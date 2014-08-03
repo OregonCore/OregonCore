@@ -1165,6 +1165,8 @@ class Player : public Unit, public GridObject<Player>
         }
         float GetReferFriendXPMultiplier() const;
 
+        bool AddItem(uint32 itemId, uint32 count);
+
         uint32 m_stableSlots;
 
         /*********************************************************/

@@ -6542,26 +6542,11 @@ bool Player::RewardHonor(Unit *uVictim, uint32 groupsize, float honor, bool pvpt
                 || (MapType == 3 && !InBattleGround()))
                 return true;
 
-            uint32 noSpaceForCount = 0;
             uint32 itemId = sWorld.getConfig(CONFIG_PVP_TOKEN_ID);
             int32 count = sWorld.getConfig(CONFIG_PVP_TOKEN_COUNT);
 
-            // check space and find places
-            ItemPosCountVec dest;
-            uint8 msg = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, count, &noSpaceForCount);
-            if (msg != EQUIP_ERR_OK)   // convert to possible store amount
-                count = noSpaceForCount;
-
-            if (count == 0 || dest.empty()) // can't add any
-            {
-                // -- @todo Send to mailbox if no space
-                ChatHandler(this).PSendSysMessage("You don't have any space in your bags for a token.");
-                return true;
-            }
-
-            Item* item = StoreNewItem(dest, itemId, true, Item::GenerateItemRandomPropertyId(itemId));
-            SendNewItem(item,count,true,false);
-            ChatHandler(this).PSendSysMessage("You have been awarded a token for slaying another player.");
+            if (AddItem(itemId, count))
+                ChatHandler(this).PSendSysMessage("You have been awarded a token for slaying another player.");
         }
     }
 
@@ -13417,9 +13402,16 @@ void Player::RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver,
     uint32 quest_id = pQuest->GetQuestId();
 
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-    {
         if (pQuest->ReqItemId[i])
             DestroyItemCount(pQuest->ReqItemId[i], pQuest->ReqItemCount[i], true);
+
+    for (uint8 i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
+    {
+        if (pQuest->ReqSourceCount[i])
+        {
+            uint32 count = pQuest->ReqSourceCount[i];
+            DestroyItemCount(pQuest->ReqSourceId[i], count ? count : 9999, true);
+        }
     }
 
     RemoveTimedQuest(quest_id);
@@ -13439,7 +13431,7 @@ void Player::RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver,
 
     if (pQuest->GetRewItemsCount() > 0)
     {
-        for (uint32 i=0; i < pQuest->GetRewItemsCount(); ++i)
+        for (uint32 i = 0; i < pQuest->GetRewItemsCount(); ++i)
         {
             if (uint32 itemId = pQuest->RewItemId[i])
             {
@@ -13464,13 +13456,18 @@ void Player::RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver,
     // Not give XP in case already completed once repeatable quest
     uint32 XP = q_status.m_rewarded ? 0 : uint32(pQuest->XPValue(this)*sWorld.getRate(RATE_XP_QUEST));
 
+    int32 moneyRew = 0;
     if (getLevel() < sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
         GiveXP(XP , NULL);
     else
-        ModifyMoney(int32(pQuest->GetRewMoneyMaxLevel() * sWorld.getRate(RATE_DROP_MONEY)));
+        moneyRew = int32(pQuest->GetRewMoneyMaxLevel() * sWorld.getRate(RATE_DROP_MONEY));
 
     // Give player extra money if GetRewOrReqMoney > 0 and get ReqMoney if negative
-    ModifyMoney(pQuest->GetRewOrReqMoney());
+    if (pQuest->GetRewOrReqMoney())
+        moneyRew += pQuest->GetRewOrReqMoney();
+
+    if (moneyRew)
+        ModifyMoney(moneyRew);
 
     // honor reward
     if (pQuest->GetRewHonorableKills())
@@ -13502,7 +13499,9 @@ void Player::RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver,
     if (announce)
         SendQuestReward(pQuest, XP, questGiver);
 
-    // cast spells after mark quest complete (some spells have quest completed state reqyurements in spell_area data)
+
+    // cast spells after mark quest complete (some spells have quest completed state requirements in spell_area data)
+    // @todo Add extra checks incase player needs to cast the spell himself or creature cast spell on player
     if (pQuest->GetRewSpellCast() > 0)
         CastSpell(this, pQuest->GetRewSpellCast(), true);
     else if (pQuest->GetRewSpell() > 0)
@@ -21000,4 +20999,27 @@ void Player::SetMap(Map * map)
 bool Player::IsLoading() const
 {
     return GetSession()->PlayerLoading();
+}
+
+bool Player::AddItem(uint32 itemId, uint32 count)
+{
+    uint32 noSpaceForCount = 0;
+    ItemPosCountVec dest;
+    uint8 msg = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, count, &noSpaceForCount);
+    if (msg != EQUIP_ERR_OK)
+        count -= noSpaceForCount;
+
+    if (count == 0 || dest.empty())
+    {
+        /// @todo Send to mailbox if no space
+        ChatHandler(GetSession()).PSendSysMessage("You don't have any space in your bags.");
+        return false;
+    }
+
+    Item* item = StoreNewItem(dest, itemId, true, Item::GenerateItemRandomPropertyId(itemId));
+    if (item)
+        SendNewItem(item, count, true, false);
+    else
+        return false;
+    return true;
 }
