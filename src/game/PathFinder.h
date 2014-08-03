@@ -45,7 +45,8 @@ enum PathType
     PATHFIND_SHORTCUT       = 0x0002,   // travel through obstacles, terrain, air, etc (old behavior)
     PATHFIND_INCOMPLETE     = 0x0004,   // we have partial path to follow - getting closer to target
     PATHFIND_NOPATH         = 0x0008,   // no valid path at all or error in generating one
-    PATHFIND_NOT_USING_PATH = 0x0010    // used when we are either flying/swiming or on map w/o mmaps
+    PATHFIND_NOT_USING_PATH = 0x0010,   // used when we are either flying/swiming or on map w/o mmaps
+    PATHFIND_SHORT          = 0x0020    // too long path, truncating
 };
 
 class PathInfo
@@ -105,6 +106,8 @@ class PathInfo
         void setStartPosition(PathNode point) { m_startPosition = point; }
         void setEndPosition(PathNode point) { m_actualEndPosition = point; m_endPosition = point; }
         void setActualEndPosition(PathNode point) { m_actualEndPosition = point; }
+
+        void NormalizePath();
 
         void clear()
         {
