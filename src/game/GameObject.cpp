@@ -449,6 +449,13 @@ void GameObject::Update(uint32 diff)
             {
                 SendObjectDeSpawnAnim(GetGUID());
                 //reset flags
+                if (GetMap()->Instanceable())
+                {
+                    // In Instances GO_FLAG_LOCKED, GO_FLAG_INTERACT_COND or GO_FLAG_NO_INTERACT are not changed
+                    uint32 currentLockOrInteractFlags = GetUInt32Value(GAMEOBJECT_FLAGS) & (GO_FLAG_LOCKED | GO_FLAG_INTERACT_COND | GO_FLAG_NOT_SELECTABLE);
+                    SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags & ~(GO_FLAG_LOCKED | GO_FLAG_INTERACT_COND | GO_FLAG_NOT_SELECTABLE) | currentLockOrInteractFlags);
+                }
+                else
                 SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags);
             }
 
