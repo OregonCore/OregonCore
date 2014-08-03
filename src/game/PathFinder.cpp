@@ -27,7 +27,7 @@
 ////////////////// PathInfo //////////////////
 PathInfo::PathInfo(const Unit* owner, float destX, float destY, float destZ, bool forceDest) :
     m_polyLength(0), m_type(PATHFIND_BLANK),
-    m_forceDestination(forceDest), m_pointPathLimit(MAX_POINT_PATH_LENGTH),
+    m_forceDestination(forceDest), m_useStraightPath(true), m_pointPathLimit(MAX_POINT_PATH_LENGTH),
     m_sourceUnit(owner), m_navMesh(NULL), m_navMeshQuery(NULL)
 {
     PathNode endPoint(destX, destY, destZ);
@@ -99,6 +99,21 @@ bool PathInfo::Update(float destX, float destY, float destZ, bool forceDest)
 
     updateFilter();
 
+    // check if destination moved - if not we can optimize something here
+    // we are following old, precalculated path?
+    float dist = m_sourceUnit->GetObjectSize();
+
+    if (inRange(oldDest, newDest, dist, dist) && m_pathPoints.size() > 2)
+    {
+        // our target is not moving - we just coming closer
+        // we are moving on precalculated path - enjoy the ride
+        //DEBUG_FILTER_LOG(LOG_FILTER_PATHFINDING, "++ PathInfo::Update:: precalculated path\n");
+
+        m_pathPoints.crop(1, 0);
+        setNextPosition(m_pathPoints[1]);
+        return false;
+    }
+    // target moved, so we need to update the poly path
     BuildPolyPath(newStart, newDest);
     return true;
 }
@@ -115,7 +130,7 @@ dtPolyRef PathInfo::getPathPolyByPosition(const dtPolyRef *polyPath, uint32 poly
     for (uint32 i = 0; i < polyPathSize; ++i)
     {
         float closestPoint[VERTEX_SIZE];
-        if (DT_SUCCESS != m_navMeshQuery->closestPointOnPoly(polyPath[i], point, closestPoint))
+        if (DT_SUCCESS != m_navMeshQuery->closestPointOnPoly(polyPath[i], point, closestPoint, NULL))
             continue;
 
         float d = dtVdist2DSqr(point, closestPoint);
@@ -246,7 +261,7 @@ void PathInfo::BuildPolyPath(const PathNode &startPos, const PathNode &endPos)
         {
             float closestPoint[VERTEX_SIZE];
             // we may want to use closestPointOnPolyBoundary instead
-            if (DT_SUCCESS == m_navMeshQuery->closestPointOnPoly(endPoly, endPoint, closestPoint))
+            if (DT_SUCCESS == m_navMeshQuery->closestPointOnPoly(endPoly, endPoint, closestPoint, NULL))
             {
                 dtVcopy(endPoint, closestPoint);
                 setActualEndPosition(PathNode(endPoint[2],endPoint[0],endPoint[1]));
@@ -312,69 +327,6 @@ void PathInfo::BuildPolyPath(const PathNode &startPos, const PathNode &endPos)
 
         m_polyLength = pathEndIndex - pathStartIndex + 1;
         memmove(m_pathPolyRefs, m_pathPolyRefs+pathStartIndex, m_polyLength*sizeof(dtPolyRef));
-    }
-    else if (startPolyFound && !endPolyFound)
-    {
-        //DEBUG_FILTER_LOG(LOG_FILTER_PATHFINDING, "++ BuildPolyPath :: (startPolyFound && !endPolyFound)\n");
-
-        // we are moving on the old path but target moved out
-        // so we have atleast part of poly-path ready
-
-        m_polyLength -= pathStartIndex;
-
-        // try to adjust the suffix of the path instead of recalculating entire length
-        // at given interval the target cannot get too far from its last location
-        // thus we have less poly to cover
-        // sub-path of optimal path is optimal
-
-        // take ~80% of the original length
-        // TODO : play with the values here
-        uint32 prefixPolyLength = uint32(m_polyLength*0.8f + 0.5f);
-        memmove(m_pathPolyRefs, m_pathPolyRefs+pathStartIndex, prefixPolyLength*sizeof(dtPolyRef));
-
-        dtPolyRef suffixStartPoly = m_pathPolyRefs[prefixPolyLength-1];
-
-        // we need any point on our suffix start poly to generate poly-path, so we need last poly in prefix data
-        float suffixEndPoint[VERTEX_SIZE];
-        if (DT_SUCCESS != m_navMeshQuery->closestPointOnPoly(suffixStartPoly, endPoint, suffixEndPoint))
-        {
-            // we can hit offmesh connection as last poly - closestPointOnPoly() don't like that
-            // try to recover by using prev polyref
-            --prefixPolyLength;
-            suffixStartPoly = m_pathPolyRefs[prefixPolyLength-1];
-            if (DT_SUCCESS != m_navMeshQuery->closestPointOnPoly(suffixStartPoly, endPoint, suffixEndPoint))
-            {
-                // suffixStartPoly is still invalid, error state
-                BuildShortcut();
-                m_type = PATHFIND_NOPATH;
-                return;
-            }
-        }
-
-        // generate suffix
-        uint32 suffixPolyLength = 0;
-        dtStatus dtResult = m_navMeshQuery->findPath(
-                                suffixStartPoly,    // start polygon
-                                endPoly,            // end polygon
-                                suffixEndPoint,     // start position
-                                endPoint,           // end position
-                                &m_filter,            // polygon search filter
-                                m_pathPolyRefs + prefixPolyLength - 1,    // [out] path
-                                (int*)&suffixPolyLength,
-                                MAX_PATH_LENGTH-prefixPolyLength);   // max number of polygons in output path
-
-        if (!suffixPolyLength || dtResult != DT_SUCCESS)
-        {
-            // this is probably an error state, but we'll leave it
-            // and hopefully recover on the next Update
-            // we still need to copy our preffix
-            sLog.outError("%u's Path Build failed: 0 length path", m_sourceUnit->GetGUIDLow());
-        }
-
-        //DEBUG_FILTER_LOG(LOG_FILTER_PATHFINDING, "++  m_polyLength=%u prefixPolyLength=%u suffixPolyLength=%u \n",m_polyLength, prefixPolyLength, suffixPolyLength);
-
-        // new path = prefix + suffix - overlap
-        m_polyLength = prefixPolyLength + suffixPolyLength - 1;
     }
     else
     {
@@ -582,7 +534,7 @@ bool PathInfo::HaveTile(const PathNode &p) const
     if (tx < 0 || ty < 0)
         return false;
 
-    return (m_navMesh->getTileAt(tx, ty) != NULL);
+    return (m_navMesh->getTileAt(tx, ty, 0) != NULL);
 }
 
 uint32 PathInfo::fixupCorridor(dtPolyRef* path, uint32 npath, uint32 maxPath,
