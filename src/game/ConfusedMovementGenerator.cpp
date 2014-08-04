@@ -28,7 +28,7 @@ template<class T>
 void
 ConfusedMovementGenerator<T>::Initialize(T &unit)
 {
-    const float wander_distance = 11;
+    const float wanderDistance = 4;
     float x,y,z;
     x = unit.GetPositionX();
     y = unit.GetPositionY();
@@ -45,8 +45,8 @@ ConfusedMovementGenerator<T>::Initialize(T &unit)
 
     for (uint8 idx = 0; idx <= MAX_CONF_WAYPOINTS; ++idx)
     {
-        float wanderX = x + wander_distance*rand_norm() - wander_distance/2;
-        float wanderY = y + wander_distance*rand_norm() - wander_distance/2;
+        float wanderX = x + wanderDistance*rand_norm() - wanderDistance/2;
+        float wanderY = y + wanderDistance*rand_norm() - wanderDistance/2;
         Oregon::NormalizeMapCoord(wanderX);
         Oregon::NormalizeMapCoord(wanderY);
 
@@ -91,7 +91,7 @@ ConfusedMovementGenerator<T>::Initialize(T &unit)
     unit.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED);
     unit.CastStop();
     unit.StopMoving();
-    unit.RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+    unit.AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
     unit.addUnitState(UNIT_STAT_CONFUSED);
 }
 
@@ -141,7 +141,7 @@ bool ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
                 unit.clearUnitState(UNIT_STAT_MOVE);
 
                 i_nextMove = urand(1,MAX_CONF_WAYPOINTS);
-                i_nextMoveTime.Reset(urand(0, 1500-1));     // TODO: check the minimum reset time, should be probably higher
+                i_nextMoveTime.Reset(urand(100, 1000));
             }
         }
     }

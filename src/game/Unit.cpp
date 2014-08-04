@@ -2382,18 +2382,17 @@ void Unit::SendMeleeAttackStart(Unit* pVictim)
 
 void Unit::SendMeleeAttackStop(Unit* victim)
 {
-    if (!victim)
-        return;
-
-    WorldPacket data(SMSG_ATTACKSTOP, (4+16));            // we guess size
+    WorldPacket data(SMSG_ATTACKSTOP, (4+16));                 // we guess size
     data << GetPackGUID();
-    data << victim->GetPackGUID();                     // can be 0x00...
-    data << uint32(0);                                      // can be 0x1
+    data << (victim ? victim->GetPackGUID() : PackedGuid(0));  // can be 0x00...
+    data << uint32(0);                                         // can be 0x1
     SendMessageToSet(&data, true);
-    sLog.outDetail("%s %u stopped attacking %s %u", (GetTypeId() == TYPEID_PLAYER ? "player" : "creature"), GetGUIDLow(), (victim->GetTypeId() == TYPEID_PLAYER ? "player" : "creature"),victim->GetGUIDLow());
+    sLog.outDebug("WORLD: Sent SMSG_ATTACKSTOP");
 
-    /*if (victim->GetTypeId() == TYPEID_UNIT)
-    victim->ToCreature()->AI().EnterEvadeMode(this);*/
+    if (victim)
+        sLog.outDetail("%s %u stopped attacking %s %u", (GetTypeId() == TYPEID_PLAYER ? "player" : "creature"), GetGUIDLow(), (victim->GetTypeId() == TYPEID_PLAYER ? "player" : "creature"),victim->GetGUIDLow());
+    else
+        sLog.outDetail("%s %u stopped attacking", (GetTypeId() == TYPEID_PLAYER ? "Player" : "Creature"), GetGUIDLow());
 }
 
 bool Unit::isSpellBlocked(Unit *pVictim, SpellEntry const* /*spellProto*/, WeaponAttackType attackType)
@@ -11936,6 +11935,8 @@ void Unit::SetControlled(bool apply, UnitState state)
             case UNIT_STAT_CONFUSED:
                 if (!hasUnitState(UNIT_STAT_STUNNED))
                 {
+                    clearUnitState(UNIT_STAT_MELEE_ATTACKING);
+                    SendMeleeAttackStop();
                     SetConfused(true);
                     CastStop();
                 }
@@ -11943,6 +11944,8 @@ void Unit::SetControlled(bool apply, UnitState state)
             case UNIT_STAT_FLEEING:
                 if (!hasUnitState(UNIT_STAT_STUNNED | UNIT_STAT_CONFUSED))
                 {
+                    clearUnitState(UNIT_STAT_MELEE_ATTACKING);
+                    SendMeleeAttackStop();
                     SetFeared(true);
                     CastStop();
                 }
