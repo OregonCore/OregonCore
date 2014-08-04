@@ -2872,7 +2872,7 @@ void Spell::SendCastResult(SpellCastResult result)
     {
         WorldPacket data(SMSG_CAST_FAILED, (4+1+1));
         data << uint32(m_spellInfo->Id);
-        data << uint8(result);                              // problem
+        data << uint8(!IsPassiveSpell(m_spellInfo) ? result : SPELL_FAILED_DONT_REPORT); // do not report failed passive spells
         data << uint8(m_cast_count);                        // single cast or multi 2.3 (0/1)
         switch (result)
         {
