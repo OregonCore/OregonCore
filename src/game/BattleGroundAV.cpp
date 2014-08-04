@@ -44,7 +44,7 @@ BattleGroundAV::~BattleGroundAV()
 {
 }
 
-uint16 BattleGroundAV::GetBonusHonor(uint8 kills) //TODO: move this function to Battleground.cpp (needs to find a way to get m_MaxLevel)
+uint16 BattleGroundAV::GetBonusHonor(uint8 kills) //@todo move this function to Battleground.cpp (needs to find a way to get m_MaxLevel)
 {
     return Oregon::Honor::hk_honor_at_level(m_MaxLevel, kills);
 }
@@ -271,7 +271,7 @@ Creature* BattleGroundAV::AddAVCreature(uint32 cinfoid, uint32 type)
     if (!creature)
         return NULL;
     if (creature->GetEntry() == BG_AV_CreatureInfo[AV_NPC_A_CAPTAIN][0] || creature->GetEntry() == BG_AV_CreatureInfo[AV_NPC_H_CAPTAIN][0])
-        creature->SetRespawnDelay(RESPAWN_ONE_DAY); // TODO: look if this can be done by database + also add this for the wingcommanders
+        creature->SetRespawnDelay(RESPAWN_ONE_DAY); // @todo look if this can be done by database + also add this for the wingcommanders
 
     if ((isStatic && cinfoid >= 10 && cinfoid <= 14) || (!isStatic && ((/*cinfoid >= AV_NPC_A_GRAVEDEFENSE0 && */cinfoid <= AV_NPC_A_GRAVEDEFENSE3) ||
         (cinfoid >= AV_NPC_H_GRAVEDEFENSE0 && cinfoid <= AV_NPC_H_GRAVEDEFENSE3))))
@@ -287,7 +287,7 @@ Creature* BattleGroundAV::AddAVCreature(uint32 cinfoid, uint32 type)
         creature->GetMotionMaster()->Initialize();
         creature->setDeathState(JUST_DIED);
         creature->Respawn();
-        //TODO: find a way to add a motionmaster without killing the creature (i
+        //@todo find a way to add a motionmaster without killing the creature (i
         //just copied this code from a gm-command
     }
 
@@ -321,7 +321,7 @@ void BattleGroundAV::Update(time_t diff)
                 else
                 {
                     CastSpellOnTeam(AV_BUFF_H_CAPTAIN,HORDE);
-                    Creature* creature = GetBGCreature(AV_CPLACE_MAX + 59); //TODO: make the captains a dynamic creature
+                    Creature* creature = GetBGCreature(AV_CPLACE_MAX + 59); //@todo make the captains a dynamic creature
                     if (creature)
                         YellToAll(creature,LANG_BG_AV_H_CAPTAIN_BUFF,LANG_ORCISH);
                 }
@@ -388,7 +388,7 @@ void BattleGroundAV::AddPlayer(Player *plr)
     BattleGroundAVScore* sc = new BattleGroundAVScore;
     m_PlayerScores[plr->GetGUID()] = sc;
     if (m_MaxLevel == 0)
-        m_MaxLevel=(plr->getLevel()%10 == 0)? plr->getLevel() : (plr->getLevel()-(plr->getLevel()%10))+10; //TODO: just look at the code \^_^/ --but queue-info should provide this information..
+        m_MaxLevel=(plr->getLevel()%10 == 0)? plr->getLevel() : (plr->getLevel()-(plr->getLevel()%10))+10; //@todo just look at the code \^_^/ --but queue-info should provide this information..
 
 }
 
@@ -649,7 +649,7 @@ void BattleGroundAV::ChangeMineOwner(uint8 mine, uint32 team, bool initial)
     //because the gameobjects in this mine have changed, update all surrounding players:
 //    for (uint16 i = ((mine == BG_AV_NORTH_MINE)?BG_AV_OBJECT_MINE_SUPPLY_N_MIN:BG_AV_OBJECT_MINE_SUPPLY_N_MIN); i <= ((mine == BG_AV_NORTH_MINE)?BG_AV_OBJECT_MINE_SUPPLY_N_MAX:BG_AV_OBJECT_MINE_SUPPLY_N_MAX); i++)
 //    {
-        //TODO: add gameobject-update code
+        //@todo add gameobject-update code
 //    }
     if (team == ALLIANCE || team == HORDE)
     {

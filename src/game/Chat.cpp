@@ -494,7 +494,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "addgroup",       SEC_MODERATOR,      false, &ChatHandler::HandleNpcAddGroupCommand,         "", NULL },
         { "setlink",        SEC_MODERATOR,      false, &ChatHandler::HandleNpcSetLinkCommand,          "", NULL },
 
-        //{ TODO: fix or remove this commands
+        //{ @todo fix or remove this commands
         { "name",           SEC_GAMEMASTER,     false, &ChatHandler::HandleNameCommand,                "", NULL },
         { "subname",        SEC_GAMEMASTER,     false, &ChatHandler::HandleSubNameCommand,             "", NULL },
         { "addweapon",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleAddWeaponCommand,           "", NULL },

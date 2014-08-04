@@ -101,7 +101,7 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket & recv_data)
     }
     else
     {
-        // TODO: find correct opcode
+        // @todo find correct opcode
         if (_player->getLevel() < sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
         {
             SendNotification(LANG_ARENA_ONE_TOOLOW, sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL));

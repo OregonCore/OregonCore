@@ -1025,7 +1025,7 @@ void AuctionHouseBot::Initialize()
                     continue;
             }
 
-             //TODO:Make list of items and create a vector
+             //@todoMake list of items and create a vector
             // Disable PTR/Beta/Unused items
             if ((DisableBeta_PTR_Unused) && ((prototype->ItemId == 21878) || (prototype->ItemId == 27774) || (prototype->ItemId == 27811) || (prototype->ItemId == 28117) || (prototype->ItemId == 28112)))
             {

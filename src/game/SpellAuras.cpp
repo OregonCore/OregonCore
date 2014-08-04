@@ -1918,7 +1918,7 @@ void Aura::TriggerSpell()
             // Curse of Idiocy
             case 1010:
             {
-                // TODO: spell casted by result in correct way mostly
+                // @todo spell casted by result in correct way mostly
                 // BUT:
                 // 1) target show casting at each triggered cast: target don't must show casting animation for any triggered spell
                 //      but must show affect apply like item casting
@@ -3072,7 +3072,7 @@ void Aura::HandleBindSight(bool apply, bool /*Real*/)
     caster->ToPlayer()->SetViewpoint(m_target, (apply));
 }
 
-//TODO: complete
+//@todo complete
 void Aura::HandleFarSight(bool /*apply*/, bool /*Real*/)
 {
     /*Unit* caster = GetCaster();
@@ -5608,7 +5608,7 @@ void Aura::CleanupTriggeredSpells()
         return;
 
     // needed for spell 43680, maybe others
-    // TODO: is there a spell flag, which can solve this in a more sophisticated way?
+    // @todo is there a spell flag, which can solve this in a more sophisticated way?
     if (m_spellProto->EffectApplyAuraName[GetEffIndex()] == SPELL_AURA_PERIODIC_TRIGGER_SPELL &&
         uint32(GetSpellDuration(m_spellProto)) == m_spellProto->EffectAmplitude[GetEffIndex()])
         return;

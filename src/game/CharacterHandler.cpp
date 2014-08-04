@@ -314,7 +314,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket & recv_data)
             uint8 race = field[0].GetUInt32();
 
             // need to check team only for first character
-            // TODO: what to if account already has characters of both races?
+            // @todo what to if account already has characters of both races?
             if (!AllowTwoSideAccounts)
             {
                 uint32 team=0;
@@ -331,7 +331,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket & recv_data)
 
             if (skipCinematics == 1)
             {
-                // TODO: check if cinematic already shown? (already logged in?; cinematic field)
+                // @todo check if cinematic already shown? (already logged in?; cinematic field)
                 while (race_ != race && result2->NextRow())
                 {
                     field = result2->Fetch();

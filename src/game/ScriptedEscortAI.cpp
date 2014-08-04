@@ -449,7 +449,7 @@ void npc_escortAI::SetRun(bool bRun)
     m_bIsRunning = bRun;
 }
 
-//TODO: get rid of this many variables passed in function.
+//@todo get rid of this many variables passed in function.
 void npc_escortAI::Start(bool bIsActiveAttacker, bool bRun, uint64 uiPlayerGUID, const Quest* pQuest, bool bInstantRespawn, bool bCanLoopPath)
 {
     if (me->getVictim())

@@ -101,7 +101,7 @@ class InstanceSave
         bool UnloadIfEmpty();
         /* the only reason the instSave-object links are kept is because
            the object-instSave links need to be broken at reset time
-           TODO: maybe it's enough to just store the number of players/groups */
+           @todo maybe it's enough to just store the number of players/groups */
         uint16 m_mapid;
         uint32 m_instanceid;
         time_t m_resetTime;

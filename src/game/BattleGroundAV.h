@@ -72,7 +72,7 @@ enum BG_AV_OTHER_VALUES
     BG_AV_NORTH_MINE            = 0,
     BG_AV_SOUTH_MINE            = 1,
     BG_AV_MINE_TICK_TIMER       = 45000,
-    BG_AV_MINE_RECLAIM_TIMER    = 1200000,                  // TODO: get the right value.. this is currently 20 minutes
+    BG_AV_MINE_RECLAIM_TIMER    = 1200000,                  // @todo get the right value.. this is currently 20 minutes
     BG_AV_NEUTRAL_TEAM          = 0                         // this is the neutral owner of snowfall
 };
 #define BG_AV_MAX_MINES 2
@@ -995,7 +995,7 @@ const uint32 BG_AV_CreatureInfo[AV_NPC_INFO_MAX][4] = {
     { 11602, 59, 54, 55 }, //Irondeep Skullthumper
     { 11657, 59, 58, 58 }, //Morloch
 
-    {13396,469,52,53}, //irondeep alliance TODO: get the right ids
+    {13396,469,52,53}, //irondeep alliance @todo get the right ids
     {13080,469,53,54},
     {13098,469,54,55},
     {13078,469,58,58},
@@ -1169,7 +1169,7 @@ const uint32 BG_AV_StaticCreatureInfo[51][4] = {
     { 11675, 514, 53, 53 }, //Snowblind Windcaller
     { 11678, 14, 52, 53 }, //Snowblind Ambusher
     { 11839, 39, 56, 56 }, //Wildpaw Brute
-    { 11947, 1214, 61, 61 }, //Captain Galvangar --TODO: doubled
+    { 11947, 1214, 61, 61 }, //Captain Galvangar --@todo doubled
     { 11948, 1216, 63, 63 }, //Vanndar Stormpike
     { 11949, 1216, 61, 61 }, //Captain Balinda Stonehearth
     { 11997, 1334, 60, 60 }, //Stormpike Herald
@@ -1200,7 +1200,7 @@ const uint32 BG_AV_StaticCreatureInfo[51][4] = {
     { 14282, 1214, 53, 54 }, //Frostwolf Bloodhound
     { 14283, 1216, 53, 54 }, //Stormpike Owl
     { 14284, 1216, 61, 61 }, //Stormpike Battleguard
-    { 11946, 1214, 63, 63 }, //Drek'Thar //TODO: make the levels right (boss=0 maybe)
+    { 11946, 1214, 63, 63 }, //Drek'Thar //@todo make the levels right (boss=0 maybe)
     { 11948, 1216, 63, 63 }, //Vanndar Stormpike
     { 11947, 1214, 61, 61 }, //Captain Galvangar
     { 11949, 1216, 61, 61 } //Captain Balinda Stonehearth

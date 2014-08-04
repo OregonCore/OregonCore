@@ -119,7 +119,7 @@ void WorldSession::HandlePetActionHelper(Unit *pet, uint64 guid1, uint16 spellid
                     if (_player->HasAuraType(SPELL_AURA_MOD_PACIFY))
                     {
                         //pet->SendPetCastFail(spellid, SPELL_FAILED_PACIFIED);
-                        //TODO: Send proper error message to client
+                        //@todo Send proper error message to client
                         return;
                     }
 

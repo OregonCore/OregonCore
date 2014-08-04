@@ -1456,7 +1456,7 @@ namespace Oregon
             {
                 char const* text = objmgr.GetOregonString(i_textId,loc_idx);
 
-                // TODO: i_object.GetName() also must be localized?
+                // @todo i_object.GetName() also must be localized?
                 i_object.BuildMonsterChat(&data,i_msgtype,text,i_language,i_object.GetNameForLocaleIdx(loc_idx),i_targetGUID);
             }
 
@@ -2096,7 +2096,7 @@ void WorldObject::DestroyForNearbyPlayers()
         if (!plr->HaveAtClient(this))
             continue;
 
-        if (isType(TYPEMASK_UNIT) && ((Unit*)this)->GetCharmerGUID() == plr->GetGUID()) // TODO: this is for puppet
+        if (isType(TYPEMASK_UNIT) && ((Unit*)this)->GetCharmerGUID() == plr->GetGUID()) // @todo this is for puppet
             continue;
 
         DestroyForPlayer(plr);

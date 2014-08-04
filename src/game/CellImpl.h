@@ -147,7 +147,7 @@ inline CellArea Cell::CalculateCellArea(float x, float y, float radius)
         return CellArea();
 
     //lets calculate object coord offsets from cell borders.
-    //TODO: add more correct/generic method for this task
+    //@todo add more correct/generic method for this task
     const float x_offset = (x - CENTER_GRID_CELL_OFFSET)/SIZE_OF_GRID_CELL;
     const float y_offset = (y - CENTER_GRID_CELL_OFFSET)/SIZE_OF_GRID_CELL;
 

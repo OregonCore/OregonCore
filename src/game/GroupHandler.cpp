@@ -36,7 +36,7 @@
     -you can uninvite yourself - is is useful
     -you can accept invitation even if leader went offline
 */
-/* todo:
+/* @todo
     -group_destroyed msg is sent but not shown
     -reduce xp gaining when in raid group
     -quest sharing has to be corrected

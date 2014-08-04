@@ -544,7 +544,7 @@ void WorldSession::HandleBattlefieldStatusOpcode(WorldPacket & /*recv_data*/)
 
     WorldPacket data;
 
-    // TODO: we must put player back to battleground in case disconnect (< 5 minutes offline time) or teleport player on login(!) from battleground map to entry point
+    // @todo we must put player back to battleground in case disconnect (< 5 minutes offline time) or teleport player on login(!) from battleground map to entry point
     if (_player->InBattleGround())
     {
         BattleGround *bg = _player->GetBattleGround();

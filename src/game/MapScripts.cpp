@@ -705,7 +705,7 @@ void Map::ScriptsProcess()
 
             case SCRIPT_COMMAND_CAST_SPELL:
             {
-                // TODO: Allow gameobjects to be targets and casters
+                // @todo Allow gameobjects to be targets and casters
                 if (!source && !target)
                 {
                     sLog.outError("%s source and target objects are NULL.", step.script->GetDebugInfo().c_str());

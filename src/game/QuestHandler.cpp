@@ -434,7 +434,7 @@ void WorldSession::HandleQuestComplete(WorldPacket& recv_data)
 
     if (Quest const *pQuest = objmgr.GetQuestTemplate(quest))
     {
-        // TODO: need a virtual function
+        // @todo need a virtual function
         if (GetPlayer()->InBattleGround())
             if (BattleGround* bg = GetPlayer()->GetBattleGround())
                 if (bg->GetTypeID() == BATTLEGROUND_AV)

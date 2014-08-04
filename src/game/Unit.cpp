@@ -961,7 +961,7 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
 
         if (damagetype == DIRECT_DAMAGE || damagetype == SPELL_DIRECT_DAMAGE)
         {
-            //TODO: This is from procflag, I do not know which spell needs this
+            //@todo This is from procflag, I do not know which spell needs this
             //Maim?
             //if (!spellProto || !(spellProto->AuraInterruptFlags&AURA_INTERRUPT_FLAG_DIRECT_DAMAGE))
                 pVictim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DIRECT_DAMAGE, spellProto ? spellProto->Id : 0);
@@ -2691,7 +2691,7 @@ SpellMissInfo Unit::SpellHitResult(Unit *pVictim, SpellEntry const *spell, bool 
         return SPELL_MISS_IMMUNE;
 
     // All positive spells can`t miss
-    // TODO: client not show miss log for this spells - so need find info for this in dbc and use it!
+    // @todo client not show miss log for this spells - so need find info for this in dbc and use it!
     if (IsPositiveSpell(spell->Id)
         &&(!IsHostileTo(pVictim)))  //prevent from affecting enemy by "positive" spell
         return SPELL_MISS_NONE;
@@ -4822,7 +4822,7 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                     break;
                 }
                 /*
-                // TODO: need find item for aura and triggered spells
+                // @todo need find item for aura and triggered spells
                 // Sunwell Exalted Caster Neck (??? neck)
                 // cast ??? Light's Wrath if Exalted by Aldor
                 // cast ??? Arcane Bolt if Exalted by Scryers*/
@@ -7200,7 +7200,7 @@ void Unit::SetCharm(Unit* charm, bool apply)
                 sLog.outCrash("Player %s is trying to charm unit %u, but it already has a charmed unit %llu", GetName(), charm->GetEntry(), GetCharmGUID());
 
             charm->m_ControlledByPlayer = true;
-            // TODO: maybe we can use this flag to check if controlled by player
+            // @todo maybe we can use this flag to check if controlled by player
             charm->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
         }
         else
@@ -7940,7 +7940,7 @@ uint32 Unit::SpellCriticalBonus(SpellEntry const *spellProto, uint32 damage, Uni
     {
         case SPELL_DAMAGE_CLASS_MELEE:                      // for melee based spells is 100%
         case SPELL_DAMAGE_CLASS_RANGED:
-            // TODO: write here full calculation for melee/ranged spells
+            // @todo write here full calculation for melee/ranged spells
             crit_bonus = damage;
             break;
         default:
@@ -7985,13 +7985,13 @@ uint32 Unit::SpellHealingBonus(SpellEntry const *spellProto, uint32 healamount, 
 
     // These spells are triggers, and should trigger with their full amount of healing.
     // So, to prevent double dipping of reduced heals we need to remove these from effects of SPELL_AURA_MOD_HEALING_PCT.
-    // @todo: Find a less hacky method of handling these spells.
+    // @@todo Find a less hacky method of handling these spells.
     if ((spellProto->Id == 33763 && damagetype != DOT) ||                                                        // Lifeblooms Final Tick
         (spellProto->SpellFamilyName == SPELLFAMILY_SHAMAN && spellProto->SpellFamilyFlags == 0x40000000000l) || // Earth Shield
         spellProto->Id == 41635)                                                                                 // Prayer of Mending
             TotalHealPct = 1.0f;
 
-    // These Spells are doing fixed amount of healing (@todo: find a less hack-like check)
+    // These Spells are doing fixed amount of healing (@@todo find a less hack-like check)
     // Generic family spells are not handled here, these are exceptions to the rule
     if (spellId == 33778 || spellId == 379 || spellId == 38395 || spellId == 34299 ||  // Lifebloom (rank 1), Earth Shield, Siphon Essence, Flame Quills
         spellId == 27813 || spellId == 27817 || spellId == 27818)                      // Blessed Recovery (rank 1, rank 2 & rank 3)
@@ -8177,7 +8177,7 @@ uint32 Unit::SpellHealingBonus(SpellEntry const *spellProto, uint32 healamount, 
     // use float as more appropriate for negative values and percent applying
     float heal = healamount + ActualBenefit;
 
-    // TODO: check for ALL/SPELLS type
+    // @todo check for ALL/SPELLS type
     // Healing done percent
     AuraList const& mHealingDonePct = GetAurasByType(SPELL_AURA_MOD_HEALING_DONE_PERCENT);
     for (AuraList::const_iterator i = mHealingDonePct.begin();i != mHealingDonePct.end(); ++i)
@@ -8934,7 +8934,7 @@ void Unit::ModSpellCastTime(SpellEntry const* spellProto, int32 & castTime, Spel
 
     if (spellProto->Attributes & SPELL_ATTR_RANGED && !(spellProto->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG))
         castTime = int32 (float(castTime) * m_modAttackSpeedPct[RANGED_ATTACK]);
-    else // TODO: fix it
+    else // @todo fix it
         if (spellProto->SpellFamilyName) // some magic spells doesn't have dmgType == SPELL_DAMAGE_CLASS_MAGIC (arcane missiles/evocation)
             castTime = int32(float(castTime) * GetFloatValue(UNIT_MOD_CAST_SPEED));
 }
@@ -8988,7 +8988,7 @@ bool Unit::isInvisibleForAlive() const
 {
     if (m_AuraFlags & UNIT_AURAFLAG_ALIVE_INVISIBLE)
         return true;
-    // TODO: maybe spiritservices also have just an aura
+    // @todo maybe spiritservices also have just an aura
     return isSpiritService();
 }
 
@@ -9144,7 +9144,7 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
         case MOVE_FLIGHT:
         {
             // Normalize speed by 191 aura SPELL_AURA_USE_NORMAL_MOVEMENT_SPEED if need
-            // TODO: possible affect only on MOVE_RUN
+            // @todo possible affect only on MOVE_RUN
             if (int32 normalization = GetMaxPositiveAuraModifier(SPELL_AURA_USE_NORMAL_MOVEMENT_SPEED))
             {
                 // Use speed from aura
@@ -11871,7 +11871,7 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
         {
             Map *m = creature->GetMap();
             Player *creditedPlayer = GetCharmerOrOwnerPlayerOrPlayerItself();
-            // TODO: do instance binding anyway if the charmer/owner is offline
+            // @todo do instance binding anyway if the charmer/owner is offline
 
             if (m->IsDungeon() && creditedPlayer)
             {
@@ -12138,7 +12138,7 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
         return;
     }
     CastStop();
-    CombatStop(); //TODO: CombatStop(true) may cause crash (interrupt spells)
+    CombatStop(); //@todo CombatStop(true) may cause crash (interrupt spells)
     DeleteThreatList();
 
     // Charmer stop charming
@@ -12243,7 +12243,7 @@ void Unit::RemoveCharmedBy(Unit *charmer)
         type = CHARM_TYPE_CHARM;
 
     CastStop();
-    CombatStop(); //TODO: CombatStop(true) may cause crash (interrupt spells)
+    CombatStop(); //@todo CombatStop(true) may cause crash (interrupt spells)
     getHostileRefManager().deleteReferences();
     DeleteThreatList();
     RestoreFaction();

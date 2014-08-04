@@ -482,7 +482,7 @@ void Map::MessageBroadcast(WorldObject *obj, WorldPacket *msg)
     if (!loaded(GridPair(cell.data.Part.grid_x, cell.data.Part.grid_y)))
         return;
 
-    //TODO: currently on continents when Visibility.Distance.InFlight > Visibility.Distance.Continents
+    //@todo currently on continents when Visibility.Distance.InFlight > Visibility.Distance.Continents
     //we have alot of blinking mobs because monster move packet send is broken...
     Oregon::ObjectMessageDeliverer post_man(*obj, msg);
     TypeContainerVisitor<Oregon::ObjectMessageDeliverer, WorldTypeMapContainer > message(post_man);
@@ -2342,7 +2342,7 @@ bool InstanceMap::CanEnter(Player *player)
 */
 bool InstanceMap::Add(Player *player)
 {
-    // TODO: Not sure about checking player level: already done in HandleAreaTriggerOpcode
+    // @todo Not sure about checking player level: already done in HandleAreaTriggerOpcode
     // GMs still can teleport player in instance.
     // Is it needed?
 
@@ -2489,7 +2489,7 @@ void InstanceMap::CreateInstanceData(bool load)
 
     if (load)
     {
-        // TODO: make a global storage for this
+        // @todo make a global storage for this
         QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT data FROM instance WHERE map = '%u' AND id = '%u'", GetId(), i_InstanceId);
         if (result)
         {

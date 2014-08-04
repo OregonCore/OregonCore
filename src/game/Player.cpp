@@ -897,7 +897,7 @@ void Player::HandleDrowning(uint32 time_diff)
             {
                 m_MirrorTimer[BREATH_TIMER]+= 2*IN_MILLISECONDS;
                 // Calculate and deal damage
-                // TODO: Check this formula
+                // @todo Check this formula
                 uint32 damage = GetMaxHealth() / 5 + urand(0, getLevel()-1);
                 EnvironmentalDamage(DAMAGE_DROWNING, damage);
             }
@@ -966,7 +966,7 @@ void Player::HandleDrowning(uint32 time_diff)
             {
                 m_MirrorTimer[FIRE_TIMER]+= 2*IN_MILLISECONDS;
                 // Calculate and deal damage
-                // TODO: Check this formula
+                // @todo Check this formula
                 uint32 damage = urand(600, 700);
                 if (m_MirrorTimerFlags&UNDERWATER_INLAVA)
                     EnvironmentalDamage(DAMAGE_LAVA, damage);
@@ -2172,7 +2172,7 @@ GameObject* Player::GetGameObjectIfCanInteractWith(uint64 guid, GameobjectTypes 
             float maxdist;
             switch (type)
             {
-                // TODO: find out how the client calculates the maximal usage distance to spellless working
+                // @todo find out how the client calculates the maximal usage distance to spellless working
                 // gameobjects like guildbanks and mailboxes - 10.0 is a just an abitrary choosen number
                 case GAMEOBJECT_TYPE_GUILD_BANK:
                 case GAMEOBJECT_TYPE_MAILBOX:
@@ -2211,7 +2211,7 @@ void Player::SetInWater(bool apply)
     //move player's guid into HateOfflineList of those mobs
     //which can't swim and move guid back into ThreatList when
     //on surface.
-    //TODO: exist also swimming mobs, and function must be symmetric to enter/leave water
+    //@todo exist also swimming mobs, and function must be symmetric to enter/leave water
     m_isInWater = apply;
 
     // remove auras that need water/land
@@ -3546,7 +3546,7 @@ void Player::InitVisibleBits()
 {
     updateVisualBits.SetCount(PLAYER_END);
 
-    // TODO: really implement OWNER_ONLY and GROUP_ONLY. Flags can be found in UpdateFields.h
+    // @todo really implement OWNER_ONLY and GROUP_ONLY. Flags can be found in UpdateFields.h
 
     updateVisualBits.SetBit(OBJECT_FIELD_GUID);
     updateVisualBits.SetBit(OBJECT_FIELD_TYPE);
@@ -6361,7 +6361,7 @@ void Player::RewardReputation(Quest const *pQuest)
         }
     }
 
-    // TODO: implement reputation spillover
+    // @todo implement reputation spillover
 }
 
 void Player::UpdateHonorFields()
@@ -6554,7 +6554,7 @@ bool Player::RewardHonor(Unit *uVictim, uint32 groupsize, float honor, bool pvpt
 
             if (count == 0 || dest.empty()) // can't add any
             {
-                // -- TODO: Send to mailbox if no space
+                // -- @todo Send to mailbox if no space
                 ChatHandler(this).PSendSysMessage("You don't have any space in your bags for a token.");
                 return true;
             }
@@ -7750,7 +7750,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
         {
             uint32 lootid =  go->GetLootId();
 
-            //TODO: fix this big hack
+            //@todo fix this big hack
             if ((go->GetEntry() == BG_AV_OBJECTID_MINE_N || go->GetEntry() == BG_AV_OBJECTID_MINE_S))
                 if (BattleGround *bg = GetBattleGround())
                     if (bg->GetTypeID() == BATTLEGROUND_AV)
@@ -15487,7 +15487,7 @@ void Player::_LoadInventory(QueryResult_AutoPtr result, uint32 timediff)
     //NOTE: the "order by `bag`" is important because it makes sure
     //the bagMap is filled before items in the bags are loaded
     //NOTE2: the "order by `slot`" is needed because mainhand weapons are (wrongly?)
-    //expected to be equipped before offhand items (TODO: fixme)
+    //expected to be equipped before offhand items (@todo fixme)
 
     uint32 zone = GetZoneId();
 
@@ -16737,7 +16737,7 @@ void Player::_SaveAuras()
                 break;
         }
 
-        //TODO: if need delete this
+        //@todo if need delete this
         if (lastEffectPair == itr->first)
             stackCounter++;
         else
@@ -18562,7 +18562,7 @@ void Player::UpdateHomebindTime(uint32 time)
 
 void Player::UpdatePvPState(bool onlyFFA)
 {
-    // TODO: should we always synchronize UNIT_FIELD_BYTES_2, 1 of controller and controlled?
+    // @todo should we always synchronize UNIT_FIELD_BYTES_2, 1 of controller and controlled?
     if (!pvpInfo.inNoPvPArea && !isGameMaster()
         && (pvpInfo.inFFAPvPArea || sWorld.IsFFAPvPRealm()))
     {
@@ -20702,7 +20702,7 @@ void Player::HandleFallUnderMap()
     {
         // NOTE: this is actually called many times while falling
         // even after the player has been teleported away
-        // TODO: discard movement packets after the player is rooted
+        // @todo discard movement packets after the player is rooted
         if (isAlive())
         {
             EnvironmentalDamage(DAMAGE_FALL_TO_VOID, GetMaxHealth());

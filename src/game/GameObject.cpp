@@ -308,7 +308,7 @@ void GameObject::Update(uint32 diff)
 
                     bool IsBattleGroundTrap = false;
                     //FIXME: this is activation radius (in different casting radius that must be selected from spell data)
-                    //TODO: move activated state code (cast itself) to GO_ACTIVATED, in this place only check activating and set state
+                    //@todo move activated state code (cast itself) to GO_ACTIVATED, in this place only check activating and set state
                     float radius = (float)(goInfo->trap.radius)/2; // TODO rename radius to diameter (goInfo->trap.radius) should be (goInfo->trap.diameter)
                     if (!radius)
                     {
@@ -821,7 +821,7 @@ bool GameObject::ActivateToQuest(Player *pTarget) const
         {
             if (LootTemplates_Gameobject.HaveQuestLootForPlayer(GetLootId(), pTarget))
             {
-                //TODO: fix this hack
+                //@todo fix this hack
                 //look for battlegroundAV for some objects which are only activated after mine gots captured by own team
                 if (GetEntry() == BG_AV_OBJECTID_MINE_N || GetEntry() == BG_AV_OBJECTID_MINE_S)
                     if (BattleGround *bg = pTarget->GetBattleGround())

@@ -346,8 +346,8 @@ std::string PlayerDumpWriter::GetDump(uint32 guid)
     for (int i = 0; i < DUMP_TABLE_COUNT; ++i)
         DumpTable(dump, guid, dumpTables[i].name, dumpTables[i].name, dumpTables[i].type);
 
-    // TODO: Add instance/group..
-    // TODO: Add a dump level option to skip some non-important tables
+    // @todo Add instance/group..
+    // @todo Add a dump level option to skip some non-important tables
 
     return dump;
 }

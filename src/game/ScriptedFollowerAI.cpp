@@ -135,7 +135,7 @@ void FollowerAI::JustDied(Unit* /*pKiller*/)
     if (!HasFollowState(STATE_FOLLOW_INPROGRESS) || !m_uiLeaderGUID || !m_pQuestForFollow)
         return;
 
-    //TODO: need a better check for quests with time limit.
+    //@todo need a better check for quests with time limit.
     if (Player* pPlayer = GetLeaderForFollower())
     {
         if (Group* pGroup = pPlayer->GetGroup())

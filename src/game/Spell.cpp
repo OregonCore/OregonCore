@@ -1113,7 +1113,7 @@ void Spell::DoSpellHitOnUnit(Unit *unit, const uint32 effectMask)
         else if (m_caster->IsFriendlyTo(unit))
         {
             // for delayed spells ignore negative spells (after duel end) for friendly targets
-            // TODO: this cause soul transfer bugged
+            // @todo this cause soul transfer bugged
             if (m_spellInfo->speed > 0.0f && unit->GetTypeId() == TYPEID_PLAYER && !IsPositiveSpell(m_spellInfo->Id))
             {
                 m_caster->SendSpellMiss(unit, m_spellInfo->Id, SPELL_MISS_EVADE);
@@ -3037,7 +3037,7 @@ void Spell::WriteAmmoToPacket(WorldPacket * data)
             }
         }
     }
-    // TODO: implement selection ammo data based at ranged weapon stored in equipmodel/equipinfo/equipslot fields
+    // @todo implement selection ammo data based at ranged weapon stored in equipmodel/equipinfo/equipslot fields
 
     *data << uint32(ammoDisplayID);
     *data << uint32(ammoInventoryType);
@@ -3639,7 +3639,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
         }
 
-        // TODO: this check can be applied and for player to prevent cheating when IsPositiveSpell will return always correct result.
+        // @todo this check can be applied and for player to prevent cheating when IsPositiveSpell will return always correct result.
         // check target for pet/charmed casts (not self targeted), self targeted cast used for area effects and etc
         if (m_caster != target && m_caster->GetTypeId() == TYPEID_UNIT && m_caster->GetCharmerOrOwnerGUID())
         {
@@ -4159,7 +4159,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     SkillValue = 0;
 
                 // add the damage modifier from the spell casted (cheat lock / skeleton key etc.) (use m_currentBasePoints, CalculateDamage returns wrong value)
-                // TODO: is this a hack?
+                // @todo is this a hack?
                 SkillValue += m_currentBasePoints[i]+1;
 
                 // get the required lock value

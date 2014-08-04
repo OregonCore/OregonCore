@@ -50,7 +50,7 @@ void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recv_data)
     WorldPacket data(SMSG_GMTICKET_CREATE, 4);
 
     // recv Data
-    //TODO: Add map coordinates to tickets.
+    //@todo Add map coordinates to tickets.
     recv_data >> map;
     recv_data >> x;
     recv_data >> y;
@@ -200,7 +200,7 @@ void WorldSession::HandleGMSurveySubmit(WorldPacket& recv_data)
     uint32 x;
     recv_data >> x; // answer range? (6 = 0-5?)
 
-    // TODO: columns for "playerguid" "playername" and possibly "gm" after `surveyid` but how do we retrieve after ticket deletion?
+    // @todo columns for "playerguid" "playername" and possibly "gm" after `surveyid` but how do we retrieve after ticket deletion?
     // first we must get in basic template so each answer can be inserted to the same field since they are not handled all at once
     CharacterDatabase.PExecute("INSERT INTO gm_surveys (surveyid) VALUES ('%llu')",nextSurveyID);
 

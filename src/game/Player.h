@@ -1551,7 +1551,7 @@ class Player : public Unit, public GridObject<Player>
             m_contestedPvPTimer = 0;
         }
 
-        /** todo: -maybe move UpdateDuelFlag+DuelComplete to independent DuelHandler.. **/
+        /** @todo -maybe move UpdateDuelFlag+DuelComplete to independent DuelHandler.. **/
         DuelInfo *duel;
         void UpdateDuelFlag(time_t currTime);
         void CheckDuelDistance(time_t currTime);

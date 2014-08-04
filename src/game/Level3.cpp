@@ -2350,7 +2350,7 @@ bool ChatHandler::HandleLearnAllMySpellsCommand(const char* /*args*/)
         if (spellInfo->SpellFamilyName != family)
             continue;
 
-        //TODO: skip triggered spells
+        //@todo skip triggered spells
 
         // skip spells with first rank learned as talent (and all talents then also)
         uint32 first_rank = spellmgr.GetFirstSpellInChain(spellInfo->Id);

@@ -2958,7 +2958,7 @@ void ObjectMgr::LoadGroups()
     }
 
     // clean groups
-    // TODO: maybe delete from the DB before loading in this case
+    // @todo maybe delete from the DB before loading in this case
     for (GroupSet::iterator itr = mGroupSet.begin(); itr != mGroupSet.end();)
     {
         if ((*itr)->GetMembersCount() < 2)
@@ -7179,7 +7179,7 @@ bool PlayerCondition::IsValid(ConditionType condition, uint32 value1, uint32 val
             break;
         }
         case CONDITION_INSTANCE_DATA:
-            //TODO: need some check
+            //@todo need some check
             break;
     }
     return true;

@@ -864,7 +864,7 @@ namespace Oregon
             }
             bool operator()(Unit* u)
             {
-                // TODO: addthreat for every enemy in range?
+                // @todo addthreat for every enemy in range?
                 if (!me->IsWithinDistInMap(u, m_range))
                     return false;
 

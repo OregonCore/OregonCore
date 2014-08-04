@@ -838,7 +838,7 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
 
     map->Add(pGameObj);
 
-    // TODO: is it really necessary to add both the real and DB table guid here ?
+    // @todo is it really necessary to add both the real and DB table guid here ?
     objmgr.AddGameobjectToGrid(db_lowGUID, objmgr.GetGOData(db_lowGUID));
 
     PSendSysMessage(LANG_GAMEOBJECT_ADD,id,gInfo->name,db_lowGUID,x,y,z);
@@ -1627,7 +1627,7 @@ bool ChatHandler::HandleNpcSetDeathStateCommand(const char* args)
     return true;
 }
 
-//TODO: NpcCommands that need to be fixed :
+//@todo NpcCommands that need to be fixed :
 
 bool ChatHandler::HandleNameCommand(const char* /*args*/)
 {

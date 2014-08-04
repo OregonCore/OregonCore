@@ -260,7 +260,7 @@ void WorldSession::SendLfgResult(uint32 type, uint32 entry, uint8 lfg_type)
     data << uint32(0);                                      // count, placeholder
     data << uint32(0);                                      // count again, strange, placeholder
 
-    //TODO: Guard Player map
+    //@todo Guard Player map
     HashMapHolder<Player>::MapType const& players = ObjectAccessor::Instance().GetPlayers();
     for (HashMapHolder<Player>::MapType::const_iterator iter = players.begin(); iter != players.end(); ++iter)
     {

@@ -219,7 +219,7 @@ void Script::RegisterSelf()
         // if the script is already assigned -> delete it!
         else
         {
-            // TODO: write a better error message than this one :)
+            // @todo write a better error message than this one :)
             error_log("ScriptName: '%s' already assigned with the same ScriptName, so the script can't work.", Name.c_str());
             delete this;
         }

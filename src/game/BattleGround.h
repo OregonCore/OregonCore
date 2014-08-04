@@ -487,7 +487,7 @@ class BattleGround
         void HandleTriggerBuff(uint64 const& go_guid);
         void SetHoliday(bool is_holiday);
 
-        // TODO: make this protected:
+        // @todo make this protected:
         typedef std::vector<uint64> BGObjects;
         typedef std::vector<uint64> BGCreatures;
         BGObjects m_BgObjects;

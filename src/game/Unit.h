@@ -646,7 +646,7 @@ struct CalcDamageInfo
     uint32 procVictim;
     uint32 procEx;
     uint32 cleanDamage;          // Used only fo rage calcultion
-    MeleeHitOutcome hitOutCome;  // TODO: remove this field (need use TargetState)
+    MeleeHitOutcome hitOutCome;  // @todo remove this field (need use TargetState)
 };
 
 // Spell damage info structure based on structure sending in SMSG_SPELLNONMELEEDAMAGELOG opcode
@@ -1635,7 +1635,7 @@ class Unit : public WorldObject
         float m_auraModifiersGroup[UNIT_MOD_END][MODIFIER_TYPE_END];
         float m_weaponDamage[MAX_ATTACK][2];
         bool m_canModifyStats;
-        //std::list< spellEffectPair > AuraSpells[TOTAL_AURAS];  // TODO: use this if ok for mem
+        //std::list< spellEffectPair > AuraSpells[TOTAL_AURAS];  // @todo use this if ok for mem
 
         float m_speed_rate[MAX_MOVE_TYPE];
 

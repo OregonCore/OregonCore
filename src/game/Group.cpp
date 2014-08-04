@@ -1126,7 +1126,7 @@ void Group::_setLeader(const uint64 &guid)
 
     if (!isBGGroup())
     {
-        // TODO: set a time limit to have this function run rarely cause it can be slow
+        // @todo set a time limit to have this function run rarely cause it can be slow
         CharacterDatabase.BeginTransaction();
 
         // update the group's bound instances when changing leaders

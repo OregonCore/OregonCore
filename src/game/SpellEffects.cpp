@@ -601,7 +601,7 @@ void Spell::SpellDamageSchoolDmg(SpellEffIndex effIndex)
                         }
                     }
 
-                    // TODO: should this be put on taken but not done?
+                    // @todo should this be put on taken but not done?
                     if (found)
                         damage += m_spellInfo->EffectBasePoints[1];
                 }
@@ -774,7 +774,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
 
                     float damage;
                     // DW should benefit of attack power, damage percent mods etc.
-                    // TODO: check if using offhand damage is correct and if it should be divided by 2
+                    // @todo check if using offhand damage is correct and if it should be divided by 2
                     if (m_caster->haveOffhandWeapon() && m_caster->getAttackTimer(BASE_ATTACK) > m_caster->getAttackTimer(OFF_ATTACK))
                         damage = (m_caster->GetFloatValue(UNIT_FIELD_MINOFFHANDDAMAGE) + m_caster->GetFloatValue(UNIT_FIELD_MAXOFFHANDDAMAGE))/2;
                     else
@@ -2517,7 +2517,7 @@ void Spell::EffectPowerBurn(SpellEffIndex effIndex)
 
     new_damage = int32(new_damage * multiplier);
     //m_damage+=new_damage; should not apply spell bonus
-    //TODO: no log
+    //@todo no log
     //unitTarget->ModifyHealth(-new_damage);
     if (m_originalCaster)
         m_originalCaster->DealDamage(unitTarget, new_damage);
@@ -2690,7 +2690,7 @@ void Spell::DoCreateItem(uint32 /*i*/, uint32 itemtype)
 
     uint32 num_to_add;
 
-    // TODO: maybe all this can be replaced by using correct calculated `damage` value
+    // @todo maybe all this can be replaced by using correct calculated `damage` value
     if (pProto->Class != ITEM_CLASS_CONSUMABLE || m_spellInfo->SpellFamilyName != SPELLFAMILY_MAGE)
     {
         num_to_add = damage;
@@ -2981,7 +2981,7 @@ void Spell::SendLoot(uint64 guid, LootType loottype)
                 return;
 
             case GAMEOBJECT_TYPE_CHEST:
-                // TODO: possible must be moved to loot release (in different from linked triggering)
+                // @todo possible must be moved to loot release (in different from linked triggering)
                 if (gameObjTarget->GetGOInfo()->chest.eventId)
                 {
                     DEBUG_LOG("Chest ScriptStart id %u for GO %u", gameObjTarget->GetGOInfo()->chest.eventId,gameObjTarget->GetDBTableGUIDLow());
@@ -3472,7 +3472,7 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
 
             SpellEntry const* spellInfo = aur->GetSpellProto();
             // Base dispel chance
-            // TODO: possible chance depend from spell level??
+            // @todo possible chance depend from spell level??
             int32 miss_chance = 0;
             // Apply dispel mod from aura caster
             if (Unit *caster = aur->GetCaster())
@@ -3569,7 +3569,7 @@ void Spell::EffectDualWield(SpellEffIndex /*effIndex*/)
 
 void Spell::EffectPull(SpellEffIndex /*effIndex*/)
 {
-    // TODO: create a proper pull towards distract spell center for distract
+    // @todo create a proper pull towards distract spell center for distract
     DEBUG_LOG("WORLD: Spell Effect DUMMY");
 }
 
@@ -4491,7 +4491,7 @@ void Spell::EffectInterruptCast(SpellEffIndex effIndex)
     if (!unitTarget->isAlive())
         return;
 
-    // TODO: not all spells that used this effect apply cooldown at school spells
+    // @todo not all spells that used this effect apply cooldown at school spells
     // also exist case: apply cooldown to interrupted cast only and to all spells
     for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; ++i)
     {
@@ -4606,7 +4606,7 @@ void Spell::EffectSummonObjectWild(SpellEffIndex effIndex)
 
 void Spell::EffectScriptEffect(SpellEffIndex effIndex)
 {
-    // TODO: we must implement hunter pet summon at login there (spell 6962)
+    // @todo we must implement hunter pet summon at login there (spell 6962)
 
     switch(m_spellInfo->SpellFamilyName)
     {
@@ -5618,7 +5618,7 @@ void Spell::EffectFeedPet(SpellEffIndex effIndex)
 
     uint32 count = 1;
     _player->DestroyItemCount(itemTarget,count,true);
-    // TODO: fix crash when a spell has two effects, both pointed at the same item target
+    // @todo fix crash when a spell has two effects, both pointed at the same item target
 
     m_caster->CastCustomSpell(m_caster,m_spellInfo->EffectTriggerSpell[effIndex],&benefit,NULL,NULL,true);
 }
@@ -6439,7 +6439,7 @@ void Spell::EffectStealBeneficialBuff(SpellEffIndex effIndex)
             Aura *aur = steal_list[urand(0, list_size-1)];
 
             // Base dispel chance
-            // TODO: possible chance depend from spell level??
+            // @todo possible chance depend from spell level??
             int32 miss_chance = 0;
             // Apply dispel mod from aura caster
             if (Unit *caster = aur->GetCaster())

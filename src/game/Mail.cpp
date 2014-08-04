@@ -670,7 +670,7 @@ void WorldSession::HandleItemTextQuery(WorldPacket & recv_data)
 
     recv_data >> itemTextId >> mailId >> unk;
 
-    // TODO: some check needed, if player has item with guid mailId, or has mail with id mailId
+    // @todo some check needed, if player has item with guid mailId, or has mail with id mailId
 
     sLog.outDebug("CMSG_ITEM_TEXT_QUERY itemguid: %u, mailId: %u, unk: %u", itemTextId, mailId, unk);
 
