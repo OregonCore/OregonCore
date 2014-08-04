@@ -1,0 +1,1 @@
+INSERT INTO `oregon_string` (`entry`, `content_default`) VALUES (5010, 'Result limit reached (max results: %d)');

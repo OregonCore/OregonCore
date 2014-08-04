@@ -2167,6 +2167,8 @@ bool ChatHandler::HandleLookupAreaCommand(const char* args)
         return false;
 
     bool found = false;
+    uint32 count = 0;
+    uint32 maxResults = sWorld.getConfig(CONFIG_MAX_RESULTS_LOOKUP_COMMANDS);
 
     // converting string that we try to find to lower case
     wstrToLower (wnamepart);
@@ -2201,6 +2203,12 @@ bool ChatHandler::HandleLookupAreaCommand(const char* args)
 
             if (loc < MAX_LOCALE)
             {
+                if (maxResults && count++ == maxResults)
+                {
+                    PSendSysMessage(LANG_COMMAND_LOOKUP_MAX_RESULTS, maxResults);
+                    return true;
+                }
+
                 // send area in "id - [name]" format
                 std::ostringstream ss;
                 if (m_session)
@@ -2246,6 +2254,9 @@ bool ChatHandler::HandleLookupTeleCommand(const char * args)
     wstrToLower(wnamepart);
 
     std::ostringstream reply;
+    uint32 count = 0;
+    uint32 maxResults = sWorld.getConfig(CONFIG_MAX_RESULTS_LOOKUP_COMMANDS);
+    bool limitReached = false;
 
     GameTeleMap const & teleMap = objmgr.GetGameTeleMap();
     for (GameTeleMap::const_iterator itr = teleMap.begin(); itr != teleMap.end(); ++itr)
@@ -2254,6 +2265,12 @@ bool ChatHandler::HandleLookupTeleCommand(const char * args)
 
         if (tele->wnameLow.find(wnamepart) == std::wstring::npos)
             continue;
+
+        if (maxResults && count++ == maxResults)
+        {
+            limitReached = true;
+            break;
+        }
 
         if (m_session)
             reply << "  |cffffffff|Htele:" << itr->first << "|h[" << tele->name << "]|h|r\n";
@@ -2265,6 +2282,9 @@ bool ChatHandler::HandleLookupTeleCommand(const char * args)
         SendSysMessage(LANG_COMMAND_TELE_NOLOCATION);
     else
         PSendSysMessage(LANG_COMMAND_TELE_LOCATION,reply.str().c_str());
+
+    if (limitReached)
+        PSendSysMessage(LANG_COMMAND_LOOKUP_MAX_RESULTS, maxResults);
 
     return true;
 }
