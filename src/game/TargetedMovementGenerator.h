@@ -79,6 +79,7 @@ class TargetedMovementGenerator
         bool m_usePathfinding;
         PathInfo *i_path;
         uint32 m_pathPointsSent;
+        uint32 m_evadeTimer;
 };
 #endif
 

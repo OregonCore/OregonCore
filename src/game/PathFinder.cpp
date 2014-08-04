@@ -107,14 +107,21 @@ bool PathInfo::Update(float destX, float destY, float destZ, bool forceDest)
     // we are following old, precalculated path?
     float dist = m_sourceUnit->GetObjectBoundingRadius();
 
-    if (inRange(oldDest, newDest, dist, dist) && m_pathPoints.size() > 2)
+    if (inRange(oldDest, newDest, dist, dist))
     {
         // our target is not moving - we just coming closer
         // we are moving on precalculated path - enjoy the ride
         sLog.outDebug("PathFinder::Update:: precalculated path\n");
 
-        m_pathPoints.crop(1, 0);
-        setNextPosition(m_pathPoints[1]);
+        if (m_pathPoints.size() > 2)
+        {
+            m_pathPoints.crop(1, 0);
+            setNextPosition(m_pathPoints[1]);
+        }
+        else if (!inRange(newDest, m_pathPoints[m_pathPoints.Size() -1], dist, dist))
+            /* We are struggling under/near the target and don't have path (no nodes left) */
+            m_type = PATHFIND_NOPATH;
+
         return false;
     }
     // target moved, so we need to update the poly path

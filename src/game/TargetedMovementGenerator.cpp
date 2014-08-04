@@ -57,6 +57,9 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
         if (i_destinationHolder.HasArrived())
         {
             // prevent redundant micro-movement
+            if (i_path && i_path->getPathType() & PATHFIND_INCOMPLETE)
+                return false;
+
             if (!i_offset)
             {
                 if (i_target->IsWithinMeleeRange(&owner))
@@ -257,6 +260,7 @@ void TargetedMovementGenerator<T>::Initialize(T &owner)
         owner.RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
  
     _setTargetLocation(owner);
+    m_evadeTimer = urand(4000, 8000);
 }
 
 template<class T>
@@ -308,8 +312,20 @@ bool TargetedMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
  
     if (m_usePathfinding)
     {
-        if (i_path && (i_path->getPathType() & PATHFIND_NOPATH))
+        if (i_path && i_path->getPathType() & PATHFIND_NOPATH)
+        {
+            if (Creature* me = owner.ToCreature())
+            {
+                if (m_evadeTimer <= time_diff)
+                {
+                    if (me->AI())
+                        me->AI()->EnterEvadeMode();
+                }
+                else
+                    m_evadeTimer -= time_diff;
+            }
             return true;
+        }
  
         Traveller<T> traveller(owner);
  
