@@ -18999,7 +18999,6 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
                 else
                     return true;
             }
-            return false;
         }
     }
 
