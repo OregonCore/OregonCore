@@ -630,7 +630,7 @@ CreatureAI* GetAI_npc_doctor(Creature* pCreature)
 ## npc_garments_of_quests
 ######*/
 
-//TODO: get text for each NPC
+//@todo get text for each NPC
 
 enum eGarments
 {
@@ -1258,7 +1258,7 @@ struct npc_winter_revelerAI : public ScriptedAI
     npc_winter_revelerAI(Creature* c) : ScriptedAI(c) {}
     void ReceiveEmote(Player* pPlayer, uint32 emote)
     {
-        //TODO: check auralist.
+        //@todo check auralist.
         if (pPlayer->HasAura(26218, 1))
             return;
 

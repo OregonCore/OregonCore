@@ -895,7 +895,7 @@ struct mob_hand_of_the_deceiverAI : public ScriptedAI
 
     void Reset()
     {
-        // TODO: Timers!
+        // @todo Timers!
         ShadowBoltVolleyTimer = urand(8000,14000); // So they don't all cast it in the same moment.
         FelfirePortalTimer = 20000;
         if (pInstance)

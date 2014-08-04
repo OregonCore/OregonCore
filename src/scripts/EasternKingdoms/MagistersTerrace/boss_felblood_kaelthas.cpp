@@ -115,7 +115,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
 
     void Reset()
     {
-        // TODO: Timers
+        // @todo Timers
         FireballTimer = 0;
         PhoenixTimer = 10000;
         FlameStrikeTimer = 25000;

@@ -259,7 +259,7 @@ struct npc_daranelleAI : public ScriptedAI
             if (who->HasAura(36904,0))
             {
                 DoScriptText(SAY_DARANELLE, me, who);
-                //TODO: Move the below to updateAI and run if this statement == true
+                //@todo Move the below to updateAI and run if this statement == true
                 CAST_PLR(who)->KilledMonsterCredit(21511, me->GetGUID());
                 CAST_PLR(who)->RemoveAurasDueToSpell(36904);
             }

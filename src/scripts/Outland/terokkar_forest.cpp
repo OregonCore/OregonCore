@@ -1157,7 +1157,7 @@ struct npc_skyguard_prisonerAI : public npc_escortAI
 
     uint32 CalculateWaypointID()
     {
-        //TODO: we have 2 ways to calculate wich waypoint we need to use
+        //@todo we have 2 ways to calculate wich waypoint we need to use
 
         /*if (abs(me->GetPositionX() + 4108.25) < abs(me->GetPositionX() + 3718.81) &&
             abs(me->GetPositionX() + 4108.25) < abs(me->GetPositionX() + 3671.51))

@@ -37,7 +37,7 @@ EndScriptData */
 #define SPELL_UPPERCUT          22916
 
 #define GOSSIP_HCB "I know this is rather silly but a young ward who is a bit shy would like your hoofprint."
-//TODO: verify abilities/timers
+//@todo verify abilities/timers
 struct npc_cairne_bloodhoofAI : public ScriptedAI
 {
     npc_cairne_bloodhoofAI(Creature* c) : ScriptedAI(c) {}

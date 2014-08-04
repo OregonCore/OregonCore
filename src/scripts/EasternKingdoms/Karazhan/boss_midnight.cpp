@@ -44,7 +44,7 @@ EndScriptData */
 
 #define MOUNTED_DISPLAYID           16040
 
-//Attumen (TODO: Use the summoning spell instead of creature id. It works , but is not convenient for us)
+//Attumen (@todo Use the summoning spell instead of creature id. It works , but is not convenient for us)
 #define SUMMON_ATTUMEN 15550
 
 struct boss_midnightAI : public ScriptedAI

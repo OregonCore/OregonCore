@@ -90,7 +90,7 @@ struct boss_gatewatcher_iron_handAI : public ScriptedAI
         if (!pInstance)
             return;
 
-        //TODO: Add door check/open code
+        //@todo Add door check/open code
     }
 
     void UpdateAI(const uint32 diff)
@@ -109,7 +109,7 @@ struct boss_gatewatcher_iron_handAI : public ScriptedAI
         //Jack Hammer
         if (Jackhammer_Timer <= diff)
         {
-            //TODO: expect cast this about 5 times in a row (?), announce it by emote only once
+            //@todo expect cast this about 5 times in a row (?), announce it by emote only once
             DoScriptText(EMOTE_HAMMER, me);
             DoCast(me->getVictim(),HeroicMode ? H_SPELL_JACKHAMMER : SPELL_JACKHAMMER);
 

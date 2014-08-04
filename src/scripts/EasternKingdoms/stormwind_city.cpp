@@ -279,7 +279,7 @@ enum
     NPC_PRIESTESS_TYRIONA     = 7779,
     NPC_TYRION_SPYBOT         = 8856,
 
-    //TODO: need to implement script support for Illusion spells
+    //@todo need to implement script support for Illusion spells
     SPELL_ILLUSION_BISHOP_TYRIONA = 11048,
     SPELL_ILLUSION_TYRION         = 11067,
     SPELL_FADED                   = 6408,

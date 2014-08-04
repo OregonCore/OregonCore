@@ -730,7 +730,7 @@ void Log::outCommand(uint32 account, const char * str, ...)
     if (!str)
         return;
 
-    // TODO: support accountid
+    // @todo support accountid
     if (m_enableLogDB && m_dbGM)
     {
         va_list ap2;

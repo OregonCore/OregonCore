@@ -125,7 +125,7 @@ enum GrimstoneTexts
     SCRIPT_TEXT6                                           = -1000005
 };
 
-//TODO: implement quest part of event (different end boss)
+//@todo implement quest part of event (different end boss)
 struct npc_grimstoneAI : public npc_escortAI
 {
     npc_grimstoneAI(Creature *c) : npc_escortAI(c)
@@ -166,7 +166,7 @@ struct npc_grimstoneAI : public npc_escortAI
         CanWalk = false;
     }
 
-    //TODO: move them to center
+    //@todo move them to center
     void SummonRingMob()
     {
         if (Creature* tmp = me->SummonCreature(RingMob[MobSpawnId],608.960,-235.322,-53.907,1.857,TEMPSUMMON_DEAD_DESPAWN,0))
@@ -178,7 +178,7 @@ struct npc_grimstoneAI : public npc_escortAI
             MobDeath_Timer = 2500;
     }
 
-    //TODO: move them to center
+    //@todo move them to center
     void SummonRingBoss()
     {
         if (Creature* tmp = me->SummonCreature(RingBoss[rand()%6],644.300,-175.989,-53.739,3.418,TEMPSUMMON_DEAD_DESPAWN,0))

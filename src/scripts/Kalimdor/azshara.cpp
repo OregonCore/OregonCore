@@ -89,7 +89,7 @@ struct mobs_spitelashesAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        //TODO: add abilities for the different creatures
+        //@todo add abilities for the different creatures
         DoMeleeAttackIfReady();
     }
 };

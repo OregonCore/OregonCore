@@ -175,7 +175,7 @@ bool QuestAccept_npc_shenthul(Player* pPlayer, Creature* pCreature, Quest const*
 #define GOSSIP_STW5 "I live only to serve, Warchief! My life is empty and meaningless without your guidance."
 #define GOSSIP_STW6 "Of course, Warchief!"
 
-//TODO: verify abilities/timers
+//@todo verify abilities/timers
 struct npc_thrall_warchiefAI : public ScriptedAI
 {
     npc_thrall_warchiefAI(Creature* c) : ScriptedAI(c) {}

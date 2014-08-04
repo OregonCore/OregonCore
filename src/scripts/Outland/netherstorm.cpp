@@ -301,7 +301,7 @@ CreatureAI* GetAI_npc_manaforge_control_console(Creature* pCreature)
 ## go_manaforge_control_console
 ######*/
 
-//TODO: clean up this workaround when Oregon adds support to do it properly (with gossip selections instead of instant summon)
+//@todo clean up this workaround when Oregon adds support to do it properly (with gossip selections instead of instant summon)
 bool GOHello_go_manaforge_control_console(Player *player, GameObject* _GO)
 {
     if (_GO->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER)

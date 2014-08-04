@@ -60,7 +60,7 @@ struct npc_blackfathom_deeps_eventAI : public ScriptedAI
     npc_blackfathom_deeps_eventAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         //if (pCreature->isSummon())
-        if (pCreature->isPet()) //TODO: Use line above
+        if (pCreature->isPet()) //@todo Use line above
         {
             pCreature->SetHomePosition(HomePosition);
             AttackPlayer();
@@ -162,7 +162,7 @@ struct npc_blackfathom_deeps_eventAI : public ScriptedAI
     void JustDied(Unit* /*pKiller*/)
     {
         //if (me->isSummon()) //we are not a normal spawn.
-        if (me->isPet()) //TODO: Use line above
+        if (me->isPet()) //@todo Use line above
             if (pInstance)
                 pInstance->SetData(DATA_EVENT, pInstance->GetData(DATA_EVENT) + 1);
     }

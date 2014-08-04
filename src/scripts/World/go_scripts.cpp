@@ -163,7 +163,7 @@ bool GOHello_go_tablet_of_madness(Player *pPlayer, GameObject * /*pGO*/)
 ## go_tablet_of_the_seven
 ######*/
 
-//TODO: use gossip option ("Transcript the Tablet") instead, if Oregon adds support.
+//@todo use gossip option ("Transcript the Tablet") instead, if Oregon adds support.
 bool GOHello_go_tablet_of_the_seven(Player *pPlayer, GameObject *pGO)
 {
     if (pGO->GetGoType() != GAMEOBJECT_TYPE_QUESTGIVER)

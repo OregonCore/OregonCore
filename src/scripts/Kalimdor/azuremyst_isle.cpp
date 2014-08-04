@@ -492,7 +492,7 @@ struct npc_geezleAI : public ScriptedAI
         {
             for (std::list<GameObject*>::iterator itr = FlagList.begin(); itr != FlagList.end(); ++itr)
             {
-                //TODO: Found how to despawn and respawn
+                //@todo Found how to despawn and respawn
                 if (despawn)
                     (*itr)->RemoveFromWorld();
                 else

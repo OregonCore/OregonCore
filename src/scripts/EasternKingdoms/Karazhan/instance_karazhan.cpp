@@ -20,7 +20,7 @@
 /* ScriptData
 SDName: Instance_Karazhan
 SD%Complete: 70
-SDComment: Instance Script for Karazhan to help in various m_auiEncounter. TODO: GameObject visibility for Opera event.
+SDComment: Instance Script for Karazhan to help in various m_auiEncounter. @todo GameObject visibility for Opera event.
 SDCategory: Karazhan
 EndScriptData */
 
@@ -222,7 +222,7 @@ struct instance_karazhan : public ScriptedInstance
 
         switch(m_uiOperaEvent)
         {
-            //TODO: Set Object visibilities for Opera based on performance
+            //@todo Set Object visibilities for Opera based on performance
             case EVENT_OZ:
                 break;
 

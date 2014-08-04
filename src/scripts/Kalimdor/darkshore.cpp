@@ -65,7 +65,7 @@ enum eKerlonian
     FACTION_KER_ESCORTEE        = 113
 };
 
-//TODO: make concept similar as "ringo" -escort. Find a way to run the scripted attacks, _if_ player are choosing road.
+//@todo make concept similar as "ringo" -escort. Find a way to run the scripted attacks, _if_ player are choosing road.
 struct npc_kerlonianAI : public FollowerAI
 {
     npc_kerlonianAI(Creature* pCreature) : FollowerAI(pCreature) { }

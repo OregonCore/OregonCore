@@ -865,7 +865,7 @@ struct npc_remulosAI : public npc_escortAI
                 case 4:
                     if (Creature* pEranikus = me->SummonCreature(NPC_ERANIKUS, 7867.44f, -2671.37f, 498.042f, 0.51f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000))
                     {
-                        //TODO: now must be server-wide emote
+                        //@todo now must be server-wide emote
                         DoScriptText(ERANIKUS_ZONE_EMOTE_ENTER, pEranikus);
                         pEranikus->SetReactState(REACT_PASSIVE);
                         pEranikus->SetFlying(true);
@@ -1252,7 +1252,7 @@ public:
                 me->SetStandState(UNIT_STAND_STATE_DEAD);
                 DoTeleportTo(7901.51f, -2565.71f, 488.046f);
                 DoCast(SPELL_SPOTLIGHT);
-                //TODO: now must be server-wide emote
+                //@todo now must be server-wide emote
                 DoScriptText(ERANIKUS_ZONE_EMOTE_CONSUMED, me);
                 if (Creature* pTyrande = Unit::GetCreature(*me, TyrandeGUID))
                     me->SetFacingToObject(pTyrande);
