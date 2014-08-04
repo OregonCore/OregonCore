@@ -344,10 +344,8 @@ bool Creature::InitEntry(uint32 Entry, uint32 team, const CreatureData *data)
     if (!m_respawnradius && m_defaultMovementType == RANDOM_MOTION_TYPE)
         m_defaultMovementType = IDLE_MOTION_TYPE;
 
-    m_spells[0] = GetCreatureInfo()->spell1;
-    m_spells[1] = GetCreatureInfo()->spell2;
-    m_spells[2] = GetCreatureInfo()->spell3;
-    m_spells[3] = GetCreatureInfo()->spell4;
+    for(int i=0; i < CREATURE_MAX_SPELLS; ++i)
+        m_spells[i] = GetCreatureInfo()->spells[i];
 
     return true;
 }
