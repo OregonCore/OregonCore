@@ -462,7 +462,7 @@ void PathInfo::BuildPointPath(const float *startPoint, const float *endPoint)
 void PathInfo::NormalizePath()
 {
     for (uint32 i = 0; i < m_pathPoints.size(); ++i)
-        m_sourceUnit->UpdateAllowedPositionZ(m_pathPoints[i].x, m_pathPoints[i].y, m_pathPoints[i].z);
+        m_sourceUnit->UpdateGroundPositionZ(m_pathPoints[i].x, m_pathPoints[i].y, m_pathPoints[i].z);
 }
 
 void PathInfo::BuildShortcut()

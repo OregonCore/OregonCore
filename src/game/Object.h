@@ -601,6 +601,8 @@ class WorldObject : public Object, public WorldLocation
             GetNearPoint(obj,x,y,z,obj->GetObjectSize(),distance2d,GetAngle(obj));
         }
 
+        virtual float GetObjectBoundingRadius() const { return DEFAULT_WORLD_OBJECT_SIZE; }
+
         float GetObjectSize() const
         {
             return (m_valuesCount > UNIT_FIELD_COMBATREACH) ? m_floatValues[UNIT_FIELD_COMBATREACH] : DEFAULT_WORLD_OBJECT_SIZE;
