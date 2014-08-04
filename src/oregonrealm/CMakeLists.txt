@@ -74,7 +74,7 @@ endif()
 
 if( UNIX )
   install(TARGETS oregon-realm DESTINATION bin)
-  install(FILES oregonrealm.conf.dist DESTINATION etc)
+  install(FILES oregonrealm.conf.dist DESTINATION ${CONF_DIR})
 elseif( WIN32 )
   install(TARGETS oregon-realm DESTINATION "${CMAKE_INSTALL_PREFIX}")
   install(FILES oregonrealm.conf.dist DESTINATION "${CMAKE_INSTALL_PREFIX}")
