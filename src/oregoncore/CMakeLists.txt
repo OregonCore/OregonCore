@@ -92,7 +92,7 @@ endif()
 
 if( UNIX )
   install(TARGETS oregon-core DESTINATION bin)
-  install(FILES oregoncore.conf.dist DESTINATION etc)
+  install(FILES oregoncore.conf.dist DESTINATION ${CONF_DIR})
 elseif( WIN32 )
   install(TARGETS oregon-core DESTINATION "${CMAKE_INSTALL_PREFIX}")
   install(FILES oregoncore.conf.dist DESTINATION "${CMAKE_INSTALL_PREFIX}")
