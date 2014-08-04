@@ -4291,8 +4291,9 @@ SpellCastResult Spell::CheckCast(bool strict)
                     DungeonDifficulties difficulty = m_caster->GetMap()->GetSpawnMode();
                     if (map->IsRaid())
                         if (InstancePlayerBind* targetBind = target->GetBoundInstance(mapId, difficulty))
-                            if (targetBind->perm && targetBind != m_caster->ToPlayer()->GetBoundInstance(mapId, difficulty))
-                                return SPELL_FAILED_TARGET_LOCKED_TO_RAID_INSTANCE;
+                            if (InstancePlayerBind* casterBind = m_caster->ToPlayer()->GetBoundInstance(mapId, difficulty))
+                                if (targetBind->perm && targetBind->save != casterBind->save)
+                                    return SPELL_FAILED_TARGET_LOCKED_TO_RAID_INSTANCE;
 
                     InstanceTemplate const* instance = ObjectMgr::GetInstanceTemplate(mapId);
                     if (!instance)
