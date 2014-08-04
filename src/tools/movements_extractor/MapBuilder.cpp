@@ -319,7 +319,7 @@ namespace MMAP
         }
 
         // now start building mmtiles for each tile
-        printf("[Map %03i] We have %u tiles.                          \n", mapID, (unsigned int)tiles->size())
+        printf("[Map %03i] We have %u tiles.                          \n", mapID, (unsigned int)tiles->size());
         for (set<uint32>::iterator it = tiles->begin(); it != tiles->end(); ++it)
         {
             uint32 tileX, tileY;
