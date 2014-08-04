@@ -1356,6 +1356,7 @@ void Player::setDeathState(DeathState s)
         if (!ressSpellId)
             ressSpellId = GetResurrectionSpellId();
     }
+
     Unit::setDeathState(s);
 
     // restore resurrection spell id for player after aura remove
@@ -3430,11 +3431,14 @@ bool Player::resetTalents(bool no_cost)
         }
     }
 
-    for (unsigned int i = 0; i < sTalentStore.GetNumRows(); ++i)
-    {
-        TalentEntry const *talentInfo = sTalentStore.LookupEntry(i);
+    RemovePet(NULL, PET_SAVE_NOT_IN_SLOT, true);
 
-        if (!talentInfo) continue;
+    for (uint32 talentId = 0; talentId < sTalentStore.GetNumRows(); ++talentId)
+    {
+        TalentEntry const *talentInfo = sTalentStore.LookupEntry(talentId);
+
+        if (!talentInfo)
+            continue;
 
         TalentTabEntry const *talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
 
@@ -3483,9 +3487,6 @@ bool Player::resetTalents(bool no_cost)
         m_resetTalentsTime = time(NULL);
     }
 
-    //FIXME: remove pet before or after unlearn spells? for now after unlearn to allow removing of talent related, pet affecting auras
-    RemovePet(NULL,PET_SAVE_NOT_IN_SLOT, true);
-
     return true;
 }
 
@@ -3504,12 +3505,9 @@ bool Player::_removeSpell(uint16 spell_id)
 Mail* Player::GetMail(uint32 id)
 {
     for (PlayerMails::iterator itr = m_mail.begin(); itr != m_mail.end(); ++itr)
-    {
         if ((*itr)->messageID == id)
-        {
             return (*itr);
-        }
-    }
+
     return NULL;
 }
 
@@ -3690,14 +3688,14 @@ void Player::DestroyForPlayer(Player *target) const
 
     if (target == this)
     {
-        for (int i = INVENTORY_SLOT_BAG_START; i < BANK_SLOT_BAG_END; i++)
+        for (uint8 i = INVENTORY_SLOT_BAG_START; i < BANK_SLOT_BAG_END; i++)
         {
             if (m_items[i] == NULL)
                 continue;
 
             m_items[i]->DestroyForPlayer(target);
         }
-        for (int i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; i++)
+        for (uint8 i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; i++)
         {
             if (m_items[i] == NULL)
                 continue;
@@ -3710,7 +3708,15 @@ void Player::DestroyForPlayer(Player *target) const
 bool Player::HasSpell(uint32 spell) const
 {
     PlayerSpellMap::const_iterator itr = m_spells.find((uint16)spell);
-    return (itr != m_spells.end() && itr->second->state != PLAYERSPELL_REMOVED && !itr->second->disabled);
+    return (itr != m_spells.end() && itr->second->state != PLAYERSPELL_REMOVED &&
+        !itr->second->disabled);
+}
+
+bool Player::HasActiveSpell(uint32 spell) const
+{
+    PlayerSpellMap::const_iterator itr = m_spells.find(spell);
+    return (itr != m_spells.end() && itr->second->state != PLAYERSPELL_REMOVED &&
+        itr->second->active && !itr->second->disabled);
 }
 
 TrainerSpellState Player::GetTrainerSpellState(TrainerSpell const* trainer_spell) const
@@ -4135,7 +4141,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     m_deathTimer = 0;
 
     // set health/powers (0- will be set in caller)
-    if (restore_percent>0.0f)
+    if (restore_percent > 0.0f)
     {
         SetHealth(uint32(GetMaxHealth()*restore_percent));
         SetPower(POWER_MANA, uint32(GetMaxPower(POWER_MANA)*restore_percent));
@@ -4161,7 +4167,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     if (int32(getLevel()) >= startLevel)
     {
         // set resurrection sickness
-        CastSpell(this,SPELL_ID_PASSIVE_RESURRECTION_SICKNESS,true);
+        CastSpell(this, SPELL_ID_PASSIVE_RESURRECTION_SICKNESS, true);
 
         // not full duration
         if (int32(getLevel()) < startLevel+9)
@@ -4182,6 +4188,9 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
 
 void Player::KillPlayer()
 {
+    if (IsFlying() && !GetTransport())
+        GetMotionMaster()->MoveFall();
+
     SetMovement(MOVE_ROOT);
 
     StopMirrorTimers();                                     //disable timers(bars)
@@ -4252,16 +4261,16 @@ void Player::CreateCorpse()
     corpse->SetUInt32Value(CORPSE_FIELD_GUILD, GetGuildId());
 
     uint32 iDisplayID;
-    uint16 iIventoryType;
+    uint32 iIventoryType;
     uint32 _cfi;
-    for (int i = 0; i < EQUIPMENT_SLOT_END; i++)
+    for (uint8 i = 0; i < EQUIPMENT_SLOT_END; i++)
     {
         if (m_items[i])
         {
             iDisplayID = m_items[i]->GetProto()->DisplayInfoID;
-            iIventoryType = (uint16)m_items[i]->GetProto()->InventoryType;
+            iIventoryType = m_items[i]->GetProto()->InventoryType;
 
-            _cfi =  (uint16(iDisplayID)) | (iIventoryType)<< 24;
+            _cfi =  iDisplayID | (iIventoryType << 24);
             corpse->SetUInt32Value(CORPSE_FIELD_ITEM + i,_cfi);
         }
     }
@@ -4565,13 +4574,13 @@ void Player::CleanupChannels()
             cMgr->LeftChannel(ch->GetName());               // deleted channel if empty
 
     }
-    DEBUG_LOG("Player: channels cleaned up!");
+    DEBUG_LOG("Player %s: channels cleaned up!", GetName());
 }
 
 void Player::UpdateLocalChannels(uint32 newZone)
 {
-    if (m_channels.empty())
-        return;
+    if (GetSession()->PlayerLoading() && !IsBeingTeleportedFar())
+        return; // The client handles it automatically after loading, but not after teleporting
 
     AreaTableEntry const* current_zone = GetAreaEntryByAreaID(newZone);
     if (!current_zone)
@@ -4631,13 +4640,8 @@ void Player::LeaveLFGChannel()
 
 void Player::UpdateDefense()
 {
-    uint32 defense_skill_gain = sWorld.getConfig(CONFIG_SKILL_GAIN_DEFENSE);
-
-    if (UpdateSkill(SKILL_DEFENSE,defense_skill_gain))
-    {
-        // update dependent from defense skill part
-        UpdateDefenseBonusesMod();
-    }
+    if (UpdateSkill(SKILL_DEFENSE, sWorld.getConfig(CONFIG_SKILL_GAIN_DEFENSE)))
+        UpdateDefenseBonusesMod();  // update dependent from defense skill part
 }
 
 void Player::HandleBaseModValue(BaseModGroup modGroup, BaseModType modType, float amount, bool apply)
@@ -4650,19 +4654,10 @@ void Player::HandleBaseModValue(BaseModGroup modGroup, BaseModType modType, floa
 
     float val = 1.0f;
 
-    switch(modType)
-    {
-        case FLAT_MOD:
-            m_auraBaseMod[modGroup][modType] += apply ? amount : -amount;
-            break;
-        case PCT_MOD:
-            if (amount <= -100.0f)
-                amount = -200.0f;
-
-            val = (100.0f + amount) / 100.0f;
-            m_auraBaseMod[modGroup][modType] *= apply ? val : (1.0f/val);
-            break;
-    }
+    if (modType == FLAT_MOD)
+        m_auraBaseMod[modGroup][modType] += apply ? amount : -amount;
+    else // PCT_MOD
+        ApplyPercentModFloatVar(m_auraBaseMod[modGroup][modType], amount, apply);
 
     if (!CanModifyStats())
         return;
@@ -4707,7 +4702,7 @@ float Player::GetTotalBaseModValue(BaseModGroup modGroup) const
 
 uint32 Player::GetShieldBlockValue() const
 {
-    float value = (m_auraBaseMod[SHIELD_BLOCK_VALUE][FLAT_MOD] + GetStat(STAT_STRENGTH) * 0.05f - 1)*m_auraBaseMod[SHIELD_BLOCK_VALUE][PCT_MOD];
+    float value = (m_auraBaseMod[SHIELD_BLOCK_VALUE][FLAT_MOD] + GetStat(STAT_STRENGTH) / 20 - 1)*m_auraBaseMod[SHIELD_BLOCK_VALUE][PCT_MOD];
 
     value = (value < 0) ? 0 : value;
 
@@ -4719,15 +4714,16 @@ float Player::GetMeleeCritFromAgility()
     uint32 level = getLevel();
     uint32 pclass = getClass();
 
-    if (level>GT_MAX_LEVEL) level = GT_MAX_LEVEL;
+    if (level > GT_MAX_LEVEL)
+        level = GT_MAX_LEVEL;
 
-    GtChanceToMeleeCritBaseEntry const *critBase  = sGtChanceToMeleeCritBaseStore.LookupEntry(pclass-1);
-    GtChanceToMeleeCritEntry     const *critRatio = sGtChanceToMeleeCritStore.LookupEntry((pclass-1)*GT_MAX_LEVEL + level-1);
+    GtChanceToMeleeCritBaseEntry const *critBase  = sGtChanceToMeleeCritBaseStore.LookupEntry(pclass - 1);
+    GtChanceToMeleeCritEntry     const *critRatio = sGtChanceToMeleeCritStore.LookupEntry((pclass-1)*GT_MAX_LEVEL + level - 1);
     if (critBase == NULL || critRatio == NULL)
         return 0.0f;
 
-    float crit=critBase->base + GetStat(STAT_AGILITY)*critRatio->ratio;
-    return crit*100.0f;
+    float crit = critBase->base + GetStat(STAT_AGILITY) * critRatio->ratio;
+    return crit * 100.0f;
 }
 
 float Player::GetDodgeFromAgility()
@@ -4764,15 +4760,16 @@ float Player::GetDodgeFromAgility()
     uint32 level = getLevel();
     uint32 pclass = getClass();
 
-    if (level>GT_MAX_LEVEL) level = GT_MAX_LEVEL;
+    if (level > GT_MAX_LEVEL)
+        level = GT_MAX_LEVEL;
 
     // Dodge per agility for most classes equal crit per agility (but for some classes need apply some multiplier)
     GtChanceToMeleeCritEntry  const *dodgeRatio = sGtChanceToMeleeCritStore.LookupEntry((pclass-1)*GT_MAX_LEVEL + level-1);
     if (dodgeRatio == NULL || pclass > MAX_CLASSES)
         return 0.0f;
 
-    float dodge=dodge_base[pclass-1] + GetStat(STAT_AGILITY) * dodgeRatio->ratio * crit_to_dodge[pclass-1];
-    return dodge*100.0f;
+    float dodge = dodge_base[pclass-1] + GetStat(STAT_AGILITY) * dodgeRatio->ratio * crit_to_dodge[pclass-1];
+    return dodge * 100.0f;
 }
 
 float Player::GetSpellCritFromIntellect()
@@ -4780,56 +4777,58 @@ float Player::GetSpellCritFromIntellect()
     uint32 level = getLevel();
     uint32 pclass = getClass();
 
-    if (level>GT_MAX_LEVEL) level = GT_MAX_LEVEL;
+    if (level > GT_MAX_LEVEL)
+        level = GT_MAX_LEVEL;
 
-    GtChanceToSpellCritBaseEntry const *critBase  = sGtChanceToSpellCritBaseStore.LookupEntry(pclass-1);
-    GtChanceToSpellCritEntry     const *critRatio = sGtChanceToSpellCritStore.LookupEntry((pclass-1)*GT_MAX_LEVEL + level-1);
+    GtChanceToSpellCritBaseEntry const* critBase = sGtChanceToSpellCritBaseStore.LookupEntry(pclass - 1);
+    GtChanceToSpellCritEntry const* critRatio = sGtChanceToSpellCritStore.LookupEntry((pclass - 1) * GT_MAX_LEVEL + level - 1);
     if (critBase == NULL || critRatio == NULL)
         return 0.0f;
 
-    float crit=critBase->base + GetStat(STAT_INTELLECT)*critRatio->ratio;
-    return crit*100.0f;
+    float crit = critBase->base + GetStat(STAT_INTELLECT) * critRatio->ratio;
+    return crit * 100.0f;
 }
 
-float Player::GetRatingCoefficient(CombatRating cr) const
+float Player::GetRatingMultiplier(CombatRating cr) const
 {
     uint32 level = getLevel();
 
-    if (level>GT_MAX_LEVEL) level = GT_MAX_LEVEL;
+    if (level > GT_MAX_LEVEL)
+        level = GT_MAX_LEVEL;
 
-    GtCombatRatingsEntry const *Rating = sGtCombatRatingsStore.LookupEntry(cr*GT_MAX_LEVEL+level-1);
-    if (Rating == NULL)
+    GtCombatRatingsEntry const* Rating = sGtCombatRatingsStore.LookupEntry(cr * GT_MAX_LEVEL + level - 1);
+    if (!Rating)
         return 1.0f;                                        // By default use minimum coefficient (not must be called)
 
-    return Rating->ratio;
+    return 1.0f / Rating->ratio;
 }
 
 float Player::GetRatingBonusValue(CombatRating cr) const
 {
-    return float(GetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + cr)) / GetRatingCoefficient(cr);
+    return float(GetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + cr)) * GetRatingMultiplier(cr);
 }
 
 uint32 Player::GetMeleeCritDamageReduction(uint32 damage) const
 {
-    float melee  = GetRatingBonusValue(CR_CRIT_TAKEN_MELEE)*2.0f;
-    if (melee>25.0f) melee = 25.0f;
-    return uint32 (melee * damage /100.0f);
+    float melee = GetRatingBonusValue(CR_CRIT_TAKEN_MELEE) * 2.0f;
+    if (melee > 25.0f) melee = 25.0f;
+    return uint32(melee * damage / 100.0f);
 }
 
 uint32 Player::GetRangedCritDamageReduction(uint32 damage) const
 {
-    float ranged = GetRatingBonusValue(CR_CRIT_TAKEN_RANGED)*2.0f;
-    if (ranged>25.0f) ranged=25.0f;
-    return uint32 (ranged * damage /100.0f);
+    float ranged = GetRatingBonusValue(CR_CRIT_TAKEN_RANGED) * 2.0f;
+    if (ranged > 25.0f) ranged = 25.0f;
+    return uint32(ranged * damage / 100.0f);
 }
 
 uint32 Player::GetSpellCritDamageReduction(uint32 damage) const
 {
-    float spell = GetRatingBonusValue(CR_CRIT_TAKEN_SPELL)*2.0f;
+    float spell = GetRatingBonusValue(CR_CRIT_TAKEN_SPELL) * 2.0f;
     // In wow script resilience limited to 25%
-    if (spell>25.0f)
+    if (spell > 25.0f)
         spell = 25.0f;
-    return uint32 (spell * damage / 100.0f);
+    return uint32(spell * damage / 100.0f);
 }
 
 uint32 Player::GetDotDamageReduction(uint32 damage) const
@@ -4838,7 +4837,7 @@ uint32 Player::GetDotDamageReduction(uint32 damage) const
     // Dot resilience not limited (limit it by 100%)
     if (spellDot > 100.0f)
         spellDot = 100.0f;
-    return uint32 (spellDot * damage / 100.0f);
+    return uint32(spellDot * damage / 100.0f);
 }
 
 float Player::GetExpertiseDodgeOrParryReduction(WeaponAttackType attType) const
@@ -4860,17 +4859,19 @@ float Player::OCTRegenHPPerSpirit()
     uint32 level = getLevel();
     uint32 pclass = getClass();
 
-    if (level>GT_MAX_LEVEL) level = GT_MAX_LEVEL;
+    if (level > GT_MAX_LEVEL)
+        level = GT_MAX_LEVEL;
 
-    GtOCTRegenHPEntry     const *baseRatio = sGtOCTRegenHPStore.LookupEntry((pclass-1)*GT_MAX_LEVEL + level-1);
-    GtRegenHPPerSptEntry  const *moreRatio = sGtRegenHPPerSptStore.LookupEntry((pclass-1)*GT_MAX_LEVEL + level-1);
+    GtOCTRegenHPEntry const* baseRatio = sGtOCTRegenHPStore.LookupEntry((pclass - 1) * GT_MAX_LEVEL + level - 1);
+    GtRegenHPPerSptEntry const* moreRatio = sGtRegenHPPerSptStore.LookupEntry((pclass - 1) * GT_MAX_LEVEL + level - 1);
     if (baseRatio == NULL || moreRatio == NULL)
         return 0.0f;
 
     // Formula from PaperDollFrame script
     float spirit = GetStat(STAT_SPIRIT);
     float baseSpirit = spirit;
-    if (baseSpirit>50) baseSpirit = 50;
+    if (baseSpirit > 50)
+        baseSpirit = 50;
     float moreSpirit = spirit - baseSpirit;
     float regen = baseSpirit * baseRatio->ratio + moreSpirit * moreRatio->ratio;
     return regen;
@@ -4881,10 +4882,11 @@ float Player::OCTRegenMPPerSpirit()
     uint32 level = getLevel();
     uint32 pclass = getClass();
 
-    if (level>GT_MAX_LEVEL) level = GT_MAX_LEVEL;
+    if (level > GT_MAX_LEVEL)
+        level = GT_MAX_LEVEL;
 
 //    GtOCTRegenMPEntry     const *baseRatio = sGtOCTRegenMPStore.LookupEntry((pclass-1)*GT_MAX_LEVEL + level-1);
-    GtRegenMPPerSptEntry  const *moreRatio = sGtRegenMPPerSptStore.LookupEntry((pclass-1)*GT_MAX_LEVEL + level-1);
+    GtRegenMPPerSptEntry  const* moreRatio = sGtRegenMPPerSptStore.LookupEntry((pclass - 1) * GT_MAX_LEVEL + level - 1);
     if (moreRatio == NULL)
         return 0.0f;
 
@@ -4898,7 +4900,7 @@ void Player::ApplyRatingMod(CombatRating cr, int32 value, bool apply)
 {
     ApplyModUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + cr, value, apply);
 
-    float RatingCoeffecient = GetRatingCoefficient(cr);
+    float RatingCoeffecient = GetRatingMultiplier(cr);
     float RatingChange = 0.0f;
 
     bool affectStats = CanModifyStats();
@@ -5115,7 +5117,7 @@ bool Player::UpdateFishingSkill()
 
     uint32 gathering_skill_gain = sWorld.getConfig(CONFIG_SKILL_GAIN_GATHERING);
 
-    return UpdateSkillPro(SKILL_FISHING,chance*10,gathering_skill_gain);
+    return UpdateSkillPro(SKILL_FISHING, chance*10, gathering_skill_gain);
 }
 
 bool Player::UpdateSkillPro(uint16 SkillId, int32 Chance, uint32 step)
@@ -5176,46 +5178,34 @@ void Player::UpdateWeaponSkill (WeaponAttackType attType)
 
     uint32 weapon_skill_gain = sWorld.getConfig(CONFIG_SKILL_GAIN_WEAPON);
 
-    switch(attType)
-    {
-        case BASE_ATTACK:
-        {
-            Item *tmpitem = GetWeaponForAttack(attType,true);
 
-            if (!tmpitem)
-                UpdateSkill(SKILL_UNARMED,weapon_skill_gain);
-            else if (tmpitem->GetProto()->SubClass != ITEM_SUBCLASS_WEAPON_FISHING_POLE)
-                UpdateSkill(tmpitem->GetSkill(),weapon_skill_gain);
-            break;
-        }
-        case OFF_ATTACK:
-        case RANGED_ATTACK:
+    Item* tmpWeapon = GetWeaponForAttack(attType, true);
+    if (!tmpWeapon && attType == BASE_ATTACK)
+    {
+        // Keep unarmed & fist weapon skills in sync
+        UpdateSkill(SKILL_UNARMED, weapon_skill_gain);
+        UpdateSkill(SKILL_FIST_WEAPONS, weapon_skill_gain);
+    }
+    else if (tmpWeapon && tmpWeapon->GetProto()->SubClass != ITEM_SUBCLASS_WEAPON_FISHING_POLE)
+    {
+        switch (tmpWeapon->GetProto()->SubClass)
         {
-            Item *tmpitem = GetWeaponForAttack(attType,true);
-            if (tmpitem)
-                UpdateSkill(tmpitem->GetSkill(), weapon_skill_gain);
-            break;
+            case ITEM_SUBCLASS_WEAPON_FISHING_POLE:
+                break;
+            case ITEM_SUBCLASS_WEAPON_FIST:
+                UpdateSkill(SKILL_UNARMED, weapon_skill_gain);
+                // no break intended
+            default:
+                UpdateSkill(tmpWeapon->GetSkill(), weapon_skill_gain);
+                break;
         }
     }
+
     UpdateAllCritPercentages();
 }
 
 void Player::UpdateCombatSkills(Unit *pVictim, WeaponAttackType attType, MeleeHitOutcome /*outcome*/, bool defence)
 {
-/* Not need, this checked on call this func from trigger system
-    switch(outcome)
-    {
-        case MELEE_HIT_CRIT:
-        case MELEE_HIT_DODGE:
-        case MELEE_HIT_PARRY:
-        case MELEE_HIT_BLOCK:
-        case MELEE_HIT_BLOCK_CRIT:
-            return;
-
-        default:
-            break;
-    }
-*/
     uint32 plevel = getLevel();                             // if defense than pVictim == attacker
     uint32 greylevel = Oregon::XP::GetGrayLevel(plevel);
     uint32 moblevel = pVictim->getLevelForTarget(this);
@@ -5235,10 +5225,8 @@ void Player::UpdateCombatSkills(Unit *pVictim, WeaponAttackType attType, MeleeHi
 
     float chance = float(3 * lvldif * skilldif) / plevel;
     if (!defence)
-    {
         if (getClass() == CLASS_WARRIOR || getClass() == CLASS_ROGUE)
             chance *= 0.1f * GetStat(STAT_INTELLECT);
-    }
 
     chance = chance < 1.0f ? 1.0f : chance;                 //minimum chance to increase skill is 1%
 
@@ -5284,7 +5272,6 @@ void Player::UpdateSkillsForLevel()
             continue;
 
         uint32 pskill = itr->first;
-
         SkillLineEntry const *pSkill = sSkillLineStore.LookupEntry(pskill);
         if (!pSkill)
             continue;

@@ -354,6 +354,21 @@ MotionMaster::MoveCharge(float x, float y, float z, float speed, uint32 id)
 
 void MotionMaster::MoveFall(float z, uint32 id)
 {
+    if(!z)
+    {
+        // use larger distance for vmap height search than in most other cases
+        z = i_owner->GetMap()->GetHeight(i_owner->GetPositionX(), i_owner->GetPositionY(), i_owner->GetPositionZ(), true, MAX_FALL_DISTANCE);
+        if (z < INVALID_HEIGHT)
+        {
+            sLog.outDebug("MotionMaster::MoveFall: unable retrive a proper height at map %u (x: %f, y: %f, z: %f).",
+                i_owner->GetMap()->GetId(), i_owner->GetPositionX(), i_owner->GetPositionX(), i_owner->GetPositionZ(), z);
+        }
+
+        // Abort too if the ground is very near
+        if (fabs(i_owner->GetPositionZ() - z) < 0.1f)
+            return;
+    }
+
     i_owner->SetFlying(false);
     i_owner->SendMovementFlagUpdate();
     //AddUnitMovementFlag(MOVEFLAG_FALLING);

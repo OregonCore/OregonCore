@@ -1434,6 +1434,7 @@ class Player : public Unit, public GridObject<Player>
         void PossessSpellInitialize();
         void SendRemoveControlBar();
         bool HasSpell(uint32 spell) const;
+        bool HasActiveSpell(uint32 spell) const;            // shown in spellbook
         TrainerSpellState GetTrainerSpellState(TrainerSpell const* trainer_spell) const;
         bool IsSpellFitByClassAndRace(uint32 spell_id) const;
 
@@ -1630,7 +1631,7 @@ class Player : public Unit, public GridObject<Player>
         float GetSpellCritFromIntellect();
         float OCTRegenHPPerSpirit();
         float OCTRegenMPPerSpirit();
-        float GetRatingCoefficient(CombatRating cr) const;
+        float GetRatingMultiplier(CombatRating cr) const;
         float GetRatingBonusValue(CombatRating cr) const;
         uint32 GetMeleeCritDamageReduction(uint32 damage) const;
         uint32 GetRangedCritDamageReduction(uint32 damage) const;
