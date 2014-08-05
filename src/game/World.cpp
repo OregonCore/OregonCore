@@ -149,7 +149,6 @@ Player* World::FindPlayerInZone(uint32 zone)
         if (!player)
             continue;
         if (player->IsInWorld() && player->GetZoneId() == zone)
-            // Used by the weather system. We return the player to broadcast the change weather message to him and all players in the zone.
             return player;
     }
     return NULL;
