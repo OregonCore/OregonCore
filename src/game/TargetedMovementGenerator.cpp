@@ -57,9 +57,6 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
         if (i_destinationHolder.HasArrived())
         {
             // prevent redundant micro-movement
-            if (i_path && i_path->getPathType() & PATHFIND_INCOMPLETE)
-                return false;
-
             if (!i_offset)
             {
                 if (i_target->IsWithinMeleeRange(&owner))
@@ -160,7 +157,26 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
     if (!i_offset)
     {
         // to nearest random contact position
-        i_target->GetRandomContactPoint(&owner, x, y, z, 0, MELEE_RANGE - 0.5f);
+        i_target->GetRandomContactPoint(&owner, x, y, z, 0, CONTACT_DISTANCE);
+        
+        // Sometimes target is available only from certain angles
+        if (fabsf(i_target->GetPositionZ() - z) > owner.GetObjectSize())
+        {
+            float angles[] = { 0.f, 90.f, 180.f, 270.f, 45.f, 125.f, 225.f, 315.f };
+            bool needExact = true;
+            for (uint32 i = 0; i < sizeof(angles)/sizeof(*angles); i++)
+            {
+                i_target->GetClosePoint(x, y, z, owner.GetObjectSize(), CONTACT_DISTANCE, angles[i]);
+                if (fabsf(i_target->GetPositionZ() - z) <= owner.GetObjectSize())
+                {
+                    needExact = false;
+                    break;
+                }
+            }
+
+            if (needExact)
+                i_target->GetPosition(x, y, z);
+        }
     }
     else if (!i_angle && !owner.hasUnitState(UNIT_STAT_FOLLOW))
     {
