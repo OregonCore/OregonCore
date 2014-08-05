@@ -151,19 +151,22 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         void MoveChase(Unit* target, float dist = 0.0f, float angle = 0.0f);
         void MoveConfused();
         void MoveFleeing(Unit* enemy, uint32 time = 0);
-        void MovePoint(uint32 id, const Position &pos)
-            { MovePoint(id, pos.m_positionX, pos.m_positionY, pos.m_positionZ); }
-        void MovePoint(uint32 id, float x,float y,float z);
-        void MoveCharge(float x, float y, float z, float speed = SPEED_CHARGE, uint32 id = EVENT_CHARGE);
-        void MoveFall(float z = NULL, uint32 id = 0);
+        void MovePoint(uint32 id, const Position &pos, bool usePathfinding = true)
+            { MovePoint(id, pos.m_positionX, pos.m_positionY, pos.m_positionZ, usePathfinding); }
+        void MovePoint(uint32 id, float x,float y,float z, bool usePathfinding = true);
+        void MoveCharge(float x, float y, float z, float speed = SPEED_CHARGE, uint32 id = EVENT_CHARGE, bool usePathfinding = true);
+        void MoveFall(float z = 0, uint32 id = 0);
         void MoveJumpTo(float angle, float speedXY, float speedZ);
-        void MoveJump(float x, float y, float z, float speedXY, float speedZ);
+        void MoveJump(float x, float y, float z, float speedXY, float speedZ, bool usePathfinding = true);
         void MoveSeekAssistance(float x,float y,float z);
         void MoveSeekAssistanceDistract(uint32 timer);
         void MoveTaxiFlight(uint32 path, uint32 pathnode);
         void MoveDistract(uint32 time);
         void MovePath(uint32 path_id, bool repeatable);
         void MoveRotate(uint32 time, RotateDirection direction);
+
+        // given destination unreachable? due to pathfinding or other
+        virtual bool isReachable() const { return true; }
 
         MovementGeneratorType GetCurrentMovementGeneratorType() const;
         MovementGeneratorType GetMotionSlotType(int slot) const;

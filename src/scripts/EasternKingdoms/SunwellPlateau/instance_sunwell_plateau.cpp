@@ -61,7 +61,7 @@ struct instance_sunwell_plateau : public ScriptedInstance
     uint64 IceBarrier;
     uint64 FireBarrier;                                     // Felmysts Encounter
     uint64 MurusGate[2];                                    // Murus Encounter
-    uint64 DragonOrb[3];                                    // Kil'Jaeden Encounter
+    uint64 DragonOrb[4];                                    // Kil'Jaeden Encounter
     /*** Misc ***/
     uint32 SpectralRealmTimer;
     std::vector<uint64> SpectralRealmList;

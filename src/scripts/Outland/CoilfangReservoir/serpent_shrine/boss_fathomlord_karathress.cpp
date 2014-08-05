@@ -270,7 +270,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
             BlessingOfTides = true;
             bool continueTriggering = false;
             Creature* Advisor;
-            for (uint8 i = 0; i < 4; ++i)
+            for (uint8 i = 0; i < 3; ++i)
                 if (Advisors[i])
                 {
                     Advisor = (Unit::GetCreature(*me, Advisors[i]));
