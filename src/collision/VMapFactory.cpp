@@ -113,11 +113,16 @@ namespace VMAP
     // delete all internal data structures
     void VMapFactory::clear()
     {
-        delete iIgnoreSpellIds;
-        iIgnoreSpellIds = NULL;
-
-        delete gVMapManager;
-        gVMapManager = NULL;
+        if(iIgnoreSpellIds)
+        {
+            delete iIgnoreSpellIds;
+            iIgnoreSpellIds = NULL;
+        }
+        if(gVMapManager)
+        {
+            delete gVMapManager;
+            gVMapManager = NULL;
+        }
     }
 }
 

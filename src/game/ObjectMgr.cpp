@@ -5030,6 +5030,7 @@ uint16 ObjectMgr::GetTaxiMount(uint32 id, uint32 team)
     return mount_id;
 }
 
+/* -- didnt compile with mmaps
 void ObjectMgr::GetTaxiPathNodes(uint32 path, Path &pathnodes, std::vector<uint32>& mapIds)
 {
     if (path >= sTaxiPathNodesByPath.size())
@@ -5069,7 +5070,7 @@ void ObjectMgr::GetTransportPathNodes(uint32 path, TransportPath &pathnodes)
         pathnodes[ i ].delay = nodeList[i].delay;
     }
 }
-
+*/
 void ObjectMgr::LoadGraveyardZones()
 {
     mGraveYardMap.clear();                                  // need for reload case

@@ -64,6 +64,7 @@ namespace VMAP
             // Tree to check collision
             ModelFileMap iLoadedModelFiles;
             InstanceTreeMap iInstanceMapTrees;
+            UNORDERED_MAP<unsigned int , bool> iIgnoreMapIds;
 
             bool _loadMap(uint32 pMapId, const std::string &basePath, uint32 tileX, uint32 tileY);
             /* void _unloadMap(uint32 pMapId, uint32 x, uint32 y); */
@@ -89,6 +90,7 @@ namespace VMAP
 
             bool processCommand(char * /*pCommand*/) { return false; }      // for debug and extensions
 
+            void preventMapsFromBeingUsed(const char* pMapIdString);
             bool getAreaInfo(unsigned int pMapId, float x, float y, float &z, uint32 &flags, int32 &adtId, int32 &rootId, int32 &groupId) const;
             bool GetLiquidLevel(uint32 pMapId, float x, float y, float z, uint8 ReqLiquidType, float &level, float &floor, uint32 &type) const;
 
@@ -101,7 +103,12 @@ namespace VMAP
                 return getMapFileName(pMapId);
             }
             virtual bool existsMap(const char* pBasePath, unsigned int pMapId, int x, int y);
-    };
+
+#ifdef MMAP_GENERATOR
+        public:
+            void getInstanceMapTree(InstanceTreeMap &instanceMapTree);
+#endif
+   };
 }
 #endif
 

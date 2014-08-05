@@ -19,6 +19,7 @@
 
 #include "Config.h"
 #include "ace/Configuration_Import_Export.h"
+#include "ace/Guard_T.h"
 
 #include "Policies/SingletonImp.h"
 
@@ -28,6 +29,10 @@ static bool GetValueHelper(ACE_Configuration_Heap *mConf, const char *name, ACE_
 {
     if (!mConf)
         return false;
+
+    // Make this call thread-safe and prevent data-race
+    static ACE_Thread_Mutex mutex;
+    ACE_Guard<ACE_Thread_Mutex> guard(mutex);
 
     ACE_TString section_name;
     ACE_Configuration_Section_Key section_key;

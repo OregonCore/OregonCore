@@ -154,7 +154,7 @@ namespace VMAP
         
         float ty_f = (pos.y - iCorner.y)/LIQUID_TILE_SIZE;
         int32 ty = int32(ty_f);
-        
+
         if (ty_f < 0.0f || ty >= iTilesY)
             return false;
 

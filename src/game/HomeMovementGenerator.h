@@ -23,6 +23,7 @@
 #include "MovementGenerator.h"
 #include "DestinationHolder.h"
 #include "Traveller.h"
+#include "PathFinder.h"
 
 class Creature;
 

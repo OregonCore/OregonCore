@@ -93,6 +93,7 @@ class MotionMaster //: private std::stack<MovementGenerator *>
 
         bool needInitTop() const { return needInit[i_top]; }
         void InitTop();
+
     public:
 
         explicit MotionMaster(Unit *unit) : i_top(-1), i_owner(unit), m_expList(NULL), m_cleanFlag(MMCF_NONE)

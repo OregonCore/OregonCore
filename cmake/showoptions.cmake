@@ -43,9 +43,10 @@ else()
 endif()
 
 if( TOOLS )
-  message("* Build map/vmap tools   : Yes")
+  message("* Build map/vmap/mmap tools   : Yes")
+  add_definitions(-DMMAP_GENERATOR)
 else()
-  message("* Build map/vmap tools   : No  (default)")
+  message("* Build map/vmap/mmap tools   : No  (default)")
 endif()
 
 if( USE_COREPCH )

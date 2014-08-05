@@ -204,8 +204,10 @@ struct keyFrame
 
 bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
 {
-    TransportPath path;
-    objmgr.GetTransportPathNodes(pathid, path);
+    if (pathid >= sTaxiPathNodesByPath.size())
+        return false;
+
+    TaxiPathNodeList const& path = sTaxiPathNodesByPath[pathid];
 
     if (path.Empty())
         return false;

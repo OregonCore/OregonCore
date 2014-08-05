@@ -51,6 +51,7 @@
 #include "PassiveAI.h"
 #include "Traveller.h"
 #include "TemporarySummon.h"
+#include "PathFinder.h"
 #include "ScriptMgr.h"
 #include "Object.h"
 
@@ -521,11 +522,22 @@ void Unit::SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 M
         SendMessageToSet(&data, true);
 }
 
-void Unit::SendMonsterMoveByPath(Path const& path, uint32 start, uint32 end)
+template<typename Elem, typename Node>
+void Unit::SendMonsterMoveByPath(Path<Elem, Node> const& path, uint32 start, uint32 end, uint32 traveltime)
 {
-    uint32 traveltime = uint32(path.GetTotalLength(start, end) * 32);
-
     uint32 pathSize = end - start;
+
+    if (pathSize < 1)
+    {
+        SendMonsterMove(GetPositionX(), GetPositionY(), GetPositionZ(), 0);
+        return;
+    }
+
+    if (pathSize == 1)
+    {
+        SendMonsterMove(path[start].x, path[start].y, path[start].z, traveltime);
+        return;
+    }
 
     WorldPacket data(SMSG_MONSTER_MOVE, (GetPackGUID().size()+4+4+4+4+1+4+4+4+pathSize*4*3));
     data << GetPackGUID();
@@ -537,7 +549,36 @@ void Unit::SendMonsterMoveByPath(Path const& path, uint32 start, uint32 end)
     data << uint32(((GetUnitMovementFlags() & MOVEFLAG_LEVITATING) || isInFlight())? (SPLINEFLAG_FLYING|SPLINEFLAG_WALKMODE) : SPLINEFLAG_WALKMODE);
     data << uint32(traveltime);
     data << uint32(pathSize);
-    data.append((char*)path.GetNodes(start), pathSize * 4 * 3);
+    
+    if (GetUnitMovementFlags() & UnitFlags(SPLINEFLAG_FLYING))
+    {
+        // sending a taxi flight path
+        for (uint32 i = start; i < end; ++i)
+        {
+            data << float(path[i].x);
+            data << float(path[i].y);
+            data << float(path[i].z);
+        }
+    }
+    else
+    {
+        // sending a series of points
+
+        // destination
+        data << path[end-1].x;
+        data << path[end-1].y;
+        data << path[end-1].z;
+
+        // all other points are relative to the center of the path
+        float mid_X = (GetPositionX() + path[end-1].x) * 0.5f;
+        float mid_Y = (GetPositionY() + path[end-1].y) * 0.5f;
+        float mid_Z = (GetPositionZ() + path[end-1].z) * 0.5f;
+
+        for (uint32 i = start; i < end - 1; ++i)
+        {
+            data.appendPackXYZ(mid_X - path[i].x, mid_Y - path[i].y, mid_Z - path[i].z);
+        }
+    }
     SendMessageToSet(&data, true);
 
     addUnitState(UNIT_STAT_MOVE);
@@ -8680,6 +8721,9 @@ void Unit::SetInCombatWith(Unit* enemy)
 
 void Unit::CombatStart(Unit* target, bool initialAggro)
 {
+    if (target->ToCreature() && target->ToCreature()->IsInEvadeMode())
+        return;
+
     if (initialAggro)
     {
         if (!target->IsStandState()/* && !target->hasUnitState(UNIT_STAT_STUNNED)*/)
@@ -9481,7 +9525,34 @@ Unit* Creature::SelectVictim()
     if (target)
     {
         if (!hasUnitState(UNIT_STAT_STUNNED))
+        {
             SetInFront(target);
+            
+            // check if currently selected target is reachable
+            // NOTE: path alrteady generated from AttackStart()
+            if(!GetMotionMaster()->isReachable())
+            {
+                // remove all taunts
+                RemoveSpellsCausingAura(SPELL_AURA_MOD_TAUNT);
+
+                if(m_ThreatManager.getThreatList().size() < 2)
+                {
+                    // only one target in list, we have to evade after timer
+                    // TODO: make timer - inside Creature class
+                    ((Creature*)this)->AI()->EnterEvadeMode();
+                }
+                else
+                {
+                    // remove unreachable target from our threat list
+                    // next iteration we will select next possible target
+					getHostileRefManager().deleteReference(target);
+                    m_ThreatManager.modifyThreatPercent(target, -101);
+                    
+                    _removeAttacker(target);
+                }
+                return NULL;
+            }
+        }
         return target;
     }
 
@@ -11758,6 +11829,30 @@ void Unit::NearTeleportTo(float x, float y, float z, float orientation, bool cas
     }
 }
 
+void Unit::MonsterMoveByPath(float x, float y, float z, uint32 speed, bool forceDest)
+{
+    PathInfo path(this, x, y, z, forceDest);
+    PointPath pointPath = path.getFullPath();
+
+    uint32 traveltime = uint32(pointPath.GetTotalLength() / float(speed));
+    MonsterMoveByPath(pointPath, 1, pointPath.size(), traveltime);
+}
+
+template<typename PathElem, typename PathNode>
+void Unit::MonsterMoveByPath(Path<PathElem,PathNode> const& path, uint32 start, uint32 end, uint32 transitTime)
+{
+    SplineFlags flags = GetTypeId() == TYPEID_PLAYER ? SPLINEFLAG_WALKMODE : SplineFlags(((Creature*)this)->GetUnitMovementFlags());
+    SetUnitMovementFlags(flags);
+    SendMonsterMoveByPath(path, start, end, transitTime);
+}
+
+template void Unit::MonsterMoveByPath<PathNode>(const Path<PathNode> &, uint32, uint32, uint32);
+
+
+
+template void Unit::SendMonsterMoveByPath<PathNode>(const Path<PathNode> &, uint32, uint32, uint32);
+template void Unit::SendMonsterMoveByPath<TaxiPathNodePtr, const TaxiPathNodeEntry>(const Path<TaxiPathNodePtr, const TaxiPathNodeEntry> &, uint32, uint32, uint32);
+
 /*-----------------------Oregon-----------------------------*/
 
 void Unit::Kill(Unit *pVictim, bool durabilityLoss)
@@ -11809,6 +11904,7 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
 
                 // FORM_SPIRITOFREDEMPTION and related auras
                 pVictim->CastSpell(pVictim,27827,true,NULL,*itr);
+                pVictim->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // should not be attackable
                 SpiritOfRedemption = true;
                 break;
             }
@@ -11817,10 +11913,11 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
 
     if (!SpiritOfRedemption)
     {
-    DEBUG_LOG("SET JUST_DIED");
-    pVictim->setDeathState(JUST_DIED);
+        DEBUG_LOG("SET JUST_DIED");
+        pVictim->setDeathState(JUST_DIED);
+        pVictim->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // reactive attackable flag
     }
-    
+
     // 10% durability loss on death
     // clean InHateListOf
     if (pVictim->GetTypeId() == TYPEID_PLAYER)

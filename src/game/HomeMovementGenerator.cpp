@@ -52,8 +52,16 @@ HomeMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
 
     CreatureTraveller traveller(owner);
 
-    uint32 travel_time = i_destinationHolder.SetDestination(traveller, x, y, z);
-    modifyTravelTime(travel_time);
+    i_destinationHolder.SetDestination(traveller, x, y, z, false);
+
+    PathInfo path(&owner, x, y, z, true);
+    PointPath pointPath = path.getFullPath();
+
+    float speed = traveller.Speed() * 0.001f; // in ms
+    uint32 traveltime = uint32(pointPath.GetTotalLength() / speed);
+    modifyTravelTime(traveltime);
+    owner.SendMonsterMoveByPath(pointPath, 1, pointPath.size(), traveltime);
+
     owner.clearUnitState(UNIT_STAT_ALL_STATE);
 }
 
