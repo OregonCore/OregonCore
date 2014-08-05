@@ -24,7 +24,8 @@
 #include "DestinationHolder.h"
 #include "Traveller.h"
 #include "FollowerReference.h"
-
+#include "PathFinder.h"
+ 
 class TargetedMovementGeneratorBase
 {
     public:
@@ -39,13 +40,9 @@ class TargetedMovementGenerator
 : public MovementGeneratorMedium< T, TargetedMovementGenerator<T> >, public TargetedMovementGeneratorBase
 {
     public:
-
-        TargetedMovementGenerator(Unit &target)
-            : TargetedMovementGeneratorBase(target), i_offset(0), i_angle(0), i_recalculateTravel(false) {}
-        TargetedMovementGenerator(Unit &target, float offset, float angle)
-            : TargetedMovementGeneratorBase(target), i_offset(offset), i_angle(angle), i_recalculateTravel(false) {}
-        ~TargetedMovementGenerator() {}
-
+        TargetedMovementGenerator(Unit &target, float offset = 0, float angle = 0, bool _usePathfinding = true);
+        ~TargetedMovementGenerator() {delete i_path;}
+ 
         void Initialize(T &);
         void Finalize(T &);
         void Reset(T &);
@@ -58,12 +55,18 @@ class TargetedMovementGenerator
 
         bool GetDestination(float &x, float &y, float &z) const
         {
-            if (i_destinationHolder.HasArrived()) return false;
+            if (i_destinationHolder.HasArrived() || !i_destinationHolder.HasDestination()) return false;
             i_destinationHolder.GetDestination(x,y,z);
             return true;
         }
-
+ 
+        bool IsReachable() const
+        {
+            return (i_path) ? (i_path->getPathType() & PATHFIND_NORMAL) : true;
+        }
+ 
         void unitSpeedChanged() { i_recalculateTravel=true; }
+        void UpdateFinalDistance(float fDistance);
     private:
 
         bool _setTargetLocation(T &);
@@ -73,6 +76,10 @@ class TargetedMovementGenerator
         DestinationHolder< Traveller<T> > i_destinationHolder;
         bool i_recalculateTravel;
         float i_targetX, i_targetY, i_targetZ;
+        bool m_usePathfinding;
+        PathInfo *i_path;
+        uint32 m_pathPointsSent;
+        uint32 m_evadeTimer;
 };
 #endif
 

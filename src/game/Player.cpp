@@ -15103,6 +15103,18 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         ? bubble1*sWorld.getRate(RATE_REST_OFFLINE_IN_TAVERN_OR_CITY)
         : bubble0*sWorld.getRate(RATE_REST_OFFLINE_IN_WILDERNESS);
 
+
+    if ((m_rafLink = objmgr.GetRAFLinkStatus(this)) != RAF_LINK_NONE)
+    {
+        SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_REFER_A_FRIEND);
+        learnSpell(SPELL_SUMMON_FRIEND);
+        /* In case of recently RAF-unlinked acc we may
+           unlearn the SPELL_SUMMON_FRIEND, its not necessary
+           though because its unusable by the player anyway,
+           and also is not shown in the spellbook */
+        SetGrantableLevels(m_GrantableLevels);
+    }
+
     SetRestBonus((GetRestBonus() + time_diff * ((float) GetUInt32Value(PLAYER_NEXT_LEVEL_XP) / 72000)) * bubble);
 
     m_cinematic = fields[19].GetUInt32();
@@ -15294,19 +15306,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     }
 
     _LoadDeclinedNames(holder->GetResult(PLAYER_LOGIN_QUERY_LOADDECLINEDNAMES));
-
-    if ((m_rafLink = objmgr.GetRAFLinkStatus(this)) != RAF_LINK_NONE)
-    {
-        SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_REFER_A_FRIEND);
-        learnSpell(SPELL_SUMMON_FRIEND);
-
-        SetGrantableLevels(m_GrantableLevels);
-    }
-
-    /* In case of recently RAF-unlinked acc we may
-       unlearn the SPELL_SUMMON_FRIEND, its not necessary
-       though because its unusable by the player anyway,
-       and also is not shown in the spellbook */
 
     return true;
 }
@@ -18166,8 +18165,8 @@ void Player::ContinueTaxiFlight()
 
     for (uint32 i = 1; i < nodeList.size(); ++i)
     {
-        TaxiPathNode const& node = nodeList[i];
-        TaxiPathNode const& prevNode = nodeList[i-1];
+        TaxiPathNodeEntry const& node = nodeList[i];
+        TaxiPathNodeEntry const& prevNode = nodeList[i-1];
 
         // skip nodes at another map
         if (node.mapid != GetMapId())

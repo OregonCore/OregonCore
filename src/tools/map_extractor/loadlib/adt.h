@@ -1,22 +1,3 @@
-/*
- * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 2 of the License, or (at your
- * option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
- * more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef ADT_H
 #define ADT_H
 
@@ -34,12 +15,16 @@ enum LiquidType
     LIQUID_TYPE_SLIME = 3
 };
 
+//**************************************************************************************
 // ADT file class
+//**************************************************************************************
 #define ADT_CELLS_PER_GRID    16
 #define ADT_CELL_SIZE         8
 #define ADT_GRID_SIZE         (ADT_CELLS_PER_GRID*ADT_CELL_SIZE)
 
+//
 // Adt file height map chunk
+//
 class adt_MCVT
 {
     union{
@@ -53,7 +38,9 @@ public:
     bool  prepareLoadedData();
 };
 
+//
 // Adt file liquid map chunk (old)
+//
 class adt_MCLQ
 {
     union{
@@ -80,7 +67,9 @@ public:
     bool  prepareLoadedData();
 };
 
+//
 // Adt file cell chunk
+//
 class adt_MCNK
 {
     union{
@@ -104,7 +93,8 @@ public:
     uint32 sizeMCSH;
     uint32 areaid;
     uint32 nMapObjRefs;
-    uint32 holes;
+    uint16 holes;           // locations where models pierce the heightmap
+    uint16 pad;
     uint16 s[2];
     uint32 data1;
     uint32 data2;
@@ -137,7 +127,9 @@ public:
     }
 };
 
+//
 // Adt file grid chunk
+//
 class adt_MCIN
 {
     union{
@@ -179,7 +171,9 @@ struct adt_liquid_header{
     uint32 offsData2b;
 };
 
+//
 // Adt file liquid data chunk (new)
+//
 class adt_MH2O
 {
 public:
@@ -249,7 +243,9 @@ public:
 
 };
 
+//
 // Adt file header chunk
+//
 class adt_MHDR
 {
     union{
@@ -260,10 +256,10 @@ class adt_MHDR
 
     uint32 pad;
     uint32 offsMCIN;           // MCIN
-    uint32 offsTex;               // MTEX
-    uint32 offsModels;           // MMDX
-    uint32 offsModelsIds;       // MMID
-    uint32 offsMapObejcts;       // MWMO
+    uint32 offsTex;	           // MTEX
+    uint32 offsModels;	       // MMDX
+    uint32 offsModelsIds;	   // MMID
+    uint32 offsMapObejcts;	   // MWMO
     uint32 offsMapObejctsIds;  // MWID
     uint32 offsDoodsDef;       // MDDF
     uint32 offsObjectsDef;     // MODF
@@ -291,5 +287,6 @@ public:
     adt_MHDR *a_grid;
 };
 
-#endif
+bool isHole(int holes, int i, int j);
 
+#endif

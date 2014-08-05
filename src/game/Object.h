@@ -605,6 +605,8 @@ class WorldObject : public Object, public WorldLocation
             GetNearPoint(obj,x,y,z,obj->GetObjectSize(),distance2d,GetAngle(obj));
         }
 
+        virtual float GetObjectBoundingRadius() const { return DEFAULT_WORLD_OBJECT_SIZE; }
+
         float GetObjectSize() const
         {
             return (m_valuesCount > UNIT_FIELD_COMBATREACH) ? m_floatValues[UNIT_FIELD_COMBATREACH] : DEFAULT_WORLD_OBJECT_SIZE;
@@ -618,6 +620,10 @@ class WorldObject : public Object, public WorldLocation
             GetRandomPoint(srcPos, distance, x, y, z);
             pos.Relocate(x, y, z, GetOrientation());
         }
+
+        float GetDistanceSqr(float x, float y, float z) const;
+        bool HasInArc(float arcangle, const Position *pos) const;
+        bool HasInArc(const float arcangle, const float x, const float y) const;
 
         uint32 GetInstanceId() const { return m_InstanceId; }
 

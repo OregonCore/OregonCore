@@ -33,6 +33,7 @@
 #include "Utilities/EventProcessor.h"
 #include "MotionMaster.h"
 #include "DBCStructure.h"
+#include "Path.h"
 #include <list>
 
 #define WORLD_TRIGGER   12999
@@ -296,7 +297,6 @@ class DynamicObject;
 class GameObject;
 class Item;
 class Pet;
-class Path;
 class PetAura;
 class UnitAI;
 class Minion;
@@ -429,6 +429,7 @@ enum UnitState
     UNIT_STAT_MOVE            = 0x00100000,
     UNIT_STAT_ROTATING        = 0x00200000,
     UNIT_STAT_EVADE           = 0x00400000,
+    UNIT_STAT_IGNORE_PATHFINDING    = 0x00800000,
     UNIT_STAT_MOVING          = (UNIT_STAT_ROAMING | UNIT_STAT_CHASE),
     UNIT_STAT_LOST_CONTROL    = (UNIT_STAT_CONFUSED | UNIT_STAT_STUNNED | UNIT_STAT_FLEEING | UNIT_STAT_CHARGING),
     UNIT_STAT_SIGHTLESS       = (UNIT_STAT_LOST_CONTROL),
@@ -1169,7 +1170,13 @@ class Unit : public WorldObject
         void SendMonsterStop();
         void SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 Time, Player* player = NULL);
         void SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 MoveFlags, uint32 time, float speedZ, Player *player = NULL);
-        void SendMonsterMoveByPath(Path const& path, uint32 start, uint32 end);
+
+        void MonsterMoveByPath(float x, float y, float z, uint32 speed, bool forceDest = false);
+        template<typename PathElem, typename PathNode>
+        void MonsterMoveByPath(Path<PathElem,PathNode> const& path, uint32 start, uint32 end, uint32 transitTime = 0);
+        template<typename PathElem, typename PathNode>
+        void SendMonsterMoveByPath(Path<PathElem,PathNode> const& path, uint32 start, uint32 end, uint32 traveltime);
+
         void SendMonsterMoveWithSpeed(float x, float y, float z, uint32 transitTime = 0, Player* player = NULL);
         void SendMonsterMoveWithSpeedToCurrentDestination(Player* player = NULL);
         void SendMovementFlagUpdate();

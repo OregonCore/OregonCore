@@ -418,7 +418,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
                 *data << (float)0;
             }
 
-            Path &path = fmg->GetPath();
+            TaxiPathNodeList& path = const_cast<TaxiPathNodeList&>(fmg->GetPath());
 
             float x, y, z;
             ToPlayer()->GetPosition(x, y, z);
@@ -435,14 +435,14 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
 
             for (uint32 i = 0; i < poscount; ++i)
             {
-                *data << float(path.GetNodes()[i].x);
-                *data << float(path.GetNodes()[i].y);
-                *data << float(path.GetNodes()[i].z);
+                *data << path[i].x;
+                *data << path[i].y;
+                *data << path[i].z;
             }
 
-            *data << float(path.GetNodes()[poscount-1].x);
-            *data << float(path.GetNodes()[poscount-1].y);
-            *data << float(path.GetNodes()[poscount-1].z);
+            *data << path[poscount-1].x;
+            *data << path[poscount-1].y;
+            *data << path[poscount-1].z;
         }
     }
 
@@ -1196,6 +1196,16 @@ float WorldObject::GetDistanceZ(const WorldObject* obj) const
     return (dist > 0 ? dist : 0);
 }
 
+float WorldObject::GetDistanceSqr(float x, float y, float z) const
+{
+    float dx = GetPositionX() - x;
+    float dy = GetPositionY() - y;
+    float dz = GetPositionZ() - z;
+    float sizefactor = GetObjectSize();
+    float dist = dx*dx+dy*dy+dz*dz-sizefactor;
+    return (dist > 0 ? dist : 0);
+}
+
 bool WorldObject::_IsWithinDist(WorldObject const* obj, float dist2compare, bool is3D) const
 {
     float dx = GetPositionX() - obj->GetPositionX();
@@ -1332,6 +1342,39 @@ float Position::GetAngle(const float x, const float y) const
     float ang = atan2(dy, dx);
     ang = (ang >= 0) ? ang : 2 * M_PI + ang;
     return ang;
+}
+
+bool WorldObject::HasInArc(const float arcangle, const float x, const float y) const
+{
+    // always have self in arc
+    if(x == m_positionX && y == m_positionY)
+        return true;
+
+    float arc = arcangle;
+
+    // move arc to range 0.. 2*pi
+    while( arc >= 2.0f * M_PI )
+        arc -=  2.0f * M_PI;
+    while( arc < 0 )
+        arc +=  2.0f * M_PI;
+
+    float angle = GetAngle( x, y );
+    angle -= m_orientation;
+
+    // move angle to range -pi ... +pi
+    while( angle > M_PI)
+        angle -= 2.0f * M_PI;
+    while(angle < -M_PI)
+        angle += 2.0f * M_PI;
+
+    float lborder =  -1 * (arc/2.0f);                       // in range -pi..0
+    float rborder = (arc/2.0f);                             // in range 0..pi
+    return (( angle >= lborder ) && ( angle <= rborder ));
+}
+
+bool WorldObject::HasInArc(float arc, const Position *obj) const
+{
+    return this->HasInArc(arc, obj->GetPositionX(), obj->GetPositionY());
 }
 
 bool Position::HasInArc(float arc, const Position *obj) const
@@ -1998,8 +2041,42 @@ void WorldObject::GetNearPoint(WorldObject const* /*searcher*/, float &x, float 
 void WorldObject::MovePosition(Position &pos, float dist, float angle)
 {
     angle += m_orientation;
-    pos.m_positionX += dist * cos(angle);
-    pos.m_positionY += dist * sin(angle);
+    float destx, desty, destz, ground, floor;
+    destx = pos.m_positionX + dist * cos(angle);
+    desty = pos.m_positionY + dist * sin(angle);
+
+    // Prevent invalid coordinates here, position is unchanged
+    if (!Oregon::IsValidMapCoord(destx, desty, pos.m_positionZ))
+    {
+        sLog.outString("WorldObject::MovePosition invalid coordinates X: %f and Y: %f were passed!", destx, desty);
+        return;
+    }
+
+    ground = GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
+    floor = GetMap()->GetHeight(destx, desty, pos.m_positionZ, true);
+    destz = fabs(ground - pos.m_positionZ) <= fabs(floor - pos.m_positionZ) ? ground : floor;
+
+    float step = dist/10.0f;
+
+    for (uint8 j = 0; j < 10; ++j)
+    {
+        // do not allow too big z changes
+        if (fabs(pos.m_positionZ - destz) > 6)
+        {
+            destx -= step * cos(angle);
+            desty -= step * sin(angle);
+            ground = GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
+            floor = GetMap()->GetHeight(destx, desty, pos.m_positionZ, true);
+            destz = fabs(ground - pos.m_positionZ) <= fabs(floor - pos.m_positionZ) ? ground : floor;
+        }
+        // we have correct destz now
+        else
+        {
+            pos.Relocate(destx, desty, destz);
+            break;
+        }
+    }
+
     Oregon::NormalizeMapCoord(pos.m_positionX);
     Oregon::NormalizeMapCoord(pos.m_positionY);
     UpdateGroundPositionZ(pos.m_positionX, pos.m_positionY, pos.m_positionZ);
