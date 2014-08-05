@@ -31,7 +31,6 @@
 #include "ObjectAccessor.h"
 #include "MapManager.h"
 #include "Language.h"
-#include "World.h"
 #include "GameEventMgr.h"
 #include "SpellMgr.h"
 #include "PoolHandler.h"

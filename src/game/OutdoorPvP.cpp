@@ -27,8 +27,6 @@
 #include "WorldPacket.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
-#include "GridNotifiers.h"
-#include "GridNotifiersImpl.h"
 #include "CellImpl.h"
 
 OPvPCapturePoint::OPvPCapturePoint(OutdoorPvP * pvp)

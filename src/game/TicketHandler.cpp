@@ -27,8 +27,6 @@
 #include "Chat.h"
 #include "TicketMgr.h"
 #include "World.h"
-#include "Chat.h"
-
 
 void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recv_data)
 {

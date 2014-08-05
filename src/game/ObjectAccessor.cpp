@@ -28,7 +28,6 @@
 #include "WorldSession.h"
 #include "WorldPacket.h"
 #include "Item.h"
-#include "Corpse.h"
 #include "GridNotifiers.h"
 #include "MapManager.h"
 #include "Map.h"
