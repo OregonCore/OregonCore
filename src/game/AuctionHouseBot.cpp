@@ -1671,7 +1671,7 @@ void AuctionHouseBot::LoadValues(AHBConfig *config)
         uint32 yellowi = CharacterDatabase.PQuery("SELECT percentyellowitems FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32();
         std::string XcludeItemsIds;
         if (QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT exludeItemsIds FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID()))
-            XcludeItemsIds = result->Fetch()->GetString();
+            XcludeItemsIds = result->Fetch()[0].GetCppString();
         config->SetPercentages(greytg, whitetg, greentg, bluetg, purpletg, orangetg, yellowtg, greyi, whitei, greeni, bluei, purplei, orangei, yellowi);
         //load min and max prices
         config->SetMinPrice(AHB_GREY, CharacterDatabase.PQuery("SELECT minpricegrey FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32());
