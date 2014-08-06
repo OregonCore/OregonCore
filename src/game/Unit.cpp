@@ -2090,7 +2090,6 @@ void Unit::CalcAbsorbResist(Unit *pVictim, SpellSchoolMask schoolMask, DamageEff
         for (AuraList::const_iterator i = vSplitDamagePct.begin(), next; i != vSplitDamagePct.end() && RemainingDamage >= 0; i = next)
         {
             next = i; ++next;
-            //int32 *p_absorbAmount = &(*i)->GetModifier()->m_amount;
 
             // check damage school mask
             if (!((*i)->GetModifier()->m_miscvalue & schoolMask))
@@ -2100,10 +2099,10 @@ void Unit::CalcAbsorbResist(Unit *pVictim, SpellSchoolMask schoolMask, DamageEff
             Unit *caster = (*i)->GetCaster();
             if (!caster || caster == pVictim || !caster->IsInWorld() || !caster->isAlive())
                 continue;
-                                 
-            uint32 splitted = CalculatePctU(RemainingDamage * (*i)->GetModifier()->m_amount, 100);
 
-            RemainingDamage -= splitted;
+            uint32 splitted = CalculatePctU(RemainingDamage, (*i)->GetModifier()->m_amount);
+
+            RemainingDamage -= int32(splitted);
 
             SendSpellNonMeleeDamageLog(caster, (*i)->GetSpellProto()->Id, splitted, schoolMask, 0, 0, false, 0, false);
 
