@@ -22,6 +22,18 @@
 
 using namespace MMAP;
 
+
+// Used for creating MMaps folder
+char output_path[128] = ".";
+void CreateDir(const std::string& Path)
+{
+    #ifdef WIN32
+    _mkdir( Path.c_str());
+    #else
+    mkdir( Path.c_str(), 0777 );
+    #endif
+}
+
 bool checkDirectories(bool debugOutput)
 {
     vector<string> dirFiles;
