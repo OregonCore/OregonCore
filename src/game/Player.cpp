@@ -17502,12 +17502,16 @@ void Player::TextEmote(const std::string& text)
             GetName(), text.c_str());
 }
 
-void Player::Whisper(const std::string& text, uint32 language,uint64 receiver)
+void Player::Whisper(const std::string& text, const uint32 language,uint64 receiver)
+{
+    if (Player* player = ObjectAccessor::Instance().FindPlayer(receiver))
+        Whisper(text, language, player);
+}
+
+void Player::Whisper(const std::string& text, uint32 language,Player* rPlayer)
 {
     if (language != LANG_ADDON)                             // if not addon data
         language = LANG_UNIVERSAL;                          // whispers should always be readable
-
-    Player *rPlayer = objmgr.GetPlayer(receiver);
 
     if (sWorld.getConfig(CONFIG_CHATLOG_WHISPER))
         sLog.outChat("[WHISPER] Player %s tells %s: %s",

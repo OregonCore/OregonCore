@@ -252,7 +252,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 break;
             }
 
-            Player *player = objmgr.GetPlayer(to.c_str());
+            Player *player = objmgr.GetPlayer(to.c_str(), true);
             uint32 tSecurity = GetSecurity();
             uint32 pSecurity = player ? player->GetSession()->GetSecurity() : uint32(SEC_PLAYER);
             if (!player || (lang != LANG_ADDON && tSecurity == SEC_PLAYER && pSecurity > SEC_PLAYER && !player->isAcceptWhispers()))
@@ -278,7 +278,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 return;
             }
 
-            GetPlayer()->Whisper(msg, lang, player->GetGUID());
+            GetPlayer()->Whisper(msg, lang, player);
         } break;
 
         case CHAT_MSG_PARTY:

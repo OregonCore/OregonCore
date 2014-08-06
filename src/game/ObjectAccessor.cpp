@@ -155,12 +155,13 @@ Unit* ObjectAccessor::FindUnit(uint64 guid)
     return GetObjectInWorld(guid, (Unit*)NULL);
 }
 
-Player* ObjectAccessor::FindPlayerByName(const char* name)
+Player* ObjectAccessor::FindPlayerByName(const char* name, bool force)
 {
     Guard guard(*HashMapHolder<Player>::GetLock());
+
     HashMapHolder<Player>::MapType& m = HashMapHolder<Player>::GetContainer();
     for (HashMapHolder<Player>::MapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-        if (iter->second->IsInWorld() && strcmp(name, iter->second->GetName()) == 0)
+        if (!strcmp(name, iter->second->GetName()) && (iter->second->IsInWorld() || force))
             return iter->second;
 
     return NULL;

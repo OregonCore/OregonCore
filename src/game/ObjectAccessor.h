@@ -177,7 +177,7 @@ class ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLev
         static Pet* FindPet(uint64);
         static Player* FindPlayer(uint64);
         static Unit* FindUnit(uint64);
-        Player* FindPlayerByName(const char* name);
+        Player* FindPlayerByName(const char* name, bool force = false);
         Player* FindPlayerByAccountId(uint64 Id);
 
         // when using this, you must use the hashmapholder's lock
