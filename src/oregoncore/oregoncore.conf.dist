@@ -819,6 +819,11 @@ ChatLogTimestamp = 0
 #        Default: 1 (true)
 #                 0 (false)
 #
+#    ShowProgressBars
+#		  Control show progress bars for load steps at server startup
+#         Default: 1 (true)
+#                  0 (false)
+#
 #    Motd
 #        Message of the Day. Displayed at worldlogin for every user
 #         Use '@' for a newline, and be sure to escape special characters.
@@ -876,6 +881,7 @@ ExternalMailInterval = 1
 SkillChance.Prospecting = 0
 Event.Announce = 0
 BeepAtStart = 1
+ShowProgressBars = 0
 Motd = "Welcome to an Oregon Core server."
 Server.LoginInfo = 0
 Command.LookupMaxResults = 0
