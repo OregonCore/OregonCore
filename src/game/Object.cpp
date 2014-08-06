@@ -1419,6 +1419,70 @@ void WorldObject::GetRandomPoint(const Position &pos, float distance, float &ran
     UpdateGroundPositionZ(rand_x,rand_y,rand_z);            // update to LOS height if available
 }
 
+void WorldObject::UpdateAllowedPositionZ(float x, float y, float &z) const
+{
+    switch (GetTypeId())
+    {
+        case TYPEID_UNIT:
+        {
+            // non fly unit don't must be in air
+            // non swim unit must be at ground (mostly speedup, because it don't must be in water and water level check less fast
+            if (!((Creature const*)this)->canFly())
+            {
+                bool canSwim = ((Creature const*)this)->canSwim();
+                float ground_z = z;
+                float max_z = canSwim
+                    ? GetBaseMap()->GetWaterOrGroundLevel(x, y, z, &ground_z, !((Unit const*)this)->HasAuraType(SPELL_AURA_WATER_WALK))
+                    : ((ground_z = GetBaseMap()->GetHeight(x, y, z, true)));
+                if (max_z > INVALID_HEIGHT)
+                {
+                    if (z > max_z)
+                        z = max_z;
+                    else if (z < ground_z)
+                        z = ground_z;
+                }
+            }
+            else
+            {
+                float ground_z = GetBaseMap()->GetHeight(x, y, z, true);
+                if (z < ground_z)
+                    z = ground_z;
+            }
+            break;
+        }
+        case TYPEID_PLAYER:
+        {
+            // for server controlled moves playr work same as creature (but it can always swim)
+            if (!((Player const*)this)->CanFly())
+            {
+                float ground_z = z;
+                float max_z = GetBaseMap()->GetWaterOrGroundLevel(x, y, z, &ground_z, !((Unit const*)this)->HasAuraType(SPELL_AURA_WATER_WALK));
+                if (max_z > INVALID_HEIGHT)
+                {
+                    if (z > max_z)
+                        z = max_z;
+                    else if (z < ground_z)
+                        z = ground_z;
+                }
+            }
+            else
+            {
+                float ground_z = GetBaseMap()->GetHeight(x, y, z, true);
+                if (z < ground_z)
+                    z = ground_z;
+            }
+            break;
+        }
+        default:
+        {
+            float ground_z = GetBaseMap()->GetHeight(x, y, z, true);
+            if(ground_z > INVALID_HEIGHT)
+                z = ground_z;
+            break;
+        }
+    }
+}
+
 void WorldObject::UpdateGroundPositionZ(float x, float y, float &z) const
 {
     float new_z = GetBaseMap()->GetHeight(x,y,z,true);
@@ -2034,7 +2098,7 @@ void WorldObject::GetNearPoint(WorldObject const* /*searcher*/, float &x, float 
 {
     GetNearPoint2D(x,y,distance2d+searcher_size,absAngle);
     z = GetPositionZ();
-    UpdateGroundPositionZ(x,y,z);
+    UpdateAllowedPositionZ(x, y, z);
 }
 
 void WorldObject::MovePosition(Position &pos, float dist, float angle)

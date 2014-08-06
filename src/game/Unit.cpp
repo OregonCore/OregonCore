@@ -9366,8 +9366,18 @@ void Unit::setDeathState(DeathState s)
         // remove aurastates allowing special moves
         ClearAllReactives();
         ClearDiminishings();
-        GetMotionMaster()->Clear(false);
-        GetMotionMaster()->MoveIdle();
+        if (GetTypeId() == TYPEID_UNIT)
+        {
+            clearUnitState(UNIT_STAT_MOVING);
+
+            GetMap()->CreatureRelocation((Creature*)this, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            SendMonsterMove(GetPositionX(), GetPositionY(), GetPositionZ(), 0);
+        }
+        else
+        {
+            if (!IsStopped())
+                StopMoving();
+        }
         //without this when removing IncreaseMaxHealth aura player may stuck with 1 hp
         //do not why since in IncreaseMaxHealth currenthealth is checked
         SetHealth(0);

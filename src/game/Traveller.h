@@ -97,12 +97,14 @@ inline float Traveller<Creature>::GetMoveDestinationTo(float x, float y, float z
 {
     float dx = x - GetPositionX();
     float dy = y - GetPositionY();
-    float dz = z - GetPositionZ();
 
-    //if (i_traveller.HasUnitMovementFlag(MOVEFLAG_FLYING2))
+    if (i_traveller.canFly())
+    {
+        float dz = z - GetPositionZ();
         return sqrt((dx*dx) + (dy*dy) + (dz*dz));
-    //else                                                    //Walking on the ground
-    //    return sqrt((dx*dx) + (dy*dy));
+    }
+    else                                                    //Walking on the ground
+        return sqrt((dx*dx) + (dy*dy));
 }
 
 template<>
