@@ -2917,10 +2917,10 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         float x         = fields[0].GetFloat();
         float y         = fields[1].GetFloat();
         float z         = fields[2].GetFloat();
+        float o         = fields[3].GetFloat();
         uint32 id = VISUAL_WAYPOINT;
 
         Player *chr = m_session->GetPlayer();
-        float o = chr->GetOrientation();
         Map *map = chr->GetMap();
 
         Creature* pCreature = new Creature;
