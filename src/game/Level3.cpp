@@ -4425,18 +4425,16 @@ bool ChatHandler::HandleNpcInfoCommand(const char* /*args*/)
     PSendSysMessage(LANG_NPCINFO_LOOT,  cInfo->lootid,cInfo->pickpocketLootId,cInfo->SkinLootId);
     PSendSysMessage(LANG_NPCINFO_DUNGEON_ID, target->GetInstanceId());
     PSendSysMessage(LANG_NPCINFO_POSITION,float(target->GetPositionX()), float(target->GetPositionY()), float(target->GetPositionZ()));
+    PSendSysMessage(LANG_NPCINFO_AIINFO, target->GetAIName().c_str(), target->GetScriptName().c_str());
     if (const CreatureData* const linked = target->GetLinkedRespawnCreatureData())
         if (CreatureInfo const *master = GetCreatureInfo(linked->id))
             PSendSysMessage(LANG_NPCINFO_LINKGUID, objmgr.GetLinkedRespawnGuid(target->GetDBTableGUIDLow()), linked->id, master->Name);
 
     if ((npcflags & UNIT_NPC_FLAG_VENDOR))
-    {
         SendSysMessage(LANG_NPCINFO_VENDOR);
-    }
+
     if ((npcflags & UNIT_NPC_FLAG_TRAINER))
-    {
         SendSysMessage(LANG_NPCINFO_TRAINER);
-    }
 
     return true;
 }
