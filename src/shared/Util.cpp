@@ -42,6 +42,11 @@ uint32 urand (uint32 min, uint32 max)
     return sfmtRand->URandom(min, max);
 }
 
+float frand(float min, float max)
+{
+    return float(sfmtRand->Random() * (max - min) + min);
+}
+
 int32 rand32 ()
 {
     return int32(sfmtRand->BRandom());
@@ -113,7 +118,7 @@ Tokens StrSplit(const std::string &src, const std::string &sep)
 
 void stripLineInvisibleChars(std::string &str)
 {
-    static std::string invChars = " \t\7\n";
+    static std::string const invChars = " \t\7\n";
 
     size_t wpos = 0;
 
@@ -241,7 +246,7 @@ uint32 CreatePIDFile(const std::string& filename)
     pid_t pid = getpid();
 #endif
 
-    fprintf(pid_file, "%d", pid );
+    fprintf(pid_file, "%u", pid );
     fclose(pid_file);
 
     return (uint32)pid;
@@ -485,7 +490,7 @@ std::string ByteArrayToHexStr(uint8* bytes, uint32 length)
     for (uint32 i = 0; i < length; ++i)
     {
         char buffer[4];
-        sprintf(buffer, "%02X ", bytes[i]);
+        sprintf(buffer, "%02X", bytes[i]);
         ss << buffer;
     }
 
