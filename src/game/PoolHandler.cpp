@@ -27,6 +27,108 @@
 INSTANTIATE_SINGLETON_1(PoolHandler);
 
 ////////////////////////////////////////////////////////////
+// template class ActivePoolData
+
+// Method that tell amount spawned objects/subpools
+uint32 ActivePoolData::GetActiveObjectCount(uint32 pool_id) const
+{
+    ActivePoolPools::const_iterator itr = mSpawnedPools.find(pool_id);
+    return itr != mSpawnedPools.end() ? itr->second : 0;
+}
+
+// Method that tell if a creature is spawned currently
+template<>
+bool ActivePoolData::IsActiveObject<Creature>(uint32 db_guid) const
+{
+    return mSpawnedCreatures.find(db_guid) != mSpawnedCreatures.end();
+}
+
+// Method that tell if a gameobject is spawned currently
+template<>
+bool ActivePoolData::IsActiveObject<GameObject>(uint32 db_guid) const
+{
+    return mSpawnedGameobjects.find(db_guid) != mSpawnedGameobjects.end();
+}
+
+// Method that tell if a quest can be started
+template<>
+bool ActivePoolData::IsActiveObject<Quest>(uint32 quest_id) const
+{
+    return mActiveQuests.find(quest_id) != mActiveQuests.end();
+}
+
+// Method that tell if a pool is spawned currently
+template<>
+bool ActivePoolData::IsActiveObject<Pool>(uint32 sub_pool_id) const
+{
+    return mSpawnedPools.find(sub_pool_id) != mSpawnedPools.end();
+}
+
+template<>
+void ActivePoolData::ActivateObject<Creature>(uint32 db_guid, uint32 pool_id)
+{
+    mSpawnedCreatures.insert(db_guid);
+    ++mSpawnedPools[pool_id];
+}
+
+template<>
+void ActivePoolData::ActivateObject<GameObject>(uint32 db_guid, uint32 pool_id)
+{
+    mSpawnedGameobjects.insert(db_guid);
+    ++mSpawnedPools[pool_id];
+}
+
+template<>
+void ActivePoolData::ActivateObject<Quest>(uint32 quest_id, uint32 pool_id)
+{
+    mActiveQuests.insert(quest_id);
+    ++mSpawnedPools[pool_id];
+}
+
+template<>
+void ActivePoolData::ActivateObject<Pool>(uint32 sub_pool_id, uint32 pool_id)
+{
+    mSpawnedPools[sub_pool_id] = 0;
+    ++mSpawnedPools[pool_id];
+}
+
+template<>
+void ActivePoolData::RemoveObject<Creature>(uint32 db_guid, uint32 pool_id)
+{
+    mSpawnedCreatures.erase(db_guid);
+    uint32& val = mSpawnedPools[pool_id];
+    if (val > 0)
+        --val;
+}
+
+template<>
+void ActivePoolData::RemoveObject<GameObject>(uint32 db_guid, uint32 pool_id)
+{
+    mSpawnedGameobjects.erase(db_guid);
+    uint32& val = mSpawnedPools[pool_id];
+    if (val > 0)
+        --val;
+}
+
+template<>
+void ActivePoolData::RemoveObject<Quest>(uint32 quest_id, uint32 pool_id)
+{
+    mActiveQuests.erase(quest_id);
+    uint32& val = mSpawnedPools[pool_id];
+    if (val > 0)
+      
+        --val;
+}
+template<>
+void ActivePoolData::RemoveObject<Pool>(uint32 sub_pool_id, uint32 pool_id)
+{
+    mSpawnedPools.erase(sub_pool_id);
+    uint32& val = mSpawnedPools[pool_id];
+    if (val > 0)
+        --val;
+}
+
+////////////////////////////////////////////////////////////
 // Methods of template class PoolGroup
 
 // Method to add a gameobject/creature guid to the proper list depending on pool type and chance value
@@ -41,12 +143,15 @@ void PoolGroup<T>::AddEntry(PoolObject& poolitem, uint32 maxentries)
 
 // Method to check the chances are proper in this object pool
 template <class T>
-bool PoolGroup<T>::CheckPool(void)
+bool PoolGroup<T>::CheckPool() const
 {
-    if (EqualChanced.size() == 0)
+    if (EqualChanced.size() && ExplicitlyChanced.size())
+        return false;
+
+    if (!EqualChanced.size())
     {
         float chance = 0;
-        for (uint32 i=0; i<ExplicitlyChanced.size(); ++i)
+        for (uint32 i = 0; i < ExplicitlyChanced.size(); ++i)
             chance += ExplicitlyChanced[i].chance;
         if (chance != 100 && chance != 0)
             return false;
@@ -54,86 +159,62 @@ bool PoolGroup<T>::CheckPool(void)
     return true;
 }
 
-// Method that tell if the gameobject, creature or pool is spawned currently
 template <class T>
-bool PoolGroup<T>::IsSpawnedObject(uint32 guid)
-{
-    for (uint32 i=0; i<ExplicitlyChanced.size(); ++i)
-        if (ExplicitlyChanced[i].guid == guid)
-            return ExplicitlyChanced[i].spawned;
-    for (uint32 i=0; i<EqualChanced.size(); ++i)
-        if (EqualChanced[i].guid == guid)
-            return EqualChanced[i].spawned;
-    return false;
-}
-
-template <class T>
-void PoolGroup<T>::RollOne(int32& index, PoolObjectList** store, uint32 triggerFrom)
+PoolObject* PoolGroup<T>::RollOne(ActivePoolData& spawns, uint32 triggerFrom)
 {
     if (!ExplicitlyChanced.empty())
     {
         float roll = (float)rand_chance();
 
-        for (uint32 i=0; i<ExplicitlyChanced.size(); ++i)
+        for (uint32 i=0; i < ExplicitlyChanced.size(); ++i)
         {
             roll -= ExplicitlyChanced[i].chance;
             // Triggering object is marked as spawned at this time and can be also rolled (respawn case)
             // so this need explicit check for this case
-            if (roll < 0 && (!ExplicitlyChanced[i].spawned || ExplicitlyChanced[i].guid == triggerFrom))
-            {
-                index = i;
-                *store = &ExplicitlyChanced;
-                return;
-            }
+            if (roll < 0 && (ExplicitlyChanced[i].guid == triggerFrom || !spawns.IsActiveObject<T>(ExplicitlyChanced[i].guid)))
+               return &ExplicitlyChanced[i];
         }
     }
     if (!EqualChanced.empty())
     {
-        index = irand(0, EqualChanced.size()-1);
+        int32 index = irand(0, EqualChanced.size()-1);
         // Triggering object is marked as spawned at this time and can be also rolled (respawn case)
         // so this need explicit check for this case
-        if (!EqualChanced[index].spawned || EqualChanced[index].guid == triggerFrom)
-        {
-            *store = &EqualChanced;
-            return;
-        }
+        if (EqualChanced[index].guid == triggerFrom || !spawns.IsActiveObject<T>(EqualChanced[index].guid))
+           return &EqualChanced[index];
     }
 
-    index = -1;
+    return NULL;
 }
 
 // Main method to despawn a creature or gameobject in a pool
 // If no guid is passed, the pool is just removed (event end case)
 // If guid is filled, cache will be used and no removal will occur, it just fill the cache
 template<class T>
-void PoolGroup<T>::DespawnObject(uint32 guid)
+void PoolGroup<T>::DespawnObject(ActivePoolData& spawns, uint32 guid)
 {
-    for (size_t i=0; i<EqualChanced.size(); ++i)
+    for (size_t i=0; i < EqualChanced.size(); ++i)
     {
-        if (EqualChanced[i].spawned)
+        // if spawned
+        if (spawns.IsActiveObject<T>(EqualChanced[i].guid))
         {
             if (!guid || EqualChanced[i].guid == guid)
             {
                 Despawn1Object(EqualChanced[i].guid);
-
-                EqualChanced[i].spawned = false;
-                if (m_SpawnedPoolAmount > 0)
-                    --m_SpawnedPoolAmount;
+                spawns.RemoveObject<T>(EqualChanced[i].guid,poolId);
             }
         }
     }
 
     for (size_t i = 0; i < ExplicitlyChanced.size(); ++i)
     {
-        if (ExplicitlyChanced[i].spawned)
+        // spawned
+        if (spawns.IsActiveObject<T>(ExplicitlyChanced[i].guid))
         {
             if (!guid || ExplicitlyChanced[i].guid == guid)
             {
                 Despawn1Object(ExplicitlyChanced[i].guid);
-                ExplicitlyChanced[i].spawned = false;
-
-                if (m_SpawnedPoolAmount > 0)
-                    --m_SpawnedPoolAmount;
+                spawns.RemoveObject<T>(ExplicitlyChanced[i].guid,poolId);
             }
         }
     }
@@ -165,6 +246,49 @@ void PoolGroup<GameObject>::Despawn1Object(uint32 guid)
     }
 }
 
+// Same on one quest
+template<>
+void PoolGroup<Quest>::Despawn1Object(uint32 quest_id)
+{
+    // Creatures
+    QuestRelations* questMap = objmgr.GetCreatureQuestRelationMap();
+    PooledQuestRelationBoundsNC qr = poolhandler.mQuestCreatureRelation.equal_range(quest_id);
+    for (PooledQuestRelation::iterator itr = qr.first; itr != qr.second; ++itr)
+    {
+        QuestRelations::iterator qitr = questMap->find(itr->second);
+        if (qitr == questMap->end())
+            continue;
+        QuestRelations::iterator lastElement = questMap->upper_bound(itr->second);
+        for (; qitr != lastElement; ++qitr)
+        {
+            if (qitr->first == itr->second)
+            {
+                questMap->erase(qitr);                  // iterator is now no more valid
+                break;                                  // but we can exit loop since the element is found
+            }
+        }
+    }
+
+    // Gameobjects
+    questMap = objmgr.GetGOQuestRelationMap();
+    qr = poolhandler.mQuestGORelation.equal_range(quest_id);
+    for (PooledQuestRelation::iterator itr = qr.first; itr != qr.second; ++itr)
+    {
+        QuestRelations::iterator qitr = questMap->find(itr->second);
+        if (qitr == questMap->end())
+            continue;
+        QuestRelations::iterator lastElement = questMap->upper_bound(itr->second);
+        for (; qitr != lastElement; ++qitr)
+        {
+            if (qitr->first == itr->second)
+            {
+                questMap->erase(qitr);                  // iterator is now no more valid
+                break;                                  // but we can exit loop since the element is found
+            }
+        }
+    }
+}
+
 // Same on one pool
 template<>
 void PoolGroup<Pool>::Despawn1Object(uint32 child_pool_id)
@@ -174,7 +298,7 @@ void PoolGroup<Pool>::Despawn1Object(uint32 child_pool_id)
 
 // Method for a pool only to remove any found record causing a circular dependency loop
 template<>
-void PoolGroup<Pool>::RemoveOneRelation(uint16 child_pool_id)
+void PoolGroup<Pool>::RemoveOneRelation(uint32 child_pool_id)
 {
     for (PoolObjectList::iterator itr = ExplicitlyChanced.begin(); itr != ExplicitlyChanced.end(); ++itr)
     {
@@ -195,10 +319,10 @@ void PoolGroup<Pool>::RemoveOneRelation(uint16 child_pool_id)
 }
 
 template <class T>
-void PoolGroup<T>::SpawnObject(uint32 limit, uint32 triggerFrom)
+void PoolGroup<T>::SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 triggerFrom)
 {
     uint32 lastDespawned = 0;
-    int count = limit - m_SpawnedPoolAmount;
+    int count = limit - spawns.GetActiveObjectCount(poolId);
 
     // If triggered from some object respawn this object is still marked as spawned
     // and also counted into m_SpawnedPoolAmount so we need increase count to be
@@ -209,43 +333,106 @@ void PoolGroup<T>::SpawnObject(uint32 limit, uint32 triggerFrom)
     // This will try to spawn the rest of pool, not guaranteed
     for (int i = 0; i < count; ++i)
     {
-        int index;
-        PoolObjectList* store;
-
-        RollOne(index, &store, triggerFrom);
-        if (index == -1)
+        PoolObject* obj = RollOne(spawns, triggerFrom);
+        if (!obj)
             continue;
-        if ((*store)[index].guid == lastDespawned)
+        if (obj->guid == lastDespawned)
             continue;
 
-        if ((*store)[index].guid == triggerFrom)
+        if (obj->guid == triggerFrom)
         {
-            (*store)[index].spawned = ReSpawn1Object(triggerFrom);
+            ReSpawn1Object(obj);
             triggerFrom = 0;
             continue;
         }
-        else
-            (*store)[index].spawned = Spawn1Object((*store)[index].guid);
+        spawns.ActivateObject<T>(obj->guid, poolId);
+        Spawn1Object(obj);
 
         if (triggerFrom)
         {
             // One spawn one despawn no count increase
-            DespawnObject(triggerFrom);
+            DespawnObject(spawns, triggerFrom);
             lastDespawned = triggerFrom;
             triggerFrom = 0;
         }
-        else
-            ++m_SpawnedPoolAmount;
     }
+}
+
+template <>
+void PoolGroup<Quest>::SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 triggerFrom)
+{
+    sLog.outDebug("PoolGroup<Quest>: Spawning pool %u", poolId);
+    // load state from db
+    if (!triggerFrom)
+    {
+        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT quest_id FROM pool_quest_save WHERE pool_id = %u", poolId);
+        if (result)
+        {
+            do
+            {
+                uint32 questId = result->Fetch()[0].GetUInt32();
+                spawns.ActivateObject<Quest>(questId, poolId);
+                PoolObject tempObj(questId, 0.0f);
+                Spawn1Object(&tempObj);
+                --limit;
+            } while (result->NextRow() && limit);
+            return;
+        }
+    }
+    uint32 lastDespawned = 0;
+    ActivePoolObjects currentQuests = spawns.GetActiveQuests();
+    ActivePoolObjects newQuests;
+
+    // always try to select different quests
+    for (PoolObjectList::iterator itr = EqualChanced.begin(); itr != EqualChanced.end(); ++itr)
+    {
+        if (spawns.IsActiveObject<Quest>(itr->guid))
+            continue;
+        newQuests.insert(itr->guid);
+    }
+
+    // clear the pool
+    DespawnObject(spawns);
+
+    // recycle minimal amount of quests if possible count is lower than limit
+    if (limit > newQuests.size() && !currentQuests.empty())
+    {
+        do
+        {
+            ActivePoolObjects::iterator itr = currentQuests.begin();
+            std::advance(itr, urand(0, currentQuests.size()-1));
+            newQuests.insert(*itr);
+            currentQuests.erase(*itr);
+        } while (newQuests.size() < limit && !currentQuests.empty()); // failsafe
+    }
+
+    if (newQuests.empty())
+        return;
+
+    // activate <limit> random quests
+    do
+    {
+        ActivePoolObjects::iterator itr = newQuests.begin();
+        std::advance(itr, urand(0, newQuests.size()-1));
+        spawns.ActivateObject<Quest>(*itr, poolId);
+        PoolObject tempObj(*itr, 0.0f);
+        Spawn1Object(&tempObj);
+        newQuests.erase(itr);
+        --limit;
+    } while (limit && newQuests.size());
+
+    // if we are here it means the pool is initialized at startup and did not have previous saved state
+    if (!triggerFrom)
+        poolhandler.SaveQuestsToDB();
 }
 
 // Method that is actualy doing the spawn job on 1 creature
 template <>
-bool PoolGroup<Creature>::Spawn1Object(uint32 guid)
+void PoolGroup<Creature>::Spawn1Object(PoolObject* obj)
 {
-    if (CreatureData const* data = objmgr.GetCreatureData(guid))
+    if (CreatureData const* data = objmgr.GetCreatureData(obj->guid))
     {
-        objmgr.AddCreatureToGrid(guid, data);
+        objmgr.AddCreatureToGrid(obj->guid, data);
 
         // Spawn if necessary (loaded grids only)
         Map* map = const_cast<Map*>(MapManager::Instance().CreateBaseMap(data->mapid));
@@ -254,26 +441,24 @@ bool PoolGroup<Creature>::Spawn1Object(uint32 guid)
         {
             Creature* pCreature = new Creature;
             //sLog.outDebug("Spawning creature %u",guid);
-            if (!pCreature->LoadFromDB(guid, map))
+            if (!pCreature->LoadFromDB(obj->guid, map))
             {
                 delete pCreature;
-                return false;
+                return;
             }
             else
                 map->Add(pCreature);
         }
-        return true;
     }
-    return false;
 }
 
 // Same for 1 gameobject
 template <>
-bool PoolGroup<GameObject>::Spawn1Object(uint32 guid)
+void PoolGroup<GameObject>::Spawn1Object(PoolObject* obj)
 {
-    if (GameObjectData const* data = objmgr.GetGOData(guid))
+    if (GameObjectData const* data = objmgr.GetGOData(obj->guid))
     {
-        objmgr.AddGameobjectToGrid(guid, data);
+        objmgr.AddGameobjectToGrid(obj->guid, data);
         // Spawn if necessary (loaded grids only)
         // this base map checked as non-instanced and then only existed
         Map* map = const_cast<Map*>(MapManager::Instance().CreateBaseMap(data->mapid));
@@ -282,10 +467,10 @@ bool PoolGroup<GameObject>::Spawn1Object(uint32 guid)
         {
             GameObject* pGameobject = new GameObject;
             //sLog.outDebug("Spawning gameobject %u", guid);
-            if (!pGameobject->LoadFromDB(guid, map))
+            if (!pGameobject->LoadFromDB(obj->guid, map))
             {
                 delete pGameobject;
-                return false;
+                return;
             }
             else
             {
@@ -293,52 +478,67 @@ bool PoolGroup<GameObject>::Spawn1Object(uint32 guid)
                     map->Add(pGameobject);
             }
         }
-        return true;
     }
-    return false;
+}
+
+// Same for 1 quest
+template<>
+void PoolGroup<Quest>::Spawn1Object(PoolObject* obj)
+{
+    // Creatures
+    QuestRelations* questMap = objmgr.GetCreatureQuestRelationMap();
+    PooledQuestRelationBoundsNC qr = poolhandler.mQuestCreatureRelation.equal_range(obj->guid);
+    for (PooledQuestRelation::iterator itr = qr.first; itr != qr.second; ++itr)
+    {
+        sLog.outDebug("PoolGroup<Quest>: Adding quest %u to creature %u", itr->first, itr->second);
+        questMap->insert(QuestRelations::value_type(itr->second, itr->first));
+    }
+
+    // Gameobjects
+    questMap = objmgr.GetGOQuestRelationMap();
+    qr = poolhandler.mQuestGORelation.equal_range(obj->guid);
+    for (PooledQuestRelation::iterator itr = qr.first; itr != qr.second; ++itr)
+    {
+        sLog.outDebug("PoolGroup<Quest>: Adding quest %u to GO %u", itr->first, itr->second);
+        questMap->insert(QuestRelations::value_type(itr->second, itr->first));
+    }
 }
 
 // Same for 1 pool
 template <>
-bool PoolGroup<Pool>::Spawn1Object(uint32 child_pool_id)
+void PoolGroup<Pool>::Spawn1Object(PoolObject* obj)
 {
-    poolhandler.SpawnPool(child_pool_id, 0, 0);
-    poolhandler.SpawnPool(child_pool_id, 0, TYPEID_GAMEOBJECT);
-    poolhandler.SpawnPool(child_pool_id, 0, TYPEID_UNIT);
-    return true;
+    poolhandler.SpawnPool(obj->guid);
 }
 
 // Method that does the respawn job on the specified creature
 template <>
-bool PoolGroup<Creature>::ReSpawn1Object(uint32 guid)
+void PoolGroup<Creature>::ReSpawn1Object(PoolObject* obj)
 {
-    if (CreatureData const* data = objmgr.GetCreatureData(guid))
-    {
-        if (Creature* pCreature = ObjectAccessor::Instance().GetObjectInWorld(MAKE_NEW_GUID(guid, data->id, HIGHGUID_UNIT), (Creature*)NULL))
+    if (CreatureData const* data = objmgr.GetCreatureData(obj->guid))
+        if (Creature* pCreature = ObjectAccessor::Instance().GetObjectInWorld(MAKE_NEW_GUID(obj->guid, data->id, HIGHGUID_UNIT), (Creature*)NULL))
             pCreature->GetMap()->Add(pCreature);
-        return true;
-    }
-    return false;
 }
 
-// Same for 1 gameobject
+// Method that does the respawn job on the specified gameobject
 template <>
-bool PoolGroup<GameObject>::ReSpawn1Object(uint32 guid)
+void PoolGroup<GameObject>::ReSpawn1Object(PoolObject* obj)
 {
-    if (GameObjectData const* data = objmgr.GetGOData(guid))
-    {
-        if (GameObject* pGameobject = ObjectAccessor::Instance().GetObjectInWorld(MAKE_NEW_GUID(guid, data->id, HIGHGUID_GAMEOBJECT), (GameObject*)NULL))
+    if (GameObjectData const* data = objmgr.GetGOData(obj->guid))
+        if (GameObject* pGameobject = ObjectAccessor::Instance().GetObjectInWorld(MAKE_NEW_GUID(obj->guid, data->id, HIGHGUID_GAMEOBJECT), (GameObject*)NULL))
             pGameobject->GetMap()->Add(pGameobject);
-        return true;
-    }
-    return false;
+}
+
+// Nothing to do for a quest
+template <>
+void PoolGroup<Quest>::ReSpawn1Object(PoolObject* /*obj*/)
+{
 }
 
 // Nothing to do for a child Pool
 template <>
-bool PoolGroup<Pool>::ReSpawn1Object(uint32 /*guid*/)
+void PoolGroup<Pool>::ReSpawn1Object(PoolObject* /*obj*/)
 {
-    return true;
 }
 
 ////////////////////////////////////////////////////////////
@@ -346,7 +546,6 @@ bool PoolGroup<Pool>::ReSpawn1Object(uint32 /*guid*/)
 
 PoolHandler::PoolHandler()
 {
-    m_IsPoolSystemStarted = false;
 }
 
 void PoolHandler::LoadFromDB()
@@ -361,7 +560,7 @@ void PoolHandler::LoadFromDB()
     else
     {
         Field *fields = result->Fetch();
-        max_pool_id = fields[0].GetUInt16();
+        max_pool_id = fields[0].GetUInt32();    
     }
 
     mPoolTemplate.resize(max_pool_id + 1);
@@ -377,15 +576,15 @@ void PoolHandler::LoadFromDB()
 
     uint32 count = 0;
 
-    barGoLink bar(result->GetRowCount());
+    
     do
     {
         ++count;
         Field *fields = result->Fetch();
 
-        bar.step();
+        
 
-        uint16 pool_id = fields[0].GetUInt16();
+        uint32 pool_id = fields[0].GetUInt32();
 
         PoolTemplateData& pPoolTemplate = mPoolTemplate[pool_id];
         pPoolTemplate.MaxLimit  = fields[1].GetUInt32();
@@ -425,13 +624,13 @@ void PoolHandler::LoadFromDB()
             bar2.step();
 
             uint32 guid    = fields[0].GetUInt32();
-            uint16 pool_id = fields[1].GetUInt16();
+            uint32 pool_id = fields[1].GetUInt32();
             float chance   = fields[2].GetFloat();
 
             CreatureData const* data = objmgr.GetCreatureData(guid);
             if (!data)
             {
-                sLog.outErrorDb("`pool_creature` has invalid creature spawn (GUID: %u) defined for pool id (%u), skipped.", guid, pool_id);
+                sLog.outErrorDb("`pool_creature` has a non existing creature spawn (GUID: %u) defined for pool id (%u), skipped.", guid, pool_id);
                 continue;
             }
             if (pool_id > max_pool_id)
@@ -449,6 +648,7 @@ void PoolHandler::LoadFromDB()
 
             PoolObject plObject = PoolObject(guid, chance);
             PoolGroup<Creature>& cregroup = mPoolCreatureGroups[pool_id];
+            cregroup.SetPoolId(pool_id);
             cregroup.AddEntry(plObject, pPoolTemplate->MaxLimit);
             SearchPair p(guid, pool_id);
             mCreatureSearchMap.insert(p);
@@ -487,13 +687,13 @@ void PoolHandler::LoadFromDB()
             bar2.step();
 
             uint32 guid    = fields[0].GetUInt32();
-            uint16 pool_id = fields[1].GetUInt16();
+            uint32 pool_id = fields[1].GetUInt32();
             float chance   = fields[2].GetFloat();
 
             GameObjectData const* data = objmgr.GetGOData(guid);
             if (!data)
             {
-                sLog.outErrorDb("`pool_gameobject` has invalid gameobject spawn (GUID: %u) defined for pool id (%u), skipped.", guid, pool_id);
+                sLog.outErrorDb("`pool_gameobject` has a non existing gameobject spawn (GUID: %u) defined for pool id (%u), skipped.", guid, pool_id);
                 continue;
             }
             GameObjectInfo const* goinfo = objmgr.GetGameObjectInfo(data->id);
@@ -520,6 +720,7 @@ void PoolHandler::LoadFromDB()
 
             PoolObject plObject = PoolObject(guid, chance);
             PoolGroup<GameObject>& gogroup = mPoolGameobjectGroups[pool_id];
+            gogroup.SetPoolId(pool_id);
             gogroup.AddEntry(plObject, pPoolTemplate->MaxLimit);
             SearchPair p(guid, pool_id);
             mGameobjectSearchMap.insert(p);
@@ -534,7 +735,7 @@ void PoolHandler::LoadFromDB()
     sLog.outString("Loading Mother Pooling Data...");
 
     mPoolPoolGroups.resize(max_pool_id + 1);
-    //                                   1        2            3
+    //                                      1        2            3
     result = WorldDatabase.Query("SELECT pool_id, mother_pool, chance FROM pool_pool");
 
     count = 0;
@@ -556,8 +757,8 @@ void PoolHandler::LoadFromDB()
 
             bar2.step();
 
-            uint16 child_pool_id  = fields[0].GetUInt16();
-            uint16 mother_pool_id = fields[1].GetUInt16();
+            uint32 child_pool_id  = fields[0].GetUInt32();
+            uint32 mother_pool_id = fields[1].GetUInt32();
             float chance          = fields[2].GetFloat();
 
             if (mother_pool_id > max_pool_id)
@@ -586,6 +787,7 @@ void PoolHandler::LoadFromDB()
 
             PoolObject plObject = PoolObject(child_pool_id, chance);
             PoolGroup<Pool>& plgroup = mPoolPoolGroups[mother_pool_id];
+            plgroup.SetPoolId(mother_pool_id);
             plgroup.AddEntry(plObject, pPoolTemplateMother->MaxLimit);
             SearchPair p(child_pool_id, mother_pool_id);
             mPoolSearchMap.insert(p);
@@ -593,9 +795,9 @@ void PoolHandler::LoadFromDB()
         } while (result->NextRow());
 
         // Now check for circular reference
-        for (uint16 i=0; i<max_pool_id; ++i)
+        for (uint32 i=0; i<max_pool_id; ++i)
         {
-            std::set<uint16> checkedPools;
+            std::set<uint32> checkedPools;
             for (SearchMap::iterator poolItr = mPoolSearchMap.find(i); poolItr != mPoolSearchMap.end(); poolItr = mPoolSearchMap.find(poolItr->second))
             {
                 checkedPools.insert(poolItr->first);
@@ -603,11 +805,11 @@ void PoolHandler::LoadFromDB()
                 {
                     std::ostringstream ss;
                     ss<< "The pool(s) ";
-                    for (std::set<uint16>::const_iterator itr=checkedPools.begin(); itr != checkedPools.end(); ++itr)
+                    for (std::set<uint32>::const_iterator itr=checkedPools.begin(); itr != checkedPools.end(); ++itr)
                         ss << *itr << " ";
                     ss << "create(s) a circular reference, which can cause the server to freeze.\nRemoving the last link between mother pool "
                         << poolItr->first << " and child pool " << poolItr->second;
-                    sLog.outErrorDb("%s", ss.str().c_str());
+                    sLog.outErrorDb(ss.str().c_str());
                     mPoolPoolGroups[poolItr->second].RemoveOneRelation(poolItr->first);
                     mPoolSearchMap.erase(poolItr);
                     --count;
@@ -621,120 +823,267 @@ void PoolHandler::LoadFromDB()
     }
 }
 
+void PoolHandler::LoadQuestPools()
+{
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, pool_entry FROM pool_quest");
+
+    mQuestSearchMap.clear();
+    mPoolQuestGroups.resize(max_pool_id + 1);
+
+    uint32 count = 0;
+    if (!result)
+    {
+        sLog.outString();
+        sLog.outString(">> Loaded 0 quests in pools");
+        return;
+    }
+
+    
+    PooledQuestRelationBounds creBounds;
+    PooledQuestRelationBounds goBounds;
+
+    enum eQuestTypes
+    {
+        QUEST_NONE   = 0,
+        QUEST_DAILY  = 1,
+    };
+
+    std::map<uint32, uint32> poolTypeMap;
+
+    do
+    {
+        Field* fields = result->Fetch();
+        
+
+        uint32 entry   = fields[0].GetUInt32();
+        uint32 pool_id = fields[1].GetUInt32();
+
+        Quest const* pQuest = objmgr.GetQuestTemplate(entry);
+        if (!pQuest)
+        {
+            sLog.outErrorDb("`pool_quest` has a non existing quest template (Entry: %u) defined for pool id (%u), skipped.", entry, pool_id);
+            continue;
+        }
+
+        if (pool_id > max_pool_id)
+        {
+            sLog.outErrorDb("`pool_quest` pool id (%u) is out of range compared to max pool id in `pool_template`, skipped.",pool_id);
+            continue;
+        }
+
+        if (!pQuest->IsDaily())
+        {
+            sLog.outErrorDb("`pool_quest` has an quest (%u) which is not daily or weekly in pool id (%u), use ExclusiveGroup instead, skipped.", entry, pool_id);
+            continue;
+        }
+
+        if (poolTypeMap[pool_id] == QUEST_NONE)
+             poolTypeMap[pool_id] = pQuest->IsDaily() ? QUEST_DAILY : QUEST_NONE;
+
+        int32 currType = pQuest->IsDaily() ? QUEST_DAILY : QUEST_NONE;
+
+        if (poolTypeMap[pool_id] != currType)
+        {
+            sLog.outErrorDb("`pool_quest` quest %u is %s but pool (%u) is specified for %s, mixing not allowed, skipped.", entry, currType == QUEST_DAILY ? "QUEST_DAILY" : "QUEST_NONE", pool_id,  poolTypeMap[pool_id] == QUEST_DAILY ? "QUEST_DAILY" : "QUEST_NONE");
+            continue;
+        }
+
+        creBounds = mQuestCreatureRelation.equal_range(entry);
+        goBounds = mQuestGORelation.equal_range(entry);
+
+        if (creBounds.first == creBounds.second && goBounds.first == goBounds.second)
+        {
+            sLog.outErrorDb("`pool_quest` lists entry (%u) as member of pool (%u) but is not started anywhere, skipped.", entry, pool_id);
+            continue;
+        }
+
+
+        PoolTemplateData *pPoolTemplate = &mPoolTemplate[pool_id];
+        ++count;
+
+        PoolObject plObject = PoolObject(entry, 0.0f);
+        PoolGroup<Quest>& questgroup = mPoolQuestGroups[pool_id];
+        questgroup.SetPoolId(pool_id);
+        questgroup.AddEntry(plObject, pPoolTemplate->MaxLimit);
+        SearchPair p(entry, pool_id);
+        mQuestSearchMap.insert(p);
+
+    } while (result->NextRow());
+    sLog.outString();
+    sLog.outString(">> Loaded %u quests in pools", count);
+}
+
 // The initialize method will spawn all pools not in an event and not in another pool, this is why there is 2 left joins with 2 null checks
 void PoolHandler::Initialize()
 {
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT DISTINCT pool_template.entry FROM pool_template LEFT JOIN game_event_pool ON pool_template.entry=game_event_pool.pool_entry LEFT JOIN pool_pool ON pool_template.entry=pool_pool.pool_id WHERE game_event_pool.pool_entry IS NULL AND pool_pool.pool_id IS NULL");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT DISTINCT pool_template.entry, pool_pool.pool_id, pool_pool.mother_pool FROM pool_template LEFT JOIN game_event_pool ON pool_template.entry=game_event_pool.pool_entry LEFT JOIN pool_pool ON pool_template.entry=pool_pool.pool_id WHERE game_event_pool.pool_entry IS NULL");
     uint32 count=0;
     if (result)
     {
         do
         {
             Field *fields = result->Fetch();
-            uint16 pool_entry = fields[0].GetUInt16();
+            uint32 pool_entry = fields[0].GetUInt32();
+            uint32 pool_pool_id = fields[1].GetUInt32();
             if (!CheckPool(pool_entry))
             {
-                sLog.outErrorDb("Pool Id (%u) has all creatures or gameobjects with explicit chance sum <>100 and no equal chance defined. The pool system cannot pick one to spawn.", pool_entry);
+                if (pool_pool_id)
+                    // The pool is a child pool in pool_pool table. Ideally we should remove it from the pool handler to ensure it never gets spawned,
+                    // however that could recursively invalidate entire chain of mother pools. It can be done in the future but for now we'll do nothing.
+                    //sLog.outErrorDb("Pool Id %u has no equal chance pooled entites defined and explicit chance sum is not 100. This broken pool is a child pool of Id %u and cannot be safely removed.", pool_entry, fields[2].GetUInt32());
+                //else
+                    //sLog.outErrorDb("Pool Id %u has no equal chance pooled entites defined and explicit chance sum is not 100. The pool will not be spawned.", pool_entry);
                 continue;
             }
-            SpawnPool(pool_entry, 0, 0);
-            SpawnPool(pool_entry, 0, TYPEID_GAMEOBJECT);
-            SpawnPool(pool_entry, 0, TYPEID_UNIT);
-            count++;
+
+            // Don't spawn child pools, they are spawned recursively by their parent pools
+            if (!pool_pool_id)
+            {
+                SpawnPool(pool_entry);
+                count++;
+            }
         } while (result->NextRow());
     }
 
     sLog.outBasic("Pool handling system initialized, %u pools spawned.", count);
-    m_IsPoolSystemStarted = true;
+}
+
+void PoolHandler::SaveQuestsToDB()
+{
+    CharacterDatabase.BeginTransaction();
+    std::ostringstream query;
+    query << "DELETE FROM pool_quest_save WHERE pool_id IN (";
+    bool first = true;
+    for (PoolGroupQuestMap::iterator itr = mPoolQuestGroups.begin(); itr != mPoolQuestGroups.end(); ++itr)
+    {
+        if(itr->GetPoolId() != 0)
+        {
+            if (!first)
+                query << ",";
+            first = false;
+                query << itr->GetPoolId();
+        }
+    }
+    if (!first)
+    {
+        query << ")";
+        CharacterDatabase.PExecute(query.str().c_str());
+    }
+
+    first = true;
+    query.rdbuf()->str("");
+    query << "INSERT INTO pool_quest_save (pool_id, quest_id) VALUES ";
+    for (SearchMap::iterator itr = mQuestSearchMap.begin(); itr != mQuestSearchMap.end(); ++itr)
+    {
+        if (IsSpawnedObject<Quest>(itr->first))
+        {
+            if (!first)
+                query << ",";
+            first = false;
+            query << "(" << itr->second << "," << itr->first << ")";
+        }
+    }
+
+    if (!first)
+        CharacterDatabase.PExecute(query.str().c_str());
+
+    CharacterDatabase.CommitTransaction();
+}
+
+void PoolHandler::ChangeDailyQuests()
+{
+    for (PoolGroupQuestMap::iterator itr = mPoolQuestGroups.begin(); itr != mPoolQuestGroups.end(); ++itr)
+    {
+        if (Quest const* pQuest = objmgr.GetQuestTemplate(itr->GetFirstEqualChancedObjectId()))
+        {
+            UpdatePool<Quest>(itr->GetPoolId(), 1);    // anything non-zero means don't load from db
+        }
+    }
+
+    SaveQuestsToDB();
 }
 
 // Call to spawn a pool, if cache if true the method will spawn only if cached entry is different
-// If it's same, the gameobject/creature is respawned only (added back to map)
-void PoolHandler::SpawnPool(uint16 pool_id, uint32 guid, uint32 type)
+// If it's same, the creature is respawned only (added back to map)
+template<>
+void PoolHandler::SpawnPool<Creature>(uint32 pool_id, uint32 db_guid)
 {
-    switch (type)
-    {
-        case TYPEID_UNIT:
-            if (!mPoolCreatureGroups[pool_id].isEmpty())
-                mPoolCreatureGroups[pool_id].SpawnObject(mPoolTemplate[pool_id].MaxLimit, guid);
-            break;
-        case TYPEID_GAMEOBJECT:
-            if (!mPoolGameobjectGroups[pool_id].isEmpty())
-                mPoolGameobjectGroups[pool_id].SpawnObject(mPoolTemplate[pool_id].MaxLimit, guid);
-            break;
-        default:
-            if (!mPoolPoolGroups[pool_id].isEmpty())
-                mPoolPoolGroups[pool_id].SpawnObject(mPoolTemplate[pool_id].MaxLimit, guid);
-    }
+    if (!mPoolCreatureGroups[pool_id].isEmpty())
+        mPoolCreatureGroups[pool_id].SpawnObject(mSpawnedData, mPoolTemplate[pool_id].MaxLimit, db_guid);
+}
+
+// Call to spawn a pool
+template<>
+void PoolHandler::SpawnPool<Quest>(uint32 pool_id, uint32 quest_id)
+{
+    if (!mPoolQuestGroups[pool_id].isEmpty())
+        mPoolQuestGroups[pool_id].SpawnObject(mSpawnedData, mPoolTemplate[pool_id].MaxLimit, quest_id);
+}
+
+// Call to spawn a pool, if cache if true the method will spawn only if cached entry is different
+// If it's same, the gameobject is respawned only (added back to map)
+template<>
+void PoolHandler::SpawnPool<GameObject>(uint32 pool_id, uint32 db_guid)
+{
+    if (!mPoolGameobjectGroups[pool_id].isEmpty())
+        mPoolGameobjectGroups[pool_id].SpawnObject(mSpawnedData, mPoolTemplate[pool_id].MaxLimit, db_guid);
+}
+
+// Call to spawn a pool, if cache if true the method will spawn only if cached entry is different
+// If it's same, the pool is respawned only
+template<>
+void PoolHandler::SpawnPool<Pool>(uint32 pool_id, uint32 sub_pool_id)
+{
+    if (!mPoolPoolGroups[pool_id].isEmpty())
+        mPoolPoolGroups[pool_id].SpawnObject(mSpawnedData, mPoolTemplate[pool_id].MaxLimit, sub_pool_id);
+}
+
+void PoolHandler::SpawnPool(uint32 pool_id)
+{
+    SpawnPool<Pool>(pool_id, 0);
+    SpawnPool<GameObject>(pool_id, 0);
+    SpawnPool<Creature>(pool_id, 0);
+    SpawnPool<Quest>(pool_id, 0);
 }
 
 // Call to despawn a pool, all gameobjects/creatures in this pool are removed
-void PoolHandler::DespawnPool(uint16 pool_id)
+void PoolHandler::DespawnPool(uint32 pool_id)
 {
     if (!mPoolCreatureGroups[pool_id].isEmpty())
-        mPoolCreatureGroups[pool_id].DespawnObject();
+        mPoolCreatureGroups[pool_id].DespawnObject(mSpawnedData);
 
     if (!mPoolGameobjectGroups[pool_id].isEmpty())
-        mPoolGameobjectGroups[pool_id].DespawnObject();
+        mPoolGameobjectGroups[pool_id].DespawnObject(mSpawnedData);
+
+    if (!mPoolQuestGroups[pool_id].isEmpty())
+        mPoolQuestGroups[pool_id].DespawnObject(mSpawnedData);
 
     if (!mPoolPoolGroups[pool_id].isEmpty())
-        mPoolPoolGroups[pool_id].DespawnObject();
+        mPoolPoolGroups[pool_id].DespawnObject(mSpawnedData);
+}
+
+// Method that check chance integrity of the creatures and gameobjects in this pool
+bool PoolHandler::CheckPool(uint32 pool_id) const
+{
+    return pool_id <= max_pool_id &&
+        mPoolGameobjectGroups[pool_id].CheckPool() &&
+        mPoolCreatureGroups[pool_id].CheckPool() &&
+        mPoolQuestGroups[pool_id].CheckPool() &&
+        mPoolPoolGroups[pool_id].CheckPool();
 }
 
 // Call to update the pool when a gameobject/creature part of pool [pool_id] is ready to respawn
 // Here we cache only the creature/gameobject whose guid is passed as parameter
 // Then the spawn pool call will use this cache to decide
-void PoolHandler::UpdatePool(uint16 pool_id, uint32 guid, uint32 type)
+template<typename T>
+void PoolHandler::UpdatePool(uint32 pool_id, uint32 db_guid_or_pool_id)
 {
-    if (uint16 motherpoolid = IsPartOfAPool(pool_id, 0))
-        SpawnPool(motherpoolid, 0, 0);
+    if (uint32 motherpoolid = IsPartOfAPool<Pool>(pool_id))
+        SpawnPool<Pool>(motherpoolid, pool_id);
     else
-        SpawnPool(pool_id, guid, type);
+        SpawnPool<T>(pool_id, db_guid_or_pool_id);
 }
 
-// Method that tell if the gameobject/creature is part of a pool and return the pool id if yes
-uint16 PoolHandler::IsPartOfAPool(uint32 guid, uint32 type)
-{
-    if (type == 0) // pool of pool
-    {
-        SearchMap::const_iterator itr = mPoolSearchMap.find(guid);
-        if (itr != mPoolSearchMap.end())
-            return itr->second;
-    }
-    else if (type == TYPEID_GAMEOBJECT)
-    {
-        SearchMap::const_iterator itr = mGameobjectSearchMap.find(guid);
-        if (itr != mGameobjectSearchMap.end())
-            return itr->second;
-    }
-    else // creature
-    {
-        SearchMap::const_iterator itr = mCreatureSearchMap.find(guid);
-        if (itr != mCreatureSearchMap.end())
-            return itr->second;
-    }
-    return 0;
-}
-
-// Method that check chance integrity of the creatures and gameobjects in this pool
-bool PoolHandler::CheckPool(uint16 pool_id)
-{
-    return pool_id <= max_pool_id &&
-        mPoolGameobjectGroups[pool_id].CheckPool() &&
-        mPoolCreatureGroups[pool_id].CheckPool() &&
-        mPoolPoolGroups[pool_id].CheckPool();
-}
-
-// Method that tell if a creature or gameobject in pool_id is spawned currently
-bool PoolHandler::IsSpawnedObject(uint16 pool_id, uint32 guid, uint32 type)
-{
-    if (pool_id > max_pool_id)
-        return false;
-    if (type == 0)
-        return mPoolPoolGroups[pool_id].IsSpawnedObject(guid);
-    else if (type == TYPEID_GAMEOBJECT)
-        return mPoolGameobjectGroups[pool_id].IsSpawnedObject(guid);
-    else
-        return mPoolCreatureGroups[pool_id].IsSpawnedObject(guid);
-}
-
+template void PoolHandler::UpdatePool<Pool>(uint32 pool_id, uint32 db_guid_or_pool_id);
+template void PoolHandler::UpdatePool<GameObject>(uint32 pool_id, uint32 db_guid_or_pool_id);
+template void PoolHandler::UpdatePool<Creature>(uint32 pool_id, uint32 db_guid_or_pool_id);

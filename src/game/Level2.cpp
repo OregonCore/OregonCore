@@ -554,7 +554,8 @@ bool ChatHandler::HandleTargetObjectCommand(const char* args)
     bool found = false;
     float x, y, z, o;
     uint32 lowguid, id;
-    uint16 mapid, pool_id;
+    uint16 mapid;
+    uint32 pool_id;
 
     do
     {
@@ -566,8 +567,8 @@ bool ChatHandler::HandleTargetObjectCommand(const char* args)
         z =       fields[4].GetFloat();
         o =       fields[5].GetFloat();
         mapid =   fields[6].GetUInt16();
-        pool_id = poolhandler.IsPartOfAPool(lowguid, TYPEID_GAMEOBJECT);
-        if (!pool_id || (pool_id && poolhandler.IsSpawnedObject(pool_id, lowguid, TYPEID_GAMEOBJECT)))
+        pool_id = poolhandler.IsPartOfAPool<GameObject>(lowguid);
+        if (!pool_id || (pool_id && poolhandler.IsSpawnedObject<GameObject>(pool_id)))
             found = true;
     } while (result->NextRow() && (!found));
 
@@ -2916,10 +2917,10 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         float x         = fields[0].GetFloat();
         float y         = fields[1].GetFloat();
         float z         = fields[2].GetFloat();
+        float o         = fields[3].GetFloat();
         uint32 id = VISUAL_WAYPOINT;
 
         Player *chr = m_session->GetPlayer();
-        float o = chr->GetOrientation();
         Map *map = chr->GetMap();
 
         Creature* pCreature = new Creature;

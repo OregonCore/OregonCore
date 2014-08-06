@@ -1590,9 +1590,9 @@ void Creature::Respawn(bool force)
         if(IsAIEnabled)
             AI()->JustRespawned();
 
-        uint16 poolid = poolhandler.IsPartOfAPool(GetGUIDLow(), GetTypeId());
+        uint32 poolid = poolhandler.IsPartOfAPool<Creature>(GetDBTableGUIDLow());
         if (poolid)
-            poolhandler.UpdatePool(poolid, GetGUIDLow(), TYPEID_UNIT);
+            poolhandler.UpdatePool<Creature>(poolid, GetDBTableGUIDLow());
     }
 
     UpdateObjectVisibility();

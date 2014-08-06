@@ -283,9 +283,9 @@ void GameObject::Update(uint32 diff)
                                 return;
                             }
                                                             // respawn timer
-                            uint16 poolid = poolhandler.IsPartOfAPool(GetGUIDLow(), TYPEID_GAMEOBJECT);
+                            uint16 poolid = poolhandler.IsPartOfAPool<GameObject>(GetDBTableGUIDLow());
                             if (poolid)
-                                poolhandler.UpdatePool(poolid, GetGUIDLow(), TYPEID_GAMEOBJECT);
+                                poolhandler.UpdatePool<GameObject>(poolid, GetDBTableGUIDLow());
                             else
                                 GetMap()->Add(this);
                             break;
@@ -510,9 +510,9 @@ void GameObject::Delete()
     SetGoState(GO_STATE_READY);
     SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags);
 
-    uint16 poolid = poolhandler.IsPartOfAPool(GetGUIDLow(), TYPEID_GAMEOBJECT);
+    uint32 poolid = poolhandler.IsPartOfAPool<GameObject>(GetDBTableGUIDLow());
     if (poolid)
-        poolhandler.UpdatePool(poolid, GetGUIDLow(), TYPEID_GAMEOBJECT);
+        poolhandler.UpdatePool<GameObject>(poolid, GetDBTableGUIDLow());
     else
         AddObjectToRemoveList();
 }

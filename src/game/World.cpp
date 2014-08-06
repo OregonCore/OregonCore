@@ -1264,9 +1264,6 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading Objects Pooling Data...");
     poolhandler.LoadFromDB();
 
-    sLog.outString("Loading Game Event Data...");
-    gameeventmgr.LoadFromDB();
-
     sLog.outString("Loading Weather Data...");
     objmgr.LoadWeatherZoneChances();
 
@@ -1275,6 +1272,12 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Loading Quests Relations...");
     objmgr.LoadQuestRelations();                            // must be after quest load
+
+    sLog.outString("Loading Quest Pooling Data...");
+    poolhandler.LoadQuestPools();
+
+    sLog.outString("Loading Game Event Data...");           // must be after loading pools fully
+    gameeventmgr.LoadFromDB();
 
     sLog.outString("Loading AreaTrigger definitions...");
     objmgr.LoadAreaTriggerTeleports();
@@ -2456,6 +2459,9 @@ void World::ResetDailyQuests()
     for (SessionMap::iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
         if (itr->second->GetPlayer())
             itr->second->GetPlayer()->ResetDailyQuestStatus();
+
+    // change available dailies
+    poolhandler.ChangeDailyQuests();
 }
 
 void World::SetPlayerLimit(int32 limit, bool /*needUpdate*/)
