@@ -50,18 +50,18 @@ bool ActivePoolData::IsActiveObject<GameObject>(uint32 db_guid) const
     return mSpawnedGameobjects.find(db_guid) != mSpawnedGameobjects.end();
 }
 
-// Method that tell if a quest can be started
-template<>
-bool ActivePoolData::IsActiveObject<Quest>(uint32 quest_id) const
-{
-    return mActiveQuests.find(quest_id) != mActiveQuests.end();
-}
-
 // Method that tell if a pool is spawned currently
 template<>
 bool ActivePoolData::IsActiveObject<Pool>(uint32 sub_pool_id) const
 {
     return mSpawnedPools.find(sub_pool_id) != mSpawnedPools.end();
+}
+
+// Method that tell if a quest can be started
+template<>
+bool ActivePoolData::IsActiveObject<Quest>(uint32 quest_id) const
+{
+    return mActiveQuests.find(quest_id) != mActiveQuests.end();
 }
 
 template<>
@@ -148,7 +148,7 @@ bool PoolGroup<T>::CheckPool() const
     if (EqualChanced.size() && ExplicitlyChanced.size())
         return false;
 
-    if (!EqualChanced.size())
+    if (EqualChanced.empty())
     {
         float chance = 0;
         for (uint32 i = 0; i < ExplicitlyChanced.size(); ++i)
@@ -261,7 +261,7 @@ void PoolGroup<Quest>::Despawn1Object(uint32 quest_id)
         QuestRelations::iterator lastElement = questMap->upper_bound(itr->second);
         for (; qitr != lastElement; ++qitr)
         {
-            if (qitr->first == itr->second)
+            if (qitr->first == itr->second && qitr->second == itr->first)
             {
                 questMap->erase(qitr);                  // iterator is now no more valid
                 break;                                  // but we can exit loop since the element is found
@@ -280,7 +280,7 @@ void PoolGroup<Quest>::Despawn1Object(uint32 quest_id)
         QuestRelations::iterator lastElement = questMap->upper_bound(itr->second);
         for (; qitr != lastElement; ++qitr)
         {
-            if (qitr->first == itr->second)
+            if (qitr->first == itr->second && qitr->second == itr->first)
             {
                 questMap->erase(qitr);                  // iterator is now no more valid
                 break;                                  // but we can exit loop since the element is found
@@ -495,7 +495,7 @@ void PoolGroup<Quest>::SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 
         Spawn1Object(&tempObj);
         newQuests.erase(itr);
         --limit;
-    } while (limit && newQuests.size());
+    } while (limit && !newQuests.empty());
 
     // if we are here it means the pool is initialized at startup and did not have previous saved state
     if (!triggerFrom)
@@ -543,8 +543,6 @@ void PoolGroup<T>::SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 trig
     }
 }
 
-
-
 ////////////////////////////////////////////////////////////
 // Methods of class PoolHandler
 
@@ -557,13 +555,13 @@ void PoolHandler::LoadFromDB()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT MAX(entry) FROM pool_template");
     if (!result)
     {
-        sLog.outString(">> Table pool_template is empty.");
+        sLog.outString(">> Loaded 0 object pools. DB table `pool_template` is empty.");
         sLog.outString();
         return;
     }
     else
     {
-        Field *fields = result->Fetch();
+        Field* fields = result->Fetch();
         max_pool_id = fields[0].GetUInt32();    
     }
 
@@ -573,20 +571,17 @@ void PoolHandler::LoadFromDB()
     if (!result)
     {
         mPoolTemplate.clear();
-        sLog.outString(">> Table pool_template is empty:");
+        sLog.outString(">> Loaded 0 object pools. DB table `pool_template` is empty.");
         sLog.outString();
         return;
     }
 
     uint32 count = 0;
-
-    
+ 
     do
     {
         ++count;
-        Field *fields = result->Fetch();
-
-        
+        Field* fields = result->Fetch();
 
         uint32 pool_id = fields[0].GetUInt32();
 
@@ -600,7 +595,6 @@ void PoolHandler::LoadFromDB()
 
     // Creatures
 
-    sLog.outString();
     sLog.outString("Loading Creatures Pooling Data...");
 
     mPoolCreatureGroups.resize(max_pool_id + 1);
@@ -614,8 +608,8 @@ void PoolHandler::LoadFromDB()
         barGoLink bar2(1);
         bar2.step();
 
+        sLog.outString(">> Loaded 0 creatures in  pools. DB table `pool_creature` is empty.");
         sLog.outString();
-        sLog.outString(">> Loaded %u creatures in pools", count);
     }
     else
     {
@@ -623,7 +617,7 @@ void PoolHandler::LoadFromDB()
         barGoLink bar2(result->GetRowCount());
         do
         {
-            Field *fields = result->Fetch();
+            Field* fields = result->Fetch();
 
             bar2.step();
 
@@ -658,8 +652,8 @@ void PoolHandler::LoadFromDB()
             mCreatureSearchMap.insert(p);
 
         } while (result->NextRow());
-        sLog.outString();
         sLog.outString(">> Loaded %u creatures in pools", count);
+        sLog.outString();
     }
 
     // Gameobjects
@@ -677,8 +671,8 @@ void PoolHandler::LoadFromDB()
         barGoLink bar2(1);
         bar2.step();
 
+        sLog.outString(">> Loaded 0 gameobjects in pools. DB table `pool_gameobject` is empty.");
         sLog.outString();
-        sLog.outString(">> Loaded %u gameobject in pools", count);
     }
     else
     {
@@ -686,7 +680,7 @@ void PoolHandler::LoadFromDB()
         barGoLink bar2(result->GetRowCount());
         do
         {
-            Field *fields = result->Fetch();
+            Field* fields = result->Fetch();
 
             bar2.step();
 
@@ -730,8 +724,8 @@ void PoolHandler::LoadFromDB()
             mGameobjectSearchMap.insert(p);
 
         } while (result->NextRow());
-        sLog.outString();
         sLog.outString(">> Loaded %u gameobject in pools", count);
+        sLog.outString();
     }
 
     // Pool of pools
@@ -748,8 +742,8 @@ void PoolHandler::LoadFromDB()
         barGoLink bar2(1);
         bar2.step();
 
+        sLog.outString(">> Loaded 0 pools in pools");
         sLog.outString();
-        sLog.outString(">> Loaded %u pools in pools", count);
     }
     else
     {
@@ -757,7 +751,7 @@ void PoolHandler::LoadFromDB()
         barGoLink bar2(result->GetRowCount());
         do
         {
-            Field *fields = result->Fetch();
+            Field* fields = result->Fetch();
 
             bar2.step();
 
@@ -799,7 +793,7 @@ void PoolHandler::LoadFromDB()
         } while (result->NextRow());
 
         // Now check for circular reference
-        for (uint32 i=0; i<max_pool_id; ++i)
+        for (uint32 i=0; i < max_pool_id; ++i)
         {
             std::set<uint32> checkedPools;
             for (SearchMap::iterator poolItr = mPoolSearchMap.find(i); poolItr != mPoolSearchMap.end(); poolItr = mPoolSearchMap.find(poolItr->second))
@@ -822,8 +816,8 @@ void PoolHandler::LoadFromDB()
             }
         }
 
-        sLog.outString();
         sLog.outString(">> Loaded %u pools in mother pools", count);
+        sLog.outString();
     }
 }
 
@@ -837,8 +831,8 @@ void PoolHandler::LoadQuestPools()
     uint32 count = 0;
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded 0 quests in pools");
+        sLog.outString();
         return;
     }
 
@@ -852,7 +846,7 @@ void PoolHandler::LoadQuestPools()
         QUEST_DAILY  = 1,
     };
 
-    std::map<uint32, uint32> poolTypeMap;
+    std::map<uint32, int32> poolTypeMap;
 
     do
     {
@@ -926,7 +920,7 @@ void PoolHandler::Initialize()
     {
         do
         {
-            Field *fields = result->Fetch();
+            Field* fields = result->Fetch();
             uint32 pool_entry = fields[0].GetUInt32();
             uint32 pool_pool_id = fields[1].GetUInt32();
             if (!CheckPool(pool_entry))
