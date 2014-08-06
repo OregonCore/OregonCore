@@ -682,7 +682,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
     }
 
     // show time before shutdown if shutdown planned.
-    if (sWorld.IsShutdowning())
+     if (sWorld.IsShuttingDown())
         sWorld.ShutdownMsg(true,pCurrChar);
 
     // ImpConfig - Max weapon skill when logging in

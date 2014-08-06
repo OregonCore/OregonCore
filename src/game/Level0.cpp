@@ -106,7 +106,10 @@ bool ChatHandler::HandleServerInfoCommand(const char* /*args*/)
     //PSendSysMessage(LANG_USING_WORLD_DB,sWorld.GetDBVersion());
     PSendSysMessage(LANG_CONNECTED_USERS, activeClientsNum, maxActiveClientsNum, queuedClientsNum, maxQueuedClientsNum);
     PSendSysMessage(LANG_UPTIME, str.c_str());
-    PSendSysMessage("Update time diff: %u.", updateTime);
+    PSendSysMessage(LANG_UPDATE_DIFF, updateTime);
+    //! Can't use sWorld->ShutdownMsg here in case of console command
+    if (sWorld.IsShuttingDown())
+        PSendSysMessage(LANG_SHUTDOWN_TIMELEFT, secsToTimeString(sWorld.GetShutDownTimeLeft()).c_str());
 
     return true;
 }
