@@ -532,7 +532,7 @@ class World
         static void StopNow(uint8 exitcode) { if (m_stopEvent) return; m_stopEvent = true; m_ExitCode = exitcode; }
         static bool IsStopped() { return m_stopEvent; }
 
-        void Update(time_t diff);
+        void Update(uint32 diff);
 
         void UpdateSessions(time_t diff);
         // Set a server rate (see #Rates)

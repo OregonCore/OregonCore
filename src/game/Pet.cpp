@@ -1090,7 +1090,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
                     if (val < 0)
                         val = 0;
                     SetBonusDamage(int32(val));
-                    ApplySpellImmune(NULL, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+                    ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                     break;
                 }
                 case 1964: //force of nature

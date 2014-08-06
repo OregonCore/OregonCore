@@ -175,7 +175,7 @@ class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Th
 #ifdef OREGON_DEBUG
 #define DEBUG_LOG Oregon::Singleton<Log>::Instance().outDebug
 #else
-#define DEBUG_LOG
+#define DEBUG_LOG(...)
 #endif
 
 // primary for script library

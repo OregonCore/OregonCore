@@ -144,7 +144,7 @@ DestinationHolder<TRAVELLER>::UpdateTraveller(TRAVELLER &traveller, uint32 diff,
 
 template<typename TRAVELLER>
 void
-DestinationHolder<TRAVELLER>::GetLocationNow(const Map * map, float &x, float &y, float &z, bool is3D) const
+DestinationHolder<TRAVELLER>::GetLocationNow(const Map * map, float &x, float &y, float &z, bool is3D)
 {
     if (HasArrived())
     {
@@ -195,7 +195,7 @@ DestinationHolder<TRAVELLER>::GetDestinationDiff(float x, float y, float z) cons
 
 template<typename TRAVELLER>
 void
-DestinationHolder<TRAVELLER>::GetLocationNowNoMicroMovement(float &x, float &y, float &z) const
+DestinationHolder<TRAVELLER>::GetLocationNowNoMicroMovement(float &x, float &y, float &z)
 {
     if (HasArrived())
     {

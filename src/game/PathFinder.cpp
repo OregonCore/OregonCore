@@ -84,7 +84,6 @@ bool PathInfo::Update(float destX, float destY, float destZ, bool forceDest)
     setEndPosition(newDest);
 
     PathNode newStart(x, y, z);
-    PathNode oldStart = getStartPosition();
     setStartPosition(newStart);
 
     m_forceDestination = forceDest;

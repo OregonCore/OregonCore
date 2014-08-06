@@ -687,10 +687,12 @@ void WorldSession::HandleBugOpcode(WorldPacket & recv_data)
     recv_data >> suggestion >> contentlen >> content;
     recv_data >> typelen >> type;
 
+    #ifdef OREGON_DEBUG
     if (suggestion == 0)
         DEBUG_LOG("WORLD: Received CMSG_BUG [Bug Report] \n %s \n %s", type.c_str(), content.c_str());
     else
         DEBUG_LOG("WORLD: Received CMSG_BUG [Suggestion]");
+    #endif
 
     CharacterDatabase.escape_string(type);
     CharacterDatabase.escape_string(content);
@@ -1344,6 +1346,7 @@ void WorldSession::HandleTimeSyncResp(WorldPacket & recv_data)
     uint32 counter, clientTicks;
     recv_data >> counter >> clientTicks;
 
+    #ifdef OREGON_DEBUG
     if (counter != _player->m_timeSyncCounter - 1)
         DEBUG_LOG("Wrong time sync counter from player %s (cheater?)", _player->GetName());
 
@@ -1353,6 +1356,7 @@ void WorldSession::HandleTimeSyncResp(WorldPacket & recv_data)
 
     // diff should be small
     DEBUG_LOG("Our ticks: %u, diff %u, latency %u", ourTicks, ourTicks - clientTicks, GetLatency());
+    #endif
 
     _player->m_timeSyncClient = clientTicks;
 }
@@ -1455,7 +1459,7 @@ void WorldSession::HandleSetTaxiBenchmarkOpcode(WorldPacket & recv_data)
 }
 
 
-void WorldSession::HandleSetGrantableLevels(WorldPacket& recv_data)
+void WorldSession::HandleSetGrantableLevels(WorldPacket& /*recv_data*/)
 {
     DEBUG_LOG("WORLD: CMSG_SET_GRANTABLE_LEVELS");   
 }
@@ -1554,7 +1558,7 @@ void WorldSession::HandleAcceptGrantLevel(WorldPacket& recv_data)
     GetPlayer()->GiveLevel(GetPlayer()->getLevel() + 1.f, true);
 }
 
-void WorldSession::HandleReferAFriend(WorldPacket& recv_data)
+void WorldSession::HandleReferAFriend(WorldPacket& /*recv_data*/)
 {
     DEBUG_LOG("WORLD: CMSG_REFER_A_FRIEND");
 }

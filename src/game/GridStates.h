@@ -41,6 +41,7 @@ class GridState
         void setMagic() { i_Magic = MAGIC_TESTVAL; }
         unsigned int i_Magic;
 #endif
+        virtual ~GridState() {}
         virtual void Update(Map &, NGridType&, GridInfo &, const uint32 &x, const uint32 &y, const uint32 &t_diff) const = 0;
 };
 

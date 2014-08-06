@@ -1266,7 +1266,7 @@ void Creature::SetVirtualItem(VirtualItemSlot slot, uint32 item_id)
     ItemPrototype const* proto = ObjectMgr::GetItemPrototype(item_id);
     if (!proto)
     {
-        sLog.outError("Not listed in 'item_template' item (ID:%u) used as virtual item for %i", item_id, GetGUID());
+        sLog.outError("Not listed in 'item_template' item (ID:%u) used as virtual item for %llu", item_id, GetGUID());
         return;
     }
 
@@ -2103,7 +2103,6 @@ void Creature::AddCreatureSpellCooldown(uint32 spellid)
             WorldPacket data(SMSG_SPELL_COOLDOWN, (4+8));
             data << uint64(GetGUID());
             data << uint8(0x0);                                     // flags (0x1, 0x2)
-            time_t curTime = time(NULL);
             data << uint32(spellid);
             data << uint32(cooldown);                               // in m.secs
 

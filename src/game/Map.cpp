@@ -2621,7 +2621,7 @@ void InstanceMap::PermBindAllPlayers(Player *player)
 time_t InstanceMap::GetResetTime()
 {
     InstanceSave *save = sInstanceSaveManager.GetInstanceSave(GetInstanceId());
-    return save ? save->GetDifficulty() : time_t(DIFFICULTY_NORMAL);
+    return time_t(save ? save->GetDifficulty() : DIFFICULTY_NORMAL);
 }
 
 void InstanceMap::UnloadAll()

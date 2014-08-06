@@ -44,6 +44,8 @@ class UnitAI
         Unit * const me;
     public:
         explicit UnitAI(Unit *u) : me(u) {}
+        virtual ~UnitAI() {}
+
         virtual bool CanAIAttack(const Unit* /*who*/) const { return true; }
         virtual void AttackStart(Unit *);
         virtual void UpdateAI(const uint32 /*diff*/) = 0;

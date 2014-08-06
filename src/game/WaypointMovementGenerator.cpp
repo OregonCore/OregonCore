@@ -335,7 +335,7 @@ void FlightPathMovementGenerator::SetCurrentNodeAfterTeleport()
         return;
 
     uint32 map0 = (*i_path)[0].mapid;
-    for (int i = 1; i < i_path->size(); ++i)
+    for (uint32 i = 1; i < i_path->size(); ++i)
     {
         if ((*i_path)[i].mapid != map0)
         {
