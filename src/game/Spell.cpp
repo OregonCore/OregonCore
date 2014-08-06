@@ -2919,6 +2919,8 @@ void Spell::SendCastResult(SpellCastResult result)
                 data << uint32(m_spellInfo->EquippedItemSubClassMask);
                 data << uint32(m_spellInfo->EquippedItemInventoryTypeMask);
                 break;
+            default:
+                break;
         }
         m_caster->ToPlayer()->GetSession()->SendPacket(&data);
     }
@@ -3738,10 +3740,10 @@ SpellCastResult Spell::CheckCast(bool strict)
     {
         for (uint8 j = 0; j < 3; j++)
         {
-            if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_UNIT_NEARBY_ENTRY ||
-                m_spellInfo->EffectImplicitTargetB[j] == TARGET_UNIT_NEARBY_ENTRY && m_spellInfo->EffectImplicitTargetA[j] != TARGET_UNIT_CASTER ||
-                m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY ||
-                m_spellInfo->EffectImplicitTargetB[j] == TARGET_DST_NEARBY_ENTRY)
+            if ((m_spellInfo->EffectImplicitTargetA[j] == TARGET_UNIT_NEARBY_ENTRY) ||
+                (m_spellInfo->EffectImplicitTargetB[j] == TARGET_UNIT_NEARBY_ENTRY && m_spellInfo->EffectImplicitTargetA[j] != TARGET_UNIT_CASTER) ||
+                (m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY) ||
+                (m_spellInfo->EffectImplicitTargetB[j] == TARGET_DST_NEARBY_ENTRY))
             {
                 SpellScriptTarget::const_iterator lower = spellmgr.GetBeginSpellScriptTarget(m_spellInfo->Id);
                 SpellScriptTarget::const_iterator upper = spellmgr.GetEndSpellScriptTarget(m_spellInfo->Id);
@@ -4015,7 +4017,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 // Can be area effect, Check only for players and not check if target - caster (spell can have multiply drain/burn effects)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                     if (Unit* target = m_targets.getUnitTarget())
-                        if (target != m_caster && target->getPowerType() != m_spellInfo->EffectMiscValue[i])
+                        if (target != m_caster && int32(target->getPowerType()) != m_spellInfo->EffectMiscValue[i])
                             return SPELL_FAILED_BAD_TARGETS;
                 break;
             }
@@ -4679,6 +4681,8 @@ SpellCastResult Spell::CheckCasterAuras() const
                                 return SPELL_FAILED_PACIFIED;
                             else if (m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
                                 return SPELL_FAILED_SILENCED;
+                        default:
+                            break;
                     }
                 }
             }
@@ -4707,6 +4711,8 @@ SpellCastResult Spell::CheckCasterAuras() const
                 case SPELL_FAILED_PACIFIED:
                     if (m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_PACIFY)
                         return SPELL_CAST_OK;
+                default:
+                    break;
             }
 
             return prevented_reason;

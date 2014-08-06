@@ -35,8 +35,8 @@ namespace VMAP
 #ifdef MMAP_GENERATOR
     #include <assert.h>
     #define ASSERT(x) assert(x)
-    #define DEBUG_LOG(...) 0
-    #define DETAIL_LOG(...) 0
+    #define DEBUG_LOG(...) 
+    #define DETAIL_LOG(...) 
     #define ERROR_LOG(...) do{ printf("ERROR:"); printf(__VA_ARGS__); printf("\n"); } while(0)
 #elif !defined NO_CORE_FUNCS
     #include "Errors.h"
@@ -46,9 +46,9 @@ namespace VMAP
 #else
     #include <assert.h>
     #define ASSERT(x) assert(x)
-    #define DEBUG_LOG(...) do{ printf(__VA_ARGS__); printf("\n"); } while(0)
-    #define DETAIL_LOG(...) do{ printf(__VA_ARGS__); printf("\n"); } while(0)
-    #define ERROR_LOG(...) do{ printf("ERROR:"); printf(__VA_ARGS__); printf("\n"); } while(0)
+    #define DEBUG_LOG(x, ...) printf(x,"\n", ##__VA_ARGS__)
+    #define DETAIL_LOG(x, ...) printf(x "\n", ##__VA_ARGS__)
+    #define ERROR_LOG(x, ...) printf("ERROR:" x, ##__VA_ARGS__)
 #endif
 
 #endif // _VMAPDEFINITIONS_H

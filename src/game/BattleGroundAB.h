@@ -143,13 +143,13 @@ enum BG_AB_Nodes
     BG_AB_NODE_LUMBER_MILL      = 3,
     BG_AB_NODE_GOLD_MINE        = 4,
 
+    BG_AB_NODES_MAX             = 5,
+
     BG_AB_SPIRIT_ALIANCE        = 5,
     BG_AB_SPIRIT_HORDE          = 6,
 
-    BG_AB_ALL_NODES_COUNT       = 7,                        // all nodes (dynamic and static)
+    BG_AB_ALL_NODES_COUNT       = 7                         // all nodes (dynamic and static)
 };
-
-#define BG_AB_NODES_MAX   5
 
 enum BG_AB_NodeStatus
 {
@@ -238,7 +238,7 @@ class BattleGroundAB : public BattleGround
         BattleGroundAB();
         ~BattleGroundAB();
 
-        void Update(time_t diff);
+        void Update(uint32 diff);
         void AddPlayer(Player *plr);
         virtual void StartingEventCloseDoors();
         virtual void StartingEventOpenDoors();

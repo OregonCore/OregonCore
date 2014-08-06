@@ -496,7 +496,7 @@ void World::LoadConfigSettings(bool reload)
     rate_values[RATE_RAF_BONUS_XP] = sConfig.GetIntDefault("RAF.BonusXPGain", 3);
     if (rate_values[RATE_TALENT] < 0.0f)
     {
-        sLog.outError("RAF.BonusXPGain (%u) must be > 0. Using 3 instead.",rate_values[RATE_RAF_BONUS_XP]);
+        sLog.outError("RAF.BonusXPGain (%f) must be > 0. Using 3 instead.",rate_values[RATE_RAF_BONUS_XP]);
         rate_values[RATE_RAF_BONUS_XP] = 3;
     }
     rate_values[RATE_RAF_GRANTABLE_LEVELS_PER_LEVEL] = std::max<float>(0.f, sConfig.GetFloatDefault("RAF.GrantableLevelsPerLevel", .5f));
@@ -1032,8 +1032,6 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_BG_START_MUSIC] = sConfig.GetBoolDefault("MusicInBattleground", false);
     m_configs[CONFIG_START_ALL_SPELLS] = sConfig.GetBoolDefault("PlayerStart.AllSpells", false);
     m_configs[CONFIG_HONOR_AFTER_DUEL] = sConfig.GetIntDefault("HonorPointsAfterDuel", 0);
-    if (m_configs[CONFIG_HONOR_AFTER_DUEL] < 0)
-        m_configs[CONFIG_HONOR_AFTER_DUEL]= 0;
     m_configs[CONFIG_START_ALL_EXPLORED] = sConfig.GetBoolDefault("PlayerStart.MapsExplored", false);
     m_configs[CONFIG_START_ALL_REP] = sConfig.GetBoolDefault("PlayerStart.AllReputation", false);
     m_configs[CONFIG_ALWAYS_MAXSKILL] = sConfig.GetBoolDefault("AlwaysMaxWeaponSkill", false);
@@ -1041,8 +1039,6 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_PVP_TOKEN_MAP_TYPE] = sConfig.GetIntDefault("PvPToken.MapAllowType", 4);
     m_configs[CONFIG_PVP_TOKEN_ID] = sConfig.GetIntDefault("PvPToken.ItemID", 29434);
     m_configs[CONFIG_PVP_TOKEN_COUNT] = sConfig.GetIntDefault("PvPToken.ItemCount", 1);
-    if (m_configs[CONFIG_PVP_TOKEN_COUNT] < 1)
-        m_configs[CONFIG_PVP_TOKEN_COUNT] = 1;
     m_configs[CONFIG_NO_RESET_TALENT_COST] = sConfig.GetBoolDefault("NoResetTalentsCost", false);
     m_configs[CONFIG_SHOW_KICK_IN_WORLD] = sConfig.GetBoolDefault("ShowKickInWorld", false);
     m_configs[CONFIG_INTERVAL_LOG_UPDATE] = sConfig.GetIntDefault("RecordUpdateTimeDiffInterval", 60000);
@@ -1661,8 +1657,6 @@ void World::LoadAutobroadcasts()
  	
 void World::LoadIp2nation()
 {
- 	uint32 oldMSTime = getMSTime();
- 	
  	QueryResult_AutoPtr result = WorldDatabase.Query("SELECT count(c.code) FROM ip2nationCountries c, ip2nation i WHERE c.code = i.country");
  	uint32 count = 0;
 
@@ -1677,7 +1671,7 @@ void World::LoadIp2nation()
 }
 
 // Update the World !
-void World::Update(time_t diff)
+void World::Update(uint32 diff)
 {
     m_updateTime = uint32(diff);
     if (m_configs[CONFIG_INTERVAL_LOG_UPDATE])

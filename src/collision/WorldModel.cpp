@@ -147,13 +147,13 @@ namespace VMAP
     bool WmoLiquid::GetLiquidHeight(const Vector3 &pos, float &liqHeight) const
     {
         float tx_f = (pos.x - iCorner.x)/LIQUID_TILE_SIZE;
-        int32 tx = int32(tx_f);
+        uint32 tx = uint32(tx_f);
         
         if (tx_f < 0.0f || tx >= iTilesX)
             return false;
         
         float ty_f = (pos.y - iCorner.y)/LIQUID_TILE_SIZE;
-        int32 ty = int32(ty_f);
+        uint32 ty = uint32(ty_f);
 
         if (ty_f < 0.0f || ty >= iTilesY)
             return false;

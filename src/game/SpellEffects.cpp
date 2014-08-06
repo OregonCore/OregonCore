@@ -1795,7 +1795,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
             {
                 // damage is based on the speed of the weapon...
                 // but we need to know which weapon was used main or off
-                uint8 slot = (m_CastItem) ? m_CastItem->GetSlot() : EQUIPMENT_SLOT_MAINHAND;
+                uint8 slot = (m_CastItem) ? m_CastItem->GetSlot() : uint8(EQUIPMENT_SLOT_MAINHAND);
                 bp = m_caster->GetAttackTime( (slot == EQUIPMENT_SLOT_MAINHAND) ? BASE_ATTACK : OFF_ATTACK) * (m_spellInfo->EffectBasePoints[0]+1) / 100000;
                 spell_id = 16368;
                 break;
@@ -2126,8 +2126,10 @@ void Spell::EffectTriggerMissileSpell(SpellEffIndex effIndex)
         return;
     }
 
+    #ifdef OREGON_DEBUG
     if (m_CastItem)
         DEBUG_LOG("WORLD: cast Item spellId - %i", spellInfo->Id);
+    #endif
 
     Spell *spell = new Spell(m_caster, spellInfo, true, m_originalCasterGUID);
 
@@ -3353,7 +3355,6 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                 }
                 default:
                 {
-                    float radius = GetSpellRadius(m_spellInfo, effIndex, false);
                     TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
                     summon = m_originalCaster->SummonCreature(entry, pos, summonType, duration);
                     if (!summon)
@@ -3439,10 +3440,6 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
         {
             if (aur->GetSpellProto()->Dispel == DISPEL_MAGIC)
             {
-                bool positive = true;
-                if (!aur->IsPositive())
-                    positive = false;
-
                 // do not remove positive auras if friendly target
                 //               negative auras if non-friendly target
                 if (aur->IsPositive() == unitTarget->IsFriendlyTo(m_caster))

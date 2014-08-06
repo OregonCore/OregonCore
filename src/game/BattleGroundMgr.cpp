@@ -1022,7 +1022,7 @@ void BattleGroundMgr::DeleteAlllBattleGrounds()
 }
 
 // used to update running battlegrounds, and delete finished ones
-void BattleGroundMgr::Update(time_t diff)
+void BattleGroundMgr::Update(uint32 diff)
 {
     BattleGroundSet::iterator itr, next;
     for (itr = m_BattleGrounds.begin(); itr != m_BattleGrounds.end(); itr = next)
@@ -1043,7 +1043,7 @@ void BattleGroundMgr::Update(time_t diff)
     if (m_MaxRatingDifference)
     {
         // it's time to force update
-        if (m_NextRatingDiscardUpdate < int32(diff))
+        if (m_NextRatingDiscardUpdate < diff)
         {
             // forced update for level 70 rated arenas
             m_BattleGroundQueues[BATTLEGROUND_QUEUE_2v2].Update(BATTLEGROUND_AA,6,ARENA_TYPE_2v2,true,0);
@@ -1056,7 +1056,7 @@ void BattleGroundMgr::Update(time_t diff)
     }
     if (m_AutoDistributePoints)
     {
-        if (m_AutoDistributionTimeChecker < int32(diff))
+        if (m_AutoDistributionTimeChecker < diff)
         {
             if (uint32(time(NULL)) > m_NextAutoDistributionTime)
             {

@@ -476,8 +476,10 @@ bool Database::_TransactionCmd(const char *sql)
         sLog.outError("SQL ERROR: %s", mysql_error(mMysql));
         return false;
     }
+    #if OREGON_DEBUG
     else
         DEBUG_LOG("SQL: %s", sql);
+    #endif
 
     return true;
 }

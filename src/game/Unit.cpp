@@ -1157,8 +1157,10 @@ void Unit::CastSpell(Unit* Victim,SpellEntry const *spellInfo, bool triggered, I
         targets.setDst(Victim);
     }
 
+    #ifdef OREGON_DEBUG
     if (castItem)
         DEBUG_LOG("WORLD: cast Item spellId - %i", spellInfo->Id);
+    #endif
 
     if (!originalCaster && triggeredByAura)
         originalCaster = triggeredByAura->GetCasterGUID();
@@ -1260,8 +1262,10 @@ void Unit::CastSpell(float x, float y, float z, uint32 spellId, bool triggered, 
         return;
     }
 
+    #ifdef OREGON_DEBUG
     if (castItem)
         DEBUG_LOG("WORLD: cast Item spellId - %i", spellInfo->Id);
+    #endif
 
     if (!originalCaster && triggeredByAura)
         originalCaster = triggeredByAura->GetCasterGUID();
@@ -1294,8 +1298,10 @@ void Unit::CastSpell(GameObject *go, uint32 spellId, bool triggered, Item *castI
         return;
     }
 
+    #ifdef OREGON_DEBUG
     if (castItem)
         DEBUG_LOG("WORLD: cast Item spellId - %i", spellInfo->Id);
+    #endif
 
     if (!originalCaster && triggeredByAura)
         originalCaster = triggeredByAura->GetCasterGUID();
@@ -2154,12 +2160,14 @@ void Unit::AttackerStateUpdate (Unit *pVictim, WeaponAttackType attType, bool ex
     DealMeleeDamage(&damageInfo,true);
     ProcDamageAndSpell(damageInfo.target, damageInfo.procAttacker, damageInfo.procVictim, damageInfo.procEx, damageInfo.damage, damageInfo.attackType);
 
+    #ifdef OREGON_DEBUG
     if (GetTypeId() == TYPEID_PLAYER)
         DEBUG_LOG("AttackerStateUpdate: (Player) %u attacked %u (TypeId: %u) for %u dmg, absorbed %u, blocked %u, resisted %u.",
             GetGUIDLow(), pVictim->GetGUIDLow(), pVictim->GetTypeId(), damageInfo.damage, damageInfo.absorb, damageInfo.blocked_amount, damageInfo.resist);
     else
         DEBUG_LOG("AttackerStateUpdate: (NPC)    %u attacked %u (TypeId: %u) for %u dmg, absorbed %u, blocked %u, resisted %u.",
             GetGUIDLow(), pVictim->GetGUIDLow(), pVictim->GetTypeId(), damageInfo.damage, damageInfo.absorb, damageInfo.blocked_amount, damageInfo.resist);
+    #endif
 
 }
 
@@ -3559,9 +3567,12 @@ bool Unit::AddAura(Aura *Aur)
                     return false;
                 }
 
-                // Allow mongoose procs from different weapon stacks
-                if (Aur->GetId() == 28093 || Aur->GetId() == 20007 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
-                { i2++; continue; }
+                // XXX:Allow mongoose procs from different weapon stacks
+                if (Aur->GetId() == 28093 || (Aur->GetId() == 20007 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID()))
+                {
+                    i2++;
+                    continue;
+                }
 				 
                 // Increment aura's stack, one stack per one call
                 Aur->SetStackAmount(aur2->GetStackAmount()+1);
@@ -4626,7 +4637,7 @@ bool Unit::HandleHasteAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
     return true;
 }
 
-bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const * procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown)
+bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const * procSpell, uint32 /*procFlag*/, uint32 procEx, uint32 cooldown)
 {
     SpellEntry const *dummySpell = triggeredByAura->GetSpellProto();
     uint32 effIndex = triggeredByAura->GetEffIndex();
@@ -6201,7 +6212,7 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
                         else if (auraSpellInfo->SpellIconID == 2013)
                         {
                             // Check health condition - should drop to less 30% (damage deal after this!)
-                            if (!uint32((10*(int32(GetHealth() - damage))) < 3 * GetMaxHealth()))
+                            if (!uint32((10*(int32(GetHealth() - damage)))) < 3 * GetMaxHealth())
                                 return false;
 
                              if (pVictim && pVictim->isAlive())
@@ -10947,7 +10958,6 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
         Aura *triggeredByAura = i->triggeredByAura;
         Modifier *auraModifier = triggeredByAura->GetModifier();
         SpellEntry const *spellInfo = triggeredByAura->GetSpellProto();
-        uint32 effIndex = triggeredByAura->GetEffIndex();
         bool useCharges = triggeredByAura->m_procCharges > 0;
         // For players set spell cooldown if need
         uint32 cooldown = 0;

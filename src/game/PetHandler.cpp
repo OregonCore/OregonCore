@@ -320,6 +320,8 @@ void WorldSession::HandlePetActionHelper(Unit *pet, uint64 guid1, uint16 spellid
                         case SPELL_FAILED_REQUIRES_AREA:
                             data << uint32(spellInfo->AreaId);
                             break;
+                        default:
+                            break;
                     }
                     SendPacket(&data);
                 }

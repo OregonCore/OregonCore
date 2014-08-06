@@ -55,7 +55,7 @@ BattleGroundAB::~BattleGroundAB()
 {
 }
 
-void BattleGroundAB::Update(time_t diff)
+void BattleGroundAB::Update(uint32 diff)
 {
     BattleGround::Update(diff);
 
@@ -68,7 +68,7 @@ void BattleGroundAB::Update(time_t diff)
             // 3 sec delay to spawn new banner instead previous despawned one
             if (m_BannerTimers[node].timer)
             {
-                if (m_BannerTimers[node].timer > int32(diff))
+                if (m_BannerTimers[node].timer > diff)
                     m_BannerTimers[node].timer -= diff;
                 else
                 {
@@ -80,7 +80,7 @@ void BattleGroundAB::Update(time_t diff)
             // 1-minute to occupy a node from contested state
             if (m_NodeTimers[node])
             {
-                if (m_NodeTimers[node] > int32(diff))
+                if (m_NodeTimers[node] > diff)
                     m_NodeTimers[node] -= diff;
                 else
                 {
@@ -359,6 +359,9 @@ void BattleGroundAB::_SendNodeUpdate(uint8 node)
 
 void BattleGroundAB::_NodeOccupied(uint8 node,Team team)
 {
+    if (node >= BG_AB_NODES_MAX)
+        return;
+
     if (!AddSpiritGuide(node, BG_AB_SpiritGuidePos[node][0], BG_AB_SpiritGuidePos[node][1], BG_AB_SpiritGuidePos[node][2], BG_AB_SpiritGuidePos[node][3], team))
         sLog.outError("Failed to spawn spirit guide! point: %u, team: %u,", node, team);
 
