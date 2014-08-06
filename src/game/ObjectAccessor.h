@@ -175,10 +175,10 @@ class ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLev
         // these functions return objects if found in whole world
         // ACCESS LIKE THAT IS NOT THREAD SAFE
         static Pet* FindPet(uint64);
-        static Player* FindPlayer(uint64);
+        static Player* FindPlayer(uint64, bool force = false);
         static Unit* FindUnit(uint64);
         Player* FindPlayerByName(const char* name, bool force = false);
-        Player* FindPlayerByAccountId(uint64 Id);
+        Player* FindPlayerByAccountId(uint64 Id, bool force = false);
 
         // when using this, you must use the hashmapholder's lock
         HashMapHolder<Player>::MapType& GetPlayers()

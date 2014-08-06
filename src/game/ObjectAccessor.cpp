@@ -145,9 +145,17 @@ Pet* ObjectAccessor::FindPet(uint64 guid)
     return GetObjectInWorld(guid, (Pet*)NULL);
 }
 
-Player* ObjectAccessor::FindPlayer(uint64 guid)
+Player* ObjectAccessor::FindPlayer(uint64 guid, bool force)
 {
-    return GetObjectInWorld(guid, (Player*)NULL);
+    if (!force)
+        return GetObjectInWorld(guid, (Player*)NULL);
+
+    Guard guard(*HashMapHolder<Player>::GetLock());
+
+    HashMapHolder<Player>::MapType& m = HashMapHolder<Player>::GetContainer();
+    for (HashMapHolder<Player>::MapType::iterator iter = m.begin(); iter != m.end(); ++iter)
+        if (iter->second->GetGUID() == guid)
+            return iter->second;
 }
 
 Unit* ObjectAccessor::FindUnit(uint64 guid)
@@ -167,12 +175,12 @@ Player* ObjectAccessor::FindPlayerByName(const char* name, bool force)
     return NULL;
 }
 
-Player* ObjectAccessor::FindPlayerByAccountId(uint64 Id)
+Player* ObjectAccessor::FindPlayerByAccountId(uint64 Id, bool force)
 {
     Guard guard(*HashMapHolder<Player>::GetLock());
     HashMapHolder<Player>::MapType& m = HashMapHolder<Player>::GetContainer();
     for (HashMapHolder<Player>::MapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-        if (iter->second->IsInWorld() && iter->second->GetSession()->GetAccountId() == Id)
+        if (iter->second->GetSession()->GetAccountId() == Id && (iter->second->IsInWorld() || force))
             return iter->second;
 
     return NULL;

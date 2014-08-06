@@ -560,7 +560,7 @@ class ObjectMgr
         UNORDERED_MAP<uint32, uint32> TransportEventMap;
 
         Player* GetPlayer(const char* name, bool force = false) const { return ObjectAccessor::Instance().FindPlayerByName(name, force);}
-        Player* GetPlayer(uint64 guid) const { return ObjectAccessor::FindPlayer(guid); }
+        Player* GetPlayer(uint64 guid, bool force = false) const { return ObjectAccessor::FindPlayer(guid, force); }
 
         // Refer-a-Friend
 
