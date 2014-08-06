@@ -42,8 +42,9 @@ bool checkDirectories(bool debugOutput)
     dirFiles.clear();
     if (getDirContents(dirFiles, "mmaps") == LISTFILE_DIRECTORY_NOT_FOUND)
     {
-        printf("'mmaps' directory does not exist\n");
-        return false;
+        std::string path = output_path;
+        path += "/mmaps/";
+        CreateDir(path);
     }
 
     dirFiles.clear();
