@@ -318,113 +318,6 @@ void PoolGroup<Pool>::RemoveOneRelation(uint32 child_pool_id)
     }
 }
 
-template <class T>
-void PoolGroup<T>::SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 triggerFrom)
-{
-    uint32 lastDespawned = 0;
-    int count = limit - spawns.GetActiveObjectCount(poolId);
-
-    // If triggered from some object respawn this object is still marked as spawned
-    // and also counted into m_SpawnedPoolAmount so we need increase count to be
-    // spawned by 1
-    if (triggerFrom)
-        ++count;
-
-    // This will try to spawn the rest of pool, not guaranteed
-    for (int i = 0; i < count; ++i)
-    {
-        PoolObject* obj = RollOne(spawns, triggerFrom);
-        if (!obj)
-            continue;
-        if (obj->guid == lastDespawned)
-            continue;
-
-        if (obj->guid == triggerFrom)
-        {
-            ReSpawn1Object(obj);
-            triggerFrom = 0;
-            continue;
-        }
-        spawns.ActivateObject<T>(obj->guid, poolId);
-        Spawn1Object(obj);
-
-        if (triggerFrom)
-        {
-            // One spawn one despawn no count increase
-            DespawnObject(spawns, triggerFrom);
-            lastDespawned = triggerFrom;
-            triggerFrom = 0;
-        }
-    }
-}
-
-template <>
-void PoolGroup<Quest>::SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 triggerFrom)
-{
-    sLog.outDebug("PoolGroup<Quest>: Spawning pool %u", poolId);
-    // load state from db
-    if (!triggerFrom)
-    {
-        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT quest_id FROM pool_quest_save WHERE pool_id = %u", poolId);
-        if (result)
-        {
-            do
-            {
-                uint32 questId = result->Fetch()[0].GetUInt32();
-                spawns.ActivateObject<Quest>(questId, poolId);
-                PoolObject tempObj(questId, 0.0f);
-                Spawn1Object(&tempObj);
-                --limit;
-            } while (result->NextRow() && limit);
-            return;
-        }
-    }
-    uint32 lastDespawned = 0;
-    ActivePoolObjects currentQuests = spawns.GetActiveQuests();
-    ActivePoolObjects newQuests;
-
-    // always try to select different quests
-    for (PoolObjectList::iterator itr = EqualChanced.begin(); itr != EqualChanced.end(); ++itr)
-    {
-        if (spawns.IsActiveObject<Quest>(itr->guid))
-            continue;
-        newQuests.insert(itr->guid);
-    }
-
-    // clear the pool
-    DespawnObject(spawns);
-
-    // recycle minimal amount of quests if possible count is lower than limit
-    if (limit > newQuests.size() && !currentQuests.empty())
-    {
-        do
-        {
-            ActivePoolObjects::iterator itr = currentQuests.begin();
-            std::advance(itr, urand(0, currentQuests.size()-1));
-            newQuests.insert(*itr);
-            currentQuests.erase(*itr);
-        } while (newQuests.size() < limit && !currentQuests.empty()); // failsafe
-    }
-
-    if (newQuests.empty())
-        return;
-
-    // activate <limit> random quests
-    do
-    {
-        ActivePoolObjects::iterator itr = newQuests.begin();
-        std::advance(itr, urand(0, newQuests.size()-1));
-        spawns.ActivateObject<Quest>(*itr, poolId);
-        PoolObject tempObj(*itr, 0.0f);
-        Spawn1Object(&tempObj);
-        newQuests.erase(itr);
-        --limit;
-    } while (limit && newQuests.size());
-
-    // if we are here it means the pool is initialized at startup and did not have previous saved state
-    if (!triggerFrom)
-        poolhandler.SaveQuestsToDB();
-}
 
 // Method that is actualy doing the spawn job on 1 creature
 template <>
@@ -540,6 +433,117 @@ template <>
 void PoolGroup<Pool>::ReSpawn1Object(PoolObject* /*obj*/)
 {
 }
+
+template <>
+void PoolGroup<Quest>::SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 triggerFrom)
+{
+    sLog.outDebug("PoolGroup<Quest>: Spawning pool %u", poolId);
+    // load state from db
+    if (!triggerFrom)
+    {
+        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT quest_id FROM pool_quest_save WHERE pool_id = %u", poolId);
+        if (result)
+        {
+            do
+            {
+                uint32 questId = result->Fetch()[0].GetUInt32();
+                spawns.ActivateObject<Quest>(questId, poolId);
+                PoolObject tempObj(questId, 0.0f);
+                Spawn1Object(&tempObj);
+                --limit;
+            } while (result->NextRow() && limit);
+            return;
+        }
+    }
+    uint32 lastDespawned = 0;
+    ActivePoolObjects currentQuests = spawns.GetActiveQuests();
+    ActivePoolObjects newQuests;
+
+    // always try to select different quests
+    for (PoolObjectList::iterator itr = EqualChanced.begin(); itr != EqualChanced.end(); ++itr)
+    {
+        if (spawns.IsActiveObject<Quest>(itr->guid))
+            continue;
+        newQuests.insert(itr->guid);
+    }
+
+    // clear the pool
+    DespawnObject(spawns);
+
+    // recycle minimal amount of quests if possible count is lower than limit
+    if (limit > newQuests.size() && !currentQuests.empty())
+    {
+        do
+        {
+            ActivePoolObjects::iterator itr = currentQuests.begin();
+            std::advance(itr, urand(0, currentQuests.size()-1));
+            newQuests.insert(*itr);
+            currentQuests.erase(*itr);
+        } while (newQuests.size() < limit && !currentQuests.empty()); // failsafe
+    }
+
+    if (newQuests.empty())
+        return;
+
+    // activate <limit> random quests
+    do
+    {
+        ActivePoolObjects::iterator itr = newQuests.begin();
+        std::advance(itr, urand(0, newQuests.size()-1));
+        spawns.ActivateObject<Quest>(*itr, poolId);
+        PoolObject tempObj(*itr, 0.0f);
+        Spawn1Object(&tempObj);
+        newQuests.erase(itr);
+        --limit;
+    } while (limit && newQuests.size());
+
+    // if we are here it means the pool is initialized at startup and did not have previous saved state
+    if (!triggerFrom)
+        poolhandler.SaveQuestsToDB();
+}
+
+
+template <class T>
+void PoolGroup<T>::SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 triggerFrom)
+{
+    uint32 lastDespawned = 0;
+    int count = limit - spawns.GetActiveObjectCount(poolId);
+
+    // If triggered from some object respawn this object is still marked as spawned
+    // and also counted into m_SpawnedPoolAmount so we need increase count to be
+    // spawned by 1
+    if (triggerFrom)
+        ++count;
+
+    // This will try to spawn the rest of pool, not guaranteed
+    for (int i = 0; i < count; ++i)
+    {
+        PoolObject* obj = RollOne(spawns, triggerFrom);
+        if (!obj)
+            continue;
+        if (obj->guid == lastDespawned)
+            continue;
+
+        if (obj->guid == triggerFrom)
+        {
+            ReSpawn1Object(obj);
+            triggerFrom = 0;
+            continue;
+        }
+        spawns.ActivateObject<T>(obj->guid, poolId);
+        Spawn1Object(obj);
+
+        if (triggerFrom)
+        {
+            // One spawn one despawn no count increase
+            DespawnObject(spawns, triggerFrom);
+            lastDespawned = triggerFrom;
+            triggerFrom = 0;
+        }
+    }
+}
+
+
 
 ////////////////////////////////////////////////////////////
 // Methods of class PoolHandler
