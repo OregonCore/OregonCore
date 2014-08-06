@@ -26,8 +26,12 @@
 #define HAVE_DECL_BASENAME 1
 
 #include <libiberty.h>
-#include <demangle.h>
 #include <bfd.h>
+
+// Some distributios of libiberty doesn't provide demangle.h
+// so this is a workaround - declaring needed function explicitly
+extern char *
+cplus_demangle (const char *mangled, int options);
 
 namespace UnixDebugger
 {
