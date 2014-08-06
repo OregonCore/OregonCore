@@ -12,6 +12,12 @@ IF (IBERTY_INCLUDE_DIR AND IBERTY_LIBRARY AND BFD_LIBRARY AND BFD_INCLUDE_DIR)
     MESSAGE(STATUS "Found Binutils")
     INCLUDE_DIRECTORIES(${BFD_INCLUDE_DIR})
     INCLUDE_DIRECTORIES(${IBERTY_INCLUDE_DIR})
+
+    FIND_PATH(DEMANGLE_H demangle.h
+              PATH_SUFFIXES libiberty)
+    if (DEMANGLE_H)
+        add_definitions(-DHAVE_DEMANGLE_H)
+    endif()
 ELSE ()
     SET(BINUTILS_FOUND FALSE)
     MESSAGE(FATAL_ERROR "** Binutils were not found!\n** Your distro may provide a package for binutils e.g. for ubuntu try apt-get install binutils-dev")

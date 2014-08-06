@@ -28,10 +28,24 @@
 #include <libiberty.h>
 #include <bfd.h>
 
+#ifdef HAVE_DEMANGLE_H
+#include <demangle.h>
+#else
 // Some distributios of libiberty doesn't provide demangle.h
 // so this is a workaround - declaring needed function explicitly
+
+/* Options passed to cplus_demangle (in 2nd parameter). */
+#define DMGL_NO_OPTS	 0	
+#define DMGL_PARAMS	 (1 << 0)
+#define DMGL_ANSI	 (1 << 1)
+#define DMGL_JAVA	 (1 << 2)
+#define DMGL_VERBOSE	 (1 << 3
+#define DMGL_TYPES	 (1 << 4)
+#define DMGL_RET_POSTFIX (1 << 5)
+#define DMGL_RET_DROP	 (1 << 6)
 extern char *
 cplus_demangle (const char *mangled, int options);
+#endif
 
 namespace UnixDebugger
 {
