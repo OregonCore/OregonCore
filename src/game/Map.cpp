@@ -101,8 +101,22 @@ bool Map::ExistVMap(uint32 mapid,int gx,int gy)
     return true;
 }
 
+void Map::LoadMMap(int gx, int gy)
+{
+    if (!MMAP::MMapFactory::IsPathfindingEnabled(GetId()))
+        return;
+
+    bool mmapLoadResult = MMAP::MMapFactory::createOrGetMMapManager()->loadMap(GetId(), gx, gy);
+    if (mmapLoadResult)
+        sLog.outDetail("MMAP loaded name:%s, id:%d, x:%d, y:%d (mmap rep.: x:%d, y:%d)", GetMapName(), GetId(), gx, gy, gx, gy);
+    else
+        sLog.outDetail("Could not load MMAP name:%s, id:%d, x:%d, y:%d (mmap rep.: x:%d, y:%d)", GetMapName(), GetId(), gx, gy, gx, gy);
+}
+
 void Map::LoadVMap(int gx,int gy)
 {
+    if (!VMAP::VMapFactory::createOrGetVMapManager()->isMapLoadingEnabled())
+        return;
                                                             // x and y are swapped !!
     int vmapLoadResult = VMAP::VMapFactory::createOrGetVMapManager()->loadMap((sWorld.GetDataPath()+ "vmaps").c_str(),  GetId(), gx,gy);
     switch(vmapLoadResult)
@@ -164,13 +178,11 @@ void Map::LoadMap(int gx,int gy, bool reload)
 void Map::LoadMapAndVMap(int gx,int gy)
 {
     LoadMap(gx,gy);
-
-    if (i_InstanceId == 0) // Only load the data for the base map
+    // Only load the data for the base map
+    if (i_InstanceId == 0)
     {
         LoadVMap(gx, gy);
-
-        // load navmesh
-        MMAP::MMapFactory::createOrGetMMapManager()->loadMap(GetId(), gx, gy);
+        LoadMMap(gx, gy);    
     }
 }
 

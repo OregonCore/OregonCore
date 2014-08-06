@@ -433,6 +433,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
     private:
         void LoadMapAndVMap(int gx, int gy);
         void LoadVMap(int gx, int gy);
+        void LoadMMap(int gx, int gy);
         void LoadMap(int gx,int gy, bool reload = false);
         GridMap *GetGrid(float x, float y);
 
