@@ -680,7 +680,7 @@ void Pet::KillLoyaltyBonus(uint32 level)
     if (level > 100)
         return;
 
-                                                            //at lower levels gain is faster | the lower loyalty the more loyalty is gained
+    //at lower levels gain is faster | the lower loyalty the more loyalty is gained
     uint32 bonus = uint32(((100 - level) / 10) + (6 - GetLoyaltyLevel()));
     ModifyLoyalty(bonus);
 }
@@ -788,11 +788,15 @@ int32 Pet::GetTPForSpell(uint32 spellid)
 
 uint32 Pet::GetMaxLoyaltyPoints(uint32 level)
 {
+    if (level < 1) level = 1;   // prevent SIGSEGV (out of range)
+    if (level > 7) level = 7;   // prevent SIGSEGV (out of range)
     return LevelUpLoyalty[level - 1];
 }
 
 uint32 Pet::GetStartLoyaltyPoints(uint32 level)
 {
+    if (level < 1) level = 1; // prevent SIGSEGV (out of range)
+    if (level > 7) level = 7; // prevent SIGSEGV (out of range)
     return LevelStartLoyalty[level - 1];
 }
 
@@ -829,34 +833,28 @@ void Pet::GivePetXP(uint32 xp)
         return;
 
     uint32 level = getLevel();
+    uint32 maxlevel = std::min(sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL), GetOwner()->getLevel());
 
-    // XP to money conversion processed in Player::RewardQuest
-    if (level >= sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
+    // pet not receive xp for level equal to owner level
+    if (level >= maxlevel)
         return;
 
-    uint32 curXP = GetUInt32Value(UNIT_FIELD_PETEXPERIENCE);
     uint32 nextLvlXP = GetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP);
+    uint32 curXP = GetUInt32Value(UNIT_FIELD_PETEXPERIENCE);
     uint32 newXP = curXP + xp;
 
-    if (newXP >= nextLvlXP && level+1 > GetOwner()->getLevel())
-    {
-        SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, nextLvlXP-1);
-        return;
-    }
 
-    while (newXP >= nextLvlXP && level < sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
+    while (newXP >= nextLvlXP && level < maxlevel)
     {
         newXP -= nextLvlXP;
+        ++level;
 
-        SetLevel(level + 1);
-        SetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP, uint32((Oregon::XP::xp_to_level(level+1))/4));
+        GivePetLevel(level); // also update UNIT_FIELD_PETNEXTLEVELEXP and UNIT_FIELD_PETEXPERIENCE to level start
 
-        level = getLevel();
         nextLvlXP = GetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP);
-        GivePetLevel(level);
     }
 
-    SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, newXP);
+    SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, level < maxlevel ? newXP : 0);
 
     if (getPetType() == HUNTER_PET)
         KillLoyaltyBonus(level);
@@ -864,7 +862,7 @@ void Pet::GivePetXP(uint32 xp)
 
 void Pet::GivePetLevel(uint32 level)
 {
-    if (!level)
+    if (!level || level == getLevel())
         return;
 
     InitStatsForLevel(level);

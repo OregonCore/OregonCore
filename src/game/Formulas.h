@@ -116,6 +116,23 @@ namespace Oregon
             return (uint32)(xp_gain*sWorld.getRate(RATE_XP_KILL));
         }
 
+        inline uint32 Gain(Pet *pet, Unit *u)
+        {
+            if (u->GetTypeId() == TYPEID_UNIT && (
+                ((Creature*)u)->isTotem() || ((Creature*)u)->isPet() ||
+                (((Creature*)u)->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)))
+                return 0;
+
+            uint32 xp_gain= BaseGain(pet->getLevel(), u->getLevel(), GetContentLevelsForMapAndZone(u->GetMapId(),u->GetZoneId()));
+            if (xp_gain == 0)
+                return 0;
+
+            if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->isElite())
+                xp_gain *= 2;
+
+            return (uint32)(xp_gain*sWorld.getRate(RATE_XP_KILL));
+        }
+
         inline uint32 xp_Diff(uint32 lvl)
         {
             if (lvl < 29)
