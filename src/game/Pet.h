@@ -189,6 +189,8 @@ class Pet : public Guardian
         uint32 GetCurrentFoodBenefitLevel(uint32 itemlevel);
         void SetDuration(int32 dur) { m_duration = dur; }
 
+        bool canSwim() const { return true; }
+
         bool   CanTakeMoreActiveSpells(uint32 SpellIconID);
         void   ToggleAutocast(uint32 spellid, bool apply);
         bool   HasTPForSpell(uint32 spellid);
