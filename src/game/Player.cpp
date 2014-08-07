@@ -1797,6 +1797,13 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     return true;
 }
 
+WorldLocation Player::GetStartPosition() const
+{
+    PlayerInfo const* info = objmgr.GetPlayerInfo(getRace(), getClass());
+    uint32 mapId = info->mapId;
+    return WorldLocation(mapId, info->positionX, info->positionY, info->positionZ, 0);
+}
+
 bool Player::TeleportToBGEntryPoint()
 {
     if (sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))
@@ -20122,6 +20129,7 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
 
     // prepare data for near group iteration (PvP and !PvP cases)
     uint32 xp = 0;
+    uint32 petXP = 0;
 
     if (Group *pGroup = GetGroup())
     {
@@ -20195,6 +20203,9 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
     else                                                    // if (!pGroup)
     {
         xp = PvP ? 0 : Oregon::XP::Gain(this, pVictim);
+        
+        if (Pet* pet = GetPet())
+            petXP = PvP ? 0 : Oregon::XP::Gain(pet, pVictim);
 
         // honor can be in PvP and !PvP (racial leader) cases
         RewardHonor(pVictim,1, -1, true);
@@ -20206,7 +20217,7 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
             GiveXP(xp, pVictim);
 
             if (Pet* pet = GetPet())
-                pet->GivePetXP(xp);
+                pet->GivePetXP(petXP);
 
             // normal creature (not pet/etc) can be only in !PvP case
             if (pVictim->GetTypeId() == TYPEID_UNIT)

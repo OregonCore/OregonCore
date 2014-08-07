@@ -2075,6 +2075,8 @@ class Player : public Unit, public GridObject<Player>
         void SetHomebindToLocation(WorldLocation const& loc, uint32 area_id);
         void RelocateToHomebind(uint32 & newMap) { newMap = m_homebindMapId; Relocate(m_homebindX,m_homebindY,m_homebindZ); }
         bool TeleportToHomebind(uint32 options = 0) { return TeleportTo(m_homebindMapId, m_homebindX, m_homebindY, m_homebindZ, GetOrientation(), options); }
+        
+        WorldLocation GetStartPosition() const;
 
         // currently visible objects at player client
         typedef std::set<uint64> ClientGUIDs;
