@@ -386,7 +386,8 @@ bool TargetedMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
             if (!i_path || targetMoved || needNewDest || forceRecalc)
             {
                 // (re)calculate path
-                _setTargetLocation(owner);
+                if (!_setTargetLocation(owner))
+                    return true;
  
                 next_point = i_path->getNextPosition();
  
