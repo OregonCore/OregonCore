@@ -8959,30 +8959,6 @@ int32 Unit::ModifyHealth(int32 dVal)
     return gain;
 }
 
-// Modify target's health and send client log
-uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 heal, bool crit)
-{
-    // This should have already been checked, but just in case...
-    if (target && spellInfo)
-    {	
-        sLog.outDebug("DEBUG: HealTargetUnit(caster: %u, target: %u, spell: %u, healing: %u)",
-            GetGUIDLow(), target->GetGUIDLow(), spellInfo->Id, heal);
-
-        // Amount of health points the target was healed 
-        if (uint32 gain = target->ModifyHealth(int32(heal)))
-        {
-            SendHealSpellLog(target, spellInfo->Id, heal, crit);
-
-            // Increase threat for caster if the target is being healed in combat
-            if (target->isInCombat())
-                target->getHostileRefManager().threatAssist(this, float(gain) * 0.5f, spellInfo);
-	    
-            return gain;
-        }
-    }
-    return 0;
-}
-
 // used only to calculate channeling time
 void Unit::ModSpellCastTime(SpellEntry const* spellProto, int32 & castTime, Spell * spell)
 {

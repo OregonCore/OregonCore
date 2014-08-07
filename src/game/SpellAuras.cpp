@@ -1300,7 +1300,9 @@ void Aura::TriggerSpell()
                     case 23493:
                     {
                         int32 heal = caster->GetMaxHealth() / 10;
-                        caster->HealTargetUnit(caster, auraSpellInfo, heal);
+                        caster->ModifyHealth(heal);
+                        caster->SendHealSpellLog(caster, 23493, heal);
+
                         if (int32 mana = caster->GetMaxPower(POWER_MANA))
                         {
                             mana /= 10;
@@ -4667,14 +4669,14 @@ void Aura::HandleModRegen(bool apply, bool /*Real*/)        // eating
         if (m_periodicTimer <= 0)
         {
             m_periodicTimer += 5000;
-            
+            int32 gain = m_target->ModifyHealth(GetModifierValue());
+
             if (Unit *caster = GetCaster())
             {
                 // It's unclear why eating would cause threat, but I've routed it through here never the less
                 if (SpellEntry const *spellProto = GetSpellProto())
-                    caster->HealTargetUnit(m_target, spellProto, GetModifierValue(), false);
+                    m_target->getHostileRefManager().threatAssist(caster, float(gain) * 0.5f, spellProto);
             }
-            else m_target->ModifyHealth(GetModifierValue());
         }
     }
 
@@ -5977,8 +5979,12 @@ void Aura::PeriodicTick()
             if (Player *modOwner = pCaster->GetSpellModOwner())
                 modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_MULTIPLE_VALUE, multiplier);
 
-            // uint32 heal = pCaster->SpellHealingBonus(spellProto, uint32(new_damage * multiplier), DOT, pCaster);
-            // uint32 gain = pCaster->HealTargetUnit(pCaster, spellProto, heal);
+            uint32 heal = pCaster->SpellHealingBonus(spellProto, uint32(new_damage * multiplier), DOT, pCaster);
+
+            int32 gain = pCaster->ModifyHealth(heal);
+            pCaster->getHostileRefManager().threatAssist(pCaster, gain * 0.5f, spellProto);
+
+            pCaster->SendHealSpellLog(pCaster, spellProto->Id, heal);
             break;
         }
         case SPELL_AURA_PERIODIC_HEAL:
@@ -6016,7 +6022,7 @@ void Aura::PeriodicTick()
             data << (uint32)pdamage;
             m_target->SendMessageToSet(&data,true);
 
-            uint32 gain = pCaster->HealTargetUnit(m_target, GetSpellProto(), pdamage, false);
+            int32 gain = m_target->ModifyHealth(pdamage);
 
             // add HoTs to amount healed in bgs
             if (pCaster->GetTypeId() == TYPEID_PLAYER)
@@ -6025,6 +6031,8 @@ void Aura::PeriodicTick()
 
             //Do check before because m_modifier.auraName can be invalidate by DealDamage.
             bool procSpell = (m_modifier.m_auraname == SPELL_AURA_PERIODIC_HEAL && m_target != pCaster);
+
+            m_target->getHostileRefManager().threatAssist(pCaster, float(gain) * 0.5f, GetSpellProto());
 
             Unit* target = m_target;                        // aura can be deleted in DealDamage
             SpellEntry const* spellProto = GetSpellProto();
