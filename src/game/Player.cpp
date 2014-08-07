@@ -1797,6 +1797,13 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     return true;
 }
 
+WorldLocation Player::GetStartPosition() const
+{
+    PlayerInfo const* info = objmgr.GetPlayerInfo(getRace(), getClass());
+    uint32 mapId = info->mapId;
+    return WorldLocation(mapId, info->positionX, info->positionY, info->positionZ, 0);
+}
+
 bool Player::TeleportToBGEntryPoint()
 {
     if (sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))

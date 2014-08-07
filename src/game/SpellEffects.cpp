@@ -5449,6 +5449,8 @@ void Spell::EffectStuck(SpellEffIndex /*effIndex*/)
         return;
 
     Player* pTarget = unitTarget->ToPlayer();
+    if (!pTarget)
+        return;
 
     DEBUG_LOG("Spell Effect: Stuck");
     sLog.outDetail("Player %s (guid %u) used auto-unstuck future at map %u (%f, %f, %f)", pTarget->GetName(), pTarget->GetGUIDLow(), m_caster->GetMapId(), m_caster->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
@@ -5456,8 +5458,10 @@ void Spell::EffectStuck(SpellEffIndex /*effIndex*/)
     if (pTarget->isInFlight())
         return;
 
+    pTarget->TeleportTo(pTarget->GetStartPosition(), TELE_TO_SPELL);
     // homebind location is loaded always
-    pTarget->TeleportToHomebind(unitTarget == m_caster ? TELE_TO_SPELL : 0);
+    // Only leaving this here so users can change back if need be
+    // pTarget->TeleportToHomebind(unitTarget == m_caster ? TELE_TO_SPELL : 0);
 
     // Stuck spell trigger Hearthstone cooldown
     SpellEntry const *spellInfo = sSpellStore.LookupEntry(8690);
