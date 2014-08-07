@@ -2497,7 +2497,6 @@ void SpellMgr::LoadSpellCustomAttr()
         case 36350: //They Must Burn Bomb Aura (self)
             spellInfo->EffectTriggerSpell[0] = 36325; // They Must Burn Bomb Drop (DND)
             break;
-        case 32727: // Arena Preparation - remove invisibility aura
         case 44949: // Whirlwind's offhand attack - @todo remove this (50% weapon damage effect)
             spellInfo->Effect[1] = 0;
             break;
@@ -2567,6 +2566,12 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
             spellInfo->EffectImplicitTargetB[1] = 0;
             break;
+        case 32724: // alliance gold flag
+        case 32725: // alliance green flag
+        case 35774: // horde gold flag
+        case 35775: // hode green flag
+            // These four needs to be on an aura slot that is sent to client
+            mSpellCustomAttr[i] |= SPELL_ATTR_CU_HAS_VISUAL_BUFF;
         default:
             break;
         }

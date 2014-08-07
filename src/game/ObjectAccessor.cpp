@@ -156,6 +156,8 @@ Player* ObjectAccessor::FindPlayer(uint64 guid, bool force)
     for (HashMapHolder<Player>::MapType::iterator iter = m.begin(); iter != m.end(); ++iter)
         if (iter->second->GetGUID() == guid)
             return iter->second;
+
+    return NULL;
 }
 
 Unit* ObjectAccessor::FindUnit(uint64 guid)
