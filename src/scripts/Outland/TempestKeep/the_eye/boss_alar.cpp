@@ -123,6 +123,7 @@ struct boss_alarAI : public ScriptedAI
         me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         me->setActive(false);
+        me->addUnitState(UNIT_STAT_IGNORE_PATHFINDING);
     }
 
     void EnterCombat(Unit * /*who*/)
