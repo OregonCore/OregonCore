@@ -127,13 +127,20 @@ struct boss_void_reaverAI : public ScriptedAI
             for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
                 pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
-                                                            //18 yard radius minimum
+                // exclude pets & totems
+                if (pTarget->GetTypeId() != TYPEID_PLAYER)
+                    continue;
+
+                //18 yard radius minimum
                 if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive() && pTarget->GetDistance2d(me) >= 18)
                     target_list.push_back(pTarget);
                 pTarget = NULL;
             }
+
             if (target_list.size())
                 pTarget = *(target_list.begin()+rand()%target_list.size());
+            else
+                pTarget = me->getVictim();
 
             if (pTarget)
                 me->CastSpell(pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(), SPELL_ARCANE_ORB, false);
