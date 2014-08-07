@@ -371,7 +371,7 @@ bool BattleGroundQueue::InviteGroupToBG(GroupQueueInfo * ginfo, BattleGround * b
             itr->second->LastInviteTime = getMSTime();
 
             // get the player
-            Player* plr = objmgr.GetPlayer(itr->first);
+            Player* plr = objmgr.GetPlayer(itr->first, true);
             // if offline, skip him
             if (!plr)
                 continue;
