@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 """
+  Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
   Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
  
   This program is free software; you can redistribute it and/or modify
