@@ -738,6 +738,12 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
     if (pCurrChar->isGameMaster())
         SendNotification(LANG_GM_ON);
 
+    if (!pCurrChar->isGMVisible())
+    {
+        pCurrChar->AddAura(37800, pCurrChar);
+        SendNotification(LANG_INVISIBLE_INVISIBLE);
+    }
+
     std::string IP_str = GetRemoteAddress();
     sLog.outChar("Account: %d (IP: %s) Login Character:[%s] (guid: %u)",
         GetAccountId(), IP_str.c_str(), pCurrChar->GetName(), pCurrChar->GetGUIDLow());
