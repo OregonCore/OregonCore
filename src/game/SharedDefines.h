@@ -2315,6 +2315,8 @@ enum CorpseDynFlags
 #define SPELL_ID_PASSIVE_RESURRECTION_SICKNESS  15007
 #define SPELL_ID_WEAPON_SWITCH_COOLDOWN_1_5s    6119
 #define SPELL_ID_WEAPON_SWITCH_COOLDOWN_1_0s    6123
+#define SPELL_ID_DUEL_BEG                       7267       // Beg
+#define SPELL_ID_TRANSPARENCY_50                37800      // 50% Transparency
 
 enum WeatherType
 {
