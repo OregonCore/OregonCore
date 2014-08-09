@@ -18,7 +18,9 @@
 
 #if PLATFROM == PLATFORM_UNIX
 
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 
 #include "UnixDebugger.h"
 #include "SystemConfig.h"
@@ -216,7 +218,7 @@ void WriteBacktrace(std::stringstream& ss)
 
         if (func.size())
         {
-            if (demangled = cplus_demangle(func.c_str(), DMGL_PARAMS | DMGL_ANSI))
+            if ((demangled = cplus_demangle(func.c_str(), DMGL_PARAMS | DMGL_ANSI)))
                 func = demangled;
             // else func is a C symbol and it needs not to be demangled (or else cplus_demangle will yield NULL)
         }

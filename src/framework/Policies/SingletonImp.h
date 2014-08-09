@@ -70,23 +70,35 @@ Oregon::Singleton<T, ThreadingModel, CreatePolicy, LifeTimePolicy>::DestroySingl
 }
 
 #define INSTANTIATE_SINGLETON_1(TYPE) \
-    template class Oregon::Singleton<TYPE, Oregon::SingleThreaded<TYPE>, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >; \
-    template<> TYPE* Oregon::Singleton<TYPE, Oregon::SingleThreaded<TYPE>, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >::si_instance = 0; \
-    template<> bool Oregon::Singleton<TYPE, Oregon::SingleThreaded<TYPE>, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >::si_destroyed = false
+    namespace Oregon \
+    { \
+        template<> TYPE* Singleton<TYPE, Oregon::SingleThreaded<TYPE>, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >::si_instance = 0; \
+        template<> bool  Singleton<TYPE, Oregon::SingleThreaded<TYPE>, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >::si_destroyed = false; \
+        template   class Singleton<TYPE, Oregon::SingleThreaded<TYPE>, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >; \
+    }
 
 #define INSTANTIATE_SINGLETON_2(TYPE, THREADINGMODEL) \
-    template class Oregon::Singleton<TYPE, THREADINGMODEL, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >; \
-    template<> TYPE* Oregon::Singleton<TYPE, THREADINGMODEL, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >::si_instance = 0; \
-    template<> bool Oregon::Singleton<TYPE, THREADINGMODEL, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >::si_destroyed = false
+    namespace Oregon \
+    { \
+        template<> TYPE* Singleton<TYPE, THREADINGMODEL, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >::si_instance = 0; \
+        template<> bool  Singleton<TYPE, THREADINGMODEL, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >::si_destroyed = false; \
+        template   class Singleton<TYPE, THREADINGMODEL, Oregon::OperatorNew<TYPE>, Oregon::ObjectLifeTime<TYPE> >; \
+    }
 
 #define INSTANTIATE_SINGLETON_3(TYPE, THREADINGMODEL, CREATIONPOLICY ) \
-    template class Oregon::Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, Oregon::ObjectLifeTime<TYPE> >; \
-    template<> TYPE* Oregon::Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, Oregon::ObjectLifeTime<TYPE> >::si_instance = 0; \
-    template<> bool Oregon::Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, Oregon::ObjectLifeType<TYPE> >::si_destroyed = false
+    namespace Oregon \
+    { \
+        template<> TYPE* Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, Oregon::ObjectLifeTime<TYPE> >::si_instance = 0; \
+        template<> bool  Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, Oregon::ObjectLifeType<TYPE> >::si_destroyed = false; \
+        template   class Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, Oregon::ObjectLifeTime<TYPE> >; \
+    }
 
 #define INSTANTIATE_SINGLETON_4(TYPE, THREADINGMODEL, CREATIONPOLICY, OBJECTLIFETIME) \
-    template class Oregon::Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, OBJECTLIFETIME >; \
-    template<> TYPE* Oregon::Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, OBJECTLIFETIME >::si_instance = 0; \
-    template<> bool Oregon::Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, OBJECTLIFETIME >::si_destroyed = false
+    namespace Oregon \
+    { \
+        template<> TYPE* Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, OBJECTLIFETIME >::si_instance = 0; \
+        template<> bool  Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, OBJECTLIFETIME >::si_destroyed = false; \
+        template   class Singleton<TYPE, THREADINGMODEL, CREATIONPOLICY, OBJECTLIFETIME >; \
+    }
 #endif
 
