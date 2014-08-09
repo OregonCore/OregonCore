@@ -4035,23 +4035,13 @@ bool ChatHandler::HandleDieCommand(const char* /*args*/)
 
     if (target->isAlive())
     {
-        //m_session->GetPlayer()->DealDamage(target, target->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-        m_session->GetPlayer()->Kill(target);
+        if(sWorld.getConfig(CONFIG_DIE_COMMAND_MODE))
+            m_session->GetPlayer()->Kill(target);
+        else
+            m_session->GetPlayer()->DealDamage(target, target->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
     }
 
     return true;
-}
-
-// Kills the unit and grants the corpse ownership rights to the command caller
-bool ChatHandler::HandleKillCommand(const char* /*args*/)
-{
-    if (Unit* target = getSelectedUnit())
-    {
-        // Converts the targets health points value from integer to string data format
-        std::string damage = static_cast<std::ostringstream*>(&(std::ostringstream() << int(target->GetHealth())))->str();
-        return HandleDamageCommand(damage.c_str());
-    }
-    else return false;
 }
 
 bool ChatHandler::HandleDamageCommand(const char * args)
