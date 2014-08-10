@@ -18,11 +18,13 @@
  */
 
 #include "InstanceData.h"
+#include "MapReference.h"
 #include "Database/DatabaseEnv.h"
 #include "Map.h"
 #include "GameObject.h"
 #include "Creature.h"
 #include "CreatureAI.h"
+#include "Player.h"
 
 void InstanceData::SaveToDB()
 {

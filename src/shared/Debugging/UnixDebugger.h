@@ -24,6 +24,10 @@
 
 // This is fix for libiberty because ACE has already declared it.
 #define HAVE_DECL_BASENAME 1
+// And this one is fix for bfd.h
+#ifndef PACKAGE
+#define PACKAGE
+#endif
 
 #include <libiberty.h>
 #include <bfd.h>

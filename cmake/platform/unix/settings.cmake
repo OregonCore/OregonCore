@@ -29,8 +29,10 @@ add_custom_target(uninstall
 )
 message(STATUS "UNIX: Created uninstall target")
 
-if(CMAKE_C_COMPILER MATCHES "gcc")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   include(${CMAKE_SOURCE_DIR}/cmake/compiler/gcc/settings.cmake)
-elseif(CMAKE_C_COMPILER MATCHES "icc")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  include(${CMAKE_SOURCE_DIR}/cmake/compiler/clang/settings.cmake)
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
   include(${CMAKE_SOURCE_DIR}/cmake/compiler/icc/settings.cmake)
 endif()

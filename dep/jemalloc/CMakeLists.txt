@@ -20,7 +20,7 @@ include_directories(
 )
 
 add_definitions(-D_GNU_SOURCE -D_REENTRANT)
-add_definitions(-std=gnu99 -pipe -fvisibility=hidden -O3 -funroll-loops)
+add_definitions(-std=gnu99 -pipe -fvisibility=hidden -O3 -funroll-loops --no-warnings)
 
 add_custom_command(
     OUTPUT jemallocs_internals

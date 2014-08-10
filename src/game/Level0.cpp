@@ -26,6 +26,7 @@
 #include "Opcodes.h"
 #include "Chat.h"
 #include "MapManager.h"
+#include "ObjectMgr.h"
 #include "ObjectAccessor.h"
 #include "Language.h"
 #include "AccountMgr.h"

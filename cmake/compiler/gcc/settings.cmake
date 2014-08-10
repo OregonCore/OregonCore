@@ -1,8 +1,6 @@
 # Set build-directive (used in core to tell which buildtype we used)
 add_definitions(-D_BUILD_DIRECTIVE=${CMAKE_BUILD_TYPE})
 
-add_definitions(-fno-delete-null-pointer-checks -Wno-multichar)
-
 if( USE_SFMT)
   if(PLATFORM EQUAL 32)
     # Required on 32-bit systems to enable SSE2 (standard on x64)
