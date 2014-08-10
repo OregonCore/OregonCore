@@ -13261,37 +13261,48 @@ bool Player::CanRewardQuest(Quest const *pQuest, uint32 reward, bool msg)
     if (!CanRewardQuest(pQuest,msg))
         return false;
 
+    /* The best way to check if player can acutally store reward items,
+       we must simulate the reward process. Unless no error occurs
+       he cant store any items  */
+    typedef std::pair<uint32, uint32> Reward; // item id, count
+    typedef std::pair<Item*, uint32> Reward2; // item, cound (dont use item->GetCount(), because
+                                              // it will get count of items in stack, not reward count
+    std::list<Reward> rewardItems;
+    std::list<Reward2> takenItems;
+
+    uint8 res = EQUIP_ERR_OK;
+
     if (pQuest->GetRewChoiceItemsCount() > 0)
-    {
         if (pQuest->RewChoiceItemId[reward])
-        {
-            ItemPosCountVec dest;
-            uint8 res = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, pQuest->RewChoiceItemId[reward], pQuest->RewChoiceItemCount[reward]);
-            if (res != EQUIP_ERR_OK)
-            {
-                SendEquipError(res, NULL, NULL);
-                return false;
-            }
-        }
-    }
+            rewardItems.push_back(Reward(pQuest->RewChoiceItemId[reward], pQuest->RewChoiceItemCount[reward]));
 
     if (pQuest->GetRewItemsCount() > 0)
-    {
         for (uint32 i = 0; i < pQuest->GetRewItemsCount(); ++i)
-        {
             if (pQuest->RewItemId[i])
-            {
-                ItemPosCountVec dest;
-                uint8 res = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, pQuest->RewItemId[i], pQuest->RewItemCount[i]);
-                if (res != EQUIP_ERR_OK)
-                {
-                    SendEquipError(res, NULL, NULL);
-                    return false;
-                }
-            }
-        }
+                rewardItems.push_back(Reward(pQuest->RewItemId[i], pQuest->RewItemCount[i]));
+
+    // give all reward to player
+    for (std::list<Reward>::iterator it = rewardItems.begin(); it != rewardItems.end(); it++)
+    {
+        ItemPosCountVec dest; // dont move this outside of loop
+        res = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, it->first, it->second);
+        if (res != EQUIP_ERR_OK)
+            break;
+        Item* item = StoreNewItem(dest, it->first, false);
+        takenItems.push_back(Reward2(item, it->second));
     }
 
+    // now take them back
+    for (std::list<Reward2>::iterator it = takenItems.begin(); it != takenItems.end(); it++)
+        DestroyItemCount(it->first, it->second, false);
+
+    if (res != EQUIP_ERR_OK)
+    {
+        SendEquipError(res, NULL, NULL);
+        return false;
+    }
+
+    // all ok
     return true;
 }
 
