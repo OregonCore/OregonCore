@@ -7,7 +7,7 @@
  6. .raf grantlevel
  7. .reload account_referred
 */
-REPLACE INTO command (NAME, SECURITY, HELP) VALUES
+replace into command (name, security, help) values
 ('raf',       2, '.raf - Refer-A-Friend Commands'),
 ('raf info',  2, CONCAT('Syntax: .raf info <account>',
                         '\n\n',
