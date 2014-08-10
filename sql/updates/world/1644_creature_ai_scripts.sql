@@ -5,7 +5,7 @@
 
 -- Cursed Mage - Cast Tainted Mind on Death --
 
-UPDATE `world`.`creature_ai_scripts` SET `action1_param2`=0 WHERE `id`=852410;
+UPDATE `creature_ai_scripts` SET `action1_param2`=0 WHERE `id`=852410;
 
 -- Young Sporebat - Cast Energizing Spores on Death --
 
