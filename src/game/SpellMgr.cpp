@@ -2407,7 +2407,7 @@ void SpellMgr::LoadSpellCustomAttr()
         {
             if (spellInfo->ToolTip[j] && *spellInfo->ToolTip[j])
             {
-                mSpellCustomAttr[i] |= SPELL_ATTR_CU_HAS_VISUAL_BUFF;
+                spellInfo->AttributesEx3 |= SPELL_ATTR_EX3_HAS_VISUAL_EFFECT;
                 break;
             }
         }
@@ -2569,12 +2569,6 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
             spellInfo->EffectImplicitTargetB[1] = 0;
             break;
-        case 32724: // alliance gold flag
-        case 32725: // alliance green flag
-        case 35774: // horde gold flag
-        case 35775: // hode green flag
-            // These four needs to be on an aura slot that is sent to client
-            mSpellCustomAttr[i] |= SPELL_ATTR_CU_HAS_VISUAL_BUFF;
         default:
             break;
         }

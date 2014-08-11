@@ -912,7 +912,7 @@ void Aura::_AddAura()
         m_target->ApplyDiminishingAura(getDiminishGroup(),true);
 
     // Show the buff (if any) on the target
-    if (spellmgr.GetSpellCustomAttr(m_spellProto->Id) & SPELL_ATTR_CU_HAS_VISUAL_BUFF &&
+    if (m_spellProto->AttributesEx3 & SPELL_ATTR_EX3_HAS_VISUAL_EFFECT &&
         (m_spellProto->Effect[GetEffIndex()] != SPELL_EFFECT_APPLY_AREA_AURA_ENEMY || m_target != caster))
     {
         if (!secondaura)                                     // new slot need

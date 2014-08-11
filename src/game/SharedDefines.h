@@ -513,7 +513,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
 #define SPELL_ATTR_EX3_UNK25                      0x02000000            // 25
 #define SPELL_ATTR_EX3_UNK26                      0x04000000            // 26
 #define SPELL_ATTR_EX3_UNK27                      0x08000000            // 27
-#define SPELL_ATTR_EX3_UNK28                      0x10000000            // 28
+#define SPELL_ATTR_EX3_HAS_VISUAL_EFFECT          0x10000000            // 28
 #define SPELL_ATTR_EX3_UNK29                      0x20000000            // 29
 #define SPELL_ATTR_EX3_UNK30                      0x40000000            // 30
 #define SPELL_ATTR_EX3_UNK31                      0x80000000            // 31
@@ -2309,14 +2309,26 @@ enum CorpseDynFlags
     CORPSE_DYNFLAG_LOOTABLE        = 0x0001
 };
 
-// Passive Spell codes explicit used in code
-#define SPELL_ID_GENERIC_LEARN                  483
-#define SPELL_ID_PASSIVE_BATTLE_STANCE          2457
-#define SPELL_ID_PASSIVE_RESURRECTION_SICKNESS  15007
-#define SPELL_ID_WEAPON_SWITCH_COOLDOWN_1_5s    6119
-#define SPELL_ID_WEAPON_SWITCH_COOLDOWN_1_0s    6123
-#define SPELL_ID_DUEL_BEG                       7267       // Beg
-#define SPELL_ID_TRANSPARENCY_50                37800      // 50% Transparency
+// Some magic spells with explicit use in code
+enum
+{
+    SPELL_DEATH_TOUCH                   =     5, // kill target
+    SPELL_SUICIDE                       =     7, // kill caster
+    SPELL_LOGINEFFECT                   =   836,
+    SPELL_OPEN_CHEST                    = 11437,
+    SPELL_OPEN_SAFE                     = 11535,
+    SPELL_OPEN_CAGE                     = 11792,
+    SPELL_OPEN_BOOTY_CHEST              =  5107,
+    SPELL_OPEN_STRONGBOX                =  8517,
+    SPELL_SUMMON_FRIEND                 = 45927,
+    SPELL_GENERIC_LEARN                 =   483,
+    SPELL_PASSIVE_BATTLE_STANCE         =  2457,
+    SPELL_PASSIVE_RESURRECTION_SICKNESS = 15007,
+    SPELL_WEAPON_SWITCH_COOLDOWN_1_5s   =  6119,
+    SPELL_WEAPON_SWITCH_COOLDOWN_1_0s   =  6123,
+    SPELL_DUEL_BEG                      =  7267, // beg
+    SPELL_PERMANENT_INVISIBILITY        = 44036
+};
 
 enum WeatherType
 {

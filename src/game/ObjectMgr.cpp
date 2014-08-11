@@ -1779,7 +1779,7 @@ void ObjectMgr::LoadItemPrototypes()
         }
 
         // special format
-        if (proto->Spells[0].SpellId == SPELL_ID_GENERIC_LEARN)
+        if (proto->Spells[0].SpellId == SPELL_GENERIC_LEARN)
         {
             // spell_1
             if (proto->Spells[0].SpellTrigger != ITEM_SPELLTRIGGER_ON_USE)
@@ -1816,7 +1816,7 @@ void ObjectMgr::LoadItemPrototypes()
                     const_cast<ItemPrototype*>(proto)->Spells[1].SpellTrigger = ITEM_SPELLTRIGGER_ON_USE;
                 }
                 // allowed only in special format
-                else if (proto->Spells[1].SpellId == SPELL_ID_GENERIC_LEARN)
+                else if (proto->Spells[1].SpellId == SPELL_GENERIC_LEARN)
                 {
                     sLog.outErrorDb("Item (Entry: %u) has broken spell in spellid_%d (%u)",i,1+1,proto->Spells[1].SpellId);
                     const_cast<ItemPrototype*>(proto)->Spells[0].SpellId = 0;
@@ -1862,7 +1862,7 @@ void ObjectMgr::LoadItemPrototypes()
                         const_cast<ItemPrototype*>(proto)->Spells[j].SpellId = 0;
                     }
                     // allowed only in special format
-                    else if (proto->Spells[j].SpellId == SPELL_ID_GENERIC_LEARN)
+                    else if (proto->Spells[j].SpellId == SPELL_GENERIC_LEARN)
                     {
                         sLog.outErrorDb("Item (Entry: %u) has broken spell in spellid_%d (%u)",i,j+1,proto->Spells[j].SpellId);
                         const_cast<ItemPrototype*>(proto)->Spells[j].SpellId = 0;

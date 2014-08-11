@@ -24,16 +24,7 @@
 #include "SpellMgr.h"
 #include "SharedDefines.h"
 
-// Some Special Spells
-#define SPELL_LOGINEFFECT         836
-#define SPELL_OPEN_CHEST        11437
-#define SPELL_OPEN_SAFE         11535
-#define SPELL_OPEN_CAGE         11792
-#define SPELL_OPEN_BOOTY_CHEST   5107
-#define SPELL_OPEN_STRONGBOX     8517
-#define SPELL_SUMMON_FRIEND     45927
-
-#define MAX_SPELL_ID    60000
+static const uint32 MAX_SPELL_ID = 53085;
 
 class Unit;
 class Player;

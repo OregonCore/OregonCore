@@ -131,14 +131,14 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
         // no script or script not process request by self
 
         // special learning case
-        if (pItem->GetProto()->Spells[0].SpellId == SPELL_ID_GENERIC_LEARN)
+        if (pItem->GetProto()->Spells[0].SpellId == SPELL_GENERIC_LEARN)
         {
             uint32 learning_spell_id = pItem->GetProto()->Spells[1].SpellId;
 
-            SpellEntry const *spellInfo = sSpellStore.LookupEntry(SPELL_ID_GENERIC_LEARN);
+            SpellEntry const *spellInfo = sSpellStore.LookupEntry(SPELL_GENERIC_LEARN);
             if (!spellInfo)
             {
-                sLog.outError("Item (Entry: %u) has invalid spell id %u, ignoring ",proto->ItemId, SPELL_ID_GENERIC_LEARN);
+                sLog.outError("Item (Entry: %u) has invalid spell id %u, ignoring ",proto->ItemId, SPELL_GENERIC_LEARN);
                 pUser->SendEquipError(EQUIP_ERR_NONE,pItem,NULL);
                 return;
             }

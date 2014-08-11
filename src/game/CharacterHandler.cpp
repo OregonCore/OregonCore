@@ -740,7 +740,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
 
     if (!pCurrChar->isGMVisible())
     {
-        pCurrChar->AddAura(SPELL_ID_TRANSPARENCY_50, pCurrChar);
+        pCurrChar->AddAura(SPELL_PERMANENT_INVISIBILITY, pCurrChar);
         SendNotification(LANG_INVISIBLE_INVISIBLE);
     }
 

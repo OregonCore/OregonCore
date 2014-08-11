@@ -1366,7 +1366,7 @@ void Player::setDeathState(DeathState s)
 
         // restore default warrior stance
         if (getClass() == CLASS_WARRIOR)
-            CastSpell(this,SPELL_ID_PASSIVE_BATTLE_STANCE,true);
+            CastSpell(this,SPELL_PASSIVE_BATTLE_STANCE,true);
     }
 }
 
@@ -4163,7 +4163,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     if (int32(getLevel()) >= startLevel)
     {
         // set resurrection sickness
-        CastSpell(this, SPELL_ID_PASSIVE_RESURRECTION_SICKNESS, true);
+        CastSpell(this, SPELL_PASSIVE_RESURRECTION_SICKNESS, true);
 
         // not full duration
         if (int32(getLevel()) < startLevel+9)
@@ -4172,7 +4172,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
 
             for (int i =0; i < 3; ++i)
             {
-                if (Aura* Aur = GetAura(SPELL_ID_PASSIVE_RESURRECTION_SICKNESS,i))
+                if (Aura* Aur = GetAura(SPELL_PASSIVE_RESURRECTION_SICKNESS,i))
                 {
                     Aur->SetAuraDuration(delta*IN_MILLISECONDS);
                     Aur->UpdateAuraDuration();
@@ -10814,7 +10814,7 @@ Item* Player::EquipItem(uint16 pos, Item *pItem, bool update)
 
             if (pProto && isInCombat() && (pProto->Class == ITEM_CLASS_WEAPON || pProto->InventoryType == INVTYPE_RELIC) && m_weaponChangeTimer == 0)
             {
-                uint32 cooldownSpell = getClass() == CLASS_ROGUE ? SPELL_ID_WEAPON_SWITCH_COOLDOWN_1_0s : SPELL_ID_WEAPON_SWITCH_COOLDOWN_1_5s;
+                uint32 cooldownSpell = getClass() == CLASS_ROGUE ? SPELL_WEAPON_SWITCH_COOLDOWN_1_0s : SPELL_WEAPON_SWITCH_COOLDOWN_1_5s;
                 SpellEntry const* spellProto = sSpellStore.LookupEntry(cooldownSpell);
 
                 if (!spellProto)
@@ -15453,7 +15453,7 @@ void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
     }
 
     if (getClass() == CLASS_WARRIOR)
-        CastSpell(this,SPELL_ID_PASSIVE_BATTLE_STANCE,true);
+        CastSpell(this,SPELL_PASSIVE_BATTLE_STANCE,true);
 }
 
 void Player::LoadCorpse()
