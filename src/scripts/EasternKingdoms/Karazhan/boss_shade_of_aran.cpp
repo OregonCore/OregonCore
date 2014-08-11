@@ -19,8 +19,8 @@
 
 /* ScriptData
 SDName: Boss_Shade_of_Aran
-SD%Complete: 95
-SDComment: Flame wreath missing cast animation, mods won't triggere.
++SD%Complete: 98
++SDComment: Elementals should die when Aran is killed.
 SDCategory: Karazhan
 EndScriptData */
 
@@ -53,7 +53,8 @@ EndScriptData */
 #define SPELL_CHAINSOFICE   29991
 #define SPELL_DRAGONSBREATH 29964
 #define SPELL_MASSSLOW      30035
-#define SPELL_FLAME_WREATH  29946
+#define SPELL_FLAME_WREATH  30004 // triggers 29946 on targets
+#define SPELL_SUMMON_BLIZZ  29969 // script target on npc 17161 - triggers spell 29952 on target
 #define SPELL_AOE_CS        29961
 #define SPELL_PLAYERPULL    32265
 #define SPELL_AEXPLOSION    29973
@@ -66,7 +67,7 @@ EndScriptData */
 #define SPELL_AOE_PYROBLAST 29978
 
 //Creature Spells
-#define SPELL_CIRCULAR_BLIZZARD     29951                   //29952 is the REAL circular blizzard that leaves persistant blizzards that last for 10 seconds
+#define SPELL_CIRCULAR_BLIZZARD     29952
 #define SPELL_WATERBOLT             31012
 #define SPELL_SHADOW_PYRO           29978
 
@@ -204,7 +205,7 @@ struct boss_aranAI : public ScriptedAI
                 FlameWreathTarget[i] = (*itr)->GetGUID();
                 FWTargPosX[i] = (*itr)->GetPositionX();
                 FWTargPosY[i] = (*itr)->GetPositionY();
-                DoCast((*itr), SPELL_FLAME_WREATH, true);
+                me->CastSpell((*itr), SPELL_FLAME_WREATH, false);
                 ++i;
             }
         }
@@ -278,10 +279,8 @@ struct boss_aranAI : public ScriptedAI
 
         //Drink Inturrupt Timer
         if (Drinking && !DrinkInturrupted)
-        {
             if (DrinkInturruptTimer >= diff)
                 DrinkInturruptTimer -= diff;
-        }
         else
         {
             me->SetStandState(UNIT_STAND_STATE_STAND);
@@ -374,16 +373,16 @@ struct boss_aranAI : public ScriptedAI
             switch (LastSuperSpell)
             {
                 case SUPER_AE:
-                    DoScriptText(RAND(SAY_EXPLOSION1,SAY_EXPLOSION2), me);
+                    DoScriptText(RAND(SAY_EXPLOSION1, SAY_EXPLOSION2), me);
 
                     DoCast(me, SPELL_BLINK_CENTER, true);
                     DoCast(me, SPELL_PLAYERPULL, true);
                     DoCast(me, SPELL_MASSSLOW, true);
-                    DoCast(me, SPELL_AEXPLOSION, false);
+                    DoCast(SPELL_AEXPLOSION);
                     break;
 
                 case SUPER_FLAME:
-                    DoScriptText(RAND(SAY_FLAMEWREATH1,SAY_FLAMEWREATH2), me);
+                    DoScriptText(RAND(SAY_FLAMEWREATH1, SAY_FLAMEWREATH2), me);
 
                     FlameWreathTimer = 20000;
                     FlameWreathCheckTime = 500;
@@ -396,12 +395,18 @@ struct boss_aranAI : public ScriptedAI
                     break;
 
                 case SUPER_BLIZZARD:
-                    DoScriptText(RAND(SAY_BLIZZARD1,SAY_BLIZZARD2), me);
+                    DoScriptText(RAND(SAY_BLIZZARD1, SAY_BLIZZARD2), me);
 
-                    if (Creature* pSpawn = me->SummonCreature(CREATURE_ARAN_BLIZZARD, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 25000))
+                    Creature* Blizzard = NULL;
+                    Blizzard = me->SummonCreature(CREATURE_ARAN_BLIZZARD, -11179.080f, -1905.279f, 232.008f, 2.9f, TEMPSUMMON_TIMED_DESPAWN, 25000);
+                    if (Blizzard)
                     {
-                        pSpawn->setFaction(me->getFaction());
-                        pSpawn->CastSpell(pSpawn, SPELL_CIRCULAR_BLIZZARD, false);
+                        Blizzard->SetInCombatWithZone();
+                        Blizzard->setFaction(me->getFaction());
+                        me->CastSpell(Blizzard, SPELL_SUMMON_BLIZZ, false);
+                                                Blizzard->CastSpell(Blizzard, 29952, false);
+                        Blizzard->CastSpell(Blizzard, 29952, false);
+                        Blizzard->GetMotionMaster()->MovePath(90000, false);
                     }
                     break;
             }
@@ -413,29 +418,77 @@ struct boss_aranAI : public ScriptedAI
         {
             ElementalsSpawned = true;
 
-            for (uint32 i = 0; i < 4; ++i)
+           Creature* ElementalOne   = NULL;
+            Creature* ElementalTwo   = NULL;
+            Creature* ElementalThree = NULL;
+            Creature* ElementalFour  = NULL;
+
+            ElementalOne     = me->SummonCreature(CREATURE_WATER_ELEMENTAL, -11168.1f, -1939.29f, 232.092f, 1.46f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
+            ElementalTwo     = me->SummonCreature(CREATURE_WATER_ELEMENTAL, -11138.2f, -1915.38f, 232.092f, 3.00f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
+            ElementalThree   = me->SummonCreature(CREATURE_WATER_ELEMENTAL, -11161.7f, -1885.36f, 232.092f, 4.59f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
+            ElementalFour    = me->SummonCreature(CREATURE_WATER_ELEMENTAL, -11192.4f, -1909.36f, 232.092f, 6.19f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
+
+            if (ElementalOne)
             {
-                if (Creature* pUnit = me->SummonCreature(CREATURE_WATER_ELEMENTAL, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 90000))
-                {
-                    pUnit->Attack(me->getVictim(), true);
-                    pUnit->setFaction(me->getFaction());
-                }
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (!pTarget)
+                    return;
+
+                DoStartNoMovement(pTarget);
+                ElementalOne->SetInCombatWithZone();
+                ElementalOne->CombatStart(pTarget);
+                ElementalOne->setFaction(me->getFaction());
+                ElementalOne->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                ElementalOne->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+                ElementalOne->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
+            }
+
+            if (ElementalTwo)
+            {
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (!pTarget)
+                    return;
+
+                DoStartNoMovement(pTarget);
+                ElementalTwo->SetInCombatWithZone();
+                ElementalTwo->CombatStart(pTarget);
+                ElementalTwo->setFaction(me->getFaction());
+                ElementalTwo->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                ElementalTwo->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+                ElementalTwo->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
+            }
+
+            if (ElementalThree)
+            {
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (!pTarget)
+                    return;
+
+                DoStartNoMovement(pTarget);
+                ElementalThree->SetInCombatWithZone();
+                ElementalThree->CombatStart(pTarget);
+                ElementalThree->setFaction(me->getFaction());
+                ElementalThree->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                ElementalThree->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+                ElementalThree->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
+            }
+
+            if (ElementalFour)
+            {
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (!pTarget)
+                    return;
+
+                DoStartNoMovement(pTarget);
+                ElementalFour->SetInCombatWithZone();
+                ElementalFour->CombatStart(pTarget);
+                ElementalFour->setFaction(me->getFaction());
+                ElementalFour->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                ElementalFour->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+                ElementalFour->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
             }
 
             DoScriptText(SAY_ELEMENTALS, me);
-        }
-
-        if (BerserkTimer <= diff)
-        {
-            for (uint32 i = 0; i < 5; ++i)
-            {
-                if (Creature* pUnit = me->SummonCreature(CREATURE_SHADOW_OF_ARAN, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-                {
-                    pUnit->Attack(me->getVictim(), true);
-                    pUnit->setFaction(me->getFaction());
-                }
-            }
-
             DoScriptText(SAY_TIMEOVER, me);
 
             BerserkTimer = 60000;
@@ -571,4 +624,3 @@ void AddSC_boss_shade_of_aran()
     newscript->GetAI = &GetAI_water_elemental;
     newscript->RegisterSelf();
 }
-

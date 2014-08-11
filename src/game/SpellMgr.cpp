@@ -2569,6 +2569,12 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
             spellInfo->EffectImplicitTargetB[1] = 0;
             break;
+        case 29955: // "Arcane Missiles implict correctly target"
+            spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
+            break;
+        case 33206: // "Pain Suppression dispel resistance"
+            spellInfo->AttributesEx4 |= SPELL_ATTR_EX4_NOT_STEALABLE;
+            break;
         default:
             break;
         }
