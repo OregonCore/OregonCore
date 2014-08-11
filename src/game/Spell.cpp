@@ -4838,17 +4838,14 @@ SpellCastResult Spell::CheckRange(bool strict)
             return !m_IsTriggeredSpell ? SPELL_FAILED_UNIT_NOT_INFRONT : SPELL_FAILED_DONT_REPORT;
     }
 
-    if (m_targets.HasDst())
+    WorldLocation destPos = m_targets.m_dstPos;
+    // @todo: verify that such spells really use bounding radius
+    if (m_targets.m_targetMask == TARGET_FLAG_DEST_LOCATION && destPos.m_positionX != 0 && destPos.m_positionY != 0 && destPos.m_positionZ != 0)
     {
-        /* 1.05225f is a magic constant obtainied by testing  how far
-           client display green / read area, to fit into this, we need this
-           magic numeric contant */
-        float dist = m_caster->GetDistance(m_targets.m_dstPos) * 1.05225f;
-        DEBUG_LOG("DIST : REAL: %f MAX: %f MIN: %f", dist, max_range, min_range);
-        if (dist > max_range)
-            return !m_IsTriggeredSpell ? SPELL_FAILED_OUT_OF_RANGE : SPELL_FAILED_DONT_REPORT;
-        if (dist < min_range)
-            return !m_IsTriggeredSpell ? SPELL_FAILED_TOO_CLOSE : SPELL_FAILED_DONT_REPORT;
+        if (!m_caster->IsWithinDist3d(destPos.m_positionX, destPos.m_positionY, destPos.m_positionZ, max_range))
+            return SPELL_FAILED_OUT_OF_RANGE;
+        if (min_range && m_caster->IsWithinDist3d(destPos.m_positionX, destPos.m_positionY, destPos.m_positionZ, min_range))
+            return SPELL_FAILED_TOO_CLOSE;
     }
 
     return SPELL_CAST_OK; 
