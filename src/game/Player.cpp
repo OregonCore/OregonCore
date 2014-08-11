@@ -19010,6 +19010,20 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
         }
     }
 
+    
+    if (u->GetVisibility() == VISIBILITY_OFF)
+    {
+        // GMs see any players, not higher GMs and all units
+        if (isGameMaster())
+        {
+            if (u->GetTypeId() == TYPEID_PLAYER)
+                return u->ToPlayer()->GetSession()->GetSecurity() <= GetSession()->GetSecurity();
+            else
+                return true;
+        }
+        return false;
+    }
+
     // GM's can see everyone with invisibilitymask with less or equal security level
     if (m_mover->m_invisibilityMask || u->m_invisibilityMask)
     {
