@@ -285,7 +285,14 @@ inline bool IsAreaOfEffectSpell(SpellEntry const *spellInfo)
 
 inline bool IsFarUnitTargetEffect(uint32 effect)
 {
-    return (effect == SPELL_EFFECT_SUMMON_PLAYER);
+    switch (effect)
+    {
+        case SPELL_EFFECT_SUMMON_PLAYER:
+        case SPELL_EFFECT_RESURRECT_NEW:
+            return true;
+    }
+
+    return false;
 }
 
 inline bool IsFarDestTargetEffect(uint32 effect)
