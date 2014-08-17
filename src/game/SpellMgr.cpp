@@ -2415,6 +2415,13 @@ void SpellMgr::LoadSpellCustomAttr()
         if (spellInfo->SpellVisual == 3879)
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_CONE_BACK;
 
+		// Natural Shapeshifter
+		if (spellInfo->Id == 16834 || spellInfo->Id == 16835)
+		{
+			SpellEntry const* baseInfo = sSpellStore.LookupEntry(16833);
+			spellInfo->DurationIndex = baseInfo>DurationIndex;
+		}
+
         switch(i)
         {
         case 26029: // dark glare
