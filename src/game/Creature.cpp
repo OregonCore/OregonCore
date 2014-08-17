@@ -1614,7 +1614,7 @@ void Creature::ForcedDespawn(uint32 timeMSToDespawn)
     RemoveCorpse(false);
 }
 
-bool Creature::IsImmunedToSpell(SpellEntry const* spellInfo, bool useCharges)
+bool Creature::IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges)
 {
     if (!spellInfo)
         return false;
@@ -1622,15 +1622,29 @@ bool Creature::IsImmunedToSpell(SpellEntry const* spellInfo, bool useCharges)
     if (GetCreatureInfo()->MechanicImmuneMask & (1 << (spellInfo->Mechanic - 1)))
         return true;
 
-    return Unit::IsImmunedToSpell(spellInfo, useCharges);
+    return Unit::IsImmuneToSpell(spellInfo, useCharges);
 }
 
-bool Creature::IsImmunedToSpellEffect(SpellEntry const* spellInfo, uint32 index) const
+bool Creature::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const
 {
-    if (GetCreatureInfo()->MechanicImmuneMask & (1 << (spellInfo->EffectMechanic[index] - 1)))
+    if (!castOnSelf && GetCreatureInfo()->MechanicImmuneMask & (1 << (spellInfo->EffectMechanic[index] - 1)))
         return true;
 
-    return Unit::IsImmunedToSpellEffect(spellInfo, index);
+    // Taunt immunity special flag check
+    if (GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_TAUNT)
+    {
+        // Taunt aura apply check
+        if (spellInfo->Effect[index] == SPELL_EFFECT_APPLY_AURA)
+        {
+            if (spellInfo->EffectApplyAuraName[index] == SPELL_AURA_MOD_TAUNT)
+                return true;
+        }
+        // Spell effect taunt check
+        else if (spellInfo->Effect[index] == SPELL_EFFECT_ATTACK_ME)
+            return true;
+    }
+
+    return Unit::IsImmuneToSpellEffect(spellInfo, index, castOnSelf);
 }
 
 SpellEntry const *Creature::reachWithSpellAttack(Unit *pVictim)

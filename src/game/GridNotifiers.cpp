@@ -296,7 +296,7 @@ void DynamicObjectUpdater::VisitHelper(Unit* target)
     }
 
     // Check target immune to spell or aura
-    if (target->IsImmunedToSpell(spellInfo) || target->IsImmunedToSpellEffect(spellInfo, eff_index))
+    if (target->IsImmuneToSpell(spellInfo) || target->IsImmuneToSpellEffect(spellInfo, eff_index, false))
         return;
     // Apply PersistentAreaAura on target
     PersistentAreaAura* Aur = new PersistentAreaAura(spellInfo, eff_index, NULL, target, i_dynobject.GetCaster());

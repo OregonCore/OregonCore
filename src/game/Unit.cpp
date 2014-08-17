@@ -2731,7 +2731,7 @@ SpellMissInfo Unit::SpellHitResult(Unit *pVictim, SpellEntry const *spell, bool 
         return SPELL_MISS_EVADE;
 
     // Check for immune (use charges)
-    if (pVictim->IsImmunedToSpell(spell,true))
+    if (pVictim->IsImmuneToSpell(spell,true))
         return SPELL_MISS_IMMUNE;
 
     // All positive spells can`t miss
@@ -8313,7 +8313,7 @@ bool Unit::IsImmunedToDamage(SpellSchoolMask shoolMask, bool /*useCharges*/)
     return false;
 }
 
-bool Unit::IsImmunedToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
+bool Unit::IsImmuneToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
 {
     if (!spellInfo)
         return false;
@@ -8352,7 +8352,7 @@ bool Unit::IsImmunedToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
     return false;
 }
 
-bool Unit::IsImmunedToSpellEffect(SpellEntry const* spellInfo, uint32 index) const
+bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const
 {
     if (!spellInfo)
         return false;
@@ -12554,22 +12554,22 @@ void Unit::AddAura(uint32 spellId, Unit* target)
     if (!spellInfo)
         return;
 
-    if (target->IsImmunedToSpell(spellInfo))
+    if (target->IsImmuneToSpell(spellInfo))
         return;
 
     for (uint32 i = 0; i < 3; ++i)
     {
         if (spellInfo->Effect[i] == SPELL_EFFECT_APPLY_AURA)
         {
-            if (target->IsImmunedToSpellEffect(spellInfo, i))
+            if (target->IsImmuneToSpellEffect(spellInfo, i, false))
                 continue;
 
-            /*if (spellInfo->EffectImplicitTargetA[i] == TARGET_UNIT_CASTER)
+            if (spellInfo->EffectImplicitTargetA[i] == TARGET_UNIT_CASTER)
             {
                 Aura *Aur = CreateAura(spellInfo, i, NULL, this, this);
                 AddAura(Aur);
             }
-            else*/
+            else
             {
                 Aura *Aur = CreateAura(spellInfo, i, NULL, target, this);
                 target->AddAura(Aur);

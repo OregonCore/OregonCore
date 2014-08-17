@@ -483,10 +483,10 @@ class Creature : public Unit, public GridObject<Creature>
         bool CanInteractWithBattleMaster(Player* player, bool msg) const;
         bool CanTrainAndResetTalentsOf(Player* pPlayer) const;
         bool IsOutOfThreatArea(Unit* pVictim) const;
-        bool IsImmunedToSpell(SpellEntry const* spellInfo, bool useCharges = false);
-                                                            // redefine Unit::IsImmunedToSpell
-        bool IsImmunedToSpellEffect(SpellEntry const* spellInfo, uint32 index) const;
-                                                            // redefine Unit::IsImmunedToSpellEffect
+
+        bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false);
+        bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const;
+
         bool isElite() const
         {
             if (isPet())

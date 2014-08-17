@@ -146,8 +146,23 @@ void Totem::UnSummon()
     AddObjectToRemoveList();
 }
 
-bool Totem::IsImmunedToSpellEffect(SpellEntry const* spellInfo, uint32 index) const
+bool Totem::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const
 {
+    switch (spellInfo->Effect[index])
+    {
+        case SPELL_EFFECT_ATTACK_ME:
+        // immune to any type of regeneration effects hp/mana etc.
+        case SPELL_EFFECT_HEAL:
+        case SPELL_EFFECT_HEAL_MAX_HEALTH:
+        case SPELL_EFFECT_HEAL_MECHANICAL:
+        case SPELL_EFFECT_HEAL_PCT:
+        case SPELL_EFFECT_ENERGIZE:
+        case SPELL_EFFECT_ENERGIZE_PCT:
+            return true;
+        default:
+            break;
+    }
+
     // @todo possibly all negative auras immuned?
     switch(spellInfo->EffectApplyAuraName[index])
     {
@@ -159,6 +174,7 @@ bool Totem::IsImmunedToSpellEffect(SpellEntry const* spellInfo, uint32 index) co
         default:
             break;
     }
-    return Creature::IsImmunedToSpellEffect(spellInfo, index);
+
+    return Creature::IsImmuneToSpellEffect(spellInfo, index, castOnSelf);
 }
 
