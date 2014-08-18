@@ -2419,7 +2419,7 @@ void SpellMgr::LoadSpellCustomAttr()
 		if (spellInfo->Id == 16834 || spellInfo->Id == 16835)
 		{
 			SpellEntry const* baseInfo = sSpellStore.LookupEntry(16833);
-			spellInfo->DurationIndex = baseInfo>DurationIndex;
+			spellInfo->DurationIndex = baseInfo->DurationIndex;
 		}
 
         switch(i)
