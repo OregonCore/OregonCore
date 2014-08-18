@@ -1008,19 +1008,15 @@ bool ChatHandler::HandleGonameCommand(const char* args)
                 }
             }
 
-            // if the player or the player's group is bound to another instance
-            // the player will not be bound to another one
-            InstancePlayerBind *pBind = _player->GetBoundInstance(target->GetMapId(), target->GetDifficulty());
-            if (!pBind)
-            {
-                Group *group = _player->GetGroup();
-                // if no bind exists, create a solo bind
-                InstanceGroupBind *gBind = group ? group->GetBoundInstance(target) : NULL;                // if no bind exists, create a solo bind
-                if (!gBind)
-                    if (InstanceSave *save = sInstanceSaveManager.GetInstanceSave(target->GetInstanceId()))
-                        _player->BindToInstance(save, !save->CanReset());
-            }
-
+            // now we need to switch to target's instance
+            if (InstancePlayerBind *pBind = _player->GetBoundInstance(target->GetMapId(), target->GetDifficulty()))
+                if (InstancePlayerBind* tBind = target->GetBoundInstance(target->GetMapId(), target->GetDifficulty()))
+                    if (pBind != tBind)
+                    {
+                        _player->UnbindInstance(target->GetMapId(), target->GetDifficulty());
+                        _player->BindToInstance(tBind->save, !tBind->save->CanReset());       
+                    }
+            
             _player->SetDifficulty(target->GetDifficulty());
         }
 
@@ -1043,13 +1039,14 @@ bool ChatHandler::HandleGonameCommand(const char* args)
         float x,y,z;
         target->GetPosition(x,y,z);
 
-        if (target->HasUnitMovementFlag(MOVEFLAG_FLYING))
+        if (_player->HasUnitMovementFlag(MOVEFLAG_FLYING) ||
+            target->HasUnitMovementFlag(MOVEFLAG_FLYING))
         {
             WorldPacket data;
             data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
-            data << target->GetPackGUID();
+            data << _player->GetPackGUID();
             data << uint32(0);                                      // unknown
-            target->SendMessageToSet(&data, true);
+            _player->SendMessageToSet(&data, true);
         }
 
         _player->TeleportTo(target->GetMapId(), x, y, z, _player->GetAngle(target), TELE_TO_GM_MODE);
@@ -2149,6 +2146,16 @@ bool ChatHandler::HandleTeleCommand(const char * args)
     // save only in non-flight case
     else
         _player->SaveRecallPosition();
+
+    // let gm fly remain
+    if (_player->HasUnitMovementFlag(MOVEFLAG_FLYING))
+    {
+        WorldPacket data;
+        data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
+        data << _player->GetPackGUID();
+        data << uint32(0);                                      // unknown
+        _player->SendMessageToSet(&data, true);
+    }
 
     _player->TeleportTo(tele->mapId, tele->position_x, tele->position_y, tele->position_z, tele->orientation);
     return true;
