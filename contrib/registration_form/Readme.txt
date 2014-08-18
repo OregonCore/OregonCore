@@ -1,6 +1,6 @@
 = Oregon Core -- Account registration form =
 
-Copyright (C) Oregon Core (http://www.oregoncore.com)
+This file is part of the OregonCore Project. See AUTHORS file for Copyright information
 
 Use either of the two scripts, not both :)
 

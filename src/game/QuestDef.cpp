@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -178,17 +176,17 @@ uint32 Quest::XPValue (Player *pPlayer) const
                 fullxp = RewMoneyMaxLevel / 0.6f;
 
             if (pLevel <= qLevel + 5)
-                return (uint32)fullxp;
+                return uint32(ceilf(fullxp));
             else if (pLevel == qLevel + 6)
-                return (uint32)(fullxp * 0.8f);
+                return uint32(ceilf(fullxp * 0.8f));
             else if (pLevel == qLevel + 7)
-                return (uint32)(fullxp * 0.6f);
+                return uint32(ceilf(fullxp * 0.6f));
             else if (pLevel == qLevel + 8)
-                return (uint32)(fullxp * 0.4f);
+                return uint32(ceilf(fullxp * 0.4f));
             else if (pLevel == qLevel + 9)
-                return (uint32)(fullxp * 0.2f);
+                return uint32(ceilf(fullxp * 0.2f));
             else
-                return (uint32)(fullxp * 0.1f);
+                return uint32(ceilf(fullxp * 0.1f));
         }
     }
     return 0;

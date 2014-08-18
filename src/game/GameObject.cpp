@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -208,7 +206,7 @@ void GameObject::Update(uint32 diff)
                     // Arming Time for GAMEOBJECT_TYPE_TRAP (6)
                     Unit* owner = GetOwner();
                     if (owner && owner->isInCombat())
-                        m_cooldownTime = time(NULL) + GetGOInfo()->trap.startDelay;
+                        m_cooldownTime = time(NULL) + GetGOInfo()->trap.cooldown;
                     m_lootState = GO_READY;
                     break;
                 }
@@ -358,9 +356,9 @@ void GameObject::Update(uint32 diff)
                         if (goInfo->trap.spellId)
                             CastSpell(ok, goInfo->trap.spellId);
 
-                        m_cooldownTime = time(NULL) + 4;        // 4 seconds
+                        m_cooldownTime = time(NULL) + (goInfo->trap.cooldown ? goInfo->trap.cooldown : uint32(4));
 
-                        if (owner)  // || goInfo->trap.charges == 1)
+                        if (goInfo->trap.type == 1)
                             SetLootState(GO_JUST_DEACTIVATED);
 
                         if (IsBattleGroundTrap && ok->GetTypeId() == TYPEID_PLAYER)
@@ -428,7 +426,9 @@ void GameObject::Update(uint32 diff)
                     for (; it != end; ++it)
                     {
                         if (Unit* owner = Unit::GetUnit(*this, uint64(*it)))
+						{
                             owner->CastSpell(owner, spellId, false);
+						}
                     }
 
                     m_unique_users.clear();
@@ -442,7 +442,10 @@ void GameObject::Update(uint32 diff)
                 SetRespawnTime(0);
                 Delete();
                 return;
-            }
+			} else {
+				SetRespawnTime(GetRespawnDelay());
+				DestroyForNearbyPlayers();
+			}
 
             //burning flags in some battlegrounds, if you find better condition, just add it
             if (GetGoAnimProgress() > 0)
@@ -621,6 +624,8 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
     float rotation2 = data->rotation2;
     float rotation3 = data->rotation3;
 
+	uint32 spawnTime = data->spawntimesecs;
+
     uint32 animprogress = data->animprogress;
     GOState go_state = data->go_state;
     uint32 artKit = data->artKit;
@@ -635,11 +640,11 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
     {
         m_spawnedByDefault = true;
 
-        if (!GetDespawnPossibility())
+        if (!GetDespawnPossibility() && !GetGOInfo()->IsDespawnAtAction())
         {
             SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
-            m_respawnDelayTime = 0;
-            m_respawnTime = 0;
+			m_respawnDelayTime = 0;
+			m_respawnTime = 0;
         }
         else
         {
@@ -944,6 +949,15 @@ void GameObject::Use(Unit* user)
     Unit* spellCaster = user;
     uint32 spellId = 0;
     bool triggered = false;
+
+    // If cooldown data present in template
+    if (uint32 cooldown = GetCooldown())
+    {
+        if (m_cooldownTime > sWorld.GetGameTime())
+            return;
+
+        m_cooldownTime = sWorld.GetGameTime() + cooldown;
+    }
 
     switch(GetGoType())
     {

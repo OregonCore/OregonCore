@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -4615,16 +4613,6 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
         {
             switch(m_spellInfo->Id)
             {
-                // Improved Mana Gems (Serpent-Coil Braid)
-                case 5497:
-                {
-                    if (!unitTarget)
-                        return;
-
-                    // Mana Surge
-                    m_caster->CastSpell(m_caster, 37445, true);
-                    return;
-                }
                 // Bending Shinbone
                 case 8856:
                 {

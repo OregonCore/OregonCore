@@ -8,9 +8,7 @@ But remember we don't change the header of files in the /dep folder.
 Header for Core Files (even possible without MaNGOS or/and Trinity):
 --- SNIP ---
 /*
- * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -30,9 +28,7 @@ Header for Core Files (even possible without MaNGOS or/and Trinity):
 Header for Script Files:
 --- SNIP ---
 /*
- * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2006-2012 ScriptDev2 <http://www.scriptdev2.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -51,8 +47,7 @@ Header for Script Files:
 
 Header for CMake Files:
 --- SNIP ---
-# Copyright (C) 2008-2014 OregonCore <http://www.oregoncore.com/>
-# Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+# This file is part of the OregonCore Project. See AUTHORS file for Copyright information
 #
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without
