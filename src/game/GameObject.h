@@ -119,7 +119,7 @@ struct GameObjectInfo
             uint32 level;                                   //1
             uint32 radius;                                  //2 radius for trap activation
             uint32 spellId;                                 //3
-            uint32 charges;                                 //4 need respawn (if > 0)
+            uint32 type;                                    //4 0 trap with no despawn after cast. 1 trap despawns after cast. 2 bomb casts on spawn.
             uint32 cooldown;                                //5 time in secs
             uint32 autoCloseTime;                           //6
             uint32 startDelay;                              //7
@@ -362,6 +362,17 @@ struct GameObjectInfo
         } raw;
     };
     uint32 ScriptId;
+
+	// helpers
+    bool IsDespawnAtAction() const
+    {
+        switch (type)
+        {
+            case GAMEOBJECT_TYPE_CHEST: return chest.consumable;
+            case GAMEOBJECT_TYPE_GOOBER: return goober.consumable;
+            default: return false;
+        }
+	}
 
     uint32 GetCharges() const                               // despawn at uses amount
     {
@@ -618,6 +629,16 @@ class GameObject : public WorldObject, public GridObject<GameObject>
                 case GAMEOBJECT_TYPE_SPELL_FOCUS: return GetGOInfo()->spellFocus.linkedTrapId;
                 case GAMEOBJECT_TYPE_GOOBER:      return GetGOInfo()->goober.linkedTrapId;
                 default: return 0;
+            }
+        }
+
+        uint32 GetCooldown() const                              // Cooldown preventing goober and traps to cast spell
+        {
+            switch (GetGoType())
+            {
+            case GAMEOBJECT_TYPE_TRAP:      return GetGOInfo()->trap.cooldown;
+            case GAMEOBJECT_TYPE_GOOBER:    return GetGOInfo()->goober.cooldown;
+            default: return 0;
             }
         }
 

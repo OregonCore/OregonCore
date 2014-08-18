@@ -4613,16 +4613,6 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
         {
             switch(m_spellInfo->Id)
             {
-                // Improved Mana Gems (Serpent-Coil Braid)
-                case 5497:
-                {
-                    if (!unitTarget)
-                        return;
-
-                    // Mana Surge
-                    m_caster->CastSpell(m_caster, 37445, true);
-                    return;
-                }
                 // Bending Shinbone
                 case 8856:
                 {

@@ -2467,19 +2467,15 @@ bool Unit::isSpellBlocked(Unit *pVictim, SpellEntry const* /*spellProto*/, Weapo
 float Unit::MeleeSpellMissChance(const Unit *pVictim, WeaponAttackType attType, int32 skillDiff, uint32 spellId) const
 {
     // Calculate hit chance (more correct for chance mod)
-    int32 HitChance;
+    float HitChance = 0.0f;
 
     // PvP - PvE melee chances
-    /*int32 lchance = pVictim->GetTypeId() == TYPEID_PLAYER ? 5 : 7;
-    int32 leveldif = pVictim->getLevelForTarget(this) - getLevelForTarget(pVictim);
-    if (leveldif < 3)
-        HitChance = 95 - leveldif;
+    if (pVictim->GetTypeId() == TYPEID_PLAYER)
+        HitChance = 95.0f + skillDiff * 0.04f;
+    else if (skillDiff < -10)
+        HitChance = 93.0f + (skillDiff + 10) * 0.4f;        // 7% base chance to miss for big skill diff (%6 in 3.x)
     else
-        HitChance = 93 - (leveldif - 2) * lchance;*/
-    if (spellId || attType == RANGED_ATTACK || !haveOffhandWeapon())
-        HitChance = 95.0f;
-    else
-        HitChance = 76.0f;
+        HitChance = 95.0f + skillDiff * 0.1f;
 
     // Hit chance depends from victim auras
     if (attType == RANGED_ATTACK)
@@ -2561,12 +2557,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
     bool canDodge = true;
     bool canParry = true;
     bool canBlock = spell->AttributesEx3 & SPELL_ATTR_EX3_CAN_BE_BLOCKED;
-    //We use SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY until right Attribute was found
-    bool canMiss = !(spell->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY) && cMiss;
-
-    // Same spells cannot be parry/dodge
-    if (spell->Attributes & SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK)
-        return SPELL_MISS_NONE;
+	bool canMiss = !(spell->AttributesEx3 & SPELL_ATTR_EX3_CANT_MISS) && cMiss;
 
     if (canMiss)
     {
@@ -2585,6 +2576,10 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
 
     // Ranged attack can`t miss too
     if (attType == RANGED_ATTACK)
+        return SPELL_MISS_NONE;
+
+    // Some spells cannot be parry/dodge
+    if (spell->Attributes & SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK)
         return SPELL_MISS_NONE;
 
     // Check for attack from behind
@@ -2734,7 +2729,7 @@ SpellMissInfo Unit::SpellHitResult(Unit *pVictim, SpellEntry const *spell, bool 
         return SPELL_MISS_EVADE;
 
     // Check for immune (use charges)
-    if (pVictim->IsImmunedToSpell(spell,true))
+    if (pVictim->IsImmuneToSpell(spell,true))
         return SPELL_MISS_IMMUNE;
 
     // All positive spells can`t miss
@@ -2781,19 +2776,19 @@ SpellMissInfo Unit::SpellHitResult(Unit *pVictim, SpellEntry const *spell, bool 
     return SPELL_MISS_NONE;
 }
 
-/*float Unit::MeleeMissChanceCalc(const Unit *pVictim, WeaponAttackType attType) const
+float Unit::MeleeMissChanceCalc(const Unit *pVictim, WeaponAttackType attType) const
 {
-    if (!pVictim)
+    if(!pVictim)
         return 0.0f;
 
     // Base misschance 5%
-    float misschance = 5.0f;
+    float missChance = 5.0f;
 
-    // DualWield - Melee spells and physical dmg spells - 5% , white damage 24%
+    // DualWield - white damage has additional 19% miss penalty
     if (haveOffhandWeapon() && attType != RANGED_ATTACK)
     {
         bool isNormal = false;
-        for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; i++)
+        for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; ++i)
         {
             if (m_currentSpells[i] && (GetSpellSchoolMask(m_currentSpells[i]->m_spellInfo) & SPELL_SCHOOL_MASK_NORMAL))
             {
@@ -2801,58 +2796,49 @@ SpellMissInfo Unit::SpellHitResult(Unit *pVictim, SpellEntry const *spell, bool 
                 break;
             }
         }
-        if (isNormal || m_currentSpells[CURRENT_MELEE_SPELL])
-            misschance = 5.0f;
-        else
-            misschance = 24.0f;
+        if (!isNormal && !m_currentSpells[CURRENT_MELEE_SPELL])
+            missChance += 19.0f;
     }
 
-    // PvP : PvE melee misschances per leveldif > 2
-    int32 chance = pVictim->GetTypeId() == TYPEID_PLAYER ? 5 : 7;
+    int32 skillDiff = int32(GetWeaponSkillValue(attType, pVictim)) - int32(pVictim->GetDefenseSkillValue(this));
 
-    int32 leveldif = int32(pVictim->getLevelForTarget(this)) - int32(getLevelForTarget(pVictim));
-    if (leveldif < 0)
-        leveldif = 0;
+    // PvP - PvE melee chances
+    if ( pVictim->GetTypeId() == TYPEID_PLAYER )
+        missChance -= skillDiff * 0.04f;
+    else if ( skillDiff < -10 )
+        missChance -= (skillDiff + 10) * 0.4f - 2.0f;       // 7% base chance to miss for big skill diff (%6 in 3.x)
+     else
+        missChance -=  skillDiff * 0.1f;
 
-    // Hit chance from attacker based on ratings and auras
-    float m_modHitChance;
+    // Hit chance bonus from attacker based on ratings and auras
     if (attType == RANGED_ATTACK)
-        m_modHitChance = m_modRangedHitChance;
+        missChance -= m_modRangedHitChance;
     else
-        m_modHitChance = m_modMeleeHitChance;
-
-    if (leveldif < 3)
-        misschance += (leveldif - m_modHitChance);
-    else
-        misschance += ((leveldif - 2) * chance - m_modHitChance);
+        missChance -= m_modMeleeHitChance;
 
     // Hit chance for victim based on ratings
     if (pVictim->GetTypeId() == TYPEID_PLAYER)
     {
         if (attType == RANGED_ATTACK)
-            misschance += pVictim->ToPlayer()->GetRatingBonusValue(CR_HIT_TAKEN_RANGED);
+            missChance += ((Player*)pVictim)->GetRatingBonusValue(CR_HIT_TAKEN_RANGED);
         else
-            misschance += pVictim->ToPlayer()->GetRatingBonusValue(CR_HIT_TAKEN_MELEE);
+            missChance += ((Player*)pVictim)->GetRatingBonusValue(CR_HIT_TAKEN_MELEE);
     }
 
     // Modify miss chance by victim auras
-    if (attType == RANGED_ATTACK)
-        misschance -= pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_RANGED_HIT_CHANCE);
+    if(attType == RANGED_ATTACK)
+        missChance -= pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_RANGED_HIT_CHANCE);
     else
-        misschance -= pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_MELEE_HIT_CHANCE);
-
-    // Modify miss chance from skill difference (bonus from skills is 0.04%)
-    int32 skillBonus = int32(GetWeaponSkillValue(attType,pVictim)) - int32(pVictim->GetDefenseSkillValue(this));
-    misschance -= skillBonus * 0.04f;
+        missChance -= pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_MELEE_HIT_CHANCE);
 
     // Limit miss chance from 0 to 60%
-    if (misschance < 0.0f)
+    if (missChance < 0.0f)
         return 0.0f;
-    if (misschance > 60.0f)
+    if (missChance > 60.0f)
         return 60.0f;
 
-    return misschance;
-}*/
+    return missChance;
+}
 
 uint32 Unit::GetDefenseSkillValue(Unit const* target) const
 {
@@ -8325,7 +8311,7 @@ bool Unit::IsImmunedToDamage(SpellSchoolMask shoolMask, bool /*useCharges*/)
     return false;
 }
 
-bool Unit::IsImmunedToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
+bool Unit::IsImmuneToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
 {
     if (!spellInfo)
         return false;
@@ -8364,7 +8350,7 @@ bool Unit::IsImmunedToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
     return false;
 }
 
-bool Unit::IsImmunedToSpellEffect(SpellEntry const* spellInfo, uint32 index) const
+bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const
 {
     if (!spellInfo)
         return false;
@@ -12566,22 +12552,22 @@ void Unit::AddAura(uint32 spellId, Unit* target)
     if (!spellInfo)
         return;
 
-    if (target->IsImmunedToSpell(spellInfo))
+    if (target->IsImmuneToSpell(spellInfo))
         return;
 
     for (uint32 i = 0; i < 3; ++i)
     {
         if (spellInfo->Effect[i] == SPELL_EFFECT_APPLY_AURA)
         {
-            if (target->IsImmunedToSpellEffect(spellInfo, i))
+            if (target->IsImmuneToSpellEffect(spellInfo, i, false))
                 continue;
 
-            /*if (spellInfo->EffectImplicitTargetA[i] == TARGET_UNIT_CASTER)
+            if (spellInfo->EffectImplicitTargetA[i] == TARGET_UNIT_CASTER)
             {
                 Aura *Aur = CreateAura(spellInfo, i, NULL, this, this);
                 AddAura(Aur);
             }
-            else*/
+            else
             {
                 Aura *Aur = CreateAura(spellInfo, i, NULL, target, this);
                 target->AddAura(Aur);

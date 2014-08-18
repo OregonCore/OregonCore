@@ -1040,7 +1040,7 @@ class Unit : public WorldObject
         void HandleEmoteCommand(uint32 anim_id);
         void AttackerStateUpdate (Unit *pVictim, WeaponAttackType attType = BASE_ATTACK, bool extra = false);
 
-        //float MeleeMissChanceCalc(const Unit *pVictim, WeaponAttackType attType) const;
+        float MeleeMissChanceCalc(const Unit *pVictim, WeaponAttackType attType) const;
 
         void CalculateMeleeDamage(Unit *pVictim, uint32 damage, CalcDamageInfo *damageInfo, WeaponAttackType attackType = BASE_ATTACK);
         void DealMeleeDamage(CalcDamageInfo *damageInfo, bool durabilityLoss);
@@ -1494,10 +1494,10 @@ class Unit : public WorldObject
 
         void ApplySpellImmune(uint32 spellId, uint32 op, uint32 type, bool apply);
         void ApplySpellDispelImmunity(const SpellEntry * spellProto, DispelType type, bool apply);
-        virtual bool IsImmunedToSpell(SpellEntry const* spellInfo, bool useCharges = false);
+        virtual bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false);
                                                             // redefined in Creature
         bool IsImmunedToDamage(SpellSchoolMask meleeSchoolMask, bool useCharges = false);
-        virtual bool IsImmunedToSpellEffect(SpellEntry const* spellInfo, uint32 index) const;
+        virtual bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const;
                                                             // redefined in Creature
 
         uint32 CalcArmorReducedDamage(Unit* pVictim, const uint32 damage);
