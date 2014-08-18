@@ -1,5 +1,4 @@
-# Copyright (C) 2006 MySQL AB
-# Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+# This file is part of the OregonCore Project. See AUTHORS file for Copyright information
 #
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without
