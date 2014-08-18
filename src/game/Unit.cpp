@@ -9279,10 +9279,6 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
         // and do it only for real sent packets and use run for run/mounted as client expected
         ++ToPlayer()->m_forced_speed_changes[mtype];
 
-        if (!isInCombat())
-            if (Pet* pet = ToPlayer()->GetPet())
-                pet->SetSpeed(mtype, m_speed_rate[mtype], forced);
-
         switch(mtype)
         {
             case MOVE_WALK:
