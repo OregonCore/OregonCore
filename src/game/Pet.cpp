@@ -96,6 +96,8 @@ m_petType(type), m_duration(0), m_declinedname(NULL)
     m_autospells.clear();
 
     m_isWorldObject = true;
+    m_wasOutdoors = false;
+    m_outdoorBonusCheckTimer = 1000;
 }
 
 Pet::~Pet()
@@ -582,6 +584,26 @@ void Pet::Update(uint32 diff)
         default:
             break;
     }
+
+    // Handle outdoor movements speed bonuses (every 1sec check for change)
+    if (sWorld.getConfig(CONFIG_VMAP_INDOOR_CHECK) && m_owner)
+    {
+        if (m_outdoorBonusCheckTimer <= diff)
+        {
+            bool isOutdoor = GetMap()->IsOutdoors(GetPositionX(), GetPositionY(), GetPositionZ());
+            if ((isOutdoor && !m_wasOutdoors) || (!isOutdoor && m_wasOutdoors))
+            {
+                AuraList const& auras = m_owner->GetAurasByType(SPELL_AURA_REUSED_INCREASE_PET_OUTDOOR_SPEED);
+                for (AuraList::const_iterator it = auras.begin(); it != auras.end(); it++)
+                    (*it)->ApplyModifier(isOutdoor);
+                m_wasOutdoors = isOutdoor;
+            }
+            m_outdoorBonusCheckTimer = 1000;
+        }
+        else
+            m_outdoorBonusCheckTimer -= diff;
+    }
+
     Creature::Update(diff);
 }
 

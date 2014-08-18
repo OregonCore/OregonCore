@@ -251,6 +251,8 @@ class Pet : public Guardian
 
         DeclinedName *m_declinedname;
 
+        bool m_wasOutdoors;
+        uint32 m_outdoorBonusCheckTimer;
     private:
         void SaveToDB(uint32, uint8)                        // overwrited of Creature::SaveToDB     - don't must be called
         {

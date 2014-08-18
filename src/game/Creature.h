@@ -467,7 +467,8 @@ class Creature : public Unit, public GridObject<Creature>
         bool isHunterPet() const{ return m_summonMask & SUMMON_MASK_HUNTER_PET; }
         bool isTotem() const    { return m_summonMask & SUMMON_MASK_TOTEM; }
 
-        Pet* ToPet(){ if (isPet()) return reinterpret_cast<Pet*>(this); else return NULL; }
+        Pet* ToPet() { if (isPet()) return reinterpret_cast<Pet*>(this); else return NULL; }
+        const Pet* ToPet() const { if (isPet()) return reinterpret_cast<const Pet*>(this); else return NULL; }
 
         void SetCorpseDelay(uint32 delay) { m_corpseDelay = delay; }
         bool isRacialLeader() const { return GetCreatureInfo()->RacialLeader; }

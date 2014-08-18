@@ -2575,6 +2575,15 @@ void SpellMgr::LoadSpellCustomAttr()
         case 33206: // "Pain Suppression dispel resistance"
             spellInfo->AttributesEx4 |= SPELL_ATTR_EX4_NOT_STEALABLE;
             break;
+        case 19596: // Bestial Swiftness - append additional aura
+            spellInfo->EffectApplyAuraName[0] = SPELL_AURA_REUSED_INCREASE_PET_OUTDOOR_SPEED;
+            break;
+        case 1206: // "REUSE" - we turn it into 30% outdoor movement speed bonus (for Bestial Swiftness)
+            spellInfo->Effect[0] = SPELL_EFFECT_APPLY_AURA;
+            spellInfo->EffectApplyAuraName[0] = SPELL_AURA_MOD_SPEED_NOT_STACK;
+            spellInfo->EffectBasePoints[0] = 29; // all spells claiming they increase speed by 30% increase it just by 29%
+            spellInfo->Attributes = (SPELL_ATTR_PASSIVE | SPELL_ATTR_OUTDOORS_ONLY);
+            break;
         default:
             break;
         }

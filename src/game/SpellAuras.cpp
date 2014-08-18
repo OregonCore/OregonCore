@@ -306,7 +306,7 @@ pAuraHandler AuraHandler[TOTAL_AURAS]=
     &Aura::HandleAuraModIncreaseHealth,                     //250 SPELL_AURA_MOD_INCREASE_HEALTH_2
     &Aura::HandleNULL,                                      //251 SPELL_AURA_MOD_ENEMY_DODGE
     &Aura::HandleNoImmediateEffect,                         //252 SPELL_AURA_REUSED_BLESSED_LIFE
-    &Aura::HandleUnused,                                    //253 unused
+    &Aura::HandleIncreasePetOutdoorSpeed,                   //253 SPELL_INCREASE_PET_OUTDOOR_SPEED (used for bestial swiftness)
     &Aura::HandleUnused,                                    //254 unused
     &Aura::HandleUnused,                                    //255 unused
     &Aura::HandleUnused,                                    //256 unused
@@ -6639,3 +6639,21 @@ void Aura::UnregisterSingleCastAura()
         m_isSingleTargetAura = false;
     }
 }
+
+void Aura::HandleIncreasePetOutdoorSpeed(bool apply, bool /*Real*/)
+{
+    if (Unit* caster = GetCaster())
+    {
+        if (Player* player = caster->ToPlayer())
+        {
+            if (Pet* pet = player->GetPet())
+            {
+                if (apply)
+                    pet->CastSpell(pet, SPELL_INC_OUTDOOR_SPEED_30, false);
+                else
+                    pet->RemoveAurasDueToSpell(SPELL_INC_OUTDOOR_SPEED_30);
+            }
+        }
+    }
+}
+
