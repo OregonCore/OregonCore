@@ -923,7 +923,9 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
                 else
                     weaponSpeedHitFactor = uint32(GetAttackTime(cleanDamage->attackType)/1000.0f * 3.5f);
 
-                ToPlayer()->RewardRage(damage, weaponSpeedHitFactor, true);
+                // If attack is evaded/parried/dodged DON'T add rage
+                if (cleanDamage->hitOutCome != MELEE_HIT_EVADE && cleanDamage->hitOutCome != MELEE_HIT_PARRY && cleanDamage->hitOutCome != MELEE_HIT_DODGE)
+                    ToPlayer()->RewardRage(damage, weaponSpeedHitFactor, true);
 
                 break;
             }
