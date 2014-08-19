@@ -73,6 +73,7 @@ struct npc_converted_sentryAI : public ScriptedAI
                 if (me->isPet())
                     CAST_PET(me)->SetDuration(7500);
                 Credit = true;
+                me->GetMotionMaster()->MoveConfused();
             } else Timer -= diff;
         }
     }
