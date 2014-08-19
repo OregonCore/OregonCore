@@ -507,11 +507,11 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
                     ROLLBACK(DUMP_FILE_BROKEN);
 
                 const char null[5] = "NULL";
-                if (!changenth(line, 58, null))
-                    ROLLBACK(DUMP_FILE_BROKEN);
                 if (!changenth(line, 59, null))
                     ROLLBACK(DUMP_FILE_BROKEN);
                 if (!changenth(line, 60, null))
+                    ROLLBACK(DUMP_FILE_BROKEN);
+                if (!changenth(line, 61, null))
                     ROLLBACK(DUMP_FILE_BROKEN);
 
                 break;
