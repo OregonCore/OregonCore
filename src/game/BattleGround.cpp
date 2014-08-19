@@ -1000,40 +1000,48 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
 
     RemovePlayerFromResurrectQueue(guid);
 
-    Player *plr = objmgr.GetPlayer(guid);
+    Player *player = objmgr.GetPlayer(guid);
 
-    // should remove spirit of redemption
-    if (plr && plr->HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
-        plr->RemoveSpellsCausingAura(SPELL_AURA_MOD_SHAPESHIFT);
+	if (player)
+	{
+		// should remove spirit of redemption
+		if (player->HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
+			player->RemoveSpellsCausingAura(SPELL_AURA_MOD_SHAPESHIFT);
 
-    if (plr && !plr->isAlive())                              // resurrect on exit
-    {
-        plr->ResurrectPlayer(1.0f);
-        plr->SpawnCorpseBones();
-    }
+		player->RemoveAurasByType(SPELL_AURA_MOUNTED);
 
-    RemovePlayer(plr, guid);                                // BG subclass specific code
+		if (!player->isAlive())                              // resurrect on exit
+		{
+			player->ResurrectPlayer(1.0f);
+			player->SpawnCorpseBones();
+		}
+	} // try to resurrect the offline player. If he is alive, nothing will happen.
+	else ObjectAccessor::Instance().ConvertCorpseForPlayer(guid);
+
+    RemovePlayer(player, guid);                                // BG subclass specific code
 
     if (participant)
     {
-        if (plr)
+        if (player)
         {
-            if (!team) team = plr->GetTeam();
+			player->ClearAfkReports();
+
+            if (!team) team = player->GetTeam();
 
             uint32 bgQueueTypeId = sBattleGroundMgr.BGQueueTypeId(GetTypeID(), GetArenaType());
             // if arena, remove the specific arena auras
             if (isArena())
             {
-                plr->RemoveArenaAuras(true);    // removes debuffs / dots etc., we don't want the player to die after porting out
+                player->RemoveArenaAuras(true);    // removes debuffs / dots etc., we don't want the player to die after porting out
 
                 // summon old pet if there was one and there isn't a current pet
-                if (!plr->GetGuardianPet() && plr->GetTemporaryUnsummonedPetNumber())
+                if (!player->GetGuardianPet() && player->GetTemporaryUnsummonedPetNumber())
                 {
-                    Pet* NewPet = new Pet(plr);
-                    if (!NewPet->LoadPetFromDB(plr, 0, (plr)->GetTemporaryUnsummonedPetNumber(), true))
+                    Pet* NewPet = new Pet(player);
+                    if (!NewPet->LoadPetFromDB(player, 0, (player)->GetTemporaryUnsummonedPetNumber(), true))
                         delete NewPet;
 
-                    (plr)->SetTemporaryUnsummonedPetNumber(0);
+                    (player)->SetTemporaryUnsummonedPetNumber(0);
                 }
 
                 if (isRated() && GetStatus() == STATUS_IN_PROGRESS)
@@ -1042,19 +1050,19 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
                     ArenaTeam * winner_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(GetOtherTeam(team)));
                     ArenaTeam * loser_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(team));
                     if (winner_arena_team && loser_arena_team)
-                        loser_arena_team->MemberLost(plr,winner_arena_team->GetRating());
+                        loser_arena_team->MemberLost(player,winner_arena_team->GetRating());
                 }
             }
 
             WorldPacket data;
             if (SendPacket)
             {
-                sBattleGroundMgr.BuildBattleGroundStatusPacket(&data, this, team, plr->GetBattleGroundQueueIndex(bgQueueTypeId), STATUS_NONE, 0, 0);
-                plr->GetSession()->SendPacket(&data);
+                sBattleGroundMgr.BuildBattleGroundStatusPacket(&data, this, team, player->GetBattleGroundQueueIndex(bgQueueTypeId), STATUS_NONE, 0, 0);
+                player->GetSession()->SendPacket(&data);
             }
 
             // this call is important, because player, when joins to battleground, this method is not called, so it must be called when leaving bg
-            plr->RemoveBattleGroundQueueId(bgQueueTypeId);
+            player->RemoveBattleGroundQueueId(bgQueueTypeId);
         }
         else
         {
@@ -1087,20 +1095,20 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
         // Let others know
         WorldPacket data;
         sBattleGroundMgr.BuildPlayerLeftBattleGroundPacket(&data, guid);
-        SendPacketToTeam(team, &data, plr, false);
+        SendPacketToTeam(team, &data, player, false);
     }
 
-    if (plr)
+    if (player)
     {
         // Do next only if found in battleground
-        plr->SetBattleGroundId(0);                          // We're not in BG.
+        player->SetBattleGroundId(0);                          // We're not in BG.
         // reset destination bg team
-        plr->SetBGTeam(0);
+        player->SetBGTeam(0);
 
         if (Transport)
-            plr->TeleportToBGEntryPoint();
+            player->TeleportToBGEntryPoint();
 
-        sLog.outDetail("BATTLEGROUND: Removed player %s from BattleGround.", plr->GetName());
+        sLog.outDetail("BATTLEGROUND: Removed player %s from BattleGround.", player->GetName());
     }
 
     if (!GetPlayersSize() && !GetInvitedCount(HORDE) && !GetInvitedCount(ALLIANCE))
