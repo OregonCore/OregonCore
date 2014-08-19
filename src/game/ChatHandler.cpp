@@ -117,9 +117,12 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 GetPlayer()->GetName(), msg.c_str());
         }
 
-        // Disabled addon channel?
+        // check if addon messages are disabled
         if (!sWorld.getConfig(CONFIG_ADDON_CHANNEL))
+        {
+            recv_data.rpos();
             return;
+        }
     }
     // LANG_ADDON should not be changed nor be affected by flood control
     else
