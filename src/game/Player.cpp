@@ -7386,7 +7386,7 @@ void Player::CastItemCombatSpell(Unit *target, WeaponAttackType attType, uint32 
 void Player::CastItemCombatSpell(Unit *target, WeaponAttackType attType, uint32 procVictim, uint32 procEx, Item *item, ItemPrototype const * proto, SpellEntry const *spell)
 {
     // Can do effect if any damage done to target
-    if (procVictim & PROC_FLAG_TAKEN_ANY_DAMAGE)
+    if (procVictim & PROC_FLAG_TAKEN_DAMAGE)
     {
         for (uint8 i = 0; i < 5; ++i)
         {
@@ -7449,7 +7449,7 @@ void Player::CastItemCombatSpell(Unit *target, WeaponAttackType attType, uint32 
             else
             {
                 // Can do effect if any damage done to target
-                if (!(procVictim & PROC_FLAG_TAKEN_ANY_DAMAGE))
+                if (!(procVictim & PROC_FLAG_TAKEN_DAMAGE))
                     continue;
             }
 

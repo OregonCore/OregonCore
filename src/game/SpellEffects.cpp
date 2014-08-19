@@ -2039,7 +2039,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
         // Cloak of Shadows
         case 35729 :
         {
-            uint32 dispelMask = GetDispellMask(DISPEL_ALL);
+            uint32 dispelMask = GetDispelMask(DISPEL_ALL);
             Unit::AuraMap& Auras = m_caster->GetAuras();
             for (Unit::AuraMap::iterator iter = Auras.begin(); iter != Auras.end(); ++iter)
             {
@@ -3437,7 +3437,7 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
 
     // Create dispel mask by dispel type
     uint32 dispel_type = m_spellInfo->EffectMiscValue[effIndex];
-    uint32 dispelMask  = GetDispellMask(DispelType(dispel_type));
+    uint32 dispelMask  = GetDispelMask(DispelType(dispel_type));
     Unit::AuraMap const& auras = unitTarget->GetAuras();
     for (Unit::AuraMap::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
     {
@@ -6404,7 +6404,7 @@ void Spell::EffectStealBeneficialBuff(SpellEffIndex effIndex)
 
     std::vector <Aura *> steal_list;
     // Create dispel mask by dispel type
-    uint32 dispelMask  = GetDispellMask(DispelType(m_spellInfo->EffectMiscValue[effIndex]));
+    uint32 dispelMask  = GetDispelMask(DispelType(m_spellInfo->EffectMiscValue[effIndex]));
     Unit::AuraMap const& auras = unitTarget->GetAuras();
     for (Unit::AuraMap::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
     {

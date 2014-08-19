@@ -91,7 +91,7 @@ SpellMgr::SpellMgr()
             case TARGET_UNIT_RAID_CASTER:
                 SpellTargetType[i] = TARGET_TYPE_UNIT_CASTER;
                 break;
-            case TARGET_UNIT_MINIPET:
+            case TARGET_UNIT_TARGET_MINIPET:
             case TARGET_UNIT_TARGET_ALLY:
             case TARGET_UNIT_TARGET_RAID:
             case TARGET_UNIT_TARGET_ANY:
@@ -103,8 +103,8 @@ SpellMgr::SpellMgr()
                 SpellTargetType[i] = TARGET_TYPE_UNIT_TARGET;
                 break;
             case TARGET_UNIT_NEARBY_ENEMY:
+            case TARGET_UNIT_NEARBY_PARTY:
             case TARGET_UNIT_NEARBY_ALLY:
-            case TARGET_UNIT_NEARBY_ALLY_UNK:
             case TARGET_UNIT_NEARBY_ENTRY:
             case TARGET_UNIT_NEARBY_RAID:
                 SpellTargetType[i] = TARGET_TYPE_UNIT_NEARBY;
@@ -1313,41 +1313,41 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const * spellP
 
     /* Check Periodic Auras
 
-    * Both hots and dots can trigger if spell has no PROC_FLAG_SUCCESSFUL_POSITIVE_SPELL
-        nor PROC_FLAG_SUCCESSFUL_NEGATIVE_SPELL_HIT
+    * Both hots and dots can trigger if spell has no PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS
+        nor PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG
 
-    *Only Hots can trigger if spell has PROC_FLAG_SUCCESSFUL_POSITIVE_SPELL
+    *Only Hots can trigger if spell has PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS
 
-    *Only dots can trigger if spell has both positivity flags or PROC_FLAG_SUCCESSFUL_NEGATIVE_SPELL_HIT
+    *Only dots can trigger if spell has both positivity flags or PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG
 
     */
 
-    if (procFlags & PROC_FLAG_ON_DO_PERIODIC)
+    if (procFlags & PROC_FLAG_DONE_PERIODIC)
     {
-        if (EventProcFlag & PROC_FLAG_SUCCESSFUL_NEGATIVE_SPELL_HIT)
+        if (EventProcFlag & PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG)
         {
             if (!(procExtra & PROC_EX_INTERNAL_DOT))
                 return false;
         }
-        else if (EventProcFlag & PROC_FLAG_SUCCESSFUL_POSITIVE_SPELL
+        else if (EventProcFlag & PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS
             && !(procExtra & PROC_EX_INTERNAL_HOT))
             return false;
     }
 
-    if (procFlags & PROC_FLAG_ON_TAKE_PERIODIC)
+    if (procFlags & PROC_FLAG_TAKEN_PERIODIC)
     {
-        if (EventProcFlag & PROC_FLAG_TAKEN_NEGATIVE_SPELL_HIT)
+        if (EventProcFlag & PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG)
         {
             if (!(procExtra & PROC_EX_INTERNAL_DOT))
                 return false;
         }
-        else if (EventProcFlag & PROC_FLAG_TAKEN_POSITIVE_SPELL
+        else if (EventProcFlag & PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_POS
             && !(procExtra & PROC_EX_INTERNAL_HOT))
             return false;
     }
 
     // Always trigger for this
-    if (EventProcFlag & (PROC_FLAG_KILLED | PROC_FLAG_KILL | PROC_FLAG_ON_TRAP_ACTIVATION))
+    if (EventProcFlag & (PROC_FLAG_KILLED | PROC_FLAG_KILL | PROC_FLAG_DONE_TRAP_ACTIVATION))
         return true;
 
     if (spellProcEvent)     // Exist event data

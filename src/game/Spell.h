@@ -576,7 +576,7 @@ class Spell
         ChanceTriggerSpells m_ChanceTriggerSpells;
 
         uint32 m_spellState;
-        uint32 m_timer;
+        int32 m_timer;
 
         float m_castPositionX;
         float m_castPositionY;

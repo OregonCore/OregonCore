@@ -480,7 +480,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
 #define SPELL_ATTR_EX2_UNK27                      0x08000000            // 27 fishing (profession), and enchant (2H) weapon
 #define SPELL_ATTR_EX2_UNK28                      0x10000000            // 28
 #define SPELL_ATTR_EX2_CANT_CRIT                  0x20000000            // 29 Spell can't crit
-#define SPELL_ATTR_EX2_UNK30                      0x40000000            // 30
+#define SPELL_ATTR_EX2_TRIGGERED_CAN_TRIGGER_PROC 0x40000000		    // 30 spell can trigger even if triggered
 #define SPELL_ATTR_EX2_FOOD                       0x80000000            // 31 food, well-fed, and a few others
 
 #define SPELL_ATTR_EX3_UNK0                       0x00000001            // 0
@@ -499,7 +499,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
 #define SPELL_ATTR_EX3_UNK13                      0x00002000            // 13 
 #define SPELL_ATTR_EX3_HONORLESS                  0x00004000            // 14 "Honorless Target" only this spells have this flag
 #define SPELL_ATTR_EX3_AUTO_SHOT                  0x00008000            // 15 Auto Shoot, Shoot, Throw,  - this is autoshot flag
-#define SPELL_ATTR_EX3_UNK16                      0x00010000            // 16
+#define SPELL_ATTR_EX3_CANT_TRIGGER_PROC          0x00010000			// 16 confirmed with many patchnotes
 #define SPELL_ATTR_EX3_NO_INITIAL_AGGRO           0x00020000            // 17 no initial aggro
 #define SPELL_ATTR_EX3_CANT_MISS                  0x00040000            // 18 Spell should always hit its target
 #define SPELL_ATTR_EX3_UNK19                      0x00080000            // 19
@@ -968,8 +968,8 @@ enum Targets
     TARGET_NONE                        = 0,
     TARGET_UNIT_CASTER                 = 1,
     TARGET_UNIT_NEARBY_ENEMY           = 2, // only one spell has that, but regardless, it's a target type after all
-    TARGET_UNIT_NEARBY_ALLY            = 3,
-    TARGET_UNIT_NEARBY_ALLY_UNK        = 4,
+    TARGET_UNIT_NEARBY_PARTY           = 3,
+    TARGET_UNIT_NEARBY_ALLY            = 4,
     TARGET_UNIT_PET                    = 5,
     TARGET_UNIT_TARGET_ENEMY           = 6,
     TARGET_UNIT_AREA_ENTRY_SRC         = 7,
@@ -1053,7 +1053,7 @@ enum Targets
     TARGET_DEST_DEST                   = 87,
     TARGET_DEST_DYNOBJ_NONE            = 88,
     TARGET_DEST_TRAJ                   = 89,
-    TARGET_UNIT_MINIPET                = 90,
+    TARGET_UNIT_TARGET_MINIPET         = 90,
     TARGET_CORPSE_AREA_ENEMY_PLAYER    = 93,
 };
 

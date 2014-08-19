@@ -30,8 +30,6 @@ enum PetType
     MAX_PET_TYPE            = 4
 };
 
-extern char const* petTypeSuffix[MAX_PET_TYPE];
-
 enum PetSaveMode
 {
     PET_SAVE_AS_DELETED       =-1,

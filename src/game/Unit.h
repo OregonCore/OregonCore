@@ -1180,6 +1180,7 @@ class Unit : public WorldObject
 
         virtual void MoveOutOfRange(Player &) {  };
 
+		bool isMoving() const   { return m_movementInfo.HasMovementFlag(MOVEFLAG_MOVING); }
         bool isAlive() const { return (m_deathState == ALIVE); };
         bool isDying() const { return (m_deathState == JUST_DIED); };
         bool isDead() const { return (m_deathState == DEAD || m_deathState == CORPSE); };
