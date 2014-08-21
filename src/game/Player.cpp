@@ -17958,7 +17958,7 @@ void Player::HandleStealthedUnitsDetection()
             continue;
 
         bool hasAtClient = HaveAtClient((*i));
-        bool hasDetected = isVisibleForOrDetect(*i, true);
+        bool hasDetected = canSeeOrDetect(*i, true);
 
         if (hasDetected)
         {
