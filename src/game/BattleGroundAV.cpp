@@ -295,7 +295,7 @@ Creature* BattleGroundAV::AddAVCreature(uint32 cinfoid, uint32 type)
     return creature;
 }
 
-void BattleGroundAV::Update(time_t diff)
+void BattleGroundAV::Update(uint32 diff)
 {
     BattleGround::Update(diff);
 
