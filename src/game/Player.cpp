@@ -5339,7 +5339,7 @@ void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
     {
         if (currVal)
         {
-            SetUInt32Value(PLAYER_SKILL_INDEX(itr->second.pos), MAKE_SKILL_VALUE(currVal, maxVal));
+            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos), MAKE_SKILL_VALUE(currVal, maxVal));
             if (itr->second.uState != SKILL_NEW)
                 itr->second.uState = SKILL_CHANGED;
         }
