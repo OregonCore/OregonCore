@@ -17,7 +17,6 @@
 
 #include "PoolHandler.h"
 #include "ObjectMgr.h"
-#include "ProgressBar.h"
 #include "Log.h"
 #include "MapManager.h"
 #include "Policies/SingletonImp.h"
@@ -603,8 +602,6 @@ void PoolHandler::LoadFromDB()
     count = 0;
     if (!result)
     {
-        barGoLink bar2(1);
-        bar2.step();
 
         sLog.outString(">> Loaded 0 creatures in  pools. DB table `pool_creature` is empty.");
         sLog.outString();
@@ -612,12 +609,10 @@ void PoolHandler::LoadFromDB()
     else
     {
 
-        barGoLink bar2(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
 
-            bar2.step();
 
             uint32 guid    = fields[0].GetUInt32();
             uint32 pool_id = fields[1].GetUInt32();
@@ -666,8 +661,6 @@ void PoolHandler::LoadFromDB()
     count = 0;
     if (!result)
     {
-        barGoLink bar2(1);
-        bar2.step();
 
         sLog.outString(">> Loaded 0 gameobjects in pools. DB table `pool_gameobject` is empty.");
         sLog.outString();
@@ -675,12 +668,10 @@ void PoolHandler::LoadFromDB()
     else
     {
 
-        barGoLink bar2(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
 
-            bar2.step();
 
             uint32 guid    = fields[0].GetUInt32();
             uint32 pool_id = fields[1].GetUInt32();
@@ -737,8 +728,6 @@ void PoolHandler::LoadFromDB()
     count = 0;
     if (!result)
     {
-        barGoLink bar2(1);
-        bar2.step();
 
         sLog.outString(">> Loaded 0 pools in pools");
         sLog.outString();
@@ -746,12 +735,10 @@ void PoolHandler::LoadFromDB()
     else
     {
 
-        barGoLink bar2(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
 
-            bar2.step();
 
             uint32 child_pool_id  = fields[0].GetUInt32();
             uint32 mother_pool_id = fields[1].GetUInt32();

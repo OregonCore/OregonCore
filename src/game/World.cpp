@@ -60,7 +60,6 @@
 #include "Transports.h"
 #include "CreatureEventAIMgr.h"
 #include "ScriptMgr.h"
-#include "ProgressBar.h"
 #include "WardenDataStorage.h"
 
 INSTANTIATE_SINGLETON_1(World);
@@ -1628,20 +1627,16 @@ void World::LoadAutobroadcasts()
 
     if (!result)
     {
-        barGoLink bar(1);
-        bar.step();
 
         sLog.outString();
         sLog.outString(">> Loaded 0 autobroadcasts definitions");
         return;
     }
 
-    barGoLink bar(result->GetRowCount());
     uint32 count = 0;
 
     do
     {
-        bar.step();
         Field *fields = result->Fetch();
         std::string message = fields[0].GetCppString();
         m_Autobroadcasts.push_back(message);

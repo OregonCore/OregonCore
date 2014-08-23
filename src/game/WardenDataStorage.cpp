@@ -19,7 +19,6 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "Log.h"
-#include "ProgressBar.h"
 #include "Database/DatabaseEnv.h"
 #include "Util.h"
 #include "WardenDataStorage.h"
@@ -61,20 +60,16 @@ void CWardenDataStorage::LoadWardenDataResult(bool reload)
 
     if (!result)
     {
-        barGoLink bar(1);
-        bar.step();
 
         sLog.outString();
         sLog.outString(">> Loaded %u warden data and results", count);
         return;
     }
 
-    barGoLink bar((int)result->GetRowCount());
 
     do
     {
         ++count;
-        bar.step();
 
         Field *fields = result->Fetch();
 

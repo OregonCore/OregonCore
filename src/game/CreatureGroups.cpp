@@ -18,7 +18,6 @@
 #include "Creature.h"
 #include "CreatureGroups.h"
 #include "ObjectMgr.h"
-#include "ProgressBar.h"
 #include "Policies/SingletonImp.h"
 #include "CreatureAI.h"
 
@@ -117,8 +116,6 @@ void CreatureGroupManager::LoadCreatureGroups()
 
     if (!result_data)
     {
-        barGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 creature groups. DB table `creature_groups` is empty.");
         return;
@@ -129,8 +126,6 @@ void CreatureGroupManager::LoadCreatureGroups()
 
     if (!result_member)
     {
-        barGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 creature groups. DB table `creature_group_data` is empty.");
         return;
@@ -140,7 +135,6 @@ void CreatureGroupManager::LoadCreatureGroups()
     uint64 total_groups = result_data->GetRowCount();
     uint64 total_member = result_member->GetRowCount();
 
-    barGoLink bar(total_groups+total_member);
     Field *fields;
     std::set<uint32> guidSet;
 
@@ -148,7 +142,6 @@ void CreatureGroupManager::LoadCreatureGroups()
     do
     {
         fields = result_data->Fetch();
-        bar.step();
         
         //Load group member data
         uint32 groupId = fields[0].GetUInt32();
@@ -178,7 +171,6 @@ void CreatureGroupManager::LoadCreatureGroups()
     do
     {
         fields = result_member->Fetch();
-        bar.step();
         
         //Load group member data
         uint32 groupId = fields[0].GetUInt32();

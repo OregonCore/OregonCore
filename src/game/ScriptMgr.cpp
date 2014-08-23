@@ -20,7 +20,6 @@
 #include "Database/DatabaseEnv.h"
 #include "DBCStores.h"
 #include "ObjectMgr.h"
-#include "ProgressBar.h"
 #include "ScriptLoader.h"
 #include "ScriptSystem.h"
 #include "Policies/SingletonImp.h"
@@ -77,8 +76,6 @@ void ScriptMgr::ScriptsInit()
     LoadDatabase();
 
     outstring_log("OSCR: Loading C++ scripts\n");
-    barGoLink bar(1);
-    bar.step();
 
     for (uint16 i =0; i<MAX_SCRIPTS; ++i)
         m_scripts[i]=NULL;

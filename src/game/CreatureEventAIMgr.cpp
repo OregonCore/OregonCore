@@ -22,7 +22,6 @@
 #include "CreatureEventAI.h"
 #include "CreatureEventAIMgr.h"
 #include "ObjectMgr.h"
-#include "ProgressBar.h"
 #include "Policies/SingletonImp.h"
 #include "ObjectGuid.h"
 #include "GridDefines.h"
@@ -44,12 +43,10 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Texts(bool check_entry_use)
     sLog.outString("Loading EventAI Texts additional data...");
     if (result)
     {
-        barGoLink bar(result->GetRowCount());
         uint32 count = 0;
 
         do
         {
-            bar.step();
             Field* fields = result->Fetch();
             StringTextData temp;
 
@@ -103,8 +100,6 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Texts(bool check_entry_use)
     }
     else
     {
-        barGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 additional CreatureEventAI Texts data. DB table creature_ai_texts is empty.");
     }
@@ -157,12 +152,10 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Summons(bool check_entry_use)
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT id, position_x, position_y, position_z, orientation, spawntimesecs FROM creature_ai_summons");
     if (result)
     {
-        barGoLink bar(result->GetRowCount());
         uint32 Count = 0;
 
         do
         {
-            bar.step();
             Field *fields = result->Fetch();
 
             CreatureEventAI_Summon temp;
@@ -193,8 +186,6 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Summons(bool check_entry_use)
     }
     else
     {
-        barGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 CreatureEventAI Summon definitions. DB table creature_ai_summons is empty.");
     }
@@ -249,12 +240,10 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
         "FROM creature_ai_scripts");
     if (result)
     {
-        barGoLink bar(result->GetRowCount());
         uint32 Count = 0;
 
         do
         {
-            bar.step();
             Field *fields = result->Fetch();
 
             CreatureEventAI_Event temp;
@@ -655,10 +644,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u attempts to set phase >= %u. Phase mask cannot be used past phase %u.", i, j+1, MAX_PHASE, MAX_PHASE-1);
                         break;
                     case ACTION_T_INC_PHASE:
-                        if (action.set_inc_phase.step == 0)
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u is incrementing phase by 0. Was this intended?", i, j+1);
-                        else if (std::abs(action.set_inc_phase.step) > MAX_PHASE-1)
-                            sLog.outErrorDb("CreatureEventAI:  Event %u Action %u phase (%i) exceeds maximum phase.", i, j+1, action.set_inc_phase.step);
                         break;
                     case ACTION_T_QUEST_EVENT_ALL:
                         if (Quest const* qid = objmgr.GetQuestTemplate(action.quest_event_all.questId))
@@ -809,8 +795,6 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
     }
     else
     {
-        barGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 CreatureEventAI scripts. DB table creature_ai_scripts is empty.");
     }
