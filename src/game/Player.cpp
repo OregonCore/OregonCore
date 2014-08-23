@@ -444,9 +444,6 @@ Player::Player (WorldSession *session): Unit()
 
 Player::~Player ()
 {
-    if (GetSession()->GetPlayer() != this)
-        return;
-
     CleanupsBeforeDelete();
 
     // it must be unloaded already in PlayerLogout and accessed only for loggined player

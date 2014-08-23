@@ -1011,7 +1011,7 @@ void BattleGroundMgr::DeleteAlllBattleGrounds()
     }
 
     // destroy template battlegrounds that listed only in queues (other already terminated)
-    for (uint32 bgTypeId = 0; bgTypeId < MAX_BATTLEGROUND_TYPE_ID; ++bgTypeId)
+    for (uint32 bgTypeId = 0; bgTypeId <= MAX_BATTLEGROUND_TYPE_ID; ++bgTypeId)
     {
         // ~BattleGround call unregistring BG from queue
         while (!BGFreeSlotQueue[bgTypeId].empty())

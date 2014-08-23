@@ -28,7 +28,6 @@
 #include "GridDefines.h"
 
 INSTANTIATE_SINGLETON_1(CreatureEventAIMgr);
-static const char EventAIString[] = "EventAI";
 
 // -------------------
 void CreatureEventAIMgr::LoadCreatureEventAI_Texts(bool check_entry_use)
@@ -787,9 +786,11 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                 if (!cInfo->AIName || !cInfo->AIName[0])
                 {
                     sLog.outErrorDb("CreatureEventAI: Creature Entry %u has EventAI script but its AIName is empty. Set to EventAI as default.", cInfo->Entry);
-                    const_cast<CreatureInfo*>(cInfo)->AIName = EventAIString;
+                    delete[] const_cast<char*>(cInfo->AIName);
+                    const_cast<CreatureInfo*>(cInfo)->AIName = new char[sizeof("EventAI")];
+                    memcpy(const_cast<char*>(cInfo->AIName), "EventAI", sizeof("EventAI"));
                 }
-                if (strcmp(cInfo->AIName, EventAIString))
+                if (strcmp(cInfo->AIName, "EventAI"))
                 {
                     sLog.outErrorDb("CreatureEventAI: Creature Entry %u has EventAI script but it has AIName %s. EventAI script will be overriden.", cInfo->Entry, cInfo->AIName);
                 }
