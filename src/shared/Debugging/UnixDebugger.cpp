@@ -24,6 +24,7 @@
 #include "UnixDebugger.h"
 #include "SystemConfig.h"
 #include "World.h"
+#include "Log.h"
 
 #include <sys/resource.h>
 #include <sys/types.h>
@@ -70,7 +71,7 @@ void SignalHandler(int num, siginfo_t* info, void* ctx)
 
     if (segv)
     {
-        reason << "Fault (" << info->si_code << ") at "
+        reason << "Fault [code " << info->si_code << "] at "
                << std::hex << "0x"
                << (unsigned long) info->si_addr
                << " referenced from: 0x"
@@ -289,8 +290,6 @@ void WriteBacktrace(std::stringstream& ss)
         delete atlmIt->second;
 
     free(symbols);
-
-    ss << std::endl;
 }
 
 void DumpDebugInfo(const char* sig, const char* reason)
@@ -331,17 +330,31 @@ void DumpDebugInfo(const char* sig, const char* reason)
 
     ss << "Date: " << dateString << std::endl;
     ss << "Version: " << _FULLVERSION << std::endl;
+    ss << "Build Type: " << _BUILD_DIRECTIVE << std::endl;
     #if COMPILER == COMPILER_BORLAND
     ss << "Compiler: Borland" << std::endl;
     #elif COMPILER == COMPILER_GNU
-    ss << "Compiler: GNU (or compatible)" << std::endl;
+        #ifdef __clang__
+        ss << "Compiler: clang" << std::endl;
+        #else
+        ss << "Compiler: GNU (or compatible)" << std::endl;
+        #endif
     #elif COMPILER == COMPILER_INTEL
     ss << "Compiler: Intel" << std::endl;
     #endif
-    ss << "Active Clients: " << sWorld.GetActiveSessionCount() << std::endl;
-    ss << "Queued Clients: " << sWorld.GetQueuedSessionCount() << std::endl;
-    ss << "Uptime: " << sWorld.GetUptime() << std::endl;
-    ss << "Game Diff: " << sWorld.GetUpdateTime() << std::endl;
+    ss << "ACE version: " << ACE_VERSION << std::endl;
+
+    try
+    {
+        ss << "Active Clients: " << sWorld.GetActiveSessionCount() << std::endl;
+        ss << "Queued Clients: " << sWorld.GetQueuedSessionCount() << std::endl;
+        ss << "Uptime: " << sWorld.GetUptime() << std::endl;
+        ss << "Game Diff: " << sWorld.GetUpdateTime() << std::endl;
+    }
+    catch (...)
+    {
+        // sWorld was already destroyed ("Dead Reference" exception)
+    }
 
     ss << std::endl;
 
@@ -372,12 +385,6 @@ void DumpDebugInfo(const char* sig, const char* reason)
 
     WriteBacktrace(ss);
 
-    ss << std::endl;
-    ss << "Environment Variables:" << std::endl;
-    ss << "======================" << std::endl;
-    for (int i = 0; environ[i] != NULL; i++)
-        ss << environ[i] << std::endl;
-
     // We got all info needed now we just need to log it
     mkdir(CRASH_DIR, 0777);
     // not we try to chdir() to the newly created directory,
@@ -398,6 +405,21 @@ void DumpDebugInfo(const char* sig, const char* reason)
 
         flock(fileno(fp), LOCK_UN);
         fclose(fp);
+    }
+    else
+    {
+        // Failed to create file... perhaps no write permissions
+        // try to use our sLog.outError instead
+        try
+        {
+            sLog.outError("Failed to create crash file: %s\n", strerror(errno));
+            sLog.outError("%s", ss.str().c_str());
+            return;
+        }
+        catch (...)
+        {
+            // sLog was already destroyed ("Dead Reference" exception)
+        }
     }
 
     // We always use classic stdio instead of streams for output
@@ -463,8 +485,9 @@ bool Resolver::Resolve(unsigned long address)
         else
             function = func; // doesn't need demangling
     }
-    if (file)
-        filename = file;
+    else
+        func = "??";
+    filename = file ? file : "??";
     // line has been already written
 
     return true;

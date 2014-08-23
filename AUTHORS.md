@@ -16,10 +16,21 @@ Development of this project dates back to 2010, and was developed under various 
 * ScriptDev2 project, 2006-2012 located at http://www.scriptdev2.com/
 
 ## Authorship of the code
-Authorship is assigned for each commit within the git history, which is stored in these git repositories:
+Authorship is assigned for each commit within the git history, which is stored in these mercurial repositories:
 * https://bitbucket.org/oregon/oregoncore
+* if you have cloned the repository you can access commits through command `hg log`
 
 ## Exceptions with third party libraries
+
+* As a special exception, the OregonCore project
+  gives permission to link the code of its release of OregonCore with the
+  OpenSSL project's "OpenSSL" library (or with modified versions of it
+  that use the same license as the "OpenSSL" library), and distribute
+  the linked executables.  You must obey the GNU General Public License
+  in all respects for all of the code used other than "OpenSSL".  If you
+  modify this file, you may extend this exception to your version of the
+  file, but you are not obligated to do so.  If you do not wish to do
+  so, delete this exception statement from your version.
 
 ## Authors List:
 
