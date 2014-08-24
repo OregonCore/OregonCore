@@ -1,3 +1,4 @@
+
 /*
  * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
@@ -644,7 +645,10 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u attempts to set phase >= %u. Phase mask cannot be used past phase %u.", i, j+1, MAX_PHASE, MAX_PHASE-1);
                         break;
                     case ACTION_T_INC_PHASE:
+                        if (action.set_inc_phase.step == 0)
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u is incrementing phase by 0. Was this intended?", i, j+1);
+                        else if (std::abs(action.set_inc_phase.step) > MAX_PHASE-1)
+                            sLog.outErrorDb("CreatureEventAI:  Event %u Action %u phase (%i) exceeds maximum phase.", i, j+1, action.set_inc_phase.step);
                         break;
                     case ACTION_T_QUEST_EVENT_ALL:
                         if (Quest const* qid = objmgr.GetQuestTemplate(action.quest_event_all.questId))
