@@ -2762,16 +2762,6 @@ void Spell::update(uint32 difftime)
                     SendChannelUpdate(0);
                     finish();
                 }
-                // Check if the caster has the target in his front 120 degree field of view
-                // Channeling will be interrupted if the caster is no longer facing target
-                else if (Unit* target = m_targets.getUnitTarget())
-                if (IsChanneledSpell(m_spellInfo) && !m_caster->HasInArc(M_PI, target))
-                {
-                    SendChannelUpdate(0);
-                    SendInterrupted(2);
-                    finish(false); 
-                    return;
-                }
 
                 if (m_timer > 0)
                 {
