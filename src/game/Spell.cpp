@@ -4805,10 +4805,14 @@ SpellCastResult Spell::CheckRange(bool strict)
                 if (target == m_caster)
                     return SPELL_CAST_OK;
 
-                float range_mod = strict ? 0.0f : 5.0f;
                 float base = ATTACK_DISTANCE;
+                float range_mod = strict ? 0.0f : 5.0f;
                 if (Player* modOwner = m_caster->GetSpellModOwner())
                     range_mod += modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_RANGE, base, this);
+
+                // Not 100% sure about this one
+                // but seems to work for now.
+                range_mod += base;
 
                 // with additional 5 dist for non stricted case (some melee spells have delay in apply
                 return m_caster->IsWithinMeleeRange(target, range_mod) ? SPELL_CAST_OK : SPELL_FAILED_OUT_OF_RANGE;

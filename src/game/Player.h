@@ -2479,15 +2479,18 @@ void RemoveItemsSetItem(Player*player,ItemPrototype const *proto);
 template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &basevalue, Spell const* spell)
 {
     SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
-    if (!spellInfo) return 0;
-    int32 totalpct = 0;
+    if (!spellInfo)
+        return 0;
+    float totalpct = 1.0f;
     int32 totalflat = 0;
+
     for (SpellModList::iterator itr = m_spellMods[op].begin(); itr != m_spellMods[op].end(); ++itr)
     {
         SpellModifier *mod = *itr;
 
-        if (!IsAffectedBySpellmod(spellInfo,mod,spell))
+        if (!IsAffectedBySpellmod(spellInfo, mod, spell))
             continue;
+
         if (mod->type == SPELLMOD_FLAT)
             totalflat += mod->value;
         else if (mod->type == SPELLMOD_PCT)
@@ -2500,7 +2503,7 @@ template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &bas
             if (mod->op == SPELLMOD_CASTING_TIME  && basevalue >= T(10*IN_MILLISECONDS) && mod->value <= -100)
                 continue;
 
-            totalpct += mod->value;
+            totalpct += CalculatePctF(1.0f, (float)mod->value);
         }
 
         if (mod->charges > 0)
@@ -2518,7 +2521,7 @@ template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &bas
         }
     }
 
-    float diff = (float)basevalue*(float)totalpct/100.0f + (float)totalflat;
+    float diff = (float)basevalue * (totalpct - 1.0f) + (float)totalflat;
     basevalue = T((float)basevalue + diff);
     return T(diff);
 }
