@@ -48,7 +48,6 @@
 #include "MoveMap.h"
 #include "GameEventMgr.h"
 #include "PoolHandler.h"
-#include "Database/DatabaseImpl.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
 #include "InstanceSaveMgr.h"
@@ -94,7 +93,6 @@ World::World()
     m_startTime=m_gameTime;
     m_maxActiveSessionCount = 0;
     m_maxQueuedSessionCount = 0;
-    m_resultQueue = NULL;
     m_NextDailyQuestReset = 0;
     m_scheduledScripts = 0;
 
@@ -128,8 +126,6 @@ World::~World()
 
     VMAP::VMapFactory::clear();
     MMAP::MMapFactory::clear();
-
-    delete m_resultQueue;
 
     //TODO free addSessQueue
 }
@@ -1092,6 +1088,12 @@ void World::LoadConfigSettings(bool reload)
     std::string ignoreMMapIds = sConfig.GetStringDefault("mmap.ignoreMapIds", "");
     MMAP::MMapFactory::preventPathfindingOnMaps(ignoreMMapIds.c_str());
     sLog.outString("WORLD: MMap pathfinding %sabled.", getConfig(CONFIG_BOOL_MMAP_ENABLED) ? "en" : "dis");
+
+    // MySQL thread bundling config for other runnable tasks
+    m_configs[CONFIG_MYSQL_BUNDLE_LOGINDB] = sConfig.GetIntDefault("LoginDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);
+    m_configs[CONFIG_MYSQL_BUNDLE_CHARDB] = sConfig.GetIntDefault("CharacterDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);
+    m_configs[CONFIG_MYSQL_BUNDLE_WORLDDB] = sConfig.GetIntDefault("WorldDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);
+
 }
 
 // Initialize the World
@@ -1812,8 +1814,8 @@ void World::Update(uint32 diff)
     }
 
     // execute callbacks from sql queries that were queued recently
-    UpdateResultQueue();
-    RecordTimeDiff("UpdateResultQueue");
+    ProcessQueryCallbacks();
+    RecordTimeDiff("ProcessQueryCallbacks");
 
     // Erase corpses once every 20 minutes
     if (m_timers[WUPDATE_CORPSES].Passed())
@@ -2364,21 +2366,12 @@ void World::SendAutoBroadcast()
     sLog.outString("AutoBroadcast: '%s'", msg.c_str());
 }
 
-void World::InitResultQueue()
-{
-    m_resultQueue = new SqlResultQueue;
-    CharacterDatabase.SetResultQueue(m_resultQueue);
-}
-
-void World::UpdateResultQueue()
-{
-    m_resultQueue->Update();
-}
-
 void World::UpdateRealmCharCount(uint32 accountId)
 {
-    CharacterDatabase.AsyncPQuery(this, &World::_UpdateRealmCharCount, accountId,
-        "SELECT COUNT(guid) FROM characters WHERE account = '%u'", accountId);
+    m_realmCharCallback.SetParam(accountId);
+    m_realmCharCallback.SetFutureResult(
+        LoginDatabase.AsyncPQuery("SELECT COUNT(guid) FROM characters WHERE account = '%u'", accountId)
+        );
 }
 
 void World::_UpdateRealmCharCount(QueryResult_AutoPtr resultCharCount, uint32 accountId)
@@ -2476,3 +2469,16 @@ void World::LoadDBVersion()
         m_DBVersion = "unknown world database";
 }
 
+void World::ProcessQueryCallbacks()
+{
+    QueryResult_AutoPtr result;
+
+    //-UpdateRealmCharCount
+    if (m_realmCharCallback.IsReady())
+    {
+        uint32 param = m_realmCharCallback.GetParam();
+        m_realmCharCallback.GetResult(result);
+        _UpdateRealmCharCount(result, param);
+        m_realmCharCallback.FreeResult();
+    }
+}

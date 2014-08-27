@@ -597,8 +597,8 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask)
         << uint32(GetGoState()) << ")";
 
     WorldDatabase.BeginTransaction();
-    WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecuteLog("%s", ss.str().c_str());
+    WorldDatabase.PExecute("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.PExecute("%s", ss.str().c_str());
     WorldDatabase.CommitTransaction();
 }
 
@@ -675,8 +675,8 @@ void GameObject::DeleteFromDB()
 {
     objmgr.SaveGORespawnTime(m_DBTableGuid,GetInstanceId(),0);
     objmgr.DeleteGOData(m_DBTableGuid);
-    WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecuteLog("DELETE FROM game_event_gameobject WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.PExecute("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.PExecute("DELETE FROM game_event_gameobject WHERE guid = '%u'", m_DBTableGuid);
 }
 
 GameObject* GameObject::GetGameObject(WorldObject& object, uint64 guid)

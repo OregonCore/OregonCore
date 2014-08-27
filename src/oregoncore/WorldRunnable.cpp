@@ -32,9 +32,27 @@
 // Heartbeat for the World
 void WorldRunnable::run()
 {
-    // Init new SQL thread for the world database
-    WorldDatabase.ThreadStart();                                // let thread do safe mySQL requests (one connection call enough)
-    sWorld.InitResultQueue();
+    ///- Init MySQL threads or connections
+    bool needInit = true;
+    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_WORLDDB) & MYSQL_BUNDLE_RA))
+    {
+        WorldDatabase.Init_MySQL_Connection();
+        needInit = false;
+    }
+    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_LOGINDB) & MYSQL_BUNDLE_RA))
+    {
+        LoginDatabase.Init_MySQL_Connection();
+        needInit = false;
+    }
+
+    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_CHARDB) & MYSQL_BUNDLE_RA))
+    {
+        CharacterDatabase.Init_MySQL_Connection();
+        needInit = false;
+    }
+
+    if (needInit)
+        MySQL::Thread_Init();
 
     uint32 realCurrTime = 0;
     uint32 realPrevTime = getMSTime();
@@ -77,7 +95,17 @@ void WorldRunnable::run()
 
     MapManager::Instance().UnloadAll();                     // unload all grids (including locked in memory)
 
-    // End the database thread
-    WorldDatabase.ThreadEnd();                                  // free mySQL thread resources
+    ///- Free MySQL thread resources and deallocate lingering connections
+    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_WORLDDB) & MYSQL_BUNDLE_RA))
+        WorldDatabase.End_MySQL_Connection();
+
+    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_LOGINDB) & MYSQL_BUNDLE_RA))
+        LoginDatabase.End_MySQL_Connection();
+
+    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_CHARDB) & MYSQL_BUNDLE_RA))
+        CharacterDatabase.End_MySQL_Connection();
+
+    if (needInit)
+        MySQL::Thread_End();
 }
 

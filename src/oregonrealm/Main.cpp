@@ -297,12 +297,12 @@ extern int main(int argc, char **argv)
     }
 
     // Wait for the delay thread to exit
-    LoginDatabase.HaltDelayThread();
+    LoginDatabase.Close();
 
     // Remove signal handling before leaving
     UnhookSignals();
 
-    sLog.outString( "Halting process..." );
+    sLog.outString("Halting process...");
     return 0;
 }
 
@@ -337,7 +337,14 @@ bool StartDB()
     }
 
     sLog.outString("Database: %s", dbstring.c_str() );
-    if (!LoginDatabase.Initialize(dbstring.c_str()))
+    uint8 num_threads = sConfig.GetIntDefault("LoginDatabase.WorkerThreads", 1);
+    if (num_threads < 1 || num_threads > 32)
+    {
+        sLog.outError("Improper value specified for LoginDatabase.WorkerThreads, defaulting to 1.");
+        num_threads = 1;
+    }
+
+    if (!LoginDatabase.Open(dbstring.c_str(), num_threads))
     {
         sLog.outError("Cannot connect to database");
         return false;

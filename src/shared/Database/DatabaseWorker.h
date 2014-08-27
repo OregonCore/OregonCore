@@ -14,31 +14,28 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _WORKERTHREAD_H
+#define _WORKERTHREAD_H
 
-#if !defined(DATABASEENV_H)
-#define DATABASEENV_H
+#include <ace/Task.h>
+#include <ace/Activation_Queue.h>
+#include "SQLOperation.h"
 
-#include "Common.h"
-#include "Log.h"
-#include "Errors.h"
+class MySQLConnection;
 
-#include "Database/Field.h"
-#include "Database/QueryResult.h"
+class DatabaseWorker : protected ACE_Task_Base
+{
+    public:
+        DatabaseWorker(ACE_Activation_Queue* new_queue, MySQLConnection* con);
 
-#include "Database/DatabaseWorkerPool.h"
-#include "Database/MySQLThreading.h"
+        ///- Inherited from ACE_Task_Base
+        int svc();
+        int activate();
 
-typedef DatabaseWorkerPool DatabaseType;
-#define _LIKE_           "LIKE"
-#define _TABLE_SIM_      "`"
-#define _CONCAT3_(A,B,C) "CONCAT( " A " , " B " , " C " )"
-#define _OFFSET_         "LIMIT %d,1"
-
-extern DatabaseType WorldDatabase;
-extern DatabaseType CharacterDatabase;
-extern DatabaseType LoginDatabase;
-
-#define MAX_QUERY_LEN 32*1024
+    private:
+        DatabaseWorker() : ACE_Task_Base() {}
+        ACE_Activation_Queue* m_queue;
+        MySQLConnection* m_conn;
+};
 
 #endif
-

@@ -56,7 +56,6 @@
 #include "OutdoorPvPMgr.h"
 #include "ArenaTeam.h"
 #include "Chat.h"
-#include "Database/DatabaseImpl.h"
 #include "Spell.h"
 #include "SocialMgr.h"
 #include "Mail.h"
@@ -14716,7 +14715,7 @@ float Player::GetFloatValueFromDB(uint16 index, uint64 guid)
     return result;
 }
 
-bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
+bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
 {
     //                                                       0     1        2     3     4     5      6       7      8   9      10           11            12
     //QueryResult *result = CharacterDatabase.PQuery("SELECT guid, account, data, name, race, class, gender, level, xp, money, playerBytes, playerBytes2, playerFlags,"
@@ -17099,7 +17098,7 @@ void Player::SaveDataFieldToDB()
     CharacterDatabase.Execute(ss.str().c_str());
 }
 
-bool Player::SaveValuesArrayInDB(Tokens const& tokens, uint64 guid)
+void Player::SaveValuesArrayInDB(Tokens const& tokens, uint64 guid)
 {
     std::ostringstream ss2;
     ss2<<"UPDATE characters SET data='";
@@ -17110,7 +17109,8 @@ bool Player::SaveValuesArrayInDB(Tokens const& tokens, uint64 guid)
     }
     ss2<<"' WHERE guid='"<< GUID_LOPART(guid) <<"'";
 
-    return CharacterDatabase.Execute(ss2.str().c_str());
+    CharacterDatabase.Execute(ss2.str().c_str());
+
 }
 
 void Player::SetUInt32ValueInArray(Tokens& tokens,uint16 index, uint32 value)

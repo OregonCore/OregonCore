@@ -1134,7 +1134,7 @@ bool ChatHandler::HandleNpcFlagCommand(const char* args)
 
     pCreature->SetUInt32Value(UNIT_NPC_FLAGS, npcFlags);
 
-    WorldDatabase.PExecuteLog("UPDATE creature_template SET npcflag = '%u' WHERE entry = '%u'", npcFlags, pCreature->GetEntry());
+    WorldDatabase.PExecute("UPDATE creature_template SET npcflag = '%u' WHERE entry = '%u'", npcFlags, pCreature->GetEntry());
 
     SendSysMessage(LANG_VALUE_SAVED_REJOIN);
 
@@ -1253,7 +1253,7 @@ bool ChatHandler::HandleNpcMoveCommand(const char* args)
         }
     }
 
-    WorldDatabase.PExecuteLog("UPDATE creature SET position_x = '%f', position_y = '%f', position_z = '%f', orientation = '%f' WHERE guid = '%u'", x, y, z, o, lowguid);
+    WorldDatabase.PExecute("UPDATE creature SET position_x = '%f', position_y = '%f', position_z = '%f', orientation = '%f' WHERE guid = '%u'", x, y, z, o, lowguid);
     PSendSysMessage(LANG_COMMAND_CREATUREMOVED);
     return true;
 }
@@ -1461,7 +1461,7 @@ bool ChatHandler::HandleNpcFactionIdCommand(const char* args)
     }
 
     // and DB
-    WorldDatabase.PExecuteLog("UPDATE creature_template SET faction_A = '%u', faction_H = '%u' WHERE entry = '%u'", factionId, factionId, pCreature->GetEntry());
+    WorldDatabase.PExecute("UPDATE creature_template SET faction_A = '%u', faction_H = '%u' WHERE entry = '%u'", factionId, factionId, pCreature->GetEntry());
 
     return true;
 }
@@ -1500,7 +1500,7 @@ bool ChatHandler::HandleNpcSpawnDistCommand(const char* args)
         pCreature->Respawn();
     }
 
-    WorldDatabase.PExecuteLog("UPDATE creature SET spawndist=%f, MovementType=%i WHERE guid=%u",option,mtype,u_guidlow);
+    WorldDatabase.PExecute("UPDATE creature SET spawndist=%f, MovementType=%i WHERE guid=%u",option,mtype,u_guidlow);
     PSendSysMessage(LANG_COMMAND_SPAWNDIST,option);
     return true;
 }
@@ -1532,7 +1532,7 @@ bool ChatHandler::HandleNpcSpawnTimeCommand(const char* args)
     else
         return false;
 
-    WorldDatabase.PExecuteLog("UPDATE creature SET spawntimesecs=%i WHERE guid=%u",i_stime,u_guidlow);
+    WorldDatabase.PExecute("UPDATE creature SET spawntimesecs=%i WHERE guid=%u",i_stime,u_guidlow);
     pCreature->SetRespawnDelay((uint32)i_stime);
     PSendSysMessage(LANG_COMMAND_SPAWNTIME,i_stime);
 
@@ -2143,7 +2143,7 @@ bool ChatHandler::HandleWpAddCommand(const char* args)
     Player* player = m_session->GetPlayer();
     //Map *map = player->GetMap();
 
-    WorldDatabase.PExecuteLog("INSERT INTO waypoint_data (id, point, position_x, position_y, position_z) VALUES ('%u','%u','%f', '%f', '%f')",
+    WorldDatabase.PExecute("INSERT INTO waypoint_data (id, point, position_x, position_y, position_z) VALUES ('%u','%u','%f', '%f', '%f')",
         pathid, point+1, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ());
 
     PSendSysMessage("%s%s%u%s%u%s|r", "|cff00ff00", "PathID: |r|cff00ffff", pathid, "|r|cff00ff00: Waypoint |r|cff00ffff", point,"|r|cff00ff00 created. ");
@@ -2347,7 +2347,7 @@ bool ChatHandler::HandleWpEventCommand(const char* args)
 
         if (result)
         {
-           WorldDatabase.PExecuteLog("DELETE FROM waypoint_scripts WHERE guid = %u", id);
+           WorldDatabase.PExecute("DELETE FROM waypoint_scripts WHERE guid = %u", id);
            PSendSysMessage("%s%s%u|r","|cff00ff00","Wp Event: Waypoint script removed: ", id);
         }
         else
@@ -2406,7 +2406,7 @@ bool ChatHandler::HandleWpEventCommand(const char* args)
         {
             uint32 newid = atoi(arg_3);
             PSendSysMessage("%s%s|r|cff00ffff%u|r|cff00ff00%s|r|cff00ffff%u|r","|cff00ff00","Wp Event: Wypoint scipt guid: ", newid," id changed: ", id);
-            WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET id='%u' WHERE guid='%u'",
+            WorldDatabase.PExecute("UPDATE waypoint_scripts SET id='%u' WHERE guid='%u'",
             newid, id); return true;
         }
         else
@@ -2422,7 +2422,7 @@ bool ChatHandler::HandleWpEventCommand(const char* args)
             if (arg_str_2 == "posx")
             {
                 coord = atof(arg_3);
-                WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET x='%f' WHERE guid='%u'",
+                WorldDatabase.PExecute("UPDATE waypoint_scripts SET x='%f' WHERE guid='%u'",
                     coord, id);
                 PSendSysMessage("|cff00ff00Waypoint script:|r|cff00ffff %u|r|cff00ff00 position_x updated.|r", id);
                 return true;
@@ -2430,7 +2430,7 @@ bool ChatHandler::HandleWpEventCommand(const char* args)
             else if (arg_str_2 == "posy")
             {
                 coord = atof(arg_3);
-                WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET y='%f' WHERE guid='%u'",
+                WorldDatabase.PExecute("UPDATE waypoint_scripts SET y='%f' WHERE guid='%u'",
                     coord, id);
                 PSendSysMessage("|cff00ff00Waypoint script: %u position_y updated.|r", id);
                 return true;
@@ -2438,7 +2438,7 @@ bool ChatHandler::HandleWpEventCommand(const char* args)
             else if (arg_str_2 == "posz")
             {
                 coord = atof(arg_3);
-                WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET z='%f' WHERE guid='%u'",
+                WorldDatabase.PExecute("UPDATE waypoint_scripts SET z='%f' WHERE guid='%u'",
                     coord, id);
                 PSendSysMessage("|cff00ff00Waypoint script: |r|cff00ffff%u|r|cff00ff00 position_z updated.|r", id);
                 return true;
@@ -2446,14 +2446,14 @@ bool ChatHandler::HandleWpEventCommand(const char* args)
             else if (arg_str_2 == "orientation")
             {
                 coord = atof(arg_3);
-                WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET o='%f' WHERE guid='%u'",
+                WorldDatabase.PExecute("UPDATE waypoint_scripts SET o='%f' WHERE guid='%u'",
                     coord, id);
                 PSendSysMessage("|cff00ff00Waypoint script: |r|cff00ffff%u|r|cff00ff00 orientation updated.|r", id);
                 return true;
             }
             else if (arg_str_2 == "dataint")
             {
-                    WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET %s='%u' WHERE guid='%u'",
+                    WorldDatabase.PExecute("UPDATE waypoint_scripts SET %s='%u' WHERE guid='%u'",
                     arg_2, atoi(arg_3), id);
                     PSendSysMessage("|cff00ff00Waypoint script: |r|cff00ffff%u|r|cff00ff00 dataint updated.|r", id);
                     return true;
@@ -2462,7 +2462,7 @@ bool ChatHandler::HandleWpEventCommand(const char* args)
             {
                     std::string arg_str_3 = arg_3;
                     WorldDatabase.escape_string(arg_str_3);
-                    WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET %s='%s' WHERE guid='%u'",
+                    WorldDatabase.PExecute("UPDATE waypoint_scripts SET %s='%s' WHERE guid='%u'",
                     arg_2, arg_str_3.c_str(), id);
             }
         }
@@ -2591,9 +2591,9 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
             wpCreature->AddObjectToRemoveList();
         }
 
-        WorldDatabase.PExecuteLog("DELETE FROM waypoint_data WHERE id='%u' AND point='%u'",
+        WorldDatabase.PExecute("DELETE FROM waypoint_data WHERE id='%u' AND point='%u'",
             pathid, point);
-        WorldDatabase.PExecuteLog("UPDATE waypoint_data SET point=point-1 WHERE id='%u' AND point>'%u'",
+        WorldDatabase.PExecute("UPDATE waypoint_data SET point=point-1 WHERE id='%u' AND point>'%u'",
             pathid, point);
 
         PSendSysMessage(LANG_WAYPOINT_REMOVED);
@@ -2633,7 +2633,7 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
                 map->Add(wpCreature2);
             }
 
-            WorldDatabase.PExecuteLog("UPDATE waypoint_data SET position_x = '%f',position_y = '%f',position_z = '%f' where id = '%u' AND point='%u'",
+            WorldDatabase.PExecute("UPDATE waypoint_data SET position_x = '%f',position_y = '%f',position_z = '%f' where id = '%u' AND point='%u'",
                 chr->GetPositionX(), chr->GetPositionY(), chr->GetPositionZ(), pathid, point);
 
             PSendSysMessage(LANG_WAYPOINT_CHANGED);
@@ -2646,7 +2646,7 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
     if (text == 0)
     {
         // show_str check for present in list of correct values, no sql injection possible
-        WorldDatabase.PExecuteLog("UPDATE waypoint_data SET %s=NULL WHERE id='%u' AND point='%u'",
+        WorldDatabase.PExecute("UPDATE waypoint_data SET %s=NULL WHERE id='%u' AND point='%u'",
             show_str, pathid, point);
     }
     else
@@ -2654,7 +2654,7 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
         // show_str check for present in list of correct values, no sql injection possible
         std::string text2 = text;
         WorldDatabase.escape_string(text2);
-        WorldDatabase.PExecuteLog("UPDATE waypoint_data SET %s='%s' WHERE id='%u' AND point='%u'",
+        WorldDatabase.PExecute("UPDATE waypoint_data SET %s='%s' WHERE id='%u' AND point='%u'",
             show_str, text2.c_str(), pathid, point);
     }
 
@@ -2789,7 +2789,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
                 {
                     PSendSysMessage(LANG_WAYPOINT_NOTREMOVED, wpguid);
                     hasError = true;
-                    WorldDatabase.PExecuteLog("DELETE FROM creature WHERE guid = '%u'", wpguid);
+                    WorldDatabase.PExecute("DELETE FROM creature WHERE guid = '%u'", wpguid);
                 }
                 else
                 {
@@ -2833,7 +2833,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
 
             sLog.outDebug("DEBUG: UPDATE waypoint_data SET wpguid = '%u'", wpCreature->GetGUIDLow());
             // set "wpguid" column to the visual waypoint
-            WorldDatabase.PExecuteLog("UPDATE waypoint_data SET wpguid = '%u' WHERE id = '%u' and point = '%u'", wpCreature->GetGUIDLow(), pathid, point);
+            WorldDatabase.PExecute("UPDATE waypoint_data SET wpguid = '%u' WHERE id = '%u' and point = '%u'", wpCreature->GetGUIDLow(), pathid, point);
 
             wpCreature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
             wpCreature->LoadFromDB(wpCreature->GetDBTableGUIDLow(),map);
@@ -2961,7 +2961,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             {
                 PSendSysMessage(LANG_WAYPOINT_NOTREMOVED, guid);
                 hasError = true;
-                WorldDatabase.PExecuteLog("DELETE FROM creature WHERE guid = '%u'", guid);
+                WorldDatabase.PExecute("DELETE FROM creature WHERE guid = '%u'", guid);
             }
             else
             {
@@ -2972,8 +2972,8 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         }
         while (result->NextRow());
         // set "wpguid" column to "empty" - no visual waypoint spawned
-        WorldDatabase.PExecuteLog("UPDATE waypoint_data SET wpguid = '0'");
-        //WorldDatabase.PExecuteLog("UPDATE creature_movement SET wpguid = '0' WHERE wpguid <> '0'");
+        WorldDatabase.PExecute("UPDATE waypoint_data SET wpguid = '0'");
+        //WorldDatabase.PExecute("UPDATE creature_movement SET wpguid = '0' WHERE wpguid <> '0'");
 
         if (hasError)
         {

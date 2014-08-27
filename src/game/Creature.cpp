@@ -988,7 +988,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
     // updated in DB
     WorldDatabase.BeginTransaction();
 
-    WorldDatabase.PExecuteLog("DELETE FROM creature WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.PExecute("DELETE FROM creature WHERE guid = '%u'", m_DBTableGuid);
 
     std::ostringstream ss;
     ss << "INSERT INTO creature VALUES ("
@@ -1010,7 +1010,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
         << (m_isDeadByDefault ? 1 : 0) << ","               //is_dead
         << GetDefaultMovementType() << ")";                 //default movement generator type
 
-    WorldDatabase.PExecuteLog("%s", ss.str().c_str());
+    WorldDatabase.PExecute("%s", ss.str().c_str());
 
     WorldDatabase.CommitTransaction();
 }
@@ -1318,10 +1318,10 @@ void Creature::DeleteFromDB()
     objmgr.DeleteCreatureData(m_DBTableGuid);
 
     WorldDatabase.BeginTransaction();
-    WorldDatabase.PExecuteLog("DELETE FROM creature WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecuteLog("DELETE FROM creature_addon WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecuteLog("DELETE FROM game_event_creature WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecuteLog("DELETE FROM game_event_model_equip WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.PExecute("DELETE FROM creature WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.PExecute("DELETE FROM creature_addon WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.PExecute("DELETE FROM game_event_creature WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.PExecute("DELETE FROM game_event_model_equip WHERE guid = '%u'", m_DBTableGuid);
     WorldDatabase.CommitTransaction();
 }
 
