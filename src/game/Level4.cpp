@@ -1,19 +1,3 @@
-/*
- * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 2 of the License, or (at your
- * option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
- * more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 
 #include "Common.h"
 #include "ObjectMgr.h"
@@ -23,82 +7,11 @@
 
 #include "AccountMgr.h"
 #include "Chat.h"
-#include "CliRunnable.h"
 #include "Language.h"
 #include "Log.h"
 #include "MapManager.h"
 #include "Player.h"
 #include "Util.h"
-
-#if PLATFORM != WINDOWS
-#include <readline/readline.h>
-#include <readline/history.h>
-
-char * command_finder(const char* text, int state)
-{
-    static int idx,len;
-    const char* ret;
-    ChatCommand *cmd = ChatHandler::getCommandTable();
-
-    if (!state)
-    {
-        idx = 0;
-        len = strlen(text);
-    }
-
-    while((ret = cmd[idx].Name))
-    {
-        if (!cmd[idx].AllowConsole)
-        {
-            idx++;
-            continue;
-        }
-
-        idx++;
-        //printf("Checking %s \n", cmd[idx].Name);
-        if (strncmp(ret, text, len) == 0)
-            return strdup(ret);
-        if (cmd[idx].Name == NULL)
-            break;
-    }
-
-    return ((char*)NULL);
-}
-
-char ** cli_completion(const char * text, int start, int /*end*/)
-{
-    char ** matches;
-    matches = (char**)NULL;
-
-    if (start == 0)
-        matches = rl_completion_matches((char*)text,&command_finder);
-    else
-        rl_bind_key('\t',rl_abort);
-    return (matches);
-}
-#endif
-
-void utf8print(void* /*arg*/, const char* str)
-{
-#if PLATFORM == PLATFORM_WINDOWS
-    wchar_t wtemp_buf[6000];
-    size_t wtemp_len = 6000-1;
-    if (!Utf8toWStr(str,strlen(str),wtemp_buf,wtemp_len))
-        return;
-
-    char temp_buf[6000];
-    CharToOemBuffW(&wtemp_buf[0],&temp_buf[0],wtemp_len+1);
-    printf(temp_buf);
-#else
-    printf("%s", str);
-#endif
-}
-
-void commandFinished(void*, bool /*success*/)
-{
-    printf("Oregon>");
-    fflush(stdout);
-}
 
 // Delete a user account and all associated characters in this realm
 // todo - This function has to be enhanced to respect the login/realm split (delete char, delete account chars in realm, delete account chars in realm then delete account
@@ -650,109 +563,5 @@ bool ChatHandler::HandleServerSetDiffTimeCommand(const char *args)
     sWorld.SetRecordDiffInterval(NewTime);
     printf( "Record diff every %u ms\n", NewTime);
     return true;
-}
-
-#ifdef linux
-// Non-blocking keypress detector, when return pressed, return 1, else always return 0
-int kb_hit_return()
-{
-    struct timeval tv;
-    fd_set fds;
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
-    FD_ZERO(&fds);
-    FD_SET(STDIN_FILENO, &fds);
-    select(STDIN_FILENO+1, &fds, NULL, NULL, &tv);
-    return FD_ISSET(STDIN_FILENO, &fds);
-}
-#endif
-
-// Thread start
-void CliRunnable::run()
-{
-    // Init new SQL thread for the world database (one connection call enough)
-    WorldDatabase.ThreadStart();                                // let thread do safe mySQL requests
-
-    // Display the list of available CLI functions then beep
-    sLog.outString();
-    #if PLATFORM != WINDOWS
-    rl_getc_function = getc;
-    rl_attempted_completion_function = cli_completion;
-    #endif
-    if (sConfig.GetBoolDefault("BeepAtStart", true))
-        printf("\a");                                       // \a = Alert
-
-    #if PLATFORM == PLATFORM_WINDOWS
-    char commandbuf[256];
-    #endif
-    // print this here the first time
-    // later it will be printed after command queue updates
-    printf("Oregon>");
-
-    // As long as the World is running (no World::m_stopEvent), get the command line and handle it
-    while (!World::IsStopped())
-    {
-        fflush(stdout);
-
-        char *command_str ;             // = fgets(commandbuf,sizeof(commandbuf),stdin);
-
-        #if PLATFORM == WINDOWS
-        command_str = fgets(commandbuf,sizeof(commandbuf),stdin);
-        #else
-        command_str = readline("Oregon>");
-        rl_bind_key('\t',rl_complete);
-        #endif
-        if (command_str != NULL)
-        {
-            for (int x=0; command_str[x]; x++)
-                if (command_str[x]=='\r'||command_str[x]=='\n')
-                {
-                    command_str[x]=0;
-                    break;
-                }
-
-            if (!*command_str)
-            {
-                #if PLATFORM == WINDOWS
-                printf("Oregon>");
-				#else
-				free(command_str);
-                #endif
-                continue;
-            }
-
-            std::string command;
-            if (!consoleToUtf8(command_str,command))         // convert from console encoding to utf8
-            {
-                #if PLATFORM == WINDOWS
-                printf("Oregon>");
-				#else
-				free(command_str);
-                #endif
-                continue;
-            }
-            fflush(stdout);
-            sWorld.QueueCliCommand(new CliCommandHolder(NULL, command.c_str(), &utf8print, &commandFinished));
-            #if PLATFORM != WINDOWS
-            add_history(command.c_str());
-			free(command_str);
-            #endif
-
-        }
-        else if (feof(stdin))
-        {
-            World::StopNow(SHUTDOWN_EXIT_CODE);
-        }
-    }
-
-    #if PLATFORM != WINDOWS
-    /* Without these two lines, terminal will be screwed up and
-       unusable if restart was issued */
-    rl_free_line_state();
-    rl_cleanup_after_signal();
-    #endif
-
-    // End the database thread
-    WorldDatabase.ThreadEnd();                                  // free mySQL thread resources
 }
 
