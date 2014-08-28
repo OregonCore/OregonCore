@@ -75,10 +75,10 @@ class MovementGeneratorMedium : public MovementGenerator
         }
     public:
         // will not link if not overridden in the generators
-        void Initialize(T &u);
-        void Finalize(T &u);
-        void Reset(T &u);
-        bool Update(T &u, const uint32 &time_diff);
+        virtual void Initialize(T &u) = 0;
+        virtual void Finalize(T &u) = 0;
+        virtual void Reset(T &u) = 0;
+        virtual bool Update(T &u, const uint32 &time_diff) = 0;
 };
 
 struct SelectableMovement : public FactoryHolder<MovementGenerator,MovementGeneratorType>

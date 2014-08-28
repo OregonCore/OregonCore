@@ -1102,7 +1102,7 @@ bool Position::HasInLine(const Unit * const target, float distance, float width)
         return false;
     width += target->GetObjectSize() * 0.5f;
     float angle = GetRelativeAngle(target);
-    return abs(sin(angle)) * GetExactDist2d(target->GetPositionX(), target->GetPositionY()) < width;
+    return fabsf(sinf(angle)) * GetExactDist2d(target->GetPositionX(), target->GetPositionY()) < width;
 }
 
 WorldObject::WorldObject()

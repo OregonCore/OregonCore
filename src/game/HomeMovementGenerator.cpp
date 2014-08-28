@@ -39,9 +39,6 @@ HomeMovementGenerator<Creature>::Reset(Creature &)
 void
 HomeMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
 {
-    if (!&owner)
-        return;
-
     if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED))
         return;
 

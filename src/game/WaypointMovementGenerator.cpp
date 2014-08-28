@@ -138,9 +138,6 @@ WaypointMovementGenerator<T>::Update(T & /*unit*/, const uint32 & /*diff*/)
 template<>
 bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &diff)
 {
-    if (!&unit)
-        return true;
-
     if (!path_id)
         return false;
 

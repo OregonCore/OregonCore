@@ -528,7 +528,7 @@ void ObjectMgr::LoadCreatureTemplates()
             CreatureInfo const* heroicInfo = GetCreatureTemplate(cInfo->HeroicEntry);
             if (!heroicInfo)
             {
-                sLog.outErrorDb("Creature (Entry: %u) has heroic_entry=%u but creature entry %u does not exist.",cInfo->HeroicEntry,cInfo->HeroicEntry);
+                sLog.outErrorDb("Creature (Entry: %u) has heroic_entry=%u but creature entry %u does not exist.",cInfo->Entry,cInfo->HeroicEntry,cInfo->HeroicEntry);
                 continue;
             }
 
@@ -731,7 +731,7 @@ void ObjectMgr::ConvertCreatureAddonAuras(CreatureDataAddon* addon, char const* 
     const_cast<CreatureDataAddonAura*&>(addon->auras) = new CreatureDataAddonAura[val.size()/2+1];
 
     uint32 i=0;
-    for (int j=0;j<val.size()/2;++j)
+    for (size_t j = 0; j < val.size()/2; ++j)
     {
         CreatureDataAddonAura& cAura = const_cast<CreatureDataAddonAura&>(addon->auras[i]);
         cAura.spell_id = (uint32)val[2*j+0];
@@ -1092,7 +1092,7 @@ void ObjectMgr::LoadCreatures()
 
         if (heroicCreatures.find(data.id) != heroicCreatures.end())
         {
-            sLog.outErrorDb("Table creature has creature (GUID: %u) that is listed as heroic template in creature_template_substitution, skipped.",guid,data.id);
+            sLog.outErrorDb("Table creature has creature (GUID: %u, Entry %u) that is listed as heroic template in creature_template_substitution, skipped.",guid,data.id);
             continue;
         }
 
@@ -6238,19 +6238,19 @@ void ObjectMgr::LoadWeatherZoneChances()
             if (wzc.data[season].rainChance > 100)
             {
                 wzc.data[season].rainChance = 25;
-                sLog.outErrorDb("Weather for zone %u season %u has wrong rain chance > 100%",zone_id,season);
+                sLog.outErrorDb("Weather for zone %u season %u has wrong rain chance > 100%%",zone_id,season);
             }
 
             if (wzc.data[season].snowChance > 100)
             {
                 wzc.data[season].snowChance = 25;
-                sLog.outErrorDb("Weather for zone %u season %u has wrong snow chance > 100%",zone_id,season);
+                sLog.outErrorDb("Weather for zone %u season %u has wrong snow chance > 100%%",zone_id,season);
             }
 
             if (wzc.data[season].stormChance > 100)
             {
                 wzc.data[season].stormChance = 25;
-                sLog.outErrorDb("Weather for zone %u season %u has wrong storm chance > 100%",zone_id,season);
+                sLog.outErrorDb("Weather for zone %u season %u has wrong storm chance > 100%%",zone_id,season);
             }
         }
 
@@ -8005,6 +8005,6 @@ void ObjectMgr::LoadTransportEvents()
     }
     while (result->NextRow());
 
-    sLog.outString("\n>> Loaded %u transport events \n", result->GetRowCount());
+    sLog.outString("\n>> Loaded %llu transport events \n", result->GetRowCount());
 }
 

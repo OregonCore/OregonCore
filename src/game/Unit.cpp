@@ -1436,7 +1436,7 @@ void Unit::DealSpellDamage(SpellNonMeleeDamage *damageInfo, bool durabilityLoss)
 
     Unit *pVictim = damageInfo->target;
 
-    if (!this || !pVictim)
+    if (!pVictim)
         return;
 
     if ((!pVictim->isAlive() || pVictim->isInFlight()) || (pVictim->GetTypeId() == TYPEID_UNIT && pVictim->ToCreature()->IsInEvadeMode()))
@@ -1497,9 +1497,9 @@ void Unit::CalculateMeleeDamage(Unit *pVictim, uint32 damage, CalcDamageInfo *da
     damageInfo->procEx           = PROC_EX_NONE;
     damageInfo->hitOutCome       = MELEE_HIT_EVADE;
 
-    if (!this || !pVictim)
+    if (!pVictim)
         return;
-    if (!this->isAlive() || !pVictim->isAlive())
+    if (!isAlive() || !pVictim->isAlive())
         return;
 
     // Select HitInfo/procAttacker/procVictim flag based on attack type
@@ -1690,7 +1690,7 @@ void Unit::DealMeleeDamage(CalcDamageInfo *damageInfo, bool durabilityLoss)
         return;
     Unit *pVictim = damageInfo->target;
 
-    if (!this || !pVictim)
+    if (!pVictim)
         return;
 
     if ((!pVictim->isAlive() || pVictim->isInFlight()) || (pVictim->GetTypeId() == TYPEID_UNIT && pVictim->ToCreature()->IsInEvadeMode()))
@@ -3201,8 +3201,6 @@ void Unit::SetCurrentCastedSpell(Spell * pSpell)
 
 void Unit::InterruptSpell(CurrentSpellTypes spellType, bool withDelayed, bool withInstant)
 {
-    ASSERT(spellType < CURRENT_MAX_SPELL);
-
     Spell *spell = m_currentSpells[spellType];
     if (spell
         && (withDelayed || spell->getState() != SPELL_STATE_DELAYED)
@@ -3645,11 +3643,13 @@ bool Unit::AddAura(Aura *Aur)
     if (spellmgr.GetSpellCustomAttr(id) & SPELL_ATTR_CU_LINK_AURA)
     {
         if (const std::vector<int32> *spell_triggered = spellmgr.GetSpellLinked(id + SPELL_LINK_AURA))
+        {
             for (std::vector<int32>::const_iterator itr = spell_triggered->begin(); itr != spell_triggered->end(); ++itr)
                 if (*itr < 0)
                     ApplySpellImmune(id, IMMUNITY_ID, -(*itr), true);
                 else if (Unit* caster = Aur->GetCaster())
                     caster->AddAura(*itr, this);
+        }
     }
 
     DEBUG_LOG("Aura %u now is in use", Aur->GetModifier()->m_auraname);
@@ -4194,20 +4194,24 @@ void Unit::RemoveAura(AuraMap::iterator &i, AuraRemoveMode mode)
         if (spellmgr.GetSpellCustomAttr(id) & SPELL_ATTR_CU_LINK_REMOVE)
         {
             if (const std::vector<int32> *spell_triggered = spellmgr.GetSpellLinked(-(int32)id))
+            {
                 for (std::vector<int32>::const_iterator itr = spell_triggered->begin(); itr != spell_triggered->end(); ++itr)
                     if (*itr < 0)
                         RemoveAurasDueToSpell(-(*itr));
                     else if (Unit* caster = Aur->GetCaster())
                         CastSpell(this, *itr, true, 0, 0, caster->GetGUID());
+            }
         }
         if (spellmgr.GetSpellCustomAttr(id) & SPELL_ATTR_CU_LINK_AURA)
         {
             if (const std::vector<int32> *spell_triggered = spellmgr.GetSpellLinked(id + SPELL_LINK_AURA))
+            {
                 for (std::vector<int32>::const_iterator itr = spell_triggered->begin(); itr != spell_triggered->end(); ++itr)
                     if (*itr < 0)
                         ApplySpellImmune(id, IMMUNITY_ID, -(*itr), false);
                     else
                         RemoveAurasDueToSpell(*itr);
+            }
         }
     }
 
@@ -4371,14 +4375,16 @@ DynamicObject * Unit::GetDynObject(uint32 spellId)
 
 void Unit::AddGameObject(GameObject* gameObj)
 {
-    if (!gameObj || !gameObj->GetOwnerGUID() == 0) return;
+    if (!gameObj || gameObj->GetOwnerGUID() != 0)
+        return;
     m_gameObj.push_back(gameObj);
     gameObj->SetOwnerGUID(GetGUID());
 }
 
 void Unit::RemoveGameObject(GameObject* gameObj, bool del)
 {
-    if (!gameObj || !gameObj->GetOwnerGUID() == GetGUID()) return;
+    if (!gameObj || gameObj->GetOwnerGUID() != GetGUID())
+        return;
 
     gameObj->SetOwnerGUID(0);
 
@@ -4815,7 +4821,7 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                 // 41409 Dementia: Every 5 seconds either gives you -5% damage/healing. (Druid, Shaman, Priest, Warlock, Mage, Paladin)
                 case 39446:
                 {
-                    if (GetTypeId() != TYPEID_PLAYER || !this->isAlive())
+                    if (GetTypeId() != TYPEID_PLAYER || !isAlive())
                         return false;
 
                     // Select class defined buff
@@ -6202,7 +6208,7 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
                         else if (auraSpellInfo->SpellIconID == 2013)
                         {
                             // Check health condition - should drop to less 30% (damage deal after this!)
-                            if (!uint32((10*(int32(GetHealth() - damage)))) < 3 * GetMaxHealth())
+                            if (uint32((10*(int32(GetHealth() - damage)))) >= 3 * GetMaxHealth())
                                 return false;
 
                              if (pVictim && pVictim->isAlive())
@@ -7587,7 +7593,7 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
             // Darkmoon Card: Vengeance - 0.1%
             else if (spellProto->SpellVisual == 9850 && spellProto->SpellIconID == 2230)
             {
-                CastingTime = 3.5;
+                CastingTime = 3500;
             }
             // This will disable the spell power coefficient for other generic family spells
             else CastingTime = 0;
@@ -8356,7 +8362,7 @@ bool Unit::IsImmuneToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
     return false;
 }
 
-bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const
+bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool /*castOnSelf*/) const
 {
     if (!spellInfo)
         return false;

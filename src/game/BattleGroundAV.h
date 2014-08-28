@@ -1430,7 +1430,7 @@ struct BG_AV_NodeInfo
     uint16       PrevOwner;
     BG_AV_States State;
     BG_AV_States PrevState;
-    int          Timer;
+    uint32       Timer;
     bool         Tower;
 };
 
@@ -1517,14 +1517,14 @@ class BattleGroundAV : public BattleGround
         uint16 GetBonusHonor(uint8 kills); //TODO remove this when mangos handles this right
 
         /*variables */
-        int32 m_Team_Scores[BG_TEAMS_COUNT];
+        uint32 m_Team_Scores[BG_TEAMS_COUNT];
         uint32 m_Team_QuestStatus[BG_TEAMS_COUNT][9];       // [x][y] x=team y=questcounter
 
         BG_AV_NodeInfo m_Nodes[BG_AV_NODES_MAX];
 
         uint32 m_Mine_Owner[BG_AV_MAX_MINES];
         uint32 m_Mine_PrevOwner[BG_AV_MAX_MINES];           // only for worldstates needed
-        int32 m_Mine_Timer; //ticks for both teams
+        uint32 m_Mine_Timer; //ticks for both teams
         uint32 m_Mine_Reclaim_Timer[BG_AV_MAX_MINES];
         uint32 m_CaptainBuffTimer[BG_TEAMS_COUNT];
         bool m_CaptainAlive[BG_TEAMS_COUNT];

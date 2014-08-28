@@ -28,13 +28,13 @@ class PointMovementGenerator
 : public MovementGeneratorMedium< T, PointMovementGenerator<T> >
 {
     public:
-        PointMovementGenerator(uint32 _id, float _x, float _y, float _z, bool _usePathfinding) : id(_id),
-            i_x(_x), i_y(_y), i_z(_z), i_nextMoveTime(0), arrived(false), m_usePathfinding(_usePathfinding) {}
+        PointMovementGenerator(uint32 _id, float _x, float _y, float _z, bool _usePathfinding) :
+            i_x(_x), i_y(_y), i_z(_z), m_usePathfinding(_usePathfinding), i_nextMoveTime(0), id(_id), arrived(false) {}
 
-        void Initialize(T &);
-        void Finalize(T &unit);
-        void Reset(T &unit){unit.StopMoving();}
-        bool Update(T &, const uint32 &diff);
+        virtual void Initialize(T &);
+        virtual void Finalize(T &unit);
+        virtual void Reset(T &unit){unit.StopMoving();}
+        virtual bool Update(T &, const uint32 &diff);
 
         void MovementInform(T &);
 
@@ -58,7 +58,7 @@ class AssistanceMovementGenerator
             PointMovementGenerator<Creature>(0, _x, _y, _z, true) {}
 
         MovementGeneratorType GetMovementGeneratorType() { return ASSISTANCE_MOTION_TYPE; }
-        void Finalize(Unit &);
+        void Finalize(Creature &);
 };
 
 #endif

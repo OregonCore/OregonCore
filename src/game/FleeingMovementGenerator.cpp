@@ -29,9 +29,6 @@ template<class T>
 void
 FleeingMovementGenerator<T>::_setTargetLocation(T &owner)
 {
-    if (!&owner)
-        return;
-
     if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED))
         return;
 
@@ -67,9 +64,6 @@ template<class T>
 bool
 FleeingMovementGenerator<T>::_getPoint(T &owner, float &x, float &y, float &z)
 {
-    if (!&owner)
-        return false;
-
     x = owner.GetPositionX();
     y = owner.GetPositionY();
     z = owner.GetPositionZ();
@@ -296,9 +290,6 @@ template<class T>
 void
 FleeingMovementGenerator<T>::Initialize(T &owner)
 {
-    if (!&owner)
-        return;
-
     _Init(owner);
     owner.CastStop();
     owner.addUnitState(UNIT_STAT_FLEEING | UNIT_STAT_ROAMING);
@@ -330,9 +321,6 @@ template<>
 void
 FleeingMovementGenerator<Creature>::_Init(Creature &owner)
 {
-    if (!&owner)
-        return;
-
     is_water_ok = owner.canSwim();
     is_land_ok  = owner.canWalk();
 }
@@ -366,7 +354,7 @@ template<class T>
 bool
 FleeingMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
 {
-    if (!&owner || !owner.isAlive())
+    if (!owner.isAlive())
         return false;
     if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED))
         return true;

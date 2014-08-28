@@ -53,9 +53,6 @@ void PointMovementGenerator<T>::Initialize(T &unit)
 template<class T>
 bool PointMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 {
-    if (!&unit)
-        return false;
-
     if (unit.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED))
     {
         if (unit.hasUnitState(UNIT_STAT_CHARGING))
@@ -111,10 +108,10 @@ template void PointMovementGenerator<Creature>::Initialize(Creature&);
 template bool PointMovementGenerator<Creature>::Update(Creature&, const uint32 &diff);
 template void PointMovementGenerator<Creature>::Finalize(Creature&);
 
-void AssistanceMovementGenerator::Finalize(Unit &unit)
+void AssistanceMovementGenerator::Finalize(Creature &unit)
 {
-    unit.ToCreature()->SetNoCallAssistance(false);
-    unit.ToCreature()->CallAssistance();
+    unit.SetNoCallAssistance(false);
+    unit.CallAssistance();
     if (unit.isAlive())
         unit.GetMotionMaster()->MoveSeekAssistanceDistract(sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY));
 }

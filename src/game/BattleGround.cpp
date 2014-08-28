@@ -354,7 +354,7 @@ void BattleGround::Update(uint32 diff)
             m_PrematureCountDown = true;
             m_PrematureCountDownTimer = sBattleGroundMgr.GetPrematureFinishTime();
         }
-        else if (m_PrematureCountDownTimer < int32(diff))
+        else if (m_PrematureCountDownTimer < diff)
         {
             // time's up!
             EndBattleGround(0); // noone wins

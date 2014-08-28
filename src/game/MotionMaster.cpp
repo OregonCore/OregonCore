@@ -358,7 +358,7 @@ void MotionMaster::MoveFall(float z, uint32 id)
         z = i_owner->GetMap()->GetHeight(i_owner->GetPositionX(), i_owner->GetPositionY(), i_owner->GetPositionZ(), true, MAX_FALL_DISTANCE);
         if (z < INVALID_HEIGHT)
         {
-            sLog.outDebug("MotionMaster::MoveFall: unable retrive a proper height at map %u (x: %f, y: %f, z: %f).",
+            sLog.outDebug("MotionMaster::MoveFall: unable retrive a proper height at map %u (x: %f, y: %f, z: %f) Z: %f.",
                 i_owner->GetMap()->GetId(), i_owner->GetPositionX(), i_owner->GetPositionX(), i_owner->GetPositionZ(), z);
         }
 

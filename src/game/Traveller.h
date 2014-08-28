@@ -53,9 +53,9 @@ struct Traveller
     float GetMoveDestinationTo(float x, float y, float z);
     uint32 GetTotalTrevelTimeTo(float x, float y, float z);
 
-    void Relocation(float x, float y, float z, float orientation) {}
+    void Relocation(float /*x*/, float /*y*/, float /*z*/, float /*orientation*/) {}
     void Relocation(float x, float y, float z) { Relocation(x, y, z, i_traveller.GetOrientation()); }
-    void MoveTo(float x, float y, float z, uint32 t) {}
+    void MoveTo(float /*x*/, float /*y*/, float /*z*/, uint32 /*t*/) {}
 };
 
 template<class T>

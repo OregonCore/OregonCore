@@ -453,7 +453,6 @@ void PoolGroup<Quest>::SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 
             return;
         }
     }
-    uint32 lastDespawned = 0;
     ActivePoolObjects currentQuests = spawns.GetActiveQuests();
     ActivePoolObjects newQuests;
 
@@ -805,7 +804,7 @@ void PoolHandler::LoadFromDB()
                         ss << *itr << " ";
                     ss << "create(s) a circular reference, which can cause the server to freeze.\nRemoving the last link between mother pool "
                         << poolItr->first << " and child pool " << poolItr->second;
-                    sLog.outErrorDb(ss.str().c_str());
+                    sLog.outErrorDb("%s", ss.str().c_str());
                     mPoolPoolGroups[poolItr->second].RemoveOneRelation(poolItr->first);
                     mPoolSearchMap.erase(poolItr);
                     --count;
@@ -963,7 +962,7 @@ void PoolHandler::SaveQuestsToDB()
     if (!first)
     {
         query << ")";
-        CharacterDatabase.PExecute(query.str().c_str());
+        CharacterDatabase.PExecute("%s", query.str().c_str());
     }
 
     first = true;
@@ -981,7 +980,7 @@ void PoolHandler::SaveQuestsToDB()
     }
 
     if (!first)
-        CharacterDatabase.PExecute(query.str().c_str());
+        CharacterDatabase.PExecute("%s", query.str().c_str());
 
     CharacterDatabase.CommitTransaction();
 }
@@ -990,7 +989,7 @@ void PoolHandler::ChangeDailyQuests()
 {
     for (PoolGroupQuestMap::iterator itr = mPoolQuestGroups.begin(); itr != mPoolQuestGroups.end(); ++itr)
     {
-        if (Quest const* pQuest = objmgr.GetQuestTemplate(itr->GetFirstEqualChancedObjectId()))
+        if (/*Quest const* pQuest = */objmgr.GetQuestTemplate(itr->GetFirstEqualChancedObjectId()))
         {
             UpdatePool<Quest>(itr->GetPoolId(), 1);    // anything non-zero means don't load from db
         }

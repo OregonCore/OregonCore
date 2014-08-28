@@ -295,7 +295,7 @@ bool TargetedMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
     if (!i_target.isValid() || !i_target->IsInWorld())
         return false;
 
-    if (!&owner || !owner.isAlive())
+    if (!owner.isAlive())
         return true;
 
     if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_FLEEING | UNIT_STAT_DISTRACTED))

@@ -4643,8 +4643,6 @@ void Player::HandleBaseModValue(BaseModGroup modGroup, BaseModType modType, floa
         return;
     }
 
-    float val = 1.0f;
-
     if (modType == FLAT_MOD)
         m_auraBaseMod[modGroup][modType] += apply ? amount : -amount;
     else // PCT_MOD
@@ -20795,7 +20793,7 @@ WorldObject* Player::GetViewpoint() const
     return NULL;
 }
 
-bool Player::CanUseBattleGroundObject(GameObject* gameobject)
+bool Player::CanUseBattleGroundObject(GameObject* /*gameobject*/)
 {
     // Note: Mount, stealth and invisibility will be removed when used
     return (!isTotalImmunity() &&                          // Damage immune

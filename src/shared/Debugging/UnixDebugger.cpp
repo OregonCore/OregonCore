@@ -167,7 +167,6 @@ void WriteBacktrace(std::stringstream& ss)
 
     std::string module, func, offset, addr;
     char* demangled;
-    int status;
 
     ss << "BackTrace ";
     if (size == BACKTRACE_SIZE)
@@ -451,7 +450,7 @@ abfd(0), syms(0), text(0), function("??"), filename("??"), line(0)
 
     unsigned storage_needed = bfd_get_symtab_upper_bound(abfd);
     syms = (asymbol **) malloc(storage_needed);
-    unsigned cSymbols = bfd_canonicalize_symtab(abfd, syms);
+    /*unsigned cSymbols = */bfd_canonicalize_symtab(abfd, syms);
 
     text = bfd_get_section_by_name(abfd, ".text");
 }

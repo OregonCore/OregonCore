@@ -26,7 +26,7 @@
 ////////////////// PathInfo //////////////////
 PathInfo::PathInfo(const Unit* owner, float destX, float destY, float destZ, bool forceDest) :
     m_polyLength(0), m_type(PATHFIND_BLANK),
-    m_forceDestination(forceDest), m_useStraightPath(true), m_pointPathLimit(MAX_POINT_PATH_LENGTH),
+    m_useStraightPath(true), m_forceDestination(forceDest), m_pointPathLimit(MAX_POINT_PATH_LENGTH),
     m_sourceUnit(owner), m_navMesh(NULL), m_navMeshQuery(NULL)
 {
     PathNode endPoint(destX, destY, destZ);
@@ -425,7 +425,7 @@ void PathInfo::BuildPointPath(const float *startPoint, const float *endPoint)
     }
     else if (pointCount == m_pointPathLimit)
     {
-        sLog.outDebug("PathInfo::BuildPointPath pointCount == m_pointPathLimit\n", pointCount);
+        sLog.outDebug("PathInfo::BuildPointPath pointCount %u == m_pointPathLimit\n", pointCount);
         BuildShortcut();
         m_type = PATHFIND_SHORT;
         return;
