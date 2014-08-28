@@ -58,6 +58,8 @@
 
 #include "Platform/Define.h"
 
+#define STRINGIFY(x) #x
+
 #if COMPILER == COMPILER_MICROSOFT
 #   pragma warning(disable:4996)                            // 'function': was declared deprecated
 #ifndef __SHOW_STUPID_WARNINGS__

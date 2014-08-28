@@ -1,5 +1,5 @@
 # Set build-directive (used in core to tell which buildtype we used)
-add_definitions(-D_BUILD_DIRECTIVE="${CMAKE_BUILD_TYPE}")
+add_definitions(-D_BUILD_DIRECTIVE=${CMAKE_BUILD_TYPE})
 
 if( USE_SFMT)
   if(PLATFORM EQUAL 32)
@@ -38,7 +38,7 @@ function(add_clang_pch target dir header cpp)
     # helper target for triggering PCH re-generation
     add_library(${target}PCH-Trigger STATIC "${dir}/${cpp}")
 
-    separate_arguments(args UNIX_COMMAND "-x c++-header --relocatable-pch -isysroot ${CMAKE_CURRENT_BINARY_DIR} ${dir}/${header} -o ${header}.pch ${includes} ${CMAKE_CXX_FLAGS} ${definitions}")
+    separate_arguments(args UNIX_COMMAND "-x c++-header --relocatable-pch -isysroot ${CMAKE_CURRENT_BINARY_DIR} ${dir}/${header} -o ${header}.pch ${definitions} ${includes} ${CMAKE_CXX_FLAGS} -Winvalid-pch")
     add_custom_command(
         OUTPUT "${header}.pch"
         COMMAND ${CMAKE_CXX_COMPILER} ARGS ${args}

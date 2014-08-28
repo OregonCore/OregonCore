@@ -330,7 +330,7 @@ void DumpDebugInfo(const char* sig, const char* reason)
 
     ss << "Date: " << dateString << std::endl;
     ss << "Version: " << _FULLVERSION << std::endl;
-    ss << "Build Type: " << _BUILD_DIRECTIVE << std::endl;
+    ss << "Build Type: " << STRINGIFY(_BUILD_DIRECTIVE) << std::endl;
     #if COMPILER == COMPILER_BORLAND
     ss << "Compiler: Borland" << std::endl;
     #elif COMPILER == COMPILER_GNU
