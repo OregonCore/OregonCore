@@ -946,7 +946,7 @@ void PoolHandler::Initialize()
 
 void PoolHandler::SaveQuestsToDB()
 {
-    CharacterDatabase.BeginTransaction();
+    SQLTransaction trans = CharacterDatabase.BeginTransaction();
     std::ostringstream query;
     query << "DELETE FROM pool_quest_save WHERE pool_id IN (";
     bool first = true;
@@ -981,9 +981,9 @@ void PoolHandler::SaveQuestsToDB()
     }
 
     if (!first)
-        CharacterDatabase.PExecute(query.str().c_str());
+        trans->PAppend(query.str().c_str());
 
-    CharacterDatabase.CommitTransaction();
+    CharacterDatabase.CommitTransaction(trans);
 }
 
 void PoolHandler::ChangeDailyQuests()

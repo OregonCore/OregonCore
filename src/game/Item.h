@@ -211,10 +211,10 @@ class Item : public Object
         bool IsSoulBound() const { return HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED); }
         bool IsBindedNotWith(uint64 guid) const { return IsSoulBound() && GetOwnerGUID() != guid; }
         bool IsBoundByEnchant() const;
-        virtual void SaveToDB();
+        virtual void SaveToDB(SQLTransaction& trans);
         virtual bool LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result = QueryResult_AutoPtr(NULL));
-        virtual void DeleteFromDB();
-        void DeleteFromInventoryDB();
+        virtual void DeleteFromDB(SQLTransaction& trans);
+        void DeleteFromInventoryDB(SQLTransaction& trans);
 
         bool IsBag() const { return GetProto()->InventoryType == INVTYPE_BAG; }
         bool IsBroken() const { return GetUInt32Value(ITEM_FIELD_MAXDURABILITY) > 0 && GetUInt32Value(ITEM_FIELD_DURABILITY) == 0; }

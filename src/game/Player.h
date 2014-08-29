@@ -1310,8 +1310,9 @@ class Player : public Unit, public GridObject<Player>
         /*********************************************************/
 
         void SaveToDB();
-        void SaveInventoryAndGoldToDB();                    // fast save function for item/money cheating preventing
-        void SaveGoldToDB();
+        void SaveInventoryAndGoldToDB(SQLTransaction& trans);                    // fast save function for item/money cheating preventing
+        void SaveGoldToDB(SQLTransaction& trans);
+
         void SaveDataFieldToDB();
         static void SaveValuesArrayInDB(Tokens const& data,uint64 guid);
         static void SetUInt32ValueInArray(Tokens& data,uint16 index, uint32 value);
@@ -1488,7 +1489,7 @@ class Player : public Unit, public GridObject<Player>
         void RemoveArenaSpellCooldowns();
         void RemoveAllSpellCooldown();
         void _LoadSpellCooldowns(QueryResult_AutoPtr result);
-        void _SaveSpellCooldowns();
+        void _SaveSpellCooldowns(SQLTransaction& trans);
 
         GlobalCooldownMgr& GetGlobalCooldownMgr() { return m_GlobalCooldownMgr; }
 
@@ -2249,17 +2250,17 @@ class Player : public Unit, public GridObject<Player>
         /***                   SAVE SYSTEM                     ***/
         /*********************************************************/
 
-        void _SaveActions();
-        void _SaveAuras();
-        void _SaveInventory();
-        void _SaveMail();
-        void _SaveQuestStatus();
-        void _SaveDailyQuestStatus();
+        void _SaveActions(SQLTransaction& trans);
+        void _SaveAuras(SQLTransaction& trans);
+        void _SaveInventory(SQLTransaction& trans);
+        void _SaveMail(SQLTransaction& trans);
+        void _SaveQuestStatus(SQLTransaction& trans);
+        void _SaveDailyQuestStatus(SQLTransaction& trans);
         void _SaveReputation();
-        void _SaveSkills();
-        void _SaveSpells();
+        void _SaveSkills(SQLTransaction& trans);
+        void _SaveSpells(SQLTransaction& trans);
         void _SaveTutorials();
-        void _SaveBGData();
+        void _SaveBGData(SQLTransaction& trans);
 
         void _SetCreateBits(UpdateMask *updateMask, Player *target) const;
         void _SetUpdateBits(UpdateMask *updateMask, Player *target) const;

@@ -131,31 +131,31 @@ void WorldSession::HandleCharEnumOpcode(WorldPacket & /*recv_data*/)
     // get all the data necessary for loading all characters (along with their pets) on the account
     m_charEnumCallback =
         CharacterDatabase.AsyncPQuery(
-             !sWorld.getConfig(CONFIG_DECLINED_NAMES_USED) ?
-            //   ------- Query Without Declined Names --------
-            //           0               1                2                3                 4                  5                       6                        7
-                "SELECT characters.guid, characters.name, characters.race, characters.class, characters.gender, characters.playerBytes, characters.playerBytes2, characters.level, "
-            //   8                9               10                     11                     12                     13                    14
-                "characters.zone, characters.map, characters.position_x, characters.position_y, characters.position_z, guild_member.guildid, characters.playerFlags, "
-            //  15                    16                   17                     18                   19
-                "characters.at_login, character_pet.entry, character_pet.modelid, character_pet.level, characters.equipmentCache "
-                "FROM characters LEFT JOIN character_pet ON characters.guid=character_pet.owner AND character_pet.slot='%u' "
-                "LEFT JOIN guild_member ON characters.guid = guild_member.guid "
-                "WHERE characters.account = '%u' ORDER BY characters.guid"
-                :
-            //   --------- Query With Declined Names ---------
-            //           0               1                2                3                 4                  5                       6                        7
-                "SELECT characters.guid, characters.name, characters.race, characters.class, characters.gender, characters.playerBytes, characters.playerBytes2, characters.level, "
-            //   8                9               10                     11                     12                     13                    14
-                "characters.zone, characters.map, characters.position_x, characters.position_y, characters.position_z, guild_member.guildid, characters.playerFlags, "
-            //  15                    16                   17                     18                   19               20
-                "characters.at_login, character_pet.entry, character_pet.modelid, character_pet.level, characters.equipmentCache, character_declinedname.genitive "
-                "FROM characters LEFT JOIN character_pet ON characters.guid = character_pet.owner AND character_pet.slot='%u' "
-                "LEFT JOIN character_declinedname ON characters.guid = character_declinedname.guid "
-                "LEFT JOIN guild_member ON characters.guid = guild_member.guid "
-                "WHERE characters.account = '%u' ORDER BY characters.guid",
-                PET_SAVE_AS_CURRENT, GetAccountId()
-            );
+         !sWorld.getConfig(CONFIG_DECLINED_NAMES_USED) ?
+    //   ------- Query Without Declined Names --------
+    //           0               1                2                3                 4                  5                       6                        7
+        "SELECT characters.guid, characters.name, characters.race, characters.class, characters.gender, characters.playerBytes, characters.playerBytes2, characters.level, "
+    //   8                9               10                     11                     12                     13                    14
+        "characters.zone, characters.map, characters.position_x, characters.position_y, characters.position_z, guild_member.guildid, characters.playerFlags, "
+    //  15                    16                   17                     18                   19
+        "characters.at_login, character_pet.entry, character_pet.modelid, character_pet.level, characters.data "
+        "FROM characters LEFT JOIN character_pet ON characters.guid=character_pet.owner AND character_pet.slot='0' "
+        "LEFT JOIN guild_member ON characters.guid = guild_member.guid "
+        "WHERE characters.account = '%u' ORDER BY characters.guid"
+        :
+    //   --------- Query With Declined Names ---------
+    //           0               1                2                3                 4                  5                       6                        7
+        "SELECT characters.guid, characters.name, characters.race, characters.class, characters.gender, characters.playerBytes, characters.playerBytes2, characters.level, "
+    //   8                9               10                     11                     12                     13                    14
+        "characters.zone, characters.map, characters.position_x, characters.position_y, characters.position_z, guild_member.guildid, characters.playerFlags, "
+    //  15                    16                   17                     18                   19               20
+        "characters.at_login, character_pet.entry, character_pet.modelid, character_pet.level, characters.data, character_declinedname.genitive "
+        "FROM characters LEFT JOIN character_pet ON characters.guid = character_pet.owner AND character_pet.slot='0' "
+        "LEFT JOIN character_declinedname ON characters.guid = character_declinedname.guid "
+        "LEFT JOIN guild_member ON characters.guid = guild_member.guid "
+        "WHERE characters.account = '%u' ORDER BY characters.guid",
+        GetAccountId()
+);
 }
 
 void WorldSession::HandleCharCreateOpcode(WorldPacket & recv_data)
@@ -974,11 +974,11 @@ void WorldSession::HandleDeclinedPlayerNameOpcode(WorldPacket& recv_data)
     for (int i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
         CharacterDatabase.escape_string(declinedname.name[i]);
 
-    CharacterDatabase.BeginTransaction();
-    CharacterDatabase.PExecute("DELETE FROM character_declinedname WHERE guid = '%u'", GUID_LOPART(guid));
-    CharacterDatabase.PExecute("INSERT INTO character_declinedname (guid, genitive, dative, accusative, instrumental, prepositional) VALUES ('%u','%s','%s','%s','%s','%s')",
+    SQLTransaction trans = CharacterDatabase.BeginTransaction();
+    trans->PAppend("DELETE FROM character_declinedname WHERE guid = '%u'", GUID_LOPART(guid));
+    trans->PAppend("INSERT INTO character_declinedname (guid, genitive, dative, accusative, instrumental, prepositional) VALUES ('%u','%s','%s','%s','%s','%s')",
         GUID_LOPART(guid), declinedname.name[0].c_str(), declinedname.name[1].c_str(), declinedname.name[2].c_str(), declinedname.name[3].c_str(), declinedname.name[4].c_str());
-    CharacterDatabase.CommitTransaction();
+    CharacterDatabase.CommitTransaction(trans);
 
     WorldPacket data(SMSG_SET_PLAYER_DECLINED_NAMES_RESULT, 4+8);
     data << uint32(0);                                      // OK

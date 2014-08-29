@@ -437,11 +437,11 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
             auctionEntry->deposit = dep;
             auctionEntry->expire_time = (time_t) etime + time(NULL);
             auctionEntry->auctionHouseEntry = ahEntry;
-            item->SaveToDB();
+            //item->SaveToDB();
             item->RemoveFromUpdateQueueOf(AHBplayer);
             sAuctionMgr->AddAItem(item);
             auctionHouse->AddAuction(auctionEntry);
-            auctionEntry->SaveToDB();
+//            auctionEntry->SaveToDB();
 
             switch(itemColor)
             {
@@ -669,7 +669,7 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *con
                 else
                 {
                     // mail to last bidder and return money
-                    session->SendAuctionOutbiddedMail(auction , bidprice);
+                    //sAuctionMgr->SendAuctionOutbiddedMail(auction , bidprice);
                     //pl->ModifyMoney(-int32(price));
                 }
            }
@@ -685,16 +685,16 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *con
             //buyout
             if ((auction->bidder) && (AHBplayer->GetGUIDLow() != auction->bidder))
             {
-                session->SendAuctionOutbiddedMail(auction, auction->buyout);
+                //sAuctionMgr->SendAuctionOutbiddedMail(auction, auction->buyout);
             }
             auction->bidder = AHBplayer->GetGUIDLow();
             auction->bid = auction->buyout;
 
             // Send mails to buyer & seller
-            sAuctionMgr->SendAuctionSalePendingMail(auction);
-            sAuctionMgr->SendAuctionSuccessfulMail(auction);
-            sAuctionMgr->SendAuctionWonMail(auction);
-            auction->DeleteFromDB();
+//            sAuctionMgr->SendAuctionSalePendingMail(auction);
+//            sAuctionMgr->SendAuctionSuccessfulMail(auction);
+//            sAuctionMgr->SendAuctionWonMail(auction);
+//            auction->DeleteFromDB();
             uint32 item_template = auction->item_template;
             sAuctionMgr->RemoveAItem(auction->item_guidlow);
             auctionHouse->RemoveAuction(auction, item_template);
@@ -1571,7 +1571,7 @@ void AuctionHouseBot::Commands(uint32 command, uint32 ahMapID, uint32 col, char*
             CharacterDatabase.PExecute("UPDATE auctionhousebot SET percentpurpleitems = '%u' WHERE auctionhouse = '%u'", purplei, ahMapID);
             CharacterDatabase.PExecute("UPDATE auctionhousebot SET percentorangeitems = '%u' WHERE auctionhouse = '%u'", orangei, ahMapID);
             CharacterDatabase.PExecute("UPDATE auctionhousebot SET percentyellowitems = '%u' WHERE auctionhouse = '%u'", yellowi, ahMapID);
-            CharacterDatabase.CommitTransaction();
+//            CharacterDatabase.CommitTransaction();
             config->SetPercentages(greytg, whitetg, greentg, bluetg, purpletg, orangetg, yellowtg, greyi, whitei, greeni, bluei, purplei, orangei, yellowi);
         }
         break;

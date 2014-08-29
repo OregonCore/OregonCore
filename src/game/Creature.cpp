@@ -986,9 +986,9 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
     data.spawnMask = spawnMask;
 
     // updated in DB
-    WorldDatabase.BeginTransaction();
+    SQLTransaction trans = WorldDatabase.BeginTransaction();
 
-    WorldDatabase.PExecute("DELETE FROM creature WHERE guid = '%u'", m_DBTableGuid);
+    trans->PAppend("DELETE FROM creature WHERE guid = '%u'", m_DBTableGuid);
 
     std::ostringstream ss;
     ss << "INSERT INTO creature VALUES ("
@@ -1010,9 +1010,9 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
         << (m_isDeadByDefault ? 1 : 0) << ","               //is_dead
         << GetDefaultMovementType() << ")";                 //default movement generator type
 
-    WorldDatabase.PExecute("%s", ss.str().c_str());
+    trans->PAppend("%s", ss.str().c_str());
 
-    WorldDatabase.CommitTransaction();
+    WorldDatabase.CommitTransaction(trans);
 }
 
 void Creature::SelectLevel(const CreatureInfo *cinfo)
@@ -1317,12 +1317,12 @@ void Creature::DeleteFromDB()
     objmgr.SaveCreatureRespawnTime(m_DBTableGuid,GetInstanceId(),0);
     objmgr.DeleteCreatureData(m_DBTableGuid);
 
-    WorldDatabase.BeginTransaction();
-    WorldDatabase.PExecute("DELETE FROM creature WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecute("DELETE FROM creature_addon WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecute("DELETE FROM game_event_creature WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecute("DELETE FROM game_event_model_equip WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.CommitTransaction();
+    SQLTransaction trans = WorldDatabase.BeginTransaction();
+    trans->PAppend("DELETE FROM creature WHERE guid = '%u'", m_DBTableGuid);
+    trans->PAppend("DELETE FROM creature_addon WHERE guid = '%u'", m_DBTableGuid);
+    trans->PAppend("DELETE FROM game_event_creature WHERE guid = '%u'", m_DBTableGuid);
+    trans->PAppend("DELETE FROM game_event_model_equip WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.CommitTransaction(trans);
 }
 
 bool Creature::canSeeOrDetect(Unit const* u, bool detect, bool /*inVisibleList*/, bool /*is3dDistance*/) const

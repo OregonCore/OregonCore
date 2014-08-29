@@ -35,7 +35,7 @@ barGoLink::~barGoLink()
     fflush(stdout);
 }
 
-barGoLink::barGoLink(int row_count)
+barGoLink::barGoLink(uint64 row_count)
 {
     rec_no    = 0;
     rec_pos   = 0;
@@ -64,7 +64,7 @@ void barGoLink::step()
     if (!m_showOutput)
         return;
 
-    int i, n;
+    uint64 i, n;
 
     if ( num_rec == 0 ) return;
     ++rec_no;

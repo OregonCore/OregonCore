@@ -23,8 +23,6 @@
 #include "Util.h"
 #include "Auth/Sha1.h"
 
-extern DatabaseType LoginDatabase;
-
 AccountMgr::AccountMgr()
 {}
 
@@ -83,13 +81,13 @@ AccountOpResult AccountMgr::DeleteAccount(uint32 accid)
     // table realm specific but common for all characters of account for realm
     CharacterDatabase.PExecute("DELETE FROM character_tutorial WHERE account = '%u'",accid);
 
-    LoginDatabase.BeginTransaction();
+    SQLTransaction trans = LoginDatabase.BeginTransaction();
 
-    LoginDatabase.PExecute("DELETE FROM account WHERE id='%d'", accid);
-    LoginDatabase.PExecute("DELETE FROM account_access WHERE id ='%d'", accid);
-    LoginDatabase.PExecute("DELETE FROM realmcharacters WHERE acctid='%d'", accid);
+    trans->PAppend("DELETE FROM account WHERE id='%d'", accid);
+    trans->PAppend("DELETE FROM account_access WHERE id ='%d'", accid);
+    trans->PAppend("DELETE FROM realmcharacters WHERE acctid='%d'", accid);
 
-    LoginDatabase.CommitTransaction();
+    LoginDatabase.CommitTransaction(trans);
 
     return AOR_OK;
 }
