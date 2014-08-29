@@ -20,8 +20,8 @@
 #include "Log.h"
 
 PreparedStatement::PreparedStatement(uint32 index) :
-m_index(index),
-m_stmt(NULL)
+m_stmt(NULL),
+m_index(index)
 {
 }
 
@@ -182,7 +182,7 @@ m_bind(NULL)
     memset(m_bind, 0, sizeof(MYSQL_BIND)*m_paramCount);
 
     /// "If set to 1, causes mysql_stmt_store_result() to update the metadata MYSQL_FIELD->max_length value."
-    my_bool	bool_tmp = 1;
+    my_bool bool_tmp = 1;
     mysql_stmt_attr_set(stmt, STMT_ATTR_UPDATE_MAX_LENGTH, &bool_tmp);
 }
 
@@ -199,7 +199,7 @@ void MySQLPreparedStatement::ClearParameters()
     {
         delete m_bind[i].length;
         m_bind[i].length = NULL;
-        delete[] m_bind[i].buffer;
+        delete[] (char*) m_bind[i].buffer;
         m_bind[i].buffer = NULL;
         m_paramsSet[i] = false;
     }

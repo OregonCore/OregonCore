@@ -670,29 +670,6 @@ int kb_hit_return()
 // Thread start
 void CliRunnable::run()
 {
-    ///- Init MySQL threads or connections
-    bool needInit = true;
-    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_WORLDDB) & MYSQL_BUNDLE_RA))
-    {
-        WorldDatabase.Init_MySQL_Connection();
-        needInit = false;
-    }
-
-    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_LOGINDB) & MYSQL_BUNDLE_RA))
-    {
-        LoginDatabase.Init_MySQL_Connection();
-        needInit = false;
-    }
-
-    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_CHARDB) & MYSQL_BUNDLE_RA))
-    {
-        CharacterDatabase.Init_MySQL_Connection();
-        needInit = false;
-    }
-
-    if (needInit)
-        MySQL::Thread_Init();
-
     // Display the list of available CLI functions then beep
     sLog.outString();
     #if PLATFORM != WINDOWS
@@ -771,16 +748,5 @@ void CliRunnable::run()
     rl_free_line_state();
     rl_cleanup_after_signal();
     #endif
-
-    ///- Free MySQL thread resources and deallocate lingering connections
-    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_WORLDDB) & MYSQL_BUNDLE_RA))
-        WorldDatabase.End_MySQL_Connection();
-    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_LOGINDB) & MYSQL_BUNDLE_RA))
-        LoginDatabase.End_MySQL_Connection();
-
-    if (!(sWorld.getConfig(CONFIG_MYSQL_BUNDLE_CHARDB) & MYSQL_BUNDLE_RA))
-        CharacterDatabase.End_MySQL_Connection();
-    if (needInit)
-        MySQL::Thread_End();
 }
 

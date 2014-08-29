@@ -1088,12 +1088,6 @@ void World::LoadConfigSettings(bool reload)
     std::string ignoreMMapIds = sConfig.GetStringDefault("mmap.ignoreMapIds", "");
     MMAP::MMapFactory::preventPathfindingOnMaps(ignoreMMapIds.c_str());
     sLog.outString("WORLD: MMap pathfinding %sabled.", getConfig(CONFIG_BOOL_MMAP_ENABLED) ? "en" : "dis");
-
-    // MySQL thread bundling config for other runnable tasks
-    m_configs[CONFIG_MYSQL_BUNDLE_LOGINDB] = sConfig.GetIntDefault("LoginDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);
-    m_configs[CONFIG_MYSQL_BUNDLE_CHARDB] = sConfig.GetIntDefault("CharacterDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);
-    m_configs[CONFIG_MYSQL_BUNDLE_WORLDDB] = sConfig.GetIntDefault("WorldDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);
-
 }
 
 // Initialize the World

@@ -258,7 +258,13 @@ void AuthSocket::_SetVSFields(const std::string& rI)
     const char *v_hex, *s_hex;
     v_hex = v.AsHexStr();
     s_hex = s.AsHexStr();
-    LoginDatabase.PExecute("UPDATE account SET v = '%s', s = '%s' WHERE username = '%s'", v_hex, s_hex, _safelogin.c_str() );
+
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SET_VS);
+    stmt->setString(0, v_hex);
+    stmt->setString(1, s_hex);
+    stmt->setString(2, _safelogin);
+    LoginDatabase.Execute(stmt);
+
     OPENSSL_free((void*)v_hex);
     OPENSSL_free((void*)s_hex);
 }
@@ -663,7 +669,15 @@ bool AuthSocket::_HandleLogonProof()
         // Update the sessionkey, last_ip, last login time and reset number of failed logins in the account table for this account
         // No SQL injection (escaped user name) and IP address as received by socket
         const char* K_hex = K.AsHexStr();
-        LoginDatabase.PExecute("UPDATE account SET sessionkey = '%s', last_ip = '%s', last_login = NOW(), locale = '%u', os = '%s', failed_logins = 0 WHERE username = '%s'", K_hex, get_remote_address().c_str(), GetLocaleByName(_localizationName), _os.c_str(), _safelogin.c_str() );
+        
+        PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SET_LOGONPROOF);
+        stmt->setString(0, K_hex);
+        stmt->setString(1, get_remote_address().c_str());
+        stmt->setUInt32(2, GetLocaleByName(_localizationName));
+        stmt->setString(3, _os.c_str());
+        stmt->setString(4, _safelogin.c_str());
+        LoginDatabase.Execute(stmt);
+
         OPENSSL_free((void*)K_hex);
 
         // Finish SRP6 and send the final result to the client

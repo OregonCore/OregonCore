@@ -162,7 +162,7 @@ bool MySQLConnection::Execute(const char* sql)
         // guarded block for thread-safe mySQL request
         ACE_Guard<ACE_Thread_Mutex> query_connection_guard(m_Mutex);
 
-        #ifdef TRINITY_DEBUG
+        #ifdef OREGON_DEBUG
         uint32 _s = getMSTime();
         #endif
         if (mysql_query(m_Mysql, sql))
@@ -173,7 +173,7 @@ bool MySQLConnection::Execute(const char* sql)
         }
         else
         {
-            #ifdef TRINITY_DEBUG
+            #ifdef OREGON_DEBUG
             sLog.outSQLDriver("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
             #endif
         }
@@ -188,21 +188,22 @@ bool MySQLConnection::Execute(PreparedStatement* stmt)
         return false;
 
     uint32 index = stmt->m_index;
-    MySQLPreparedStatement* m_mStmt = GetPreparedStatement(index);
-    ASSERT(m_mStmt);            // Can only be null if preparation failed, server side error or bad query
-    m_mStmt->m_stmt = stmt;     // Cross reference them for debug output
-    stmt->m_stmt = m_mStmt;
 
     {
         // guarded block for thread-safe mySQL request
         ACE_Guard<ACE_Thread_Mutex> query_connection_guard(m_Mutex);
-        
+
+        MySQLPreparedStatement* m_mStmt = GetPreparedStatement(index);
+        ASSERT(m_mStmt);            // Can only be null if preparation failed, server side error or bad query
+        m_mStmt->m_stmt = stmt;     // Cross reference them for debug output
+        stmt->m_stmt = m_mStmt;     // TODO: Cleaner way
+
         stmt->BindParameters();
 
         MYSQL_STMT* msql_STMT = m_mStmt->GetSTMT();
         MYSQL_BIND* msql_BIND = m_mStmt->GetBind();
 
-        #ifdef TRINITY_DEBUG
+        #ifdef OREGON_DEBUG
         uint32 _s = getMSTime();
         #endif
         if (mysql_stmt_bind_param(msql_STMT, msql_BIND))
@@ -220,7 +221,7 @@ bool MySQLConnection::Execute(PreparedStatement* stmt)
         }
         else
         {
-            #ifdef TRINITY_DEBUG
+            #ifdef OREGON_DEBUG
             sLog.outSQLDriver("[%u ms] Prepared SQL: %u", getMSTimeDiff(_s, getMSTime()), index);
             #endif
             m_mStmt->ClearParameters();
@@ -257,7 +258,7 @@ bool MySQLConnection::_Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD *
     {
         // guarded block for thread-safe mySQL request
         ACE_Guard<ACE_Thread_Mutex> query_connection_guard(m_Mutex);
-        #ifdef TRINITY_DEBUG
+        #ifdef OREGON_DEBUG
         uint32 _s = getMSTime();
         #endif
         if (mysql_query(m_Mysql, sql))
@@ -268,7 +269,7 @@ bool MySQLConnection::_Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD *
         }
         else
         {
-            #ifdef TRINITY_DEBUG
+            #ifdef OREGON_DEBUG
             sLog.outSQLDriver("[%u ms] SQL: %s", getMSTimeDiff(_s,getMSTime()), sql);
             #endif
         }
@@ -308,6 +309,7 @@ void MySQLConnection::CommitTransaction()
 
 MySQLPreparedStatement* MySQLConnection::GetPreparedStatement(uint32 index)
 {
+    ASSERT(index < m_stmts.size());
     return m_stmts[index];
 }
 
@@ -332,4 +334,13 @@ void MySQLConnection::PrepareStatement(uint32 index, const char* sql)
     MySQLPreparedStatement* mStmt = new MySQLPreparedStatement(stmt);
     m_stmts[index] = mStmt;
 }
-    
+
+PreparedResultSet* MySQLConnection::Query(PreparedStatement* stmt)
+{
+    this->Execute(stmt);
+    if (mysql_more_results(m_Mysql))
+    {
+        mysql_next_result(m_Mysql);
+    }
+    return new PreparedResultSet(stmt->m_stmt->GetSTMT());
+}

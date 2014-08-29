@@ -29,6 +29,8 @@
 #include "SystemConfig.h"
 #include "Config/Config.h"
 #include "Database/DatabaseEnv.h"
+#include "Database/DatabaseWorkerPool.h"
+
 #include "DBCStores.h"
 #include "CliRunnable.h"
 #include "RARunnable.h"
@@ -343,6 +345,7 @@ bool Master::_StartDB()
     sLog.SetLogDB(false);
     std::string dbstring;
     uint8 num_threads;
+    int32 mask;
 
     dbstring = sConfig.GetStringDefault("WorldDatabaseInfo", "");
     if (dbstring.empty())
@@ -359,8 +362,10 @@ bool Master::_StartDB()
         return false;
     }
 
+    mask = sConfig.GetIntDefault("WorldDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);   
+
     ///- Initialise the world database
-    if (!WorldDatabase.Open(dbstring, num_threads))
+    if (!WorldDatabase.Open(dbstring, num_threads, MySQLThreadBundle(mask)))
     {
         sLog.outError("Cannot connect to world database %s", dbstring.c_str());
         return false;
@@ -381,8 +386,10 @@ bool Master::_StartDB()
         return false;
     }
 
+    mask = sConfig.GetIntDefault("CharacterDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);
+
     ///- Initialise the Character database
-    if (!CharacterDatabase.Open(dbstring, num_threads))
+    if (!CharacterDatabase.Open(dbstring, num_threads, MySQLThreadBundle(mask)))
     {
         sLog.outError("Cannot connect to Character database %s", dbstring.c_str());
         return false;
@@ -403,8 +410,10 @@ bool Master::_StartDB()
         return false;
     }
 
+    mask = sConfig.GetIntDefault("LoginDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);  
+
     ///- Initialise the login database
-    if (!LoginDatabase.Open(dbstring, num_threads))
+    if (!LoginDatabase.Open(dbstring, num_threads, MySQLThreadBundle(mask)))
     {
         sLog.outError("Cannot connect to login database %s", dbstring.c_str());
         return false;

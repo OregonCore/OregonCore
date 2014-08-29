@@ -32,11 +32,11 @@
 enum MySQLThreadBundle
 {
     MYSQL_BUNDLE_NONE   = 0x00,     //- Each task will run their own MySQL connection
-    MYSQL_BUNDLE_CLI    = 0x01,     //- Commandline interface thread
+    MYSQL_BUNDLE_UNUSED = 0x01,     //- Temp unused
     MYSQL_BUNDLE_RA     = 0x02,     //- Remote admin thread
     MYSQL_BUNDLE_RAR    = 0x04,     //- Reactor runnable thread
     MYSQL_BUNDLE_WORLD  = 0x08,     //- WorldRunnable
-    MYSQL_BUNDLE_ALL    = MYSQL_BUNDLE_CLI | MYSQL_BUNDLE_RA | MYSQL_BUNDLE_RAR | MYSQL_BUNDLE_WORLD,
+    MYSQL_BUNDLE_ALL    = MYSQL_BUNDLE_RA | MYSQL_BUNDLE_RAR | MYSQL_BUNDLE_WORLD,
 };
 
 template <class T>
@@ -62,12 +62,18 @@ class DatabaseWorkerPool
             mysql_library_end();
         }
 
-        bool Open(const std::string& infoString, uint8 num_threads)
+        bool Open(const std::string& infoString, uint8 num_threads, MySQLThreadBundle mask)
         {
-            sLog.outSQLDriver("Creating bundled/master MySQL connection.");
-            m_bundle_conn = new T();
-            m_bundle_conn->Open(infoString);
-            ++m_connections;
+            //- Only created bundled connection if configured            
+            m_bundle_conn = NULL;
+            if (mask != MYSQL_BUNDLE_NONE)
+            {
+                sLog.outSQLDriver("Creating bundled/master MySQL connection.");
+                m_bundle_conn = new T();
+                m_bundle_conn->Open(infoString);
+                ++m_connections;
+            }
+
             
             m_async_connections.resize(num_threads);
 
@@ -96,17 +102,15 @@ class DatabaseWorkerPool
                 --m_connections;
             }
     
-            delete m_bundle_conn;
-            m_bundle_conn = NULL;
-            --m_connections;
-            sLog.outSQLDriver("Closed bundled connection.");
-
-            //- MySQL::Thread_End() should be called manually from the aborting calling threads
-            sLog.outSQLDriver("Waiting for %u synchroneous database threads to exit.", (uint32)m_connections.value());
-            while (!m_sync_connections.empty())
+            if (m_bundleMask != MYSQL_BUNDLE_NONE)
             {
+                delete m_bundle_conn;
+                m_bundle_conn = NULL;
+                --m_connections;
+                sLog.outSQLDriver("Closed bundled connection.");
             }
-            sLog.outSQLDriver("Synchroneous database threads exited succesfuly.");
+            
+            //- MySQL::Thread_End() should be called manually from the aborting calling threads
         }
 
         void Init_MySQL_Connection()
@@ -244,7 +248,7 @@ class DatabaseWorkerPool
 
         void CommitTransaction(SQLTransaction transaction)
         {
-            #ifdef TRINITY_DEBUG
+            #ifdef OREGON_DEBUG
             if (transaction->GetSize() == 0)
             {
                 sLog.outSQLDriver("Transaction contains 0 queries. Not executing.");
@@ -280,6 +284,19 @@ class DatabaseWorkerPool
             delete[] buf;
         }
 
+        MySQLThreadBundle GetBundleMask() { return m_bundleMask; } 
+
+        PreparedResultSet* Query(PreparedStatement* stmt)
+        {
+            PreparedResultSet* ret = GetConnection()->Query(stmt);
+            if (!ret || !ret->num_rows)
+                return NULL;
+
+            ret->NextRow();
+            return ret;
+        }
+
+    private:
         unsigned long escape_string(char *to, const char *from, unsigned long length)
         {
             if (!to || !from || !length)
@@ -287,7 +304,6 @@ class DatabaseWorkerPool
             return (mysql_real_escape_string(GetConnection()->GetHandle(), to, from, length));
         }
 
-    private:
         void Enqueue(SQLOperation* op)
         {
             m_queue->enqueue(op);
@@ -312,13 +328,13 @@ class DatabaseWorkerPool
 
     private:
         ACE_Activation_Queue*           m_queue;             //! Queue shared by async worker threads.
-        ACE_Thread_Mutex                m_queue_mtx;         //! For thread safe enqueues of delayed statements. 
         std::vector<T*>                 m_async_connections;
         ConnectionMap                   m_sync_connections;  //! Holds a mysql connection+thread per mapUpdate thread and unbundled runnnables.
         ACE_Thread_Mutex                m_connectionMap_mtx; //! For thread safe access to the synchroneous connection map
         T*                              m_bundle_conn;       //! Bundled connection (see Database.ThreadBundleMask config)
         AtomicUInt                      m_connections;       //! Counter of MySQL connections; 
         std::string                     m_infoString;        //! Infostring that is passed on to child connections.
+        MySQLThreadBundle               m_bundleMask;        //! Our configured bundle mask (see enum)
 };
 
 #endif
