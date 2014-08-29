@@ -257,7 +257,7 @@ namespace VMAP
 
     bool StaticMapTree::InitMap(const std::string &fname, VMapManager2 *vm)
     {
-        DEBUG_LOG("Initializing StaticMapTree '%s'", fname.c_str());
+        sLog.outStaticDebug("Initializing StaticMapTree '%s'", fname.c_str());
         bool success = true;
         std::string fullname = iBasePath + fname;
         FILE *rf = fopen(fullname.c_str(), "rb");
@@ -290,7 +290,7 @@ namespace VMAP
             if (!iIsTiled && ModelSpawn::readFromFile(rf, spawn))
             {
                 WorldModel *model = vm->acquireModelInstance(iBasePath, spawn.name);
-                DEBUG_LOG("StaticMapTree::InitMap(): loading %s", spawn.name.c_str());
+                sLog.outStaticDebug("StaticMapTree::InitMap(): loading %s", spawn.name.c_str());
                 if (model)
                 {
                     // assume that global model always is the first and only tree value (could be improved...)

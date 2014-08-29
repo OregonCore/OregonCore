@@ -19,9 +19,9 @@
 #define __WORLDSESSION_H
 
 #include "Common.h"
-#include "QueryResult.h"
 #include "World.h"
 #include "WardenBase.h"
+#include "DatabaseEnv.h"
 
 struct ItemPrototype;
 struct AuctionEntry;

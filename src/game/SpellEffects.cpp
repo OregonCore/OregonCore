@@ -2126,7 +2126,7 @@ void Spell::EffectTriggerMissileSpell(SpellEffIndex effIndex)
 
     #ifdef OREGON_DEBUG
     if (m_CastItem)
-        DEBUG_LOG("WORLD: cast Item spellId - %i", spellInfo->Id);
+        sLog.outStaticDebug("WORLD: cast Item spellId - %i", spellInfo->Id);
     #endif
 
     Spell *spell = new Spell(m_caster, spellInfo, true, m_originalCasterGUID);
@@ -2157,7 +2157,7 @@ void Spell::EffectTeleportUnits(SpellEffIndex /*effIndex*/)
     m_targets.m_dstPos.GetPosition(x, y, z, orientation);
     if (!orientation && m_targets.getUnitTarget())
         orientation = m_targets.getUnitTarget()->GetOrientation();
-    DEBUG_LOG("Spell::EffectTeleportUnits - teleport unit to %u %f %f %f %f\n", mapid, x, y, z, orientation);
+    sLog.outStaticDebug("Spell::EffectTeleportUnits - teleport unit to %u %f %f %f %f\n", mapid, x, y, z, orientation);
 
     if (mapid == unitTarget->GetMapId())
         unitTarget->NearTeleportTo(x, y, z, orientation, unitTarget == m_caster);
@@ -2275,7 +2275,7 @@ void Spell::EffectApplyAura(SpellEffIndex effIndex)
     if (!caster)
         return;
 
-    DEBUG_LOG("Spell: Aura is: %u", m_spellInfo->EffectApplyAuraName[effIndex]);
+    sLog.outStaticDebug("Spell: Aura is: %u", m_spellInfo->EffectApplyAuraName[effIndex]);
 
     Aura* Aur = CreateAura(m_spellInfo, effIndex, &damage, unitTarget, caster, m_CastItem);
 
@@ -2338,7 +2338,7 @@ void Spell::EffectApplyAura(SpellEffIndex effIndex)
             // applied at target by target
             Aura* AdditionalAura = CreateAura(AdditionalSpellInfo, 0, NULL, unitTarget,unitTarget, 0);
             unitTarget->AddAura(AdditionalAura);
-            DEBUG_LOG("Spell: Additional Aura is: %u", AdditionalSpellInfo->EffectApplyAuraName[0]);
+            sLog.outStaticDebug("Spell: Additional Aura is: %u", AdditionalSpellInfo->EffectApplyAuraName[0]);
         }
     }
 
@@ -2357,7 +2357,7 @@ void Spell::EffectUnlearnSpecialization(SpellEffIndex effIndex)
 
     _player->removeSpell(spellToUnlearn);
 
-    DEBUG_LOG("Spell: Player %u has unlearned spell %u from NpcGUID: %u", _player->GetGUIDLow(), spellToUnlearn, m_caster->GetGUIDLow());
+    sLog.outStaticDebug("Spell: Player %u has unlearned spell %u from NpcGUID: %u", _player->GetGUIDLow(), spellToUnlearn, m_caster->GetGUIDLow());
 }
 
 void Spell::EffectPowerDrain(SpellEffIndex effIndex)
@@ -2651,7 +2651,7 @@ void Spell::EffectHealthLeech(SpellEffIndex effIndex)
     if (damage < 0)
         return;
 
-    DEBUG_LOG("HealthLeech :%i", damage);
+    sLog.outStaticDebug("HealthLeech :%i", damage);
 
     float multiplier = m_spellInfo->EffectMultipleValue[effIndex];
 
@@ -2957,7 +2957,7 @@ void Spell::SendLoot(uint64 guid, LootType loottype)
                 // goober_scripts can be triggered if the player don't have the quest
                 if (gameObjTarget->GetGOInfo()->goober.eventId)
                 {
-                    DEBUG_LOG("Goober ScriptStart id %u for GO %u", gameObjTarget->GetGOInfo()->goober.eventId,gameObjTarget->GetDBTableGUIDLow());
+                    sLog.outStaticDebug("Goober ScriptStart id %u for GO %u", gameObjTarget->GetGOInfo()->goober.eventId,gameObjTarget->GetDBTableGUIDLow());
                     player->GetMap()->ScriptsStart(sEventScripts, gameObjTarget->GetGOInfo()->goober.eventId, player, gameObjTarget);
                 }
 
@@ -2988,7 +2988,7 @@ void Spell::SendLoot(uint64 guid, LootType loottype)
                 // @todo possible must be moved to loot release (in different from linked triggering)
                 if (gameObjTarget->GetGOInfo()->chest.eventId)
                 {
-                    DEBUG_LOG("Chest ScriptStart id %u for GO %u", gameObjTarget->GetGOInfo()->chest.eventId,gameObjTarget->GetDBTableGUIDLow());
+                    sLog.outStaticDebug("Chest ScriptStart id %u for GO %u", gameObjTarget->GetGOInfo()->chest.eventId,gameObjTarget->GetDBTableGUIDLow());
                     player->GetMap()->ScriptsStart(sEventScripts, gameObjTarget->GetGOInfo()->chest.eventId, player, gameObjTarget);
                 }
 
@@ -3418,7 +3418,7 @@ void Spell::EffectLearnSpell(SpellEffIndex effIndex)
     uint32 spellToLearn = (m_spellInfo->Id == SPELL_GENERIC_LEARN) ? damage : m_spellInfo->EffectTriggerSpell[effIndex];
     player->learnSpell(spellToLearn);
 
-    DEBUG_LOG("Spell: Player %u has learned spell %u from NpcGUID=%u", player->GetGUIDLow(), spellToLearn, m_caster->GetGUIDLow());
+    sLog.outStaticDebug("Spell: Player %u has learned spell %u from NpcGUID=%u", player->GetGUIDLow(), spellToLearn, m_caster->GetGUIDLow());
 }
 
 void Spell::EffectDispel(SpellEffIndex effIndex)
@@ -3569,7 +3569,7 @@ void Spell::EffectDualWield(SpellEffIndex /*effIndex*/)
 void Spell::EffectPull(SpellEffIndex /*effIndex*/)
 {
     // @todo create a proper pull towards distract spell center for distract
-    DEBUG_LOG("WORLD: Spell Effect DUMMY");
+    sLog.outStaticDebug("WORLD: Spell Effect DUMMY");
 }
 
 void Spell::EffectDistract(SpellEffIndex /*effIndex*/)
@@ -3697,7 +3697,7 @@ void Spell::EffectAddHonor(SpellEffIndex /*effIndex*/)
     // 2.4.3 honor-spells don't scale with level and won't be casted by an item
     // also we must use damage+1 (spelldescription says +25 honor but damage is only 24)
     unitTarget->ToPlayer()->RewardHonor(NULL, 1, damage + 1);
-    DEBUG_LOG("SpellEffect::AddHonor (spell_id %u) rewards %u honor points (non scale) for player: %u", m_spellInfo->Id, damage, unitTarget->ToPlayer()->GetGUIDLow());
+    sLog.outStaticDebug("SpellEffect::AddHonor (spell_id %u) rewards %u honor points (non scale) for player: %u", m_spellInfo->Id, damage, unitTarget->ToPlayer()->GetGUIDLow());
 }
 
 void Spell::EffectTradeSkill(SpellEffIndex /*effIndex*/)
@@ -5304,7 +5304,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
     }
 
     // normal DB scripted effect
-    DEBUG_LOG("Spell ScriptStart spellid %u in EffectScriptEffect ", m_spellInfo->Id);
+    sLog.outStaticDebug("Spell ScriptStart spellid %u in EffectScriptEffect ", m_spellInfo->Id);
     m_caster->GetMap()->ScriptsStart(sSpellScripts, m_spellInfo->Id, m_caster, unitTarget);
 }
 
@@ -5448,7 +5448,7 @@ void Spell::EffectStuck(SpellEffIndex /*effIndex*/)
     if (!pTarget)
         return;
 
-    DEBUG_LOG("Spell Effect: Stuck");
+    sLog.outStaticDebug("Spell Effect: Stuck");
     sLog.outDetail("Player %s (guid %u) used auto-unstuck future at map %u (%f, %f, %f)", pTarget->GetName(), pTarget->GetGUIDLow(), m_caster->GetMapId(), m_caster->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
 
     if (pTarget->isInFlight())
@@ -6305,7 +6305,7 @@ void Spell::EffectTransmitted(SpellEffIndex effIndex)
     //pGameObj->SetUInt32Value(GAMEOBJECT_LEVEL, m_caster->getLevel());
     pGameObj->SetSpellId(m_spellInfo->Id);
 
-    DEBUG_LOG("AddObject at SpellEfects.cpp EffectTransmitted");
+    sLog.outStaticDebug("AddObject at SpellEfects.cpp EffectTransmitted");
     //m_caster->AddGameObject(pGameObj);
     //m_ObjToDel.push_back(pGameObj);
 
@@ -6361,7 +6361,7 @@ void Spell::EffectProspecting(SpellEffIndex /*effIndex*/)
 
 void Spell::EffectSkill(SpellEffIndex /*effIndex*/)
 {
-    DEBUG_LOG("WORLD: SkillEFFECT");
+    sLog.outStaticDebug("WORLD: SkillEFFECT");
 }
 
 /* There is currently no need for this effect. We handle it in BattleGround.cpp
@@ -6388,7 +6388,7 @@ void Spell::EffectSpiritHeal(SpellEffIndex /*effIndex*/)
 // remove insignia spell effect
 void Spell::EffectSkinPlayerCorpse(SpellEffIndex /*effIndex*/)
 {
-    DEBUG_LOG("Effect: SkinPlayerCorpse");
+    sLog.outStaticDebug("Effect: SkinPlayerCorpse");
     if ((m_caster->GetTypeId() != TYPEID_PLAYER) || (unitTarget->GetTypeId() != TYPEID_PLAYER) || (unitTarget->isAlive()))
         return;
 
@@ -6397,7 +6397,7 @@ void Spell::EffectSkinPlayerCorpse(SpellEffIndex /*effIndex*/)
 
 void Spell::EffectStealBeneficialBuff(SpellEffIndex effIndex)
 {
-    DEBUG_LOG("Effect: StealBeneficialBuff");
+    sLog.outStaticDebug("Effect: StealBeneficialBuff");
 
     if (!unitTarget || unitTarget == m_caster)                 // can't steal from self
         return;
@@ -6529,11 +6529,11 @@ void Spell::EffectBind(SpellEffIndex /*effIndex*/)
     data << uint32(area_id);
     player->SendDirectMessage(&data);
 
-    DEBUG_LOG("New Home Position X is %f", loc.GetPositionX());
-    DEBUG_LOG("New Home Position Y is %f", loc.GetPositionY());
-    DEBUG_LOG("New Home Position Z is %f", loc.GetPositionZ());
-    DEBUG_LOG("New Home MapId is %u", loc.GetMapId());
-    DEBUG_LOG("New Home AreaId is %u", area_id);
+    sLog.outStaticDebug("New Home Position X is %f", loc.GetPositionX());
+    sLog.outStaticDebug("New Home Position Y is %f", loc.GetPositionY());
+    sLog.outStaticDebug("New Home Position Z is %f", loc.GetPositionZ());
+    sLog.outStaticDebug("New Home MapId is %u", loc.GetMapId());
+    sLog.outStaticDebug("New Home AreaId is %u", area_id);
 
     // zone update
     data.Initialize(SMSG_PLAYERBOUND, 8+4);

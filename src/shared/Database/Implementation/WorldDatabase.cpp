@@ -14,28 +14,23 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _WORKERTHREAD_H
-#define _WORKERTHREAD_H
 
-#include <ace/Task.h>
-#include <ace/Activation_Queue.h>
+#include "WorldDatabase.h"
 
-class MySQLConnection;
-
-class DatabaseWorker : protected ACE_Task_Base
+bool WorldDatabaseConnection::Open(const std::string& infoString)
 {
-    public:
-        DatabaseWorker(ACE_Activation_Queue* new_queue, MySQLConnection* con);
+    if (!MySQLConnection::Open(infoString))
+        return false;
 
-        ///- Inherited from ACE_Task_Base
-        int svc();
-        int activate();
-        int wait() { return ACE_Task_Base::wait(); }
+    m_stmts.resize(MAX_WORLDDATABASE_STATEMENTS);
 
-    private:
-        DatabaseWorker() : ACE_Task_Base() {}
-        ACE_Activation_Queue* m_queue;
-        MySQLConnection* m_conn;
-};
+    /*
+        ##################################
+        LOAD YOUR PREPARED STATEMENTS HERE
+        ##################################
+    */
+    PrepareStatement(WORLD_DEL_CRESPAWNTIME, "DELETE FROM creature_respawn WHERE guid = ? AND instance = ?");
+    PrepareStatement(WORLD_ADD_CRESPAWNTIME, "INSERT INTO creature_respawn VALUES (?, ?, ?)");
 
-#endif
+    return true;
+}

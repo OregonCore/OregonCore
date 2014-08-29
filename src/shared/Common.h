@@ -235,5 +235,6 @@ LocaleConstant GetLocaleByName(const std::string& name);
 #define M_PI            3.14159265358979323846
 #endif
 
+#define MAX_QUERY_LEN 32*1024
 #endif
 

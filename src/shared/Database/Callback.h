@@ -20,8 +20,7 @@
 
 #include <ace/Future.h>
 #include <ace/Future_Set.h>
-
-#include "DatabaseEnv.h"
+#include "QueryResult.h"
 
 typedef ACE_Future<QueryResult_AutoPtr> QueryResultFuture;
 

@@ -28,7 +28,6 @@
 #include "Database/MySQLThreading.h"
 #include "Database/Transaction.h"
 
-#define MAX_QUERY_LEN 32*1024
 #define _LIKE_           "LIKE"
 #define _TABLE_SIM_      "`"
 #define _CONCAT3_(A,B,C) "CONCAT( " A " , " B " , " C " )"

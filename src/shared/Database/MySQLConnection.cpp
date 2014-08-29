@@ -17,20 +17,24 @@
 
 #include "Common.h"
 
-#include "DatabaseEnv.h"
+#ifdef _WIN32
+   #include <winsock2.h>
+#endif
 #include <mysql.h>
+
+#include "MySQLConnection.h"
+#include "MySQLThreading.h"
 #include "QueryResult.h"
 #include "SQLOperation.h"
-#include "MySQLConnection.h"
+#include "PreparedStatement.h"
 #include "DatabaseWorker.h"
-#include "Log.h"
 #include "Util.h"
 #include "Timer.h"
 
 MySQLConnection::MySQLConnection() :
-m_Mysql(NULL),
+m_queue(NULL),
 m_worker(NULL),
-m_queue(NULL)
+m_Mysql(NULL)
 {
 }
 
@@ -43,6 +47,9 @@ m_Mysql(NULL)
 
 MySQLConnection::~MySQLConnection()
 {
+    for (size_t i = 0; i < m_stmts.size(); ++i)
+        delete m_stmts[i];
+
     MySQL::Thread_End();
     mysql_close(m_Mysql);
 }
@@ -114,13 +121,13 @@ bool MySQLConnection::Open(const std::string& infoString)
     if (m_Mysql)
     {
         sLog.outDetail("Connected to MySQL database at %s", host.c_str());
-        sLog.outString("MySQL client library: %s", mysql_get_client_info());
-        sLog.outString("MySQL server ver: %s ", mysql_get_server_info( m_Mysql));
+        sLog.outSQLDriver("MySQL client library: %s", mysql_get_client_info());
+        sLog.outSQLDriver("MySQL server ver: %s ", mysql_get_server_info( m_Mysql));
 
         if (!mysql_autocommit(m_Mysql, 1))
-            sLog.outDetail("AUTOCOMMIT SUCCESSFULLY SET TO 1");
+            sLog.outSQLDriver("AUTOCOMMIT SUCCESSFULLY SET TO 1");
         else
-            sLog.outDetail("AUTOCOMMIT NOT SET TO 1");
+            sLog.outSQLDriver("AUTOCOMMIT NOT SET TO 1");
 
         // set connection properties to UTF8 to properly handle locales for different
         // server configs - core sends data in UTF8, so MySQL must expect UTF8 too
@@ -130,9 +137,9 @@ bool MySQLConnection::Open(const std::string& infoString)
     #if MYSQL_VERSION_ID >= 50003
         my_bool my_true = (my_bool)1;
         if (mysql_options(m_Mysql, MYSQL_OPT_RECONNECT, &my_true))
-            sLog.outDetail("Failed to turn on MYSQL_OPT_RECONNECT.");
+            sLog.outSQLDriver("Failed to turn on MYSQL_OPT_RECONNECT.");
         else
-           sLog.outDetail("Successfully turned on MYSQL_OPT_RECONNECT.");
+            sLog.outSQLDriver("Successfully turned on MYSQL_OPT_RECONNECT.");
     #else
         #warning "Your mySQL client lib version does not support reconnecting after a timeout.\nIf this causes you any trouble we advice you to upgrade your mySQL client libs to at least mySQL 5.0.13 to resolve this problem."
     #endif
@@ -160,19 +167,66 @@ bool MySQLConnection::Execute(const char* sql)
         #endif
         if (mysql_query(m_Mysql, sql))
         {
-            sLog.outErrorDb("SQL: %s", sql);
-            sLog.outErrorDb("SQL ERROR: %s", mysql_error(m_Mysql));
+            sLog.outSQLDriver("SQL: %s", sql);
+            sLog.outSQLDriver("SQL ERROR: %s", mysql_error(m_Mysql));
             return false;
         }
         else
         {
             #ifdef TRINITY_DEBUG
-            sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
+            sLog.outSQLDriver("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
             #endif
         }
     }
 
     return true;
+}
+
+bool MySQLConnection::Execute(PreparedStatement* stmt)
+{
+    if (!m_Mysql)
+        return false;
+
+    uint32 index = stmt->m_index;
+    MySQLPreparedStatement* m_mStmt = GetPreparedStatement(index);
+    ASSERT(m_mStmt);            // Can only be null if preparation failed, server side error or bad query
+    m_mStmt->m_stmt = stmt;     // Cross reference them for debug output
+    stmt->m_stmt = m_mStmt;
+
+    {
+        // guarded block for thread-safe mySQL request
+        ACE_Guard<ACE_Thread_Mutex> query_connection_guard(m_Mutex);
+        
+        stmt->BindParameters();
+
+        MYSQL_STMT* msql_STMT = m_mStmt->GetSTMT();
+        MYSQL_BIND* msql_BIND = m_mStmt->GetBind();
+
+        #ifdef TRINITY_DEBUG
+        uint32 _s = getMSTime();
+        #endif
+        if (mysql_stmt_bind_param(msql_STMT, msql_BIND))
+        {
+            sLog.outSQLDriver("[ERROR]: PreparedStatement (id: %u) error binding params:  %s", index, mysql_stmt_error(msql_STMT));
+            m_mStmt->ClearParameters();
+            return false;
+        }
+
+        if (mysql_stmt_execute(msql_STMT))
+        {
+            sLog.outSQLDriver("[ERROR]: PreparedStatement (id: %u) error executing:  %s", index, mysql_stmt_error(msql_STMT));
+            m_mStmt->ClearParameters();
+            return false;
+        }
+        else
+        {
+            #ifdef TRINITY_DEBUG
+            sLog.outSQLDriver("[%u ms] Prepared SQL: %u", getMSTimeDiff(_s, getMSTime()), index);
+            #endif
+            m_mStmt->ClearParameters();
+            return true;
+        }
+    }
 }
 
 QueryResult_AutoPtr MySQLConnection::Query(const char* sql)
@@ -208,14 +262,14 @@ bool MySQLConnection::_Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD *
         #endif
         if (mysql_query(m_Mysql, sql))
         {
-            sLog.outErrorDb("SQL: %s", sql);
-            sLog.outErrorDb("query ERROR: %s", mysql_error(m_Mysql));
+            sLog.outSQLDriver("SQL: %s", sql);
+            sLog.outSQLDriver("query ERROR: %s", mysql_error(m_Mysql));
             return false;
         }
         else
         {
             #ifdef TRINITY_DEBUG
-            sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s,getMSTime()), sql);
+            sLog.outSQLDriver("[%u ms] SQL: %s", getMSTimeDiff(_s,getMSTime()), sql);
             #endif
         }
 
@@ -251,3 +305,31 @@ void MySQLConnection::CommitTransaction()
 {
     Execute("COMMIT");
 }
+
+MySQLPreparedStatement* MySQLConnection::GetPreparedStatement(uint32 index)
+{
+    return m_stmts[index];
+}
+
+void MySQLConnection::PrepareStatement(uint32 index, const char* sql)
+{
+    MYSQL_STMT * stmt = mysql_stmt_init(m_Mysql);
+    if (!stmt)
+    {
+        sLog.outSQLDriver("[ERROR]: In mysql_stmt_init() id: %u, sql: \"%s\"", index, sql);
+        sLog.outSQLDriver("[ERROR]: %s", mysql_error(m_Mysql));
+        return;
+    }
+
+    if (mysql_stmt_prepare(stmt, sql, static_cast<unsigned long>(strlen(sql))))
+    {
+        mysql_stmt_close(stmt);
+        sLog.outSQLDriver("[ERROR]: In mysql_stmt_close() id: %u, sql: \"%s\"", index, sql);
+        sLog.outSQLDriver("[ERROR]: %s", mysql_error(m_Mysql));
+        return;
+    }
+
+    MySQLPreparedStatement* mStmt = new MySQLPreparedStatement(stmt);
+    m_stmts[index] = mStmt;
+}
+    

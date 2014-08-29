@@ -1125,7 +1125,7 @@ void GameObject::Use(Unit* user)
                     int32 chance = skill - zone_skill + 5;
                     int32 roll = irand(1,100);
 
-                    DEBUG_LOG("Fishing check (skill: %i zone min skill: %i chance %i roll: %i",skill,zone_skill,chance,roll);
+                    sLog.outStaticDebug("Fishing check (skill: %i zone min skill: %i chance %i roll: %i",skill,zone_skill,chance,roll);
 
                     if (skill >= zone_skill && chance >= roll)
                     {

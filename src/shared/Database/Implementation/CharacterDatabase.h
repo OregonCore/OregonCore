@@ -14,28 +14,29 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _WORKERTHREAD_H
-#define _WORKERTHREAD_H
 
-#include <ace/Task.h>
-#include <ace/Activation_Queue.h>
+#ifndef _CHARACTERDATABASE_H
+#define _CHARACTERDATABASE_H
 
-class MySQLConnection;
+#include "DatabaseWorkerPool.h"
+#include "MySQLConnection.h"
 
-class DatabaseWorker : protected ACE_Task_Base
+class CharacterDatabaseConnection : public MySQLConnection
 {
     public:
-        DatabaseWorker(ACE_Activation_Queue* new_queue, MySQLConnection* con);
+        //- Constructors for sync and async connections
+        CharacterDatabaseConnection() : MySQLConnection() {}
+        CharacterDatabaseConnection(ACE_Activation_Queue* q) : MySQLConnection(q) {}
 
-        ///- Inherited from ACE_Task_Base
-        int svc();
-        int activate();
-        int wait() { return ACE_Task_Base::wait(); }
+        //- Loads databasetype specific prepared statements
+        bool Open(const std::string& infoString);
+};
 
-    private:
-        DatabaseWorker() : ACE_Task_Base() {}
-        ACE_Activation_Queue* m_queue;
-        MySQLConnection* m_conn;
+typedef DatabaseWorkerPool<CharacterDatabaseConnection> CharacterDatabaseWorkerPool;
+
+enum CharacterDatabaseStatements
+{
+    MAX_CHARACTERDATABASE_STATEMENTS,
 };
 
 #endif

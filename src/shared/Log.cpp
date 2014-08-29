@@ -21,6 +21,9 @@
 #include "Config/Config.h"
 #include "Util.h"
 
+#include "Implementation/LoginDatabase.h" // For logging
+extern LoginDatabaseWorkerPool LoginDatabase;
+
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -28,7 +31,7 @@ INSTANTIATE_SINGLETON_1(Log);
 
 Log::Log() :
     raLogfile(NULL), logfile(NULL), gmLogfile(NULL), charLogfile(NULL),
-    dberLogfile(NULL), chatLogfile(NULL), arenaLogFile(NULL),
+    dberLogfile(NULL), chatLogfile(NULL), arenaLogFile(NULL), sqlLogFile(NULL),
     wardenLogFile(NULL), m_gmlog_per_account(false),
     m_enableLogDBLater(false), m_enableLogDB(false), m_colored(false)
 {
@@ -68,6 +71,10 @@ Log::~Log()
     if (wardenLogFile != NULL)
         fclose(wardenLogFile);
     wardenLogFile = NULL;
+
+    if (sqlLogFile != NULL)
+        fclose(sqlLogFile);
+    sqlLogFile = NULL;
 }
 
 void Log::SetLogLevel(char *Level)
@@ -160,6 +167,7 @@ void Log::Initialize()
     chatLogfile = openLogFile("ChatLogFile","ChatLogTimestamp","a");
     arenaLogFile = openLogFile("ArenaLogFile",NULL,"a");
     wardenLogFile = openLogFile("Warden.LogFile",NULL,"a");
+    sqlLogFile = openLogFile("SQLDriverLogFile", NULL, "a");
 
     // Main log file settings
     m_logLevel     = sConfig.GetIntDefault("LogLevel", LOGL_NORMAL);
@@ -517,6 +525,30 @@ void Log::outArena(const char * str, ...)
     fflush(stdout);
 }
 
+void Log::outSQLDriver(const char* str, ...)
+{
+    if (!str)
+        return;
+
+    va_list ap;
+    va_start(ap, str);
+//    vutf8printf(stdout, str, &ap);
+    va_end(ap);
+
+    printf("\n");
+    if (sqlLogFile)
+    {
+        outTimestamp(sqlLogFile);
+        va_start(ap, str);
+        vfprintf(sqlLogFile, str, ap);
+        fprintf(sqlLogFile, "\n");
+        va_end(ap);
+
+        fflush(sqlLogFile);
+    }
+    fflush(stdout);
+}
+
 void Log::outErrorDb(const char * err, ...)
 {
     if (!err)
@@ -705,6 +737,18 @@ void Log::outDebug(const char * str, ...)
         }
     }
     fflush(stdout);
+}
+
+void Log::outStaticDebug(const char * fmt, ...)
+{
+    #ifdef OREGON_DEBUG
+    va_list ap;
+    char str[2048];
+    va_start(ap, str);
+    vsnprintf(str, 2048, fmt, ap);
+    va_end(ap);
+    outDebug(str);
+    #endif
 }
 
 void Log::outStringInLine(const char * str, ...)

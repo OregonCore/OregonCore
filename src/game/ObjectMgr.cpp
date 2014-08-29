@@ -6264,9 +6264,19 @@ void ObjectMgr::LoadWeatherZoneChances()
 void ObjectMgr::SaveCreatureRespawnTime(uint32 loguid, uint32 instance, time_t t)
 {
     mCreatureRespawnTimes[MAKE_PAIR64(loguid,instance)] = t;
-    WorldDatabase.PExecute("DELETE FROM creature_respawn WHERE guid = '%u' AND instance = '%u'", loguid, instance);
+    PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_CRESPAWNTIME);
+    stmt->setUInt32(0, loguid);
+    stmt->setUInt32(1, instance);
+    WorldDatabase.Execute(stmt);
+
     if (t)
-        WorldDatabase.PExecute("INSERT INTO creature_respawn VALUES ('%u', '" UI64FMTD "', '%u')", loguid, uint64(t), instance);
+    {
+        stmt = WorldDatabase.GetPreparedStatement(WORLD_ADD_CRESPAWNTIME);
+        stmt->setUInt32(0, loguid);
+        stmt->setUInt64(1, uint64(t));
+        stmt->setUInt32(2, instance);
+        WorldDatabase.Execute(stmt);
+    }
 }
 
 void ObjectMgr::DeleteCreatureData(uint32 guid)
@@ -7911,7 +7921,7 @@ void ObjectMgr::CheckScripts(ScriptsType type, std::set<int32>& ids)
 
 void ObjectMgr::LoadDbScriptStrings()
 {
-    LoadOregonStrings(WorldDatabase,"db_script_string",MIN_DB_SCRIPT_STRING_ID,MAX_DB_SCRIPT_STRING_ID);
+    LoadOregonStrings("db_script_string",MIN_DB_SCRIPT_STRING_ID,MAX_DB_SCRIPT_STRING_ID);
 
     std::set<int32> ids;
 
@@ -7932,7 +7942,7 @@ uint32 GetAreaTriggerScriptId(uint32 trigger_id)
     return objmgr.GetAreaTriggerScriptId(trigger_id);
 }
 
-bool LoadOregonStrings(DatabaseType& db, char const* table,int32 start_value, int32 end_value)
+bool LoadOregonStrings(char const* table,int32 start_value, int32 end_value)
 {
     // MAX_DB_SCRIPT_STRING_ID is max allowed negative value for scripts (scrpts can use only more deep negative values
     // start/end reversed for negative values
@@ -7942,7 +7952,7 @@ bool LoadOregonStrings(DatabaseType& db, char const* table,int32 start_value, in
         return false;
     }
 
-    return objmgr.LoadOregonStrings(db,table,start_value,end_value);
+    return objmgr.LoadOregonStrings(table,start_value,end_value);
 }
 
 uint32 GetScriptId(const char *name)

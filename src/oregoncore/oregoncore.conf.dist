@@ -416,6 +416,11 @@ MapUpdate.Threads = 1
 #        Default: 0 - extended arena logs off
 #                 1 - extended arena logs on
 #
+#    SQLDriverLogFile
+#        Log file of SQL driver events.
+#        For effective query logging you need to build in debug configuration.
+#        Default: "" - Empty name for disable
+#
 #    LogColors
 #        Color for messages (format "normal basic detail debug")
 #        Default: "" - no colors
@@ -542,6 +547,7 @@ GmLogPerAccount = 0
 RaLogFile = "ra_commands.log"
 ArenaLogFile = ""
 ArenaLogExtendedInfo = 0
+SQLDriverLogFile = ""
 LogColors = ""
 EnableLogDB = 0
 DBLogLevel = 2

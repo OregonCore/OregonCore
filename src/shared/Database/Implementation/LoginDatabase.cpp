@@ -14,28 +14,16 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _WORKERTHREAD_H
-#define _WORKERTHREAD_H
 
-#include <ace/Task.h>
-#include <ace/Activation_Queue.h>
+#include "LoginDatabase.h"
 
-class MySQLConnection;
-
-class DatabaseWorker : protected ACE_Task_Base
+bool LoginDatabaseConnection::Open(const std::string& infoString)
 {
-    public:
-        DatabaseWorker(ACE_Activation_Queue* new_queue, MySQLConnection* con);
+    /*
+        ##################################
+        LOAD YOUR PREPARED STATEMENTS HERE
+        ##################################
+    */
 
-        ///- Inherited from ACE_Task_Base
-        int svc();
-        int activate();
-        int wait() { return ACE_Task_Base::wait(); }
-
-    private:
-        DatabaseWorker() : ACE_Task_Base() {}
-        ACE_Activation_Queue* m_queue;
-        MySQLConnection* m_conn;
-};
-
-#endif
+    return MySQLConnection::Open(infoString);
+}

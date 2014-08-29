@@ -529,10 +529,10 @@ void Transport::Update(uint32 /*p_time*/)
 
         #ifdef OREGON_DEBUG
         if (m_curr == m_WayPoints.begin() && (sLog.getLogFilter() & LOG_FILTER_TRANSPORT_MOVES) == 0)
-            DEBUG_LOG(" ************ BEGIN ************** %s", this->m_name.c_str());
+            sLog.outStaticDebug(" ************ BEGIN ************** %s", this->m_name.c_str());
 
         if ((sLog.getLogFilter() & LOG_FILTER_TRANSPORT_MOVES) == 0)
-            DEBUG_LOG("%s moved to %d %f %f %f %d", this->m_name.c_str(), m_curr->second.id, m_curr->second.x, m_curr->second.y, m_curr->second.z, m_curr->second.mapid);
+            sLog.outStaticDebug("%s moved to %d %f %f %f %d", this->m_name.c_str(), m_curr->second.id, m_curr->second.x, m_curr->second.y, m_curr->second.z, m_curr->second.mapid);
         #endif
 
         //Transport Event System

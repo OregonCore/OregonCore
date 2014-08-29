@@ -15,10 +15,15 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <ace/Activation_Queue.h>
+#include "DatabaseWorkerPool.h"
+
 #ifndef _MYSQLCONNECTION_H
 #define _MYSQLCONNECTION_H
 
 class DatabaseWorker;
+class PreparedStatement;
+class MySQLPreparedStatement;
 
 class MySQLConnection
 {
@@ -33,6 +38,7 @@ class MySQLConnection
 
     public:
         bool Execute(const char* sql);
+        bool Execute(PreparedStatement* stmt);
         QueryResult_AutoPtr Query(const char* sql);
         bool _Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD **pFields, uint64* pRowCount, uint32* pFieldCount);
 
@@ -44,6 +50,9 @@ class MySQLConnection
 
     protected:
         MYSQL* GetHandle()  { return m_Mysql; }
+        MySQLPreparedStatement* GetPreparedStatement(uint32 index);
+        void PrepareStatement(uint32 index, const char* sql);
+        std::vector<MySQLPreparedStatement*> m_stmts;       //! PreparedStatements storage
 
     private:
         ACE_Activation_Queue* m_queue;                      //! Queue shared with other asynchroneous connections.
