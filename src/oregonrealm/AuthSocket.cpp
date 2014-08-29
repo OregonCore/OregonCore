@@ -31,8 +31,6 @@
 #include <ace/OS_NS_fcntl.h>
 #include <ace/OS_NS_sys_stat.h>
 
-extern DatabaseType LoginDatabase;
-
 enum eStatus
 {
     STATUS_CONNECTED = 0,

@@ -15,7 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined(DATABASEENV_H)
+#ifndef DATABASEENV_H
 #define DATABASEENV_H
 
 #include "Common.h"
@@ -25,22 +25,22 @@
 #include "Database/Field.h"
 #include "Database/QueryResult.h"
 
-#include "Database/DatabaseWorkerPool.h"
 #include "Database/MySQLThreading.h"
 #include "Database/Transaction.h"
 
-typedef DatabaseWorkerPool DatabaseType;
-
+#define MAX_QUERY_LEN 32*1024
 #define _LIKE_           "LIKE"
 #define _TABLE_SIM_      "`"
 #define _CONCAT3_(A,B,C) "CONCAT( " A " , " B " , " C " )"
 #define _OFFSET_         "LIMIT %d,1"
 
-extern DatabaseType WorldDatabase;
-extern DatabaseType CharacterDatabase;
-extern DatabaseType LoginDatabase;
+#include "Implementation/LoginDatabase.h"
+#include "Implementation/CharacterDatabase.h"
+#include "Implementation/WorldDatabase.h"
 
-#define MAX_QUERY_LEN 32*1024
+extern WorldDatabaseWorkerPool WorldDatabase;
+extern CharacterDatabaseWorkerPool CharacterDatabase;
+extern LoginDatabaseWorkerPool LoginDatabase;
 
 #endif
 

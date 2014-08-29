@@ -62,7 +62,7 @@ void HookSignals();
 
 bool stopEvent = false;                                     // Setting it to true stops the server
 
-DatabaseType LoginDatabase;                                 // Accessor to the realm server database
+LoginDatabaseWorkerPool LoginDatabase;                      // Accessor to the realm server database
 
 // Print out the usage string for this program on the console.
 void usage(const char *prog)
