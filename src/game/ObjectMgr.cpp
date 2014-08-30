@@ -1009,16 +1009,22 @@ bool ObjectMgr::SetCreatureLinkedRespawn(uint32 guid, uint32 linkedGuid)
     if (!linkedGuid) // we're removing the linking
     {
         mCreatureLinkedRespawnMap.erase(guid);
-        WorldDatabase.DirectPExecute("DELETE FROM creature_linked_respawn WHERE guid = '%u'",guid);
+        PreparedStatement *stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_CRELINKED_RESPAWN);
+        stmt->setUInt32(0, guid);
+        WorldDatabase.Execute(stmt);
         return true;
     }
 
     if (CheckCreatureLinkedRespawn(guid,linkedGuid)) // we add/change linking
     {
         mCreatureLinkedRespawnMap[guid] = linkedGuid;
-        WorldDatabase.DirectPExecute("REPLACE INTO creature_linked_respawn(guid,linkedGuid) VALUES ('%u','%u')",guid,linkedGuid);
+        PreparedStatement *stmt = WorldDatabase.GetPreparedStatement(WORLD_REP_CRELINKED_RESPAWN);
+        stmt->setUInt32(0, guid);
+        stmt->setUInt64(1, linkedGuid);
+        WorldDatabase.Execute(stmt);
         return true;
     }
+
     return false;
 }
 
@@ -1446,7 +1452,8 @@ void ObjectMgr::LoadCreatureRespawnTimes()
 void ObjectMgr::LoadGameobjectRespawnTimes()
 {
     // remove outdated data
-    WorldDatabase.DirectExecute("DELETE FROM gameobject_respawn WHERE respawntime <= UNIX_TIMESTAMP(NOW())");
+    PreparedStatement *stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_GAMEOBJECT_RESPAWN_TIMES);
+    WorldDatabase.Execute(stmt);
 
     uint32 count = 0;
 
@@ -4709,10 +4716,7 @@ void ObjectMgr::ReturnOrDeleteOldMails(bool serverUp)
     if (!result)
         return;                                             // any mails need to be returned or deleted
     Field *fields;
-    //std::ostringstream delitems, delmails; //will be here for optimization
-    //bool deletemail = false, deleteitem = false;
-    //delitems << "DELETE FROM item_instance WHERE guid IN (";
-    //delmails << "DELETE FROM mail WHERE id IN ("
+
     do
     {
         fields = result->Fetch();
@@ -4729,15 +4733,17 @@ void ObjectMgr::ReturnOrDeleteOldMails(bool serverUp)
         m->checked = fields[8].GetUInt32();
         m->mailTemplateId = fields[9].GetInt16();
 
-        Player *pl = 0;
+        Player *pl = NULL;
         if (serverUp)
             pl = GetPlayer((uint64)m->receiver);
+
         if (pl && pl->m_mailsLoaded)
         {                                                   //this code will run very improbably (the time is between 4 and 5 am, in game is online a player, who has old mail
             //his in mailbox and he has already listed his mails)
             delete m;
             continue;
         }
+
         //delete or return mail:
         if (has_items)
         {
@@ -4774,8 +4780,6 @@ void ObjectMgr::ReturnOrDeleteOldMails(bool serverUp)
         if (m->itemTextId)
             CharacterDatabase.PExecute("DELETE FROM item_text WHERE id = '%u'", m->itemTextId);
 
-        //deletemail = true;
-        //delmails << m->messageID << ", ";
         CharacterDatabase.PExecute("DELETE FROM mail WHERE id = '%u'", m->messageID);
         delete m;
     } while (result->NextRow());

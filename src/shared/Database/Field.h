@@ -17,6 +17,8 @@
 
 #if !defined(FIELD_H)
 #define FIELD_H
+#include <iostream>
+#include "Common.h"
 
 class Field
 {
@@ -31,10 +33,11 @@ class Field
             DB_TYPE_BOOL    = 0x04
         };
 
-        Field() : mValue(NULL), mType(DB_TYPE_UNKNOWN) {}
-        Field(const char* value, enum DataTypes type) : mValue(value), mType(type) {}
+        Field();
+        Field(Field &f);
+        Field(const char *value, enum DataTypes type);
 
-        ~Field() {}
+        ~Field();
 
         enum DataTypes GetType() const { return mType; }
 
@@ -50,21 +53,35 @@ class Field
         uint16 GetUInt16() const { return mValue ? static_cast<uint16>(atol(mValue)) : uint16(0); }
         int16 GetInt16() const { return mValue ? static_cast<int16>(atol(mValue)) : int16(0); }
         uint32 GetUInt32() const { return mValue ? static_cast<uint32>(atol(mValue)) : uint32(0); }
-        uint64 GetUInt64() const { return mValue ? strtoull(mValue, NULL, 10) : uint64(0); }
-        int64 GetInt64() const { return mValue ? strtoll(mValue, NULL, 10) : int64(0); }
+        uint64 GetUInt64() const
+        {
+            if(mValue)
+            {
+                uint64 value;
+                sscanf(mValue,UI64FMTD,&value);
+                return value;
+            }
+            else
+                return 0;
+        }
+        uint64 GetInt64() const
+        {
+            if(mValue)
+            {
+                int64 value;
+                sscanf(mValue,SI64FMTD,&value);
+                return value;
+            }
+            else
+                return 0;
+        }
 
         void SetType(enum DataTypes type) { mType = type; }
 
-        //no need for memory allocations to store resultset field strings
-        //all we need is to cache pointers returned by different DBMS APIs
-        void SetValue(const char* value) { mValue = value; };
+        void SetValue(const char *value);
 
     private:
-        Field(Field const&);
-        Field& operator=(Field const&);
-
-        const char* mValue;
+        char *mValue;
         enum DataTypes mType;
 };
 #endif
-

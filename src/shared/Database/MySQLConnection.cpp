@@ -232,10 +232,10 @@ bool MySQLConnection::Execute(PreparedStatement* stmt)
     }
 }
 
-QueryResult MySQLConnection::Query(const char* sql)
+ResultSet* MySQLConnection::Query(const char* sql)
 {
     if (!sql)
-        return QueryResult(NULL);
+        return NULL;
 
     MYSQL_RES *result = NULL;
     MYSQL_FIELD *fields = NULL;
@@ -243,13 +243,9 @@ QueryResult MySQLConnection::Query(const char* sql)
     uint32 fieldCount = 0;
 
     if (!_Query(sql, &result, &fields, &rowCount, &fieldCount))
-        return QueryResult(NULL);
+        return NULL;
 
-    ResultSet *queryResult = new ResultSet(result, fields, rowCount, fieldCount);
-
-    queryResult->NextRow();
-
-    return QueryResult(queryResult);
+    return new ResultSet(result, fields, rowCount, fieldCount);
 }
 
 bool MySQLConnection::_Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD **pFields, uint64* pRowCount, uint32* pFieldCount)
@@ -322,15 +318,15 @@ void MySQLConnection::PrepareStatement(uint32 index, const char* sql)
     {
         sLog.outSQLDriver("[ERROR]: In mysql_stmt_init() id: %u, sql: \"%s\"", index, sql);
         sLog.outSQLDriver("[ERROR]: %s", mysql_error(m_Mysql));
-        return;
+        exit(1);
     }
 
     if (mysql_stmt_prepare(stmt, sql, static_cast<unsigned long>(strlen(sql))))
     {
+        sLog.outSQLDriver("[ERROR]: In mysql_stmt_prepare() id: %u, sql: \"%s\"", index, sql);
+        sLog.outSQLDriver("[ERROR]: %s", mysql_stmt_error(stmt));
         mysql_stmt_close(stmt);
-        sLog.outSQLDriver("[ERROR]: In mysql_stmt_close() id: %u, sql: \"%s\"", index, sql);
-        sLog.outSQLDriver("[ERROR]: %s", mysql_error(m_Mysql));
-        return;
+        exit(1);
     }
 
     MySQLPreparedStatement* mStmt = new MySQLPreparedStatement(stmt);

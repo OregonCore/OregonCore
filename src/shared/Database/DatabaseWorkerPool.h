@@ -29,6 +29,8 @@
 #include "PreparedStatement.h"
 #include "Log.h"
 #include "QueryResult.h"
+#include "QueryHolder.h"
+#include "AdhocStatement.h"
 
 enum MySQLThreadBundle
 {
@@ -198,7 +200,12 @@ class DatabaseWorkerPool
 
         QueryResult Query(const char* sql)
         {
-            return GetConnection()->Query(sql);
+            ResultSet* result = GetConnection()->Query(sql);
+            if (!result || !result->GetRowCount())
+                return QueryResult(NULL);
+
+            result->NextRow();
+            return QueryResult(result);
         }
 
         QueryResult PQuery(const char* sql, ...)
@@ -290,7 +297,7 @@ class DatabaseWorkerPool
         PreparedQueryResult Query(PreparedStatement* stmt)
         {
             PreparedResultSet* ret = GetConnection()->Query(stmt);
-            if (!ret || !ret->num_rows)
+            if (!ret || !ret->GetRowCount())
                 return PreparedQueryResult(NULL);
 
             ret->NextRow();
