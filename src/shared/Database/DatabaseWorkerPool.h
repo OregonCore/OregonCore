@@ -28,6 +28,7 @@
 #include "DatabaseWorker.h"
 #include "PreparedStatement.h"
 #include "Log.h"
+#include "QueryResult.h"
 
 enum MySQLThreadBundle
 {
@@ -195,15 +196,15 @@ class DatabaseWorkerPool
             return DirectExecute(szQuery);
         }
 
-        QueryResult_AutoPtr Query(const char* sql)
+        QueryResult Query(const char* sql)
         {
             return GetConnection()->Query(sql);
         }
 
-        QueryResult_AutoPtr PQuery(const char* sql, ...)
+        QueryResult PQuery(const char* sql, ...)
         {
             if (!sql)
-                return QueryResult_AutoPtr(NULL);
+                return QueryResult(NULL);
 
             va_list ap;
             char szQuery[MAX_QUERY_LEN];
@@ -214,7 +215,7 @@ class DatabaseWorkerPool
             return Query(szQuery);
         }
 
-        ACE_Future<QueryResult_AutoPtr> AsyncQuery(const char* sql)
+        ACE_Future<QueryResult> AsyncQuery(const char* sql)
         {
             QueryResultFuture res;
             BasicStatementTask* task = new BasicStatementTask(sql, res);
@@ -222,7 +223,7 @@ class DatabaseWorkerPool
             return res;         //! Actual return value has no use yet
         }
 
-        ACE_Future<QueryResult_AutoPtr> AsyncPQuery(const char* sql, ...)
+        ACE_Future<QueryResult> AsyncPQuery(const char* sql, ...)
         {
             va_list ap;
             char szQuery[MAX_QUERY_LEN];
@@ -248,7 +249,7 @@ class DatabaseWorkerPool
 
         void CommitTransaction(SQLTransaction transaction)
         {
-            #ifdef OREGON_DEBUG
+            #ifdef SQLQUERY_LOG
             if (transaction->GetSize() == 0)
             {
                 sLog.outSQLDriver("Transaction contains 0 queries. Not executing.");
@@ -286,14 +287,14 @@ class DatabaseWorkerPool
 
         MySQLThreadBundle GetBundleMask() { return m_bundleMask; } 
 
-        PreparedResultSet* Query(PreparedStatement* stmt)
+        PreparedQueryResult Query(PreparedStatement* stmt)
         {
             PreparedResultSet* ret = GetConnection()->Query(stmt);
             if (!ret || !ret->num_rows)
-                return NULL;
+                return PreparedQueryResult(NULL);
 
             ret->NextRow();
-            return ret;
+            return PreparedQueryResult(ret);
         }
 
     private:

@@ -69,7 +69,7 @@ bool SQLQueryHolder::SetQuery(size_t index, const char *sql)
     }
 
     /// not executed yet, just stored (it's not called a holder for nothing)
-    m_queries[index] = SQLResultPair(strdup(sql), QueryResult_AutoPtr(NULL));
+    m_queries[index] = SQLResultPair(strdup(sql), QueryResult(NULL));
     return true;
 }
 
@@ -96,7 +96,7 @@ bool SQLQueryHolder::SetPQuery(size_t index, const char *format, ...)
     return SetQuery(index, szQuery);
 }
 
-QueryResult_AutoPtr SQLQueryHolder::GetResult(size_t index)
+QueryResult SQLQueryHolder::GetResult(size_t index)
 {
     if (index < m_queries.size())
     {
@@ -110,10 +110,10 @@ QueryResult_AutoPtr SQLQueryHolder::GetResult(size_t index)
         return m_queries[index].second;
     }
     else
-        return QueryResult_AutoPtr(NULL);
+        return QueryResult(NULL);
 }
 
-void SQLQueryHolder::SetResult(size_t index, QueryResult_AutoPtr result)
+void SQLQueryHolder::SetResult(size_t index, QueryResult result)
 {
     /// store the result in the holder
     if (index < m_queries.size())

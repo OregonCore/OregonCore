@@ -960,7 +960,7 @@ void SpellMgr::LoadSpellTargetPositions()
     uint32 count = 0;
 
     //                                                       0   1           2                  3                  4                  5
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT id, target_map, target_position_x, target_position_y, target_position_z, target_orientation FROM spell_target_position");
+    QueryResult result = WorldDatabase.Query("SELECT id, target_map, target_position_x, target_position_y, target_position_z, target_orientation FROM spell_target_position");
     if (!result)
     {
 
@@ -1042,7 +1042,7 @@ void SpellMgr::LoadSpellAffects()
     uint32 count = 0;
 
     //                                                       0      1         2
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, effectId, SpellFamilyMask FROM spell_affect");
+    QueryResult result = WorldDatabase.Query("SELECT entry, effectId, SpellFamilyMask FROM spell_affect");
     if (!result)
     {
 
@@ -1173,7 +1173,7 @@ void SpellMgr::LoadSpellProcEvents()
     uint32 count = 0;
 
     //                                                       0      1           2                3                4          5       6        7             8
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, SchoolMask, SpellFamilyName, SpellFamilyMask, procFlags, procEx, ppmRate, CustomChance, Cooldown FROM spell_proc_event");
+    QueryResult result = WorldDatabase.Query("SELECT entry, SchoolMask, SpellFamilyName, SpellFamilyMask, procFlags, procEx, ppmRate, CustomChance, Cooldown FROM spell_proc_event");
     if (!result)
     {
         barGoLink bar(1);
@@ -1422,7 +1422,7 @@ void SpellMgr::LoadSpellElixirs()
     uint32 count = 0;
 
     //                                                       0      1
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, mask FROM spell_elixir");
+    QueryResult result = WorldDatabase.Query("SELECT entry, mask FROM spell_elixir");
     if (!result)
     {
 
@@ -1480,7 +1480,7 @@ void SpellMgr::LoadSpellEnchantProcData()
     uint32 count = 0;
 
     //                                                       0      1             2          3
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, customChance, PPMChance, procEx FROM spell_enchant_proc_data");
+    QueryResult result = WorldDatabase.Query("SELECT entry, customChance, PPMChance, procEx FROM spell_enchant_proc_data");
     if (!result)
     {
 
@@ -1719,7 +1719,7 @@ void SpellMgr::LoadSpellRequired()
     mSpellsReqSpell.clear();                                   // need for reload case
     mSpellReq.clear();                                         // need for reload case
 
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT spell_id, req_spell from spell_required");
+    QueryResult result = WorldDatabase.Query("SELECT spell_id, req_spell from spell_required");
 
     if (!result)
     {
@@ -2013,7 +2013,7 @@ void SpellMgr::LoadSpellLearnSpells()
 {
     mSpellLearnSpells.clear();                              // need for reload case
 
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, SpellID FROM spell_learn_spell");
+    QueryResult result = WorldDatabase.Query("SELECT entry, SpellID FROM spell_learn_spell");
     if (!result)
     {
         barGoLink bar(1);
@@ -2107,7 +2107,7 @@ void SpellMgr::LoadSpellScriptTarget()
 
     uint32 count = 0;
 
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry,type,targetEntry FROM spell_script_target");
+    QueryResult result = WorldDatabase.Query("SELECT entry,type,targetEntry FROM spell_script_target");
 
     if (!result)
     {
@@ -2243,7 +2243,7 @@ void SpellMgr::LoadSpellPetAuras()
     uint32 count = 0;
 
     //                                                       0      1    2
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT spell, pet, aura FROM spell_pet_auras");
+    QueryResult result = WorldDatabase.Query("SELECT spell, pet, aura FROM spell_pet_auras");
     if (!result)
     {
 
@@ -2638,7 +2638,7 @@ void SpellMgr::LoadSpellCustomCooldowns()
     SpellEntry *spellInfo;
 
     //                                                       0              1
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT spellid, cooldown FROM spell_cooldown");
+    QueryResult result = WorldDatabase.Query("SELECT spellid, cooldown FROM spell_cooldown");
     if (!result)
     {
         barGoLink bar(1);
@@ -2682,7 +2682,7 @@ void SpellMgr::LoadSpellLinked()
     uint32 count = 0;
 
     //                                                       0              1             2
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT spell_trigger, spell_effect, type FROM spell_linked_spell");
+    QueryResult result = WorldDatabase.Query("SELECT spell_trigger, spell_effect, type FROM spell_linked_spell");
     if (!result)
     {
         barGoLink bar(1);

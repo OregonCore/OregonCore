@@ -30,7 +30,7 @@
 
 void MapManager::LoadTransports()
 {
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, name, period FROM transports");
+    QueryResult result = WorldDatabase.Query("SELECT entry, name, period FROM transports");
 
     uint32 count = 0;
 

@@ -230,7 +230,7 @@ void InstanceSaveManager::_DelHelper(const char *fields, const char *table, cons
     vsnprintf(szQueryTail, MAX_QUERY_LEN, queryTail, ap);
     va_end(ap);
 
-    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT %s FROM %s %s", fields, table, szQueryTail);
+    QueryResult result = CharacterDatabase.PQuery("SELECT %s FROM %s %s", fields, table, szQueryTail);
     if (result)
     {
         do
@@ -270,7 +270,7 @@ void InstanceSaveManager::CleanupInstances()
     // creature_respawn and gameobject_respawn are in another database
     // first, obtain total instance set
     std::set<uint32> InstanceSet;
-    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id FROM instance");
+    QueryResult result = CharacterDatabase.Query("SELECT id FROM instance");
     if (result)
     {
         do
@@ -348,7 +348,7 @@ void InstanceSaveManager::PackInstances()
     // all valid ids are in the instance table
     // any associations to ids not in this table are assumed to be
     // cleaned already in CleanupInstances
-    if (QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id FROM instance ORDER BY id ASC"))
+    if (QueryResult result = CharacterDatabase.Query("SELECT id FROM instance ORDER BY id ASC"))
     {
         do
         {
@@ -419,7 +419,7 @@ void InstanceSaveManager::LoadResetTimes()
     // resettime = 0 in the DB for raid/heroic instances so those are skipped
     typedef std::map<uint32, std::pair<uint32, uint64> > ResetTimeMapType;
     ResetTimeMapType InstResetTime;
-    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id, map, resettime FROM instance WHERE resettime > 0");
+    QueryResult result = CharacterDatabase.Query("SELECT id, map, resettime FROM instance WHERE resettime > 0");
     if (result)
     {
         do

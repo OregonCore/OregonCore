@@ -1620,7 +1620,7 @@ void World::LoadAutobroadcasts()
 {
     m_Autobroadcasts.clear();
 
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT text FROM autobroadcast");
+    QueryResult result = WorldDatabase.Query("SELECT text FROM autobroadcast");
 
     if (!result)
     {
@@ -1653,7 +1653,7 @@ void World::LoadAutobroadcasts()
  	
 void World::LoadIp2nation()
 {
- 	QueryResult_AutoPtr result = WorldDatabase.Query("SELECT count(c.code) FROM ip2nationCountries c, ip2nation i WHERE c.code = i.country");
+ 	QueryResult result = WorldDatabase.Query("SELECT count(c.code) FROM ip2nationCountries c, ip2nation i WHERE c.code = i.country");
  	uint32 count = 0;
 
     if (result)
@@ -2087,7 +2087,7 @@ BanReturn World::BanAccount(BanMode mode, std::string nameOrIP, std::string dura
     LoginDatabase.escape_string(safe_author);
 
     uint32 duration_secs = TimeStringToSecs(duration);
-    QueryResult_AutoPtr resultAccounts = QueryResult_AutoPtr(NULL);                     //used for kicking
+    QueryResult resultAccounts = QueryResult(NULL);                     //used for kicking
 
     // Update the database with ban information
     switch(mode)
@@ -2368,7 +2368,7 @@ void World::UpdateRealmCharCount(uint32 accountId)
         );
 }
 
-void World::_UpdateRealmCharCount(QueryResult_AutoPtr resultCharCount, uint32 accountId)
+void World::_UpdateRealmCharCount(QueryResult resultCharCount, uint32 accountId)
 {
     if (resultCharCount)
     {
@@ -2384,7 +2384,7 @@ void World::InitDailyQuestResetTime()
 {
     time_t mostRecentQuestTime;
 
-    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT MAX(time) FROM character_queststatus_daily");
+    QueryResult result = CharacterDatabase.Query("SELECT MAX(time) FROM character_queststatus_daily");
     if (result)
     {
         Field *fields = result->Fetch();
@@ -2419,7 +2419,7 @@ void World::InitDailyQuestResetTime()
 
 void World::UpdateAllowedSecurity()
 {
-     QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT allowedSecurityLevel from realmlist WHERE id = '%d'", realmID);
+     QueryResult result = LoginDatabase.PQuery("SELECT allowedSecurityLevel from realmlist WHERE id = '%d'", realmID);
      if (result)
      {
         m_allowedSecurityLevel = AccountTypes(result->Fetch()->GetUInt16());
@@ -2452,7 +2452,7 @@ void World::UpdateMaxSessionCounters()
 
 void World::LoadDBVersion()
 {
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT db_version FROM version LIMIT 1");
+    QueryResult result = WorldDatabase.Query("SELECT db_version FROM version LIMIT 1");
     if (result)
     {
         Field* fields = result->Fetch();
@@ -2465,7 +2465,7 @@ void World::LoadDBVersion()
 
 void World::ProcessQueryCallbacks()
 {
-    QueryResult_AutoPtr result;
+    QueryResult result;
 
     //-UpdateRealmCharCount
     if (m_realmCharCallback.IsReady())

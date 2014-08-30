@@ -74,7 +74,7 @@ void CreatureFormationManager::LoadCreatureFormations()
     UnloadCreatureFormations();
 
     //Check Integrity of the table creature_formations
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT MAX(formationId) FROM creature_formations");
+    QueryResult result = WorldDatabase.Query("SELECT MAX(formationId) FROM creature_formations");
 
     if (!result)
     {
@@ -108,7 +108,7 @@ void CreatureFormationManager::LoadCreatureFormations()
     }
 
     //Get formations
-    QueryResult_AutoPtr result_data = WorldDatabase.Query("SELECT formationId, leaderGUID, formationAI FROM creature_formations WHERE formationId IN (SELECT formationId FROM creature_formation_data) ORDER BY formationId");
+    QueryResult result_data = WorldDatabase.Query("SELECT formationId, leaderGUID, formationAI FROM creature_formations WHERE formationId IN (SELECT formationId FROM creature_formation_data) ORDER BY formationId");
 
     if (!result_data)
     {
@@ -120,7 +120,7 @@ void CreatureFormationManager::LoadCreatureFormations()
     }
 
     //Get member
-    QueryResult_AutoPtr result_member = WorldDatabase.Query("SELECT formationId, memberGUID, dist, angle FROM creature_formation_data WHERE formationId IN (SELECT formationId FROM creature_formations) ORDER BY formationId");
+    QueryResult result_member = WorldDatabase.Query("SELECT formationId, memberGUID, dist, angle FROM creature_formation_data WHERE formationId IN (SELECT formationId FROM creature_formations) ORDER BY formationId");
 
     if (!result_member)
     {
@@ -133,7 +133,7 @@ void CreatureFormationManager::LoadCreatureFormations()
 
     std::set<uint32> guidSet;
 
-    QueryResult_AutoPtr guidResult = WorldDatabase.Query("SELECT guid FROM creature");
+    QueryResult guidResult = WorldDatabase.Query("SELECT guid FROM creature");
 
     if (guidResult)
     {

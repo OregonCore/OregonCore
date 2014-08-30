@@ -501,7 +501,7 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *con
         return;
     }
 
-    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT id FROM auctionhouse WHERE itemowner<>%u AND buyguid<>%u", AHBplayerGUID, AHBplayerGUID);
+    QueryResult result = CharacterDatabase.PQuery("SELECT id FROM auctionhouse WHERE itemowner<>%u AND buyguid<>%u", AHBplayerGUID, AHBplayerGUID);
 
     if (!result)
         return;
@@ -828,7 +828,7 @@ void AuctionHouseBot::Initialize()
 
     if ((AHBplayerAccount != 0) || (AHBplayerGUID != 0))
     {
-        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE account = %u AND guid = %u", AHBplayerAccount, AHBplayerGUID);
+        QueryResult result = CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE account = %u AND guid = %u", AHBplayerAccount, AHBplayerGUID);
         if (!result)
        {
            sLog.outError("AuctionHouseBot: The account/GUID-information set for your AHBot is incorrect (account: %u guid: %u)", AHBplayerAccount, AHBplayerGUID);
@@ -838,7 +838,7 @@ void AuctionHouseBot::Initialize()
 
     if (AHBSeller)
     {
-        QueryResult_AutoPtr results = QueryResult_AutoPtr(NULL);
+        QueryResult results = QueryResult(NULL);
         char npcQuery[] = "SELECT distinct item FROM npc_vendor";
         results = WorldDatabase.Query(npcQuery);
         if (results)
@@ -1668,7 +1668,7 @@ void AuctionHouseBot::LoadValues(AHBConfig *config)
         uint32 orangei = CharacterDatabase.PQuery("SELECT percentorangeitems FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32();
         uint32 yellowi = CharacterDatabase.PQuery("SELECT percentyellowitems FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32();
         std::string XcludeItemsIds;
-        if (QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT exludeItemsIds FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID()))
+        if (QueryResult result = CharacterDatabase.PQuery("SELECT exludeItemsIds FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID()))
             XcludeItemsIds = result->Fetch()[0].GetCppString();
         config->SetPercentages(greytg, whitetg, greentg, bluetg, purpletg, orangetg, yellowtg, greyi, whitei, greeni, bluei, purplei, orangei, yellowi);
         //load min and max prices

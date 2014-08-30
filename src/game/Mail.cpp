@@ -142,7 +142,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
     else
     {
         rc_team = objmgr.GetPlayerTeamByGUID(rc);
-        if (QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT COUNT(*) FROM mail WHERE receiver = '%u'", GUID_LOPART(rc)))
+        if (QueryResult result = CharacterDatabase.PQuery("SELECT COUNT(*) FROM mail WHERE receiver = '%u'", GUID_LOPART(rc)))
         {
             Field *fields = result->Fetch();
             mails_count = fields[0].GetUInt32();
@@ -1068,7 +1068,7 @@ void MailDraft::SendMailTo(SQLTransaction& trans, MailReceiver const& receiver, 
 void WorldSession::SendExternalMails()
 {
     sLog.outDebug("External Mail - Send Mails from Queue...");
-    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id,receiver,subject,message,money,item,item_count FROM mail_external");
+    QueryResult result = CharacterDatabase.Query("SELECT id,receiver,subject,message,money,item,item_count FROM mail_external");
         if (!result)
         {
             sLog.outDebug("External Mail - No Mails in Queue...");

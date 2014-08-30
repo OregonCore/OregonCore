@@ -120,10 +120,12 @@ bool MySQLConnection::Open(const std::string& infoString)
 
     if (m_Mysql)
     {
-        sLog.outDetail("Connected to MySQL database at %s", host.c_str());
         sLog.outSQLDriver("MySQL client library: %s", mysql_get_client_info());
-        sLog.outSQLDriver("MySQL server ver: %s ", mysql_get_server_info( m_Mysql));
+        sLog.outSQLDriver("MySQL server ver: %s ", mysql_get_server_info(m_Mysql));
+        if (mysql_get_server_version(m_Mysql) != mysql_get_client_version())
+            sLog.outSQLDriver("[WARNING] MySQL client/server version mismatch; may conflict with behaviour of prepared statements.");
 
+        sLog.outDetail("Connected to MySQL database at %s", host.c_str());
         if (!mysql_autocommit(m_Mysql, 1))
             sLog.outSQLDriver("AUTOCOMMIT SUCCESSFULLY SET TO 1");
         else
@@ -162,7 +164,7 @@ bool MySQLConnection::Execute(const char* sql)
         // guarded block for thread-safe mySQL request
         ACE_Guard<ACE_Thread_Mutex> query_connection_guard(m_Mutex);
 
-        #ifdef OREGON_DEBUG
+        #ifdef SQLQUERY_LOG
         uint32 _s = getMSTime();
         #endif
         if (mysql_query(m_Mysql, sql))
@@ -173,7 +175,7 @@ bool MySQLConnection::Execute(const char* sql)
         }
         else
         {
-            #ifdef OREGON_DEBUG
+            #ifdef SQLQUERY_LOG
             sLog.outSQLDriver("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
             #endif
         }
@@ -203,7 +205,7 @@ bool MySQLConnection::Execute(PreparedStatement* stmt)
         MYSQL_STMT* msql_STMT = m_mStmt->GetSTMT();
         MYSQL_BIND* msql_BIND = m_mStmt->GetBind();
 
-        #ifdef OREGON_DEBUG
+        #ifdef SQLQUERY_LOG
         uint32 _s = getMSTime();
         #endif
         if (mysql_stmt_bind_param(msql_STMT, msql_BIND))
@@ -221,7 +223,7 @@ bool MySQLConnection::Execute(PreparedStatement* stmt)
         }
         else
         {
-            #ifdef OREGON_DEBUG
+            #ifdef SQLQUERY_LOG
             sLog.outSQLDriver("[%u ms] Prepared SQL: %u", getMSTimeDiff(_s, getMSTime()), index);
             #endif
             m_mStmt->ClearParameters();
@@ -230,10 +232,10 @@ bool MySQLConnection::Execute(PreparedStatement* stmt)
     }
 }
 
-QueryResult_AutoPtr MySQLConnection::Query(const char* sql)
+QueryResult MySQLConnection::Query(const char* sql)
 {
     if (!sql)
-        return QueryResult_AutoPtr(NULL);
+        return QueryResult(NULL);
 
     MYSQL_RES *result = NULL;
     MYSQL_FIELD *fields = NULL;
@@ -241,13 +243,13 @@ QueryResult_AutoPtr MySQLConnection::Query(const char* sql)
     uint32 fieldCount = 0;
 
     if (!_Query(sql, &result, &fields, &rowCount, &fieldCount))
-        return QueryResult_AutoPtr(NULL);
+        return QueryResult(NULL);
 
-    QueryResult *queryResult = new QueryResult(result, fields, rowCount, fieldCount);
+    ResultSet *queryResult = new ResultSet(result, fields, rowCount, fieldCount);
 
     queryResult->NextRow();
 
-    return QueryResult_AutoPtr(queryResult);
+    return QueryResult(queryResult);
 }
 
 bool MySQLConnection::_Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD **pFields, uint64* pRowCount, uint32* pFieldCount)
@@ -258,7 +260,7 @@ bool MySQLConnection::_Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD *
     {
         // guarded block for thread-safe mySQL request
         ACE_Guard<ACE_Thread_Mutex> query_connection_guard(m_Mutex);
-        #ifdef OREGON_DEBUG
+        #ifdef SQLQUERY_LOG
         uint32 _s = getMSTime();
         #endif
         if (mysql_query(m_Mysql, sql))
@@ -269,7 +271,7 @@ bool MySQLConnection::_Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD *
         }
         else
         {
-            #ifdef OREGON_DEBUG
+            #ifdef SQLQUERY_LOG
             sLog.outSQLDriver("[%u ms] SQL: %s", getMSTimeDiff(_s,getMSTime()), sql);
             #endif
         }

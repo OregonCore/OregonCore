@@ -123,7 +123,7 @@ bool Group::Create(const uint64 &guid, const char * name)
     return true;
 }
 
-bool Group::LoadGroupFromDB(const uint64 &leaderGuid, QueryResult_AutoPtr result, bool loadMembers)
+bool Group::LoadGroupFromDB(const uint64 &leaderGuid, QueryResult result, bool loadMembers)
 {
     if (isBGGroup())
         return false;

@@ -327,7 +327,7 @@ void Item::SaveToDB(SQLTransaction& trans)
     SetState(ITEM_UNCHANGED);
 }
 
-bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result)
+bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult result)
 {
     // create item before any checks for store correct guid
     // and allow use "FSetState(ITEM_REMOVED); SaveToDB();" for deleting item from DB

@@ -923,7 +923,7 @@ class Player : public Unit, public GridObject<Player>
 
         void Update(uint32 time);
 
-        static bool BuildEnumData(QueryResult_AutoPtr result, WorldPacket * p_data);
+        static bool BuildEnumData(QueryResult result, WorldPacket * p_data);
 
         void SetInWater(bool apply);
 
@@ -1488,7 +1488,7 @@ class Player : public Unit, public GridObject<Player>
         void RemoveSpellCooldown(uint32 spell_id, bool update = false);
         void RemoveArenaSpellCooldowns();
         void RemoveAllSpellCooldown();
-        void _LoadSpellCooldowns(QueryResult_AutoPtr result);
+        void _LoadSpellCooldowns(QueryResult result);
         void _SaveSpellCooldowns(SQLTransaction& trans);
 
         GlobalCooldownMgr& GetGlobalCooldownMgr() { return m_GlobalCooldownMgr; }
@@ -2226,25 +2226,25 @@ class Player : public Unit, public GridObject<Player>
         /***                   LOAD SYSTEM                     ***/
         /*********************************************************/
 
-        void _LoadActions(QueryResult_AutoPtr result);
-        void _LoadAuras(QueryResult_AutoPtr result, uint32 timediff);
-        void _LoadBoundInstances(QueryResult_AutoPtr result);
-        void _LoadInventory(QueryResult_AutoPtr result, uint32 timediff);
-        void _LoadMailInit(QueryResult_AutoPtr resultUnread, QueryResult_AutoPtr resultDelivery);
+        void _LoadActions(QueryResult result);
+        void _LoadAuras(QueryResult result, uint32 timediff);
+        void _LoadBoundInstances(QueryResult result);
+        void _LoadInventory(QueryResult result, uint32 timediff);
+        void _LoadMailInit(QueryResult resultUnread, QueryResult resultDelivery);
         void _LoadMail();
         void _LoadMailedItems(Mail *mail);
-        void _LoadQuestStatus(QueryResult_AutoPtr result);
-        void _LoadDailyQuestStatus(QueryResult_AutoPtr result);
-        void _LoadGroup(QueryResult_AutoPtr result);
-        void _LoadReputation(QueryResult_AutoPtr result);
-        void _LoadSkills(QueryResult_AutoPtr result);
-        void _LoadSpells(QueryResult_AutoPtr result);
-        void _LoadTutorials(QueryResult_AutoPtr result);
-        void _LoadFriendList(QueryResult_AutoPtr result);
-        bool _LoadHomeBind(QueryResult_AutoPtr result);
-        void _LoadDeclinedNames(QueryResult_AutoPtr result);
-        void _LoadArenaTeamInfo(QueryResult_AutoPtr result);
-        void _LoadBGData(QueryResult_AutoPtr result);
+        void _LoadQuestStatus(QueryResult result);
+        void _LoadDailyQuestStatus(QueryResult result);
+        void _LoadGroup(QueryResult result);
+        void _LoadReputation(QueryResult result);
+        void _LoadSkills(QueryResult result);
+        void _LoadSpells(QueryResult result);
+        void _LoadTutorials(QueryResult result);
+        void _LoadFriendList(QueryResult result);
+        bool _LoadHomeBind(QueryResult result);
+        void _LoadDeclinedNames(QueryResult result);
+        void _LoadArenaTeamInfo(QueryResult result);
+        void _LoadBGData(QueryResult result);
 
         /*********************************************************/
         /***                   SAVE SYSTEM                     ***/

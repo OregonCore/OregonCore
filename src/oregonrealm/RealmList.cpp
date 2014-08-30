@@ -65,7 +65,7 @@ void RealmList::Initialize(uint32 updateInterval)
     UpdateRealms(true);
 }
 
-void RealmList::UpdateRealm( uint32 ID, const std::string& name, const std::string& address, uint32 port, uint8 icon, RealmFlags realmflags, uint8 timezone, AccountTypes allowedSecurityLevel, float popu, const char* builds)
+void RealmList::UpdateRealm( uint32 ID, const std::string& name, const std::string& address, uint32 port, uint8 icon, RealmFlags realmflags, uint8 timezone, AccountTypes allowedSecurityLevel, float popu, std::string& builds)
 {
     // Create new if not exist or update existed
     Realm& realm = m_realms[name];
@@ -124,19 +124,24 @@ void RealmList::UpdateRealms(bool init)
 {
     sLog.outDetail("Updating Realm List...");
 
-    //                                                        0   1     2        3     4     5           6         7                     8           9
-    QueryResult_AutoPtr result = LoginDatabase.Query( "SELECT id, name, address, port, icon, realmflags, timezone, allowedSecurityLevel, population, realmbuilds FROM realmlist WHERE (realmflags & 1) = 0 ORDER BY name" );
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_GET_REALMLIST);
+    PreparedQueryResult result = LoginDatabase.Query(stmt);
 
     // Circle through results and add them to the realm map
     if (result)
     {
         do
         {
-            Field *fields = result->Fetch();
-
-            uint8 allowedSecurityLevel = fields[7].GetUInt8();
-
-            uint8 realmflags = fields[5].GetUInt8();
+            uint32 realmId = result->GetUInt32(0); 
+            const std::string& name = result->GetString(1);
+            const std::string& address = result->GetString(2);
+            uint32 port = result->GetUInt32(3);
+            uint8 icon = result->GetUInt8(4);
+            uint8 realmflags = result->GetUInt8(5);
+            uint8 timezone = result->GetUInt8(6);
+            uint8 allowedSecurityLevel = result->GetUInt8(7);
+            float pop = result->GetFloat(8);
+            std::string& build = result->GetString(9);
 
             if (realmflags & ~(REALM_FLAG_OFFLINE|REALM_FLAG_NEW_PLAYERS|REALM_FLAG_RECOMMENDED|REALM_FLAG_SPECIFYBUILD))
             {
@@ -144,15 +149,12 @@ void RealmList::UpdateRealms(bool init)
                 realmflags &= (REALM_FLAG_OFFLINE|REALM_FLAG_NEW_PLAYERS|REALM_FLAG_RECOMMENDED|REALM_FLAG_SPECIFYBUILD);
             }
 
-            UpdateRealm(
-                fields[0].GetUInt32(), fields[1].GetCppString(),fields[2].GetCppString(),fields[3].GetUInt32(),
-                fields[4].GetUInt8(), RealmFlags(realmflags), fields[6].GetUInt8(),
-                (allowedSecurityLevel <= SEC_ADMINISTRATOR ? AccountTypes(allowedSecurityLevel) : SEC_ADMINISTRATOR),
-                fields[8].GetFloat(), fields[9].GetString());
+            UpdateRealm(realmId, name, address, port, icon, RealmFlags(realmflags), timezone, (allowedSecurityLevel <= SEC_ADMINISTRATOR ? AccountTypes(allowedSecurityLevel) : SEC_ADMINISTRATOR), pop, build);
 
             if (init)
-                sLog.outString("Added realm \"%s\"", fields[1].GetString());
-        } while ( result->NextRow() );
+                sLog.outString("Added realm \"%s\".", result->GetString(1).c_str());
+        }
+        while (result->NextRow());
     }
 }
 

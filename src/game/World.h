@@ -36,7 +36,6 @@ class WorldSession;
 class Player;
 class Weather;
 struct ScriptInfo;
-class QueryResult;
 class WorldSocket;
 
 // ServerMessages.dbc
@@ -611,7 +610,7 @@ class World
     protected:
         void _UpdateGameTime();
         // callback for UpdateRealmCharacters
-        void _UpdateRealmCharCount(QueryResult_AutoPtr resultCharCount, uint32 accountId);
+        void _UpdateRealmCharCount(QueryResult resultCharCount, uint32 accountId);
 
         void InitDailyQuestResetTime();
         void ResetDailyQuests();

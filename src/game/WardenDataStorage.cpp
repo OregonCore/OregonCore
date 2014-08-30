@@ -55,7 +55,7 @@ void CWardenDataStorage::LoadWardenDataResult(bool reload)
         InternalDataID = 1;
     }
 
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT `check`, `data`, `result`, `address`, `length`, `str`, `id` FROM warden_data_result");
+    QueryResult result = WorldDatabase.Query("SELECT `check`, `data`, `result`, `address`, `length`, `str`, `id` FROM warden_data_result");
 
     uint32 count = 0;
 

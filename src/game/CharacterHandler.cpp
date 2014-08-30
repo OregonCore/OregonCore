@@ -101,7 +101,7 @@ bool LoginQueryHolder::Initialize()
     return res;
 }
 
-void WorldSession::HandleCharEnum(QueryResult_AutoPtr result)
+void WorldSession::HandleCharEnum(QueryResult result)
 {
     WorldPacket data(SMSG_CHAR_ENUM, 100);                  // we guess size
 
@@ -243,7 +243,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket & recv_data)
         return;
     }
 
-    QueryResult_AutoPtr resultacct = LoginDatabase.PQuery("SELECT SUM(numchars) FROM realmcharacters WHERE acctid = '%d'", GetAccountId());
+    QueryResult resultacct = LoginDatabase.PQuery("SELECT SUM(numchars) FROM realmcharacters WHERE acctid = '%d'", GetAccountId());
     if (resultacct)
     {
         Field *fields=resultacct->Fetch();
@@ -257,7 +257,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket & recv_data)
         }
     }
 
-    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT COUNT(guid) FROM characters WHERE account = '%d'", GetAccountId());
+    QueryResult result = CharacterDatabase.PQuery("SELECT COUNT(guid) FROM characters WHERE account = '%d'", GetAccountId());
     uint8 charcount = 0;
     if (result)
     {
@@ -278,7 +278,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket & recv_data)
     bool have_same_race = false;
     if (!AllowTwoSideAccounts || skipCinematics == 1)
     {
-        QueryResult_AutoPtr result2 = CharacterDatabase.PQuery("SELECT DISTINCT race FROM characters WHERE account = '%u' %s", GetAccountId(),skipCinematics == 1 ? "" : "LIMIT 1");
+        QueryResult result2 = CharacterDatabase.PQuery("SELECT DISTINCT race FROM characters WHERE account = '%u' %s", GetAccountId(),skipCinematics == 1 ? "" : "LIMIT 1");
         if (result2)
         {
             uint32 team_= Player::TeamForRace(race_);
@@ -382,7 +382,7 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket & recv_data)
         return;
     }
 
-    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT account,name FROM characters WHERE guid='%u'", GUID_LOPART(guid));
+    QueryResult result = CharacterDatabase.PQuery("SELECT account,name FROM characters WHERE guid='%u'", GUID_LOPART(guid));
     if (result)
     {
         Field *fields = result->Fetch();
@@ -520,7 +520,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
         sLog.outStaticDebug("WORLD: Sent server info");
     }
 
-    QueryResult_AutoPtr resultGuild = holder->GetResult(PLAYER_LOGIN_QUERY_LOADGUILD);
+    QueryResult resultGuild = holder->GetResult(PLAYER_LOGIN_QUERY_LOADGUILD);
 
     if (resultGuild)
     {
@@ -873,7 +873,7 @@ void WorldSession::HandleChangePlayerNameOpcode(WorldPacket& recv_data)
     );
 }
 
-void WorldSession::HandleChangePlayerNameOpcodeCallBack(QueryResult_AutoPtr result, std::string newname)
+void WorldSession::HandleChangePlayerNameOpcodeCallBack(QueryResult result, std::string newname)
 {
     if (!result)
     {

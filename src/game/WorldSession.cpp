@@ -603,7 +603,7 @@ void WorldSession::ExecuteOpcode(OpcodeHandler const& opHandle, WorldPacket* pac
 
 void WorldSession::ProcessQueryCallbacks()
 {
-    QueryResult_AutoPtr result;
+    QueryResult result;
 
     //! HandleNameQueryOpcode
     while (!m_nameQueryCallbacks.is_empty())

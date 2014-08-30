@@ -41,7 +41,7 @@ class SQLOperation : public ACE_Method_Request
         MySQLConnection* m_conn;
 };
 
-typedef ACE_Future<QueryResult_AutoPtr> QueryResultFuture;
+typedef ACE_Future<QueryResult> QueryResultFuture;
 /*! Raw, ad-hoc query. */
 class BasicStatementTask :  public SQLOperation
 {
@@ -62,7 +62,7 @@ class SQLQueryHolder
 {
     friend class SQLQueryHolderTask;
     private:
-        typedef std::pair<const char*, QueryResult_AutoPtr> SQLResultPair;
+        typedef std::pair<const char*, QueryResult> SQLResultPair;
         std::vector<SQLResultPair> m_queries;
     public:
         SQLQueryHolder() {}
@@ -70,8 +70,8 @@ class SQLQueryHolder
         bool SetQuery(size_t index, const char *sql);
         bool SetPQuery(size_t index, const char *format, ...) ATTR_PRINTF(3,4);
         void SetSize(size_t size);
-        QueryResult_AutoPtr GetResult(size_t index);
-        void SetResult(size_t index, QueryResult_AutoPtr result);
+        QueryResult GetResult(size_t index);
+        void SetResult(size_t index, QueryResult result);
 };
 
 typedef ACE_Future<SQLQueryHolder*> QueryResultHolderFuture;
