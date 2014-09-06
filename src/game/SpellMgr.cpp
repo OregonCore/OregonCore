@@ -2589,6 +2589,9 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->EffectBasePoints[0] = 29; // all spells claiming they increase speed by 30% increase it just by 29%
             spellInfo->Attributes = (SPELL_ATTR_PASSIVE | SPELL_ATTR_OUTDOORS_ONLY);
             break;
+        case 31789: // Righteous Defense
+            spellInfo->EffectTriggerSpell[1] = 31790;
+            break;
         default:
             break;
         }
