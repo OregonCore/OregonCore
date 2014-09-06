@@ -265,7 +265,7 @@ Spell::Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 origin
     m_triggeringContainer = triggeringContainer;
     m_referencedFromCurrentSpell = false;
     m_executedCurrently = false;
-    m_needComboPoints = NeedsComboPoints(m_spellInfo);
+    m_needComboPoints = !triggered && NeedsComboPoints(m_spellInfo);
     m_delayStart = 0;
     m_delayAtDamageCount = 0;
     m_destroyed = false;
