@@ -148,13 +148,7 @@ void BattleGroundEY::CheckSomeoneJoinedPoint()
             while (j < m_PlayersNearPoint[EY_POINTS_MAX].size())
             {
                 Player *plr = objmgr.GetPlayer(m_PlayersNearPoint[EY_POINTS_MAX][j]);
-                if (!plr)
-                {
-                    sLog.outError("BattleGroundEY: Player (GUID: %u) not found!", GUID_LOPART(m_PlayersNearPoint[EY_POINTS_MAX][j]));
-                    ++j;
-                    continue;
-                }
-                if (plr->CanCaptureTowerPoint() && plr->IsWithinDistInMap(obj, BG_EY_POINT_RADIUS))
+                if (plr && plr->CanCaptureTowerPoint() && plr->IsWithinDistInMap(obj, BG_EY_POINT_RADIUS))
                 {
                     //player joined point!
                     //show progress bar
