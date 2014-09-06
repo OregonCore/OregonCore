@@ -2218,7 +2218,6 @@ void Spell::cancel(bool sendInterrupt)
     switch (oldState)
     {
         case SPELL_STATE_PREPARING:
-            CancelGlobalCooldown();
         case SPELL_STATE_DELAYED:
         {
             SendInterrupted(0);
@@ -2258,6 +2257,8 @@ void Spell::cancel(bool sendInterrupt)
         {
         } break;
     }
+
+    CancelGlobalCooldown();
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
         m_caster->ToPlayer()->RemoveGlobalCooldown(m_spellInfo);
@@ -5916,10 +5917,6 @@ void Spell::TriggerGlobalCooldown()
 void Spell::CancelGlobalCooldown()
 {
     if (!m_spellInfo->StartRecoveryTime)
-        return;
-
-    // Cancel global cooldown when interrupting current cast
-    if (m_caster->GetCurrentSpell(CURRENT_GENERIC_SPELL) != this)
         return;
 
    // Only players or controlled units have global cooldown
