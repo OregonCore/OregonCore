@@ -553,7 +553,6 @@ void PoolHandler::LoadFromDB()
     if (!result)
     {
         sLog.outString(">> Loaded 0 object pools. DB table `pool_template` is empty.");
-        sLog.outString();
         return;
     }
     else
@@ -569,7 +568,6 @@ void PoolHandler::LoadFromDB()
     {
         mPoolTemplate.clear();
         sLog.outString(">> Loaded 0 object pools. DB table `pool_template` is empty.");
-        sLog.outString();
         return;
     }
 
@@ -587,7 +585,6 @@ void PoolHandler::LoadFromDB()
 
     } while (result->NextRow());
 
-    sLog.outString();
     sLog.outString(">> Loaded %u objects pools", count);
 
     // Creatures
@@ -604,7 +601,6 @@ void PoolHandler::LoadFromDB()
     {
 
         sLog.outString(">> Loaded 0 creatures in  pools. DB table `pool_creature` is empty.");
-        sLog.outString();
     }
     else
     {
@@ -646,7 +642,6 @@ void PoolHandler::LoadFromDB()
 
         } while (result->NextRow());
         sLog.outString(">> Loaded %u creatures in pools", count);
-        sLog.outString();
     }
 
     // Gameobjects
@@ -663,7 +658,6 @@ void PoolHandler::LoadFromDB()
     {
 
         sLog.outString(">> Loaded 0 gameobjects in pools. DB table `pool_gameobject` is empty.");
-        sLog.outString();
     }
     else
     {
@@ -714,7 +708,6 @@ void PoolHandler::LoadFromDB()
 
         } while (result->NextRow());
         sLog.outString(">> Loaded %u gameobject in pools", count);
-        sLog.outString();
     }
 
     // Pool of pools
@@ -730,7 +723,6 @@ void PoolHandler::LoadFromDB()
     {
 
         sLog.outString(">> Loaded 0 pools in pools");
-        sLog.outString();
     }
     else
     {
@@ -802,7 +794,6 @@ void PoolHandler::LoadFromDB()
         }
 
         sLog.outString(">> Loaded %u pools in mother pools", count);
-        sLog.outString();
     }
 }
 
@@ -817,7 +808,6 @@ void PoolHandler::LoadQuestPools()
     if (!result)
     {
         sLog.outString(">> Loaded 0 quests in pools");
-        sLog.outString();
         return;
     }
 
@@ -892,7 +882,6 @@ void PoolHandler::LoadQuestPools()
         mQuestSearchMap.insert(p);
 
     } while (result->NextRow());
-    sLog.outString();
     sLog.outString(">> Loaded %u quests in pools", count);
 }
 

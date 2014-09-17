@@ -1866,7 +1866,7 @@ bool CliHandler::isAvailable(ChatCommand const& cmd) const
 void CliHandler::SendSysMessage(const char *str)
 {
     m_print(m_callbackArg, str);
-    m_print(m_callbackArg, "\r\n");
+    m_print(m_callbackArg, "\n");
 }
 
 const char *CliHandler::GetName() const

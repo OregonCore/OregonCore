@@ -37,8 +37,7 @@ void WaypointStore::Load()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT COUNT(id) FROM waypoint_data");
     if (!result)
     {
-        sLog.outError("an error occured while loading the table waypoint_data (maybe it doesn't exist ?)");
-        exit(1);                                            // Stop server at loading non exited table or not accessable table
+        sLog.outFatal("an error occured while loading the table waypoint_data (maybe it doesn't exist ?)");
     }
 
     records = (*result)[0].GetUInt32();

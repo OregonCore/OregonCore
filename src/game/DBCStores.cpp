@@ -521,8 +521,7 @@ void LoadDBCStores(const std::string& dataPath)
     // error checks
     if (bad_dbc_files.size() >= DBCFilesCount)
     {
-        sLog.outError("\nIncorrect DataDir value in Oregond.conf or ALL required *.dbc files (%d) not found by path: %sdbc",DBCFilesCount,dataPath.c_str());
-        exit(1);
+        sLog.outFatal("\nIncorrect DataDir value in Oregond.conf or ALL required *.dbc files (%d) not found by path: %sdbc",DBCFilesCount,dataPath.c_str());
     }
     else if (!bad_dbc_files.empty())
     {
@@ -530,8 +529,7 @@ void LoadDBCStores(const std::string& dataPath)
         for (std::list<std::string>::iterator i = bad_dbc_files.begin(); i != bad_dbc_files.end(); ++i)
             str += *i + "\n";
 
-        sLog.outError("\nSome required *.dbc files (%u from %d) not found or not compatible:\n%s",bad_dbc_files.size(),DBCFilesCount,str.c_str());
-        exit(1);
+        sLog.outFatal("\nSome required *.dbc files (%u from %d) not found or not compatible:\n%s",bad_dbc_files.size(),DBCFilesCount,str.c_str());
     }
 
     // check at up-to-date DBC files (53085 is last added spell in 2.4.3)
@@ -549,11 +547,9 @@ void LoadDBCStores(const std::string& dataPath)
         !sCharTitlesStore.LookupEntry(71)          ||
         !sAreaStore.LookupEntry(1768))
     {
-        sLog.outError("\nYou have _outdated_ DBC files. Please extract correct versions from 2.4.3 client.");
-        exit(1);
+        sLog.outFatal("\nYou have _outdated_ DBC files. Please extract correct versions from 2.4.3 client.");
     }
 
-    sLog.outString();
     sLog.outString(">> Initialized %d data stores", DBCFilesCount);
 }
 

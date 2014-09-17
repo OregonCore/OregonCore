@@ -123,8 +123,7 @@ void SQLStorageLoaderBase<T>::Load(SQLStorage &store)
     QueryResult_AutoPtr result  = WorldDatabase.PQuery("SELECT MAX(%s) FROM %s", store.entry_field, store.table);
     if (!result)
     {
-        sLog.outError("Error loading %s table (not exist?)\n", store.table);
-        exit(1);                                            // Stop server at loading non exited table or not accessable table
+        sLog.outFatal("Error loading %s table (not exist?)\n", store.table);
     }
 
     maxi = (*result)[0].GetUInt32()+1;
@@ -153,8 +152,7 @@ void SQLStorageLoaderBase<T>::Load(SQLStorage &store)
     if (store.iNumFields != result->GetFieldCount())
     {
         store.RecordCount = 0;
-        sLog.outError("Error in %s table, probably sql file format was updated (there should be %d fields in sql).\n", store.table, store.iNumFields);
-        exit(1);                                            // Stop server at loading broken or non-compatible table.
+        sLog.outFatal("Error in %s table, probably sql file format was updated (there should be %d fields in sql).\n", store.table, store.iNumFields);
     }
 
     //get struct size

@@ -111,7 +111,6 @@ void CreatureFormationManager::LoadCreatureFormations()
 
     if (!result_data)
     {
-        sLog.outString();
         sLog.outString(">> Loaded 0 creature formations. DB table `creature_formations` is empty.");
         return;
     }
@@ -121,7 +120,6 @@ void CreatureFormationManager::LoadCreatureFormations()
 
     if (!result_member)
     {
-        sLog.outString();
         sLog.outString(">> Loaded 0 formation formations. DB table `creature_formation_data` is empty.");
         return;
     }
@@ -212,10 +210,8 @@ void CreatureFormationManager::LoadCreatureFormations()
     }
     while (result_member->NextRow()) ;
 
-    sLog.outString();
     sLog.outString(">> Loaded " UI64FMTD " formations", total_formations);
     sLog.outString(">> Loaded " UI64FMTD " creatures in formations", total_member);
-    sLog.outString();
 }
 
 void CreatureFormation::AddMember(Creature *member)

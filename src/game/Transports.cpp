@@ -35,16 +35,12 @@ void MapManager::LoadTransports()
 
     if (!result)
     {
-
-        sLog.outString();
         sLog.outString(">> Loaded %u transports", count);
         return;
     }
 
-
     do
     {
-
         Transport *t = new Transport;
 
         Field *fields = result->Fetch();

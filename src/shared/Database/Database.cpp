@@ -45,10 +45,7 @@ Database::Database() : mMysql(NULL)
         mysql_library_init(-1, NULL, NULL);
 
         if (!mysql_thread_safe())
-        {
-            sLog.outError("FATAL ERROR: Used MySQL library isn't thread-safe.");
-            exit(1);
-        }
+            sLog.outFatal("FATAL ERROR: Used MySQL library isn't thread-safe.");
     }
 }
 
@@ -145,13 +142,13 @@ bool Database::Initialize(const char *infoString)
     if (mMysql)
     {
         sLog.outDetail("Connected to MySQL database at %s", host.c_str());
-        sLog.outString("MySQL client library: %s", mysql_get_client_info());
-        sLog.outString("MySQL server ver: %s ", mysql_get_server_info( mMysql));
+        sLog.outDebug("MySQL client library: %s", mysql_get_client_info());
+        sLog.outDebug("MySQL server ver: %s ", mysql_get_server_info( mMysql));
 
         if (!mysql_autocommit(mMysql, 1))
-            sLog.outDetail("AUTOCOMMIT SUCCESSFULLY SET TO 1");
+            sLog.outDebug("AUTOCOMMIT SUCCESSFULLY SET TO 1");
         else
-            sLog.outDetail("AUTOCOMMIT NOT SET TO 1");
+            sLog.outDebug("AUTOCOMMIT NOT SET TO 1");
 
         // set connection properties to UTF8 to properly handle locales for different
         // server configs - core sends data in UTF8, so MySQL must expect UTF8 too
@@ -161,9 +158,9 @@ bool Database::Initialize(const char *infoString)
     #if MYSQL_VERSION_ID >= 50003
         my_bool my_true = (my_bool)1;
         if (mysql_options(mMysql, MYSQL_OPT_RECONNECT, &my_true))
-            sLog.outDetail("Failed to turn on MYSQL_OPT_RECONNECT.");
+            sLog.outDebug("Failed to turn on MYSQL_OPT_RECONNECT.");
         else
-           sLog.outDetail("Successfully turned on MYSQL_OPT_RECONNECT.");
+           sLog.outDebug("Successfully turned on MYSQL_OPT_RECONNECT.");
     #else
         #warning "Your mySQL client lib version does not support reconnecting after a timeout.\nIf this causes you any trouble we advice you to upgrade your mySQL client libs to at least mySQL 5.0.13 to resolve this problem."
     #endif
@@ -171,7 +168,7 @@ bool Database::Initialize(const char *infoString)
     }
     else
     {
-        sLog.outError("Could not connect to MySQL database at %s: %s\n", host.c_str(),mysql_error(mysqlInit));
+        sLog.outError("Could not connect to MySQL database at %s: %s", host.c_str(),mysql_error(mysqlInit));
         mysql_close(mysqlInit);
         return false;
     }

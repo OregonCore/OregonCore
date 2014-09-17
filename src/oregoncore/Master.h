@@ -31,7 +31,7 @@ class Master
         static volatile uint32 m_masterLoopCounter;
 
     private:
-        bool _StartDB();
+        void _StartDB();
 
         void _HookSignals();
         void _UnhookSignals();

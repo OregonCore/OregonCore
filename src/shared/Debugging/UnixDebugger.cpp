@@ -132,10 +132,6 @@ void SignalHandler(int num, siginfo_t* info, void* ctx)
 
     DumpDebugInfo(strsig, reason.str().c_str());
 
-    // Fix terminal (unload readline)
-    rl_free_line_state();
-    rl_cleanup_after_signal();
-
     struct sigaction sa;
     sa.sa_handler = SIG_DFL;
     sa.sa_flags = 0;

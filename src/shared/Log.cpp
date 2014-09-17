@@ -19,6 +19,7 @@
 #include "Log.h"
 #include "Policies/SingletonImp.h"
 #include "Config/Config.h"
+#include "Console.h"
 #include "Util.h"
 
 #include <stdarg.h>
@@ -249,8 +250,15 @@ void Log::InitColors(const std::string& str)
     m_colored = true;
 }
 
-void Log::SetColor(bool stdout_stream, ColorTypes color)
+void Log::SetColor(bool stdeerr_stream, ColorTypes color)
 {
+    if (sConsole.IsEnabled())
+    {
+        fputc(0xFF, stderr);
+        fputc((char) color, stderr);
+        return;
+    }
+
     #if PLATFORM == PLATFORM_WINDOWS
     static WORD WinColorFG[Colors] =
     {
@@ -277,7 +285,7 @@ void Log::SetColor(bool stdout_stream, ColorTypes color)
         FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY
     };
 
-    HANDLE hConsole = GetStdHandle(stdout_stream ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
+    HANDLE hConsole = GetStdHandle(stdeerr_stream ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
     SetConsoleTextAttribute(hConsole, WinColorFG[color]);
     #else
     enum ANSITextAttr
@@ -319,17 +327,23 @@ void Log::SetColor(bool stdout_stream, ColorTypes color)
         FG_WHITE                                            // LWHITE
     };
 
-    fprintf((stdout_stream? stdout : stderr), "\x1b[%d%sm", UnixColorFG[color], (color >= YELLOW && color < Colors ? ";1" : ""));
+    fprintf((stdeerr_stream? stderr : stderr), "\x1b[%d%sm", UnixColorFG[color], (color >= YELLOW && color < Colors ? ";1" : ""));
     #endif
 }
 
-void Log::ResetColor(bool stdout_stream)
+void Log::ResetColor(bool stdeerr_stream)
 {
+    if (sConsole.IsEnabled())
+    {
+        fputc(0xFE, stderr);
+        return;
+    }
+
     #if PLATFORM == PLATFORM_WINDOWS
-    HANDLE hConsole = GetStdHandle(stdout_stream ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
+    HANDLE hConsole = GetStdHandle(stdeerr_stream ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
     #else
-    fprintf((stdout_stream ? stdout : stderr), "\x1b[0m");
+    fprintf((stdeerr_stream ? stderr : stderr), "\x1b[0m");
     #endif
 }
 
@@ -385,12 +399,12 @@ void Log::outString(const char * str, ...)
     if (m_colored)
         SetColor(true,m_colors[LOGL_NORMAL]);
 
-    UTF8PRINTF(stdout,str,);
+    UTF8PRINTF(stderr,str,);
 
     if (m_colored)
         ResetColor(true);
 
-    printf("\n");
+    fprintf(stderr, "\n");
     if (logfile)
     {
         outTimestamp(logfile);
@@ -403,19 +417,19 @@ void Log::outString(const char * str, ...)
         fflush(logfile);
     }
 
-    fflush(stdout);
+    fflush(stderr);
 }
 
 void Log::outString()
 {
-    printf("\n");
+    fprintf(stderr, "\n");
     if (logfile)
     {
         outTimestamp(logfile);
         fprintf(logfile, "\n");
         fflush(logfile);
     }
-    fflush(stdout);
+    fflush(stderr);
 }
 
 void Log::outCrash(const char * err, ...)
@@ -499,6 +513,24 @@ void Log::outError(const char * err, ...)
     fflush(stderr);
 }
 
+void Log::outFatal(const char * err, ...)
+{
+    va_list ap;
+    va_start(ap, err);
+    size_t len = vsnprintf(NULL, 0, err, ap) + 1;
+    char* buffer = (char*) alloca(len);
+    buffer[len-1] = '\0';
+    vsprintf(buffer, err, ap);
+    va_end(ap);
+
+    outError("%s", buffer);
+
+    if (sConsole.IsEnabled())
+        sConsole.FatalError(buffer);
+
+    exit (EXIT_FAILURE);
+}
+
 void Log::outArena(const char * str, ...)
 {
     if (!str)
@@ -514,7 +546,7 @@ void Log::outArena(const char * str, ...)
         va_end(ap);
         fflush(arenaLogFile);
     }
-    fflush(stdout);
+    fflush(stderr);
 }
 
 void Log::outErrorDb(const char * err, ...)
@@ -582,12 +614,12 @@ void Log::outBasic(const char * str, ...)
         if (m_colored)
             SetColor(true,m_colors[LOGL_BASIC]);
 
-        UTF8PRINTF(stdout,str,);
+        UTF8PRINTF(stderr,str,);
 
         if (m_colored)
             ResetColor(true);
 
-        printf("\n");
+        fprintf(stderr, "\n");
 
         if (logfile)
         {
@@ -600,7 +632,7 @@ void Log::outBasic(const char * str, ...)
             fflush(logfile);
         }
     }
-    fflush(stdout);
+    fflush(stderr);
 }
 
 void Log::outDetail(const char * str, ...)
@@ -623,12 +655,12 @@ void Log::outDetail(const char * str, ...)
         if (m_colored)
             SetColor(true,m_colors[LOGL_DETAIL]);
 
-        UTF8PRINTF(stdout,str,);
+        UTF8PRINTF(stderr,str,);
 
         if (m_colored)
             ResetColor(true);
 
-        printf("\n");
+        fprintf(stderr, "\n");
 
         if (logfile)
         {
@@ -643,7 +675,7 @@ void Log::outDetail(const char * str, ...)
         }
     }
 
-    fflush(stdout);
+    fflush(stderr);
 }
 
 void Log::outDebugInLine(const char * str, ...)
@@ -653,7 +685,7 @@ void Log::outDebugInLine(const char * str, ...)
 
     if (m_logLevel > LOGL_DETAIL)
     {
-        UTF8PRINTF(stdout,str,);
+        UTF8PRINTF(stderr,str,);
 
         if (logfile)
         {
@@ -685,12 +717,12 @@ void Log::outDebug(const char * str, ...)
         if (m_colored)
             SetColor(true,m_colors[LOGL_DEBUG]);
 
-        UTF8PRINTF(stdout,str,);
+        UTF8PRINTF(stderr,str,);
 
         if (m_colored)
             ResetColor(true);
 
-        printf ("\n");
+        fprintf(stderr, "\n");
 
         if (logfile)
         {
@@ -704,7 +736,7 @@ void Log::outDebug(const char * str, ...)
             fflush(logfile);
         }
     }
-    fflush(stdout);
+    fflush(stderr);
 }
 
 void Log::outStringInLine(const char * str, ...)
@@ -712,7 +744,7 @@ void Log::outStringInLine(const char * str, ...)
     if (!str)
         return;
 
-    UTF8PRINTF(stdout,str,);
+    UTF8PRINTF(stderr,str,);
 
     if (logfile)
     {
@@ -744,12 +776,12 @@ void Log::outCommand(uint32 account, const char * str, ...)
         if (m_colored)
             SetColor(true,m_colors[LOGL_BASIC]);
 
-        UTF8PRINTF(stdout,str,);
+        UTF8PRINTF(stderr,str,);
 
         if (m_colored)
             ResetColor(true);
 
-        printf("\n");
+        fprintf(stderr, "\n");
     }
     if (logfile && m_logFileLevel > LOGL_NORMAL)
     {
@@ -786,7 +818,7 @@ void Log::outCommand(uint32 account, const char * str, ...)
         fflush(gmLogfile);
     }
 
-    fflush(stdout);
+    fflush(stderr);
 }
 
 void Log::outChar(const char * str, ...)
@@ -851,7 +883,7 @@ void Log::outRemote(const char * str, ...)
         fflush(raLogfile);
     }
 
-    fflush(stdout);
+    fflush(stderr);
 }
 
 void Log::outChat(const char * str, ...)
@@ -879,7 +911,7 @@ void Log::outChat(const char * str, ...)
         fflush(chatLogfile);
         va_end(ap);
     }
-    fflush(stdout);
+    fflush(stderr);
 }
 
 void Log::outWarden(const char * str, ...)
@@ -887,9 +919,9 @@ void Log::outWarden(const char * str, ...)
     if(!str)
         return;
 
-    UTF8PRINTF(stdout,str,);
+    UTF8PRINTF(stderr,str,);
 
-    printf("\n");
+    fprintf(stderr, "\n");
     if (wardenLogFile)
     {
         outTimestamp(wardenLogFile);
@@ -903,5 +935,5 @@ void Log::outWarden(const char * str, ...)
 
         fflush(wardenLogFile);
     }
-    fflush(stdout);
+    fflush(stderr);
 }
