@@ -18,7 +18,6 @@
 #include "Creature.h"
 #include "CreatureFormations.h"
 #include "ObjectMgr.h"
-#include "ProgressBar.h"
 
 #include "CreatureAI.h"
 
@@ -112,9 +111,6 @@ void CreatureFormationManager::LoadCreatureFormations()
 
     if (!result_data)
     {
-        barGoLink bar(1);
-        bar.step();
-        sLog.outString();
         sLog.outString(">> Loaded 0 creature formations. DB table `creature_formations` is empty.");
         return;
     }
@@ -124,9 +120,6 @@ void CreatureFormationManager::LoadCreatureFormations()
 
     if (!result_member)
     {
-        barGoLink bar(1);
-        bar.step();
-        sLog.outString();
         sLog.outString(">> Loaded 0 formation formations. DB table `creature_formation_data` is empty.");
         return;
     }
@@ -151,7 +144,6 @@ void CreatureFormationManager::LoadCreatureFormations()
     uint64 total_formations = result_data->GetRowCount();
     uint64 total_member = result_member->GetRowCount();
 
-    barGoLink bar(total_formations+total_member);
     Field *fields;
 
     FormationInfo *formation_info;
@@ -159,7 +151,6 @@ void CreatureFormationManager::LoadCreatureFormations()
     do
     {
         fields = result_data->Fetch();
-        bar.step();
         
         //Load formation member data
         uint32 formationId = fields[0].GetUInt32();
@@ -192,7 +183,6 @@ void CreatureFormationManager::LoadCreatureFormations()
     do
     {
         fields = result_member->Fetch();
-        bar.step();
         
         //Load formation member data
         uint32 formationId = fields[0].GetUInt32();
@@ -220,10 +210,8 @@ void CreatureFormationManager::LoadCreatureFormations()
     }
     while (result_member->NextRow()) ;
 
-    sLog.outString();
     sLog.outString(">> Loaded " UI64FMTD " formations", total_formations);
     sLog.outString(">> Loaded " UI64FMTD " creatures in formations", total_member);
-    sLog.outString();
 }
 
 void CreatureFormation::AddMember(Creature *member)

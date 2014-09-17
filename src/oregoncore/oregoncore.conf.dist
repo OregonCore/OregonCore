@@ -3,7 +3,7 @@
 ###############################################
 
 [worldserver]
-ConfVersion=2014050801
+ConfVersion=2014091557
 
 # Note to devs, line breaks should be at column 80
 ###############################################################################
@@ -819,11 +819,6 @@ ChatLogTimestamp = 0
 #        Default: 1 (true)
 #                 0 (false)
 #
-#    ShowProgressBars
-#		  Control show progress bars for load steps at server startup
-#         Default: 1 (true)
-#                  0 (false)
-#
 #    Motd
 #        Message of the Day. Displayed at worldlogin for every user
 #         Use '@' for a newline, and be sure to escape special characters.
@@ -881,7 +876,6 @@ ExternalMailInterval = 1
 SkillChance.Prospecting = 0
 Event.Announce = 0
 BeepAtStart = 1
-ShowProgressBars = 0
 Motd = "Welcome to an Oregon Core server."
 Server.LoginInfo = 0
 Command.LookupMaxResults = 0
@@ -1864,6 +1858,14 @@ AuctionHouseBot.DisableTGsAboveReqSkillRank = 0
 #        Default: 1 - on
 #                 0 - off
 #
+#    Console.Width
+#        The width of console
+#        Default: 0 (keep)
+#
+#    Console.Height
+#        The height of console
+#        Default: 0 (keep)
+#
 #    Ra.Enable
 #        Enable remote console
 #        Default: 0 - off
@@ -1894,6 +1896,8 @@ AuctionHouseBot.DisableTGsAboveReqSkillRank = 0
 ###############################################################################
 
 Console.Enable = 1
+Console.Width = 0
+Console.Height = 0
 Ra.Enable = 0
 Ra.IP = 0.0.0.0
 Ra.Port = 3443

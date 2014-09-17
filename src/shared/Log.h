@@ -96,6 +96,7 @@ class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Th
         void outString( );
         void outStringInLine( const char * str, ... )           ATTR_PRINTF(2,3);
         void outError( const char * err, ... )                  ATTR_PRINTF(2,3);
+        void outFatal( const char * err, ... )                  ATTR_PRINTF(2,3) ATTR_NORETURN;
         void outCrash( const char * err, ... )                  ATTR_PRINTF(2,3);
         void outBasic( const char * str, ... )                  ATTR_PRINTF(2,3);
         void outDetail( const char * str, ... )                 ATTR_PRINTF(2,3);
@@ -117,6 +118,7 @@ class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Th
         void SetLogFileLevel(char * Level);
         void SetDBLogLevel(char * Level);
         void SetRealmID(uint32 id) { realm = id; }
+        uint8 GetLogLevel() const { return m_logLevel; } 
 
         uint32 getLogFilter() const { return m_logFilter; }
         bool IsOutDebug() const { return m_logLevel > 2 || (m_logFileLevel > 2 && logfile); }

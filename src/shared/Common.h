@@ -136,6 +136,8 @@
 #define finite(X) _finite(X)
 #define strtoull _strtoui64
 #define strtoll _strtoi64
+#define fileno _fileno
+#define dup2 _dup2
 
 #else
 

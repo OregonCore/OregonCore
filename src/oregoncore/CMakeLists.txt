@@ -67,13 +67,13 @@ target_link_libraries(oregon-core
   Recast
   Detour
   ${JEMALLOC_LIBRARY}
-  ${READLINE_LIBRARY}
   ${TERMCAP_LIBRARY}
   ${ACE_LIBRARY}
   ${MYSQL_LIBRARY}
   ${OPENSSL_LIBRARIES}
   ${OPENSSL_EXTRA_LIBRARIES}
   ${ZLIB_LIBRARIES}
+  ${CURSES_LIBRARY}
   ${OSX_LIBS}
 )
 

@@ -47,3 +47,6 @@ gSOAP (a portable development toolkit for C and C++ XML Web services and XML dat
 Recast Navigation (latest Rev Modified by Mangos)
   http://code.google.com/p/recastnavigation/
   Recast 1.4
+
+PDCurses (Command-Line Interface)
+  Version: 3.4

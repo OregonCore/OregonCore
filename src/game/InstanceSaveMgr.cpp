@@ -37,7 +37,6 @@
 #include "World.h"
 #include "Group.h"
 #include "InstanceData.h"
-#include "ProgressBar.h"
 #include "Policies/Singleton.h"
 #include "Policies/SingletonImp.h"
 
@@ -250,8 +249,6 @@ void InstanceSaveManager::_DelHelper(DatabaseType &db, const char *fields, const
 
 void InstanceSaveManager::CleanupInstances()
 {
-    barGoLink bar(2);
-    bar.step();
 
     // load reset times and clean expired instances
     sInstanceSaveManager.LoadResetTimes();
@@ -333,7 +330,6 @@ void InstanceSaveManager::CleanupInstances()
         while (result->NextRow());
     }
 
-    bar.step();
     sLog.outString();
     sLog.outString(">> Initialized %u instances", (uint32)InstanceSet.size());
 }
@@ -358,8 +354,6 @@ void InstanceSaveManager::PackInstances()
         while (result->NextRow());
     }
 
-    barGoLink bar(InstanceSet.size() + 1);
-    bar.step();
 
     uint32 InstanceNumber = 1;
 
@@ -392,7 +386,6 @@ void InstanceSaveManager::PackInstances()
         }
 
         ++InstanceNumber;
-        bar.step();
     }
 
     WorldDatabase.Execute(    "DEALLOCATE PREPARE stmt0");

@@ -17,7 +17,6 @@
 
 #include "ScriptPCH.h"
 #include "ScriptSystem.h"
-#include "ProgressBar.h"
 #include "ObjectMgr.h"
 #include "Database/DatabaseEnv.h"
 
@@ -59,12 +58,10 @@ void SystemMgr::LoadScriptTexts()
 
     if (Result)
     {
-        barGoLink bar(Result->GetRowCount());
         uint32 uiCount = 0;
 
         do
         {
-            bar.step();
             Field* pFields = Result->Fetch();
             StringTextData pTemp;
 
@@ -106,8 +103,6 @@ void SystemMgr::LoadScriptTexts()
     }
     else
     {
-        barGoLink bar(1);
-        bar.step();
         outstring_log("\n>> Loaded 0 additional Script Texts data. DB table script_texts is empty.");
     }
 }
@@ -123,12 +118,10 @@ void SystemMgr::LoadScriptTextsCustom()
 
     if (Result)
     {
-        barGoLink bar(Result->GetRowCount());
         uint32 uiCount = 0;
 
         do
         {
-            bar.step();
             Field* pFields = Result->Fetch();
             StringTextData pTemp;
 
@@ -170,8 +163,6 @@ void SystemMgr::LoadScriptTextsCustom()
     }
     else
     {
-        barGoLink bar(1);
-        bar.step();
         outstring_log("\n>> Loaded 0 additional Custom Texts data. DB table custom_texts is empty.");
     }
 }
@@ -194,12 +185,10 @@ void SystemMgr::LoadScriptWaypoints()
 
     if (Result)
     {
-        barGoLink bar(Result->GetRowCount());
         uint32 uiNodeCount = 0;
 
         do
         {
-            bar.step();
             Field* pFields = Result->Fetch();
             ScriptPointMove pTemp;
 
@@ -230,8 +219,6 @@ void SystemMgr::LoadScriptWaypoints()
     }
     else
     {
-        barGoLink bar(1);
-        bar.step();
         outstring_log("\n>> Loaded 0 Script Waypoints. DB table script_waypoint is empty.");
     }
 }

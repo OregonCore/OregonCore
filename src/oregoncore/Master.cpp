@@ -30,10 +30,10 @@
 #include "Config/Config.h"
 #include "Database/DatabaseEnv.h"
 #include "DBCStores.h"
-#include "CliRunnable.h"
 #include "RARunnable.h"
 #include "Util.h"
 #include "OCSoap.h"
+#include "Console.h"
 
 #ifdef _WIN32
 #include "ServiceWin32.h"
@@ -103,22 +103,14 @@ Master::~Master()
 // Main function
 int Master::Run()
 {
-    // Catch termination signals
-    _HookSignals();
+    #if PLATFORM == PLATFORM_UNIX
+    UnixDebugger::RegisterDeadlySignalHandler();
+    #endif
 
-    sLog.outString("%s (core-daemon)", _FULLVERSION);
-    sLog.outString("<Ctrl-C> to stop.\n");
-
-    sLog.outString("  _____                                          ");
-    sLog.outString(" /\\  __`\\                                        ");
-    sLog.outString(" \\ \\ \\/\\ \\  _ __   __     __     ___    ___      ");
-    sLog.outString("  \\ \\ \\ \\ \\/\\`'__\\'__`\\ /'_ `\\  / __`\\/' _ `\\    ");
-    sLog.outString("   \\ \\ \\_\\ \\ \\ \\/\\  __//\\ \\L\\ \\/\\ \\L\\ \\\\ \\/\\ \\   ");
-    sLog.outString("    \\ \\_____\\ \\_\\ \\____\\ \\____ \\ \\____/ \\_\\ \\_\\  ");
-    sLog.outString("     \\/_____/\\/_/\\/____/\\/___L\\ \\/___/ \\/_/\\/_/  ");
-    sLog.outString("                          /\\____/                ");
-    sLog.outString("                          \\_/__/                 ");
-    sLog.outString(" http://www.oregoncore.com                    \n ");
+    if (sConfig.GetBoolDefault("Console.Enable", true))
+        sConsole.Initialize();
+    sConsole.SetLoading(true);
+    sConsole.DrawLogo();
 
     // worldd PID file creation
     std::string pidfile = sConfig.GetStringDefault("PidFile", "");
@@ -135,8 +127,7 @@ int Master::Run()
     }
 
     // Start the databases
-    if (!_StartDB())
-        return 1;
+    _StartDB();
 
     // Initialize the World
     sWorld.SetInitialWorldSettings();
@@ -145,6 +136,11 @@ int Master::Run()
     std::string builds = AcceptableClientBuildsListStr();
     LoginDatabase.escape_string(builds);
     LoginDatabase.PExecute("UPDATE realmlist SET realmflags = realmflags & ~(%u), population = 0, realmbuilds = '%s'  WHERE id = '%d'", REALM_FLAG_OFFLINE, builds.c_str(), realmID);
+
+    sConsole.SetLoading(false);
+    
+    // Catch termination signals
+    _HookSignals();
 
     ACE_Based::Thread* cliThread = NULL;
 
@@ -155,7 +151,7 @@ int Master::Run()
 #endif
     {
         // Launch CliRunnable thread
-        cliThread = new ACE_Based::Thread(new CliRunnable);
+        cliThread = new ACE_Based::Thread(new Console::CliRunnable);
     }
 
     ACE_Based::Thread rar_thread(new RARunnable);
@@ -279,49 +275,7 @@ int Master::Run()
 
     if (cliThread)
     {
-        #ifdef _WIN32
-
-        // this only way to terminate CLI thread exist at Win32 (alt. way exist only in Windows Vista API)
-        //_exit(1);
-        // send keyboard input to safely unblock the CLI thread
-        INPUT_RECORD b[5];
-        HANDLE hStdIn = GetStdHandle(STD_INPUT_HANDLE);
-        b[0].EventType = KEY_EVENT;
-        b[0].Event.KeyEvent.bKeyDown = TRUE;
-        b[0].Event.KeyEvent.uChar.AsciiChar = 'X';
-        b[0].Event.KeyEvent.wVirtualKeyCode = 'X';
-        b[0].Event.KeyEvent.wRepeatCount = 1;
-
-        b[1].EventType = KEY_EVENT;
-        b[1].Event.KeyEvent.bKeyDown = FALSE;
-        b[1].Event.KeyEvent.uChar.AsciiChar = 'X';
-        b[1].Event.KeyEvent.wVirtualKeyCode = 'X';
-        b[1].Event.KeyEvent.wRepeatCount = 1;
-
-        b[2].EventType = KEY_EVENT;
-        b[2].Event.KeyEvent.bKeyDown = TRUE;
-        b[2].Event.KeyEvent.dwControlKeyState = 0;
-        b[2].Event.KeyEvent.uChar.AsciiChar = '\r';
-        b[2].Event.KeyEvent.wVirtualKeyCode = VK_RETURN;
-        b[2].Event.KeyEvent.wRepeatCount = 1;
-        b[2].Event.KeyEvent.wVirtualScanCode = 0x1c;
-
-        b[3].EventType = KEY_EVENT;
-        b[3].Event.KeyEvent.bKeyDown = FALSE;
-        b[3].Event.KeyEvent.dwControlKeyState = 0;
-        b[3].Event.KeyEvent.uChar.AsciiChar = '\r';
-        b[3].Event.KeyEvent.wVirtualKeyCode = VK_RETURN;
-        b[3].Event.KeyEvent.wVirtualScanCode = 0x1c;
-        b[3].Event.KeyEvent.wRepeatCount = 1;
-        DWORD numb;
-        WriteConsoleInput(hStdIn, b, 4, &numb);
-
-        #else
-
         cliThread->interrupt();
-
-        #endif
-
         cliThread->wait();
         delete cliThread;
     }
@@ -338,62 +292,43 @@ int Master::Run()
 }
 
 // Initialize connection to the databases
-bool Master::_StartDB()
+void Master::_StartDB()
 {
+    sConsole.SetLoadingLabel("Connecting to databases...");
     sLog.SetLogDB(false);
 
     // Get world database info from configuration file
     std::string dbstring = sConfig.GetStringDefault("WorldDatabaseInfo", "");
     if (dbstring.empty())
-    {
-        sLog.outError("World database not specified in configuration file");
-        return false;
-    }
+        sLog.outFatal("World database not specified in configuration file");
 
     // Initialise the world database
     if (!WorldDatabase.Initialize(dbstring.c_str()))
-    {
-        sLog.outError("Cannot connect to world database %s",dbstring.c_str());
-        return false;
-    }
+        sLog.outFatal("Cannot connect to world database %s",dbstring.c_str());
 
     // Get character database info from configuration file
     dbstring = sConfig.GetStringDefault("CharacterDatabaseInfo", "");
     if (dbstring.empty())
-    {
-        sLog.outError("Character database not specified in configuration file");
-        return false;
-    }
+        sLog.outFatal("Character database not specified in configuration file");
 
     // Initialise the Character database
     if (!CharacterDatabase.Initialize(dbstring.c_str()))
-    {
-        sLog.outError("Cannot connect to Character database %s",dbstring.c_str());
-        return false;
-    }
+        sLog.outFatal("Cannot connect to Character database %s",dbstring.c_str());
 
     // Get login database info from configuration file
     dbstring = sConfig.GetStringDefault("LoginDatabaseInfo", "");
     if (dbstring.empty())
-    {
-        sLog.outError("Login database not specified in configuration file");
-        return false;
-    }
+        sLog.outFatal("Login database not specified in configuration file");
 
     // Initialise the login database
     if (!LoginDatabase.Initialize(dbstring.c_str()))
-    {
-        sLog.outError("Cannot connect to login database %s",dbstring.c_str());
-        return false;
-    }
+        sLog.outFatal("Cannot connect to login database %s",dbstring.c_str());
 
     // Get the realm Id from the configuration file
     realmID = sConfig.GetIntDefault("RealmID", 0);
     if (!realmID)
-    {
-        sLog.outError("Realm ID not defined in configuration file");
-        return false;
-    }
+        sLog.outFatal("Realm ID not defined in configuration file");
+
     sLog.outString("Realm running as realm ID %d", realmID);
 
     // Initialize the DB logging system
@@ -410,7 +345,6 @@ bool Master::_StartDB()
     sWorld.LoadDBVersion();
 
     sLog.outString("Using World DB: %s", sWorld.GetDBVersion());
-    return true;
 }
 
 // Clear 'online' status for all accounts with characters in this realm
@@ -449,10 +383,6 @@ void Master::_HookSignals()
     signal(SIGTERM, _OnSignal);
     #ifdef _WIN32
     signal(SIGBREAK, _OnSignal);
-    #endif
-
-    #if PLATFORM == PLATFORM_UNIX
-    UnixDebugger::RegisterDeadlySignalHandler();
     #endif
 }
 

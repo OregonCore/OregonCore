@@ -18,7 +18,6 @@
 #include "Database/DatabaseEnv.h"
 #include "GridDefines.h"
 #include "WaypointManager.h"
-#include "ProgressBar.h"
 #include "MapManager.h"
 
 void WaypointStore::Free()
@@ -38,8 +37,7 @@ void WaypointStore::Load()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT COUNT(id) FROM waypoint_data");
     if (!result)
     {
-        sLog.outError("an error occured while loading the table waypoint_data (maybe it doesn't exist ?)");
-        exit(1);                                            // Stop server at loading non exited table or not accessable table
+        sLog.outFatal("an error occured while loading the table waypoint_data (maybe it doesn't exist ?)");
     }
 
     records = (*result)[0].GetUInt32();
@@ -54,7 +52,6 @@ void WaypointStore::Load()
     WaypointPath* path_data = NULL;
     uint32 total_records = result->GetRowCount();
 
-    barGoLink bar(total_records);
     uint32 count = 0;
     Field *fields;
     uint32 last_id = 0;
@@ -63,7 +60,6 @@ void WaypointStore::Load()
     {
         fields = result->Fetch();
         uint32 id = fields[0].GetUInt32();
-        bar.step();
         count++;
         WaypointData *wp = new WaypointData;
 
