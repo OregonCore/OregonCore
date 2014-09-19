@@ -3369,9 +3369,6 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                     summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
                     summon->setFaction(m_originalCaster->getFaction());
                     summon->SetLevel(m_originalCaster->getLevel());
-
-                    if (prop_id == 121) // Battle Standard
-                        summon->CastSpell(summon, 23036, true);
                 }
             }
             break;
