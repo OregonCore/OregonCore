@@ -659,6 +659,72 @@ typedef std::vector<uint32> SpellCustomAttribute;
 
 typedef std::map<int32, std::vector<int32> > SpellLinkedMap;
 
+enum SpellDummyConditionBitmask
+{
+    SDC_BTM_CASTER_MUST_NOT_HAVE_PET      = 1 << 0,
+    SDC_BTM_CASTER_MUST_NOT_HAVE_CHARM    = 1 << 1,
+    SDC_BTM_CASTER_MUST_BE_UNDERWATER     = 1 << 2,
+    SDC_BTM_TARGET_MUST_BE_CREATURE       = 1 << 3,
+    SDC_BTM_TARGET_MUST_BE_PLAYER         = 1 << 4,
+    SDC_BTM_TARGET_MUST_BE_FRIENDLY       = 1 << 5,
+    SDC_BTM_TARGET_MUST_BE_HOSTILE        = 1 << 6,
+    SDC_BTM_TARGET_MUST_BE_DEAD           = 1 << 7,
+    SDC_BTM_CASTER_MUST_BE_OUT_OF_COMBAT  = 1 << 8,
+    SDC_BTM_TARGET_MUST_NOT_BE_HIER_LEVEL = 1 << 9,
+    // bits 10 - 17 are reserved
+    SDC_BTM_NEEDS_SCRIPT_CHECK            = 1 << 18,
+    SDC_BTM_TARGET_TYPE_NONE              = 1 << 19,
+    SDC_BTM_TARGET_TYPE_BEAST             = 1 << 20,
+    SDC_BTM_TARGET_TYPE_DRAGONKIN         = 1 << 21,
+    SDC_BTM_TARGET_TYPE_DEMON             = 1 << 20,
+    SDC_BTM_TARGET_TYPE_ELEMENTAL         = 1 << 22,
+    SDC_BTM_TARGET_TYPE_GIANT             = 1 << 23,
+    SDC_BTM_TARGET_TYPE_UNDEAD            = 1 << 24,
+    SDC_BTM_TARGET_TYPE_HUMANOID          = 1 << 25,
+    SDC_BTM_TARGET_TYPE_CRITTER           = 1 << 26,
+    SDC_BTM_TARGET_TYPE_MECHANICAL        = 1 << 27,
+    SDC_BTM_TARGET_TYPE_10                = 1 << 28,
+    SDC_BTM_TARGET_TYPE_TOTEM             = 1 << 29,
+    SDC_BTM_TARGET_TYPE_NON_COMBAT_PET    = 1 << 30,
+    SDC_BTM_TARGET_TYPE_GAS_CLOUD         = 1 << 31
+};
+
+enum SpellDummyCondition
+{
+    SDC_NONE                  = 0,
+    SDC_AURA_TARGET           = 1,
+    SDC_AURA_CASTER           = 2,
+    SDC_QUEST_TAKEN           = 3,
+    SDC_QUEST_REWARDED        = 4,
+    SDC_HAS_SPELL             = 5,
+    SDC_ACTIVE_EVENT          = 6,
+    SDC_TEAM                  = 7,
+    SDC_CASTER_HP_PCT         = 8,
+    SDC_TARGET_HP_PCT         = 9,
+    SDC_CASTER_MANA_PCT       = 10,
+    SDC_TARGET_MANA_PCT       = 11,
+    SDC_TARGET_IN_ARC         = 12,
+    SDC_TARGET_EXACT_ENTRY    = 13,
+    SDC_TARGET_TYPE_FLAGS     = 14,
+    SDC_TARGET_FAMILY         = 15
+};
+
+struct SpellDummyConditionEntry
+{
+    uint32 entry;
+    SpellEffIndex effIndex;
+    uint32 bitMaskCondition;
+
+    struct
+    {
+        SpellDummyCondition condition;
+        int32 data;
+    }
+    conditions[5];
+};
+
+typedef std::multimap<uint32, SpellDummyConditionEntry> SpellDummyConditionMap;
+
 class SpellMgr
 {
     // Constructors
@@ -918,6 +984,18 @@ class SpellMgr
         SpellEffectTargetTypes EffectTargetType[TOTAL_SPELL_EFFECTS];
         SpellSelectTargetTypes SpellTargetType[TOTAL_SPELL_TARGETS];
 
+        const SpellDummyConditionEntry* GetSpellDummyCondition(uint32 spellId, uint32 effIndex) const
+        {
+            typedef SpellDummyConditionMap::const_iterator Iterator;
+            std::pair<Iterator, Iterator> range = mSpellDummyConditionMap.equal_range(spellId);
+
+            for (Iterator it = range.first; it != range.second; it++)
+                if (it->second.effIndex == effIndex)
+                    return &(it->second);
+
+            return NULL;                                  
+        }
+
         // Modifiers
     public:
         static SpellMgr& Instance();
@@ -939,6 +1017,7 @@ class SpellMgr
         void LoadSpellCustomCooldowns();
         void LoadSpellLinked();
         void LoadSpellEnchantProcData();
+        void LoadSpellDummyCondition();
 
     private:
         SpellScriptTarget  mSpellScriptTarget;
@@ -956,6 +1035,7 @@ class SpellMgr
         SpellCustomAttribute  mSpellCustomAttr;
         SpellLinkedMap      mSpellLinkedMap;
         SpellEnchantProcEventMap     mSpellEnchantProcEventMap;
+        SpellDummyConditionMap       mSpellDummyConditionMap;
 };
 
 #define spellmgr SpellMgr::Instance()

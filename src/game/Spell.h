@@ -335,6 +335,7 @@ class Spell
         void TriggerSpell();
         SpellCastResult CheckCast(bool strict);
         SpellCastResult CheckPetCast(Unit* target);
+        SpellCastResult CheckDummyCast(uint32 effIndex);
         bool CanAutoCast(Unit* target);
 
         // handlers

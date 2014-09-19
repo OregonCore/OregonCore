@@ -1197,6 +1197,9 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Loading Spell Proc Event conditions...");
     spellmgr.LoadSpellProcEvents();
 
+    sConsole.SetLoadingLabel("Loading Spell Dummy Conditions...");
+    spellmgr.LoadSpellDummyCondition();
+
     sConsole.SetLoadingLabel("Loading Aggro Spells Definitions...");
     spellmgr.LoadSpellThreats();
 

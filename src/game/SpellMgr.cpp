@@ -1492,6 +1492,39 @@ void SpellMgr::LoadSpellEnchantProcData()
     sLog.outString(">> Loaded %u enchant proc data definitions", count);
 }
 
+void SpellMgr::LoadSpellDummyCondition()
+{
+    //                                                             0        1          2                3          4        5          6     7          8        9        10          11      12
+    if (QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT entry, effIndex, bitMaskCondition, condition0, data0, condition1, data1, condition2, data2, condition3, data3, condition4, data4 FROM spell_dummy_condition ORDER BY entry ASC"))
+    {
+        Field* field;
+        SpellDummyConditionEntry sdcEntry;
+
+        do
+        {
+            field = result->Fetch();
+
+            sdcEntry.entry = field[0].GetUInt32();
+            sdcEntry.effIndex = SpellEffIndex(field[1].GetUInt32());
+            sdcEntry.bitMaskCondition = field[2].GetUInt32();
+            
+            for (uint32 i = 0; i < 5; i++) // 5 condition - data pairs
+            {
+                sdcEntry.conditions[i].condition = static_cast<SpellDummyCondition>(field[3 + i*2].GetUInt32());
+                sdcEntry.conditions[i].data = field[4 + i*2].GetInt32();
+            }
+
+            mSpellDummyConditionMap.insert( std::pair<uint32, SpellDummyConditionEntry>(sdcEntry.entry, sdcEntry) );
+        }
+        while (result->NextRow());
+
+        sLog.outString(">> Loaded %llu spell dummy conditions", result->GetRowCount());
+        return;
+    }
+
+    sLog.outString(">> Loaded 0 spell dummy conditions");
+}
+
 bool SpellMgr::IsRankSpellDueToSpell(SpellEntry const *spellInfo_1,uint32 spellId_2) const
 {
     SpellEntry const *spellInfo_2 = sSpellStore.LookupEntry(spellId_2);
@@ -2532,6 +2565,9 @@ void SpellMgr::LoadSpellCustomAttr()
             break;
         case 31789: // Righteous Defense
             spellInfo->EffectTriggerSpell[1] = 31790;
+            break;
+        case 47129: // Totemic Beacon
+            spellInfo->EffectImplicitTargetA[1] = TARGET_NONE;
             break;
         default:
             break;

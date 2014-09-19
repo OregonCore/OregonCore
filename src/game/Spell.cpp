@@ -45,6 +45,7 @@
 #include "BattleGround.h"
 #include "Util.h"
 #include "TemporarySummon.h"
+#include "GameEventMgr.h"
 
 #define SPELL_CHANNEL_UPDATE_INTERVAL (1*IN_MILLISECONDS)
 
@@ -2135,6 +2136,8 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
     // Fill cost data (not use power for item casts)
     m_powerCost = m_CastItem ? 0 : CalculatePowerCost(m_spellInfo, m_caster, m_spellSchoolMask);
 
+    FillTargetMap();
+
     SpellCastResult result = CheckCast(true);
     if (result != SPELL_CAST_OK && !IsAutoRepeat())                      //always cast autorepeat dummy for triggering
     {
@@ -3902,13 +3905,23 @@ SpellCastResult Spell::CheckCast(bool strict)
             return castResult;
     }
 
-    for (int i = 0; i < 3; i++)
+    for (uint32 i = 0; i < 3; i++)
     {
         // for effects of spells that have only one target
         switch(m_spellInfo->Effect[i])
         {
             case SPELL_EFFECT_DUMMY:
             {
+                if (SpellCastResult result = CheckDummyCast(i))
+                {
+                    if (result != SPELL_CAST_OK)
+                        return result;
+                    break;
+                }
+
+                // TODO: Remove this in future
+                // we'll let this here for backward compatibility
+
                 if (m_spellInfo->SpellIconID == 1648)        // Execute
                 {
                     if (!m_targets.getUnitTarget() || m_targets.getUnitTarget()->GetHealth() > m_targets.getUnitTarget()->GetMaxHealth()*0.2)
@@ -4435,6 +4448,16 @@ SpellCastResult Spell::CheckCast(bool strict)
         {
             case SPELL_AURA_DUMMY:
             {
+                if (SpellCastResult result = CheckDummyCast(i))
+                {
+                    if (result != SPELL_CAST_OK)
+                        return result;
+                    break;
+                }
+
+                // TODO: Remove this in future
+                // we'll let this here for backward compatibility
+
                 if (m_spellInfo->Id == 1515)
                 {
                     if (!m_targets.getUnitTarget() || m_targets.getUnitTarget()->GetTypeId() == TYPEID_PLAYER)
@@ -4617,6 +4640,278 @@ SpellCastResult Spell::CheckPetCast(Unit* target)
         return SPELL_FAILED_NOT_READY;
 
     return CheckCast(true);                                       //this allows to check spell fail 0, in combat
+}
+
+SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
+{
+    SpellDummyConditionEntry const* sdcEntry = spellmgr.GetSpellDummyCondition(m_spellInfo->Id, effIndex);
+
+    if (!sdcEntry)
+    {
+        sLog.outError("Spell %u has dummy effect/aura but don't have a record in spell_dummy_conditions. (effIndex: %u)", m_spellInfo->Id, effIndex);
+        return SPELL_CAST_OK;
+    }
+
+    Unit* unitTarget = m_targets.getUnitTarget();
+
+    if (sdcEntry->bitMaskCondition)
+    {
+        if (sdcEntry->bitMaskCondition & SDC_BTM_CASTER_MUST_NOT_HAVE_PET)
+            if (m_caster->GetPetGUID())
+                return SPELL_FAILED_ALREADY_HAVE_SUMMON;
+
+        if (sdcEntry->bitMaskCondition & SDC_BTM_CASTER_MUST_NOT_HAVE_CHARM)
+            if (m_caster->GetCharmGUID())
+                return SPELL_FAILED_ALREADY_HAVE_CHARM;
+
+        bool creature = sdcEntry->bitMaskCondition & SDC_BTM_TARGET_MUST_BE_CREATURE;
+        bool player   = sdcEntry->bitMaskCondition & SDC_BTM_TARGET_MUST_BE_PLAYER;
+        
+        //  creature && !player = TARGET MUST BE CREATURE
+        // !creature &&  player = TARGET MUST BE PLAYER
+        //  creature &&  player = TARGET MUST BE ANY UNIT
+        // !creature && !player = TARGET is not required
+
+        if ((creature || player) && !unitTarget)
+            return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+
+        if (creature)
+        {
+            if (!player && !unitTarget->ToCreature())
+                return SPELL_FAILED_BAD_TARGETS;
+        }
+        else if (player && !unitTarget->ToPlayer())
+            return SPELL_FAILED_BAD_TARGETS;
+
+        bool friendly = (sdcEntry->bitMaskCondition & SDC_BTM_TARGET_MUST_BE_FRIENDLY);
+        bool hostile  = (sdcEntry->bitMaskCondition & SDC_BTM_TARGET_MUST_BE_HOSTILE);
+
+        // Note: IsHostileTo returns true even if target is neutral ( <= neutral)
+        //       IsFriendlyTo returns true only if target is friendly ( > neutral)
+
+        if (!friendly)
+        {
+            if (hostile)
+            {
+                if (!m_caster->IsHostileTo(unitTarget))
+                //    return SPELL_FAILED_BAD_TARGETS;
+                    return SPELL_FAILED_TARGET_FRIENDLY;
+            }
+        }
+        else if (!hostile && !m_caster->IsFriendlyTo(unitTarget))
+            return SPELL_FAILED_TARGET_ENEMY;
+
+        if (sdcEntry->bitMaskCondition & SDC_BTM_TARGET_MUST_BE_DEAD)
+            if (!unitTarget->isDead())
+                return SPELL_FAILED_TARGET_NOT_DEAD;
+
+        if (sdcEntry->bitMaskCondition & SDC_BTM_TARGET_MUST_NOT_BE_HIER_LEVEL)
+            if (unitTarget->getLevel() > m_caster->getLevel())
+                return SPELL_FAILED_HIGHLEVEL;
+
+        // 14 upper bits are for Creature Type
+        if (sdcEntry->bitMaskCondition >> 18) // 32 - 14 = 18
+        {
+            // we have some SDC_BTM_TYPE set
+            Creature* c = unitTarget->ToCreature();
+            if (!c)
+                return SPELL_FAILED_BAD_TARGETS;
+            
+            if (!(sdcEntry->bitMaskCondition & (1 << (c->GetCreatureInfo()->type + 17))))
+                return SPELL_FAILED_BAD_TARGETS;
+        }
+
+        if (sdcEntry->bitMaskCondition & SDC_BTM_NEEDS_SCRIPT_CHECK)
+        {
+            switch (m_spellInfo->Id)
+            {
+                default:
+                    sLog.outError("Spell %u has SDC_BTM_NEEDS_SCRIPT_CHECK in bitMaskCondition (spell_dummy_conditions), but hasn't been implemented, yet.", m_spellInfo->Id);
+                    break;
+            }
+        }
+    }
+
+    for (uint32 i = 0; i < sizeof(sdcEntry->conditions)/sizeof(*sdcEntry->conditions); i++)
+    {
+        int32 data = sdcEntry->conditions[i].data;
+        switch (sdcEntry->conditions[i].condition)
+        {
+            case SDC_NONE:
+                break;
+            case SDC_AURA_TARGET:
+                if (!unitTarget)
+                    return SPELL_FAILED_BAD_TARGETS;
+
+                if (data > 0)
+                {
+                    if (!unitTarget->HasAura(data, 0) &&
+                        !unitTarget->HasAura(data, 1) &&
+                        !unitTarget->HasAura(data, 2))
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                else
+                {
+                    data = -data;
+                    if (unitTarget->HasAura(data, 0) &&
+                        unitTarget->HasAura(data, 1) &&
+                        unitTarget->HasAura(data, 2))
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                break;
+            case SDC_AURA_CASTER:
+                if (data > 0)
+                {
+                    if (!m_caster->HasAura(data, 0) &&
+                        !m_caster->HasAura(data, 1) &&
+                        !m_caster->HasAura(data, 2))
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                else
+                {
+                    data = -data;
+                    if (m_caster->HasAura(data, 0) &&
+                        m_caster->HasAura(data, 1) &&
+                        m_caster->HasAura(data, 2))
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                break;
+            case SDC_QUEST_TAKEN:
+                if (!m_caster->ToPlayer() || m_caster->ToPlayer()->GetQuestStatus(data) != QUEST_STATUS_INCOMPLETE)
+                    return SPELL_FAILED_SPELL_UNAVAILABLE;
+                break;
+            case SDC_QUEST_REWARDED:
+                if (!m_caster->ToPlayer() || !m_caster->ToPlayer()->GetQuestRewardStatus(data))
+                    return SPELL_FAILED_SPELL_UNAVAILABLE;
+                break;
+            case SDC_HAS_SPELL:
+                if (!m_caster->ToPlayer() || !m_caster->ToPlayer()->HasSpell(data))
+                    return SPELL_FAILED_SPELL_UNAVAILABLE;
+                break;
+            case SDC_ACTIVE_EVENT:
+                if (!gameeventmgr.IsActiveEvent(data))
+                    return SPELL_FAILED_SPELL_UNAVAILABLE;
+                break;
+            case SDC_TEAM:
+                if (!m_caster->ToPlayer() || m_caster->ToPlayer()->GetTeam() != (data ? HORDE : ALLIANCE))
+                    return SPELL_FAILED_SPELL_UNAVAILABLE;
+                break;
+            case SDC_CASTER_HP_PCT:
+            {
+                bool below = data < 0;
+                float pct = float(labs(data)) / 100.f;
+
+                if (below)
+                {
+                    if (m_caster->GetHealth() > m_caster->GetMaxHealth()*pct)
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                else
+                {
+                    if (m_caster->GetHealth() < m_caster->GetMaxHealth()*pct)
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                break;
+            }
+            case SDC_TARGET_HP_PCT:
+            {
+                if (!unitTarget)
+                    return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+
+                bool below = data < 0;
+                float pct = float(abs(data)) / 100.f;
+
+                if (below)
+                {
+                    if (unitTarget->GetHealth() >= m_caster->GetMaxHealth()*pct)
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                else
+                {
+                    if (unitTarget->GetHealth() <= m_caster->GetMaxHealth()*pct)
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                break;
+            }
+            case SDC_CASTER_MANA_PCT:
+            {
+                bool below = data < 0;
+                float pct = float(abs(data)) / 100.f;
+
+                if (below)
+                {
+                    if (m_caster->GetHealth() >= m_caster->GetMaxHealth()*pct)
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                else
+                {
+                    if (m_caster->GetHealth() <= m_caster->GetMaxHealth()*pct)
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                break;
+            }
+            case SDC_TARGET_MANA_PCT:
+            {
+                if (!unitTarget)
+                    return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+
+                bool below = data < 0;
+                float pct = float(abs(data)) / 100.f;
+
+                if (below)
+                {
+                    if (unitTarget->GetPower(POWER_MANA) >= m_caster->GetMaxPower(POWER_MANA)*pct)
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                else
+                {
+                    if (unitTarget->GetPower(POWER_MANA) <= m_caster->GetMaxPower(POWER_MANA)*pct)
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                break;
+            }
+            case SDC_TARGET_IN_ARC:
+                if (!unitTarget)
+                    return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+
+                if (data == 1 && !m_caster->IsHostileTo(unitTarget))
+                    break;
+
+                if (!m_caster->HasInArc(M_PI, unitTarget))
+                    return SPELL_FAILED_NOT_INFRONT;
+                break;
+            case SDC_TARGET_EXACT_ENTRY:
+                if (!unitTarget)
+                    return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+                if (!unitTarget->ToCreature())
+                    return SPELL_FAILED_BAD_TARGETS;
+
+                if (unitTarget->ToCreature()->GetEntry() != uint32(data))
+                    return SPELL_FAILED_BAD_TARGETS;
+                break;
+            case SDC_TARGET_TYPE_FLAGS:
+                if (!unitTarget)
+                    return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+                if (!(unitTarget->ToCreature() && unitTarget->ToCreature()->GetCreatureInfo()->type_flags & uint32(data)))
+                    return SPELL_FAILED_BAD_TARGETS;
+                break;
+            case SDC_TARGET_FAMILY:
+                if (!unitTarget)
+                    return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+                if (!unitTarget->ToCreature())
+                    return SPELL_FAILED_BAD_TARGETS;
+                if (data < 0)
+                {
+                    if (unitTarget->ToCreature()->GetCreatureInfo()->family == 0)
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                else if (unitTarget->ToCreature()->GetCreatureInfo()->family != uint32(data))
+                        return SPELL_FAILED_BAD_TARGETS;
+                break;
+        }
+    }
+
+    return SPELL_CAST_OK;
 }
 
 SpellCastResult Spell::CheckCasterAuras() const
