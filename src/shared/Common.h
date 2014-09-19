@@ -137,6 +137,7 @@
 #define strtoull _strtoui64
 #define strtoll _strtoi64
 #define fileno _fileno
+#define dup _dup
 #define dup2 _dup2
 
 #else

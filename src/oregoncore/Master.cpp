@@ -103,6 +103,8 @@ Master::~Master()
 // Main function
 int Master::Run()
 {
+    int defaultStderr = dup(2);
+
     #if PLATFORM == PLATFORM_UNIX
     UnixDebugger::RegisterDeadlySignalHandler();
     #endif
@@ -279,6 +281,11 @@ int Master::Run()
         cliThread->wait();
         delete cliThread;
     }
+
+    // we've been messing up with stderr (if Console.Enable was set),
+    // so we need to restore it back, to prevent SIGPIPEs after restart
+    dup2(defaultStderr, 2);
+    close(defaultStderr);
 
     // Remove signal handling before leaving
     _UnhookSignals();

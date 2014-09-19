@@ -44,7 +44,7 @@ static const char* Menu[] =
     "-------------",
     " Halt Server ",
 };
-const int MenuItems = sizeof(Menu)/sizeof(*Menu);
+static const int MenuItems = sizeof(Menu)/sizeof(*Menu);
 
 #if PLATFORM == PLATFORM_WINDOWS
 BOOL WINAPI HandleConsoleInterrupt(DWORD)
