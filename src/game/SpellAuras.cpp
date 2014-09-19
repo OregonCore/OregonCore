@@ -4769,13 +4769,13 @@ void Aura::HandleAuraModIncreaseHealth(bool apply, bool Real)
 
         if (apply)
         {
+            // max health is increased, we need to increase current health too
             m_target->ModifyHealth(m_modifier.m_amount);
         }
         else
         {
-            if (int32(m_target->GetHealth()) >= m_modifier.m_amount)
-                m_target->ModifyHealth(-m_modifier.m_amount);
-            else
+            // max health is lowered, so is current health, we may not die from aura unapply
+            if (m_target->GetHealth() == 0)
                 m_target->SetHealth(1);
         }
     }
