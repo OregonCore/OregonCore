@@ -707,8 +707,7 @@ bool ChatHandler::HandleVisibleCommand(const char* args)
 
     if (argstr == "on")
     {
-        if (player->HasAura(SPELL_PERMANENT_INVISIBILITY, 0))
-            player->RemoveAurasDueToSpell(SPELL_PERMANENT_INVISIBILITY);
+        player->RemoveAurasDueToSpell(SPELL_PERMANENT_INVISIBILITY);
 
         player->SetGMVisible(true);
         m_session->SendNotification(LANG_INVISIBLE_VISIBLE);
@@ -718,10 +717,9 @@ bool ChatHandler::HandleVisibleCommand(const char* args)
     if (argstr == "off")
     {
         m_session->SendNotification(LANG_INVISIBLE_INVISIBLE);
-        m_session->GetPlayer()->SetGMVisible(false);
+        player->SetGMVisible(false);
 
         player->AddAura(SPELL_PERMANENT_INVISIBILITY, player);
-
         return true;
     }
 
