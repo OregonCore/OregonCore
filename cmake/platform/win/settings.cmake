@@ -14,6 +14,9 @@ if( USE_MYSQL_SOURCES )
   message(STATUS "Using supplied MySQL sources")
 endif()
 
+include_directories(${CMAKE_SOURCE_DIR}/dep/pdcurses)
+set(CURSES_LIBRARY "curses")
+
 # check the CMake preload parameters (commented out by default)
 
 # overload CMAKE_INSTALL_PREFIX if not being set properly
