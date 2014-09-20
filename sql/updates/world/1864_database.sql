@@ -149,4 +149,4 @@ UPDATE quest_template SET ReqCreatureOrGOId2 = 0 WHERE entry = 10182;
 DELETE FROM event_scripts where id = 17253;
 
 -- creature_addon cleanup
-DELETE FROM creature_addon WHERE NOT EXISTS(SELECT 1 FROM creature WHERE creature_addon.guid = creature.guid)
+DELETE FROM creature_addon WHERE NOT EXISTS(SELECT 1 FROM creature WHERE creature_addon.guid = creature.guid);
