@@ -114,7 +114,7 @@ bool ArenaTeam::AddMember(const uint64& playerGuid)
         if (!result)
             return false;
 
-        plName = (*result)[0].GetCppString();
+        plName = (*result)[0].GetString();
         plClass = (*result)[1].GetUInt8();
 
         // check if player already in arenateam of that size
@@ -164,7 +164,7 @@ bool ArenaTeam::LoadArenaTeamFromDB(QueryResult arenaTeamDataResult)
     Field *fields = arenaTeamDataResult->Fetch();
 
     m_TeamId             = fields[0].GetUInt32();
-    m_Name               = fields[1].GetCppString();
+    m_Name               = fields[1].GetString();
     m_CaptainGuid        = MAKE_NEW_GUID(fields[2].GetUInt32(), 0, HIGHGUID_PLAYER);
     m_Type               = fields[3].GetUInt32();
     m_BackgroundColor    = fields[4].GetUInt32();
@@ -216,7 +216,7 @@ bool ArenaTeam::LoadMembersFromDB(QueryResult arenaTeamMembersResult)
         newmember.games_season    = fields[4].GetUInt32();
         newmember.wins_season     = fields[5].GetUInt32();
         newmember.personal_rating = fields[6].GetUInt32();
-        newmember.name            = fields[7].GetCppString();
+        newmember.name            = fields[7].GetString();
         newmember.Class           = fields[8].GetUInt8();
 
         //check if member exists in characters table

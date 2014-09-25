@@ -216,7 +216,7 @@ void GameEventMgr::LoadFromDB()
         pGameEvent.end          = time_t(endtime);
         pGameEvent.occurence    = fields[3].GetUInt32();
         pGameEvent.length       = fields[4].GetUInt32();
-        pGameEvent.description  = fields[5].GetCppString();
+        pGameEvent.description  = fields[5].GetString();
         pGameEvent.state        = (GameEventState)(fields[6].GetUInt8());
         pGameEvent.nextstart    = 0;
 

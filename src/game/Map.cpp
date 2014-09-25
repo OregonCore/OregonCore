@@ -2533,7 +2533,7 @@ void InstanceMap::CreateInstanceData(bool load)
         if (result)
         {
             Field* fields = result->Fetch();
-            const char* data = fields[0].GetString();
+            const char* data = fields[0].GetCString();
             if (data && *data)
             {
                 sLog.outDebug("Loading instance data for %s with id %u", objmgr.GetScriptName(i_script_id), i_InstanceId);

@@ -55,7 +55,7 @@ void MapManager::LoadTransports()
         Field *fields = result->Fetch();
 
         uint32 entry = fields[0].GetUInt32();
-        std::string name = fields[1].GetCppString();
+        std::string name = fields[1].GetString();
         t->m_period = fields[2].GetUInt32();
 
         const GameObjectInfo *goinfo = objmgr.GetGameObjectInfo(entry);
@@ -123,7 +123,7 @@ void MapManager::LoadTransports()
 
             uint32 guid  = fields[0].GetUInt32();
             uint32 entry = fields[1].GetUInt32();
-            std::string name = fields[2].GetCppString();
+            std::string name = fields[2].GetString();
             sLog.outErrorDb("Transport %u '%s' has record (GUID: %u) in gameobject. Transports MUST NOT have any records in gameobject or its behavior will be unpredictable/bugged.",entry,name.c_str(),guid);
         }
         while (result->NextRow());

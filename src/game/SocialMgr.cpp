@@ -314,7 +314,7 @@ PlayerSocial *SocialMgr::LoadFromDB(QueryResult result, uint32 guid)
 
         friend_guid = fields[0].GetUInt32();
         flags = fields[1].GetUInt32();
-        note = fields[2].GetCppString();
+        note = fields[2].GetString();
 
         social->m_playerSocialMap[friend_guid] = FriendInfo(flags, note);
 

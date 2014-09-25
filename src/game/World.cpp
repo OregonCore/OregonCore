@@ -1639,7 +1639,7 @@ void World::LoadAutobroadcasts()
     {
         bar.step();
         Field *fields = result->Fetch();
-        std::string message = fields[0].GetCppString();
+        std::string message = fields[0].GetString();
         m_Autobroadcasts.push_back(message);
         ++count;
     }

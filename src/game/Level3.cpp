@@ -2739,7 +2739,7 @@ bool ChatHandler::HandleListItemCommand(const char *args)
             uint32 item_slot = fields[2].GetUInt32();
             uint32 owner_guid = fields[3].GetUInt32();
             uint32 owner_acc = fields[4].GetUInt32();
-            std::string owner_name = fields[5].GetCppString();
+            std::string owner_name = fields[5].GetString();
 
             char const* item_pos = 0;
             if (Player::IsEquipmentPos(item_bag,item_slot))
@@ -2790,9 +2790,9 @@ bool ChatHandler::HandleListItemCommand(const char *args)
             uint32 item_s           = fields[1].GetUInt32();
             uint32 item_r           = fields[2].GetUInt32();
             uint32 item_s_acc       = fields[3].GetUInt32();
-            std::string item_s_name = fields[4].GetCppString();
+            std::string item_s_name = fields[4].GetString();
             uint32 item_r_acc       = fields[5].GetUInt32();
-            std::string item_r_name = fields[6].GetCppString();
+            std::string item_r_name = fields[6].GetString();
 
             char const* item_pos = "[in mail]";
 
@@ -2833,7 +2833,7 @@ bool ChatHandler::HandleListItemCommand(const char *args)
             uint32 item_guid       = fields[0].GetUInt32();
             uint32 owner           = fields[1].GetUInt32();
             uint32 owner_acc       = fields[2].GetUInt32();
-            std::string owner_name = fields[3].GetCppString();
+            std::string owner_name = fields[3].GetString();
 
             char const* item_pos = "[in auction]";
 
@@ -2860,7 +2860,7 @@ bool ChatHandler::HandleListItemCommand(const char *args)
             Field *fields = result->Fetch();
             uint32 item_guid = fields[0].GetUInt32();
             uint32 guild_guid = fields[1].GetUInt32();
-            std::string guild_name = fields[2].GetCppString();
+            std::string guild_name = fields[2].GetString();
 
             char const* item_pos = "[in guild bank]";
 
@@ -6064,7 +6064,7 @@ bool ChatHandler::HandleBanListHelper(QueryResult result)
 
             // "account" case, name can be get in same query
             if (result->GetFieldCount() > 1)
-                account_name = fields[1].GetCppString();
+                account_name = fields[1].GetString();
             // "character" case, name need extract from another DB
             else
                 sAccountMgr->GetName (account_id,account_name);
@@ -7529,7 +7529,7 @@ bool ChatHandler::HandleListFreezeCommand(const char * /*args*/)
     do
     {
         Field *fields = result->Fetch();
-        std::string fplayers = fields[0].GetCppString();
+        std::string fplayers = fields[0].GetString();
         PSendSysMessage(LANG_COMMAND_FROZEN_PLAYERS,fplayers.c_str());
     } while (result->NextRow());
 

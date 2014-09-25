@@ -1416,7 +1416,7 @@ bool Player::BuildEnumData(QueryResult result, WorldPacket * p_data)
         char_flags |= CHARACTER_FLAG_RENAME;
     if (sWorld.getConfig(CONFIG_DECLINED_NAMES_USED))
     {
-        if (!fields[20].GetCppString().empty())
+        if (!fields[20].GetString().empty())
             char_flags |= CHARACTER_FLAG_DECLINED;
     }
     else
@@ -1450,7 +1450,7 @@ bool Player::BuildEnumData(QueryResult result, WorldPacket * p_data)
         *p_data << uint32(petFamily);
     }
 
-    Tokens data = StrSplit(fields[19].GetCppString(), " ");
+    Tokens data = StrSplit(fields[19].GetString(), " ");
 
     for (uint8 slot = 0; slot < EQUIPMENT_SLOT_END; ++slot)
     {
@@ -3856,7 +3856,7 @@ void Player::DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmC
                     uint16 mailType      = fields[1].GetUInt16();
                     uint16 mailTemplateId= fields[2].GetUInt16();
                     uint32 sender        = fields[3].GetUInt32();
-                    std::string subject  = fields[4].GetCppString();
+                    std::string subject  = fields[4].GetString();
                     uint32 itemTextId    = fields[5].GetUInt32();
                     uint32 money         = fields[6].GetUInt32();
                     bool has_items       = fields[7].GetBool();
@@ -14600,7 +14600,7 @@ void Player::_LoadDeclinedNames(QueryResult result)
     m_declinedname = new DeclinedName;
     Field *fields = result->Fetch();
     for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
-        m_declinedname->name[i] = fields[i].GetCppString();
+        m_declinedname->name[i] = fields[i].GetString();
 }
 
 void Player::_LoadArenaTeamInfo(QueryResult result)
@@ -14671,7 +14671,7 @@ bool Player::LoadPositionFromDB(uint32& mapid, float& x,float& y,float& z,float&
     z = fields[2].GetFloat();
     o = fields[3].GetFloat();
     mapid = fields[4].GetUInt32();
-    in_flight = !fields[5].GetCppString().empty();
+    in_flight = !fields[5].GetString().empty();
 
     return true;
 }
@@ -14684,7 +14684,7 @@ bool Player::LoadValuesArrayFromDB(Tokens& data, uint64 guid)
 
     Field *fields = result->Fetch();
 
-    data = StrSplit(fields[0].GetCppString(), " ");
+    data = StrSplit(fields[0].GetString(), " ");
 
     return true;
 }
@@ -14759,7 +14759,7 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
 
     Object::_Create(guid, 0, HIGHGUID_PLAYER);
 
-    m_name = fields[3].GetCppString();
+    m_name = fields[3].GetString();
 
     // check name limitations
     if (!ObjectMgr::IsValidName(m_name) || (GetSession()->GetSecurity() == SEC_PLAYER && objmgr.IsReservedName(m_name)))
@@ -14768,7 +14768,7 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
         return false;
     }
 
-    if (!LoadValues(fields[2].GetString()))
+    if (!LoadValues(fields[2].GetCString()))
     {
         sLog.outError("Player #%d has invalid data in data field. Not loaded.",GUID_LOPART(guid));
         return false;
@@ -14829,7 +14829,7 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
     m_GrantableLevels = fields[57].GetFloat();
 
     SetDifficulty((DungeonDifficulties)fields[39].GetUInt8());                  // may be changed in _LoadGroup
-    std::string taxi_nodes = fields[38].GetCppString();
+    std::string taxi_nodes = fields[38].GetString();
 
 #define RelocateToHomebind() { mapId = m_homebindMapId; instanceId = 0; Relocate(m_homebindX, m_homebindY, m_homebindZ); if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE)) { m_movementInfo.ClearTransportData(); transGUID = 0; } }
 
@@ -15138,7 +15138,7 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
     if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_GM))
         SetUInt32Value(PLAYER_FLAGS, 0 | old_safe_flags);
 
-    m_taxi.LoadTaxiMask(fields[18].GetString());            // must be before InitTaxiNodesForLevel
+    m_taxi.LoadTaxiMask(fields[18].GetCString());            // must be before InitTaxiNodesForLevel
 
     uint32 extraflags = fields[32].GetUInt32();
 
@@ -15708,7 +15708,7 @@ void Player::_LoadMail()
             m->messageType = fields[1].GetUInt8();
             m->sender = fields[2].GetUInt32();
             m->receiver = fields[3].GetUInt32();
-            m->subject = fields[4].GetCppString();
+            m->subject = fields[4].GetString();
             m->itemTextId = fields[5].GetUInt32();
             bool has_items = fields[6].GetBool();
             m->expire_time = (time_t)fields[7].GetUInt64();

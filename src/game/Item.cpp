@@ -344,7 +344,7 @@ bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult result)
 
     Field *fields = result->Fetch();
 
-    if (!LoadValues(fields[0].GetString()))
+    if (!LoadValues(fields[0].GetCString()))
     {
         sLog.outError("Item #%d has invalid data in data field.  Not loaded.",guid);
         return false;
