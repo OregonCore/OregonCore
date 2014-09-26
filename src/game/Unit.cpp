@@ -3565,7 +3565,7 @@ bool Unit::AddAura(Aura *Aur)
                 }
 
                 // XXX:Allow mongoose procs from different weapon stacks
-                if (Aur->GetId() == 28093 || (Aur->GetId() == 20007 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID()))
+                if (Aur->GetId() == 28093 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
                 {
                     i2++;
                     continue;
