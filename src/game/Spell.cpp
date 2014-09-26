@@ -2607,7 +2607,8 @@ void Spell::_handle_finish_phase()
 {
     // Take for real after all targets are processed
     if (m_needComboPoints)
-        ((Player*)m_caster)->ClearComboPoints();
+        if (Player* player = m_caster->ToPlayer())
+            player->ClearComboPoints();
 
     // spell log
     if (m_needSpellLog)
