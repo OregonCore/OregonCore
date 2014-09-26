@@ -530,12 +530,8 @@ void Log::outSQLDriver(const char* str, ...)
     if (!str)
         return;
 
-    va_list ap;
-    va_start(ap, str);
-//    vutf8printf(stdout, str, &ap);
-    va_end(ap);
-
-    printf("\n");
+	UTF8PRINTF(stdout,str,);
+	printf("\n");
 
     if (sqlLogFile)
     {
@@ -544,9 +540,9 @@ void Log::outSQLDriver(const char* str, ...)
         va_list ap;
         va_start(ap, str);
         vfprintf(sqlLogFile, str, ap);
+        fprintf(sqlLogFile, "\n");
         va_end(ap);
 
-        fprintf(sqlLogFile, "\n");
         fflush(sqlLogFile);
     }
 
