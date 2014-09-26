@@ -923,7 +923,7 @@ class Player : public Unit, public GridObject<Player>
 
         void Update(uint32 time);
 
-        static bool BuildEnumData(QueryResult_AutoPtr result, WorldPacket * p_data);
+        static bool BuildEnumData(QueryResult result, WorldPacket * p_data);
 
         void SetInWater(bool apply);
 
@@ -1294,7 +1294,7 @@ class Player : public Unit, public GridObject<Player>
         /***                   LOAD SYSTEM                     ***/
         /*********************************************************/
 
-        bool LoadFromDB(uint32 guid, SqlQueryHolder *holder);
+        bool LoadFromDB(uint32 guid, SQLQueryHolder *holder);
         void Initialize(uint32 guid);
         static bool   LoadValuesArrayFromDB(Tokens& data,uint64 guid);
         static uint32 GetUInt32ValueFromArray(Tokens const& data, uint16 index);
@@ -1310,10 +1310,11 @@ class Player : public Unit, public GridObject<Player>
         /*********************************************************/
 
         void SaveToDB();
-        void SaveInventoryAndGoldToDB();                    // fast save function for item/money cheating preventing
-        void SaveGoldToDB();
+        void SaveInventoryAndGoldToDB(SQLTransaction& trans);                    // fast save function for item/money cheating preventing
+        void SaveGoldToDB(SQLTransaction& trans);
+
         void SaveDataFieldToDB();
-        static bool SaveValuesArrayInDB(Tokens const& data,uint64 guid);
+        static void SaveValuesArrayInDB(Tokens const& data,uint64 guid);
         static void SetUInt32ValueInArray(Tokens& data,uint16 index, uint32 value);
         static void SetFloatValueInArray(Tokens& data,uint16 index, float value);
         static void SetUInt32ValueInDB(uint16 index, uint32 value, uint64 guid);
@@ -1487,8 +1488,8 @@ class Player : public Unit, public GridObject<Player>
         void RemoveSpellCooldown(uint32 spell_id, bool update = false);
         void RemoveArenaSpellCooldowns();
         void RemoveAllSpellCooldown();
-        void _LoadSpellCooldowns(QueryResult_AutoPtr result);
-        void _SaveSpellCooldowns();
+        void _LoadSpellCooldowns(QueryResult result);
+        void _SaveSpellCooldowns(SQLTransaction& trans);
 
         GlobalCooldownMgr& GetGlobalCooldownMgr() { return m_GlobalCooldownMgr; }
 
@@ -2225,41 +2226,41 @@ class Player : public Unit, public GridObject<Player>
         /***                   LOAD SYSTEM                     ***/
         /*********************************************************/
 
-        void _LoadActions(QueryResult_AutoPtr result);
-        void _LoadAuras(QueryResult_AutoPtr result, uint32 timediff);
-        void _LoadBoundInstances(QueryResult_AutoPtr result);
-        void _LoadInventory(QueryResult_AutoPtr result, uint32 timediff);
-        void _LoadMailInit(QueryResult_AutoPtr resultUnread, QueryResult_AutoPtr resultDelivery);
+        void _LoadActions(QueryResult result);
+        void _LoadAuras(QueryResult result, uint32 timediff);
+        void _LoadBoundInstances(QueryResult result);
+        void _LoadInventory(QueryResult result, uint32 timediff);
+        void _LoadMailInit(QueryResult resultUnread, QueryResult resultDelivery);
         void _LoadMail();
         void _LoadMailedItems(Mail *mail);
-        void _LoadQuestStatus(QueryResult_AutoPtr result);
-        void _LoadDailyQuestStatus(QueryResult_AutoPtr result);
-        void _LoadGroup(QueryResult_AutoPtr result);
-        void _LoadReputation(QueryResult_AutoPtr result);
-        void _LoadSkills(QueryResult_AutoPtr result);
-        void _LoadSpells(QueryResult_AutoPtr result);
-        void _LoadTutorials(QueryResult_AutoPtr result);
-        void _LoadFriendList(QueryResult_AutoPtr result);
-        bool _LoadHomeBind(QueryResult_AutoPtr result);
-        void _LoadDeclinedNames(QueryResult_AutoPtr result);
-        void _LoadArenaTeamInfo(QueryResult_AutoPtr result);
-        void _LoadBGData(QueryResult_AutoPtr result);
+        void _LoadQuestStatus(QueryResult result);
+        void _LoadDailyQuestStatus(QueryResult result);
+        void _LoadGroup(QueryResult result);
+        void _LoadReputation(QueryResult result);
+        void _LoadSkills(QueryResult result);
+        void _LoadSpells(QueryResult result);
+        void _LoadTutorials(QueryResult result);
+        void _LoadFriendList(QueryResult result);
+        bool _LoadHomeBind(QueryResult result);
+        void _LoadDeclinedNames(QueryResult result);
+        void _LoadArenaTeamInfo(QueryResult result);
+        void _LoadBGData(QueryResult result);
 
         /*********************************************************/
         /***                   SAVE SYSTEM                     ***/
         /*********************************************************/
 
-        void _SaveActions();
-        void _SaveAuras();
-        void _SaveInventory();
-        void _SaveMail();
-        void _SaveQuestStatus();
-        void _SaveDailyQuestStatus();
+        void _SaveActions(SQLTransaction& trans);
+        void _SaveAuras(SQLTransaction& trans);
+        void _SaveInventory(SQLTransaction& trans);
+        void _SaveMail(SQLTransaction& trans);
+        void _SaveQuestStatus(SQLTransaction& trans);
+        void _SaveDailyQuestStatus(SQLTransaction& trans);
         void _SaveReputation();
-        void _SaveSkills();
-        void _SaveSpells();
+        void _SaveSkills(SQLTransaction& trans);
+        void _SaveSpells(SQLTransaction& trans);
         void _SaveTutorials();
-        void _SaveBGData();
+        void _SaveBGData(SQLTransaction& trans);
 
         void _SetCreateBits(UpdateMask *updateMask, Player *target) const;
         void _SetUpdateBits(UpdateMask *updateMask, Player *target) const;

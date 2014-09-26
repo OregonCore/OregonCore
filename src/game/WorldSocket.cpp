@@ -260,14 +260,14 @@ int WorldSocket::handle_input (ACE_HANDLE)
                 return Update();                           // interesting line ,isn't it ?
             }
 
-            DEBUG_LOG("WorldSocket::handle_input: Peer error closing connection errno = %s", ACE_OS::strerror (errno));
+            sLog.outStaticDebug("WorldSocket::handle_input: Peer error closing connection errno = %s", ACE_OS::strerror (errno));
 
             errno = ECONNRESET;
             return -1;
         }
         case 0:
         {
-            DEBUG_LOG("WorldSocket::handle_input: Peer has closed connection");
+            sLog.outStaticDebug("WorldSocket::handle_input: Peer has closed connection");
 
             errno = ECONNRESET;
             return -1;
@@ -601,7 +601,7 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
 
                 return HandleAuthSession (*new_pct);
             case CMSG_KEEP_ALIVE:
-                DEBUG_LOG ("CMSG_KEEP_ALIVE ,size: %d", new_pct->size());
+                sLog.outStaticDebug ("CMSG_KEEP_ALIVE ,size: %d", new_pct->size());
 
                 return 0;
             default:
@@ -648,7 +648,7 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
 int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
 {
     // NOTE: ATM the socket is singlethread, have this in mind ...
-    uint8 digest[20];
+    uint8 digest[SHA_DIGEST_LENGTH];
     uint32 clientSeed;
     uint32 unk2;
     uint32 BuiltNumberClient;
@@ -670,7 +670,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     recvPacket >> clientSeed;
     recvPacket.read (digest, 20);
 
-    DEBUG_LOG ("WorldSocket::HandleAuthSession: client %u, unk2 %u, account %s, clientseed %u",
+    sLog.outStaticDebug ("WorldSocket::HandleAuthSession: client %u, unk2 %u, account %s, clientseed %u",
                 BuiltNumberClient,
                 unk2,
                 account.c_str (),
@@ -693,7 +693,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     LoginDatabase.escape_string (safe_account);
     // No SQL injection, username escaped.
 
-    QueryResult_AutoPtr result = LoginDatabase.PQuery ("SELECT "
+    QueryResult result = LoginDatabase.PQuery ("SELECT "
                                 "id, "                      //0
                                 "sessionkey, "              //1
                                 "last_ip, "                 //2
@@ -731,13 +731,13 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     N.SetHexStr ("894B645E89E1535BBDAD5B8B290650530801B18EBFBF5E8FAB3C82872A3E9BB7");
     g.SetDword (7);
 
-    v.SetHexStr(fields[4].GetString());
-    s.SetHexStr (fields[5].GetString ());
+    v.SetHexStr(fields[4].GetCString());
+    s.SetHexStr (fields[5].GetCString());
 
-    const char* sStr = s.AsHexStr ();                       //Must be freed by OPENSSL_free()
-    const char* vStr = v.AsHexStr ();                       //Must be freed by OPENSSL_free()
+    const char* sStr = s.AsHexStr();                       //Must be freed by OPENSSL_free()
+    const char* vStr = v.AsHexStr();                       //Must be freed by OPENSSL_free()
 
-    DEBUG_LOG ("WorldSocket::HandleAuthSession: (s,v) check s: %s v: %s",
+    sLog.outStaticDebug ("WorldSocket::HandleAuthSession: (s,v) check s: %s v: %s",
                 sStr,
                 vStr);
 
@@ -747,7 +747,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     // Re-check ip locking (same check as in realmd).
     if (fields[3].GetUInt8 () == 1) // if ip is locked
     {
-        if (strcmp (fields[2].GetString (), GetRemoteAddress ().c_str ()))
+        if (strcmp (fields[2].GetCString (), GetRemoteAddress ().c_str ()))
         {
             packet.Initialize (SMSG_AUTH_RESPONSE, 1);
             packet << uint8 (AUTH_FAILED);
@@ -759,7 +759,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     }
 
     id = fields[0].GetUInt32 ();
-    K.SetHexStr (fields[1].GetString ());
+    K.SetHexStr (fields[1].GetCString());
 
     time_t mutetime = time_t (fields[7].GetUInt64 ());
     std::string os = fields[9].GetString();
@@ -787,7 +787,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     }
 
     // Re-check account ban (same check as in realmd)
-    QueryResult_AutoPtr banresult = LoginDatabase.PQuery ("SELECT "
+    QueryResult banresult = LoginDatabase.PQuery ("SELECT "
                                 "bandate, "
                                 "unbandate "
                                 "FROM account_banned "
@@ -833,7 +833,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     sha.UpdateBigNumbers (&K, NULL);
     sha.Finalize ();
 
-    if (memcmp (sha.GetDigest (), digest, 20))
+    if (memcmp(sha.GetDigest(), digest, SHA_DIGEST_LENGTH) != 0)
     {
         packet.Initialize (SMSG_AUTH_RESPONSE, 1);
         packet << uint8 (AUTH_FAILED);
@@ -846,7 +846,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
 
     std::string address = GetRemoteAddress();
 
-    DEBUG_LOG ("WorldSocket::HandleAuthSession: Client '%s' authenticated successfully from %s.",
+    sLog.outStaticDebug ("WorldSocket::HandleAuthSession: Client '%s' authenticated successfully from %s.",
                 account.c_str(),
                 address.c_str());
 

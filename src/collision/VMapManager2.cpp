@@ -269,7 +269,7 @@ namespace VMAP
                 delete worldmodel;
                 return NULL;
             }
-            DEBUG_LOG("VMapManager2: loading file '%s%s'.", basepath.c_str(), filename.c_str());
+            sLog.outStaticDebug("VMapManager2: loading file '%s%s'.", basepath.c_str(), filename.c_str());
             model = iLoadedModelFiles.insert(std::pair<std::string, ManagedModel>(filename, ManagedModel())).first;
             model->second.setModel(worldmodel);
         }
@@ -287,7 +287,7 @@ namespace VMAP
         }
         if (model->second.decRefCount() == 0)
         {
-            DEBUG_LOG("VMapManager2: unloading file '%s'", filename.c_str());
+            sLog.outStaticDebug("VMapManager2: unloading file '%s'", filename.c_str());
             delete model->second.getModel();
             iLoadedModelFiles.erase(model);
         }

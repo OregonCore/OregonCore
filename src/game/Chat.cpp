@@ -697,19 +697,19 @@ ChatCommand * ChatHandler::getCommandTable()
     {
         load_command_table = false;
 
-        QueryResult_AutoPtr result = WorldDatabase.Query("SELECT name,security,help FROM command");
+        QueryResult result = WorldDatabase.Query("SELECT name,security,help FROM command");
         if (result)
         {
             do
             {
                 Field *fields = result->Fetch();
-                std::string name = fields[0].GetCppString();
+                std::string name = fields[0].GetString();
                 for (uint32 i = 0; commandTable[i].Name != NULL; i++)
                 {
                     if (name == commandTable[i].Name)
                     {
                         commandTable[i].SecurityLevel = (uint16)fields[1].GetUInt16();
-                        commandTable[i].Help = fields[2].GetCppString();
+                        commandTable[i].Help = fields[2].GetString();
                     }
                     if (commandTable[i].ChildCommands != NULL)
                     {
@@ -721,7 +721,7 @@ ChatCommand * ChatHandler::getCommandTable()
                                 (name == fmtstring("%s %s", commandTable[i].Name, ptable[j].Name)))
                             {
                                 ptable[j].SecurityLevel = (uint16)fields[1].GetUInt16();
-                                ptable[j].Help = fields[2].GetCppString();
+                                ptable[j].Help = fields[2].GetString();
                             }
                         }
                     }

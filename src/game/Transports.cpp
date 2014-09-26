@@ -29,7 +29,7 @@
 
 void MapManager::LoadTransports()
 {
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, name, period FROM transports");
+    QueryResult result = WorldDatabase.Query("SELECT entry, name, period FROM transports");
 
     uint32 count = 0;
 
@@ -46,7 +46,7 @@ void MapManager::LoadTransports()
         Field *fields = result->Fetch();
 
         uint32 entry = fields[0].GetUInt32();
-        std::string name = fields[1].GetCppString();
+        std::string name = fields[1].GetString();
         t->m_period = fields[2].GetUInt32();
 
         const GameObjectInfo *goinfo = objmgr.GetGameObjectInfo(entry);
@@ -114,7 +114,7 @@ void MapManager::LoadTransports()
 
             uint32 guid  = fields[0].GetUInt32();
             uint32 entry = fields[1].GetUInt32();
-            std::string name = fields[2].GetCppString();
+            std::string name = fields[2].GetString();
             sLog.outErrorDb("Transport %u '%s' has record (GUID: %u) in gameobject. Transports MUST NOT have any records in gameobject or its behavior will be unpredictable/bugged.",entry,name.c_str(),guid);
         }
         while (result->NextRow());
@@ -520,10 +520,10 @@ void Transport::Update(uint32 /*p_time*/)
 
         #ifdef OREGON_DEBUG
         if (m_curr == m_WayPoints.begin() && (sLog.getLogFilter() & LOG_FILTER_TRANSPORT_MOVES) == 0)
-            DEBUG_LOG(" ************ BEGIN ************** %s", this->m_name.c_str());
+            sLog.outStaticDebug(" ************ BEGIN ************** %s", this->m_name.c_str());
 
         if ((sLog.getLogFilter() & LOG_FILTER_TRANSPORT_MOVES) == 0)
-            DEBUG_LOG("%s moved to %d %f %f %f %d", this->m_name.c_str(), m_curr->second.id, m_curr->second.x, m_curr->second.y, m_curr->second.z, m_curr->second.mapid);
+            sLog.outStaticDebug("%s moved to %d %f %f %f %d", this->m_name.c_str(), m_curr->second.id, m_curr->second.x, m_curr->second.y, m_curr->second.z, m_curr->second.mapid);
         #endif
 
         //Transport Event System

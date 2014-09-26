@@ -132,10 +132,10 @@ class MailDraft
         MailDraft& AddCOD(uint32 COD) { m_COD = COD; return *this; }
     public:                                                 // finishers
         void SendReturnToSender(uint32 sender_acc, uint32 sender_guid, uint32 receiver_guid);
-        void SendMailTo(MailReceiver const& receiver, MailSender const& sender, MailCheckMask checked = MAIL_CHECK_MASK_NONE, uint32 deliver_delay = 0);
+        void SendMailTo(SQLTransaction& trans, MailReceiver const& receiver, MailSender const& sender, MailCheckMask checked = MAIL_CHECK_MASK_NONE, uint32 deliver_delay = 0);
     private:
-        void deleteIncludedItems(bool inDB = false);
-        void prepareItems(Player* receiver);                // called from SendMailTo for generate mailTemplateBase items
+        void deleteIncludedItems(bool inDB = false, SQLTransaction& trans = SQLTransaction(NULL));
+        void prepareItems(Player* receiver, SQLTransaction& trans);                // called from SendMailTo for generate mailTemplateBase items
 
         uint16      m_mailTemplateId;
         bool        m_mailTemplateItemsNeed;

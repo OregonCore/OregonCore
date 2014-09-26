@@ -54,7 +54,7 @@ void CWardenDataStorage::LoadWardenDataResult(bool reload)
         InternalDataID = 1;
     }
 
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT `check`, `data`, `result`, `address`, `length`, `str`, `id` FROM warden_data_result");
+    QueryResult result = WorldDatabase.Query("SELECT `check`, `data`, `result`, `address`, `length`, `str`, `id` FROM warden_data_result");
 
     uint32 count = 0;
 
@@ -82,7 +82,7 @@ void CWardenDataStorage::LoadWardenDataResult(bool reload)
 
         if (type == PAGE_CHECK_A || type == PAGE_CHECK_B || type == DRIVER_CHECK)
         {
-            std::string data = fields[1].GetCppString();
+            std::string data = fields[1].GetString();
             wd->i.SetHexStr(data.c_str());
             int len = data.size() / 2;
             if (wd->i.GetNumBytes() < len)
@@ -106,13 +106,13 @@ void CWardenDataStorage::LoadWardenDataResult(bool reload)
 
         // PROC_CHECK support missing
         if (type == MEM_CHECK || type == MPQ_CHECK || type == LUA_STR_CHECK || type == DRIVER_CHECK || type == MODULE_CHECK)
-            wd->str = fields[5].GetCppString();
+            wd->str = fields[5].GetString();
 
         _data_map[id] = wd;
 
         if (type == MPQ_CHECK || type == MEM_CHECK)
         {
-            std::string result = fields[2].GetCppString();
+            std::string result = fields[2].GetString();
             WardenDataResult *wr = new WardenDataResult();
             wr->res.SetHexStr(result.c_str());
             int len = result.size() / 2;

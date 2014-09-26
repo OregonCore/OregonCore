@@ -62,7 +62,7 @@ void HookSignals();
 
 bool stopEvent = false;                                     // Setting it to true stops the server
 
-DatabaseType LoginDatabase;                                 // Accessor to the realm server database
+LoginDatabaseWorkerPool LoginDatabase;                      // Accessor to the realm server database
 
 // Print out the usage string for this program on the console.
 void usage(const char *prog)
@@ -288,7 +288,7 @@ extern int main(int argc, char **argv)
         {
             loopCounter = 0;
             sLog.outDetail("Ping MySQL to keep connection alive");
-            LoginDatabase.Query("SELECT 1 FROM realmlist LIMIT 1");
+            LoginDatabase.KeepAlive();
         }
 #ifdef _WIN32
         if (m_ServiceStatus == 0) stopEvent = true;
@@ -297,12 +297,12 @@ extern int main(int argc, char **argv)
     }
 
     // Wait for the delay thread to exit
-    LoginDatabase.HaltDelayThread();
+    LoginDatabase.Close();
 
     // Remove signal handling before leaving
     UnhookSignals();
 
-    sLog.outString( "Halting process..." );
+    sLog.outString("Halting process...");
     return 0;
 }
 
@@ -337,7 +337,15 @@ bool StartDB()
     }
 
     sLog.outString("Database: %s", dbstring.c_str() );
-    if (!LoginDatabase.Initialize(dbstring.c_str()))
+    uint8 num_threads = sConfig.GetIntDefault("LoginDatabase.WorkerThreads", 1);
+    if (num_threads < 1 || num_threads > 32)
+    {
+        sLog.outError("Improper value specified for LoginDatabase.WorkerThreads, defaulting to 1.");
+        num_threads = 1;
+    }
+
+    //- Authserver has singlethreaded synchronous DB access, hence MYSQL_BUNDLE_ALL
+    if (!LoginDatabase.Open(dbstring.c_str(), num_threads, MYSQL_BUNDLE_ALL))
     {
         sLog.outError("Cannot connect to database");
         return false;
