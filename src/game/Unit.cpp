@@ -2575,6 +2575,19 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
     if (roll < tmp)
         return SPELL_MISS_RESIST;
 
+    // @XXX: Tidal Charm: Increased chance to be resisted when used against targets over level 60.
+    if (spell->Id == 835)
+    {
+        if (pVictim->getLevel() > 60)
+        {
+            int32 tmp = pVictim->getLevel();
+            uint32 rand = urand(60, 160);
+
+            if (rand > tmp)
+                return SPELL_MISS_RESIST;
+        }
+    }
+
     // Ranged attack can`t miss too
     if (attType == RANGED_ATTACK)
         return SPELL_MISS_NONE;
