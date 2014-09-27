@@ -38,9 +38,6 @@
 
 #include <fstream>
 
-#include <readline/readline.h>
-#include <readline/history.h>
-
 #include <dlfcn.h>
  
 #include <execinfo.h>
