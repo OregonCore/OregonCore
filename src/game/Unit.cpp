@@ -1866,7 +1866,7 @@ void Unit::CalcAbsorbResist(Unit *pVictim, SpellSchoolMask schoolMask, DamageEff
         return;
 
     // Magic damage, check for resists
-    if ((schoolMask & SPELL_SCHOOL_MASK_NORMAL) == 0)
+    if ((schoolMask & (SPELL_SCHOOL_MASK_NORMAL | SPELL_SCHOOL_MASK_HOLY)) == 0)
     {
         // Get base victim resistance for school
         float tmpvalue2 = (float)pVictim->GetResistance(GetFirstSchoolInMask(schoolMask));
@@ -2723,7 +2723,7 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit *pVictim, SpellEntry const *spell)
 
     int32 rand = irand(0,10000);
     if (rand > HitChance)
-        return SPELL_MISS_MISS;
+        return SPELL_MISS_RESIST;
 
     return SPELL_MISS_NONE;
 }
@@ -4661,6 +4661,17 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
         {
             switch (dummySpell->Id)
             {
+                // Blackout
+                case 15268:
+                case 15323:
+                case 15324:
+                case 15325:
+                case 15326:
+                {
+                    // should only proc from spell that deal damage
+                    if (target || procSpell->Id == 15487 || procSpell->Id == 10909 || procSpell->Id == 605)
+                        return false;
+                }
                 // Eye for an Eye
                 case 9799:
                 case 25988:
