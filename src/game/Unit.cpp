@@ -3550,6 +3550,19 @@ bool Unit::AddAura(Aura *Aur)
             Aura* aur2 = i2->second;
             if (aur2 && !stackModified && aur2->GetId() == Aur->GetId())
             {
+                // Allow multiple auras if one non-stackable spell is triggered by different items
+                if (Aur->GetCastItemGUID() && !aurSpellInfo->StackAmount)
+                {
+                    bool allow = true;
+
+                    for (AuraMap::const_iterator i3 = m_Auras.lower_bound(spair); i3 != m_Auras.upper_bound(spair); i3++)
+                        if (i3->second->GetCastItemGUID() == Aur->GetCastItemGUID())
+                            allow = false;
+
+                    if (allow)
+                        break;
+                }
+
                 // Non stackable and capped auras do not allow stacking
                 if (!(aurSpellInfo->StackAmount && uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount))
                 {
@@ -3564,13 +3577,6 @@ bool Unit::AddAura(Aura *Aur)
                     return false;
                 }
 
-                // XXX:Allow mongoose procs from different weapon stacks
-                if (Aur->GetId() == 28093 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
-                {
-                    i2++;
-                    continue;
-                }
-				 
                 // Increment aura's stack, one stack per one call
                 Aur->SetStackAmount(aur2->GetStackAmount()+1);
                 stackModified = true;
