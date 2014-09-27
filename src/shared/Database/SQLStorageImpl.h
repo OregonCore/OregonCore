@@ -120,7 +120,7 @@ void SQLStorageLoaderBase<T>::Load(SQLStorage &store)
 {
     uint32 maxi;
     Field *fields;
-    QueryResult_AutoPtr result  = WorldDatabase.PQuery("SELECT MAX(%s) FROM %s", store.entry_field, store.table);
+    QueryResult result = WorldDatabase.PQuery("SELECT MAX(%s) FROM %s", store.entry_field, store.table);
     if (!result)
     {
         sLog.outFatal("Error loading %s table (not exist?)\n", store.table);
@@ -192,7 +192,7 @@ void SQLStorageLoaderBase<T>::Load(SQLStorage &store)
                 case FT_FLOAT:
                     storeValue((float)fields[x].GetFloat(), store, p, x, offset); break;
                 case FT_STRING:
-                    storeValue((char*)fields[x].GetString(), store, p, x, offset); break;
+                    storeValue((char*)fields[x].GetCString(), store, p, x, offset); break;
             }
         ++count;
     }while( result->NextRow() );

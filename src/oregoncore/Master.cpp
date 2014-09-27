@@ -29,6 +29,8 @@
 #include "SystemConfig.h"
 #include "Config/Config.h"
 #include "Database/DatabaseEnv.h"
+#include "Database/DatabaseWorkerPool.h"
+
 #include "DBCStores.h"
 #include "RARunnable.h"
 #include "Util.h"
@@ -269,9 +271,9 @@ int Master::Run()
     clearOnlineAccounts();
 
     // Wait for delay threads to end
-    CharacterDatabase.HaltDelayThread();
-    WorldDatabase.HaltDelayThread();
-    LoginDatabase.HaltDelayThread();
+    CharacterDatabase.Close();
+    WorldDatabase.Close();
+    LoginDatabase.Close();
 
     sLog.outString("Halting process...");
 
@@ -303,33 +305,59 @@ void Master::_StartDB()
 {
     sConsole.SetLoadingLabel("Connecting to databases...");
     sLog.SetLogDB(false);
+    std::string dbstring;
+    uint8 num_threads;
+    int32 mask;
 
-    // Get world database info from configuration file
-    std::string dbstring = sConfig.GetStringDefault("WorldDatabaseInfo", "");
+    dbstring = sConfig.GetStringDefault("WorldDatabaseInfo", "");
     if (dbstring.empty())
         sLog.outFatal("World database not specified in configuration file");
 
-    // Initialise the world database
-    if (!WorldDatabase.Initialize(dbstring.c_str()))
+    num_threads = sConfig.GetIntDefault("WorldDatabase.WorkerThreads", 1);
+    if (num_threads < 1 || num_threads > 32)
         sLog.outFatal("Cannot connect to world database %s",dbstring.c_str());
+        sLog.outError("World database: invalid number of worker threads specified. "
+            "Please pick a value between 1 and 32.");
+
+    mask = sConfig.GetIntDefault("WorldDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);   
+
+    ///- Initialise the world database
+    if (!WorldDatabase.Open(dbstring, num_threads, MySQLThreadBundle(mask)))
+        sLog.outError("Cannot connect to world database %s", dbstring.c_str());
 
     // Get character database info from configuration file
     dbstring = sConfig.GetStringDefault("CharacterDatabaseInfo", "");
     if (dbstring.empty())
         sLog.outFatal("Character database not specified in configuration file");
 
-    // Initialise the Character database
-    if (!CharacterDatabase.Initialize(dbstring.c_str()))
+    num_threads = sConfig.GetIntDefault("CharacterDatabase.WorkerThreads", 1);
+    if (num_threads < 1 || num_threads > 32)
         sLog.outFatal("Cannot connect to Character database %s",dbstring.c_str());
+        sLog.outError("Character database: invalid number of worker threads specified. "
+            "Please pick a value between 1 and 32.");
+
+    mask = sConfig.GetIntDefault("CharacterDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);
+
+    ///- Initialise the Character database
+    if (!CharacterDatabase.Open(dbstring, num_threads, MySQLThreadBundle(mask)))
+        sLog.outError("Cannot connect to Character database %s", dbstring.c_str());
 
     // Get login database info from configuration file
     dbstring = sConfig.GetStringDefault("LoginDatabaseInfo", "");
     if (dbstring.empty())
         sLog.outFatal("Login database not specified in configuration file");
 
-    // Initialise the login database
-    if (!LoginDatabase.Initialize(dbstring.c_str()))
+    num_threads = sConfig.GetIntDefault("LoginDatabase.WorkerThreads", 1);
+    if (num_threads < 1 || num_threads > 32)
         sLog.outFatal("Cannot connect to login database %s",dbstring.c_str());
+        sLog.outError("Login database: invalid number of worker threads specified. "
+            "Please pick a value between 1 and 32.");
+
+    mask = sConfig.GetIntDefault("LoginDatabase.ThreadBundleMask", MYSQL_BUNDLE_ALL);  
+
+    ///- Initialise the login database
+    if (!LoginDatabase.Open(dbstring, num_threads, MySQLThreadBundle(mask)))
+        sLog.outError("Cannot connect to login database %s", dbstring.c_str());
 
     // Get the realm Id from the configuration file
     realmID = sConfig.GetIntDefault("RealmID", 0);

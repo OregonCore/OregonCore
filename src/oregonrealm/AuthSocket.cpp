@@ -31,8 +31,6 @@
 #include <ace/OS_NS_fcntl.h>
 #include <ace/OS_NS_sys_stat.h>
 
-extern DatabaseType LoginDatabase;
-
 enum eStatus
 {
     STATUS_CONNECTED = 0,
@@ -210,12 +208,12 @@ void AuthSocket::OnRead()
                     (table[i].status == STATUS_CONNECTED ||
                      (_authed && table[i].status == STATUS_AUTHED)))
             {
-                DEBUG_LOG("[Auth] got data for cmd %u recv length %u",
+                sLog.outStaticDebug("[Auth] got data for cmd %u recv length %u",
                         (uint32)_cmd, (uint32)recv_len());
 
                 if (!(*this.*table[i].handler)())
                 {
-                    DEBUG_LOG("Command handler failed for cmd %u recv length %u",
+                    sLog.outStaticDebug("Command handler failed for cmd %u recv length %u",
                             (uint32)_cmd, (uint32)recv_len());
 
                     return;
@@ -227,7 +225,7 @@ void AuthSocket::OnRead()
         // Report unknown commands in the debug log
         if (i == AUTH_TOTAL_COMMANDS)
         {
-            DEBUG_LOG("[Auth] got unknown packet %u", (uint32)_cmd);
+            sLog.outStaticDebug("[Auth] got unknown packet %u", (uint32)_cmd);
             return;
         }
     }
@@ -260,7 +258,13 @@ void AuthSocket::_SetVSFields(const std::string& rI)
     const char *v_hex, *s_hex;
     v_hex = v.AsHexStr();
     s_hex = s.AsHexStr();
-    LoginDatabase.PExecute("UPDATE account SET v = '%s', s = '%s' WHERE username = '%s'", v_hex, s_hex, _safelogin.c_str() );
+
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SET_VS);
+    stmt->setString(0, v_hex);
+    stmt->setString(1, s_hex);
+    stmt->setString(2, _login);
+    LoginDatabase.Execute(stmt);
+
     OPENSSL_free((void*)v_hex);
     OPENSSL_free((void*)s_hex);
 }
@@ -306,7 +310,7 @@ void AuthSocket::SendProof(Sha1Hash sha)
 // Logon Challenge command handler
 bool AuthSocket::_HandleLogonChallenge()
 {
-    DEBUG_LOG("Entering _HandleLogonChallenge");
+    sLog.outStaticDebug("Entering _HandleLogonChallenge");
     if (recv_len() < sizeof(sAuthLogonChallenge_C))
         return false;
 
@@ -318,7 +322,7 @@ bool AuthSocket::_HandleLogonChallenge()
 
     EndianConvert(*((uint16*)(&buf[0])));
     uint16 remaining = ((sAuthLogonChallenge_C *)&buf[0])->size;
-    DEBUG_LOG("[AuthChallenge] got header, body is %#04x bytes", remaining);
+    sLog.outStaticDebug("[AuthChallenge] got header, body is %#04x bytes", remaining);
 
     if ((remaining < sizeof(sAuthLogonChallenge_C) - buf.size()) || (recv_len() < remaining))
         return false;
@@ -330,8 +334,8 @@ bool AuthSocket::_HandleLogonChallenge()
 
     // Read the remaining of the packet
     recv((char *)&buf[4], remaining);
-    DEBUG_LOG("[AuthChallenge] got full packet, %#04x bytes", ch->size);
-    DEBUG_LOG("[AuthChallenge] name(%d): '%s'", ch->I_len, ch->I);
+    sLog.outStaticDebug("[AuthChallenge] got full packet, %#04x bytes", ch->size);
+    sLog.outStaticDebug("[AuthChallenge] name(%d): '%s'", ch->I_len, ch->I);
 
     // BigEndian code, nop in little endian case
     // size already converted
@@ -356,89 +360,91 @@ bool AuthSocket::_HandleLogonChallenge()
     // Restore string order as its byte order is reversed
     std::reverse(_os.begin(), _os.end());
 
-    // Escape the user login to avoid further SQL injection
-    // Memory will be freed on AuthSocket object destruction
-    _safelogin = _login;
-    LoginDatabase.escape_string(_safelogin);
-
     pkt << (uint8) CMD_AUTH_LOGON_CHALLENGE;
     pkt << (uint8) 0x00;
 
     // Verify that this IP is not in the ip_banned table
-    // No SQL injection possible (paste the IP address as passed by the socket)
-    std::string address = get_remote_address();
-    LoginDatabase.escape_string(address);
-    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT unbandate FROM ip_banned WHERE "
-    //    permanent                    still banned
-        "(unbandate = bandate OR unbandate > UNIX_TIMESTAMP()) AND ip = '%s'", address.c_str());
+    LoginDatabase.Execute(
+        LoginDatabase.GetPreparedStatement(LOGIN_SET_EXPIREDIPBANS)
+        );
+
+    const std::string& ip_address = get_remote_address();
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_GET_IPBANNED);
+    stmt->setString(0, ip_address);
+    PreparedQueryResult result = LoginDatabase.Query(stmt);
     if (result)
     {
         pkt << (uint8)WOW_FAIL_BANNED;
-        sLog.outBasic("[AuthChallenge] Banned ip %s tries to login!", get_remote_address().c_str());
+        sLog.outBasic("[AuthChallenge] Banned ip %s tries to login!", ip_address.c_str());
     }
     else
     {
         // Get the account details from the account table
-        // No SQL injection (escaped user name)
+        // No SQL injection (prepared statement)
+        stmt = LoginDatabase.GetPreparedStatement(LOGIN_GET_LOGONCHALLENGE);
+        stmt->setString(0, _login);
 
-        result = 
-            LoginDatabase.PQuery("SELECT a.sha_pass_hash,a.id,a.locked,a.last_ip,aa.gmlevel,a.v,a.s "
-                                 "FROM account a "
-                                 "LEFT JOIN account_access aa "
-                                 "ON (a.id = aa.id) "
-                                 "WHERE a.username = '%s'",_safelogin.c_str ());
-        if (result)
+        PreparedQueryResult res2 = LoginDatabase.Query(stmt);
+        if (res2)
         {
+			Field* fields = res2->Fetch();
+
             // If the IP is 'locked', check that the player comes indeed from the correct IP address
             bool locked = false;
-            if ((*result)[2].GetUInt8() == 1)                // if ip is locked
+            if (fields[2].GetUInt8() == 1)            // if ip is locked
             {
-                DEBUG_LOG("[AuthChallenge] Account '%s' is locked to IP - '%s'", _login.c_str(), (*result)[3].GetString());
-                DEBUG_LOG("[AuthChallenge] Player address is '%s'", get_remote_address().c_str());
-                if ( strcmp((*result)[3].GetString(),get_remote_address().c_str()) )
+                sLog.outStaticDebug("[AuthChallenge] Account '%s' is locked to IP - '%s'", _login.c_str(), fields[3].GetCString());
+                sLog.outStaticDebug("[AuthChallenge] Player address is '%s'", ip_address.c_str());
+                if (strcmp(fields[3].GetCString(), ip_address.c_str()))
                 {
-                    DEBUG_LOG("[AuthChallenge] Account IP differs");
+                    sLog.outStaticDebug("[AuthChallenge] Account IP differs");
                     pkt << (uint8) WOW_FAIL_LOCKED_ENFORCED;
                     locked=true;
                 }
                 else
                 {
-                    DEBUG_LOG("[AuthChallenge] Account IP matches");
+                    sLog.outStaticDebug("[AuthChallenge] Account IP matches");
                 }
             }
             else
             {
-                DEBUG_LOG("[AuthChallenge] Account '%s' is not locked to ip", _login.c_str());
+                sLog.outStaticDebug("[AuthChallenge] Account '%s' is not locked to ip", _login.c_str());
             }
 
             if (!locked)
             {
+                //set expired bans to inactive
+                LoginDatabase.Execute(
+                        LoginDatabase.GetPreparedStatement(LOGIN_SET_EXPIREDACCBANS)
+                    );
+
                 // If the account is banned, reject the logon attempt
-                QueryResult_AutoPtr banresult = LoginDatabase.PQuery("SELECT bandate,unbandate FROM account_banned WHERE "
-                    "id = %u AND active = 1 AND (unbandate > UNIX_TIMESTAMP() OR unbandate = bandate)", (*result)[1].GetUInt32());
+                stmt = LoginDatabase.GetPreparedStatement(LOGIN_GET_ACCBANNED);
+                stmt->setUInt32(0, fields[1].GetUInt32());
+                PreparedQueryResult banresult = LoginDatabase.Query(stmt);
                 if (banresult)
                 {
                     if ((*banresult)[0].GetUInt64() == (*banresult)[1].GetUInt64())
                     {
                         pkt << (uint8) WOW_FAIL_BANNED;
-                        sLog.outBasic("[AuthChallenge] Banned account %s tries to login!",_login.c_str ());
+                        sLog.outBasic("[AuthChallenge] Banned account %s tries to login!", _login.c_str());
                     }
                     else
                     {
                         pkt << (uint8) WOW_FAIL_SUSPENDED;
-                        sLog.outBasic("[AuthChallenge] Temporarily banned account %s tries to login!",_login.c_str ());
+                        sLog.outBasic("[AuthChallenge] Temporarily banned account %s tries to login!", _login.c_str());
                     }
                 }
                 else
                 {
                     // Get the password from the account table, upper it, and make the SRP6 calculation
-                    std::string rI = (*result)[0].GetCppString();
+                    std::string rI = fields[0].GetString();
 
                     // Don't calculate (v, s) if there are already some in the database
-                    std::string databaseV = (*result)[5].GetCppString();
-                    std::string databaseS = (*result)[6].GetCppString();
+                    std::string databaseV = fields[5].GetString();
+                    std::string databaseS = fields[6].GetString();
 
-                    DEBUG_LOG("database authentication values: v='%s' s='%s'", databaseV.c_str(), databaseS.c_str());
+                    sLog.outStaticDebug("database authentication values: v='%s' s='%s'", databaseV.c_str(), databaseS.c_str());
 
                     // multiply with 2, bytes are stored as hexstring
                     if (databaseV.size() != s_BYTE_SIZE*2 || databaseS.size() != s_BYTE_SIZE*2)
@@ -488,11 +494,9 @@ bool AuthSocket::_HandleLogonChallenge()
                     }
 
                     if (securityFlags & 0x04)                // Security token input
-                    {
                         pkt << uint8(1);
-                    }
 
-                    uint8 secLevel = (*result)[4].GetUInt8();
+                    uint8 secLevel = fields[4].GetUInt8();
                     _accountSecurityLevel = secLevel <= SEC_ADMINISTRATOR ? AccountTypes(secLevel) : SEC_ADMINISTRATOR;
 
                     _localizationName.resize(4);
@@ -515,7 +519,7 @@ bool AuthSocket::_HandleLogonChallenge()
 // Logon Proof command handler
 bool AuthSocket::_HandleLogonProof()
 {
-    DEBUG_LOG("Entering _HandleLogonProof");
+    sLog.outStaticDebug("Entering _HandleLogonProof");
     // Read the packet
     sAuthLogonProof_C lp;
     if (!recv((char *)&lp, sizeof(sAuthLogonProof_C)))
@@ -549,8 +553,8 @@ bool AuthSocket::_HandleLogonProof()
             pkt << (uint8) CMD_AUTH_LOGON_CHALLENGE;
             pkt << (uint8) 0x00;
             pkt << (uint8) WOW_FAIL_VERSION_INVALID;
-            DEBUG_LOG("[AuthChallenge] %u is not a valid client version!", _build);
-            DEBUG_LOG("[AuthChallenge] Patch %s not found", tmp);
+            sLog.outStaticDebug("[AuthChallenge] %u is not a valid client version!", _build);
+            sLog.outStaticDebug("[AuthChallenge] Patch %s not found", tmp);
             send((char const*)pkt.contents(), pkt.size());
             return true;
         }
@@ -665,7 +669,15 @@ bool AuthSocket::_HandleLogonProof()
         // Update the sessionkey, last_ip, last login time and reset number of failed logins in the account table for this account
         // No SQL injection (escaped user name) and IP address as received by socket
         const char* K_hex = K.AsHexStr();
-        LoginDatabase.PExecute("UPDATE account SET sessionkey = '%s', last_ip = '%s', last_login = NOW(), locale = '%u', os = '%s', failed_logins = 0 WHERE username = '%s'", K_hex, get_remote_address().c_str(), GetLocaleByName(_localizationName), _os.c_str(), _safelogin.c_str() );
+        
+        PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SET_LOGONPROOF);
+        stmt->setString(0, K_hex);
+        stmt->setString(1, get_remote_address().c_str());
+        stmt->setUInt32(2, GetLocaleByName(_localizationName));
+        stmt->setString(3, _os.c_str());
+        stmt->setString(4, _login.c_str());
+        LoginDatabase.Execute(stmt);
+
         OPENSSL_free((void*)K_hex);
 
         // Finish SRP6 and send the final result to the client
@@ -697,12 +709,16 @@ bool AuthSocket::_HandleLogonProof()
         if (MaxWrongPassCount > 0)
         {
             // Increment number of failed logins by one and if it reaches the limit temporarily ban that account or IP
-            LoginDatabase.PExecute("UPDATE account SET failed_logins = failed_logins + 1 WHERE username = '%s'",_safelogin.c_str());
+            PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SET_FAILEDLOGINS);
+            stmt->setString(0, _login);
+            LoginDatabase.Execute(stmt);
 
-            if (QueryResult_AutoPtr loginfail = LoginDatabase.PQuery("SELECT id, failed_logins FROM account WHERE username = '%s'", _safelogin.c_str()))
+            stmt = LoginDatabase.GetPreparedStatement(LOGIN_GET_FAILEDLOGINS);
+            stmt->setString(0, _login);
+ 
+            if (PreparedQueryResult loginfail = LoginDatabase.Query(stmt))
             {
-                Field* fields = loginfail->Fetch();
-                uint32 failed_logins = fields[1].GetUInt32();
+                uint32 failed_logins = (*loginfail)[1].GetUInt32();
 
                 if ( failed_logins >= MaxWrongPassCount )
                 {
@@ -711,20 +727,24 @@ bool AuthSocket::_HandleLogonProof()
 
                     if (WrongPassBanType)
                     {
-                        uint32 acc_id = fields[0].GetUInt32();
-                        LoginDatabase.PExecute("INSERT INTO account_banned VALUES ('%u',UNIX_TIMESTAMP(),UNIX_TIMESTAMP()+'%u','Oregon realmd','Failed login autoban',1)",
-                            acc_id, WrongPassBanTime);
+                        uint32 acc_id = (*loginfail)[0].GetUInt32();
+                        stmt = LoginDatabase.GetPreparedStatement(LOGIN_SET_ACCAUTOBANNED);
+                        stmt->setUInt32(0, acc_id);
+                        stmt->setUInt32(1, WrongPassBanTime);
+                        LoginDatabase.Execute(stmt);
+
                         sLog.outBasic("[AuthChallenge] account %s got banned for '%u' seconds because it failed to authenticate '%u' times",
                             _login.c_str(), WrongPassBanTime, failed_logins);
                     }
                     else
                     {
-                        std::string current_ip = get_remote_address();
-                        LoginDatabase.escape_string(current_ip);
-                        LoginDatabase.PExecute("INSERT INTO ip_banned VALUES ('%s',UNIX_TIMESTAMP(),UNIX_TIMESTAMP()+'%u','Oregon realmd','Failed login autoban')",
-                            current_ip.c_str(), WrongPassBanTime);
+                        stmt = LoginDatabase.GetPreparedStatement(LOGIN_SET_IPAUTOBANNED);
+                        stmt->setString(0, get_remote_address());
+                        stmt->setUInt32(1, WrongPassBanTime);
+                        LoginDatabase.Execute(stmt);
+
                         sLog.outBasic("[AuthChallenge] IP %s got banned for '%u' seconds because account %s failed to authenticate '%u' times",
-                            current_ip.c_str(), WrongPassBanTime, _login.c_str(), failed_logins);
+                            get_remote_address().c_str(), WrongPassBanTime, _login.c_str(), failed_logins);
                     }
                 }
             }
@@ -736,7 +756,7 @@ bool AuthSocket::_HandleLogonProof()
 // Reconnect Challenge command handler
 bool AuthSocket::_HandleReconnectChallenge()
 {
-    DEBUG_LOG("Entering _HandleReconnectChallenge");
+    sLog.outStaticDebug("Entering _HandleReconnectChallenge");
     if (recv_len() < sizeof(sAuthLogonChallenge_C))
         return false;
 
@@ -748,7 +768,7 @@ bool AuthSocket::_HandleReconnectChallenge()
 
     EndianConvert(*((uint16*)(&buf[0])));
     uint16 remaining = ((sAuthLogonChallenge_C *)&buf[0])->size;
-    DEBUG_LOG("[ReconnectChallenge] got header, body is %#04x bytes", remaining);
+    sLog.outStaticDebug("[ReconnectChallenge] got header, body is %#04x bytes", remaining);
 
     if ((remaining < sizeof(sAuthLogonChallenge_C) - buf.size()) || (recv_len() < remaining))
         return false;
@@ -760,13 +780,10 @@ bool AuthSocket::_HandleReconnectChallenge()
 
     // Read the remaining of the packet
     recv((char *)&buf[4], remaining);
-    DEBUG_LOG("[ReconnectChallenge] got full packet, %#04x bytes", ch->size);
-    DEBUG_LOG("[ReconnectChallenge] name(%d): '%s'", ch->I_len, ch->I);
+    sLog.outStaticDebug("[ReconnectChallenge] got full packet, %#04x bytes", ch->size);
+    sLog.outStaticDebug("[ReconnectChallenge] name(%d): '%s'", ch->I_len, ch->I);
 
     _login = (const char*)ch->I;
-
-    _safelogin = _login;
-    LoginDatabase.escape_string(_safelogin);
 
     EndianConvert(ch->build);
     _build = ch->build;
@@ -779,7 +796,9 @@ bool AuthSocket::_HandleReconnectChallenge()
     // Restore string order as its byte order is reversed
     std::reverse(_os.begin(), _os.end());
 
-    QueryResult_AutoPtr result = LoginDatabase.PQuery ("SELECT sessionkey FROM account WHERE username = '%s'", _safelogin.c_str ());
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_GET_SESSIONKEY);
+    stmt->setString(0, _login);
+    PreparedQueryResult result = LoginDatabase.Query(stmt);
 
     // Stop if the account is not found
     if (!result)
@@ -789,8 +808,7 @@ bool AuthSocket::_HandleReconnectChallenge()
         return false;
     }
 
-    Field* fields = result->Fetch ();
-    K.SetHexStr (fields[0].GetString ());
+    K.SetHexStr ((*result)[0].GetCString());
 
     // Sending response
     ByteBuffer pkt;
@@ -806,7 +824,7 @@ bool AuthSocket::_HandleReconnectChallenge()
 // Reconnect Proof command handler
 bool AuthSocket::_HandleReconnectProof()
 {
-    DEBUG_LOG("Entering _HandleReconnectProof");
+    sLog.outStaticDebug("Entering _HandleReconnectProof");
     // Read the packet
     sAuthReconnectProof_C lp;
     if (!recv((char *)&lp, sizeof(sAuthReconnectProof_C)))
@@ -849,25 +867,27 @@ bool AuthSocket::_HandleReconnectProof()
 // Realm List command handler
 bool AuthSocket::_HandleRealmList()
 {
-    DEBUG_LOG("Entering _HandleRealmList");
+    sLog.outStaticDebug("Entering _HandleRealmList");
     if (recv_len() < 5)
         return false;
 
     recv_skip(5);
 
     // Get the user id (else close the connection)
-    // No SQL injection (escaped user name)
+    // No SQL injection (prepared statement)
 
-    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT id,sha_pass_hash FROM account WHERE username = '%s'",_safelogin.c_str());
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_GET_ACCIDBYNAME);
+    stmt->setString(0, _login);
+    PreparedQueryResult result = LoginDatabase.Query(stmt);
     if (!result)
     {
-        sLog.outError("[ERROR] user %s tried to login and we cannot find him in the database.",_login.c_str());
+        sLog.outError("[ERROR] user %s tried to login and we cannot find him in the database.", _login.c_str());
         close_connection();
         return false;
     }
 
-    uint32 id = (*result)[0].GetUInt32();
-    std::string rI = (*result)[1].GetCppString();
+	Field* fields = result->Fetch();
+    uint32 id = fields[0].GetUInt32();
 
     // Update realm list if need
     sRealmList->UpdateIfNeed();
@@ -888,6 +908,10 @@ bool AuthSocket::_HandleRealmList()
 
 void AuthSocket::LoadRealmlist(ByteBuffer &pkt, uint32 acctid)
 {
+    // Using this multiple times throughout this switch statement
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_GET_NUMCHARSONREALM);
+    PreparedQueryResult result;
+
     switch(_build)
     {
         case 5875:                                          // 1.12.1
@@ -901,12 +925,11 @@ void AuthSocket::LoadRealmlist(ByteBuffer &pkt, uint32 acctid)
                 uint8 AmountOfCharacters;
 
                 // No SQL injection. id of realm is controlled by the database.
-                QueryResult_AutoPtr result = LoginDatabase.PQuery( "SELECT numchars FROM realmcharacters WHERE realmid = '%d' AND acctid='%u'", i->second.m_ID, acctid);
-                if ( result )
-                {
-                    Field *fields = result->Fetch();
-                    AmountOfCharacters = fields[0].GetUInt8();
-                }
+                stmt->setUInt32(0, i->second.m_ID);
+                stmt->setUInt32(1, acctid);
+                result = LoginDatabase.Query(stmt);
+                if (result)
+                    AmountOfCharacters = (*result)[0].GetUInt8();
                 else
                     AmountOfCharacters = 0;
 
@@ -962,12 +985,11 @@ void AuthSocket::LoadRealmlist(ByteBuffer &pkt, uint32 acctid)
                 uint8 AmountOfCharacters;
 
                 // No SQL injection. id of realm is controlled by the database.
-                QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT numchars FROM realmcharacters WHERE realmid = '%d' AND acctid='%u'", i->second.m_ID, acctid);
-                if ( result )
-                {
-                    Field *fields = result->Fetch();
-                    AmountOfCharacters = fields[0].GetUInt8();
-                }
+                stmt->setUInt32(0, i->second.m_ID);
+                stmt->setUInt32(1, acctid);
+                result = LoginDatabase.Query(stmt);
+                if (result)
+                    AmountOfCharacters = (*result)[0].GetUInt8();
                 else
                     AmountOfCharacters = 0;
 
@@ -1016,7 +1038,7 @@ void AuthSocket::LoadRealmlist(ByteBuffer &pkt, uint32 acctid)
 // Resume patch transfer
 bool AuthSocket::_HandleXferResume()
 {
-    DEBUG_LOG("Entering _HandleXferResume");
+    sLog.outStaticDebug("Entering _HandleXferResume");
 
     if (recv_len() < 9)
         return false;
@@ -1054,7 +1076,7 @@ bool AuthSocket::_HandleXferResume()
 // Cancel patch transfer
 bool AuthSocket::_HandleXferCancel()
 {
-    DEBUG_LOG("Entering _HandleXferCancel");
+    sLog.outStaticDebug("Entering _HandleXferCancel");
 
     recv_skip(1);
     close_connection();
@@ -1065,7 +1087,7 @@ bool AuthSocket::_HandleXferCancel()
 // Accept patch transfer
 bool AuthSocket::_HandleXferAccept()
 {
-    DEBUG_LOG("Entering _HandleXferAccept");
+    sLog.outStaticDebug("Entering _HandleXferAccept");
 
     recv_skip(1);
 

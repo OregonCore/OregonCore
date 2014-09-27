@@ -769,8 +769,8 @@ class ObjectMgr
 
         void LoadTransportEvents();
 
-        bool LoadOregonStrings(DatabaseType& db, char const* table, int32 min_value, int32 max_value);
-        bool LoadOregonStrings() { return LoadOregonStrings(WorldDatabase,"oregon_string",MIN_OREGON_STRING_ID,MAX_OREGON_STRING_ID); }
+        bool LoadOregonStrings(char const* table, int32 min_value, int32 max_value);
+        bool LoadOregonStrings() { return LoadOregonStrings("oregon_string",MIN_OREGON_STRING_ID,MAX_OREGON_STRING_ID); }
         void LoadDbScriptStrings();
         void LoadPetCreateSpells();
         void LoadCreatureLocales();
@@ -1190,7 +1190,7 @@ class ObjectMgr
 #define objmgr Oregon::Singleton<ObjectMgr>::Instance()
 
 // scripting access functions
-bool LoadOregonStrings(DatabaseType& db, char const* table,int32 start_value = MAX_CREATURE_AI_TEXT_STRING_ID, int32 end_value = std::numeric_limits<int32>::min());
+bool LoadOregonStrings(char const* table,int32 start_value = MAX_CREATURE_AI_TEXT_STRING_ID, int32 end_value = std::numeric_limits<int32>::min());
 uint32 GetAreaTriggerScriptId(uint32 trigger_id);
 uint32 GetScriptId(const char *name);
 ObjectMgr::ScriptNameMap& GetScriptNames();

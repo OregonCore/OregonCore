@@ -15,83 +15,93 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined(QUERYRESULT_H)
+#ifndef QUERYRESULT_H
 #define QUERYRESULT_H
 
 #include <ace/Refcounted_Auto_Ptr.h>
 #include <ace/Null_Mutex.h>
 
 #include "Field.h"
+#include "Log.h"
 
-#ifdef WIN32
-  #define FD_SETSIZE 1024
+#ifdef _WIN32
   #include <winsock2.h>
 #endif
 #include <mysql.h>
 
-class QueryResult
+class ResultSet
 {
     public:
-        QueryResult(MYSQL_RES *result, MYSQL_FIELD *fields, uint64 rowCount, uint32 fieldCount);
-        ~QueryResult();
+        ResultSet(MYSQL_RES *result, MYSQL_FIELD *fields, uint64 rowCount, uint32 fieldCount);
+        ~ResultSet();
 
         bool NextRow();
+        uint64 GetRowCount() const { return m_rowCount; }
+        uint32 GetFieldCount() const { return m_fieldCount; }
 
-        Field *Fetch() const { return mCurrentRow; }
-
-        const Field & operator [] (int index) const { return mCurrentRow[index]; }
-
-        uint32 GetFieldCount() const { return mFieldCount; }
-        uint64 GetRowCount() const { return mRowCount; }
-
-    protected:
-        Field *mCurrentRow;
-        uint32 mFieldCount;
-        uint64 mRowCount;
-
-    private:
-        enum Field::DataTypes ConvertNativeType(enum_field_types mysqlType) const;
-        void EndQuery();
-        MYSQL_RES *mResult;
-
-};
-
-typedef ACE_Refcounted_Auto_Ptr<QueryResult, ACE_Null_Mutex> QueryResult_AutoPtr;
-
-typedef std::vector<std::string> QueryFieldNames;
-
-class QueryNamedResult
-{
-    public:
-        explicit QueryNamedResult(QueryResult* query, QueryFieldNames const& names) : mQuery(query), mFieldNames(names) {}
-        ~QueryNamedResult() { delete mQuery; }
-
-        // compatible interface with QueryResult
-        bool NextRow() { return mQuery->NextRow(); }
-        Field *Fetch() const { return mQuery->Fetch(); }
-        uint32 GetFieldCount() const { return mQuery->GetFieldCount(); }
-        uint64 GetRowCount() const { return mQuery->GetRowCount(); }
-        Field const& operator[] (int index) const { return (*mQuery)[index]; }
-
-        // named access
-        Field const& operator[] (const std::string &name) const { return mQuery->Fetch()[GetField_idx(name)]; }
-        QueryFieldNames const& GetFieldNames() const { return mFieldNames; }
-
-        uint32 GetField_idx(const std::string &name) const
-        {
-            for (size_t idx = 0; idx < mFieldNames.size(); ++idx)
-            {
-                if (mFieldNames[idx] == name)
-                    return idx;
-            }
-            ASSERT(false && "unknown field name");
-            return uint32(-1);
+        Field *Fetch() const { return m_currentRow; }
+        const Field & operator [] (uint32 index) const
+        { 
+            ASSERT(index < m_fieldCount); 
+            return m_currentRow[index];
         }
 
     protected:
-        QueryResult *mQuery;
-        QueryFieldNames mFieldNames;
+        Field *m_currentRow;
+        uint64 m_rowCount;
+        uint32 m_fieldCount;
+
+    private:
+        void CleanUp();
+        MYSQL_RES *m_result;
+        MYSQL_FIELD *m_fields;
 };
 
-#endif
+typedef ACE_Refcounted_Auto_Ptr<ResultSet, ACE_Null_Mutex> QueryResult;
 
+class PreparedResultSet
+{
+    public:
+        PreparedResultSet(MYSQL_STMT* stmt, MYSQL_RES *result, MYSQL_FIELD *fields, uint64 rowCount, uint32 fieldCount);
+        ~PreparedResultSet();
+
+        bool NextRow();
+        uint64 GetRowCount() const { return m_rowCount; }
+        uint32 GetFieldCount() const { return m_fieldCount; }
+
+        Field* Fetch() const
+        {
+            ASSERT(m_rowPosition < m_rowCount);
+            return m_rows[m_rowPosition];
+        }
+
+        const Field & operator [] (uint32 index) const
+        {
+            ASSERT(m_rowPosition < m_rowCount);
+            ASSERT(index < m_fieldCount);
+            return m_rows[m_rowPosition][index];
+        }
+
+    protected:
+        uint64 m_rowCount;
+        uint64 m_rowPosition;
+        std::vector<Field*> m_rows;
+        uint32 m_fieldCount;
+      
+    private:
+        MYSQL_BIND* m_rBind;
+        MYSQL_STMT* m_stmt;
+        MYSQL_RES* m_res;
+
+        my_bool* m_isNull;
+        unsigned long* m_length;
+
+        void FreeBindBuffer();
+        void CleanUp();
+        bool _NextRow();
+
+};
+
+typedef ACE_Refcounted_Auto_Ptr<PreparedResultSet, ACE_Null_Mutex> PreparedQueryResult;
+
+#endif

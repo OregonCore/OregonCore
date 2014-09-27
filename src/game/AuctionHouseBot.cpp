@@ -437,11 +437,11 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
             auctionEntry->deposit = dep;
             auctionEntry->expire_time = (time_t) etime + time(NULL);
             auctionEntry->auctionHouseEntry = ahEntry;
-            item->SaveToDB();
+            //item->SaveToDB();
             item->RemoveFromUpdateQueueOf(AHBplayer);
             sAuctionMgr->AddAItem(item);
             auctionHouse->AddAuction(auctionEntry);
-            auctionEntry->SaveToDB();
+//            auctionEntry->SaveToDB();
 
             switch(itemColor)
             {
@@ -501,7 +501,7 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *con
         return;
     }
 
-    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT id FROM auctionhouse WHERE itemowner<>%u AND buyguid<>%u", AHBplayerGUID, AHBplayerGUID);
+    QueryResult result = CharacterDatabase.PQuery("SELECT id FROM auctionhouse WHERE itemowner<>%u AND buyguid<>%u", AHBplayerGUID, AHBplayerGUID);
 
     if (!result)
         return;
@@ -669,7 +669,7 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *con
                 else
                 {
                     // mail to last bidder and return money
-                    session->SendAuctionOutbiddedMail(auction , bidprice);
+                    //sAuctionMgr->SendAuctionOutbiddedMail(auction , bidprice);
                     //pl->ModifyMoney(-int32(price));
                 }
            }
@@ -685,16 +685,16 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *con
             //buyout
             if ((auction->bidder) && (AHBplayer->GetGUIDLow() != auction->bidder))
             {
-                session->SendAuctionOutbiddedMail(auction, auction->buyout);
+                //sAuctionMgr->SendAuctionOutbiddedMail(auction, auction->buyout);
             }
             auction->bidder = AHBplayer->GetGUIDLow();
             auction->bid = auction->buyout;
 
             // Send mails to buyer & seller
-            sAuctionMgr->SendAuctionSalePendingMail(auction);
-            sAuctionMgr->SendAuctionSuccessfulMail(auction);
-            sAuctionMgr->SendAuctionWonMail(auction);
-            auction->DeleteFromDB();
+//            sAuctionMgr->SendAuctionSalePendingMail(auction);
+//            sAuctionMgr->SendAuctionSuccessfulMail(auction);
+//            sAuctionMgr->SendAuctionWonMail(auction);
+//            auction->DeleteFromDB();
             uint32 item_template = auction->item_template;
             sAuctionMgr->RemoveAItem(auction->item_guidlow);
             auctionHouse->RemoveAuction(auction, item_template);
@@ -828,7 +828,7 @@ void AuctionHouseBot::Initialize()
 
     if ((AHBplayerAccount != 0) || (AHBplayerGUID != 0))
     {
-        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE account = %u AND guid = %u", AHBplayerAccount, AHBplayerGUID);
+        QueryResult result = CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE account = %u AND guid = %u", AHBplayerAccount, AHBplayerGUID);
         if (!result)
        {
            sLog.outError("AuctionHouseBot: The account/GUID-information set for your AHBot is incorrect (account: %u guid: %u)", AHBplayerAccount, AHBplayerGUID);
@@ -838,7 +838,7 @@ void AuctionHouseBot::Initialize()
 
     if (AHBSeller)
     {
-        QueryResult_AutoPtr results = QueryResult_AutoPtr(NULL);
+        QueryResult results = QueryResult(NULL);
         char npcQuery[] = "SELECT distinct item FROM npc_vendor";
         results = WorldDatabase.Query(npcQuery);
         if (results)
@@ -1571,7 +1571,7 @@ void AuctionHouseBot::Commands(uint32 command, uint32 ahMapID, uint32 col, char*
             CharacterDatabase.PExecute("UPDATE auctionhousebot SET percentpurpleitems = '%u' WHERE auctionhouse = '%u'", purplei, ahMapID);
             CharacterDatabase.PExecute("UPDATE auctionhousebot SET percentorangeitems = '%u' WHERE auctionhouse = '%u'", orangei, ahMapID);
             CharacterDatabase.PExecute("UPDATE auctionhousebot SET percentyellowitems = '%u' WHERE auctionhouse = '%u'", yellowi, ahMapID);
-            CharacterDatabase.CommitTransaction();
+//            CharacterDatabase.CommitTransaction();
             config->SetPercentages(greytg, whitetg, greentg, bluetg, purpletg, orangetg, yellowtg, greyi, whitei, greeni, bluei, purplei, orangei, yellowi);
         }
         break;
@@ -1668,8 +1668,8 @@ void AuctionHouseBot::LoadValues(AHBConfig *config)
         uint32 orangei = CharacterDatabase.PQuery("SELECT percentorangeitems FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32();
         uint32 yellowi = CharacterDatabase.PQuery("SELECT percentyellowitems FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32();
         std::string XcludeItemsIds;
-        if (QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT exludeItemsIds FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID()))
-            XcludeItemsIds = result->Fetch()[0].GetCppString();
+        if (QueryResult result = CharacterDatabase.PQuery("SELECT exludeItemsIds FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID()))
+            XcludeItemsIds = result->Fetch()[0].GetString();
         config->SetPercentages(greytg, whitetg, greentg, bluetg, purpletg, orangetg, yellowtg, greyi, whitei, greeni, bluei, purplei, orangei, yellowi);
         //load min and max prices
         config->SetMinPrice(AHB_GREY, CharacterDatabase.PQuery("SELECT minpricegrey FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32());

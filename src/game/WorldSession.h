@@ -19,9 +19,9 @@
 #define __WORLDSESSION_H
 
 #include "Common.h"
-#include "QueryResult.h"
 #include "World.h"
 #include "WardenBase.h"
+#include "DatabaseEnv.h"
 
 struct ItemPrototype;
 struct AuctionEntry;
@@ -34,7 +34,6 @@ class Player;
 class Unit;
 class WorldPacket;
 class WorldSocket;
-class QueryResult;
 class LoginQueryHolder;
 class CharacterHandler;
 
@@ -124,7 +123,7 @@ class WorldSession
         //void SendTestCreatureQueryOpcode(uint32 entry, uint64 guid, uint32 testvalue);
         void SendNameQueryOpcode(Player* p);
         void SendNameQueryOpcodeFromDB(uint64 guid);
-        static void SendNameQueryOpcodeFromDBCallBack(QueryResult_AutoPtr result, uint32 accountId);
+        void SendNameQueryOpcodeFromDBCallBack(QueryResult result);
 
         void SendTrainerList(uint64 guid);
         void SendTrainerList(uint64 guid, const std::string& strTitle);
@@ -159,8 +158,6 @@ class WorldSession
         void SendAuctionCommandResult(uint32 auctionId, uint32 Action, uint32 ErrorCode, uint32 bidError = 0);
         void SendAuctionBidderNotification(uint32 location, uint32 auctionId, uint64 bidder, uint32 bidSum, uint32 diff, uint32 item_template);
         void SendAuctionOwnerNotification(AuctionEntry * auction);
-        void SendAuctionOutbiddedMail(AuctionEntry * auction, uint32 newPrice);
-        void SendAuctionCancelledToBidderMail(AuctionEntry* auction);
 
         //Item Enchantment
         void SendEnchantmentLog(uint64 Target, uint64 Caster,uint32 ItemID,uint32 SpellID);
@@ -233,7 +230,7 @@ class WorldSession
         void HandleCharDeleteOpcode(WorldPacket& recvPacket);
         void HandleCharCreateOpcode(WorldPacket& recvPacket);
         void HandlePlayerLoginOpcode(WorldPacket& recvPacket);
-        void HandleCharEnum(QueryResult_AutoPtr result);
+        void HandleCharEnum(QueryResult result);
         void HandlePlayerLogin(LoginQueryHolder * holder);
 
         // played time
@@ -301,10 +298,10 @@ class WorldSession
         void HandleEmoteOpcode(WorldPacket& recvPacket);
         void HandleFriendListOpcode(WorldPacket& recvPacket);
         void HandleAddFriendOpcode(WorldPacket& recvPacket);
-        static void HandleAddFriendOpcodeCallBack(QueryResult_AutoPtr result, uint32 accountId, std::string friendNote);
+        void HandleAddFriendOpcodeCallBack(QueryResult result, std::string friendNote);
         void HandleDelFriendOpcode(WorldPacket& recvPacket);
         void HandleAddIgnoreOpcode(WorldPacket& recvPacket);
-        static void HandleAddIgnoreOpcodeCallBack(QueryResult_AutoPtr result, uint32 accountId);
+        void HandleAddIgnoreOpcodeCallBack(QueryResult result);
         void HandleDelIgnoreOpcode(WorldPacket& recvPacket);
         void HandleSetFriendNoteOpcode(WorldPacket& recvPacket);
         void HandleBugOpcode(WorldPacket& recvPacket);
@@ -565,7 +562,7 @@ class WorldSession
         void HandleSetActionBar(WorldPacket& recv_data);
 
         void HandleChangePlayerNameOpcode(WorldPacket& recv_data);
-        static void HandleChangePlayerNameOpcodeCallBack(QueryResult_AutoPtr result, uint32 accountId, std::string newname);
+        void HandleChangePlayerNameOpcodeCallBack(QueryResult result, std::string newname);
         void HandleDeclinedPlayerNameOpcode(WorldPacket& recv_data);
 
         void HandleTotemDestroy(WorldPacket& recv_data);
@@ -651,6 +648,17 @@ class WorldSession
         void HandleGrantLevel(WorldPacket& recv_data);
         void HandleAcceptGrantLevel(WorldPacket& recv_data);
         void HandleReferAFriend(WorldPacket& recv_data);
+
+    private:
+        void ProcessQueryCallbacks();
+
+        ACE_Future_Set<QueryResult> m_nameQueryCallbacks;   
+        QueryResultFuture m_charEnumCallback;
+        QueryResultFuture m_addIgnoreCallback;
+        QueryCallback<std::string> m_charRenameCallback;
+        QueryCallback<std::string> m_addFriendCallback;
+        QueryResultHolderFuture m_charLoginCallback;
+
     private:
         // private trade methods
         void moveItems(Item* myItems[], Item* hisItems[]);

@@ -109,8 +109,8 @@ bool Corpse::Create(uint32 guidlow, Player *owner, uint32 /*mapid*/, float x, fl
 void Corpse::SaveToDB()
 {
     // prevent DB data inconsistance problems and duplicates
-    CharacterDatabase.BeginTransaction();
-    DeleteFromDB();
+    SQLTransaction trans = CharacterDatabase.BeginTransaction();
+    DeleteFromDB(trans);
 
     std::ostringstream ss;
     ss  << "INSERT INTO corpse (guid,player,position_x,position_y,position_z,orientation,zone,map,displayId,itemCache,bytes1,bytes2,guild,flags,dynFlags,time,corpse_type,instance) VALUES ("
@@ -134,8 +134,8 @@ void Corpse::SaveToDB()
         << uint64(m_time) << ", "
         << uint32(GetType()) << ", "
         << int(GetInstanceId()) << ")";
-    CharacterDatabase.Execute(ss.str().c_str());
-    CharacterDatabase.CommitTransaction();
+    trans->Append(ss.str().c_str());
+    CharacterDatabase.CommitTransaction(trans);
 }
 
 void Corpse::DeleteBonesFromWorld()
@@ -152,14 +152,14 @@ void Corpse::DeleteBonesFromWorld()
     AddObjectToRemoveList();
 }
 
-void Corpse::DeleteFromDB()
+void Corpse::DeleteFromDB(SQLTransaction& trans)
 {
     if (GetType() == CORPSE_BONES)
         // only specific bones
-        CharacterDatabase.PExecute("DELETE FROM corpse WHERE guid = '%d'", GetGUIDLow());
+        trans->PAppend("DELETE FROM corpse WHERE guid = '%d'", GetGUIDLow());
     else
         // all corpses (not bones)
-        CharacterDatabase.PExecute("DELETE FROM corpse WHERE player = '%d' AND corpse_type <> '0'",  GUID_LOPART(GetOwnerGUID()));
+        trans->PAppend("DELETE FROM corpse WHERE player = '%d' AND corpse_type <> '0'",  GUID_LOPART(GetOwnerGUID()));
 }
 
 bool Corpse::LoadFromDB(uint32 guid, Field *fields)
@@ -176,7 +176,7 @@ bool Corpse::LoadFromDB(uint32 guid, Field *fields)
     WorldObject::_Create(guid, HIGHGUID_CORPSE);
 
     SetUInt32Value(CORPSE_FIELD_DISPLAY_ID, fields[5].GetUInt32());
-    _LoadIntoDataField(fields[6].GetString(), CORPSE_FIELD_ITEM, EQUIPMENT_SLOT_END);
+    _LoadIntoDataField(fields[6].GetCString(), CORPSE_FIELD_ITEM, EQUIPMENT_SLOT_END);
     SetUInt32Value(CORPSE_FIELD_BYTES_1, fields[7].GetUInt32());
     SetUInt32Value(CORPSE_FIELD_BYTES_2, fields[8].GetUInt32());
     SetUInt32Value(CORPSE_FIELD_GUILD, fields[9].GetUInt32());

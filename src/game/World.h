@@ -24,6 +24,7 @@
 #include "SharedDefines.h"
 #include "ace/Atomic_Op.h"
 #include "QueryResult.h"
+#include "Callback.h"
 
 #include <map>
 #include <set>
@@ -35,8 +36,6 @@ class WorldSession;
 class Player;
 class Weather;
 struct ScriptInfo;
-class SqlResultQueue;
-class QueryResult;
 class WorldSocket;
 
 // ServerMessages.dbc
@@ -589,9 +588,6 @@ class World
         void ProcessCliCommands();
         void QueueCliCommand(CliCommandHolder* commandHolder) { cliCmdQueue.add(commandHolder); }
 
-        void UpdateResultQueue();
-        void InitResultQueue();
-
         void ForceGameEventUpdate();
 
         void UpdateRealmCharCount(uint32 accid);
@@ -614,7 +610,7 @@ class World
     protected:
         void _UpdateGameTime();
         // callback for UpdateRealmCharacters
-        void _UpdateRealmCharCount(QueryResult_AutoPtr resultCharCount, uint32 accountId);
+        void _UpdateRealmCharCount(QueryResult resultCharCount, uint32 accountId);
 
         void InitDailyQuestResetTime();
         void ResetDailyQuests();
@@ -676,7 +672,6 @@ class World
 
         // CLI command holder to be thread safe
         ACE_Based::LockedQueue<CliCommandHolder*, ACE_Thread_Mutex> cliCmdQueue;
-        SqlResultQueue *m_resultQueue;
 
         // next daily quests reset time
         time_t m_NextDailyQuestReset;
@@ -693,6 +688,10 @@ class World
         std::string m_ScriptsVersion;
 
         std::list<std::string> m_Autobroadcasts;
+
+    private:
+        void ProcessQueryCallbacks();
+        QueryCallback<uint32> m_realmCharCallback;
 };
 
 extern uint32 realmID;

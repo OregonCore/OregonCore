@@ -596,10 +596,10 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask)
         << uint32(GetGoAnimProgress()) << ", "
         << uint32(GetGoState()) << ")";
 
-    WorldDatabase.BeginTransaction();
-    WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecuteLog("%s", ss.str().c_str());
-    WorldDatabase.CommitTransaction();
+    SQLTransaction trans = WorldDatabase.BeginTransaction();
+    trans->PAppend("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
+    trans->PAppend("%s", ss.str().c_str());
+    WorldDatabase.CommitTransaction(trans);
 }
 
 bool GameObject::LoadFromDB(uint32 guid, Map *map)
@@ -673,8 +673,8 @@ void GameObject::DeleteFromDB()
 {
     objmgr.SaveGORespawnTime(m_DBTableGuid,GetInstanceId(),0);
     objmgr.DeleteGOData(m_DBTableGuid);
-    WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecuteLog("DELETE FROM game_event_gameobject WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.PExecute("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
+    WorldDatabase.PExecute("DELETE FROM game_event_gameobject WHERE guid = '%u'", m_DBTableGuid);
 }
 
 GameObject* GameObject::GetGameObject(WorldObject& object, uint64 guid)
@@ -1123,7 +1123,7 @@ void GameObject::Use(Unit* user)
                     int32 chance = skill - zone_skill + 5;
                     int32 roll = irand(1,100);
 
-                    DEBUG_LOG("Fishing check (skill: %i zone min skill: %i chance %i roll: %i",skill,zone_skill,chance,roll);
+                    sLog.outStaticDebug("Fishing check (skill: %i zone min skill: %i chance %i roll: %i",skill,zone_skill,chance,roll);
 
                     if (skill >= zone_skill && chance >= roll)
                     {

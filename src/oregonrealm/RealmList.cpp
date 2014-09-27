@@ -21,8 +21,6 @@
 #include "Util.h"                                           // for Tokens typedef
 #include "Database/DatabaseEnv.h"
 
-extern DatabaseType LoginDatabase;
-
 // will only support WoW 1.12.1/1.12.2 , WoW:TBC 2.4.3 and official release for WoW:WotLK and later, client builds 10505, 8606, 6005, 5875
 // if you need more from old build then add it in cases in realmd sources code
 // list sorted from high to low build and first build used as low bound for accepted by default range (any > it will accepted by realmd at least)
@@ -126,19 +124,25 @@ void RealmList::UpdateRealms(bool init)
 {
     sLog.outDetail("Updating Realm List...");
 
-    //                                                        0   1     2        3     4     5           6         7                     8           9
-    QueryResult_AutoPtr result = LoginDatabase.Query( "SELECT id, name, address, port, icon, realmflags, timezone, allowedSecurityLevel, population, realmbuilds FROM realmlist WHERE (realmflags & 1) = 0 ORDER BY name" );
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_GET_REALMLIST);
+    PreparedQueryResult result = LoginDatabase.Query(stmt);
 
     // Circle through results and add them to the realm map
     if (result)
     {
         do
         {
-            Field *fields = result->Fetch();
-
-            uint8 allowedSecurityLevel = fields[7].GetUInt8();
-
+            Field* fields = result->Fetch();
+            uint32 realmId = fields[0].GetUInt32();
+            const std::string& name = fields[1].GetString();
+            const std::string& address = fields[2].GetString();
+            uint32 port = fields[3].GetUInt32();
+            uint8 icon = fields[4].GetUInt8();
             uint8 realmflags = fields[5].GetUInt8();
+            uint8 timezone = fields[6].GetUInt8();
+            uint8 allowedSecurityLevel = fields[7].GetUInt8();
+            float pop = fields[8].GetFloat();
+            const char* build = fields[9].GetCString();
 
             if (realmflags & ~(REALM_FLAG_OFFLINE|REALM_FLAG_NEW_PLAYERS|REALM_FLAG_RECOMMENDED|REALM_FLAG_SPECIFYBUILD))
             {
@@ -146,15 +150,12 @@ void RealmList::UpdateRealms(bool init)
                 realmflags &= (REALM_FLAG_OFFLINE|REALM_FLAG_NEW_PLAYERS|REALM_FLAG_RECOMMENDED|REALM_FLAG_SPECIFYBUILD);
             }
 
-            UpdateRealm(
-                fields[0].GetUInt32(), fields[1].GetCppString(),fields[2].GetCppString(),fields[3].GetUInt32(),
-                fields[4].GetUInt8(), RealmFlags(realmflags), fields[6].GetUInt8(),
-                (allowedSecurityLevel <= SEC_ADMINISTRATOR ? AccountTypes(allowedSecurityLevel) : SEC_ADMINISTRATOR),
-                fields[8].GetFloat(), fields[9].GetString());
+            UpdateRealm(realmId, name, address, port, icon, RealmFlags(realmflags), timezone, (allowedSecurityLevel <= SEC_ADMINISTRATOR ? AccountTypes(allowedSecurityLevel) : SEC_ADMINISTRATOR), pop, build);
 
             if (init)
-                sLog.outString("Added realm \"%s\"", fields[1].GetString());
-        } while ( result->NextRow() );
+                sLog.outString("Added realm \"%s\".", fields[1].GetCString());
+        }
+        while (result->NextRow());
     }
 }
 
