@@ -1495,7 +1495,7 @@ void SpellMgr::LoadSpellEnchantProcData()
 void SpellMgr::LoadSpellDummyCondition()
 {
     //                                                             0        1          2                3          4        5          6     7          8        9        10          11      12
-    if (QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT entry, effIndex, bitMaskCondition, condition0, data0, condition1, data1, condition2, data2, condition3, data3, condition4, data4 FROM spell_dummy_condition ORDER BY entry ASC"))
+    if (QueryResult result = WorldDatabase.PQuery("SELECT entry, effIndex, bitMaskCondition, condition0, data0, condition1, data1, condition2, data2, condition3, data3, condition4, data4 FROM spell_dummy_condition ORDER BY entry ASC"))
     {
         Field* field;
         SpellDummyConditionEntry sdcEntry;

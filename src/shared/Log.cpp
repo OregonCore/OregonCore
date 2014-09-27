@@ -562,8 +562,8 @@ void Log::outSQLDriver(const char* str, ...)
     if (!str)
         return;
 
-	UTF8PRINTF(stdout,str,);
-	printf("\n");
+	UTF8PRINTF(stderr,str,);
+	fprintf (stderr, "\n");
 
     if (sqlLogFile)
     {
@@ -578,7 +578,7 @@ void Log::outSQLDriver(const char* str, ...)
         fflush(sqlLogFile);
     }
 
-    fflush(stdout);
+    fflush(stderr);
 }
 
 void Log::outErrorDb(const char * err, ...)

@@ -323,10 +323,8 @@ void Master::_StartDB()
 
     ///- Initialise the world database
     if (!WorldDatabase.Open(dbstring, num_threads, MySQLThreadBundle(mask)))
-    {
         sLog.outError("Cannot connect to world database %s", dbstring.c_str());
-        return false;
-    }
+
     // Get character database info from configuration file
     dbstring = sConfig.GetStringDefault("CharacterDatabaseInfo", "");
     if (dbstring.empty())
@@ -342,10 +340,8 @@ void Master::_StartDB()
 
     ///- Initialise the Character database
     if (!CharacterDatabase.Open(dbstring, num_threads, MySQLThreadBundle(mask)))
-    {
         sLog.outError("Cannot connect to Character database %s", dbstring.c_str());
-        return false;
-    }
+
     // Get login database info from configuration file
     dbstring = sConfig.GetStringDefault("LoginDatabaseInfo", "");
     if (dbstring.empty())
@@ -361,10 +357,8 @@ void Master::_StartDB()
 
     ///- Initialise the login database
     if (!LoginDatabase.Open(dbstring, num_threads, MySQLThreadBundle(mask)))
-    {
         sLog.outError("Cannot connect to login database %s", dbstring.c_str());
-        return false;
-    }
+
     // Get the realm Id from the configuration file
     realmID = sConfig.GetIntDefault("RealmID", 0);
     if (!realmID)
