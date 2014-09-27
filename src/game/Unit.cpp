@@ -4661,6 +4661,17 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
         {
             switch (dummySpell->Id)
             {
+                // Blackout
+                case 15268:
+                case 15323:
+                case 15324:
+                case 15325:
+                case 15326:
+                {
+                    // should only proc from spell that deal damage
+                    if (target || procSpell->Id == 15487 || procSpell->Id == 10909 || procSpell->Id == 605)
+                        return false;
+                }
                 // Eye for an Eye
                 case 9799:
                 case 25988:
