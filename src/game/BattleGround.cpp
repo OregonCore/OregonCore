@@ -1755,34 +1755,37 @@ void BattleGround::HandleTriggerBuff(uint64 const& go_guid)
     SpawnBGObject(index, BUFF_RESPAWN_TIME);
 }
 
-void BattleGround::HandleKillPlayer(Player *player, Player *killer)
+void BattleGround::HandleKillPlayer(Player *victim, Player *killer)
 {
-    //keep in mind that for arena this will have to be changed a bit
+    // Keep in mind that for arena this will have to be changed a bit
 
-    // add +1 deaths
-    UpdatePlayerScore(player, SCORE_DEATHS, 1);
+    // Add +1 deaths
+    UpdatePlayerScore(victim, SCORE_DEATHS, 1);
 
-    // add +1 kills to group and +1 killing_blows to killer
+    // Add +1 kills to group and +1 killing_blows to killer
     if (killer)
     {
+        // Don't reward credit for killing ourselves, like fall damage of hellfire (warlock)
+        if (killer == victim)
+            return;
+
         UpdatePlayerScore(killer, SCORE_HONORABLE_KILLS, 1);
         UpdatePlayerScore(killer, SCORE_KILLING_BLOWS, 1);
 
         for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
         {
-            Player *plr = objmgr.GetPlayer(itr->first);
-
-            if (!plr || plr == killer)
+            Player *creditedPlayer = objmgr.GetPlayer(itr->first);
+            if (!creditedPlayer || creditedPlayer == killer)
                 continue;
 
-            if (plr->GetTeam() == killer->GetTeam() && plr->IsAtGroupRewardDistance(player))
-                UpdatePlayerScore(plr, SCORE_HONORABLE_KILLS, 1);
+            if (creditedPlayer->GetTeam() == killer->GetTeam() && creditedPlayer->IsAtGroupRewardDistance(victim))
+                UpdatePlayerScore(creditedPlayer, SCORE_HONORABLE_KILLS, 1);
         }
     }
 
-    // to be able to remove insignia -- ONLY IN BattleGrounds
+    // To be able to remove insignia -- ONLY IN Battlegrounds
     if (!isArena())
-        player->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
+        victim->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 }
 
 // return the player's team based on battlegroundplayer info
