@@ -5474,7 +5474,7 @@ void Spell::EffectSummonPlayer(SpellEffIndex /*effIndex*/)
         return;
 
     float x, y, z;
-    m_caster->GetClosePoint(x, y, z, unitTarget->GetObjectSize());
+    m_caster->GetPosition(x, y, z);
 
     unitTarget->ToPlayer()->SetSummonPoint(m_caster->GetMapId(),x,y,z);
 
