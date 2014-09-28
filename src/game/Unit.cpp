@@ -3165,9 +3165,11 @@ void Unit::SetCurrentCastedSpell(Spell * pSpell)
                     InterruptSpell(CURRENT_AUTOREPEAT_SPELL);
                 m_AutoRepeatFirstCast = true;
             }
-            addUnitState(UNIT_STAT_CASTING);
-        } break;
+            if (pSpell->GetCastTime() > 0)
+                addUnitState(UNIT_STAT_CASTING);
 
+            break;
+        }
         case CURRENT_CHANNELED_SPELL:
         {
             // channel spells always break generic non-delayed and any channeled spells
@@ -3179,8 +3181,9 @@ void Unit::SetCurrentCastedSpell(Spell * pSpell)
                 m_currentSpells[CURRENT_AUTOREPEAT_SPELL]->m_spellInfo->Category == 351)
                 InterruptSpell(CURRENT_AUTOREPEAT_SPELL);
             addUnitState(UNIT_STAT_CASTING);
-        } break;
 
+            break;
+        }
         case CURRENT_AUTOREPEAT_SPELL:
         {
             // only Auto Shoot does not break anything
@@ -3192,12 +3195,11 @@ void Unit::SetCurrentCastedSpell(Spell * pSpell)
             }
             // special action: set first cast flag
             m_AutoRepeatFirstCast = true;
-        } break;
 
+            break;
+        }
         default:
-        {
-            // other spell types don't break anything now
-        } break;
+            break;  // other spell types don't break anything now
     }
 
     // current spell (if it is still here) may be safely deleted now
@@ -8990,17 +8992,18 @@ int32 Unit::ModifyHealth(int32 dVal)
 // used only to calculate channeling time
 void Unit::ModSpellCastTime(SpellEntry const* spellProto, int32 & castTime, Spell * spell)
 {
-    if (!spellProto || castTime<0)
+    if (!spellProto || castTime < 0)
         return;
+
     //called from caster
     if (Player* modOwner = GetSpellModOwner())
         modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_CASTING_TIME, castTime, spell);
 
-    if (spellProto->Attributes & SPELL_ATTR_RANGED && !(spellProto->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG))
+    if (!((spellProto->Attributes & (SPELL_ATTR_UNK4 | SPELL_ATTR_TRADESPELL)) || (spellProto->AttributesEx3 & SPELL_ATTR_EX3_UNK29)) &&
+        ((GetTypeId() == TYPEID_PLAYER && spellProto->SpellFamilyName) || GetTypeId() == TYPEID_UNIT))
+        castTime = int32(float(castTime) * GetFloatValue(UNIT_MOD_CAST_SPEED));
+    else if (spellProto->Attributes & SPELL_ATTR_RANGED && !(spellProto->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG))
         castTime = int32 (float(castTime) * m_modAttackSpeedPct[RANGED_ATTACK]);
-    else // @todo fix it
-        if (spellProto->SpellFamilyName) // some magic spells doesn't have dmgType == SPELL_DAMAGE_CLASS_MAGIC (arcane missiles/evocation)
-            castTime = int32(float(castTime) * GetFloatValue(UNIT_MOD_CAST_SPEED));
 }
 
 int32 Unit::ModifyPower(Powers power, int32 dVal)
