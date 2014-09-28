@@ -196,6 +196,8 @@ void npc_escortAI::EnterEvadeMode()
     else
     {
         me->GetMotionMaster()->MoveTargetedHome();
+        if (HasPassiveFlag)
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
         Reset();
     }
 }
@@ -500,6 +502,11 @@ void npc_escortAI::Start(bool bIsActiveAttacker, bool bRun, uint64 uiPlayerGUID,
 
     //disable npcflags
     me->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
+    if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE))
+    {
+        HasPassiveFlag = true;
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+    }
 
     debug_log("OSCR: EscortAI started with %u waypoints. ActiveAttacker = %d, Run = %d, PlayerGUID = %llu", WaypointList.size(), m_bIsActiveAttacker, m_bIsRunning, m_uiPlayerGUID);
 

@@ -126,6 +126,7 @@ struct npc_escortAI : public ScriptedAI
         bool DespawnAtFar;
         bool ScriptWP;
         bool ClearWP;
+        bool HasPassiveFlag;
 };
 #endif
 
