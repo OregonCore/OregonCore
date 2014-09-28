@@ -559,37 +559,6 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
         pCurrChar->SetRank(0);
     }
 
-    if (pCurrChar->GetGuildId() != 0)
-    {
-        Guild* guild = objmgr.GetGuildById(pCurrChar->GetGuildId());
-        if (guild)
-        {
-            data.Initialize(SMSG_GUILD_EVENT, (1+1+guild->GetMOTD().size()+1));
-            data << uint8(GE_MOTD);
-            data << uint8(1);
-            data << guild->GetMOTD();
-            SendPacket(&data);
-            DEBUG_LOG("WORLD: Sent guild-motd (SMSG_GUILD_EVENT)");
-
-            data.Initialize(SMSG_GUILD_EVENT, (5+10));      // we guess size
-            data<<(uint8)GE_SIGNED_ON;
-            data<<(uint8)1;
-            data<<pCurrChar->GetName();
-            data<<pCurrChar->GetGUID();
-            guild->BroadcastPacket(&data);
-            DEBUG_LOG("WORLD: Sent guild-signed-on (SMSG_GUILD_EVENT)");
-
-            // Increment online members of the guild
-            guild->IncOnlineMemberCount();
-        }
-        else
-        {
-            // remove wrong guild data
-            sLog.outError("Player %s (GUID: %u) marked as member of invalid guild (id: %u), removing guild membership for player.",pCurrChar->GetName(),pCurrChar->GetGUIDLow(),pCurrChar->GetGuildId());
-            pCurrChar->SetInGuild(0);
-        }
-    }
-
     if (!pCurrChar->isAlive())
         pCurrChar->SendCorpseReclaimDelay(true);
 
@@ -622,6 +591,38 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
 
     ObjectAccessor::Instance().AddObject(pCurrChar);
     //sLog.outDebug("Player %s added to Map.",pCurrChar->GetName());
+
+    if (pCurrChar->GetGuildId() != 0)
+    {
+        Guild* guild = objmgr.GetGuildById(pCurrChar->GetGuildId());
+        if (guild)
+        {
+            data.Initialize(SMSG_GUILD_EVENT, (1+1+guild->GetMOTD().size()+1));
+            data << uint8(GE_MOTD);
+            data << uint8(1);
+            data << guild->GetMOTD();
+            SendPacket(&data);
+            DEBUG_LOG("WORLD: Sent guild-motd (SMSG_GUILD_EVENT)");
+
+            data.Initialize(SMSG_GUILD_EVENT, (5+10));      // we guess size
+            data<<(uint8)GE_SIGNED_ON;
+            data<<(uint8)1;
+            data<<pCurrChar->GetName();
+            data<<pCurrChar->GetGUID();
+            guild->BroadcastPacket(&data);
+            DEBUG_LOG("WORLD: Sent guild-signed-on (SMSG_GUILD_EVENT)");
+
+            // Increment online members of the guild
+            guild->IncOnlineMemberCount();
+        }
+        else
+        {
+            // remove wrong guild data
+            sLog.outError("Player %s (GUID: %u) marked as member of invalid guild (id: %u), removing guild membership for player.",pCurrChar->GetName(),pCurrChar->GetGUIDLow(),pCurrChar->GetGuildId());
+            pCurrChar->SetInGuild(0);
+        }
+    }
+
     pCurrChar->GetSocial()->SendSocialList();
 
     pCurrChar->SendInitialPacketsAfterAddToMap();
