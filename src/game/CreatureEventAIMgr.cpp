@@ -274,6 +274,25 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                 continue;
             }
 
+            if (CreatureInfo const* cInfo = sCreatureStorage.LookupEntry<CreatureInfo>(temp.creature_id))
+            {
+                if (!cInfo->AIName || !cInfo->AIName[0])
+                {
+                    sLog.outErrorDb("CreatureEventAI: Creature Entry %u has EventAI script but its AIName is empty. Set to EventAI as default.", cInfo->Entry);
+                    delete[] const_cast<char*>(cInfo->AIName);
+                    const_cast<CreatureInfo*>(cInfo)->AIName = new char[sizeof("EventAI")];
+                    memcpy(const_cast<char*>(cInfo->AIName), "EventAI", sizeof("EventAI"));
+                }
+                if (strcmp(cInfo->AIName, "EventAI"))
+                {
+                    sLog.outErrorDb("CreatureEventAI: Creature Entry %u has EventAI script but it has AIName %s. EventAI script will be overriden.", cInfo->Entry, cInfo->AIName);
+                }
+                if (cInfo->ScriptID)
+                {
+                    sLog.outErrorDb("CreatureEventAI: Creature Entry %u has EventAI script but it also has C++ script. EventAI script will be overriden.", cInfo->Entry);
+                }
+            }
+
             //No chance of this event occuring
             if (temp.event_chance == 0)
                 sLog.outErrorDb("CreatureEventAI:  Event %u has 0 percent chance. Event will never trigger!", i);
@@ -767,24 +786,6 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
             m_CreatureEventAI_Event_Map[creature_id].push_back(temp);
             ++Count;
 
-            if (CreatureInfo const* cInfo = sCreatureStorage.LookupEntry<CreatureInfo>(temp.creature_id))
-            {
-                if (!cInfo->AIName || !cInfo->AIName[0])
-                {
-                    sLog.outErrorDb("CreatureEventAI: Creature Entry %u has EventAI script but its AIName is empty. Set to EventAI as default.", cInfo->Entry);
-                    delete[] const_cast<char*>(cInfo->AIName);
-                    const_cast<CreatureInfo*>(cInfo)->AIName = new char[sizeof("EventAI")];
-                    memcpy(const_cast<char*>(cInfo->AIName), "EventAI", sizeof("EventAI"));
-                }
-                if (strcmp(cInfo->AIName, "EventAI"))
-                {
-                    sLog.outErrorDb("CreatureEventAI: Creature Entry %u has EventAI script but it has AIName %s. EventAI script will be overriden.", cInfo->Entry, cInfo->AIName);
-                }
-                if (cInfo->ScriptID)
-                {
-                    sLog.outErrorDb("CreatureEventAI: Creature Entry %u has EventAI script but it also has C++ script. EventAI script will be overriden.", cInfo->Entry);
-                }
-            }
         } while (result->NextRow());
 
         CheckUnusedAITexts();
