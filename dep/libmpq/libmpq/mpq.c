@@ -19,7 +19,11 @@
  */
 
 /* mpq-tools configuration includes. */
+#if _WIN32
+#include "win/config.h"
+#else
 #include "config.h"
+#endif
 
 /* libmpq main includes. */
 #include "mpq.h"
