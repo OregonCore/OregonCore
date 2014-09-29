@@ -6678,9 +6678,8 @@ void Player::UpdateZone(uint32 newZone)
 
     if (sWorld.getConfig(CONFIG_WEATHER))
     {
-        Weather *wth = sWorld.FindWeather(zone->ID);
-        if (wth)
-            wth->SendWeatherUpdateToPlayer(this);
+        if (Weather* weather = sWorld.FindWeather(zone->ID))
+            weather->SendWeatherUpdateToPlayer(this);
         else if (!sWorld.AddWeather(zone->ID))
             // send fine weather packet to remove old zone's weather
             Weather::SendFineWeatherUpdateToPlayer(this);
@@ -6727,7 +6726,7 @@ void Player::UpdateZone(uint32 newZone)
         {
             if (GetRestType() == REST_TYPE_IN_TAVERN)        // has been in tavern. Is still in?
             {
-                if (GetMapId() != GetInnPosMapId() || sqrt((GetPositionX()-GetInnPosX())*(GetPositionX()-GetInnPosX())+(GetPositionY()-GetInnPosY())*(GetPositionY()-GetInnPosY())+(GetPositionZ()-GetInnPosZ())*(GetPositionZ()-GetInnPosZ()))>40)
+                if (GetMapId() != GetInnPosMapId() || GetExactDist(GetInnPosX(), GetInnPosY(), GetInnPosZ()) > 1.0f)
                 {
                     RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
                     SetRestType(REST_TYPE_NO);
