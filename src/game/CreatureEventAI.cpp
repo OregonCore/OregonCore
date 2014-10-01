@@ -127,7 +127,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
             pHolder.UpdateRepeatTimer(me,event.timer.repeatMin,event.timer.repeatMax);
             break;
         case EVENT_T_TIMER_OOC:
-            if (me->isInCombat())
+            if (me->isInCombat() || me->IsInEvadeMode())
                 return false;
 
             //Repeat Timers
@@ -371,18 +371,30 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
     switch (action.type)
     {
         case ACTION_T_TEXT:
+        case ACTION_T_CHANCED_TEXT:
         {
             if (!action.text.TextId[0])
                 return;
 
             int32 temp = 0;
 
-            if (action.text.TextId[1] && action.text.TextId[2])
-                temp = action.text.TextId[rand()%3];
-            else if (action.text.TextId[1] && urand(0,1))
-                temp = action.text.TextId[1];
-            else
-                temp = action.text.TextId[0];
+            if (action.type == ACTION_T_TEXT)
+            {
+                if (action.text.TextId[1] && action.text.TextId[2])
+                    temp = action.text.TextId[urand(0, 2)];
+                else if (action.text.TextId[1] && urand(0, 1))
+                    temp = action.text.TextId[1];
+                else
+                    temp = action.text.TextId[0];
+            }
+            // ACTION_T_CHANCED_TEXT, chance hits
+            else if (urand(0, 99) < action.chanced_text.chance)
+            {
+                if (action.chanced_text.TextId[0] && action.chanced_text.TextId[1])
+                    temp = action.chanced_text.TextId[urand(0, 1)];
+                else
+                    temp = action.chanced_text.TextId[0];
+            }
 
             if (temp)
             {
@@ -821,6 +833,28 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
                 InvinceabilityHpLevel = action.invincibility_hp_level.hp_level;
             break;
         }
+        case ACTION_T_MOUNT_TO_ENTRY_OR_MODEL:
+        {
+            if (action.mount.creatureId || action.mount.modelId)
+            {
+                // set model based on entry from creature_template
+                if (action.mount.creatureId)
+                {
+                    if (CreatureInfo const* cInfo = GetCreatureTemplateStore(action.mount.creatureId))
+                    {
+                        uint32 display_id = objmgr.ChooseDisplayId(0, cInfo);
+                        me->Mount(display_id);
+                    }
+                }
+                //if no param1, then use value from param2 (modelId)
+                else
+                    me->Mount(action.mount.modelId);
+            }
+            else
+                me->Unmount();
+
+            break;
+        }
     }
 }
 
@@ -869,8 +903,6 @@ void CreatureEventAI::Reset()
 
 void CreatureEventAI::JustReachedHome()
 {
-    me->LoadCreaturesAddon();
-
     if (!bEmptyList)
     {
         for (std::list<CreatureEventAIHolder>::iterator i = CreatureEventAIList.begin(); i != CreatureEventAIList.end(); ++i)
