@@ -3,7 +3,7 @@
 ###############################################
 
 [worldserver]
-ConfVersion=2014091557
+ConfVersion=2014100158
 
 # Note to devs, line breaks should be at column 80
 ###############################################################################
@@ -396,14 +396,15 @@ MapUpdate.Threads = 1
 #                4  - BLUE
 #                5  - MAGENTA
 #                6  - CYAN
-#                7  - GREY
-#                8  - YELLOW
+#                7  - LGREY
+#                8  - GREY
 #                9  - LRED
 #                10 - LGREEN
-#                11 - LBLUE
-#                12 - LMAGENTA
-#                13 - LCYAN
-#                14 - WHITE
+#                11 - YELLOW
+#                12 - LBLUE
+#                13 - LMAGENTA
+#                14 - LCYAN
+#                15 - WHITE
 #        Example: "13 11 9 5"
 #
 #    EnableLogDB
