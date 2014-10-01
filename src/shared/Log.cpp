@@ -520,6 +520,8 @@ void Log::outFatal(const char * err, ...)
     size_t len = vsnprintf(NULL, 0, err, ap) + 1;
     char* buffer = (char*) alloca(len);
     buffer[len-1] = '\0';
+    va_end(ap);
+    va_start(ap, err);
     vsprintf(buffer, err, ap);
     va_end(ap);
 

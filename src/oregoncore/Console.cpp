@@ -54,7 +54,7 @@ BOOL WINAPI HandleConsoleInterrupt(DWORD)
 }
 #endif
 
-Console::Console() : m_loggerFd(0), m_logoWindow(0), m_loadWindow(0)
+Console::Console() : m_IamEnabled(false), m_loggerFd(0), m_logoWindow(0), m_loadWindow(0)
 {
     SetTitle("OregonCore");
     #if PLATFORM == PLATFORM_WINDOWS
@@ -805,7 +805,7 @@ void Console::UpdateLog()
                     {
                         control = 0;
                         if (buffer[i] > 7)
-                            wattrset(m_logViewer, A_BOLD | TermColor(buffer[i] - 7));
+                            wattrset(m_logViewer, A_BOLD | TermColor(buffer[i] - 8));
                         else
                             wattrset(m_logViewer, TermColor(buffer[i]));
                         continue;

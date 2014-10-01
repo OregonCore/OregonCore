@@ -4,7 +4,7 @@
 
 INSTANTIATE_SINGLETON_1(Console);
 
-Console::Console()
+Console::Console() : m_IamEnabled(false)
 {
     SetTitle("OregonRealm");
 }
