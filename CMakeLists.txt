@@ -65,6 +65,23 @@ endif()
 # Find revision ID and hash of the sourcetree
 include(cmake/genrev.cmake)
 
+if ( WITH_DOCS )
+    find_package(Doxygen)
+    if(DOXYGEN_FOUND)
+        configure_file(
+          "${CMAKE_SOURCE_DIR}/Doxyfile.in.cmake"
+          "${CMAKE_BINARY_DIR}/Doxyfile"
+          @ONLY)
+        add_custom_target(docs
+          ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+          COMMENT "Generating API documentation with Doxygen" VERBATIM)
+        install(DIRECTORY ${CMAKE_BINARY_DIR}/doc DESTINATION .)
+    else()
+        set(WITH_DOCS 0)
+    endif()
+endif()
+
 # print out the results before continuing
 include(cmake/showoptions.cmake)
 

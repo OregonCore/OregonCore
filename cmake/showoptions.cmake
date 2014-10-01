@@ -118,4 +118,10 @@ if( WIN32 )
   endif()
 endif( WIN32 )
 
+if( WITH_DOCS )
+    ShowOption("Build w/ documentation :" "Yes")
+else()
+    ShowOption("Build w/ documentation :" "No  (default)")
+endif()
+
 message("")
