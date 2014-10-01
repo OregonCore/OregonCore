@@ -153,7 +153,7 @@ struct boss_mr_smiteAI : public ScriptedAI
         if (uiSlamTimer <= uiDiff)
         {
             if (bCheckChances())
-                DoCast(me->getVictim(), SPELL_SMITE_SLAM);
+                DoCastVictim( SPELL_SMITE_SLAM);
             uiSlamTimer = 11000;
         } else uiSlamTimer -= uiDiff;
 

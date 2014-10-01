@@ -247,7 +247,7 @@ struct boss_halazziAI : public ScriptedAI
                 }
                 // A tank with more than 490 defense skills should receive no critical hit
                 //DoCast(me, 41296, true);
-                DoCast(me->getVictim(), SPELL_SABER_LASH, true);
+                DoCastVictim( SPELL_SABER_LASH, true);
                 //me->RemoveAurasDueToSpell(41296);
                 SaberlashTimer = 30000;
             }
@@ -413,7 +413,7 @@ struct boss_spiritlynxAI : public ScriptedAI
 
         if (shredder_timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHRED_ARMOR);
+            DoCastVictim( SPELL_SHRED_ARMOR);
             shredder_timer = 4000;
         }
         else

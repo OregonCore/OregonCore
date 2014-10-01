@@ -197,13 +197,13 @@ struct npc_millhouse_manastormAI : public ScriptedAI
 
              DoScriptText(SAY_PYRO, me);
 
-            DoCast(me->getVictim(),SPELL_PYROBLAST);
+            DoCastVictim(SPELL_PYROBLAST);
             Pyroblast_Timer = 40000;
         } else Pyroblast_Timer -=diff;
 
         if (Fireball_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FIREBALL);
+            DoCastVictim(SPELL_FIREBALL);
             Fireball_Timer = 4000;
         } else Fireball_Timer -=diff;
 

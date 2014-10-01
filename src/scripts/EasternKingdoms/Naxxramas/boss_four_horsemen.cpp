@@ -86,7 +86,7 @@ struct boss_lady_blaumeuxAI : public ScriptedAI
         // Mark of Blaumeux
         if (Mark_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MARK_OF_BLAUMEUX);
+            DoCastVictim(SPELL_MARK_OF_BLAUMEUX);
             Mark_Timer = 12000;
         } else Mark_Timer -= diff;
 
@@ -111,7 +111,7 @@ struct boss_lady_blaumeuxAI : public ScriptedAI
         // Void Zone
         if (VoidZone_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_VOIDZONE);
+            DoCastVictim(SPELL_VOIDZONE);
             VoidZone_Timer = 12000;
         } else VoidZone_Timer -= diff;
 
@@ -242,7 +242,7 @@ struct boss_thane_korthazzAI : public ScriptedAI
         // Mark of Korthazz
         if (Mark_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MARK_OF_KORTHAZZ);
+            DoCastVictim(SPELL_MARK_OF_KORTHAZZ);
             Mark_Timer = 12000;
         } else Mark_Timer -= diff;
 
@@ -267,7 +267,7 @@ struct boss_thane_korthazzAI : public ScriptedAI
         // Meteor
         if (Meteor_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_METEOR);
+            DoCastVictim(SPELL_METEOR);
             Meteor_Timer = 20000;                                    // wrong
       } else Meteor_Timer -= diff;
 
@@ -338,7 +338,7 @@ struct boss_sir_zeliekAI : public ScriptedAI
         // Mark of Zeliek
         if (Mark_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MARK_OF_ZELIEK);
+            DoCastVictim(SPELL_MARK_OF_ZELIEK);
             Mark_Timer = 12000;
         } else Mark_Timer -= diff;
 
@@ -363,7 +363,7 @@ struct boss_sir_zeliekAI : public ScriptedAI
         // Holy Wrath
         if (HolyWrath_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_HOLY_WRATH);
+            DoCastVictim(SPELL_HOLY_WRATH);
             HolyWrath_Timer = 12000;
         } else HolyWrath_Timer -= diff;
 

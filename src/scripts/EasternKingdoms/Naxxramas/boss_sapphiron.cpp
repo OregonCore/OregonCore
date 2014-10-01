@@ -80,7 +80,7 @@ struct boss_sapphironAI : public ScriptedAI
             {
                 if (FrostAura_Timer <= diff)
                 {
-                    DoCast(me->getVictim(),SPELL_FROST_AURA);
+                    DoCastVictim(SPELL_FROST_AURA);
                     FrostAura_Timer = 5000;
                 } else FrostAura_Timer -= diff;
 
@@ -132,7 +132,7 @@ struct boss_sapphironAI : public ScriptedAI
                     if (Icebolt_Count == 5 && IsInFly && FrostBreath_Timer <= diff)
                     {
                         DoScriptText(EMOTE_BREATH, me);
-                        DoCast(me->getVictim(),SPELL_FROST_BREATH);
+                        DoCastVictim(SPELL_FROST_BREATH);
                         land_Timer = 2000;
                         IsInFly = false;
                         FrostBreath_Timer = 6000;

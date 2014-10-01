@@ -124,7 +124,7 @@ struct boss_patchwerkAI : public ScriptedAI
         //Slimebolt_Timer
         if (Slimebolt_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SLIMEBOLT);
+            DoCastVictim(SPELL_SLIMEBOLT);
             Slimebolt_Timer = 5000;
         } else Slimebolt_Timer -= diff;
 

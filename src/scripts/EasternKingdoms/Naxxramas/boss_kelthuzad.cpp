@@ -282,7 +282,7 @@ struct boss_kelthuzadAI : public ScriptedAI
             //Check for Frost Bolt
             if (FrostBolt_Timer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_FROST_BOLT);
+                DoCastVictim(SPELL_FROST_BOLT);
                 //Cast again on time
                 FrostBolt_Timer = (rand()%60)*1000;
             } else FrostBolt_Timer -= diff;
@@ -290,14 +290,14 @@ struct boss_kelthuzadAI : public ScriptedAI
             //Check for Frost Bolt Nova
             if (FrostBoltNova_Timer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_FROST_BOLT_NOVA);
+                DoCastVictim(SPELL_FROST_BOLT_NOVA);
                 FrostBoltNova_Timer = 15000;
             } else FrostBoltNova_Timer -= diff;
 
             //Check for Chains Of Kelthuzad
             if (ChainsOfKelthuzad_Timer <= diff)
             {
-                //DoCast(me->getVictim(),SPELL_CHAINS_OF_KELTHUZAD);
+                //DoCastVictim(SPELL_CHAINS_OF_KELTHUZAD);
 
                 //if (rand()%2 == 0)
                    //DoScriptText(SAY_CHAIN1, me);
@@ -310,7 +310,7 @@ struct boss_kelthuzadAI : public ScriptedAI
             if (ManaDetonation_Timer <= diff)
             {
                 //time to cast
-                DoCast(me->getVictim(),SPELL_MANA_DETONATION);
+                DoCastVictim(SPELL_MANA_DETONATION);
 
                  if (rand()%2)
                      DoScriptText(SAY_SPECIAL1_MANA_DET, me);
@@ -320,7 +320,7 @@ struct boss_kelthuzadAI : public ScriptedAI
             //Check for Shadow Fissure
             if (ShadowFisure_Timer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_SHADOW_FISURE);
+                DoCastVictim(SPELL_SHADOW_FISURE);
 
                if (rand()%2)
                    DoScriptText(SAY_SPECIAL3_MANA_DET, me);
@@ -331,7 +331,7 @@ struct boss_kelthuzadAI : public ScriptedAI
             if (FrostBlast_Timer <= diff)
             {
                 //time to cast
-                DoCast(me->getVictim(),SPELL_FROST_BLAST);
+                DoCastVictim(SPELL_FROST_BLAST);
 
                 if (rand()%2 == 0)
                     DoScriptText(SAY_FROST_BLAST, me);

@@ -81,7 +81,7 @@ struct boss_kruulAI : public ScriptedAI
         if (ShadowVolley_Timer <= diff)
         {
             if (urand(0,99) < 45)
-                DoCast(me->getVictim(), SPELL_SHADOWVOLLEY);
+                DoCastVictim( SPELL_SHADOWVOLLEY);
 
             ShadowVolley_Timer = 5000;
         } else ShadowVolley_Timer -= diff;
@@ -90,7 +90,7 @@ struct boss_kruulAI : public ScriptedAI
         if (Cleave_Timer <= diff)
         {
             if (urand(0,1))
-                DoCast(me->getVictim(), SPELL_CLEAVE);
+                DoCastVictim( SPELL_CLEAVE);
 
             Cleave_Timer = 10000;
         } else Cleave_Timer -= diff;
@@ -99,7 +99,7 @@ struct boss_kruulAI : public ScriptedAI
         if (ThunderClap_Timer <= diff)
         {
             if (urand(0,9) < 2)
-                DoCast(me->getVictim(), SPELL_THUNDERCLAP);
+                DoCastVictim( SPELL_THUNDERCLAP);
 
             ThunderClap_Timer = 12000;
         } else ThunderClap_Timer -= diff;
@@ -107,7 +107,7 @@ struct boss_kruulAI : public ScriptedAI
         //TwistedReflection_Timer
         if (TwistedReflection_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_TWISTEDREFLECTION);
+            DoCastVictim( SPELL_TWISTEDREFLECTION);
             TwistedReflection_Timer = 30000;
         } else TwistedReflection_Timer -= diff;
 
@@ -115,7 +115,7 @@ struct boss_kruulAI : public ScriptedAI
         if (VoidBolt_Timer <= diff)
         {
             if (urand(0,9) < 4)
-                DoCast(me->getVictim(), SPELL_VOIDBOLT);
+                DoCastVictim( SPELL_VOIDBOLT);
 
             VoidBolt_Timer = 18000;
         } else VoidBolt_Timer -= diff;

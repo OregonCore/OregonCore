@@ -248,7 +248,7 @@ struct npc_engineer_spark_overgrindAI : public ScriptedAI
 
         if (Dynamite_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_DYNAMITE);
+            DoCastVictim( SPELL_DYNAMITE);
             Dynamite_Timer = 8000;
         } else Dynamite_Timer -= diff;
 
@@ -619,14 +619,14 @@ struct npc_death_ravagerAI : public ScriptedAI
 
         if (RendTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_REND);
+            DoCastVictim( SPELL_REND);
             RendTimer = 30000;
         }
         else RendTimer -= diff;
 
         if (EnragingBiteTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ENRAGING_BITE);
+            DoCastVictim( SPELL_ENRAGING_BITE);
             EnragingBiteTimer = 15000;
         }
         else EnragingBiteTimer -= diff;

@@ -408,7 +408,7 @@ struct mob_coilfang_ambusherAI : public Scripted_NoMovementAI
         if (MultiShotTimer <= diff)
         {
             if (me->getVictim())
-                DoCast(me->getVictim(), SPELL_SPREAD_SHOT, true);
+                DoCastVictim( SPELL_SPREAD_SHOT, true);
 
             MultiShotTimer = 10000+rand()%10000;
             ShootBowTimer += 1500;//add global cooldown

@@ -71,7 +71,7 @@ struct boss_gehennasAI : public ScriptedAI
         //GehennasCurse_Timer
         if (GehennasCurse_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_GEHENNASCURSE);
+            DoCastVictim( SPELL_GEHENNASCURSE);
             GehennasCurse_Timer = urand(22000,30000);
         } else GehennasCurse_Timer -= diff;
 

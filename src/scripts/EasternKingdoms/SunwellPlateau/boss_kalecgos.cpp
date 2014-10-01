@@ -638,7 +638,7 @@ struct boss_sathrovarrAI : public ScriptedAI
         if (CorruptionStrikeTimer <= diff)
         {
             if (!(rand()%5))DoScriptText(SAY_SATH_SPELL2, me);
-            DoCast(me->getVictim(), SPELL_CORRUPTION_STRIKE);
+            DoCastVictim( SPELL_CORRUPTION_STRIKE);
             CorruptionStrikeTimer = 13000;
         } else CorruptionStrikeTimer -= diff;
 
@@ -728,7 +728,7 @@ struct boss_kalecAI : public ScriptedAI
 
         if (HeroicStrikeTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_HEROIC_STRIKE);
+            DoCastVictim( SPELL_HEROIC_STRIKE);
             HeroicStrikeTimer = 2000;
         } else HeroicStrikeTimer -= diff;
 

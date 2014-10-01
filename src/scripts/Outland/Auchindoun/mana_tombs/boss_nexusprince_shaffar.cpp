@@ -198,13 +198,13 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
 
         if (Frostbolt_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FROSTBOLT);
+            DoCastVictim(SPELL_FROSTBOLT);
             Frostbolt_Timer = 4500 + rand()%1500;
         } else Frostbolt_Timer -= diff;
 
         if (FireBall_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FIREBALL);
+            DoCastVictim(SPELL_FIREBALL);
             FireBall_Timer = 4500 + rand()%1500;
         } else FireBall_Timer -= diff;
 
@@ -312,7 +312,7 @@ struct mob_ethereal_beaconAI : public ScriptedAI
 
         if (ArcaneBolt_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_ARCANE_BOLT);
+            DoCastVictim(SPELL_ARCANE_BOLT);
             ArcaneBolt_Timer = 2000 + rand()%2500;
         } else ArcaneBolt_Timer -= diff;
 

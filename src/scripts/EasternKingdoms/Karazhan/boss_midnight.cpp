@@ -221,13 +221,13 @@ struct boss_attumenAI : public ScriptedAI
 
         if (CleaveTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOWCLEAVE);
+            DoCastVictim( SPELL_SHADOWCLEAVE);
             CleaveTimer = urand(10000,15000);
         } else CleaveTimer -= diff;
 
         if (CurseTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_INTANGIBLE_PRESENCE);
+            DoCastVictim( SPELL_INTANGIBLE_PRESENCE);
             CurseTimer = 30000;
         } else CurseTimer -= diff;
 

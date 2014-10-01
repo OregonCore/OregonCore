@@ -68,7 +68,7 @@ struct npc_raliq_the_drunkAI : public ScriptedAI
 
         if (Uppercut_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_UPPERCUT);
+            DoCastVictim(SPELL_UPPERCUT);
             Uppercut_Timer = 15000;
         } else Uppercut_Timer -= diff;
 
@@ -143,7 +143,7 @@ struct npc_salsalabimAI : public ScriptedAI
 
         if (MagneticPull_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MAGNETIC_PULL);
+            DoCastVictim(SPELL_MAGNETIC_PULL);
             MagneticPull_Timer = 15000;
         } else MagneticPull_Timer -= diff;
 

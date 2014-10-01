@@ -110,7 +110,7 @@ struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
         //CurseOfBlood_Timer
         if (CurseOfBlood_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CURSEOFBLOOD);
+            DoCastVictim( SPELL_CURSEOFBLOOD);
             CurseOfBlood_Timer = 25000;
         } else CurseOfBlood_Timer -= diff;
 

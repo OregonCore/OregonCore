@@ -112,7 +112,7 @@ struct npc_ameAI : public npc_escortAI
 
         if (DEMORALIZINGSHOUT_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_DEMORALIZINGSHOUT);
+            DoCastVictim( SPELL_DEMORALIZINGSHOUT);
             DEMORALIZINGSHOUT_Timer = 70000;
         } else DEMORALIZINGSHOUT_Timer -= diff;
 

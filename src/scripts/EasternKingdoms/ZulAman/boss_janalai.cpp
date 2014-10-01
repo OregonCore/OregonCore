@@ -639,7 +639,7 @@ struct mob_hatchlingAI : public ScriptedAI
 
         if (BuffetTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FLAMEBUFFET, false);
+            DoCastVictim( SPELL_FLAMEBUFFET, false);
             BuffetTimer = 10000;
         }
         else

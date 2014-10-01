@@ -336,13 +336,13 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         {
             if (!SpinOnce)
             {
-                DoCast(me->getVictim(),SPELL_DARK_SPIN);
+                DoCastVictim(SPELL_DARK_SPIN);
                 SpinOnce = true;
             }
 
             if (Cleave_Timer <= diff)
             {
-                DoCast(me->getVictim(),(HeroicMode ? H_SPELL_SHADOW_SLAM : SPELL_SHADOW_CLEAVE));
+                DoCastVictim((HeroicMode ? H_SPELL_SHADOW_SLAM : SPELL_SHADOW_CLEAVE));
                 Cleave_Timer = 6000+rand()%2500;
             } else Cleave_Timer -= diff;
 			
@@ -429,7 +429,7 @@ struct mob_fel_orc_convertAI : public ScriptedAI
 
         if (Hemorrhage_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_HEMORRHAGE);
+            DoCastVictim(SPELL_HEMORRHAGE);
             Hemorrhage_Timer = 15000;
         } else Hemorrhage_Timer -= diff;
 

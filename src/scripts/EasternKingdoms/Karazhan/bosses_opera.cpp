@@ -189,7 +189,7 @@ struct boss_dorotheeAI : public ScriptedAI
 
         if (FearTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SCREAM);
+            DoCastVictim( SPELL_SCREAM);
             FearTimer = 30000;
         } else FearTimer -= diff;
 
@@ -239,7 +239,7 @@ struct mob_titoAI : public ScriptedAI
 
         if (YipTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_YIPPING);
+            DoCastVictim( SPELL_YIPPING);
             YipTimer = 10000;
         } else YipTimer -= diff;
 
@@ -340,7 +340,7 @@ struct boss_strawmanAI : public ScriptedAI
 
         if (BrainBashTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_BRAIN_BASH);
+            DoCastVictim( SPELL_BRAIN_BASH);
             BrainBashTimer = 15000;
         } else BrainBashTimer -= diff;
 
@@ -434,7 +434,7 @@ struct boss_tinheadAI : public ScriptedAI
 
         if (CleaveTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CLEAVE);
+            DoCastVictim( SPELL_CLEAVE);
             CleaveTimer = 5000;
         } else CleaveTimer -= diff;
 
@@ -530,19 +530,19 @@ struct boss_roarAI : public ScriptedAI
 
         if (MangleTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_MANGLE);
+            DoCastVictim( SPELL_MANGLE);
             MangleTimer = urand(5000,8000);
         } else MangleTimer -= diff;
 
         if (ShredTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHRED);
+            DoCastVictim( SPELL_SHRED);
             ShredTimer = urand(10000,15000);
         } else ShredTimer -= diff;
 
         if (ScreamTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FRIGHTENED_SCREAM);
+            DoCastVictim( SPELL_FRIGHTENED_SCREAM);
             ScreamTimer = urand(20000,30000);
         } else ScreamTimer -= diff;
 
@@ -612,7 +612,7 @@ struct boss_croneAI : public ScriptedAI
 
         if (ChainLightningTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CHAIN_LIGHTNING);
+            DoCastVictim( SPELL_CHAIN_LIGHTNING);
             ChainLightningTimer = 15000;
         } else ChainLightningTimer -= diff;
 
@@ -829,13 +829,13 @@ struct boss_bigbadwolfAI : public ScriptedAI
 
         if (FearTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_TERRIFYING_HOWL);
+            DoCastVictim( SPELL_TERRIFYING_HOWL);
             FearTimer = urand(25000,35000);
         } else FearTimer -= diff;
 
         if (SwipeTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WIDE_SWIPE);
+            DoCastVictim( SPELL_WIDE_SWIPE);
             SwipeTimer = urand(25000,30000);
         } else SwipeTimer -= diff;
 
@@ -1405,7 +1405,7 @@ void boss_romuloAI::UpdateAI(const uint32 diff)
 
     if (PoisonThrustTimer <= diff)
     {
-        DoCast(me->getVictim(), SPELL_POISON_THRUST);
+        DoCastVictim( SPELL_POISON_THRUST);
         PoisonThrustTimer = urand(10000,20000);
     } else PoisonThrustTimer -= diff;
 

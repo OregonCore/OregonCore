@@ -77,14 +77,14 @@ struct mobs_risen_husk_spiritAI : public ScriptedAI
         if (ConsumeFlesh_Timer <= diff)
         {
             if (me->GetEntry() == 23555)
-                DoCast(me->getVictim(),SPELL_CONSUME_FLESH);
+                DoCastVictim(SPELL_CONSUME_FLESH);
             ConsumeFlesh_Timer = 15000;
         } else ConsumeFlesh_Timer -= diff;
 
         if (IntangiblePresence_Timer <= diff)
         {
             if (me->GetEntry() == 23554)
-                DoCast(me->getVictim(),SPELL_INTANGIBLE_PRESENCE);
+                DoCastVictim(SPELL_INTANGIBLE_PRESENCE);
             IntangiblePresence_Timer = 20000;
         } else IntangiblePresence_Timer -= diff;
 

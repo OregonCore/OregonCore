@@ -110,14 +110,14 @@ struct boss_aeonusAI : public ScriptedAI
         //Sand Breath
         if (SandBreath_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SAND_BREATH);
+            DoCastVictim( SPELL_SAND_BREATH);
             SandBreath_Timer = 30000;
         } else SandBreath_Timer -= diff;
 
         //Time Stop
         if (TimeStop_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_TIME_STOP);
+            DoCastVictim( SPELL_TIME_STOP);
             TimeStop_Timer = 40000;
         } else TimeStop_Timer -= diff;
 

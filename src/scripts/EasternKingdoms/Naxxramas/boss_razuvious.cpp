@@ -114,14 +114,14 @@ struct boss_razuviousAI : public ScriptedAI
         //UnbalancingStrike_Timer
         if (UnbalancingStrike_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_UNBALANCINGSTRIKE);
+            DoCastVictim(SPELL_UNBALANCINGSTRIKE);
             UnbalancingStrike_Timer = 30000;
         } else UnbalancingStrike_Timer -= diff;
 
         //DisruptingShout_Timer
         if (DisruptingShout_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_DISRUPTINGSHOUT);
+            DoCastVictim( SPELL_DISRUPTINGSHOUT);
             DisruptingShout_Timer = 25000;
         } else DisruptingShout_Timer -= diff;
 

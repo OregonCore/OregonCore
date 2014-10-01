@@ -116,28 +116,28 @@ struct boss_doomlordkazzakAI : public ScriptedAI
         //ShadowVolley_Timer
         if (ShadowVolley_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOWVOLLEY);
+            DoCastVictim( SPELL_SHADOWVOLLEY);
             ShadowVolley_Timer = 4000 + rand()%2000;
         } else ShadowVolley_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
+            DoCastVictim(SPELL_CLEAVE);
             Cleave_Timer = 8000 + rand()%4000;
         } else Cleave_Timer -= diff;
 
         //ThunderClap_Timer
         if (ThunderClap_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_THUNDERCLAP);
+            DoCastVictim(SPELL_THUNDERCLAP);
             ThunderClap_Timer = 10000 + rand()%4000;
         } else ThunderClap_Timer -= diff;
 
         //VoidBolt_Timer
         if (VoidBolt_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_VOIDBOLT);
+            DoCastVictim(SPELL_VOIDBOLT);
             VoidBolt_Timer = 15000 + rand()%3000;
         } else VoidBolt_Timer -= diff;
 

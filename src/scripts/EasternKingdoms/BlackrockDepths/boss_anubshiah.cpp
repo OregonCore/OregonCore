@@ -65,7 +65,7 @@ struct boss_anubshiahAI : public ScriptedAI
         //ShadowBolt_Timer
         if (ShadowBolt_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOWBOLT);
+            DoCastVictim( SPELL_SHADOWBOLT);
             ShadowBolt_Timer = 7000;
         } else ShadowBolt_Timer -= diff;
 
@@ -80,7 +80,7 @@ struct boss_anubshiahAI : public ScriptedAI
         //CurseOfWeakness_Timer
         if (CurseOfWeakness_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CURSEOFWEAKNESS);
+            DoCastVictim( SPELL_CURSEOFWEAKNESS);
             CurseOfWeakness_Timer = 45000;
         } else CurseOfWeakness_Timer -= diff;
 

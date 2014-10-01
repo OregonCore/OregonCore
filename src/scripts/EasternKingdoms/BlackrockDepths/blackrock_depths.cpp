@@ -381,7 +381,7 @@ struct mob_phalanxAI : public ScriptedAI
         //ThunderClap_Timer
         if (ThunderClap_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_THUNDERCLAP);
+            DoCastVictim( SPELL_THUNDERCLAP);
             ThunderClap_Timer = 10000;
         } else ThunderClap_Timer -= diff;
 
@@ -390,7 +390,7 @@ struct mob_phalanxAI : public ScriptedAI
         {
             if (FireballVolley_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_FIREBALLVOLLEY);
+                DoCastVictim( SPELL_FIREBALLVOLLEY);
                 FireballVolley_Timer = 15000;
             } else FireballVolley_Timer -= diff;
         }
@@ -398,7 +398,7 @@ struct mob_phalanxAI : public ScriptedAI
         //MightyBlow_Timer
         if (MightyBlow_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_MIGHTYBLOW);
+            DoCastVictim( SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 10000;
         } else MightyBlow_Timer -= diff;
 

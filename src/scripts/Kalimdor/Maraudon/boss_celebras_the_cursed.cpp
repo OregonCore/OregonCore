@@ -68,7 +68,7 @@ struct celebras_the_cursedAI : public ScriptedAI
         //EntanglingRoots
         if (EntanglingRoots_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ENTANGLINGROOTS);
+            DoCastVictim( SPELL_ENTANGLINGROOTS);
             EntanglingRoots_Timer = 20000;
         } else EntanglingRoots_Timer -= diff;
 

@@ -129,7 +129,7 @@ struct boss_highlord_mograineAI : public ScriptedAI
         // Mark of Mograine
         if (Mark_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MARK_OF_MOGRAINE);
+            DoCastVictim(SPELL_MARK_OF_MOGRAINE);
             Mark_Timer = 12000;
         } else Mark_Timer -= diff;
 
@@ -156,7 +156,7 @@ struct boss_highlord_mograineAI : public ScriptedAI
         {
             if (rand()%4 == 1)                               // 1/4
             {
-                DoCast(me->getVictim(),SPELL_RIGHTEOUS_FIRE);
+                DoCastVictim(SPELL_RIGHTEOUS_FIRE);
             }
             RighteousFire_Timer = 2000;
         } else RighteousFire_Timer -= diff;

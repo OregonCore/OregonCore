@@ -279,14 +279,14 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
                         me->InterruptSpell(CURRENT_CHANNELED_SPELL);
                         me->InterruptSpell(CURRENT_GENERIC_SPELL);
                         DoCast(me, SPELL_SHOCK_BARRIER, true);
-                        DoCast(me->getVictim(), SPELL_PYROBLAST);
+                        DoCastVictim( SPELL_PYROBLAST);
                         PyroblastTimer = 60000;
                     } else PyroblastTimer -= diff;
                 }
 
                 if (FireballTimer <= diff)
                 {
-                    DoCast(me->getVictim(), Heroic ? SPELL_FIREBALL_HEROIC : SPELL_FIREBALL_NORMAL);
+                    DoCastVictim( Heroic ? SPELL_FIREBALL_HEROIC : SPELL_FIREBALL_NORMAL);
                     FireballTimer = urand(2000,6000);
                 } else FireballTimer -= diff;
 

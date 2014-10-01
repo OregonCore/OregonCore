@@ -68,49 +68,49 @@ struct boss_highlordomokkAI : public ScriptedAI
         //WarStomp_Timer
         if (WarStomp_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WARSTOMP);
+            DoCastVictim( SPELL_WARSTOMP);
             WarStomp_Timer = 14000;
         } else WarStomp_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CLEAVE);
+            DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 8000;
         } else Cleave_Timer -= diff;
 
         //Strike_Timer
         if (Strike_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_STRIKE);
+            DoCastVictim( SPELL_STRIKE);
             Strike_Timer = 10000;
         } else Strike_Timer -= diff;
 
         //Rend_Timer
         if (Rend_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_REND);
+            DoCastVictim( SPELL_REND);
             Rend_Timer = 18000;
         } else Rend_Timer -= diff;
 
         //SunderArmor_Timer
         if (SunderArmor_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SUNDERARMOR);
+            DoCastVictim( SPELL_SUNDERARMOR);
             SunderArmor_Timer = 25000;
         } else SunderArmor_Timer -= diff;
 
         //KnockAway_Timer
         if (KnockAway_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_KNOCKAWAY);
+            DoCastVictim( SPELL_KNOCKAWAY);
             KnockAway_Timer = 12000;
         } else KnockAway_Timer -= diff;
 
         //Slow_Timer
         if (Slow_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SLOW);
+            DoCastVictim( SPELL_SLOW);
             Slow_Timer = 18000;
         } else Slow_Timer -= diff;
 

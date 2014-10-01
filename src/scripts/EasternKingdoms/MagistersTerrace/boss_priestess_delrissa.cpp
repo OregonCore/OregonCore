@@ -525,8 +525,8 @@ struct boss_kagani_nightstrikeAI : public boss_priestess_lackey_commonAI
         {
             if (Wait_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_BACKSTAB, true);
-                DoCast(me->getVictim(), SPELL_KIDNEY_SHOT, true);
+                DoCastVictim( SPELL_BACKSTAB, true);
+                DoCastVictim( SPELL_KIDNEY_SHOT, true);
                 me->SetVisibility(VISIBILITY_ON);       // ...? Hacklike
                 InVanish = false;
             } else Wait_Timer -= diff;
@@ -534,19 +534,19 @@ struct boss_kagani_nightstrikeAI : public boss_priestess_lackey_commonAI
 
         if (Gouge_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_GOUGE);
+            DoCastVictim( SPELL_GOUGE);
             Gouge_Timer = 5500;
         } else Gouge_Timer -= diff;
 
         if (Kick_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_KICK);
+            DoCastVictim( SPELL_KICK);
             Kick_Timer = 7000;
         } else Kick_Timer -= diff;
 
         if (Eviscerate_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_EVISCERATE);
+            DoCastVictim( SPELL_EVISCERATE);
             Eviscerate_Timer = 4000;
         } else Eviscerate_Timer -= diff;
 
@@ -607,13 +607,13 @@ struct boss_ellris_duskhallowAI : public boss_priestess_lackey_commonAI
 
         if (Immolate_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_IMMOLATE);
+            DoCastVictim( SPELL_IMMOLATE);
             Immolate_Timer = 6000;
         } else Immolate_Timer -= diff;
 
         if (Shadow_Bolt_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOW_BOLT);
+            DoCastVictim( SPELL_SHADOW_BOLT);
             Shadow_Bolt_Timer = 5000;
         } else Shadow_Bolt_Timer -= diff;
 
@@ -681,13 +681,13 @@ struct boss_eramas_brightblazeAI : public boss_priestess_lackey_commonAI
 
         if (Knockdown_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_KNOCKDOWN);
+            DoCastVictim( SPELL_KNOCKDOWN);
             Knockdown_Timer = 6000;
         } else Knockdown_Timer -= diff;
 
         if (Snap_Kick_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SNAP_KICK);
+            DoCastVictim( SPELL_SNAP_KICK);
             Snap_Kick_Timer  = 4500;
         } else Snap_Kick_Timer -= diff;
 
@@ -775,19 +775,19 @@ struct boss_yazzaiAI : public boss_priestess_lackey_commonAI
 
         if (Ice_Lance_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ICE_LANCE);
+            DoCastVictim( SPELL_ICE_LANCE);
             Ice_Lance_Timer = 12000;
         } else Ice_Lance_Timer -= diff;
 
         if (Cone_of_Cold_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CONE_OF_COLD);
+            DoCastVictim( SPELL_CONE_OF_COLD);
             Cone_of_Cold_Timer = 10000;
         } else Cone_of_Cold_Timer -= diff;
 
         if (Frostbolt_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FROSTBOLT);
+            DoCastVictim( SPELL_FROSTBOLT);
             Frostbolt_Timer = 8000;
         } else Frostbolt_Timer -= diff;
 
@@ -900,31 +900,31 @@ struct boss_warlord_salarisAI : public boss_priestess_lackey_commonAI
 
         if (Disarm_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_DISARM);
+            DoCastVictim( SPELL_DISARM);
             Disarm_Timer = 6000;
         } else Disarm_Timer -= diff;
 
         if (Hamstring_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_HAMSTRING);
+            DoCastVictim( SPELL_HAMSTRING);
             Hamstring_Timer = 4500;
         } else Hamstring_Timer -= diff;
 
         if (Mortal_Strike_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
+            DoCastVictim( SPELL_MORTAL_STRIKE);
             Mortal_Strike_Timer = 4500;
         } else Mortal_Strike_Timer -= diff;
 
         if (Piercing_Howl_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_PIERCING_HOWL);
+            DoCastVictim( SPELL_PIERCING_HOWL);
             Piercing_Howl_Timer = 10000;
         } else Piercing_Howl_Timer -= diff;
 
         if (Frightening_Shout_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FRIGHTENING_SHOUT);
+            DoCastVictim( SPELL_FRIGHTENING_SHOUT);
             Frightening_Shout_Timer = 18000;
         } else Frightening_Shout_Timer -= diff;
 
@@ -995,7 +995,7 @@ struct boss_garaxxasAI : public boss_priestess_lackey_commonAI
         {
             if (Wing_Clip_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_WING_CLIP);
+                DoCastVictim( SPELL_WING_CLIP);
                 Wing_Clip_Timer = 4000;
             } else Wing_Clip_Timer -= diff;
 
@@ -1010,7 +1010,7 @@ struct boss_garaxxasAI : public boss_priestess_lackey_commonAI
                 else
                 {
                     //if pGo does not exist, then we can cast
-                    DoCast(me->getVictim(), SPELL_FREEZING_TRAP);
+                    DoCastVictim( SPELL_FREEZING_TRAP);
                     Freezing_Trap_Timer = 15000;
                 }
             } else Freezing_Trap_Timer -= diff;
@@ -1021,25 +1021,25 @@ struct boss_garaxxasAI : public boss_priestess_lackey_commonAI
         {
             if (Concussive_Shot_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_CONCUSSIVE_SHOT);
+                DoCastVictim( SPELL_CONCUSSIVE_SHOT);
                 Concussive_Shot_Timer = 8000;
             } else Concussive_Shot_Timer -= diff;
 
             if (Multi_Shot_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_MULTI_SHOT);
+                DoCastVictim( SPELL_MULTI_SHOT);
                 Multi_Shot_Timer = 10000;
             } else Multi_Shot_Timer -= diff;
 
             if (Aimed_Shot_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_AIMED_SHOT);
+                DoCastVictim( SPELL_AIMED_SHOT);
                 Aimed_Shot_Timer = 6000;
             } else Aimed_Shot_Timer -= diff;
 
             if (Shoot_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_SHOOT);
+                DoCastVictim( SPELL_SHOOT);
                 Shoot_Timer = 2500;
             } else Shoot_Timer -= diff;
         }
@@ -1116,7 +1116,7 @@ struct boss_apokoAI : public boss_priestess_lackey_commonAI
 
         if (Frost_Shock_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FROST_SHOCK);
+            DoCastVictim( SPELL_FROST_SHOCK);
             Frost_Shock_Timer = 7000;
         } else Frost_Shock_Timer -= diff;
 
@@ -1185,19 +1185,19 @@ struct boss_zelfanAI : public boss_priestess_lackey_commonAI
 
         if (Goblin_Dragon_Gun_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_GOBLIN_DRAGON_GUN);
+            DoCastVictim( SPELL_GOBLIN_DRAGON_GUN);
             Goblin_Dragon_Gun_Timer = 10000;
         } else Goblin_Dragon_Gun_Timer -= diff;
 
         if (Rocket_Launch_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ROCKET_LAUNCH);
+            DoCastVictim( SPELL_ROCKET_LAUNCH);
             Rocket_Launch_Timer = 9000;
         } else Rocket_Launch_Timer -= diff;
 
         if (Fel_Iron_Bomb_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FEL_IRON_BOMB);
+            DoCastVictim( SPELL_FEL_IRON_BOMB);
             Fel_Iron_Bomb_Timer = 15000;
         } else Fel_Iron_Bomb_Timer -= diff;
 
@@ -1251,7 +1251,7 @@ CreatureAI* GetAI_zelfan(Creature* pCreature)
 //    {
 //        if (Explosion_Timer <= diff)
 //        {
-//            DoCast(me->getVictim(), SPELL_SHEEP_EXPLOSION);
+//            DoCastVictim( SPELL_SHEEP_EXPLOSION);
 //        } else
 //            Explosion_Timer -= diff;
 //    }

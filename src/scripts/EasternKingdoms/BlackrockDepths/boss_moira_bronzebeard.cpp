@@ -64,21 +64,21 @@ struct boss_moira_bronzebeardAI : public ScriptedAI
         //MindBlast_Timer
         if (MindBlast_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_MINDBLAST);
+            DoCastVictim( SPELL_MINDBLAST);
             MindBlast_Timer = 14000;
         } else MindBlast_Timer -= diff;
 
         //ShadowWordPain_Timer
         if (ShadowWordPain_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOWWORDPAIN);
+            DoCastVictim( SPELL_SHADOWWORDPAIN);
             ShadowWordPain_Timer = 18000;
         } else ShadowWordPain_Timer -= diff;
 
         //Smite_Timer
         if (Smite_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SMITE);
+            DoCastVictim( SPELL_SMITE);
             Smite_Timer = 10000;
         } else Smite_Timer -= diff;
 

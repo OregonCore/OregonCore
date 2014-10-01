@@ -108,21 +108,21 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
         //Frost Attack
         if (frost_attack_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FROST_ATTACK);
+            DoCastVictim(SPELL_FROST_ATTACK);
             frost_attack_Timer = 7000 + rand()%30000;
         } else frost_attack_Timer -= diff;
 
         //Arcane Blast
         if (arcane_blast_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ARCANE_BLAST);
+            DoCastVictim( SPELL_ARCANE_BLAST);
             arcane_blast_Timer = 15000;
         } else arcane_blast_Timer -= diff;
 
         //Dragons Breath
         if (dragons_breath_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_DRAGONS_BREATH);
+            DoCastVictim(SPELL_DRAGONS_BREATH);
             {
                 if (rand()%2)
                     return;
@@ -139,14 +139,14 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
         //Knockback
         if (knockback_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_KNOCKBACK);
+            DoCastVictim(SPELL_KNOCKBACK);
             knockback_Timer = 15000 + rand()%10000;
         } else knockback_Timer -= diff;
 
         //Solarburn
         if (solarburn_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SOLARBURN);
+            DoCastVictim(SPELL_SOLARBURN);
             solarburn_Timer = 30000;
         } else solarburn_Timer -= diff;
 
@@ -224,7 +224,7 @@ struct mob_ragin_flamesAI : public ScriptedAI
 
         if (inferno_Timer <= diff)
         {
-            DoCast(me->getVictim(),HeroicMode ? H_SPELL_INFERNO : SPELL_INFERNO);
+            DoCastVictim(HeroicMode ? H_SPELL_INFERNO : SPELL_INFERNO);
             me->TauntApply(me->getVictim());
             inferno_Timer = 10000;
         } else inferno_Timer -= diff;

@@ -69,7 +69,7 @@ struct boss_magmadarAI : public ScriptedAI
         //Panic_Timer
         if (Panic_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_PANIC);
+            DoCastVictim( SPELL_PANIC);
             Panic_Timer = 35000;
         } else Panic_Timer -= diff;
 

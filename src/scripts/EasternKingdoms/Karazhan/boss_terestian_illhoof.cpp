@@ -106,7 +106,7 @@ struct mob_kilrekAI : public ScriptedAI
         if (AmplifyTimer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
-            DoCast(me->getVictim(), SPELL_AMPLIFY_FLAMES);
+            DoCastVictim( SPELL_AMPLIFY_FLAMES);
 
             AmplifyTimer = urand(10000,20000);
         } else AmplifyTimer -= diff;
@@ -303,10 +303,10 @@ struct boss_terestianAI : public ScriptedAI
         if (SummonTimer <= diff)
         {
             if (!PortalGUID[0])
-                DoCast(me->getVictim(), SPELL_FIENDISH_PORTAL, false);
+                DoCastVictim( SPELL_FIENDISH_PORTAL, false);
 
             if (!PortalGUID[1])
-                DoCast(me->getVictim(), SPELL_FIENDISH_PORTAL_1, false);
+                DoCastVictim( SPELL_FIENDISH_PORTAL_1, false);
 
             if (PortalGUID[0] && PortalGUID[1])
             {
@@ -354,7 +354,7 @@ struct mob_fiendish_impAI : public ScriptedAI
 
         if (FireboltTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FIREBOLT);
+            DoCastVictim( SPELL_FIREBOLT);
             FireboltTimer = 2200;
         } else FireboltTimer -= diff;
 

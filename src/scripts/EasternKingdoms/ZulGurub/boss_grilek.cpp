@@ -71,7 +71,7 @@ struct boss_grilekAI : public ScriptedAI
         //GroundTremor_Timer
         if (GroundTremor_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_GROUNDTREMOR);
+            DoCastVictim( SPELL_GROUNDTREMOR);
             GroundTremor_Timer = 12000 + rand()%4000;
         } else GroundTremor_Timer -= diff;
 

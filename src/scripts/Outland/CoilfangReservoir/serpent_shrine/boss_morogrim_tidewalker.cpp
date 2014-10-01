@@ -192,7 +192,7 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
         {
             if (!Earthquake)
             {
-                DoCast(me->getVictim(), SPELL_EARTHQUAKE);
+                DoCastVictim( SPELL_EARTHQUAKE);
                 Earthquake = true;
                 Earthquake_Timer = 10000;
             }
@@ -220,7 +220,7 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
         //TidalWave_Timer
         if (TidalWave_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_TIDAL_WAVE);
+            DoCastVictim( SPELL_TIDAL_WAVE);
             TidalWave_Timer = 20000;
         } else TidalWave_Timer -= diff;
 
@@ -344,7 +344,7 @@ struct mob_water_globuleAI : public ScriptedAI
         {
             if (me->IsWithinDistInMap(me->getVictim(), 5))
             {
-                DoCast(me->getVictim(), SPELL_GLOBULE_EXPLOSION);
+                DoCastVictim( SPELL_GLOBULE_EXPLOSION);
 
                 //despawn
                 me->ForcedDespawn();

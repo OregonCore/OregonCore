@@ -76,7 +76,7 @@ struct boss_kurinnaxxAI : public ScriptedAI
         //MORTALWOUND_Timer
         if (MORTALWOUND_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MORTALWOUND);
+            DoCastVictim(SPELL_MORTALWOUND);
             MORTALWOUND_Timer = 6000 + rand()%2000;
         } else MORTALWOUND_Timer -= diff;
 
@@ -88,7 +88,7 @@ struct boss_kurinnaxxAI : public ScriptedAI
 
         if (SLASH_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SLASH);
+            DoCastVictim(SPELL_SLASH);
             SLASH_Timer = 5000 + rand()%5000;
         } else SLASH_Timer -= diff;
 

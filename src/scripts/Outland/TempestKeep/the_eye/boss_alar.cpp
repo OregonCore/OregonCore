@@ -354,7 +354,7 @@ struct boss_alarAI : public ScriptedAI
 
             if (MeltArmor_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_MELT_ARMOR);
+                DoCastVictim( SPELL_MELT_ARMOR);
                 MeltArmor_Timer = 60000;
             } else MeltArmor_Timer -= diff;
 

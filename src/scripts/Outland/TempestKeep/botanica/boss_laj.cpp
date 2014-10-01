@@ -168,7 +168,7 @@ struct boss_lajAI : public ScriptedAI
 
         if (Allergic_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_ALLERGIC_REACTION);
+            DoCastVictim(SPELL_ALLERGIC_REACTION);
             Allergic_Timer = 25000+rand()%15000;
         } else Allergic_Timer -= diff;
 

@@ -159,7 +159,7 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
 
         if (CastTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_NETHER_BREATH);
+            DoCastVictim( SPELL_NETHER_BREATH);
             CastTimer = 5000;
         } else CastTimer -= diff;
 
@@ -1262,7 +1262,7 @@ struct mob_torlothAI : public ScriptedAI
 
             if (m_uiCleaveTimer < uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_CLEAVE);
+                DoCastVictim( SPELL_CLEAVE);
                 m_uiCleaveTimer = 15000;
             }
             else
@@ -1270,7 +1270,7 @@ struct mob_torlothAI : public ScriptedAI
 
             if (m_uiShadowfuryTimer < uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_SHADOWFURY);
+                DoCastVictim( SPELL_SHADOWFURY);
                 m_uiShadowfuryTimer = 20000;
             }
             else

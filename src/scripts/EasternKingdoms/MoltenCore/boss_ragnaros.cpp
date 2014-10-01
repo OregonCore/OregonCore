@@ -155,7 +155,7 @@ struct boss_ragnarosAI : public Scripted_NoMovementAI
         //WrathOfRagnaros_Timer
         if (WrathOfRagnaros_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WRATHOFRAGNAROS);
+            DoCastVictim( SPELL_WRATHOFRAGNAROS);
 
             if (urand(0,1))
                 DoScriptText(SAY_WRATH, me);
@@ -177,21 +177,21 @@ struct boss_ragnarosAI : public Scripted_NoMovementAI
         //LavaBurst_Timer
         if (LavaBurst_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_LAVABURST);
+            DoCastVictim( SPELL_LAVABURST);
             LavaBurst_Timer = 10000;
         } else LavaBurst_Timer -= diff;
 
         //Erruption_Timer
         if (LavaBurst_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ERRUPTION);
+            DoCastVictim( SPELL_ERRUPTION);
             Erruption_Timer = urand(20000,45000);
         } else Erruption_Timer -= diff;
 
         //ElementalFire_Timer
         if (ElementalFire_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ELEMENTALFIRE);
+            DoCastVictim( SPELL_ELEMENTALFIRE);
             ElementalFire_Timer = urand(10000,14000);
         } else ElementalFire_Timer -= diff;
 
@@ -265,7 +265,7 @@ struct boss_ragnarosAI : public Scripted_NoMovementAI
             //MagmaBurst_Timer
             if (MagmaBurst_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_MAGMABURST);
+                DoCastVictim( SPELL_MAGMABURST);
 
                 if (!HasYelledMagmaBurst)
                 {

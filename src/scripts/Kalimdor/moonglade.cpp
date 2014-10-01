@@ -1031,7 +1031,7 @@ struct npc_remulosAI : public npc_escortAI
 
         if (StarfireTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_STARFIRE);
+            DoCastVictim( SPELL_STARFIRE);
             StarfireTimer = urand(7000, 10000);
         } else StarfireTimer -= diff;
 
@@ -1342,19 +1342,19 @@ public:
 
             if (ShadowBoltTimer <= diff)
             {
-                DoCast(me->getVictim(), ERANIKUS_SPELL_SHADOW_BOLT_VOLLEY);
+                DoCastVictim( ERANIKUS_SPELL_SHADOW_BOLT_VOLLEY);
                 ShadowBoltTimer = urand(7000, 12000);
             } else ShadowBoltTimer -= diff;
 
             if (AcidBreathTimer <= diff)
             {
-                DoCast(me->getVictim(), ERANIKUS_SPELL_ACID_BREATH);
+                DoCastVictim( ERANIKUS_SPELL_ACID_BREATH);
                 AcidBreathTimer = urand(5000, 15000);
             } else AcidBreathTimer -= diff;
 
             if (NoxiusBreathTimer <= diff)
             {
-                DoCast(me->getVictim(), ERANIKUS_SPELL_NOXIUS_BREATH);
+                DoCastVictim( ERANIKUS_SPELL_NOXIUS_BREATH);
                 NoxiusBreathTimer = urand(10000, 20000);
             } else NoxiusBreathTimer -= diff;
 

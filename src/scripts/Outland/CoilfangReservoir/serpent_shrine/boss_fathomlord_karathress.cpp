@@ -251,7 +251,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
         //SearNova_Timer
         if (SearNova_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SEAR_NOVA);
+            DoCastVictim( SPELL_SEAR_NOVA);
             SearNova_Timer = 20000+rand()%40000;
         } else SearNova_Timer -= diff;
 
@@ -378,14 +378,14 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
         //LeechingThrow_Timer
         if (LeechingThrow_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_LEECHING_THROW);
+            DoCastVictim( SPELL_LEECHING_THROW);
             LeechingThrow_Timer = 20000;
         } else LeechingThrow_Timer -= diff;
 
         //Multishot_Timer
         if (Multishot_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_MULTISHOT);
+            DoCastVictim( SPELL_MULTISHOT);
             Multishot_Timer = 20000;
         } else Multishot_Timer -= diff;
 
@@ -512,7 +512,7 @@ struct boss_fathomguard_tidalvessAI : public ScriptedAI
         //FrostShock_Timer
         if (FrostShock_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FROST_SHOCK);
+            DoCastVictim( SPELL_FROST_SHOCK);
             FrostShock_Timer = 25000+rand()%5000;
         } else FrostShock_Timer -= diff;
 
@@ -620,14 +620,14 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
         //WaterBoltVolley_Timer
         if (WaterBoltVolley_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WATER_BOLT_VOLLEY);
+            DoCastVictim( SPELL_WATER_BOLT_VOLLEY);
             WaterBoltVolley_Timer = 30000;
         } else WaterBoltVolley_Timer -= diff;
 
         //TidalSurge_Timer
         if (TidalSurge_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_TIDAL_SURGE);
+            DoCastVictim( SPELL_TIDAL_SURGE);
             // Hacky way to do it - won't trigger elseways
             me->getVictim()->CastSpell(me->getVictim(), SPELL_TIDAL_SURGE_FREEZE, true);
             TidalSurge_Timer = 15000+rand()%5000;

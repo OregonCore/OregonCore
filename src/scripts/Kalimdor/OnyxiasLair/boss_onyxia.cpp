@@ -146,7 +146,7 @@ struct boss_onyxiaAI : public ScriptedAI
         {
             if (FlameBreathTimer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_FLAMEBREATH);
+                DoCastVictim( SPELL_FLAMEBREATH);
                 FlameBreathTimer = 15000;
             } else FlameBreathTimer -= diff;
 
@@ -161,13 +161,13 @@ struct boss_onyxiaAI : public ScriptedAI
 
             if (CleaveTimer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_CLEAVE);
+                DoCastVictim( SPELL_CLEAVE);
                 CleaveTimer = 10000;
             } else CleaveTimer -= diff;
 
             if (WingBuffetTimer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_WINGBUFFET);
+                DoCastVictim( SPELL_WINGBUFFET);
                 WingBuffetTimer = 7000 + ((rand()%8)*1000);
             } else WingBuffetTimer -= diff;
 
@@ -175,7 +175,7 @@ struct boss_onyxiaAI : public ScriptedAI
             {
                 if (rand() <= 30)
                 {
-                    DoCast(me->getVictim(), SPELL_KNOCK_AWAY);
+                    DoCastVictim( SPELL_KNOCK_AWAY);
                 }
                 KnockAwayTimer = 15000;
             } else KnockAwayTimer -= diff;
@@ -184,7 +184,7 @@ struct boss_onyxiaAI : public ScriptedAI
             {
                 if (BellowingRoarTimer <= diff)
                 {
-                    DoCast(me->getVictim(), SPELL_BELLOWINGROAR);
+                    DoCastVictim( SPELL_BELLOWINGROAR);
 
                     BellowingRoarTimer = 30000;
                 } else BellowingRoarTimer -= diff;
@@ -237,7 +237,7 @@ struct boss_onyxiaAI : public ScriptedAI
                 if (rand()%100 < 30)
                 {
                     DoScriptText(EMOTE_BREATH, me);
-                    DoCast(me->getVictim(), SPELL_DEEPBREATH);
+                    DoCastVictim( SPELL_DEEPBREATH);
                 }
                 else ChangePosition();
 

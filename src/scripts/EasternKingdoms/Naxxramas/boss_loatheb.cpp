@@ -148,28 +148,28 @@ struct boss_loathebAI : public ScriptedAI
         //CorruptedMind_Timer
         if (CorruptedMind_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CORRUPTED_MIND);
+            DoCastVictim(SPELL_CORRUPTED_MIND);
             CorruptedMind_Timer = 62000;
         } else CorruptedMind_Timer -= diff;
 
         //PoisonAura_Timer
         if (PoisonAura_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_POISON_AURA);
+            DoCastVictim(SPELL_POISON_AURA);
             PoisonAura_Timer = 60000;
         } else PoisonAura_Timer -= diff;
 
         //InevitableDoom_Timer
         if (InevitableDoom_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_INEVITABLE_DOOM);
+            DoCastVictim(SPELL_INEVITABLE_DOOM);
             InevitableDoom_Timer = 120000;
         } else InevitableDoom_Timer -= diff;
 
         //InevitableDoom5mins_Timer
         if (InevitableDoom5mins_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_INEVITABLE_DOOM);
+            DoCastVictim(SPELL_INEVITABLE_DOOM);
             InevitableDoom5mins_Timer = 15000;
         } else InevitableDoom5mins_Timer -= diff;
 

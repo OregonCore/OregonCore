@@ -58,14 +58,14 @@ struct boss_flamegorAI : public ScriptedAI
         //ShadowFlame_Timer
         if (ShadowFlame_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOWFLAME);
+            DoCastVictim( SPELL_SHADOWFLAME);
             ShadowFlame_Timer = 15000 + rand()%7000;
         } else ShadowFlame_Timer -= diff;
 
         //WingBuffet_Timer
         if (WingBuffet_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WINGBUFFET);
+            DoCastVictim( SPELL_WINGBUFFET);
             if (DoGetThreat(me->getVictim()))
                 DoModifyThreatPercent(me->getVictim(),-75);
 

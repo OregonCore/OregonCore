@@ -109,7 +109,7 @@ struct mob_fireswornAI : public ScriptedAI
         //Cast Erruption and let them die
         if (me->GetHealth() <= me->GetMaxHealth() * 0.10f)
         {
-            DoCast(me->getVictim(), SPELL_ERUPTION);
+            DoCastVictim( SPELL_ERUPTION);
             me->setDeathState(JUST_DIED);
             me->RemoveCorpse();
         }

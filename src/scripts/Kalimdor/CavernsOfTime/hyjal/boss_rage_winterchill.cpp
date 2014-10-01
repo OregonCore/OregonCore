@@ -153,7 +153,7 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
         } else FrostArmorTimer -= diff;
         if (DecayTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_DEATH_AND_DECAY);
+            DoCastVictim( SPELL_DEATH_AND_DECAY);
             DecayTimer = 60000+rand()%20000;
             switch (urand(0,1))
             {
@@ -169,7 +169,7 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
         } else DecayTimer -= diff;
         if (NovaTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FROST_NOVA);
+            DoCastVictim( SPELL_FROST_NOVA);
             NovaTimer = 30000+rand()%15000;
             switch (urand(0,1))
             {

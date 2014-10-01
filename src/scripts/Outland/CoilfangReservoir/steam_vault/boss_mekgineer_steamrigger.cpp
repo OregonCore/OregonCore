@@ -132,7 +132,7 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
 
         if (Shrink_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SUPER_SHRINK_RAY);
+            DoCastVictim(SPELL_SUPER_SHRINK_RAY);
             Shrink_Timer = 20000;
         } else Shrink_Timer -= diff;
 
@@ -141,14 +141,14 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(pTarget,SPELL_SAW_BLADE);
             else
-                DoCast(me->getVictim(),SPELL_SAW_BLADE);
+                DoCastVictim(SPELL_SAW_BLADE);
 
             Saw_Blade_Timer = 15000;
         } else Saw_Blade_Timer -= diff;
 
         if (Electrified_Net_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_ELECTRIFIED_NET);
+            DoCastVictim(SPELL_ELECTRIFIED_NET);
             Electrified_Net_Timer = 10000;
         }
         else Electrified_Net_Timer -= diff;

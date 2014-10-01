@@ -87,7 +87,7 @@ struct boss_jindoAI : public ScriptedAI
         //Hex_Timer
         if (Hex_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_HEX);
+            DoCastVictim( SPELL_HEX);
 
             if (DoGetThreat(me->getVictim()))
                 DoModifyThreatPercent(me->getVictim(),-80);
@@ -219,7 +219,7 @@ struct mob_shade_of_jindoAI : public ScriptedAI
         //ShadowShock_Timer
         if (ShadowShock_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOWSHOCK);
+            DoCastVictim( SPELL_SHADOWSHOCK);
             ShadowShock_Timer = 2000;
         } else ShadowShock_Timer -= diff;
 

@@ -68,7 +68,7 @@ struct mob_water_elementalAI : public ScriptedAI
 
         if (uiWaterBoltTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WATERBOLT);
+            DoCastVictim( SPELL_WATERBOLT);
             uiWaterBoltTimer = 5*IN_MILLISECONDS;
         } else uiWaterBoltTimer -= diff;
 
@@ -147,25 +147,25 @@ struct boss_balindaAI : public ScriptedAI
 
         if (uiArcaneExplosionTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ARCANE_EXPLOSION);
+            DoCastVictim( SPELL_ARCANE_EXPLOSION);
             uiArcaneExplosionTimer =  urand(5*IN_MILLISECONDS,15*IN_MILLISECONDS);
         } else uiArcaneExplosionTimer -= diff;
 
         if (uiConeOfColdTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CONE_OF_COLD);
+            DoCastVictim( SPELL_CONE_OF_COLD);
             uiConeOfColdTimer = urand(10*IN_MILLISECONDS,20*IN_MILLISECONDS);
         } else uiConeOfColdTimer -= diff;
 
         if (uiFireBoltTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FIREBALL);
+            DoCastVictim( SPELL_FIREBALL);
             uiFireBoltTimer = urand(5*IN_MILLISECONDS,9*IN_MILLISECONDS);
         } else uiFireBoltTimer -= diff;
 
         if (uiFrostboltTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FROSTBOLT);
+            DoCastVictim( SPELL_FROSTBOLT);
             uiFrostboltTimer = urand(4*IN_MILLISECONDS,12*IN_MILLISECONDS);
         } else uiFrostboltTimer -= diff;
 

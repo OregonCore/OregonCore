@@ -65,8 +65,8 @@ struct mob_jadespine_basiliskAI : public ScriptedAI
         if (Cslumber_Timer <= diff)
         {
             //Cast
-            // DoCast(me->getVictim(), SPELL_CSLUMBER);
-            DoCast(me->getVictim(), SPELL_CSLUMBER, true);
+            // DoCastVictim( SPELL_CSLUMBER);
+            DoCastVictim( SPELL_CSLUMBER, true);
 
             //Stop attacking target thast asleep and pick new target
             Cslumber_Timer = 28000;

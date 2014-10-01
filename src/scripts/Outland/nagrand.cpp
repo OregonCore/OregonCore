@@ -183,7 +183,7 @@ struct mob_lumpAI : public ScriptedAI
         //Spear_Throw_Timer
         if (Spear_Throw_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SPEAR_THROW);
+            DoCastVictim( SPELL_SPEAR_THROW);
             Spear_Throw_Timer = 20000;
         } else Spear_Throw_Timer -= diff;
 
@@ -635,7 +635,7 @@ struct npc_maghar_captiveAI : public npc_escortAI
 
         if (m_uiChainLightningTimer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_CHAIN_LIGHTNING);
+            DoCastVictim( SPELL_CHAIN_LIGHTNING);
             m_uiChainLightningTimer = urand(7000, 14000);
         }
         else
@@ -654,7 +654,7 @@ struct npc_maghar_captiveAI : public npc_escortAI
 
         if (m_uiFrostShockTimer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_FROST_SHOCK);
+            DoCastVictim( SPELL_FROST_SHOCK);
             m_uiFrostShockTimer = urand(7500, 15000);
         }
         else
@@ -1427,7 +1427,7 @@ struct npc_kurenai_captiveAI : public npc_escortAI
 
         if (m_uiChainLightningTimer <= uiDiff)
         {
-            DoCast(me->getVictim(), MAGIC_CHAIN_LIGHTNING);
+            DoCastVictim( MAGIC_CHAIN_LIGHTNING);
             m_uiChainLightningTimer = urand(7000, 14000);
         }
         else m_uiChainLightningTimer -= uiDiff;
@@ -1444,7 +1444,7 @@ struct npc_kurenai_captiveAI : public npc_escortAI
 
         if (m_uiFrostShockTimer <= uiDiff)
         {
-            DoCast(me->getVictim(), MAGIC_FROST_SHOCK);
+            DoCastVictim( MAGIC_FROST_SHOCK);
             m_uiFrostShockTimer = urand(7500, 15000);
         }
         else m_uiFrostShockTimer -= uiDiff;

@@ -820,7 +820,7 @@ struct npc_akamaAI : public ScriptedAI
 
         if (LightningBoltTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_LIGHTNING_BOLT);
+            DoCastVictim( SPELL_LIGHTNING_BOLT);
             LightningBoltTimer = 10000;
         } else LightningBoltTimer -= diff;
 

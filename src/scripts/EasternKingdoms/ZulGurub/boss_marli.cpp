@@ -115,7 +115,7 @@ struct boss_marliAI : public ScriptedAI
 
             if (PoisonVolley_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_POISONVOLLEY);
+                DoCastVictim( SPELL_POISONVOLLEY);
                 PoisonVolley_Timer = 10000 + rand()%10000;
             }
             else
@@ -123,7 +123,7 @@ struct boss_marliAI : public ScriptedAI
 
             if (!PhaseTwo && Aspect_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_ASPECT_OF_MARLI);
+                DoCastVictim( SPELL_ASPECT_OF_MARLI);
                 Aspect_Timer = 13000 + rand()%5000;
             }
             else
@@ -180,7 +180,7 @@ struct boss_marliAI : public ScriptedAI
                 me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg / 100) * 35)));
                 me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg / 100) * 35)));
                 me->UpdateDamagePhysical(BASE_ATTACK);
-                DoCast(me->getVictim(), SPELL_ENVOLWINGWEB);
+                DoCastVictim( SPELL_ENVOLWINGWEB);
 
                 PhaseTwo = true;
                 Transform_Timer = 35000 + rand()%25000;

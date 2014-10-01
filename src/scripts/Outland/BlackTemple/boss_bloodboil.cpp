@@ -216,19 +216,19 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
 
         if (ArcingSmashTimer <= diff)
         {
-            DoCast(me->getVictim(),Phase1 ? SPELL_ARCING_SMASH_1 : SPELL_ARCING_SMASH_2);
+            DoCastVictim(Phase1 ? SPELL_ARCING_SMASH_1 : SPELL_ARCING_SMASH_2);
             ArcingSmashTimer = 10000;
         } else ArcingSmashTimer -= diff;
 
         if (FelBreathTimer <= diff)
         {
-            DoCast(me->getVictim(),Phase1 ? SPELL_FELBREATH_1 : SPELL_FELBREATH_2);
+            DoCastVictim(Phase1 ? SPELL_FELBREATH_1 : SPELL_FELBREATH_2);
             FelBreathTimer = 25000;
         } else FelBreathTimer -= diff;
 
         if (EjectTimer <= diff)
         {
-            DoCast(me->getVictim(),Phase1 ? SPELL_EJECT_1 : SPELL_EJECT_2);
+            DoCastVictim(Phase1 ? SPELL_EJECT_1 : SPELL_EJECT_2);
             EjectTimer = 15000;
         } else EjectTimer -= diff;
 
@@ -236,7 +236,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         if (Charge_Timer <= diff)
         {
             if (me->GetDistance2d(me->getVictim()) > 15)
-                DoCast(me->getVictim(),SPELL_CHARGE);
+                DoCastVictim(SPELL_CHARGE);
             Charge_Timer = 10000;
         } else Charge_Timer -= diff;
 
@@ -244,7 +244,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             if (BewilderingStrikeTimer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_BEWILDERING_STRIKE);
+                DoCastVictim( SPELL_BEWILDERING_STRIKE);
                 BewilderingStrikeTimer = 20000;
             } else BewilderingStrikeTimer -= diff;
 
@@ -253,7 +253,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
                 if (BloodboilCount < 5)                      // Only cast it five times.
                 {
                     CastBloodboil(); // Causes issues on windows, so is commented out.
-                    //DoCast(me->getVictim(), SPELL_BLOODBOIL);
+                    //DoCastVictim( SPELL_BLOODBOIL);
                     ++BloodboilCount;
                     BloodboilTimer = 10000;
                 }
@@ -264,7 +264,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             if (FelGeyserTimer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_FEL_GEYSER);
+                DoCastVictim( SPELL_FEL_GEYSER);
                 FelGeyserTimer = 30000;
             } else FelGeyserTimer -= diff;
 

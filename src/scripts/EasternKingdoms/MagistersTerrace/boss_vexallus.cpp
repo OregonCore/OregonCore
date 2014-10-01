@@ -173,7 +173,7 @@ struct boss_vexallusAI : public ScriptedAI
         {
             if (OverloadTimer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_OVERLOAD);
+                DoCastVictim( SPELL_OVERLOAD);
 
                 OverloadTimer = 2000;
             } else OverloadTimer -= diff;

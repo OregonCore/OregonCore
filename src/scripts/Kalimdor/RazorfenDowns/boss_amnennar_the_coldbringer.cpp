@@ -74,14 +74,14 @@ struct boss_amnennar_the_coldbringerAI : public ScriptedAI
         //AmnenarsWrath_Timer
         if (AmnenarsWrath_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_AMNENNARSWRATH);
+            DoCastVictim( SPELL_AMNENNARSWRATH);
             AmnenarsWrath_Timer = 12000;
         } else AmnenarsWrath_Timer -= diff;
 
         //FrostBolt_Timer
         if (FrostBolt_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FROSTBOLT);
+            DoCastVictim( SPELL_FROSTBOLT);
             FrostBolt_Timer = 8000;
         } else FrostBolt_Timer -= diff;
 
@@ -94,7 +94,7 @@ struct boss_amnennar_the_coldbringerAI : public ScriptedAI
         if (!Spectrals60 && me->GetHealth()*100 / me->GetMaxHealth() < 60)
         {
             DoScriptText(SAY_SUMMON60, me);
-            DoCast(me->getVictim(), SPELL_FROST_SPECTRES);
+            DoCastVictim( SPELL_FROST_SPECTRES);
             Spectrals60 = true;
         }
 
@@ -107,7 +107,7 @@ struct boss_amnennar_the_coldbringerAI : public ScriptedAI
         if (!Spectrals30 && me->GetHealth()*100 / me->GetMaxHealth() < 30)
         {
             DoScriptText(SAY_SUMMON30, me);
-            DoCast(me->getVictim(), SPELL_FROST_SPECTRES);
+            DoCastVictim( SPELL_FROST_SPECTRES);
             Spectrals30 = true;
         }
 

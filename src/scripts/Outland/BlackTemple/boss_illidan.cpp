@@ -775,12 +775,12 @@ struct boss_illidan_stormrageAI : public ScriptedAI
                 break;
 
             case EVENT_SHEAR:
-                DoCast(me->getVictim(), SPELL_SHEAR);
+                DoCastVictim( SPELL_SHEAR);
                 Timer[EVENT_SHEAR] = 25000 + (rand()%16 * 1000);
                 break;
 
             case EVENT_FLAME_CRASH:
-                DoCast(me->getVictim(), SPELL_FLAME_CRASH);
+                DoCastVictim( SPELL_FLAME_CRASH);
                 Timer[EVENT_FLAME_CRASH] = 30000 + rand()%10000;
                 break;
 
@@ -797,7 +797,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
                 break;
 
             case EVENT_DRAW_SOUL:
-                DoCast(me->getVictim(), SPELL_DRAW_SOUL);
+                DoCastVictim( SPELL_DRAW_SOUL);
                 Timer[EVENT_DRAW_SOUL] = 50000 + rand()%10000;
                 break;
 
@@ -866,7 +866,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
                     me->GetMotionMaster()->MoveChase(me->getVictim(), 30);
                 else
                     me->GetMotionMaster()->MoveIdle();
-                DoCast(me->getVictim(), SPELL_SHADOW_BLAST);
+                DoCastVictim( SPELL_SHADOW_BLAST);
                 Timer[EVENT_SHADOW_BLAST] = 4000;
                 break;
             case EVENT_SHADOWDEMON:
@@ -952,8 +952,8 @@ struct flame_of_azzinothAI : public ScriptedAI
 
         if (FlameBlastTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_BLAZE_SUMMON, true); //appear at victim
-            DoCast(me->getVictim(), SPELL_FLAME_BLAST);
+            DoCastVictim( SPELL_BLAZE_SUMMON, true); //appear at victim
+            DoCastVictim( SPELL_FLAME_BLAST);
             FlameBlastTimer = 15000; //10000 is official-like?
             DoZoneInCombat(); //in case someone is revived
         } else FlameBlastTimer -= diff;
@@ -1367,7 +1367,7 @@ struct npc_akama_illidanAI : public ScriptedAI
                         EnterPhase(PHASE_TALK);
                     else
                     {
-                        DoCast(me->getVictim(), SPELL_CHAIN_LIGHTNING);
+                        DoCastVictim( SPELL_CHAIN_LIGHTNING);
                         Timer = 30000;
                     }
                 }
@@ -1577,7 +1577,7 @@ struct boss_maievAI : public ScriptedAI
                 }
                 break;
             case EVENT_MAIEV_SHADOW_STRIKE:
-                DoCast(me->getVictim(), SPELL_SHADOW_STRIKE);
+                DoCastVictim( SPELL_SHADOW_STRIKE);
                 Timer[EVENT_MAIEV_SHADOW_STRIKE] = 60000;
                 break;
             case EVENT_MAIEV_TRAP:
@@ -1591,7 +1591,7 @@ struct boss_maievAI : public ScriptedAI
                 {
                     if (!me->IsWithinDistInMap(me->getVictim(), 40))
                         me->GetMotionMaster()->MoveChase(me->getVictim(), 30);
-                    DoCast(me->getVictim(), SPELL_THROW_DAGGER);
+                    DoCastVictim( SPELL_THROW_DAGGER);
                     Timer[EVENT_MAIEV_THROW_DAGGER] = 2000;
                 }
                 break;
@@ -1741,12 +1741,12 @@ struct shadow_demonAI : public ScriptedAI
         {
             TargetGUID = me->getVictim()->GetGUID();
             me->AddThreat(me->getVictim(), 10000000.0f);
-            DoCast(me->getVictim(), SPELL_PURPLE_BEAM, true);
-            DoCast(me->getVictim(), SPELL_PARALYZE, true);
+            DoCastVictim( SPELL_PURPLE_BEAM, true);
+            DoCastVictim( SPELL_PARALYZE, true);
         }
         // Kill our target if we're very close.
         if (me->IsWithinDistInMap(me->getVictim(), 3))
-            DoCast(me->getVictim(), SPELL_CONSUME_SOUL);
+            DoCastVictim( SPELL_CONSUME_SOUL);
     }
 };
 

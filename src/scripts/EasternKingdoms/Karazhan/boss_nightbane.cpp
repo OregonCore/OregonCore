@@ -349,13 +349,13 @@ struct boss_nightbaneAI : public ScriptedAI
 
             if (BellowingRoarTimer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_BELLOWING_ROAR);
+                DoCastVictim( SPELL_BELLOWING_ROAR);
                 BellowingRoarTimer = urand(30000,40000);
             } else BellowingRoarTimer -= diff;
 
             if (SmolderingBreathTimer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_SMOLDERING_BREATH);
+                DoCastVictim( SPELL_SMOLDERING_BREATH);
                 SmolderingBreathTimer = 20000;
             } else SmolderingBreathTimer -= diff;
 
@@ -407,11 +407,11 @@ struct boss_nightbaneAI : public ScriptedAI
                     if (!Skeletons)
                     {
                         for (int i = 0; i < 5; i++)
-                            DoCast(me->getVictim(), SPELL_SUMMON_SKELETON, true);
+                            DoCastVictim( SPELL_SUMMON_SKELETON, true);
                         Skeletons = true;
                     }
 
-                    DoCast(me->getVictim(), SPELL_RAIN_OF_BONES);
+                    DoCastVictim( SPELL_RAIN_OF_BONES);
                     RainBones = true;
                     SmokingBlastTimer = 20000;
                 } else RainofBonesTimer -= diff;
@@ -428,7 +428,7 @@ struct boss_nightbaneAI : public ScriptedAI
             {
                 if (SmokingBlastTimer <= diff)
                  {
-                    DoCast(me->getVictim(), SPELL_SMOKING_BLAST);
+                    DoCastVictim( SPELL_SMOKING_BLAST);
                     SmokingBlastTimer = 1500; //timer wrong
                  } else SmokingBlastTimer -= diff;
             }

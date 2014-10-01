@@ -327,7 +327,7 @@ struct npc_torekAI : public npc_escortAI
 
         if (Rend_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_REND);
+            DoCastVictim(SPELL_REND);
             Rend_Timer = 20000;
         } else Rend_Timer -= diff;
 

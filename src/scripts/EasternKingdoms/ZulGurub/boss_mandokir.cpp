@@ -217,7 +217,7 @@ struct boss_mandokirAI : public ScriptedAI
                 // Cleave
                 if (Cleave_Timer <= diff)
                 {
-                    DoCast(me->getVictim(), SPELL_CLEAVE);
+                    DoCastVictim( SPELL_CLEAVE);
                     Cleave_Timer = 7000;
                 }
                 else
@@ -246,7 +246,7 @@ struct boss_mandokirAI : public ScriptedAI
                     }
 
                     if (TargetInRange > 3)
-                        DoCast(me->getVictim(), SPELL_FEAR);
+                        DoCastVictim( SPELL_FEAR);
 
                     Fear_Timer = 4000;
                 }
@@ -258,7 +258,7 @@ struct boss_mandokirAI : public ScriptedAI
                 {
                     if (MortalStrike_Timer <= diff)
                     {
-                        DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
+                        DoCastVictim( SPELL_MORTAL_STRIKE);
                         MortalStrike_Timer = 15000;
                     }
                     else
@@ -324,7 +324,7 @@ struct mob_ohganAI : public ScriptedAI
         // SunderArmor_Timer
         if (SunderArmor_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SUNDERARMOR);
+            DoCastVictim( SPELL_SUNDERARMOR);
             SunderArmor_Timer = 10000 + rand()%5000;
         }
         else

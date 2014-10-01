@@ -55,14 +55,14 @@ struct boss_hazzarahAI : public ScriptedAI
         //ManaBurn_Timer
         if (ManaBurn_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_MANABURN);
+            DoCastVictim( SPELL_MANABURN);
             ManaBurn_Timer = 8000 + rand()%8000;
         } else ManaBurn_Timer -= diff;
 
         //Sleep_Timer
         if (Sleep_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SLEEP);
+            DoCastVictim( SPELL_SLEEP);
             Sleep_Timer = 12000 + rand()%8000;
         } else Sleep_Timer -= diff;
 

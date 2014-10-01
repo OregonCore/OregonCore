@@ -92,7 +92,7 @@ struct boss_ysondreAI : public ScriptedAI
         //NoxiousBreath_Timer
         if (m_uiNoxiousBreath_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_NOXIOUSBREATH);
+            DoCastVictim( SPELL_NOXIOUSBREATH);
             m_uiNoxiousBreath_Timer = 14000 + rand()%6000;
         }
         else
@@ -112,7 +112,7 @@ struct boss_ysondreAI : public ScriptedAI
         //MarkOfNature_Timer
         //if (m_uiMarkOfNature_Timer <= uiDiff)
         //{
-        //    DoCast(me->getVictim(), SPELL_MARKOFNATURE);
+        //    DoCastVictim( SPELL_MARKOFNATURE);
         //    m_uiMarkOfNature_Timer = 45000;
         //}
         //else
@@ -165,7 +165,7 @@ struct mob_dementeddruidsAI : public ScriptedAI
         //MoonFire_Timer
         if (m_uiMoonFire_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_MOONFIRE);
+            DoCastVictim( SPELL_MOONFIRE);
             m_uiMoonFire_Timer = 5000;
         }
         else

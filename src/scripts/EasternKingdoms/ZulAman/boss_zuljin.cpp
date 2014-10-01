@@ -276,7 +276,7 @@ struct boss_zuljinAI : public ScriptedAI
                     me->AttackerStateUpdate(me->getVictim());
                     if (me->getVictim() && health == me->getVictim()->GetHealth())
                     {
-                        DoCast(me->getVictim(), SPELL_OVERPOWER, false);
+                        DoCastVictim( SPELL_OVERPOWER, false);
                         Overpower_Timer = 5000;
                     }
                 } else me->AttackerStateUpdate(me->getVictim());

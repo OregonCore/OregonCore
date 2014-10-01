@@ -751,7 +751,7 @@ struct boss_kaelthasAI : public ScriptedAI
                     //ArcaneDisruption_Timer
                     if (ArcaneDisruption_Timer <= diff)
                     {
-                        DoCast(me->getVictim(), SPELL_ARCANE_DISRUPTION, true);
+                        DoCastVictim( SPELL_ARCANE_DISRUPTION, true);
 
                         ArcaneDisruption_Timer = 60000;
                     } else ArcaneDisruption_Timer -= diff;
@@ -836,7 +836,7 @@ struct boss_kaelthasAI : public ScriptedAI
                     {
                         if (PyrosCasted < 3)
                         {
-                            DoCast(me->getVictim(), SPELL_PYROBLAST);
+                            DoCastVictim( SPELL_PYROBLAST);
                             PyrosCasted++;
                         }
                         else
@@ -1046,14 +1046,14 @@ struct boss_thaladred_the_darkenerAI : public advisorbase_ai
         //Silence_Timer
         if (Silence_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SILENCE);
+            DoCastVictim( SPELL_SILENCE);
             Silence_Timer = 20000;
         } else Silence_Timer -= diff;
 
         //PsychicBlow_Timer
         if (PsychicBlow_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_PSYCHIC_BLOW);
+            DoCastVictim( SPELL_PSYCHIC_BLOW);
             PsychicBlow_Timer = 20000+rand()%5000;
         } else PsychicBlow_Timer -= diff;
 
@@ -1106,7 +1106,7 @@ struct boss_lord_sanguinarAI : public advisorbase_ai
         //Fear_Timer
         if (Fear_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_BELLOWING_ROAR);
+            DoCastVictim( SPELL_BELLOWING_ROAR);
             Fear_Timer = 25000+rand()%10000;                //approximately every 30 seconds
         } else Fear_Timer -= diff;
 
@@ -1192,7 +1192,7 @@ struct boss_grand_astromancer_capernianAI : public advisorbase_ai
         //Fireball_Timer
         if (Fireball_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CAPERNIAN_FIREBALL);
+            DoCastVictim( SPELL_CAPERNIAN_FIREBALL);
             Fireball_Timer = 4000;
         } else Fireball_Timer -= diff;
 
@@ -1205,7 +1205,7 @@ struct boss_grand_astromancer_capernianAI : public advisorbase_ai
             if (pTarget && me->IsWithinDistInMap(pTarget, 30))
                 DoCast(pTarget, SPELL_CONFLAGRATION);
             else
-                DoCast(me->getVictim(), SPELL_CONFLAGRATION);
+                DoCastVictim( SPELL_CONFLAGRATION);
 
             Conflagration_Timer = 10000+rand()%5000;
         } else Conflagration_Timer -= diff;
@@ -1286,7 +1286,7 @@ struct boss_master_engineer_telonicusAI : public advisorbase_ai
         //Bomb_Timer
         if (Bomb_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_BOMB);
+            DoCastVictim( SPELL_BOMB);
             Bomb_Timer = 25000;
         } else Bomb_Timer -= diff;
 

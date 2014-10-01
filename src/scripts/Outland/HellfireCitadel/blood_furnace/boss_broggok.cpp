@@ -110,13 +110,13 @@ struct boss_broggokAI : public ScriptedAI
 
         if (AcidSpray_Timer <= diff)
         {
-            DoCast(me->getVictim(),HeroicMode ? SPELL_SLIME_SPRAY_H : SPELL_SLIME_SPRAY);
+            DoCastVictim(HeroicMode ? SPELL_SLIME_SPRAY_H : SPELL_SLIME_SPRAY);
             AcidSpray_Timer = 4000+rand()%8000;
         } else AcidSpray_Timer -=diff;
 
         if (PoisonBolt_Timer <= diff)
         {
-            DoCast(me->getVictim(),HeroicMode ? SPELL_POISON_BOLT_H : SPELL_POISON_BOLT);
+            DoCastVictim(HeroicMode ? SPELL_POISON_BOLT_H : SPELL_POISON_BOLT);
             PoisonBolt_Timer = 4000+rand()%8000;
         } else PoisonBolt_Timer -=diff;
 
@@ -192,13 +192,13 @@ struct mob_nascent_orcAI : public ScriptedAI
 
         if (Blow_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_BLOW);
+            DoCastVictim(SPELL_BLOW);
             Blow_Timer = 10000+rand()%4000;
         } else Blow_Timer -=diff;
 
         if (Stomp_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_STOMP);
+            DoCastVictim(SPELL_STOMP);
             Stomp_Timer = 15000+rand()%4000;
         } else Stomp_Timer -=diff;
 

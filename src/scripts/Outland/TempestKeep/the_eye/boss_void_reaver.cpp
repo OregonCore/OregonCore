@@ -101,7 +101,7 @@ struct boss_void_reaverAI : public ScriptedAI
         // Pounding
         if (Pounding_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_POUNDING);
+            DoCastVictim(SPELL_POUNDING);
 
             switch(rand()%2)
             {
@@ -149,7 +149,7 @@ struct boss_void_reaverAI : public ScriptedAI
         // Single Target knock back, reduces aggro
         if (KnockAway_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_KNOCK_AWAY);
+            DoCastVictim(SPELL_KNOCK_AWAY);
 
             //Drop 25% aggro
             if (DoGetThreat(me->getVictim()))

@@ -174,7 +174,7 @@ struct boss_azgalorAI : public hyjal_trashAI
 
         if (CleaveTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CLEAVE);
+            DoCastVictim( SPELL_CLEAVE);
             CleaveTimer = 10000+rand()%5000;
         } else CleaveTimer -= diff;
 

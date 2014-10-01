@@ -156,7 +156,7 @@ struct boss_arlokkAI : public ScriptedAI
         {
             if (m_uiShadowWordPain_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_SHADOWWORDPAIN);
+                DoCastVictim( SPELL_SHADOWWORDPAIN);
                 m_uiShadowWordPain_Timer = 15000;
             }
             else
@@ -193,7 +193,7 @@ struct boss_arlokkAI : public ScriptedAI
            // Ravage Timer
            if (m_uiRavage_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_RAVAGE);
+                DoCastVictim( SPELL_RAVAGE);
                 m_uiRavage_Timer = 16000;
             }
             else
@@ -202,7 +202,7 @@ struct boss_arlokkAI : public ScriptedAI
             // Whirlwind_Timer
             if (m_uiWhirlwind_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_WHIRLWIND);
+                DoCastVictim( SPELL_WHIRLWIND);
                 m_uiWhirlwind_Timer = 16000;
             }
             else
@@ -211,7 +211,7 @@ struct boss_arlokkAI : public ScriptedAI
             // Gouge_Timer
             if (m_uiGouge_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_GOUGE);
+                DoCastVictim( SPELL_GOUGE);
 
                 if (DoGetThreat(me->getVictim()))
                     DoModifyThreatPercent(me->getVictim(), -80);

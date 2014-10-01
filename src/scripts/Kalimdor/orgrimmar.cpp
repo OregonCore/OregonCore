@@ -196,13 +196,13 @@ struct npc_thrall_warchiefAI : public ScriptedAI
 
         if (ChainLightning_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CHAIN_LIGHTNING);
+            DoCastVictim( SPELL_CHAIN_LIGHTNING);
             ChainLightning_Timer = 9000;
         } else ChainLightning_Timer -= diff;
 
         if (Shock_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHOCK);
+            DoCastVictim( SPELL_SHOCK);
             Shock_Timer = 15000;
         } else Shock_Timer -= diff;
 

@@ -96,7 +96,7 @@ struct boss_golemaggAI : public ScriptedAI
         {
             if (uiEarthquakeTimer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_EARTHQUAKE);
+                DoCastVictim( SPELL_EARTHQUAKE);
                 uiEarthquakeTimer = 3*IN_MILLISECONDS;
             }
             else
@@ -162,7 +162,7 @@ struct mob_core_ragerAI : public ScriptedAI
         // Mangle
         if (uiMangleTimer <= uiDiff)
         {
-            DoCast(me->getVictim(),SPELL_MANGLE);
+            DoCastVictim(SPELL_MANGLE);
             uiMangleTimer = 10*IN_MILLISECONDS;
         }
         else

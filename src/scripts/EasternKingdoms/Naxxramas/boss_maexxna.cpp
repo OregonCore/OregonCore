@@ -191,21 +191,21 @@ struct boss_maexxnaAI : public ScriptedAI
         //WebSpray_Timer
         if (WebSpray_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WEBSPRAY);
+            DoCastVictim( SPELL_WEBSPRAY);
             WebSpray_Timer = 40000;
         } else WebSpray_Timer -= diff;
 
         //PoisonShock_Timer
         if (PoisonShock_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_POISONSHOCK);
+            DoCastVictim( SPELL_POISONSHOCK);
             PoisonShock_Timer = 20000;
         } else PoisonShock_Timer -= diff;
 
         //NecroticPoison_Timer
         if (NecroticPoison_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_NECROTICPOISON);
+            DoCastVictim( SPELL_NECROTICPOISON);
             NecroticPoison_Timer = 30000;
         } else NecroticPoison_Timer -= diff;
 

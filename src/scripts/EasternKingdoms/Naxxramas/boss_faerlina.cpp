@@ -100,7 +100,7 @@ struct boss_faerlinaAI : public ScriptedAI
         //PoisonBoltVolley_Timer
         if (PoisonBoltVolley_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_POSIONBOLT_VOLLEY);
+            DoCastVictim(SPELL_POSIONBOLT_VOLLEY);
             PoisonBoltVolley_Timer = 11000;
         } else PoisonBoltVolley_Timer -= diff;
 

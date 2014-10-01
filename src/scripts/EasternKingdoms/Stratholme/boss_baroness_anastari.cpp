@@ -71,7 +71,7 @@ struct boss_baroness_anastariAI : public ScriptedAI
         if (BansheeWail_Timer <= diff)
         {
             if (rand()%100 < 95)
-                DoCast(me->getVictim(), SPELL_BANSHEEWAIL);
+                DoCastVictim( SPELL_BANSHEEWAIL);
             //4 seconds until we should cast this again
             BansheeWail_Timer = 4000;
         } else BansheeWail_Timer -= diff;
@@ -80,7 +80,7 @@ struct boss_baroness_anastariAI : public ScriptedAI
         if (BansheeCurse_Timer <= diff)
         {
             if (rand()%100 < 75)
-                DoCast(me->getVictim(), SPELL_BANSHEECURSE);
+                DoCastVictim( SPELL_BANSHEECURSE);
             //18 seconds until we should cast this again
             BansheeCurse_Timer = 18000;
         } else BansheeCurse_Timer -= diff;
@@ -89,7 +89,7 @@ struct boss_baroness_anastariAI : public ScriptedAI
         if (Silence_Timer <= diff)
         {
             if (rand()%100 < 80)
-                DoCast(me->getVictim(), SPELL_SILENCE);
+                DoCastVictim( SPELL_SILENCE);
             //13 seconds until we should cast this again
             Silence_Timer = 13000;
         } else Silence_Timer -= diff;

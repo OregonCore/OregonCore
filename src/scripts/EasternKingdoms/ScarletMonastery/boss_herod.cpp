@@ -89,7 +89,7 @@ struct boss_herodAI : public ScriptedAI
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CLEAVE);
+            DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 12000;
         } else Cleave_Timer -= diff;
 
@@ -97,7 +97,7 @@ struct boss_herodAI : public ScriptedAI
         if (Whirlwind_Timer <= diff)
         {
             DoScriptText(SAY_WHIRLWIND, me);
-            DoCast(me->getVictim(), SPELL_WHIRLWIND);
+            DoCastVictim( SPELL_WHIRLWIND);
             Whirlwind_Timer = 30000;
         } else Whirlwind_Timer -= diff;
 

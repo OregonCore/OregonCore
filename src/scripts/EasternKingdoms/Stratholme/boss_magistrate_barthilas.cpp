@@ -92,21 +92,21 @@ struct boss_magistrate_barthilasAI : public ScriptedAI
         //DrainingBlow
         if (DrainingBlow_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_DRAININGBLOW);
+            DoCastVictim( SPELL_DRAININGBLOW);
             DrainingBlow_Timer = 15000;
         } else DrainingBlow_Timer -= diff;
 
         //CrowdPummel
         if (CrowdPummel_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CROWDPUMMEL);
+            DoCastVictim( SPELL_CROWDPUMMEL);
             CrowdPummel_Timer = 15000;
         } else CrowdPummel_Timer -= diff;
 
         //MightyBlow
         if (MightyBlow_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_MIGHTYBLOW);
+            DoCastVictim( SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 20000;
         } else MightyBlow_Timer -= diff;
 

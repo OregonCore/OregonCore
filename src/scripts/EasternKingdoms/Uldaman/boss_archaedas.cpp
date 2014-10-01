@@ -169,7 +169,7 @@ struct boss_archaedasAI : public ScriptedAI
         if (Tremor_Timer <= diff)
         {
             //Cast
-            DoCast(me->getVictim(), SPELL_GROUND_TREMOR);
+            DoCastVictim( SPELL_GROUND_TREMOR);
 
             //45 seconds until we should cast this agian
             Tremor_Timer  = 45000;

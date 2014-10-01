@@ -864,7 +864,7 @@ struct npc_guardianAI : public ScriptedAI
 
         if (me->isAttackReady())
         {
-            DoCast(me->getVictim(), SPELL_DEATHTOUCH, true);
+            DoCastVictim( SPELL_DEATHTOUCH, true);
             me->resetAttackTimer();
         }
     }
@@ -1406,7 +1406,7 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
                     else
                         spell = SPELL_CRIPPLING_POISON;
 
-                    DoCast(me->getVictim(), spell);
+                    DoCastVictim( spell);
                 }
 
                 SpellTimer = VIPER_TIMER;
@@ -1414,7 +1414,7 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
             else //Venomous Snake
             {
                 if (rand() % 10 < 8) //80% chance to cast
-                    DoCast(me->getVictim(), SPELL_DEADLY_POISON);
+                    DoCastVictim( SPELL_DEADLY_POISON);
                 SpellTimer = VENOMOUS_SNAKE_TIMER + (rand() %5)*100;
             }
         } else SpellTimer -= diff;

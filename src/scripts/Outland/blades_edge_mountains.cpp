@@ -206,7 +206,7 @@ struct mobs_nether_drakeAI : public ScriptedAI
 
         if (IntangiblePresence_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_INTANGIBLE_PRESENCE);
+            DoCastVictim(SPELL_INTANGIBLE_PRESENCE);
             IntangiblePresence_Timer = 15000+rand()%15000;
         } else IntangiblePresence_Timer -= diff;
 
@@ -220,7 +220,7 @@ struct mobs_nether_drakeAI : public ScriptedAI
 
         if (ArcaneBlast_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_ARCANE_BLAST);
+            DoCastVictim(SPELL_ARCANE_BLAST);
             ArcaneBlast_Timer = 2500+rand()%5000;
         } else ArcaneBlast_Timer -= diff;
 

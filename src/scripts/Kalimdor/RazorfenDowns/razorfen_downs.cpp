@@ -124,7 +124,7 @@ struct npc_tomb_creatureAI : public ScriptedAI
         {
             if (uiWebTimer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_WEB);
+                DoCastVictim( SPELL_WEB);
                 uiWebTimer = urand(7000,16000);
             } else uiWebTimer -= uiDiff;
         }

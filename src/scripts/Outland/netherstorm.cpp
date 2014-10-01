@@ -788,7 +788,7 @@ struct mob_phase_hunterAI : public ScriptedAI
         {
             if (me->getVictim()->GetCreateMana() > 0)
             {
-                DoCast(me->getVictim(), SPELL_MANA_BURN);
+                DoCastVictim( SPELL_MANA_BURN);
                 ManaBurnTimer = 8000 + (rand()%10 * 1000); // 8-18 sec cd
             }
         } else ManaBurnTimer -= diff;
@@ -1124,7 +1124,7 @@ struct npc_dr_boomAI : public ScriptedAI
  
         if (me->isAttackReady() && me->IsWithinDistInMap(me->getVictim(), 13.0f))
         {
-            DoCast(me->getVictim(), THROW_DYNAMITE, true);
+            DoCastVictim( THROW_DYNAMITE, true);
             me->resetAttackTimer();
         }
     }

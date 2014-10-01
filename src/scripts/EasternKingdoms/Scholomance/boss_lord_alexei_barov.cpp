@@ -77,7 +77,7 @@ struct boss_lordalexeibarovAI : public ScriptedAI
         //VeilofShadow_Timer
         if (VeilofShadow_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_VEILOFSHADOW);
+            DoCastVictim( SPELL_VEILOFSHADOW);
             VeilofShadow_Timer = 20000;
         } else VeilofShadow_Timer -= diff;
 

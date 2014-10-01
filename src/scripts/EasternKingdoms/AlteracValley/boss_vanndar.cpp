@@ -84,19 +84,19 @@ struct boss_vanndarAI : public ScriptedAI
 
         if (uiAvatarTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_AVATAR);
+            DoCastVictim( SPELL_AVATAR);
             uiAvatarTimer =  urand(15*IN_MILLISECONDS,20*IN_MILLISECONDS);
         } else uiAvatarTimer -= diff;
 
         if (uiThunderclapTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_THUNDERCLAP);
+            DoCastVictim( SPELL_THUNDERCLAP);
             uiThunderclapTimer = urand(5*IN_MILLISECONDS,15*IN_MILLISECONDS);
         } else uiThunderclapTimer -= diff;
 
         if (uiStormboltTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_STORMBOLT);
+            DoCastVictim( SPELL_STORMBOLT);
             uiStormboltTimer = urand(10*IN_MILLISECONDS,25*IN_MILLISECONDS);
         } else uiStormboltTimer -= diff;
 

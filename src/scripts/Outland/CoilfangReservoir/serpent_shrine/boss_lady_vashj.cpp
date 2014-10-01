@@ -306,12 +306,12 @@ struct boss_lady_vashjAI : public ScriptedAI
             case 0:
                 //Shoot
                 //Used in Phases 1 and 3 after Entangle or while having nobody in melee range. A shot that hits her target for 4097-5543 Physical damage.
-                DoCast(me->getVictim(), SPELL_SHOOT);
+                DoCastVictim( SPELL_SHOOT);
                 break;
             case 1:
                 //Multishot
                 //Used in Phases 1 and 3 after Entangle or while having nobody in melee range. A shot that hits 1 person and 4 people around him for 6475-7525 physical damage.
-                DoCast(me->getVictim(), SPELL_MULTI_SHOT);
+                DoCastVictim( SPELL_MULTI_SHOT);
                 break;
         }
         if (rand()%3)
@@ -356,7 +356,7 @@ struct boss_lady_vashjAI : public ScriptedAI
             {
                 //Shock Burst
                 //Randomly used in Phases 1 and 3 on Vashj's target, it's a Shock spell doing 8325-9675 nature damage and stunning the target for 5 seconds, during which she will not attack her target but switch to the next person on the aggro list.
-                DoCast(me->getVictim(), SPELL_SHOCK_BLAST);
+                DoCastVictim( SPELL_SHOCK_BLAST);
                 me->TauntApply(me->getVictim());
 
                 ShockBlast_Timer = 1000+rand()%14000;       //random cooldown
@@ -384,7 +384,7 @@ struct boss_lady_vashjAI : public ScriptedAI
                 {
                     //Entangle
                     //Used in Phases 1 and 3, it casts Entangling Roots on everybody in a 15 yard radius of Vashj, immobilzing them for 10 seconds and dealing 500 damage every 2 seconds. It's not a magic effect so it cannot be dispelled, but is removed by various buffs such as Cloak of Shadows or Blessing of Freedom.
-                    DoCast(me->getVictim(), SPELL_ENTANGLE);
+                    DoCastVictim( SPELL_ENTANGLE);
                     Entangle = true;
                     Entangle_Timer = 10000;
                 }

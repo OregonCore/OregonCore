@@ -81,14 +81,14 @@ struct boss_noxxionAI : public ScriptedAI
         //ToxicVolley_Timer
         if (ToxicVolley_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_TOXICVOLLEY);
+            DoCastVictim( SPELL_TOXICVOLLEY);
             ToxicVolley_Timer = 9000;
         } else ToxicVolley_Timer -= diff;
 
         //Uppercut_Timer
         if (Uppercut_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_UPPERCUT);
+            DoCastVictim( SPELL_UPPERCUT);
             Uppercut_Timer = 12000;
         } else Uppercut_Timer -= diff;
 

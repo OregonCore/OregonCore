@@ -485,14 +485,14 @@ struct boss_essence_of_desireAI : public ScriptedAI
 
         if (SoulShockTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SOUL_SHOCK);
+            DoCastVictim( SPELL_SOUL_SHOCK);
             SoulShockTimer = 5000;
         } else SoulShockTimer -= diff;
 
         if (DeadenTimer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
-            DoCast(me->getVictim(), SPELL_DEADEN);
+            DoCastVictim( SPELL_DEADEN);
             DeadenTimer = 25000 + rand()%10000;
             if (!(rand()%2))
             {
@@ -574,7 +574,7 @@ struct boss_essence_of_angerAI : public ScriptedAI
 
         if (SoulScreamTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SOUL_SCREAM);
+            DoCastVictim( SPELL_SOUL_SCREAM);
             SoulScreamTimer = 9000 + rand()%2000;
             if (!(rand()%3))
             {

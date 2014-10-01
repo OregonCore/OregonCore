@@ -59,21 +59,21 @@ struct boss_ebonrocAI : public ScriptedAI
         //Shadowflame Timer
         if (ShadowFlame_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOWFLAME);
+            DoCastVictim( SPELL_SHADOWFLAME);
             ShadowFlame_Timer = urand(12000,15000);
         } else ShadowFlame_Timer -= diff;
 
         //Wing Buffet Timer
         if (WingBuffet_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WINGBUFFET);
+            DoCastVictim( SPELL_WINGBUFFET);
             WingBuffet_Timer = 25000;
         } else WingBuffet_Timer -= diff;
 
         //Shadow of Ebonroc Timer
         if (ShadowOfEbonroc_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOWOFEBONROC);
+            DoCastVictim( SPELL_SHADOWOFEBONROC);
             ShadowOfEbonroc_Timer = urand(25000,350000);
         } else ShadowOfEbonroc_Timer -= diff;
 

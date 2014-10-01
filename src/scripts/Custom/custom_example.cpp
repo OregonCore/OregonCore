@@ -156,9 +156,9 @@ struct custom_exampleAI : public ScriptedAI
         {
             //Cast spell one on our current target.
             if (rand()%50 > 10)
-                DoCast(me->getVictim(),SPELL_ONE_ALT);
+                DoCastVictim(SPELL_ONE_ALT);
             else if (me->GetDistance(me->getVictim()) < 25)
-                DoCast(me->getVictim(),SPELL_ONE);
+                DoCastVictim(SPELL_ONE);
 
             Spell_1_Timer = 5000;
         } else Spell_1_Timer -= diff;
@@ -167,7 +167,7 @@ struct custom_exampleAI : public ScriptedAI
         if (Spell_2_Timer <= diff)
         {
             //Cast spell one on our current target.
-            DoCast(me->getVictim(),SPELL_TWO);
+            DoCastVictim(SPELL_TWO);
 
             Spell_2_Timer = 37000;
         } else Spell_2_Timer -= diff;
@@ -178,7 +178,7 @@ struct custom_exampleAI : public ScriptedAI
             if (Spell_3_Timer <= diff)
             {
                 //Cast spell one on our current target.
-                DoCast(me->getVictim(),SPELL_THREE);
+                DoCastVictim(SPELL_THREE);
 
                 Spell_3_Timer = 19000;
             } else Spell_3_Timer -= diff;
@@ -192,7 +192,7 @@ struct custom_exampleAI : public ScriptedAI
                 //Say our line then cast uber death spell
                 DoPlaySoundToSet(me,8588);
                 me->MonsterYell(SAY_BESERK,LANG_UNIVERSAL,me->getVictim()->GetGUID());
-                DoCast(me->getVictim(),SPELL_BESERK);
+                DoCastVictim(SPELL_BESERK);
 
                 //Cast our beserk spell agian in 12 seconds if we didn't kill everyone
                 Beserk_Timer = 12000;

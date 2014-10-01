@@ -89,7 +89,7 @@ struct boss_draganthaurissanAI : public ScriptedAI
         //AvatarOfFlame_Timer
         if (AvatarOfFlame_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_AVATAROFFLAME);
+            DoCastVictim( SPELL_AVATAROFFLAME);
             AvatarOfFlame_Timer = 18000;
         } else AvatarOfFlame_Timer -= diff;
 

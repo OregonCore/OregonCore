@@ -651,7 +651,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
-                DoCast(me->getVictim(), SPELL_BLAZE);
+                DoCastVictim( SPELL_BLAZE);
                 BlazeTimer = 3800;
             }
         } else BlazeTimer -= diff;
@@ -734,7 +734,7 @@ struct mob_shadow_imageAI : public ScriptedAI
             {
                 //If we are within range melee the target
                 if (me->IsWithinMeleeRange(me->getVictim()))
-                    DoCast(me->getVictim(), SPELL_DARK_STRIKE);
+                    DoCastVictim( SPELL_DARK_STRIKE);
             }
             DarkstrikeTimer = 3000;
         } else DarkstrikeTimer -= diff;

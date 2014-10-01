@@ -504,7 +504,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         if (me->HasAura(chargeSpell, 0))
         {
             me->RemoveSingleAuraFromStack(chargeSpell, 0);
-            DoCast(me->getVictim(), unleashSpell);
+            DoCastVictim( unleashSpell);
             HasCast = true;
             SoulChargeCount--;
         }
@@ -603,7 +603,7 @@ struct boss_archimondeAI : public hyjal_trashAI
                 me->GetMotionMaster()->MoveIdle();
 
                 //all members of raid must get this buff
-                DoCast(me->getVictim(), SPELL_PROTECTION_OF_ELUNE);
+                DoCastVictim( SPELL_PROTECTION_OF_ELUNE);
                 HasProtected = true;
                 Enraged = true;
             }
@@ -628,7 +628,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         {
             if (HandOfDeathTimer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_HAND_OF_DEATH);
+                DoCastVictim( SPELL_HAND_OF_DEATH);
                 HandOfDeathTimer = 2000;
             } else HandOfDeathTimer -= diff;
             return;                                         // Don't do anything after this point.
@@ -660,7 +660,7 @@ struct boss_archimondeAI : public hyjal_trashAI
 
         if (FearTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FEAR);
+            DoCastVictim( SPELL_FEAR);
             FearTimer = 42000;
         } else FearTimer -= diff;
 

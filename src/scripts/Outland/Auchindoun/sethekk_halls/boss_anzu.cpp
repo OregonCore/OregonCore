@@ -132,7 +132,7 @@ struct boss_anzuAI : public ScriptedAI
         {
             if (Paralyzing_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_PARALYZING);
+                DoCastVictim( SPELL_PARALYZING);
                 Paralyzing_Timer = 1000;
                 Paralyzing = false;
             } else Paralyzing_Timer -= diff;
@@ -160,7 +160,7 @@ struct boss_anzuAI : public ScriptedAI
 
             if (Rip_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_RIP);
+                DoCastVictim( SPELL_RIP);
                 Rip_Timer = 25000+rand()%2000;
             } else Rip_Timer -= diff;
 

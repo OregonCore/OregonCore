@@ -543,7 +543,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
            {
                 if (me->HasAura(SPELL_SEAL_OF_COMMAND,0))
                 {
-                    if (TryDoCast(me->getVictim(),SPELL_JUDGEMENT_OF_COMMAND))
+                    if (TryDoCast(me->getVictim(), SPELL_JUDGEMENT_OF_COMMAND))
                     {
                         me->RemoveAurasDueToSpell(SPELL_SEAL_OF_COMMAND);
                         JudgeTimer = 45000;
@@ -551,7 +551,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
                 }
                 if (me->HasAura(SPELL_SEAL_OF_BLOOD,0))
                 {
-                    if (TryDoCast(me->getVictim(),SPELL_JUDGEMENT_OF_BLOOD))
+                    if (TryDoCast(me->getVictim(), SPELL_JUDGEMENT_OF_BLOOD))
                     {
                         me->RemoveAurasDueToSpell(SPELL_SEAL_OF_BLOOD);
                         JudgeTimer = 45000;
@@ -656,7 +656,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
             {
                 if (me->GetDistance2d(me->getVictim()) <= 5)
                 {
-                    DoCast(me->getVictim(), SPELL_ARCANE_EXPLOSION);
+                    DoCastVictim( SPELL_ARCANE_EXPLOSION);
                     ArcaneExplosionTimer = 14000;
                 }
             }
@@ -666,7 +666,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
-                DoCast(me->getVictim(), SPELL_ARCANE_BOLT);
+                DoCastVictim( SPELL_ARCANE_BOLT);
                 ArcaneBoltTimer = 500;
             }
         } else ArcaneBoltTimer -= diff;
@@ -735,7 +735,7 @@ struct boss_lady_malandeAI : public boss_illidari_councilAI
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
-                DoCast(me->getVictim(), SPELL_EMPOWERED_SMITE);
+                DoCastVictim( SPELL_EMPOWERED_SMITE);
                 EmpoweredSmiteTimer = 30000;
             }
         } else EmpoweredSmiteTimer -= diff;

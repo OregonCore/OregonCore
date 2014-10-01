@@ -96,7 +96,7 @@ struct boss_maiden_of_virtueAI : public ScriptedAI
 
         if (Repentance_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_REPENTANCE);
+            DoCastVictim( SPELL_REPENTANCE);
             DoScriptText(RAND(SAY_REPENTANCE1,SAY_REPENTANCE2), me);
 
             Repentance_Timer = urand(30000,45000);        //A little randomness on that spell

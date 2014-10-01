@@ -285,7 +285,7 @@ struct npc_floonAI : public ScriptedAI
 
         if (Silence_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SILENCE);
+            DoCastVictim(SPELL_SILENCE);
             Silence_Timer = 30000;
         } else Silence_Timer -= diff;
 
@@ -297,7 +297,7 @@ struct npc_floonAI : public ScriptedAI
 
         if (Frostbolt_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FROSTBOLT);
+            DoCastVictim(SPELL_FROSTBOLT);
             Frostbolt_Timer = 5000;
         } else Frostbolt_Timer -= diff;
 
@@ -638,7 +638,7 @@ struct npc_akunoAI : public npc_escortAI
 
         if (m_uiChainLightningTimer < uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_CHAIN_LIGHTNING);
+            DoCastVictim( SPELL_CHAIN_LIGHTNING);
             m_uiChainLightningTimer = urand(7000, 14000);
         }
         else

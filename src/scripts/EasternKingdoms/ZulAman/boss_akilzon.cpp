@@ -316,7 +316,7 @@ struct boss_akilzonAI : public ScriptedAI
 
         if (CallLighting_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CALL_LIGHTNING);
+            DoCastVictim( SPELL_CALL_LIGHTNING);
             CallLighting_Timer = (diff - CallLighting_Timer) + (12 + rand()%5)*1000; //totaly random timer. can't find any info on this
         }
         else

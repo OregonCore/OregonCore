@@ -112,7 +112,7 @@ struct boss_majordomoAI : public ScriptedAI
         //Blastwave_Timer
         if (Blastwave_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_BLASTWAVE);
+            DoCastVictim( SPELL_BLASTWAVE);
             Blastwave_Timer = 10000;
         } else Blastwave_Timer -= diff;
 

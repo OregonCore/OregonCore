@@ -116,7 +116,7 @@ struct mob_aquementasAI : public ScriptedAI
 
         if (FrostShock_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FROST_SHOCK);
+            DoCastVictim( SPELL_FROST_SHOCK);
             FrostShock_Timer = 15000;
         } else FrostShock_Timer -= diff;
 

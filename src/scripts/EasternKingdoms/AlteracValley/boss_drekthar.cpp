@@ -86,25 +86,25 @@ struct boss_drektharAI : public ScriptedAI
 
         if (uiWhirlwindTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WHIRLWIND);
+            DoCastVictim( SPELL_WHIRLWIND);
             uiWhirlwindTimer =  urand(8*IN_MILLISECONDS,18*IN_MILLISECONDS);
         } else uiWhirlwindTimer -= diff;
 
         if (uiWhirlwind2Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WHIRLWIND2);
+            DoCastVictim( SPELL_WHIRLWIND2);
             uiWhirlwind2Timer = urand(7*IN_MILLISECONDS,25*IN_MILLISECONDS);
         } else uiWhirlwind2Timer -= diff;
 
         if (uiKnockdownTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_KNOCKDOWN);
+            DoCastVictim( SPELL_KNOCKDOWN);
             uiKnockdownTimer = urand(10*IN_MILLISECONDS,15*IN_MILLISECONDS);
         } else uiKnockdownTimer -= diff;
 
         if (uiFrenzyTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_FRENZY);
+            DoCastVictim( SPELL_FRENZY);
             uiFrenzyTimer = urand(20*IN_MILLISECONDS,30*IN_MILLISECONDS);
         } else uiFrenzyTimer -= diff;
 

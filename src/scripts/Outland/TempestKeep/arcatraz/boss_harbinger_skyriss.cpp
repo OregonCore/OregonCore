@@ -207,7 +207,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(pTarget,HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
             else
-                DoCast(me->getVictim(),HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
+                DoCastVictim(HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
 
             MindRend_Timer = 8000;
         } else MindRend_Timer -=diff;
@@ -226,7 +226,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(pTarget,SPELL_FEAR);
             else
-                DoCast(me->getVictim(),SPELL_FEAR);
+                DoCastVictim(SPELL_FEAR);
 
             Fear_Timer = 25000;
         } else Fear_Timer -=diff;
@@ -245,7 +245,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(pTarget,HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
             else
-                DoCast(me->getVictim(),HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
+                DoCastVictim(HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
 
             Domination_Timer = 16000+rand()%16000;
         } else Domination_Timer -=diff;

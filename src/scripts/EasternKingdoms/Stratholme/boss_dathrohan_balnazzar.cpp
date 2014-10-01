@@ -119,28 +119,28 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             //MindBlast
             if (m_uiMindBlast_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_MINDBLAST);
+                DoCastVictim( SPELL_MINDBLAST);
                 m_uiMindBlast_Timer = 15000 + rand()%5000;
             } else m_uiMindBlast_Timer -= uiDiff;
 
             //CrusadersHammer
             if (m_uiCrusadersHammer_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_CRUSADERSHAMMER);
+                DoCastVictim( SPELL_CRUSADERSHAMMER);
                 m_uiCrusadersHammer_Timer = 12000;
             } else m_uiCrusadersHammer_Timer -= uiDiff;
 
             //CrusaderStrike
             if (m_uiCrusaderStrike_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_CRUSADERSTRIKE);
+                DoCastVictim( SPELL_CRUSADERSTRIKE);
                 m_uiCrusaderStrike_Timer = 15000;
             } else m_uiCrusaderStrike_Timer -= uiDiff;
 
             //HolyStrike
             if (m_uiHolyStrike_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_HOLYSTRIKE);
+                DoCastVictim( SPELL_HOLYSTRIKE);
                 m_uiHolyStrike_Timer = 15000;
             } else m_uiHolyStrike_Timer -= uiDiff;
 
@@ -161,14 +161,14 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             //MindBlast
             if (m_uiMindBlast_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_MINDBLAST);
+                DoCastVictim( SPELL_MINDBLAST);
                 m_uiMindBlast_Timer = 15000 + rand()%5000;
             } else m_uiMindBlast_Timer -= uiDiff;
 
             //ShadowShock
             if (m_uiShadowShock_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_SHADOWSHOCK);
+                DoCastVictim( SPELL_SHADOWSHOCK);
                 m_uiShadowShock_Timer = 11000;
             } else m_uiShadowShock_Timer -= uiDiff;
 
@@ -193,7 +193,7 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             //MindControl
             if (m_uiMindControl_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(), SPELL_MINDCONTROL);
+                DoCastVictim( SPELL_MINDCONTROL);
                 m_uiMindControl_Timer = 15000;
             } else m_uiMindControl_Timer -= uiDiff;
         }

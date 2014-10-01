@@ -71,7 +71,7 @@ struct boss_blood_guard_porungAI : public ScriptedAI
 
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
+            DoCastVictim(SPELL_CLEAVE);
             Cleave_Timer = 10000+rand()%5000;
         } else Cleave_Timer -= diff;
 

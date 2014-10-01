@@ -241,7 +241,7 @@ struct boss_thekalAI : public ScriptedAI
             // Mortal Cleave Timer
             if (MortalCleave_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_MORTALCLEAVE);
+                DoCastVictim( SPELL_MORTALCLEAVE);
                 MortalCleave_Timer = 15000 + rand()%5000;
             } 
             else 
@@ -250,7 +250,7 @@ struct boss_thekalAI : public ScriptedAI
             // Silence Timer
             if (Silence_Timer <= diff)  // Cast on a random target in range?
             {
-                DoCast(me->getVictim(), SPELL_SILENCE);
+                DoCastVictim( SPELL_SILENCE);
                 Silence_Timer = 20000 + rand()%5000;
             }
             else 
@@ -293,7 +293,7 @@ struct boss_thekalAI : public ScriptedAI
             // Force Punch Timer
             if (ForcePunch_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_SILENCE);
+                DoCastVictim( SPELL_SILENCE);
                 ForcePunch_Timer = 16000 + rand()%5000;
             } 
             else
@@ -302,7 +302,7 @@ struct boss_thekalAI : public ScriptedAI
             // Summon Zulian Guardians
             if (SummonTigers_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_SUMMONTIGERS);
+                DoCastVictim( SPELL_SUMMONTIGERS);
                 SummonTigers_Timer = 10000 + rand()%4000;
             } 
             else
@@ -472,7 +472,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
         // Disarm Timer
         if (Disarm_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_DISARM);
+            DoCastVictim( SPELL_DISARM);
             Disarm_Timer = 15000 + rand()%10000;
         }
         else
@@ -580,7 +580,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         // Sweeping Strikes Timer
         if (SweepingStrikes_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SWEEPINGSTRIKES);
+            DoCastVictim( SPELL_SWEEPINGSTRIKES);
             SweepingStrikes_Timer = 22000 + rand()%4000;
         }
         else
@@ -589,7 +589,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         // Sinister Strike Timer
         if (SinisterStrike_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SINISTERSTRIKE);
+            DoCastVictim( SPELL_SINISTERSTRIKE);
             SinisterStrike_Timer = 8000 + rand()%8000;
         }
         else
@@ -598,7 +598,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         // Gouge Timer
         if (Gouge_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_GOUGE);
+            DoCastVictim( SPELL_GOUGE);
 
             if (DoGetThreat(me->getVictim()))
                 DoModifyThreatPercent(me->getVictim(), -100);
@@ -611,7 +611,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         // Kick Timer
         if (Kick_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_KICK);
+            DoCastVictim( SPELL_KICK);
             Kick_Timer = 15000 + rand()%10000;
         }
         else
@@ -620,7 +620,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         // Blind Timer
         if (Blind_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_BLIND);
+            DoCastVictim( SPELL_BLIND);
             Blind_Timer = 10000 + rand()%10000;
         }
         else

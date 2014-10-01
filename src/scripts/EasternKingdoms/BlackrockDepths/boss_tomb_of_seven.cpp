@@ -162,7 +162,7 @@ struct boss_doomrelAI : public ScriptedAI
         //ShadowVolley_Timer
         if (ShadowVolley_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOWBOLTVOLLEY);
+            DoCastVictim( SPELL_SHADOWBOLTVOLLEY);
             ShadowVolley_Timer = 12000;
         } else ShadowVolley_Timer -= diff;
 
@@ -178,7 +178,7 @@ struct boss_doomrelAI : public ScriptedAI
         //CurseOfWeakness_Timer
         if (CurseOfWeakness_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CURSEOFWEAKNESS);
+            DoCastVictim( SPELL_CURSEOFWEAKNESS);
             CurseOfWeakness_Timer = 45000;
         } else CurseOfWeakness_Timer -= diff;
 
@@ -192,7 +192,7 @@ struct boss_doomrelAI : public ScriptedAI
         //Summon Voidwalkers
         if (!Voidwalkers && me->GetHealth()*100 / me->GetMaxHealth() < 51)
         {
-            DoCast(me->getVictim(), SPELL_SUMMON_VOIDWALKERS, true);
+            DoCastVictim( SPELL_SUMMON_VOIDWALKERS, true);
             Voidwalkers = true;
         }
 

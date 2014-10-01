@@ -681,7 +681,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
                 DoMeleeAttackIfReady();
                 if (cleave <= diff)
                 {
-                    DoCast(me->getVictim(), SPELL_CLEAVE);
+                    DoCastVictim( SPELL_CLEAVE);
                     cleave = urand(2000,6000);       //1 cleave per 2.0-6.0sec
                 } else cleave -= diff;
             }

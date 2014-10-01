@@ -125,13 +125,13 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
 
         if (ManaTap_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MANA_TAP);
+            DoCastVictim(SPELL_MANA_TAP);
             ManaTap_Timer = 14000 + rand()%8000;
         } else ManaTap_Timer -= diff;
 
         if (ArcaneTorrent_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_ARCANE_TORRENT);
+            DoCastVictim(SPELL_ARCANE_TORRENT);
             ArcaneTorrent_Timer = 12000 + rand()%6000;
         } else ArcaneTorrent_Timer -= diff;
 
@@ -155,7 +155,7 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
         {
             if (ArcaneExplosion_Timer <= diff)
             {
-                DoCast(me->getVictim(),H_SPELL_ARCANE_EXPLOSION);
+                DoCastVictim(H_SPELL_ARCANE_EXPLOSION);
                 ArcaneExplosion_Timer = 10000 + rand()%4000;
             } else ArcaneExplosion_Timer -= diff;
         }
@@ -210,7 +210,7 @@ struct mob_nether_wraithAI : public ScriptedAI
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(pTarget,SPELL_ARCANE_MISSILES);
             else
-                DoCast(me->getVictim(),SPELL_ARCANE_MISSILES);
+                DoCastVictim(SPELL_ARCANE_MISSILES);
 
             ArcaneMissiles_Timer = 5000 + rand()%5000;
         } else ArcaneMissiles_Timer -=diff;

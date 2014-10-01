@@ -72,25 +72,25 @@ struct npc_cairne_bloodhoofAI : public ScriptedAI
 
         if (Uppercut_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_UPPERCUT);
+            DoCastVictim( SPELL_UPPERCUT);
             Uppercut_Timer = 20000;
         } else Uppercut_Timer -= diff;
 
         if (Thunderclap_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_THUNDERCLAP);
+            DoCastVictim( SPELL_THUNDERCLAP);
             Thunderclap_Timer = 15000;
         } else Thunderclap_Timer -= diff;
 
         if (MortalStrike_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
+            DoCastVictim( SPELL_MORTAL_STRIKE);
             MortalStrike_Timer = 15000;
         } else MortalStrike_Timer -= diff;
 
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CLEAVE);
+            DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 7000;
         } else Cleave_Timer -= diff;
 

@@ -99,21 +99,21 @@ struct boss_gluthAI : public ScriptedAI
         //MortalWound_Timer
         if (MortalWound_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MORTALWOUND);
+            DoCastVictim(SPELL_MORTALWOUND);
             MortalWound_Timer = 10000;
         } else MortalWound_Timer -= diff;
 
         //Decimate_Timer
         if (Decimate_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_DECIMATE);
+            DoCastVictim(SPELL_DECIMATE);
             Decimate_Timer = 100000;
         } else Decimate_Timer -= diff;
 
         //TerrifyingRoar_Timer
         if (TerrifyingRoar_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_TERRIFYINGROAR);
+            DoCastVictim(SPELL_TERRIFYINGROAR);
             TerrifyingRoar_Timer = 20000;
         } else TerrifyingRoar_Timer -= diff;
 

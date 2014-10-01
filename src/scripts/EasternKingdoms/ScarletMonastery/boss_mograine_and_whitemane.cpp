@@ -190,14 +190,14 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
         //m_uiCrusaderStrike_Timer
         if (m_uiCrusaderStrike_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_CRUSADERSTRIKE);
+            DoCastVictim( SPELL_CRUSADERSTRIKE);
             m_uiCrusaderStrike_Timer = 10000;
         } else m_uiCrusaderStrike_Timer -= uiDiff;
 
         //m_uiHammerOfJustice_Timer
         if (m_uiHammerOfJustice_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_HAMMEROFJUSTICE);
+            DoCastVictim( SPELL_HAMMEROFJUSTICE);
             m_uiHammerOfJustice_Timer = 60000;
         } else m_uiHammerOfJustice_Timer -= uiDiff;
 
@@ -281,7 +281,7 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
             if (me->IsNonMeleeSpellCasted(false))
                 me->InterruptNonMeleeSpells(false);
 
-            DoCast(me->getVictim(), SPELL_DEEPSLEEP);
+            DoCastVictim( SPELL_DEEPSLEEP);
             m_bCanResurrectCheck = true;
             m_bCanResurrect = true;
             return;
@@ -325,7 +325,7 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
         //m_uiHolySmite_Timer
         if (m_uiHolySmite_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_HOLYSMITE);
+            DoCastVictim( SPELL_HOLYSMITE);
             m_uiHolySmite_Timer = 6000;
         } else m_uiHolySmite_Timer -= uiDiff;
 

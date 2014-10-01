@@ -125,7 +125,7 @@ struct mob_inner_demonAI : public ScriptedAI
 
         if (Link_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SOUL_LINK, true);
+            DoCastVictim( SPELL_SOUL_LINK, true);
             Link_Timer = 1000;
         } else Link_Timer -= diff;
 
@@ -134,7 +134,7 @@ struct mob_inner_demonAI : public ScriptedAI
 
         if (ShadowBolt_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_SHADOWBOLT, false);
+            DoCastVictim( SPELL_SHADOWBOLT, false);
             ShadowBolt_Timer = 10000;
         } else ShadowBolt_Timer -= diff;
 
@@ -482,7 +482,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
                 // will cast only when in range of spell
                 if (me->GetDistance(me->getVictim()) < 30)
                 {
-                    //DoCast(me->getVictim(), SPELL_CHAOS_BLAST, true);
+                    //DoCastVictim( SPELL_CHAOS_BLAST, true);
                     int damage = 100;
                     me->CastCustomSpell(me->getVictim(), SPELL_CHAOS_BLAST, &damage, NULL, NULL, false, NULL, NULL, me->GetGUID());
                 }
@@ -631,7 +631,7 @@ struct boss_leotheras_the_blind_demonformAI : public ScriptedAI
             // will cast only when in range od spell
             if (me->GetDistance(me->getVictim()) < 30)
             {
-                //DoCast(me->getVictim(), SPELL_CHAOS_BLAST, true);
+                //DoCastVictim( SPELL_CHAOS_BLAST, true);
                 int damage = 100;
                 me->CastCustomSpell(me->getVictim(), SPELL_CHAOS_BLAST, &damage, NULL, NULL, false, NULL, NULL, me->GetGUID());
                 ChaosBlast_Timer = 3000;

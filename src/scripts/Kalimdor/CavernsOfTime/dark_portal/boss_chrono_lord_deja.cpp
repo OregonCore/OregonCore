@@ -105,7 +105,7 @@ struct boss_chrono_lord_dejaAI : public ScriptedAI
         //Arcane Blast
         if (ArcaneBlast_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ARCANE_BLAST);
+            DoCastVictim( SPELL_ARCANE_BLAST);
             ArcaneBlast_Timer = 20000+rand()%5000;
         } else ArcaneBlast_Timer -= diff;
 

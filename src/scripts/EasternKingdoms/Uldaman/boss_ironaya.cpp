@@ -59,7 +59,7 @@ struct boss_ironayaAI : public ScriptedAI
         //If we are <50% hp do knockaway ONCE
         if (!hasCastedKnockaway && me->GetHealth()*2 < me->GetMaxHealth())
         {
-            DoCast(me->getVictim(), SPELL_KNOCKAWAY, true);
+            DoCastVictim( SPELL_KNOCKAWAY, true);
 
             // current aggro target is knocked away pick new target
             Unit* Target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);

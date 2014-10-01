@@ -69,7 +69,7 @@ struct boss_theolenkrastinovAI : public ScriptedAI
         //Rend_Timer
         if (m_uiRend_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_REND);
+            DoCastVictim( SPELL_REND);
             m_uiRend_Timer = 10000;
         }
         else
@@ -78,7 +78,7 @@ struct boss_theolenkrastinovAI : public ScriptedAI
         //Backhand_Timer
         if (m_uiBackhand_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_BACKHAND);
+            DoCastVictim( SPELL_BACKHAND);
             m_uiBackhand_Timer = 10000;
         }
         else

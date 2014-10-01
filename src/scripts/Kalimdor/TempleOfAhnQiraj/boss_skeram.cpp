@@ -135,7 +135,7 @@ struct boss_skeramAI : public ScriptedAI
         //ArcaneExplosion_Timer
         if (ArcaneExplosion_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ARCANE_EXPLOSION);
+            DoCastVictim( SPELL_ARCANE_EXPLOSION);
             ArcaneExplosion_Timer = 8000 + rand()%10000;
         } else ArcaneExplosion_Timer -= diff;
 
@@ -153,7 +153,7 @@ struct boss_skeramAI : public ScriptedAI
             //EarthShock_Timer
             if (EarthShock_Timer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_EARTH_SHOCK);
+                DoCastVictim(SPELL_EARTH_SHOCK);
                 EarthShock_Timer = 1000;
             } else EarthShock_Timer -= diff;
         }

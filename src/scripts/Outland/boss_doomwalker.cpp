@@ -79,7 +79,7 @@ struct boss_doomwalkerAI : public ScriptedAI
             case 2: DoScriptText(SAY_SLAY_3, me); break;
         }
 
-        DoCast(me->getVictim(), SPELL_MARK_DEATH);
+        DoCastVictim( SPELL_MARK_DEATH);
     }
 
     void JustDied(Unit* /*Killer*/)
@@ -117,7 +117,7 @@ struct boss_doomwalkerAI : public ScriptedAI
                 case 1: DoScriptText(SAY_OVERRUN_2, me); break;
             }
 
-            DoCast(me->getVictim(),SPELL_OVERRUN);
+            DoCastVictim(SPELL_OVERRUN);
             Overrun_Timer = 25000 + rand()%15000;
         } else Overrun_Timer -= diff;
 
@@ -159,7 +159,7 @@ struct boss_doomwalkerAI : public ScriptedAI
         //Spell Sunder Armor
         if (Armor_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SUNDER_ARMOR);
+            DoCastVictim(SPELL_SUNDER_ARMOR);
             Armor_Timer = 10000 + rand()%15000;
         } else Armor_Timer -= diff;
 

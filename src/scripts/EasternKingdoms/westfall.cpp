@@ -157,7 +157,7 @@ struct npc_daphne_stilwellAI : public npc_escortAI
             uiShootTimer = 1500;
 
             if (!me->IsWithinDist(me->getVictim(), ATTACK_DISTANCE))
-                DoCast(me->getVictim(), SPELL_SHOOT);
+                DoCastVictim( SPELL_SHOOT);
         } else uiShootTimer -= diff;
     }
 };

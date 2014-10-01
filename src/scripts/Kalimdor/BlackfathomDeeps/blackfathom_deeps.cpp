@@ -119,7 +119,7 @@ struct npc_blackfathom_deeps_eventAI : public ScriptedAI
             {
                 if (uiRavageTimer <= uiDiff)
                 {
-                    DoCast(me->getVictim(), SPELL_RAVAGE);
+                    DoCastVictim( SPELL_RAVAGE);
                     uiRavageTimer = urand(9000,14000);
                 } else uiRavageTimer -= uiDiff;
                 break;

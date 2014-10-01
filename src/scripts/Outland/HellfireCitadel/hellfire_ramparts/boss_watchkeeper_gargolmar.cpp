@@ -129,7 +129,7 @@ struct boss_watchkeeper_gargolmarAI : public ScriptedAI
 
         if (MortalWound_Timer <= diff)
         {
-            DoCast(me->getVictim(),HeroicMode ? H_SPELL_MORTAL_WOUND : SPELL_MORTAL_WOUND);
+            DoCastVictim(HeroicMode ? H_SPELL_MORTAL_WOUND : SPELL_MORTAL_WOUND);
             MortalWound_Timer = 5000+rand()%8000;
         } else MortalWound_Timer -= diff;
 

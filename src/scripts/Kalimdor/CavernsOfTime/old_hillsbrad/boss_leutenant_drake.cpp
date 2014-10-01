@@ -151,7 +151,7 @@ struct boss_lieutenant_drakeAI : public ScriptedAI
         //Whirlwind
         if (Whirlwind_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_WHIRLWIND);
+            DoCastVictim( SPELL_WHIRLWIND);
             Whirlwind_Timer = 20000+rand()%5000;
         } else Whirlwind_Timer -= diff;
 
@@ -159,7 +159,7 @@ struct boss_lieutenant_drakeAI : public ScriptedAI
         if (Fear_Timer <= diff)
         {
             DoScriptText(SAY_SHOUT, me);
-            DoCast(me->getVictim(), SPELL_FRIGHTENING_SHOUT);
+            DoCastVictim( SPELL_FRIGHTENING_SHOUT);
             Fear_Timer = 30000+rand()%10000;
         } else Fear_Timer -= diff;
 
@@ -167,7 +167,7 @@ struct boss_lieutenant_drakeAI : public ScriptedAI
         if (MortalStrike_Timer <= diff)
         {
             DoScriptText(SAY_MORTAL, me);
-            DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
+            DoCastVictim( SPELL_MORTAL_STRIKE);
             MortalStrike_Timer = 45000+rand()%5000;
         } else MortalStrike_Timer -= diff;
 

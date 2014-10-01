@@ -1058,14 +1058,14 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
         //GroundRuptureTimer
         if (GroundRuptureTimer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_GROUND_RUPTURE);
+            DoCastVictim(SPELL_GROUND_RUPTURE);
             GroundRuptureTimer = 30000;
         } else GroundRuptureTimer -= diff;
 
         //HamstringTimer
         if (HamstringTimer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_HAMSTRING);
+            DoCastVictim(SPELL_HAMSTRING);
             HamstringTimer = 5000;
         } else HamstringTimer -= diff;
 
@@ -1157,21 +1157,21 @@ struct giant_claw_tentacleAI : public Scripted_NoMovementAI
         //GroundRuptureTimer
         if (GroundRuptureTimer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_GROUND_RUPTURE);
+            DoCastVictim(SPELL_GROUND_RUPTURE);
             GroundRuptureTimer = 30000;
         } else GroundRuptureTimer -= diff;
 
         //ThrashTimer
         if (ThrashTimer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_THRASH);
+            DoCastVictim(SPELL_THRASH);
             ThrashTimer = 10000;
         } else ThrashTimer -= diff;
 
         //HamstringTimer
         if (HamstringTimer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_HAMSTRING);
+            DoCastVictim(SPELL_HAMSTRING);
             HamstringTimer = 10000;
         } else HamstringTimer -= diff;
 

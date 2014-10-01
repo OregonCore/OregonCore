@@ -178,14 +178,14 @@ struct boss_warp_splinterAI : public ScriptedAI
         //Check for War Stomp
         if (War_Stomp_Timer <= diff)
         {
-            DoCast(me->getVictim(),WAR_STOMP);
+            DoCastVictim(WAR_STOMP);
             War_Stomp_Timer = 25000 + rand()%15000;
         } else War_Stomp_Timer -= diff;
 
         //Check for Arcane Volley
         if (Arcane_Volley_Timer <= diff)
         {
-            DoCast(me->getVictim(),ARCANE_VOLLEY);
+            DoCastVictim(ARCANE_VOLLEY);
             Arcane_Volley_Timer = 20000 + rand()%15000;
         } else Arcane_Volley_Timer -= diff;
 

@@ -247,7 +247,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
                         case 5: mark_spell = SPELL_MARK_OF_CORRUPTION6; break;
                     }
 
-                    DoCast(me->getVictim(), mark_spell);
+                    DoCastVictim( mark_spell);
 
                     if (MarkOfCorruption_Count < 5)
                         ++MarkOfCorruption_Count;
@@ -314,7 +314,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
                         case 5:  mark_spell = SPELL_MARK_OF_HYDROSS6; break;
                     }
 
-                    DoCast(me->getVictim(), mark_spell);
+                    DoCastVictim( mark_spell);
 
                     if (MarkOfHydross_Count < 5)
                         ++MarkOfHydross_Count;

@@ -464,7 +464,7 @@ struct boss_veknilashAI : public boss_twinemperorsAI
         //UnbalancingStrike_Timer
         if (UnbalancingStrike_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_UNBALANCING_STRIKE);
+            DoCastVictim(SPELL_UNBALANCING_STRIKE);
             UnbalancingStrike_Timer = 8000+rand()%12000;
         } else UnbalancingStrike_Timer -= diff;
 
@@ -555,7 +555,7 @@ struct boss_veklorAI : public boss_twinemperorsAI
             if (me->GetDistance(me->getVictim()) > 45)
                 me->GetMotionMaster()->MoveChase(me->getVictim(), VEKLOR_DIST, 0);
             else
-                DoCast(me->getVictim(),SPELL_SHADOWBOLT);
+                DoCastVictim(SPELL_SHADOWBOLT);
             ShadowBolt_Timer = 2000;
         } else ShadowBolt_Timer -= diff;
 

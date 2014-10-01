@@ -135,7 +135,7 @@ struct boss_renatakiAI : public ScriptedAI
         {
             if (ThousandBlades_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_THOUSANDBLADES);
+                DoCastVictim( SPELL_THOUSANDBLADES);
                 ThousandBlades_Timer = 7000 + rand()%5000;
             } else ThousandBlades_Timer -= diff;
         }

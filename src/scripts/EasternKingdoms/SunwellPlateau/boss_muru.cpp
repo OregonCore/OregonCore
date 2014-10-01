@@ -545,7 +545,7 @@ struct npc_void_sentinelAI : public ScriptedAI
 
         if (VoidBlastTimer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_VOID_BLAST, false);
+            DoCastVictim( SPELL_VOID_BLAST, false);
             VoidBlastTimer = 45000;
         } else VoidBlastTimer -= diff;
 

@@ -83,7 +83,7 @@ struct boss_emerissAI : public ScriptedAI
         //NoxiousBreath_Timer
         if (m_uiNoxiousBreath_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_NOXIOUSBREATH);
+            DoCastVictim( SPELL_NOXIOUSBREATH);
             m_uiNoxiousBreath_Timer = 14000 + rand()%6000;
         }
         else
@@ -101,7 +101,7 @@ struct boss_emerissAI : public ScriptedAI
         //MarkOfNature_Timer
         //if (m_uiMarkOfNature_Timer <= uiDiff)
         //{
-        //    DoCast(me->getVictim(), SPELL_MARKOFNATURE);
+        //    DoCastVictim( SPELL_MARKOFNATURE);
         //    m_uiMarkOfNature_Timer = 45000;
         //}
         //else
@@ -110,7 +110,7 @@ struct boss_emerissAI : public ScriptedAI
         //VolatileInfection_Timer
         if (m_uiVolatileInfection_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_VOLATILEINFECTION);
+            DoCastVictim( SPELL_VOLATILEINFECTION);
             m_uiVolatileInfection_Timer = 7000 + rand()%5000;
         }
         else
@@ -122,7 +122,7 @@ struct boss_emerissAI : public ScriptedAI
         {
             ++m_uiCorruptionsCasted;                        // prevent casting twice on same hp
             DoScriptText(SAY_CASTCORRUPTION, me);
-            DoCast(me->getVictim(), SPELL_CORRUPTIONOFEARTH);
+            DoCastVictim( SPELL_CORRUPTIONOFEARTH);
         }
 
         DoMeleeAttackIfReady();

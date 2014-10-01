@@ -70,39 +70,39 @@ struct mob_stolen_soulAI : public ScriptedAI
             switch (myClass)
             {
                 case CLASS_WARRIOR:
-                    DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
+                    DoCastVictim( SPELL_MORTAL_STRIKE);
                     Class_Timer = 6000;
                     break;
                 case CLASS_PALADIN:
-                    DoCast(me->getVictim(), SPELL_HAMMER_OF_JUSTICE);
+                    DoCastVictim( SPELL_HAMMER_OF_JUSTICE);
                     Class_Timer = 6000;
                     break;
                 case CLASS_HUNTER:
-                    DoCast(me->getVictim(), SPELL_FREEZING_TRAP);
+                    DoCastVictim( SPELL_FREEZING_TRAP);
                     Class_Timer = 20000;
                     break;
                 case CLASS_ROGUE:
-                    DoCast(me->getVictim(), SPELL_HEMORRHAGE);
+                    DoCastVictim( SPELL_HEMORRHAGE);
                     Class_Timer = 10000;
                     break;
                 case CLASS_PRIEST:
-                    DoCast(me->getVictim(), SPELL_MIND_FLAY);
+                    DoCastVictim( SPELL_MIND_FLAY);
                     Class_Timer = 5000;
                     break;
                 case CLASS_SHAMAN:
-                    DoCast(me->getVictim(), SPELL_FROSTSHOCK);
+                    DoCastVictim( SPELL_FROSTSHOCK);
                     Class_Timer = 8000;
                     break;
                 case CLASS_MAGE:
-                    DoCast(me->getVictim(), SPELL_FIREBALL);
+                    DoCastVictim( SPELL_FIREBALL);
                     Class_Timer = 5000;
                     break;
                 case CLASS_WARLOCK:
-                    DoCast(me->getVictim(), SPELL_CURSE_OF_AGONY);
+                    DoCastVictim( SPELL_CURSE_OF_AGONY);
                     Class_Timer = 20000;
                     break;
                 case CLASS_DRUID:
-                    DoCast(me->getVictim(), SPELL_MOONFIRE);
+                    DoCastVictim( SPELL_MOONFIRE);
                     Class_Timer = 10000;
                     break;
             }
@@ -324,7 +324,7 @@ struct mob_avatar_of_martyredAI : public ScriptedAI
 
         if (Mortal_Strike_timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_AV_MORTAL_STRIKE);
+            DoCastVictim( SPELL_AV_MORTAL_STRIKE);
             Mortal_Strike_timer = 10000 + rand()%20 * 1000;
         } else Mortal_Strike_timer -= diff;
 

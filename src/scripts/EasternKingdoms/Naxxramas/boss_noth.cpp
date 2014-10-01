@@ -103,7 +103,7 @@ struct boss_nothAI : public ScriptedAI
         //Blink_Timer
         if (Blink_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CRIPPLE);
+            DoCastVictim(SPELL_CRIPPLE);
             DoCast(me,SPELL_BLINK);
 
             Blink_Timer = 25000;
@@ -112,7 +112,7 @@ struct boss_nothAI : public ScriptedAI
         //Curse_Timer
         if (Curse_Timer <= diff)
         {
-             DoCast(me->getVictim(),SPELL_CURSE_PLAGUEBRINGER);
+             DoCastVictim(SPELL_CURSE_PLAGUEBRINGER);
             Curse_Timer = 28000;
         } else Curse_Timer -= diff;
 

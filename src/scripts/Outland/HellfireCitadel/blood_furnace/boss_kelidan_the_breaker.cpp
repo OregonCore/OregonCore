@@ -344,7 +344,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
 
         if (ShadowBolt_Timer <= diff)
         {
-            DoCast(me->getVictim(),HeroicMode ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
+            DoCastVictim(HeroicMode ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
             ShadowBolt_Timer = 5000+rand()%1000;
         } else ShadowBolt_Timer -=diff;
 

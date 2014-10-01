@@ -154,21 +154,21 @@ struct boss_gythAI : public ScriptedAI
             // CorrosiveAcid_Timer
             if (CorrosiveAcid_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_CORROSIVEACID);
+                DoCastVictim( SPELL_CORROSIVEACID);
                 CorrosiveAcid_Timer = 7000;
             } else CorrosiveAcid_Timer -= diff;
 
             // Freeze_Timer
             if (Freeze_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_FREEZE);
+                DoCastVictim( SPELL_FREEZE);
                 Freeze_Timer = 16000;
             } else Freeze_Timer -= diff;
 
             // Flamebreath_Timer
             if (Flamebreath_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_FLAMEBREATH);
+                DoCastVictim( SPELL_FLAMEBREATH);
                 Flamebreath_Timer = 10500;
             } else Flamebreath_Timer -= diff;
 

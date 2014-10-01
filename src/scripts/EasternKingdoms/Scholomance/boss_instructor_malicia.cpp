@@ -78,7 +78,7 @@ struct boss_instructormaliciaAI : public ScriptedAI
         //CallOfGraves_Timer
         if (CallOfGraves_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_CALLOFGRAVES);
+            DoCastVictim( SPELL_CALLOFGRAVES);
             CallOfGraves_Timer = 65000;
         } else CallOfGraves_Timer -= diff;
 

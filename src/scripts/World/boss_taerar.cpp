@@ -125,7 +125,7 @@ struct boss_taerarAI : public ScriptedAI
         //NoxiousBreath_Timer
         if (m_uiNoxiousBreath_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_NOXIOUSBREATH);
+            DoCastVictim( SPELL_NOXIOUSBREATH);
             m_uiNoxiousBreath_Timer = 14000 + rand()%6000;
         }
         else
@@ -143,7 +143,7 @@ struct boss_taerarAI : public ScriptedAI
         //MarkOfNature_Timer
         //if (m_uiMarkOfNature_Timer <= uiDiff)
         //{
-        //    DoCast(me->getVictim(), SPELL_MARKOFNATURE);
+        //    DoCastVictim( SPELL_MARKOFNATURE);
         //    m_uiMarkOfNature_Timer = 45000;
         //}
         //else
@@ -152,7 +152,7 @@ struct boss_taerarAI : public ScriptedAI
         //ArcaneBlast_Timer
         if (m_uiArcaneBlast_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_ARCANEBLAST);
+            DoCastVictim( SPELL_ARCANEBLAST);
             m_uiArcaneBlast_Timer = 7000 + rand()%5000;
         }
         else
@@ -161,7 +161,7 @@ struct boss_taerarAI : public ScriptedAI
         //BellowingRoar_Timer
         if (m_uiBellowingRoar_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_BELLOWINGROAR);
+            DoCastVictim( SPELL_BELLOWINGROAR);
             m_uiBellowingRoar_Timer = 20000 + rand()%10000;
         }
         else
@@ -218,7 +218,7 @@ struct boss_shadeoftaerarAI : public ScriptedAI
         //PoisonCloud_Timer
         if (m_uiPoisonCloud_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_POSIONCLOUD);
+            DoCastVictim( SPELL_POSIONCLOUD);
             m_uiPoisonCloud_Timer = 30000;
         }
         else
@@ -227,7 +227,7 @@ struct boss_shadeoftaerarAI : public ScriptedAI
         //PosionBreath_Timer
         if (m_uiPosionBreath_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(), SPELL_POSIONBREATH);
+            DoCastVictim( SPELL_POSIONBREATH);
             m_uiPosionBreath_Timer = 12000;
         }
         else

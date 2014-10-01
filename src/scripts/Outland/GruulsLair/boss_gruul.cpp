@@ -245,7 +245,7 @@ struct boss_gruulAI : public ScriptedAI
                 if (pTarget && me->IsWithinMeleeRange(me->getVictim()))
                     DoCast(pTarget,SPELL_HURTFUL_STRIKE);
                 else
-                    DoCast(me->getVictim(),SPELL_HURTFUL_STRIKE);
+                    DoCastVictim(SPELL_HURTFUL_STRIKE);
 
                 HurtfulStrike_Timer= 8000;
             } else HurtfulStrike_Timer -= diff;
@@ -253,7 +253,7 @@ struct boss_gruulAI : public ScriptedAI
             // Reverberation
             if (Reverberation_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_REVERBERATION, true);
+                DoCastVictim( SPELL_REVERBERATION, true);
                 Reverberation_Timer = 30000;
             } else Reverberation_Timer -= diff;
 
@@ -276,7 +276,7 @@ struct boss_gruulAI : public ScriptedAI
                 PerformingGroundSlam= true;
                 GroundSlamTimer = 0;
                 GroundSlamStage = 0;
-                DoCast(me->getVictim(), SPELL_GROUND_SLAM);
+                DoCastVictim( SPELL_GROUND_SLAM);
             } else GroundSlamTimer -=diff;
 
             DoMeleeAttackIfReady();

@@ -121,7 +121,7 @@ struct boss_jeklikAI : public ScriptedAI
 
                 if (SonicBurst_Timer <= diff)
                 {
-                    DoCast(me->getVictim(), SPELL_SONICBURST);
+                    DoCastVictim( SPELL_SONICBURST);
                     SonicBurst_Timer = 20000;
                 }
                 else
@@ -129,7 +129,7 @@ struct boss_jeklikAI : public ScriptedAI
 
                 if (Screech_Timer <= diff)
                 {
-                    DoCast(me->getVictim(), SPELL_SCREECH);
+                    DoCastVictim( SPELL_SCREECH);
                     Screech_Timer = 18000 + rand()%8000;
                 }
                 else
@@ -180,7 +180,7 @@ struct boss_jeklikAI : public ScriptedAI
 
                     if (MindFlay_Timer <= diff)
                     {
-                        DoCast(me->getVictim(), SPELL_MIND_FLAY);
+                        DoCastVictim( SPELL_MIND_FLAY);
                         MindFlay_Timer = 16000;
                     }
 
@@ -189,7 +189,7 @@ struct boss_jeklikAI : public ScriptedAI
                     if (ChainMindFlay_Timer <= diff)
                     {
                         me->InterruptNonMeleeSpells(false);
-                        DoCast(me->getVictim(), SPELL_CHAIN_MIND_FLAY);
+                        DoCastVictim( SPELL_CHAIN_MIND_FLAY);
                         ChainMindFlay_Timer = 15000 + rand()%15000;
                     }
 

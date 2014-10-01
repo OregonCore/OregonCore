@@ -396,7 +396,7 @@ struct boss_nalorakkAI : public ScriptedAI
         {
             if (BrutalSwipe_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_BRUTALSWIPE);
+                DoCastVictim( SPELL_BRUTALSWIPE);
                 BrutalSwipe_Timer = 7000 + rand()%5000;
             }
             else
@@ -406,7 +406,7 @@ struct boss_nalorakkAI : public ScriptedAI
             {
                 if (me->getVictim() && !me->getVictim()->HasAura(SPELL_MANGLEEFFECT, 0))
                 {
-                    DoCast(me->getVictim(), SPELL_MANGLE);
+                    DoCastVictim( SPELL_MANGLE);
                     Mangle_Timer = 1000;
                 }
                 else Mangle_Timer = 10000 + rand()%5000;
@@ -430,7 +430,7 @@ struct boss_nalorakkAI : public ScriptedAI
         {
             if (LaceratingSlash_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_LACERATINGSLASH);
+                DoCastVictim( SPELL_LACERATINGSLASH);
                 LaceratingSlash_Timer = 18000 + rand()%5000;
             }
             else
@@ -438,7 +438,7 @@ struct boss_nalorakkAI : public ScriptedAI
 
             if (RendFlesh_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_RENDFLESH);
+                DoCastVictim( SPELL_RENDFLESH);
                 RendFlesh_Timer = 5000 + rand()%5000;
             }
             else
@@ -446,7 +446,7 @@ struct boss_nalorakkAI : public ScriptedAI
 
             if (DeafeningRoar_Timer <= diff)
             {
-                DoCast(me->getVictim(), SPELL_DEAFENINGROAR);
+                DoCastVictim( SPELL_DEAFENINGROAR);
                 DeafeningRoar_Timer = 15000 + rand()%5000;
             }
             else

@@ -244,21 +244,21 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         //ArcingSmash_Timer
         if (ArcingSmash_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ARCING_SMASH);
+            DoCastVictim( SPELL_ARCING_SMASH);
             ArcingSmash_Timer = 10000;
         } else ArcingSmash_Timer -= diff;
 
         //Whirlwind_Timer
                if (Whirlwind_Timer <= diff)
                {
-                    DoCast(me->getVictim(), SPELL_WHIRLWIND);
+                    DoCastVictim( SPELL_WHIRLWIND);
                     Whirlwind_Timer = 55000;
                } else Whirlwind_Timer -= diff;
 
         //MightyBlow_Timer
         if (MightyBlow_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_MIGHTY_BLOW);
+            DoCastVictim( SPELL_MIGHTY_BLOW);
             MightyBlow_Timer = 30000+rand()%10000;
         } else MightyBlow_Timer -= diff;
 
@@ -376,7 +376,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
         //DarkDecay_Timer
         if (DarkDecay_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_DARK_DECAY);
+            DoCastVictim( SPELL_DARK_DECAY);
             DarkDecay_Timer = 20000;
         } else DarkDecay_Timer -= diff;
 
@@ -490,21 +490,21 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
         //LightningBolt_Timer
         if (LightningBolt_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_LIGHTNING_BOLT);
+            DoCastVictim( SPELL_LIGHTNING_BOLT);
             LightningBolt_Timer = 15000;
         } else LightningBolt_Timer -= diff;
 
         //ArcaneShock_Timer
         if (ArcaneShock_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ARCANE_SHOCK);
+            DoCastVictim( SPELL_ARCANE_SHOCK);
             ArcaneShock_Timer = 20000;
         } else ArcaneShock_Timer -= diff;
 
         //ArcaneExplosion_Timer
         if (ArcaneExplosion_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_ARCANE_EXPLOSION);
+            DoCastVictim( SPELL_ARCANE_EXPLOSION);
             ArcaneExplosion_Timer = 30000;
         } else ArcaneExplosion_Timer -= diff;
 
@@ -677,7 +677,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
         //GreaterFireball_Timer
         if (GreaterFireball_Timer <= diff || me->GetDistance(me->getVictim()) < 30)
         {
-            DoCast(me->getVictim(), SPELL_GREATER_FIREBALL);
+            DoCastVictim( SPELL_GREATER_FIREBALL);
             GreaterFireball_Timer = 2000;
         } else GreaterFireball_Timer -= diff;
 
@@ -685,7 +685,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
         if (SpellShield_Timer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
-            DoCast(me->getVictim(), SPELL_SPELLSHIELD);
+            DoCastVictim( SPELL_SPELLSHIELD);
             SpellShield_Timer = 30000;
         } else SpellShield_Timer -= diff;
 
