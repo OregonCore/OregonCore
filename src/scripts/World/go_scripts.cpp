@@ -189,26 +189,54 @@ bool GOHello_go_jump_a_tron(Player *pPlayer, GameObject * /*pGO*/)
 ## go_ethereum_prison
 ######*/
 
-float ethereum_NPC[2][7] =
+enum EthereumPrison
 {
- {20785,20790,20789,20784,20786,20783,20788}, // hostile npc
- {22810,22811,22812,22813,22814,22815,0}      // fiendly npc (need script in acid ? only to cast spell reputation reward)
+    SPELL_REP_LC        = 39456,
+    SPELL_REP_SHAT      = 39457,
+    SPELL_REP_CE        = 39460,
+    SPELL_REP_CON       = 39474,
+    SPELL_REP_KT        = 39475,
+    SPELL_REP_SPOR      = 39476
 };
 
-bool GOHello_go_ethereum_prison(Player* /*pPlayer*/, GameObject *pGO)
+const uint32 NpcPrisonEntry[] =
 {
-    pGO->SetGoState(GO_STATE_ACTIVE);
-    switch(rand()%2)
-    {
-        case 0:
-            pGO->SummonCreature(ethereum_NPC[0][rand()%6], pGO->GetPositionX(), pGO->GetPositionY(), pGO->GetPositionZ()+0.3, 0,TEMPSUMMON_CORPSE_TIMED_DESPAWN,10000);
-        break;
-        case 1:
-            pGO->SummonCreature(ethereum_NPC[1][rand()%5], pGO->GetPositionX(), pGO->GetPositionY(), pGO->GetPositionZ()+0.3, 0,TEMPSUMMON_TIMED_DESPAWN,10000);
-        break;
-    }
+    22810, 22811, 22812, 22813, 22814, 22815,               //good guys
+    20783, 20784, 20785, 20786, 20788, 20789, 20790         //bad guys
+};
 
-    return true;
+bool GOHello_go_ethereum_prison(Player* player, GameObject *go)
+{
+    int Random = rand() % (sizeof(NpcPrisonEntry) / sizeof(uint32));
+
+    if (Creature* creature = player->SummonCreature(NpcPrisonEntry[Random], go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), go->GetAngle(player),
+        TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000))
+        {
+            if (!creature->IsHostileTo(player))
+            {
+                if (FactionTemplateEntry const* pFaction = creature->getFactionTemplateEntry())
+                {
+                    uint32 Spell = 0;
+
+                    switch (pFaction->faction)
+                    {
+                        case 1011: Spell = SPELL_REP_LC; break;
+                        case 935: Spell = SPELL_REP_SHAT; break;
+                        case 942: Spell = SPELL_REP_CE; break;
+                        case 933: Spell = SPELL_REP_CON; break;
+                        case 989: Spell = SPELL_REP_KT; break;
+                        case 970: Spell = SPELL_REP_SPOR; break;
+                    }
+
+                    if (Spell)
+                        creature->CastSpell(player, Spell, false);
+                    else
+                        sLog.outError("go_ethereum_prison summoned Creature (entry %u) but faction (%u) are not expected by script.", creature->GetEntry(), creature->getFaction());
+                }
+            }
+        }
+
+    return false;
 }
 
 /*######
