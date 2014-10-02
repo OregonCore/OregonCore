@@ -107,7 +107,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         DoScriptText(SAY_WAKE, me);
-        if (me->IsNonMeleeSpellCasted(false))
+        if (me->IsNonMeleeSpellCast(false))
             me->InterruptNonMeleeSpells(true);
         DoStartMovement(who);
         if (pInstance)
@@ -203,7 +203,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
         {
             if (check_Timer <= diff)
             {
-                if (!me->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCast(false))
                     DoCast(me,SPELL_EVOCATION);
                 check_Timer = 5000;
             } else check_Timer -= diff;
@@ -236,7 +236,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
 
         if (BurningNova_Timer <= diff)
         {
-            if (me->IsNonMeleeSpellCasted(false))
+            if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(true);
 
             DoScriptText(SAY_NOVA, me);
@@ -298,7 +298,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
         ShadowBolt_Timer = 1000+rand()%1000;
         MarkOfShadow_Timer = 5000+rand()%2000;
         check_Timer = 0;
-        if (me->IsNonMeleeSpellCasted(false))
+        if (me->IsNonMeleeSpellCast(false))
             me->InterruptNonMeleeSpells(true);
     }
 
@@ -306,7 +306,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
     {
         if (Creature *Kelidan = me->FindNearestCreature(ENTRY_KELIDAN, 100))
             CAST_AI(boss_kelidan_the_breakerAI, Kelidan->AI())->ChannelerEngaged(who);
-        if (me->IsNonMeleeSpellCasted(false))
+        if (me->IsNonMeleeSpellCast(false))
             me->InterruptNonMeleeSpells(true);
         DoStartMovement(who);
     }
@@ -323,7 +323,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
         {
             if (check_Timer <= diff)
             {
-                if (!me->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCast(false))
                     if (Creature *Kelidan = me->FindNearestCreature(ENTRY_KELIDAN, 100))
                     {
                         uint64 channeler = CAST_AI(boss_kelidan_the_breakerAI, Kelidan->AI())->GetChanneled(me);

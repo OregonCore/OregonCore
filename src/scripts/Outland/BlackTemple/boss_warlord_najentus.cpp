@@ -102,7 +102,7 @@ struct boss_najentusAI : public ScriptedAI
 
     bool TryDoCast(Unit *victim, uint32 spellId, bool triggered = false)
     {
-        if (me->IsNonMeleeSpellCasted(false)) return false;
+        if (me->IsNonMeleeSpellCast(false)) return false;
 
         DoCast(victim,spellId,triggered);
         return true;
@@ -202,7 +202,7 @@ struct boss_najentusAI : public ScriptedAI
 
         if (ImpalingSpineTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 80,true);
                 if (!pTarget) pTarget = me->getVictim();

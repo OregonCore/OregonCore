@@ -394,7 +394,7 @@ struct boss_felmystAI : public ScriptedAI
  
         events.Update(diff);
 
-        if (me->IsNonMeleeSpellCasted(false))
+        if (me->IsNonMeleeSpellCast(false))
             return;
 
         if (phase == PHASE_GROUND)

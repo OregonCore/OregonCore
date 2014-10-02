@@ -394,7 +394,7 @@ struct boss_alarAI : public ScriptedAI
 
     void DoMeleeAttackIfReady()
     {
-        if (me->isAttackReady() && !me->IsNonMeleeSpellCasted(false))
+        if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
         {
             if (me->IsWithinMeleeRange(me->getVictim()))
             {

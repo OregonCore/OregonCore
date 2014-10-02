@@ -157,7 +157,7 @@ struct npc_deaths_head_ward_keeperAI : public ScriptedAI
 
         if (QuillboarChanneling_Timer <= diff)
         {
-            if (me->IsNonMeleeSpellCasted(false))
+            if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(true);
             DoCast(me, SPELL_QUILLBOAR_CHANNELING);
             QuillboarChanneling_Timer = 1100;

@@ -317,7 +317,7 @@ struct boss_janalaiAI : public ScriptedAI
     {
         if (isFlameBreathing)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
                 isFlameBreathing = false;
             else
                 return;

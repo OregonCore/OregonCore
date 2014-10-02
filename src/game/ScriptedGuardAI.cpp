@@ -93,7 +93,7 @@ void guardAI::UpdateAI(const uint32 diff)
         return;
 
     // Make sure our attack is ready and we arn't currently casting
-    if (me->isAttackReady() && !me->IsNonMeleeSpellCasted(false))
+    if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
     {
         //If we are within range melee the target
         if (me->IsWithinMeleeRange(me->getVictim()))
@@ -127,7 +127,7 @@ void guardAI::UpdateAI(const uint32 diff)
     else
     {
         //Only run this code if we arn't already casting
-        if (!me->IsNonMeleeSpellCasted(false))
+        if (!me->IsNonMeleeSpellCast(false))
         {
             bool Healing = false;
             SpellEntry const *info = NULL;

@@ -289,7 +289,7 @@ struct boss_halazziAI : public ScriptedAI
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 {
-                    if (pTarget->IsNonMeleeSpellCasted(false))
+                    if (pTarget->IsNonMeleeSpellCast(false))
                         DoCast(pTarget, SPELL_EARTHSHOCK);
                     else
                         DoCast(pTarget, SPELL_FLAMESHOCK);

@@ -162,7 +162,7 @@ struct boss_shahrazAI : public ScriptedAI
 
     bool TryDoCast(Unit *victim, uint32 spellId, bool triggered = false)
     {
-        if (me->IsNonMeleeSpellCasted(false)) return false;
+        if (me->IsNonMeleeSpellCast(false)) return false;
 
         DoCast(victim,spellId,triggered);
         return true;
@@ -182,7 +182,7 @@ struct boss_shahrazAI : public ScriptedAI
 
         if (BeamTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 switch(CurrentBeam)
                 {

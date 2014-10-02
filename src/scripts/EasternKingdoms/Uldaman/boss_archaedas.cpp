@@ -320,7 +320,7 @@ bool GOHello_go_altar_of_archaedas(Player *player, GameObject* go)
     for (uint32 x=0; x<5; x++) {
         pTarget = Unit::GetUnit(*player, altarOfArchaedasCount[x]);
         if (!pTarget) continue;
-        if (pTarget->IsNonMeleeSpellCasted(true)) count++;
+        if (pTarget->IsNonMeleeSpellCast(true)) count++;
         if (count >= NUMBER_NEEDED_TO_ACTIVATE) break;
     }
 
@@ -443,7 +443,7 @@ bool GOHello_go_altar_of_the_keepers(Player* pPlayer, GameObject* pGo)
         //error_log("number of people currently activating it: %d", x+1);
         if (!pTarget)
             continue;
-        if (pTarget->IsNonMeleeSpellCasted(true))
+        if (pTarget->IsNonMeleeSpellCast(true))
             ++count;
         if (count >= NUMBER_NEEDED_TO_ACTIVATE)
             break;

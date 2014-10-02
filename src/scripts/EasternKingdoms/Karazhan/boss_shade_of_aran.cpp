@@ -295,7 +295,7 @@ struct boss_aranAI : public ScriptedAI
         //Normal casts
         if (NormalCastTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (!pTarget)
@@ -533,7 +533,7 @@ struct boss_aranAI : public ScriptedAI
         //We only care about inturrupt effects and only if they are durring a spell currently being casted
         if ((Spell->Effect[0] != SPELL_EFFECT_INTERRUPT_CAST &&
             Spell->Effect[1] != SPELL_EFFECT_INTERRUPT_CAST &&
-            Spell->Effect[2] != SPELL_EFFECT_INTERRUPT_CAST) || !me->IsNonMeleeSpellCasted(false))
+            Spell->Effect[2] != SPELL_EFFECT_INTERRUPT_CAST) || !me->IsNonMeleeSpellCast(false))
             return;
 
         //Inturrupt effect

@@ -7401,7 +7401,7 @@ bool ChatHandler::HandleFreezeCommand(const char *args)
         //stop combat + make player unattackable + duel stop + stop some spells
         player->setFaction(35);
         player->CombatStop();
-        if (player->IsNonMeleeSpellCasted(true))
+        if (player->IsNonMeleeSpellCast(true))
             player->InterruptNonMeleeSpells(true);
         player->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 

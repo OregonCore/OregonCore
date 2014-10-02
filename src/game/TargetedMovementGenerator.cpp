@@ -302,7 +302,7 @@ bool TargetedMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
         return true;
 
     // prevent movement while casting spells with cast time or channel time
-    if (owner.IsNonMeleeSpellCasted(false, false,  true) || owner.hasUnitState(UNIT_STAT_CASTING))
+    if (owner.IsNonMeleeSpellCast(false, false,  true) || owner.hasUnitState(UNIT_STAT_CASTING))
     {
         if (!owner.IsStopped())
             owner.StopMoving();

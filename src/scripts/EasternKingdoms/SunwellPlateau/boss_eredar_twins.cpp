@@ -245,7 +245,7 @@ struct boss_sacrolashAI : public ScriptedAI
         {
             if (ConflagrationTimer <= diff)
             {
-                if (!me->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCast(false))
                 {
                     me->InterruptSpell(CURRENT_GENERIC_SPELL);
                     Unit *pTarget = NULL;
@@ -260,7 +260,7 @@ struct boss_sacrolashAI : public ScriptedAI
         {
             if (ShadownovaTimer <= diff)
             {
-                if (!me->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCast(false))
                 {
                     Unit *pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -280,7 +280,7 @@ struct boss_sacrolashAI : public ScriptedAI
 
         if (ConfoundingblowTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -309,7 +309,7 @@ struct boss_sacrolashAI : public ScriptedAI
 
         if (ShadowbladesTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 DoCast(me, SPELL_SHADOW_BLADES);
                 ShadowbladesTimer = 10000;
@@ -324,7 +324,7 @@ struct boss_sacrolashAI : public ScriptedAI
             Enraged = true;
         } else EnrageTimer -= diff;
 
-        if (me->isAttackReady() && !me->IsNonMeleeSpellCasted(false))
+        if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
         {
             //If we are within range melee the target
             if (me->IsWithinMeleeRange(me->getVictim()))
@@ -594,7 +594,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
         {
             if (ShadownovaTimer <= diff)
             {
-                if (!me->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCast(false))
                 {
                     Unit *pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -608,7 +608,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
         {
             if (ConflagrationTimer <= diff)
             {
-                if (!me->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCast(false))
                 {
                     me->InterruptSpell(CURRENT_GENERIC_SPELL);
                     Unit *pTarget = NULL;
@@ -631,7 +631,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
 
         if (FlamesearTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 DoCast(me, SPELL_FLAME_SEAR);
                 FlamesearTimer = 15000;
@@ -640,7 +640,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
 
         if (PyrogenicsTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 DoCast(me, SPELL_PYROGENICS, true);
                 PyrogenicsTimer = 15000;
@@ -649,7 +649,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
 
         if (BlazeTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 DoCastVictim( SPELL_BLAZE);
                 BlazeTimer = 3800;
@@ -730,7 +730,7 @@ struct mob_shadow_imageAI : public ScriptedAI
 
         if (DarkstrikeTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 //If we are within range melee the target
                 if (me->IsWithinMeleeRange(me->getVictim()))

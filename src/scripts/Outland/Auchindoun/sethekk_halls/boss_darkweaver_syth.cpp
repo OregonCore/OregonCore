@@ -133,7 +133,7 @@ struct boss_darkweaver_sythAI : public ScriptedAI
     {
         DoScriptText(SAY_SUMMON, me);
 
-        if (me->IsNonMeleeSpellCasted(false))
+        if (me->IsNonMeleeSpellCast(false))
             me->InterruptNonMeleeSpells(false);
 
         DoCast(me,SPELL_SUMMON_SYTH_ARCANE,true);   //front

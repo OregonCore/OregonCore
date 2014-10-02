@@ -397,7 +397,7 @@ struct boss_twinemperorsAI : public ScriptedAI
     {
         if (EnrageTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(true))
+            if (!me->IsNonMeleeSpellCast(true))
             {
                 DoCast(me, SPELL_BERSERK);
                 EnrageTimer = 60*60000;

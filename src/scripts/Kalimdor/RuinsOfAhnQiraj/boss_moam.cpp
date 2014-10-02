@@ -65,14 +65,14 @@ struct boss_moamAI : public ScriptedAI
             return;
 
         //If we are 100%MANA cast Arcane Erruption
-        //if (j == 1 && me->GetMana()*100 / me->GetMaxMana() == 100 && !me->IsNonMeleeSpellCasted(false))
+        //if (j == 1 && me->GetMana()*100 / me->GetMaxMana() == 100 && !me->IsNonMeleeSpellCast(false))
         {
             DoCastVictim(SPELL_ARCANEERUPTION);
             DoScriptText(EMOTE_MANA_FULL, me);
         }
 
         //If we are <50%HP cast MANA FIEND (Summon Mana) and Sleep
-        //if (i == 0 && me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCasted(false))
+        //if (i == 0 && me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCast(false))
         {
             i=1;
             DoCastVictim(SPELL_SUMMONMANA);

@@ -67,7 +67,7 @@ struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
             return;
 
         //If we are <25% hp cast Heal
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 25 && !me->IsNonMeleeSpellCasted(false) && Heal_Timer <= diff)
+        if (me->GetHealth()*100 / me->GetMaxHealth() <= 25 && !me->IsNonMeleeSpellCast(false) && Heal_Timer <= diff)
         {
             DoCast(me, SPELL_HEAL);
             Heal_Timer = 30000;

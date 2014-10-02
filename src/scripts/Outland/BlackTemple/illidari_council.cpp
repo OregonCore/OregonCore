@@ -393,7 +393,7 @@ struct boss_illidari_councilAI : public ScriptedAI
 
     bool TryDoCast(Unit *victim, uint32 spellId, bool triggered = false)
     {
-        if (me->IsNonMeleeSpellCasted(false)) return false;
+        if (me->IsNonMeleeSpellCast(false)) return false;
 
         DoCast(victim,spellId,triggered);
         return true;
@@ -522,7 +522,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
 
         if (BlessingTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 if (Unit* pUnit = SelectCouncilMember())
                 {
@@ -539,7 +539,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
 
         if (JudgeTimer <= diff)
         {
-           if (!me->IsNonMeleeSpellCasted(false))
+           if (!me->IsNonMeleeSpellCast(false))
            {
                 if (me->HasAura(SPELL_SEAL_OF_COMMAND,0))
                 {
@@ -582,7 +582,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
 
         if (SealTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 switch(rand()%2)
                 {
@@ -595,7 +595,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
 
         if (AuraTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 CastAuraOnCouncil();
                 AuraTimer = 60000;
@@ -642,7 +642,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
 
         if (DampenMagicTimer <= diff)
         {
-           if (!me->IsNonMeleeSpellCasted(false))
+           if (!me->IsNonMeleeSpellCast(false))
            {
                 DoCast(me, SPELL_DAMPEN_MAGIC);
                 DampenMagicTimer = 30000;
@@ -652,7 +652,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
 
         if (ArcaneExplosionTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 if (me->GetDistance2d(me->getVictim()) <= 5)
                 {
@@ -664,7 +664,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
 
         if (ArcaneBoltTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 DoCastVictim( SPELL_ARCANE_BOLT);
                 ArcaneBoltTimer = 500;
@@ -673,7 +673,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
 
         if (BlizzardTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
@@ -686,7 +686,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
 
         if (FlamestrikeTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
@@ -733,7 +733,7 @@ struct boss_lady_malandeAI : public boss_illidari_councilAI
 
         if (EmpoweredSmiteTimer <= diff)
         {
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 DoCastVictim( SPELL_EMPOWERED_SMITE);
                 EmpoweredSmiteTimer = 30000;

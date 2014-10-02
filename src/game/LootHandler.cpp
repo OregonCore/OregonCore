@@ -253,7 +253,7 @@ void WorldSession::HandleLootOpcode(WorldPacket & recv_data)
     GetPlayer()->SendLoot(guid, LOOT_CORPSE);
 
     // Interrupt spell casting on loot
-    if (GetPlayer()->IsNonMeleeSpellCasted(false))
+    if (GetPlayer()->IsNonMeleeSpellCast(false))
         GetPlayer()->InterruptNonMeleeSpells(false);
 }
 

@@ -114,7 +114,7 @@ struct boss_void_reaverAI : public ScriptedAI
         // Arcane Orb
         if (ArcaneOrb_Timer <= diff)
         {
-            if (me->IsNonMeleeSpellCasted(false))
+            if (me->IsNonMeleeSpellCast(false))
             {
                 ArcaneOrb_Timer = 3000;
                 return;

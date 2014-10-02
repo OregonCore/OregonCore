@@ -258,7 +258,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
 
             if (FelExplosionTimer <= diff)
             {
-                if (!me->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCast(false))
                 {
                     DoCast(me, SPELL_FEL_EXPLOSION);
                     FelExplosionTimer = 2000;

@@ -78,7 +78,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
     void UpdateAI(const uint32 diff)
     {
         //Return since we have no target or casting
-        if (!UpdateVictim() || me->IsNonMeleeSpellCasted(false))
+        if (!UpdateVictim() || me->IsNonMeleeSpellCast(false))
             return;
 
         // Sonic Boom

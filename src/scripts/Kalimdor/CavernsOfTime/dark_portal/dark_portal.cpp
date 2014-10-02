@@ -324,7 +324,7 @@ struct npc_time_riftAI : public ScriptedAI
             TimeRiftWave_Timer = 15000;
         } else TimeRiftWave_Timer -= diff;
 
-        if (me->IsNonMeleeSpellCasted(false))
+        if (me->IsNonMeleeSpellCast(false))
             return;
 
         debug_log("OSCR: npc_time_rift: not casting anylonger, i need to die.");

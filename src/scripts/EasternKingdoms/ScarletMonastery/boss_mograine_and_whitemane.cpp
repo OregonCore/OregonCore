@@ -129,7 +129,7 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
 
             me->SetHealth(0);
 
-            if (me->IsNonMeleeSpellCasted(false))
+            if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(false);
 
             me->ClearComboPointHolders();
@@ -278,7 +278,7 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
         //Cast Deep sleep when health is less than 50%
         if (!m_bCanResurrectCheck && me->GetHealth()*100 / me->GetMaxHealth() <= 50)
         {
-            if (me->IsNonMeleeSpellCasted(false))
+            if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(false);
 
             DoCastVictim( SPELL_DEEPSLEEP);

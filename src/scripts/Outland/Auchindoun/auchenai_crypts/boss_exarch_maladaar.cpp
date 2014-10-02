@@ -239,7 +239,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
 
         if (!Avatar_summoned && ((me->GetHealth()*100) / me->GetMaxHealth() < 25))
         {
-            if (me->IsNonMeleeSpellCasted(false))
+            if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(true);
 
             DoScriptText(SAY_SUMMON, me);
@@ -255,7 +255,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
             {
                 if (pTarget->GetTypeId() == TYPEID_PLAYER)
                 {
-                    if (me->IsNonMeleeSpellCasted(false))
+                    if (me->IsNonMeleeSpellCast(false))
                         me->InterruptNonMeleeSpells(true);
 
                     uint32 i = urand(1,2);

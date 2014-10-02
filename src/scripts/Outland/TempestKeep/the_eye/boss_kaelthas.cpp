@@ -729,7 +729,7 @@ struct boss_kaelthasAI : public ScriptedAI
                     {
                         if (!IsCastingFireball)
                         {
-                            if (!me->IsNonMeleeSpellCasted(false))
+                            if (!me->IsNonMeleeSpellCast(false))
                             {
                                 //interruptable
                                 me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, false);
@@ -832,7 +832,7 @@ struct boss_kaelthasAI : public ScriptedAI
                     } else ShockBarrier_Timer -= diff;
 
                     //Chain Pyros (3 of them max)
-                    if (ChainPyros && !me->IsNonMeleeSpellCasted(false))
+                    if (ChainPyros && !me->IsNonMeleeSpellCast(false))
                     {
                         if (PyrosCasted < 3)
                         {

@@ -353,7 +353,7 @@ struct boss_magtheridonAI : public ScriptedAI
         if (Quake_Timer <= diff)
         {
             // to avoid blastnova interruption
-            if (!me->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCast(false))
             {
                 me->CastSpell(me, SPELL_QUAKE_TRIGGER, true);
                 Quake_Timer = 50000;
@@ -378,7 +378,7 @@ struct boss_magtheridonAI : public ScriptedAI
         } else Blaze_Timer -= diff;
 
         if (!Phase3 && me->GetHealth()*10 < me->GetMaxHealth()*3
-            && !me->IsNonMeleeSpellCasted(false) // blast nova
+            && !me->IsNonMeleeSpellCast(false) // blast nova
             && !me->hasUnitState(UNIT_STAT_STUNNED)) // shadow cage and earthquake
         {
             Phase3 = true;

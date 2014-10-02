@@ -147,7 +147,7 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             //BalnazzarTransform
             if (me->GetHealth()*100 / me->GetMaxHealth() < 40)
             {
-                if (me->IsNonMeleeSpellCasted(false))
+                if (me->IsNonMeleeSpellCast(false))
                     me->InterruptNonMeleeSpells(false);
 
                 //restore hp, mana and stun

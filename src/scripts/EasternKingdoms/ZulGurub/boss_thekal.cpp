@@ -83,7 +83,7 @@ void FakeDeath(Unit* Target)
 
     Target->SetHealth(0);
 
-    if (Target->IsNonMeleeSpellCasted(false))
+    if (Target->IsNonMeleeSpellCast(false))
         Target->InterruptNonMeleeSpells(false);
 
     Target->ClearComboPointHolders();

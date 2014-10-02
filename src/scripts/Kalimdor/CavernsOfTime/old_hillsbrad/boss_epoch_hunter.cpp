@@ -98,7 +98,7 @@ struct boss_epoch_hunterAI : public ScriptedAI
         //Sand Breath
         if (SandBreath_Timer <= diff)
         {
-            if (me->IsNonMeleeSpellCasted(false))
+            if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(false);
 
             DoCastVictim(SPELL_SAND_BREATH);

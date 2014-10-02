@@ -114,7 +114,7 @@ struct boss_high_botanist_freywinnAI : public ScriptedAI
             case 1: DoScriptText(SAY_TREE_2, me); break;
             }
 
-            if (me->IsNonMeleeSpellCasted(false))
+            if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(true);
 
             me->RemoveAllAuras();

@@ -297,7 +297,7 @@ struct boss_netherspiteAI : public ScriptedAI
 
             if (PhaseTimer <= diff)
             {
-                if (!me->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCast(false))
                 {
                     SwitchToBanishPhase();
                     return;
@@ -316,7 +316,7 @@ struct boss_netherspiteAI : public ScriptedAI
 
             if (PhaseTimer <= diff)
             {
-                if (!me->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCast(false))
                 {
                     SwitchToPortalPhase();
                     return;

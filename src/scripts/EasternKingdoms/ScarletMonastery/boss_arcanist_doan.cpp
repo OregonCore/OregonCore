@@ -78,7 +78,7 @@ struct boss_arcanist_doanAI : public ScriptedAI
         if (!bShielded && me->GetHealth()*100 / me->GetMaxHealth() <= 50)
         {
             //wait if we already casting
-            if (me->IsNonMeleeSpellCasted(false))
+            if (me->IsNonMeleeSpellCast(false))
                 return;
 
             DoScriptText(SAY_SPECIALAE, me);

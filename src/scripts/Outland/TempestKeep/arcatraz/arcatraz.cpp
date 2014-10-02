@@ -192,7 +192,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI
 
         if (Pyroblast_Timer <= diff)
         {
-            if (me->IsNonMeleeSpellCasted(false))
+            if (me->IsNonMeleeSpellCast(false))
                 return;
 
              DoScriptText(SAY_PYRO, me);

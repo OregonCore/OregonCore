@@ -143,7 +143,7 @@ void ScriptedAI::DoStopAttack()
 
 void ScriptedAI::DoCastSpell(Unit* pTarget, SpellEntry const* pSpellInfo, bool bTriggered)
 {
-    if (!pTarget || me->IsNonMeleeSpellCasted(false))
+    if (!pTarget || me->IsNonMeleeSpellCast(false))
         return;
 
     me->StopMoving();
