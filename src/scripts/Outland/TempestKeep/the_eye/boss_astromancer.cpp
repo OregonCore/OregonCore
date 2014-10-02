@@ -76,7 +76,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
         pInstance = c->GetInstanceData();
 
         defaultarmor = me->GetArmor();
-        defaultsize = me->GetFloatValue(OBJECT_FIELD_SCALE_X);
+        defaultsize = me->GetObjectScale();
     }
 
     ScriptedInstance *pInstance;
