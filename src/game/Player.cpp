@@ -12588,7 +12588,7 @@ void Player::PrepareGossipMenu(WorldObject *pSource, uint32 menuId)
                     break;
                 case GOSSIP_OPTION_TAXIVENDOR:
                     if (GetSession()->SendLearnNewTaxiNode(pCreature))
-                        return;
+                        continue;
                     break;
                 case GOSSIP_OPTION_BATTLEFIELD:
                     if (!pCreature->CanInteractWithBattleMaster(this, false))
