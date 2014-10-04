@@ -16907,15 +16907,6 @@ void Player::_SaveQuestStatus()
             case QUEST_UNCHANGED:
                 break;
         };
-
-        if(i->second.m_rewarded)
-        {
-            Quest const* pQuest = objmgr.GetQuestTemplate(i->first);
-            WorldDatabase.PExecute("INSERT IGNORE INTO completable_quests (quest, title) "
-                "VALUES ('%u', '%s')",
-                i->first, pQuest->GetTitle().c_str());
-        }
-
         i->second.uState = QUEST_UNCHANGED;
     }
 }
