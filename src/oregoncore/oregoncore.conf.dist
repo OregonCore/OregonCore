@@ -2028,6 +2028,11 @@ CharDelete.KeepDays = 30
 #       Default: 0 (Disabled)
 #                1 - Enabled
 #
+#     UI.ShowQuestLevelsInDialogs
+#        Description: Show quest levels next to quest titles in UI dialogs
+#        Example: [13] Westfall Stew
+#        Default: 0 (do not show)
+#
 ###############################################################################
 
 PlayerStart.AllReputation = 0
@@ -2047,6 +2052,7 @@ MinRecordUpdateTimeDiff = 100
 PlayerStart.String = ""
 DuelMod.Enable = 0
 DuelMod.Cooldowns = 0
+UI.ShowQuestLevelsInDialogs = 0
 
 ###############################################################################
 # AUTO BROADCAST

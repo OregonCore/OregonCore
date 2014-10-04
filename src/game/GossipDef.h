@@ -251,6 +251,8 @@ class PlayerMenu
         void SendTalking(uint32 textID);
         void SendTalking(char const * title, char const * text);
 
+        void AddQuestLevelToTitle(std::string &title, int32 level);
+
         /*********************************************************/
         /***                    QUEST SYSTEM                   ***/
         /*********************************************************/

@@ -155,6 +155,9 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, uint64 objectGUID)
 
     data << uint32(mQuestMenu.MenuItemCount());           // max count 0x20
 
+    // Store this instead of checking the Singleton every loop iteration
+    bool questLevelInTitle = sWorld.getConfig(CONFIG_UI_QUESTLEVELS_IN_DIALOGS);
+
     for (uint32 iI = 0; iI < mQuestMenu.MenuItemCount(); ++iI)
     {
         QuestMenuItem const& qItem = mQuestMenu.GetItem(iI);
@@ -171,6 +174,9 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, uint64 objectGUID)
             if (QuestLocale const *ql = objmgr.GetQuestLocale(questID))
                 if (ql->Title.size() > uint32(loc_idx) && !ql->Title[loc_idx].empty())
                     Title=ql->Title[loc_idx];
+
+        if (questLevelInTitle)
+            AddQuestLevelToTitle(Title, pQuest->GetQuestLevel());
 
         data << Title;
     }
@@ -348,6 +354,9 @@ void PlayerMenu::SendQuestGiverQuestList(QEmote eEmote, const std::string& Title
     data << uint32(eEmote._Emote);                         // NPC emote
     data << uint8 (mQuestMenu.MenuItemCount());
 
+    // Store this instead of checking the Singleton every loop iteration
+    bool questLevelInTitle = sWorld.getConfig(CONFIG_UI_QUESTLEVELS_IN_DIALOGS);
+
     for (uint32 iI = 0; iI < mQuestMenu.MenuItemCount(); iI++)
     {
         QuestMenuItem const& qmi = mQuestMenu.GetItem(iI);
@@ -366,6 +375,9 @@ void PlayerMenu::SendQuestGiverQuestList(QEmote eEmote, const std::string& Title
                     title=ql->Title[loc_idx];
             }
         }
+
+        if (questLevelInTitle)
+            AddQuestLevelToTitle(title, pQuest->GetQuestLevel());
 
         data << uint32(questID);
         data << uint32(qmi.m_qIcon);
@@ -409,6 +421,9 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const *pQuest, uint64 npcGUID,
                 EndText=ql->EndText[loc_idx];
         }
     }
+
+    if (sWorld.getConfig(CONFIG_UI_QUESTLEVELS_IN_DIALOGS))
+        AddQuestLevelToTitle(Title, pQuest->GetQuestLevel());
 
     WorldPacket data(SMSG_QUESTGIVER_QUEST_DETAILS, 100);   // guess size
     data << uint64(npcGUID);
@@ -690,13 +705,6 @@ void PlayerMenu::SendQuestGiverRequestItems(Quest const *pQuest, uint64 npcGUID,
     // We can always call to RequestItems, but this packet only goes out if there are actually
     // items.  Otherwise, we'll skip straight to the OfferReward
 
-    // We may wish a better check, perhaps checking the real quest requirements
-    if (pQuest->GetRequestItemsText().empty())
-    {
-        SendQuestGiverOfferReward(pQuest, npcGUID, true);
-        return;
-    }
-
     std::string Title = pQuest->GetTitle();
     std::string RequestItemsText = pQuest->GetRequestItemsText();
 
@@ -711,6 +719,16 @@ void PlayerMenu::SendQuestGiverRequestItems(Quest const *pQuest, uint64 npcGUID,
                 RequestItemsText=ql->RequestItemsText[loc_idx];
         }
     }
+
+    // We may wish a better check, perhaps checking the real quest requirements
+    if (pQuest->GetRequestItemsText().empty() && Completable)
+    {
+        SendQuestGiverOfferReward(pQuest, npcGUID, true);
+        return;
+    }
+
+    if (sWorld.getConfig(CONFIG_UI_QUESTLEVELS_IN_DIALOGS))
+        AddQuestLevelToTitle(Title, pQuest->GetQuestLevel());
 
     WorldPacket data(SMSG_QUESTGIVER_REQUEST_ITEMS, 50);  // guess size
     data << uint64(npcGUID);
@@ -765,5 +783,15 @@ void PlayerMenu::SendQuestGiverRequestItems(Quest const *pQuest, uint64 npcGUID,
 
     pSession->SendPacket(&data);
     sLog.outDebug("WORLD: Sent SMSG_QUESTGIVER_REQUEST_ITEMS NPCGuid=%u, questid=%u", GUID_LOPART(npcGUID), pQuest->GetQuestId());
+}
+
+void PlayerMenu::AddQuestLevelToTitle(std::string &title, int32 level)
+{
+    // Adds the quest level to the front of the quest title
+    // example: [13] Westfall Stew
+
+    std::stringstream questTitlePretty;
+    questTitlePretty << "[" << level << "] " << title;
+    title = questTitlePretty.str();
 }
 
