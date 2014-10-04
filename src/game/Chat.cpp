@@ -387,6 +387,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "leader",         SEC_ADMINISTRATOR,     false,  &ChatHandler::HandleGroupLeaderCommand,         "", NULL },
         { "disband",        SEC_ADMINISTRATOR,     false,  &ChatHandler::HandleGroupDisbandCommand,        "", NULL },
         { "remove",         SEC_ADMINISTRATOR,     false,  &ChatHandler::HandleGroupRemoveCommand,         "", NULL },
+        { "join",           SEC_ADMINISTRATOR,     false,  &ChatHandler::HandleGroupJoinCommand,           "", NULL },
         { NULL,             0,                     false, NULL,                                            "", NULL }
     };
 

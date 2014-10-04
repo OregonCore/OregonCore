@@ -7570,6 +7570,61 @@ bool ChatHandler::HandleGroupRemoveCommand(const char *args)
     return true;
 }
 
+bool ChatHandler::HandleGroupJoinCommand(const char *args)
+{
+        if (!*args)
+            return false;
+
+        Player* playerSource = NULL;
+        Player* playerTarget = NULL;
+        Group* groupSource = NULL;
+        Group* groupTarget = NULL;
+        uint64 guidSource = 0;
+        uint64 guidTarget = 0;
+        char* nameplgrStr = strtok((char*)args, " ");
+        char* nameplStr = strtok(NULL, " ");
+
+        if (GetPlayerGroupAndGUIDByName(nameplgrStr, playerSource, groupSource, guidSource, true))
+        {
+            if (groupSource)
+            {
+                if (GetPlayerGroupAndGUIDByName(nameplStr, playerTarget, groupTarget, guidTarget, true))
+                {
+                    if (!groupTarget && playerTarget->GetGroup() != groupSource)
+                    {
+                        if (!groupSource->IsFull())
+                        {
+                            groupSource->AddMember(guidTarget, playerTarget->GetName());
+                            groupSource->BroadcastGroupUpdate();
+                            PSendSysMessage(LANG_GROUP_PLAYER_JOINED, playerTarget->GetName(), playerSource->GetName());
+                            return true;
+                        }
+                        else
+                        {
+                            // group is full
+                            PSendSysMessage(LANG_GROUP_FULL);
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        // group is full or target player already in a group
+                        PSendSysMessage(LANG_GROUP_ALREADY_IN_GROUP, playerTarget->GetName());
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                // specified source player is not in a group
+                PSendSysMessage(LANG_GROUP_NOT_IN_GROUP, playerSource->GetName());
+                return true;
+            }
+        }
+
+        return true;
+}
+
 bool ChatHandler::HandlePossessCommand(const char * /*args*/)
 {
     Unit *pUnit = getSelectedUnit();

@@ -754,7 +754,11 @@ enum OregonStrings
     LANG_MUST_MALE_OR_FEMALE            = 1119,
     LANG_YOU_CHANGE_GENDER              = 1120,
     LANG_YOUR_GENDER_CHANGED            = 1121,
-    // Room for more level 3              1123-1198 not used
+    LANG_GROUP_ALREADY_IN_GROUP         = 1122,
+    LANG_GROUP_PLAYER_JOINED            = 1123,
+    LANG_GROUP_NOT_IN_GROUP             = 1124,
+    LANG_GROUP_FULL                     = 1125,
+    // Room for more level 3              1126-1198 not used
 
     LANG_CREATURE_NOT_DEAD              = 1122,
 

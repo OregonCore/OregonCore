@@ -410,9 +410,11 @@ class ChatHandler
         bool HandlePetLearnCommand(const char* args);
         bool HandleCreatePetCommand(const char* args);
 
+        // Group Related
         bool HandleGroupLeaderCommand(const char* args);
         bool HandleGroupDisbandCommand(const char* args);
         bool HandleGroupRemoveCommand(const char* args);
+        bool HandleGroupJoinCommand(const char* args);
 
         bool HandleGuildCreateCommand(const char* args);
         bool HandleGuildInviteCommand(const char* args);
