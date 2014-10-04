@@ -683,6 +683,15 @@ struct SpellEntry
     uint32    AreaId;                                       // 214
     uint32    SchoolMask;                                   // 215 school mask
 
+    // Helpers
+    bool HasEffect(uint8 effect) const
+    {
+        for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+            if (Effect[i] == effect)
+                return true;
+        return false;
+    }
+
     private:
         // prevent creating custom entries (copy data from original in fact)
         SpellEntry(SpellEntry const&);                      // DON'T must have implementation

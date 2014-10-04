@@ -13393,6 +13393,10 @@ void Player::IncompleteQuest(uint32 quest_id)
 
 void Player::RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver, bool announce)
 {
+    //this THING should be here to protect code from quest, which cast on player far teleport as a reward
+    //should work fine, cause far teleport will be executed in Player::Update()
+    SetCanDelayTeleport(true);
+
     uint32 quest_id = pQuest->GetQuestId();
 
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
@@ -13493,13 +13497,31 @@ void Player::RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver,
     if (announce)
         SendQuestReward(pQuest, XP, questGiver);
 
-
     // cast spells after mark quest complete (some spells have quest completed state requirements in spell_area data)
-    // @todo Add extra checks incase player needs to cast the spell himself or creature cast spell on player
     if (pQuest->GetRewSpellCast() > 0)
-        CastSpell(this, pQuest->GetRewSpellCast(), true);
+    {
+        SpellEntry const* spellInfo = sSpellStore.LookupEntry(pQuest->GetRewSpellCast());
+        if (questGiver->isType(TYPEMASK_UNIT) && !spellInfo->HasEffect(SPELL_EFFECT_LEARN_SPELL) && !spellInfo->HasEffect(SPELL_EFFECT_CREATE_ITEM))
+        {
+            if (Creature* creature = GetMap()->GetCreature(questGiver->GetGUID()))
+                creature->CastSpell(this, pQuest->GetRewSpellCast(), true);
+        }
+        else
+            CastSpell(this, pQuest->GetRewSpellCast(), true);
+    }
     else if (pQuest->GetRewSpell() > 0)
-        CastSpell(this, pQuest->GetRewSpell(), true);
+    {
+        SpellEntry const* spellInfo = sSpellStore.LookupEntry(pQuest->GetRewSpell());
+        if (questGiver->isType(TYPEMASK_UNIT) && !spellInfo->HasEffect(SPELL_EFFECT_LEARN_SPELL) && !spellInfo->HasEffect(SPELL_EFFECT_CREATE_ITEM))
+        {
+            if (Creature* creature = GetMap()->GetCreature(questGiver->GetGUID()))
+                creature->CastSpell(this, pQuest->GetRewSpell(), true);
+        }
+        else
+            CastSpell(this, pQuest->GetRewSpell(), true);
+    }
+
+    SetCanDelayTeleport(false);
 }
 
 void Player::FailQuest(uint32 questId)
@@ -16885,6 +16907,15 @@ void Player::_SaveQuestStatus()
             case QUEST_UNCHANGED:
                 break;
         };
+
+        if(i->second.m_rewarded)
+        {
+            Quest const* pQuest = objmgr.GetQuestTemplate(i->first);
+            WorldDatabase.PExecute("INSERT IGNORE INTO completable_quests (quest, title) "
+                "VALUES ('%u', '%s')",
+                i->first, pQuest->GetTitle().c_str());
+        }
+
         i->second.uState = QUEST_UNCHANGED;
     }
 }
