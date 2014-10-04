@@ -2948,14 +2948,24 @@ void SpellMgr::LoadSkillLineAbilityMap()
 
 DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto, bool triggered)
 {
+    if (!spellproto)
+        return DIMINISHING_NONE;
+
     // Explicit Diminishing Groups
     switch(spellproto->SpellFamilyName)
     {
+        // Event + General spells
+        case SPELLFAMILY_UNK1:
+        case SPELLFAMILY_POTION:
+            return DIMINISHING_NONE;
         case SPELLFAMILY_MAGE:
         {
             // Polymorph
             if ((spellproto->SpellFamilyFlags & 0x00001000000LL) && spellproto->EffectApplyAuraName[0] == SPELL_AURA_MOD_CONFUSE)
                 return DIMINISHING_POLYMORPH;
+            // Frost Nova / Freeze (Water Elemental)
+            else if (spellproto->SpellIconID == 193)
+                return DIMINISHING_CONTROLLED_ROOT;
             break;
         }
         case SPELLFAMILY_ROGUE:
@@ -2974,11 +2984,11 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
                 return DIMINISHING_BLIND_CYCLONE;
             break;
         }
-        case SPELLFAMILY_HUNTER:
+        case SPELLFAMILY_WARRIOR:
         {
-            // Freezing trap
-            if (spellproto->SpellFamilyFlags & 0x00000000008LL)
-                return DIMINISHING_FREEZE;
+            // Hamstring - limit duration to 10s in PvP
+            if (spellproto->SpellFamilyFlags & 0x00000000002LL)
+                return DIMINISHING_LIMITONLY;
             break;
         }
         case SPELLFAMILY_WARLOCK:
@@ -3007,14 +3017,24 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
                 return DIMINISHING_BLIND_CYCLONE;
             // Nature's Grasp trigger
             if (spellproto->SpellFamilyFlags & 0x00000000200LL && spellproto->Attributes == 0x49010000)
-                return DIMINISHING_CONTROL_ROOT;
+                return DIMINISHING_CONTROLLED_ROOT;
             break;
         }
-        case SPELLFAMILY_WARRIOR:
+        case SPELLFAMILY_HUNTER:
         {
-            // Hamstring - limit duration to 10s in PvP
-            if (spellproto->SpellFamilyFlags & 0x00000000002LL)
-                return DIMINISHING_LIMITONLY;
+            // Freezing trap
+            if (spellproto->SpellFamilyFlags & 0x00000000008LL)
+                return DIMINISHING_FREEZE;
+            // Intimidation
+            else if (spellproto->Id == 24394)
+                return DIMINISHING_CONTROL_STUN;
+            break;
+        }
+        case SPELLFAMILY_PALADIN:
+        {
+            // Turn Evil shared diminishing with fear
+            if (spellproto->Id == 10326)
+                return DIMINISHING_FEAR;
             break;
         }
         default:
@@ -3033,7 +3053,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
         else if (spellproto->Mechanic == MECHANIC_SLEEP   || spellproto->EffectMechanic[i] == MECHANIC_SLEEP)
             return DIMINISHING_SLEEP;
         else if (spellproto->Mechanic == MECHANIC_ROOT    || spellproto->EffectMechanic[i] == MECHANIC_ROOT)
-            return triggered ? DIMINISHING_TRIGGER_ROOT : DIMINISHING_CONTROL_ROOT;
+            return triggered ? DIMINISHING_TRIGGER_ROOT : DIMINISHING_CONTROLLED_ROOT;
         else if (spellproto->Mechanic == MECHANIC_FEAR    || spellproto->EffectMechanic[i] == MECHANIC_FEAR)
             return DIMINISHING_FEAR;
         else if (spellproto->Mechanic == MECHANIC_CHARM   || spellproto->EffectMechanic[i] == MECHANIC_CHARM)
@@ -3060,7 +3080,7 @@ bool IsDiminishingReturnsGroupDurationLimited(DiminishingGroup group)
         case DIMINISHING_TRIGGER_STUN:
         case DIMINISHING_KIDNEYSHOT:
         case DIMINISHING_SLEEP:
-        case DIMINISHING_CONTROL_ROOT:
+        case DIMINISHING_CONTROLLED_ROOT:
         case DIMINISHING_TRIGGER_ROOT:
         case DIMINISHING_FEAR:
         case DIMINISHING_WARLOCK_FEAR:
@@ -3087,7 +3107,7 @@ DiminishingReturnsType GetDiminishingReturnsGroupType(DiminishingGroup group)
         case DIMINISHING_KIDNEYSHOT:
             return DRTYPE_ALL;
         case DIMINISHING_SLEEP:
-        case DIMINISHING_CONTROL_ROOT:
+        case DIMINISHING_CONTROLLED_ROOT:
         case DIMINISHING_TRIGGER_ROOT:
         case DIMINISHING_FEAR:
         case DIMINISHING_CHARM:

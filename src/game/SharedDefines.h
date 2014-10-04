@@ -2453,7 +2453,7 @@ enum DiminishingGroup
     DIMINISHING_CONTROL_STUN,                               // Player Controlled stuns
     DIMINISHING_TRIGGER_STUN,                               // By aura proced stuns, usualy chance on hit talents
     DIMINISHING_SLEEP,
-    DIMINISHING_CONTROL_ROOT,                               // Immobilizing effects from casted spells
+    DIMINISHING_CONTROLLED_ROOT,                            // Immobilizing effects from casted spells
     DIMINISHING_TRIGGER_ROOT,                               // Immobilizing effects from triggered spells like Frostbite
     DIMINISHING_FEAR,                                       // Non-warlock fears
     DIMINISHING_CHARM,
