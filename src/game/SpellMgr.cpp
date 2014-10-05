@@ -403,7 +403,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
             // Food / Drinks (mostly)
             if (spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED)
             {
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
                 {
                     if (spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_POWER_REGEN)
                         return SPELL_DRINK;
@@ -487,7 +487,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
             if ((spellInfo->SpellFamilyFlags & 0x00000820180400LL) && (spellInfo->AttributesEx3 & 0x200))
                 return SPELL_JUDGEMENT;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
             {
                 // only paladin auras have this
                 if (spellInfo->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA_PARTY)
@@ -526,7 +526,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         return SPELL_ASPECT;
     }
 
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
         if (spellInfo->Effect[i] == SPELL_EFFECT_APPLY_AURA)
         {
@@ -709,7 +709,7 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
                         if (spellTriggeredProto)
                         {
                             // non-positive targets of main spell return early
-                            for (int i = 0; i < 3; ++i)
+                            for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
                             {
                                 // if non-positive trigger cast targeted to positive target this main cast is non-positive
                                 // this will place this spell auras as debuffs
@@ -843,7 +843,7 @@ bool IsPositiveSpell(uint32 spellId)
 
     // spells with at least one negative effect are considered negative
     // some self-applied spells have negative effects but in self casting case negative check ignored.
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
         if (!IsPositiveEffect(spellId, i))
             return false;
     return true;
@@ -901,7 +901,7 @@ bool IsAuraAddedBySpell(uint32 auraType, uint32 spellId)
     SpellEntry const *spellproto = sSpellStore.LookupEntry(spellId);
     if (!spellproto) return false;
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
         if (spellproto->EffectApplyAuraName[i] == auraType)
             return true;
     return false;
@@ -1006,7 +1006,7 @@ void SpellMgr::LoadSpellTargetPositions()
         }
 
         bool found = false;
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
         {
             if (spellInfo->EffectImplicitTargetA[i] == TARGET_DST_DB || spellInfo->EffectImplicitTargetB[i] == TARGET_DST_DB)
             {
@@ -1102,7 +1102,7 @@ void SpellMgr::LoadSpellAffects()
         if (!spellInfo)
             continue;
 
-        for (int effectId = 0; effectId < 3; ++effectId)
+        for (int effectId = 0; effectId < MAX_SPELL_EFFECTS; ++effectId)
         {
             if (spellInfo->Effect[effectId] != SPELL_EFFECT_APPLY_AURA ||
                 (spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_FLAT_MODIFIER &&
@@ -1542,7 +1542,7 @@ bool SpellMgr::canStackSpellRanks(SpellEntry const *spellInfo)
         return false;
 
     // All stance spells. if any better way, change it.
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
     {
         // Paladin aura Spell
         if (spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN
@@ -1586,7 +1586,7 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
 
     if (!sameCaster)
     {
-        for (uint32 i = 0; i < 3; ++i)
+        for (uint32 i = 0; i < MAX_SPELL_EFFECTS; ++i)
             if (spellInfo_1->Effect[i] == SPELL_EFFECT_APPLY_AURA
                 || spellInfo_1->Effect[i] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
                 // not area auras (shaman totem)
@@ -1634,7 +1634,7 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
     spellInfo_2=sSpellStore.LookupEntry(GetLastSpellInChain(spellId_2));
 
     //if spells have exactly the same effect they cannot stack
-    for (uint32 i = 0; i < 3; ++i)
+    for (uint32 i = 0; i < MAX_SPELL_EFFECTS; ++i)
         if (spellInfo_1->Effect[i] != spellInfo_2->Effect[i]
             || spellInfo_1->EffectApplyAuraName[i] != spellInfo_2->EffectApplyAuraName[i]
             || spellInfo_1->EffectMiscValue[i] != spellInfo_2->EffectMiscValue[i]) // paladin resist aura
@@ -1979,7 +1979,7 @@ void SpellMgr::LoadSpellLearnSkills()
         if (!entry)
             continue;
 
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
         {
             if (entry->Effect[i] == SPELL_EFFECT_SKILL)
             {
@@ -2052,7 +2052,7 @@ void SpellMgr::LoadSpellLearnSpells()
         if (!entry)
             continue;
 
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
         {
             if (entry->Effect[i] == SPELL_EFFECT_LEARN_SPELL)
             {
@@ -2255,7 +2255,7 @@ void SpellMgr::LoadSpellPetAuras()
                 continue;
             }
             int i = 0;
-            for (; i < 3; ++i)
+            for (; i < MAX_SPELL_EFFECTS; ++i)
                 if ((spellInfo->Effect[i] == SPELL_EFFECT_APPLY_AURA &&
                     spellInfo->EffectApplyAuraName[i] == SPELL_AURA_DUMMY) ||
                     spellInfo->Effect[i] == SPELL_EFFECT_DUMMY)
@@ -2298,7 +2298,7 @@ void SpellMgr::LoadSpellCustomAttr()
             continue;
 
         bool auraSpell = true;
-        for (uint8 j = 0; j < 3; ++j)
+        for (uint8 j = 0; j < MAX_SPELL_EFFECTS; ++j)
         {
             if (spellInfo->Effect[j])
                 if (spellInfo->Effect[j] != SPELL_EFFECT_APPLY_AURA
@@ -2312,7 +2312,7 @@ void SpellMgr::LoadSpellCustomAttr()
         if (auraSpell)
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_AURA_SPELL;
 
-        for (uint32 j = 0; j < 3; ++j)
+        for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
         {
             switch(spellInfo->EffectApplyAuraName[j])
             {
@@ -2360,7 +2360,7 @@ void SpellMgr::LoadSpellCustomAttr()
             }
         }
 
-        for (uint8 j = 0; j < 3; ++j)
+        for (uint8 j = 0; j < MAX_SPELL_EFFECTS; ++j)
         {
             switch (spellInfo->EffectApplyAuraName[j])
             {

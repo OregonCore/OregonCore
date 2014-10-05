@@ -365,7 +365,7 @@ Spell::~Spell()
 
 void Spell::FillTargetMap()
 {
-    for (uint32 i = 0; i < 3; ++i)
+    for (uint32 i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
         // not call for empty effect.
         // Also some spells use not used effect targets for store targets for dummy effect in triggered spells
@@ -2539,7 +2539,7 @@ void Spell::_handle_immediate_phase()
     HandleThreatSpells(m_spellInfo->Id);
 
     m_needSpellLog = IsNeedSendToClient();
-    for (uint32 j = 0; j < 3; ++j)
+    for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
     {
         if (m_spellInfo->Effect[j] == 0)
             continue;
@@ -2572,7 +2572,7 @@ void Spell::_handle_immediate_phase()
     if (!m_originalCaster)
         return;
     // process ground
-    for (uint32 j = 0; j < 3; ++j)
+    for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
     {
         if (spellmgr.EffectTargetType[m_spellInfo->Effect[j]] == SPELL_REQUIRE_DEST)
         {
@@ -3615,7 +3615,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         }
 
         // check pet presents
-        for (int j = 0; j < 3; ++j)
+        for (int j = 0; j < MAX_SPELL_EFFECTS; ++j)
         {
             if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_UNIT_PET)
             {
@@ -3741,7 +3741,7 @@ SpellCastResult Spell::CheckCast(bool strict)
     //ImpliciteTargetA-B = 38, If fact there is 0 Spell with  ImpliciteTargetB=38
     if (m_UniqueTargetInfo.empty())                          // skip second canCast apply (for delayed spells for example)
     {
-        for (uint8 j = 0; j < 3; j++)
+        for (uint8 j = 0; j < MAX_SPELL_EFFECTS; j++)
         {
             if ((m_spellInfo->EffectImplicitTargetA[j] == TARGET_UNIT_NEARBY_ENTRY) ||
                 (m_spellInfo->EffectImplicitTargetB[j] == TARGET_UNIT_NEARBY_ENTRY && m_spellInfo->EffectImplicitTargetA[j] != TARGET_UNIT_CASTER) ||
@@ -3888,7 +3888,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             return castResult;
     }
 
-    for (uint32 i = 0; i < 3; i++)
+    for (uint32 i = 0; i < MAX_SPELL_EFFECTS; i++)
     {
         // for effects of spells that have only one target
         switch(m_spellInfo->Effect[i])
@@ -4425,7 +4425,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         }
     }
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
     {
         switch(m_spellInfo->EffectApplyAuraName[i])
         {
@@ -4731,34 +4731,34 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
 
                 if (data > 0)
                 {
-                    if (!unitTarget->HasAura(data, 0) &&
-                        !unitTarget->HasAura(data, 1) &&
-                        !unitTarget->HasAura(data, 2))
+                    if (!unitTarget->HasAura(data, EFFECT_0) &&
+                        !unitTarget->HasAura(data, EFFECT_1) &&
+                        !unitTarget->HasAura(data, EFFECT_2))
                         return SPELL_FAILED_BAD_TARGETS;
                 }
                 else
                 {
                     data = -data;
-                    if (unitTarget->HasAura(data, 0) &&
-                        unitTarget->HasAura(data, 1) &&
-                        unitTarget->HasAura(data, 2))
+                    if (unitTarget->HasAura(data, EFFECT_0) &&
+                        unitTarget->HasAura(data, EFFECT_1) &&
+                        unitTarget->HasAura(data, EFFECT_2))
                         return SPELL_FAILED_BAD_TARGETS;
                 }
                 break;
             case SDC_AURA_CASTER:
                 if (data > 0)
                 {
-                    if (!m_caster->HasAura(data, 0) &&
-                        !m_caster->HasAura(data, 1) &&
-                        !m_caster->HasAura(data, 2))
+                    if (!m_caster->HasAura(data, EFFECT_0) &&
+                        !m_caster->HasAura(data, EFFECT_1) &&
+                        !m_caster->HasAura(data, EFFECT_2))
                         return SPELL_FAILED_BAD_TARGETS;
                 }
                 else
                 {
                     data = -data;
-                    if (m_caster->HasAura(data, 0) &&
-                        m_caster->HasAura(data, 1) &&
-                        m_caster->HasAura(data, 2))
+                    if (m_caster->HasAura(data, EFFECT_0) &&
+                        m_caster->HasAura(data, EFFECT_1) &&
+                        m_caster->HasAura(data, EFFECT_2))
                         return SPELL_FAILED_BAD_TARGETS;
                 }
                 break;
@@ -4916,7 +4916,7 @@ SpellCastResult Spell::CheckCasterAuras() const
     //We use bitmasks so the loop is done only once and not on every aura check below.
     if (m_spellInfo->AttributesEx & SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY)
     {
-        for (int i = 0;i < 3; i ++)
+        for (int i = 0;i < MAX_SPELL_EFFECTS; i ++)
         {
             if (m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_SCHOOL_IMMUNITY)
                 school_immune |= uint32(m_spellInfo->EffectMiscValue[i]);
@@ -5224,7 +5224,7 @@ SpellCastResult Spell::CheckItems()
             {
                 // such items should only fail if there is no suitable effect at all - see Rejuvenation Potions for example
                 SpellCastResult failReason = SPELL_CAST_OK;
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
                 {
                     // skip check, pet not required like checks, and for TARGET_UNIT_PET m_targets.getUnitTarget() is not the real target but the caster
                     if (m_spellInfo->EffectImplicitTargetA[i] == TARGET_UNIT_PET)
@@ -5379,7 +5379,7 @@ SpellCastResult Spell::CheckItems()
         return SPELL_FAILED_TOTEM_CATEGORY;          //0x7B
 
     // Special check for spell effects
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
     {
         switch (m_spellInfo->Effect[i])
         {
@@ -5639,7 +5639,7 @@ void Spell::DelayedChannel()
         }
     }
 
-    for (int j = 0; j < 3; j++)
+    for (int j = 0; j < MAX_SPELL_EFFECTS; j++)
     {
         // partially interrupt persistent area auras
         DynamicObject* dynObj = m_caster->GetDynObject(m_spellInfo->Id, j);
@@ -6021,7 +6021,7 @@ bool Spell::IsValidSingleTargetEffect(Unit const* target, Targets type) const
 
 bool Spell::IsValidSingleTargetSpell(Unit const* target) const
 {
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
         if (!IsValidSingleTargetEffect(target, Targets(m_spellInfo->EffectImplicitTargetA[i])))
             return false;
@@ -6035,7 +6035,7 @@ bool Spell::IsValidSingleTargetSpell(Unit const* target) const
 void Spell::CalculateDamageDoneForAllTargets()
 {
     float multiplier[3];
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
         if (m_applyMultiplierMask & (1 << i))
         {
@@ -6083,7 +6083,7 @@ int32 Spell::CalculateDamageDone(Unit *unit, const uint32 effectMask, float *mul
 {
     int32 damageDone = 0;
     unitTarget = unit;
-    for (uint32 i = 0; i < 3; ++i)
+    for (uint32 i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
         if (effectMask & (1<<i))
         {

@@ -4164,7 +4164,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
         {
             int32 delta = (int32(getLevel()) - startLevel + 1)*MINUTE;
 
-            for (int i =0; i < 3; ++i)
+            for (int i =0; i < MAX_SPELL_EFFECTS; ++i)
             {
                 if (Aura* Aur = GetAura(SPELL_PASSIVE_RESURRECTION_SICKNESS,i))
                 {
@@ -7261,7 +7261,7 @@ void Player::ApplyEquipSpell(SpellEntry const* spellInfo, Item* item, bool apply
         if (form_change)                                     // check aura active state from other form
         {
             bool found = false;
-            for (int k=0; k < 3; ++k)
+            for (int k=0; k < MAX_SPELL_EFFECTS; ++k)
             {
                 spellEffectPair spair = spellEffectPair(spellInfo->Id, k);
                 for (AuraMap::iterator iter = m_Auras.lower_bound(spair); iter != m_Auras.upper_bound(spair); ++iter)
@@ -15415,7 +15415,7 @@ void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
                 continue;
             }
 
-            if (effindex >= 3)
+            if (effindex >= MAX_SPELL_EFFECTS)
             {
                 sLog.outError("Invalid effect index (spellid %u, effindex %u), ignore.",spellid,effindex);
                 continue;
@@ -16724,7 +16724,7 @@ void Player::_SaveAuras()
                 {
                     uint8 i;
                     // or apply at cast SPELL_AURA_MOD_SHAPESHIFT or SPELL_AURA_MOD_STEALTH auras
-                    for (i = 0; i < 3; i++)
+                    for (i = 0; i < MAX_SPELL_EFFECTS; i++)
 					{
                         if (spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_SHAPESHIFT ||
                             spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_STEALTH)
@@ -19629,7 +19629,7 @@ void Player::learnQuestRewardedSpells(Quest const* quest)
 
     // check learned spells state
     bool found = false;
-    for (uint8 i = 0; i < 3; ++i)
+    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
         if (spellInfo->Effect[i] == SPELL_EFFECT_LEARN_SPELL && !HasSpell(spellInfo->EffectTriggerSpell[i]))
         {
@@ -20403,7 +20403,7 @@ void Player::UpdateAreaDependentAuras(uint32 newArea)
         // use m_zoneUpdateId for speed: UpdateArea called from UpdateZone or instead UpdateZone in both cases m_zoneUpdateId up-to-date
         if (!IsSpellAllowedInLocation(iter->second->GetSpellProto(),GetMapId(),m_zoneUpdateId,newArea))
         {
-            for (uint8 i = 0; i < 3; ++i)
+            for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
             {
                 if (iter->second->GetSpellProto()->Effect[i] == SPELL_EFFECT_TRIGGER_SPELL && HasAura(iter->second->GetSpellProto()->EffectTriggerSpell[i],0))
                     RemoveAurasDueToSpell(iter->second->GetSpellProto()->EffectTriggerSpell[i]);
