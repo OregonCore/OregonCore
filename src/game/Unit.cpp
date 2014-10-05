@@ -3576,7 +3576,7 @@ bool Unit::AddAura(Aura *Aur)
                     aur2->UpdateAuraDuration();
                     aur2->UpdateAuraCharges();
                     delete Aur;
-                    return false;
+                    return true;
                 }
 
                 // Increment aura's stack, one stack per one call
