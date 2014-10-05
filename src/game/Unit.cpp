@@ -8999,7 +8999,7 @@ void Unit::ModSpellCastTime(SpellEntry const* spellProto, int32 & castTime, Spel
     if (Player* modOwner = GetSpellModOwner())
         modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_CASTING_TIME, castTime, spell);
 
-    if (!((spellProto->Attributes & (SPELL_ATTR_UNK4 | SPELL_ATTR_TRADESPELL)) || (spellProto->AttributesEx3 & SPELL_ATTR_EX3_UNK29)) &&
+    if (!((spellProto->Attributes & (SPELL_ATTR_ABILITY | SPELL_ATTR_TRADESPELL)) || (spellProto->AttributesEx3 & SPELL_ATTR_EX3_UNK29)) &&
         ((GetTypeId() == TYPEID_PLAYER && spellProto->SpellFamilyName) || GetTypeId() == TYPEID_UNIT))
         castTime = int32(float(castTime) * GetFloatValue(UNIT_MOD_CAST_SPEED));
     else if (spellProto->Attributes & SPELL_ATTR_RANGED && !(spellProto->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG))

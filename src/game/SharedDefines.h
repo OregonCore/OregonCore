@@ -388,7 +388,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
 #define SPELL_ATTR_RANGED                         0x00000002            // 1 All ranged abilities have this flag
 #define SPELL_ATTR_ON_NEXT_SWING_1                0x00000004            // 2 on next swing
 #define SPELL_ATTR_UNK3                           0x00000008            // 3 not set in 2.4.2
-#define SPELL_ATTR_UNK4                           0x00000010            // 4
+#define SPELL_ATTR_ABILITY                        0x00000010            // 4 client puts 'ability' instead of 'spell' in game strings for these spells
 #define SPELL_ATTR_TRADESPELL                     0x00000020            // 5 trade spells, will be added by client to a sublist of profession spell
 #define SPELL_ATTR_PASSIVE                        0x00000040            // 6 Passive spell
 #define SPELL_ATTR_UNK7                           0x00000080            // 7 visible?

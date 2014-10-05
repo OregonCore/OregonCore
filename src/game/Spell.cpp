@@ -297,14 +297,11 @@ Spell::Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 origin
     m_spellSchoolMask = GetSpellSchoolMask(info);           // Can be override for some spell (wand shoot for example)
 
     if (m_attackType == RANGED_ATTACK)
-    {
         // wand case
         if ((m_caster->getClassMask() & CLASSMASK_WAND_USERS) != 0 && m_caster->GetTypeId() == TYPEID_PLAYER)
-        {
             if (Item* pItem = m_caster->ToPlayer()->GetWeaponForAttack(RANGED_ATTACK))
                 m_spellSchoolMask = SpellSchoolMask(1 << pItem->GetProto()->Damage->DamageType);
-        }
-    }
+
     // Set health leech amount to zero
     m_healthLeech = 0;
 
@@ -318,7 +315,8 @@ Spell::Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 origin
     else
     {
         m_originalCaster = ObjectAccessor::GetUnit(*m_caster,m_originalCasterGUID);
-        if (m_originalCaster && !m_originalCaster->IsInWorld()) m_originalCaster = NULL;
+        if (m_originalCaster && !m_originalCaster->IsInWorld())
+            m_originalCaster = NULL;
     }
 
     for (int i=0; i <3; ++i)
@@ -349,27 +347,11 @@ Spell::Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 origin
 
     m_needAliveTargetMask = 0;
 
-    // determine reflection
-    m_canReflect = false;
-
-    if (m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_MAGIC && !IsAreaOfEffectSpell(m_spellInfo) && (m_spellInfo->AttributesEx2 & 0x4) == 0)
-    {
-        for (int j=0;j<3;j++)
-        {
-            if (m_spellInfo->Effect[j] == 0)
-                continue;
-
-            if (!IsPositiveTarget(m_spellInfo->EffectImplicitTargetA[j],m_spellInfo->EffectImplicitTargetB[j]))
-                m_canReflect = true;
-            else
-                m_canReflect = (m_spellInfo->AttributesEx & SPELL_ATTR_EX_NEGATIVE) ? true : false;
-
-            if (m_canReflect)
-                continue;
-            else
-                break;
-        }
-    }
+    // Determine if spell can be reflected back to the caster
+    // Patch 1.2 notes: Spell Reflection no longer reflects abilities
+    m_canReflect = m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_MAGIC && !(m_spellInfo->Attributes & SPELL_ATTR_ABILITY)
+        && !(m_spellInfo->AttributesEx & SPELL_ATTR_EX_CANT_BE_REDIRECTED) && !(m_spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
+        && !IsPassiveSpell(m_spellInfo) && !IsPositiveSpell(m_spellInfo->Id);
 
     CleanupTargetList();
 }
