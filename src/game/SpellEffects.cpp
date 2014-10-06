@@ -4495,22 +4495,19 @@ void Spell::EffectInterruptCast(SpellEffIndex effIndex)
         {
             SpellEntry const* curSpellInfo = spell->m_spellInfo;
             // check if we can interrupt spell
-            if (spell->getState() == SPELL_STATE_CASTING || (spell->getState() == SPELL_STATE_PREPARING && spell->GetCastTime() > 0.0f))
-            {
-                if ((i == CURRENT_GENERIC_SPELL && curSpellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_INTERRUPT) ||				    
-                   (i == CURRENT_CHANNELED_SPELL && curSpellInfo->ChannelInterruptFlags & CHANNEL_FLAG_MOVEMENT))
-                {   
-                    if (curSpellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
-                    {
+            if ((spell->getState() == SPELL_STATE_CASTING
+                || (spell->getState() == SPELL_STATE_PREPARING && spell->GetCastTime() > 0.0f))
+                && curSpellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE
+                && ((i == CURRENT_GENERIC_SPELL && curSpellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_INTERRUPT)
+                || (i == CURRENT_CHANNELED_SPELL && curSpellInfo->ChannelInterruptFlags & CHANNEL_FLAG_MOVEMENT)))
+             {
                         if (m_originalCaster)
                         {
                             int32 duration = m_originalCaster->CalculateSpellDuration(m_spellInfo, effIndex, unitTarget);
                             unitTarget->ProhibitSpellSchool(GetSpellSchoolMask(curSpellInfo), duration/*GetSpellDuration(m_spellInfo)*/);
                         }
                         unitTarget->InterruptSpell(CurrentSpellTypes(i), false);
-                    }
-                }
-            }
+             }
         }
     }
 }
