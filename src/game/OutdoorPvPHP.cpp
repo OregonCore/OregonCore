@@ -81,7 +81,7 @@ bool OutdoorPvPHP::SetupOutdoorPvP()
     return true;
 }
 
-void OutdoorPvPHP::HandlePlayerEnterZone(Player * plr, uint32 zone)
+void OutdoorPvPHP::HandlePlayerEnterZone(Player* plr, uint32 zone)
 {
     // add buffs
     if (plr->GetTeam() == ALLIANCE)
@@ -97,7 +97,7 @@ void OutdoorPvPHP::HandlePlayerEnterZone(Player * plr, uint32 zone)
     OutdoorPvP::HandlePlayerEnterZone(plr,zone);
 }
 
-void OutdoorPvPHP::HandlePlayerLeaveZone(Player * plr, uint32 zone)
+void OutdoorPvPHP::HandlePlayerLeaveZone(Player* plr, uint32 zone)
 {
     // remove buffs
     if (plr->GetTeam() == ALLIANCE)
@@ -131,7 +131,7 @@ bool OutdoorPvPHP::Update(uint32 diff)
     return changed;
 }
 
-void OutdoorPvPHP::SendRemoveWorldStates(Player *plr)
+void OutdoorPvPHP::SendRemoveWorldStates(Player* plr)
 {
     plr->SendUpdateWorldState(HP_UI_TOWER_DISPLAY_A,0);
     plr->SendUpdateWorldState(HP_UI_TOWER_DISPLAY_H,0);
@@ -296,7 +296,7 @@ void OPvPCapturePointHP::FillInitialWorldStates(WorldPacket &data)
     }
 }
 
-bool OPvPCapturePointHP::HandlePlayerEnter(Player *plr)
+bool OPvPCapturePointHP::HandlePlayerEnter(Player* plr)
 {
     if (OPvPCapturePoint::HandlePlayerEnter(plr))
     {
@@ -309,13 +309,13 @@ bool OPvPCapturePointHP::HandlePlayerEnter(Player *plr)
     return false;
 }
 
-void OPvPCapturePointHP::HandlePlayerLeave(Player *plr)
+void OPvPCapturePointHP::HandlePlayerLeave(Player* plr)
 {
     plr->SendUpdateWorldState(HP_UI_TOWER_SLIDER_DISPLAY, 0);
     OPvPCapturePoint::HandlePlayerLeave(plr);
 }
 
-void OutdoorPvPHP::HandleKillImpl(Player *plr, Unit * killed)
+void OutdoorPvPHP::HandleKillImpl(Player* plr, Unit * killed)
 {
     if (killed->GetTypeId() != TYPEID_PLAYER)
         return;

@@ -1238,8 +1238,8 @@ private:
     time_t _lastrun_n;
 
     inline uint32 minValue(uint32 a, uint32 b) { return a <= b ? a : b; };
-    void addNewAuctions(Player *AHBplayer, AHBConfig *config);
-    void addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *config, WorldSession *session);
+    void addNewAuctions(Player* AHBplayer, AHBConfig *config);
+    void addNewAuctionBuyerBotBid(Player* AHBplayer, AHBConfig *config, WorldSession *session);
 
 public:
     AuctionHouseBot();

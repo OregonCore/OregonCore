@@ -596,7 +596,7 @@ bool Item::UpdateItemSuffixFactor()
     return true;
 }
 
-void Item::SetState(ItemUpdateState state, Player *forplayer)
+void Item::SetState(ItemUpdateState state, Player* forplayer)
 {
     if (uState == ITEM_NEW && state == ITEM_REMOVED)
     {
@@ -623,7 +623,7 @@ void Item::SetState(ItemUpdateState state, Player *forplayer)
     }
 }
 
-void Item::AddToUpdateQueueOf(Player *player)
+void Item::AddToUpdateQueueOf(Player* player)
 {
     if (IsInUpdateQueue())
         return;
@@ -643,7 +643,7 @@ void Item::AddToUpdateQueueOf(Player *player)
     uQueuePos = player->m_itemUpdateQueue.size()-1;
 }
 
-void Item::RemoveFromUpdateQueueOf(Player *player)
+void Item::RemoveFromUpdateQueueOf(Player* player)
 {
     if (!IsInUpdateQueue())
         return;
@@ -914,7 +914,7 @@ Item* Item::CloneItem(uint32 count, Player const* player) const
 
 void Item::BuildUpdate(UpdateDataMapType& data_map)
 {
-    if (Player *owner = GetOwner())
+    if (Player* owner = GetOwner())
         BuildFieldsUpdate(owner, data_map);
     ClearUpdateMask(false);
 }

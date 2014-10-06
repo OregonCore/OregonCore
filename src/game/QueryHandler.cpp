@@ -32,7 +32,7 @@
 #include "ObjectAccessor.h"
 #include "MapManager.h"
 
-void WorldSession::SendNameQueryOpcode(Player *p)
+void WorldSession::SendNameQueryOpcode(Player* p)
 {
     if (!p)
         return;
@@ -120,7 +120,7 @@ void WorldSession::HandleNameQueryOpcode(WorldPacket & recv_data)
 
     recv_data >> guid;
 
-    Player *pChar = objmgr.GetPlayer(guid);
+    Player* pChar = objmgr.GetPlayer(guid);
 
     if (pChar)
         SendNameQueryOpcode(pChar);

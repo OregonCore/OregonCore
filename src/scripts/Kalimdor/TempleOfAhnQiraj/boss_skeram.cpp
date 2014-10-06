@@ -248,7 +248,7 @@ struct boss_skeramAI : public ScriptedAI
             Unit *targetpl = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (targetpl->GetTypeId() == TYPEID_PLAYER)
             {
-                Group *grp = ((Player *)targetpl)->GetGroup();
+                Group *grp = ((Player* )targetpl)->GetGroup();
                 if (grp)
                 {
                     for (int ici = 0; ici < TARGETICONCOUNT; ici++)

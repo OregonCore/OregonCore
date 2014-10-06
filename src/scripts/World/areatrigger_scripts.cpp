@@ -39,7 +39,7 @@ enum eCoilfangGOs
     GO_COILFANG_WATERFALL   = 184212
 };
 
-bool AreaTrigger_at_coilfang_waterfall(Player *pPlayer, const AreaTriggerEntry * /*pAt*/)
+bool AreaTrigger_at_coilfang_waterfall(Player* pPlayer, const AreaTriggerEntry * /*pAt*/)
 {
     if (GameObject* pGo = GetClosestGameObjectWithEntry(pPlayer, GO_COILFANG_WATERFALL, 35.0f))
         if (pGo->getLootState() == GO_READY)
@@ -61,7 +61,7 @@ enum eLegionTeleporter
     QUEST_GAINING_ACCESS_H  = 10604
 };
 
-bool AreaTrigger_at_legion_teleporter(Player *pPlayer, const AreaTriggerEntry * /*pAt*/)
+bool AreaTrigger_at_legion_teleporter(Player* pPlayer, const AreaTriggerEntry * /*pAt*/)
 {
     if (pPlayer->isAlive() && !pPlayer->isInCombat())
     {

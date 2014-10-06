@@ -128,7 +128,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
         return;
     }
 
-    Player *receive = objmgr.GetPlayer(rc);
+    Player* receive = objmgr.GetPlayer(rc);
 
     uint32 rc_team = 0;
     uint8 mails_count = 0;                                  // do not allow to send to one player more than 100 mails
@@ -294,7 +294,7 @@ void WorldSession::HandleMarkAsRead(WorldPacket & recv_data)
     if (!GetPlayer()->GetGameObjectIfCanInteractWith(mailbox, GAMEOBJECT_TYPE_MAILBOX))
         return;
 
-    Player *pl = _player;
+    Player* pl = _player;
 
     if (Mail *m = pl->GetMail(mailId))
     {
@@ -362,7 +362,7 @@ void WorldSession::HandleReturnToSender(WorldPacket & recv_data)
     if (!GetPlayer()->GetGameObjectIfCanInteractWith(mailbox, GAMEOBJECT_TYPE_MAILBOX))
         return;
 
-    Player *pl = _player;
+    Player* pl = _player;
     Mail *m = pl->GetMail(mailId);
     if (!m || m->state == MAIL_STATE_DELETED || m->deliver_time > time(NULL))
     {
@@ -450,7 +450,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data)
         if (m->COD > 0)                                     // if there is COD, take COD money from player and send them to sender by mail
         {
             uint64 sender_guid = MAKE_NEW_GUID(m->sender, 0, HIGHGUID_PLAYER);
-            Player *receive = objmgr.GetPlayer(sender_guid);
+            Player* receive = objmgr.GetPlayer(sender_guid);
 
             uint32 sender_accId = 0;
 
@@ -518,7 +518,7 @@ void WorldSession::HandleTakeMoney(WorldPacket & recv_data)
     if (!GetPlayer()->GetGameObjectIfCanInteractWith(mailbox, GAMEOBJECT_TYPE_MAILBOX))
         return;
 
-    Player *pl = _player;
+    Player* pl = _player;
 
     Mail* m = pl->GetMail(mailId);
     if (!m || m->state == MAIL_STATE_DELETED || m->deliver_time > time(NULL))
@@ -697,7 +697,7 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data)
     if (!GetPlayer()->GetGameObjectIfCanInteractWith(mailbox, GAMEOBJECT_TYPE_MAILBOX))
         return;
 
-    Player *pl = _player;
+    Player* pl = _player;
 
     Mail* m = pl->GetMail(mailId);
     if (!m || (!m->itemTextId && !m->mailTemplateId) || m->state == MAIL_STATE_DELETED || m->deliver_time > time(NULL))
@@ -928,7 +928,7 @@ void MailDraft::deleteIncludedItems(bool inDB /*= false*/)
  */
 void MailDraft::SendReturnToSender(uint32 sender_acc, uint32 sender_guid, uint32 receiver_guid)
 {
-    Player *receiver = objmgr.GetPlayer(MAKE_NEW_GUID(receiver_guid, 0, HIGHGUID_PLAYER));
+    Player* receiver = objmgr.GetPlayer(MAKE_NEW_GUID(receiver_guid, 0, HIGHGUID_PLAYER));
 
     uint32 rc_account = 0;
     if (!receiver)
@@ -1086,7 +1086,7 @@ void WorldSession::SendExternalMails()
                 uint32 ItemID = fields[5].GetUInt32();
                 uint32 ItemCount = fields[6].GetUInt32();
 
-                Player *receiver = objmgr.GetPlayer(receiver_guid);
+                Player* receiver = objmgr.GetPlayer(receiver_guid);
 
                 if (receiver != 0)
                 {

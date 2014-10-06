@@ -753,7 +753,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     if (m_caster->GetTypeId() != TYPEID_PLAYER || !((Player*)m_caster)->IsFlying())
                         return;
 					
-					Player *player = m_caster->ToPlayer();
+					Player* player = m_caster->ToPlayer();
 
                     if (m_caster->GetDistance(-145.554f, 1511.28f, 34.3641f) < 25)
                         player->KilledMonsterCredit(19291, 0);
@@ -1252,7 +1252,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
-                    Player *player = m_caster->ToPlayer();
+                    Player* player = m_caster->ToPlayer();
 
                     if (player && player->GetQuestStatus(11379) == QUEST_STATUS_INCOMPLETE)
                     {
@@ -1558,7 +1558,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
-                    Player *pCaster = m_caster->ToPlayer();
+                    Player* pCaster = m_caster->ToPlayer();
 
                     Item *item = pCaster->GetWeaponForAttack(OFF_ATTACK);
                     if (!item)
@@ -2352,7 +2352,7 @@ void Spell::EffectUnlearnSpecialization(SpellEffIndex effIndex)
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player *_player = unitTarget->ToPlayer();
+    Player* _player = unitTarget->ToPlayer();
     uint32 spellToUnlearn = m_spellInfo->EffectTriggerSpell[effIndex];
 
     _player->removeSpell(spellToUnlearn);
@@ -2400,7 +2400,7 @@ void Spell::EffectPowerDrain(SpellEffIndex effIndex)
         if (manaMultiplier == 0)
             manaMultiplier = 1;
 
-        if (Player *modOwner = m_caster->GetSpellModOwner())
+        if (Player* modOwner = m_caster->GetSpellModOwner())
             modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_MULTIPLE_VALUE, manaMultiplier);
 
         int32 gain = int32(new_damage * manaMultiplier);
@@ -2508,7 +2508,7 @@ void Spell::EffectPowerBurn(SpellEffIndex effIndex)
     unitTarget->ModifyPower(powertype, -new_damage);
     float multiplier = m_spellInfo->EffectMultipleValue[effIndex];
 
-    if (Player *modOwner = m_caster->GetSpellModOwner())
+    if (Player* modOwner = m_caster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_MULTIPLE_VALUE, multiplier);
 
     new_damage = int32(new_damage * multiplier);
@@ -2655,7 +2655,7 @@ void Spell::EffectHealthLeech(SpellEffIndex effIndex)
 
     float multiplier = m_spellInfo->EffectMultipleValue[effIndex];
 
-    if (Player *modOwner = m_caster->GetSpellModOwner())
+    if (Player* modOwner = m_caster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_MULTIPLE_VALUE, multiplier);
 
     int32 new_damage = int32(damage*multiplier);
@@ -3161,7 +3161,7 @@ void Spell::EffectSummonChangeItem(SpellEffIndex effIndex)
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player *player = m_caster->ToPlayer();
+    Player* player = m_caster->ToPlayer();
 
     // applied only to using item
     if (!m_CastItem)
@@ -3262,7 +3262,7 @@ void Spell::EffectProficiency(SpellEffIndex /*effIndex*/)
 {
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
-    Player *p_target = unitTarget->ToPlayer();
+    Player* p_target = unitTarget->ToPlayer();
 
     uint32 subClassMask = m_spellInfo->EquippedItemSubClassMask;
     if (m_spellInfo->EquippedItemClass == 2 && !(p_target->GetWeaponProficiency() & subClassMask))
@@ -3410,7 +3410,7 @@ void Spell::EffectLearnSpell(SpellEffIndex effIndex)
         return;
     }
 
-    Player *player = unitTarget->ToPlayer();
+    Player* player = unitTarget->ToPlayer();
 
     uint32 spellToLearn = (m_spellInfo->Id == SPELL_GENERIC_LEARN) ? damage : m_spellInfo->EffectTriggerSpell[effIndex];
     player->learnSpell(spellToLearn);
@@ -3936,7 +3936,7 @@ void Spell::EffectTameCreature(SpellEffIndex /*effIndex*/)
 
 void Spell::EffectSummonPet(SpellEffIndex effIndex)
 {
-    Player *owner = NULL;
+    Player* owner = NULL;
     if (m_originalCaster)
     {
         if (m_originalCaster->GetTypeId() == TYPEID_PLAYER)
@@ -4018,7 +4018,7 @@ void Spell::SummonClassPet(SpellEffIndex effIndex)
     if (!pet_entry)
         return;
 
-    Player *caster = NULL;
+    Player* caster = NULL;
     if (m_originalCaster)
     {
         if (m_originalCaster->GetTypeId() == TYPEID_PLAYER)
@@ -4128,7 +4128,7 @@ void Spell::EffectLearnPetSpell(SpellEffIndex effIndex)
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player *_player = m_caster->ToPlayer();
+    Player* _player = m_caster->ToPlayer();
 
     Pet *pet = _player->GetPet();
     if (!pet)
@@ -4551,7 +4551,7 @@ void Spell::EffectSummonObjectWild(SpellEffIndex effIndex)
         {
             case 489:                                       //WS
             {
-                Player *pl = m_caster->ToPlayer();
+                Player* pl = m_caster->ToPlayer();
                 BattleGround* bg = m_caster->ToPlayer()->GetBattleGround();
                 if (bg && bg->GetTypeID() == BATTLEGROUND_WS && bg->GetStatus() == STATUS_IN_PROGRESS)
                 {
@@ -4897,7 +4897,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                 // Plant Warmaul Ogre Banner
                 case 32307:
                 {
-                    Player *p_caster = dynamic_cast<Player*>(m_caster);
+                    Player* p_caster = dynamic_cast<Player*>(m_caster);
                     if (!p_caster)
                         break;
                     p_caster->RewardPlayerAndGroupAtEvent(18388, unitTarget);
@@ -5356,8 +5356,8 @@ void Spell::EffectDuel(SpellEffIndex effIndex)
     if (!m_caster || !unitTarget || m_caster->GetTypeId() != TYPEID_PLAYER || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player *caster = m_caster->ToPlayer();
-    Player *target = unitTarget->ToPlayer();
+    Player* caster = m_caster->ToPlayer();
+    Player* target = unitTarget->ToPlayer();
 
     // caster or target already have requested duel
     if (caster->duel || target->duel || !target->GetSocial() || target->GetSocial()->HasIgnore(caster->GetGUIDLow()))
@@ -5572,7 +5572,7 @@ void Spell::EffectInebriate(SpellEffIndex /*effIndex*/)
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player *player = unitTarget->ToPlayer();
+    Player* player = unitTarget->ToPlayer();
     uint16 currentDrunk = player->GetDrunkValue();
     uint16 drunkMod = damage * 256;
     if (currentDrunk + drunkMod > 0xFFFF)
@@ -5587,7 +5587,7 @@ void Spell::EffectFeedPet(SpellEffIndex effIndex)
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player *_player = m_caster->ToPlayer();
+    Player* _player = m_caster->ToPlayer();
 
     if (!itemTarget)
         return;
@@ -5822,7 +5822,7 @@ void Spell::EffectReputation(SpellEffIndex effIndex)
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player *_player = unitTarget->ToPlayer();
+    Player* _player = unitTarget->ToPlayer();
 
     int32  rep_change = damage;//+1;           // field store reputation change -1
 
@@ -5841,7 +5841,7 @@ void Spell::EffectQuestComplete(SpellEffIndex effIndex)
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player *pPlayer = m_caster->ToPlayer();
+    Player* pPlayer = m_caster->ToPlayer();
 
     uint32 quest_id = m_spellInfo->EffectMiscValue[effIndex];
     pPlayer->AreaExploredOrEventHappens(quest_id);
@@ -5873,7 +5873,7 @@ void Spell::EffectSelfResurrect(SpellEffIndex effIndex)
             mana = uint32(damage/100.0f*unitTarget->GetMaxPower(POWER_MANA));
     }
 
-    Player *plr = unitTarget->ToPlayer();
+    Player* plr = unitTarget->ToPlayer();
     plr->ResurrectPlayer(0.0f);
 
     plr->SetHealth(health);
@@ -6067,7 +6067,7 @@ void Spell::EffectSummonDeadPet(SpellEffIndex /*effIndex*/)
     if (!m_caster->isPlayer())
         return;
 
-    Player *_player = m_caster->ToPlayer();
+    Player* _player = m_caster->ToPlayer();
     Pet *pet = _player->GetPet();
 
     // Only dead pets should be revived
@@ -6571,7 +6571,7 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *
             amount = 1;
             break;
     }
-    if (Player *modOwner = m_originalCaster->GetSpellModOwner())
+    if (Player* modOwner = m_originalCaster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_DURATION, duration);
 
     //TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;

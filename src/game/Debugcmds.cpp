@@ -70,7 +70,7 @@ bool ChatHandler::HandleDebugSpellFailCommand(const char* args)
 
 bool ChatHandler::HandleSetPoiCommand(const char* args)
 {
-    Player *pPlayer = m_session->GetPlayer();
+    Player* pPlayer = m_session->GetPlayer();
     Unit* target = getSelectedUnit();
     if (!target)
     {
@@ -127,7 +127,7 @@ bool ChatHandler::HandleBuyErrorCommand(const char* args)
 bool ChatHandler::HandleSendOpcodeCommand(const char* /*args*/)
 {
     Unit *unit = getSelectedUnit();
-    Player *player = NULL;
+    Player* player = NULL;
     if (!unit || (unit->GetTypeId() != TYPEID_PLAYER))
         player = m_session->GetPlayer();
     else

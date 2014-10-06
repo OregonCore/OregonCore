@@ -502,7 +502,7 @@ struct mob_hellfire_channelerAI : public ScriptedAI
 };
 
 //Manticron Cube
-bool GOHello_go_Manticron_Cube(Player *player, GameObject* _GO)
+bool GOHello_go_Manticron_Cube(Player* player, GameObject* _GO)
 {
     ScriptedInstance* pInstance =_GO->GetInstanceData();
     if (!pInstance) return true;

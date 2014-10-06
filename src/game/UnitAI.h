@@ -86,7 +86,7 @@ class PlayerAI : public UnitAI
     protected:
         Player* const me;
     public:
-        explicit PlayerAI(Player *p) : UnitAI((Unit*)p), me(p) {}
+        explicit PlayerAI(Player* p) : UnitAI((Unit*)p), me(p) {}
 
         void OnCharmed(bool apply);
 };

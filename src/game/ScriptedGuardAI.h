@@ -43,14 +43,14 @@ struct guardAI_orgrimmar : public guardAI
 {
     guardAI_orgrimmar(Creature *c) : guardAI(c) {}
 
-    void ReceiveEmote(Player *player, uint32 text_emote);
+    void ReceiveEmote(Player* player, uint32 text_emote);
 };
 
 struct guardAI_stormwind : public guardAI
 {
     guardAI_stormwind(Creature *c) : guardAI(c) {}
 
-    void ReceiveEmote(Player *player, uint32 text_emote);
+    void ReceiveEmote(Player* player, uint32 text_emote);
 };
 #endif
 

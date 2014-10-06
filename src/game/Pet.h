@@ -136,7 +136,7 @@ class Player;
 class Pet : public Guardian
 {
     public:
-        explicit Pet(Player *owner, PetType type = MAX_PET_TYPE);
+        explicit Pet(Player* owner, PetType type = MAX_PET_TYPE);
         virtual ~Pet();
 
         void AddToWorld();
@@ -234,9 +234,9 @@ class Pet : public Guardian
 
         bool    m_removed;                                  // prevent overwrite pet state in DB at next Pet::Update if pet already removed(saved)
 
-        Player *GetOwner() { return m_owner; }
+        Player* GetOwner() { return m_owner; }
     protected:
-        Player *m_owner;
+        Player* m_owner;
         uint32  m_regenTimer;
         uint32  m_happinessTimer;
         uint32  m_loyaltyTimer;

@@ -253,7 +253,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 break;
             }
 
-            Player *player = objmgr.GetPlayer(to.c_str(), true);
+            Player* player = objmgr.GetPlayer(to.c_str(), true);
             uint32 tSecurity = GetSecurity();
             uint32 pSecurity = player ? player->GetSession()->GetSecurity() : uint32(SEC_PLAYER);
             if (!player || (lang != LANG_ADDON && tSecurity == SEC_PLAYER && pSecurity > SEC_PLAYER && !player->isAcceptWhispers()))
@@ -561,7 +561,7 @@ void WorldSession::HandleChatIgnoredOpcode(WorldPacket& recv_data)
     recv_data >> iguid;
     recv_data >> unk;                                       // probably related to spam reporting
 
-    Player *player = objmgr.GetPlayer(iguid);
+    Player* player = objmgr.GetPlayer(iguid);
     if (!player || !player->GetSession())
         return;
 

@@ -144,7 +144,7 @@ Player* World::FindPlayerInZone(uint32 zone)
     {
         if (!itr->second)
             continue;
-        Player *player = itr->second->GetPlayer();
+        Player* player = itr->second->GetPlayer();
         if (!player)
             continue;
         if (player->IsInWorld() && player->GetZoneId() == zone)
@@ -2042,7 +2042,7 @@ bool World::KickPlayer(const std::string& playerName)
     {
         if (!itr->second)
             continue;
-        Player *player = itr->second->GetPlayer();
+        Player* player = itr->second->GetPlayer();
         if (!player)
             continue;
         if (player->IsInWorld())

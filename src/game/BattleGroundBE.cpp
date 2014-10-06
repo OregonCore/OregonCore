@@ -67,7 +67,7 @@ void BattleGroundBE::StartingEventOpenDoors()
         SpawnBGObject(i, 60);
 }
 
-void BattleGroundBE::AddPlayer(Player *plr)
+void BattleGroundBE::AddPlayer(Player* plr)
 {
     BattleGround::AddPlayer(plr);
     //create score and add it to map, default values are set in constructor
@@ -90,7 +90,7 @@ void BattleGroundBE::RemovePlayer(Player* /*plr*/, uint64 /*guid*/)
     CheckArenaWinConditions();
 }
 
-void BattleGroundBE::HandleKillPlayer(Player *player, Player *killer)
+void BattleGroundBE::HandleKillPlayer(Player* player, Player* killer)
 {
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;
@@ -109,13 +109,13 @@ void BattleGroundBE::HandleKillPlayer(Player *player, Player *killer)
     CheckArenaWinConditions();
 }
 
-bool BattleGroundBE::HandlePlayerUnderMap(Player *player)
+bool BattleGroundBE::HandlePlayerUnderMap(Player* player)
 {
     player->TeleportTo(GetMapId(),6238.930176,262.963470,0.889519,player->GetOrientation(),false);
     return true;
 }
 
-void BattleGroundBE::HandleAreaTrigger(Player *Source, uint32 Trigger)
+void BattleGroundBE::HandleAreaTrigger(Player* Source, uint32 Trigger)
 {
     // this is wrong way to implement these things. On official it done by gameobject spell cast.
     if (GetStatus() != STATUS_IN_PROGRESS)

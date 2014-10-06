@@ -95,7 +95,7 @@ bool ArenaTeam::AddMember(const uint64& playerGuid)
     if (GetMembersSize() >= GetType() * 2)
         return false;
 
-    Player *pl = objmgr.GetPlayer(playerGuid);
+    Player* pl = objmgr.GetPlayer(playerGuid);
     if (pl)
     {
         if (pl->GetArenaTeamId(GetSlot()))
@@ -246,7 +246,7 @@ bool ArenaTeam::LoadMembersFromDB(QueryResult_AutoPtr arenaTeamMembersResult)
 void ArenaTeam::SetCaptain(const uint64& guid)
 {
     // disable remove/promote buttons
-    Player *oldcaptain = objmgr.GetPlayer(GetCaptain());
+    Player* oldcaptain = objmgr.GetPlayer(GetCaptain());
     if (oldcaptain)
         oldcaptain->SetArenaTeamInfoField(GetSlot(), ARENA_TEAM_MEMBER, 1);
 
@@ -257,7 +257,7 @@ void ArenaTeam::SetCaptain(const uint64& guid)
     CharacterDatabase.PExecute("UPDATE arena_team SET captainguid = '%u' WHERE arenateamid = '%u'", GUID_LOPART(guid), GetId());
 
     // enable remove/promote buttons
-    if (Player *newcaptain = objmgr.GetPlayer(guid))
+    if (Player* newcaptain = objmgr.GetPlayer(guid))
     {
         newcaptain->SetArenaTeamInfoField(GetSlot(), ARENA_TEAM_MEMBER, 0);
         sLog.outArena("Player: %s [GUID: %u] promoted player: %s [GUID: %u] to leader of arena team [Id: %u] [Type: %u].", oldcaptain->GetName(), oldcaptain->GetGUIDLow(), newcaptain->GetName(), newcaptain->GetGUIDLow(), GetId(), GetType());
@@ -273,7 +273,7 @@ void ArenaTeam::DelMember(uint64 guid)
             break;
         }
 
-    if (Player *player = objmgr.GetPlayer(guid))
+    if (Player* player = objmgr.GetPlayer(guid))
     {
         player->SetInArenaTeam(0, GetSlot());
         player->GetSession()->SendArenaTeamCommandResult(ERR_ARENA_TEAM_QUIT_S, GetName(), "", 0);
@@ -297,7 +297,7 @@ void ArenaTeam::Disband(WorldSession *session)
         DelMember(m_members.front().guid);
 
     if (session)
-        if (Player *player = session->GetPlayer())
+        if (Player* player = session->GetPlayer())
             sLog.outArena("Player: %s [GUID: %u] disbanded arena team type: %u [Id: %u].", player->GetName(), player->GetGUIDLow(), GetType(), GetId());
 
     CharacterDatabase.BeginTransaction();
@@ -310,7 +310,7 @@ void ArenaTeam::Disband(WorldSession *session)
 
 void ArenaTeam::Roster(WorldSession *session)
 {
-    Player *pl = NULL;
+    Player* pl = NULL;
 
     WorldPacket data(SMSG_ARENA_TEAM_ROSTER, 100);
     data << uint32(GetId());                                // arena team id
@@ -372,7 +372,7 @@ void ArenaTeam::NotifyStatsChanged()
     // updates arena team stats for every member of the team (not only the ones who participated!)
     for (MemberList::const_iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {
-        Player * plr = objmgr.GetPlayer(itr->guid);
+        Player* plr = objmgr.GetPlayer(itr->guid);
         if (plr)
             Stats(plr->GetSession());
     }
@@ -445,7 +445,7 @@ void ArenaTeam::BroadcastPacket(WorldPacket *packet)
 {
     for (MemberList::const_iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {
-        Player *player = objmgr.GetPlayer(itr->guid);
+        Player* player = objmgr.GetPlayer(itr->guid);
         if (player)
             player->GetSession()->SendPacket(packet);
     }
@@ -581,7 +581,7 @@ int32 ArenaTeam::LostAgainst(uint32 againstRating)
     return mod;
 }
 
-void ArenaTeam::MemberLost(Player * plr, uint32 againstRating)
+void ArenaTeam::MemberLost(Player* plr, uint32 againstRating)
 {
     // called for each participant of a match after losing
     for (MemberList::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
@@ -625,7 +625,7 @@ void ArenaTeam::OfflineMemberLost(uint64 guid, uint32 againstRating)
     }
 }
 
-void ArenaTeam::MemberWon(Player * plr, uint32 againstRating)
+void ArenaTeam::MemberWon(Player* plr, uint32 againstRating)
 {
     // called for each participant after winning a match
     for (MemberList::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
@@ -705,7 +705,7 @@ void ArenaTeam::FinishWeek()
 bool ArenaTeam::IsFighting() const
 {
     for (MemberList::const_iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
-        if (Player *p = objmgr.GetPlayer(itr->guid))
+        if (Player* p = objmgr.GetPlayer(itr->guid))
             if (p->GetMap()->IsBattleArena())
                 return true;
     return false;

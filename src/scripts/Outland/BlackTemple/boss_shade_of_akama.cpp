@@ -859,7 +859,7 @@ bool GossipSelect_npc_akama(Player* pPlayer, Creature* pCreature, uint32 /*uiSen
     return true;
 }
 
-bool GossipHello_npc_akama(Player *player, Creature* pCreature)
+bool GossipHello_npc_akama(Player* player, Creature* pCreature)
 {
     ScriptedInstance* pInstance = (pCreature->GetInstanceData());
 

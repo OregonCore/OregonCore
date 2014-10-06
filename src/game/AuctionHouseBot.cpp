@@ -117,7 +117,7 @@ AuctionHouseBot::~AuctionHouseBot()
 {
 }
 
-void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
+void AuctionHouseBot::addNewAuctions(Player* AHBplayer, AHBConfig *config)
 {
     if (!AHBSeller)
     {
@@ -493,7 +493,7 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
         }
     }
 }
-void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *config, WorldSession *session)
+void AuctionHouseBot::addNewAuctionBuyerBotBid(Player* AHBplayer, AHBConfig *config, WorldSession *session)
 {
     if (!AHBBuyer)
     {

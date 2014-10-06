@@ -75,7 +75,7 @@ bool Corpse::Create(uint32 guidlow, Map *map)
     return true;
 }
 
-bool Corpse::Create(uint32 guidlow, Player *owner, uint32 /*mapid*/, float x, float y, float z, float ang)
+bool Corpse::Create(uint32 guidlow, Player* owner, uint32 /*mapid*/, float x, float y, float z, float ang)
 {
     ASSERT(owner);
 

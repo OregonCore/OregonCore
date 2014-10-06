@@ -32,14 +32,14 @@ enum eSpells
 
 const Position HomePosition = {-815.817,-145.299,-25.870, 0};
 
-bool GoHello_blackfathom_altar(Player *pPlayer, GameObject* /*pGo*/)
+bool GoHello_blackfathom_altar(Player* pPlayer, GameObject* /*pGo*/)
 {
     if (!pPlayer->HasAura(SPELL_BLESSING_OF_BLACKFATHOM, 0))
         pPlayer->AddAura(SPELL_BLESSING_OF_BLACKFATHOM,pPlayer);
     return true;
 }
 
-bool GoHello_blackfathom_fire(Player * /*pPlayer*/, GameObject* pGo)
+bool GoHello_blackfathom_fire(Player* /*pPlayer*/, GameObject* pGo)
 {
     ScriptedInstance *pInstance = pGo->GetInstanceData();
 

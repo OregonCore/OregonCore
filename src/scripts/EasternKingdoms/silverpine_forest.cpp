@@ -245,7 +245,7 @@ struct pyrewood_ambushAI : public ScriptedAI
     {
         if (Creature *pSummoned = me->SummonCreature(creatureId, PyrewoodSpawnPoints[position][0], PyrewoodSpawnPoints[position][1], PyrewoodSpawnPoints[position][2], PyrewoodSpawnPoints[position][3], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 15000))
         {
-            Player *pPlayer = NULL;
+            Player* pPlayer = NULL;
             Unit *pTarget = NULL;
             if (PlayerGUID)
             {
@@ -267,7 +267,7 @@ struct pyrewood_ambushAI : public ScriptedAI
     void JustDied(Unit * /*pKiller*/)
     {
         if (PlayerGUID)
-            if (Player *pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+            if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
                 if (pPlayer->GetQuestStatus(QUEST_PYREWOOD_AMBUSH) == QUEST_STATUS_INCOMPLETE)
                     pPlayer->FailQuest(QUEST_PYREWOOD_AMBUSH);
     }
@@ -320,7 +320,7 @@ struct pyrewood_ambushAI : public ScriptedAI
             case 5: //end
                 if (PlayerGUID)
                 {
-                    if (Player *pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+                    if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
                     {
                         me->MonsterSay(NPCSAY_END, LANG_UNIVERSAL, 0); //not blizzlike
                         pPlayer->GroupEventHappens(QUEST_PYREWOOD_AMBUSH, me);
@@ -339,7 +339,7 @@ CreatureAI* GetAI_pyrewood_ambush(Creature *pCreature)
     return new pyrewood_ambushAI (pCreature);
 }
 
-bool QuestAccept_pyrewood_ambush(Player *pPlayer, Creature *pCreature, const Quest *pQuest)
+bool QuestAccept_pyrewood_ambush(Player* pPlayer, Creature *pCreature, const Quest *pQuest)
 {
     if (pQuest->GetQuestId() == QUEST_PYREWOOD_AMBUSH && !CAST_AI(pyrewood_ambushAI, pCreature->AI())->QuestInProgress)
     {

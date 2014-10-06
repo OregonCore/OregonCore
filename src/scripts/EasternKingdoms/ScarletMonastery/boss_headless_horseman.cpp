@@ -607,7 +607,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
                         if (say_timer <= diff)
                         {
                             say_timer = 3000;
-                            Player *plr = SelectRandomPlayer(100.0f,false);
+                            Player* plr = SelectRandomPlayer(100.0f,false);
                             if (count < 3)
                             {
                                 if (plr)

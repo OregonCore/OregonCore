@@ -142,7 +142,7 @@ struct instance_dark_portal : public ScriptedInstance
         return false;
     }
 
-    void OnPlayerEnter(Player *player)
+    void OnPlayerEnter(Player* player)
     {
         if (GetData(TYPE_MEDIVH) == IN_PROGRESS)
             return;
@@ -184,7 +184,7 @@ struct instance_dark_portal : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        Player *player = GetPlayerInMap();
+        Player* player = GetPlayerInMap();
 
         if (!player)
         {
@@ -296,7 +296,7 @@ struct instance_dark_portal : public ScriptedInstance
 
     void DoSpawnPortal()
     {
-        Player *player = GetPlayerInMap();
+        Player* player = GetPlayerInMap();
         if (!player)
             return;
 

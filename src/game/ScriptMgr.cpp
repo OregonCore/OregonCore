@@ -227,21 +227,21 @@ void Script::RegisterSelf()
     }
 }
 
-void ScriptMgr::OnLogin(Player *pPlayer)
+void ScriptMgr::OnLogin(Player* pPlayer)
 {
     Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->pOnLogin) return;
     tmpscript->pOnLogin(pPlayer);
 }
 
-void ScriptMgr::OnLogout(Player *pPlayer)
+void ScriptMgr::OnLogout(Player* pPlayer)
 {
     Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->pOnLogout) return;
     tmpscript->pOnLogout(pPlayer);
 }
 
-void ScriptMgr::OnPVPKill(Player *killer, Player *killed)
+void ScriptMgr::OnPVPKill(Player* killer, Player* killed)
 {
     Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->pOnPVPKill) return;
@@ -253,7 +253,7 @@ char const* ScriptMgr::ScriptsVersion()
     return "Integrated Oregon Scripts";
 }
 
-bool ScriptMgr::GossipHello (Player * pPlayer, Creature* pCreature)
+bool ScriptMgr::GossipHello (Player* pPlayer, Creature* pCreature)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pGossipHello) return false;

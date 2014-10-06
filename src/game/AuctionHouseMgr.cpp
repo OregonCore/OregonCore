@@ -112,7 +112,7 @@ void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry *auction)
     uint32 bidder_accId = 0;
     uint32 bidder_security = 0;
     uint64 bidder_guid = MAKE_NEW_GUID(auction->bidder, 0, HIGHGUID_PLAYER);
-    Player *bidder = objmgr.GetPlayer(bidder_guid);
+    Player* bidder = objmgr.GetPlayer(bidder_guid);
     // data for gm.log
     if (sWorld.getConfig(CONFIG_GM_LOG_TRADE))
     {
@@ -178,7 +178,7 @@ void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry *auction)
 void AuctionHouseMgr::SendAuctionSalePendingMail(AuctionEntry * auction)
 {
     uint64 owner_guid = MAKE_NEW_GUID(auction->owner, 0, HIGHGUID_PLAYER);
-    Player *owner = objmgr.GetPlayer(owner_guid);
+    Player* owner = objmgr.GetPlayer(owner_guid);
     uint32 owner_accId = objmgr.GetPlayerAccountIdByGUID(owner_guid);
     // owner exist (online or offline)
     if (owner || owner_accId)
@@ -210,7 +210,7 @@ void AuctionHouseMgr::SendAuctionSalePendingMail(AuctionEntry * auction)
 void AuctionHouseMgr::SendAuctionSuccessfulMail(AuctionEntry * auction)
 {
     uint64 owner_guid = MAKE_NEW_GUID(auction->owner, 0, HIGHGUID_PLAYER);
-    Player *owner = objmgr.GetPlayer(owner_guid);
+    Player* owner = objmgr.GetPlayer(owner_guid);
     uint32 owner_accId = objmgr.GetPlayerAccountIdByGUID(owner_guid);
     // owner exist
     if (owner || owner_accId)
@@ -252,7 +252,7 @@ void AuctionHouseMgr::SendAuctionExpiredMail(AuctionEntry * auction)
         return;
 
     uint64 owner_guid = MAKE_NEW_GUID(auction->owner, 0, HIGHGUID_PLAYER);
-    Player *owner = objmgr.GetPlayer(owner_guid);
+    Player* owner = objmgr.GetPlayer(owner_guid);
     uint32 owner_accId = objmgr.GetPlayerAccountIdByGUID(owner_guid);
     // owner exist
     if (owner || owner_accId)

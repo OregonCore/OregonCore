@@ -132,7 +132,7 @@ void BattleGroundQueue::SelectionPool::AddGroup(GroupQueueInfo * ginfo)
 }
 
 // add group to bg queue with the given leader and bg specifications
-GroupQueueInfo * BattleGroundQueue::AddGroup(Player *leader, uint32 BgTypeId, uint8 ArenaType, bool isRated, uint32 arenaRating, uint32 arenateamid)
+GroupQueueInfo * BattleGroundQueue::AddGroup(Player* leader, uint32 BgTypeId, uint8 ArenaType, bool isRated, uint32 arenaRating, uint32 arenateamid)
 {
     uint32 queue_id = leader->GetBattleGroundQueueIdFromLevel();
 
@@ -158,7 +158,7 @@ GroupQueueInfo * BattleGroundQueue::AddGroup(Player *leader, uint32 BgTypeId, ui
     return ginfo;
 }
 
-void BattleGroundQueue::AddPlayer(Player *plr, GroupQueueInfo *ginfo)
+void BattleGroundQueue::AddPlayer(Player* plr, GroupQueueInfo *ginfo)
 {
     uint32 queue_id = plr->GetBattleGroundQueueIdFromLevel();
 
@@ -196,7 +196,7 @@ void BattleGroundQueue::AddPlayer(Player *plr, GroupQueueInfo *ginfo)
 
         for(std::map<uint64, PlayerQueueInfo>::iterator itr = m_QueuedPlayers[queue_id].begin(); itr != m_QueuedPlayers[queue_id].end(); ++itr)
         {
-            Player *_player = objmgr.GetPlayer((uint64)itr->first);
+            Player* _player = objmgr.GetPlayer((uint64)itr->first);
             if (_player)
             {
                 if (_player->GetTeam() == ALLIANCE)
@@ -225,7 +225,7 @@ void BattleGroundQueue::AddPlayer(Player *plr, GroupQueueInfo *ginfo)
 
 void BattleGroundQueue::RemovePlayer(uint64 guid, bool decreaseInvitedCount)
 {
-    Player *plr = objmgr.GetPlayer(guid);
+    Player* plr = objmgr.GetPlayer(guid);
 
     int32 queue_id = 0;                                     // signed for proper for-loop finish
     QueuedPlayersMap::iterator itr;
@@ -310,7 +310,7 @@ void BattleGroundQueue::RemovePlayer(uint64 guid, bool decreaseInvitedCount)
             if (at)
             {
                 sLog.outDebug("UPDATING memberLost's personal arena rating for %u by opponents rating: %u", GUID_LOPART(guid), group->OpponentsTeamRating);
-                Player *plr = objmgr.GetPlayer(guid);
+                Player* plr = objmgr.GetPlayer(guid);
                 if (plr)
                     at->MemberLost(plr, group->OpponentsTeamRating);
                 else
@@ -333,7 +333,7 @@ void BattleGroundQueue::RemovePlayer(uint64 guid, bool decreaseInvitedCount)
         {
             // remove next player, this is recursive
             // first send removal information
-            if (Player *plr2 = objmgr.GetPlayer(group->Players.begin()->first))
+            if (Player* plr2 = objmgr.GetPlayer(group->Players.begin()->first))
             {
                 BattleGround * bg = sBattleGroundMgr.GetBattleGroundTemplate(group->BgTypeId);
                 uint32 bgQueueTypeId = sBattleGroundMgr.BGQueueTypeId(group->BgTypeId,group->ArenaType);
@@ -500,7 +500,7 @@ void BattleGroundQueue::BGEndedRemoveInvites(BattleGround *bg)
                 }
 
                 // get the player
-                Player * plr = objmgr.GetPlayer(itr2->first);
+                Player* plr = objmgr.GetPlayer(itr2->first);
                 if (!plr)
                 {
                     sLog.outError("Player offline when trying to remove from GroupQueueInfo, this should never happen.");
@@ -1221,7 +1221,7 @@ void BattleGroundMgr::BuildPvpLogDataPacket(WorldPacket *data, BattleGround *bg)
         }
         else
         {
-            Player *plr = objmgr.GetPlayer(itr2->first);
+            Player* plr = objmgr.GetPlayer(itr2->first);
             uint32 team = bg->GetPlayerTeam(itr2->first);
             if (!team && plr)
                 team = plr->GetBGTeam();
@@ -1309,7 +1309,7 @@ void BattleGroundMgr::BuildPlayerLeftBattleGroundPacket(WorldPacket *data, const
     *data << uint64(guid);
 }
 
-void BattleGroundMgr::BuildPlayerJoinedBattleGroundPacket(WorldPacket *data, Player *plr)
+void BattleGroundMgr::BuildPlayerJoinedBattleGroundPacket(WorldPacket *data, Player* plr)
 {
     data->Initialize(SMSG_BATTLEGROUND_PLAYER_JOINED, 8);
     *data << uint64(plr->GetGUID());
@@ -1697,7 +1697,7 @@ void BattleGroundMgr::BuildBattleGroundListPacket(WorldPacket *data, uint64 guid
     }
 }
 
-void BattleGroundMgr::SendToBattleGround(Player *pl, uint32 instanceId)
+void BattleGroundMgr::SendToBattleGround(Player* pl, uint32 instanceId)
 {
     BattleGround *bg = GetBattleGround(instanceId);
     if (bg)
@@ -1718,7 +1718,7 @@ void BattleGroundMgr::SendToBattleGround(Player *pl, uint32 instanceId)
     }
 }
 
-void BattleGroundMgr::SendAreaSpiritHealerQueryOpcode(Player *pl, BattleGround *bg, uint64 guid)
+void BattleGroundMgr::SendAreaSpiritHealerQueryOpcode(Player* pl, BattleGround *bg, uint64 guid)
 {
     WorldPacket data(SMSG_AREA_SPIRIT_HEALER_TIME, 12);
     uint32 time_ = 30000 - bg->GetLastResurrectTime();      // resurrect every 30 seconds

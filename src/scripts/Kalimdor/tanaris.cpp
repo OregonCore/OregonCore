@@ -162,7 +162,7 @@ struct npc_custodian_of_timeAI : public npc_escortAI
 
     void WaypointReached(uint32 i)
     {
-        Player *pPlayer = GetPlayerForEscort();
+        Player* pPlayer = GetPlayerForEscort();
         if (!pPlayer)
             return;
 
@@ -454,7 +454,7 @@ CreatureAI* GetAI_npc_OOX17(Creature* pCreature)
 #define PATH_ENTRY_4       2093
 #define PATH_ENTRY_5       2094
 
-bool GOHello_go_landmark_treasure(Player *player, GameObject* /*_GO*/)
+bool GOHello_go_landmark_treasure(Player* player, GameObject* /*_GO*/)
 {
     if (player->GetQuestStatus(QUEST_CUERGOS_GOLD) != QUEST_STATUS_INCOMPLETE)
         return false;

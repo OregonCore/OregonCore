@@ -405,7 +405,7 @@ class BattleGround
         /* Packet Transfer */
         // method that should fill worldpacket with actual world states (not yet implemented for all battlegrounds!)
         virtual void FillInitialWorldStates(WorldPacket& /*data*/) {}
-        void SendPacketToTeam(uint32 TeamID, WorldPacket *packet, Player *sender = NULL, bool self = true);
+        void SendPacketToTeam(uint32 TeamID, WorldPacket *packet, Player* sender = NULL, bool self = true);
         void SendPacketToAll(WorldPacket *packet);
         void YellToAll(Creature* creature, const char* text, uint32 language);
 
@@ -417,13 +417,13 @@ class BattleGround
         void CastSpellOnTeam(uint32 SpellID, uint32 TeamID);
         void RewardHonorToTeam(uint32 Honor, uint32 TeamID);
         void RewardReputationToTeam(uint32 faction_id, uint32 Reputation, uint32 TeamID);
-        void RewardMark(Player *plr,uint32 count);
-        void SendRewardMarkByMail(Player *plr,uint32 mark, uint32 count);
-        void RewardQuest(Player *plr);
+        void RewardMark(Player* plr,uint32 count);
+        void SendRewardMarkByMail(Player* plr,uint32 mark, uint32 count);
+        void RewardQuest(Player* plr);
         void UpdateWorldState(uint32 Field, uint32 Value);
-        void UpdateWorldStateForPlayer(uint32 Field, uint32 Value, Player *Source);
+        void UpdateWorldStateForPlayer(uint32 Field, uint32 Value, Player* Source);
         void EndBattleGround(uint32 winner);
-        void BlockMovement(Player *plr);
+        void BlockMovement(Player* plr);
 
         void SendMessageToAll(int32 entry, ChatMsg type, Player const* source = NULL);
         void PSendMessageToAll(int32 entry, ChatMsg type, Player const* source, ...);
@@ -441,7 +441,7 @@ class BattleGround
             old_raid = bg_raid;
         }
 
-        virtual void UpdatePlayerScore(Player *Source, uint32 type, uint32 value);
+        virtual void UpdatePlayerScore(Player* Source, uint32 type, uint32 value);
 
         uint8 GetTeamIndexByTeamId(uint32 Team) const { return Team == ALLIANCE ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE; }
         uint32 GetPlayersCountByTeam(uint32 Team) const { return m_PlayersCount[GetTeamIndexByTeamId(Team)]; }
@@ -465,7 +465,7 @@ class BattleGround
         // must be implemented in BG subclass
         virtual void HandleAreaTrigger(Player* /*Source*/, uint32 /*Trigger*/) {}
         // must be implemented in BG subclass if need AND call base class generic code
-        virtual void HandleKillPlayer(Player *player, Player *killer);
+        virtual void HandleKillPlayer(Player* player, Player* killer);
         virtual void HandleKillUnit(Creature* /*unit*/, Player* /*killer*/);
 
         /* Battleground events */
@@ -477,7 +477,7 @@ class BattleGround
         /* Death related */
         virtual WorldSafeLocsEntry const* GetClosestGraveYard(Player* player);
 
-        virtual void AddPlayer(Player *plr);                // must be implemented in BG subclass
+        virtual void AddPlayer(Player* plr);                // must be implemented in BG subclass
 
         virtual void RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPacket);
                                                             // can be extended in in BG subclass
@@ -503,7 +503,7 @@ class BattleGround
         void DoorClose(uint32 type);
         const char *GetOregonString(int32 entry);
 
-        virtual bool HandlePlayerUnderMap(Player * /*plr*/) { return false; }
+        virtual bool HandlePlayerUnderMap(Player* /*plr*/) { return false; }
 
         // since arenas can be AvA or Hvh, we have to get the "temporary" team of a player
         uint32 GetPlayerTeam(uint64 guid);
@@ -525,7 +525,7 @@ class BattleGround
         /* Scorekeeping */
         BattleGroundScoreMap m_PlayerScores;                // Player scores
         // must be implemented in BG subclass
-        virtual void RemovePlayer(Player * /*player*/, uint64 /*guid*/) {}
+        virtual void RemovePlayer(Player* /*player*/, uint64 /*guid*/) {}
 
         /* Player lists, those need to be accessible by inherited classes */
         BattleGroundPlayerMap  m_Players;

@@ -809,7 +809,7 @@ void GameObject::Respawn()
     }
 }
 
-bool GameObject::ActivateToQuest(Player *pTarget) const
+bool GameObject::ActivateToQuest(Player* pTarget) const
 {
     if (pTarget->HasQuestForGO(GetEntry()))
         return true;

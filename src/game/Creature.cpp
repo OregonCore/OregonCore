@@ -905,7 +905,7 @@ void Creature::AI_SendMoveToPacket(float x, float y, float z, uint32 time, uint3
     SendMonsterMove(x, y, z, time);
 }
 
-Player *Creature::GetLootRecipient() const
+Player* Creature::GetLootRecipient() const
 {
     if (!m_lootRecipient) return NULL;
     else return ObjectAccessor::FindPlayer(m_lootRecipient);
@@ -1468,6 +1468,9 @@ void Creature::setDeathState(DeathState s)
         if (!isPet() && GetCreatureInfo()->SkinLootId)
             if (LootTemplates_Skinning.HaveLootFor(GetCreatureInfo()->SkinLootId))
                 SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
+
+        if (canFly() && FallGround())
+            return;
 
         // return, since we promote to DEAD_FALLING. DEAD_FALLING is promoted to CORPSE at next update.
         if (canFly() && FallGround())
@@ -2097,7 +2100,7 @@ void Creature::AddCreatureSpellCooldown(uint32 spellid)
         return;
 
     uint32 cooldown = GetSpellRecoveryTime(spellInfo);
-    if(Player *modOwner = GetSpellModOwner())
+    if(Player* modOwner = GetSpellModOwner())
         modOwner->ApplySpellMod(spellid, SPELLMOD_COOLDOWN, cooldown);
 
     if (cooldown)

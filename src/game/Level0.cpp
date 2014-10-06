@@ -65,7 +65,7 @@ bool ChatHandler::HandleAccountCommand(const char* /*args*/)
 
 bool ChatHandler::HandleStartCommand(const char* /*args*/)
 {
-    Player *chr = m_session->GetPlayer();
+    Player* chr = m_session->GetPlayer();
 
     if (chr->isInFlight())
     {
@@ -137,12 +137,12 @@ bool ChatHandler::HandleDismountCommand(const char* /*args*/)
 
 bool ChatHandler::HandleSaveCommand(const char* /*args*/)
 {
-    Player *player=m_session->GetPlayer();
+    Player* player=m_session->GetPlayer();
 
     // save GM account without delay and output message (testing, etc)
     if (m_session->GetSecurity())
     {
-        if (Player *target = getSelectedPlayer())
+        if (Player* target = getSelectedPlayer())
             target->SaveToDB();
         else
             player->SaveToDB();

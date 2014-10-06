@@ -115,7 +115,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        Player *player = GetPlayerInMap();
+        Player* player = GetPlayerInMap();
 
         if (!player)
         {

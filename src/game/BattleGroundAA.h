@@ -38,14 +38,14 @@ class BattleGroundAA : public BattleGround
         void Update(uint32 diff);
 
         /* inherited from BattlegroundClass */
-        virtual void AddPlayer(Player *plr);
+        virtual void AddPlayer(Player* plr);
         virtual void StartingEventCloseDoors();
         virtual void StartingEventOpenDoors();
 
-        void RemovePlayer(Player *plr, uint64 guid);
-        void HandleAreaTrigger(Player *Source, uint32 Trigger);
+        void RemovePlayer(Player* plr, uint64 guid);
+        void HandleAreaTrigger(Player* Source, uint32 Trigger);
         bool SetupBattleGround();
-        void HandleKillPlayer(Player* player, Player *killer);
+        void HandleKillPlayer(Player* player, Player* killer);
 };
 #endif
 

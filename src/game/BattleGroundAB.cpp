@@ -198,7 +198,7 @@ void BattleGroundAB::StartingEventOpenDoors()
     DoorOpen(BG_AB_OBJECT_GATE_H);
 }
 
-void BattleGroundAB::AddPlayer(Player *plr)
+void BattleGroundAB::AddPlayer(Player* plr)
 {
     BattleGround::AddPlayer(plr);
     //create score and add it to map, default values are set in the constructor
@@ -207,12 +207,12 @@ void BattleGroundAB::AddPlayer(Player *plr)
     m_PlayerScores[plr->GetGUID()] = sc;
 }
 
-void BattleGroundAB::RemovePlayer(Player * /*plr*/, uint64 /*guid*/)
+void BattleGroundAB::RemovePlayer(Player* /*plr*/, uint64 /*guid*/)
 {
 
 }
 
-void BattleGroundAB::HandleAreaTrigger(Player *Source, uint32 Trigger)
+void BattleGroundAB::HandleAreaTrigger(Player* Source, uint32 Trigger)
 {
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;
@@ -403,7 +403,7 @@ void BattleGroundAB::_NodeDeOccupied(uint8 node)
 }
 
 /* Invoked if a player used a banner as a gameobject */
-void BattleGroundAB::EventPlayerClickedOnFlag(Player *source, GameObject* /*target_obj*/)
+void BattleGroundAB::EventPlayerClickedOnFlag(Player* source, GameObject* /*target_obj*/)
 {
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;
@@ -627,7 +627,7 @@ WorldSafeLocsEntry const* BattleGroundAB::GetClosestGraveYard(Player* player)
     return good_entry;
 }
 
-void BattleGroundAB::UpdatePlayerScore(Player *Source, uint32 type, uint32 value)
+void BattleGroundAB::UpdatePlayerScore(Player* Source, uint32 type, uint32 value)
 {
     BattleGroundScoreMap::iterator itr = m_PlayerScores.find(Source->GetGUID());
     if (itr == m_PlayerScores.end())                         // player not found...

@@ -40,7 +40,7 @@ void OutdoorPvPSI::FillInitialWorldStates(WorldPacket &data)
     data << SI_SILITHYST_MAX << SI_MAX_RESOURCES;
 }
 
-void OutdoorPvPSI::SendRemoveWorldStates(Player *plr)
+void OutdoorPvPSI::SendRemoveWorldStates(Player* plr)
 {
     plr->SendUpdateWorldState(SI_GATHERED_A,0);
     plr->SendUpdateWorldState(SI_GATHERED_H,0);
@@ -66,21 +66,21 @@ bool OutdoorPvPSI::Update(uint32 /*diff*/)
     return false;
 }
 
-void OutdoorPvPSI::HandlePlayerEnterZone(Player * plr, uint32 zone)
+void OutdoorPvPSI::HandlePlayerEnterZone(Player* plr, uint32 zone)
 {
     if (plr->GetTeam() == m_LastController)
         plr->CastSpell(plr,SI_CENARION_FAVOR,true);
     OutdoorPvP::HandlePlayerEnterZone(plr,zone);
 }
 
-void OutdoorPvPSI::HandlePlayerLeaveZone(Player * plr, uint32 zone)
+void OutdoorPvPSI::HandlePlayerLeaveZone(Player* plr, uint32 zone)
 {
     // remove buffs
     plr->RemoveAurasDueToSpell(SI_CENARION_FAVOR);
     OutdoorPvP::HandlePlayerLeaveZone(plr, zone);
 }
 
-bool OutdoorPvPSI::HandleAreaTrigger(Player *plr, uint32 trigger)
+bool OutdoorPvPSI::HandleAreaTrigger(Player* plr, uint32 trigger)
 {
     switch (trigger)
     {
@@ -138,7 +138,7 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player *plr, uint32 trigger)
     return false;
 }
 
-bool OutdoorPvPSI::HandleDropFlag(Player *plr, uint32 spellId)
+bool OutdoorPvPSI::HandleDropFlag(Player* plr, uint32 spellId)
 {
     if (spellId == SI_SILITHYST_FLAG)
     {
@@ -210,7 +210,7 @@ bool OutdoorPvPSI::HandleDropFlag(Player *plr, uint32 spellId)
     return false;
 }
 
-bool OutdoorPvPSI::HandleCustomSpell(Player *plr, uint32 spellId, GameObject *go)
+bool OutdoorPvPSI::HandleCustomSpell(Player* plr, uint32 spellId, GameObject *go)
 {
     if (!go || spellId != SI_SILITHYST_FLAG_GO_SPELL)
         return false;

@@ -89,7 +89,7 @@ class Puppet : public Minion
         void Update(uint32 time);
         void RemoveFromWorld();
     protected:
-        Player *m_owner;
+        Player* m_owner;
 };
 
 #endif

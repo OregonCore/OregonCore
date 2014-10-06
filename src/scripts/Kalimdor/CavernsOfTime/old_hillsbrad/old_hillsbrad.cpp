@@ -42,7 +42,7 @@ EndContentData */
 ## npc_erozion
 ######*/
 
-bool GossipHello_npc_erozion(Player *player, Creature* pCreature)
+bool GossipHello_npc_erozion(Player* player, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
@@ -59,7 +59,7 @@ bool GossipHello_npc_erozion(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_erozion(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_erozion(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {

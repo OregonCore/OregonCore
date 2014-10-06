@@ -39,7 +39,7 @@ bool isEventActive()
     return isGameEventActive(HALLOWEEN_EVENTID);
 }
 
-bool GossipHello_npc_innkeeper(Player *pPlayer, Creature *pCreature)
+bool GossipHello_npc_innkeeper(Player* pPlayer, Creature *pCreature)
 {
 
     pPlayer->TalkedToCreature(pCreature->GetEntry(),pCreature->GetGUID());

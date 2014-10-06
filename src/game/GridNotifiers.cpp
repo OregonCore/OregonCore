@@ -160,7 +160,7 @@ void CreatureRelocationNotifier::Visit(PlayerMapType &m)
 {
     for (PlayerMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
     {
-        Player * pl = iter->getSource();
+        Player* pl = iter->getSource();
 
         if (!pl->m_seer->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
             pl->UpdateVisibilityOf(&i_creature);
@@ -206,7 +206,7 @@ void DelayedUnitRelocation::Visit(PlayerMapType &m)
 {
     for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        Player * player = iter->getSource();
+        Player* player = iter->getSource();
         WorldObject const *viewPoint = player->m_seer;
 
         if (!viewPoint->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
@@ -319,7 +319,7 @@ MessageDistDeliverer::Visit(PlayerMapType &m)
 {
     for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        Player *target = iter->getSource();
+        Player* target = iter->getSource();
 
         if (target->GetExactDistSq(i_source) > i_distSq)
             continue;

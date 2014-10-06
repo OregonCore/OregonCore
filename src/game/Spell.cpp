@@ -1512,7 +1512,7 @@ WorldObject* Spell::SearchNearbyTarget(float range, SpellTargets TargetType)
 void Spell::SetTargetMap(uint32 i, uint32 cur)
 {
     SpellNotifyPushType pushType = PUSH_NONE;
-    Player *modOwner = NULL;
+    Player* modOwner = NULL;
     if (m_originalCaster)
         modOwner = m_originalCaster->GetSpellModOwner();
 

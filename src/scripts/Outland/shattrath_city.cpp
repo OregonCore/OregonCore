@@ -81,7 +81,7 @@ CreatureAI* GetAI_npc_raliq_the_drunk(Creature* pCreature)
     return new npc_raliq_the_drunkAI (pCreature);
 }
 
-bool GossipHello_npc_raliq_the_drunk(Player *player, Creature* pCreature)
+bool GossipHello_npc_raliq_the_drunk(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10009) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_RALIQ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
@@ -90,7 +90,7 @@ bool GossipHello_npc_raliq_the_drunk(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_raliq_the_drunk(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_raliq_the_drunk(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -155,7 +155,7 @@ CreatureAI* GetAI_npc_salsalabim(Creature* pCreature)
     return new npc_salsalabimAI (pCreature);
 }
 
-bool GossipHello_npc_salsalabim(Player *player, Creature* pCreature)
+bool GossipHello_npc_salsalabim(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(QUEST_10004) == QUEST_STATUS_INCOMPLETE)
     {
@@ -182,7 +182,7 @@ Purchase requires exalted reputation with Scryers/Aldor, Cenarion Expedition and
 ##################################################
 */
 
-bool GossipHello_npc_shattrathflaskvendors(Player *player, Creature* pCreature)
+bool GossipHello_npc_shattrathflaskvendors(Player* player, Creature* pCreature)
 {
     if (pCreature->GetEntry() == 23484)
     {
@@ -215,7 +215,7 @@ bool GossipHello_npc_shattrathflaskvendors(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_shattrathflaskvendors(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_shattrathflaskvendors(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
         player->SEND_VENDORLIST(pCreature->GetGUID());
@@ -229,7 +229,7 @@ bool GossipSelect_npc_shattrathflaskvendors(Player *player, Creature* pCreature,
 
 #define GOSSIP_HZ "Take me to the Caverns of Time."
 
-bool GossipHello_npc_zephyr(Player *player, Creature* pCreature)
+bool GossipHello_npc_zephyr(Player* player, Creature* pCreature)
 {
     if (player->GetReputationRank(989) >= REP_REVERED)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HZ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
@@ -239,7 +239,7 @@ bool GossipHello_npc_zephyr(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_zephyr(Player *player, Creature* /*pCreature*/, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_zephyr(Player* player, Creature* /*pCreature*/, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
         player->CastSpell(player,37778,false);
@@ -695,7 +695,7 @@ struct npc_dirty_larryAI : public ScriptedAI
     }
 };
 
-bool GossipHello_npc_dirty_larry(Player *player, Creature *creature)
+bool GossipHello_npc_dirty_larry(Player* player, Creature *creature)
 {
     if (creature->isQuestGiver())
         player->PrepareQuestMenu(creature->GetGUID());
@@ -707,7 +707,7 @@ bool GossipHello_npc_dirty_larry(Player *player, Creature *creature)
     return true;
 }
 
-bool GossipSelect_npc_dirty_larry(Player *player, Creature *creature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_dirty_larry(Player* player, Creature *creature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -731,7 +731,7 @@ CreatureAI* GetAI_npc_dirty_larryAI(Creature* pCreature)
 #define ISANAH_GOSSIP_1 "Who are the Sha'tar?"
 #define ISANAH_GOSSIP_2 "Isn't Shattrath a draenei city? Why do you allow others here?"
 
-bool GossipHello_npc_ishanah(Player *player, Creature* pCreature)
+bool GossipHello_npc_ishanah(Player* player, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
@@ -744,7 +744,7 @@ bool GossipHello_npc_ishanah(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_ishanah(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_ishanah(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
         player->SEND_GOSSIP_MENU(9458, pCreature->GetGUID());
@@ -765,7 +765,7 @@ bool GossipSelect_npc_ishanah(Player *player, Creature* pCreature, uint32 /*send
 #define KHADGAR_GOSSIP_5    "What happened next?"
 #define KHADGAR_GOSSIP_7    "There was something else I wanted to ask you."
 
-bool GossipHello_npc_khadgar(Player *player, Creature *creature)
+bool GossipHello_npc_khadgar(Player* player, Creature *creature)
 {
     if (creature->isQuestGiver())
         player->PrepareQuestMenu(creature->GetGUID());
@@ -778,7 +778,7 @@ bool GossipHello_npc_khadgar(Player *player, Creature *creature)
     return true;
 }
 
-bool GossipSelect_npc_khadgar(Player *player, Creature *creature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_khadgar(Player* player, Creature *creature, uint32 /*sender*/, uint32 action)
 {
     switch(action)
     {

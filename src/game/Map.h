@@ -267,17 +267,17 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
             return false;
         }
 
-        virtual bool Add(Player *);
-        virtual void Remove(Player *, bool);
+        virtual bool Add(Player* );
+        virtual void Remove(Player* , bool);
         template<class T> void Add(T *);
         template<class T> void Remove(T *, bool);
 
         virtual void Update(const uint32&);
 
         /*
-        void MessageBroadcast(Player *, WorldPacket *, bool to_self);
+        void MessageBroadcast(Player* , WorldPacket *, bool to_self);
         void MessageBroadcast(WorldObject *, WorldPacket *);
-        void MessageDistBroadcast(Player *, WorldPacket *, float dist, bool to_self, bool own_team_only = false);
+        void MessageDistBroadcast(Player* , WorldPacket *, float dist, bool to_self, bool own_team_only = false);
         void MessageDistBroadcast(WorldObject *, WorldPacket *, float dist);
         */
 
@@ -285,7 +285,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         //function for setting up visibility distance for maps on per-type/per-Id basis
         virtual void InitVisibilityDistance();
 
-        void PlayerRelocation(Player *, float x, float y, float z, float orientation);
+        void PlayerRelocation(Player* , float x, float y, float z, float orientation);
         void CreatureRelocation(Creature *creature, float x, float y, float z, float ang, bool respawnRelocationOnFail = true);
 
         template<class T, class CONTAINER> void Visit(const Cell& cell, TypeContainerVisitor<T, CONTAINER> &visitor);
@@ -421,7 +421,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         CreatureFormationHolderType CreatureFormationHolder;
         CreatureGroupHolderType CreatureGroupHolder;
 
-        void UpdateIteratorBack(Player *player);
+        void UpdateIteratorBack(Player* player);
 
         TempSummon *SummonCreature(uint32 entry, const Position &pos, SummonPropertiesEntry const *properties = NULL, uint32 duration = 0, Unit *summoner = NULL, SpellEntry const* spellInfo = NULL);
         Creature* GetCreature(uint64 guid);
@@ -436,10 +436,10 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         void SetTimer(uint32 t) { i_gridExpiry = t < MIN_GRID_DELAY ? MIN_GRID_DELAY : t; }
 
-        void SendInitSelf(Player * player);
+        void SendInitSelf(Player* player);
 
-        void SendInitTransports(Player * player);
-        void SendRemoveTransports(Player * player);
+        void SendInitTransports(Player* player);
+        void SendRemoveTransports(Player* player);
 
         bool CreatureCellRelocation(Creature *creature, Cell new_cell);
 
@@ -569,14 +569,14 @@ class InstanceMap : public Map
     public:
         InstanceMap(uint32 id, time_t, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent);
         ~InstanceMap();
-        bool Add(Player *);
-        void Remove(Player *, bool);
+        bool Add(Player* );
+        void Remove(Player* , bool);
         void Update(const uint32&);
         void CreateInstanceData(bool load);
         bool Reset(uint8 method);
         uint32 GetScriptId() { return i_script_id; }
         InstanceData* GetInstanceData() { return i_data; }
-        void PermBindAllPlayers(Player *player);
+        void PermBindAllPlayers(Player* player);
         time_t GetResetTime();
         void UnloadAll();
         bool CanEnter(Player* player);
@@ -597,8 +597,8 @@ class BattleGroundMap : public Map
         BattleGroundMap(uint32 id, time_t, uint32 InstanceId, Map* _parent);
         ~BattleGroundMap();
 
-        bool Add(Player *);
-        void Remove(Player *, bool);
+        bool Add(Player* );
+        void Remove(Player* , bool);
         bool CanEnter(Player* player);
         void SetUnload();
         void RemoveAllPlayers();

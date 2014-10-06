@@ -77,8 +77,8 @@ class InstanceSave
 
         /* online players bound to the instance (perm/solo)
            does not include the members of the group unless they have permanent saves */
-        void AddPlayer(Player *player) { m_playerList.push_back(player); }
-        bool RemovePlayer(Player *player) { m_playerList.remove(player); return UnloadIfEmpty(); }
+        void AddPlayer(Player* player) { m_playerList.push_back(player); }
+        bool RemovePlayer(Player* player) { m_playerList.remove(player); return UnloadIfEmpty(); }
         /* all groups bound to the instance */
         void AddGroup(Group *group) { m_groupList.push_back(group); }
         bool RemoveGroup(Group *group) { m_groupList.remove(group); return UnloadIfEmpty(); }

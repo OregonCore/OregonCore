@@ -52,7 +52,7 @@ uint32 const LevelStartLoyalty[6] =
     17500,
 };
 
-Pet::Pet(Player *owner, PetType type) : Guardian(NULL, owner),
+Pet::Pet(Player* owner, PetType type) : Guardian(NULL, owner),
 m_resetTalentsCost(0), m_resetTalentsTime(0),
 m_removed(false), m_owner(owner), m_happinessTimer(7500),
 m_petType(type), m_duration(0), m_declinedname(NULL)
@@ -473,7 +473,7 @@ void Pet::setDeathState(DeathState s)                       // overwrite virtual
         if (getPetType() == HUNTER_PET)
         {
             // Pet has just died, update it's status
-            if (Player *owner = GetOwner())
+            if (Player* owner = GetOwner())
                 owner->SetPetStatus(PET_STATUS_DEAD); 
 
             // pet corpse non lootable and non skinnable

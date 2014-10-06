@@ -278,7 +278,7 @@ CreatureAI* GetAI_npc_daranelle(Creature* pCreature)
 
 #define GOSSIP_HON "Overseer, I am here to negotiate on behalf of the Cenarion Expedition."
 
-bool GossipHello_npc_overseer_nuaar(Player *player, Creature* pCreature)
+bool GossipHello_npc_overseer_nuaar(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10682) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
@@ -288,7 +288,7 @@ bool GossipHello_npc_overseer_nuaar(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_overseer_nuaar(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_overseer_nuaar(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -305,7 +305,7 @@ bool GossipSelect_npc_overseer_nuaar(Player *player, Creature* pCreature, uint32
 #define GOSSIP_HSTE "Yes... yes, it's me."
 #define GOSSIP_SSTE "Yes elder. Tell me more of the book."
 
-bool GossipHello_npc_saikkal_the_elder(Player *player, Creature* pCreature)
+bool GossipHello_npc_saikkal_the_elder(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10980) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
@@ -315,7 +315,7 @@ bool GossipHello_npc_saikkal_the_elder(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_saikkal_the_elder(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_saikkal_the_elder(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     switch (action)
     {
@@ -430,7 +430,7 @@ CreatureAI* GetAI_npc_ogre_brute(Creature* pCreature)
 #define Q_THE_THUNDERSPIKE 10526
 #define GOR_GRIMGUT_ENTRY  21319
 
-bool GOUse_go_thunderspike(Player *player, GameObject* /*_GO*/)
+bool GOUse_go_thunderspike(Player* player, GameObject* /*_GO*/)
 {
     if (player->GetQuestStatus(Q_THE_THUNDERSPIKE) == QUEST_STATUS_INCOMPLETE)
     {

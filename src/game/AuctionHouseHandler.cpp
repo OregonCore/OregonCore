@@ -108,7 +108,7 @@ void WorldSession::SendAuctionOwnerNotification(AuctionEntry* auction)
 void WorldSession::SendAuctionOutbiddedMail(AuctionEntry *auction, uint32 newPrice)
 {
     uint64 oldBidder_guid = MAKE_NEW_GUID(auction->bidder,0, HIGHGUID_PLAYER);
-    Player *oldBidder = objmgr.GetPlayer(oldBidder_guid);
+    Player* oldBidder = objmgr.GetPlayer(oldBidder_guid);
 
     uint32 oldBidder_accId = 0;
     if (!oldBidder)
@@ -136,7 +136,7 @@ void WorldSession::SendAuctionOutbiddedMail(AuctionEntry *auction, uint32 newPri
 void WorldSession::SendAuctionCancelledToBidderMail(AuctionEntry* auction)
 {
     uint64 bidder_guid = MAKE_NEW_GUID(auction->bidder, 0, HIGHGUID_PLAYER);
-    Player *bidder = objmgr.GetPlayer(bidder_guid);
+    Player* bidder = objmgr.GetPlayer(bidder_guid);
 
     uint32 bidder_accId = 0;
     if (!bidder)
@@ -161,7 +161,7 @@ void WorldSession::HandleAuctionSellItem(WorldPacket & recv_data)
     uint32 etime, bid, buyout;
     recv_data >> auctioneer >> item;
     recv_data >> bid >> buyout >> etime;
-    Player *pl = GetPlayer();
+    Player* pl = GetPlayer();
 
     if (!item || !bid || !etime)
         return;                                             // check for cheaters
@@ -311,7 +311,7 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket & recv_data)
     AuctionHouseObject *auctionHouse = sAuctionMgr->GetAuctionsMap(pCreature->getFaction());
 
     AuctionEntry *auction = auctionHouse->GetAuction(auctionId);
-    Player *pl = GetPlayer();
+    Player* pl = GetPlayer();
 
     if (!auction || auction->owner == pl->GetGUIDLow())
     {
@@ -426,7 +426,7 @@ void WorldSession::HandleAuctionRemoveItem(WorldPacket & recv_data)
     AuctionHouseObject* auctionHouse = sAuctionMgr->GetAuctionsMap(pCreature->getFaction());
 
     AuctionEntry *auction = auctionHouse->GetAuction(auctionId);
-    Player *pl = GetPlayer();
+    Player* pl = GetPlayer();
 
     if (auction && auction->owner == pl->GetGUIDLow())
     {
@@ -509,7 +509,7 @@ void WorldSession::HandleAuctionListBidderItems(WorldPacket & recv_data)
     AuctionHouseObject* auctionHouse = sAuctionMgr->GetAuctionsMap(pCreature->getFaction());
 
     WorldPacket data(SMSG_AUCTION_BIDDER_LIST_RESULT, (4+4+4));
-    Player *pl = GetPlayer();
+    Player* pl = GetPlayer();
     data << uint32(0);                                     // add 0 as count
     uint32 count = 0;
     uint32 totalcount = 0;

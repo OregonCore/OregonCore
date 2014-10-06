@@ -279,9 +279,9 @@ struct LootView
     QuestItemList *qlist;
     QuestItemList *ffalist;
     QuestItemList *conditionallist;
-    Player *viewer;
+    Player* viewer;
     PermissionTypes permission;
-    LootView(Loot &_loot, QuestItemList *_qlist, QuestItemList *_ffalist, QuestItemList *_conditionallist, Player *_viewer,PermissionTypes _permission = ALL_PERMISSION)
+    LootView(Loot &_loot, QuestItemList *_qlist, QuestItemList *_ffalist, QuestItemList *_conditionallist, Player* _viewer,PermissionTypes _permission = ALL_PERMISSION)
         : loot(_loot), qlist(_qlist), ffalist(_ffalist), conditionallist(_conditionallist), viewer(_viewer), permission(_permission) {}
 };
 

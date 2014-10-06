@@ -42,7 +42,7 @@ EndContentData */
 #define GOSSIP_REWARD_BLESS       -1000207
 //#define TEXT_BLESSINGS        "<You need higher standing with Cenarion Expedition to recive a blessing.>"
 
-bool GossipHello_npcs_ashyen_and_keleth(Player *player, Creature* pCreature)
+bool GossipHello_npcs_ashyen_and_keleth(Player* player, Creature* pCreature)
 {
     if (player->GetReputationRank(942) > REP_NEUTRAL)
     {
@@ -56,7 +56,7 @@ bool GossipHello_npcs_ashyen_and_keleth(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npcs_ashyen_and_keleth(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npcs_ashyen_and_keleth(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -161,7 +161,7 @@ CreatureAI* GetAI_npc_cooshcoosh(Creature* pCreature)
     return new npc_cooshcooshAI (pCreature);
 }
 
-bool GossipHello_npc_cooshcoosh(Player *player, Creature* pCreature)
+bool GossipHello_npc_cooshcoosh(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10009) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_COOSH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
@@ -170,7 +170,7 @@ bool GossipHello_npc_cooshcoosh(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_cooshcoosh(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_cooshcoosh(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
@@ -189,7 +189,7 @@ bool GossipSelect_npc_cooshcoosh(Player *player, Creature* pCreature, uint32 /*s
 #define GOSSIP_ITEM_KUR2 "Im a messenger for Draenei"
 #define GOSSIP_ITEM_KUR3 "Get message"
 
-bool GossipHello_npc_elder_kuruti(Player *player, Creature* pCreature)
+bool GossipHello_npc_elder_kuruti(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(9803) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_KUR1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
@@ -199,7 +199,7 @@ bool GossipHello_npc_elder_kuruti(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_elder_kuruti(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_elder_kuruti(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     switch (action)
     {
@@ -235,7 +235,7 @@ bool GossipSelect_npc_elder_kuruti(Player *player, Creature* pCreature, uint32 /
 ## npc_mortog_steamhead
 ######*/
 
-bool GossipHello_npc_mortog_steamhead(Player *player, Creature* pCreature)
+bool GossipHello_npc_mortog_steamhead(Player* player, Creature* pCreature)
 {
     if (pCreature->isVendor() && player->GetReputationRank(942) == REP_EXALTED)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
@@ -245,7 +245,7 @@ bool GossipHello_npc_mortog_steamhead(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_mortog_steamhead(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_mortog_steamhead(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
     {

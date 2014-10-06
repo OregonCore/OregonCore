@@ -100,7 +100,7 @@ CreatureAI* GetAI_mobs_risen_husk_spirit(Creature* pCreature)
 ## npc_restless_apparition
 ######*/
 
-bool GossipHello_npc_restless_apparition(Player *player, Creature* pCreature)
+bool GossipHello_npc_restless_apparition(Player* player, Creature* pCreature)
 {
     player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
@@ -295,7 +295,7 @@ bool GossipSelect_npc_theramore_guard(Player* pPlayer, Creature* pCreature, uint
 
 #define GOSSIP_ITEM_JAINA "I know this is rather silly but i have a young ward who is a bit shy and would like your autograph."
 
-bool GossipHello_npc_lady_jaina_proudmoore(Player *player, Creature* pCreature)
+bool GossipHello_npc_lady_jaina_proudmoore(Player* player, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
@@ -308,7 +308,7 @@ bool GossipHello_npc_lady_jaina_proudmoore(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_lady_jaina_proudmoore(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_lady_jaina_proudmoore(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_SENDER_INFO)
     {
@@ -322,7 +322,7 @@ bool GossipSelect_npc_lady_jaina_proudmoore(Player *player, Creature* pCreature,
 ## npc_nat_pagle
 ######*/
 
-bool GossipHello_npc_nat_pagle(Player *player, Creature* pCreature)
+bool GossipHello_npc_nat_pagle(Player* player, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
@@ -338,7 +338,7 @@ bool GossipHello_npc_nat_pagle(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_nat_pagle(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_nat_pagle(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
         player->SEND_VENDORLIST(pCreature->GetGUID());

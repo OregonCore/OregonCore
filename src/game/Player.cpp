@@ -3503,7 +3503,7 @@ Mail* Player::GetMail(uint32 id)
     return NULL;
 }
 
-void Player::_SetCreateBits(UpdateMask *updateMask, Player *target) const
+void Player::_SetCreateBits(UpdateMask *updateMask, Player* target) const
 {
     if (target == this)
     {
@@ -3519,7 +3519,7 @@ void Player::_SetCreateBits(UpdateMask *updateMask, Player *target) const
     }
 }
 
-void Player::_SetUpdateBits(UpdateMask *updateMask, Player *target) const
+void Player::_SetUpdateBits(UpdateMask *updateMask, Player* target) const
 {
     if (target == this)
     {
@@ -3634,7 +3634,7 @@ void Player::InitVisibleBits()
     updateVisualBits.SetBit(PLAYER_CHOSEN_TITLE);
 }
 
-void Player::BuildCreateUpdateBlockForPlayer(UpdateData *data, Player *target) const
+void Player::BuildCreateUpdateBlockForPlayer(UpdateData *data, Player* target) const
 {
     if (target == this)
     {
@@ -3665,7 +3665,7 @@ void Player::BuildCreateUpdateBlockForPlayer(UpdateData *data, Player *target) c
     Unit::BuildCreateUpdateBlockForPlayer(data, target);
 }
 
-void Player::DestroyForPlayer(Player *target) const
+void Player::DestroyForPlayer(Player* target) const
 {
     Unit::DestroyForPlayer(target);
 
@@ -6412,7 +6412,7 @@ bool Player::RewardHonor(Unit *uVictim, uint32 groupsize, float honor, bool pvpt
 
         if (uVictim->GetTypeId() == TYPEID_PLAYER)
         {
-            Player *pVictim = uVictim->ToPlayer();
+            Player* pVictim = uVictim->ToPlayer();
 
             if (GetTeam() == pVictim->GetTeam() && !sWorld.IsFFAPvPRealm())
                 return false;
@@ -7881,7 +7881,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
         else
         {
             // the player whose group may loot the corpse
-            Player *recipient = creature->GetLootRecipient();
+            Player* recipient = creature->GetLootRecipient();
             if (!recipient)
             {
                 creature->SetLootRecipient(this);
@@ -14078,7 +14078,7 @@ void Player::GroupEventHappens(uint32 questId, WorldObject const* pEventObject)
     {
         for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player *pGroupGuy = itr->getSource();
+            Player* pGroupGuy = itr->getSource();
 
             // for any leave or dead (with not released body) group member at appropriate distance
             if (pGroupGuy && pGroupGuy->IsAtGroupRewardDistance(pEventObject) && !pGroupGuy->GetCorpse())
@@ -14552,7 +14552,7 @@ void Player::SendQuestConfirmAccept(const Quest* pQuest, Player* pReceiver)
     }
 }
 
-void Player::SendPushToPartyResponse(Player *pPlayer, uint32 msg)
+void Player::SendPushToPartyResponse(Player* pPlayer, uint32 msg)
 {
     if (pPlayer)
     {
@@ -16298,7 +16298,7 @@ void Player::SendSavedInstances()
 }
 
 // convert the player's binds to the group
-void Player::ConvertInstancesToGroup(Player *player, Group *group, uint64 player_guid)
+void Player::ConvertInstancesToGroup(Player* player, Group *group, uint64 player_guid)
 {
     bool has_binds = false;
     bool has_solo = false;
@@ -19029,7 +19029,7 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
     // unit is also invisible for alive.. if an isinvisibleforalive unit dies we
     // should be able to see it too
     if (u->isAlive() && isAlive() && isInvisibleForAlive() != u->isInvisibleForAlive())
-        if (u->GetTypeId() != TYPEID_PLAYER || !((Player *)u)->isGameMaster())
+        if (u->GetTypeId() != TYPEID_PLAYER || !((Player* )u)->isGameMaster())
             return false;
  
     if (Unit* owner = u->GetCharmerOrOwnerOrSelf())

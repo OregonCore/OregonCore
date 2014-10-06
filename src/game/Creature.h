@@ -579,7 +579,7 @@ class Creature : public Unit, public GridObject<Creature>
         Loot loot;
         bool lootForPickPocketed;
         bool lootForBody;
-        Player *GetLootRecipient() const;
+        Player* GetLootRecipient() const;
         bool hasLootRecipient() const { return m_lootRecipient != 0; }
 
         void SetLootRecipient (Unit* unit);

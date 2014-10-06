@@ -56,7 +56,7 @@ enum eLunaclaw
 
 #define GOSSIP_ITEM_GRANT   "You have thought well, spirit. I ask you to grant me the strength of your body and the strength of your heart."
 
-bool GossipHello_npc_lunaclaw_spirit(Player *pPlayer, Creature *pCreature)
+bool GossipHello_npc_lunaclaw_spirit(Player* pPlayer, Creature *pCreature)
 {
     if (pPlayer->GetQuestStatus(QUEST_BODY_HEART_A) == QUEST_STATUS_INCOMPLETE || pPlayer->GetQuestStatus(QUEST_BODY_HEART_H) == QUEST_STATUS_INCOMPLETE)
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_GRANT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);

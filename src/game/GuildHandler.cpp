@@ -71,7 +71,7 @@ void WorldSession::HandleGuildInviteOpcode(WorldPacket& recvPacket)
     //sLog.outDebug("WORLD: Received CMSG_GUILD_INVITE");
 
     std::string Invitedname, plname;
-    Player * player = NULL;
+    Player* player = NULL;
     recvPacket >> Invitedname;
 
     if (normalizePlayerName(Invitedname))
@@ -187,7 +187,7 @@ void WorldSession::HandleGuildRemoveOpcode(WorldPacket& recvPacket)
 void WorldSession::HandleGuildAcceptOpcode(WorldPacket& /*recvPacket*/)
 {
     Guild *guild;
-    Player *player = GetPlayer();
+    Player* player = GetPlayer();
 
     //sLog.outDebug("WORLD: Received CMSG_GUILD_ACCEPT");
 
@@ -436,7 +436,7 @@ void WorldSession::HandleGuildDisbandOpcode(WorldPacket& /*recvPacket*/)
 void WorldSession::HandleGuildLeaderOpcode(WorldPacket& recvPacket)
 {
     std::string name;
-    Player *oldLeader = GetPlayer();
+    Player* oldLeader = GetPlayer();
     Guild *guild;
 
     //sLog.outDebug("WORLD: Received CMSG_GUILD_LEADER");
@@ -1070,7 +1070,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
     if (!pGuild)
         return;
 
-    Player *pl = GetPlayer();
+    Player* pl = GetPlayer();
 
     // player->bank or bank->bank check if tab is correct to prevent crash
     if (!ToChar && !pGuild->GetBankTab(BankTab))

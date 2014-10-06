@@ -1460,24 +1460,24 @@ class BattleGroundAV : public BattleGround
         void Update(uint32 diff);
 
         /* inherited from BattlegroundClass */
-        virtual void AddPlayer(Player *plr);
+        virtual void AddPlayer(Player* plr);
         virtual void StartingEventCloseDoors();
         virtual void StartingEventOpenDoors();
 
-        void RemovePlayer(Player *plr,uint64 guid);
-        void HandleAreaTrigger(Player *Source, uint32 Trigger);
+        void RemovePlayer(Player* plr,uint64 guid);
+        void HandleAreaTrigger(Player* Source, uint32 Trigger);
         bool SetupBattleGround();
         virtual void ResetBGSubclass();
 
         /*general stuff*/
         void UpdateScore(uint16 team, int16 points);
-        void UpdatePlayerScore(Player *Source, uint32 type, uint32 value);
+        void UpdatePlayerScore(Player* Source, uint32 type, uint32 value);
 
         /*handle stuff*/ // these are functions which get called from extern scripts
-        virtual void EventPlayerClickedOnFlag(Player *source, GameObject* target_obj);
-        void HandleKillPlayer(Player* player, Player *killer);
-        void HandleKillUnit(Creature *unit, Player *killer);
-        void HandleQuestComplete(uint32 questid, Player *player);
+        virtual void EventPlayerClickedOnFlag(Player* source, GameObject* target_obj);
+        void HandleKillPlayer(Player* player, Player* killer);
+        void HandleKillUnit(Creature *unit, Player* killer);
+        void HandleQuestComplete(uint32 questid, Player* player);
         bool PlayerCanDoMineQuest(int32 GOId,uint32 team);
 
         void EndBattleGround(uint32 winner);

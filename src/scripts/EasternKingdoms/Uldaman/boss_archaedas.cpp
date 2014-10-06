@@ -296,7 +296,7 @@ uint64 altarOfArchaedasCount[5];
 int32 altarOfArchaedasCounter=0;
 
 
-bool GOHello_go_altar_of_archaedas(Player *player, GameObject* go)
+bool GOHello_go_altar_of_archaedas(Player* player, GameObject* go)
 {
     bool alreadyUsed;
     go->AddUse ();

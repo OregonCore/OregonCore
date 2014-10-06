@@ -429,7 +429,7 @@ void Transport::TeleportTransport(uint32 newMapid, float x, float y, float z)
         PlayerSet::iterator it2 = itr;
         ++itr;
 
-        Player *plr = *it2;
+        Player* plr = *it2;
         if (!plr)
         {
             m_passengers.erase(it2);

@@ -345,7 +345,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket & recv_data)
     recv_data >> gender >> skin >> face;
     recv_data >> hairStyle >> hairColor >> facialHair >> outfitId;
 
-    Player * pNewChar = new Player(this);
+    Player*  pNewChar = new Player(this);
     if (!pNewChar->Create(objmgr.GenerateLowGuid(HIGHGUID_PLAYER), name, race_, class_, gender, skin, face, hairStyle, hairColor, facialHair, outfitId))
     {
         // Player not create (race/class problem?)

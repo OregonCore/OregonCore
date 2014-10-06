@@ -163,7 +163,7 @@ void WorldSession::HandleBattleGroundJoinOpcode(WorldPacket & recv_data)
         GroupQueueInfo * ginfo = sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].AddGroup(_player, bgTypeId, 0, false, 0);
         for (GroupReference *itr = grp->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player *member = itr->getSource();
+            Player* member = itr->getSource();
             if (!member) continue;   // this should never happen
 
             uint32 queueSlot = member->AddBattleGroundQueueId(bgQueueTypeId);           // add to queue
@@ -220,11 +220,11 @@ void WorldSession::HandleBattleGroundPlayerPositionsOpcode(WorldPacket & /*recv_
                 uint32 count1 = 0;                                  //always constant zero?
                 uint32 count2 = 0;                                  //count of next fields
 
-                Player *ali_plr = objmgr.GetPlayer(((BattleGroundWS*)bg)->GetAllianceFlagPickerGUID());
+                Player* ali_plr = objmgr.GetPlayer(((BattleGroundWS*)bg)->GetAllianceFlagPickerGUID());
                 if (ali_plr)
                     ++count2;
 
-                Player *horde_plr = objmgr.GetPlayer(((BattleGroundWS*)bg)->GetHordeFlagPickerGUID());
+                Player* horde_plr = objmgr.GetPlayer(((BattleGroundWS*)bg)->GetHordeFlagPickerGUID());
                 if (horde_plr)
                     ++count2;
 
@@ -772,7 +772,7 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data)
         uint32 avg_pers_rating = 0;
         for (GroupReference *itr = grp->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player *member = itr->getSource();
+            Player* member = itr->getSource();
 
             // calc avg personal rating
             avg_pers_rating += member->GetArenaPersonalRating(arenaslot);
@@ -794,7 +794,7 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data)
             sLog.outDebug("Battleground: arena team id %u, leader %s queued with rating %u for type %u",_player->GetArenaTeamId(arenaslot),_player->GetName(),arenaRating,arenatype);
         for (GroupReference *itr = grp->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player *member = itr->getSource();
+            Player* member = itr->getSource();
             if (!member) continue;
 
             uint32 queueSlot = member->AddBattleGroundQueueId(bgQueueTypeId);// add to queue
@@ -838,7 +838,7 @@ void WorldSession::HandleBattleGroundReportAFK(WorldPacket & recv_data)
 {
     uint64 playerGuid;
     recv_data >> playerGuid;
-    Player *reportedPlayer = objmgr.GetPlayer(playerGuid);
+    Player* reportedPlayer = objmgr.GetPlayer(playerGuid);
 
     if (!reportedPlayer)
     {

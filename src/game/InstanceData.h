@@ -111,7 +111,7 @@ class InstanceData : public ZoneScript
         virtual bool IsEncounterInProgress() const;
 
         //Called when a player successfully enters the instance.
-        virtual void OnPlayerEnter(Player *) {}
+        virtual void OnPlayerEnter(Player* ) {}
 
         // Direct calls to Map functions.
         Creature *GetCreature(uint64 guid) {return instance->GetCreature(guid);}

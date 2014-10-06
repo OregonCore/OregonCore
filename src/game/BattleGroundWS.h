@@ -155,7 +155,7 @@ class BattleGroundWS : public BattleGround
         void Update(uint32 diff);
 
         /* inherited from BattlegroundClass */
-        virtual void AddPlayer(Player *plr);
+        virtual void AddPlayer(Player* plr);
         virtual void StartingEventCloseDoors();
         virtual void StartingEventOpenDoors();
 
@@ -175,13 +175,13 @@ class BattleGroundWS : public BattleGround
         bool IsForceTimerDone;
 
         /* Battleground Events */
-        virtual void EventPlayerDroppedFlag(Player *Source);
-        virtual void EventPlayerClickedOnFlag(Player *Source, GameObject* target_obj);
-        virtual void EventPlayerCapturedFlag(Player *Source);
+        virtual void EventPlayerDroppedFlag(Player* Source);
+        virtual void EventPlayerClickedOnFlag(Player* Source, GameObject* target_obj);
+        virtual void EventPlayerCapturedFlag(Player* Source);
 
-        void RemovePlayer(Player *plr, uint64 guid);
-        void HandleAreaTrigger(Player *Source, uint32 Trigger);
-        void HandleKillPlayer(Player *player, Player *killer);
+        void RemovePlayer(Player* plr, uint64 guid);
+        void HandleAreaTrigger(Player* Source, uint32 Trigger);
+        void HandleKillPlayer(Player* player, Player* killer);
         bool SetupBattleGround();
         virtual void ResetBGSubclass();
         virtual WorldSafeLocsEntry const* GetClosestGraveYard(Player* player);
@@ -189,7 +189,7 @@ class BattleGroundWS : public BattleGround
         void UpdateFlagState(uint32 team, uint32 value);
         void SetFirstFlagCapture(uint32 team) { m_FirstFlagCaptureTeam = team; }
         void UpdateTeamScore(uint32 team);
-        void UpdatePlayerScore(Player *Source, uint32 type, uint32 value);
+        void UpdatePlayerScore(Player* Source, uint32 type, uint32 value);
         void SetDroppedFlagGUID(uint64 guid, uint32 TeamID)  { m_DroppedFlagGUID[GetTeamIndexByTeamId(TeamID)] = guid;}
         uint64 GetDroppedFlagGUID(uint32 TeamID)             { return m_DroppedFlagGUID[GetTeamIndexByTeamId(TeamID)];}
         virtual void FillInitialWorldStates(WorldPacket& data);

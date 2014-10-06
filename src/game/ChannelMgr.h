@@ -45,7 +45,7 @@ class ChannelMgr
             }
             return channels[name];
         }
-        Channel *GetChannel(const std::string& name, Player *p)
+        Channel *GetChannel(const std::string& name, Player* p)
         {
             ChannelMap::const_iterator i = channels.find(name);
 

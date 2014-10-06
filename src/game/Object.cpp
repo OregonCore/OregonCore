@@ -140,7 +140,7 @@ void Object::BuildMovementUpdateBlock(UpdateData * data, uint32 flags) const
     data->AddUpdateBlock(buf);
 }
 
-void Object::BuildCreateUpdateBlockForPlayer(UpdateData *data, Player *target) const
+void Object::BuildCreateUpdateBlockForPlayer(UpdateData *data, Player* target) const
 {
     if (!target)
         return;
@@ -210,7 +210,7 @@ void Object::SendUpdateToPlayer(Player* player)
     player->GetSession()->SendPacket(&packet);
 }
 
-void Object::BuildValuesUpdateBlockForPlayer(UpdateData *data, Player *target) const
+void Object::BuildValuesUpdateBlockForPlayer(UpdateData *data, Player* target) const
 {
     ByteBuffer buf(500);
 
@@ -233,7 +233,7 @@ void Object::BuildOutOfRangeUpdateBlock(UpdateData * data) const
     data->AddOutOfRangeGUID(GetGUID());
 }
 
-void Object::DestroyForPlayer(Player *target) const
+void Object::DestroyForPlayer(Player* target) const
 {
     ASSERT(target);
 
@@ -503,7 +503,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
     }
 }
 
-void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask *updateMask, Player *target) const
+void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask *updateMask, Player* target) const
 {
     if (!target)
         return;
@@ -702,7 +702,7 @@ void Object::ClearUpdateMask(bool remove)
     }
 }
 
-void Object::BuildFieldsUpdate(Player *pl, UpdateDataMapType &data_map) const
+void Object::BuildFieldsUpdate(Player* pl, UpdateDataMapType &data_map) const
 {
     UpdateDataMapType::iterator iter = data_map.find(pl);
 
@@ -1516,7 +1516,7 @@ void WorldObject::MonsterTextEmote(const char* text, uint64 TargetGuid, bool IsB
 
 void WorldObject::MonsterWhisper(const char* text, uint64 receiver, bool IsBossWhisper)
 {
-    Player *player = objmgr.GetPlayer(receiver);
+    Player* player = objmgr.GetPlayer(receiver);
     if (!player || !player->GetSession())
         return;
 
@@ -1633,7 +1633,7 @@ void WorldObject::MonsterTextEmote(int32 textId, uint64 TargetGuid, bool IsBossE
 
 void WorldObject::MonsterWhisper(int32 textId, uint64 receiver, bool IsBossWhisper)
 {
-    Player *player = objmgr.GetPlayer(receiver);
+    Player* player = objmgr.GetPlayer(receiver);
     if (!player || !player->GetSession())
         return;
 
@@ -1817,7 +1817,7 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
 
     if (mask == SUMMON_MASK_TOTEM && spellInfo)
     {
-        if (Player *pPlayer = summoner->ToPlayer())
+        if (Player* pPlayer = summoner->ToPlayer())
         {
             if (properties->Slot >= SUMMON_SLOT_TOTEM && properties->Slot < MAX_TOTEM_SLOT)
             {
@@ -2222,7 +2222,7 @@ void WorldObject::DestroyForNearbyPlayers()
     VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), searcher);
     for (std::list<Player*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
     {
-        Player *plr = (*iter);
+        Player* plr = (*iter);
 
         if (plr == this)
             continue;
@@ -2285,7 +2285,7 @@ struct WorldObjectChangeAccumulator
             if (IS_PLAYER_GUID(guid))
             {
                 //Caster may be NULL if DynObj is in removelist
-                if (Player *caster = ObjectAccessor::FindPlayer(guid))
+                if (Player* caster = ObjectAccessor::FindPlayer(guid))
                     if (caster->GetUInt64Value(PLAYER_FARSIGHT) == iter->getSource()->GetGUID())
                         BuildPacket(caster);
             }

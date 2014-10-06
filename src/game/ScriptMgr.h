@@ -93,10 +93,10 @@ class ScriptMgr
         char const* ScriptsVersion();
 
     //event handlers
-        void OnLogin(Player *pPlayer);
-        void OnLogout(Player *pPlayer);
-        void OnPVPKill(Player *killer, Player *killed);
-        bool GossipHello (Player * pPlayer, Creature* pCreature);
+        void OnLogin(Player* pPlayer);
+        void OnLogout(Player* pPlayer);
+        void OnPVPKill(Player* killer, Player* killed);
+        bool GossipHello (Player* pPlayer, Creature* pCreature);
         bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction);
         bool GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction, const char* sCode);
         bool GOSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction);

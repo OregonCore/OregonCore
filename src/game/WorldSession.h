@@ -89,7 +89,7 @@ class WorldSession
         char const* GetPlayerName() const;
         void SetSecurity(uint32 security) { _security = security; }
         std::string const& GetRemoteAddress() { return m_Address; }
-        void SetPlayer(Player *plr) { _player = plr; }
+        void SetPlayer(Player* plr) { _player = plr; }
         uint8 Expansion() const { return m_expansion; }
 
         void InitWarden(BigNumber *K, std::string os);
@@ -185,7 +185,7 @@ class WorldSession
         bool LookingForGroup_auto_join;
         bool LookingForGroup_auto_add;
 
-        void BuildPartyMemberStatsChangedPacket(Player *player, WorldPacket *data);
+        void BuildPartyMemberStatsChangedPacket(Player* player, WorldPacket *data);
 
         void DoLootRelease(uint64 lguid);
 
@@ -200,7 +200,7 @@ class WorldSession
         uint32 GetLatency() const { return m_latency; }
         void SetLatency(uint32 latency) { m_latency = latency; }
         void ResetClientTimeDelay() { m_clientTimeDelay = 0; }
-        uint32 getDialogStatus(Player *pPlayer, Object* questgiver, uint32 defstatus);
+        uint32 getDialogStatus(Player* pPlayer, Object* questgiver, uint32 defstatus);
 
         uint32 m_timeOutTime;
         void UpdateTimeOutTime(uint32 diff)
@@ -661,7 +661,7 @@ class WorldSession
         void LogUnexpectedOpcode(WorldPacket *packet, const char * reason);
         void LogUnprocessedTail(WorldPacket *packet);
 
-        Player *_player;
+        Player* _player;
         WorldSocket *m_Socket;
         std::string m_Address;
 

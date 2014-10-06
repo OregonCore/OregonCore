@@ -261,7 +261,7 @@ CreatureAI* GetAI_npc_engineer_spark_overgrind(Creature* pCreature)
     return new npc_engineer_spark_overgrindAI (pCreature);
 }
 
-bool GossipHello_npc_engineer_spark_overgrind(Player *player, Creature* pCreature)
+bool GossipHello_npc_engineer_spark_overgrind(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(9537) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_FIGHT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
@@ -270,7 +270,7 @@ bool GossipHello_npc_engineer_spark_overgrind(Player *player, Creature* pCreatur
     return true;
 }
 
-bool GossipSelect_npc_engineer_spark_overgrind(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_engineer_spark_overgrind(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {

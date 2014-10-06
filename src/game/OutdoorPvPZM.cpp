@@ -51,7 +51,7 @@ void OPvPCapturePointZM_Beacon::UpdateTowerState()
     m_PvP->SendUpdateWorldState(uint32(ZMBeaconInfo[m_TowerType].map_tower_h),uint32(bool(m_TowerState & ZM_TOWERSTATE_H)));
 }
 
-bool OPvPCapturePointZM_Beacon::HandlePlayerEnter(Player *plr)
+bool OPvPCapturePointZM_Beacon::HandlePlayerEnter(Player* plr)
 {
     if (OPvPCapturePoint::HandlePlayerEnter(plr))
     {
@@ -64,7 +64,7 @@ bool OPvPCapturePointZM_Beacon::HandlePlayerEnter(Player *plr)
     return false;
 }
 
-void OPvPCapturePointZM_Beacon::HandlePlayerLeave(Player *plr)
+void OPvPCapturePointZM_Beacon::HandlePlayerLeave(Player* plr)
 {
     plr->SendUpdateWorldState(ZMBeaconInfo[m_TowerType].slider_disp, 0);
     OPvPCapturePoint::HandlePlayerLeave(plr);
@@ -138,7 +138,7 @@ bool OutdoorPvPZM::Update(uint32 diff)
     return changed;
 }
 
-void OutdoorPvPZM::HandlePlayerEnterZone(Player * plr, uint32 zone)
+void OutdoorPvPZM::HandlePlayerEnterZone(Player* plr, uint32 zone)
 {
     if (plr->GetTeam() == ALLIANCE)
     {
@@ -153,7 +153,7 @@ void OutdoorPvPZM::HandlePlayerEnterZone(Player * plr, uint32 zone)
     OutdoorPvP::HandlePlayerEnterZone(plr,zone);
 }
 
-void OutdoorPvPZM::HandlePlayerLeaveZone(Player * plr, uint32 zone)
+void OutdoorPvPZM::HandlePlayerLeaveZone(Player* plr, uint32 zone)
 {
     // remove buffs
     plr->RemoveAurasDueToSpell(ZM_CAPTURE_BUFF);
@@ -189,7 +189,7 @@ bool OutdoorPvPZM::SetupOutdoorPvP()
     return true;
 }
 
-void OutdoorPvPZM::HandleKillImpl(Player *plr, Unit * killed)
+void OutdoorPvPZM::HandleKillImpl(Player* plr, Unit * killed)
 {
     if (killed->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -207,7 +207,7 @@ bool OPvPCapturePointZM_GraveYard::Update(uint32 /*diff*/)
     return retval;
 }
 
-int32 OPvPCapturePointZM_GraveYard::HandleOpenGo(Player *plr, uint64 guid)
+int32 OPvPCapturePointZM_GraveYard::HandleOpenGo(Player* plr, uint64 guid)
 {
     int32 retval = OPvPCapturePoint::HandleOpenGo(plr, guid);
     if (retval >= 0)
@@ -310,7 +310,7 @@ void OPvPCapturePointZM_GraveYard::SetBeaconState(uint32 controlling_faction)
             if (m_FlagCarrierGUID)
             {
                 // remove flag from carrier, reset flag carrier guid
-                Player * p = objmgr.GetPlayer(m_FlagCarrierGUID);
+                Player* p = objmgr.GetPlayer(m_FlagCarrierGUID);
                 if (p)
                 {
                    p->RemoveAurasDueToSpell(ZM_BATTLE_STANDARD_A);
@@ -325,7 +325,7 @@ void OPvPCapturePointZM_GraveYard::SetBeaconState(uint32 controlling_faction)
     UpdateTowerState();
 }
 
-bool OPvPCapturePointZM_GraveYard::CanTalkTo(Player * plr, Creature * c, GossipMenuItems /*gso*/)
+bool OPvPCapturePointZM_GraveYard::CanTalkTo(Player* plr, Creature * c, GossipMenuItems /*gso*/)
 {
     uint64 guid = c->GetGUID();
     std::map<uint64,uint32>::iterator itr = m_CreatureTypes.find(guid);
@@ -339,7 +339,7 @@ bool OPvPCapturePointZM_GraveYard::CanTalkTo(Player * plr, Creature * c, GossipM
     return false;
 }
 
-bool OPvPCapturePointZM_GraveYard::HandleGossipOption(Player *plr, uint64 guid, uint32 /*gossipid*/)
+bool OPvPCapturePointZM_GraveYard::HandleGossipOption(Player* plr, uint64 guid, uint32 /*gossipid*/)
 {
     std::map<uint64,uint32>::iterator itr = m_CreatureTypes.find(guid);
     if (itr != m_CreatureTypes.end())
@@ -367,7 +367,7 @@ bool OPvPCapturePointZM_GraveYard::HandleGossipOption(Player *plr, uint64 guid, 
     return false;
 }
 
-bool OPvPCapturePointZM_GraveYard::HandleDropFlag(Player * /*plr*/, uint32 spellId)
+bool OPvPCapturePointZM_GraveYard::HandleDropFlag(Player* /*plr*/, uint32 spellId)
 {
     switch (spellId)
     {
@@ -390,7 +390,7 @@ void OutdoorPvPZM::FillInitialWorldStates(WorldPacket &data)
     }
 }
 
-void OutdoorPvPZM::SendRemoveWorldStates(Player *plr)
+void OutdoorPvPZM::SendRemoveWorldStates(Player* plr)
 {
     plr->SendUpdateWorldState(ZM_UI_TOWER_SLIDER_N_W,0);
     plr->SendUpdateWorldState(ZM_UI_TOWER_SLIDER_POS_W,0);

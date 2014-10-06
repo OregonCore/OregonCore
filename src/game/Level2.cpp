@@ -91,7 +91,7 @@ bool ChatHandler::HandleMuteCommand(const char* args)
         return false;
     }
 
-    Player *chr = objmgr.GetPlayer(guid);
+    Player* chr = objmgr.GetPlayer(guid);
 
     // check security
     uint32 account_id = 0;
@@ -157,7 +157,7 @@ bool ChatHandler::HandleUnmuteCommand(const char* args)
         return false;
     }
 
-    Player *chr = objmgr.GetPlayer(guid);
+    Player* chr = objmgr.GetPlayer(guid);
 
     // check security
     uint32 account_id = 0;
@@ -684,7 +684,7 @@ bool ChatHandler::HandleTurnObjectCommand(const char* args)
     }
     else
     {
-        Player *chr = m_session->GetPlayer();
+        Player* chr = m_session->GetPlayer();
         o = chr->GetOrientation();
     }
 
@@ -732,7 +732,7 @@ bool ChatHandler::HandleMoveObjectCommand(const char* args)
 
     if (!px)
     {
-        Player *chr = m_session->GetPlayer();
+        Player* chr = m_session->GetPlayer();
         obj->Relocate(chr->GetPositionX(), chr->GetPositionY(), chr->GetPositionZ(), obj->GetOrientation());
         obj->SetFloatValue(GAMEOBJECT_POS_X, chr->GetPositionX());
         obj->SetFloatValue(GAMEOBJECT_POS_Y, chr->GetPositionY());
@@ -799,7 +799,7 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
         return false;
     }
 
-    Player *chr = m_session->GetPlayer();
+    Player* chr = m_session->GetPlayer();
     float x = float(chr->GetPositionX());
     float y = float(chr->GetPositionY());
     float z = float(chr->GetPositionZ());
@@ -969,7 +969,7 @@ bool ChatHandler::HandleNpcAddCommand(const char* args)
 
     uint32 id  = atoi(charID);
 
-    Player *chr = m_session->GetPlayer();
+    Player* chr = m_session->GetPlayer();
     float x = chr->GetPositionX();
     float y = chr->GetPositionY();
     float z = chr->GetPositionZ();
@@ -1541,7 +1541,7 @@ bool ChatHandler::HandleNpcSpawnTimeCommand(const char* args)
 
 bool ChatHandler::HandleNpcFollowCommand(const char* /*args*/)
 {
-    Player *player = m_session->GetPlayer();
+    Player* player = m_session->GetPlayer();
     Creature *creature = getSelectedCreature();
 
     if (!creature)
@@ -1560,7 +1560,7 @@ bool ChatHandler::HandleNpcFollowCommand(const char* /*args*/)
 
 bool ChatHandler::HandleNpcUnFollowCommand(const char* /*args*/)
 {
-    Player *player = m_session->GetPlayer();
+    Player* player = m_session->GetPlayer();
     Creature *creature = getSelectedCreature();
 
     if (!creature)
@@ -2604,7 +2604,7 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
     {
         PSendSysMessage("|cff00ff00DEBUG: wp move, PathID: |r|cff00ffff%u|r", pathid);
 
-        Player *chr = m_session->GetPlayer();
+        Player* chr = m_session->GetPlayer();
         Map *map = chr->GetMap();
         {
             // wpCreature
@@ -2819,7 +2819,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
 
             uint32 id = VISUAL_WAYPOINT;
 
-            Player *chr = m_session->GetPlayer();
+            Player* chr = m_session->GetPlayer();
             Map *map = chr->GetMap();
             float o = chr->GetOrientation();
 
@@ -2870,7 +2870,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         float o         = fields[3].GetFloat();
         uint32 id = VISUAL_WAYPOINT;
 
-        Player *chr = m_session->GetPlayer();
+        Player* chr = m_session->GetPlayer();
         Map *map = chr->GetMap();
 
         Creature* pCreature = new Creature;
@@ -2918,7 +2918,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         float o         = fields[3].GetFloat();
         uint32 id = VISUAL_WAYPOINT;
 
-        Player *chr = m_session->GetPlayer();
+        Player* chr = m_session->GetPlayer();
         Map *map = chr->GetMap();
 
         Creature* pCreature = new Creature;
@@ -3050,7 +3050,7 @@ bool ChatHandler::HandleLookupFactionCommand(const char* args)
         return false;
 
     // Can be NULL at console call
-    Player *target = getSelectedPlayer ();
+    Player* target = getSelectedPlayer ();
 
     std::string namepart = args;
     std::wstring wnamepart;
@@ -3170,7 +3170,7 @@ bool ChatHandler::HandleAddHonorCommand(const char* args)
     if (!*args)
         return false;
 
-    Player *target = getSelectedPlayer();
+    Player* target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_PLAYER_NOT_FOUND);
@@ -3199,7 +3199,7 @@ bool ChatHandler::HandleHonorAddKillCommand(const char* /*args*/)
 
 bool ChatHandler::HandleUpdateHonorFieldsCommand(const char* /*args*/)
 {
-    Player *target = getSelectedPlayer();
+    Player* target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_PLAYER_NOT_FOUND);
@@ -3428,7 +3428,7 @@ bool ChatHandler::HandleEventStopCommand(const char* args)
 
 bool ChatHandler::HandleCombatStopCommand(const char* args)
 {
-    Player *player;
+    Player* player;
 
     if (*args)
     {
@@ -3690,7 +3690,7 @@ bool ChatHandler::HandleServerCorpsesCommand(const char* /*args*/)
 
 bool ChatHandler::HandleRepairitemsCommand(const char* /*args*/)
 {
-    Player *target = getSelectedPlayer();
+    Player* target = getSelectedPlayer();
 
     if (!target)
     {
@@ -3710,7 +3710,7 @@ bool ChatHandler::HandleRepairitemsCommand(const char* /*args*/)
 
 bool ChatHandler::HandleCreatePetCommand(const char* /*args*/)
 {
-    Player *player = m_session->GetPlayer();
+    Player* player = m_session->GetPlayer();
     Creature *creatureTarget = getSelectedCreature();
 
     if (!creatureTarget || creatureTarget->isPet() || creatureTarget->GetTypeId() == TYPEID_PLAYER)
@@ -3789,7 +3789,7 @@ bool ChatHandler::HandlePetLearnCommand(const char* args)
     if (!*args)
         return false;
 
-    Player *plr = m_session->GetPlayer();
+    Player* plr = m_session->GetPlayer();
     Pet *pet = plr->GetPet();
 
     if (!pet)
@@ -3832,7 +3832,7 @@ bool ChatHandler::HandlePetUnlearnCommand(const char *args)
     if (!*args)
         return false;
 
-    Player *plr = m_session->GetPlayer();
+    Player* plr = m_session->GetPlayer();
     Pet *pet = plr->GetPet();
 
     if (!pet)
@@ -3857,7 +3857,7 @@ bool ChatHandler::HandlePetTpCommand(const char *args)
     if (!*args)
         return false;
 
-    Player *plr = m_session->GetPlayer();
+    Player* plr = m_session->GetPlayer();
     Pet *pet = plr->GetPet();
 
     if (!pet)
@@ -3919,7 +3919,7 @@ bool ChatHandler::HandleTempAddSpwCommand(const char* args)
     if (!charID)
         return false;
 
-    Player *chr = m_session->GetPlayer();
+    Player* chr = m_session->GetPlayer();
 
     float x = chr->GetPositionX();
     float y = chr->GetPositionY();
@@ -3942,7 +3942,7 @@ bool ChatHandler::HandleTempGameObjectCommand(const char* args)
     if (!charID)
         return false;
 
-    Player *chr = m_session->GetPlayer();
+    Player* chr = m_session->GetPlayer();
 
     char* spawntime = strtok(NULL, " ");
     uint32 spawntm = 0;
@@ -4003,7 +4003,7 @@ bool ChatHandler::HandleNpcAddFormationCommand(const char* args)
         return false;
     }
 
-    Player *chr = m_session->GetPlayer();
+    Player* chr = m_session->GetPlayer();
 
     memberGUID = pCreature->GetDBTableGUIDLow();
     follow_dist = sqrtf(pow(chr->GetPositionX() - pCreature->GetPositionX(),int(2))+pow(chr->GetPositionY()-pCreature->GetPositionY(),int(2))); 
@@ -4314,7 +4314,7 @@ bool ChatHandler::HandleTitlesAddCommand(const char* args)
         return false;
     }
 
-    Player * target = getSelectedPlayer();
+    Player*  target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -4357,7 +4357,7 @@ bool ChatHandler::HandleTitlesRemoveCommand(const char* args)
         return false;
     }
 
-    Player * target = getSelectedPlayer();
+    Player*  target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -4400,7 +4400,7 @@ bool ChatHandler::HandleTitlesSetMaskCommand(const char* args)
 
     sscanf((char*)args, UI64FMTD, &titles);
 
-    Player *target = getSelectedPlayer();
+    Player* target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -4431,7 +4431,7 @@ bool ChatHandler::HandleTitlesSetMaskCommand(const char* args)
 bool ChatHandler::HandleCharacterTitlesCommand(const char* /*args*/)
 {
 
-    Player * target = getSelectedPlayer();
+    Player*  target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -4485,7 +4485,7 @@ bool ChatHandler::HandleTitlesCurrentCommand(const char* args)
         return false;
     }
 
-    Player * target = getSelectedPlayer();
+    Player*  target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);

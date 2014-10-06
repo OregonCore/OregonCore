@@ -97,7 +97,7 @@ namespace Oregon
             }
         }
 
-        inline uint32 Gain(Player *pl, Unit *u)
+        inline uint32 Gain(Player* pl, Unit *u)
         {
             if (u->GetTypeId() == TYPEID_UNIT && (
                 ((Creature*)u)->isTotem() || ((Creature*)u)->isPet() ||

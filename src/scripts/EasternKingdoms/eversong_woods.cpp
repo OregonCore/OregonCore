@@ -481,7 +481,7 @@ void npc_secondTrialAI::JustDied(Unit* Killer)
             {
                 for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                 {
-                    Player *pGroupGuy = itr->getSource();
+                    Player* pGroupGuy = itr->getSource();
 
                     // for any leave or dead (with not released body) group member at appropriate distance
                     if (pGroupGuy && pGroupGuy->IsAtGroupRewardDistance(me) && !pGroupGuy->GetCorpse() && pGroupGuy->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)

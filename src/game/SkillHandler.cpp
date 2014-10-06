@@ -50,7 +50,7 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
     if (!talentTabInfo)
         return;
 
-    Player * player = GetPlayer();
+    Player* player = GetPlayer();
 
     // prevent learn talent for different class (cheating)
     if ((player->getClassMask() & talentTabInfo->ClassMask) == 0)

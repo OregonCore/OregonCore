@@ -143,11 +143,11 @@ class SocialMgr
         // Misc
         void RemovePlayerSocial(uint32 guid) { m_socialMap.erase(guid); }
 
-        void GetFriendInfo(Player *player, uint32 friendGUID, FriendInfo &friendInfo);
+        void GetFriendInfo(Player* player, uint32 friendGUID, FriendInfo &friendInfo);
         // Packet management
         void MakeFriendStatusPacket(FriendsResult result, uint32 friend_guid, WorldPacket *data);
-        void SendFriendStatus(Player *player, FriendsResult result, uint32 friend_guid, bool broadcast);
-        void BroadcastToFriendListers(Player *player, WorldPacket *packet);
+        void SendFriendStatus(Player* player, FriendsResult result, uint32 friend_guid, bool broadcast);
+        void BroadcastToFriendListers(Player* player, WorldPacket *packet);
         // Loading
         PlayerSocial *LoadFromDB(QueryResult_AutoPtr result, uint32 guid);
     private:

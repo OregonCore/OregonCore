@@ -128,7 +128,7 @@ struct instance_steam_vault : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        Player *player = GetPlayerInMap();
+        Player* player = GetPlayerInMap();
 
         if (!player)
         {

@@ -257,7 +257,7 @@ void InstanceData::DoUpdateWorldState(uint32 uiStateId, uint32 uiStateData)
     if (!lPlayers.isEmpty())
     {
         for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
-            if (Player *pPlayer = itr->getSource())
+            if (Player* pPlayer = itr->getSource())
                 pPlayer->SendUpdateWorldState(uiStateId, uiStateData);
     }
     else

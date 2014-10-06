@@ -33,7 +33,7 @@ static void AttemptJoin(Player* _player)
     HashMapHolder<Player>::MapType const& players = ObjectAccessor::Instance().GetPlayers();
     for (HashMapHolder<Player>::MapType::const_iterator iter = players.begin(); iter != players.end(); ++iter)
     {
-        Player *plr = iter->second;
+        Player* plr = iter->second;
 
         // skip enemies and self
         if (!plr || plr == _player || plr->GetTeam() != _player->GetTeam())
@@ -93,7 +93,7 @@ static void AttemptAddMore(Player* _player)
     HashMapHolder<Player>::MapType const& players = ObjectAccessor::Instance().GetPlayers();
     for (HashMapHolder<Player>::MapType::const_iterator iter = players.begin(); iter != players.end(); ++iter)
     {
-        Player *plr = iter->second;
+        Player* plr = iter->second;
 
         // skip enemies and self
         if (!plr || plr == _player || plr->GetTeam() != _player->GetTeam())
@@ -262,7 +262,7 @@ void WorldSession::SendLfgResult(uint32 type, uint32 entry, uint8 lfg_type)
     HashMapHolder<Player>::MapType const& players = ObjectAccessor::Instance().GetPlayers();
     for (HashMapHolder<Player>::MapType::const_iterator iter = players.begin(); iter != players.end(); ++iter)
     {
-        Player *plr = iter->second;
+        Player* plr = iter->second;
 
         if (!plr || plr->GetTeam() != _player->GetTeam())
             continue;
@@ -292,7 +292,7 @@ void WorldSession::SendLfgResult(uint32 type, uint32 entry, uint8 lfg_type)
             data << group->GetMembersCount()-1;             // count of group members without group leader
             for (GroupReference *itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
             {
-                Player *member = itr->getSource();
+                Player* member = itr->getSource();
                 if (member && member->GetGUID() != plr->GetGUID())
                 {
                     data << member->GetPackGUID();          // packed guid
