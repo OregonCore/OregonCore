@@ -205,12 +205,11 @@ bool ChatHandler::HandleGMNotifyCommand(const char* args)
 //Enable\Dissable GM Mode
 bool ChatHandler::HandleGMmodeCommand(const char* args)
 {
+    Player* _player = m_session->GetPlayer();
+
     if (!*args)
     {
-        if (m_session->GetPlayer()->isGameMaster())
-            m_session->SendNotification(LANG_GM_ON);
-        else
-            m_session->SendNotification(LANG_GM_OFF);
+        m_session->SendNotification(_player->isGameMaster() ? LANG_GM_ON : LANG_GM_OFF);
         return true;
     }
 
@@ -218,9 +217,9 @@ bool ChatHandler::HandleGMmodeCommand(const char* args)
 
     if (argstr == "on")
     {
-        m_session->GetPlayer()->SetGameMaster(true);
+        _player->SetGameMaster(true);
         m_session->SendNotification(LANG_GM_ON);
-        m_session->GetPlayer()->UpdateTriggerVisibility();
+        _player->UpdateTriggerVisibility();
         #ifdef _DEBUG_VMAPS
         VMAP::IVMapManager *vMapManager = VMAP::VMapFactory::createOrGetVMapManager();
         vMapManager->processCommand("stoplog");
@@ -230,9 +229,9 @@ bool ChatHandler::HandleGMmodeCommand(const char* args)
 
     if (argstr == "off")
     {
-        m_session->GetPlayer()->SetGameMaster(false);
+        _player->SetGameMaster(false);
         m_session->SendNotification(LANG_GM_OFF);
-        m_session->GetPlayer()->UpdateTriggerVisibility();
+        _player->UpdateTriggerVisibility();
         #ifdef _DEBUG_VMAPS
         VMAP::IVMapManager *vMapManager = VMAP::VMapFactory::createOrGetVMapManager();
         vMapManager->processCommand("startlog");
@@ -696,30 +695,33 @@ bool ChatHandler::HandleGMTicketReloadCommand(const char*)
 //Enable\Disable Invisible mode
 bool ChatHandler::HandleVisibleCommand(const char* args)
 {
+    Player* _player = m_session->GetPlayer();
+
     if (!*args)
     {
-        PSendSysMessage(LANG_YOU_ARE, m_session->GetPlayer()->isGMVisible() ?  GetOregonString(LANG_VISIBLE) : GetOregonString(LANG_INVISIBLE));
+        PSendSysMessage(LANG_YOU_ARE, _player->isGMVisible() ?  GetOregonString(LANG_VISIBLE) : GetOregonString(LANG_INVISIBLE));
         return true;
     }
 
     std::string argstr = (char*)args;
-    Player* player = m_session->GetPlayer();
 
     if (argstr == "on")
     {
-        player->RemoveAurasDueToSpell(SPELL_PERMANENT_INVISIBILITY);
+        if (_player->HasAura(SPELL_INVISIBILITY, 0))
+        _player->RemoveAurasDueToSpell(SPELL_INVISIBILITY);
 
-        player->SetGMVisible(true);
+        _player->SetGMVisible(true);
+        _player->UpdateObjectVisibility();
         m_session->SendNotification(LANG_INVISIBLE_VISIBLE);
         return true;
     }
 
     if (argstr == "off")
     {
+        _player->AddAura(SPELL_INVISIBILITY, _player);
+        _player->SetGMVisible(false);
+        _player->UpdateObjectVisibility();
         m_session->SendNotification(LANG_INVISIBLE_INVISIBLE);
-        player->SetGMVisible(false);
-
-        player->AddAura(SPELL_PERMANENT_INVISIBILITY, player);
         return true;
     }
 

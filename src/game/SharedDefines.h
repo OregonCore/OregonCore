@@ -2325,7 +2325,7 @@ enum
     SPELL_WEAPON_SWITCH_COOLDOWN_1_5s   =  6119,
     SPELL_WEAPON_SWITCH_COOLDOWN_1_0s   =  6123,
     SPELL_DUEL_BEG                      =  7267, // beg
-    SPELL_PERMANENT_INVISIBILITY        = 44036,
+    SPELL_INVISIBILITY                  = 37800,
     SPELL_INC_OUTDOOR_SPEED_30          =  1206
 };
 
