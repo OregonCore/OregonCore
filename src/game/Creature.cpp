@@ -1469,9 +1469,6 @@ void Creature::setDeathState(DeathState s)
             if (LootTemplates_Skinning.HaveLootFor(GetCreatureInfo()->SkinLootId))
                 SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 
-        if (canFly() && FallGround())
-            return;
-
         // return, since we promote to DEAD_FALLING. DEAD_FALLING is promoted to CORPSE at next update.
         if (canFly() && FallGround())
             return;
