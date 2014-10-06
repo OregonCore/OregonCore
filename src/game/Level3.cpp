@@ -51,6 +51,7 @@
 #include "InstanceData.h"
 #include "AuctionHouseBot.h"
 #include "CreatureEventAIMgr.h"
+#include "DisableMgr.h"
 
 bool ChatHandler::HandleAHBotOptionsCommand(const char *args)
 {
@@ -638,7 +639,6 @@ bool ChatHandler::HandleReloadAllSpellCommand(const char*)
     HandleReloadSpellTargetPositionCommand("a");
     HandleReloadSpellThreatsCommand("a");
     HandleReloadSpellPetAurasCommand("a");
-    HandleReloadSpellDisabledCommand("a");
     return true;
 }
 
@@ -1204,13 +1204,13 @@ bool ChatHandler::HandleReloadGameTeleCommand(const char* /*arg*/)
     return true;
 }
 
-bool ChatHandler::HandleReloadSpellDisabledCommand(const char* /*arg*/)
+bool ChatHandler::HandleReloadDisablesCommand(const char* /*arg*/)
 {
-    sLog.outString("Re-Loading spell disabled table...");
-
-    objmgr.LoadSpellDisabledEntrys();
-
-    SendGlobalGMSysMessage("DB table spell_disabled reloaded.");
+    sLog.outString("Re-Loading disables table...");
+    sDisableMgr.LoadDisables();
+    sLog.outString("Checking quest disables...");
+    sDisableMgr.CheckQuestDisables();
+    SendGlobalGMSysMessage("DB table `disables` reloaded.");
 
     return true;
 }

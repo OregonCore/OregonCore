@@ -2660,6 +2660,15 @@ enum MailResponseResult
     MAIL_ERR_MAIL_ATTACHMENT_INVALID   = 19,
 };
 
+enum DungeonStatusFlag
+{
+    DUNGEON_STATUSFLAG_NORMAL = 0x01,
+    DUNGEON_STATUSFLAG_HEROIC = 0x02,
+
+    RAID_STATUSFLAG_10MAN = 0x04,
+    RAID_STATUSFLAG_25MAN = 0x08,
+};
+
 // we need to stick to 1 version or half of the stuff will work for someone
 // others will not and opposite
 // will only support WoW and WoW:TBC 2.4.3 client build 8606...

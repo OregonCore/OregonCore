@@ -35,6 +35,7 @@
 #include "World.h"
 #include "Chat.h"
 #include "ArenaTeam.h"
+#include "DisableMgr.h"
 
 INSTANTIATE_SINGLETON_1(BattleGroundMgr);
 
@@ -1509,6 +1510,8 @@ void BattleGroundMgr::CreateInitialBattleGrounds()
         Field *fields = result->Fetch();
 
         uint32 bgTypeID = fields[0].GetUInt32();
+        if (sDisableMgr.IsDisabledFor(DISABLE_TYPE_BATTLEGROUND, bgTypeID, NULL))
+            continue;
 
         // can be overwritten by values from DB
         bl = sBattlemasterListStore.LookupEntry(bgTypeID);

@@ -624,6 +624,7 @@ enum TradeSlots
 
 enum TransferAbortReason
 {
+    TRANSFER_ABORT_NONE                 = 0x0000,
     TRANSFER_ABORT_MAX_PLAYERS          = 0x0001,           // Transfer Aborted: instance is full
     TRANSFER_ABORT_NOT_FOUND            = 0x0002,           // Transfer Aborted: instance not found
     TRANSFER_ABORT_TOO_MANY_INSTANCES   = 0x0003,           // You have entered too many instances recently.

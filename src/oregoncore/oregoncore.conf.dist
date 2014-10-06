@@ -1987,13 +1987,6 @@ CharDelete.KeepDays = 30
 #    NoResetTalentsCost
 #        Enable or disable no cost when reseting talents
 #
-#   ForbiddenMaps
-#       Map ids that users below SEC_GAMEMASTER cannot enter,
-#        with delimiter ','
-#       Default: ""
-#       example: "538,90"
-#       Note that it's HIGHLY DISCOURAGED to forbid starting maps (0,1,530)!
-#
 #   ShowKickInWorld
 #        Determines wether a message is broadcasted to the entire server
 #         when a player gets kicked

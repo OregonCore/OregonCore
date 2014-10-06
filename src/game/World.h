@@ -571,8 +571,6 @@ class World
         uint32 DecreaseScheduledScriptCount(size_t count) { return (uint32)(m_scheduledScripts -= count); }
         bool IsScriptScheduled() const { return m_scheduledScripts > 0; }
 
-        bool IsAllowedMap(uint32 mapid) { return m_forbiddenMapIds.count(mapid) == 0 ;}
-
         // for max speed access
         static float GetMaxVisibleDistanceOnContinents()    { return m_MaxVisibleDistanceOnContinents; }
         static float GetMaxVisibleDistanceInInstances()     { return m_MaxVisibleDistanceInInstances;  }
@@ -659,7 +657,6 @@ class World
         bool m_allowMovement;
         std::string m_motd;
         std::string m_dataPath;
-        std::set<uint32> m_forbiddenMapIds;
 
         // for max speed access
         static float m_MaxVisibleDistanceOnContinents;

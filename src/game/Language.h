@@ -671,6 +671,8 @@ enum OregonStrings
     LANG_CANNOT_SUMMON_TO_BG            = 734,              // "You cannot summon players to a battleground or arena map."
     LANG_CANNOT_GO_TO_BG_GM             = 735,              // "You must be in GM mode to teleport to a player in a battleground."
     LANG_CANNOT_GO_TO_BG_FROM_BG        = 736,              // "You cannot teleport to a battleground from another battleground. Please leave the current battleground first."
+    LANG_BG_DISABLED                    = 737,              // "This Battleground has been disabled. You can't join the queue."
+    LANG_ARENA_DISABLED                 = 738,              // "Arenas have been disabled. You can't join the queue."
 //                                      = 737-749, not used
     LANG_BATTLEGROUND_PREMATURE_FINISH_WARNING = 750,       // "Not enough players. This game will close in %u mins."
     LANG_BATTLEGROUND_PREMATURE_FINISH_WARNING_SECS = 751,  // "Not enough players. This game will close in %u seconds."
@@ -849,7 +851,8 @@ enum OregonStrings
     LANG_COMMAND_PLAYED_TO_ALL          = 5009,
     LANG_COMMAND_LOOKUP_MAX_RESULTS     = 5010,
     LANG_NPCINFO_AIINFO                 = 5011,
-    // Room for more Oregon strings       5012-9999
+    LANG_INSTANCE_CLOSED                = 5012,
+    // Room for more Oregon strings       5013-9999
 
     // Used for GM Announcements
     LANG_GM_BROADCAST                    = 6613,

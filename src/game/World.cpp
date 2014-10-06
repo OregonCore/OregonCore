@@ -62,6 +62,7 @@
 #include "CreatureEventAIMgr.h"
 #include "ScriptMgr.h"
 #include "WardenDataStorage.h"
+#include "DisableMgr.h"
 
 INSTANTIATE_SINGLETON_1(World);
 
@@ -1050,20 +1051,6 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_AUTOBROADCAST_ENABLED] = sConfig.GetIntDefault("AutoBroadcast.On", 0);
     m_configs[CONFIG_AUTOBROADCAST_CENTER] = sConfig.GetIntDefault("AutoBroadcast.Center", 0);
 
-    std::string forbiddenmaps = sConfig.GetStringDefault("ForbiddenMaps", "");
-    char * forbiddenMaps = new char[forbiddenmaps.length() + 1];
-    forbiddenMaps[forbiddenmaps.length()] = 0;
-    strncpy(forbiddenMaps, forbiddenmaps.c_str(), forbiddenmaps.length());
-    const char * delim = ",";
-    char * token = strtok(forbiddenMaps, delim);
-    while (token != NULL)
-    {
-        int32 mapid = strtol(token, NULL, 10);
-        m_forbiddenMapIds.insert(mapid);
-        token = strtok(NULL,delim);
-    }
-    delete[] forbiddenMaps;
-
     m_configs[CONFIG_MAX_RESULTS_LOOKUP_COMMANDS] = sConfig.GetIntDefault("Command.LookupMaxResults", 0);
     
     // chat logging
@@ -1263,8 +1250,14 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Loading Weather Data...");
     objmgr.LoadWeatherZoneChances();
 
+    sConsole.SetLoadingLabel("Loading Disables");
+    sDisableMgr.LoadDisables();                             // must be before loading quests
+
     sConsole.SetLoadingLabel("Loading Quests...");
     objmgr.LoadQuests();                                    // must be loaded after DBCs, creature_template, item_template, gameobject tables
+
+    sConsole.SetLoadingLabel("Checking Quest Disables");
+    sDisableMgr.CheckQuestDisables();                       // must be after loading quests
 
     sConsole.SetLoadingLabel("Loading Quests Relations...");
     objmgr.LoadQuestRelations();                            // must be after quest load
@@ -1328,9 +1321,6 @@ void World::SetInitialWorldSettings()
 
     sConsole.SetLoadingLabel("Loading Player Corpses...");
     objmgr.LoadCorpses();
-
-    sConsole.SetLoadingLabel("Loading Disabled Spells...");
-    objmgr.LoadSpellDisabledEntrys();
 
     sConsole.SetLoadingLabel("Loading Loot Tables...");
     LoadLootTables();

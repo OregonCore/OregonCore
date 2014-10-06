@@ -43,6 +43,7 @@
 #include "WaypointManager.h"
 #include "GossipDef.h"
 #include "InstanceData.h"
+#include "DisableMgr.h"
 
 INSTANTIATE_SINGLETON_1(ObjectMgr);
 
@@ -1750,7 +1751,7 @@ void ObjectMgr::LoadItemPrototypes()
             else
             {
                 SpellEntry const* spellInfo = sSpellStore.LookupEntry(proto->Spells[1].SpellId);
-                if (!spellInfo)
+                if (!spellInfo && !sDisableMgr.IsDisabledFor(DISABLE_TYPE_SPELL, spellInfo->Id, NULL))
                 {
                     sLog.outErrorDb("Item (Entry: %u) has invalid spell in spellid_%d (%u)",i,1+1,proto->Spells[1].SpellId);
                     const_cast<ItemPrototype*>(proto)->Spells[0].SpellId = 0;
@@ -1798,7 +1799,7 @@ void ObjectMgr::LoadItemPrototypes()
                 if (proto->Spells[j].SpellId)
                 {
                     SpellEntry const* spellInfo = sSpellStore.LookupEntry(proto->Spells[j].SpellId);
-                    if (!spellInfo)
+                    if (!spellInfo && !sDisableMgr.IsDisabledFor(DISABLE_TYPE_SPELL, spellInfo->Id, NULL))
                     {
                         sLog.outErrorDb("Item (Entry: %u) has invalid spell in spellid_%d (%u)",i,j+1,proto->Spells[j].SpellId);
                         const_cast<ItemPrototype*>(proto)->Spells[j].SpellId = 0;
@@ -2947,6 +2948,10 @@ void ObjectMgr::LoadQuests()
     // Post processing
     for (QuestMap::iterator iter = mQuestTemplates.begin(); iter != mQuestTemplates.end(); ++iter)
     {
+        // skip post-loading checks for disabled quests
+        if (sDisableMgr.IsDisabledFor(DISABLE_TYPE_QUEST, iter->first, NULL))
+            continue;
+
         Quest * qinfo = iter->second;
 
         // additional quest integrity checks (GO, creature_template and item_template must be loaded already)
@@ -6554,46 +6559,6 @@ const char *ObjectMgr::GetOregonString(int32 entry, int locale_idx) const
     else
         sLog.outErrorDb("Oregon string entry %i not found in DB.",entry);
     return "<error>";
-}
-
-void ObjectMgr::LoadSpellDisabledEntrys()
-{
-    m_DisabledPlayerSpells.clear();                                // need for reload case
-    m_DisabledCreatureSpells.clear();
-    m_DisabledPetSpells.clear();
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, disable_mask FROM spell_disabled");
-
-    uint32 total_count = 0;
-
-    if (!result)
-    {
-
-        sLog.outString(">> Loaded %u disabled spells", total_count);
-        return;
-    }
-
-
-    Field* fields;
-    do
-    {
-        fields = result->Fetch();
-        uint32 spellid = fields[0].GetUInt32();
-        if (!sSpellStore.LookupEntry(spellid))
-        {
-            sLog.outErrorDb("Spell entry %u from spell_disabled doesn't exist in dbc, ignoring.",spellid);
-            continue;
-        }
-        uint32 disable_mask = fields[1].GetUInt32();
-        if (disable_mask & SPELL_DISABLE_PLAYER)
-            m_DisabledPlayerSpells.insert(spellid);
-        if (disable_mask & SPELL_DISABLE_CREATURE)
-            m_DisabledCreatureSpells.insert(spellid);
-        if (disable_mask & SPELL_DISABLE_PET)
-            m_DisabledPetSpells.insert(spellid);
-        ++total_count;
-   } while (result->NextRow());
-
-    sLog.outString(">> Loaded %u disabled spells from spell_disabled", total_count);
 }
 
 void ObjectMgr::LoadFishingBaseSkillLevel()

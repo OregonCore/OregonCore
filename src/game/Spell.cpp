@@ -46,6 +46,7 @@
 #include "Util.h"
 #include "TemporarySummon.h"
 #include "GameEventMgr.h"
+#include "DisableMgr.h"
 
 #define SPELL_CHANNEL_UPDATE_INTERVAL (1*IN_MILLISECONDS)
 
@@ -2088,31 +2089,11 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
         return;
     }
 
-    if (m_caster->GetTypeId() == TYPEID_PLAYER)
+    if (sDisableMgr.IsDisabledFor(DISABLE_TYPE_SPELL, m_spellInfo->Id, m_caster))
     {
-        if (objmgr.IsPlayerSpellDisabled(m_spellInfo->Id))
-        {
-            SendCastResult(SPELL_FAILED_SPELL_UNAVAILABLE);
-            finish(false);
-            return;
-        }
-    }
-    else if (m_caster->GetTypeId() == TYPEID_UNIT && m_caster->ToCreature()->isPet())
-    {
-        if (objmgr.IsPetSpellDisabled(m_spellInfo->Id))
-        {
-            SendCastResult(SPELL_FAILED_SPELL_UNAVAILABLE);
-            finish(false);
-            return;
-        }
-    }
-    else
-    {
-        if (objmgr.IsCreatureSpellDisabled(m_spellInfo->Id))
-        {
-            finish(false);
-            return;
-        }
+        SendCastResult(SPELL_FAILED_SPELL_UNAVAILABLE);
+        finish(false);
+        return;
     }
 
     // Fill cost data (not use power for item casts)
@@ -3597,7 +3578,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     if (DynamicObject* dynObj = m_caster->GetDynObject(m_triggeredByAuraSpell->Id))
                         losTarget = dynObj;
 
-            if (!(m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_IGNORE_LOS) && VMAP::VMapFactory::checkSpellForLoS(m_spellInfo->Id) && !m_caster->IsWithinLOSInMap(losTarget))
+            if (!(m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_IGNORE_LOS) && !sDisableMgr.IsDisabledFor(DISABLE_TYPE_SPELL, m_spellInfo->Id, NULL, SPELL_DISABLE_LOS) && VMAP::VMapFactory::checkSpellForLoS(m_spellInfo->Id) && !m_caster->IsWithinLOSInMap(losTarget))
                      return SPELL_FAILED_LINE_OF_SIGHT;
             }
 
