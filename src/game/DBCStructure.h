@@ -488,14 +488,6 @@ struct MapEntry
     bool IsBattleGroundOrArena() const { return map_type == MAP_BATTLEGROUND || map_type == MAP_ARENA; }
     bool SupportsHeroicMode() const { return resetTimeHeroic && !resetTimeRaid; }
     bool HasResetTime() const { return resetTimeHeroic || resetTimeRaid; }
-
-    bool IsMountAllowed() const
-    {
-        return !IsDungeon() ||
-            MapID==209 || MapID==269 || MapID==309 ||       // TanarisInstance, CavernsOfTime, Zul'gurub
-            MapID==509 || MapID==534 || MapID==560 ||       // AhnQiraj, HyjalPast, HillsbradPast
-            MapID==568 || MapID==580;                       // ZulAman, Sunwell Plateau
-    }
 };
 
 struct QuestSortEntry

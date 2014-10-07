@@ -153,17 +153,23 @@ void WorldSession::HandleMoveWorldportAckOpcode()
         }
     }
 
-    if (mEntry->IsRaid() && mInstance)
+    bool allowMount = !mEntry->IsDungeon()  || mEntry->IsBattleGroundOrArena();
+    if (mInstance)
     {
         if (reset_notify)
         {
-            uint32 timeleft = sInstanceSaveManager.GetResetTimeFor(GetPlayer()->GetMapId()) - time(NULL);
-            GetPlayer()->SendInstanceResetWarning(GetPlayer()->GetMapId(), timeleft); // greeting at the entrance of the resort raid instance
+            if (uint32 timeReset = sInstanceSaveManager.GetResetTimeFor(mEntry->MapID))
+            {
+                uint32 timeleft = timeReset - time(NULL);
+                GetPlayer()->SendInstanceResetWarning(mEntry->MapID, timeleft); // greeting at the entrance of the resort raid instance
+        
+            }
         }
+        allowMount = mInstance->allowMount;
     }
 
     // mount allow check
-    if (!mEntry->IsMountAllowed())
+    if (!allowMount)
         GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
 
     // honorless target

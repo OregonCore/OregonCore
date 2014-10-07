@@ -227,6 +227,7 @@ struct InstanceTemplate
     float startLocZ;
     float startLocO;
     uint32 script_id;
+    bool allowMount;
 };
 
 enum LevelRequirementVsMode
