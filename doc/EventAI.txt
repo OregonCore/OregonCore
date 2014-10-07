@@ -410,30 +410,6 @@ BOTH - Expires before creature with entry(Param1) is dwspawned or for all spawns
 This is commonly used for NPC's who will do something special once another NPC is despawn. Usually used is Complex Scripts or Special Events.
 NOTE: called before despawn happens, so summoned creature still in world at expire moment.
 
------------------------------------------
-43   ACTION_T_MOUNT_TO_ENTRY_OR_MODEL:
------------------------------------------
-Parameter 1, Optional: Set mount model from creature_template.entry
-Parameter 2, Optional: Set mount model by explicit modelId
-
-If (Param1) AND (Param2) are both 0, unmount.
-
-------------------
-44 = ACTION_T_CHANCED_TEXT:
-------------------
-Parameter 1: Chance with which a text will be displayed (must be between 1 and 99)
-
-Parameter 2: The entry of the text that the NPC should use from eventai_texts table. Optionally a entry from other tables can be used (such as custom_texts).
-             Entry are required to be negative and exist in a *_texts-table. The type text to be displayed are defined in the texts-table itself (Say, Yell, Whisper, Emote Text, Boss Whisper, Boss Emote)
-             Other options are also to be defined in the texts-table, such as a sound to be heard with the text and the language used in output (common, dwarvish, etc).
-             In case this entry has a localized version of the text, the localized text will be displayed in client that support this locale.
-Parameter 3: Optional: TextId can be defined in addition. The same apply to this as explained above, however eventAI will randomize between the two.
-
-Also remark that the chance also depends on the chance of the event. And remark that a chance of 100 is useless!
-
-Read at bottom for documentation of creature_ai_texts-table.
-
-
 =========================================
 Action Types
 =========================================
@@ -815,6 +791,30 @@ Parameter 1: Minimum Health Level That NPC Can Reach (NPC Will Not Go Below This
 Parameter 2: Sets Format of Paramater 1 Value
 0 = Sets Paramater 1 as an exact HP value
 1 = Sets Paramater 1 as a HP Percent (0..100) of the creature's max health
+
+-----------------------------------------
+43   ACTION_T_MOUNT_TO_ENTRY_OR_MODEL:
+-----------------------------------------
+Parameter 1, Optional: Set mount model from creature_template.entry
+Parameter 2, Optional: Set mount model by explicit modelId
+
+If (Param1) AND (Param2) are both 0, unmount.
+
+------------------
+44 = ACTION_T_CHANCED_TEXT:
+------------------
+Parameter 1: Chance with which a text will be displayed (must be between 1 and 99)
+
+Parameter 2: The entry of the text that the NPC should use from eventai_texts table. Optionally a entry from other tables can be used (such as custom_texts).
+             Entry are required to be negative and exist in a *_texts-table. The type text to be displayed are defined in the texts-table itself (Say, Yell, Whisper, Emote Text, Boss Whisper, Boss Emote)
+             Other options are also to be defined in the texts-table, such as a sound to be heard with the text and the language used in output (common, dwarvish, etc).
+             In case this entry has a localized version of the text, the localized text will be displayed in client that support this locale.
+Parameter 3: Optional: TextId can be defined in addition. The same apply to this as explained above, however eventAI will randomize between the two.
+
+Also remark that the chance also depends on the chance of the event. And remark that a chance of 100 is useless!
+
+Read at bottom for documentation of creature_ai_texts-table.
+
 
 =========================================
 Target Types
