@@ -120,7 +120,7 @@ UPDATE `creature` SET `modelid`='17055' WHERE id = 17407;
 UPDATE `quest_template` SET `OfferRewardText`='You are to be commended for the service you have done for Stormwind, $N. If VanCleef had been successful in his machinations, he would no doubt have done considerable harm to the kingdom--something we must obviously avoid.$B$BTake this, $C, as a token of the my appreciation.' WHERE `Id`=396;
 
 -- Spell Dummy Conditions
-INSERT INTO spell_dummy_conditions VALUES
+INSERT INTO spell_dummy_condition VALUES
 (21862, 0, 1 << 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Radiation Visual');
 
 -- Ogre Heaven fix PrevQuestID by shlomi1515

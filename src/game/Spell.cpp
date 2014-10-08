@@ -4621,7 +4621,7 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
 
     if (!sdcEntry)
     {
-        sLog.outError("Spell %u has dummy effect/aura but don't have a record in spell_dummy_conditions. (effIndex: %u)", m_spellInfo->Id, effIndex);
+        sLog.outError("Spell %u has dummy effect/aura but doesn't have a record in spell_dummy_condition. (effIndex: %u)", m_spellInfo->Id, effIndex);
         return SPELL_CAST_OK;
     }
 
@@ -4699,7 +4699,7 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
             switch (m_spellInfo->Id)
             {
                 default:
-                    sLog.outError("Spell %u has SDC_BTM_NEEDS_SCRIPT_CHECK in bitMaskCondition (spell_dummy_conditions), but hasn't been implemented, yet.", m_spellInfo->Id);
+                    sLog.outError("Spell %u has SDC_BTM_NEEDS_SCRIPT_CHECK in bitMaskCondition (spell_dummy_condition), but hasn't been implemented, yet.", m_spellInfo->Id);
                     break;
             }
         }
