@@ -53,9 +53,9 @@ void PointMovementGenerator<T>::Initialize(T &unit)
 template<class T>
 bool PointMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 {
-    if (unit.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED))
+    if (unit.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
     {
-        if (unit.hasUnitState(UNIT_STAT_CHARGING))
+        if (unit.HasUnitState(UNIT_STATE_CHARGING))
             return false;
         else
             return true;
@@ -67,7 +67,7 @@ bool PointMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 
     if (i_destinationHolder.HasArrived())
     {
-        unit.clearUnitState(UNIT_STAT_MOVE);
+        unit.ClearUnitState(UNIT_STATE_MOVE);
         arrived = true;
         return false;
     }
@@ -78,8 +78,8 @@ bool PointMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 template<class T>
 void PointMovementGenerator<T>:: Finalize(T &unit)
 {
-    if (unit.hasUnitState(UNIT_STAT_CHARGING))
-        unit.clearUnitState(UNIT_STAT_CHARGING | UNIT_STAT_JUMPING);
+    if (unit.HasUnitState(UNIT_STATE_CHARGING))
+        unit.ClearUnitState(UNIT_STATE_CHARGING | UNIT_STATE_JUMPING);
     if (arrived) // without this crash!
         MovementInform(unit);
 }

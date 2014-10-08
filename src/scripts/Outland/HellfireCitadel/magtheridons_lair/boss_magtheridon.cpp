@@ -226,7 +226,7 @@ struct boss_magtheridonAI : public ScriptedAI
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
-        me->addUnitState(UNIT_STAT_STUNNED);
+        me->AddUnitState(UNIT_STATE_STUNNED);
         me->CastSpell(me, SPELL_SHADOW_CAGE_C, true);
     }
 
@@ -294,7 +294,7 @@ struct boss_magtheridonAI : public ScriptedAI
 
     void AttackStart(Unit *who)
     {
-        if (!me->hasUnitState(UNIT_STAT_STUNNED))
+        if (!me->HasUnitState(UNIT_STATE_STUNNED))
             ScriptedAI::AttackStart(who);
     }
 
@@ -342,7 +342,7 @@ struct boss_magtheridonAI : public ScriptedAI
         if (BlastNova_Timer <= diff)
         {
             // to avoid earthquake interruption
-            if (!me->hasUnitState(UNIT_STAT_STUNNED))
+            if (!me->HasUnitState(UNIT_STATE_STUNNED))
             {
                 DoScriptText(EMOTE_BLASTNOVA, me);
                 DoCast(me, SPELL_BLASTNOVA);
@@ -379,7 +379,7 @@ struct boss_magtheridonAI : public ScriptedAI
 
         if (!Phase3 && me->GetHealth()*10 < me->GetMaxHealth()*3
             && !me->IsNonMeleeSpellCast(false) // blast nova
-            && !me->hasUnitState(UNIT_STAT_STUNNED)) // shadow cage and earthquake
+            && !me->HasUnitState(UNIT_STATE_STUNNED)) // shadow cage and earthquake
         {
             Phase3 = true;
             DoScriptText(SAY_CHAMBER_DESTROY, me);

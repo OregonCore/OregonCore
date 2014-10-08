@@ -319,7 +319,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
                 VazrudenGUID = 0;
             }
             summoned = false;
-            me->clearUnitState(UNIT_STAT_ROOT);
+            me->ClearUnitState(UNIT_STATE_ROOT);
             me->SetVisibility(VISIBILITY_ON);
 
             for (std::vector<uint64>::const_iterator itr = OrcGUID.begin(); itr != OrcGUID.end(); ++itr)
@@ -348,7 +348,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
                 NazanGUID = Nazan->GetGUID();	    
             summoned = true;
             me->SetVisibility(VISIBILITY_OFF);
-            me->addUnitState(UNIT_STAT_ROOT);
+            me->AddUnitState(UNIT_STATE_ROOT);
         }
     }
 

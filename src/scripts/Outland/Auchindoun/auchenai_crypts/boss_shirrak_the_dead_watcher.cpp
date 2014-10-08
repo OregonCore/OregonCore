@@ -72,7 +72,7 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
             summoned->CastSpell(summoned,SPELL_FOCUS_FIRE_VISUAL,false);
             summoned->setFaction(me->getFaction());
             summoned->SetLevel(me->getLevel());
-            summoned->addUnitState(UNIT_STAT_ROOT);
+            summoned->AddUnitState(UNIT_STATE_ROOT);
 
             if (focusedTarget)
                 summoned->AI()->AttackStart(focusedTarget);

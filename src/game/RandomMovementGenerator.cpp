@@ -108,7 +108,7 @@ RandomMovementGenerator<Creature>::_setRandomLocation(Creature &creature)
 
     creature.SetOrientation(creature.GetAngle(nx, ny));
     i_destinationHolder.SetDestination(traveller, nx, ny, nz);
-    creature.addUnitState(UNIT_STAT_ROAMING);
+    creature.AddUnitState(UNIT_STATE_ROAMING);
 
     if (is_air_ok)
     {
@@ -154,20 +154,20 @@ void RandomMovementGenerator<Creature>::Finalize(Creature& /*creature*/){}
 template<>
 bool RandomMovementGenerator<Creature>::Update(Creature& creature, const uint32 &diff)
 {
-    if (creature.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED))
+    if (creature.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
     {
         i_nextMoveTime.Update(i_nextMoveTime.GetExpiry());  // Expire the timer
-        creature.clearUnitState(UNIT_STAT_ROAMING);
+        creature.ClearUnitState(UNIT_STATE_ROAMING);
         return true;
     }
 
     i_nextMoveTime.Update(diff);
 
     if (i_destinationHolder.HasArrived() && !creature.IsStopped() && !creature.canFly())
-        creature.clearUnitState(UNIT_STAT_ROAMING | UNIT_STAT_MOVE);
+        creature.ClearUnitState(UNIT_STATE_ROAMING | UNIT_STATE_MOVE);
 
     if (!i_destinationHolder.HasArrived() && creature.IsStopped())
-        creature.addUnitState(UNIT_STAT_ROAMING);
+        creature.AddUnitState(UNIT_STATE_ROAMING);
 
     CreatureTraveller traveller(creature);
 

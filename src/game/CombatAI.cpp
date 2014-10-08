@@ -80,7 +80,7 @@ void CombatAI::UpdateAI(const uint32 diff)
 
     events.Update(diff);
 
-    if (me->hasUnitState(UNIT_STAT_CASTING))
+    if (me->HasUnitState(UNIT_STATE_CASTING))
         return;
 
     if (uint32 spellId = events.ExecuteEvent())
@@ -140,7 +140,7 @@ void CasterAI::UpdateAI(const uint32 diff)
 
     events.Update(diff);
 
-    if (me->hasUnitState(UNIT_STAT_CASTING))
+    if (me->HasUnitState(UNIT_STATE_CASTING))
         return;
 
     if (uint32 spellId = events.ExecuteEvent())

@@ -390,7 +390,7 @@ struct boss_kaelthasAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (!me->hasUnitState(UNIT_STAT_STUNNED) && who->isTargetableForAttack() &&
+        if (!me->HasUnitState(UNIT_STATE_STUNNED) && who->isTargetableForAttack() &&
             me->IsHostileTo(who) && who->isInAccessiblePlaceFor(me))
         {
             if (!me->canFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)

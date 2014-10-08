@@ -380,7 +380,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
             me->setDeathState(JUST_DIED);
             me->SetHealth(0);
             me->GetMotionMaster()->Clear();
-            me->clearUnitState(UNIT_STAT_ALL_STATE);
+            me->ClearUnitState(UNIT_STATE_ALL_STATE);
             me->LoadCreaturesAddon(true);
             return;
         }
@@ -551,7 +551,7 @@ struct mob_zealot_zathAI : public ScriptedAI
             me->setDeathState(JUST_DIED);
             me->SetHealth(0);
             me->GetMotionMaster()->Clear();
-            me->clearUnitState(UNIT_STAT_ALL_STATE);
+            me->ClearUnitState(UNIT_STATE_ALL_STATE);
             me->LoadCreaturesAddon(true);
             return;
         }

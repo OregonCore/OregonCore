@@ -375,7 +375,7 @@ struct boss_malchezaarAI : public ScriptedAI
             EnfeebleResetTimer = 0;
         } else EnfeebleResetTimer -= diff;
 
-        if (me->hasUnitState(UNIT_STAT_STUNNED))      // While shifting to phase 2 malchezaar stuns himself
+        if (me->HasUnitState(UNIT_STATE_STUNNED))      // While shifting to phase 2 malchezaar stuns himself
             return;
 
         if (me->GetUInt64Value(UNIT_FIELD_TARGET) != me->getVictim()->GetGUID())

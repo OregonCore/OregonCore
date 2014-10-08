@@ -146,7 +146,7 @@ struct boss_entropiusAI : public Scripted_NoMovementAI
                 summoned->CastSpell(summoned,SPELL_DARKFIEND_VISUAL,false);
                 break;
             case CREATURE_DARKNESS:
-                summoned->addUnitState(UNIT_STAT_STUNNED);
+                summoned->AddUnitState(UNIT_STATE_STUNNED);
                 summoned->GetHomePosition(x,y,z,o);
                 me->SummonCreature(CREATURE_DARK_FIENDS, x,y,z,o, TEMPSUMMON_CORPSE_DESPAWN, 0);
                 break;
@@ -391,7 +391,7 @@ struct npc_muru_portalAI : public Scripted_NoMovementAI
         InAction = false;
         SummonSentinel = false;
 
-        me->addUnitState(UNIT_STAT_STUNNED);
+        me->AddUnitState(UNIT_STATE_STUNNED);
 
         Summons.DespawnAll();
     }
@@ -457,7 +457,7 @@ struct npc_dark_fiendAI : public ScriptedAI
         WaitTimer = 2000;
         InAction = false;
 
-        me->addUnitState(UNIT_STAT_STUNNED);
+        me->AddUnitState(UNIT_STATE_STUNNED);
     }
 
     void SpellHit(Unit* /*caster*/, const SpellEntry* Spell)
@@ -476,7 +476,7 @@ struct npc_dark_fiendAI : public ScriptedAI
         {
             if (!InAction)
             {
-                me->clearUnitState(UNIT_STAT_STUNNED);
+                me->ClearUnitState(UNIT_STATE_STUNNED);
                 DoCastAOE(SPELL_DARKFIEND_SKIN, false);
                 AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true));
                 InAction = true;
@@ -578,7 +578,7 @@ struct npc_blackholeAI : public ScriptedAI
         SpellTimer = 5000;
         Phase = 0;
 
-        me->addUnitState(UNIT_STAT_STUNNED);
+        me->AddUnitState(UNIT_STATE_STUNNED);
         DoCastAOE(SPELL_BLACKHOLE_SPAWN, true);
     }
 
@@ -590,7 +590,7 @@ struct npc_blackholeAI : public ScriptedAI
             switch (NeedForAHack)
             {
                 case 0:
-                    me->clearUnitState(UNIT_STAT_STUNNED);
+                    me->ClearUnitState(UNIT_STATE_STUNNED);
                     DoCastAOE(SPELL_BLACKHOLE_GROW, false);
                     if (Victim)
                         AttackStart(Victim);

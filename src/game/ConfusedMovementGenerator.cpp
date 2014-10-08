@@ -90,7 +90,7 @@ ConfusedMovementGenerator<T>::Initialize(T &unit)
     unit.CastStop();
     unit.StopMoving();
     unit.AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
-    unit.addUnitState(UNIT_STAT_CONFUSED);
+    unit.AddUnitState(UNIT_STATE_CONFUSED);
 }
 
 template<>
@@ -121,7 +121,7 @@ void ConfusedMovementGenerator<T>::Reset(T &unit)
 template<class T>
 bool ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 {
-    if (unit.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED))
+    if (unit.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
         return true;
 
     if (i_nextMoveTime.Passed())
@@ -133,7 +133,7 @@ bool ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
             if (i_destinationHolder.HasArrived())
             {
                 // arrived, stop and wait a bit
-                unit.clearUnitState(UNIT_STAT_MOVE);
+                unit.ClearUnitState(UNIT_STATE_MOVE);
 
                 i_nextMove = urand(1,MAX_CONF_WAYPOINTS);
                 i_nextMoveTime.Reset(urand(100, 1000));
@@ -162,7 +162,7 @@ template<class T>
 void ConfusedMovementGenerator<T>::Finalize(T &unit)
 {
     unit.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED);
-    unit.clearUnitState(UNIT_STAT_CONFUSED);
+    unit.ClearUnitState(UNIT_STATE_CONFUSED);
     if (unit.GetTypeId() == TYPEID_UNIT && unit.getVictim())
         unit.SetUInt64Value(UNIT_FIELD_TARGET, unit.getVictim()->GetGUID());
 }

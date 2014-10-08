@@ -213,7 +213,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
                 Creature *Magtheridon = instance->GetCreature(MagtheridonGUID);
                 if (Magtheridon && Magtheridon->isAlive())
                 {
-                    Magtheridon->clearUnitState(UNIT_STAT_STUNNED);
+                    Magtheridon->ClearUnitState(UNIT_STATE_STUNNED);
                     Magtheridon->AI()->AttackStart(Magtheridon->SelectNearestTarget(999));
                 }
                 CageTimer = 0;

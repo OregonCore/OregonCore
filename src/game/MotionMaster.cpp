@@ -78,7 +78,7 @@ MotionMaster::~MotionMaster()
 void
 MotionMaster::UpdateMotion(uint32 diff)
 {
-    if (i_owner->hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED))
+    if (i_owner->HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
         return;
     ASSERT(!empty());
     m_cleanFlag |= MMCF_UPDATE;
@@ -196,7 +196,7 @@ MotionMaster::MoveRandom(float spawndist)
 void
 MotionMaster::MoveTargetedHome()
 {
-    //if (i_owner->hasUnitState(UNIT_STAT_FLEEING))
+    //if (i_owner->HasUnitState(UNIT_STATE_FLEEING))
     //    return;
 
     Clear(false);
@@ -235,7 +235,7 @@ MotionMaster::MoveChase(Unit* target, float dist, float angle)
     if (!target || target == i_owner || i_owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
         return;
 
-    i_owner->clearUnitState(UNIT_STAT_FOLLOW);
+    i_owner->ClearUnitState(UNIT_STATE_FOLLOW);
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
     {
         DEBUG_LOG("Player (GUID: %u) chase to %s (GUID: %u)",
@@ -261,7 +261,7 @@ MotionMaster::MoveFollow(Unit* target, float dist, float angle, MovementSlot slo
     if (!target || target == i_owner || i_owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
         return;
 
-    i_owner->addUnitState(UNIT_STAT_FOLLOW);
+    i_owner->AddUnitState(UNIT_STATE_FOLLOW);
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
     {
         DEBUG_LOG("Player (GUID: %u) follow to %s (GUID: %u)", i_owner->GetGUIDLow(),
@@ -312,7 +312,7 @@ void MotionMaster::MoveJump(float x, float y, float z, float speedXY, float spee
     uint32 moveFlag = SPLINEFLAG_JUMP | SPLINEFLAG_WALKMODE;
     uint32 time = speedZ * 100;
 
-    i_owner->addUnitState(UNIT_STAT_CHARGING | UNIT_STAT_JUMPING);
+    i_owner->AddUnitState(UNIT_STATE_CHARGING | UNIT_STATE_JUMPING);
     i_owner->m_TempSpeed = speedXY;
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
     {
@@ -335,7 +335,7 @@ MotionMaster::MoveCharge(float x, float y, float z, float speed, uint32 id, bool
     if (Impl[MOTION_SLOT_CONTROLLED] && Impl[MOTION_SLOT_CONTROLLED]->GetMovementGeneratorType() != DISTRACT_MOTION_TYPE)
         return;
 
-    i_owner->addUnitState(UNIT_STAT_CHARGING);
+    i_owner->AddUnitState(UNIT_STATE_CHARGING);
     i_owner->m_TempSpeed = speed;
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
     {

@@ -607,7 +607,7 @@ void Aura::Update(uint32 diff)
             // update before applying (aura can be removed in TriggerSpell or PeriodicTick calls)
             m_periodicTimer += m_amplitude;//m_modifier.periodictime;
 
-            if (!m_target->hasUnitState(UNIT_STAT_ISOLATED))
+            if (!m_target->HasUnitState(UNIT_STATE_ISOLATED))
                 PeriodicTick();
         }
     }
@@ -664,7 +664,7 @@ void AreaAura::Update(uint32 diff)
     {
         Unit* caster = m_target;
 
-        if (!caster->hasUnitState(UNIT_STAT_ISOLATED))
+        if (!caster->HasUnitState(UNIT_STATE_ISOLATED))
         {
             std::list<Unit *> targets;
 
@@ -735,7 +735,7 @@ void AreaAura::Update(uint32 diff)
         // or caster is isolated or caster no longer has the aura
         // or caster is (no longer) friendly
         bool needFriendly = (m_areaAuraType == AREA_AURA_ENEMY ? false : true);
-        if (!caster || caster->hasUnitState(UNIT_STAT_ISOLATED) ||
+        if (!caster || caster->HasUnitState(UNIT_STATE_ISOLATED) ||
             !caster->IsWithinDistInMap(tmp_target, m_radius)    ||
             !caster->HasAura(tmp_spellId, tmp_effIndex)         ||
             caster->IsFriendlyTo(tmp_target) != needFriendly
@@ -3207,7 +3207,7 @@ void Aura::HandleModConfuse(bool apply, bool Real)
         return;
 
     //m_target->SetConfused(apply, GetCasterGUID(), GetId());
-    m_target->SetControlled(apply, UNIT_STAT_CONFUSED);
+    m_target->SetControlled(apply, UNIT_STATE_CONFUSED);
 }
 
 void Aura::HandleModFear(bool apply, bool Real)
@@ -3216,7 +3216,7 @@ void Aura::HandleModFear(bool apply, bool Real)
         return;
 
     //m_target->SetFeared(apply, GetCasterGUID(), GetId());
-    m_target->SetControlled(apply, UNIT_STAT_FLEEING);
+    m_target->SetControlled(apply, UNIT_STATE_FLEEING);
 }
 
 void Aura::HandleFeignDeath(bool apply, bool Real)
@@ -3242,7 +3242,7 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
         m_target->VisitNearbyObject(m_target->GetMap()->GetVisibilityDistance(), searcher);
         for (std::list<Unit*>::iterator iter = targets.begin(); iter != targets.end(); ++iter)
         {
-            if (!(*iter)->hasUnitState(UNIT_STAT_CASTING))
+            if (!(*iter)->HasUnitState(UNIT_STATE_CASTING))
                 continue;
 
             for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; i++)
@@ -3261,7 +3261,7 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
                                                             // blizz like 2.0.x
         m_target->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
 
-        m_target->addUnitState(UNIT_STAT_DIED);
+        m_target->AddUnitState(UNIT_STATE_DIED);
         m_target->CombatStop();
         m_target->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_UNATTACKABLE);
 
@@ -3286,7 +3286,7 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
                                                             // blizz like 2.0.x
         m_target->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
 
-        m_target->clearUnitState(UNIT_STAT_DIED);
+        m_target->ClearUnitState(UNIT_STATE_DIED);
     }
 }
 
@@ -3330,7 +3330,7 @@ void Aura::HandleAuraModStun(bool apply, bool Real)
     if (!Real)
         return;
 
-    m_target->SetControlled(apply, UNIT_STAT_STUNNED);
+    m_target->SetControlled(apply, UNIT_STATE_STUNNED);
 }
 
 void Aura::HandleModStealth(bool apply, bool Real)
@@ -3500,7 +3500,7 @@ void Aura::HandleAuraModRoot(bool apply, bool Real)
     if (!Real)
         return;
 
-    m_target->SetControlled(apply, UNIT_STAT_ROOT);
+    m_target->SetControlled(apply, UNIT_STATE_ROOT);
 }
 
 void Aura::HandleAuraModSilence(bool apply, bool Real)
@@ -3926,9 +3926,9 @@ void Aura::HandleAuraModSchoolImmunity(bool apply, bool Real)
     if (Real && GetSpellProto()->Mechanic == MECHANIC_BANISH)
     {
         if (apply)
-            m_target->addUnitState(UNIT_STAT_ISOLATED);
+            m_target->AddUnitState(UNIT_STATE_ISOLATED);
         else
-            m_target->clearUnitState(UNIT_STAT_ISOLATED);
+            m_target->ClearUnitState(UNIT_STATE_ISOLATED);
     }
 }
 

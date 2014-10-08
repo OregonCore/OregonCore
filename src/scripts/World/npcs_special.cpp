@@ -1310,7 +1310,7 @@ struct npc_force_of_nature_treantsAI : public ScriptedAI {
             {
                 AttackStart(target);
             }
-            else if (!me->hasUnitState(UNIT_STAT_FOLLOW))
+            else if (!me->HasUnitState(UNIT_STATE_FOLLOW))
             {
                 me->GetMotionMaster()->Clear();
                 me->GetMotionMaster()->MoveFollow(Owner,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE);
@@ -1387,7 +1387,7 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
             {
                 AttackStart(Owner->getAttackerForHelper());
             }
-            else if (!me->hasUnitState(UNIT_STAT_FOLLOW))
+            else if (!me->HasUnitState(UNIT_STATE_FOLLOW))
             {
                 me->GetMotionMaster()->Clear();
                 me->GetMotionMaster()->MoveFollow(Owner,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE);

@@ -781,7 +781,7 @@ bool GameObject::isVisibleForInState(Player const* u, bool inVisibleList) const
 
 bool GameObject::canDetectTrap(Player const* u, float distance) const
 {
-    if (u->hasUnitState(UNIT_STAT_STUNNED))
+    if (u->HasUnitState(UNIT_STATE_STUNNED))
         return false;
     if (distance < GetGOInfo()->size) //collision
         return true;

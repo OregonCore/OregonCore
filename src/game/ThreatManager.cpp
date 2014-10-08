@@ -130,7 +130,7 @@ void HostileReference::updateOnlineStatus()
     // target is not in flight
     if (isValid() &&
         ((getTarget()->GetTypeId() != TYPEID_PLAYER || !getTarget()->ToPlayer()->isGameMaster()) ||
-        !getTarget()->hasUnitState(UNIT_STAT_IN_FLIGHT)))
+        !getTarget()->HasUnitState(UNIT_STATE_IN_FLIGHT)))
     {
         Creature* creature = (Creature*) getSourceUnit();
         online = getTarget()->isInAccessiblePlaceFor(creature);
@@ -287,7 +287,7 @@ HostileReference* ThreatContainer::selectNextVictim(Creature* pAttacker, Hostile
 
         // some units are preferred in comparison to others
         if (iter != lastRef && (target->IsImmunedToDamage(pAttacker->GetMeleeDamageSchoolMask(), false) ||
-                target->hasUnitState(UNIT_STAT_CONFUSED)
+                target->HasUnitState(UNIT_STATE_CONFUSED)
 ))
         {
             // current victim is a second choice target, so don't compare threat with it below

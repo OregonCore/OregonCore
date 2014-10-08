@@ -404,35 +404,35 @@ enum DeathState
 
 enum UnitState
 {
-    UNIT_STAT_DIED            = 0x00000001,
-    UNIT_STAT_MELEE_ATTACKING = 0x00000002,                     // player is melee attacking someone
-    //UNIT_STAT_MELEE_ATTACK_BY = 0x00000004,                     // player is melee attack by someone
-    UNIT_STAT_STUNNED         = 0x00000008,
-    UNIT_STAT_ROAMING         = 0x00000010,
-    UNIT_STAT_CHASE           = 0x00000020,
-    //UNIT_STAT_SEARCHING       = 0x00000040,
-    UNIT_STAT_FLEEING         = 0x00000080,
-    UNIT_STAT_IN_FLIGHT       = 0x00000100,                     // player is in flight mode
-    UNIT_STAT_FOLLOW          = 0x00000200,
-    UNIT_STAT_ROOT            = 0x00000400,
-    UNIT_STAT_CONFUSED        = 0x00000800,
-    UNIT_STAT_DISTRACTED      = 0x00001000,
-    UNIT_STAT_ISOLATED        = 0x00002000,                     // area auras do not affect other players
-    UNIT_STAT_ATTACK_PLAYER   = 0x00004000,
-    UNIT_STAT_CASTING         = 0x00008000,
-    UNIT_STAT_POSSESSED       = 0x00010000,
-    UNIT_STAT_CHARGING        = 0x00020000,
-    UNIT_STAT_JUMPING         = 0x00040000,
-    UNIT_STAT_MOVE            = 0x00100000,
-    UNIT_STAT_ROTATING        = 0x00200000,
-    UNIT_STAT_EVADE           = 0x00400000,
-    UNIT_STAT_IGNORE_PATHFINDING    = 0x00800000,
-    UNIT_STAT_MOVING          = (UNIT_STAT_ROAMING | UNIT_STAT_CHASE),
-    UNIT_STAT_LOST_CONTROL    = (UNIT_STAT_CONFUSED | UNIT_STAT_STUNNED | UNIT_STAT_FLEEING | UNIT_STAT_CHARGING),
-    UNIT_STAT_SIGHTLESS       = (UNIT_STAT_LOST_CONTROL),
-    UNIT_STAT_CANNOT_AUTOATTACK     = (UNIT_STAT_LOST_CONTROL | UNIT_STAT_CASTING),
-    UNIT_STAT_CANNOT_TURN     = (UNIT_STAT_LOST_CONTROL | UNIT_STAT_ROTATING),
-    UNIT_STAT_ALL_STATE       = 0xffffffff                      //(UNIT_STAT_STOPPED | UNIT_STAT_MOVING | UNIT_STAT_IN_COMBAT | UNIT_STAT_IN_FLIGHT)
+    UNIT_STATE_DIED            = 0x00000001,
+    UNIT_STATE_MELEE_ATTACKING = 0x00000002,                     // player is melee attacking someone
+    //UNIT_STATE_MELEE_ATTACK_BY = 0x00000004,                     // player is melee attack by someone
+    UNIT_STATE_STUNNED         = 0x00000008,
+    UNIT_STATE_ROAMING         = 0x00000010,
+    UNIT_STATE_CHASE           = 0x00000020,
+    //UNIT_STATE_SEARCHING       = 0x00000040,
+    UNIT_STATE_FLEEING         = 0x00000080,
+    UNIT_STATE_IN_FLIGHT       = 0x00000100,                     // player is in flight mode
+    UNIT_STATE_FOLLOW          = 0x00000200,
+    UNIT_STATE_ROOT            = 0x00000400,
+    UNIT_STATE_CONFUSED        = 0x00000800,
+    UNIT_STATE_DISTRACTED      = 0x00001000,
+    UNIT_STATE_ISOLATED        = 0x00002000,                     // area auras do not affect other players
+    UNIT_STATE_ATTACK_PLAYER   = 0x00004000,
+    UNIT_STATE_CASTING         = 0x00008000,
+    UNIT_STATE_POSSESSED       = 0x00010000,
+    UNIT_STATE_CHARGING        = 0x00020000,
+    UNIT_STATE_JUMPING         = 0x00040000,
+    UNIT_STATE_MOVE            = 0x00100000,
+    UNIT_STATE_ROTATING        = 0x00200000,
+    UNIT_STATE_EVADE           = 0x00400000,
+    UNIT_STATE_IGNORE_PATHFINDING    = 0x00800000,
+    UNIT_STATE_MOVING          = (UNIT_STATE_ROAMING | UNIT_STATE_CHASE),
+    UNIT_STATE_LOST_CONTROL    = (UNIT_STATE_CONFUSED | UNIT_STATE_STUNNED | UNIT_STATE_FLEEING | UNIT_STATE_CHARGING),
+    UNIT_STATE_SIGHTLESS       = (UNIT_STATE_LOST_CONTROL),
+    UNIT_STATE_CANNOT_AUTOATTACK     = (UNIT_STATE_LOST_CONTROL | UNIT_STATE_CASTING),
+    UNIT_STATE_CANNOT_TURN     = (UNIT_STATE_LOST_CONTROL | UNIT_STATE_ROTATING),
+    UNIT_STATE_ALL_STATE       = 0xffffffff                      //(UNIT_STATEE_STOPPED | UNIT_STATEE_MOVING | UNIT_STATEE_IN_COMBAT | UNIT_STATEE_IN_FLIGHT)
 };
 
 enum UnitMoveType
@@ -936,13 +936,13 @@ class Unit : public WorldObject
         void SendMeleeAttackStop(Unit* victim = NULL);
         void SendMeleeAttackStart(Unit* pVictim);
 
-        void addUnitState(uint32 f) { m_state |= f; }
-        bool hasUnitState(const uint32 f) const { return (m_state & f); }
-        void clearUnitState(uint32 f) { m_state &= ~f; }
+        void AddUnitState(uint32 f) { m_state |= f; }
+        bool HasUnitState(const uint32 f) const { return (m_state & f); }
+        void ClearUnitState(uint32 f) { m_state &= ~f; }
         bool CanFreeMove() const
         {
-            return !hasUnitState(UNIT_STAT_CONFUSED | UNIT_STAT_FLEEING | UNIT_STAT_IN_FLIGHT |
-                UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED) && GetOwnerGUID() == 0;
+            return !HasUnitState(UNIT_STATE_CONFUSED | UNIT_STATE_FLEEING | UNIT_STATE_IN_FLIGHT |
+                UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED) && GetOwnerGUID() == 0;
         }
 
         uint32 getLevel() const { return GetUInt32Value(UNIT_FIELD_LEVEL); }
@@ -1098,7 +1098,7 @@ class Unit : public WorldObject
         // Is the unit a player?
         bool isPlayer() const { return GetTypeId() == TYPEID_PLAYER; }
 
-        bool isInFlight()  const { return hasUnitState(UNIT_STAT_IN_FLIGHT); }
+        bool isInFlight()  const { return HasUnitState(UNIT_STATE_IN_FLIGHT); }
         
         // Is the unit casting, or has recently casted a combat spell but not in combat yet? 
         bool isInitiatingCombat() const { return m_initiatingCombat; }
@@ -1236,8 +1236,8 @@ class Unit : public WorldObject
         void RemoveAllControlled();
 
         bool isCharmed() const { return GetCharmerGUID() != 0; }
-        bool isPossessed() const { return hasUnitState(UNIT_STAT_POSSESSED); }
-        bool isPossessedByPlayer() const { return hasUnitState(UNIT_STAT_POSSESSED) && IS_PLAYER_GUID(GetCharmerGUID()); }
+        bool isPossessed() const { return HasUnitState(UNIT_STATE_POSSESSED); }
+        bool isPossessedByPlayer() const { return HasUnitState(UNIT_STATE_POSSESSED) && IS_PLAYER_GUID(GetCharmerGUID()); }
         bool isPossessing() const
         {
             if (Unit *u = GetCharm())
@@ -1385,7 +1385,7 @@ class Unit : public WorldObject
         bool isInFrontInMap(Unit const* target,float distance, float arc = M_PI) const;
         void SetInFront(Unit const* target)
         {
-            if (!hasUnitState(UNIT_STAT_CANNOT_TURN))
+            if (!HasUnitState(UNIT_STATE_CANNOT_TURN))
                 SetOrientation(GetAngle(target));
         }
         bool isInBackInMap(Unit const* target, float distance, float arc = M_PI) const;
@@ -1528,7 +1528,7 @@ class Unit : public WorldObject
 
         MotionMaster* GetMotionMaster() { return &i_motionMaster; }
 
-        bool IsStopped() const { return !(hasUnitState(UNIT_STAT_MOVING)); }
+        bool IsStopped() const { return !(HasUnitState(UNIT_STATE_MOVING)); }
         void StopMoving();
 
         void AddUnitMovementFlag(uint32 f) { m_unit_movement_flags |= f; }

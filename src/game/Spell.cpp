@@ -1111,7 +1111,7 @@ void Spell::DoSpellHitOnUnit(Unit *unit, const uint32 effectMask)
             }
 
             // assisting case, healing and resurrection
-            if (unit->hasUnitState(UNIT_STAT_ATTACK_PLAYER))
+            if (unit->HasUnitState(UNIT_STATE_ATTACK_PLAYER))
             {
                 m_caster->SetContestedPvP();
                 //m_caster->UpdatePvP(true);
@@ -2726,7 +2726,7 @@ void Spell::update(uint32 difftime)
                         cancel();
 
                     // check for incapacitating player states
-                    if (m_caster->hasUnitState(UNIT_STAT_STUNNED | UNIT_STAT_CONFUSED))
+                    if (m_caster->HasUnitState(UNIT_STATE_STUNNED | UNIT_STATE_CONFUSED))
                         cancel();
                 }
 
@@ -2810,7 +2810,7 @@ void Spell::finish(bool ok)
         m_caster->UpdateInterruptMask();
 
     if (!m_caster->IsNonMeleeSpellCast(false, false, true))
-        m_caster->clearUnitState(UNIT_STAT_CASTING);
+        m_caster->ClearUnitState(UNIT_STATE_CASTING);
 
     if (!ok)
     {
@@ -4019,7 +4019,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
             case SPELL_EFFECT_CHARGE:
             {
-                if (m_caster->hasUnitState(UNIT_STAT_ROOT))
+                if (m_caster->HasUnitState(UNIT_STATE_ROOT))
                     return SPELL_FAILED_ROOTED;
 
                 break;

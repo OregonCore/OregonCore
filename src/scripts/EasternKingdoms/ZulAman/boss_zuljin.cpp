@@ -296,7 +296,7 @@ struct boss_zuljinAI : public ScriptedAI
                 pCreature->CastSpell(pCreature, SPELL_SPIRIT_AURA, true);
                 pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                pCreature->addUnitState(UNIT_STAT_STUNNED);
+                pCreature->AddUnitState(UNIT_STATE_STUNNED);
                 SpiritGUID[i] = pCreature->GetGUID();
             }
         }

@@ -1492,7 +1492,7 @@ void Creature::setDeathState(DeathState s)
         if (GetCreatureInfo()->InhabitType & INHABIT_WATER)
             AddUnitMovementFlag(MOVEFLAG_SWIMMING);
         SetUInt32Value(UNIT_NPC_FLAGS, cinfo->npcflag);
-        clearUnitState(UNIT_STAT_ALL_STATE);
+        ClearUnitState(UNIT_STATE_ALL_STATE);
         i_motionMaster.Initialize();
         SetMeleeDamageSchool(SpellSchools(cinfo->dmgschool));
         LoadCreaturesAddon(true);
@@ -1576,7 +1576,7 @@ void Creature::Respawn(bool force)
         {
             setDeathState(JUST_DIED);
             i_motionMaster.Clear();
-            clearUnitState(UNIT_STAT_ALL_STATE);
+            ClearUnitState(UNIT_STATE_ALL_STATE);
             LoadCreaturesAddon(true);
         }
         else
@@ -1797,7 +1797,7 @@ void Creature::DoFleeToGetAssistance()
 
         SetNoSearchAssistance(true);
         if (!pCreature)
-            SetControlled(true, UNIT_STAT_FLEEING);
+            SetControlled(true, UNIT_STATE_FLEEING);
         else
             GetMotionMaster()->MoveSeekAssistance(pCreature->GetPositionX(), pCreature->GetPositionY(), pCreature->GetPositionZ());
     }

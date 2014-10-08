@@ -100,7 +100,7 @@ void WaypointMovementGenerator<Creature>::InitTraveller(Creature &unit, const Wa
     // @todo make this part of waypoint node, so that creature can walk when desired?
     if (unit.canFly())
         unit.SetByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
-    unit.addUnitState(UNIT_STAT_ROAMING);
+    unit.AddUnitState(UNIT_STATE_ROAMING);
 }
 
 template<>
@@ -143,7 +143,7 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &d
 
     // Waypoint movement can be switched on/off
     // This is quite handy for escort quests and other stuff
-    if (unit.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED))
+    if (unit.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
         return true;
 
     // Clear the generator if the path doesn't exist
@@ -199,7 +199,7 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &d
             i_destinationHolder.ResetTravelTime();
             MovementInform(unit);
             unit.UpdateWaypointID(i_currentNode);
-            unit.clearUnitState(UNIT_STAT_ROAMING);
+            unit.ClearUnitState(UNIT_STATE_ROAMING);
             if (node->orientation)
             {
                 unit.Relocate(node->x, node->y, node->z, node->orientation);
@@ -247,7 +247,7 @@ uint32 FlightPathMovementGenerator::GetPathAtMapEnd() const
 void FlightPathMovementGenerator::Initialize(Player &player)
 {
     player.getHostileRefManager().setOnlineOfflineState(false);
-    player.addUnitState(UNIT_STAT_IN_FLIGHT);
+    player.AddUnitState(UNIT_STATE_IN_FLIGHT);
     player.SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
 
     Traveller<Player> traveller(player);
@@ -265,7 +265,7 @@ void FlightPathMovementGenerator::Initialize(Player &player)
 void FlightPathMovementGenerator::Finalize(Player & player)
 {
     // remove flag to prevent send object build movement packets for flight state and crash (movement generator already not at top of stack)
-    player.clearUnitState(UNIT_FLAG_DISABLE_MOVE | UNIT_STAT_IN_FLIGHT);
+    player.ClearUnitState(UNIT_FLAG_DISABLE_MOVE | UNIT_STATE_IN_FLIGHT);
 
     float x, y, z;
     i_destinationHolder.GetLocationNow(player.GetBaseMap(), x, y, z);

@@ -39,7 +39,7 @@ HomeMovementGenerator<Creature>::Reset(Creature &)
 void
 HomeMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
 {
-    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED))
+    if (owner.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
         return;
 
     float x, y, z;
@@ -57,7 +57,7 @@ HomeMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
     modifyTravelTime(traveltime);
     owner.SendMonsterMoveByPath(pointPath, 1, pointPath.size(), traveltime);
 
-    owner.clearUnitState(UNIT_STAT_ALL_STATE);
+    owner.ClearUnitState(UNIT_STATE_ALL_STATE);
 }
 
 bool
