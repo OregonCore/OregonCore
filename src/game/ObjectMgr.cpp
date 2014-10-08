@@ -6677,6 +6677,11 @@ bool PlayerCondition::Meets(Player const * player) const
             QuestStatus status = player->GetQuestStatus(value1);
             return (status == QUEST_STATUS_INCOMPLETE);
         }
+        case CONDITION_QUEST_NONE:
+        {
+            QuestStatus status = player->GetQuestStatus(value1);
+            return (status == QUEST_STATUS_NONE);
+        }
         case CONDITION_AD_COMMISSION_AURA:
         {
             Unit::AuraMap const& auras = player->GetAuras();
@@ -7014,17 +7019,13 @@ void ObjectMgr::LoadTrainerSpell()
 
     if (!result)
     {
-
-
         sLog.outErrorDb(">> Loaded npc_trainer, table is empty!");
         return;
     }
 
-
     uint32 count = 0;
     do
     {
-
         Field* fields = result->Fetch();
 
         uint32 entry  = fields[0].GetUInt32();
@@ -7070,7 +7071,6 @@ void ObjectMgr::LoadTrainerSpell()
 
         if (!pTrainerSpell->reqlevel)
             pTrainerSpell->reqlevel = spellinfo->spellLevel;
-
 
         TrainerSpellData& data = m_mCacheTrainerSpellMap[entry];
 
