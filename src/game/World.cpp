@@ -1175,8 +1175,8 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Loading Spell Required Data...");
     spellmgr.LoadSpellRequired();
 
-    sConsole.SetLoadingLabel("Loading Spell Elixir types...");
-    spellmgr.LoadSpellElixirs();
+    sConsole.SetLoadingLabel("Loading Spell Group types...");
+    spellmgr.LoadSpellGroups();
 
     sConsole.SetLoadingLabel("Loading Spell Learn Skills...");
     spellmgr.LoadSpellLearnSkills();                        // must be after LoadSpellChains
@@ -1195,6 +1195,9 @@ void World::SetInitialWorldSettings()
 
     sConsole.SetLoadingLabel("Loading NPC Texts...");
     objmgr.LoadGossipText();
+
+    sLog.outString("Loading Spell Group Stack Rules...");
+    spellmgr.LoadSpellGroupStackRules();
 
     sConsole.SetLoadingLabel("Loading Enchant Spells Proc datas...");
     spellmgr.LoadSpellEnchantProcData();

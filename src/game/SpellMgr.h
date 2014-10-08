@@ -94,7 +94,6 @@ enum SpellSpecific
 {
     SPELL_NORMAL            = 0,
     SPELL_SEAL              = 1,
-    SPELL_BLESSING          = 2,
     SPELL_AURA              = 3,
     SPELL_STING             = 4,
     SPELL_CURSE             = 5,
@@ -104,13 +103,8 @@ enum SpellSpecific
     SPELL_MAGE_ARMOR        = 9,
     SPELL_ELEMENTAL_SHIELD  = 10,
     SPELL_MAGE_POLYMORPH    = 11,
-    SPELL_POSITIVE_SHOUT    = 12,
     SPELL_JUDGEMENT         = 13,
-    SPELL_BATTLE_ELIXIR     = 14,
-    SPELL_GUARDIAN_ELIXIR   = 15,
-    SPELL_FLASK_ELIXIR      = 16,
     SPELL_WARLOCK_CORRUPTION= 17,
-    SPELL_WELL_FED          = 18,
     SPELL_DRINK             = 19,
     SPELL_FOOD              = 20,
     SPELL_CHARM             = 21,
@@ -485,13 +479,35 @@ struct SpellEnchantProcEntry
 
 typedef UNORDERED_MAP<uint32, SpellEnchantProcEntry> SpellEnchantProcEventMap;
 
-#define ELIXIR_BATTLE_MASK    0x1
-#define ELIXIR_GUARDIAN_MASK  0x2
-#define ELIXIR_FLASK_MASK     (ELIXIR_BATTLE_MASK|ELIXIR_GUARDIAN_MASK)
-#define ELIXIR_UNSTABLE_MASK  0x4
-#define ELIXIR_SHATTRATH_MASK 0x8
+enum SpellGroup
+{
+    SPELL_GROUP_ELIXIR_BATTLE = 1,
+    SPELL_GROUP_ELIXIR_GUARDIAN = 2,
+    SPELL_GROUP_ELIXIR_UNSTABLE = 3,
+    SPELL_GROUP_ELIXIR_SHATTRATH = 4,
+    SPELL_GROUP_CORE_RANGE_MAX = 5,
+};
 
-typedef std::map<uint32, uint8> SpellElixirMap;
+#define SPELL_GROUP_DB_RANGE_MIN 1000
+
+//                  spell_id, group_id
+typedef std::multimap<uint32, SpellGroup > SpellSpellGroupMap;
+typedef std::pair<SpellSpellGroupMap::const_iterator,SpellSpellGroupMap::const_iterator> SpellSpellGroupMapBounds;
+
+//                      group_id, spell_id
+typedef std::multimap<SpellGroup, int32> SpellGroupSpellMap;
+typedef std::pair<SpellGroupSpellMap::const_iterator,SpellGroupSpellMap::const_iterator> SpellGroupSpellMapBounds;
+
+enum SpellGroupStackRule
+{
+    SPELL_GROUP_STACK_RULE_DEFAULT = 0,
+    SPELL_GROUP_STACK_RULE_EXCLUSIVE = 1,
+    SPELL_GROUP_STACK_RULE_EXCLUSIVE_FROM_SAME_CASTER = 2,
+};
+
+#define SPELL_GROUP_STACK_RULE_MAX 3
+
+typedef std::map<SpellGroup, SpellGroupStackRule> SpellGroupStackMap;
 
 // Spell script target related declarations (accessed using SpellMgr functions)
 enum SpellScriptTargetType
@@ -752,28 +768,95 @@ class SpellMgr
             return false;
         }
 
-        SpellElixirMap const& GetSpellElixirMap() const { return mSpellElixirs; }
-
-        uint32 GetSpellElixirMask(uint32 spellid) const
+        SpellSpellGroupMapBounds GetSpellSpellGroupMapBounds(uint32 spell_id) const 
+         {
+            spell_id = GetFirstSpellInChain(spell_id);
+            return SpellSpellGroupMapBounds(mSpellSpellGroup.lower_bound(spell_id),mSpellSpellGroup.upper_bound(spell_id));
+        }
+        uint32 IsSpellMemberOfSpellGroup(uint32 spellid, SpellGroup groupid) const
         {
-            SpellElixirMap::const_iterator itr = mSpellElixirs.find(spellid);
-            if (itr == mSpellElixirs.end())
-                return 0x0;
+            SpellSpellGroupMapBounds spellGroup = GetSpellSpellGroupMapBounds(spellid);
+            for ( SpellSpellGroupMap::const_iterator itr = spellGroup.first; itr != spellGroup.second ; ++itr)
+            {
+                if (itr->second == groupid)
+                    return true;
+            }
+            return false;
+         }
 
-            return itr->second;
+        SpellGroupSpellMapBounds GetSpellGroupSpellMapBounds(SpellGroup group_id) const 
+        {
+            return SpellGroupSpellMapBounds(mSpellGroupSpell.lower_bound(group_id),mSpellGroupSpell.upper_bound(group_id));
         }
 
-        SpellSpecific GetSpellElixirSpecific(uint32 spellid) const
+        void GetSetOfSpellsInSpellGroup(SpellGroup group_id, std::set<uint32>& foundSpells) const 
         {
-            uint32 mask = GetSpellElixirMask(spellid);
-            if ((mask & ELIXIR_FLASK_MASK) == ELIXIR_FLASK_MASK)
-                return SPELL_FLASK_ELIXIR;
-            else if (mask & ELIXIR_BATTLE_MASK)
-                return SPELL_BATTLE_ELIXIR;
-            else if (mask & ELIXIR_GUARDIAN_MASK)
-                return SPELL_GUARDIAN_ELIXIR;
-            else
-                return SPELL_NORMAL;
+            std::set<SpellGroup> usedGroups;
+            GetSetOfSpellsInSpellGroup(group_id, foundSpells, usedGroups);
+        }
+
+        void GetSetOfSpellsInSpellGroup(SpellGroup group_id, std::set<uint32>& foundSpells, std::set<SpellGroup>& usedGroups) const 
+        {
+            if (usedGroups.find(group_id) != usedGroups.end())
+                return;
+            usedGroups.insert(group_id);
+
+            SpellGroupSpellMapBounds groupSpell = GetSpellGroupSpellMapBounds(group_id);
+            for ( SpellGroupSpellMap::const_iterator itr = groupSpell.first; itr != groupSpell.second ; ++itr)
+            {
+                if (itr->second < 0)
+                {
+                    SpellGroup currGroup = (SpellGroup)abs(itr->second);
+                    GetSetOfSpellsInSpellGroup(currGroup, foundSpells, usedGroups);
+                }
+                else
+                {
+                    foundSpells.insert(itr->second);
+                }
+            }
+        }
+
+        SpellGroupStackRule CheckSpellGroupStackRules(uint32 spellid_1, uint32 spellid_2) const
+        {
+            spellid_1 = GetFirstSpellInChain(spellid_1);
+            spellid_2 = GetFirstSpellInChain(spellid_2);
+            // find SpellGroups which are common for both spells
+            SpellSpellGroupMapBounds spellGroup1 = GetSpellSpellGroupMapBounds(spellid_1);
+            std::set<SpellGroup> groups;
+            for ( SpellSpellGroupMap::const_iterator itr = spellGroup1.first; itr != spellGroup1.second ; ++itr)
+            {
+                if (IsSpellMemberOfSpellGroup(spellid_2, itr->second))
+                {
+                    bool add = true;
+                    SpellGroupSpellMapBounds groupSpell = GetSpellGroupSpellMapBounds(itr->second);
+                    for ( SpellGroupSpellMap::const_iterator itr2 = groupSpell.first; itr2 != groupSpell.second ; ++itr2)
+                    {
+                        if (itr2->second < 0)
+                        {
+                            SpellGroup currGroup = (SpellGroup)abs(itr2->second);
+                            if (IsSpellMemberOfSpellGroup(spellid_1, currGroup) && IsSpellMemberOfSpellGroup(spellid_2, currGroup))
+                            {
+                                add = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (add)
+                        groups.insert(itr->second);
+                }
+            }
+
+            SpellGroupStackRule rule = SPELL_GROUP_STACK_RULE_DEFAULT;
+
+            for (std::set<SpellGroup>::iterator itr = groups.begin() ; itr!= groups.end() ; ++itr)
+            {
+                SpellGroupStackMap::const_iterator found = mSpellGroupStack.find(*itr);
+                if (found != mSpellGroupStack.end())
+                    rule = found->second;
+                if (rule)
+                    break;
+            }
+            return rule;
         }
 
         // Spell proc events
@@ -861,17 +944,13 @@ class SpellMgr
 
         uint8 IsHighRankOfSpell(uint32 spell1,uint32 spell2) const
         {
-            SpellChainMap::const_iterator itr = mSpellChains.find(spell1);
-
-            uint32 rank2 = GetSpellRank(spell2);
-
-            // not ordered correctly by rank value
-            if (itr == mSpellChains.end() || !rank2 || itr->second.rank <= rank2)
+            SpellChainMap::const_iterator itr1 = mSpellChains.find(spell1);
+            SpellChainMap::const_iterator itr2 = mSpellChains.find(spell2);
+            if (itr1 == mSpellChains.end() || itr2 == mSpellChains.end())
                 return false;
 
-            // check present in same rank chain
-            for (; itr != mSpellChains.end(); itr = mSpellChains.find(itr->second.prev))
-                if (itr->second.prev == spell2)
+            if (itr1->second.first == itr2->second.first)
+                if (itr1->second.rank > itr2->second.rank)
                     return true;
 
             return false;
@@ -1000,7 +1079,7 @@ class SpellMgr
         void LoadSpellLearnSpells();
         void LoadSpellScriptTarget();
         void LoadSpellAffects();
-        void LoadSpellElixirs();
+        void LoadSpellGroups();
         void LoadSpellProcEvents();
         void LoadSpellTargetPositions();
         void LoadSpellThreats();
@@ -1011,6 +1090,7 @@ class SpellMgr
         void LoadSpellLinked();
         void LoadSpellEnchantProcData();
         void LoadSpellDummyCondition();
+        void LoadSpellGroupStackRules();
 
     private:
         SpellScriptTarget  mSpellScriptTarget;
@@ -1021,12 +1101,14 @@ class SpellMgr
         SpellLearnSpellMap mSpellLearnSpells;
         SpellTargetPositionMap mSpellTargetPositions;
         SpellAffectMap     mSpellAffectMap;
-        SpellElixirMap     mSpellElixirs;
+        SpellSpellGroupMap mSpellSpellGroup;
+        SpellGroupSpellMap mSpellGroupSpell;
         SpellProcEventMap  mSpellProcEventMap;
         SkillLineAbilityMap mSkillLineAbilityMap;
         SpellPetAuraMap     mSpellPetAuraMap;
         SpellCustomAttribute  mSpellCustomAttr;
         SpellLinkedMap      mSpellLinkedMap;
+        SpellGroupStackMap   mSpellGroupStack;
         SpellEnchantProcEventMap     mSpellEnchantProcEventMap;
         SpellDummyConditionMap       mSpellDummyConditionMap;
 };

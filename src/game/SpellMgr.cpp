@@ -413,10 +413,6 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
                         return SPELL_FOOD;
                 }
             }
-            // this may be a hack
-            else if ((spellInfo->AttributesEx2 & SPELL_ATTR_EX2_FOOD)
-                && !spellInfo->Category)
-                return SPELL_WELL_FED;
 
             switch(spellInfo->Id)
             {
@@ -445,8 +441,6 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         }
         case SPELLFAMILY_WARRIOR:
         {
-            if (spellInfo->SpellFamilyFlags & 0x00008000010000LL)
-                return SPELL_POSITIVE_SHOUT;
             // Sunder Armor (vs Expose Armor)
             if (spellInfo->SpellFamilyFlags & 0x00000000004000LL)
                 return SPELL_ARMOR_REDUCE;
@@ -481,9 +475,6 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
             if (IsSealSpell(spellInfo))
                 return SPELL_SEAL;
 
-            if (spellInfo->SpellFamilyFlags & 0x10000100LL)
-                return SPELL_BLESSING;
-
             if ((spellInfo->SpellFamilyFlags & 0x00000820180400LL) && (spellInfo->AttributesEx3 & 0x200))
                 return SPELL_JUDGEMENT;
 
@@ -509,8 +500,6 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
                 return SPELL_ARMOR_REDUCE;
             break;
         }
-        case SPELLFAMILY_POTION:
-            return spellmgr.GetSpellElixirSpecific(spellInfo->Id);
     }
 
     // only warlock armor/skin have this (in additional to family cases)
@@ -544,10 +533,6 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         }
     }
 
-    // elixirs can have different families, but potion most ofc.
-    if (SpellSpecific sp = spellmgr.GetSpellElixirSpecific(spellInfo->Id))
-        return sp;
-
     return SPELL_NORMAL;
 }
 
@@ -556,12 +541,10 @@ bool IsSingleFromSpellSpecificPerCaster(uint32 spellSpec1,uint32 spellSpec2)
     switch(spellSpec1)
     {
         case SPELL_SEAL:
-        case SPELL_BLESSING:
         case SPELL_AURA:
         case SPELL_STING:
         case SPELL_CURSE:
         case SPELL_ASPECT:
-        case SPELL_POSITIVE_SHOUT:
         case SPELL_JUDGEMENT:
         case SPELL_WARLOCK_CORRUPTION:
             return spellSpec1 == spellSpec2;
@@ -579,23 +562,12 @@ bool IsSingleFromSpellSpecificPerTarget(uint32 spellSpec1,uint32 spellSpec2)
         case SPELL_MAGE_ARMOR:
         case SPELL_ELEMENTAL_SHIELD:
         case SPELL_MAGE_POLYMORPH:
-        case SPELL_WELL_FED:
         case SPELL_DRINK:
         case SPELL_FOOD:
         case SPELL_CHARM:
         case SPELL_WARRIOR_ENRAGE:
         case SPELL_ARMOR_REDUCE:
             return spellSpec1 == spellSpec2;
-        case SPELL_BATTLE_ELIXIR:
-            return spellSpec2 == SPELL_BATTLE_ELIXIR
-                || spellSpec2 == SPELL_FLASK_ELIXIR;
-        case SPELL_GUARDIAN_ELIXIR:
-            return spellSpec2 == SPELL_GUARDIAN_ELIXIR
-                || spellSpec2 == SPELL_FLASK_ELIXIR;
-        case SPELL_FLASK_ELIXIR:
-            return spellSpec2 == SPELL_BATTLE_ELIXIR
-                || spellSpec2 == SPELL_GUARDIAN_ELIXIR
-                || spellSpec2 == SPELL_FLASK_ELIXIR;
         default:
             return false;
     }
@@ -1396,46 +1368,130 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const * spellP
     return false;
 }
 
-void SpellMgr::LoadSpellElixirs()
+void SpellMgr::LoadSpellGroups()
 {
-    mSpellElixirs.clear();                                  // need for reload case
+    mSpellSpellGroup.clear();                                  // need for reload case
+    mSpellGroupSpell.clear();
 
     uint32 count = 0;
 
-    //                                                       0      1
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, mask FROM spell_elixir");
-    if (!result)
+    //                                                       0   1
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT id, spell_id FROM spell_group");
+    if( !result )
     {
-
-
-
-        sLog.outString(">> Loaded %u spell elixir definitions", count);
+        sLog.outString();
+        sLog.outString( ">> Loaded %u spell group definitions", count );
         return;
     }
 
+    std::set<uint32> groups;
 
     do
     {
         Field *fields = result->Fetch();
 
-
-        uint16 entry = fields[0].GetUInt16();
-        uint8 mask = fields[1].GetUInt8();
-
-        SpellEntry const* spellInfo = sSpellStore.LookupEntry(entry);
-
-        if (!spellInfo)
+        uint32 group_id = fields[0].GetUInt32();
+        if (group_id <= SPELL_GROUP_DB_RANGE_MIN && group_id >= SPELL_GROUP_CORE_RANGE_MAX)
         {
-            sLog.outErrorDb("Spell %u listed in spell_elixir does not exist", entry);
+            sLog.outErrorDb("SpellGroup id %u listed in `spell_groups` is in core range, but is not defined in core!", group_id);
+            continue;
+        }
+        int32 spell_id = fields[1].GetInt32();
+
+        groups.insert(std::set<uint32>::value_type(group_id));
+        mSpellGroupSpell.insert(SpellGroupSpellMap::value_type((SpellGroup)group_id, spell_id));
+
+    } while( result->NextRow() );
+
+    for (SpellGroupSpellMap::iterator itr = mSpellGroupSpell.begin(); itr!= mSpellGroupSpell.end() ; )
+    {
+        if (itr->second < 0)
+        {
+            if (groups.find(abs(itr->second)) == groups.end())
+            {
+                sLog.outErrorDb("SpellGroup id %u listed in `spell_groups` does not exist", abs(itr->second));
+                mSpellGroupSpell.erase(itr++);
+            }
+            else
+                ++itr;
+        }
+        else
+        {
+            SpellEntry const* spellInfo = sSpellStore.LookupEntry(itr->second);
+
+            if (!spellInfo)
+            {
+                sLog.outErrorDb("Spell %u listed in `spell_group` does not exist", itr->second);
+                mSpellGroupSpell.erase(itr++);
+            }
+            else if (GetSpellRank(itr->second) > 1)
+            {
+                sLog.outErrorDb("Spell %u listed in `spell_group` is not first rank of spell", itr->second);
+                mSpellGroupSpell.erase(itr++);
+            }
+            else
+                ++itr;
+        }
+    }
+
+    for (std::set<uint32>::iterator groupItr = groups.begin() ; groupItr != groups.end() ; ++groupItr)
+    {
+        std::set<uint32> spells;
+        GetSetOfSpellsInSpellGroup(SpellGroup(*groupItr), spells);
+
+        for (std::set<uint32>::iterator spellItr = spells.begin() ; spellItr != spells.end() ; ++spellItr)
+        {
+            ++count;
+            mSpellSpellGroup.insert(SpellSpellGroupMap::value_type(*spellItr, SpellGroup(*groupItr)));
+        }
+    }
+
+    sLog.outString();
+    sLog.outString( ">> Loaded %u spell group definitions", count );
+}
+
+void SpellMgr::LoadSpellGroupStackRules()
+{
+    mSpellGroupStack.clear();                                  // need for reload case
+
+    uint32 count = 0;
+
+    //                                                       0         1
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT group_id, stack_rule FROM spell_group_stack_rules");
+    if( !result )
+    {
+        sLog.outString();
+        sLog.outString( ">> Loaded %u spell group stack rules", count );
+        return;
+    }
+
+    do
+    {
+        Field *fields = result->Fetch();
+
+        uint32 group_id = fields[0].GetUInt32();
+        uint8 stack_rule = fields[1].GetUInt32();
+        if (stack_rule >= SPELL_GROUP_STACK_RULE_MAX)
+        {
+            sLog.outErrorDb("SpellGroupStackRule %u listed in `spell_group_stack_rules` does not exist", stack_rule);
             continue;
         }
 
-        mSpellElixirs[entry] = mask;
+        SpellGroupSpellMapBounds spellGroup = GetSpellGroupSpellMapBounds((SpellGroup)group_id);
+
+        if (spellGroup.first == spellGroup.second)
+        {
+            sLog.outErrorDb("SpellGroup id %u listed in `spell_group_stack_rules` does not exist", group_id);
+            continue;
+        }
+
+        mSpellGroupStack[(SpellGroup)group_id] = (SpellGroupStackRule)stack_rule;
 
         ++count;
-    } while (result->NextRow());
+    } while( result->NextRow() );
 
-    sLog.outString(">> Loaded %u spell elixir definitions", count);
+    sLog.outString();
+    sLog.outString( ">> Loaded %u spell group stack rules", count );
 }
 
 void SpellMgr::LoadSpellThreats()
@@ -1570,16 +1626,14 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
     if (!spellInfo_1 || !spellInfo_2)
         return false;
 
-    SpellSpecific spellId_spec_1 = GetSpellSpecific(spellId_1);
-    SpellSpecific spellId_spec_2 = GetSpellSpecific(spellId_2);
-    if (spellId_spec_1 && spellId_spec_2)
-        if (IsSingleFromSpellSpecificPerTarget(spellId_spec_1, spellId_spec_2)
-            ||(IsSingleFromSpellSpecificPerCaster(spellId_spec_1, spellId_spec_2) && sameCaster))
+    SpellGroupStackRule stackRule = CheckSpellGroupStackRules(spellInfo_1->Id, spellInfo_2->Id);
+    if (stackRule)
+    {
+        if (stackRule == SPELL_GROUP_STACK_RULE_EXCLUSIVE)
+             return true;
+        if (sameCaster && stackRule == SPELL_GROUP_STACK_RULE_EXCLUSIVE_FROM_SAME_CASTER)
             return true;
-
-    // spells with different specific always stack
-    if (spellId_spec_1 != spellId_spec_2)
-        return false;
+    }
 
     if (spellInfo_1->SpellFamilyName != spellInfo_2->SpellFamilyName)
         return false;
@@ -1608,10 +1662,6 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
                         break;
                 }
     }
-
-//    not needed now because we compare effects last rank of spells
-//    if (spellInfo_1->SpellFamilyName && IsRankSpellDueToSpell(spellInfo_1, spellId_2))
-//        return true;
 
     // generic spells
     if (!spellInfo_1->SpellFamilyName)
@@ -2799,14 +2849,14 @@ bool IsSpellAllowedInLocation(SpellEntry const *spellInfo,uint32 map_id,uint32 z
     // elixirs (all area dependent elixirs have family SPELLFAMILY_POTION, use this for speedup)
     if (spellInfo->SpellFamilyName == SPELLFAMILY_POTION)
     {
-        if (uint32 mask = spellmgr.GetSpellElixirMask(spellInfo->Id))
+        /*if (uint32 mask = spellmgr.GetSpellElixirSpecific(spellInfo->Id))
         {
-            if (mask & ELIXIR_BATTLE_MASK)
+            if (mask & SPELL_BATTLE_ELIXIR)
             {
                 if (spellInfo->Id == 45373)                    // Bloodberry Elixir
                     return zone_id == 4075;
             }
-            if (mask & ELIXIR_UNSTABLE_MASK)
+            /*if (mask & ELIXIR_UNSTABLE_MASK)
             {
                 // in the Blade's Edge Mountains Plateaus and Gruul's Lair.
                 return zone_id == 3522 || map_id == 565;
@@ -2822,11 +2872,11 @@ bool IsSpellAllowedInLocation(SpellEntry const *spellInfo,uint32 map_id,uint32 z
                     return false;
 
                 return mapEntry->multimap_id == 206;
-            }
+            }*/
 
             // elixirs not have another limitations
             return true;
-        }
+        //}
     }
 
     // special cases zone check (maps checked by multimap common id)

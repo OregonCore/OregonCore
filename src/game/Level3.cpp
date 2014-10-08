@@ -631,8 +631,9 @@ bool ChatHandler::HandleReloadAllSpellCommand(const char*)
     HandleReloadSkillExtraItemTemplateCommand("a");
     HandleReloadSpellAffectCommand("a");
     HandleReloadSpellRequiredCommand("a");
-    HandleReloadSpellElixirCommand("a");
     HandleReloadSpellLearnSpellCommand("a");
+    HandleReloadSpellGroupsCommand("a");
+    HandleReloadSpellGroupStackRulesCommand("a");
     HandleReloadSpellLinkedSpellCommand("a");
     HandleReloadSpellProcEventCommand("a");
     HandleReloadSpellScriptTargetCommand("a");
@@ -949,11 +950,19 @@ bool ChatHandler::HandleReloadSpellRequiredCommand(const char*)
     return true;
 }
 
-bool ChatHandler::HandleReloadSpellElixirCommand(const char*)
+bool ChatHandler::HandleReloadSpellGroupsCommand(const char*)
 {
-    sLog.outString("Re-Loading Spell Elixir types...");
-    spellmgr.LoadSpellElixirs();
-    SendGlobalGMSysMessage("DB table spell_elixir (spell elixir types) reloaded.");
+    sLog.outString("Re-Loading Spell Groups...");
+    spellmgr.LoadSpellGroups();
+    SendGlobalGMSysMessage("DB table `spell_group` (spell elixir types) reloaded.");
+    return true;
+}
+
+bool ChatHandler::HandleReloadSpellGroupStackRulesCommand(const char*)
+{
+    sLog.outString( "Re-Loading Spell Group Stack Rules..." );
+    spellmgr.LoadSpellGroupStackRules();
+    SendGlobalGMSysMessage("DB table `spell_group_stack_rules` (spell stacking definitions) reloaded.");
     return true;
 }
 
