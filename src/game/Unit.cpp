@@ -3269,7 +3269,7 @@ bool Unit::IsNonMeleeSpellCast(bool withDelayed, bool skipChanneled, bool skipAu
     else if (!skipChanneled && m_currentSpells[CURRENT_CHANNELED_SPELL] &&
         (m_currentSpells[CURRENT_CHANNELED_SPELL]->getState() != SPELL_STATE_FINISHED))
     {
-        if (!(m_currentSpells[CURRENT_GENERIC_SPELL]->m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_NOT_RESET_AUTO_ACTIONS))
+        if (!(m_currentSpells[CURRENT_CHANNELED_SPELL]->m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_NOT_RESET_AUTO_ACTIONS))
             return(true);
     }
 
