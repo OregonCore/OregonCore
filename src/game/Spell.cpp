@@ -2842,13 +2842,15 @@ void Spell::finish(bool ok)
         m_caster->SendHealSpellLog(m_caster, m_spellInfo->Id, uint32(m_healthLeech));
     }
 
-    if (IsMeleeAttackResetSpell())
+    if (IsAutoActionResetSpell())
     {
-        m_caster->resetAttackTimer(BASE_ATTACK);
-        if (m_caster->haveOffhandWeapon())
-            m_caster->resetAttackTimer(OFF_ATTACK);
-        if (!(m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_NOT_RESET_AUTOSHOT))
+        if (!(m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_NOT_RESET_AUTO_ACTIONS))
+        {
+            m_caster->resetAttackTimer(BASE_ATTACK);
             m_caster->resetAttackTimer(RANGED_ATTACK);
+            if (m_caster->haveOffhandWeapon())
+                m_caster->resetAttackTimer(OFF_ATTACK);
+        }
     }
 
     // call triggered spell only at successful cast (after clear combo points -> for add some if need)
@@ -3368,7 +3370,7 @@ void Spell::TakePower()
     if (hit)
         m_caster->ModifyPower(powerType, -m_powerCost);
     else
-      m_caster->ModifyPower(powerType, -irand(0, m_powerCost/4));
+        m_caster->ModifyPower(powerType, -irand(0, m_powerCost/4));
 
     // Set the five second timer
     if (powerType == POWER_MANA && m_powerCost > 0)
