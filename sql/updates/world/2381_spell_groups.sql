@@ -211,7 +211,7 @@ INSERT INTO spell_group (id, spell_id) VALUES
 (1001, 23697),
  -- Blessing of Might
 (1002, 19740),
-(1002, 25782),
+(1002, 25782), -- Greater
 -- Battle Shout
 (1003, 6673),
 -- Blessing of Might, Battle Shout
@@ -220,18 +220,17 @@ INSERT INTO spell_group (id, spell_id) VALUES
 -- Blessing of Wisdom
 (1005, 19742),
 (1005, 25894),
-(1005, 56521),
 -- Blessing of Kings
 (1006, 20217),
-(1006, 25898),,
+(1006, 25898), -- Greater
 -- Blessing of Sanctuary
 (1007, 20911),
-(1007, 25899),
+(1007, 25899), -- Greater
 -- Blessing of Protection
-(1008, 41450),
-(1008, 23415),
+(1008, 1022),
+(1008, 23415), -- Improved
 -- Blessing of Light
-(1009, 32770),
+(1009, 19977),
 -- Blessings
 (1010, -1002),
 (1010, -1005),
