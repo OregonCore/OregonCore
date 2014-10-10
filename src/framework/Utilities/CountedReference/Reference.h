@@ -35,47 +35,77 @@
 
 template
 <
-typename T,
-class THREADING_MODEL = Oregon::SingleThreaded<T>
->
+    typename T,
+    class THREADING_MODEL = Oregon::SingleThreaded<T>
+    >
 class Referencer
 {
-    typedef typename THREADING_MODEL::Lock Lock;
-    typedef ReferenceHolder<T, THREADING_MODEL> ReferenceeHolder;
+        typedef typename THREADING_MODEL::Lock Lock;
+        typedef ReferenceHolder<T, THREADING_MODEL> ReferenceeHolder;
     public:
 
         // Constructs a referencer.
-        Referencer(T *ref = NULL);
+        Referencer(T* ref = NULL);
 
         // Copy constructor
-        Referencer(const Referencer &obj) : i_holder(NULL) { *this = obj; }
+        Referencer(const Referencer& obj) : i_holder(NULL)
+        {
+            *this = obj;
+        }
 
         // Destructor
         ~Referencer();
 
         // Referencee accessor
-        T* referencee(void) { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
-        const T* referencee(void) const { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
+        T* referencee(void)
+        {
+            return (i_holder == NULL ? NULL : i_holder->i_referencee);
+        }
+        const T* referencee(void) const
+        {
+            return (i_holder == NULL ? NULL : i_holder->i_referencee);
+        }
 
         //T& referencee(void){ return _referencee(); }
         //const T& referencee(void) const { return const_cast<Referencer *>(this)->_referencee(); }
-        operator T&(void) { return _referencee(); }
-        operator const T&(void) const { return *const_cast<Referencer *>(this)->_referencee(); }
+        operator T& (void)
+        {
+            return _referencee();
+        }
+        operator const T& (void) const
+        {
+            return *const_cast<Referencer*>(this)->_referencee();
+        }
 
         // cast operators
-        T* operator*() { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
-        T const * operator*() const { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
+        T* operator*()
+        {
+            return (i_holder == NULL ? NULL : i_holder->i_referencee);
+        }
+        T const* operator*() const
+        {
+            return (i_holder == NULL ? NULL : i_holder->i_referencee);
+        }
 
         // overload operators
-        T* operator->() { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
-        const T * operator->() const { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
+        T* operator->()
+        {
+            return (i_holder == NULL ? NULL : i_holder->i_referencee);
+        }
+        const T* operator->() const
+        {
+            return (i_holder == NULL ? NULL : i_holder->i_referencee);
+        }
 
         // operator =
-        Referencer& operator=(const Referencer &obj);
-        Referencer& operator=(T *);
+        Referencer& operator=(const Referencer& obj);
+        Referencer& operator=(T*);
 
         // returns true if i_referencee is null
-        bool isNull(void) const { return i_holder == NULL; }
+        bool isNull(void) const
+        {
+            return i_holder == NULL;
+        }
 
     private:
 
@@ -86,11 +116,11 @@ class Referencer
             return *i_holder->i_referencee;
         }
 
-        void deReference(ReferenceeHolder *);
-        void addReference(ReferenceeHolder *);
+        void deReference(ReferenceeHolder*);
+        void addReference(ReferenceeHolder*);
 
         // private data
-        ReferenceeHolder *i_holder;
+        ReferenceeHolder* i_holder;
 };
 #endif
 

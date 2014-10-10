@@ -25,13 +25,13 @@
 
 template
 <
-typename T,
-class THREADING_MODEL
->
+    typename T,
+    class THREADING_MODEL
+    >
 struct ReferenceHolder : public THREADING_MODEL
 {
-    explicit ReferenceHolder(T *ref) : i_referencee(ref), i_referenceCount(0) {}
-    T *i_referencee;
+    explicit ReferenceHolder(T* ref) : i_referencee(ref), i_referenceCount(0) {}
+    T* i_referencee;
     unsigned int i_referenceCount;
     typedef typename THREADING_MODEL::Lock Lock;
 };

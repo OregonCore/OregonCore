@@ -49,20 +49,26 @@ class UpdateData
         UpdateData();
 
         void AddOutOfRangeGUID(std::set<uint64>& guids);
-        void AddOutOfRangeGUID(const uint64 &guid);
-        void AddUpdateBlock(const ByteBuffer &block);
-        bool BuildPacket(WorldPacket *packet, bool hasTransport = false);
-        bool HasData() { return m_blockCount > 0 || !m_outOfRangeGUIDs.empty(); }
+        void AddOutOfRangeGUID(const uint64& guid);
+        void AddUpdateBlock(const ByteBuffer& block);
+        bool BuildPacket(WorldPacket* packet, bool hasTransport = false);
+        bool HasData()
+        {
+            return m_blockCount > 0 || !m_outOfRangeGUIDs.empty();
+        }
         void Clear();
 
-        std::set<uint64> const& GetOutOfRangeGUIDs() const { return m_outOfRangeGUIDs; }
+        std::set<uint64> const& GetOutOfRangeGUIDs() const
+        {
+            return m_outOfRangeGUIDs;
+        }
 
     protected:
         uint32 m_blockCount;
         std::set<uint64> m_outOfRangeGUIDs;
         ByteBuffer m_data;
 
-        void Compress(void* dst, uint32 *dst_size, void* src, int src_size);
+        void Compress(void* dst, uint32* dst_size, void* src, int src_size);
 };
 #endif
 

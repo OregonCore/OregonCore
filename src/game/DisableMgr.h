@@ -53,8 +53,8 @@ typedef std::map<DisableType, DisableTypeMap> DisableMap;   // global disable ma
 
 class DisableMgr
 {
-    friend class ACE_Singleton<DisableMgr, ACE_Null_Mutex>;
-    DisableMgr();
+        friend class ACE_Singleton<DisableMgr, ACE_Null_Mutex>;
+        DisableMgr();
 
     public:
         ~DisableMgr();

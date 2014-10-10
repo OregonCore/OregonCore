@@ -50,7 +50,7 @@ struct GameEventQuestToEventConditionNum
 
 struct GameEventData
 {
-    GameEventData() : start(1),end(0),nextstart(0),occurence(0),length(0),state(GAMEEVENT_NORMAL) {}
+    GameEventData() : start(1), end(0), nextstart(0), occurence(0), length(0), state(GAMEEVENT_NORMAL) {}
     time_t start;   // occurs after this time
     time_t end;     // occurs before this time
     time_t nextstart; // after this time the follow-up events count this phase completed
@@ -61,7 +61,10 @@ struct GameEventData
     std::set<uint16 /*gameevent id*/> prerequisite_events;  // events that must be completed before starting this event
     std::string description;
 
-    bool isValid() const { return ((length > 0) || (state > GAMEEVENT_NORMAL)); }
+    bool isValid() const
+    {
+        return ((length > 0) || (state > GAMEEVENT_NORMAL));
+    }
 };
 
 struct ModelEquip
@@ -89,23 +92,38 @@ class GameEventMgr
         ~GameEventMgr() {};
         typedef std::set<uint16> ActiveEvents;
         typedef std::vector<GameEventData> GameEventDataMap;
-        ActiveEvents const& GetActiveEventList() const { return m_ActiveEvents; }
-        GameEventDataMap const& GetEventMap() const { return mGameEvent; }
+        ActiveEvents const& GetActiveEventList() const
+        {
+            return m_ActiveEvents;
+        }
+        GameEventDataMap const& GetEventMap() const
+        {
+            return mGameEvent;
+        }
         bool CheckOneGameEvent(uint16 entry) const;
         uint32 NextCheck(uint16 entry) const;
         void LoadFromDB();
         uint32 Update();
-        bool IsActiveEvent(uint16 event_id) { return (m_ActiveEvents.find(event_id) != m_ActiveEvents.end()); }
+        bool IsActiveEvent(uint16 event_id)
+        {
+            return (m_ActiveEvents.find(event_id) != m_ActiveEvents.end());
+        }
         uint32 Initialize();
         bool StartEvent(uint16 event_id, bool overwrite = false);
         void StopEvent(uint16 event_id, bool overwrite = false);
         void HandleQuestComplete(uint32 quest_id);  // called on world event type quest completions
-        void HandleWorldEventGossip(Player* plr, Creature * c);
-        uint32 GetNPCFlag(Creature * cr);
+        void HandleWorldEventGossip(Player* plr, Creature* c);
+        uint32 GetNPCFlag(Creature* cr);
     private:
         void SendWorldStateUpdate(Player* plr, uint16 event_id);
-        void AddActiveEvent(uint16 event_id) { m_ActiveEvents.insert(event_id); }
-        void RemoveActiveEvent(uint16 event_id) { m_ActiveEvents.erase(event_id); }
+        void AddActiveEvent(uint16 event_id)
+        {
+            m_ActiveEvents.insert(event_id);
+        }
+        void RemoveActiveEvent(uint16 event_id)
+        {
+            m_ActiveEvents.erase(event_id);
+        }
         void ApplyNewEvent(uint16 event_id);
         void UnApplyEvent(uint16 event_id);
         void GameEventSpawn(int16 event_id);

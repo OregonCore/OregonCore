@@ -37,8 +37,8 @@ struct GameObjectInfo
     uint32  id;
     uint32  type;
     uint32  displayId;
-    char   *name;
-    char   *castBarCaption;
+    char*   name;
+    char*   castBarCaption;
     uint32  faction;
     uint32  flags;
     float   size;
@@ -363,35 +363,44 @@ struct GameObjectInfo
     };
     uint32 ScriptId;
 
-	// helpers
+    // helpers
     bool IsDespawnAtAction() const
     {
         switch (type)
         {
-            case GAMEOBJECT_TYPE_CHEST: return chest.consumable;
-            case GAMEOBJECT_TYPE_GOOBER: return goober.consumable;
-            default: return false;
+        case GAMEOBJECT_TYPE_CHEST:
+            return chest.consumable;
+        case GAMEOBJECT_TYPE_GOOBER:
+            return goober.consumable;
+        default:
+            return false;
         }
-	}
+    }
 
     uint32 GetCharges() const                               // despawn at uses amount
     {
-        switch(type)
+        switch (type)
         {
-            //case GAMEOBJECT_TYPE_TRAP:        return trap.charges;
-            case GAMEOBJECT_TYPE_GUARDPOST:   return guardpost.charges;
-            case GAMEOBJECT_TYPE_SPELLCASTER: return spellcaster.charges;
-            default: return 0;
+        //case GAMEOBJECT_TYPE_TRAP:        return trap.charges;
+        case GAMEOBJECT_TYPE_GUARDPOST:
+            return guardpost.charges;
+        case GAMEOBJECT_TYPE_SPELLCASTER:
+            return spellcaster.charges;
+        default:
+            return 0;
         }
     }
 
     uint32 GetGossipMenuId() const
     {
-        switch(type)
+        switch (type)
         {
-            case GAMEOBJECT_TYPE_QUESTGIVER:    return questgiver.gossipID;
-            case GAMEOBJECT_TYPE_GOOBER:        return goober.gossipID;
-            default: return 0;
+        case GAMEOBJECT_TYPE_QUESTGIVER:
+            return questgiver.gossipID;
+        case GAMEOBJECT_TYPE_GOOBER:
+            return goober.gossipID;
+        default:
+            return 0;
         }
     }
 };
@@ -468,46 +477,80 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         void RemoveFromWorld();
         void CleanupsBeforeDelete();
 
-        bool Create(uint32 guidlow, uint32 name_id, Map *map, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 ArtKit = 0);
+        bool Create(uint32 guidlow, uint32 name_id, Map* map, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 ArtKit = 0);
         void Update(uint32 diff);
         static GameObject* GetGameObject(WorldObject& object, uint64 guid);
-        GameObjectInfo const* GetGOInfo() const { return m_goInfo; }
-        GameObjectData const* GetGOData() const { return m_goData; }
+        GameObjectInfo const* GetGOInfo() const
+        {
+            return m_goInfo;
+        }
+        GameObjectData const* GetGOData() const
+        {
+            return m_goData;
+        }
 
         bool IsTransport() const;
 
-        uint32 GetDBTableGUIDLow() const { return m_DBTableGuid; }
+        uint32 GetDBTableGUIDLow() const
+        {
+            return m_DBTableGuid;
+        }
 
         void UpdateRotationFields(float rotation2 = 0.0f, float rotation3 = 0.0f);
 
-        void Say(const char* text, uint32 language, uint64 TargetGuid) { MonsterSay(text,language,TargetGuid); }
-        void Yell(const char* text, uint32 language, uint64 TargetGuid) { MonsterYell(text,language,TargetGuid); }
-        void TextEmote(const char* text, uint64 TargetGuid) { MonsterTextEmote(text,TargetGuid); }
-        void Whisper(const char* text,uint64 receiver) { MonsterWhisper(text,receiver); }
-        void Say(int32 textId, uint32 language, uint64 TargetGuid) { MonsterSay(textId,language,TargetGuid); }
-        void Yell(int32 textId, uint32 language, uint64 TargetGuid) { MonsterYell(textId,language,TargetGuid); }
-        void TextEmote(int32 textId, uint64 TargetGuid) { MonsterTextEmote(textId,TargetGuid); }
-        void Whisper(int32 textId, uint64 receiver) { MonsterWhisper(textId,receiver); }
+        void Say(const char* text, uint32 language, uint64 TargetGuid)
+        {
+            MonsterSay(text, language, TargetGuid);
+        }
+        void Yell(const char* text, uint32 language, uint64 TargetGuid)
+        {
+            MonsterYell(text, language, TargetGuid);
+        }
+        void TextEmote(const char* text, uint64 TargetGuid)
+        {
+            MonsterTextEmote(text, TargetGuid);
+        }
+        void Whisper(const char* text, uint64 receiver)
+        {
+            MonsterWhisper(text, receiver);
+        }
+        void Say(int32 textId, uint32 language, uint64 TargetGuid)
+        {
+            MonsterSay(textId, language, TargetGuid);
+        }
+        void Yell(int32 textId, uint32 language, uint64 TargetGuid)
+        {
+            MonsterYell(textId, language, TargetGuid);
+        }
+        void TextEmote(int32 textId, uint64 TargetGuid)
+        {
+            MonsterTextEmote(textId, TargetGuid);
+        }
+        void Whisper(int32 textId, uint64 receiver)
+        {
+            MonsterWhisper(textId, receiver);
+        }
 
         // overwrite WorldObject function for proper name localization
         const char* GetNameForLocaleIdx(int32 locale_idx) const;
 
         void SaveToDB();
         void SaveToDB(uint32 mapid, uint8 spawnMask);
-        bool LoadFromDB(uint32 guid, Map *map);
+        bool LoadFromDB(uint32 guid, Map* map);
         void DeleteFromDB();
 
         void SetOwnerGUID(uint64 owner)
         {
             // Owner already found and different than expected owner - remove object from old owner
             if (owner && GetOwnerGUID() && GetOwnerGUID() != owner)
-            {
                 assert(false);
-            }
             m_spawnedByDefault = false;                     // all object with owner is despawned after delay
             SetUInt64Value(OBJECT_FIELD_CREATED_BY, owner);
         }
-        uint64 GetOwnerGUID() const { return GetUInt64Value(OBJECT_FIELD_CREATED_BY); }
+        uint64 GetOwnerGUID() const
+        {
+            return GetUInt64Value(OBJECT_FIELD_CREATED_BY);
+        }
         Unit* GetOwner() const;
 
         void SetSpellId(uint32 id)
@@ -515,44 +558,72 @@ class GameObject : public WorldObject, public GridObject<GameObject>
             m_spawnedByDefault = false;                     // all summoned object is despawned after delay
             m_spellId = id;
         }
-        uint32 GetSpellId() const { return m_spellId;}
+        uint32 GetSpellId() const
+        {
+            return m_spellId;
+        }
 
         static uint32 GetLootId(GameObjectInfo const* info);
-        uint32 GetLootId() const { return GetLootId(GetGOInfo()); }
+        uint32 GetLootId() const
+        {
+            return GetLootId(GetGOInfo());
+        }
         uint32 GetLockId() const
         {
-            switch(GetGoType())
+            switch (GetGoType())
             {
-                case GAMEOBJECT_TYPE_DOOR:       return GetGOInfo()->door.lockId;
-                case GAMEOBJECT_TYPE_BUTTON:     return GetGOInfo()->button.lockId;
-                case GAMEOBJECT_TYPE_QUESTGIVER: return GetGOInfo()->questgiver.lockId;
-                case GAMEOBJECT_TYPE_CHEST:      return GetGOInfo()->chest.lockId;
-                case GAMEOBJECT_TYPE_TRAP:       return GetGOInfo()->trap.lockId;
-                case GAMEOBJECT_TYPE_GOOBER:     return GetGOInfo()->goober.lockId;
-                case GAMEOBJECT_TYPE_AREADAMAGE: return GetGOInfo()->areadamage.lockId;
-                case GAMEOBJECT_TYPE_CAMERA:     return GetGOInfo()->camera.lockId;
-                case GAMEOBJECT_TYPE_FLAGSTAND:  return GetGOInfo()->flagstand.lockId;
-                case GAMEOBJECT_TYPE_FISHINGHOLE:return GetGOInfo()->fishinghole.lockId;
-                case GAMEOBJECT_TYPE_FLAGDROP:   return GetGOInfo()->flagdrop.lockId;
-                default: return 0;
+            case GAMEOBJECT_TYPE_DOOR:
+                return GetGOInfo()->door.lockId;
+            case GAMEOBJECT_TYPE_BUTTON:
+                return GetGOInfo()->button.lockId;
+            case GAMEOBJECT_TYPE_QUESTGIVER:
+                return GetGOInfo()->questgiver.lockId;
+            case GAMEOBJECT_TYPE_CHEST:
+                return GetGOInfo()->chest.lockId;
+            case GAMEOBJECT_TYPE_TRAP:
+                return GetGOInfo()->trap.lockId;
+            case GAMEOBJECT_TYPE_GOOBER:
+                return GetGOInfo()->goober.lockId;
+            case GAMEOBJECT_TYPE_AREADAMAGE:
+                return GetGOInfo()->areadamage.lockId;
+            case GAMEOBJECT_TYPE_CAMERA:
+                return GetGOInfo()->camera.lockId;
+            case GAMEOBJECT_TYPE_FLAGSTAND:
+                return GetGOInfo()->flagstand.lockId;
+            case GAMEOBJECT_TYPE_FISHINGHOLE:
+                return GetGOInfo()->fishinghole.lockId;
+            case GAMEOBJECT_TYPE_FLAGDROP:
+                return GetGOInfo()->flagdrop.lockId;
+            default:
+                return 0;
             }
         }
 
         bool GetDespawnPossibility() const                      // despawn at targeting of cast?
         {
-            switch(GetGoType())
+            switch (GetGoType())
             {
-                case GAMEOBJECT_TYPE_DOOR:       return GetGOInfo()->door.noDamageImmune;
-                case GAMEOBJECT_TYPE_BUTTON:     return GetGOInfo()->button.noDamageImmune;
-                case GAMEOBJECT_TYPE_QUESTGIVER: return GetGOInfo()->questgiver.noDamageImmune;
-                case GAMEOBJECT_TYPE_GOOBER:     return GetGOInfo()->goober.noDamageImmune;
-                case GAMEOBJECT_TYPE_FLAGSTAND:  return GetGOInfo()->flagstand.noDamageImmune;
-                case GAMEOBJECT_TYPE_FLAGDROP:   return GetGOInfo()->flagdrop.noDamageImmune;
-                default: return true;
+            case GAMEOBJECT_TYPE_DOOR:
+                return GetGOInfo()->door.noDamageImmune;
+            case GAMEOBJECT_TYPE_BUTTON:
+                return GetGOInfo()->button.noDamageImmune;
+            case GAMEOBJECT_TYPE_QUESTGIVER:
+                return GetGOInfo()->questgiver.noDamageImmune;
+            case GAMEOBJECT_TYPE_GOOBER:
+                return GetGOInfo()->goober.noDamageImmune;
+            case GAMEOBJECT_TYPE_FLAGSTAND:
+                return GetGOInfo()->flagstand.noDamageImmune;
+            case GAMEOBJECT_TYPE_FLAGDROP:
+                return GetGOInfo()->flagdrop.noDamageImmune;
+            default:
+                return true;
             }
         }
 
-        time_t GetRespawnTime() const { return m_respawnTime; }
+        time_t GetRespawnTime() const
+        {
+            return m_respawnTime;
+        }
         time_t GetRespawnTimeEx() const
         {
             time_t now = time(NULL);
@@ -571,43 +642,94 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         bool isSpawned() const
         {
             return m_respawnDelayTime == 0 ||
-                (m_respawnTime > 0 && !m_spawnedByDefault) ||
-                (m_respawnTime == 0 && m_spawnedByDefault);
+                   (m_respawnTime > 0 && !m_spawnedByDefault) ||
+                   (m_respawnTime == 0 && m_spawnedByDefault);
         }
-        bool isSpawnedByDefault() const { return m_spawnedByDefault; }
-        void SetSpawnedByDefault(bool b) { m_spawnedByDefault = b; }
-        uint32 GetRespawnDelay() const { return m_respawnDelayTime; }
+        bool isSpawnedByDefault() const
+        {
+            return m_spawnedByDefault;
+        }
+        void SetSpawnedByDefault(bool b)
+        {
+            m_spawnedByDefault = b;
+        }
+        uint32 GetRespawnDelay() const
+        {
+            return m_respawnDelayTime;
+        }
         void Refresh();
         void Delete();
-        void getFishLoot(Loot *loot);
-        GameobjectTypes GetGoType() const { return GameobjectTypes(GetUInt32Value(GAMEOBJECT_TYPE_ID)); }
-        void SetGoType(GameobjectTypes type) { SetUInt32Value(GAMEOBJECT_TYPE_ID, type); }
-        GOState GetGoState() const { return GOState(GetUInt32Value(GAMEOBJECT_STATE)); }
-        void SetGoState(GOState state) { SetUInt32Value(GAMEOBJECT_STATE, state); }
-        uint32 GetGoArtKit() const { return GetUInt32Value(GAMEOBJECT_ARTKIT); }
+        void getFishLoot(Loot* loot);
+        GameobjectTypes GetGoType() const
+        {
+            return GameobjectTypes(GetUInt32Value(GAMEOBJECT_TYPE_ID));
+        }
+        void SetGoType(GameobjectTypes type)
+        {
+            SetUInt32Value(GAMEOBJECT_TYPE_ID, type);
+        }
+        GOState GetGoState() const
+        {
+            return GOState(GetUInt32Value(GAMEOBJECT_STATE));
+        }
+        void SetGoState(GOState state)
+        {
+            SetUInt32Value(GAMEOBJECT_STATE, state);
+        }
+        uint32 GetGoArtKit() const
+        {
+            return GetUInt32Value(GAMEOBJECT_ARTKIT);
+        }
         void SetGoArtKit(uint32 artkit);
-        uint32 GetGoAnimProgress() const { return GetUInt32Value(GAMEOBJECT_ANIMPROGRESS); }
-        void SetGoAnimProgress(uint32 animprogress) { SetUInt32Value(GAMEOBJECT_ANIMPROGRESS, animprogress); }
+        uint32 GetGoAnimProgress() const
+        {
+            return GetUInt32Value(GAMEOBJECT_ANIMPROGRESS);
+        }
+        void SetGoAnimProgress(uint32 animprogress)
+        {
+            SetUInt32Value(GAMEOBJECT_ANIMPROGRESS, animprogress);
+        }
 
         void Use(Unit* user);
 
-        LootState getLootState() const { return m_lootState; }
-        void SetLootState(LootState s) { m_lootState = s; }
+        LootState getLootState() const
+        {
+            return m_lootState;
+        }
+        void SetLootState(LootState s)
+        {
+            m_lootState = s;
+        }
 
-        void AddToSkillupList(uint32 PlayerGuidLow) { m_SkillupList.push_back(PlayerGuidLow); }
+        void AddToSkillupList(uint32 PlayerGuidLow)
+        {
+            m_SkillupList.push_back(PlayerGuidLow);
+        }
         bool IsInSkillupList(uint32 PlayerGuidLow) const
         {
             for (std::list<uint32>::const_iterator i = m_SkillupList.begin(); i != m_SkillupList.end(); ++i)
                 if (*i == PlayerGuidLow) return true;
             return false;
         }
-        void ClearSkillupList() { m_SkillupList.clear(); }
+        void ClearSkillupList()
+        {
+            m_SkillupList.clear();
+        }
 
         void AddUniqueUse(Player* player);
-        void AddUse() { ++m_usetimes; }
+        void AddUse()
+        {
+            ++m_usetimes;
+        }
 
-        uint32 GetUseCount() const { return m_usetimes; }
-        uint32 GetUniqueUseCount() const { return m_unique_users.size(); }
+        uint32 GetUseCount() const
+        {
+            return m_usetimes;
+        }
+        uint32 GetUniqueUseCount() const
+        {
+            return m_unique_users.size();
+        }
 
         void SaveRespawnTime();
 
@@ -617,18 +739,22 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         bool hasInvolvedQuest(uint32 quest_id) const;
         bool ActivateToQuest(Player* pTarget) const;
         void UseDoorOrButton(uint32 time_to_restore = 0, bool alternative = false);
-                                                            // 0 = use `gameobject`.`spawntimesecs`
+        // 0 = use `gameobject`.`spawntimesecs`
         void ResetDoorOrButton();
         // 0 = use `gameobject`.`spawntimesecs`
 
         uint32 GetLinkedGameObjectEntry() const
         {
-            switch(GetGoType())
+            switch (GetGoType())
             {
-                case GAMEOBJECT_TYPE_CHEST:       return GetGOInfo()->chest.linkedTrapId;
-                case GAMEOBJECT_TYPE_SPELL_FOCUS: return GetGOInfo()->spellFocus.linkedTrapId;
-                case GAMEOBJECT_TYPE_GOOBER:      return GetGOInfo()->goober.linkedTrapId;
-                default: return 0;
+            case GAMEOBJECT_TYPE_CHEST:
+                return GetGOInfo()->chest.linkedTrapId;
+            case GAMEOBJECT_TYPE_SPELL_FOCUS:
+                return GetGOInfo()->spellFocus.linkedTrapId;
+            case GAMEOBJECT_TYPE_GOOBER:
+                return GetGOInfo()->goober.linkedTrapId;
+            default:
+                return 0;
             }
         }
 
@@ -636,24 +762,40 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         {
             switch (GetGoType())
             {
-            case GAMEOBJECT_TYPE_TRAP:      return GetGOInfo()->trap.cooldown;
-            case GAMEOBJECT_TYPE_GOOBER:    return GetGOInfo()->goober.cooldown;
-            default: return 0;
+            case GAMEOBJECT_TYPE_TRAP:
+                return GetGOInfo()->trap.cooldown;
+            case GAMEOBJECT_TYPE_GOOBER:
+                return GetGOInfo()->goober.cooldown;
+            default:
+                return 0;
             }
         }
 
         uint32 GetAutoCloseTime() const
         {
             uint32 autoCloseTime = 0;
-            switch(GetGoType())
+            switch (GetGoType())
             {
-                case GAMEOBJECT_TYPE_DOOR:          autoCloseTime = GetGOInfo()->door.autoCloseTime; break;
-                case GAMEOBJECT_TYPE_BUTTON:        autoCloseTime = GetGOInfo()->button.autoCloseTime; break;
-                case GAMEOBJECT_TYPE_TRAP:          autoCloseTime = GetGOInfo()->trap.autoCloseTime; break;
-                case GAMEOBJECT_TYPE_GOOBER:        autoCloseTime = GetGOInfo()->goober.autoCloseTime; break;
-                case GAMEOBJECT_TYPE_TRANSPORT:     autoCloseTime = GetGOInfo()->transport.autoCloseTime; break;
-                case GAMEOBJECT_TYPE_AREADAMAGE:    autoCloseTime = GetGOInfo()->areadamage.autoCloseTime; break;
-                default: break;
+            case GAMEOBJECT_TYPE_DOOR:
+                autoCloseTime = GetGOInfo()->door.autoCloseTime;
+                break;
+            case GAMEOBJECT_TYPE_BUTTON:
+                autoCloseTime = GetGOInfo()->button.autoCloseTime;
+                break;
+            case GAMEOBJECT_TYPE_TRAP:
+                autoCloseTime = GetGOInfo()->trap.autoCloseTime;
+                break;
+            case GAMEOBJECT_TYPE_GOOBER:
+                autoCloseTime = GetGOInfo()->goober.autoCloseTime;
+                break;
+            case GAMEOBJECT_TYPE_TRANSPORT:
+                autoCloseTime = GetGOInfo()->transport.autoCloseTime;
+                break;
+            case GAMEOBJECT_TYPE_AREADAMAGE:
+                autoCloseTime = GetGOInfo()->areadamage.autoCloseTime;
+                break;
+            default:
+                break;
             }
             return autoCloseTime / 0x10000;
         }
@@ -665,7 +807,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
 
         GameObject* LookupFishingHoleAround(float range);
 
-        void CastSpell(Unit *target, uint32 spell);
+        void CastSpell(Unit* target, uint32 spell);
     protected:
         uint32      m_spellId;
         time_t      m_respawnTime;                          // (secs) time of next respawn (or despawn if GO have owner()),
@@ -673,7 +815,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         LootState   m_lootState;
         bool        m_spawnedByDefault;
         time_t      m_cooldownTime;                         // used as internal reaction delay time store (not state change reaction).
-                                                            // For traps this: spell casting cooldown, for doors/buttons: reset time.
+        // For traps this: spell casting cooldown, for doors/buttons: reset time.
         std::list<uint32> m_SkillupList;
 
         Player* m_ritualOwner;                              // used for GAMEOBJECT_TYPE_SUMMONING_RITUAL where GO is not summoned (no owner)

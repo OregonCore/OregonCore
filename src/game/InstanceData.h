@@ -69,16 +69,16 @@ struct BossInfo
 
 struct DoorInfo
 {
-    explicit DoorInfo(BossInfo *_bossInfo, DoorType _type)
+    explicit DoorInfo(BossInfo* _bossInfo, DoorType _type)
         : bossInfo(_bossInfo), type(_type) {}
-    BossInfo *bossInfo;
+    BossInfo* bossInfo;
     DoorType type;
 };
 
 struct MinionInfo
 {
-    explicit MinionInfo(BossInfo *_bossInfo) : bossInfo(_bossInfo) {}
-    BossInfo *bossInfo;
+    explicit MinionInfo(BossInfo* _bossInfo) : bossInfo(_bossInfo) {}
+    BossInfo* bossInfo;
 };
 
 typedef std::multimap<uint32 /*entry*/, DoorInfo> DoorInfoMap;
@@ -88,19 +88,25 @@ class InstanceData : public ZoneScript
 {
     public:
 
-        explicit InstanceData(Map *map) : instance(map) {}
+        explicit InstanceData(Map* map) : instance(map) {}
         virtual ~InstanceData() {}
 
-        Map *instance;
+        Map* instance;
 
         //On creation, NOT load.
         virtual void Initialize() {}
 
         //On load
-        virtual void Load(const char * data) { LoadBossState(data); }
+        virtual void Load(const char* data)
+        {
+            LoadBossState(data);
+        }
 
         //When save is needed, this function generates the data
-        virtual std::string GetSaveData() { return GetBossSaveData(); }
+        virtual std::string GetSaveData()
+        {
+            return GetBossSaveData();
+        }
 
         void SaveToDB();
 
@@ -111,11 +117,17 @@ class InstanceData : public ZoneScript
         virtual bool IsEncounterInProgress() const;
 
         //Called when a player successfully enters the instance.
-        virtual void OnPlayerEnter(Player* ) {}
+        virtual void OnPlayerEnter(Player*) {}
 
         // Direct calls to Map functions.
-        Creature *GetCreature(uint64 guid) {return instance->GetCreature(guid);}
-        GameObject *GetGameObject(uint64 guid) {return instance->GetGameObject(guid);}
+        Creature* GetCreature(uint64 guid)
+        {
+            return instance->GetCreature(guid);
+        }
+        GameObject* GetGameObject(uint64 guid)
+        {
+            return instance->GetGameObject(guid);
+        }
 
         //sends world state update to all players in instance
         void DoUpdateWorldState(uint32 uiStateId, uint32 uiStateData);
@@ -126,7 +138,7 @@ class InstanceData : public ZoneScript
         //Handle open / close objects
         //use HandleGameObject(NULL,boolen,GO); in OnObjectCreate in instance scripts
         //use HandleGameObject(GUID,boolen,NULL); in any other script
-        void HandleGameObject(uint64 GUID, bool open, GameObject *go = NULL);
+        void HandleGameObject(uint64 GUID, bool open, GameObject* go = NULL);
 
         //change active state of doors or buttons
         void DoUseDoorOrButton(uint64 uiGuid, uint32 uiWithRestoreTime = 0, bool bUseAlternativeState = false);
@@ -136,17 +148,20 @@ class InstanceData : public ZoneScript
 
         virtual bool SetBossState(uint32 id, EncounterState state);
     protected:
-        void SetBossNumber(uint32 number) { bosses.resize(number); }
-        void LoadDoorData(const DoorData *data);
-        void LoadMinionData(const MinionData *data);
+        void SetBossNumber(uint32 number)
+        {
+            bosses.resize(number);
+        }
+        void LoadDoorData(const DoorData* data);
+        void LoadMinionData(const MinionData* data);
 
-        void AddDoor(GameObject *door, bool add);
-        void AddMinion(Creature *minion, bool add);
+        void AddDoor(GameObject* door, bool add);
+        void AddMinion(Creature* minion, bool add);
 
-        void UpdateDoorState(GameObject *door);
-        void UpdateMinionState(Creature *minion, EncounterState state);
+        void UpdateDoorState(GameObject* door);
+        void UpdateMinionState(Creature* minion, EncounterState state);
 
-        std::string LoadBossState(const char * data);
+        std::string LoadBossState(const char* data);
         std::string GetBossSaveData();
     private:
         std::vector<BossInfo> bosses;

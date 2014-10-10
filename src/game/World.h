@@ -335,7 +335,7 @@ enum RealmType
     REALM_TYPE_RP = 6,
     REALM_TYPE_RPPVP = 8,
     REALM_TYPE_FFA_PVP = 16                                 // custom, free for all pvp mode like arena PvP in all zones except rest activated places and sanctuaries
-                                                            // replaced by REALM_PVP in realm list
+                         // replaced by REALM_PVP in realm list
 };
 
 enum RealmZone
@@ -413,20 +413,23 @@ struct CliCommandHolder
     typedef void CommandFinished(void*, bool success);
 
     void* m_callbackArg;
-    char *m_command;
+    char* m_command;
     Print* m_print;
 
     CommandFinished* m_commandFinished;
 
-    CliCommandHolder(void* callbackArg, const char *command, Print* zprint, CommandFinished* commandFinished)
+    CliCommandHolder(void* callbackArg, const char* command, Print* zprint, CommandFinished* commandFinished)
         : m_callbackArg(callbackArg), m_print(zprint), m_commandFinished(commandFinished)
     {
-        size_t len = strlen(command)+1;
+        size_t len = strlen(command) + 1;
         m_command = new char[len];
         memcpy(m_command, command, len);
     }
 
-    ~CliCommandHolder() { delete[] m_command; }
+    ~CliCommandHolder()
+    {
+        delete[] m_command;
+    }
 };
 
 // The World
@@ -439,17 +442,32 @@ class World
         ~World();
 
         WorldSession* FindSession(uint32 id) const;
-        void AddSession(WorldSession *s);
+        void AddSession(WorldSession* s);
         void SendAutoBroadcast();
         bool RemoveSession(uint32 id);
         // Get the number of current active sessions
         void UpdateMaxSessionCounters();
-        uint32 GetActiveAndQueuedSessionCount() const { return m_sessions.size(); }
-        uint32 GetActiveSessionCount() const { return m_sessions.size() - m_QueuedPlayer.size(); }
-        uint32 GetQueuedSessionCount() const { return m_QueuedPlayer.size(); }
+        uint32 GetActiveAndQueuedSessionCount() const
+        {
+            return m_sessions.size();
+        }
+        uint32 GetActiveSessionCount() const
+        {
+            return m_sessions.size() - m_QueuedPlayer.size();
+        }
+        uint32 GetQueuedSessionCount() const
+        {
+            return m_QueuedPlayer.size();
+        }
         // Get the maximum number of parallel sessions on the server since last reboot
-        uint32 GetMaxQueuedSessionCount() const { return m_maxQueuedSessionCount; }
-        uint32 GetMaxActiveSessionCount() const { return m_maxActiveSessionCount; }
+        uint32 GetMaxQueuedSessionCount() const
+        {
+            return m_maxQueuedSessionCount;
+        }
+        uint32 GetMaxActiveSessionCount() const
+        {
+            return m_maxActiveSessionCount;
+        }
         Player* FindPlayerInZone(uint32 zone);
 
         Weather* FindWeather(uint32 id) const;
@@ -457,9 +475,18 @@ class World
         void RemoveWeather(uint32 zone_id);
 
         // Get the active session server limit (or security level limitations)
-        uint32 GetPlayerAmountLimit() const { return m_playerLimit >= 0 ? m_playerLimit : 0; }
-        AccountTypes GetPlayerSecurityLimit() const { return m_allowedSecurityLevel < 0 ? SEC_PLAYER : m_allowedSecurityLevel; }
-        void SetPlayerSecurityLimit(AccountTypes sec) { m_allowedSecurityLevel = (sec < SEC_PLAYER ? SEC_PLAYER : sec); }
+        uint32 GetPlayerAmountLimit() const
+        {
+            return m_playerLimit >= 0 ? m_playerLimit : 0;
+        }
+        AccountTypes GetPlayerSecurityLimit() const
+        {
+            return m_allowedSecurityLevel < 0 ? SEC_PLAYER : m_allowedSecurityLevel;
+        }
+        void SetPlayerSecurityLimit(AccountTypes sec)
+        {
+            m_allowedSecurityLevel = (sec < SEC_PLAYER ? SEC_PLAYER : sec);
+        }
 
         // Set the active session server limit (or security level limitation)
         void SetPlayerLimit(int32 limit, bool needUpdate = false);
@@ -470,95 +497,166 @@ class World
         bool RemoveQueuedPlayer(WorldSession* session);
         int32 GetQueuePos(WorldSession*);
         bool HasRecentlyDisconnected(WorldSession*);
-        uint32 GetQueueSize() const { return m_QueuedPlayer.size(); }
+        uint32 GetQueueSize() const
+        {
+            return m_QueuedPlayer.size();
+        }
 
         // todo Actions on m_allowMovement still to be implemented
         // Is movement allowed?
-        bool getAllowMovement() const { return m_allowMovement; }
+        bool getAllowMovement() const
+        {
+            return m_allowMovement;
+        }
         // Allow/Disallow object movements
-        void SetAllowMovement(bool allow) { m_allowMovement = allow; }
+        void SetAllowMovement(bool allow)
+        {
+            m_allowMovement = allow;
+        }
 
         // Set a new Message of the Day
-        void SetMotd(std::string motd) { m_motd = motd; }
+        void SetMotd(std::string motd)
+        {
+            m_motd = motd;
+        }
         // Get the current Message of the Day
-        const char* GetMotd() const { return m_motd.c_str(); }
+        const char* GetMotd() const
+        {
+            return m_motd.c_str();
+        }
 
         // Set the string for new characters (first login)
-        void SetNewCharString(std::string str) { m_newCharString = str; }
+        void SetNewCharString(std::string str)
+        {
+            m_newCharString = str;
+        }
         // Get the string for new characters (first login)
-        const std::string& GetNewCharString() const { return m_newCharString; }
+        const std::string& GetNewCharString() const
+        {
+            return m_newCharString;
+        }
 
-        uint32 GetDefaultDbcLocale() const { return m_defaultDbcLocale; }
+        uint32 GetDefaultDbcLocale() const
+        {
+            return m_defaultDbcLocale;
+        }
 
         // Get the path where data (dbc, maps) are stored on disk
-        std::string GetDataPath() const { return m_dataPath; }
+        std::string GetDataPath() const
+        {
+            return m_dataPath;
+        }
 
         // When server started?
-        time_t const& GetStartTime() const { return m_startTime; }
+        time_t const& GetStartTime() const
+        {
+            return m_startTime;
+        }
         // What time is it?
-        time_t const& GetGameTime() const { return m_gameTime; }
+        time_t const& GetGameTime() const
+        {
+            return m_gameTime;
+        }
         // Uptime (in secs)
-        uint32 GetUptime() const { return uint32(m_gameTime - m_startTime); }
+        uint32 GetUptime() const
+        {
+            return uint32(m_gameTime - m_startTime);
+        }
         // Update time
-        uint32 GetUpdateTime() const { return m_updateTime; }
-        void SetRecordDiffInterval(int32 t) { if (t >= 0) m_configs[CONFIG_INTERVAL_LOG_UPDATE] = (uint32)t; }
+        uint32 GetUpdateTime() const
+        {
+            return m_updateTime;
+        }
+        void SetRecordDiffInterval(int32 t)
+        {
+            if (t >= 0) m_configs[CONFIG_INTERVAL_LOG_UPDATE] = (uint32)t;
+        }
 
         // Get the maximum skill level a player can reach
         uint16 GetConfigMaxSkillValue() const
         {
             uint32 lvl = getConfig(CONFIG_MAX_PLAYER_LEVEL);
-            return lvl > 60 ? 300 + ((lvl - 60) * 75) / 10 : lvl*5;
+            return lvl > 60 ? 300 + ((lvl - 60) * 75) / 10 : lvl * 5;
         }
 
         void SetInitialWorldSettings();
         void LoadConfigSettings(bool reload = false);
 
         void SendWorldText(int32 string_id, ...);
-        void SendGlobalText(const char* text, WorldSession *self);
+        void SendGlobalText(const char* text, WorldSession* self);
         void SendGMText(int32 string_id, ...);
-        void SendGlobalMessage(WorldPacket *packet, WorldSession *self = 0, uint32 team = 0);
-        void SendGlobalGMMessage(WorldPacket *packet, WorldSession *self = 0, uint32 team = 0);
-        bool SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self = 0, uint32 team = 0);
-        void SendZoneText(uint32 zone, const char *text, WorldSession *self = 0, uint32 team = 0);
-        void SendServerMessage(ServerMessageType type, const char *text = "", Player* player = NULL);
+        void SendGlobalMessage(WorldPacket* packet, WorldSession* self = 0, uint32 team = 0);
+        void SendGlobalGMMessage(WorldPacket* packet, WorldSession* self = 0, uint32 team = 0);
+        bool SendZoneMessage(uint32 zone, WorldPacket* packet, WorldSession* self = 0, uint32 team = 0);
+        void SendZoneText(uint32 zone, const char* text, WorldSession* self = 0, uint32 team = 0);
+        void SendServerMessage(ServerMessageType type, const char* text = "", Player* player = NULL);
 
         // Are we in the middle of a shutdown?
-        bool IsShuttingDown() const { return m_ShutdownTimer > 0; }
-        uint32 GetShutDownTimeLeft() { return m_ShutdownTimer; }
+        bool IsShuttingDown() const
+        {
+            return m_ShutdownTimer > 0;
+        }
+        uint32 GetShutDownTimeLeft()
+        {
+            return m_ShutdownTimer;
+        }
         void ShutdownServ(uint32 time, uint32 options, uint8 exitcode);
         void ShutdownCancel();
         void ShutdownMsg(bool show = false, Player* player = NULL);
-        static uint8 GetExitCode() { return m_ExitCode; }
-        static void StopNow(uint8 exitcode) { if (m_stopEvent) return; m_stopEvent = true; m_ExitCode = exitcode; }
-        static bool IsStopped() { return m_stopEvent; }
+        static uint8 GetExitCode()
+        {
+            return m_ExitCode;
+        }
+        static void StopNow(uint8 exitcode)
+        {
+            if (m_stopEvent) return;
+            m_stopEvent = true;
+            m_ExitCode = exitcode;
+        }
+        static bool IsStopped()
+        {
+            return m_stopEvent;
+        }
 
         void Update(uint32 diff);
 
         void UpdateSessions(time_t diff);
         // Set a server rate (see #Rates)
-        void setRate(Rates rate,float value) { rate_values[rate]=value; }
+        void setRate(Rates rate, float value)
+        {
+            rate_values[rate] = value;
+        }
         // Get a server rate (see #Rates)
-        float getRate(Rates rate) const { return rate_values[rate]; }
+        float getRate(Rates rate) const
+        {
+            return rate_values[rate];
+        }
 
         // Set a server configuration element (see #WorldConfigs)
-        void setConfig(uint32 index,uint32 value)
+        void setConfig(uint32 index, uint32 value)
         {
-            if (index<CONFIG_VALUE_COUNT)
-                m_configs[index]=value;
+            if (index < CONFIG_VALUE_COUNT)
+                m_configs[index] = value;
         }
 
         // Get a server configuration element (see #WorldConfigs)
         uint32 getConfig(uint32 index) const
         {
-            if (index<CONFIG_VALUE_COUNT)
+            if (index < CONFIG_VALUE_COUNT)
                 return m_configs[index];
             else
                 return 0;
         }
 
         // Are we on a "Player versus Player" server?
-        bool IsPvPRealm() { return (getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_PVP || getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_RPPVP || getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_FFA_PVP); }
-        bool IsFFAPvPRealm() { return getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_FFA_PVP; }
+        bool IsPvPRealm()
+        {
+            return (getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_PVP || getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_RPPVP || getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_FFA_PVP);
+        }
+        bool IsFFAPvPRealm()
+        {
+            return getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_FFA_PVP;
+        }
 
         bool KickPlayer(const std::string& playerName);
         void KickAll();
@@ -566,27 +664,72 @@ class World
         BanReturn BanAccount(BanMode mode, std::string nameOrIP, std::string duration, std::string reason, std::string author);
         bool RemoveBanAccount(BanMode mode, std::string nameOrIP);
 
-        uint32 IncreaseScheduledScriptsCount() { return (uint32)++m_scheduledScripts; }
-        uint32 DecreaseScheduledScriptCount() { return (uint32)--m_scheduledScripts; }
-        uint32 DecreaseScheduledScriptCount(size_t count) { return (uint32)(m_scheduledScripts -= count); }
-        bool IsScriptScheduled() const { return m_scheduledScripts > 0; }
+        uint32 IncreaseScheduledScriptsCount()
+        {
+            return (uint32)++m_scheduledScripts;
+        }
+        uint32 DecreaseScheduledScriptCount()
+        {
+            return (uint32)--m_scheduledScripts;
+        }
+        uint32 DecreaseScheduledScriptCount(size_t count)
+        {
+            return (uint32)(m_scheduledScripts -= count);
+        }
+        bool IsScriptScheduled() const
+        {
+            return m_scheduledScripts > 0;
+        }
 
         // for max speed access
-        static float GetMaxVisibleDistanceOnContinents()    { return m_MaxVisibleDistanceOnContinents; }
-        static float GetMaxVisibleDistanceInInstances()     { return m_MaxVisibleDistanceInInstances;  }
-        static float GetMaxVisibleDistanceInBGArenas()      { return m_MaxVisibleDistanceInBGArenas;   }
-        static float GetMaxVisibleDistanceForObject()       { return m_MaxVisibleDistanceForObject;    }
+        static float GetMaxVisibleDistanceOnContinents()
+        {
+            return m_MaxVisibleDistanceOnContinents;
+        }
+        static float GetMaxVisibleDistanceInInstances()
+        {
+            return m_MaxVisibleDistanceInInstances;
+        }
+        static float GetMaxVisibleDistanceInBGArenas()
+        {
+            return m_MaxVisibleDistanceInBGArenas;
+        }
+        static float GetMaxVisibleDistanceForObject()
+        {
+            return m_MaxVisibleDistanceForObject;
+        }
 
-        static float GetMaxVisibleDistanceInFlight()        { return m_MaxVisibleDistanceInFlight;     }
-        static float GetVisibleUnitGreyDistance()           { return m_VisibleUnitGreyDistance;        }
-        static float GetVisibleObjectGreyDistance()         { return m_VisibleObjectGreyDistance;      }
+        static float GetMaxVisibleDistanceInFlight()
+        {
+            return m_MaxVisibleDistanceInFlight;
+        }
+        static float GetVisibleUnitGreyDistance()
+        {
+            return m_VisibleUnitGreyDistance;
+        }
+        static float GetVisibleObjectGreyDistance()
+        {
+            return m_VisibleObjectGreyDistance;
+        }
 
-        static int32 GetVisibilityNotifyPeriodOnContinents(){ return m_visibility_notify_periodOnContinents; }
-        static int32 GetVisibilityNotifyPeriodInInstances() { return m_visibility_notify_periodInInstances;  }
-        static int32 GetVisibilityNotifyPeriodInBGArenas()  { return m_visibility_notify_periodInBGArenas;   }
+        static int32 GetVisibilityNotifyPeriodOnContinents()
+        {
+            return m_visibility_notify_periodOnContinents;
+        }
+        static int32 GetVisibilityNotifyPeriodInInstances()
+        {
+            return m_visibility_notify_periodInInstances;
+        }
+        static int32 GetVisibilityNotifyPeriodInBGArenas()
+        {
+            return m_visibility_notify_periodInBGArenas;
+        }
 
         void ProcessCliCommands();
-        void QueueCliCommand(CliCommandHolder* commandHolder) { cliCmdQueue.add(commandHolder); }
+        void QueueCliCommand(CliCommandHolder* commandHolder)
+        {
+            cliCmdQueue.add(commandHolder);
+        }
 
         void UpdateResultQueue();
         void InitResultQueue();
@@ -597,17 +740,30 @@ class World
 
         void UpdateAllowedSecurity();
 
-        LocaleConstant GetAvailableDbcLocale(LocaleConstant locale) const { if (m_availableDbcLocaleMask & (1 << locale)) return locale; else return m_defaultDbcLocale; }
+        LocaleConstant GetAvailableDbcLocale(LocaleConstant locale) const
+        {
+            if (m_availableDbcLocaleMask & (1 << locale)) return locale;
+            else return m_defaultDbcLocale;
+        }
 
         //used World DB version
         void LoadDBVersion();
-        char const* GetDBVersion() { return m_DBVersion.c_str(); }
+        char const* GetDBVersion()
+        {
+            return m_DBVersion.c_str();
+        }
 
         //used Script version
-        void SetScriptsVersion(char const* version) { m_ScriptsVersion = version ? version : "unknown scripting library"; }
-        char const* GetScriptsVersion() { return m_ScriptsVersion.c_str(); }
+        void SetScriptsVersion(char const* version)
+        {
+            m_ScriptsVersion = version ? version : "unknown scripting library";
+        }
+        char const* GetScriptsVersion()
+        {
+            return m_ScriptsVersion.c_str();
+        }
 
-        void RecordTimeDiff(const char * text, ...);
+        void RecordTimeDiff(const char* text, ...);
         void LoadAutobroadcasts();
         void LoadIp2nation();
     protected:
@@ -674,7 +830,7 @@ class World
 
         // CLI command holder to be thread safe
         ACE_Based::LockedQueue<CliCommandHolder*, ACE_Thread_Mutex> cliCmdQueue;
-        SqlResultQueue *m_resultQueue;
+        SqlResultQueue* m_resultQueue;
 
         // next daily quests reset time
         time_t m_NextDailyQuestReset;

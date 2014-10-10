@@ -25,7 +25,7 @@
 struct WaypointData
 {
     uint32 id;
-    float x,y,z,orientation;
+    float x, y, z, orientation;
     bool run;
     uint32 delay;
     uint32 event_id;
@@ -42,9 +42,15 @@ class WaypointStore
 
     public:
         // Null Mutex is OK because WaypointMgr is initialized in the World thread before World is initialized
-        static WaypointStore* instance() { return ACE_Singleton<WaypointStore, ACE_Null_Mutex>::instance(); }
+        static WaypointStore* instance()
+        {
+            return ACE_Singleton<WaypointStore, ACE_Null_Mutex>::instance();
+        }
 
-        ~WaypointStore() { Free(); }
+        ~WaypointStore()
+        {
+            Free();
+        }
         void UpdatePath(uint32 id);
         void Load();
         void Free();
@@ -56,7 +62,10 @@ class WaypointStore
             else return 0;
         }
 
-        inline uint32 GetRecordsCount() { return records; }
+        inline uint32 GetRecordsCount()
+        {
+            return records;
+        }
 };
 
 #define sWaypointMgr WaypointStore::instance()

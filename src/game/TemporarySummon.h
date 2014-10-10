@@ -23,8 +23,8 @@
 class TempSummon : public Creature
 {
     public:
-        explicit TempSummon(SummonPropertiesEntry const *properties, Unit *owner);
-        virtual ~TempSummon(){};
+        explicit TempSummon(SummonPropertiesEntry const* properties, Unit* owner);
+        virtual ~TempSummon() {};
         void Update(uint32 time);
         virtual void InitStats(uint32 lifetime);
         virtual void InitSummon();
@@ -34,7 +34,7 @@ class TempSummon : public Creature
         void SaveToDB();
         Unit* GetSummoner() const;
 
-        SummonPropertiesEntry const *m_Properties;
+        SummonPropertiesEntry const* m_Properties;
     private:
         TempSummonType m_type;
         uint32 m_timer;
@@ -45,22 +45,31 @@ class TempSummon : public Creature
 class Minion : public TempSummon
 {
     public:
-        Minion(SummonPropertiesEntry const *properties, Unit *owner);
+        Minion(SummonPropertiesEntry const* properties, Unit* owner);
         void InitStats(uint32 duration);
         void RemoveFromWorld();
-        Unit *GetOwner() { return m_owner; }
-        float GetFollowAngle() const { return m_followAngle; }
-        void SetFollowAngle(float angle) { m_followAngle = angle; }
+        Unit* GetOwner()
+        {
+            return m_owner;
+        }
+        float GetFollowAngle() const
+        {
+            return m_followAngle;
+        }
+        void SetFollowAngle(float angle)
+        {
+            m_followAngle = angle;
+        }
         bool IsGuardianPet() const;
     protected:
-        Unit * const m_owner;
+        Unit* const m_owner;
         float m_followAngle;
 };
 
 class Guardian : public Minion
 {
     public:
-        Guardian(SummonPropertiesEntry const *properties, Unit *owner);
+        Guardian(SummonPropertiesEntry const* properties, Unit* owner);
         void InitStats(uint32 duration);
         bool InitStatsForLevel(uint32 level);
         void InitSummon();
@@ -74,8 +83,14 @@ class Guardian : public Minion
         void UpdateAttackPowerAndDamage(bool ranged = false);
         void UpdateDamagePhysical(WeaponAttackType attType);
 
-        int32 GetBonusDamage() { return m_bonusdamage; }
-        void SetBonusDamage(int32 damage) { m_bonusdamage = damage; }
+        int32 GetBonusDamage()
+        {
+            return m_bonusdamage;
+        }
+        void SetBonusDamage(int32 damage)
+        {
+            m_bonusdamage = damage;
+        }
     protected:
         int32   m_bonusdamage;
 };
@@ -83,7 +98,7 @@ class Guardian : public Minion
 class Puppet : public Minion
 {
     public:
-        Puppet(SummonPropertiesEntry const *properties, Unit *owner);
+        Puppet(SummonPropertiesEntry const* properties, Unit* owner);
         void InitStats(uint32 duration);
         void InitSummon();
         void Update(uint32 time);

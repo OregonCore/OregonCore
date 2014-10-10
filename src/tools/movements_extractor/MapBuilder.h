@@ -40,115 +40,118 @@ using namespace VMAP;
 
 namespace MMAP
 {
-    typedef map<uint32,set<uint32>*> TileList;
-    struct Tile
+typedef map<uint32, set<uint32>*> TileList;
+struct Tile
+{
+    Tile() : chf(NULL), solid(NULL), cset(NULL), pmesh(NULL), dmesh(NULL) {}
+    ~Tile()
     {
-        Tile() : chf(NULL), solid(NULL), cset(NULL), pmesh(NULL), dmesh(NULL) {}
-        ~Tile()
+        rcFreeCompactHeightfield(chf);
+        rcFreeContourSet(cset);
+        rcFreeHeightField(solid);
+        rcFreePolyMesh(pmesh);
+        rcFreePolyMeshDetail(dmesh);
+    }
+    rcCompactHeightfield* chf;
+    rcHeightfield* solid;
+    rcContourSet* cset;
+    rcPolyMesh* pmesh;
+    rcPolyMeshDetail* dmesh;
+};
+
+class MapBuilder
+{
+    public:
+        MapBuilder(float maxWalkableAngle   = 55.f,
+                   bool skipLiquid          = false,
+                   bool skipContinents      = false,
+                   bool skipJunkMaps        = true,
+                   bool skipBattlegrounds   = false,
+                   bool debugOutput         = false,
+                   bool bigBaseUnit         = false,
+                   const char* offMeshFilePath = NULL);
+
+        ~MapBuilder();
+
+        // builds all mmap tiles for the specified map id (ignores skip settings)
+        void buildMap(uint32 mapID);
+
+        // builds an mmap tile for the specified map and its mesh
+        void buildSingleTile(uint32 mapID, uint32 tileX, uint32 tileY);
+
+        // builds list of maps, then builds all of mmap tiles (based on the skip settings)
+        void buildAllMaps(int threads);
+
+    private:
+        // detect maps and tiles
+        void discoverTiles();
+        set<uint32>* getTileList(uint32 mapID);
+
+        void buildNavMesh(uint32 mapID, dtNavMesh*& navMesh);
+
+        void buildTile(uint32 mapID, uint32 tileX, uint32 tileY, dtNavMesh* navMesh);
+
+        // move map building
+        void buildMoveMapTile(uint32 mapID,
+                              uint32 tileX,
+                              uint32 tileY,
+                              MeshData& meshData,
+                              float bmin[3],
+                              float bmax[3],
+                              dtNavMesh* navMesh);
+
+        void getTileBounds(uint32 tileX, uint32 tileY,
+                           float* verts, int vertCount,
+                           float* bmin, float* bmax);
+        void getGridBounds(uint32 mapID, uint32& minX, uint32& minY, uint32& maxX, uint32& maxY);
+
+        bool shouldSkipMap(uint32 mapID);
+        bool isTransportMap(uint32 mapID);
+        bool shouldSkipTile(uint32 mapID, uint32 tileX, uint32 tileY);
+
+        TerrainBuilder* m_terrainBuilder;
+        TileList m_tiles;
+
+        bool m_debugOutput;
+
+        const char* m_offMeshFilePath;
+        bool m_skipContinents;
+        bool m_skipJunkMaps;
+        bool m_skipBattlegrounds;
+
+        float m_maxWalkableAngle;
+        bool m_bigBaseUnit;
+
+        // build performance - not really used for now
+        rcContext* m_rcContext;
+};
+
+class MapBuildRequest : public ACE_Method_Request
+{
+    public:
+        MapBuildRequest(uint32 mapId) : _mapId(mapId) {}
+
+        virtual int call()
         {
-            rcFreeCompactHeightfield(chf);
-            rcFreeContourSet(cset);
-            rcFreeHeightField(solid);
-            rcFreePolyMesh(pmesh);
-            rcFreePolyMeshDetail(dmesh);
+            /// @ Actually a creative way of unabstracting the class and returning a member variable
+            return (int)_mapId;
         }
-        rcCompactHeightfield* chf;
-        rcHeightfield* solid;
-        rcContourSet* cset;
-        rcPolyMesh* pmesh;
-        rcPolyMeshDetail* dmesh;
-    };
 
-    class MapBuilder
-    {
-        public:
-            MapBuilder(float maxWalkableAngle   = 55.f,
-                       bool skipLiquid          = false,
-                       bool skipContinents      = false,
-                       bool skipJunkMaps        = true,
-                       bool skipBattlegrounds   = false,
-                       bool debugOutput         = false,
-                       bool bigBaseUnit         = false,
-                       const char* offMeshFilePath = NULL);
+    private:
+        uint32 _mapId;
+};
 
-            ~MapBuilder();
-
-            // builds all mmap tiles for the specified map id (ignores skip settings)
-            void buildMap(uint32 mapID);
-
-            // builds an mmap tile for the specified map and its mesh
-            void buildSingleTile(uint32 mapID, uint32 tileX, uint32 tileY);
-
-            // builds list of maps, then builds all of mmap tiles (based on the skip settings)
-            void buildAllMaps(int threads);
-
-        private:
-            // detect maps and tiles
-            void discoverTiles();
-            set<uint32>* getTileList(uint32 mapID);
-
-            void buildNavMesh(uint32 mapID, dtNavMesh* &navMesh);
-
-            void buildTile(uint32 mapID, uint32 tileX, uint32 tileY, dtNavMesh* navMesh);
-
-            // move map building
-            void buildMoveMapTile(uint32 mapID,
-                                  uint32 tileX,
-                                  uint32 tileY,
-                                  MeshData &meshData,
-                                  float bmin[3],
-                                  float bmax[3],
-                                  dtNavMesh* navMesh);
-
-            void getTileBounds(uint32 tileX, uint32 tileY,
-                               float* verts, int vertCount,
-                               float* bmin, float* bmax);
-            void getGridBounds(uint32 mapID, uint32 &minX, uint32 &minY, uint32 &maxX, uint32 &maxY);
-
-            bool shouldSkipMap(uint32 mapID);
-            bool isTransportMap(uint32 mapID);
-            bool shouldSkipTile(uint32 mapID, uint32 tileX, uint32 tileY);
-
-            TerrainBuilder* m_terrainBuilder;
-            TileList m_tiles;
-
-            bool m_debugOutput;
-
-            const char* m_offMeshFilePath;
-            bool m_skipContinents;
-            bool m_skipJunkMaps;
-            bool m_skipBattlegrounds;
-
-            float m_maxWalkableAngle;
-            bool m_bigBaseUnit;
-
-            // build performance - not really used for now
-            rcContext* m_rcContext;
-    };
-        
-    class MapBuildRequest : public ACE_Method_Request
-    {
-        public:
-            MapBuildRequest(uint32 mapId) : _mapId(mapId) {}
-
-            virtual int call()
-            {
-                /// @ Actually a creative way of unabstracting the class and returning a member variable
-                return (int)_mapId;
-            }
-
-        private:
-            uint32 _mapId;
-    };
-
-    class BuilderThread : public ACE_Task_Base
-    {
+class BuilderThread : public ACE_Task_Base
+{
     private:
         MapBuilder* _builder;
         ACE_Activation_Queue* _queue;
 
     public:
-        BuilderThread(MapBuilder* builder, ACE_Activation_Queue* queue) : _builder(builder), _queue(queue) { activate(); }
+        BuilderThread(MapBuilder* builder, ACE_Activation_Queue* queue) : _builder(builder), _queue(queue)
+        {
+            activate();
+        }
 
         int svc()
         {
@@ -165,24 +168,31 @@ namespace MMAP
             return 0;
         }
 
-    };
+};
 
-    class BuilderThreadPool
-    {
-        public:
-            BuilderThreadPool() : _queue(new ACE_Activation_Queue()) {}
-            ~BuilderThreadPool() { _queue->queue()->close(); delete _queue; }
+class BuilderThreadPool
+{
+    public:
+        BuilderThreadPool() : _queue(new ACE_Activation_Queue()) {}
+        ~BuilderThreadPool()
+        {
+            _queue->queue()->close();
+            delete _queue;
+        }
 
-            void Enqueue(MapBuildRequest* request)
-            {
-                _queue->enqueue(request);
-            }
+        void Enqueue(MapBuildRequest* request)
+        {
+            _queue->enqueue(request);
+        }
 
-            ACE_Activation_Queue* Queue() { return _queue; }
+        ACE_Activation_Queue* Queue()
+        {
+            return _queue;
+        }
 
-        private:
-            ACE_Activation_Queue* _queue;
-    };
+    private:
+        ACE_Activation_Queue* _queue;
+};
 }
 
 #endif

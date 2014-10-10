@@ -65,12 +65,12 @@ struct Script
     bool (*pQuestSelect         )(Player*, Creature*, Quest const*);
     bool (*pQuestComplete       )(Player*, Creature*, Quest const*);
     uint32 (*pNPCDialogStatus   )(Player*, Creature*);
-    uint32 (*pGODialogStatus    )(Player*, GameObject * _GO);
+    uint32 (*pGODialogStatus    )(Player*, GameObject* _GO);
     bool (*pChooseReward        )(Player*, Creature*, Quest const*, uint32);
     bool (*pItemHello           )(Player*, Item*, Quest const*);
     bool (*pGOHello             )(Player*, GameObject*);
     bool (*pAreaTrigger         )(Player*, AreaTriggerEntry const*);
-    bool (*pItemQuestAccept     )(Player*, Item *, Quest const*);
+    bool (*pItemQuestAccept     )(Player*, Item*, Quest const*);
     bool (*pGOQuestAccept       )(Player*, GameObject*, Quest const*);
     bool (*pGOChooseReward      )(Player*, GameObject*, Quest const*, uint32);
     bool (*pItemUse             )(Player*, Item*, SpellCastTargets const&);
@@ -92,7 +92,7 @@ class ScriptMgr
         void LoadDatabase();
         char const* ScriptsVersion();
 
-    //event handlers
+        //event handlers
         void OnLogin(Player* pPlayer);
         void OnLogout(Player* pPlayer);
         void OnPVPKill(Player* killer, Player* killed);
@@ -112,15 +112,15 @@ class ScriptMgr
         bool GOHello(Player* pPlayer, GameObject* pGO);
         bool GOQuestAccept(Player* pPlayer, GameObject* pGO, Quest const* pQuest);
         bool GOChooseReward(Player* pPlayer, GameObject* pGO, Quest const* pQuest, uint32 opt);
-        bool AreaTrigger(Player* pPlayer,AreaTriggerEntry const* atEntry);
+        bool AreaTrigger(Player* pPlayer, AreaTriggerEntry const* atEntry);
         CreatureAI* GetAI(Creature* pCreature);
         bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets);
-        bool EffectDummyCreature(Unit *caster, uint32 spellId, uint32 effIndex, Creature *crTarget);
-        InstanceData* CreateInstanceData(Map *map);
+        bool EffectDummyCreature(Unit* caster, uint32 spellId, uint32 effIndex, Creature* crTarget);
+        InstanceData* CreateInstanceData(Map* map);
 };
 
 //Generic scripting text function
-void DoScriptText(int32 textEntry, WorldObject* pSource, Unit *pTarget = NULL);
+void DoScriptText(int32 textEntry, WorldObject* pSource, Unit* pTarget = NULL);
 
 #if COMPILER == COMPILER_GNU
 #define FUNC_PTR(name,callconvention,returntype,parameters)    typedef returntype(*name)parameters __attribute__ ((callconvention));

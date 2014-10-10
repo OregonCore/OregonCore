@@ -123,7 +123,7 @@ class WorldSocket : protected WorldHandler
         virtual ~WorldSocket (void);
 
         // Called on open ,the void* is the acceptor.
-        virtual int open (void *);
+        virtual int open (void*);
 
         // Called on failures inside of the acceptor, don't call from your code.
         virtual int close (u_long);
@@ -136,7 +136,7 @@ class WorldSocket : protected WorldHandler
 
         // Called when connection is closed or error happens.
         virtual int handle_close (ACE_HANDLE = ACE_INVALID_HANDLE,
-            ACE_Reactor_Mask = ACE_Event_Handler::ALL_EVENTS_MASK);
+                                  ACE_Reactor_Mask = ACE_Event_Handler::ALL_EVENTS_MASK);
 
         // Called by WorldSocketMgr/ReactorRunnable.
         int Update (void);
@@ -206,7 +206,7 @@ class WorldSocket : protected WorldHandler
         LockType m_OutBufferLock;
 
         // Buffer used for writing output.
-        ACE_Message_Block *m_OutBuffer;
+        ACE_Message_Block* m_OutBuffer;
 
         // Size of the m_OutBuffer.
         size_t m_OutBufferSize;

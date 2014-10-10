@@ -33,26 +33,32 @@ class Console
         void RunLogViewLoop();
 
         void DrawLogo();
-        bool IsEnabled() const { return m_IamEnabled; }
-        
-        void Beep() { beep(); }
+        bool IsEnabled() const
+        {
+            return m_IamEnabled;
+        }
+
+        void Beep()
+        {
+            beep();
+        }
 
         class CliRunnable : public ACE_Based::Runnable
         {
             public:
                 void run();
         };
-                            
+
     private:
 
         void SetTitle(const char* title)
         {
-        #if PLATFORM == PLATFORM_WINDOWS
+            #if PLATFORM == PLATFORM_WINDOWS
             SetConsoleTitle("OregonCore");
-        #elif PLATFORM == PLATFORM_UNIX
+            #elif PLATFORM == PLATFORM_UNIX
             printf("\033]0;%s\007", title);
             fflush(stdout);
-        #endif
+            #endif
         }
 
         void Refresh();
@@ -70,11 +76,11 @@ class Console
         bool m_IamEnabled;
 
         typedef std::list<std::string> History;
-    #if PLATFORM == PLATFORM_WINDOWS
+        #if PLATFORM == PLATFORM_WINDOWS
         typedef HANDLE PipeType;
-    #else
+        #else
         typedef int PipeType;
-    #endif
+        #endif
 
         History m_cmdHistory;
         PipeType m_loggerFd;

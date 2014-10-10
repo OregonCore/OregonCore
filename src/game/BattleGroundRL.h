@@ -47,7 +47,7 @@ class BattleGroundRLScore : public BattleGroundScore
 
 class BattleGroundRL : public BattleGround
 {
-    friend class BattleGroundMgr;
+        friend class BattleGroundMgr;
 
     public:
         BattleGroundRL();
@@ -63,7 +63,7 @@ class BattleGroundRL : public BattleGround
         void HandleAreaTrigger(Player* Source, uint32 Trigger);
         bool SetupBattleGround();
         virtual void ResetBGSubclass();
-        virtual void FillInitialWorldStates(WorldPacket &d);
+        virtual void FillInitialWorldStates(WorldPacket& d);
         void HandleKillPlayer(Player* player, Player* killer);
         bool HandlePlayerUnderMap(Player* plr);
 };

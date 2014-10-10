@@ -33,13 +33,22 @@ class FactoryHolder
 
         FactoryHolder(Key k) : i_key(k) {}
         virtual ~FactoryHolder() {}
-        inline Key key() const { return i_key; }
+        inline Key key() const
+        {
+            return i_key;
+        }
 
-        void RegisterSelf(void) { FactoryHolderRepository::Instance().InsertItem(this, i_key); }
-        void DeregisterSelf(void) { FactoryHolderRepository::Instance().RemoveItem(this, false); }
+        void RegisterSelf(void)
+        {
+            FactoryHolderRepository::Instance().InsertItem(this, i_key);
+        }
+        void DeregisterSelf(void)
+        {
+            FactoryHolderRepository::Instance().RemoveItem(this, false);
+        }
 
         // Abstract Factory create method
-        virtual T* Create(void *data = NULL) const = 0;
+        virtual T* Create(void* data = NULL) const = 0;
     private:
         Key i_key;
 };
@@ -53,7 +62,7 @@ class Permissible
 {
     public:
         virtual ~Permissible() {}
-        virtual int Permit(const T *) const = 0;
+        virtual int Permit(const T*) const = 0;
 };
 #endif
 

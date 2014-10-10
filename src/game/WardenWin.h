@@ -87,13 +87,13 @@ class WardenWin : WardenBase
         WardenWin();
         ~WardenWin();
 
-        void Init(WorldSession *pClient, BigNumber *K);
-        ClientWardenModule *GetModuleForClient(WorldSession *session);
+        void Init(WorldSession* pClient, BigNumber* K);
+        ClientWardenModule* GetModuleForClient(WorldSession* session);
         void InitializeModule();
         void RequestHash();
-        void HandleHashResult(ByteBuffer &buff);
+        void HandleHashResult(ByteBuffer& buff);
         void RequestData();
-        void HandleData(ByteBuffer &buff);
+        void HandleData(ByteBuffer& buff);
 
     private:
         uint32 ServerTicks;

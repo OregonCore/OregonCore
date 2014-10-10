@@ -83,29 +83,68 @@ struct npc_escortAI : public ScriptedAI
         void SetRun(bool bRun = true);
         void SetEscortPaused(bool uPaused);
 
-        bool HasEscortState(uint32 uiEscortState) { return (m_uiEscortState & uiEscortState); }
-        virtual bool IsEscorted() { return (m_uiEscortState & STATE_ESCORT_ESCORTING); }
+        bool HasEscortState(uint32 uiEscortState)
+        {
+            return (m_uiEscortState & uiEscortState);
+        }
+        virtual bool IsEscorted()
+        {
+            return (m_uiEscortState & STATE_ESCORT_ESCORTING);
+        }
 
-        void SetMaxPlayerDistance(float newMax) { MaxPlayerDistance = newMax; }
-        float GetMaxPlayerDistance() { return MaxPlayerDistance; }
+        void SetMaxPlayerDistance(float newMax)
+        {
+            MaxPlayerDistance = newMax;
+        }
+        float GetMaxPlayerDistance()
+        {
+            return MaxPlayerDistance;
+        }
 
-        void SetDespawnAtEnd(bool despawn) { DespawnAtEnd = despawn; }
-        void SetDespawnAtFar(bool despawn) { DespawnAtFar = despawn; }
-        void SetClearWaypoints(bool clear) { ClearWP = clear; }
-        bool GetAttack() { return m_bIsActiveAttacker; }//used in EnterEvadeMode override
-        void SetCanAttack(bool attack) { m_bIsActiveAttacker = attack; }
-        uint64 GetEventStarterGUID() { return m_uiPlayerGUID; }
+        void SetDespawnAtEnd(bool despawn)
+        {
+            DespawnAtEnd = despawn;
+        }
+        void SetDespawnAtFar(bool despawn)
+        {
+            DespawnAtFar = despawn;
+        }
+        void SetClearWaypoints(bool clear)
+        {
+            ClearWP = clear;
+        }
+        bool GetAttack()
+        {
+            return m_bIsActiveAttacker;    //used in EnterEvadeMode override
+        }
+        void SetCanAttack(bool attack)
+        {
+            m_bIsActiveAttacker = attack;
+        }
+        uint64 GetEventStarterGUID()
+        {
+            return m_uiPlayerGUID;
+        }
 
     protected:
-        Player* GetPlayerForEscort() { return (Player*)Unit::GetUnit(*me, m_uiPlayerGUID); }
+        Player* GetPlayerForEscort()
+        {
+            return (Player*)Unit::GetUnit(*me, m_uiPlayerGUID);
+        }
 
     private:
         bool AssistPlayerInCombat(Unit* pWho);
         bool IsPlayerOrGroupInRange();
         void FillPointMovementListForCreature();
 
-        void AddEscortState(uint32 uiEscortState) { m_uiEscortState |= uiEscortState; }
-        void RemoveEscortState(uint32 uiEscortState) { m_uiEscortState &= ~uiEscortState; }
+        void AddEscortState(uint32 uiEscortState)
+        {
+            m_uiEscortState |= uiEscortState;
+        }
+        void RemoveEscortState(uint32 uiEscortState)
+        {
+            m_uiEscortState &= ~uiEscortState;
+        }
 
         uint64 m_uiPlayerGUID;
         uint32 m_uiWPWaitTimer;

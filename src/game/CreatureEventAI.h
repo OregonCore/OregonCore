@@ -196,7 +196,7 @@ struct CreatureEventAI_Action
         // ACTION_T_TEXT                                    = 1
         struct
         {
-           int32 TextId[3];
+            int32 TextId[3];
         } text;
         // ACTION_T_SET_FACTION                             = 2
         struct
@@ -573,7 +573,7 @@ typedef UNORDERED_MAP<uint32, CreatureEventAI_Summon> CreatureEventAI_Summon_Map
 
 struct CreatureEventAIHolder
 {
-    CreatureEventAIHolder(CreatureEventAI_Event p) : Event(p), Time(0), Enabled(true){}
+    CreatureEventAIHolder(CreatureEventAI_Event p) : Event(p), Time(0), Enabled(true) {}
 
     CreatureEventAI_Event Event;
     uint32 Time;
@@ -587,7 +587,7 @@ class CreatureEventAI : public CreatureAI
 {
 
     public:
-        explicit CreatureEventAI(Creature *c);
+        explicit CreatureEventAI(Creature* c);
         ~CreatureEventAI()
         {
             CreatureEventAIList.clear();
@@ -595,18 +595,18 @@ class CreatureEventAI : public CreatureAI
         void JustRespawned();
         void Reset();
         void JustReachedHome();
-        void EnterCombat(Unit *enemy);
+        void EnterCombat(Unit* enemy);
         void EnterEvadeMode();
         void JustDied(Unit* /*killer*/);
         void KilledUnit(Unit* victim);
         void JustSummoned(Creature* pUnit);
-        void AttackStart(Unit *who);
-        void MoveInLineOfSight(Unit *who);
+        void AttackStart(Unit* who);
+        void MoveInLineOfSight(Unit* who);
         void SpellHit(Unit* pUnit, const SpellEntry* pSpell);
         void DamageTaken(Unit* done_by, uint32& damage);
         void UpdateAI(const uint32 diff);
         void ReceiveEmote(Player* pPlayer, uint32 text_emote);
-        static int Permissible(const Creature *);
+        static int Permissible(const Creature*);
 
         bool ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pActionInvoker = NULL);
         void ProcessAction(CreatureEventAI_Action const& action, uint32 rnd, uint32 EventId, Unit* pActionInvoker);
@@ -615,7 +615,7 @@ class CreatureEventAI : public CreatureAI
         Unit* GetTargetByType(uint32 Target, Unit* pActionInvoker);
 
         void DoScriptText(int32 textEntry, WorldObject* pSource, Unit* target);
-        bool CanCast(Unit* Target, SpellEntry const *Spell, bool Triggered);
+        bool CanCast(Unit* Target, SpellEntry const* Spell, bool Triggered);
 
         bool SpawnedEventConditionsCheck(CreatureEventAI_Event const& event);
 
@@ -623,7 +623,7 @@ class CreatureEventAI : public CreatureAI
         void DoFindFriendlyMissingBuff(std::list<Creature*>& _list, float range, uint32 spellid);
         void DoFindFriendlyCC(std::list<Creature*>& _list, float range);
 
-                                                            //Holder for events (stores enabled, time, and eventid)
+        //Holder for events (stores enabled, time, and eventid)
         std::list<CreatureEventAIHolder> CreatureEventAIList;
         uint32 EventUpdateTime;                             //Time between event updates
         uint32 EventDiff;                                   //Time between the last event call

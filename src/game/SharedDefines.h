@@ -67,9 +67,9 @@ enum Races
 
 #define RACEMASK_ALL_PLAYABLE \
     ((1<<(RACE_HUMAN-1))   |(1<<(RACE_ORC-1))          |(1<<(RACE_DWARF-1))   | \
-    (1<<(RACE_NIGHTELF-1))|(1<<(RACE_UNDEAD_PLAYER-1))|(1<<(RACE_TAUREN-1))  | \
-    (1<<(RACE_GNOME-1))   |(1<<(RACE_TROLL-1))        |(1<<(RACE_BLOODELF-1))| \
-    (1<<(RACE_DRAENEI-1)))
+     (1<<(RACE_NIGHTELF-1))|(1<<(RACE_UNDEAD_PLAYER-1))|(1<<(RACE_TAUREN-1))  | \
+     (1<<(RACE_GNOME-1))   |(1<<(RACE_TROLL-1))        |(1<<(RACE_BLOODELF-1))| \
+     (1<<(RACE_DRAENEI-1)))
 
 // Class value is index in ChrClasses.dbc
 enum Classes
@@ -92,8 +92,8 @@ enum Classes
 
 #define CLASSMASK_ALL_PLAYABLE \
     ((1<<(CLASS_WARRIOR-1))|(1<<(CLASS_PALADIN-1))|(1<<(CLASS_HUNTER-1))| \
-    (1<<(CLASS_ROGUE-1))  |(1<<(CLASS_PRIEST-1)) |(1<<(CLASS_SHAMAN-1))| \
-    (1<<(CLASS_MAGE-1))   |(1<<(CLASS_WARLOCK-1))|(1<<(CLASS_DRUID-1)))
+     (1<<(CLASS_ROGUE-1))  |(1<<(CLASS_PRIEST-1)) |(1<<(CLASS_SHAMAN-1))| \
+     (1<<(CLASS_MAGE-1))   |(1<<(CLASS_WARLOCK-1))|(1<<(CLASS_DRUID-1)))
 
 #define CLASSMASK_WAND_USERS ((1<<(CLASS_PRIEST-1))|(1<<(CLASS_MAGE-1))|(1<<(CLASS_WARLOCK-1)))
 
@@ -117,8 +117,8 @@ enum ReputationRank
 enum MoneyConstants
 {
     COPPER = 1,
-    SILVER = COPPER*100,
-    GOLD   = SILVER*100
+    SILVER = COPPER * 100,
+    GOLD   = SILVER * 100
 };
 
 enum Stats
@@ -172,8 +172,8 @@ enum SpellSchoolMask
 
     // 124, not include normal and holy damage
     SPELL_SCHOOL_MASK_SPELL   = (SPELL_SCHOOL_MASK_FIRE   |
-                                  SPELL_SCHOOL_MASK_NATURE | SPELL_SCHOOL_MASK_FROST  |
-                                  SPELL_SCHOOL_MASK_SHADOW | SPELL_SCHOOL_MASK_ARCANE),
+                                 SPELL_SCHOOL_MASK_NATURE | SPELL_SCHOOL_MASK_FROST  |
+                                 SPELL_SCHOOL_MASK_SHADOW | SPELL_SCHOOL_MASK_ARCANE),
     // 126
     SPELL_SCHOOL_MASK_MAGIC   = (SPELL_SCHOOL_MASK_HOLY | SPELL_SCHOOL_MASK_SPELL),
 
@@ -183,8 +183,8 @@ enum SpellSchoolMask
 
 #define SPELL_SCHOOL_MASK_MAGIC                            \
     (SPELL_SCHOOL_MASK_HOLY | SPELL_SCHOOL_MASK_FIRE | SPELL_SCHOOL_MASK_NATURE |  \
-      SPELL_SCHOOL_MASK_FROST | SPELL_SCHOOL_MASK_SHADOW | \
-      SPELL_SCHOOL_MASK_ARCANE)
+     SPELL_SCHOOL_MASK_FROST | SPELL_SCHOOL_MASK_SHADOW | \
+     SPELL_SCHOOL_MASK_ARCANE)
 
 inline SpellSchools GetFirstSchoolInMask(SpellSchoolMask mask)
 {
@@ -321,7 +321,7 @@ enum SpellCategory
     SPELL_CATEGORY_WYVERN_STRING    = 1111,
     SPELL_CATEGORY_HAMMER_OF_WRATH  = 1131,
     SPELL_CATEGORY_INTIMIDATION     = 1132,
-    SPELL_CATEGORY_FAERIE_FIRE_FERAL= 1133,
+    SPELL_CATEGORY_FAERIE_FIRE_FERAL = 1133,
     SPELL_CATEGORY_COUNTERATTACK    = 1135,
     SPELL_CATEGORY_FIRECRACKERS     = 1137,
     SPELL_CATEGORY_UNK1138          = 1138,
@@ -344,7 +344,7 @@ enum SpellCategory
     SPELL_CATEGORY_MOVE             = 1163,
     SPELL_CATEGORY_PAIN_SPIKE       = 1165,
     SPELL_CATEGORY_UNK1167          = 1167,
-    SPELL_CATEGORY_SHADOW_WORD_DEATH= 1169,
+    SPELL_CATEGORY_SHADOW_WORD_DEATH = 1169,
     SPELL_CATEOGRY_DROP_HEAVY_BOMB  = 1170,
     SPELL_CATEGORY_KILL_COMMAND     = 1171,
     SPELL_CATEOGRY_ARCANE_SHOT      = 1173,
@@ -354,11 +354,11 @@ enum SpellCategory
     SPELL_CATEGORY_UNK1177          = 1177,
     SPELL_CATEGORY_CURSE_OF_DOOM    = 1179,
     SPELL_CATEGORY_ROCKET_HELM_COOL = 1180,
-    SPELL_CATEGORY_PRAYER_OF_MENDING= 1181,
+    SPELL_CATEGORY_PRAYER_OF_MENDING = 1181,
     SPELL_CATEGORY_UNK1184          = 1184,
     SPELL_CATEGORY_UNK1185          = 1185,
     SPELL_CATEGORY_BLESSING_OF_SACR = 1186,
-    SPELL_CATEGORY_BLIND_DIRTY_TRICK= 1187,
+    SPELL_CATEGORY_BLIND_DIRTY_TRICK = 1187,
     SPELL_CATEGORY_CHASTISE         = 1188,
     SPELL_CATEGORY_STARSHARDS       = 1192,
     SPELL_CATEGORY_BLOODBERRY       = 1194,
@@ -370,7 +370,8 @@ enum SpellCategory
     SPELL_CATEGORY_MAX              = 1203
 };
 
-const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
+const uint32 ItemQualityColors[MAX_ITEM_QUALITY] =
+{
     0xff9d9d9d,        //GREY
     0xffffffff,        //WHITE
     0xff1eff00,        //GREEN
@@ -480,7 +481,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
 #define SPELL_ATTR_EX2_UNK27                      0x08000000            // 27 fishing (profession), and enchant (2H) weapon
 #define SPELL_ATTR_EX2_UNK28                      0x10000000            // 28
 #define SPELL_ATTR_EX2_CANT_CRIT                  0x20000000            // 29 Spell can't crit
-#define SPELL_ATTR_EX2_TRIGGERED_CAN_TRIGGER_PROC 0x40000000		    // 30 spell can trigger even if triggered
+#define SPELL_ATTR_EX2_TRIGGERED_CAN_TRIGGER_PROC 0x40000000            // 30 spell can trigger even if triggered
 #define SPELL_ATTR_EX2_FOOD                       0x80000000            // 31 food, well-fed, and a few others
 
 #define SPELL_ATTR_EX3_UNK0                       0x00000001            // 0
@@ -499,7 +500,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
 #define SPELL_ATTR_EX3_UNK13                      0x00002000            // 13 
 #define SPELL_ATTR_EX3_HONORLESS                  0x00004000            // 14 "Honorless Target" only this spells have this flag
 #define SPELL_ATTR_EX3_AUTO_SHOT                  0x00008000            // 15 Auto Shoot, Shoot, Throw,  - this is autoshot flag
-#define SPELL_ATTR_EX3_CANT_TRIGGER_PROC          0x00010000			// 16 confirmed with many patchnotes
+#define SPELL_ATTR_EX3_CANT_TRIGGER_PROC          0x00010000            // 16 confirmed with many patchnotes
 #define SPELL_ATTR_EX3_NO_INITIAL_AGGRO           0x00020000            // 17 no initial aggro
 #define SPELL_ATTR_EX3_CANT_MISS                  0x00040000            // 18 Spell should always hit its target
 #define SPELL_ATTR_EX3_UNK19                      0x00080000            // 19
@@ -741,7 +742,7 @@ enum SpellEffects
     SPELL_EFFECT_DUAL_WIELD                = 40,
     SPELL_EFFECT_41                        = 41, // not set: old SPELL_EFFECT_SUMMON_WILD
     SPELL_EFFECT_42                        = 42, // not set: old SPELL_EFFECT_SUMMON_GUARDIAN
-    SPELL_EFFECT_TELEPORT_UNITS_FACE_CASTER= 43,
+    SPELL_EFFECT_TELEPORT_UNITS_FACE_CASTER = 43,
     SPELL_EFFECT_SKILL_STEP                = 44,
     SPELL_EFFECT_UNDEFINED_45              = 45,
     SPELL_EFFECT_SPAWN                     = 46,
@@ -857,7 +858,8 @@ enum SpellEffects
 
 // Spell aura states
 enum AuraState
-{   // (C) used in caster aura state     (T) used in target aura state
+{
+    // (C) used in caster aura state     (T) used in target aura state
     // (c) used in caster aura state-not (t) used in target aura state-not
     AURA_STATE_DEFENSE                      = 1,            // C   |
     AURA_STATE_HEALTHLESS_20_PERCENT        = 2,            // CcT |
@@ -921,12 +923,12 @@ enum Mechanics
 
 // Used for spell 42292 Immune Movement Impairment and Loss of Control (0x49967da6)
 #define IMMUNE_TO_MOVEMENT_IMPAIRMENT_AND_LOSS_CONTROL_MASK (\
-    (1<<MECHANIC_CHARM)|(1<<MECHANIC_CONFUSED)|(1<<MECHANIC_FEAR)| \
-    (1<<MECHANIC_ROOT)|(1<<MECHANIC_PACIFY)|(1<<MECHANIC_SLEEP)| \
-    (1<<MECHANIC_SNARE)|(1<<MECHANIC_STUN)|(1<<MECHANIC_FREEZE)| \
-    (1<<MECHANIC_KNOCKOUT)|(1<<MECHANIC_POLYMORPH)|(1<<MECHANIC_BANISH)| \
-    (1<<MECHANIC_SHACKLE)|(1<<MECHANIC_TURN)|(1<<MECHANIC_HORROR)| \
-    (1<<MECHANIC_DAZE)|(1<<MECHANIC_SAPPED))
+        (1<<MECHANIC_CHARM)|(1<<MECHANIC_CONFUSED)|(1<<MECHANIC_FEAR)| \
+        (1<<MECHANIC_ROOT)|(1<<MECHANIC_PACIFY)|(1<<MECHANIC_SLEEP)| \
+        (1<<MECHANIC_SNARE)|(1<<MECHANIC_STUN)|(1<<MECHANIC_FREEZE)| \
+        (1<<MECHANIC_KNOCKOUT)|(1<<MECHANIC_POLYMORPH)|(1<<MECHANIC_BANISH)| \
+        (1<<MECHANIC_SHACKLE)|(1<<MECHANIC_TURN)|(1<<MECHANIC_HORROR)| \
+        (1<<MECHANIC_DAZE)|(1<<MECHANIC_SAPPED))
 
 // Spell dispell type
 enum DispelType
@@ -1616,7 +1618,7 @@ enum Emote
     EMOTE_ONESHOT_READYRIFLE           = 213,
     EMOTE_STATE_READYRIFLE             = 214,
     EMOTE_STATE_WORK_NOSHEATHE_MINING  = 233,
-    EMOTE_STATE_WORK_NOSHEATHE_CHOPWOOD= 234,
+    EMOTE_STATE_WORK_NOSHEATHE_CHOPWOOD = 234,
     EMOTE_zzOLDONESHOT_LIFTOFF         = 253,
     EMOTE_ONESHOT_LIFTOFF              = 254,
     EMOTE_ONESHOT_YES                  = 273,
@@ -1810,7 +1812,7 @@ enum Anim
     ANIM_FLY                       = 0x87,
     ANIM_EMOTE_WORK_NO_SHEATHE     = 0x88,
     ANIM_EMOTE_STUN_NO_SHEATHE     = 0x89,
-    ANIM_EMOTE_USE_STANDING_NO_SHEATHE= 0x8A,
+    ANIM_EMOTE_USE_STANDING_NO_SHEATHE = 0x8A,
     ANIM_SPELL_SLEEP_DOWN          = 0x8B,
     ANIM_SPELL_KNEEL_START         = 0x8C,
     ANIM_SPELL_KNEEL_LOOP          = 0x8D,
@@ -1956,7 +1958,7 @@ enum CreatureType
     CREATURE_TYPE_GAS_CLOUD        = 13
 };
 
-uint32 const CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD = (1 << (CREATURE_TYPE_HUMANOID-1)) | (1 << (CREATURE_TYPE_UNDEAD-1));
+uint32 const CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD = (1 << (CREATURE_TYPE_HUMANOID - 1)) | (1 << (CREATURE_TYPE_UNDEAD - 1));
 
 enum CreatureFamily
 {
@@ -2046,7 +2048,7 @@ enum QuestSort
     QUEST_SORT_SEASONAL            = 22,
     QUEST_SORT_UNDERCITY_OLD       = 23,
     QUEST_SORT_HERBALISM           = 24,
-    QUEST_SORT_SCARLET_MONASTERY_OLD= 25,
+    QUEST_SORT_SCARLET_MONASTERY_OLD = 25,
     QUEST_SORT_ULDAMN_OLD          = 41,
     QUEST_SORT_WARLOCK             = 61,
     QUEST_SORT_WARRIOR             = 81,
@@ -2080,17 +2082,26 @@ enum QuestSort
 
 inline uint8 ClassByQuestSort(int32 QuestSort)
 {
-    switch(QuestSort)
+    switch (QuestSort)
     {
-        case QUEST_SORT_WARLOCK: return CLASS_WARLOCK;
-        case QUEST_SORT_WARRIOR: return CLASS_WARRIOR;
-        case QUEST_SORT_SHAMAN:  return CLASS_SHAMAN;
-        case QUEST_SORT_PALADIN: return CLASS_PALADIN;
-        case QUEST_SORT_MAGE:    return CLASS_MAGE;
-        case QUEST_SORT_ROGUE:   return CLASS_ROGUE;
-        case QUEST_SORT_HUNTER:  return CLASS_HUNTER;
-        case QUEST_SORT_PRIEST:  return CLASS_PRIEST;
-        case QUEST_SORT_DRUID:   return CLASS_DRUID;
+    case QUEST_SORT_WARLOCK:
+        return CLASS_WARLOCK;
+    case QUEST_SORT_WARRIOR:
+        return CLASS_WARRIOR;
+    case QUEST_SORT_SHAMAN:
+        return CLASS_SHAMAN;
+    case QUEST_SORT_PALADIN:
+        return CLASS_PALADIN;
+    case QUEST_SORT_MAGE:
+        return CLASS_MAGE;
+    case QUEST_SORT_ROGUE:
+        return CLASS_ROGUE;
+    case QUEST_SORT_HUNTER:
+        return CLASS_HUNTER;
+    case QUEST_SORT_PRIEST:
+        return CLASS_PRIEST;
+    case QUEST_SORT_DRUID:
+        return CLASS_DRUID;
     }
     return 0;
 }
@@ -2241,17 +2252,26 @@ enum SkillType
 
 inline uint32 SkillByQuestSort(int32 QuestSort)
 {
-    switch(QuestSort)
+    switch (QuestSort)
     {
-        case QUEST_SORT_HERBALISM:      return SKILL_HERBALISM;
-        case QUEST_SORT_FISHING:        return SKILL_FISHING;
-        case QUEST_SORT_BLACKSMITHING:  return SKILL_BLACKSMITHING;
-        case QUEST_SORT_ALCHEMY:        return SKILL_ALCHEMY;
-        case QUEST_SORT_LEATHERWORKING: return SKILL_LEATHERWORKING;
-        case QUEST_SORT_ENGINERING:     return SKILL_ENGINERING;
-        case QUEST_SORT_TAILORING:      return SKILL_TAILORING;
-        case QUEST_SORT_COOKING:        return SKILL_COOKING;
-        case QUEST_SORT_FIRST_AID:      return SKILL_FIRST_AID;
+    case QUEST_SORT_HERBALISM:
+        return SKILL_HERBALISM;
+    case QUEST_SORT_FISHING:
+        return SKILL_FISHING;
+    case QUEST_SORT_BLACKSMITHING:
+        return SKILL_BLACKSMITHING;
+    case QUEST_SORT_ALCHEMY:
+        return SKILL_ALCHEMY;
+    case QUEST_SORT_LEATHERWORKING:
+        return SKILL_LEATHERWORKING;
+    case QUEST_SORT_ENGINERING:
+        return SKILL_ENGINERING;
+    case QUEST_SORT_TAILORING:
+        return SKILL_TAILORING;
+    case QUEST_SORT_COOKING:
+        return SKILL_COOKING;
+    case QUEST_SORT_FIRST_AID:
+        return SKILL_FIRST_AID;
     }
     return 0;
 }

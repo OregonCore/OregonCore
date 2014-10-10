@@ -25,9 +25,9 @@
 
 typedef std::vector<std::string> Tokens;
 
-Tokens StrSplit(const std::string &src, const std::string &sep);
+Tokens StrSplit(const std::string& src, const std::string& sep);
 
-void stripLineInvisibleChars(std::string &src);
+void stripLineInvisibleChars(std::string& src);
 
 std::string secsToTimeString(uint32 timeInSecs, bool shortText = false, bool hoursOnly = false);
 uint32 TimeStringToSecs(const std::string& timestring);
@@ -95,7 +95,7 @@ inline void ApplyPercentModFloatVar(float& var, float val, bool apply)
 {
     if (val == -100.0f) // prevent set var to zero
         val = -99.99f;
-    var *= (apply ? (100.0f+val) / 100.0f : 100.0f / (100.0f + val));
+    var *= (apply ? (100.0f + val) / 100.0f : 100.0f / (100.0f + val));
 }
 
 // Percentage calculation
@@ -167,7 +167,7 @@ bool WStrToUtf8(std::wstring wstr, std::string& utf8str);
 bool WStrToUtf8(wchar_t* wstr, size_t size, std::string& utf8str);
 
 size_t utf8length(std::string& utf8str);                    // set string to "" if invalid utf8 sequence
-void utf8truncate(std::string& utf8str,size_t len);
+void utf8truncate(std::string& utf8str, size_t len);
 
 inline bool isBasicLatinCharacter(wchar_t wchar)
 {
@@ -231,12 +231,12 @@ inline bool isEastAsianCharacter(wchar_t wchar)
 
 inline bool isNumeric(wchar_t wchar)
 {
-    return (wchar >= L'0' && wchar <=L'9');
+    return (wchar >= L'0' && wchar <= L'9');
 }
 
 inline bool isNumeric(char c)
 {
-    return (c >= '0' && c <='9');
+    return (c >= '0' && c <= '9');
 }
 
 inline bool isNumericOrSpace(wchar_t wchar)
@@ -288,20 +288,20 @@ inline bool isEastAsianString(std::wstring wstr, bool numericOrSpace)
 inline wchar_t wcharToUpper(wchar_t wchar)
 {
     if (wchar >= L'a' && wchar <= L'z')                      // LATIN SMALL LETTER A - LATIN SMALL LETTER Z
-        return wchar_t(uint16(wchar)-0x0020);
+        return wchar_t(uint16(wchar) - 0x0020);
     if (wchar == 0x00DF)                                     // LATIN SMALL LETTER SHARP S
         return wchar_t(0x1E9E);
     if (wchar >= 0x00E0 && wchar <= 0x00F6)                  // LATIN SMALL LETTER A WITH GRAVE - LATIN SMALL LETTER O WITH DIAERESIS
-        return wchar_t(uint16(wchar)-0x0020);
+        return wchar_t(uint16(wchar) - 0x0020);
     if (wchar >= 0x00F8 && wchar <= 0x00FE)                  // LATIN SMALL LETTER O WITH STROKE - LATIN SMALL LETTER THORN
-        return wchar_t(uint16(wchar)-0x0020);
+        return wchar_t(uint16(wchar) - 0x0020);
     if (wchar >= 0x0101 && wchar <= 0x012F)                  // LATIN SMALL LETTER A WITH MACRON - LATIN SMALL LETTER I WITH OGONEK (only %2=1)
     {
         if (wchar % 2 == 1)
-            return wchar_t(uint16(wchar)-0x0001);
+            return wchar_t(uint16(wchar) - 0x0001);
     }
     if (wchar >= 0x0430 && wchar <= 0x044F)                  // CYRILLIC SMALL LETTER A - CYRILLIC SMALL LETTER YA
-        return wchar_t(uint16(wchar)-0x0020);
+        return wchar_t(uint16(wchar) - 0x0020);
     if (wchar == 0x0451)                                     // CYRILLIC SMALL LETTER IO
         return wchar_t(0x0401);
 
@@ -316,22 +316,22 @@ inline wchar_t wcharToUpperOnlyLatin(wchar_t wchar)
 inline wchar_t wcharToLower(wchar_t wchar)
 {
     if (wchar >= L'A' && wchar <= L'Z')                      // LATIN CAPITAL LETTER A - LATIN CAPITAL LETTER Z
-        return wchar_t(uint16(wchar)+0x0020);
+        return wchar_t(uint16(wchar) + 0x0020);
     if (wchar >= 0x00C0 && wchar <= 0x00D6)                  // LATIN CAPITAL LETTER A WITH GRAVE - LATIN CAPITAL LETTER O WITH DIAERESIS
-        return wchar_t(uint16(wchar)+0x0020);
+        return wchar_t(uint16(wchar) + 0x0020);
     if (wchar >= 0x00D8 && wchar <= 0x00DE)                  // LATIN CAPITAL LETTER O WITH STROKE - LATIN CAPITAL LETTER THORN
-        return wchar_t(uint16(wchar)+0x0020);
+        return wchar_t(uint16(wchar) + 0x0020);
     if (wchar >= 0x0100 && wchar <= 0x012E)                  // LATIN CAPITAL LETTER A WITH MACRON - LATIN CAPITAL LETTER I WITH OGONEK (only %2=0)
     {
         if (wchar % 2 == 0)
-            return wchar_t(uint16(wchar)+0x0001);
+            return wchar_t(uint16(wchar) + 0x0001);
     }
     if (wchar == 0x1E9E)                                     // LATIN CAPITAL LETTER SHARP S
         return wchar_t(0x00DF);
     if (wchar == 0x0401)                                     // CYRILLIC CAPITAL LETTER IO
         return wchar_t(0x0451);
     if (wchar >= 0x0410 && wchar <= 0x042F)                  // CYRILLIC CAPITAL LETTER A - CYRILLIC CAPITAL LETTER YA
-        return wchar_t(uint16(wchar)+0x0020);
+        return wchar_t(uint16(wchar) + 0x0020);
 
     return wchar;
 }
@@ -349,35 +349,35 @@ inline void wstrToLower(std::wstring& str)
 std::wstring GetMainPartOfName(std::wstring wname, uint32 declension);
 
 bool utf8ToConsole(const std::string& utf8str, std::string& conStr);
-bool consoleToUtf8(const std::string& conStr,std::string& utf8str);
+bool consoleToUtf8(const std::string& conStr, std::string& utf8str);
 bool Utf8FitTo(const std::string& str, std::wstring search);
 void hexEncodeByteArray(uint8* bytes, uint32 arrayLen, std::string& result);
 std::string ByteArrayToHexStr(uint8* bytes, uint32 length);
 
 #if PLATFORM == PLATFORM_WINDOWS
 #define UTF8PRINTF(OUT,FRM,RESERR)                      \
-{                                                       \
-    char temp_buf[6000];                                \
-    va_list ap;                                         \
-    va_start(ap, FRM);                                  \
-    size_t temp_len = vsnprintf(temp_buf,6000,FRM,ap);  \
-    va_end(ap);                                         \
-                                                        \
-    wchar_t wtemp_buf[6000];                            \
-    size_t wtemp_len = 6000-1;                          \
-    if (!Utf8toWStr(temp_buf,temp_len,wtemp_buf,wtemp_len)) \
-        return RESERR;                                  \
-    CharToOemBuffW(&wtemp_buf[0],&temp_buf[0],wtemp_len+1);\
-    fprintf(OUT,temp_buf);                              \
-}
+    {                                                       \
+        char temp_buf[6000];                                \
+        va_list ap;                                         \
+        va_start(ap, FRM);                                  \
+        size_t temp_len = vsnprintf(temp_buf,6000,FRM,ap);  \
+        va_end(ap);                                         \
+        \
+        wchar_t wtemp_buf[6000];                            \
+        size_t wtemp_len = 6000-1;                          \
+        if (!Utf8toWStr(temp_buf,temp_len,wtemp_buf,wtemp_len)) \
+            return RESERR;                                  \
+        CharToOemBuffW(&wtemp_buf[0],&temp_buf[0],wtemp_len+1);\
+        fprintf(OUT,temp_buf);                              \
+    }
 #else
 #define UTF8PRINTF(OUT,FRM,RESERR)                      \
-{                                                       \
-    va_list ap;                                         \
-    va_start(ap, FRM);                                  \
-    vfprintf(OUT, FRM, ap );                            \
-    va_end(ap);                                         \
-}
+    {                                                       \
+        va_list ap;                                         \
+        va_start(ap, FRM);                                  \
+        vfprintf(OUT, FRM, ap );                            \
+        va_end(ap);                                         \
+    }
 #endif
 
 bool IsIPAddress(char const* ipaddress);

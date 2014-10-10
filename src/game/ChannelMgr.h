@@ -28,31 +28,31 @@
 class ChannelMgr
 {
     public:
-        typedef std::map<std::string,Channel *> ChannelMap;
+        typedef std::map<std::string, Channel*> ChannelMap;
         ChannelMgr() {}
         ~ChannelMgr()
         {
-            for (ChannelMap::iterator itr = channels.begin();itr != channels.end(); ++itr)
+            for (ChannelMap::iterator itr = channels.begin(); itr != channels.end(); ++itr)
                 delete itr->second;
             channels.clear();
         }
-        Channel *GetJoinChannel(const std::string& name, uint32 channel_id)
+        Channel* GetJoinChannel(const std::string& name, uint32 channel_id)
         {
             if (channels.count(name) == 0)
             {
-                Channel *nchan = new Channel(name,channel_id);
+                Channel* nchan = new Channel(name, channel_id);
                 channels[name] = nchan;
             }
             return channels[name];
         }
-        Channel *GetChannel(const std::string& name, Player* p)
+        Channel* GetChannel(const std::string& name, Player* p)
         {
             ChannelMap::const_iterator i = channels.find(name);
 
             if (i == channels.end())
             {
                 WorldPacket data;
-                MakeNotOnPacket(&data,name);
+                MakeNotOnPacket(&data, name);
                 p->GetSession()->SendPacket(&data);
                 return NULL;
             }
@@ -76,9 +76,9 @@ class ChannelMgr
         }
     private:
         ChannelMap channels;
-        void MakeNotOnPacket(WorldPacket *data, const std::string& name)
+        void MakeNotOnPacket(WorldPacket* data, const std::string& name)
         {
-            data->Initialize(SMSG_CHANNEL_NOTIFY, (1+10));  // we guess size
+            data->Initialize(SMSG_CHANNEL_NOTIFY, (1 + 10)); // we guess size
             (*data) << (uint8)0x05 << name;
         }
 };
@@ -89,7 +89,7 @@ class HordeChannelMgr    : public ChannelMgr {};
 inline ChannelMgr* channelMgr(uint32 team)
 {
     if (sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_CHANNEL))
-                                                            //For Test,No Seprate Faction
+        //For Test,No Seprate Faction
         return &Oregon::Singleton<AllianceChannelMgr>::Instance();
 
     if (team == ALLIANCE)

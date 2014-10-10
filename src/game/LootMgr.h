@@ -55,21 +55,21 @@ struct LootStoreItem
     uint32  itemid;                                         // id of the item
     float   chance;                                         // always positive, chance to drop for both quest and non-quest items, chance to be used for refs
     int32   mincountOrRef;                                  // mincount for drop items (positive) or minus referenced TemplateleId (negative)
-    uint8   group       :8;
-    uint8   maxcount    :8;                                 // max drop count for the item (mincountOrRef positive) or Ref multiplicator (mincountOrRef negative)
-    uint16  conditionId :16;                                // additional loot condition Id
-    bool    needs_quest :1;                                 // quest drop (negative ChanceOrQuestChance in DB)
+    uint8   group       : 8;
+    uint8   maxcount    : 8;                                // max drop count for the item (mincountOrRef positive) or Ref multiplicator (mincountOrRef negative)
+    uint16  conditionId : 16;                               // additional loot condition Id
+    bool    needs_quest : 1;                                // quest drop (negative ChanceOrQuestChance in DB)
 
     // Constructor, converting ChanceOrQuestChance -> (chance, needs_quest)
     // displayid is filled in IsValid() which must be called after
     LootStoreItem(uint32 _itemid, float _chanceOrQuestChance, int8 _group, uint8 _conditionId, int32 _mincountOrRef, uint8 _maxcount)
         : itemid(_itemid), chance(fabs(_chanceOrQuestChance)), mincountOrRef(_mincountOrRef),
-        group(_group), maxcount(_maxcount), conditionId(_conditionId),
-        needs_quest(_chanceOrQuestChance < 0) {}
+          group(_group), maxcount(_maxcount), conditionId(_conditionId),
+          needs_quest(_chanceOrQuestChance < 0) {}
 
     bool Roll() const;                                      // Checks if the entry takes it's chance (at loot generation)
     bool IsValid(LootStore const& store, uint32 entry) const;
-                                                            // Checks correctness of values
+    // Checks correctness of values
 };
 
 struct LootItem
@@ -77,7 +77,7 @@ struct LootItem
     uint32  itemid;
     uint32  randomSuffix;
     int32   randomPropertyId;
-    uint16  conditionId       :16;                          // allow compiler pack structure
+    uint16  conditionId       : 16;                         // allow compiler pack structure
     uint8   count             : 8;
     bool    is_looted         : 1;
     bool    is_blocked        : 1;
@@ -91,7 +91,7 @@ struct LootItem
     explicit LootItem(LootStoreItem const& li);
 
     // Basic checks for player/item compatibility - if false no chance to see the item in the loot
-    bool AllowedForPlayer(Player const * player) const;
+    bool AllowedForPlayer(Player const* player) const;
 };
 
 struct QuestItem
@@ -110,7 +110,7 @@ struct Loot;
 class LootTemplate;
 
 typedef std::vector<QuestItem> QuestItemList;
-typedef std::map<uint32, QuestItemList *> QuestItemMap;
+typedef std::map<uint32, QuestItemList*> QuestItemMap;
 typedef std::vector<LootStoreItem> LootStoreItemList;
 typedef UNORDERED_MAP<uint32, LootTemplate*> LootTemplateMap;
 
@@ -120,7 +120,10 @@ class LootStore
 {
     public:
         explicit LootStore(char const* name, char const* entryName) : m_name(name), m_entryName(entryName) {}
-        virtual ~LootStore() { Clear(); }
+        virtual ~LootStore()
+        {
+            Clear();
+        }
 
         void Verify() const;
 
@@ -129,14 +132,23 @@ class LootStore
         void ReportUnusedIds(LootIdSet const& ids_set) const;
         void ReportNotExistedId(uint32 id) const;
 
-        bool HaveLootFor(uint32 loot_id) const { return m_LootTemplates.find(loot_id) != m_LootTemplates.end(); }
+        bool HaveLootFor(uint32 loot_id) const
+        {
+            return m_LootTemplates.find(loot_id) != m_LootTemplates.end();
+        }
         bool HaveQuestLootFor(uint32 loot_id) const;
-        bool HaveQuestLootForPlayer(uint32 loot_id,Player* player) const;
+        bool HaveQuestLootForPlayer(uint32 loot_id, Player* player) const;
 
         LootTemplate const* GetLootFor(uint32 loot_id) const;
 
-        char const* GetName() const { return m_name; }
-        char const* GetEntryName() const { return m_entryName; }
+        char const* GetName() const
+        {
+            return m_name;
+        }
+        char const* GetEntryName() const
+        {
+            return m_entryName;
+        }
     protected:
         void LoadLootTable();
         void Clear();
@@ -148,8 +160,8 @@ class LootStore
 
 class LootTemplate
 {
-    class  LootGroup;                                       // A set of loot definitions for items (refs are not allowed inside)
-    typedef std::vector<LootGroup> LootGroups;
+        class  LootGroup;                                       // A set of loot definitions for items (refs are not allowed inside)
+        typedef std::vector<LootGroup> LootGroups;
 
     public:
         // Adds an entry to the group (at loading stage)
@@ -160,7 +172,7 @@ class LootTemplate
         // True if template includes at least 1 quest drop entry
         bool HasQuestDrop(LootTemplateMap const& store, uint8 GroupId = 0) const;
         // True if template includes at least 1 quest drop for an active quest of the player
-        bool HasQuestDropForPlayer(LootTemplateMap const& store, Player const * player, uint8 GroupId = 0) const;
+        bool HasQuestDropForPlayer(LootTemplateMap const& store, Player const* player, uint8 GroupId = 0) const;
 
         // Checks integrity of the template
         void Verify(LootStore const& store, uint32 Id) const;
@@ -187,80 +199,124 @@ class LootValidatorRefManager : public RefManager<Loot, LootValidatorRef>
     public:
         typedef LinkedListHead::Iterator< LootValidatorRef > iterator;
 
-        LootValidatorRef* getFirst() { return (LootValidatorRef*)RefManager<Loot, LootValidatorRef>::getFirst(); }
-        LootValidatorRef* getLast() { return (LootValidatorRef*)RefManager<Loot, LootValidatorRef>::getLast(); }
+        LootValidatorRef* getFirst()
+        {
+            return (LootValidatorRef*)RefManager<Loot, LootValidatorRef>::getFirst();
+        }
+        LootValidatorRef* getLast()
+        {
+            return (LootValidatorRef*)RefManager<Loot, LootValidatorRef>::getLast();
+        }
 
-        iterator begin() { return iterator(getFirst()); }
-        iterator end() { return iterator(NULL); }
-        iterator rbegin() { return iterator(getLast()); }
-        iterator rend() { return iterator(NULL); }
+        iterator begin()
+        {
+            return iterator(getFirst());
+        }
+        iterator end()
+        {
+            return iterator(NULL);
+        }
+        iterator rbegin()
+        {
+            return iterator(getLast());
+        }
+        iterator rend()
+        {
+            return iterator(NULL);
+        }
 };
 
 //=====================================================
 
 struct Loot
 {
-    QuestItemMap const& GetPlayerQuestItems() const { return PlayerQuestItems; }
-    QuestItemMap const& GetPlayerFFAItems() const { return PlayerFFAItems; }
-    QuestItemMap const& GetPlayerNonQuestNonFFAConditionalItems() const { return PlayerNonQuestNonFFAConditionalItems; }
+        QuestItemMap const& GetPlayerQuestItems() const
+        {
+            return PlayerQuestItems;
+        }
+        QuestItemMap const& GetPlayerFFAItems() const
+        {
+            return PlayerFFAItems;
+        }
+        QuestItemMap const& GetPlayerNonQuestNonFFAConditionalItems() const
+        {
+            return PlayerNonQuestNonFFAConditionalItems;
+        }
 
-    QuestItemList* FillFFALoot(Player* player);
-    QuestItemList* FillQuestLoot(Player* player);
-    QuestItemList* FillNonQuestNonFFAConditionalLoot(Player* player);
+        QuestItemList* FillFFALoot(Player* player);
+        QuestItemList* FillQuestLoot(Player* player);
+        QuestItemList* FillNonQuestNonFFAConditionalLoot(Player* player);
 
-    std::vector<LootItem> items;
-    std::vector<LootItem> quest_items;
-    uint32 gold;
-    uint8 unlootedCount;
+        std::vector<LootItem> items;
+        std::vector<LootItem> quest_items;
+        uint32 gold;
+        uint8 unlootedCount;
 
-    Loot(uint32 _gold = 0) : gold(_gold), unlootedCount(0) {}
-    ~Loot() { clear(); }
+        Loot(uint32 _gold = 0) : gold(_gold), unlootedCount(0) {}
+        ~Loot()
+        {
+            clear();
+        }
 
-    // if loot becomes invalid this reference is used to inform the listener
-    void addLootValidatorRef(LootValidatorRef* pLootValidatorRef)
-    {
-        i_LootValidatorRefManager.insertFirst(pLootValidatorRef);
-    }
+        // if loot becomes invalid this reference is used to inform the listener
+        void addLootValidatorRef(LootValidatorRef* pLootValidatorRef)
+        {
+            i_LootValidatorRefManager.insertFirst(pLootValidatorRef);
+        }
 
-    // void clear();
-    void clear()
-    {
-        items.clear(); gold = 0; PlayersLooting.clear();
-        for (QuestItemMap::iterator itr = PlayerQuestItems.begin(); itr != PlayerQuestItems.end(); ++itr)
-            delete itr->second;
-        for (QuestItemMap::iterator itr = PlayerFFAItems.begin(); itr != PlayerFFAItems.end(); ++itr)
-            delete itr->second;
-        for (QuestItemMap::iterator itr = PlayerNonQuestNonFFAConditionalItems.begin(); itr != PlayerNonQuestNonFFAConditionalItems.end(); ++itr)
-            delete itr->second;
+        // void clear();
+        void clear()
+        {
+            items.clear();
+            gold = 0;
+            PlayersLooting.clear();
+            for (QuestItemMap::iterator itr = PlayerQuestItems.begin(); itr != PlayerQuestItems.end(); ++itr)
+                delete itr->second;
+            for (QuestItemMap::iterator itr = PlayerFFAItems.begin(); itr != PlayerFFAItems.end(); ++itr)
+                delete itr->second;
+            for (QuestItemMap::iterator itr = PlayerNonQuestNonFFAConditionalItems.begin(); itr != PlayerNonQuestNonFFAConditionalItems.end(); ++itr)
+                delete itr->second;
 
-        PlayerQuestItems.clear();
-        PlayerFFAItems.clear();
-        PlayerNonQuestNonFFAConditionalItems.clear();
+            PlayerQuestItems.clear();
+            PlayerFFAItems.clear();
+            PlayerNonQuestNonFFAConditionalItems.clear();
 
-        items.clear();
-        quest_items.clear();
-        gold = 0;
-        unlootedCount = 0;
-        i_LootValidatorRefManager.clearReferences();
-    }
+            items.clear();
+            quest_items.clear();
+            gold = 0;
+            unlootedCount = 0;
+            i_LootValidatorRefManager.clearReferences();
+        }
 
-    bool empty() const { return items.empty() && gold == 0; }
-    bool isLooted() const { return gold == 0 && unlootedCount == 0; }
+        bool empty() const
+        {
+            return items.empty() && gold == 0;
+        }
+        bool isLooted() const
+        {
+            return gold == 0 && unlootedCount == 0;
+        }
 
-    void NotifyItemRemoved(uint8 lootIndex);
-    void NotifyQuestItemRemoved(uint8 questIndex);
-    void NotifyMoneyRemoved();
-    void AddLooter(uint64 GUID) { PlayersLooting.insert(GUID); }
-    void RemoveLooter(uint64 GUID) { PlayersLooting.erase(GUID); }
+        void NotifyItemRemoved(uint8 lootIndex);
+        void NotifyQuestItemRemoved(uint8 questIndex);
+        void NotifyMoneyRemoved();
+        void AddLooter(uint64 GUID)
+        {
+            PlayersLooting.insert(GUID);
+        }
+        void RemoveLooter(uint64 GUID)
+        {
+            PlayersLooting.erase(GUID);
+        }
 
-    void generateMoneyLoot(uint32 minAmount, uint32 maxAmount);
-    void FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner);
+        void generateMoneyLoot(uint32 minAmount, uint32 maxAmount);
+        void FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner);
 
-    // Inserts the item into the loot (called by LootTemplate processors)
-    void AddItem(LootStoreItem const & item);
+        // Inserts the item into the loot (called by LootTemplate processors)
+        void AddItem(LootStoreItem const& item);
 
-    LootItem* LootItemInSlot(uint32 lootslot, Player* player, QuestItem** qitem = NULL, QuestItem** ffaitem = NULL, QuestItem** conditem = NULL);
-    uint32 GetMaxSlotInLootFor(Player* player) const;
+        LootItem* LootItemInSlot(uint32 lootslot, Player* player, QuestItem** qitem = NULL, QuestItem** ffaitem = NULL, QuestItem** conditem = NULL);
+        uint32 GetMaxSlotInLootFor(Player* player) const;
 
     private:
         std::set<uint64> PlayersLooting;
@@ -275,13 +331,13 @@ struct Loot
 
 struct LootView
 {
-    Loot &loot;
-    QuestItemList *qlist;
-    QuestItemList *ffalist;
-    QuestItemList *conditionallist;
+    Loot& loot;
+    QuestItemList* qlist;
+    QuestItemList* ffalist;
+    QuestItemList* conditionallist;
     Player* viewer;
     PermissionTypes permission;
-    LootView(Loot &_loot, QuestItemList *_qlist, QuestItemList *_ffalist, QuestItemList *_conditionallist, Player* _viewer,PermissionTypes _permission = ALL_PERMISSION)
+    LootView(Loot& _loot, QuestItemList* _qlist, QuestItemList* _ffalist, QuestItemList* _conditionallist, Player* _viewer, PermissionTypes _permission = ALL_PERMISSION)
         : loot(_loot), qlist(_qlist), ffalist(_ffalist), conditionallist(_conditionallist), viewer(_viewer), permission(_permission) {}
 };
 

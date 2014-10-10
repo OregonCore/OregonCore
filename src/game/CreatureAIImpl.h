@@ -29,19 +29,22 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2)
 {
-    return (urand(0,1)) ? v1 : v2;
+    return (urand(0, 1)) ? v1 : v2;
 }
 
 template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3)
 {
-    switch (urand(0,2))
+    switch (urand(0, 2))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
     }
 }
 
@@ -49,13 +52,17 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4)
 {
-    switch (urand(0,3))
+    switch (urand(0, 3))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
     }
 }
 
@@ -63,14 +70,19 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5)
 {
-    switch (urand(0,4))
+    switch (urand(0, 4))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
     }
 }
 
@@ -78,15 +90,21 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6)
 {
-    switch (urand(0,5))
+    switch (urand(0, 5))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
     }
 }
 
@@ -94,16 +112,23 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7)
 {
-    switch (urand(0,6))
+    switch (urand(0, 6))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
-        case 6: return v7;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
+    case 6:
+        return v7;
     }
 }
 
@@ -111,17 +136,25 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8)
 {
-    switch (urand(0,7))
+    switch (urand(0, 7))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
-        case 6: return v7;
-        case 7: return v8;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
+    case 6:
+        return v7;
+    case 7:
+        return v8;
     }
 }
 
@@ -130,18 +163,27 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9)
 {
-    switch (urand(0,8))
+    switch (urand(0, 8))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
-        case 6: return v7;
-        case 7: return v8;
-        case 8: return v9;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
+    case 6:
+        return v7;
+    case 7:
+        return v8;
+    case 8:
+        return v9;
     }
 }
 
@@ -150,19 +192,29 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10)
 {
-    switch (urand(0,9))
+    switch (urand(0, 9))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
-        case 6: return v7;
-        case 7: return v8;
-        case 8: return v9;
-        case 9: return v10;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
+    case 6:
+        return v7;
+    case 7:
+        return v8;
+    case 8:
+        return v9;
+    case 9:
+        return v10;
     }
 }
 
@@ -171,20 +223,31 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11)
 {
-    switch (urand(0,10))
+    switch (urand(0, 10))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
-        case 6: return v7;
-        case 7: return v8;
-        case 8: return v9;
-        case 9: return v10;
-        case 10: return v11;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
+    case 6:
+        return v7;
+    case 7:
+        return v8;
+    case 8:
+        return v9;
+    case 9:
+        return v10;
+    case 10:
+        return v11;
     }
 }
 
@@ -193,21 +256,33 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11, const T& v12)
 {
-    switch (urand(0,11))
+    switch (urand(0, 11))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
-        case 6: return v7;
-        case 7: return v8;
-        case 8: return v9;
-        case 9: return v10;
-        case 10: return v11;
-        case 11: return v12;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
+    case 6:
+        return v7;
+    case 7:
+        return v8;
+    case 8:
+        return v9;
+    case 9:
+        return v10;
+    case 10:
+        return v11;
+    case 11:
+        return v12;
     }
 }
 
@@ -216,22 +291,35 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11, const T& v12, const T& v13)
 {
-    switch (urand(0,12))
+    switch (urand(0, 12))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
-        case 6: return v7;
-        case 7: return v8;
-        case 8: return v9;
-        case 9: return v10;
-        case 10: return v11;
-        case 11: return v12;
-        case 12: return v13;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
+    case 6:
+        return v7;
+    case 7:
+        return v8;
+    case 8:
+        return v9;
+    case 9:
+        return v10;
+    case 10:
+        return v11;
+    case 11:
+        return v12;
+    case 12:
+        return v13;
     }
 }
 
@@ -240,23 +328,37 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11, const T& v12, const T& v13, const T& v14)
 {
-    switch (urand(0,13))
+    switch (urand(0, 13))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
-        case 6: return v7;
-        case 7: return v8;
-        case 8: return v9;
-        case 9: return v10;
-        case 10: return v11;
-        case 11: return v12;
-        case 12: return v13;
-        case 13: return v14;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
+    case 6:
+        return v7;
+    case 7:
+        return v8;
+    case 8:
+        return v9;
+    case 9:
+        return v10;
+    case 10:
+        return v11;
+    case 11:
+        return v12;
+    case 12:
+        return v13;
+    case 13:
+        return v14;
     }
 }
 
@@ -265,24 +367,39 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11, const T& v12, const T& v13, const T& v14, const T& v15)
 {
-    switch (urand(0,14))
+    switch (urand(0, 14))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
-        case 6: return v7;
-        case 7: return v8;
-        case 8: return v9;
-        case 9: return v10;
-        case 10: return v11;
-        case 11: return v12;
-        case 12: return v13;
-        case 13: return v14;
-        case 14: return v15;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
+    case 6:
+        return v7;
+    case 7:
+        return v8;
+    case 8:
+        return v9;
+    case 9:
+        return v10;
+    case 10:
+        return v11;
+    case 11:
+        return v12;
+    case 12:
+        return v13;
+    case 13:
+        return v14;
+    case 14:
+        return v15;
     }
 }
 
@@ -291,25 +408,41 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11, const T& v12, const T& v13, const T& v14, const T& v15, const T& v16)
 {
-    switch (urand(0,15))
+    switch (urand(0, 15))
     {
-        default:
-        case 0: return v1;
-        case 1: return v2;
-        case 2: return v3;
-        case 3: return v4;
-        case 4: return v5;
-        case 5: return v6;
-        case 6: return v7;
-        case 7: return v8;
-        case 8: return v9;
-        case 9: return v10;
-        case 10: return v11;
-        case 11: return v12;
-        case 12: return v13;
-        case 13: return v14;
-        case 14: return v15;
-        case 15: return v16;
+    default:
+    case 0:
+        return v1;
+    case 1:
+        return v2;
+    case 2:
+        return v3;
+    case 3:
+        return v4;
+    case 4:
+        return v5;
+    case 5:
+        return v6;
+    case 6:
+        return v7;
+    case 7:
+        return v8;
+    case 8:
+        return v9;
+    case 9:
+        return v10;
+    case 10:
+        return v11;
+    case 11:
+        return v12;
+    case 12:
+        return v13;
+    case 13:
+        return v14;
+    case 14:
+        return v15;
+    case 15:
+        return v16;
     }
 }
 
@@ -320,11 +453,22 @@ class EventMap : private std::map<uint32, uint32>
     public:
         explicit EventMap() : m_time(0), m_phase(0) {}
 
-        uint32 GetTimer() const { return m_time; }
+        uint32 GetTimer() const
+        {
+            return m_time;
+        }
 
-        void Reset() { clear(); m_time = 0; m_phase = 0; }
+        void Reset()
+        {
+            clear();
+            m_time = 0;
+            m_phase = 0;
+        }
 
-        void Update(uint32 time) { m_time += time; }
+        void Update(uint32 time)
+        {
+            m_time += time;
+        }
 
         void SetPhase(uint32 phase)
         {
@@ -470,7 +614,7 @@ enum AICondition
 struct AISpellInfoType
 {
     AISpellInfoType() : target(AITARGET_SELF), condition(AICOND_COMBAT)
-        , cooldown(AI_DEFAULT_COOLDOWN), realCooldown(0), maxRange(0.0f){}
+        , cooldown(AI_DEFAULT_COOLDOWN), realCooldown(0), maxRange(0.0f) {}
     AITarget target;
     AICondition condition;
     uint32 cooldown;
@@ -478,9 +622,9 @@ struct AISpellInfoType
     float maxRange;
 };
 
-AISpellInfoType * GetAISpellInfo(uint32 i);
+AISpellInfoType* GetAISpellInfo(uint32 i);
 
-inline void CreatureAI::SetGazeOn(Unit *target)
+inline void CreatureAI::SetGazeOn(Unit* target)
 {
     if (me->canAttack(target))
     {
@@ -502,7 +646,7 @@ inline bool CreatureAI::UpdateVictimWithGaze()
             me->SetReactState(REACT_AGGRESSIVE);
     }
 
-    if (Unit *victim = me->SelectVictim())
+    if (Unit* victim = me->SelectVictim())
         AttackStart(victim);
     return me->getVictim();
 }
@@ -514,7 +658,7 @@ inline bool CreatureAI::UpdateCombatState()
 
     if (!me->HasReactState(REACT_PASSIVE))
     {
-        if (Unit *victim = me->SelectVictim())
+        if (Unit* victim = me->SelectVictim())
             AttackStart(victim);
         return me->getVictim();
     }
@@ -535,7 +679,7 @@ inline bool CreatureAI::UpdateVictim()
 
     if (!me->HasReactState(REACT_PASSIVE))
     {
-        if (Unit *victim = me->SelectVictim())
+        if (Unit* victim = me->SelectVictim())
             AttackStart(victim);
         return me->getVictim();
     }
@@ -602,19 +746,19 @@ inline void UnitAI::DoCastAOE(uint32 spellId, bool triggered)
     me->CastSpell((Unit*)NULL, spellId, triggered);
 }
 
-inline Creature *CreatureAI::DoSummon(uint32 uiEntry, const Position &pos, uint32 uiDespawntime, TempSummonType uiType)
+inline Creature* CreatureAI::DoSummon(uint32 uiEntry, const Position& pos, uint32 uiDespawntime, TempSummonType uiType)
 {
     return me->SummonCreature(uiEntry, pos, uiType, uiDespawntime);
 }
 
-inline Creature *CreatureAI::DoSummon(uint32 uiEntry, WorldObject* obj, float fRadius, uint32 uiDespawntime, TempSummonType uiType)
+inline Creature* CreatureAI::DoSummon(uint32 uiEntry, WorldObject* obj, float fRadius, uint32 uiDespawntime, TempSummonType uiType)
 {
     Position pos;
     obj->GetRandomNearPosition(pos, fRadius);
     return me->SummonCreature(uiEntry, pos, uiType, uiDespawntime);
 }
 
-inline Creature *CreatureAI::DoSummonFlyer(uint32 uiEntry, WorldObject *obj, float _fZ, float fRadius, uint32 uiDespawntime, TempSummonType uiType)
+inline Creature* CreatureAI::DoSummonFlyer(uint32 uiEntry, WorldObject* obj, float _fZ, float fRadius, uint32 uiDespawntime, TempSummonType uiType)
 {
     Position pos;
     obj->GetRandomNearPosition(pos, fRadius);

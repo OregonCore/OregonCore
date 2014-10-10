@@ -37,7 +37,7 @@ class Bag : public Item
         bool Create(uint32 guidlow, uint32 itemid, Player const* owner);
 
         void Clear();
-        void StoreItem(uint8 slot, Item *pItem, bool update);
+        void StoreItem(uint8 slot, Item* pItem, bool update);
         void RemoveItem(uint8 slot, bool update);
 
         Item* GetItemByPos(uint8 slot) const;
@@ -46,7 +46,10 @@ class Bag : public Item
         uint8 GetSlotByItemGUID(uint64 guid) const;
         bool IsEmpty() const;
         uint32 GetFreeSlots() const;
-        uint32 GetBagSize() const { return GetUInt32Value(CONTAINER_FIELD_NUM_SLOTS); }
+        uint32 GetBagSize() const
+        {
+            return GetUInt32Value(CONTAINER_FIELD_NUM_SLOTS);
+        }
 
         // DB operations
         // overwrite virtual Item::SaveToDB
@@ -56,7 +59,7 @@ class Bag : public Item
         // overwrite virtual Item::DeleteFromDB
         void DeleteFromDB();
 
-        void BuildCreateUpdateBlockForPlayer(UpdateData *data, Player* target) const;
+        void BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) const;
 
     protected:
 
@@ -64,7 +67,7 @@ class Bag : public Item
         Item* m_bagslot[MAX_BAG_SIZE];
 };
 
-inline Item* NewItemOrBag(ItemPrototype const * proto)
+inline Item* NewItemOrBag(ItemPrototype const* proto)
 {
     return (proto->InventoryType == INVTYPE_BAG) ? new Bag : new Item;
 }

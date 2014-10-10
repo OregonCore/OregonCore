@@ -32,7 +32,7 @@ enum PetType
 
 enum PetSaveMode
 {
-    PET_SAVE_AS_DELETED       =-1,
+    PET_SAVE_AS_DELETED       = -1,
     PET_SAVE_AS_CURRENT       = 0,
     PET_SAVE_IN_STABLE_SLOT_1 = 1,
     PET_SAVE_IN_STABLE_SLOT_2 = 2,
@@ -121,7 +121,7 @@ enum PetNameInvalidReason
 };
 
 typedef UNORDERED_MAP<uint16, PetSpell> PetSpellMap;
-typedef std::map<uint32,uint32> TeachSpellMap;
+typedef std::map<uint32, uint32> TeachSpellMap;
 typedef std::vector<uint32> AutoSpellList;
 
 #define HAPPINESS_LEVEL_SIZE        333000
@@ -142,16 +142,28 @@ class Pet : public Guardian
         void AddToWorld();
         void RemoveFromWorld();
 
-        PetType getPetType() const { return m_petType; }
-        void setPetType(PetType type) { m_petType = type; }
-        bool isControlled() const { return getPetType() == SUMMON_PET || getPetType() == HUNTER_PET; }
-        bool isTemporarySummoned() const { return m_duration > 0; }
+        PetType getPetType() const
+        {
+            return m_petType;
+        }
+        void setPetType(PetType type)
+        {
+            m_petType = type;
+        }
+        bool isControlled() const
+        {
+            return getPetType() == SUMMON_PET || getPetType() == HUNTER_PET;
+        }
+        bool isTemporarySummoned() const
+        {
+            return m_duration > 0;
+        }
 
         bool IsPermanentPetFor(Player* owner);              // pet have tab in character windows and set UNIT_FIELD_PETNUMBER
 
-        bool Create (uint32 guidlow, Map *map, uint32 Entry, uint32 pet_number);
+        bool Create (uint32 guidlow, Map* map, uint32 Entry, uint32 pet_number);
         bool CreateBaseAtCreature(Creature* creature);
-        bool LoadPetFromDB(Player* owner,uint32 petentry = 0,uint32 petnumber = 0, bool current = false);
+        bool LoadPetFromDB(Player* owner, uint32 petentry = 0, uint32 petnumber = 0, bool current = false);
         void SavePetToDB(PetSaveMode mode);
         void Remove(PetSaveMode mode, bool returnreagent = false);
         static void DeleteFromDB(uint32 guidlow);
@@ -159,7 +171,10 @@ class Pet : public Guardian
         void setDeathState(DeathState s);                   // overwrite virtual Creature::setDeathState and Unit::setDeathState
         void Update(uint32 diff);                           // overwrite virtual Creature::Update and Unit::Update
 
-        uint8 GetPetAutoSpellSize() const { return m_autospells.size(); }
+        uint8 GetPetAutoSpellSize() const
+        {
+            return m_autospells.size();
+        }
         uint32 GetPetAutoSpellOnPos(uint8 pos) const
         {
             if (pos >= m_autospells.size())
@@ -176,16 +191,25 @@ class Pet : public Guardian
         uint32 GetMaxLoyaltyPoints(uint32 level);
         uint32 GetStartLoyaltyPoints(uint32 level);
         void KillLoyaltyBonus(uint32 level);
-        uint32 GetLoyaltyLevel() { return GetByteValue(UNIT_FIELD_BYTES_1, 1); }
+        uint32 GetLoyaltyLevel()
+        {
+            return GetByteValue(UNIT_FIELD_BYTES_1, 1);
+        }
         void SetLoyaltyLevel(LoyaltyLevel level);
         void GivePetXP(uint32 xp);
         void GivePetLevel(uint32 level);
         void InitPetAuras(const uint32 Entry);
         bool HaveInDiet(ItemPrototype const* item) const;
         uint32 GetCurrentFoodBenefitLevel(uint32 itemlevel);
-        void SetDuration(int32 dur) { m_duration = dur; }
+        void SetDuration(int32 dur)
+        {
+            m_duration = dur;
+        }
 
-        bool canSwim() const { return true; }
+        bool canSwim() const
+        {
+            return true;
+        }
 
         bool   CanTakeMoreActiveSpells(uint32 SpellIconID);
         void   ToggleAutocast(uint32 spellid, bool apply);
@@ -193,7 +217,10 @@ class Pet : public Guardian
         int32  GetTPForSpell(uint32 spellid);
 
         bool HasSpell(uint32 spell) const;
-        void AddTeachSpell(uint32 learned_id, uint32 source_id) { m_teachspells[learned_id] = source_id; }
+        void AddTeachSpell(uint32 learned_id, uint32 source_id)
+        {
+            m_teachspells[learned_id] = source_id;
+        }
 
         void LearnPetPassives();
         void CastPetAuras(bool current);
@@ -206,7 +233,7 @@ class Pet : public Guardian
         void _LoadSpells();
         void _SaveSpells();
 
-        bool addSpell(uint16 spell_id,uint16 active = ACT_DECIDE, PetSpellState state = PETSPELL_NEW, PetSpellType type = PETSPELL_NORMAL);
+        bool addSpell(uint16 spell_id, uint16 active = ACT_DECIDE, PetSpellState state = PETSPELL_NEW, PetSpellType type = PETSPELL_NORMAL);
         bool learnSpell(uint16 spell_id);
         void removeSpell(uint16 spell_id);
 
@@ -225,16 +252,34 @@ class Pet : public Guardian
         uint32  m_resetTalentsCost;
         time_t  m_resetTalentsTime;
 
-        uint64 GetAuraUpdateMask() { return m_auraUpdateMask; }
-        void SetAuraUpdateMask(uint8 slot) { m_auraUpdateMask |= (uint64(1) << slot); }
-        void UnsetAuraUpdateMask(uint8 slot) { m_auraUpdateMask &= ~(uint64(1) << slot); }
-        void ResetAuraUpdateMask() { m_auraUpdateMask = 0; }
+        uint64 GetAuraUpdateMask()
+        {
+            return m_auraUpdateMask;
+        }
+        void SetAuraUpdateMask(uint8 slot)
+        {
+            m_auraUpdateMask |= (uint64(1) << slot);
+        }
+        void UnsetAuraUpdateMask(uint8 slot)
+        {
+            m_auraUpdateMask &= ~(uint64(1) << slot);
+        }
+        void ResetAuraUpdateMask()
+        {
+            m_auraUpdateMask = 0;
+        }
 
-        DeclinedName const* GetDeclinedNames() const { return m_declinedname; }
+        DeclinedName const* GetDeclinedNames() const
+        {
+            return m_declinedname;
+        }
 
         bool    m_removed;                                  // prevent overwrite pet state in DB at next Pet::Update if pet already removed(saved)
 
-        Player* GetOwner() { return m_owner; }
+        Player* GetOwner()
+        {
+            return m_owner;
+        }
     protected:
         Player* m_owner;
         uint32  m_regenTimer;
@@ -245,7 +290,7 @@ class Pet : public Guardian
         int32   m_loyaltyPoints;
         uint64  m_auraUpdateMask;
 
-        DeclinedName *m_declinedname;
+        DeclinedName* m_declinedname;
 
         bool m_wasOutdoors;
         uint32 m_outdoorBonusCheckTimer;

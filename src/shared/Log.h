@@ -55,7 +55,7 @@ enum LogLevel
     LOGL_DEBUG
 };
 
-const int LogLevels = int(LOGL_DEBUG)+1;
+const int LogLevels = int(LOGL_DEBUG) + 1;
 
 enum ColorTypes
 {
@@ -77,13 +77,13 @@ enum ColorTypes
     WHITE
 };
 
-const int Colors = int(WHITE)+1;
+const int Colors = int(WHITE) + 1;
 
 class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Thread_Mutex> >
 {
-    friend class Oregon::OperatorNew<Log>;
-    Log();
-    ~Log();
+        friend class Oregon::OperatorNew<Log>;
+        Log();
+        ~Log();
 
     public:
         void Initialize();
@@ -92,45 +92,72 @@ class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Th
         void SetColor(bool stdout_stream, ColorTypes color);
         void ResetColor(bool stdout_stream);
 
-        void outDB( LogTypes type, const char * str );
-        void outString( const char * str, ... )                 ATTR_PRINTF(2,3);
+        void outDB( LogTypes type, const char* str );
+        void outString( const char* str, ... )                 ATTR_PRINTF(2, 3);
         void outString( );
-        void outStringInLine( const char * str, ... )           ATTR_PRINTF(2,3);
-        void outError( const char * err, ... )                  ATTR_PRINTF(2,3);
-        void outFatal( const char * err, ... )                  ATTR_PRINTF(2,3) ATTR_NORETURN;
-        void outCrash( const char * err, ... )                  ATTR_PRINTF(2,3);
-        void outBasic( const char * str, ... )                  ATTR_PRINTF(2,3);
-        void outDetail( const char * str, ... )                 ATTR_PRINTF(2,3);
-        void outDebug( const char * str, ... )                  ATTR_PRINTF(2,3);
-        void outDebugInLine( const char * str, ... )            ATTR_PRINTF(2,3);
-        void outErrorDb( const char * str, ... )                ATTR_PRINTF(2,3);
-        void outChar( const char * str, ... )                   ATTR_PRINTF(2,3);
-        void outCommand( uint32 account, const char * str, ...) ATTR_PRINTF(3,4);
-        void outRemote( const char * str, ... )                 ATTR_PRINTF(2,3);
-        void outChat( const char * str, ... )                   ATTR_PRINTF(2,3);
-        void outWarden( const char * str, ... )                 ATTR_PRINTF(2,3);
-        void outArena( const char * str, ... )                  ATTR_PRINTF(2,3);
-        void outCharDump( const char * str, uint32 account_id, uint32 guid, const char * name );
+        void outStringInLine( const char* str, ... )           ATTR_PRINTF(2, 3);
+        void outError( const char* err, ... )                  ATTR_PRINTF(2, 3);
+        void outFatal( const char* err, ... )                  ATTR_PRINTF(2, 3) ATTR_NORETURN;
+        void outCrash( const char* err, ... )                  ATTR_PRINTF(2, 3);
+        void outBasic( const char* str, ... )                  ATTR_PRINTF(2, 3);
+        void outDetail( const char* str, ... )                 ATTR_PRINTF(2, 3);
+        void outDebug( const char* str, ... )                  ATTR_PRINTF(2, 3);
+        void outDebugInLine( const char* str, ... )            ATTR_PRINTF(2, 3);
+        void outErrorDb( const char* str, ... )                ATTR_PRINTF(2, 3);
+        void outChar( const char* str, ... )                   ATTR_PRINTF(2, 3);
+        void outCommand( uint32 account, const char* str, ...) ATTR_PRINTF(3, 4);
+        void outRemote( const char* str, ... )                 ATTR_PRINTF(2, 3);
+        void outChat( const char* str, ... )                   ATTR_PRINTF(2, 3);
+        void outWarden( const char* str, ... )                 ATTR_PRINTF(2, 3);
+        void outArena( const char* str, ... )                  ATTR_PRINTF(2, 3);
+        void outCharDump( const char* str, uint32 account_id, uint32 guid, const char* name );
 
         static void outTimestamp(FILE* file);
         static std::string GetTimestampStr();
 
-        void SetLogLevel(char * Level);
-        void SetLogFileLevel(char * Level);
-        void SetDBLogLevel(char * Level);
-        void SetRealmID(uint32 id) { realm = id; }
-        uint8 GetLogLevel() const { return m_logLevel; } 
+        void SetLogLevel(char* Level);
+        void SetLogFileLevel(char* Level);
+        void SetDBLogLevel(char* Level);
+        void SetRealmID(uint32 id)
+        {
+            realm = id;
+        }
+        uint8 GetLogLevel() const
+        {
+            return m_logLevel;
+        }
 
-        uint32 getLogFilter() const { return m_logFilter; }
-        bool IsOutDebug() const { return m_logLevel > 2 || (m_logFileLevel > 2 && logfile); }
-        bool IsOutCharDump() const { return m_charLog_Dump; }
+        uint32 getLogFilter() const
+        {
+            return m_logFilter;
+        }
+        bool IsOutDebug() const
+        {
+            return m_logLevel > 2 || (m_logFileLevel > 2 && logfile);
+        }
+        bool IsOutCharDump() const
+        {
+            return m_charLog_Dump;
+        }
 
-        bool GetLogDB() { return m_enableLogDB; }
-        bool GetLogDBLater() { return m_enableLogDBLater; }
-        void SetLogDB(bool enable) { m_enableLogDB = enable; }
-        void SetLogDBLater(bool value) { m_enableLogDBLater = value; }
+        bool GetLogDB()
+        {
+            return m_enableLogDB;
+        }
+        bool GetLogDBLater()
+        {
+            return m_enableLogDBLater;
+        }
+        void SetLogDB(bool enable)
+        {
+            m_enableLogDB = enable;
+        }
+        void SetLogDBLater(bool value)
+        {
+            m_enableLogDBLater = value;
+        }
     private:
-        FILE* openLogFile(char const* configFileName,char const* configTimeStampFlag, char const* mode);
+        FILE* openLogFile(char const* configFileName, char const* configTimeStampFlag, char const* mode);
         FILE* openGmlogPerAccount(uint32 account);
 
         FILE* raLogfile;

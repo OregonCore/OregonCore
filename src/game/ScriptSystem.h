@@ -93,7 +93,7 @@ class SystemMgr
             return &itr->second;
         }
 
-        std::vector<ScriptPointMove> const &GetPointMoveList(uint32 uiCreatureEntry) const
+        std::vector<ScriptPointMove> const& GetPointMoveList(uint32 uiCreatureEntry) const
         {
             static std::vector<ScriptPointMove> vEmpty;
 

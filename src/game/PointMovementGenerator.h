@@ -25,24 +25,36 @@
 
 template<class T>
 class PointMovementGenerator
-: public MovementGeneratorMedium< T, PointMovementGenerator<T> >
+    : public MovementGeneratorMedium< T, PointMovementGenerator<T> >
 {
     public:
         PointMovementGenerator(uint32 _id, float _x, float _y, float _z, bool _usePathfinding) :
             i_x(_x), i_y(_y), i_z(_z), m_usePathfinding(_usePathfinding), i_nextMoveTime(0), id(_id), arrived(false) {}
 
-        virtual void Initialize(T &);
-        virtual void Finalize(T &unit);
-        virtual void Reset(T &unit){unit.StopMoving();}
-        virtual bool Update(T &, const uint32 &diff);
+        virtual void Initialize(T&);
+        virtual void Finalize(T& unit);
+        virtual void Reset(T& unit)
+        {
+            unit.StopMoving();
+        }
+        virtual bool Update(T&, const uint32& diff);
 
-        void MovementInform(T &);
+        void MovementInform(T&);
 
-        MovementGeneratorType GetMovementGeneratorType() { return POINT_MOTION_TYPE; }
+        MovementGeneratorType GetMovementGeneratorType()
+        {
+            return POINT_MOTION_TYPE;
+        }
 
-        bool GetDestination(float& x, float& y, float& z) const { x=i_x; y=i_y; z=i_z; return true; }
+        bool GetDestination(float& x, float& y, float& z) const
+        {
+            x = i_x;
+            y = i_y;
+            z = i_z;
+            return true;
+        }
     private:
-        float i_x,i_y,i_z;
+        float i_x, i_y, i_z;
         bool m_usePathfinding;
         TimeTracker i_nextMoveTime;
         uint32 id;
@@ -51,14 +63,17 @@ class PointMovementGenerator
 };
 
 class AssistanceMovementGenerator
-: public PointMovementGenerator<Creature>
+    : public PointMovementGenerator<Creature>
 {
     public:
         AssistanceMovementGenerator(float _x, float _y, float _z) :
             PointMovementGenerator<Creature>(0, _x, _y, _z, true) {}
 
-        MovementGeneratorType GetMovementGeneratorType() { return ASSISTANCE_MOTION_TYPE; }
-        void Finalize(Creature &);
+        MovementGeneratorType GetMovementGeneratorType()
+        {
+            return ASSISTANCE_MOTION_TYPE;
+        }
+        void Finalize(Creature&);
 };
 
 #endif

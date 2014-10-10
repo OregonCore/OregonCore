@@ -28,19 +28,19 @@
 
 template<class T>
 inline void
-Oregon::VisibleNotifier::Visit(GridRefManager<T> &m)
+Oregon::VisibleNotifier::Visit(GridRefManager<T>& m)
 {
     for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
         vis_guids.erase(iter->getSource()->GetGUID());
-        i_player.UpdateVisibilityOf(iter->getSource(),i_data,i_visibleNow);
+        i_player.UpdateVisibilityOf(iter->getSource(), i_data, i_visibleNow);
     }
 }
 
 inline void
-Oregon::ObjectUpdater::Visit(CreatureMapType &m)
+Oregon::ObjectUpdater::Visit(CreatureMapType& m)
 {
-    for (CreatureMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
+    for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
         if (iter->getSource()->IsInWorld() && !iter->getSource()->isSpiritService())
             iter->getSource()->Update(i_timeDiff);
 }
@@ -50,13 +50,13 @@ Oregon::ObjectUpdater::Visit(CreatureMapType &m)
 // WorldObject searchers & workers
 
 template<class Check>
-void Oregon::WorldObjectSearcher<Check>::Visit(GameObjectMapType &m)
+void Oregon::WorldObjectSearcher<Check>::Visit(GameObjectMapType& m)
 {
     // already found
     if (i_object)
         return;
 
-    for (GameObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
         {
@@ -67,13 +67,13 @@ void Oregon::WorldObjectSearcher<Check>::Visit(GameObjectMapType &m)
 }
 
 template<class Check>
-void Oregon::WorldObjectSearcher<Check>::Visit(PlayerMapType &m)
+void Oregon::WorldObjectSearcher<Check>::Visit(PlayerMapType& m)
 {
     // already found
     if (i_object)
         return;
 
-    for (PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
         {
@@ -84,13 +84,13 @@ void Oregon::WorldObjectSearcher<Check>::Visit(PlayerMapType &m)
 }
 
 template<class Check>
-void Oregon::WorldObjectSearcher<Check>::Visit(CreatureMapType &m)
+void Oregon::WorldObjectSearcher<Check>::Visit(CreatureMapType& m)
 {
     // already found
     if (i_object)
         return;
 
-    for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
         {
@@ -101,13 +101,13 @@ void Oregon::WorldObjectSearcher<Check>::Visit(CreatureMapType &m)
 }
 
 template<class Check>
-void Oregon::WorldObjectSearcher<Check>::Visit(CorpseMapType &m)
+void Oregon::WorldObjectSearcher<Check>::Visit(CorpseMapType& m)
 {
     // already found
     if (i_object)
         return;
 
-    for (CorpseMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (CorpseMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
         {
@@ -118,13 +118,13 @@ void Oregon::WorldObjectSearcher<Check>::Visit(CorpseMapType &m)
 }
 
 template<class Check>
-void Oregon::WorldObjectSearcher<Check>::Visit(DynamicObjectMapType &m)
+void Oregon::WorldObjectSearcher<Check>::Visit(DynamicObjectMapType& m)
 {
     // already found
     if (i_object)
         return;
 
-    for (DynamicObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (DynamicObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
         {
@@ -135,41 +135,41 @@ void Oregon::WorldObjectSearcher<Check>::Visit(DynamicObjectMapType &m)
 }
 
 template<class Check>
-void Oregon::WorldObjectListSearcher<Check>::Visit(PlayerMapType &m)
+void Oregon::WorldObjectListSearcher<Check>::Visit(PlayerMapType& m)
 {
-    for (PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
         if (i_check(itr->getSource()))
             i_objects.push_back(itr->getSource());
 }
 
 template<class Check>
-void Oregon::WorldObjectListSearcher<Check>::Visit(CreatureMapType &m)
+void Oregon::WorldObjectListSearcher<Check>::Visit(CreatureMapType& m)
 {
-    for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
         if (i_check(itr->getSource()))
             i_objects.push_back(itr->getSource());
 }
 
 template<class Check>
-void Oregon::WorldObjectListSearcher<Check>::Visit(CorpseMapType &m)
+void Oregon::WorldObjectListSearcher<Check>::Visit(CorpseMapType& m)
 {
-    for (CorpseMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (CorpseMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
         if (i_check(itr->getSource()))
             i_objects.push_back(itr->getSource());
 }
 
 template<class Check>
-void Oregon::WorldObjectListSearcher<Check>::Visit(GameObjectMapType &m)
+void Oregon::WorldObjectListSearcher<Check>::Visit(GameObjectMapType& m)
 {
-    for (GameObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
         if (i_check(itr->getSource()))
             i_objects.push_back(itr->getSource());
 }
 
 template<class Check>
-void Oregon::WorldObjectListSearcher<Check>::Visit(DynamicObjectMapType &m)
+void Oregon::WorldObjectListSearcher<Check>::Visit(DynamicObjectMapType& m)
 {
-    for (DynamicObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (DynamicObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
         if (i_check(itr->getSource()))
             i_objects.push_back(itr->getSource());
 }
@@ -177,13 +177,13 @@ void Oregon::WorldObjectListSearcher<Check>::Visit(DynamicObjectMapType &m)
 // Gameobject searchers
 
 template<class Check>
-void Oregon::GameObjectSearcher<Check>::Visit(GameObjectMapType &m)
+void Oregon::GameObjectSearcher<Check>::Visit(GameObjectMapType& m)
 {
     // already found
     if (i_object)
         return;
 
-    for (GameObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
         {
@@ -194,9 +194,9 @@ void Oregon::GameObjectSearcher<Check>::Visit(GameObjectMapType &m)
 }
 
 template<class Check>
-void Oregon::GameObjectLastSearcher<Check>::Visit(GameObjectMapType &m)
+void Oregon::GameObjectLastSearcher<Check>::Visit(GameObjectMapType& m)
 {
-    for (GameObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
             i_object = itr->getSource();
@@ -204,9 +204,9 @@ void Oregon::GameObjectLastSearcher<Check>::Visit(GameObjectMapType &m)
 }
 
 template<class Check>
-void Oregon::GameObjectListSearcher<Check>::Visit(GameObjectMapType &m)
+void Oregon::GameObjectListSearcher<Check>::Visit(GameObjectMapType& m)
 {
-    for (GameObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
         if (i_check(itr->getSource()))
             i_objects.push_back(itr->getSource());
 }
@@ -214,13 +214,13 @@ void Oregon::GameObjectListSearcher<Check>::Visit(GameObjectMapType &m)
 // Unit searchers
 
 template<class Check>
-void Oregon::UnitSearcher<Check>::Visit(CreatureMapType &m)
+void Oregon::UnitSearcher<Check>::Visit(CreatureMapType& m)
 {
     // already found
     if (i_object)
         return;
 
-    for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
         {
@@ -231,13 +231,13 @@ void Oregon::UnitSearcher<Check>::Visit(CreatureMapType &m)
 }
 
 template<class Check>
-void Oregon::UnitSearcher<Check>::Visit(PlayerMapType &m)
+void Oregon::UnitSearcher<Check>::Visit(PlayerMapType& m)
 {
     // already found
     if (i_object)
         return;
 
-    for (PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
         {
@@ -248,9 +248,9 @@ void Oregon::UnitSearcher<Check>::Visit(PlayerMapType &m)
 }
 
 template<class Check>
-void Oregon::UnitLastSearcher<Check>::Visit(CreatureMapType &m)
+void Oregon::UnitLastSearcher<Check>::Visit(CreatureMapType& m)
 {
-    for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
             i_object = itr->getSource();
@@ -258,9 +258,9 @@ void Oregon::UnitLastSearcher<Check>::Visit(CreatureMapType &m)
 }
 
 template<class Check>
-void Oregon::UnitLastSearcher<Check>::Visit(PlayerMapType &m)
+void Oregon::UnitLastSearcher<Check>::Visit(PlayerMapType& m)
 {
-    for (PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
             i_object = itr->getSource();
@@ -268,17 +268,17 @@ void Oregon::UnitLastSearcher<Check>::Visit(PlayerMapType &m)
 }
 
 template<class Check>
-void Oregon::UnitListSearcher<Check>::Visit(PlayerMapType &m)
+void Oregon::UnitListSearcher<Check>::Visit(PlayerMapType& m)
 {
-    for (PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
         if (i_check(itr->getSource()))
             i_objects.push_back(itr->getSource());
 }
 
 template<class Check>
-void Oregon::UnitListSearcher<Check>::Visit(CreatureMapType &m)
+void Oregon::UnitListSearcher<Check>::Visit(CreatureMapType& m)
 {
-    for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
         if (i_check(itr->getSource()))
             i_objects.push_back(itr->getSource());
 }
@@ -286,13 +286,13 @@ void Oregon::UnitListSearcher<Check>::Visit(CreatureMapType &m)
 // Creature searchers
 
 template<class Check>
-void Oregon::CreatureSearcher<Check>::Visit(CreatureMapType &m)
+void Oregon::CreatureSearcher<Check>::Visit(CreatureMapType& m)
 {
     // already found
     if (i_object)
         return;
 
-    for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
         {
@@ -303,9 +303,9 @@ void Oregon::CreatureSearcher<Check>::Visit(CreatureMapType &m)
 }
 
 template<class Check>
-void Oregon::CreatureLastSearcher<Check>::Visit(CreatureMapType &m)
+void Oregon::CreatureLastSearcher<Check>::Visit(CreatureMapType& m)
 {
-    for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
             i_object = itr->getSource();
@@ -313,29 +313,29 @@ void Oregon::CreatureLastSearcher<Check>::Visit(CreatureMapType &m)
 }
 
 template<class Check>
-void Oregon::CreatureListSearcher<Check>::Visit(CreatureMapType &m)
+void Oregon::CreatureListSearcher<Check>::Visit(CreatureMapType& m)
 {
-    for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
         if (i_check(itr->getSource()))
             i_objects.push_back(itr->getSource());
 }
 
 template<class Check>
-void Oregon::PlayerListSearcher<Check>::Visit(PlayerMapType &m)
+void Oregon::PlayerListSearcher<Check>::Visit(PlayerMapType& m)
 {
-    for (PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
         if (i_check(itr->getSource()))
             i_objects.push_back(itr->getSource());
 }
 
 template<class Check>
-void Oregon::PlayerSearcher<Check>::Visit(PlayerMapType &m)
+void Oregon::PlayerSearcher<Check>::Visit(PlayerMapType& m)
 {
     // already found
     if (i_object)
         return;
 
-    for (PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+    for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (i_check(itr->getSource()))
         {
@@ -349,18 +349,18 @@ template<class Builder>
 void Oregon::LocalizedPacketDo<Builder>::operator()(Player* p)
 {
     uint32 loc_idx = p->GetSession()->GetSessionDbLocaleIndex();
-    uint32 cache_idx = loc_idx+1;
+    uint32 cache_idx = loc_idx + 1;
     WorldPacket* data;
 
     // create if not cached yet
-    if (i_data_cache.size() < cache_idx+1 || !i_data_cache[cache_idx])
+    if (i_data_cache.size() < cache_idx + 1 || !i_data_cache[cache_idx])
     {
-        if (i_data_cache.size() < cache_idx+1)
-            i_data_cache.resize(cache_idx+1);
+        if (i_data_cache.size() < cache_idx + 1)
+            i_data_cache.resize(cache_idx + 1);
 
         data = new WorldPacket(SMSG_MESSAGECHAT, 200);
 
-        i_builder(*data,loc_idx);
+        i_builder(*data, loc_idx);
 
         i_data_cache[cache_idx] = data;
     }
@@ -374,14 +374,14 @@ template<class Builder>
 void Oregon::LocalizedPacketListDo<Builder>::operator()(Player* p)
 {
     uint32 loc_idx = p->GetSession()->GetSessionDbLocaleIndex();
-    uint32 cache_idx = loc_idx+1;
+    uint32 cache_idx = loc_idx + 1;
     WorldPacketList* data_list;
 
     // create if not cached yet
-    if (i_data_cache.size() < cache_idx+1 || i_data_cache[cache_idx].empty())
+    if (i_data_cache.size() < cache_idx + 1 || i_data_cache[cache_idx].empty())
     {
-        if (i_data_cache.size() < cache_idx+1)
-            i_data_cache.resize(cache_idx+1);
+        if (i_data_cache.size() < cache_idx + 1)
+            i_data_cache.resize(cache_idx + 1);
 
         data_list = &i_data_cache[cache_idx];
 

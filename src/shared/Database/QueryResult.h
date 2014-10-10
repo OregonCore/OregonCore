@@ -24,35 +24,47 @@
 #include "Field.h"
 
 #ifdef WIN32
-  #define FD_SETSIZE 1024
-  #include <winsock2.h>
+#define FD_SETSIZE 1024
+#include <winsock2.h>
 #endif
 #include <mysql.h>
 
 class QueryResult
 {
     public:
-        QueryResult(MYSQL_RES *result, MYSQL_FIELD *fields, uint64 rowCount, uint32 fieldCount);
+        QueryResult(MYSQL_RES* result, MYSQL_FIELD* fields, uint64 rowCount, uint32 fieldCount);
         ~QueryResult();
 
         bool NextRow();
 
-        Field *Fetch() const { return mCurrentRow; }
+        Field* Fetch() const
+        {
+            return mCurrentRow;
+        }
 
-        const Field & operator [] (int index) const { return mCurrentRow[index]; }
+        const Field& operator [] (int index) const
+        {
+            return mCurrentRow[index];
+        }
 
-        uint32 GetFieldCount() const { return mFieldCount; }
-        uint64 GetRowCount() const { return mRowCount; }
+        uint32 GetFieldCount() const
+        {
+            return mFieldCount;
+        }
+        uint64 GetRowCount() const
+        {
+            return mRowCount;
+        }
 
     protected:
-        Field *mCurrentRow;
+        Field* mCurrentRow;
         uint32 mFieldCount;
         uint64 mRowCount;
 
     private:
         enum Field::DataTypes ConvertNativeType(enum_field_types mysqlType) const;
         void EndQuery();
-        MYSQL_RES *mResult;
+        MYSQL_RES* mResult;
 
 };
 
@@ -64,20 +76,44 @@ class QueryNamedResult
 {
     public:
         explicit QueryNamedResult(QueryResult* query, QueryFieldNames const& names) : mQuery(query), mFieldNames(names) {}
-        ~QueryNamedResult() { delete mQuery; }
+        ~QueryNamedResult()
+        {
+            delete mQuery;
+        }
 
         // compatible interface with QueryResult
-        bool NextRow() { return mQuery->NextRow(); }
-        Field *Fetch() const { return mQuery->Fetch(); }
-        uint32 GetFieldCount() const { return mQuery->GetFieldCount(); }
-        uint64 GetRowCount() const { return mQuery->GetRowCount(); }
-        Field const& operator[] (int index) const { return (*mQuery)[index]; }
+        bool NextRow()
+        {
+            return mQuery->NextRow();
+        }
+        Field* Fetch() const
+        {
+            return mQuery->Fetch();
+        }
+        uint32 GetFieldCount() const
+        {
+            return mQuery->GetFieldCount();
+        }
+        uint64 GetRowCount() const
+        {
+            return mQuery->GetRowCount();
+        }
+        Field const& operator[] (int index) const
+        {
+            return (*mQuery)[index];
+        }
 
         // named access
-        Field const& operator[] (const std::string &name) const { return mQuery->Fetch()[GetField_idx(name)]; }
-        QueryFieldNames const& GetFieldNames() const { return mFieldNames; }
+        Field const& operator[] (const std::string& name) const
+        {
+            return mQuery->Fetch()[GetField_idx(name)];
+        }
+        QueryFieldNames const& GetFieldNames() const
+        {
+            return mFieldNames;
+        }
 
-        uint32 GetField_idx(const std::string &name) const
+        uint32 GetField_idx(const std::string& name) const
         {
             for (size_t idx = 0; idx < mFieldNames.size(); ++idx)
             {
@@ -89,7 +125,7 @@ class QueryNamedResult
         }
 
     protected:
-        QueryResult *mQuery;
+        QueryResult* mQuery;
         QueryFieldNames mFieldNames;
 };
 

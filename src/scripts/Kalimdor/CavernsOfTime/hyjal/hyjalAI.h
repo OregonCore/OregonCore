@@ -98,47 +98,47 @@ extern Yells ThrallQuotes[9];
 
 struct hyjalAI : public npc_escortAI
 {
-    hyjalAI(Creature *c);
+        hyjalAI(Creature* c);
 
-    void Reset();                                           // Generically used to reset our variables. Do *not* call in EnterEvadeMode as this may make problems if the raid is still in combat
+        void Reset();                                           // Generically used to reset our variables. Do *not* call in EnterEvadeMode as this may make problems if the raid is still in combat
 
-    void EnterEvadeMode();                                  // Send creature back to spawn location and evade.
+        void EnterEvadeMode();                                  // Send creature back to spawn location and evade.
 
-    void EnterCombat(Unit *who);                                  // Used to reset cooldowns for our spells and to inform the raid that we're under attack
+        void EnterCombat(Unit* who);                                  // Used to reset cooldowns for our spells and to inform the raid that we're under attack
 
-    void UpdateAI(const uint32 diff);                       // Called to summon waves, check for boss deaths and to cast our spells.
+        void UpdateAI(const uint32 diff);                       // Called to summon waves, check for boss deaths and to cast our spells.
 
-    void JustDied(Unit* killer);                             // Called on death, informs the raid that they have failed.
+        void JustDied(Unit* killer);                             // Called on death, informs the raid that they have failed.
 
-    void SetFaction(uint32 _faction)                        // Set the faction to either Alliance or Horde in Hyjal
-    {
-        Faction = _faction;
-    }
+        void SetFaction(uint32 _faction)                        // Set the faction to either Alliance or Horde in Hyjal
+        {
+            Faction = _faction;
+        }
 
-    void Retreat();                                         // "Teleport" (teleport visual + set invisible) all friendly creatures away from the base.
+        void Retreat();                                         // "Teleport" (teleport visual + set invisible) all friendly creatures away from the base.
 
-    void SpawnVeins();
-    void DeSpawnVeins();
-    void JustSummoned(Creature *summoned);
-    void SummonedCreatureDespawn(Creature* summoned);
-    void HideNearPos(float x, float y);
-    void RespawnNearPos(float x, float y);
-    void WaypointReached(uint32 i);
-    void DoOverrun(uint32 faction, const uint32 diff);
-    void MoveInLineOfSight(Unit *who);
+        void SpawnVeins();
+        void DeSpawnVeins();
+        void JustSummoned(Creature* summoned);
+        void SummonedCreatureDespawn(Creature* summoned);
+        void HideNearPos(float x, float y);
+        void RespawnNearPos(float x, float y);
+        void WaypointReached(uint32 i);
+        void DoOverrun(uint32 faction, const uint32 diff);
+        void MoveInLineOfSight(Unit* who);
 
-    void SummonCreature(uint32 entry, float Base[4][3]);    // Summons a creature for that wave in that base
+        void SummonCreature(uint32 entry, float Base[4][3]);    // Summons a creature for that wave in that base
 
-                                                            // Summons the next wave, calls SummonCreature
-    void SummonNextWave(Wave wave[18], uint32 Count, float Base[4][3]);
+        // Summons the next wave, calls SummonCreature
+        void SummonNextWave(Wave wave[18], uint32 Count, float Base[4][3]);
 
-    void StartEvent(Player* player);                        // Begins the event by gossip click
+        void StartEvent(Player* player);                        // Begins the event by gossip click
 
-    uint32 GetInstanceData(uint32 Event);                   // Gets instance data for this instance, used to check if raid has gotten past a certain point and can access the next phase
+        uint32 GetInstanceData(uint32 Event);                   // Gets instance data for this instance, used to check if raid has gotten past a certain point and can access the next phase
 
-    void Talk(uint32 id);                                   // Searches for the appropriate yell and sound and uses it to inform the raid of various things
+        void Talk(uint32 id);                                   // Searches for the appropriate yell and sound and uses it to inform the raid of various things
 
-    void UpdateWorldState(uint32 field, uint32 value);      // NYI: Requires core support. Updates the world state counter at the top of the UI.
+        void UpdateWorldState(uint32 field, uint32 value);      // NYI: Requires core support. Updates the world state counter at the top of the UI.
     public:
         ScriptedInstance* pInstance;
 
@@ -182,7 +182,7 @@ struct hyjalAI : public npc_escortAI
             uint32 SpellId;
             uint32 Cooldown;
             uint32 TargetType;
-        }Spell[3];
+        } Spell[3];
 
     private:
         uint32 SpellTimer[3];

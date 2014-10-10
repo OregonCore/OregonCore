@@ -117,25 +117,61 @@ class ArenaTeam
         ~ArenaTeam();
 
         bool Create(uint64 captainGuid, uint32 type, std::string arenaTeamName);
-        void Disband(WorldSession *session);
+        void Disband(WorldSession* session);
 
         typedef std::list<ArenaTeamMember> MemberList;
 
-        uint32 GetId() const              { return m_TeamId; }
-        uint32 GetType() const            { return m_Type; }
-        uint8  GetSlot() const            { return GetSlotByType(GetType()); }
+        uint32 GetId() const
+        {
+            return m_TeamId;
+        }
+        uint32 GetType() const
+        {
+            return m_Type;
+        }
+        uint8  GetSlot() const
+        {
+            return GetSlotByType(GetType());
+        }
         static uint8 GetSlotByType(uint32 type);
-        const uint64& GetCaptain() const  { return m_CaptainGuid; }
-        std::string GetName() const       { return m_Name; }
-        const ArenaTeamStats& GetStats() const { return m_stats; }
+        const uint64& GetCaptain() const
+        {
+            return m_CaptainGuid;
+        }
+        std::string GetName() const
+        {
+            return m_Name;
+        }
+        const ArenaTeamStats& GetStats() const
+        {
+            return m_stats;
+        }
         void SetStats(uint32 stat_type, uint32 value);
-        uint32 GetRating() const          { return m_stats.rating; }
+        uint32 GetRating() const
+        {
+            return m_stats.rating;
+        }
 
-        uint32 GetEmblemStyle() const     { return m_EmblemStyle; }
-        uint32 GetEmblemColor() const     { return m_EmblemColor; }
-        uint32 GetBorderStyle() const     { return m_BorderStyle; }
-        uint32 GetBorderColor() const     { return m_BorderColor; }
-        uint32 GetBackgroundColor() const { return m_BackgroundColor; }
+        uint32 GetEmblemStyle() const
+        {
+            return m_EmblemStyle;
+        }
+        uint32 GetEmblemColor() const
+        {
+            return m_EmblemColor;
+        }
+        uint32 GetBorderStyle() const
+        {
+            return m_BorderStyle;
+        }
+        uint32 GetBorderColor() const
+        {
+            return m_BorderColor;
+        }
+        uint32 GetBackgroundColor() const
+        {
+            return m_BackgroundColor;
+        }
 
         void SetCaptain(const uint64& guid);
         bool AddMember(const uint64& playerGuid);
@@ -143,10 +179,22 @@ class ArenaTeam
 
         void SetEmblem(uint32 backgroundColor, uint32 emblemStyle, uint32 emblemColor, uint32 borderStyle, uint32 borderColor);
 
-        size_t GetMembersSize() const         { return m_members.size(); }
-        bool   Empty() const                  { return m_members.empty(); }
-        MemberList::iterator m_membersBegin() { return m_members.begin(); }
-        MemberList::iterator m_membersEnd()   { return m_members.end(); }
+        size_t GetMembersSize() const
+        {
+            return m_members.size();
+        }
+        bool   Empty() const
+        {
+            return m_members.empty();
+        }
+        MemberList::iterator m_membersBegin()
+        {
+            return m_members.begin();
+        }
+        MemberList::iterator m_membersEnd()
+        {
+            return m_members.end();
+        }
         bool HaveMember(const uint64& guid) const;
 
         ArenaTeamMember* GetMember(const uint64& guid)
@@ -175,7 +223,7 @@ class ArenaTeam
 
         void SaveToDB();
 
-        void BroadcastPacket(WorldPacket *packet);
+        void BroadcastPacket(WorldPacket* packet);
 
         void BroadcastEvent(ArenaTeamEvents event, uint64 guid, char const* str1 = NULL, char const* str2 = NULL, char const* str3 = NULL);
         void BroadcastEvent(ArenaTeamEvents event, char const* str1 = NULL, char const* str2 = NULL, char const* str3 = NULL)
@@ -183,10 +231,10 @@ class ArenaTeam
             BroadcastEvent(event, 0, str1, str2, str3);
         }
 
-        void Roster(WorldSession *session);
-        void Query(WorldSession *session);
-        void Stats(WorldSession *session);
-        void InspectStats(WorldSession *session, uint64 guid);
+        void Roster(WorldSession* session);
+        void Query(WorldSession* session);
+        void Stats(WorldSession* session);
+        void InspectStats(WorldSession* session, uint64 guid);
 
         uint32 GetPoints(uint32 MemberRating);
         float GetChanceAgainst(uint32 own_rating, uint32 enemy_rating);
@@ -196,7 +244,7 @@ class ArenaTeam
         void MemberLost(Player* plr, uint32 againstRating);
         void OfflineMemberLost(uint64 guid, uint32 againstRating);
 
-        void UpdateArenaPointsHelper(std::map<uint32, uint32> & PlayerPoints);
+        void UpdateArenaPointsHelper(std::map<uint32, uint32>& PlayerPoints);
 
         void NotifyStatsChanged();
 

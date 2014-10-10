@@ -51,7 +51,7 @@ class BattleGroundNAScore : public BattleGroundScore
 
 class BattleGroundNA : public BattleGround
 {
-    friend class BattleGroundMgr;
+        friend class BattleGroundMgr;
 
     public:
         BattleGroundNA();
@@ -67,7 +67,7 @@ class BattleGroundNA : public BattleGround
         void HandleAreaTrigger(Player* Source, uint32 Trigger);
         bool SetupBattleGround();
         virtual void ResetBGSubclass();
-        virtual void FillInitialWorldStates(WorldPacket &d);
+        virtual void FillInitialWorldStates(WorldPacket& d);
         void HandleKillPlayer(Player* player, Player* killer);
         bool HandlePlayerUnderMap(Player* plr);
 };

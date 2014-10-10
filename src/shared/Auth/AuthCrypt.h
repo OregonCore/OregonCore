@@ -34,14 +34,17 @@ class AuthCrypt
 
         void Init();
 
-        void SetKey(BigNumber *);
+        void SetKey(BigNumber*);
 
-        void DecryptRecv(uint8 *, size_t);
-        void EncryptSend(uint8 *, size_t);
+        void DecryptRecv(uint8*, size_t);
+        void EncryptSend(uint8*, size_t);
 
-        bool IsInitialized() { return _initialized; }
+        bool IsInitialized()
+        {
+            return _initialized;
+        }
 
-        static void GenerateKey(uint8 *, BigNumber *);
+        static void GenerateKey(uint8*, BigNumber*);
 
     private:
         std::vector<uint8> _key;

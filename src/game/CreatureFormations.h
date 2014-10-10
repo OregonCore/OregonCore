@@ -49,10 +49,10 @@ struct Formation
 
 class CreatureFormationManager
 {
-    friend class ACE_Singleton<CreatureFormationManager, ACE_Null_Mutex>;
+        friend class ACE_Singleton<CreatureFormationManager, ACE_Null_Mutex>;
     public:
-        void AddCreatureToFormation(uint32 formation_id, Creature *creature);
-        void RemoveCreatureFromFormation(CreatureFormation *formation, Creature *creature);
+        void AddCreatureToFormation(uint32 formation_id, Creature* creature);
+        void RemoveCreatureFromFormation(CreatureFormation* formation, Creature* creature);
         void LoadCreatureFormations();
         void UnloadCreatureFormations();
 };
@@ -72,7 +72,7 @@ extern CreatureFormationDataType    CreatureFormationDataMap;
 class CreatureFormation
 {
     private:
-        Creature *m_leader;
+        Creature* m_leader;
         typedef std::map<Creature*, Formation*>  CreatureFormationMemberType;
         CreatureFormationMemberType m_members;
 
@@ -82,19 +82,34 @@ class CreatureFormation
     public:
         //Fromation cannot be created empty
         explicit CreatureFormation(uint32 id) : m_leader(NULL), m_formationID(id), m_Formed(false) {}
-        ~CreatureFormation() { sLog.outDebug("Destroying formation"); }
+        ~CreatureFormation()
+        {
+            sLog.outDebug("Destroying formation");
+        }
 
-        Creature* getLeader() const { return m_leader; }
-        uint32 GetId() const { return m_formationID; }
-        bool isEmpty() const { return m_members.empty(); }
-        bool isFormed() const { return m_Formed; }
+        Creature* getLeader() const
+        {
+            return m_leader;
+        }
+        uint32 GetId() const
+        {
+            return m_formationID;
+        }
+        bool isEmpty() const
+        {
+            return m_members.empty();
+        }
+        bool isFormed() const
+        {
+            return m_Formed;
+        }
 
-        void AddMember(Creature *member);
-        void RemoveMember(Creature *member);
+        void AddMember(Creature* member);
+        void RemoveMember(Creature* member);
         void Reset(bool dismiss);
 
         void LeaderMoveTo(float x, float y, float z);
-        void MemberAttackStart(Creature* member, Unit *target);
+        void MemberAttackStart(Creature* member, Unit* target);
 };
 
 #endif

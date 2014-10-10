@@ -68,7 +68,7 @@ enum HighGuid
 #define IS_CREATURE_OR_PET_GUID(Guid)(IS_CREATURE_GUID(Guid) || IS_PET_GUID(Guid))
 #define IS_PLAYER_GUID(Guid)         (GUID_HIPART(Guid) == HIGHGUID_PLAYER && Guid != 0)
 #define IS_UNIT_GUID(Guid)           (IS_CREATURE_OR_PET_GUID(Guid) || IS_PLAYER_GUID(Guid))
-                                                            // special case for empty guid need check
+// special case for empty guid need check
 #define IS_ITEM_GUID(Guid)           (GUID_HIPART(Guid) == HIGHGUID_ITEM)
 #define IS_GAMEOBJECT_GUID(Guid)     (GUID_HIPART(Guid) == HIGHGUID_GAMEOBJECT)
 #define IS_CORPSE_GUID(Guid)         (GUID_HIPART(Guid) == HIGHGUID_CORPSE)
@@ -89,20 +89,20 @@ enum HighGuid
 
 inline bool IsGuidHaveEnPart(uint64 const& guid)
 {
-    switch(GUID_HIPART(guid))
+    switch (GUID_HIPART(guid))
     {
-        case HIGHGUID_ITEM:
-        case HIGHGUID_PLAYER:
-        case HIGHGUID_DYNAMICOBJECT:
-        case HIGHGUID_CORPSE:
-        case HIGHGUID_MO_TRANSPORT:
-            return false;
-        case HIGHGUID_GAMEOBJECT:
-        case HIGHGUID_TRANSPORT:
-        case HIGHGUID_UNIT:
-        case HIGHGUID_PET:
-        default:
-            return true;
+    case HIGHGUID_ITEM:
+    case HIGHGUID_PLAYER:
+    case HIGHGUID_DYNAMICOBJECT:
+    case HIGHGUID_CORPSE:
+    case HIGHGUID_MO_TRANSPORT:
+        return false;
+    case HIGHGUID_GAMEOBJECT:
+    case HIGHGUID_TRANSPORT:
+    case HIGHGUID_UNIT:
+    case HIGHGUID_PET:
+    default:
+        return true;
     }
 }
 
@@ -127,54 +127,120 @@ class ObjectGuid
         ObjectGuid(HighGuid hi, uint32 entry, uint32 counter) : m_guid(uint64(counter) | (uint64(entry) << 24) | (uint64(hi) << 48)) {}
 
     public:                                                 // modifiers
-        PackedGuidReader ReadAsPacked() { return PackedGuidReader(*this); }
+        PackedGuidReader ReadAsPacked()
+        {
+            return PackedGuidReader(*this);
+        }
 
-        void Set(uint64 const& guid) { m_guid = guid; }
-        void Clear() { m_guid = 0; }
+        void Set(uint64 const& guid)
+        {
+            m_guid = guid;
+        }
+        void Clear()
+        {
+            m_guid = 0;
+        }
 
         // Possible removed in future for more strict control type conversions
-        void operator= (uint64 const& guid) { m_guid = guid; }
+        void operator= (uint64 const& guid)
+        {
+            m_guid = guid;
+        }
 
         PackedGuid WriteAsPacked() const;
     public:                                                 // accessors
-        uint64 const& GetRawValue() const { return m_guid; }
-        HighGuid GetHigh() const { return HighGuid((m_guid >> 48) & 0x0000FFFF); }
-        uint32   GetEntry() const { return HasEntry() ? uint32((m_guid >> 24) & UI64LIT(0x0000000000FFFFFF)) : 0; }
+        uint64 const& GetRawValue() const
+        {
+            return m_guid;
+        }
+        HighGuid GetHigh() const
+        {
+            return HighGuid((m_guid >> 48) & 0x0000FFFF);
+        }
+        uint32   GetEntry() const
+        {
+            return HasEntry() ? uint32((m_guid >> 24) & UI64LIT(0x0000000000FFFFFF)) : 0;
+        }
         uint32   GetCounter()  const
         {
             return HasEntry()
-                ? uint32(m_guid & UI64LIT(0x0000000000FFFFFF))
-                : uint32(m_guid & UI64LIT(0x00000000FFFFFFFF));
+                   ? uint32(m_guid & UI64LIT(0x0000000000FFFFFF))
+                   : uint32(m_guid & UI64LIT(0x00000000FFFFFFFF));
         }
 
-        bool IsEmpty()         const { return m_guid == 0; }
-        bool IsCreature()      const { return GetHigh() == HIGHGUID_UNIT; }
-        bool IsPet()           const { return GetHigh() == HIGHGUID_PET; }
-        bool IsCreatureOrPet() const { return IsCreature() || IsPet(); }
-        bool IsPlayer()        const { return !IsEmpty() && GetHigh() == HIGHGUID_PLAYER; }
-        bool IsUnit()          const { return IsCreatureOrPet() || IsPlayer(); }
-        bool IsItem()          const { return GetHigh() == HIGHGUID_ITEM; }
-        bool IsGameobject()    const { return GetHigh() == HIGHGUID_GAMEOBJECT; }
-        bool IsDynamicObject() const { return GetHigh() == HIGHGUID_DYNAMICOBJECT; }
-        bool IsCorpse()        const { return GetHigh() == HIGHGUID_CORPSE; }
-        bool IsTransport()     const { return GetHigh() == HIGHGUID_TRANSPORT; }
-        bool IsMOTransport()   const { return GetHigh() == HIGHGUID_MO_TRANSPORT; }
+        bool IsEmpty()         const
+        {
+            return m_guid == 0;
+        }
+        bool IsCreature()      const
+        {
+            return GetHigh() == HIGHGUID_UNIT;
+        }
+        bool IsPet()           const
+        {
+            return GetHigh() == HIGHGUID_PET;
+        }
+        bool IsCreatureOrPet() const
+        {
+            return IsCreature() || IsPet();
+        }
+        bool IsPlayer()        const
+        {
+            return !IsEmpty() && GetHigh() == HIGHGUID_PLAYER;
+        }
+        bool IsUnit()          const
+        {
+            return IsCreatureOrPet() || IsPlayer();
+        }
+        bool IsItem()          const
+        {
+            return GetHigh() == HIGHGUID_ITEM;
+        }
+        bool IsGameobject()    const
+        {
+            return GetHigh() == HIGHGUID_GAMEOBJECT;
+        }
+        bool IsDynamicObject() const
+        {
+            return GetHigh() == HIGHGUID_DYNAMICOBJECT;
+        }
+        bool IsCorpse()        const
+        {
+            return GetHigh() == HIGHGUID_CORPSE;
+        }
+        bool IsTransport()     const
+        {
+            return GetHigh() == HIGHGUID_TRANSPORT;
+        }
+        bool IsMOTransport()   const
+        {
+            return GetHigh() == HIGHGUID_MO_TRANSPORT;
+        }
 
         TypeID GetTypeId()
         {
-            switch(GetHigh())
+            switch (GetHigh())
             {
-                case HIGHGUID_ITEM:         return TYPEID_ITEM;
-                //case HIGHGUID_CONTAINER:    return TYPEID_CONTAINER; HIGHGUID_CONTAINER==HIGHGUID_ITEM currently
-                case HIGHGUID_UNIT:         return TYPEID_UNIT;
-                case HIGHGUID_PET:          return TYPEID_UNIT;
-                case HIGHGUID_PLAYER:       return TYPEID_PLAYER;
-                case HIGHGUID_GAMEOBJECT:   return TYPEID_GAMEOBJECT;
-                case HIGHGUID_DYNAMICOBJECT:return TYPEID_DYNAMICOBJECT;
-                case HIGHGUID_CORPSE:       return TYPEID_CORPSE;
-                case HIGHGUID_MO_TRANSPORT: return TYPEID_GAMEOBJECT;
-                // unknown
-                default:                    return TYPEID_OBJECT;
+            case HIGHGUID_ITEM:
+                return TYPEID_ITEM;
+            //case HIGHGUID_CONTAINER:    return TYPEID_CONTAINER; HIGHGUID_CONTAINER==HIGHGUID_ITEM currently
+            case HIGHGUID_UNIT:
+                return TYPEID_UNIT;
+            case HIGHGUID_PET:
+                return TYPEID_UNIT;
+            case HIGHGUID_PLAYER:
+                return TYPEID_PLAYER;
+            case HIGHGUID_GAMEOBJECT:
+                return TYPEID_GAMEOBJECT;
+            case HIGHGUID_DYNAMICOBJECT:
+                return TYPEID_DYNAMICOBJECT;
+            case HIGHGUID_CORPSE:
+                return TYPEID_CORPSE;
+            case HIGHGUID_MO_TRANSPORT:
+                return TYPEID_GAMEOBJECT;
+            // unknown
+            default:
+                return TYPEID_OBJECT;
             }
         }
 
@@ -184,20 +250,20 @@ class ObjectGuid
     private:                                                // internal functions
         bool HasEntry() const
         {
-            switch(GetHigh())
+            switch (GetHigh())
             {
-                case HIGHGUID_ITEM:
-                case HIGHGUID_PLAYER:
-                case HIGHGUID_DYNAMICOBJECT:
-                case HIGHGUID_CORPSE:
-                case HIGHGUID_MO_TRANSPORT:
-                    return false;
-                case HIGHGUID_GAMEOBJECT:
-                case HIGHGUID_TRANSPORT:
-                case HIGHGUID_UNIT:
-                case HIGHGUID_PET:
-                default:
-                    return true;
+            case HIGHGUID_ITEM:
+            case HIGHGUID_PLAYER:
+            case HIGHGUID_DYNAMICOBJECT:
+            case HIGHGUID_CORPSE:
+            case HIGHGUID_MO_TRANSPORT:
+                return false;
+            case HIGHGUID_GAMEOBJECT:
+            case HIGHGUID_TRANSPORT:
+            case HIGHGUID_UNIT:
+            case HIGHGUID_PET:
+            default:
+                return true;
             }
         }
 
@@ -207,19 +273,39 @@ class ObjectGuid
 
 class PackedGuid
 {
-    friend ByteBuffer& operator<< (ByteBuffer& buf, PackedGuid const& guid);
+        friend ByteBuffer& operator<< (ByteBuffer& buf, PackedGuid const& guid);
 
     public:                                                 // constructors
-        explicit PackedGuid() { m_packedGuid.appendPackGUID(0); }
-        explicit PackedGuid(uint64 const& guid) { m_packedGuid.appendPackGUID(guid); }
-        explicit PackedGuid(ObjectGuid const& guid) { m_packedGuid.appendPackGUID(guid.GetRawValue()); }
+        explicit PackedGuid()
+        {
+            m_packedGuid.appendPackGUID(0);
+        }
+        explicit PackedGuid(uint64 const& guid)
+        {
+            m_packedGuid.appendPackGUID(guid);
+        }
+        explicit PackedGuid(ObjectGuid const& guid)
+        {
+            m_packedGuid.appendPackGUID(guid.GetRawValue());
+        }
 
     public:                                                 // modifiers
-        void Set(uint64 const& guid) { m_packedGuid.wpos(0); m_packedGuid.appendPackGUID(guid); }
-        void Set(ObjectGuid const& guid) { m_packedGuid.wpos(0); m_packedGuid.appendPackGUID(guid.GetRawValue()); }
+        void Set(uint64 const& guid)
+        {
+            m_packedGuid.wpos(0);
+            m_packedGuid.appendPackGUID(guid);
+        }
+        void Set(ObjectGuid const& guid)
+        {
+            m_packedGuid.wpos(0);
+            m_packedGuid.appendPackGUID(guid.GetRawValue());
+        }
 
     public:                                                 // accessors
-        size_t size() const { return m_packedGuid.size(); }
+        size_t size() const
+        {
+            return m_packedGuid.size();
+        }
 
     private:                                                // fields
         ByteBuffer m_packedGuid;
@@ -231,7 +317,10 @@ ByteBuffer& operator>> (ByteBuffer& buf, ObjectGuid&       guid);
 ByteBuffer& operator<< (ByteBuffer& buf, PackedGuid const& guid);
 ByteBuffer& operator>> (ByteBuffer& buf, PackedGuidReader const& guid);
 
-inline PackedGuid ObjectGuid::WriteAsPacked() const { return PackedGuid(*this); }
+inline PackedGuid ObjectGuid::WriteAsPacked() const
+{
+    return PackedGuid(*this);
+}
 
 #endif
 

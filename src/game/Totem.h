@@ -31,18 +31,33 @@ enum TotemType
 class Totem : public Minion
 {
     public:
-        explicit Totem(SummonPropertiesEntry const *properties, Unit *owner);
-        virtual ~Totem(){};
+        explicit Totem(SummonPropertiesEntry const* properties, Unit* owner);
+        virtual ~Totem() {};
         void Update(uint32 time);
         void InitStats(uint32 duration);
         void InitSummon();
         void UnSummon();
-        uint32 GetSpell() const { return m_spells[0]; }
-        uint32 GetTotemDuration() const { return m_duration; }
-        TotemType GetTotemType() const { return m_type; }
+        uint32 GetSpell() const
+        {
+            return m_spells[0];
+        }
+        uint32 GetTotemDuration() const
+        {
+            return m_duration;
+        }
+        TotemType GetTotemType() const
+        {
+            return m_type;
+        }
 
-        bool UpdateStats(Stats /*stat*/) { return true; }
-        bool UpdateAllStats() { return true; }
+        bool UpdateStats(Stats /*stat*/)
+        {
+            return true;
+        }
+        bool UpdateAllStats()
+        {
+            return true;
+        }
         void UpdateResistances(uint32 /*school*/) {}
         void UpdateArmor() {}
         void UpdateMaxHealth() {}

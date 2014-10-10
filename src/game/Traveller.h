@@ -31,43 +31,68 @@
 template<class T>
 struct Traveller
 {
-    T &i_traveller;
-    Traveller(T &t) : i_traveller(t) {}
-    Traveller(const Traveller &obj) : i_traveller(obj) {}
-    Traveller& operator=(const Traveller &obj)
+    T& i_traveller;
+    Traveller(T& t) : i_traveller(t) {}
+    Traveller(const Traveller& obj) : i_traveller(obj) {}
+    Traveller& operator=(const Traveller& obj)
     {
         this->~Traveller();
         new (this) Traveller(obj);
         return *this;
     }
 
-    operator T&(void) { return i_traveller; }
-    operator const T&(void) { return i_traveller; }
-    float GetPositionX() const { return i_traveller.GetPositionX(); }
-    float GetPositionY() const { return i_traveller.GetPositionY(); }
-    float GetPositionZ() const { return i_traveller.GetPositionZ(); }
-    T& GetTraveller(void) { return i_traveller; }
+    operator T& (void)
+    {
+        return i_traveller;
+    }
+    operator const T& (void)
+    {
+        return i_traveller;
+    }
+    float GetPositionX() const
+    {
+        return i_traveller.GetPositionX();
+    }
+    float GetPositionY() const
+    {
+        return i_traveller.GetPositionY();
+    }
+    float GetPositionZ() const
+    {
+        return i_traveller.GetPositionZ();
+    }
+    T& GetTraveller(void)
+    {
+        return i_traveller;
+    }
 
 
-    float Speed(void) { assert(false); return 0.0f; }
+    float Speed(void)
+    {
+        assert(false);
+        return 0.0f;
+    }
     float GetMoveDestinationTo(float x, float y, float z);
     uint32 GetTotalTrevelTimeTo(float x, float y, float z);
 
     void Relocation(float /*x*/, float /*y*/, float /*z*/, float /*orientation*/) {}
-    void Relocation(float x, float y, float z) { Relocation(x, y, z, i_traveller.GetOrientation()); }
+    void Relocation(float x, float y, float z)
+    {
+        Relocation(x, y, z, i_traveller.GetOrientation());
+    }
     void MoveTo(float /*x*/, float /*y*/, float /*z*/, uint32 /*t*/) {}
 };
 
 template<class T>
 inline uint32 Traveller<T>::GetTotalTrevelTimeTo(float x, float y, float z)
 {
-    float dist = GetMoveDestinationTo(x,y,z);
+    float dist = GetMoveDestinationTo(x, y, z);
     float speed = Speed();;
     if (speed <= 0.0f)
         return 0xfffffffe;  // almost infinity-unit should stop
     else
         speed *= 0.001f;   // speed is in seconds so convert from second to millisecond
-    return static_cast<uint32>(dist/speed);
+    return static_cast<uint32>(dist / speed);
 }
 
 // specialization for creatures
@@ -99,10 +124,10 @@ inline float Traveller<Creature>::GetMoveDestinationTo(float x, float y, float z
     if (i_traveller.canFly())
     {
         float dz = z - GetPositionZ();
-        return sqrt((dx*dx) + (dy*dy) + (dz*dz));
+        return sqrt((dx * dx) + (dy * dy) + (dz * dz));
     }
     else                                                    //Walking on the ground
-        return sqrt((dx*dx) + (dy*dy));
+        return sqrt((dx * dx) + (dy * dy));
 }
 
 template<>
@@ -131,7 +156,7 @@ inline float Traveller<Player>::GetMoveDestinationTo(float x, float y, float z)
     float dz = z - GetPositionZ();
 
     //if (i_traveller.isInFlight())
-        return sqrt((dx*dx) + (dy*dy) + (dz*dz));
+    return sqrt((dx * dx) + (dy * dy) + (dz * dz));
     //else                                                    //Walking on the ground
     //    return sqrt((dx*dx) + (dy*dy));
 }

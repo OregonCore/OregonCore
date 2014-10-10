@@ -69,9 +69,15 @@ class HashMapHolder
             return (itr != m_objectMap.end()) ? itr->second : NULL;
         }
 
-        static MapType& GetContainer() { return m_objectMap; }
+        static MapType& GetContainer()
+        {
+            return m_objectMap;
+        }
 
-        static LockType* GetLock() { return &i_lock; }
+        static LockType* GetLock()
+        {
+            return &i_lock;
+        }
     private:
 
         //Non instanceable only static
@@ -83,11 +89,11 @@ class HashMapHolder
 
 class ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLevelLockable<ObjectAccessor, ACE_Thread_Mutex> >
 {
-    friend class Oregon::OperatorNew<ObjectAccessor>;
-    ObjectAccessor();
-    ~ObjectAccessor();
-    ObjectAccessor(const ObjectAccessor&);
-    ObjectAccessor& operator=(const ObjectAccessor&);
+        friend class Oregon::OperatorNew<ObjectAccessor>;
+        ObjectAccessor();
+        ~ObjectAccessor();
+        ObjectAccessor(const ObjectAccessor&);
+        ObjectAccessor& operator=(const ObjectAccessor&);
 
     public:
 
@@ -121,10 +127,10 @@ class ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLev
         }
 
         // returns object if is in map
-        template<class T> static T* GetObjectInMap(uint64 guid, Map * map, T* /*typeSpecifier*/)
+        template<class T> static T* GetObjectInMap(uint64 guid, Map* map, T* /*typeSpecifier*/)
         {
             assert(map);
-            if (T * obj = GetObjectInWorld(guid, (T*)NULL))
+            if (T* obj = GetObjectInWorld(guid, (T*)NULL))
                 if (obj->GetMap() == map)
                     return obj;
             return NULL;
@@ -143,7 +149,7 @@ class ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLev
                 return NULL;
             }
 
-            CellPair q = Oregon::ComputeCellPair(obj->GetPositionX(),obj->GetPositionY());
+            CellPair q = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
             if (q.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || q.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
             {
                 sLog.outError("ObjectAccessor::GetObjecInWorld: object (GUID: %u TypeId: %u) has invalid coordinates X:%f Y:%f grid cell [%u:%u]", obj->GetGUIDLow(), obj->GetTypeId(), obj->GetPositionX(), obj->GetPositionY(), q.x_coord, q.y_coord);

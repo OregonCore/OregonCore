@@ -39,16 +39,22 @@ enum SelectAggroTarget
 class UnitAI
 {
     protected:
-        Unit * const me;
+        Unit* const me;
     public:
-        explicit UnitAI(Unit *u) : me(u) {}
+        explicit UnitAI(Unit* u) : me(u) {}
         virtual ~UnitAI() {}
 
-        virtual bool CanAIAttack(const Unit* /*who*/) const { return true; }
-        virtual void AttackStart(Unit *);
+        virtual bool CanAIAttack(const Unit* /*who*/) const
+        {
+            return true;
+        }
+        virtual void AttackStart(Unit*);
         virtual void UpdateAI(const uint32 /*diff*/) = 0;
 
-        virtual void InitializeAI() { if (!me->isDead()) Reset(); }
+        virtual void InitializeAI()
+        {
+            if (!me->isDead()) Reset();
+        }
 
         virtual void Reset() {};
 
@@ -56,16 +62,30 @@ class UnitAI
         virtual void OnCharmed(bool /*apply*/) = 0;
 
         // Pass parameters between AI
-        virtual void DoAction(const int32 param = 0) { UNUSED(param); }
-        virtual uint32 GetData(uint32 id = 0) { UNUSED(id); return 0; }
+        virtual void DoAction(const int32 param = 0)
+        {
+            UNUSED(param);
+        }
+        virtual uint32 GetData(uint32 id = 0)
+        {
+            UNUSED(id);
+            return 0;
+        }
         virtual void SetData(uint32 /*id*/, uint32 /*value*/) {}
-        virtual void SetGUID(const uint64& /*guid*/, int32 id = 0) { UNUSED(id); }
-        virtual uint64 GetGUID(int32 id = 0) { UNUSED(id); return 0; }
+        virtual void SetGUID(const uint64& /*guid*/, int32 id = 0)
+        {
+            UNUSED(id);
+        }
+        virtual uint64 GetGUID(int32 id = 0)
+        {
+            UNUSED(id);
+            return 0;
+        }
 
         Unit* SelectTarget(SelectAggroTarget target, uint32 position = 0, float dist = 0, bool playerOnly = false, int32 aura = 0);
-        void SelectTargetList(std::list<Unit*> &targetList, uint32 num, SelectAggroTarget target, float dist = 0, bool playerOnly = false, int32 aura = 0);
+        void SelectTargetList(std::list<Unit*>& targetList, uint32 num, SelectAggroTarget target, float dist = 0, bool playerOnly = false, int32 aura = 0);
 
-        void AttackStartCaster(Unit *victim, float dist);
+        void AttackStartCaster(Unit* victim, float dist);
 
         void DoCast(uint32 spellId);
         void DoCast(Unit* victim, uint32 spellId, bool triggered = false);
@@ -77,7 +97,7 @@ class UnitAI
         void DoMeleeAttackIfReady();
         bool DoSpellAttackIfReady(uint32 spell);
 
-        static AISpellInfoType *AISpellInfo;
+        static AISpellInfoType* AISpellInfo;
         static void FillAISpellInfo();
 };
 

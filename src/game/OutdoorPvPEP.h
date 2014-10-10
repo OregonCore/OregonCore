@@ -22,7 +22,7 @@
 
 #define OutdoorPvPEPBuffZonesNum 3
 #define OutdoorPvPEPTeamsBuffNum 4
-                                                         //  Eastern Plaguelands, Stratholme and Scholomance
+//  Eastern Plaguelands, Stratholme and Scholomance
 const uint32 OutdoorPvPEPBuffZones[OutdoorPvPEPBuffZonesNum] = {139, 2017, 2057};
 
 const int EP_AllianceBuffs[OutdoorPvPEPTeamsBuffNum] = {11413, 11414, 11415, 1386};
@@ -40,15 +40,15 @@ enum OutdoorPvPEPTowerType
     EP_TOWER_NUM
 };
 
-const uint32 EP_CREDITMARKER[EP_TOWER_NUM] = {17689,17690,17696,17698};
+const uint32 EP_CREDITMARKER[EP_TOWER_NUM] = {17689, 17690, 17696, 17698};
 
-const uint32 EP_MAP_N[EP_TOWER_NUM] = {2355,2361,2352,2353};
-const uint32 EP_MAP_A[EP_TOWER_NUM] = {2378,2354,2372,2370};
-const uint32 EP_MAP_H[EP_TOWER_NUM] = {2379,2356,2373,2371};
-const uint32 EP_MAP_N_A[EP_TOWER_NUM] = {2374,2359,2362,2366};
-const uint32 EP_MAP_N_H[EP_TOWER_NUM] = {2375,2360,2363,2353}; // plaguewood tower has incorrect display value (2353 as well as logical 2367 is wrong)
+const uint32 EP_MAP_N[EP_TOWER_NUM] = {2355, 2361, 2352, 2353};
+const uint32 EP_MAP_A[EP_TOWER_NUM] = {2378, 2354, 2372, 2370};
+const uint32 EP_MAP_H[EP_TOWER_NUM] = {2379, 2356, 2373, 2371};
+const uint32 EP_MAP_N_A[EP_TOWER_NUM] = {2374, 2359, 2362, 2366};
+const uint32 EP_MAP_N_H[EP_TOWER_NUM] = {2375, 2360, 2363, 2353}; // plaguewood tower has incorrect display value (2353 as well as logical 2367 is wrong)
 
-const uint32 EP_TAXI_NODE[EP_TOWER_NUM] = {84,85,86,87};
+const uint32 EP_TAXI_NODE[EP_TOWER_NUM] = {84, 85, 86, 87};
 
 enum OutdoorPvPEPWorldStates
 {
@@ -78,26 +78,26 @@ enum EP_GoSummons
 
 const go_type EPCapturePoints[EP_TOWER_NUM] =
 {
-    {182096,0,1860.85f,-3731.23f,196.716f,-2.53214f,0.033967f,-0.131914f,0.944741f,-0.298177f},
-    {182097,0,2574.51f,-4794.89f,144.704f,-1.45003f,-0.097056f,0.095578f,-0.656229f,0.742165f},
-    {181899,0,3181.08f,-4379.36f,174.123f,-2.03472f,-0.065392f,0.119494f,-0.842275f,0.521553f},
-    {182098,0,2962.71f,-3042.31f,154.789f,2.08426f,-0.074807f,-0.113837f,0.855928f,0.49883f}
+    {182096, 0, 1860.85f, -3731.23f, 196.716f, -2.53214f, 0.033967f, -0.131914f, 0.944741f, -0.298177f},
+    {182097, 0, 2574.51f, -4794.89f, 144.704f, -1.45003f, -0.097056f, 0.095578f, -0.656229f, 0.742165f},
+    {181899, 0, 3181.08f, -4379.36f, 174.123f, -2.03472f, -0.065392f, 0.119494f, -0.842275f, 0.521553f},
+    {182098, 0, 2962.71f, -3042.31f, 154.789f, 2.08426f, -0.074807f, -0.113837f, 0.855928f, 0.49883f}
 };
 
-const go_type EPTowerFlags[EP_TOWER_NUM*2] =
+const go_type EPTowerFlags[EP_TOWER_NUM * 2] =
 {
-    {182106,0,1877.60f,-3716.76f,167.188f,1.74533f,0.0f,0.0f,0.766044f,0.642788f}, // flags left side
-    {182106,0,2569.60f,-4772.93f,115.399f,2.72271f,0.0f,0.0f,0.978148f,0.207912f},
-    {182106,0,3188.76f,-4358.50f,144.555f,1.97222f,0.0f,0.0f,0.833886f,0.551937f},
-    {182106,0,2975.50f,-3060.36f,125.108f,-1.0472f,0.0f,0.0f,0.5f,-0.866025f},
-    {182106,0,1838.42f,-3703.56f,167.713f,0.890118f,0.0f,0.0f,0.430511f,0.902585f}, // flags right side
-    {182106,0,2539.61f,-4801.55f,115.766f,2.00713f,0.0f,0.0f,0.843391f,0.5373f},
-    {182106,0,3148.17f,-4365.51f,145.029f,1.53589f,0.0f,0.0f,0.694658f,0.71934f},
-    {182106,0,2992.63f,-3022.95f,125.593f,3.03687f,0.0f,0.0f,0.99863f,0.052336f}
+    {182106, 0, 1877.60f, -3716.76f, 167.188f, 1.74533f, 0.0f, 0.0f, 0.766044f, 0.642788f}, // flags left side
+    {182106, 0, 2569.60f, -4772.93f, 115.399f, 2.72271f, 0.0f, 0.0f, 0.978148f, 0.207912f},
+    {182106, 0, 3188.76f, -4358.50f, 144.555f, 1.97222f, 0.0f, 0.0f, 0.833886f, 0.551937f},
+    {182106, 0, 2975.50f, -3060.36f, 125.108f, -1.0472f, 0.0f, 0.0f, 0.5f, -0.866025f},
+    {182106, 0, 1838.42f, -3703.56f, 167.713f, 0.890118f, 0.0f, 0.0f, 0.430511f, 0.902585f}, // flags right side
+    {182106, 0, 2539.61f, -4801.55f, 115.766f, 2.00713f, 0.0f, 0.0f, 0.843391f, 0.5373f},
+    {182106, 0, 3148.17f, -4365.51f, 145.029f, 1.53589f, 0.0f, 0.0f, 0.694658f, 0.71934f},
+    {182106, 0, 2992.63f, -3022.95f, 125.593f, 3.03687f, 0.0f, 0.0f, 0.99863f, 0.052336f}
 };
 
-const uint32 EPTowerPlayerEnterEvents[EP_TOWER_NUM] = {10705,10691,10699,10701};
-const uint32 EPTowerPlayerLeaveEvents[EP_TOWER_NUM] = {10704,10692,10698,10700};
+const uint32 EPTowerPlayerEnterEvents[EP_TOWER_NUM] = {10705, 10691, 10699, 10701};
+const uint32 EPTowerPlayerLeaveEvents[EP_TOWER_NUM] = {10704, 10692, 10698, 10700};
 
 const uint8 EP_NUM_CREATURES = 6;
 const uint8 EP_EWT_NUM_CREATURES = 5;
@@ -106,39 +106,39 @@ const uint8 EP_EWT_NUM_CREATURES = 5;
 // should be spawned at EWT and follow a path, but trans-grid pathing isn't safe, so summon them directly at NPT
 const creature_type EP_EWT_Summons_A[EP_EWT_NUM_CREATURES] =
 {
-    {17635,469,0, 3167.61f,-4352.09f,138.20f,4.5811f},
-    {17647,469,0, 3172.74f,-4352.99f,139.14f,4.9873f},
-    {17647,469,0, 3165.89f,-4354.46f,138.67f,3.7244f},
-    {17647,469,0, 3164.65f,-4350.26f,138.22f,2.4794f},
-    {17647,469,0, 3169.91f,-4349.68f,138.37f,0.7444f}
+    {17635, 469, 0, 3167.61f, -4352.09f, 138.20f, 4.5811f},
+    {17647, 469, 0, 3172.74f, -4352.99f, 139.14f, 4.9873f},
+    {17647, 469, 0, 3165.89f, -4354.46f, 138.67f, 3.7244f},
+    {17647, 469, 0, 3164.65f, -4350.26f, 138.22f, 2.4794f},
+    {17647, 469, 0, 3169.91f, -4349.68f, 138.37f, 0.7444f}
 };
 
 const creature_type EP_EWT_Summons_H[EP_EWT_NUM_CREATURES] =
 {
-    {17995,67,0, 3167.61f,-4352.09f,138.20f,4.5811f},
-    {17996,67,0, 3172.74f,-4352.99f,139.14f,4.9873f},
-    {17996,67,0, 3165.89f,-4354.46f,138.67f,3.7244f},
-    {17996,67,0, 3164.65f,-4350.26f,138.22f,2.4794f},
-    {17996,67,0, 3169.91f,-4349.68f,138.37f,0.7444f}
+    {17995, 67, 0, 3167.61f, -4352.09f, 138.20f, 4.5811f},
+    {17996, 67, 0, 3172.74f, -4352.99f, 139.14f, 4.9873f},
+    {17996, 67, 0, 3165.89f, -4354.46f, 138.67f, 3.7244f},
+    {17996, 67, 0, 3164.65f, -4350.26f, 138.22f, 2.4794f},
+    {17996, 67, 0, 3169.91f, -4349.68f, 138.37f, 0.7444f}
 };
 
-const creature_type EP_PWT_FlightMaster = {17209,0,0,2987.5,-3049.11,120.126,5.75959};
+const creature_type EP_PWT_FlightMaster = {17209, 0, 0, 2987.5, -3049.11, 120.126, 5.75959};
 const uint32 EP_PWT_FlightMasterAura = 36725;
 
-const go_type EP_NPT_LordaeronShrine = {181682,0,3167.72,-4355.91,138.785,1.69297,0,0,0.748956,0.66262};
-const go_type EP_NPT_LordaeronShrineAura = {180100,0,3167.72,-4355.91,138.785,1.69297,0,0,0.748956,0.66262};
+const go_type EP_NPT_LordaeronShrine = {181682, 0, 3167.72, -4355.91, 138.785, 1.69297, 0, 0, 0.748956, 0.66262};
+const go_type EP_NPT_LordaeronShrineAura = {180100, 0, 3167.72, -4355.91, 138.785, 1.69297, 0, 0, 0.748956, 0.66262};
 
 class OPvPCapturePointEP : public OPvPCapturePoint
 {
     public:
 
-        OPvPCapturePointEP(OutdoorPvP * pvp, OutdoorPvPEPTowerType type);
+        OPvPCapturePointEP(OutdoorPvP* pvp, OutdoorPvPEPTowerType type);
 
         void ChangeState();
 
         void SendChangePhase();
 
-        void FillInitialWorldStates(WorldPacket & data);
+        void FillInitialWorldStates(WorldPacket& data);
 
         // used when player is activated/inactivated in the area
         bool HandlePlayerEnter(Player* plr);
@@ -174,7 +174,7 @@ class OPvPCapturePointEP : public OPvPCapturePoint
 
 class OutdoorPvPEP : public OutdoorPvP
 {
-    friend class OPvPCapturePointEP;
+        friend class OPvPCapturePointEP;
 
     public:
 
@@ -187,7 +187,7 @@ class OutdoorPvPEP : public OutdoorPvP
 
         bool Update(uint32 diff);
 
-        void FillInitialWorldStates(WorldPacket &data);
+        void FillInitialWorldStates(WorldPacket& data);
 
         void SendRemoveWorldStates(Player* plr);
 

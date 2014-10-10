@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #ifndef MANGOS_PATH_FINDER_H
 #define MANGOS_PATH_FINDER_H
 
@@ -59,25 +59,69 @@ class PathInfo
         bool Update(float destX, float destY, float destZ, bool forceDest = false);
 
         // option setters - use optional
-        void setUseStrightPath(bool useStraightPath) { m_useStraightPath = useStraightPath; };
-        void setPathLengthLimit(float distance) { m_pointPathLimit = std::min<uint32>(uint32(distance/SMOOTH_PATH_STEP_SIZE), MAX_POINT_PATH_LENGTH); };
+        void setUseStrightPath(bool useStraightPath)
+        {
+            m_useStraightPath = useStraightPath;
+        };
+        void setPathLengthLimit(float distance)
+        {
+            m_pointPathLimit = std::min<uint32>(uint32(distance / SMOOTH_PATH_STEP_SIZE), MAX_POINT_PATH_LENGTH);
+        };
 
         // result getters
-        void getStartPosition(float &x, float &y, float &z) { x = m_startPosition.x; y = m_startPosition.y; z = m_startPosition.z; }
-        void getNextPosition(float &x, float &y, float &z) { x = m_nextPosition.x; y = m_nextPosition.y; z = m_nextPosition.z; }
-        void getEndPosition(float &x, float &y, float &z) { x = m_endPosition.x; y = m_endPosition.y; z = m_endPosition.z; }
-        void getActualEndPosition(float &x, float &y, float &z) { x = m_actualEndPosition.x; y = m_actualEndPosition.y; z = m_actualEndPosition.z; }
+        void getStartPosition(float& x, float& y, float& z)
+        {
+            x = m_startPosition.x;
+            y = m_startPosition.y;
+            z = m_startPosition.z;
+        }
+        void getNextPosition(float& x, float& y, float& z)
+        {
+            x = m_nextPosition.x;
+            y = m_nextPosition.y;
+            z = m_nextPosition.z;
+        }
+        void getEndPosition(float& x, float& y, float& z)
+        {
+            x = m_endPosition.x;
+            y = m_endPosition.y;
+            z = m_endPosition.z;
+        }
+        void getActualEndPosition(float& x, float& y, float& z)
+        {
+            x = m_actualEndPosition.x;
+            y = m_actualEndPosition.y;
+            z = m_actualEndPosition.z;
+        }
 
-        PathNode getStartPosition() const { return m_startPosition; }
-        PathNode getNextPosition() const { return m_nextPosition; }
-        PathNode getEndPosition() const { return m_endPosition; }
-        PathNode getActualEndPosition() const { return m_actualEndPosition; }
+        PathNode getStartPosition() const
+        {
+            return m_startPosition;
+        }
+        PathNode getNextPosition() const
+        {
+            return m_nextPosition;
+        }
+        PathNode getEndPosition() const
+        {
+            return m_endPosition;
+        }
+        PathNode getActualEndPosition() const
+        {
+            return m_actualEndPosition;
+        }
 
-        PointPath& getFullPath() { return m_pathPoints; }
-        PathType getPathType() const { return m_type; }
+        PointPath& getFullPath()
+        {
+            return m_pathPoints;
+        }
+        PathType getPathType() const
+        {
+            return m_type;
+        }
 
-        bool inRange(const PathNode &p1, const PathNode &p2, float r, float h) const;
-        float dist3DSqr(const PathNode &p1, const PathNode &p2) const;
+        bool inRange(const PathNode& p1, const PathNode& p2, float r, float h) const;
+        float dist3DSqr(const PathNode& p1, const PathNode& p2) const;
     private:
 
         dtPolyRef       m_pathPolyRefs[MAX_PATH_LENGTH];   // array of detour polygon references
@@ -101,10 +145,23 @@ class PathInfo
 
         dtQueryFilter m_filter;                     // use single filter for all movements, update it when needed
 
-        void setNextPosition(PathNode point) { m_nextPosition = point; }
-        void setStartPosition(PathNode point) { m_startPosition = point; }
-        void setEndPosition(PathNode point) { m_actualEndPosition = point; m_endPosition = point; }
-        void setActualEndPosition(PathNode point) { m_actualEndPosition = point; }
+        void setNextPosition(PathNode point)
+        {
+            m_nextPosition = point;
+        }
+        void setStartPosition(PathNode point)
+        {
+            m_startPosition = point;
+        }
+        void setEndPosition(PathNode point)
+        {
+            m_actualEndPosition = point;
+            m_endPosition = point;
+        }
+        void setActualEndPosition(PathNode point)
+        {
+            m_actualEndPosition = point;
+        }
 
         void NormalizePath();
 
@@ -116,12 +173,12 @@ class PathInfo
 
         bool inRangeYZX(const float* v1, const float* v2, float r, float h) const;
 
-        dtPolyRef getPathPolyByPosition(const dtPolyRef *polyPath, uint32 polyPathSize, const float* point, float *distance = NULL) const;
-        dtPolyRef getPolyByLocation(const float* point, float *distance) const;
-        bool HaveTile(const PathNode &p) const;
+        dtPolyRef getPathPolyByPosition(const dtPolyRef* polyPath, uint32 polyPathSize, const float* point, float* distance = NULL) const;
+        dtPolyRef getPolyByLocation(const float* point, float* distance) const;
+        bool HaveTile(const PathNode& p) const;
 
-        void BuildPolyPath(const PathNode &startPos, const PathNode &endPos);
-        void BuildPointPath(const float *startPoint, const float *endPoint);
+        void BuildPolyPath(const PathNode& startPos, const PathNode& endPos);
+        void BuildPointPath(const float* startPoint, const float* endPoint);
         void BuildShortcut();
 
         NavTerrain getNavTerrain(float x, float y, float z);
@@ -135,8 +192,8 @@ class PathInfo
                             const dtPolyRef* path, uint32 pathSize, float* steerPos,
                             unsigned char& steerPosFlag, dtPolyRef& steerPosRef);
         dtStatus findSmoothPath(const float* startPos, const float* endPos,
-                              const dtPolyRef* polyPath, uint32 polyPathSize,
-                              float* smoothPath, int* smoothPathSize, uint32 smoothPathMaxSize);
+                                const dtPolyRef* polyPath, uint32 polyPathSize,
+                                float* smoothPath, int* smoothPathSize, uint32 smoothPathMaxSize);
 };
 
 #endif

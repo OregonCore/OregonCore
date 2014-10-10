@@ -25,13 +25,13 @@
 
 struct hyjal_trashAI : public npc_escortAI
 {
-    hyjal_trashAI(Creature *c);
+        hyjal_trashAI(Creature* c);
 
-    void UpdateAI(const uint32 diff);
+        void UpdateAI(const uint32 diff);
 
-    void JustDied(Unit* /*killer*/);
+        void JustDied(Unit* /*killer*/);
 
-    void DamageTaken(Unit *done_by, uint32 &damage);
+        void DamageTaken(Unit* done_by, uint32& damage);
 
     public:
         ScriptedInstance* pInstance;
@@ -46,6 +46,6 @@ struct hyjal_trashAI : public npc_escortAI
         uint32 damageTaken;
         float DummyTarget[3];
 
-    //private:
+        //private:
 };
 #endif

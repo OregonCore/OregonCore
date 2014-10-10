@@ -22,11 +22,11 @@
 
 template
 <
-typename T,
-class THREADING_MODEL
->
-Referencer<T, THREADING_MODEL>::Referencer(T *ref)
-: i_holder(NULL)
+    typename T,
+    class THREADING_MODEL
+    >
+Referencer<T, THREADING_MODEL>::Referencer(T* ref)
+    : i_holder(NULL)
 {
     if (ref != NULL)
     {
@@ -37,9 +37,9 @@ Referencer<T, THREADING_MODEL>::Referencer(T *ref)
 
 template
 <
-typename T,
-class THREADING_MODEL
->
+    typename T,
+    class THREADING_MODEL
+    >
 Referencer<T, THREADING_MODEL>::~Referencer()
 {
     if (i_holder != NULL)
@@ -49,11 +49,11 @@ Referencer<T, THREADING_MODEL>::~Referencer()
 
 template
 <
-typename T,
-class THREADING_MODEL
->
+    typename T,
+    class THREADING_MODEL
+    >
 Referencer<T, THREADING_MODEL>&
-Referencer<T, THREADING_MODEL>::operator=(const Referencer<T, THREADING_MODEL> &obj)
+Referencer<T, THREADING_MODEL>::operator=(const Referencer<T, THREADING_MODEL>& obj)
 {
     if (i_holder != NULL)
         deReference(i_holder);
@@ -65,11 +65,11 @@ Referencer<T, THREADING_MODEL>::operator=(const Referencer<T, THREADING_MODEL> &
 
 template
 <
-typename T,
-class THREADING_MODEL
->
+    typename T,
+    class THREADING_MODEL
+    >
 Referencer<T, THREADING_MODEL>&
-Referencer<T, THREADING_MODEL>::operator=(T *ref)
+Referencer<T, THREADING_MODEL>::operator=(T* ref)
 {
     if (i_holder != NULL)
         deReference(i_holder);
@@ -85,11 +85,11 @@ Referencer<T, THREADING_MODEL>::operator=(T *ref)
 
 template
 <
-typename T,
-class THREADING_MODEL
->
+    typename T,
+    class THREADING_MODEL
+    >
 void
-Referencer<T, THREADING_MODEL>::deReference(ReferenceHolder<T, THREADING_MODEL> *holder)
+Referencer<T, THREADING_MODEL>::deReference(ReferenceHolder<T, THREADING_MODEL>* holder)
 {
     assert( holder != NULL && holder->i_referenceCount > 0);
     bool delete_object = false;
@@ -114,11 +114,11 @@ Referencer<T, THREADING_MODEL>::deReference(ReferenceHolder<T, THREADING_MODEL> 
 
 template
 <
-typename T,
-class THREADING_MODEL
->
+    typename T,
+    class THREADING_MODEL
+    >
 void
-Referencer<T, THREADING_MODEL>::addReference(ReferenceHolder<T, THREADING_MODEL> *holder)
+Referencer<T, THREADING_MODEL>::addReference(ReferenceHolder<T, THREADING_MODEL>* holder)
 {
     assert( i_holder != NULL );
     Lock guard(*holder);
