@@ -38,7 +38,7 @@ enum eEnums
 
 struct boss_bloodmage_thalnosAI : public ScriptedAI
 {
-    boss_bloodmage_thalnosAI(Creature *c) : ScriptedAI(c) {}
+    boss_bloodmage_thalnosAI(Creature* c) : ScriptedAI(c) {}
 
     bool HpYell;
     uint32 FlameShock_Timer;
@@ -55,7 +55,7 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
         FireNova_Timer = 40000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
@@ -71,7 +71,7 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
             return;
 
         //If we are <35% hp
-        if (!HpYell && ((me->GetHealth()*100) / me->GetMaxHealth() <= 35))
+        if (!HpYell && ((me->GetHealth() * 100) / me->GetMaxHealth() <= 35))
         {
             DoScriptText(SAY_HEALTH, me);
             HpYell = true;
@@ -81,29 +81,33 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
         if (FlameShock_Timer <= diff)
         {
             DoCastVictim( SPELL_FLAMESHOCK);
-            FlameShock_Timer = 10000 + rand()%5000;
-        } else FlameShock_Timer -= diff;
+            FlameShock_Timer = 10000 + rand() % 5000;
+        }
+        else FlameShock_Timer -= diff;
 
         //FlameSpike_Timer
         if (FlameSpike_Timer <= diff)
         {
             DoCastVictim( SPELL_FLAMESPIKE);
             FlameSpike_Timer = 30000;
-        } else FlameSpike_Timer -= diff;
+        }
+        else FlameSpike_Timer -= diff;
 
         //FireNova_Timer
         if (FireNova_Timer <= diff)
         {
             DoCastVictim( SPELL_FIRENOVA);
             FireNova_Timer = 40000;
-        } else FireNova_Timer -= diff;
+        }
+        else FireNova_Timer -= diff;
 
         //ShadowBolt_Timer
         if (ShadowBolt_Timer <= diff)
         {
             DoCastVictim( SPELL_SHADOWBOLT);
             ShadowBolt_Timer = 2000;
-        } else ShadowBolt_Timer -= diff;
+        }
+        else ShadowBolt_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -116,7 +120,7 @@ CreatureAI* GetAI_boss_bloodmage_thalnos(Creature* pCreature)
 
 void AddSC_boss_bloodmage_thalnos()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_bloodmage_thalnos";
     newscript->GetAI = &GetAI_boss_bloodmage_thalnos;

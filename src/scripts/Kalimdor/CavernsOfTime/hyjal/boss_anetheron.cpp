@@ -54,12 +54,12 @@
 
 struct boss_anetheronAI : public hyjal_trashAI
 {
-    boss_anetheronAI(Creature *c) : hyjal_trashAI(c)
+    boss_anetheronAI(Creature* c) : hyjal_trashAI(c)
     {
         pInstance = c->GetInstanceData();
         pGo = false;
         pos = 0;
-        SpellEntry *TempSpell = GET_SPELL(SPELL_SLEEP);
+        SpellEntry* TempSpell = GET_SPELL(SPELL_SLEEP);
         if (TempSpell && TempSpell->EffectImplicitTargetA[0] != 1)
         {
             TempSpell->EffectImplicitTargetA[0] = 1;
@@ -86,7 +86,7 @@ struct boss_anetheronAI : public hyjal_trashAI
             pInstance->SetData(DATA_ANETHERONEVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_ANETHERONEVENT, IN_PROGRESS);
@@ -94,22 +94,22 @@ struct boss_anetheronAI : public hyjal_trashAI
         me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, 0);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
-        switch (urand(0,2))
+        switch (urand(0, 2))
         {
-            case 0:
-                DoPlaySoundToSet(me, SOUND_ONSLAY1);
-                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
-                break;
-            case 1:
-                DoPlaySoundToSet(me, SOUND_ONSLAY2);
-                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
-                break;
-            case 2:
-                DoPlaySoundToSet(me, SOUND_ONSLAY3);
-                me->MonsterYell(SAY_ONSLAY3, LANG_UNIVERSAL, 0);
-                break;
+        case 0:
+            DoPlaySoundToSet(me, SOUND_ONSLAY1);
+            me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
+            break;
+        case 1:
+            DoPlaySoundToSet(me, SOUND_ONSLAY2);
+            me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
+            break;
+        case 2:
+            DoPlaySoundToSet(me, SOUND_ONSLAY3);
+            me->MonsterYell(SAY_ONSLAY3, LANG_UNIVERSAL, 0);
+            break;
         }
     }
 
@@ -118,13 +118,13 @@ struct boss_anetheronAI : public hyjal_trashAI
         pos = i;
         if (i == 7 && pInstance)
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
             if (pTarget && pTarget->isAlive())
-                me->AddThreat(pTarget,0.0f);
+                me->AddThreat(pTarget, 0.0f);
         }
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit* victim)
     {
         hyjal_trashAI::JustDied(victim);
         if (pInstance && IsEvent)
@@ -164,64 +164,68 @@ struct boss_anetheronAI : public hyjal_trashAI
 
         if (SwarmTimer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_CARRION_SWARM);
 
-            SwarmTimer = urand(45000,60000);
-            switch (urand(0,1))
+            SwarmTimer = urand(45000, 60000);
+            switch (urand(0, 1))
             {
-                case 0:
-                    DoPlaySoundToSet(me, SOUND_SWARM1);
-                    me->MonsterYell(SAY_SWARM1, LANG_UNIVERSAL, 0);
-                    break;
-                case 1:
-                    DoPlaySoundToSet(me, SOUND_SWARM2);
-                    me->MonsterYell(SAY_SWARM2, LANG_UNIVERSAL, 0);
-                    break;
+            case 0:
+                DoPlaySoundToSet(me, SOUND_SWARM1);
+                me->MonsterYell(SAY_SWARM1, LANG_UNIVERSAL, 0);
+                break;
+            case 1:
+                DoPlaySoundToSet(me, SOUND_SWARM2);
+                me->MonsterYell(SAY_SWARM2, LANG_UNIVERSAL, 0);
+                break;
             }
-        } else SwarmTimer -= diff;
+        }
+        else SwarmTimer -= diff;
 
         if (SleepTimer <= diff)
         {
             for (uint8 i = 0; i < 3; ++i)
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
-                    pTarget->CastSpell(pTarget,SPELL_SLEEP,true);
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                    pTarget->CastSpell(pTarget, SPELL_SLEEP, true);
             }
             SleepTimer = 60000;
-            switch (urand(0,1))
+            switch (urand(0, 1))
             {
-                case 0:
-                    DoPlaySoundToSet(me, SOUND_SLEEP1);
-                    me->MonsterYell(SAY_SLEEP1, LANG_UNIVERSAL, 0);
-                    break;
-                case 1:
-                    DoPlaySoundToSet(me, SOUND_SLEEP2);
-                    me->MonsterYell(SAY_SLEEP2, LANG_UNIVERSAL, 0);
-                    break;
+            case 0:
+                DoPlaySoundToSet(me, SOUND_SLEEP1);
+                me->MonsterYell(SAY_SLEEP1, LANG_UNIVERSAL, 0);
+                break;
+            case 1:
+                DoPlaySoundToSet(me, SOUND_SLEEP2);
+                me->MonsterYell(SAY_SLEEP2, LANG_UNIVERSAL, 0);
+                break;
             }
-        } else SleepTimer -= diff;
+        }
+        else SleepTimer -= diff;
         if (AuraTimer <= diff)
         {
             DoCast(me, SPELL_VAMPIRIC_AURA, true);
-            AuraTimer = urand(10000,20000);
-        } else AuraTimer -= diff;
+            AuraTimer = urand(10000, 20000);
+        }
+        else AuraTimer -= diff;
         if (InfernoTimer <= diff)
         {
             DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true), SPELL_INFERNO);
             InfernoTimer = 45000;
-            switch (urand(0,1))
+            switch (urand(0, 1))
             {
-                case 0:
-                    DoPlaySoundToSet(me, SOUND_INFERNO1);
-                    me->MonsterYell(SAY_INFERNO1, LANG_UNIVERSAL, 0);
-                    break;
-                case 1:
-                    DoPlaySoundToSet(me, SOUND_INFERNO2);
-                    me->MonsterYell(SAY_INFERNO2, LANG_UNIVERSAL, 0);
-                    break;
+            case 0:
+                DoPlaySoundToSet(me, SOUND_INFERNO1);
+                me->MonsterYell(SAY_INFERNO1, LANG_UNIVERSAL, 0);
+                break;
+            case 1:
+                DoPlaySoundToSet(me, SOUND_INFERNO2);
+                me->MonsterYell(SAY_INFERNO2, LANG_UNIVERSAL, 0);
+                break;
             }
-        } else InfernoTimer -= diff;
+        }
+        else InfernoTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -237,7 +241,7 @@ CreatureAI* GetAI_boss_anetheron(Creature* pCreature)
 
 struct mob_towering_infernalAI : public ScriptedAI
 {
-    mob_towering_infernalAI(Creature *c) : ScriptedAI(c)
+    mob_towering_infernalAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         if (pInstance)
@@ -256,22 +260,22 @@ struct mob_towering_infernalAI : public ScriptedAI
         CheckTimer = 5000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (me->IsWithinDist(who, 50) && !me->isInCombat() && me->IsHostileTo(who))
-            me->Attack(who,false);
+            me->Attack(who, false);
     }
 
     void UpdateAI(const uint32 diff)
@@ -280,7 +284,7 @@ struct mob_towering_infernalAI : public ScriptedAI
         {
             if (AnetheronGUID)
             {
-                Creature* boss = Unit::GetCreature((*me),AnetheronGUID);
+                Creature* boss = Unit::GetCreature((*me), AnetheronGUID);
                 if (!boss || (boss && boss->isDead()))
                 {
                     me->setDeathState(JUST_DIED);
@@ -289,7 +293,8 @@ struct mob_towering_infernalAI : public ScriptedAI
                 }
             }
             CheckTimer = 5000;
-        } else CheckTimer -= diff;
+        }
+        else CheckTimer -= diff;
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -299,7 +304,8 @@ struct mob_towering_infernalAI : public ScriptedAI
         {
             DoCast(me, SPELL_IMMOLATION);
             ImmolationTimer = 5000;
-        } else ImmolationTimer -= diff;
+        }
+        else ImmolationTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -312,7 +318,7 @@ CreatureAI* GetAI_mob_towering_infernal(Creature* pCreature)
 
 void AddSC_boss_anetheron()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_anetheron";
     newscript->GetAI = &GetAI_boss_anetheron;

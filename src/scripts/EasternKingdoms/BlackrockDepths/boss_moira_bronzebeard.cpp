@@ -36,7 +36,7 @@ enum Spells
 
 struct boss_moira_bronzebeardAI : public ScriptedAI
 {
-    boss_moira_bronzebeardAI(Creature *c) : ScriptedAI(c) {}
+    boss_moira_bronzebeardAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Heal_Timer;
     uint32 MindBlast_Timer;
@@ -51,7 +51,7 @@ struct boss_moira_bronzebeardAI : public ScriptedAI
         Smite_Timer = 8000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -66,21 +66,24 @@ struct boss_moira_bronzebeardAI : public ScriptedAI
         {
             DoCastVictim( SPELL_MINDBLAST);
             MindBlast_Timer = 14000;
-        } else MindBlast_Timer -= diff;
+        }
+        else MindBlast_Timer -= diff;
 
         //ShadowWordPain_Timer
         if (ShadowWordPain_Timer <= diff)
         {
             DoCastVictim( SPELL_SHADOWWORDPAIN);
             ShadowWordPain_Timer = 18000;
-        } else ShadowWordPain_Timer -= diff;
+        }
+        else ShadowWordPain_Timer -= diff;
 
         //Smite_Timer
         if (Smite_Timer <= diff)
         {
             DoCastVictim( SPELL_SMITE);
             Smite_Timer = 10000;
-        } else Smite_Timer -= diff;
+        }
+        else Smite_Timer -= diff;
 
     }
 };
@@ -91,7 +94,7 @@ CreatureAI* GetAI_boss_moira_bronzebeard(Creature* pCreature)
 
 void AddSC_boss_moira_bronzebeard()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_moira_bronzebeard";
     newscript->GetAI = &GetAI_boss_moira_bronzebeard;

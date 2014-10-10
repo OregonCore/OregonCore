@@ -43,7 +43,7 @@ enum eConv
 
 struct npc_converted_sentryAI : public ScriptedAI
 {
-    npc_converted_sentryAI(Creature *c) : ScriptedAI(c) {}
+    npc_converted_sentryAI(Creature* c) : ScriptedAI(c) {}
 
     bool Credit;
     uint32 Timer;
@@ -54,7 +54,7 @@ struct npc_converted_sentryAI : public ScriptedAI
         Timer = 2500;
     }
 
-    void MoveInLineOfSight(Unit * /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
     void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
@@ -63,7 +63,7 @@ struct npc_converted_sentryAI : public ScriptedAI
         {
             if (Timer <= diff)
             {
-                uint32 i = urand(1,2);
+                uint32 i = urand(1, 2);
                 if (i == 1)
                     DoScriptText(SAY_CONVERTED_1, me);
                 else
@@ -74,7 +74,8 @@ struct npc_converted_sentryAI : public ScriptedAI
                     CAST_PET(me)->SetDuration(7500);
                 Credit = true;
                 me->GetMotionMaster()->MoveConfused();
-            } else Timer -= diff;
+            }
+            else Timer -= diff;
         }
     }
 };
@@ -98,11 +99,11 @@ struct npc_greengill_slaveAI : public ScriptedAI
 
     uint64 PlayerGUID;
 
-    void EnterCombat(Unit* /*who*/){}
+    void EnterCombat(Unit* /*who*/) {}
 
     void Reset()
     {
-    PlayerGUID = 0;
+        PlayerGUID = 0;
     }
 
     void SpellHit(Unit* caster, const SpellEntry* spell)
@@ -142,7 +143,7 @@ CreatureAI* GetAI_npc_greengill_slaveAI(Creature* pCreature)
 
 void AddSC_isle_of_queldanas()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_converted_sentry";

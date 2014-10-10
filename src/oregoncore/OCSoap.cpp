@@ -45,15 +45,15 @@ void OCSoapRunnable::run()
 
     sLog.outString("OCSoap: bound to http://%s:%d", m_host.c_str(), m_port);
 
-    while(!World::IsStopped())
+    while (!World::IsStopped())
     {
         if (!soap_valid_socket(soap_accept(&soap)))
             continue;   // ran into an accept timeout
 
-        sLog.outDebug("OCSoap: accepted connection from IP=%d.%d.%d.%d", (int)(soap.ip>>24)&0xFF, (int)(soap.ip>>16)&0xFF, (int)(soap.ip>>8)&0xFF, (int)soap.ip&0xFF);
+        sLog.outDebug("OCSoap: accepted connection from IP=%d.%d.%d.%d", (int)(soap.ip >> 24) & 0xFF, (int)(soap.ip >> 16) & 0xFF, (int)(soap.ip >> 8) & 0xFF, (int)soap.ip & 0xFF);
         struct soap* thread_soap = soap_copy(&soap);// make a safe copy
 
-        ACE_Message_Block *mb = new ACE_Message_Block(sizeof(struct soap*));
+        ACE_Message_Block* mb = new ACE_Message_Block(sizeof(struct soap*));
         ACE_OS::memcpy (mb->wr_ptr(), &thread_soap, sizeof(struct soap*));
         pool.putq(mb);
     }
@@ -64,7 +64,7 @@ void OCSoapRunnable::run()
     soap_done(&soap);
 }
 
-void SOAPWorkingThread::process_message (ACE_Message_Block *mb)
+void SOAPWorkingThread::process_message (ACE_Message_Block* mb)
 {
     ACE_TRACE (ACE_TEXT ("SOAPWorkingThread::process_message"));
 
@@ -128,9 +128,7 @@ int ns1__executeCommand(soap* soap, char* command, char** result)
 
     int acc = connection.pendingCommands.acquire();
     if (acc)
-    {
         sLog.outError("OCSoap: Error while acquiring lock, acc = %i, errno = %u", acc, errno);
-    }
 
     // alright, command finished
 
@@ -159,11 +157,12 @@ void SOAPCommand::commandFinished(void* soapconnection, bool success)
 ////////////////////////////////////////////////////////////////////////////////
 
 struct Namespace namespaces[] =
-{ { "SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", NULL, NULL }, // must be first
-  { "SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", NULL, NULL }, // must be second
-  { "xsi", "http://www.w3.org/1999/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL },
-  { "xsd", "http://www.w3.org/1999/XMLSchema",          "http://www.w3.org/*/XMLSchema", NULL, },
-  { "ns1", "urn:Oregon", NULL, NULL },     // "ns1" namespace prefix
-  { NULL, NULL, NULL, NULL }
+{
+    { "SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", NULL, NULL }, // must be first
+    { "SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", NULL, NULL }, // must be second
+    { "xsi", "http://www.w3.org/1999/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL },
+    { "xsd", "http://www.w3.org/1999/XMLSchema",          "http://www.w3.org/*/XMLSchema", NULL, },
+    { "ns1", "urn:Oregon", NULL, NULL },     // "ns1" namespace prefix
+    { NULL, NULL, NULL, NULL }
 };
 

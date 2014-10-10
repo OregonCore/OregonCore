@@ -34,7 +34,7 @@ RASocket::~RASocket()
 {
 }
 
-int RASocket::open(void *)
+int RASocket::open(void*)
 {
     ACE_INET_Addr remote_addr;
 
@@ -71,9 +71,7 @@ int RASocket::recv_line(ACE_Message_Block& buffer)
         ssize_t n = peer().recv(&byte, sizeof(byte));
 
         if (n < 0)
-        {
             return -1;
-        }
 
         if (n == 0)
         {
@@ -104,16 +102,16 @@ int RASocket::recv_line(std::string& out_line)
     char buf[4096];
 
     ACE_Data_Block db(sizeof (buf),
-            ACE_Message_Block::MB_DATA,
-            buf,
-            0,
-            0,
-            ACE_Message_Block::DONT_DELETE,
-            0);
+                      ACE_Message_Block::MB_DATA,
+                      buf,
+                      0,
+                      0,
+                      ACE_Message_Block::DONT_DELETE,
+                      0);
 
     ACE_Message_Block message_block(&db,
-            ACE_Message_Block::DONT_DELETE,
-            0);
+                                    ACE_Message_Block::DONT_DELETE,
+                                    0);
 
     if (recv_line(message_block) == -1)
     {
@@ -134,7 +132,8 @@ int RASocket::process_command(const std::string& command)
     sLog.outRemote("Got command: %s", command.c_str());
 
     // handle quit, exit and logout commands to terminate connection
-    if (command == "quit" || command == "exit" || command == "logout") {
+    if (command == "quit" || command == "exit" || command == "logout")
+    {
         (void) send("Bye\r\n");
         return -1;
     }
@@ -182,7 +181,7 @@ int RASocket::check_access_level(const std::string& user)
         return -1;
     }
 
-    Field *fields = result->Fetch();
+    Field* fields = result->Fetch();
 
     if (fields[1].GetUInt32() < iMinLevel)
     {
@@ -211,8 +210,8 @@ int RASocket::check_password(const std::string& user, const std::string& pass)
     std::string hash = AccountMgr::CalculateShaPassHash(safe_user, safe_pass);
 
     QueryResult_AutoPtr check = LoginDatabase.PQuery(
-            "SELECT 1 FROM account WHERE username = '%s' AND sha_pass_hash = '%s'",
-            safe_user.c_str(), hash.c_str());
+                                    "SELECT 1 FROM account WHERE username = '%s' AND sha_pass_hash = '%s'",
+                                    safe_user.c_str(), hash.c_str());
 
     if (!check)
     {
@@ -258,23 +257,23 @@ int RASocket::subnegotiate()
     char buf[1024];
 
     ACE_Data_Block db(sizeof (buf),
-        ACE_Message_Block::MB_DATA,
-        buf,
-        0,
-        0,
-        ACE_Message_Block::DONT_DELETE,
-        0);
+                      ACE_Message_Block::MB_DATA,
+                      buf,
+                      0,
+                      0,
+                      ACE_Message_Block::DONT_DELETE,
+                      0);
 
     ACE_Message_Block message_block(&db,
-        ACE_Message_Block::DONT_DELETE,
-        0);
+                                    ACE_Message_Block::DONT_DELETE,
+                                    0);
 
     const size_t recv_size = message_block.space();
 
     // Wait a maximum of 1000ms for negotiation packet - not all telnet clients may send it
     ACE_Time_Value waitTime = ACE_Time_Value(1);
     const ssize_t n = peer().recv(message_block.wr_ptr(),
-        recv_size, &waitTime);
+                                  recv_size, &waitTime);
 
     if (n <= 0)
         return int(n);
@@ -297,20 +296,20 @@ int RASocket::subnegotiate()
             std::stringstream ss;
             switch (command)
             {
-                case 0xFB:        // WILL
-                    ss << "WILL ";
-                    break;
-                case 0xFC:        // WON'T
-                    ss << "WON'T ";
-                    break;
-                case 0xFD:        // DO
-                    ss << "DO ";
-                    break;
-                case 0xFE:        // DON'T
-                    ss << "DON'T ";
-                    break;
-                default:
-                    return -1;      // not allowed
+            case 0xFB:        // WILL
+                ss << "WILL ";
+                break;
+            case 0xFC:        // WON'T
+                ss << "WON'T ";
+                break;
+            case 0xFD:        // DO
+                ss << "DO ";
+                break;
+            case 0xFE:        // DON'T
+                ss << "DON'T ";
+                break;
+            default:
+                return -1;      // not allowed
             }
 
             uint8 param = buf[++i];
@@ -344,7 +343,7 @@ int RASocket::svc(void)
     if (send(std::string(sWorld.GetMotd()) + "\r\n") == -1)
         return -1;
 
-    for(;;)
+    for (;;)
     {
         // show prompt
         const char* tc_prompt = "TC> ";
@@ -363,7 +362,7 @@ int RASocket::svc(void)
     return 0;
 }
 
-void RASocket::zprint(void* callbackArg, const char * szText)
+void RASocket::zprint(void* callbackArg, const char* szText)
 {
     if (!szText || !callbackArg)
         return;

@@ -59,34 +59,34 @@ Object* ObjectAccessor::GetObjectByTypeMask(WorldObject const& p, uint64 guid, u
 {
     switch (GUID_HIPART(guid))
     {
-        case HIGHGUID_ITEM:
-            if (typemask & TYPEMASK_ITEM && p.GetTypeId() == TYPEID_PLAYER)
-                return ((Player const&)p).GetItemByGuid(guid);
-            break;
-        case HIGHGUID_PLAYER:
-            if (typemask & TYPEMASK_PLAYER)
-                return GetPlayer(p, guid);
-            break;
-        case HIGHGUID_GAMEOBJECT:
-            if (typemask & TYPEMASK_GAMEOBJECT)
-                return GetGameObject(p, guid);
-            break;
-        case HIGHGUID_UNIT:
-            if (typemask & TYPEMASK_UNIT)
-                return GetCreature(p, guid);
-            break;
-        case HIGHGUID_PET:
-            if (typemask & TYPEMASK_UNIT)
-                return GetPet(p, guid);
-            break;
-        case HIGHGUID_DYNAMICOBJECT:
-            if (typemask & TYPEMASK_DYNAMICOBJECT)
-                return GetDynamicObject(p, guid);
-            break;
-        case HIGHGUID_TRANSPORT:
-        case HIGHGUID_CORPSE:
-        case HIGHGUID_MO_TRANSPORT:
-            break;
+    case HIGHGUID_ITEM:
+        if (typemask & TYPEMASK_ITEM && p.GetTypeId() == TYPEID_PLAYER)
+            return ((Player const&)p).GetItemByGuid(guid);
+        break;
+    case HIGHGUID_PLAYER:
+        if (typemask & TYPEMASK_PLAYER)
+            return GetPlayer(p, guid);
+        break;
+    case HIGHGUID_GAMEOBJECT:
+        if (typemask & TYPEMASK_GAMEOBJECT)
+            return GetGameObject(p, guid);
+        break;
+    case HIGHGUID_UNIT:
+        if (typemask & TYPEMASK_UNIT)
+            return GetCreature(p, guid);
+        break;
+    case HIGHGUID_PET:
+        if (typemask & TYPEMASK_UNIT)
+            return GetPet(p, guid);
+        break;
+    case HIGHGUID_DYNAMICOBJECT:
+        if (typemask & TYPEMASK_DYNAMICOBJECT)
+            return GetDynamicObject(p, guid);
+        break;
+    case HIGHGUID_TRANSPORT:
+    case HIGHGUID_CORPSE:
+    case HIGHGUID_MO_TRANSPORT:
+        break;
     }
 
     return NULL;
@@ -286,7 +286,7 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
 
     DEBUG_LOG("Deleting Corpse and spawned bones.");
 
-    Map *map = corpse->FindMap();
+    Map* map = corpse->FindMap();
 
     // remove corpse from player_guid -> corpse map
     RemoveCorpse(corpse);
@@ -305,7 +305,7 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
     // create the bones only if the map and the grid is loaded at the corpse's location
     // ignore bones creating option in case insignia
     if (map && (insignia ||
-        (map->IsBattleGroundOrArena() ? sWorld.getConfig(CONFIG_DEATH_BONES_BG_OR_ARENA) : sWorld.getConfig(CONFIG_DEATH_BONES_WORLD))) &&
+                (map->IsBattleGroundOrArena() ? sWorld.getConfig(CONFIG_DEATH_BONES_BG_OR_ARENA) : sWorld.getConfig(CONFIG_DEATH_BONES_WORLD))) &&
         !map->IsRemovalGrid(corpse->GetPositionX(), corpse->GetPositionY()))
     {
         // Create bones, don't change Corpse

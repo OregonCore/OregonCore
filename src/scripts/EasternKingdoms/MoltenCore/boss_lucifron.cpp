@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_lucifronAI : public ScriptedAI
 {
-    boss_lucifronAI(Creature *c) : ScriptedAI(c) {}
+    boss_lucifronAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ImpendingDoom_Timer;
     uint32 LucifronCurse_Timer;
@@ -43,7 +43,7 @@ struct boss_lucifronAI : public ScriptedAI
         ShadowShock_Timer = 6000;                           //6 seconds
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -57,21 +57,24 @@ struct boss_lucifronAI : public ScriptedAI
         {
             DoCastVictim( SPELL_IMPENDINGDOOM);
             ImpendingDoom_Timer = 20000;
-        } else ImpendingDoom_Timer -= diff;
+        }
+        else ImpendingDoom_Timer -= diff;
 
         //Lucifron's curse timer
         if (LucifronCurse_Timer <= diff)
         {
             DoCastVictim( SPELL_LUCIFRONCURSE);
             LucifronCurse_Timer = 15000;
-        } else LucifronCurse_Timer -= diff;
+        }
+        else LucifronCurse_Timer -= diff;
 
         //Shadowshock
         if (ShadowShock_Timer <= diff)
         {
             DoCastVictim( SPELL_SHADOWSHOCK);
             ShadowShock_Timer = 6000;
-        } else ShadowShock_Timer -= diff;
+        }
+        else ShadowShock_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -83,7 +86,7 @@ CreatureAI* GetAI_boss_lucifron(Creature* pCreature)
 
 void AddSC_boss_lucifron()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_lucifron";
     newscript->GetAI = &GetAI_boss_lucifron;

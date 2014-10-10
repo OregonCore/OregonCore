@@ -146,7 +146,7 @@ static void AttemptAddMore(Player* _player)
     }
 }
 
-void WorldSession::HandleLfgAutoJoinOpcode(WorldPacket & /*recv_data*/)
+void WorldSession::HandleLfgAutoJoinOpcode(WorldPacket& /*recv_data*/)
 {
     sLog.outDebug("CMSG_SET_LFG_AUTO_JOIN");
     LookingForGroup_auto_join = true;
@@ -157,13 +157,13 @@ void WorldSession::HandleLfgAutoJoinOpcode(WorldPacket & /*recv_data*/)
     AttemptJoin(_player);
 }
 
-void WorldSession::HandleLfgCancelAutoJoinOpcode(WorldPacket & /*recv_data*/)
+void WorldSession::HandleLfgCancelAutoJoinOpcode(WorldPacket& /*recv_data*/)
 {
     sLog.outDebug("CMSG_UNSET_LFG_AUTO_JOIN");
     LookingForGroup_auto_join = false;
 }
 
-void WorldSession::HandleLfmAutoAddMembersOpcode(WorldPacket & /*recv_data*/)
+void WorldSession::HandleLfmAutoAddMembersOpcode(WorldPacket& /*recv_data*/)
 {
     sLog.outDebug("CMSG_SET_LFM_AUTOADD");
     LookingForGroup_auto_add = true;
@@ -174,13 +174,13 @@ void WorldSession::HandleLfmAutoAddMembersOpcode(WorldPacket & /*recv_data*/)
     AttemptAddMore(_player);
 }
 
-void WorldSession::HandleLfmCancelAutoAddmembersOpcode(WorldPacket & /*recv_data*/)
+void WorldSession::HandleLfmCancelAutoAddmembersOpcode(WorldPacket& /*recv_data*/)
 {
     sLog.outDebug("CMSG_UNSET_LFM_AUTOADD");
     LookingForGroup_auto_add = false;
 }
 
-void WorldSession::HandleLfgClearOpcode(WorldPacket & /*recv_data */)
+void WorldSession::HandleLfgClearOpcode(WorldPacket& /*recv_data */)
 {
     sLog.outDebug("CMSG_LOOKING_FOR_GROUP_CLEAR");
 
@@ -191,14 +191,14 @@ void WorldSession::HandleLfgClearOpcode(WorldPacket & /*recv_data */)
         _player->LeaveLFGChannel();
 }
 
-void WorldSession::HandleLfmSetNoneOpcode(WorldPacket & /*recv_data */)
+void WorldSession::HandleLfmSetNoneOpcode(WorldPacket& /*recv_data */)
 {
     sLog.outDebug("CMSG_SET_LOOKING_FOR_NONE");
 
     _player->m_lookingForGroup.more.Clear();
 }
 
-void WorldSession::HandleLfmSetOpcode(WorldPacket & recv_data)
+void WorldSession::HandleLfmSetOpcode(WorldPacket& recv_data)
 {
     sLog.outDebug("CMSG_SET_LOOKING_FOR_MORE");
 
@@ -208,7 +208,7 @@ void WorldSession::HandleLfmSetOpcode(WorldPacket & recv_data)
     entry = (temp & 0xFFFF);
     type = ((temp >> 24) & 0xFFFF);
 
-    _player->m_lookingForGroup.more.Set(entry,type);
+    _player->m_lookingForGroup.more.Set(entry, type);
     sLog.outDebug("LFM set: temp %u, zone %u, type %u", temp, entry, type);
 
     if (LookingForGroup_auto_add)
@@ -217,7 +217,7 @@ void WorldSession::HandleLfmSetOpcode(WorldPacket & recv_data)
     SendLfgResult(type, entry, 1);
 }
 
-void WorldSession::HandleLfgSetCommentOpcode(WorldPacket & recv_data)
+void WorldSession::HandleLfgSetCommentOpcode(WorldPacket& recv_data)
 {
     sLog.outDebug("CMSG_SET_COMMENTARY");
     //recv_data.hexlike();
@@ -281,16 +281,14 @@ void WorldSession::SendLfgResult(uint32 type, uint32 entry, uint8 lfg_type)
         data << lfg_type;                                   // 0x00 - LFG, 0x01 - LFM
 
         for (uint8 j = 0; j < MAX_LOOKING_FOR_GROUP_SLOT; ++j)
-        {
             data << uint32(plr->m_lookingForGroup.slots[j].entry | (plr->m_lookingForGroup.slots[j].type << 24));
-        }
         data << plr->m_lookingForGroup.comment;
 
-        Group *group = plr->GetGroup();
+        Group* group = plr->GetGroup();
         if (group)
         {
-            data << group->GetMembersCount()-1;             // count of group members without group leader
-            for (GroupReference *itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
+            data << group->GetMembersCount() - 1;           // count of group members without group leader
+            for (GroupReference* itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
             {
                 Player* member = itr->getSource();
                 if (member && member->GetGUID() != plr->GetGUID())
@@ -301,19 +299,17 @@ void WorldSession::SendLfgResult(uint32 type, uint32 entry, uint8 lfg_type)
             }
         }
         else
-        {
             data << uint32(0x00);
-        }
     }
 
     // fill count placeholders
-    data.put<uint32>(4+4,  number);
-    data.put<uint32>(4+4+4,number);
+    data.put<uint32>(4 + 4,  number);
+    data.put<uint32>(4 + 4 + 4, number);
 
     SendPacket(&data);
 }
 
-void WorldSession::HandleSetLfgOpcode(WorldPacket & recv_data)
+void WorldSession::HandleSetLfgOpcode(WorldPacket& recv_data)
 {
     sLog.outDebug("CMSG_SET_LOOKING_FOR_GROUP");
     //recv_data.hexlike();
@@ -327,7 +323,7 @@ void WorldSession::HandleSetLfgOpcode(WorldPacket & recv_data)
     if (slot >= MAX_LOOKING_FOR_GROUP_SLOT)
         return;
 
-    _player->m_lookingForGroup.slots[slot].Set(entry,type);
+    _player->m_lookingForGroup.slots[slot].Set(entry, type);
     sLog.outDebug("LFG set: looknumber %u, temp %X, type %u, entry %u", slot, temp, type, entry);
 
     if (LookingForGroup_auto_join)

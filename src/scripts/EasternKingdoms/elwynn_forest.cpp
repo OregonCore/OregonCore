@@ -39,7 +39,7 @@ struct npc_henze_faulkAI : public ScriptedAI
     uint32 lifeTimer;
     bool spellHit;
 
-    npc_henze_faulkAI(Creature *c) : ScriptedAI(c) {}
+    npc_henze_faulkAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()
     {
@@ -49,11 +49,11 @@ struct npc_henze_faulkAI : public ScriptedAI
         spellHit = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
-    void MoveInLineOfSight(Unit * /*who*/)
+    void MoveInLineOfSight(Unit* /*who*/)
     {
         return;
     }
@@ -72,7 +72,7 @@ struct npc_henze_faulkAI : public ScriptedAI
         }
     }
 
-    void SpellHit(Unit * /*Hitter*/, const SpellEntry *Spellkind)
+    void SpellHit(Unit* /*Hitter*/, const SpellEntry* Spellkind)
     {
         if (Spellkind->Id == 8593 && !spellHit)
         {
@@ -93,7 +93,7 @@ CreatureAI* GetAI_npc_henze_faulk(Creature* pCreature)
 
 void AddSC_elwynn_forest()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_henze_faulk";

@@ -20,19 +20,28 @@
 
 char const* ObjectGuid::GetTypeName() const
 {
-    switch(GetHigh())
+    switch (GetHigh())
     {
-        case HIGHGUID_ITEM:         return "item";
-        case HIGHGUID_PLAYER:       return !IsEmpty() ? "player" : "none";
-        case HIGHGUID_GAMEOBJECT:   return "gameobject";
-        case HIGHGUID_TRANSPORT:    return "transport";
-        case HIGHGUID_UNIT:         return "creature";
-        case HIGHGUID_PET:          return "pet";
-        case HIGHGUID_DYNAMICOBJECT:return "dynobject";
-        case HIGHGUID_CORPSE:       return "corpse";
-        case HIGHGUID_MO_TRANSPORT: return "mo_transport";
-        default:
-            return "<unknown>";
+    case HIGHGUID_ITEM:
+        return "item";
+    case HIGHGUID_PLAYER:
+        return !IsEmpty() ? "player" : "none";
+    case HIGHGUID_GAMEOBJECT:
+        return "gameobject";
+    case HIGHGUID_TRANSPORT:
+        return "transport";
+    case HIGHGUID_UNIT:
+        return "creature";
+    case HIGHGUID_PET:
+        return "pet";
+    case HIGHGUID_DYNAMICOBJECT:
+        return "dynobject";
+    case HIGHGUID_CORPSE:
+        return "corpse";
+    case HIGHGUID_MO_TRANSPORT:
+        return "mo_transport";
+    default:
+        return "<unknown>";
     }
 }
 
@@ -52,7 +61,7 @@ ByteBuffer& operator<< (ByteBuffer& buf, ObjectGuid const& guid)
     return buf;
 }
 
-ByteBuffer &operator>>(ByteBuffer& buf, ObjectGuid& guid)
+ByteBuffer& operator>>(ByteBuffer& buf, ObjectGuid& guid)
 {
     guid.Set(buf.read<uint64>());
     return buf;
@@ -64,7 +73,7 @@ ByteBuffer& operator<< (ByteBuffer& buf, PackedGuid const& guid)
     return buf;
 }
 
-ByteBuffer &operator>>(ByteBuffer& buf, PackedGuidReader const& guid)
+ByteBuffer& operator>>(ByteBuffer& buf, PackedGuidReader const& guid)
 {
     guid.m_guidPtr->Set(buf.readPackGUID());
     return buf;

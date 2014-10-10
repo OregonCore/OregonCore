@@ -35,7 +35,7 @@ BufferedSocket::BufferedSocket(void):
 {
 }
 
-/*virtual*/ int BufferedSocket::open(void * arg)
+/*virtual*/ int BufferedSocket::open(void* arg)
 {
     if (Base::open(arg) == -1)
         return -1;
@@ -66,7 +66,7 @@ size_t BufferedSocket::recv_len(void) const
     return this->input_buffer_.length();
 }
 
-bool BufferedSocket::recv_soft(char *buf, size_t len)
+bool BufferedSocket::recv_soft(char* buf, size_t len)
 {
     if (this->input_buffer_.length() < len)
         return false;
@@ -76,7 +76,7 @@ bool BufferedSocket::recv_soft(char *buf, size_t len)
     return true;
 }
 
-bool BufferedSocket::recv(char *buf, size_t len)
+bool BufferedSocket::recv(char* buf, size_t len)
 {
     bool ret = this->recv_soft(buf, len);
 
@@ -91,7 +91,7 @@ void BufferedSocket::recv_skip(size_t len)
     this->input_buffer_.rd_ptr(len);
 }
 
-ssize_t BufferedSocket::noblk_send(ACE_Message_Block &message_block)
+ssize_t BufferedSocket::noblk_send(ACE_Message_Block& message_block)
 {
     const size_t len = message_block.length();
 
@@ -120,24 +120,24 @@ ssize_t BufferedSocket::noblk_send(ACE_Message_Block &message_block)
     return n;
 }
 
-bool BufferedSocket::send(const char *buf, size_t len)
+bool BufferedSocket::send(const char* buf, size_t len)
 {
     if (buf == NULL || len == 0)
         return true;
 
     ACE_Data_Block db(
-            len,
-            ACE_Message_Block::MB_DATA,
-            (const char*)buf,
-            0,
-            0,
-            ACE_Message_Block::DONT_DELETE,
-            0);
+        len,
+        ACE_Message_Block::MB_DATA,
+        (const char*)buf,
+        0,
+        0,
+        ACE_Message_Block::DONT_DELETE,
+        0);
 
     ACE_Message_Block message_block(
-            &db,
-            ACE_Message_Block::DONT_DELETE,
-            0);
+        &db,
+        ACE_Message_Block::DONT_DELETE,
+        0);
 
     message_block.wr_ptr(len);
 
@@ -158,9 +158,9 @@ bool BufferedSocket::send(const char *buf, size_t len)
     }
 
     // enqueue the message, note: clone is needed cause we cant enqueue stuff on the stack
-    ACE_Message_Block *mb = message_block.clone();
+    ACE_Message_Block* mb = message_block.clone();
 
-    if (this->msg_queue()->enqueue_tail(mb, (ACE_Time_Value *) &ACE_Time_Value::zero) == -1)
+    if (this->msg_queue()->enqueue_tail(mb, (ACE_Time_Value*) &ACE_Time_Value::zero) == -1)
     {
         mb->release();
         return false;
@@ -175,7 +175,7 @@ bool BufferedSocket::send(const char *buf, size_t len)
 
 /*virtual*/ int BufferedSocket::handle_output(ACE_HANDLE /*= ACE_INVALID_HANDLE*/)
 {
-    ACE_Message_Block *mb = 0;
+    ACE_Message_Block* mb = 0;
 
     if (this->msg_queue()->is_empty())
     {
@@ -184,7 +184,7 @@ bool BufferedSocket::send(const char *buf, size_t len)
         return 0;
     }
 
-    if (this->msg_queue()->dequeue_head(mb, (ACE_Time_Value *) &ACE_Time_Value::zero) == -1)
+    if (this->msg_queue()->dequeue_head(mb, (ACE_Time_Value*) &ACE_Time_Value::zero) == -1)
         return -1;
 
     ssize_t n = this->noblk_send(*mb);
@@ -203,7 +203,7 @@ bool BufferedSocket::send(const char *buf, size_t len)
     {
         mb->rd_ptr(n);
 
-        if (this->msg_queue()->enqueue_head(mb, (ACE_Time_Value *) &ACE_Time_Value::zero) == -1)
+        if (this->msg_queue()->enqueue_head(mb, (ACE_Time_Value*) &ACE_Time_Value::zero) == -1)
         {
             mb->release();
             return -1;

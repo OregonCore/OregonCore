@@ -59,7 +59,7 @@ struct boss_arlokkAI : public ScriptedAI
         pInstance = pCreature->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 m_uiShadowWordPain_Timer;
     uint32 m_uiGouge_Timer;
@@ -127,7 +127,7 @@ struct boss_arlokkAI : public ScriptedAI
 
     void DoSummonPhanters()
     {
-        if (Unit *pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID))
+        if (Unit* pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID))
             DoScriptText(SAY_FEAST_PANTHER, me, pMarkedTarget);
 
         me->SummonCreature(NPC_ZULIAN_PROWLER, -11532.7998, -1649.6734, 41.4800, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
@@ -136,11 +136,11 @@ struct boss_arlokkAI : public ScriptedAI
 
     void JustSummoned(Creature* pSummoned)
     {
-        if (Unit *pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID))
+        if (Unit* pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID))
             pSummoned->AI()->AttackStart(pMarkedTarget);
         else
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 pSummoned->AI()->AttackStart(pTarget);
         }
 
@@ -164,7 +164,7 @@ struct boss_arlokkAI : public ScriptedAI
 
             if (m_uiMark_Timer <= uiDiff)
             {
-                Unit *pMarkedTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* pMarkedTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
                 if (pMarkedTarget)
                 {
@@ -190,8 +190,8 @@ struct boss_arlokkAI : public ScriptedAI
             else
                 m_uiThrash_Timer -= uiDiff;
 
-           // Ravage Timer
-           if (m_uiRavage_Timer <= uiDiff)
+            // Ravage Timer
+            if (m_uiRavage_Timer <= uiDiff)
             {
                 DoCastVictim( SPELL_RAVAGE);
                 m_uiRavage_Timer = 16000;
@@ -216,7 +216,7 @@ struct boss_arlokkAI : public ScriptedAI
                 if (DoGetThreat(me->getVictim()))
                     DoModifyThreatPercent(me->getVictim(), -80);
 
-                m_uiGouge_Timer = 17000 + rand()%10000;
+                m_uiGouge_Timer = 17000 + rand() % 10000;
             }
             else
                 m_uiGouge_Timer -= uiDiff;
@@ -258,15 +258,15 @@ struct boss_arlokkAI : public ScriptedAI
                 me->SetDisplayId(MODEL_ID_PANTHER);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
-                const CreatureInfo *cinfo = me->GetCreatureInfo();
-                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg / 100) * 35)));
-                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg / 100) * 35)));
+                const CreatureInfo* cinfo = me->GetCreatureInfo();
+                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 35)));
+                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 35)));
                 me->UpdateDamagePhysical(BASE_ATTACK);
 
                 if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     AttackStart(pTarget);
-                    DoCast(pTarget,SPELL_BACKSTAB);
+                    DoCast(pTarget, SPELL_BACKSTAB);
                 }
 
                 m_bIsPhaseTwo = true;
@@ -291,7 +291,7 @@ struct mob_prowlerAI : public ScriptedAI
         pInstance = pCreature->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     void Reset()
     {
@@ -308,7 +308,7 @@ struct mob_prowlerAI : public ScriptedAI
     {
         if (m_uiUpdateTarget_Timer <= uiDiff)
         {
-            Unit *pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID);
+            Unit* pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID);
             if (DoGetThreat(me->getVictim()))
                 DoModifyThreatPercent(me->getVictim(), -100);
             me->AI()->AttackStart(pMarkedTarget);
@@ -339,7 +339,7 @@ CreatureAI* GetAI_mob_prowler(Creature* pCreature)
 
 void AddSC_boss_arlokk()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_arlokk";

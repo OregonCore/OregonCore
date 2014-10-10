@@ -22,13 +22,13 @@
 
 // ASYNC STATEMENTS / TRANSACTIONS
 
-void SqlStatement::Execute(Database *db)
+void SqlStatement::Execute(Database* db)
 {
     // just do it
     db->DirectExecute(m_sql);
 }
 
-void SqlTransaction::Execute(Database *db)
+void SqlTransaction::Execute(Database* db)
 {
     const char* sql;
 
@@ -68,7 +68,7 @@ void SqlTransaction::Execute(Database *db)
 
 // ASYNC QUERIES
 
-void SqlQuery::Execute(Database *db)
+void SqlQuery::Execute(Database* db)
 {
     if (!m_callback || !m_queue)
         return;
@@ -90,30 +90,30 @@ void SqlResultQueue::Update()
     }
 }
 
-bool SqlQueryHolder::Execute(Oregon::IQueryCallback * callback, SqlDelayThread *thread, SqlResultQueue *queue)
+bool SqlQueryHolder::Execute(Oregon::IQueryCallback* callback, SqlDelayThread* thread, SqlResultQueue* queue)
 {
     if (!callback || !thread || !queue)
         return false;
 
     // delay the execution of the queries, sync them with the delay thread
     // which will in turn resync on execution (via the queue) and call back
-    SqlQueryHolderEx *holderEx = new SqlQueryHolderEx(this, callback, queue);
+    SqlQueryHolderEx* holderEx = new SqlQueryHolderEx(this, callback, queue);
     thread->Delay(holderEx);
     return true;
 }
 
-bool SqlQueryHolder::SetQuery(size_t index, const char *sql)
+bool SqlQueryHolder::SetQuery(size_t index, const char* sql)
 {
     if (m_queries.size() <= index)
     {
-        sLog.outError("Query index (%u) out of range (size: %u) for query: %s",index,(uint32)m_queries.size(),sql);
+        sLog.outError("Query index (%u) out of range (size: %u) for query: %s", index, (uint32)m_queries.size(), sql);
         return false;
     }
 
     if (m_queries[index].first != NULL)
     {
         sLog.outError("Attempt assign query to holder index (%u) where other query stored (Old: [%s] New: [%s])",
-            index,m_queries[index].first,sql);
+                      index, m_queries[index].first, sql);
         return false;
     }
 
@@ -122,11 +122,11 @@ bool SqlQueryHolder::SetQuery(size_t index, const char *sql)
     return true;
 }
 
-bool SqlQueryHolder::SetPQuery(size_t index, const char *format, ...)
+bool SqlQueryHolder::SetPQuery(size_t index, const char* format, ...)
 {
     if (!format)
     {
-        sLog.outError("Query (index: %u) is empty.",index);
+        sLog.outError("Query (index: %u) is empty.", index);
         return false;
     }
 
@@ -136,13 +136,13 @@ bool SqlQueryHolder::SetPQuery(size_t index, const char *format, ...)
     int res = vsnprintf(szQuery, MAX_QUERY_LEN, format, ap);
     va_end(ap);
 
-    if (res==-1)
+    if (res == -1)
     {
-        sLog.outError("SQL Query truncated (and not execute) for format: %s",format);
+        sLog.outError("SQL Query truncated (and not execute) for format: %s", format);
         return false;
     }
 
-    return SetQuery(index,szQuery);
+    return SetQuery(index, szQuery);
 }
 
 QueryResult_AutoPtr SqlQueryHolder::GetResult(size_t index)
@@ -186,18 +186,18 @@ void SqlQueryHolder::SetSize(size_t size)
     m_queries.resize(size);
 }
 
-void SqlQueryHolderEx::Execute(Database *db)
+void SqlQueryHolderEx::Execute(Database* db)
 {
     if (!m_holder || !m_callback || !m_queue)
         return;
 
     // we can do this, we are friends
-    std::vector<SqlQueryHolder::SqlResultPair> &queries = m_holder->m_queries;
+    std::vector<SqlQueryHolder::SqlResultPair>& queries = m_holder->m_queries;
 
     for (size_t i = 0; i < queries.size(); i++)
     {
         // execute all queries in the holder and pass the results
-        char const *sql = queries[i].first;
+        char const* sql = queries[i].first;
         if (sql) m_holder->SetResult(i, db->Query(sql));
     }
 

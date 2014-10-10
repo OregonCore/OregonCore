@@ -178,24 +178,24 @@ struct boss_kelthuzadAI : public ScriptedAI
 
     void Reset()
     {
-        FrostBolt_Timer = (rand()%60)*1000;                 //It won't be more than a minute without cast it
+        FrostBolt_Timer = (rand() % 60) * 1000;             //It won't be more than a minute without cast it
         FrostBoltNova_Timer = 15000;                        //Cast every 15 seconds
-        ChainsOfKelthuzad_Timer = (rand()%30+30)*1000;      //Cast no sooner than once every 30 seconds
+        ChainsOfKelthuzad_Timer = (rand() % 30 + 30) * 1000; //Cast no sooner than once every 30 seconds
         ManaDetonation_Timer = 20000;                       //Seems to cast about every 20 seconds
         ShadowFisure_Timer = 25000;                         //25 seconds
-        FrostBlast_Timer = (rand()%30+30)*1000;             //Random time between 30-60 seconds
+        FrostBlast_Timer = (rand() % 30 + 30) * 1000;       //Random time between 30-60 seconds
         GuardiansOfIcecrown_Timer = 5000;                   //5 seconds for summoning each Guardian of Icecrown in phase 3
 
-        for (int i=0; i<5; i++)
+        for (int i = 0; i < 5; i++)
         {
             if (GuardiansOfIcecrown[i])
-        {
-            //delete creature
-            Unit* pUnit = Unit::GetUnit((*me), GuardiansOfIcecrown[i]);
-            if (pUnit && pUnit->isAlive())
-                pUnit->DealDamage(pUnit, pUnit->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            GuardiansOfIcecrown[i] = 0;
-        }
+            {
+                //delete creature
+                Unit* pUnit = Unit::GetUnit((*me), GuardiansOfIcecrown[i]);
+                if (pUnit && pUnit->isAlive())
+                    pUnit->DealDamage(pUnit, pUnit->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                GuardiansOfIcecrown[i] = 0;
+            }
         }
 
         Phase1_Timer = 310000;                              //Phase 1 lasts 5 minutes and 10 seconds
@@ -205,7 +205,7 @@ struct boss_kelthuzadAI : public ScriptedAI
 
     void KilledUnit()
     {
-        if (rand()%2)
+        if (rand() % 2)
             DoScriptText(SAY_SLAY1, me);
         else
             DoScriptText(SAY_SLAY2, me);
@@ -214,19 +214,19 @@ struct boss_kelthuzadAI : public ScriptedAI
     void JustDied(Unit*)
     {
         DoScriptText(SAY_DEATH, me);
-        for (int i=0; i<5; i++)
+        for (int i = 0; i < 5; i++)
             if (GuardiansOfIcecrown[i])
-        {
-            Unit* pUnit = Unit::GetUnit((*me), GuardiansOfIcecrown[i]);
-            if (!pUnit || !pUnit->isAlive())
-                continue;
-
-            pUnit->CombatStop();
-            float Walk_Pos_X = 0;
-            float Walk_Pos_Y = 0;
-            float Walk_Pos_Z = 0;
-            switch(rand()%6)
             {
+                Unit* pUnit = Unit::GetUnit((*me), GuardiansOfIcecrown[i]);
+                if (!pUnit || !pUnit->isAlive())
+                    continue;
+
+                pUnit->CombatStop();
+                float Walk_Pos_X = 0;
+                float Walk_Pos_Y = 0;
+                float Walk_Pos_Z = 0;
+                switch (rand() % 6)
+                {
                 case 0:
                     Walk_Pos_X = ADDX_LEFT_FAR;
                     Walk_Pos_Y = ADDY_LEFT_FAR;
@@ -257,24 +257,30 @@ struct boss_kelthuzadAI : public ScriptedAI
                     Walk_Pos_Y = ADDY_RIGHT_NEAR;
                     Walk_Pos_Z = ADDZ_RIGHT_NEAR;
                     break;
+                }
+                pUnit->SendMonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, MOVEFLAG_WALK_MODE);
             }
-            pUnit->SendMonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z,MOVEFLAG_WALK_MODE);
-        }
     }
 
     void EnterCombat(Unit*)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-        case 0: DoScriptText(SAY_AGGRO1, me); break;
-        case 1: DoScriptText(SAY_AGGRO2, me); break;
-        case 2: DoScriptText(SAY_AGGRO3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO3, me);
+            break;
         }
     }
 
     void UpdateAI(const uint32 diff)
     {
-         if (!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
         if (me->getVictim() && me->isAlive())
@@ -284,15 +290,17 @@ struct boss_kelthuzadAI : public ScriptedAI
             {
                 DoCastVictim(SPELL_FROST_BOLT);
                 //Cast again on time
-                FrostBolt_Timer = (rand()%60)*1000;
-            } else FrostBolt_Timer -= diff;
+                FrostBolt_Timer = (rand() % 60) * 1000;
+            }
+            else FrostBolt_Timer -= diff;
 
             //Check for Frost Bolt Nova
             if (FrostBoltNova_Timer <= diff)
             {
                 DoCastVictim(SPELL_FROST_BOLT_NOVA);
                 FrostBoltNova_Timer = 15000;
-            } else FrostBoltNova_Timer -= diff;
+            }
+            else FrostBoltNova_Timer -= diff;
 
             //Check for Chains Of Kelthuzad
             if (ChainsOfKelthuzad_Timer <= diff)
@@ -300,11 +308,12 @@ struct boss_kelthuzadAI : public ScriptedAI
                 //DoCastVictim(SPELL_CHAINS_OF_KELTHUZAD);
 
                 //if (rand()%2 == 0)
-                   //DoScriptText(SAY_CHAIN1, me);
+                //DoScriptText(SAY_CHAIN1, me);
                 //else
-                    //DoScriptText(SAY_CHAIN2, me);
-                ChainsOfKelthuzad_Timer = (rand()%30+30)*1000;
-            } else ChainsOfKelthuzad_Timer -= diff;
+                //DoScriptText(SAY_CHAIN2, me);
+                ChainsOfKelthuzad_Timer = (rand() % 30 + 30) * 1000;
+            }
+            else ChainsOfKelthuzad_Timer -= diff;
 
             //Check for Mana Detonation
             if (ManaDetonation_Timer <= diff)
@@ -312,20 +321,22 @@ struct boss_kelthuzadAI : public ScriptedAI
                 //time to cast
                 DoCastVictim(SPELL_MANA_DETONATION);
 
-                 if (rand()%2)
-                     DoScriptText(SAY_SPECIAL1_MANA_DET, me);
+                if (rand() % 2)
+                    DoScriptText(SAY_SPECIAL1_MANA_DET, me);
                 ManaDetonation_Timer = 20000;
-            } else ManaDetonation_Timer -= diff;
+            }
+            else ManaDetonation_Timer -= diff;
 
             //Check for Shadow Fissure
             if (ShadowFisure_Timer <= diff)
             {
                 DoCastVictim(SPELL_SHADOW_FISURE);
 
-               if (rand()%2)
-                   DoScriptText(SAY_SPECIAL3_MANA_DET, me);
+                if (rand() % 2)
+                    DoScriptText(SAY_SPECIAL3_MANA_DET, me);
                 ShadowFisure_Timer = 25000;
-            } else ShadowFisure_Timer -= diff;
+            }
+            else ShadowFisure_Timer -= diff;
 
             //Check for Frost Blast
             if (FrostBlast_Timer <= diff)
@@ -333,16 +344,17 @@ struct boss_kelthuzadAI : public ScriptedAI
                 //time to cast
                 DoCastVictim(SPELL_FROST_BLAST);
 
-                if (rand()%2 == 0)
+                if (rand() % 2 == 0)
                     DoScriptText(SAY_FROST_BLAST, me);
-                FrostBlast_Timer = (rand()%30+30)*1000;
-            } else FrostBlast_Timer -= diff;
+                FrostBlast_Timer = (rand() % 30 + 30) * 1000;
+            }
+            else FrostBlast_Timer -= diff;
 
             //start phase 3 when we are 40% health
-            if (!Phase3 && (me->GetHealth()*100 / me->GetMaxHealth()) < 40)
+            if (!Phase3 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 40)
             {
                 Phase3 = true;
-                    DoScriptText(SAY_REQUEST_AID, me);
+                DoScriptText(SAY_REQUEST_AID, me);
                 //here Lich King should respond to KelThuzad but I don't know which creature to make talk
                 //so for now just make Kelthuzad says it.
                 DoScriptText(SAY_ANSWER_REQUEST, me);
@@ -358,58 +370,58 @@ struct boss_kelthuzadAI : public ScriptedAI
                     float Walk_Pos_X;
                     float Walk_Pos_Y;
                     float Walk_Pos_Z;
-                    switch(rand()%6)
+                    switch (rand() % 6)
                     {
-                        case 0:
-                            pUnit = me->SummonCreature(16441,ADDX_LEFT_FAR,ADDY_LEFT_FAR,ADDZ_LEFT_FAR,ADDO_LEFT_FAR,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,1000);
-                            //Setting walk position
-                            Walk_Pos_X = WALKX_LEFT_FAR;
-                            Walk_Pos_Y = WALKY_LEFT_FAR;
-                            Walk_Pos_Z = WALKZ_LEFT_FAR;
-                            break;
-                        case 1:
-                            pUnit = me->SummonCreature(16441,ADDX_LEFT_MIDDLE,ADDY_LEFT_MIDDLE,ADDZ_LEFT_MIDDLE,ADDO_LEFT_MIDDLE,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,1000);
-                            //Start moving guardian towards the center of the room
-                            Walk_Pos_X = WALKX_LEFT_MIDDLE;
-                            Walk_Pos_Y = WALKY_LEFT_MIDDLE;
-                            Walk_Pos_Z = WALKZ_LEFT_MIDDLE;
-                            break;
-                        case 2:
-                            pUnit = me->SummonCreature(16441,ADDX_LEFT_NEAR,ADDY_LEFT_NEAR,ADDZ_LEFT_NEAR,ADDO_LEFT_NEAR,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,1000);
-                            //Start moving guardian towards the center of the room
-                            Walk_Pos_X = WALKX_LEFT_NEAR;
-                            Walk_Pos_Y = WALKY_LEFT_NEAR;
-                            Walk_Pos_Z = WALKZ_LEFT_NEAR;
-                            break;
-                        case 3:
+                    case 0:
+                        pUnit = me->SummonCreature(16441, ADDX_LEFT_FAR, ADDY_LEFT_FAR, ADDZ_LEFT_FAR, ADDO_LEFT_FAR, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
+                        //Setting walk position
+                        Walk_Pos_X = WALKX_LEFT_FAR;
+                        Walk_Pos_Y = WALKY_LEFT_FAR;
+                        Walk_Pos_Z = WALKZ_LEFT_FAR;
+                        break;
+                    case 1:
+                        pUnit = me->SummonCreature(16441, ADDX_LEFT_MIDDLE, ADDY_LEFT_MIDDLE, ADDZ_LEFT_MIDDLE, ADDO_LEFT_MIDDLE, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
+                        //Start moving guardian towards the center of the room
+                        Walk_Pos_X = WALKX_LEFT_MIDDLE;
+                        Walk_Pos_Y = WALKY_LEFT_MIDDLE;
+                        Walk_Pos_Z = WALKZ_LEFT_MIDDLE;
+                        break;
+                    case 2:
+                        pUnit = me->SummonCreature(16441, ADDX_LEFT_NEAR, ADDY_LEFT_NEAR, ADDZ_LEFT_NEAR, ADDO_LEFT_NEAR, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
+                        //Start moving guardian towards the center of the room
+                        Walk_Pos_X = WALKX_LEFT_NEAR;
+                        Walk_Pos_Y = WALKY_LEFT_NEAR;
+                        Walk_Pos_Z = WALKZ_LEFT_NEAR;
+                        break;
+                    case 3:
 
-                            pUnit = me->SummonCreature(16441,ADDX_RIGHT_FAR,ADDY_RIGHT_FAR,ADDZ_RIGHT_FAR,ADDO_RIGHT_FAR,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,1000);
-                            //Start moving guardian towards the center of the room
-                            Walk_Pos_X = WALKX_RIGHT_FAR;
-                            Walk_Pos_Y = WALKY_RIGHT_FAR;
-                            Walk_Pos_Z = WALKZ_RIGHT_FAR;
-                            break;
-                        case 4:
-                            pUnit = me->SummonCreature(16441,ADDX_RIGHT_MIDDLE,ADDY_RIGHT_MIDDLE,ADDZ_RIGHT_MIDDLE,ADDO_RIGHT_MIDDLE,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,1000);
-                            //Start moving guardian towards the center of the room
-                            Walk_Pos_X = WALKX_RIGHT_MIDDLE;
-                            Walk_Pos_Y = WALKY_RIGHT_MIDDLE;
-                            Walk_Pos_Z = WALKZ_RIGHT_MIDDLE;
-                            break;
-                        case 5:
-                            pUnit = me->SummonCreature(16441,ADDX_RIGHT_NEAR,ADDY_RIGHT_NEAR,ADDZ_RIGHT_NEAR,ADDO_RIGHT_NEAR,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,1000);
-                            //Start moving guardian towards the center of the room
-                            Walk_Pos_X = WALKX_RIGHT_NEAR;
-                            Walk_Pos_Y = WALKY_RIGHT_NEAR;
-                            Walk_Pos_Z = WALKZ_RIGHT_NEAR;
-                            break;
+                        pUnit = me->SummonCreature(16441, ADDX_RIGHT_FAR, ADDY_RIGHT_FAR, ADDZ_RIGHT_FAR, ADDO_RIGHT_FAR, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
+                        //Start moving guardian towards the center of the room
+                        Walk_Pos_X = WALKX_RIGHT_FAR;
+                        Walk_Pos_Y = WALKY_RIGHT_FAR;
+                        Walk_Pos_Z = WALKZ_RIGHT_FAR;
+                        break;
+                    case 4:
+                        pUnit = me->SummonCreature(16441, ADDX_RIGHT_MIDDLE, ADDY_RIGHT_MIDDLE, ADDZ_RIGHT_MIDDLE, ADDO_RIGHT_MIDDLE, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
+                        //Start moving guardian towards the center of the room
+                        Walk_Pos_X = WALKX_RIGHT_MIDDLE;
+                        Walk_Pos_Y = WALKY_RIGHT_MIDDLE;
+                        Walk_Pos_Z = WALKZ_RIGHT_MIDDLE;
+                        break;
+                    case 5:
+                        pUnit = me->SummonCreature(16441, ADDX_RIGHT_NEAR, ADDY_RIGHT_NEAR, ADDZ_RIGHT_NEAR, ADDO_RIGHT_NEAR, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
+                        //Start moving guardian towards the center of the room
+                        Walk_Pos_X = WALKX_RIGHT_NEAR;
+                        Walk_Pos_Y = WALKY_RIGHT_NEAR;
+                        Walk_Pos_Z = WALKZ_RIGHT_NEAR;
+                        break;
                     }
 
                     if (pUnit)
                     {
                         //if we find no one to figth walk to the center
                         if (!pUnit->isInCombat())
-                            pUnit->SendMonsterMoveWithSpeed(Walk_Pos_X,Walk_Pos_Y,Walk_Pos_Z,MOVEFLAG_WALK_MODE);
+                            pUnit->SendMonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, MOVEFLAG_WALK_MODE);
 
                         //Safe storing of creatures
                         GuardiansOfIcecrown[GuardiansOfIcecrown_Count] = pUnit->GetGUID();
@@ -437,7 +449,7 @@ CreatureAI* GetAI_boss_kelthuzadAI(Creature* pCreature)
 void AddSC_boss_kelthuzad()
 {
 
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_kelthuzad";
     newscript->GetAI = &GetAI_boss_kelthuzadAI;

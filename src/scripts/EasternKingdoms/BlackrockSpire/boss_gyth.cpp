@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_gythAI : public ScriptedAI
 {
-    boss_gythAI(Creature *c) : ScriptedAI(c) {}
+    boss_gythAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Aggro_Timer;
     uint32 Dragons_Timer;
@@ -58,7 +58,7 @@ struct boss_gythAI : public ScriptedAI
         Flamebreath_Timer = 4000;
         Event = false;
         SummonedDragons = false;
-        SummonedOrcs= false;
+        SummonedOrcs = false;
         SummonedRend = false;
         bAggro = false;
         RootSelf = false;
@@ -76,7 +76,7 @@ struct boss_gythAI : public ScriptedAI
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -85,7 +85,7 @@ struct boss_gythAI : public ScriptedAI
         Unit* Summoned = me->SummonCreature(creatureId, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 240000);
         if (Summoned)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget)
                 Summoned->AddThreat(pTarget, 1.0f);
         }
@@ -115,7 +115,8 @@ struct boss_gythAI : public ScriptedAI
                 me->SetDisplayId(9723);
                 me->setFaction(14);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            } else Aggro_Timer -= diff;
+            }
+            else Aggro_Timer -= diff;
         }
 
         // Summon Dragon pack. 2 Dragons and 3 Whelps
@@ -130,7 +131,8 @@ struct boss_gythAI : public ScriptedAI
                 SummonCreatureWithRandomTarget(10442);
                 Line1Count = Line1Count - 1;
                 Dragons_Timer = 60000;
-            } else Dragons_Timer -= diff;
+            }
+            else Dragons_Timer -= diff;
         }
 
         //Summon Orc pack. 1 Orc Handler 1 Elite Dragonkin and 3 Whelps
@@ -145,7 +147,8 @@ struct boss_gythAI : public ScriptedAI
                 SummonCreatureWithRandomTarget(10442);
                 Line2Count = Line2Count - 1;
                 Orc_Timer = 60000;
-            } else Orc_Timer -= diff;
+            }
+            else Orc_Timer -= diff;
         }
 
         // we take part in the fight
@@ -156,24 +159,27 @@ struct boss_gythAI : public ScriptedAI
             {
                 DoCastVictim( SPELL_CORROSIVEACID);
                 CorrosiveAcid_Timer = 7000;
-            } else CorrosiveAcid_Timer -= diff;
+            }
+            else CorrosiveAcid_Timer -= diff;
 
             // Freeze_Timer
             if (Freeze_Timer <= diff)
             {
                 DoCastVictim( SPELL_FREEZE);
                 Freeze_Timer = 16000;
-            } else Freeze_Timer -= diff;
+            }
+            else Freeze_Timer -= diff;
 
             // Flamebreath_Timer
             if (Flamebreath_Timer <= diff)
             {
                 DoCastVictim( SPELL_FLAMEBREATH);
                 Flamebreath_Timer = 10500;
-            } else Flamebreath_Timer -= diff;
+            }
+            else Flamebreath_Timer -= diff;
 
             //Summon Rend
-            if (!SummonedRend && me->GetHealth()*100 / me->GetMaxHealth() < 11
+            if (!SummonedRend && me->GetHealth() * 100 / me->GetMaxHealth() < 11
                 && me->GetHealth() > 0)
             {
                 //summon Rend and Change model to normal Gyth
@@ -197,7 +203,7 @@ CreatureAI* GetAI_boss_gyth(Creature* pCreature)
 
 void AddSC_boss_gyth()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_gyth";
     newscript->GetAI = &GetAI_boss_gyth;

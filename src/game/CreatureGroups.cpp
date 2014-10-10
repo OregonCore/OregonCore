@@ -28,9 +28,9 @@ INSTANTIATE_SINGLETON_1(CreatureGroupManager);
 CreatureGroupInfoType   CreatureGroupMap;
 CreatureGroupDataType   CreatureGroupDataMap;
 
-void CreatureGroupManager::AddCreatureToGroup(uint32 groupId, Creature *member)
+void CreatureGroupManager::AddCreatureToGroup(uint32 groupId, Creature* member)
 {
-    Map *map = member->FindMap();
+    Map* map = member->FindMap();
     if (!map)
         return;
 
@@ -52,14 +52,14 @@ void CreatureGroupManager::AddCreatureToGroup(uint32 groupId, Creature *member)
     }
 }
 
-void CreatureGroupManager::RemoveCreatureFromGroup(CreatureGroup *group, Creature *member)
+void CreatureGroupManager::RemoveCreatureFromGroup(CreatureGroup* group, Creature* member)
 {
     sLog.outDebug("Deleting member pointer to GUID: %u from group %u", group->GetId(), member->GetDBTableGUIDLow());
     group->RemoveMember(member);
 
     if (group->isEmpty())
     {
-        Map *map = member->FindMap();
+        Map* map = member->FindMap();
         if (!map)
             return;
 
@@ -73,7 +73,7 @@ void CreatureGroupManager::LoadCreatureGroups()
 {
     //Clear existing map
     for (CreatureGroupInfoType::iterator itr = CreatureGroupMap.begin(); itr != CreatureGroupMap.end(); ++itr)
-       delete itr->second;
+        delete itr->second;
     CreatureGroupMap.clear();
     CreatureGroupDataMap.clear();
 
@@ -99,17 +99,13 @@ void CreatureGroupManager::LoadCreatureGroups()
     result = WorldDatabase.Query("SELECT COUNT(groupId) FROM creature_groups WHERE groupId NOT IN (SELECT groupId FROM creature_group_data)");
 
     if (result)
-    {
-        sLog.outDetail(">> %u Groups without member found, groups skipped.",result->Fetch()->GetInt32());
-    }
+        sLog.outDetail(">> %u Groups without member found, groups skipped.", result->Fetch()->GetInt32());
 
     //Check if member without group exist
     result = WorldDatabase.Query("SELECT COUNT(groupId) FROM creature_group_data WHERE groupId NOT IN (SELECT groupId FROM creature_groups)");
 
     if (result)
-    {
-        sLog.outDetail(">> %u Member without group found, member skipped.",result->Fetch()->GetInt32());
-    }
+        sLog.outDetail(">> %u Member without group found, member skipped.", result->Fetch()->GetInt32());
 
     //Get groups
     QueryResult_AutoPtr result_data = WorldDatabase.Query("SELECT groupId, leaderGUID, groupType FROM creature_groups WHERE groupId IN (SELECT groupId FROM creature_group_data) ORDER BY groupId");
@@ -135,22 +131,22 @@ void CreatureGroupManager::LoadCreatureGroups()
     uint64 total_groups = result_data->GetRowCount();
     uint64 total_member = result_member->GetRowCount();
 
-    Field *fields;
+    Field* fields;
     std::set<uint32> guidSet;
 
-    GroupInfo *group_member;
+    GroupInfo* group_member;
     do
     {
         fields = result_data->Fetch();
-        
+
         //Load group member data
         uint32 groupId = fields[0].GetUInt32();
         uint32 leaderGUID = fields[1].GetUInt32();
-        uint8  groupType = fields[2].GetUInt8(); 
+        uint8  groupType = fields[2].GetUInt8();
 
         group_member                        = new GroupInfo;
         group_member->leaderGUID            = leaderGUID;
-        group_member->groupType             = groupType;        
+        group_member->groupType             = groupType;
 
         // check data correctness
         if (guidSet.find(group_member->leaderGUID) == guidSet.end())
@@ -171,7 +167,7 @@ void CreatureGroupManager::LoadCreatureGroups()
     do
     {
         fields = result_member->Fetch();
-        
+
         //Load group member data
         uint32 groupId = fields[0].GetUInt32();
         uint32 memberGUID = fields[1].GetUInt32();
@@ -197,7 +193,7 @@ void CreatureGroupManager::LoadCreatureGroups()
     sLog.outString();
 }
 
-void CreatureGroup::AddMember(Creature *member)
+void CreatureGroup::AddMember(Creature* member)
 {
     if (!member)
         return;
@@ -208,7 +204,7 @@ void CreatureGroup::AddMember(Creature *member)
     member->SetGroup(this);
 }
 
-void CreatureGroup::RemoveMember(Creature *member)
+void CreatureGroup::RemoveMember(Creature* member)
 {
     if (!member)
         return;
@@ -217,13 +213,13 @@ void CreatureGroup::RemoveMember(Creature *member)
     member->SetGroup(NULL);
 }
 
-void CreatureGroup::MemberAttackStart(Creature *member, Unit *target)
+void CreatureGroup::MemberAttackStart(Creature* member, Unit* target)
 {
     for (CreatureGroupMemberType::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {
         Creature* pCreature = itr->first;
 
-        sLog.outDebug("CreatureGroup::MemberAttackStart: group member instanceId %u .",member->GetInstanceId());
+        sLog.outDebug("CreatureGroup::MemberAttackStart: group member instanceId %u .", member->GetInstanceId());
 
         //Skip one check
         if (pCreature == member)
@@ -240,7 +236,7 @@ void CreatureGroup::MemberAttackStart(Creature *member, Unit *target)
     }
 }
 
-bool CreatureGroup::IsAllowedToRespawn(Creature *member)
+bool CreatureGroup::IsAllowedToRespawn(Creature* member)
 {
     uint8 groupType = CreatureGroupMap[m_groupID]->groupType;
 
@@ -257,9 +253,9 @@ bool CreatureGroup::IsAllowedToRespawn(Creature *member)
     for (CreatureGroupMemberType::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
         if (itr->first->isInCombat())
             exist = false;
-    
+
     if (exist)
-         sLog.outDebug("CreatureGroup::IsAllowedToRespawn: group member instanceId %u can respawn.",member->GetInstanceId());
+        sLog.outDebug("CreatureGroup::IsAllowedToRespawn: group member instanceId %u can respawn.", member->GetInstanceId());
 
     return exist;
 }

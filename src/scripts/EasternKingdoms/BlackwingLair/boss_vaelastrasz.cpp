@@ -41,9 +41,9 @@ EndScriptData */
 
 struct boss_vaelAI : public ScriptedAI
 {
-    boss_vaelAI(Creature *c) : ScriptedAI(c)
+    boss_vaelAI(Creature* c) : ScriptedAI(c)
     {
-        c->SetUInt32Value(UNIT_NPC_FLAGS,1);
+        c->SetUInt32Value(UNIT_NPC_FLAGS, 1);
         c->setFaction(35);
         c->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
@@ -75,7 +75,7 @@ struct boss_vaelAI : public ScriptedAI
         DoingSpeech = false;
     }
 
-    void BeginSpeech(Unit *pTarget)
+    void BeginSpeech(Unit* pTarget)
     {
         //Stand up and begin speach
         PlayerGUID = pTarget->GetGUID();
@@ -90,15 +90,15 @@ struct boss_vaelAI : public ScriptedAI
         me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
     }
 
-    void KilledUnit(Unit * victim)
+    void KilledUnit(Unit* victim)
     {
-        if (rand()%5)
+        if (rand() % 5)
             return;
 
         DoScriptText(SAY_KILLTARGET, me, victim);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoCast(me, SPELL_ESSENCEOFTHERED);
         DoZoneInCombat();
@@ -114,30 +114,31 @@ struct boss_vaelAI : public ScriptedAI
             {
                 switch (SpeechNum)
                 {
-                    case 0:
-                        //16 seconds till next line
-                        DoScriptText(SAY_LINE2, me);
-                        SpeechTimer = 16000;
-                        ++SpeechNum;
-                        break;
-                    case 1:
-                        //This one is actually 16 seconds but we only go to 10 seconds because he starts attacking after he says "I must fight this!"
-                        DoScriptText(SAY_LINE3, me);
-                        SpeechTimer = 10000;
-                        ++SpeechNum;
-                        break;
-                    case 2:
-                        me->setFaction(103);
-                        if (PlayerGUID && Unit::GetUnit((*me),PlayerGUID))
-                        {
-                            AttackStart(Unit::GetUnit((*me),PlayerGUID));
-                            DoCast(me, SPELL_ESSENCEOFTHERED);
-                        }
-                        SpeechTimer = 0;
-                        DoingSpeech = false;
-                        break;
+                case 0:
+                    //16 seconds till next line
+                    DoScriptText(SAY_LINE2, me);
+                    SpeechTimer = 16000;
+                    ++SpeechNum;
+                    break;
+                case 1:
+                    //This one is actually 16 seconds but we only go to 10 seconds because he starts attacking after he says "I must fight this!"
+                    DoScriptText(SAY_LINE3, me);
+                    SpeechTimer = 10000;
+                    ++SpeechNum;
+                    break;
+                case 2:
+                    me->setFaction(103);
+                    if (PlayerGUID && Unit::GetUnit((*me), PlayerGUID))
+                    {
+                        AttackStart(Unit::GetUnit((*me), PlayerGUID));
+                        DoCast(me, SPELL_ESSENCEOFTHERED);
+                    }
+                    SpeechTimer = 0;
+                    DoingSpeech = false;
+                    break;
                 }
-            } else SpeechTimer -= diff;
+            }
+            else SpeechTimer -= diff;
         }
 
         //Return since we have no target
@@ -145,7 +146,7 @@ struct boss_vaelAI : public ScriptedAI
             return;
 
         // Yell if hp lower than 15%
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 15 && !HasYelled)
+        if (me->GetHealth() * 100 / me->GetMaxHealth() < 15 && !HasYelled)
         {
             DoScriptText(SAY_HALFLIFE, me);
             HasYelled = true;
@@ -156,19 +157,21 @@ struct boss_vaelAI : public ScriptedAI
         {
             DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 15000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         //FlameBreath_Timer
         if (FlameBreath_Timer <= diff)
         {
             DoCastVictim( SPELL_FLAMEBREATH);
-            FlameBreath_Timer = urand(4000,8000);
-        } else FlameBreath_Timer -= diff;
+            FlameBreath_Timer = urand(4000, 8000);
+        }
+        else FlameBreath_Timer -= diff;
 
         //BurningAdrenalineCaster_Timer
         if (BurningAdrenalineCaster_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
 
             uint8 i = 0;
             while (i < 3)                                   // max 3 tries to get a random target with power_mana
@@ -176,30 +179,33 @@ struct boss_vaelAI : public ScriptedAI
                 ++i;
                 pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true); //not aggro leader
                 if (pTarget && pTarget->getPowerType() == POWER_MANA)
-                        i = 3;
+                    i = 3;
             }
             if (pTarget)                                     // cast on self (see below)
-                pTarget->CastSpell(pTarget,SPELL_BURNINGADRENALINE,1);
+                pTarget->CastSpell(pTarget, SPELL_BURNINGADRENALINE, 1);
 
             BurningAdrenalineCaster_Timer = 15000;
-        } else BurningAdrenalineCaster_Timer -= diff;
+        }
+        else BurningAdrenalineCaster_Timer -= diff;
 
         //BurningAdrenalineTank_Timer
         if (BurningAdrenalineTank_Timer <= diff)
         {
             // have the victim cast the spell on himself otherwise the third effect aura will be applied
             // to Vael instead of the player
-            me->getVictim()->CastSpell(me->getVictim(),SPELL_BURNINGADRENALINE,1);
+            me->getVictim()->CastSpell(me->getVictim(), SPELL_BURNINGADRENALINE, 1);
 
             BurningAdrenalineTank_Timer = 45000;
-        } else BurningAdrenalineTank_Timer -= diff;
+        }
+        else BurningAdrenalineTank_Timer -= diff;
 
         //FireNova_Timer
         if (FireNova_Timer <= diff)
         {
             DoCastVictim( SPELL_FIRENOVA);
             FireNova_Timer = 5000;
-        } else FireNova_Timer -= diff;
+        }
+        else FireNova_Timer -= diff;
 
         //TailSwipe_Timer
         if (TailSwipe_Timer <= diff)
@@ -211,7 +217,8 @@ struct boss_vaelAI : public ScriptedAI
             }*/
 
             TailSwipe_Timer = 20000;
-        } else TailSwipe_Timer -= diff;
+        }
+        else TailSwipe_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -249,7 +256,7 @@ CreatureAI* GetAI_boss_vael(Creature* pCreature)
 
 void AddSC_boss_vael()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_vaelastrasz";
     newscript->GetAI = &GetAI_boss_vael;

@@ -38,11 +38,11 @@ EndScriptData */
 
 struct boss_the_makerAI : public ScriptedAI
 {
-    boss_the_makerAI(Creature *c) : ScriptedAI(c) 
-	{
-            pInstance = c->GetInstanceData();
-            HeroicMode = me->GetMap()->IsHeroic();
-	}
+    boss_the_makerAI(Creature* c) : ScriptedAI(c)
+    {
+        pInstance = c->GetInstanceData();
+        HeroicMode = me->GetMap()->IsHeroic();
+    }
 
     ScriptedInstance* pInstance;
     bool HeroicMode;
@@ -60,11 +60,17 @@ struct boss_the_makerAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO_3, me);
+            break;
         }
 
         if (pInstance)
@@ -73,10 +79,14 @@ struct boss_the_makerAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_KILL_1, me); break;
-            case 1: DoScriptText(SAY_KILL_2, me); break;
+        case 0:
+            DoScriptText(SAY_KILL_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_KILL_2, me);
+            break;
         }
     }
 
@@ -95,20 +105,20 @@ struct boss_the_makerAI : public ScriptedAI
 
         if (ExplodingBreaker_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,HeroicMode ? SPELL_EXPLODING_BREAKER_H : SPELL_EXPLODING_BREAKER);
-            ExplodingBreaker_Timer = 9000+rand()%2000;
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, HeroicMode ? SPELL_EXPLODING_BREAKER_H : SPELL_EXPLODING_BREAKER);
+            ExplodingBreaker_Timer = 9000 + rand() % 2000;
         }
-        else ExplodingBreaker_Timer -=diff;
+        else ExplodingBreaker_Timer -= diff;
 
         if (Domination_Timer <= diff)
         {
-            Unit *pTarget;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            DoCast(pTarget,SPELL_DOMINATION);
+            Unit* pTarget;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            DoCast(pTarget, SPELL_DOMINATION);
             Domination_Timer = 60000;
         }
-        else Domination_Timer -=diff;
+        else Domination_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -121,7 +131,7 @@ CreatureAI* GetAI_boss_the_makerAI(Creature* pCreature)
 
 void AddSC_boss_the_maker()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_the_maker";
     newscript->GetAI = &GetAI_boss_the_makerAI;

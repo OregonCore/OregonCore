@@ -34,7 +34,7 @@ EndContentData */
 
 struct mob_yennikuAI : public ScriptedAI
 {
-    mob_yennikuAI(Creature *c) : ScriptedAI(c)
+    mob_yennikuAI(Creature* c) : ScriptedAI(c)
     {
         bReset = false;
     }
@@ -48,11 +48,11 @@ struct mob_yennikuAI : public ScriptedAI
         me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
     }
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry* spell)
     {
         if (caster->GetTypeId() == TYPEID_PLAYER)
         {
-                                                            //Yenniku's Release
+            //Yenniku's Release
             if (!bReset && CAST_PLR(caster)->GetQuestStatus(592) == QUEST_STATUS_INCOMPLETE && spell->Id == 3607)
             {
                 me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STUN);
@@ -67,7 +67,7 @@ struct mob_yennikuAI : public ScriptedAI
         return;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -86,7 +86,7 @@ struct mob_yennikuAI : public ScriptedAI
             {
                 if (me->getVictim()->GetTypeId() == TYPEID_PLAYER)
                 {
-                    Unit *victim = me->getVictim();
+                    Unit* victim = me->getVictim();
                     if (CAST_PLR(victim)->GetTeam() == HORDE)
                     {
                         me->CombatStop();
@@ -94,7 +94,7 @@ struct mob_yennikuAI : public ScriptedAI
                     }
                 }
             }
-         }
+        }
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -114,7 +114,7 @@ CreatureAI* GetAI_mob_yenniku(Creature* pCreature)
 
 void AddSC_stranglethorn_vale()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "mob_yenniku";

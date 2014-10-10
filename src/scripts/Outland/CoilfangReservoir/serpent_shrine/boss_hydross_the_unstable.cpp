@@ -77,7 +77,7 @@ EndScriptData */
 
 struct boss_hydross_the_unstableAI : public ScriptedAI
 {
-    boss_hydross_the_unstableAI(Creature *c) : ScriptedAI(c), Summons(me)
+    boss_hydross_the_unstableAI(Creature* c) : ScriptedAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
     }
@@ -126,28 +126,28 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
 
     void SummonBeams()
     {
-        Creature* beamer = me->SummonCreature(ENTRY_BEAM_DUMMY,-258.333f,-356.34f,22.0499f,5.90835f,TEMPSUMMON_CORPSE_DESPAWN,0);
+        Creature* beamer = me->SummonCreature(ENTRY_BEAM_DUMMY, -258.333f, -356.34f, 22.0499f, 5.90835f, TEMPSUMMON_CORPSE_DESPAWN, 0);
         if (beamer)
         {
-            beamer->CastSpell(me,SPELL_BLUE_BEAM,true);
+            beamer->CastSpell(me, SPELL_BLUE_BEAM, true);
             beamer->SetUInt32Value(UNIT_FIELD_DISPLAYID , 11686);  //invisible
             beamer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            beams[0]=beamer->GetGUID();
+            beams[0] = beamer->GetGUID();
         }
-        beamer = me->SummonCreature(ENTRY_BEAM_DUMMY,-219.918f,-371.308f,22.0042f,2.73072f,TEMPSUMMON_CORPSE_DESPAWN,0);
+        beamer = me->SummonCreature(ENTRY_BEAM_DUMMY, -219.918f, -371.308f, 22.0042f, 2.73072f, TEMPSUMMON_CORPSE_DESPAWN, 0);
         if (beamer)
         {
-            beamer->CastSpell(me,SPELL_BLUE_BEAM,true);
+            beamer->CastSpell(me, SPELL_BLUE_BEAM, true);
             beamer->SetUInt32Value(UNIT_FIELD_DISPLAYID , 11686);  //invisible
             beamer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            beams[1]=beamer->GetGUID();
+            beams[1] = beamer->GetGUID();
         }
     }
     void DeSummonBeams()
     {
-        for (uint8 i=0; i<2; ++i)
+        for (uint8 i = 0; i < 2; ++i)
         {
-            Creature* mob = Unit::GetCreature(*me,beams[i]);
+            Creature* mob = Unit::GetCreature(*me, beams[i]);
             if (mob)
             {
                 mob->setDeathState(DEAD);
@@ -155,7 +155,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
             }
         }
     }
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
 
@@ -163,22 +163,30 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
             pInstance->SetData(DATA_HYDROSSTHEUNSTABLEEVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         if (CorruptedForm)
         {
-            switch(rand()%2)
+            switch (rand() % 2)
             {
-                case 0: DoScriptText(SAY_CORRUPT_SLAY1, me); break;
-                case 1: DoScriptText(SAY_CORRUPT_SLAY2, me); break;
+            case 0:
+                DoScriptText(SAY_CORRUPT_SLAY1, me);
+                break;
+            case 1:
+                DoScriptText(SAY_CORRUPT_SLAY2, me);
+                break;
             }
         }
         else
         {
-            switch(rand()%2)
+            switch (rand() % 2)
             {
-                case 0: DoScriptText(SAY_CLEAN_SLAY1, me); break;
-                case 1: DoScriptText(SAY_CLEAN_SLAY2, me); break;
+            case 0:
+                DoScriptText(SAY_CLEAN_SLAY1, me);
+                break;
+            case 1:
+                DoScriptText(SAY_CLEAN_SLAY2, me);
+                break;
             }
         }
     }
@@ -188,23 +196,23 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
         if (summoned->GetEntry() == ENTRY_PURE_SPAWN)
         {
             summoned->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
-            summoned->CastSpell(summoned,SPELL_ELEMENTAL_SPAWNIN,true);
+            summoned->CastSpell(summoned, SPELL_ELEMENTAL_SPAWNIN, true);
             Summons.Summon(summoned);
         }
         if (summoned->GetEntry() == ENTRY_TAINTED_SPAWN)
         {
             summoned->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
-            summoned->CastSpell(summoned,SPELL_ELEMENTAL_SPAWNIN,true);
+            summoned->CastSpell(summoned, SPELL_ELEMENTAL_SPAWNIN, true);
             Summons.Summon(summoned);
         }
     }
 
-    void SummonedCreatureDespawn(Creature *summon)
+    void SummonedCreatureDespawn(Creature* summon)
     {
         Summons.Despawn(summon);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         if (CorruptedForm)
             DoScriptText(SAY_CORRUPT_DEATH, me);
@@ -221,7 +229,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
         if (!beam)
         {
             SummonBeams();
-            beam=true;
+            beam = true;
         }
         //Return since we have no target
         if (!UpdateVictim())
@@ -239,12 +247,24 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
 
                     switch (MarkOfCorruption_Count)
                     {
-                        case 0: mark_spell = SPELL_MARK_OF_CORRUPTION1; break;
-                        case 1: mark_spell = SPELL_MARK_OF_CORRUPTION2; break;
-                        case 2: mark_spell = SPELL_MARK_OF_CORRUPTION3; break;
-                        case 3: mark_spell = SPELL_MARK_OF_CORRUPTION4; break;
-                        case 4: mark_spell = SPELL_MARK_OF_CORRUPTION5; break;
-                        case 5: mark_spell = SPELL_MARK_OF_CORRUPTION6; break;
+                    case 0:
+                        mark_spell = SPELL_MARK_OF_CORRUPTION1;
+                        break;
+                    case 1:
+                        mark_spell = SPELL_MARK_OF_CORRUPTION2;
+                        break;
+                    case 2:
+                        mark_spell = SPELL_MARK_OF_CORRUPTION3;
+                        break;
+                    case 3:
+                        mark_spell = SPELL_MARK_OF_CORRUPTION4;
+                        break;
+                    case 4:
+                        mark_spell = SPELL_MARK_OF_CORRUPTION5;
+                        break;
+                    case 5:
+                        mark_spell = SPELL_MARK_OF_CORRUPTION6;
+                        break;
                     }
 
                     DoCastVictim( mark_spell);
@@ -254,17 +274,19 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
                 }
 
                 MarkOfCorruption_Timer = 15000;
-            } else MarkOfCorruption_Timer -= diff;
+            }
+            else MarkOfCorruption_Timer -= diff;
 
             //VileSludge_Timer
             if (VileSludge_Timer <= diff)
             {
-                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget)
                     DoCast(pTarget, SPELL_VILE_SLUDGE);
 
                 VileSludge_Timer = 15000;
-            } else VileSludge_Timer -= diff;
+            }
+            else VileSludge_Timer -= diff;
 
             //PosCheck_Timer
             if (PosCheck_Timer <= diff)
@@ -292,7 +314,8 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
                 }
 
                 PosCheck_Timer = 2500;
-            } else PosCheck_Timer -=diff;
+            }
+            else PosCheck_Timer -= diff;
         }
         // clean form
         else
@@ -304,14 +327,26 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
                 {
                     uint32 mark_spell = 0;
 
-                    switch(MarkOfHydross_Count)
+                    switch (MarkOfHydross_Count)
                     {
-                        case 0:  mark_spell = SPELL_MARK_OF_HYDROSS1; break;
-                        case 1:  mark_spell = SPELL_MARK_OF_HYDROSS2; break;
-                        case 2:  mark_spell = SPELL_MARK_OF_HYDROSS3; break;
-                        case 3:  mark_spell = SPELL_MARK_OF_HYDROSS4; break;
-                        case 4:  mark_spell = SPELL_MARK_OF_HYDROSS5; break;
-                        case 5:  mark_spell = SPELL_MARK_OF_HYDROSS6; break;
+                    case 0:
+                        mark_spell = SPELL_MARK_OF_HYDROSS1;
+                        break;
+                    case 1:
+                        mark_spell = SPELL_MARK_OF_HYDROSS2;
+                        break;
+                    case 2:
+                        mark_spell = SPELL_MARK_OF_HYDROSS3;
+                        break;
+                    case 3:
+                        mark_spell = SPELL_MARK_OF_HYDROSS4;
+                        break;
+                    case 4:
+                        mark_spell = SPELL_MARK_OF_HYDROSS5;
+                        break;
+                    case 5:
+                        mark_spell = SPELL_MARK_OF_HYDROSS6;
+                        break;
                     }
 
                     DoCastVictim( mark_spell);
@@ -321,17 +356,19 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
                 }
 
                 MarkOfHydross_Timer = 15000;
-            } else MarkOfHydross_Timer -= diff;
+            }
+            else MarkOfHydross_Timer -= diff;
 
             //WaterTomb_Timer
             if (WaterTomb_Timer <= diff)
             {
-                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
+                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (pTarget)
                     DoCast(pTarget, SPELL_WATER_TOMB);
 
                 WaterTomb_Timer = 7000;
-            } else WaterTomb_Timer -= diff;
+            }
+            else WaterTomb_Timer -= diff;
 
             //PosCheck_Timer
             if (PosCheck_Timer <= diff)
@@ -359,7 +396,8 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
                 }
 
                 PosCheck_Timer = 2500;
-            } else PosCheck_Timer -=diff;
+            }
+            else PosCheck_Timer -= diff;
         }
 
         //EnrageTimer
@@ -367,7 +405,8 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
         {
             DoCast(me, SPELL_ENRAGE);
             EnrageTimer = 60000;
-        } else EnrageTimer -= diff;
+        }
+        else EnrageTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -379,7 +418,7 @@ CreatureAI* GetAI_boss_hydross_the_unstable(Creature* pCreature)
 
 void AddSC_boss_hydross_the_unstable()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_hydross_the_unstable";
     newscript->GetAI = &GetAI_boss_hydross_the_unstable;

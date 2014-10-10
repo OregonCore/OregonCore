@@ -23,7 +23,7 @@
 
 INSTANTIATE_SINGLETON_1(Config);
 
-static bool GetValueHelper(ACE_Configuration_Heap *mConf, const char *name, ACE_TString &result)
+static bool GetValueHelper(ACE_Configuration_Heap* mConf, const char* name, ACE_TString& result)
 {
     if (!mConf)
         return false;
@@ -49,7 +49,7 @@ static bool GetValueHelper(ACE_Configuration_Heap *mConf, const char *name, ACE_
 }
 
 Config::Config()
-: mConf(NULL)
+    : mConf(NULL)
 {
 }
 
@@ -58,7 +58,7 @@ Config::~Config()
     delete mConf;
 }
 
-bool Config::SetSource(const char *file)
+bool Config::SetSource(const char* file)
 {
     mFilename = file;
     return Reload();

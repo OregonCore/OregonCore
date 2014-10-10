@@ -32,7 +32,7 @@ EndScriptData */
 
 struct boss_flamegorAI : public ScriptedAI
 {
-    boss_flamegorAI(Creature *c) : ScriptedAI(c) {}
+    boss_flamegorAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ShadowFlame_Timer;
     uint32 WingBuffet_Timer;
@@ -45,7 +45,7 @@ struct boss_flamegorAI : public ScriptedAI
         Frenzy_Timer = 10000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoZoneInCombat();
     }
@@ -59,18 +59,20 @@ struct boss_flamegorAI : public ScriptedAI
         if (ShadowFlame_Timer <= diff)
         {
             DoCastVictim( SPELL_SHADOWFLAME);
-            ShadowFlame_Timer = 15000 + rand()%7000;
-        } else ShadowFlame_Timer -= diff;
+            ShadowFlame_Timer = 15000 + rand() % 7000;
+        }
+        else ShadowFlame_Timer -= diff;
 
         //WingBuffet_Timer
         if (WingBuffet_Timer <= diff)
         {
             DoCastVictim( SPELL_WINGBUFFET);
             if (DoGetThreat(me->getVictim()))
-                DoModifyThreatPercent(me->getVictim(),-75);
+                DoModifyThreatPercent(me->getVictim(), -75);
 
             WingBuffet_Timer = 25000;
-        } else WingBuffet_Timer -= diff;
+        }
+        else WingBuffet_Timer -= diff;
 
         //Frenzy_Timer
         if (Frenzy_Timer <= diff)
@@ -78,7 +80,8 @@ struct boss_flamegorAI : public ScriptedAI
             DoScriptText(EMOTE_FRENZY, me);
             DoCast(me, SPELL_FRENZY);
             Frenzy_Timer = urand(8000, 10000);
-        } else Frenzy_Timer -= diff;
+        }
+        else Frenzy_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -90,7 +93,7 @@ CreatureAI* GetAI_boss_flamegor(Creature* pCreature)
 
 void AddSC_boss_flamegor()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_flamegor";
     newscript->GetAI = &GetAI_boss_flamegor;

@@ -61,23 +61,23 @@ struct npc_00x09hlAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 26:
-                DoScriptText(SAY_OOX_AMBUSH, me);
-                for (uint8 i = 0; i < 3; ++i)
-                    me->SummonCreature(NPC_MARAUDING_OWL, 178.111f, -3801.58f, 128.37f, 0.0f,    TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
-                break;
-            case 43:
-                DoScriptText(SAY_OOX_AMBUSH, me);
-                for (uint8 i = 0; i < 3; ++i)
-                    me->SummonCreature(NPC_VILE_AMBUSHER, -116.258f, -4211.96f, 121.878f, 0.0f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
-                break;
-            case 64:
-                DoScriptText(SAY_OOX_END, me);
-                if (Player* pPlayer = GetPlayerForEscort())
-                    pPlayer->GroupEventHappens(QUEST_RESQUE_OOX_09, me);
-                break;
+        case 26:
+            DoScriptText(SAY_OOX_AMBUSH, me);
+            for (uint8 i = 0; i < 3; ++i)
+                me->SummonCreature(NPC_MARAUDING_OWL, 178.111f, -3801.58f, 128.37f, 0.0f,    TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
+            break;
+        case 43:
+            DoScriptText(SAY_OOX_AMBUSH, me);
+            for (uint8 i = 0; i < 3; ++i)
+                me->SummonCreature(NPC_VILE_AMBUSHER, -116.258f, -4211.96f, 121.878f, 0.0f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
+            break;
+        case 64:
+            DoScriptText(SAY_OOX_END, me);
+            if (Player* pPlayer = GetPlayerForEscort())
+                pPlayer->GroupEventHappens(QUEST_RESQUE_OOX_09, me);
+            break;
         }
     }
 
@@ -86,7 +86,7 @@ struct npc_00x09hlAI : public npc_escortAI
         if (pWho->GetEntry() == NPC_MARAUDING_OWL || pWho->GetEntry() == NPC_VILE_AMBUSHER)
             return;
 
-        DoScriptText(RAND(SAY_OOX_AGGRO1,SAY_OOX_AGGRO2), me);
+        DoScriptText(RAND(SAY_OOX_AGGRO1, SAY_OOX_AGGRO2), me);
     }
 
     void JustSummoned(Creature* pSummoned)
@@ -191,11 +191,11 @@ struct npc_rinjiAI : public npc_escortAI
                 m_bIsByOutrunner = true;
             }
 
-            if (rand()%4)
+            if (rand() % 4)
                 return;
 
             //only if attacked and escorter is not in combat?
-            DoScriptText(RAND(SAY_RIN_HELP_1,SAY_RIN_HELP_2), me);
+            DoScriptText(RAND(SAY_RIN_HELP_1, SAY_RIN_HELP_2), me);
         }
     }
 
@@ -205,14 +205,14 @@ struct npc_rinjiAI : public npc_escortAI
             m_iSpawnId = 1;
 
         me->SummonCreature(NPC_RANGER,
-            m_afAmbushSpawn[m_iSpawnId].m_fX, m_afAmbushSpawn[m_iSpawnId].m_fY, m_afAmbushSpawn[m_iSpawnId].m_fZ, 0.0f,
-            TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
+                           m_afAmbushSpawn[m_iSpawnId].m_fX, m_afAmbushSpawn[m_iSpawnId].m_fY, m_afAmbushSpawn[m_iSpawnId].m_fZ, 0.0f,
+                           TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
 
         for (int i = 0; i < 2; ++i)
         {
             me->SummonCreature(NPC_OUTRUNNER,
-                m_afAmbushSpawn[m_iSpawnId].m_fX, m_afAmbushSpawn[m_iSpawnId].m_fY, m_afAmbushSpawn[m_iSpawnId].m_fZ, 0.0f,
-                TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
+                               m_afAmbushSpawn[m_iSpawnId].m_fX, m_afAmbushSpawn[m_iSpawnId].m_fY, m_afAmbushSpawn[m_iSpawnId].m_fZ, 0.0f,
+                               TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
         }
     }
 
@@ -229,23 +229,23 @@ struct npc_rinjiAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 1:
-                DoScriptText(SAY_RIN_FREE, me, pPlayer);
-                break;
-            case 7:
-                DoSpawnAmbush(true);
-                break;
-            case 13:
-                DoSpawnAmbush(false);
-                break;
-            case 17:
-                DoScriptText(SAY_RIN_COMPLETE, me, pPlayer);
-                pPlayer->GroupEventHappens(QUEST_RINJI_TRAPPED, me);
-                SetRun();
-                m_uiPostEventCount = 1;
-                break;
+        case 1:
+            DoScriptText(SAY_RIN_FREE, me, pPlayer);
+            break;
+        case 7:
+            DoSpawnAmbush(true);
+            break;
+        case 13:
+            DoSpawnAmbush(false);
+            break;
+        case 17:
+            DoScriptText(SAY_RIN_COMPLETE, me, pPlayer);
+            pPlayer->GroupEventHappens(QUEST_RINJI_TRAPPED, me);
+            SetRun();
+            m_uiPostEventCount = 1;
+            break;
         }
     }
 
@@ -262,16 +262,16 @@ struct npc_rinjiAI : public npc_escortAI
 
                     if (Unit* pPlayer = GetPlayerForEscort())
                     {
-                        switch(m_uiPostEventCount)
+                        switch (m_uiPostEventCount)
                         {
-                            case 1:
-                                DoScriptText(SAY_RIN_PROGRESS_1, me, pPlayer);
-                                ++m_uiPostEventCount;
-                                break;
-                            case 2:
-                                DoScriptText(SAY_RIN_PROGRESS_2, me, pPlayer);
-                                m_uiPostEventCount = 0;
-                                break;
+                        case 1:
+                            DoScriptText(SAY_RIN_PROGRESS_1, me, pPlayer);
+                            ++m_uiPostEventCount;
+                            break;
+                        case 2:
+                            DoScriptText(SAY_RIN_PROGRESS_2, me, pPlayer);
+                            m_uiPostEventCount = 0;
+                            break;
                         }
                     }
                     else

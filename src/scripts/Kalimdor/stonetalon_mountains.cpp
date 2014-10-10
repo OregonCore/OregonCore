@@ -47,11 +47,11 @@ bool GossipHello_npc_braug_dimspirit(Player* pPlayer, Creature* pCreature)
 
     if (pPlayer->GetQuestStatus(6627) == QUEST_STATUS_INCOMPLETE)
     {
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBD1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBD2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBD3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBD4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBD5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBD1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBD2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBD3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBD4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBD5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
         pPlayer->SEND_GOSSIP_MENU(5820, pCreature->GetGUID());
     }
@@ -63,13 +63,13 @@ bool GossipHello_npc_braug_dimspirit(Player* pPlayer, Creature* pCreature)
 
 bool GossipSelect_npc_braug_dimspirit(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
-        pCreature->CastSpell(pPlayer,6766,false);
+        pCreature->CastSpell(pPlayer, 6766, false);
 
     }
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+2)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 2)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
         pPlayer->AreaExploredOrEventHappens(6627);
@@ -107,7 +107,7 @@ struct npc_kaya_flathoofAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(i)
+        switch (i)
         {
         case 16:
             DoScriptText(SAY_AMBUSH, me);
@@ -115,7 +115,8 @@ struct npc_kaya_flathoofAI : public npc_escortAI
             me->SummonCreature(NPC_GRIMTOTEM_RUFFIAN, -38.85f, -503.77f, -45.90f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
             me->SummonCreature(NPC_GRIMTOTEM_SORCERER, -36.37f, -496.23f, -45.71f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
             break;
-        case 18: me->SetInFront(pPlayer);
+        case 18:
+            me->SetInFront(pPlayer);
             DoScriptText(SAY_END, me, pPlayer);
             if (pPlayer)
                 pPlayer->GroupEventHappens(QUEST_PROTECT_KAYA, me);
@@ -128,7 +129,7 @@ struct npc_kaya_flathoofAI : public npc_escortAI
         summoned->AI()->AttackStart(me);
     }
 
-    void Reset(){}
+    void Reset() {}
 };
 
 bool QuestAccept_npc_kaya_flathoof(Player* pPlayer, Creature* pCreature, Quest const* quest)
@@ -156,7 +157,7 @@ CreatureAI* GetAI_npc_kaya_flathoofAI(Creature* pCreature)
 
 void AddSC_stonetalon_mountains()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_braug_dimspirit";

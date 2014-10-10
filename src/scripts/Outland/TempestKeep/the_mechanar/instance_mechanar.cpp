@@ -29,7 +29,10 @@ EndScriptData */
 
 struct instance_mechanar : public ScriptedInstance
 {
-    instance_mechanar(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_mechanar(Map* map) : ScriptedInstance(map)
+    {
+        Initialize();
+    };
 
 
     uint32 Encounters[ENCOUNTERS];
@@ -55,9 +58,10 @@ struct instance_mechanar : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-        case DATA_NETHERMANCER_EVENT:   return Encounters[0];
+        case DATA_NETHERMANCER_EVENT:
+            return Encounters[0];
         }
 
         return false;
@@ -70,9 +74,11 @@ struct instance_mechanar : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-        case DATA_NETHERMANCER_EVENT:   Encounters[0] = data;   break;
+        case DATA_NETHERMANCER_EVENT:
+            Encounters[0] = data;
+            break;
         }
     }
 };
@@ -84,7 +90,7 @@ InstanceData* GetInstanceData_instance_mechanar(Map* map)
 
 void AddSC_instance_mechanar()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_mechanar";
     newscript->GetInstanceData = &GetInstanceData_instance_mechanar;

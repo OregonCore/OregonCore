@@ -43,17 +43,17 @@ EndScriptData */
 
 struct molten_flameAI : public NullCreatureAI
 {
-    molten_flameAI(Creature *c) : NullCreatureAI(c)
+    molten_flameAI(Creature* c) : NullCreatureAI(c)
     {
         float x, y, z;
-        me->GetNearPoint(me, x, y, z, 1, 50, M_PI*2*rand_norm());
+        me->GetNearPoint(me, x, y, z, 1, 50, M_PI * 2 * rand_norm());
         me->GetMotionMaster()->MovePoint(0, x, y, z);
     }
 };
 
 struct boss_supremusAI : public ScriptedAI
 {
-    boss_supremusAI(Creature *c) : ScriptedAI(c), summons(me)
+    boss_supremusAI(Creature* c) : ScriptedAI(c), summons(me)
     {
         pInstance = c->GetInstanceData();
     }
@@ -76,9 +76,7 @@ struct boss_supremusAI : public ScriptedAI
         if (pInstance)
         {
             if (me->isAlive())
-            {
                 pInstance->SetData(DATA_SUPREMUSEVENT, NOT_STARTED);
-            }
         }
 
         HatefulStrikeTimer = 5000;
@@ -92,7 +90,7 @@ struct boss_supremusAI : public ScriptedAI
         summons.DespawnAll();
 
         me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
-        me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
+        me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, false);
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -122,17 +120,23 @@ struct boss_supremusAI : public ScriptedAI
         summons.DespawnAll();
     }
 
-    void JustSummoned(Creature *summon) {summons.Summon(summon);}
-    void SummonedCreatureDespawn(Creature *summon) {summons.Despawn(summon);}
+    void JustSummoned(Creature* summon)
+    {
+        summons.Summon(summon);
+    }
+    void SummonedCreatureDespawn(Creature* summon)
+    {
+        summons.Despawn(summon);
+    }
 
     Unit* CalculateHatefulStrikeTarget()
     {
         uint32 health = 0;
-        Unit *pTarget = NULL;
+        Unit* pTarget = NULL;
 
         std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
         std::list<HostileReference*>::iterator i = m_threatlist.begin();
-        for (i = m_threatlist.begin(); i != m_threatlist.end();++i)
+        for (i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && me->IsWithinMeleeRange(pUnit))
@@ -164,45 +168,49 @@ struct boss_supremusAI : public ScriptedAI
         {
             DoCast(me, SPELL_MOLTEN_PUNCH);
             SummonFlameTimer = 10000;
-        } else SummonFlameTimer -= diff;
+        }
+        else SummonFlameTimer -= diff;
 
         if (Phase1)
         {
             if (HatefulStrikeTimer <= diff)
             {
-                if (Unit *pTarget = CalculateHatefulStrikeTarget())
+                if (Unit* pTarget = CalculateHatefulStrikeTarget())
                 {
                     DoCast(pTarget, SPELL_HATEFUL_STRIKE);
                     HatefulStrikeTimer = 5000;
                 }
-            } else HatefulStrikeTimer -= diff;
+            }
+            else HatefulStrikeTimer -= diff;
         }
 
         if (!Phase1)
         {
             if (SwitchTargetTimer <= diff)
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
                 {
                     if (me->GetDistance2d(me->getVictim()) < 40)
-                        me->CastSpell(me->getVictim(),SPELL_CHARGE,false);
+                        me->CastSpell(me->getVictim(), SPELL_CHARGE, false);
 
                     DoResetThreat();
                     me->AddThreat(pTarget, 5000000.0f);
                     DoScriptText(EMOTE_NEW_TARGET, me);
                     SwitchTargetTimer = 10000;
                 }
-            } else SwitchTargetTimer -= diff;
+            }
+            else SwitchTargetTimer -= diff;
 
             if (SummonVolcanoTimer <= diff)
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
                 {
                     DoCast(pTarget, SPELL_VOLCANIC_SUMMON);
                     DoScriptText(EMOTE_GROUND_CRACK, me);
                     SummonVolcanoTimer = 10000;
                 }
-            } else SummonVolcanoTimer -= diff;
+            }
+            else SummonVolcanoTimer -= diff;
         }
 
         if (PhaseSwitchTimer <= diff)
@@ -215,7 +223,7 @@ struct boss_supremusAI : public ScriptedAI
                 me->SetSpeed(MOVE_RUN, 1.2f);
                 DoZoneInCombat();
                 me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
-                me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
+                me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, false);
             }
             else
             {
@@ -227,9 +235,10 @@ struct boss_supremusAI : public ScriptedAI
                 me->SetSpeed(MOVE_RUN, 0.9f);
                 DoZoneInCombat();
                 me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-                me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
+                me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
             }
-        } else PhaseSwitchTimer -= diff;
+        }
+        else PhaseSwitchTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -237,12 +246,12 @@ struct boss_supremusAI : public ScriptedAI
 
 struct npc_volcanoAI : public ScriptedAI
 {
-    npc_volcanoAI(Creature *c) : ScriptedAI(c)
+    npc_volcanoAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 CheckTimer;
     bool Eruption;
@@ -280,7 +289,8 @@ struct npc_volcanoAI : public ScriptedAI
                     me->RemoveAura(SPELL_VOLCANIC_ERUPTION, 0);
             }
             CheckTimer = 1500;
-        } else CheckTimer -= diff;
+        }
+        else CheckTimer -= diff;
     }
 };
 
@@ -301,7 +311,7 @@ CreatureAI* GetAI_npc_volcano(Creature* pCreature)
 
 void AddSC_boss_supremus()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_supremus";
     newscript->GetAI = &GetAI_boss_supremus;

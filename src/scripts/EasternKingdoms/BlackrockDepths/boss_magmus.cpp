@@ -37,7 +37,7 @@ enum eEnums
 
 struct boss_magmusAI : public ScriptedAI
 {
-    boss_magmusAI(Creature *c) : ScriptedAI(c) {}
+    boss_magmusAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 FieryBurst_Timer;
     uint32 WarStomp_Timer;
@@ -45,10 +45,10 @@ struct boss_magmusAI : public ScriptedAI
     void Reset()
     {
         FieryBurst_Timer = 5000;
-        WarStomp_Timer =0;
+        WarStomp_Timer = 0;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -63,22 +63,24 @@ struct boss_magmusAI : public ScriptedAI
         {
             DoCastVictim( SPELL_FIERYBURST);
             FieryBurst_Timer = 6000;
-        } else FieryBurst_Timer -= diff;
+        }
+        else FieryBurst_Timer -= diff;
 
         //WarStomp_Timer
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 51)
+        if (me->GetHealth() * 100 / me->GetMaxHealth() < 51)
         {
             if (WarStomp_Timer <= diff)
             {
                 DoCastVictim( SPELL_WARSTOMP);
                 WarStomp_Timer = 8000;
-            } else WarStomp_Timer -= diff;
+            }
+            else WarStomp_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
     }
     // When he die open door to last chamber
-    void JustDied(Unit *who)
+    void JustDied(Unit* who)
     {
         if (ScriptedInstance* pInstance = who->GetInstanceData())
             pInstance->HandleGameObject(pInstance->GetData64(DATA_THRONE_DOOR), true);
@@ -91,7 +93,7 @@ CreatureAI* GetAI_boss_magmus(Creature* pCreature)
 
 void AddSC_boss_magmus()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_magmus";
     newscript->GetAI = &GetAI_boss_magmus;

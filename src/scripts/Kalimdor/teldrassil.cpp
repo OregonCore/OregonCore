@@ -63,7 +63,7 @@ struct npc_mistAI : public FollowerAI
         AryniaGUID = 0;
     }
 
-    void MoveInLineOfSight(Unit *pWho)
+    void MoveInLineOfSight(Unit* pWho)
     {
         FollowerAI::MoveInLineOfSight(pWho);
 
@@ -104,14 +104,14 @@ struct npc_mistAI : public FollowerAI
                 {
                     m_uiPostEventTimer = 3000;
 
-                    Unit *pArynia = Unit::GetUnit(*me, AryniaGUID);
+                    Unit* pArynia = Unit::GetUnit(*me, AryniaGUID);
                     if (!pArynia || !pArynia->isAlive())
                     {
                         SetFollowComplete();
                         return;
                     }
 
-                    switch(m_uiPhasePostEvent)
+                    switch (m_uiPhasePostEvent)
                     {
                     case 0:
                         DoScriptText(SAY_AT_HOME, pArynia);
@@ -153,7 +153,7 @@ bool QuestAccept_npc_mist(Player* pPlayer, Creature* pCreature, Quest const* pQu
 
 void AddSC_teldrassil()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_mist";

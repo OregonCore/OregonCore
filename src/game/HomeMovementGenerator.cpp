@@ -25,19 +25,19 @@
 #include "WorldPacket.h"
 
 void
-HomeMovementGenerator<Creature>::Initialize(Creature & owner)
+HomeMovementGenerator<Creature>::Initialize(Creature& owner)
 {
     owner.RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
     _setTargetLocation(owner);
 }
 
 void
-HomeMovementGenerator<Creature>::Reset(Creature &)
+HomeMovementGenerator<Creature>::Reset(Creature&)
 {
 }
 
 void
-HomeMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
+HomeMovementGenerator<Creature>::_setTargetLocation(Creature& owner)
 {
     if (owner.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
         return;
@@ -61,7 +61,7 @@ HomeMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
 }
 
 bool
-HomeMovementGenerator<Creature>::Update(Creature &owner, const uint32& time_diff)
+HomeMovementGenerator<Creature>::Update(Creature& owner, const uint32& time_diff)
 {
     CreatureTraveller traveller(owner);
     i_destinationHolder.UpdateTraveller(traveller, time_diff);

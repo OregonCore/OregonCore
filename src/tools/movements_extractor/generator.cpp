@@ -72,19 +72,19 @@ bool checkDirectories(bool debugOutput)
 }
 
 bool handleArgs(int argc, char** argv,
-               int &mapnum,
-               int &tileX,
-               int &tileY,
-               int &threads,
-               float &maxAngle,
-               bool &skipLiquid,
-               bool &skipContinents,
-               bool &skipJunkMaps,
-               bool &skipBattlegrounds,
-               bool &debugOutput,
-               bool &silent,
-               bool &bigBaseUnit,
-               char* &offMeshInputPath)
+                int& mapnum,
+                int& tileX,
+                int& tileY,
+                int& threads,
+                float& maxAngle,
+                bool& skipLiquid,
+                bool& skipContinents,
+                bool& skipJunkMaps,
+                bool& skipBattlegrounds,
+                bool& debugOutput,
+                bool& silent,
+                bool& bigBaseUnit,
+                char*& offMeshInputPath)
 {
     char* param = NULL;
     for (int i = 1; i < argc; ++i)
@@ -136,7 +136,7 @@ bool handleArgs(int argc, char** argv,
             else
                 printf("invalid option for '--skipLiquid', using default\n");
         }
-        else if(strcmp(argv[i], "--skipContinents") == 0)
+        else if (strcmp(argv[i], "--skipContinents") == 0)
         {
             param = argv[++i];
             if (!param)
@@ -189,9 +189,7 @@ bool handleArgs(int argc, char** argv,
                 printf("invalid option for '--debugOutput', using default true\n");
         }
         else if (strcmp(argv[i], "--silent") == 0)
-        {
             silent = true;
-        }
         else if (strcmp(argv[i], "--bigBaseUnit") == 0)
         {
             param = argv[++i];
@@ -223,7 +221,7 @@ bool handleArgs(int argc, char** argv,
             // Default to one thread, not sure if needed with previous check
             if (threads <= 0)
                 threads = 1;
-             printf("Using %i threads to extract mmaps\n", threads);
+            printf("Using %i threads to extract mmaps\n", threads);
         }
         else
         {

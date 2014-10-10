@@ -42,15 +42,13 @@ void SystemMgr::LoadVersion()
         outstring_log("OSCR: Database version is: %s\n", pFields[0].GetString());
     }
     else
-    {
         error_log("OSCR: Missing version.script_version information.\n");
-    }
 }
 
 void SystemMgr::LoadScriptTexts()
 {
     outstring_log("OSCR: Loading Script Texts...");
-    LoadOregonStrings(WorldDatabase,"script_texts",TEXT_SOURCE_RANGE,1+(TEXT_SOURCE_RANGE*2));
+    LoadOregonStrings(WorldDatabase, "script_texts", TEXT_SOURCE_RANGE, 1 + (TEXT_SOURCE_RANGE * 2));
 
     QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT entry, sound, type, language, emote FROM script_texts");
 
@@ -77,7 +75,7 @@ void SystemMgr::LoadScriptTexts()
                 continue;
             }
 
-            if (iId > TEXT_SOURCE_RANGE || iId <= TEXT_SOURCE_RANGE*2)
+            if (iId > TEXT_SOURCE_RANGE || iId <= TEXT_SOURCE_RANGE * 2)
             {
                 error_db_log("OSCR: Entry %i in table script_texts is out of accepted entry range for table.", iId);
                 continue;
@@ -97,20 +95,19 @@ void SystemMgr::LoadScriptTexts()
 
             m_mTextDataMap[iId] = pTemp;
             ++uiCount;
-        } while (Result->NextRow());
+        }
+        while (Result->NextRow());
 
         outstring_log("\n>> Loaded %u additional Script Texts data.", uiCount);
     }
     else
-    {
         outstring_log("\n>> Loaded 0 additional Script Texts data. DB table script_texts is empty.");
-    }
 }
 
 void SystemMgr::LoadScriptTextsCustom()
 {
     outstring_log("OSCR: Loading Custom Texts...");
-    LoadOregonStrings(WorldDatabase,"custom_texts",TEXT_SOURCE_RANGE*2,1+(TEXT_SOURCE_RANGE*3));
+    LoadOregonStrings(WorldDatabase, "custom_texts", TEXT_SOURCE_RANGE * 2, 1 + (TEXT_SOURCE_RANGE * 3));
 
     QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT entry, sound, type, language, emote FROM custom_texts");
 
@@ -137,7 +134,7 @@ void SystemMgr::LoadScriptTextsCustom()
                 continue;
             }
 
-            if (iId > TEXT_SOURCE_RANGE*2 || iId <= TEXT_SOURCE_RANGE*3)
+            if (iId > TEXT_SOURCE_RANGE * 2 || iId <= TEXT_SOURCE_RANGE * 3)
             {
                 error_db_log("OSCR: Entry %i in table custom_texts is out of accepted entry range for table.", iId);
                 continue;
@@ -157,14 +154,13 @@ void SystemMgr::LoadScriptTextsCustom()
 
             m_mTextDataMap[iId] = pTemp;
             ++uiCount;
-        } while (Result->NextRow());
+        }
+        while (Result->NextRow());
 
         outstring_log("\n>> Loaded %u additional Custom Texts data.", uiCount);
     }
     else
-    {
         outstring_log("\n>> Loaded 0 additional Custom Texts data. DB table custom_texts is empty.");
-    }
 }
 
 void SystemMgr::LoadScriptWaypoints()
@@ -213,13 +209,12 @@ void SystemMgr::LoadScriptWaypoints()
 
             m_mPointMoveMap[uiEntry].push_back(pTemp);
             ++uiNodeCount;
-        } while (Result->NextRow());
+        }
+        while (Result->NextRow());
 
         outstring_log("\n>> Loaded %u Script Waypoint nodes.", uiNodeCount);
     }
     else
-    {
         outstring_log("\n>> Loaded 0 Script Waypoints. DB table script_waypoint is empty.");
-    }
 }
 

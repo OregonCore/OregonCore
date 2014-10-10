@@ -49,7 +49,7 @@ enum WaterElementalSpells
 
 struct mob_water_elementalAI : public ScriptedAI
 {
-    mob_water_elementalAI(Creature *c) : ScriptedAI(c) {}
+    mob_water_elementalAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 uiWaterBoltTimer;
     uint64 uiBalindaGUID;
@@ -57,8 +57,8 @@ struct mob_water_elementalAI : public ScriptedAI
 
     void Reset()
     {
-        uiWaterBoltTimer            = 3*IN_MILLISECONDS;
-        uiResetTimer                = 5*IN_MILLISECONDS;
+        uiWaterBoltTimer            = 3 * IN_MILLISECONDS;
+        uiResetTimer                = 5 * IN_MILLISECONDS;
     }
 
     void UpdateAI(const uint32 diff)
@@ -69,17 +69,19 @@ struct mob_water_elementalAI : public ScriptedAI
         if (uiWaterBoltTimer <= diff)
         {
             DoCastVictim( SPELL_WATERBOLT);
-            uiWaterBoltTimer = 5*IN_MILLISECONDS;
-        } else uiWaterBoltTimer -= diff;
+            uiWaterBoltTimer = 5 * IN_MILLISECONDS;
+        }
+        else uiWaterBoltTimer -= diff;
 
         // check if creature is not outside of building
         if (uiResetTimer <= diff)
         {
-            if (Creature *pBalinda = Unit::GetCreature(*me, uiBalindaGUID))
+            if (Creature* pBalinda = Unit::GetCreature(*me, uiBalindaGUID))
                 if (me->GetDistance2d(pBalinda->GetHomePosition().GetPositionX(), pBalinda->GetHomePosition().GetPositionY()) > 50)
                     EnterEvadeMode();
-                uiResetTimer = 5*IN_MILLISECONDS;
-        } else uiResetTimer -= diff;
+            uiResetTimer = 5 * IN_MILLISECONDS;
+        }
+        else uiResetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -87,7 +89,7 @@ struct mob_water_elementalAI : public ScriptedAI
 
 struct boss_balindaAI : public ScriptedAI
 {
-    boss_balindaAI(Creature *c) : ScriptedAI(c), Summons(me) {}
+    boss_balindaAI(Creature* c) : ScriptedAI(c), Summons(me) {}
 
     uint32 uiArcaneExplosionTimer;
     uint32 uiConeOfColdTimer;
@@ -100,17 +102,17 @@ struct boss_balindaAI : public ScriptedAI
 
     void Reset()
     {
-        uiArcaneExplosionTimer      = urand(5*IN_MILLISECONDS,15*IN_MILLISECONDS);
-        uiConeOfColdTimer           = 8*IN_MILLISECONDS;
-        uiFireBoltTimer             = 1*IN_MILLISECONDS;
-        uiFrostboltTimer            = 4*IN_MILLISECONDS;
-        uiResetTimer                = 5*IN_MILLISECONDS;
+        uiArcaneExplosionTimer      = urand(5 * IN_MILLISECONDS, 15 * IN_MILLISECONDS);
+        uiConeOfColdTimer           = 8 * IN_MILLISECONDS;
+        uiFireBoltTimer             = 1 * IN_MILLISECONDS;
+        uiFrostboltTimer            = 4 * IN_MILLISECONDS;
+        uiResetTimer                = 5 * IN_MILLISECONDS;
         uiWaterElementalTimer       = 0;
 
         Summons.DespawnAll();
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(YELL_AGGRO, me);
     }
@@ -123,7 +125,7 @@ struct boss_balindaAI : public ScriptedAI
     void JustSummoned(Creature* summoned)
     {
         ((mob_water_elementalAI*)summoned->AI())->uiBalindaGUID = me->GetGUID();
-        summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM,0, 50, true));
+        summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true));
         summoned->setFaction(me->getFaction());
         Summons.Summon(summoned);
     }
@@ -141,33 +143,38 @@ struct boss_balindaAI : public ScriptedAI
         if (uiWaterElementalTimer <= diff)
         {
             if (Summons.empty())
-                me->SummonCreature(NPC_WATER_ELEMENTAL, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45*IN_MILLISECONDS);
-            uiWaterElementalTimer = 50*IN_MILLISECONDS;
-        } else uiWaterElementalTimer -= diff;
+                me->SummonCreature(NPC_WATER_ELEMENTAL, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45 * IN_MILLISECONDS);
+            uiWaterElementalTimer = 50 * IN_MILLISECONDS;
+        }
+        else uiWaterElementalTimer -= diff;
 
         if (uiArcaneExplosionTimer <= diff)
         {
             DoCastVictim( SPELL_ARCANE_EXPLOSION);
-            uiArcaneExplosionTimer =  urand(5*IN_MILLISECONDS,15*IN_MILLISECONDS);
-        } else uiArcaneExplosionTimer -= diff;
+            uiArcaneExplosionTimer =  urand(5 * IN_MILLISECONDS, 15 * IN_MILLISECONDS);
+        }
+        else uiArcaneExplosionTimer -= diff;
 
         if (uiConeOfColdTimer <= diff)
         {
             DoCastVictim( SPELL_CONE_OF_COLD);
-            uiConeOfColdTimer = urand(10*IN_MILLISECONDS,20*IN_MILLISECONDS);
-        } else uiConeOfColdTimer -= diff;
+            uiConeOfColdTimer = urand(10 * IN_MILLISECONDS, 20 * IN_MILLISECONDS);
+        }
+        else uiConeOfColdTimer -= diff;
 
         if (uiFireBoltTimer <= diff)
         {
             DoCastVictim( SPELL_FIREBALL);
-            uiFireBoltTimer = urand(5*IN_MILLISECONDS,9*IN_MILLISECONDS);
-        } else uiFireBoltTimer -= diff;
+            uiFireBoltTimer = urand(5 * IN_MILLISECONDS, 9 * IN_MILLISECONDS);
+        }
+        else uiFireBoltTimer -= diff;
 
         if (uiFrostboltTimer <= diff)
         {
             DoCastVictim( SPELL_FROSTBOLT);
-            uiFrostboltTimer = urand(4*IN_MILLISECONDS,12*IN_MILLISECONDS);
-        } else uiFrostboltTimer -= diff;
+            uiFrostboltTimer = urand(4 * IN_MILLISECONDS, 12 * IN_MILLISECONDS);
+        }
+        else uiFrostboltTimer -= diff;
 
 
         // check if creature is not outside of building
@@ -178,8 +185,9 @@ struct boss_balindaAI : public ScriptedAI
                 EnterEvadeMode();
                 DoScriptText(YELL_EVADE, me);
             }
-            uiResetTimer = 5*IN_MILLISECONDS;
-        } else uiResetTimer -= diff;
+            uiResetTimer = 5 * IN_MILLISECONDS;
+        }
+        else uiResetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -190,14 +198,14 @@ CreatureAI* GetAI_boss_balinda(Creature* pCreature)
     return new boss_balindaAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_water_elemental(Creature *_Creature)
+CreatureAI* GetAI_mob_water_elemental(Creature* _Creature)
 {
     return new mob_water_elementalAI (_Creature);
 }
 
 void AddSC_boss_balinda()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_balinda";
     newscript->GetAI = &GetAI_boss_balinda;

@@ -38,7 +38,10 @@ EndScriptData */
 
 struct instance_old_hillsbrad : public ScriptedInstance
 {
-    instance_old_hillsbrad(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_old_hillsbrad(Map* map) : ScriptedInstance(map)
+    {
+        Initialize();
+    };
 
     uint32 Encounter[ENCOUNTERS];
     uint32 mBarrelCount;
@@ -54,7 +57,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
         mThrallEventCount   = 0;
         ThrallGUID          = 0;
         TarethaGUID         = 0;
-    EpochGUID        = 0;
+        EpochGUID        = 0;
 
         for (uint8 i = 0; i < ENCOUNTERS; i++)
             Encounter[i] = NOT_STARTED;
@@ -87,29 +90,30 @@ struct instance_old_hillsbrad : public ScriptedInstance
             {
                 if (Player* player = itr->getSource())
                 {
-                    player->SendUpdateWorldState(WORLD_STATE_OH,mBarrelCount);
+                    player->SendUpdateWorldState(WORLD_STATE_OH, mBarrelCount);
 
                     if (mBarrelCount == 5)
-                        player->KilledMonsterCredit(LODGE_QUEST_TRIGGER,0);
+                        player->KilledMonsterCredit(LODGE_QUEST_TRIGGER, 0);
                 }
             }
-        } else
+        }
+        else
             debug_log("OSCR: Instance Old Hillsbrad: UpdateOHWorldState, but PlayerList is empty!");
     }
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-            case THRALL_ENTRY:
-                ThrallGUID = pCreature->GetGUID();
-                break;
-            case TARETHA_ENTRY:
-                TarethaGUID = pCreature->GetGUID();
-                break;
+        case THRALL_ENTRY:
+            ThrallGUID = pCreature->GetGUID();
+            break;
+        case TARETHA_ENTRY:
+            TarethaGUID = pCreature->GetGUID();
+            break;
         case EPOCH_ENTRY:
-        EpochGUID = pCreature->GetGUID();
-        break;
+            EpochGUID = pCreature->GetGUID();
+            break;
         }
     }
 
@@ -123,9 +127,9 @@ struct instance_old_hillsbrad : public ScriptedInstance
             return;
         }
 
-        switch(type)
+        switch (type)
         {
-            case TYPE_BARREL_DIVERSION:
+        case TYPE_BARREL_DIVERSION:
             {
                 if (data == IN_PROGRESS)
                 {
@@ -135,19 +139,19 @@ struct instance_old_hillsbrad : public ScriptedInstance
                     ++mBarrelCount;
                     UpdateOHWorldState();
 
-                    debug_log("OSCR: Instance Old Hillsbrad: go_barrel_old_hillsbrad count %u",mBarrelCount);
+                    debug_log("OSCR: Instance Old Hillsbrad: go_barrel_old_hillsbrad count %u", mBarrelCount);
 
                     Encounter[0] = IN_PROGRESS;
 
                     if (mBarrelCount == 5)
                     {
-                    player->SummonCreature(DRAKE_ENTRY,2128.43f,71.01f,64.42f,1.74f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000);
-                    Encounter[0] = DONE;
+                        player->SummonCreature(DRAKE_ENTRY, 2128.43f, 71.01f, 64.42f, 1.74f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 1800000);
+                        Encounter[0] = DONE;
                     }
                 }
                 break;
             }
-            case TYPE_THRALL_EVENT:
+        case TYPE_THRALL_EVENT:
             {
                 if (data == FAIL)
                 {
@@ -155,7 +159,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
                     {
                         mThrallEventCount++;
                         Encounter[1] = NOT_STARTED;
-                        debug_log("OSCR: Instance Old Hillsbrad: Thrall event failed %u times. Resetting all sub-events.",mThrallEventCount);
+                        debug_log("OSCR: Instance Old Hillsbrad: Thrall event failed %u times. Resetting all sub-events.", mThrallEventCount);
                         Encounter[2] = NOT_STARTED;
                         Encounter[3] = NOT_STARTED;
                         Encounter[4] = NOT_STARTED;
@@ -168,63 +172,63 @@ struct instance_old_hillsbrad : public ScriptedInstance
                         Encounter[3] = data;
                         Encounter[4] = data;
                         Encounter[5] = data;
-                        debug_log("OSCR: Instance Old Hillsbrad: Thrall event failed %u times. Resetting all sub-events.",mThrallEventCount);
+                        debug_log("OSCR: Instance Old Hillsbrad: Thrall event failed %u times. Resetting all sub-events.", mThrallEventCount);
                     }
                 }
                 else
                     Encounter[1] = data;
-                debug_log("OSCR: Instance Old Hillsbrad: Thrall escort event adjusted to data %u.",data);
+                debug_log("OSCR: Instance Old Hillsbrad: Thrall escort event adjusted to data %u.", data);
                 break;
             }
-            case TYPE_THRALL_PART1:
-                Encounter[2] = data;
-                debug_log("OSCR: Instance Old Hillsbrad: Thrall event part I adjusted to data %u.",data);
-                break;
-            case TYPE_THRALL_PART2:
-                Encounter[3] = data;
-                debug_log("OSCR: Instance Old Hillsbrad: Thrall event part II adjusted to data %u.",data);
-                break;
-            case TYPE_THRALL_PART3:
-                Encounter[4] = data;
-                debug_log("OSCR: Instance Old Hillsbrad: Thrall event part III adjusted to data %u.",data);
-                break;
-            case TYPE_THRALL_PART4:
-                Encounter[5] = data;
-                 debug_log("OSCR: Instance Old Hillsbrad: Thrall event part IV adjusted to data %u.",data);
-                break;
+        case TYPE_THRALL_PART1:
+            Encounter[2] = data;
+            debug_log("OSCR: Instance Old Hillsbrad: Thrall event part I adjusted to data %u.", data);
+            break;
+        case TYPE_THRALL_PART2:
+            Encounter[3] = data;
+            debug_log("OSCR: Instance Old Hillsbrad: Thrall event part II adjusted to data %u.", data);
+            break;
+        case TYPE_THRALL_PART3:
+            Encounter[4] = data;
+            debug_log("OSCR: Instance Old Hillsbrad: Thrall event part III adjusted to data %u.", data);
+            break;
+        case TYPE_THRALL_PART4:
+            Encounter[5] = data;
+            debug_log("OSCR: Instance Old Hillsbrad: Thrall event part IV adjusted to data %u.", data);
+            break;
         }
     }
 
     uint32 GetData(uint32 data)
     {
-        switch(data)
+        switch (data)
         {
-            case TYPE_BARREL_DIVERSION:
-                return Encounter[0];
-            case TYPE_THRALL_EVENT:
-                return Encounter[1];
-            case TYPE_THRALL_PART1:
-                return Encounter[2];
-            case TYPE_THRALL_PART2:
-                return Encounter[3];
-            case TYPE_THRALL_PART3:
-                return Encounter[4];
-            case TYPE_THRALL_PART4:
-                return Encounter[5];
+        case TYPE_BARREL_DIVERSION:
+            return Encounter[0];
+        case TYPE_THRALL_EVENT:
+            return Encounter[1];
+        case TYPE_THRALL_PART1:
+            return Encounter[2];
+        case TYPE_THRALL_PART2:
+            return Encounter[3];
+        case TYPE_THRALL_PART3:
+            return Encounter[4];
+        case TYPE_THRALL_PART4:
+            return Encounter[5];
         }
         return 0;
     }
 
     uint64 GetData64(uint32 data)
     {
-        switch(data)
+        switch (data)
         {
-            case DATA_THRALL:
-                return ThrallGUID;
-            case DATA_TARETHA:
-                return TarethaGUID;
+        case DATA_THRALL:
+            return ThrallGUID;
+        case DATA_TARETHA:
+            return TarethaGUID;
         case DATA_EPOCH:
-        return EpochGUID;
+            return EpochGUID;
         }
         return 0;
     }
@@ -236,7 +240,7 @@ InstanceData* GetInstanceData_instance_old_hillsbrad(Map* map)
 
 void AddSC_instance_old_hillsbrad()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_old_hillsbrad";
     newscript->GetInstanceData = &GetInstanceData_instance_old_hillsbrad;

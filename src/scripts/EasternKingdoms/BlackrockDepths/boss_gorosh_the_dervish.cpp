@@ -32,7 +32,7 @@ enum Spells
 
 struct boss_gorosh_the_dervishAI : public ScriptedAI
 {
-    boss_gorosh_the_dervishAI(Creature *c) : ScriptedAI(c) {}
+    boss_gorosh_the_dervishAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 WhirlWind_Timer;
     uint32 MortalStrike_Timer;
@@ -43,7 +43,7 @@ struct boss_gorosh_the_dervishAI : public ScriptedAI
         MortalStrike_Timer = 22000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -58,14 +58,16 @@ struct boss_gorosh_the_dervishAI : public ScriptedAI
         {
             DoCast(me, SPELL_WHIRLWIND);
             WhirlWind_Timer = 15000;
-        } else WhirlWind_Timer -= diff;
+        }
+        else WhirlWind_Timer -= diff;
 
         //MortalStrike_Timer
         if (MortalStrike_Timer <= diff)
         {
             DoCastVictim( SPELL_MORTALSTRIKE);
             MortalStrike_Timer = 15000;
-        } else MortalStrike_Timer -= diff;
+        }
+        else MortalStrike_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -77,7 +79,7 @@ CreatureAI* GetAI_boss_gorosh_the_dervish(Creature* pCreature)
 
 void AddSC_boss_gorosh_the_dervish()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_gorosh_the_dervish";
     newscript->GetAI = &GetAI_boss_gorosh_the_dervish;

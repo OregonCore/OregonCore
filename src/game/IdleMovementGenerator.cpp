@@ -23,7 +23,7 @@ IdleMovementGenerator si_idleMovement;
 
 // StopMoving is needed to make unit stop if its last movement generator expires
 // But it should not be sent otherwise there are many redundent packets
-void IdleMovementGenerator::Initialize(Unit &owner)
+void IdleMovementGenerator::Initialize(Unit& owner)
 {
     if (owner.HasUnitState(UNIT_STATE_MOVE))
         owner.StopMoving();
@@ -73,7 +73,7 @@ bool RotateMovementGenerator::Update(Unit& owner, const uint32& diff)
     return true;
 }
 
-void RotateMovementGenerator::Finalize(Unit &unit)
+void RotateMovementGenerator::Finalize(Unit& unit)
 {
     unit.ClearUnitState(UNIT_STATE_ROTATING);
     if (unit.GetTypeId() == TYPEID_UNIT)
@@ -103,7 +103,7 @@ DistractMovementGenerator::Update(Unit& /*owner*/, const uint32& time_diff)
 }
 
 void
-AssistanceDistractMovementGenerator::Finalize(Unit &unit)
+AssistanceDistractMovementGenerator::Finalize(Unit& unit)
 {
     unit.ClearUnitState(UNIT_STATE_DISTRACTED);
     unit.ToCreature()->SetReactState(REACT_AGGRESSIVE);

@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_landslideAI : public ScriptedAI
 {
-    boss_landslideAI(Creature *c) : ScriptedAI(c) {}
+    boss_landslideAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 KnockAway_Timer;
     uint32 Trample_Timer;
@@ -43,7 +43,7 @@ struct boss_landslideAI : public ScriptedAI
         Landslide_Timer = 0;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -57,24 +57,27 @@ struct boss_landslideAI : public ScriptedAI
         {
             DoCastVictim( SPELL_KNOCKAWAY);
             KnockAway_Timer = 15000;
-        } else KnockAway_Timer -= diff;
+        }
+        else KnockAway_Timer -= diff;
 
         //Trample_Timer
         if (Trample_Timer <= diff)
         {
             DoCast(me, SPELL_TRAMPLE);
             Trample_Timer = 8000;
-        } else Trample_Timer -= diff;
+        }
+        else Trample_Timer -= diff;
 
         //Landslide
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
+        if (me->GetHealth() * 100 / me->GetMaxHealth() < 50)
         {
             if (Landslide_Timer <= diff)
             {
                 me->InterruptNonMeleeSpells(false);
                 DoCast(me, SPELL_LANDSLIDE);
                 Landslide_Timer = 60000;
-            } else Landslide_Timer -= diff;
+            }
+            else Landslide_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -87,7 +90,7 @@ CreatureAI* GetAI_boss_landslide(Creature* pCreature)
 
 void AddSC_boss_landslide()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_landslide";
     newscript->GetAI = &GetAI_boss_landslide;

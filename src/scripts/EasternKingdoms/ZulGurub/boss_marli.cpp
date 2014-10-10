@@ -49,12 +49,12 @@ enum Spells
 
 struct boss_marliAI : public ScriptedAI
 {
-    boss_marliAI(Creature *c) : ScriptedAI(c)
+    boss_marliAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 SpawnStartSpiders_Timer;
     uint32 PoisonVolley_Timer;
@@ -85,7 +85,7 @@ struct boss_marliAI : public ScriptedAI
         PhaseTwo = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
@@ -106,7 +106,7 @@ struct boss_marliAI : public ScriptedAI
         {
             if (!PhaseTwo && DrainLife_Timer <= diff)
             {
-                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 DoCast(pTarget, SPELL_DRAIN_LIFE);
                 DrainLife_Timer = 20000;
             }
@@ -116,7 +116,7 @@ struct boss_marliAI : public ScriptedAI
             if (PoisonVolley_Timer <= diff)
             {
                 DoCastVictim( SPELL_POISONVOLLEY);
-                PoisonVolley_Timer = 10000 + rand()%10000;
+                PoisonVolley_Timer = 10000 + rand() % 10000;
             }
             else
                 PoisonVolley_Timer -= diff;
@@ -124,7 +124,7 @@ struct boss_marliAI : public ScriptedAI
             if (!PhaseTwo && Aspect_Timer <= diff)
             {
                 DoCastVictim( SPELL_ASPECT_OF_MARLI);
-                Aspect_Timer = 13000 + rand()%5000;
+                Aspect_Timer = 13000 + rand() % 5000;
             }
             else
                 Aspect_Timer -= diff;
@@ -133,11 +133,11 @@ struct boss_marliAI : public ScriptedAI
             {
                 DoScriptText(SAY_SPIDER_SPAWN, me);
 
-                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (!pTarget)
                     return;
 
-                Creature *Spider = NULL;
+                Creature* Spider = NULL;
 
                 Spider = me->SummonCreature(15041, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                 if (Spider)
@@ -159,14 +159,14 @@ struct boss_marliAI : public ScriptedAI
 
             if (SpawnSpider_Timer <= diff)
             {
-                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (!pTarget)
                     return;
 
-                Creature *Spider = me->SummonCreature(15041, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                Creature* Spider = me->SummonCreature(15041, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                 if (Spider)
                     Spider->AI()->AttackStart(pTarget);
-                SpawnSpider_Timer = 12000 + rand()%5000;
+                SpawnSpider_Timer = 12000 + rand() % 5000;
             }
             else
                 SpawnSpider_Timer -= diff;
@@ -176,14 +176,14 @@ struct boss_marliAI : public ScriptedAI
                 me->InterruptNonMeleeSpells(false);
                 DoScriptText(SAY_TRANSFORM, me);
                 DoCast(me, SPELL_SPIDER_FORM);
-                const CreatureInfo *cinfo = me->GetCreatureInfo();
-                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg / 100) * 35)));
-                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg / 100) * 35)));
+                const CreatureInfo* cinfo = me->GetCreatureInfo();
+                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 35)));
+                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 35)));
                 me->UpdateDamagePhysical(BASE_ATTACK);
                 DoCastVictim( SPELL_ENVOLWINGWEB);
 
                 PhaseTwo = true;
-                Transform_Timer = 35000 + rand()%25000;
+                Transform_Timer = 35000 + rand() % 25000;
             }
             else
                 Transform_Timer -= diff;
@@ -192,7 +192,7 @@ struct boss_marliAI : public ScriptedAI
             {
                 if (Charge_Timer <= diff)
                 {
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     int i = 0;
                     while (i < 3)                           // max 3 tries to get a random target with power_mana
                     {
@@ -211,7 +211,7 @@ struct boss_marliAI : public ScriptedAI
                         AttackStart(pTarget);
                     }
 
-                    Charge_Timer = 15000 + rand()%5000;
+                    Charge_Timer = 15000 + rand() % 5000;
                 }
                 else
                     Charge_Timer -= diff;
@@ -227,14 +227,14 @@ struct boss_marliAI : public ScriptedAI
                 if (TransformBack_Timer <= diff)
                 {
                     me->SetDisplayId(15220);
-                    const CreatureInfo *cinfo = me->GetCreatureInfo();
+                    const CreatureInfo* cinfo = me->GetCreatureInfo();
                     me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
                     me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));
                     me->UpdateDamagePhysical(BASE_ATTACK);
                     Charge_Timer = 1500;  // reset charge timer so each transform she charges
 
                     PhaseTwo = false;
-                    TransformBack_Timer = 25000 + rand()%15000;
+                    TransformBack_Timer = 25000 + rand() % 15000;
                 }
                 else
                     TransformBack_Timer -= diff;
@@ -249,7 +249,7 @@ struct boss_marliAI : public ScriptedAI
 // Spawn of Marli
 struct mob_spawn_of_marliAI : public ScriptedAI
 {
-    mob_spawn_of_marliAI(Creature *c) : ScriptedAI(c) {}
+    mob_spawn_of_marliAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Grow_Timer;
     float Growth_Level;
@@ -260,9 +260,9 @@ struct mob_spawn_of_marliAI : public ScriptedAI
         Growth_Level = 1;  // increases each time Grow_Timer is called to increase scale & damage.
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
-       Growth_Level = 1;
+        Growth_Level = 1;
     }
 
     void JustDied(Unit* /*Killer*/)
@@ -279,7 +279,7 @@ struct mob_spawn_of_marliAI : public ScriptedAI
         // Grow_Timer
         if (Grow_Timer <= diff)
         {
-            const CreatureInfo *cinfo = me->GetCreatureInfo();
+            const CreatureInfo* cinfo = me->GetCreatureInfo();
             me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->maxdmg * (1 + 0.1f * Growth_Level)));
             me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg * (1 + 0.1f * Growth_Level)));
             me->UpdateDamagePhysical(BASE_ATTACK);
@@ -306,7 +306,7 @@ CreatureAI* GetAI_mob_spawn_of_marli(Creature* pCreature)
 
 void AddSC_boss_marli()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_marli";

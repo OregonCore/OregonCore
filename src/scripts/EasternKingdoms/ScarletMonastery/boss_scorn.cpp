@@ -31,7 +31,7 @@ EndScriptData */
 
 struct boss_scornAI : public ScriptedAI
 {
-    boss_scornAI(Creature *c) : ScriptedAI(c) {}
+    boss_scornAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 LichSlap_Timer;
     uint32 FrostboltVolley_Timer;
@@ -46,7 +46,7 @@ struct boss_scornAI : public ScriptedAI
         FrostNova_Timer = 30000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -60,28 +60,32 @@ struct boss_scornAI : public ScriptedAI
         {
             DoCastVictim( SPELL_LICHSLAP);
             LichSlap_Timer = 45000;
-        } else LichSlap_Timer -= diff;
+        }
+        else LichSlap_Timer -= diff;
 
         //FrostboltVolley_Timer
         if (FrostboltVolley_Timer <= diff)
         {
             DoCastVictim( SPELL_FROSTBOLTVOLLEY);
             FrostboltVolley_Timer = 20000;
-        } else FrostboltVolley_Timer -= diff;
+        }
+        else FrostboltVolley_Timer -= diff;
 
         //MindFlay_Timer
         if (MindFlay_Timer <= diff)
         {
             DoCastVictim( SPELL_MINDFLAY);
             MindFlay_Timer = 20000;
-        } else MindFlay_Timer -= diff;
+        }
+        else MindFlay_Timer -= diff;
 
         //FrostNova_Timer
         if (FrostNova_Timer <= diff)
         {
             DoCastVictim( SPELL_FROSTNOVA);
             FrostNova_Timer = 15000;
-        } else FrostNova_Timer -= diff;
+        }
+        else FrostNova_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -93,7 +97,7 @@ CreatureAI* GetAI_boss_scorn(Creature* pCreature)
 
 void AddSC_boss_scorn()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_scorn";
     newscript->GetAI = &GetAI_boss_scorn;

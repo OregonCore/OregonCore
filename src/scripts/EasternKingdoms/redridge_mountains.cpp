@@ -65,21 +65,21 @@ struct npc_corporal_keeshanAI : public npc_escortAI
         if (uiI >= 65 && me->GetUnitMovementFlags() == MOVEFLAG_WALK_MODE)
             me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
 
-        switch(uiI)
+        switch (uiI)
         {
-            case 39:
-                SetEscortPaused(true);
-                uiTimer = 2000;
-                uiPhase = 1;
-                break;
-            case 65:
-                me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
-                break;
-            case 115:
-                pPlayer->AreaExploredOrEventHappens(QUEST_MISSING_IN_ACTION);
-                uiTimer = 2000;
-                uiPhase = 4;
-                break;
+        case 39:
+            SetEscortPaused(true);
+            uiTimer = 2000;
+            uiPhase = 1;
+            break;
+        case 65:
+            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            break;
+        case 115:
+            pPlayer->AreaExploredOrEventHappens(QUEST_MISSING_IN_ACTION);
+            uiTimer = 2000;
+            uiPhase = 4;
+            break;
         }
     }
 
@@ -94,35 +94,36 @@ struct npc_corporal_keeshanAI : public npc_escortAI
         {
             if (uiTimer <= uiDiff)
             {
-                switch(uiPhase)
+                switch (uiPhase)
                 {
-                    case 1:
-                        me->SetStandState(UNIT_STAND_STATE_SIT);
-                        uiTimer = 1000;
-                        uiPhase = 2;
-                        break;
-                    case 2:
-                        DoScriptText(SAY_CORPORAL_2,me);
-                        uiTimer = 15000;
-                        uiPhase = 3;
-                        break;
-                    case 3:
-                        DoScriptText(SAY_CORPORAL_3,me);
-                        me->SetStandState(UNIT_STAND_STATE_STAND);
-                        SetEscortPaused(false);
-                        uiTimer = 0;
-                        uiPhase = 0;
-                        break;
-                    case 4:
-                        DoScriptText(SAY_CORPORAL_4, me);
-                        uiTimer = 2500;
-                        uiPhase = 5;
-                    case 5:
-                        DoScriptText(SAY_CORPORAL_5, me);
-                        uiTimer = 0;
-                        uiPhase = 0;
+                case 1:
+                    me->SetStandState(UNIT_STAND_STATE_SIT);
+                    uiTimer = 1000;
+                    uiPhase = 2;
+                    break;
+                case 2:
+                    DoScriptText(SAY_CORPORAL_2, me);
+                    uiTimer = 15000;
+                    uiPhase = 3;
+                    break;
+                case 3:
+                    DoScriptText(SAY_CORPORAL_3, me);
+                    me->SetStandState(UNIT_STAND_STATE_STAND);
+                    SetEscortPaused(false);
+                    uiTimer = 0;
+                    uiPhase = 0;
+                    break;
+                case 4:
+                    DoScriptText(SAY_CORPORAL_4, me);
+                    uiTimer = 2500;
+                    uiPhase = 5;
+                case 5:
+                    DoScriptText(SAY_CORPORAL_5, me);
+                    uiTimer = 0;
+                    uiPhase = 0;
                 }
-            } else uiTimer -= uiDiff;
+            }
+            else uiTimer -= uiDiff;
         }
 
         if (!UpdateVictim())
@@ -132,23 +133,25 @@ struct npc_corporal_keeshanAI : public npc_escortAI
         {
             DoCastVictim(SPELL_MOCKING_BLOW);
             uiMockingBlowTimer = 5000;
-        } else uiMockingBlowTimer -= uiDiff;
+        }
+        else uiMockingBlowTimer -= uiDiff;
 
         if (uiShieldBashTimer <= uiDiff)
         {
             DoCastVictim(SPELL_MOCKING_BLOW);
             uiShieldBashTimer = 8000;
-        } else uiShieldBashTimer -= uiDiff;
+        }
+        else uiShieldBashTimer -= uiDiff;
 
         DoMeleeAttackIfReady();
     }
 };
 
-bool QuestAccept_npc_corporal_keeshan(Player* pPlayer, Creature* pCreature, Quest const *pQuest)
+bool QuestAccept_npc_corporal_keeshan(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     if (pQuest->GetQuestId() == QUEST_MISSING_IN_ACTION)
     {
-        CAST_AI(npc_corporal_keeshanAI,pCreature->AI())->Start(true, false, pPlayer->GetGUID(),pQuest);
+        CAST_AI(npc_corporal_keeshanAI, pCreature->AI())->Start(true, false, pPlayer->GetGUID(), pQuest);
         DoScriptText(SAY_CORPORAL_1, pCreature);
     }
 

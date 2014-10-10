@@ -57,7 +57,7 @@ enum Summons
 
 struct boss_mandokirAI : public ScriptedAI
 {
-    boss_mandokirAI(Creature *c) : ScriptedAI(c)
+    boss_mandokirAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -74,7 +74,7 @@ struct boss_mandokirAI : public ScriptedAI
     float targetY;
     float targetZ;
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     bool endGaze;
     bool someGazed;
@@ -135,7 +135,7 @@ struct boss_mandokirAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
@@ -164,15 +164,13 @@ struct boss_mandokirAI : public ScriptedAI
                     Unit* pUnit = Unit::GetUnit(*me, GazeTarget);
 
                     if (pUnit && (
-                        targetX != pUnit->GetPositionX() ||
-                        targetY != pUnit->GetPositionY() ||
-                        targetZ != pUnit->GetPositionZ() ||
-                        pUnit->isInCombat()))
+                            targetX != pUnit->GetPositionX() ||
+                            targetY != pUnit->GetPositionY() ||
+                            targetZ != pUnit->GetPositionZ() ||
+                            pUnit->isInCombat()))
                     {
                         if (me->IsWithinMeleeRange(pUnit))
-                        {
                             DoCast(pUnit, 24316);
-                        }
                         else
                         {
                             DoCast(pUnit, SPELL_CHARGE);
@@ -189,7 +187,7 @@ struct boss_mandokirAI : public ScriptedAI
 
             if (Gaze_Timer < 8000 && !someGazed)            // 8 second(cast time + expire time) before the check for the gaze effect Mandokir will cast gaze debuff on a random target
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 {
                     DoScriptText(SAY_GAZE, me, pTarget);
                     DoCast(pTarget, SPELL_GAZE);
@@ -251,7 +249,7 @@ struct boss_mandokirAI : public ScriptedAI
                     Fear_Timer = 4000;
                 }
                 else
-                    Fear_Timer -=diff;
+                    Fear_Timer -= diff;
 
                 // Mortal Strike if target is below 50% hp
                 if (me->getVictim() && me->getVictim()->GetHealth() < me->getVictim()->GetMaxHealth() * 0.5f)
@@ -294,20 +292,20 @@ struct boss_mandokirAI : public ScriptedAI
 // Ohgan
 struct mob_ohganAI : public ScriptedAI
 {
-    mob_ohganAI(Creature *c) : ScriptedAI(c)
+    mob_ohganAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
 
     uint32 SunderArmor_Timer;
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     void Reset()
     {
         SunderArmor_Timer = 5000;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void JustDied(Unit* /*Killer*/)
     {
@@ -325,7 +323,7 @@ struct mob_ohganAI : public ScriptedAI
         if (SunderArmor_Timer <= diff)
         {
             DoCastVictim( SPELL_SUNDERARMOR);
-            SunderArmor_Timer = 10000 + rand()%5000;
+            SunderArmor_Timer = 10000 + rand() % 5000;
         }
         else
             SunderArmor_Timer -= diff;
@@ -346,7 +344,7 @@ CreatureAI* GetAI_mob_ohgan(Creature* pCreature)
 
 void AddSC_boss_mandokir()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_mandokir";

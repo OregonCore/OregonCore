@@ -36,7 +36,7 @@ EndScriptData */
 
 struct instance_magtheridons_lair : public ScriptedInstance
 {
-    instance_magtheridons_lair(Map *Map) : ScriptedInstance(Map)
+    instance_magtheridons_lair(Map* Map) : ScriptedInstance(Map)
     {
         Initialize();
     }
@@ -74,7 +74,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
         case 17257:
             MagtheridonGUID = pCreature->GetGUID();
@@ -87,7 +87,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
         case 181713:
             pGo->SetUInt32Value(GAMEOBJECT_FLAGS, 0);
@@ -109,7 +109,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
 
     uint64 GetData64(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
         case DATA_MAGTHERIDON:
             return MagtheridonGUID;
@@ -119,7 +119,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
         case DATA_MAGTHERIDON_EVENT:
             Encounters[0] = data;
@@ -127,12 +127,12 @@ struct instance_magtheridons_lair : public ScriptedInstance
                 RespawnTimer = 10000;
             if (data != IN_PROGRESS)
             {
-                if (GameObject *Door = instance->GetGameObject(DoorGUID))
+                if (GameObject* Door = instance->GetGameObject(DoorGUID))
                     Door->SetGoState(GO_STATE_ACTIVE);
             }
             break;
         case DATA_CHANNELER_EVENT:
-            switch(data)
+            switch (data)
             {
             case NOT_STARTED: // Reset all channelers once one is reset.
                 if (Encounters[1] != NOT_STARTED)
@@ -140,7 +140,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
                     Encounters[1] = NOT_STARTED;
                     for (std::set<uint64>::iterator i = ChannelerGUID.begin(); i != ChannelerGUID.end(); ++i)
                     {
-                        if (Creature *Channeler = instance->GetCreature(*i))
+                        if (Creature* Channeler = instance->GetCreature(*i))
                         {
                             if (Channeler->isAlive())
                                 Channeler->AI()->EnterEvadeMode();
@@ -149,9 +149,10 @@ struct instance_magtheridons_lair : public ScriptedInstance
                         }
                     }
                     CageTimer = 0;
-                    if (GameObject *Door = instance->GetGameObject(DoorGUID))
+                    if (GameObject* Door = instance->GetGameObject(DoorGUID))
                         Door->SetGoState(GO_STATE_ACTIVE);
-                }break;
+                }
+                break;
             case IN_PROGRESS: // Event start.
                 if (Encounters[1] != IN_PROGRESS)
                 {
@@ -159,31 +160,33 @@ struct instance_magtheridons_lair : public ScriptedInstance
                     // Let all five channelers aggro.
                     for (std::set<uint64>::iterator i = ChannelerGUID.begin(); i != ChannelerGUID.end(); ++i)
                     {
-                        Creature *Channeler = instance->GetCreature(*i);
+                        Creature* Channeler = instance->GetCreature(*i);
                         if (Channeler && Channeler->isAlive())
                             Channeler->AI()->AttackStart(Channeler->SelectNearestTarget(999));
                     }
                     // Release Magtheridon after two minutes.
-                    Creature *Magtheridon = instance->GetCreature(MagtheridonGUID);
+                    Creature* Magtheridon = instance->GetCreature(MagtheridonGUID);
                     if (Magtheridon && Magtheridon->isAlive())
                     {
                         Magtheridon->TextEmote("'s bonds begin to weaken!", 0);
                         CageTimer = 120000;
                     }
-                    if (GameObject *Door = instance->GetGameObject(DoorGUID))
+                    if (GameObject* Door = instance->GetGameObject(DoorGUID))
                         Door->SetGoState(GO_STATE_READY);
-                }break;
+                }
+                break;
             case DONE: // Add buff and check if all channelers are dead.
                 for (std::set<uint64>::iterator i = ChannelerGUID.begin(); i != ChannelerGUID.end(); ++i)
                 {
-                    Creature *Channeler = instance->GetCreature(*i);
+                    Creature* Channeler = instance->GetCreature(*i);
                     if (Channeler && Channeler->isAlive())
                     {
                         //Channeler->CastSpell(Channeler, SPELL_SOUL_TRANSFER, true);
                         data = IN_PROGRESS;
                         break;
                     }
-                }break;
+                }
+                break;
             }
             Encounters[1] = data;
             break;
@@ -210,14 +213,15 @@ struct instance_magtheridons_lair : public ScriptedInstance
         {
             if (CageTimer <= diff)
             {
-                Creature *Magtheridon = instance->GetCreature(MagtheridonGUID);
+                Creature* Magtheridon = instance->GetCreature(MagtheridonGUID);
                 if (Magtheridon && Magtheridon->isAlive())
                 {
                     Magtheridon->ClearUnitState(UNIT_STATE_STUNNED);
                     Magtheridon->AI()->AttackStart(Magtheridon->SelectNearestTarget(999));
                 }
                 CageTimer = 0;
-            } else CageTimer -= diff;
+            }
+            else CageTimer -= diff;
         }
 
         if (RespawnTimer)
@@ -226,7 +230,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
             {
                 for (std::set<uint64>::iterator i = ChannelerGUID.begin(); i != ChannelerGUID.end(); ++i)
                 {
-                    if (Creature *Channeler = instance->GetCreature(*i))
+                    if (Creature* Channeler = instance->GetCreature(*i))
                     {
                         if (Channeler->isAlive())
                             Channeler->AI()->EnterEvadeMode();
@@ -235,7 +239,8 @@ struct instance_magtheridons_lair : public ScriptedInstance
                     }
                 }
                 RespawnTimer = 0;
-            } else RespawnTimer -= diff;
+            }
+            else RespawnTimer -= diff;
         }
     }
 };
@@ -247,7 +252,7 @@ InstanceData* GetInstanceData_instance_magtheridons_lair(Map* map)
 
 void AddSC_instance_magtheridons_lair()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_magtheridons_lair";
     newscript->GetInstanceData = &GetInstanceData_instance_magtheridons_lair;

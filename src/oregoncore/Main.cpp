@@ -57,31 +57,31 @@ DatabaseType LoginDatabase;                                 ///< Accessor to the
 uint32 realmID;                                             ///< Id of the realm
 
 // Print out the usage string for this program on the console.
-void usage(const char *prog)
+void usage(const char* prog)
 {
     sLog.outString("Usage: \n %s [<options>]\n"
-        "    -v, --version            print version and exit\n\r"
-        "    -c config_file           use config_file as configuration file\n\r"
-        #ifdef _WIN32
-        "    Running as service functions:\n\r"
-        "    -s run                   run as service\n\r"
-        "    -s install               install service\n\r"
-        "    -s uninstall             uninstall service\n\r"
-        #endif
-        ,prog);
+                   "    -v, --version            print version and exit\n\r"
+                   "    -c config_file           use config_file as configuration file\n\r"
+                   #ifdef _WIN32
+                   "    Running as service functions:\n\r"
+                   "    -s run                   run as service\n\r"
+                   "    -s install               install service\n\r"
+                   "    -s uninstall             uninstall service\n\r"
+                   #endif
+                   , prog);
 }
 
 // Launch the oregon server
-extern int main(int argc, char **argv)
+extern int main(int argc, char** argv)
 {
     // Command line parsing
     char const* cfg_file = _OREGON_CORE_CONFIG;
 
-#ifdef _WIN32
-    char const *options = ":c:s:";
-#else
-    char const *options = ":c:";
-#endif
+    #ifdef _WIN32
+    char const* options = ":c:s:";
+    #else
+    char const* options = ":c:";
+    #endif
 
     ACE_Get_Opt cmd_opts(argc, argv, options);
     cmd_opts.long_option("version", 'v');
@@ -91,16 +91,16 @@ extern int main(int argc, char **argv)
     {
         switch (option)
         {
-            case 'c':
-                cfg_file = cmd_opts.opt_arg();
-                break;
-            case 'v':
-                printf("%s\n", _FULLVERSION);
-                return 0;
-#ifdef _WIN32
-            case 's':
+        case 'c':
+            cfg_file = cmd_opts.opt_arg();
+            break;
+        case 'v':
+            printf("%s\n", _FULLVERSION);
+            return 0;
+            #ifdef _WIN32
+        case 's':
             {
-                const char *mode = cmd_opts.opt_arg();
+                const char* mode = cmd_opts.opt_arg();
 
                 if (!strcmp(mode, "install"))
                 {
@@ -124,15 +124,15 @@ extern int main(int argc, char **argv)
                 }
                 break;
             }
-#endif
-            case ':':
-                sLog.outError("Runtime-Error: -%c option requires an input argument", cmd_opts.opt_opt());
-                usage(argv[0]);
-                return 1;
-            default:
-                sLog.outError("Runtime-Error: bad format of commandline arguments");
-                usage(argv[0]);
-                return 1;
+            #endif
+        case ':':
+            sLog.outError("Runtime-Error: -%c option requires an input argument", cmd_opts.opt_opt());
+            usage(argv[0]);
+            return 1;
+        default:
+            sLog.outError("Runtime-Error: bad format of commandline arguments");
+            usage(argv[0]);
+            return 1;
         }
     }
 
@@ -191,7 +191,7 @@ extern int main(int argc, char **argv)
         arg0.append(1, '"');
         arg0.append(argv[0]);
         arg0.append(1, '"');
-       
+
         char* path = argv[0];
         argv[0] = const_cast<char*>(arg0.c_str());
         _execv(path, argv);

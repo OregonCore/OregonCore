@@ -50,46 +50,52 @@ volatile uint32 Master::m_masterLoopCounter = 0;
 
 class FreezeDetectorRunnable : public ACE_Based::Runnable
 {
-public:
-    FreezeDetectorRunnable() { _delaytime = 0; }
-    uint32 m_loops, m_lastchange;
-    uint32 w_loops, w_lastchange;
-    uint32 _delaytime;
-    void SetDelayTime(uint32 t) { _delaytime = t; }
-    void run(void)
-    {
-        if (!_delaytime)
-            return;
-        sLog.outString("Starting up anti-freeze thread (%u seconds max stuck time)...",_delaytime/1000);
-        m_loops = 0;
-        w_loops = 0;
-        m_lastchange = 0;
-        w_lastchange = 0;
-        for (;;)
+    public:
+        FreezeDetectorRunnable()
         {
-            ACE_Based::Thread::Sleep(1000);
-            /* Windows' Sleep() returns void so
-               we cant be sure if Sleep() was interrupted
-               by shutdown. So check if world is running here.
-               Else this will detect false positive. */
-            if (World::IsStopped())
-                break;
-            uint32 curtime = getMSTime();
-            // normal work
-            if (w_loops != World::m_worldLoopCounter)
-            {
-                w_lastchange = curtime;
-                w_loops = World::m_worldLoopCounter;
-            }
-            // possible freeze
-            else if (getMSTimeDiff(w_lastchange,curtime) > _delaytime)
-            {
-                sLog.outError("World Thread is stuck.  Terminating server!");
-                *((uint32 volatile*)NULL) = 0;                       // bang crash
-            }
+            _delaytime = 0;
         }
-        sLog.outString("Anti-freeze thread exiting without problems.");
-    }
+        uint32 m_loops, m_lastchange;
+        uint32 w_loops, w_lastchange;
+        uint32 _delaytime;
+        void SetDelayTime(uint32 t)
+        {
+            _delaytime = t;
+        }
+        void run(void)
+        {
+            if (!_delaytime)
+                return;
+            sLog.outString("Starting up anti-freeze thread (%u seconds max stuck time)...", _delaytime / 1000);
+            m_loops = 0;
+            w_loops = 0;
+            m_lastchange = 0;
+            w_lastchange = 0;
+            for (;;)
+            {
+                ACE_Based::Thread::Sleep(1000);
+                /* Windows' Sleep() returns void so
+                   we cant be sure if Sleep() was interrupted
+                   by shutdown. So check if world is running here.
+                   Else this will detect false positive. */
+                if (World::IsStopped())
+                    break;
+                uint32 curtime = getMSTime();
+                // normal work
+                if (w_loops != World::m_worldLoopCounter)
+                {
+                    w_lastchange = curtime;
+                    w_loops = World::m_worldLoopCounter;
+                }
+                // possible freeze
+                else if (getMSTimeDiff(w_lastchange, curtime) > _delaytime)
+                {
+                    sLog.outError("World Thread is stuck.  Terminating server!");
+                    *((uint32 volatile*)NULL) = 0;                       // bang crash
+                }
+            }
+            sLog.outString("Anti-freeze thread exiting without problems.");
+        }
 };
 
 Master::Master()
@@ -140,17 +146,17 @@ int Master::Run()
     LoginDatabase.PExecute("UPDATE realmlist SET realmflags = realmflags & ~(%u), population = 0, realmbuilds = '%s'  WHERE id = '%d'", REALM_FLAG_OFFLINE, builds.c_str(), realmID);
 
     sConsole.SetLoading(false);
-    
+
     // Catch termination signals
     _HookSignals();
 
     ACE_Based::Thread* cliThread = NULL;
 
-#ifdef _WIN32
+    #ifdef _WIN32
     if (sConfig.GetBoolDefault("Console.Enable", true) && (m_ServiceStatus == -1)/* need disable console in service mode*/)
-#else
+    #else
     if (sConfig.GetBoolDefault("Console.Enable", true))
-#endif
+    #endif
     {
         // Launch CliRunnable thread
         cliThread = new ACE_Based::Thread(new Console::CliRunnable);
@@ -169,20 +175,18 @@ int Master::Run()
             ULONG_PTR appAff;
             ULONG_PTR sysAff;
 
-            if (GetProcessAffinityMask(hProcess,&appAff,&sysAff))
+            if (GetProcessAffinityMask(hProcess, &appAff, &sysAff))
             {
                 ULONG_PTR curAff = Aff & appAff;            // remove non accessible processors
 
                 if (!curAff)
-                {
-                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for OregonCore. Accessible processors bitmask (hex): %x",Aff,appAff);
-                }
+                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for OregonCore. Accessible processors bitmask (hex): %x", Aff, appAff);
                 else
                 {
-                    if (SetProcessAffinityMask(hProcess,curAff))
+                    if (SetProcessAffinityMask(hProcess, curAff))
                         sLog.outString("Using processors (bitmask, hex): %x", curAff);
                     else
-                        sLog.outError("Can't set used processors (hex): %x",curAff);
+                        sLog.outError("Can't set used processors (hex): %x", curAff);
                 }
             }
             sLog.outString();
@@ -192,7 +196,7 @@ int Master::Run()
 
         if (Prio)
         {
-            if (SetPriorityClass(hProcess,HIGH_PRIORITY_CLASS))
+            if (SetPriorityClass(hProcess, HIGH_PRIORITY_CLASS))
                 sLog.outString("OregonCore process priority class set to HIGH");
             else
                 sLog.outError("ERROR: Can't set OregonCore process priority class.");
@@ -206,7 +210,7 @@ int Master::Run()
 
     if (sConfig.GetBoolDefault("SOAP.Enabled", false))
     {
-        OCSoapRunnable *runnable = new OCSoapRunnable();
+        OCSoapRunnable* runnable = new OCSoapRunnable();
 
         runnable->setListenArguments(sConfig.GetStringDefault("SOAP.IP", "127.0.0.1"), sConfig.GetIntDefault("SOAP.Port", 7878));
         soap_thread = new ACE_Based::Thread(runnable);
@@ -218,8 +222,8 @@ int Master::Run()
     ACE_Based::Thread* freeze_thread = NULL;
     if (uint32 freeze_delay = sConfig.GetIntDefault("MaxCoreStuckTime", 0))
     {
-        FreezeDetectorRunnable *fdr = new FreezeDetectorRunnable();
-        fdr->SetDelayTime(freeze_delay*1000);
+        FreezeDetectorRunnable* fdr = new FreezeDetectorRunnable();
+        fdr->SetDelayTime(freeze_delay * 1000);
         freeze_thread = new ACE_Based::Thread(fdr);
         freeze_thread->setPriority(ACE_Based::Highest);
     }
@@ -311,7 +315,7 @@ void Master::_StartDB()
 
     // Initialise the world database
     if (!WorldDatabase.Initialize(dbstring.c_str()))
-        sLog.outFatal("Cannot connect to world database %s",dbstring.c_str());
+        sLog.outFatal("Cannot connect to world database %s", dbstring.c_str());
 
     // Get character database info from configuration file
     dbstring = sConfig.GetStringDefault("CharacterDatabaseInfo", "");
@@ -320,7 +324,7 @@ void Master::_StartDB()
 
     // Initialise the Character database
     if (!CharacterDatabase.Initialize(dbstring.c_str()))
-        sLog.outFatal("Cannot connect to Character database %s",dbstring.c_str());
+        sLog.outFatal("Cannot connect to Character database %s", dbstring.c_str());
 
     // Get login database info from configuration file
     dbstring = sConfig.GetStringDefault("LoginDatabaseInfo", "");
@@ -329,7 +333,7 @@ void Master::_StartDB()
 
     // Initialise the login database
     if (!LoginDatabase.Initialize(dbstring.c_str()))
-        sLog.outFatal("Cannot connect to login database %s",dbstring.c_str());
+        sLog.outFatal("Cannot connect to login database %s", dbstring.c_str());
 
     // Get the realm Id from the configuration file
     realmID = sConfig.GetIntDefault("RealmID", 0);
@@ -369,15 +373,15 @@ void Master::_OnSignal(int s)
 {
     switch (s)
     {
-        case SIGINT:
-            World::StopNow(SHUTDOWN_EXIT_CODE);
-            break;
-        case SIGTERM:
+    case SIGINT:
+        World::StopNow(SHUTDOWN_EXIT_CODE);
+        break;
+    case SIGTERM:
         #ifdef _WIN32
-        case SIGBREAK:
+    case SIGBREAK:
         #endif
-            World::StopNow(SHUTDOWN_EXIT_CODE);
-            break;
+        World::StopNow(SHUTDOWN_EXIT_CODE);
+        break;
     }
 
     signal(s, _OnSignal);

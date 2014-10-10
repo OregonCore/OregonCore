@@ -25,7 +25,7 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "ScriptedSimpleAI.h"
 
-SimpleAI::SimpleAI(Creature *c) : ScriptedAI(c)
+SimpleAI::SimpleAI(Creature* c) : ScriptedAI(c)
 {
     //Clear all data
     Aggro_TextId[0] = 0;
@@ -53,7 +53,7 @@ SimpleAI::SimpleAI(Creature *c) : ScriptedAI(c)
     Kill_Spell = 0;
     Kill_Target_Type = 0;
 
-    memset(Spell,0,sizeof(Spell));
+    memset(Spell, 0, sizeof(Spell));
 
     EnterEvadeMode();
 }
@@ -62,7 +62,7 @@ void SimpleAI::Reset()
 {
 }
 
-void SimpleAI::EnterCombat(Unit *who)
+void SimpleAI::EnterCombat(Unit* who)
 {
     //Reset cast timers
     if (Spell[0].First_Cast >= 0)
@@ -96,7 +96,7 @@ void SimpleAI::EnterCombat(Unit *who)
         Spell_Timer[9] = Spell[9].First_Cast;
     else Spell_Timer[9] = 1000;
 
-    uint8 random_text = urand(0,2);
+    uint8 random_text = urand(0, 2);
 
     //Random text
     if (Aggro_TextId[random_text])
@@ -107,9 +107,9 @@ void SimpleAI::EnterCombat(Unit *who)
         DoPlaySoundToSet(me, Aggro_Sound[random_text]);
 }
 
-void SimpleAI::KilledUnit(Unit *victim)
+void SimpleAI::KilledUnit(Unit* victim)
 {
-    uint8 random_text = urand(0,2);
+    uint8 random_text = urand(0, 2);
 
     //Random yell
     if (Kill_TextId[random_text])
@@ -122,7 +122,7 @@ void SimpleAI::KilledUnit(Unit *victim)
     if (!Kill_Spell)
         return;
 
-    Unit *pTarget = NULL;
+    Unit* pTarget = NULL;
 
     switch (Kill_Target_Type)
     {
@@ -133,13 +133,13 @@ void SimpleAI::KilledUnit(Unit *victim)
         pTarget = me->getVictim();
         break;
     case CAST_HOSTILE_SECOND_AGGRO:
-        pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
+        pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
         break;
     case CAST_HOSTILE_LAST_AGGRO:
-        pTarget = SelectUnit(SELECT_TARGET_BOTTOMAGGRO,0);
+        pTarget = SelectUnit(SELECT_TARGET_BOTTOMAGGRO, 0);
         break;
     case CAST_HOSTILE_RANDOM:
-        pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+        pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
         break;
     case CAST_KILLEDUNIT_VICTIM:
         pTarget = victim;
@@ -151,13 +151,13 @@ void SimpleAI::KilledUnit(Unit *victim)
         DoCast(pTarget, Kill_Spell);
 }
 
-void SimpleAI::DamageTaken(Unit *killer, uint32 &damage)
+void SimpleAI::DamageTaken(Unit* killer, uint32& damage)
 {
     //Return if damage taken won't kill us
     if (me->GetHealth() > damage)
         return;
 
-    uint8 random_text = urand(0,2);
+    uint8 random_text = urand(0, 2);
 
     //Random yell
     if (Death_TextId[random_text])
@@ -170,7 +170,7 @@ void SimpleAI::DamageTaken(Unit *killer, uint32 &damage)
     if (!Death_Spell)
         return;
 
-    Unit *pTarget = NULL;
+    Unit* pTarget = NULL;
 
     switch (Death_Target_Type)
     {
@@ -181,13 +181,13 @@ void SimpleAI::DamageTaken(Unit *killer, uint32 &damage)
         pTarget = me->getVictim();
         break;
     case CAST_HOSTILE_SECOND_AGGRO:
-        pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
+        pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
         break;
     case CAST_HOSTILE_LAST_AGGRO:
-        pTarget = SelectUnit(SELECT_TARGET_BOTTOMAGGRO,0);
+        pTarget = SelectUnit(SELECT_TARGET_BOTTOMAGGRO, 0);
         break;
     case CAST_HOSTILE_RANDOM:
-        pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+        pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
         break;
     case CAST_JUSTDIED_KILLER:
         pTarget = killer;
@@ -215,13 +215,13 @@ void SimpleAI::UpdateAI(const uint32 diff)
         if (Spell_Timer[i] <= diff)
         {
             //Check if this is a percentage based
-            if (Spell[i].First_Cast < 0 && Spell[i].First_Cast > -100 && int32(me->GetHealth()*100 / me->GetMaxHealth()) > -Spell[i].First_Cast)
+            if (Spell[i].First_Cast < 0 && Spell[i].First_Cast > -100 && int32(me->GetHealth() * 100 / me->GetMaxHealth()) > -Spell[i].First_Cast)
                 continue;
 
             //Check Current spell
             if (!(Spell[i].InterruptPreviousCast && me->IsNonMeleeSpellCast(false)))
             {
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
 
                 switch (Spell[i].Cast_Target_Type)
                 {
@@ -232,13 +232,13 @@ void SimpleAI::UpdateAI(const uint32 diff)
                     pTarget = me->getVictim();
                     break;
                 case CAST_HOSTILE_SECOND_AGGRO:
-                    pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
+                    pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
                     break;
                 case CAST_HOSTILE_LAST_AGGRO:
-                    pTarget = SelectUnit(SELECT_TARGET_BOTTOMAGGRO,0);
+                    pTarget = SelectUnit(SELECT_TARGET_BOTTOMAGGRO, 0);
                     break;
                 case CAST_HOSTILE_RANDOM:
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     break;
                 }
 
@@ -252,7 +252,7 @@ void SimpleAI::UpdateAI(const uint32 diff)
 
                     //Yell and sound use the same number so that you can make
                     //the creature yell with the correct sound effect attached
-                    uint8 random_text = urand(0,2);
+                    uint8 random_text = urand(0, 2);
 
                     //Random yell
                     if (Spell[i].TextId[random_text])
@@ -270,7 +270,8 @@ void SimpleAI::UpdateAI(const uint32 diff)
                 Spell_Timer[i] = Spell[i].Cooldown + (rand() % Spell[i].CooldownRandomAddition);
             else Spell_Timer[i] = Spell[i].Cooldown;
 
-        } else Spell_Timer[i] -= diff;
+        }
+        else Spell_Timer[i] -= diff;
 
     }
 

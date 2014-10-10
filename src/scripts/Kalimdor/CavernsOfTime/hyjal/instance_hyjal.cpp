@@ -38,7 +38,10 @@ EndScriptData */
 
 struct instance_mount_hyjal : public ScriptedInstance
 {
-    instance_mount_hyjal(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
+    instance_mount_hyjal(Map* pMap) : ScriptedInstance(pMap)
+    {
+        Initialize();
+    };
 
     uint64 RageWinterchill;
     uint64 Anetheron;
@@ -60,8 +63,8 @@ struct instance_mount_hyjal : public ScriptedInstance
 
     uint32 RaidDamage;
 
-    #define YELL_EFFORTS        "All of your efforts have been in vain, for the draining of the World Tree has already begun. Soon the heart of your world will beat no more."
-    #define YELL_EFFORTS_NAME   "Archimonde"
+#define YELL_EFFORTS        "All of your efforts have been in vain, for the draining of the World Tree has already begun. Soon the heart of your world will beat no more."
+#define YELL_EFFORTS_NAME   "Archimonde"
 
     void Initialize()
     {
@@ -97,22 +100,22 @@ struct instance_mount_hyjal : public ScriptedInstance
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case 182060:
-                HordeGate = pGo->GetGUID();
-                if (allianceRetreat)
-                    pGo->SetGoState(GO_STATE_ACTIVE);
-                else
-                    pGo->SetGoState(GO_STATE_READY);
-                break;
-            case 182061:
-                ElfGate = pGo->GetGUID();
-                if (hordeRetreat)
-                    pGo->SetGoState(GO_STATE_ACTIVE);
-                else
-                    pGo->SetGoState(GO_STATE_READY);
-                break;
+        case 182060:
+            HordeGate = pGo->GetGUID();
+            if (allianceRetreat)
+                pGo->SetGoState(GO_STATE_ACTIVE);
+            else
+                pGo->SetGoState(GO_STATE_READY);
+            break;
+        case 182061:
+            ElfGate = pGo->GetGUID();
+            if (hordeRetreat)
+                pGo->SetGoState(GO_STATE_ACTIVE);
+            else
+                pGo->SetGoState(GO_STATE_READY);
+            break;
         }
     }
 
@@ -123,31 +126,55 @@ struct instance_mount_hyjal : public ScriptedInstance
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-            case 17767: RageWinterchill = pCreature->GetGUID(); break;
-            case 17808: Anetheron = pCreature->GetGUID(); break;
-            case 17888: Kazrogal = pCreature->GetGUID();  break;
-            case 17842: Azgalor = pCreature->GetGUID(); break;
-            case 17968: Archimonde = pCreature->GetGUID(); break;
-            case 17772: JainaProudmoore = pCreature->GetGUID(); break;
-            case 17852: Thrall = pCreature->GetGUID(); break;
-            case 17948: TyrandeWhisperwind = pCreature->GetGUID(); break;
+        case 17767:
+            RageWinterchill = pCreature->GetGUID();
+            break;
+        case 17808:
+            Anetheron = pCreature->GetGUID();
+            break;
+        case 17888:
+            Kazrogal = pCreature->GetGUID();
+            break;
+        case 17842:
+            Azgalor = pCreature->GetGUID();
+            break;
+        case 17968:
+            Archimonde = pCreature->GetGUID();
+            break;
+        case 17772:
+            JainaProudmoore = pCreature->GetGUID();
+            break;
+        case 17852:
+            Thrall = pCreature->GetGUID();
+            break;
+        case 17948:
+            TyrandeWhisperwind = pCreature->GetGUID();
+            break;
         }
     }
 
     uint64 GetData64(uint32 identifier)
     {
-        switch(identifier)
+        switch (identifier)
         {
-            case DATA_RAGEWINTERCHILL: return RageWinterchill;
-            case DATA_ANETHERON: return Anetheron;
-            case DATA_KAZROGAL: return Kazrogal;
-            case DATA_AZGALOR: return Azgalor;
-            case DATA_ARCHIMONDE: return Archimonde;
-            case DATA_JAINAPROUDMOORE: return JainaProudmoore;
-            case DATA_THRALL: return Thrall;
-            case DATA_TYRANDEWHISPERWIND: return TyrandeWhisperwind;
+        case DATA_RAGEWINTERCHILL:
+            return RageWinterchill;
+        case DATA_ANETHERON:
+            return Anetheron;
+        case DATA_KAZROGAL:
+            return Kazrogal;
+        case DATA_AZGALOR:
+            return Azgalor;
+        case DATA_ARCHIMONDE:
+            return Archimonde;
+        case DATA_JAINAPROUDMOORE:
+            return JainaProudmoore;
+        case DATA_THRALL:
+            return Thrall;
+        case DATA_TYRANDEWHISPERWIND:
+            return TyrandeWhisperwind;
         }
 
         return 0;
@@ -155,81 +182,89 @@ struct instance_mount_hyjal : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_RAGEWINTERCHILLEVENT: Encounters[0] = data; break;
-            case DATA_ANETHERONEVENT:
-                Encounters[1] = data;
-                break;
-            case DATA_KAZROGALEVENT:        Encounters[2] = data; break;
-            case DATA_AZGALOREVENT:
+        case DATA_RAGEWINTERCHILLEVENT:
+            Encounters[0] = data;
+            break;
+        case DATA_ANETHERONEVENT:
+            Encounters[1] = data;
+            break;
+        case DATA_KAZROGALEVENT:
+            Encounters[2] = data;
+            break;
+        case DATA_AZGALOREVENT:
+            {
+                Encounters[3] = data;
+                if (data == DONE)
                 {
-                    Encounters[3] = data;
-                    if (data == DONE)
+                    if (ArchiYell)break;
+                    ArchiYell = true;
+
+                    Creature* pCreature = instance->GetCreature(Azgalor);
+                    if (pCreature)
                     {
-                        if (ArchiYell)break;
-                        ArchiYell = true;
+                        Creature* pUnit = pCreature->SummonCreature(21987, pCreature->GetPositionX(), pCreature->GetPositionY(), pCreature->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 10000);
 
-                        Creature* pCreature = instance->GetCreature(Azgalor);
-                        if (pCreature)
+                        Map* pMap = pCreature->GetMap();
+                        if (pMap->IsDungeon() && pUnit)
                         {
-                            Creature* pUnit = pCreature->SummonCreature(21987,pCreature->GetPositionX(),pCreature->GetPositionY(),pCreature->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,10000);
+                            pUnit->SetVisibility(VISIBILITY_OFF);
+                            Map::PlayerList const& PlayerList = pMap->GetPlayers();
+                            if (PlayerList.isEmpty())
+                                return;
 
-                            Map* pMap = pCreature->GetMap();
-                            if (pMap->IsDungeon() && pUnit)
+                            for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                             {
-                                pUnit->SetVisibility(VISIBILITY_OFF);
-                                Map::PlayerList const &PlayerList = pMap->GetPlayers();
-                                if (PlayerList.isEmpty())
-                                     return;
-
-                                for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                                if (i->getSource())
                                 {
-                                     if (i->getSource())
-                                     {
-                                        WorldPacket data(SMSG_MESSAGECHAT, 200);
-                                        pUnit->BuildMonsterChat(&data,CHAT_MSG_MONSTER_YELL,YELL_EFFORTS,0,YELL_EFFORTS_NAME,i->getSource()->GetGUID());
-                                        i->getSource()->GetSession()->SendPacket(&data);
+                                    WorldPacket data(SMSG_MESSAGECHAT, 200);
+                                    pUnit->BuildMonsterChat(&data, CHAT_MSG_MONSTER_YELL, YELL_EFFORTS, 0, YELL_EFFORTS_NAME, i->getSource()->GetGUID());
+                                    i->getSource()->GetSession()->SendPacket(&data);
 
-                                        WorldPacket data2(SMSG_PLAY_SOUND, 4);
-                                        data2 << 10986;
-                                        i->getSource()->GetSession()->SendPacket(&data2);
-                                     }
+                                    WorldPacket data2(SMSG_PLAY_SOUND, 4);
+                                    data2 << 10986;
+                                    i->getSource()->GetSession()->SendPacket(&data2);
                                 }
                             }
                         }
                     }
                 }
-                break;
-            case DATA_ARCHIMONDEEVENT:      Encounters[4] = data; break;
-            case DATA_RESET_TRASH_COUNT:    Trash = 0;            break;
+            }
+            break;
+        case DATA_ARCHIMONDEEVENT:
+            Encounters[4] = data;
+            break;
+        case DATA_RESET_TRASH_COUNT:
+            Trash = 0;
+            break;
 
-            case DATA_TRASH:
-                if (data) Trash = data;
-                else     Trash--;
-                UpdateWorldState(WORLD_STATE_ENEMYCOUNT, Trash);
-                break;
-            case DATA_ALLIANCE_RETREAT:
-                allianceRetreat = data;
-                OpenDoor(HordeGate,true);
-                SaveToDB();
-                break;
-            case DATA_HORDE_RETREAT:
-                hordeRetreat = data;
-                OpenDoor(ElfGate,true);
-                SaveToDB();
-                break;
-            case DATA_RAIDDAMAGE:
-                RaidDamage += data;
-                if (RaidDamage >= MINRAIDDAMAGE)
-                    RaidDamage = MINRAIDDAMAGE;
-                break;
-            case DATA_RESET_RAIDDAMAGE:
-                RaidDamage = 0;
-                break;
+        case DATA_TRASH:
+            if (data) Trash = data;
+            else     Trash--;
+            UpdateWorldState(WORLD_STATE_ENEMYCOUNT, Trash);
+            break;
+        case DATA_ALLIANCE_RETREAT:
+            allianceRetreat = data;
+            OpenDoor(HordeGate, true);
+            SaveToDB();
+            break;
+        case DATA_HORDE_RETREAT:
+            hordeRetreat = data;
+            OpenDoor(ElfGate, true);
+            SaveToDB();
+            break;
+        case DATA_RAIDDAMAGE:
+            RaidDamage += data;
+            if (RaidDamage >= MINRAIDDAMAGE)
+                RaidDamage = MINRAIDDAMAGE;
+            break;
+        case DATA_RESET_RAIDDAMAGE:
+            RaidDamage = 0;
+            break;
         }
 
-         debug_log("OSCR: Instance Hyjal: Instance data updated for event %u (Data=%u)",type,data);
+        debug_log("OSCR: Instance Hyjal: Instance data updated for event %u (Data=%u)", type, data);
 
         if (data == DONE)
             SaveToDB();
@@ -237,17 +272,26 @@ struct instance_mount_hyjal : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_RAGEWINTERCHILLEVENT: return Encounters[0];
-            case DATA_ANETHERONEVENT:      return Encounters[1];
-            case DATA_KAZROGALEVENT:       return Encounters[2];
-            case DATA_AZGALOREVENT:        return Encounters[3];
-            case DATA_ARCHIMONDEEVENT:     return Encounters[4];
-            case DATA_TRASH:               return Trash;
-            case DATA_ALLIANCE_RETREAT:    return allianceRetreat;
-            case DATA_HORDE_RETREAT:       return hordeRetreat;
-            case DATA_RAIDDAMAGE:          return RaidDamage;
+        case DATA_RAGEWINTERCHILLEVENT:
+            return Encounters[0];
+        case DATA_ANETHERONEVENT:
+            return Encounters[1];
+        case DATA_KAZROGALEVENT:
+            return Encounters[2];
+        case DATA_AZGALOREVENT:
+            return Encounters[3];
+        case DATA_ARCHIMONDEEVENT:
+            return Encounters[4];
+        case DATA_TRASH:
+            return Trash;
+        case DATA_ALLIANCE_RETREAT:
+            return allianceRetreat;
+        case DATA_HORDE_RETREAT:
+            return hordeRetreat;
+        case DATA_RAIDDAMAGE:
+            return RaidDamage;
         }
         return 0;
     }
@@ -258,12 +302,13 @@ struct instance_mount_hyjal : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-                for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
-                {
-                    if (Player* player = itr->getSource())
-                        player->SendUpdateWorldState(id,state);
-                }
-        } else debug_log("OSCR: Instance Hyjal: UpdateWorldState, but PlayerList is empty!");
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            {
+                if (Player* player = itr->getSource())
+                    player->SendUpdateWorldState(id, state);
+            }
+        }
+        else debug_log("OSCR: Instance Hyjal: UpdateWorldState, but PlayerList is empty!");
     }
 
     std::string GetSaveData()
@@ -271,7 +316,7 @@ struct instance_mount_hyjal : public ScriptedInstance
         OUT_SAVE_INST_DATA;
         std::ostringstream stream;
         stream << Encounters[0] << " " << Encounters[1] << " " << Encounters[2] << " "
-            << Encounters[3] << " " << Encounters[4] << " " << allianceRetreat << " " << hordeRetreat << " " << RaidDamage;
+               << Encounters[3] << " " << Encounters[4] << " " << allianceRetreat << " " << hordeRetreat << " " << RaidDamage;
         char* out = new char[stream.str().length() + 1];
         strcpy(out, stream.str().c_str());
         if (out)
@@ -309,7 +354,7 @@ InstanceData* GetInstanceData_instance_mount_hyjal(Map* pMap)
 
 void AddSC_instance_mount_hyjal()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_hyjal";
     newscript->GetInstanceData = &GetInstanceData_instance_mount_hyjal;

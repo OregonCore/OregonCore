@@ -36,7 +36,10 @@ EndScriptData */
 
 struct instance_magisters_terrace : public ScriptedInstance
 {
-    instance_magisters_terrace(Map* pMap) : ScriptedInstance(pMap) {Initialize();}
+    instance_magisters_terrace(Map* pMap) : ScriptedInstance(pMap)
+    {
+        Initialize();
+    }
 
     uint32 m_auiEncounter[MAX_ENCOUNTER];
     uint32 DelrissaDeathCount;
@@ -86,87 +89,126 @@ struct instance_magisters_terrace : public ScriptedInstance
 
     uint32 GetData(uint32 identifier)
     {
-        switch(identifier)
+        switch (identifier)
         {
-            case DATA_SELIN_EVENT:          return m_auiEncounter[0];
-            case DATA_VEXALLUS_EVENT:       return m_auiEncounter[1];
-            case DATA_DELRISSA_EVENT:       return m_auiEncounter[2];
-            case DATA_KAELTHAS_EVENT:       return m_auiEncounter[3];
-            case DATA_DELRISSA_DEATH_COUNT: return DelrissaDeathCount;
-            case DATA_FEL_CRYSTAL_SIZE:     return FelCrystals.size();
+        case DATA_SELIN_EVENT:
+            return m_auiEncounter[0];
+        case DATA_VEXALLUS_EVENT:
+            return m_auiEncounter[1];
+        case DATA_DELRISSA_EVENT:
+            return m_auiEncounter[2];
+        case DATA_KAELTHAS_EVENT:
+            return m_auiEncounter[3];
+        case DATA_DELRISSA_DEATH_COUNT:
+            return DelrissaDeathCount;
+        case DATA_FEL_CRYSTAL_SIZE:
+            return FelCrystals.size();
         }
         return 0;
     }
 
     void SetData(uint32 identifier, uint32 data)
     {
-        switch(identifier)
+        switch (identifier)
         {
-            case DATA_SELIN_EVENT:       m_auiEncounter[0] = data;  break;
-            case DATA_VEXALLUS_EVENT:
-                if (data == DONE)
-                    DoUseDoorOrButton(VexallusDoorGUID);
-                m_auiEncounter[1] = data;
-                break;
-            case DATA_DELRISSA_EVENT:
-                if (data == DONE)
-                    DoUseDoorOrButton(DelrissaDoorGUID);
-                if (data == IN_PROGRESS)
-                    DelrissaDeathCount = 0;
-                m_auiEncounter[2] = data;
-                break;
-            case DATA_KAELTHAS_EVENT:    m_auiEncounter[3] = data;  break;
+        case DATA_SELIN_EVENT:
+            m_auiEncounter[0] = data;
+            break;
+        case DATA_VEXALLUS_EVENT:
+            if (data == DONE)
+                DoUseDoorOrButton(VexallusDoorGUID);
+            m_auiEncounter[1] = data;
+            break;
+        case DATA_DELRISSA_EVENT:
+            if (data == DONE)
+                DoUseDoorOrButton(DelrissaDoorGUID);
+            if (data == IN_PROGRESS)
+                DelrissaDeathCount = 0;
+            m_auiEncounter[2] = data;
+            break;
+        case DATA_KAELTHAS_EVENT:
+            m_auiEncounter[3] = data;
+            break;
 
-            case DATA_DELRISSA_DEATH_COUNT:
-                if (data == SPECIAL)
-                    ++DelrissaDeathCount;
-                else
-                    DelrissaDeathCount = 0;
-                break;
+        case DATA_DELRISSA_DEATH_COUNT:
+            if (data == SPECIAL)
+                ++DelrissaDeathCount;
+            else
+                DelrissaDeathCount = 0;
+            break;
         }
     }
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-            case 24723: SelinGUID = pCreature->GetGUID(); break;
-            case 24560: DelrissaGUID = pCreature->GetGUID(); break;
-            case 24722: FelCrystals.push_back(pCreature->GetGUID()); break;
+        case 24723:
+            SelinGUID = pCreature->GetGUID();
+            break;
+        case 24560:
+            DelrissaGUID = pCreature->GetGUID();
+            break;
+        case 24722:
+            FelCrystals.push_back(pCreature->GetGUID());
+            break;
         }
     }
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case 187896:  VexallusDoorGUID = pGo->GetGUID();       break;
-            //SunwellRaid Gate 02
-            case 187979:  SelinDoorGUID = pGo->GetGUID();          break;
-            //Assembly Chamber Door
-            case 188065:  SelinEncounterDoorGUID = pGo->GetGUID(); break;
-            case 187770:  DelrissaDoorGUID = pGo->GetGUID();       break;
-            case 188064:  KaelDoorGUID = pGo->GetGUID();           break;
-            case 188165:  KaelStatue[0] = pGo->GetGUID();          break;
-            case 188166:  KaelStatue[1] = pGo->GetGUID();          break;
+        case 187896:
+            VexallusDoorGUID = pGo->GetGUID();
+            break;
+        //SunwellRaid Gate 02
+        case 187979:
+            SelinDoorGUID = pGo->GetGUID();
+            break;
+        //Assembly Chamber Door
+        case 188065:
+            SelinEncounterDoorGUID = pGo->GetGUID();
+            break;
+        case 187770:
+            DelrissaDoorGUID = pGo->GetGUID();
+            break;
+        case 188064:
+            KaelDoorGUID = pGo->GetGUID();
+            break;
+        case 188165:
+            KaelStatue[0] = pGo->GetGUID();
+            break;
+        case 188166:
+            KaelStatue[1] = pGo->GetGUID();
+            break;
         }
     }
 
     uint64 GetData64(uint32 identifier)
     {
-        switch(identifier)
+        switch (identifier)
         {
-            case DATA_SELIN:                return SelinGUID;
-            case DATA_DELRISSA:             return DelrissaGUID;
-            case DATA_VEXALLUS_DOOR:        return VexallusDoorGUID;
-            case DATA_SELIN_DOOR:           return SelinDoorGUID;
-            case DATA_SELIN_ENCOUNTER_DOOR: return SelinEncounterDoorGUID;
-            case DATA_DELRISSA_DOOR:        return DelrissaDoorGUID;
-            case DATA_KAEL_DOOR:            return KaelDoorGUID;
-            case DATA_KAEL_STATUE_LEFT:     return KaelStatue[0];
-            case DATA_KAEL_STATUE_RIGHT:    return KaelStatue[1];
+        case DATA_SELIN:
+            return SelinGUID;
+        case DATA_DELRISSA:
+            return DelrissaGUID;
+        case DATA_VEXALLUS_DOOR:
+            return VexallusDoorGUID;
+        case DATA_SELIN_DOOR:
+            return SelinDoorGUID;
+        case DATA_SELIN_ENCOUNTER_DOOR:
+            return SelinEncounterDoorGUID;
+        case DATA_DELRISSA_DOOR:
+            return DelrissaDoorGUID;
+        case DATA_KAEL_DOOR:
+            return KaelDoorGUID;
+        case DATA_KAEL_STATUE_LEFT:
+            return KaelStatue[0];
+        case DATA_KAEL_STATUE_RIGHT:
+            return KaelStatue[1];
 
-            case DATA_FEL_CRYSTAL:
+        case DATA_FEL_CRYSTAL:
             {
                 if (FelCrystals.empty())
                 {
@@ -196,7 +238,7 @@ InstanceData* GetInstanceData_instance_magisters_terrace(Map* pMap)
 
 void AddSC_instance_magisters_terrace()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "instance_magisters_terrace";

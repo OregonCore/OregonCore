@@ -34,7 +34,10 @@ EndScriptData */
 
 struct instance_scarlet_monastery : public ScriptedInstance
 {
-    instance_scarlet_monastery(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
+    instance_scarlet_monastery(Map* pMap) : ScriptedInstance(pMap)
+    {
+        Initialize();
+    };
 
     uint64 PumpkinShrineGUID;
     uint64 HorsemanGUID;
@@ -65,29 +68,45 @@ struct instance_scarlet_monastery : public ScriptedInstance
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-        case ENTRY_PUMPKIN_SHRINE: PumpkinShrineGUID = pGo->GetGUID();break;
-        case 104600: DoorHighInquisitorGUID = pGo->GetGUID(); break;
+        case ENTRY_PUMPKIN_SHRINE:
+            PumpkinShrineGUID = pGo->GetGUID();
+            break;
+        case 104600:
+            DoorHighInquisitorGUID = pGo->GetGUID();
+            break;
         }
     }
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-            case ENTRY_HORSEMAN:    HorsemanGUID = pCreature->GetGUID(); break;
-            case ENTRY_HEAD:        HeadGUID = pCreature->GetGUID(); break;
-            case ENTRY_PUMPKIN:     HorsemanAdds.insert(pCreature->GetGUID());break;
-            case 3976: MograineGUID = pCreature->GetGUID(); break;
-            case 3977: WhitemaneGUID = pCreature->GetGUID(); break;
-            case 3981: VorrelGUID = pCreature->GetGUID(); break;
+        case ENTRY_HORSEMAN:
+            HorsemanGUID = pCreature->GetGUID();
+            break;
+        case ENTRY_HEAD:
+            HeadGUID = pCreature->GetGUID();
+            break;
+        case ENTRY_PUMPKIN:
+            HorsemanAdds.insert(pCreature->GetGUID());
+            break;
+        case 3976:
+            MograineGUID = pCreature->GetGUID();
+            break;
+        case 3977:
+            WhitemaneGUID = pCreature->GetGUID();
+            break;
+        case 3981:
+            VorrelGUID = pCreature->GetGUID();
+            break;
         }
     }
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
         case TYPE_MOGRAINE_AND_WHITE_EVENT:
             if (data == IN_PROGRESS)
@@ -119,15 +138,19 @@ struct instance_scarlet_monastery : public ScriptedInstance
 
     uint64 GetData64(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            //case GAMEOBJECT_PUMPKIN_SHRINE:   return PumpkinShrineGUID;
-            //case DATA_HORSEMAN:               return HorsemanGUID;
-            //case DATA_HEAD:                   return HeadGUID;
-            case DATA_MOGRAINE:             return MograineGUID;
-            case DATA_WHITEMANE:            return WhitemaneGUID;
-            case DATA_VORREL:               return VorrelGUID;
-            case DATA_DOOR_WHITEMANE:       return DoorHighInquisitorGUID;
+        //case GAMEOBJECT_PUMPKIN_SHRINE:   return PumpkinShrineGUID;
+        //case DATA_HORSEMAN:               return HorsemanGUID;
+        //case DATA_HEAD:                   return HeadGUID;
+        case DATA_MOGRAINE:
+            return MograineGUID;
+        case DATA_WHITEMANE:
+            return WhitemaneGUID;
+        case DATA_VORREL:
+            return VorrelGUID;
+        case DATA_DOOR_WHITEMANE:
+            return DoorHighInquisitorGUID;
         }
         return 0;
     }
@@ -149,7 +172,7 @@ InstanceData* GetInstanceData_instance_scarlet_monastery(Map* pMap)
 
 void AddSC_instance_scarlet_monastery()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_scarlet_monastery";
     newscript->GetInstanceData = &GetInstanceData_instance_scarlet_monastery;

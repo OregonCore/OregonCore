@@ -26,9 +26,9 @@
 CreatureFormationInfoType   CreatureFormationMap;
 CreatureFormationDataType   CreatureFormationDataMap;
 
-void CreatureFormationManager::AddCreatureToFormation(uint32 formationId, Creature *member)
+void CreatureFormationManager::AddCreatureToFormation(uint32 formationId, Creature* member)
 {
-    Map *map = member->FindMap();
+    Map* map = member->FindMap();
     if (!map)
         return;
 
@@ -50,14 +50,14 @@ void CreatureFormationManager::AddCreatureToFormation(uint32 formationId, Creatu
     }
 }
 
-void CreatureFormationManager::RemoveCreatureFromFormation(CreatureFormation *formation, Creature *member)
+void CreatureFormationManager::RemoveCreatureFromFormation(CreatureFormation* formation, Creature* member)
 {
     sLog.outDebug("Deleting member pointer to GUID: %u from formation %u", formation->GetId(), member->GetDBTableGUIDLow());
     formation->RemoveMember(member);
 
     if (formation->isEmpty())
     {
-        Map *map = member->FindMap();
+        Map* map = member->FindMap();
         if (!map)
             return;
 
@@ -94,17 +94,13 @@ void CreatureFormationManager::LoadCreatureFormations()
     result = WorldDatabase.Query("SELECT COUNT(formationId) FROM creature_formations WHERE formationId NOT IN (SELECT formationId FROM creature_formation_data)");
 
     if (result)
-    {
-        sLog.outDetail(">> %u Formations without member found, formations skipped.",result->Fetch()->GetInt32());
-    }
+        sLog.outDetail(">> %u Formations without member found, formations skipped.", result->Fetch()->GetInt32());
 
     //Check if member without formation exist
     result = WorldDatabase.Query("SELECT COUNT(formationId) FROM creature_formation_data WHERE formationId NOT IN (SELECT formationId FROM creature_formations)");
 
     if (result)
-    {
-        sLog.outDetail(">> %u Member without formation found, member skipped.",result->Fetch()->GetInt32());
-    }
+        sLog.outDetail(">> %u Member without formation found, member skipped.", result->Fetch()->GetInt32());
 
     //Get formations
     QueryResult_AutoPtr result_data = WorldDatabase.Query("SELECT formationId, leaderGUID, formationAI FROM creature_formations WHERE formationId IN (SELECT formationId FROM creature_formation_data) ORDER BY formationId");
@@ -130,28 +126,29 @@ void CreatureFormationManager::LoadCreatureFormations()
 
     if (guidResult)
     {
-        do 
+        do
         {
-            Field *fields = guidResult->Fetch();
+            Field* fields = guidResult->Fetch();
             uint32 guid = fields[0].GetUInt32();
 
             guidSet.insert(guid);
 
-        } while (guidResult->NextRow());
+        }
+        while (guidResult->NextRow());
     }
 
     //Loading formations...
     uint64 total_formations = result_data->GetRowCount();
     uint64 total_member = result_member->GetRowCount();
 
-    Field *fields;
+    Field* fields;
 
-    FormationInfo *formation_info;
+    FormationInfo* formation_info;
 
     do
     {
         fields = result_data->Fetch();
-        
+
         //Load formation member data
         uint32 formationId = fields[0].GetUInt32();
         uint32 leaderGUID = fields[1].GetUInt32();
@@ -159,7 +156,7 @@ void CreatureFormationManager::LoadCreatureFormations()
 
         formation_info                        = new FormationInfo;
         formation_info->leaderGUID            = leaderGUID;
-        formation_info->formationAI           = formationAI; 
+        formation_info->formationAI           = formationAI;
 
         // check data correctness
         if (guidSet.find(formation_info->leaderGUID) == guidSet.end())
@@ -178,12 +175,12 @@ void CreatureFormationManager::LoadCreatureFormations()
 
 
     //Loading member...
-    FormationData *formation_data;
+    FormationData* formation_data;
 
     do
     {
         fields = result_member->Fetch();
-        
+
         //Load formation member data
         uint32 formationId = fields[0].GetUInt32();
         uint32 memberGUID = fields[1].GetUInt32();
@@ -192,8 +189,8 @@ void CreatureFormationManager::LoadCreatureFormations()
 
         formation_data                        = new FormationData;
         formation_data->formationId           = formationId;
-        formation_data->follow_dist           = follow_dist; 
-        formation_data->follow_angle          = follow_angle; 
+        formation_data->follow_dist           = follow_dist;
+        formation_data->follow_angle          = follow_angle;
 
         // check data correctness
         if (guidSet.find(memberGUID) == guidSet.end())
@@ -214,7 +211,7 @@ void CreatureFormationManager::LoadCreatureFormations()
     sLog.outString(">> Loaded " UI64FMTD " creatures in formations", total_member);
 }
 
-void CreatureFormation::AddMember(Creature *member)
+void CreatureFormation::AddMember(Creature* member)
 {
     if (!member)
         return;
@@ -222,8 +219,8 @@ void CreatureFormation::AddMember(Creature *member)
     uint32 memberGUID = member->GetDBTableGUIDLow();
 
     sLog.outDebug("CreatureFormation::AddMember: Adding unit GUID: %u to formation.", memberGUID);
-    
-    Formation *formation;
+
+    Formation* formation;
     formation = new Formation;
 
     //Check if it is a leader
@@ -239,27 +236,27 @@ void CreatureFormation::AddMember(Creature *member)
         formation->follow_dist = CreatureFormationDataMap.find(memberGUID)->second->follow_dist;
         formation->follow_angle = CreatureFormationDataMap.find(memberGUID)->second->follow_angle;
     }
-    
-    formation->formationAI = CreatureFormationMap.find(m_formationID)->second->formationAI; 
-    formation->leaderGUID = CreatureFormationMap.find(m_formationID)->second->leaderGUID; 
+
+    formation->formationAI = CreatureFormationMap.find(m_formationID)->second->formationAI;
+    formation->leaderGUID = CreatureFormationMap.find(m_formationID)->second->leaderGUID;
 
     m_members[member] = formation;
     member->SetFormation(this);
 }
 
-void CreatureFormation::RemoveMember(Creature *member)
+void CreatureFormation::RemoveMember(Creature* member)
 {
     if (!member)
         return;
 
     if (m_leader == member)
         m_leader = NULL;
-    
+
     m_members.erase(member);
     member->SetFormation(NULL);
 }
 
-void CreatureFormation::MemberAttackStart(Creature *member, Unit *target)
+void CreatureFormation::MemberAttackStart(Creature* member, Unit* target)
 {
     uint8 formationAI = CreatureFormationMap[m_formationID]->formationAI;
 
@@ -319,7 +316,7 @@ void CreatureFormation::LeaderMoveTo(float x, float y, float z)
 
     for (CreatureFormationMemberType::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {
-        Creature *pCreature = itr->first;
+        Creature* pCreature = itr->first;
         if (pCreature == m_leader || !pCreature->isAlive() || pCreature->getVictim())
             continue;
 

@@ -29,7 +29,10 @@ EndScriptData */
 
 struct instance_ramparts : public ScriptedInstance
 {
-    instance_ramparts(Map *map) : ScriptedInstance(map){Initialize();}
+    instance_ramparts(Map* map) : ScriptedInstance(map)
+    {
+        Initialize();
+    }
 
     uint32 Encounter[ENCOUNTERS];
     std::string str_data;
@@ -71,20 +74,20 @@ struct instance_ramparts : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_GARGOLMAR:
-                if (Encounter[0] != DONE)
-                    Encounter[0] = data;
-                break;
-            case DATA_OMOR:
-                if (Encounter[1] != DONE)
-                    Encounter[1] = data;
-                break;
-            case DATA_VAZRUDEN:
-                if (Encounter[2] != DONE)
-                    Encounter[2] = data;
-				break;
+        case DATA_GARGOLMAR:
+            if (Encounter[0] != DONE)
+                Encounter[0] = data;
+            break;
+        case DATA_OMOR:
+            if (Encounter[1] != DONE)
+                Encounter[1] = data;
+            break;
+        case DATA_VAZRUDEN:
+            if (Encounter[2] != DONE)
+                Encounter[2] = data;
+            break;
         }
 
         if (data == DONE)
@@ -96,11 +99,14 @@ struct instance_ramparts : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_GARGOLMAR: return Encounter[0];
-            case DATA_OMOR: return Encounter[1];
-            case DATA_VAZRUDEN: return Encounter[2];
+        case DATA_GARGOLMAR:
+            return Encounter[0];
+        case DATA_OMOR:
+            return Encounter[1];
+        case DATA_VAZRUDEN:
+            return Encounter[2];
         }
         return false;
     }

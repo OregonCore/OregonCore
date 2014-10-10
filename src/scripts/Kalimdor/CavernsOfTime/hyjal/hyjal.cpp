@@ -52,15 +52,15 @@ CreatureAI* GetAI_npc_jaina_proudmoore(Creature* pCreature)
     ai->EnterEvadeMode();
 
     ai->Spell[0].SpellId = SPELL_BLIZZARD;
-    ai->Spell[0].Cooldown = 15000 + rand()%20000;
+    ai->Spell[0].Cooldown = 15000 + rand() % 20000;
     ai->Spell[0].TargetType = TARGETTYPE_RANDOM;
 
     ai->Spell[1].SpellId = SPELL_PYROBLAST;
-    ai->Spell[1].Cooldown = 5500 + rand()%4000;
+    ai->Spell[1].Cooldown = 5500 + rand() % 4000;
     ai->Spell[1].TargetType = TARGETTYPE_RANDOM;
 
     ai->Spell[2].SpellId = SPELL_SUMMON_ELEMENTALS;
-    ai->Spell[2].Cooldown = 15000 + rand()%30000;
+    ai->Spell[2].Cooldown = 15000 + rand() % 30000;
     ai->Spell[2].TargetType = TARGETTYPE_SELF;
 
     return ai;
@@ -91,23 +91,23 @@ bool GossipHello_npc_jaina_proudmoore(Player* pPlayer, Creature* pCreature)
 bool GossipSelect_npc_jaina_proudmoore(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
     hyjalAI* ai = CAST_AI(hyjalAI, pCreature->AI());
-    switch(uiAction)
+    switch (uiAction)
     {
-        case GOSSIP_ACTION_INFO_DEF + 1:
-            ai->StartEvent(pPlayer);
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 2:
-            ai->FirstBossDead = true;
-            ai->WaveCount = 9;
-            ai->StartEvent(pPlayer);
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-            ai->Retreat();
-            break;
-         case GOSSIP_ACTION_INFO_DEF:
-            ai->Debug = !ai->Debug;
-            debug_log("OSCR: HyjalAI - Debug mode has been toggled");
-            break;
+    case GOSSIP_ACTION_INFO_DEF + 1:
+        ai->StartEvent(pPlayer);
+        break;
+    case GOSSIP_ACTION_INFO_DEF + 2:
+        ai->FirstBossDead = true;
+        ai->WaveCount = 9;
+        ai->StartEvent(pPlayer);
+        break;
+    case GOSSIP_ACTION_INFO_DEF + 3:
+        ai->Retreat();
+        break;
+    case GOSSIP_ACTION_INFO_DEF:
+        ai->Debug = !ai->Debug;
+        debug_log("OSCR: HyjalAI - Debug mode has been toggled");
+        break;
     }
     return true;
 }
@@ -120,11 +120,11 @@ CreatureAI* GetAI_npc_thrall(Creature* pCreature)
     ai->EnterEvadeMode();
 
     ai->Spell[0].SpellId = SPELL_CHAIN_LIGHTNING;
-    ai->Spell[0].Cooldown = 3000 + rand()%5000;
+    ai->Spell[0].Cooldown = 3000 + rand() % 5000;
     ai->Spell[0].TargetType = TARGETTYPE_VICTIM;
 
     ai->Spell[1].SpellId = SPELL_SUMMON_DIRE_WOLF;
-    ai->Spell[1].Cooldown = 6000 + rand()%35000;
+    ai->Spell[1].Cooldown = 6000 + rand() % 35000;
     ai->Spell[1].TargetType = TARGETTYPE_RANDOM;
 
     return ai;
@@ -161,23 +161,23 @@ bool GossipSelect_npc_thrall(Player* pPlayer, Creature* pCreature, uint32 /*uiSe
 {
     hyjalAI* ai = CAST_AI(hyjalAI, pCreature->AI());
     ai->DeSpawnVeins();//despawn the alliance veins
-    switch(uiAction)
+    switch (uiAction)
     {
-        case GOSSIP_ACTION_INFO_DEF + 1:
-            ai->StartEvent(pPlayer);
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 2:
-            ai->FirstBossDead = true;
-            ai->WaveCount = 9;
-            ai->StartEvent(pPlayer);
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-            ai->Retreat();
-            break;
-        case GOSSIP_ACTION_INFO_DEF:
-            ai->Debug = !ai->Debug;
-            debug_log("OSCR: HyjalAI - Debug mode has been toggled");
-            break;
+    case GOSSIP_ACTION_INFO_DEF + 1:
+        ai->StartEvent(pPlayer);
+        break;
+    case GOSSIP_ACTION_INFO_DEF + 2:
+        ai->FirstBossDead = true;
+        ai->WaveCount = 9;
+        ai->StartEvent(pPlayer);
+        break;
+    case GOSSIP_ACTION_INFO_DEF + 3:
+        ai->Retreat();
+        break;
+    case GOSSIP_ACTION_INFO_DEF:
+        ai->Debug = !ai->Debug;
+        debug_log("OSCR: HyjalAI - Debug mode has been toggled");
+        break;
     }
     return true;
 }
@@ -196,7 +196,7 @@ bool GossipHello_npc_tyrande_whisperwind(Player* pPlayer, Creature* pCreature)
     uint32 AzgalorEvent = ai->GetInstanceData(DATA_AZGALOREVENT);
 
     // Only let them get item if Azgalor is dead.
-    if (AzgalorEvent == DONE && !pPlayer->HasItemCount(ITEM_TEAR_OF_GODDESS,1))
+    if (AzgalorEvent == DONE && !pPlayer->HasItemCount(ITEM_TEAR_OF_GODDESS, 1))
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TYRANDE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
     pPlayer->SEND_GOSSIP_MENU(907, pCreature->GetGUID());
     return true;
@@ -206,23 +206,23 @@ bool GossipSelect_npc_tyrande_whisperwind(Player* pPlayer, Creature* pCreature, 
 {
     if (uiAction == GOSSIP_ACTION_INFO_DEF)
     {
-            ItemPosCountVec dest;
-            uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_TEAR_OF_GODDESS, 1);
-            if (msg == EQUIP_ERR_OK)
-            {
-                 Item* item = pPlayer->StoreNewItem(dest, ITEM_TEAR_OF_GODDESS, true);
-                 if (item && pPlayer)
-                     pPlayer->SendNewItem(item,1,true,false,true);
-            }
-            pPlayer->SEND_GOSSIP_MENU(907, pCreature->GetGUID());
-            CAST_AI(hyjalAI, pCreature->AI());
+        ItemPosCountVec dest;
+        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_TEAR_OF_GODDESS, 1);
+        if (msg == EQUIP_ERR_OK)
+        {
+            Item* item = pPlayer->StoreNewItem(dest, ITEM_TEAR_OF_GODDESS, true);
+            if (item && pPlayer)
+                pPlayer->SendNewItem(item, 1, true, false, true);
+        }
+        pPlayer->SEND_GOSSIP_MENU(907, pCreature->GetGUID());
+        CAST_AI(hyjalAI, pCreature->AI());
     }
     return true;
 }
 
 void AddSC_hyjal()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_jaina_proudmoore";

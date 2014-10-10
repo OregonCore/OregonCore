@@ -52,12 +52,12 @@ EndScriptData */
 
 struct boss_gruulAI : public ScriptedAI
 {
-    boss_gruulAI(Creature *c) : ScriptedAI(c)
+    boss_gruulAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 Growth_Timer;
     uint32 CaveIn_Timer;
@@ -69,13 +69,13 @@ struct boss_gruulAI : public ScriptedAI
 
     void Reset()
     {
-        Growth_Timer= 30000;
-        CaveIn_Timer= 40000;
-        GroundSlamTimer= 35000;
-        GroundSlamStage= 0;
-        PerformingGroundSlam= false;
-        HurtfulStrike_Timer= 8000;
-        Reverberation_Timer= 60000+45000;
+        Growth_Timer = 30000;
+        CaveIn_Timer = 40000;
+        GroundSlamTimer = 35000;
+        GroundSlamStage = 0;
+        PerformingGroundSlam = false;
+        HurtfulStrike_Timer = 8000;
+        Reverberation_Timer = 60000 + 45000;
 
         if (pInstance)
             pInstance->SetData(DATA_GRUULEVENT, NOT_STARTED);
@@ -100,11 +100,17 @@ struct boss_gruulAI : public ScriptedAI
 
     void KilledUnit()
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
-        case 2: DoScriptText(SAY_SLAY3, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_SLAY3, me);
+            break;
         }
     }
 
@@ -118,18 +124,19 @@ struct boss_gruulAI : public ScriptedAI
         // Gruul can cast this spell up to 30 times
         if (Growth_Timer <= diff)
         {
-            DoCast(me,SPELL_GROWTH);
+            DoCast(me, SPELL_GROWTH);
             DoScriptText(EMOTE_GROW, me);
             Growth_Timer = 30000;
-        } else Growth_Timer -= diff;
+        }
+        else Growth_Timer -= diff;
 
         if (PerformingGroundSlam)
         {
             if (GroundSlamTimer <= diff)
             {
-                switch(GroundSlamStage)
+                switch (GroundSlamStage)
                 {
-                    case 0:
+                case 0:
                     {
                         //Begin the whole ordeal
                         std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
@@ -139,7 +146,7 @@ struct boss_gruulAI : public ScriptedAI
                         //First limit the list to only players
                         for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {
-                            Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
+                            Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
 
                             if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                                 knockback_targets.push_back(pTarget);
@@ -148,31 +155,35 @@ struct boss_gruulAI : public ScriptedAI
                         //Now to totally disoriend those players
                         for (std::vector<Unit*>::iterator itr = knockback_targets.begin(); itr != knockback_targets.end(); ++itr)
                         {
-                            Unit *target = *itr;
-                            Unit *target2 = *(knockback_targets.begin() + rand()%knockback_targets.size());
+                            Unit* target = *itr;
+                            Unit* target2 = *(knockback_targets.begin() + rand() % knockback_targets.size());
 
                             if (target && target2)
                             {
-                                switch(rand()%2)
+                                switch (rand() % 2)
                                 {
-                                    case 0: target2->CastSpell(target, SPELL_MAGNETIC_PULL, true, NULL, NULL, me->GetGUID()); break;
-                                    case 1: target2->CastSpell(target, SPELL_KNOCK_BACK, true, NULL, NULL, me->GetGUID()); break;
+                                case 0:
+                                    target2->CastSpell(target, SPELL_MAGNETIC_PULL, true, NULL, NULL, me->GetGUID());
+                                    break;
+                                case 1:
+                                    target2->CastSpell(target, SPELL_KNOCK_BACK, true, NULL, NULL, me->GetGUID());
+                                    break;
                                 }
                             }
                         }
 
                         GroundSlamTimer = 7000;
-                     break;
+                        break;
                     }
 
-                    case 1:
+                case 1:
                     {
                         //Players are going to get stoned
                         std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
 
                         for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {
-                            Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
+                            Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
 
                             if (pTarget)
                             {
@@ -183,17 +194,17 @@ struct boss_gruulAI : public ScriptedAI
 
                         GroundSlamTimer = 5000;
 
-                     break;
+                        break;
                     }
 
-                    case 2:
+                case 2:
                     {
                         DoCast(me, SPELL_SHATTER);
                         GroundSlamTimer = 1000;
-                     break;
+                        break;
                     }
 
-                    case 3:
+                case 3:
                     {
                         //Shatter takes effect
                         // Not Needet Anymore Handled in Spell SPELL_SHATTER
@@ -211,7 +222,7 @@ struct boss_gruulAI : public ScriptedAI
 
                         me->GetMotionMaster()->Clear();
 
-                        Unit *victim = me->getVictim();
+                        Unit* victim = me->getVictim();
                         if (victim)
                         {
                             me->GetMotionMaster()->MoveChase(victim);
@@ -220,51 +231,54 @@ struct boss_gruulAI : public ScriptedAI
 
                         PerformingGroundSlam = false;
 
-                        GroundSlamTimer =120000;
-                        HurtfulStrike_Timer= 8000;
+                        GroundSlamTimer = 120000;
+                        HurtfulStrike_Timer = 8000;
                         if (Reverberation_Timer < 10000)     //Give a little time to the players to undo the damage from shatter
                             Reverberation_Timer += 10000;
 
-                     break;
+                        break;
                     }
                 }
 
                 GroundSlamStage++;
             }
             else
-                GroundSlamTimer-=diff;
+                GroundSlamTimer -= diff;
         }
         else
         {
             // Hurtful Strike
             if (HurtfulStrike_Timer <= diff)
             {
-                Unit *pTarget = NULL;
-                pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
+                Unit* pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
 
                 if (pTarget && me->IsWithinMeleeRange(me->getVictim()))
-                    DoCast(pTarget,SPELL_HURTFUL_STRIKE);
+                    DoCast(pTarget, SPELL_HURTFUL_STRIKE);
                 else
                     DoCastVictim(SPELL_HURTFUL_STRIKE);
 
-                HurtfulStrike_Timer= 8000;
-            } else HurtfulStrike_Timer -= diff;
+                HurtfulStrike_Timer = 8000;
+            }
+            else HurtfulStrike_Timer -= diff;
 
             // Reverberation
             if (Reverberation_Timer <= diff)
             {
                 DoCastVictim( SPELL_REVERBERATION, true);
                 Reverberation_Timer = 30000;
-            } else Reverberation_Timer -= diff;
+            }
+            else Reverberation_Timer -= diff;
 
             // Cave In
             if (CaveIn_Timer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(pTarget,SPELL_CAVE_IN);
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_CAVE_IN);
 
                 CaveIn_Timer = 20000;
-            } else CaveIn_Timer -= diff;
+            }
+            else CaveIn_Timer -= diff;
 
             // Ground Slam, Gronn Lord's Grasp, Stoned, Shatter
             if (GroundSlamTimer <= diff)
@@ -273,11 +287,12 @@ struct boss_gruulAI : public ScriptedAI
                 me->GetMotionMaster()->MoveIdle();
                 me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 
-                PerformingGroundSlam= true;
+                PerformingGroundSlam = true;
                 GroundSlamTimer = 0;
                 GroundSlamStage = 0;
                 DoCastVictim( SPELL_GROUND_SLAM);
-            } else GroundSlamTimer -=diff;
+            }
+            else GroundSlamTimer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -291,7 +306,7 @@ CreatureAI* GetAI_boss_gruul(Creature* pCreature)
 
 void AddSC_boss_gruul()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_gruul";
     newscript->GetAI = &GetAI_boss_gruul;

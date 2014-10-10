@@ -58,15 +58,15 @@ struct npc_tapoke_slim_jahnAI : public npc_escortAI
 
     void WaypointReached(uint32 uiPointId)
     {
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 2:
-                if (me->HasStealthAura())
-                    me->RemoveAurasDueToSpell(SPELL_AURA_MOD_STEALTH);
+        case 2:
+            if (me->HasStealthAura())
+                me->RemoveAurasDueToSpell(SPELL_AURA_MOD_STEALTH);
 
-                SetRun();
-                me->setFaction(FACTION_ENEMY);
-                break;
+            SetRun();
+            me->setFaction(FACTION_ENEMY);
+            break;
         }
     }
 
@@ -102,7 +102,7 @@ struct npc_tapoke_slim_jahnAI : public npc_escortAI
 
     void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
-        if (me->GetHealth()*100 < me->GetMaxHealth()*20)
+        if (me->GetHealth() * 100 < me->GetMaxHealth() * 20)
         {
             if (Player* pPlayer = GetPlayerForEscort())
             {
@@ -155,7 +155,7 @@ bool QuestAccept_npc_mikhail(Player* pPlayer, Creature* pCreature, const Quest* 
 
 void AddSC_wetlands()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_tapoke_slim_jahn";

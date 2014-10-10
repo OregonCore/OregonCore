@@ -54,7 +54,7 @@ struct boss_ysondreAI : public ScriptedAI
 
     void Reset()
     {
-        m_uiSleep_Timer = 15000 + rand()%5000;
+        m_uiSleep_Timer = 15000 + rand() % 5000;
         m_uiNoxiousBreath_Timer = 8000;
         m_uiTailSweep_Timer = 4000;
         //m_uiMarkOfNature_Timer = 45000;
@@ -84,7 +84,7 @@ struct boss_ysondreAI : public ScriptedAI
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_SLEEP);
 
-            m_uiSleep_Timer = 8000 + rand()%7000;
+            m_uiSleep_Timer = 8000 + rand() % 7000;
         }
         else
             m_uiSleep_Timer -= uiDiff;
@@ -93,7 +93,7 @@ struct boss_ysondreAI : public ScriptedAI
         if (m_uiNoxiousBreath_Timer <= uiDiff)
         {
             DoCastVictim( SPELL_NOXIOUSBREATH);
-            m_uiNoxiousBreath_Timer = 14000 + rand()%6000;
+            m_uiNoxiousBreath_Timer = 14000 + rand() % 6000;
         }
         else
             m_uiNoxiousBreath_Timer -= uiDiff;
@@ -101,7 +101,7 @@ struct boss_ysondreAI : public ScriptedAI
         //Tailsweep every 2 seconds
         if (m_uiTailSweep_Timer <= uiDiff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_TAILSWEEP);
 
             m_uiTailSweep_Timer = 2000;
@@ -122,16 +122,16 @@ struct boss_ysondreAI : public ScriptedAI
         if (m_uiLightningWave_Timer <= uiDiff)
         {
             //Cast LIGHTNINGWAVE on a Random target
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_LIGHTNINGWAVE);
 
-            m_uiLightningWave_Timer = 7000 + rand()%5000;
+            m_uiLightningWave_Timer = 7000 + rand() % 5000;
         }
         else
             m_uiLightningWave_Timer -= uiDiff;
 
         //Summon Druids
-        if ((me->GetHealth()*100 / me->GetMaxHealth()) <= (100-(25*m_uiSummonDruidModifier)))
+        if ((me->GetHealth() * 100 / me->GetMaxHealth()) <= (100 - (25 * m_uiSummonDruidModifier)))
         {
             DoScriptText(SAY_SUMMONDRUIDS, me);
 
@@ -148,7 +148,7 @@ struct boss_ysondreAI : public ScriptedAI
 // Summoned druid script
 struct mob_dementeddruidsAI : public ScriptedAI
 {
-    mob_dementeddruidsAI(Creature *c) : ScriptedAI(c) {}
+    mob_dementeddruidsAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 m_uiMoonFire_Timer;
 
@@ -187,7 +187,7 @@ CreatureAI* GetAI_mob_dementeddruids(Creature* pCreature)
 
 void AddSC_boss_ysondre()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_ysondre";

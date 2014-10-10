@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_thebeastAI : public ScriptedAI
 {
-    boss_thebeastAI(Creature *c) : ScriptedAI(c) {}
+    boss_thebeastAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Flamebreak_Timer;
     uint32 Immolate_Timer;
@@ -43,7 +43,7 @@ struct boss_thebeastAI : public ScriptedAI
         TerrifyingRoar_Timer = 23000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -58,22 +58,25 @@ struct boss_thebeastAI : public ScriptedAI
         {
             DoCastVictim( SPELL_FLAMEBREAK);
             Flamebreak_Timer = 10000;
-        } else Flamebreak_Timer -= diff;
+        }
+        else Flamebreak_Timer -= diff;
 
         //Immolate_Timer
         if (Immolate_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_IMMOLATE);
             Immolate_Timer = 8000;
-        } else Immolate_Timer -= diff;
+        }
+        else Immolate_Timer -= diff;
 
         //TerrifyingRoar_Timer
         if (TerrifyingRoar_Timer <= diff)
         {
             DoCastVictim( SPELL_TERRIFYINGROAR);
             TerrifyingRoar_Timer = 20000;
-        } else TerrifyingRoar_Timer -= diff;
+        }
+        else TerrifyingRoar_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -85,7 +88,7 @@ CreatureAI* GetAI_boss_thebeast(Creature* pCreature)
 
 void AddSC_boss_thebeast()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_the_beast";
     newscript->GetAI = &GetAI_boss_thebeast;

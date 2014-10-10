@@ -31,7 +31,7 @@ EndScriptData */
 
 struct boss_ptheradrasAI : public ScriptedAI
 {
-    boss_ptheradrasAI(Creature *c) : ScriptedAI(c) {}
+    boss_ptheradrasAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Dustfield_Timer;
     uint32 Boulder_Timer;
@@ -46,13 +46,13 @@ struct boss_ptheradrasAI : public ScriptedAI
         RepulsiveGaze_Timer = 23000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
     void JustDied(Unit* /*killer*/)
     {
-        me->SummonCreature(12238,28.067f,61.875f,-123.405f,4.67f,TEMPSUMMON_TIMED_DESPAWN,600000);
+        me->SummonCreature(12238, 28.067f, 61.875f, -123.405f, 4.67f, TEMPSUMMON_TIMED_DESPAWN, 600000);
     }
 
     void UpdateAI(const uint32 diff)
@@ -65,31 +65,35 @@ struct boss_ptheradrasAI : public ScriptedAI
         {
             DoCast(me, SPELL_DUSTFIELD);
             Dustfield_Timer = 14000;
-        } else Dustfield_Timer -= diff;
+        }
+        else Dustfield_Timer -= diff;
 
         //Boulder_Timer
         if (Boulder_Timer <= diff)
         {
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            Unit* pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget)
                 DoCast(pTarget, SPELL_BOULDER);
             Boulder_Timer = 10000;
-        } else Boulder_Timer -= diff;
+        }
+        else Boulder_Timer -= diff;
 
         //RepulsiveGaze_Timer
         if (RepulsiveGaze_Timer <= diff)
         {
             DoCastVictim( SPELL_REPULSIVEGAZE);
             RepulsiveGaze_Timer = 20000;
-        } else RepulsiveGaze_Timer -= diff;
+        }
+        else RepulsiveGaze_Timer -= diff;
 
         //Thrash_Timer
         if (Thrash_Timer <= diff)
         {
             DoCast(me, SPELL_THRASH);
             Thrash_Timer = 18000;
-        } else Thrash_Timer -= diff;
+        }
+        else Thrash_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -101,7 +105,7 @@ CreatureAI* GetAI_boss_ptheradras(Creature* pCreature)
 
 void AddSC_boss_ptheradras()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_princess_theradras";
     newscript->GetAI = &GetAI_boss_ptheradras;

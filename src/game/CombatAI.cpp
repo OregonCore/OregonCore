@@ -18,7 +18,7 @@
 #include "CombatAI.h"
 #include "SpellMgr.h"
 
-int AggressorAI::Permissible(const Creature *creature)
+int AggressorAI::Permissible(const Creature* creature)
 {
     // have some hostile factions, it will be selected by IsHostileTo check at MoveInLineOfSight
     if (!creature->isCivilian() && !creature->IsNeutralToAll())
@@ -55,21 +55,21 @@ void CombatAI::Reset()
     events.Reset();
 }
 
-void CombatAI::JustDied(Unit *killer)
+void CombatAI::JustDied(Unit* killer)
 {
     for (SpellVct::iterator i = spells.begin(); i != spells.end(); ++i)
         if (AISpellInfo[*i].condition == AICOND_DIE)
             me->CastSpell(killer, *i, true);
 }
 
-void CombatAI::EnterCombat(Unit *who)
+void CombatAI::EnterCombat(Unit* who)
 {
     for (SpellVct::iterator i = spells.begin(); i != spells.end(); ++i)
     {
         if (AISpellInfo[*i].condition == AICOND_AGGRO)
             me->CastSpell(who, *i, false);
         else if (AISpellInfo[*i].condition == AICOND_COMBAT)
-            events.ScheduleEvent(*i, AISpellInfo[*i].cooldown + rand()%AISpellInfo[*i].cooldown);
+            events.ScheduleEvent(*i, AISpellInfo[*i].cooldown + rand() % AISpellInfo[*i].cooldown);
     }
 }
 
@@ -86,7 +86,7 @@ void CombatAI::UpdateAI(const uint32 diff)
     if (uint32 spellId = events.ExecuteEvent())
     {
         DoCast(spellId);
-        events.ScheduleEvent(spellId, AISpellInfo[spellId].cooldown + rand()%AISpellInfo[spellId].cooldown);
+        events.ScheduleEvent(spellId, AISpellInfo[spellId].cooldown + rand() % AISpellInfo[spellId].cooldown);
     }
     else
         DoMeleeAttackIfReady();
@@ -109,12 +109,12 @@ void CasterAI::InitializeAI()
         m_attackDist = MELEE_RANGE;
 }
 
-void CasterAI::EnterCombat(Unit *who)
+void CasterAI::EnterCombat(Unit* who)
 {
     if (spells.empty())
         return;
 
-    uint32 spell = rand()%spells.size();
+    uint32 spell = rand() % spells.size();
     uint32 count = 0;
     for (SpellVct::iterator itr = spells.begin(); itr != spells.end(); ++itr, ++count)
     {

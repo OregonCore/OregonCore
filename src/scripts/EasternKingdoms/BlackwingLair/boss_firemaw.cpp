@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_firemawAI : public ScriptedAI
 {
-    boss_firemawAI(Creature *c) : ScriptedAI(c) {}
+    boss_firemawAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ShadowFlame_Timer;
     uint32 WingBuffet_Timer;
@@ -43,7 +43,7 @@ struct boss_firemawAI : public ScriptedAI
         FlameBuffet_Timer = 5000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoZoneInCombat();
     }
@@ -57,25 +57,28 @@ struct boss_firemawAI : public ScriptedAI
         if (ShadowFlame_Timer <= diff)
         {
             DoCastVictim( SPELL_SHADOWFLAME);
-            ShadowFlame_Timer = urand(15000,18000);
-        } else ShadowFlame_Timer -= diff;
+            ShadowFlame_Timer = urand(15000, 18000);
+        }
+        else ShadowFlame_Timer -= diff;
 
         //WingBuffet_Timer
         if (WingBuffet_Timer <= diff)
         {
             DoCastVictim( SPELL_WINGBUFFET);
             if (DoGetThreat(me->getVictim()))
-                DoModifyThreatPercent(me->getVictim(),-75);
+                DoModifyThreatPercent(me->getVictim(), -75);
 
             WingBuffet_Timer = 25000;
-        } else WingBuffet_Timer -= diff;
+        }
+        else WingBuffet_Timer -= diff;
 
         //FlameBuffet_Timer
         if (FlameBuffet_Timer <= diff)
         {
             DoCastVictim( SPELL_FLAMEBUFFET);
             FlameBuffet_Timer = 5000;
-        } else FlameBuffet_Timer -= diff;
+        }
+        else FlameBuffet_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -87,7 +90,7 @@ CreatureAI* GetAI_boss_firemaw(Creature* pCreature)
 
 void AddSC_boss_firemaw()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_firemaw";
     newscript->GetAI = &GetAI_boss_firemaw;

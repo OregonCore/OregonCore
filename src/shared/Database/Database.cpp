@@ -62,20 +62,20 @@ Database::~Database()
         mysql_library_end();
 }
 
-bool Database::Initialize(const char *infoString)
+bool Database::Initialize(const char* infoString)
 {
     // Enable logging of SQL commands (usally only GM commands)
     // (See method: PExecuteLog)
     m_logSQL = sConfig.GetBoolDefault("LogSQL", false);
-    m_logsDir = sConfig.GetStringDefault("LogsDir","");
+    m_logsDir = sConfig.GetStringDefault("LogsDir", "");
     if (!m_logsDir.empty())
     {
-        if ((m_logsDir.at(m_logsDir.length()-1)!='/') && (m_logsDir.at(m_logsDir.length()-1)!='\\'))
+        if ((m_logsDir.at(m_logsDir.length() - 1) != '/') && (m_logsDir.at(m_logsDir.length() - 1) != '\\'))
             m_logsDir.append("/");
     }
 
     tranThread = NULL;
-    MYSQL *mysqlInit;
+    MYSQL* mysqlInit;
     mysqlInit = mysql_init(NULL);
     if (!mysqlInit)
     {
@@ -108,7 +108,7 @@ bool Database::Initialize(const char *infoString)
 
     mysql_options(mysqlInit, MYSQL_SET_CHARSET_NAME, "utf8");
     #ifdef _WIN32
-    if (host==".")                                           // named pipe use option (Windows)
+    if (host == ".")                                         // named pipe use option (Windows)
     {
         unsigned int opt = MYSQL_PROTOCOL_PIPE;
         mysql_options(mysqlInit, MYSQL_OPT_PROTOCOL, (char const*)&opt);
@@ -121,7 +121,7 @@ bool Database::Initialize(const char *infoString)
         unix_socket = 0;
     }
     #else
-    if (host==".")                                           // socket use option (Unix/Linux)
+    if (host == ".")                                         // socket use option (Unix/Linux)
     {
         unsigned int opt = MYSQL_PROTOCOL_SOCKET;
         mysql_options(mysqlInit, MYSQL_OPT_PROTOCOL, (char const*)&opt);
@@ -137,7 +137,7 @@ bool Database::Initialize(const char *infoString)
     #endif
 
     mMysql = mysql_real_connect(mysqlInit, host.c_str(), user.c_str(),
-        password.c_str(), database.c_str(), port, unix_socket, 0);
+                                password.c_str(), database.c_str(), port, unix_socket, 0);
 
     if (mMysql)
     {
@@ -155,20 +155,20 @@ bool Database::Initialize(const char *infoString)
         PExecute("SET NAMES `utf8`");
         PExecute("SET CHARACTER SET `utf8`");
 
-    #if MYSQL_VERSION_ID >= 50003
+        #if MYSQL_VERSION_ID >= 50003
         my_bool my_true = (my_bool)1;
         if (mysql_options(mMysql, MYSQL_OPT_RECONNECT, &my_true))
             sLog.outDebug("Failed to turn on MYSQL_OPT_RECONNECT.");
         else
-           sLog.outDebug("Successfully turned on MYSQL_OPT_RECONNECT.");
-    #else
-        #warning "Your mySQL client lib version does not support reconnecting after a timeout.\nIf this causes you any trouble we advice you to upgrade your mySQL client libs to at least mySQL 5.0.13 to resolve this problem."
-    #endif
+            sLog.outDebug("Successfully turned on MYSQL_OPT_RECONNECT.");
+        #else
+#warning "Your mySQL client lib version does not support reconnecting after a timeout.\nIf this causes you any trouble we advice you to upgrade your mySQL client libs to at least mySQL 5.0.13 to resolve this problem."
+        #endif
         return true;
     }
     else
     {
-        sLog.outError("Could not connect to MySQL database at %s: %s", host.c_str(),mysql_error(mysqlInit));
+        sLog.outError("Could not connect to MySQL database at %s: %s", host.c_str(), mysql_error(mysqlInit));
         mysql_close(mysqlInit);
         return false;
     }
@@ -189,22 +189,22 @@ void Database::escape_string(std::string& str)
     if (str.empty())
         return;
 
-    char* buf = new char[str.size()*2+1];
-    escape_string(buf,str.c_str(),str.size());
+    char* buf = new char[str.size() * 2 + 1];
+    escape_string(buf, str.c_str(), str.size());
     str = buf;
     delete[] buf;
 }
 
-unsigned long Database::escape_string(char *to, const char *from, unsigned long length)
+unsigned long Database::escape_string(char* to, const char* from, unsigned long length)
 {
     if (!mMysql || !to || !from || !length)
         return 0;
 
-    return(mysql_real_escape_string(mMysql, to, from, length));
+    return (mysql_real_escape_string(mMysql, to, from, length));
 }
 
 
-bool Database::PExecuteLog(const char * format,...)
+bool Database::PExecuteLog(const char* format, ...)
 {
     if (!format)
         return false;
@@ -215,9 +215,9 @@ bool Database::PExecuteLog(const char * format,...)
     int res = vsnprintf(szQuery, MAX_QUERY_LEN, format, ap);
     va_end(ap);
 
-    if (res==-1)
+    if (res == -1)
     {
-        sLog.outError("SQL Query truncated (and not execute) for format: %s",format);
+        sLog.outError("SQL Query truncated (and not execute) for format: %s", format);
         return false;
     }
 
@@ -226,12 +226,12 @@ bool Database::PExecuteLog(const char * format,...)
         time_t curr;
         tm local;
         time(&curr);                                        // get current time_t value
-        local=*(localtime(&curr));                          // dereference and assign
+        local = *(localtime(&curr));                        // dereference and assign
         char fName[128];
-        sprintf(fName, "%04d-%02d-%02d_logSQL.sql", local.tm_year+1900, local.tm_mon+1, local.tm_mday);
+        sprintf(fName, "%04d-%02d-%02d_logSQL.sql", local.tm_year + 1900, local.tm_mon + 1, local.tm_mday);
 
         FILE* log_file;
-        std::string logsDir_fname = m_logsDir+fName;
+        std::string logsDir_fname = m_logsDir + fName;
         log_file = fopen(logsDir_fname.c_str(), "a");
         if (log_file)
         {
@@ -241,19 +241,19 @@ bool Database::PExecuteLog(const char * format,...)
         else
         {
             // The file could not be opened
-            sLog.outError("SQL-Logging is disabled - Log file for the SQL commands could not be openend: %s",fName);
+            sLog.outError("SQL-Logging is disabled - Log file for the SQL commands could not be openend: %s", fName);
         }
     }
 
     return Execute(szQuery);
 }
 
-void Database::SetResultQueue(SqlResultQueue * queue)
+void Database::SetResultQueue(SqlResultQueue* queue)
 {
     m_queryQueues[ACE_Based::Thread::current()] = queue;
 }
 
-bool Database::_Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD **pFields, uint64* pRowCount, uint32* pFieldCount)
+bool Database::_Query(const char* sql, MYSQL_RES** pResult, MYSQL_FIELD** pFields, uint64* pRowCount, uint32* pFieldCount)
 {
     if (!mMysql)
         return 0;
@@ -273,7 +273,7 @@ bool Database::_Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD **pField
         else
         {
             #ifdef TRINITY_DEBUG
-            sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s,getMSTime()), sql );
+            sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql );
             #endif
         }
 
@@ -295,24 +295,24 @@ bool Database::_Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD **pField
     return true;
 }
 
-QueryResult_AutoPtr Database::Query(const char *sql)
+QueryResult_AutoPtr Database::Query(const char* sql)
 {
-    MYSQL_RES *result = NULL;
-    MYSQL_FIELD *fields = NULL;
+    MYSQL_RES* result = NULL;
+    MYSQL_FIELD* fields = NULL;
     uint64 rowCount = 0;
     uint32 fieldCount = 0;
 
     if (!_Query(sql, &result, &fields, &rowCount, &fieldCount))
         return QueryResult_AutoPtr(NULL);
 
-    QueryResult *queryResult = new QueryResult(result, fields, rowCount, fieldCount);
+    QueryResult* queryResult = new QueryResult(result, fields, rowCount, fieldCount);
 
     queryResult->NextRow();
 
     return QueryResult_AutoPtr(queryResult);
 }
 
-QueryResult_AutoPtr Database::PQuery(const char *format,...)
+QueryResult_AutoPtr Database::PQuery(const char* format, ...)
 {
     if (!format)
         return QueryResult_AutoPtr(NULL);
@@ -323,19 +323,19 @@ QueryResult_AutoPtr Database::PQuery(const char *format,...)
     int res = vsnprintf(szQuery, MAX_QUERY_LEN, format, ap);
     va_end(ap);
 
-    if (res==-1)
+    if (res == -1)
     {
-        sLog.outError("SQL Query truncated (and not execute) for format: %s",format);
+        sLog.outError("SQL Query truncated (and not execute) for format: %s", format);
         return QueryResult_AutoPtr(NULL);
     }
 
     return Query(szQuery);
 }
 
-QueryNamedResult* Database::QueryNamed(const char *sql)
+QueryNamedResult* Database::QueryNamed(const char* sql)
 {
-    MYSQL_RES *result = NULL;
-    MYSQL_FIELD *fields = NULL;
+    MYSQL_RES* result = NULL;
+    MYSQL_FIELD* fields = NULL;
     uint64 rowCount = 0;
     uint32 fieldCount = 0;
 
@@ -344,16 +344,16 @@ QueryNamedResult* Database::QueryNamed(const char *sql)
 
     QueryFieldNames names(fieldCount);
     for (uint32 i = 0; i < fieldCount; i++)
-         names[i] = fields[i].name;
+        names[i] = fields[i].name;
 
-    QueryResult *queryResult = new QueryResult(result, fields, rowCount, fieldCount);
+    QueryResult* queryResult = new QueryResult(result, fields, rowCount, fieldCount);
 
     queryResult->NextRow();
 
     return new QueryNamedResult(queryResult, names);
 }
 
-QueryNamedResult* Database::PQueryNamed(const char *format,...)
+QueryNamedResult* Database::PQueryNamed(const char* format, ...)
 {
     if (!format)
         return NULL;
@@ -364,16 +364,16 @@ QueryNamedResult* Database::PQueryNamed(const char *format,...)
     int res = vsnprintf(szQuery, MAX_QUERY_LEN, format, ap);
     va_end(ap);
 
-    if (res==-1)
+    if (res == -1)
     {
-        sLog.outError("SQL Query truncated (and not execute) for format: %s",format);
+        sLog.outError("SQL Query truncated (and not execute) for format: %s", format);
         return NULL;
     }
 
     return QueryNamed(szQuery);
 }
 
-bool Database::Execute(const char *sql)
+bool Database::Execute(const char* sql)
 {
     if (!mMysql)
         return false;
@@ -394,7 +394,7 @@ bool Database::Execute(const char *sql)
     return true;
 }
 
-bool Database::PExecute(const char * format,...)
+bool Database::PExecute(const char* format, ...)
 {
     if (!format)
         return false;
@@ -405,9 +405,9 @@ bool Database::PExecute(const char * format,...)
     int res = vsnprintf(szQuery, MAX_QUERY_LEN, format, ap);
     va_end(ap);
 
-    if (res==-1)
+    if (res == -1)
     {
-        sLog.outError("SQL Query truncated (and not execute) for format: %s",format);
+        sLog.outError("SQL Query truncated (and not execute) for format: %s", format);
         return false;
     }
 
@@ -435,7 +435,7 @@ bool Database::DirectExecute(const char* sql)
         else
         {
             #ifdef OREGON_DEBUG
-            sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s,getMSTime()), sql);
+            sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
             #endif
         }
     }
@@ -443,7 +443,7 @@ bool Database::DirectExecute(const char* sql)
     return true;
 }
 
-bool Database::DirectPExecute(const char * format,...)
+bool Database::DirectPExecute(const char* format, ...)
 {
     if (!format)
         return false;
@@ -454,16 +454,16 @@ bool Database::DirectPExecute(const char * format,...)
     int res = vsnprintf(szQuery, MAX_QUERY_LEN, format, ap);
     va_end(ap);
 
-    if (res==-1)
+    if (res == -1)
     {
-        sLog.outError("SQL Query truncated (and not execute) for format: %s",format);
+        sLog.outError("SQL Query truncated (and not execute) for format: %s", format);
         return false;
     }
 
     return DirectExecute(szQuery);
 }
 
-bool Database::_TransactionCmd(const char *sql)
+bool Database::_TransactionCmd(const char* sql)
 {
     if (mysql_query(mMysql, sql))
     {

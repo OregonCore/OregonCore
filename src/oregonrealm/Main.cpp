@@ -65,31 +65,31 @@ bool stopEvent = false;                                     // Setting it to tru
 DatabaseType LoginDatabase;                                 // Accessor to the realm server database
 
 // Print out the usage string for this program on the console.
-void usage(const char *prog)
+void usage(const char* prog)
 {
     sLog.outString("Usage: \n %s [<options>]\n"
-        "    -v, --version            print version and exit\n\r"
-        "    -c config_file           use config_file as configuration file\n\r"
-        #ifdef _WIN32
-        "    Running as service functions:\n\r"
-        "    -s run                   run as service\n\r"
-        "    -s install               install service\n\r"
-        "    -s uninstall             uninstall service\n\r"
-        #endif
-        ,prog);
+                   "    -v, --version            print version and exit\n\r"
+                   "    -c config_file           use config_file as configuration file\n\r"
+                   #ifdef _WIN32
+                   "    Running as service functions:\n\r"
+                   "    -s run                   run as service\n\r"
+                   "    -s install               install service\n\r"
+                   "    -s uninstall             uninstall service\n\r"
+                   #endif
+                   , prog);
 }
 
 // Launch the realm server
-extern int main(int argc, char **argv)
+extern int main(int argc, char** argv)
 {
     // Command line parsing
     char const* cfg_file = _OREGON_REALM_CONFIG;
 
-#ifdef _WIN32
-    char const *options = ":c:s:";
-#else
-    char const *options = ":c:";
-#endif
+    #ifdef _WIN32
+    char const* options = ":c:s:";
+    #else
+    char const* options = ":c:";
+    #endif
 
     ACE_Get_Opt cmd_opts(argc, argv, options);
     cmd_opts.long_option("version", 'v');
@@ -99,16 +99,16 @@ extern int main(int argc, char **argv)
     {
         switch (option)
         {
-            case 'c':
-                cfg_file = cmd_opts.opt_arg();
-                break;
-            case 'v':
-                printf("%s\n", _FULLVERSION);
-                return 0;
-#ifdef _WIN32
-            case 's':
+        case 'c':
+            cfg_file = cmd_opts.opt_arg();
+            break;
+        case 'v':
+            printf("%s\n", _FULLVERSION);
+            return 0;
+            #ifdef _WIN32
+        case 's':
             {
-                const char *mode = cmd_opts.opt_arg();
+                const char* mode = cmd_opts.opt_arg();
 
                 if (!strcmp(mode, "install"))
                 {
@@ -132,15 +132,15 @@ extern int main(int argc, char **argv)
                 }
                 break;
             }
-#endif
-            case ':':
-                sLog.outError("Runtime-Error: -%c option requires an input argument", cmd_opts.opt_opt());
-                usage(argv[0]);
-                return 1;
-            default:
-                sLog.outError("Runtime-Error: bad format of commandline arguments");
-                usage(argv[0]);
-                return 1;
+            #endif
+        case ':':
+            sLog.outError("Runtime-Error: -%c option requires an input argument", cmd_opts.opt_opt());
+            usage(argv[0]);
+            return 1;
+        default:
+            sLog.outError("Runtime-Error: bad format of commandline arguments");
+            usage(argv[0]);
+            return 1;
         }
     }
 
@@ -172,11 +172,11 @@ extern int main(int argc, char **argv)
 
     sLog.outDetail("Using ACE: %s", ACE_VERSION);
 
-#if defined (ACE_HAS_EVENT_POLL) || defined (ACE_HAS_DEV_POLL)
+    #if defined (ACE_HAS_EVENT_POLL) || defined (ACE_HAS_DEV_POLL)
     ACE_Reactor::instance(new ACE_Reactor(new ACE_Dev_Poll_Reactor(ACE::max_handles(), 1), 1), true);
-#else
+    #else
     ACE_Reactor::instance(new ACE_Reactor(new ACE_TP_Reactor(), true), true);
-#endif
+    #endif
 
     sLog.outBasic("Max allowed open files is %d", ACE::max_handles());
 
@@ -239,17 +239,15 @@ extern int main(int argc, char **argv)
             ULONG_PTR appAff;
             ULONG_PTR sysAff;
 
-            if (GetProcessAffinityMask(hProcess,&appAff,&sysAff))
+            if (GetProcessAffinityMask(hProcess, &appAff, &sysAff))
             {
                 ULONG_PTR curAff = Aff & appAff;            // remove non accessible processors
 
                 if (!curAff )
-                {
-                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for realmd. Accessible processors bitmask (hex): %x",Aff,appAff);
-                }
+                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for realmd. Accessible processors bitmask (hex): %x", Aff, appAff);
                 else
                 {
-                    if (SetProcessAffinityMask(hProcess,curAff))
+                    if (SetProcessAffinityMask(hProcess, curAff))
                         sLog.outString("Using processors (bitmask, hex): %x", curAff);
                     else
                         sLog.outError("Can't set used processors (hex): %x", curAff);
@@ -262,7 +260,7 @@ extern int main(int argc, char **argv)
 
         if (Prio)
         {
-            if (SetPriorityClass(hProcess,HIGH_PRIORITY_CLASS))
+            if (SetPriorityClass(hProcess, HIGH_PRIORITY_CLASS))
                 sLog.outString("realmd process priority class set to HIGH");
             else
                 sLog.outError("ERROR: Can't set realmd process priority class.");
@@ -290,10 +288,10 @@ extern int main(int argc, char **argv)
             sLog.outDetail("Ping MySQL to keep connection alive");
             LoginDatabase.Query("SELECT 1 FROM realmlist LIMIT 1");
         }
-#ifdef _WIN32
+        #ifdef _WIN32
         if (m_ServiceStatus == 0) stopEvent = true;
         while (m_ServiceStatus == 2) Sleep(1000);
-#endif
+        #endif
     }
 
     // Wait for the delay thread to exit
@@ -312,14 +310,14 @@ void OnSignal(int s)
 {
     switch (s)
     {
-        case SIGINT:
-        case SIGTERM:
-            stopEvent = true;
-            break;
+    case SIGINT:
+    case SIGTERM:
+        stopEvent = true;
+        break;
         #ifdef _WIN32
-        case SIGBREAK:
-            stopEvent = true;
-            break;
+    case SIGBREAK:
+        stopEvent = true;
+        break;
         #endif
     }
 

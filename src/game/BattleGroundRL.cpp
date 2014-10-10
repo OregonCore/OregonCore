@@ -98,7 +98,7 @@ void BattleGroundRL::HandleKillPlayer(Player* player, Player* killer)
         return;
     }
 
-    BattleGround::HandleKillPlayer(player,killer);
+    BattleGround::HandleKillPlayer(player, killer);
 
     UpdateWorldState(0xbb8, GetAlivePlayersCountByTeam(ALLIANCE));
     UpdateWorldState(0xbb9, GetAlivePlayersCountByTeam(HORDE));
@@ -108,7 +108,7 @@ void BattleGroundRL::HandleKillPlayer(Player* player, Player* killer)
 
 bool BattleGroundRL::HandlePlayerUnderMap(Player* player)
 {
-    player->TeleportTo(GetMapId(),1285.810547,1667.896851,39.957642,player->GetOrientation(),false);
+    player->TeleportTo(GetMapId(), 1285.810547, 1667.896851, 39.957642, player->GetOrientation(), false);
     return true;
 }
 
@@ -120,22 +120,22 @@ void BattleGroundRL::HandleAreaTrigger(Player* Source, uint32 Trigger)
 
     //uint32 SpellId = 0;
     //uint64 buff_guid = 0;
-    switch(Trigger)
+    switch (Trigger)
     {
-        case 4696:                                          // buff trigger?
-        case 4697:                                          // buff trigger?
-            break;
-        default:
-            sLog.outError("WARNING: Unhandled AreaTrigger in Battleground: %u", Trigger);
-            Source->GetSession()->SendAreaTriggerMessage("Warning: Unhandled AreaTrigger in Battleground: %u", Trigger);
-            break;
+    case 4696:                                          // buff trigger?
+    case 4697:                                          // buff trigger?
+        break;
+    default:
+        sLog.outError("WARNING: Unhandled AreaTrigger in Battleground: %u", Trigger);
+        Source->GetSession()->SendAreaTriggerMessage("Warning: Unhandled AreaTrigger in Battleground: %u", Trigger);
+        break;
     }
 
     //if (buff_guid)
     //    HandleTriggerBuff(buff_guid,Source);
 }
 
-void BattleGroundRL::FillInitialWorldStates(WorldPacket &data)
+void BattleGroundRL::FillInitialWorldStates(WorldPacket& data)
 {
     data << uint32(0xbb8) << uint32(GetAlivePlayersCountByTeam(ALLIANCE));           // 7
     data << uint32(0xbb9) << uint32(GetAlivePlayersCountByTeam(HORDE));           // 8
@@ -151,10 +151,10 @@ bool BattleGroundRL::SetupBattleGround()
 {
     // gates
     if (  !AddObject(BG_RL_OBJECT_DOOR_1, BG_RL_OBJECT_TYPE_DOOR_1, 1293.561, 1601.938, 31.60557, -1.457349, 0, 0, -0.6658813, 0.7460576, RESPAWN_IMMEDIATELY)
-        || !AddObject(BG_RL_OBJECT_DOOR_2, BG_RL_OBJECT_TYPE_DOOR_2, 1278.648, 1730.557, 31.60557, 1.684245, 0, 0, 0.7460582, 0.6658807, RESPAWN_IMMEDIATELY)
-    // buffs
-        || !AddObject(BG_RL_OBJECT_BUFF_1, BG_RL_OBJECT_TYPE_BUFF_1, 1328.719971, 1632.719971, 36.730400, -1.448624, 0, 0, 0.6626201, -0.7489557, 120)
-        || !AddObject(BG_RL_OBJECT_BUFF_2, BG_RL_OBJECT_TYPE_BUFF_2, 1243.300049, 1699.170044, 34.872601, -0.06981307, 0, 0, 0.03489945, -0.9993908, 120))
+          || !AddObject(BG_RL_OBJECT_DOOR_2, BG_RL_OBJECT_TYPE_DOOR_2, 1278.648, 1730.557, 31.60557, 1.684245, 0, 0, 0.7460582, 0.6658807, RESPAWN_IMMEDIATELY)
+          // buffs
+          || !AddObject(BG_RL_OBJECT_BUFF_1, BG_RL_OBJECT_TYPE_BUFF_1, 1328.719971, 1632.719971, 36.730400, -1.448624, 0, 0, 0.6626201, -0.7489557, 120)
+          || !AddObject(BG_RL_OBJECT_BUFF_2, BG_RL_OBJECT_TYPE_BUFF_2, 1243.300049, 1699.170044, 34.872601, -0.06981307, 0, 0, 0.03489945, -0.9993908, 120))
     {
         sLog.outErrorDb("BatteGroundRL: Failed to spawn some object!");
         return false;

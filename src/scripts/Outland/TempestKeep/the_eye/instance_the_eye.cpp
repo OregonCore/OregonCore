@@ -36,7 +36,10 @@ EndScriptData */
 
 struct instance_the_eye : public ScriptedInstance
 {
-    instance_the_eye(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_the_eye(Map* map) : ScriptedInstance(map)
+    {
+        Initialize();
+    };
 
     uint64 ThaladredTheDarkener;
     uint64 LordSanguinar;
@@ -78,55 +81,76 @@ struct instance_the_eye : public ScriptedInstance
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-            case 20064: ThaladredTheDarkener = pCreature->GetGUID(); break;
-            case 20063: MasterEngineerTelonicus = pCreature->GetGUID(); break;
-            case 20062: GrandAstromancerCapernian = pCreature->GetGUID(); break;
-            case 20060: LordSanguinar = pCreature->GetGUID(); break;
-            case 19622: Kaelthas = pCreature->GetGUID(); break;
-            case 18805: Astromancer = pCreature->GetGUID(); break;
-            case 19514: Alar = pCreature->GetGUID(); break;
+        case 20064:
+            ThaladredTheDarkener = pCreature->GetGUID();
+            break;
+        case 20063:
+            MasterEngineerTelonicus = pCreature->GetGUID();
+            break;
+        case 20062:
+            GrandAstromancerCapernian = pCreature->GetGUID();
+            break;
+        case 20060:
+            LordSanguinar = pCreature->GetGUID();
+            break;
+        case 19622:
+            Kaelthas = pCreature->GetGUID();
+            break;
+        case 18805:
+            Astromancer = pCreature->GetGUID();
+            break;
+        case 19514:
+            Alar = pCreature->GetGUID();
+            break;
         }
     }
 
     uint64 GetData64(uint32 identifier)
     {
-        switch(identifier)
+        switch (identifier)
         {
-            case DATA_THALADREDTHEDARKENER:         return ThaladredTheDarkener;
-            case DATA_LORDSANGUINAR:                return LordSanguinar;
-            case DATA_GRANDASTROMANCERCAPERNIAN:    return GrandAstromancerCapernian;
-            case DATA_MASTERENGINEERTELONICUS:      return MasterEngineerTelonicus;
-            case DATA_KAELTHAS:                     return Kaelthas;
-            case DATA_ASTROMANCER:                  return Astromancer;
-            case DATA_ALAR:                         return Alar;
+        case DATA_THALADREDTHEDARKENER:
+            return ThaladredTheDarkener;
+        case DATA_LORDSANGUINAR:
+            return LordSanguinar;
+        case DATA_GRANDASTROMANCERCAPERNIAN:
+            return GrandAstromancerCapernian;
+        case DATA_MASTERENGINEERTELONICUS:
+            return MasterEngineerTelonicus;
+        case DATA_KAELTHAS:
+            return Kaelthas;
+        case DATA_ASTROMANCER:
+            return Astromancer;
+        case DATA_ALAR:
+            return Alar;
         }
         return 0;
     }
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_ALAREVENT:
-                AlarEventPhase = data;
-                if (Encounters[0] != DONE)
-                    Encounters[0] = data;
-                break;
-            case DATA_HIGHASTROMANCERSOLARIANEVENT:
-                if (Encounters[1] != DONE)
-                    Encounters[1] = data;
-                break;
-            case DATA_VOIDREAVEREVENT:
-                if (Encounters[2] != DONE)
-                    Encounters[2] = data;
-                break;
-            case DATA_KAELTHASEVENT:
-                KaelthasEventPhase = data;
-                if (Encounters[3] != DONE)
-                    Encounters[3] = data;
-                break;
+        case DATA_ALAREVENT:
+            AlarEventPhase = data;
+            if (Encounters[0] != DONE)
+                Encounters[0] = data;
+            break;
+        case DATA_HIGHASTROMANCERSOLARIANEVENT:
+            if (Encounters[1] != DONE)
+                Encounters[1] = data;
+            break;
+        case DATA_VOIDREAVEREVENT:
+            if (Encounters[2] != DONE)
+                Encounters[2] = data;
+            break;
+        case DATA_KAELTHASEVENT:
+            KaelthasEventPhase = data;
+            if (Encounters[3] != DONE)
+                Encounters[3] = data;
+            break;
         }
         if (data == DONE)
             SaveToDB();
@@ -134,12 +158,16 @@ struct instance_the_eye : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_ALAREVENT:    return AlarEventPhase;
-            case DATA_HIGHASTROMANCERSOLARIANEVENT: return Encounters[1];
-            case DATA_VOIDREAVEREVENT:  return Encounters[2];
-            case DATA_KAELTHASEVENT:    return KaelthasEventPhase;
+        case DATA_ALAREVENT:
+            return AlarEventPhase;
+        case DATA_HIGHASTROMANCERSOLARIANEVENT:
+            return Encounters[1];
+        case DATA_VOIDREAVEREVENT:
+            return Encounters[2];
+        case DATA_KAELTHASEVENT:
+            return KaelthasEventPhase;
         }
         return 0;
     }
@@ -183,7 +211,7 @@ InstanceData* GetInstanceData_instance_the_eye(Map* map)
 
 void AddSC_instance_the_eye()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_the_eye";
     newscript->GetInstanceData = &GetInstanceData_instance_the_eye;

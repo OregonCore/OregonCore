@@ -54,7 +54,7 @@ EndScriptData */
 
 struct boss_majordomoAI : public ScriptedAI
 {
-    boss_majordomoAI(Creature *c) : ScriptedAI(c) {}
+    boss_majordomoAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 MagicReflection_Timer;
     uint32 DamageReflection_Timer;
@@ -69,13 +69,13 @@ struct boss_majordomoAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        if (rand()%5)
+        if (rand() % 5)
             return;
 
         DoScriptText(SAY_SLAY, me);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
@@ -86,10 +86,8 @@ struct boss_majordomoAI : public ScriptedAI
             return;
 
         //Cast Ageis if less than 50% hp
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
-        {
+        if (me->GetHealth() * 100 / me->GetMaxHealth() < 50)
             DoCast(me, SPELL_AEGIS);
-        }
 
         //MagicReflection_Timer
         //        if (MagicReflection_Timer <= diff)
@@ -114,7 +112,8 @@ struct boss_majordomoAI : public ScriptedAI
         {
             DoCastVictim( SPELL_BLASTWAVE);
             Blastwave_Timer = 10000;
-        } else Blastwave_Timer -= diff;
+        }
+        else Blastwave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -126,7 +125,7 @@ CreatureAI* GetAI_boss_majordomo(Creature* pCreature)
 
 void AddSC_boss_majordomo()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_majordomo";
     newscript->GetAI = &GetAI_boss_majordomo;
