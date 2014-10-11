@@ -19,8 +19,5 @@ CREATE TABLE `disables` (
   PRIMARY KEY  (`sourceType`,`entry`)
 ) ENGINE=MYISAM DEFAULT CHARSET=latin1;
 
--- Pull spell disable data into new table
-INSERT INTO `disables` SELECT 0,`entry`,`disable_mask`,`comment` FROM `spell_disabled`;
-
 -- Drop old table
 DROP TABLE IF EXISTS `spell_disabled`;

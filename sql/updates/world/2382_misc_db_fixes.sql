@@ -59,55 +59,6 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 (@PATH,5,-13.55803,-454.8065,2.49773,0,0,0,0,100,0),
 (@PATH,6,-62.09498,-454.9725,-1.592298,0,0,0,0,100,0);
 
--- Misc fixes for the Arcatraz
-UPDATE `creature_template` SET `speed_walk`= 1.6, `speed_run`= 1.428571 WHERE `entry`= 20885;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 0.8571429 WHERE `entry`= 20859;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 0.8571429 WHERE `entry`= 20857;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 21186;
-UPDATE `creature_template` SET `speed_walk`= 1.6, `speed_run`= 1.428571 WHERE `entry`= 20886;
-UPDATE `creature_template` SET `speed_walk`= 1.2, `speed_run`= 1.428571 WHERE `entry`= 20864;
-UPDATE `creature_template` SET `speed_walk`= 1.2, `speed_run`= 1.428571 WHERE `entry`= 20865;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 0.8571429 WHERE `entry`= 21303;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 0.8571429 WHERE `entry`= 21304;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20869;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20875;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20873;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20866;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20868;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20900;
-UPDATE `creature_template` SET `speed_walk`= 0.888888, `speed_run`= 1.428571 WHERE `entry`= 20880;
-UPDATE `creature_template` SET `speed_walk`= 0.888888, `speed_run`= 1.428571 WHERE `entry`= 20879;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 0.8571429 WHERE `entry`= 20977;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 0.8571429 WHERE `entry`= 20904;
-UPDATE `creature_template` SET `speed_walk`= 1.6, `speed_run`= 1.714286 WHERE `entry`= 20898;
-UPDATE `creature_template` SET `speed_walk`= 1.6, `speed_run`= 1.714286 WHERE `entry`= 20870;
-UPDATE `creature_template` SET `speed_walk`= 1.6, `speed_run`= 1.714286 WHERE `entry`= 20912;
-UPDATE `creature_template` SET `speed_walk`= 8, `speed_run`= 2.857143 WHERE `entry`= 20978;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1 WHERE `entry`= 21962;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20906;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20909;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20910;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 22494;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20881;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20882;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20883;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20896;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 21702;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20897;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20901;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.428571 WHERE `entry`= 20902;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 15384;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 21436;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 21437;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 21438;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 21439;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 21440;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 20515;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 22491;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 22479;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 18884;
-UPDATE `creature_template` SET `speed_walk`= 1, `speed_run`= 1.142857 WHERE `entry`= 20673;
-
 -- Fix Lunar Festival Invitation teleport coordinates.
 DELETE FROM `spell_target_position` WHERE `id`=26448;
 INSERT INTO `spell_target_position` (`id`,`target_map`,`target_position_x`,`target_position_y`,`target_position_z`,`target_orientation`) VALUES
