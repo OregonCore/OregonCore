@@ -48,7 +48,7 @@
 #include "VMapFactory.h"
 #include "MoveMap.h"
 #include "GameEventMgr.h"
-#include "PoolHandler.h"
+#include "PoolMgr.h"
 #include "Database/DatabaseImpl.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"

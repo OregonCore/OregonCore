@@ -18,7 +18,7 @@
 #include "GameEventMgr.h"
 #include "World.h"
 #include "ObjectMgr.h"
-#include "PoolHandler.h"
+#include "PoolMgr.h"
 #include "Language.h"
 #include "Log.h"
 #include "MapManager.h"

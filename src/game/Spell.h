@@ -313,7 +313,7 @@ class Spell
         void EffectStealBeneficialBuff(SpellEffIndex effIndex);
         void EffectUnlearnSpecialization(SpellEffIndex effIndex);
         void EffectHealPct(SpellEffIndex effIndex);
-        void EffectEnergisePct(SpellEffIndex effIndex);
+        void EffectEnergizePct(SpellEffIndex effIndex);
         void EffectTriggerSpellWithValue(SpellEffIndex effIndex);
         void EffectTriggerRitualOfSummoning(SpellEffIndex effIndex);
         void EffectKillCredit(SpellEffIndex effIndex);

@@ -15,8 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OREGON_POOLHANDLER_H
-#define OREGON_POOLHANDLER_H
+#ifndef _POOLMGR_H
+#define _POOLMGR_H
 
 #include "Platform/Define.h"
 #include "Policies/Singleton.h"
@@ -101,11 +101,11 @@ typedef std::multimap<uint32, uint32> PooledQuestRelation;
 typedef std::pair<PooledQuestRelation::const_iterator, PooledQuestRelation::const_iterator> PooledQuestRelationBounds;
 typedef std::pair<PooledQuestRelation::iterator, PooledQuestRelation::iterator> PooledQuestRelationBoundsNC;
 
-class PoolHandler
+class PoolMgr
 {
     public:
-        PoolHandler();
-        ~PoolHandler() {};
+        PoolMgr();
+        ~PoolMgr() {};
 
         void LoadFromDB();
         void LoadQuestPools();
@@ -158,11 +158,11 @@ class PoolHandler
         ActivePoolData mSpawnedData;
 };
 
-#define sPoolMgr Oregon::Singleton<PoolHandler>::Instance()
+#define sPoolMgr Oregon::Singleton<PoolMgr>::Instance()
 
 // Method that tell if the quest is part of another pool and return the pool id if yes
 template<>
-inline uint32 PoolHandler::IsPartOfAPool<Quest>(uint32 pool_id) const
+inline uint32 PoolMgr::IsPartOfAPool<Quest>(uint32 pool_id) const
 {
     SearchMap::const_iterator itr = mQuestSearchMap.find(pool_id);
     if (itr != mQuestSearchMap.end())
@@ -173,7 +173,7 @@ inline uint32 PoolHandler::IsPartOfAPool<Quest>(uint32 pool_id) const
 
 // Method that tell if the creature is part of a pool and return the pool id if yes
 template<>
-inline uint32 PoolHandler::IsPartOfAPool<Creature>(uint32 db_guid) const
+inline uint32 PoolMgr::IsPartOfAPool<Creature>(uint32 db_guid) const
 {
     SearchMap::const_iterator itr = mCreatureSearchMap.find(db_guid);
     if (itr != mCreatureSearchMap.end())
@@ -184,7 +184,7 @@ inline uint32 PoolHandler::IsPartOfAPool<Creature>(uint32 db_guid) const
 
 // Method that tell if the gameobject is part of a pool and return the pool id if yes
 template<>
-inline uint32 PoolHandler::IsPartOfAPool<GameObject>(uint32 db_guid) const
+inline uint32 PoolMgr::IsPartOfAPool<GameObject>(uint32 db_guid) const
 {
     SearchMap::const_iterator itr = mGameobjectSearchMap.find(db_guid);
     if (itr != mGameobjectSearchMap.end())
@@ -195,7 +195,7 @@ inline uint32 PoolHandler::IsPartOfAPool<GameObject>(uint32 db_guid) const
 
 // Method that tell if the pool is part of another pool and return the pool id if yes
 template<>
-inline uint32 PoolHandler::IsPartOfAPool<Pool>(uint32 pool_id) const
+inline uint32 PoolMgr::IsPartOfAPool<Pool>(uint32 pool_id) const
 {
     SearchMap::const_iterator itr = mPoolSearchMap.find(pool_id);
     if (itr != mPoolSearchMap.end())
