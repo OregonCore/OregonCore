@@ -52,7 +52,7 @@ struct mob_stolen_soulAI : public ScriptedAI
         Class_Timer = 1000;
     }
 
-    void EnterCombat(Unit *)
+    void EnterCombat(Unit* )
     { }
 
     void SetMyClass(uint8 myclass)
@@ -173,7 +173,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
         Avatar_summoned = false;
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!HasTaunted && me->IsWithinDistInMap(who, 150.0f))
         {
@@ -185,7 +185,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
     }
 
 
-    void EnterCombat(Unit *)
+    void EnterCombat(Unit* )
     {
         switch (rand()%3)
         {
@@ -204,7 +204,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
             summoned->SetDisplayId(soulmodel);
             summoned->setFaction(me->getFaction());
 
-            if (Unit *pTarget = Unit::GetUnit(*me,soulholder))
+            if (Unit* pTarget = Unit::GetUnit(*me,soulholder))
             {
 
             ((mob_stolen_soulAI*)summoned->AI())->SetMyClass(soulclass);
@@ -251,7 +251,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
 
         if (StolenSoul_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
                 if (pTarget->GetTypeId() == TYPEID_PLAYER)
                 {
@@ -278,7 +278,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
 
         if (Ribbon_of_Souls_timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_RIBBON_OF_SOULS);
 
             Ribbon_of_Souls_timer = 5000 + (rand()%20 * 1000);
@@ -313,7 +313,7 @@ struct mob_avatar_of_martyredAI : public ScriptedAI
         Mortal_Strike_timer = 10000;
     }
 
-    void EnterCombat(Unit *)
+    void EnterCombat(Unit* )
     {
     }
 

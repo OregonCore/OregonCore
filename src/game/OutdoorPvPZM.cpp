@@ -189,7 +189,7 @@ bool OutdoorPvPZM::SetupOutdoorPvP()
     return true;
 }
 
-void OutdoorPvPZM::HandleKillImpl(Player* plr, Unit * killed)
+void OutdoorPvPZM::HandleKillImpl(Player* plr, Unit* killed)
 {
     if (killed->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -325,7 +325,7 @@ void OPvPCapturePointZM_GraveYard::SetBeaconState(uint32 controlling_faction)
     UpdateTowerState();
 }
 
-bool OPvPCapturePointZM_GraveYard::CanTalkTo(Player* plr, Creature*  c, GossipMenuItems /*gso*/)
+bool OPvPCapturePointZM_GraveYard::CanTalkTo(Player* plr, Creature* c, GossipMenuItems /*gso*/)
 {
     uint64 guid = c->GetGUID();
     std::map<uint64,uint32>::iterator itr = m_CreatureTypes.find(guid);
@@ -344,7 +344,7 @@ bool OPvPCapturePointZM_GraveYard::HandleGossipOption(Player* plr, uint64 guid, 
     std::map<uint64,uint32>::iterator itr = m_CreatureTypes.find(guid);
     if (itr != m_CreatureTypes.end())
     {
-        Creature*  cr = HashMapHolder<Creature>::Find(guid);
+        Creature* cr = HashMapHolder<Creature>::Find(guid);
         if (!cr)
             return true;
         // if the flag is already taken, then return

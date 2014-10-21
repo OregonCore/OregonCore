@@ -578,7 +578,7 @@ void Player::UpdateExpertise(WeaponAttackType attack)
 
     int32 expertise = int32(GetRatingBonusValue(CR_EXPERTISE));
 
-    Item *weapon = GetWeaponForAttack(attack);
+    Item* weapon = GetWeaponForAttack(attack);
 
     AuraList const& expAuras = GetAurasByType(SPELL_AURA_MOD_EXPERTISE);
     for (AuraList::const_iterator itr = expAuras.begin(); itr != expAuras.end(); ++itr)
@@ -828,7 +828,7 @@ bool Guardian::UpdateStats(Stats stat)
     // value = ((base_value * base_pct) + total_value) * total_pct
     float value  = GetTotalStatValue(stat);
 
-    Unit *owner = GetOwner();
+    Unit* owner = GetOwner();
     if (stat == STAT_STAMINA)
     {
         if (owner && (isHunterPet() || owner->getClass() == CLASS_WARLOCK))
@@ -877,7 +877,7 @@ void Guardian::UpdateResistances(uint32 school)
     {
         float value  = GetTotalAuraModValue(UnitMods(UNIT_MOD_RESISTANCE_START + school));
 
-        Unit *owner = GetOwner();
+        Unit* owner = GetOwner();
         // hunter and warlock pets gain 40% of owner's resistance
         if (owner && (isHunterPet() || (isPet() && owner->getClass() == CLASS_WARLOCK)))
             value += float(owner->GetResistance(SpellSchools(school))) * 0.4f;
@@ -894,7 +894,7 @@ void Guardian::UpdateArmor()
     float bonus_armor = 0.0f;
     UnitMods unitMod = UNIT_MOD_ARMOR;
 
-    Unit *owner = GetOwner();
+    Unit* owner = GetOwner();
     // hunter and warlock pets gain 35% of owner's armor value
     if (owner && (isHunterPet() || (isPet() && owner->getClass() == CLASS_WARLOCK)))
         bonus_armor = 0.35f * float(owner->GetArmor());
@@ -1024,7 +1024,7 @@ void Guardian::UpdateDamagePhysical(WeaponAttackType attType)
         // shadowfiend 65.7% per 10 hits so 6.57 per hit
         else if (GetEntry() == 19668)
         {
-            if (Unit *owner = GetOwner())
+            if (Unit* owner = GetOwner())
             {
                 int32 spellDmg = int32(owner->SpellBaseDamageBonus(SPELL_SCHOOL_MASK_SHADOW));
                 if (spellDmg > 0)

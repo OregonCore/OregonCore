@@ -81,7 +81,7 @@ struct boss_anzuAI : public ScriptedAI
         SummonedCount = 5;
     }
 
-    void EnterCombat(Unit *)
+    void EnterCombat(Unit* )
     {
         if (pInstance)
             pInstance->SetData(DATA_ANZUEVENT, IN_PROGRESS);        
@@ -95,7 +95,7 @@ struct boss_anzuAI : public ScriptedAI
 	
     void JustSummoned(Creature* summoned)
     {
-        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             summoned->AI()->AttackStart(pTarget);
     }
 
@@ -142,7 +142,7 @@ struct boss_anzuAI : public ScriptedAI
         {
             if (Cyclone_Timer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 {
                     DoCast(pTarget, SPELL_CYCLONE);
                     Cyclone_Timer = 20000+rand()%1000;
@@ -151,7 +151,7 @@ struct boss_anzuAI : public ScriptedAI
 
             if (Bomb_Timer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 {
                     DoCast(pTarget, SPELL_BOMB);
                     Bomb_Timer = 30000+rand()%1000;

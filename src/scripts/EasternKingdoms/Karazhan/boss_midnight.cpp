@@ -63,11 +63,11 @@ struct boss_midnightAI : public ScriptedAI
         me->SetVisibility(VISIBILITY_ON);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         if (Phase == 2)
         {
-            if (Unit *pUnit = Unit::GetUnit(*me, Attumen))
+            if (Unit* pUnit = Unit::GetUnit(*me, Attumen))
             DoScriptText(SAY_MIDNIGHT_KILL, pUnit);
         }
     }
@@ -90,7 +90,7 @@ struct boss_midnightAI : public ScriptedAI
         }
         else if (Phase == 2 && (me->GetHealth()*100)/me->GetMaxHealth() < 25)
         {
-            if (Unit *pAttumen = Unit::GetUnit(*me, Attumen))
+            if (Unit* pAttumen = Unit::GetUnit(*me, Attumen))
                 Mount(pAttumen);
         }
         else if (Phase == 3)
@@ -102,7 +102,7 @@ struct boss_midnightAI : public ScriptedAI
                     Mount_Timer = 0;
                     me->SetVisibility(VISIBILITY_OFF);
                     me->GetMotionMaster()->MoveIdle();
-                    if (Unit *pAttumen = Unit::GetUnit(*me, Attumen))
+                    if (Unit* pAttumen = Unit::GetUnit(*me, Attumen))
                     {
                         pAttumen->SetDisplayId(MOUNTED_DISPLAYID);
                         pAttumen->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -122,7 +122,7 @@ struct boss_midnightAI : public ScriptedAI
             DoMeleeAttackIfReady();
     }
 
-    void Mount(Unit *pAttumen)
+    void Mount(Unit* pAttumen)
     {
         DoScriptText(SAY_MOUNT, pAttumen);
         Phase = 3;
@@ -181,15 +181,15 @@ struct boss_attumenAI : public ScriptedAI
         ResetTimer = 2000;
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(RAND(SAY_KILL1,SAY_KILL2), me);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         DoScriptText(SAY_DEATH, me);
-        if (Unit *pMidnight = Unit::GetUnit(*me, Midnight))
+        if (Unit* pMidnight = Unit::GetUnit(*me, Midnight))
             pMidnight->Kill(pMidnight);
     }
 
@@ -200,7 +200,7 @@ struct boss_attumenAI : public ScriptedAI
             if (ResetTimer <= diff)
             {
                 ResetTimer = 0;
-                Unit *pMidnight = Unit::GetUnit(*me, Midnight);
+                Unit* pMidnight = Unit::GetUnit(*me, Midnight);
                 if (pMidnight)
                 {
                     pMidnight->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -241,9 +241,9 @@ struct boss_attumenAI : public ScriptedAI
         {
             if (ChargeTimer <= diff)
             {
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
                 std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
-                std::vector<Unit *> target_list;
+                std::vector<Unit* > target_list;
                 for (std::list<HostileReference *>::const_iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
                 {
                     pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
@@ -274,7 +274,7 @@ struct boss_attumenAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 
-    void SpellHit(Unit * /*source*/, const SpellEntry *spell)
+    void SpellHit(Unit* /*source*/, const SpellEntry *spell)
     {
         if (spell->Mechanic == MECHANIC_DISARM)
             DoScriptText(SAY_DISARMED, me);

@@ -74,7 +74,7 @@ struct mob_kilrekAI : public ScriptedAI
         AmplifyTimer = 2000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (!pInstance)
         {
@@ -130,7 +130,7 @@ struct mob_demon_chainAI : public ScriptedAI
     void AttackStart(Unit* /*who*/) {}
     void MoveInLineOfSight(Unit* /*who*/) {}
 
-    void JustDied(Unit * /*killer*/)
+    void JustDied(Unit* /*killer*/)
     {
         if (SacrificeGUID)
         {
@@ -247,12 +247,12 @@ struct boss_terestianAI : public ScriptedAI
         }
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
     }
 
-    void JustDied(Unit * /*killer*/)
+    void JustDied(Unit* /*killer*/)
     {
         for (uint8 i = 0; i < 2; ++i)
         {
@@ -278,7 +278,7 @@ struct boss_terestianAI : public ScriptedAI
 
         if (SacrificeTimer <= diff)
         {
-            Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
+            Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
             if (pTarget && pTarget->isAlive())
             {
                 DoCast(pTarget, SPELL_SACRIFICE, true);
@@ -344,7 +344,7 @@ struct mob_fiendish_impAI : public ScriptedAI
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {

@@ -114,7 +114,7 @@ struct boss_brutallusAI : public ScriptedAI
             pInstance->SetData(DATA_BRUTALLUS_EVENT, NOT_STARTED);
     }
  
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if(!Intro)
             DoScriptText(YELL_AGGRO, me);
@@ -286,7 +286,7 @@ struct boss_brutallusAI : public ScriptedAI
         }
     }
  
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who->isTargetableForAttack() || !me->IsHostileTo(who))
             return;

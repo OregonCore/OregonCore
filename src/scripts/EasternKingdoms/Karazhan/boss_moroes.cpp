@@ -288,7 +288,7 @@ struct boss_moroesAI : public ScriptedAI
 
             if (Blind_Timer <= diff)
             {
-                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 25, true);
+                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 25, true);
                 if (pTarget && me->IsWithinMeleeRange(pTarget))
                     DoCast(pTarget, SPELL_BLIND);
 
@@ -302,7 +302,7 @@ struct boss_moroesAI : public ScriptedAI
             {
                 DoScriptText(RAND(SAY_SPECIAL_1,SAY_SPECIAL_2), me);
 
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     pTarget->CastSpell(pTarget, SPELL_GARROTE,true);
 
                 InVanish = false;
@@ -414,7 +414,7 @@ struct boss_baroness_dorothea_millstipeAI : public boss_moroes_guestAI
 
         if (ManaBurn_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 if (pTarget->getPowerType() == POWER_MANA)
                     DoCast(pTarget, SPELL_MANABURN);
             ManaBurn_Timer = 5000;                          // 3 sec cast
@@ -422,7 +422,7 @@ struct boss_baroness_dorothea_millstipeAI : public boss_moroes_guestAI
 
         if (ShadowWordPain_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
             {
                 DoCast(pTarget, SPELL_SWPAIN);
                 ShadowWordPain_Timer = 7000;
@@ -523,7 +523,7 @@ struct boss_lady_catriona_von_indiAI : public boss_moroes_guestAI
 
         if (GreaterHeal_Timer <= diff)
         {
-            Unit *pTarget = SelectGuestTarget();
+            Unit* pTarget = SelectGuestTarget();
 
             DoCast(pTarget, SPELL_GREATERHEAL);
             GreaterHeal_Timer = 17000;
@@ -537,7 +537,7 @@ struct boss_lady_catriona_von_indiAI : public boss_moroes_guestAI
 
         if (DispelMagic_Timer <= diff)
         {
-            if (Unit *pTarget = RAND(SelectGuestTarget(), SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true)))
+            if (Unit* pTarget = RAND(SelectGuestTarget(), SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true)))
                 DoCast(pTarget, SPELL_DISPELMAGIC);
 
             DispelMagic_Timer = 25000;
@@ -587,7 +587,7 @@ struct boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
 
         if (HolyLight_Timer <= diff)
         {
-            Unit *pTarget = SelectGuestTarget();
+            Unit* pTarget = SelectGuestTarget();
 
             DoCast(pTarget, SPELL_HOLYLIGHT);
             HolyLight_Timer = 10000;
@@ -595,7 +595,7 @@ struct boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
 
         if (GreaterBless_Timer <= diff)
         {
-            Unit *pTarget = SelectGuestTarget();
+            Unit* pTarget = SelectGuestTarget();
 
             DoCast(pTarget, SPELL_GREATERBLESSOFMIGHT);
 
@@ -604,7 +604,7 @@ struct boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
 
         if (Cleanse_Timer <= diff)
         {
-            Unit *pTarget = SelectGuestTarget();
+            Unit* pTarget = SelectGuestTarget();
 
             DoCast(pTarget, SPELL_CLEANSE);
 

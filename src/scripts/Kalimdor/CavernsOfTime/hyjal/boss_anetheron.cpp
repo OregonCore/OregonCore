@@ -86,7 +86,7 @@ struct boss_anetheronAI : public hyjal_trashAI
             pInstance->SetData(DATA_ANETHERONEVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_ANETHERONEVENT, IN_PROGRESS);
@@ -94,7 +94,7 @@ struct boss_anetheronAI : public hyjal_trashAI
         me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, 0);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         switch (urand(0,2))
         {
@@ -118,13 +118,13 @@ struct boss_anetheronAI : public hyjal_trashAI
         pos = i;
         if (i == 7 && pInstance)
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
             if (pTarget && pTarget->isAlive())
                 me->AddThreat(pTarget,0.0f);
         }
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit* victim)
     {
         hyjal_trashAI::JustDied(victim);
         if (pInstance && IsEvent)
@@ -164,7 +164,7 @@ struct boss_anetheronAI : public hyjal_trashAI
 
         if (SwarmTimer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_CARRION_SWARM);
 
             SwarmTimer = urand(45000,60000);
@@ -185,7 +185,7 @@ struct boss_anetheronAI : public hyjal_trashAI
         {
             for (uint8 i = 0; i < 3; ++i)
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     pTarget->CastSpell(pTarget,SPELL_SLEEP,true);
             }
             SleepTimer = 60000;
@@ -256,19 +256,19 @@ struct mob_towering_infernalAI : public ScriptedAI
         CheckTimer = 5000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (me->IsWithinDist(who, 50) && !me->isInCombat() && me->IsHostileTo(who))
             me->Attack(who,false);

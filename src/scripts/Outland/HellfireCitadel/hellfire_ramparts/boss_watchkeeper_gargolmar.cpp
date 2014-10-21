@@ -137,7 +137,7 @@ struct boss_watchkeeper_gargolmarAI : public ScriptedAI
         {
             DoScriptText(SAY_SURGE, me);
 
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_SURGE);
 
             Surge_Timer = 5000+rand()%8000;

@@ -63,7 +63,7 @@ struct mob_shattered_rumblerAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) {}
 
-    void SpellHit(Unit *Hitter, const SpellEntry *Spellkind)
+    void SpellHit(Unit* Hitter, const SpellEntry *Spellkind)
     {
         if (Spellkind->Id == 32001 && !Spawn)
         {
@@ -123,7 +123,7 @@ struct mob_lumpAI : public ScriptedAI
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
-    void DamageTaken(Unit *done_by, uint32 & damage)
+    void DamageTaken(Unit* done_by, uint32 & damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER && (me->GetHealth() - damage)*100 / me->GetMaxHealth() < 30)
         {
@@ -704,7 +704,7 @@ struct npc_creditmarker_visit_with_ancestorsAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) {}
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who)
             return;
@@ -753,7 +753,7 @@ struct mob_sparrowhawkAI : public ScriptedAI
         PlayerGUID = 0;
         fleeing = false;
     }
-    void AttackStart(Unit *who)
+    void AttackStart(Unit* who)
     {
         if (PlayerGUID)
             return;
@@ -763,7 +763,7 @@ struct mob_sparrowhawkAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) {}
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who || PlayerGUID)
             return;
@@ -812,7 +812,7 @@ struct mob_sparrowhawkAI : public ScriptedAI
         ScriptedAI::UpdateAI(diff);
     }
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry *spell)
     {
         if (caster->GetTypeId() == TYPEID_PLAYER)
         {

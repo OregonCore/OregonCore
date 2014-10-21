@@ -67,7 +67,7 @@ struct boss_faerlinaAI : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
          if (!HasTaunted && me->IsWithinDistInMap(who, 60.0f))
          {
@@ -107,7 +107,7 @@ struct boss_faerlinaAI : public ScriptedAI
         //RainOfFire_Timer
         if (RainOfFire_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_RAINOFFIRE);
             RainOfFire_Timer = 16000;
         } else RainOfFire_Timer -= diff;

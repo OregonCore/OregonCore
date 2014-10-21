@@ -203,11 +203,11 @@ struct boss_victor_nefariusAI : public ScriptedAI
         AttackStart(pTarget);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         //We simply use this function to find players until we can use Map->GetPlayers()
 
@@ -229,7 +229,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
             //ShadowBoltTimer
             if (ShadowBoltTimer <= diff)
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     DoCast(pTarget, SPELL_SHADOWBOLT);
 
                 ShadowBoltTimer = urand(3000,10000);
@@ -238,7 +238,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
             //FearTimer
             if (FearTimer <= diff)
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     DoCast(pTarget, SPELL_FEAR);
 
                 FearTimer = 10000 + (rand()%10000);
@@ -250,7 +250,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 //Spawn 2 random types of creatures at the 2 locations
                 uint32 CreatureID;
                 Creature* Spawned = NULL;
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
 
                 //1 in 3 chance it will be a chromatic
                 if (urand(0,2) == 0)

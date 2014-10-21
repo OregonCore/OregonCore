@@ -99,7 +99,7 @@ struct npc_aged_dying_ancient_kodoAI : public ScriptedAI
     }
 };
 
-bool EffectDummyCreature_npc_aged_dying_ancient_kodo(Unit *pCaster, uint32 spellId, uint32 effIndex, Creature* pCreatureTarget)
+bool EffectDummyCreature_npc_aged_dying_ancient_kodo(Unit* pCaster, uint32 spellId, uint32 effIndex, Creature* pCreatureTarget)
 {
     //always check spellid and effectindex
     if (spellId == SPELL_KODO_KOMBO_ITEM && effIndex == 0)

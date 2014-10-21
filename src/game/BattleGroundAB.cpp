@@ -246,7 +246,7 @@ void BattleGroundAB::HandleAreaTrigger(Player* Source, uint32 Trigger)
     }
 }
 
-/*  type: 0-neutral, 1-contested, 3-occupied
+/* type: 0-neutral, 1-contested, 3-occupied
     teamIndex: 0-ally, 1-horde                        */
 void BattleGroundAB::_CreateBanner(uint8 node, uint8 type, uint8 teamIndex, bool delay)
 {
@@ -402,7 +402,7 @@ void BattleGroundAB::_NodeDeOccupied(uint8 node)
     // buff object isn't despawned
 }
 
-/* Invoked if a player used a banner as a gameobject */
+/* Invoked if a player used a banner as a GameObject*/
 void BattleGroundAB::EventPlayerClickedOnFlag(Player* source, GameObject* /*target_obj*/)
 {
     if (GetStatus() != STATUS_IN_PROGRESS)

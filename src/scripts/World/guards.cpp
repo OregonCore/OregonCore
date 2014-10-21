@@ -2493,7 +2493,7 @@ struct guard_shattrath_aldorAI : public guardAI
         CanTeleport = false;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -2689,7 +2689,7 @@ struct guard_shattrath_scryerAI : public guardAI
         CanTeleport = false;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {

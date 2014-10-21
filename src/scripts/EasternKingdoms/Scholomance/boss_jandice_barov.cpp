@@ -48,7 +48,7 @@ struct boss_jandicebarovAI : public ScriptedAI
         Invisible = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -100,7 +100,7 @@ struct boss_jandicebarovAI : public ScriptedAI
             DoModifyThreatPercent(me->getVictim(),-99);
 
             //Summon 10 Illusions attacking random gamers
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             for (uint8 i = 0; i < 10; ++i)
             {
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -152,7 +152,7 @@ struct mob_illusionofjandicebarovAI : public ScriptedAI
         me->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_MAGIC, true);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

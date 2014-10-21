@@ -54,7 +54,7 @@ struct npc_converted_sentryAI : public ScriptedAI
         Timer = 2500;
     }
 
-    void MoveInLineOfSight(Unit * /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
     void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)

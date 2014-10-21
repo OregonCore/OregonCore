@@ -72,7 +72,7 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
             pInstance->SetData(DATA_NETHERMANCER_EVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if (pInstance)
             pInstance->SetData(DATA_NETHERMANCER_EVENT, IN_PROGRESS);
@@ -217,7 +217,7 @@ struct mob_ragin_flamesAI : public ScriptedAI
 
         if (!onlyonce)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 me->GetMotionMaster()->MoveChase(pTarget);
             onlyonce = true;
         }

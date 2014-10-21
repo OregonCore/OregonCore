@@ -127,7 +127,7 @@ struct boss_arlokkAI : public ScriptedAI
 
     void DoSummonPhanters()
     {
-        if (Unit *pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID))
+        if (Unit* pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID))
             DoScriptText(SAY_FEAST_PANTHER, me, pMarkedTarget);
 
         me->SummonCreature(NPC_ZULIAN_PROWLER, -11532.7998, -1649.6734, 41.4800, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
@@ -136,11 +136,11 @@ struct boss_arlokkAI : public ScriptedAI
 
     void JustSummoned(Creature* pSummoned)
     {
-        if (Unit *pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID))
+        if (Unit* pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID))
             pSummoned->AI()->AttackStart(pMarkedTarget);
         else
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 pSummoned->AI()->AttackStart(pTarget);
         }
 
@@ -164,7 +164,7 @@ struct boss_arlokkAI : public ScriptedAI
 
             if (m_uiMark_Timer <= uiDiff)
             {
-                Unit *pMarkedTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* pMarkedTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
                 if (pMarkedTarget)
                 {
@@ -308,7 +308,7 @@ struct mob_prowlerAI : public ScriptedAI
     {
         if (m_uiUpdateTarget_Timer <= uiDiff)
         {
-            Unit *pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID);
+            Unit* pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID);
             if (DoGetThreat(me->getVictim()))
                 DoModifyThreatPercent(me->getVictim(), -100);
             me->AI()->AttackStart(pMarkedTarget);

@@ -46,7 +46,7 @@ struct boss_baron_geddonAI : public ScriptedAI
         LivingBomb_Timer = 35000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -74,7 +74,7 @@ struct boss_baron_geddonAI : public ScriptedAI
         //IgniteMana_Timer
         if (IgniteMana_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget, SPELL_IGNITEMANA);
 
             IgniteMana_Timer = 30000;
@@ -83,7 +83,7 @@ struct boss_baron_geddonAI : public ScriptedAI
         //LivingBomb_Timer
         if (LivingBomb_Timer <= diff)
         {
-           if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+           if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                DoCast(pTarget, SPELL_LIVINGBOMB);
 
             LivingBomb_Timer = 35000;

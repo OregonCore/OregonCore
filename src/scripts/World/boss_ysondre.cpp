@@ -101,7 +101,7 @@ struct boss_ysondreAI : public ScriptedAI
         //Tailsweep every 2 seconds
         if (m_uiTailSweep_Timer <= uiDiff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_TAILSWEEP);
 
             m_uiTailSweep_Timer = 2000;
@@ -122,7 +122,7 @@ struct boss_ysondreAI : public ScriptedAI
         if (m_uiLightningWave_Timer <= uiDiff)
         {
             //Cast LIGHTNINGWAVE on a Random target
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_LIGHTNINGWAVE);
 
             m_uiLightningWave_Timer = 7000 + rand()%5000;

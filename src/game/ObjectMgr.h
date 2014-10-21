@@ -534,7 +534,7 @@ class ObjectMgr
 
         typedef std::set< Group * > GroupSet;
 
-        typedef UNORDERED_MAP<uint32, Guild *> GuildMap;
+        typedef UNORDERED_MAP<uint32, Guild* > GuildMap;
 
         typedef UNORDERED_MAP<uint32, ArenaTeam*> ArenaTeamMap;
 

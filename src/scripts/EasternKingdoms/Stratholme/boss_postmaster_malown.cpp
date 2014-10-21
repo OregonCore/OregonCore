@@ -56,7 +56,7 @@ struct boss_postmaster_malownAI : public ScriptedAI
         HasYelled = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

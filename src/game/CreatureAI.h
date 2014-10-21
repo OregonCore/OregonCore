@@ -64,16 +64,16 @@ enum SCEquip
 class CreatureAI : public UnitAI
 {
     protected:
-        Creature*  const me;
+        Creature* const me;
 
         bool UpdateVictim();
         bool UpdateVictimByReact();
         bool UpdateVictimWithGaze();
         bool UpdateCombatState();
 
-        void SelectNearestTarget(Unit *who);
+        void SelectNearestTarget(Unit* who);
 
-        void SetGazeOn(Unit *target);
+        void SetGazeOn(Unit* target);
 
         Creature* DoSummon(uint32 uiEntry, const Position &pos, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
         Creature* DoSummon(uint32 uiEntry, WorldObject *obj, float fRadius = 5.0f, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
@@ -86,8 +86,8 @@ class CreatureAI : public UnitAI
 
         // == Reactions At =================================
 
-        // Called if IsVisible(Unit *who) is true at each *who move, reaction at visibility zone enter
-        void MoveInLineOfSight_Safe(Unit *who);
+        // Called if IsVisible(Unit* who) is true at each *who move, reaction at visibility zone enter
+        void MoveInLineOfSight_Safe(Unit* who);
 
         // Called for reaction at stopping attack at no attackers or targets
         virtual void EnterEvadeMode();
@@ -98,17 +98,17 @@ class CreatureAI : public UnitAI
         // Called at any Damage from any attacker (before damage apply)
         // Note: it for recalculation damage or special reaction at damage
         // for attack reaction use AttackedBy called for not DOT damage in Unit::DealDamage also
-        virtual void DamageTaken(Unit * /*done_by*/, uint32 & /*damage*/) {}
+        virtual void DamageTaken(Unit* /*done_by*/, uint32 & /*damage*/) {}
 
         // Called when the creature is killed
-        virtual void JustDied(Unit *) {}
+        virtual void JustDied(Unit* ) {}
 
         // Called when the creature kills a unit
-        virtual void KilledUnit(Unit *) {}
+        virtual void KilledUnit(Unit* ) {}
 
         // Called when the creature summon successfully other creature
         virtual void JustSummoned(Creature*) {}
-        virtual void IsSummonedBy(Unit * /*summoner*/) {}
+        virtual void IsSummonedBy(Unit* /*summoner*/) {}
 
         virtual void SummonedCreatureDespawn(Creature* /*unit*/) {}
 
@@ -144,7 +144,7 @@ class CreatureAI : public UnitAI
 
         // Called when creature attack expected (if creature can and no have current victim)
         // Note: for reaction at hostile action must be called AttackedBy function.
-        //virtual void AttackStart(Unit *) {}
+        //virtual void AttackStart(Unit* ) {}
 
         // Called at World update tick
         //virtual void UpdateAI(const uint32 /*diff*/) {}
@@ -152,7 +152,7 @@ class CreatureAI : public UnitAI
         // == State checks =================================
 
         // Is unit visible for MoveInLineOfSight
-        //virtual bool IsVisible(Unit *) const { return false; }
+        //virtual bool IsVisible(Unit* ) const { return false; }
 
         // Called when victim entered water and creature can not enter water
         //virtual bool canReachByRangeAttack(Unit*) { return false; }
@@ -162,10 +162,10 @@ class CreatureAI : public UnitAI
         // Pointer to controlled by AI creature
         //Creature* const me;
 
-        virtual void PassengerBoarded(Unit * /*who*/, int8 /*seatId*/, bool /*apply*/) {}
+        virtual void PassengerBoarded(Unit* /*who*/, int8 /*seatId*/, bool /*apply*/) {}
 
     protected:
-        virtual void MoveInLineOfSight(Unit *);
+        virtual void MoveInLineOfSight(Unit* );
 
         bool _EnterEvadeMode();
 

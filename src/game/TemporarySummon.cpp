@@ -21,7 +21,7 @@
 #include "ObjectMgr.h"
 #include "TemporarySummon.h"
 
-TempSummon::TempSummon(SummonPropertiesEntry const *properties, Unit *owner) :
+TempSummon::TempSummon(SummonPropertiesEntry const *properties, Unit* owner) :
 Creature(), m_Properties(properties), m_type(TEMPSUMMON_MANUAL_DESPAWN), m_timer(0), m_lifetime(0)
 {
     m_summonerGUID = owner ? owner->GetGUID() : 0;
@@ -172,7 +172,7 @@ void TempSummon::InitStats(uint32 duration)
     if (m_type == TEMPSUMMON_MANUAL_DESPAWN)
         m_type = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
 
-    Unit *owner = GetSummoner();
+    Unit* owner = GetSummoner();
 
     if (owner && isTrigger() && m_spells[0])
     {
@@ -257,7 +257,7 @@ void TempSummon::SaveToDB()
 {
 }
 
-Minion::Minion(SummonPropertiesEntry const *properties, Unit *owner) : TempSummon(properties, owner)
+Minion::Minion(SummonPropertiesEntry const *properties, Unit* owner) : TempSummon(properties, owner)
 , m_owner(owner)
 {
     ASSERT(m_owner);
@@ -291,7 +291,7 @@ bool Minion::IsGuardianPet() const
     return isPet() || (m_Properties && m_Properties->Category == SUMMON_CATEGORY_PET);
 }
 
-Guardian::Guardian(SummonPropertiesEntry const *properties, Unit *owner) : Minion(properties, owner)
+Guardian::Guardian(SummonPropertiesEntry const *properties, Unit* owner) : Minion(properties, owner)
 , m_bonusdamage(0)
 {
     m_summonMask |= SUMMON_MASK_GUARDIAN;
@@ -324,7 +324,7 @@ void Guardian::InitSummon()
         m_owner->ToPlayer()->CharmSpellInitialize();
 }
 
-Puppet::Puppet(SummonPropertiesEntry const *properties, Unit *owner) : Minion(properties, owner)
+Puppet::Puppet(SummonPropertiesEntry const *properties, Unit* owner) : Minion(properties, owner)
 {
     ASSERT(owner->GetTypeId() == TYPEID_PLAYER);
     m_owner = owner->ToPlayer();

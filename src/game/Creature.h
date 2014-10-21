@@ -143,9 +143,9 @@ struct CreatureInfo
     uint32  Modelid_A2;
     uint32  Modelid_H1;
     uint32  Modelid_H2;
-    char*   Name;
-    char*   SubName;
-    char*   IconName;
+    char*  Name;
+    char*  SubName;
+    char*  IconName;
     uint32  GossipMenuId;
     uint32  minlevel;
     uint32  maxlevel;
@@ -585,8 +585,8 @@ class Creature : public Unit, public GridObject<Creature>
         void SetLootRecipient (Unit* unit);
         void AllLootRemovedFromCorpse();
 
-        SpellEntry const *reachWithSpellAttack(Unit *pVictim);
-        SpellEntry const *reachWithSpellCure(Unit *pVictim);
+        SpellEntry const *reachWithSpellAttack(Unit* pVictim);
+        SpellEntry const *reachWithSpellCure(Unit* pVictim);
 
         uint32 m_spells[CREATURE_MAX_SPELLS];
         CreatureSpellCooldowns m_CreatureSpellCooldowns;
@@ -674,7 +674,7 @@ class Creature : public Unit, public GridObject<Creature>
         CreatureGroup *GetGroup() {return m_group;}
         void SetGroup(CreatureGroup *group) {m_group = group;}
 
-        Unit *SelectVictim();
+        Unit* SelectVictim();
 
         void SetDisableReputationGain(bool disable) { DisableReputationGain = disable; }
         bool IsReputationGainDisabled() { return DisableReputationGain; }

@@ -50,7 +50,7 @@ struct boss_maleki_the_pallidAI : public ScriptedAI
         DrainLife_Timer = 31000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

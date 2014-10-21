@@ -52,7 +52,7 @@ struct boss_baroness_anastariAI : public ScriptedAI
         //Possess_Timer = 35000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -95,12 +95,12 @@ struct boss_baroness_anastariAI : public ScriptedAI
         } else Silence_Timer -= diff;
 
         //Possess
-        /*            if (Possess_Timer <= diff)
+        /*           if (Possess_Timer <= diff)
         {
         //Cast
           if (rand()%100 < 65)
         {
-        Unit *pTarget = NULL;
+        Unit* pTarget = NULL;
         pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
         if (pTarget)DoCast(pTarget, SPELL_POSSESS);
         }

@@ -38,7 +38,7 @@ struct boss_ayamissAI : public ScriptedAI
 {
     boss_ayamissAI(Creature* c) : ScriptedAI(c) {}
 
-    Unit *pTarget;
+    Unit* pTarget;
     uint32 STINGERSPRAY_Timer;
     uint32 POISONSTINGER_Timer;
     uint32 SUMMONSWARMER_Timer;
@@ -53,7 +53,7 @@ struct boss_ayamissAI : public ScriptedAI
         phase=1;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         pTarget = who;
     }

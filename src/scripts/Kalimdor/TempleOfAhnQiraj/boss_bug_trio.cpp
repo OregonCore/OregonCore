@@ -170,7 +170,7 @@ struct boss_vemAI : public ScriptedAI
         //Charge_Timer
         if (Charge_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget)
             {
@@ -238,7 +238,7 @@ struct boss_yaujAI : public ScriptedAI
 
         for (int i = 0; i < 10;i++)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             Creature* Summoned = me->SummonCreature(15621,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,90000);
             if (Summoned && pTarget)
                 ((CreatureAI*)Summoned->AI())->AttackStart(pTarget);
@@ -268,8 +268,8 @@ struct boss_yaujAI : public ScriptedAI
         {
             if (pInstance)
             {
-                Unit *pKri = Unit::GetUnit((*me), pInstance->GetData64(DATA_KRI));
-                Unit *pVem = Unit::GetUnit((*me), pInstance->GetData64(DATA_VEM));
+                Unit* pKri = Unit::GetUnit((*me), pInstance->GetData64(DATA_KRI));
+                Unit* pVem = Unit::GetUnit((*me), pInstance->GetData64(DATA_VEM));
 
                 switch(rand()%3)
                 {

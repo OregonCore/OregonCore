@@ -212,7 +212,7 @@ struct boss_zuljinAI : public ScriptedAI
         me->SetSheath(SHEATH_STATE_MELEE);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance)
             pInstance->SetData(ENCOUNTER_ZULJIN, IN_PROGRESS);
@@ -252,11 +252,11 @@ struct boss_zuljinAI : public ScriptedAI
         DoPlaySoundToSet(me, SOUND_DEATH);
         Summons.DespawnEntry(CREATURE_COLUMN_OF_FIRE);
 
-        if (Unit *Temp = Unit::GetUnit(*me, SpiritGUID[3]))
+        if (Unit* Temp = Unit::GetUnit(*me, SpiritGUID[3]))
             Temp->SetUInt32Value(UNIT_FIELD_BYTES_1,UNIT_STAND_STATE_DEAD);
     }
 
-    void AttackStart(Unit *who)
+    void AttackStart(Unit* who)
     {
         if (Phase == 2)
             AttackStartNoMove(who);
@@ -348,10 +348,10 @@ struct boss_zuljinAI : public ScriptedAI
             DoPlaySoundToSet(me, Transform[Phase].sound);
             if (Phase > 0)
             {
-                if (Unit *Temp = Unit::GetUnit(*me, SpiritGUID[Phase - 1]))
+                if (Unit* Temp = Unit::GetUnit(*me, SpiritGUID[Phase - 1]))
                     Temp->SetUInt32Value(UNIT_FIELD_BYTES_1,UNIT_STAND_STATE_DEAD);
             }
-            if (Unit *Temp = Unit::GetUnit(*me, SpiritGUID[NextPhase - 1]))
+            if (Unit* Temp = Unit::GetUnit(*me, SpiritGUID[NextPhase - 1]))
                 Temp->CastSpell(me, SPELL_SIPHON_SOUL, false); // should m cast on temp
             if (NextPhase == 2)
             {
@@ -426,7 +426,7 @@ struct boss_zuljinAI : public ScriptedAI
 
             if (Grievous_Throw_Timer <= diff)
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     DoCast(pTarget, SPELL_GRIEVOUS_THROW, false);
                 Grievous_Throw_Timer = 10000;
             } else Grievous_Throw_Timer -= diff;
@@ -454,7 +454,7 @@ struct boss_zuljinAI : public ScriptedAI
             {
                 if (!TankGUID)
                 {
-                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
                         TankGUID = me->getVictim()->GetGUID();
                         me->SetSpeed(MOVE_RUN, 5.0f);
@@ -468,7 +468,7 @@ struct boss_zuljinAI : public ScriptedAI
                 {
                     if (Claw_Loop_Timer <= diff)
                     {
-                        Unit *pTarget = me->getVictim();
+                        Unit* pTarget = me->getVictim();
                         if (!pTarget || !pTarget->isTargetableForAttack()) pTarget = Unit::GetUnit(*me, TankGUID);
                         if (!pTarget || !pTarget->isTargetableForAttack()) pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                         if (pTarget)
@@ -503,7 +503,7 @@ struct boss_zuljinAI : public ScriptedAI
             {
                 if (!TankGUID)
                 {
-                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
                         TankGUID = me->getVictim()->GetGUID();
                         me->SetSpeed(MOVE_RUN, 5.0f);
@@ -514,7 +514,7 @@ struct boss_zuljinAI : public ScriptedAI
                 }
                 else if (!Lynx_Rush_Timer)
                 {
-                    Unit *pTarget = me->getVictim();
+                    Unit* pTarget = me->getVictim();
                     if (!pTarget || !pTarget->isTargetableForAttack())
                     {
                         pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -555,14 +555,14 @@ struct boss_zuljinAI : public ScriptedAI
 
             if (Pillar_Of_Fire_Timer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_SUMMON_PILLAR);
                 Pillar_Of_Fire_Timer = 10000;
             } else Pillar_Of_Fire_Timer -= diff;
 
             if (Flame_Breath_Timer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     me->SetInFront(pTarget);
                 DoCast(me, SPELL_FLAME_BREATH);
                 Flame_Breath_Timer = 10000;
@@ -595,7 +595,7 @@ struct feather_vortexAI : public ScriptedAI
 
     void EnterCombat(Unit* /*pTarget*/ ) {}
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry *spell)
     {
         if (caster->GetTypeId() == TYPEID_PLAYER && !PlayerIsInList(CAST_PLR(caster)))
         {

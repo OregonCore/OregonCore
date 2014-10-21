@@ -35,10 +35,10 @@ class GuardAI : public CreatureAI
 
         explicit GuardAI(Creature* c);
 
-        void MoveInLineOfSight(Unit *);
+        void MoveInLineOfSight(Unit* );
         void EnterEvadeMode();
-        void JustDied(Unit *);
-        bool IsVisible(Unit *) const;
+        void JustDied(Unit* );
+        bool IsVisible(Unit* ) const;
 
         void UpdateAI(const uint32);
         static int Permissible(const Creature* );

@@ -304,7 +304,7 @@ void PlayerMenu::SendTalking(char const * title, char const * text)
 }
 
 /*********************************************************/
-/***                    QUEST SYSTEM                   ***/
+/***                   QUEST SYSTEM                   ***/
 /*********************************************************/
 
 QuestMenu::QuestMenu()

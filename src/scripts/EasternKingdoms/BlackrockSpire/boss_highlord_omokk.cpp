@@ -55,7 +55,7 @@ struct boss_highlordomokkAI : public ScriptedAI
         Slow_Timer = 24000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

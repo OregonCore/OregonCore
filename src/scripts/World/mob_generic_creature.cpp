@@ -41,7 +41,7 @@ struct generic_creatureAI : public ScriptedAI
         IsSelfRooted = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if (!me->IsWithinMeleeRange(who))
         {

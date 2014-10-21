@@ -75,7 +75,7 @@ struct boss_vaelAI : public ScriptedAI
         DoingSpeech = false;
     }
 
-    void BeginSpeech(Unit *pTarget)
+    void BeginSpeech(Unit* pTarget)
     {
         //Stand up and begin speach
         PlayerGUID = pTarget->GetGUID();
@@ -90,7 +90,7 @@ struct boss_vaelAI : public ScriptedAI
         me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
     }
 
-    void KilledUnit(Unit * victim)
+    void KilledUnit(Unit* victim)
     {
         if (rand()%5)
             return;
@@ -98,7 +98,7 @@ struct boss_vaelAI : public ScriptedAI
         DoScriptText(SAY_KILLTARGET, me, victim);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoCast(me, SPELL_ESSENCEOFTHERED);
         DoZoneInCombat();
@@ -168,7 +168,7 @@ struct boss_vaelAI : public ScriptedAI
         //BurningAdrenalineCaster_Timer
         if (BurningAdrenalineCaster_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
 
             uint8 i = 0;
             while (i < 3)                                   // max 3 tries to get a random target with power_mana

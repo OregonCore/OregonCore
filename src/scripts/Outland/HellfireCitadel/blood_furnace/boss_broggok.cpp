@@ -167,7 +167,7 @@ struct mob_nascent_orcAI : public ScriptedAI
     {
         if (uiMotionType == POINT_MOTION_TYPE)
         {
-            if (Unit *pTarget = me->SelectNearestTarget(99.0f))
+            if (Unit* pTarget = me->SelectNearestTarget(99.0f))
             {
                 me->AI()->AttackStart(pTarget);
             }

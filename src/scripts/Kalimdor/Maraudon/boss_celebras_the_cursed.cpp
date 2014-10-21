@@ -43,7 +43,7 @@ struct celebras_the_cursedAI : public ScriptedAI
         CorruptForces_Timer = 30000;
     }
 
-    void EnterCombat(Unit * /*who*/) { }
+    void EnterCombat(Unit* /*who*/) { }
 
     void JustDied(Unit* /*Killer*/)
     {
@@ -58,7 +58,7 @@ struct celebras_the_cursedAI : public ScriptedAI
         //Wrath
         if (Wrath_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget)
                 DoCast(pTarget, SPELL_WRATH);

@@ -150,7 +150,7 @@ struct boss_nalorakkAI : public ScriptedAI
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 1, 5122);
     }
 
-    void SendAttacker(Unit *pTarget)
+    void SendAttacker(Unit* pTarget)
     {
         std::list<Creature*> templist;
         float x, y, z;
@@ -187,7 +187,7 @@ struct boss_nalorakkAI : public ScriptedAI
             ScriptedAI::AttackStart(who);
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!MoveEvent)
         {
@@ -260,7 +260,7 @@ struct boss_nalorakkAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance)
             pInstance->SetData(ENCOUNTER_NALORAKK, IN_PROGRESS);
@@ -418,7 +418,7 @@ struct boss_nalorakkAI : public ScriptedAI
             {
                 me->MonsterYell(YELL_SURGE, LANG_UNIVERSAL, 0);
                 DoPlaySoundToSet(me, SOUND_YELL_SURGE);
-                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 45, true);
+                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 45, true);
                 if (pTarget)
                     DoCast(pTarget, SPELL_SURGE);
                 Surge_Timer = 15000 + rand()%5000;

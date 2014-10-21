@@ -301,7 +301,7 @@ public:
         }
     }
 
-    void JustDied(Unit * /*killer*/)
+    void JustDied(Unit* /*killer*/)
     {
         if (!PlayerGUID)
             return;
@@ -746,7 +746,7 @@ struct npc_remulosAI : public npc_escortAI
         {
             if (PhantasmPhase)
             {
-                if (Unit *pTarget = pCreature->FindNearestCreature(NPC_NIGHTMARE_PHANTASM, 50.0f))
+                if (Unit* pTarget = pCreature->FindNearestCreature(NPC_NIGHTMARE_PHANTASM, 50.0f))
                 {
                     pCreature->GetMotionMaster()->MoveChase(pTarget);
                     pCreature->AI()->AttackStart(pTarget);
@@ -1416,7 +1416,7 @@ public:
     {
         if (!me->getVictim())
         {
-            if (Unit *pTarget = me->SelectNearestTarget(20))
+            if (Unit* pTarget = me->SelectNearestTarget(20))
             {
                 me->GetMotionMaster()->MoveChase(pTarget);
                 AttackStart(pTarget);

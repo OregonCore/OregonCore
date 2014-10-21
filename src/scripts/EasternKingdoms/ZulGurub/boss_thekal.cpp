@@ -270,7 +270,7 @@ struct boss_thekalAI : public ScriptedAI
             // Charge Timer
             if (Charge_Timer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     DoCast(pTarget, SPELL_CHARGE);
                     DoResetThreat();
@@ -429,8 +429,8 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
         {
             if (pInstance)
             {
-                Unit *pThekal = Unit::GetUnit((*me), ThekalGUID);
-                Unit *pZath = Unit::GetUnit((*me), ZathGUID);
+                Unit* pThekal = Unit::GetUnit((*me), ThekalGUID);
+                Unit* pZath = Unit::GetUnit((*me), ZathGUID);
 
                 if (!pThekal || !pZath)
                     return;

@@ -63,7 +63,7 @@ class CreatureGroup
         void AddMember(Creature* member);
         void RemoveMember(Creature* member);
 
-        void MemberAttackStart(Creature* member, Unit *target);
+        void MemberAttackStart(Creature* member, Unit* target);
         bool IsAllowedToRespawn(Creature* member);
 };
 

@@ -435,7 +435,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
     {
         DoScriptText(RAND(SAY_TH_RANDOM_KILL1,SAY_TH_RANDOM_KILL2,SAY_TH_RANDOM_KILL3), me);
     }
-    void JustDied(Unit *slayer)
+    void JustDied(Unit* slayer)
     {
         if (pInstance)
             pInstance->SetData(TYPE_THRALL_EVENT,FAIL);

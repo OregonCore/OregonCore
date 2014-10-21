@@ -254,7 +254,7 @@ class PlayerMenu
         void AddQuestLevelToTitle(std::string &title, int32 level);
 
         /*********************************************************/
-        /***                    QUEST SYSTEM                   ***/
+        /***                   QUEST SYSTEM                   ***/
         /*********************************************************/
         void SendQuestGiverStatus(uint8 questStatus, uint64 npcGUID);
 

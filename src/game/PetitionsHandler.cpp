@@ -184,7 +184,7 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket & recv_data)
     }
 
     _player->ModifyMoney(-(int32)cost);
-    Item *charter = _player->StoreNewItem(dest, charterid, true);
+    Item* charter = _player->StoreNewItem(dest, charterid, true);
     if (!charter)
         return;
 
@@ -361,7 +361,7 @@ void WorldSession::HandlePetitionRenameOpcode(WorldPacket & recv_data)
     recv_data >> petitionguid;                              // guid
     recv_data >> newname;                                   // new name
 
-    Item *item = _player->GetItemByGuid(petitionguid);
+    Item* item = _player->GetItemByGuid(petitionguid);
     if (!item)
         return;
 
@@ -532,7 +532,7 @@ void WorldSession::HandlePetitionSignOpcode(WorldPacket & recv_data)
     SendPacket(&data);
 
     // update signs count on charter, required testing...
-    //Item *item = _player->GetItemByGuid(petitionguid));
+    //Item* item = _player->GetItemByGuid(petitionguid));
     //if (item)
     //    item->SetUInt32Value(ITEM_FIELD_ENCHANTMENT+1, signs);
 
@@ -765,7 +765,7 @@ void WorldSession::HandleTurnInPetitionOpcode(WorldPacket & recv_data)
     }
 
     // and at last charter item check
-    Item *item = _player->GetItemByGuid(petitionguid);
+    Item* item = _player->GetItemByGuid(petitionguid);
     if (!item)
         return;
 

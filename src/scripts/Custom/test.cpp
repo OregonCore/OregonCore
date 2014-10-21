@@ -106,7 +106,7 @@ struct npc_testAI : public npc_escortAI
                 //killer = me when player got to far from creature
                 if (killer == me)
                 {
-                    Unit *pTemp = Unit::GetUnit(*me, GetPlayerForEscort()->GetGUID());
+                    Unit* pTemp = Unit::GetUnit(*me, GetPlayerForEscort()->GetGUID());
                     if (pTemp)
                         me->MonsterWhisper(WHISPER_TOO_FAR, pTemp->GetGUID());
                 }

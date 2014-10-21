@@ -129,7 +129,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoZoneInCombat();
         DoScriptText(SAY_AGGRO, me);
@@ -137,12 +137,12 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
             pInstance->SetData(DATA_GURTOGGBLOODBOILEVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_GURTOGGBLOODBOILEVENT, DONE);
@@ -153,7 +153,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
     // Note: This seems like a very complicated fix. The fix needs to be handled by the core, as implementation of limited-target AoE spells are still not limited.
     void CastBloodboil()
     {
-        std::list<Unit *> targets;
+        std::list<Unit* > targets;
         Map *map = me->GetMap();
         if (map->IsDungeon())
         {
@@ -174,9 +174,9 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         targets.resize(5);
 
         //Aura each player in the targets list with Bloodboil.
-        for (std::list<Unit *>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
+        for (std::list<Unit* >::iterator itr = targets.begin(); itr != targets.end(); ++itr)
         {
-            Unit *pTarget = *itr;
+            Unit* pTarget = *itr;
             if (pTarget && pTarget->isAlive())
                 me->AddAura(SPELL_BLOODBOIL, pTarget);
         }
@@ -276,7 +276,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             if (Phase1)
             {
-                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget && pTarget->isAlive())
                 {
                     Phase1 = false;

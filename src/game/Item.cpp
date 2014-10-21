@@ -22,7 +22,7 @@
 #include "Database/DatabaseEnv.h"
 #include "ItemEnchantmentMgr.h"
 
-void AddItemsSetItem(Player*player,Item *item)
+void AddItemsSetItem(Player*player,Item* item)
 {
     ItemPrototype const *proto = item->GetProto();
     uint32 setid = proto->ItemSet;
@@ -884,7 +884,7 @@ Item* Item::CreateItem(uint32 item, uint32 count, Player const* player)
 
         ASSERT(count != 0 && "pProto->Stackable == 0 but checked at loading already");
 
-        Item *pItem = NewItemOrBag(pProto);
+        Item* pItem = NewItemOrBag(pProto);
         if (pItem->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_ITEM), item, player))
         {
             pItem->SetCount(count);

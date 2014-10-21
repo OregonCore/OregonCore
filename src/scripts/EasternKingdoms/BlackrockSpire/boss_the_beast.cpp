@@ -43,7 +43,7 @@ struct boss_thebeastAI : public ScriptedAI
         TerrifyingRoar_Timer = 23000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -63,7 +63,7 @@ struct boss_thebeastAI : public ScriptedAI
         //Immolate_Timer
         if (Immolate_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_IMMOLATE);
             Immolate_Timer = 8000;
         } else Immolate_Timer -= diff;

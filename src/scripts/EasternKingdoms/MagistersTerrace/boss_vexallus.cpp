@@ -87,18 +87,18 @@ struct boss_vexallusAI : public ScriptedAI
             pInstance->SetData(DATA_VEXALLUS_EVENT, NOT_STARTED);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(SAY_KILL, me);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_VEXALLUS_EVENT, DONE);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
 
@@ -108,7 +108,7 @@ struct boss_vexallusAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        if (Unit *temp = SelectUnit(SELECT_TARGET_RANDOM, 0))
+        if (Unit* temp = SelectUnit(SELECT_TARGET_RANDOM, 0))
             summoned->GetMotionMaster()->MoveFollow(temp,0,0);
 
         //spells are SUMMON_TYPE_GUARDIAN, so using setOwner should be ok
@@ -154,7 +154,7 @@ struct boss_vexallusAI : public ScriptedAI
 
             if (ChainLightningTimer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_CHAIN_LIGHTNING);
 
                 ChainLightningTimer = 8000;
@@ -162,7 +162,7 @@ struct boss_vexallusAI : public ScriptedAI
 
             if (ArcaneShockTimer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 if (pTarget)
                     DoCast(pTarget, SPELL_ARCANE_SHOCK);
 
@@ -196,16 +196,16 @@ struct mob_pure_energyAI : public ScriptedAI
 
     void JustDied(Unit* slayer)
     {
-        if (Unit *temp = me->GetOwner())
+        if (Unit* temp = me->GetOwner())
         {
             if (temp && temp->isAlive())
                 slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, true, 0, 0, temp->GetGUID());
         }
     }
 
-    void EnterCombat(Unit * /*who*/) {}
-    void MoveInLineOfSight(Unit * /*who*/) {}
-    void AttackStart(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
+    void AttackStart(Unit* /*who*/) {}
 };
 
 CreatureAI* GetAI_mob_pure_energy(Creature* pCreature)

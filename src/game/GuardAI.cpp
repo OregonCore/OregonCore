@@ -34,7 +34,7 @@ GuardAI::GuardAI(Creature* c) : CreatureAI(c), i_victimGuid(0), i_state(STATE_NO
 {
 }
 
-void GuardAI::MoveInLineOfSight(Unit *u)
+void GuardAI::MoveInLineOfSight(Unit* u)
 {
     // Ignore Z for flying creatures
     if (!me->canFly() && me->GetDistanceZ(u) > CREATURE_Z_ATTACK_RANGE)
@@ -121,13 +121,13 @@ void GuardAI::UpdateAI(const uint32 /*diff*/)
     }
 }
 
-bool GuardAI::IsVisible(Unit *pl) const
+bool GuardAI::IsVisible(Unit* pl) const
 {
     return me->IsWithinDistInMap(pl,sWorld.getConfig(CONFIG_SIGHT_GUARDER))
         && pl->isVisibleForOrDetect(me,true);
 }
 
-void GuardAI::JustDied(Unit *killer)
+void GuardAI::JustDied(Unit* killer)
 {
     if (Player* pkiller = killer->GetCharmerOrOwnerPlayerOrPlayerItself())
         me->SendZoneUnderAttackMessage(pkiller);

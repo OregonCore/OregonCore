@@ -316,8 +316,8 @@ class Guild
 
         void BroadcastToGuild(WorldSession *session, const std::string& msg, uint32 language = LANG_UNIVERSAL);
         void BroadcastToOfficers(WorldSession *session, const std::string& msg, uint32 language = LANG_UNIVERSAL);
-        void BroadcastPacketToRank(WorldPacket *packet, uint32 rankId);
-        void BroadcastPacket(WorldPacket *packet);
+        void BroadcastPacketToRank(WorldPacket* packet, uint32 rankId);
+        void BroadcastPacket(WorldPacket* packet);
 
         void BroadcastEvent(GuildEvents event, uint64 guid, char const* str1 = NULL, char const* str2 = NULL, char const* str3 = NULL);
         void BroadcastEvent(GuildEvents event, char const* str1 = NULL, char const* str2 = NULL, char const* str3 = NULL)
@@ -374,9 +374,9 @@ class Guild
         void   DisplayGuildBankContentUpdate(uint8 TabId, GuildItemPosCountVec const& slots);
         void   DisplayGuildBankMoneyUpdate();
 
-        Item*  GetItem(uint8 TabId, uint8 SlotId);
-        uint8  CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec& dest, uint32 count, Item *pItem, bool swap = false) const;
-        Item*  StoreItem(uint8 tab, GuildItemPosCountVec const& pos, Item *pItem);
+        Item* GetItem(uint8 TabId, uint8 SlotId);
+        uint8  CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec& dest, uint32 count, Item* pItem, bool swap = false) const;
+        Item* StoreItem(uint8 tab, GuildItemPosCountVec const& pos, Item* pItem);
         void   RemoveItem(uint8 tab, uint8 slot);
 
         // Tabs
@@ -467,9 +467,9 @@ class Guild
         void UpdateAccountsNumber();
         // internal common parts for CanStore/StoreItem functions
         void AppendDisplayGuildBankSlot(WorldPacket& data, GuildBankTab const *tab, int32 slot);
-        uint8 _CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCountVec& dest, uint32& count, bool swap, Item *pSrcItem) const;
-        uint8 _CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec& dest, uint32& count, bool merge, Item *pSrcItem, uint8 skip_slot) const;
-        Item* _StoreItem(uint8 tab, uint8 slot, Item *pItem, uint32 count, bool clone);
+        uint8 _CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCountVec& dest, uint32& count, bool swap, Item* pSrcItem) const;
+        uint8 _CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec& dest, uint32& count, bool merge, Item* pSrcItem, uint8 skip_slot) const;
+        Item* _StoreItem(uint8 tab, uint8 slot, Item* pItem, uint32 count, bool clone);
 };
 #endif
 

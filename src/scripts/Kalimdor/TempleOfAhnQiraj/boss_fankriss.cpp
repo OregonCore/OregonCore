@@ -125,7 +125,7 @@ struct boss_fankrissAI : public ScriptedAI
         {
             if (SpawnHatchlings_Timer <= diff)
             {
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                 if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                 {

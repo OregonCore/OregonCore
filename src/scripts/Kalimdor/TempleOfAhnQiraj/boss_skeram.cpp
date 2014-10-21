@@ -245,7 +245,7 @@ struct boss_skeramAI : public ScriptedAI
 
         for (int tryi = 0; tryi < 41; tryi ++)
         {
-            Unit *targetpl = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit* targetpl = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (targetpl->GetTypeId() == TYPEID_PLAYER)
             {
                 Group *grp = ((Player* )targetpl)->GetGroup();
@@ -276,7 +276,7 @@ struct boss_skeramAI : public ScriptedAI
             case 25: Images25 = true; break;
         }
 
-        Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+        Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
         Image1 = me->SummonCreature(15263, i1->x, i1->y, i1->z, i1->r, TEMPSUMMON_CORPSE_DESPAWN, 30000);
         if (!Image1)

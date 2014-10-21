@@ -115,7 +115,7 @@ class InstanceData : public ZoneScript
 
         // Direct calls to Map functions.
         Creature* GetCreature(uint64 guid) {return instance->GetCreature(guid);}
-        GameObject *GetGameObject(uint64 guid) {return instance->GetGameObject(guid);}
+        GameObject* GetGameObject(uint64 guid) {return instance->GetGameObject(guid);}
 
         //sends world state update to all players in instance
         void DoUpdateWorldState(uint32 uiStateId, uint32 uiStateData);
@@ -126,7 +126,7 @@ class InstanceData : public ZoneScript
         //Handle open / close objects
         //use HandleGameObject(NULL,boolen,GO); in OnObjectCreate in instance scripts
         //use HandleGameObject(GUID,boolen,NULL); in any other script
-        void HandleGameObject(uint64 GUID, bool open, GameObject *go = NULL);
+        void HandleGameObject(uint64 GUID, bool open, GameObject* go = NULL);
 
         //change active state of doors or buttons
         void DoUseDoorOrButton(uint64 uiGuid, uint32 uiWithRestoreTime = 0, bool bUseAlternativeState = false);
@@ -140,10 +140,10 @@ class InstanceData : public ZoneScript
         void LoadDoorData(const DoorData *data);
         void LoadMinionData(const MinionData *data);
 
-        void AddDoor(GameObject *door, bool add);
+        void AddDoor(GameObject* door, bool add);
         void AddMinion(Creature* minion, bool add);
 
-        void UpdateDoorState(GameObject *door);
+        void UpdateDoorState(GameObject* door);
         void UpdateMinionState(Creature* minion, EncounterState state);
 
         std::string LoadBossState(const char * data);

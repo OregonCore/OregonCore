@@ -89,7 +89,7 @@ struct npc_draenei_survivorAI : public ScriptedAI
 
     void EnterCombat(Unit*) {}
 
-    void MoveInLineOfSight(Unit *who)                       //MoveInLineOfSight is called if creature could see you, updated all 100 ms
+    void MoveInLineOfSight(Unit* who)                       //MoveInLineOfSight is called if creature could see you, updated all 100 ms
     {
         if (!who)
             return;
@@ -177,7 +177,7 @@ struct npc_draenei_survivorAI : public ScriptedAI
         } else SayingTimer -= diff;
     }
 
-    void SpellHit(Unit *Hitter, const SpellEntry *Spellkind)//Called if you cast a spell and do some things if Specified spell is true!
+    void SpellHit(Unit* Hitter, const SpellEntry *Spellkind)//Called if you cast a spell and do some things if Specified spell is true!
     {
         if (Hitter && Spellkind->Id == 28880)
         {
@@ -301,9 +301,9 @@ struct npc_injured_draeneiAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
-    void MoveInLineOfSight(Unit * /*who*/)
+    void MoveInLineOfSight(Unit* /*who*/)
     {
     }
 

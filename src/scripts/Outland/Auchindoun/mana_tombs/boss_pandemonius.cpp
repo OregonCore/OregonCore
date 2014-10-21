@@ -73,7 +73,7 @@ struct boss_pandemoniusAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *)
+    void EnterCombat(Unit* )
     {
         switch(rand()%3)
         {
@@ -91,7 +91,7 @@ struct boss_pandemoniusAI : public ScriptedAI
 
         if (VoidBlast_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 DoCast(pTarget,HeroicMode ? H_SPELL_VOID_BLAST : SPELL_VOID_BLAST);
                 VoidBlast_Timer = 500;

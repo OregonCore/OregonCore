@@ -119,9 +119,9 @@ struct boss_void_reaverAI : public ScriptedAI
                 ArcaneOrb_Timer = 3000;
                 return;
             }
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
-            std::vector<Unit *> target_list;
+            std::vector<Unit* > target_list;
             for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
                 pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());

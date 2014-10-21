@@ -91,7 +91,7 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket & recv_data)
     }
 
     Creature* unit = NULL;
-    GameObject *go = NULL;
+    GameObject* go = NULL;
     if (IS_CREATURE_GUID(guid))
     {
         unit = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);
@@ -938,7 +938,7 @@ void WorldSession::HandleNextCinematicCamera(WorldPacket & /*recv_data*/)
 
 void WorldSession::HandleMoveTimeSkippedOpcode(WorldPacket & recv_data)
 {
-    /*  WorldSession::Update(getMSTime());*/
+    /* WorldSession::Update(getMSTime());*/
     DEBUG_LOG("WORLD: Time Lag/Synchronization Resent/Update");
 
     recv_data.read_skip<uint64>();

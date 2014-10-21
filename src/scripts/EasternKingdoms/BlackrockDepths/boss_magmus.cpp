@@ -48,7 +48,7 @@ struct boss_magmusAI : public ScriptedAI
         WarStomp_Timer =0;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -78,7 +78,7 @@ struct boss_magmusAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
     // When he die open door to last chamber
-    void JustDied(Unit *who)
+    void JustDied(Unit* who)
     {
         if (ScriptedInstance* pInstance = who->GetInstanceData())
             pInstance->HandleGameObject(pInstance->GetData64(DATA_THRONE_DOOR), true);

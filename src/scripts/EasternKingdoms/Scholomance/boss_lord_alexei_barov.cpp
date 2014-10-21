@@ -43,7 +43,7 @@ struct boss_lordalexeibarovAI : public ScriptedAI
         me->LoadCreaturesAddon();
     }
 
-    void JustDied(Unit * /*killer*/)
+    void JustDied(Unit* /*killer*/)
     {
         ScriptedInstance *pInstance = me->GetInstanceData();
         if (pInstance)
@@ -55,7 +55,7 @@ struct boss_lordalexeibarovAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -67,7 +67,7 @@ struct boss_lordalexeibarovAI : public ScriptedAI
         //Immolate_Timer
         if (Immolate_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget) DoCast(pTarget, SPELL_IMMOLATE);
 

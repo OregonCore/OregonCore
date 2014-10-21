@@ -74,7 +74,7 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data)
     }
 }
 
-void WorldSession::HandlePetActionHelper(Unit *pet, uint64 guid1, uint16 spellid, uint16 flag, uint64 guid2)
+void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid, uint16 flag, uint64 guid2)
 {
     CharmInfo *charmInfo = pet->GetCharmInfo();
     if (!charmInfo)
@@ -122,7 +122,7 @@ void WorldSession::HandlePetActionHelper(Unit *pet, uint64 guid1, uint16 spellid
                     }
 
                     // only place where pet can be player
-                    Unit *TargetUnit = ObjectAccessor::GetUnit(*_player, guid2);
+                    Unit* TargetUnit = ObjectAccessor::GetUnit(*_player, guid2);
                     if (!TargetUnit)
                         return;
 
@@ -477,7 +477,7 @@ void WorldSession::HandlePetRename(WorldPacket & recv_data)
 
     pet->SetName(name);
 
-    Unit *owner = pet->GetOwner();
+    Unit* owner = pet->GetOwner();
     if (owner && (owner->GetTypeId() == TYPEID_PLAYER) && owner->ToPlayer()->GetGroup())
         owner->ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_PET_NAME);
 

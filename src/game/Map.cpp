@@ -461,7 +461,7 @@ Map::AddToMap(T *obj)
 }
 
 /*
-void Map::MessageBroadcast(Player* player, WorldPacket *msg, bool to_self)
+void Map::MessageBroadcast(Player* player, WorldPacket* msg, bool to_self)
 {
     CellPair p = Oregon::ComputeCellPair(player->GetPositionX(), player->GetPositionY());
 
@@ -482,7 +482,7 @@ void Map::MessageBroadcast(Player* player, WorldPacket *msg, bool to_self)
     cell.Visit(p, message, *this, *player, GetVisibilityDistance());
 }
 
-void Map::MessageBroadcast(WorldObject *obj, WorldPacket *msg)
+void Map::MessageBroadcast(WorldObject *obj, WorldPacket* msg)
 {
     CellPair p = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
 
@@ -506,7 +506,7 @@ void Map::MessageBroadcast(WorldObject *obj, WorldPacket *msg)
     cell.Visit(p, message, *this, *obj, GetVisibilityDistance());
 }
 
-void Map::MessageDistBroadcast(Player* player, WorldPacket *msg, float dist, bool to_self, bool own_team_only)
+void Map::MessageDistBroadcast(Player* player, WorldPacket* msg, float dist, bool to_self, bool own_team_only)
 {
     CellPair p = Oregon::ComputeCellPair(player->GetPositionX(), player->GetPositionY());
 
@@ -527,7 +527,7 @@ void Map::MessageDistBroadcast(Player* player, WorldPacket *msg, float dist, boo
     cell.Visit(p, message, *this, *player, dist);
 }
 
-void Map::MessageDistBroadcast(WorldObject *obj, WorldPacket *msg, float dist)
+void Map::MessageDistBroadcast(WorldObject *obj, WorldPacket* msg, float dist)
 {
     CellPair p = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
 
@@ -2281,12 +2281,12 @@ void Map::RemoveFromActive(Creature* c)
 
 template void Map::AddToMap(Corpse *);
 template void Map::AddToMap(Creature* );
-template void Map::AddToMap(GameObject *);
+template void Map::AddToMap(GameObject* );
 template void Map::AddToMap(DynamicObject *);
 
 template void Map::RemoveFromMap(Corpse *,bool);
 template void Map::RemoveFromMap(Creature* ,bool);
-template void Map::RemoveFromMap(GameObject *, bool);
+template void Map::RemoveFromMap(GameObject* , bool);
 template void Map::RemoveFromMap(DynamicObject *, bool);
 
 /* ******* Dungeon Instance Maps ******* */

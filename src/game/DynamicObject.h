@@ -32,7 +32,7 @@ class DynamicObject : public WorldObject, public GridObject<DynamicObject>
         void AddToWorld();
         void RemoveFromWorld();
 
-        bool Create(uint32 guidlow, Unit *caster, uint32 spellId, uint32 effIndex, const Position &pos, int32 duration, float radius);
+        bool Create(uint32 guidlow, Unit* caster, uint32 spellId, uint32 effIndex, const Position &pos, int32 duration, float radius);
         void Update(uint32 p_time);
         void Delete();
         uint32 GetSpellId() const { return m_spellId; }
@@ -41,9 +41,9 @@ class DynamicObject : public WorldObject, public GridObject<DynamicObject>
         uint64 GetCasterGUID() const { return m_casterGuid; }
         Unit* GetCaster() const;
         float GetRadius() const { return m_radius; }
-        bool IsAffecting(Unit *unit) const { return m_affected.find(unit) != m_affected.end(); }
-        void AddAffected(Unit *unit) { m_affected.insert(unit); }
-        void RemoveAffected(Unit *unit) { m_affected.erase(unit); }
+        bool IsAffecting(Unit* unit) const { return m_affected.find(unit) != m_affected.end(); }
+        void AddAffected(Unit* unit) { m_affected.insert(unit); }
+        void RemoveAffected(Unit* unit) { m_affected.erase(unit); }
         void Delay(int32 delaytime);
         bool isVisibleForInState(Player const* u, bool inVisibleList) const;
 

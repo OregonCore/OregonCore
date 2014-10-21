@@ -157,7 +157,7 @@ struct instance_uldaman : public ScriptedInstance
 
     void BlockGO(uint64 guid)
     {
-        GameObject *go = instance->GetGameObject(guid);
+        GameObject* go = instance->GetGameObject(guid);
         if (!go)
             return;
         go->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
@@ -238,7 +238,7 @@ struct instance_uldaman : public ScriptedInstance
         if (!archaedas)
             return;
 
-        if (/*Unit *victim = */Unit::GetUnit(*archaedas, target))
+        if (/*Unit* victim = */Unit::GetUnit(*archaedas, target))
         {
             archaedas->CastSpell(archaedas, SPELL_ARCHAEDAS_AWAKEN,false);
             whoWokeArchaedasGUID = target;

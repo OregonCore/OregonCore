@@ -283,7 +283,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
 
     void AttackStart(Unit* /*who*/) { }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (IsRunning)
             return;
@@ -350,7 +350,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
                 case 2:
                     DoCast(me,SPELL_TARGET_ALPHA);
                     pInstance->SetData(TYPE_WARDEN_1,IN_PROGRESS);
-                    if (GameObject *Sphere = GameObject::GetGameObject(*me,pInstance->GetData64(DATA_SPHERE_SHIELD)))
+                    if (GameObject* Sphere = GameObject::GetGameObject(*me,pInstance->GetData64(DATA_SPHERE_SHIELD)))
                         Sphere->SetGoState(GO_STATE_READY);
                     break;
                 case 3:

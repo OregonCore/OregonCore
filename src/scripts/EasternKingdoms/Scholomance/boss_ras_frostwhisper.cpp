@@ -54,7 +54,7 @@ struct boss_rasfrostAI : public ScriptedAI
         DoCast(me, SPELL_ICEARMOR, true);
     }
 
-    void EnterCombat(Unit * /*who*/){}
+    void EnterCombat(Unit* /*who*/){}
 
     void UpdateAI(const uint32 diff)
     {
@@ -71,7 +71,7 @@ struct boss_rasfrostAI : public ScriptedAI
         //Frostbolt_Timer
         if (Frostbolt_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_FROSTBOLT);
 
             Frostbolt_Timer = 8000;

@@ -54,7 +54,7 @@ struct boss_instructormaliciaAI : public ScriptedAI
         TouchCounter = 0;
     }
 
-    void JustDied(Unit * /*killer*/)
+    void JustDied(Unit* /*killer*/)
     {
         ScriptedInstance *pInstance = me->GetInstanceData();
         if (pInstance)
@@ -66,7 +66,7 @@ struct boss_instructormaliciaAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -85,7 +85,7 @@ struct boss_instructormaliciaAI : public ScriptedAI
         //Corruption_Timer
         if (Corruption_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget) DoCast(pTarget, SPELL_CORRUPTION);
 

@@ -51,7 +51,7 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
     uint32 Carnivorousbite_Timer;
     uint32 FocusFire_Timer;
     bool HeroicMode;
-    Unit *focusedTarget;
+    Unit* focusedTarget;
 
     void Reset()
     {
@@ -62,7 +62,7 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
         focusedTarget = NULL;
     }
 
-    void EnterCombat(Unit *)
+    void EnterCombat(Unit* )
     { }
 
     void JustSummoned(Creature* summoned)
@@ -126,7 +126,7 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
         if (FocusFire_Timer <= diff)
         {
             // Summon Focus Fire & Emote
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
             if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive())
             {
                 focusedTarget = pTarget;
@@ -169,7 +169,7 @@ struct mob_focus_fireAI : public ScriptedAI
         fiery1 = fiery2 = true;
     }
 
-    void EnterCombat(Unit *)
+    void EnterCombat(Unit* )
     { }
 
     void UpdateAI(const uint32 diff)

@@ -52,7 +52,7 @@ struct boss_nerubenkanAI : public ScriptedAI
         RaiseUndeadScarab_Timer = 3000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

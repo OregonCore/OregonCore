@@ -55,13 +55,13 @@ struct boss_herodAI : public ScriptedAI
         Whirlwind_Timer = 60000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
         DoCast(me, SPELL_RUSHINGCHARGE);
     }
 
-     void KilledUnit(Unit * /*victim*/)
+     void KilledUnit(Unit* /*victim*/)
      {
          DoScriptText(SAY_KILL, me);
      }

@@ -126,7 +126,7 @@ bool ChatHandler::HandleBuyErrorCommand(const char* args)
 
 bool ChatHandler::HandleSendOpcodeCommand(const char* /*args*/)
 {
-    Unit *unit = getSelectedUnit();
+    Unit* unit = getSelectedUnit();
     Player* player = NULL;
     if (!unit || (unit->GetTypeId() != TYPEID_PLAYER))
         player = m_session->GetPlayer();
@@ -383,7 +383,7 @@ bool ChatHandler::HandleGetItemState(const char* args)
             if (i >= BUYBACK_SLOT_START && i < BUYBACK_SLOT_END)
                 continue;
 
-            Item *item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, i);
+            Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, i);
             if (!item) continue;
             if (!item->IsBag())
             {
@@ -405,10 +405,10 @@ bool ChatHandler::HandleGetItemState(const char* args)
 
     if (list_queue)
     {
-        std::vector<Item *> &updateQueue = player->GetItemUpdateQueue();
+        std::vector<Item* > &updateQueue = player->GetItemUpdateQueue();
         for (size_t i = 0; i < updateQueue.size(); i++)
         {
-            Item *item = updateQueue[i];
+            Item* item = updateQueue[i];
             if (!item) continue;
 
             Bag *container = item->GetContainer();
@@ -432,13 +432,13 @@ bool ChatHandler::HandleGetItemState(const char* args)
     if (check_all)
     {
         bool error = false;
-        std::vector<Item *> &updateQueue = player->GetItemUpdateQueue();
+        std::vector<Item* > &updateQueue = player->GetItemUpdateQueue();
         for (uint8 i = PLAYER_SLOT_START; i < PLAYER_SLOT_END; i++)
         {
             if (i >= BUYBACK_SLOT_START && i < BUYBACK_SLOT_END)
                 continue;
 
-            Item *item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, i);
+            Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, i);
             if (!item) continue;
 
             if (item->GetSlot() != i)
@@ -551,7 +551,7 @@ bool ChatHandler::HandleGetItemState(const char* args)
 
         for (size_t i = 0; i < updateQueue.size(); i++)
         {
-            Item *item = updateQueue[i];
+            Item* item = updateQueue[i];
             if (!item) continue;
 
             if (item->GetOwnerGUID() != player->GetGUID())
@@ -567,7 +567,7 @@ bool ChatHandler::HandleGetItemState(const char* args)
             }
 
             if (item->GetState() == ITEM_REMOVED) continue;
-            Item *test = player->GetItemByPos(item->GetBagSlot(), item->GetSlot());
+            Item* test = player->GetItemByPos(item->GetBagSlot(), item->GetSlot());
 
             if (test == NULL)
             {
@@ -632,7 +632,7 @@ bool ChatHandler::HandleDebugHostilRefList(const char * /*args*/)
     PSendSysMessage("Hostil reference list of %s (guid %u)",target->GetName(), target->GetGUIDLow());
     while (ref)
     {
-        if (Unit * unit = ref->getSource()->getOwner())
+        if (Unit* unit = ref->getSource()->getOwner())
         {
             ++cnt;
             PSendSysMessage("   %u.   %s   (guid %u)  - threat %f",cnt,unit->GetName(), unit->GetGUIDLow(), ref->getThreat());

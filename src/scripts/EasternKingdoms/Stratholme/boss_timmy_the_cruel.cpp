@@ -41,7 +41,7 @@ struct boss_timmy_the_cruelAI : public ScriptedAI
         HasYelled = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (!HasYelled)
         {

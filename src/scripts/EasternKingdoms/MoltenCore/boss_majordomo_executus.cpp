@@ -75,7 +75,7 @@ struct boss_majordomoAI : public ScriptedAI
         DoScriptText(SAY_SLAY, me);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }

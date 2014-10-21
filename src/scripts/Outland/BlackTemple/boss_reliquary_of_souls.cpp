@@ -114,7 +114,7 @@ struct npc_enslaved_soulAI : public ScriptedAI
         DoZoneInCombat();
     }
 
-    void JustDied(Unit *killer);
+    void JustDied(Unit* killer);
 };
 
 struct boss_reliquary_of_soulsAI : public ScriptedAI
@@ -176,7 +176,7 @@ struct boss_reliquary_of_soulsAI : public ScriptedAI
         float y = Coords[random].y;
         Creature* Soul = me->SummonCreature(CREATURE_ENSLAVED_SOUL, x, y, me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_CORPSE_DESPAWN, 0);
         if (!Soul) return false;
-        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
         {
             CAST_AI(npc_enslaved_soulAI, Soul->AI())->ReliquaryGUID = me->GetGUID();
             Soul->AI()->AttackStart(pTarget);
@@ -327,7 +327,7 @@ struct boss_essence_of_sufferingAI : public ScriptedAI
         AuraTimer = 5000;
     }
 
-    void DamageTaken(Unit * /*done_by*/, uint32 &damage)
+    void DamageTaken(Unit* /*done_by*/, uint32 &damage)
     {
         if (damage >= me->GetHealth())
         {
@@ -338,7 +338,7 @@ struct boss_essence_of_sufferingAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SUFF_SAY_FREED, me);
         DoZoneInCombat();
@@ -347,7 +347,7 @@ struct boss_essence_of_sufferingAI : public ScriptedAI
         me->CastSpell(me, ESSENCE_OF_SUFFERING_PASSIVE2, true);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(RAND(SUFF_SAY_SLAY1,SUFF_SAY_SLAY2,SUFF_SAY_SLAY3), me);
     }
@@ -369,7 +369,7 @@ struct boss_essence_of_sufferingAI : public ScriptedAI
             return; // No targets added for some reason. No point continuing.
         targets.sort(Oregon::ObjectDistanceOrderPred(me)); // Sort players by distance.
         targets.resize(1); // Only need closest target.
-        Unit *pTarget = targets.front(); // Get the first target.
+        Unit* pTarget = targets.front(); // Get the first target.
         if (pTarget)
             pTarget->CastSpell(me, SPELL_FIXATE_TAUNT, true);
         DoResetThreat();
@@ -429,7 +429,7 @@ struct boss_essence_of_desireAI : public ScriptedAI
         me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_CONFUSE, true);
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32 &damage)
     {
         if (done_by == me)
             return;
@@ -447,7 +447,7 @@ struct boss_essence_of_desireAI : public ScriptedAI
         }
     }
 
-    void SpellHit(Unit * /*caster*/, const SpellEntry *spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry *spell)
     {
         if (me->GetCurrentSpell(CURRENT_GENERIC_SPELL))
             for (uint8 i = 0; i < 3; ++i)
@@ -457,14 +457,14 @@ struct boss_essence_of_desireAI : public ScriptedAI
                         me->InterruptSpell(CURRENT_GENERIC_SPELL, false);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(DESI_SAY_FREED, me);
         DoZoneInCombat();
         DoCast(me, AURA_OF_DESIRE, true);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(RAND(DESI_SAY_SLAY1,DESI_SAY_SLAY2,DESI_SAY_SLAY3), me);
     }
@@ -531,7 +531,7 @@ struct boss_essence_of_angerAI : public ScriptedAI
         CheckedAggro = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(RAND(ANGER_SAY_FREED,ANGER_SAY_FREED2), me);
 
@@ -539,12 +539,12 @@ struct boss_essence_of_angerAI : public ScriptedAI
         DoCast(me, AURA_OF_ANGER, true);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         DoScriptText(ANGER_SAY_DEATH, me);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(RAND(ANGER_SAY_SLAY1,ANGER_SAY_SLAY2), me);
     }
@@ -593,7 +593,7 @@ struct boss_essence_of_angerAI : public ScriptedAI
     }
 };
 
-void npc_enslaved_soulAI::JustDied(Unit * /*killer*/)
+void npc_enslaved_soulAI::JustDied(Unit* /*killer*/)
 {
     if (ReliquaryGUID)
         if (Creature* Reliquary = (Unit::GetCreature((*me), ReliquaryGUID)))

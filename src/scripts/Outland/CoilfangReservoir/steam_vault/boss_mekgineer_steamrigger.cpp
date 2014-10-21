@@ -138,7 +138,7 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
 
         if (Saw_Blade_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(pTarget,SPELL_SAW_BLADE);
             else
                 DoCastVictim(SPELL_SAW_BLADE);

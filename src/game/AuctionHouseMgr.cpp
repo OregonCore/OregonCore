@@ -61,7 +61,7 @@ AuctionHouseObject * AuctionHouseMgr::GetAuctionsMap(uint32 factionTemplateId)
         return &mNeutralAuctions;
 }
 
-uint32 AuctionHouseMgr::GetAuctionDeposit(AuctionHouseEntry const* entry, uint32 time, Item *pItem)
+uint32 AuctionHouseMgr::GetAuctionDeposit(AuctionHouseEntry const* entry, uint32 time, Item* pItem)
 {
     uint32 MSV = pItem->GetProto()->SellPrice;
     double deposit;
@@ -105,7 +105,7 @@ uint32 AuctionHouseMgr::GetAuctionDeposit(AuctionHouseEntry const* entry, uint32
 // does not clear ram
 void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry *auction)
 {
-    Item *pItem = GetAItem(auction->item_guidlow);
+    Item* pItem = GetAItem(auction->item_guidlow);
     if (!pItem)
         return;
 
@@ -247,7 +247,7 @@ void AuctionHouseMgr::SendAuctionSuccessfulMail(AuctionEntry * auction)
 // does not clear ram
 void AuctionHouseMgr::SendAuctionExpiredMail(AuctionEntry * auction)
 { // return an item in auction to its owner by mail
-    Item *pItem = GetAItem(auction->item_guidlow);
+    Item* pItem = GetAItem(auction->item_guidlow);
     if (!pItem)
         return;
 
@@ -300,7 +300,7 @@ void AuctionHouseMgr::LoadAuctionItems()
             continue;
         }
 
-        Item *item = NewItemOrBag(proto);
+        Item* item = NewItemOrBag(proto);
 
         if (!item->LoadFromDB(item_guid,0, result))
         {
@@ -592,7 +592,7 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPacket& data, Player* player
     for (AuctionEntryMap::const_iterator itr = AuctionsMap.begin();itr != AuctionsMap.end();++itr)
     {
         AuctionEntry *Aentry = itr->second;
-        Item *item = sAuctionMgr->GetAItem(Aentry->item_guidlow);
+        Item* item = sAuctionMgr->GetAItem(Aentry->item_guidlow);
         if (!item)
             continue;
 
@@ -646,7 +646,7 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPacket& data, Player* player
 // this function inserts to WorldPacket auction's data
 bool AuctionEntry::BuildAuctionInfo(WorldPacket & data) const
 {
-    Item *pItem = sAuctionMgr->GetAItem(item_guidlow);
+    Item* pItem = sAuctionMgr->GetAItem(item_guidlow);
     if (!pItem)
     {
         sLog.outError("auction to item, that doesn't exist !!!!");

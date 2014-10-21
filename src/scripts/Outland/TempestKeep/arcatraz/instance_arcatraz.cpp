@@ -53,14 +53,14 @@ struct instance_arcatraz : public ScriptedInstance
 
     uint32 Encounter[ENCOUNTERS];
 
-    GameObject *Containment_Core_Security_Field_Alpha;
-    GameObject *Containment_Core_Security_Field_Beta;
-    GameObject *Pod_Alpha;
-    GameObject *Pod_Gamma;
-    GameObject *Pod_Beta;
-    GameObject *Pod_Delta;
-    GameObject *Pod_Omega;
-    GameObject *Wardens_Shield;
+    GameObject* Containment_Core_Security_Field_Alpha;
+    GameObject* Containment_Core_Security_Field_Beta;
+    GameObject* Pod_Alpha;
+    GameObject* Pod_Gamma;
+    GameObject* Pod_Beta;
+    GameObject* Pod_Delta;
+    GameObject* Pod_Omega;
+    GameObject* Wardens_Shield;
 
     uint64 GoSphereGUID;
     uint64 MellicharGUID;

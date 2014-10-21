@@ -57,7 +57,7 @@ void DynamicObject::RemoveFromWorld()
     {
         if (m_isWorldObject)
         {
-            if (Unit *caster = GetCaster())
+            if (Unit* caster = GetCaster())
             {
                 if (caster->GetTypeId() == TYPEID_PLAYER)
                     ((Player*)caster)->SetViewpoint(this, false);
@@ -72,7 +72,7 @@ void DynamicObject::RemoveFromWorld()
     }
 }
 
-bool DynamicObject::Create(uint32 guidlow, Unit *caster, uint32 spellId, uint32 effIndex, const Position &pos, int32 duration, float radius)
+bool DynamicObject::Create(uint32 guidlow, Unit* caster, uint32 spellId, uint32 effIndex, const Position &pos, int32 duration, float radius)
 {
     SetMap(caster->GetMap());
     Relocate(pos);

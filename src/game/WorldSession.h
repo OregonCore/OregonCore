@@ -155,7 +155,7 @@ class WorldSession
         static void SendExternalMails();
 
         //auction
-        void SendAuctionHello(uint64 guid, Creature*  unit);
+        void SendAuctionHello(uint64 guid, Creature* unit);
         void SendAuctionCommandResult(uint32 auctionId, uint32 Action, uint32 ErrorCode, uint32 bidError = 0);
         void SendAuctionBidderNotification(uint32 location, uint32 auctionId, uint64 bidder, uint32 bidSum, uint32 diff, uint32 item_template);
         void SendAuctionOwnerNotification(AuctionEntry * auction);
@@ -185,7 +185,7 @@ class WorldSession
         bool LookingForGroup_auto_join;
         bool LookingForGroup_auto_add;
 
-        void BuildPartyMemberStatsChangedPacket(Player* player, WorldPacket *data);
+        void BuildPartyMemberStatsChangedPacket(Player* player, WorldPacket* data);
 
         void DoLootRelease(uint64 lguid);
 
@@ -552,7 +552,7 @@ class WorldSession
 
         //Pet
         void HandlePetAction(WorldPacket & recv_data);
-        void HandlePetActionHelper(Unit *pet, uint64 guid1, uint16 spellid, uint16 flag, uint64 guid2);
+        void HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid, uint16 flag, uint64 guid2);
         void HandlePetNameQuery(WorldPacket & recv_data);
         void HandlePetSetAction(WorldPacket & recv_data);
         void HandlePetAbandon(WorldPacket & recv_data);
@@ -658,8 +658,8 @@ class WorldSession
         void ExecuteOpcode(OpcodeHandler const& opHandle, WorldPacket* packet);
 
         // logging helper
-        void LogUnexpectedOpcode(WorldPacket *packet, const char * reason);
-        void LogUnprocessedTail(WorldPacket *packet);
+        void LogUnexpectedOpcode(WorldPacket* packet, const char * reason);
+        void LogUnprocessedTail(WorldPacket* packet);
 
         Player* _player;
         WorldSocket *m_Socket;

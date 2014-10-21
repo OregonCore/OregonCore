@@ -61,7 +61,7 @@ typedef void(Aura::*pAuraHandler)(bool Apply, bool Real);
 
 class Aura
 {
-    friend Aura* CreateAura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit *target, Unit *caster, Item* castItem);
+    friend Aura* CreateAura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit* target, Unit* caster, Item* castItem);
 
     public:
         //aura handlers
@@ -321,7 +321,7 @@ class Aura
         bool IsSingleTarget() const {return m_isSingleTargetAura;}
         void SetIsSingleTarget(bool val) { m_isSingleTargetAura = val;}
     protected:
-        Aura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit *target, Unit *caster = NULL, Item* castItem = NULL);
+        Aura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit* target, Unit* caster = NULL, Item* castItem = NULL);
 
         Modifier m_modifier;
         SpellModifier *m_spellmod;
@@ -370,10 +370,10 @@ class Aura
 class AreaAura : public Aura
 {
     public:
-        AreaAura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit *target, Unit *caster = NULL, Item* castItem = NULL);
+        AreaAura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit* target, Unit* caster = NULL, Item* castItem = NULL);
         ~AreaAura();
         void Update(uint32 diff);
-        bool CheckTarget(Unit *target);
+        bool CheckTarget(Unit* target);
     private:
         float m_radius;
         AreaAuraType m_areaAuraType;
@@ -382,11 +382,11 @@ class AreaAura : public Aura
 class PersistentAreaAura : public Aura
 {
     public:
-        PersistentAreaAura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit *target, Unit *caster = NULL, Item* castItem = NULL);
+        PersistentAreaAura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit* target, Unit* caster = NULL, Item* castItem = NULL);
         ~PersistentAreaAura();
         void Update(uint32 diff);
 };
 
-Aura* CreateAura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit *target, Unit *caster = NULL, Item* castItem = NULL);
+Aura* CreateAura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit* target, Unit* caster = NULL, Item* castItem = NULL);
 #endif
 

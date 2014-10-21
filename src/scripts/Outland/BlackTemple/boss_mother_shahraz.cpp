@@ -118,7 +118,7 @@ struct boss_shahrazAI : public ScriptedAI
         Enraged = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, IN_PROGRESS);
@@ -129,12 +129,12 @@ struct boss_shahrazAI : public ScriptedAI
         DoCast(me,SPELL_SABER_LASH_TRIGGER,true);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, DONE);
@@ -160,7 +160,7 @@ struct boss_shahrazAI : public ScriptedAI
         }
     }
 
-    bool TryDoCast(Unit *victim, uint32 spellId, bool triggered = false)
+    bool TryDoCast(Unit* victim, uint32 spellId, bool triggered = false)
     {
         if (me->IsNonMeleeSpellCast(false)) return false;
 

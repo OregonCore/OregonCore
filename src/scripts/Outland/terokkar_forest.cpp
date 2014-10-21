@@ -68,7 +68,7 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
         me->setFaction(FACTION_HOSTILE);
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void DoNice()
     {
@@ -81,7 +81,7 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
         UnkorUnfriendly_Timer = 60000;
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32 &damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER)
             if ((me->GetHealth()-damage)*100 / me->GetMaxHealth() < 30)
@@ -158,7 +158,7 @@ struct mob_infested_root_walkerAI : public ScriptedAI
     void Reset() { }
     void EnterCombat(Unit* /*who*/) { }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32 &damage)
     {
         if (done_by && done_by->GetTypeId() == TYPEID_PLAYER)
             if (me->GetHealth() <= damage)
@@ -183,7 +183,7 @@ struct mob_rotting_forest_ragerAI : public ScriptedAI
     void Reset() { }
     void EnterCombat(Unit* /*who*/) { }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32 &damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER)
             if (me->GetHealth() <= damage)

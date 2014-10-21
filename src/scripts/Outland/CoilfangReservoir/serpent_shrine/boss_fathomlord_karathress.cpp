@@ -173,7 +173,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
         Advisors[2] = pInstance->GetData64(DATA_CARIBDIS);
     }
 
-    void StartEvent(Unit *who)
+    void StartEvent(Unit* who)
     {
         if (!pInstance)
             return;
@@ -187,12 +187,12 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
         pInstance->SetData(DATA_KARATHRESSEVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2,SAY_SLAY3), me);
     }
 
-    void JustDied(Unit * /*killer*/)
+    void JustDied(Unit* /*killer*/)
     {
         DoScriptText(SAY_DEATH, me);
 
@@ -203,7 +203,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
         me->SummonCreature(SEER_OLUM, OLUM_X, OLUM_Y, OLUM_Z, OLUM_O, TEMPSUMMON_TIMED_DESPAWN, 3600000);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         StartEvent(who);
     }
@@ -213,7 +213,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
             if (pTarget)
             {
@@ -237,7 +237,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
         if (CataclysmicBolt_Timer <= diff)
         {
             //select a random unit other than the main tank
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
 
             //if there aren't other units, cast on the tank
             if (!pTarget)
@@ -330,7 +330,7 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
             pInstance->SetData(DATA_KARATHRESSEVENT, NOT_STARTED);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         if (pInstance)
         {
@@ -342,7 +342,7 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if (pInstance)
         {
@@ -356,7 +356,7 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
             if (pTarget)
             {
@@ -420,7 +420,7 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
             }
             //DoCast(me, spell_id, true);
             Creature* Pet = DoSpawnCreature(pet_id,0,0,0,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (Pet && pTarget)
             {
                 Pet->AI()->AttackStart(pTarget);
@@ -458,7 +458,7 @@ struct boss_fathomguard_tidalvessAI : public ScriptedAI
             pInstance->SetData(DATA_KARATHRESSEVENT, NOT_STARTED);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         if (pInstance)
         {
@@ -470,7 +470,7 @@ struct boss_fathomguard_tidalvessAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if (pInstance)
         {
@@ -485,7 +485,7 @@ struct boss_fathomguard_tidalvessAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
             if (pTarget)
             {
@@ -520,7 +520,7 @@ struct boss_fathomguard_tidalvessAI : public ScriptedAI
         if (Spitfire_Timer <= diff)
         {
             DoCast(me, SPELL_SPITFIRE_TOTEM);
-            Unit *SpitfireTotem = Unit::GetUnit(*me, CREATURE_SPITFIRE_TOTEM);
+            Unit* SpitfireTotem = Unit::GetUnit(*me, CREATURE_SPITFIRE_TOTEM);
             if (SpitfireTotem)
             {
                 CAST_CRE(SpitfireTotem)->AI()->AttackStart(me->getVictim());
@@ -572,7 +572,7 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
             pInstance->SetData(DATA_KARATHRESSEVENT, NOT_STARTED);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         if (pInstance)
         {
@@ -584,7 +584,7 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if (pInstance)
         {
@@ -598,7 +598,7 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
             if (pTarget)
             {
@@ -645,7 +645,7 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
                 Cyclone->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 Cyclone->setFaction(me->getFaction());
                 Cyclone->CastSpell(Cyclone, SPELL_CYCLONE_CYCLONE, true);
-                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget)
                 {
                     Cyclone->AI()->AttackStart(pTarget);
@@ -657,7 +657,7 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
         if (Heal_Timer <= diff)
         {
             // It can be cast on any of the mobs
-            Unit *pUnit = NULL;
+            Unit* pUnit = NULL;
 
             while (pUnit == NULL || !pUnit->isAlive())
             {

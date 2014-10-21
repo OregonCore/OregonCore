@@ -162,9 +162,9 @@ struct boss_netherspiteAI : public ScriptedAI
             if (Creature* portal = Unit::GetCreature(*me, PortalGUID[j]))
             {
                 // the one who's been casted upon before
-                Unit *current = Unit::GetUnit(*portal, BeamTarget[j]);
+                Unit* current = Unit::GetUnit(*portal, BeamTarget[j]);
                 // temporary store for the best suitable beam reciever
-                Unit *pTarget = me;
+                Unit* pTarget = me;
 
                 if (Map* map = me->GetMap())
                 {
@@ -242,7 +242,7 @@ struct boss_netherspiteAI : public ScriptedAI
 
     void HandleDoors(bool open) // Massive Door switcher
     {
-        if (GameObject *Door = GameObject::GetGameObject(*me, pInstance ? pInstance->GetData64(DATA_GO_MASSIVE_DOOR) : 0))
+        if (GameObject* Door = GameObject::GetGameObject(*me, pInstance ? pInstance->GetData64(DATA_GO_MASSIVE_DOOR) : 0))
             Door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
     }
 
@@ -309,7 +309,7 @@ struct boss_netherspiteAI : public ScriptedAI
             // Netherbreath
             if (NetherbreathTimer <= diff)
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,40,true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,40,true))
                     DoCast(pTarget, SPELL_NETHERBREATH);
                 NetherbreathTimer = urand(5000,7000);
             } else NetherbreathTimer -= diff;

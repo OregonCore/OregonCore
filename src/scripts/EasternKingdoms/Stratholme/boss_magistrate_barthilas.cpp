@@ -57,7 +57,7 @@ struct boss_magistrate_barthilasAI : public ScriptedAI
             me->SetDisplayId(MODEL_HUMAN);
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         //nothing to see here yet
 
@@ -69,7 +69,7 @@ struct boss_magistrate_barthilasAI : public ScriptedAI
         me->SetDisplayId(MODEL_HUMAN);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

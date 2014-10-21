@@ -87,7 +87,7 @@ struct npc_aeranasAI : public ScriptedAI
         DoScriptText(SAY_SUMMON, me);
     }
 
-    void EnterCombat(Unit *) {}
+    void EnterCombat(Unit* ) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -642,7 +642,7 @@ struct npc_hand_berserkerAI : public ScriptedAI
 
     void Reset() {}
 
-    void AttackStart(Unit *pWho)
+    void AttackStart(Unit* pWho)
     {
         DoMeleeAttackIfReady();
         ScriptedAI::AttackStart(pWho);
@@ -815,7 +815,7 @@ struct npc_anchorite_baradaAI : public ScriptedAI
         me->SummonCreature(NPC_DARKNESS_RELEASED, -710.924, 2754.683, 105.0, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 20000);
     }
 
-    void MoveInLineOfSight(Unit *pWho)
+    void MoveInLineOfSight(Unit* pWho)
     {
         if (pWho->GetTypeId() == TYPEID_PLAYER)
         {
@@ -1215,13 +1215,13 @@ struct npc_vindicator_sedaiAI : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (who->GetTypeId() == TYPEID_PLAYER)
         {
             if (CAST_PLR(who)->GetQuestStatus(9545) == QUEST_STATUS_INCOMPLETE)
             {
-                if (Creature*  pCr = me->FindNearestCreature(17413, 6.0f))
+                if (Creature* pCr = me->FindNearestCreature(17413, 6.0f))
                 {
                     float Radius = 10.0;
                     if (me->IsWithinDistInMap(who, Radius))

@@ -99,7 +99,7 @@ struct boss_nefarianAI : public ScriptedAI
         DoScriptText(SAY_DEATH, me);
     }
 
-    void EnterCombat(Unit * who)
+    void EnterCombat(Unit* who)
     {
         DoScriptText(RAND(SAY_XHEALTH,SAY_AGGRO,SAY_SHADOWFLAME), me);
 

@@ -172,7 +172,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
         Creature* Summoned = me->SummonCreature(entry, x, y, z, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
         if (Summoned)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 Summoned->AI()->AttackStart(pTarget);
 
             Summons.Summon(Summoned);
@@ -236,7 +236,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
                     DoCastVictim( SPELL_BLINDING_LIGHT);
                     BlindingLight = false;
                 } else{
-                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
                     if (!me->HasInArc(2.5f, pTarget))
                         pTarget = me->getVictim();
@@ -255,7 +255,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
 
             if (MarkOfTheAstromancer_Timer <= diff) //A debuff that lasts for 5 seconds, cast several times each phase on a random raid member, but not the main tank
             {
-                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
+                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
                 if (pTarget)
                     DoCast(pTarget, SPELL_MARK_OF_THE_ASTROMANCER);
                 else DoCastVictim( SPELL_MARK_OF_THE_ASTROMANCER);
@@ -415,7 +415,7 @@ struct mob_solarium_priestAI : public ScriptedAI
 
         if (healTimer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
 
             switch(rand()%2)
             {

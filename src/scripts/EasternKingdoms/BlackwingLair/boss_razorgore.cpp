@@ -53,7 +53,7 @@ struct boss_razorgoreAI : public ScriptedAI
         Conflagration_Timer = 12000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoZoneInCombat();
     }
@@ -103,7 +103,7 @@ struct boss_razorgoreAI : public ScriptedAI
 
         // Aura Check. If the gamer is affected by confliguration we attack a random gamer.
         if (me->getVictim() && me->getVictim()->HasAura(SPELL_CONFLAGRATION, 0))
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
                 me->TauntApply(pTarget);
 
         DoMeleeAttackIfReady();

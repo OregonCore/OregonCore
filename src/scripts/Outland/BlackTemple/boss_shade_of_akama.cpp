@@ -260,7 +260,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
             summons.Despawn(summon);
     }
 
-    void MoveInLineOfSight(Unit * /*who*/)
+    void MoveInLineOfSight(Unit* /*who*/)
     {
         if (!GridSearcherSucceeded)
         {
@@ -354,7 +354,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
                 {
                     Spawn->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
                     Spawn->GetMotionMaster()->MovePoint(0, AGGRO_X, AGGRO_Y, AGGRO_Z);
-                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+                    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                     Spawn->AI()->AttackStart(pTarget);
                     DoZoneInCombat(Spawn);
                 }

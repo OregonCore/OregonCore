@@ -41,7 +41,7 @@ struct boss_wushoolayAI : public ScriptedAI
         LightningWave_Timer = 8000 + rand()%8000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -60,7 +60,7 @@ struct boss_wushoolayAI : public ScriptedAI
         //LightningWave_Timer
         if (LightningWave_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget) DoCast(pTarget, SPELL_LIGHTNINGWAVE);
 

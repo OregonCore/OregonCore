@@ -40,13 +40,13 @@
 INSTANTIATE_SINGLETON_1(BattleGroundMgr);
 
 /*********************************************************/
-/***            BATTLEGROUND QUEUE SYSTEM              ***/
+/***           BATTLEGROUND QUEUE SYSTEM              ***/
 /*********************************************************/
 
 BattleGroundQueue::BattleGroundQueue()
 {
     //queues are empty, we don't have to call clear()
-/*    for (int i = 0; i < MAX_BATTLEGROUND_QUEUES; i++)
+/*   for (int i = 0; i < MAX_BATTLEGROUND_QUEUES; i++)
     {
         //m_QueuedPlayers[i].Horde = 0;
         //m_QueuedPlayers[i].Alliance = 0;
@@ -890,7 +890,7 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
 }
 
 /*********************************************************/
-/***            BATTLEGROUND QUEUE EVENTS              ***/
+/***           BATTLEGROUND QUEUE EVENTS              ***/
 /*********************************************************/
 
 bool BGQueueInviteEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
@@ -980,7 +980,7 @@ void BGQueueRemoveEvent::Abort(uint64 /*e_time*/)
 }
 
 /*********************************************************/
-/***            BATTLEGROUND MANAGER                   ***/
+/***           BATTLEGROUND MANAGER                   ***/
 /*********************************************************/
 
 BattleGroundMgr::BattleGroundMgr()
@@ -1069,7 +1069,7 @@ void BattleGroundMgr::Update(uint32 diff)
     }
 }
 
-void BattleGroundMgr::BuildBattleGroundStatusPacket(WorldPacket *data, BattleGround *bg, uint32 /*team*/, uint8 QueueSlot, uint8 StatusID, uint32 Time1, uint32 Time2, uint32 arenatype, uint8 israted)
+void BattleGroundMgr::BuildBattleGroundStatusPacket(WorldPacket* data, BattleGround *bg, uint32 /*team*/, uint8 QueueSlot, uint8 StatusID, uint32 Time1, uint32 Time2, uint32 arenatype, uint8 israted)
 {
     // we can be in 3 queues in same time...
     if (StatusID == 0)
@@ -1092,7 +1092,7 @@ void BattleGroundMgr::BuildBattleGroundStatusPacket(WorldPacket *data, BattleGro
     // alliance/horde for BG and skirmish/rated for Arenas
     // following displays the minimap-icon 0 = faction icon 1 = arenaicon
     *data << uint8(israted ? israted : bg->isRated());                              // 1 for rated match, 0 for bg or non rated match
-/*    *data << uint8(arenatype ? arenatype : bg->GetArenaType());                     // team type (0=BG, 2=2x2, 3=3x3, 5=5x5), for arenas    // NOT PROPER VALUE IF ARENA ISN'T RUNNING YET!!!!
+/*   *data << uint8(arenatype ? arenatype : bg->GetArenaType());                     // team type (0=BG, 2=2x2, 3=3x3, 5=5x5), for arenas    // NOT PROPER VALUE IF ARENA ISN'T RUNNING YET!!!!
     switch(bg->GetTypeID())                                 // value depends on bg id
     {
         case BATTLEGROUND_AV:
@@ -1160,7 +1160,7 @@ void BattleGroundMgr::BuildBattleGroundStatusPacket(WorldPacket *data, BattleGro
     }
 }
 
-void BattleGroundMgr::BuildPvpLogDataPacket(WorldPacket *data, BattleGround *bg)
+void BattleGroundMgr::BuildPvpLogDataPacket(WorldPacket* data, BattleGround *bg)
 {
     uint8 type = (bg->isArena() ? 1 : 0);
                                                             // last check on 2.4.1
@@ -1275,7 +1275,7 @@ void BattleGroundMgr::BuildPvpLogDataPacket(WorldPacket *data, BattleGround *bg)
     data->put(wpos, scoreCount);
 }
 
-void BattleGroundMgr::BuildGroupJoinedBattlegroundPacket(WorldPacket *data, uint32 bgTypeId)
+void BattleGroundMgr::BuildGroupJoinedBattlegroundPacket(WorldPacket* data, uint32 bgTypeId)
 {
     /*bgTypeId is:
     0 - Your group has joined a battleground queue, but you are not eligible
@@ -1290,26 +1290,26 @@ void BattleGroundMgr::BuildGroupJoinedBattlegroundPacket(WorldPacket *data, uint
     *data << uint32(bgTypeId);
 }
 
-void BattleGroundMgr::BuildUpdateWorldStatePacket(WorldPacket *data, uint32 field, uint32 value)
+void BattleGroundMgr::BuildUpdateWorldStatePacket(WorldPacket* data, uint32 field, uint32 value)
 {
     data->Initialize(SMSG_UPDATE_WORLD_STATE, 4+4);
     *data << uint32(field);
     *data << uint32(value);
 }
 
-void BattleGroundMgr::BuildPlaySoundPacket(WorldPacket *data, uint32 soundid)
+void BattleGroundMgr::BuildPlaySoundPacket(WorldPacket* data, uint32 soundid)
 {
     data->Initialize(SMSG_PLAY_SOUND, 4);
     *data << uint32(soundid);
 }
 
-void BattleGroundMgr::BuildPlayerLeftBattleGroundPacket(WorldPacket *data, const uint64& guid)
+void BattleGroundMgr::BuildPlayerLeftBattleGroundPacket(WorldPacket* data, const uint64& guid)
 {
     data->Initialize(SMSG_BATTLEGROUND_PLAYER_LEFT, 8);
     *data << uint64(guid);
 }
 
-void BattleGroundMgr::BuildPlayerJoinedBattleGroundPacket(WorldPacket *data, Player* plr)
+void BattleGroundMgr::BuildPlayerJoinedBattleGroundPacket(WorldPacket* data, Player* plr)
 {
     data->Initialize(SMSG_BATTLEGROUND_PLAYER_JOINED, 8);
     *data << uint64(plr->GetGUID());
@@ -1410,7 +1410,7 @@ BattleGround * BattleGroundMgr::CreateNewBattleGround(uint32 bgTypeId, uint8 are
     // reset the new bg (set status to status_wait_queue from status_none)
     bg->Reset();
 
-    /*   will be setup in BG::Update() when the first player is ported in
+    /*  will be setup in BG::Update() when the first player is ported in
     if (!(bg->SetupBattleGround()))
     {
         sLog.outError("BattleGround: CreateNewBattleGround: SetupBattleGround failed for bg %u", bgTypeId);
@@ -1662,7 +1662,7 @@ void BattleGroundMgr::DistributeArenaPoints()
     sWorld.SendGlobalText("Done flushing Arena points.", NULL);
 }
 
-void BattleGroundMgr::BuildBattleGroundListPacket(WorldPacket *data, uint64 guid, Player* plr, uint32 bgTypeId)
+void BattleGroundMgr::BuildBattleGroundListPacket(WorldPacket* data, uint64 guid, Player* plr, uint32 bgTypeId)
 {
     uint32 PlayerLevel = 10;
 

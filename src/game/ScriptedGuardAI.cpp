@@ -42,7 +42,7 @@ void guardAI::Reset()
     BuffTimer = 0;                                          //Rebuff as soon as we can
 }
 
-void guardAI::EnterCombat(Unit *who)
+void guardAI::EnterCombat(Unit* who)
 {
     if (me->GetEntry() == 15184)
         DoScriptText(RAND(SAY_GUARD_SIL_AGGRO1,SAY_GUARD_SIL_AGGRO2,SAY_GUARD_SIL_AGGRO3), me, who);
@@ -51,7 +51,7 @@ void guardAI::EnterCombat(Unit *who)
         DoCastSpell(who, spell);
 }
 
-void guardAI::JustDied(Unit *Killer)
+void guardAI::JustDied(Unit* Killer)
 {
     //Send Zone Under Attack message to the LocalDefense and WorldDefense Channels
     if (Player* pKiller = Killer->GetCharmerOrOwnerPlayerOrPlayerItself())

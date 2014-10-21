@@ -202,7 +202,7 @@ struct instance_dark_portal : public ScriptedInstance
 
                 if (!mShieldPercent)
                 {
-                    if (Unit *medivh = Unit::GetUnit(*player,MedivhGUID))
+                    if (Unit* medivh = Unit::GetUnit(*player,MedivhGUID))
                     {
                         if (medivh->isAlive())
                         {
@@ -226,7 +226,7 @@ struct instance_dark_portal : public ScriptedInstance
                 if (data == DONE)
                 {
                     //this may be completed further out in the post-event
-                    if (Unit *medivh = Unit::GetUnit(*player,MedivhGUID))
+                    if (Unit* medivh = Unit::GetUnit(*player,MedivhGUID))
                     {
                         player->GroupEventHappens(QUEST_OPENING_PORTAL,medivh);
                         player->GroupEventHappens(QUEST_MASTER_TOUCH,medivh);
@@ -287,7 +287,7 @@ struct instance_dark_portal : public ScriptedInstance
         //normalize Z-level if we can, if rift is not at ground level.
         pos.m_positionZ = std::max(source->GetMap()->GetHeight(pos.m_positionX, pos.m_positionY, MAX_HEIGHT), source->GetMap()->GetWaterLevel(pos.m_positionX, pos.m_positionY));
 
-        if (Unit *summon = source->SummonCreature(entry, pos, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000))
+        if (Unit* summon = source->SummonCreature(entry, pos, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000))
             return summon;
 
         debug_log("OSCR: Instance Dark Portal: what just happened there? No boss, no loot, no fun...");
@@ -300,7 +300,7 @@ struct instance_dark_portal : public ScriptedInstance
         if (!player)
             return;
 
-        if (Unit *medivh = Unit::GetUnit(*player,MedivhGUID))
+        if (Unit* medivh = Unit::GetUnit(*player,MedivhGUID))
         {
             for (uint8 i = 0; i < 4; i++)
             {
@@ -311,7 +311,7 @@ struct instance_dark_portal : public ScriptedInstance
 
                     CurrentRiftId = tmp;
 
-                    Unit *temp = medivh->SummonCreature(C_TIME_RIFT,
+                    Unit* temp = medivh->SummonCreature(C_TIME_RIFT,
                         PortalLocation[tmp][0],PortalLocation[tmp][1],PortalLocation[tmp][2],PortalLocation[tmp][3],
                         TEMPSUMMON_CORPSE_DESPAWN,0);
                     if (temp)

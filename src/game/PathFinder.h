@@ -96,8 +96,8 @@ class PathInfo
         PathNode        m_actualEndPosition;  // {x, y, z} of the closest possible point to given destination
 
         const Unit* const       m_sourceUnit;       // the unit that is moving
-        const dtNavMesh*        m_navMesh;          // the nav mesh
-        const dtNavMeshQuery*   m_navMeshQuery;     // the nav mesh query used to find the path
+        const dtNavMesh*       m_navMesh;          // the nav mesh
+        const dtNavMeshQuery*  m_navMeshQuery;     // the nav mesh query used to find the path
 
         dtQueryFilter m_filter;                     // use single filter for all movements, update it when needed
 

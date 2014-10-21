@@ -59,7 +59,7 @@ public:
 
     void HandleGossipOption(Player* player, uint64 guid, uint32 gossipid);
 
-    bool CanTalkTo(Player* player, Creature*  creature, GossipMenuItems gso);
+    bool CanTalkTo(Player* player, Creature* creature, GossipMenuItems gso);
 
     void HandleDropFlag(Player* plr, uint32 spellId);
 

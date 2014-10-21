@@ -370,7 +370,7 @@ struct instance_blackrock_depths : public ScriptedInstance
             {
                 boss->setFaction(FACTION_HOSTILE);
                 boss->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
-                if (Unit *pTarget = boss->SelectNearestTarget(500))
+                if (Unit* pTarget = boss->SelectNearestTarget(500))
                     boss->AI()->AttackStart(pTarget);
             }
         }

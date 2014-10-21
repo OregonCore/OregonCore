@@ -271,9 +271,9 @@ typedef std::map<uint32,ReputationRank> ForcedReactions;
 struct EnchantDuration
 {
     EnchantDuration() : item(NULL), slot(MAX_ENCHANTMENT_SLOT), leftduration(0) {};
-    EnchantDuration(Item * _item, EnchantmentSlot _slot, uint32 _leftduration) : item(_item), slot(_slot), leftduration(_leftduration) { assert(item); };
+    EnchantDuration(Item* _item, EnchantmentSlot _slot, uint32 _leftduration) : item(_item), slot(_slot), leftduration(_leftduration) { assert(item); };
 
-    Item * item;
+    Item* item;
     EnchantmentSlot slot;
     uint32 leftduration;
 };
@@ -924,7 +924,7 @@ class Player : public Unit, public GridObject<Player>
 
         void Update(uint32 time);
 
-        static bool BuildEnumData(QueryResult_AutoPtr result, WorldPacket * p_data);
+        static bool BuildEnumData(QueryResult_AutoPtr result, WorldPacket* p_data);
 
         void SetInWater(bool apply);
 
@@ -1015,10 +1015,10 @@ class Player : public Unit, public GridObject<Player>
         void TextEmote(const std::string& text);
         void Whisper(const std::string& text, const uint32 language,uint64 receiver);
         void Whisper(const std::string& text, const uint32 language,Player* receiver);
-        void BuildPlayerChat(WorldPacket *data, uint8 msgtype, const std::string& text, uint32 language) const;
+        void BuildPlayerChat(WorldPacket* data, uint8 msgtype, const std::string& text, uint32 language) const;
 
         /*********************************************************/
-        /***                    STORAGE SYSTEM                 ***/
+        /***                   STORAGE SYSTEM                 ***/
         /*********************************************************/
 
         void SetVirtualItemSlot(uint8 i, Item* item);
@@ -1031,7 +1031,7 @@ class Player : public Unit, public GridObject<Player>
         Item* GetWeaponForAttack(WeaponAttackType attackType, bool useable = false) const;
         Item* GetShield(bool useable = false) const;
         static uint32 GetAttackBySlot(uint8 slot);        // MAX_ATTACK if not weapon slot
-        std::vector<Item *> &GetItemUpdateQueue() { return m_itemUpdateQueue; }
+        std::vector<Item* > &GetItemUpdateQueue() { return m_itemUpdateQueue; }
         static bool IsInventoryPos(uint16 pos) { return IsInventoryPos(pos >> 8,pos & 255); }
         static bool IsInventoryPos(uint8 bag, uint8 slot);
         static bool IsEquipmentPos(uint16 pos) { return IsEquipmentPos(pos >> 8,pos & 255); }
@@ -1053,7 +1053,7 @@ class Player : public Unit, public GridObject<Player>
         {
             return _CanStoreItem(bag, slot, dest, item, count, NULL, false, no_space_count);
         }
-        uint8 CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item *pItem, bool swap = false) const
+        uint8 CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item* pItem, bool swap = false) const
         {
             if (!pItem)
                 return EQUIP_ERR_ITEM_NOT_FOUND;
@@ -1061,45 +1061,45 @@ class Player : public Unit, public GridObject<Player>
             return _CanStoreItem(bag, slot, dest, pItem->GetEntry(), count, pItem, swap, NULL);
 
         }
-        uint8 CanStoreItems(Item **pItem,int count) const;
+        uint8 CanStoreItems(Item* *pItem,int count) const;
         uint8 CanEquipNewItem(uint8 slot, uint16 &dest, uint32 item, bool swap) const;
-        uint8 CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool swap, bool not_loading = true) const;
+        uint8 CanEquipItem(uint8 slot, uint16 &dest, Item* pItem, bool swap, bool not_loading = true) const;
         uint8 CanUnequipItems(uint32 item, uint32 count) const;
         uint8 CanUnequipItem(uint16 src, bool swap) const;
-        uint8 CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item *pItem, bool swap, bool not_loading = true) const;
-        uint8 CanUseItem(Item *pItem, bool not_loading = true) const;
+        uint8 CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item* pItem, bool swap, bool not_loading = true) const;
+        uint8 CanUseItem(Item* pItem, bool not_loading = true) const;
         bool HasItemTotemCategory(uint32 TotemCategory) const;
         bool CanUseItem(ItemPrototype const *pItem);
         uint8 CanUseAmmo(uint32 item) const;
         Item* StoreNewItem(ItemPosCountVec const& pos, uint32 item, bool update,int32 randomPropertyId = 0);
-        Item* StoreItem(ItemPosCountVec const& pos, Item *pItem, bool update);
+        Item* StoreItem(ItemPosCountVec const& pos, Item* pItem, bool update);
         Item* EquipNewItem(uint16 pos, uint32 item, bool update);
-        Item* EquipItem(uint16 pos, Item *pItem, bool update);
+        Item* EquipItem(uint16 pos, Item* pItem, bool update);
         void AutoUnequipOffhandIfNeed();
         bool StoreNewItemInBestSlots(uint32 item_id, uint32 item_count);
 
         uint8 _CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item* pItem, uint32* no_space_count = NULL) const;
-        uint8 _CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 entry, uint32 count, Item *pItem = NULL, bool swap = false, uint32* no_space_count = NULL) const;
+        uint8 _CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 entry, uint32 count, Item* pItem = NULL, bool swap = false, uint32* no_space_count = NULL) const;
 
-        void ApplyEquipCooldown(Item * pItem);
+        void ApplyEquipCooldown(Item* pItem);
         void SetAmmo(uint32 item);
         void RemoveAmmo();
         float GetAmmoDPS() const { return m_ammoDPS; }
         bool CheckAmmoCompatibility(const ItemPrototype *ammo_proto) const;
-        void QuickEquipItem(uint16 pos, Item *pItem);
-        void VisualizeItem(uint8 slot, Item *pItem);
-        void SetVisibleItemSlot(uint8 slot, Item *pItem);
-        Item* BankItem(ItemPosCountVec const& dest, Item *pItem, bool update)
+        void QuickEquipItem(uint16 pos, Item* pItem);
+        void VisualizeItem(uint8 slot, Item* pItem);
+        void SetVisibleItemSlot(uint8 slot, Item* pItem);
+        Item* BankItem(ItemPosCountVec const& dest, Item* pItem, bool update)
         {
             return StoreItem(dest, pItem, update);
         }
-        Item* BankItem(uint16 pos, Item *pItem, bool update);
+        Item* BankItem(uint16 pos, Item* pItem, bool update);
         void RemoveItem(uint8 bag, uint8 slot, bool update);
         void MoveItemFromInventory(uint8 bag, uint8 slot, bool update);
                                                             // in trade, auction, guild bank, mail....
         void MoveItemToInventory(ItemPosCountVec const& dest, Item* pItem, bool update, bool in_characterInventoryDB = false);
                                                             // in trade, guild bank, mail....
-        void RemoveItemDependentAurasAndCasts(Item * pItem);
+        void RemoveItemDependentAurasAndCasts(Item* pItem);
         void DestroyItem(uint8 bag, uint8 slot, bool update);
         void DestroyItemCount(uint32 item, uint32 count, bool update, bool unequip_check = false);
         void DestroyItemCount(Item* item, uint32& count, bool update);
@@ -1107,11 +1107,11 @@ class Player : public Unit, public GridObject<Player>
         void DestroyZoneLimitedItem(bool update, uint32 new_zone);
         void SplitItem(uint16 src, uint16 dst, uint32 count);
         void SwapItem(uint16 src, uint16 dst);
-        void AddItemToBuyBackSlot(Item *pItem);
+        void AddItemToBuyBackSlot(Item* pItem);
         Item* GetItemFromBuyBackSlot(uint32 slot);
         void RemoveItemFromBuyBackSlot(uint32 slot, bool del);
         uint32 GetMaxKeyringSize() const { return KEYRING_SLOT_END-KEYRING_SLOT_START; }
-        void SendEquipError(uint8 msg, Item* pItem, Item *pItem2);
+        void SendEquipError(uint8 msg, Item* pItem, Item* pItem2);
         void SendBuyError(uint8 msg, Creature* pCreature, uint32 item, uint32 param);
         void SendSellError(uint8 msg, Creature* pCreature, uint64 guid, uint32 param);
         void SendReferFriendError(ReferFriendError err, const char* name = 0);
@@ -1125,14 +1125,14 @@ class Player : public Unit, public GridObject<Player>
             // disarm applied only to mainhand weapon
             return !IsInFeralForm() && (!mainhand || !HasFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISARMED));
         }
-        void SendNewItem(Item *item, uint32 count, bool received, bool created, bool broadcast = false);
+        void SendNewItem(Item* item, uint32 count, bool received, bool created, bool broadcast = false);
         bool BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint8 bag, uint8 slot);
 
         float GetReputationPriceDiscount(Creature const* pCreature) const;
         Player* GetTrader() const { return pTrader; }
         void ClearTrade();
         void TradeCancel(bool sendback);
-        Item *GetItemByTradeSlot(uint8 slot) const
+        Item* GetItemByTradeSlot(uint8 slot) const
         {
             if (slot < TRADE_SLOT_COUNT && tradeItems[slot])
                 return GetItemByGuid(tradeItems[slot]);
@@ -1141,15 +1141,15 @@ class Player : public Unit, public GridObject<Player>
 
         void UpdateEnchantTime(uint32 time);
         void UpdateItemDuration(uint32 time, bool realtimeonly=false);
-        void AddEnchantmentDurations(Item *item);
-        void RemoveEnchantmentDurations(Item *item);
+        void AddEnchantmentDurations(Item* item);
+        void RemoveEnchantmentDurations(Item* item);
         void RemoveAllEnchantments(EnchantmentSlot slot, bool arena);
-        void AddEnchantmentDuration(Item *item,EnchantmentSlot slot,uint32 duration);
-        void ApplyEnchantment(Item *item,EnchantmentSlot slot,bool apply, bool apply_dur = true, bool ignore_condition = false);
-        void ApplyEnchantment(Item *item,bool apply);
+        void AddEnchantmentDuration(Item* item,EnchantmentSlot slot,uint32 duration);
+        void ApplyEnchantment(Item* item,EnchantmentSlot slot,bool apply, bool apply_dur = true, bool ignore_condition = false);
+        void ApplyEnchantment(Item* item,bool apply);
         void SendEnchantmentDurations();
-        void AddItemDurations(Item *item);
-        void RemoveItemDurations(Item *item);
+        void AddItemDurations(Item* item);
+        void RemoveItemDurations(Item* item);
         void SendItemDurations();
         void LoadCorpse();
         void LoadPet();
@@ -1170,7 +1170,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 m_stableSlots;
 
         /*********************************************************/
-        /***                    GOSSIP SYSTEM                  ***/
+        /***                   GOSSIP SYSTEM                  ***/
         /*********************************************************/
 
         void PrepareGossipMenu(WorldObject *pSource, uint32 menuId = 0);
@@ -1182,7 +1182,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetDefaultGossipMenuForSource(WorldObject *pSource);
 
         /*********************************************************/
-        /***                    QUEST SYSTEM                   ***/
+        /***                   QUEST SYSTEM                   ***/
         /*********************************************************/
 
         // Return player level when QuestLevel is dynamic (-1)
@@ -1292,7 +1292,7 @@ class Player : public Unit, public GridObject<Player>
         void RemoveTimedQuest(uint32 quest_id) { m_timedquests.erase(quest_id); }
 
         /*********************************************************/
-        /***                   LOAD SYSTEM                     ***/
+        /***                  LOAD SYSTEM                     ***/
         /*********************************************************/
 
         bool LoadFromDB(uint32 guid, SqlQueryHolder *holder);
@@ -1307,7 +1307,7 @@ class Player : public Unit, public GridObject<Player>
         static bool   LoadPositionFromDB(uint32& mapid, float& x,float& y,float& z,float& o, bool& in_flight, uint64 guid);
 
         /*********************************************************/
-        /***                   SAVE SYSTEM                     ***/
+        /***                  SAVE SYSTEM                     ***/
         /*********************************************************/
 
         void SaveToDB();
@@ -1684,9 +1684,9 @@ class Player : public Unit, public GridObject<Player>
 
         void UpdateUnderwaterState(Map * m, float x, float y, float z);
 
-        void SendMessageToSet(WorldPacket *data, bool self);// overwrite Object::SendMessageToSet
-        void SendMessageToSetInRange(WorldPacket *data, float fist, bool self);// overwrite Object::SendMessageToSetInRange
-        void SendMessageToSetInRange(WorldPacket *data, float dist, bool self, bool own_team_only);
+        void SendMessageToSet(WorldPacket* data, bool self);// overwrite Object::SendMessageToSet
+        void SendMessageToSetInRange(WorldPacket* data, float fist, bool self);// overwrite Object::SendMessageToSetInRange
+        void SendMessageToSetInRange(WorldPacket* data, float dist, bool self, bool own_team_only);
 
         Corpse *GetCorpse() const;
         void SpawnCorpseBones();
@@ -1723,7 +1723,7 @@ class Player : public Unit, public GridObject<Player>
 
         void UpdateDefense();
         void UpdateWeaponSkill (WeaponAttackType attType);
-        void UpdateCombatSkills(Unit *pVictim, WeaponAttackType attType, MeleeHitOutcome outcome, bool defence);
+        void UpdateCombatSkills(Unit* pVictim, WeaponAttackType attType, MeleeHitOutcome outcome, bool defence);
 
         void SetSkill(uint32 id, uint16 currVal, uint16 maxVal);
         uint16 GetMaxSkillValue(uint32 skill) const;        // max + perm. bonus
@@ -1778,7 +1778,7 @@ class Player : public Unit, public GridObject<Player>
         bool SetFactionReputation(FactionEntry const* factionEntry, int32 standing);
         bool SetOneFactionReputation(FactionEntry const* factionEntry, int32 standing);
         int32 CalculateReputationGain(uint32 creatureOrQuestLevel, int32 rep, bool for_quest);
-        void RewardReputation(Unit *pVictim, float rate);
+        void RewardReputation(Unit* pVictim, float rate);
         void RewardReputation(Quest const *pQuest);
         void SetInitialFactions();
         void UpdateReputation() const;
@@ -1795,10 +1795,10 @@ class Player : public Unit, public GridObject<Player>
         void ModifySkillBonus(uint32 skillid,int32 val, bool talent);
 
         /*********************************************************/
-        /***                  PVP SYSTEM                       ***/
+        /***                 PVP SYSTEM                       ***/
         /*********************************************************/
         void UpdateHonorFields();
-        bool RewardHonor(Unit *pVictim, uint32 groupsize, float honor = -1, bool pvptoken = false);
+        bool RewardHonor(Unit* pVictim, uint32 groupsize, float honor = -1, bool pvptoken = false);
         uint32 GetHonorPoints() { return GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY); }
         uint32 GetArenaPoints() { return GetUInt32Value(PLAYER_FIELD_ARENA_CURRENCY); }
         void ModifyHonorPoints(int32 value);
@@ -1833,11 +1833,11 @@ class Player : public Unit, public GridObject<Player>
 
         void ResetAllPowers();
 
-        void _ApplyWeaponDependentAuraMods(Item *item, WeaponAttackType attackType, bool apply);
-        void _ApplyWeaponDependentAuraCritMod(Item *item, WeaponAttackType attackType, Aura* aura, bool apply);
-        void _ApplyWeaponDependentAuraDamageMod(Item *item, WeaponAttackType attackType, Aura* aura, bool apply);
+        void _ApplyWeaponDependentAuraMods(Item* item, WeaponAttackType attackType, bool apply);
+        void _ApplyWeaponDependentAuraCritMod(Item* item, WeaponAttackType attackType, Aura* aura, bool apply);
+        void _ApplyWeaponDependentAuraDamageMod(Item* item, WeaponAttackType attackType, Aura* aura, bool apply);
 
-        void _ApplyItemMods(Item *item,uint8 slot,bool apply);
+        void _ApplyItemMods(Item* item,uint8 slot,bool apply);
         void _RemoveAllItemMods();
         void _ApplyAllItemMods();
         void _ApplyItemBonuses(ItemPrototype const *proto,uint8 slot,bool apply);
@@ -1847,15 +1847,15 @@ class Player : public Unit, public GridObject<Player>
         void CorrectMetaGemEnchants(uint8 slot, bool apply);
         void InitDataForForm(bool reapplyMods = false);
 
-        void ApplyItemEquipSpell(Item *item, bool apply, bool form_change = false);
+        void ApplyItemEquipSpell(Item* item, bool apply, bool form_change = false);
         void ApplyEquipSpell(SpellEntry const* spellInfo, Item* item, bool apply, bool form_change = false);
         void UpdateEquipSpellsAtFormChange();
-        void CastItemCombatSpell(Unit *target, WeaponAttackType attType, uint32 procVictim, uint32 procEx, SpellEntry const *spellInfo = NULL);
-        void CastItemCombatSpell(Unit *target, WeaponAttackType attType, uint32 procVictim, uint32 procEx, Item *item, ItemPrototype const * proto, SpellEntry const *spell = NULL);
+        void CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 procVictim, uint32 procEx, SpellEntry const *spellInfo = NULL);
+        void CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 procVictim, uint32 procEx, Item* item, ItemPrototype const * proto, SpellEntry const *spell = NULL);
 
         void SendInitWorldStates(bool force = false, uint32 forceZoneId = 0);
         void SendUpdateWorldState(uint32 Field, uint32 Value);
-        void SendDirectMessage(WorldPacket *data);
+        void SendDirectMessage(WorldPacket* data);
 
         void SendAuraDurationsForTarget(Unit* target);
 
@@ -1868,7 +1868,7 @@ class Player : public Unit, public GridObject<Player>
         void SendNotifyLootMoneyRemoved();
 
         /*********************************************************/
-        /***               BATTLEGROUND SYSTEM                 ***/
+        /***              BATTLEGROUND SYSTEM                 ***/
         /*********************************************************/
 
         bool InBattleGround()       const                { return m_bgData.bgInstanceID != 0; }
@@ -1976,7 +1976,7 @@ class Player : public Unit, public GridObject<Player>
         bool CanCaptureTowerPoint();
 
         /*********************************************************/
-        /***               OUTDOOR PVP SYSTEM                  ***/
+        /***              OUTDOOR PVP SYSTEM                  ***/
         /*********************************************************/
 
         OutdoorPvP * GetOutdoorPvP() const;
@@ -1984,7 +1984,7 @@ class Player : public Unit, public GridObject<Player>
         bool IsOutdoorPvPActive();
 
         /*********************************************************/
-        /***                    REST SYSTEM                    ***/
+        /***                   REST SYSTEM                    ***/
         /*********************************************************/
 
         bool isRested() const { return GetRestTime() >= 10*IN_MILLISECONDS; }
@@ -1993,13 +1993,13 @@ class Player : public Unit, public GridObject<Player>
         void SetRestTime(uint32 v) { m_restTime = v;}
 
         /*********************************************************/
-        /***              ENVIROMENTAL SYSTEM                  ***/
+        /***             ENVIROMENTAL SYSTEM                  ***/
         /*********************************************************/
 
         void EnvironmentalDamage(EnviromentalDamage type, uint32 damage);
 
         /*********************************************************/
-        /***               FLOOD FILTER SYSTEM                 ***/
+        /***              FLOOD FILTER SYSTEM                 ***/
         /*********************************************************/
 
         void UpdateSpeakTime();
@@ -2007,11 +2007,11 @@ class Player : public Unit, public GridObject<Player>
         void ChangeSpeakTime(int utime);
 
         /*********************************************************/
-        /***                 VARIOUS SYSTEMS                   ***/
+        /***                VARIOUS SYSTEMS                   ***/
         /*********************************************************/
         uint32 m_lastFallTime;
         float  m_lastFallZ;
-        Unit *m_mover;
+        Unit* m_mover;
         WorldObject *m_seer;
         void SetFallInformation(uint32 time, float z)
         {
@@ -2019,7 +2019,7 @@ class Player : public Unit, public GridObject<Player>
             m_lastFallZ = z;
         }
 
-        void BuildTeleportAckMsg( WorldPacket *data, float x, float y, float z, float ang) const;
+        void BuildTeleportAckMsg( WorldPacket* data, float x, float y, float z, float ang) const;
 
         bool isMoving() const { return HasUnitMovementFlag(MOVEFLAG_MOVING); }
         bool isMovingOrTurning() const { return HasUnitMovementFlag(MOVEFLAG_TURNING); }
@@ -2126,7 +2126,7 @@ class Player : public Unit, public GridObject<Player>
         void SendCinematicStart(uint32 CinematicSequenceId);
 
         /*********************************************************/
-        /***                 INSTANCE SYSTEM                   ***/
+        /***                INSTANCE SYSTEM                   ***/
         /*********************************************************/
 
         typedef UNORDERED_MAP< uint32 /*mapId*/, InstancePlayerBind > BoundInstancesMap;
@@ -2149,7 +2149,7 @@ class Player : public Unit, public GridObject<Player>
         bool Satisfy(AccessRequirement const*, uint32 target_map, bool report = false);
 
         /*********************************************************/
-        /***                   GROUP SYSTEM                    ***/
+        /***                  GROUP SYSTEM                    ***/
         /*********************************************************/
 
         Group * GetGroupInvite() { return m_groupInvite; }
@@ -2197,7 +2197,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 m_contestedPvPTimer;
 
         /*********************************************************/
-        /***               BATTLEGROUND SYSTEM                 ***/
+        /***              BATTLEGROUND SYSTEM                 ***/
         /*********************************************************/
 
         /*
@@ -2213,7 +2213,7 @@ class Player : public Unit, public GridObject<Player>
         BGData                    m_bgData;
 
         /*********************************************************/
-        /***                    QUEST SYSTEM                   ***/
+        /***                   QUEST SYSTEM                   ***/
         /*********************************************************/
 
         //We allow only one timed quest active at the same time. Below can then be simple value instead of set.
@@ -2223,7 +2223,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 m_ingametime;
 
         /*********************************************************/
-        /***                   LOAD SYSTEM                     ***/
+        /***                  LOAD SYSTEM                     ***/
         /*********************************************************/
 
         void _LoadActions(QueryResult_AutoPtr result);
@@ -2247,7 +2247,7 @@ class Player : public Unit, public GridObject<Player>
         void _LoadBGData(QueryResult_AutoPtr result);
 
         /*********************************************************/
-        /***                   SAVE SYSTEM                     ***/
+        /***                  SAVE SYSTEM                     ***/
         /*********************************************************/
 
         void _SaveActions();
@@ -2266,7 +2266,7 @@ class Player : public Unit, public GridObject<Player>
         void _SetUpdateBits(UpdateMask *updateMask, Player* target) const;
 
         /*********************************************************/
-        /***              ENVIRONMENTAL SYSTEM                 ***/
+        /***             ENVIRONMENTAL SYSTEM                 ***/
         /*********************************************************/
         void HandleSobering();
         void SendMirrorTimer(MirrorTimerType Type, uint32 MaxValue, uint32 CurrentValue, int32 Regen);
@@ -2275,7 +2275,7 @@ class Player : public Unit, public GridObject<Player>
         int32 getMaxTimer(MirrorTimerType timer);
 
         /*********************************************************/
-        /***                  HONOR SYSTEM                     ***/
+        /***                 HONOR SYSTEM                     ***/
         /*********************************************************/
         time_t m_lastHonorUpdateTime;
 
@@ -2408,10 +2408,10 @@ class Player : public Unit, public GridObject<Player>
         DeclinedName *m_declinedname;
     private:
         // internal common parts for CanStore/StoreItem functions
-        uint8 _CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool swap, Item *pSrcItem) const;
-        uint8 _CanStoreItem_InBag(uint8 bag, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, bool non_specialized, Item *pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
-        uint8 _CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, Item *pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
-        Item* _StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool update);
+        uint8 _CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool swap, Item* pSrcItem) const;
+        uint8 _CanStoreItem_InBag(uint8 bag, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, bool non_specialized, Item* pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
+        uint8 _CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, Item* pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
+        Item* _StoreItem(uint16 pos, Item* pItem, uint32 count, bool clone, bool update);
 
         int32 m_MirrorTimer[MAX_TIMERS];
         uint8 m_MirrorTimerFlags;
@@ -2473,7 +2473,7 @@ class Player : public Unit, public GridObject<Player>
         PetStatus m_petStatus;
 };
 
-void AddItemsSetItem(Player*player,Item *item);
+void AddItemsSetItem(Player*player,Item* item);
 void RemoveItemsSetItem(Player*player,ItemPrototype const *proto);
 
 // "the bodies of template functions must be made available in a header file"

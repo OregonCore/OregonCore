@@ -42,9 +42,9 @@ struct mobs_mana_tappedAI : public ScriptedAI
 
     void Reset() { }
 
-    void EnterCombat(Unit *) { }
+    void EnterCombat(Unit* ) { }
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry *spell)
     {
         if (caster->GetTypeId() == TYPEID_PLAYER)
             if (CAST_PLR(caster)->GetQuestStatus(8346) == QUEST_STATUS_INCOMPLETE && !CAST_PLR(caster)->GetReqKillOrCastCurrentCount(8346, me->GetEntry()) && spell->Id == 28734)
@@ -251,7 +251,7 @@ struct npc_secondTrialAI : public ScriptedAI
       }
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -263,7 +263,7 @@ struct npc_secondTrialAI : public ScriptedAI
                 me->setFaction(FACTION_HOSTILE);
                 questPhase = 0;
 
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 {
                     me->AddThreat(pTarget, 5000000.0f);
                     AttackStart(pTarget);
@@ -356,7 +356,7 @@ struct master_kelerun_bloodmournAI : public ScriptedAI
             paladinGuid[i] = 0;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {

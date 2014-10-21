@@ -106,10 +106,10 @@ struct boss_thespiaAI : public ScriptedAI
         if (LightningCloud_Timer <= diff)
         {
             //cast twice in Heroic mode
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget, SPELL_LIGHTNING_CLOUD);
             if (HeroicMode)
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(pTarget, SPELL_LIGHTNING_CLOUD);
             LightningCloud_Timer = 15000+rand()%10000;
         } else LightningCloud_Timer -=diff;
@@ -117,7 +117,7 @@ struct boss_thespiaAI : public ScriptedAI
         //LungBurst_Timer
         if (LungBurst_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget, SPELL_LUNG_BURST);
             LungBurst_Timer = 7000+rand()%5000;
         } else LungBurst_Timer -=diff;
@@ -126,10 +126,10 @@ struct boss_thespiaAI : public ScriptedAI
         if (EnvelopingWinds_Timer <= diff)
         {
             //cast twice in Heroic mode
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget, SPELL_ENVELOPING_WINDS);
             if (HeroicMode)
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(pTarget, SPELL_ENVELOPING_WINDS);
             EnvelopingWinds_Timer = 10000+rand()%5000;
         } else EnvelopingWinds_Timer -=diff;

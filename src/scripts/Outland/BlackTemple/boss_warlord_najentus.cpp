@@ -86,12 +86,12 @@ struct boss_najentusAI : public ScriptedAI
         DeleteSpine();
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(rand()%2 ? SAY_SLAY1 : SAY_SLAY2, me);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, DONE);
@@ -100,7 +100,7 @@ struct boss_najentusAI : public ScriptedAI
         DeleteSpine();
     }
 
-    bool TryDoCast(Unit *victim, uint32 spellId, bool triggered = false)
+    bool TryDoCast(Unit* victim, uint32 spellId, bool triggered = false)
     {
         if (me->IsNonMeleeSpellCast(false)) return false;
 
@@ -108,7 +108,7 @@ struct boss_najentusAI : public ScriptedAI
         return true;
     }
 
-    void SpellHit(Unit * /*caster*/, const SpellEntry *spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry *spell)
     {
         if (spell->Id == SPELL_HURL_SPINE && me->HasAura(SPELL_TIDAL_SHIELD, 0))
         {
@@ -118,7 +118,7 @@ struct boss_najentusAI : public ScriptedAI
         }
     }
 
-    void SpellHitTarget(Unit *pTarget, const SpellEntry *spell)
+    void SpellHitTarget(Unit* pTarget, const SpellEntry *spell)
     {
         switch(spell->Id)
         {
@@ -128,7 +128,7 @@ struct boss_najentusAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, IN_PROGRESS);
@@ -140,7 +140,7 @@ struct boss_najentusAI : public ScriptedAI
     bool RemoveImpalingSpine()
     {
         if (!SpineTargetGUID) return false;
-        Unit *pTarget = Unit::GetUnit(*me, SpineTargetGUID);
+        Unit* pTarget = Unit::GetUnit(*me, SpineTargetGUID);
         if (pTarget && pTarget->HasAura(SPELL_IMPALING_SPINE, 1))
             pTarget->RemoveAurasDueToSpell(SPELL_IMPALING_SPINE);
         SpineTargetGUID=0;
@@ -204,7 +204,7 @@ struct boss_najentusAI : public ScriptedAI
         {
             if (!me->IsNonMeleeSpellCast(false))
             {
-                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 80,true);
+                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 80,true);
                 if (!pTarget) pTarget = me->getVictim();
                 if (pTarget)
                 {

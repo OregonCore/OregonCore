@@ -28,7 +28,7 @@ OutdoorPvPNA::OutdoorPvPNA()
     m_TypeId = OUTDOOR_PVP_NA;
 }
 
-void OutdoorPvPNA::HandleKillImpl(Player* plr, Unit * killed)
+void OutdoorPvPNA::HandleKillImpl(Player* plr, Unit* killed)
 {
     if (killed->GetTypeId() == TYPEID_PLAYER && plr->GetTeam() != killed->ToPlayer()->GetTeam())
     {
@@ -63,7 +63,7 @@ uint32 OPvPCapturePointNA::GetAliveGuardsCount()
         case NA_NPC_GUARD_14:
         case NA_NPC_GUARD_15:
             {
-                if (Creature*  cr = HashMapHolder<Creature>::Find(itr->second))
+                if (Creature* cr = HashMapHolder<Creature>::Find(itr->second))
                 {
                     if (cr->isAlive())
                         ++cnt;
@@ -333,7 +333,7 @@ bool OutdoorPvPNA::Update(uint32 diff)
     return m_obj->Update(diff);
 }
 
-bool OPvPCapturePointNA::HandleCustomSpell(Player* plr, uint32 spellId, GameObject * /*go*/)
+bool OPvPCapturePointNA::HandleCustomSpell(Player* plr, uint32 spellId, GameObject* /*go*/)
 {
     std::vector<uint32> nodes;
     nodes.resize(2);

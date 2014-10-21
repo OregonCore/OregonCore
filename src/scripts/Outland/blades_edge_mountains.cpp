@@ -88,7 +88,7 @@ struct mobs_nether_drakeAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) { }
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry *spell)
     {
         if (spell->Id == SPELL_T_PHASE_MODULATOR && caster->GetTypeId() == TYPEID_PLAYER)
         {
@@ -212,7 +212,7 @@ struct mobs_nether_drakeAI : public ScriptedAI
 
         if (ManaBurn_Timer <= diff)
         {
-            Unit *pTarget = me->getVictim();
+            Unit* pTarget = me->getVictim();
             if (pTarget && pTarget->getPowerType() == POWER_MANA)
                 DoCast(pTarget,SPELL_MANA_BURN);
             ManaBurn_Timer = 8000+rand()%8000;
@@ -250,7 +250,7 @@ struct npc_daranelleAI : public ScriptedAI
     {
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (who->GetTypeId() == TYPEID_PLAYER)
         {
@@ -383,7 +383,7 @@ struct npc_ogre_bruteAI : public ScriptedAI
         PlayerGUID = 0;
     }
 
-    void MoveInLineOfSight(Unit *pWho)
+    void MoveInLineOfSight(Unit* pWho)
     {
         if (!pWho || (!pWho->isAlive()))
             return;

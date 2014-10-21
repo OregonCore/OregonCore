@@ -132,7 +132,7 @@ struct npc_disciple_of_naralexAI : public npc_escortAI
         DoScriptText(SAY_ATTACKED, me, who);
     }
 
-    void JustDied(Unit * /*slayer*/)
+    void JustDied(Unit* /*slayer*/)
     {
         if (pInstance)
         {

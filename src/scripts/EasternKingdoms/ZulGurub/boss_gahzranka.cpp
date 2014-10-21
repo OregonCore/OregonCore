@@ -42,7 +42,7 @@ struct boss_gahzrankaAI : public ScriptedAI
         Slam_Timer = 17000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

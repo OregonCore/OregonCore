@@ -223,7 +223,7 @@ class OPvPCapturePointZM_GraveYard : public OPvPCapturePoint
 
         bool HandleDropFlag(Player* plr, uint32 spellId);
 
-        bool CanTalkTo(Player* plr, Creature*  c, GossipMenuItems gso);
+        bool CanTalkTo(Player* plr, Creature* c, GossipMenuItems gso);
 
     private:
 
@@ -255,7 +255,7 @@ class OutdoorPvPZM : public OutdoorPvP
 
         void SendRemoveWorldStates(Player* plr);
 
-        void HandleKillImpl(Player* plr, Unit * killed);
+        void HandleKillImpl(Player* plr, Unit* killed);
 
     private:
 

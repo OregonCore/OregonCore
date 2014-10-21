@@ -82,7 +82,7 @@ struct boss_anubrekhanAI : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
 
             if (!HasTaunted && me->IsWithinDistInMap(who, 60.0f))
@@ -112,7 +112,7 @@ struct boss_anubrekhanAI : public ScriptedAI
             //Do NOT cast it when we are afflicted by locust swarm
             if (!me->HasAura(SPELL_LOCUSTSWARM,1))
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(pTarget,SPELL_IMPALE);
             }
 

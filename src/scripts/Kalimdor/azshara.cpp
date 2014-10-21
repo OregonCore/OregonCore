@@ -50,9 +50,9 @@ struct mobs_spitelashesAI : public ScriptedAI
         spellhit = false;
     }
 
-    void EnterCombat(Unit * /*who*/) { }
+    void EnterCombat(Unit* /*who*/) { }
 
-    void SpellHit(Unit *Hitter, const SpellEntry *Spellkind)
+    void SpellHit(Unit* Hitter, const SpellEntry *Spellkind)
     {
         if (!spellhit &&
             Hitter->GetTypeId() == TYPEID_PLAYER &&
@@ -381,7 +381,7 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
             pPlayer->GetSession()->SendPacket(&data);
     }
 
-    void AttackStart(Unit *who)
+    void AttackStart(Unit* who)
     {
         if (!who || PlayerGUID)
             return;
@@ -471,7 +471,7 @@ struct mob_depth_chargeAI : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who)
             return;
@@ -484,7 +484,7 @@ struct mob_depth_chargeAI : public ScriptedAI
         }
     }
 
-    void AttackStart(Unit * /*who*/)
+    void AttackStart(Unit* /*who*/)
     {
     }
 

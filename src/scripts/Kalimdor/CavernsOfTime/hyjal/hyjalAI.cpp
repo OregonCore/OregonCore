@@ -499,7 +499,7 @@ void hyjalAI::EnterEvadeMode()
     me->SetLootRecipient(NULL);
 }
 
-void hyjalAI::EnterCombat(Unit * /*who*/)
+void hyjalAI::EnterCombat(Unit* /*who*/)
 {
     if (IsDummy)return;
     for (uint8 i = 0; i < 3; ++i)
@@ -509,7 +509,7 @@ void hyjalAI::EnterCombat(Unit * /*who*/)
     Talk(ATTACKED);
 }
 
-void hyjalAI::MoveInLineOfSight(Unit *who)
+void hyjalAI::MoveInLineOfSight(Unit* who)
 {
     if (IsDummy)
         return;
@@ -976,7 +976,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                 if (me->IsNonMeleeSpellCast(false))
                     me->InterruptNonMeleeSpells(false);
 
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
 
                 switch(Spell[i].TargetType)
                 {

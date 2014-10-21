@@ -94,7 +94,7 @@ struct npc_darrowshire_spiritAI : public ScriptedAI
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
 };
 CreatureAI* GetAI_npc_darrowshire_spirit(Creature* pCreature)

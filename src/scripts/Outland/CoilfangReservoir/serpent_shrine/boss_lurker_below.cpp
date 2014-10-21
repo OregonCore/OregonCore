@@ -143,14 +143,14 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
         Summons.DespawnAll();
     }
 
-    void EnterCombat(Unit * who)
+    void EnterCombat(Unit* who)
     {
         if (pInstance)
             pInstance->SetData(DATA_THELURKERBELOWEVENT, IN_PROGRESS);
         Scripted_NoMovementAI::EnterCombat(who);
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!CanStartEvent)//boss is invisible, don't attack
             return;
@@ -280,7 +280,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
 
             if (GeyserTimer <= diff)
             {
-                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
                 if (!pTarget && me->getVictim())
                     pTarget = me->getVictim();
                 if (pTarget)
@@ -292,7 +292,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
             {
                 if (WaterboltTimer <= diff)
                 {
-                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                     if (!pTarget && me->getVictim())
                         pTarget = me->getVictim();
                     if (pTarget)
@@ -388,12 +388,12 @@ struct mob_coilfang_ambusherAI : public Scripted_NoMovementAI
 
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
 
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who || me->getVictim()) return;
 
@@ -416,7 +416,7 @@ struct mob_coilfang_ambusherAI : public Scripted_NoMovementAI
 
         if (ShootBowTimer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             int bp0 = 1100;
             if (pTarget)

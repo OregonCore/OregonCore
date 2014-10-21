@@ -145,7 +145,7 @@ void PlayerRelocationNotifier::Visit(CreatureMapType &m)
 
     for (CreatureMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
     {
-        Creature*  c = iter->getSource();
+        Creature* c = iter->getSource();
 
         vis_guids.erase(c->GetGUID());
 
@@ -188,7 +188,7 @@ void DelayedUnitRelocation::Visit(CreatureMapType &m)
 {
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        Creature*  unit = iter->getSource();
+        Creature* unit = iter->getSource();
         if (!unit->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
             continue;
 

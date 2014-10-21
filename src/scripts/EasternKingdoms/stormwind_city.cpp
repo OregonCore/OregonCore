@@ -86,12 +86,12 @@ struct npc_bartlebyAI : public ScriptedAI
         PlayerGUID = 0;
     }
 
-    void JustDied(Unit *)
+    void JustDied(Unit* )
     {
         me->setFaction(11);
     }
 
-    void DamageTaken(Unit *done_by, uint32 & damage)
+    void DamageTaken(Unit* done_by, uint32 & damage)
     {
         if (damage > me->GetHealth() || ((me->GetHealth() - damage)*100 / me->GetMaxHealth() < 15))
         {
@@ -139,7 +139,7 @@ struct npc_dashel_stonefistAI : public ScriptedAI
         me->setEmoteState(7);
     }
 
-    void DamageTaken(Unit *done_by, uint32 & damage)
+    void DamageTaken(Unit* done_by, uint32 & damage)
     {
         if ((damage > me->GetHealth()) || (me->GetHealth() - damage)*100 / me->GetMaxHealth() < 15)
         {
@@ -335,7 +335,7 @@ struct npc_stormwind_royal_guardAI : public ScriptedAI
                 switch(uiSpybotPhase)
                 {
                 case 1:
-                    if ( Unit *pSpybot = me->GetUnit(*me, SpybotGUID))
+                    if ( Unit* pSpybot = me->GetUnit(*me, SpybotGUID))
                         me->SetFacingToObject(pSpybot);
                     uiSpybotTimer = 1000;
                     ++uiSpybotPhase;

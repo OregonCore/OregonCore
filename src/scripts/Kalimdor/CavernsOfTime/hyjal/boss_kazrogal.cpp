@@ -74,7 +74,7 @@ struct boss_kazrogalAI : public hyjal_trashAI
             pInstance->SetData(DATA_KAZROGALEVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_KAZROGALEVENT, IN_PROGRESS);
@@ -82,7 +82,7 @@ struct boss_kazrogalAI : public hyjal_trashAI
         me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, 0);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         switch (urand(0,2))
         {
@@ -106,13 +106,13 @@ struct boss_kazrogalAI : public hyjal_trashAI
         pos = i;
         if (i == 7 && pInstance)
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
             if (pTarget && pTarget->isAlive())
                 me->AddThreat(pTarget,0.0f);
         }
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit* victim)
     {
         hyjal_trashAI::JustDied(victim);
         if (pInstance && IsEvent)
@@ -171,7 +171,7 @@ struct boss_kazrogalAI : public hyjal_trashAI
             std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
             for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
-                Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
+                Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                 if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->getPowerType() == POWER_MANA)
                 {
                     pTarget->CastSpell(pTarget, SPELL_MARK,true);//only cast on mana users

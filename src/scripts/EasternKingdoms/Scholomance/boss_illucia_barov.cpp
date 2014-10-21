@@ -47,7 +47,7 @@ struct boss_illuciabarovAI : public ScriptedAI
         Fear_Timer = 30000;
     }
 
-    void JustDied(Unit * /*killer*/)
+    void JustDied(Unit* /*killer*/)
     {
         ScriptedInstance *pInstance = me->GetInstanceData();
         if (pInstance)
@@ -59,7 +59,7 @@ struct boss_illuciabarovAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -78,7 +78,7 @@ struct boss_illuciabarovAI : public ScriptedAI
         //ShadowShock_Timer
         if (ShadowShock_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget) DoCast(pTarget, SPELL_SHADOWSHOCK);
 

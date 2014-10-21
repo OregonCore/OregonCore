@@ -31,7 +31,7 @@ struct hyjal_trashAI : public npc_escortAI
 
     void JustDied(Unit* /*killer*/);
 
-    void DamageTaken(Unit *done_by, uint32 &damage);
+    void DamageTaken(Unit* done_by, uint32 &damage);
 
     public:
         ScriptedInstance* pInstance;

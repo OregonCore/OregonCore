@@ -433,7 +433,7 @@ bool ScriptMgr::ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& ta
     return tmpscript->pItemUse(pPlayer, pItem, targets);
 }
 
-bool ScriptMgr::EffectDummyCreature(Unit *caster, uint32 spellId, uint32 effIndex, Creature* crTarget)
+bool ScriptMgr::EffectDummyCreature(Unit* caster, uint32 spellId, uint32 effIndex, Creature* crTarget)
 {
     Script *tmpscript = m_scripts[crTarget->GetScriptId()];
 

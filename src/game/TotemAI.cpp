@@ -42,7 +42,7 @@ TotemAI::TotemAI(Creature* c) : CreatureAI(c), i_totem(static_cast<Totem&>(*c)),
 }
 
 void
-TotemAI::MoveInLineOfSight(Unit *)
+TotemAI::MoveInLineOfSight(Unit* )
 {
 }
 
@@ -113,13 +113,13 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
 }
 
 bool
-TotemAI::IsVisible(Unit *) const
+TotemAI::IsVisible(Unit* ) const
 {
     return false;
 }
 
 void
-TotemAI::AttackStart(Unit *)
+TotemAI::AttackStart(Unit* )
 {
     // Sentry totem sends ping on attack
     if (i_totem.GetEntry() == SENTRY_TOTEM_ENTRY && i_totem.GetOwner()->GetTypeId() == TYPEID_PLAYER)

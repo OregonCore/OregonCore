@@ -123,7 +123,7 @@ struct boss_maexxnaAI : public ScriptedAI
     void DoCastWebWrap()
     {
         std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
-        std::vector<Unit *> targets;
+        std::vector<Unit* > targets;
 
         //This spell doesn't work if we only have 1 player on threat list
         if (t_list.size() < 2)
@@ -134,7 +134,7 @@ struct boss_maexxnaAI : public ScriptedAI
         std::advance(itr, 1);
         for (; itr != t_list.end(); ++itr)                   //store the threat list in a different container
         {
-            Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
+            Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                                                             //only on alive players
             if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
                 targets.push_back(pTarget);
@@ -145,10 +145,10 @@ struct boss_maexxnaAI : public ScriptedAI
             targets.erase(targets.begin()+rand()%targets.size());
 
         int i = 0;
-        for (std::vector<Unit *>::iterator itr = targets.begin(); itr != targets.end(); ++itr, ++i)
+        for (std::vector<Unit* >::iterator itr = targets.begin(); itr != targets.end(); ++itr, ++i)
         {
             // Teleport the 3 targets to a location on the wall and summon a Web Wrap on them
-            Unit *pTarget = *itr;
+            Unit* pTarget = *itr;
             Creature* Wrap = NULL;
             if (pTarget)
             {

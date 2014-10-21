@@ -154,7 +154,7 @@ bool OutdoorPvPSI::HandleDropFlag(Player* plr, uint32 spellId)
                     if (plr->GetDistance(atEntry->x,atEntry->y,atEntry->z) > 5.0f + atEntry->radius)
                     {
                         // he dropped it further, summon mound
-                        GameObject * go = new GameObject;
+                        GameObject* go = new GameObject;
                         Map * map = plr->GetMap();
                         if (!map)
                         {
@@ -184,7 +184,7 @@ bool OutdoorPvPSI::HandleDropFlag(Player* plr, uint32 spellId)
                     if (plr->GetDistance(atEntry->x,atEntry->y,atEntry->z) > 5.0f + atEntry->radius)
                     {
                         // he dropped it further, summon mound
-                        GameObject * go = new GameObject;
+                        GameObject* go = new GameObject;
                         Map * map = plr->GetMap();
                         if (!map)
                         {
@@ -210,7 +210,7 @@ bool OutdoorPvPSI::HandleDropFlag(Player* plr, uint32 spellId)
     return false;
 }
 
-bool OutdoorPvPSI::HandleCustomSpell(Player* plr, uint32 spellId, GameObject *go)
+bool OutdoorPvPSI::HandleCustomSpell(Player* plr, uint32 spellId, GameObject* go)
 {
     if (!go || spellId != SI_SILITHYST_FLAG_GO_SPELL)
         return false;

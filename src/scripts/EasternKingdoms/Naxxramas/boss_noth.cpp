@@ -65,7 +65,7 @@ struct boss_nothAI : public ScriptedAI
         Summon_Timer = 12000;
     }
 
-    void EnterCombat(Unit *)
+    void EnterCombat(Unit* )
     {
         switch (rand()%3)
         {
@@ -86,7 +86,7 @@ struct boss_nothAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             summoned->AddThreat(pTarget,0.0f);
     }
 

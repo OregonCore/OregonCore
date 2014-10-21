@@ -480,7 +480,7 @@ struct AISpellInfoType
 
 AISpellInfoType * GetAISpellInfo(uint32 i);
 
-inline void CreatureAI::SetGazeOn(Unit *target)
+inline void CreatureAI::SetGazeOn(Unit* target)
 {
     if (me->canAttack(target))
     {
@@ -502,7 +502,7 @@ inline bool CreatureAI::UpdateVictimWithGaze()
             me->SetReactState(REACT_AGGRESSIVE);
     }
 
-    if (Unit *victim = me->SelectVictim())
+    if (Unit* victim = me->SelectVictim())
         AttackStart(victim);
     return me->getVictim();
 }
@@ -514,7 +514,7 @@ inline bool CreatureAI::UpdateCombatState()
 
     if (!me->HasReactState(REACT_PASSIVE))
     {
-        if (Unit *victim = me->SelectVictim())
+        if (Unit* victim = me->SelectVictim())
             AttackStart(victim);
         return me->getVictim();
     }
@@ -535,7 +535,7 @@ inline bool CreatureAI::UpdateVictim()
 
     if (!me->HasReactState(REACT_PASSIVE))
     {
-        if (Unit *victim = me->SelectVictim())
+        if (Unit* victim = me->SelectVictim())
             AttackStart(victim);
         return me->getVictim();
     }
@@ -554,7 +554,7 @@ inline bool CreatureAI::UpdateVictim()
 {
     if (!me->isInCombat())
         return false;
-    if (Unit *victim = me->SelectVictim())
+    if (Unit* victim = me->SelectVictim())
         AttackStart(victim);
     return me->getVictim();
 }

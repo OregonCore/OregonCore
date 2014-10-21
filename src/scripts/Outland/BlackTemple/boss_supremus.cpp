@@ -128,7 +128,7 @@ struct boss_supremusAI : public ScriptedAI
     Unit* CalculateHatefulStrikeTarget()
     {
         uint32 health = 0;
-        Unit *pTarget = NULL;
+        Unit* pTarget = NULL;
 
         std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
         std::list<HostileReference*>::iterator i = m_threatlist.begin();
@@ -170,7 +170,7 @@ struct boss_supremusAI : public ScriptedAI
         {
             if (HatefulStrikeTimer <= diff)
             {
-                if (Unit *pTarget = CalculateHatefulStrikeTarget())
+                if (Unit* pTarget = CalculateHatefulStrikeTarget())
                 {
                     DoCast(pTarget, SPELL_HATEFUL_STRIKE);
                     HatefulStrikeTimer = 5000;
@@ -182,7 +182,7 @@ struct boss_supremusAI : public ScriptedAI
         {
             if (SwitchTargetTimer <= diff)
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
                 {
                     if (me->GetDistance2d(me->getVictim()) < 40)
                         me->CastSpell(me->getVictim(),SPELL_CHARGE,false);
@@ -196,7 +196,7 @@ struct boss_supremusAI : public ScriptedAI
 
             if (SummonVolcanoTimer <= diff)
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
                 {
                     DoCast(pTarget, SPELL_VOLCANIC_SUMMON);
                     DoScriptText(EMOTE_GROUND_CRACK, me);

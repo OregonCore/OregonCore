@@ -130,7 +130,7 @@ struct boss_akilzonAI : public ScriptedAI
         SetWeather(WEATHER_STATE_FINE, 0.0f);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_ONAGGRO);
@@ -189,7 +189,7 @@ struct boss_akilzonAI : public ScriptedAI
         pMap->SendToPlayers(&data);
     }
 
-    void HandleStormSequence(Unit *Cloud) // 1: begin, 2-9: tick, 10: end
+    void HandleStormSequence(Unit* Cloud) // 1: begin, 2-9: tick, 10: end
     {
         if (StormCount < 10 && StormCount > 1)
         {
@@ -203,7 +203,7 @@ struct boss_akilzonAI : public ScriptedAI
             cell.data.Part.reserved = ALL_DISTRICT;
             cell.SetNoCreate();
 
-            std::list<Unit *> tempUnitMap;
+            std::list<Unit* > tempUnitMap;
 
             {
                 Oregon::AnyAoETargetUnitInObjectRangeCheck u_check(me, me, 999);
@@ -230,7 +230,7 @@ struct boss_akilzonAI : public ScriptedAI
             {
                 x = 343+rand()%60;
                 y = 1380+rand()%60;
-                if (Unit *trigger = me->SummonTrigger(x, y, z, 0, 2000))
+                if (Unit* trigger = me->SummonTrigger(x, y, z, 0, 2000))
                 {
                     trigger->setFaction(35);
                     trigger->SetMaxHealth(100000);
@@ -263,7 +263,7 @@ struct boss_akilzonAI : public ScriptedAI
 
         if (StormCount)
         {
-            Unit *pTarget = Unit::GetUnit(*me, CloudGUID);
+            Unit* pTarget = Unit::GetUnit(*me, CloudGUID);
             if (!pTarget || !pTarget->isAlive())
             {
                 EnterEvadeMode();
@@ -292,7 +292,7 @@ struct boss_akilzonAI : public ScriptedAI
 
         if (StaticDisruption_Timer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (!pTarget) pTarget = me->getVictim();
             TargetGUID = pTarget->GetGUID();
             DoCast(pTarget, SPELL_STATIC_DISRUPTION, false);
@@ -307,7 +307,7 @@ struct boss_akilzonAI : public ScriptedAI
 
         if (GustOfWind_Timer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (!pTarget) pTarget = me->getVictim();
             DoCast(pTarget, SPELL_GUST_OF_WIND);
             GustOfWind_Timer = (diff - GustOfWind_Timer) + (20+rand()%10)*1000; //20 to 30 seconds(bosskillers)
@@ -330,7 +330,7 @@ struct boss_akilzonAI : public ScriptedAI
 
         if (ElectricalStorm_Timer <= diff)
         {
-            Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true);
+            Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true);
             if (!pTarget)
             {
                 EnterEvadeMode();
@@ -343,7 +343,7 @@ struct boss_akilzonAI : public ScriptedAI
             pTarget->GetPosition(x,y,z);
             pTarget->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
             pTarget->SendMonsterMove(x,y,me->GetPositionZ()+15,0);
-            Unit *Cloud = me->SummonTrigger(x, y, me->GetPositionZ()+16, 0, 15000);
+            Unit* Cloud = me->SummonTrigger(x, y, me->GetPositionZ()+16, 0, 15000);
             if (Cloud)
             {
                 CloudGUID = Cloud->GetGUID();
@@ -382,7 +382,7 @@ struct boss_akilzonAI : public ScriptedAI
             {
                 if (!Unit::GetUnit(*me,BirdGUIDs[i])) // they despawn on death
                 {
-                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
                         x = pTarget->GetPositionX() + irand(-10,10);
                         y = pTarget->GetPositionY() + irand(-10,10);
@@ -424,7 +424,7 @@ struct mob_soaring_eagleAI : public ScriptedAI
         me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoZoneInCombat();
     }
@@ -434,7 +434,7 @@ struct mob_soaring_eagleAI : public ScriptedAI
         arrived = true;
         if (TargetGUID)
         {
-            if (Unit *pTarget = Unit::GetUnit(*me, TargetGUID))
+            if (Unit* pTarget = Unit::GetUnit(*me, TargetGUID))
                 DoCast(pTarget, SPELL_EAGLE_SWOOP, true);
             TargetGUID = 0;
             me->SetSpeed(MOVE_RUN, 1.2f);
@@ -451,7 +451,7 @@ struct mob_soaring_eagleAI : public ScriptedAI
 
         if (arrived)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 float x, y, z;
                 if (EagleSwoop_Timer)

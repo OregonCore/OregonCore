@@ -119,7 +119,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
         ScriptedAI::EnterEvadeMode();
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
         {
@@ -141,7 +141,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         switch(rand()%3)
         {
@@ -162,7 +162,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
         {
             summoned->CastSpell(summoned,SPELL_ETHEREAL_BEACON_VISUAL,false);
 
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 summoned->AI()->AttackStart(pTarget);
         }
     }
@@ -270,7 +270,7 @@ struct mob_ethereal_beaconAI : public ScriptedAI
         Check_Timer = 1000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         // Send Shaffar to fight
         Creature* Shaffar = me->FindNearestCreature(ENTRY_SHAFFAR, 100);

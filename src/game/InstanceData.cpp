@@ -33,7 +33,7 @@ void InstanceData::SaveToDB()
     CharacterDatabase.PExecute("UPDATE instance SET data = '%s' WHERE id = '%d'", data.c_str(), instance->GetInstanceId());
 }
 
-void InstanceData::HandleGameObject(uint64 GUID, bool open, GameObject *go)
+void InstanceData::HandleGameObject(uint64 GUID, bool open, GameObject* go)
 {
     if (!go)
         go = instance->GetGameObject(GUID);
@@ -96,7 +96,7 @@ void InstanceData::UpdateMinionState(Creature* minion, EncounterState state)
     }
 }
 
-void InstanceData::UpdateDoorState(GameObject *door)
+void InstanceData::UpdateDoorState(GameObject* door)
 {
     DoorInfoMap::iterator lower = doors.lower_bound(door->GetEntry());
     DoorInfoMap::iterator upper = doors.upper_bound(door->GetEntry());
@@ -127,7 +127,7 @@ void InstanceData::UpdateDoorState(GameObject *door)
     door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
 }
 
-void InstanceData::AddDoor(GameObject *door, bool add)
+void InstanceData::AddDoor(GameObject* door, bool add)
 {
     DoorInfoMap::iterator lower = doors.lower_bound(door->GetEntry());
     DoorInfoMap::iterator upper = doors.upper_bound(door->GetEntry());

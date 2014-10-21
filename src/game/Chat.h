@@ -31,12 +31,12 @@ struct GameTele;
 class ChatCommand
 {
     public:
-        const char *       Name;
+        const char *      Name;
         uint32             SecurityLevel;                   // function pointer required correct align (use uint32)
         bool               AllowConsole;
         bool (ChatHandler::*Handler)(const char* args);
         std::string        Help;
-        ChatCommand *      ChildCommands;
+        ChatCommand *     ChildCommands;
 };
 
 class ChatHandler
@@ -46,14 +46,14 @@ class ChatHandler
         explicit ChatHandler(Player* player) : m_session(player->GetSession()) {}
          ~ChatHandler() {}
 
-        static void FillMessageData(WorldPacket *data, WorldSession* session, uint8 type, uint32 language, const char *channelName, uint64 target_guid, const char *message, Unit *speaker);
+        static void FillMessageData(WorldPacket* data, WorldSession* session, uint8 type, uint32 language, const char *channelName, uint64 target_guid, const char *message, Unit* speaker);
 
-        void FillMessageData(WorldPacket *data, uint8 type, uint32 language, uint64 target_guid, const char* message)
+        void FillMessageData(WorldPacket* data, uint8 type, uint32 language, uint64 target_guid, const char* message)
         {
             FillMessageData(data, m_session, type, language, NULL, target_guid, message, NULL);
         }
 
-        void FillSystemMessageData(WorldPacket *data, const char* message)
+        void FillSystemMessageData(WorldPacket* data, const char* message)
         {
             FillMessageData(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, 0, message);
         }
@@ -533,11 +533,11 @@ class ChatHandler
         bool HandleGetInstanceDataCommand(const char* args);
         bool HandleDebugRAFError(const char* args);
 
-        Player*   getSelectedPlayer();
+        Player*  getSelectedPlayer();
         Creature* getSelectedCreature();
-        Unit*     getSelectedUnit();
-        char*     extractKeyFromLink(char* text, char const* linkType, char** something1 = NULL);
-        char*     extractKeyFromLink(char* text, char const* const* linkTypes, int* found_idx, char** something1 = NULL);
+        Unit*    getSelectedUnit();
+        char*    extractKeyFromLink(char* text, char const* linkType, char** something1 = NULL);
+        char*    extractKeyFromLink(char* text, char const* const* linkTypes, int* found_idx, char** something1 = NULL);
         uint32    extractSpellIdFromLink(char* text);
         GameTele const* extractGameTeleFromLink(char* text);
         bool GetPlayerGroupAndGUIDByName(const char* cname, Player* &plr, Group* &group, uint64 &guid, bool offline = false);

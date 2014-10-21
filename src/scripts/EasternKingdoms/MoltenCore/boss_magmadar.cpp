@@ -49,7 +49,7 @@ struct boss_magmadarAI : public ScriptedAI
         DoCast(me, SPELL_MAGMASPIT, true);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -76,7 +76,7 @@ struct boss_magmadarAI : public ScriptedAI
         //Lavabomb_Timer
         if (Lavabomb_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget, SPELL_LAVABOMB_ALT);
 
             Lavabomb_Timer = 12000;

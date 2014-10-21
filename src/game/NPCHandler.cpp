@@ -757,7 +757,7 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket & recv_data)
         uint32 GuildId = _player->GetGuildId();
         if (!GuildId)
             return;
-        Guild *pGuild = sObjectMgr.GetGuildById(GuildId);
+        Guild* pGuild = sObjectMgr.GetGuildById(GuildId);
         if (!pGuild)
             return;
         pGuild->LogBankEvent(GUILD_BANK_LOG_REPAIR_MONEY, 0, _player->GetGUIDLow(), TotalCost);

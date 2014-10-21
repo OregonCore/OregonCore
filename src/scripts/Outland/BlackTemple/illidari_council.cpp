@@ -250,11 +250,11 @@ struct mob_illidari_councilAI : public ScriptedAI
         me->SetDisplayId(11686);
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
     void AttackStart(Unit* /*who*/) {}
     void MoveInLineOfSight(Unit* /*who*/) {}
 
-    void StartEvent(Unit *pTarget)
+    void StartEvent(Unit* pTarget)
     {
         if (!pInstance)
             return;
@@ -391,7 +391,7 @@ struct boss_illidari_councilAI : public ScriptedAI
             LoadGUIDs();
     }
 
-    bool TryDoCast(Unit *victim, uint32 spellId, bool triggered = false)
+    bool TryDoCast(Unit* victim, uint32 spellId, bool triggered = false)
     {
         if (me->IsNonMeleeSpellCast(false)) return false;
 
@@ -476,12 +476,12 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
         JudgeTimer = 45000;
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(SAY_GATH_SLAY, me);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         DoScriptText(SAY_GATH_DEATH, me);
     }
@@ -569,7 +569,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
 
         if (HammerOfJusticeTimer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 // is in ~10-40 yd range
                 if (me->GetDistance2d(pTarget) > 10)
@@ -625,12 +625,12 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
         ArcaneExplosionTimer = 14000;
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(SAY_ZERE_SLAY, me);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         DoScriptText(SAY_ZERE_DEATH, me);
     }
@@ -675,7 +675,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
         {
             if (!me->IsNonMeleeSpellCast(false))
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     DoCast(pTarget, SPELL_BLIZZARD);
                     BlizzardTimer = 45000;
@@ -688,7 +688,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
         {
             if (!me->IsNonMeleeSpellCast(false))
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     DoCast(pTarget, SPELL_FLAMESTRIKE);
                     FlamestrikeTimer = 45000;
@@ -716,12 +716,12 @@ struct boss_lady_malandeAI : public boss_illidari_councilAI
         ReflectiveShieldTimer = 15000;
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(SAY_MALA_SLAY, me);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         DoScriptText(SAY_MALA_DEATH, me);
     }
@@ -748,7 +748,7 @@ struct boss_lady_malandeAI : public boss_illidari_councilAI
 
         if (DivineWrathTimer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 if (TryDoCast(pTarget, SPELL_DIVINE_WRATH))
                     DivineWrathTimer = 20000 + rand()%20 * 1000;
@@ -791,7 +791,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
-    void SpellHitTarget(Unit *pTarget, const SpellEntry *spell)
+    void SpellHitTarget(Unit* pTarget, const SpellEntry *spell)
     {
         if (spell->Id != 41485)
         {
@@ -803,12 +803,12 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
         }
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(SAY_VERA_SLAY, me);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         DoScriptText(SAY_VERA_DEATH, me);
     }
@@ -822,7 +822,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
         {
             if (VanishTimer <= diff)
             {
-                if (/*Unit *pTarget = */SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (/*Unit* pTarget = */SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     DoCast(me,SPELL_DEADLY_POISON_TRIGGER,true);
                     DoCast(me,SPELL_VANISH,false);
@@ -841,7 +841,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
             {
                 if (EnvenomTargetGUID)
                 {
-                    if (Unit *pTarget = Unit::GetUnit((*me),EnvenomTargetGUID))
+                    if (Unit* pTarget = Unit::GetUnit((*me),EnvenomTargetGUID))
                     {
                         if (pTarget->HasAura(SPELL_DEADLY_POISON,0))
                         {

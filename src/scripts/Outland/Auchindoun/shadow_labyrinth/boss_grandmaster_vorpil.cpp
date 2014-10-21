@@ -64,7 +64,7 @@ float VoidPortalCoords[5][3] =
 class EmpoweringShadowsAura: public Aura
 {
     public:
-        EmpoweringShadowsAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *pTarget, Unit *caster) : Aura(spell, eff, bp, pTarget, caster, NULL) {}
+        EmpoweringShadowsAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit* pTarget, Unit* caster) : Aura(spell, eff, bp, pTarget, caster, NULL) {}
 };
 
 struct mob_voidtravelerAI : public ScriptedAI
@@ -75,7 +75,7 @@ struct mob_voidtravelerAI : public ScriptedAI
     }
 
     bool HeroicMode;
-    Unit *Vorpil;
+    Unit* Vorpil;
     uint32 move;
     bool sacrificed;
 
@@ -86,7 +86,7 @@ struct mob_voidtravelerAI : public ScriptedAI
         sacrificed = false;
     }
 
-    void EnterCombat(Unit *){}
+    void EnterCombat(Unit* ){}
 
     void UpdateAI(const uint32 diff)
     {
@@ -187,7 +187,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
         {
             for (int i = 0;i < 5; i ++)
             {
-                Unit *Portal = Unit::GetUnit((*me), PortalsGuid[i]);
+                Unit* Portal = Unit::GetUnit((*me), PortalsGuid[i]);
                 if (Portal && Portal->isAlive())
                     Portal->DealDamage(Portal, Portal->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 PortalsGuid[i] = 0;
@@ -213,7 +213,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
             ((mob_voidtravelerAI*)summoned->AI())->Vorpil = me;
     }
 
-    void KilledUnit(Unit *)
+    void KilledUnit(Unit* )
     {
         switch(rand()%2)
         {
@@ -222,7 +222,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit *)
+    void JustDied(Unit* )
     {
         DoScriptText(SAY_DEATH, me);
         destroyPortals();
@@ -231,7 +231,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
             pInstance->SetData(DATA_GRANDMASTERVORPILEVENT, DONE);
     }
 
-    void EnterCombat(Unit *)
+    void EnterCombat(Unit* )
     {
         switch(rand()%3)
         {
@@ -245,7 +245,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
             pInstance->SetData(DATA_GRANDMASTERVORPILEVENT, IN_PROGRESS);
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (who && !me->getVictim() && me->canStartAttack(who))
             AttackStart(who);
@@ -269,7 +269,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
 
         if (HeroicMode && banish_Timer <= diff)
         {
-            Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,30,false);
+            Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,30,false);
             if (pTarget)
             {
                 DoCast(pTarget,SPELL_BANISH);

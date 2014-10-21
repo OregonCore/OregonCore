@@ -159,7 +159,7 @@ struct npc_the_scourge_cauldronAI : public ScriptedAI
             me->SetRespawnDelay(600);
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who || who->GetTypeId() != TYPEID_PLAYER)
             return;

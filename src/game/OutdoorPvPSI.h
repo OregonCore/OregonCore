@@ -72,7 +72,7 @@ class OutdoorPvPSI : public OutdoorPvP
 
         bool HandleDropFlag(Player* plr, uint32 spellId);
 
-        bool HandleCustomSpell(Player* plr, uint32 spellId, GameObject *go);
+        bool HandleCustomSpell(Player* plr, uint32 spellId, GameObject* go);
 
         void UpdateWorldState();
 

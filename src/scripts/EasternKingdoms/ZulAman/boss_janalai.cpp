@@ -171,7 +171,7 @@ struct boss_janalaiAI : public ScriptedAI
         DoScriptText(RAND(SAY_SLAY_1,SAY_SLAY_2), me);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance)
             pInstance->SetData(ENCOUNTER_JANALAI, IN_PROGRESS);
@@ -180,7 +180,7 @@ struct boss_janalaiAI : public ScriptedAI
         DoZoneInCombat();
     }
 
-    void DamageDeal(Unit *pTarget, uint32 &damage)
+    void DamageDeal(Unit* pTarget, uint32 &damage)
     {
         if (isFlameBreathing)
         {
@@ -286,7 +286,7 @@ struct boss_janalaiAI : public ScriptedAI
     {
         if (BombCount < 40)
         {
-            if (Unit *FireBomb = Unit::GetUnit((*me), FireBombGUIDs[BombCount]))
+            if (Unit* FireBomb = Unit::GetUnit((*me), FireBombGUIDs[BombCount]))
             {
                 FireBomb->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 DoCast(FireBomb, SPELL_FIRE_BOMB_THROW, true);
@@ -434,7 +434,7 @@ struct boss_janalaiAI : public ScriptedAI
 
         if (FireBreathTimer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
                 me->AttackStop();
                 me->GetMotionMaster()->Clear();
@@ -461,7 +461,7 @@ struct mob_janalai_firebombAI : public ScriptedAI
 
     void Reset() {}
 
-    void SpellHit(Unit * /*caster*/, const SpellEntry *spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry *spell)
     {
         if (spell->Id == SPELL_FIRE_BOMB_THROW)
             DoCast(me, SPELL_FIRE_BOMB_DUMMY, true);
@@ -624,7 +624,7 @@ struct mob_hatchlingAI : public ScriptedAI
         me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
     }
 
-    void EnterCombat(Unit * /*who*/) {/*DoZoneInCombat();*/}
+    void EnterCombat(Unit* /*who*/) {/*DoZoneInCombat();*/}
 
     void UpdateAI(const uint32 diff)
     {
@@ -663,7 +663,7 @@ struct mob_eggAI : public ScriptedAI
     void MoveInLineOfSight(Unit* /*who*/) {}
     void UpdateAI(const uint32 /*diff*/) {}
 
-    void SpellHit(Unit * /*caster*/, const SpellEntry *spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry *spell)
     {
         if (spell->Id == SPELL_HATCH_EGG)
         {

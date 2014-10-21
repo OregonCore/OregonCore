@@ -338,11 +338,11 @@ bool ChatHandler::HandleGoGraveyardCommand(const char* args)
  *
  * .gocreature <GUID>      --> TP using creature.guid
  * .gocreature azuregos    --> TP player to the mob with this name
- *                             Warning: If there is more than one mob with this name
- *                                      you will be teleported to the first one that is found.
+ *                            Warning: If there is more than one mob with this name
+ *                                     you will be teleported to the first one that is found.
  * .gocreature id 6109     --> TP player to the mob, that has this creature_template.entry
- *                             Warning: If there is more than one mob with this "id"
- *                                      you will be teleported to the first one that is found.
+ *                            Warning: If there is more than one mob with this "id"
+ *                                     you will be teleported to the first one that is found.
  */
 //teleport to creature
 bool ChatHandler::HandleGoCreatureCommand(const char* args)
@@ -1268,7 +1268,7 @@ bool ChatHandler::HandleNpcMoveCommand(const char* args)
  * <li> way - NPC will move with given waypoints set </li>
  * </ul>
  * additional parameter: NODEL - so no waypoints are deleted, if you
- *                       change the movement type
+ *                      change the movement type
  */
 bool ChatHandler::HandleNpcSetMoveTypeCommand(const char* args)
 {
@@ -1758,7 +1758,7 @@ bool ChatHandler::HandleItemMoveCommand(const char* args)
 //demorph player or unit
 bool ChatHandler::HandleDeMorphCommand(const char* /*args*/)
 {
-    Unit *target = getSelectedUnit();
+    Unit* target = getSelectedUnit();
     if (!target)
         target = m_session->GetPlayer();
 
@@ -1775,7 +1775,7 @@ bool ChatHandler::HandleMorphCommand(const char* args)
 
     uint16 display_id = (uint16)atoi((char*)args);
 
-    Unit *target = getSelectedUnit();
+    Unit* target = getSelectedUnit();
     if (!target)
         target = m_session->GetPlayer();
 
@@ -3185,7 +3185,7 @@ bool ChatHandler::HandleAddHonorCommand(const char* args)
 
 bool ChatHandler::HandleHonorAddKillCommand(const char* /*args*/)
 {
-    Unit *target = getSelectedUnit();
+    Unit* target = getSelectedUnit();
     if (!target)
     {
         SendSysMessage(LANG_PLAYER_NOT_FOUND);
@@ -4314,7 +4314,7 @@ bool ChatHandler::HandleTitlesAddCommand(const char* args)
         return false;
     }
 
-    Player*  target = getSelectedPlayer();
+    Player* target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -4357,7 +4357,7 @@ bool ChatHandler::HandleTitlesRemoveCommand(const char* args)
         return false;
     }
 
-    Player*  target = getSelectedPlayer();
+    Player* target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -4431,7 +4431,7 @@ bool ChatHandler::HandleTitlesSetMaskCommand(const char* args)
 bool ChatHandler::HandleCharacterTitlesCommand(const char* /*args*/)
 {
 
-    Player*  target = getSelectedPlayer();
+    Player* target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -4485,7 +4485,7 @@ bool ChatHandler::HandleTitlesCurrentCommand(const char* args)
         return false;
     }
 
-    Player*  target = getSelectedPlayer();
+    Player* target = getSelectedPlayer();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);

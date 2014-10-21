@@ -46,7 +46,7 @@ struct boss_ptheradrasAI : public ScriptedAI
         RepulsiveGaze_Timer = 23000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -70,7 +70,7 @@ struct boss_ptheradrasAI : public ScriptedAI
         //Boulder_Timer
         if (Boulder_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget)
                 DoCast(pTarget, SPELL_BOULDER);

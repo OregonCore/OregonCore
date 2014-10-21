@@ -121,10 +121,10 @@ namespace Oregon
     struct MessageDistDeliverer
     {
         WorldObject *i_source;
-        WorldPacket *i_message;
+        WorldPacket* i_message;
         float i_distSq;
         uint32 team;
-        MessageDistDeliverer(WorldObject *src, WorldPacket *msg, float dist, bool own_team_only = false)
+        MessageDistDeliverer(WorldObject *src, WorldPacket* msg, float dist, bool own_team_only = false)
             : i_source(src), i_message(msg), i_distSq(dist * dist)
             , team((own_team_only && src->GetTypeId() == TYPEID_PLAYER) ? ((Player*)src)->GetTeam() : 0)
         {

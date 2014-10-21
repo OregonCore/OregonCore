@@ -893,7 +893,7 @@ struct npc_earthmender_wildaAI : public npc_escortAI
 
     bool Completed;
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         Player* player = GetPlayerForEscort();
 

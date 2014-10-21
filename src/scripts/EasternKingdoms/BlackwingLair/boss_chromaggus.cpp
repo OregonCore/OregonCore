@@ -186,7 +186,7 @@ struct boss_chromaggusAI : public ScriptedAI
         Enraged = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

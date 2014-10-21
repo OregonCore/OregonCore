@@ -55,7 +55,7 @@ struct npc_cairne_bloodhoofAI : public ScriptedAI
         Uppercut_Timer = 10000;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -64,7 +64,7 @@ struct npc_cairne_bloodhoofAI : public ScriptedAI
 
         if (BerserkerCharge_Timer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget)
                 DoCast(pTarget, SPELL_BERSERKER_CHARGE);
             BerserkerCharge_Timer = 25000;

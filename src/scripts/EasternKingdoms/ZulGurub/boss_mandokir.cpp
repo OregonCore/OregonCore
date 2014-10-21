@@ -135,7 +135,7 @@ struct boss_mandokirAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
@@ -189,7 +189,7 @@ struct boss_mandokirAI : public ScriptedAI
 
             if (Gaze_Timer < 8000 && !someGazed)            // 8 second(cast time + expire time) before the check for the gaze effect Mandokir will cast gaze debuff on a random target
             {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 {
                     DoScriptText(SAY_GAZE, me, pTarget);
                     DoCast(pTarget, SPELL_GAZE);
@@ -307,7 +307,7 @@ struct mob_ohganAI : public ScriptedAI
         SunderArmor_Timer = 5000;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void JustDied(Unit* /*Killer*/)
     {

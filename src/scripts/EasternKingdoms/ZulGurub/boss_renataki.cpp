@@ -53,7 +53,7 @@ struct boss_renatakiAI : public ScriptedAI
         Ambushed = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -82,7 +82,7 @@ struct boss_renatakiAI : public ScriptedAI
         {
             if (Ambush_Timer <= diff)
             {
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                 if (pTarget)
                 {
@@ -118,7 +118,7 @@ struct boss_renatakiAI : public ScriptedAI
         {
             if (Aggro_Timer <= diff)
             {
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
 
                 if (DoGetThreat(me->getVictim()))

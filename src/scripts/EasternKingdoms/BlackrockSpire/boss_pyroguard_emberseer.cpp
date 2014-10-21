@@ -43,7 +43,7 @@ struct boss_pyroguard_emberseerAI : public ScriptedAI
         PyroBlast_Timer = 14000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -70,7 +70,7 @@ struct boss_pyroguard_emberseerAI : public ScriptedAI
         //PyroBlast_Timer
         if (PyroBlast_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_PYROBLAST);
             PyroBlast_Timer = 15000;
         } else PyroBlast_Timer -= diff;

@@ -49,9 +49,9 @@ char serviceLongName[] = "Oregon realm service";
 char serviceDescription[] = "Massive Network Game Object Server";
 /*
  * -1 - not in service mode
- *  0 - stopped
- *  1 - running
- *  2 - paused
+ * 0 - stopped
+ * 1 - running
+ * 2 - paused
  */
 int m_ServiceStatus = -1;
 #endif

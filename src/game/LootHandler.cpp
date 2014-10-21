@@ -41,7 +41,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket & recv_data)
 
     if (IS_GAMEOBJECT_GUID(lguid))
     {
-        GameObject *go = player->GetMap()->GetGameObject(lguid);
+        GameObject* go = player->GetMap()->GetGameObject(lguid);
 
         // not check distance for GO in case owned GO (fishing bobber case, for example) or Fishing hole GO
         if (!go || ((go->GetOwnerGUID() != _player->GetGUID() && go->GetGoType() != GAMEOBJECT_TYPE_FISHINGHOLE) && !go->IsWithinDistInMap(_player,INTERACTION_DISTANCE)))
@@ -54,7 +54,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket & recv_data)
     }
     else if (IS_ITEM_GUID(lguid))
     {
-        Item *pItem = player->GetItemByGuid(lguid);
+        Item* pItem = player->GetItemByGuid(lguid);
 
         if (!pItem)
         {
@@ -89,11 +89,11 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket & recv_data)
         loot = &pCreature->loot;
     }
 
-    QuestItem *qitem = NULL;
-    QuestItem *ffaitem = NULL;
-    QuestItem *conditem = NULL;
+    QuestItem* qitem = NULL;
+    QuestItem* ffaitem = NULL;
+    QuestItem* conditem = NULL;
 
-    LootItem *item = loot->LootItemInSlot(lootSlot,player,&qitem,&ffaitem,&conditem);
+    LootItem* item = loot->LootItemInSlot(lootSlot,player,&qitem,&ffaitem,&conditem);
 
     if (!item)
     {
@@ -112,7 +112,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket & recv_data)
     uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, item->itemid, item->count);
     if (msg == EQUIP_ERR_OK)
     {
-        Item * newitem = player->StoreNewItem(dest, item->itemid, true, item->randomPropertyId);
+        Item* newitem = player->StoreNewItem(dest, item->itemid, true, item->randomPropertyId);
 
         if (qitem)
         {
@@ -167,7 +167,7 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket & /*recv_data*/)
     {
         case HIGHGUID_GAMEOBJECT:
         {
-            GameObject *pGameObject = GetPlayer()->GetMap()->GetGameObject(guid);
+            GameObject* pGameObject = GetPlayer()->GetMap()->GetGameObject(guid);
 
             // not check distance for GO in case owned GO (fishing bobber case, for example)
             if (pGameObject && ((pGameObject->GetOwnerGUID() == _player->GetGUID() || pGameObject->IsWithinDistInMap(_player,INTERACTION_DISTANCE))))
@@ -186,7 +186,7 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket & /*recv_data*/)
         }
         case HIGHGUID_ITEM:
         {
-            if (Item *item = GetPlayer()->GetItemByGuid(guid))
+            if (Item* item = GetPlayer()->GetItemByGuid(guid))
                 pLoot = &item->loot;
             break;
         }
@@ -284,7 +284,7 @@ void WorldSession::DoLootRelease(uint64 lguid)
 
     if (IS_GAMEOBJECT_GUID(lguid))
     {
-        GameObject *go = GetPlayer()->GetMap()->GetGameObject(lguid);
+        GameObject* go = GetPlayer()->GetMap()->GetGameObject(lguid);
 
         // not check distance for GO in case owned GO (fishing bobber case, for example) or Fishing hole GO
         if (!go || ((go->GetOwnerGUID() != _player->GetGUID() && go->GetGoType() != GAMEOBJECT_TYPE_FISHINGHOLE) && !go->IsWithinDistInMap(_player,INTERACTION_DISTANCE)))
@@ -378,7 +378,7 @@ void WorldSession::DoLootRelease(uint64 lguid)
     }
     else if (IS_ITEM_GUID(lguid))
     {
-        Item *pItem = player->GetItemByGuid(lguid);
+        Item* pItem = player->GetItemByGuid(lguid);
         if (!pItem)
             return;
 
@@ -466,7 +466,7 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket & recv_data)
     }
     else if (IS_GAMEOBJECT_GUID(GetPlayer()->GetLootGUID()))
     {
-        GameObject *pGO = GetPlayer()->GetMap()->GetGameObject(lootguid);
+        GameObject* pGO = GetPlayer()->GetMap()->GetGameObject(lootguid);
         if (!pGO)
             return;
 
@@ -494,7 +494,7 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket & recv_data)
     }
 
     // not move item from loot to target inventory
-    Item * newitem = target->StoreNewItem(dest, item.itemid, true, item.randomPropertyId);
+    Item* newitem = target->StoreNewItem(dest, item.itemid, true, item.randomPropertyId);
     target->SendNewItem(newitem, uint32(item.count), false, false, true);
 
     // mark as looted

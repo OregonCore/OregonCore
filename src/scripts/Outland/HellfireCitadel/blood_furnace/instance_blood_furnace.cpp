@@ -206,7 +206,7 @@ struct instance_blood_furnace : public ScriptedInstance
 
                             DoUseDoorOrButton(BroggokEvent[i].CellGuid);
                             BroggokEvent[i].IsCellOpened = false;
-                            if (GameObject *Lever = instance->GetGameObject(LeverGUID))
+                            if (GameObject* Lever = instance->GetGameObject(LeverGUID))
                             {
                                 if (Lever)
                                     Lever->ResetDoorOrButton();
@@ -354,7 +354,7 @@ struct instance_blood_furnace : public ScriptedInstance
         {
             if (DoorTimer <= diff)
             {
-                if (GameObject *Brog2 = instance->GetGameObject(Brog2GUID))
+                if (GameObject* Brog2 = instance->GetGameObject(Brog2GUID))
                 {
                     if (Brog2)
                         Brog2->ResetDoorOrButton();

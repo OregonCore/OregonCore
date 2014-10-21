@@ -66,7 +66,7 @@ struct boss_aeonusAI : public ScriptedAI
         DoScriptText(SAY_AGGRO, me);
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         //Despawn Time Keeper
         if (who->GetTypeId() == TYPEID_UNIT && who->GetEntry() == C_TIME_KEEPER)

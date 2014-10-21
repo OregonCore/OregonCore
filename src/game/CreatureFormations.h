@@ -94,7 +94,7 @@ class CreatureFormation
         void Reset(bool dismiss);
 
         void LeaderMoveTo(float x, float y, float z);
-        void MemberAttackStart(Creature* member, Unit *target);
+        void MemberAttackStart(Creature* member, Unit* target);
 };
 
 #endif

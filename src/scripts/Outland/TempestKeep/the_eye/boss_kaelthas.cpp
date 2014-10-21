@@ -180,7 +180,7 @@ struct advisorbase_ai : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who || FakeDeath || me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
@@ -255,7 +255,7 @@ struct advisorbase_ai : public ScriptedAI
                 DelayRes_Timer = 0;
                 FakeDeath = false;
 
-                Unit *pTarget = Unit::GetUnit((*me), DelayRes_Target);
+                Unit* pTarget = Unit::GetUnit((*me), DelayRes_Target);
                 if (!pTarget)
                     pTarget = me->getVictim();
 
@@ -370,7 +370,7 @@ struct boss_kaelthasAI : public ScriptedAI
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 AttackStart(pTarget);
         }
         else
@@ -388,7 +388,7 @@ struct boss_kaelthasAI : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!me->HasUnitState(UNIT_STATE_STUNNED) && who->isTargetableForAttack() &&
             me->IsHostileTo(who) && who->isInAccessiblePlaceFor(me))
@@ -416,7 +416,7 @@ struct boss_kaelthasAI : public ScriptedAI
         }
     }
 
-    void Aggro(Unit *who)
+    void Aggro(Unit* who)
     {
         if (m_pInstance && !m_pInstance->GetData(DATA_KAELTHASEVENT) && !Phase)
             StartEvent();
@@ -472,7 +472,7 @@ struct boss_kaelthasAI : public ScriptedAI
         {
             case 1:
             {
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
                 Creature* Advisor = NULL;
 
                 //Subphase switch
@@ -677,7 +677,7 @@ struct boss_kaelthasAI : public ScriptedAI
                 if (PhaseSubphase == 0)
                 {
                     //Respawn advisors
-                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
                     Creature* Advisor;
                     for (uint32 i = 0; i < MAX_ADVISORS; i++)
@@ -706,7 +706,7 @@ struct boss_kaelthasAI : public ScriptedAI
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                         AttackStart(pTarget);
 
                     Phase_Timer = 30000;
@@ -1002,7 +1002,7 @@ struct boss_thaladred_the_darkenerAI : public advisorbase_ai
         advisorbase_ai::Reset();
     }
 
-    void Aggro(Unit *who)
+    void Aggro(Unit* who)
     {
         if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
@@ -1074,7 +1074,7 @@ struct boss_lord_sanguinarAI : public advisorbase_ai
         advisorbase_ai::Reset();
     }
 
-    void Aggro(Unit *who)
+    void Aggro(Unit* who)
     {
         if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
@@ -1157,7 +1157,7 @@ struct boss_grand_astromancer_capernianAI : public advisorbase_ai
         }
     }
 
-    void Aggro(Unit *who)
+    void Aggro(Unit* who)
     {
         if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
@@ -1199,7 +1199,7 @@ struct boss_grand_astromancer_capernianAI : public advisorbase_ai
         //Conflagration_Timer
         if (Conflagration_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
             if (pTarget && me->IsWithinDistInMap(pTarget, 30))
@@ -1214,7 +1214,7 @@ struct boss_grand_astromancer_capernianAI : public advisorbase_ai
         if (ArcaneExplosion_Timer <= diff)
         {
             bool InMeleeRange = false;
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
             for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end();++i)
             {
@@ -1260,7 +1260,7 @@ struct boss_master_engineer_telonicusAI : public advisorbase_ai
             DoScriptText(SAY_TELONICUS_DEATH, me);
     }
 
-    void Aggro(Unit *who)
+    void Aggro(Unit* who)
     {
         if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
@@ -1293,7 +1293,7 @@ struct boss_master_engineer_telonicusAI : public advisorbase_ai
         //RemoteToy_Timer
         if (RemoteToy_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_REMOTE_TOY);
 
             RemoteToy_Timer = 10000+rand()%5000;
@@ -1322,7 +1322,7 @@ struct mob_kael_flamestrikeAI : public ScriptedAI
         me->setFaction(14);
     }
 
-    void MoveInLineOfSight(Unit *who) { }
+    void MoveInLineOfSight(Unit* who) { }
 
     void UpdateAI(const uint32 diff)
     {

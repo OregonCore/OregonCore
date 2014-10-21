@@ -59,7 +59,7 @@ struct boss_jindoAI : public ScriptedAI
         Teleport_Timer = 5000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
@@ -98,7 +98,7 @@ struct boss_jindoAI : public ScriptedAI
         //Casting the delusion curse with a shade. So shade will attack the same target with the curse.
         if (Delusions_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
                 DoCast(pTarget, SPELL_DELUSIONSOFJINDO);
 
@@ -113,7 +113,7 @@ struct boss_jindoAI : public ScriptedAI
         //Teleporting a random gamer and spawning 9 skeletons that will attack this gamer
         if (Teleport_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
             {
@@ -176,7 +176,7 @@ struct mob_healing_wardAI : public ScriptedAI
         Heal_Timer = 2000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -187,7 +187,7 @@ struct mob_healing_wardAI : public ScriptedAI
         {
             if (pInstance)
             {
-                Unit *pJindo = Unit::GetUnit((*me), pInstance->GetData64(DATA_JINDO));
+                Unit* pJindo = Unit::GetUnit((*me), pInstance->GetData64(DATA_JINDO));
                 if (pJindo)
                     DoCast(pJindo, SPELL_HEAL);
             }
@@ -211,7 +211,7 @@ struct mob_shade_of_jindoAI : public ScriptedAI
         DoCast(me, SPELL_INVISIBLE, true);
     }
 
-    void EnterCombat(Unit * /*who*/){}
+    void EnterCombat(Unit* /*who*/){}
 
     void UpdateAI (const uint32 diff)
     {

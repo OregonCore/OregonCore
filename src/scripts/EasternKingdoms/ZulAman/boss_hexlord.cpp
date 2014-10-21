@@ -432,8 +432,8 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
 
         if (SiphonSoul_Timer <= diff)
         {
-            Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 70, true);
-            Unit *trigger = DoSpawnCreature(MOB_TEMP_TRIGGER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
+            Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 70, true);
+            Unit* trigger = DoSpawnCreature(MOB_TEMP_TRIGGER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
             if (!pTarget || !trigger)
             {
                 EnterEvadeMode();
@@ -465,7 +465,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
 
         if (PlayerAbility_Timer <= diff)
         {
-            //Unit *pTarget = Unit::GetUnit(*me, PlayerGUID);
+            //Unit* pTarget = Unit::GetUnit(*me, PlayerGUID);
             //if (pTarget && pTarget->isAlive())
             //{
                 UseAbility();
@@ -479,7 +479,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
     void UseAbility()
     {
         uint32 random = urand(0,2);
-        Unit *pTarget = NULL;
+        Unit* pTarget = NULL;
         switch(PlayerAbility[PlayerClass][random].target)
         {
             case ABILITY_TARGET_SELF:
@@ -534,7 +534,7 @@ struct boss_thurgAI : public boss_hexlord_addAI
             std::list<Creature*> templist = DoFindFriendlyMissingBuff(50, SPELL_BLOODLUST);
             if (!templist.empty())
             {
-                if (Unit *pTarget = *(templist.begin()))
+                if (Unit* pTarget = *(templist.begin()))
                     DoCast(pTarget, SPELL_BLOODLUST, false);
             }
             bloodlust_timer = 12000;
@@ -590,7 +590,7 @@ struct boss_alyson_antilleAI : public boss_hexlord_addAI
 
         if (flashheal_timer <= diff)
         {
-            Unit *pTarget = DoSelectLowestHpFriendly(99, 30000);
+            Unit* pTarget = DoSelectLowestHpFriendly(99, 30000);
             if (pTarget)
             {
                 if (pTarget->IsWithinDistInMap(me, 50))
@@ -618,7 +618,7 @@ struct boss_alyson_antilleAI : public boss_hexlord_addAI
         {
         if (urand(0,1))
         {
-            Unit *pTarget = SelectTarget();
+            Unit* pTarget = SelectTarget();
 
             DoCast(pTarget, SPELL_DISPEL_MAGIC, false);
         }

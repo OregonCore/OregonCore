@@ -155,7 +155,7 @@ void WorldSession::LogUnexpectedOpcode(WorldPacket* packet, const char *reason)
 }
 
 // Logging helper for unexpected opcodes
-void WorldSession::LogUnprocessedTail(WorldPacket *packet)
+void WorldSession::LogUnprocessedTail(WorldPacket* packet)
 {
     sLog.outError("SESSION: opcode %s (0x%.4X) has unprocessed tail data (read stop at %u from %u)",
         LookupOpcodeName(packet->GetOpcode()),
@@ -380,7 +380,7 @@ void WorldSession::LogoutPlayer(bool Save)
         }
 
         // If the player is in a guild, update the guild roster and broadcast a logout message to other guild members
-        if (Guild *guild = sObjectMgr.GetGuildById(_player->GetGuildId()))
+        if (Guild* guild = sObjectMgr.GetGuildById(_player->GetGuildId()))
         {
             guild->LoadPlayerStatsByGuid(_player->GetGUID());
             guild->UpdateLogoutTime(_player->GetGUID());

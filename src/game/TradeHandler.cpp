@@ -105,7 +105,7 @@ void WorldSession::HandleBusyTradeOpcode(WorldPacket& /*recvPacket*/)
 
 void WorldSession::SendUpdateTrade()
 {
-    Item *item = NULL;
+    Item* item = NULL;
 
     if (!_player || !_player->pTrader)
         return;
@@ -252,8 +252,8 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& recvPacket)
 {
     recvPacket.read_skip<uint32>();
 
-    Item *myItems[TRADE_SLOT_TRADED_COUNT]  = { NULL, NULL, NULL, NULL, NULL, NULL };
-    Item *hisItems[TRADE_SLOT_TRADED_COUNT] = { NULL, NULL, NULL, NULL, NULL, NULL };
+    Item* myItems[TRADE_SLOT_TRADED_COUNT]  = { NULL, NULL, NULL, NULL, NULL, NULL };
+    Item* hisItems[TRADE_SLOT_TRADED_COUNT] = { NULL, NULL, NULL, NULL, NULL, NULL };
     bool myCanCompleteTrade=true,hisCanCompleteTrade=true;
 
     if (!GetPlayer()->pTrader)

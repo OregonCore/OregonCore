@@ -84,7 +84,7 @@ struct boss_archaedasAI : public ScriptedAI
 
     void ActivateMinion (uint64 guid, bool flag)
     {
-        Unit *minion = Unit::GetUnit(*me, guid);
+        Unit* minion = Unit::GetUnit(*me, guid);
 
         if (minion && minion->isAlive())
         {
@@ -93,7 +93,7 @@ struct boss_archaedasAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         me->setFaction (14);
         me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -111,7 +111,7 @@ struct boss_archaedasAI : public ScriptedAI
         }
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         me->MonsterYell(SAY_KILL,LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_KILL);
@@ -178,7 +178,7 @@ struct boss_archaedasAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 
-    void JustDied (Unit * /*killer*/) {
+    void JustDied (Unit* /*killer*/) {
         if (pInstance)
         {
             pInstance->SetData(DATA_ANCIENT_DOOR, DONE);        // open the vault door
@@ -230,7 +230,7 @@ struct mob_archaedas_minionsAI : public ScriptedAI
         me->RemoveAllAuras();
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         me->setFaction (14);
         me->RemoveAllAuras();
@@ -247,7 +247,7 @@ struct mob_archaedas_minionsAI : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (amIAwake)
             ScriptedAI::MoveInLineOfSight(who);
@@ -316,7 +316,7 @@ bool GOHello_go_altar_of_archaedas(Player* player, GameObject* go)
 
     // Check to make sure at least three people are still casting
     uint32 count=0;
-    Unit *pTarget;
+    Unit* pTarget;
     for (uint32 x=0; x<5; x++) {
         pTarget = Unit::GetUnit(*player, altarOfArchaedasCount[x]);
         if (!pTarget) continue;
@@ -363,7 +363,7 @@ struct mob_stonekeepersAI : public ScriptedAI
         me->RemoveAllAuras();
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         me->setFaction (14);
         me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -380,7 +380,7 @@ struct mob_stonekeepersAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 
-    void JustDied(Unit * /*attacker*/)
+    void JustDied(Unit* /*attacker*/)
     {
         DoCast (me, SPELL_SELF_DESTRUCT,true);
         if (pInstance)
@@ -436,7 +436,7 @@ bool GOHello_go_altar_of_the_keepers(Player* pPlayer, GameObject* pGo)
 
     // Check to make sure at least three people are still casting
     uint8 count = 0;
-    Unit *pTarget;
+    Unit* pTarget;
     for (uint8 x = 0; x < 5; ++x)
     {
         pTarget = Unit::GetUnit(*pPlayer, altarOfTheKeeperCount[x]);

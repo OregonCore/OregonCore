@@ -616,7 +616,7 @@ void WorldSession::HandleBattlefieldStatusOpcode(WorldPacket & /*recv_data*/)
             }
         }
     }
-/*    else              // not sure if it needed...
+/*   else              // not sure if it needed...
     {
         for (uint32 i = 0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; i++)
         {

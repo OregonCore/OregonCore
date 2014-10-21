@@ -103,7 +103,7 @@ public:
     // checks if player is in range of a capture credit marker
     bool IsInsideObjective(Player* plr) const;
 
-    virtual bool HandleCustomSpell(Player* plr, uint32 spellId, GameObject * go);
+    virtual bool HandleCustomSpell(Player* plr, uint32 spellId, GameObject* go);
     virtual int32 HandleOpenGo(Player* plr, uint64 guid);
 
     // returns true if the state of the objective has changed, in this case, the OutdoorPvP must send a world state ui update.
@@ -114,14 +114,14 @@ public:
 
     virtual bool HandleGossipOption(Player* plr, uint64 guid, uint32 gossipid);
 
-    virtual bool CanTalkTo(Player* plr, Creature*  c, GossipMenuItems gso);
+    virtual bool CanTalkTo(Player* plr, Creature* c, GossipMenuItems gso);
 
     virtual bool HandleDropFlag(Player* plr, uint32 spellId);
 
     virtual void DeleteSpawns();
 
     uint32 m_capturePointGUID;
-    GameObject *m_capturePoint;
+    GameObject* m_capturePoint;
 
     void AddGO(uint32 type, uint32 guid, uint32 entry = 0);
     void AddCre(uint32 type, uint32 guid, uint32 entry = 0);
@@ -182,14 +182,14 @@ public:
     // called when a player triggers an areatrigger
     virtual bool HandleAreaTrigger(Player* plr, uint32 trigger);
     // called on custom spell
-    virtual bool HandleCustomSpell(Player* plr, uint32 spellId, GameObject * go);
+    virtual bool HandleCustomSpell(Player* plr, uint32 spellId, GameObject* go);
     // called on go use
     virtual bool HandleOpenGo(Player* plr, uint64 guid);
 
     // setup stuff
     virtual bool SetupOutdoorPvP() {return true;}
 
-    void OnGameObjectCreate(GameObject *go, bool add);
+    void OnGameObjectCreate(GameObject* go, bool add);
     void OnCreatureCreate(Creature* , bool /*add*/) {}
 
     // send world state update to all players present
@@ -199,8 +199,8 @@ public:
     virtual bool Update(uint32 diff);
 
     // handle npc/player kill
-    virtual void HandleKill(Player* killer, Unit * killed);
-    virtual void HandleKillImpl(Player* /*killer*/, Unit * /*killed*/) {}
+    virtual void HandleKill(Player* killer, Unit* killed);
+    virtual void HandleKillImpl(Player* /*killer*/, Unit* /*killed*/) {}
 
     // checks if player is in range of a capture credit marker
     bool IsInsideObjective(Player* plr) const;
@@ -214,7 +214,7 @@ public:
 
     virtual bool HandleGossipOption(Player* plr, uint64 guid, uint32 gossipid);
 
-    virtual bool CanTalkTo(Player* plr, Creature*  c, GossipMenuItems gso);
+    virtual bool CanTalkTo(Player* plr, Creature* c, GossipMenuItems gso);
 
     void TeamApplyBuff(TeamId team, uint32 spellId, uint32 spellId2 = 0);
 protected:

@@ -104,7 +104,7 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             TEMPSUMMON_TIMED_DESPAWN, HOUR*IN_MILLISECONDS);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -184,7 +184,7 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             //DeepSleep
             if (m_uiDeepSleep_Timer <= uiDiff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(pTarget, SPELL_SLEEP);
 
                 m_uiDeepSleep_Timer = 15000;

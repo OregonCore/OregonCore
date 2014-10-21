@@ -51,7 +51,7 @@ struct npc_forest_frogAI : public ScriptedAI
 
     void Reset() {}
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void DoSpawnRandom()
     {
@@ -84,7 +84,7 @@ struct npc_forest_frogAI : public ScriptedAI
         }
     }
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry *spell)
     {
         if (spell->Id == SPELL_REMOVE_AMANI_CURSE && caster->GetTypeId() == TYPEID_PLAYER && me->GetEntry() == ENTRY_FOREST_FROG)
         {
@@ -114,7 +114,7 @@ struct npc_zulaman_hostageAI : public ScriptedAI
     bool IsLoot;
     uint64 PlayerGUID;
     void Reset() {}
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
     void JustDied(Unit* /*who*/)
     {
         Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);

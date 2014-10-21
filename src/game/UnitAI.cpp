@@ -22,13 +22,13 @@
 #include "SpellMgr.h"
 #include "CreatureAIImpl.h"
 
-void UnitAI::AttackStart(Unit *victim)
+void UnitAI::AttackStart(Unit* victim)
 {
     if (victim && me->Attack(victim, true))
         me->GetMotionMaster()->MoveChase(victim);
 }
 
-void UnitAI::AttackStartCaster(Unit *victim, float dist)
+void UnitAI::AttackStartCaster(Unit* victim, float dist)
 {
     if (victim && me->Attack(victim, false))
         me->GetMotionMaster()->MoveChase(victim, dist);
@@ -79,7 +79,7 @@ bool UnitAI::DoSpellAttackIfReady(uint32 spell)
     return true;
 }
 
-inline bool SelectTargetHelper(const Unit * me, const Unit * target, const bool &playerOnly, const float &dist, const int32 &aura)
+inline bool SelectTargetHelper(const Unit* me, const Unit* target, const bool &playerOnly, const float &dist, const int32 &aura)
 {
     if (playerOnly && (!target || target->GetTypeId() != TYPEID_PLAYER))
         return false;
@@ -104,12 +104,12 @@ inline bool SelectTargetHelper(const Unit * me, const Unit * target, const bool 
     return true;
 }
 
-struct TargetDistanceOrder : public std::binary_function<const Unit *, const Unit *, bool>
+struct TargetDistanceOrder : public std::binary_function<const Unit* , const Unit* , bool>
 {
-    const Unit * me;
+    const Unit* me;
     TargetDistanceOrder(const Unit* Target) : me(Target) {};
     // functor for operator ">"
-    bool operator()(const Unit * _Left, const Unit * _Right) const
+    bool operator()(const Unit* _Left, const Unit* _Right) const
     {
         return (me->GetExactDistSq(_Left) < me->GetExactDistSq(_Right));
     }
@@ -200,7 +200,7 @@ float UnitAI::DoGetSpellMaxRange(uint32 spellId, bool /*positive*/)
 
 void UnitAI::DoCast(uint32 spellId)
 {
-    Unit *target = NULL;
+    Unit* target = NULL;
     //sLog.outError("aggre %u %u", spellId, (uint32)AISpellInfo[spellId].target);
     switch(AISpellInfo[spellId].target)
     {
@@ -312,7 +312,7 @@ void SimpleCharmedAI::UpdateAI(const uint32 /*diff*/)
     if (!charmer->isInCombat())
         me->GetMotionMaster()->MoveFollow(charmer, PET_FOLLOW_DIST, me->GetFollowAngle());
 
-    Unit *target = me->getVictim();
+    Unit* target = me->getVictim();
     if (!target || !charmer->canAttack(target))
         AttackStart(charmer->SelectNearestTarget());
 }

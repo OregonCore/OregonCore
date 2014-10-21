@@ -131,7 +131,7 @@ struct boss_doomrelAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -148,7 +148,7 @@ struct boss_doomrelAI : public ScriptedAI
             pInstance->SetData64(DATA_EVENSTARTER, 0);
     }
 
-    void JustDied(Unit * /*who*/)
+    void JustDied(Unit* /*who*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_GHOSTKILL, 1);
@@ -169,7 +169,7 @@ struct boss_doomrelAI : public ScriptedAI
         //Immolate_Timer
         if (Immolate_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_IMMOLATE);
 
             Immolate_Timer = 25000;

@@ -606,7 +606,7 @@ void Guild::BroadcastToOfficers(WorldSession *session, const std::string& msg, u
     }
 }
 
-void Guild::BroadcastPacket(WorldPacket *packet)
+void Guild::BroadcastPacket(WorldPacket* packet)
 {
     for (MemberList::iterator itr = members.begin(); itr != members.end(); ++itr)
     {
@@ -616,7 +616,7 @@ void Guild::BroadcastPacket(WorldPacket *packet)
     }
 }
 
-void Guild::BroadcastPacketToRank(WorldPacket *packet, uint32 rankId)
+void Guild::BroadcastPacketToRank(WorldPacket* packet, uint32 rankId)
 {
     for (MemberList::iterator itr = members.begin(); itr != members.end(); ++itr)
     {
@@ -1269,7 +1269,7 @@ void Guild::LoadGuildBankFromDB()
             continue;
         }
 
-        Item *pItem = NewItemOrBag(proto);
+        Item* pItem = NewItemOrBag(proto);
         if (!pItem->LoadFromDB(ItemGuid, 0, result))
         {
             CharacterDatabase.PExecute("DELETE FROM guild_bank_item WHERE guildid='%u' AND TabId='%u' AND SlotId='%u'", m_Id, uint32(TabId), uint32(SlotId));
@@ -1700,7 +1700,7 @@ bool Guild::AddGBankItemToDB(uint32 GuildId, uint32 BankTab , uint32 BankTabSlot
 
 void Guild::AppendDisplayGuildBankSlot(WorldPacket& data, GuildBankTab const *tab, int slot)
 {
-    Item *pItem = tab->Slots[slot];
+    Item* pItem = tab->Slots[slot];
     uint32 entry = pItem ? pItem->GetEntry() : 0;
 
     data << uint8(slot);
@@ -1752,7 +1752,7 @@ Item* Guild::StoreItem(uint8 tabId, GuildItemPosCountVec const& dest, Item* pIte
 }
 
 // Return stored item (if stored to stack, it can diff. from pItem). And pItem ca be deleted in this case.
-Item* Guild::_StoreItem(uint8 tab, uint8 slot, Item *pItem, uint32 count, bool clone)
+Item* Guild::_StoreItem(uint8 tab, uint8 slot, Item* pItem, uint32 count, bool clone)
 {
     if (!pItem)
         return NULL;
@@ -1905,7 +1905,7 @@ uint8 Guild::_CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec &dest, uint32& 
     return EQUIP_ERR_OK;
 }
 
-uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uint32 count, Item *pItem, bool swap) const
+uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uint32 count, Item* pItem, bool swap) const
 {
     sLog.outDebug("GUILD STORAGE: CanStoreItem tab = %u, slot = %u, item = %u, count = %u", tab, slot, pItem->GetEntry(), count);
 

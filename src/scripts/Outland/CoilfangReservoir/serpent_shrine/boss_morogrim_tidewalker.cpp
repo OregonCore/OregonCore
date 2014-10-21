@@ -145,7 +145,7 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
             pInstance->SetData(DATA_MOROGRIMTIDEWALKEREVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         switch(rand()%3)
         {
@@ -155,7 +155,7 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         DoScriptText(SAY_DEATH, me);
 
@@ -163,7 +163,7 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
             pInstance->SetData(DATA_MOROGRIMTIDEWALKEREVENT, DONE);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         PlayerList = &me->GetMap()->GetPlayers();
         Playercount = PlayerList->getSize();
@@ -206,7 +206,7 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
 
                 for (uint8 i = 0; i < 10; ++i)
                 {
-                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     Creature* Murloc = me->SummonCreature(MurlocCords[i][0],MurlocCords[i][1],MurlocCords[i][2],MurlocCords[i][3],MurlocCords[i][4], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
                     if (pTarget && Murloc)
                         Murloc->AI()->AttackStart(pTarget);
@@ -230,7 +230,7 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
             if (WateryGrave_Timer <= diff)
             {
                 //Teleport 4 players under the waterfalls
-                Unit *pTarget;
+                Unit* pTarget;
                 using std::set;
                 set<int>list;
                 set<int>::const_iterator itr;
@@ -319,9 +319,9 @@ struct mob_water_globuleAI : public ScriptedAI
         me->setFaction(14);
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who || me->getVictim())
             return;

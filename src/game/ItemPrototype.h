@@ -475,7 +475,7 @@ struct ItemPrototype
     uint32 Class;                                           // id from ItemClass.dbc
     uint32 SubClass;                                        // id from ItemSubClass.dbc
     uint32 SoundOverrideSubclass;                           // < 0: id from ItemSubClass.dbc, used to override weapon sound from actual SubClass
-    char*  Name1;
+    char* Name1;
     uint32 DisplayInfoID;                                   // id from ItemDisplayInfo.dbc
     uint32 Quality;
     uint32 Flags;
@@ -511,7 +511,7 @@ struct ItemPrototype
     float  RangedModRange;
     _Spell Spells[5];
     uint32 Bonding;
-    char*  Description;
+    char* Description;
     uint32 PageText;
     uint32 LanguageID;
     uint32 PageMaterial;

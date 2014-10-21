@@ -140,7 +140,7 @@ class AuctionHouseMgr
     void SendAuctionSalePendingMail(AuctionEntry * auction);
     void SendAuctionSuccessfulMail(AuctionEntry * auction);
     void SendAuctionExpiredMail(AuctionEntry * auction);
-    static uint32 GetAuctionDeposit(AuctionHouseEntry const* entry, uint32 time, Item *pItem);
+    static uint32 GetAuctionDeposit(AuctionHouseEntry const* entry, uint32 time, Item* pItem);
     static AuctionHouseEntry const* GetAuctionHouseEntry(uint32 factionTemplateId);
 
   public:

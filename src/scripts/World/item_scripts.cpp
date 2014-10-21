@@ -219,7 +219,7 @@ bool ItemUse_item_flying_machine(Player* pPlayer, Item* pItem, SpellCastTargets 
 # item_gor_dreks_ointment
 #####*/
 
-bool ItemUse_item_gor_dreks_ointment(Player* pPlayer, Item *pItem, SpellCastTargets const& targets)
+bool ItemUse_item_gor_dreks_ointment(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
 {
     if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT &&
         targets.getUnitTarget()->GetEntry() == 20748 && !targets.getUnitTarget()->HasAura(32578, 0))
@@ -455,7 +455,7 @@ bool ItemUse_item_yehkinyas_bramble(Player* player, Item* _Item, SpellCastTarget
 {
     if (player->GetQuestStatus(3520) == QUEST_STATUS_INCOMPLETE)
     {
-        Unit * unit_target = targets.getUnitTarget();
+        Unit* unit_target = targets.getUnitTarget();
         if (unit_target &&
             unit_target->GetTypeId() == TYPEID_UNIT &&
             unit_target->isDead() &&

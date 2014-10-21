@@ -57,7 +57,7 @@ struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
         PowerWordShield = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -76,7 +76,7 @@ struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
         //Fear_Timer
         if (Fear_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(pTarget, SPELL_FEAR);
 
             Fear_Timer = 40000;
@@ -85,7 +85,7 @@ struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
         //Sleep_Timer
         if (Sleep_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,0))
                 DoCast(pTarget, SPELL_SLEEP);
 
             Sleep_Timer = 30000;
@@ -101,7 +101,7 @@ struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
         //Dispel_Timer
         if (Dispel_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget, SPELL_DISPELMAGIC);
 
             DispelMagic_Timer = 30000;

@@ -144,7 +144,7 @@ struct boss_doomwalkerAI : public ScriptedAI
         //Spell Chain Lightning
         if (Chain_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
 
             if (!pTarget)

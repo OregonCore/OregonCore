@@ -316,7 +316,7 @@ struct boss_kalecgosAI : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (bJustReset)//boss is invisible, don't attack
             return;
@@ -329,7 +329,7 @@ struct boss_kalecgosAI : public ScriptedAI
         }
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32 &damage)
     {
         if (damage >= me->GetHealth() && done_by != me)
             damage = 0;
@@ -345,7 +345,7 @@ struct boss_kalecgosAI : public ScriptedAI
             pInstance->SetData(DATA_KALECGOS_EVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(RAND(SAY_EVIL_SLAY1,SAY_EVIL_SLAY2), me);
     }
@@ -484,13 +484,13 @@ struct boss_sathrovarrAI : public ScriptedAI
         DoScriptText(SAY_SATH_AGGRO, me);
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32 &damage)
     {
         if (damage >= me->GetHealth() && done_by != me)
             damage = 0;
     }
 
-    void KilledUnit(Unit *pTarget)
+    void KilledUnit(Unit* pTarget)
     {
         if (pTarget->GetGUID() == KalecGUID)
         {
@@ -506,7 +506,7 @@ struct boss_sathrovarrAI : public ScriptedAI
         DoScriptText(RAND(SAY_SATH_SLAY1,SAY_SATH_SLAY2), me);
     }
 
-    void JustDied(Unit * /*killer*/)
+    void JustDied(Unit* /*killer*/)
     {
         DoScriptText(SAY_SATH_DEATH, me);
         me->GetMap()->CreatureRelocation(me, me->GetPositionX(), me->GetPositionY(), DRAGON_REALM_Z, me->GetOrientation());
@@ -629,7 +629,7 @@ struct boss_sathrovarrAI : public ScriptedAI
 
         if (AgonyCurseTimer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (!pTarget) pTarget = me->getVictim();
             DoCast(pTarget, SPELL_AGONY_CURSE);
             AgonyCurseTimer = 20000;
@@ -677,7 +677,7 @@ struct boss_kalecAI : public ScriptedAI
         isEnraged = false;
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32 &damage)
     {
         if (done_by->GetGUID() != SathGUID)
             damage = 0;

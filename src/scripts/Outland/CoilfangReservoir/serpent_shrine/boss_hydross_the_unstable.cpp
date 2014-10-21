@@ -155,7 +155,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
             }
         }
     }
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
 
@@ -163,7 +163,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
             pInstance->SetData(DATA_HYDROSSTHEUNSTABLEEVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         if (CorruptedForm)
         {
@@ -204,7 +204,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
         Summons.Despawn(summon);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         if (CorruptedForm)
             DoScriptText(SAY_CORRUPT_DEATH, me);
@@ -259,7 +259,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
             //VileSludge_Timer
             if (VileSludge_Timer <= diff)
             {
-                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget)
                     DoCast(pTarget, SPELL_VILE_SLUDGE);
 
@@ -326,7 +326,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
             //WaterTomb_Timer
             if (WaterTomb_Timer <= diff)
             {
-                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
+                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (pTarget)
                     DoCast(pTarget, SPELL_WATER_TOMB);
 

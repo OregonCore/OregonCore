@@ -66,7 +66,7 @@ const float ShadowmoonChannelers[5][4]=
 class BurningNovaAura : public Aura
 {
     public:
-        BurningNovaAura(SpellEntry *spell, uint32 eff, Unit *pTarget, Unit *caster) : Aura(spell, eff, NULL, pTarget, caster, NULL){}
+        BurningNovaAura(SpellEntry *spell, uint32 eff, Unit* pTarget, Unit* caster) : Aura(spell, eff, NULL, pTarget, caster, NULL){}
 };
 
 struct boss_kelidan_the_breakerAI : public ScriptedAI
@@ -104,7 +104,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
             pInstance->SetData(DATA_KELIDANEVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         DoScriptText(SAY_WAKE, me);
         if (me->IsNonMeleeSpellCast(false))
@@ -327,7 +327,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
                     if (Creature* Kelidan = me->FindNearestCreature(ENTRY_KELIDAN, 100))
                     {
                         uint64 channeler = CAST_AI(boss_kelidan_the_breakerAI, Kelidan->AI())->GetChanneled(me);
-                        if (Unit *channeled = Unit::GetUnit(*me, channeler))
+                        if (Unit* channeled = Unit::GetUnit(*me, channeler))
                             DoCast(channeled,SPELL_CHANNELING);
                     }
                 check_Timer = 5000;
@@ -337,7 +337,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
 
         if (MarkOfShadow_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget,SPELL_MARK_OF_SHADOW);
             MarkOfShadow_Timer = 15000+rand()%5000;
         } else MarkOfShadow_Timer -=diff;

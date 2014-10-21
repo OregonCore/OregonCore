@@ -38,7 +38,7 @@
  *
  * This methods takes the packet sent by the client and performs the following actions:
  * - Checks whether the mail is valid: i.e. can he send the selected items,
- *   does he have enough money, etc.
+ *  does he have enough money, etc.
  * - Creates a MailDraft and adds the needed items, money, cost data.
  * - Sends the mail.
  *
@@ -390,7 +390,7 @@ void WorldSession::HandleReturnToSender(WorldPacket & recv_data)
         {
             for (std::vector<MailItemInfo>::iterator itr2 = m->items.begin(); itr2 != m->items.end(); ++itr2)
             {
-                if (Item *item = pl->GetMItem(itr2->item_guid))
+                if (Item* item = pl->GetMItem(itr2->item_guid))
                     draft.AddItem(item);
 
                 pl->RemoveMItem(itr2->item_guid);
@@ -438,7 +438,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data)
         return;
     }
 
-    Item *it = pl->GetMItem(itemId);
+    Item* it = pl->GetMItem(itemId);
 
     ItemPosCountVec dest;
     uint8 msg = _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, it, false);
@@ -617,7 +617,7 @@ void WorldSession::HandleGetMail(WorldPacket & recv_data)
 
         for (uint8 i = 0; i < item_count; ++i)
         {
-            Item *item = pl->GetMItem((*itr)->items[i].item_guid);
+            Item* item = pl->GetMItem((*itr)->items[i].item_guid);
             // item index (0-6?)
             data << (uint8)  i;
             // item guid low?
@@ -706,7 +706,7 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data)
         return;
     }
 
-    Item *bodyItem = new Item;                              // This is not bag and then can be used new Item.
+    Item* bodyItem = new Item;                              // This is not bag and then can be used new Item.
     if (!bodyItem->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_ITEM), MAIL_BODY_ITEM_TEMPLATE, pl))
     {
         delete bodyItem;

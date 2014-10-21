@@ -31,7 +31,7 @@ HostileRefManager::~HostileRefManager()
 // The pVictim is hated than by them as well
 // use for buffs and healing threat functionality
 
-void HostileRefManager::threatAssist(Unit *pVictim, float pThreat, SpellEntry const *pThreatSpell, bool pSingleTarget)
+void HostileRefManager::threatAssist(Unit* pVictim, float pThreat, SpellEntry const *pThreatSpell, bool pSingleTarget)
 {
     HostileReference* ref;
 
@@ -109,7 +109,7 @@ void HostileRefManager::deleteReferences()
 //=================================================
 // delete one reference, defined by Unit
 
-void HostileRefManager::deleteReference(Unit *pCreature)
+void HostileRefManager::deleteReference(Unit* pCreature)
 {
     HostileReference* ref = getFirst();
     while (ref)
@@ -128,7 +128,7 @@ void HostileRefManager::deleteReference(Unit *pCreature)
 //=================================================
 // set state for one reference, defined by Unit
 
-void HostileRefManager::setOnlineOfflineState(Unit *pCreature,bool pIsOnline)
+void HostileRefManager::setOnlineOfflineState(Unit* pCreature,bool pIsOnline)
 {
     HostileReference* ref = getFirst();
     while (ref)

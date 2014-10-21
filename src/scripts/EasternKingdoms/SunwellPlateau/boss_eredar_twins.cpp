@@ -142,7 +142,7 @@ struct boss_sacrolashAI : public ScriptedAI
             pInstance->SetData(DATA_EREDAR_TWINS_EVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         DoZoneInCombat();
 
@@ -157,7 +157,7 @@ struct boss_sacrolashAI : public ScriptedAI
             pInstance->SetData(DATA_EREDAR_TWINS_EVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         if (rand()%4 == 0)
             DoScriptText(RAND(YELL_SAC_KILL_1,YELL_SAC_KILL_2), me);
@@ -177,7 +177,7 @@ struct boss_sacrolashAI : public ScriptedAI
             me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
     }
 
-    void SpellHitTarget(Unit *pTarget,const SpellEntry* spell)
+    void SpellHitTarget(Unit* pTarget,const SpellEntry* spell)
     {
         switch(spell->Id)
         {
@@ -193,7 +193,7 @@ struct boss_sacrolashAI : public ScriptedAI
         }
     }
 
-    void HandleTouchedSpells(Unit *pTarget, uint32 TouchedType)
+    void HandleTouchedSpells(Unit* pTarget, uint32 TouchedType)
     {
         switch(TouchedType)
         {
@@ -248,7 +248,7 @@ struct boss_sacrolashAI : public ScriptedAI
                 if (!me->IsNonMeleeSpellCast(false))
                 {
                     me->InterruptSpell(CURRENT_GENERIC_SPELL);
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     if (pTarget)
                         DoCast(pTarget, SPELL_CONFLAGRATION);
@@ -262,7 +262,7 @@ struct boss_sacrolashAI : public ScriptedAI
             {
                 if (!me->IsNonMeleeSpellCast(false))
                 {
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     if (pTarget)
                         DoCast(pTarget, SPELL_SHADOW_NOVA);
@@ -282,7 +282,7 @@ struct boss_sacrolashAI : public ScriptedAI
         {
             if (!me->IsNonMeleeSpellCast(false))
             {
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget)
                     DoCast(pTarget, SPELL_CONFOUNDING_BLOW);
@@ -292,7 +292,7 @@ struct boss_sacrolashAI : public ScriptedAI
 
         if (ShadowimageTimer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             Creature* temp = NULL;
             for (uint8 i = 0; i<3; ++i)
             {
@@ -404,7 +404,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
             pInstance->SetData(DATA_EREDAR_TWINS_EVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         DoZoneInCombat();
 
@@ -419,7 +419,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
             pInstance->SetData(DATA_EREDAR_TWINS_EVENT, IN_PROGRESS);
     }
 
-    void AttackStart(Unit *who)
+    void AttackStart(Unit* who)
     {
         if (!me->isInCombat())
         {
@@ -427,7 +427,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who || me->getVictim())
             return;
@@ -450,7 +450,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
         }
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         if (rand()%4 == 0)
         {
@@ -471,7 +471,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
             me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
     }
 
-    void SpellHitTarget(Unit *pTarget,const SpellEntry* spell)
+    void SpellHitTarget(Unit* pTarget,const SpellEntry* spell)
     {
         switch(spell->Id)
         {
@@ -488,7 +488,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
         }
     }
 
-    void HandleTouchedSpells(Unit *pTarget, uint32 TouchedType)
+    void HandleTouchedSpells(Unit* pTarget, uint32 TouchedType)
     {
         switch(TouchedType)
         {
@@ -596,7 +596,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
             {
                 if (!me->IsNonMeleeSpellCast(false))
                 {
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     if (pTarget)
                         DoCast(pTarget, SPELL_SHADOW_NOVA);
@@ -611,7 +611,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
                 if (!me->IsNonMeleeSpellCast(false))
                 {
                     me->InterruptSpell(CURRENT_GENERIC_SPELL);
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     if (pTarget)
                         DoCast(pTarget, SPELL_CONFLAGRATION);
@@ -687,9 +687,9 @@ struct mob_shadow_imageAI : public ScriptedAI
         KillTimer = 15000;
     }
 
-    void EnterCombat(Unit * /*who*/){}
+    void EnterCombat(Unit* /*who*/){}
 
-    void SpellHitTarget(Unit *pTarget,const SpellEntry* spell)
+    void SpellHitTarget(Unit* pTarget,const SpellEntry* spell)
     {
         switch(spell->Id)
         {

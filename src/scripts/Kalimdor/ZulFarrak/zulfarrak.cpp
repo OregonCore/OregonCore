@@ -206,7 +206,7 @@ struct npc_weegli_blastfuseAI : public ScriptedAI
     {
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

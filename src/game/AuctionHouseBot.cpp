@@ -199,7 +199,7 @@ void AuctionHouseBot::addNewAuctions(Player* AHBplayer, AHBConfig *config)
     uint32 purpleIcount = config->GetPercents(AHB_PURPLE_I);
     uint32 orangeIcount = config->GetPercents(AHB_ORANGE_I);
     uint32 yellowIcount = config->GetPercents(AHB_YELLOW_I);
-/*    uint32 total = greyTGcount + whiteTGcount + greenTGcount + blueTGcount
+/*   uint32 total = greyTGcount + whiteTGcount + greenTGcount + blueTGcount
         + purpleTGcount + orangeTGcount + yellowTGcount
         + whiteIcount + greenIcount + blueIcount + purpleIcount
         + orangeIcount + yellowIcount;
@@ -544,7 +544,7 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player* AHBplayer, AHBConfig *con
             continue;
 
         // get exact item information
-        Item *pItem = sAuctionMgr->GetAItem(auction->item_guidlow);
+        Item* pItem = sAuctionMgr->GetAItem(auction->item_guidlow);
         if (!pItem)
         {
             if (debug_Out) sLog.outError("AHBuyer: Item %u doesn't exist, perhaps bought already?", auction->item_guidlow);
@@ -1371,7 +1371,7 @@ void AuctionHouseBot::IncrementItemCounts(AuctionEntry* ah)
     // from auctionhousehandler.cpp, creates auction pointer & player pointer
 
     // get exact item information
-    Item *pItem = sAuctionMgr->GetAItem(ah->item_guidlow);
+    Item* pItem = sAuctionMgr->GetAItem(ah->item_guidlow);
     if (!pItem)
     {
         if (debug_Out) sLog.outError("AHBot: Item %u doesn't exist, perhaps bought already?", ah->item_guidlow);
@@ -1778,7 +1778,7 @@ void AuctionHouseBot::LoadValues(AHBConfig *config)
             for (AuctionHouseObject::AuctionEntryMap::const_iterator itr = auctionHouse->GetAuctionsBegin(); itr != auctionHouse->GetAuctionsEnd(); ++itr)
             {
                 AuctionEntry *Aentry = itr->second;
-                Item *item = sAuctionMgr->GetAItem(Aentry->item_guidlow);
+                Item* item = sAuctionMgr->GetAItem(Aentry->item_guidlow);
                 if (item)
                 {
                     ItemPrototype const *prototype = item->GetProto();

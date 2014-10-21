@@ -187,7 +187,7 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
         {
             DoScriptText(SAY_CURSE, me);
 
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
                 DoCast(pTarget,HeroicMode ? H_SPELL_BANE_OF_TREACHERY : SPELL_TREACHEROUS_AURA);
                 Aura_Timer = 8000+rand()%8000;
@@ -196,7 +196,7 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 
         if (Shadowbolt_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
                 if (pTarget)
                     pTarget = me->getVictim();

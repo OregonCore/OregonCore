@@ -103,7 +103,7 @@ struct npc_chicken_cluckAI : public ScriptedAI
         me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -405,7 +405,7 @@ struct npc_injured_patientAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/){}
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry *spell)
     {
         if (caster->GetTypeId() == TYPEID_PLAYER && me->isAlive() && spell->Id == 20804)
         {
@@ -685,7 +685,7 @@ struct npc_garments_of_questsAI : public npc_escortAI
         me->SetHealth(int(me->GetMaxHealth()*0.7));
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void SpellHit(Unit* pCaster, const SpellEntry *Spell)
     {
@@ -807,7 +807,7 @@ struct npc_garments_of_questsAI : public npc_escortAI
         {
             if (RunAwayTimer <= diff)
             {
-                if (Unit *pUnit = Unit::GetUnit(*me,caster))
+                if (Unit* pUnit = Unit::GetUnit(*me,caster))
                 {
                     switch(me->GetEntry())
                     {
@@ -852,7 +852,7 @@ struct npc_guardianAI : public ScriptedAI
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         me->MonsterYell(SAY_AGGRO, LANG_UNIVERSAL, 0);
     }
@@ -1169,7 +1169,7 @@ struct npc_steam_tonkAI : public ScriptedAI
     npc_steam_tonkAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset() {}
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void OnPossess(bool apply)
     {
@@ -1208,9 +1208,9 @@ struct npc_tonk_mineAI : public ScriptedAI
         ExplosionTimer = 3000;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
-    void AttackStart(Unit * /*who*/) {}
-    void MoveInLineOfSight(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
+    void AttackStart(Unit* /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -1345,10 +1345,10 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
     npc_snake_trap_serpentsAI(Creature* c) : ScriptedAI(c), SpellTimer(0) {}
 
     uint32 SpellTimer;
-    Unit *Owner;
+    Unit* Owner;
     bool IsViper;
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void Reset()
     {
@@ -1450,7 +1450,7 @@ struct mob_mojoAI : public ScriptedAI
         if (Unit* own = me->GetOwner())
             me->GetMotionMaster()->MoveFollow(own,0,0);
     }
-    void Aggro(Unit * /*who*/){}
+    void Aggro(Unit* /*who*/){}
     void UpdateAI(const uint32 diff)
     {
         if (me->HasAura(20372, 0))

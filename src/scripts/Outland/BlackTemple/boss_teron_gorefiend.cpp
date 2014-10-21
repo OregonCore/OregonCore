@@ -65,7 +65,7 @@ struct mob_doom_blossomAI : public ScriptedAI
         TeronGUID = 0;
     }
 
-    void EnterCombat(Unit * /*who*/) { }
+    void EnterCombat(Unit* /*who*/) { }
     void AttackStart(Unit* /*who*/) {}
     void MoveInLineOfSight(Unit* /*who*/) {}
 
@@ -125,7 +125,7 @@ struct mob_shadowy_constructAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) {}
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who || (!who->isAlive()) || (who->GetGUID() == GhostGUID))
             return;
@@ -155,7 +155,7 @@ struct mob_shadowy_constructAI : public ScriptedAI
                 targets.push_back(pUnit);
         }
         targets.sort(Oregon::ObjectDistanceOrderPred(me));
-        Unit *pTarget = targets.front();
+        Unit* pTarget = targets.front();
         if (pTarget && me->IsWithinDistInMap(pTarget, me->GetAttackDistance(pTarget)))
         {
             DoCast(pTarget, SPELL_ATROPHY);
@@ -226,9 +226,9 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         Intro = false;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who || (!who->isAlive())) return;
 
@@ -259,12 +259,12 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         }
     }
 
-    void KilledUnit(Unit * /*victim*/)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
     }
 
-    void JustDied(Unit * /*victim*/)
+    void JustDied(Unit* /*victim*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_TERONGOREFIENDEVENT, DONE);
@@ -308,9 +308,9 @@ struct boss_teron_gorefiendAI : public ScriptedAI
     {
         /************************************************************************/
         /** NOTE FOR FUTURE DEVELOPER: PROPERLY IMPLEMENT THE GHOST PORTION *****/
-        /**  ONLY AFTER Oregon FULLY IMPLEMENTS MIND CONTROL ABILITIES      *****/
-        /**   THE CURRENT CODE IN THIS FUNCTION IS ONLY THE BEGINNING OF    *****/
-        /**    WHAT IS FULLY NECESSARY FOR GOREFIEND TO BE 100% COMPLETE    *****/
+        /** ONLY AFTER Oregon FULLY IMPLEMENTS MIND CONTROL ABILITIES      *****/
+        /**  THE CURRENT CODE IN THIS FUNCTION IS ONLY THE BEGINNING OF    *****/
+        /**   WHAT IS FULLY NECESSARY FOR GOREFIEND TO BE 100% COMPLETE    *****/
         /************************************************************************/
 
         Unit* Ghost = NULL;
@@ -338,7 +338,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
                     Construct->CastSpell(Construct, SPELL_PASSIVE_SHADOWFORM, true);
                     SetThreatList(Construct);               // Use same function as Doom Blossom to set Threat List.
                     CAST_AI(mob_shadowy_constructAI, Construct->AI())->GhostGUID = GhostGUID;
-                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+                    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                     if (!pTarget)                             // someone's trying to solo.
                         pTarget = me->getVictim();
 
@@ -390,7 +390,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
                 Shadow = me->SummonCreature(CREATURE_SHADOWY_CONSTRUCT, X, me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 0);
                 if (Shadow)
                 {
-                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+                    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                     if (!pTarget)
                         pTarget = me->getVictim();
 
@@ -403,7 +403,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
         if (SummonDoomBlossomTimer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 float X = CalculateRandomLocation(pTarget->GetPositionX(), 20);
                 float Y = CalculateRandomLocation(pTarget->GetPositionY(), 20);
@@ -425,7 +425,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
         if (IncinerateTimer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (!pTarget)
                 pTarget = me->getVictim();
 
@@ -439,7 +439,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
         if (CrushingShadowsTimer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget && pTarget->isAlive())
                 DoCast(pTarget, SPELL_CRUSHING_SHADOWS);
             CrushingShadowsTimer = 10000 + rand()%16 * 1000;
@@ -448,7 +448,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         /*** NOTE FOR FUTURE DEV: UNCOMMENT BELOW ONLY IF MIND CONTROL IS FULLY IMPLEMENTED **/
         /*if (ShadowOfDeathTimer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
 
             if (!pTarget)
                pTarget = me->getVictim();

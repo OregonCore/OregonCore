@@ -243,7 +243,7 @@ inline void Map::_ScriptProcessDoor(Object* source, Object* target, const Script
                 scriptInfo->GetDebugInfo().c_str(), source->GetTypeId(), source->GetEntry(), source->GetGUIDLow());
         else
         {
-            GameObject *pDoor = _FindGameObject(wSource, guid);
+            GameObject* pDoor = _FindGameObject(wSource, guid);
             if (!pDoor)
                 sLog.outError("%s gameobject was not found (guid: %u).", scriptInfo->GetDebugInfo().c_str(), guid);
             else if (pDoor->GetGoType() != GAMEOBJECT_TYPE_DOOR && pDoor->GetGoType () != GAMEOBJECT_TYPE_BUTTON)
@@ -266,7 +266,7 @@ inline void Map::_ScriptProcessDoor(Object* source, Object* target, const Script
 
 inline GameObject* Map::_FindGameObject(WorldObject* pSearchObject, uint32 guid) const
 {
-    GameObject *pGameObject = NULL;
+    GameObject* pGameObject = NULL;
 
     CellPair p(Oregon::ComputeCellPair(pSearchObject->GetPositionX(), pSearchObject->GetPositionY()));
     Cell cell(p);
@@ -614,7 +614,7 @@ void Map::ScriptsProcess()
                 // Source or target must be WorldObject.
                 if (WorldObject* pSummoner = _GetScriptWorldObject(source, true, step.script))
                 {
-                    GameObject *pGO = _FindGameObject(pSummoner, step.script->RespawnGameobject.GOGuid);
+                    GameObject* pGO = _FindGameObject(pSummoner, step.script->RespawnGameobject.GOGuid);
                     if (!pGO)
                     {
                         sLog.outError("%s gameobject was not found (guid: %u).", step.script->GetDebugInfo().c_str(), step.script->RespawnGameobject.GOGuid);
@@ -671,7 +671,7 @@ void Map::ScriptsProcess()
 
             case SCRIPT_COMMAND_ACTIVATE_OBJECT:
                 // Source must be Unit.
-                if (Unit *pSource = _GetScriptUnit(source, true, step.script))
+                if (Unit* pSource = _GetScriptUnit(source, true, step.script))
                 {
                     // Target must be GameObject.
                     if (!target)
@@ -687,7 +687,7 @@ void Map::ScriptsProcess()
                         break;
                     }
 
-                    if (GameObject *pGO = dynamic_cast<GameObject*>(target))
+                    if (GameObject* pGO = dynamic_cast<GameObject*>(target))
                         pGO->Use(pSource);
                 }
                 break;
@@ -696,7 +696,7 @@ void Map::ScriptsProcess()
             {
                 // Source (datalong2 != 0) or target (datalong2 == 0) must be Unit.
                 bool bReverse = step.script->RemoveAura.Flags & SF_REMOVEAURA_REVERSE;
-                if (Unit *pTarget = _GetScriptUnit(bReverse ? source : target, bReverse, step.script))
+                if (Unit* pTarget = _GetScriptUnit(bReverse ? source : target, bReverse, step.script))
                     pTarget->RemoveAurasDueToSpell(step.script->RemoveAura.SpellID);
                 break;
             }
@@ -884,7 +884,7 @@ void Map::ScriptsProcess()
 
             case SCRIPT_COMMAND_ORIENTATION:
                 // Source must be Unit.
-                if (Unit *pSource = _GetScriptUnit(source, true, step.script))
+                if (Unit* pSource = _GetScriptUnit(source, true, step.script))
                 {
                     if (step.script->Orientation.Flags& SF_ORIENTATION_FACE_TARGET)
                     {

@@ -884,7 +884,7 @@ bool Creature::CanTrainAndResetTalentsOf(Player* pPlayer) const
 
 void Creature::AI_SendMoveToPacket(float x, float y, float z, uint32 time, uint32 /*MovementFlags*/, uint8 /*type*/)
 {
-    /*    uint32 timeElap = getMSTime();
+    /*   uint32 timeElap = getMSTime();
         if ((timeElap - m_startMove) < m_moveTime)
         {
             oX = (dX - oX) * ((timeElap - m_startMove) / m_moveTime);
@@ -911,7 +911,7 @@ Player* Creature::GetLootRecipient() const
     else return ObjectAccessor::FindPlayer(m_lootRecipient);
 }
 
-void Creature::SetLootRecipient(Unit *unit)
+void Creature::SetLootRecipient(Unit* unit)
 {
     // set the player whose group should receive the right
     // to loot the creature after it dies
@@ -1645,7 +1645,7 @@ bool Creature::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, 
     return Unit::IsImmuneToSpellEffect(spellInfo, index, castOnSelf);
 }
 
-SpellEntry const *Creature::reachWithSpellAttack(Unit *pVictim)
+SpellEntry const *Creature::reachWithSpellAttack(Unit* pVictim)
 {
     if (!pVictim)
         return NULL;
@@ -1693,7 +1693,7 @@ SpellEntry const *Creature::reachWithSpellAttack(Unit *pVictim)
     return NULL;
 }
 
-SpellEntry const *Creature::reachWithSpellCure(Unit *pVictim)
+SpellEntry const *Creature::reachWithSpellCure(Unit* pVictim)
 {
     if (!pVictim)
         return NULL;
@@ -1811,7 +1811,7 @@ Unit* Creature::SelectNearestTarget(float dist) const
     cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
-    Unit *target = NULL;
+    Unit* target = NULL;
 
     {
         Oregon::NearestHostileUnitInAttackDistanceCheck u_check(this, dist);

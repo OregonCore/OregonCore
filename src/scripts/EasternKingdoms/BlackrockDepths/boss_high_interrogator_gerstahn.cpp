@@ -49,7 +49,7 @@ struct boss_high_interrogator_gerstahnAI : public ScriptedAI
         ShadowShield_Timer = 8000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -62,7 +62,7 @@ struct boss_high_interrogator_gerstahnAI : public ScriptedAI
         //ShadowWordPain_Timer
         if (ShadowWordPain_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_SHADOWWORDPAIN);
             ShadowWordPain_Timer = 7000;
         } else ShadowWordPain_Timer -= diff;
@@ -70,7 +70,7 @@ struct boss_high_interrogator_gerstahnAI : public ScriptedAI
         //ManaBurn_Timer
         if (ManaBurn_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_MANABURN);
             ManaBurn_Timer = 10000;
         } else ManaBurn_Timer -= diff;

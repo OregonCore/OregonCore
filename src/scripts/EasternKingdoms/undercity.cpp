@@ -74,13 +74,13 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
         targetGUID = 0;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void JustSummoned(Creature* summoned)
     {
         if (summoned->GetEntry() == ENTRY_HIGHBORNE_BUNNY)
         {
-            if (Unit *pTarget = Unit::GetUnit(*summoned,targetGUID))
+            if (Unit* pTarget = Unit::GetUnit(*summoned,targetGUID))
             {
                 pTarget->SendMonsterMove(pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ()+15.0f,0);
                 pTarget->GetMap()->CreatureRelocation(me, pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ()+15.0f, 0.0f);
@@ -157,7 +157,7 @@ struct npc_highborne_lamenterAI : public ScriptedAI
         EventCast = true;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {

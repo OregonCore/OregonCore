@@ -62,7 +62,7 @@ struct mobs_risen_husk_spiritAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) { }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32 &damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER)
             if (damage >= me->GetHealth() && CAST_PLR(done_by)->GetQuestStatus(11180) == QUEST_STATUS_INCOMPLETE)

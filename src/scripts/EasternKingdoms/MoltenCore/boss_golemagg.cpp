@@ -140,7 +140,7 @@ struct mob_core_ragerAI : public ScriptedAI
         {
             if (pInstance)
             {
-                if (Unit *pGolemagg = Unit::GetUnit(*me, pInstance->GetData64(DATA_GOLEMAGG)))
+                if (Unit* pGolemagg = Unit::GetUnit(*me, pInstance->GetData64(DATA_GOLEMAGG)))
                 {
                     if (pGolemagg->isAlive())
                     {

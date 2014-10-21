@@ -47,7 +47,7 @@ struct boss_halyconAI : public ScriptedAI
         Summoned = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

@@ -96,7 +96,7 @@ struct npc_manaforge_control_consoleAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) { return; }
 
-    /*void SpellHit(Unit *caster, const SpellEntry *spell)
+    /*void SpellHit(Unit* caster, const SpellEntry *spell)
     {
         //we have no way of telling the creature was hit by spell -> got aura applied after 10-12 seconds
         //then no way for the mobs to actually stop the shutdown as intended.
@@ -459,7 +459,7 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
     //Set them back to each other
     void Turn_to_eachother()
     {
-        if (Unit *ardonis = Unit::GetUnit(*me,ardonisGUID))
+        if (Unit* ardonis = Unit::GetUnit(*me,ardonisGUID))
         {
             Player* player = Unit::GetPlayer(*me, playerGUID);
 
@@ -516,8 +516,8 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
             return;
         }
 
-        Unit *ardonis = Unit::GetUnit(*me,ardonisGUID);
-        Unit *pathaleon = Unit::GetUnit(*me,pathaleonGUID);
+        Unit* ardonis = Unit::GetUnit(*me,ardonisGUID);
+        Unit* pathaleon = Unit::GetUnit(*me,pathaleonGUID);
         Player* player = Unit::GetPlayer(*me, playerGUID);
 
         if (!ardonis || !player)
@@ -759,7 +759,7 @@ struct mob_phase_hunterAI : public ScriptedAI
         ManaBurnTimer = 5000 + (rand()%3 * 1000); // 5-8 sec cd
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if (Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself())
             PlayerGUID = player->GetGUID();
@@ -1169,7 +1169,7 @@ struct npc_boom_botAI : public ScriptedAI
         Boom = true;
     }
  
-    void MoveInLineOfSight(Unit *pWho)
+    void MoveInLineOfSight(Unit* pWho)
     {
         if (!pWho->isCharmedOwnedByPlayerOrPlayer())
             return;

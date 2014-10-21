@@ -183,7 +183,7 @@ struct boss_loathebAI : public ScriptedAI
         //Summon_Timer
         if (Summon_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             Unit* SummonedSpores = NULL;
 
             SummonedSpores = me->SummonCreature(16286,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);

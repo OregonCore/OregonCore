@@ -97,7 +97,7 @@ namespace Oregon
             }
         }
 
-        inline uint32 Gain(Player* pl, Unit *u)
+        inline uint32 Gain(Player* pl, Unit* u)
         {
             if (u->GetTypeId() == TYPEID_UNIT && (
                 ((Creature*)u)->isTotem() || ((Creature*)u)->isPet() ||
@@ -114,7 +114,7 @@ namespace Oregon
             return (uint32)(xp_gain*sWorld.getRate(RATE_XP_KILL));
         }
 
-        inline uint32 Gain(Pet *pet, Unit *u)
+        inline uint32 Gain(Pet *pet, Unit* u)
         {
             if (u->GetTypeId() == TYPEID_UNIT && (
                 ((Creature*)u)->isTotem() || ((Creature*)u)->isPet() ||

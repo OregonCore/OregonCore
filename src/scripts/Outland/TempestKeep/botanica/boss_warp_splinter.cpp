@@ -55,7 +55,7 @@ struct mob_treantAI  : public ScriptedAI
         {
             if (WarpGuid && check_Timer <= diff)
             {
-                if (Unit *Warp = (Unit*)Unit::GetUnit(*me, WarpGuid))
+                if (Unit* Warp = (Unit*)Unit::GetUnit(*me, WarpGuid))
                 {
                     if (me->IsWithinMeleeRange(Warp,2.5f))
                     {

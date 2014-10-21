@@ -613,7 +613,7 @@ void WorldSession::HandleRaidReadyCheckFinishOpcode(WorldPacket & /*recv_data*/)
     // Is any reaction need?
 }
 
-void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacket *data)
+void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacket* data)
 {
     uint32 mask = player->GetGroupUpdateFlag();
 

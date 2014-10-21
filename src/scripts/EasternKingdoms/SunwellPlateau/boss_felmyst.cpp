@@ -141,7 +141,7 @@ struct boss_felmystAI : public ScriptedAI
             pInstance->SetData(DATA_FELMYST_EVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         events.ScheduleEvent(EVENT_BERSERK, 600000);
         me->setActive(true);
@@ -154,13 +154,13 @@ struct boss_felmystAI : public ScriptedAI
             pInstance->SetData(DATA_FELMYST_EVENT, IN_PROGRESS);
     }
 
-    void AttackStart(Unit *who)
+    void AttackStart(Unit* who)
     {
         if (phase != PHASE_FLIGHT)
             ScriptedAI::AttackStart(who);
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (phase != PHASE_FLIGHT)
             ScriptedAI::MoveInLineOfSight(who);
@@ -190,7 +190,7 @@ struct boss_felmystAI : public ScriptedAI
         }
     }
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry *spell)
     {
         switch(spell->Id)
         {
@@ -276,7 +276,7 @@ struct boss_felmystAI : public ScriptedAI
                 break;
             case 2:
             {
-                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true);
+                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true);
                 if (!pTarget)
                     pTarget = Unit::GetUnit(*me, pInstance ? pInstance->GetData64(DATA_PLAYER_GUID) : 0);
                 if (!pTarget)
@@ -299,7 +299,7 @@ struct boss_felmystAI : public ScriptedAI
             {
                 DespawnSummons(MOB_VAPOR_TRAIL);
                 //DoCast(me, SPELL_VAPOR_SELECT); @todo Need core support
-                Unit *pTarget;
+                Unit* pTarget;
                 if (!(pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true)))
                     if (!(pTarget = Unit::GetUnit(*me, pInstance ? pInstance->GetData64(DATA_PLAYER_GUID) : 0)))
                     {
@@ -325,7 +325,7 @@ struct boss_felmystAI : public ScriptedAI
                 break;
             case 5:
             {
-                Unit *pTarget;
+                Unit* pTarget;
                 if (!(pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true)))
                     if (!(pTarget = Unit::GetUnit(*me, pInstance ? pInstance->GetData64(DATA_PLAYER_GUID) : 0)))
                     {
@@ -365,7 +365,7 @@ struct boss_felmystAI : public ScriptedAI
                     uiFlightCount = 4;
                 break;
             case 9:
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_TOPAGGRO))
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_TOPAGGRO))
                     DoStartMovement(pTarget);
                 else
                 {
@@ -419,7 +419,7 @@ struct boss_felmystAI : public ScriptedAI
                     events.ScheduleEvent(EVENT_GAS_NOVA, urand(20000,25000));
                     break;
                 case EVENT_ENCAPSULATE:
-                    if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true))
+                    if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true))
                         DoCast(pTarget, SPELL_ENCAPSULATE_CHANNEL, false);
                     events.ScheduleEvent(EVENT_ENCAPSULATE, urand(25000,30000));
                     break;
@@ -504,7 +504,7 @@ struct mob_felmyst_vaporAI : public ScriptedAI
     void UpdateAI(const uint32 /*diff*/)
     {
         if (!me->getVictim())
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 AttackStart(pTarget);
     }
 };

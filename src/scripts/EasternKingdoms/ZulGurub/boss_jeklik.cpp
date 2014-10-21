@@ -83,7 +83,7 @@ struct boss_jeklikAI : public ScriptedAI
         PhaseTwo = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
         DoCast(me, SPELL_BAT_FORM);
@@ -108,7 +108,7 @@ struct boss_jeklikAI : public ScriptedAI
             {
                 if (Charge_Timer <= diff)
                 {
-                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
                         DoCast(pTarget, SPELL_CHARGE);
                         AttackStart(pTarget);
@@ -137,7 +137,7 @@ struct boss_jeklikAI : public ScriptedAI
 
                 if (SpawnBats_Timer <= diff)
                 {
-                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
                     Creature* Bat = NULL;
                     Bat = me->SummonCreature(11368, -12291.6220f, -1380.2640f, 144.8304f, 5.483f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
@@ -169,7 +169,7 @@ struct boss_jeklikAI : public ScriptedAI
                 {
                     if (PhaseTwo && ShadowWordPain_Timer <= diff)
                     {
-                        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                         {
                             DoCast(pTarget, SPELL_SHADOW_WORD_PAIN);
                             ShadowWordPain_Timer = 12000 + rand()%6000;
@@ -206,7 +206,7 @@ struct boss_jeklikAI : public ScriptedAI
 
                     if (SpawnFlyingBats_Timer <= diff)
                     {
-                        Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                        Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                         if (!pTarget)
                             return;
 
@@ -253,7 +253,7 @@ struct mob_batriderAI : public ScriptedAI
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);    // not attackable so will despawn at Despawn_Timer
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI (const uint32 diff)
     {
@@ -263,7 +263,7 @@ struct mob_batriderAI : public ScriptedAI
         // Bomb_Timer
         if (Bomb_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 DoCast(pTarget, SPELL_BOMB);
                 Bomb_Timer = 2500;

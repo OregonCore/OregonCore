@@ -1560,7 +1560,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
 
                     Player* pCaster = m_caster->ToPlayer();
 
-                    Item *item = pCaster->GetWeaponForAttack(OFF_ATTACK);
+                    Item* item = pCaster->GetWeaponForAttack(OFF_ATTACK);
                     if (!item)
                         return;
 
@@ -2059,7 +2059,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
         // Priest Shadowfiend (34433) need apply mana gain trigger aura on pet
         case 41967:
         {
-            if (Unit *pet = m_caster->GetGuardianPet())
+            if (Unit* pet = m_caster->GetGuardianPet())
                 pet->CastSpell(pet, 28305, true);
             return;
         }
@@ -2528,7 +2528,7 @@ void Spell::SpellDamageHeal(SpellEffIndex /*effIndex*/)
     if (unitTarget && unitTarget->isAlive() && damage >= 0)
     {
         // Try to get original caster
-        Unit *caster = m_originalCasterGUID ? m_originalCaster : m_caster;
+        Unit* caster = m_originalCasterGUID ? m_originalCaster : m_caster;
 
         // Skip if m_originalCaster not available
         if (!caster)
@@ -2605,7 +2605,7 @@ void Spell::EffectHealPct(SpellEffIndex /*effIndex*/)
     if (unitTarget && unitTarget->isAlive() && damage >= 0)
     {
         // Try to get original caster
-        Unit *caster = m_originalCasterGUID ? m_originalCaster : m_caster;
+        Unit* caster = m_originalCasterGUID ? m_originalCaster : m_caster;
 
         // Skip if m_originalCaster not available
         if (!caster)
@@ -2629,7 +2629,7 @@ void Spell::EffectHealMechanical(SpellEffIndex /*effIndex*/)
     if (unitTarget && unitTarget->isAlive() && damage >= 0)
     {
         // Try to get original caster
-        Unit *caster = m_originalCasterGUID ? m_originalCaster : m_caster;
+        Unit* caster = m_originalCasterGUID ? m_originalCaster : m_caster;
 
         // Skip if m_originalCaster not available
         if (!caster)
@@ -2792,7 +2792,7 @@ void Spell::EffectPersistentAA(SpellEffIndex effIndex)
     if (Player* modOwner = m_originalCaster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_RADIUS, radius);
 
-    Unit *caster = m_caster->GetEntry() == WORLD_TRIGGER ? m_originalCaster : m_caster;
+    Unit* caster = m_caster->GetEntry() == WORLD_TRIGGER ? m_originalCaster : m_caster;
     int32 duration = GetSpellDuration(m_spellInfo);
     DynamicObject* dynObj = new DynamicObject;
     if (!dynObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), caster, m_spellInfo->Id, effIndex, m_targets.m_dstPos, duration, radius))
@@ -3176,7 +3176,7 @@ void Spell::EffectSummonChangeItem(SpellEffIndex effIndex)
 
     uint16 pos = m_CastItem->GetPos();
 
-    Item *pNewItem = Item::CreateItem(newitemid, 1, player);
+    Item* pNewItem = Item::CreateItem(newitemid, 1, player);
     if (!pNewItem)
         return;
 
@@ -3470,7 +3470,7 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
             // @todo possible chance depend from spell level??
             int32 miss_chance = 0;
             // Apply dispel mod from aura caster
-            if (Unit *caster = aur->GetCaster())
+            if (Unit* caster = aur->GetCaster())
             {
                 if (Player* modOwner = caster->GetSpellModOwner())
                     modOwner->ApplySpellMod(spellInfo->Id, SPELLMOD_RESIST_DISPEL_CHANCE, miss_chance, this);
@@ -4413,7 +4413,7 @@ void Spell::SpellDamageWeaponDmg(SpellEffIndex effIndex)
     // take ammo
     if (m_attackType == RANGED_ATTACK && m_caster->GetTypeId() == TYPEID_PLAYER)
     {
-        Item *pItem = m_caster->ToPlayer()->GetWeaponForAttack(RANGED_ATTACK);
+        Item* pItem = m_caster->ToPlayer()->GetWeaponForAttack(RANGED_ATTACK);
 
         // wands don't have ammo
         if (!pItem  || pItem->IsBroken() || pItem->GetProto()->SubClass == ITEM_SUBCLASS_WEAPON_WAND)
@@ -5038,7 +5038,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
 
                     uint8 bag = 19;
                     uint8 slot = 0;
-                    Item *item = NULL;
+                    Item* item = NULL;
 
                     while (bag != 0)
                     {
@@ -5733,7 +5733,7 @@ void Spell::EffectAddExtraAttacks(SpellEffIndex /*effIndex*/)
     //if (unitTarget->m_extraAttacks)
     //    return;
 
-    Unit *victim = unitTarget->getVictim();
+    Unit* victim = unitTarget->getVictim();
 
     // attack prevented
     // fixme, some attacks may not target current victim, this is right now not handled
@@ -5913,7 +5913,7 @@ void Spell::EffectCharge(SpellEffIndex /*effIndex*/)
     if (!m_caster)
         return;
 
-    Unit *target = m_targets.getUnitTarget();
+    Unit* target = m_targets.getUnitTarget();
     if (!target)
         return;
 
@@ -6425,7 +6425,7 @@ void Spell::EffectStealBeneficialBuff(SpellEffIndex effIndex)
             // @todo possible chance depend from spell level??
             int32 miss_chance = 0;
             // Apply dispel mod from aura caster
-            if (Unit *caster = aur->GetCaster())
+            if (Unit* caster = aur->GetCaster())
             {
                 if ( Player* modOwner = caster->GetSpellModOwner())
                     modOwner->ApplySpellMod(aur->GetSpellProto()->Id, SPELLMOD_RESIST_DISPEL_CHANCE, miss_chance, this);
@@ -6537,7 +6537,7 @@ void Spell::EffectBind(SpellEffIndex /*effIndex*/)
 
 void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *properties)
 {
-    Unit *caster = m_originalCaster;
+    Unit* caster = m_originalCaster;
     if (caster && caster->GetTypeId() == TYPEID_UNIT && caster->ToCreature()->isTotem())
         caster = caster->GetOwner();
     if (!caster)

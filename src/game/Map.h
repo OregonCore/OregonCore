@@ -276,10 +276,10 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         virtual void Update(const uint32&);
 
         /*
-        void MessageBroadcast(Player* , WorldPacket *, bool to_self);
-        void MessageBroadcast(WorldObject *, WorldPacket *);
-        void MessageDistBroadcast(Player* , WorldPacket *, float dist, bool to_self, bool own_team_only = false);
-        void MessageDistBroadcast(WorldObject *, WorldPacket *, float dist);
+        void MessageBroadcast(Player* , WorldPacket* , bool to_self);
+        void MessageBroadcast(WorldObject *, WorldPacket* );
+        void MessageDistBroadcast(Player* , WorldPacket* , float dist, bool to_self, bool own_team_only = false);
+        void MessageDistBroadcast(WorldObject *, WorldPacket* , float dist);
         */
 
         float GetVisibilityDistance() const { return m_VisibleDistance; }
@@ -424,7 +424,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         void UpdateIteratorBack(Player* player);
 
-        TempSummon *SummonCreature(uint32 entry, const Position &pos, SummonPropertiesEntry const *properties = NULL, uint32 duration = 0, Unit *summoner = NULL, SpellEntry const* spellInfo = NULL);
+        TempSummon *SummonCreature(uint32 entry, const Position &pos, SummonPropertiesEntry const *properties = NULL, uint32 duration = 0, Unit* summoner = NULL, SpellEntry const* spellInfo = NULL);
         Creature* GetCreature(uint64 guid);
         GameObject* GetGameObject(uint64 guid);
         DynamicObject* GetDynamicObject(uint64 guid);

@@ -138,7 +138,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit * /*killer*/)
+    void JustDied(Unit* /*killer*/)
     {
         DoScriptText(SAY_DEATH, me);
 
@@ -155,7 +155,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
             RemoveGravityLapse();                           // Remove Gravity Lapse so that players fall to ground if they kill him when in air.
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         if (!pInstance)
             return;
@@ -164,7 +164,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
        //Close the encounter door, open it in JustDied/Reset
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!HasTaunted && me->IsWithinDistInMap(who, 40.0f))
         {
@@ -293,7 +293,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
                 if (PhoenixTimer <= diff)
                 {
 
-                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
+                    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
 
                     uint8 random = urand(1,2);
                     float x = KaelLocations[random][0];
@@ -314,7 +314,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
 
                 if (FlameStrikeTimer <= diff)
                 {
-                    if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                    if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     {
                         me->InterruptSpell(CURRENT_CHANNELED_SPELL);
                         me->InterruptSpell(CURRENT_GENERIC_SPELL);
@@ -386,7 +386,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
 
                             for (uint8 i = 0; i < 3; ++i)
                             {
-                                Unit *pTarget = NULL;
+                                Unit* pTarget = NULL;
                                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
                                 Creature* Orb = DoSpawnCreature(CREATURE_ARCANE_SPHERE, 5, 5, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
@@ -438,8 +438,8 @@ struct mob_felkael_flamestrikeAI : public ScriptedAI
         DoCast(me, SPELL_FLAMESTRIKE2, true);
     }
 
-    void EnterCombat(Unit * /*who*/) {}
-    void MoveInLineOfSight(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
     void UpdateAI(const uint32 diff)
     {
         if (FlameStrikeTimer <= diff)
@@ -611,7 +611,7 @@ struct mob_arcane_sphereAI : public ScriptedAI
 
         if (ChangeTargetTimer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
             {
                 me->AddThreat(pTarget, 1.0f);
                 me->TauntApply(pTarget);

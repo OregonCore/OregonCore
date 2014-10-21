@@ -46,7 +46,7 @@ struct boss_drakkisathAI : public ScriptedAI
         Thunderclap_Timer = 17000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

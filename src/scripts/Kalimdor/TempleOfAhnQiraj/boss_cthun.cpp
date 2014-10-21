@@ -194,7 +194,7 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
         Spawned = (Creature*)me->SummonCreature(MOB_EYE_TENTACLE,me->GetPositionX()+x,me->GetPositionY()+y,me->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
         if (Spawned)
         {
-            Unit *pTarget;
+            Unit* pTarget;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
             if (pTarget)
@@ -220,7 +220,7 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
                 if (BeamTimer <= diff)
                 {
                     //SPELL_GREEN_BEAM
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                     if (pTarget)
                     {
@@ -238,7 +238,7 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
                 //ClawTentacleTimer
                 if (ClawTentacleTimer <= diff)
                 {
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                     if (pTarget)
                     {
@@ -283,7 +283,7 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
                     me->InterruptNonMeleeSpells(false);
 
                     //Select random target for dark beam to start on
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
                     if (pTarget)
@@ -512,7 +512,7 @@ struct cthunAI : public Scripted_NoMovementAI
         Spawned = (Creature*)me->SummonCreature(MOB_EYE_TENTACLE,me->GetPositionX()+x,me->GetPositionY()+y,me->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
         if (Spawned)
         {
-            Unit *pTarget;
+            Unit* pTarget;
 
             pTarget = SelectRandomNotStomach();
 
@@ -735,7 +735,7 @@ struct cthunAI : public Scripted_NoMovementAI
                 //Stomach Enter Timer
                 if (StomachEnterTimer <= diff)
                 {
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     pTarget = SelectRandomNotStomach();
 
                     if (pTarget)
@@ -771,7 +771,7 @@ struct cthunAI : public Scripted_NoMovementAI
                 //GientClawTentacleTimer
                 if (GiantClawTentacleTimer <= diff)
                 {
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     pTarget = SelectRandomNotStomach();
                     if (pTarget)
                     {
@@ -791,7 +791,7 @@ struct cthunAI : public Scripted_NoMovementAI
                 //GiantEyeTentacleTimer
                 if (GiantEyeTentacleTimer <= diff)
                 {
-                    Unit *pTarget = NULL;
+                    Unit* pTarget = NULL;
                     pTarget = SelectRandomNotStomach();
                     if (pTarget)
                     {
@@ -966,7 +966,7 @@ struct eye_tentacleAI : public Scripted_NoMovementAI
         //MindflayTimer
         if (MindflayTimer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget && !pTarget->HasAura(SPELL_DIGESTIVE_ACID, 0))
                 DoCast(pTarget,SPELL_MIND_FLAY);
@@ -1029,7 +1029,7 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
                 //Dissapear and reappear at new position
                 me->SetVisibility(VISIBILITY_OFF);
 
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                 if (!pTarget)
                 {
@@ -1127,7 +1127,7 @@ struct giant_claw_tentacleAI : public Scripted_NoMovementAI
                 //Dissapear and reappear at new position
                 me->SetVisibility(VISIBILITY_OFF);
 
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (!pTarget)
                 {
@@ -1218,7 +1218,7 @@ struct giant_eye_tentacleAI : public Scripted_NoMovementAI
         //BeamTimer
         if (BeamTimer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget && !pTarget->HasAura(SPELL_DIGESTIVE_ACID, 0))
                 DoCast(pTarget,SPELL_GREEN_BEAM);

@@ -61,7 +61,7 @@ struct boss_galvangarAI : public ScriptedAI
         uiResetTimer                      = 5*IN_MILLISECONDS;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(YELL_AGGRO, me);
     }

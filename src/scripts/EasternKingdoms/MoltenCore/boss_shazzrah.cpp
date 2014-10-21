@@ -48,7 +48,7 @@ struct boss_shazzrahAI : public ScriptedAI
         Blink_Timer = 30000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -67,7 +67,7 @@ struct boss_shazzrahAI : public ScriptedAI
         //ShazzrahCurse_Timer
         if (ShazzrahCurse_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget) DoCast(pTarget, SPELL_SHAZZRAHCURSE);
 
@@ -93,7 +93,7 @@ struct boss_shazzrahAI : public ScriptedAI
         {
             // Teleporting him to a random gamer and casting Arcane Explosion after that.
             // Blink is not working cause of LoS System we need to do this hardcoded.
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM,0, 100, true))
             {
                 DoTeleportTo(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
                 DoCast(pTarget, SPELL_ARCANEEXPLOSION);

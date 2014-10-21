@@ -187,7 +187,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
        }
 
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         StartEvent(who);
     }
@@ -201,7 +201,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         Council[3] = pInstance->GetData64(DATA_KROSHFIREHAND);
     }
 
-    void StartEvent(Unit *who)
+    void StartEvent(Unit* who)
     {
         if (!pInstance)
             return;
@@ -221,7 +221,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
             if (pTarget)
             {
@@ -278,7 +278,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
             //Charging_Timer
             if (Charging_Timer <= diff)
             {
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget)
                 {
@@ -325,7 +325,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
             pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if (pInstance)
         {
@@ -354,7 +354,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
             if (pTarget)
             {
@@ -390,7 +390,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
         //DeathCoil Timer /need correct timer
         if (DeathCoil_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget)
                 DoCast(pTarget, SPELL_DEATH_COIL);
@@ -429,7 +429,7 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
             pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if (pInstance)
         {
@@ -458,7 +458,7 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
             if (pTarget)
             {
@@ -480,7 +480,7 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
         //GreaterPolymorph_Timer
         if (GreaterPolymorph_Timer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget)
                 DoCast(pTarget, SPELL_GREATER_POLYMORPH);
 
@@ -535,7 +535,7 @@ struct boss_blindeye_the_seerAI : public ScriptedAI
             pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if (pInstance)
         {
@@ -564,7 +564,7 @@ struct boss_blindeye_the_seerAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
             if (pTarget)
             {
@@ -626,7 +626,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
             pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         if (pInstance)
         {
@@ -655,7 +655,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
-            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+            Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
             if (pTarget)
             {
@@ -692,9 +692,9 @@ struct boss_krosh_firehandAI : public ScriptedAI
         //BlastWave_Timer
         if (BlastWave_Timer <= diff)
         {
-                       Unit *pTarget;
+                       Unit* pTarget;
             std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
-            std::vector<Unit *> target_list;
+            std::vector<Unit* > target_list;
             for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
                 pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());

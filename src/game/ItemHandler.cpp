@@ -145,7 +145,7 @@ void WorldSession::HandleAutoEquipItemOpcode(WorldPacket & recv_data)
     recv_data >> srcbag >> srcslot;
     //sLog.outDebug("STORAGE: receive srcbag = %u, srcslot = %u", srcbag, srcslot);
 
-    Item *pSrcItem  = _player->GetItemByPos(srcbag, srcslot);
+    Item* pSrcItem  = _player->GetItemByPos(srcbag, srcslot);
     if (!pSrcItem)
         return;                                             // only at cheat
 
@@ -161,7 +161,7 @@ void WorldSession::HandleAutoEquipItemOpcode(WorldPacket & recv_data)
     if (dest == src)                                           // prevent equip in same slot, only at cheat
         return;
 
-    Item *pDstItem = _player->GetItemByPos(dest);
+    Item* pDstItem = _player->GetItemByPos(dest);
     if (!pDstItem)                                         // empty slot, simple case
     {
         _player->RemoveItem(srcbag, srcslot, true);
@@ -252,7 +252,7 @@ void WorldSession::HandleDestroyItemOpcode(WorldPacket & recv_data)
         }
     }
 
-    Item *pItem  = _player->GetItemByPos(bag, slot);
+    Item* pItem  = _player->GetItemByPos(bag, slot);
     if (!pItem)
     {
         _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, NULL);
@@ -433,7 +433,7 @@ void WorldSession::HandleReadItem(WorldPacket & recv_data)
     recv_data >> bag >> slot;
 
     //sLog.outDetail("STORAGE: Read bag = %u, slot = %u", bag, slot);
-    Item *pItem = _player->GetItemByPos(bag, slot);
+    Item* pItem = _player->GetItemByPos(bag, slot);
 
     if (pItem && pItem->GetProto()->PageText)
     {
@@ -497,7 +497,7 @@ void WorldSession::HandleSellItemOpcode(WorldPacket & recv_data)
     if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
         GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
-    Item *pItem = _player->GetItemByGuid(itemguid);
+    Item* pItem = _player->GetItemByGuid(itemguid);
     if (pItem)
     {
         // prevent sell not owner item
@@ -543,7 +543,7 @@ void WorldSession::HandleSellItemOpcode(WorldPacket & recv_data)
             {
                 if (count < pItem->GetCount())               // need split items
                 {
-                    Item *pNewItem = pItem->CloneItem(count, _player);
+                    Item* pNewItem = pItem->CloneItem(count, _player);
                     if (!pNewItem)
                     {
                         sLog.outError("WORLD: HandleSellItemOpcode - could not create clone of item %u; count = %u", pItem->GetEntry(), count);
@@ -600,7 +600,7 @@ void WorldSession::HandleBuybackItem(WorldPacket & recv_data)
     if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
         GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
-    Item *pItem = _player->GetItemFromBuyBackSlot(slot);
+    Item* pItem = _player->GetItemFromBuyBackSlot(slot);
     if (pItem)
     {
         uint32 price = _player->GetUInt32Value(PLAYER_FIELD_BUYBACK_PRICE_1 + slot - BUYBACK_SLOT_START);
@@ -782,7 +782,7 @@ void WorldSession::HandleAutoStoreBagItemOpcode(WorldPacket & recv_data)
     recv_data >> srcbag >> srcslot >> dstbag;
     //sLog.outDebug("STORAGE: receive srcbag = %u, srcslot = %u, dstbag = %u", srcbag, srcslot, dstbag);
 
-    Item *pItem = _player->GetItemByPos(srcbag, srcslot);
+    Item* pItem = _player->GetItemByPos(srcbag, srcslot);
     if (!pItem)
         return;
 
@@ -883,7 +883,7 @@ void WorldSession::HandleAutoBankItemOpcode(WorldPacket& recvPacket)
     recvPacket >> srcbag >> srcslot;
     sLog.outDebug("STORAGE: receive srcbag = %u, srcslot = %u", srcbag, srcslot);
 
-    Item *pItem = _player->GetItemByPos(srcbag, srcslot);
+    Item* pItem = _player->GetItemByPos(srcbag, srcslot);
     if (!pItem)
         return;
 
@@ -907,7 +907,7 @@ void WorldSession::HandleAutoStoreBankItemOpcode(WorldPacket& recvPacket)
     recvPacket >> srcbag >> srcslot;
     sLog.outDebug("STORAGE: receive srcbag = %u, srcslot = %u", srcbag, srcslot);
 
-    Item *pItem = _player->GetItemByPos(srcbag, srcslot);
+    Item* pItem = _player->GetItemByPos(srcbag, srcslot);
     if (!pItem)
         return;
 
@@ -1013,7 +1013,7 @@ void WorldSession::HandleItemNameQueryOpcode(WorldPacket & recv_data)
     }
 // This is a BS check, there are lots of items listed in Item.dbc that do not even exist on official -- so we can NEVER get the data for them.
 // If you *really* want to spam your error log -- uncomment this.
-/*    else
+/*   else
     {
         // listed in dbc or not expected to exist unknown item
         if (sItemStore.LookupEntry(itemid))
@@ -1035,7 +1035,7 @@ void WorldSession::HandleWrapItemOpcode(WorldPacket& recv_data)
 
     sLog.outDebug("WRAP: receive gift_bag = %u, gift_slot = %u, item_bag = %u, item_slot = %u", gift_bag, gift_slot, item_bag, item_slot);
 
-    Item *gift = _player->GetItemByPos(gift_bag, gift_slot);
+    Item* gift = _player->GetItemByPos(gift_bag, gift_slot);
     if (!gift)
     {
         _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, gift, NULL);
@@ -1048,7 +1048,7 @@ void WorldSession::HandleWrapItemOpcode(WorldPacket& recv_data)
         return;
     }
 
-    Item *item = _player->GetItemByPos(item_bag, item_slot);
+    Item* item = _player->GetItemByPos(item_bag, item_slot);
 
     if (!item)
     {
@@ -1134,7 +1134,7 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recv_data)
 
     uint64 guids[4];
     uint32 GemEnchants[3], OldEnchants[3];
-    Item *Gems[3];
+    Item* Gems[3];
 
     for (int i = 0; i < 4; i++)
         recv_data >> guids[i];
@@ -1146,7 +1146,7 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recv_data)
     if ((guids[1] && (guids[1] == guids[2] || guids[1] == guids[3])) || (guids[2] && (guids[2] == guids[3])))
         return;
 
-    Item *itemTarget = _player->GetItemByGuid(guids[0]);
+    Item* itemTarget = _player->GetItemByGuid(guids[0]);
     if (!itemTarget)                                         //missing item to socket
         return;
 

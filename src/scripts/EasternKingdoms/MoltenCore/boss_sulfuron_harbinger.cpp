@@ -55,7 +55,7 @@ struct boss_sulfuronAI : public ScriptedAI
         Flamespear_Timer = 2000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -101,7 +101,7 @@ struct boss_sulfuronAI : public ScriptedAI
         //Flamespear_Timer
         if (Flamespear_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget) DoCast(pTarget, SPELL_FLAMESPEAR);
 
@@ -134,7 +134,7 @@ struct mob_flamewaker_priestAI : public ScriptedAI
         Immolate_Timer = 8000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -158,7 +158,7 @@ struct mob_flamewaker_priestAI : public ScriptedAI
         //ShadowWordPain_Timer
         if (ShadowWordPain_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget) DoCast(pTarget, SPELL_SHADOWWORDPAIN);
 
@@ -168,7 +168,7 @@ struct mob_flamewaker_priestAI : public ScriptedAI
         //Immolate_Timer
         if (Immolate_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget) DoCast(pTarget, SPELL_IMMOLATE);
 

@@ -128,7 +128,7 @@ struct boss_ragnarosAI : public Scripted_NoMovementAI
         DoScriptText(SAY_KILL, me);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

@@ -50,7 +50,7 @@ struct boss_garrAI : public ScriptedAI
         CheckAdds_Timer = 2000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -88,7 +88,7 @@ struct mob_fireswornAI : public ScriptedAI
         Immolate_Timer = 4000;                              //These times are probably wrong
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -100,7 +100,7 @@ struct mob_fireswornAI : public ScriptedAI
         //Immolate_Timer
         if (Immolate_Timer <= diff)
         {
-             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget, SPELL_IMMOLATE);
 
             Immolate_Timer = urand(5000,10000);

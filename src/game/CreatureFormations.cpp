@@ -259,7 +259,7 @@ void CreatureFormation::RemoveMember(Creature* member)
     member->SetFormation(NULL);
 }
 
-void CreatureFormation::MemberAttackStart(Creature* member, Unit *target)
+void CreatureFormation::MemberAttackStart(Creature* member, Unit* target)
 {
     uint8 formationAI = CreatureFormationMap[m_formationID]->formationAI;
 

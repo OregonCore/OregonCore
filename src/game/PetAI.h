@@ -35,12 +35,12 @@ class PetAI : public CreatureAI
         void UpdateAI(const uint32);
         static int Permissible(const Creature* );
 
-        void KilledUnit(Unit *victim);
-        void AttackStart(Unit *target);
+        void KilledUnit(Unit* victim);
+        void AttackStart(Unit* target);
         void MovementInform(uint32 moveType, uint32 data);
 
     private:
-        bool _isVisible(Unit *) const;
+        bool _isVisible(Unit* ) const;
         bool _needToStop(void) const;
         void _stopAttack(void);
 
@@ -51,10 +51,10 @@ class PetAI : public CreatureAI
         std::set<uint64> m_AllySet;
         uint32 m_updateAlliesTimer;
 
-        Unit *SelectNextTarget();
+        Unit* SelectNextTarget();
         void HandleReturnMovement();
-        void DoAttack(Unit *target, bool chase);
-        bool _CanAttack(Unit *target);
+        void DoAttack(Unit* target, bool chase);
+        bool _CanAttack(Unit* target);
 };
 #endif
 

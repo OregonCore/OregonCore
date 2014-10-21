@@ -114,7 +114,7 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
         {
             for (int i = 0; i < 3;i++)
             {
-                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 Creature* Wraith = me->SummonCreature(21062,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(),0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
                 if (pTarget && Wraith)
                     Wraith->AI()->AttackStart(pTarget);
@@ -137,7 +137,7 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
 
         if (Domination_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
             {
                 switch(rand()%2)
                 {
@@ -207,7 +207,7 @@ struct mob_nether_wraithAI : public ScriptedAI
 
         if (ArcaneMissiles_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(pTarget,SPELL_ARCANE_MISSILES);
             else
                 DoCastVictim(SPELL_ARCANE_MISSILES);

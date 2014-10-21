@@ -72,7 +72,7 @@ struct boss_maiden_of_virtueAI : public ScriptedAI
         DoScriptText(SAY_DEATH, me);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
@@ -104,7 +104,7 @@ struct boss_maiden_of_virtueAI : public ScriptedAI
 
         if (Holyfire_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_HOLYFIRE);
 
                 Holyfire_Timer = urand(8000,25000);      //Anywhere from 8 to 25 seconds, good luck having several of those in a row!
@@ -112,7 +112,7 @@ struct boss_maiden_of_virtueAI : public ScriptedAI
 
         if (Holywrath_Timer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_HOLYWRATH);
 
             Holywrath_Timer = urand(20000,30000);        //20-30 secs sounds nice

@@ -595,13 +595,13 @@ class CreatureEventAI : public CreatureAI
         void JustRespawned();
         void Reset();
         void JustReachedHome();
-        void EnterCombat(Unit *enemy);
+        void EnterCombat(Unit* enemy);
         void EnterEvadeMode();
         void JustDied(Unit* /*killer*/);
         void KilledUnit(Unit* victim);
         void JustSummoned(Creature* pUnit);
-        void AttackStart(Unit *who);
-        void MoveInLineOfSight(Unit *who);
+        void AttackStart(Unit* who);
+        void MoveInLineOfSight(Unit* who);
         void SpellHit(Unit* pUnit, const SpellEntry* pSpell);
         void DamageTaken(Unit* done_by, uint32& damage);
         void UpdateAI(const uint32 diff);

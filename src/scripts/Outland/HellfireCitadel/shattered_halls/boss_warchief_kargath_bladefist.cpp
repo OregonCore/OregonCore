@@ -98,7 +98,7 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
             pInstance->SetData(DATA_KARGATH, NOT_STARTED);
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(RAND(SAY_AGGRO1,SAY_AGGRO2,SAY_AGGRO3), me);
 

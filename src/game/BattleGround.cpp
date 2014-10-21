@@ -343,7 +343,7 @@ void BattleGround::Update(uint32 diff)
     }
 
     /*********************************************************/
-    /***           BATTLEGROUND BALLANCE SYSTEM            ***/
+    /***          BATTLEGROUND BALLANCE SYSTEM            ***/
     /*********************************************************/
 
     // if less then minimum players are in on one side, then start premature finish timer
@@ -382,7 +382,7 @@ void BattleGround::Update(uint32 diff)
         m_PrematureCountDown = false;
 
     /*********************************************************/
-    /***           BATTLEGROUND STARTING SYSTEM            ***/
+    /***          BATTLEGROUND STARTING SYSTEM            ***/
     /*********************************************************/
 
     if (GetStatus() == STATUS_WAIT_JOIN && GetPlayersSize())
@@ -452,7 +452,7 @@ void BattleGround::Update(uint32 diff)
     }
 
     /*********************************************************/
-    /***           BATTLEGROUND ENDING SYSTEM              ***/
+    /***          BATTLEGROUND ENDING SYSTEM              ***/
     /*********************************************************/
 
     if (GetStatus() == STATUS_WAIT_LEAVE)
@@ -479,7 +479,7 @@ void BattleGround::SetTeamStartLoc(uint32 TeamID, float X, float Y, float Z, flo
     m_TeamStartLocO[idx] = O;
 }
 
-void BattleGround::SendPacketToAll(WorldPacket *packet)
+void BattleGround::SendPacketToAll(WorldPacket* packet)
 {
     for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
     {
@@ -494,7 +494,7 @@ void BattleGround::SendPacketToAll(WorldPacket *packet)
     }
 }
 
-void BattleGround::SendPacketToTeam(uint32 TeamID, WorldPacket *packet, Player* sender, bool self)
+void BattleGround::SendPacketToTeam(uint32 TeamID, WorldPacket* packet, Player* sender, bool self)
 {
     for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
     {
@@ -1433,7 +1433,7 @@ bool BattleGround::AddObject(uint32 type, uint32 entry, float x, float y, float 
     // must be created this way, adding to godatamap would add it to the base map of the instance
     // and when loading it (in go::LoadFromDB()), a new guid would be assigned to the object, and a new object would be created
     // so we must create it specific for this instance
-    GameObject * go = new GameObject;
+    GameObject* go = new GameObject;
     if (!go->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT),entry, map,x,y,z,o,rotation0,rotation1,rotation2,rotation3,100,GO_STATE_READY))
     {
         sLog.outErrorDb("Gameobject template %u not found in database! BattleGround not created!", entry);
@@ -1473,7 +1473,7 @@ bool BattleGround::AddObject(uint32 type, uint32 entry, float x, float y, float 
 //it would be nice to correctly implement GO_ACTIVATED state and open/close doors in gameobject code
 void BattleGround::DoorClose(uint32 type)
 {
-    GameObject *obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
+    GameObject* obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
     if (obj)
     {
         //if doors are open, close it
@@ -1492,7 +1492,7 @@ void BattleGround::DoorClose(uint32 type)
 
 void BattleGround::DoorOpen(uint32 type)
 {
-    GameObject *obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
+    GameObject* obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
     if (obj)
     {
         //change state to be sure they will be opened
@@ -1507,7 +1507,7 @@ void BattleGround::DoorOpen(uint32 type)
 
 GameObject* BattleGround::GetBGObject(uint32 type)
 {
-    GameObject *obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
+    GameObject* obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
     if (!obj)
         sLog.outError("couldn't get gameobject %i",type);
     return obj;
@@ -1528,7 +1528,7 @@ void BattleGround::SpawnBGObject(uint32 type, uint32 respawntime)
         return;
     if (respawntime == 0)
     {
-        GameObject *obj = map->GetGameObject(m_BgObjects[type]);
+        GameObject* obj = map->GetGameObject(m_BgObjects[type]);
         if (obj)
         {
             //we need to change state from GO_JUST_DEACTIVATED to GO_READY in case battleground is starting again
@@ -1540,7 +1540,7 @@ void BattleGround::SpawnBGObject(uint32 type, uint32 respawntime)
     }
     else
     {
-        GameObject *obj = map->GetGameObject(m_BgObjects[type]);
+        GameObject* obj = map->GetGameObject(m_BgObjects[type]);
         if (obj)
         {
             map->AddToMap(obj);
@@ -1625,7 +1625,7 @@ bool BattleGround::DelObject(uint32 type)
     if (!m_BgObjects[type])
         return true;
 
-    GameObject *obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
+    GameObject* obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
     if (!obj)
     {
         sLog.outError("Can't find gobject guid: %u",GUID_LOPART(m_BgObjects[type]));
@@ -1722,7 +1722,7 @@ buffs are in their positions when battleground starts
 */
 void BattleGround::HandleTriggerBuff(uint64 const& go_guid)
 {
-    GameObject *obj = GetBgMap()->GetGameObject(go_guid);
+    GameObject* obj = GetBgMap()->GetGameObject(go_guid);
     if (!obj || obj->GetGoType() != GAMEOBJECT_TYPE_TRAP || !obj->isSpawned())
         return;
 
@@ -1867,7 +1867,7 @@ int32 BattleGround::GetObjectType(uint64 guid)
     return -1;
 }
 
-void BattleGround::HandleKillUnit(Creature*  /*creature*/, Player* /*killer*/)
+void BattleGround::HandleKillUnit(Creature* /*creature*/, Player* /*killer*/)
 {
 }
 

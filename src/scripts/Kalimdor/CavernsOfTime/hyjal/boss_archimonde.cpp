@@ -194,7 +194,7 @@ struct mob_doomfireAI : public ScriptedAI
 
         if (TargetSelected && TargetGUID)
         {
-            Unit *pTarget = Unit::GetUnit((*me), TargetGUID);
+            Unit* pTarget = Unit::GetUnit((*me), TargetGUID);
             if (pTarget && pTarget->isAlive())
             {
                 pTarget->CastSpell(pTarget, SPELL_DOOMFIRE_DAMAGE, true);
@@ -247,7 +247,7 @@ struct mob_doomfire_targettingAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) {}
 
-    void DamageTaken(Unit * /*done_by*/, uint32 &damage) { damage = 0; }
+    void DamageTaken(Unit* /*done_by*/, uint32 &damage) { damage = 0; }
 
     void UpdateAI(const uint32 diff)
     {
@@ -279,7 +279,7 @@ struct mob_doomfire_targettingAI : public ScriptedAI
 
         if (ChangeTargetTimer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             switch(rand()%2)
             {
                 case 0:                                     // stalk player
@@ -365,7 +365,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         IsChanneling = false;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
         me->InterruptSpell(CURRENT_CHANNELED_SPELL);
         DoScriptText(SAY_AGGRO, me);
@@ -375,7 +375,7 @@ struct boss_archimondeAI : public hyjal_trashAI
             pInstance->SetData(DATA_ARCHIMONDEEVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit * victim)
+    void KilledUnit(Unit* victim)
     {
         DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2,SAY_SLAY3), me);
 
@@ -408,7 +408,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         ++SoulChargeCount;
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit* victim)
     {
         hyjal_trashAI::JustDied(victim);
         DoScriptText(SAY_DEATH, me);
@@ -441,7 +441,7 @@ struct boss_archimondeAI : public hyjal_trashAI
             return false;
 
         targets.sort(Oregon::ObjectDistanceOrderPred(me));
-        Unit *pTarget = targets.front();
+        Unit* pTarget = targets.front();
         if (pTarget)
         {
             if (!me->IsWithinDistInMap(pTarget, me->GetAttackDistance(pTarget)))
@@ -453,7 +453,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         return false;
     }
 
-    void SummonDoomfire(Unit *pTarget)
+    void SummonDoomfire(Unit* pTarget)
     {
         Creature* Doomfire = DoSpawnCreature(CREATURE_DOOMFIRE_TARGETING, float(rand()%30), float(rand()%30), 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
         if (Doomfire)

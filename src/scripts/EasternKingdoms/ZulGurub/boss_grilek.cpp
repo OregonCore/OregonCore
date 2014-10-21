@@ -41,7 +41,7 @@ struct boss_grilekAI : public ScriptedAI
         GroundTremor_Timer = 8000 + rand()%8000;
     }
 
-    void EnterCombat(Unit * /*who*/)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -56,7 +56,7 @@ struct boss_grilekAI : public ScriptedAI
         {
 
             DoCast(me, SPELL_AVARTAR);
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
 
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
 

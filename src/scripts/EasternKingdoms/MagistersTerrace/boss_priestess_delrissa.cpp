@@ -248,7 +248,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
         if (HealTimer <= diff)
         {
             uint32 health = me->GetHealth();
-            Unit *pTarget = me;
+            Unit* pTarget = me;
             for (uint8 i = 0; i < MAX_ACTIVE_LACKEY; ++i)
                 if (Unit* pAdd = Unit::GetUnit(*me, m_auiLackeyGUID[i]))
                     if (pAdd->isAlive() && pAdd->GetHealth() < health)
@@ -260,7 +260,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
 
         if (RenewTimer <= diff)
         {
-            Unit *pTarget = me;
+            Unit* pTarget = me;
 
             if (urand(0,1))
                 if (Unit* pAdd = Unit::GetUnit(*me, m_auiLackeyGUID[rand()%MAX_ACTIVE_LACKEY]))
@@ -273,7 +273,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
 
         if (ShieldTimer <= diff)
         {
-            Unit *pTarget = me;
+            Unit* pTarget = me;
 
             if (urand(0,1))
                 if (Unit* pAdd = Unit::GetUnit(*me, m_auiLackeyGUID[rand()%MAX_ACTIVE_LACKEY]))
@@ -286,7 +286,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
 
         if (DispelTimer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
 
             if (urand(0,1))
                 pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
@@ -752,7 +752,7 @@ struct boss_yazzaiAI : public boss_priestess_lackey_commonAI
 
         if (Polymorph_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 DoCast(pTarget, SPELL_POLYMORPH);
                 Polymorph_Timer = 20000;
@@ -797,7 +797,7 @@ struct boss_yazzaiAI : public boss_priestess_lackey_commonAI
             std::list<HostileReference*>& t_list = me->getThreatManager().getThreatList();
             for (std::list<HostileReference*>::const_iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
             {
-                if (Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid()))
+                if (Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid()))
                 {
                     //if in melee range
                     if (pTarget->IsWithinDistInMap(me, 5))
@@ -877,7 +877,7 @@ struct boss_warlord_salarisAI : public boss_priestess_lackey_commonAI
             std::list<HostileReference*>& t_list = me->getThreatManager().getThreatList();
             for (std::list<HostileReference*>::const_iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
             {
-                if (Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid()))
+                if (Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid()))
                 {
                     //if in melee range
                     if (pTarget->IsWithinDistInMap(me, ATTACK_DISTANCE))
@@ -1243,9 +1243,9 @@ CreatureAI* GetAI_zelfan(Creature* pCreature)
 //        Explosion_Timer = 60000;
 //    }
 //
-//    void JustDied(Unit *Killer){}
+//    void JustDied(Unit* Killer){}
 //
-//    void EnterCombat(Unit * /*who*/){}
+//    void EnterCombat(Unit* /*who*/){}
 //
 //    void UpdateAI(const uint32 diff)
 //    {

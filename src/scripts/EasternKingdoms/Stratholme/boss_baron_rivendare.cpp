@@ -111,7 +111,7 @@ struct boss_baron_rivendareAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             summoned->AI()->AttackStart(pTarget);
     }
 
@@ -129,7 +129,7 @@ struct boss_baron_rivendareAI : public ScriptedAI
         //ShadowBolt
         if (ShadowBolt_Timer <= diff)
         {
-            if (/*Unit *pTarget = */SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (/*Unit* pTarget = */SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCastVictim( SPELL_SHADOWBOLT);
 
             ShadowBolt_Timer = 10000;

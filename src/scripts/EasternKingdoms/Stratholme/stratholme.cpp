@@ -122,7 +122,7 @@ struct mob_restless_soulAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) {}
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry *spell)
     {
         if (caster->GetTypeId() == TYPEID_PLAYER)
         {
@@ -191,7 +191,7 @@ struct mobs_spectral_ghostly_citizenAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) {}
 
-    void SpellHit(Unit * /*caster*/, const SpellEntry *spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry *spell)
     {
         if (!Tagged && spell->Id == SPELL_EGAN_BLASTER)
             Tagged = true;

@@ -107,7 +107,7 @@ struct boss_twinemperorsAI : public ScriptedAI
 
     void DamageTaken(Unit* /*done_by*/, uint32 &damage)
     {
-        Unit *pOtherBoss = GetOtherBoss();
+        Unit* pOtherBoss = GetOtherBoss();
         if (pOtherBoss)
         {
             float dPercent = ((float)damage) / ((float)me->GetMaxHealth());
@@ -141,7 +141,7 @@ struct boss_twinemperorsAI : public ScriptedAI
         DoPlaySoundToSet(me, IAmVeklor() ? SOUND_VL_KILL : SOUND_VN_KILL);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* who)
     {
         DoZoneInCombat();
         Creature* pOtherBoss = GetOtherBoss();
@@ -159,7 +159,7 @@ struct boss_twinemperorsAI : public ScriptedAI
         }
     }
 
-    void SpellHit(Unit *caster, const SpellEntry *entry)
+    void SpellHit(Unit* caster, const SpellEntry *entry)
     {
         if (caster == me)
             return;
@@ -197,7 +197,7 @@ struct boss_twinemperorsAI : public ScriptedAI
 
         if (Heal_Timer <= diff)
         {
-            Unit *pOtherBoss = GetOtherBoss();
+            Unit* pOtherBoss = GetOtherBoss();
             if (pOtherBoss && (pOtherBoss->GetDistance((const Creature* )me) <= 60))
             {
                 DoCast(pOtherBoss, SPELL_HEAL_BROTHER);
@@ -264,7 +264,7 @@ struct boss_twinemperorsAI : public ScriptedAI
             {
                 AfterTeleport = false;
                 me->ClearUnitState(UNIT_STATE_STUNNED);
-                Unit *nearu = me->SelectNearestTarget(100);
+                Unit* nearu = me->SelectNearestTarget(100);
                 //DoYell(nearu->GetName(), LANG_UNIVERSAL, 0);
                 if (nearu)
                 {
@@ -294,7 +294,7 @@ struct boss_twinemperorsAI : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!who || me->getVictim())
             return;
@@ -409,7 +409,7 @@ struct boss_twinemperorsAI : public ScriptedAI
 class BugAura : public Aura
 {
     public:
-        BugAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *pTarget, Unit *caster) : Aura(spell, eff, bp, pTarget, caster, NULL)
+        BugAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit* pTarget, Unit* caster) : Aura(spell, eff, bp, pTarget, caster, NULL)
             {}
 };
 
@@ -562,7 +562,7 @@ struct boss_veklorAI : public boss_twinemperorsAI
         //Blizzard_Timer
         if (Blizzard_Timer <= diff)
         {
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 45, true);
             if (pTarget)
                 DoCast(pTarget,SPELL_BLIZZARD);
@@ -571,7 +571,7 @@ struct boss_veklorAI : public boss_twinemperorsAI
 
         if (ArcaneBurst_Timer <= diff)
         {
-            Unit *mvic;
+            Unit* mvic;
             if ((mvic=SelectTarget(SELECT_TARGET_NEAREST, 0, NOMINAL_MELEE_RANGE, true)) != NULL)
             {
                 DoCast(mvic,SPELL_ARCANEBURST);

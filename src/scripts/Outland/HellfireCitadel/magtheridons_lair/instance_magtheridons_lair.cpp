@@ -127,7 +127,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
                 RespawnTimer = 10000;
             if (data != IN_PROGRESS)
             {
-                if (GameObject *Door = instance->GetGameObject(DoorGUID))
+                if (GameObject* Door = instance->GetGameObject(DoorGUID))
                     Door->SetGoState(GO_STATE_ACTIVE);
             }
             break;
@@ -149,7 +149,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
                         }
                     }
                     CageTimer = 0;
-                    if (GameObject *Door = instance->GetGameObject(DoorGUID))
+                    if (GameObject* Door = instance->GetGameObject(DoorGUID))
                         Door->SetGoState(GO_STATE_ACTIVE);
                 }break;
             case IN_PROGRESS: // Event start.
@@ -170,7 +170,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
                         Magtheridon->TextEmote("'s bonds begin to weaken!", 0);
                         CageTimer = 120000;
                     }
-                    if (GameObject *Door = instance->GetGameObject(DoorGUID))
+                    if (GameObject* Door = instance->GetGameObject(DoorGUID))
                         Door->SetGoState(GO_STATE_READY);
                 }break;
             case DONE: // Add buff and check if all channelers are dead.

@@ -217,7 +217,7 @@ void CreatureGroup::RemoveMember(Creature* member)
     member->SetGroup(NULL);
 }
 
-void CreatureGroup::MemberAttackStart(Creature* member, Unit *target)
+void CreatureGroup::MemberAttackStart(Creature* member, Unit* target)
 {
     for (CreatureGroupMemberType::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {

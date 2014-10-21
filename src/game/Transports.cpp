@@ -96,7 +96,7 @@ void MapManager::LoadTransports()
         //If we someday decide to use the grid to track transports, here:
         t->SetMap(MapManager::Instance().CreateMap(mapid, t, 0));
 
-        //t->GetMap()->Add<GameObject>((GameObject *)t);
+        //t->GetMap()->Add<GameObject>((GameObject* )t);
 
         ++count;
     } while (result->NextRow());

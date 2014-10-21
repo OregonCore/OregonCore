@@ -139,7 +139,7 @@ struct boss_gruulAI : public ScriptedAI
                         //First limit the list to only players
                         for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {
-                            Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
+                            Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
 
                             if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                                 knockback_targets.push_back(pTarget);
@@ -148,8 +148,8 @@ struct boss_gruulAI : public ScriptedAI
                         //Now to totally disoriend those players
                         for (std::vector<Unit*>::iterator itr = knockback_targets.begin(); itr != knockback_targets.end(); ++itr)
                         {
-                            Unit *target = *itr;
-                            Unit *target2 = *(knockback_targets.begin() + rand()%knockback_targets.size());
+                            Unit* target = *itr;
+                            Unit* target2 = *(knockback_targets.begin() + rand()%knockback_targets.size());
 
                             if (target && target2)
                             {
@@ -172,7 +172,7 @@ struct boss_gruulAI : public ScriptedAI
 
                         for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {
-                            Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
+                            Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
 
                             if (pTarget)
                             {
@@ -200,7 +200,7 @@ struct boss_gruulAI : public ScriptedAI
                         //std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
                         //for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         //{
-                        //    Unit *target = Unit::GetUnit(*me, (*itr)->getUnitGuid());
+                        //    Unit* target = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                         //    if (target)
                         //    {
                         //        target->RemoveAurasDueToSpell(SPELL_STONED);
@@ -211,7 +211,7 @@ struct boss_gruulAI : public ScriptedAI
 
                         me->GetMotionMaster()->Clear();
 
-                        Unit *victim = me->getVictim();
+                        Unit* victim = me->getVictim();
                         if (victim)
                         {
                             me->GetMotionMaster()->MoveChase(victim);
@@ -239,7 +239,7 @@ struct boss_gruulAI : public ScriptedAI
             // Hurtful Strike
             if (HurtfulStrike_Timer <= diff)
             {
-                Unit *pTarget = NULL;
+                Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
 
                 if (pTarget && me->IsWithinMeleeRange(me->getVictim()))
@@ -260,7 +260,7 @@ struct boss_gruulAI : public ScriptedAI
             // Cave In
             if (CaveIn_Timer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(pTarget,SPELL_CAVE_IN);
 
                 CaveIn_Timer = 20000;

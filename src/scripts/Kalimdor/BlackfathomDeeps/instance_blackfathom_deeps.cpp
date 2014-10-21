@@ -137,13 +137,13 @@ struct instance_blackfathom_deeps : public ScriptedInstance
             case TYPE_GELIHAST:
                 m_auiEncounter[0] = uiData;
                 if (uiData == DONE)
-                    if (GameObject *pGo = instance->GetGameObject(m_uiShrineOfGelihastGUID))
+                    if (GameObject* pGo = instance->GetGameObject(m_uiShrineOfGelihastGUID))
                         pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
                 break;
             case TYPE_AKU_MAI:
                 m_auiEncounter[3] = uiData;
                 if (uiData == DONE)
-                    if (GameObject *pGo = instance->GetGameObject(m_uiAltarOfTheDeepsGUID))
+                    if (GameObject* pGo = instance->GetGameObject(m_uiAltarOfTheDeepsGUID))
                     {
                         pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
                         pGo->SummonCreature(NPC_MORRIDUNE,SpawnsLocation[4], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 300000);

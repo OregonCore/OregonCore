@@ -86,7 +86,7 @@ struct npc_medivh_bmAI : public ScriptedAI
         me->CastSpell(me,SPELL_PORTAL_RUNE,true);
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (!pInstance)
             return;
@@ -289,8 +289,8 @@ struct npc_time_riftAI : public ScriptedAI
         //normalize Z-level if we can, if rift is not at ground level.
         pos.m_positionZ = std::max(me->GetMap()->GetHeight(pos.m_positionX, pos.m_positionY, MAX_HEIGHT), me->GetMap()->GetWaterLevel(pos.m_positionX, pos.m_positionY));
 
-        if (Unit *Summon = DoSummon(creature_entry, pos, 30000, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT))
-            if (Unit *temp = Unit::GetUnit(*me, pInstance ? pInstance->GetData64(DATA_MEDIVH) : 0))
+        if (Unit* Summon = DoSummon(creature_entry, pos, 30000, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT))
+            if (Unit* temp = Unit::GetUnit(*me, pInstance ? pInstance->GetData64(DATA_MEDIVH) : 0))
                 Summon->AddThreat(temp,0.0f);
     }
 

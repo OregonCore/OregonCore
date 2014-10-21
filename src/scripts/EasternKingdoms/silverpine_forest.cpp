@@ -51,7 +51,7 @@ struct npc_astor_hadrenAI : public ScriptedAI
     {
     }
 
-    void JustDied(Unit * /*who*/)
+    void JustDied(Unit* /*who*/)
     {
         me->setFaction(68);
     }
@@ -227,7 +227,7 @@ struct pyrewood_ambushAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit * /*who*/){}
+    void EnterCombat(Unit* /*who*/){}
 
     void JustSummoned(Creature* pSummoned)
     {
@@ -246,7 +246,7 @@ struct pyrewood_ambushAI : public ScriptedAI
         if (Creature* pSummoned = me->SummonCreature(creatureId, PyrewoodSpawnPoints[position][0], PyrewoodSpawnPoints[position][1], PyrewoodSpawnPoints[position][2], PyrewoodSpawnPoints[position][3], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 15000))
         {
             Player* pPlayer = NULL;
-            Unit *pTarget = NULL;
+            Unit* pTarget = NULL;
             if (PlayerGUID)
             {
                 pPlayer = Unit::GetPlayer(*me, PlayerGUID);
@@ -264,7 +264,7 @@ struct pyrewood_ambushAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit * /*pKiller*/)
+    void JustDied(Unit* /*pKiller*/)
     {
         if (PlayerGUID)
             if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))

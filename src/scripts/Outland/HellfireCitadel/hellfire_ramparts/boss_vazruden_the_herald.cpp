@@ -103,7 +103,7 @@ struct boss_nazanAI : public ScriptedAI
         }
     }
 
-    void SpellHitTarget(Unit *pTarget, const SpellEntry* entry)
+    void SpellHitTarget(Unit* pTarget, const SpellEntry* entry)
     {
         if (pTarget && entry->Id == SPELL_FIREBALL)
             me->SummonCreature(ENTRY_LIQUID_FIRE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),pTarget->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,30000);
@@ -125,7 +125,7 @@ struct boss_nazanAI : public ScriptedAI
 
         if (Fireball_Timer <= diff)
         {
-            if (Unit *victim = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* victim = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(victim, SPELL_FIREBALL,true);
             Fireball_Timer = 4000+rand()%3000;
         } else Fireball_Timer -= diff;
@@ -141,7 +141,7 @@ struct boss_nazanAI : public ScriptedAI
                 me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
                 me->AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
                 me->GetMotionMaster()->Clear();
-                if (Unit *victim = SelectUnit(SELECT_TARGET_NEAREST,0))
+                if (Unit* victim = SelectUnit(SELECT_TARGET_NEAREST,0))
                     me->AI()->AttackStart(victim);
                 DoStartMovement(me->getVictim());
                 DoScriptText(EMOTE, me);
@@ -245,7 +245,7 @@ struct boss_vazrudenAI : public ScriptedAI
 
         if (Revenge_Timer <= diff)
         {
-            if (Unit *victim = me->getVictim())
+            if (Unit* victim = me->getVictim())
                 DoCast(victim, SPELL_REVENGE);
             Revenge_Timer = 5000;
         } else Revenge_Timer -= diff;
@@ -368,7 +368,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
     void JustSummoned(Creature* summoned)
     {
         if (!summoned) return;
-        Unit *victim = me->getVictim();
+        Unit* victim = me->getVictim();
         if (summoned->GetEntry() == ENTRY_NAZAN)
         {
             ((boss_nazanAI *)summoned->AI())->VazrudenGUID = VazrudenGUID;
@@ -472,7 +472,7 @@ struct mob_hellfire_sentryAI : public ScriptedAI
 
         if (KidneyShot_Timer <= diff)
         {
-            if (Unit *victim = me->getVictim())
+            if (Unit* victim = me->getVictim())
                 DoCast(victim, SPELL_KIDNEY_SHOT);
             KidneyShot_Timer = 20000;
         } else KidneyShot_Timer -= diff;

@@ -194,7 +194,7 @@ struct npc_custodian_of_timeAI : public npc_escortAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* who)
     {
         if (HasEscortState(STATE_ESCORT_ESCORTING))
             return;
@@ -459,7 +459,7 @@ bool GOHello_go_landmark_treasure(Player* player, GameObject* /*_GO*/)
     if (player->GetQuestStatus(QUEST_CUERGOS_GOLD) != QUEST_STATUS_INCOMPLETE)
         return false;
 
-    Creature*  spawn = NULL;
+    Creature* spawn = NULL;
 
     spawn = player->SummonCreature(NPC_PIRATE, -10029.78f, -4032.54f, 19.41f, 3.40f, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if (spawn)
@@ -527,7 +527,7 @@ struct npc_toogaAI : public FollowerAI
         TortaGUID = 0;
     }
 
-    void MoveInLineOfSight(Unit *pWho)
+    void MoveInLineOfSight(Unit* pWho)
     {
         FollowerAI::MoveInLineOfSight(pWho);
 
@@ -569,7 +569,7 @@ struct npc_toogaAI : public FollowerAI
                 {
                     m_uiPostEventTimer = 5000;
 
-                    Unit *pTorta = Unit::GetUnit(*me, TortaGUID);
+                    Unit* pTorta = Unit::GetUnit(*me, TortaGUID);
                     if (!pTorta || !pTorta->isAlive())
                     {
                         //something happened, so just complete

@@ -441,7 +441,7 @@ void ArenaTeam::SetStats(uint32 stat_type, uint32 value)
     }
 }
 
-void ArenaTeam::BroadcastPacket(WorldPacket *packet)
+void ArenaTeam::BroadcastPacket(WorldPacket* packet)
 {
     for (MemberList::const_iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {

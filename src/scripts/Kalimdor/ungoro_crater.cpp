@@ -189,7 +189,7 @@ struct npc_ringoAI : public FollowerAI
         SpraggleGUID = 0;
     }
 
-    void MoveInLineOfSight(Unit *pWho)
+    void MoveInLineOfSight(Unit* pWho)
     {
         FollowerAI::MoveInLineOfSight(pWho);
 
@@ -248,7 +248,7 @@ struct npc_ringoAI : public FollowerAI
             {
                 if (m_uiEndEventTimer <= uiDiff)
                 {
-                    Unit *pSpraggle = Unit::GetUnit(*me, SpraggleGUID);
+                    Unit* pSpraggle = Unit::GetUnit(*me, SpraggleGUID);
                     if (!pSpraggle || !pSpraggle->isAlive())
                     {
                         SetFollowComplete();

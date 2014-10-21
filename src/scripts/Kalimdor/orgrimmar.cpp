@@ -187,7 +187,7 @@ struct npc_thrall_warchiefAI : public ScriptedAI
         Shock_Timer = 8000;
     }
 
-    void EnterCombat(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {

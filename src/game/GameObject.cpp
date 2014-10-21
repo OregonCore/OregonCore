@@ -117,7 +117,7 @@ void GameObject::RemoveFromWorld()
         // Possible crash at access to deleted GO in Unit::m_gameobj
         if (uint64 owner_guid = GetOwnerGUID())
         {
-            if (Unit * owner = GetOwner())
+            if (Unit* owner = GetOwner())
                 owner->RemoveGameObject(this,false);
             else
                 sLog.outError("Delete GameObject (GUID: %u Entry: %u) that has references in invalid creature %u GO list. Crash possible.",GetGUIDLow(),GetGOInfo()->id,GUID_LOPART(owner_guid));
@@ -701,7 +701,7 @@ uint32 GameObject::GetLootId(GameObjectInfo const* ginfo)
 }
 
 /*********************************************************/
-/***                    QUEST SYSTEM                   ***/
+/***                   QUEST SYSTEM                   ***/
 /*********************************************************/
 bool GameObject::hasQuest(uint32 quest_id) const
 {
@@ -764,7 +764,7 @@ bool GameObject::isVisibleForInState(Player const* u, bool inVisibleList) const
         // special invisibility cases
         if (GetGOInfo()->type == GAMEOBJECT_TYPE_TRAP && GetGOInfo()->trap.stealthed)
         {
-            Unit *owner = GetOwner();
+            Unit* owner = GetOwner();
             if (owner && u->IsHostileTo(owner) && !canDetectTrap(u, GetDistance(u)))
                 return false;
         }
@@ -1431,7 +1431,7 @@ void GameObject::CastSpell(Unit* target, uint32 spell)
     Creature* trigger = SummonTrigger(GetPositionX(), GetPositionY(), GetPositionZ(), 0, 1);
     if (!trigger) return;
 
-    if (Unit *owner = GetOwner())
+    if (Unit* owner = GetOwner())
     {
         trigger->setFaction(owner->getFaction());
         trigger->CastSpell(target ? target : trigger, spell, true, 0, 0, owner->GetGUID());
