@@ -579,7 +579,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
         }
     }
 
-    if (!pCurrChar->GetMap()->Add(pCurrChar))
+    if (!pCurrChar->GetMap()->AddToMap(pCurrChar))
     {
         // normal delayed teleport protection not applied (and this correct) for this case (Player object just created)
         AreaTrigger const* at = sObjectMgr.GetGoBackTrigger(pCurrChar->GetMapId());

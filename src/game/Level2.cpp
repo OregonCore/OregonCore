@@ -834,7 +834,7 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
 
     sLog.outDebug(GetOregonString(LANG_GAMEOBJECT_CURRENT), gInfo->name, db_lowGUID, x, y, z, o);
 
-    map->Add(pGameObj);
+    map->AddToMap(pGameObj);
 
     // @todo is it really necessary to add both the real and DB table guid here ?
     sObjectMgr.AddGameobjectToGrid(db_lowGUID, sObjectMgr.GetGOData(db_lowGUID));
@@ -990,7 +990,7 @@ bool ChatHandler::HandleNpcAddCommand(const char* args)
     // To call _LoadGoods(); _LoadQuests(); CreateTrainerSpells();
     pCreature->LoadFromDB(db_guid, map);
 
-    map->Add(pCreature);
+    map->AddToMap(pCreature);
     sObjectMgr.AddCreatureToGrid(db_guid, sObjectMgr.GetCreatureData(db_guid));
     return true;
 }
@@ -2630,7 +2630,7 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
                 wpCreature2->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
                 // To call _LoadGoods(); _LoadQuests(); CreateTrainerSpells();
                 wpCreature2->LoadFromDB(wpCreature2->GetDBTableGUIDLow(), map);
-                map->Add(wpCreature2);
+                map->AddToMap(wpCreature2);
             }
 
             WorldDatabase.PExecuteLog("UPDATE waypoint_data SET position_x = '%f',position_y = '%f',position_z = '%f' where id = '%u' AND point='%u'",
@@ -2837,7 +2837,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
 
             wpCreature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
             wpCreature->LoadFromDB(wpCreature->GetDBTableGUIDLow(),map);
-            map->Add(wpCreature);
+            map->AddToMap(wpCreature);
 
             if (target)
             {
@@ -2883,7 +2883,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
 
         pCreature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
         pCreature->LoadFromDB(pCreature->GetDBTableGUIDLow(), map);
-        map->Add(pCreature);
+        map->AddToMap(pCreature);
 
         if (target)
         {
@@ -2931,7 +2931,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
 
         pCreature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
         pCreature->LoadFromDB(pCreature->GetDBTableGUIDLow(), map);
-        map->Add(pCreature);
+        map->AddToMap(pCreature);
 
         if (target)
         {
@@ -3772,7 +3772,7 @@ bool ChatHandler::HandleCreatePetCommand(const char* /*args*/)
      pet->InitPetCreateSpells();
      pet->SetHealth(pet->GetMaxHealth());
 
-     pet->GetMap()->Add(pet->ToCreature());
+     pet->GetMap()->AddToMap(pet->ToCreature());
 
      // visual effect for levelup
      pet->SetUInt32Value(UNIT_FIELD_LEVEL,creatureTarget->getLevel());

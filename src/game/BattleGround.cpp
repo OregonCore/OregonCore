@@ -1464,7 +1464,7 @@ bool BattleGround::AddObject(uint32 type, uint32 entry, float x, float y, float 
     data.go_state       = 1;
 */
     // add to world, so it can be later looked up from HashMapHolder
-    map->Add(go);
+    map->AddToMap(go);
     m_BgObjects[type] = go->GetGUID();
     return true;
 }
@@ -1535,7 +1535,7 @@ void BattleGround::SpawnBGObject(uint32 type, uint32 respawntime)
             if (obj->getLootState() == GO_JUST_DEACTIVATED)
                 obj->SetLootState(GO_READY);
             obj->SetRespawnTime(0);
-            map->Add(obj);
+            map->AddToMap(obj);
         }
     }
     else
@@ -1543,7 +1543,7 @@ void BattleGround::SpawnBGObject(uint32 type, uint32 respawntime)
         GameObject *obj = map->GetGameObject(m_BgObjects[type]);
         if (obj)
         {
-            map->Add(obj);
+            map->AddToMap(obj);
             obj->SetRespawnTime(respawntime);
             obj->SetLootState(GO_JUST_DEACTIVATED);
         }
@@ -1568,7 +1568,7 @@ Creature* BattleGround::AddCreature(uint32 entry, uint32 type, uint32 teamval, f
 
     //pCreature->SetDungeonDifficulty(0);
 
-    map->Add(pCreature);
+    map->AddToMap(pCreature);
     m_BgCreatures[type] = pCreature->GetGUID();
 
     return  pCreature;

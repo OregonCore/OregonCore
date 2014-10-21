@@ -1834,7 +1834,7 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
     summon->SetHomePosition(pos);
 
     summon->InitStats(duration);
-    Add(summon->ToCreature());
+    AddToMap(summon->ToCreature());
     summon->InitSummon();
 
     return summon;
@@ -1942,7 +1942,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
             break;
     }
 
-    map->Add(pet->ToCreature());
+    map->AddToMap(pet->ToCreature());
 
     switch(petType)
     {
@@ -2000,7 +2000,7 @@ GameObject* WorldObject::SummonGameObject(uint32 entry, float x, float y, float 
         ((Unit*)this)->AddGameObject(go);
     else
         go->SetSpawnedByDefault(false);
-    map->Add(go);
+    map->AddToMap(go);
 
     return go;
 }

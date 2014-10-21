@@ -193,7 +193,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
     CreatureInfo const *cinfo = GetCreatureTemplate();
     if (cinfo->type == CREATURE_TYPE_CRITTER)
     {
-        map->Add(ToCreature());
+        map->AddToMap(ToCreature());
         return true;
     }
 
@@ -308,7 +308,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
     }
 
     owner->SetMinion(this, true);
-    map->Add(ToCreature());
+    map->AddToMap(ToCreature());
 
     uint32 timediff = (time(NULL) - fields[18].GetUInt32());
     _LoadAuras(timediff);

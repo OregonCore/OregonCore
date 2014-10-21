@@ -268,10 +268,10 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
             return false;
         }
 
-        virtual bool Add(Player* );
-        virtual void Remove(Player* , bool);
-        template<class T> void Add(T *);
-        template<class T> void Remove(T *, bool);
+        virtual bool AddToMap(Player* );
+        virtual void RemoveFromMap(Player* , bool);
+        template<class T> void AddToMap(T *);
+        template<class T> void RemoveFromMap(T *, bool);
 
         virtual void Update(const uint32&);
 
@@ -570,8 +570,8 @@ class InstanceMap : public Map
     public:
         InstanceMap(uint32 id, time_t, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent);
         ~InstanceMap();
-        bool Add(Player* );
-        void Remove(Player* , bool);
+        bool AddToMap(Player* );
+        void RemoveFromMap(Player* , bool);
         void Update(const uint32&);
         void CreateInstanceData(bool load);
         bool Reset(uint8 method);
@@ -598,8 +598,8 @@ class BattleGroundMap : public Map
         BattleGroundMap(uint32 id, time_t, uint32 InstanceId, Map* _parent);
         ~BattleGroundMap();
 
-        bool Add(Player* );
-        void Remove(Player* , bool);
+        bool AddToMap(Player* );
+        void RemoveFromMap(Player* , bool);
         bool CanEnter(Player* player);
         void SetUnload();
         void RemoveAllPlayers();

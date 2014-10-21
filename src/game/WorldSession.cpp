@@ -431,7 +431,7 @@ void WorldSession::LogoutPlayer(bool Save)
         // calls to GetMap in this case may cause crashes
         _player->CleanupsBeforeDelete();
         Map* _map = _player->GetMap();
-        _map->Remove(_player, true);
+        _map->RemoveFromMap(_player, true);
         _player = NULL;                                     // deleted in Remove call
 
         // Send the 'logout complete' packet to the client

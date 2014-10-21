@@ -169,7 +169,7 @@ bool OutdoorPvPSI::HandleDropFlag(Player* plr, uint32 spellId)
                         else
                         {
                             go->SetRespawnTime(0);
-                            map->Add(go);
+                            map->AddToMap(go);
                         }
                     }
                 }
@@ -198,7 +198,7 @@ bool OutdoorPvPSI::HandleDropFlag(Player* plr, uint32 spellId)
                         else
                         {
                             go->SetRespawnTime(0);
-                            map->Add(go);
+                            map->AddToMap(go);
                         }
                     }
                 }

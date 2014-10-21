@@ -1194,7 +1194,7 @@ uint32 ObjectMgr::AddGOData(uint32 entry, uint32 artKit, uint32 mapId, float x, 
             delete go;
             return 0;
         }
-        map->Add(go);
+        map->AddToMap(go);
     }
 
     return guid;
@@ -1241,7 +1241,7 @@ uint32 ObjectMgr::AddCreData(uint32 entry, uint32 /*team*/, uint32 mapId, float 
                 delete creature;
                 return 0;
             }
-            map->Add(creature);
+            map->AddToMap(creature);
         }
     }
 

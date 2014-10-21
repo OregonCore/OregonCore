@@ -2802,7 +2802,7 @@ void Spell::EffectPersistentAA(SpellEffIndex effIndex)
     }
     dynObj->SetUInt32Value(OBJECT_FIELD_TYPE, 65);
     caster->AddDynObject(dynObj);
-    dynObj->GetMap()->Add(dynObj);
+    dynObj->GetMap()->AddToMap(dynObj);
 }
 
 void Spell::EffectEnergize(SpellEffIndex effIndex)
@@ -3649,7 +3649,7 @@ void Spell::EffectAddFarsight(SpellEffIndex effIndex)
     m_caster->AddDynObject(dynObj);
 
     dynObj->setActive(true);    //must before add to map to be put in world container
-    dynObj->GetMap()->Add(dynObj); //grid will also be loaded
+    dynObj->GetMap()->AddToMap(dynObj); //grid will also be loaded
 
     // Need to update visibility of object for client to accept farsight guid
     ((Player*)m_caster)->SetViewpoint(dynObj, true);
@@ -3918,7 +3918,7 @@ void Spell::EffectTameCreature(SpellEffIndex /*effIndex*/)
     pet->SetUInt32Value(UNIT_FIELD_LEVEL,creatureTarget->getLevel()-1);
 
     // add to world
-    pet->GetMap()->Add(pet->ToCreature());
+    pet->GetMap()->AddToMap(pet->ToCreature());
 
     // visual effect for levelup
     pet->SetUInt32Value(UNIT_FIELD_LEVEL,creatureTarget->getLevel());
@@ -3967,7 +3967,7 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
 
             ASSERT(OldSummon->GetMap() == owner->GetMap());
 
-            //OldSummon->GetMap()->Remove(OldSummon->ToCreature(),false);
+            //OldSummon->GetMap()->RemoveFromMap(OldSummon->ToCreature(),false);
 
             float px, py, pz;
             owner->GetClosePoint(px, py, pz, OldSummon->GetObjectSize());
@@ -3975,7 +3975,7 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
             OldSummon->NearTeleportTo(px, py, pz, OldSummon->GetOrientation());
             //OldSummon->Relocate(px, py, pz, OldSummon->GetOrientation());
             //OldSummon->SetMap(owner->GetMap());
-            //owner->GetMap()->Add(OldSummon->ToCreature());
+            //owner->GetMap()->AddToMap(OldSummon->ToCreature());
 
             if (owner->GetTypeId() == TYPEID_PLAYER && OldSummon->isControlled())
                 owner->ToPlayer()->PetSpellInitialize();
@@ -4542,7 +4542,7 @@ void Spell::EffectSummonObjectWild(SpellEffIndex effIndex)
     pGameObj->SetSpellId(m_spellInfo->Id);
 
     // Wild object not have owner and check clickable by players
-    map->Add(pGameObj);
+    map->AddToMap(pGameObj);
 
     if (pGameObj->GetGoType() == GAMEOBJECT_TYPE_FLAGDROP && m_caster->GetTypeId() == TYPEID_PLAYER)
     {
@@ -4585,7 +4585,7 @@ void Spell::EffectSummonObjectWild(SpellEffIndex effIndex)
             linkedGO->SetSpellId(m_spellInfo->Id);
 
             // Wild object not have owner and check clickable by players
-            map->Add(linkedGO);
+            map->AddToMap(linkedGO);
         }
         else
         {
@@ -5400,7 +5400,7 @@ void Spell::EffectDuel(SpellEffIndex effIndex)
     pGameObj->SetSpellId(m_spellInfo->Id);
 
     m_caster->AddGameObject(pGameObj);
-    map->Add(pGameObj);
+    map->AddToMap(pGameObj);
     //END
 
     // Send request
@@ -5671,7 +5671,7 @@ void Spell::EffectSummonObject(SpellEffIndex effIndex)
     pGameObj->SetSpellId(m_spellInfo->Id);
     m_caster->AddGameObject(pGameObj);
 
-    map->Add(pGameObj);
+    map->AddToMap(pGameObj);
     WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
     data << uint64(pGameObj->GetGUID());
     m_caster->SendMessageToSet(&data, true);
@@ -6302,7 +6302,7 @@ void Spell::EffectTransmitted(SpellEffIndex effIndex)
     //m_caster->AddGameObject(pGameObj);
     //m_ObjToDel.push_back(pGameObj);
 
-    cMap->Add(pGameObj);
+    cMap->AddToMap(pGameObj);
 
     WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
     data << uint64(pGameObj->GetGUID());
@@ -6319,7 +6319,7 @@ void Spell::EffectTransmitted(SpellEffIndex effIndex)
             linkedGO->SetSpellId(m_spellInfo->Id);
             linkedGO->SetOwnerGUID(m_caster->GetGUID());
 
-            linkedGO->GetMap()->Add(linkedGO);
+            linkedGO->GetMap()->AddToMap(linkedGO);
         }
         else
         {
