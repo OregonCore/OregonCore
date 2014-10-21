@@ -123,9 +123,9 @@ struct instance_deadmines : public ScriptedInstance
     {
         if (GameObject *pIronCladDoor = instance->GetGameObject(IronCladDoorGUID))
         {
-            Creature *DefiasPirate1 = pIronCladDoor->SummonCreature(657,pIronCladDoor->GetPositionX() - 2,pIronCladDoor->GetPositionY()-7,pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
-            Creature *DefiasPirate2 = pIronCladDoor->SummonCreature(657,pIronCladDoor->GetPositionX() + 3,pIronCladDoor->GetPositionY()-6,pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
-            Creature *DefiasCompanion = pIronCladDoor->SummonCreature(3450,pIronCladDoor->GetPositionX() + 2,pIronCladDoor->GetPositionY()-6,pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
+            Creature* DefiasPirate1 = pIronCladDoor->SummonCreature(657,pIronCladDoor->GetPositionX() - 2,pIronCladDoor->GetPositionY()-7,pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
+            Creature* DefiasPirate2 = pIronCladDoor->SummonCreature(657,pIronCladDoor->GetPositionX() + 3,pIronCladDoor->GetPositionY()-6,pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
+            Creature* DefiasCompanion = pIronCladDoor->SummonCreature(3450,pIronCladDoor->GetPositionX() + 2,pIronCladDoor->GetPositionY()-6,pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
 
             DefiasPirate1GUID = DefiasPirate1->GetGUID();
             DefiasPirate2GUID = DefiasPirate2->GetGUID();
@@ -138,9 +138,9 @@ struct instance_deadmines : public ScriptedInstance
         if (!DefiasPirate1GUID || !DefiasPirate2GUID || !DefiasCompanionGUID)
             return;
 
-        Creature *pDefiasPirate1 = instance->GetCreature(DefiasPirate1GUID);
-        Creature *pDefiasPirate2 = instance->GetCreature(DefiasPirate2GUID);
-        Creature *pDefiasCompanion = instance->GetCreature(DefiasCompanionGUID);
+        Creature* pDefiasPirate1 = instance->GetCreature(DefiasPirate1GUID);
+        Creature* pDefiasPirate2 = instance->GetCreature(DefiasPirate2GUID);
+        Creature* pDefiasCompanion = instance->GetCreature(DefiasCompanionGUID);
         if (!pDefiasPirate1 || !pDefiasPirate2 || !pDefiasCompanion)
             return;
 

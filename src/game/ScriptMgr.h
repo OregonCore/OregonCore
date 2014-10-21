@@ -115,7 +115,7 @@ class ScriptMgr
         bool AreaTrigger(Player* pPlayer,AreaTriggerEntry const* atEntry);
         CreatureAI* GetAI(Creature* pCreature);
         bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets);
-        bool EffectDummyCreature(Unit *caster, uint32 spellId, uint32 effIndex, Creature *crTarget);
+        bool EffectDummyCreature(Unit *caster, uint32 spellId, uint32 effIndex, Creature* crTarget);
         InstanceData* CreateInstanceData(Map *map);
 };
 

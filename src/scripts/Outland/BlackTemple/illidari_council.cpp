@@ -197,7 +197,7 @@ struct mob_blood_elf_council_voice_triggerAI : public ScriptedAI
 
 struct mob_illidari_councilAI : public ScriptedAI
 {
-    mob_illidari_councilAI(Creature *c) : ScriptedAI(c)
+    mob_illidari_councilAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         for (uint8 i = 0; i < 4; ++i)
@@ -457,7 +457,7 @@ struct boss_illidari_councilAI : public ScriptedAI
 
 struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
 {
-    boss_gathios_the_shattererAI(Creature *c) : boss_illidari_councilAI(c) {}
+    boss_gathios_the_shattererAI(Creature* c) : boss_illidari_councilAI(c) {}
 
     uint32 ConsecrationTimer;
     uint32 HammerOfJusticeTimer;
@@ -608,7 +608,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
 
 struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
 {
-    boss_high_nethermancer_zerevorAI(Creature *c) : boss_illidari_councilAI(c) {}
+    boss_high_nethermancer_zerevorAI(Creature* c) : boss_illidari_councilAI(c) {}
 
     uint32 BlizzardTimer;
     uint32 FlamestrikeTimer;
@@ -701,7 +701,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
 
 struct boss_lady_malandeAI : public boss_illidari_councilAI
 {
-    boss_lady_malandeAI(Creature *c) : boss_illidari_councilAI(c) {}
+    boss_lady_malandeAI(Creature* c) : boss_illidari_councilAI(c) {}
 
     uint32 EmpoweredSmiteTimer;
     uint32 CircleOfHealingTimer;
@@ -767,7 +767,7 @@ struct boss_lady_malandeAI : public boss_illidari_councilAI
 
 struct boss_veras_darkshadowAI : public boss_illidari_councilAI
 {
-    boss_veras_darkshadowAI(Creature *c) : boss_illidari_councilAI(c) {}
+    boss_veras_darkshadowAI(Creature* c) : boss_illidari_councilAI(c) {}
 
     uint64 EnvenomTargetGUID;
 

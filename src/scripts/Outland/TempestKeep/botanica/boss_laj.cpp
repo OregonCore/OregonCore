@@ -46,7 +46,7 @@ EndScriptData */
 
 struct boss_lajAI : public ScriptedAI
 {
-    boss_lajAI(Creature *c) : ScriptedAI(c) {}
+    boss_lajAI(Creature* c) : ScriptedAI(c) {}
 
     bool CanSummon;
     uint32 Teleport_Timer;
@@ -145,7 +145,7 @@ struct boss_lajAI : public ScriptedAI
     {
     }
 
-    void JustSummoned(Creature *summon)
+    void JustSummoned(Creature* summon)
     {
         if (summon && me->getVictim())
             summon->AI()->AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0));

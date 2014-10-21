@@ -100,8 +100,8 @@ class GameEventMgr
         bool StartEvent(uint16 event_id, bool overwrite = false);
         void StopEvent(uint16 event_id, bool overwrite = false);
         void HandleQuestComplete(uint32 quest_id);  // called on world event type quest completions
-        void HandleWorldEventGossip(Player* plr, Creature * c);
-        uint32 GetNPCFlag(Creature * cr);
+        void HandleWorldEventGossip(Player* plr, Creature*  c);
+        uint32 GetNPCFlag(Creature*  cr);
     private:
         void SendWorldStateUpdate(Player* plr, uint16 event_id);
         void AddActiveEvent(uint16 event_id) { m_ActiveEvents.insert(event_id); }
@@ -157,7 +157,7 @@ class GameEventMgr
         bool isSystemInit;
 };
 
-#define gameeventmgr Oregon::Singleton<GameEventMgr>::Instance()
+#define sGameEventMgr Oregon::Singleton<GameEventMgr>::Instance()
 #endif
 
 bool isGameEventActive(uint16 event_id);

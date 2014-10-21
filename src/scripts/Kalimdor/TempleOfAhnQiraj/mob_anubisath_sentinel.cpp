@@ -103,20 +103,20 @@ struct aqsentinelAI : public ScriptedAI
         }
     }
 
-    aqsentinelAI(Creature *c) : ScriptedAI(c)
+    aqsentinelAI(Creature* c) : ScriptedAI(c)
     {
         ClearBudyList();
         abselected = 0;                                     // just initialization of variable
     }
 
-    Creature *nearby[3];
+    Creature* nearby[3];
 
     void ClearBudyList()
     {
         nearby[0] = nearby[1] = nearby[2] = NULL;
     }
 
-    void AddBuddyToList(Creature *c)
+    void AddBuddyToList(Creature* c)
     {
         if (c == me)
             return;
@@ -132,7 +132,7 @@ struct aqsentinelAI : public ScriptedAI
         }
     }
 
-    void GiveBuddyMyList(Creature *c)
+    void GiveBuddyMyList(Creature* c)
     {
         aqsentinelAI *cai = CAST_AI(aqsentinelAI, (c)->AI());
         for (int i=0; i<3; ++i)
@@ -152,7 +152,7 @@ struct aqsentinelAI : public ScriptedAI
     {
         for (int i=0; i<3; ++i)
         {
-            Creature *c = nearby[i];
+            Creature* c = nearby[i];
             if (c)
             {
                 if (!c->isInCombat())
@@ -259,7 +259,7 @@ struct aqsentinelAI : public ScriptedAI
     {
         for (int ni=0; ni<3; ++ni)
         {
-            Creature *sent = nearby[ni];
+            Creature* sent = nearby[ni];
             if (!sent)
                 continue;
             if (sent->isDead())

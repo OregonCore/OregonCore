@@ -77,7 +77,7 @@ EndScriptData */
 
 struct boss_hydross_the_unstableAI : public ScriptedAI
 {
-    boss_hydross_the_unstableAI(Creature *c) : ScriptedAI(c), Summons(me)
+    boss_hydross_the_unstableAI(Creature* c) : ScriptedAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
     }
@@ -199,7 +199,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
         }
     }
 
-    void SummonedCreatureDespawn(Creature *summon)
+    void SummonedCreatureDespawn(Creature* summon)
     {
         Summons.Despawn(summon);
     }

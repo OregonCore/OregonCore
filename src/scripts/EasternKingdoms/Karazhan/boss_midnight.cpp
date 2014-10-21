@@ -47,7 +47,7 @@ EndScriptData */
 
 struct boss_midnightAI : public ScriptedAI
 {
-    boss_midnightAI(Creature *c) : ScriptedAI(c) {}
+    boss_midnightAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 Attumen;
     uint8 Phase;
@@ -147,7 +147,7 @@ struct boss_midnightAI : public ScriptedAI
         Mount_Timer = 1000;
     }
 
-    void SetMidnight(Creature *, uint64);                   //Below ..
+    void SetMidnight(Creature* , uint64);                   //Below ..
 };
 
 CreatureAI* GetAI_boss_midnight(Creature* pCreature)
@@ -157,7 +157,7 @@ CreatureAI* GetAI_boss_midnight(Creature* pCreature)
 
 struct boss_attumenAI : public ScriptedAI
 {
-    boss_attumenAI(Creature *c) : ScriptedAI(c)
+    boss_attumenAI(Creature* c) : ScriptedAI(c)
     {
         Phase = 1;
 
@@ -262,7 +262,7 @@ struct boss_attumenAI : public ScriptedAI
         {
             if ((me->GetHealth()*100)/me->GetMaxHealth() < 25)
             {
-                Creature *pMidnight = Unit::GetCreature(*me, Midnight);
+                Creature* pMidnight = Unit::GetCreature(*me, Midnight);
                 if (pMidnight && pMidnight->GetTypeId() == TYPEID_UNIT)
                 {
                     CAST_AI(boss_midnightAI, (pMidnight->AI()))->Mount(me);
@@ -281,7 +281,7 @@ struct boss_attumenAI : public ScriptedAI
     }
 };
 
-void boss_midnightAI::SetMidnight(Creature *pAttumen, uint64 value)
+void boss_midnightAI::SetMidnight(Creature* pAttumen, uint64 value)
 {
     CAST_AI(boss_attumenAI, pAttumen->AI())->Midnight = value;
 }

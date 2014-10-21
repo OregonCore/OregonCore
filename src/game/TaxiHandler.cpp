@@ -42,14 +42,14 @@ void WorldSession::HandleTaxiNodeStatusQueryOpcode(WorldPacket & recv_data)
 void WorldSession::SendTaxiStatus(uint64 guid)
 {
     // cheating checks
-    Creature *unit = GetPlayer()->GetMap()->GetCreature(guid);
+    Creature* unit = GetPlayer()->GetMap()->GetCreature(guid);
     if (!unit)
     {
         sLog.outDebug("WorldSession::SendTaxiStatus - Unit (GUID: %u) not found.", uint32(GUID_LOPART(guid)));
         return;
     }
 
-    uint32 curloc = objmgr.GetNearestTaxiNode(unit->GetPositionX(),unit->GetPositionY(),unit->GetPositionZ(),unit->GetMapId());
+    uint32 curloc = sObjectMgr.GetNearestTaxiNode(unit->GetPositionX(),unit->GetPositionY(),unit->GetPositionZ(),unit->GetMapId());
 
     // not found nearest
     if (curloc == 0)
@@ -72,7 +72,7 @@ void WorldSession::HandleTaxiQueryAvailableNodesOpcode(WorldPacket & recv_data)
     recv_data >> guid;
 
     // cheating checks
-    Creature *unit = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_FLIGHTMASTER);
+    Creature* unit = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_FLIGHTMASTER);
     if (!unit)
     {
         sLog.outDebug("WORLD: HandleTaxiQueryAvailableNodes - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(guid)));
@@ -94,7 +94,7 @@ void WorldSession::HandleTaxiQueryAvailableNodesOpcode(WorldPacket & recv_data)
 void WorldSession::SendTaxiMenu(Creature* unit)
 {
     // find current node
-    uint32 curloc = objmgr.GetNearestTaxiNode(unit->GetPositionX(),unit->GetPositionY(),unit->GetPositionZ(),unit->GetMapId());
+    uint32 curloc = sObjectMgr.GetNearestTaxiNode(unit->GetPositionX(),unit->GetPositionY(),unit->GetPositionZ(),unit->GetMapId());
 
     if (curloc == 0)
         return;
@@ -127,7 +127,7 @@ void WorldSession::SendDoFlight(uint16 MountId, uint32 path, uint32 pathNode)
 bool WorldSession::SendLearnNewTaxiNode(Creature* unit)
 {
     // find current node
-    uint32 curloc = objmgr.GetNearestTaxiNode(unit->GetPositionX(),unit->GetPositionY(),unit->GetPositionZ(),unit->GetMapId());
+    uint32 curloc = sObjectMgr.GetNearestTaxiNode(unit->GetPositionX(),unit->GetPositionY(),unit->GetPositionZ(),unit->GetMapId());
 
     if (curloc == 0)
         return true;                                        // `true` send to avoid WorldSession::SendTaxiMenu call with one more curlock seartch with same false result.
@@ -157,7 +157,7 @@ void WorldSession::HandleActivateTaxiFarOpcode (WorldPacket & recv_data)
 
     recv_data >> guid >> _totalcost >> node_count;
 
-    Creature *npc = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_FLIGHTMASTER);
+    Creature* npc = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_FLIGHTMASTER);
     if (!npc)
     {
         sLog.outDebug("WORLD: HandleActivateTaxiFarOpcode - Unit (GUID: %u) not found or you can't interact with it.", uint32(GUID_LOPART(guid)));
@@ -235,10 +235,10 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
 
         DEBUG_LOG("WORLD: Taxi has to go from %u to %u", sourcenode, destinationnode);
 
-        uint16 MountId = objmgr.GetTaxiMount(sourcenode, GetPlayer()->GetTeam());
+        uint16 MountId = sObjectMgr.GetTaxiMount(sourcenode, GetPlayer()->GetTeam());
 
         uint32 path, cost;
-        objmgr.GetTaxiPath(sourcenode, destinationnode, path, cost);
+        sObjectMgr.GetTaxiPath(sourcenode, destinationnode, path, cost);
 
         if (path && MountId)
             SendDoFlight(MountId, path, 1);               // skip start fly node
@@ -259,7 +259,7 @@ void WorldSession::HandleActivateTaxiOpcode(WorldPacket & recv_data)
 
     recv_data >> guid >> nodes[0] >> nodes[1];
     DEBUG_LOG("WORLD: Received CMSG_ACTIVATETAXI from %d to %d" ,nodes[0],nodes[1]);
-    Creature *npc = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_FLIGHTMASTER);
+    Creature* npc = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_FLIGHTMASTER);
     if (!npc)
     {
         sLog.outDebug("WORLD: HandleActivateTaxiOpcode - Unit (GUID: %u) not found or you can't interact with it.", uint32(GUID_LOPART(guid)));

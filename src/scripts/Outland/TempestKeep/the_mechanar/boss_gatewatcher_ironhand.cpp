@@ -43,7 +43,7 @@ EndScriptData */
 // Gatewatcher Iron-Hand AI
 struct boss_gatewatcher_iron_handAI : public ScriptedAI
 {
-    boss_gatewatcher_iron_handAI(Creature *c) : ScriptedAI(c)
+    boss_gatewatcher_iron_handAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();

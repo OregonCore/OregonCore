@@ -29,7 +29,7 @@ EndScriptData */
 
 struct boss_hungarfenAI : public ScriptedAI
 {
-    boss_hungarfenAI(Creature *c) : ScriptedAI(c)
+    boss_hungarfenAI(Creature* c) : ScriptedAI(c)
     {
         HeroicMode = me->GetMap()->IsHeroic();
     }
@@ -95,7 +95,7 @@ CreatureAI* GetAI_boss_hungarfen(Creature* pCreature)
 
 struct mob_underbog_mushroomAI : public ScriptedAI
 {
-    mob_underbog_mushroomAI(Creature *c) : ScriptedAI(c) {}
+    mob_underbog_mushroomAI(Creature* c) : ScriptedAI(c) {}
 
     bool Stop;
     uint32 Grow_Timer;

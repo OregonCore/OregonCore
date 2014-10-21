@@ -41,7 +41,7 @@ EndScriptData */
 
 struct boss_anzuAI : public ScriptedAI
 {
-    boss_anzuAI(Creature *c) : ScriptedAI(c)
+    boss_anzuAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
@@ -93,7 +93,7 @@ struct boss_anzuAI : public ScriptedAI
             pInstance->SetData(DATA_ANZUEVENT, DONE);
     }
 	
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             summoned->AI()->AttackStart(pTarget);

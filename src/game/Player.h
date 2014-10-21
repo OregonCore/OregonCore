@@ -2444,7 +2444,7 @@ class Player : public Unit, public GridObject<Player>
         MapReference m_mapRef;
 
         void UpdateCharmedAI();
-        UnitAI *i_AI;
+        UnitAI* i_AI;
 
         uint32 m_timeSyncCounter;
         uint32 m_timeSyncTimer;

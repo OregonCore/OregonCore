@@ -46,7 +46,7 @@ enum Spells
 
 struct boss_venoxisAI : public ScriptedAI
 {
-    boss_venoxisAI(Creature *c) : ScriptedAI(c)
+    boss_venoxisAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -164,7 +164,7 @@ struct boss_venoxisAI : public ScriptedAI
                     me->InterruptNonMeleeSpells(false);
                     DoCast(me, SPELL_SNAKE_FORM);
                     me->SetObjectScale(2.0f);
-                    const CreatureInfo *cinfo = me->GetCreatureInfo();
+                    const CreatureInfo *cinfo = me->GetCreatureTemplate();
                     me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 25)));
                     me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 25)));
                     me->UpdateDamagePhysical(BASE_ATTACK);

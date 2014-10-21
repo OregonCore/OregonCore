@@ -69,7 +69,7 @@ class EmpoweringShadowsAura: public Aura
 
 struct mob_voidtravelerAI : public ScriptedAI
 {
-    mob_voidtravelerAI(Creature *c) : ScriptedAI(c)
+    mob_voidtravelerAI(Creature* c) : ScriptedAI(c)
     {
         HeroicMode = me->GetMap()->IsHeroic();
     }
@@ -131,7 +131,7 @@ CreatureAI* GetAI_mob_voidtraveler(Creature* pCreature)
 
 struct boss_grandmaster_vorpilAI : public ScriptedAI
 {
-    boss_grandmaster_vorpilAI(Creature *c) : ScriptedAI(c)
+    boss_grandmaster_vorpilAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
@@ -168,7 +168,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
         {
             for (int i = 0;i<5;i++)
             {
-                Creature *Portal = NULL;
+                Creature* Portal = NULL;
                 Portal = me->SummonCreature(MOB_VOID_PORTAL,VoidPortalCoords[i][0],VoidPortalCoords[i][1],VoidPortalCoords[i][2],0,TEMPSUMMON_CORPSE_DESPAWN,3000000);
                 if (Portal)
                 {
@@ -207,7 +207,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
         }
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         if (summoned && summoned->GetEntry() == MOB_VOID_TRAVELER)
             ((mob_voidtravelerAI*)summoned->AI())->Vorpil = me;

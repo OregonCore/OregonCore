@@ -701,7 +701,7 @@ void AreaAura::Update(uint32 diff)
                 if (!CheckTarget(*tIter))
                     continue;
 
-                if (SpellEntry const *actualSpellInfo = spellmgr.SelectAuraRankForPlayerLevel(GetSpellProto(), (*tIter)->getLevel()))
+                if (SpellEntry const *actualSpellInfo = sSpellMgr.SelectAuraRankForPlayerLevel(GetSpellProto(), (*tIter)->getLevel()))
                 {
                     //int32 actualBasePoints = m_currentBasePoints;
                     // recalculate basepoints for lower rank (all AreaAura spell not use custom basepoints?)
@@ -832,7 +832,7 @@ void Aura::UpdateAuraDuration()
         SendAuraDurationForCaster(caster->ToPlayer());
 
         Group* CasterGroup = caster->ToPlayer()->GetGroup();
-        if (CasterGroup && (spellmgr.GetSpellCustomAttr(GetId()) & SPELL_ATTR_CU_AURA_CC))
+        if (CasterGroup && (sSpellMgr.GetSpellCustomAttr(GetId()) & SPELL_ATTR_CU_AURA_CC))
         {
             for (GroupReference *itr = CasterGroup->GetFirstMember(); itr != NULL; itr = itr->next())
             {
@@ -1157,7 +1157,7 @@ void Aura::HandleAddModifier(bool apply, bool Real)
         mod->effectId = m_effIndex;
         mod->lastAffected = NULL;
 
-        uint64 spellAffectMask = spellmgr.GetSpellAffectMask(GetId(), m_effIndex);
+        uint64 spellAffectMask = sSpellMgr.GetSpellAffectMask(GetId(), m_effIndex);
 
         if (spellAffectMask)
             mod->mask = spellAffectMask;
@@ -1433,18 +1433,18 @@ void Aura::TriggerSpell()
                         // move loot to player inventory and despawn target
                         if (caster->GetTypeId() == TYPEID_PLAYER &&
                                 target->GetTypeId() == TYPEID_UNIT &&
-                                target->ToCreature()->GetCreatureInfo()->type == CREATURE_TYPE_GAS_CLOUD)
+                                target->ToCreature()->GetCreatureTemplate()->type == CREATURE_TYPE_GAS_CLOUD)
                         {
                             Player* player = caster->ToPlayer();
                             Creature* creature = target->ToCreature();
                             // missing lootid has been reported on startup - just return
-                            if (!creature->GetCreatureInfo()->SkinLootId)
+                            if (!creature->GetCreatureTemplate()->SkinLootId)
                             {
                                 return;
                             }
                             Loot *loot = &creature->loot;
                             loot->clear();
-                            loot->FillLoot(creature->GetCreatureInfo()->SkinLootId, LootTemplates_Skinning, NULL);
+                            loot->FillLoot(creature->GetCreatureTemplate()->SkinLootId, LootTemplates_Skinning, NULL);
                             for (uint8 i=0;i<loot->items.size();i++)
                             {
                                 LootItem *item = loot->LootItemInSlot(i,player);
@@ -2437,7 +2437,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     uint64 guid = caster->m_SummonSlot[3];
                     if (guid)
                     {
-                        Creature *totem = caster->GetMap()->GetCreature(guid);
+                        Creature* totem = caster->GetMap()->GetCreature(guid);
                         if (totem && totem->isTotem())
                             caster->ToPlayer()->CastSpell(totem, 6277, true);
                     }
@@ -2451,7 +2451,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
     }
 
     // pet auras
-    if (PetAura const* petSpell = spellmgr.GetPetAura(GetId()))
+    if (PetAura const* petSpell = sSpellMgr.GetPetAura(GetId()))
     {
         if (apply)
             m_target->AddPetAura(petSpell);
@@ -2469,7 +2469,7 @@ void Aura::HandleAuraMounted(bool apply, bool Real)
 
     if (apply)
     {
-        CreatureInfo const* ci = objmgr.GetCreatureTemplate(m_modifier.m_miscvalue);
+        CreatureInfo const* ci = sObjectMgr.GetCreatureTemplate(m_modifier.m_miscvalue);
         if (!ci)
         {
             sLog.outErrorDb("AuraMounted: creature_template='%u' not found in database (only need it modelid)", m_modifier.m_miscvalue);
@@ -2480,8 +2480,8 @@ void Aura::HandleAuraMounted(bool apply, bool Real)
         if (m_target->GetTypeId() == TYPEID_PLAYER)
             team = m_target->ToPlayer()->GetTeam();
 
-        uint32 display_id = objmgr.ChooseDisplayId(team,ci);
-        CreatureModelInfo const *minfo = objmgr.GetCreatureModelRandomGender(display_id);
+        uint32 display_id = sObjectMgr.ChooseDisplayId(team,ci);
+        CreatureModelInfo const *minfo = sObjectMgr.GetCreatureModelRandomGender(display_id);
         if (minfo)
             display_id = minfo->modelid;
 
@@ -2915,7 +2915,7 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
         {
             uint32 model_id;
 
-            CreatureInfo const * ci = objmgr.GetCreatureTemplate(m_modifier.m_miscvalue);
+            CreatureInfo const * ci = sObjectMgr.GetCreatureTemplate(m_modifier.m_miscvalue);
             if (!ci)
             {
                 model_id =16358;                             //pig pink ^_^
@@ -2953,7 +2953,7 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
 
         // apply default equipment for creature case
         if (m_target->GetTypeId() == TYPEID_UNIT)
-            ((Creature*)m_target)->LoadEquipment(((Creature*)m_target)->GetCreatureInfo()->equipmentId, true);
+            ((Creature*)m_target)->LoadEquipment(((Creature*)m_target)->GetCreatureTemplate()->equipmentId, true);
 
         // re-apply some from still active with preference negative cases
         Unit::AuraList const& otherTransforms = m_target->GetAurasByType(SPELL_AURA_TRANSFORM);
@@ -2979,14 +2979,14 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
             if (!m_target->GetAurasByType(SPELL_AURA_MOUNTED).empty())
             {
                 uint32 cr_id = m_target->GetAurasByType(SPELL_AURA_MOUNTED).front()->GetModifier()->m_miscvalue;
-                if (CreatureInfo const* ci = objmgr.GetCreatureTemplate(cr_id))
+                if (CreatureInfo const* ci = sObjectMgr.GetCreatureTemplate(cr_id))
                 {
                     uint32 team = 0;
                     if (m_target->GetTypeId() == TYPEID_PLAYER)
                         team = m_target->ToPlayer()->GetTeam();
 
-                    uint32 display_id = objmgr.ChooseDisplayId(team,ci);
-                    CreatureModelInfo const *minfo = objmgr.GetCreatureModelRandomGender(display_id);
+                    uint32 display_id = sObjectMgr.ChooseDisplayId(team,ci);
+                    CreatureModelInfo const *minfo = sObjectMgr.GetCreatureModelRandomGender(display_id);
                     if (minfo)
                         display_id = minfo->modelid;
 
@@ -5385,7 +5385,7 @@ void Aura::HandleAuraEmpathy(bool apply, bool /*Real*/)
     if (m_target->GetTypeId() != TYPEID_UNIT)
         return;
 
-    CreatureInfo const * ci = objmgr.GetCreatureTemplate(m_target->GetEntry());
+    CreatureInfo const * ci = sObjectMgr.GetCreatureTemplate(m_target->GetEntry());
     if (ci && ci->type == CREATURE_TYPE_BEAST)
         m_target->ApplyModUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_SPECIALINFO, apply);
 }
@@ -5600,7 +5600,7 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
 
 void Aura::CleanupTriggeredSpells()
 {
-	/*if(spellmgr.GetSpellElixirSpecific(m_spellProto->Id) & SPELL_GROUP_ELIXIR_SHATTRATH)
+	/*if(sSpellMgr.GetSpellElixirSpecific(m_spellProto->Id) & SPELL_GROUP_ELIXIR_SHATTRATH)
     {
         m_target->RemoveAurasDueToSpell( m_spellProto->EffectTriggerSpell[1]);  // remove triggered effect of shattrath flask, when removing it
         return;
@@ -5916,8 +5916,8 @@ void Aura::PeriodicTick()
                             if (m_spell->SpellFamilyName != SPELLFAMILY_WARLOCK)
                                 continue;
 
-                            SkillLineAbilityMap::const_iterator lower = spellmgr.GetBeginSkillLineAbilityMap(m_spell->Id);
-                            SkillLineAbilityMap::const_iterator upper = spellmgr.GetEndSkillLineAbilityMap(m_spell->Id);
+                            SkillLineAbilityMap::const_iterator lower = sSpellMgr.GetBeginSkillLineAbilityMap(m_spell->Id);
+                            SkillLineAbilityMap::const_iterator upper = sSpellMgr.GetEndSkillLineAbilityMap(m_spell->Id);
 
                             for (SkillLineAbilityMap::const_iterator _spell_idx = lower; _spell_idx != upper; ++_spell_idx)
                             {

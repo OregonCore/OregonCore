@@ -76,7 +76,7 @@ void InstanceData::LoadDoorData(const DoorData *data)
     sLog.outDebug("InstanceData::LoadDoorData: %u doors loaded.", doors.size());
 }
 
-void InstanceData::UpdateMinionState(Creature *minion, EncounterState state)
+void InstanceData::UpdateMinionState(Creature* minion, EncounterState state)
 {
     switch (state)
     {
@@ -146,7 +146,7 @@ void InstanceData::AddDoor(GameObject *door, bool add)
         UpdateDoorState(door);
 }
 
-void InstanceData::AddMinion(Creature *minion, bool add)
+void InstanceData::AddMinion(Creature* minion, bool add)
 {
     MinionInfoMap::iterator itr = minions.find(minion->GetEntry());
     if (itr == minions.end())

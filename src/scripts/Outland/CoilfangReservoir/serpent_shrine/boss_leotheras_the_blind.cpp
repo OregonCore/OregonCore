@@ -74,7 +74,7 @@ public:
 
 struct mob_inner_demonAI : public ScriptedAI
 {
-    mob_inner_demonAI(Creature *c) : ScriptedAI(c)
+    mob_inner_demonAI(Creature* c) : ScriptedAI(c)
     {
         victimGUID = 0;
     }
@@ -144,7 +144,7 @@ struct mob_inner_demonAI : public ScriptedAI
 //Original Leotheras the Blind AI
 struct boss_leotheras_the_blindAI : public ScriptedAI
 {
-    boss_leotheras_the_blindAI(Creature *c) : ScriptedAI(c)
+    boss_leotheras_the_blindAI(Creature* c) : ScriptedAI(c)
     {
         c->GetPosition(x,y,z);
         pInstance = c->GetInstanceData();
@@ -207,7 +207,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
     {
         for (uint8 i = 0; i < 3; ++i)
         {
-            if (Creature *add = Unit::GetCreature(*me,SpellBinderGUID[i]))
+            if (Creature* add = Unit::GetCreature(*me,SpellBinderGUID[i]))
                 add->DisappearAndDie();
 
             float nx = x;
@@ -504,7 +504,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
                 {
                     if ((*itr) && (*itr)->isAlive())
                     {
-                        Creature * demon = me->SummonCreature(INNER_DEMON_ID, (*itr)->GetPositionX()+10, (*itr)->GetPositionY()+10, (*itr)->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+                        Creature*  demon = me->SummonCreature(INNER_DEMON_ID, (*itr)->GetPositionX()+10, (*itr)->GetPositionY()+10, (*itr)->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                         if (demon)
                         {
                             demon->AI()->AttackStart((*itr));
@@ -555,7 +555,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             //at this point he divides himself in two parts
             CastConsumingMadness();
             DespawnDemon();
-            Creature *Copy = NULL;
+            Creature* Copy = NULL;
             Copy = DoSpawnCreature(DEMON_FORM, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 6000);
             if (Copy)
              {
@@ -577,7 +577,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
 //Leotheras the Blind Demon Form AI
 struct boss_leotheras_the_blind_demonformAI : public ScriptedAI
 {
-    boss_leotheras_the_blind_demonformAI(Creature *c) : ScriptedAI(c) {}
+    boss_leotheras_the_blind_demonformAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ChaosBlast_Timer;
     bool DealDamage;
@@ -643,7 +643,7 @@ struct boss_leotheras_the_blind_demonformAI : public ScriptedAI
 };
 struct mob_greyheart_spellbinderAI : public ScriptedAI
 {
-    mob_greyheart_spellbinderAI(Creature *c) : ScriptedAI(c)
+    mob_greyheart_spellbinderAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         leotherasGUID = 0;
@@ -667,7 +667,7 @@ struct mob_greyheart_spellbinderAI : public ScriptedAI
         if (pInstance)
         {
             pInstance->SetData64(DATA_LEOTHERAS_EVENT_STARTER, 0);
-            Creature *leotheras = Unit::GetCreature(*me, leotherasGUID);
+            Creature* leotheras = Unit::GetCreature(*me, leotherasGUID);
             if (leotheras && leotheras->isAlive())
                 CAST_AI(boss_leotheras_the_blindAI, leotheras->AI())->CheckChannelers(/*false*/);
         }
@@ -692,7 +692,7 @@ struct mob_greyheart_spellbinderAI : public ScriptedAI
         {
             if (leotherasGUID)
             {
-                Creature *leotheras = Unit::GetCreature(*me, leotherasGUID);
+                Creature* leotheras = Unit::GetCreature(*me, leotherasGUID);
                 if (leotheras && leotheras->isAlive())
                     DoCast(leotheras, BANISH_BEAM);
             }

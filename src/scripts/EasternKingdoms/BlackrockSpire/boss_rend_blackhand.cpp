@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_rend_blackhandAI : public ScriptedAI
 {
-    boss_rend_blackhandAI(Creature *c) : ScriptedAI(c) {}
+    boss_rend_blackhandAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 WhirlWind_Timer;
     uint32 Cleave_Timer;

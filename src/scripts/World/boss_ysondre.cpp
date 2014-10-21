@@ -148,7 +148,7 @@ struct boss_ysondreAI : public ScriptedAI
 // Summoned druid script
 struct mob_dementeddruidsAI : public ScriptedAI
 {
-    mob_dementeddruidsAI(Creature *c) : ScriptedAI(c) {}
+    mob_dementeddruidsAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 m_uiMoonFire_Timer;
 

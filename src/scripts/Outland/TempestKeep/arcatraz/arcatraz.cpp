@@ -62,7 +62,7 @@ EndContentData */
 
 struct npc_millhouse_manastormAI : public ScriptedAI
 {
-    npc_millhouse_manastormAI(Creature *c) : ScriptedAI(c)
+    npc_millhouse_manastormAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -253,7 +253,7 @@ CreatureAI* GetAI_npc_millhouse_manastorm(Creature* pCreature)
 
 struct npc_warden_mellicharAI : public ScriptedAI
 {
-    npc_warden_mellicharAI(Creature *c) : ScriptedAI(c)
+    npc_warden_mellicharAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -484,7 +484,7 @@ CreatureAI* GetAI_npc_warden_mellichar(Creature* pCreature)
 
 struct mob_zerekethvoidzoneAI : public ScriptedAI
 {
-    mob_zerekethvoidzoneAI(Creature *c) : ScriptedAI(c) {}
+    mob_zerekethvoidzoneAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()
     {

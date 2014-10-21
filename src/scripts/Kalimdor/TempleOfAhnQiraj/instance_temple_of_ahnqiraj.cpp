@@ -60,7 +60,7 @@ struct instance_temple_of_ahnqiraj : public ScriptedInstance
         CthunPhase = 0;
     }
 
-    void OnCreatureCreate (Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate (Creature* creature, uint32 creature_entry)
     {
         switch (creature_entry)
         {

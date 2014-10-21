@@ -32,7 +32,7 @@ enum Spells
 
 struct boss_gorosh_the_dervishAI : public ScriptedAI
 {
-    boss_gorosh_the_dervishAI(Creature *c) : ScriptedAI(c) {}
+    boss_gorosh_the_dervishAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 WhirlWind_Timer;
     uint32 MortalStrike_Timer;

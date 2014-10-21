@@ -60,7 +60,7 @@ enum eEnums
 
 struct boss_vexallusAI : public ScriptedAI
 {
-    boss_vexallusAI(Creature *c) : ScriptedAI(c)
+    boss_vexallusAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         Heroic = c->GetMap()->IsHeroic();
@@ -106,7 +106,7 @@ struct boss_vexallusAI : public ScriptedAI
             pInstance->SetData(DATA_VEXALLUS_EVENT, IN_PROGRESS);
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         if (Unit *temp = SelectUnit(SELECT_TARGET_RANDOM, 0))
             summoned->GetMotionMaster()->MoveFollow(temp,0,0);
@@ -190,7 +190,7 @@ CreatureAI* GetAI_boss_vexallus(Creature* pCreature)
 
 struct mob_pure_energyAI : public ScriptedAI
 {
-    mob_pure_energyAI(Creature *c) : ScriptedAI(c) {}
+    mob_pure_energyAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset() {}
 

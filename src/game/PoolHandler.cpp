@@ -221,9 +221,9 @@ void PoolGroup<T>::DespawnObject(ActivePoolData& spawns, uint32 guid)
 template<>
 void PoolGroup<Creature>::Despawn1Object(uint32 guid)
 {
-    if (CreatureData const* data = objmgr.GetCreatureData(guid))
+    if (CreatureData const* data = sObjectMgr.GetCreatureData(guid))
     {
-        objmgr.RemoveCreatureFromGrid(guid, data);
+        sObjectMgr.RemoveCreatureFromGrid(guid, data);
 
         if (Creature* pCreature = ObjectAccessor::Instance().GetObjectInWorld(MAKE_NEW_GUID(guid, data->id, HIGHGUID_UNIT), (Creature*)NULL))
             pCreature->AddObjectToRemoveList();
@@ -234,9 +234,9 @@ void PoolGroup<Creature>::Despawn1Object(uint32 guid)
 template<>
 void PoolGroup<GameObject>::Despawn1Object(uint32 guid)
 {
-    if (GameObjectData const* data = objmgr.GetGOData(guid))
+    if (GameObjectData const* data = sObjectMgr.GetGOData(guid))
     {
-        objmgr.RemoveGameobjectFromGrid(guid, data);
+        sObjectMgr.RemoveGameobjectFromGrid(guid, data);
 
         if (GameObject* pGameobject = ObjectAccessor::Instance().GetObjectInWorld(MAKE_NEW_GUID(guid, data->id, HIGHGUID_GAMEOBJECT), (GameObject*)NULL))
             pGameobject->AddObjectToRemoveList();
@@ -248,8 +248,8 @@ template<>
 void PoolGroup<Quest>::Despawn1Object(uint32 quest_id)
 {
     // Creatures
-    QuestRelations* questMap = objmgr.GetCreatureQuestRelationMap();
-    PooledQuestRelationBoundsNC qr = poolhandler.mQuestCreatureRelation.equal_range(quest_id);
+    QuestRelations* questMap = sObjectMgr.GetCreatureQuestRelationMap();
+    PooledQuestRelationBoundsNC qr = sPoolMgr.mQuestCreatureRelation.equal_range(quest_id);
     for (PooledQuestRelation::iterator itr = qr.first; itr != qr.second; ++itr)
     {
         QuestRelations::iterator qitr = questMap->find(itr->second);
@@ -267,8 +267,8 @@ void PoolGroup<Quest>::Despawn1Object(uint32 quest_id)
     }
 
     // Gameobjects
-    questMap = objmgr.GetGOQuestRelationMap();
-    qr = poolhandler.mQuestGORelation.equal_range(quest_id);
+    questMap = sObjectMgr.GetGOQuestRelationMap();
+    qr = sPoolMgr.mQuestGORelation.equal_range(quest_id);
     for (PooledQuestRelation::iterator itr = qr.first; itr != qr.second; ++itr)
     {
         QuestRelations::iterator qitr = questMap->find(itr->second);
@@ -290,7 +290,7 @@ void PoolGroup<Quest>::Despawn1Object(uint32 quest_id)
 template<>
 void PoolGroup<Pool>::Despawn1Object(uint32 child_pool_id)
 {
-    poolhandler.DespawnPool(child_pool_id);
+    sPoolMgr.DespawnPool(child_pool_id);
 }
 
 // Method for a pool only to remove any found record causing a circular dependency loop
@@ -320,9 +320,9 @@ void PoolGroup<Pool>::RemoveOneRelation(uint32 child_pool_id)
 template <>
 void PoolGroup<Creature>::Spawn1Object(PoolObject* obj)
 {
-    if (CreatureData const* data = objmgr.GetCreatureData(obj->guid))
+    if (CreatureData const* data = sObjectMgr.GetCreatureData(obj->guid))
     {
-        objmgr.AddCreatureToGrid(obj->guid, data);
+        sObjectMgr.AddCreatureToGrid(obj->guid, data);
 
         // Spawn if necessary (loaded grids only)
         Map* map = const_cast<Map*>(MapManager::Instance().CreateBaseMap(data->mapid));
@@ -346,9 +346,9 @@ void PoolGroup<Creature>::Spawn1Object(PoolObject* obj)
 template <>
 void PoolGroup<GameObject>::Spawn1Object(PoolObject* obj)
 {
-    if (GameObjectData const* data = objmgr.GetGOData(obj->guid))
+    if (GameObjectData const* data = sObjectMgr.GetGOData(obj->guid))
     {
-        objmgr.AddGameobjectToGrid(obj->guid, data);
+        sObjectMgr.AddGameobjectToGrid(obj->guid, data);
         // Spawn if necessary (loaded grids only)
         // this base map checked as non-instanced and then only existed
         Map* map = const_cast<Map*>(MapManager::Instance().CreateBaseMap(data->mapid));
@@ -376,8 +376,8 @@ template<>
 void PoolGroup<Quest>::Spawn1Object(PoolObject* obj)
 {
     // Creatures
-    QuestRelations* questMap = objmgr.GetCreatureQuestRelationMap();
-    PooledQuestRelationBoundsNC qr = poolhandler.mQuestCreatureRelation.equal_range(obj->guid);
+    QuestRelations* questMap = sObjectMgr.GetCreatureQuestRelationMap();
+    PooledQuestRelationBoundsNC qr = sPoolMgr.mQuestCreatureRelation.equal_range(obj->guid);
     for (PooledQuestRelation::iterator itr = qr.first; itr != qr.second; ++itr)
     {
         sLog.outDebug("PoolGroup<Quest>: Adding quest %u to creature %u", itr->first, itr->second);
@@ -385,8 +385,8 @@ void PoolGroup<Quest>::Spawn1Object(PoolObject* obj)
     }
 
     // Gameobjects
-    questMap = objmgr.GetGOQuestRelationMap();
-    qr = poolhandler.mQuestGORelation.equal_range(obj->guid);
+    questMap = sObjectMgr.GetGOQuestRelationMap();
+    qr = sPoolMgr.mQuestGORelation.equal_range(obj->guid);
     for (PooledQuestRelation::iterator itr = qr.first; itr != qr.second; ++itr)
     {
         sLog.outDebug("PoolGroup<Quest>: Adding quest %u to GO %u", itr->first, itr->second);
@@ -398,14 +398,14 @@ void PoolGroup<Quest>::Spawn1Object(PoolObject* obj)
 template <>
 void PoolGroup<Pool>::Spawn1Object(PoolObject* obj)
 {
-    poolhandler.SpawnPool(obj->guid);
+    sPoolMgr.SpawnPool(obj->guid);
 }
 
 // Method that does the respawn job on the specified creature
 template <>
 void PoolGroup<Creature>::ReSpawn1Object(PoolObject* obj)
 {
-    if (CreatureData const* data = objmgr.GetCreatureData(obj->guid))
+    if (CreatureData const* data = sObjectMgr.GetCreatureData(obj->guid))
         if (Creature* pCreature = ObjectAccessor::Instance().GetObjectInWorld(MAKE_NEW_GUID(obj->guid, data->id, HIGHGUID_UNIT), (Creature*)NULL))
             pCreature->GetMap()->Add(pCreature);
 }
@@ -414,7 +414,7 @@ void PoolGroup<Creature>::ReSpawn1Object(PoolObject* obj)
 template <>
 void PoolGroup<GameObject>::ReSpawn1Object(PoolObject* obj)
 {
-    if (GameObjectData const* data = objmgr.GetGOData(obj->guid))
+    if (GameObjectData const* data = sObjectMgr.GetGOData(obj->guid))
         if (GameObject* pGameobject = ObjectAccessor::Instance().GetObjectInWorld(MAKE_NEW_GUID(obj->guid, data->id, HIGHGUID_GAMEOBJECT), (GameObject*)NULL))
             pGameobject->GetMap()->Add(pGameobject);
 }
@@ -495,7 +495,7 @@ void PoolGroup<Quest>::SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 
 
     // if we are here it means the pool is initialized at startup and did not have previous saved state
     if (!triggerFrom)
-        poolhandler.SaveQuestsToDB();
+        sPoolMgr.SaveQuestsToDB();
 }
 
 
@@ -613,7 +613,7 @@ void PoolHandler::LoadFromDB()
             uint32 pool_id = fields[1].GetUInt32();
             float chance   = fields[2].GetFloat();
 
-            CreatureData const* data = objmgr.GetCreatureData(guid);
+            CreatureData const* data = sObjectMgr.GetCreatureData(guid);
             if (!data)
             {
                 sLog.outErrorDb("`pool_creature` has a non existing creature spawn (GUID: %u) defined for pool id (%u), skipped.", guid, pool_id);
@@ -670,13 +670,13 @@ void PoolHandler::LoadFromDB()
             uint32 pool_id = fields[1].GetUInt32();
             float chance   = fields[2].GetFloat();
 
-            GameObjectData const* data = objmgr.GetGOData(guid);
+            GameObjectData const* data = sObjectMgr.GetGOData(guid);
             if (!data)
             {
                 sLog.outErrorDb("`pool_gameobject` has a non existing gameobject spawn (GUID: %u) defined for pool id (%u), skipped.", guid, pool_id);
                 continue;
             }
-            GameObjectInfo const* goinfo = objmgr.GetGameObjectInfo(data->id);
+            GameObjectInfo const* goinfo = sObjectMgr.GetGameObjectInfo(data->id);
             if (goinfo->type != GAMEOBJECT_TYPE_CHEST &&
                 goinfo->type != GAMEOBJECT_TYPE_GOOBER &&
                 goinfo->type != GAMEOBJECT_TYPE_FISHINGHOLE)
@@ -830,7 +830,7 @@ void PoolHandler::LoadQuestPools()
         uint32 entry   = fields[0].GetUInt32();
         uint32 pool_id = fields[1].GetUInt32();
 
-        Quest const* pQuest = objmgr.GetQuestTemplate(entry);
+        Quest const* pQuest = sObjectMgr.GetQuestTemplate(entry);
         if (!pQuest)
         {
             sLog.outErrorDb("`pool_quest` has a non existing quest template (Entry: %u) defined for pool id (%u), skipped.", entry, pool_id);
@@ -965,7 +965,7 @@ void PoolHandler::ChangeDailyQuests()
 {
     for (PoolGroupQuestMap::iterator itr = mPoolQuestGroups.begin(); itr != mPoolQuestGroups.end(); ++itr)
     {
-        if (/*Quest const* pQuest = */objmgr.GetQuestTemplate(itr->GetFirstEqualChancedObjectId()))
+        if (/*Quest const* pQuest = */sObjectMgr.GetQuestTemplate(itr->GetFirstEqualChancedObjectId()))
         {
             UpdatePool<Quest>(itr->GetPoolId(), 1);    // anything non-zero means don't load from db
         }

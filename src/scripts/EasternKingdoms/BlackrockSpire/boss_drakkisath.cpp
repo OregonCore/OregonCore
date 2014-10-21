@@ -31,7 +31,7 @@ EndScriptData */
 
 struct boss_drakkisathAI : public ScriptedAI
 {
-    boss_drakkisathAI(Creature *c) : ScriptedAI(c) {}
+    boss_drakkisathAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 FireNova_Timer;
     uint32 Cleave_Timer;

@@ -52,7 +52,7 @@ float AddsEntrance[3] = {306.036f,-84.29f,1.93f};
 
 struct boss_warchief_kargath_bladefistAI : public ScriptedAI
 {
-    boss_warchief_kargath_bladefistAI(Creature *c) : ScriptedAI(c)
+    boss_warchief_kargath_bladefistAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
@@ -108,14 +108,14 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
 
             if (pInstance->GetData64(DATA_WARBRINGER))
             {
-                Creature *pWar = Unit::GetCreature(*me,pInstance->GetData64(DATA_WARBRINGER));
+                Creature* pWar = Unit::GetCreature(*me,pInstance->GetData64(DATA_WARBRINGER));
                 if (pWar && pWar->isAlive())
                     pWar->AI()->AttackStart(me->getVictim());
             }
         }
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         switch(summoned->GetEntry())
         {

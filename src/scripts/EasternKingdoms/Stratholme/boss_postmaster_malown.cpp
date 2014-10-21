@@ -37,7 +37,7 @@ EndScriptData */
 
 struct boss_postmaster_malownAI : public ScriptedAI
 {
-    boss_postmaster_malownAI(Creature *c) : ScriptedAI(c) {}
+    boss_postmaster_malownAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 WailingDead_Timer;
     uint32 Backhand_Timer;

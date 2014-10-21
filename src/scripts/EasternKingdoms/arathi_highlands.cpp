@@ -52,7 +52,7 @@ enum eEnums
 
 struct npc_professor_phizzlethorpeAI : public npc_escortAI
 {
-    npc_professor_phizzlethorpeAI(Creature *c) : npc_escortAI(c) {}
+    npc_professor_phizzlethorpeAI(Creature* c) : npc_escortAI(c) {}
 
     void WaypointReached(uint32 uiPointId)
     {

@@ -51,7 +51,7 @@ enum blySpells
 
 struct npc_sergeant_blyAI : public ScriptedAI
 {
-    npc_sergeant_blyAI(Creature *c) : ScriptedAI(c)
+    npc_sergeant_blyAI(Creature* c) : ScriptedAI(c)
     {
         instance = c->GetInstanceData();
         postGossipStep = 0;
@@ -193,7 +193,7 @@ enum weegliSays
 
 struct npc_weegli_blastfuseAI : public ScriptedAI
 {
-    npc_weegli_blastfuseAI(Creature *c) : ScriptedAI(c)
+    npc_weegli_blastfuseAI(Creature* c) : ScriptedAI(c)
     {
         instance = c->GetInstanceData();
         destroyingDoor = false;

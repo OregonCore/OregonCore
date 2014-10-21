@@ -52,14 +52,14 @@ class SummonList : public std::list<uint64>
 {
     public:
         explicit SummonList(Creature* creature) : me(creature) {}
-        void Summon(Creature *summon) { push_back(summon->GetGUID()); }
-        void Despawn(Creature *summon) { remove(summon->GetGUID()); }
+        void Summon(Creature* summon) { push_back(summon->GetGUID()); }
+        void Despawn(Creature* summon) { remove(summon->GetGUID()); }
         void DespawnEntry(uint32 entry);
         void DespawnAll();
         void DoAction(uint32 entry, uint32 info);
         void DoZoneInCombat(uint32 entry = 0);
     private:
-        Creature *me;
+        Creature* me;
 };
 
 struct ScriptedAI : public CreatureAI
@@ -208,7 +208,7 @@ struct Scripted_NoMovementAI : public ScriptedAI
 
 struct BossAI : public ScriptedAI
 {
-    BossAI(Creature *c, uint32 id);
+    BossAI(Creature* c, uint32 id);
     virtual ~BossAI() {}
 
     const uint32 bossId;
@@ -216,8 +216,8 @@ struct BossAI : public ScriptedAI
     SummonList summons;
     InstanceData * const instance;
 
-    void JustSummoned(Creature *summon);
-    void SummonedCreatureDespawn(Creature *summon);
+    void JustSummoned(Creature* summon);
+    void SummonedCreatureDespawn(Creature* summon);
 
     void UpdateAI(const uint32 diff) = 0;
 
@@ -234,7 +234,7 @@ struct BossAI : public ScriptedAI
 };
 
 // SD2 grid searchers.
-Creature *GetClosestCreatureWithEntry(WorldObject *pSource, uint32 uiEntry, float fMaxSearchRange, bool bAlive = true);
+Creature* GetClosestCreatureWithEntry(WorldObject *pSource, uint32 uiEntry, float fMaxSearchRange, bool bAlive = true);
 GameObject *GetClosestGameObjectWithEntry(WorldObject *pSource, uint32 uiEntry, float fMaxSearchRange);
 void GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange);
 void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange);

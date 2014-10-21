@@ -293,7 +293,7 @@ void Map::SwitchGridContainers(T* obj, bool on)
     obj->m_isWorldObject = on;
 }
 
-template void Map::SwitchGridContainers(Creature *, bool);
+template void Map::SwitchGridContainers(Creature* , bool);
 //template void Map::SwitchGridContainers(DynamicObject *, bool);
 
 template<class T>
@@ -868,7 +868,7 @@ Map::PlayerRelocation(Player* player, float x, float y, float z, float orientati
 }
 
 void
-Map::CreatureRelocation(Creature *creature, float x, float y, float z, float ang, bool respawnRelocationOnFail)
+Map::CreatureRelocation(Creature* creature, float x, float y, float z, float ang, bool respawnRelocationOnFail)
 {
     ASSERT(CheckGridIntegrity(creature,false));
 
@@ -899,7 +899,7 @@ Map::CreatureRelocation(Creature *creature, float x, float y, float z, float ang
     ASSERT(CheckGridIntegrity(creature,true));
 }
 
-void Map::AddCreatureToMoveList(Creature *c, float x, float y, float z, float ang)
+void Map::AddCreatureToMoveList(Creature* c, float x, float y, float z, float ang)
 {
     if (!c)
         return;
@@ -946,7 +946,7 @@ void Map::MoveAllCreaturesInMoveList()
     }
 }
 
-bool Map::CreatureCellRelocation(Creature *c, Cell new_cell)
+bool Map::CreatureCellRelocation(Creature* c, Cell new_cell)
 {
     Cell const& old_cell = c->GetCurrentCell();
     if (!old_cell.DiffGrid(new_cell))                       // in same grid
@@ -1012,7 +1012,7 @@ bool Map::CreatureCellRelocation(Creature *c, Cell new_cell)
     return false;
 }
 
-bool Map::CreatureRespawnRelocation(Creature *c)
+bool Map::CreatureRespawnRelocation(Creature* c)
 {
     float resp_x, resp_y, resp_z, resp_o;
     c->GetRespawnCoord(resp_x, resp_y, resp_z, &resp_o);
@@ -2280,12 +2280,12 @@ void Map::RemoveFromActive(Creature* c)
 }
 
 template void Map::Add(Corpse *);
-template void Map::Add(Creature *);
+template void Map::Add(Creature* );
 template void Map::Add(GameObject *);
 template void Map::Add(DynamicObject *);
 
 template void Map::Remove(Corpse *,bool);
-template void Map::Remove(Creature *,bool);
+template void Map::Remove(Creature* ,bool);
 template void Map::Remove(GameObject *, bool);
 template void Map::Remove(DynamicObject *, bool);
 
@@ -2334,7 +2334,7 @@ bool InstanceMap::CanEnter(Player* player)
         return Map::CanEnter(player);
 
     // cannot enter if the instance is full (player cap), GMs don't count
-    InstanceTemplate const* iTemplate = objmgr.GetInstanceTemplate(GetId());
+    InstanceTemplate const* iTemplate = sObjectMgr.GetInstanceTemplate(GetId());
     if (GetPlayersCountExceptGMs() >= iTemplate->maxPlayers)
     {
         sLog.outDetail("MAP: Instance '%u' of map '%s' cannot have more than '%u' players. Player '%s' rejected", GetInstanceId(), GetMapName(), iTemplate->maxPlayers, player->GetName());
@@ -2394,11 +2394,11 @@ bool InstanceMap::Add(Player* player)
         if (IsDungeon())
         {
             // get or create an instance save for the map
-            InstanceSave *mapSave = sInstanceSaveManager.GetInstanceSave(GetInstanceId());
+            InstanceSave *mapSave = sInstanceSaveMgr.GetInstanceSave(GetInstanceId());
             if (!mapSave)
             {
                 sLog.outDetail("InstanceMap::Add: creating instance save for map %d spawnmode %d with instance id %d", GetId(), GetSpawnMode(), GetInstanceId());
-                mapSave = sInstanceSaveManager.AddInstanceSave(GetId(), GetInstanceId(), GetSpawnMode(), 0, true);
+                mapSave = sInstanceSaveMgr.AddInstanceSave(GetId(), GetInstanceId(), GetSpawnMode(), 0, true);
             }
 
             // check for existing instance binds
@@ -2514,7 +2514,7 @@ void InstanceMap::CreateInstanceData(bool load)
     if (i_data != NULL)
         return;
 
-    InstanceTemplate const* mInstance = objmgr.GetInstanceTemplate(GetId());
+    InstanceTemplate const* mInstance = sObjectMgr.GetInstanceTemplate(GetId());
     if (mInstance)
     {
         i_script_id = mInstance->script_id;
@@ -2536,7 +2536,7 @@ void InstanceMap::CreateInstanceData(bool load)
             const char* data = fields[0].GetString();
             if (data && *data)
             {
-                sLog.outDebug("Loading instance data for %s with id %u", objmgr.GetScriptName(i_script_id), i_InstanceId);
+                sLog.outDebug("Loading instance data for %s with id %u", sObjectMgr.GetScriptName(i_script_id), i_InstanceId);
                 i_data->Load(data);
             }
         }
@@ -2587,7 +2587,7 @@ void InstanceMap::PermBindAllPlayers(Player* player)
     if (!IsDungeon())
         return;
 
-    InstanceSave *save = sInstanceSaveManager.GetInstanceSave(GetInstanceId());
+    InstanceSave *save = sInstanceSaveMgr.GetInstanceSave(GetInstanceId());
     if (!save)
     {
         sLog.outError("Cannot bind players, no instance save available for map!");
@@ -2618,7 +2618,7 @@ void InstanceMap::PermBindAllPlayers(Player* player)
 
 time_t InstanceMap::GetResetTime()
 {
-    InstanceSave *save = sInstanceSaveManager.GetInstanceSave(GetInstanceId());
+    InstanceSave *save = sInstanceSaveMgr.GetInstanceSave(GetInstanceId());
     return time_t(save ? save->GetDifficulty() : DIFFICULTY_NORMAL);
 }
 
@@ -2627,7 +2627,7 @@ void InstanceMap::UnloadAll()
     ASSERT(!HavePlayers());
 
     if (m_resetAfterUnload == true)
-        objmgr.DeleteRespawnTimeForInstance(GetInstanceId());
+        sObjectMgr.DeleteRespawnTimeForInstance(GetInstanceId());
 
     Map::UnloadAll();
 }
@@ -2645,9 +2645,9 @@ void InstanceMap::SetResetSchedule(bool on)
     // it is assumed that the reset time will rarely (if ever) change while the reset is scheduled
     if (IsDungeon() && !HavePlayers() && !IsRaid() && !IsHeroic())
     {
-        InstanceSave *save = sInstanceSaveManager.GetInstanceSave(GetInstanceId());
+        InstanceSave *save = sInstanceSaveMgr.GetInstanceSave(GetInstanceId());
         if (!save) sLog.outError("InstanceMap::SetResetSchedule: cannot turn schedule %s, no save available for instance %d of %d", on ? "on" : "off", GetInstanceId(), GetId());
-        else sInstanceSaveManager.ScheduleReset(on, save->GetResetTime(), InstanceSaveManager::InstResetEvent(0, GetId(), GetInstanceId()));
+        else sInstanceSaveMgr.ScheduleReset(on, save->GetResetTime(), InstanceSaveManager::InstResetEvent(0, GetId(), GetInstanceId()));
     }
 }
 

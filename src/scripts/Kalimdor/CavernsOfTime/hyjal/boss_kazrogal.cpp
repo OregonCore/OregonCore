@@ -42,7 +42,7 @@
 
 struct boss_kazrogalAI : public hyjal_trashAI
 {
-    boss_kazrogalAI(Creature *c) : hyjal_trashAI(c)
+    boss_kazrogalAI(Creature* c) : hyjal_trashAI(c)
     {
         pInstance = c->GetInstanceData();
         pGo = false;

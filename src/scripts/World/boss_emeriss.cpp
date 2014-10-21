@@ -39,7 +39,7 @@ enum eEnums
 
 struct boss_emerissAI : public ScriptedAI
 {
-    boss_emerissAI(Creature *c) : ScriptedAI(c) {}
+    boss_emerissAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 m_uiSleep_Timer;
     uint32 m_uiNoxiousBreath_Timer;

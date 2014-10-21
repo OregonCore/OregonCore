@@ -40,7 +40,7 @@ void WorldSession::HandleBattleGroundHelloOpcode(WorldPacket & recv_data)
     recv_data >> guid;
     sLog.outDebug("WORLD: Recvd CMSG_BATTLEMASTER_HELLO Message from (GUID: %u TypeId:%u)", GUID_LOPART(guid),GuidHigh2TypeId(GUID_HIPART(guid)));
 
-    Creature *unit = GetPlayer()->GetMap()->GetCreature(guid);
+    Creature* unit = GetPlayer()->GetMap()->GetCreature(guid);
     if (!unit)
         return;
 
@@ -51,7 +51,7 @@ void WorldSession::HandleBattleGroundHelloOpcode(WorldPacket & recv_data)
     if(!unit->IsStopped())
         unit->StopMoving();
 
-    uint32 bgTypeId = objmgr.GetBattleMasterBG(unit->GetEntry());
+    uint32 bgTypeId = sObjectMgr.GetBattleMasterBG(unit->GetEntry());
 
     if (!_player->GetBGAccessByLevel(bgTypeId))
     {
@@ -104,7 +104,7 @@ void WorldSession::HandleBattleGroundJoinOpcode(WorldPacket & recv_data)
     if (_player->InBattleGround())
         return;
 
-    Creature *unit = GetPlayer()->GetMap()->GetCreature(guid);
+    Creature* unit = GetPlayer()->GetMap()->GetCreature(guid);
     if (!unit)
         return;
 
@@ -220,11 +220,11 @@ void WorldSession::HandleBattleGroundPlayerPositionsOpcode(WorldPacket & /*recv_
                 uint32 count1 = 0;                                  //always constant zero?
                 uint32 count2 = 0;                                  //count of next fields
 
-                Player* ali_plr = objmgr.GetPlayer(((BattleGroundWS*)bg)->GetAllianceFlagPickerGUID());
+                Player* ali_plr = sObjectMgr.GetPlayer(((BattleGroundWS*)bg)->GetAllianceFlagPickerGUID());
                 if (ali_plr)
                     ++count2;
 
-                Player* horde_plr = objmgr.GetPlayer(((BattleGroundWS*)bg)->GetHordeFlagPickerGUID());
+                Player* horde_plr = sObjectMgr.GetPlayer(((BattleGroundWS*)bg)->GetHordeFlagPickerGUID());
                 if (horde_plr)
                     ++count2;
 
@@ -498,7 +498,7 @@ void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data)
                 */
                 if (israted)
                 {
-                    ArenaTeam * at = objmgr.GetArenaTeamById(team);
+                    ArenaTeam * at = sObjectMgr.GetArenaTeamById(team);
                     if (at)
                     {
                         sLog.outDebug("UPDATING memberLost's personal arena rating for %u by opponents rating: %u, because he has left queue!", GUID_LOPART(_player->GetGUID()), opponentsRating);
@@ -637,7 +637,7 @@ void WorldSession::HandleAreaSpiritHealerQueryOpcode(WorldPacket & recv_data)
     uint64 guid;
     recv_data >> guid;
 
-    Creature *unit = GetPlayer()->GetMap()->GetCreature(guid);
+    Creature* unit = GetPlayer()->GetMap()->GetCreature(guid);
     if (!unit)
         return;
 
@@ -658,7 +658,7 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket & recv_data)
     uint64 guid;
     recv_data >> guid;
 
-    Creature *unit = GetPlayer()->GetMap()->GetCreature(guid);
+    Creature* unit = GetPlayer()->GetMap()->GetCreature(guid);
     if (!unit)
         return;
 
@@ -685,7 +685,7 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data)
     if (_player->InBattleGround())
         return;
 
-    Creature *unit = GetPlayer()->GetMap()->GetCreature(guid);
+    Creature* unit = GetPlayer()->GetMap()->GetCreature(guid);
     if (!unit)
         return;
 
@@ -759,7 +759,7 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data)
     {
         ateamId = _player->GetArenaTeamId(arenaslot);
         // check real arenateam existence only here (if it was moved to group->CanJoin .. () then we would ahve to get it twice)
-        ArenaTeam * at = objmgr.GetArenaTeamById(ateamId);
+        ArenaTeam * at = sObjectMgr.GetArenaTeamById(ateamId);
         if (!at)
         {
             _player->GetSession()->SendNotInArenaTeamPacket(arenatype);
@@ -838,7 +838,7 @@ void WorldSession::HandleBattleGroundReportAFK(WorldPacket & recv_data)
 {
     uint64 playerGuid;
     recv_data >> playerGuid;
-    Player* reportedPlayer = objmgr.GetPlayer(playerGuid);
+    Player* reportedPlayer = sObjectMgr.GetPlayer(playerGuid);
 
     if (!reportedPlayer)
     {

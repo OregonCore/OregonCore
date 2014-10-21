@@ -50,7 +50,7 @@ enum eAME
 
 struct npc_ameAI : public npc_escortAI
 {
-    npc_ameAI(Creature *c) : npc_escortAI(c) {}
+    npc_ameAI(Creature* c) : npc_escortAI(c) {}
 
     uint32 DEMORALIZINGSHOUT_Timer;
 

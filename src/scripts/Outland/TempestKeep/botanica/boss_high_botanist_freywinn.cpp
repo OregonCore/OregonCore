@@ -44,7 +44,7 @@ EndScriptData */
 
 struct boss_high_botanist_freywinnAI : public ScriptedAI
 {
-    boss_high_botanist_freywinnAI(Creature *c) : ScriptedAI(c) {}
+    boss_high_botanist_freywinnAI(Creature* c) : ScriptedAI(c) {}
 
     std::list<uint64> Adds_List;
 
@@ -70,7 +70,7 @@ struct boss_high_botanist_freywinnAI : public ScriptedAI
         DoScriptText(SAY_AGGRO, me);
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         if (summoned->GetEntry() == ENTRY_FRAYER)
             Adds_List.push_back(summoned->GetGUID());

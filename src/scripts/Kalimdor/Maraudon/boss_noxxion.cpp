@@ -29,7 +29,7 @@ EndScriptData */
 
 struct boss_noxxionAI : public ScriptedAI
 {
-    boss_noxxionAI(Creature *c) : ScriptedAI(c) {}
+    boss_noxxionAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ToxicVolley_Timer;
     uint32 Uppercut_Timer;
@@ -52,7 +52,7 @@ struct boss_noxxionAI : public ScriptedAI
 
     void SummonAdds(Unit* pVictim)
     {
-        if (Creature *Add = DoSpawnCreature(13456, irand(-7,7), irand(-7,7), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000))
+        if (Creature* Add = DoSpawnCreature(13456, irand(-7,7), irand(-7,7), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000))
             Add->AI()->AttackStart(pVictim);
     }
 

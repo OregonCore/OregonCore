@@ -78,7 +78,7 @@ static Say PeonDies[]=
 
 struct boss_grand_warlock_nethekurseAI : public ScriptedAI
 {
-    boss_grand_warlock_nethekurseAI(Creature *c) : ScriptedAI(c)
+    boss_grand_warlock_nethekurseAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
@@ -238,7 +238,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         }
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         summoned->setFaction(14);
         summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -373,7 +373,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
 
 struct mob_fel_orc_convertAI : public ScriptedAI
 {
-    mob_fel_orc_convertAI(Creature *c) : ScriptedAI(c)
+    mob_fel_orc_convertAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -398,7 +398,7 @@ struct mob_fel_orc_convertAI : public ScriptedAI
         {
             if (pInstance->GetData64(DATA_NETHEKURSE))
             {
-                Creature *pKurse = Unit::GetCreature(*me,pInstance->GetData64(DATA_NETHEKURSE));
+                Creature* pKurse = Unit::GetCreature(*me,pInstance->GetData64(DATA_NETHEKURSE));
                 if (pKurse)
                     ((boss_grand_warlock_nethekurseAI*)pKurse->AI())->DoYellForPeonEnterCombat();
             }
@@ -415,7 +415,7 @@ struct mob_fel_orc_convertAI : public ScriptedAI
         {
             if (pInstance->GetData64(DATA_NETHEKURSE))
             {
-                Creature *pKurse = Unit::GetCreature(*me,pInstance->GetData64(DATA_NETHEKURSE));
+                Creature* pKurse = Unit::GetCreature(*me,pInstance->GetData64(DATA_NETHEKURSE));
                 if (pKurse)
                     ((boss_grand_warlock_nethekurseAI*)pKurse->AI())->DoYellForPeonDeath();
             }
@@ -440,7 +440,7 @@ struct mob_fel_orc_convertAI : public ScriptedAI
 //NOTE: this creature are also summoned by other spells, for different creatures
 struct mob_lesser_shadow_fissureAI : public ScriptedAI
 {
-    mob_lesser_shadow_fissureAI(Creature *c) : ScriptedAI(c) {}
+    mob_lesser_shadow_fissureAI(Creature* c) : ScriptedAI(c) {}
 
     bool Start;
     uint32 Stop_Timer;

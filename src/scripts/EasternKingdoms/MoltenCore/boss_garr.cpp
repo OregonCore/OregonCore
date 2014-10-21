@@ -35,7 +35,7 @@ EndScriptData */
 
 struct boss_garrAI : public ScriptedAI
 {
-    boss_garrAI(Creature *c) : ScriptedAI(c) {}
+    boss_garrAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 AntiMagicPulse_Timer;
     uint32 MagmaShackles_Timer;
@@ -79,7 +79,7 @@ struct boss_garrAI : public ScriptedAI
 
 struct mob_fireswornAI : public ScriptedAI
 {
-    mob_fireswornAI(Creature *c) : ScriptedAI(c) {}
+    mob_fireswornAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Immolate_Timer;
 

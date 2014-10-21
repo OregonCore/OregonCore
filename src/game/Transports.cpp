@@ -49,7 +49,7 @@ void MapManager::LoadTransports()
         std::string name = fields[1].GetCppString();
         t->m_period = fields[2].GetUInt32();
 
-        const GameObjectInfo *goinfo = objmgr.GetGameObjectInfo(entry);
+        const GameObjectInfo *goinfo = sObjectMgr.GetGameObjectInfo(entry);
 
         if (!goinfo)
         {
@@ -140,7 +140,7 @@ bool Transport::Create(uint32 guidlow, uint32 mapid, float x, float y, float z, 
 
     Object::_Create(guidlow, 0, HIGHGUID_MO_TRANSPORT);
 
-    GameObjectInfo const* goinfo = objmgr.GetGameObjectInfo(guidlow);
+    GameObjectInfo const* goinfo = sObjectMgr.GetGameObjectInfo(guidlow);
 
     if (!goinfo)
     {
@@ -482,8 +482,8 @@ bool Transport::RemovePassenger(Player* passenger)
 void Transport::CheckForEvent(uint32 entry, uint32 wp_id)
 {
     uint32 key = entry*100+wp_id;
-    if (objmgr.TransportEventMap.find(key) != objmgr.TransportEventMap.end())
-        GetMap()->ScriptsStart(sEventScripts, objmgr.TransportEventMap[key], this, NULL);
+    if (sObjectMgr.TransportEventMap.find(key) != sObjectMgr.TransportEventMap.end())
+        GetMap()->ScriptsStart(sEventScripts, sObjectMgr.TransportEventMap[key], this, NULL);
 }
 
 void Transport::Update(uint32 /*p_time*/)

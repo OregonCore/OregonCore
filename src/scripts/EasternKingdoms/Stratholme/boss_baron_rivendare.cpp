@@ -78,7 +78,7 @@ EndScriptData */
 
 struct boss_baron_rivendareAI : public ScriptedAI
 {
-    boss_baron_rivendareAI(Creature *c) : ScriptedAI(c)
+    boss_baron_rivendareAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = me->GetInstanceData();
     }

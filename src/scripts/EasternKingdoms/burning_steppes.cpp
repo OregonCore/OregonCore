@@ -47,7 +47,7 @@ EndContentData */
 
 struct npc_ragged_johnAI : public ScriptedAI
 {
-    npc_ragged_johnAI(Creature *c) : ScriptedAI(c) {}
+    npc_ragged_johnAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset() {}
 

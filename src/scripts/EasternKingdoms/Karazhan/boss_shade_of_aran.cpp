@@ -83,7 +83,7 @@ enum SuperSpell
 
 struct boss_aranAI : public ScriptedAI
 {
-    boss_aranAI(Creature *c) : ScriptedAI(c)
+    boss_aranAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -553,7 +553,7 @@ struct boss_aranAI : public ScriptedAI
 
 struct water_elementalAI : public ScriptedAI
 {
-    water_elementalAI(Creature *c) : ScriptedAI(c) {}
+    water_elementalAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 CastTimer;
 

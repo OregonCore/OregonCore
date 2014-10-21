@@ -49,7 +49,7 @@ EndContentData */
 
 struct mobs_risen_husk_spiritAI : public ScriptedAI
 {
-    mobs_risen_husk_spiritAI(Creature *c) : ScriptedAI(c) {}
+    mobs_risen_husk_spiritAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ConsumeFlesh_Timer;
     uint32 IntangiblePresence_Timer;
@@ -218,7 +218,7 @@ enum eTheramoreGuard
 
 struct npc_theramore_guardAI : public ScriptedAI
 {
-    npc_theramore_guardAI(Creature *pCreature) : ScriptedAI(pCreature) { }
+    npc_theramore_guardAI(Creature* pCreature) : ScriptedAI(pCreature) { }
 
     uint32 uiYellTimer;
     uint32 uiStep;
@@ -257,7 +257,7 @@ struct npc_theramore_guardAI : public ScriptedAI
     }
 };
 
-CreatureAI *GetAI_npc_theramore_guard(Creature *pCreature)
+CreatureAI *GetAI_npc_theramore_guard(Creature* pCreature)
 {
     return new npc_theramore_guardAI(pCreature);
 }

@@ -34,14 +34,14 @@ struct CreatureAIFactory : public SelectableAI
 
     CreatureAI* Create(void *) const;
 
-    int Permit(const Creature *c) const { return REAL_AI::Permissible(c); }
+    int Permit(const Creature* c) const { return REAL_AI::Permissible(c); }
 };
 
 template<class REAL_AI>
 inline CreatureAI*
 CreatureAIFactory<REAL_AI>::Create(void *data) const
 {
-    Creature* creature = reinterpret_cast<Creature *>(data);
+    Creature* creature = reinterpret_cast<Creature* >(data);
     return (new REAL_AI(creature));
 }
 

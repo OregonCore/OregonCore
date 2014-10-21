@@ -32,7 +32,7 @@ EndScriptData */
 
 struct boss_baroness_anastariAI : public ScriptedAI
 {
-    boss_baroness_anastariAI(Creature *c) : ScriptedAI(c)
+    boss_baroness_anastariAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = me->GetInstanceData();
     }

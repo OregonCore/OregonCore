@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_hazzarahAI : public ScriptedAI
 {
-    boss_hazzarahAI(Creature *c) : ScriptedAI(c) {}
+    boss_hazzarahAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ManaBurn_Timer;
     uint32 Sleep_Timer;
@@ -78,7 +78,7 @@ struct boss_hazzarahAI : public ScriptedAI
                 if (!pTarget)
                     return;
 
-                Creature *Illusion = me->SummonCreature(15163,pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,30000);
+                Creature* Illusion = me->SummonCreature(15163,pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,30000);
                 if (Illusion)
                     Illusion->AI()->AttackStart(pTarget);
             }

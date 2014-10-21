@@ -683,7 +683,7 @@ bool QuestAccept_npc_karynaku(Player* player, Creature* /*creature*/, Quest cons
 
 struct npc_overlord_morghorAI : public ScriptedAI
 {
-    npc_overlord_morghorAI(Creature *c) : ScriptedAI(c) {}
+    npc_overlord_morghorAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 PlayerGUID;
     uint64 IllidanGUID;
@@ -889,7 +889,7 @@ enum eWilda
 
 struct npc_earthmender_wildaAI : public npc_escortAI
 {
-    npc_earthmender_wildaAI(Creature *c) : npc_escortAI(c) {}
+    npc_earthmender_wildaAI(Creature* c) : npc_escortAI(c) {}
 
     bool Completed;
 
@@ -1576,7 +1576,7 @@ bool GOQuestAccept_GO_crystal_prison(Player* pPlayer, GameObject* /*pGo*/, Quest
 
 struct npc_enraged_spiritAI : public ScriptedAI
 {
-    npc_enraged_spiritAI(Creature *c) : ScriptedAI(c) {}
+    npc_enraged_spiritAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()   { }
 
@@ -1763,7 +1763,7 @@ CreatureAI* GetAI_npc_jovaan(Creature* pCreature)
 #define GOSSIP_SGCR4 "Do I need to go into all the gory details? I think we are both well aware of what Lord Illidan does with those that would oppose his word. Now, I must be going! Farewell, Ruusk! Forever..."
 #define GOSSIP_SGCR5 "Ah, good of you to come around, Ruusk. Thank you and farewell."
 
-bool GossipHello_npc_grand_commander_ruusk(Player* player, Creature *_Creature)
+bool GossipHello_npc_grand_commander_ruusk(Player* player, Creature* _Creature)
 {
     if (player->GetQuestStatus(QUEST_10577) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM( 0, GOSSIP_HGCR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
@@ -1772,7 +1772,7 @@ bool GossipHello_npc_grand_commander_ruusk(Player* player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_npc_grand_commander_ruusk(Player* player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_grand_commander_ruusk(Player* player, Creature* _Creature, uint32 sender, uint32 action)
 {
     switch (action)
     {

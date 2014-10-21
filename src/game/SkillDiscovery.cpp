@@ -90,8 +90,8 @@ void LoadSkillDiscoveryTable()
             }
             else if (reqSkillOrSpell == 0)                 // skill case
             {
-                SkillLineAbilityMap::const_iterator lower = spellmgr.GetBeginSkillLineAbilityMap(spellId);
-                SkillLineAbilityMap::const_iterator upper = spellmgr.GetEndSkillLineAbilityMap(spellId);
+                SkillLineAbilityMap::const_iterator lower = sSpellMgr.GetBeginSkillLineAbilityMap(spellId);
+                SkillLineAbilityMap::const_iterator upper = sSpellMgr.GetEndSkillLineAbilityMap(spellId);
 
                 if (lower == upper)
                 {

@@ -249,7 +249,7 @@ void ChatHandler::HandleCharacterDeletedRestoreHelper(DeletedInfo const& delInfo
         return;
     }
 
-    if (objmgr.GetPlayerGUIDByName(delInfo.name))
+    if (sObjectMgr.GetPlayerGUIDByName(delInfo.name))
     {
         PSendSysMessage(LANG_CHARACTER_DELETED_SKIP_NAME, delInfo.name.c_str(), delInfo.lowguid, delInfo.accountId);
         return;
@@ -410,7 +410,7 @@ bool ChatHandler::HandleCharacterEraseCommand(const char* args)
     uint64 character_guid;
     uint32 account_id;
 
-    Player* player = objmgr.GetPlayer(character_name.c_str());
+    Player* player = sObjectMgr.GetPlayer(character_name.c_str());
     if (player)
     {
         character_guid = player->GetGUID();
@@ -419,7 +419,7 @@ bool ChatHandler::HandleCharacterEraseCommand(const char* args)
     }
     else
     {
-        character_guid = objmgr.GetPlayerGUIDByName(character_name);
+        character_guid = sObjectMgr.GetPlayerGUIDByName(character_name);
         if (!character_guid)
         {
             PSendSysMessage(LANG_NO_PLAYER,character_name.c_str());
@@ -427,7 +427,7 @@ bool ChatHandler::HandleCharacterEraseCommand(const char* args)
             return false;
         }
 
-        account_id = objmgr.GetPlayerAccountIdByGUID(character_guid);
+        account_id = sObjectMgr.GetPlayerAccountIdByGUID(character_guid);
     }
 
     std::string account_name;

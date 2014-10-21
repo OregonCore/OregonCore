@@ -46,7 +46,7 @@ enum eDoomwalker
 
 struct boss_doomwalkerAI : public ScriptedAI
 {
-    boss_doomwalkerAI(Creature *c) : ScriptedAI(c) {}
+    boss_doomwalkerAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Chain_Timer;
     uint32 Enrage_Timer;

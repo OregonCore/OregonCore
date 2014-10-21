@@ -114,7 +114,7 @@ public:
 
     virtual bool HandleGossipOption(Player* plr, uint64 guid, uint32 gossipid);
 
-    virtual bool CanTalkTo(Player* plr, Creature * c, GossipMenuItems gso);
+    virtual bool CanTalkTo(Player* plr, Creature*  c, GossipMenuItems gso);
 
     virtual bool HandleDropFlag(Player* plr, uint32 spellId);
 
@@ -190,7 +190,7 @@ public:
     virtual bool SetupOutdoorPvP() {return true;}
 
     void OnGameObjectCreate(GameObject *go, bool add);
-    void OnCreatureCreate(Creature *, bool /*add*/) {}
+    void OnCreatureCreate(Creature* , bool /*add*/) {}
 
     // send world state update to all players present
     void SendUpdateWorldState(uint32 field, uint32 value);
@@ -214,7 +214,7 @@ public:
 
     virtual bool HandleGossipOption(Player* plr, uint64 guid, uint32 gossipid);
 
-    virtual bool CanTalkTo(Player* plr, Creature * c, GossipMenuItems gso);
+    virtual bool CanTalkTo(Player* plr, Creature*  c, GossipMenuItems gso);
 
     void TeamApplyBuff(TeamId team, uint32 spellId, uint32 spellId2 = 0);
 protected:

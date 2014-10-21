@@ -98,7 +98,7 @@ static Yell KillingDelay[]=
 
 struct mob_omrogg_headsAI : public ScriptedAI
 {
-    mob_omrogg_headsAI(Creature *c) : ScriptedAI(c) {}
+    mob_omrogg_headsAI(Creature* c) : ScriptedAI(c) {}
 
     bool DeathYell;
     uint32 Death_Timer;
@@ -127,7 +127,7 @@ struct mob_omrogg_headsAI : public ScriptedAI
 
 struct boss_warbringer_omroggAI : public ScriptedAI
 {
-    boss_warbringer_omroggAI(Creature *c) : ScriptedAI(c)
+    boss_warbringer_omroggAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
@@ -217,7 +217,7 @@ struct boss_warbringer_omroggAI : public ScriptedAI
             pInstance->SetData(TYPE_WARBRINGER, IN_PROGRESS);
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         if (summoned->GetEntry() == ENTRY_LEFT_HEAD)
             LeftHead = summoned->GetGUID();

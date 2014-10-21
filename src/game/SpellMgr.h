@@ -15,8 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SPELLMGR_H
-#define _SPELLMGR_H
+#ifndef _sSpellMgr_H
+#define _sSpellMgr_H
 
 // For static or at-server-startup loaded spell data
 // For more high level function for sSpellStore data
@@ -375,10 +375,10 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
 bool IsDiminishingReturnsGroupDurationLimited(DiminishingGroup group);
 DiminishingReturnsType GetDiminishingReturnsGroupType(DiminishingGroup group);
 
-// Spell affects related declarations (accessed using SpellMgr functions)
+// Spell affects related declarations (accessed using sSpellMgr functions)
 typedef std::map<uint32, uint64> SpellAffectMap;
 
-// Spell proc event related declarations (accessed using SpellMgr functions)
+// Spell proc event related declarations (accessed using sSpellMgr functions)
 enum ProcFlags
 {
     PROC_FLAG_NONE                            = 0x00000000,
@@ -509,7 +509,7 @@ enum SpellGroupStackRule
 
 typedef std::map<SpellGroup, SpellGroupStackRule> SpellGroupStackMap;
 
-// Spell script target related declarations (accessed using SpellMgr functions)
+// Spell script target related declarations (accessed using sSpellMgr functions)
 enum SpellScriptTargetType
 {
     SPELL_TARGET_TYPE_GAMEOBJECT = 0,
@@ -528,7 +528,7 @@ struct SpellTargetEntry
 
 typedef std::multimap<uint32,SpellTargetEntry> SpellScriptTarget;
 
-// coordinates for spells (accessed using SpellMgr functions)
+// coordinates for spells (accessed using sSpellMgr functions)
 struct SpellTargetPosition
 {
     uint32 target_mapId;
@@ -592,7 +592,7 @@ class PetAura
 };
 typedef std::map<uint32, PetAura> SpellPetAuraMap;
 
-// Spell rank chain  (accessed using SpellMgr functions)
+// Spell rank chain  (accessed using sSpellMgr functions)
 struct SpellChainNode
 {
     uint32 prev;
@@ -609,7 +609,7 @@ typedef UNORDERED_MAP<uint32, uint32> SpellRequiredMap;
 
 typedef std::multimap<uint32, uint32> SpellsRequiringSpellMap;
 
-// Spell learning properties (accessed using SpellMgr functions)
+// Spell learning properties (accessed using sSpellMgr functions)
 struct SpellLearnSkillNode
 {
     uint32 skill;
@@ -1113,6 +1113,6 @@ class SpellMgr
         SpellDummyConditionMap       mSpellDummyConditionMap;
 };
 
-#define spellmgr SpellMgr::Instance()
+#define sSpellMgr SpellMgr::Instance()
 #endif
 

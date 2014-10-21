@@ -905,7 +905,7 @@ void PretendToDie(Creature* pCreature)
     pCreature->SetStandState(UNIT_STAND_STATE_DEAD);
 };
 
-void Resurrect(Creature *pTarget)
+void Resurrect(Creature* pTarget)
 {
     pTarget->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     pTarget->SetHealth(pTarget->GetMaxHealth());

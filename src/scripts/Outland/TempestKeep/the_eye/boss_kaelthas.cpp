@@ -175,7 +175,7 @@ struct advisorbase_ai : public ScriptedAI
         //reset encounter
         if (m_pInstance && (m_pInstance->GetData(DATA_KAELTHASEVENT) == 1 || m_pInstance->GetData(DATA_KAELTHASEVENT) == 3))
         {
-            if (Creature *Kaelthas = (Creature*)Unit::GetUnit((*me), m_pInstance->GetData64(DATA_KAELTHAS)))
+            if (Creature* Kaelthas = (Creature*)Unit::GetUnit((*me), m_pInstance->GetData64(DATA_KAELTHAS)))
                 Kaelthas->AI()->EnterEvadeMode();
         }
     }
@@ -338,7 +338,7 @@ struct boss_kaelthasAI : public ScriptedAI
     {
         for(uint8 i = 0; i < MAX_ADVISORS; i++)
         {
-            if (Creature *pCreature = (Creature*)Unit::GetUnit((*me), m_auiAdvisorGuid[i]))
+            if (Creature* pCreature = (Creature*)Unit::GetUnit((*me), m_auiAdvisorGuid[i]))
             {
                 pCreature->Respawn();
                 pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -444,7 +444,7 @@ struct boss_kaelthasAI : public ScriptedAI
         }
     }
 
-    void SummonedCreatureDespawn(Creature *summon) {summons.Despawn(summon);}
+    void SummonedCreatureDespawn(Creature* summon) {summons.Despawn(summon);}
 
     void JustDied(Unit* /*Killer*/)
     {

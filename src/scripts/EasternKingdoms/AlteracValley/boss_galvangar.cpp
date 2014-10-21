@@ -40,7 +40,7 @@ enum Yells
 
 struct boss_galvangarAI : public ScriptedAI
 {
-    boss_galvangarAI(Creature *c) : ScriptedAI(c) {}
+    boss_galvangarAI(Creature* c) : ScriptedAI(c) {}
 
 
     uint32 uiCleaveTimer;

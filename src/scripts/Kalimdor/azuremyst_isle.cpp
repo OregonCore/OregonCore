@@ -56,7 +56,7 @@ enum eSurv
 
 struct npc_draenei_survivorAI : public ScriptedAI
 {
-    npc_draenei_survivorAI(Creature *c) : ScriptedAI(c) {}
+    npc_draenei_survivorAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 UnSpawnTimer;
     uint32 ResetlifeTimer;
@@ -217,7 +217,7 @@ enum eSpark
 
 struct npc_engineer_spark_overgrindAI : public ScriptedAI
 {
-    npc_engineer_spark_overgrindAI(Creature *c) : ScriptedAI(c) {}
+    npc_engineer_spark_overgrindAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Dynamite_Timer;
     uint32 Emote_Timer;
@@ -288,7 +288,7 @@ bool GossipSelect_npc_engineer_spark_overgrind(Player* player, Creature* pCreatu
 
 struct npc_injured_draeneiAI : public ScriptedAI
 {
-    npc_injured_draeneiAI(Creature *c) : ScriptedAI(c) {}
+    npc_injured_draeneiAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()
     {
@@ -335,7 +335,7 @@ enum eMagwin
 
 struct npc_magwinAI : public npc_escortAI
 {
-    npc_magwinAI(Creature *c) : npc_escortAI(c) {}
+    npc_magwinAI(Creature* c) : npc_escortAI(c) {}
 
     void WaypointReached(uint32 i)
     {
@@ -408,7 +408,7 @@ static float SparkPos[3] = {-5030.95f, -11291.99f, 7.97f};
 
 struct npc_geezleAI : public ScriptedAI
 {
-    npc_geezleAI(Creature *c) : ScriptedAI(c) {}
+    npc_geezleAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 SparkGUID;
 
@@ -525,7 +525,7 @@ CreatureAI* GetAI_npc_geezleAI(Creature* pCreature)
 
 struct mob_nestlewood_owlkinAI : public ScriptedAI
 {
-    mob_nestlewood_owlkinAI(Creature *c) : ScriptedAI(c) {}
+    mob_nestlewood_owlkinAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ChannelTimer;
     bool Channeled;
@@ -598,7 +598,7 @@ bool go_ravager_cage(Player* pPlayer, GameObject* pGo)
 
 struct npc_death_ravagerAI : public ScriptedAI
 {
-    npc_death_ravagerAI(Creature *c) : ScriptedAI(c){}
+    npc_death_ravagerAI(Creature* c) : ScriptedAI(c){}
 
     uint32 RendTimer;
     uint32 EnragingBiteTimer;
@@ -659,7 +659,7 @@ enum BristlelimbCage
 
 struct npc_stillpine_capitiveAI : public ScriptedAI
 {
-    npc_stillpine_capitiveAI(Creature *c) : ScriptedAI(c){}
+    npc_stillpine_capitiveAI(Creature* c) : ScriptedAI(c){}
 
     uint32 FleeTimer;
 

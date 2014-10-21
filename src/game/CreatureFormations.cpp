@@ -26,7 +26,7 @@
 CreatureFormationInfoType   CreatureFormationMap;
 CreatureFormationDataType   CreatureFormationDataMap;
 
-void CreatureFormationManager::AddCreatureToFormation(uint32 formationId, Creature *member)
+void CreatureFormationManager::AddCreatureToFormation(uint32 formationId, Creature* member)
 {
     Map *map = member->FindMap();
     if (!map)
@@ -50,7 +50,7 @@ void CreatureFormationManager::AddCreatureToFormation(uint32 formationId, Creatu
     }
 }
 
-void CreatureFormationManager::RemoveCreatureFromFormation(CreatureFormation *formation, Creature *member)
+void CreatureFormationManager::RemoveCreatureFromFormation(CreatureFormation *formation, Creature* member)
 {
     sLog.outDebug("Deleting member pointer to GUID: %u from formation %u", formation->GetId(), member->GetDBTableGUIDLow());
     formation->RemoveMember(member);
@@ -214,7 +214,7 @@ void CreatureFormationManager::LoadCreatureFormations()
     sLog.outString(">> Loaded " UI64FMTD " creatures in formations", total_member);
 }
 
-void CreatureFormation::AddMember(Creature *member)
+void CreatureFormation::AddMember(Creature* member)
 {
     if (!member)
         return;
@@ -247,7 +247,7 @@ void CreatureFormation::AddMember(Creature *member)
     member->SetFormation(this);
 }
 
-void CreatureFormation::RemoveMember(Creature *member)
+void CreatureFormation::RemoveMember(Creature* member)
 {
     if (!member)
         return;
@@ -259,7 +259,7 @@ void CreatureFormation::RemoveMember(Creature *member)
     member->SetFormation(NULL);
 }
 
-void CreatureFormation::MemberAttackStart(Creature *member, Unit *target)
+void CreatureFormation::MemberAttackStart(Creature* member, Unit *target)
 {
     uint8 formationAI = CreatureFormationMap[m_formationID]->formationAI;
 
@@ -319,7 +319,7 @@ void CreatureFormation::LeaderMoveTo(float x, float y, float z)
 
     for (CreatureFormationMemberType::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {
-        Creature *pCreature = itr->first;
+        Creature* pCreature = itr->first;
         if (pCreature == m_leader || !pCreature->isAlive() || pCreature->getVictim())
             continue;
 

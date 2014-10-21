@@ -76,7 +76,7 @@ enum //Misc
 
 struct boss_akilzonAI : public ScriptedAI
 {
-    boss_akilzonAI(Creature *c) : ScriptedAI(c)
+    boss_akilzonAI(Creature* c) : ScriptedAI(c)
     {
         SpellEntry *TempSpell = GET_SPELL(SPELL_ELECTRICAL_DAMAGE);
         if (TempSpell)
@@ -391,7 +391,7 @@ struct boss_akilzonAI : public ScriptedAI
                             z = 95 - urand(0,5);
                     }
 
-                    if (Creature *pCreature = me->SummonCreature(MOB_SOARING_EAGLE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                    if (Creature* pCreature = me->SummonCreature(MOB_SOARING_EAGLE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
                     {
                         pCreature->AddThreat(me->getVictim(), 1.0f);
                         pCreature->AI()->AttackStart(me->getVictim());
@@ -410,7 +410,7 @@ struct boss_akilzonAI : public ScriptedAI
 
 struct mob_soaring_eagleAI : public ScriptedAI
 {
-    mob_soaring_eagleAI(Creature *c) : ScriptedAI(c) {}
+    mob_soaring_eagleAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 EagleSwoop_Timer;
     bool arrived;

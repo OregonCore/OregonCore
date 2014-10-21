@@ -32,7 +32,7 @@ EndScriptData */
 
 struct boss_jandicebarovAI : public ScriptedAI
 {
-    boss_jandicebarovAI(Creature *c) : ScriptedAI(c) {}
+    boss_jandicebarovAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 CurseOfBlood_Timer;
     uint32 Illusion_Timer;
@@ -54,7 +54,7 @@ struct boss_jandicebarovAI : public ScriptedAI
 
     void SummonIllusions(Unit* victim)
     {
-        if (Creature *Illusion = DoSpawnCreature(11439, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000))
+        if (Creature* Illusion = DoSpawnCreature(11439, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000))
             Illusion->AI()->AttackStart(victim);
     }
 
@@ -142,7 +142,7 @@ struct boss_jandicebarovAI : public ScriptedAI
 
 struct mob_illusionofjandicebarovAI : public ScriptedAI
 {
-    mob_illusionofjandicebarovAI(Creature *c) : ScriptedAI(c) {}
+    mob_illusionofjandicebarovAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Cleave_Timer;
 

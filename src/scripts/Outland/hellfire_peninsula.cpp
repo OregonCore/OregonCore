@@ -550,7 +550,7 @@ enum eWoundedBloodElf
 
 struct npc_wounded_blood_elfAI : public npc_escortAI
 {
-    npc_wounded_blood_elfAI(Creature *c) : npc_escortAI(c) {}
+    npc_wounded_blood_elfAI(Creature* c) : npc_escortAI(c) {}
 
     void WaypointReached(uint32 i)
     {
@@ -951,7 +951,7 @@ CreatureAI* GetAI_npc_anchorite_barada(Creature* pCreature)
     return new npc_anchorite_baradaAI(pCreature);
 }
 
-bool GossipHello_npc_anchorite_barada(Player* pPlayer, Creature *pCreature)
+bool GossipHello_npc_anchorite_barada(Player* pPlayer, Creature* pCreature)
 {
     if (pPlayer->GetQuestStatus(QUEST_THE_EXORCIM) == QUEST_STATUS_INCOMPLETE)
         pPlayer->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_START, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
@@ -1221,7 +1221,7 @@ struct npc_vindicator_sedaiAI : public ScriptedAI
         {
             if (CAST_PLR(who)->GetQuestStatus(9545) == QUEST_STATUS_INCOMPLETE)
             {
-                if (Creature * pCr = me->FindNearestCreature(17413, 6.0f))
+                if (Creature*  pCr = me->FindNearestCreature(17413, 6.0f))
                 {
                     float Radius = 10.0;
                     if (me->IsWithinDistInMap(who, Radius))

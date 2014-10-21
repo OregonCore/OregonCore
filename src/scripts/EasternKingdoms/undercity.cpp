@@ -61,7 +61,7 @@ float HighborneLoc[4][3]=
 
 struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
 {
-    npc_lady_sylvanas_windrunnerAI(Creature *c) : ScriptedAI(c) {}
+    npc_lady_sylvanas_windrunnerAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 LamentEvent_Timer;
     bool LamentEvent;
@@ -76,7 +76,7 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
 
     void EnterCombat(Unit * /*who*/) {}
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         if (summoned->GetEntry() == ENTRY_HIGHBORNE_BUNNY)
         {
@@ -142,7 +142,7 @@ bool ChooseReward_npc_lady_sylvanas_windrunner(Player* /*pPlayer*/, Creature* pC
 
 struct npc_highborne_lamenterAI : public ScriptedAI
 {
-    npc_highborne_lamenterAI(Creature *c) : ScriptedAI(c) {}
+    npc_highborne_lamenterAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 EventMove_Timer;
     uint32 EventCast_Timer;

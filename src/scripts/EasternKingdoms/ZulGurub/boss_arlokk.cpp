@@ -258,7 +258,7 @@ struct boss_arlokkAI : public ScriptedAI
                 me->SetDisplayId(MODEL_ID_PANTHER);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
-                const CreatureInfo *cinfo = me->GetCreatureInfo();
+                const CreatureInfo *cinfo = me->GetCreatureTemplate();
                 me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg / 100) * 35)));
                 me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg / 100) * 35)));
                 me->UpdateDamagePhysical(BASE_ATTACK);

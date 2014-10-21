@@ -110,7 +110,7 @@ static uint32 ChestEntry[] = {186648, 187021, 186672, 186667};
 
 struct npc_zulaman_hostageAI : public ScriptedAI
 {
-    npc_zulaman_hostageAI(Creature *c) : ScriptedAI(c) {IsLoot = false;}
+    npc_zulaman_hostageAI(Creature* c) : ScriptedAI(c) {IsLoot = false;}
     bool IsLoot;
     uint64 PlayerGUID;
     void Reset() {}

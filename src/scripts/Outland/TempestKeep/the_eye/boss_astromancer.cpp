@@ -71,7 +71,7 @@ static float SolarianPos[4] = {432.909f, -373.424f, 17.9608f, 1.06421f};
 
 struct boss_high_astromancer_solarianAI : public ScriptedAI
 {
-    boss_high_astromancer_solarianAI(Creature *c) : ScriptedAI(c), Summons(me)
+    boss_high_astromancer_solarianAI(Creature* c) : ScriptedAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
 
@@ -386,7 +386,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
 
 struct mob_solarium_priestAI : public ScriptedAI
 {
-    mob_solarium_priestAI(Creature *c) : ScriptedAI(c)
+    mob_solarium_priestAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

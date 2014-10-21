@@ -42,7 +42,7 @@ EndContentData */
 
 struct mob_jadespine_basiliskAI : public ScriptedAI
 {
-    mob_jadespine_basiliskAI(Creature *c) : ScriptedAI(c) {}
+    mob_jadespine_basiliskAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Cslumber_Timer;
 

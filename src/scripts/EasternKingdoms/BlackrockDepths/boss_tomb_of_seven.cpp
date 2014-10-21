@@ -97,7 +97,7 @@ enum DoomrelSpells
 
 struct boss_doomrelAI : public ScriptedAI
 {
-    boss_doomrelAI(Creature *c) : ScriptedAI(c)
+    boss_doomrelAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

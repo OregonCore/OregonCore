@@ -49,7 +49,7 @@ enum Spells
 
 struct boss_jeklikAI : public ScriptedAI
 {
-    boss_jeklikAI(Creature *c) : ScriptedAI(c)
+    boss_jeklikAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -235,7 +235,7 @@ struct boss_jeklikAI : public ScriptedAI
 // Flying Bat
 struct mob_batriderAI : public ScriptedAI
 {
-    mob_batriderAI(Creature *c) : ScriptedAI(c)
+    mob_batriderAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

@@ -36,7 +36,7 @@ enum eSpells
 
 struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
 {
-    boss_high_inquisitor_fairbanksAI(Creature *c) : ScriptedAI(c) {}
+    boss_high_inquisitor_fairbanksAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 CurseOfBlood_Timer;
     uint32 DispelMagic_Timer;

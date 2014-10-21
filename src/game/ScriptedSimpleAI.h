@@ -34,7 +34,7 @@ enum CastTarget
 
 struct SimpleAI : public ScriptedAI
 {
-    SimpleAI(Creature *c);// : ScriptedAI(c);
+    SimpleAI(Creature* c);// : ScriptedAI(c);
 
     void Reset();
 

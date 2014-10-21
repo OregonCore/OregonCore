@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_wushoolayAI : public ScriptedAI
 {
-    boss_wushoolayAI(Creature *c) : ScriptedAI(c) {}
+    boss_wushoolayAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 LightningCloud_Timer;
     uint32 LightningWave_Timer;

@@ -44,7 +44,7 @@ EndScriptData */
 
 struct boss_nethermancer_sepethreaAI : public ScriptedAI
 {
-    boss_nethermancer_sepethreaAI(Creature *c) : ScriptedAI(c)
+    boss_nethermancer_sepethreaAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
@@ -165,7 +165,7 @@ CreatureAI* GetAI_boss_nethermancer_sepethrea(Creature* pCreature)
 
 struct mob_ragin_flamesAI : public ScriptedAI
 {
-    mob_ragin_flamesAI(Creature *c) : ScriptedAI(c)
+    mob_ragin_flamesAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();        HeroicMode = me->GetMap()->IsHeroic();
     }

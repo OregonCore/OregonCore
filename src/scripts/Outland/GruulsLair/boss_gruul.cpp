@@ -52,7 +52,7 @@ EndScriptData */
 
 struct boss_gruulAI : public ScriptedAI
 {
-    boss_gruulAI(Creature *c) : ScriptedAI(c)
+    boss_gruulAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

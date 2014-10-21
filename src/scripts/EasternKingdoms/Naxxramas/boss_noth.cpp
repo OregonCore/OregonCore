@@ -52,7 +52,7 @@ EndScriptData */
 
 struct boss_nothAI : public ScriptedAI
 {
-    boss_nothAI(Creature *c) : ScriptedAI(c) {}
+    boss_nothAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Blink_Timer;
     uint32 Curse_Timer;

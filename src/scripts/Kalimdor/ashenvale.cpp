@@ -265,7 +265,7 @@ enum
 
 struct npc_torekAI : public npc_escortAI
 {
-    npc_torekAI(Creature *c) : npc_escortAI(c) {}
+    npc_torekAI(Creature* c) : npc_escortAI(c) {}
 
     uint32 Rend_Timer;
     uint32 Thunderclap_Timer;
@@ -368,7 +368,7 @@ CreatureAI* GetAI_npc_torek(Creature* pCreature)
 
 struct npc_ruul_snowhoofAI : public npc_escortAI
 {
-    npc_ruul_snowhoofAI(Creature *c) : npc_escortAI(c) {}
+    npc_ruul_snowhoofAI(Creature* c) : npc_escortAI(c) {}
 
     void WaypointReached(uint32 i)
     {

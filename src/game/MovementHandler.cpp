@@ -59,7 +59,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
     // get the destination map entry, not the current one, this will fix homebind and reset greeting
     MapEntry const* mEntry = sMapStore.LookupEntry(loc.GetMapId());
-    InstanceTemplate const* mInstance = objmgr.GetInstanceTemplate(loc.GetMapId());
+    InstanceTemplate const* mInstance = sObjectMgr.GetInstanceTemplate(loc.GetMapId());
 
     // reset instance validity, except if going to an instance inside an instance
     if (GetPlayer()->m_InstanceValid == false && !mInstance)
@@ -158,7 +158,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     {
         if (reset_notify)
         {
-            if (uint32 timeReset = sInstanceSaveManager.GetResetTimeFor(mEntry->MapID))
+            if (uint32 timeReset = sInstanceSaveMgr.GetResetTimeFor(mEntry->MapID))
             {
                 uint32 timeleft = timeReset - time(NULL);
                 GetPlayer()->SendInstanceResetWarning(mEntry->MapID, timeleft); // greeting at the entrance of the resort raid instance

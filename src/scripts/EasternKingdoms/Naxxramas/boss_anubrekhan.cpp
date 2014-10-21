@@ -47,7 +47,7 @@ EndScriptData */
 
 struct boss_anubrekhanAI : public ScriptedAI
 {
-    boss_anubrekhanAI(Creature *c) : ScriptedAI(c) {}
+    boss_anubrekhanAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Impale_Timer;
     uint32 LocustSwarm_Timer;

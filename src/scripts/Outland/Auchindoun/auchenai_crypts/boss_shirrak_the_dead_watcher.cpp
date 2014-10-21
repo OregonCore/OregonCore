@@ -41,7 +41,7 @@ EndScriptData */
 
 struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
 {
-    boss_shirrak_the_dead_watcherAI(Creature *c) : ScriptedAI(c)
+    boss_shirrak_the_dead_watcherAI(Creature* c) : ScriptedAI(c)
     {
         HeroicMode = me->GetMap()->IsHeroic();
     }
@@ -65,7 +65,7 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
     void EnterCombat(Unit *)
     { }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         if (summoned && summoned->GetEntry() == ENTRY_FOCUS_FIRE)
         {
@@ -154,7 +154,7 @@ CreatureAI* GetAI_boss_shirrak_the_dead_watcher(Creature* pCreature)
 
 struct mob_focus_fireAI : public ScriptedAI
 {
-    mob_focus_fireAI(Creature *c) : ScriptedAI(c)
+    mob_focus_fireAI(Creature* c) : ScriptedAI(c)
     {
         HeroicMode = me->GetMap()->IsHeroic();
     }

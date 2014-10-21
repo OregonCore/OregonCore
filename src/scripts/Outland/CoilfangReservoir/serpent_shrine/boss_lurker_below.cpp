@@ -67,7 +67,7 @@ float AddPos[9][3] =
 
 struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
 {
-    boss_the_lurker_belowAI(Creature *c) : Scripted_NoMovementAI(c), Summons(me)
+    boss_the_lurker_belowAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
         SpellEntry *TempSpell = GET_SPELL(SPELL_SPOUT_ANIM);
@@ -371,7 +371,7 @@ CreatureAI* GetAI_mob_coilfang_guardian(Creature* pCreature)
 
 struct mob_coilfang_ambusherAI : public Scripted_NoMovementAI
 {
-    mob_coilfang_ambusherAI(Creature *c) : Scripted_NoMovementAI(c)
+    mob_coilfang_ambusherAI(Creature* c) : Scripted_NoMovementAI(c)
     {
         SpellEntry *TempSpell = GET_SPELL(SPELL_SHOOT);
         if (TempSpell)

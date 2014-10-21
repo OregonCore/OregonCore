@@ -129,7 +129,7 @@ static const char* Text[]=
 
 struct mob_wisp_invisAI : public ScriptedAI
 {
-    mob_wisp_invisAI(Creature *c) : ScriptedAI(c)
+    mob_wisp_invisAI(Creature* c) : ScriptedAI(c)
     {
         Creaturetype = delay = spell = spell2 = 0;
         //that's hack but there are no info about range of this spells in dbc
@@ -204,7 +204,7 @@ struct mob_wisp_invisAI : public ScriptedAI
 
 struct mob_headAI : public ScriptedAI
 {
-    mob_headAI(Creature *c) : ScriptedAI(c) {}
+    mob_headAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 bodyGUID;
 
@@ -230,7 +230,7 @@ struct mob_headAI : public ScriptedAI
     {
         DoScriptText(textEntry, me, pTarget);
         //DoCast(me, SPELL_HEAD_SPEAKS, true);
-        Creature *speaker = DoSpawnCreature(HELPER,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1000);
+        Creature* speaker = DoSpawnCreature(HELPER,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1000);
         if (speaker)
             speaker->CastSpell(speaker,SPELL_HEAD_SPEAKS,false);
         laugh += 3000;
@@ -306,7 +306,7 @@ struct mob_headAI : public ScriptedAI
                 laugh = urand(15000,30000);
                 DoPlaySoundToSet(me, RandomLaugh[urand(0,2)]);
                 //DoCast(me, SPELL_HEAD_SPEAKS, true); //this spell remove buff "head"
-                Creature *speaker = DoSpawnCreature(HELPER,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1000);
+                Creature* speaker = DoSpawnCreature(HELPER,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1000);
                 if (speaker)
                     speaker->CastSpell(speaker,SPELL_HEAD_SPEAKS,false);
                 me->MonsterTextEmote(EMOTE_LAUGHS,0);
@@ -330,7 +330,7 @@ struct mob_headAI : public ScriptedAI
 
 struct boss_headless_horsemanAI : public ScriptedAI
 {
-    boss_headless_horsemanAI(Creature *c) : ScriptedAI(c)
+    boss_headless_horsemanAI(Creature* c) : ScriptedAI(c)
     {
         SpellEntry *confl = GET_SPELL(SPELL_CONFLAGRATION);
         if (confl)
@@ -433,7 +433,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
                 break;
             case 1:
             {
-                if (Creature *smoke = me->SummonCreature(HELPER,Spawn[1].x,Spawn[1].y,Spawn[1].z,0,TEMPSUMMON_TIMED_DESPAWN,20000))
+                if (Creature* smoke = me->SummonCreature(HELPER,Spawn[1].x,Spawn[1].y,Spawn[1].z,0,TEMPSUMMON_TIMED_DESPAWN,20000))
                     CAST_AI(mob_wisp_invisAI, smoke->AI())->SetType(3);
                 DoCast(me, SPELL_RHYME_BIG);
                 break;
@@ -479,7 +479,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
             if (withhead)
                 SaySound(SAY_PLAYER_DEATH);
             //maybe possible when player dies from conflagration
-            else if (Creature *Head = Unit::GetCreature((*me), headGUID))
+            else if (Creature* Head = Unit::GetCreature((*me), headGUID))
                 CAST_AI(mob_headAI, Head->AI())->SaySound(SAY_PLAYER_DEATH);
         }
     }
@@ -527,9 +527,9 @@ struct boss_headless_horsemanAI : public ScriptedAI
         me->StopMoving();
         //me->GetMotionMaster()->MoveIdle();
         SaySound(SAY_DEATH);
-        if (Creature *flame = DoSpawnCreature(HELPER,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,60000))
+        if (Creature* flame = DoSpawnCreature(HELPER,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,60000))
             flame->CastSpell(flame,SPELL_BODY_FLAME,false);
-        if (Creature *wisp = DoSpawnCreature(WISP_INVIS,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,60000))
+        if (Creature* wisp = DoSpawnCreature(WISP_INVIS,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,60000))
             CAST_AI(mob_wisp_invisAI, wisp->AI())->SetType(4);
         if (pInstance)
             pInstance->SetData(DATA_HORSEMAN_EVENT, DONE);
@@ -645,7 +645,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
                         break;
                     if (burn <= diff)
                     {
-                        if (Creature *flame = me->SummonCreature(HELPER,Spawn[0].x,Spawn[0].y,Spawn[0].z,0,TEMPSUMMON_TIMED_DESPAWN,17000))
+                        if (Creature* flame = me->SummonCreature(HELPER,Spawn[0].x,Spawn[0].y,Spawn[0].z,0,TEMPSUMMON_TIMED_DESPAWN,17000))
                             CAST_AI(mob_wisp_invisAI, flame->AI())->SetType(2);
                         burned = true;
                     } else burn -= diff;
@@ -729,7 +729,7 @@ void mob_headAI::Disappear()
         return;
     if (bodyGUID)
     {
-        Creature *body = Unit::GetCreature((*me), bodyGUID);
+        Creature* body = Unit::GetCreature((*me), bodyGUID);
         if (body && body->isAlive())
         {
             withbody = true;
@@ -747,7 +747,7 @@ void mob_headAI::Disappear()
 
 struct mob_pulsing_pumpkinAI : public ScriptedAI
 {
-    mob_pulsing_pumpkinAI(Creature *c) : ScriptedAI(c) {}
+    mob_pulsing_pumpkinAI(Creature* c) : ScriptedAI(c) {}
 
     bool sprouted;
     uint64 debuffGUID;
@@ -758,7 +758,7 @@ struct mob_pulsing_pumpkinAI : public ScriptedAI
         me->GetPosition(x, y, z);   //this visual aura some under ground
         me->GetMap()->CreatureRelocation(me, x,y,z + 0.35f, 0.0f);
         Despawn();
-        Creature *debuff = DoSpawnCreature(HELPER,0,0,0,0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,14500);
+        Creature* debuff = DoSpawnCreature(HELPER,0,0,0,0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,14500);
         if (debuff)
         {
             debuff->SetDisplayId(me->GetDisplayId());
@@ -832,7 +832,7 @@ bool GOHello_go_loosely_turned_soil(Player* pPlayer, GameObject* soil)
     if (plr->GetQuestStatus(11405) == QUEST_STATUS_INCOMPLETE && plr->getLevel() > 64)
     { */
         pPlayer->AreaExploredOrEventHappens(11405);
-        if (Creature *horseman = soil->SummonCreature(HH_MOUNTED,FlightPoint[20].x,FlightPoint[20].y,FlightPoint[20].z,0,TEMPSUMMON_MANUAL_DESPAWN,0))
+        if (Creature* horseman = soil->SummonCreature(HH_MOUNTED,FlightPoint[20].x,FlightPoint[20].y,FlightPoint[20].z,0,TEMPSUMMON_MANUAL_DESPAWN,0))
         {
             CAST_AI(boss_headless_horsemanAI, horseman->AI())->PlayerGUID = pPlayer->GetGUID();
             CAST_AI(boss_headless_horsemanAI, horseman->AI())->FlyMode();

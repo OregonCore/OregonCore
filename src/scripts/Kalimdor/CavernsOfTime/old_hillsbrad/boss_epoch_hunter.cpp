@@ -43,7 +43,7 @@ EndScriptData */
 
 struct boss_epoch_hunterAI : public ScriptedAI
 {
-    boss_epoch_hunterAI(Creature *c) : ScriptedAI(c)
+    boss_epoch_hunterAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

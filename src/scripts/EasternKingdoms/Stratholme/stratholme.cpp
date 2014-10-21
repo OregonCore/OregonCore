@@ -80,7 +80,7 @@ bool GOHello_go_gauntlet_gate(Player* pPlayer, GameObject* pGo)
 
 struct mob_freed_soulAI : public ScriptedAI
 {
-    mob_freed_soulAI(Creature *c) : ScriptedAI(c) {}
+    mob_freed_soulAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()
     {
@@ -107,7 +107,7 @@ CreatureAI* GetAI_mob_freed_soul(Creature* pCreature)
 
 struct mob_restless_soulAI : public ScriptedAI
 {
-    mob_restless_soulAI(Creature *c) : ScriptedAI(c) {}
+    mob_restless_soulAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 Tagger;
     uint32 Die_Timer;
@@ -134,7 +134,7 @@ struct mob_restless_soulAI : public ScriptedAI
         }
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         summoned->CastSpell(summoned,SPELL_SOUL_FREED,false);
     }
@@ -178,7 +178,7 @@ enum eGhostlyCitizenSpells
 
 struct mobs_spectral_ghostly_citizenAI : public ScriptedAI
 {
-    mobs_spectral_ghostly_citizenAI(Creature *c) : ScriptedAI(c) {}
+    mobs_spectral_ghostly_citizenAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Die_Timer;
     bool Tagged;

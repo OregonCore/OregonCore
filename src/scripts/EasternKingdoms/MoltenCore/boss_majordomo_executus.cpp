@@ -54,7 +54,7 @@ EndScriptData */
 
 struct boss_majordomoAI : public ScriptedAI
 {
-    boss_majordomoAI(Creature *c) : ScriptedAI(c) {}
+    boss_majordomoAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 MagicReflection_Timer;
     uint32 DamageReflection_Timer;

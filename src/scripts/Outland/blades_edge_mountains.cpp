@@ -60,7 +60,7 @@ enum eDrake
 
 struct mobs_nether_drakeAI : public ScriptedAI
 {
-    mobs_nether_drakeAI(Creature *c) : ScriptedAI(c) {}
+    mobs_nether_drakeAI(Creature* c) : ScriptedAI(c) {}
 
     bool IsNihil;
     uint32 NihilSpeech_Timer;
@@ -240,7 +240,7 @@ CreatureAI* GetAI_mobs_nether_drake(Creature* pCreature)
 
 struct npc_daranelleAI : public ScriptedAI
 {
-    npc_daranelleAI(Creature *c) : ScriptedAI(c) {}
+    npc_daranelleAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()
     {
@@ -344,7 +344,7 @@ enum eBloodmaul
 
 struct npc_bloodmaul_brutebaneAI : public ScriptedAI
 {
-    npc_bloodmaul_brutebaneAI(Creature *c) : ScriptedAI(c)
+    npc_bloodmaul_brutebaneAI(Creature* c) : ScriptedAI(c)
     {
        if (Creature* pOgre = me->FindNearestCreature(NPC_OGRE_BRUTE, 50, true))
        {
@@ -374,7 +374,7 @@ CreatureAI* GetAI_npc_bloodmaul_brutebane(Creature* pCreature)
 
 struct npc_ogre_bruteAI : public ScriptedAI
 {
-    npc_ogre_bruteAI(Creature *c) : ScriptedAI(c) {}
+    npc_ogre_bruteAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 PlayerGUID;
 
@@ -435,7 +435,7 @@ bool GOUse_go_thunderspike(Player* player, GameObject* /*_GO*/)
     if (player->GetQuestStatus(Q_THE_THUNDERSPIKE) == QUEST_STATUS_INCOMPLETE)
     {
         // to prevent spawn spam :)
-        if (Creature *pGor = GetClosestCreatureWithEntry(player, GOR_GRIMGUT_ENTRY, 50.0f, true))
+        if (Creature* pGor = GetClosestCreatureWithEntry(player, GOR_GRIMGUT_ENTRY, 50.0f, true))
         {
             if (!pGor->getVictim())
                 pGor->AI()->AttackStart(player);

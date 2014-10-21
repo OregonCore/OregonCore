@@ -142,7 +142,7 @@ static TransformStruct Transform[] =
 
 struct boss_zuljinAI : public ScriptedAI
 {
-    boss_zuljinAI(Creature *c) : ScriptedAI(c), Summons(me)
+    boss_zuljinAI(Creature* c) : ScriptedAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
     }
@@ -287,7 +287,7 @@ struct boss_zuljinAI : public ScriptedAI
 
     void SpawnAdds()
     {
-        Creature *pCreature = NULL;
+        Creature* pCreature = NULL;
         for (uint8 i = 0; i < 4; ++i)
         {
             pCreature = me->SummonCreature(SpiritInfo[i].entry, SpiritInfo[i].x, SpiritInfo[i].y, SpiritInfo[i].z, SpiritInfo[i].orient, TEMPSUMMON_DEAD_DESPAWN, 0);
@@ -319,12 +319,12 @@ struct boss_zuljinAI : public ScriptedAI
         }
     }
 
-    void JustSummoned(Creature *summon)
+    void JustSummoned(Creature* summon)
     {
         Summons.Summon(summon);
     }
 
-    void SummonedCreatureDespawn(Creature *summon)
+    void SummonedCreatureDespawn(Creature* summon)
     {
         Summons.Despawn(summon);
     }
@@ -585,7 +585,7 @@ CreatureAI* GetAI_boss_zuljin(Creature* pCreature)
 
 struct feather_vortexAI : public ScriptedAI
 {
-    feather_vortexAI(Creature *c) : ScriptedAI(c) {}
+    feather_vortexAI(Creature* c) : ScriptedAI(c) {}
 
     std::list<Player*> PlayerList;
     uint32 ResetTimer;

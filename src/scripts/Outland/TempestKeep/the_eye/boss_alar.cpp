@@ -68,7 +68,7 @@ enum WaitEventType
 
 struct boss_alarAI : public ScriptedAI
 {
-    boss_alarAI(Creature *c) : ScriptedAI(c)
+    boss_alarAI(Creature* c) : ScriptedAI(c)
     {
         pInstance =c->GetInstanceData();
         DefaultMoveSpeedRate = me->GetSpeedRate(MOVE_RUN);
@@ -140,7 +140,7 @@ struct boss_alarAI : public ScriptedAI
             pInstance->SetData(DATA_ALAREVENT, DONE);
     }
 
-    void JustSummoned(Creature *summon)
+    void JustSummoned(Creature* summon)
     {
         if (summon->GetEntry() == CREATURE_EMBER_OF_ALAR)
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
@@ -429,7 +429,7 @@ CreatureAI* GetAI_boss_alar(Creature* pCreature)
 
 struct mob_ember_of_alarAI : public ScriptedAI
 {
-    mob_ember_of_alarAI(Creature *c) : ScriptedAI(c)
+    mob_ember_of_alarAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
@@ -490,7 +490,7 @@ CreatureAI* GetAI_mob_ember_of_alar(Creature* pCreature)
 
 struct mob_flame_patch_alarAI : public ScriptedAI
 {
-    mob_flame_patch_alarAI(Creature *c) : ScriptedAI(c) {}
+    mob_flame_patch_alarAI(Creature* c) : ScriptedAI(c) {}
     void Reset() {}
     void EnterCombat(Unit * /*who*/) {}
     void AttackStart(Unit* /*who*/) {}

@@ -120,7 +120,7 @@ void PlayerSocial::SetFriendNote(uint32 friend_guid, std::string note)
 
 void PlayerSocial::SendSocialList()
 {
-    Player* plr = objmgr.GetPlayer(GetPlayerGUID());
+    Player* plr = sObjectMgr.GetPlayer(GetPlayerGUID());
     if (!plr)
         return;
 
@@ -216,7 +216,7 @@ void SocialMgr::GetFriendInfo(Player* player, uint32 friendGUID, FriendInfo &fri
         pFriend->isDND() ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_DND) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_DND);
         
         // RAF Status
-        objmgr.GetRAFLinkStatus(player, pFriend) ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_RAF) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_RAF);
+        sObjectMgr.GetRAFLinkStatus(player, pFriend) ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_RAF) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_RAF);
  
         friendInfo.Area = pFriend->GetZoneId();
         friendInfo.Level = pFriend->getLevel();

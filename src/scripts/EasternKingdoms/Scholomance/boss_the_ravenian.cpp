@@ -32,7 +32,7 @@ EndScriptData */
 
 struct boss_theravenianAI : public ScriptedAI
 {
-    boss_theravenianAI(Creature *c) : ScriptedAI(c) {}
+    boss_theravenianAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Trample_Timer;
     uint32 Cleave_Timer;

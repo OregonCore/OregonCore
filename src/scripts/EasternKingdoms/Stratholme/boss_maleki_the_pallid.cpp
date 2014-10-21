@@ -32,7 +32,7 @@ EndScriptData */
 
 struct boss_maleki_the_pallidAI : public ScriptedAI
 {
-    boss_maleki_the_pallidAI(Creature *c) : ScriptedAI(c)
+    boss_maleki_the_pallidAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = me->GetInstanceData();
     }

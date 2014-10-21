@@ -144,7 +144,7 @@ bool ItemUse_item_draenei_fishing_net(Player* pPlayer, Item* /*pItem*/, SpellCas
     {
         if (urand(0,99) < 35)
         {
-            Creature *Murloc = pPlayer->SummonCreature(17102, pPlayer->GetPositionX(), pPlayer->GetPositionY()+20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+            Creature* Murloc = pPlayer->SummonCreature(17102, pPlayer->GetPositionX(), pPlayer->GetPositionY()+20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
             if (Murloc)
                 Murloc->AI()->AttackStart(pPlayer);
         }
@@ -186,7 +186,7 @@ bool ItemUse_item_nether_wraith_beacon(Player* pPlayer, Item* /*pItem*/, SpellCa
 {
     if (pPlayer->GetQuestStatus(10832) == QUEST_STATUS_INCOMPLETE)
     {
-        Creature *Nether;
+        Creature* Nether;
         Nether = pPlayer->SummonCreature(22408, pPlayer->GetPositionX(), pPlayer->GetPositionY()+20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
         Nether = pPlayer->SummonCreature(22408, pPlayer->GetPositionX(), pPlayer->GetPositionY()-20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
         if (Nether)

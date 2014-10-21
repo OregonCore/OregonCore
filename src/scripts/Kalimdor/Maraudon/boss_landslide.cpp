@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_landslideAI : public ScriptedAI
 {
-    boss_landslideAI(Creature *c) : ScriptedAI(c) {}
+    boss_landslideAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 KnockAway_Timer;
     uint32 Trample_Timer;

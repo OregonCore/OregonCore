@@ -38,7 +38,7 @@ EndScriptData */
 
 struct boss_the_makerAI : public ScriptedAI
 {
-    boss_the_makerAI(Creature *c) : ScriptedAI(c) 
+    boss_the_makerAI(Creature* c) : ScriptedAI(c) 
 	{
             pInstance = c->GetInstanceData();
             HeroicMode = me->GetMap()->IsHeroic();

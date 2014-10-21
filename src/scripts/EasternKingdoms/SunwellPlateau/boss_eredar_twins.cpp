@@ -87,7 +87,7 @@ enum Spells
 
 struct boss_sacrolashAI : public ScriptedAI
 {
-    boss_sacrolashAI(Creature *c) : ScriptedAI(c)
+    boss_sacrolashAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -344,7 +344,7 @@ CreatureAI* GetAI_boss_sacrolash(Creature* pCreature)
 
 struct boss_alythessAI : public Scripted_NoMovementAI
 {
-    boss_alythessAI(Creature *c) : Scripted_NoMovementAI(c)
+    boss_alythessAI(Creature* c) : Scripted_NoMovementAI(c)
     {
         pInstance = c->GetInstanceData();
         IntroStepCounter = 10;
@@ -673,7 +673,7 @@ CreatureAI* GetAI_boss_alythess(Creature* pCreature)
 
 struct mob_shadow_imageAI : public ScriptedAI
 {
-    mob_shadow_imageAI(Creature *c) : ScriptedAI(c) {}
+    mob_shadow_imageAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ShadowfuryTimer;
     uint32 KillTimer;

@@ -49,7 +49,7 @@ enum WaterElementalSpells
 
 struct mob_water_elementalAI : public ScriptedAI
 {
-    mob_water_elementalAI(Creature *c) : ScriptedAI(c) {}
+    mob_water_elementalAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 uiWaterBoltTimer;
     uint64 uiBalindaGUID;
@@ -75,7 +75,7 @@ struct mob_water_elementalAI : public ScriptedAI
         // check if creature is not outside of building
         if (uiResetTimer <= diff)
         {
-            if (Creature *pBalinda = Unit::GetCreature(*me, uiBalindaGUID))
+            if (Creature* pBalinda = Unit::GetCreature(*me, uiBalindaGUID))
                 if (me->GetDistance2d(pBalinda->GetHomePosition().GetPositionX(), pBalinda->GetHomePosition().GetPositionY()) > 50)
                     EnterEvadeMode();
                 uiResetTimer = 5*IN_MILLISECONDS;
@@ -87,7 +87,7 @@ struct mob_water_elementalAI : public ScriptedAI
 
 struct boss_balindaAI : public ScriptedAI
 {
-    boss_balindaAI(Creature *c) : ScriptedAI(c), Summons(me) {}
+    boss_balindaAI(Creature* c) : ScriptedAI(c), Summons(me) {}
 
     uint32 uiArcaneExplosionTimer;
     uint32 uiConeOfColdTimer;
@@ -190,7 +190,7 @@ CreatureAI* GetAI_boss_balinda(Creature* pCreature)
     return new boss_balindaAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_water_elemental(Creature *_Creature)
+CreatureAI* GetAI_mob_water_elemental(Creature* _Creature)
 {
     return new mob_water_elementalAI (_Creature);
 }

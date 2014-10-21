@@ -65,7 +65,7 @@ EndScriptData */
 
 struct boss_loathebAI : public ScriptedAI
 {
-    boss_loathebAI(Creature *c) : ScriptedAI(c) {}
+    boss_loathebAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 CorruptedMind_Timer;
     uint32 PoisonAura_Timer;

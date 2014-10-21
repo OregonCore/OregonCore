@@ -57,7 +57,7 @@ enum Summons
 
 struct boss_mandokirAI : public ScriptedAI
 {
-    boss_mandokirAI(Creature *c) : ScriptedAI(c)
+    boss_mandokirAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -294,7 +294,7 @@ struct boss_mandokirAI : public ScriptedAI
 // Ohgan
 struct mob_ohganAI : public ScriptedAI
 {
-    mob_ohganAI(Creature *c) : ScriptedAI(c)
+    mob_ohganAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

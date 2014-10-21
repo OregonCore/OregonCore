@@ -35,7 +35,7 @@ EndScriptData */
 
 struct boss_magistrate_barthilasAI : public ScriptedAI
 {
-    boss_magistrate_barthilasAI(Creature *c) : ScriptedAI(c) {}
+    boss_magistrate_barthilasAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 DrainingBlow_Timer;
     uint32 CrowdPummel_Timer;

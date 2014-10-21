@@ -420,7 +420,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
 
 struct mob_felkael_flamestrikeAI : public ScriptedAI
 {
-    mob_felkael_flamestrikeAI(Creature *c) : ScriptedAI(c)
+    mob_felkael_flamestrikeAI(Creature* c) : ScriptedAI(c)
     {
         Heroic = c->GetMap()->IsHeroic();
     }
@@ -556,7 +556,7 @@ struct mob_felkael_phoenixAI : public ScriptedAI
 
 struct mob_felkael_phoenix_eggAI : public ScriptedAI
 {
-    mob_felkael_phoenix_eggAI(Creature *c) : ScriptedAI(c) {}
+    mob_felkael_phoenix_eggAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 HatchTimer;
 
@@ -580,7 +580,7 @@ struct mob_felkael_phoenix_eggAI : public ScriptedAI
 
 struct mob_arcane_sphereAI : public ScriptedAI
 {
-    mob_arcane_sphereAI(Creature *c) : ScriptedAI(c) { Reset(); }
+    mob_arcane_sphereAI(Creature* c) : ScriptedAI(c) { Reset(); }
 
     uint32 DespawnTimer;
     uint32 ChangeTargetTimer;

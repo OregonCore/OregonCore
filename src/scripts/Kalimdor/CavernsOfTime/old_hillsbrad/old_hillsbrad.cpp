@@ -178,7 +178,7 @@ bool GossipSelect_npc_erozion(Player* player, Creature* pCreature, uint32 /*send
 
 struct npc_thrall_old_hillsbradAI : public npc_escortAI
 {
-    npc_thrall_old_hillsbradAI(Creature *c) : npc_escortAI(c)
+    npc_thrall_old_hillsbradAI(Creature* c) : npc_escortAI(c)
     {
         pInstance = c->GetInstanceData();
         HadMount = false;
@@ -561,7 +561,7 @@ bool GossipSelect_npc_thrall_old_hillsbrad(Player* pPlayer, Creature* pCreature,
 
 struct npc_tarethaAI : public npc_escortAI
 {
-    npc_tarethaAI(Creature *c) : npc_escortAI(c)
+    npc_tarethaAI(Creature* c) : npc_escortAI(c)
     {
         pInstance = c->GetInstanceData();
     }

@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_lucifronAI : public ScriptedAI
 {
-    boss_lucifronAI(Creature *c) : ScriptedAI(c) {}
+    boss_lucifronAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ImpendingDoom_Timer;
     uint32 LucifronCurse_Timer;

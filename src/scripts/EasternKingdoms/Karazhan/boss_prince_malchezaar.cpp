@@ -99,7 +99,7 @@ static InfernalPoint InfernalPoints[] =
 //---------Infernal code first
 struct netherspite_infernalAI : public ScriptedAI
 {
-    netherspite_infernalAI(Creature *c) : ScriptedAI(c) ,
+    netherspite_infernalAI(Creature* c) : ScriptedAI(c) ,
         malchezaar(0), HellfireTimer(0), CleanupTimer(0), point(NULL) {}
 
     uint32 malchezaar;
@@ -161,7 +161,7 @@ struct netherspite_infernalAI : public ScriptedAI
 
 struct boss_malchezaarAI : public ScriptedAI
 {
-    boss_malchezaarAI(Creature *c) : ScriptedAI(c)
+    boss_malchezaarAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -279,7 +279,7 @@ struct boss_malchezaarAI : public ScriptedAI
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, 0);
 
         //damage
-        const CreatureInfo *cinfo = me->GetCreatureInfo();
+        const CreatureInfo *cinfo = me->GetCreatureTemplate();
         me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, cinfo->mindmg);
         me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, cinfo->maxdmg);
         me->UpdateDamagePhysical(BASE_ATTACK);
@@ -347,7 +347,7 @@ struct boss_malchezaarAI : public ScriptedAI
             pos.Relocate(point->x, point->y, INFERNAL_Z);
         }
 
-        Creature *Infernal = me->SummonCreature(NETHERSPITE_INFERNAL, pos, TEMPSUMMON_TIMED_DESPAWN, 180000);
+        Creature* Infernal = me->SummonCreature(NETHERSPITE_INFERNAL, pos, TEMPSUMMON_TIMED_DESPAWN, 180000);
 
         if (Infernal)
         {
@@ -406,7 +406,7 @@ struct boss_malchezaarAI : public ScriptedAI
                 me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, AXE_EQUIP_INFO);
 
                 //damage
-                const CreatureInfo *cinfo = me->GetCreatureInfo();
+                const CreatureInfo *cinfo = me->GetCreatureTemplate();
                 me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, 2*cinfo->mindmg);
                 me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, 2*cinfo->maxdmg);
                 me->UpdateDamagePhysical(BASE_ATTACK);
@@ -438,7 +438,7 @@ struct boss_malchezaarAI : public ScriptedAI
                 Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 for (uint8 i = 0; i < 2; ++i)
                 {
-                    Creature *axe = me->SummonCreature(MALCHEZARS_AXE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
+                    Creature* axe = me->SummonCreature(MALCHEZARS_AXE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
                     if (axe)
                     {
                         axe->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, AXE_EQUIP_MODEL);
@@ -574,7 +574,7 @@ struct boss_malchezaarAI : public ScriptedAI
         }
     }
 
-    void Cleanup(Creature *infernal, InfernalPoint *point)
+    void Cleanup(Creature* infernal, InfernalPoint *point)
     {
         for (std::vector<uint64>::iterator itr = infernals.begin(); itr != infernals.end(); ++itr)
             if (*itr == infernal->GetGUID())

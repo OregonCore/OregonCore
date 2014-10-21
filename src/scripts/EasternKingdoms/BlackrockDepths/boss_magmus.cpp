@@ -37,7 +37,7 @@ enum eEnums
 
 struct boss_magmusAI : public ScriptedAI
 {
-    boss_magmusAI(Creature *c) : ScriptedAI(c) {}
+    boss_magmusAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 FieryBurst_Timer;
     uint32 WarStomp_Timer;

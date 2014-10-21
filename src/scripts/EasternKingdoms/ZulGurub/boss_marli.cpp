@@ -49,7 +49,7 @@ enum Spells
 
 struct boss_marliAI : public ScriptedAI
 {
-    boss_marliAI(Creature *c) : ScriptedAI(c)
+    boss_marliAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -137,7 +137,7 @@ struct boss_marliAI : public ScriptedAI
                 if (!pTarget)
                     return;
 
-                Creature *Spider = NULL;
+                Creature* Spider = NULL;
 
                 Spider = me->SummonCreature(15041, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                 if (Spider)
@@ -163,7 +163,7 @@ struct boss_marliAI : public ScriptedAI
                 if (!pTarget)
                     return;
 
-                Creature *Spider = me->SummonCreature(15041, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                Creature* Spider = me->SummonCreature(15041, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                 if (Spider)
                     Spider->AI()->AttackStart(pTarget);
                 SpawnSpider_Timer = 12000 + rand()%5000;
@@ -176,7 +176,7 @@ struct boss_marliAI : public ScriptedAI
                 me->InterruptNonMeleeSpells(false);
                 DoScriptText(SAY_TRANSFORM, me);
                 DoCast(me, SPELL_SPIDER_FORM);
-                const CreatureInfo *cinfo = me->GetCreatureInfo();
+                const CreatureInfo *cinfo = me->GetCreatureTemplate();
                 me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg / 100) * 35)));
                 me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg / 100) * 35)));
                 me->UpdateDamagePhysical(BASE_ATTACK);
@@ -227,7 +227,7 @@ struct boss_marliAI : public ScriptedAI
                 if (TransformBack_Timer <= diff)
                 {
                     me->SetDisplayId(15220);
-                    const CreatureInfo *cinfo = me->GetCreatureInfo();
+                    const CreatureInfo *cinfo = me->GetCreatureTemplate();
                     me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
                     me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));
                     me->UpdateDamagePhysical(BASE_ATTACK);
@@ -249,7 +249,7 @@ struct boss_marliAI : public ScriptedAI
 // Spawn of Marli
 struct mob_spawn_of_marliAI : public ScriptedAI
 {
-    mob_spawn_of_marliAI(Creature *c) : ScriptedAI(c) {}
+    mob_spawn_of_marliAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Grow_Timer;
     float Growth_Level;
@@ -279,7 +279,7 @@ struct mob_spawn_of_marliAI : public ScriptedAI
         // Grow_Timer
         if (Grow_Timer <= diff)
         {
-            const CreatureInfo *cinfo = me->GetCreatureInfo();
+            const CreatureInfo *cinfo = me->GetCreatureTemplate();
             me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->maxdmg * (1 + 0.1f * Growth_Level)));
             me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg * (1 + 0.1f * Growth_Level)));
             me->UpdateDamagePhysical(BASE_ATTACK);

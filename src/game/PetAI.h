@@ -28,12 +28,12 @@ class PetAI : public CreatureAI
 {
     public:
 
-        explicit PetAI(Creature *c);
+        explicit PetAI(Creature* c);
 
         void EnterEvadeMode();
 
         void UpdateAI(const uint32);
-        static int Permissible(const Creature *);
+        static int Permissible(const Creature* );
 
         void KilledUnit(Unit *victim);
         void AttackStart(Unit *target);

@@ -54,7 +54,7 @@
 
 struct boss_anetheronAI : public hyjal_trashAI
 {
-    boss_anetheronAI(Creature *c) : hyjal_trashAI(c)
+    boss_anetheronAI(Creature* c) : hyjal_trashAI(c)
     {
         pInstance = c->GetInstanceData();
         pGo = false;
@@ -237,7 +237,7 @@ CreatureAI* GetAI_boss_anetheron(Creature* pCreature)
 
 struct mob_towering_infernalAI : public ScriptedAI
 {
-    mob_towering_infernalAI(Creature *c) : ScriptedAI(c)
+    mob_towering_infernalAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         if (pInstance)

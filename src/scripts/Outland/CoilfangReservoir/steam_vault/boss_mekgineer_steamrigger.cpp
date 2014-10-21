@@ -49,7 +49,7 @@ EndContentData */
 
 struct boss_mekgineer_steamriggerAI : public ScriptedAI
 {
-    boss_mekgineer_steamriggerAI(Creature *c) : ScriptedAI(c)
+    boss_mekgineer_steamriggerAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
@@ -198,7 +198,7 @@ CreatureAI* GetAI_boss_mekgineer_steamrigger(Creature* pCreature)
 
 struct mob_steamrigger_mechanicAI : public ScriptedAI
 {
-    mob_steamrigger_mechanicAI(Creature *c) : ScriptedAI(c)
+    mob_steamrigger_mechanicAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();

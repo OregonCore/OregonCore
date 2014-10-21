@@ -277,7 +277,7 @@ enum eSpirit
 struct npc_clintar_spiritAI : public npc_escortAI
 {
 public:
-    npc_clintar_spiritAI(Creature *c) : npc_escortAI(c) {}
+    npc_clintar_spiritAI(Creature* c) : npc_escortAI(c) {}
 
     uint32 Step;
     uint32 CurrWP;
@@ -445,7 +445,7 @@ public:
                     {
                         case 0:
                             {
-                            Creature *mob = me->SummonCreature(ASPECT_RAVEN, ASPECT_RAVEN_SUMMON_X, ASPECT_RAVEN_SUMMON_Y, ASPECT_RAVEN_SUMMON_Z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 2000);
+                            Creature* mob = me->SummonCreature(ASPECT_RAVEN, ASPECT_RAVEN_SUMMON_X, ASPECT_RAVEN_SUMMON_Y, ASPECT_RAVEN_SUMMON_Z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 2000);
                             if (mob)
                             {
                                 mob->AddThreat(me,10000.0f);
@@ -542,7 +542,7 @@ bool QuestAccept_npc_clintar_dreamwalker(Player* pPlayer, Creature* pCreature, Q
 {
     if (quest->GetQuestId() == 10965)
     {
-        Creature *clintar_spirit = pCreature->SummonCreature(CLINTAR_SPIRIT, CLINTAR_SPIRIT_SUMMON_X, CLINTAR_SPIRIT_SUMMON_Y, CLINTAR_SPIRIT_SUMMON_Z, CLINTAR_SPIRIT_SUMMON_O, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 100000);
+        Creature* clintar_spirit = pCreature->SummonCreature(CLINTAR_SPIRIT, CLINTAR_SPIRIT_SUMMON_X, CLINTAR_SPIRIT_SUMMON_Y, CLINTAR_SPIRIT_SUMMON_Z, CLINTAR_SPIRIT_SUMMON_O, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 100000);
         if (clintar_spirit)
             CAST_AI(npc_clintar_spiritAI, clintar_spirit->AI())->StartEvent(pPlayer);
     }
@@ -660,7 +660,7 @@ Location PristessHomePoint[] =
 
 struct npc_remulosAI : public npc_escortAI
 {
-    npc_remulosAI(Creature *c) : npc_escortAI(c) {}
+    npc_remulosAI(Creature* c) : npc_escortAI(c) {}
 
     uint64 EranikusGUID;
     uint32 uiPhase;
@@ -773,7 +773,7 @@ struct npc_remulosAI : public npc_escortAI
         {
             for (std::list<uint64>::iterator itr = PhantasmsList.begin(); itr != PhantasmsList.end(); ++itr)
             {
-                if (Creature *pPhantasm = Unit::GetCreature(*me,*itr))
+                if (Creature* pPhantasm = Unit::GetCreature(*me,*itr))
                 {
                     if (!pPhantasm->isAlive())
                     {
@@ -1098,7 +1098,7 @@ bool QuestAccept_npc_remulos(Player* pPlayer, Creature* pCreature, const Quest* 
 struct npc_eranikusAI : public ScriptedAI
 {
 public:
-    npc_eranikusAI(Creature *c) : ScriptedAI(c) {}
+    npc_eranikusAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ShadowBoltTimer;
     uint32 AcidBreathTimer;

@@ -114,7 +114,7 @@ class InstanceData : public ZoneScript
         virtual void OnPlayerEnter(Player* ) {}
 
         // Direct calls to Map functions.
-        Creature *GetCreature(uint64 guid) {return instance->GetCreature(guid);}
+        Creature* GetCreature(uint64 guid) {return instance->GetCreature(guid);}
         GameObject *GetGameObject(uint64 guid) {return instance->GetGameObject(guid);}
 
         //sends world state update to all players in instance
@@ -141,10 +141,10 @@ class InstanceData : public ZoneScript
         void LoadMinionData(const MinionData *data);
 
         void AddDoor(GameObject *door, bool add);
-        void AddMinion(Creature *minion, bool add);
+        void AddMinion(Creature* minion, bool add);
 
         void UpdateDoorState(GameObject *door);
-        void UpdateMinionState(Creature *minion, EncounterState state);
+        void UpdateMinionState(Creature* minion, EncounterState state);
 
         std::string LoadBossState(const char * data);
         std::string GetBossSaveData();

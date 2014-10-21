@@ -51,7 +51,7 @@ EndScriptData */
 
 struct boss_pathaleon_the_calculatorAI : public ScriptedAI
 {
-    boss_pathaleon_the_calculatorAI(Creature *c) : ScriptedAI(c), summons(me)
+    boss_pathaleon_the_calculatorAI(Creature* c) : ScriptedAI(c), summons(me)
     {
         HeroicMode = me->GetMap()->IsHeroic();
     }
@@ -101,8 +101,8 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
         summons.DespawnAll();
     }
 
-    void JustSummoned(Creature *summon) { summons.Summon(summon); }
-    void SummonedCreatureDespawn(Creature *summon) { summons.Despawn(summon); }
+    void JustSummoned(Creature* summon) { summons.Summon(summon); }
+    void SummonedCreatureDespawn(Creature* summon) { summons.Despawn(summon); }
 
     void UpdateAI(const uint32 diff)
     {
@@ -178,7 +178,7 @@ CreatureAI* GetAI_boss_pathaleon_the_calculator(Creature* pCreature)
 
 struct mob_nether_wraithAI : public ScriptedAI
 {
-    mob_nether_wraithAI(Creature *c) : ScriptedAI(c) {}
+    mob_nether_wraithAI(Creature* c) : ScriptedAI(c) {}
 
     ScriptedInstance *pInstance;
 

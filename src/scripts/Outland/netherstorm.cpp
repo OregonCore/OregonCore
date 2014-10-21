@@ -73,7 +73,7 @@ enum eManaforge
 
 struct npc_manaforge_control_consoleAI : public ScriptedAI
 {
-    npc_manaforge_control_consoleAI(Creature *c) : ScriptedAI(c) {}
+    npc_manaforge_control_consoleAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Event_Timer;
     uint32 Wave_Timer;
@@ -142,7 +142,7 @@ struct npc_manaforge_control_consoleAI : public ScriptedAI
         }
     }
 
-    void DoWaveSpawnForCreature(Creature *creature)
+    void DoWaveSpawnForCreature(Creature* creature)
     {
         switch(creature->GetEntry())
         {
@@ -196,7 +196,7 @@ struct npc_manaforge_control_consoleAI : public ScriptedAI
                 break;
         }
     }
-    void DoFinalSpawnForCreature(Creature *creature)
+    void DoFinalSpawnForCreature(Creature* creature)
     {
         switch(creature->GetEntry())
         {
@@ -377,7 +377,7 @@ int CreatureEntry[3][1] =
 
 struct npc_commander_dawnforgeAI : public ScriptedAI
 {
-    npc_commander_dawnforgeAI(Creature *c) : ScriptedAI(c) { Reset (); }
+    npc_commander_dawnforgeAI(Creature* c) : ScriptedAI(c) { Reset (); }
 
 
     uint64 playerGUID;
@@ -425,7 +425,7 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
         return pCreature;
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         pathaleonGUID = summoned->GetGUID();
     }
@@ -433,8 +433,8 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
     // Emote Ardonis and Pathaleon
     void Turn_to_Pathaleons_Image()
     {
-        Creature *ardonis = Unit::GetCreature(*me,ardonisGUID);
-        Creature *pathaleon = Unit::GetCreature(*me,pathaleonGUID);
+        Creature* ardonis = Unit::GetCreature(*me,ardonisGUID);
+        Creature* pathaleon = Unit::GetCreature(*me,pathaleonGUID);
         Player* player = Unit::GetPlayer(*me, playerGUID);
 
         if (!ardonis || !pathaleon || !player)
@@ -486,7 +486,7 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
     {
         if (!isEvent)
         {
-            Creature *ardonis = SelectCreatureInGrid(CreatureEntry[0][0], 10.0f);
+            Creature* ardonis = SelectCreatureInGrid(CreatureEntry[0][0], 10.0f);
             if (!ardonis)
                 return false;
 
@@ -711,7 +711,7 @@ bool GossipSelect_npc_professor_dabiri(Player* player, Creature* pCreature, uint
     return true;
 }
 
-bool QuestAccept_npc_professor_dabiri(Player* player, Creature *creature, Quest const *quest)
+bool QuestAccept_npc_professor_dabiri(Player* player, Creature* creature, Quest const *quest)
 {
     if (quest->GetQuestId() == QUEST_DIMENSIUS)
         DoScriptText(WHISPER_DABIRI, creature, player);
@@ -735,7 +735,7 @@ bool QuestAccept_npc_professor_dabiri(Player* player, Creature *creature, Quest 
 struct mob_phase_hunterAI : public ScriptedAI
 {
 
-    mob_phase_hunterAI(Creature *c) : ScriptedAI(c) {}
+    mob_phase_hunterAI(Creature* c) : ScriptedAI(c) {}
 
     bool Weak;
     bool Materialize;
@@ -852,7 +852,7 @@ CreatureAI* GetAI_mob_phase_hunter(Creature* pCreature)
 struct npc_bessyAI : public npc_escortAI
 {
 
-    npc_bessyAI(Creature *c) : npc_escortAI(c) {}
+    npc_bessyAI(Creature* c) : npc_escortAI(c) {}
 
     void JustDied(Unit* /*killer*/)
     {
@@ -1029,7 +1029,7 @@ enum
 
 struct npc_zeppitAI : public ScriptedAI
 {
-    npc_zeppitAI(Creature *pCreature) : ScriptedAI(pCreature) {}
+    npc_zeppitAI(Creature* pCreature) : ScriptedAI(pCreature) {}
 
     uint32 uiCheckTimer;
     uint64 uiWarpGUID;
@@ -1077,7 +1077,7 @@ enum
 
 struct npc_dr_boomAI : public ScriptedAI
 {
-    npc_dr_boomAI(Creature *pCeature) : ScriptedAI(pCeature) {}
+    npc_dr_boomAI(Creature* pCeature) : ScriptedAI(pCeature) {}
 
     std::vector<uint64> targetGUID;
 
@@ -1144,7 +1144,7 @@ CreatureAI* GetAI_npc_dr_boom(Creature* pCreature)
 
 struct npc_boom_botAI : public ScriptedAI
 {
-    npc_boom_botAI(Creature *pCreature) : ScriptedAI(pCreature) {}
+    npc_boom_botAI(Creature* pCreature) : ScriptedAI(pCreature) {}
 
     bool Boom;
 

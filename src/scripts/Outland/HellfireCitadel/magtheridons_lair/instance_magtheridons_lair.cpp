@@ -140,7 +140,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
                     Encounters[1] = NOT_STARTED;
                     for (std::set<uint64>::iterator i = ChannelerGUID.begin(); i != ChannelerGUID.end(); ++i)
                     {
-                        if (Creature *Channeler = instance->GetCreature(*i))
+                        if (Creature* Channeler = instance->GetCreature(*i))
                         {
                             if (Channeler->isAlive())
                                 Channeler->AI()->EnterEvadeMode();
@@ -159,12 +159,12 @@ struct instance_magtheridons_lair : public ScriptedInstance
                     // Let all five channelers aggro.
                     for (std::set<uint64>::iterator i = ChannelerGUID.begin(); i != ChannelerGUID.end(); ++i)
                     {
-                        Creature *Channeler = instance->GetCreature(*i);
+                        Creature* Channeler = instance->GetCreature(*i);
                         if (Channeler && Channeler->isAlive())
                             Channeler->AI()->AttackStart(Channeler->SelectNearestTarget(999));
                     }
                     // Release Magtheridon after two minutes.
-                    Creature *Magtheridon = instance->GetCreature(MagtheridonGUID);
+                    Creature* Magtheridon = instance->GetCreature(MagtheridonGUID);
                     if (Magtheridon && Magtheridon->isAlive())
                     {
                         Magtheridon->TextEmote("'s bonds begin to weaken!", 0);
@@ -176,7 +176,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
             case DONE: // Add buff and check if all channelers are dead.
                 for (std::set<uint64>::iterator i = ChannelerGUID.begin(); i != ChannelerGUID.end(); ++i)
                 {
-                    Creature *Channeler = instance->GetCreature(*i);
+                    Creature* Channeler = instance->GetCreature(*i);
                     if (Channeler && Channeler->isAlive())
                     {
                         //Channeler->CastSpell(Channeler, SPELL_SOUL_TRANSFER, true);
@@ -210,7 +210,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
         {
             if (CageTimer <= diff)
             {
-                Creature *Magtheridon = instance->GetCreature(MagtheridonGUID);
+                Creature* Magtheridon = instance->GetCreature(MagtheridonGUID);
                 if (Magtheridon && Magtheridon->isAlive())
                 {
                     Magtheridon->ClearUnitState(UNIT_STATE_STUNNED);
@@ -226,7 +226,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
             {
                 for (std::set<uint64>::iterator i = ChannelerGUID.begin(); i != ChannelerGUID.end(); ++i)
                 {
-                    if (Creature *Channeler = instance->GetCreature(*i))
+                    if (Creature* Channeler = instance->GetCreature(*i))
                     {
                         if (Channeler->isAlive())
                             Channeler->AI()->EnterEvadeMode();

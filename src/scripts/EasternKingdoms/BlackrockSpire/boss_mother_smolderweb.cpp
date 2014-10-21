@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_mothersmolderwebAI : public ScriptedAI
 {
-    boss_mothersmolderwebAI(Creature *c) : ScriptedAI(c) {}
+    boss_mothersmolderwebAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Crystalize_Timer;
     uint32 MothersMilk_Timer;

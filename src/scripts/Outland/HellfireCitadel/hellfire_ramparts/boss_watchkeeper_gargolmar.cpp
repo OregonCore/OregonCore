@@ -42,7 +42,7 @@ EndScriptData */
 
 struct boss_watchkeeper_gargolmarAI : public ScriptedAI
 {
-    boss_watchkeeper_gargolmarAI(Creature *c) : ScriptedAI(c)
+    boss_watchkeeper_gargolmarAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();

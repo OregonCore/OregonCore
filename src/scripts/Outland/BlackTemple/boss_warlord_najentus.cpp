@@ -55,7 +55,7 @@ enum eEnums
 
 struct boss_najentusAI : public ScriptedAI
 {
-    boss_najentusAI(Creature *c) : ScriptedAI(c)
+    boss_najentusAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

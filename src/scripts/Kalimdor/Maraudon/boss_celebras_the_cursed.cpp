@@ -30,7 +30,7 @@ EndScriptData */
 
 struct celebras_the_cursedAI : public ScriptedAI
 {
-    celebras_the_cursedAI(Creature *c) : ScriptedAI(c) {}
+    celebras_the_cursedAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Wrath_Timer;
     uint32 EntanglingRoots_Timer;

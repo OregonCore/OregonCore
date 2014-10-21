@@ -192,7 +192,7 @@ time_t InstanceSave::GetResetTimeForDB()
 // to cache or not to cache, that is the question
 InstanceTemplate const* InstanceSave::GetTemplate()
 {
-    return objmgr.GetInstanceTemplate(m_mapid);
+    return sObjectMgr.GetInstanceTemplate(m_mapid);
 }
 
 MapEntry const* InstanceSave::GetMapEntry()
@@ -210,8 +210,8 @@ bool InstanceSave::UnloadIfEmpty()
 {
     if (m_playerList.empty() && m_groupList.empty())
     {
-        if (!sInstanceSaveManager.lock_instLists)
-            sInstanceSaveManager.RemoveInstanceSave(GetInstanceId());
+        if (!sInstanceSaveMgr.lock_instLists)
+            sInstanceSaveMgr.RemoveInstanceSave(GetInstanceId());
         return false;
     }
     else
@@ -251,7 +251,7 @@ void InstanceSaveManager::CleanupInstances()
 {
 
     // load reset times and clean expired instances
-    sInstanceSaveManager.LoadResetTimes();
+    sInstanceSaveMgr.LoadResetTimes();
 
     // clean character/group - instance binds with invalid group/characters
     _DelHelper(CharacterDatabase, "character_instance.guid, instance", "character_instance", "LEFT JOIN characters ON character_instance.guid = characters.guid WHERE characters.guid IS NULL");
@@ -461,7 +461,7 @@ void InstanceSaveManager::LoadResetTimes()
         {
             Field *fields = result->Fetch();
             uint32 mapid = fields[0].GetUInt32();
-            if (!objmgr.GetInstanceTemplate(mapid))
+            if (!sObjectMgr.GetInstanceTemplate(mapid))
             {
                 sLog.outError("InstanceSaveManager::LoadResetTimes: invalid mapid %u in instance_reset!", mapid);
                 CharacterDatabase.DirectPExecute("DELETE FROM instance_reset WHERE mapid = '%u'", mapid);
@@ -486,7 +486,7 @@ void InstanceSaveManager::LoadResetTimes()
     // add the global reset times to the priority queue
     for (uint32 i = 0; i < sInstanceTemplate.MaxEntry; i++)
     {
-        InstanceTemplate* temp = (InstanceTemplate*)objmgr.GetInstanceTemplate(i);
+        InstanceTemplate* temp = (InstanceTemplate*)sObjectMgr.GetInstanceTemplate(i);
         if (!temp) continue;
         // only raid/heroic maps have a global reset time
         const MapEntry* entry = sMapStore.LookupEntry(temp->map);
@@ -613,7 +613,7 @@ void InstanceSaveManager::_ResetInstance(uint32 mapid, uint32 instanceId)
 
     Map* iMap = ((MapInstanced*)map)->FindMap(instanceId);
     if (iMap && iMap->IsDungeon()) ((InstanceMap*)iMap)->Reset(INSTANCE_RESET_RESPAWN_DELAY);
-    else objmgr.DeleteRespawnTimeForInstance(instanceId);   // even if map is not loaded
+    else sObjectMgr.DeleteRespawnTimeForInstance(instanceId);   // even if map is not loaded
 }
 
 void InstanceSaveManager::_ResetOrWarnAll(uint32 mapid, bool warn, uint32 timeLeft)
@@ -629,7 +629,7 @@ void InstanceSaveManager::_ResetOrWarnAll(uint32 mapid, bool warn, uint32 timeLe
     if (!warn)
     {
         // this is called one minute before the reset time
-        InstanceTemplate const* temp = objmgr.GetInstanceTemplate(mapid);
+        InstanceTemplate const* temp = sObjectMgr.GetInstanceTemplate(mapid);
         if (!temp || !temp->reset_delay)
         {
             sLog.outError("InstanceSaveManager::ResetOrWarnAll: no instance template or reset delay for map %d", mapid);

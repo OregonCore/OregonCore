@@ -99,7 +99,7 @@ float MurlocCords[10][5] =
 //Morogrim Tidewalker AI
 struct boss_morogrim_tidewalkerAI : public ScriptedAI
 {
-    boss_morogrim_tidewalkerAI(Creature *c) : ScriptedAI(c)
+    boss_morogrim_tidewalkerAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -306,7 +306,7 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
 
 struct mob_water_globuleAI : public ScriptedAI
 {
-    mob_water_globuleAI(Creature *c) : ScriptedAI(c) {}
+    mob_water_globuleAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Check_Timer;
 

@@ -57,7 +57,7 @@ EndContentData */
 
 struct npc_medivh_bmAI : public ScriptedAI
 {
-    npc_medivh_bmAI(Creature *c) : ScriptedAI(c)
+    npc_medivh_bmAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -239,7 +239,7 @@ static Wave PortalWaves[]=
 
 struct npc_time_riftAI : public ScriptedAI
 {
-    npc_time_riftAI(Creature *c) : ScriptedAI(c)
+    npc_time_riftAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

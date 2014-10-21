@@ -43,7 +43,7 @@ EndScriptData */
 
 struct molten_flameAI : public NullCreatureAI
 {
-    molten_flameAI(Creature *c) : NullCreatureAI(c)
+    molten_flameAI(Creature* c) : NullCreatureAI(c)
     {
         float x, y, z;
         me->GetNearPoint(me, x, y, z, 1, 50, M_PI*2*rand_norm());
@@ -53,7 +53,7 @@ struct molten_flameAI : public NullCreatureAI
 
 struct boss_supremusAI : public ScriptedAI
 {
-    boss_supremusAI(Creature *c) : ScriptedAI(c), summons(me)
+    boss_supremusAI(Creature* c) : ScriptedAI(c), summons(me)
     {
         pInstance = c->GetInstanceData();
     }
@@ -122,8 +122,8 @@ struct boss_supremusAI : public ScriptedAI
         summons.DespawnAll();
     }
 
-    void JustSummoned(Creature *summon) {summons.Summon(summon);}
-    void SummonedCreatureDespawn(Creature *summon) {summons.Despawn(summon);}
+    void JustSummoned(Creature* summon) {summons.Summon(summon);}
+    void SummonedCreatureDespawn(Creature* summon) {summons.Despawn(summon);}
 
     Unit* CalculateHatefulStrikeTarget()
     {
@@ -237,7 +237,7 @@ struct boss_supremusAI : public ScriptedAI
 
 struct npc_volcanoAI : public ScriptedAI
 {
-    npc_volcanoAI(Creature *c) : ScriptedAI(c)
+    npc_volcanoAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

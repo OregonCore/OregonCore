@@ -313,7 +313,7 @@ struct mob_doomfire_targettingAI : public ScriptedAI
 
 struct boss_archimondeAI : public hyjal_trashAI
 {
-    boss_archimondeAI(Creature *c) : hyjal_trashAI(c)
+    boss_archimondeAI(Creature* c) : hyjal_trashAI(c)
     {
         pInstance = c->GetInstanceData();
     }

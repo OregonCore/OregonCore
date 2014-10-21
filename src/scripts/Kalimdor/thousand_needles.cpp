@@ -274,7 +274,7 @@ enum ePlucky
 
 struct npc_pluckyAI : public ScriptedAI
 {
-    npc_pluckyAI(Creature *c) : ScriptedAI(c) { m_uiNormFaction = c->getFaction(); }
+    npc_pluckyAI(Creature* c) : ScriptedAI(c) { m_uiNormFaction = c->getFaction(); }
 
     uint32 m_uiNormFaction;
     uint32 m_uiResetTimer;
@@ -395,7 +395,7 @@ bool go_panther_cage(Player* pPlayer, GameObject* pGo)
 
 struct npc_enraged_pantherAI : public ScriptedAI
 {
-    npc_enraged_pantherAI(Creature *c) : ScriptedAI(c) {}
+    npc_enraged_pantherAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()
     {

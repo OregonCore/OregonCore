@@ -22,7 +22,7 @@
 #include "World.h"
 #include "CreatureAIImpl.h"
 
-int GuardAI::Permissible(const Creature *creature)
+int GuardAI::Permissible(const Creature* creature)
 {
     if (creature->isGuard())
         return PERMIT_BASE_SPECIAL;
@@ -30,7 +30,7 @@ int GuardAI::Permissible(const Creature *creature)
     return PERMIT_BASE_NO;
 }
 
-GuardAI::GuardAI(Creature *c) : CreatureAI(c), i_victimGuid(0), i_state(STATE_NORMAL), i_tracker(TIME_INTERVAL_LOOK)
+GuardAI::GuardAI(Creature* c) : CreatureAI(c), i_victimGuid(0), i_state(STATE_NORMAL), i_tracker(TIME_INTERVAL_LOOK)
 {
 }
 

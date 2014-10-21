@@ -120,7 +120,7 @@ inline Player* Map::_GetScriptPlayerSourceOrTarget(Object* source, Object* targe
 
 inline Creature* Map::_GetScriptCreatureSourceOrTarget(Object* source, Object* target, const ScriptInfo* scriptInfo, bool bReverse) const
 {
-    Creature *pCreature = NULL;
+    Creature* pCreature = NULL;
     if (!source && !target)
         sLog.outError("%s source and target objects are NULL.", scriptInfo->GetDebugInfo().c_str());
     else
@@ -386,7 +386,7 @@ void Map::ScriptsProcess()
                     {
                         uint64 targetGUID = target ? target->GetGUID() : 0;
                         uint32 loc_idx = pSource->GetSession()->GetSessionDbLocaleIndex();
-                        std::string text(objmgr.GetOregonString(step.script->Talk.TextID, loc_idx));
+                        std::string text(sObjectMgr.GetOregonString(step.script->Talk.TextID, loc_idx));
 
                         switch (step.script->Talk.ChatType)
                         {
@@ -417,7 +417,7 @@ void Map::ScriptsProcess()
                 else
                 {
                     // Source or target must be Creature.
-                    if (Creature *cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
+                    if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
                     {
                         uint64 targetGUID = target ? target->GetGUID() : 0;
                         switch (step.script->Talk.ChatType)
@@ -459,7 +459,7 @@ void Map::ScriptsProcess()
 
             case SCRIPT_COMMAND_EMOTE:
                 // Source or target must be Creature.
-                if (Creature *cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
+                if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
                 {
                     if (step.script->Emote.Flags & SF_EMOTE_USE_STATE)
                         cSource->SetUInt32Value(UNIT_NPC_EMOTESTATE, step.script->Emote.EmoteID);
@@ -470,7 +470,7 @@ void Map::ScriptsProcess()
 
             case SCRIPT_COMMAND_FIELD_SET:
                 // Source or target must be Creature.
-                if (Creature *cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
+                if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
                 {
                     // Validate field number.
                     if (step.script->FieldSet.FieldID <= OBJECT_FIELD_ENTRY || step.script->FieldSet.FieldID >= cSource->GetValuesCount())
@@ -484,7 +484,7 @@ void Map::ScriptsProcess()
 
             case SCRIPT_COMMAND_MOVE_TO:
                 // Source or target must be Creature.
-                if (Creature *cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
+                if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
                 {
                     cSource->SendMonsterMoveWithSpeed(step.script->MoveTo.DestX, step.script->MoveTo.DestY, step.script->MoveTo.DestZ, step.script->MoveTo.TravelTime);
                     cSource->GetMap()->CreatureRelocation(cSource, step.script->MoveTo.DestX, step.script->MoveTo.DestY, step.script->MoveTo.DestZ, 0);
@@ -493,7 +493,7 @@ void Map::ScriptsProcess()
 
             case SCRIPT_COMMAND_FLAG_SET:
                 // Source or target must be Creature.
-                if (Creature *cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
+                if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
                 {
                     // Validate field number.
                     if (step.script->FlagToggle.FieldID <= OBJECT_FIELD_ENTRY || step.script->FlagToggle.FieldID >= cSource->GetValuesCount())
@@ -507,7 +507,7 @@ void Map::ScriptsProcess()
 
             case SCRIPT_COMMAND_FLAG_REMOVE:
                 // Source or target must be Creature.
-                if (Creature *cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
+                if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
                 {
                     // Validate field number.
                     if (step.script->FlagToggle.FieldID <= OBJECT_FIELD_ENTRY || step.script->FlagToggle.FieldID >= cSource->GetValuesCount())
@@ -523,7 +523,7 @@ void Map::ScriptsProcess()
                 if  (step.script->TeleportTo.Flags & SF_TELEPORT_USE_CREATURE)
                 {
                     // Source or target must be Creature.
-                    if (Creature *cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script, true))
+                    if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script, true))
                         cSource->NearTeleportTo(step.script->TeleportTo.DestX, step.script->TeleportTo.DestY, step.script->TeleportTo.DestZ, step.script->TeleportTo.Orientation);
                 }
                 else
@@ -842,7 +842,7 @@ void Map::ScriptsProcess()
                 }
                 else //check hashmap holders
                 {
-                    if (CreatureData const* data = objmgr.GetCreatureData(step.script->CallScript.CreatureEntry))
+                    if (CreatureData const* data = sObjectMgr.GetCreatureData(step.script->CallScript.CreatureEntry))
                         cTarget = ObjectAccessor::GetObjectInWorld<Creature>(data->mapid, data->posX, data->posY, MAKE_NEW_GUID(step.script->CallScript.CreatureEntry, data->id, HIGHGUID_UNIT), cTarget);
                 }
 
@@ -868,7 +868,7 @@ void Map::ScriptsProcess()
 
             case SCRIPT_COMMAND_KILL:
                 // Source or target must be Creature.
-                if (Creature *cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
+                if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
                 {
                     if (cSource->isDead())
                         sLog.outError("%s creature is already dead (Entry: %u, GUID: %u)",
@@ -904,13 +904,13 @@ void Map::ScriptsProcess()
 
             case SCRIPT_COMMAND_EQUIP:
                 // Source must be Creature.
-                if (Creature *cSource = _GetScriptCreature(source, true, step.script))
+                if (Creature* cSource = _GetScriptCreature(source, true, step.script))
                     cSource->LoadEquipment(step.script->Equip.EquipmentID);
                 break;
 
             case SCRIPT_COMMAND_MODEL:
                 // Source must be Creature.
-                if (Creature *cSource = _GetScriptCreature(source, true, step.script))
+                if (Creature* cSource = _GetScriptCreature(source, true, step.script))
                     cSource->SetDisplayId(step.script->Model.ModelID);
                 break;
 

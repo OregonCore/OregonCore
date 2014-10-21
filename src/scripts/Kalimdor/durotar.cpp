@@ -44,7 +44,7 @@ enum LazyPeon
 
 struct npc_lazy_peonAI : public ScriptedAI
 {
-    npc_lazy_peonAI(Creature *c) : ScriptedAI(c) {}
+    npc_lazy_peonAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 uiPlayerGUID;
 

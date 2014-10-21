@@ -105,7 +105,7 @@ float Humanoides[6][5] =
 uint32 EnrageTimer = 600000;
 struct boss_entropiusAI : public Scripted_NoMovementAI
 {
-    boss_entropiusAI(Creature *c) : Scripted_NoMovementAI(c), Summons(me)
+    boss_entropiusAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
     }
@@ -200,7 +200,7 @@ CreatureAI* GetAI_boss_entropius(Creature* pCreature)
 
 struct boss_muruAI : public Scripted_NoMovementAI
 {
-    boss_muruAI(Creature *c) : Scripted_NoMovementAI(c), Summons(me)
+    boss_muruAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
     }
@@ -370,7 +370,7 @@ CreatureAI* GetAI_boss_muru(Creature* pCreature)
 
 struct npc_muru_portalAI : public Scripted_NoMovementAI
 {
-    npc_muru_portalAI(Creature *c) : Scripted_NoMovementAI(c), Summons(me)
+    npc_muru_portalAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
     }
@@ -447,7 +447,7 @@ CreatureAI* GetAI_npc_muru_portal(Creature* pCreature)
 
 struct npc_dark_fiendAI : public ScriptedAI
 {
-    npc_dark_fiendAI(Creature *c) : ScriptedAI(c) {}
+    npc_dark_fiendAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 WaitTimer;
     bool InAction;
@@ -502,7 +502,7 @@ CreatureAI* GetAI_npc_dark_fiend(Creature* pCreature)
 
 struct npc_void_sentinelAI : public ScriptedAI
 {
-    npc_void_sentinelAI(Creature *c) : ScriptedAI(c)
+    npc_void_sentinelAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -560,7 +560,7 @@ CreatureAI* GetAI_npc_void_sentinel(Creature* pCreature)
 
 struct npc_blackholeAI : public ScriptedAI
 {
-    npc_blackholeAI(Creature *c) : ScriptedAI(c)
+    npc_blackholeAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

@@ -33,7 +33,7 @@ enum Spells
 
 struct boss_general_angerforgeAI : public ScriptedAI
 {
-    boss_general_angerforgeAI(Creature *c) : ScriptedAI(c) {}
+    boss_general_angerforgeAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 MightyBlow_Timer;
     uint32 HamString_Timer;
@@ -56,13 +56,13 @@ struct boss_general_angerforgeAI : public ScriptedAI
 
     void SummonAdds(Unit* victim)
     {
-        if (Creature *SummonedAdd = DoSpawnCreature(8901, irand(-14,14), irand(-14,14), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
+        if (Creature* SummonedAdd = DoSpawnCreature(8901, irand(-14,14), irand(-14,14), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
             SummonedAdd->AI()->AttackStart(victim);
     }
 
     void SummonMedics(Unit* victim)
     {
-        if (Creature *SummonedMedic = DoSpawnCreature(8894, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
+        if (Creature* SummonedMedic = DoSpawnCreature(8894, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
             SummonedMedic->AI()->AttackStart(victim);
     }
 

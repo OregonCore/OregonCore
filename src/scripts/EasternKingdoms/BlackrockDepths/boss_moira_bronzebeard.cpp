@@ -36,7 +36,7 @@ enum Spells
 
 struct boss_moira_bronzebeardAI : public ScriptedAI
 {
-    boss_moira_bronzebeardAI(Creature *c) : ScriptedAI(c) {}
+    boss_moira_bronzebeardAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Heal_Timer;
     uint32 MindBlast_Timer;

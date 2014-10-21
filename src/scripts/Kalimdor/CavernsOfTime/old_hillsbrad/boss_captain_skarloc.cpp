@@ -41,7 +41,7 @@ EndScriptData */
 
 struct boss_captain_skarlocAI : public ScriptedAI
 {
-    boss_captain_skarlocAI(Creature *c) : ScriptedAI(c)
+    boss_captain_skarlocAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

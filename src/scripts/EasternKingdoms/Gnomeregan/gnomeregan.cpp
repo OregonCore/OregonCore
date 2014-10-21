@@ -136,7 +136,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
            {
                 if (pGo)
                 {
-                    if (Creature *trigger = pGo->SummonTrigger(pGo->GetPositionX(), pGo->GetPositionY(),pGo->GetPositionZ(), 0, 1))
+                    if (Creature* trigger = pGo->SummonTrigger(pGo->GetPositionX(), pGo->GetPositionY(),pGo->GetPositionZ(), 0, 1))
                     {
                         //visual effects are not working! ¬¬
                         trigger->CastSpell(trigger,11542,true);

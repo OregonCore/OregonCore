@@ -46,14 +46,14 @@ bool CreatureEventAIHolder::UpdateRepeatTimer(Creature* creature, uint32 repeatM
     return true;
 }
 
-int CreatureEventAI::Permissible(const Creature *creature)
+int CreatureEventAI::Permissible(const Creature* creature)
 {
     if (creature->GetAIName() == "EventAI")
         return PERMIT_BASE_SPECIAL;
     return PERMIT_BASE_NO;
 }
 
-CreatureEventAI::CreatureEventAI(Creature *c) : CreatureAI(c)
+CreatureEventAI::CreatureEventAI(Creature* c) : CreatureAI(c)
 {
     // Need make copy for filter unneeded steps and safe in case table reload
     CreatureEventAI_Event_Map::const_iterator CreatureEvents = CreatureEAI_Mgr.GetCreatureEventAIMap().find(me->GetEntry());
@@ -447,7 +447,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
                 {
                     if (CreatureInfo const* ci = GetCreatureTemplateStore(action.morph.creatureId))
                     {
-                        uint32 display_id = objmgr.ChooseDisplayId(0,ci);
+                        uint32 display_id = sObjectMgr.ChooseDisplayId(0,ci);
                         me->SetDisplayId(display_id);
                     }
                 }
@@ -842,7 +842,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
                 {
                     if (CreatureInfo const* cInfo = GetCreatureTemplateStore(action.mount.creatureId))
                     {
-                        uint32 display_id = objmgr.ChooseDisplayId(0, cInfo);
+                        uint32 display_id = sObjectMgr.ChooseDisplayId(0, cInfo);
                         me->Mount(display_id);
                     }
                 }

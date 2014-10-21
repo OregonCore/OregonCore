@@ -37,7 +37,7 @@ void WorldSession::HandleAuctionHelloOpcode(WorldPacket & recv_data)
     uint64 guid;                                            // NPC guid
     recv_data >> guid;
 
-    Creature *unit = GetPlayer()->GetNPCIfCanInteractWith(guid,UNIT_NPC_FLAG_AUCTIONEER);
+    Creature* unit = GetPlayer()->GetNPCIfCanInteractWith(guid,UNIT_NPC_FLAG_AUCTIONEER);
     if (!unit)
     {
         sLog.outDebug("WORLD: HandleAuctionHelloOpcode - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(guid)));
@@ -108,11 +108,11 @@ void WorldSession::SendAuctionOwnerNotification(AuctionEntry* auction)
 void WorldSession::SendAuctionOutbiddedMail(AuctionEntry *auction, uint32 newPrice)
 {
     uint64 oldBidder_guid = MAKE_NEW_GUID(auction->bidder,0, HIGHGUID_PLAYER);
-    Player* oldBidder = objmgr.GetPlayer(oldBidder_guid);
+    Player* oldBidder = sObjectMgr.GetPlayer(oldBidder_guid);
 
     uint32 oldBidder_accId = 0;
     if (!oldBidder)
-        oldBidder_accId = objmgr.GetPlayerAccountIdByGUID(oldBidder_guid);
+        oldBidder_accId = sObjectMgr.GetPlayerAccountIdByGUID(oldBidder_guid);
 
     // old bidder exist
     if (oldBidder || oldBidder_accId)
@@ -136,11 +136,11 @@ void WorldSession::SendAuctionOutbiddedMail(AuctionEntry *auction, uint32 newPri
 void WorldSession::SendAuctionCancelledToBidderMail(AuctionEntry* auction)
 {
     uint64 bidder_guid = MAKE_NEW_GUID(auction->bidder, 0, HIGHGUID_PLAYER);
-    Player* bidder = objmgr.GetPlayer(bidder_guid);
+    Player* bidder = sObjectMgr.GetPlayer(bidder_guid);
 
     uint32 bidder_accId = 0;
     if (!bidder)
-        bidder_accId = objmgr.GetPlayerAccountIdByGUID(bidder_guid);
+        bidder_accId = sObjectMgr.GetPlayerAccountIdByGUID(bidder_guid);
 
     // bidder exist
     if (bidder || bidder_accId)
@@ -166,7 +166,7 @@ void WorldSession::HandleAuctionSellItem(WorldPacket & recv_data)
     if (!item || !bid || !etime)
         return;                                             // check for cheaters
 
-    Creature *pCreature = GetPlayer()->GetNPCIfCanInteractWith(auctioneer, UNIT_NPC_FLAG_AUCTIONEER);
+    Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(auctioneer, UNIT_NPC_FLAG_AUCTIONEER);
     if (!pCreature)
     {
         sLog.outDebug("WORLD: HandleAuctionSellItem - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(auctioneer)));
@@ -253,7 +253,7 @@ void WorldSession::HandleAuctionSellItem(WorldPacket & recv_data)
     uint32 auction_time = uint32(etime * sWorld.getRate(RATE_AUCTION_TIME));
 
     AuctionEntry *AH = new AuctionEntry;
-    AH->Id = objmgr.GenerateAuctionID();
+    AH->Id = sObjectMgr.GenerateAuctionID();
     if (sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_AUCTION))
         AH->auctioneer = 23442;
     else
@@ -297,7 +297,7 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket & recv_data)
     if (!auctionId || !price)
         return;                                             // check for cheaters
 
-    Creature *pCreature = GetPlayer()->GetNPCIfCanInteractWith(auctioneer, UNIT_NPC_FLAG_AUCTIONEER);
+    Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(auctioneer, UNIT_NPC_FLAG_AUCTIONEER);
     if (!pCreature)
     {
         sLog.outDebug("WORLD: HandleAuctionPlaceBid - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(auctioneer)));
@@ -321,8 +321,8 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket & recv_data)
     }
 
     // impossible have online own another character (use this for speedup check in case online owner)
-    Player* auction_owner = objmgr.GetPlayer(MAKE_NEW_GUID(auction->owner, 0, HIGHGUID_PLAYER));
-    if (!auction_owner && objmgr.GetPlayerAccountIdByGUID(MAKE_NEW_GUID(auction->owner, 0, HIGHGUID_PLAYER)) == pl->GetSession()->GetAccountId())
+    Player* auction_owner = sObjectMgr.GetPlayer(MAKE_NEW_GUID(auction->owner, 0, HIGHGUID_PLAYER));
+    if (!auction_owner && sObjectMgr.GetPlayerAccountIdByGUID(MAKE_NEW_GUID(auction->owner, 0, HIGHGUID_PLAYER)) == pl->GetSession()->GetAccountId())
     {
         // you cannot bid your another character auction:
         SendAuctionCommandResult(0, AUCTION_PLACE_BID, CANNOT_BID_YOUR_AUCTION_ERROR);
@@ -412,7 +412,7 @@ void WorldSession::HandleAuctionRemoveItem(WorldPacket & recv_data)
     recv_data >> auctionId;
     //sLog.outDebug("Cancel AUCTION AuctionID: %u", auctionId);
 
-    Creature *pCreature = GetPlayer()->GetNPCIfCanInteractWith(auctioneer, UNIT_NPC_FLAG_AUCTIONEER);
+    Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(auctioneer, UNIT_NPC_FLAG_AUCTIONEER);
     if (!pCreature)
     {
         sLog.outDebug("WORLD: HandleAuctionRemoveItem - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(auctioneer)));
@@ -495,7 +495,7 @@ void WorldSession::HandleAuctionListBidderItems(WorldPacket & recv_data)
         outbiddedCount = 0;
     }
 
-    Creature *pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid,UNIT_NPC_FLAG_AUCTIONEER);
+    Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid,UNIT_NPC_FLAG_AUCTIONEER);
     if (!pCreature)
     {
         sLog.outDebug("WORLD: HandleAuctionListBidderItems - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(guid)));
@@ -542,7 +542,7 @@ void WorldSession::HandleAuctionListOwnerItems(WorldPacket & recv_data)
     recv_data >> guid;
     recv_data >> listfrom;                                  // not used in fact (this list not have page control in client)
 
-    Creature *pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_AUCTIONEER);
+    Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_AUCTIONEER);
     if (!pCreature)
     {
         sLog.outDebug("WORLD: HandleAuctionListOwnerItems - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(guid)));
@@ -595,7 +595,7 @@ void WorldSession::HandleAuctionListItems(WorldPacket & recv_data)
         recv_data.read_skip<uint8>();
     }
 
-    Creature *pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_AUCTIONEER);
+    Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_AUCTIONEER);
     if (!pCreature)
     {
         sLog.outDebug("WORLD: HandleAuctionListItems - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(guid)));

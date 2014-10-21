@@ -48,7 +48,7 @@ EndContentData */
 
 struct npc_willixAI : public npc_escortAI
 {
-    npc_willixAI(Creature *c) : npc_escortAI(c) {}
+    npc_willixAI(Creature* c) : npc_escortAI(c) {}
 
     void WaypointReached(uint32 i)
     {
@@ -134,7 +134,7 @@ bool QuestAccept_npc_willix(Player* pPlayer, Creature* pCreature, Quest const* q
 
 struct npc_deaths_head_ward_keeperAI : public ScriptedAI
 {
-    npc_deaths_head_ward_keeperAI(Creature *c) : ScriptedAI(c)
+    npc_deaths_head_ward_keeperAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

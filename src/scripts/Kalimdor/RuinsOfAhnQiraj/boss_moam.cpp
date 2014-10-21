@@ -35,7 +35,7 @@ EndScriptData */
 
 struct boss_moamAI : public ScriptedAI
 {
-    boss_moamAI(Creature *c) : ScriptedAI(c) {}
+    boss_moamAI(Creature* c) : ScriptedAI(c) {}
 
     Unit *pTarget;
     uint32 TRAMPLE_Timer;

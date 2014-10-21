@@ -50,7 +50,7 @@ EndScriptData */
 
 struct boss_archaedasAI : public ScriptedAI
 {
-    boss_archaedasAI(Creature *c) : ScriptedAI(c)
+    boss_archaedasAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = me->GetInstanceData();
     }
@@ -204,7 +204,7 @@ EndScriptData */
 
 struct mob_archaedas_minionsAI : public ScriptedAI
 {
-    mob_archaedas_minionsAI(Creature *c) : ScriptedAI(c)
+    mob_archaedas_minionsAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = me->GetInstanceData();
     }
@@ -348,7 +348,7 @@ EndScriptData */
 
 struct mob_stonekeepersAI : public ScriptedAI
 {
-    mob_stonekeepersAI(Creature *c) : ScriptedAI(c)
+    mob_stonekeepersAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = (me->GetInstanceData());
     }

@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_pyroguard_emberseerAI : public ScriptedAI
 {
-    boss_pyroguard_emberseerAI(Creature *c) : ScriptedAI(c) {}
+    boss_pyroguard_emberseerAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 FireNova_Timer;
     uint32 FlameBuffet_Timer;

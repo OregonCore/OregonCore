@@ -56,7 +56,7 @@ class ov_mycoordinates
 
 struct boss_skeramAI : public ScriptedAI
 {
-    boss_skeramAI(Creature *c) : ScriptedAI(c)
+    boss_skeramAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         IsImage = false;
@@ -70,7 +70,7 @@ struct boss_skeramAI : public ScriptedAI
     uint32 Blink_Timer;
     uint32 Invisible_Timer;
 
-    Creature *Image1, *Image2;
+    Creature* Image1, *Image2;
 
     bool Images75;
     bool Images50;

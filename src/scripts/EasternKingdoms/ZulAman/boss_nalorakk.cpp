@@ -95,7 +95,7 @@ enum // Spells
 
 struct boss_nalorakkAI : public ScriptedAI
 {
-    boss_nalorakkAI(Creature *c) : ScriptedAI(c)
+    boss_nalorakkAI(Creature* c) : ScriptedAI(c)
     {
         MoveEvent = true;
         MovePhase = 0;

@@ -187,13 +187,13 @@ void OPvPCapturePointEP::ChangeState()
         field = EP_MAP_A[m_TowerType];
         if (((OutdoorPvPEP*)m_PvP)->m_AllianceTowersControlled)
             ((OutdoorPvPEP*)m_PvP)->m_AllianceTowersControlled--;
-        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],objmgr.GetOregonStringForDBCLocale(EP_LANG_LOOSE_A[m_TowerType]));
+        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],sObjectMgr.GetOregonStringForDBCLocale(EP_LANG_LOOSE_A[m_TowerType]));
         break;
     case OBJECTIVESTATE_HORDE:
         field = EP_MAP_H[m_TowerType];
         if (((OutdoorPvPEP*)m_PvP)->m_HordeTowersControlled)
             ((OutdoorPvPEP*)m_PvP)->m_HordeTowersControlled--;
-        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],objmgr.GetOregonStringForDBCLocale(EP_LANG_LOOSE_H[m_TowerType]));
+        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],sObjectMgr.GetOregonStringForDBCLocale(EP_LANG_LOOSE_H[m_TowerType]));
         break;
     case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
     case OBJECTIVESTATE_ALLIANCE_HORDE_CHALLENGE:
@@ -223,14 +223,14 @@ void OPvPCapturePointEP::ChangeState()
         artkit = 2;
         if (((OutdoorPvPEP*)m_PvP)->m_AllianceTowersControlled<4)
             ((OutdoorPvPEP*)m_PvP)->m_AllianceTowersControlled++;
-        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],objmgr.GetOregonStringForDBCLocale(EP_LANG_CAPTURE_A[m_TowerType]));
+        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],sObjectMgr.GetOregonStringForDBCLocale(EP_LANG_CAPTURE_A[m_TowerType]));
         break;
     case OBJECTIVESTATE_HORDE:
         field = EP_MAP_H[m_TowerType];
         artkit = 1;
         if (((OutdoorPvPEP*)m_PvP)->m_HordeTowersControlled<4)
             ((OutdoorPvPEP*)m_PvP)->m_HordeTowersControlled++;
-        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],objmgr.GetOregonStringForDBCLocale(EP_LANG_CAPTURE_H[m_TowerType]));
+        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],sObjectMgr.GetOregonStringForDBCLocale(EP_LANG_CAPTURE_H[m_TowerType]));
         break;
     case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
     case OBJECTIVESTATE_ALLIANCE_HORDE_CHALLENGE:
@@ -384,14 +384,14 @@ void OPvPCapturePointEP::LinkGraveYard(uint32 team)
     if (EP_TOWER_EVENT_TEAM[EP_TOWER_CROWNGUARD] != team)
     {
         EP_TOWER_EVENT_TEAM[EP_TOWER_CROWNGUARD] = team;
-        objmgr.RemoveGraveYardLink(EP_GraveYardId,EP_GraveYardZone,team,false);
-        objmgr.AddGraveYardLink(EP_GraveYardId,EP_GraveYardZone,team,false);
+        sObjectMgr.RemoveGraveYardLink(EP_GraveYardId,EP_GraveYardZone,team,false);
+        sObjectMgr.AddGraveYardLink(EP_GraveYardId,EP_GraveYardZone,team,false);
     }
 }
 
 void OPvPCapturePointEP::UnlinkGraveYard()
 {
-    objmgr.RemoveGraveYardLink(EP_GraveYardId,EP_GraveYardZone,EP_TOWER_EVENT_TEAM[EP_TOWER_CROWNGUARD],false);
+    sObjectMgr.RemoveGraveYardLink(EP_GraveYardId,EP_GraveYardZone,EP_TOWER_EVENT_TEAM[EP_TOWER_CROWNGUARD],false);
     EP_TOWER_EVENT_TEAM[EP_TOWER_CROWNGUARD] = 0;
 }
 
@@ -454,10 +454,10 @@ void OPvPCapturePointEP::SummonFlightMaster(uint32 team)
         AddCreature(EP_PWT_FLIGHTMASTER,EP_PWT_FlightMaster.entry,team,EP_PWT_FlightMaster.map,EP_PWT_FlightMaster.x,EP_PWT_FlightMaster.y,EP_PWT_FlightMaster.z,EP_PWT_FlightMaster.o);
 
         // Change the flightmasters's faction to horde and display a red aura around the npc
-        Creature * c = HashMapHolder<Creature>::Find(m_Creatures[EP_PWT_FLIGHTMASTER]);
+        Creature*  c = HashMapHolder<Creature>::Find(m_Creatures[EP_PWT_FLIGHTMASTER]);
         if (c && team == HORDE)
         {
-            c->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, c->GetCreatureInfo()->faction_H);
+            c->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, c->GetCreatureTemplate()->faction_H);
             c->SetUInt32Value(UNIT_FIELD_AURA, EP_PWT_FlightMasterAura);
         }
     }

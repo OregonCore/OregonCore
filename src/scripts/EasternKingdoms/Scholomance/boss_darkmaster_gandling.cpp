@@ -51,7 +51,7 @@ EndScriptData */
 
 struct boss_darkmaster_gandlingAI : public ScriptedAI
 {
-    boss_darkmaster_gandlingAI(Creature *c) : ScriptedAI(c)
+    boss_darkmaster_gandlingAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = me->GetInstanceData();
     }
@@ -120,7 +120,7 @@ struct boss_darkmaster_gandlingAI : public ScriptedAI
                     if (DoGetThreat(pTarget))
                         DoModifyThreatPercent(pTarget, -100);
 
-                    Creature *Summoned = NULL;
+                    Creature* Summoned = NULL;
                     switch(rand()%6)
                     {
                         case 0:

@@ -36,7 +36,7 @@ EndScriptData */
 
 struct boss_murmurAI : public Scripted_NoMovementAI
 {
-    boss_murmurAI(Creature *c) : Scripted_NoMovementAI(c)
+    boss_murmurAI(Creature* c) : Scripted_NoMovementAI(c)
     {
         HeroicMode = me->GetMap()->IsHeroic();
     }

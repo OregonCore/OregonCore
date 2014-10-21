@@ -41,7 +41,7 @@ EndScriptData */
 
 struct boss_vaelAI : public ScriptedAI
 {
-    boss_vaelAI(Creature *c) : ScriptedAI(c)
+    boss_vaelAI(Creature* c) : ScriptedAI(c)
     {
         c->SetUInt32Value(UNIT_NPC_FLAGS,1);
         c->setFaction(35);

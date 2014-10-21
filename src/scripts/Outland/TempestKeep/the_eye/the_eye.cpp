@@ -34,7 +34,7 @@ EndContentData */
 
 struct mob_crystalcore_devastatorAI : public ScriptedAI
 {
-    mob_crystalcore_devastatorAI(Creature *c) : ScriptedAI(c) {}
+    mob_crystalcore_devastatorAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Knockaway_Timer;
     uint32 Countercharge_Timer;

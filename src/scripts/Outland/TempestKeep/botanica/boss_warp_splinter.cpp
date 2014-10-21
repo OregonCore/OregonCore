@@ -32,7 +32,7 @@ EndScriptData */
 
 struct mob_treantAI  : public ScriptedAI
 {
-    mob_treantAI (Creature *c) : ScriptedAI(c)
+    mob_treantAI (Creature* c) : ScriptedAI(c)
     {
         WarpGuid = 0;
     }
@@ -107,7 +107,7 @@ float treant_pos[6][3] =
 
 struct boss_warp_splinterAI : public ScriptedAI
 {
-    boss_warp_splinterAI(Creature *c) : ScriptedAI(c)
+    boss_warp_splinterAI(Creature* c) : ScriptedAI(c)
     {
         HeroicMode = c->GetMap()->IsHeroic();
         Treant_Spawn_Pos_X = c->GetPositionX();
@@ -160,7 +160,7 @@ struct boss_warp_splinterAI : public ScriptedAI
             float Y = Treant_Spawn_Pos_Y + TREANT_SPAWN_DIST * sin(angle);
             float O = - me->GetAngle(X,Y);
 
-            if (Creature *pTreant = me->SummonCreature(CREATURE_TREANT,treant_pos[i][0],treant_pos[i][1],treant_pos[i][2],O,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,25000))
+            if (Creature* pTreant = me->SummonCreature(CREATURE_TREANT,treant_pos[i][0],treant_pos[i][1],treant_pos[i][2],O,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,25000))
                 ((mob_treantAI*)pTreant->AI())->WarpGuid = me->GetGUID();
         }
         switch(rand()%2)

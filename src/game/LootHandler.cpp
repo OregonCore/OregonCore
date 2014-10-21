@@ -458,7 +458,7 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket & recv_data)
 
     if (IS_CREATURE_GUID(GetPlayer()->GetLootGUID()))
     {
-        Creature *pCreature = GetPlayer()->GetMap()->GetCreature(lootguid);
+        Creature* pCreature = GetPlayer()->GetMap()->GetCreature(lootguid);
         if (!pCreature)
             return;
 

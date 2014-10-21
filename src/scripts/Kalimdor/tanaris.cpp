@@ -51,7 +51,7 @@ enum eAqua
 
 struct mob_aquementasAI : public ScriptedAI
 {
-    mob_aquementasAI(Creature *c) : ScriptedAI(c) {}
+    mob_aquementasAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 SendItem_Timer;
     uint32 SwitchFaction_Timer;
@@ -158,7 +158,7 @@ enum eCustodian
 
 struct npc_custodian_of_timeAI : public npc_escortAI
 {
-    npc_custodian_of_timeAI(Creature *c) : npc_escortAI(c) {}
+    npc_custodian_of_timeAI(Creature* c) : npc_escortAI(c) {}
 
     void WaypointReached(uint32 i)
     {
@@ -366,7 +366,7 @@ enum e00X17
 
 struct npc_OOX17AI : public npc_escortAI
 {
-    npc_OOX17AI(Creature *c) : npc_escortAI(c) {}
+    npc_OOX17AI(Creature* c) : npc_escortAI(c) {}
 
     void WaypointReached(uint32 i)
     {
@@ -459,7 +459,7 @@ bool GOHello_go_landmark_treasure(Player* player, GameObject* /*_GO*/)
     if (player->GetQuestStatus(QUEST_CUERGOS_GOLD) != QUEST_STATUS_INCOMPLETE)
         return false;
 
-    Creature * spawn = NULL;
+    Creature*  spawn = NULL;
 
     spawn = player->SummonCreature(NPC_PIRATE, -10029.78f, -4032.54f, 19.41f, 3.40f, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if (spawn)

@@ -314,7 +314,7 @@ CreatureAI* GetAI_boss_selin_fireheart(Creature* pCreature)
 
 struct mob_fel_crystalAI : public ScriptedAI
 {
-    mob_fel_crystalAI(Creature *c) : ScriptedAI(c) {}
+    mob_fel_crystalAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset() {}
     void EnterCombat(Unit* /*who*/) {}

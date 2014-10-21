@@ -153,7 +153,7 @@ CreatureAI* GetAI_mob_unkor_the_ruthless(Creature* pCreature)
 
 struct mob_infested_root_walkerAI : public ScriptedAI
 {
-    mob_infested_root_walkerAI(Creature *c) : ScriptedAI(c) {}
+    mob_infested_root_walkerAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset() { }
     void EnterCombat(Unit* /*who*/) { }
@@ -178,7 +178,7 @@ CreatureAI* GetAI_mob_infested_root_walker(Creature* pCreature)
 
 struct mob_rotting_forest_ragerAI : public ScriptedAI
 {
-    mob_rotting_forest_ragerAI(Creature *c) : ScriptedAI(c) {}
+    mob_rotting_forest_ragerAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset() { }
     void EnterCombat(Unit* /*who*/) { }
@@ -210,7 +210,7 @@ const uint32 netherwebVictims[6] =
 };
 struct mob_netherweb_victimAI : public ScriptedAI
 {
-    mob_netherweb_victimAI(Creature *c) : ScriptedAI(c) {}
+    mob_netherweb_victimAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset() { }
     void EnterCombat(Unit* /*who*/) { }
@@ -485,7 +485,7 @@ enum
 
 struct npc_skywingAI : public npc_escortAI
 {
-    npc_skywingAI(Creature *c) : npc_escortAI(c) {}
+    npc_skywingAI(Creature* c) : npc_escortAI(c) {}
 
     void WaypointReached(uint32 i)
     {

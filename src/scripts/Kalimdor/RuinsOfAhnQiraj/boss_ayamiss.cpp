@@ -36,7 +36,7 @@ make him fly from 70-100%
 
 struct boss_ayamissAI : public ScriptedAI
 {
-    boss_ayamissAI(Creature *c) : ScriptedAI(c) {}
+    boss_ayamissAI(Creature* c) : ScriptedAI(c) {}
 
     Unit *pTarget;
     uint32 STINGERSPRAY_Timer;

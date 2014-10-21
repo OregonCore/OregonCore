@@ -31,8 +31,8 @@ struct GroupInfo
 class CreatureGroupManager
 {
     public:
-        void AddCreatureToGroup(uint32 group_id, Creature *creature);
-        void RemoveCreatureFromGroup(CreatureGroup *group, Creature *creature);
+        void AddCreatureToGroup(uint32 group_id, Creature* creature);
+        void RemoveCreatureFromGroup(CreatureGroup *group, Creature* creature);
         void LoadCreatureGroups();
 };
 
@@ -60,11 +60,11 @@ class CreatureGroup
         uint32 GetId() const { return m_groupID; }
         bool isEmpty() const { return m_members.empty(); }
 
-        void AddMember(Creature *member);
-        void RemoveMember(Creature *member);
+        void AddMember(Creature* member);
+        void RemoveMember(Creature* member);
 
         void MemberAttackStart(Creature* member, Unit *target);
-        bool IsAllowedToRespawn(Creature *member);
+        bool IsAllowedToRespawn(Creature* member);
 };
 
 #endif

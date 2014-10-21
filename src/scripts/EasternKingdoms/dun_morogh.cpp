@@ -39,7 +39,7 @@ struct npc_narm_faulkAI : public ScriptedAI
     uint32 lifeTimer;
     bool spellHit;
 
-    npc_narm_faulkAI(Creature *c) : ScriptedAI(c) {}
+    npc_narm_faulkAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()
     {

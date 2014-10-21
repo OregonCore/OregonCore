@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_gehennasAI : public ScriptedAI
 {
-    boss_gehennasAI(Creature *c) : ScriptedAI(c) {}
+    boss_gehennasAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ShadowBolt_Timer;
     uint32 RainOfFire_Timer;

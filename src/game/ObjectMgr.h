@@ -1179,7 +1179,7 @@ class ObjectMgr
         CacheTrainerSpellMap m_mCacheTrainerSpellMap;
 };
 
-#define objmgr Oregon::Singleton<ObjectMgr>::Instance()
+#define sObjectMgr Oregon::Singleton<ObjectMgr>::Instance()
 
 // scripting access functions
 bool LoadOregonStrings(DatabaseType& db, char const* table,int32 start_value = MAX_CREATURE_AI_TEXT_STRING_ID, int32 end_value = std::numeric_limits<int32>::min());
@@ -1187,7 +1187,7 @@ uint32 GetAreaTriggerScriptId(uint32 trigger_id);
 uint32 GetScriptId(const char *name);
 ObjectMgr::ScriptNameMap& GetScriptNames();
 GameObjectInfo const *GetGameObjectInfo(uint32 id);
-CreatureInfo const *GetCreatureInfo(uint32 id);
+CreatureInfo const *GetCreatureTemplate(uint32 id);
 CreatureInfo const* GetCreatureTemplateStore(uint32 entry);
 Quest const* GetQuestTemplateStore(uint32 entry);
 

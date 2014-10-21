@@ -56,7 +56,7 @@ EndContentData */
 
 struct boss_harbinger_skyrissAI : public ScriptedAI
 {
-    boss_harbinger_skyrissAI(Creature *c) : ScriptedAI(c)
+    boss_harbinger_skyrissAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
@@ -111,7 +111,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
             pInstance->SetData(TYPE_HARBINGERSKYRISS,DONE);
     }
 
-    void JustSummoned(Creature *summon)
+    void JustSummoned(Creature* summon)
     {
         if (!summon)
             return;
@@ -278,7 +278,7 @@ CreatureAI* GetAI_boss_harbinger_skyriss(Creature* pCreature)
 
 struct boss_harbinger_skyriss_illusionAI : public ScriptedAI
 {
-    boss_harbinger_skyriss_illusionAI(Creature *c) : ScriptedAI(c)
+    boss_harbinger_skyriss_illusionAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();

@@ -42,7 +42,7 @@ EndContentData */
 
 struct mob_stolen_soulAI : public ScriptedAI
 {
-    mob_stolen_soulAI(Creature *c) : ScriptedAI(c) {}
+    mob_stolen_soulAI(Creature* c) : ScriptedAI(c) {}
 
     uint8 myClass;
     uint32 Class_Timer;
@@ -144,7 +144,7 @@ CreatureAI* GetAI_mob_stolen_soul(Creature* pCreature)
 
 struct boss_exarch_maladaarAI : public ScriptedAI
 {
-    boss_exarch_maladaarAI(Creature *c) : ScriptedAI(c)
+    boss_exarch_maladaarAI(Creature* c) : ScriptedAI(c)
     {
         HasTaunted = false;
     }
@@ -195,7 +195,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
         }
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         if (summoned->GetEntry() == ENTRY_STOLEN_SOUL)
         {
@@ -304,7 +304,7 @@ CreatureAI* GetAI_boss_exarch_maladaar(Creature* pCreature)
 
 struct mob_avatar_of_martyredAI : public ScriptedAI
 {
-    mob_avatar_of_martyredAI(Creature *c) : ScriptedAI(c) {}
+    mob_avatar_of_martyredAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Mortal_Strike_timer;
 

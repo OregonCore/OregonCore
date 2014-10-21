@@ -238,7 +238,7 @@ float wp_plain_vision[50][3] =
 
 struct npc_plains_visionAI  : public ScriptedAI
 {
-    npc_plains_visionAI(Creature *c) : ScriptedAI(c) {}
+    npc_plains_visionAI(Creature* c) : ScriptedAI(c) {}
 
     bool newWaypoint;
     uint8 WayPointId;

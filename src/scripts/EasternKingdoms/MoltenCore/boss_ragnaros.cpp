@@ -86,7 +86,7 @@ EndScriptData */
 
 struct boss_ragnarosAI : public Scripted_NoMovementAI
 {
-    boss_ragnarosAI(Creature *c) : Scripted_NoMovementAI(c) {}
+    boss_ragnarosAI(Creature* c) : Scripted_NoMovementAI(c) {}
 
     uint32 WrathOfRagnaros_Timer;
     uint32 HandOfRagnaros_Timer;

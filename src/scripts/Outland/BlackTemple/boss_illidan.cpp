@@ -398,7 +398,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
 
     void SummonedCreatureDespawn(Creature* summon)
     {
-        if (summon->GetCreatureInfo()->Entry == FLAME_OF_AZZINOTH)
+        if (summon->GetCreatureTemplate()->Entry == FLAME_OF_AZZINOTH)
         {
             for (uint8 i = 0; i < 2; ++i)
                 if (summon->GetGUID() == FlameGUID[i])
@@ -892,7 +892,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
 
 struct flame_of_azzinothAI : public ScriptedAI
 {
-    flame_of_azzinothAI(Creature *c) : ScriptedAI(c) {}
+    flame_of_azzinothAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 FlameBlastTimer;
     uint32 CheckTimer;
@@ -1408,7 +1408,7 @@ struct npc_akama_illidanAI : public ScriptedAI
 
 struct boss_maievAI : public ScriptedAI
 {
-    boss_maievAI(Creature *c) : ScriptedAI(c) {};
+    boss_maievAI(Creature* c) : ScriptedAI(c) {};
 
     uint64 IllidanGUID;
 
@@ -1635,7 +1635,7 @@ bool GossipHello_npc_akama_at_illidan(Player* pPlayer, Creature* pCreature)
 
 struct cage_trap_triggerAI : public ScriptedAI
 {
-    cage_trap_triggerAI(Creature *c) : ScriptedAI(c) {}
+    cage_trap_triggerAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 IllidanGUID;
     uint32 DespawnTimer;
@@ -1713,7 +1713,7 @@ bool GOHello_cage_trap(Player* pPlayer, GameObject* pGo)
 
 struct shadow_demonAI : public ScriptedAI
 {
-    shadow_demonAI(Creature *c) : ScriptedAI(c) {}
+    shadow_demonAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 TargetGUID;
 

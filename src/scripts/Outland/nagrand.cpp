@@ -54,7 +54,7 @@ struct mob_shattered_rumblerAI : public ScriptedAI
 {
     bool Spawn;
 
-    mob_shattered_rumblerAI(Creature *c) : ScriptedAI(c) {}
+    mob_shattered_rumblerAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()
     {
@@ -106,7 +106,7 @@ enum eLump
 
 struct mob_lumpAI : public ScriptedAI
 {
-    mob_lumpAI(Creature *c) : ScriptedAI(c)
+    mob_lumpAI(Creature* c) : ScriptedAI(c)
     {
         bReset = false;
     }
@@ -236,7 +236,7 @@ bool GossipSelect_mob_lump(Player* player, Creature* pCreature, uint32 /*sender*
 
 struct mob_sunspring_villagerAI : public ScriptedAI
 {
-    mob_sunspring_villagerAI(Creature *c) : ScriptedAI(c) {}
+    mob_sunspring_villagerAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()
     {
@@ -740,7 +740,7 @@ CreatureAI* GetAI_npc_creditmarker_visit_with_ancestors(Creature* pCreature)
 struct mob_sparrowhawkAI : public ScriptedAI
 {
 
-    mob_sparrowhawkAI(Creature *c) : ScriptedAI(c) {}
+    mob_sparrowhawkAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Check_Timer;
     uint64 PlayerGUID;
@@ -853,7 +853,7 @@ enum
 
 struct npc_maghar_prisonerAI : public npc_escortAI
 {
-    npc_maghar_prisonerAI(Creature *pCreature) : npc_escortAI(pCreature) {}
+    npc_maghar_prisonerAI(Creature* pCreature) : npc_escortAI(pCreature) {}
 
     uint64 uiPlayerGUID;
 
@@ -1078,7 +1078,7 @@ enum
 
 struct npc_corki1AI : public npc_escortAI
 {
-    npc_corki1AI(Creature *pCreature) : npc_escortAI(pCreature) {}
+    npc_corki1AI(Creature* pCreature) : npc_escortAI(pCreature) {}
 
     uint64 uiPlayerGUID;
 
@@ -1166,7 +1166,7 @@ enum
 
 struct npc_corki2AI : public npc_escortAI
 {
-    npc_corki2AI(Creature *pCreature) : npc_escortAI(pCreature) {}
+    npc_corki2AI(Creature* pCreature) : npc_escortAI(pCreature) {}
 
     uint64 uiPlayerGUID;
 
@@ -1253,7 +1253,7 @@ enum
 
 struct npc_corki3AI : public npc_escortAI
 {
-    npc_corki3AI(Creature *pCreature) : npc_escortAI(pCreature) {}
+    npc_corki3AI(Creature* pCreature) : npc_escortAI(pCreature) {}
 
     uint64 uiPlayerGUID;
 

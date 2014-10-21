@@ -102,7 +102,7 @@ static Position2d Coords[]=
 
 struct npc_enslaved_soulAI : public ScriptedAI
 {
-    npc_enslaved_soulAI(Creature *c) : ScriptedAI(c) {}
+    npc_enslaved_soulAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 ReliquaryGUID;
 
@@ -119,7 +119,7 @@ struct npc_enslaved_soulAI : public ScriptedAI
 
 struct boss_reliquary_of_soulsAI : public ScriptedAI
 {
-    boss_reliquary_of_soulsAI(Creature *c) : ScriptedAI(c)
+    boss_reliquary_of_soulsAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         EssenceGUID = 0;
@@ -306,7 +306,7 @@ struct boss_reliquary_of_soulsAI : public ScriptedAI
 
 struct boss_essence_of_sufferingAI : public ScriptedAI
 {
-    boss_essence_of_sufferingAI(Creature *c) : ScriptedAI(c) {}
+    boss_essence_of_sufferingAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 StatAuraGUID;
 
@@ -415,7 +415,7 @@ struct boss_essence_of_sufferingAI : public ScriptedAI
 
 struct boss_essence_of_desireAI : public ScriptedAI
 {
-    boss_essence_of_desireAI(Creature *c) : ScriptedAI(c) {}
+    boss_essence_of_desireAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 RuneShieldTimer;
     uint32 DeadenTimer;
@@ -506,7 +506,7 @@ struct boss_essence_of_desireAI : public ScriptedAI
 
 struct boss_essence_of_angerAI : public ScriptedAI
 {
-    boss_essence_of_angerAI(Creature *c) : ScriptedAI(c) {}
+    boss_essence_of_angerAI(Creature* c) : ScriptedAI(c) {}
 
     uint64 AggroTargetGUID;
 
@@ -596,7 +596,7 @@ struct boss_essence_of_angerAI : public ScriptedAI
 void npc_enslaved_soulAI::JustDied(Unit * /*killer*/)
 {
     if (ReliquaryGUID)
-        if (Creature *Reliquary = (Unit::GetCreature((*me), ReliquaryGUID)))
+        if (Creature* Reliquary = (Unit::GetCreature((*me), ReliquaryGUID)))
             ++(CAST_AI(boss_reliquary_of_soulsAI, Reliquary->AI())->SoulDeathCount);
 
     DoCast(me, SPELL_SOUL_RELEASE, true);

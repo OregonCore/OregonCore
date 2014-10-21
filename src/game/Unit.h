@@ -1599,7 +1599,7 @@ class Unit : public WorldObject
     protected:
         explicit Unit ();
 
-        UnitAI *i_AI, *i_disabledAI;
+        UnitAI* i_AI, *i_disabledAI;
 
         void _UpdateSpells(uint32 time);
         void _DeleteAuras();

@@ -51,8 +51,8 @@ class CreatureFormationManager
 {
     friend class ACE_Singleton<CreatureFormationManager, ACE_Null_Mutex>;
     public:
-        void AddCreatureToFormation(uint32 formation_id, Creature *creature);
-        void RemoveCreatureFromFormation(CreatureFormation *formation, Creature *creature);
+        void AddCreatureToFormation(uint32 formation_id, Creature* creature);
+        void RemoveCreatureFromFormation(CreatureFormation *formation, Creature* creature);
         void LoadCreatureFormations();
         void UnloadCreatureFormations();
 };
@@ -72,7 +72,7 @@ extern CreatureFormationDataType    CreatureFormationDataMap;
 class CreatureFormation
 {
     private:
-        Creature *m_leader;
+        Creature* m_leader;
         typedef std::map<Creature*, Formation*>  CreatureFormationMemberType;
         CreatureFormationMemberType m_members;
 
@@ -89,8 +89,8 @@ class CreatureFormation
         bool isEmpty() const { return m_members.empty(); }
         bool isFormed() const { return m_Formed; }
 
-        void AddMember(Creature *member);
-        void RemoveMember(Creature *member);
+        void AddMember(Creature* member);
+        void RemoveMember(Creature* member);
         void Reset(bool dismiss);
 
         void LeaderMoveTo(float x, float y, float z);

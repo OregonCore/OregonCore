@@ -61,7 +61,7 @@ static void AttemptJoin(Player* _player)
                 continue;
             }
 
-            objmgr.AddGroup(group);
+            sObjectMgr.AddGroup(group);
         }
 
         // stop at success join
@@ -119,7 +119,7 @@ static void AttemptAddMore(Player* _player)
                 return;                                     // can't create group (??)
             }
 
-            objmgr.AddGroup(group);
+            sObjectMgr.AddGroup(group);
         }
 
         // stop at join fail (full)

@@ -40,7 +40,7 @@ EndContentData */
 
 struct npc_astor_hadrenAI : public ScriptedAI
 {
-    npc_astor_hadrenAI(Creature *c) : ScriptedAI(c) {}
+    npc_astor_hadrenAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset()
     {
@@ -119,7 +119,7 @@ enum eErland
 
 struct npc_deathstalker_erlandAI : public npc_escortAI
 {
-    npc_deathstalker_erlandAI(Creature *c) : npc_escortAI(c) {}
+    npc_deathstalker_erlandAI(Creature* c) : npc_escortAI(c) {}
 
     void WaypointReached(uint32 i)
     {
@@ -201,7 +201,7 @@ static float PyrewoodSpawnPoints[3][4] =
 
 struct pyrewood_ambushAI : public ScriptedAI
 {
-    pyrewood_ambushAI(Creature *c) : ScriptedAI(c), Summons(me)
+    pyrewood_ambushAI(Creature* c) : ScriptedAI(c), Summons(me)
     {
        QuestInProgress = false;
     }
@@ -229,13 +229,13 @@ struct pyrewood_ambushAI : public ScriptedAI
 
     void EnterCombat(Unit * /*who*/){}
 
-    void JustSummoned(Creature *pSummoned)
+    void JustSummoned(Creature* pSummoned)
     {
         Summons.Summon(pSummoned);
         ++KillCount;
     }
 
-    void SummonedCreatureDespawn(Creature *pSummoned)
+    void SummonedCreatureDespawn(Creature* pSummoned)
     {
         Summons.Despawn(pSummoned);
         --KillCount;
@@ -243,7 +243,7 @@ struct pyrewood_ambushAI : public ScriptedAI
 
     void SummonCreatureWithRandomTarget(uint32 creatureId, int position)
     {
-        if (Creature *pSummoned = me->SummonCreature(creatureId, PyrewoodSpawnPoints[position][0], PyrewoodSpawnPoints[position][1], PyrewoodSpawnPoints[position][2], PyrewoodSpawnPoints[position][3], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 15000))
+        if (Creature* pSummoned = me->SummonCreature(creatureId, PyrewoodSpawnPoints[position][0], PyrewoodSpawnPoints[position][1], PyrewoodSpawnPoints[position][2], PyrewoodSpawnPoints[position][3], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 15000))
         {
             Player* pPlayer = NULL;
             Unit *pTarget = NULL;
@@ -334,12 +334,12 @@ struct pyrewood_ambushAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_pyrewood_ambush(Creature *pCreature)
+CreatureAI* GetAI_pyrewood_ambush(Creature* pCreature)
 {
     return new pyrewood_ambushAI (pCreature);
 }
 
-bool QuestAccept_pyrewood_ambush(Player* pPlayer, Creature *pCreature, const Quest *pQuest)
+bool QuestAccept_pyrewood_ambush(Player* pPlayer, Creature* pCreature, const Quest *pQuest)
 {
     if (pQuest->GetQuestId() == QUEST_PYREWOOD_AMBUSH && !CAST_AI(pyrewood_ambushAI, pCreature->AI())->QuestInProgress)
     {

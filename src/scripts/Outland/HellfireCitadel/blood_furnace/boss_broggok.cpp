@@ -35,7 +35,7 @@ EndScriptData */
 
 struct boss_broggokAI : public ScriptedAI
 {
-    boss_broggokAI(Creature *c) : ScriptedAI(c) 
+    boss_broggokAI(Creature* c) : ScriptedAI(c) 
 	{
             pInstance = c->GetInstanceData();
             HeroicMode = me->GetMap()->IsHeroic();
@@ -144,7 +144,7 @@ CreatureAI* GetAI_boss_broggokAI(Creature* pCreature)
 
 struct mob_nascent_orcAI : public ScriptedAI
 {
-    mob_nascent_orcAI(Creature *c) : ScriptedAI(c)
+    mob_nascent_orcAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
@@ -220,7 +220,7 @@ CreatureAI* GetAI_mob_nascent_orc(Creature* pCreature)
 
 struct mob_broggok_poisoncloudAI : public ScriptedAI
 {
-    mob_broggok_poisoncloudAI(Creature *c) : ScriptedAI(c)
+    mob_broggok_poisoncloudAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();

@@ -31,7 +31,7 @@ EndScriptData */
 
 struct boss_ptheradrasAI : public ScriptedAI
 {
-    boss_ptheradrasAI(Creature *c) : ScriptedAI(c) {}
+    boss_ptheradrasAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Dustfield_Timer;
     uint32 Boulder_Timer;

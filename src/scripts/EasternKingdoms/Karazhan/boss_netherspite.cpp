@@ -136,7 +136,7 @@ struct boss_netherspiteAI : public ScriptedAI
         pos[BLUE_PORTAL] = (r>1 ? 1: 2); // Blue Portal not on the left side (0)
 
         for (int i=0; i<3; ++i)
-            if (Creature *portal = me->SummonCreature(PortalID[i],PortalCoord[pos[i]][0],PortalCoord[pos[i]][1],PortalCoord[pos[i]][2],0,TEMPSUMMON_TIMED_DESPAWN,60000))
+            if (Creature* portal = me->SummonCreature(PortalID[i],PortalCoord[pos[i]][0],PortalCoord[pos[i]][1],PortalCoord[pos[i]][2],0,TEMPSUMMON_TIMED_DESPAWN,60000))
             {
                 PortalGUID[i] = portal->GetGUID();
                 portal->AddAura(PortalVisual[i], portal);
@@ -147,9 +147,9 @@ struct boss_netherspiteAI : public ScriptedAI
     {
         for (int i=0; i<3; ++i)
         {
-            if (Creature *portal = Unit::GetCreature(*me, PortalGUID[i]))
+            if (Creature* portal = Unit::GetCreature(*me, PortalGUID[i]))
                 portal->DisappearAndDie();
-            if (Creature *portal = Unit::GetCreature(*me, BeamerGUID[i]))
+            if (Creature* portal = Unit::GetCreature(*me, BeamerGUID[i]))
                 portal->DisappearAndDie();
             PortalGUID[i] = 0;
             BeamTarget[i] = 0;
@@ -159,7 +159,7 @@ struct boss_netherspiteAI : public ScriptedAI
     void UpdatePortals() // Here we handle the beams' behavior
     {
         for (int j=0; j<3; ++j) // j = color
-            if (Creature *portal = Unit::GetCreature(*me, PortalGUID[j]))
+            if (Creature* portal = Unit::GetCreature(*me, PortalGUID[j]))
             {
                 // the one who's been casted upon before
                 Unit *current = Unit::GetUnit(*portal, BeamTarget[j]);
@@ -194,14 +194,14 @@ struct boss_netherspiteAI : public ScriptedAI
                 {
                     BeamTarget[j] = pTarget->GetGUID();
                     // remove currently beaming portal
-                    if (Creature *beamer = Unit::GetCreature(*portal, BeamerGUID[j]))
+                    if (Creature* beamer = Unit::GetCreature(*portal, BeamerGUID[j]))
                     {
                         beamer->CastSpell(pTarget, PortalBeam[j], false);
                         beamer->DisappearAndDie();
                         BeamerGUID[j] = 0;
                     }
                     // create new one and start beaming on the target
-                    if (Creature *beamer = portal->SummonCreature(PortalID[j],portal->GetPositionX(),portal->GetPositionY(),portal->GetPositionZ(),portal->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,60000))
+                    if (Creature* beamer = portal->SummonCreature(PortalID[j],portal->GetPositionX(),portal->GetPositionY(),portal->GetPositionZ(),portal->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,60000))
                     {
                         beamer->CastSpell(pTarget, PortalBeam[j], false);
                         BeamerGUID[j] = beamer->GetGUID();
@@ -328,7 +328,7 @@ struct boss_netherspiteAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_netherspite(Creature *pCreature)
+CreatureAI* GetAI_boss_netherspite(Creature* pCreature)
 {
     return new boss_netherspiteAI(pCreature);
 }

@@ -39,7 +39,7 @@ EndContentData */
 
 struct mobs_spitelashesAI : public ScriptedAI
 {
-    mobs_spitelashesAI(Creature *c) : ScriptedAI(c) {}
+    mobs_spitelashesAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 morphtimer;
     bool spellhit;
@@ -248,7 +248,7 @@ float WPs[58][4] =
 
 struct mob_rizzle_sprysprocketAI : public ScriptedAI
 {
-    mob_rizzle_sprysprocketAI(Creature *c) : ScriptedAI(c) {}
+    mob_rizzle_sprysprocketAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 spellEscape_Timer;
     uint32 Teleport_Timer;
@@ -446,7 +446,7 @@ CreatureAI* GetAI_mob_rizzle_sprysprocket(Creature* pCreature)
 
 struct mob_depth_chargeAI : public ScriptedAI
 {
-    mob_depth_chargeAI(Creature *c) : ScriptedAI(c) {}
+    mob_depth_chargeAI(Creature* c) : ScriptedAI(c) {}
 
     bool we_must_die;
     uint32 must_die_timer;

@@ -38,7 +38,7 @@ EndScriptData */
 
 struct boss_kriAI : public ScriptedAI
 {
-    boss_kriAI(Creature *c) : ScriptedAI(c)
+    boss_kriAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -123,7 +123,7 @@ struct boss_kriAI : public ScriptedAI
 
 struct boss_vemAI : public ScriptedAI
 {
-    boss_vemAI(Creature *c) : ScriptedAI(c)
+    boss_vemAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -204,7 +204,7 @@ struct boss_vemAI : public ScriptedAI
 
 struct boss_yaujAI : public ScriptedAI
 {
-    boss_yaujAI(Creature *c) : ScriptedAI(c)
+    boss_yaujAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

@@ -2478,7 +2478,7 @@ CreatureAI* GetAI_guard_shattrath(Creature* pCreature)
 
 struct guard_shattrath_aldorAI : public guardAI
 {
-    guard_shattrath_aldorAI(Creature *c) : guardAI(c) {}
+    guard_shattrath_aldorAI(Creature* c) : guardAI(c) {}
 
     uint32 Exile_Timer;
     uint32 Banish_Timer;
@@ -2674,7 +2674,7 @@ CreatureAI* GetAI_guard_shattrath_aldor(Creature* pCreature)
 
 struct guard_shattrath_scryerAI : public guardAI
 {
-    guard_shattrath_scryerAI(Creature *c) : guardAI(c) {}
+    guard_shattrath_scryerAI(Creature* c) : guardAI(c) {}
 
     uint32 Exile_Timer;
     uint32 Banish_Timer;

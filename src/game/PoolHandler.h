@@ -158,7 +158,7 @@ class PoolHandler
         ActivePoolData mSpawnedData;
 };
 
-#define poolhandler Oregon::Singleton<PoolHandler>::Instance()
+#define sPoolMgr Oregon::Singleton<PoolHandler>::Instance()
 
 // Method that tell if the quest is part of another pool and return the pool id if yes
 template<>

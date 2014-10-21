@@ -28,7 +28,7 @@ INSTANTIATE_SINGLETON_1(CreatureGroupManager);
 CreatureGroupInfoType   CreatureGroupMap;
 CreatureGroupDataType   CreatureGroupDataMap;
 
-void CreatureGroupManager::AddCreatureToGroup(uint32 groupId, Creature *member)
+void CreatureGroupManager::AddCreatureToGroup(uint32 groupId, Creature* member)
 {
     Map *map = member->FindMap();
     if (!map)
@@ -52,7 +52,7 @@ void CreatureGroupManager::AddCreatureToGroup(uint32 groupId, Creature *member)
     }
 }
 
-void CreatureGroupManager::RemoveCreatureFromGroup(CreatureGroup *group, Creature *member)
+void CreatureGroupManager::RemoveCreatureFromGroup(CreatureGroup *group, Creature* member)
 {
     sLog.outDebug("Deleting member pointer to GUID: %u from group %u", group->GetId(), member->GetDBTableGUIDLow());
     group->RemoveMember(member);
@@ -197,7 +197,7 @@ void CreatureGroupManager::LoadCreatureGroups()
     sLog.outString();
 }
 
-void CreatureGroup::AddMember(Creature *member)
+void CreatureGroup::AddMember(Creature* member)
 {
     if (!member)
         return;
@@ -208,7 +208,7 @@ void CreatureGroup::AddMember(Creature *member)
     member->SetGroup(this);
 }
 
-void CreatureGroup::RemoveMember(Creature *member)
+void CreatureGroup::RemoveMember(Creature* member)
 {
     if (!member)
         return;
@@ -217,7 +217,7 @@ void CreatureGroup::RemoveMember(Creature *member)
     member->SetGroup(NULL);
 }
 
-void CreatureGroup::MemberAttackStart(Creature *member, Unit *target)
+void CreatureGroup::MemberAttackStart(Creature* member, Unit *target)
 {
     for (CreatureGroupMemberType::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {
@@ -240,7 +240,7 @@ void CreatureGroup::MemberAttackStart(Creature *member, Unit *target)
     }
 }
 
-bool CreatureGroup::IsAllowedToRespawn(Creature *member)
+bool CreatureGroup::IsAllowedToRespawn(Creature* member)
 {
     uint8 groupType = CreatureGroupMap[m_groupID]->groupType;
 

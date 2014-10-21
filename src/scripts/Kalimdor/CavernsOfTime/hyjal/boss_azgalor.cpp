@@ -45,7 +45,7 @@
 
 struct boss_azgalorAI : public hyjal_trashAI
 {
-    boss_azgalorAI(Creature *c) : hyjal_trashAI(c)
+    boss_azgalorAI(Creature* c) : hyjal_trashAI(c)
     {
         pInstance = c->GetInstanceData();
         pGo = false;
@@ -201,7 +201,7 @@ CreatureAI* GetAI_boss_azgalor(Creature* pCreature)
 
 struct mob_lesser_doomguardAI : public hyjal_trashAI
 {
-    mob_lesser_doomguardAI(Creature *c) : hyjal_trashAI(c)
+    mob_lesser_doomguardAI(Creature* c) : hyjal_trashAI(c)
     {
         pInstance = c->GetInstanceData();
         if (pInstance)

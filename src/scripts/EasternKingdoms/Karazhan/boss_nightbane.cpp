@@ -268,7 +268,7 @@ struct boss_nightbaneAI : public ScriptedAI
         }
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         summoned->AI()->AttackStart(me->getVictim());
     }

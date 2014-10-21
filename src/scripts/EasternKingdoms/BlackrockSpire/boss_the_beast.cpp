@@ -30,7 +30,7 @@ EndScriptData */
 
 struct boss_thebeastAI : public ScriptedAI
 {
-    boss_thebeastAI(Creature *c) : ScriptedAI(c) {}
+    boss_thebeastAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Flamebreak_Timer;
     uint32 Immolate_Timer;

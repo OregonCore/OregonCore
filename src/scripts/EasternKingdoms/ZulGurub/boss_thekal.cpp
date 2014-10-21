@@ -110,7 +110,7 @@ void Resurrect(Unit* Target)
 
 struct boss_thekalAI : public ScriptedAI
 {
-    boss_thekalAI(Creature *c) : ScriptedAI(c)
+    boss_thekalAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -209,7 +209,7 @@ struct boss_thekalAI : public ScriptedAI
                 DoCast(me, SPELL_TIGER_FORM);
                 Resurrect(me);
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                const CreatureInfo *cinfo = me->GetCreatureInfo();
+                const CreatureInfo *cinfo = me->GetCreatureTemplate();
                 me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg / 100) * 40)));
                 me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg / 100) * 40)));
                 me->UpdateDamagePhysical(BASE_ATTACK);
@@ -315,7 +315,7 @@ struct boss_thekalAI : public ScriptedAI
 
 struct mob_zealot_lorkhanAI : public ScriptedAI
 {
-    mob_zealot_lorkhanAI(Creature *c) : ScriptedAI(c)
+    mob_zealot_lorkhanAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -484,7 +484,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
 
 struct mob_zealot_zathAI : public ScriptedAI
 {
-    mob_zealot_zathAI(Creature *c) : ScriptedAI(c)
+    mob_zealot_zathAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

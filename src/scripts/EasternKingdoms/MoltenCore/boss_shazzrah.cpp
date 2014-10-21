@@ -31,7 +31,7 @@ EndScriptData */
 
 struct boss_shazzrahAI : public ScriptedAI
 {
-    boss_shazzrahAI(Creature *c) : ScriptedAI(c) {}
+    boss_shazzrahAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 ArcaneExplosion_Timer;
     uint32 ShazzrahCurse_Timer;

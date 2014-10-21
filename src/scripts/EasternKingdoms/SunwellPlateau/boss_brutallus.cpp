@@ -70,7 +70,7 @@ enum Spells
  
 struct boss_brutallusAI : public ScriptedAI
 {
-    boss_brutallusAI(Creature *c) : ScriptedAI(c)
+    boss_brutallusAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
         Intro = true;
@@ -158,7 +158,7 @@ struct boss_brutallusAI : public ScriptedAI
         if (!Intro || IsIntro)
             return;
 
-        Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
+        Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
         if (Madrigosa)
         {
             Madrigosa->setActive(true);
@@ -187,7 +187,7 @@ struct boss_brutallusAI : public ScriptedAI
  
     void DoIntro()
     {
-        Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
+        Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
         if (!Madrigosa)
             return;
  
@@ -317,7 +317,7 @@ struct boss_brutallusAI : public ScriptedAI
             {
                 if (IntroAttackTimer < diff)
                 {
-                    if (Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
+                    if (Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
                     {
                         me->Attack(Madrigosa, true);
                         me->AttackerStateUpdate(Madrigosa,BASE_ATTACK,false);
@@ -332,7 +332,7 @@ struct boss_brutallusAI : public ScriptedAI
         {
             if (IntroAttackTimer < diff)
             {
-                if (Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
+                if (Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
                 {
                     Madrigosa->CastSpell(me, SPELL_INTRO_FREEZE, true);
                     DoCast(me, SPELL_INTRO_FROST_BLAST);
@@ -342,7 +342,7 @@ struct boss_brutallusAI : public ScriptedAI
 
             if (IntroFrostBoltTimer < diff)
             {
-                if (Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
+                if (Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
                 {
                     Madrigosa->SetInCombatState(true,me);
                     Madrigosa->CastSpell(me, SPELL_INTRO_FROSTBOLT, true);
@@ -355,7 +355,7 @@ struct boss_brutallusAI : public ScriptedAI
         {
             if (IntroAttackTimer < diff)
             {
-                if (Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
+                if (Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
                 {
                     me->Attack(Madrigosa, true);
                     me->CastSpell(Madrigosa, 45185, true);

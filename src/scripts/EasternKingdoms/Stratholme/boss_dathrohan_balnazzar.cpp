@@ -66,7 +66,7 @@ SummonDef m_aSummonPoint[]=
 
 struct boss_dathrohan_balnazzarAI : public ScriptedAI
 {
-    boss_dathrohan_balnazzarAI(Creature *c) : ScriptedAI(c) {}
+    boss_dathrohan_balnazzarAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 m_uiCrusadersHammer_Timer;
     uint32 m_uiCrusaderStrike_Timer;

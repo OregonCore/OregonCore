@@ -38,7 +38,7 @@ EndContentData */
 
 struct mobs_mana_tappedAI : public ScriptedAI
 {
-    mobs_mana_tappedAI(Creature *c) : ScriptedAI(c) {}
+    mobs_mana_tappedAI(Creature* c) : ScriptedAI(c) {}
 
     void Reset() { }
 
@@ -74,7 +74,7 @@ enum eProspectorAnvilward
 struct npc_prospector_anvilwardAI : public npc_escortAI
 {
     // CreatureAI functions
-    npc_prospector_anvilwardAI(Creature *c) : npc_escortAI(c) {}
+    npc_prospector_anvilwardAI(Creature* c) : npc_escortAI(c) {}
 
     // Pure Virtual Functions
     void WaypointReached(uint32 i)
@@ -195,7 +195,7 @@ static uint32 PaladinEntry[] = {CHAMPION_BLOODWRATH, CHAMPION_LIGHTREND, CHAMPIO
 
 struct npc_secondTrialAI : public ScriptedAI
 {
-    npc_secondTrialAI(Creature *c) : ScriptedAI(c) {}
+    npc_secondTrialAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 timer;
     uint8  questPhase;
@@ -339,7 +339,7 @@ struct npc_secondTrialAI : public ScriptedAI
 
 struct master_kelerun_bloodmournAI : public ScriptedAI
 {
-    master_kelerun_bloodmournAI(Creature *c) : ScriptedAI(c) {}
+    master_kelerun_bloodmournAI(Creature* c) : ScriptedAI(c) {}
 
     uint8  questPhase;
     uint8  paladinPhase;
@@ -416,7 +416,7 @@ struct master_kelerun_bloodmournAI : public ScriptedAI
         { // no player check, quest can be finished as group, so no complex PlayerGUID/group search code
 
             for (uint8 i = 0; i < 4; ++i)
-            if (Creature *pSummoned = DoSpawnCreature(PaladinEntry[i], SpawnPosition[i].x, SpawnPosition[i].y, SpawnPosition[i].z, SpawnPosition[i].o, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 180000))
+            if (Creature* pSummoned = DoSpawnCreature(PaladinEntry[i], SpawnPosition[i].x, SpawnPosition[i].y, SpawnPosition[i].z, SpawnPosition[i].o, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 180000))
                 paladinGuid[i] = pSummoned->GetGUID();
 
             timer = OFFSET_NEXT_ATTACK;
@@ -471,7 +471,7 @@ void npc_secondTrialAI::JustDied(Unit* Killer)
 {
     if (Killer->GetTypeId() == TYPEID_PLAYER)
     {
-        if (Creature *pSummoner = Unit::GetCreature((*me), summonerGuid))
+        if (Creature* pSummoner = Unit::GetCreature((*me), summonerGuid))
             CAST_AI(master_kelerun_bloodmournAI, pSummoner->AI())->SecondTrialKill();
 
         // last kill quest complete for group
@@ -524,7 +524,7 @@ CreatureAI* GetAI_npc_secondTrial(Creature* pCreature)
 bool GOHello_go_second_trial(Player* /*pPlayer*/, GameObject* pGO)
 {
     // find spawn :: master_kelerun_bloodmourn
-    if (Creature *pCreature = pGO->FindNearestCreature(MASTER_KELERUN_BLOODMOURN, 30.0f))
+    if (Creature* pCreature = pGO->FindNearestCreature(MASTER_KELERUN_BLOODMOURN, 30.0f))
        CAST_AI(master_kelerun_bloodmournAI, pCreature->AI())->StartEvent();
 
     return true;
@@ -560,7 +560,7 @@ struct npc_apprentice_mirvedaAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/){}
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         summoned->AI()->AttackStart(me);
         Summons.Summon(summoned);
@@ -671,7 +671,7 @@ struct npc_infused_crystalAI : public Scripted_NoMovementAI
         }
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* summoned)
     {
         summoned->AI()->AttackStart(me);
     }
@@ -717,7 +717,7 @@ CreatureAI* GetAI_npc_infused_crystalAI(Creature* pCreature)
 
 struct npc_eversong_rangerAI : public ScriptedAI
 {
-    npc_eversong_rangerAI(Creature *c) : ScriptedAI(c) {}
+    npc_eversong_rangerAI(Creature* c) : ScriptedAI(c) {}
 
 	void Reset() { }
 

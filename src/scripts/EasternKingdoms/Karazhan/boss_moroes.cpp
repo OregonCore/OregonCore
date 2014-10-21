@@ -61,7 +61,7 @@ const uint32 Adds[6]=
 
 struct boss_moroesAI : public ScriptedAI
 {
-    boss_moroesAI(Creature *c) : ScriptedAI(c)
+    boss_moroesAI(Creature* c) : ScriptedAI(c)
     {
         for (uint8 i = 0; i < 4; ++i)
         {
@@ -157,7 +157,7 @@ struct boss_moroesAI : public ScriptedAI
         DeSpawnAdds();
         if (isAddlistEmpty())
         {
-            Creature *pCreature = NULL;
+            Creature* pCreature = NULL;
             std::vector<uint32> AddList;
 
             for (uint8 i = 0; i < 6; ++i)
@@ -183,7 +183,7 @@ struct boss_moroesAI : public ScriptedAI
         {
             for (uint8 i = 0; i < 4; ++i)
             {
-                Creature *pCreature = me->SummonCreature(AddId[i], Locations[i][0], Locations[i][1], POS_Z, Locations[i][2], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                Creature* pCreature = me->SummonCreature(AddId[i], Locations[i][0], Locations[i][1], POS_Z, Locations[i][2], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
                 if (pCreature)
                 {
                     AddGUID[i] = pCreature->GetGUID();
@@ -382,7 +382,7 @@ struct boss_moroes_guestAI : public ScriptedAI
 struct boss_baroness_dorothea_millstipeAI : public boss_moroes_guestAI
 {
     //Shadow Priest
-    boss_baroness_dorothea_millstipeAI(Creature *c) : boss_moroes_guestAI(c) {}
+    boss_baroness_dorothea_millstipeAI(Creature* c) : boss_moroes_guestAI(c) {}
 
     uint32 ManaBurn_Timer;
     uint32 MindFlay_Timer;
@@ -438,7 +438,7 @@ struct boss_baroness_dorothea_millstipeAI : public boss_moroes_guestAI
 struct boss_baron_rafe_dreugerAI : public boss_moroes_guestAI
 {
     //Retr Pally
-    boss_baron_rafe_dreugerAI(Creature *c) : boss_moroes_guestAI(c){}
+    boss_baron_rafe_dreugerAI(Creature* c) : boss_moroes_guestAI(c){}
 
     uint32 HammerOfJustice_Timer;
     uint32 SealOfCommand_Timer;
@@ -489,7 +489,7 @@ struct boss_baron_rafe_dreugerAI : public boss_moroes_guestAI
 struct boss_lady_catriona_von_indiAI : public boss_moroes_guestAI
 {
     //Holy Priest
-    boss_lady_catriona_von_indiAI(Creature *c) : boss_moroes_guestAI(c) {}
+    boss_lady_catriona_von_indiAI(Creature* c) : boss_moroes_guestAI(c) {}
 
     uint32 DispelMagic_Timer;
     uint32 GreaterHeal_Timer;
@@ -553,7 +553,7 @@ struct boss_lady_catriona_von_indiAI : public boss_moroes_guestAI
 struct boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
 {
     //Holy Pally
-    boss_lady_keira_berrybuckAI(Creature *c) : boss_moroes_guestAI(c)  {}
+    boss_lady_keira_berrybuckAI(Creature* c) : boss_moroes_guestAI(c)  {}
 
     uint32 Cleanse_Timer;
     uint32 GreaterBless_Timer;
@@ -620,7 +620,7 @@ struct boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
 struct boss_lord_robin_darisAI : public boss_moroes_guestAI
 {
     //Arms Warr
-    boss_lord_robin_darisAI(Creature *c) : boss_moroes_guestAI(c) {}
+    boss_lord_robin_darisAI(Creature* c) : boss_moroes_guestAI(c) {}
 
     uint32 Hamstring_Timer;
     uint32 MortalStrike_Timer;
@@ -670,7 +670,7 @@ struct boss_lord_robin_darisAI : public boss_moroes_guestAI
 struct boss_lord_crispin_ferenceAI : public boss_moroes_guestAI
 {
     //Arms Warr
-    boss_lord_crispin_ferenceAI(Creature *c) : boss_moroes_guestAI(c) {}
+    boss_lord_crispin_ferenceAI(Creature* c) : boss_moroes_guestAI(c) {}
 
     uint32 Disarm_Timer;
     uint32 HeroicStrike_Timer;

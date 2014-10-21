@@ -236,7 +236,7 @@ InstanceData* GetInstanceData_instance_shadow_labyrinth(Map* map)
 // ToDo Move creature_fel_overseerAI to a seperate file
 struct mob_fel_overseerAI : public ScriptedAI
 {
-    mob_fel_overseerAI(Creature *c) : ScriptedAI(c) 
+    mob_fel_overseerAI(Creature* c) : ScriptedAI(c) 
     {
         pInstance = c->GetInstanceData();
     }

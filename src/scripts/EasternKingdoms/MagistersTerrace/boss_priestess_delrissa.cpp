@@ -476,7 +476,7 @@ enum eRogueSpells
 struct boss_kagani_nightstrikeAI : public boss_priestess_lackey_commonAI
 {
     //Rogue
-    boss_kagani_nightstrikeAI(Creature *c) : boss_priestess_lackey_commonAI(c) {}
+    boss_kagani_nightstrikeAI(Creature* c) : boss_priestess_lackey_commonAI(c) {}
 
     uint32 Gouge_Timer;
     uint32 Kick_Timer;
@@ -574,7 +574,7 @@ enum eWarlockSpells
 struct boss_ellris_duskhallowAI : public boss_priestess_lackey_commonAI
 {
     //Warlock
-    boss_ellris_duskhallowAI(Creature *c) : boss_priestess_lackey_commonAI(c) {}
+    boss_ellris_duskhallowAI(Creature* c) : boss_priestess_lackey_commonAI(c) {}
 
     uint32 Immolate_Timer;
     uint32 Shadow_Bolt_Timer;
@@ -659,7 +659,7 @@ enum eKickDown
 struct boss_eramas_brightblazeAI : public boss_priestess_lackey_commonAI
 {
     //Monk
-    boss_eramas_brightblazeAI(Creature *c) : boss_priestess_lackey_commonAI(c) {}
+    boss_eramas_brightblazeAI(Creature* c) : boss_priestess_lackey_commonAI(c) {}
 
     uint32 Knockdown_Timer;
     uint32 Snap_Kick_Timer;
@@ -714,7 +714,7 @@ enum eMageSpells
 struct boss_yazzaiAI : public boss_priestess_lackey_commonAI
 {
     //Mage
-    boss_yazzaiAI(Creature *c) : boss_priestess_lackey_commonAI(c) {}
+    boss_yazzaiAI(Creature* c) : boss_priestess_lackey_commonAI(c) {}
 
     bool HasIceBlocked;
 
@@ -838,7 +838,7 @@ enum eWarriorSpells
 struct boss_warlord_salarisAI : public boss_priestess_lackey_commonAI
 {
     //Warrior
-    boss_warlord_salarisAI(Creature *c) : boss_priestess_lackey_commonAI(c) {}
+    boss_warlord_salarisAI(Creature* c) : boss_priestess_lackey_commonAI(c) {}
 
     uint32 Intercept_Stun_Timer;
     uint32 Disarm_Timer;
@@ -952,7 +952,7 @@ enum eHunterSpells
 struct boss_garaxxasAI : public boss_priestess_lackey_commonAI
 {
     //Hunter
-    boss_garaxxasAI(Creature *c) : boss_priestess_lackey_commonAI(c) { m_uiPetGUID = 0; }
+    boss_garaxxasAI(Creature* c) : boss_priestess_lackey_commonAI(c) { m_uiPetGUID = 0; }
 
     uint64 m_uiPetGUID;
 
@@ -1065,7 +1065,7 @@ enum Spells
 struct boss_apokoAI : public boss_priestess_lackey_commonAI
 {
     //Shaman
-    boss_apokoAI(Creature *c) : boss_priestess_lackey_commonAI(c) {}
+    boss_apokoAI(Creature* c) : boss_priestess_lackey_commonAI(c) {}
 
     uint32 Totem_Timer;
     uint8  Totem_Amount;
@@ -1157,7 +1157,7 @@ enum eEngineerSpells
 struct boss_zelfanAI : public boss_priestess_lackey_commonAI
 {
     //Engineer
-    boss_zelfanAI(Creature *c) : boss_priestess_lackey_commonAI(c) {}
+    boss_zelfanAI(Creature* c) : boss_priestess_lackey_commonAI(c) {}
 
     uint32 Goblin_Dragon_Gun_Timer;
     uint32 Rocket_Launch_Timer;
@@ -1234,7 +1234,7 @@ CreatureAI* GetAI_zelfan(Creature* pCreature)
 
 //struct mob_high_explosive_sheepAI : public ScriptedAI
 //{
-//    mob_high_explosive_sheepAI(Creature *c) : ScriptedAI(c) {}
+//    mob_high_explosive_sheepAI(Creature* c) : ScriptedAI(c) {}
 //
 //    uint32 Explosion_Timer;
 //

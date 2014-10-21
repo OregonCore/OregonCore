@@ -695,7 +695,7 @@ struct npc_dirty_larryAI : public ScriptedAI
     }
 };
 
-bool GossipHello_npc_dirty_larry(Player* player, Creature *creature)
+bool GossipHello_npc_dirty_larry(Player* player, Creature* creature)
 {
     if (creature->isQuestGiver())
         player->PrepareQuestMenu(creature->GetGUID());
@@ -707,7 +707,7 @@ bool GossipHello_npc_dirty_larry(Player* player, Creature *creature)
     return true;
 }
 
-bool GossipSelect_npc_dirty_larry(Player* player, Creature *creature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_dirty_larry(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -765,7 +765,7 @@ bool GossipSelect_npc_ishanah(Player* player, Creature* pCreature, uint32 /*send
 #define KHADGAR_GOSSIP_5    "What happened next?"
 #define KHADGAR_GOSSIP_7    "There was something else I wanted to ask you."
 
-bool GossipHello_npc_khadgar(Player* player, Creature *creature)
+bool GossipHello_npc_khadgar(Player* player, Creature* creature)
 {
     if (creature->isQuestGiver())
         player->PrepareQuestMenu(creature->GetGUID());
@@ -778,7 +778,7 @@ bool GossipHello_npc_khadgar(Player* player, Creature *creature)
     return true;
 }
 
-bool GossipSelect_npc_khadgar(Player* player, Creature *creature, uint32 /*sender*/, uint32 action)
+bool GossipSelect_npc_khadgar(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
 {
     switch(action)
     {

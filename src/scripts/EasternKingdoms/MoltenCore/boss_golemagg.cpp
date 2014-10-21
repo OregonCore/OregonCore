@@ -120,7 +120,7 @@ struct boss_golemaggAI : public ScriptedAI
 
 struct mob_core_ragerAI : public ScriptedAI
 {
-    mob_core_ragerAI(Creature *c) : ScriptedAI(c)
+    mob_core_ragerAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }

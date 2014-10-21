@@ -70,7 +70,7 @@ EndScriptData */
 
 struct boss_victor_nefariusAI : public ScriptedAI
 {
-    boss_victor_nefariusAI(Creature *c) : ScriptedAI(c)
+    boss_victor_nefariusAI(Creature* c) : ScriptedAI(c)
     {
         NefarianGUID = 0;
         switch (urand(0,19))
