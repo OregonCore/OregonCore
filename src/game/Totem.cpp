@@ -23,6 +23,7 @@
 #include "Player.h"
 #include "ObjectMgr.h"
 #include "SpellMgr.h"
+#include "SpellAuras.h"
 
 Totem::Totem(SummonPropertiesEntry const *properties, Unit* owner) : Minion(properties, owner)
 {
@@ -102,7 +103,12 @@ void Totem::InitSummon()
     SendMessageToSet(&data, true);
 
     if (m_type == TOTEM_PASSIVE)
+    {
         CastSpell(this, GetSpell(), true);
+        if (Aura* aura = GetAuraByCasterSpell(GetSpell(), GetGUID()))
+            if (aura->IsPeriodic())
+                aura->PeriodicTick();
+    }
 }
 
 void Totem::UnSummon()
