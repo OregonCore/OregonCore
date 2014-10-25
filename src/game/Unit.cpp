@@ -3558,8 +3558,11 @@ bool Unit::AddAura(Aura *Aur)
             Aura* aur2 = i2->second;
             if (aur2 && !stackModified && aur2->GetId() == Aur->GetId())
             {
-                // Allow multiple auras if one non-stackable spell is triggered by different items
-                if (Aur->GetCastItemGUID() && !aurSpellInfo->StackAmount)
+                // @todo: fix this hack
+                // Allow mongoose proc from different weapons... this should be corrected to allow multiple
+                // auras triggered by different enchanted items this is not possible currently since we only have
+                // GUID and not even information if the Aura was "triggered" see m_IsTriggeredSpell in Spell.h
+                if (Aur->GetCastItemGUID() && Aur->GetId() == 28093)
                 {
                     bool allow = true;
 
