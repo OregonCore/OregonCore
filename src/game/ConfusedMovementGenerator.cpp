@@ -23,11 +23,10 @@
 #include "VMapFactory.h"
 
 template<class T>
-void
-ConfusedMovementGenerator<T>::Initialize(T &unit)
+void ConfusedMovementGenerator<T>::Initialize(T &unit)
 {
-    const float wanderDistance = 4;
-    float x,y,z;
+    float const wanderDistance = 4;
+    float x, y, z;
     x = unit.GetPositionX();
     y = unit.GetPositionY();
     z = unit.GetPositionZ();
@@ -43,8 +42,8 @@ ConfusedMovementGenerator<T>::Initialize(T &unit)
 
     for (uint8 idx = 0; idx <= MAX_CONF_WAYPOINTS; ++idx)
     {
-        float wanderX = x + wanderDistance*rand_norm() - wanderDistance/2;
-        float wanderY = y + wanderDistance*rand_norm() - wanderDistance/2;
+        float wanderX = x + wanderDistance * (float)rand_norm() - wanderDistance/2;
+        float wanderY = y + wanderDistance * (float)rand_norm() - wanderDistance/2;
         Oregon::NormalizeMapCoord(wanderX);
         Oregon::NormalizeMapCoord(wanderY);
 
@@ -94,16 +93,14 @@ ConfusedMovementGenerator<T>::Initialize(T &unit)
 }
 
 template<>
-void
-ConfusedMovementGenerator<Creature>::_InitSpecific(Creature &creature, bool &is_water_ok, bool &is_land_ok)
+void ConfusedMovementGenerator<Creature>::_InitSpecific(Creature &creature, bool &is_water_ok, bool &is_land_ok)
 {
     is_water_ok = creature.canSwim();
     is_land_ok  = creature.canWalk();
 }
 
 template<>
-void
-ConfusedMovementGenerator<Player>::_InitSpecific(Player &, bool &is_water_ok, bool &is_land_ok)
+void ConfusedMovementGenerator<Player>::_InitSpecific(Player &, bool &is_water_ok, bool &is_land_ok)
 {
     is_water_ok = true;
     is_land_ok  = true;
@@ -121,6 +118,9 @@ void ConfusedMovementGenerator<T>::Reset(T &unit)
 template<class T>
 bool ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 {
+    if (!&unit)
+        return true;
+
     if (unit.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
         return true;
 
@@ -163,6 +163,7 @@ void ConfusedMovementGenerator<T>::Finalize(T &unit)
 {
     unit.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED);
     unit.ClearUnitState(UNIT_STATE_CONFUSED);
+
     if (unit.GetTypeId() == TYPEID_UNIT && unit.getVictim())
         unit.SetUInt64Value(UNIT_FIELD_TARGET, unit.getVictim()->GetGUID());
 }
