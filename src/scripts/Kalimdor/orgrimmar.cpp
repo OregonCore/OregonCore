@@ -130,7 +130,7 @@ struct npc_shenthulAI : public ScriptedAI
 
     void ReceiveEmote(Player* pPlayer, uint32 emote)
     {
-        if (emote == TEXTEMOTE_SALUTE && pPlayer->GetQuestStatus(QUEST_SHATTERED_SALUTE) == QUEST_STATUS_INCOMPLETE)
+        if (emote == TEXT_EMOTE_SALUTE && pPlayer->GetQuestStatus(QUEST_SHATTERED_SALUTE) == QUEST_STATUS_INCOMPLETE)
         {
             if (CanEmote)
             {

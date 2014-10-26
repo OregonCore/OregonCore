@@ -219,10 +219,10 @@ struct custom_exampleAI : public ScriptedAI
     {
         me->HandleEmoteCommand(emote);
 
-        if (emote == TEXTEMOTE_DANCE)
+        if (emote == TEXT_EMOTE_DANCE)
             me->MonsterSay(SAY_DANCE, LANG_UNIVERSAL, 0);
 
-        if (emote == TEXTEMOTE_SALUTE)
+        if (emote == TEXT_EMOTE_SALUTE)
             me->MonsterSay(SAY_SALUTE, LANG_UNIVERSAL, 0);
     }
 };

@@ -229,22 +229,22 @@ struct mobs_spectral_ghostly_citizenAI : public ScriptedAI
     {
         switch(emote)
         {
-            case TEXTEMOTE_DANCE:
+            case TEXT_EMOTE_DANCE:
                 EnterEvadeMode();
                 break;
-            case TEXTEMOTE_RUDE:
+            case TEXT_EMOTE_RUDE:
                 if (me->IsWithinDistInMap(pPlayer, 5))
                     DoCast(pPlayer, SPELL_SLAP, false);
                 else
                     me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
                 break;
-            case TEXTEMOTE_WAVE:
+            case TEXT_EMOTE_WAVE:
                 me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
                 break;
-            case TEXTEMOTE_BOW:
+            case TEXT_EMOTE_BOW:
                 me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
                 break;
-            case TEXTEMOTE_KISS:
+            case TEXT_EMOTE_KISS:
                 me->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);
                 break;
         }

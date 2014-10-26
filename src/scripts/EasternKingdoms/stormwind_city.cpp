@@ -183,12 +183,12 @@ struct npc_general_marcus_jonathanAI : public ScriptedAI
     {
         if (pPlayer->GetTeam() == ALLIANCE)
         {
-            if (emote == TEXTEMOTE_SALUTE)
+            if (emote == TEXT_EMOTE_SALUTE)
             {
                 me->SetOrientation(me->GetAngle(pPlayer));
                 me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
             }
-            if (emote == TEXTEMOTE_WAVE)
+            if (emote == TEXT_EMOTE_WAVE)
             {
                 me->MonsterSay("Greetings citizen", LANG_COMMON, 0);
             }

@@ -259,7 +259,7 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
 
     void ReceiveEmote(Player* /*pPlayer*/, uint32 emote)
     {
-        if (emote == TEXTEMOTE_SALUTE)
+        if (emote == TEXT_EMOTE_SALUTE)
         {
             if (FlareCount >= 2)
             {
