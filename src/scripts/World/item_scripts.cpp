@@ -50,6 +50,7 @@ EndContentData */
 #include "Spell.h"
 #include "WorldPacket.h"
 
+
 /*#####
 # item_area_52_special
 #####*/
@@ -102,11 +103,18 @@ bool ItemUse_item_only_for_flight(Player* pPlayer, Item* pItem, SpellCastTargets
 # item_attuned_crystal_cores
 #####*/
 
+enum CrystalCores
+{
+    ERRATIC_BEHAVIOUR   = 11524,
+    FURTHER_CONVERSIONS = 11525,
+    ERRATIC_SENTRY      = 24972
+};
+
 bool ItemUse_item_attuned_crystal_cores(Player* player, Item* _Item, SpellCastTargets const& targets)
 {
     if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT &&
-        targets.getUnitTarget()->GetEntry() == 24972 && targets.getUnitTarget()->isDead() &&
-        (player->GetQuestStatus(11524) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(11525) == QUEST_STATUS_INCOMPLETE))
+        targets.getUnitTarget()->GetEntry() == ERRATIC_SENTRY && targets.getUnitTarget()->isDead() &&
+        (player->GetQuestStatus(ERRATIC_BEHAVIOUR) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(FURTHER_CONVERSIONS) == QUEST_STATUS_INCOMPLETE))
     {
         return false;
     }
