@@ -25,25 +25,33 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "magisters_terrace.h"
 
-#define SAY_AGGRO                       -1585000
-#define SAY_ENERGY                      -1585001
-#define SAY_EMPOWERED                   -1585002
-#define SAY_KILL_1                      -1585003
-#define SAY_KILL_2                      -1585004
-#define SAY_DEATH                       -1585005
-#define EMOTE_CRYSTAL                   -1585006
+enum Texts
+{
+    SAY_AGGRO                      = -1585000,
+    SAY_ENERGY                     = -1585001,
+    SAY_EMPOWERED                  = -1585002,
+    SAY_KILL_1                     = -1585003,
+    SAY_KILL_2                     = -1585004,
+    SAY_DEATH                      = -1585005,
+    EMOTE_CRYSTAL                  = -1585006
+};
 
-//Crystal effect spells
-#define SPELL_FEL_CRYSTAL_COSMETIC      44374
-#define SPELL_FEL_CRYSTAL_DUMMY         44329
-#define SPELL_FEL_CRYSTAL_VISUAL        44355
-#define SPELL_MANA_RAGE                 44320               // This spell triggers 44321, which changes scale and regens mana Requires an entry in spell_script_target
+enum CrystalSpells
+{
+    SPELL_FEL_CRYSTAL_COSMETIC     = 44374,
+    SPELL_FEL_CRYSTAL_DUMMY        = 44329,
+    SPELL_FEL_CRYSTAL_VISUAL       = 44355,
+    SPELL_MANA_RAGE                = 44320      // This spell triggers 44321, which changes scale and regens mana Requires an entry in spell_script_target
+};
 
-//Selin's spells
-#define SPELL_DRAIN_LIFE                44294
-#define SPELL_FEL_EXPLOSION             44314
+enum SelinSpells
+{
+    SPELL_DRAIN_LIFE               = 44294,
+    SPELL_FEL_EXPLOSION            = 44314,
 
-#define SPELL_DRAIN_MANA                46153               // Heroic only
+    H_SPELL_DRAIN_MANA             = 46153,
+    H_SPELL_DRAIN_LIFE             = 46155
+};
 
 #define CRYSTALS_NUMBER                 5
 #define DATA_CRYSTALS                   6
@@ -52,26 +60,26 @@ EndScriptData */
 
 struct boss_selin_fireheartAI : public ScriptedAI
 {
-    boss_selin_fireheartAI(Creature* c) : ScriptedAI(c)
+    boss_selin_fireheartAI(Creature* creature) : ScriptedAI(creature)
     {
-        pInstance = c->GetInstanceData();
+        instance = creature->GetInstanceData();
 
         Crystals.clear();
         // GUIDs per instance is static, so we only need to load them once.
-        if (pInstance)
+        if (instance)
         {
-            uint32 size = pInstance->GetData(DATA_FEL_CRYSTAL_SIZE);
+            uint32 size = instance->GetData(DATA_FEL_CRYSTAL_SIZE);
             for (uint8 i = 0; i < size; ++i)
             {
-                uint64 guid = pInstance->GetData64(DATA_FEL_CRYSTAL);
+                uint64 guid = instance->GetData64(DATA_FEL_CRYSTAL);
                 debug_log("OSCR: Selin: Adding Fel Crystal %llu to list", guid);
                 Crystals.push_back(guid);
             }
         }
-        Heroic = c->GetMap()->IsHeroic();
+        Heroic = creature->GetMap()->IsHeroic();
     }
 
-    ScriptedInstance* pInstance;
+    ScriptedInstance* instance;
 
     std::list<uint64> Crystals;
 
@@ -88,28 +96,28 @@ struct boss_selin_fireheartAI : public ScriptedAI
 
     void Reset()
     {
-        if (pInstance)
+        if (instance)
         {
             //for (uint8 i = 0; i < CRYSTALS_NUMBER; ++i)
             for (std::list<uint64>::const_iterator itr = Crystals.begin(); itr != Crystals.end(); ++itr)
             {
-                //Unit* pUnit = Unit::GetUnit(*me, FelCrystals[i]);
-                Unit* pUnit = Unit::GetUnit(*me, *itr);
-                if (pUnit)
+                //Unit* unit = Unit::GetUnit(*me, FelCrystals[i]);
+                Unit* unit = Unit::GetUnit(*me, *itr);
+                if (unit)
                 {
-                    if (!pUnit->isAlive())
-                        CAST_CRE(pUnit)->Respawn();      // Let the core handle setting death state, etc.
+                    if (!unit->isAlive())
+                        CAST_CRE(unit)->Respawn();      // Let the core handle setting death state, etc.
 
                     // Only need to set unselectable flag. You can't attack unselectable units so non_attackable flag is not necessary here.
-                    pUnit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                    unit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 }
             }
 
-            pInstance->HandleGameObject(pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), true);
+            instance->HandleGameObject(instance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), true);
             // Open the big encounter door. Close it in Aggro and open it only in JustDied(and here)
                                                             // Small door opened after event are expected to be closed by default
             // Set Inst data for encounter
-            pInstance->SetData(DATA_SELIN_EVENT, NOT_STARTED);
+            instance->SetData(DATA_SELIN_EVENT, NOT_STARTED);
         } else error_log(ERROR_INST_DATA);
 
         DrainLifeTimer = 3000 + rand()%4000;
@@ -184,8 +192,8 @@ struct boss_selin_fireheartAI : public ScriptedAI
     {
         DoScriptText(SAY_AGGRO, me);
 
-        if (pInstance)
-            pInstance->HandleGameObject(pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), false);
+        if (instance)
+            instance->HandleGameObject(instance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), false);
             //Close the encounter door, open it in JustDied/Reset
      }
 
@@ -220,12 +228,12 @@ struct boss_selin_fireheartAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, me);
 
-        if (!pInstance)
+        if (!instance)
             return;
 
-        pInstance->SetData(DATA_SELIN_EVENT, DONE);         // Encounter complete!
-        pInstance->HandleGameObject(pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), true);                  // Open the encounter door
-        pInstance->HandleGameObject(pInstance->GetData64(DATA_SELIN_DOOR), true);                 // Open the door leading further in
+        instance->SetData(DATA_SELIN_EVENT, DONE);                                          // Encounter complete!
+        instance->HandleGameObject(instance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), true);   // Open the encounter door
+        instance->HandleGameObject(instance->GetData64(DATA_SELIN_DOOR), true);             // Open the door leading further in
         ShatterRemainingCrystals();
     }
 
@@ -241,7 +249,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
             {
                 if (DrainLifeTimer <= diff)
                 {
-                    DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DRAIN_LIFE);
+                    DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), Heroic? H_SPELL_DRAIN_LIFE : SPELL_DRAIN_LIFE);
                     DrainLifeTimer = 10000;
                 } else DrainLifeTimer -= diff;
 
@@ -250,7 +258,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
                 {
                     if (DrainManaTimer <= diff)
                     {
-                        DoCast(SelectUnit(SELECT_TARGET_RANDOM, 1), SPELL_DRAIN_MANA);
+                        DoCast(SelectUnit(SELECT_TARGET_RANDOM, 1), H_SPELL_DRAIN_MANA);
                         DrainManaTimer = 10000;
                     } else DrainManaTimer -= diff;
                 }
@@ -307,14 +315,14 @@ struct boss_selin_fireheartAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_selin_fireheart(Creature* pCreature)
+CreatureAI* GetAI_boss_selin_fireheart(Creature* creature)
 {
-    return new boss_selin_fireheartAI (pCreature);
+    return new boss_selin_fireheartAI (creature);
 };
 
 struct mob_fel_crystalAI : public ScriptedAI
 {
-    mob_fel_crystalAI(Creature* c) : ScriptedAI(c) {}
+    mob_fel_crystalAI(Creature* creature) : ScriptedAI(creature) {}
 
     void Reset() {}
     void EnterCombat(Unit* /*who*/) {}
@@ -324,9 +332,9 @@ struct mob_fel_crystalAI : public ScriptedAI
 
     void JustDied(Unit* /*killer*/)
     {
-        if (ScriptedInstance* pInstance = me->GetInstanceData())
+        if (ScriptedInstance* instance = me->GetInstanceData())
         {
-            Creature* Selin = (Unit::GetCreature(*me, pInstance->GetData64(DATA_SELIN)));
+            Creature* Selin = (Unit::GetCreature(*me, instance->GetData64(DATA_SELIN)));
             if (Selin && Selin->isAlive())
             {
                 if (CAST_AI(boss_selin_fireheartAI, Selin->AI())->CrystalGUID == me->GetGUID())
@@ -346,9 +354,9 @@ struct mob_fel_crystalAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_fel_crystal(Creature* pCreature)
+CreatureAI* GetAI_mob_fel_crystal(Creature* creature)
 {
-    return new mob_fel_crystalAI (pCreature);
+    return new mob_fel_crystalAI (creature);
 };
 
 void AddSC_boss_selin_fireheart()
