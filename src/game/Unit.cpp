@@ -43,7 +43,6 @@
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
 #include "Path.h"
-#include "CreatureFormations.h"
 #include "CreatureGroups.h"
 #include "PetAI.h"
 #include "PassiveAI.h"
@@ -8781,12 +8780,12 @@ void Unit::CombatStart(Unit* target, bool initialAggro)
         if (!target->isInCombat() && target->GetTypeId() != TYPEID_PLAYER
             && !target->ToCreature()->HasReactState(REACT_PASSIVE) && target->ToCreature()->IsAIEnabled)
         {
-            target->ToCreature()->AI()->AttackStart(this);
-            if (target->ToCreature()->GetFormation())
-            {
-                target->ToCreature()->GetFormation()->MemberAttackStart(target->ToCreature(), this);
-                sLog.outDebug("Unit::CombatStart() calls CreatureGroups::MemberHasAttacked(this);");
-            }
+                target->ToCreature()->AI()->AttackStart(this);
+                if(((Creature*)target)->GetFormation())
+                {   
+                    ((Creature*)target)->GetFormation()->MemberAttackStart((Creature*)target, this);
+                    sLog.outDebug("Unit::CombatStart() calls CreatureGroups::MemberHasAttacked(this);");
+                }
         }
 
         SetInCombatWith(target);
@@ -8847,9 +8846,6 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
             if (ToCreature()->GetFormation())
                 ToCreature()->GetFormation()->MemberAttackStart((Creature*)this, enemy);
-
-            if (ToCreature()->GetGroup())
-                ToCreature()->GetGroup()->MemberAttackStart((Creature*)this, enemy);
 
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
         }

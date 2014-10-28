@@ -23,7 +23,7 @@
 #include "DestinationHolderImp.h"
 #include "Map.h"
 #include "Util.h"
-#include "CreatureFormations.h"
+#include "CreatureGroups.h"
 
 #define RUNNING_CHANCE_RANDOMMV 20                                  //will be "1 / RUNNING_CHANCE_RANDOMMV"
 

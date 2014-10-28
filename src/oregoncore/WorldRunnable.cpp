@@ -23,7 +23,7 @@
 #include "ObjectAccessor.h"
 #include "MapManager.h"
 #include "BattleGroundMgr.h"
-#include "CreatureFormations.h"
+#include "CreatureGroups.h"
 
 #include "Database/DatabaseEnv.h"
 
@@ -72,8 +72,6 @@ void WorldRunnable::run()
     sBattleGroundMgr.DeleteAlllBattleGrounds();
 
     sWorldSocketMgr->StopNetwork();
-
-    formation_mgr.UnloadCreatureFormations();
 
     MapManager::Instance().UnloadAll();                     // unload all grids (including locked in memory)
 

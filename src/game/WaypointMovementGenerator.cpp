@@ -22,7 +22,7 @@
 #include "Creature.h"
 #include "DestinationHolderImp.h"
 #include "CreatureAI.h"
-#include "CreatureFormations.h"
+#include "CreatureGroups.h"
 #include "Player.h"
 
 template<class T>

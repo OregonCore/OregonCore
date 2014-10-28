@@ -56,7 +56,6 @@
 #include "TicketMgr.h"
 #include "Util.h"
 #include "Language.h"
-#include "CreatureFormations.h"
 #include "CreatureGroups.h"
 #include "Transports.h"
 #include "CreatureEventAIMgr.h"
@@ -1386,10 +1385,7 @@ void World::SetInitialWorldSettings()
     sWaypointMgr->Load();
 
     sConsole.SetLoadingLabel("Loading Creature Formations...");
-    formation_mgr.LoadCreatureFormations();
-
-    sConsole.SetLoadingLabel("Loading Creature Groups...");
-    group_mgr.LoadCreatureGroups();
+    sFormationMgr.LoadCreatureFormations();
 
     sConsole.SetLoadingLabel("Loading GM tickets...");
     ticketmgr.LoadGMTickets();
