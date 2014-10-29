@@ -120,6 +120,10 @@ void WaypointMovementGenerator<Creature>::Initialize(Creature &u)
         Traveller<Creature> traveller(u);
         InitTraveller(u, *node);
         MoveToNextNode(traveller);
+
+        //Call for creature group update
+        if (u.GetFormation() && u.GetFormation()->getLeader() == &u)
+            u.GetFormation()->LeaderMoveTo(node->x, node->y, node->z);
     }
     else
         node = NULL;
@@ -185,6 +189,10 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &d
             node = waypoints->at(i_currentNode);
             InitTraveller(unit, *node);
             MoveToNextNode(traveller);
+
+            //Call for creature group update
+            if (unit.GetFormation() && unit.GetFormation()->getLeader() == &unit)
+                unit.GetFormation()->LeaderMoveTo(node->x, node->y, node->z);
         }
         else
         {
