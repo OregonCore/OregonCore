@@ -91,8 +91,6 @@ void LootStore::LoadLootTable()
     // Clearing store (for reloading case)
     Clear();
 
-    sLog.outString("%s :", GetName());
-
     //                                                        0      1     2                    3        4              5         6              7                 8
     QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT entry, item, ChanceOrQuestChance, groupid, mincountOrRef, maxcount, lootcondition, condition_value1, condition_value2 FROM %s",GetName());
 
@@ -150,12 +148,10 @@ void LootStore::LoadLootTable()
 
         Verify();                                           // Checks validity of the loot store
 
-        sLog.outString();
         sLog.outString(">> Loaded %u loot definitions (%d templates)", count, m_LootTemplates.size());
     }
     else
     {
-        sLog.outString();
         sLog.outErrorDb(">> Loaded 0 loot definitions. DB table %s is empty.",GetName());
     }
 }

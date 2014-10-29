@@ -41,7 +41,6 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Texts(bool check_entry_use)
     // Gather Additional data from EventAI Texts
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, sound, type, language, emote FROM creature_ai_texts");
 
-    sLog.outString("Loading EventAI Texts additional data...");
     if (result)
     {
         uint32 count = 0;

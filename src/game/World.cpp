@@ -1195,7 +1195,7 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Loading NPC Texts...");
     sObjectMgr.LoadGossipText();
 
-    sLog.outString("Loading Spell Group Stack Rules...");
+    sConsole.SetLoadingLabel("Loading Spell Group Stack Rules...");
     sSpellMgr.LoadSpellGroupStackRules();
 
     sConsole.SetLoadingLabel("Loading Enchant Spells Proc datas...");

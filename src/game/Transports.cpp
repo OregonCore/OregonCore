@@ -101,7 +101,6 @@ void MapManager::LoadTransports()
         ++count;
     } while (result->NextRow());
 
-    sLog.outString();
     sLog.outString(">> Loaded %u transports", count);
 
     // check transport data DB integrity

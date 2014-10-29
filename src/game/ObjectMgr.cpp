@@ -3745,8 +3745,6 @@ void ObjectMgr::LoadScripts(ScriptsType type)
     if (sWorld.IsScriptScheduled())                          // function don't must be called in time scripts use.
         return;
 
-    sLog.outString("%s :", tableName.c_str());
-
     scripts->clear();                                        // need for reload support
 
     QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT id,delay,command,datalong,datalong2,dataint, x, y, z, o FROM %s", tableName.c_str());

@@ -801,8 +801,6 @@ void GameEventMgr::LoadFromDB()
 
     mGameEventPoolIds.resize(mGameEvent.size()*2-1);
 
-    sLog.outString("Loading Game Event Pool Data...");
-
     //                                   1                    2
     result = WorldDatabase.Query("SELECT pool_template.entry, game_event_pool.event "
         "FROM pool_template JOIN game_event_pool ON pool_template.entry = game_event_pool.pool_entry");

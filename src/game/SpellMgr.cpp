@@ -1379,7 +1379,6 @@ void SpellMgr::LoadSpellGroups()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT id, spell_id FROM spell_group");
     if( !result )
     {
-        sLog.outString();
         sLog.outString( ">> Loaded %u spell group definitions", count );
         return;
     }
@@ -1446,7 +1445,6 @@ void SpellMgr::LoadSpellGroups()
         }
     }
 
-    sLog.outString();
     sLog.outString( ">> Loaded %u spell group definitions", count );
 }
 
@@ -1460,7 +1458,6 @@ void SpellMgr::LoadSpellGroupStackRules()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT group_id, stack_rule FROM spell_group_stack_rules");
     if( !result )
     {
-        sLog.outString();
         sLog.outString( ">> Loaded %u spell group stack rules", count );
         return;
     }
@@ -1490,7 +1487,6 @@ void SpellMgr::LoadSpellGroupStackRules()
         ++count;
     } while( result->NextRow() );
 
-    sLog.outString();
     sLog.outString( ">> Loaded %u spell group stack rules", count );
 }
 

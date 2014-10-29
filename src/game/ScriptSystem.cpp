@@ -49,12 +49,9 @@ void SystemMgr::LoadVersion()
 
 void SystemMgr::LoadScriptTexts()
 {
-    outstring_log("OSCR: Loading Script Texts...");
     LoadOregonStrings(WorldDatabase,"script_texts",TEXT_SOURCE_RANGE,1+(TEXT_SOURCE_RANGE*2));
 
     QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT entry, sound, type, language, emote FROM script_texts");
-
-    outstring_log("OSCR: Loading Script Texts additional data...");
 
     if (Result)
     {
@@ -99,22 +96,19 @@ void SystemMgr::LoadScriptTexts()
             ++uiCount;
         } while (Result->NextRow());
 
-        outstring_log("\n>> Loaded %u additional Script Texts data.", uiCount);
+        outstring_log(">> Loaded %u additional Script Texts data.", uiCount);
     }
     else
     {
-        outstring_log("\n>> Loaded 0 additional Script Texts data. DB table script_texts is empty.");
+        outstring_log(">> Loaded 0 additional Script Texts data. DB table script_texts is empty.");
     }
 }
 
 void SystemMgr::LoadScriptTextsCustom()
 {
-    outstring_log("OSCR: Loading Custom Texts...");
     LoadOregonStrings(WorldDatabase,"custom_texts",TEXT_SOURCE_RANGE*2,1+(TEXT_SOURCE_RANGE*3));
 
     QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT entry, sound, type, language, emote FROM custom_texts");
-
-    outstring_log("OSCR: Loading Custom Texts additional data...");
 
     if (Result)
     {
@@ -159,11 +153,11 @@ void SystemMgr::LoadScriptTextsCustom()
             ++uiCount;
         } while (Result->NextRow());
 
-        outstring_log("\n>> Loaded %u additional Custom Texts data.", uiCount);
+        outstring_log(">> Loaded %u additional Custom Texts data.", uiCount);
     }
     else
     {
-        outstring_log("\n>> Loaded 0 additional Custom Texts data. DB table custom_texts is empty.");
+        outstring_log(">> Loaded 0 additional Custom Texts data. DB table custom_texts is empty.");
     }
 }
 
@@ -178,8 +172,6 @@ void SystemMgr::LoadScriptWaypoints()
     QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT COUNT(entry) FROM script_waypoint GROUP BY entry");
     if (Result)
         uiCreatureCount = Result->GetRowCount();
-
-    outstring_log("OSCR: Loading Script Waypoints for %llu creature(s)...", uiCreatureCount);
 
     Result = WorldDatabase.Query("SELECT entry, pointid, location_x, location_y, location_z, waittime FROM script_waypoint ORDER BY pointid");
 
@@ -215,11 +207,11 @@ void SystemMgr::LoadScriptWaypoints()
             ++uiNodeCount;
         } while (Result->NextRow());
 
-        outstring_log("\n>> Loaded %u Script Waypoint nodes.", uiNodeCount);
+        outstring_log(">> Loaded %u Script Waypoint nodes.", uiNodeCount);
     }
     else
     {
-        outstring_log("\n>> Loaded 0 Script Waypoints. DB table script_waypoint is empty.");
+        outstring_log(">> Loaded 0 Script Waypoints. DB table script_waypoint is empty.");
     }
 }
 

@@ -108,7 +108,6 @@ void TicketMgr::LoadGMTickets()
     if (!result)
     {
         ticketmgr.InitTicketID();
-        sLog.outString();
         sLog.outString(">> GM Tickets table is empty, no tickets were loaded.");
         return;
     }

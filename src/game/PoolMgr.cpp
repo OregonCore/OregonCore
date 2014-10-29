@@ -587,9 +587,6 @@ void PoolMgr::LoadFromDB()
     sLog.outString(">> Loaded %u objects pools", count);
 
     // Creatures
-
-    sLog.outString("Loading Creatures Pooling Data...");
-
     mPoolCreatureGroups.resize(max_pool_id + 1);
     mCreatureSearchMap.clear();
     //                                   1     2           3
@@ -644,9 +641,6 @@ void PoolMgr::LoadFromDB()
     }
 
     // Gameobjects
-
-    sLog.outString("Loading Gameobject Pooling Data...");
-
     mPoolGameobjectGroups.resize(max_pool_id + 1);
     mGameobjectSearchMap.clear();
     //                                   1     2           3
@@ -710,9 +704,6 @@ void PoolMgr::LoadFromDB()
     }
 
     // Pool of pools
-
-    sLog.outString("Loading Mother Pooling Data...");
-
     mPoolPoolGroups.resize(max_pool_id + 1);
     //                                      1        2            3
     result = WorldDatabase.Query("SELECT pool_id, mother_pool, chance FROM pool_pool");

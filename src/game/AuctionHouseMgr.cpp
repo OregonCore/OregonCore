@@ -276,7 +276,6 @@ void AuctionHouseMgr::LoadAuctionItems()
 
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded 0 auction items");
         return;
     }
@@ -313,7 +312,6 @@ void AuctionHouseMgr::LoadAuctionItems()
     }
     while (result->NextRow());
 
-    sLog.outString();
     sLog.outString(">> Loaded %u auction items", count);
 }
 
@@ -322,7 +320,6 @@ void AuctionHouseMgr::LoadAuctions()
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT COUNT(*) FROM auctionhouse");
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded 0 auctions. DB table auctionhouse is empty.");
         return;
     }
@@ -332,7 +329,6 @@ void AuctionHouseMgr::LoadAuctions()
 
     if (!AuctionCount)
     {
-        sLog.outString();
         sLog.outString(">> Loaded 0 auctions. DB table auctionhouse is empty.");
         return;
     }
@@ -340,7 +336,6 @@ void AuctionHouseMgr::LoadAuctions()
     result = CharacterDatabase.Query("SELECT id,auctioneerguid,itemguid,item_template,itemowner,buyoutprice,time,buyguid,lastbid,startbid,deposit FROM auctionhouse");
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded 0 auctions. DB table auctionhouse is empty.");
         return;
     }
@@ -408,7 +403,6 @@ void AuctionHouseMgr::LoadAuctions()
 
     } while (result->NextRow());
 
-    sLog.outString();
     sLog.outString(">> Loaded %u auctions", AuctionCount);
 }
 

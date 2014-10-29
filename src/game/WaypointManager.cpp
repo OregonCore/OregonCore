@@ -94,7 +94,6 @@ void WaypointStore::Load()
 
     } while (result->NextRow()) ;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u waypoints", count);
 }
 

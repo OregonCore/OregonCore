@@ -330,7 +330,6 @@ void InstanceSaveManager::CleanupInstances()
         while (result->NextRow());
     }
 
-    sLog.outString();
     sLog.outString(">> Initialized %u instances", (uint32)InstanceSet.size());
 }
 
@@ -396,7 +395,6 @@ void InstanceSaveManager::PackInstances()
     CharacterDatabase.Execute("DEALLOCATE PREPARE stmt5");
     CharacterDatabase.Execute("DEALLOCATE PREPARE stmt6");
 
-    sLog.outString();
     sLog.outString(">> Instance numbers remapped, next instance id is %u", InstanceNumber);
 }
 
