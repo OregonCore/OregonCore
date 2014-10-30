@@ -3718,10 +3718,12 @@ void Aura::HandleAuraModDecreaseSpeed(bool /*apply*/, bool Real)
     if (!Real)
         return;
 
-    //m_target->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
     m_target->UpdateSpeed(MOVE_RUN, true);
     m_target->UpdateSpeed(MOVE_SWIM, true);
     m_target->UpdateSpeed(MOVE_FLIGHT, true);
+    m_target->UpdateSpeed(MOVE_RUN_BACK, true);
+    m_target->UpdateSpeed(MOVE_SWIM_BACK, true);
+    m_target->UpdateSpeed(MOVE_FLIGHT_BACK, true);
 }
 
 void Aura::HandleAuraModUseNormalSpeed(bool /*apply*/, bool Real)
