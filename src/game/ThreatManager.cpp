@@ -24,6 +24,7 @@
 #include "Player.h"
 #include "ObjectAccessor.h"
 #include "UnitEvents.h"
+#include "SpellMgr.h"
 
 //==============================================================
 //================= ThreatCalcHelper ===========================
@@ -34,6 +35,18 @@ float ThreatCalcHelper::calcThreat(Unit* pHatedUnit, Unit* /*pHatingUnit*/, floa
 {
     if (pThreatSpell)
     {
+        if (pThreatSpell->AttributesEx & SPELL_ATTR_EX_NO_THREAT)
+            return 0.0f;
+
+        if (SpellThreatEntry const*  threatEntry = sSpellMgr.GetSpellThreatEntry(pThreatSpell->Id))
+            if (threatEntry->pctMod != 1.0f)
+                pThreat *= threatEntry->pctMod;
+
+        // Energize is not affected by Mods
+        for (uint8 i = 0; i < MAX_SPELL_EFFECTS; i++)
+            if (pThreatSpell->Effect[i] == SPELL_EFFECT_ENERGIZE || pThreatSpell->EffectApplyAuraName[i] == SPELL_AURA_PERIODIC_ENERGIZE)
+                return pThreat;
+
         if (Player* modOwner = pHatedUnit->GetSpellModOwner())
             modOwner->ApplySpellMod(pThreatSpell->Id, SPELLMOD_THREAT, pThreat);
     }

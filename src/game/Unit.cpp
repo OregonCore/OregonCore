@@ -972,7 +972,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
     {
         DEBUG_LOG("DealDamageAlive");
 
-        pVictim->ModifyHealth(- (int32)damage);
+        pVictim->ModifyHealth(-(int32)damage);
 
         if (damagetype != DOT)
         {
@@ -997,13 +997,9 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             //if (!spellProto || !(spellProto->AuraInterruptFlags&AURA_INTERRUPT_FLAG_DIRECT_DAMAGE))
                 pVictim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DIRECT_DAMAGE, spellProto ? spellProto->Id : 0);
         }
+
         if (pVictim->GetTypeId() != TYPEID_PLAYER)
-        {
-            if (spellProto && IsDamageToThreatSpell(spellProto))
-                pVictim->AddThreat(this, damage*2, damageSchoolMask, spellProto);
-            else
-                pVictim->AddThreat(this, damage, damageSchoolMask, spellProto);
-        }
+            pVictim->AddThreat(this, (float)damage, damageSchoolMask, spellProto);
         else                                                // victim is a player
         {
             // Rage from damage received
@@ -1031,7 +1027,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             }
         }
 
-        if (damagetype != NODAMAGE && damage)// && pVictim->GetTypeId() == TYPEID_PLAYER)
+        if (damagetype != NODAMAGE && damage)
         {
             if (pVictim != this && pVictim->GetTypeId() == TYPEID_PLAYER) // does not support creature push_back
             {
@@ -7448,11 +7444,14 @@ void Unit::SendEnergizeSpellLog(Unit* pVictim, uint32 SpellID, uint32 Damage, Po
     SendMessageToSet(&data, true);
 }
 
-void Unit::EnergizeBySpell(Unit* pVictim, uint32 SpellID, uint32 Damage, Powers powertype)
+void Unit::EnergizeBySpell(Unit* victim, uint32 SpellID, uint32 damage, Powers powertype)
 {
-    SendEnergizeSpellLog(pVictim, SpellID, Damage, powertype);
+    SendEnergizeSpellLog(victim, SpellID, damage, powertype);
     // needs to be called after sending spell log
-    pVictim->ModifyPower(powertype, Damage);
+    victim->ModifyPower(powertype, damage);
+
+    SpellEntry const* spellInfo = sSpellStore.LookupEntry(SpellID);
+    victim->getHostileRefManager().threatAssist(this, float(damage) * 0.5f, spellInfo);
 }
 
 uint32 Unit::SpellDamageBonus(Unit* pVictim, SpellEntry const *spellProto, uint32 pdamage, DamageEffectType damagetype)
@@ -8433,21 +8432,6 @@ bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool
             if (itr->type == aura)
                 return true;
     }
-
-    return false;
-}
-
-bool Unit::IsDamageToThreatSpell(SpellEntry const * spellInfo) const
-{
-    if (!spellInfo)
-        return false;
-
-    uint32 family = spellInfo->SpellFamilyName;
-    uint64 flags = spellInfo->SpellFamilyFlags;
-
-    if ((family == 5 && flags == 256) ||                     //Searing Pain
-        (family == SPELLFAMILY_SHAMAN && flags == SPELLFAMILYFLAG_SHAMAN_FROST_SHOCK))
-        return true;
 
     return false;
 }
@@ -9445,7 +9429,7 @@ bool Unit::CanHaveThreatList() const
 
 float Unit::ApplyTotalThreatModifier(float threat, SpellSchoolMask schoolMask)
 {
-    if (!HasAuraType(SPELL_AURA_MOD_THREAT))
+    if (!HasAuraType(SPELL_AURA_MOD_THREAT) || threat < 0)
         return threat;
 
     SpellSchools school = GetFirstSchoolInMask(schoolMask);

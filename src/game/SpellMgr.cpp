@@ -1492,11 +1492,41 @@ void SpellMgr::LoadSpellGroupStackRules()
 
 void SpellMgr::LoadSpellThreats()
 {
-    sSpellThreatStore.Free();                               // for reload
+    mSpellThreatMap.clear();                                // need for reload case
 
-    sSpellThreatStore.Load();
+    uint32 count = 0;
 
-    sLog.outString(">> Loaded %u aggro generating spells", sSpellThreatStore.RecordCount);
+    //                                                0      1        2       3
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, flatMod, pctMod, apPctMod FROM spell_threat");
+
+    if(!result)
+    {
+        sLog.outString( ">> Loaded %u aggro generating spells", count);
+        return;
+    }
+
+    do
+    {
+        Field *fields = result->Fetch();
+
+        uint32 entry = fields[0].GetUInt32();
+
+        if (!sSpellStore.LookupEntry(entry))
+        {
+            sLog.outErrorDb("Spell %u listed in `spell_threat` does not exist", entry);
+            continue;
+        }
+
+        SpellThreatEntry ste;
+        ste.flatMod  = fields[1].GetInt16();
+        ste.pctMod   = fields[2].GetFloat();
+        ste.apPctMod = fields[3].GetFloat();
+
+        mSpellThreatMap[entry] = ste;
+        count++;
+    } while (result->NextRow());
+
+    sLog.outString(">> Loaded %u SpellThreatEntries.", count);
 }
 
 void SpellMgr::LoadSpellEnchantProcData()
@@ -1509,9 +1539,6 @@ void SpellMgr::LoadSpellEnchantProcData()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, customChance, PPMChance, procEx FROM spell_enchant_proc_data");
     if (!result)
     {
-
-
-
         sLog.outString(">> Loaded %u spell enchant proc event conditions", count);
         return;
     }
@@ -1519,7 +1546,6 @@ void SpellMgr::LoadSpellEnchantProcData()
     do
     {
         Field *fields = result->Fetch();
-
 
         uint32 enchantId = fields[0].GetUInt32();
 

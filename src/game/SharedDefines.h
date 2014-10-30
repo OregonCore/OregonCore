@@ -432,7 +432,7 @@ enum SpellAttributesEx
       SPELL_ATTR_EX_NEGATIVE                   = 0x00000080,            // 7
       SPELL_ATTR_EX_NOT_IN_COMBAT_TARGET       = 0x00000100,            // 8 Spell req target not to be in combat state
       SPELL_ATTR_EX_UNK9                       = 0x00000200,            // 9
-      SPELL_ATTR_EX_UNK10                      = 0x00000400,            // 10
+      SPELL_ATTR_EX_NO_THREAT                  = 0x00000400,            // 10 no generates threat on cast 100% (old NO_INITIAL_AGGRO)
       SPELL_ATTR_EX_UNK11                      = 0x00000800,            // 11
       SPELL_ATTR_EX_PICKPOCKET                 = 0x00001000,            // 12 pickpocket
       SPELL_ATTR_EX_POSSESSION                 = 0x00002000,            // 13 used by spells like mind control

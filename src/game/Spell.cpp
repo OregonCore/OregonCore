@@ -3429,19 +3429,57 @@ void Spell::TakeReagents()
 
 void Spell::HandleThreatSpells(uint32 spellId)
 {
-    if (!m_targets.getUnitTarget() || !spellId)
+    if (m_UniqueTargetInfo.empty())
         return;
 
-    if (!m_targets.getUnitTarget()->CanHaveThreatList())
+    if (!spellId)
         return;
 
-    SpellThreatEntry const *threatSpell = sSpellThreatStore.LookupEntry<SpellThreatEntry>(spellId);
-    if (!threatSpell)
+    if ((m_spellInfo->AttributesEx  & SPELL_ATTR_EX_NO_THREAT) ||
+        (m_spellInfo->AttributesEx3 & SPELL_ATTR_EX3_NO_INITIAL_AGGRO))
         return;
 
-    m_targets.getUnitTarget()->AddThreat(m_caster, float(threatSpell->threat));
+    float threat = 0.0f;
+    if (SpellThreatEntry const* threatEntry = sSpellMgr.GetSpellThreatEntry(m_spellInfo->Id))
+    {
+        if (threatEntry->apPctMod != 0.0f)
+            threat += threatEntry->apPctMod * m_caster->GetTotalAttackPowerValue(BASE_ATTACK);
 
-    DEBUG_LOG("Spell %u, rank %u, added an additional %i threat", spellId, sSpellMgr.GetSpellRank(spellId), threatSpell->threat);
+        threat += threatEntry->flatMod;
+    }
+    else
+        threat += m_spellInfo->spellLevel;
+
+    if (threat == 0.0f)
+        return;
+
+    // since 2.0.1 threat from positive effects also is distributed among all targets, so the overall caused threat is at most the defined bonus
+    threat /= m_UniqueTargetInfo.size();
+
+    for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
+    {
+        float threatToAdd = threat;
+        if (ihit->missCondition != SPELL_MISS_NONE)
+            threatToAdd = 0.0f;
+
+        Unit* target = ObjectAccessor::GetUnit(*m_caster, ihit->targetGUID);
+        if (!target)
+            continue;
+
+        // positive spells distribute threat among all units that are in combat with target, like healing
+        if (IsPositiveSpell(spellId))
+            target->getHostileRefManager().threatAssist(m_caster, threatToAdd, m_spellInfo);
+        // for negative spells threat gets distributed among affected targets
+        else
+        {
+            if (!target->CanHaveThreatList())
+                continue;
+
+            target->AddThreat(m_caster, threatToAdd, GetSpellSchoolMask(m_spellInfo), m_spellInfo);
+        }
+    }
+
+    sLog.outDebug("Spell %u, added an additional %f threat for %s %u target(s)", m_spellInfo->Id, threat, IsPositiveSpell(spellId) ? "assisting" : "harming", uint32(m_UniqueTargetInfo.size()));
 }
 
 void Spell::HandleEffects(Unit* pUnitTarget,Item* pItemTarget,GameObject* pGOTarget,uint32 i, float /*DamageMultiplier*/)

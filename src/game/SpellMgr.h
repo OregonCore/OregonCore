@@ -15,8 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _sSpellMgr_H
-#define _sSpellMgr_H
+#ifndef _SPELLMGR_H
+#define _SPELLMGR_H
 
 // For static or at-server-startup loaded spell data
 // For more high level function for sSpellStore data
@@ -32,8 +32,6 @@
 
 class Player;
 class Spell;
-
-extern SQLStorage sSpellThreatStore;
 
 enum SpellFamilyNames
 {
@@ -375,10 +373,10 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
 bool IsDiminishingReturnsGroupDurationLimited(DiminishingGroup group);
 DiminishingReturnsType GetDiminishingReturnsGroupType(DiminishingGroup group);
 
-// Spell affects related declarations (accessed using sSpellMgr functions)
+// Spell affects related declarations (accessed using SpellMgr functions)
 typedef std::map<uint32, uint64> SpellAffectMap;
 
-// Spell proc event related declarations (accessed using sSpellMgr functions)
+// Spell proc event related declarations (accessed using SpellMgr functions)
 enum ProcFlags
 {
     PROC_FLAG_NONE                            = 0x00000000,
@@ -508,6 +506,15 @@ enum SpellGroupStackRule
 #define SPELL_GROUP_STACK_RULE_MAX 3
 
 typedef std::map<SpellGroup, SpellGroupStackRule> SpellGroupStackMap;
+
+struct SpellThreatEntry
+{
+    int32       flatMod;                                    // flat threat-value for this Spell  - default: 0
+    float       pctMod;                                     // threat-multiplier for this Spell  - default: 1.0f
+    float       apPctMod;                                   // Pct of AP that is added as Threat - default: 0.0f
+};
+
+typedef std::map<uint32, SpellThreatEntry> SpellThreatMap;
 
 // Spell script target related declarations (accessed using sSpellMgr functions)
 enum SpellScriptTargetType
@@ -859,6 +866,21 @@ class SpellMgr
             return rule;
         }
 
+        SpellThreatEntry const* SpellMgr::GetSpellThreatEntry(uint32 spellID) const
+        {
+            SpellThreatMap::const_iterator itr = mSpellThreatMap.find(spellID);
+            if (itr != mSpellThreatMap.end())
+                return &itr->second;
+            else
+            {
+                uint32 firstSpell = GetFirstSpellInChain(spellID);
+                SpellThreatMap::const_iterator itr = mSpellThreatMap.find(firstSpell);
+                if (itr != mSpellThreatMap.end())
+                    return &itr->second;
+            }
+            return NULL;
+        }
+
         // Spell proc events
         SpellProcEventEntry const* GetSpellProcEvent(uint32 spellId) const
         {
@@ -1100,6 +1122,7 @@ class SpellMgr
         SpellLearnSkillMap mSpellLearnSkills;
         SpellLearnSpellMap mSpellLearnSpells;
         SpellTargetPositionMap mSpellTargetPositions;
+        SpellThreatMap     mSpellThreatMap;
         SpellAffectMap     mSpellAffectMap;
         SpellSpellGroupMap mSpellSpellGroup;
         SpellGroupSpellMap mSpellGroupSpell;

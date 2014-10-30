@@ -1146,8 +1146,6 @@ class Unit : public WorldObject
         void CastSpell(GameObject* go, uint32 spellId, bool triggered, Item* castItem = NULL, Aura* triggeredByAura = NULL, uint64 originalCaster = 0);
         void AddAura(uint32 spellId, Unit* target);
 
-        bool IsDamageToThreatSpell(SpellEntry const * spellInfo) const;
-
         void DeMorph();
 
         void SendAttackStateUpdate(CalcDamageInfo *damageInfo);

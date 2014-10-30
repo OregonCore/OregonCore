@@ -3605,7 +3605,8 @@ void Aura::HandleModThreat(bool apply, bool Real)
     if (m_target->GetTypeId() == TYPEID_PLAYER)
         for (int8 x = 0;x < MAX_SPELL_SCHOOL; x++)
             if (GetMiscValue() & int32(1 << x))
-                ApplyPercentModFloatVar(m_target->m_threatModifier[x], m_positive ? GetModifierValue() : -GetModifierValue(), apply);
+                ApplyPercentModFloatVar(m_target->m_threatModifier[x], GetModifierValue(), apply);
+
 }
 
 void Aura::HandleAuraModTotalThreat(bool apply, bool Real)
