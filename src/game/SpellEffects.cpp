@@ -3294,7 +3294,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
         return;
 
     uint32 prop_id = m_spellInfo->EffectMiscValueB[effIndex];
-    SummonPropertiesEntry const *properties = sSummonPropertiesStore.LookupEntry(prop_id);
+    SummonPropertiesEntry const* properties = sSummonPropertiesStore.LookupEntry(prop_id);
     if (!properties)
     {
         sLog.outError("EffectSummonType: Unhandled summon type %u", prop_id);
@@ -3308,6 +3308,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
     if (Player* modOwner = m_originalCaster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_DURATION, duration);
 
+    SpellEntry const* spellInfo = sSpellStore.LookupEntry(m_spellInfo->Id);
     Position pos;
     GetSummonPosition(effIndex, pos);
 
@@ -3332,7 +3333,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                     break;
                 case SUMMON_TYPE_TOTEM:
                 {
-                    summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
+                    summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster, spellInfo);
                     if (!summon || !summon->isTotem())
                         return;
 
@@ -3345,7 +3346,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                 }
                 case SUMMON_TYPE_MINIPET:
                 {
-                    summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
+                    summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster, spellInfo);
                     if (!summon || !summon->HasSummonMask(SUMMON_MASK_MINION))
                         return;
 
@@ -3365,9 +3366,13 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                     if (!summon)
                         return;
 
-                    summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
-                    summon->setFaction(m_originalCaster->getFaction());
-                    summon->SetLevel(m_originalCaster->getLevel());
+                    if (properties->Category == SUMMON_CATEGORY_ALLY)
+                    {
+                        summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
+                        summon->setFaction(m_originalCaster->getFaction());
+                        summon->SetLevel(m_originalCaster->getLevel());
+                        summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
+                    }
                 }
             }
             break;
@@ -3375,7 +3380,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
             SummonClassPet(effIndex);
             break;
         case SUMMON_CATEGORY_PUPPET:
-            summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
+            summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster, spellInfo);
             break;
 
             uint32 faction = properties->Faction;
