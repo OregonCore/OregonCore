@@ -43,7 +43,7 @@ LookingForGroup_auto_join(false), LookingForGroup_auto_add(false), m_muteTime(mu
 _player(NULL), m_Socket(sock),_security(sec), _accountId(id), m_expansion(expansion), m_Warden(NULL),
 m_inQueue(false), m_playerLoading(false), m_playerLogout(false), m_playerRecentlyLogout(false), m_playerSave(false),
 m_sessionDbcLocale(sWorld.GetAvailableDbcLocale(locale)), m_sessionDbLocaleIndex(sObjectMgr.GetIndexForLocale(locale)),
-_logoutTime(0), m_latency(0), m_clientTimeDelay(0)
+_logoutTime(0), m_latency(0), m_clientTimeDelay(0), expireTime(60000), forceExit(false)
 {
     if (sock)
     {
@@ -269,8 +269,12 @@ bool WorldSession::Update(uint32 diff)
     // Cleanup socket pointer if need
     if (m_Socket && m_Socket->IsClosed())
     {
-        m_Socket->RemoveReference();
-        m_Socket = NULL;
+        expireTime -= expireTime > diff ? diff : expireTime;
+        if (expireTime < diff || forceExit)
+        {
+            m_Socket->RemoveReference();
+            m_Socket = NULL;
+        }
     }
 
     if (!m_Socket)
@@ -299,7 +303,6 @@ void WorldSession::LogoutPlayer(bool Save)
             DoLootRelease(lguid);
 
         // If the player just died before logging out, make him appear as a ghost
-        // FIXME: logout must be delayed in case lost connection with client in time of combat
         if (_player->GetDeathTimer())
         {
             _player->getHostileRefManager().deleteReferences();
@@ -458,7 +461,10 @@ void WorldSession::LogoutPlayer(bool Save)
 void WorldSession::KickPlayer()
 {
     if (m_Socket)
+    {
         m_Socket->CloseSocket();
+        forceExit = true;
+    }
 }
 
 // Cancel channeling handler
