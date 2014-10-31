@@ -974,6 +974,7 @@ void CreatureEventAI::JustSummoned(Creature* pUnit)
 
 void CreatureEventAI::EnterCombat(Unit* enemy)
 {
+    me->InterruptNonMeleeSpells(false);
     //Check for on combat start events
     if (!bEmptyList)
     {
