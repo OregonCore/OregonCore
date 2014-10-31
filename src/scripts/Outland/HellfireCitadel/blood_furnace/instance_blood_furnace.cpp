@@ -238,15 +238,8 @@ struct instance_blood_furnace : public ScriptedInstance
         return false;
     }
 
-    uint64 GetData64(uint32 identifier)
+    uint64 GetData64(uint32 /*identifier*/)
     {
-        switch(identifier)
-        {
-            case DATA_BROGGOK:
-                return BroggokGUID;
-            default:
-                return 0;
-        }
         return 0;
     }
 
@@ -456,11 +449,7 @@ bool GOHello_go_prison_cell_lever(Player* /*pPlayer*/, GameObject* pGo)
 {
     if (ScriptedInstance* instance = (ScriptedInstance*)pGo->GetInstanceData())
         if (instance->GetData(DATA_BROGGOKEVENT) != DONE && instance->GetData(DATA_BROGGOKEVENT) != IN_PROGRESS)
-        {
             instance->SetData(DATA_BROGGOKEVENT, IN_PROGRESS);
-            if (Creature* broggok = Creature::GetCreature(*pGo, instance->GetData64(DATA_BROGGOK)))
-                broggok->AI()->DoAction(ACTION_PREPARE_BROGGOK);
-        }
 
     return false;
 }

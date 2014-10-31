@@ -25,24 +25,31 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "blood_furnace.h"
 
-#define SAY_AGGRO               -1542008
+enum Texts
+{
+    SAY_AGGRO              = -1542008
+};
 
-#define SPELL_SLIME_SPRAY       30913
-#define SPELL_SLIME_SPRAY_H     38458
-#define SPELL_POISON_CLOUD      30916
-#define SPELL_POISON_BOLT       30917
-#define SPELL_POISON_BOLT_H     38459
+enum Spells
+{
+    SPELL_SLIME_SPRAY            = 30913,
+    SPELL_SLIME_SPRAY_H          = 38458,
+    SPELL_POISON_CLOUD           = 30916,
+    SPELL_POISON_BOLT            = 30917,
+    SPELL_POISON_BOLT_H          = 38459,
+
+    SPELL_POISON_CLOUD_PASSIVE   = 30914,
+    SPELL_POISON_CLOUD_PASSIVE_H = 38462
+};
 
 struct boss_broggokAI : public ScriptedAI
 {
-    boss_broggokAI(Creature* c) : ScriptedAI(c) 
+    boss_broggokAI(Creature* creature) : ScriptedAI(creature) 
 	{
-            pInstance = c->GetInstanceData();
-            HeroicMode = me->GetMap()->IsHeroic();
+            instance = creature->GetInstanceData();
 	}
 
-    ScriptedInstance* pInstance;
-    bool HeroicMode;
+    ScriptedInstance* instance;
 
     uint32 AcidSpray_Timer;
     uint32 PoisonSpawn_Timer;
@@ -54,22 +61,23 @@ struct boss_broggokAI : public ScriptedAI
         AcidSpray_Timer = 10000;
         PoisonSpawn_Timer = 5000;
         PoisonBolt_Timer = 7000;
-        if (pInstance)
-            pInstance->SetData(DATA_BROGGOKEVENT, NOT_STARTED);
+        
+        if (instance)
+            instance->SetData(DATA_BROGGOKEVENT, NOT_STARTED);
     }
 
     void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
 
-        if (pInstance)
-            pInstance->SetData(DATA_BROGGOKEVENT, IN_PROGRESS);
+        if (instance)
+            instance->SetData(DATA_BROGGOKEVENT, IN_PROGRESS);
     }
 
     void JustDied(Unit* /*Killer*/)
     {
-       if (pInstance)
-           pInstance->SetData(DATA_BROGGOKEVENT, DONE);
+       if (instance)
+           instance->SetData(DATA_BROGGOKEVENT, DONE);
     }
 
     void EnterEvadeMode()
@@ -77,15 +85,15 @@ struct boss_broggokAI : public ScriptedAI
         me->RemoveAllAuras();
         me->DeleteThreatList();
         me->CombatStop(true);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_PASSIVE);
         Reset();
 
         if (!me->isAlive())
             return;    
 
-        if (pInstance)
+        if (instance)
         {
-            pInstance->SetData(DATA_BROGGOKEVENT, FAIL);
+            instance->SetData(DATA_BROGGOKEVENT, FAIL);
             float fRespX, fRespY, fRespZ;
             me->GetRespawnCoord(fRespX, fRespY, fRespZ);
             me->GetMotionMaster()->MovePoint(0, fRespX, fRespY, fRespZ);
@@ -139,18 +147,20 @@ CreatureAI* GetAI_boss_broggokAI(Creature* pCreature)
 ## mob_nascent_orc
 ######*/
 
-#define SPELL_BLOW     22427
-#define SPELL_STOMP    31900
+enum OrcSpells
+{
+    SPELL_BLOW    = 22427,
+    SPELL_STOMP   = 31900
+};
 
 struct mob_nascent_orcAI : public ScriptedAI
 {
-    mob_nascent_orcAI(Creature* c) : ScriptedAI(c)
+    mob_nascent_orcAI(Creature* creature) : ScriptedAI(creature)
     {
-        pInstance = c->GetInstanceData();
-        HeroicMode = me->GetMap()->IsHeroic();
+        instance = creature->GetInstanceData();
     }
 
-    ScriptedInstance* pInstance;
+    ScriptedInstance* instance;
 
     uint32 Blow_Timer;
     uint32 Stomp_Timer;
@@ -176,8 +186,8 @@ struct mob_nascent_orcAI : public ScriptedAI
 
     void EnterEvadeMode()
     {
-        if (pInstance)
-            pInstance->SetData(DATA_BROGGOKEVENT, FAIL);
+        if (instance)
+            instance->SetData(DATA_BROGGOKEVENT, FAIL);
 
         me->DeleteThreatList();
         me->CombatStop(true);
@@ -215,22 +225,18 @@ CreatureAI* GetAI_mob_nascent_orc(Creature* pCreature)
 ## mob_broggok_poisoncloud
 ######*/
 
-#define SPELL_POISON      30914
-#define SPELL_POISON_H    38462
-
 struct mob_broggok_poisoncloudAI : public ScriptedAI
 {
-    mob_broggok_poisoncloudAI(Creature* c) : ScriptedAI(c)
+    mob_broggok_poisoncloudAI(Creature* creature) : ScriptedAI(creature)
     {
-        pInstance = c->GetInstanceData();
-        HeroicMode = me->GetMap()->IsHeroic();
+        instance = creature->GetInstanceData();
     }
 
-    ScriptedInstance* pInstance;
+    ScriptedInstance* instance;
 
     void Reset()
     {
-        DoCast(me,HeroicMode ? SPELL_POISON_H : SPELL_POISON);
+        DoCast(me, HeroicMode ? SPELL_POISON_CLOUD_PASSIVE_H : SPELL_POISON_CLOUD_PASSIVE);
     }
 
     void AttackedBy(Unit* /*who*/) {}
