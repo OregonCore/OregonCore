@@ -487,14 +487,40 @@ void WorldSession::HandleMoveKnockBackAck(WorldPacket& recv_data)
     uint64 guid;
 
     recv_data >> guid;                                      // guid
-    recv_data >> Unused<uint32>();                          // unk
+    recv_data >> Unused<uint32>();                          // Always set to 0
     recv_data >> movementInfo;
 
     if (GetPlayer()->GetGUID() != guid)
         return;
 
+    _player->m_movementInfo = movementInfo;
+
+    // Calculate timestamp
+    uint32 move_time, mstime;
+    mstime = getMSTime();
+    if(m_clientTimeDelay == 0)
+        m_clientTimeDelay = mstime - movementInfo.time;
+    move_time = (movementInfo.time - (mstime - m_clientTimeDelay)) + mstime + 500;
+    movementInfo.time = move_time;
+
     // Save movement flags
     GetPlayer()->SetUnitMovementFlags(movementInfo.GetMovementFlags());
+
+    // Send packet
+    WorldPacket data(MSG_MOVE_KNOCK_BACK, uint16(recv_data.size() + 4));
+    data.appendPackGUID(guid);
+
+    /* Includes data shown below (but in different order) */
+    movementInfo.Write(data);
+
+    /* This is sent in addition to the rest of the movement data (yes, angle+velocity are sent twice) */
+    data << movementInfo.j_sinAngle;
+    data << movementInfo.j_cosAngle;
+    data << movementInfo.j_xyspeed;
+    data << movementInfo.j_velocity;
+
+    /* Do we really need to send the data to everyone? Seemed to work better */
+    _player->SendMessageToSet(&data, false); 
 }
 
 void WorldSession::HandleMoveFlyModeChangeAckOpcode(WorldPacket& recv_data)

@@ -6210,41 +6210,40 @@ void Spell::EffectKnockBack(SpellEffIndex effIndex)
     if (unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
+    // Spells with SPELL_EFFECT_KNOCK_BACK (like Thunderstorm) can't knockback target if target has ROOT/STUN
+    if (unitTarget->HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
+        return;
+
+    // Instantly interrupt non melee spells being cast
+    if (unitTarget->IsNonMeleeSpellCast(true))
+        unitTarget->InterruptNonMeleeSpells(true);
+
+    float ratio = 0.1f;
+    float speedxy = float(m_spellInfo->EffectMiscValue[effIndex]) * ratio;
+    float speedz = float(damage) * ratio;
+    if (speedxy < 0.1f && speedz < 0.1f)
+        return;
+
     float x, y;
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
     {
-        x = m_targets.m_dstPos.GetPositionX();
-        y = m_targets.m_dstPos.GetPositionY();
+            m_targets.m_dstPos.GetPosition(x, y);
     }
-    else
+    else //if (m_spellInfo->Effect[effIndex] == SPELL_EFFECT_KNOCK_BACK)
     {
-        x = m_caster->GetPositionX();
-        y = m_caster->GetPositionY();
+        m_caster->GetPosition(x, y);
     }
 
-    float dx = unitTarget->GetPositionX() - x;
-    float dy = unitTarget->GetPositionY() - y;
     float vcos, vsin;
-    if (dx < 0.001f && dy < 0.001f)
-    {
-        float angle = rand_norm() * 2 * M_PI;
-        vcos = cos(angle);
-        vsin = sin(angle);
-    }
-    else
-    {
-        float dist = sqrt((dx * dx) + (dy * dy));
-        vcos = dx / dist;
-        vsin = dy / dist;
-    }
+    unitTarget->GetSinCos(x, y, vsin, vcos);
 
-    WorldPacket data(SMSG_MOVE_KNOCK_BACK, (8 + 4 + 4 + 4 + 4 + 4));
+    WorldPacket data(SMSG_MOVE_KNOCK_BACK, (8+4+4+4+4+4));
     data << unitTarget->GetPackGUID();
-    data << uint32(0);                                      // Sequence
+    data << uint32(0);                                      // Counter
     data << float(vcos);                                    // x direction
     data << float(vsin);                                    // y direction
-    data << float(m_spellInfo->EffectMiscValue[effIndex]) / 10;    // Horizontal speed
-    data << float(damage / -10);                            // Z Movement speed (vertical)
+    data << float(speedxy);                                 // Horizontal speed
+    data << float(-speedz);                                 // Z Movement speed (vertical)
 
     unitTarget->ToPlayer()->GetSession()->SendPacket(&data);
 }

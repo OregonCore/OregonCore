@@ -616,6 +616,7 @@ struct Position
     {
         return GetExactDistSq(pos) < dist * dist;
     }
+    void GetSinCos(float x, float y, float &vsin, float &vcos) const;
     bool HasInArc(float arcangle, const Position* pos) const;
     bool HasInLine(const Unit* target, float distance, float width) const;
 };

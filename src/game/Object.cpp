@@ -1337,6 +1337,25 @@ float Position::GetAngle(const float x, const float y) const
     return ang;
 }
 
+void Position::GetSinCos(const float x, const float y, float &vsin, float &vcos) const
+{
+    float dx = GetPositionX() - x;
+    float dy = GetPositionY() - y;
+
+    if (std::fabs(dx) < 0.001f && std::fabs(dy) < 0.001f)
+    {
+        float angle = (float)rand_norm()*static_cast<float>(2*M_PI);
+        vcos = std::cos(angle);
+        vsin = std::sin(angle);
+    }
+    else
+    {
+        float dist = std::sqrt((dx*dx) + (dy*dy));
+        vcos = dx / dist;
+        vsin = dy / dist;
+    }
+}
+
 bool WorldObject::HasInArc(const float arcangle, const float x, const float y) const
 {
     // always have self in arc
