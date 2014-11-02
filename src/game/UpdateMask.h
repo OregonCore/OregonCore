@@ -25,7 +25,10 @@ class UpdateMask
 {
     public:
         UpdateMask() : mCount(0), mBlocks(0), mUpdateMask(0) { }
-        UpdateMask(const UpdateMask& mask) : mUpdateMask(0) { *this = mask; }
+        UpdateMask(const UpdateMask& mask) : mUpdateMask(0)
+        {
+            *this = mask;
+        }
 
         ~UpdateMask()
         {
@@ -35,23 +38,35 @@ class UpdateMask
 
         void SetBit (uint32 index)
         {
-            ((uint8 *)mUpdateMask)[ index >> 3 ] |= 1 << (index & 0x7);
+            ((uint8*)mUpdateMask)[ index >> 3 ] |= 1 << (index & 0x7);
         }
 
         void UnsetBit (uint32 index)
         {
-            ((uint8 *)mUpdateMask)[ index >> 3 ] &= (0xff ^ (1 <<  (index & 0x7)));
+            ((uint8*)mUpdateMask)[ index >> 3 ] &= (0xff ^ (1 <<  (index & 0x7)));
         }
 
         bool GetBit (uint32 index)
         {
-            return (((uint8 *)mUpdateMask)[ index >> 3 ] & (1 << (index & 0x7))) != 0;
+            return (((uint8*)mUpdateMask)[ index >> 3 ] & (1 << (index & 0x7))) != 0;
         }
 
-        uint32 GetBlockCount() { return mBlocks; }
-        uint32 GetLength() { return mBlocks << 2; }
-        uint32 GetCount() { return mCount; }
-        uint8* GetMask() { return (uint8*)mUpdateMask; }
+        uint32 GetBlockCount()
+        {
+            return mBlocks;
+        }
+        uint32 GetLength()
+        {
+            return mBlocks << 2;
+        }
+        uint32 GetCount()
+        {
+            return mCount;
+        }
+        uint8* GetMask()
+        {
+            return (uint8*)mUpdateMask;
+        }
 
         void SetCount (uint32 valuesCount)
         {
@@ -118,7 +133,7 @@ class UpdateMask
     private:
         uint32 mCount;
         uint32 mBlocks;
-        uint32 *mUpdateMask;
+        uint32* mUpdateMask;
 };
 #endif
 

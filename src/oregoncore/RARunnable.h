@@ -24,13 +24,13 @@
 
 class RARunnable : public ACE_Based::Runnable
 {
-public:
-    RARunnable();
-    virtual ~RARunnable();
-    void run();
+    public:
+        RARunnable();
+        virtual ~RARunnable();
+        void run();
 
-private:
-    ACE_Reactor* m_Reactor;
+    private:
+        ACE_Reactor* m_Reactor;
 
 };
 

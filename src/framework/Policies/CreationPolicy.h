@@ -23,22 +23,28 @@
 
 namespace Oregon
 {
-    // OperatorNew policy creates an object on the heap using new.
-    template <class T>
-        class OperatorNew
-    {
-        public:
-            static T* Create(void) { return (new T); }
-            static void Destroy(T *obj) { delete obj; }
-    };
+// OperatorNew policy creates an object on the heap using new.
+template <class T>
+class OperatorNew
+{
+    public:
+        static T* Create(void)
+        {
+            return (new T);
+        }
+        static void Destroy(T* obj)
+        {
+            delete obj;
+        }
+};
 
-    /*
-     * LocalStaticCreation policy creates an object on the stack
-     * the first time call Create.
-     */
-    template <class T>
-        class LocalStaticCreation
-    {
+/*
+ * LocalStaticCreation policy creates an object on the stack
+ * the first time call Create.
+ */
+template <class T>
+class LocalStaticCreation
+{
         union MaxAlign
         {
             char t_[sizeof(T)];
@@ -52,54 +58,57 @@ namespace Oregon
             int Test::* pMember_;
             int (Test::*pMemberFn_)(int);
         };
-        public:
-            static T* Create(void)
-            {
-                static MaxAlign si_localStatic;
-                return new(&si_localStatic) T;
-            }
+    public:
+        static T* Create(void)
+        {
+            static MaxAlign si_localStatic;
+            return new(&si_localStatic) T;
+        }
 
-            static void Destroy(T *obj) { obj->~T(); }
-    };
+        static void Destroy(T* obj)
+        {
+            obj->~T();
+        }
+};
 
-    /*
-     * CreateUsingMalloc by pass the memory manger.
-     */
-    template<class T>
-        class CreateUsingMalloc
-    {
-        public:
-            static T* Create()
-            {
-                void* p = ::malloc(sizeof(T));
-                if (!p) return 0;
-                return new(p) T;
-            }
+/*
+ * CreateUsingMalloc by pass the memory manger.
+ */
+template<class T>
+class CreateUsingMalloc
+{
+    public:
+        static T* Create()
+        {
+            void* p = ::malloc(sizeof(T));
+            if (!p) return 0;
+            return new(p) T;
+        }
 
-            static void Destroy(T* p)
-            {
-                p->~T();
-                ::free(p);
-            }
-    };
+        static void Destroy(T* p)
+        {
+            p->~T();
+            ::free(p);
+        }
+};
 
-    /*
-     * CreateOnCallBack creates the object base on the call back.
-     */
-    template<class T, class CALL_BACK>
-        class CreateOnCallBack
-    {
-        public:
-            static T* Create()
-            {
-                return CALL_BACK::createCallBack();
-            }
+/*
+ * CreateOnCallBack creates the object base on the call back.
+ */
+template<class T, class CALL_BACK>
+class CreateOnCallBack
+{
+    public:
+        static T* Create()
+        {
+            return CALL_BACK::createCallBack();
+        }
 
-            static void Destroy(T *p)
-            {
-                CALL_BACK::destroyCallBack(p);
-            }
-    };
+        static void Destroy(T* p)
+        {
+            CALL_BACK::destroyCallBack(p);
+        }
+};
 }
 #endif
 

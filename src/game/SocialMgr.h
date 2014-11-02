@@ -114,7 +114,7 @@ enum FriendsResult
 
 class PlayerSocial
 {
-    friend class SocialMgr;
+        friend class SocialMgr;
     public:
         PlayerSocial();
         ~PlayerSocial();
@@ -127,8 +127,14 @@ class PlayerSocial
         // Misc
         bool HasFriend(uint32 friend_guid);
         bool HasIgnore(uint32 ignore_guid);
-        uint32 GetPlayerGUID() { return m_playerGUID; }
-        void SetPlayerGUID(uint32 guid) { m_playerGUID = guid; }
+        uint32 GetPlayerGUID()
+        {
+            return m_playerGUID;
+        }
+        void SetPlayerGUID(uint32 guid)
+        {
+            m_playerGUID = guid;
+        }
         uint32 GetNumberOfSocialsWithFlag(SocialFlag flag);
     private:
         PlayerSocialMap m_playerSocialMap;
@@ -141,15 +147,18 @@ class SocialMgr
         SocialMgr();
         ~SocialMgr();
         // Misc
-        void RemovePlayerSocial(uint32 guid) { m_socialMap.erase(guid); }
+        void RemovePlayerSocial(uint32 guid)
+        {
+            m_socialMap.erase(guid);
+        }
 
-        void GetFriendInfo(Player* player, uint32 friendGUID, FriendInfo &friendInfo);
+        void GetFriendInfo(Player* player, uint32 friendGUID, FriendInfo& friendInfo);
         // Packet management
         void MakeFriendStatusPacket(FriendsResult result, uint32 friend_guid, WorldPacket* data);
         void SendFriendStatus(Player* player, FriendsResult result, uint32 friend_guid, bool broadcast);
         void BroadcastToFriendListers(Player* player, WorldPacket* packet);
         // Loading
-        PlayerSocial *LoadFromDB(QueryResult_AutoPtr result, uint32 guid);
+        PlayerSocial* LoadFromDB(QueryResult_AutoPtr result, uint32 guid);
     private:
         SocialMap m_socialMap;
 };

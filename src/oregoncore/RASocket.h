@@ -33,7 +33,7 @@ class RASocket: public ACE_Svc_Handler<ACE_SOCK_STREAM, ACE_MT_SYNCH>
         virtual ~RASocket();
 
         virtual int svc(void);
-        virtual int open(void * = 0);
+        virtual int open(void* = 0);
         virtual int handle_close(ACE_HANDLE = ACE_INVALID_HANDLE, ACE_Reactor_Mask = ACE_Event_Handler::ALL_EVENTS_MASK);
 
     private:
@@ -46,7 +46,7 @@ class RASocket: public ACE_Svc_Handler<ACE_SOCK_STREAM, ACE_MT_SYNCH>
         int check_password(const std::string& user, const std::string& pass);
         int send(const std::string& line);
 
-        static void zprint(void* callbackArg, const char * szText );
+        static void zprint(void* callbackArg, const char* szText );
         static void commandFinished(void* callbackArg, bool success);
 
     private:

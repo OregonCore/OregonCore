@@ -30,16 +30,16 @@ class TotemAI : public CreatureAI
 
         TotemAI(Creature* c);
 
-        void MoveInLineOfSight(Unit* );
-        void AttackStart(Unit* );
+        void MoveInLineOfSight(Unit*);
+        void AttackStart(Unit*);
         void EnterEvadeMode();
-        bool IsVisible(Unit* ) const;
+        bool IsVisible(Unit*) const;
 
         void UpdateAI(const uint32);
-        static int Permissible(const Creature* );
+        static int Permissible(const Creature*);
 
     private:
-        Totem &i_totem;
+        Totem& i_totem;
         uint64 i_victimGuid;
 };
 #endif

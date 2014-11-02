@@ -44,7 +44,7 @@ enum MovementGeneratorType
     POINT_MOTION_TYPE     = 8,                              // PointMovementGenerator.h
     FLEEING_MOTION_TYPE   = 9,                              // FleeingMovementGenerator.h
     DISTRACT_MOTION_TYPE  = 10,                             // IdleMovementGenerator.h
-    ASSISTANCE_MOTION_TYPE= 11,                             // PointMovementGenerator.h (first part of flee for assistance)
+    ASSISTANCE_MOTION_TYPE = 11,                            // PointMovementGenerator.h (first part of flee for assistance)
     ASSISTANCE_DISTRACT_MOTION_TYPE = 12,                   // IdleMovementGenerator.h (second part of flee for assistance)
     TIMED_FLEEING_MOTION_TYPE = 13,                         // FleeingMovementGenerator.h (alt.second part of flee for assistance)
     ROTATE_MOTION_TYPE    = 14,
@@ -85,11 +85,25 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         typedef std::vector<_Ty> ExpireList;
         int i_top;
 
-        bool empty() const { return i_top < 0; }
-        void pop() { Impl[i_top] = NULL; --i_top; }
-        void push(_Ty _Val) { ++i_top; Impl[i_top] = _Val; }
+        bool empty() const
+        {
+            return i_top < 0;
+        }
+        void pop()
+        {
+            Impl[i_top] = NULL;
+            --i_top;
+        }
+        void push(_Ty _Val)
+        {
+            ++i_top;
+            Impl[i_top] = _Val;
+        }
 
-        bool needInitTop() const { return needInit[i_top]; }
+        bool needInitTop() const
+        {
+            return needInit[i_top];
+        }
         void InitTop();
 
     public:
@@ -107,9 +121,18 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         void Initialize();
         void InitDefault();
 
-        int size() const { return i_top + 1; }
-        _Ty top() const { return Impl[i_top]; }
-        _Ty GetMotionSlot(int slot) const { return Impl[slot]; }
+        int size() const
+        {
+            return i_top + 1;
+        }
+        _Ty top() const
+        {
+            return Impl[i_top];
+        }
+        _Ty GetMotionSlot(int slot) const
+        {
+            return Impl[slot];
+        }
 
         void DirectDelete(_Ty curr);
         void DelayedDelete(_Ty curr);
@@ -149,14 +172,16 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         void MoveChase(Unit* target, float dist = 0.0f, float angle = 0.0f);
         void MoveConfused();
         void MoveFleeing(Unit* enemy, uint32 time = 0);
-        void MovePoint(uint32 id, const Position &pos, bool usePathfinding = true)
-            { MovePoint(id, pos.m_positionX, pos.m_positionY, pos.m_positionZ, usePathfinding); }
-        void MovePoint(uint32 id, float x,float y,float z, bool usePathfinding = true);
+        void MovePoint(uint32 id, const Position& pos, bool usePathfinding = true)
+        {
+            MovePoint(id, pos.m_positionX, pos.m_positionY, pos.m_positionZ, usePathfinding);
+        }
+        void MovePoint(uint32 id, float x, float y, float z, bool usePathfinding = true);
         void MoveCharge(float x, float y, float z, float speed = SPEED_CHARGE, uint32 id = EVENT_CHARGE, bool usePathfinding = true);
         void MoveFall(float z = 0, uint32 id = 0);
         void MoveJumpTo(float angle, float speedXY, float speedZ);
         void MoveJump(float x, float y, float z, float speedXY, float speedZ, bool usePathfinding = true);
-        void MoveSeekAssistance(float x,float y,float z);
+        void MoveSeekAssistance(float x, float y, float z);
         void MoveSeekAssistanceDistract(uint32 timer);
         void MoveTaxiFlight(uint32 path, uint32 pathnode);
         void MoveDistract(uint32 time);
@@ -164,16 +189,19 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         void MoveRotate(uint32 time, RotateDirection direction);
 
         // given destination unreachable? due to pathfinding or other
-        virtual bool isReachable() const { return true; }
+        virtual bool isReachable() const
+        {
+            return true;
+        }
 
         MovementGeneratorType GetCurrentMovementGeneratorType() const;
         MovementGeneratorType GetMotionSlotType(int slot) const;
 
         void propagateSpeedChange();
 
-        bool GetDestination(float &x, float &y, float &z);
+        bool GetDestination(float& x, float& y, float& z);
     private:
-        void Mutate(MovementGenerator *m, MovementSlot slot);                  // use Move* functions instead
+        void Mutate(MovementGenerator* m, MovementSlot slot);                  // use Move* functions instead
 
         void DirectClean(bool reset);
         void DelayedClean();
@@ -181,8 +209,8 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         void DirectExpire(bool reset);
         void DelayedExpire();
 
-        Unit       *i_owner;
-        ExpireList *m_expList;
+        Unit*       i_owner;
+        ExpireList* m_expList;
         uint8       m_cleanFlag;
 };
 #endif

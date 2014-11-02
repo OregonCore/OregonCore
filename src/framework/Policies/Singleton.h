@@ -24,35 +24,35 @@
 
 namespace Oregon
 {
-    template
-        <
-        typename T,
-        class ThreadingModel = Oregon::SingleThreaded<T>,
-        class CreatePolicy = Oregon::OperatorNew<T>,
-        class LifeTimePolicy = Oregon::ObjectLifeTime<T>
-        >
-        class Singleton
-    {
-        public:
-            static T& Instance();
+template
+<
+    typename T,
+    class ThreadingModel = Oregon::SingleThreaded<T>,
+    class CreatePolicy = Oregon::OperatorNew<T>,
+    class LifeTimePolicy = Oregon::ObjectLifeTime<T>
+    >
+class Singleton
+{
+    public:
+        static T& Instance();
 
-        protected:
-            Singleton() {};
+    protected:
+        Singleton() {};
 
-        private:
+    private:
 
-            // Prohibited actions...this does not prevent hijacking.
-            Singleton(const Singleton &);
-            Singleton& operator=(const Singleton &);
+        // Prohibited actions...this does not prevent hijacking.
+        Singleton(const Singleton&);
+        Singleton& operator=(const Singleton&);
 
-            // Singleton Helpers
-            static void DestroySingleton();
+        // Singleton Helpers
+        static void DestroySingleton();
 
-            // data structure
-            typedef typename ThreadingModel::Lock Guard;
-            static T *si_instance;
-            static bool si_destroyed;
-    };
+        // data structure
+        typedef typename ThreadingModel::Lock Guard;
+        static T* si_instance;
+        static bool si_destroyed;
+};
 }
 #endif
 

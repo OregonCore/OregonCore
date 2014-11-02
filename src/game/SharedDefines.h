@@ -67,9 +67,9 @@ enum Races
 
 #define RACEMASK_ALL_PLAYABLE \
     ((1<<(RACE_HUMAN-1))   |(1<<(RACE_ORC-1))          |(1<<(RACE_DWARF-1))   | \
-    (1<<(RACE_NIGHTELF-1))|(1<<(RACE_UNDEAD_PLAYER-1))|(1<<(RACE_TAUREN-1))  | \
-    (1<<(RACE_GNOME-1))   |(1<<(RACE_TROLL-1))        |(1<<(RACE_BLOODELF-1))| \
-    (1<<(RACE_DRAENEI-1)))
+     (1<<(RACE_NIGHTELF-1))|(1<<(RACE_UNDEAD_PLAYER-1))|(1<<(RACE_TAUREN-1))  | \
+     (1<<(RACE_GNOME-1))   |(1<<(RACE_TROLL-1))        |(1<<(RACE_BLOODELF-1))| \
+     (1<<(RACE_DRAENEI-1)))
 
 // Class value is index in ChrClasses.dbc
 enum Classes
@@ -92,8 +92,8 @@ enum Classes
 
 #define CLASSMASK_ALL_PLAYABLE \
     ((1<<(CLASS_WARRIOR-1))|(1<<(CLASS_PALADIN-1))|(1<<(CLASS_HUNTER-1))| \
-    (1<<(CLASS_ROGUE-1))  |(1<<(CLASS_PRIEST-1)) |(1<<(CLASS_SHAMAN-1))| \
-    (1<<(CLASS_MAGE-1))   |(1<<(CLASS_WARLOCK-1))|(1<<(CLASS_DRUID-1)))
+     (1<<(CLASS_ROGUE-1))  |(1<<(CLASS_PRIEST-1)) |(1<<(CLASS_SHAMAN-1))| \
+     (1<<(CLASS_MAGE-1))   |(1<<(CLASS_WARLOCK-1))|(1<<(CLASS_DRUID-1)))
 
 #define CLASSMASK_WAND_USERS ((1<<(CLASS_PRIEST-1))|(1<<(CLASS_MAGE-1))|(1<<(CLASS_WARLOCK-1)))
 
@@ -117,8 +117,8 @@ enum ReputationRank
 enum MoneyConstants
 {
     COPPER = 1,
-    SILVER = COPPER*100,
-    GOLD   = SILVER*100
+    SILVER = COPPER * 100,
+    GOLD   = SILVER * 100
 };
 
 enum Stats
@@ -172,8 +172,8 @@ enum SpellSchoolMask
 
     // 124, not include normal and holy damage
     SPELL_SCHOOL_MASK_SPELL   = (SPELL_SCHOOL_MASK_FIRE   |
-                                  SPELL_SCHOOL_MASK_NATURE | SPELL_SCHOOL_MASK_FROST  |
-                                  SPELL_SCHOOL_MASK_SHADOW | SPELL_SCHOOL_MASK_ARCANE),
+                                 SPELL_SCHOOL_MASK_NATURE | SPELL_SCHOOL_MASK_FROST  |
+                                 SPELL_SCHOOL_MASK_SHADOW | SPELL_SCHOOL_MASK_ARCANE),
     // 126
     SPELL_SCHOOL_MASK_MAGIC   = (SPELL_SCHOOL_MASK_HOLY | SPELL_SCHOOL_MASK_SPELL),
 
@@ -183,8 +183,8 @@ enum SpellSchoolMask
 
 #define SPELL_SCHOOL_MASK_MAGIC                            \
     (SPELL_SCHOOL_MASK_HOLY | SPELL_SCHOOL_MASK_FIRE | SPELL_SCHOOL_MASK_NATURE |  \
-      SPELL_SCHOOL_MASK_FROST | SPELL_SCHOOL_MASK_SHADOW | \
-      SPELL_SCHOOL_MASK_ARCANE)
+     SPELL_SCHOOL_MASK_FROST | SPELL_SCHOOL_MASK_SHADOW | \
+     SPELL_SCHOOL_MASK_ARCANE)
 
 inline SpellSchools GetFirstSchoolInMask(SpellSchoolMask mask)
 {
@@ -321,7 +321,7 @@ enum SpellCategory
     SPELL_CATEGORY_WYVERN_STRING    = 1111,
     SPELL_CATEGORY_HAMMER_OF_WRATH  = 1131,
     SPELL_CATEGORY_INTIMIDATION     = 1132,
-    SPELL_CATEGORY_FAERIE_FIRE_FERAL= 1133,
+    SPELL_CATEGORY_FAERIE_FIRE_FERAL = 1133,
     SPELL_CATEGORY_COUNTERATTACK    = 1135,
     SPELL_CATEGORY_FIRECRACKERS     = 1137,
     SPELL_CATEGORY_UNK1138          = 1138,
@@ -344,7 +344,7 @@ enum SpellCategory
     SPELL_CATEGORY_MOVE             = 1163,
     SPELL_CATEGORY_PAIN_SPIKE       = 1165,
     SPELL_CATEGORY_UNK1167          = 1167,
-    SPELL_CATEGORY_SHADOW_WORD_DEATH= 1169,
+    SPELL_CATEGORY_SHADOW_WORD_DEATH = 1169,
     SPELL_CATEOGRY_DROP_HEAVY_BOMB  = 1170,
     SPELL_CATEGORY_KILL_COMMAND     = 1171,
     SPELL_CATEOGRY_ARCANE_SHOT      = 1173,
@@ -354,11 +354,11 @@ enum SpellCategory
     SPELL_CATEGORY_UNK1177          = 1177,
     SPELL_CATEGORY_CURSE_OF_DOOM    = 1179,
     SPELL_CATEGORY_ROCKET_HELM_COOL = 1180,
-    SPELL_CATEGORY_PRAYER_OF_MENDING= 1181,
+    SPELL_CATEGORY_PRAYER_OF_MENDING = 1181,
     SPELL_CATEGORY_UNK1184          = 1184,
     SPELL_CATEGORY_UNK1185          = 1185,
     SPELL_CATEGORY_BLESSING_OF_SACR = 1186,
-    SPELL_CATEGORY_BLIND_DIRTY_TRICK= 1187,
+    SPELL_CATEGORY_BLIND_DIRTY_TRICK = 1187,
     SPELL_CATEGORY_CHASTISE         = 1188,
     SPELL_CATEGORY_STARSHARDS       = 1192,
     SPELL_CATEGORY_BLOODBERRY       = 1194,
@@ -370,7 +370,8 @@ enum SpellCategory
     SPELL_CATEGORY_MAX              = 1203
 };
 
-const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
+const uint32 ItemQualityColors[MAX_ITEM_QUALITY] =
+{
     0xff9d9d9d,        //GREY
     0xffffffff,        //WHITE
     0xff1eff00,        //GREEN
@@ -386,254 +387,254 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
 
 enum SpellAttributes
 {
-      SPELL_ATTR_UNK0                          = 0x00000001,            // 0
-      SPELL_ATTR_RANGED                        = 0x00000002,            // 1 All ranged abilities have this flag
-      SPELL_ATTR_ON_NEXT_SWING_1               = 0x00000004,            // 2 on next swing
-      SPELL_ATTR_UNK3                          = 0x00000008,            // 3 not set in 2.4.2
-      SPELL_ATTR_ABILITY                       = 0x00000010,            // 4 client puts 'ability' instead of 'spell' in game strings for these spells
-      SPELL_ATTR_TRADESPELL                    = 0x00000020,            // 5 trade spells, will be added by client to a sublist of profession spell
-      SPELL_ATTR_PASSIVE                       = 0x00000040,            // 6 Passive spell
-      SPELL_ATTR_UNK7                          = 0x00000080,            // 7 visible?
-      SPELL_ATTR_UNK8                          = 0x00000100,            // 8
-      SPELL_ATTR_UNK9                          = 0x00000200,            // 9 used by shaman's totems like Rockbitter/Flametongue/Windfury totems. 
-      SPELL_ATTR_ON_NEXT_SWING_2               = 0x00000400,            // 10 on next swing 2
-      SPELL_ATTR_UNK11                         = 0x00000800,            // 11
-      SPELL_ATTR_DAYTIME_ONLY                  = 0x00001000,            // 12 only useable at daytime, not set in 2.4.2
-      SPELL_ATTR_NIGHT_ONLY                    = 0x00002000,            // 13 only useable at night, not set in 2.4.2
-      SPELL_ATTR_INDOORS_ONLY                  = 0x00004000,            // 14 only useable indoors, not set in 2.4.2
-      SPELL_ATTR_OUTDOORS_ONLY                 = 0x00008000,            // 15 Only useable outdoors.
-      SPELL_ATTR_NOT_SHAPESHIFT                = 0x00010000,            // 16 Not while shapeshifted
-      SPELL_ATTR_ONLY_STEALTHED                = 0x00020000,            // 17 Must be in stealth
-      SPELL_ATTR_UNK18                         = 0x00040000,            // 18
-      SPELL_ATTR_LEVEL_DAMAGE_CALCULATION      = 0x00080000,            // 19 spelldamage depends on caster level
-      SPELL_ATTR_STOP_ATTACK_TARGET            = 0x00100000,            // 20 Stop attack after use this spell (and not begin attack if use)
-      SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK  = 0x00200000,            // 21 Cannot be dodged/parried/blocked
-      SPELL_ATTR_UNK22                         = 0x00400000,            // 22 shoot spells
-      SPELL_ATTR_CASTABLE_WHILE_DEAD           = 0x00800000,            // 23 castable while dead?
-      SPELL_ATTR_CASTABLE_WHILE_MOUNTED        = 0x01000000,            // 24 castable while mounted
-      SPELL_ATTR_DISABLED_WHILE_ACTIVE         = 0x02000000,            // 25 Activate and start cooldown after aura fade or remove summoned creature or go
-      SPELL_ATTR_NEGATIVE_1                    = 0x04000000,            // 26 Many negative spells have this attr
-      SPELL_ATTR_CASTABLE_WHILE_SITTING        = 0x08000000,            // 27 castable while sitting
-      SPELL_ATTR_CANT_USED_IN_COMBAT           = 0x10000000,            // 28 Cannot be used in combat
-      SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY = 0x20000000,            // 29 unaffected by invulnerability (hmm possible not...)
-      SPELL_ATTR_BREAKABLE_BY_DAMAGE           = 0x40000000,            // 30 breakable by damage?
-      SPELL_ATTR_CANT_CANCEL                   = 0x80000000             // 31 positive aura can't be canceled
+    SPELL_ATTR_UNK0                          = 0x00000001,            // 0
+    SPELL_ATTR_RANGED                        = 0x00000002,            // 1 All ranged abilities have this flag
+    SPELL_ATTR_ON_NEXT_SWING_1               = 0x00000004,            // 2 on next swing
+    SPELL_ATTR_UNK3                          = 0x00000008,            // 3 not set in 2.4.2
+    SPELL_ATTR_ABILITY                       = 0x00000010,            // 4 client puts 'ability' instead of 'spell' in game strings for these spells
+    SPELL_ATTR_TRADESPELL                    = 0x00000020,            // 5 trade spells, will be added by client to a sublist of profession spell
+    SPELL_ATTR_PASSIVE                       = 0x00000040,            // 6 Passive spell
+    SPELL_ATTR_UNK7                          = 0x00000080,            // 7 visible?
+    SPELL_ATTR_UNK8                          = 0x00000100,            // 8
+    SPELL_ATTR_UNK9                          = 0x00000200,            // 9 used by shaman's totems like Rockbitter/Flametongue/Windfury totems.
+    SPELL_ATTR_ON_NEXT_SWING_2               = 0x00000400,            // 10 on next swing 2
+    SPELL_ATTR_UNK11                         = 0x00000800,            // 11
+    SPELL_ATTR_DAYTIME_ONLY                  = 0x00001000,            // 12 only useable at daytime, not set in 2.4.2
+    SPELL_ATTR_NIGHT_ONLY                    = 0x00002000,            // 13 only useable at night, not set in 2.4.2
+    SPELL_ATTR_INDOORS_ONLY                  = 0x00004000,            // 14 only useable indoors, not set in 2.4.2
+    SPELL_ATTR_OUTDOORS_ONLY                 = 0x00008000,            // 15 Only useable outdoors.
+    SPELL_ATTR_NOT_SHAPESHIFT                = 0x00010000,            // 16 Not while shapeshifted
+    SPELL_ATTR_ONLY_STEALTHED                = 0x00020000,            // 17 Must be in stealth
+    SPELL_ATTR_UNK18                         = 0x00040000,            // 18
+    SPELL_ATTR_LEVEL_DAMAGE_CALCULATION      = 0x00080000,            // 19 spelldamage depends on caster level
+    SPELL_ATTR_STOP_ATTACK_TARGET            = 0x00100000,            // 20 Stop attack after use this spell (and not begin attack if use)
+    SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK  = 0x00200000,            // 21 Cannot be dodged/parried/blocked
+    SPELL_ATTR_UNK22                         = 0x00400000,            // 22 shoot spells
+    SPELL_ATTR_CASTABLE_WHILE_DEAD           = 0x00800000,            // 23 castable while dead?
+    SPELL_ATTR_CASTABLE_WHILE_MOUNTED        = 0x01000000,            // 24 castable while mounted
+    SPELL_ATTR_DISABLED_WHILE_ACTIVE         = 0x02000000,            // 25 Activate and start cooldown after aura fade or remove summoned creature or go
+    SPELL_ATTR_NEGATIVE_1                    = 0x04000000,            // 26 Many negative spells have this attr
+    SPELL_ATTR_CASTABLE_WHILE_SITTING        = 0x08000000,            // 27 castable while sitting
+    SPELL_ATTR_CANT_USED_IN_COMBAT           = 0x10000000,            // 28 Cannot be used in combat
+    SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY = 0x20000000,            // 29 unaffected by invulnerability (hmm possible not...)
+    SPELL_ATTR_BREAKABLE_BY_DAMAGE           = 0x40000000,            // 30 breakable by damage?
+    SPELL_ATTR_CANT_CANCEL                   = 0x80000000             // 31 positive aura can't be canceled
 };
 
 enum SpellAttributesEx
 {
-      SPELL_ATTR_EX_UNK0                       = 0x00000001,            // 0 used in summoing / pet-reviving spells
-      SPELL_ATTR_EX_DRAIN_ALL_POWER            = 0x00000002,            // 1 use all power (Only paladin Lay of Hands and Bunyanize)
-      SPELL_ATTR_EX_CHANNELED_1                = 0x00000004,            // 2 channeled 1
-      SPELL_ATTR_EX_CANT_BE_REDIRECTED         = 0x00000008,            // 3 guaranteed direct spells (no reflect, no intervene effects)
-      SPELL_ATTR_EX_UNK4                       = 0x00000010,            // 4
-      SPELL_ATTR_EX_NOT_BREAK_STEALTH          = 0x00000020,            // 5 Not break stealth
-      SPELL_ATTR_EX_CHANNELED_2                = 0x00000040,            // 6 channeled 2
-      SPELL_ATTR_EX_NEGATIVE                   = 0x00000080,            // 7
-      SPELL_ATTR_EX_NOT_IN_COMBAT_TARGET       = 0x00000100,            // 8 Spell req target not to be in combat state
-      SPELL_ATTR_EX_UNK9                       = 0x00000200,            // 9
-      SPELL_ATTR_EX_NO_THREAT                  = 0x00000400,            // 10 no generates threat on cast 100% (old NO_INITIAL_AGGRO)
-      SPELL_ATTR_EX_UNK11                      = 0x00000800,            // 11
-      SPELL_ATTR_EX_PICKPOCKET                 = 0x00001000,            // 12 pickpocket
-      SPELL_ATTR_EX_POSSESSION                 = 0x00002000,            // 13 used by spells like mind control
-      SPELL_ATTR_EX_UNK14                      = 0x00004000,            // 14
-      SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY   = 0x00008000,            // 15 remove auras on immunity
-      SPELL_ATTR_EX_UNAFFECTED_BY_SCHOOL_IMMUNE= 0x00010000,            // 16 unaffected by school immunity
-      SPELL_ATTR_EX_UNAUTOCASTABLE_BY_PET      = 0x00020000,            // 17
-      SPELL_ATTR_EX_UNK18                      = 0x00040000,            // 18
-      SPELL_ATTR_EX_UNK19                      = 0x00080000,            // 19
-      SPELL_ATTR_EX_REQ_COMBO_POINTS1          = 0x00100000,            // 20 Req combo points on target
-      SPELL_ATTR_EX_UNK21                      = 0x00200000,            // 21
-      SPELL_ATTR_EX_REQ_COMBO_POINTS2          = 0x00400000,            // 22 Req combo points on target
-      SPELL_ATTR_EX_UNK23                      = 0x00800000,            // 23 snake trap effect
-      SPELL_ATTR_EX_UNK24                      = 0x01000000,            // 24 Req fishing pole??
-      SPELL_ATTR_EX_UNK25                      = 0x02000000,            // 25 not set in 2.4.2
-      SPELL_ATTR_EX_UNK26                      = 0x04000000,            // 26
-      SPELL_ATTR_EX_UNK27                      = 0x08000000,            // 27
-      SPELL_ATTR_EX_UNK28                      = 0x10000000,            // 28
-      SPELL_ATTR_EX_UNK29                      = 0x20000000,            // 29
-      SPELL_ATTR_EX_UNK30                      = 0x40000000,            // 30 overpower
-      SPELL_ATTR_EX_UNK31                      = 0x80000000             // 31
+    SPELL_ATTR_EX_UNK0                       = 0x00000001,            // 0 used in summoing / pet-reviving spells
+    SPELL_ATTR_EX_DRAIN_ALL_POWER            = 0x00000002,            // 1 use all power (Only paladin Lay of Hands and Bunyanize)
+    SPELL_ATTR_EX_CHANNELED_1                = 0x00000004,            // 2 channeled 1
+    SPELL_ATTR_EX_CANT_BE_REDIRECTED         = 0x00000008,            // 3 guaranteed direct spells (no reflect, no intervene effects)
+    SPELL_ATTR_EX_UNK4                       = 0x00000010,            // 4
+    SPELL_ATTR_EX_NOT_BREAK_STEALTH          = 0x00000020,            // 5 Not break stealth
+    SPELL_ATTR_EX_CHANNELED_2                = 0x00000040,            // 6 channeled 2
+    SPELL_ATTR_EX_NEGATIVE                   = 0x00000080,            // 7
+    SPELL_ATTR_EX_NOT_IN_COMBAT_TARGET       = 0x00000100,            // 8 Spell req target not to be in combat state
+    SPELL_ATTR_EX_UNK9                       = 0x00000200,            // 9
+    SPELL_ATTR_EX_NO_THREAT                  = 0x00000400,            // 10 no generates threat on cast 100% (old NO_INITIAL_AGGRO)
+    SPELL_ATTR_EX_UNK11                      = 0x00000800,            // 11
+    SPELL_ATTR_EX_PICKPOCKET                 = 0x00001000,            // 12 pickpocket
+    SPELL_ATTR_EX_POSSESSION                 = 0x00002000,            // 13 used by spells like mind control
+    SPELL_ATTR_EX_UNK14                      = 0x00004000,            // 14
+    SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY   = 0x00008000,            // 15 remove auras on immunity
+    SPELL_ATTR_EX_UNAFFECTED_BY_SCHOOL_IMMUNE = 0x00010000,           // 16 unaffected by school immunity
+    SPELL_ATTR_EX_UNAUTOCASTABLE_BY_PET      = 0x00020000,            // 17
+    SPELL_ATTR_EX_UNK18                      = 0x00040000,            // 18
+    SPELL_ATTR_EX_UNK19                      = 0x00080000,            // 19
+    SPELL_ATTR_EX_REQ_COMBO_POINTS1          = 0x00100000,            // 20 Req combo points on target
+    SPELL_ATTR_EX_UNK21                      = 0x00200000,            // 21
+    SPELL_ATTR_EX_REQ_COMBO_POINTS2          = 0x00400000,            // 22 Req combo points on target
+    SPELL_ATTR_EX_UNK23                      = 0x00800000,            // 23 snake trap effect
+    SPELL_ATTR_EX_UNK24                      = 0x01000000,            // 24 Req fishing pole??
+    SPELL_ATTR_EX_UNK25                      = 0x02000000,            // 25 not set in 2.4.2
+    SPELL_ATTR_EX_UNK26                      = 0x04000000,            // 26
+    SPELL_ATTR_EX_UNK27                      = 0x08000000,            // 27
+    SPELL_ATTR_EX_UNK28                      = 0x10000000,            // 28
+    SPELL_ATTR_EX_UNK29                      = 0x20000000,            // 29
+    SPELL_ATTR_EX_UNK30                      = 0x40000000,            // 30 overpower
+    SPELL_ATTR_EX_UNK31                      = 0x80000000             // 31
 };
 
 enum SpellAttributesEx2
 {
-      SPELL_ATTR_EX2_UNK0                      = 0x00000001,            // 0
-      SPELL_ATTR_EX2_UNK1                      = 0x00000002,            // 1
-      SPELL_ATTR_EX2_IGNORE_LOS                = 0x00000004,            // 2
-      SPELL_ATTR_EX2_UNK3                      = 0x00000008,            // 3
-      SPELL_ATTR_EX2_UNK4                      = 0x00000010,            // 4
-      SPELL_ATTR_EX2_AUTOREPEAT_FLAG           = 0x00000020,            // 5
-      SPELL_ATTR_EX2_UNK6                      = 0x00000040,            // 6
-      SPELL_ATTR_EX2_UNK7                      = 0x00000080,            // 7
-      SPELL_ATTR_EX2_UNK8                      = 0x00000100,            // 8 not set in 2.4.2
-      SPELL_ATTR_EX2_UNK9                      = 0x00000200,            // 9 used by 30421,30466,42454
-      SPELL_ATTR_EX2_UNK10                     = 0x00000400,            // 10
-      SPELL_ATTR_EX2_HEALTH_FUNNEL             = 0x00000800,            // 11
-      SPELL_ATTR_EX2_UNK12                     = 0x00001000,            // 12
-      SPELL_ATTR_EX2_UNK13                     = 0x00002000,            // 13
-      SPELL_ATTR_EX2_UNK14                     = 0x00004000,            // 14
-      SPELL_ATTR_EX2_UNK15                     = 0x00008000,            // 15 not set in 2.4.2
-      SPELL_ATTR_EX2_TAME_BEAST                = 0x00010000,            // 16
-      SPELL_ATTR_EX2_NOT_RESET_AUTO_ACTIONS    = 0x00020000,            // 17 don't reset timers for melee autoattacks (swings) or ranged autoattacks (autoshoots)
-      SPELL_ATTR_EX2_REQ_DEAD_PET              = 0x00040000,            // 18 Only Revive pet - possible req dead pet
-      SPELL_ATTR_EX2_NOT_NEED_SHAPESHIFT       = 0x00080000,            // 19 does not necessarly need shapeshift
-      SPELL_ATTR_EX2_MUST_BE_BEHIND_TARGET     = 0x00100000,            // 20 spells that requires to be behind the target, there's also one spell judgement (41467) - but this one is not the paladins'
-      SPELL_ATTR_EX2_UNK21                     = 0x00200000,            // 21
-      SPELL_ATTR_EX2_UNK22                     = 0x00400000,            // 22
-      SPELL_ATTR_EX2_UNK23                     = 0x00800000,            // 23 Only mage Arcane Concentration have this flag
-      SPELL_ATTR_EX2_UNK24                     = 0x01000000,            // 24
-      SPELL_ATTR_EX2_UNK25                     = 0x02000000,            // 25
-      SPELL_ATTR_EX2_UNK26                     = 0x04000000,            // 26 unaffected by school immunity
-      SPELL_ATTR_EX2_UNK27                     = 0x08000000,            // 27 fishing (profession), and enchant (2H) weapon
-      SPELL_ATTR_EX2_UNK28                     = 0x10000000,            // 28
-      SPELL_ATTR_EX2_CANT_CRIT                 = 0x20000000,            // 29 Spell can't crit
-      SPELL_ATTR_EX2_TRIGGERED_CAN_TRIGGER_PROC= 0x40000000,		    // 30 spell can trigger even if triggered
-      SPELL_ATTR_EX2_FOOD                      = 0x80000000             // 31 food, well-fed, and a few others
+    SPELL_ATTR_EX2_UNK0                      = 0x00000001,            // 0
+    SPELL_ATTR_EX2_UNK1                      = 0x00000002,            // 1
+    SPELL_ATTR_EX2_IGNORE_LOS                = 0x00000004,            // 2
+    SPELL_ATTR_EX2_UNK3                      = 0x00000008,            // 3
+    SPELL_ATTR_EX2_UNK4                      = 0x00000010,            // 4
+    SPELL_ATTR_EX2_AUTOREPEAT_FLAG           = 0x00000020,            // 5
+    SPELL_ATTR_EX2_UNK6                      = 0x00000040,            // 6
+    SPELL_ATTR_EX2_UNK7                      = 0x00000080,            // 7
+    SPELL_ATTR_EX2_UNK8                      = 0x00000100,            // 8 not set in 2.4.2
+    SPELL_ATTR_EX2_UNK9                      = 0x00000200,            // 9 used by 30421,30466,42454
+    SPELL_ATTR_EX2_UNK10                     = 0x00000400,            // 10
+    SPELL_ATTR_EX2_HEALTH_FUNNEL             = 0x00000800,            // 11
+    SPELL_ATTR_EX2_UNK12                     = 0x00001000,            // 12
+    SPELL_ATTR_EX2_UNK13                     = 0x00002000,            // 13
+    SPELL_ATTR_EX2_UNK14                     = 0x00004000,            // 14
+    SPELL_ATTR_EX2_UNK15                     = 0x00008000,            // 15 not set in 2.4.2
+    SPELL_ATTR_EX2_TAME_BEAST                = 0x00010000,            // 16
+    SPELL_ATTR_EX2_NOT_RESET_AUTO_ACTIONS    = 0x00020000,            // 17 don't reset timers for melee autoattacks (swings) or ranged autoattacks (autoshoots)
+    SPELL_ATTR_EX2_REQ_DEAD_PET              = 0x00040000,            // 18 Only Revive pet - possible req dead pet
+    SPELL_ATTR_EX2_NOT_NEED_SHAPESHIFT       = 0x00080000,            // 19 does not necessarly need shapeshift
+    SPELL_ATTR_EX2_MUST_BE_BEHIND_TARGET     = 0x00100000,            // 20 spells that requires to be behind the target, there's also one spell judgement (41467) - but this one is not the paladins'
+    SPELL_ATTR_EX2_UNK21                     = 0x00200000,            // 21
+    SPELL_ATTR_EX2_UNK22                     = 0x00400000,            // 22
+    SPELL_ATTR_EX2_UNK23                     = 0x00800000,            // 23 Only mage Arcane Concentration have this flag
+    SPELL_ATTR_EX2_UNK24                     = 0x01000000,            // 24
+    SPELL_ATTR_EX2_UNK25                     = 0x02000000,            // 25
+    SPELL_ATTR_EX2_UNK26                     = 0x04000000,            // 26 unaffected by school immunity
+    SPELL_ATTR_EX2_UNK27                     = 0x08000000,            // 27 fishing (profession), and enchant (2H) weapon
+    SPELL_ATTR_EX2_UNK28                     = 0x10000000,            // 28
+    SPELL_ATTR_EX2_CANT_CRIT                 = 0x20000000,            // 29 Spell can't crit
+    SPELL_ATTR_EX2_TRIGGERED_CAN_TRIGGER_PROC = 0x40000000,           // 30 spell can trigger even if triggered
+    SPELL_ATTR_EX2_FOOD                      = 0x80000000             // 31 food, well-fed, and a few others
 };
 
 enum SpellAttributesEx3
 {
-      SPELL_ATTR_EX3_UNK0                      = 0x00000001,            // 0
-      SPELL_ATTR_EX3_UNK1                      = 0x00000002,            // 1
-      SPELL_ATTR_EX3_UNK2                      = 0x00000004,            // 2
-      SPELL_ATTR_EX3_CAN_BE_BLOCKED            = 0x00000008,            // 3
-      SPELL_ATTR_EX3_REBIRTH                   = 0x00000010,            // 4 Druid Rebirth only this spell have this flag
-      SPELL_ATTR_EX3_UNK5                      = 0x00000020,            // 5
-      SPELL_ATTR_EX3_UNK6                      = 0x00000040,            // 6
-      SPELL_ATTR_EX3_UNK7                      = 0x00000080,            // 7
-      SPELL_ATTR_EX3_PLAYERS_ONLY              = 0x00000100,            // 8 Player only?
-      SPELL_ATTR_EX3_UNK9                      = 0x00000200,            // 9
-      SPELL_ATTR_EX3_MAIN_HAND                 = 0x00000400,            // 10 Main hand weapon required
-      SPELL_ATTR_EX3_BATTLEGROUND              = 0x00000800,            // 11 Can casted only on battleground
-      SPELL_ATTR_EX3_CAST_ON_DEAD              = 0x00001000,            // 12 target is a dead player (not every spell has this flag)
-      SPELL_ATTR_EX3_UNK13                     = 0x00002000,            // 13 
-      SPELL_ATTR_EX3_HONORLESS                 = 0x00004000,            // 14 "Honorless Target" only this spells have this flag
-      SPELL_ATTR_EX3_AUTO_SHOT                 = 0x00008000,            // 15 Auto Shoot, Shoot, Throw,  - this is autoshot flag
-      SPELL_ATTR_EX3_CANT_TRIGGER_PROC         = 0x00010000,			// 16 confirmed with many patchnotes
-      SPELL_ATTR_EX3_NO_INITIAL_AGGRO          = 0x00020000,            // 17 no initial aggro
-      SPELL_ATTR_EX3_CANT_MISS                 = 0x00040000,            // 18 Spell should always hit its target
-      SPELL_ATTR_EX3_UNK19                     = 0x00080000,            // 19
-      SPELL_ATTR_EX3_DEATH_PERSISTENT          = 0x00100000,            // 20 Death persistent spells
-      SPELL_ATTR_EX3_UNK21                     = 0x00200000,            // 21 used by nature's grasp. 
-      SPELL_ATTR_EX3_REQ_WAND                  = 0x00400000,            // 22 Req wand used by Shoot
-      SPELL_ATTR_EX3_UNK23                     = 0x00800000,            // 23 used by Uber Heal over Time, Debuff Uber Heal Over Time, Create Pumpkin Treats (,stackable too)
-      SPELL_ATTR_EX3_REQ_OFFHAND               = 0x01000000,            // 24 Req offhand weapon
-      SPELL_ATTR_EX3_UNK25                     = 0x02000000,            // 25
-      SPELL_ATTR_EX3_UNK26                     = 0x04000000,            // 26
-      SPELL_ATTR_EX3_UNK27                     = 0x08000000,            // 27
-      SPELL_ATTR_EX3_HAS_VISUAL_EFFECT         = 0x10000000,            // 28
-      SPELL_ATTR_EX3_UNK29                     = 0x20000000,            // 29
-      SPELL_ATTR_EX3_UNK30                     = 0x40000000,            // 30
-      SPELL_ATTR_EX3_UNK31                     = 0x80000000             // 31
+    SPELL_ATTR_EX3_UNK0                      = 0x00000001,            // 0
+    SPELL_ATTR_EX3_UNK1                      = 0x00000002,            // 1
+    SPELL_ATTR_EX3_UNK2                      = 0x00000004,            // 2
+    SPELL_ATTR_EX3_CAN_BE_BLOCKED            = 0x00000008,            // 3
+    SPELL_ATTR_EX3_REBIRTH                   = 0x00000010,            // 4 Druid Rebirth only this spell have this flag
+    SPELL_ATTR_EX3_UNK5                      = 0x00000020,            // 5
+    SPELL_ATTR_EX3_UNK6                      = 0x00000040,            // 6
+    SPELL_ATTR_EX3_UNK7                      = 0x00000080,            // 7
+    SPELL_ATTR_EX3_PLAYERS_ONLY              = 0x00000100,            // 8 Player only?
+    SPELL_ATTR_EX3_UNK9                      = 0x00000200,            // 9
+    SPELL_ATTR_EX3_MAIN_HAND                 = 0x00000400,            // 10 Main hand weapon required
+    SPELL_ATTR_EX3_BATTLEGROUND              = 0x00000800,            // 11 Can casted only on battleground
+    SPELL_ATTR_EX3_CAST_ON_DEAD              = 0x00001000,            // 12 target is a dead player (not every spell has this flag)
+    SPELL_ATTR_EX3_UNK13                     = 0x00002000,            // 13
+    SPELL_ATTR_EX3_HONORLESS                 = 0x00004000,            // 14 "Honorless Target" only this spells have this flag
+    SPELL_ATTR_EX3_AUTO_SHOT                 = 0x00008000,            // 15 Auto Shoot, Shoot, Throw,  - this is autoshot flag
+    SPELL_ATTR_EX3_CANT_TRIGGER_PROC         = 0x00010000,            // 16 confirmed with many patchnotes
+    SPELL_ATTR_EX3_NO_INITIAL_AGGRO          = 0x00020000,            // 17 no initial aggro
+    SPELL_ATTR_EX3_CANT_MISS                 = 0x00040000,            // 18 Spell should always hit its target
+    SPELL_ATTR_EX3_UNK19                     = 0x00080000,            // 19
+    SPELL_ATTR_EX3_DEATH_PERSISTENT          = 0x00100000,            // 20 Death persistent spells
+    SPELL_ATTR_EX3_UNK21                     = 0x00200000,            // 21 used by nature's grasp.
+    SPELL_ATTR_EX3_REQ_WAND                  = 0x00400000,            // 22 Req wand used by Shoot
+    SPELL_ATTR_EX3_UNK23                     = 0x00800000,            // 23 used by Uber Heal over Time, Debuff Uber Heal Over Time, Create Pumpkin Treats (,stackable too)
+    SPELL_ATTR_EX3_REQ_OFFHAND               = 0x01000000,            // 24 Req offhand weapon
+    SPELL_ATTR_EX3_UNK25                     = 0x02000000,            // 25
+    SPELL_ATTR_EX3_UNK26                     = 0x04000000,            // 26
+    SPELL_ATTR_EX3_UNK27                     = 0x08000000,            // 27
+    SPELL_ATTR_EX3_HAS_VISUAL_EFFECT         = 0x10000000,            // 28
+    SPELL_ATTR_EX3_UNK29                     = 0x20000000,            // 29
+    SPELL_ATTR_EX3_UNK30                     = 0x40000000,            // 30
+    SPELL_ATTR_EX3_UNK31                     = 0x80000000             // 31
 };
 
 enum SpellAttributesEx4
 {
-      SPELL_ATTR_EX4_UNK0                      = 0x00000001,            // 0
-      SPELL_ATTR_EX4_UNK1                      = 0x00000002,            // 1 proc on finishing move? used by Relentless Strike, Revealed Flow, Rogue Tier 6 Trinket
-      SPELL_ATTR_EX4_UNK2                      = 0x00000004,            // 2
-      SPELL_ATTR_EX4_CANT_PROC_FROM_SELFCAST   = 0x00000008,            // 3
-      SPELL_ATTR_EX4_UNK4                      = 0x00000010,            // 4
-      SPELL_ATTR_EX4_UNK5                      = 0x00000020,            // 5
-      SPELL_ATTR_EX4_NOT_STEALABLE             = 0x00000040,            // 6 although such auras might be dispellable, they cannot be stolen
-      SPELL_ATTR_EX4_TRIGGERED                 = 0x00000080,            // 7 spells forced to be triggered
-      SPELL_ATTR_EX4_UNK8                      = 0x00000100,            // 8
-      SPELL_ATTR_EX4_UNK9                      = 0x00000200,            // 9
-      SPELL_ATTR_EX4_SPELL_VS_EXTEND_COST      = 0x00000400,            // 10 Rogue Shiv have this flag
-      SPELL_ATTR_EX4_UNK11                     = 0x00000800,            // 11
-      SPELL_ATTR_EX4_UNK12                     = 0x00001000,            // 12
-      SPELL_ATTR_EX4_UNK13                     = 0x00002000,            // 13
-      SPELL_ATTR_EX4_DAMAGE_DOESNT_BREAK_AURAS = 0x00004000,            // 14 doesn't break auras by damage from these spells
-      SPELL_ATTR_EX4_UNK15                     = 0x00008000,            // 15
-      SPELL_ATTR_EX4_NOT_USABLE_IN_ARENA       = 0x00010000,            // 16 not usable in arena
-      SPELL_ATTR_EX4_USABLE_IN_ARENA           = 0x00020000,            // 17 usable in arena
-      SPELL_ATTR_EX4_UNK18                     = 0x00040000,            // 18
-      SPELL_ATTR_EX4_UNK19                     = 0x00080000,            // 19
-      SPELL_ATTR_EX4_UNK20                     = 0x00100000,            // 20
-      SPELL_ATTR_EX4_UNK21                     = 0x00200000,            // 21
-      SPELL_ATTR_EX4_UNK22                     = 0x00400000,            // 22 
-      SPELL_ATTR_EX4_UNK23                     = 0x00800000,            // 23 used by seal of command (20424,42058)
-      SPELL_ATTR_EX4_AUTOSHOT                  = 0x01000000,            // 24
-      SPELL_ATTR_EX4_SCALE_PET                 = 0x02000000,            // 25 pet scaling auras
-      SPELL_ATTR_EX4_CAST_ONLY_IN_OUTLAND      = 0x04000000,            // 26 Can only be used in Outland.
-      SPELL_ATTR_EX4_UNK27                     = 0x08000000,            // 27
-      SPELL_ATTR_EX4_UNK28                     = 0x10000000,            // 28
-      SPELL_ATTR_EX4_UNK29                     = 0x20000000,            // 29
-      SPELL_ATTR_EX4_UNK30                     = 0x40000000,            // 30
-      SPELL_ATTR_EX4_UNK31                     = 0x80000000             // 31 Polymorph: Chicken (228), Sonic Boom (38052,38488)
+    SPELL_ATTR_EX4_UNK0                      = 0x00000001,            // 0
+    SPELL_ATTR_EX4_UNK1                      = 0x00000002,            // 1 proc on finishing move? used by Relentless Strike, Revealed Flow, Rogue Tier 6 Trinket
+    SPELL_ATTR_EX4_UNK2                      = 0x00000004,            // 2
+    SPELL_ATTR_EX4_CANT_PROC_FROM_SELFCAST   = 0x00000008,            // 3
+    SPELL_ATTR_EX4_UNK4                      = 0x00000010,            // 4
+    SPELL_ATTR_EX4_UNK5                      = 0x00000020,            // 5
+    SPELL_ATTR_EX4_NOT_STEALABLE             = 0x00000040,            // 6 although such auras might be dispellable, they cannot be stolen
+    SPELL_ATTR_EX4_TRIGGERED                 = 0x00000080,            // 7 spells forced to be triggered
+    SPELL_ATTR_EX4_UNK8                      = 0x00000100,            // 8
+    SPELL_ATTR_EX4_UNK9                      = 0x00000200,            // 9
+    SPELL_ATTR_EX4_SPELL_VS_EXTEND_COST      = 0x00000400,            // 10 Rogue Shiv have this flag
+    SPELL_ATTR_EX4_UNK11                     = 0x00000800,            // 11
+    SPELL_ATTR_EX4_UNK12                     = 0x00001000,            // 12
+    SPELL_ATTR_EX4_UNK13                     = 0x00002000,            // 13
+    SPELL_ATTR_EX4_DAMAGE_DOESNT_BREAK_AURAS = 0x00004000,            // 14 doesn't break auras by damage from these spells
+    SPELL_ATTR_EX4_UNK15                     = 0x00008000,            // 15
+    SPELL_ATTR_EX4_NOT_USABLE_IN_ARENA       = 0x00010000,            // 16 not usable in arena
+    SPELL_ATTR_EX4_USABLE_IN_ARENA           = 0x00020000,            // 17 usable in arena
+    SPELL_ATTR_EX4_UNK18                     = 0x00040000,            // 18
+    SPELL_ATTR_EX4_UNK19                     = 0x00080000,            // 19
+    SPELL_ATTR_EX4_UNK20                     = 0x00100000,            // 20
+    SPELL_ATTR_EX4_UNK21                     = 0x00200000,            // 21
+    SPELL_ATTR_EX4_UNK22                     = 0x00400000,            // 22
+    SPELL_ATTR_EX4_UNK23                     = 0x00800000,            // 23 used by seal of command (20424,42058)
+    SPELL_ATTR_EX4_AUTOSHOT                  = 0x01000000,            // 24
+    SPELL_ATTR_EX4_SCALE_PET                 = 0x02000000,            // 25 pet scaling auras
+    SPELL_ATTR_EX4_CAST_ONLY_IN_OUTLAND      = 0x04000000,            // 26 Can only be used in Outland.
+    SPELL_ATTR_EX4_UNK27                     = 0x08000000,            // 27
+    SPELL_ATTR_EX4_UNK28                     = 0x10000000,            // 28
+    SPELL_ATTR_EX4_UNK29                     = 0x20000000,            // 29
+    SPELL_ATTR_EX4_UNK30                     = 0x40000000,            // 30
+    SPELL_ATTR_EX4_UNK31                     = 0x80000000             // 31 Polymorph: Chicken (228), Sonic Boom (38052,38488)
 };
 
 enum SpellAttributesEx5
 {
-      SPELL_ATTR_EX5_UNK0                      = 0x00000001,            // 0
-      SPELL_ATTR_EX5_NO_REAGENT_WHILE_PREP     = 0x00000002,            // 1 not need reagents if UNIT_FLAG_PREPARATION
-      SPELL_ATTR_EX5_UNK2                      = 0x00000004,            // 2 used by infected bite, transporter malfunction, curse of recklessness, Blessing of Blacfathom
-      SPELL_ATTR_EX5_USABLE_WHILE_STUNNED      = 0x00000008,            // 3 usable while stunned
-      SPELL_ATTR_EX5_UNK4                      = 0x00000010,            // 4 used by 8944,24937,40902,41268,41269,41271
-      SPELL_ATTR_EX5_SINGLE_TARGET_SPELL       = 0x00000020,            // 5 Only one target can be apply at a time
-      SPELL_ATTR_EX5_UNK6                      = 0x00000040,            // 6
-      SPELL_ATTR_EX5_UNK7                      = 0x00000080,            // 7
-      SPELL_ATTR_EX5_UNK8                      = 0x00000100,            // 8 used by 33645,36310,39923,40620,45889
-      SPELL_ATTR_EX5_UNK9                      = 0x00000200,            // 9
-      SPELL_ATTR_EX5_UNK10                     = 0x00000400,            // 10 
-      SPELL_ATTR_EX5_UNK11                     = 0x00000800,            // 11 used by Intervene, Righteous Defense
-      SPELL_ATTR_EX5_UNK12                     = 0x00001000,            // 12
-      SPELL_ATTR_EX5_UNK13                     = 0x00002000,            // 13
-      SPELL_ATTR_EX5_UNK14                     = 0x00004000,            // 14 used by raise dead, flame wave and haste other
-      SPELL_ATTR_EX5_MULTI_TARGET              = 0x00008000,            // 15 used by multi-target spells: cleave,multi-shot,thunder clap and more
-      SPELL_ATTR_EX5_UNK16                     = 0x00010000,            // 16 used by One-Handed Weapon Specialization rank 1-5 - talent,passive (20196-20200) all have Attributes set to 464
-      SPELL_ATTR_EX5_USABLE_WHILE_FEARED       = 0x00020000,            // 17 usable while feared
-      SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED     = 0x00040000,            // 18 usable while confused
-      SPELL_ATTR_EX5_UNK19                     = 0x00080000,            // 19
-      SPELL_ATTR_EX5_SPECIAL_MOUNT             = 0x00100000,            // 20 used by mount transformators, also by black qiraji and dragonmaw illusion
-      SPELL_ATTR_EX5_UNK21                     = 0x00200000,            // 21 used by demonice sacrifice, BM Only OFF/ON, BM OFF, Terun Rift, "Damage", Rocket Bot Attack
-      SPELL_ATTR_EX5_UNK22                     = 0x00400000,            // 22 
-      SPELL_ATTR_EX5_UNK23                     = 0x00800000,            // 23 used by ignite, shadow work: death
-      SPELL_ATTR_EX5_UNK24                     = 0x01000000,            // 24
-      SPELL_ATTR_EX5_UNK25                     = 0x02000000,            // 25 used by one spell - Death Lightning, doesn't seem to be used anywhere
-      SPELL_ATTR_EX5_UNK26                     = 0x04000000,            // 26 used by thunder clap and seed of corruption
-      SPELL_ATTR_EX5_UNK27                     = 0x08000000,            // 27 used by Hurricane (rank 1-4), Cosmetic - Legion Ring Purple Lightning (40608,41339), darkness (45996)
-      SPELL_ATTR_EX5_UNK28                     = 0x10000000,            // 28
-      SPELL_ATTR_EX5_UNK29                     = 0x20000000,            // 29 used by Might of Froswolf (46389) and Honor of the Stormpeak (46391)
-      SPELL_ATTR_EX5_UNK30                     = 0x40000000,            // 30 used by ahune spells (45937,45938,45945,46314)
-      SPELL_ATTR_EX5_TAUNT                     = 0x80000000             // 31 Forces all nearby enemies to focus attacks to caster Taunt, Challenging Roar, etc.
+    SPELL_ATTR_EX5_UNK0                      = 0x00000001,            // 0
+    SPELL_ATTR_EX5_NO_REAGENT_WHILE_PREP     = 0x00000002,            // 1 not need reagents if UNIT_FLAG_PREPARATION
+    SPELL_ATTR_EX5_UNK2                      = 0x00000004,            // 2 used by infected bite, transporter malfunction, curse of recklessness, Blessing of Blacfathom
+    SPELL_ATTR_EX5_USABLE_WHILE_STUNNED      = 0x00000008,            // 3 usable while stunned
+    SPELL_ATTR_EX5_UNK4                      = 0x00000010,            // 4 used by 8944,24937,40902,41268,41269,41271
+    SPELL_ATTR_EX5_SINGLE_TARGET_SPELL       = 0x00000020,            // 5 Only one target can be apply at a time
+    SPELL_ATTR_EX5_UNK6                      = 0x00000040,            // 6
+    SPELL_ATTR_EX5_UNK7                      = 0x00000080,            // 7
+    SPELL_ATTR_EX5_UNK8                      = 0x00000100,            // 8 used by 33645,36310,39923,40620,45889
+    SPELL_ATTR_EX5_UNK9                      = 0x00000200,            // 9
+    SPELL_ATTR_EX5_UNK10                     = 0x00000400,            // 10
+    SPELL_ATTR_EX5_UNK11                     = 0x00000800,            // 11 used by Intervene, Righteous Defense
+    SPELL_ATTR_EX5_UNK12                     = 0x00001000,            // 12
+    SPELL_ATTR_EX5_UNK13                     = 0x00002000,            // 13
+    SPELL_ATTR_EX5_UNK14                     = 0x00004000,            // 14 used by raise dead, flame wave and haste other
+    SPELL_ATTR_EX5_MULTI_TARGET              = 0x00008000,            // 15 used by multi-target spells: cleave,multi-shot,thunder clap and more
+    SPELL_ATTR_EX5_UNK16                     = 0x00010000,            // 16 used by One-Handed Weapon Specialization rank 1-5 - talent,passive (20196-20200) all have Attributes set to 464
+    SPELL_ATTR_EX5_USABLE_WHILE_FEARED       = 0x00020000,            // 17 usable while feared
+    SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED     = 0x00040000,            // 18 usable while confused
+    SPELL_ATTR_EX5_UNK19                     = 0x00080000,            // 19
+    SPELL_ATTR_EX5_SPECIAL_MOUNT             = 0x00100000,            // 20 used by mount transformators, also by black qiraji and dragonmaw illusion
+    SPELL_ATTR_EX5_UNK21                     = 0x00200000,            // 21 used by demonice sacrifice, BM Only OFF/ON, BM OFF, Terun Rift, "Damage", Rocket Bot Attack
+    SPELL_ATTR_EX5_UNK22                     = 0x00400000,            // 22
+    SPELL_ATTR_EX5_UNK23                     = 0x00800000,            // 23 used by ignite, shadow work: death
+    SPELL_ATTR_EX5_UNK24                     = 0x01000000,            // 24
+    SPELL_ATTR_EX5_UNK25                     = 0x02000000,            // 25 used by one spell - Death Lightning, doesn't seem to be used anywhere
+    SPELL_ATTR_EX5_UNK26                     = 0x04000000,            // 26 used by thunder clap and seed of corruption
+    SPELL_ATTR_EX5_UNK27                     = 0x08000000,            // 27 used by Hurricane (rank 1-4), Cosmetic - Legion Ring Purple Lightning (40608,41339), darkness (45996)
+    SPELL_ATTR_EX5_UNK28                     = 0x10000000,            // 28
+    SPELL_ATTR_EX5_UNK29                     = 0x20000000,            // 29 used by Might of Froswolf (46389) and Honor of the Stormpeak (46391)
+    SPELL_ATTR_EX5_UNK30                     = 0x40000000,            // 30 used by ahune spells (45937,45938,45945,46314)
+    SPELL_ATTR_EX5_TAUNT                     = 0x80000000             // 31 Forces all nearby enemies to focus attacks to caster Taunt, Challenging Roar, etc.
 };
 
 enum SpellAttributesEx6
 {
-      SPELL_ATTR_EX6_UNK0                      = 0x00000001,            // 0 Only Move spell have this flag
-      SPELL_ATTR_EX6_UNK1                      = 0x00000002,            // 1 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK2                      = 0x00000004,            // 2
-      SPELL_ATTR_EX6_UNK3                      = 0x00000008,            // 3
-      SPELL_ATTR_EX6_UNK4                      = 0x00000010,            // 4 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK5                      = 0x00000020,            // 5
-      SPELL_ATTR_EX6_UNK6                      = 0x00000040,            // 6
-      SPELL_ATTR_EX6_UNK7                      = 0x00000080,            // 7
-      SPELL_ATTR_EX6_UNK8                      = 0x00000100,            // 8
-      SPELL_ATTR_EX6_UNK9                      = 0x00000200,            // 9 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK10                     = 0x00000400,            // 10
-      SPELL_ATTR_EX6_UNK11                     = 0x00000800,            // 11
-      SPELL_ATTR_EX6_UNK12                     = 0x00001000,            // 12 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK13                     = 0x00002000,            // 13 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK14                     = 0x00004000,            // 14 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK15                     = 0x00008000,            // 15 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK16                     = 0x00010000,            // 16 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK17                     = 0x00020000,            // 17 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK18                     = 0x00040000,            // 18 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK19                     = 0x00080000,            // 19 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK20                     = 0x00100000,            // 20 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK21                     = 0x00200000,            // 21 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK22                     = 0x00400000,            // 22 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK23                     = 0x00800000,            // 23 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK24                     = 0x01000000,            // 24 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK25                     = 0x02000000,            // 25 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK26                     = 0x04000000,            // 26 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK27                     = 0x08000000,            // 27 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK28                     = 0x10000000,            // 28 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK29                     = 0x20000000,            // 29 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK30                     = 0x40000000,            // 30 not set in 2.4.2
-      SPELL_ATTR_EX6_UNK31                     = 0x80000000             // 31 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK0                      = 0x00000001,            // 0 Only Move spell have this flag
+    SPELL_ATTR_EX6_UNK1                      = 0x00000002,            // 1 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK2                      = 0x00000004,            // 2
+    SPELL_ATTR_EX6_UNK3                      = 0x00000008,            // 3
+    SPELL_ATTR_EX6_UNK4                      = 0x00000010,            // 4 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK5                      = 0x00000020,            // 5
+    SPELL_ATTR_EX6_UNK6                      = 0x00000040,            // 6
+    SPELL_ATTR_EX6_UNK7                      = 0x00000080,            // 7
+    SPELL_ATTR_EX6_UNK8                      = 0x00000100,            // 8
+    SPELL_ATTR_EX6_UNK9                      = 0x00000200,            // 9 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK10                     = 0x00000400,            // 10
+    SPELL_ATTR_EX6_UNK11                     = 0x00000800,            // 11
+    SPELL_ATTR_EX6_UNK12                     = 0x00001000,            // 12 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK13                     = 0x00002000,            // 13 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK14                     = 0x00004000,            // 14 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK15                     = 0x00008000,            // 15 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK16                     = 0x00010000,            // 16 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK17                     = 0x00020000,            // 17 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK18                     = 0x00040000,            // 18 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK19                     = 0x00080000,            // 19 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK20                     = 0x00100000,            // 20 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK21                     = 0x00200000,            // 21 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK22                     = 0x00400000,            // 22 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK23                     = 0x00800000,            // 23 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK24                     = 0x01000000,            // 24 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK25                     = 0x02000000,            // 25 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK26                     = 0x04000000,            // 26 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK27                     = 0x08000000,            // 27 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK28                     = 0x10000000,            // 28 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK29                     = 0x20000000,            // 29 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK30                     = 0x40000000,            // 30 not set in 2.4.2
+    SPELL_ATTR_EX6_UNK31                     = 0x80000000             // 31 not set in 2.4.2
 };
 
 enum SheathTypes
@@ -762,7 +763,7 @@ enum SpellEffects
     SPELL_EFFECT_DUAL_WIELD                = 40,
     SPELL_EFFECT_41                        = 41, // not set: old SPELL_EFFECT_SUMMON_WILD
     SPELL_EFFECT_42                        = 42, // not set: old SPELL_EFFECT_SUMMON_GUARDIAN
-    SPELL_EFFECT_TELEPORT_UNITS_FACE_CASTER= 43,
+    SPELL_EFFECT_TELEPORT_UNITS_FACE_CASTER = 43,
     SPELL_EFFECT_SKILL_STEP                = 44,
     SPELL_EFFECT_UNDEFINED_45              = 45,
     SPELL_EFFECT_SPAWN                     = 46,
@@ -878,7 +879,8 @@ enum SpellEffects
 
 // Spell aura states
 enum AuraState
-{   // (C) used in caster aura state     (T) used in target aura state
+{
+    // (C) used in caster aura state     (T) used in target aura state
     // (c) used in caster aura state-not (t) used in target aura state-not
     AURA_STATE_DEFENSE                      = 1,            // C   |
     AURA_STATE_HEALTHLESS_20_PERCENT        = 2,            // CcT |
@@ -942,12 +944,12 @@ enum Mechanics
 
 // Used for spell 42292 Immune Movement Impairment and Loss of Control (0x49967da6)
 #define IMMUNE_TO_MOVEMENT_IMPAIRMENT_AND_LOSS_CONTROL_MASK (\
-    (1<<MECHANIC_CHARM)|(1<<MECHANIC_CONFUSED)|(1<<MECHANIC_FEAR)| \
-    (1<<MECHANIC_ROOT)|(1<<MECHANIC_PACIFY)|(1<<MECHANIC_SLEEP)| \
-    (1<<MECHANIC_SNARE)|(1<<MECHANIC_STUN)|(1<<MECHANIC_FREEZE)| \
-    (1<<MECHANIC_KNOCKOUT)|(1<<MECHANIC_POLYMORPH)|(1<<MECHANIC_BANISH)| \
-    (1<<MECHANIC_SHACKLE)|(1<<MECHANIC_TURN)|(1<<MECHANIC_HORROR)| \
-    (1<<MECHANIC_DAZE)|(1<<MECHANIC_SAPPED))
+        (1<<MECHANIC_CHARM)|(1<<MECHANIC_CONFUSED)|(1<<MECHANIC_FEAR)| \
+        (1<<MECHANIC_ROOT)|(1<<MECHANIC_PACIFY)|(1<<MECHANIC_SLEEP)| \
+        (1<<MECHANIC_SNARE)|(1<<MECHANIC_STUN)|(1<<MECHANIC_FREEZE)| \
+        (1<<MECHANIC_KNOCKOUT)|(1<<MECHANIC_POLYMORPH)|(1<<MECHANIC_BANISH)| \
+        (1<<MECHANIC_SHACKLE)|(1<<MECHANIC_TURN)|(1<<MECHANIC_HORROR)| \
+        (1<<MECHANIC_DAZE)|(1<<MECHANIC_SAPPED))
 
 // Spell dispell type
 enum DispelType
@@ -1637,7 +1639,7 @@ enum Emote
     EMOTE_ONESHOT_READYRIFLE           = 213,
     EMOTE_STATE_READYRIFLE             = 214,
     EMOTE_STATE_WORK_NOSHEATHE_MINING  = 233,
-    EMOTE_STATE_WORK_NOSHEATHE_CHOPWOOD= 234,
+    EMOTE_STATE_WORK_NOSHEATHE_CHOPWOOD = 234,
     EMOTE_zzOLDONESHOT_LIFTOFF         = 253,
     EMOTE_ONESHOT_LIFTOFF              = 254,
     EMOTE_ONESHOT_YES                  = 273,
@@ -1831,7 +1833,7 @@ enum Anim
     ANIM_FLY                       = 0x87,
     ANIM_EMOTE_WORK_NO_SHEATHE     = 0x88,
     ANIM_EMOTE_STUN_NO_SHEATHE     = 0x89,
-    ANIM_EMOTE_USE_STANDING_NO_SHEATHE= 0x8A,
+    ANIM_EMOTE_USE_STANDING_NO_SHEATHE = 0x8A,
     ANIM_SPELL_SLEEP_DOWN          = 0x8B,
     ANIM_SPELL_KNEEL_START         = 0x8C,
     ANIM_SPELL_KNEEL_LOOP          = 0x8D,
@@ -1977,7 +1979,7 @@ enum CreatureType
     CREATURE_TYPE_GAS_CLOUD        = 13
 };
 
-uint32 const CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD = (1 << (CREATURE_TYPE_HUMANOID-1)) | (1 << (CREATURE_TYPE_UNDEAD-1));
+uint32 const CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD = (1 << (CREATURE_TYPE_HUMANOID - 1)) | (1 << (CREATURE_TYPE_UNDEAD - 1));
 
 enum CreatureFamily
 {
@@ -2067,7 +2069,7 @@ enum QuestSort
     QUEST_SORT_SEASONAL            = 22,
     QUEST_SORT_UNDERCITY_OLD       = 23,
     QUEST_SORT_HERBALISM           = 24,
-    QUEST_SORT_SCARLET_MONASTERY_OLD= 25,
+    QUEST_SORT_SCARLET_MONASTERY_OLD = 25,
     QUEST_SORT_ULDAMN_OLD          = 41,
     QUEST_SORT_WARLOCK             = 61,
     QUEST_SORT_WARRIOR             = 81,
@@ -2101,17 +2103,26 @@ enum QuestSort
 
 inline uint8 ClassByQuestSort(int32 QuestSort)
 {
-    switch(QuestSort)
+    switch (QuestSort)
     {
-        case QUEST_SORT_WARLOCK: return CLASS_WARLOCK;
-        case QUEST_SORT_WARRIOR: return CLASS_WARRIOR;
-        case QUEST_SORT_SHAMAN:  return CLASS_SHAMAN;
-        case QUEST_SORT_PALADIN: return CLASS_PALADIN;
-        case QUEST_SORT_MAGE:    return CLASS_MAGE;
-        case QUEST_SORT_ROGUE:   return CLASS_ROGUE;
-        case QUEST_SORT_HUNTER:  return CLASS_HUNTER;
-        case QUEST_SORT_PRIEST:  return CLASS_PRIEST;
-        case QUEST_SORT_DRUID:   return CLASS_DRUID;
+    case QUEST_SORT_WARLOCK:
+        return CLASS_WARLOCK;
+    case QUEST_SORT_WARRIOR:
+        return CLASS_WARRIOR;
+    case QUEST_SORT_SHAMAN:
+        return CLASS_SHAMAN;
+    case QUEST_SORT_PALADIN:
+        return CLASS_PALADIN;
+    case QUEST_SORT_MAGE:
+        return CLASS_MAGE;
+    case QUEST_SORT_ROGUE:
+        return CLASS_ROGUE;
+    case QUEST_SORT_HUNTER:
+        return CLASS_HUNTER;
+    case QUEST_SORT_PRIEST:
+        return CLASS_PRIEST;
+    case QUEST_SORT_DRUID:
+        return CLASS_DRUID;
     }
     return 0;
 }
@@ -2262,17 +2273,26 @@ enum SkillType
 
 inline uint32 SkillByQuestSort(int32 QuestSort)
 {
-    switch(QuestSort)
+    switch (QuestSort)
     {
-        case QUEST_SORT_HERBALISM:      return SKILL_HERBALISM;
-        case QUEST_SORT_FISHING:        return SKILL_FISHING;
-        case QUEST_SORT_BLACKSMITHING:  return SKILL_BLACKSMITHING;
-        case QUEST_SORT_ALCHEMY:        return SKILL_ALCHEMY;
-        case QUEST_SORT_LEATHERWORKING: return SKILL_LEATHERWORKING;
-        case QUEST_SORT_ENGINERING:     return SKILL_ENGINERING;
-        case QUEST_SORT_TAILORING:      return SKILL_TAILORING;
-        case QUEST_SORT_COOKING:        return SKILL_COOKING;
-        case QUEST_SORT_FIRST_AID:      return SKILL_FIRST_AID;
+    case QUEST_SORT_HERBALISM:
+        return SKILL_HERBALISM;
+    case QUEST_SORT_FISHING:
+        return SKILL_FISHING;
+    case QUEST_SORT_BLACKSMITHING:
+        return SKILL_BLACKSMITHING;
+    case QUEST_SORT_ALCHEMY:
+        return SKILL_ALCHEMY;
+    case QUEST_SORT_LEATHERWORKING:
+        return SKILL_LEATHERWORKING;
+    case QUEST_SORT_ENGINERING:
+        return SKILL_ENGINERING;
+    case QUEST_SORT_TAILORING:
+        return SKILL_TAILORING;
+    case QUEST_SORT_COOKING:
+        return SKILL_COOKING;
+    case QUEST_SORT_FIRST_AID:
+        return SKILL_FIRST_AID;
     }
     return 0;
 }

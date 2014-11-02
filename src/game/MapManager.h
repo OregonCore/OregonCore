@@ -31,14 +31,17 @@ class Transport;
 class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockable<MapManager, ACE_Thread_Mutex> >
 {
 
-    friend class Oregon::OperatorNew<MapManager>;
-    typedef UNORDERED_MAP<uint32, Map*> MapMapType;
-    typedef std::pair<UNORDERED_MAP<uint32, Map*>::iterator, bool>  MapMapPair;
+        friend class Oregon::OperatorNew<MapManager>;
+        typedef UNORDERED_MAP<uint32, Map*> MapMapType;
+        typedef std::pair<UNORDERED_MAP<uint32, Map*>::iterator, bool>  MapMapPair;
 
     public:
 
         Map* CreateMap(uint32, const WorldObject* obj, uint32 instanceId);
-        Map const* CreateBaseMap(uint32 id) const { return const_cast<MapManager*>(this)->_createBaseMap(id); }
+        Map const* CreateBaseMap(uint32 id) const
+        {
+            return const_cast<MapManager*>(this)->_createBaseMap(id);
+        }
         Map* FindMap(uint32 mapid, uint32 instanceId = 0) const;
 
         uint16 GetAreaFlag(uint32 mapid, float x, float y, float z) const
@@ -46,8 +49,14 @@ class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockab
             Map const* m = CreateBaseMap(mapid);
             return m->GetAreaFlag(x, y, z);
         }
-        uint32 GetAreaId(uint32 mapid, float x, float y, float z) { return Map::GetAreaId(GetAreaFlag(mapid, x, y, z),mapid); }
-        uint32 GetZoneId(uint32 mapid, float x, float y, float z) { return Map::GetZoneId(GetAreaFlag(mapid, x, y, z),mapid); }
+        uint32 GetAreaId(uint32 mapid, float x, float y, float z)
+        {
+            return Map::GetAreaId(GetAreaFlag(mapid, x, y, z), mapid);
+        }
+        uint32 GetZoneId(uint32 mapid, float x, float y, float z)
+        {
+            return Map::GetZoneId(GetAreaFlag(mapid, x, y, z), mapid);
+        }
 
         void Initialize(void);
         void Update(time_t);
@@ -75,19 +84,19 @@ class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockab
         static bool ExistMapAndVMap(uint32 mapid, float x, float y);
         static bool IsValidMAP(uint32 mapid);
 
-        static bool IsValidMapCoord(uint32 mapid, float x,float y)
+        static bool IsValidMapCoord(uint32 mapid, float x, float y)
         {
-            return IsValidMAP(mapid) && Oregon::IsValidMapCoord(x,y);
+            return IsValidMAP(mapid) && Oregon::IsValidMapCoord(x, y);
         }
 
-        static bool IsValidMapCoord(uint32 mapid, float x,float y,float z)
+        static bool IsValidMapCoord(uint32 mapid, float x, float y, float z)
         {
-            return IsValidMAP(mapid) && Oregon::IsValidMapCoord(x,y,z);
+            return IsValidMAP(mapid) && Oregon::IsValidMapCoord(x, y, z);
         }
 
-        static bool IsValidMapCoord(uint32 mapid, float x,float y,float z,float o)
+        static bool IsValidMapCoord(uint32 mapid, float x, float y, float z, float o)
         {
-            return IsValidMAP(mapid) && Oregon::IsValidMapCoord(x,y,z,o);
+            return IsValidMAP(mapid) && Oregon::IsValidMapCoord(x, y, z, o);
         }
 
         static bool IsValidMapCoord(WorldLocation const& loc)
@@ -102,7 +111,7 @@ class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockab
             // to emulate negative numbers
             if (o < 0)
             {
-                float mod = o *-1;
+                float mod = o * -1;
                 mod = fmod(mod, 2.0f * static_cast<float>(M_PI));
                 mod = -mod + 2.0f * M_PI;
                 return mod;
@@ -114,14 +123,17 @@ class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockab
 
         void LoadTransports();
 
-        typedef std::set<Transport *> TransportSet;
+        typedef std::set<Transport*> TransportSet;
         TransportSet m_Transports;
 
         typedef std::map<uint32, TransportSet> TransportMap;
         TransportMap m_TransportsByMap;
 
         bool CanPlayerEnter(uint32 mapid, Player* player);
-        uint32 GenerateInstanceId() { return ++i_MaxInstanceId; }
+        uint32 GenerateInstanceId()
+        {
+            return ++i_MaxInstanceId;
+        }
         void InitMaxInstanceId();
         void InitializeVisibilityDistanceInfo();
 
@@ -138,8 +150,8 @@ class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockab
         MapManager();
         ~MapManager();
 
-        MapManager(const MapManager &);
-        MapManager& operator=(const MapManager &);
+        MapManager(const MapManager&);
+        MapManager& operator=(const MapManager&);
 
         Map* _createBaseMap(uint32 id);
         Map* _findMap(uint32 id) const

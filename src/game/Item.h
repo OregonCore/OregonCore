@@ -32,7 +32,7 @@ struct ItemSetEffect
 {
     uint32 setid;
     uint32 item_count;
-    SpellEntry const *spells[8];
+    SpellEntry const* spells[8];
 };
 
 enum InventoryChangeFailure
@@ -117,7 +117,7 @@ enum InventoryChangeFailure
     EQUIP_ERR_NOT_DURING_ARENA_MATCH             = 78,
     EQUIP_ERR_CANNOT_TRADE_THAT                  = 79,
     EQUIP_ERR_PERSONAL_ARENA_RATING_TOO_LOW      = 80
-    // probably exist more
+            // probably exist more
 };
 
 enum BuyFailure
@@ -189,7 +189,7 @@ enum ItemUpdateState
     ITEM_REMOVED                                 = 3
 };
 
-bool ItemCanGoIntoBag(ItemPrototype const *proto, ItemPrototype const *pBagProto);
+bool ItemCanGoIntoBag(ItemPrototype const* proto, ItemPrototype const* pBagProto);
 
 class Item : public Object
 {
@@ -203,51 +203,111 @@ class Item : public Object
 
         ItemPrototype const* GetProto() const;
 
-        uint64 const& GetOwnerGUID()    const { return GetUInt64Value(ITEM_FIELD_OWNER); }
-        void SetOwnerGUID(uint64 guid) { SetUInt64Value(ITEM_FIELD_OWNER, guid); }
+        uint64 const& GetOwnerGUID()    const
+        {
+            return GetUInt64Value(ITEM_FIELD_OWNER);
+        }
+        void SetOwnerGUID(uint64 guid)
+        {
+            SetUInt64Value(ITEM_FIELD_OWNER, guid);
+        }
         Player* GetOwner()const;
 
-        void SetBinding(bool val) { ApplyModFlag(ITEM_FIELD_FLAGS,ITEM_FLAGS_BINDED,val); }
-        bool IsSoulBound() const { return HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED); }
-        bool IsBindedNotWith(uint64 guid) const { return IsSoulBound() && GetOwnerGUID() != guid; }
+        void SetBinding(bool val)
+        {
+            ApplyModFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED, val);
+        }
+        bool IsSoulBound() const
+        {
+            return HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED);
+        }
+        bool IsBindedNotWith(uint64 guid) const
+        {
+            return IsSoulBound() && GetOwnerGUID() != guid;
+        }
         bool IsBoundByEnchant() const;
         virtual void SaveToDB();
         virtual bool LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result = QueryResult_AutoPtr(NULL));
         virtual void DeleteFromDB();
         void DeleteFromInventoryDB();
 
-        bool IsBag() const { return GetProto()->InventoryType == INVTYPE_BAG; }
-        bool IsBroken() const { return GetUInt32Value(ITEM_FIELD_MAXDURABILITY) > 0 && GetUInt32Value(ITEM_FIELD_DURABILITY) == 0; }
+        bool IsBag() const
+        {
+            return GetProto()->InventoryType == INVTYPE_BAG;
+        }
+        bool IsBroken() const
+        {
+            return GetUInt32Value(ITEM_FIELD_MAXDURABILITY) > 0 && GetUInt32Value(ITEM_FIELD_DURABILITY) == 0;
+        }
         bool CanBeTraded() const;
-        void SetInTrade(bool b = true) { mb_in_trade = b; }
-        bool IsInTrade() const { return mb_in_trade; }
+        void SetInTrade(bool b = true)
+        {
+            mb_in_trade = b;
+        }
+        bool IsInTrade() const
+        {
+            return mb_in_trade;
+        }
 
         bool IsFitToSpellRequirements(SpellEntry const* spellInfo) const;
         bool IsLimitedToAnotherMapOrZone(uint32 cur_mapId, uint32 cur_zoneId) const;
         bool GemsFitSockets() const;
 
-        uint32 GetCount() const { return GetUInt32Value(ITEM_FIELD_STACK_COUNT); }
-        void SetCount(uint32 value) { SetUInt32Value(ITEM_FIELD_STACK_COUNT, value); }
-        uint32 GetMaxStackCount() const { return GetProto()->Stackable; }
+        uint32 GetCount() const
+        {
+            return GetUInt32Value(ITEM_FIELD_STACK_COUNT);
+        }
+        void SetCount(uint32 value)
+        {
+            SetUInt32Value(ITEM_FIELD_STACK_COUNT, value);
+        }
+        uint32 GetMaxStackCount() const
+        {
+            return GetProto()->Stackable;
+        }
         uint8 GetGemCountWithID(uint32 GemID) const;
         uint8 CanBeMergedPartlyWith(ItemPrototype const* proto) const;
 
-        uint8 GetSlot() const {return m_slot;}
-        Bag *GetContainer() { return m_container; }
+        uint8 GetSlot() const
+        {
+            return m_slot;
+        }
+        Bag* GetContainer()
+        {
+            return m_container;
+        }
         uint8 GetBagSlot() const;
-        void SetSlot(uint8 slot) { m_slot = slot; }
-        uint16 GetPos() const { return uint16(GetBagSlot()) << 8 | GetSlot(); }
-        void SetContainer(Bag *container) { m_container = container; }
+        void SetSlot(uint8 slot)
+        {
+            m_slot = slot;
+        }
+        uint16 GetPos() const
+        {
+            return uint16(GetBagSlot()) << 8 | GetSlot();
+        }
+        void SetContainer(Bag* container)
+        {
+            m_container = container;
+        }
 
-        bool IsInBag() const { return m_container != NULL; }
+        bool IsInBag() const
+        {
+            return m_container != NULL;
+        }
         bool IsEquipped() const;
 
         uint32 GetSkill();
         uint32 GetSpell();
 
         // RandomPropertyId (signed but stored as unsigned)
-        int32 GetItemRandomPropertyId() const { return GetInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID); }
-        uint32 GetItemSuffixFactor() const { return GetUInt32Value(ITEM_FIELD_PROPERTY_SEED); }
+        int32 GetItemRandomPropertyId() const
+        {
+            return GetInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID);
+        }
+        uint32 GetItemSuffixFactor() const
+        {
+            return GetUInt32Value(ITEM_FIELD_PROPERTY_SEED);
+        }
         void SetItemRandomProperties(int32 randomPropId);
         bool UpdateItemSuffixFactor();
         static int32 GenerateItemRandomPropertyId(uint32 item_id);
@@ -255,27 +315,51 @@ class Item : public Object
         void SetEnchantmentDuration(EnchantmentSlot slot, uint32 duration, Player* owner);
         void SetEnchantmentCharges(EnchantmentSlot slot, uint32 charges);
         void ClearEnchantment(EnchantmentSlot slot);
-        uint32 GetEnchantmentId(EnchantmentSlot slot)       const { return GetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot*MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_ID_OFFSET);}
-        uint32 GetEnchantmentDuration(EnchantmentSlot slot) const { return GetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot*MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_DURATION_OFFSET);}
-        uint32 GetEnchantmentCharges(EnchantmentSlot slot)  const { return GetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot*MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_CHARGES_OFFSET);}
+        uint32 GetEnchantmentId(EnchantmentSlot slot)       const
+        {
+            return GetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot * MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_ID_OFFSET);
+        }
+        uint32 GetEnchantmentDuration(EnchantmentSlot slot) const
+        {
+            return GetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot * MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_DURATION_OFFSET);
+        }
+        uint32 GetEnchantmentCharges(EnchantmentSlot slot)  const
+        {
+            return GetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot * MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_CHARGES_OFFSET);
+        }
 
         void SendTimeUpdate(Player* owner);
         void UpdateDuration(Player* owner, uint32 diff);
 
         // spell charges (signed but stored as unsigned)
-        int32 GetSpellCharges(uint8 index/*0..5*/ = 0) const { return GetInt32Value(ITEM_FIELD_SPELL_CHARGES + index); }
-        void  SetSpellCharges(uint8 index/*0..5*/, int32 value) { SetInt32Value(ITEM_FIELD_SPELL_CHARGES + index,value); }
+        int32 GetSpellCharges(uint8 index/*0..5*/ = 0) const
+        {
+            return GetInt32Value(ITEM_FIELD_SPELL_CHARGES + index);
+        }
+        void  SetSpellCharges(uint8 index/*0..5*/, int32 value)
+        {
+            SetInt32Value(ITEM_FIELD_SPELL_CHARGES + index, value);
+        }
 
         Loot loot;
         bool m_lootGenerated;
 
         // Update States
-        ItemUpdateState GetState() const { return uState; }
+        ItemUpdateState GetState() const
+        {
+            return uState;
+        }
         void SetState(ItemUpdateState state, Player* forplayer = NULL);
         void AddToUpdateQueueOf(Player* player);
         void RemoveFromUpdateQueueOf(Player* player);
-        bool IsInUpdateQueue() const { return uQueuePos != -1; }
-        uint16 GetQueuePos() const { return uQueuePos; }
+        bool IsInUpdateQueue() const
+        {
+            return uQueuePos != -1;
+        }
+        uint16 GetQueuePos() const
+        {
+            return uQueuePos;
+        }
         void FSetState(ItemUpdateState state)               // forced
         {
             uState = state;
@@ -283,16 +367,19 @@ class Item : public Object
 
         bool hasQuest(uint32 quest_id) const
         {
-            ItemPrototype const *itemProto = GetProto();
+            ItemPrototype const* itemProto = GetProto();
             return itemProto && itemProto->StartQuest == quest_id;
         }
-        bool hasInvolvedQuest(uint32 /*quest_id*/) const { return false; }
+        bool hasInvolvedQuest(uint32 /*quest_id*/) const
+        {
+            return false;
+        }
 
-        void BuildUpdate(UpdateDataMapType& );
+        void BuildUpdate(UpdateDataMapType&);
 
     private:
         uint8 m_slot;
-        Bag *m_container;
+        Bag* m_container;
         ItemUpdateState uState;
         int16 uQueuePos;
         bool mb_in_trade;                                   // true if item is currently in trade-window

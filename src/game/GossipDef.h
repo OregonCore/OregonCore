@@ -156,8 +156,14 @@ class GossipMenu
         void AddMenuItem(uint8 Icon, char const* Message, bool Coded = false);
         void AddMenuItem(uint8 Icon, char const* Message, uint32 dtSender, uint32 dtAction, char const* BoxMessage, uint32 BoxMoney, bool Coded = false);
 
-        void SetMenuId(uint32 menu_id) { m_gMenuId = menu_id; }
-        uint32 GetMenuId() { return m_gMenuId; }
+        void SetMenuId(uint32 menu_id)
+        {
+            m_gMenuId = menu_id;
+        }
+        uint32 GetMenuId()
+        {
+            return m_gMenuId;
+        }
 
         void AddGossipMenuItemData(uint32 action_menu, uint32 action_poi, uint32 action_script);
 
@@ -232,13 +238,22 @@ class PlayerMenu
         WorldSession* pSession;
 
     public:
-        PlayerMenu(WorldSession *Session);
+        PlayerMenu(WorldSession* Session);
         ~PlayerMenu();
 
-        GossipMenu& GetGossipMenu() { return mGossipMenu; }
-        QuestMenu& GetQuestMenu() { return mQuestMenu; }
+        GossipMenu& GetGossipMenu()
+        {
+            return mGossipMenu;
+        }
+        QuestMenu& GetQuestMenu()
+        {
+            return mQuestMenu;
+        }
 
-        bool Empty() const { return mGossipMenu.Empty() && mQuestMenu.Empty(); }
+        bool Empty() const
+        {
+            return mGossipMenu.Empty() && mQuestMenu.Empty();
+        }
 
         void ClearMenus();
         uint32 GossipOptionSender(unsigned int Selection);
@@ -247,11 +262,11 @@ class PlayerMenu
 
         void SendGossipMenu(uint32 TitleTextId, uint64 npcGUID);
         void CloseGossip();
-        void SendPointOfInterest(float X, float Y, uint32 Icon, uint32 Flags, uint32 Data, const char * locName);
+        void SendPointOfInterest(float X, float Y, uint32 Icon, uint32 Flags, uint32 Data, const char* locName);
         void SendTalking(uint32 textID);
-        void SendTalking(char const * title, char const * text);
+        void SendTalking(char const* title, char const* text);
 
-        void AddQuestLevelToTitle(std::string &title, int32 level);
+        void AddQuestLevelToTitle(std::string& title, int32 level);
 
         /*********************************************************/
         /***                   QUEST SYSTEM                   ***/
@@ -260,11 +275,11 @@ class PlayerMenu
 
         void SendQuestGiverQuestList(QEmote eEmote, const std::string& Title, uint64 npcGUID);
 
-        void SendQuestQueryResponse (Quest const *pQuest);
-        void SendQuestGiverQuestDetails(Quest const *pQuest, uint64 npcGUID, bool ActivateAccept);
+        void SendQuestQueryResponse (Quest const* pQuest);
+        void SendQuestGiverQuestDetails(Quest const* pQuest, uint64 npcGUID, bool ActivateAccept);
 
         void SendQuestGiverOfferReward(Quest const* pQuest, uint64 npcGUID, bool EnbleNext);
-        void SendQuestGiverRequestItems(Quest const *pQuest, uint64 npcGUID, bool Completable, bool CloseOnCancel);
+        void SendQuestGiverRequestItems(Quest const* pQuest, uint64 npcGUID, bool Completable, bool CloseOnCancel);
 };
 #endif
 

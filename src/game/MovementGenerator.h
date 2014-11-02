@@ -32,58 +32,64 @@ class MovementGenerator
     public:
         virtual ~MovementGenerator();
 
-        virtual void Initialize(Unit &) = 0;
-        virtual void Finalize(Unit &) = 0;
+        virtual void Initialize(Unit&) = 0;
+        virtual void Finalize(Unit&) = 0;
 
-        virtual void Reset(Unit &) = 0;
+        virtual void Reset(Unit&) = 0;
 
-        virtual bool Update(Unit &, const uint32 &time_diff) = 0;
+        virtual bool Update(Unit&, const uint32& time_diff) = 0;
 
         virtual MovementGeneratorType GetMovementGeneratorType() = 0;
 
         virtual void unitSpeedChanged() { }
 
-        virtual bool GetDestination(float& /*x*/, float& /*y*/, float& /*z*/) const { return false; }
+        virtual bool GetDestination(float& /*x*/, float& /*y*/, float& /*z*/) const
+        {
+            return false;
+        }
 
         // given destination unreachable? due to pathfinsing or other
-        virtual bool IsReachable() const { return true; }
+        virtual bool IsReachable() const
+        {
+            return true;
+        }
 };
 
 template<class T, class D>
 class MovementGeneratorMedium : public MovementGenerator
 {
     public:
-        void Initialize(Unit &u)
+        void Initialize(Unit& u)
         {
             //u->AssertIsType<T>();
             (static_cast<D*>(this))->Initialize(*((T*)&u));
         }
-        void Finalize(Unit &u)
+        void Finalize(Unit& u)
         {
             //u->AssertIsType<T>();
             (static_cast<D*>(this))->Finalize(*((T*)&u));
         }
-        void Reset(Unit &u)
+        void Reset(Unit& u)
         {
             //u->AssertIsType<T>();
             (static_cast<D*>(this))->Reset(*((T*)&u));
         }
-        bool Update(Unit &u, const uint32 &time_diff)
+        bool Update(Unit& u, const uint32& time_diff)
         {
             //u->AssertIsType<T>();
             return (static_cast<D*>(this))->Update(*((T*)&u), time_diff);
         }
     public:
         // will not link if not overridden in the generators
-        virtual void Initialize(T &u) = 0;
-        virtual void Finalize(T &u) = 0;
-        virtual void Reset(T &u) = 0;
-        virtual bool Update(T &u, const uint32 &time_diff) = 0;
+        virtual void Initialize(T& u) = 0;
+        virtual void Finalize(T& u) = 0;
+        virtual void Reset(T& u) = 0;
+        virtual bool Update(T& u, const uint32& time_diff) = 0;
 };
 
-struct SelectableMovement : public FactoryHolder<MovementGenerator,MovementGeneratorType>
+struct SelectableMovement : public FactoryHolder<MovementGenerator, MovementGeneratorType>
 {
-    SelectableMovement(MovementGeneratorType mgt) : FactoryHolder<MovementGenerator,MovementGeneratorType>(mgt) {}
+    SelectableMovement(MovementGeneratorType mgt) : FactoryHolder<MovementGenerator, MovementGeneratorType>(mgt) {}
 };
 
 template<class REAL_MOVEMENT>
@@ -91,11 +97,11 @@ struct MovementGeneratorFactory : public SelectableMovement
 {
     MovementGeneratorFactory(MovementGeneratorType mgt) : SelectableMovement(mgt) {}
 
-    MovementGenerator* Create(void *) const;
+    MovementGenerator* Create(void*) const;
 };
 
-typedef FactoryHolder<MovementGenerator,MovementGeneratorType> MovementGeneratorCreator;
-typedef FactoryHolder<MovementGenerator,MovementGeneratorType>::FactoryHolderRegistry MovementGeneratorRegistry;
-typedef FactoryHolder<MovementGenerator,MovementGeneratorType>::FactoryHolderRepository MovementGeneratorRepository;
+typedef FactoryHolder<MovementGenerator, MovementGeneratorType> MovementGeneratorCreator;
+typedef FactoryHolder<MovementGenerator, MovementGeneratorType>::FactoryHolderRegistry MovementGeneratorRegistry;
+typedef FactoryHolder<MovementGenerator, MovementGeneratorType>::FactoryHolderRepository MovementGeneratorRepository;
 #endif
 

@@ -22,95 +22,107 @@
 
 namespace Oregon
 {
-    inline void Guard(void *) {}
+inline void Guard(void*) {}
 
-    template<typename MUTEX> class GeneralLock
-    {
-        public:
-            GeneralLock(MUTEX &m) : i_mutex(m)
+template<typename MUTEX> class GeneralLock
+{
+    public:
+        GeneralLock(MUTEX& m) : i_mutex(m)
+        {
+            i_mutex.acquire();
+        }
+
+        ~GeneralLock()
+        {
+            i_mutex.release();
+        }
+    private:
+        GeneralLock(const GeneralLock&);
+        GeneralLock& operator=(const GeneralLock&);
+        MUTEX& i_mutex;
+};
+
+template <class T>
+class SingleThreaded
+{
+    public:
+
+        struct Lock                                     // empty object
+        {
+            Lock() {}
+            Lock(const T&) {}
+            Lock(const SingleThreaded<T>&)              // for single threaded we ignore this
             {
-                i_mutex.acquire();
             }
+        };
 
-            ~GeneralLock()
-            {
-                i_mutex.release();
-            }
-        private:
-            GeneralLock(const GeneralLock &);
-            GeneralLock& operator=(const GeneralLock &);
-            MUTEX &i_mutex;
-    };
+        typedef T VolatileType;
+};
 
-    template <class T>
-        class SingleThreaded
-    {
-        public:
+// object level lockable
+template<class T, class MUTEX>
+class ObjectLevelLockable
+{
+    public:
+        ObjectLevelLockable() : i_mtx() {}
 
-            struct Lock                                     // empty object
-            {
-                Lock() {}
-                Lock(const T &) {}
-                Lock(const SingleThreaded<T> &)             // for single threaded we ignore this
+        friend class Lock;
+
+        class Lock
+        {
+            public:
+                Lock(ObjectLevelLockable<T, MUTEX>& host) : i_lock(host.i_mtx)
                 {
                 }
-            };
 
-            typedef T VolatileType;
-    };
+            private:
+                GeneralLock<MUTEX> i_lock;
+        };
 
-    // object level lockable
-    template<class T, class MUTEX>
-        class ObjectLevelLockable
-    {
-        public:
-            ObjectLevelLockable() : i_mtx() {}
+        typedef volatile T VolatileType;
 
-            friend class Lock;
+    private:
+        // prevent the compiler creating a copy construct
+        ObjectLevelLockable(const ObjectLevelLockable<T, MUTEX>&);
+        ObjectLevelLockable<T, MUTEX>& operator=(const ObjectLevelLockable<T, MUTEX>&);
 
-            class Lock
-            {
-                public:
-                    Lock(ObjectLevelLockable<T, MUTEX> &host) : i_lock(host.i_mtx)
-                    {
-                    }
+        MUTEX i_mtx;
+};
 
-                private:
-                    GeneralLock<MUTEX> i_lock;
-            };
+template<class T, class MUTEX>
+class ClassLevelLockable
+{
+    public:
+        class Lock;
+        friend class Lock;
+        typedef volatile T VolatileType;
 
-            typedef volatile T VolatileType;
+        ClassLevelLockable() {}
 
-        private:
-            // prevent the compiler creating a copy construct
-            ObjectLevelLockable(const ObjectLevelLockable<T, MUTEX> &);
-            ObjectLevelLockable<T, MUTEX>& operator=(const ObjectLevelLockable<T, MUTEX> &);
+        class Lock
+        {
+            public:
+                Lock(T& /*host*/)
+                {
+                    ClassLevelLockable<T, MUTEX>::si_mtx.acquire();
+                }
+                Lock(ClassLevelLockable<T, MUTEX>&)
+                {
+                    ClassLevelLockable<T, MUTEX>::si_mtx.acquire();
+                }
+                Lock()
+                {
+                    ClassLevelLockable<T, MUTEX>::si_mtx.acquire();
+                }
+                ~Lock()
+                {
+                    ClassLevelLockable<T, MUTEX>::si_mtx.release();
+                }
+        };
 
-            MUTEX i_mtx;
-    };
-
-    template<class T, class MUTEX>
-        class ClassLevelLockable
-    {
-        public:
-            class Lock;
-            friend class Lock;
-            typedef volatile T VolatileType;
-
-            ClassLevelLockable() {}
-
-            class Lock
-            {
-                public:
-                    Lock(T& /*host*/) { ClassLevelLockable<T, MUTEX>::si_mtx.acquire(); }
-                    Lock(ClassLevelLockable<T, MUTEX> &) { ClassLevelLockable<T, MUTEX>::si_mtx.acquire(); }
-                    Lock() { ClassLevelLockable<T, MUTEX>::si_mtx.acquire(); }
-                    ~Lock() { ClassLevelLockable<T, MUTEX>::si_mtx.release(); }
-            };
-
-        private:
-            static MUTEX si_mtx;
-    };
+    private:
+        static MUTEX si_mtx;
+};
 
 }
 

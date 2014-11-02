@@ -27,7 +27,7 @@ class SqlOperation;
 
 class SqlDelayThread : public ACE_Based::Runnable
 {
-    typedef ACE_Activation_Queue SqlQueue;
+        typedef ACE_Activation_Queue SqlQueue;
 
     private:
         SqlQueue m_sqlQueue;                                // Queue of SQL statements

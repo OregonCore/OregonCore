@@ -55,27 +55,30 @@ typedef std::list<GM_Ticket*>                                       GmTicketList
 class TicketMgr
 {
     public:
-        TicketMgr(){ InitTicketID();}    //constructor
-        ~TicketMgr(){}  //destructor
+        TicketMgr()
+        {
+            InitTicketID();   //constructor
+        }
+        ~TicketMgr() {} //destructor
 
         // Object Holder
         GmTicketList         GM_TicketList;
 
-        void AddGMTicket(GM_Ticket *ticket, bool startup);
+        void AddGMTicket(GM_Ticket* ticket, bool startup);
         void DeleteAllRemovedGMTickets();
         void DeleteGMTicketPermanently(uint64 ticketGuid);
         void LoadGMTickets();
         void LoadGMSurveys();
         void RemoveGMTicketByPlayer(uint64 playerGuid, uint64 GMguid);
         void RemoveGMTicket(uint64 ticketGuid, uint64 GMguid);
-        void UpdateGMTicket(GM_Ticket *ticket);
+        void UpdateGMTicket(GM_Ticket* ticket);
         void SaveGMTicket(GM_Ticket* ticket);
 
         uint64 GenerateTicketID();
         void InitTicketID();
         GM_Ticket* GetGMTicket(uint64 ticketGuid);
         GM_Ticket* GetGMTicketByPlayer(uint64 playerGuid);
-        GM_Ticket* GetGMTicketByName(const char *name);
+        GM_Ticket* GetGMTicketByName(const char* name);
         uint64 GetNextSurveyID()
         {
             return ++m_GMSurveyID;

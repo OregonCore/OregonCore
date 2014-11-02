@@ -102,7 +102,7 @@ struct SymbolPair
     bool operator<(const SymbolPair& other) const
     {
         return _offset < other._offset ||
-              (_offset == other._offset && _type < other._type);
+               (_offset == other._offset && _type < other._type);
     }
 
     DWORD _type;
@@ -132,21 +132,21 @@ class WheatyExceptionReport
         // Helper functions
         static LPTSTR GetExceptionString(DWORD dwCode);
         static BOOL GetLogicalAddress(PVOID addr, PTSTR szModule, DWORD len,
-            DWORD& section, DWORD_PTR& offset);
+                                      DWORD& section, DWORD_PTR& offset);
 
         static void WriteStackDetails(PCONTEXT pContext, bool bWriteVariables, HANDLE pThreadHandle);
 
-        static BOOL CALLBACK EnumerateSymbolsCallback(PSYMBOL_INFO,ULONG, PVOID);
+        static BOOL CALLBACK EnumerateSymbolsCallback(PSYMBOL_INFO, ULONG, PVOID);
 
-        static bool FormatSymbolValue(PSYMBOL_INFO, STACKFRAME64 *, char * pszBuffer, unsigned cbBuffer);
+        static bool FormatSymbolValue(PSYMBOL_INFO, STACKFRAME64*, char* pszBuffer, unsigned cbBuffer);
 
-        static char * DumpTypeIndex(char *, DWORD64, DWORD, unsigned, DWORD_PTR, bool &, char*, char*);
+        static char* DumpTypeIndex(char*, DWORD64, DWORD, unsigned, DWORD_PTR, bool&, char*, char*);
 
-        static char * FormatOutputValue(char * pszCurrBuffer, BasicType basicType, DWORD64 length, PVOID pAddress);
+        static char* FormatOutputValue(char* pszCurrBuffer, BasicType basicType, DWORD64 length, PVOID pAddress);
 
         static BasicType GetBasicType(DWORD typeIndex, DWORD64 modBase);
 
-        static int __cdecl _tprintf(const TCHAR * format, ...);
+        static int __cdecl _tprintf(const TCHAR* format, ...);
 
         static bool StoreSymbol(DWORD type , DWORD_PTR offset);
         static void ClearSymbols();

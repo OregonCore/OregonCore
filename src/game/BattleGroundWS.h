@@ -54,7 +54,7 @@ enum BG_WS_WorldStates
 {
     BG_WS_FLAG_UNK_ALLIANCE       = 1545,
     BG_WS_FLAG_UNK_HORDE          = 1546,
-//    FLAG_UNK                      = 1547,
+    //    FLAG_UNK                      = 1547,
     BG_WS_FLAG_CAPTURES_ALLIANCE  = 1581,
     BG_WS_FLAG_CAPTURES_HORDE     = 1582,
     BG_WS_FLAG_CAPTURES_MAX       = 1601,
@@ -146,7 +146,7 @@ class BattleGroundWGScore : public BattleGroundScore
 
 class BattleGroundWS : public BattleGround
 {
-    friend class BattleGroundMgr;
+        friend class BattleGroundMgr;
 
     public:
         /* Construction */
@@ -160,15 +160,36 @@ class BattleGroundWS : public BattleGround
         virtual void StartingEventOpenDoors();
 
         /* BG Flags */
-        uint64 GetAllianceFlagPickerGUID() const    { return m_FlagKeepers[BG_TEAM_ALLIANCE]; }
-        uint64 GetHordeFlagPickerGUID() const       { return m_FlagKeepers[BG_TEAM_HORDE]; }
-        void SetAllianceFlagPicker(uint64 guid)     { m_FlagKeepers[BG_TEAM_ALLIANCE] = guid; }
-        void SetHordeFlagPicker(uint64 guid)        { m_FlagKeepers[BG_TEAM_HORDE] = guid; }
-        bool IsAllianceFlagPickedup() const         { return m_FlagKeepers[BG_TEAM_ALLIANCE] != 0; }
-        bool IsHordeFlagPickedup() const            { return m_FlagKeepers[BG_TEAM_HORDE] != 0; }
+        uint64 GetAllianceFlagPickerGUID() const
+        {
+            return m_FlagKeepers[BG_TEAM_ALLIANCE];
+        }
+        uint64 GetHordeFlagPickerGUID() const
+        {
+            return m_FlagKeepers[BG_TEAM_HORDE];
+        }
+        void SetAllianceFlagPicker(uint64 guid)
+        {
+            m_FlagKeepers[BG_TEAM_ALLIANCE] = guid;
+        }
+        void SetHordeFlagPicker(uint64 guid)
+        {
+            m_FlagKeepers[BG_TEAM_HORDE] = guid;
+        }
+        bool IsAllianceFlagPickedup() const
+        {
+            return m_FlagKeepers[BG_TEAM_ALLIANCE] != 0;
+        }
+        bool IsHordeFlagPickedup() const
+        {
+            return m_FlagKeepers[BG_TEAM_HORDE] != 0;
+        }
         void RespawnFlag(uint32 Team, bool captured);
         void RespawnFlagAfterDrop(uint32 Team);
-        uint8 GetFlagState(uint32 team)             { return m_FlagState[GetTeamIndexByTeamId(team)]; }
+        uint8 GetFlagState(uint32 team)
+        {
+            return m_FlagState[GetTeamIndexByTeamId(team)];
+        }
         void AddTimedAura(uint32 aura);
         void RemoveTimedAura(uint32 aura);
         bool IsBrutalTimerDone;
@@ -187,18 +208,42 @@ class BattleGroundWS : public BattleGround
         virtual WorldSafeLocsEntry const* GetClosestGraveYard(Player* player);
 
         void UpdateFlagState(uint32 team, uint32 value);
-        void SetFirstFlagCapture(uint32 team) { m_FirstFlagCaptureTeam = team; }
+        void SetFirstFlagCapture(uint32 team)
+        {
+            m_FirstFlagCaptureTeam = team;
+        }
         void UpdateTeamScore(uint32 team);
         void UpdatePlayerScore(Player* Source, uint32 type, uint32 value);
-        void SetDroppedFlagGUID(uint64 guid, uint32 TeamID)  { m_DroppedFlagGUID[GetTeamIndexByTeamId(TeamID)] = guid;}
-        uint64 GetDroppedFlagGUID(uint32 TeamID)             { return m_DroppedFlagGUID[GetTeamIndexByTeamId(TeamID)];}
+        void SetDroppedFlagGUID(uint64 guid, uint32 TeamID)
+        {
+            m_DroppedFlagGUID[GetTeamIndexByTeamId(TeamID)] = guid;
+        }
+        uint64 GetDroppedFlagGUID(uint32 TeamID)
+        {
+            return m_DroppedFlagGUID[GetTeamIndexByTeamId(TeamID)];
+        }
         virtual void FillInitialWorldStates(WorldPacket& data);
 
         /* Scorekeeping */
-        uint32 GetTeamScore(uint32 TeamID) const            { return m_TeamScores[GetTeamIndexByTeamId(TeamID)]; }
-        void AddPoint(uint32 TeamID, uint32 Points = 1)     { m_TeamScores[GetTeamIndexByTeamId(TeamID)] += Points; m_score[GetTeamIndexByTeamId(TeamID)] =  m_TeamScores[GetTeamIndexByTeamId(TeamID)];}
-        void SetTeamPoint(uint32 TeamID, uint32 Points = 0) { m_TeamScores[GetTeamIndexByTeamId(TeamID)] = Points; m_score[GetTeamIndexByTeamId(TeamID)] =  m_TeamScores[GetTeamIndexByTeamId(TeamID)];}
-        void RemovePoint(uint32 TeamID, uint32 Points = 1)  { m_TeamScores[GetTeamIndexByTeamId(TeamID)] -= Points; m_score[GetTeamIndexByTeamId(TeamID)] =  m_TeamScores[GetTeamIndexByTeamId(TeamID)]; }
+        uint32 GetTeamScore(uint32 TeamID) const
+        {
+            return m_TeamScores[GetTeamIndexByTeamId(TeamID)];
+        }
+        void AddPoint(uint32 TeamID, uint32 Points = 1)
+        {
+            m_TeamScores[GetTeamIndexByTeamId(TeamID)] += Points;
+            m_score[GetTeamIndexByTeamId(TeamID)] =  m_TeamScores[GetTeamIndexByTeamId(TeamID)];
+        }
+        void SetTeamPoint(uint32 TeamID, uint32 Points = 0)
+        {
+            m_TeamScores[GetTeamIndexByTeamId(TeamID)] = Points;
+            m_score[GetTeamIndexByTeamId(TeamID)] =  m_TeamScores[GetTeamIndexByTeamId(TeamID)];
+        }
+        void RemovePoint(uint32 TeamID, uint32 Points = 1)
+        {
+            m_TeamScores[GetTeamIndexByTeamId(TeamID)] -= Points;
+            m_score[GetTeamIndexByTeamId(TeamID)] =  m_TeamScores[GetTeamIndexByTeamId(TeamID)];
+        }
 
     private:
         uint64 m_FlagKeepers[2];                            // 0 - alliance, 1 - horde

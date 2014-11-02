@@ -40,7 +40,7 @@ typedef UNORDERED_MAP<uint32/*memberDBGUID*/, FormationInfo*>   CreatureGroupInf
 
 class FormationMgr
 {
-    friend class ACE_Singleton<FormationMgr, ACE_Null_Mutex>;
+        friend class ACE_Singleton<FormationMgr, ACE_Null_Mutex>;
     public:
         FormationMgr() { }
         ~FormationMgr();
@@ -65,10 +65,22 @@ class CreatureGroup
         explicit CreatureGroup(uint32 id) : m_leader(NULL), m_groupID(id), m_Formed(false) { }
         ~CreatureGroup() { }
 
-        Creature* getLeader() const { return m_leader; }
-        uint32 GetId() const { return m_groupID; }
-        bool isEmpty() const { return m_members.empty(); }
-        bool isFormed() const { return m_Formed; }
+        Creature* getLeader() const
+        {
+            return m_leader;
+        }
+        uint32 GetId() const
+        {
+            return m_groupID;
+        }
+        bool isEmpty() const
+        {
+            return m_members.empty();
+        }
+        bool isFormed() const
+        {
+            return m_Formed;
+        }
 
         void AddMember(Creature* member);
         void RemoveMember(Creature* member);

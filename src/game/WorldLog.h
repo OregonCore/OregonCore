@@ -27,25 +27,28 @@
 // Log packets to a file
 class WorldLog : public Oregon::Singleton<WorldLog, Oregon::ClassLevelLockable<WorldLog, ACE_Thread_Mutex> >
 {
-    friend class Oregon::OperatorNew<WorldLog>;
-    WorldLog();
-    WorldLog(const WorldLog &);
-    WorldLog& operator=(const WorldLog &);
-    typedef Oregon::ClassLevelLockable<WorldLog, ACE_Thread_Mutex>::Lock Guard;
+        friend class Oregon::OperatorNew<WorldLog>;
+        WorldLog();
+        WorldLog(const WorldLog&);
+        WorldLog& operator=(const WorldLog&);
+        typedef Oregon::ClassLevelLockable<WorldLog, ACE_Thread_Mutex>::Lock Guard;
 
-    // Close the file in destructor
-    ~WorldLog();
+        // Close the file in destructor
+        ~WorldLog();
 
     public:
         void Initialize();
         // Is the world logger active?
-        bool LogWorld(void) const { return (i_file != NULL); }
+        bool LogWorld(void) const
+        {
+            return (i_file != NULL);
+        }
         // Log to the file
-        void outLog(char const *fmt, ...);
-        void outTimestampLog(char const *fmt, ...);
+        void outLog(char const* fmt, ...);
+        void outTimestampLog(char const* fmt, ...);
 
     private:
-        FILE *i_file;
+        FILE* i_file;
 
         bool m_dbWorld;
 };

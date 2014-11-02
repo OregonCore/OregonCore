@@ -31,17 +31,17 @@ template<class T, class Key = std::string>
 class ObjectRegistry
 {
     public:
-        typedef std::map<Key, T *> RegistryMapType;
+        typedef std::map<Key, T*> RegistryMapType;
 
         // Returns a registry item
         const T* GetRegistryItem(Key key) const
         {
             typename RegistryMapType::const_iterator iter = i_registeredObjects.find(key);
-            return( iter == i_registeredObjects.end() ? NULL : iter->second );
+            return ( iter == i_registeredObjects.end() ? NULL : iter->second );
         }
 
         // Inserts a registry item
-        bool InsertItem(T *obj, Key key, bool override = false)
+        bool InsertItem(T* obj, Key key, bool override = false)
         {
             typename RegistryMapType::iterator iter = i_registeredObjects.find(key);
             if (iter != i_registeredObjects.end())
@@ -75,7 +75,7 @@ class ObjectRegistry
         }
 
         // Inefficiently return a vector of registered items
-        unsigned int GetRegisteredItems(std::vector<Key> &l) const
+        unsigned int GetRegisteredItems(std::vector<Key>& l) const
         {
             unsigned int sz = l.size();
             l.resize(sz + i_registeredObjects.size());
@@ -85,7 +85,7 @@ class ObjectRegistry
         }
 
         // Return the map of registered items
-        RegistryMapType const &GetRegisteredItems() const
+        RegistryMapType const& GetRegisteredItems() const
         {
             return i_registeredObjects;
         }
@@ -98,7 +98,7 @@ class ObjectRegistry
         ObjectRegistry() {}
         ~ObjectRegistry()
         {
-            for (typename RegistryMapType::iterator iter=i_registeredObjects.begin(); iter != i_registeredObjects.end(); ++iter)
+            for (typename RegistryMapType::iterator iter = i_registeredObjects.begin(); iter != i_registeredObjects.end(); ++iter)
                 delete iter->second;
             i_registeredObjects.clear();
         }

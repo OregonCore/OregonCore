@@ -34,50 +34,50 @@ enum CastTarget
 
 struct SimpleAI : public ScriptedAI
 {
-    SimpleAI(Creature* c);// : ScriptedAI(c);
+        SimpleAI(Creature* c);// : ScriptedAI(c);
 
-    void Reset();
+        void Reset();
 
-    void EnterCombat(Unit* /*who*/);
+        void EnterCombat(Unit* /*who*/);
 
-    void KilledUnit(Unit* /*victim*/);
+        void KilledUnit(Unit* /*victim*/);
 
-    void DamageTaken(Unit* killer, uint32 &damage);
+        void DamageTaken(Unit* killer, uint32& damage);
 
-    void UpdateAI(const uint32 diff);
+        void UpdateAI(const uint32 diff);
 
-public:
+    public:
 
-    int32 Aggro_TextId[3];
-    uint32 Aggro_Sound[3];
+        int32 Aggro_TextId[3];
+        uint32 Aggro_Sound[3];
 
-    int32 Death_TextId[3];
-    uint32 Death_Sound[3];
-    uint32 Death_Spell;
-    uint32 Death_Target_Type;
+        int32 Death_TextId[3];
+        uint32 Death_Sound[3];
+        uint32 Death_Spell;
+        uint32 Death_Target_Type;
 
-    int32 Kill_TextId[3];
-    uint32 Kill_Sound[3];
-    uint32 Kill_Spell;
-    uint32 Kill_Target_Type;
+        int32 Kill_TextId[3];
+        uint32 Kill_Sound[3];
+        uint32 Kill_Spell;
+        uint32 Kill_Target_Type;
 
-    struct SimpleAI_Spell
-    {
-        uint32 Spell_Id;                //Spell ID to cast
-        int32 First_Cast;               //Delay for first cast
-        uint32 Cooldown;                //Cooldown between casts
-        uint32 CooldownRandomAddition;  //Random addition to cooldown (in range from 0 - CooldownRandomAddition)
-        uint32 Cast_Target_Type;        //Target type (note that certain spells may ignore this)
-        bool InterruptPreviousCast;     //Interrupt a previous cast if this spell needs to be cast
-        bool Enabled;                   //Spell enabled or disabled (default: false)
+        struct SimpleAI_Spell
+        {
+            uint32 Spell_Id;                //Spell ID to cast
+            int32 First_Cast;               //Delay for first cast
+            uint32 Cooldown;                //Cooldown between casts
+            uint32 CooldownRandomAddition;  //Random addition to cooldown (in range from 0 - CooldownRandomAddition)
+            uint32 Cast_Target_Type;        //Target type (note that certain spells may ignore this)
+            bool InterruptPreviousCast;     //Interrupt a previous cast if this spell needs to be cast
+            bool Enabled;                   //Spell enabled or disabled (default: false)
 
-        //3 texts to many?
-        int32 TextId[3];
-        uint32 Text_Sound[3];
-    }Spell[10];
+            //3 texts to many?
+            int32 TextId[3];
+            uint32 Text_Sound[3];
+        } Spell[10];
 
-protected:
-    uint32 Spell_Timer[10];
+    protected:
+        uint32 Spell_Timer[10];
 };
 
 #endif

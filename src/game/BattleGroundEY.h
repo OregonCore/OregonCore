@@ -238,8 +238,8 @@ struct BattleGroundEYLoosingPointStruct
 {
     BattleGroundEYLoosingPointStruct(uint32 _SpawnNeutralObjectType, uint32 _DespawnObjectTypeAlliance, uint32 _MessageIdAlliance, uint32 _DespawnObjectTypeHorde, uint32 _MessageIdHorde)
         : SpawnNeutralObjectType(_SpawnNeutralObjectType),
-        DespawnObjectTypeAlliance(_DespawnObjectTypeAlliance), MessageIdAlliance(_MessageIdAlliance),
-        DespawnObjectTypeHorde(_DespawnObjectTypeHorde), MessageIdHorde(_MessageIdHorde)
+          DespawnObjectTypeAlliance(_DespawnObjectTypeAlliance), MessageIdAlliance(_MessageIdAlliance),
+          DespawnObjectTypeHorde(_DespawnObjectTypeHorde), MessageIdHorde(_MessageIdHorde)
     {}
 
     uint32 SpawnNeutralObjectType;
@@ -253,9 +253,9 @@ struct BattleGroundEYCapturingPointStruct
 {
     BattleGroundEYCapturingPointStruct(uint32 _DespawnNeutralObjectType, uint32 _SpawnObjectTypeAlliance, uint32 _MessageIdAlliance, uint32 _SpawnObjectTypeHorde, uint32 _MessageIdHorde, uint32 _GraveYardId)
         : DespawnNeutralObjectType(_DespawnNeutralObjectType),
-        SpawnObjectTypeAlliance(_SpawnObjectTypeAlliance), MessageIdAlliance(_MessageIdAlliance),
-        SpawnObjectTypeHorde(_SpawnObjectTypeHorde), MessageIdHorde(_MessageIdHorde),
-        GraveYardId(_GraveYardId)
+          SpawnObjectTypeAlliance(_SpawnObjectTypeAlliance), MessageIdAlliance(_MessageIdAlliance),
+          SpawnObjectTypeHorde(_SpawnObjectTypeHorde), MessageIdHorde(_MessageIdHorde),
+          GraveYardId(_GraveYardId)
     {}
 
     uint32 DespawnNeutralObjectType;
@@ -302,7 +302,7 @@ class BattleGroundEYScore : public BattleGroundScore
 
 class BattleGroundEY : public BattleGround
 {
-    friend class BattleGroundMgr;
+        friend class BattleGroundMgr;
 
     public:
         BattleGroundEY();
@@ -315,14 +315,26 @@ class BattleGroundEY : public BattleGround
         virtual void StartingEventOpenDoors();
 
         /* BG Flags */
-        uint64 GetFlagPickerGUID() const    { return m_FlagKeeper; }
-        void SetFlagPicker(uint64 guid)     { m_FlagKeeper = guid; }
-        bool IsFlagPickedup() const         { return m_FlagKeeper != 0; }
-        uint8 GetFlagState() const          { return m_FlagState; }
+        uint64 GetFlagPickerGUID() const
+        {
+            return m_FlagKeeper;
+        }
+        void SetFlagPicker(uint64 guid)
+        {
+            m_FlagKeeper = guid;
+        }
+        bool IsFlagPickedup() const
+        {
+            return m_FlagKeeper != 0;
+        }
+        uint8 GetFlagState() const
+        {
+            return m_FlagState;
+        }
         void RespawnFlag(bool send_message);
         void RespawnFlagAfterDrop();
 
-        void RemovePlayer(Player* plr,uint64 guid);
+        void RemovePlayer(Player* plr, uint64 guid);
         void HandleBuffUse(uint64 const& buff_guid);
         void HandleAreaTrigger(Player* Source, uint32 Trigger);
         void HandleKillPlayer(Player* player, Player* killer);
@@ -332,8 +344,14 @@ class BattleGroundEY : public BattleGround
         void UpdateTeamScore(uint32 Team);
         void UpdatePlayerScore(Player* Source, uint32 type, uint32 value);
         virtual void FillInitialWorldStates(WorldPacket& data);
-        void SetDroppedFlagGUID(uint64 guid)       { m_DroppedFlagGUID = guid;}
-        uint64 GetDroppedFlagGUID() const          { return m_DroppedFlagGUID;}
+        void SetDroppedFlagGUID(uint64 guid)
+        {
+            m_DroppedFlagGUID = guid;
+        }
+        uint64 GetDroppedFlagGUID() const
+        {
+            return m_DroppedFlagGUID;
+        }
 
         /* Battleground Events */
         virtual void EventPlayerClickedOnFlag(Player* Source, GameObject* target_obj);
@@ -352,11 +370,20 @@ class BattleGroundEY : public BattleGround
         void UpdatePointStatuses();
 
         /* Scorekeeping */
-        uint32 GetTeamScore(uint32 Team) const { return m_TeamScores[GetTeamIndexByTeamId(Team)]; }
+        uint32 GetTeamScore(uint32 Team) const
+        {
+            return m_TeamScores[GetTeamIndexByTeamId(Team)];
+        }
         void AddPoints(uint32 Team, uint32 Points);
 
-        void RemovePoint(uint32 TeamID, uint32 Points = 1) { m_TeamScores[GetTeamIndexByTeamId(TeamID)] -= Points; }
-        void SetTeamPoint(uint32 TeamID, uint32 Points = 0) { m_TeamScores[GetTeamIndexByTeamId(TeamID)] = Points; }
+        void RemovePoint(uint32 TeamID, uint32 Points = 1)
+        {
+            m_TeamScores[GetTeamIndexByTeamId(TeamID)] -= Points;
+        }
+        void SetTeamPoint(uint32 TeamID, uint32 Points = 0)
+        {
+            m_TeamScores[GetTeamIndexByTeamId(TeamID)] = Points;
+        }
 
         uint32 m_HonorScoreTics[2];
         uint32 m_TeamPointsCount[2];
@@ -375,7 +402,7 @@ class BattleGroundEY : public BattleGround
         int32 m_PointBarStatus[EY_POINTS_MAX];
         typedef std::vector<uint64> PlayersNearPointType;
         PlayersNearPointType m_PlayersNearPoint[EY_POINTS_MAX + 1];
-        uint8 m_CurrentPointPlayersCount[2*EY_POINTS_MAX];
+        uint8 m_CurrentPointPlayersCount[2 * EY_POINTS_MAX];
 
         int32 m_PointAddingTimer;
 };

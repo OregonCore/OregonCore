@@ -54,23 +54,41 @@ class Corpse : public WorldObject, public GridObject<Corpse>
         void AddToWorld();
         void RemoveFromWorld();
 
-        bool Create(uint32 guidlow, Map *map);
+        bool Create(uint32 guidlow, Map* map);
         bool Create(uint32 guidlow, Player* owner, uint32 mapid, float x, float y, float z, float ang);
 
         void SaveToDB();
-        bool LoadFromDB(uint32 guid, Field *fields);
+        bool LoadFromDB(uint32 guid, Field* fields);
 
         void DeleteBonesFromWorld();
         void DeleteFromDB();
 
-        uint64 const& GetOwnerGUID() const { return GetUInt64Value(CORPSE_FIELD_OWNER); }
+        uint64 const& GetOwnerGUID() const
+        {
+            return GetUInt64Value(CORPSE_FIELD_OWNER);
+        }
 
-        time_t const& GetGhostTime() const { return m_time; }
-        void ResetGhostTime() { m_time = time(NULL); }
-        CorpseType GetType() const { return m_type; }
+        time_t const& GetGhostTime() const
+        {
+            return m_time;
+        }
+        void ResetGhostTime()
+        {
+            m_time = time(NULL);
+        }
+        CorpseType GetType() const
+        {
+            return m_type;
+        }
 
-        GridPair const& GetGrid() const { return m_grid; }
-        void SetGrid(GridPair const& grid) { m_grid = grid; }
+        GridPair const& GetGrid() const
+        {
+            return m_grid;
+        }
+        void SetGrid(GridPair const& grid)
+        {
+            m_grid = grid;
+        }
 
         bool isVisibleForInState(Player const* u, bool inVisibleList) const;
 
@@ -78,14 +96,38 @@ class Corpse : public WorldObject, public GridObject<Corpse>
         Player* lootRecipient;
         bool lootForBody;
 
-        void Say(const char* text, uint32 language, uint64 TargetGuid) { MonsterSay(text,language,TargetGuid); }
-        void Yell(const char* text, uint32 language, uint64 TargetGuid) { MonsterYell(text,language,TargetGuid); }
-        void TextEmote(const char* text, uint64 TargetGuid) { MonsterTextEmote(text,TargetGuid); }
-        void Whisper(const char* text, uint64 receiver) { MonsterWhisper(text,receiver); }
-        void Say(int32 textId, uint32 language, uint64 TargetGuid) { MonsterSay(textId,language,TargetGuid); }
-        void Yell(int32 textId, uint32 language, uint64 TargetGuid) { MonsterYell(textId,language,TargetGuid); }
-        void TextEmote(int32 textId, uint64 TargetGuid) { MonsterTextEmote(textId,TargetGuid); }
-        void Whisper(int32 textId,uint64 receiver) { MonsterWhisper(textId,receiver); }
+        void Say(const char* text, uint32 language, uint64 TargetGuid)
+        {
+            MonsterSay(text, language, TargetGuid);
+        }
+        void Yell(const char* text, uint32 language, uint64 TargetGuid)
+        {
+            MonsterYell(text, language, TargetGuid);
+        }
+        void TextEmote(const char* text, uint64 TargetGuid)
+        {
+            MonsterTextEmote(text, TargetGuid);
+        }
+        void Whisper(const char* text, uint64 receiver)
+        {
+            MonsterWhisper(text, receiver);
+        }
+        void Say(int32 textId, uint32 language, uint64 TargetGuid)
+        {
+            MonsterSay(textId, language, TargetGuid);
+        }
+        void Yell(int32 textId, uint32 language, uint64 TargetGuid)
+        {
+            MonsterYell(textId, language, TargetGuid);
+        }
+        void TextEmote(int32 textId, uint64 TargetGuid)
+        {
+            MonsterTextEmote(textId, TargetGuid);
+        }
+        void Whisper(int32 textId, uint64 receiver)
+        {
+            MonsterWhisper(textId, receiver);
+        }
 
         bool IsExpired(time_t t) const;
 

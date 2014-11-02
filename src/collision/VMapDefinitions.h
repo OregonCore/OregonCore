@@ -23,30 +23,30 @@
 
 namespace VMAP
 {
-    const char VMAP_MAGIC[] = "VMAP_3.0";                   // used in final vmap files
-    const char RAW_VMAP_MAGIC[] = "VMAP003";                // used in extracted vmap files with raw data
+const char VMAP_MAGIC[] = "VMAP_3.0";                   // used in final vmap files
+const char RAW_VMAP_MAGIC[] = "VMAP003";                // used in extracted vmap files with raw data
 
-    // defined in TileAssembler.cpp currently...
-    bool readChunk(FILE *rf, char *dest, const char *compare, uint32 len);
+// defined in TileAssembler.cpp currently...
+bool readChunk(FILE* rf, char* dest, const char* compare, uint32 len);
 }
 
 #ifdef MMAP_GENERATOR
-    #include <assert.h>
-    #define ASSERT(x) assert(x)
-    #define DEBUG_LOG(...) 
-    #define DETAIL_LOG(...) 
-    #define ERROR_LOG(...) do{ printf("ERROR:"); printf(__VA_ARGS__); printf("\n"); } while(0)
+#include <assert.h>
+#define ASSERT(x) assert(x)
+#define DEBUG_LOG(...)
+#define DETAIL_LOG(...)
+#define ERROR_LOG(...) do{ printf("ERROR:"); printf(__VA_ARGS__); printf("\n"); } while(0)
 #elif !defined NO_CORE_FUNCS
-    #include "Errors.h"
-    #include "Log.h"
-    #define ERROR_LOG(...) sLog.outError(__VA_ARGS__);
-    #define DETAIL_LOG(...) sLog.outDetail(__VA_ARGS__);
+#include "Errors.h"
+#include "Log.h"
+#define ERROR_LOG(...) sLog.outError(__VA_ARGS__);
+#define DETAIL_LOG(...) sLog.outDetail(__VA_ARGS__);
 #else
-    #include <assert.h>
-    #define ASSERT(x) assert(x)
-    #define DEBUG_LOG(x, ...) printf(x,"\n", ##__VA_ARGS__)
-    #define DETAIL_LOG(x, ...) printf(x "\n", ##__VA_ARGS__)
-    #define ERROR_LOG(x, ...) printf("ERROR:" x, ##__VA_ARGS__)
+#include <assert.h>
+#define ASSERT(x) assert(x)
+#define DEBUG_LOG(x, ...) printf(x,"\n", ##__VA_ARGS__)
+#define DETAIL_LOG(x, ...) printf(x "\n", ##__VA_ARGS__)
+#define ERROR_LOG(x, ...) printf("ERROR:" x, ##__VA_ARGS__)
 #endif
 
 #endif // _VMAPDEFINITIONS_H

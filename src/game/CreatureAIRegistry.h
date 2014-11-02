@@ -20,7 +20,7 @@
 
 namespace AIRegistry
 {
-    void Initialize(void);
+void Initialize(void);
 }
 #endif
 

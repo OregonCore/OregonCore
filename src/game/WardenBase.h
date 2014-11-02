@@ -80,40 +80,40 @@ struct ClientWardenModule
     uint8 ID[16];
     uint8 Key[16];
     uint32 CompressedSize;
-    uint8 *CompressedData;
+    uint8* CompressedData;
 };
 
 class WorldSession;
 
 class WardenBase
 {
-    friend class WardenWin;
-    friend class WardenMac;
+        friend class WardenWin;
+        friend class WardenMac;
 
     public:
         WardenBase();
         virtual ~WardenBase();
 
-        virtual void Init(WorldSession *pClient, BigNumber *K);
-        virtual ClientWardenModule *GetModuleForClient(WorldSession *session);
+        virtual void Init(WorldSession* pClient, BigNumber* K);
+        virtual ClientWardenModule* GetModuleForClient(WorldSession* session);
         virtual void InitializeModule();
         virtual void RequestHash();
-        virtual void HandleHashResult(ByteBuffer &buff);
+        virtual void HandleHashResult(ByteBuffer& buff);
         virtual void RequestData();
-        virtual void HandleData(ByteBuffer &buff);
+        virtual void HandleData(ByteBuffer& buff);
 
         void SendModuleToClient();
         void RequestModule();
         void Update();
-        void DecryptData(uint8 *Buffer, uint32 Len);
-        void EncryptData(uint8 *Buffer, uint32 Len);
+        void DecryptData(uint8* Buffer, uint32 Len);
+        void EncryptData(uint8* Buffer, uint32 Len);
 
-        static void PrintHexArray(const char *Before, const uint8 *Buffer, uint32 Len, bool BreakWithNewline);
-        static bool IsValidCheckSum(uint32 checksum, const uint8 *Data, const uint16 Length);
-        static uint32 BuildChecksum(const uint8 *data, uint32 dataLen);
+        static void PrintHexArray(const char* Before, const uint8* Buffer, uint32 Len, bool BreakWithNewline);
+        static bool IsValidCheckSum(uint32 checksum, const uint8* Data, const uint16 Length);
+        static uint32 BuildChecksum(const uint8* data, uint32 dataLen);
 
     private:
-        WorldSession *Client;
+        WorldSession* Client;
         uint8 InputKey[16];
         uint8 OutputKey[16];
         uint8 Seed[16];
@@ -123,7 +123,7 @@ class WardenBase
         uint32 m_WardenKickTimer;                           // time after send packet
         bool m_WardenDataSent;
         uint32 m_WardenTimer;
-        ClientWardenModule *Module;
+        ClientWardenModule* Module;
         bool m_initialized;
 };
 

@@ -24,11 +24,17 @@ class IdleMovementGenerator : public MovementGenerator
 {
     public:
 
-        void Initialize(Unit &);
-        void Finalize(Unit &) {  }
-        void Reset(Unit &);
-        bool Update(Unit &, const uint32 &) { return true; }
-        MovementGeneratorType GetMovementGeneratorType() { return IDLE_MOTION_TYPE; }
+        void Initialize(Unit&);
+        void Finalize(Unit&) {  }
+        void Reset(Unit&);
+        bool Update(Unit&, const uint32&)
+        {
+            return true;
+        }
+        MovementGeneratorType GetMovementGeneratorType()
+        {
+            return IDLE_MOTION_TYPE;
+        }
 };
 
 extern IdleMovementGenerator si_idleMovement;
@@ -40,9 +46,15 @@ class RotateMovementGenerator : public MovementGenerator
 
         void Initialize(Unit& owner);
         void Finalize(Unit& owner);
-        void Reset(Unit& owner) { Initialize(owner); }
+        void Reset(Unit& owner)
+        {
+            Initialize(owner);
+        }
         bool Update(Unit& owner, const uint32& time_diff);
-        MovementGeneratorType GetMovementGeneratorType() { return ROTATE_MOTION_TYPE; }
+        MovementGeneratorType GetMovementGeneratorType()
+        {
+            return ROTATE_MOTION_TYPE;
+        }
 
     private:
         uint32 m_duration, m_maxDuration;
@@ -56,9 +68,15 @@ class DistractMovementGenerator : public MovementGenerator
 
         void Initialize(Unit& owner);
         void Finalize(Unit& owner);
-        void Reset(Unit& owner) { Initialize(owner); }
+        void Reset(Unit& owner)
+        {
+            Initialize(owner);
+        }
         bool Update(Unit& owner, const uint32& time_diff);
-        MovementGeneratorType GetMovementGeneratorType() { return DISTRACT_MOTION_TYPE; }
+        MovementGeneratorType GetMovementGeneratorType()
+        {
+            return DISTRACT_MOTION_TYPE;
+        }
 
     private:
         uint32 m_timer;
@@ -70,7 +88,10 @@ class AssistanceDistractMovementGenerator : public DistractMovementGenerator
         AssistanceDistractMovementGenerator(uint32 timer) :
             DistractMovementGenerator(timer) {}
 
-        MovementGeneratorType GetMovementGeneratorType() { return ASSISTANCE_DISTRACT_MOTION_TYPE; }
+        MovementGeneratorType GetMovementGeneratorType()
+        {
+            return ASSISTANCE_DISTRACT_MOTION_TYPE;
+        }
         void Finalize(Unit& unit);
 };
 

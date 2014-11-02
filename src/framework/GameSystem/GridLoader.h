@@ -34,17 +34,17 @@
 
 template
 <
-class ACTIVE_OBJECT,
-class WORLD_OBJECT_TYPES,
-class GRID_OBJECT_TYPES
->
+    class ACTIVE_OBJECT,
+    class WORLD_OBJECT_TYPES,
+    class GRID_OBJECT_TYPES
+    >
 class GridLoader
 {
     public:
 
         // Loads the grid
         template<class LOADER>
-            void Load(Grid<ACTIVE_OBJECT,WORLD_OBJECT_TYPES, GRID_OBJECT_TYPES> &grid, LOADER &loader)
+        void Load(Grid<ACTIVE_OBJECT, WORLD_OBJECT_TYPES, GRID_OBJECT_TYPES>& grid, LOADER& loader)
         {
             grid.LockGrid();
             loader.Load(grid);
@@ -53,7 +53,7 @@ class GridLoader
 
         // Stop the grid
         template<class STOPER>
-            void Stop(Grid<ACTIVE_OBJECT,WORLD_OBJECT_TYPES, GRID_OBJECT_TYPES> &grid, STOPER &stoper)
+        void Stop(Grid<ACTIVE_OBJECT, WORLD_OBJECT_TYPES, GRID_OBJECT_TYPES>& grid, STOPER& stoper)
         {
             grid.LockGrid();
             stoper.Stop(grid);
@@ -62,7 +62,7 @@ class GridLoader
 
         // Unloads the grid
         template<class UNLOADER>
-            void Unload(Grid<ACTIVE_OBJECT,WORLD_OBJECT_TYPES, GRID_OBJECT_TYPES> &grid, UNLOADER &unloader)
+        void Unload(Grid<ACTIVE_OBJECT, WORLD_OBJECT_TYPES, GRID_OBJECT_TYPES>& grid, UNLOADER& unloader)
         {
             grid.LockGrid();
             unloader.Unload(grid);

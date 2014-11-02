@@ -59,14 +59,23 @@ class FollowerAI : public ScriptedAI
         void SetFollowPaused(bool bPaused);                 //if special event require follow mode to hold/resume during the follow
         void SetFollowComplete(bool bWithEndEvent = false);
 
-        bool HasFollowState(uint32 uiFollowState) { return (m_uiFollowState & uiFollowState); }
+        bool HasFollowState(uint32 uiFollowState)
+        {
+            return (m_uiFollowState & uiFollowState);
+        }
 
     protected:
         Player* GetLeaderForFollower();
 
     private:
-        void AddFollowState(uint32 uiFollowState) { m_uiFollowState |= uiFollowState; }
-        void RemoveFollowState(uint32 uiFollowState) { m_uiFollowState &= ~uiFollowState; }
+        void AddFollowState(uint32 uiFollowState)
+        {
+            m_uiFollowState |= uiFollowState;
+        }
+        void RemoveFollowState(uint32 uiFollowState)
+        {
+            m_uiFollowState &= ~uiFollowState;
+        }
 
         bool AssistPlayerInCombat(Unit* pWho);
 

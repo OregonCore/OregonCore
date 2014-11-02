@@ -87,9 +87,18 @@ class MailSender
         MailSender(Object* sender, MailStationery stationery = MAIL_STATIONERY_NORMAL);
         MailSender(AuctionEntry* sender);
     public: // Accessors
-        MailMessageType GetMailMessageType() const { return m_messageType; }
-        uint32 GetSenderId() const { return m_senderId; }
-        MailStationery GetStationery() const { return m_stationery; }
+        MailMessageType GetMailMessageType() const
+        {
+            return m_messageType;
+        }
+        uint32 GetSenderId() const
+        {
+            return m_senderId;
+        }
+        MailStationery GetStationery() const
+        {
+            return m_stationery;
+        }
     private:
         MailMessageType m_messageType;
         uint32 m_senderId; // player low guid or other object entry
@@ -101,10 +110,16 @@ class MailReceiver
     public: // Constructors
         explicit MailReceiver(uint32 receiver_lowguid) : m_receiver(NULL), m_receiver_lowguid(receiver_lowguid) {}
         MailReceiver(Player* receiver);
-        MailReceiver(Player* receiver,uint32 receiver_lowguid);
+        MailReceiver(Player* receiver, uint32 receiver_lowguid);
     public: // Accessors
-        Player* GetPlayer() const { return m_receiver; }
-        uint32 GetPlayerGUIDLow() const { return m_receiver_lowguid; }
+        Player* GetPlayer() const
+        {
+            return m_receiver;
+        }
+        uint32 GetPlayerGUIDLow() const
+        {
+            return m_receiver_lowguid;
+        }
     private:
         Player* m_receiver;
         uint32 m_receiver_lowguid;
@@ -112,7 +127,7 @@ class MailReceiver
 
 class MailDraft
 {
-    typedef std::map<uint32, Item*> MailItemMap;
+        typedef std::map<uint32, Item*> MailItemMap;
 
     public:                                                 // Constructors
         explicit MailDraft(uint16 mailTemplateId, bool need_items = true)
@@ -121,15 +136,38 @@ class MailDraft
         MailDraft(std::string subject, uint32 itemTextId = 0)
             : m_mailTemplateId(0), m_mailTemplateItemsNeed(false), m_subject(subject), m_bodyId(itemTextId), m_money(0), m_COD(0) {}
     public:                                                 // Accessors
-        uint16 GetMailTemplateId() const { return m_mailTemplateId; }
-        std::string const& GetSubject() const { return m_subject; }
-        uint32 GetBodyId() const { return m_bodyId; }
-        uint32 GetMoney() const { return m_money; }
-        uint32 GetCOD() const { return m_COD; }
+        uint16 GetMailTemplateId() const
+        {
+            return m_mailTemplateId;
+        }
+        std::string const& GetSubject() const
+        {
+            return m_subject;
+        }
+        uint32 GetBodyId() const
+        {
+            return m_bodyId;
+        }
+        uint32 GetMoney() const
+        {
+            return m_money;
+        }
+        uint32 GetCOD() const
+        {
+            return m_COD;
+        }
     public:                                                 // modifiers
         MailDraft& AddItem(Item* item);
-        MailDraft& AddMoney(uint32 money) { m_money = money; return *this; }
-        MailDraft& AddCOD(uint32 COD) { m_COD = COD; return *this; }
+        MailDraft& AddMoney(uint32 money)
+        {
+            m_money = money;
+            return *this;
+        }
+        MailDraft& AddCOD(uint32 COD)
+        {
+            m_COD = COD;
+            return *this;
+        }
     public:                                                 // finishers
         void SendReturnToSender(uint32 sender_acc, uint32 sender_guid, uint32 receiver_guid);
         void SendMailTo(MailReceiver const& receiver, MailSender const& sender, MailCheckMask checked = MAIL_CHECK_MASK_NONE, uint32 deliver_delay = 0);
@@ -194,7 +232,10 @@ struct Mail
         return false;
     }
 
-    bool HasItems() const { return !items.empty(); }
+    bool HasItems() const
+    {
+        return !items.empty();
+    }
 };
 
 #endif

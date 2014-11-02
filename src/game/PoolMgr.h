@@ -41,7 +41,7 @@ class Pool                                                  // for Pool of Pool 
 };
 
 typedef std::set<uint32> ActivePoolObjects;
-typedef std::map<uint32,uint32> ActivePoolPools;
+typedef std::map<uint32, uint32> ActivePoolPools;
 
 class ActivePoolData
 {
@@ -57,7 +57,10 @@ class ActivePoolData
         template<typename T>
         void RemoveObject(uint32 db_guid_or_pool_id, uint32 pool_id);
 
-        ActivePoolObjects GetActiveQuests() { return mActiveQuests; } // a copy of the set
+        ActivePoolObjects GetActiveQuests()
+        {
+            return mActiveQuests;    // a copy of the set
+        }
     private:
         ActivePoolObjects mSpawnedCreatures;
         ActivePoolObjects mSpawnedGameobjects;
@@ -68,16 +71,22 @@ class ActivePoolData
 template <class T>
 class PoolGroup
 {
-    typedef std::vector<PoolObject> PoolObjectList;
+        typedef std::vector<PoolObject> PoolObjectList;
     public:
         explicit PoolGroup() : poolId(0) { }
-        void SetPoolId(uint32 pool_id) { poolId = pool_id; }
+        void SetPoolId(uint32 pool_id)
+        {
+            poolId = pool_id;
+        }
         ~PoolGroup() {};
-        bool isEmpty() const { return ExplicitlyChanced.empty() && EqualChanced.empty(); }
+        bool isEmpty() const
+        {
+            return ExplicitlyChanced.empty() && EqualChanced.empty();
+        }
         void AddEntry(PoolObject& poolitem, uint32 maxentries);
         bool CheckPool() const;
         PoolObject* RollOne(ActivePoolData& spawns, uint32 triggerFrom);
-        void DespawnObject(ActivePoolData& spawns, uint32 guid=0);;
+        void DespawnObject(ActivePoolData& spawns, uint32 guid = 0);;
         void Despawn1Object(uint32 guid);
         void SpawnObject(ActivePoolData& spawns, uint32 limit, uint32 triggerFrom);
 
@@ -90,7 +99,10 @@ class PoolGroup
                 return 0;
             return EqualChanced.front().guid;
         }
-        uint32 GetPoolId() const { return poolId; }
+        uint32 GetPoolId() const
+        {
+            return poolId;
+        }
     private:
         uint32 poolId;
         PoolObjectList ExplicitlyChanced;
@@ -117,7 +129,10 @@ class PoolMgr
         uint32 IsPartOfAPool(uint32 db_guid_or_pool_id) const;
 
         template<typename T>
-        bool IsSpawnedObject(uint32 db_guid_or_pool_id) const { return mSpawnedData.IsActiveObject<T>(db_guid_or_pool_id); }
+        bool IsSpawnedObject(uint32 db_guid_or_pool_id) const
+        {
+            return mSpawnedData.IsActiveObject<T>(db_guid_or_pool_id);
+        }
 
         bool CheckPool(uint32 pool_id) const;
 

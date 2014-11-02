@@ -23,7 +23,7 @@
 
 class MapInstanced : public Map
 {
-    friend class MapManager;
+        friend class MapManager;
     public:
         typedef UNORDERED_MAP< uint32, Map* > InstancedMaps;
 
@@ -38,28 +38,34 @@ class MapInstanced : public Map
         bool CanEnter(Player* player);
 
         Map* CreateInstance(const uint32 mapId, Player* player);
-        Map* FindMap(uint32 InstanceId) const { return _FindMap(InstanceId); }
-        bool DestroyInstance(InstancedMaps::iterator &itr);
+        Map* FindMap(uint32 InstanceId) const
+        {
+            return _FindMap(InstanceId);
+        }
+        bool DestroyInstance(InstancedMaps::iterator& itr);
 
-        void AddGridMapReference(const GridPair &p)
+        void AddGridMapReference(const GridPair& p)
         {
             ++GridMapReference[p.x_coord][p.y_coord];
-            SetUnloadReferenceLock(GridPair(63-p.x_coord, 63-p.y_coord), true);
+            SetUnloadReferenceLock(GridPair(63 - p.x_coord, 63 - p.y_coord), true);
         }
 
-        void RemoveGridMapReference(const GridPair &p)
+        void RemoveGridMapReference(const GridPair& p)
         {
             --GridMapReference[p.x_coord][p.y_coord];
             if (!GridMapReference[p.x_coord][p.y_coord])
-                SetUnloadReferenceLock(GridPair(63-p.x_coord, 63-p.y_coord), false);
+                SetUnloadReferenceLock(GridPair(63 - p.x_coord, 63 - p.y_coord), false);
         }
 
-        InstancedMaps &GetInstancedMaps() { return m_InstancedMaps; }
+        InstancedMaps& GetInstancedMaps()
+        {
+            return m_InstancedMaps;
+        }
         virtual void InitVisibilityDistance();
 
     private:
 
-        InstanceMap* CreateInstance(uint32 InstanceId, InstanceSave *save, DungeonDifficulties difficulty);
+        InstanceMap* CreateInstance(uint32 InstanceId, InstanceSave* save, DungeonDifficulties difficulty);
         BattleGroundMap* CreateBattleGround(uint32 InstanceId, BattleGround* bg);
 
         InstancedMaps m_InstancedMaps;
@@ -67,7 +73,7 @@ class MapInstanced : public Map
         Map* _FindMap(uint32 InstanceId) const
         {
             InstancedMaps::const_iterator i = m_InstancedMaps.find(InstanceId);
-            return(i == m_InstancedMaps.end() ? NULL : i->second);
+            return (i == m_InstancedMaps.end() ? NULL : i->second);
         }
 
         uint16 GridMapReference[MAX_NUMBER_OF_GRIDS][MAX_NUMBER_OF_GRIDS];

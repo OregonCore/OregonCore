@@ -49,9 +49,12 @@ class CWardenDataStorage
         std::map<uint32, WardenDataResult*> _result_map;
 
     public:
-        inline uint32 GenerateInternalDataID() { return InternalDataID++; }
-        WardenData *GetWardenDataById(uint32 Id);
-        WardenDataResult *GetWardenResultById(uint32 Id);
+        inline uint32 GenerateInternalDataID()
+        {
+            return InternalDataID++;
+        }
+        WardenData* GetWardenDataById(uint32 Id);
+        WardenDataResult* GetWardenResultById(uint32 Id);
         void Init(bool reload = false);
 
     protected:

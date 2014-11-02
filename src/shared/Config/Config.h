@@ -30,7 +30,7 @@ class Config
         Config();
         ~Config();
 
-        bool SetSource(const char *file);
+        bool SetSource(const char* file);
         bool Reload();
 
         std::string GetStringDefault(const char* name, const char* def);
@@ -38,12 +38,15 @@ class Config
         int32 GetIntDefault(const char* name, const int32 def);
         float GetFloatDefault(const char* name, const float def);
 
-        std::string GetFilename() const { return mFilename; }
+        std::string GetFilename() const
+        {
+            return mFilename;
+        }
 
     private:
 
         std::string mFilename;
-        ACE_Configuration_Heap *mConf;
+        ACE_Configuration_Heap* mConf;
 };
 
 #define sConfig Oregon::Singleton<Config>::Instance()

@@ -75,9 +75,9 @@ class CreatureAI : public UnitAI
 
         void SetGazeOn(Unit* target);
 
-        Creature* DoSummon(uint32 uiEntry, const Position &pos, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
-        Creature* DoSummon(uint32 uiEntry, WorldObject *obj, float fRadius = 5.0f, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
-        Creature* DoSummonFlyer(uint32 uiEntry, WorldObject *obj, float fZ, float fRadius = 5.0f, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
+        Creature* DoSummon(uint32 uiEntry, const Position& pos, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
+        Creature* DoSummon(uint32 uiEntry, WorldObject* obj, float fRadius = 5.0f, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
+        Creature* DoSummonFlyer(uint32 uiEntry, WorldObject* obj, float fZ, float fRadius = 5.0f, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
 
     public:
         explicit CreatureAI(Creature* c) : UnitAI((Unit*)c), me(c), m_MoveInLineOfSight_locked(false) {}
@@ -98,13 +98,13 @@ class CreatureAI : public UnitAI
         // Called at any Damage from any attacker (before damage apply)
         // Note: it for recalculation damage or special reaction at damage
         // for attack reaction use AttackedBy called for not DOT damage in Unit::DealDamage also
-        virtual void DamageTaken(Unit* /*done_by*/, uint32 & /*damage*/) {}
+        virtual void DamageTaken(Unit* /*done_by*/, uint32& /*damage*/) {}
 
         // Called when the creature is killed
-        virtual void JustDied(Unit* ) {}
+        virtual void JustDied(Unit*) {}
 
         // Called when the creature kills a unit
-        virtual void KilledUnit(Unit* ) {}
+        virtual void KilledUnit(Unit*) {}
 
         // Called when the creature summon successfully other creature
         virtual void JustSummoned(Creature*) {}
@@ -120,10 +120,16 @@ class CreatureAI : public UnitAI
 
         // Called when the creature is target of hostile action: swing, hostile spell landed, fear/etc)
         //virtual void AttackedBy(Unit* attacker);
-        virtual bool IsEscorted() { return false; }
+        virtual bool IsEscorted()
+        {
+            return false;
+        }
 
         // Called when creature is spawned or respawned (for reseting variables)
-        virtual void JustRespawned() { Reset(); }
+        virtual void JustRespawned()
+        {
+            Reset();
+        }
 
         // Called at waypoint reached or point movement finished
         virtual void MovementInform(uint32 /*MovementType*/, uint32 /*Data*/) {}
@@ -165,7 +171,7 @@ class CreatureAI : public UnitAI
         virtual void PassengerBoarded(Unit* /*who*/, int8 /*seatId*/, bool /*apply*/) {}
 
     protected:
-        virtual void MoveInLineOfSight(Unit* );
+        virtual void MoveInLineOfSight(Unit*);
 
         bool _EnterEvadeMode();
 

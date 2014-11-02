@@ -31,20 +31,22 @@ The collision detection is modified to return true, if we are inside an object.
 
 namespace VMAP
 {
-    template<class TValue>
-    class IntersectionCallBack {
+template<class TValue>
+class IntersectionCallBack
+{
     public:
         TValue*      closestEntity;
         G3D::Vector3 hitLocation;
         G3D::Vector3 hitNormal;
 
-        void operator()(const G3D::Ray& ray, const TValue* entity, bool pStopAtFirstHit, float& distance) {
+        void operator()(const G3D::Ray& ray, const TValue* entity, bool pStopAtFirstHit, float& distance)
+        {
             entity->intersect(ray, distance, pStopAtFirstHit, hitLocation, hitNormal);
         }
-    };
+};
 
-    class MyCollisionDetection
-    {
+class MyCollisionDetection
+{
     private:
     public:
 
@@ -74,9 +76,7 @@ namespace VMAP
 
                     // Calculate T distances to candidate planes
                     if (IR(dir[i]))
-                    {
                         MaxT[i] = (MinB[i] - origin[i]) / dir[i];
-                    }
                 }
                 else if (origin[i] > MaxB[i])
                 {
@@ -85,9 +85,7 @@ namespace VMAP
 
                     // Calculate T distances to candidate planes
                     if (IR(dir[i]))
-                    {
                         MaxT[i] = (MaxB[i] - origin[i]) / dir[i];
-                    }
                 }
             }
 
@@ -101,14 +99,10 @@ namespace VMAP
             // Get largest of the maxT's for final choice of intersection
             int WhichPlane = 0;
             if (MaxT[1] > MaxT[WhichPlane])
-            {
                 WhichPlane = 1;
-            }
 
             if (MaxT[2] > MaxT[WhichPlane])
-            {
                 WhichPlane = 2;
-            }
 
             // Check final candidate actually inside box
             if (IR(MaxT[WhichPlane]) & 0x80000000)
@@ -140,7 +134,7 @@ namespace VMAP
 
 #undef IR
         }
-    };
+};
 }
 #endif
 

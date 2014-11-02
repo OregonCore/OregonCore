@@ -33,14 +33,14 @@ class PetAI : public CreatureAI
         void EnterEvadeMode();
 
         void UpdateAI(const uint32);
-        static int Permissible(const Creature* );
+        static int Permissible(const Creature*);
 
         void KilledUnit(Unit* victim);
         void AttackStart(Unit* target);
         void MovementInform(uint32 moveType, uint32 data);
 
     private:
-        bool _isVisible(Unit* ) const;
+        bool _isVisible(Unit*) const;
         bool _needToStop(void) const;
         void _stopAttack(void);
 

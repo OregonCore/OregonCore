@@ -33,7 +33,7 @@ enum ZulAmanEncounter
     ENCOUNTER_ZULJIN       = 5,
 
     ENCOUNTER_BOSS         = 6, // boundary
-    
+
     /* Other */
     ENCOUNTER_CHESTLOOTED      = 6,
     ENCOUNTER_RAND_VENDOR_1    = 7,
@@ -54,10 +54,10 @@ enum ZulAmanEntries
 {
     /* Doors */
     ENTRY_MASSIVE_GATE          = 186728,
-    
+
     ENTRY_HALAZZI_EXIT_DOOR     = 186303,
     ENTRY_HALAZZI_ENTRANCE_DOOR = 186304,
-    
+
     ENTRY_HEXLORD_ENTRANCE_DOOR = 186305,
     ENTRY_HEXLORD_EXIT_DOOR     = 186306,
 

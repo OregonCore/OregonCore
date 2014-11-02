@@ -55,7 +55,7 @@ class SOAPWorkingThread : public ACE_Task<ACE_MT_SYNCH>
         {
             while (1)
             {
-                ACE_Message_Block *mb = 0;
+                ACE_Message_Block* mb = 0;
                 if (this->getq (mb) == -1)
                 {
                     ACE_DEBUG ((LM_INFO,
@@ -70,7 +70,7 @@ class SOAPWorkingThread : public ACE_Task<ACE_MT_SYNCH>
             return 0;
         }
     private:
-        void process_message (ACE_Message_Block *mb);
+        void process_message (ACE_Message_Block* mb);
 };
 
 
