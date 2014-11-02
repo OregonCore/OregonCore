@@ -2207,7 +2207,7 @@ void Spell::EffectTeleportUnits(SpellEffIndex /*effIndex*/)
                     case 5:
                     // Transform
                     {
-                        if (m_caster->ToPlayer()->GetTeam() == ALLIANCE)
+                        if (m_caster->ToPlayer() && m_caster->ToPlayer()->GetTeam() == ALLIANCE)
                             m_caster->CastSpell(m_caster, 36897, true);
                         else
                             m_caster->CastSpell(m_caster, 36899, true);
@@ -3294,7 +3294,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
         return;
 
     uint32 prop_id = m_spellInfo->EffectMiscValueB[effIndex];
-    SummonPropertiesEntry const* properties = sSummonPropertiesStore.LookupEntry(prop_id);
+    SummonPropertiesEntry const *properties = sSummonPropertiesStore.LookupEntry(prop_id);
     if (!properties)
     {
         sLog.outError("EffectSummonType: Unhandled summon type %u", prop_id);
@@ -3308,7 +3308,6 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
     if (Player* modOwner = m_originalCaster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_DURATION, duration);
 
-    SpellEntry const* spellInfo = sSpellStore.LookupEntry(m_spellInfo->Id);
     Position pos;
     GetSummonPosition(effIndex, pos);
 
@@ -3333,7 +3332,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                     break;
                 case SUMMON_TYPE_TOTEM:
                 {
-                    summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster, spellInfo);
+                    summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
                     if (!summon || !summon->isTotem())
                         return;
 
@@ -3346,7 +3345,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                 }
                 case SUMMON_TYPE_MINIPET:
                 {
-                    summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster, spellInfo);
+                    summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
                     if (!summon || !summon->HasSummonMask(SUMMON_MASK_MINION))
                         return;
 
@@ -3366,13 +3365,9 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                     if (!summon)
                         return;
 
-                    if (properties->Category == SUMMON_CATEGORY_ALLY)
-                    {
-                        summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
-                        summon->setFaction(m_originalCaster->getFaction());
-                        summon->SetLevel(m_originalCaster->getLevel());
-                        summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
-                    }
+                    summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
+                    summon->setFaction(m_originalCaster->getFaction());
+                    summon->SetLevel(m_originalCaster->getLevel());
                 }
             }
             break;
@@ -3380,8 +3375,12 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
             SummonClassPet(effIndex);
             break;
         case SUMMON_CATEGORY_PUPPET:
-            summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster, spellInfo);
-            break;
+            // only player may have a puppet, or else
+            // there will be a failed assertion in Puppet::Puppet
+            if (m_caster->GetTypeId() != TYPEID_PLAYER)
+                break;
+
+            summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
 
             uint32 faction = properties->Faction;
             if (!faction)
@@ -4249,24 +4248,27 @@ void Spell::SpellDamageWeaponDmg(SpellEffIndex effIndex)
 
                 if (stack < 5)
                 {
-                    // get highest rank of the Sunder Armor spell
-                    const PlayerSpellMap& sp_list = m_caster->ToPlayer()->GetSpellMap();
-                    for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
+                    if (Player* player = m_caster->ToPlayer())
                     {
-                        // only highest rank is shown in spell book, so simply check if shown in spell book
-                        if (!itr->second->active || itr->second->disabled || itr->second->state == PLAYERSPELL_REMOVED)
-                            continue;
-
-                        SpellEntry const *spellInfo = sSpellStore.LookupEntry(itr->first);
-                        if (!spellInfo)
-                            continue;
-
-                        if (spellInfo->SpellFamilyFlags == SPELLFAMILYFLAG_WARRIOR_SUNDERARMOR
-                            && spellInfo->Id != m_spellInfo->Id
-                            && spellInfo->SpellFamilyName == SPELLFAMILY_WARRIOR)
+                        // get highest rank of the Sunder Armor spell
+                        const PlayerSpellMap& sp_list = player->GetSpellMap();
+                        for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
                         {
-                            m_caster->CastSpell(unitTarget, spellInfo, true);
-                            break;
+                            // only highest rank is shown in spell book, so simply check if shown in spell book
+                            if (!itr->second->active || itr->second->disabled || itr->second->state == PLAYERSPELL_REMOVED)
+                                continue;
+
+                            SpellEntry const *spellInfo = sSpellStore.LookupEntry(itr->first);
+                            if (!spellInfo)
+                                continue;
+
+                            if (spellInfo->SpellFamilyFlags == SPELLFAMILYFLAG_WARRIOR_SUNDERARMOR
+                                && spellInfo->Id != m_spellInfo->Id
+                                && spellInfo->SpellFamilyName == SPELLFAMILY_WARRIOR)
+                            {
+                                m_caster->CastSpell(unitTarget, spellInfo, true);
+                                break;
+                            }
                         }
                     }
                 }

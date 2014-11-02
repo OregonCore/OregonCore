@@ -2641,6 +2641,11 @@ void SpellMgr::LoadSpellCustomAttr()
         case 47129: // Totemic Beacon
             spellInfo->EffectImplicitTargetA[1] = TARGET_NONE;
             break;
+        case 40255: // Molten Flame
+            // Molten Fire triggers itself, resulting in infinite cycling,
+            // memory eating and a non-avoidable crash
+            spellInfo->Effect[1] = 0;
+            break;
         default:
             break;
         }

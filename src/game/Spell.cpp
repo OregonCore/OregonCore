@@ -1881,10 +1881,12 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                         AddGOTarget(m_targets.getGOTarget(), i);
                     else
                     {
-                        WorldObject* obj = SearchNearbyTarget(GetSpellMaxRange(m_spellInfo), SPELL_TARGETS_ENTRY);
-                        if (obj->GetTypeId() != TYPEID_GAMEOBJECT)
-                            break;
-                        AddGOTarget(obj->ToGameObject(), i);
+                        if (WorldObject* obj = SearchNearbyTarget(GetSpellMaxRange(m_spellInfo), SPELL_TARGETS_ENTRY))
+                        {
+                            if (obj->GetTypeId() != TYPEID_GAMEOBJECT)
+                                break;
+                            AddGOTarget(obj->ToGameObject(), i);
+                        }
                     }
                     break;
                 case TARGET_GAMEOBJECT_ITEM:

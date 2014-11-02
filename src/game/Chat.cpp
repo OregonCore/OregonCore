@@ -243,6 +243,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "threatlist",     SEC_ADMINISTRATOR,  false, &ChatHandler::HandleDebugThreatList,            "", NULL },
         { "setinstdata",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSetInstanceDataCommand,     "", NULL },
         { "getinstdata",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleGetInstanceDataCommand,     "", NULL },
+        { "spellcrashtest", SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSpellCrashTestCommand,      "", NULL },
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 

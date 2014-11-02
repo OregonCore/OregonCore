@@ -3980,7 +3980,7 @@ void Unit::RemoveAurasWithDispelType(DispelType type)
     for (AuraMap::iterator itr = auras.begin(); itr != auras.end();)
     {
         SpellEntry const* spell = itr->second->GetSpellProto();
-        if ((1<<spell->Dispel) & dispelMask)
+        if ((1<<spell->Dispel) & dispelMask && !itr->second->IsInUse())
         {
             // Dispel aura
             RemoveAurasDueToSpell(spell->Id);

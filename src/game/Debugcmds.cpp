@@ -693,3 +693,24 @@ bool ChatHandler::HandleGetInstanceDataCommand(const char *args)
     return true;
 }
 
+bool ChatHandler::HandleSpellCrashTestCommand(const char* /*args*/)
+{
+    /* Casts ALL spells. Useful for testing/founding out if/what spell causes server to crash */
+
+    Unit* player = m_session->GetPlayer();
+
+    for (uint32 i = 31000; i <= 53085; ++i)
+    {
+        if (SpellEntry const* spellInfo = sSpellStore.LookupEntry(i))
+        {
+            sLog.outDebugInLine("Testing spell %u ... ", i);
+            Creature* trigger = player->SummonTrigger(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), 600, NULL);
+            trigger->CastSpell(trigger, spellInfo, true);
+            trigger->DisappearAndDie();
+            sLog.outDebug("OK!");
+        }
+    }
+
+    PSendSysMessage("ALL OK!");
+    return true;
+}

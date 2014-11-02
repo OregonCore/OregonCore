@@ -5061,7 +5061,8 @@ void Aura::HandleAuraModRangedAttackPowerOfStatPercent(bool /*apply*/, bool Real
     }
 
     // Recalculate bonus
-    m_target->ToPlayer()->UpdateAttackPowerAndDamage(true);
+    if (Player* player = m_target->ToPlayer())
+        player->UpdateAttackPowerAndDamage(true);
 }
 
 /********************************/

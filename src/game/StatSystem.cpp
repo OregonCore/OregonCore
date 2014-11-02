@@ -1007,18 +1007,24 @@ void Guardian::UpdateDamagePhysical(WeaponAttackType attType)
         //force of nature
         if (GetEntry() == 1964)
         {
-            int32 spellDmg = int32(owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_NATURE)) - owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + SPELL_SCHOOL_NATURE);
-            if (spellDmg > 0)
-                bonusDamage = spellDmg * 0.09f;
+            if  (owner->ToPlayer())
+            {
+                int32 spellDmg = int32(owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_NATURE)) - owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + SPELL_SCHOOL_NATURE);
+                if (spellDmg > 0)
+                    bonusDamage = spellDmg * 0.09f;
+            }
         }
         //greater fire elemental
         else if (GetEntry() == 15438)
         {
             if (Unit* shaman = owner->GetOwner())
             {
-                int32 spellDmg = int32(shaman->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FIRE)) - shaman->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + SPELL_SCHOOL_FIRE);
-                if (spellDmg > 0)
-                    bonusDamage = spellDmg * 0.4f;
+                if (shaman->ToPlayer())
+                {
+                    int32 spellDmg = int32(shaman->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FIRE)) - shaman->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + SPELL_SCHOOL_FIRE);
+                    if (spellDmg > 0)
+                        bonusDamage = spellDmg * 0.4f;
+                }
             }
         }
         // shadowfiend 65.7% per 10 hits so 6.57 per hit
