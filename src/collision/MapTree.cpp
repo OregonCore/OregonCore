@@ -425,7 +425,9 @@ void StaticMapTree::UnloadMapTile(uint32 tileX, uint32 tileY, VMapManager2* vm)
 
                     if (fread(&referencedNode, sizeof(uint32), 1, tf) &&
                         !iLoadedSpawns.count(referencedNode))
+                    {
                         ERROR_LOG("Trying to unload non-referenced model '%s' (ID:%u)", spawn.name.c_str(), spawn.ID);
+                    }
                     else if (--iLoadedSpawns[referencedNode] == 0)
                     {
                         iTreeValues[referencedNode].setUnloaded();

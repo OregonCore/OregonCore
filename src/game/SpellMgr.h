@@ -885,7 +885,7 @@ class SpellMgr
             return rule;
         }
 
-        SpellThreatEntry const* SpellMgr::GetSpellThreatEntry(uint32 spellID) const
+        SpellThreatEntry const* GetSpellThreatEntry(uint32 spellID) const
         {
             SpellThreatMap::const_iterator itr = mSpellThreatMap.find(spellID);
             if (itr != mSpellThreatMap.end())
