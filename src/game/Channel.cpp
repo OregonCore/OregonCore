@@ -21,7 +21,7 @@
 #include "World.h"
 
 Channel::Channel(const std::string& name, uint32 channel_id)
- : m_name(name), m_announce(true), m_moderate(false), m_password(""), m_flags(0), m_channelId(channel_id), m_ownerGUID(0)
+    : m_name(name), m_announce(true), m_moderate(false), m_password(""), m_flags(0), m_channelId(channel_id), m_ownerGUID(0)
 {
     // set special flags if built-in channel
     ChatChannelsEntry const* ch = GetChannelEntryFor(channel_id);
@@ -44,12 +44,10 @@ Channel::Channel(const std::string& name, uint32 channel_id)
             m_flags |= CHANNEL_FLAG_NOT_LFG;
     }
     else                                                    // it's custom channel
-    {
         m_flags |= CHANNEL_FLAG_CUSTOM;
-    }
 }
 
-void Channel::Join(uint64 p, const char *pass)
+void Channel::Join(uint64 p, const char* pass)
 {
     WorldPacket data;
     if (IsOn(p))
@@ -167,7 +165,7 @@ void Channel::Leave(uint64 p, bool send)
     }
 }
 
-void Channel::KickOrBan(uint64 good, const char *badname, bool ban)
+void Channel::KickOrBan(uint64 good, const char* badname, bool ban)
 {
     uint32 sec = 0;
     Player* gplr = sObjectMgr.GetPlayer(good);
@@ -229,7 +227,7 @@ void Channel::KickOrBan(uint64 good, const char *badname, bool ban)
     }
 }
 
-void Channel::UnBan(uint64 good, const char *badname)
+void Channel::UnBan(uint64 good, const char* badname)
 {
     uint32 sec = 0;
     Player* gplr = sObjectMgr.GetPlayer(good);
@@ -268,7 +266,7 @@ void Channel::UnBan(uint64 good, const char *badname)
     }
 }
 
-void Channel::Password(uint64 p, const char *pass)
+void Channel::Password(uint64 p, const char* pass)
 {
     uint32 sec = 0;
     Player* plr = sObjectMgr.GetPlayer(p);
@@ -297,7 +295,7 @@ void Channel::Password(uint64 p, const char *pass)
     }
 }
 
-void Channel::SetMode(uint64 p, const char *p2n, bool mod, bool set)
+void Channel::SetMode(uint64 p, const char* p2n, bool mod, bool set)
 {
     Player* plr = sObjectMgr.GetPlayer(p);
     if (!plr)
@@ -365,7 +363,7 @@ void Channel::SetMode(uint64 p, const char *p2n, bool mod, bool set)
     }
 }
 
-void Channel::SetOwner(uint64 p, const char *newname)
+void Channel::SetOwner(uint64 p, const char* newname)
 {
     Player* plr = sObjectMgr.GetPlayer(p);
     if (!plr)
@@ -438,7 +436,7 @@ void Channel::List(Player* player)
     }
     else
     {
-        WorldPacket data(SMSG_CHANNEL_LIST, 1+(GetName().size()+1)+1+4+players.size()*(8+1));
+        WorldPacket data(SMSG_CHANNEL_LIST, 1 + (GetName().size() + 1) + 1 + 4 + players.size() * (8 + 1));
         data << uint8(1);                                   // channel type?
         data << GetName();                                  // channel name
         data << uint8(GetFlags());                          // channel flags?
@@ -463,7 +461,7 @@ void Channel::List(Player* player)
             }
         }
 
-        data.put<uint32>(pos,count);
+        data.put<uint32>(pos, count);
 
         SendToOne(&data, p);
     }
@@ -533,7 +531,7 @@ void Channel::Moderate(uint64 p)
     }
 }
 
-void Channel::Say(uint64 p, const char *what, uint32 lang)
+void Channel::Say(uint64 p, const char* what, uint32 lang)
 {
     if (!what)
         return;
@@ -567,7 +565,7 @@ void Channel::Say(uint64 p, const char *what, uint32 lang)
     {
         uint32 messageLength = strlen(what) + 1;
 
-        WorldPacket data(SMSG_MESSAGECHAT, 1+4+8+4+m_name.size()+1+8+4+messageLength+1);
+        WorldPacket data(SMSG_MESSAGECHAT, 1 + 4 + 8 + 4 + m_name.size() + 1 + 8 + 4 + messageLength + 1);
         data << (uint8)CHAT_MSG_CHANNEL;
         data << (uint32)lang;
         data << p;                                          // 2.1.0
@@ -582,7 +580,7 @@ void Channel::Say(uint64 p, const char *what, uint32 lang)
     }
 }
 
-void Channel::Invite(uint64 p, const char *newname)
+void Channel::Invite(uint64 p, const char* newname)
 {
     if (!IsOn(p))
     {
@@ -707,7 +705,7 @@ void Channel::DeVoice(uint64 /*guid1*/, uint64 /*guid2*/)
 // done
 void Channel::MakeNotifyPacket(WorldPacket* data, uint8 notify_type)
 {
-    data->Initialize(SMSG_CHANNEL_NOTIFY, 1+m_name.size()+1);
+    data->Initialize(SMSG_CHANNEL_NOTIFY, 1 + m_name.size() + 1);
     *data << uint8(notify_type);
     *data << m_name;
 }
@@ -969,9 +967,9 @@ void Channel::JoinNotify(uint64 guid)
     WorldPacket data;
 
     if (IsConstant())
-        data.Initialize(SMSG_USERLIST_ADD, 8+1+1+4+GetName().size()+1);
+        data.Initialize(SMSG_USERLIST_ADD, 8 + 1 + 1 + 4 + GetName().size() + 1);
     else
-        data.Initialize(SMSG_USERLIST_UPDATE, 8+1+1+4+GetName().size()+1);
+        data.Initialize(SMSG_USERLIST_UPDATE, 8 + 1 + 1 + 4 + GetName().size() + 1);
 
     data << uint64(guid);
     data << uint8(GetPlayerFlags(guid));
@@ -983,7 +981,7 @@ void Channel::JoinNotify(uint64 guid)
 
 void Channel::LeaveNotify(uint64 guid)
 {
-    WorldPacket data(SMSG_USERLIST_REMOVE, 8+1+4+GetName().size()+1);
+    WorldPacket data(SMSG_USERLIST_REMOVE, 8 + 1 + 4 + GetName().size() + 1);
     data << uint64(guid);
     data << uint8(GetFlags());
     data << uint32(GetNumPlayers());

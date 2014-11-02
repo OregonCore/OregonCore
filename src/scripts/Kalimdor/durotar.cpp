@@ -68,16 +68,16 @@ struct npc_lazy_peonAI : public ScriptedAI
         }
     }
 
-    void SpellHit(Unit* caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry* spell)
     {
         if (spell->Id == SPELL_AWAKEN_PEON && caster->GetTypeId() == TYPEID_PLAYER
             && CAST_PLR(caster)->GetQuestStatus(QUEST_LAZY_PEONS) == QUEST_STATUS_INCOMPLETE)
         {
-            caster->ToPlayer()->KilledMonsterCredit(me->GetEntry(),me->GetGUID());
+            caster->ToPlayer()->KilledMonsterCredit(me->GetEntry(), me->GetGUID());
             DoScriptText(SAY_SPELL_HIT, me, caster);
             me->RemoveAllAuras();
             if (GameObject* Lumberpile = me->FindNearestGameObject(GO_LUMBERPILE, 20))
-                me->GetMotionMaster()->MovePoint(1,Lumberpile->GetPositionX()-1,Lumberpile->GetPositionY(),Lumberpile->GetPositionZ());
+                me->GetMotionMaster()->MovePoint(1, Lumberpile->GetPositionX() - 1, Lumberpile->GetPositionY(), Lumberpile->GetPositionZ());
         }
     }
 
@@ -108,7 +108,7 @@ CreatureAI* GetAI_npc_lazy_peon(Creature* pCreature)
 
 void AddSC_durotar()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_lazy_peon";

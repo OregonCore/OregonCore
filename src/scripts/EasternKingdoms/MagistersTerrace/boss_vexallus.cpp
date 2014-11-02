@@ -109,10 +109,10 @@ struct boss_vexallusAI : public ScriptedAI
     void JustSummoned(Creature* summoned)
     {
         if (Unit* temp = SelectUnit(SELECT_TARGET_RANDOM, 0))
-            summoned->GetMotionMaster()->MoveFollow(temp,0,0);
+            summoned->GetMotionMaster()->MoveFollow(temp, 0, 0);
 
         //spells are SUMMON_TYPE_GUARDIAN, so using setOwner should be ok
-        summoned->CastSpell(summoned,SPELL_ENERGY_BOLT,false,0,0,me->GetGUID());
+        summoned->CastSpell(summoned, SPELL_ENERGY_BOLT, false, 0, 0, me->GetGUID());
     }
 
     void UpdateAI(const uint32 diff)
@@ -123,7 +123,7 @@ struct boss_vexallusAI : public ScriptedAI
         if (!Enraged)
         {
             //used for check, when Vexallus cast adds 85%, 70%, 55%, 40%, 25%
-            if ((me->GetHealth()*100 / me->GetMaxHealth()) <= (100-(INTERVAL_MODIFIER*IntervalHealthAmount)))
+            if ((me->GetHealth() * 100 / me->GetMaxHealth()) <= (100 - (INTERVAL_MODIFIER * IntervalHealthAmount)))
             {
                 //increase amount, unless we're at 10%, then we switch and return
                 if (IntervalHealthAmount == INTERVAL_SWITCH)
@@ -158,16 +158,18 @@ struct boss_vexallusAI : public ScriptedAI
                     DoCast(pTarget, SPELL_CHAIN_LIGHTNING);
 
                 ChainLightningTimer = 8000;
-            } else ChainLightningTimer -= diff;
+            }
+            else ChainLightningTimer -= diff;
 
             if (ArcaneShockTimer <= diff)
             {
                 if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                if (pTarget)
-                    DoCast(pTarget, SPELL_ARCANE_SHOCK);
+                    if (pTarget)
+                        DoCast(pTarget, SPELL_ARCANE_SHOCK);
 
                 ArcaneShockTimer = 8000;
-            } else ArcaneShockTimer -= diff;
+            }
+            else ArcaneShockTimer -= diff;
         }
         else
         {
@@ -176,7 +178,8 @@ struct boss_vexallusAI : public ScriptedAI
                 DoCastVictim( SPELL_OVERLOAD);
 
                 OverloadTimer = 2000;
-            } else OverloadTimer -= diff;
+            }
+            else OverloadTimer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -215,7 +218,7 @@ CreatureAI* GetAI_mob_pure_energy(Creature* pCreature)
 
 void AddSC_boss_vexallus()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_vexallus";

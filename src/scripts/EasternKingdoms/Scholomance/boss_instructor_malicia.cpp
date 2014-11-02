@@ -56,7 +56,7 @@ struct boss_instructormaliciaAI : public ScriptedAI
 
     void JustDied(Unit* /*killer*/)
     {
-        ScriptedInstance *pInstance = me->GetInstanceData();
+        ScriptedInstance* pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_INSTRUCTORMALICIA_DEATH, 0);
@@ -80,24 +80,27 @@ struct boss_instructormaliciaAI : public ScriptedAI
         {
             DoCastVictim( SPELL_CALLOFGRAVES);
             CallOfGraves_Timer = 65000;
-        } else CallOfGraves_Timer -= diff;
+        }
+        else CallOfGraves_Timer -= diff;
 
         //Corruption_Timer
         if (Corruption_Timer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget) DoCast(pTarget, SPELL_CORRUPTION);
 
             Corruption_Timer = 24000;
-        } else Corruption_Timer -= diff;
+        }
+        else Corruption_Timer -= diff;
 
         //Renew_Timer
         if (Renew_Timer <= diff)
         {
             DoCast(me, SPELL_RENEW);
             Renew_Timer = 10000;
-        } else Renew_Timer -= diff;
+        }
+        else Renew_Timer -= diff;
 
         //FlashHeal_Timer
         if (FlashHeal_Timer <= diff)
@@ -112,10 +115,11 @@ struct boss_instructormaliciaAI : public ScriptedAI
             }
             else
             {
-                FlashCounter=0;
+                FlashCounter = 0;
                 FlashHeal_Timer = 30000;
             }
-        } else FlashHeal_Timer -= diff;
+        }
+        else FlashHeal_Timer -= diff;
 
         //HealingTouch_Timer
         if (HealingTouch_Timer <= diff)
@@ -130,10 +134,11 @@ struct boss_instructormaliciaAI : public ScriptedAI
             }
             else
             {
-                TouchCounter=0;
+                TouchCounter = 0;
                 HealingTouch_Timer = 30000;
             }
-        } else HealingTouch_Timer -= diff;
+        }
+        else HealingTouch_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -145,7 +150,7 @@ CreatureAI* GetAI_boss_instructormalicia(Creature* pCreature)
 
 void AddSC_boss_instructormalicia()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_instructor_malicia";
     newscript->GetAI = &GetAI_boss_instructormalicia;

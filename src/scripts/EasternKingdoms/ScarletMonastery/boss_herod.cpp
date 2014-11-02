@@ -61,16 +61,16 @@ struct boss_herodAI : public ScriptedAI
         DoCast(me, SPELL_RUSHINGCHARGE);
     }
 
-     void KilledUnit(Unit* /*victim*/)
-     {
-         DoScriptText(SAY_KILL, me);
-     }
+    void KilledUnit(Unit* /*victim*/)
+    {
+        DoScriptText(SAY_KILL, me);
+    }
 
-     void JustDied(Unit* /*killer*/)
-     {
-         for (uint8 i = 0; i < 20; ++i)
-             me->SummonCreature(ENTRY_SCARLET_TRAINEE, 1939.18, -431.58, 17.09, 6.22, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
-     }
+    void JustDied(Unit* /*killer*/)
+    {
+        for (uint8 i = 0; i < 20; ++i)
+            me->SummonCreature(ENTRY_SCARLET_TRAINEE, 1939.18, -431.58, 17.09, 6.22, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -78,7 +78,7 @@ struct boss_herodAI : public ScriptedAI
             return;
 
         //If we are <30% hp goes Enraged
-        if (!Enrage && me->GetHealth()*100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCast(false))
+        if (!Enrage && me->GetHealth() * 100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCast(false))
         {
             DoScriptText(EMOTE_ENRAGE, me);
             DoScriptText(SAY_ENRAGE, me);
@@ -91,7 +91,8 @@ struct boss_herodAI : public ScriptedAI
         {
             DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 12000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         // Whirlwind_Timer
         if (Whirlwind_Timer <= diff)
@@ -99,7 +100,8 @@ struct boss_herodAI : public ScriptedAI
             DoScriptText(SAY_WHIRLWIND, me);
             DoCastVictim( SPELL_WHIRLWIND);
             Whirlwind_Timer = 30000;
-        } else Whirlwind_Timer -= diff;
+        }
+        else Whirlwind_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -114,7 +116,7 @@ struct mob_scarlet_traineeAI : public npc_escortAI
 {
     mob_scarlet_traineeAI(Creature* c) : npc_escortAI(c)
     {
-        Start_Timer = urand(1000,6000);
+        Start_Timer = urand(1000, 6000);
     }
 
     uint32 Start_Timer;
@@ -129,9 +131,10 @@ struct mob_scarlet_traineeAI : public npc_escortAI
         {
             if (Start_Timer <= diff)
             {
-                Start(true,true);
+                Start(true, true);
                 Start_Timer = 0;
-            } else Start_Timer -= diff;
+            }
+            else Start_Timer -= diff;
         }
 
         npc_escortAI::UpdateAI(diff);
@@ -145,7 +148,7 @@ CreatureAI* GetAI_mob_scarlet_trainee(Creature* pCreature)
 
 void AddSC_boss_herod()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_herod";
     newscript->GetAI = &GetAI_boss_herod;

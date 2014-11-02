@@ -73,88 +73,88 @@ struct boss_victor_nefariusAI : public ScriptedAI
     boss_victor_nefariusAI(Creature* c) : ScriptedAI(c)
     {
         NefarianGUID = 0;
-        switch (urand(0,19))
+        switch (urand(0, 19))
         {
-            case 0:
-                DrakType1 = CREATURE_BRONZE_DRAKANOID;
-                DrakType2 = CREATURE_BLUE_DRAKANOID;
-                break;
-            case 1:
-                DrakType1 = CREATURE_BRONZE_DRAKANOID;
-                DrakType2 = CREATURE_RED_DRAKANOID;
-                break;
-            case 2:
-                DrakType1 = CREATURE_BRONZE_DRAKANOID;
-                DrakType2 = CREATURE_GREEN_DRAKANOID;
-                break;
-            case 3:
-                DrakType1 = CREATURE_BRONZE_DRAKANOID;
-                DrakType2 = CREATURE_BLACK_DRAKANOID;
-                break;
-            case 4:
-                DrakType1 = CREATURE_BLUE_DRAKANOID;
-                DrakType2 = CREATURE_BRONZE_DRAKANOID;
-                break;
-            case 5:
-                DrakType1 = CREATURE_BLUE_DRAKANOID;
-                DrakType2 = CREATURE_RED_DRAKANOID;
-                break;
-            case 6:
-                DrakType1 = CREATURE_BLUE_DRAKANOID;
-                DrakType2 = CREATURE_GREEN_DRAKANOID;
-                break;
-            case 7:
-                DrakType1 = CREATURE_BLUE_DRAKANOID;
-                DrakType2 = CREATURE_BLACK_DRAKANOID;
-                break;
-            case 8:
-                DrakType1 = CREATURE_RED_DRAKANOID;
-                DrakType2 = CREATURE_BRONZE_DRAKANOID;
-                break;
-            case 9:
-                DrakType1 = CREATURE_RED_DRAKANOID;
-                DrakType2 = CREATURE_BLUE_DRAKANOID;
-                break;
-            case 10:
-                DrakType1 = CREATURE_RED_DRAKANOID;
-                DrakType2 = CREATURE_GREEN_DRAKANOID;
-                break;
-            case 11:
-                DrakType1 = CREATURE_RED_DRAKANOID;
-                DrakType2 = CREATURE_BLACK_DRAKANOID;
-                break;
-            case 12:
-                DrakType1 = CREATURE_GREEN_DRAKANOID;
-                DrakType2 = CREATURE_BRONZE_DRAKANOID;
-                break;
-            case 13:
-                DrakType1 = CREATURE_GREEN_DRAKANOID;
-                DrakType2 = CREATURE_BLUE_DRAKANOID;
-                break;
-            case 14:
-                DrakType1 = CREATURE_GREEN_DRAKANOID;
-                DrakType2 = CREATURE_RED_DRAKANOID;
-                break;
-            case 15:
-                DrakType1 = CREATURE_GREEN_DRAKANOID;
-                DrakType2 = CREATURE_BLACK_DRAKANOID;
-                break;
-            case 16:
-                DrakType1 = CREATURE_BLACK_DRAKANOID;
-                DrakType2 = CREATURE_BRONZE_DRAKANOID;
-                break;
-            case 17:
-                DrakType1 = CREATURE_BLACK_DRAKANOID;
-                DrakType2 = CREATURE_BLUE_DRAKANOID;
-                break;
-            case 18:
-                DrakType1 = CREATURE_BLACK_DRAKANOID;
-                DrakType2 = CREATURE_GREEN_DRAKANOID;
-                break;
-            case 19:
-                DrakType1 = CREATURE_BLACK_DRAKANOID;
-                DrakType2 = CREATURE_RED_DRAKANOID;
-                break;
+        case 0:
+            DrakType1 = CREATURE_BRONZE_DRAKANOID;
+            DrakType2 = CREATURE_BLUE_DRAKANOID;
+            break;
+        case 1:
+            DrakType1 = CREATURE_BRONZE_DRAKANOID;
+            DrakType2 = CREATURE_RED_DRAKANOID;
+            break;
+        case 2:
+            DrakType1 = CREATURE_BRONZE_DRAKANOID;
+            DrakType2 = CREATURE_GREEN_DRAKANOID;
+            break;
+        case 3:
+            DrakType1 = CREATURE_BRONZE_DRAKANOID;
+            DrakType2 = CREATURE_BLACK_DRAKANOID;
+            break;
+        case 4:
+            DrakType1 = CREATURE_BLUE_DRAKANOID;
+            DrakType2 = CREATURE_BRONZE_DRAKANOID;
+            break;
+        case 5:
+            DrakType1 = CREATURE_BLUE_DRAKANOID;
+            DrakType2 = CREATURE_RED_DRAKANOID;
+            break;
+        case 6:
+            DrakType1 = CREATURE_BLUE_DRAKANOID;
+            DrakType2 = CREATURE_GREEN_DRAKANOID;
+            break;
+        case 7:
+            DrakType1 = CREATURE_BLUE_DRAKANOID;
+            DrakType2 = CREATURE_BLACK_DRAKANOID;
+            break;
+        case 8:
+            DrakType1 = CREATURE_RED_DRAKANOID;
+            DrakType2 = CREATURE_BRONZE_DRAKANOID;
+            break;
+        case 9:
+            DrakType1 = CREATURE_RED_DRAKANOID;
+            DrakType2 = CREATURE_BLUE_DRAKANOID;
+            break;
+        case 10:
+            DrakType1 = CREATURE_RED_DRAKANOID;
+            DrakType2 = CREATURE_GREEN_DRAKANOID;
+            break;
+        case 11:
+            DrakType1 = CREATURE_RED_DRAKANOID;
+            DrakType2 = CREATURE_BLACK_DRAKANOID;
+            break;
+        case 12:
+            DrakType1 = CREATURE_GREEN_DRAKANOID;
+            DrakType2 = CREATURE_BRONZE_DRAKANOID;
+            break;
+        case 13:
+            DrakType1 = CREATURE_GREEN_DRAKANOID;
+            DrakType2 = CREATURE_BLUE_DRAKANOID;
+            break;
+        case 14:
+            DrakType1 = CREATURE_GREEN_DRAKANOID;
+            DrakType2 = CREATURE_RED_DRAKANOID;
+            break;
+        case 15:
+            DrakType1 = CREATURE_GREEN_DRAKANOID;
+            DrakType2 = CREATURE_BLACK_DRAKANOID;
+            break;
+        case 16:
+            DrakType1 = CREATURE_BLACK_DRAKANOID;
+            DrakType2 = CREATURE_BRONZE_DRAKANOID;
+            break;
+        case 17:
+            DrakType1 = CREATURE_BLACK_DRAKANOID;
+            DrakType2 = CREATURE_BLUE_DRAKANOID;
+            break;
+        case 18:
+            DrakType1 = CREATURE_BLACK_DRAKANOID;
+            DrakType2 = CREATURE_GREEN_DRAKANOID;
+            break;
+        case 19:
+            DrakType1 = CREATURE_BLACK_DRAKANOID;
+            DrakType2 = CREATURE_RED_DRAKANOID;
+            break;
         }
     }
 
@@ -179,7 +179,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
         NefarianGUID = 0;
         NefCheckTime = 2000;
 
-        me->SetUInt32Value(UNIT_NPC_FLAGS,1);
+        me->SetUInt32Value(UNIT_NPC_FLAGS, 1);
         me->setFaction(35);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
@@ -197,7 +197,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
         AttackStart((*i));
         }
         */
-        me->SetUInt32Value(UNIT_NPC_FLAGS,0);
+        me->SetUInt32Value(UNIT_NPC_FLAGS, 0);
         me->setFaction(103);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         AttackStart(pTarget);
@@ -232,8 +232,9 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     DoCast(pTarget, SPELL_SHADOWBOLT);
 
-                ShadowBoltTimer = urand(3000,10000);
-            } else ShadowBoltTimer -= diff;
+                ShadowBoltTimer = urand(3000, 10000);
+            }
+            else ShadowBoltTimer -= diff;
 
             //FearTimer
             if (FearTimer <= diff)
@@ -241,8 +242,9 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     DoCast(pTarget, SPELL_FEAR);
 
-                FearTimer = 10000 + (rand()%10000);
-            } else FearTimer -= diff;
+                FearTimer = 10000 + (rand() % 10000);
+            }
+            else FearTimer -= diff;
 
             //Add spawning mechanism
             if (AddSpawnTimer <= diff)
@@ -253,7 +255,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 Unit* pTarget = NULL;
 
                 //1 in 3 chance it will be a chromatic
-                if (urand(0,2) == 0)
+                if (urand(0, 2) == 0)
                     CreatureID = CREATURE_CHROMATIC_DRAKANOID;
                 else
                     CreatureID = DrakType1;
@@ -261,7 +263,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 ++SpawnedAdds;
 
                 //Spawn Creature and force it to start attacking a random target
-                Spawned = me->SummonCreature(CreatureID,ADD_X1,ADD_Y1,ADD_Z1,5.000f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
+                Spawned = me->SummonCreature(CreatureID, ADD_X1, ADD_Y1, ADD_Z1, 5.000f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (pTarget && Spawned)
                 {
@@ -270,14 +272,14 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 }
 
                 //1 in 3 chance it will be a chromatic
-                if (urand(0,2) == 0)
+                if (urand(0, 2) == 0)
                     CreatureID = CREATURE_CHROMATIC_DRAKANOID;
                 else
                     CreatureID = DrakType2;
 
                 ++SpawnedAdds;
 
-                Spawned = me->SummonCreature(CreatureID,ADD_X2,ADD_Y2,ADD_Z2,5.000f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
+                Spawned = me->SummonCreature(CreatureID, ADD_X2, ADD_Y2, ADD_Z2, 5.000f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (pTarget && Spawned)
                 {
@@ -301,11 +303,11 @@ struct boss_victor_nefariusAI : public ScriptedAI
                     DoCast(me, 8149);
 
                     //Teleport self to a hiding spot (this causes errors in the Oregon log but no real issues)
-                    DoTeleportTo(HIDE_X,HIDE_Y,HIDE_Z);
+                    DoTeleportTo(HIDE_X, HIDE_Y, HIDE_Z);
                     me->AddUnitState(UNIT_STATE_FLEEING);
 
                     //Spawn nef and have him attack a random target
-                    Creature* Nefarian = me->SummonCreature(CREATURE_NEFARIAN,NEF_X,NEF_Y,NEF_Z,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,120000);
+                    Creature* Nefarian = me->SummonCreature(CREATURE_NEFARIAN, NEF_X, NEF_Y, NEF_Z, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000);
                     pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                     if (pTarget && Nefarian)
                     {
@@ -317,13 +319,14 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 }
 
                 AddSpawnTimer = 4000;
-            } else AddSpawnTimer -= diff;
+            }
+            else AddSpawnTimer -= diff;
         }
         else if (NefarianGUID)
         {
             if (NefCheckTime <= diff)
             {
-                Unit* Nefarian = Unit::GetCreature((*me),NefarianGUID);
+                Unit* Nefarian = Unit::GetCreature((*me), NefarianGUID);
 
                 //If nef is dead then we die to so the players get out of combat
                 //and cannot repeat the event
@@ -334,7 +337,8 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 }
 
                 NefCheckTime = 2000;
-            } else NefCheckTime -= diff;
+            }
+            else NefCheckTime -= diff;
         }
     }
 };
@@ -346,7 +350,7 @@ CreatureAI* GetAI_boss_victor_nefarius(Creature* pCreature)
 
 bool GossipHello_boss_victor_nefarius(Player* pPlayer, Creature* pCreature)
 {
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_1 , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_1 , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
     pPlayer->SEND_GOSSIP_MENU(7134, pCreature->GetGUID());
     return true;
 }
@@ -355,26 +359,26 @@ bool GossipSelect_boss_victor_nefarius(Player* pPlayer, Creature* pCreature, uin
 {
     switch (uiAction)
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            pPlayer->SEND_GOSSIP_MENU(7198, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            pPlayer->SEND_GOSSIP_MENU(7199, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+3:
-            pPlayer->CLOSE_GOSSIP_MENU();
-            DoScriptText(SAY_GAMESBEGIN_1, pCreature);
-            CAST_AI(boss_victor_nefariusAI, pCreature->AI())->BeginEvent(pPlayer);
-            break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        pPlayer->SEND_GOSSIP_MENU(7198, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        pPlayer->SEND_GOSSIP_MENU(7199, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+3:
+        pPlayer->CLOSE_GOSSIP_MENU();
+        DoScriptText(SAY_GAMESBEGIN_1, pCreature);
+        CAST_AI(boss_victor_nefariusAI, pCreature->AI())->BeginEvent(pPlayer);
+        break;
     }
     return true;
 }
 
 void AddSC_boss_victor_nefarius()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_victor_nefarius";

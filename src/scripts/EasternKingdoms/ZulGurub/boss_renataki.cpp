@@ -43,11 +43,11 @@ struct boss_renatakiAI : public ScriptedAI
 
     void Reset()
     {
-        Invisible_Timer = 8000 + rand()%10000;
+        Invisible_Timer = 8000 + rand() % 10000;
         Ambush_Timer = 3000;
         Visible_Timer = 4000;
-        Aggro_Timer = 15000 + rand()%10000;
-        ThousandBlades_Timer = 4000 + rand()%4000;
+        Aggro_Timer = 15000 + rand() % 10000;
+        ThousandBlades_Timer = 4000 + rand() % 4000;
 
         Invisible = false;
         Ambushed = false;
@@ -75,15 +75,16 @@ struct boss_renatakiAI : public ScriptedAI
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             Invisible = true;
 
-            Invisible_Timer = 15000 + rand()%15000;
-        } else Invisible_Timer -= diff;
+            Invisible_Timer = 15000 + rand() % 15000;
+        }
+        else Invisible_Timer -= diff;
 
         if (Invisible)
         {
             if (Ambush_Timer <= diff)
             {
                 Unit* pTarget = NULL;
-                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget)
                 {
                     DoTeleportTo(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
@@ -92,7 +93,8 @@ struct boss_renatakiAI : public ScriptedAI
 
                 Ambushed = true;
                 Ambush_Timer = 3000;
-            } else Ambush_Timer -= diff;
+            }
+            else Ambush_Timer -= diff;
         }
 
         if (Ambushed)
@@ -110,7 +112,8 @@ struct boss_renatakiAI : public ScriptedAI
                 Invisible = false;
 
                 Visible_Timer = 4000;
-            } else Visible_Timer -= diff;
+            }
+            else Visible_Timer -= diff;
         }
 
         //Resetting some aggro so he attacks other gamers
@@ -119,16 +122,17 @@ struct boss_renatakiAI : public ScriptedAI
             if (Aggro_Timer <= diff)
             {
                 Unit* pTarget = NULL;
-                pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
 
                 if (DoGetThreat(me->getVictim()))
-                    DoModifyThreatPercent(me->getVictim(),-50);
+                    DoModifyThreatPercent(me->getVictim(), -50);
 
                 if (pTarget)
                     AttackStart(pTarget);
 
-                Aggro_Timer = 7000 + rand()%13000;
-            } else Aggro_Timer -= diff;
+                Aggro_Timer = 7000 + rand() % 13000;
+            }
+            else Aggro_Timer -= diff;
         }
 
         if (!Invisible)
@@ -136,8 +140,9 @@ struct boss_renatakiAI : public ScriptedAI
             if (ThousandBlades_Timer <= diff)
             {
                 DoCastVictim( SPELL_THOUSANDBLADES);
-                ThousandBlades_Timer = 7000 + rand()%5000;
-            } else ThousandBlades_Timer -= diff;
+                ThousandBlades_Timer = 7000 + rand() % 5000;
+            }
+            else ThousandBlades_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -150,7 +155,7 @@ CreatureAI* GetAI_boss_renataki(Creature* pCreature)
 
 void AddSC_boss_renataki()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_renataki";
     newscript->GetAI = &GetAI_boss_renataki;

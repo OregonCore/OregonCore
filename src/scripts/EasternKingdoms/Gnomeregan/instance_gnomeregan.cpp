@@ -68,56 +68,62 @@ struct instance_gnomeregan : public ScriptedInstance
 
     void OnCreatureCreate(Creature* pCreature, bool /*bAdd*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-            case NPC_BLASTMASTER_EMI_SHORTFUSE: uiBastmasterEmiShortfuseGUID = pCreature->GetGUID(); break;
+        case NPC_BLASTMASTER_EMI_SHORTFUSE:
+            uiBastmasterEmiShortfuseGUID = pCreature->GetGUID();
+            break;
         }
     }
 
     void OnGameObjectCreate(GameObject* pGo, bool /*bAdd*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case GO_CAVE_IN_LEFT:
-                uiCaveInLeftGUID = pGo->GetGUID();
-                if (m_auiEncounter[0] == DONE || m_auiEncounter[0] == NOT_STARTED)
-                    HandleGameObject(0,false,pGo);
-                break;
-            case GO_CAVE_IN_RIGHT:
-                uiCaveInRightGUID = pGo->GetGUID();
-                if (m_auiEncounter[0] == DONE || m_auiEncounter[0] == NOT_STARTED)
-                    HandleGameObject(0,false,pGo);
-                break;
+        case GO_CAVE_IN_LEFT:
+            uiCaveInLeftGUID = pGo->GetGUID();
+            if (m_auiEncounter[0] == DONE || m_auiEncounter[0] == NOT_STARTED)
+                HandleGameObject(0, false, pGo);
+            break;
+        case GO_CAVE_IN_RIGHT:
+            uiCaveInRightGUID = pGo->GetGUID();
+            if (m_auiEncounter[0] == DONE || m_auiEncounter[0] == NOT_STARTED)
+                HandleGameObject(0, false, pGo);
+            break;
         }
     }
 
     void SetData(uint32 uiType, uint32 uiData)
     {
-        switch(uiType)
+        switch (uiType)
         {
-            case TYPE_EVENT:
-                m_auiEncounter[0] = uiData;
-                if (uiData == DONE)
-                    SaveToDB();
-                break;
+        case TYPE_EVENT:
+            m_auiEncounter[0] = uiData;
+            if (uiData == DONE)
+                SaveToDB();
+            break;
         }
     }
 
     uint32 GetData(uint32 uiType, uint32 /*uiData*/)
     {
-        switch(uiType)
+        switch (uiType)
         {
-            case TYPE_EVENT:    return m_auiEncounter[0];
+        case TYPE_EVENT:
+            return m_auiEncounter[0];
         }
     }
 
     uint64 GetData64(uint32 uiType)
     {
-        switch(uiType)
+        switch (uiType)
         {
-            case DATA_GO_CAVE_IN_LEFT:              return uiCaveInLeftGUID;
-            case DATA_GO_CAVE_IN_RIGHT:             return uiCaveInRightGUID;
-            case DATA_NPC_BASTMASTER_EMI_SHORTFUSE: return uiBastmasterEmiShortfuseGUID;
+        case DATA_GO_CAVE_IN_LEFT:
+            return uiCaveInLeftGUID;
+        case DATA_GO_CAVE_IN_RIGHT:
+            return uiCaveInRightGUID;
+        case DATA_NPC_BASTMASTER_EMI_SHORTFUSE:
+            return uiBastmasterEmiShortfuseGUID;
         }
 
         return 0;

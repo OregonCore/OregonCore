@@ -66,20 +66,30 @@ struct boss_pandemoniusAI : public ScriptedAI
 
     void KilledUnit(Unit*)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_KILL_1, me); break;
-            case 1: DoScriptText(SAY_KILL_2, me); break;
+        case 0:
+            DoScriptText(SAY_KILL_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_KILL_2, me);
+            break;
         }
     }
 
-    void EnterCombat(Unit* )
+    void EnterCombat(Unit*)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO_3, me);
+            break;
         }
 
     }
@@ -93,17 +103,18 @@ struct boss_pandemoniusAI : public ScriptedAI
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
-                DoCast(pTarget,HeroicMode ? H_SPELL_VOID_BLAST : SPELL_VOID_BLAST);
+                DoCast(pTarget, HeroicMode ? H_SPELL_VOID_BLAST : SPELL_VOID_BLAST);
                 VoidBlast_Timer = 500;
                 ++VoidBlast_Counter;
             }
 
             if (VoidBlast_Counter == 5)
             {
-                VoidBlast_Timer = 25000+rand()%10000;
+                VoidBlast_Timer = 25000 + rand() % 10000;
                 VoidBlast_Counter = 0;
             }
-        } else VoidBlast_Timer -= diff;
+        }
+        else VoidBlast_Timer -= diff;
 
         if (!VoidBlast_Counter)
         {
@@ -114,9 +125,10 @@ struct boss_pandemoniusAI : public ScriptedAI
 
                 DoScriptText(EMOTE_DARK_SHELL, me);
 
-                DoCast(me,HeroicMode ? H_SPELL_DARK_SHELL : SPELL_DARK_SHELL);
+                DoCast(me, HeroicMode ? H_SPELL_DARK_SHELL : SPELL_DARK_SHELL);
                 DarkShell_Timer = 20000;
-            } else DarkShell_Timer -= diff;
+            }
+            else DarkShell_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -130,7 +142,7 @@ CreatureAI* GetAI_boss_pandemonius(Creature* pCreature)
 
 void AddSC_boss_pandemonius()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_pandemonius";
     newscript->GetAI = &GetAI_boss_pandemonius;

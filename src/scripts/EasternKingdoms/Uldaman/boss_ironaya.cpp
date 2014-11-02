@@ -57,7 +57,7 @@ struct boss_ironayaAI : public ScriptedAI
             return;
 
         //If we are <50% hp do knockaway ONCE
-        if (!hasCastedKnockaway && me->GetHealth()*2 < me->GetMaxHealth())
+        if (!hasCastedKnockaway && me->GetHealth() * 2 < me->GetMaxHealth())
         {
             DoCastVictim( SPELL_KNOCKAWAY, true);
 
@@ -79,9 +79,10 @@ struct boss_ironayaAI : public ScriptedAI
         {
             DoCast(me, SPELL_ARCINGSMASH);
             Arcing_Timer = 13000;
-        } else Arcing_Timer -= diff;
+        }
+        else Arcing_Timer -= diff;
 
-        if (!hasCastedWstomp && me->GetHealth()*4 < me->GetMaxHealth())
+        if (!hasCastedWstomp && me->GetHealth() * 4 < me->GetMaxHealth())
         {
             DoCast(me, SPELL_WSTOMP);
             hasCastedWstomp = true;
@@ -98,7 +99,7 @@ CreatureAI* GetAI_boss_ironaya(Creature* pCreature)
 
 void AddSC_boss_ironaya()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_ironaya";
     newscript->GetAI = &GetAI_boss_ironaya;

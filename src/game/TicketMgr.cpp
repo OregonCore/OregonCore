@@ -30,9 +30,7 @@ GM_Ticket* TicketMgr::GetGMTicket(uint64 ticketGuid)
     for (GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end();)
     {
         if ((*i)->guid == ticketGuid)
-        {
             return (*i);
-        }
         ++i;
     }
     return NULL;
@@ -43,9 +41,7 @@ GM_Ticket* TicketMgr::GetGMTicketByPlayer(uint64 playerGuid)
     for (GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end();)
     {
         if ((*i)->playerGuid == playerGuid && (*i)->closed == 0)
-        {
             return (*i);
-        }
         ++i;
     }
     return NULL;
@@ -64,15 +60,13 @@ GM_Ticket* TicketMgr::GetGMTicketByName(const char* name)
     for (GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end();)
     {
         if ((*i)->playerGuid == playerGuid && (*i)->closed == 0)
-        {
             return (*i);
-        }
         ++i;
     }
     return NULL;
 }
 
-void TicketMgr::AddGMTicket(GM_Ticket *ticket, bool startup)
+void TicketMgr::AddGMTicket(GM_Ticket* ticket, bool startup)
 {
     ASSERT(ticket);
     GM_TicketList.push_back(ticket);
@@ -103,7 +97,7 @@ void TicketMgr::LoadGMTickets()
     GM_TicketList.clear();
 
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT guid, playerGuid, name, message, createtime, map, posX, posY, posZ, timestamp, closed, assignedto, comment, escalated, viewed FROM gm_tickets");
-    GM_Ticket *ticket;
+    GM_Ticket* ticket;
 
     if (!result)
     {
@@ -115,7 +109,7 @@ void TicketMgr::LoadGMTickets()
     // Assign values from SQL to the object holder
     do
     {
-        Field *fields = result->Fetch();
+        Field* fields = result->Fetch();
         ticket = new GM_Ticket;
         ticket->guid = fields[0].GetUInt64();
         ticket->playerGuid = fields[1].GetUInt64();
@@ -135,7 +129,8 @@ void TicketMgr::LoadGMTickets()
 
         AddGMTicket(ticket, true);
 
-    } while (result->NextRow());
+    }
+    while (result->NextRow());
 
     sWorld.SendGMText(LANG_COMMAND_TICKETRELOAD, result->GetRowCount());
 }
@@ -146,7 +141,7 @@ void TicketMgr::LoadGMSurveys()
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT MAX(surveyid) FROM gm_surveys");
     if (result)
     {
-        Field *fields = result->Fetch();
+        Field* fields = result->Fetch();
         m_GMSurveyID = fields[0].GetUInt64();
     }
     else
@@ -209,7 +204,7 @@ void TicketMgr::SaveGMTicket(GM_Ticket* ticket)
 
 }
 
-void TicketMgr::UpdateGMTicket(GM_Ticket *ticket)
+void TicketMgr::UpdateGMTicket(GM_Ticket* ticket)
 {
     SaveGMTicket(ticket);
 }

@@ -68,17 +68,17 @@ struct ClientPktHeader
 #endif
 
 WorldSocket::WorldSocket (void) :
-WorldHandler(),
-m_LastPingTime(ACE_Time_Value::zero),
-m_OverSpeedPings(0),
-m_Session(0),
-m_RecvWPct(0),
-m_RecvPct(),
-m_Header(sizeof (ClientPktHeader)),
-m_OutBuffer(0),
-m_OutBufferSize(65536),
-m_OutActive(false),
-m_Seed(static_cast<uint32> (rand32()))
+    WorldHandler(),
+    m_LastPingTime(ACE_Time_Value::zero),
+    m_OverSpeedPings(0),
+    m_Session(0),
+    m_RecvWPct(0),
+    m_RecvPct(),
+    m_Header(sizeof (ClientPktHeader)),
+    m_OutBuffer(0),
+    m_OutBufferSize(65536),
+    m_OutActive(false),
+    m_Seed(static_cast<uint32> (rand32()))
 {
     reference_counting_policy().value (ACE_Event_Handler::Reference_Counting_Policy::ENABLED);
 }
@@ -139,10 +139,10 @@ int WorldSocket::SendPacket (const WorldPacket& pct)
     if (sWorldLog.LogWorld())
     {
         sWorldLog.outTimestampLog ("SERVER:\nSOCKET: %u\nLENGTH: %u\nOPCODE: %s (0x%.4X)\nDATA:\n",
-                     (uint32) get_handle(),
-                     pct.size(),
-                     LookupOpcodeName (pct.GetOpcode()),
-                     pct.GetOpcode());
+                                   (uint32) get_handle(),
+                                   pct.size(),
+                                   LookupOpcodeName (pct.GetOpcode()),
+                                   pct.GetOpcode());
 
         uint32 p = 0;
         while (p < pct.size())
@@ -184,7 +184,7 @@ long WorldSocket::RemoveReference (void)
     return static_cast<long> (remove_reference());
 }
 
-int WorldSocket::open (void *a)
+int WorldSocket::open (void* a)
 {
     ACE_UNUSED_ARG (a);
 
@@ -252,7 +252,7 @@ int WorldSocket::handle_input (ACE_HANDLE)
 
     switch (handle_input_missing_data())
     {
-        case -1 :
+    case -1 :
         {
             if ((errno == EWOULDBLOCK) ||
                 (errno == EAGAIN))
@@ -265,17 +265,17 @@ int WorldSocket::handle_input (ACE_HANDLE)
             errno = ECONNRESET;
             return -1;
         }
-        case 0:
+    case 0:
         {
             DEBUG_LOG("WorldSocket::handle_input: Peer has closed connection");
 
             errno = ECONNRESET;
             return -1;
         }
-        case 1:
-            return 1;
-        default:
-            return Update();                               // another interesting line ;)
+    case 1:
+        return 1;
+    default:
+        return Update();                               // another interesting line ;)
     }
 
     ACE_NOTREACHED(return -1);
@@ -293,11 +293,11 @@ int WorldSocket::handle_output (ACE_HANDLE)
     if (send_len == 0)
         return cancel_wakeup_output (Guard);
 
-#ifdef MSG_NOSIGNAL
+    #ifdef MSG_NOSIGNAL
     ssize_t n = peer().send (m_OutBuffer->rd_ptr(), send_len, MSG_NOSIGNAL);
-#else
+    #else
     ssize_t n = peer().send (m_OutBuffer->rd_ptr(), send_len);
-#endif // MSG_NOSIGNAL
+    #endif // MSG_NOSIGNAL
 
     if (n == 0)
         return -1;
@@ -396,9 +396,7 @@ int WorldSocket::handle_input_header (void)
         m_RecvPct.base ((char*) m_RecvWPct->contents(), m_RecvWPct->size());
     }
     else
-    {
         ACE_ASSERT(m_RecvPct.space() == 0);
-    }
 
     return 0;
 }
@@ -431,12 +429,12 @@ int WorldSocket::handle_input_missing_data (void)
     char buf [1024];
 
     ACE_Data_Block db (sizeof (buf),
-                        ACE_Message_Block::MB_DATA,
-                        buf,
-                        0,
-                        0,
-                        ACE_Message_Block::DONT_DELETE,
-                        0);
+                       ACE_Message_Block::MB_DATA,
+                       buf,
+                       0,
+                       0,
+                       ACE_Message_Block::DONT_DELETE,
+                       0);
 
     ACE_Message_Block message_block(&db,
                                     ACE_Message_Block::DONT_DELETE,
@@ -445,7 +443,7 @@ int WorldSocket::handle_input_missing_data (void)
     const size_t recv_size = message_block.space();
 
     const ssize_t n = peer().recv (message_block.wr_ptr(),
-                                          recv_size);
+                                   recv_size);
 
     if (n <= 0)
         return n;
@@ -570,10 +568,10 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
     if (sWorldLog.LogWorld())
     {
         sWorldLog.outTimestampLog ("CLIENT:\nSOCKET: %u\nLENGTH: %u\nOPCODE: %s (0x%.4X)\nDATA:\n",
-                     (uint32) get_handle(),
-                     new_pct->size(),
-                     LookupOpcodeName (new_pct->GetOpcode()),
-                     new_pct->GetOpcode());
+                                   (uint32) get_handle(),
+                                   new_pct->size(),
+                                   LookupOpcodeName (new_pct->GetOpcode()),
+                                   new_pct->GetOpcode());
 
         uint32 p = 0;
         while (p < new_pct->size())
@@ -588,23 +586,23 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
 
     try
     {
-        switch(opcode)
+        switch (opcode)
         {
-            case CMSG_PING:
-                return HandlePing (*new_pct);
-            case CMSG_AUTH_SESSION:
-                if (m_Session)
-                {
-                    sLog.outError ("WorldSocket::ProcessIncoming: Player send CMSG_AUTH_SESSION again");
-                    return -1;
-                }
+        case CMSG_PING:
+            return HandlePing (*new_pct);
+        case CMSG_AUTH_SESSION:
+            if (m_Session)
+            {
+                sLog.outError ("WorldSocket::ProcessIncoming: Player send CMSG_AUTH_SESSION again");
+                return -1;
+            }
 
-                return HandleAuthSession (*new_pct);
-            case CMSG_KEEP_ALIVE:
-                DEBUG_LOG ("CMSG_KEEP_ALIVE ,size: %d", new_pct->size());
+            return HandleAuthSession (*new_pct);
+        case CMSG_KEEP_ALIVE:
+            DEBUG_LOG ("CMSG_KEEP_ALIVE ,size: %d", new_pct->size());
 
-                return 0;
-            default:
+            return 0;
+        default:
             {
                 ACE_GUARD_RETURN (LockType, Guard, m_SessionLock, -1);
 
@@ -629,10 +627,10 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
             }
         }
     }
-    catch(ByteBufferException &)
+    catch (ByteBufferException&)
     {
         sLog.outError("WorldSocket::ProcessIncoming ByteBufferException occured while parsing an instant handled packet (opcode: %u) from client %s, accountid=%i. Disconnected client.",
-                opcode, GetRemoteAddress().c_str(), m_Session?m_Session->GetAccountId():-1);
+                      opcode, GetRemoteAddress().c_str(), m_Session ? m_Session->GetAccountId() : -1);
         if (sLog.IsOutDebug())
         {
             sLog.outDebug("Dumping error causing packet:");
@@ -671,10 +669,10 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     recvPacket.read (digest, 20);
 
     DEBUG_LOG ("WorldSocket::HandleAuthSession: client %u, unk2 %u, account %s, clientseed %u",
-                BuiltNumberClient,
-                unk2,
-                account.c_str (),
-                clientSeed);
+               BuiltNumberClient,
+               unk2,
+               account.c_str (),
+               clientSeed);
 
     // Check the version of client trying to connect
     if (!IsAcceptableClientBuild(BuiltNumberClient))
@@ -694,19 +692,19 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     // No SQL injection, username escaped.
 
     QueryResult_AutoPtr result = LoginDatabase.PQuery ("SELECT "
-                                "id, "                      //0
-                                "sessionkey, "              //1
-                                "last_ip, "                 //2
-                                "locked, "                  //3
-                                "v, "                       //4
-                                "s, "                       //5
-                                "expansion, "               //6
-                                "mutetime, "                //7
-                                "locale, "                  //8
-                                "os "                       //9
-                                "FROM account "
-                                "WHERE username = '%s'",
-                                safe_account.c_str ());
+                                 "id, "                      //0
+                                 "sessionkey, "              //1
+                                 "last_ip, "                 //2
+                                 "locked, "                  //3
+                                 "v, "                       //4
+                                 "s, "                       //5
+                                 "expansion, "               //6
+                                 "mutetime, "                //7
+                                 "locale, "                  //8
+                                 "os "                       //9
+                                 "FROM account "
+                                 "WHERE username = '%s'",
+                                 safe_account.c_str ());
 
     // Stop if the account is not found
     if (!result)
@@ -738,8 +736,8 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     const char* vStr = v.AsHexStr ();                       //Must be freed by OPENSSL_free()
 
     DEBUG_LOG ("WorldSocket::HandleAuthSession: (s,v) check s: %s v: %s",
-                sStr,
-                vStr);
+               sStr,
+               vStr);
 
     OPENSSL_free ((void*) sStr);
     OPENSSL_free ((void*) vStr);
@@ -768,8 +766,8 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     if (locale >= MAX_LOCALE)
         locale = LOCALE_enUS;
 
-        // Checks gmlevel per Realm
-        result =
+    // Checks gmlevel per Realm
+    result =
         LoginDatabase.PQuery ("SELECT "
                               "RealmID, "            //0
                               "gmlevel "             //1
@@ -788,12 +786,12 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
 
     // Re-check account ban (same check as in realmd)
     QueryResult_AutoPtr banresult = LoginDatabase.PQuery ("SELECT "
-                                "bandate, "
-                                "unbandate "
-                                "FROM account_banned "
-                                "WHERE id = '%u' "
-                                "AND active = 1",
-                                id);
+                                    "bandate, "
+                                    "unbandate "
+                                    "FROM account_banned "
+                                    "WHERE id = '%u' "
+                                    "AND active = 1",
+                                    id);
 
     if (banresult) // if account banned
     {
@@ -827,9 +825,9 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     uint32 seed = m_Seed;
 
     sha.UpdateData (account);
-    sha.UpdateData ((uint8 *) & t, 4);
-    sha.UpdateData ((uint8 *) & clientSeed, 4);
-    sha.UpdateData ((uint8 *) & seed, 4);
+    sha.UpdateData ((uint8*) & t, 4);
+    sha.UpdateData ((uint8*) & clientSeed, 4);
+    sha.UpdateData ((uint8*) & seed, 4);
     sha.UpdateBigNumbers (&K, NULL);
     sha.Finalize ();
 
@@ -847,8 +845,8 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     std::string address = GetRemoteAddress();
 
     DEBUG_LOG ("WorldSocket::HandleAuthSession: Client '%s' authenticated successfully from %s.",
-                account.c_str(),
-                address.c_str());
+               account.c_str(),
+               address.c_str());
 
     // Update the last_ip in the database
     // No SQL injection, username escaped.
@@ -937,10 +935,10 @@ int WorldSocket::HandlePing (WorldPacket& recvPacket)
         else
         {
             sLog.outError ("WorldSocket::HandlePing: peer sent CMSG_PING, "
-                            "but is not authenticated or got recently kicked,"
-                            " address = %s",
-                            GetRemoteAddress().c_str());
-             return -1;
+                           "but is not authenticated or got recently kicked,"
+                           " address = %s",
+                           GetRemoteAddress().c_str());
+            return -1;
         }
     }
 

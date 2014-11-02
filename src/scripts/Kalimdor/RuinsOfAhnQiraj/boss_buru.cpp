@@ -24,5 +24,5 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
- #define EMOTE_TARGET        -1509002
+#define EMOTE_TARGET        -1509002
 

@@ -51,7 +51,7 @@ struct boss_theravenianAI : public ScriptedAI
 
     void JustDied(Unit* /*killer*/)
     {
-        ScriptedInstance *pInstance = me->GetInstanceData();
+        ScriptedInstance* pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_THERAVENIAN_DEATH, 0);
@@ -75,28 +75,32 @@ struct boss_theravenianAI : public ScriptedAI
         {
             DoCastVictim( SPELL_TRAMPLE);
             Trample_Timer = 10000;
-        } else Trample_Timer -= diff;
+        }
+        else Trample_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 7000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         //SunderingCleave_Timer
         if (SunderingCleave_Timer <= diff)
         {
             DoCastVictim( SPELL_SUNDERINCLEAVE);
             SunderingCleave_Timer = 20000;
-        } else SunderingCleave_Timer -= diff;
+        }
+        else SunderingCleave_Timer -= diff;
 
         //KnockAway_Timer
         if (KnockAway_Timer <= diff)
         {
             DoCastVictim( SPELL_KNOCKAWAY);
             KnockAway_Timer = 12000;
-        } else KnockAway_Timer -= diff;
+        }
+        else KnockAway_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -109,7 +113,7 @@ CreatureAI* GetAI_boss_theravenian(Creature* pCreature)
 
 void AddSC_boss_theravenian()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_the_ravenian";
     newscript->GetAI = &GetAI_boss_theravenian;

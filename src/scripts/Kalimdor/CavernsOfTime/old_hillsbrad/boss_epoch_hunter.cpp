@@ -48,7 +48,7 @@ struct boss_epoch_hunterAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 SandBreath_Timer;
     uint32 ImpendingDeath_Timer;
@@ -65,19 +65,27 @@ struct boss_epoch_hunterAI : public ScriptedAI
 
     void EnterCombat(Unit*)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_AGGRO1, me); break;
-            case 1: DoScriptText(SAY_AGGRO2, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO2, me);
+            break;
         }
     }
 
     void KilledUnit(Unit*)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY1, me); break;
-            case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
         }
     }
 
@@ -103,33 +111,41 @@ struct boss_epoch_hunterAI : public ScriptedAI
 
             DoCastVictim(SPELL_SAND_BREATH);
 
-            switch(rand()%2)
+            switch (rand() % 2)
             {
-                case 0: DoScriptText(SAY_BREATH1, me); break;
-                case 1: DoScriptText(SAY_BREATH2, me); break;
+            case 0:
+                DoScriptText(SAY_BREATH1, me);
+                break;
+            case 1:
+                DoScriptText(SAY_BREATH2, me);
+                break;
             }
 
-            SandBreath_Timer = 25000+rand()%5000;
-        } else SandBreath_Timer -= diff;
+            SandBreath_Timer = 25000 + rand() % 5000;
+        }
+        else SandBreath_Timer -= diff;
 
         if (ImpendingDeath_Timer <= diff)
         {
             DoCastVictim(SPELL_IMPENDING_DEATH);
-            ImpendingDeath_Timer = 30000+rand()%5000;
-        } else ImpendingDeath_Timer -= diff;
+            ImpendingDeath_Timer = 30000 + rand() % 5000;
+        }
+        else ImpendingDeath_Timer -= diff;
 
         if (WingBuffet_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_WING_BUFFET);
-            WingBuffet_Timer = 25000+rand()%10000;
-        } else WingBuffet_Timer -= diff;
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_WING_BUFFET);
+            WingBuffet_Timer = 25000 + rand() % 10000;
+        }
+        else WingBuffet_Timer -= diff;
 
         if (Mda_Timer <= diff)
         {
-            DoCast(me,SPELL_MAGIC_DISRUPTION_AURA);
+            DoCast(me, SPELL_MAGIC_DISRUPTION_AURA);
             Mda_Timer = 15000;
-        } else Mda_Timer -= diff;
+        }
+        else Mda_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -142,7 +158,7 @@ CreatureAI* GetAI_boss_epoch_hunter(Creature* pCreature)
 
 void AddSC_boss_epoch_hunter()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_epoch_hunter";
     newscript->GetAI = &GetAI_boss_epoch_hunter;

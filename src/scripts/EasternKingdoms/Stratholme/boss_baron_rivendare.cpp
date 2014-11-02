@@ -99,27 +99,27 @@ struct boss_baron_rivendareAI : public ScriptedAI
         //        RaiseDead_Timer = 30000;
         SummonSkeletons_Timer = 34000;
         if (pInstance && pInstance->GetData(TYPE_RAMSTEIN) == DONE)
-            pInstance->SetData(TYPE_BARON,NOT_STARTED);
+            pInstance->SetData(TYPE_BARON, NOT_STARTED);
     }
 
     void AttackStart(Unit* who)
     {
         if (pInstance)//can't use entercombat(), boss' dmg aura sets near players in combat, before entering the room's door
-            pInstance->SetData(TYPE_BARON,IN_PROGRESS);
+            pInstance->SetData(TYPE_BARON, IN_PROGRESS);
         ScriptedAI::AttackStart(who);
     }
 
     void JustSummoned(Creature* summoned)
     {
-        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             summoned->AI()->AttackStart(pTarget);
     }
 
-     void JustDied(Unit* /*Killer*/)
-     {
-         if (pInstance)
-             pInstance->SetData(TYPE_BARON,DONE);
-     }
+    void JustDied(Unit* /*Killer*/)
+    {
+        if (pInstance)
+            pInstance->SetData(TYPE_BARON, DONE);
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -133,22 +133,25 @@ struct boss_baron_rivendareAI : public ScriptedAI
                 DoCastVictim( SPELL_SHADOWBOLT);
 
             ShadowBolt_Timer = 10000;
-        } else ShadowBolt_Timer -= diff;
+        }
+        else ShadowBolt_Timer -= diff;
 
         //Cleave
         if (Cleave_Timer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
             //13 seconds until we should cast this again
-            Cleave_Timer = 7000 + (rand()%10000);
-        } else Cleave_Timer -= diff;
+            Cleave_Timer = 7000 + (rand() % 10000);
+        }
+        else Cleave_Timer -= diff;
 
         //MortalStrike
         if (MortalStrike_Timer <= diff)
         {
             DoCastVictim( SPELL_MORTALSTRIKE);
-            MortalStrike_Timer = 10000 + (rand()%15000);
-        } else MortalStrike_Timer -= diff;
+            MortalStrike_Timer = 10000 + (rand() % 15000);
+        }
+        else MortalStrike_Timer -= diff;
 
         //RaiseDead
         //            if (RaiseDead_Timer <= diff)
@@ -160,16 +163,17 @@ struct boss_baron_rivendareAI : public ScriptedAI
         //SummonSkeletons
         if (SummonSkeletons_Timer <= diff)
         {
-            me->SummonCreature(11197,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,29000);
-            me->SummonCreature(11197,ADD_2X,ADD_2Y,ADD_2Z,ADD_2O,TEMPSUMMON_TIMED_DESPAWN,29000);
-            me->SummonCreature(11197,ADD_3X,ADD_3Y,ADD_3Z,ADD_3O,TEMPSUMMON_TIMED_DESPAWN,29000);
-            me->SummonCreature(11197,ADD_4X,ADD_4Y,ADD_4Z,ADD_4O,TEMPSUMMON_TIMED_DESPAWN,29000);
-            me->SummonCreature(11197,ADD_5X,ADD_5Y,ADD_5Z,ADD_5O,TEMPSUMMON_TIMED_DESPAWN,29000);
-            me->SummonCreature(11197,ADD_6X,ADD_6Y,ADD_6Z,ADD_6O,TEMPSUMMON_TIMED_DESPAWN,29000);
+            me->SummonCreature(11197, ADD_1X, ADD_1Y, ADD_1Z, ADD_1O, TEMPSUMMON_TIMED_DESPAWN, 29000);
+            me->SummonCreature(11197, ADD_2X, ADD_2Y, ADD_2Z, ADD_2O, TEMPSUMMON_TIMED_DESPAWN, 29000);
+            me->SummonCreature(11197, ADD_3X, ADD_3Y, ADD_3Z, ADD_3O, TEMPSUMMON_TIMED_DESPAWN, 29000);
+            me->SummonCreature(11197, ADD_4X, ADD_4Y, ADD_4Z, ADD_4O, TEMPSUMMON_TIMED_DESPAWN, 29000);
+            me->SummonCreature(11197, ADD_5X, ADD_5Y, ADD_5Z, ADD_5O, TEMPSUMMON_TIMED_DESPAWN, 29000);
+            me->SummonCreature(11197, ADD_6X, ADD_6Y, ADD_6Z, ADD_6O, TEMPSUMMON_TIMED_DESPAWN, 29000);
 
             //34 seconds until we should cast this again
             SummonSkeletons_Timer = 40000;
-        } else SummonSkeletons_Timer -= diff;
+        }
+        else SummonSkeletons_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -182,7 +186,7 @@ CreatureAI* GetAI_boss_baron_rivendare(Creature* pCreature)
 
 void AddSC_boss_baron_rivendare()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_baron_rivendare";
     newscript->GetAI = &GetAI_boss_baron_rivendare;

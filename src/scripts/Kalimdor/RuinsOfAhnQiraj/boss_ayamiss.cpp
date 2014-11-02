@@ -50,7 +50,7 @@ struct boss_ayamissAI : public ScriptedAI
         STINGERSPRAY_Timer = 30000;
         POISONSTINGER_Timer = 30000;
         SUMMONSWARMER_Timer = 60000;
-        phase=1;
+        phase = 1;
     }
 
     void EnterCombat(Unit* who)
@@ -64,31 +64,32 @@ struct boss_ayamissAI : public ScriptedAI
             return;
 
         //If he is 70% start phase 2
-        if (phase == 1 && me->GetHealth()*100 / me->GetMaxHealth() <= 70 && !me->IsNonMeleeSpellCast(false))
-        {
-            phase=2;
-        }
+        if (phase == 1 && me->GetHealth() * 100 / me->GetMaxHealth() <= 70 && !me->IsNonMeleeSpellCast(false))
+            phase = 2;
 
         //STINGERSPRAY_Timer (only in phase2)
         if (phase == 2 && STINGERSPRAY_Timer <= diff)
         {
             DoCastVictim(SPELL_STINGERSPRAY);
             STINGERSPRAY_Timer = 30000;
-        } else STINGERSPRAY_Timer -= diff;
+        }
+        else STINGERSPRAY_Timer -= diff;
 
         //POISONSTINGER_Timer (only in phase1)
         if (phase == 1 && POISONSTINGER_Timer <= diff)
         {
             DoCastVictim(SPELL_POISONSTINGER);
             POISONSTINGER_Timer = 30000;
-        } else POISONSTINGER_Timer -= diff;
+        }
+        else POISONSTINGER_Timer -= diff;
 
         //SUMMONSWARMER_Timer (only in phase1)
         if (SUMMONSWARMER_Timer <= diff)
         {
             DoCastVictim(SPELL_SUMMONSWARMER);
             SUMMONSWARMER_Timer = 60000;
-        } else SUMMONSWARMER_Timer -= diff;
+        }
+        else SUMMONSWARMER_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -100,7 +101,7 @@ CreatureAI* GetAI_boss_ayamiss(Creature* pCreature)
 
 void AddSC_boss_ayamiss()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_ayamiss";
     newscript->GetAI = &GetAI_boss_ayamiss;

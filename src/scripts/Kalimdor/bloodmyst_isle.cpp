@@ -52,21 +52,21 @@ struct mob_webbed_creatureAI : public ScriptedAI
     {
         uint32 spawnCreatureID = 0;
 
-        switch (urand(0,2))
+        switch (urand(0, 2))
         {
-            case 0:
-                spawnCreatureID = 17681;
-                if (Killer->GetTypeId() == TYPEID_PLAYER)
-                    CAST_PLR(Killer)->KilledMonsterCredit(spawnCreatureID, me->GetGUID());
-                break;
-            case 1:
-            case 2:
-                spawnCreatureID = possibleSpawns[urand(0,30)];
-                break;
+        case 0:
+            spawnCreatureID = 17681;
+            if (Killer->GetTypeId() == TYPEID_PLAYER)
+                CAST_PLR(Killer)->KilledMonsterCredit(spawnCreatureID, me->GetGUID());
+            break;
+        case 1:
+        case 2:
+            spawnCreatureID = possibleSpawns[urand(0, 30)];
+            break;
         }
 
         if (spawnCreatureID)
-            DoSpawnCreature(spawnCreatureID,0,0,0,me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            DoSpawnCreature(spawnCreatureID, 0, 0, 0, me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
     }
 };
 CreatureAI* GetAI_mob_webbed_creature(Creature* pCreature)
@@ -89,9 +89,9 @@ CreatureAI* GetAI_mob_webbed_creature(Creature* pCreature)
 
 bool GossipHello_npc_captured_sunhawk_agent(Player* pPlayer, Creature* pCreature)
 {
-    if (pPlayer->HasAura(31609,1) && pPlayer->GetQuestStatus(9756) == QUEST_STATUS_INCOMPLETE)
+    if (pPlayer->HasAura(31609, 1) && pPlayer->GetQuestStatus(9756) == QUEST_STATUS_INCOMPLETE)
     {
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HELLO_CSA, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HELLO_CSA, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
         pPlayer->SEND_GOSSIP_MENU(9136, pCreature->GetGUID());
     }
     else
@@ -104,37 +104,37 @@ bool GossipSelect_npc_captured_sunhawk_agent(Player* pPlayer, Creature* pCreatur
 {
     switch (uiAction)
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_CSA1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            pPlayer->SEND_GOSSIP_MENU(9137, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_CSA2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            pPlayer->SEND_GOSSIP_MENU(9138, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+3:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_CSA3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            pPlayer->SEND_GOSSIP_MENU(9139, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+4:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_CSA4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            pPlayer->SEND_GOSSIP_MENU(9140, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+5:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_CSA5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-            pPlayer->SEND_GOSSIP_MENU(9141, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+6:
-            pPlayer->CLOSE_GOSSIP_MENU();
-            pPlayer->TalkedToCreature(C_SUNHAWK_TRIGGER, pCreature->GetGUID());
-            break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_CSA1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        pPlayer->SEND_GOSSIP_MENU(9137, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_CSA2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        pPlayer->SEND_GOSSIP_MENU(9138, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+3:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_CSA3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+        pPlayer->SEND_GOSSIP_MENU(9139, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+4:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_CSA4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+        pPlayer->SEND_GOSSIP_MENU(9140, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+5:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_CSA5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+        pPlayer->SEND_GOSSIP_MENU(9141, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+6:
+        pPlayer->CLOSE_GOSSIP_MENU();
+        pPlayer->TalkedToCreature(C_SUNHAWK_TRIGGER, pCreature->GetGUID());
+        break;
     }
     return true;
 }
 
 void AddSC_bloodmyst_isle()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "mob_webbed_creature";

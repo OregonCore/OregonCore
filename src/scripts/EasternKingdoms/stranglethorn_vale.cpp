@@ -48,11 +48,11 @@ struct mob_yennikuAI : public ScriptedAI
         me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
     }
 
-    void SpellHit(Unit* caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry* spell)
     {
         if (caster->GetTypeId() == TYPEID_PLAYER)
         {
-                                                            //Yenniku's Release
+            //Yenniku's Release
             if (!bReset && CAST_PLR(caster)->GetQuestStatus(592) == QUEST_STATUS_INCOMPLETE && spell->Id == 3607)
             {
                 me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STUN);
@@ -94,7 +94,7 @@ struct mob_yennikuAI : public ScriptedAI
                     }
                 }
             }
-         }
+        }
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -114,7 +114,7 @@ CreatureAI* GetAI_mob_yenniku(Creature* pCreature)
 
 void AddSC_stranglethorn_vale()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "mob_yenniku";

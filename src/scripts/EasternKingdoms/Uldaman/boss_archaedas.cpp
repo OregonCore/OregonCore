@@ -89,7 +89,7 @@ struct boss_archaedasAI : public ScriptedAI
         if (minion && minion->isAlive())
         {
             DoCast (minion, SPELL_AWAKEN_VAULT_WALKER, flag);
-            minion->CastSpell(minion, SPELL_ARCHAEDAS_AWAKEN,true);
+            minion->CastSpell(minion, SPELL_ARCHAEDAS_AWAKEN, true);
         }
     }
 
@@ -97,15 +97,16 @@ struct boss_archaedasAI : public ScriptedAI
     {
         me->setFaction (14);
         me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag (UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE);
+        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
     }
 
-    void SpellHit (Unit* /*caster*/, const SpellEntry *spell)
+    void SpellHit (Unit* /*caster*/, const SpellEntry* spell)
     {
         // Being woken up from the altar, start the awaken sequence
-        if (spell == GetSpellStore()->LookupEntry(SPELL_ARCHAEDAS_AWAKEN)) {
-            me->MonsterYell(SAY_AGGRO,LANG_UNIVERSAL,0);
-            DoPlaySoundToSet(me,SOUND_AGGRO);
+        if (spell == GetSpellStore()->LookupEntry(SPELL_ARCHAEDAS_AWAKEN))
+        {
+            me->MonsterYell(SAY_AGGRO, LANG_UNIVERSAL, 0);
+            DoPlaySoundToSet(me, SOUND_AGGRO);
             Awaken_Timer = 4000;
             wakingUp = true;
         }
@@ -113,7 +114,7 @@ struct boss_archaedasAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        me->MonsterYell(SAY_KILL,LANG_UNIVERSAL, 0);
+        me->MonsterYell(SAY_KILL, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_KILL);
     }
 
@@ -122,10 +123,13 @@ struct boss_archaedasAI : public ScriptedAI
         if (!pInstance)
             return;
         // we're still doing awaken animation
-        if (wakingUp && Awaken_Timer >= 0) {
+        if (wakingUp && Awaken_Timer >= 0)
+        {
             Awaken_Timer -= diff;
             return;        // dont do anything until we are done
-        } else if (wakingUp && Awaken_Timer <= 0) {
+        }
+        else if (wakingUp && Awaken_Timer <= 0)
+        {
             wakingUp = false;
             AttackStart(Unit::GetUnit(*me, pInstance->GetData64(0)));
             return;     // dont want to continue until we finish the AttackStart method
@@ -136,31 +140,35 @@ struct boss_archaedasAI : public ScriptedAI
             return;
 
         // wake a wall minion
-        if (WallMinionTimer <= diff) {
+        if (WallMinionTimer <= diff)
+        {
             pInstance->SetData (DATA_MINIONS, IN_PROGRESS);
 
             WallMinionTimer = 10000;
-        } else WallMinionTimer -= diff;
+        }
+        else WallMinionTimer -= diff;
 
         //If we are <66 summon the guardians
-        if (!guardiansAwake && me->GetHealth()*100 / me->GetMaxHealth() <= 66) {
-            ActivateMinion(pInstance->GetData64(5),true);   // EarthenGuardian1
-            ActivateMinion(pInstance->GetData64(6),true);   // EarthenGuardian2
-            ActivateMinion(pInstance->GetData64(7),true);   // EarthenGuardian3
-            ActivateMinion(pInstance->GetData64(8),true);   // EarthenGuardian4
-            ActivateMinion(pInstance->GetData64(9),true);   // EarthenGuardian5
-            ActivateMinion(pInstance->GetData64(10),false); // EarthenGuardian6
-            me->MonsterYell(SAY_SUMMON,LANG_UNIVERSAL, 0);
+        if (!guardiansAwake && me->GetHealth() * 100 / me->GetMaxHealth() <= 66)
+        {
+            ActivateMinion(pInstance->GetData64(5), true);  // EarthenGuardian1
+            ActivateMinion(pInstance->GetData64(6), true);  // EarthenGuardian2
+            ActivateMinion(pInstance->GetData64(7), true);  // EarthenGuardian3
+            ActivateMinion(pInstance->GetData64(8), true);  // EarthenGuardian4
+            ActivateMinion(pInstance->GetData64(9), true);  // EarthenGuardian5
+            ActivateMinion(pInstance->GetData64(10), false); // EarthenGuardian6
+            me->MonsterYell(SAY_SUMMON, LANG_UNIVERSAL, 0);
             DoPlaySoundToSet(me, SOUND_SUMMON);
             guardiansAwake = true;
         }
 
         //If we are <33 summon the vault walkers
-        if (!vaultWalkersAwake && me->GetHealth()*100 / me->GetMaxHealth() <= 33) {
-            ActivateMinion(pInstance->GetData64(1),true);    // VaultWalker1
-            ActivateMinion(pInstance->GetData64(2),true);    // VaultWalker2
-            ActivateMinion(pInstance->GetData64(3),true);    // VaultWalker3
-            ActivateMinion(pInstance->GetData64(4),false);    // VaultWalker4
+        if (!vaultWalkersAwake && me->GetHealth() * 100 / me->GetMaxHealth() <= 33)
+        {
+            ActivateMinion(pInstance->GetData64(1), true);   // VaultWalker1
+            ActivateMinion(pInstance->GetData64(2), true);   // VaultWalker2
+            ActivateMinion(pInstance->GetData64(3), true);   // VaultWalker3
+            ActivateMinion(pInstance->GetData64(4), false);   // VaultWalker4
             me->MonsterYell(SAY_SUMMON2, LANG_UNIVERSAL, 0);
             DoPlaySoundToSet(me, SOUND_SUMMON2);
             vaultWalkersAwake = true;
@@ -173,12 +181,14 @@ struct boss_archaedasAI : public ScriptedAI
 
             //45 seconds until we should cast this agian
             Tremor_Timer  = 45000;
-        } else Tremor_Timer  -= diff;
+        }
+        else Tremor_Timer  -= diff;
 
         DoMeleeAttackIfReady();
     }
 
-    void JustDied (Unit* /*killer*/) {
+    void JustDied (Unit* /*killer*/)
+    {
         if (pInstance)
         {
             pInstance->SetData(DATA_ANCIENT_DOOR, DONE);        // open the vault door
@@ -239,9 +249,11 @@ struct mob_archaedas_minionsAI : public ScriptedAI
         amIAwake = true;
     }
 
-    void SpellHit (Unit* /*caster*/, const SpellEntry *spell) {
+    void SpellHit (Unit* /*caster*/, const SpellEntry* spell)
+    {
         // time to wake up, start animation
-        if (spell == GetSpellStore()->LookupEntry(SPELL_ARCHAEDAS_AWAKEN)){
+        if (spell == GetSpellStore()->LookupEntry(SPELL_ARCHAEDAS_AWAKEN))
+        {
             Awaken_Timer = 5000;
             wakingUp = true;
         }
@@ -256,10 +268,13 @@ struct mob_archaedas_minionsAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         // we're still in the awaken animation
-        if (wakingUp && Awaken_Timer >= 0) {
+        if (wakingUp && Awaken_Timer >= 0)
+        {
             Awaken_Timer -= diff;
             return;        // dont do anything until we are done
-        } else if (wakingUp && Awaken_Timer <= 0) {
+        }
+        else if (wakingUp && Awaken_Timer <= 0)
+        {
             wakingUp = false;
             amIAwake = true;
             AttackStart(Unit::GetUnit(*me, pInstance->GetData64(0))); // whoWokeArchaedasGUID
@@ -293,7 +308,7 @@ EndScriptData */
 #define SPELL_BOSS_OBJECT_VISUAL    11206
 
 uint64 altarOfArchaedasCount[5];
-int32 altarOfArchaedasCounter=0;
+int32 altarOfArchaedasCounter = 0;
 
 
 bool GOHello_go_altar_of_archaedas(Player* player, GameObject* go)
@@ -302,7 +317,8 @@ bool GOHello_go_altar_of_archaedas(Player* player, GameObject* go)
     go->AddUse ();
 
     alreadyUsed = false;
-    for (uint32 loop=0; loop<5; loop++) {
+    for (uint32 loop = 0; loop < 5; loop++)
+    {
         if (altarOfArchaedasCount[loop] == player->GetGUID()) alreadyUsed = true;
     }
     if (!alreadyUsed)
@@ -310,27 +326,30 @@ bool GOHello_go_altar_of_archaedas(Player* player, GameObject* go)
 
     player->CastSpell (player, SPELL_BOSS_OBJECT_VISUAL, false);
 
-    if (altarOfArchaedasCounter < NUMBER_NEEDED_TO_ACTIVATE) {
+    if (altarOfArchaedasCounter < NUMBER_NEEDED_TO_ACTIVATE)
+    {
         return false;        // not enough people yet
     }
 
     // Check to make sure at least three people are still casting
-    uint32 count=0;
+    uint32 count = 0;
     Unit* pTarget;
-    for (uint32 x=0; x<5; x++) {
+    for (uint32 x = 0; x < 5; x++)
+    {
         pTarget = Unit::GetUnit(*player, altarOfArchaedasCount[x]);
         if (!pTarget) continue;
         if (pTarget->IsNonMeleeSpellCast(true)) count++;
         if (count >= NUMBER_NEEDED_TO_ACTIVATE) break;
     }
 
-    if (count < NUMBER_NEEDED_TO_ACTIVATE) {
+    if (count < NUMBER_NEEDED_TO_ACTIVATE)
+    {
         return false;            // not enough people
     }
 
     ScriptedInstance* pInstance = (player->GetInstanceData());
     if (!pInstance) return false;
-    pInstance->SetData64(0,player->GetGUID());     // activate archaedas
+    pInstance->SetData64(0, player->GetGUID());    // activate archaedas
 
     return false;
 }
@@ -382,7 +401,7 @@ struct mob_stonekeepersAI : public ScriptedAI
 
     void JustDied(Unit* /*attacker*/)
     {
-        DoCast (me, SPELL_SELF_DESTRUCT,true);
+        DoCast (me, SPELL_SELF_DESTRUCT, true);
         if (pInstance)
             pInstance->SetData(DATA_STONE_KEEPERS, IN_PROGRESS);    // activate next stonekeeper
     }
@@ -406,7 +425,7 @@ EndScriptData */
 #define NUMBER_NEEDED_TO_ACTIVATE 3
 
 static uint64 altarOfTheKeeperCount[5];
-static uint32 altarOfTheKeeperCounter=0;
+static uint32 altarOfTheKeeperCounter = 0;
 
 bool GOHello_go_altar_of_the_keepers(Player* pPlayer, GameObject* pGo)
 {
@@ -419,7 +438,7 @@ bool GOHello_go_altar_of_the_keepers(Player* pPlayer, GameObject* pGo)
     pGo->AddUse();
 
     alreadyUsed = false;
-    for (uint32 loop=0; loop<5; ++loop)
+    for (uint32 loop = 0; loop < 5; ++loop)
     {
         if (altarOfTheKeeperCount[loop] == pPlayer->GetGUID())
             alreadyUsed = true;
@@ -462,7 +481,7 @@ bool GOHello_go_altar_of_the_keepers(Player* pPlayer, GameObject* pGo)
 
 void AddSC_boss_archaedas()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_archaedas";
     newscript->GetAI = &GetAI_boss_archaedas;

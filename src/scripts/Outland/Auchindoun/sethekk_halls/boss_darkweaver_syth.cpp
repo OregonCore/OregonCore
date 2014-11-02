@@ -90,13 +90,19 @@ struct boss_darkweaver_sythAI : public ScriptedAI
             pInstance->SetData(DATA_SYTHEVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit* )
+    void EnterCombat(Unit*)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO_3, me);
+            break;
         }
 
         if (pInstance)
@@ -113,19 +119,23 @@ struct boss_darkweaver_sythAI : public ScriptedAI
 
     void KilledUnit(Unit*)
     {
-        if (rand()%2)
+        if (rand() % 2)
             return;
 
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY_1, me); break;
-            case 1: DoScriptText(SAY_SLAY_2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY_2, me);
+            break;
         }
     }
 
     void JustSummoned(Creature* summoned)
     {
-        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             summoned->AI()->AttackStart(pTarget);
     }
 
@@ -136,10 +146,10 @@ struct boss_darkweaver_sythAI : public ScriptedAI
         if (me->IsNonMeleeSpellCast(false))
             me->InterruptNonMeleeSpells(false);
 
-        DoCast(me,SPELL_SUMMON_SYTH_ARCANE,true);   //front
-        DoCast(me,SPELL_SUMMON_SYTH_FIRE,true);     //back
-        DoCast(me,SPELL_SUMMON_SYTH_FROST,true);    //left
-        DoCast(me,SPELL_SUMMON_SYTH_SHADOW,true);   //right
+        DoCast(me, SPELL_SUMMON_SYTH_ARCANE, true); //front
+        DoCast(me, SPELL_SUMMON_SYTH_FIRE, true);   //back
+        DoCast(me, SPELL_SUMMON_SYTH_FROST, true);  //left
+        DoCast(me, SPELL_SUMMON_SYTH_SHADOW, true); //right
     }
 
     void UpdateAI(const uint32 diff)
@@ -147,19 +157,19 @@ struct boss_darkweaver_sythAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth()*100) / me->GetMaxHealth() < 90) && !summon90)
+        if (((me->GetHealth() * 100) / me->GetMaxHealth() < 90) && !summon90)
         {
             SythSummoning();
             summon90 = true;
         }
 
-        if (((me->GetHealth()*100) / me->GetMaxHealth() < 50) && !summon50)
+        if (((me->GetHealth() * 100) / me->GetMaxHealth() < 50) && !summon50)
         {
             SythSummoning();
             summon50 = true;
         }
 
-        if (((me->GetHealth()*100) / me->GetMaxHealth() < 10) && !summon10)
+        if (((me->GetHealth() * 100) / me->GetMaxHealth() < 10) && !summon10)
         {
             SythSummoning();
             summon10 = true;
@@ -167,43 +177,48 @@ struct boss_darkweaver_sythAI : public ScriptedAI
 
         if (flameshock_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_FLAME_SHOCK);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_FLAME_SHOCK);
 
-            flameshock_timer = 10000 + rand()%5000;
-        } else flameshock_timer -= diff;
+            flameshock_timer = 10000 + rand() % 5000;
+        }
+        else flameshock_timer -= diff;
 
         if (arcaneshock_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_ARCANE_SHOCK);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_ARCANE_SHOCK);
 
-            arcaneshock_timer = 10000 + rand()%5000;
-        } else arcaneshock_timer -= diff;
+            arcaneshock_timer = 10000 + rand() % 5000;
+        }
+        else arcaneshock_timer -= diff;
 
         if (frostshock_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_FROST_SHOCK);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_FROST_SHOCK);
 
-            frostshock_timer = 10000 + rand()%5000;
-        } else frostshock_timer -= diff;
+            frostshock_timer = 10000 + rand() % 5000;
+        }
+        else frostshock_timer -= diff;
 
         if (shadowshock_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_SHADOW_SHOCK);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_SHADOW_SHOCK);
 
-            shadowshock_timer = 10000 + rand()%5000;
-        } else shadowshock_timer -= diff;
+            shadowshock_timer = 10000 + rand() % 5000;
+        }
+        else shadowshock_timer -= diff;
 
         if (chainlightning_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_CHAIN_LIGHTNING);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_CHAIN_LIGHTNING);
 
             chainlightning_timer = 25000;
-        } else chainlightning_timer -= diff;
+        }
+        else chainlightning_timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -235,7 +250,7 @@ struct mob_syth_fireAI : public ScriptedAI
         flamebuffet_timer = 5000;
     }
 
-    void EnterCombat(Unit* ) { }
+    void EnterCombat(Unit*) { }
 
     void UpdateAI(const uint32 diff)
     {
@@ -244,19 +259,21 @@ struct mob_syth_fireAI : public ScriptedAI
 
         if (flameshock_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_FLAME_SHOCK);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_FLAME_SHOCK);
 
             flameshock_timer = 5000;
-        } else flameshock_timer -= diff;
+        }
+        else flameshock_timer -= diff;
 
         if (flamebuffet_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_FLAME_BUFFET);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_FLAME_BUFFET);
 
             flamebuffet_timer = 5000;
-        } else flamebuffet_timer -= diff;
+        }
+        else flamebuffet_timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -286,7 +303,7 @@ struct mob_syth_arcaneAI : public ScriptedAI
         arcanebuffet_timer = 5000;
     }
 
-    void EnterCombat(Unit* ) { }
+    void EnterCombat(Unit*) { }
 
     void UpdateAI(const uint32 diff)
     {
@@ -295,19 +312,21 @@ struct mob_syth_arcaneAI : public ScriptedAI
 
         if (arcaneshock_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_ARCANE_SHOCK);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_ARCANE_SHOCK);
 
             arcaneshock_timer = 5000;
-        } else arcaneshock_timer -= diff;
+        }
+        else arcaneshock_timer -= diff;
 
         if (arcanebuffet_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_ARCANE_BUFFET);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_ARCANE_BUFFET);
 
             arcanebuffet_timer = 5000;
-        } else arcanebuffet_timer -= diff;
+        }
+        else arcanebuffet_timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -337,7 +356,7 @@ struct mob_syth_frostAI : public ScriptedAI
         frostbuffet_timer = 5000;
     }
 
-    void EnterCombat(Unit* ) { }
+    void EnterCombat(Unit*) { }
 
     void UpdateAI(const uint32 diff)
     {
@@ -346,19 +365,21 @@ struct mob_syth_frostAI : public ScriptedAI
 
         if (frostshock_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_FROST_SHOCK);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_FROST_SHOCK);
 
             frostshock_timer = 5000;
-        } else frostshock_timer -= diff;
+        }
+        else frostshock_timer -= diff;
 
         if (frostbuffet_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_FROST_BUFFET);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_FROST_BUFFET);
 
             frostbuffet_timer = 5000;
-        } else frostbuffet_timer -= diff;
+        }
+        else frostbuffet_timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -388,7 +409,7 @@ struct mob_syth_shadowAI : public ScriptedAI
         shadowbuffet_timer = 5000;
     }
 
-    void EnterCombat(Unit* ) { }
+    void EnterCombat(Unit*) { }
 
     void UpdateAI(const uint32 diff)
     {
@@ -397,19 +418,21 @@ struct mob_syth_shadowAI : public ScriptedAI
 
         if (shadowshock_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_SHADOW_SHOCK);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_SHADOW_SHOCK);
 
             shadowshock_timer = 5000;
-        } else shadowshock_timer -= diff;
+        }
+        else shadowshock_timer -= diff;
 
         if (shadowbuffet_timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_SHADOW_BUFFET);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_SHADOW_BUFFET);
 
             shadowbuffet_timer = 5000;
-        } else shadowbuffet_timer -= diff;
+        }
+        else shadowbuffet_timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -422,7 +445,7 @@ CreatureAI* GetAI_mob_syth_shadow(Creature* pCreature)
 
 void AddSC_boss_darkweaver_syth()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_darkweaver_syth";
     newscript->GetAI = &GetAI_boss_darkweaver_syth;

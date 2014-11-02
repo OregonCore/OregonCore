@@ -23,12 +23,12 @@ SDCategory: Stratholme
 EndScriptData */
 
 #include "ScriptPCH.h"
- #include "stratholme.h"
+#include "stratholme.h"
 
 #define SPELL_TRAMPLE       5568
 #define SPELL_KNOCKOUT    17307
 
- #define C_MINDLESS_UNDEAD   11030
+#define C_MINDLESS_UNDEAD   11030
 
 struct boss_ramstein_the_gorgerAI : public ScriptedAI
 {
@@ -56,12 +56,12 @@ struct boss_ramstein_the_gorgerAI : public ScriptedAI
     {
         for (uint8 i = 0; i < 30; ++i)
         {
-            if (Creature* mob = me->SummonCreature(C_MINDLESS_UNDEAD,3969.35+irand(-10,10),-3391.87+irand(-10,10),119.11,5.91,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000))
+            if (Creature* mob = me->SummonCreature(C_MINDLESS_UNDEAD, 3969.35 + irand(-10, 10), -3391.87 + irand(-10, 10), 119.11, 5.91, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 1800000))
                 mob->AI()->AttackStart(me->SelectNearestTarget(500));
         }
 
         if (pInstance)
-            pInstance->SetData(TYPE_RAMSTEIN,DONE);
+            pInstance->SetData(TYPE_RAMSTEIN, DONE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -75,14 +75,16 @@ struct boss_ramstein_the_gorgerAI : public ScriptedAI
         {
             DoCast(me, SPELL_TRAMPLE);
             Trample_Timer = 7000;
-        } else Trample_Timer -= diff;
+        }
+        else Trample_Timer -= diff;
 
         //Knockout
         if (Knockout_Timer <= diff)
         {
             DoCastVictim( SPELL_KNOCKOUT);
             Knockout_Timer = 10000;
-        } else Knockout_Timer -= diff;
+        }
+        else Knockout_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -94,7 +96,7 @@ CreatureAI* GetAI_boss_ramstein_the_gorger(Creature* pCreature)
 
 void AddSC_boss_ramstein_the_gorger()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_ramstein_the_gorger";
     newscript->GetAI = &GetAI_boss_ramstein_the_gorger;

@@ -77,42 +77,42 @@ struct boss_highlord_mograineAI : public ScriptedAI
     {
         if (!me->isInCombat())
         {
-            switch(rand()%3)
+            switch (rand() % 3)
             {
-                case 0:
-                    me->MonsterYell(SAY_AGGRO1,LANG_UNIVERSAL,0);
-                    DoPlaySoundToSet(me,SOUND_AGGRO1);
-                    break;
-                case 1:
-                    me->MonsterYell(SAY_AGGRO2,LANG_UNIVERSAL,0);
-                    DoPlaySoundToSet(me,SOUND_AGGRO2);
-                    break;
-                case 2:
-                    me->MonsterYell(SAY_AGGRO3,LANG_UNIVERSAL,0);
-                    DoPlaySoundToSet(me,SOUND_AGGRO3);
-                    break;
+            case 0:
+                me->MonsterYell(SAY_AGGRO1, LANG_UNIVERSAL, 0);
+                DoPlaySoundToSet(me, SOUND_AGGRO1);
+                break;
+            case 1:
+                me->MonsterYell(SAY_AGGRO2, LANG_UNIVERSAL, 0);
+                DoPlaySoundToSet(me, SOUND_AGGRO2);
+                break;
+            case 2:
+                me->MonsterYell(SAY_AGGRO3, LANG_UNIVERSAL, 0);
+                DoPlaySoundToSet(me, SOUND_AGGRO3);
+                break;
             }
         }
     }
 
     void KilledUnit()
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0:
-                me->MonsterYell(SAY_SLAY1,LANG_UNIVERSAL,0);
-                DoPlaySoundToSet(me,SOUND_SLAY1);
-                break;
-            case 1:
-                me->MonsterYell(SAY_SLAY2,LANG_UNIVERSAL,0);
-                DoPlaySoundToSet(me,SOUND_SLAY2);
-                break;
+        case 0:
+            me->MonsterYell(SAY_SLAY1, LANG_UNIVERSAL, 0);
+            DoPlaySoundToSet(me, SOUND_SLAY1);
+            break;
+        case 1:
+            me->MonsterYell(SAY_SLAY2, LANG_UNIVERSAL, 0);
+            DoPlaySoundToSet(me, SOUND_SLAY2);
+            break;
         }
     }
 
     void JustDied(Unit*)
     {
-        me->MonsterYell(SAY_DEATH,LANG_UNIVERSAL,0);
+        me->MonsterYell(SAY_DEATH, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_DEATH);
     }
 
@@ -131,22 +131,23 @@ struct boss_highlord_mograineAI : public ScriptedAI
         {
             DoCastVictim(SPELL_MARK_OF_MOGRAINE);
             Mark_Timer = 12000;
-        } else Mark_Timer -= diff;
+        }
+        else Mark_Timer -= diff;
 
         // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-        if (ShieldWall1 && (me->GetHealth()*100 / me->GetMaxHealth()) < 50)
+        if (ShieldWall1 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
         {
             if (ShieldWall1)
             {
-                DoCast(me,SPELL_SHIELDWALL);
+                DoCast(me, SPELL_SHIELDWALL);
                 ShieldWall1 = false;
             }
         }
-        if (ShieldWall2 && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
+        if (ShieldWall2 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
         {
             if (ShieldWall2)
             {
-                DoCast(me,SPELL_SHIELDWALL);
+                DoCast(me, SPELL_SHIELDWALL);
                 ShieldWall2 = false;
             }
         }
@@ -154,12 +155,11 @@ struct boss_highlord_mograineAI : public ScriptedAI
         // Righteous Fire
         if (RighteousFire_Timer <= diff)
         {
-            if (rand()%4 == 1)                               // 1/4
-            {
+            if (rand() % 4 == 1)                             // 1/4
                 DoCastVictim(SPELL_RIGHTEOUS_FIRE);
-            }
             RighteousFire_Timer = 2000;
-        } else RighteousFire_Timer -= diff;
+        }
+        else RighteousFire_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -171,7 +171,7 @@ CreatureAI* GetAI_boss_highlord_mograine(Creature* pCreature)
 
 void AddSC_boss_highlord_mograine()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_highlord_mograine";
     newscript->GetAI = &GetAI_boss_highlord_mograine;

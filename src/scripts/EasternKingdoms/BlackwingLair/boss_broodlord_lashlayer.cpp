@@ -65,31 +65,35 @@ struct boss_broodlordAI : public ScriptedAI
         {
             DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 7000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         // BlastWave
         if (BlastWave_Timer <= diff)
         {
             DoCastVictim( SPELL_BLASTWAVE);
-            BlastWave_Timer = urand(8000,16000);
-        } else BlastWave_Timer -= diff;
+            BlastWave_Timer = urand(8000, 16000);
+        }
+        else BlastWave_Timer -= diff;
 
         //MortalStrike_Timer
         if (MortalStrike_Timer <= diff)
         {
             DoCastVictim( SPELL_MORTALSTRIKE);
-            MortalStrike_Timer = urand(25000,35000);
-        } else MortalStrike_Timer -= diff;
+            MortalStrike_Timer = urand(25000, 35000);
+        }
+        else MortalStrike_Timer -= diff;
 
         if (KnockBack_Timer <= diff)
         {
             DoCastVictim( SPELL_KNOCKBACK);
             //Drop 50% aggro
             if (DoGetThreat(me->getVictim()))
-                DoModifyThreatPercent(me->getVictim(),-50);
+                DoModifyThreatPercent(me->getVictim(), -50);
 
-            KnockBack_Timer = urand(15000,30000);
-        } else KnockBack_Timer -= diff;
+            KnockBack_Timer = urand(15000, 30000);
+        }
+        else KnockBack_Timer -= diff;
 
         if (EnterEvadeIfOutOfCombatArea(diff))
             DoScriptText(SAY_LEASH, me);
@@ -104,7 +108,7 @@ CreatureAI* GetAI_boss_broodlord(Creature* pCreature)
 
 void AddSC_boss_broodlord()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_broodlord";
     newscript->GetAI = &GetAI_boss_broodlord;

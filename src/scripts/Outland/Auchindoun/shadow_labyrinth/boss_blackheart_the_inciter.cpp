@@ -59,7 +59,7 @@ struct boss_blackheart_the_inciterAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     bool InciteChaos;
     uint32 InciteChaos_Timer;
@@ -79,16 +79,20 @@ struct boss_blackheart_the_inciterAI : public ScriptedAI
             pInstance->SetData(DATA_BLACKHEARTTHEINCITEREVENT, NOT_STARTED);
     }
 
-    void KilledUnit(Unit* )
+    void KilledUnit(Unit*)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY1, me); break;
-            case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
         }
     }
 
-    void JustDied(Unit* )
+    void JustDied(Unit*)
     {
         DoScriptText(SAY_DEATH, me);
 
@@ -96,13 +100,19 @@ struct boss_blackheart_the_inciterAI : public ScriptedAI
             pInstance->SetData(DATA_BLACKHEARTTHEINCITEREVENT, DONE);
     }
 
-    void EnterCombat(Unit* )
+    void EnterCombat(Unit*)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO1, me); break;
-            case 1: DoScriptText(SAY_AGGRO2, me); break;
-            case 2: DoScriptText(SAY_AGGRO3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO3, me);
+            break;
         }
 
         if (pInstance)
@@ -121,7 +131,8 @@ struct boss_blackheart_the_inciterAI : public ScriptedAI
             {
                 InciteChaos = false;
                 InciteChaosWait_Timer = 15000;
-            } else InciteChaosWait_Timer -= diff;
+            }
+            else InciteChaosWait_Timer -= diff;
 
             return;
         }
@@ -130,19 +141,20 @@ struct boss_blackheart_the_inciterAI : public ScriptedAI
         {
             DoCast(me, SPELL_INCITE_CHAOS);
 
-            std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
-            for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
+            std::list<HostileReference*> t_list = me->getThreatManager().getThreatList();
+            for (std::list<HostileReference*>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
                 Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                 if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
-                    me->CastSpell(pTarget,SPELL_INCITE_CHAOS_B,true);
+                    me->CastSpell(pTarget, SPELL_INCITE_CHAOS_B, true);
             }
 
             DoResetThreat();
             InciteChaos = true;
             InciteChaos_Timer = 40000;
             return;
-        } else InciteChaos_Timer -= diff;
+        }
+        else InciteChaos_Timer -= diff;
 
         //Charge_Timer
         if (Charge_Timer <= diff)
@@ -150,14 +162,16 @@ struct boss_blackheart_the_inciterAI : public ScriptedAI
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_CHARGE);
             Charge_Timer = 25000;
-        } else Charge_Timer -= diff;
+        }
+        else Charge_Timer -= diff;
 
         //Knockback_Timer
         if (Knockback_Timer <= diff)
         {
             DoCast(me, SPELL_WAR_STOMP);
             Knockback_Timer = 20000;
-        } else Knockback_Timer -= diff;
+        }
+        else Knockback_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -169,7 +183,7 @@ CreatureAI* GetAI_boss_blackheart_the_inciter(Creature* pCreature)
 
 void AddSC_boss_blackheart_the_inciter()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_blackheart_the_inciter";
     newscript->GetAI = &GetAI_boss_blackheart_the_inciter;

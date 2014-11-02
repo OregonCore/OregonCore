@@ -62,11 +62,11 @@ struct mobs_risen_husk_spiritAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) { }
 
-    void DamageTaken(Unit* done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32& damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER)
             if (damage >= me->GetHealth() && CAST_PLR(done_by)->GetQuestStatus(11180) == QUEST_STATUS_INCOMPLETE)
-                me->CastSpell(done_by,SPELL_SUMMON_RESTLESS_APPARITION,false);
+                me->CastSpell(done_by, SPELL_SUMMON_RESTLESS_APPARITION, false);
     }
 
     void UpdateAI(const uint32 diff)
@@ -79,14 +79,16 @@ struct mobs_risen_husk_spiritAI : public ScriptedAI
             if (me->GetEntry() == 23555)
                 DoCastVictim(SPELL_CONSUME_FLESH);
             ConsumeFlesh_Timer = 15000;
-        } else ConsumeFlesh_Timer -= diff;
+        }
+        else ConsumeFlesh_Timer -= diff;
 
         if (IntangiblePresence_Timer <= diff)
         {
             if (me->GetEntry() == 23554)
                 DoCastVictim(SPELL_INTANGIBLE_PRESENCE);
             IntangiblePresence_Timer = 20000;
-        } else IntangiblePresence_Timer -= diff;
+        }
+        else IntangiblePresence_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -120,7 +122,7 @@ enum eDeserter
     NPC_THERAMORE_DESERTER                       = 23602,
 };
 
-const Position DeserterDisappearPos = {-3609.03f, -4332.91f, 9.39354f, 3.73862f};
+const Position DeserterDisappearPos = { -3609.03f, -4332.91f, 9.39354f, 3.73862f};
 
 #define GOSSIP_ITEM_DESERTER "Your propaganda wont`t work on me. Spout your treasonous filth elsewhere traitor!"
 
@@ -168,7 +170,7 @@ bool GossipSelect_npc_deserter_agitator(Player* pPlayer, Creature* pCreature, ui
     if (uiAction == GOSSIP_SENDER_INFO)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
-        switch (urand(0,1))
+        switch (urand(0, 1))
         {
         case 0:
             pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
@@ -237,13 +239,13 @@ struct npc_theramore_guardAI : public ScriptedAI
 
         if (bYellTimer && uiYellTimer <= uiDiff)
         {
-            switch(uiStep)
+            switch (uiStep)
             {
             case 0:
                 DoScriptText(RAND(SAY_QUEST2, SAY_QUEST3, SAY_QUEST4, SAY_QUEST5, SAY_QUEST6), me);
                 uiYellTimer = 5000;
                 ++uiStep;
-                    break;
+                break;
             case 1:
                 DoScriptText(RAND(SAY_QUEST7, SAY_QUEST8, SAY_QUEST9), me);
                 me->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
@@ -257,7 +259,7 @@ struct npc_theramore_guardAI : public ScriptedAI
     }
 };
 
-CreatureAI *GetAI_npc_theramore_guard(Creature* pCreature)
+CreatureAI* GetAI_npc_theramore_guard(Creature* pCreature)
 {
     return new npc_theramore_guardAI(pCreature);
 }
@@ -375,20 +377,20 @@ struct npc_morokkAI : public npc_escortAI
 
     void WaypointReached(uint32 uiPointId)
     {
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 0:
-                SetEscortPaused(true);
-                break;
-            case 1:
-                if (m_bIsSuccess)
-                    DoScriptText(SAY_MOR_SCARED, me);
-                else
-                {
-                    me->setDeathState(JUST_DIED);
-                    me->Respawn();
-                }
-                break;
+        case 0:
+            SetEscortPaused(true);
+            break;
+        case 1:
+            if (m_bIsSuccess)
+                DoScriptText(SAY_MOR_SCARED, me);
+            else
+            {
+                me->setDeathState(JUST_DIED);
+                me->Respawn();
+            }
+            break;
         }
     }
 
@@ -403,11 +405,11 @@ struct npc_morokkAI : public npc_escortAI
         AttackStart(pAttacker);
     }
 
-    void DamageTaken(Unit* /*pDoneBy*/, uint32 &uiDamage)
+    void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
         if (HasEscortState(STATE_ESCORT_ESCORTING))
         {
-            if (me->GetHealth()*100 < me->GetMaxHealth()*30.0f)
+            if (me->GetHealth() * 100 < me->GetMaxHealth() * 30.0f)
             {
                 if (Player* pPlayer = GetPlayerForEscort())
                     pPlayer->GroupEventHappens(QUEST_CHALLENGE_MOROKK, me);
@@ -511,8 +513,8 @@ enum
     PHASE_COMPLETE                      = 3
 };
 
-static float m_afSpawn[] = {-3383.501953f, -3203.383301f, 36.149f};
-static float m_afMoveTo[] = {-3371.414795f, -3212.179932f, 34.210f};
+static float m_afSpawn[] = { -3383.501953f, -3203.383301f, 36.149f};
+static float m_afMoveTo[] = { -3371.414795f, -3212.179932f, 34.210f};
 
 struct npc_ogronAI : public npc_escortAI
 {
@@ -555,18 +557,18 @@ struct npc_ogronAI : public npc_escortAI
 
     void WaypointReached(uint32 uiPointId)
     {
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 9:
-                DoScriptText(SAY_OGR_SPOT, me);
-                break;
-            case 10:
-                if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
-                    DoScriptText(SAY_OGR_RET_WHAT, pReethe);
-                break;
-            case 11:
-                SetEscortPaused(true);
-                break;
+        case 9:
+            DoScriptText(SAY_OGR_SPOT, me);
+            break;
+        case 10:
+            if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
+                DoScriptText(SAY_OGR_RET_WHAT, pReethe);
+            break;
+        case 11:
+            SetEscortPaused(true);
+            break;
         }
     }
 
@@ -584,7 +586,7 @@ struct npc_ogronAI : public npc_escortAI
             {
                 //will this conversion work without compile warning/error?
                 size_t iSize = lCreatureList.size();
-                pSummoned->GetMotionMaster()->MoveFollow(pCaldwell, 0.5f, (M_PI/2)*(int)iSize);
+                pSummoned->GetMotionMaster()->MoveFollow(pCaldwell, 0.5f, (M_PI / 2) * (int)iSize);
             }
         }
     }
@@ -617,116 +619,116 @@ struct npc_ogronAI : public npc_escortAI
                 {
                     m_uiGlobalTimer = 5000;
 
-                    switch(m_uiPhase)
+                    switch (m_uiPhase)
                     {
-                        case PHASE_INTRO:
+                    case PHASE_INTRO:
                         {
-                            switch(m_uiPhaseCounter)
+                            switch (m_uiPhaseCounter)
                             {
-                                case 0:
-                                    if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
-                                        DoScriptText(SAY_OGR_RET_SWEAR, pReethe);
-                                    break;
-                                case 1:
-                                    DoScriptText(SAY_OGR_REPLY_RET, me);
-                                    break;
-                                case 2:
-                                    if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
-                                        DoScriptText(SAY_OGR_RET_TAKEN, pReethe);
-                                    break;
-                                case 3:
-                                    DoScriptText(SAY_OGR_TELL_FIRE, me);
-                                    if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
-                                        DoScriptText(SAY_OGR_RET_NOCLOSER, pReethe);
-                                    break;
-                                case 4:
-                                    if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
-                                        DoScriptText(SAY_OGR_RET_NOFIRE, pReethe);
-                                    break;
-                                case 5:
-                                    if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
-                                        DoScriptText(SAY_OGR_RET_HEAR, pReethe);
+                            case 0:
+                                if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
+                                    DoScriptText(SAY_OGR_RET_SWEAR, pReethe);
+                                break;
+                            case 1:
+                                DoScriptText(SAY_OGR_REPLY_RET, me);
+                                break;
+                            case 2:
+                                if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
+                                    DoScriptText(SAY_OGR_RET_TAKEN, pReethe);
+                                break;
+                            case 3:
+                                DoScriptText(SAY_OGR_TELL_FIRE, me);
+                                if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
+                                    DoScriptText(SAY_OGR_RET_NOCLOSER, pReethe);
+                                break;
+                            case 4:
+                                if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
+                                    DoScriptText(SAY_OGR_RET_NOFIRE, pReethe);
+                                break;
+                            case 5:
+                                if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
+                                    DoScriptText(SAY_OGR_RET_HEAR, pReethe);
 
-                                    me->SummonCreature(NPC_CALDWELL, m_afSpawn[0], m_afSpawn[1], m_afSpawn[2], 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
-                                    me->SummonCreature(NPC_HALLAN, m_afSpawn[0], m_afSpawn[1], m_afSpawn[2], 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
-                                    me->SummonCreature(NPC_SKIRMISHER, m_afSpawn[0], m_afSpawn[1], m_afSpawn[2], 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
-                                    me->SummonCreature(NPC_SKIRMISHER, m_afSpawn[0], m_afSpawn[1], m_afSpawn[2], 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
+                                me->SummonCreature(NPC_CALDWELL, m_afSpawn[0], m_afSpawn[1], m_afSpawn[2], 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
+                                me->SummonCreature(NPC_HALLAN, m_afSpawn[0], m_afSpawn[1], m_afSpawn[2], 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
+                                me->SummonCreature(NPC_SKIRMISHER, m_afSpawn[0], m_afSpawn[1], m_afSpawn[2], 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
+                                me->SummonCreature(NPC_SKIRMISHER, m_afSpawn[0], m_afSpawn[1], m_afSpawn[2], 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
 
-                                    m_uiPhase = PHASE_GUESTS;
-                                    break;
+                                m_uiPhase = PHASE_GUESTS;
+                                break;
                             }
                             break;
                         }
 
-                        case PHASE_GUESTS:
+                    case PHASE_GUESTS:
                         {
-                            switch(m_uiPhaseCounter)
+                            switch (m_uiPhaseCounter)
                             {
-                                case 6:
-                                    if (Creature* pCaldwell = me->FindNearestCreature(NPC_CALDWELL, 15.0f))
-                                        DoScriptText(SAY_OGR_CAL_FOUND, pCaldwell);
-                                    break;
-                                case 7:
-                                    if (Creature* pCaldwell = me->FindNearestCreature(NPC_CALDWELL, 15.0f))
-                                        DoScriptText(SAY_OGR_CAL_MERCY, pCaldwell);
-                                    break;
-                                case 8:
-                                    if (Creature* pHallan = me->FindNearestCreature(NPC_HALLAN, 15.0f))
-                                    {
-                                        DoScriptText(SAY_OGR_HALL_GLAD, pHallan);
+                            case 6:
+                                if (Creature* pCaldwell = me->FindNearestCreature(NPC_CALDWELL, 15.0f))
+                                    DoScriptText(SAY_OGR_CAL_FOUND, pCaldwell);
+                                break;
+                            case 7:
+                                if (Creature* pCaldwell = me->FindNearestCreature(NPC_CALDWELL, 15.0f))
+                                    DoScriptText(SAY_OGR_CAL_MERCY, pCaldwell);
+                                break;
+                            case 8:
+                                if (Creature* pHallan = me->FindNearestCreature(NPC_HALLAN, 15.0f))
+                                {
+                                    DoScriptText(SAY_OGR_HALL_GLAD, pHallan);
 
-                                        if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
-                                            pHallan->CastSpell(pReethe, SPELL_FAKE_SHOT, false);
-                                    }
-                                    break;
-                                case 9:
                                     if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
-                                    {
-                                        DoScriptText(EMOTE_OGR_RET_ARROW, pReethe);
-                                        DoScriptText(SAY_OGR_RET_ARROW, pReethe);
-                                    }
-                                    break;
-                                case 10:
-                                    if (Creature* pCaldwell = me->FindNearestCreature(NPC_CALDWELL, 15.0f))
-                                        DoScriptText(SAY_OGR_CAL_CLEANUP, pCaldwell);
+                                        pHallan->CastSpell(pReethe, SPELL_FAKE_SHOT, false);
+                                }
+                                break;
+                            case 9:
+                                if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
+                                {
+                                    DoScriptText(EMOTE_OGR_RET_ARROW, pReethe);
+                                    DoScriptText(SAY_OGR_RET_ARROW, pReethe);
+                                }
+                                break;
+                            case 10:
+                                if (Creature* pCaldwell = me->FindNearestCreature(NPC_CALDWELL, 15.0f))
+                                    DoScriptText(SAY_OGR_CAL_CLEANUP, pCaldwell);
 
-                                    DoScriptText(SAY_OGR_NODIE, me);
-                                    break;
-                                case 11:
-                                    DoStartAttackMe();
-                                    m_uiPhase = PHASE_COMPLETE;
-                                    break;
+                                DoScriptText(SAY_OGR_NODIE, me);
+                                break;
+                            case 11:
+                                DoStartAttackMe();
+                                m_uiPhase = PHASE_COMPLETE;
+                                break;
                             }
                             break;
                         }
 
-                        case PHASE_COMPLETE:
+                    case PHASE_COMPLETE:
                         {
-                            switch(m_uiPhaseCounter)
+                            switch (m_uiPhaseCounter)
                             {
-                                case 12:
-                                    if (Player* pPlayer = GetPlayerForEscort())
-                                        pPlayer->GroupEventHappens(QUEST_QUESTIONING, me);
-                                    DoScriptText(SAY_OGR_SURVIVE, me);
-                                    break;
-                                case 13:
-                                    if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
-                                        DoScriptText(SAY_OGR_RET_LUCKY, pReethe);
-                                    break;
-                                case 14:
-                                    if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
-                                        pReethe->setDeathState(JUST_DIED);
-                                    break;
-                                case 15:
-                                    DoScriptText(SAY_OGR_THANKS, me);
-                                    SetRun(true);
-                                    SetEscortPaused(false);
-                                    break;
+                            case 12:
+                                if (Player* pPlayer = GetPlayerForEscort())
+                                    pPlayer->GroupEventHappens(QUEST_QUESTIONING, me);
+                                DoScriptText(SAY_OGR_SURVIVE, me);
+                                break;
+                            case 13:
+                                if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
+                                    DoScriptText(SAY_OGR_RET_LUCKY, pReethe);
+                                break;
+                            case 14:
+                                if (Creature* pReethe = me->FindNearestCreature(NPC_REETHE, 15.0f))
+                                    pReethe->setDeathState(JUST_DIED);
+                                break;
+                            case 15:
+                                DoScriptText(SAY_OGR_THANKS, me);
+                                SetRun(true);
+                                SetEscortPaused(false);
+                                break;
                             }
                             break;
                         }
                     }
-                        ++m_uiPhaseCounter;
+                    ++m_uiPhaseCounter;
                 }
                 else
                     m_uiGlobalTimer -= uiDiff;
@@ -789,14 +791,17 @@ struct EventLocation
 
 EventLocation m_afEventMoveTo[] =
 {
-    {-2943.92f, -3319.41f, 29.8336f},
-    {-2933.01f, -3321.05f, 29.5781f}
+    { -2943.92f, -3319.41f, 29.8336f},
+    { -2933.01f, -3321.05f, 29.5781f}
 
 };
 
 struct npc_private_hendelAI : public ScriptedAI
 {
-    npc_private_hendelAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
+    npc_private_hendelAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+    }
 
     std::list<Creature*> lCreatureList;
 
@@ -839,7 +844,7 @@ struct npc_private_hendelAI : public ScriptedAI
             pSummoned->GetMotionMaster()->MovePoint(0, -2889.27f, -3347.17f, 32.2615f);
             return;
         }
-        pSummoned->GetMotionMaster()->MovePoint(0, -2890.31f,-3345.23f,32.3087f);
+        pSummoned->GetMotionMaster()->MovePoint(0, -2890.31f, -3345.23f, 32.3087f);
     }
 
     void DoAttackPlayer()
@@ -881,7 +886,7 @@ struct npc_private_hendelAI : public ScriptedAI
     {
         if (!UpdateVictim() && m_uiPhase)
         {
-            switch(m_uiPhase)
+            switch (m_uiPhase)
             {
             case PHASE_ATTACK:
                 DoAttackPlayer();
@@ -910,7 +915,7 @@ struct npc_private_hendelAI : public ScriptedAI
                         break;
                     case 4:
                         if (Creature* pTervosh = me->FindNearestCreature(NPC_TERVOSH, 10.0f))
-                                DoScriptText(SAY_PROGRESS_4_TER, pTervosh);
+                            DoScriptText(SAY_PROGRESS_4_TER, pTervosh);
                         if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
                             pPlayer->GroupEventHappens(QUEST_MISSING_DIPLO_PT16, me);
                         Reset();
@@ -925,9 +930,9 @@ struct npc_private_hendelAI : public ScriptedAI
         return;
     }
 
-    void DamageTaken(Unit* /*pDoneBy*/, uint32 &uiDamage)
+    void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
-        if (uiDamage > me->GetHealth() || ((me->GetHealth() - uiDamage)*100 / me->GetMaxHealth() < 20))
+        if (uiDamage > me->GetHealth() || ((me->GetHealth() - uiDamage) * 100 / me->GetMaxHealth() < 20))
         {
             uiDamage = 0;
             m_uiPhase = PHASE_COMPLETE;
@@ -938,7 +943,7 @@ struct npc_private_hendelAI : public ScriptedAI
             me->DeleteThreatList();
             me->CombatStop(true);
             me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
-            me->SetHomePosition(-2892.28f,-3347.81f,31.8609f,0.160719f);
+            me->SetHomePosition(-2892.28f, -3347.81f, 31.8609f, 0.160719f);
             me->GetMotionMaster()->MoveTargetedHome();
 
             if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
@@ -1026,8 +1031,8 @@ struct npc_zelfraxAI : public ScriptedAI
         if (uiType != POINT_MOTION_TYPE)
             return;
 
-        me->SetHomePosition(me->GetPositionX(),me->GetPositionY(),me->GetPositionZ(),me->GetOrientation());
-        me->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        me->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
         SetCombatMovement(true);
 
         if (me->isInCombat())
@@ -1038,9 +1043,9 @@ struct npc_zelfraxAI : public ScriptedAI
     void MoveToDock()
     {
         SetCombatMovement(false);
-        me->GetMotionMaster()->MovePoint(0,-2967.030,-3872.1799,35.620);
-        DoScriptText(SAY_ZELFRAX,me);
-        DoScriptText(SAY_ZELFRAX_2,me);
+        me->GetMotionMaster()->MovePoint(0, -2967.030, -3872.1799, 35.620);
+        DoScriptText(SAY_ZELFRAX, me);
+        DoScriptText(SAY_ZELFRAX_2, me);
     }
 
     void UpdateAI(uint32 const /*uiDiff*/)
@@ -1072,7 +1077,7 @@ enum
 bool GossipHello_npc_cassa_crimsonwing(Player* pPlayer, Creature* pCreature)
 {
     if (pPlayer->GetQuestStatus(QUEST_SURVEY_ALCAZ) == QUEST_STATUS_INCOMPLETE)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_RIDE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_RIDE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
@@ -1080,7 +1085,7 @@ bool GossipHello_npc_cassa_crimsonwing(Player* pPlayer, Creature* pCreature)
 
 bool GossipSelect_npc_cassa_crimsonwing(Player* pPlayer, Creature* /*pCreature*/, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
         pPlayer->CastSpell(pPlayer, SPELL_ALCAZ_SURVEY, false);
@@ -1100,7 +1105,7 @@ enum
 
 bool AreaTrigger_at_nats_landing(Player* pPlayer, const AreaTriggerEntry* /*pAt*/)
 {
-    if (pPlayer->GetQuestStatus(QUEST_NATS_BARGAIN) == QUEST_STATUS_INCOMPLETE && pPlayer->HasAura(SPELL_FISH_PASTE,0))
+    if (pPlayer->GetQuestStatus(QUEST_NATS_BARGAIN) == QUEST_STATUS_INCOMPLETE && pPlayer->HasAura(SPELL_FISH_PASTE, 0))
     {
         Creature* pShark = GetClosestCreatureWithEntry(pPlayer, NPC_LURKING_SHARK, 20.0f);
 
@@ -1205,7 +1210,7 @@ struct npc_stinkyAI : public npc_escortAI
     {
         npc_escortAI::UpdateAI(uiDiff);
 
-            if (!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
         DoMeleeAttackIfReady();
@@ -1217,7 +1222,7 @@ CreatureAI* GetAI_npc_stinky(Creature* pCreature)
     return new npc_stinkyAI(pCreature);
 }
 
-bool QuestAccept_npc_stinky(Player* pPlayer, Creature* pCreature, Quest const *quest)
+bool QuestAccept_npc_stinky(Player* pPlayer, Creature* pCreature, Quest const* quest)
 {
     if (quest->GetQuestId() == QUEST_STINKYS_ESCAPE_H || QUEST_STINKYS_ESCAPE_A)
     {
@@ -1234,7 +1239,7 @@ bool QuestAccept_npc_stinky(Player* pPlayer, Creature* pCreature, Quest const *q
 
 void AddSC_dustwallow_marsh()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "mobs_risen_husk_spirit";

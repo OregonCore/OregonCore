@@ -142,7 +142,8 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
                         PlayerGUID = 0;
                     }
                 }
-            } else EatTimer -= diff;
+            }
+            else EatTimer -= diff;
         }
 
         if (Evade)
@@ -151,7 +152,8 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
             {
                 EnterEvadeMode();
                 return;
-            } else ResetTimer -= diff;
+            }
+            else ResetTimer -= diff;
         }
 
         if (!UpdateVictim())
@@ -161,7 +163,8 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
         {
             DoCastVictim( SPELL_NETHER_BREATH);
             CastTimer = 5000;
-        } else CastTimer -= diff;
+        }
+        else CastTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -178,14 +181,14 @@ CreatureAI* GetAI_mob_mature_netherwing_drake(Creature* pCreature)
 
 enum eDrak
 {
-     FACTION_DEFAULT     = 62,
-     FACTION_FRIENDLY    = 1840,                           // Not sure if this is correct, it was taken off of Mordenai.
+    FACTION_DEFAULT     = 62,
+    FACTION_FRIENDLY    = 1840,                           // Not sure if this is correct, it was taken off of Mordenai.
 
-     SPELL_HIT_FORCE_OF_NELTHARAKU   = 38762,
-     SPELL_FORCE_OF_NELTHARAKU       = 38775,
+    SPELL_HIT_FORCE_OF_NELTHARAKU   = 38762,
+    SPELL_FORCE_OF_NELTHARAKU       = 38775,
 
-     CREATURE_DRAGONMAW_SUBJUGATOR   = 21718,
-     CREATURE_ESCAPE_DUMMY           = 22317
+    CREATURE_DRAGONMAW_SUBJUGATOR   = 21718,
+    CREATURE_ESCAPE_DUMMY           = 22317
 };
 
 struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
@@ -297,7 +300,8 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
                             me->GetMotionMaster()->MovePoint(1, pos);
                         }
                     }
-                } else FlyTimer -= diff;
+                }
+                else FlyTimer -= diff;
             }
             return;
         }
@@ -376,7 +380,8 @@ struct mob_dragonmaw_peonAI : public ScriptedAI
                 }
                 PoisonTimer = 0;
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            } else PoisonTimer -= diff;
+            }
+            else PoisonTimer -= diff;
         }
     }
 };
@@ -417,10 +422,10 @@ bool GossipSelect_npc_drake_dealer_hurlunk(Player* player, Creature* pCreature, 
 
 bool GossipHello_npcs_flanis_swiftwing_and_kagrosh(Player* player, Creature* pCreature)
 {
-    if (player->GetQuestStatus(10583) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(30658,1,true))
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HSK1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-    if (player->GetQuestStatus(10601) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(30659,1,true))
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HSK2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+    if (player->GetQuestStatus(10583) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(30658, 1, true))
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_HSK1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    if (player->GetQuestStatus(10601) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(30659, 1, true))
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_HSK2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
 
     player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
@@ -429,7 +434,7 @@ bool GossipHello_npcs_flanis_swiftwing_and_kagrosh(Player* player, Creature* pCr
 
 bool GossipSelect_npcs_flanis_swiftwing_and_kagrosh(Player* player, Creature* /*pCreature*/, uint32 /*sender*/, uint32 action)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF+1)
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
     {
         ItemPosCountVec dest;
         uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 30658, 1, NULL);
@@ -439,7 +444,7 @@ bool GossipSelect_npcs_flanis_swiftwing_and_kagrosh(Player* player, Creature* /*
             player->PlayerTalkClass->ClearMenus();
         }
     }
-    if (action == GOSSIP_ACTION_INFO_DEF+2)
+    if (action == GOSSIP_ACTION_INFO_DEF + 2)
     {
         ItemPosCountVec dest;
         uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 30659, 1, NULL);
@@ -468,7 +473,7 @@ bool GossipSelect_npcs_flanis_swiftwing_and_kagrosh(Player* player, Creature* /*
 bool GossipHello_npc_murkblood_overseer(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(QUEST_11082) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HMO, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_HMO, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
     return true;
@@ -478,37 +483,37 @@ bool GossipSelect_npc_murkblood_overseer(Player* player, Creature* pCreature, ui
 {
     switch (action)
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-                                                            //correct id not known
-            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-                                                            //correct id not known
-            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+3:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-                                                            //correct id not known
-            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+4:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-                                                            //correct id not known
-            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+5:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-                                                            //correct id not known
-            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+6:
-                                                            //correct id not known
-            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
-            pCreature->CastSpell(player,41121,false);
-            player->AreaExploredOrEventHappens(QUEST_11082);
-            break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        //correct id not known
+        player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        //correct id not known
+        player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+3:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+        //correct id not known
+        player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+4:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+        //correct id not known
+        player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+5:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+        //correct id not known
+        player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+6:
+        //correct id not known
+        player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
+        pCreature->CastSpell(player, 41121, false);
+        player->AreaExploredOrEventHappens(QUEST_11082);
+        break;
     }
     return true;
 }
@@ -528,7 +533,7 @@ bool GossipHello_npc_neltharaku(Player* player, Creature* pCreature)
         player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(10814) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_HN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     player->SEND_GOSSIP_MENU(10613, pCreature->GetGUID());
 
@@ -539,22 +544,22 @@ bool GossipSelect_npc_neltharaku(Player* player, Creature* pCreature, uint32 /*s
 {
     switch (action)
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SN1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(10614, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SN2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU(10615, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+3:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SN3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            player->SEND_GOSSIP_MENU(10616, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+4:
-            player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(10814);
-            break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SN1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        player->SEND_GOSSIP_MENU(10614, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SN2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        player->SEND_GOSSIP_MENU(10615, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+3:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SN3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+        player->SEND_GOSSIP_MENU(10616, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+4:
+        player->CLOSE_GOSSIP_MENU();
+        player->AreaExploredOrEventHappens(10814);
+        break;
     }
     return true;
 }
@@ -582,8 +587,9 @@ bool GossipHello_npc_oronok_tornheart(Player* player, Creature* pCreature)
     {
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
         player->SEND_GOSSIP_MENU(10312, pCreature->GetGUID());
-    } else
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+    }
+    else
+        player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
@@ -592,37 +598,37 @@ bool GossipSelect_npc_oronok_tornheart(Player* player, Creature* pCreature, uint
 {
     switch (action)
     {
-        case GOSSIP_ACTION_TRADE:
-            player->SEND_VENDORLIST(pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-            player->SEND_GOSSIP_MENU(10313, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(10314, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU(10315, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+3:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            player->SEND_GOSSIP_MENU(10316, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+4:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU(10317, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+5:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-            player->SEND_GOSSIP_MENU(10318, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+6:
-            player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(10519);
-            break;
+    case GOSSIP_ACTION_TRADE:
+        player->SEND_VENDORLIST(pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        player->SEND_GOSSIP_MENU(10313, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        player->SEND_GOSSIP_MENU(10314, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        player->SEND_GOSSIP_MENU(10315, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+3:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+        player->SEND_GOSSIP_MENU(10316, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+4:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+        player->SEND_GOSSIP_MENU(10317, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+5:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+        player->SEND_GOSSIP_MENU(10318, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+6:
+        player->CLOSE_GOSSIP_MENU();
+        player->AreaExploredOrEventHappens(10519);
+        break;
     }
     return true;
 }
@@ -704,12 +710,12 @@ struct npc_overlord_morghorAI : public ScriptedAI
         Event = false;
     }
 
-    void EnterCombat(Unit* /*who*/){}
+    void EnterCombat(Unit* /*who*/) {}
 
     void StartEvent()
     {
         me->SetUInt32Value(UNIT_NPC_FLAGS, 0);
-        me->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
+        me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
         Unit* Illidan = me->SummonCreature(C_ILLIDAN, -5107.83f, 602.584f, 85.2393f, 4.92598f, TEMPSUMMON_CORPSE_DESPAWN, 0);
         if (Illidan)
         {
@@ -739,29 +745,74 @@ struct npc_overlord_morghorAI : public ScriptedAI
             return 0;
         }
 
-        switch(Step)
+        switch (Step)
         {
-        case 0: return 0; break;
-        case 1: me->GetMotionMaster()->MovePoint(0, -5104.41f, 595.297f, 85.6838f); return 9000; break;
-        case 2: DoScriptText(OVERLORD_YELL_1, me, plr); return 4500; break;
-        case 3: me->SetInFront(plr); return 3200;  break;
-        case 4: DoScriptText(OVERLORD_SAY_2, me, plr); return 2000; break;
-        case 5: Illi->SetVisibility(VISIBILITY_ON);
-             Illi->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE); return 350; break;
+        case 0:
+            return 0;
+            break;
+        case 1:
+            me->GetMotionMaster()->MovePoint(0, -5104.41f, 595.297f, 85.6838f);
+            return 9000;
+            break;
+        case 2:
+            DoScriptText(OVERLORD_YELL_1, me, plr);
+            return 4500;
+            break;
+        case 3:
+            me->SetInFront(plr);
+            return 3200;
+            break;
+        case 4:
+            DoScriptText(OVERLORD_SAY_2, me, plr);
+            return 2000;
+            break;
+        case 5:
+            Illi->SetVisibility(VISIBILITY_ON);
+            Illi->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            return 350;
+            break;
         case 6:
             Illi->CastSpell(Illi, SPELL_ONE, true);
             Illi->SetUInt64Value(UNIT_FIELD_TARGET, me->GetGUID());
             me->SetUInt64Value(UNIT_FIELD_TARGET, IllidanGUID);
-            return 2000; break;
-        case 7: DoScriptText(OVERLORD_YELL_2, me); return 4500; break;
-        case 8: me->SetUInt32Value(UNIT_FIELD_BYTES_1, 8); return 2500; break;
-        case 9: DoScriptText(OVERLORD_SAY_3, me); return 6500; break;
-        case 10: DoScriptText(LORD_ILLIDAN_SAY_1, Illi); return 5000;  break;
-        case 11: DoScriptText(OVERLORD_SAY_4, me, plr); return 6000; break;
-        case 12: DoScriptText(LORD_ILLIDAN_SAY_2, Illi); return 5500; break;
-        case 13: DoScriptText(LORD_ILLIDAN_SAY_3, Illi); return 4000; break;
-        case 14: Illi->SetUInt64Value(UNIT_FIELD_TARGET, PlayerGUID); return 1500; break;
-        case 15: DoScriptText(LORD_ILLIDAN_SAY_4, Illi); return 1500; break;
+            return 2000;
+            break;
+        case 7:
+            DoScriptText(OVERLORD_YELL_2, me);
+            return 4500;
+            break;
+        case 8:
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 8);
+            return 2500;
+            break;
+        case 9:
+            DoScriptText(OVERLORD_SAY_3, me);
+            return 6500;
+            break;
+        case 10:
+            DoScriptText(LORD_ILLIDAN_SAY_1, Illi);
+            return 5000;
+            break;
+        case 11:
+            DoScriptText(OVERLORD_SAY_4, me, plr);
+            return 6000;
+            break;
+        case 12:
+            DoScriptText(LORD_ILLIDAN_SAY_2, Illi);
+            return 5500;
+            break;
+        case 13:
+            DoScriptText(LORD_ILLIDAN_SAY_3, Illi);
+            return 4000;
+            break;
+        case 14:
+            Illi->SetUInt64Value(UNIT_FIELD_TARGET, PlayerGUID);
+            return 1500;
+            break;
+        case 15:
+            DoScriptText(LORD_ILLIDAN_SAY_4, Illi);
+            return 1500;
+            break;
         case 16:
             if (plr)
             {
@@ -772,64 +823,105 @@ struct npc_overlord_morghorAI : public ScriptedAI
             }
             else
             {
-             // if !plr we can't do that!
-             //   plr->FailQuest(QUEST_LORD_ILLIDAN_STORMRAGE);
-                Step = 30; return 100;
+                // if !plr we can't do that!
+                //   plr->FailQuest(QUEST_LORD_ILLIDAN_STORMRAGE);
+                Step = 30;
+                return 100;
             }
             break;
-        case 17: DoScriptText(LORD_ILLIDAN_SAY_5, Illi); return 5000; break;
-        case 18: DoScriptText(LORD_ILLIDAN_SAY_6, Illi); return 5000; break;
-        case 19: DoScriptText(LORD_ILLIDAN_SAY_7, Illi); return 5000; break;
+        case 17:
+            DoScriptText(LORD_ILLIDAN_SAY_5, Illi);
+            return 5000;
+            break;
+        case 18:
+            DoScriptText(LORD_ILLIDAN_SAY_6, Illi);
+            return 5000;
+            break;
+        case 19:
+            DoScriptText(LORD_ILLIDAN_SAY_7, Illi);
+            return 5000;
+            break;
         case 20:
             Illi->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
             Illi->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
-            return 500; break;
-        case 21: DoScriptText(OVERLORD_SAY_5, me); return 500; break;
+            return 500;
+            break;
+        case 21:
+            DoScriptText(OVERLORD_SAY_5, me);
+            return 500;
+            break;
         case 22:
             Illi->SetVisibility(VISIBILITY_OFF);
             Illi->setDeathState(JUST_DIED);
-            return 1000; break;
-        case 23: me->SetUInt32Value(UNIT_FIELD_BYTES_1,0); return 2000; break;
-        case 24: me->SetUInt64Value(UNIT_FIELD_TARGET, PlayerGUID); return 5000; break;
-        case 25: DoScriptText(OVERLORD_SAY_6, me); return 2000; break;
+            return 1000;
+            break;
+        case 23:
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+            return 2000;
+            break;
+        case 24:
+            me->SetUInt64Value(UNIT_FIELD_TARGET, PlayerGUID);
+            return 5000;
+            break;
+        case 25:
+            DoScriptText(OVERLORD_SAY_6, me);
+            return 2000;
+            break;
         case 26:
             if (plr)
                 plr->GroupEventHappens(QUEST_LORD_ILLIDAN_STORMRAGE, me);
-            return 6000; break;
+            return 6000;
+            break;
         case 27:
             {
-            Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
-            if (Yarzill)
-                Yarzill->SetUInt64Value(UNIT_FIELD_TARGET, PlayerGUID);
-            return 500; }break;
+                Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
+                if (Yarzill)
+                    Yarzill->SetUInt64Value(UNIT_FIELD_TARGET, PlayerGUID);
+                return 500;
+            }
+            break;
         case 28:
             plr->RemoveAurasDueToSpell(SPELL_TWO);
             plr->RemoveAurasDueToSpell(41519);
             plr->CastSpell(plr, SPELL_THREE, true);
             plr->CastSpell(plr, SPELL_FOUR, true);
-            return 1000; break;
+            return 1000;
+            break;
         case 29:
             {
-            Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
-            if (Yarzill)
-                DoScriptText(YARZILL_THE_MERC_SAY, Yarzill, plr);
-            return 5000; }break;
+                Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
+                if (Yarzill)
+                    DoScriptText(YARZILL_THE_MERC_SAY, Yarzill, plr);
+                return 5000;
+            }
+            break;
         case 30:
             {
-            Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
-            if (Yarzill)
-                Yarzill->SetUInt64Value(UNIT_FIELD_TARGET, 0);
-            return 5000; }break;
+                Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
+                if (Yarzill)
+                    Yarzill->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                return 5000;
+            }
+            break;
         case 31:
             {
-            Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
-            if (Yarzill)
-                Yarzill->CastSpell(plr, 41540, true);
-            return 1000;}break;
-        case 32: me->GetMotionMaster()->MovePoint(0, -5085.77f, 577.231f, 86.6719f); return 5000; break;
-        case 33: Reset(); return 100; break;
+                Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
+                if (Yarzill)
+                    Yarzill->CastSpell(plr, 41540, true);
+                return 1000;
+            }
+            break;
+        case 32:
+            me->GetMotionMaster()->MovePoint(0, -5085.77f, 577.231f, 86.6719f);
+            return 5000;
+            break;
+        case 33:
+            Reset();
+            return 100;
+            break;
 
-        default : return 0;
+        default :
+            return 0;
         }
     }
 
@@ -841,19 +933,18 @@ struct npc_overlord_morghorAI : public ScriptedAI
         if (ConversationTimer <= diff)
         {
             if (Event && IllidanGUID && PlayerGUID)
-            {
                 ConversationTimer = NextStep(++Step);
-            }
-        } else ConversationTimer -= diff;
+        }
+        else ConversationTimer -= diff;
     }
 };
 
 CreatureAI* GetAI_npc_overlord_morghorAI(Creature* pCreature)
 {
-return new npc_overlord_morghorAI(pCreature);
+    return new npc_overlord_morghorAI(pCreature);
 }
 
-bool QuestAccept_npc_overlord_morghor(Player* player, Creature* pCreature, const Quest *_Quest)
+bool QuestAccept_npc_overlord_morghor(Player* player, Creature* pCreature, const Quest* _Quest)
 {
     if (_Quest->GetQuestId() == QUEST_LORD_ILLIDAN_STORMRAGE)
     {
@@ -915,99 +1006,152 @@ struct npc_earthmender_wildaAI : public npc_escortAI
         if (!player)
             return;
 
-        switch(i)
+        switch (i)
         {
-               case 0: DoScriptText(SAY_START, me, player); break;
-               case 13: DoScriptText(SAY_PROGRESS1, me, player);
-                   SummonAssassin();
-                   break;
-               case 14: SummonAssassin(); break;
-               case 15: DoScriptText(SAY_PROGRESS3, me, player); break;
-               case 19:
-                   switch(rand()%3)
-                   {
-                   case 0: DoScriptText(SAY_PROGRESS2, me, player); break;
-                   case 1: DoScriptText(SAY_PROGRESS4, me, player); break;
-                   case 2: DoScriptText(SAY_PROGRESS5, me, player); break;
-                   }
-                   break;
-               case 20: SummonAssassin(); break;
-               case 26:
-                   switch(rand()%3)
-                   {
-                   case 0: DoScriptText(SAY_PROGRESS2, me, player); break;
-                   case 1: DoScriptText(SAY_PROGRESS4, me, player); break;
-                   case 2: DoScriptText(SAY_PROGRESS5, me, player); break;
-                   }
-                   break;
-               case 27: SummonAssassin(); break;
-               case 33:
-                   switch(rand()%3)
-                   {
-                   case 0: DoScriptText(SAY_PROGRESS2, me, player); break;
-                   case 1: DoScriptText(SAY_PROGRESS4, me, player); break;
-                   case 2: DoScriptText(SAY_PROGRESS5, me, player); break;
-                   }
-                   break;
-               case 34: SummonAssassin(); break;
-               case 37:
-                   switch(rand()%3)
-                   {
-                   case 0: DoScriptText(SAY_PROGRESS2, me, player); break;
-                   case 1: DoScriptText(SAY_PROGRESS4, me, player); break;
-                   case 2: DoScriptText(SAY_PROGRESS5, me, player); break;
-                   }
-                   break;
-               case 38: SummonAssassin(); break;
-               case 39: DoScriptText(SAY_PROGRESS6, me, player); break;
-               case 43:
-                   switch(rand()%3)
-                   {
-                   case 0: DoScriptText(SAY_PROGRESS2, me, player); break;
-                   case 1: DoScriptText(SAY_PROGRESS4, me, player); break;
-                   case 2: DoScriptText(SAY_PROGRESS5, me, player); break;
-                   }
-                   break;
-               case 44: SummonAssassin(); break;
-               case 50:
-                   DoScriptText(SAY_END, me, player);
-                   player->GroupEventHappens(QUEST_ESCAPE_FROM_COILSKAR_CISTERN, me);
-                   Completed = true;
-                   break;
-               }
-       }
+        case 0:
+            DoScriptText(SAY_START, me, player);
+            break;
+        case 13:
+            DoScriptText(SAY_PROGRESS1, me, player);
+            SummonAssassin();
+            break;
+        case 14:
+            SummonAssassin();
+            break;
+        case 15:
+            DoScriptText(SAY_PROGRESS3, me, player);
+            break;
+        case 19:
+            switch (rand() % 3)
+            {
+            case 0:
+                DoScriptText(SAY_PROGRESS2, me, player);
+                break;
+            case 1:
+                DoScriptText(SAY_PROGRESS4, me, player);
+                break;
+            case 2:
+                DoScriptText(SAY_PROGRESS5, me, player);
+                break;
+            }
+            break;
+        case 20:
+            SummonAssassin();
+            break;
+        case 26:
+            switch (rand() % 3)
+            {
+            case 0:
+                DoScriptText(SAY_PROGRESS2, me, player);
+                break;
+            case 1:
+                DoScriptText(SAY_PROGRESS4, me, player);
+                break;
+            case 2:
+                DoScriptText(SAY_PROGRESS5, me, player);
+                break;
+            }
+            break;
+        case 27:
+            SummonAssassin();
+            break;
+        case 33:
+            switch (rand() % 3)
+            {
+            case 0:
+                DoScriptText(SAY_PROGRESS2, me, player);
+                break;
+            case 1:
+                DoScriptText(SAY_PROGRESS4, me, player);
+                break;
+            case 2:
+                DoScriptText(SAY_PROGRESS5, me, player);
+                break;
+            }
+            break;
+        case 34:
+            SummonAssassin();
+            break;
+        case 37:
+            switch (rand() % 3)
+            {
+            case 0:
+                DoScriptText(SAY_PROGRESS2, me, player);
+                break;
+            case 1:
+                DoScriptText(SAY_PROGRESS4, me, player);
+                break;
+            case 2:
+                DoScriptText(SAY_PROGRESS5, me, player);
+                break;
+            }
+            break;
+        case 38:
+            SummonAssassin();
+            break;
+        case 39:
+            DoScriptText(SAY_PROGRESS6, me, player);
+            break;
+        case 43:
+            switch (rand() % 3)
+            {
+            case 0:
+                DoScriptText(SAY_PROGRESS2, me, player);
+                break;
+            case 1:
+                DoScriptText(SAY_PROGRESS4, me, player);
+                break;
+            case 2:
+                DoScriptText(SAY_PROGRESS5, me, player);
+                break;
+            }
+            break;
+        case 44:
+            SummonAssassin();
+            break;
+        case 50:
+            DoScriptText(SAY_END, me, player);
+            player->GroupEventHappens(QUEST_ESCAPE_FROM_COILSKAR_CISTERN, me);
+            Completed = true;
+            break;
+        }
+    }
 
-       void SummonAssassin()
-       {
-           Player* player = GetPlayerForEscort();
+    void SummonAssassin()
+    {
+        Player* player = GetPlayerForEscort();
 
-           Unit* CoilskarAssassin = me->SummonCreature(NPC_COILSKAR_ASSASSIN, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0);
-           if (CoilskarAssassin)
-           {
-               switch(rand()%2)
-               {
-               case 0: DoScriptText(ASSASSIN_SAY_AGGRO1, CoilskarAssassin, player); break;
-               case 1: DoScriptText(ASSASSIN_SAY_AGGRO2, CoilskarAssassin, player); break;
-               }
-               CAST_CRE(CoilskarAssassin)->AI()->AttackStart(me);
-           }
-           else error_log("OSCR ERROR: Coilskar Assassin couldn't be summmoned");
-       }
+        Unit* CoilskarAssassin = me->SummonCreature(NPC_COILSKAR_ASSASSIN, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0);
+        if (CoilskarAssassin)
+        {
+            switch (rand() % 2)
+            {
+            case 0:
+                DoScriptText(ASSASSIN_SAY_AGGRO1, CoilskarAssassin, player);
+                break;
+            case 1:
+                DoScriptText(ASSASSIN_SAY_AGGRO2, CoilskarAssassin, player);
+                break;
+            }
+            CAST_CRE(CoilskarAssassin)->AI()->AttackStart(me);
+        }
+        else error_log("OSCR ERROR: Coilskar Assassin couldn't be summmoned");
+    }
 
-       void JustDied(Unit* /*killer*/)
-       {
-           if (!Completed)
-           {
-               Player* player = GetPlayerForEscort();
-               if (player)
-                   player->FailQuest(QUEST_ESCAPE_FROM_COILSKAR_CISTERN);
-           }
-       }
+    void JustDied(Unit* /*killer*/)
+    {
+        if (!Completed)
+        {
+            Player* player = GetPlayerForEscort();
+            if (player)
+                player->FailQuest(QUEST_ESCAPE_FROM_COILSKAR_CISTERN);
+        }
+    }
 
-       void UpdateAI(const uint32 diff)
-       {
-               npc_escortAI::UpdateAI(diff);
-       }
+    void UpdateAI(const uint32 diff)
+    {
+        npc_escortAI::UpdateAI(diff);
+    }
 };
 
 CreatureAI* GetAI_npc_earthmender_wildaAI(Creature* pCreature)
@@ -1071,7 +1215,7 @@ struct TorlothCinematic
     uint32 uiTimer;
 };
 
-static TorlothCinematic TorlothAnim[]=
+static TorlothCinematic TorlothAnim[] =
 {
     {SAY_TORLOTH_DIALOGUE1, TORLOTH, 2000},
     {SAY_ILLIDAN_DIALOGUE, LORD_ILLIDAN, 7000},
@@ -1090,24 +1234,24 @@ struct Location
     float fOrient;
 };
 
-static Location SpawnLocation[]=
+static Location SpawnLocation[] =
 {
-    {-4615.8556f, 1342.2532f, 139.9f, 1.612f},              // Illidari Soldier
-    {-4598.9365f, 1377.3182f, 139.9f, 3.917f},              // Illidari Soldier
-    {-4598.4697f, 1360.8999f, 139.9f, 2.427f},              // Illidari Soldier
-    {-4589.3599f, 1369.1061f, 139.9f, 3.165f},              // Illidari Soldier
-    {-4608.3477f, 1386.0076f, 139.9f, 4.108f},              // Illidari Soldier
-    {-4633.1889f, 1359.8033f, 139.9f, 0.949f},              // Illidari Soldier
-    {-4623.5791f, 1351.4574f, 139.9f, 0.971f},              // Illidari Soldier
-    {-4607.2988f, 1351.6099f, 139.9f, 2.416f},              // Illidari Soldier
-    {-4633.7764f, 1376.0417f, 139.9f, 5.608f},              // Illidari Soldier
-    {-4600.2461f, 1369.1240f, 139.9f, 3.056f},              // Illidari Mind Breaker
-    {-4631.7808f, 1367.9459f, 139.9f, 0.020f},              // Illidari Mind Breaker
-    {-4600.2461f, 1369.1240f, 139.9f, 3.056f},              // Illidari Highlord
-    {-4631.7808f, 1367.9459f, 139.9f, 0.020f},              // Illidari Highlord
-    {-4615.5586f, 1353.0031f, 139.9f, 1.540f},              // Illidari Highlord
-    {-4616.4736f, 1384.2170f, 139.9f, 4.971f},              // Illidari Highlord
-    {-4627.1240f, 1378.8752f, 139.9f, 2.544f}               // Torloth The Magnificent
+    { -4615.8556f, 1342.2532f, 139.9f, 1.612f},             // Illidari Soldier
+    { -4598.9365f, 1377.3182f, 139.9f, 3.917f},             // Illidari Soldier
+    { -4598.4697f, 1360.8999f, 139.9f, 2.427f},             // Illidari Soldier
+    { -4589.3599f, 1369.1061f, 139.9f, 3.165f},             // Illidari Soldier
+    { -4608.3477f, 1386.0076f, 139.9f, 4.108f},             // Illidari Soldier
+    { -4633.1889f, 1359.8033f, 139.9f, 0.949f},             // Illidari Soldier
+    { -4623.5791f, 1351.4574f, 139.9f, 0.971f},             // Illidari Soldier
+    { -4607.2988f, 1351.6099f, 139.9f, 2.416f},             // Illidari Soldier
+    { -4633.7764f, 1376.0417f, 139.9f, 5.608f},             // Illidari Soldier
+    { -4600.2461f, 1369.1240f, 139.9f, 3.056f},             // Illidari Mind Breaker
+    { -4631.7808f, 1367.9459f, 139.9f, 0.020f},             // Illidari Mind Breaker
+    { -4600.2461f, 1369.1240f, 139.9f, 3.056f},             // Illidari Highlord
+    { -4631.7808f, 1367.9459f, 139.9f, 0.020f},             // Illidari Highlord
+    { -4615.5586f, 1353.0031f, 139.9f, 1.540f},             // Illidari Highlord
+    { -4616.4736f, 1384.2170f, 139.9f, 4.971f},             // Illidari Highlord
+    { -4627.1240f, 1378.8752f, 139.9f, 2.544f}              // Torloth The Magnificent
 };
 
 struct WaveData
@@ -1120,7 +1264,7 @@ struct WaveData
     int32  iTextId;
 };
 
-static WaveData WavesInfo[]=
+static WaveData WavesInfo[] =
 {
     // Illidari Soldier
     {9, 0, NPC_ILLIDARI_SOLDIER, 10000, 7000, SAY_ILLIDAN_SUMMON1},
@@ -1145,7 +1289,10 @@ enum
 
 struct mob_torlothAI : public ScriptedAI
 {
-    mob_torlothAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+    mob_torlothAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+    }
 
     uint64 m_uiLordIllidanGUID;
     uint64 m_uiPlayerGUID;
@@ -1198,24 +1345,24 @@ struct mob_torlothAI : public ScriptedAI
 
         m_uiAnimationTimer = TorlothAnim[m_uiAnimationCount].uiTimer;
 
-        switch(m_uiAnimationCount)
+        switch (m_uiAnimationCount)
         {
-            case 0:
-                me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                break;
-            case 3:
-                me->SetStandState(UNIT_STAND_STATE_STAND);
-                break;
-            case 5:
-                if (Player* pTarget = Unit::GetPlayer(*me, m_uiPlayerGUID))
-                {
-                    me->SetReactState(REACT_AGGRESSIVE);
-                    me->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
-                    me->AddThreat(pTarget, 1);
-                    me->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
-                }
-                break;
-            case 6:
+        case 0:
+            me->SetStandState(UNIT_STAND_STATE_KNEEL);
+            break;
+        case 3:
+            me->SetStandState(UNIT_STAND_STATE_STAND);
+            break;
+        case 5:
+            if (Player* pTarget = Unit::GetPlayer(*me, m_uiPlayerGUID))
+            {
+                me->SetReactState(REACT_AGGRESSIVE);
+                me->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
+                me->AddThreat(pTarget, 1);
+                me->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
+            }
+            break;
+        case 6:
             {
                 if (Player* pTarget = Unit::GetPlayer(*me, m_uiPlayerGUID))
                 {
@@ -1300,7 +1447,10 @@ CreatureAI* GetAI_mob_torloth(Creature* pCreature)
 
 struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
 {
-    npc_lord_illidan_stormrageAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature) {Reset();}
+    npc_lord_illidan_stormrageAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
+    {
+        Reset();
+    }
 
     uint64 m_uiPlayerGUID;
     uint32 m_uiWaveTimer;
@@ -1356,7 +1506,7 @@ struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
                 if (m_uiWaveCount)                          // only in first wave
                     continue;
 
-                if (!urand(0,2) && uiFelguardCount < 2)
+                if (!urand(0, 2) && uiFelguardCount < 2)
                 {
                     pSpawn->SetDisplayId(MODEL_ID_FELGUARD);
                     ++uiFelguardCount;
@@ -1511,7 +1661,7 @@ struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
     }
 };
 
-CreatureAI* GetAI_npc_lord_illidan_stormrage(Creature* (pCreature))
+CreatureAI* GetAI_npc_lord_illidan_stormrage(Creature * (pCreature))
 {
     return new npc_lord_illidan_stormrageAI(pCreature);
 }
@@ -1580,7 +1730,7 @@ struct npc_enraged_spiritAI : public ScriptedAI
 
     void Reset()   { }
 
-    void EnterCombat(Unit* /*who*/){}
+    void EnterCombat(Unit* /*who*/) {}
 
     void JustDied(Unit* /*killer*/)
     {
@@ -1590,27 +1740,28 @@ struct npc_enraged_spiritAI : public ScriptedAI
         uint32 entry = 0;
         uint32 credit = 0;
 
-        switch(me->GetEntry()) {
-          case ENTRY_ENRAGED_FIRE_SPIRIT:
+        switch (me->GetEntry())
+        {
+        case ENTRY_ENRAGED_FIRE_SPIRIT:
             entry  = ENTRY_FIERY_SOUL;
             //credit = SPELL_FIERY_SOUL_CAPTURED_CREDIT;
             credit = CREDIT_FIRE;
-          break;
-          case ENTRY_ENRAGED_EARTH_SPIRIT:
+            break;
+        case ENTRY_ENRAGED_EARTH_SPIRIT:
             entry  = ENTRY_EARTHEN_SOUL;
             //credit = SPELL_EARTHEN_SOUL_CAPTURED_CREDIT;
             credit = CREDIT_EARTH;
-          break;
-          case ENTRY_ENRAGED_AIR_SPIRIT:
+            break;
+        case ENTRY_ENRAGED_AIR_SPIRIT:
             entry  = ENTRY_ENRAGED_AIRY_SOUL;
             //credit = SPELL_AIRY_SOUL_CAPTURED_CREDIT;
             credit = CREDIT_AIR;
-          break;
-          case ENTRY_ENRAGED_WATER_SPIRIT:
+            break;
+        case ENTRY_ENRAGED_WATER_SPIRIT:
             entry  = ENTRY_ENRAGED_WATERY_SOUL;
             //credit = SPELL_WATERY_SOUL_CAPTURED_CREDIT;
             credit = CREDIT_WATER;
-          break;
+            break;
         }
 
         // Spawn Soul on Kill ALWAYS!
@@ -1623,25 +1774,25 @@ struct npc_enraged_spiritAI : public ScriptedAI
         // FIND TOTEM, PROCESS QUEST
         if (Summoned)
         {
-             totemOspirits = me->FindNearestCreature(ENTRY_TOTEM_OF_SPIRITS, RADIUS_TOTEM_OF_SPIRITS);
-             if (totemOspirits)
-             {
-                 Summoned->setFaction(ENRAGED_SOUL_FRIENDLY);
-                 Summoned->GetMotionMaster()->MovePoint(0,totemOspirits->GetPositionX(), totemOspirits->GetPositionY(), Summoned->GetPositionZ());
+            totemOspirits = me->FindNearestCreature(ENTRY_TOTEM_OF_SPIRITS, RADIUS_TOTEM_OF_SPIRITS);
+            if (totemOspirits)
+            {
+                Summoned->setFaction(ENRAGED_SOUL_FRIENDLY);
+                Summoned->GetMotionMaster()->MovePoint(0, totemOspirits->GetPositionX(), totemOspirits->GetPositionY(), Summoned->GetPositionZ());
 
-                 Player* Owner = (Player*)totemOspirits->GetOwner();
-                 if (Owner)
-                     // DoCast(Owner, credit); -- not working!
-                     Owner->KilledMonsterCredit(credit, 0);
-                 DoCast(totemOspirits,SPELL_SOUL_CAPTURED);
-             }
+                Player* Owner = (Player*)totemOspirits->GetOwner();
+                if (Owner)
+                    // DoCast(Owner, credit); -- not working!
+                    Owner->KilledMonsterCredit(credit, 0);
+                DoCast(totemOspirits, SPELL_SOUL_CAPTURED);
+            }
         }
     }
 };
 
 CreatureAI* GetAI_npc_enraged_spirit(Creature* pCreature)
 {
-return new npc_enraged_spiritAI(pCreature);
+    return new npc_enraged_spiritAI(pCreature);
 }
 
 /*######
@@ -1692,13 +1843,11 @@ struct npc_jovaanAI : public ScriptedAI
     {
         if (pWho->GetTypeId() == TYPEID_PLAYER)
         {
-            if (me->IsWithinDistInMap(((Player* )pWho), 15) && ((Player* )pWho)->HasAura(SPELL_BOX, 0))
+            if (me->IsWithinDistInMap(((Player*)pWho), 15) && ((Player*)pWho)->HasAura(SPELL_BOX, 0))
             {
                 uiPlayerGUID = pWho->GetGUID();
                 if ((CAST_PLR(pWho)->GetQuestStatus(QUEST_LEGION_HOLD1) == QUEST_STATUS_INCOMPLETE) || (CAST_PLR(pWho)->GetQuestStatus(QUEST_LEGION_HOLD2) == QUEST_STATUS_INCOMPLETE))
-                {
                     Image = true;
-                }
             }
             else uiPlayerGUID = 0;
         }
@@ -1709,28 +1858,53 @@ struct npc_jovaanAI : public ScriptedAI
         Creature* pWarbringer = me->FindNearestCreature(NPC_WARBRINGER, 25);
         GameObject* pInfernal = me->FindNearestGameObject(GO_INFERNAL, 8);
         GameObject* pInfernalTrap = me->FindNearestGameObject(GO_INFERNAL_TRAP, 8);
-              
+
         switch (uiSteps)
         {
-            case 1:pInfernal->SetRespawnTime(61);
-                   pInfernal->UpdateObjectVisibility();
-            case 2:pInfernalTrap->SetRespawnTime(61);
-                   pInfernalTrap->UpdateObjectVisibility();return 500;
-            case 3:me->setFaction(35);
-                   me->SummonCreature(NPC_WARBRINGER, -3300.479, 2927.177, 173.894, 2.5f, TEMPSUMMON_TIMED_DESPAWN, 60000);return 1000;
-            case 4:DoScriptText(SAY_JOVAAN1, me, 0);return 6000;
-            case 5:DoScriptText(SAY_WARBRINGER1, pWarbringer, 0);
-                   pWarbringer->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_TALK);return 6800;
-            case 6:DoScriptText(SAY_JOVAAN2, me, 0);return 6800;
-            case 7:DoScriptText(SAY_WARBRINGER2, pWarbringer, 0);return 6800;
-            case 8:DoScriptText(SAY_JOVAAN3, me, 0);return 6800;
-            case 9:DoScriptText(SAY_WARBRINGER3, pWarbringer, 0);return 6800;
-            case 10:DoScriptText(SAY_JOVAAN4, me, 0);return 6800;
-            case 11:DoScriptText(SAY_WARBRINGER4, pWarbringer, 0);return 6000;
-            case 12:if (Player* pPlayer = Unit::GetPlayer(*me, uiPlayerGUID))
-                        {pPlayer->KilledMonsterCredit(NPC_WARBRINGER, 0);};return 2000;
-            case 13:Reset();
-        default: return 0;
+        case 1:
+            pInfernal->SetRespawnTime(61);
+            pInfernal->UpdateObjectVisibility();
+        case 2:
+            pInfernalTrap->SetRespawnTime(61);
+            pInfernalTrap->UpdateObjectVisibility();
+            return 500;
+        case 3:
+            me->setFaction(35);
+            me->SummonCreature(NPC_WARBRINGER, -3300.479, 2927.177, 173.894, 2.5f, TEMPSUMMON_TIMED_DESPAWN, 60000);
+            return 1000;
+        case 4:
+            DoScriptText(SAY_JOVAAN1, me, 0);
+            return 6000;
+        case 5:
+            DoScriptText(SAY_WARBRINGER1, pWarbringer, 0);
+            pWarbringer->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_TALK);
+            return 6800;
+        case 6:
+            DoScriptText(SAY_JOVAAN2, me, 0);
+            return 6800;
+        case 7:
+            DoScriptText(SAY_WARBRINGER2, pWarbringer, 0);
+            return 6800;
+        case 8:
+            DoScriptText(SAY_JOVAAN3, me, 0);
+            return 6800;
+        case 9:
+            DoScriptText(SAY_WARBRINGER3, pWarbringer, 0);
+            return 6800;
+        case 10:
+            DoScriptText(SAY_JOVAAN4, me, 0);
+            return 6800;
+        case 11:
+            DoScriptText(SAY_WARBRINGER4, pWarbringer, 0);
+            return 6000;
+        case 12:
+            if (Player* pPlayer = Unit::GetPlayer(*me, uiPlayerGUID))
+                pPlayer->KilledMonsterCredit(NPC_WARBRINGER, 0);;
+            return 2000;
+        case 13:
+            Reset();
+        default:
+            return 0;
         }
     }
 
@@ -1766,7 +1940,7 @@ CreatureAI* GetAI_npc_jovaan(Creature* pCreature)
 bool GossipHello_npc_grand_commander_ruusk(Player* player, Creature* _Creature)
 {
     if (player->GetQuestStatus(QUEST_10577) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_HGCR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM( 0, GOSSIP_HGCR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     player->SEND_GOSSIP_MENU(10401, _Creature->GetGUID());
     return true;
@@ -1776,37 +1950,37 @@ bool GossipSelect_npc_grand_commander_ruusk(Player* player, Creature* _Creature,
 {
     switch (action)
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SGCR1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(10405, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SGCR2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU(10406, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+3:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SGCR3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            player->SEND_GOSSIP_MENU(10407, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+4:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SGCR4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU(10408, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+5:
-			player->ADD_GOSSIP_ITEM(0, GOSSIP_SGCR5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-            player->SEND_GOSSIP_MENU(10409, _Creature->GetGUID());
-            break;
-		case GOSSIP_ACTION_INFO_DEF+6:
-			player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(QUEST_10577);
-            break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SGCR1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        player->SEND_GOSSIP_MENU(10405, _Creature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SGCR2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        player->SEND_GOSSIP_MENU(10406, _Creature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+3:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SGCR3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+        player->SEND_GOSSIP_MENU(10407, _Creature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+4:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SGCR4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+        player->SEND_GOSSIP_MENU(10408, _Creature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+5:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SGCR5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+        player->SEND_GOSSIP_MENU(10409, _Creature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+6:
+        player->CLOSE_GOSSIP_MENU();
+        player->AreaExploredOrEventHappens(QUEST_10577);
+        break;
     }
     return true;
 }
 
 void AddSC_shadowmoon_valley()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "mob_mature_netherwing_drake";
@@ -1896,7 +2070,7 @@ void AddSC_shadowmoon_valley()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_grand_commander_ruusk";
+    newscript->Name = "npc_grand_commander_ruusk";
     newscript->pGossipHello =  &GossipHello_npc_grand_commander_ruusk;
     newscript->pGossipSelect = &GossipSelect_npc_grand_commander_ruusk;
     newscript->RegisterSelf();

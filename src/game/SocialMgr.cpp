@@ -100,9 +100,7 @@ void PlayerSocial::RemoveFromSocialList(uint32 friend_guid, bool ignore)
         m_playerSocialMap.erase(itr);
     }
     else
-    {
         CharacterDatabase.PExecute("UPDATE character_social SET flags = (flags & ~%u) WHERE guid = '%u' AND friend = '%u'", flag, GetPlayerGUID(), friend_guid);
-    }
 }
 
 void PlayerSocial::SetFriendNote(uint32 friend_guid, std::string note)
@@ -111,7 +109,7 @@ void PlayerSocial::SetFriendNote(uint32 friend_guid, std::string note)
     if (itr == m_playerSocialMap.end())                      // not exist
         return;
 
-    utf8truncate(note,48);                                  // DB and client size limitation
+    utf8truncate(note, 48);                                 // DB and client size limitation
 
     CharacterDatabase.escape_string(note);
     CharacterDatabase.PExecute("UPDATE character_social SET note = '%s' WHERE guid = '%u' AND friend = '%u'", note.c_str(), GetPlayerGUID(), friend_guid);
@@ -126,7 +124,7 @@ void PlayerSocial::SendSocialList()
 
     uint32 size = m_playerSocialMap.size();
 
-    WorldPacket data(SMSG_CONTACT_LIST, (4+4+size*25));     // just can guess size
+    WorldPacket data(SMSG_CONTACT_LIST, (4 + 4 + size * 25)); // just can guess size
     data << uint32(7);                                      // unk flag (0x1, 0x2, 0x4), 0x7 if it include ignore list
     data << uint32(size);                                   // friends count
 
@@ -177,7 +175,7 @@ SocialMgr::~SocialMgr()
 {
 }
 
-void SocialMgr::GetFriendInfo(Player* player, uint32 friendGUID, FriendInfo &friendInfo)
+void SocialMgr::GetFriendInfo(Player* player, uint32 friendGUID, FriendInfo& friendInfo)
 {
     if (!player)
         return;
@@ -203,21 +201,21 @@ void SocialMgr::GetFriendInfo(Player* player, uint32 friendGUID, FriendInfo &fri
     // PLAYER see his team only and PLAYER can't see MODERATOR, GAME MASTER, ADMINISTRATOR characters
     // MODERATOR, GAME MASTER, ADMINISTRATOR can see all
     if (pFriend && pFriend->GetName() &&
-       (security > SEC_PLAYER ||
-       ((pFriend->GetTeam() == team || allowTwoSideWhoList) &&
-       (pFriend->GetSession()->GetSecurity() == SEC_PLAYER || (gmInWhoList && pFriend->IsVisibleGloballyFor(player))))))
+        (security > SEC_PLAYER ||
+         ((pFriend->GetTeam() == team || allowTwoSideWhoList) &&
+          (pFriend->GetSession()->GetSecurity() == SEC_PLAYER || (gmInWhoList && pFriend->IsVisibleGloballyFor(player))))))
     {
         friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_ONLINE);
 
         // AFK Status
         pFriend->isAFK() ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_AFK) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_AFK);
-        
+
         // DND Status
         pFriend->isDND() ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_DND) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_DND);
-        
+
         // RAF Status
         sObjectMgr.GetRAFLinkStatus(player, pFriend) ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_RAF) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_RAF);
- 
+
         friendInfo.Area = pFriend->GetZoneId();
         friendInfo.Level = pFriend->getLevel();
         friendInfo.Class = pFriend->getClass();
@@ -238,25 +236,25 @@ void SocialMgr::SendFriendStatus(Player* player, FriendsResult result, uint32 fr
     WorldPacket data;
     MakeFriendStatusPacket(result, friend_guid, &data);
     GetFriendInfo(player, friend_guid, fi);
-    switch(result)
+    switch (result)
     {
-        case FRIEND_ADDED_OFFLINE:
-        case FRIEND_ADDED_ONLINE:
-            data << fi.Note;
-        default:
-            break;
+    case FRIEND_ADDED_OFFLINE:
+    case FRIEND_ADDED_ONLINE:
+        data << fi.Note;
+    default:
+        break;
     }
 
-    switch(result)
+    switch (result)
     {
-        case FRIEND_ADDED_ONLINE:
-        case FRIEND_ONLINE:
-            data << uint8(fi.Status);
-            data << uint32(fi.Area);
-            data << uint32(fi.Level);
-            data << uint32(fi.Class);
-        default:
-            break;
+    case FRIEND_ADDED_ONLINE:
+    case FRIEND_ONLINE:
+        data << uint8(fi.Status);
+        data << uint32(fi.Area);
+        data << uint32(fi.Level);
+        data << uint32(fi.Class);
+    default:
+        break;
     }
 
     if (broadcast)
@@ -286,19 +284,17 @@ void SocialMgr::BroadcastToFriendListers(Player* player, WorldPacket* packet)
             // PLAYER see his team only and PLAYER can't see MODERATOR, GAME MASTER, ADMINISTRATOR characters
             // MODERATOR, GAME MASTER, ADMINISTRATOR can see all
             if (pFriend && pFriend->IsInWorld() &&
-               (pFriend->GetSession()->GetSecurity() > SEC_PLAYER ||
-               ((pFriend->GetTeam() == team || allowTwoSideWhoList) &&
-               (security == SEC_PLAYER || (gmInWhoList && player->IsVisibleGloballyFor(pFriend))))))
-            {
+                (pFriend->GetSession()->GetSecurity() > SEC_PLAYER ||
+                 ((pFriend->GetTeam() == team || allowTwoSideWhoList) &&
+                  (security == SEC_PLAYER || (gmInWhoList && player->IsVisibleGloballyFor(pFriend))))))
                 pFriend->GetSession()->SendPacket(packet);
-            }
         }
     }
 }
 
-PlayerSocial *SocialMgr::LoadFromDB(QueryResult_AutoPtr result, uint32 guid)
+PlayerSocial* SocialMgr::LoadFromDB(QueryResult_AutoPtr result, uint32 guid)
 {
-    PlayerSocial *social = &m_socialMap[guid];
+    PlayerSocial* social = &m_socialMap[guid];
     social->SetPlayerGUID(guid);
 
     if (!result)
@@ -310,7 +306,7 @@ PlayerSocial *SocialMgr::LoadFromDB(QueryResult_AutoPtr result, uint32 guid)
 
     do
     {
-        Field *fields  = result->Fetch();
+        Field* fields  = result->Fetch();
 
         friend_guid = fields[0].GetUInt32();
         flags = fields[1].GetUInt32();

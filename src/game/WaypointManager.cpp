@@ -36,9 +36,7 @@ void WaypointStore::Load()
 {
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT COUNT(id) FROM waypoint_data");
     if (!result)
-    {
         sLog.outFatal("an error occured while loading the table waypoint_data (maybe it doesn't exist ?)");
-    }
 
     records = (*result)[0].GetUInt32();
 
@@ -53,7 +51,7 @@ void WaypointStore::Load()
     uint32 total_records = result->GetRowCount();
 
     uint32 count = 0;
-    Field *fields;
+    Field* fields;
     uint32 last_id = 0;
 
     do
@@ -61,12 +59,12 @@ void WaypointStore::Load()
         fields = result->Fetch();
         uint32 id = fields[0].GetUInt32();
         count++;
-        WaypointData *wp = new WaypointData;
+        WaypointData* wp = new WaypointData;
 
         if (last_id != id)
             path_data = new WaypointPath;
 
-        float x,y,z,o;
+        float x, y, z, o;
         x = fields[2].GetFloat();
         y = fields[3].GetFloat();
         z = fields[4].GetFloat();
@@ -92,7 +90,8 @@ void WaypointStore::Load()
 
         last_id = id;
 
-    } while (result->NextRow()) ;
+    }
+    while (result->NextRow()) ;
 
     sLog.outString(">> Loaded %u waypoints", count);
 }
@@ -111,15 +110,15 @@ void WaypointStore::UpdatePath(uint32 id)
 
     WaypointPath* path_data;
     path_data = new WaypointPath;
-    Field *fields;
+    Field* fields;
 
     do
     {
         fields = result->Fetch();
 
-        WaypointData *wp = new WaypointData;
+        WaypointData* wp = new WaypointData;
 
-        float x,y,z,o;
+        float x, y, z, o;
         x = fields[1].GetFloat();
         y = fields[2].GetFloat();
         z = fields[3].GetFloat();

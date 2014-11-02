@@ -84,16 +84,16 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch (urand(0,1))
+        switch (urand(0, 1))
         {
-            case 0:
-                DoPlaySoundToSet(me, SOUND_ONSLAY1);
-                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
-                break;
-            case 1:
-                DoPlaySoundToSet(me, SOUND_ONSLAY2);
-                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
-                break;
+        case 0:
+            DoPlaySoundToSet(me, SOUND_ONSLAY1);
+            me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
+            break;
+        case 1:
+            DoPlaySoundToSet(me, SOUND_ONSLAY2);
+            me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
+            break;
         }
     }
 
@@ -104,7 +104,7 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
             if (pTarget && pTarget->isAlive())
-                me->AddThreat(pTarget,0.0f);
+                me->AddThreat(pTarget, 0.0f);
         }
     }
 
@@ -149,45 +149,49 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
         if (FrostArmorTimer <= diff)
         {
             DoCast(me, SPELL_FROST_ARMOR);
-            FrostArmorTimer = 40000+rand()%20000;
-        } else FrostArmorTimer -= diff;
+            FrostArmorTimer = 40000 + rand() % 20000;
+        }
+        else FrostArmorTimer -= diff;
         if (DecayTimer <= diff)
         {
             DoCastVictim( SPELL_DEATH_AND_DECAY);
-            DecayTimer = 60000+rand()%20000;
-            switch (urand(0,1))
+            DecayTimer = 60000 + rand() % 20000;
+            switch (urand(0, 1))
             {
-                case 0:
-                    DoPlaySoundToSet(me, SOUND_DECAY1);
-                    me->MonsterYell(SAY_DECAY1, LANG_UNIVERSAL, 0);
-                    break;
-                case 1:
-                    DoPlaySoundToSet(me, SOUND_DECAY2);
-                    me->MonsterYell(SAY_DECAY2, LANG_UNIVERSAL, 0);
-                    break;
+            case 0:
+                DoPlaySoundToSet(me, SOUND_DECAY1);
+                me->MonsterYell(SAY_DECAY1, LANG_UNIVERSAL, 0);
+                break;
+            case 1:
+                DoPlaySoundToSet(me, SOUND_DECAY2);
+                me->MonsterYell(SAY_DECAY2, LANG_UNIVERSAL, 0);
+                break;
             }
-        } else DecayTimer -= diff;
+        }
+        else DecayTimer -= diff;
         if (NovaTimer <= diff)
         {
             DoCastVictim( SPELL_FROST_NOVA);
-            NovaTimer = 30000+rand()%15000;
-            switch (urand(0,1))
+            NovaTimer = 30000 + rand() % 15000;
+            switch (urand(0, 1))
             {
-                case 0:
-                    DoPlaySoundToSet(me, SOUND_NOVA1);
-                    me->MonsterYell(SAY_NOVA1, LANG_UNIVERSAL, 0);
-                    break;
-                case 1:
-                    DoPlaySoundToSet(me, SOUND_NOVA2);
-                    me->MonsterYell(SAY_NOVA2, LANG_UNIVERSAL, 0);
-                    break;
+            case 0:
+                DoPlaySoundToSet(me, SOUND_NOVA1);
+                me->MonsterYell(SAY_NOVA1, LANG_UNIVERSAL, 0);
+                break;
+            case 1:
+                DoPlaySoundToSet(me, SOUND_NOVA2);
+                me->MonsterYell(SAY_NOVA2, LANG_UNIVERSAL, 0);
+                break;
             }
-        } else NovaTimer -= diff;
+        }
+        else NovaTimer -= diff;
         if (IceboltTimer <= diff)
         {
-            DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,40,true), SPELL_ICEBOLT);
-            IceboltTimer = 11000+rand()%20000;
-        } else IceboltTimer -= diff;
+            DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 40, true), SPELL_ICEBOLT);
+            IceboltTimer = 11000 + rand() % 20000;
+        }
+        else IceboltTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -200,7 +204,7 @@ CreatureAI* GetAI_boss_rage_winterchill(Creature* pCreature)
 
 void AddSC_boss_rage_winterchill()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_rage_winterchill";
     newscript->GetAI = &GetAI_boss_rage_winterchill;

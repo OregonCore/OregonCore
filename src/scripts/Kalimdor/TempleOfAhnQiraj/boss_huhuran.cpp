@@ -50,11 +50,11 @@ struct boss_huhuranAI : public ScriptedAI
 
     void Reset()
     {
-        Frenzy_Timer = 25000 + rand()%10000;
-        Wyvern_Timer = 18000 + rand()%10000;
+        Frenzy_Timer = 25000 + rand() % 10000;
+        Wyvern_Timer = 18000 + rand() % 10000;
         Spit_Timer = 8000;
         PoisonBolt_Timer = 4000;
-        NoxiousPoison_Timer = 10000 + rand()%10000;
+        NoxiousPoison_Timer = 10000 + rand() % 10000;
         FrenzyBack_Timer = 15000;
 
         Frenzy = false;
@@ -78,30 +78,34 @@ struct boss_huhuranAI : public ScriptedAI
             DoScriptText(EMOTE_GENERIC_FRENZY_KILL, me);
             Frenzy = true;
             PoisonBolt_Timer = 3000;
-            Frenzy_Timer = 25000 + rand()%10000;
-        } else Frenzy_Timer -= diff;
+            Frenzy_Timer = 25000 + rand() % 10000;
+        }
+        else Frenzy_Timer -= diff;
 
         // Wyvern Timer
         if (Wyvern_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_WYVERNSTING);
-            Wyvern_Timer = 15000 + rand()%17000;
-        } else Wyvern_Timer -= diff;
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_WYVERNSTING);
+            Wyvern_Timer = 15000 + rand() % 17000;
+        }
+        else Wyvern_Timer -= diff;
 
         //Spit Timer
         if (Spit_Timer <= diff)
         {
             DoCastVictim(SPELL_ACIDSPIT);
-            Spit_Timer = 5000 + rand()%5000;
-        } else Spit_Timer -= diff;
+            Spit_Timer = 5000 + rand() % 5000;
+        }
+        else Spit_Timer -= diff;
 
         //NoxiousPoison_Timer
         if (NoxiousPoison_Timer <= diff)
         {
             DoCastVictim(SPELL_NOXIOUSPOISON);
-            NoxiousPoison_Timer = 12000 + rand()%12000;
-        } else NoxiousPoison_Timer -= diff;
+            NoxiousPoison_Timer = 12000 + rand() % 12000;
+        }
+        else NoxiousPoison_Timer -= diff;
 
         //PoisonBolt only if frenzy or berserk
         if (Frenzy || Berserk)
@@ -110,7 +114,8 @@ struct boss_huhuranAI : public ScriptedAI
             {
                 DoCastVictim(SPELL_POISONBOLT);
                 PoisonBolt_Timer = 3000;
-            } else PoisonBolt_Timer -= diff;
+            }
+            else PoisonBolt_Timer -= diff;
         }
 
         //FrenzyBack_Timer
@@ -119,9 +124,10 @@ struct boss_huhuranAI : public ScriptedAI
             me->InterruptNonMeleeSpells(false);
             Frenzy = false;
             FrenzyBack_Timer = 15000;
-        } else FrenzyBack_Timer -= diff;
+        }
+        else FrenzyBack_Timer -= diff;
 
-        if (!Berserk && me->GetHealth()*100 / me->GetMaxHealth() < 31)
+        if (!Berserk && me->GetHealth() * 100 / me->GetMaxHealth() < 31)
         {
             me->InterruptNonMeleeSpells(false);
             DoScriptText(EMOTE_GENERIC_BERSERK, me);
@@ -140,7 +146,7 @@ CreatureAI* GetAI_boss_huhuran(Creature* pCreature)
 
 void AddSC_boss_huhuran()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_huhuran";
     newscript->GetAI = &GetAI_boss_huhuran;

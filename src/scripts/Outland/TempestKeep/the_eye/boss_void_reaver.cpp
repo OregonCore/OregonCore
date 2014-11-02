@@ -69,11 +69,17 @@ struct boss_void_reaverAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
-        case 2: DoScriptText(SAY_SLAY3, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_SLAY3, me);
+            break;
         }
     }
 
@@ -103,13 +109,18 @@ struct boss_void_reaverAI : public ScriptedAI
         {
             DoCastVictim(SPELL_POUNDING);
 
-            switch(rand()%2)
+            switch (rand() % 2)
             {
-            case 0: DoScriptText(SAY_POUNDING1, me); break;
-            case 1: DoScriptText(SAY_POUNDING2, me); break;
+            case 0:
+                DoScriptText(SAY_POUNDING1, me);
+                break;
+            case 1:
+                DoScriptText(SAY_POUNDING2, me);
+                break;
             }
-             Pounding_Timer = 15000;                         //cast time(3000) + cooldown time(12000)
-        } else Pounding_Timer -= diff;
+            Pounding_Timer = 15000;                         //cast time(3000) + cooldown time(12000)
+        }
+        else Pounding_Timer -= diff;
 
         // Arcane Orb
         if (ArcaneOrb_Timer <= diff)
@@ -120,9 +131,9 @@ struct boss_void_reaverAI : public ScriptedAI
                 return;
             }
             Unit* pTarget = NULL;
-            std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
+            std::list<HostileReference*> t_list = me->getThreatManager().getThreatList();
             std::vector<Unit* > target_list;
-            for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
+            for (std::list<HostileReference*>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
                 pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                 // exclude pets & totems
@@ -136,15 +147,16 @@ struct boss_void_reaverAI : public ScriptedAI
             }
 
             if (target_list.size())
-                pTarget = *(target_list.begin()+rand()%target_list.size());
+                pTarget = *(target_list.begin() + rand() % target_list.size());
             else
                 pTarget = me->getVictim();
 
             if (pTarget)
-                me->CastSpell(pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(), SPELL_ARCANE_ORB, false);
+                me->CastSpell(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), SPELL_ARCANE_ORB, false);
 
             ArcaneOrb_Timer = 3000;
-        } else ArcaneOrb_Timer -= diff;
+        }
+        else ArcaneOrb_Timer -= diff;
 
         // Single Target knock back, reduces aggro
         if (KnockAway_Timer <= diff)
@@ -153,17 +165,19 @@ struct boss_void_reaverAI : public ScriptedAI
 
             //Drop 25% aggro
             if (DoGetThreat(me->getVictim()))
-                DoModifyThreatPercent(me->getVictim(),-25);
+                DoModifyThreatPercent(me->getVictim(), -25);
 
             KnockAway_Timer = 30000;
-        } else KnockAway_Timer -= diff;
+        }
+        else KnockAway_Timer -= diff;
 
         //Berserk
         if (Berserk_Timer <= diff && !Enraged)
         {
-            DoCast(me,SPELL_BERSERK);
+            DoCast(me, SPELL_BERSERK);
             Enraged = true;
-        } else Berserk_Timer -= diff;
+        }
+        else Berserk_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -176,7 +190,7 @@ CreatureAI* GetAI_boss_void_reaver(Creature* pCreature)
 
 void AddSC_boss_void_reaver()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_void_reaver";
     newscript->GetAI = &GetAI_boss_void_reaver;

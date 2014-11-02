@@ -61,39 +61,43 @@ struct boss_shazzrahAI : public ScriptedAI
         if (ArcaneExplosion_Timer <= diff)
         {
             DoCastVictim( SPELL_ARCANEEXPLOSION);
-            ArcaneExplosion_Timer = 5000 + rand()%4000;
-        } else ArcaneExplosion_Timer -= diff;
+            ArcaneExplosion_Timer = 5000 + rand() % 4000;
+        }
+        else ArcaneExplosion_Timer -= diff;
 
         //ShazzrahCurse_Timer
         if (ShazzrahCurse_Timer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget) DoCast(pTarget, SPELL_SHAZZRAHCURSE);
 
-            ShazzrahCurse_Timer = 25000 + rand()%5000;
-        } else ShazzrahCurse_Timer -= diff;
+            ShazzrahCurse_Timer = 25000 + rand() % 5000;
+        }
+        else ShazzrahCurse_Timer -= diff;
 
         //DeadenMagic_Timer
         if (DeadenMagic_Timer <= diff)
         {
             DoCast(me, SPELL_DEADENMAGIC);
             DeadenMagic_Timer = 35000;
-        } else DeadenMagic_Timer -= diff;
+        }
+        else DeadenMagic_Timer -= diff;
 
         //Countspell_Timer
         if (Countspell_Timer <= diff)
         {
             DoCastVictim( SPELL_COUNTERSPELL);
-            Countspell_Timer = 16000 + rand()%4000;
-        } else Countspell_Timer -= diff;
+            Countspell_Timer = 16000 + rand() % 4000;
+        }
+        else Countspell_Timer -= diff;
 
         //Blink_Timer
         if (Blink_Timer <= diff)
         {
             // Teleporting him to a random gamer and casting Arcane Explosion after that.
             // Blink is not working cause of LoS System we need to do this hardcoded.
-            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM,0, 100, true))
+            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
             {
                 DoTeleportTo(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
                 DoCast(pTarget, SPELL_ARCANEEXPLOSION);
@@ -101,7 +105,8 @@ struct boss_shazzrahAI : public ScriptedAI
             }
 
             Blink_Timer = 45000;
-        } else Blink_Timer -= diff;
+        }
+        else Blink_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -113,7 +118,7 @@ CreatureAI* GetAI_boss_shazzrah(Creature* pCreature)
 
 void AddSC_boss_shazzrah()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_shazzrah";
     newscript->GetAI = &GetAI_boss_shazzrah;

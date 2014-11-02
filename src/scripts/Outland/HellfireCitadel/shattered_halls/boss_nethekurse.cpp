@@ -36,19 +36,19 @@ struct Say
     int32 id;
 };
 
-static Say PeonAttacked[]=
+static Say PeonAttacked[] =
 {
-    {-1540001},
-    {-1540002},
-    {-1540003},
-    {-1540004},
+    { -1540001},
+    { -1540002},
+    { -1540003},
+    { -1540004},
 };
-static Say PeonDies[]=
+static Say PeonDies[] =
 {
-    {-1540005},
-    {-1540006},
-    {-1540007},
-    {-1540008},
+    { -1540005},
+    { -1540006},
+    { -1540007},
+    { -1540008},
 };
 
 #define SAY_INTRO           -1540000
@@ -158,11 +158,17 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
 
     void DoKillPeons()
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_TAUNT_1, me); break;
-            case 1: DoScriptText(SAY_TAUNT_2, me); break;
-            case 2: DoScriptText(SAY_TAUNT_3, me); break;
+        case 0:
+            DoScriptText(SAY_TAUNT_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_TAUNT_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_TAUNT_3, me);
+            break;
         }
 
         for (std::vector<uint64>::const_iterator itr = OrcGUID.begin(); itr != OrcGUID.end(); ++itr)
@@ -171,7 +177,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
             {
                 if (pOrc->isAlive())
                 {
-                    DoCast(pOrc,SPELL_SHADOW_SEAR);
+                    DoCast(pOrc, SPELL_SHADOW_SEAR);
                     pOrc->DealDamage(pOrc, pOrc->GetHealth(), 0, DIRECT_DAMAGE);
                 }
             }
@@ -209,7 +215,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
                 IsIntroEvent = true;
 
                 if (pInstance)
-                    pInstance->SetData(TYPE_NETHEKURSE,IN_PROGRESS);
+                    pInstance->SetData(TYPE_NETHEKURSE, IN_PROGRESS);
             }
 
             if (!me->canFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
@@ -230,11 +236,17 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO_3, me);
+            break;
         }
     }
 
@@ -247,10 +259,14 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY_1, me); break;
-            case 1: DoScriptText(SAY_SLAY_2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY_2, me);
+            break;
         }
     }
 
@@ -262,7 +278,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         Reset();
 
         if (!me->isAlive())
-            return;    
+            return;
 
         if (pInstance)
         {
@@ -294,7 +310,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         if (!pInstance)
             return;
 
-        pInstance->SetData(TYPE_NETHEKURSE,DONE);
+        pInstance->SetData(TYPE_NETHEKURSE, DONE);
     }
 
     void MovementInform(uint32 uiMotionType, uint32 /*uiPointId*/)
@@ -320,9 +336,8 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
             if (pInstance->GetData(TYPE_NETHEKURSE) == IN_PROGRESS)
             {
                 if (IntroEvent_Timer <= diff)
-                {
                     DoKillPeons();
-                } else IntroEvent_Timer -= diff;
+                else IntroEvent_Timer -= diff;
             }
         }
 
@@ -343,27 +358,30 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
             if (Cleave_Timer <= diff)
             {
                 DoCastVictim((HeroicMode ? H_SPELL_SHADOW_SLAM : SPELL_SHADOW_CLEAVE));
-                Cleave_Timer = 6000+rand()%2500;
-            } else Cleave_Timer -= diff;
-			
+                Cleave_Timer = 6000 + rand() % 2500;
+            }
+            else Cleave_Timer -= diff;
+
         }
         else
         {
             if (ShadowFissure_Timer <= diff)
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(pTarget,SPELL_SHADOW_FISSURE);
-                ShadowFissure_Timer = 7500+rand()%7500;
-            } else ShadowFissure_Timer -= diff;
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_SHADOW_FISSURE);
+                ShadowFissure_Timer = 7500 + rand() % 7500;
+            }
+            else ShadowFissure_Timer -= diff;
 
             if (DeathCoil_Timer <= diff)
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(pTarget,SPELL_DEATH_COIL);
-                DeathCoil_Timer = 15000+rand()%5000;
-            } else DeathCoil_Timer -= diff;
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_DEATH_COIL);
+                DeathCoil_Timer = 15000 + rand() % 5000;
+            }
+            else DeathCoil_Timer -= diff;
 
-            if ((me->GetHealth()*100) / me->GetMaxHealth() <= 20)
+            if ((me->GetHealth() * 100) / me->GetMaxHealth() <= 20)
                 Phase = true;
 
             DoMeleeAttackIfReady();
@@ -398,14 +416,14 @@ struct mob_fel_orc_convertAI : public ScriptedAI
         {
             if (pInstance->GetData64(DATA_NETHEKURSE))
             {
-                Creature* pKurse = Unit::GetCreature(*me,pInstance->GetData64(DATA_NETHEKURSE));
+                Creature* pKurse = Unit::GetCreature(*me, pInstance->GetData64(DATA_NETHEKURSE));
                 if (pKurse)
                     ((boss_grand_warlock_nethekurseAI*)pKurse->AI())->DoYellForPeonEnterCombat();
             }
 
             if (pInstance->GetData(TYPE_NETHEKURSE) == IN_PROGRESS)
                 return;
-            else pInstance->SetData(TYPE_NETHEKURSE,IN_PROGRESS);
+            else pInstance->SetData(TYPE_NETHEKURSE, IN_PROGRESS);
         }
     }
 
@@ -415,7 +433,7 @@ struct mob_fel_orc_convertAI : public ScriptedAI
         {
             if (pInstance->GetData64(DATA_NETHEKURSE))
             {
-                Creature* pKurse = Unit::GetCreature(*me,pInstance->GetData64(DATA_NETHEKURSE));
+                Creature* pKurse = Unit::GetCreature(*me, pInstance->GetData64(DATA_NETHEKURSE));
                 if (pKurse)
                     ((boss_grand_warlock_nethekurseAI*)pKurse->AI())->DoYellForPeonDeath();
             }
@@ -431,7 +449,8 @@ struct mob_fel_orc_convertAI : public ScriptedAI
         {
             DoCastVictim(SPELL_HEMORRHAGE);
             Hemorrhage_Timer = 15000;
-        } else Hemorrhage_Timer -= diff;
+        }
+        else Hemorrhage_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -453,15 +472,21 @@ struct mob_lesser_shadow_fissureAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) { }
 
-    void MoveInLineOfSight(Unit* /*who*/) { return; }
+    void MoveInLineOfSight(Unit* /*who*/)
+    {
+        return;
+    }
 
-    void AttackStart(Unit* /*who*/) { return; }
+    void AttackStart(Unit* /*who*/)
+    {
+        return;
+    }
 
     void UpdateAI(const uint32 diff)
     {
         if (!Start)
         {
-            me->CastSpell(me,SPELL_CONSUMPTION,false);
+            me->CastSpell(me, SPELL_CONSUMPTION, false);
             Start = true;
         }
 
@@ -471,7 +496,8 @@ struct mob_lesser_shadow_fissureAI : public ScriptedAI
             me->SetHealth(0);
             me->CombatStop();
             me->DeleteThreatList();
-        } else Stop_Timer -= diff;
+        }
+        else Stop_Timer -= diff;
     }
 };
 
@@ -492,7 +518,7 @@ CreatureAI* GetAI_mob_lesser_shadow_fissure(Creature* pCreature)
 
 void AddSC_boss_grand_warlock_nethekurse()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_grand_warlock_nethekurse";

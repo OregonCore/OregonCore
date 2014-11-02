@@ -48,7 +48,7 @@ struct boss_sulfuronAI : public ScriptedAI
 
     void Reset()
     {
-        Darkstrike_Timer=10000;                             //These times are probably wrong
+        Darkstrike_Timer = 10000;                           //These times are probably wrong
         DemoralizingShout_Timer = 15000;
         Inspire_Timer = 13000;
         Knockdown_Timer = 6000;
@@ -68,18 +68,19 @@ struct boss_sulfuronAI : public ScriptedAI
         if (DemoralizingShout_Timer <= diff)
         {
             DoCastVictim( SPELL_DEMORALIZINGSHOUT);
-            DemoralizingShout_Timer = 15000 + rand()%5000;
-        } else DemoralizingShout_Timer -= diff;
+            DemoralizingShout_Timer = 15000 + rand() % 5000;
+        }
+        else DemoralizingShout_Timer -= diff;
 
         //Inspire_Timer
         if (Inspire_Timer <= diff)
         {
             Creature* pTarget = NULL;
-            std::list<Creature*> pList = DoFindFriendlyMissingBuff(45.0f,SPELL_INSPIRE);
+            std::list<Creature*> pList = DoFindFriendlyMissingBuff(45.0f, SPELL_INSPIRE);
             if (!pList.empty())
             {
                 std::list<Creature*>::const_iterator i = pList.begin();
-                advance(i, (rand()%pList.size()));
+                advance(i, (rand() % pList.size()));
                 pTarget = (*i);
             }
 
@@ -88,32 +89,36 @@ struct boss_sulfuronAI : public ScriptedAI
 
             DoCast(me, SPELL_INSPIRE);
 
-            Inspire_Timer = 20000 + rand()%6000;
-        } else Inspire_Timer -= diff;
+            Inspire_Timer = 20000 + rand() % 6000;
+        }
+        else Inspire_Timer -= diff;
 
         //Knockdown_Timer
         if (Knockdown_Timer <= diff)
         {
             DoCastVictim( SPELL_KNOCKDOWN);
-            Knockdown_Timer = 12000 + rand()%3000;
-        } else Knockdown_Timer -= diff;
+            Knockdown_Timer = 12000 + rand() % 3000;
+        }
+        else Knockdown_Timer -= diff;
 
         //Flamespear_Timer
         if (Flamespear_Timer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget) DoCast(pTarget, SPELL_FLAMESPEAR);
 
-            Flamespear_Timer = 12000 + rand()%4000;
-        } else Flamespear_Timer -= diff;
+            Flamespear_Timer = 12000 + rand() % 4000;
+        }
+        else Flamespear_Timer -= diff;
 
         //DarkStrike_Timer
         if (Darkstrike_Timer <= diff)
         {
             DoCast(me, SPELL_DARKSTRIKE);
-            Darkstrike_Timer = 15000 + rand()%3000;
-        } else Darkstrike_Timer -= diff;
+            Darkstrike_Timer = 15000 + rand() % 3000;
+        }
+        else Darkstrike_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -129,7 +134,7 @@ struct mob_flamewaker_priestAI : public ScriptedAI
 
     void Reset()
     {
-        Heal_Timer = 15000+rand()%15000;
+        Heal_Timer = 15000 + rand() % 15000;
         ShadowWordPain_Timer = 2000;
         Immolate_Timer = 8000;
     }
@@ -152,28 +157,31 @@ struct mob_flamewaker_priestAI : public ScriptedAI
 
             DoCast(pUnit, SPELL_HEAL);
 
-            Heal_Timer = 15000+rand()%5000;
-        } else Heal_Timer -= diff;
+            Heal_Timer = 15000 + rand() % 5000;
+        }
+        else Heal_Timer -= diff;
 
         //ShadowWordPain_Timer
         if (ShadowWordPain_Timer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget) DoCast(pTarget, SPELL_SHADOWWORDPAIN);
 
-            ShadowWordPain_Timer = 18000+rand()%8000;
-        } else ShadowWordPain_Timer -= diff;
+            ShadowWordPain_Timer = 18000 + rand() % 8000;
+        }
+        else ShadowWordPain_Timer -= diff;
 
         //Immolate_Timer
         if (Immolate_Timer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget) DoCast(pTarget, SPELL_IMMOLATE);
 
-            Immolate_Timer = 15000+rand()%10000;
-        } else Immolate_Timer -= diff;
+            Immolate_Timer = 15000 + rand() % 10000;
+        }
+        else Immolate_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -191,7 +199,7 @@ CreatureAI* GetAI_mob_flamewaker_priest(Creature* pCreature)
 
 void AddSC_boss_sulfuron()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_sulfuron";

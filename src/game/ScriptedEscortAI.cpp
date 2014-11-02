@@ -416,7 +416,7 @@ void npc_escortAI::AddWaypoint(uint32 id, float x, float y, float z, uint32 Wait
 
 void npc_escortAI::FillPointMovementListForCreature()
 {
-    std::vector<ScriptPointMove> const &pPointsEntries = pSystemMgr.GetPointMoveList(me->GetEntry());
+    std::vector<ScriptPointMove> const& pPointsEntries = pSystemMgr.GetPointMoveList(me->GetEntry());
 
     if (pPointsEntries.empty())
         return;
@@ -467,10 +467,10 @@ void npc_escortAI::Start(bool bIsActiveAttacker, bool bRun, uint64 uiPlayerGUID,
     if (!ScriptWP) // sd2 never adds wp in script, but tc does
     {
 
-    if (!WaypointList.empty())
-        WaypointList.clear();
+        if (!WaypointList.empty())
+            WaypointList.clear();
 
-    FillPointMovementListForCreature();
+        FillPointMovementListForCreature();
 
     }
 

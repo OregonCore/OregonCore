@@ -67,13 +67,14 @@ struct boss_blood_guard_porungAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
-           return;
+            return;
 
         if (Cleave_Timer <= diff)
         {
             DoCastVictim(SPELL_CLEAVE);
-            Cleave_Timer = 10000+rand()%5000;
-        } else Cleave_Timer -= diff;
+            Cleave_Timer = 10000 + rand() % 5000;
+        }
+        else Cleave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -86,7 +87,7 @@ CreatureAI* GetAI_boss_blood_guard_porungAI(Creature* pCreature)
 
 void AddSC_boss_blood_guard_porung()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_blood_guard_porung";
     newscript->GetAI = &GetAI_boss_blood_guard_porungAI;

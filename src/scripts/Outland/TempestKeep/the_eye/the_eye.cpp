@@ -58,7 +58,7 @@ struct mob_crystalcore_devastatorAI : public ScriptedAI
         //Knockaway_Timer
         if (Knockaway_Timer <= diff)
         {
-            me->CastSpell(me->getVictim(),SPELL_KNOCKAWAY, true);
+            me->CastSpell(me->getVictim(), SPELL_KNOCKAWAY, true);
 
             // current aggro target is knocked away pick new target
             Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
@@ -76,9 +76,10 @@ struct mob_crystalcore_devastatorAI : public ScriptedAI
         //Countercharge_Timer
         if (Countercharge_Timer <= diff)
         {
-            DoCast(this->me,SPELL_COUNTERCHARGE);
+            DoCast(this->me, SPELL_COUNTERCHARGE);
             Countercharge_Timer = 45000;
-        } else Countercharge_Timer -= diff;
+        }
+        else Countercharge_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -91,7 +92,7 @@ CreatureAI* GetAI_mob_crystalcore_devastator(Creature* pCreature)
 
 void AddSC_the_eye()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "mob_crystalcore_devastator";
     newscript->GetAI = &GetAI_mob_crystalcore_devastator;

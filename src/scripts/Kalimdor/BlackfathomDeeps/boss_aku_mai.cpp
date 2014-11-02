@@ -34,11 +34,11 @@ struct boss_aku_maiAI : public ScriptedAI
     uint32 uiPoisonCloudTimer;
     bool bIsEnraged;
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     void Reset()
     {
-        uiPoisonCloudTimer = urand(5000,9000);
+        uiPoisonCloudTimer = urand(5000, 9000);
         bIsEnraged = false;
         if (pInstance)
             pInstance->SetData(TYPE_AKU_MAI, NOT_STARTED);
@@ -64,12 +64,13 @@ struct boss_aku_maiAI : public ScriptedAI
         if (uiPoisonCloudTimer < diff)
         {
             DoCastVictim(SPELL_POISON_CLOUD);
-            uiPoisonCloudTimer = urand(25000,50000);
-        } else uiPoisonCloudTimer -= diff;
+            uiPoisonCloudTimer = urand(25000, 50000);
+        }
+        else uiPoisonCloudTimer -= diff;
 
         if (!bIsEnraged && HealthBelowPct(30))
         {
-            DoCast(me,SPELL_FRENZIED_RAGE);
+            DoCast(me, SPELL_FRENZIED_RAGE);
             bIsEnraged = true;
         }
 
@@ -84,7 +85,7 @@ CreatureAI* GetAI_boss_aku_mai(Creature* pCreature)
 
 void AddSC_boss_aku_mai()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_aku_mai";

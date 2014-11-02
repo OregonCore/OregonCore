@@ -59,7 +59,7 @@ struct boss_arlokkAI : public ScriptedAI
         pInstance = pCreature->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 m_uiShadowWordPain_Timer;
     uint32 m_uiGouge_Timer;
@@ -190,8 +190,8 @@ struct boss_arlokkAI : public ScriptedAI
             else
                 m_uiThrash_Timer -= uiDiff;
 
-           // Ravage Timer
-           if (m_uiRavage_Timer <= uiDiff)
+            // Ravage Timer
+            if (m_uiRavage_Timer <= uiDiff)
             {
                 DoCastVictim( SPELL_RAVAGE);
                 m_uiRavage_Timer = 16000;
@@ -216,7 +216,7 @@ struct boss_arlokkAI : public ScriptedAI
                 if (DoGetThreat(me->getVictim()))
                     DoModifyThreatPercent(me->getVictim(), -80);
 
-                m_uiGouge_Timer = 17000 + rand()%10000;
+                m_uiGouge_Timer = 17000 + rand() % 10000;
             }
             else
                 m_uiGouge_Timer -= uiDiff;
@@ -258,15 +258,15 @@ struct boss_arlokkAI : public ScriptedAI
                 me->SetDisplayId(MODEL_ID_PANTHER);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
-                const CreatureInfo *cinfo = me->GetCreatureTemplate();
-                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg / 100) * 35)));
-                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg / 100) * 35)));
+                const CreatureInfo* cinfo = me->GetCreatureTemplate();
+                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 35)));
+                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 35)));
                 me->UpdateDamagePhysical(BASE_ATTACK);
 
                 if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     AttackStart(pTarget);
-                    DoCast(pTarget,SPELL_BACKSTAB);
+                    DoCast(pTarget, SPELL_BACKSTAB);
                 }
 
                 m_bIsPhaseTwo = true;
@@ -291,7 +291,7 @@ struct mob_prowlerAI : public ScriptedAI
         pInstance = pCreature->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     void Reset()
     {
@@ -339,7 +339,7 @@ CreatureAI* GetAI_mob_prowler(Creature* pCreature)
 
 void AddSC_boss_arlokk()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_arlokk";

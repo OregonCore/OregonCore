@@ -74,7 +74,7 @@ enum eGrimstone
     MAX_MOB_AMOUNT                                         = 4
 };
 
-uint32 RingMob[]=
+uint32 RingMob[] =
 {
     8925,                                                   // Dredge Worm
     8926,                                                   // Deep Stinger
@@ -84,7 +84,7 @@ uint32 RingMob[]=
     8932,                                                   // Borer Beetle
 };
 
-uint32 RingBoss[]=
+uint32 RingBoss[] =
 {
     9027,                                                   // Gorosh
     9028,                                                   // Grizzle
@@ -94,15 +94,15 @@ uint32 RingBoss[]=
     9032,                                                   // Hedrum
 };
 
-bool AreaTrigger_at_ring_of_law(Player* pPlayer, const AreaTriggerEntry * /*at*/)
+bool AreaTrigger_at_ring_of_law(Player* pPlayer, const AreaTriggerEntry* /*at*/)
 {
     if (ScriptedInstance* pInstance = pPlayer->GetInstanceData())
     {
         if (pInstance->GetData(TYPE_RING_OF_LAW) == IN_PROGRESS || pInstance->GetData(TYPE_RING_OF_LAW) == DONE)
             return false;
 
-        pInstance->SetData(TYPE_RING_OF_LAW,IN_PROGRESS);
-        pPlayer->SummonCreature(NPC_GRIMSTONE,625.559,-205.618,-52.735,2.609,TEMPSUMMON_DEAD_DESPAWN,0);
+        pInstance->SetData(TYPE_RING_OF_LAW, IN_PROGRESS);
+        pPlayer->SummonCreature(NPC_GRIMSTONE, 625.559, -205.618, -52.735, 2.609, TEMPSUMMON_DEAD_DESPAWN, 0);
 
         return false;
     }
@@ -129,7 +129,7 @@ struct npc_grimstoneAI : public npc_escortAI
     npc_grimstoneAI(Creature* c) : npc_escortAI(c)
     {
         pInstance = c->GetInstanceData();
-        MobSpawnId = rand()%6;
+        MobSpawnId = rand() % 6;
     }
 
     ScriptedInstance* pInstance;
@@ -167,7 +167,7 @@ struct npc_grimstoneAI : public npc_escortAI
     //@todo move them to center
     void SummonRingMob()
     {
-        if (Creature* tmp = me->SummonCreature(RingMob[MobSpawnId],608.960,-235.322,-53.907,1.857,TEMPSUMMON_DEAD_DESPAWN,0))
+        if (Creature* tmp = me->SummonCreature(RingMob[MobSpawnId], 608.960, -235.322, -53.907, 1.857, TEMPSUMMON_DEAD_DESPAWN, 0))
             RingMobGUID[MobCount] = tmp->GetGUID();
 
         ++MobCount;
@@ -179,7 +179,7 @@ struct npc_grimstoneAI : public npc_escortAI
     //@todo move them to center
     void SummonRingBoss()
     {
-        if (Creature* tmp = me->SummonCreature(RingBoss[rand()%6],644.300,-175.989,-53.739,3.418,TEMPSUMMON_DEAD_DESPAWN,0))
+        if (Creature* tmp = me->SummonCreature(RingBoss[rand() % 6], 644.300, -175.989, -53.739, 3.418, TEMPSUMMON_DEAD_DESPAWN, 0))
             RingBossGUID = tmp->GetGUID();
 
         MobDeath_Timer = 2500;
@@ -187,7 +187,7 @@ struct npc_grimstoneAI : public npc_escortAI
 
     void WaypointReached(uint32 i)
     {
-        switch(i)
+        switch (i)
         {
         case 0:
             DoScriptText(SCRIPT_TEXT1, me);//2
@@ -213,7 +213,7 @@ struct npc_grimstoneAI : public npc_escortAI
         case 5:
             if (pInstance)
             {
-                pInstance->SetData(TYPE_RING_OF_LAW,DONE);
+                pInstance->SetData(TYPE_RING_OF_LAW, DONE);
                 debug_log("OSCR: npc_grimstone: event reached end and set complete.");
             }
             break;
@@ -238,7 +238,7 @@ struct npc_grimstoneAI : public npc_escortAI
 
                 if (RingBossGUID)
                 {
-                    Creature* boss = Unit::GetCreature(*me,RingBossGUID);
+                    Creature* boss = Unit::GetCreature(*me, RingBossGUID);
                     if (boss && !boss->isAlive() && boss->isDead())
                     {
                         RingBossGUID = 0;
@@ -251,7 +251,7 @@ struct npc_grimstoneAI : public npc_escortAI
 
                 for (uint8 i = 0; i < MAX_MOB_AMOUNT; ++i)
                 {
-                    Creature* mob = Unit::GetCreature(*me,RingMobGUID[i]);
+                    Creature* mob = Unit::GetCreature(*me, RingMobGUID[i]);
                     if (mob && !mob->isAlive() && mob->isDead())
                     {
                         RingMobGUID[i] = 0;
@@ -265,14 +265,15 @@ struct npc_grimstoneAI : public npc_escortAI
                         }
                     }
                 }
-            } else MobDeath_Timer -= diff;
+            }
+            else MobDeath_Timer -= diff;
         }
 
         if (Event_Timer)
         {
             if (Event_Timer <= diff)
             {
-                switch(EventPhase)
+                switch (EventPhase)
                 {
                 case 0:
                     DoScriptText(SCRIPT_TEXT5, me);//1
@@ -333,12 +334,13 @@ struct npc_grimstoneAI : public npc_escortAI
                     break;
                 }
                 ++EventPhase;
-            } else Event_Timer -= diff;
+            }
+            else Event_Timer -= diff;
         }
 
         if (CanWalk)
             npc_escortAI::UpdateAI(diff);
-       }
+    }
 };
 
 CreatureAI* GetAI_npc_grimstone(Creature* pCreature)
@@ -368,7 +370,7 @@ struct mob_phalanxAI : public ScriptedAI
     void Reset()
     {
         ThunderClap_Timer = 12000;
-        FireballVolley_Timer =0;
+        FireballVolley_Timer = 0;
         MightyBlow_Timer = 15000;
     }
 
@@ -383,16 +385,18 @@ struct mob_phalanxAI : public ScriptedAI
         {
             DoCastVictim( SPELL_THUNDERCLAP);
             ThunderClap_Timer = 10000;
-        } else ThunderClap_Timer -= diff;
+        }
+        else ThunderClap_Timer -= diff;
 
         //FireballVolley_Timer
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 51)
+        if (me->GetHealth() * 100 / me->GetMaxHealth() < 51)
         {
             if (FireballVolley_Timer <= diff)
             {
                 DoCastVictim( SPELL_FIREBALLVOLLEY);
                 FireballVolley_Timer = 15000;
-            } else FireballVolley_Timer -= diff;
+            }
+            else FireballVolley_Timer -= diff;
         }
 
         //MightyBlow_Timer
@@ -400,7 +404,8 @@ struct mob_phalanxAI : public ScriptedAI
         {
             DoCastVictim( SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 10000;
-        } else MightyBlow_Timer -= diff;
+        }
+        else MightyBlow_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -438,10 +443,10 @@ bool GossipHello_npc_kharan_mighthammer(Player* pPlayer, Creature* pCreature)
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(QUEST_4001) == QUEST_STATUS_INCOMPLETE)
-         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     if (pPlayer->GetQuestStatus(4342) == QUEST_STATUS_INCOMPLETE)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
     if (pPlayer->GetTeam() == HORDE)
         pPlayer->SEND_GOSSIP_MENU(2473, pCreature->GetGUID());
@@ -455,46 +460,46 @@ bool GossipSelect_npc_kharan_mighthammer(Player* pPlayer, Creature* pCreature, u
 {
     switch (uiAction)
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            pPlayer->SEND_GOSSIP_MENU(2475, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            pPlayer->SEND_GOSSIP_MENU(2476, pCreature->GetGUID());
-            break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        pPlayer->SEND_GOSSIP_MENU(2475, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        pPlayer->SEND_GOSSIP_MENU(2476, pCreature->GetGUID());
+        break;
 
-        case GOSSIP_ACTION_INFO_DEF+3:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            pPlayer->SEND_GOSSIP_MENU(2477, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+4:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            pPlayer->SEND_GOSSIP_MENU(2478, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+5:
-             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-            pPlayer->SEND_GOSSIP_MENU(2479, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+6:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_8, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
-            pPlayer->SEND_GOSSIP_MENU(2480, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+7:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_9, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+8);
-            pPlayer->SEND_GOSSIP_MENU(2481, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+8:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_10, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+9);
-            pPlayer->SEND_GOSSIP_MENU(2482, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+9:
-            pPlayer->CLOSE_GOSSIP_MENU();
-            if (pPlayer->GetTeam() == HORDE)
-                pPlayer->AreaExploredOrEventHappens(QUEST_4001);
-            else
-                pPlayer->AreaExploredOrEventHappens(QUEST_4342);
-            break;
+    case GOSSIP_ACTION_INFO_DEF+3:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+        pPlayer->SEND_GOSSIP_MENU(2477, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+4:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+        pPlayer->SEND_GOSSIP_MENU(2478, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+5:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+        pPlayer->SEND_GOSSIP_MENU(2479, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+6:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_8, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
+        pPlayer->SEND_GOSSIP_MENU(2480, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+7:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_9, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
+        pPlayer->SEND_GOSSIP_MENU(2481, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+8:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_10, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 9);
+        pPlayer->SEND_GOSSIP_MENU(2482, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+9:
+        pPlayer->CLOSE_GOSSIP_MENU();
+        if (pPlayer->GetTeam() == HORDE)
+            pPlayer->AreaExploredOrEventHappens(QUEST_4001);
+        else
+            pPlayer->AreaExploredOrEventHappens(QUEST_4342);
+        break;
     }
     return true;
 }
@@ -528,14 +533,12 @@ bool GossipHello_npc_lokhtos_darkbargainer(Player* pPlayer, Creature* pCreature)
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pCreature->isVendor() && pPlayer->GetReputationRank(59) >= REP_FRIENDLY)
-          pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_ITEM_SHOW_ACCESS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_ITEM_SHOW_ACCESS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     if (pPlayer->GetQuestRewardStatus(QUEST_A_BINDING_CONTRACT) != 1 &&
         !pPlayer->HasItemCount(ITEM_THRORIUM_BROTHERHOOD_CONTRACT, 1, true) &&
         pPlayer->HasItemCount(ITEM_SULFURON_INGOT, 1))
-    {
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_GET_CONTRACT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    }
 
     if (pPlayer->GetReputationRank(59) < REP_FRIENDLY)
         pPlayer->SEND_GOSSIP_MENU(3673, pCreature->GetGUID());
@@ -1171,7 +1174,7 @@ struct npc_rocknotAI : public npc_escortAI
         if (!pInstance)
             return;
 
-        switch(i)
+        switch (i)
         {
         case 1:
             me->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
@@ -1201,29 +1204,31 @@ struct npc_rocknotAI : public npc_escortAI
         {
             if (BreakKeg_Timer <= diff)
             {
-                DoGo(DATA_GO_BAR_KEG,0);
+                DoGo(DATA_GO_BAR_KEG, 0);
                 BreakKeg_Timer = 0;
                 BreakDoor_Timer = 1000;
-            } else BreakKeg_Timer -= diff;
+            }
+            else BreakKeg_Timer -= diff;
         }
 
         if (BreakDoor_Timer)
         {
             if (BreakDoor_Timer <= diff)
             {
-                DoGo(DATA_GO_BAR_DOOR,2);
-                DoGo(DATA_GO_BAR_KEG_TRAP,0);               //doesn't work very well, leaving code here for future
+                DoGo(DATA_GO_BAR_DOOR, 2);
+                DoGo(DATA_GO_BAR_KEG_TRAP, 0);              //doesn't work very well, leaving code here for future
                 //spell by trap has effect61, this indicate the bar go hostile
 
-                if (Unit* tmp = Unit::GetUnit(*me,pInstance->GetData64(DATA_PHALANX)))
+                if (Unit* tmp = Unit::GetUnit(*me, pInstance->GetData64(DATA_PHALANX)))
                     tmp->setFaction(14);
 
                 //for later, this event(s) has alot more to it.
                 //optionally, DONE can trigger bar to go hostile.
-                pInstance->SetData(TYPE_BAR,DONE);
+                pInstance->SetData(TYPE_BAR, DONE);
 
                 BreakDoor_Timer = 0;
-            } else BreakDoor_Timer -= diff;
+            }
+            else BreakDoor_Timer -= diff;
         }
 
         npc_escortAI::UpdateAI(diff);
@@ -1235,7 +1240,7 @@ CreatureAI* GetAI_npc_rocknot(Creature* pCreature)
     return new npc_rocknotAI(pCreature);
 }
 
-bool ChooseReward_npc_rocknot(Player* /*pPlayer*/, Creature* pCreature, const Quest *_Quest, uint32 /*item*/)
+bool ChooseReward_npc_rocknot(Player* /*pPlayer*/, Creature* pCreature, const Quest* _Quest, uint32 /*item*/)
 {
     ScriptedInstance* pInstance = pCreature->GetInstanceData();
 
@@ -1248,15 +1253,15 @@ bool ChooseReward_npc_rocknot(Player* /*pPlayer*/, Creature* pCreature, const Qu
     if (_Quest->GetQuestId() == QUEST_ALE)
     {
         if (pInstance->GetData(TYPE_BAR) != IN_PROGRESS)
-            pInstance->SetData(TYPE_BAR,IN_PROGRESS);
+            pInstance->SetData(TYPE_BAR, IN_PROGRESS);
 
-        pInstance->SetData(TYPE_BAR,SPECIAL);
+        pInstance->SetData(TYPE_BAR, SPECIAL);
 
         //keep track of amount in instance script, returns SPECIAL if amount ok and event in progress
         if (pInstance->GetData(TYPE_BAR) == SPECIAL)
         {
             DoScriptText(SAY_GOT_BEER, pCreature);
-            pCreature->CastSpell(pCreature,SPELL_DRUNKEN_RAGE,false);
+            pCreature->CastSpell(pCreature, SPELL_DRUNKEN_RAGE, false);
             if (npc_escortAI* pEscortAI = CAST_AI(npc_rocknotAI, pCreature->AI()))
                 pEscortAI->Start(false, false);
         }
@@ -1271,7 +1276,7 @@ bool ChooseReward_npc_rocknot(Player* /*pPlayer*/, Creature* pCreature, const Qu
 
 void AddSC_blackrock_depths()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "go_shadowforge_brazier";
@@ -1304,35 +1309,35 @@ void AddSC_blackrock_depths()
     newscript->pGossipHello =  &GossipHello_npc_lokhtos_darkbargainer;
     newscript->pGossipSelect = &GossipSelect_npc_lokhtos_darkbargainer;
     newscript->RegisterSelf();
-/*
-    newscript = new Script;
-    newscript->Name = "npc_dughal_stormwing";
-    newscript->pGossipHello =  &GossipHello_npc_dughal_stormwing;
-    newscript->pGossipSelect = &GossipSelect_npc_dughal_stormwing;
-    newscript->GetAI = &GetAI_npc_dughal_stormwing;
-    newscript->RegisterSelf();
+    /*
+        newscript = new Script;
+        newscript->Name = "npc_dughal_stormwing";
+        newscript->pGossipHello =  &GossipHello_npc_dughal_stormwing;
+        newscript->pGossipSelect = &GossipSelect_npc_dughal_stormwing;
+        newscript->GetAI = &GetAI_npc_dughal_stormwing;
+        newscript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "npc_tobias_seecher";
-    newscript->pGossipHello =  &GossipHello_npc_tobias_seecher;
-    newscript->pGossipSelect = &GossipSelect_npc_tobias_seecher;
-    newscript->GetAI = &GetAI_npc_tobias_seecher;
-    newscript->RegisterSelf();
+        newscript = new Script;
+        newscript->Name = "npc_tobias_seecher";
+        newscript->pGossipHello =  &GossipHello_npc_tobias_seecher;
+        newscript->pGossipSelect = &GossipSelect_npc_tobias_seecher;
+        newscript->GetAI = &GetAI_npc_tobias_seecher;
+        newscript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "npc_marshal_windsor";
-    newscript->pQuestAccept = &QuestAccept_npc_marshal_windsor;
-    newscript->GetAI = &GetAI_npc_marshal_windsor;
-    newscript->RegisterSelf();
+        newscript = new Script;
+        newscript->Name = "npc_marshal_windsor";
+        newscript->pQuestAccept = &QuestAccept_npc_marshal_windsor;
+        newscript->GetAI = &GetAI_npc_marshal_windsor;
+        newscript->RegisterSelf();
 
+        newscript = new Script;
+        newscript->Name = "npc_marshal_reginald_windsor";
+        newscript->GetAI = &GetAI_npc_marshal_reginald_windsor;
+        newscript->RegisterSelf();
+    */
     newscript = new Script;
-    newscript->Name = "npc_marshal_reginald_windsor";
-    newscript->GetAI = &GetAI_npc_marshal_reginald_windsor;
+    newscript->Name = "npc_rocknot";
+    newscript->GetAI = &GetAI_npc_rocknot;
+    newscript->pChooseReward = &ChooseReward_npc_rocknot;
     newscript->RegisterSelf();
-*/
-     newscript = new Script;
-     newscript->Name = "npc_rocknot";
-     newscript->GetAI = &GetAI_npc_rocknot;
-     newscript->pChooseReward = &ChooseReward_npc_rocknot;
-     newscript->RegisterSelf();
 }

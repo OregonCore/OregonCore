@@ -93,8 +93,8 @@ struct custom_exampleAI : public ScriptedAI
     void EnterCombat(Unit* /*who*/)
     {
         //Say some stuff
-        me->MonsterSay(SAY_AGGRO,LANG_UNIVERSAL,0);
-        DoPlaySoundToSet(me,8280);
+        me->MonsterSay(SAY_AGGRO, LANG_UNIVERSAL, 0);
+        DoPlaySoundToSet(me, 8280);
     }
 
     //*** HANDLED FUNCTION ***
@@ -108,43 +108,45 @@ struct custom_exampleAI : public ScriptedAI
             if (Say_Timer <= diff)
             {
                 //Random switch between 5 outcomes
-                switch (rand()%5)
+                switch (rand() % 5)
                 {
-                    case 0:
-                        me->MonsterYell(SAY_RANDOM_0,LANG_UNIVERSAL,0);
-                        DoPlaySoundToSet(me,8831);  //8831 is the index of the sound we are playing. You find these numbers in SoundEntries.dbc
-                        break;
+                case 0:
+                    me->MonsterYell(SAY_RANDOM_0, LANG_UNIVERSAL, 0);
+                    DoPlaySoundToSet(me, 8831); //8831 is the index of the sound we are playing. You find these numbers in SoundEntries.dbc
+                    break;
 
-                    case 1:
-                        me->MonsterYell(SAY_RANDOM_1,LANG_UNIVERSAL,0);
-                        DoPlaySoundToSet(me,8818);
-                        break;
+                case 1:
+                    me->MonsterYell(SAY_RANDOM_1, LANG_UNIVERSAL, 0);
+                    DoPlaySoundToSet(me, 8818);
+                    break;
 
-                    case 2:
-                        me->MonsterYell(SAY_RANDOM_2,LANG_UNIVERSAL,0);
-                        DoPlaySoundToSet(me,8041);
-                        break;
+                case 2:
+                    me->MonsterYell(SAY_RANDOM_2, LANG_UNIVERSAL, 0);
+                    DoPlaySoundToSet(me, 8041);
+                    break;
 
-                    case 3:
-                        me->MonsterYell(SAY_RANDOM_3,LANG_UNIVERSAL,0);
-                        DoPlaySoundToSet(me,8581);
-                        break;
+                case 3:
+                    me->MonsterYell(SAY_RANDOM_3, LANG_UNIVERSAL, 0);
+                    DoPlaySoundToSet(me, 8581);
+                    break;
 
-                    case 4:
-                        me->MonsterYell(SAY_RANDOM_4,LANG_UNIVERSAL,0);
-                        DoPlaySoundToSet(me,8791);
-                        break;
+                case 4:
+                    me->MonsterYell(SAY_RANDOM_4, LANG_UNIVERSAL, 0);
+                    DoPlaySoundToSet(me, 8791);
+                    break;
                 }
 
                 Say_Timer = 45000;                          //Say something agian in 45 seconds
-            } else Say_Timer -= diff;
+            }
+            else Say_Timer -= diff;
 
             //Rebuff timer
             if (Rebuff_Timer <= diff)
             {
-                DoCast(me,SPELL_BUFF);
+                DoCast(me, SPELL_BUFF);
                 Rebuff_Timer = 900000;                      //Rebuff agian in 15 minutes
-            } else Rebuff_Timer -= diff;
+            }
+            else Rebuff_Timer -= diff;
         }
 
         //Return since we have no target
@@ -155,13 +157,14 @@ struct custom_exampleAI : public ScriptedAI
         if (Spell_1_Timer <= diff)
         {
             //Cast spell one on our current target.
-            if (rand()%50 > 10)
+            if (rand() % 50 > 10)
                 DoCastVictim(SPELL_ONE_ALT);
             else if (me->GetDistance(me->getVictim()) < 25)
                 DoCastVictim(SPELL_ONE);
 
             Spell_1_Timer = 5000;
-        } else Spell_1_Timer -= diff;
+        }
+        else Spell_1_Timer -= diff;
 
         //Spell 2 timer
         if (Spell_2_Timer <= diff)
@@ -170,7 +173,8 @@ struct custom_exampleAI : public ScriptedAI
             DoCastVictim(SPELL_TWO);
 
             Spell_2_Timer = 37000;
-        } else Spell_2_Timer -= diff;
+        }
+        else Spell_2_Timer -= diff;
 
         //Spell 3 timer
         if (Phase > 1)
@@ -181,7 +185,8 @@ struct custom_exampleAI : public ScriptedAI
                 DoCastVictim(SPELL_THREE);
 
                 Spell_3_Timer = 19000;
-            } else Spell_3_Timer -= diff;
+            }
+            else Spell_3_Timer -= diff;
         }
 
         //Beserk timer
@@ -190,13 +195,14 @@ struct custom_exampleAI : public ScriptedAI
             if (Beserk_Timer <= diff)
             {
                 //Say our line then cast uber death spell
-                DoPlaySoundToSet(me,8588);
-                me->MonsterYell(SAY_BESERK,LANG_UNIVERSAL,me->getVictim()->GetGUID());
+                DoPlaySoundToSet(me, 8588);
+                me->MonsterYell(SAY_BESERK, LANG_UNIVERSAL, me->getVictim()->GetGUID());
                 DoCastVictim(SPELL_BESERK);
 
                 //Cast our beserk spell agian in 12 seconds if we didn't kill everyone
                 Beserk_Timer = 12000;
-            } else Beserk_Timer -= diff;
+            }
+            else Beserk_Timer -= diff;
         }
 
         //Phase timer
@@ -206,9 +212,10 @@ struct custom_exampleAI : public ScriptedAI
             {
                 //Go to next phase
                 Phase++;
-                me->MonsterYell(SAY_PHASE,LANG_UNIVERSAL,0);
-                DoCast(me,SPELL_ENRAGE);
-            } else Phase_Timer -= diff;
+                me->MonsterYell(SAY_PHASE, LANG_UNIVERSAL, 0);
+                DoCast(me, SPELL_ENRAGE);
+            }
+            else Phase_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -270,7 +277,7 @@ bool GossipHello_custom_example(Player* pPlayer, Creature* pCreature)
 //newscript->ReciveEmote = My_Emote_Function;
 void AddSC_custom_example()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "custom_example";

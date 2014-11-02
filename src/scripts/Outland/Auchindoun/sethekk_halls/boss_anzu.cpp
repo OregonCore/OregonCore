@@ -18,7 +18,7 @@
 /* ScriptData
 SDName: Boss_Anzu
 SD%Complete: 95
-SDComment:Summon event is missing. 
+SDComment:Summon event is missing.
 SDCategory: Auchindoun, Sethekk Halls
 EndScriptData */
 
@@ -81,10 +81,10 @@ struct boss_anzuAI : public ScriptedAI
         SummonedCount = 5;
     }
 
-    void EnterCombat(Unit* )
+    void EnterCombat(Unit*)
     {
         if (pInstance)
-            pInstance->SetData(DATA_ANZUEVENT, IN_PROGRESS);        
+            pInstance->SetData(DATA_ANZUEVENT, IN_PROGRESS);
     }
 
     void JustDied(Unit*)
@@ -92,10 +92,10 @@ struct boss_anzuAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_ANZUEVENT, DONE);
     }
-	
+
     void JustSummoned(Creature* summoned)
     {
-        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             summoned->AI()->AttackStart(pTarget);
     }
 
@@ -104,27 +104,23 @@ struct boss_anzuAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth()*100) / me->GetMaxHealth() < 66) && !Summon1)
+        if (((me->GetHealth() * 100) / me->GetMaxHealth() < 66) && !Summon1)
         {
             DoCast(me, SPELL_BANISH);
             DoScriptText(SAY_HELP, me);
             Paralyzing = true;
             for (uint32 i = 0; i < SummonedCount; i++)
-            {
-                me->SummonCreature(NPC_BROOD,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
-            }
+                me->SummonCreature(NPC_BROOD, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             Summon1 = true;
         }
 
-        if (((me->GetHealth()*100) / me->GetMaxHealth() < 33) && !Summon2)
+        if (((me->GetHealth() * 100) / me->GetMaxHealth() < 33) && !Summon2)
         {
             DoCast(me, SPELL_BANISH);
             DoScriptText(SAY_HELP, me);
             Paralyzing = true;
             for (uint32 i = 0; i < SummonedCount; i++)
-            {
-                me->SummonCreature(NPC_BROOD,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
-            }
+                me->SummonCreature(NPC_BROOD, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             Summon2 = true;
         }
 
@@ -135,34 +131,38 @@ struct boss_anzuAI : public ScriptedAI
                 DoCastVictim( SPELL_PARALYZING);
                 Paralyzing_Timer = 1000;
                 Paralyzing = false;
-            } else Paralyzing_Timer -= diff;
+            }
+            else Paralyzing_Timer -= diff;
         }
 
         if (!me->HasAura(SPELL_BANISH, 0))
         {
             if (Cyclone_Timer <= diff)
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     DoCast(pTarget, SPELL_CYCLONE);
-                    Cyclone_Timer = 20000+rand()%1000;
+                    Cyclone_Timer = 20000 + rand() % 1000;
                 }
-            } else Cyclone_Timer -= diff;
+            }
+            else Cyclone_Timer -= diff;
 
             if (Bomb_Timer <= diff)
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     DoCast(pTarget, SPELL_BOMB);
-                    Bomb_Timer = 30000+rand()%1000;
+                    Bomb_Timer = 30000 + rand() % 1000;
                 }
-            } else Bomb_Timer -= diff;
+            }
+            else Bomb_Timer -= diff;
 
             if (Rip_Timer <= diff)
             {
                 DoCastVictim( SPELL_RIP);
-                Rip_Timer = 25000+rand()%2000;
-            } else Rip_Timer -= diff;
+                Rip_Timer = 25000 + rand() % 2000;
+            }
+            else Rip_Timer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -176,7 +176,7 @@ CreatureAI* GetAI_boss_anzu(Creature* pCreature)
 
 void AddSC_boss_anzu()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_anzu";
     newscript->GetAI = &GetAI_boss_anzu;

@@ -86,14 +86,14 @@ struct npc_bartlebyAI : public ScriptedAI
         PlayerGUID = 0;
     }
 
-    void JustDied(Unit* )
+    void JustDied(Unit*)
     {
         me->setFaction(11);
     }
 
-    void DamageTaken(Unit* done_by, uint32 & damage)
+    void DamageTaken(Unit* done_by, uint32& damage)
     {
-        if (damage > me->GetHealth() || ((me->GetHealth() - damage)*100 / me->GetMaxHealth() < 15))
+        if (damage > me->GetHealth() || ((me->GetHealth() - damage) * 100 / me->GetMaxHealth() < 15))
         {
             //Take 0 damage
             damage = 0;
@@ -139,9 +139,9 @@ struct npc_dashel_stonefistAI : public ScriptedAI
         me->setEmoteState(7);
     }
 
-    void DamageTaken(Unit* done_by, uint32 & damage)
+    void DamageTaken(Unit* done_by, uint32& damage)
     {
-        if ((damage > me->GetHealth()) || (me->GetHealth() - damage)*100 / me->GetMaxHealth() < 15)
+        if ((damage > me->GetHealth()) || (me->GetHealth() - damage) * 100 / me->GetMaxHealth() < 15)
         {
             //Take 0 damage
             damage = 0;
@@ -189,9 +189,7 @@ struct npc_general_marcus_jonathanAI : public ScriptedAI
                 me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
             }
             if (emote == TEXT_EMOTE_WAVE)
-            {
                 me->MonsterSay("Greetings citizen", LANG_COMMON, 0);
-            }
         }
     }
 };
@@ -227,22 +225,22 @@ bool GossipSelect_npc_lady_katrana_prestor(Player* pPlayer, Creature* pCreature,
 {
     switch (uiAction)
     {
-        case GOSSIP_ACTION_INFO_DEF:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            pPlayer->SEND_GOSSIP_MENU(2694, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+1:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            pPlayer->SEND_GOSSIP_MENU(2695, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-            pPlayer->SEND_GOSSIP_MENU(2696, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+3:
-            pPlayer->CLOSE_GOSSIP_MENU();
-            pPlayer->AreaExploredOrEventHappens(4185);
-            break;
+    case GOSSIP_ACTION_INFO_DEF:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        pPlayer->SEND_GOSSIP_MENU(2694, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        pPlayer->SEND_GOSSIP_MENU(2695, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        pPlayer->SEND_GOSSIP_MENU(2696, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+3:
+        pPlayer->CLOSE_GOSSIP_MENU();
+        pPlayer->AreaExploredOrEventHappens(4185);
+        break;
     }
     return true;
 }
@@ -296,13 +294,13 @@ struct Point
 
 Point P1[] =
 {
-    {-8407.58f, 463.477f, 123.761f},
-    {-8408.53f, 464.716f, 123.761f}
+    { -8407.58f, 463.477f, 123.761f},
+    { -8408.53f, 464.716f, 123.761f}
 };
 Point P2[] =
 {
-    {-8434.93f, 441.242f, 121.922f},
-    {-8436.16f, 442.804f, 121.923f}
+    { -8434.93f, 441.242f, 121.922f},
+    { -8436.16f, 442.804f, 121.923f}
 };
 
 struct npc_stormwind_royal_guardAI : public ScriptedAI
@@ -332,7 +330,7 @@ struct npc_stormwind_royal_guardAI : public ScriptedAI
         {
             if (uiSpybotTimer <= uiDiff)
             {
-                switch(uiSpybotPhase)
+                switch (uiSpybotPhase)
                 {
                 case 1:
                     if ( Unit* pSpybot = me->GetUnit(*me, SpybotGUID))
@@ -363,7 +361,7 @@ struct npc_stormwind_royal_guardAI : public ScriptedAI
         {
             IsMove = true;
 
-            switch(MovePoint)
+            switch (MovePoint)
             {
             case 1:
                 me->GetMotionMaster()->MovePoint(1, P1[PointID].m_fX, P1[PointID].m_fY, P1[PointID].m_fZ);
@@ -381,7 +379,7 @@ struct npc_stormwind_royal_guardAI : public ScriptedAI
         if (type != POINT_MOTION_TYPE)
             return;
 
-        switch(id)
+        switch (id)
         {
         case 1:
             IsMove = false;
@@ -454,8 +452,8 @@ struct npc_lord_gregor_lescovarAI : public npc_escortAI
         {
             for (std::list<Creature*>::iterator itr = lCreatureList.begin(); itr != lCreatureList.end(); ++itr)
             {
-                CAST_AI(npc_stormwind_royal_guardAI,(*itr)->AI())->MovePoint = 1;
-                CAST_AI(npc_stormwind_royal_guardAI,(*itr)->AI())->PointID = PointID;
+                CAST_AI(npc_stormwind_royal_guardAI, (*itr)->AI())->MovePoint = 1;
+                CAST_AI(npc_stormwind_royal_guardAI, (*itr)->AI())->PointID = PointID;
                 PointID++;
             }
         }
@@ -472,27 +470,27 @@ struct npc_lord_gregor_lescovarAI : public npc_escortAI
 
     void WaypointReached(uint32 uiPointId)
     {
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 4:
-                SetEscortPaused(true);
-                DoScriptText(SAY_LESCOVAR_2, me);
-                if (Creature* pGuard = me->FindNearestCreature(NPC_STORMWIND_ROYAL, 8.0f, true))
-                     DoScriptText(SAY_GUARD_2, pGuard);
-                DoGuardList();
-                uiTimer = 3000;
-                uiPhase = 1;
-                break;
-            case 5:
-                SetEscortPaused(true);
-                if (Creature* pMarzon = me->SummonCreature(NPC_MARZON_BLADE,-8411.360352f, 480.069733f, 123.760895f, 4.941504f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 1000))
-                {
-                    pMarzon->GetMotionMaster()->MovePoint(0,-8406.08f, 469.349f, 123.76f);
-                    MarzonGUID = pMarzon->GetGUID();
-                }
-                uiTimer = 2000;
-                uiPhase = 5;
-                break;
+        case 4:
+            SetEscortPaused(true);
+            DoScriptText(SAY_LESCOVAR_2, me);
+            if (Creature* pGuard = me->FindNearestCreature(NPC_STORMWIND_ROYAL, 8.0f, true))
+                DoScriptText(SAY_GUARD_2, pGuard);
+            DoGuardList();
+            uiTimer = 3000;
+            uiPhase = 1;
+            break;
+        case 5:
+            SetEscortPaused(true);
+            if (Creature* pMarzon = me->SummonCreature(NPC_MARZON_BLADE, -8411.360352f, 480.069733f, 123.760895f, 4.941504f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 1000))
+            {
+                pMarzon->GetMotionMaster()->MovePoint(0, -8406.08f, 469.349f, 123.76f);
+                MarzonGUID = pMarzon->GetGUID();
+            }
+            uiTimer = 2000;
+            uiPhase = 5;
+            break;
         }
     }
 
@@ -502,51 +500,52 @@ struct npc_lord_gregor_lescovarAI : public npc_escortAI
         {
             if (uiTimer <= uiDiff)
             {
-                switch(uiPhase)
+                switch (uiPhase)
                 {
-                    case 1:
-                        uiTimer = 3000;
-                        uiPhase = 2;
-                        break;
-                    case 2:
-                        DoGuardList();
-                        uiTimer = 2000;
-                        uiPhase = 3;
-                        break;
-                    case 3:
-                        SetEscortPaused(false);
-                        uiTimer = 0;
-                        uiPhase = 0;
-                        break;
-                    case 4:
-                        DoScriptText(SAY_LESCOVAR_3, me);
-                        uiTimer = 0;
-                        uiPhase = 0;
-                        break;
-                    case 5:
-                        if (Creature* pMarzon = Unit::GetCreature(*me, MarzonGUID))
-                            DoScriptText(SAY_MARZON_1, pMarzon);
-                        uiTimer = 3000;
-                        uiPhase = 6;
-                        break;
-                    case 6:
-                        DoScriptText(SAY_LESCOVAR_4, me);
-                        if (Player* pPlayer = GetPlayerForEscort())
-                            pPlayer->GroupEventHappens(QUEST_THE_ATTACK, me);
-                        uiTimer = 2000;
-                        uiPhase = 7;
-                        break;
-                    case 7:
-                        if (Creature* pTyrion = me->FindNearestCreature(NPC_TYRION, 20.0f, true))
-                            DoScriptText(SAY_TYRION_2, pTyrion);
-                        if (Creature* pMarzon = Unit::GetCreature(*me, MarzonGUID))
-                            pMarzon->setFaction(14);
-                        me->setFaction(14);
-                        uiTimer = 0;
-                        uiPhase = 0;
-                        break;
+                case 1:
+                    uiTimer = 3000;
+                    uiPhase = 2;
+                    break;
+                case 2:
+                    DoGuardList();
+                    uiTimer = 2000;
+                    uiPhase = 3;
+                    break;
+                case 3:
+                    SetEscortPaused(false);
+                    uiTimer = 0;
+                    uiPhase = 0;
+                    break;
+                case 4:
+                    DoScriptText(SAY_LESCOVAR_3, me);
+                    uiTimer = 0;
+                    uiPhase = 0;
+                    break;
+                case 5:
+                    if (Creature* pMarzon = Unit::GetCreature(*me, MarzonGUID))
+                        DoScriptText(SAY_MARZON_1, pMarzon);
+                    uiTimer = 3000;
+                    uiPhase = 6;
+                    break;
+                case 6:
+                    DoScriptText(SAY_LESCOVAR_4, me);
+                    if (Player* pPlayer = GetPlayerForEscort())
+                        pPlayer->GroupEventHappens(QUEST_THE_ATTACK, me);
+                    uiTimer = 2000;
+                    uiPhase = 7;
+                    break;
+                case 7:
+                    if (Creature* pTyrion = me->FindNearestCreature(NPC_TYRION, 20.0f, true))
+                        DoScriptText(SAY_TYRION_2, pTyrion);
+                    if (Creature* pMarzon = Unit::GetCreature(*me, MarzonGUID))
+                        pMarzon->setFaction(14);
+                    me->setFaction(14);
+                    uiTimer = 0;
+                    uiPhase = 0;
+                    break;
                 }
-            } else uiTimer -= uiDiff;
+            }
+            else uiTimer -= uiDiff;
         }
         npc_escortAI::UpdateAI(uiDiff);
 
@@ -633,28 +632,28 @@ struct npc_tyrion_spybotAI : public npc_escortAI
 
     void WaypointReached(uint32 uiPointId)
     {
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 3:
-                DoGuardList();
-                SetEscortPaused(true);
-                DoScriptText(SAY_SPYBOT_1, me);
-                uiTimer = 5000;
-                uiPhase = 5;
-                break;
-            case 9:
-                if (Creature* pLescovar = me->FindNearestCreature(NPC_LORD_GREGOR_LESCOVAR,10.0f))
-                    pLescovar->SetFacingToObject(me);
-                SetEscortPaused(true);
-                DoScriptText(SAY_SPYBOT_3, me);
-                uiTimer = 3000;
-                uiPhase = 8;
-                break;
-            case 16:
-                me->UpdateEntry(NPC_TYRION_SPYBOT);
-                me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
-                DoCast(SPELL_FADED);
-                break;
+        case 3:
+            DoGuardList();
+            SetEscortPaused(true);
+            DoScriptText(SAY_SPYBOT_1, me);
+            uiTimer = 5000;
+            uiPhase = 5;
+            break;
+        case 9:
+            if (Creature* pLescovar = me->FindNearestCreature(NPC_LORD_GREGOR_LESCOVAR, 10.0f))
+                pLescovar->SetFacingToObject(me);
+            SetEscortPaused(true);
+            DoScriptText(SAY_SPYBOT_3, me);
+            uiTimer = 3000;
+            uiPhase = 8;
+            break;
+        case 16:
+            me->UpdateEntry(NPC_TYRION_SPYBOT);
+            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            DoCast(SPELL_FADED);
+            break;
         }
     }
 
@@ -678,8 +677,8 @@ struct npc_tyrion_spybotAI : public npc_escortAI
         {
             for (std::list<Creature*>::iterator itr = lCreatureList.begin(); itr != lCreatureList.end(); ++itr)
             {
-                CAST_AI(npc_stormwind_royal_guardAI,(*itr)->AI())->SpybotGUID = me->GetGUID();
-                CAST_AI(npc_stormwind_royal_guardAI,(*itr)->AI())->uiSpybotPhase = 1;
+                CAST_AI(npc_stormwind_royal_guardAI, (*itr)->AI())->SpybotGUID = me->GetGUID();
+                CAST_AI(npc_stormwind_royal_guardAI, (*itr)->AI())->uiSpybotPhase = 1;
             }
         }
     }
@@ -690,7 +689,7 @@ struct npc_tyrion_spybotAI : public npc_escortAI
         {
             if (uiTimer <= uiDiff)
             {
-                switch(uiPhase)
+                switch (uiPhase)
                 {
                 case 1:
                     DoScriptText(SAY_QUEST_ACCEPT_ATTACK, me);
@@ -698,7 +697,7 @@ struct npc_tyrion_spybotAI : public npc_escortAI
                     uiPhase = 2;
                     break;
                 case 2:
-                    if (Creature* pTyrion = me->FindNearestCreature(NPC_TYRION,10.0f))
+                    if (Creature* pTyrion = me->FindNearestCreature(NPC_TYRION, 10.0f))
                         DoScriptText(SAY_TYRION_1, pTyrion);
                     uiTimer = 3000;
                     uiPhase = 3;
@@ -711,12 +710,12 @@ struct npc_tyrion_spybotAI : public npc_escortAI
                     uiPhase = 4;
                     break;
                 case 4:
-                    if (Creature* pTyrion = me->FindNearestCreature(NPC_TYRION,10.0f))
+                    if (Creature* pTyrion = me->FindNearestCreature(NPC_TYRION, 10.0f))
                         pTyrion->GetMotionMaster()->MoveTargetedHome();
                     SetEscortPaused(false);
                     uiPhase = 0;
                     uiTimer = 0;
-                   break;
+                    break;
                 case 5:
                     if (Creature* pGuard = me->FindNearestCreature(NPC_STORMWIND_ROYAL, 10.0f, true))
                         DoScriptText(SAY_GUARD_1, pGuard);
@@ -734,7 +733,7 @@ struct npc_tyrion_spybotAI : public npc_escortAI
                     uiPhase = 0;
                     break;
                 case 8:
-                    if (Creature* pLescovar = me->FindNearestCreature(NPC_LORD_GREGOR_LESCOVAR,10.0f))
+                    if (Creature* pLescovar = me->FindNearestCreature(NPC_LORD_GREGOR_LESCOVAR, 10.0f))
                     {
                         DoScriptText(SAY_LESCOVAR_1, pLescovar);
                         me->SetFacingToObject(pLescovar);
@@ -755,11 +754,11 @@ struct npc_tyrion_spybotAI : public npc_escortAI
                     break;
                 case 11:
                     SetEscortPaused(false);
-                    if (Creature* pLescovar = me->FindNearestCreature(NPC_LORD_GREGOR_LESCOVAR,10.0f))
+                    if (Creature* pLescovar = me->FindNearestCreature(NPC_LORD_GREGOR_LESCOVAR, 10.0f))
                     {
                         if (Player* pPlayer = GetPlayerForEscort())
                         {
-                            CAST_AI(npc_lord_gregor_lescovarAI,pLescovar->AI())->Start(false, false, pPlayer->GetGUID());
+                            CAST_AI(npc_lord_gregor_lescovarAI, pLescovar->AI())->Start(false, false, pPlayer->GetGUID());
                             CAST_AI(npc_lord_gregor_lescovarAI, pLescovar->AI())->SetMaxPlayerDistance(200.0f);
                         }
                         uiTimer = 0;
@@ -789,18 +788,18 @@ CreatureAI* GetAI_npc_tyrion_spybot(Creature* pCreature)
 ## npc_tyrion
 ######*/
 
-bool QuestAccept_npc_tyrion(Player* pPlayer, Creature* pCreature, Quest const *pQuest)
+bool QuestAccept_npc_tyrion(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     if (pQuest->GetQuestId() == QUEST_THE_ATTACK)
     {
         if (Creature* pSpybot = pCreature->FindNearestCreature(NPC_TYRION_SPYBOT, 5.0f, true))
         {
             pCreature->SetFacingToObject(pSpybot);
-            CAST_AI(npc_tyrion_spybotAI,pSpybot->AI())->Start(false, false, pPlayer->GetGUID());
-            CAST_AI(npc_tyrion_spybotAI,pSpybot->AI())->SetEscortPaused(true);
-            CAST_AI(npc_tyrion_spybotAI,pSpybot->AI())->uiPhase = 1;
-            CAST_AI(npc_tyrion_spybotAI,pSpybot->AI())->uiTimer = 200;
-            CAST_AI(npc_tyrion_spybotAI,pSpybot->AI())->SetMaxPlayerDistance(200.0f);
+            CAST_AI(npc_tyrion_spybotAI, pSpybot->AI())->Start(false, false, pPlayer->GetGUID());
+            CAST_AI(npc_tyrion_spybotAI, pSpybot->AI())->SetEscortPaused(true);
+            CAST_AI(npc_tyrion_spybotAI, pSpybot->AI())->uiPhase = 1;
+            CAST_AI(npc_tyrion_spybotAI, pSpybot->AI())->uiTimer = 200;
+            CAST_AI(npc_tyrion_spybotAI, pSpybot->AI())->SetMaxPlayerDistance(200.0f);
         }
         return true;
     }
@@ -809,7 +808,7 @@ bool QuestAccept_npc_tyrion(Player* pPlayer, Creature* pCreature, Quest const *p
 
 void AddSC_stormwind_city()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_archmage_malin";

@@ -21,8 +21,8 @@
 #include "ObjectMgr.h"
 #include "TemporarySummon.h"
 
-TempSummon::TempSummon(SummonPropertiesEntry const *properties, Unit* owner) :
-Creature(), m_Properties(properties), m_type(TEMPSUMMON_MANUAL_DESPAWN), m_timer(0), m_lifetime(0)
+TempSummon::TempSummon(SummonPropertiesEntry const* properties, Unit* owner) :
+    Creature(), m_Properties(properties), m_type(TEMPSUMMON_MANUAL_DESPAWN), m_timer(0), m_lifetime(0)
 {
     m_summonerGUID = owner ? owner->GetGUID() : 0;
     m_summonMask |= SUMMON_MASK_SUMMON;
@@ -42,11 +42,11 @@ void TempSummon::Update(uint32 diff)
         UnSummon();
         return;
     }
-    switch(m_type)
+    switch (m_type)
     {
-        case TEMPSUMMON_MANUAL_DESPAWN:
-            break;
-        case TEMPSUMMON_TIMED_DESPAWN:
+    case TEMPSUMMON_MANUAL_DESPAWN:
+        break;
+    case TEMPSUMMON_TIMED_DESPAWN:
         {
             if (m_timer <= diff)
             {
@@ -57,7 +57,7 @@ void TempSummon::Update(uint32 diff)
             m_timer -= diff;
             break;
         }
-        case TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT:
+    case TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT:
         {
             if (!isInCombat())
             {
@@ -75,7 +75,7 @@ void TempSummon::Update(uint32 diff)
             break;
         }
 
-        case TEMPSUMMON_CORPSE_TIMED_DESPAWN:
+    case TEMPSUMMON_CORPSE_TIMED_DESPAWN:
         {
             if (m_deathState == CORPSE)
             {
@@ -89,7 +89,7 @@ void TempSummon::Update(uint32 diff)
             }
             break;
         }
-        case TEMPSUMMON_CORPSE_DESPAWN:
+    case TEMPSUMMON_CORPSE_DESPAWN:
         {
             // if m_deathState is DEAD, CORPSE was skipped
             if (m_deathState == CORPSE || m_deathState == DEAD)
@@ -100,7 +100,7 @@ void TempSummon::Update(uint32 diff)
 
             break;
         }
-        case TEMPSUMMON_DEAD_DESPAWN:
+    case TEMPSUMMON_DEAD_DESPAWN:
         {
             if (m_deathState == DEAD)
             {
@@ -109,7 +109,7 @@ void TempSummon::Update(uint32 diff)
             }
             break;
         }
-        case TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN:
+    case TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN:
         {
             // if m_deathState is DEAD, CORPSE was skipped
             if (m_deathState == CORPSE || m_deathState == DEAD)
@@ -132,7 +132,7 @@ void TempSummon::Update(uint32 diff)
                 m_timer = m_lifetime;
             break;
         }
-        case TEMPSUMMON_TIMED_OR_DEAD_DESPAWN:
+    case TEMPSUMMON_TIMED_OR_DEAD_DESPAWN:
         {
             // if m_deathState is DEAD, CORPSE was skipped
             if (m_deathState == DEAD)
@@ -155,10 +155,10 @@ void TempSummon::Update(uint32 diff)
                 m_timer = m_lifetime;
             break;
         }
-        default:
-            UnSummon();
-            sLog.outError("Temporary summoned creature (entry: %u) has unknown type %u. ",GetEntry(),m_type);
-            break;
+    default:
+        UnSummon();
+        sLog.outError("Temporary summoned creature (entry: %u) has unknown type %u. ", GetEntry(), m_type);
+        break;
     }
 }
 
@@ -257,8 +257,8 @@ void TempSummon::SaveToDB()
 {
 }
 
-Minion::Minion(SummonPropertiesEntry const *properties, Unit* owner) : TempSummon(properties, owner)
-, m_owner(owner)
+Minion::Minion(SummonPropertiesEntry const* properties, Unit* owner) : TempSummon(properties, owner)
+    , m_owner(owner)
 {
     ASSERT(m_owner);
     m_summonMask |= SUMMON_MASK_MINION;
@@ -291,8 +291,8 @@ bool Minion::IsGuardianPet() const
     return isPet() || (m_Properties && m_Properties->Category == SUMMON_CATEGORY_PET);
 }
 
-Guardian::Guardian(SummonPropertiesEntry const *properties, Unit* owner) : Minion(properties, owner)
-, m_bonusdamage(0)
+Guardian::Guardian(SummonPropertiesEntry const* properties, Unit* owner) : Minion(properties, owner)
+    , m_bonusdamage(0)
 {
     m_summonMask |= SUMMON_MASK_GUARDIAN;
     if (properties && properties->Type == SUMMON_TYPE_PET)
@@ -324,7 +324,7 @@ void Guardian::InitSummon()
         m_owner->ToPlayer()->CharmSpellInitialize();
 }
 
-Puppet::Puppet(SummonPropertiesEntry const *properties, Unit* owner) : Minion(properties, owner)
+Puppet::Puppet(SummonPropertiesEntry const* properties, Unit* owner) : Minion(properties, owner)
 {
     ASSERT(owner->GetTypeId() == TYPEID_PLAYER);
     m_owner = owner->ToPlayer();

@@ -45,7 +45,7 @@ struct boss_lordalexeibarovAI : public ScriptedAI
 
     void JustDied(Unit* /*killer*/)
     {
-        ScriptedInstance *pInstance = me->GetInstanceData();
+        ScriptedInstance* pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_LORDALEXEIBAROV_DEATH, 0);
@@ -68,18 +68,20 @@ struct boss_lordalexeibarovAI : public ScriptedAI
         if (Immolate_Timer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget) DoCast(pTarget, SPELL_IMMOLATE);
 
             Immolate_Timer = 12000;
-        } else Immolate_Timer -= diff;
+        }
+        else Immolate_Timer -= diff;
 
         //VeilofShadow_Timer
         if (VeilofShadow_Timer <= diff)
         {
             DoCastVictim( SPELL_VEILOFSHADOW);
             VeilofShadow_Timer = 20000;
-        } else VeilofShadow_Timer -= diff;
+        }
+        else VeilofShadow_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -91,7 +93,7 @@ CreatureAI* GetAI_boss_lordalexeibarov(Creature* pCreature)
 
 void AddSC_boss_lordalexeibarov()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_lord_alexei_barov";
     newscript->GetAI = &GetAI_boss_lordalexeibarov;

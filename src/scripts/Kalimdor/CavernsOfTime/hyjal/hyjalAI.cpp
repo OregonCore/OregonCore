@@ -36,8 +36,9 @@ EndScriptData */
 
 #define YELL_HURRY  "Hurry, we don't have much time"
 
-Wave AllianceWaves[18]=                                // Waves that will be summoned in the Alliance Base
-{   // Rage Winterchill Wave 1-8
+Wave AllianceWaves[18] =                               // Waves that will be summoned in the Alliance Base
+{
+    // Rage Winterchill Wave 1-8
     {{GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, 0, 0, 0, 0, 0, 0, 0, 0}, 120000, false},
     {{GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, CRYPT_FIEND, CRYPT_FIEND, 0, 0, 0, 0, 0, 0}, 120000, false},
     {{GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, CRYPT_FIEND, CRYPT_FIEND, CRYPT_FIEND, CRYPT_FIEND, CRYPT_FIEND, CRYPT_FIEND, 0, 0, 0, 0, 0, 0}, 120000, false},
@@ -61,8 +62,9 @@ Wave AllianceWaves[18]=                                // Waves that will be sum
     {{ANETHERON, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, true}
 };
 
-Wave HordeWaves[18]=                                   // Waves that are summoned in the Horde base
-{   // Kaz'Rogal Wave 1-8
+Wave HordeWaves[18] =                                  // Waves that are summoned in the Horde base
+{
+    // Kaz'Rogal Wave 1-8
     {{GHOUL, GHOUL, GHOUL, GHOUL, ABOMINATION, ABOMINATION, ABOMINATION, ABOMINATION, BANSHEE, BANSHEE, NECROMANCER, NECROMANCER, 0, 0, 0, 0, 0, 0}, 180000, false},
     {{GHOUL, GHOUL, GHOUL, GHOUL, GARGOYLE, GARGOYLE, GARGOYLE, GARGOYLE, GARGOYLE, GARGOYLE, GARGOYLE, GARGOYLE, GARGOYLE, GARGOYLE, 0, 0, 0, 0}, 180000, false},
     {{GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, GHOUL, CRYPT_FIEND, CRYPT_FIEND, CRYPT_FIEND, CRYPT_FIEND, CRYPT_FIEND, CRYPT_FIEND, NECROMANCER, NECROMANCER, 0, 0, 0, 0}, 180000, false},
@@ -86,7 +88,7 @@ Wave HordeWaves[18]=                                   // Waves that are summone
     {{AZGALOR, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, true}
 };
 
-Yells JainaQuotes[9]=
+Yells JainaQuotes[9] =
 {
     {ATTACKED, -1534000},
     {ATTACKED, -1534001},
@@ -99,7 +101,7 @@ Yells JainaQuotes[9]=
     {DEATH, -1534008},
 };
 
-Yells ThrallQuotes[9]=
+Yells ThrallQuotes[9] =
 {
     {ATTACKED, -1534009},
     {ATTACKED, -1534010},
@@ -114,7 +116,7 @@ Yells ThrallQuotes[9]=
 
 
 // Locations for summoning gargoyls and frost wyrms in special cases
-float SpawnPointSpecial[3][3]=
+float SpawnPointSpecial[3][3] =
 {
     {5497.08f,    -2493.23f,    1535.72f}, //spawn point for the gargoyles near the horde gate
     {5624.53f,    -2548.12f,    1551.54f}, //spawn point for the frost wyrm near the horde gate
@@ -122,7 +124,7 @@ float SpawnPointSpecial[3][3]=
 };
 
 // Locations for summoning waves in Alliance base
-float AllianceBase[4][3]=
+float AllianceBase[4][3] =
 {
     {4928.48f,    -1526.38f,    1326.83f},
     {4923.54f,    -1514.29f,    1327.98f},
@@ -130,14 +132,14 @@ float AllianceBase[4][3]=
     {4938.35f,    -1521.00f,    1326.69f}
 };
 
-float JainaDummySpawn[2][4]=
+float JainaDummySpawn[2][4] =
 {
     {5497.01f, -2719.03f, 1483.08f, 2.90426f},
     {5484.98f, -2721.69f, 1483.39f, 6.00656f}
 };
 
 // Locations for summoning waves in Horde base
-float HordeBase[4][3]=
+float HordeBase[4][3] =
 {
     {5458.01f,    -2340.27f,    1459.60f},
     {5466.01f,    -2334.69f,    1460.06f},
@@ -146,13 +148,13 @@ float HordeBase[4][3]=
 };
 
 // Lady Jaina's waypoints when retreathing
-float JainaWPs[2][3]=
+float JainaWPs[2][3] =
 {
     {5078.56f,    -1789.79f,    1320.73f},//next to the small stairs
     {5037.38f,    -1778.39f,    1322.61f},//center of alliance base
 };
 
-float InfernalPos[8][3]=//spawn points for the infernals in the horde base
+float InfernalPos[8][3] = //spawn points for the infernals in the horde base
 {
     {5453.59f,    -2764.52f,    1493.50f},
     {5478.4f,    -2781.77f,    1497.52f},
@@ -164,7 +166,7 @@ float InfernalPos[8][3]=//spawn points for the infernals in the horde base
     {5482.39f,    -2689.19f,    1481.09f}
 };
 
-float InfernalSPWP[26][4]=//spawn points for the infernals in the horde base used in the cleaning wave
+float InfernalSPWP[26][4] = //spawn points for the infernals in the horde base used in the cleaning wave
 {
     {5490.96f, -2718.72f, 1482.96f, 0.49773f},
     {5449.51f, -2723.32f, 1485.69f, 2.69685f},
@@ -194,7 +196,7 @@ float InfernalSPWP[26][4]=//spawn points for the infernals in the horde base use
     {5459.78f, -2755.71f, 1490.68f, 1.05139f}
 };
 
-float VeinPos[14][8]=//spawn points of the ancient gem veins
+float VeinPos[14][8] = //spawn points of the ancient gem veins
 {
     {5184.84f,    -1982.59f,    1382.66f,    2.58079f,    0,    0,    0.960944f,    0.276742f},  //alliance
     {5107.66f,    -2071.16f,    1368.37f,    2.65148f,    0,    0,    0.970124f,    0.242611f},    //alliance
@@ -212,7 +214,7 @@ float VeinPos[14][8]=//spawn points of the ancient gem veins
     {5441.54f,    -3321.59f,    1651.55f,    0.258306f,    0,    0,    0.128794f,    0.991671f}   //horde
 };
 
-float AllianceOverrunGargPos[5][4]=//gargoyle spawn points in the alliance overrun
+float AllianceOverrunGargPos[5][4] = //gargoyle spawn points in the alliance overrun
 {
     {5279.94f, -2049.68f, 1311.38f, 0},//garg1
     {5289.15f, -2219.06f, 1291.12f, 0},//garg2
@@ -221,7 +223,7 @@ float AllianceOverrunGargPos[5][4]=//gargoyle spawn points in the alliance overr
     {5120.65f, -2467.92f, 1463.93f, 2.54f}//garg5
 };
 
-float AllianceFirePos[92][8]=//spawn points for the fire visuals (GO) in the alliance base
+float AllianceFirePos[92][8] = //spawn points for the fire visuals (GO) in the alliance base
 {
     {5039.9f,    -1796.84f,    1323.88f,    2.59222f,    0,    0,    0.962511f,    0.271243f},
     {5087.2f,    -1795.2f,    1320.68f,    1.03946f,    0,    0,    0.496644f,    0.867954f},
@@ -317,7 +319,7 @@ float AllianceFirePos[92][8]=//spawn points for the fire visuals (GO) in the all
     {5108.2f    ,    -2429.84f,    1427.73f,    4.5194f,        0,    0,    0.771943f,    -0.635691f}
 };
 
-float HordeFirePos[65][8]=//spawn points for the fire visuals (GO) in the horde base
+float HordeFirePos[65][8] = //spawn points for the fire visuals (GO) in the horde base
 {
     {5524.11f,    -2612.73f,    1483.38f,    1.96198f,    0,    0,    0.831047f,    0.556202f},
     {5514.42f,    -2617.19f,    1505.77f,    1.82453f,    0,    0,    0.790892f,    0.611956f},
@@ -391,7 +393,7 @@ hyjalAI::hyjalAI(Creature* c) : npc_escortAI(c), Summons(me)
     pInstance = c->GetInstanceData();
     VeinsSpawned[0] = false;
     VeinsSpawned[1] = false;
-    for (uint8 i=0; i<14; ++i)
+    for (uint8 i = 0; i < 14; ++i)
         VeinGUID[i] = 0;
     InfernalCount = 0;
     TeleportTimer = 1000;
@@ -437,20 +439,20 @@ void hyjalAI::Reset()
     EnemyCount = 0;
 
     // Set faction properly based on Creature entry
-    switch(me->GetEntry())
+    switch (me->GetEntry())
     {
-        case JAINA:
-            Faction = 0;
-            DoCast(me, SPELL_BRILLIANCE_AURA, true);
-            break;
+    case JAINA:
+        Faction = 0;
+        DoCast(me, SPELL_BRILLIANCE_AURA, true);
+        break;
 
-        case THRALL:
-            Faction = 1;
-            break;
+    case THRALL:
+        Faction = 1;
+        break;
 
-        case TYRANDE:
-            Faction = 2;
-            break;
+    case TYRANDE:
+        Faction = 2;
+        break;
     }
 
     //Bools
@@ -478,7 +480,8 @@ void hyjalAI::Reset()
             UpdateWorldState(WORLD_STATE_ENEMYCOUNT, 0);
             pInstance->SetData(DATA_RESET_TRASH_COUNT, 0);
         }
-    } else error_log(ERROR_INST_DATA);
+    }
+    else error_log(ERROR_INST_DATA);
 
     //Visibility
     DoHide = true;
@@ -519,46 +522,45 @@ void hyjalAI::MoveInLineOfSight(Unit* who)
 
 void hyjalAI::SummonCreature(uint32 entry, float Base[4][3])
 {
-    uint32 random = rand()%4;
+    uint32 random = rand() % 4;
     float SpawnLoc[3];
 
     for (uint8 i = 0; i < 3; ++i)
-    {
         SpawnLoc[i] = Base[random][i];
-    }
     Creature* pCreature = NULL;
-    switch(entry)
+    switch (entry)
     {
-            case 17906:    //GARGOYLE
+    case 17906:    //GARGOYLE
 
-                if (!FirstBossDead && (WaveCount == 1 || WaveCount == 3))
-                {//summon at tower
-                    pCreature = me->SummonCreature(entry, SpawnPointSpecial[SPAWN_NEAR_TOWER][0]+irand(-20,20), SpawnPointSpecial[SPAWN_NEAR_TOWER][1]+irand(-20,20), SpawnPointSpecial[SPAWN_NEAR_TOWER][2]+irand(-10,10), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
-                    if (pCreature)
-                        CAST_AI(hyjal_trashAI, pCreature->AI())->useFlyPath = true;
-                } else{//summon at gate
-                    pCreature = me->SummonCreature(entry, SpawnPointSpecial[SPAWN_GARG_GATE][0]+irand(-10,10), SpawnPointSpecial[SPAWN_GARG_GATE][1]+irand(-10,10), SpawnPointSpecial[SPAWN_GARG_GATE][2]+irand(-10,10), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
-                }
-                break;
-            case 17907:    //FROST_WYRM ,
-                if (FirstBossDead && WaveCount == 1) //summon at gate
-                    pCreature = me->SummonCreature(entry, SpawnPointSpecial[SPAWN_WYRM_GATE][0],SpawnPointSpecial[SPAWN_WYRM_GATE][1],SpawnPointSpecial[SPAWN_WYRM_GATE][2], 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
-                else
-                {
-                    pCreature = me->SummonCreature(entry, SpawnPointSpecial[SPAWN_NEAR_TOWER][0], SpawnPointSpecial[SPAWN_NEAR_TOWER][1],SpawnPointSpecial[SPAWN_NEAR_TOWER][2], 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
-                    if (pCreature)
-                        CAST_AI(hyjal_trashAI, pCreature->AI())->useFlyPath = true;
-                }
-                break;
-            case 17908:    //GIANT_INFERNAL
-                ++InfernalCount;
-                if (InfernalCount > 7)
-                    InfernalCount = 0;
-                pCreature = me->SummonCreature(entry, InfernalPos[InfernalCount][0], InfernalPos[InfernalCount][1], InfernalPos[InfernalCount][2], 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
-                break;
-            default:
-                pCreature = me->SummonCreature(entry, SpawnLoc[0], SpawnLoc[1], SpawnLoc[2], 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
-                break;
+        if (!FirstBossDead && (WaveCount == 1 || WaveCount == 3))
+        {
+            //summon at tower
+            pCreature = me->SummonCreature(entry, SpawnPointSpecial[SPAWN_NEAR_TOWER][0] + irand(-20, 20), SpawnPointSpecial[SPAWN_NEAR_TOWER][1] + irand(-20, 20), SpawnPointSpecial[SPAWN_NEAR_TOWER][2] + irand(-10, 10), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
+            if (pCreature)
+                CAST_AI(hyjal_trashAI, pCreature->AI())->useFlyPath = true;
+        }
+        else   //summon at gate
+            pCreature = me->SummonCreature(entry, SpawnPointSpecial[SPAWN_GARG_GATE][0] + irand(-10, 10), SpawnPointSpecial[SPAWN_GARG_GATE][1] + irand(-10, 10), SpawnPointSpecial[SPAWN_GARG_GATE][2] + irand(-10, 10), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
+        break;
+    case 17907:    //FROST_WYRM ,
+        if (FirstBossDead && WaveCount == 1) //summon at gate
+            pCreature = me->SummonCreature(entry, SpawnPointSpecial[SPAWN_WYRM_GATE][0], SpawnPointSpecial[SPAWN_WYRM_GATE][1], SpawnPointSpecial[SPAWN_WYRM_GATE][2], 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
+        else
+        {
+            pCreature = me->SummonCreature(entry, SpawnPointSpecial[SPAWN_NEAR_TOWER][0], SpawnPointSpecial[SPAWN_NEAR_TOWER][1], SpawnPointSpecial[SPAWN_NEAR_TOWER][2], 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
+            if (pCreature)
+                CAST_AI(hyjal_trashAI, pCreature->AI())->useFlyPath = true;
+        }
+        break;
+    case 17908:    //GIANT_INFERNAL
+        ++InfernalCount;
+        if (InfernalCount > 7)
+            InfernalCount = 0;
+        pCreature = me->SummonCreature(entry, InfernalPos[InfernalCount][0], InfernalPos[InfernalCount][1], InfernalPos[InfernalCount][2], 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
+        break;
+    default:
+        pCreature = me->SummonCreature(entry, SpawnLoc[0], SpawnLoc[1], SpawnLoc[2], 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
+        break;
 
     }
 
@@ -569,23 +571,23 @@ void hyjalAI::SummonCreature(uint32 entry, float Base[4][3])
 
         pCreature->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
         pCreature->setActive(true);
-        switch(entry)
+        switch (entry)
         {
-            case NECROMANCER:
-            case ABOMINATION:
-            case GHOUL:
-            case BANSHEE:
-            case CRYPT_FIEND:
-            case GARGOYLE:
-            case FROST_WYRM:
-            case GIANT_INFERNAL:
-            case FEL_STALKER:
-            case RAGE_WINTERCHILL:
-            case ANETHERON:
-            case KAZROGAL:
-            case AZGALOR:
-                CAST_AI(hyjal_trashAI, pCreature->AI())->IsEvent = true;
-                break;
+        case NECROMANCER:
+        case ABOMINATION:
+        case GHOUL:
+        case BANSHEE:
+        case CRYPT_FIEND:
+        case GARGOYLE:
+        case FROST_WYRM:
+        case GIANT_INFERNAL:
+        case FEL_STALKER:
+        case RAGE_WINTERCHILL:
+        case ANETHERON:
+        case KAZROGAL:
+        case AZGALOR:
+            CAST_AI(hyjal_trashAI, pCreature->AI())->IsEvent = true;
+            break;
         }
         if (pInstance)
         {
@@ -605,7 +607,7 @@ void hyjalAI::SummonCreature(uint32 entry, float Base[4][3])
 void hyjalAI::SummonNextWave(Wave wave[18], uint32 Count, float Base[4][3])
 {
     // 1 in 4 chance we give a rally yell. Not sure if the chance is offilike.
-    if (rand()%4 == 0)
+    if (rand() % 4 == 0)
         Talk(RALLY);
 
     if (!pInstance)
@@ -624,7 +626,7 @@ void hyjalAI::SummonNextWave(Wave wave[18], uint32 Count, float Base[4][3])
 
     if (!wave[Count].IsBoss)
     {
-        uint32 stateValue = Count+1;
+        uint32 stateValue = Count + 1;
         if (FirstBossDead)
             stateValue -= 9;                                // Subtract 9 from it to give the proper wave number if we are greater than 8
         UpdateWorldState(WORLD_STATE_WAVES, stateValue);    // Set world state to our current wave number
@@ -702,17 +704,13 @@ void hyjalAI::Talk(uint32 id)
     if (index.empty())
         return;                                             // No quotes found, no use to continue
 
-    uint8 ind = *(index.begin()) + rand()%index.size();
+    uint8 ind = *(index.begin()) + rand() % index.size();
 
     int32 YellId = 0;
     if (Faction == 0)                                        // Alliance
-    {
         YellId = JainaQuotes[ind].textid;
-    }
     else if (Faction == 1)                                   // Horde
-    {
         YellId = ThrallQuotes[ind].textid;
-    }
 
     if (YellId)
         DoScriptText(YellId, me);
@@ -720,7 +718,7 @@ void hyjalAI::Talk(uint32 id)
 
 void hyjalAI::UpdateWorldState(uint32 id, uint32 state)
 {
-    Map * map = me->GetMap();
+    Map* map = me->GetMap();
 
     if (!map->IsDungeon())
         return;
@@ -729,12 +727,13 @@ void hyjalAI::UpdateWorldState(uint32 id, uint32 state)
 
     if (!players.isEmpty())
     {
-            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
-            {
-                if (Player* player = itr->getSource())
-                    player->SendUpdateWorldState(id,state);
-            }
-    } else debug_log("OSCR: HyjalAI: UpdateWorldState, but PlayerList is empty");
+        for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+        {
+            if (Player* player = itr->getSource())
+                player->SendUpdateWorldState(id, state);
+        }
+    }
+    else debug_log("OSCR: HyjalAI: UpdateWorldState, but PlayerList is empty");
 }
 
 void hyjalAI::Retreat()
@@ -744,22 +743,22 @@ void hyjalAI::Retreat()
         if (Faction == 0)
         {
             pInstance->SetData(DATA_ALLIANCE_RETREAT, 1);
-            AddWaypoint(0,JainaWPs[0][0],JainaWPs[0][1],JainaWPs[0][2]);
-            AddWaypoint(1,JainaWPs[1][0],JainaWPs[1][1],JainaWPs[1][2]);
+            AddWaypoint(0, JainaWPs[0][0], JainaWPs[0][1], JainaWPs[0][2]);
+            AddWaypoint(1, JainaWPs[1][0], JainaWPs[1][1], JainaWPs[1][2]);
             Start(false, false, false);
             SetDespawnAtEnd(false);//move to center of alliance base
         }
         if (Faction == 1)
         {
             pInstance->SetData(DATA_HORDE_RETREAT, 1);
-            Creature* JainaDummy = me->SummonCreature(JAINA,JainaDummySpawn[0][0],JainaDummySpawn[0][1],JainaDummySpawn[0][2],JainaDummySpawn[0][3],TEMPSUMMON_TIMED_DESPAWN,60000);
+            Creature* JainaDummy = me->SummonCreature(JAINA, JainaDummySpawn[0][0], JainaDummySpawn[0][1], JainaDummySpawn[0][2], JainaDummySpawn[0][3], TEMPSUMMON_TIMED_DESPAWN, 60000);
             if (JainaDummy)
             {
                 JainaDummy->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                 CAST_AI(hyjalAI, JainaDummy->AI())->IsDummy = true;
                 DummyGuid = JainaDummy->GetGUID();
             }
-            AddWaypoint(0,JainaDummySpawn[1][0],JainaDummySpawn[1][1],JainaDummySpawn[1][2]);
+            AddWaypoint(0, JainaDummySpawn[1][0], JainaDummySpawn[1][1], JainaDummySpawn[1][2]);
             Start(false, false, false);
             SetDespawnAtEnd(false);//move to center of alliance base
         }
@@ -775,21 +774,23 @@ void hyjalAI::SpawnVeins()
     {
         if (VeinsSpawned[0])//prevent any buggers
             return;
-        for (uint8 i = 0; i<7; ++i)
+        for (uint8 i = 0; i < 7; ++i)
         {
-            GameObject* gem = me->SummonGameObject(ANCIENT_VEIN,VeinPos[i][0],VeinPos[i][1],VeinPos[i][2],VeinPos[i][3],VeinPos[i][4],VeinPos[i][5],VeinPos[i][6],VeinPos[i][7],0);
+            GameObject* gem = me->SummonGameObject(ANCIENT_VEIN, VeinPos[i][0], VeinPos[i][1], VeinPos[i][2], VeinPos[i][3], VeinPos[i][4], VeinPos[i][5], VeinPos[i][6], VeinPos[i][7], 0);
             if (gem)
-                VeinGUID[i]=gem->GetGUID();
+                VeinGUID[i] = gem->GetGUID();
         }
         VeinsSpawned[0] = true;
-    } else{
+    }
+    else
+    {
         if (VeinsSpawned[1])
             return;
-        for (uint8 i = 7; i<14; ++i)
+        for (uint8 i = 7; i < 14; ++i)
         {
-            GameObject* gem = me->SummonGameObject(ANCIENT_VEIN,VeinPos[i][0],VeinPos[i][1],VeinPos[i][2],VeinPos[i][3],VeinPos[i][4],VeinPos[i][5],VeinPos[i][6],VeinPos[i][7],0);
+            GameObject* gem = me->SummonGameObject(ANCIENT_VEIN, VeinPos[i][0], VeinPos[i][1], VeinPos[i][2], VeinPos[i][3], VeinPos[i][4], VeinPos[i][5], VeinPos[i][6], VeinPos[i][7], 0);
             if (gem)
-                VeinGUID[i]=gem->GetGUID();
+                VeinGUID[i] = gem->GetGUID();
         }
         VeinsSpawned[1] = true;
     }
@@ -801,22 +802,23 @@ void hyjalAI::DeSpawnVeins()
         return;
     if (Faction == 1)
     {
-        Creature* pUnit=Unit::GetCreature((*me),pInstance->GetData64(DATA_JAINAPROUDMOORE));
+        Creature* pUnit = Unit::GetCreature((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
         if (!pUnit)return;
         hyjalAI* ai = CAST_AI(hyjalAI, pUnit->AI());
         if (!ai)return;
-        for (uint8 i = 0; i<7; ++i)
+        for (uint8 i = 0; i < 7; ++i)
         {
             if (GameObject* gem = GameObject::GetGameObject((*me), ai->VeinGUID[i]))
                 gem->RemoveFromWorld();
         }
-    } else if (Faction)
+    }
+    else if (Faction)
     {
-        Creature* pUnit=Unit::GetCreature((*me),pInstance->GetData64(DATA_THRALL));
+        Creature* pUnit = Unit::GetCreature((*me), pInstance->GetData64(DATA_THRALL));
         if (!pUnit)return;
         hyjalAI* ai = CAST_AI(hyjalAI, pUnit->AI());
         if (!ai)return;
-        for (uint8 i = 7; i<14; ++i)
+        for (uint8 i = 7; i < 14; ++i)
         {
             if (GameObject* gem = GameObject::GetGameObject((*me), ai->VeinGUID[i]))
                 gem->RemoveFromWorld();
@@ -832,39 +834,40 @@ void hyjalAI::UpdateAI(const uint32 diff)
         {
             DoCast(me, SPELL_MASS_TELEPORT, false);
             DoMassTeleport = false;
-        } else MassTeleportTimer -= diff;
+        }
+        else MassTeleportTimer -= diff;
         return;
     }
     if (DoHide)
     {
         DoHide = false;
-        switch(me->GetEntry())
+        switch (me->GetEntry())
         {
-            case JAINA:
-                if (pInstance && pInstance->GetData(DATA_ALLIANCE_RETREAT))
-                {
-                    me->SetVisibility(VISIBILITY_OFF);
-                    HideNearPos(me->GetPositionX(), me->GetPositionY());
-                    HideNearPos(5037.76f, -1889.71f);
-                    for (uint8 i = 0; i < 92; ++i)//summon fires
-                        me->SummonGameObject(FLAMEOBJECT,AllianceFirePos[i][0],AllianceFirePos[i][1],AllianceFirePos[i][2],AllianceFirePos[i][3],AllianceFirePos[i][4],AllianceFirePos[i][5],AllianceFirePos[i][6],AllianceFirePos[i][7],0);
+        case JAINA:
+            if (pInstance && pInstance->GetData(DATA_ALLIANCE_RETREAT))
+            {
+                me->SetVisibility(VISIBILITY_OFF);
+                HideNearPos(me->GetPositionX(), me->GetPositionY());
+                HideNearPos(5037.76f, -1889.71f);
+                for (uint8 i = 0; i < 92; ++i)//summon fires
+                    me->SummonGameObject(FLAMEOBJECT, AllianceFirePos[i][0], AllianceFirePos[i][1], AllianceFirePos[i][2], AllianceFirePos[i][3], AllianceFirePos[i][4], AllianceFirePos[i][5], AllianceFirePos[i][6], AllianceFirePos[i][7], 0);
 
-                }
-                else me->SetVisibility(VISIBILITY_ON);
-                break;
-            case THRALL: //thrall
-                if (pInstance && pInstance->GetData(DATA_HORDE_RETREAT))
-                {
-                    me->SetVisibility(VISIBILITY_OFF);
-                    HideNearPos(me->GetPositionX(), me->GetPositionY());
-                    HideNearPos(5563, -2763.19f);
-                    HideNearPos(5542.2f, -2629.36f);
-                    for (uint8 i = 0; i < 65; ++i)//summon fires
-                        me->SummonGameObject(FLAMEOBJECT,HordeFirePos[i][0],HordeFirePos[i][1],HordeFirePos[i][2],HordeFirePos[i][3],HordeFirePos[i][4],HordeFirePos[i][5],HordeFirePos[i][6],HordeFirePos[i][7],0);
+            }
+            else me->SetVisibility(VISIBILITY_ON);
+            break;
+        case THRALL: //thrall
+            if (pInstance && pInstance->GetData(DATA_HORDE_RETREAT))
+            {
+                me->SetVisibility(VISIBILITY_OFF);
+                HideNearPos(me->GetPositionX(), me->GetPositionY());
+                HideNearPos(5563, -2763.19f);
+                HideNearPos(5542.2f, -2629.36f);
+                for (uint8 i = 0; i < 65; ++i)//summon fires
+                    me->SummonGameObject(FLAMEOBJECT, HordeFirePos[i][0], HordeFirePos[i][1], HordeFirePos[i][2], HordeFirePos[i][3], HordeFirePos[i][4], HordeFirePos[i][5], HordeFirePos[i][6], HordeFirePos[i][7], 0);
 
-                }
-                else me->SetVisibility(VISIBILITY_ON);
-                break;
+            }
+            else me->SetVisibility(VISIBILITY_ON);
+            break;
         }
     }
     if (DoRespawn)
@@ -874,15 +877,16 @@ void hyjalAI::UpdateAI(const uint32 diff)
             DoRespawn = false;
             RespawnNearPos(me->GetPositionX(), me->GetPositionY());
             if (Faction == 0)
-            {
                 RespawnNearPos(5037.76f, -1889.71f);
-            } else if (Faction == 1)
+            else if (Faction == 1)
             {
                 RespawnNearPos(5563, -2763.19f);
                 RespawnNearPos(5542.2f, -2629.36f);
             }
             me->SetVisibility(VISIBILITY_ON);
-        } else{
+        }
+        else
+        {
             RespawnTimer -= diff;
             me->SetVisibility(VISIBILITY_OFF);
         }
@@ -897,19 +901,20 @@ void hyjalAI::UpdateAI(const uint32 diff)
             IsDummy = true;
             bRetreat = false;
             HideNearPos(me->GetPositionX(), me->GetPositionY());
-            switch(me->GetEntry())
+            switch (me->GetEntry())
             {
-                case JAINA://jaina
-                    HideNearPos(5037.76f, -1889.71f);
-                    break;
-                case THRALL://thrall
-                    HideNearPos(5563, -2763.19f);
-                    HideNearPos(5542.2f, -2629.36f);
-                    HideNearPos(5603.75f, -2853.12f);
-                    break;
+            case JAINA://jaina
+                HideNearPos(5037.76f, -1889.71f);
+                break;
+            case THRALL://thrall
+                HideNearPos(5563, -2763.19f);
+                HideNearPos(5542.2f, -2629.36f);
+                HideNearPos(5603.75f, -2853.12f);
+                break;
             }
             me->SetVisibility(VISIBILITY_OFF);
-        } else RetreatTimer -= diff;
+        }
+        else RetreatTimer -= diff;
     }
 
     if (!EventBegun)
@@ -931,7 +936,8 @@ void hyjalAI::UpdateAI(const uint32 diff)
             else if (Faction == 1)
                 SummonNextWave(HordeWaves, WaveCount, HordeBase);
             ++WaveCount;
-        } else NextWaveTimer -= diff;
+        }
+        else NextWaveTimer -= diff;
     }
 
     if (CheckTimer <= diff)
@@ -962,7 +968,8 @@ void hyjalAI::UpdateAI(const uint32 diff)
             }
         }
         CheckTimer = 5000;
-    } else CheckTimer -= diff;
+    }
+    else CheckTimer -= diff;
 
     if (!UpdateVictim())
         return;
@@ -978,11 +985,17 @@ void hyjalAI::UpdateAI(const uint32 diff)
 
                 Unit* pTarget = NULL;
 
-                switch(Spell[i].TargetType)
+                switch (Spell[i].TargetType)
                 {
-                    case TARGETTYPE_SELF: pTarget = me; break;
-                    case TARGETTYPE_RANDOM: pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0); break;
-                    case TARGETTYPE_VICTIM: pTarget = me->getVictim(); break;
+                case TARGETTYPE_SELF:
+                    pTarget = me;
+                    break;
+                case TARGETTYPE_RANDOM:
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    break;
+                case TARGETTYPE_VICTIM:
+                    pTarget = me->getVictim();
+                    break;
                 }
 
                 if (pTarget && pTarget->isAlive())
@@ -990,7 +1003,8 @@ void hyjalAI::UpdateAI(const uint32 diff)
                     DoCast(pTarget, Spell[i].SpellId);
                     SpellTimer[i] = Spell[i].Cooldown;
                 }
-            } else SpellTimer[i] -= diff;
+            }
+            else SpellTimer[i] -= diff;
         }
     }
 
@@ -1006,7 +1020,8 @@ void hyjalAI::JustDied(Unit* /*killer*/)
     Talk(DEATH);
     Summons.DespawnAll();//despawn all wave's summons
     if (pInstance)
-    {//reset encounter if boss is despawned (ex: thrall is killed, boss despawns, event stucks at inprogress)
+    {
+        //reset encounter if boss is despawned (ex: thrall is killed, boss despawns, event stucks at inprogress)
         if (pInstance->GetData(DATA_RAGEWINTERCHILLEVENT) == IN_PROGRESS)
             pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, NOT_STARTED);
         if (pInstance->GetData(DATA_ANETHERONEVENT) == IN_PROGRESS)
@@ -1030,10 +1045,10 @@ void hyjalAI::HideNearPos(float x, float y)
     Oregon::AllFriendlyCreaturesInGrid creature_check(me);
     Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> creature_searcher(creatures, creature_check);
     TypeContainerVisitor
-        <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
-        GridTypeMapContainer> creature_visitor(creature_searcher);
+    <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
+    GridTypeMapContainer> creature_visitor(creature_searcher);
 
-                                                            // Get Creatures
+    // Get Creatures
     cell.Visit(pair, creature_visitor, *(me->GetMap()));
 
     if (!creatures.empty())
@@ -1061,14 +1076,14 @@ void hyjalAI::WaypointReached(uint32 i)
 {
     if (i == 1 || (i == 0 && me->GetEntry() == THRALL))
     {
-        me->MonsterYell(YELL_HURRY,0,0);
+        me->MonsterYell(YELL_HURRY, 0, 0);
         WaitForTeleport = true;
         TeleportTimer = 20000;
         if (me->GetEntry() == JAINA)
             DoCast(me, SPELL_MASS_TELEPORT, false);
         if (me->GetEntry() == THRALL && DummyGuid)
         {
-            Unit* Dummy = Unit::GetUnit((*me),DummyGuid);
+            Unit* Dummy = Unit::GetUnit((*me), DummyGuid);
             if (Dummy)
             {
                 CAST_AI(hyjalAI, CAST_CRE(Dummy)->AI())->DoMassTeleport = true;
@@ -1088,8 +1103,8 @@ void hyjalAI::WaypointReached(uint32 i)
         Oregon::AllFriendlyCreaturesInGrid creature_check(me);
         Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> creature_searcher(creatures, creature_check);
         TypeContainerVisitor
-            <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
-            GridTypeMapContainer> creature_visitor(creature_searcher);
+        <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
+        GridTypeMapContainer> creature_visitor(creature_searcher);
 
         cell.Visit(pair, creature_visitor, *(me->GetMap()));
 
@@ -1107,7 +1122,7 @@ void hyjalAI::WaypointReached(uint32 i)
                     float range = 10;
                     if (me->GetEntry() == THRALL)range = 20;
                     me->GetNearPoint(me, x, y, z, range, 0, me->GetAngle((*itr)));
-                    (*itr)->GetMotionMaster()->MovePoint(0, x+irand(-5,5), y+irand(-5,5), me->GetPositionZ());
+                    (*itr)->GetMotionMaster()->MovePoint(0, x + irand(-5, 5), y + irand(-5, 5), me->GetPositionZ());
                 }
             }
         }
@@ -1129,8 +1144,8 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
             Oregon::AllFriendlyCreaturesInGrid creature_check(me);
             Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> creature_searcher(creatures, creature_check);
             TypeContainerVisitor
-                <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
-                GridTypeMapContainer> creature_visitor(creature_searcher);
+            <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
+            GridTypeMapContainer> creature_visitor(creature_searcher);
 
             cell.Visit(pair, creature_visitor, *(me->GetMap()));
 
@@ -1152,94 +1167,95 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
 
             WaitForTeleport = false;
             Teleported = true;
-        }TeleportTimer -= diff;
+        }
+        TeleportTimer -= diff;
     }
     if (!Teleported)
         return;
     Overrun = false;//execute once
-    switch(faction)
+    switch (faction)
     {
-        case 0://alliance
-            for (uint8 i = 0; i < 92; ++i)//summon fires
-                me->SummonGameObject(FLAMEOBJECT,AllianceFirePos[i][0],AllianceFirePos[i][1],AllianceFirePos[i][2],AllianceFirePos[i][3],AllianceFirePos[i][4],AllianceFirePos[i][5],AllianceFirePos[i][6],AllianceFirePos[i][7],0);
+    case 0://alliance
+        for (uint8 i = 0; i < 92; ++i)//summon fires
+            me->SummonGameObject(FLAMEOBJECT, AllianceFirePos[i][0], AllianceFirePos[i][1], AllianceFirePos[i][2], AllianceFirePos[i][3], AllianceFirePos[i][4], AllianceFirePos[i][5], AllianceFirePos[i][6], AllianceFirePos[i][7], 0);
 
-            for (uint8 i = 0; i < 25; ++i)//summon 25 ghouls
+        for (uint8 i = 0; i < 25; ++i)//summon 25 ghouls
+        {
+            uint8 r = rand() % 4;
+            Creature* pUnit = me->SummonCreature(GHOUL, AllianceBase[r][0] + irand(-15, 15), AllianceBase[r][1] + irand(-15, 15), AllianceBase[r][2], 0, TEMPSUMMON_MANUAL_DESPAWN, 2 * 60 * 1000);
+            if (pUnit)
             {
-                uint8 r = rand()%4;
-                Creature* pUnit = me->SummonCreature(GHOUL, AllianceBase[r][0]+irand(-15,15), AllianceBase[r][1]+irand(-15,15), AllianceBase[r][2], 0, TEMPSUMMON_MANUAL_DESPAWN, 2*60*1000);
-                if (pUnit)
-                {
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
-                    pUnit->setActive(true);
-                }
+                CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
+                pUnit->setActive(true);
             }
-            for (uint8 i = 0; i < 3; ++i)//summon 3 abominations
+        }
+        for (uint8 i = 0; i < 3; ++i)//summon 3 abominations
+        {
+            uint8 r = rand() % 4;
+            Creature* pUnit = me->SummonCreature(ABOMINATION, AllianceBase[r][0] + irand(-15, 15), AllianceBase[r][1] + irand(-15, 15), AllianceBase[r][2], 0, TEMPSUMMON_MANUAL_DESPAWN, 2 * 60 * 1000);
+            if (pUnit)
             {
-                uint8 r = rand()%4;
-                Creature* pUnit = me->SummonCreature(ABOMINATION, AllianceBase[r][0]+irand(-15,15), AllianceBase[r][1]+irand(-15,15), AllianceBase[r][2], 0, TEMPSUMMON_MANUAL_DESPAWN, 2*60*1000);
-                if (pUnit)
-                {
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
-                    pUnit->setActive(true);
-                }
+                CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
+                pUnit->setActive(true);
             }
-            for (uint8 i = 0; i < 5; ++i)//summon 5 gargoyles
+        }
+        for (uint8 i = 0; i < 5; ++i)//summon 5 gargoyles
+        {
+            Creature* pUnit = me->SummonCreature(GARGOYLE, AllianceOverrunGargPos[i][0], AllianceOverrunGargPos[i][1], AllianceOverrunGargPos[i][2], AllianceOverrunGargPos[i][3], TEMPSUMMON_MANUAL_DESPAWN, 2 * 60 * 1000);
+            if (pUnit)
             {
-                Creature* pUnit = me->SummonCreature(GARGOYLE, AllianceOverrunGargPos[i][0], AllianceOverrunGargPos[i][1], AllianceOverrunGargPos[i][2], AllianceOverrunGargPos[i][3], TEMPSUMMON_MANUAL_DESPAWN, 2*60*1000);
-                if (pUnit)
-                {
-                    pUnit->SetHomePosition(AllianceOverrunGargPos[i][0], AllianceOverrunGargPos[i][1], AllianceOverrunGargPos[i][2], AllianceOverrunGargPos[i][3]);
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
-                    pUnit->setActive(true);
-                }
+                pUnit->SetHomePosition(AllianceOverrunGargPos[i][0], AllianceOverrunGargPos[i][1], AllianceOverrunGargPos[i][2], AllianceOverrunGargPos[i][3]);
+                CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
+                pUnit->setActive(true);
             }
-            break;
-        case 1://horde
-            for (uint8 i = 0; i < 65; ++i)//summon fires
-                me->SummonGameObject(FLAMEOBJECT,HordeFirePos[i][0],HordeFirePos[i][1],HordeFirePos[i][2],HordeFirePos[i][3],HordeFirePos[i][4],HordeFirePos[i][5],HordeFirePos[i][6],HordeFirePos[i][7],0);
+        }
+        break;
+    case 1://horde
+        for (uint8 i = 0; i < 65; ++i)//summon fires
+            me->SummonGameObject(FLAMEOBJECT, HordeFirePos[i][0], HordeFirePos[i][1], HordeFirePos[i][2], HordeFirePos[i][3], HordeFirePos[i][4], HordeFirePos[i][5], HordeFirePos[i][6], HordeFirePos[i][7], 0);
 
-            for (uint8 i = 0; i < 26; ++i)//summon infernals
+        for (uint8 i = 0; i < 26; ++i)//summon infernals
+        {
+            Creature* pUnit = me->SummonCreature(GIANT_INFERNAL, InfernalSPWP[i][0], InfernalSPWP[i][1], InfernalSPWP[i][2], InfernalSPWP[i][3], TEMPSUMMON_MANUAL_DESPAWN, 2 * 60 * 1000);
+            if (pUnit)
             {
-                Creature* pUnit = me->SummonCreature(GIANT_INFERNAL, InfernalSPWP[i][0], InfernalSPWP[i][1], InfernalSPWP[i][2], InfernalSPWP[i][3], TEMPSUMMON_MANUAL_DESPAWN, 2*60*1000);
-                if (pUnit)
-                {
-                    pUnit->SetHomePosition(InfernalSPWP[i][0], InfernalSPWP[i][1], InfernalSPWP[i][2], InfernalSPWP[i][3]);
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
-                    pUnit->setActive(true);
-                }
+                pUnit->SetHomePosition(InfernalSPWP[i][0], InfernalSPWP[i][1], InfernalSPWP[i][2], InfernalSPWP[i][3]);
+                CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
+                pUnit->setActive(true);
             }
-            for (uint8 i = 0; i < 25; ++i)//summon 25 ghouls
+        }
+        for (uint8 i = 0; i < 25; ++i)//summon 25 ghouls
+        {
+            uint8 r = rand() % 4;
+            Creature* pUnit = me->SummonCreature(GHOUL, HordeBase[r][0] + irand(-15, 15), HordeBase[r][1] + irand(-15, 15), HordeBase[r][2], 0, TEMPSUMMON_MANUAL_DESPAWN, 2 * 60 * 1000);
+            if (pUnit)
             {
-                uint8 r = rand()%4;
-                Creature* pUnit = me->SummonCreature(GHOUL, HordeBase[r][0]+irand(-15,15), HordeBase[r][1]+irand(-15,15), HordeBase[r][2], 0, TEMPSUMMON_MANUAL_DESPAWN, 2*60*1000);
-                if (pUnit)
-                {
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
-                    pUnit->setActive(true);
-                }
+                CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
+                pUnit->setActive(true);
             }
-            for (uint8 i = 0; i < 5; ++i)//summon 5 abominations
+        }
+        for (uint8 i = 0; i < 5; ++i)//summon 5 abominations
+        {
+            uint8 r = rand() % 4;
+            Creature* pUnit = me->SummonCreature(ABOMINATION, HordeBase[r][0] + irand(-15, 15), HordeBase[r][1] + irand(-15, 15), HordeBase[r][2], 0, TEMPSUMMON_MANUAL_DESPAWN, 2 * 60 * 1000);
+            if (pUnit)
             {
-                uint8 r = rand()%4;
-                Creature* pUnit = me->SummonCreature(ABOMINATION, HordeBase[r][0]+irand(-15,15), HordeBase[r][1]+irand(-15,15), HordeBase[r][2], 0, TEMPSUMMON_MANUAL_DESPAWN, 2*60*1000);
-                if (pUnit)
-                {
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
-                    CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
-                    pUnit->setActive(true);
-                }
+                CAST_AI(hyjal_trashAI, pUnit->AI())->faction = Faction;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->IsOverrun = true;
+                CAST_AI(hyjal_trashAI, pUnit->AI())->OverrunType = i;
+                pUnit->setActive(true);
             }
-            break;
+        }
+        break;
     }
 }

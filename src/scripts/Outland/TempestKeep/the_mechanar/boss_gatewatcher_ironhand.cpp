@@ -49,7 +49,7 @@ struct boss_gatewatcher_iron_handAI : public ScriptedAI
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     bool HeroicMode;
 
@@ -71,13 +71,17 @@ struct boss_gatewatcher_iron_handAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        if (rand()%2)
+        if (rand() % 2)
             return;
 
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-        case 0: DoScriptText(SAY_SLAY_1, me); break;
-        case 1: DoScriptText(SAY_SLAY_2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY_2, me);
+            break;
         }
     }
 
@@ -100,9 +104,10 @@ struct boss_gatewatcher_iron_handAI : public ScriptedAI
         //Shadow Power
         if (Shadow_Power_Timer <= diff)
         {
-            DoCast(me,HeroicMode ? H_SPELL_SHADOW_POWER : SPELL_SHADOW_POWER);
-            Shadow_Power_Timer = 20000 + rand()%8000;
-        } else Shadow_Power_Timer -= diff;
+            DoCast(me, HeroicMode ? H_SPELL_SHADOW_POWER : SPELL_SHADOW_POWER);
+            Shadow_Power_Timer = 20000 + rand() % 8000;
+        }
+        else Shadow_Power_Timer -= diff;
 
         //Jack Hammer
         if (Jackhammer_Timer <= diff)
@@ -112,23 +117,29 @@ struct boss_gatewatcher_iron_handAI : public ScriptedAI
             DoCastVictim(HeroicMode ? H_SPELL_JACKHAMMER : SPELL_JACKHAMMER);
 
             //chance to yell, but not same time as emote (after spell in fact casted)
-            if (rand()%2)
+            if (rand() % 2)
                 return;
 
-            switch(rand()%2)
+            switch (rand() % 2)
             {
-            case 0: DoScriptText(SAY_HAMMER_1, me); break;
-            case 1: DoScriptText(SAY_HAMMER_2, me); break;
+            case 0:
+                DoScriptText(SAY_HAMMER_1, me);
+                break;
+            case 1:
+                DoScriptText(SAY_HAMMER_2, me);
+                break;
             }
             Jackhammer_Timer = 30000;
-        } else Jackhammer_Timer -= diff;
+        }
+        else Jackhammer_Timer -= diff;
 
         //Stream of Machine Fluid
         if (Stream_of_Machine_Fluid_Timer <= diff)
         {
             DoCastVictim(SPELL_STREAM_OF_MACHINE_FLUID);
-            Stream_of_Machine_Fluid_Timer = 35000 + rand()%15000;
-        } else Stream_of_Machine_Fluid_Timer -= diff;
+            Stream_of_Machine_Fluid_Timer = 35000 + rand() % 15000;
+        }
+        else Stream_of_Machine_Fluid_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -140,7 +151,7 @@ CreatureAI* GetAI_boss_gatewatcher_iron_hand(Creature* pCreature)
 
 void AddSC_boss_gatewatcher_iron_hand()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_gatewatcher_iron_hand";
     newscript->GetAI = &GetAI_boss_gatewatcher_iron_hand;

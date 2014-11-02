@@ -48,7 +48,7 @@ struct mob_naga_distillerAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     void Reset()
     {
@@ -73,17 +73,17 @@ struct mob_naga_distillerAI : public ScriptedAI
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-        DoCast(me,SPELL_WARLORDS_RAGE_NAGA,true);
+        DoCast(me, SPELL_WARLORDS_RAGE_NAGA, true);
 
         if (pInstance)
-            pInstance->SetData(TYPE_DISTILLER,IN_PROGRESS);
+            pInstance->SetData(TYPE_DISTILLER, IN_PROGRESS);
     }
 
-    void DamageTaken(Unit* /*done_by*/, uint32 &damage)
+    void DamageTaken(Unit* /*done_by*/, uint32& damage)
     {
         if (me->GetHealth() <= damage)
             if (pInstance)
-                pInstance->SetData(TYPE_DISTILLER,DONE);
+                pInstance->SetData(TYPE_DISTILLER, DONE);
     }
 };
 
@@ -94,7 +94,7 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 Reflection_Timer;
     uint32 Impale_Timer;
@@ -104,7 +104,7 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
     void Reset()
     {
         Reflection_Timer = 10000;
-        Impale_Timer = 7000+rand()%7000;
+        Impale_Timer = 7000 + rand() % 7000;
         Rage_Timer = 45000;
         CanRage = false;
 
@@ -114,11 +114,17 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO1, me); break;
-            case 1: DoScriptText(SAY_AGGRO2, me); break;
-            case 2: DoScriptText(SAY_AGGRO3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO3, me);
+            break;
         }
 
         if (pInstance)
@@ -127,10 +133,14 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY1, me); break;
-            case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
         }
     }
 
@@ -146,12 +156,12 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
         Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*me, entry, true, range);
         Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
-        cell.Visit(pair, creature_searcher,*(me->GetMap()));
+        cell.Visit(pair, creature_searcher, *(me->GetMap()));
 
         return pCreature;
     }
 
-    void SpellHit(Unit* /*caster*/, const SpellEntry *spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
     {
         //FIXME: hack :(
         if (spell->Id == SPELL_WARLORDS_RAGE_PROC)
@@ -179,27 +189,30 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
             if (distiller)
             {
                 DoScriptText(SAY_REGEN, me);
-                DoCast(me,SPELL_WARLORDS_RAGE);
+                DoCast(me, SPELL_WARLORDS_RAGE);
                 ((mob_naga_distillerAI*)distiller->AI())->StartRageGen(me);
             }
-            Rage_Timer = 3000+rand()%15000;
-        } else Rage_Timer -= diff;
+            Rage_Timer = 3000 + rand() % 15000;
+        }
+        else Rage_Timer -= diff;
 
         //Reflection_Timer
         if (Reflection_Timer <= diff)
         {
             DoCast(me, SPELL_SPELL_REFLECTION);
-            Reflection_Timer = 15000+rand()%10000;
-        } else Reflection_Timer -= diff;
+            Reflection_Timer = 15000 + rand() % 10000;
+        }
+        else Reflection_Timer -= diff;
 
         //Impale_Timer
         if (Impale_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_IMPALE);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_IMPALE);
 
-            Impale_Timer = 7500+rand()%5000;
-        } else Impale_Timer -= diff;
+            Impale_Timer = 7500 + rand() % 5000;
+        }
+        else Impale_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -217,7 +230,7 @@ CreatureAI* GetAI_boss_warlord_kalithresh(Creature* pCreature)
 
 void AddSC_boss_warlord_kalithresh()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "mob_naga_distiller";

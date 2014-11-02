@@ -64,14 +64,14 @@ enum
     NPC_VORSHA              = 12940
 };
 
-static float m_afFirstNagaCoord[3][3]=
+static float m_afFirstNagaCoord[3][3] =
 {
     {3603.504150f, 1122.631104f, 1.635f},                   // rider
     {3589.293945f, 1148.664063f, 5.565f},                   // sorceress
     {3609.925537f, 1168.759521f, -1.168f}                   // razortail
 };
 
-static float m_afSecondNagaCoord[3][3]=
+static float m_afSecondNagaCoord[3][3] =
 {
     {3609.925537f, 1168.759521f, -1.168f},                  // witch
     {3645.652100f, 1139.425415f, 1.322f},                   // priest
@@ -119,59 +119,59 @@ struct npc_muglashAI : public npc_escortAI
 
     void WaypointReached(uint32 uiPointId)
     {
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 0:
-                if (Player* pPlayer = GetPlayerForEscort())
-                    DoScriptText(SAY_MUG_START2, me, pPlayer);
-                break;
-            case 24:
-                if (Player* pPlayer = GetPlayerForEscort())
-                    DoScriptText(SAY_MUG_BRAZIER, me, pPlayer);
+        case 0:
+            if (Player* pPlayer = GetPlayerForEscort())
+                DoScriptText(SAY_MUG_START2, me, pPlayer);
+            break;
+        case 24:
+            if (Player* pPlayer = GetPlayerForEscort())
+                DoScriptText(SAY_MUG_BRAZIER, me, pPlayer);
 
-                if (GameObject* pGo = me->FindNearestGameObject(GO_NAGA_BRAZIER, INTERACTION_DISTANCE*2))
-                {
-                    //some kind of event flag? Update to player/group only?
-                    pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
-                    SetEscortPaused(true);
-                }
-                break;
-            case 25:
-                DoScriptText(SAY_MUG_GRATITUDE, me);
+            if (GameObject* pGo = me->FindNearestGameObject(GO_NAGA_BRAZIER, INTERACTION_DISTANCE * 2))
+            {
+                //some kind of event flag? Update to player/group only?
+                pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
+                SetEscortPaused(true);
+            }
+            break;
+        case 25:
+            DoScriptText(SAY_MUG_GRATITUDE, me);
 
-                if (Player* pPlayer = GetPlayerForEscort())
-                    pPlayer->GroupEventHappens(QUEST_VORSHA, me);
-                break;
-            case 26:
-                DoScriptText(SAY_MUG_PATROL, me);
-                break;
-            case 27:
-                DoScriptText(SAY_MUG_RETURN, me);
-                break;
+            if (Player* pPlayer = GetPlayerForEscort())
+                pPlayer->GroupEventHappens(QUEST_VORSHA, me);
+            break;
+        case 26:
+            DoScriptText(SAY_MUG_PATROL, me);
+            break;
+        case 27:
+            DoScriptText(SAY_MUG_RETURN, me);
+            break;
         }
     }
 
     void DoWaveSummon()
     {
-        switch(m_uiWaveId)
+        switch (m_uiWaveId)
         {
-            case 1:
-                me->SummonCreature(NPC_WRATH_RIDER,     m_afFirstNagaCoord[0][0], m_afFirstNagaCoord[0][1], m_afFirstNagaCoord[0][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                me->SummonCreature(NPC_WRATH_SORCERESS, m_afFirstNagaCoord[1][0], m_afFirstNagaCoord[1][1], m_afFirstNagaCoord[1][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                me->SummonCreature(NPC_WRATH_RAZORTAIL, m_afFirstNagaCoord[2][0], m_afFirstNagaCoord[2][1], m_afFirstNagaCoord[2][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                break;
-            case 2:
-                me->SummonCreature(NPC_WRATH_PRIESTESS, m_afSecondNagaCoord[0][0], m_afSecondNagaCoord[0][1], m_afSecondNagaCoord[0][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                me->SummonCreature(NPC_WRATH_MYRMIDON,  m_afSecondNagaCoord[1][0], m_afSecondNagaCoord[1][1], m_afSecondNagaCoord[1][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                me->SummonCreature(NPC_WRATH_SEAWITCH,  m_afSecondNagaCoord[2][0], m_afSecondNagaCoord[2][1], m_afSecondNagaCoord[2][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                break;
-            case 3:
-                me->SummonCreature(NPC_VORSHA, m_fVorshaCoord[0], m_fVorshaCoord[1], m_fVorshaCoord[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                break;
-            case 4:
-                SetEscortPaused(false);
-                DoScriptText(SAY_MUG_DONE, me);
-                break;
+        case 1:
+            me->SummonCreature(NPC_WRATH_RIDER,     m_afFirstNagaCoord[0][0], m_afFirstNagaCoord[0][1], m_afFirstNagaCoord[0][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            me->SummonCreature(NPC_WRATH_SORCERESS, m_afFirstNagaCoord[1][0], m_afFirstNagaCoord[1][1], m_afFirstNagaCoord[1][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            me->SummonCreature(NPC_WRATH_RAZORTAIL, m_afFirstNagaCoord[2][0], m_afFirstNagaCoord[2][1], m_afFirstNagaCoord[2][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            break;
+        case 2:
+            me->SummonCreature(NPC_WRATH_PRIESTESS, m_afSecondNagaCoord[0][0], m_afSecondNagaCoord[0][1], m_afSecondNagaCoord[0][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            me->SummonCreature(NPC_WRATH_MYRMIDON,  m_afSecondNagaCoord[1][0], m_afSecondNagaCoord[1][1], m_afSecondNagaCoord[1][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            me->SummonCreature(NPC_WRATH_SEAWITCH,  m_afSecondNagaCoord[2][0], m_afSecondNagaCoord[2][1], m_afSecondNagaCoord[2][2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            break;
+        case 3:
+            me->SummonCreature(NPC_VORSHA, m_fVorshaCoord[0], m_fVorshaCoord[1], m_fVorshaCoord[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            break;
+        case 4:
+            SetEscortPaused(false);
+            DoScriptText(SAY_MUG_DONE, me);
+            break;
         }
     }
 
@@ -226,7 +226,7 @@ CreatureAI* GetAI_npc_muglash(Creature* pCreature)
 
 bool GOHello_go_naga_brazier(Player* /*pPlayer*/, GameObject* pGo)
 {
-    if (Creature* pCreature = GetClosestCreatureWithEntry(pGo, NPC_MUGLASH, INTERACTION_DISTANCE*2))
+    if (Creature* pCreature = GetClosestCreatureWithEntry(pGo, NPC_MUGLASH, INTERACTION_DISTANCE * 2))
     {
         if (npc_muglashAI* pEscortAI = dynamic_cast<npc_muglashAI*>(pCreature->AI()))
         {
@@ -288,9 +288,9 @@ struct npc_torekAI : public npc_escortAI
             break;
         case 19:
             //@todo verify location and creatures amount.
-            me->SummonCreature(ENTRY_DURIEL,1776.73f,-2049.06f,109.83f,1.54f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
-            me->SummonCreature(ENTRY_SILVERWING_SENTINEL,1774.64f,-2049.41f,109.83f,1.40f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
-            me->SummonCreature(ENTRY_SILVERWING_WARRIOR,1778.73f,-2049.50f,109.83f,1.67f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
+            me->SummonCreature(ENTRY_DURIEL, 1776.73f, -2049.06f, 109.83f, 1.54f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            me->SummonCreature(ENTRY_SILVERWING_SENTINEL, 1774.64f, -2049.41f, 109.83f, 1.40f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            me->SummonCreature(ENTRY_SILVERWING_WARRIOR, 1778.73f, -2049.50f, 109.83f, 1.67f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             break;
         case 20:
             DoScriptText(SAY_WIN, me, pPlayer);
@@ -329,13 +329,15 @@ struct npc_torekAI : public npc_escortAI
         {
             DoCastVictim(SPELL_REND);
             Rend_Timer = 20000;
-        } else Rend_Timer -= diff;
+        }
+        else Rend_Timer -= diff;
 
         if (Thunderclap_Timer <= diff)
         {
-            DoCast(me,SPELL_THUNDERCLAP);
+            DoCast(me, SPELL_THUNDERCLAP);
             Thunderclap_Timer = 30000;
-        } else Thunderclap_Timer -= diff;
+        }
+        else Thunderclap_Timer -= diff;
     }
 };
 
@@ -377,30 +379,34 @@ struct npc_ruul_snowhoofAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(i)
+        switch (i)
         {
-        case 0:    {
+        case 0:
+            {
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                 GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20);
                 if (Cage)
                     Cage->SetGoState(GO_STATE_ACTIVE);
-                break;}
+                break;
+            }
         case 13:
-                me->SummonCreature(3922, 3449.218018f, -587.825073f, 174.978867f, 4.714445f, TEMPSUMMON_DEAD_DESPAWN, 60000);
-                me->SummonCreature(3921, 3446.384521f, -587.830872f, 175.186279f, 4.714445f, TEMPSUMMON_DEAD_DESPAWN, 60000);
-                me->SummonCreature(3926, 3444.218994f, -587.835327f, 175.380600f, 4.714445f, TEMPSUMMON_DEAD_DESPAWN, 60000);
-                break;
+            me->SummonCreature(3922, 3449.218018f, -587.825073f, 174.978867f, 4.714445f, TEMPSUMMON_DEAD_DESPAWN, 60000);
+            me->SummonCreature(3921, 3446.384521f, -587.830872f, 175.186279f, 4.714445f, TEMPSUMMON_DEAD_DESPAWN, 60000);
+            me->SummonCreature(3926, 3444.218994f, -587.835327f, 175.380600f, 4.714445f, TEMPSUMMON_DEAD_DESPAWN, 60000);
+            break;
         case 19:
-                me->SummonCreature(3922, 3508.344482f, -492.024261f, 186.929031f, 4.145029f, TEMPSUMMON_DEAD_DESPAWN, 60000);
-                me->SummonCreature(3921, 3506.265625f, -490.531006f, 186.740128f, 4.239277f, TEMPSUMMON_DEAD_DESPAWN, 60000);
-                me->SummonCreature(3926, 3503.682373f, -489.393799f, 186.629684f, 4.349232f, TEMPSUMMON_DEAD_DESPAWN, 60000);
-                break;
+            me->SummonCreature(3922, 3508.344482f, -492.024261f, 186.929031f, 4.145029f, TEMPSUMMON_DEAD_DESPAWN, 60000);
+            me->SummonCreature(3921, 3506.265625f, -490.531006f, 186.740128f, 4.239277f, TEMPSUMMON_DEAD_DESPAWN, 60000);
+            me->SummonCreature(3926, 3503.682373f, -489.393799f, 186.629684f, 4.349232f, TEMPSUMMON_DEAD_DESPAWN, 60000);
+            break;
 
-        case 21:{
+        case 21:
+            {
                 if (pPlayer)
                     pPlayer->GroupEventHappens(QUEST_FREEDOM_TO_RUUL, me);
 
-                break;  }
+                break;
+            }
         }
     }
 
@@ -443,7 +449,7 @@ CreatureAI* GetAI_npc_ruul_snowhoofAI(Creature* pCreature)
 
 void AddSC_ashenvale()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_muglash";

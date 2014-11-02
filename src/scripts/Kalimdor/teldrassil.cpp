@@ -111,7 +111,7 @@ struct npc_mistAI : public FollowerAI
                         return;
                     }
 
-                    switch(m_uiPhasePostEvent)
+                    switch (m_uiPhasePostEvent)
                     {
                     case 0:
                         DoScriptText(SAY_AT_HOME, pArynia);
@@ -153,7 +153,7 @@ bool QuestAccept_npc_mist(Player* pPlayer, Creature* pCreature, Quest const* pQu
 
 void AddSC_teldrassil()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_mist";

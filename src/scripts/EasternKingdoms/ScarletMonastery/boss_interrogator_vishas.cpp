@@ -70,7 +70,7 @@ struct boss_interrogator_vishasAI : public ScriptedAI
             return;
 
         //Any other actions to do with vorrel? setStandState?
-        if (Unit* vorrel = Unit::GetUnit(*me,pInstance->GetData64(DATA_VORREL)))
+        if (Unit* vorrel = Unit::GetUnit(*me, pInstance->GetData64(DATA_VORREL)))
             DoScriptText(SAY_TRIGGER_VORREL, vorrel);
     }
 
@@ -80,13 +80,13 @@ struct boss_interrogator_vishasAI : public ScriptedAI
             return;
 
         //If we are low on hp Do sayings
-        if (!Yell60 && ((me->GetHealth()*100) / me->GetMaxHealth() <= 60))
+        if (!Yell60 && ((me->GetHealth() * 100) / me->GetMaxHealth() <= 60))
         {
             DoScriptText(SAY_HEALTH1, me);
             Yell60 = true;
         }
 
-        if (!Yell30 && ((me->GetHealth()*100) / me->GetMaxHealth() <= 30))
+        if (!Yell30 && ((me->GetHealth() * 100) / me->GetMaxHealth() <= 30))
         {
             DoScriptText(SAY_HEALTH2, me);
             Yell30 = true;
@@ -96,8 +96,9 @@ struct boss_interrogator_vishasAI : public ScriptedAI
         if (ShadowWordPain_Timer <= diff)
         {
             DoCastVictim( SPELL_SHADOWWORDPAIN);
-            ShadowWordPain_Timer = 5000 + rand()%10000;
-        } else ShadowWordPain_Timer -= diff;
+            ShadowWordPain_Timer = 5000 + rand() % 10000;
+        }
+        else ShadowWordPain_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -110,7 +111,7 @@ CreatureAI* GetAI_boss_interrogator_vishas(Creature* pCreature)
 
 void AddSC_boss_interrogator_vishas()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_interrogator_vishas";
     newscript->GetAI = &GetAI_boss_interrogator_vishas;

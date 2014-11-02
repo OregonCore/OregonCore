@@ -55,7 +55,7 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
     bool HeroicMode;
 
     uint32 Shrink_Timer;
@@ -89,21 +89,33 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_SLAY_1, me); break;
-            case 1: DoScriptText(SAY_SLAY_2, me); break;
-            case 2: DoScriptText(SAY_SLAY_3, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_SLAY_3, me);
+            break;
         }
     }
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO_3, me);
+            break;
         }
 
         if (pInstance)
@@ -115,14 +127,14 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
     {
         DoScriptText(SAY_MECHANICS, me);
 
-        DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC,5,5,0,0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
-        DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC,-5,5,0,0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
-        DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC,-5,-5,0,0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
+        DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC, 5, 5, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
+        DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC, -5, 5, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
+        DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC, -5, -5, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
 
-        if (rand()%2)
-            DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC,5,-7,0,0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
-        if (rand()%2)
-            DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC,7,-5,0,0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
+        if (rand() % 2)
+            DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC, 5, -7, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
+        if (rand() % 2)
+            DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC, 7, -5, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
     }
 
     void UpdateAI(const uint32 diff)
@@ -134,17 +146,19 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
         {
             DoCastVictim(SPELL_SUPER_SHRINK_RAY);
             Shrink_Timer = 20000;
-        } else Shrink_Timer -= diff;
+        }
+        else Shrink_Timer -= diff;
 
         if (Saw_Blade_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
-                DoCast(pTarget,SPELL_SAW_BLADE);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
+                DoCast(pTarget, SPELL_SAW_BLADE);
             else
                 DoCastVictim(SPELL_SAW_BLADE);
 
             Saw_Blade_Timer = 15000;
-        } else Saw_Blade_Timer -= diff;
+        }
+        else Saw_Blade_Timer -= diff;
 
         if (Electrified_Net_Timer <= diff)
         {
@@ -155,7 +169,7 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
 
         if (!Summon75)
         {
-            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 75)
+            if ((me->GetHealth() * 100 / me->GetMaxHealth()) < 75)
             {
                 SummonMechanichs();
                 Summon75 = true;
@@ -164,7 +178,7 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
 
         if (!Summon50)
         {
-            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 50)
+            if ((me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
             {
                 SummonMechanichs();
                 Summon50 = true;
@@ -173,7 +187,7 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
 
         if (!Summon25)
         {
-            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 25)
+            if ((me->GetHealth() * 100 / me->GetMaxHealth()) < 25)
             {
                 SummonMechanichs();
                 Summon25 = true;
@@ -238,7 +252,7 @@ struct mob_steamrigger_mechanicAI : public ScriptedAI
                             //me->GetMotionMaster()->MovementExpired();
                             //me->GetMotionMaster()->MoveIdle();
 
-                            DoCast(me,HeroicMode ? H_SPELL_REPAIR : SPELL_REPAIR, true);
+                            DoCast(me, HeroicMode ? H_SPELL_REPAIR : SPELL_REPAIR, true);
                         }
                         Repair_Timer = 5000;
                     }
@@ -248,8 +262,10 @@ struct mob_steamrigger_mechanicAI : public ScriptedAI
                         //me->GetMotionMaster()->MoveFollow(pMekgineer,0,0);
                     }
                 }
-            } else Repair_Timer = 5000;
-        } else Repair_Timer -= diff;
+            }
+            else Repair_Timer = 5000;
+        }
+        else Repair_Timer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -265,7 +281,7 @@ CreatureAI* GetAI_mob_steamrigger_mechanic(Creature* pCreature)
 
 void AddSC_boss_mekgineer_steamrigger()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_mekgineer_steamrigger";

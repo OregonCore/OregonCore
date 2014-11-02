@@ -37,7 +37,10 @@ EndScriptData */
 
 struct instance_blood_furnace : public ScriptedInstance
 {
-    instance_blood_furnace(Map *map) : ScriptedInstance(map){Initialize();}
+    instance_blood_furnace(Map* map) : ScriptedInstance(map)
+    {
+        Initialize();
+    }
 
     struct BroggokEventInfo
     {
@@ -92,28 +95,54 @@ struct instance_blood_furnace : public ScriptedInstance
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-            case NPC_BROGGOK: BroggokGUID = pCreature->GetGUID(); break;
-            case NPC_NASCENT_FEL_ORC: NascentOrcGuids.push_back(pCreature->GetGUID()); break;
+        case NPC_BROGGOK:
+            BroggokGUID = pCreature->GetGUID();
+            break;
+        case NPC_NASCENT_FEL_ORC:
+            NascentOrcGuids.push_back(pCreature->GetGUID());
+            break;
         }
     }
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case GO_SUMMON_DOOR: Sewer1GUID = pGo->GetGUID(); break;
-            case GO_PRISON_DOOR_01: Sewer2GUID = pGo->GetGUID(); break;
-            case GO_PRISON_DOOR_02: Maker1GUID = pGo->GetGUID(); break;
-            case GO_PRISON_DOOR_03: Maker2GUID = pGo->GetGUID(); break;
-            case GO_PRISON_DOOR_05: Brog1GUID = pGo->GetGUID(); break;
-            case GO_PRISON_DOOR_04: Brog2GUID = pGo->GetGUID(); break;
-            case GO_BROGGOK_LEVER: LeverGUID = pGo->GetGUID(); break;
-            case GO_PRISON_CELL_DOOR_5: BroggokEvent[0].CellGuid = pGo->GetGUID(); return;
-            case GO_PRISON_CELL_DOOR_7: BroggokEvent[1].CellGuid = pGo->GetGUID(); return;
-            case GO_PRISON_CELL_DOOR_6: BroggokEvent[2].CellGuid = pGo->GetGUID(); return;
-            case GO_PRISON_CELL_DOOR_8: BroggokEvent[3].CellGuid = pGo->GetGUID(); return;
+        case GO_SUMMON_DOOR:
+            Sewer1GUID = pGo->GetGUID();
+            break;
+        case GO_PRISON_DOOR_01:
+            Sewer2GUID = pGo->GetGUID();
+            break;
+        case GO_PRISON_DOOR_02:
+            Maker1GUID = pGo->GetGUID();
+            break;
+        case GO_PRISON_DOOR_03:
+            Maker2GUID = pGo->GetGUID();
+            break;
+        case GO_PRISON_DOOR_05:
+            Brog1GUID = pGo->GetGUID();
+            break;
+        case GO_PRISON_DOOR_04:
+            Brog2GUID = pGo->GetGUID();
+            break;
+        case GO_BROGGOK_LEVER:
+            LeverGUID = pGo->GetGUID();
+            break;
+        case GO_PRISON_CELL_DOOR_5:
+            BroggokEvent[0].CellGuid = pGo->GetGUID();
+            return;
+        case GO_PRISON_CELL_DOOR_7:
+            BroggokEvent[1].CellGuid = pGo->GetGUID();
+            return;
+        case GO_PRISON_CELL_DOOR_6:
+            BroggokEvent[2].CellGuid = pGo->GetGUID();
+            return;
+        case GO_PRISON_CELL_DOOR_8:
+            BroggokEvent[3].CellGuid = pGo->GetGUID();
+            return;
         }
     }
 
@@ -136,88 +165,80 @@ struct instance_blood_furnace : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_MAKEREVENT:
-                if (data == IN_PROGRESS)
-                {
-                    HandleGameObject(Maker1GUID, false);
-                }
-                else HandleGameObject(Maker1GUID, true);
-                if (data == DONE)
-                {
-                    HandleGameObject(Maker2GUID, true);
-                }
-                if (Encounter[0] != DONE)
-                    Encounter[0] = data;
-                break;
-            case DATA_BROGGOKEVENT:
-                if (data == IN_PROGRESS)
-                {
-                    if (Creature* pBroggok = instance->GetCreature(BroggokGUID))
-                        DoScriptText(SAY_BROGGOK_INTRO, pBroggok);
+        case DATA_MAKEREVENT:
+            if (data == IN_PROGRESS)
+                HandleGameObject(Maker1GUID, false);
+            else HandleGameObject(Maker1GUID, true);
+            if (data == DONE)
+                HandleGameObject(Maker2GUID, true);
+            if (Encounter[0] != DONE)
+                Encounter[0] = data;
+            break;
+        case DATA_BROGGOKEVENT:
+            if (data == IN_PROGRESS)
+            {
+                if (Creature* pBroggok = instance->GetCreature(BroggokGUID))
+                    DoScriptText(SAY_BROGGOK_INTRO, pBroggok);
 
-                    HandleGameObject(Brog1GUID, false);
+                HandleGameObject(Brog1GUID, false);
 
-                    if (BroggokEventPhase <= MAX_ORC_WAVES)
-                    {
-                        DoSortBroggokOrcs();
-                        DoNextBroggokEventPhase();
-                    }
-                }
-                else 
+                if (BroggokEventPhase <= MAX_ORC_WAVES)
                 {
-                    HandleGameObject(Brog1GUID, true);
+                    DoSortBroggokOrcs();
+                    DoNextBroggokEventPhase();
                 }
-                if (data == FAIL)
+            }
+            else
+                HandleGameObject(Brog1GUID, true);
+            if (data == FAIL)
+            {
+                if (BroggokEventPhase <= MAX_BROGGOK_WAVES)
                 {
-                    if (BroggokEventPhase <= MAX_BROGGOK_WAVES)
+                    for (uint8 i = 0; i < MAX_ORC_WAVES; ++i)
                     {
-                        for (uint8 i = 0; i < MAX_ORC_WAVES; ++i)
+                        if (!BroggokEvent[i].IsCellOpened)
+                            continue;
+
+                        BroggokEvent[i].KilledOrcCount = 0;
+                        for (std::set<uint64>::const_iterator itr = BroggokEvent[i].SortedOrcGuids.begin(); itr != BroggokEvent[i].SortedOrcGuids.end(); ++itr)
                         {
-                            if (!BroggokEvent[i].IsCellOpened)
-                                continue;
-
-                            BroggokEvent[i].KilledOrcCount = 0;
-                            for (std::set<uint64>::const_iterator itr = BroggokEvent[i].SortedOrcGuids.begin(); itr != BroggokEvent[i].SortedOrcGuids.end(); ++itr)
+                            if (Creature* pOrc = instance->GetCreature(*itr))
                             {
-                                if (Creature* pOrc = instance->GetCreature(*itr))
+                                if (!pOrc->isAlive())
                                 {
-                                    if (!pOrc->isAlive())
-                                    {
-                                        pOrc->Respawn();
-                                        BroggokEventPhase = 0;
-                                    }
+                                    pOrc->Respawn();
+                                    BroggokEventPhase = 0;
                                 }
                             }
+                        }
 
-                            DoUseDoorOrButton(BroggokEvent[i].CellGuid);
-                            BroggokEvent[i].IsCellOpened = false;
-                            if (GameObject* Lever = instance->GetGameObject(LeverGUID))
-                            {
-                                if (Lever)
-                                    Lever->ResetDoorOrButton();
-                            }
+                        DoUseDoorOrButton(BroggokEvent[i].CellGuid);
+                        BroggokEvent[i].IsCellOpened = false;
+                        if (GameObject* Lever = instance->GetGameObject(LeverGUID))
+                        {
+                            if (Lever)
+                                Lever->ResetDoorOrButton();
                         }
                     }
-           
                 }
-                if (data == DONE)
-                {
-                    HandleGameObject(Brog2GUID, true);
-                }
-                if (Encounter[1] != DONE)
-                    Encounter[1] = data;
-                break;
-            case DATA_KELIDANEVENT:
-                if (data == DONE)
-                {
-                    HandleGameObject(Sewer1GUID, true);
-                    HandleGameObject(Sewer2GUID, true);
-                }
-                if (Encounter[2] != DONE)
-                    Encounter[2] = data;
-                break;
+
+            }
+            if (data == DONE)
+                HandleGameObject(Brog2GUID, true);
+            if (Encounter[1] != DONE)
+                Encounter[1] = data;
+            break;
+        case DATA_KELIDANEVENT:
+            if (data == DONE)
+            {
+                HandleGameObject(Sewer1GUID, true);
+                HandleGameObject(Sewer2GUID, true);
+            }
+            if (Encounter[2] != DONE)
+                Encounter[2] = data;
+            break;
         }
 
         if (data == DONE)
@@ -229,11 +250,14 @@ struct instance_blood_furnace : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_MAKEREVENT: return Encounter[0];
-            case DATA_BROGGOKEVENT: return Encounter[1];
-            case DATA_KELIDANEVENT: return Encounter[2];
+        case DATA_MAKEREVENT:
+            return Encounter[0];
+        case DATA_BROGGOKEVENT:
+            return Encounter[1];
+        case DATA_KELIDANEVENT:
+            return Encounter[2];
         }
         return false;
     }
@@ -281,9 +305,9 @@ struct instance_blood_furnace : public ScriptedInstance
         OUT_LOAD_INST_DATA_COMPLETE;
     }
 
-#if COMPILER == COMPILER_GNU
+    #if COMPILER == COMPILER_GNU
 #pragma GCC diagnostic ignored "-Wuninitialized"
-#endif
+    #endif
 
     void DoNextBroggokEventPhase()
     {
@@ -295,20 +319,20 @@ struct instance_blood_furnace : public ScriptedInstance
             DoUseDoorOrButton(Brog2GUID);
 
             if (Creature* pBroggok = instance->GetCreature(BroggokGUID))
-                {
-                    pBroggok->GetMotionMaster()->MovePoint(0, dx, dy, pBroggok->GetPositionZ());
+            {
+                pBroggok->GetMotionMaster()->MovePoint(0, dx, dy, pBroggok->GetPositionZ());
 
-                    DoorTimer = 5000;
-                }
+                DoorTimer = 5000;
+            }
         }
         else
         {
             if (!BroggokEvent[BroggokEventPhase].IsCellOpened)
                 DoUseDoorOrButton(BroggokEvent[BroggokEventPhase].CellGuid);
-                BroggokEvent[BroggokEventPhase].IsCellOpened = true;
-			
+            BroggokEvent[BroggokEventPhase].IsCellOpened = true;
 
-            for(std::set<uint64>::const_iterator itr = BroggokEvent[BroggokEventPhase].SortedOrcGuids.begin(); itr != BroggokEvent[BroggokEventPhase].SortedOrcGuids.end(); ++itr)
+
+            for (std::set<uint64>::const_iterator itr = BroggokEvent[BroggokEventPhase].SortedOrcGuids.begin(); itr != BroggokEvent[BroggokEventPhase].SortedOrcGuids.end(); ++itr)
             {
                 if (Creature* pOrc = instance->GetCreature(*itr))
                 {
@@ -322,18 +346,16 @@ struct instance_blood_furnace : public ScriptedInstance
         ++BroggokEventPhase;
     }
 
-#if COMPILER == COMPILER_GNU
+    #if COMPILER == COMPILER_GNU
 #pragma GCC diagnostic warning "-Wuninitialized"
-#endif
+    #endif
 
     void Update(uint32 diff)
     {
         if (BroggokEventTimer && BroggokEventPhase < MAX_ORC_WAVES && instance->IsHeroic())
         {
             if (BroggokEventTimer <= diff)
-            {
                 DoNextBroggokEventPhase();
-            }
             else BroggokEventTimer -= diff;
         }
 
@@ -371,11 +393,11 @@ struct instance_blood_furnace : public ScriptedInstance
                     continue;
                 }
 
-               if (BroggokEvent[i].SortedOrcGuids.find(pCreature->GetGUID()) != BroggokEvent[i].SortedOrcGuids.end())
-                   BroggokEvent[i].KilledOrcCount++;
+                if (BroggokEvent[i].SortedOrcGuids.find(pCreature->GetGUID()) != BroggokEvent[i].SortedOrcGuids.end())
+                    BroggokEvent[i].KilledOrcCount++;
 
-               if (BroggokEvent[i].SortedOrcGuids.size() == BroggokEvent[i].KilledOrcCount)
-                   ++uiClearedCells;
+                if (BroggokEvent[i].SortedOrcGuids.size() == BroggokEvent[i].KilledOrcCount)
+                    ++uiClearedCells;
             }
 
             if (uiClearedCells == BroggokEventPhase)
@@ -456,7 +478,7 @@ bool GOHello_go_prison_cell_lever(Player* /*pPlayer*/, GameObject* pGo)
 
 void AddSC_instance_blood_furnace()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_blood_furnace";
     newscript->GetInstanceData = &GetInstanceData_instance_blood_furnace;

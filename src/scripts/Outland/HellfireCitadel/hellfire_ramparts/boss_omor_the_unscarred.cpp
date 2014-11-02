@@ -82,11 +82,17 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO_3, me);
+            break;
         }
 
         if (pInstance)
@@ -95,7 +101,7 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        if (rand()%2)
+        if (rand() % 2)
             return;
 
         DoScriptText(SAY_KILL_1, me);
@@ -105,7 +111,7 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
     {
         DoScriptText(SAY_SUMMON, me);
 
-        if (Unit* random = SelectUnit(SELECT_TARGET_RANDOM,0))
+        if (Unit* random = SelectUnit(SELECT_TARGET_RANDOM, 0))
             summoned->AI()->AttackStart(random);
     }
 
@@ -125,31 +131,32 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
         if (Summon_Timer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
-            DoCast(me,SPELL_SUMMON_FIENDISH_HOUND);
-            Summon_Timer = 24100+rand()%2800;
-        } else Summon_Timer -= diff;
+            DoCast(me, SPELL_SUMMON_FIENDISH_HOUND);
+            Summon_Timer = 24100 + rand() % 2800;
+        }
+        else Summon_Timer -= diff;
 
         if (CanPullBack)
         {
             if (ShadowWhip_Timer <= diff)
             {
-                if (Unit* temp = Unit::GetUnit(*me,playerGUID))
+                if (Unit* temp = Unit::GetUnit(*me, playerGUID))
                 {
                     //if unit dosen't have this flag, then no pulling back (script will attempt cast, even if orbital strike was resisted)
                     if (temp->HasUnitMovementFlag(MOVEFLAG_FALLING))
                     {
                         me->InterruptNonMeleeSpells(false);
-                        DoCast(temp,SPELL_SHADOW_WHIP);
+                        DoCast(temp, SPELL_SHADOW_WHIP);
                     }
-                    else 
-                        if (!temp->HasUnitMovementFlag(MOVEFLAG_FALLING))
-                        {
-                            playerGUID = 0;
-                            CanPullBack = false;
-                        }
+                    else if (!temp->HasUnitMovementFlag(MOVEFLAG_FALLING))
+                    {
+                        playerGUID = 0;
+                        CanPullBack = false;
+                    }
                 }
                 ShadowWhip_Timer = 2000;
-            } else ShadowWhip_Timer -= diff;
+            }
+            else ShadowWhip_Timer -= diff;
 
         }
         else if (OrbitalStrike_Timer <= diff)
@@ -157,13 +164,13 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
             Unit* temp = NULL;
             if (me->IsWithinMeleeRange(me->getVictim()))
                 temp = me->getVictim();
-            else temp = SelectUnit(SELECT_TARGET_RANDOM,0);
+            else temp = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
             if (temp && temp->GetTypeId() == TYPEID_PLAYER)
             {
                 me->InterruptNonMeleeSpells(false);
-                DoCast(temp,SPELL_ORBITAL_STRIKE);
-                OrbitalStrike_Timer = 14000+rand()%2000;
+                DoCast(temp, SPELL_ORBITAL_STRIKE);
+                OrbitalStrike_Timer = 14000 + rand() % 2000;
                 playerGUID = temp->GetGUID();
 
                 if (playerGUID)
@@ -172,39 +179,43 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
                     ShadowWhip_Timer = 2500;
                 }
             }
-        } else OrbitalStrike_Timer -= diff;
+        }
+        else OrbitalStrike_Timer -= diff;
 
-        if ((me->GetHealth()*100) / me->GetMaxHealth() < 20)
+        if ((me->GetHealth() * 100) / me->GetMaxHealth() < 20)
         {
             if (DemonicShield_Timer <= diff)
             {
-                DoCast(me,SPELL_DEMONIC_SHIELD);
+                DoCast(me, SPELL_DEMONIC_SHIELD);
                 DemonicShield_Timer = 15000;
-            } else DemonicShield_Timer -= diff;
+            }
+            else DemonicShield_Timer -= diff;
         }
 
         if (Aura_Timer <= diff)
         {
             DoScriptText(SAY_CURSE, me);
 
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
-                DoCast(pTarget,HeroicMode ? H_SPELL_BANE_OF_TREACHERY : SPELL_TREACHEROUS_AURA);
-                Aura_Timer = 8000+rand()%8000;
+                DoCast(pTarget, HeroicMode ? H_SPELL_BANE_OF_TREACHERY : SPELL_TREACHEROUS_AURA);
+                Aura_Timer = 8000 + rand() % 8000;
             }
-        } else Aura_Timer -= diff;
+        }
+        else Aura_Timer -= diff;
 
         if (Shadowbolt_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 if (pTarget)
                     pTarget = me->getVictim();
 
-                DoCast(pTarget,HeroicMode ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
-                Shadowbolt_Timer = 4000+rand()%3100;
+                DoCast(pTarget, HeroicMode ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
+                Shadowbolt_Timer = 4000 + rand() % 3100;
             }
-        } else Shadowbolt_Timer -= diff;
+        }
+        else Shadowbolt_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -217,7 +228,7 @@ CreatureAI* GetAI_boss_omor_the_unscarredAI(Creature* pCreature)
 
 void AddSC_boss_omor_the_unscarred()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_omor_the_unscarred";

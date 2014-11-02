@@ -53,7 +53,7 @@ struct boss_azshir_the_sleeplessAI : public ScriptedAI
             return;
 
         //If we are <50% hp cast Soul Siphon rank 1
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCast(false))
+        if (me->GetHealth() * 100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCast(false))
         {
             //SoulSiphon_Timer
             if (SoulSiphon_Timer <= diff)
@@ -62,7 +62,8 @@ struct boss_azshir_the_sleeplessAI : public ScriptedAI
                 return;
 
                 //SoulSiphon_Timer = 20000;
-            } else SoulSiphon_Timer -= diff;
+            }
+            else SoulSiphon_Timer -= diff;
         }
 
         //CallOfTheGrave_Timer
@@ -70,14 +71,16 @@ struct boss_azshir_the_sleeplessAI : public ScriptedAI
         {
             DoCastVictim( SPELL_CALLOFTHEGRAVE);
             CallOftheGrave_Timer = 30000;
-        } else CallOftheGrave_Timer -= diff;
+        }
+        else CallOftheGrave_Timer -= diff;
 
         //Terrify_Timer
         if (Terrify_Timer <= diff)
         {
             DoCastVictim( SPELL_TERRIFY);
             Terrify_Timer = 20000;
-        } else Terrify_Timer -= diff;
+        }
+        else Terrify_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -90,7 +93,7 @@ CreatureAI* GetAI_boss_azshir_the_sleepless(Creature* pCreature)
 
 void AddSC_boss_azshir_the_sleepless()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_azshir_the_sleepless";
     newscript->GetAI = &GetAI_boss_azshir_the_sleepless;

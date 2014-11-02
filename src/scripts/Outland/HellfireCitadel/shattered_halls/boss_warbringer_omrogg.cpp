@@ -39,50 +39,50 @@ struct Yell
     uint32 creature;
 };
 
-static Yell GoCombat[]=
+static Yell GoCombat[] =
 {
-    {-1540018, ENTRY_LEFT_HEAD},
-    {-1540019, ENTRY_LEFT_HEAD},
-    {-1540020, ENTRY_LEFT_HEAD},
+    { -1540018, ENTRY_LEFT_HEAD},
+    { -1540019, ENTRY_LEFT_HEAD},
+    { -1540020, ENTRY_LEFT_HEAD},
 };
-static Yell GoCombatDelay[]=
+static Yell GoCombatDelay[] =
 {
-    {-1540021, ENTRY_RIGHT_HEAD},
-    {-1540022, ENTRY_RIGHT_HEAD},
-    {-1540023, ENTRY_RIGHT_HEAD},
-};
-
-static Yell Threat[]=
-{
-    {-1540024, ENTRY_LEFT_HEAD},
-    {-1540025, ENTRY_RIGHT_HEAD},
-    {-1540026, ENTRY_LEFT_HEAD},
-    {-1540027, ENTRY_LEFT_HEAD},
-};
-static Yell ThreatDelay1[]=
-{
-    {-1540028, ENTRY_RIGHT_HEAD},
-    {-1540029, ENTRY_LEFT_HEAD},
-    {-1540030, ENTRY_RIGHT_HEAD},
-    {-1540031, ENTRY_RIGHT_HEAD},
-};
-static Yell ThreatDelay2[]=
-{
-    {-1540032, ENTRY_LEFT_HEAD},
-    {-1540033, ENTRY_RIGHT_HEAD},
-    {-1540034, ENTRY_LEFT_HEAD},
-    {-1540035, ENTRY_LEFT_HEAD},
+    { -1540021, ENTRY_RIGHT_HEAD},
+    { -1540022, ENTRY_RIGHT_HEAD},
+    { -1540023, ENTRY_RIGHT_HEAD},
 };
 
-static Yell Killing[]=
+static Yell Threat[] =
 {
-    {-1540036, ENTRY_LEFT_HEAD},
-    {-1540037, ENTRY_RIGHT_HEAD},
+    { -1540024, ENTRY_LEFT_HEAD},
+    { -1540025, ENTRY_RIGHT_HEAD},
+    { -1540026, ENTRY_LEFT_HEAD},
+    { -1540027, ENTRY_LEFT_HEAD},
 };
-static Yell KillingDelay[]=
+static Yell ThreatDelay1[] =
 {
-    {-1540038, ENTRY_RIGHT_HEAD},
-    {-1000000, ENTRY_LEFT_HEAD},
+    { -1540028, ENTRY_RIGHT_HEAD},
+    { -1540029, ENTRY_LEFT_HEAD},
+    { -1540030, ENTRY_RIGHT_HEAD},
+    { -1540031, ENTRY_RIGHT_HEAD},
+};
+static Yell ThreatDelay2[] =
+{
+    { -1540032, ENTRY_LEFT_HEAD},
+    { -1540033, ENTRY_RIGHT_HEAD},
+    { -1540034, ENTRY_LEFT_HEAD},
+    { -1540035, ENTRY_LEFT_HEAD},
+};
+
+static Yell Killing[] =
+{
+    { -1540036, ENTRY_LEFT_HEAD},
+    { -1540037, ENTRY_RIGHT_HEAD},
+};
+static Yell KillingDelay[] =
+{
+    { -1540038, ENTRY_RIGHT_HEAD},
+    { -1000000, ENTRY_LEFT_HEAD},
 };
 
 #define YELL_DIE_L                  -1540039
@@ -121,7 +121,8 @@ struct mob_omrogg_headsAI : public ScriptedAI
         {
             DoScriptText(YELL_DIE_R, me);
             DeathYell = false;
-        } else Death_Timer -= diff;
+        }
+        else Death_Timer -= diff;
     }
 };
 
@@ -181,13 +182,13 @@ struct boss_warbringer_omroggAI : public ScriptedAI
     {
         if (LeftHead && RightHead)
         {
-            Unit* Left  = Unit::GetUnit(*me,LeftHead);
-            Unit* Right = Unit::GetUnit(*me,RightHead);
+            Unit* Left  = Unit::GetUnit(*me, LeftHead);
+            Unit* Right = Unit::GetUnit(*me, RightHead);
 
             if (!Left || !Right)
                 return;
 
-            ithreat = rand()%4;
+            ithreat = rand() % 4;
 
             Unit* source = (Left->GetEntry() == Threat[ithreat].creature ? Left : Right);
 
@@ -200,12 +201,12 @@ struct boss_warbringer_omroggAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        DoSpawnCreature(ENTRY_LEFT_HEAD,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1800000);
-        DoSpawnCreature(ENTRY_RIGHT_HEAD,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1800000);
+        DoSpawnCreature(ENTRY_LEFT_HEAD, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1800000);
+        DoSpawnCreature(ENTRY_RIGHT_HEAD, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1800000);
 
-        if (Unit* Left = Unit::GetUnit(*me,LeftHead))
+        if (Unit* Left = Unit::GetUnit(*me, LeftHead))
         {
-            iaggro = rand()%3;
+            iaggro = rand() % 3;
 
             DoScriptText(GoCombat[iaggro].id, Left);
 
@@ -234,27 +235,27 @@ struct boss_warbringer_omroggAI : public ScriptedAI
     {
         if (LeftHead && RightHead)
         {
-            Unit* Left  = Unit::GetUnit(*me,LeftHead);
-            Unit* Right = Unit::GetUnit(*me,RightHead);
+            Unit* Left  = Unit::GetUnit(*me, LeftHead);
+            Unit* Right = Unit::GetUnit(*me, RightHead);
 
             if (!Left || !Right)
                 return;
 
-            ikilling = rand()%2;
+            ikilling = rand() % 2;
 
             Unit* source = (Left->GetEntry() == Killing[ikilling].creature ? Left : Right);
 
-            switch(ikilling)
+            switch (ikilling)
             {
-                case 0:
-                    DoScriptText(Killing[ikilling].id, source);
-                    Delay_Timer = 3500;
-                    KillingYell = true;
-                    break;
-                case 1:
-                    DoScriptText(Killing[ikilling].id, source);
-                    KillingYell = false;
-                    break;
+            case 0:
+                DoScriptText(Killing[ikilling].id, source);
+                Delay_Timer = 3500;
+                KillingYell = true;
+                break;
+            case 1:
+                DoScriptText(Killing[ikilling].id, source);
+                KillingYell = false;
+                break;
             }
         }
     }
@@ -263,8 +264,8 @@ struct boss_warbringer_omroggAI : public ScriptedAI
     {
         if (LeftHead && RightHead)
         {
-            Unit* Left  = Unit::GetUnit(*me,LeftHead);
-            Unit* Right = Unit::GetUnit(*me,RightHead);
+            Unit* Left  = Unit::GetUnit(*me, LeftHead);
+            Unit* Right = Unit::GetUnit(*me, RightHead);
 
             if (!Left || !Right)
                 return;
@@ -287,8 +288,8 @@ struct boss_warbringer_omroggAI : public ScriptedAI
             if (!LeftHead || !RightHead)
                 return;
 
-            Unit* Left  = Unit::GetUnit(*me,LeftHead);
-            Unit* Right = Unit::GetUnit(*me,RightHead);
+            Unit* Left  = Unit::GetUnit(*me, LeftHead);
+            Unit* Right = Unit::GetUnit(*me, RightHead);
 
             if (!Left || !Right)
                 return;
@@ -323,52 +324,58 @@ struct boss_warbringer_omroggAI : public ScriptedAI
                 DoScriptText(KillingDelay[ikilling].id, source);
                 KillingYell = false;
             }
-        } else Delay_Timer -= diff;
+        }
+        else Delay_Timer -= diff;
 
         if (!UpdateVictim())
             return;
 
         if (BlastCount && BlastWave_Timer <= diff)
         {
-            DoCast(me,SPELL_BLAST_WAVE);
+            DoCast(me, SPELL_BLAST_WAVE);
             BlastWave_Timer = 5000;
             ++BlastCount;
 
             if (BlastCount == 3)
                 BlastCount = 0;
-        } else BlastWave_Timer -= diff;
+        }
+        else BlastWave_Timer -= diff;
 
         if (BurningMaul_Timer <= diff)
         {
             DoScriptText(EMOTE_ENRAGE, me);
-            DoCast(me,HeroicMode ? H_SPELL_BURNING_MAUL : SPELL_BURNING_MAUL);
+            DoCast(me, HeroicMode ? H_SPELL_BURNING_MAUL : SPELL_BURNING_MAUL);
             BurningMaul_Timer = 40000;
             BlastWave_Timer = 16000;
             BlastCount = 1;
-        } else BurningMaul_Timer -= diff;
+        }
+        else BurningMaul_Timer -= diff;
 
         if (ResetThreat_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 DoYellForThreat();
                 DoResetThreat();
                 me->AddThreat(pTarget, 0.0f);
             }
-            ResetThreat_Timer = 35000+rand()%10000;
-        } else ResetThreat_Timer -= diff;
+            ResetThreat_Timer = 35000 + rand() % 10000;
+        }
+        else ResetThreat_Timer -= diff;
 
         if (Fear_Timer <= diff)
         {
-            DoCast(me,SPELL_FEAR);
-            Fear_Timer = 15000+rand()%25000;
-        } else Fear_Timer -= diff;
+            DoCast(me, SPELL_FEAR);
+            Fear_Timer = 15000 + rand() % 25000;
+        }
+        else Fear_Timer -= diff;
 
         if (ThunderClap_Timer <= diff)
         {
-            DoCast(me,SPELL_THUNDERCLAP);
-            ThunderClap_Timer = 25000+rand()%15000;
-        } else ThunderClap_Timer -= diff;
+            DoCast(me, SPELL_THUNDERCLAP);
+            ThunderClap_Timer = 25000 + rand() % 15000;
+        }
+        else ThunderClap_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -386,7 +393,7 @@ CreatureAI* GetAI_mob_omrogg_heads(Creature* pCreature)
 
 void AddSC_boss_warbringer_omrogg()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_warbringer_omrogg";

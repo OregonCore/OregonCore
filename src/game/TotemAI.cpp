@@ -42,7 +42,7 @@ TotemAI::TotemAI(Creature* c) : CreatureAI(c), i_totem(static_cast<Totem&>(*c)),
 }
 
 void
-TotemAI::MoveInLineOfSight(Unit* )
+TotemAI::MoveInLineOfSight(Unit*)
 {
 }
 
@@ -61,7 +61,7 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
         return;
 
     // Search spell
-    SpellEntry const *spellInfo = sSpellStore.LookupEntry(i_totem.GetSpell());
+    SpellEntry const* spellInfo = sSpellStore.LookupEntry(i_totem.GetSpell());
     if (!spellInfo)
         return;
 
@@ -77,9 +77,9 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
     // Search victim if no, not attackable, or out of range, or friendly (possible in case duel end)
     if (!victim ||
         !victim->isTargetableForAttack() || !i_totem.IsWithinDistInMap(victim, max_range) ||
-        i_totem.IsFriendlyTo(victim) || !victim->isVisibleForOrDetect(&i_totem,false))
+        i_totem.IsFriendlyTo(victim) || !victim->isVisibleForOrDetect(&i_totem, false))
     {
-        CellPair p(Oregon::ComputeCellPair(i_totem.GetPositionX(),i_totem.GetPositionY()));
+        CellPair p(Oregon::ComputeCellPair(i_totem.GetPositionX(), i_totem.GetPositionY()));
         Cell cell(p);
         cell.data.Part.reserved = ALL_DISTRICT;
 
@@ -113,18 +113,18 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
 }
 
 bool
-TotemAI::IsVisible(Unit* ) const
+TotemAI::IsVisible(Unit*) const
 {
     return false;
 }
 
 void
-TotemAI::AttackStart(Unit* )
+TotemAI::AttackStart(Unit*)
 {
     // Sentry totem sends ping on attack
     if (i_totem.GetEntry() == SENTRY_TOTEM_ENTRY && i_totem.GetOwner()->GetTypeId() == TYPEID_PLAYER)
     {
-        WorldPacket data(MSG_MINIMAP_PING, (8+4+4));
+        WorldPacket data(MSG_MINIMAP_PING, (8 + 4 + 4));
         data << i_totem.GetGUID();
         data << i_totem.GetPositionX();
         data << i_totem.GetPositionY();

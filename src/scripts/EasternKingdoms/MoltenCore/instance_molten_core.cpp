@@ -41,7 +41,10 @@ EndScriptData */
 
 struct instance_molten_core : public ScriptedInstance
 {
-    instance_molten_core(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
+    instance_molten_core(Map* pMap) : ScriptedInstance(pMap)
+    {
+        Initialize();
+    };
 
     uint64 Lucifron, Magmadar, Gehennas, Garr, Geddon, Shazzrah, Sulfuron, Golemagg, Domo, Ragnaros, FlamewakerPriest;
     uint64 RuneKoro, RuneZeth, RuneMazj, RuneTheri, RuneBlaz, RuneKress, RuneMohn;
@@ -94,7 +97,7 @@ struct instance_molten_core : public ScriptedInstance
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
         case 176951:                                    //Sulfuron
             RuneKoro = pGo->GetGUID();
@@ -124,63 +127,63 @@ struct instance_molten_core : public ScriptedInstance
     {
         switch (pCreature->GetEntry())
         {
-            case ID_LUCIFRON:
-                Lucifron = pCreature->GetGUID();
-                break;
+        case ID_LUCIFRON:
+            Lucifron = pCreature->GetGUID();
+            break;
 
-            case ID_MAGMADAR:
-                Magmadar = pCreature->GetGUID();
-                break;
+        case ID_MAGMADAR:
+            Magmadar = pCreature->GetGUID();
+            break;
 
-            case ID_GEHENNAS:
-                Gehennas = pCreature->GetGUID();
-                break;
+        case ID_GEHENNAS:
+            Gehennas = pCreature->GetGUID();
+            break;
 
-            case ID_GARR:
-                Garr = pCreature->GetGUID();
-                break;
+        case ID_GARR:
+            Garr = pCreature->GetGUID();
+            break;
 
-            case ID_GEDDON:
-                Geddon = pCreature->GetGUID();
-                break;
+        case ID_GEDDON:
+            Geddon = pCreature->GetGUID();
+            break;
 
-            case ID_SHAZZRAH:
-                Shazzrah = pCreature->GetGUID();
-                break;
+        case ID_SHAZZRAH:
+            Shazzrah = pCreature->GetGUID();
+            break;
 
-            case ID_SULFURON:
-                Sulfuron = pCreature->GetGUID();
-                break;
+        case ID_SULFURON:
+            Sulfuron = pCreature->GetGUID();
+            break;
 
-            case ID_GOLEMAGG:
-                Golemagg = pCreature->GetGUID();
-                break;
+        case ID_GOLEMAGG:
+            Golemagg = pCreature->GetGUID();
+            break;
 
-            case ID_DOMO:
-                Domo = pCreature->GetGUID();
-                break;
+        case ID_DOMO:
+            Domo = pCreature->GetGUID();
+            break;
 
-            case ID_RAGNAROS:
-                Ragnaros = pCreature->GetGUID();
-                break;
+        case ID_RAGNAROS:
+            Ragnaros = pCreature->GetGUID();
+            break;
 
-            case ID_FLAMEWAKERPRIEST:
-                FlamewakerPriest = pCreature->GetGUID();
-                break;
+        case ID_FLAMEWAKERPRIEST:
+            FlamewakerPriest = pCreature->GetGUID();
+            break;
         }
     }
 
     uint64 GetData64 (uint32 identifier)
     {
-        switch(identifier)
+        switch (identifier)
         {
-            case DATA_SULFURON:
-                return Sulfuron;
-            case DATA_GOLEMAGG:
-                return Golemagg;
+        case DATA_SULFURON:
+            return Sulfuron;
+        case DATA_GOLEMAGG:
+            return Golemagg;
 
-            case DATA_FLAMEWAKERPRIEST:
-                return FlamewakerPriest;
+        case DATA_FLAMEWAKERPRIEST:
+            return FlamewakerPriest;
         }
 
         return 0;
@@ -188,52 +191,52 @@ struct instance_molten_core : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_LUCIFRONISDEAD:
-                if (IsBossDied[0])
-                    return 1;
-                break;
+        case DATA_LUCIFRONISDEAD:
+            if (IsBossDied[0])
+                return 1;
+            break;
 
-            case DATA_MAGMADARISDEAD:
-                if (IsBossDied[1])
-                    return 1;
-                break;
+        case DATA_MAGMADARISDEAD:
+            if (IsBossDied[1])
+                return 1;
+            break;
 
-            case DATA_GEHENNASISDEAD:
-                if (IsBossDied[2])
-                    return 1;
-                break;
+        case DATA_GEHENNASISDEAD:
+            if (IsBossDied[2])
+                return 1;
+            break;
 
-            case DATA_GARRISDEAD:
-                if (IsBossDied[3])
-                    return 1;
-                break;
+        case DATA_GARRISDEAD:
+            if (IsBossDied[3])
+                return 1;
+            break;
 
-            case DATA_GEDDONISDEAD:
-                if (IsBossDied[4])
-                    return 1;
-                break;
+        case DATA_GEDDONISDEAD:
+            if (IsBossDied[4])
+                return 1;
+            break;
 
-            case DATA_SHAZZRAHISDEAD:
-                if (IsBossDied[5])
-                    return 1;
-                break;
+        case DATA_SHAZZRAHISDEAD:
+            if (IsBossDied[5])
+                return 1;
+            break;
 
-            case DATA_SULFURONISDEAD:
-                if (IsBossDied[6])
-                    return 1;
-                break;
+        case DATA_SULFURONISDEAD:
+            if (IsBossDied[6])
+                return 1;
+            break;
 
-            case DATA_GOLEMAGGISDEAD:
-                if (IsBossDied[7])
-                    return 1;
-                break;
+        case DATA_GOLEMAGGISDEAD:
+            if (IsBossDied[7])
+                return 1;
+            break;
 
-            case DATA_MAJORDOMOISDEAD:
-                if (IsBossDied[8])
-                    return 1;
-                break;
+        case DATA_MAJORDOMOISDEAD:
+            if (IsBossDied[8])
+                return 1;
+            break;
         }
 
         return 0;
@@ -253,7 +256,7 @@ InstanceData* GetInstance_instance_molten_core(Map* pMap)
 
 void AddSC_instance_molten_core()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_molten_core";
     newscript->GetInstanceData = &GetInstance_instance_molten_core;

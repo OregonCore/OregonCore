@@ -75,9 +75,9 @@ class SentinelAbilityAura : public Aura
     public:
         ~SentinelAbilityAura();
         Unit* GetTriggerTarget() const;
-        SentinelAbilityAura(aqsentinelAI *abilityOwner, SpellEntry *spell, uint32 ability, uint32 eff);
+        SentinelAbilityAura(aqsentinelAI* abilityOwner, SpellEntry* spell, uint32 ability, uint32 eff);
     protected:
-        aqsentinelAI *aOwner;
+        aqsentinelAI* aOwner;
         int32 currentBasePoints;
         uint32 abilityId;
 };
@@ -91,15 +91,33 @@ struct aqsentinelAI : public ScriptedAI
     {
         switch (asel)
         {
-            case 0: ability = SPELL_MENDING_BUFF;break;
-            case 1: ability = SPELL_KNOCK_BUFF;break;
-            case 2: ability = SPELL_MANAB_BUFF;break;
-            case 3: ability = SPELL_REFLECTAF_BUFF;break;
-            case 4: ability = SPELL_REFLECTSFr_BUFF;break;
-            case 5: ability = SPELL_THORNS_BUFF;break;
-            case 6: ability = SPELL_THUNDER_BUFF;break;
-            case 7: ability = SPELL_MSTRIKE_BUFF;break;
-            case 8: ability = SPELL_STORM_BUFF;break;
+        case 0:
+            ability = SPELL_MENDING_BUFF;
+            break;
+        case 1:
+            ability = SPELL_KNOCK_BUFF;
+            break;
+        case 2:
+            ability = SPELL_MANAB_BUFF;
+            break;
+        case 3:
+            ability = SPELL_REFLECTAF_BUFF;
+            break;
+        case 4:
+            ability = SPELL_REFLECTSFr_BUFF;
+            break;
+        case 5:
+            ability = SPELL_THORNS_BUFF;
+            break;
+        case 6:
+            ability = SPELL_THUNDER_BUFF;
+            break;
+        case 7:
+            ability = SPELL_MSTRIKE_BUFF;
+            break;
+        case 8:
+            ability = SPELL_STORM_BUFF;
+            break;
         }
     }
 
@@ -120,7 +138,7 @@ struct aqsentinelAI : public ScriptedAI
     {
         if (c == me)
             return;
-        for (int i=0; i<3; i++)
+        for (int i = 0; i < 3; i++)
         {
             if (nearby[i] == c)
                 return;
@@ -134,8 +152,8 @@ struct aqsentinelAI : public ScriptedAI
 
     void GiveBuddyMyList(Creature* c)
     {
-        aqsentinelAI *cai = CAST_AI(aqsentinelAI, (c)->AI());
-        for (int i=0; i<3; ++i)
+        aqsentinelAI* cai = CAST_AI(aqsentinelAI, (c)->AI());
+        for (int i = 0; i < 3; ++i)
             if (nearby[i] && nearby[i] != c)
                 cai->AddBuddyToList(nearby[i]);
         cai->AddBuddyToList(me);
@@ -143,14 +161,14 @@ struct aqsentinelAI : public ScriptedAI
 
     void SendMyListToBuddies()
     {
-        for (int i=0; i<3; ++i)
+        for (int i = 0; i < 3; ++i)
             if (nearby[i])
                 GiveBuddyMyList(nearby[i]);
     }
 
     void CallBuddiesToAttack(Unit* who)
     {
-        for (int i=0; i<3; ++i)
+        for (int i = 0; i < 3; ++i)
         {
             Creature* c = nearby[i];
             if (c)
@@ -168,7 +186,7 @@ struct aqsentinelAI : public ScriptedAI
     void AddSentinelsNear(Unit* /*nears*/)
     {
         std::list<Creature*> assistList;
-        me->GetCreatureListWithEntryInGrid(assistList,15264,70.0f);
+        me->GetCreatureListWithEntryInGrid(assistList, 15264, 70.0f);
 
         if (assistList.empty())
             return;
@@ -177,11 +195,11 @@ struct aqsentinelAI : public ScriptedAI
             AddBuddyToList((*iter));
     }
 
-    int pickAbilityRandom(bool *chosenAbilities)
+    int pickAbilityRandom(bool* chosenAbilities)
     {
         for (int t = 0; t < 2; ++t)
         {
-            for (int i = !t ? (rand()%9) : 0; i < 9; ++i)
+            for (int i = !t ? (rand() % 9) : 0; i < 9; ++i)
             {
                 if (!chosenAbilities[i])
                 {
@@ -195,8 +213,8 @@ struct aqsentinelAI : public ScriptedAI
 
     void GetOtherSentinels(Unit* who)
     {
-        bool *chosenAbilities = new bool[9];
-        memset(chosenAbilities, 0, 9*sizeof(bool));
+        bool* chosenAbilities = new bool[9];
+        memset(chosenAbilities, 0, 9 * sizeof(bool));
         selectAbility(pickAbilityRandom(chosenAbilities));
 
         ClearBudyList();
@@ -207,8 +225,8 @@ struct aqsentinelAI : public ScriptedAI
             if (!nearby[bli])
                 break;
             AddSentinelsNear(nearby[bli]);
-            ((aqsentinelAI *)nearby[bli]->AI())->gatherOthersWhenAggro = false;
-            ((aqsentinelAI *)nearby[bli]->AI())->selectAbility(pickAbilityRandom(chosenAbilities));
+            ((aqsentinelAI*)nearby[bli]->AI())->gatherOthersWhenAggro = false;
+            ((aqsentinelAI*)nearby[bli]->AI())->selectAbility(pickAbilityRandom(chosenAbilities));
         }
         /*if (bli < 3)
             DoYell("I dont have enough buddies.", LANG_NEUTRAL, 0);*/
@@ -222,7 +240,7 @@ struct aqsentinelAI : public ScriptedAI
     {
         if (!me->isDead())
         {
-            for (int i=0; i<3; ++i)
+            for (int i = 0; i < 3; ++i)
             {
                 if (!nearby[i])
                     continue;
@@ -236,12 +254,12 @@ struct aqsentinelAI : public ScriptedAI
 
     void GainSentinelAbility(uint32 id)
     {
-        const SpellEntry *spell = GetSpellStore()->LookupEntry(id);
-        for (int i=0; i<3; i++)
+        const SpellEntry* spell = GetSpellStore()->LookupEntry(id);
+        for (int i = 0; i < 3; i++)
         {
             if (!spell->Effect[i])
                 continue;
-            SentinelAbilityAura *a = new SentinelAbilityAura(this, (SpellEntry *)spell, id, i);
+            SentinelAbilityAura* a = new SentinelAbilityAura(this, (SpellEntry*)spell, id, i);
             me->AddAura(a);
         }
     }
@@ -257,7 +275,7 @@ struct aqsentinelAI : public ScriptedAI
 
     void JustDied(Unit* /*who*/)
     {
-        for (int ni=0; ni<3; ++ni)
+        for (int ni = 0; ni < 3; ++ni)
         {
             Creature* sent = nearby[ni];
             if (!sent)
@@ -275,7 +293,7 @@ struct aqsentinelAI : public ScriptedAI
     Unit* GetHatedManaUser()
     {
         std::list<HostileReference*>::iterator i;
-        for (i = me->getThreatManager().getThreatList().begin();i != me->getThreatManager().getThreatList().end(); ++i)
+        for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit->getPowerType() == POWER_MANA)
@@ -291,7 +309,7 @@ CreatureAI* GetAI_mob_anubisath_sentinelAI(Creature* pCreature)
 
 void AddSC_mob_anubisath_sentinel()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "mob_anubisath_sentinel";
     newscript->GetAI = &GetAI_mob_anubisath_sentinelAI;
@@ -303,26 +321,26 @@ Unit* SentinelAbilityAura::GetTriggerTarget() const
 {
     switch (abilityId)
     {
-        case SPELL_KNOCK_BUFF:
-        case SPELL_THUNDER_BUFF:
-        case SPELL_MSTRIKE_BUFF:
-        case SPELL_STORM_BUFF:
-            return aOwner->me->getVictim();
+    case SPELL_KNOCK_BUFF:
+    case SPELL_THUNDER_BUFF:
+    case SPELL_MSTRIKE_BUFF:
+    case SPELL_STORM_BUFF:
+        return aOwner->me->getVictim();
 
-        case SPELL_MANAB_BUFF:
-            return aOwner->GetHatedManaUser();
+    case SPELL_MANAB_BUFF:
+        return aOwner->GetHatedManaUser();
 
-        case SPELL_MENDING_BUFF:
-        case SPELL_REFLECTAF_BUFF:
-        case SPELL_REFLECTSFr_BUFF:
-        case SPELL_THORNS_BUFF:
-        default:
-            return aOwner->me;
+    case SPELL_MENDING_BUFF:
+    case SPELL_REFLECTAF_BUFF:
+    case SPELL_REFLECTSFr_BUFF:
+    case SPELL_THORNS_BUFF:
+    default:
+        return aOwner->me;
     }
 }
 
-SentinelAbilityAura::SentinelAbilityAura(aqsentinelAI *abilityOwner, SpellEntry *spell, uint32 ability, uint32 eff)
-: Aura(spell, eff, NULL, abilityOwner->me, abilityOwner->me, NULL)
+SentinelAbilityAura::SentinelAbilityAura(aqsentinelAI* abilityOwner, SpellEntry* spell, uint32 ability, uint32 eff)
+    : Aura(spell, eff, NULL, abilityOwner->me, abilityOwner->me, NULL)
 {
     aOwner = abilityOwner;
     abilityId = ability;

@@ -27,7 +27,7 @@ void SqlDelayThread::run()
 {
     mysql_thread_init();
 
-    SqlAsyncTask * s = NULL;
+    SqlAsyncTask* s = NULL;
 
     ACE_Time_Value _time(2);
     while (m_running)

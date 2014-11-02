@@ -28,17 +28,17 @@ EndScriptData */
 //This function is called when the player opens the gossip menubool
 bool GossipHello_custom_gossip_codebox(Player* player, Creature* pCreature)
 {
-    player->ADD_GOSSIP_ITEM_EXTENDED(0, "A quiz: what's your name?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1, "", 0, true);
-    player->ADD_GOSSIP_ITEM(0, "I'm not interested", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+    player->ADD_GOSSIP_ITEM_EXTENDED(0, "A quiz: what's your name?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1, "", 0, true);
+    player->ADD_GOSSIP_ITEM(0, "I'm not interested", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
 
-    player->PlayerTalkClass->SendGossipMenu(907,pCreature->GetGUID());
+    player->PlayerTalkClass->SendGossipMenu(907, pCreature->GetGUID());
     return true;
 }
 
 //This function is called when the player clicks an option on the gossip menubool
 bool GossipSelect_custom_gossip_codebox(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF+2)
+    if (action == GOSSIP_ACTION_INFO_DEF + 2)
     {
         pCreature->Say("Normal select, guess you're not interested.", LANG_UNIVERSAL, 0);
         player->CLOSE_GOSSIP_MENU();
@@ -50,7 +50,7 @@ bool GossipSelectWithCode_custom_gossip_codebox(Player* player, Creature* pCreat
 {
     if (sender == GOSSIP_SENDER_MAIN)
     {
-        if (action == GOSSIP_ACTION_INFO_DEF+1)
+        if (action == GOSSIP_ACTION_INFO_DEF + 1)
         {
             if (std::strcmp(sCode, player->GetName()) != 0)
             {
@@ -71,7 +71,7 @@ bool GossipSelectWithCode_custom_gossip_codebox(Player* player, Creature* pCreat
 
 void AddSC_custom_gossip_codebox()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "custom_gossip_codebox";

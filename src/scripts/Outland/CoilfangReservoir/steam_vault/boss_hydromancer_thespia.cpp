@@ -50,7 +50,7 @@ struct boss_thespiaAI : public ScriptedAI
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
     bool HeroicMode;
 
     uint32 LightningCloud_Timer;
@@ -77,20 +77,30 @@ struct boss_thespiaAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY_1, me); break;
-            case 1: DoScriptText(SAY_SLAY_2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY_2, me);
+            break;
         }
     }
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO_3, me);
+            break;
         }
 
         if (pInstance)
@@ -106,33 +116,36 @@ struct boss_thespiaAI : public ScriptedAI
         if (LightningCloud_Timer <= diff)
         {
             //cast twice in Heroic mode
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_LIGHTNING_CLOUD);
             if (HeroicMode)
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_LIGHTNING_CLOUD);
-            LightningCloud_Timer = 15000+rand()%10000;
-        } else LightningCloud_Timer -=diff;
+            LightningCloud_Timer = 15000 + rand() % 10000;
+        }
+        else LightningCloud_Timer -= diff;
 
         //LungBurst_Timer
         if (LungBurst_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_LUNG_BURST);
-            LungBurst_Timer = 7000+rand()%5000;
-        } else LungBurst_Timer -=diff;
+            LungBurst_Timer = 7000 + rand() % 5000;
+        }
+        else LungBurst_Timer -= diff;
 
         //EnvelopingWinds_Timer
         if (EnvelopingWinds_Timer <= diff)
         {
             //cast twice in Heroic mode
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_ENVELOPING_WINDS);
             if (HeroicMode)
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_ENVELOPING_WINDS);
-            EnvelopingWinds_Timer = 10000+rand()%5000;
-        } else EnvelopingWinds_Timer -=diff;
+            EnvelopingWinds_Timer = 10000 + rand() % 5000;
+        }
+        else EnvelopingWinds_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -151,7 +164,7 @@ struct mob_coilfang_waterelementalAI : public ScriptedAI
     void Reset()
     {
         HeroicMode = me->GetMap()->IsHeroic();
-        WaterBoltVolley_Timer = 3000+rand()%3000;
+        WaterBoltVolley_Timer = 3000 + rand() % 3000;
     }
 
     void EnterCombat(Unit* /*who*/) { }
@@ -164,8 +177,9 @@ struct mob_coilfang_waterelementalAI : public ScriptedAI
         if (WaterBoltVolley_Timer <= diff)
         {
             DoCast(me, HeroicMode ? H_SPELL_WATER_BOLT_VOLLEY : SPELL_WATER_BOLT_VOLLEY);
-            WaterBoltVolley_Timer = 7000+rand()%5000;
-        } else WaterBoltVolley_Timer -= diff;
+            WaterBoltVolley_Timer = 7000 + rand() % 5000;
+        }
+        else WaterBoltVolley_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -183,7 +197,7 @@ CreatureAI* GetAI_mob_coilfang_waterelementalAI(Creature* pCreature)
 
 void AddSC_boss_hydromancer_thespia()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_hydromancer_thespia";

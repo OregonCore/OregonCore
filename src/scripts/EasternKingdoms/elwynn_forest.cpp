@@ -72,7 +72,7 @@ struct npc_henze_faulkAI : public ScriptedAI
         }
     }
 
-    void SpellHit(Unit* /*Hitter*/, const SpellEntry *Spellkind)
+    void SpellHit(Unit* /*Hitter*/, const SpellEntry* Spellkind)
     {
         if (Spellkind->Id == 8593 && !spellHit)
         {
@@ -93,7 +93,7 @@ CreatureAI* GetAI_npc_henze_faulk(Creature* pCreature)
 
 void AddSC_elwynn_forest()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_henze_faulk";

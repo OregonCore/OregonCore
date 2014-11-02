@@ -62,19 +62,21 @@ struct boss_halyconAI : public ScriptedAI
         {
             DoCastVictim( SPELL_CROWDPUMMEL);
             CrowdPummel_Timer = 14000;
-        } else CrowdPummel_Timer -= diff;
+        }
+        else CrowdPummel_Timer -= diff;
 
         //MightyBlow_Timer
         if (MightyBlow_Timer <= diff)
         {
             DoCastVictim( SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 10000;
-        } else MightyBlow_Timer -= diff;
+        }
+        else MightyBlow_Timer -= diff;
 
         //Summon Gizrul
-        if (!Summoned && me->GetHealth()*100 / me->GetMaxHealth() < 25)
+        if (!Summoned && me->GetHealth() * 100 / me->GetMaxHealth() < 25)
         {
-            me->SummonCreature(10268,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,300000);
+            me->SummonCreature(10268, ADD_1X, ADD_1Y, ADD_1Z, ADD_1O, TEMPSUMMON_TIMED_DESPAWN, 300000);
             Summoned = true;
         }
 
@@ -88,7 +90,7 @@ CreatureAI* GetAI_boss_halycon(Creature* pCreature)
 
 void AddSC_boss_halycon()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_halycon";
     newscript->GetAI = &GetAI_boss_halycon;

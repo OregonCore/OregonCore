@@ -73,11 +73,17 @@ struct boss_watchkeeper_gargolmarAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO_3, me);
+            break;
         }
 
         if (pInstance)
@@ -107,10 +113,14 @@ struct boss_watchkeeper_gargolmarAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_KILL_1, me); break;
-            case 1: DoScriptText(SAY_KILL_2, me); break;
+        case 0:
+            DoScriptText(SAY_KILL_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_KILL_2, me);
+            break;
         }
     }
 
@@ -130,31 +140,34 @@ struct boss_watchkeeper_gargolmarAI : public ScriptedAI
         if (MortalWound_Timer <= diff)
         {
             DoCastVictim(HeroicMode ? H_SPELL_MORTAL_WOUND : SPELL_MORTAL_WOUND);
-            MortalWound_Timer = 5000+rand()%8000;
-        } else MortalWound_Timer -= diff;
+            MortalWound_Timer = 5000 + rand() % 8000;
+        }
+        else MortalWound_Timer -= diff;
 
         if (Surge_Timer <= diff)
         {
             DoScriptText(SAY_SURGE, me);
 
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_SURGE);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_SURGE);
 
-            Surge_Timer = 5000+rand()%8000;
-        } else Surge_Timer -= diff;
+            Surge_Timer = 5000 + rand() % 8000;
+        }
+        else Surge_Timer -= diff;
 
-        if ((me->GetHealth()*100) / me->GetMaxHealth() < 20)
+        if ((me->GetHealth() * 100) / me->GetMaxHealth() < 20)
         {
             if (Retaliation_Timer <= diff)
             {
-                DoCast(me,SPELL_RETALIATION);
+                DoCast(me, SPELL_RETALIATION);
                 Retaliation_Timer = 30000;
-            } else Retaliation_Timer -= diff;
+            }
+            else Retaliation_Timer -= diff;
         }
 
         if (!YelledForHeal)
         {
-            if ((me->GetHealth()*100) / me->GetMaxHealth() < 40)
+            if ((me->GetHealth() * 100) / me->GetMaxHealth() < 40)
             {
                 DoScriptText(SAY_HEAL, me);
                 YelledForHeal = true;
@@ -172,7 +185,7 @@ CreatureAI* GetAI_boss_watchkeeper_gargolmarAI(Creature* pCreature)
 
 void AddSC_boss_watchkeeper_gargolmar()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_watchkeeper_gargolmar";
     newscript->GetAI = &GetAI_boss_watchkeeper_gargolmarAI;

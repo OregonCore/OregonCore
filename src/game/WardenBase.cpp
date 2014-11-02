@@ -45,7 +45,7 @@ void WardenBase::Init(WorldSession* /*pClient*/, BigNumber* /*K*/)
     ASSERT(false);
 }
 
-ClientWardenModule *WardenBase::GetModuleForClient(WorldSession* /*session*/)
+ClientWardenModule* WardenBase::GetModuleForClient(WorldSession* /*session*/)
 {
     ASSERT(false);
     return NULL;
@@ -152,17 +152,17 @@ void WardenBase::Update()
     }
 }
 
-void WardenBase::DecryptData(uint8 *Buffer, uint32 Len)
+void WardenBase::DecryptData(uint8* Buffer, uint32 Len)
 {
     iCrypto.UpdateData(Len, Buffer);
 }
 
-void WardenBase::EncryptData(uint8 *Buffer, uint32 Len)
+void WardenBase::EncryptData(uint8* Buffer, uint32 Len)
 {
     oCrypto.UpdateData(Len, Buffer);
 }
 
-bool WardenBase::IsValidCheckSum(uint32 checksum, const uint8 *Data, const uint16 Length)
+bool WardenBase::IsValidCheckSum(uint32 checksum, const uint8* Data, const uint16 Length)
 {
     uint32 newchecksum = BuildChecksum(Data, Length);
 
@@ -188,7 +188,7 @@ uint32 WardenBase::BuildChecksum(const uint8* data, uint32 dataLen)
     return checkSum;
 }
 
-void WorldSession::HandleWardenDataOpcode(WorldPacket & recv_data)
+void WorldSession::HandleWardenDataOpcode(WorldPacket& recv_data)
 {
     m_Warden->DecryptData(const_cast<uint8*>(recv_data.contents()), recv_data.size());
     uint8 Opcode;
@@ -196,29 +196,29 @@ void WorldSession::HandleWardenDataOpcode(WorldPacket & recv_data)
     sLog.outDebug("Got packet, opcode %02X, size %u", Opcode, recv_data.size());
     recv_data.hexlike();
 
-    switch(Opcode)
+    switch (Opcode)
     {
-        case WARDEN_CMSG_MODULE_MISSING:
-            m_Warden->SendModuleToClient();
-            break;
-        case WARDEN_CMSG_MODULE_OK:
-            m_Warden->RequestHash();
-            break;
-        case WARDEN_CMSG_CHEAT_CHECKS_RESULT:
-            m_Warden->HandleData(recv_data);
-            break;
-        case WARDEN_CMSG_MEM_CHECKS_RESULT:
-            sLog.outDebug("NYI WARDEN_CMSG_MEM_CHECKS_RESULT received!");
-            break;
-        case WARDEN_CMSG_HASH_RESULT:
-            m_Warden->HandleHashResult(recv_data);
-            m_Warden->InitializeModule();
-            break;
-        case WARDEN_CMSG_MODULE_FAILED:
-            sLog.outDebug("NYI WARDEN_CMSG_MODULE_FAILED received!");
-            break;
-        default:
-            sLog.outError("Got unknown warden opcode %02X of size %u.", Opcode, recv_data.size() - 1);
-            break;
+    case WARDEN_CMSG_MODULE_MISSING:
+        m_Warden->SendModuleToClient();
+        break;
+    case WARDEN_CMSG_MODULE_OK:
+        m_Warden->RequestHash();
+        break;
+    case WARDEN_CMSG_CHEAT_CHECKS_RESULT:
+        m_Warden->HandleData(recv_data);
+        break;
+    case WARDEN_CMSG_MEM_CHECKS_RESULT:
+        sLog.outDebug("NYI WARDEN_CMSG_MEM_CHECKS_RESULT received!");
+        break;
+    case WARDEN_CMSG_HASH_RESULT:
+        m_Warden->HandleHashResult(recv_data);
+        m_Warden->InitializeModule();
+        break;
+    case WARDEN_CMSG_MODULE_FAILED:
+        sLog.outDebug("NYI WARDEN_CMSG_MODULE_FAILED received!");
+        break;
+    default:
+        sLog.outError("Got unknown warden opcode %02X of size %u.", Opcode, recv_data.size() - 1);
+        break;
     }
 }

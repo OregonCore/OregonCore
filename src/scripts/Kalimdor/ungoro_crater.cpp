@@ -64,25 +64,25 @@ struct npc_ameAI : public npc_escortAI
         switch (i)
         {
 
-         case 19:
+        case 19:
             me->SummonCreature(ENTRY_STOMPER, -6391.69f, -1730.49f, -272.83f, 4.96f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             DoScriptText(SAY_AGGRO1, me, pPlayer);
             break;
-            case 28:
+        case 28:
             DoScriptText(SAY_SEARCH, me, pPlayer);
             break;
-            case 38:
+        case 38:
             me->SummonCreature(ENTRY_TARLORD, -6370.75f, -1382.84f, -270.51f, 6.06f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             DoScriptText(SAY_AGGRO2, me, pPlayer);
             break;
-            case 49:
+        case 49:
             me->SummonCreature(ENTRY_TARLORD1, -6324.44f, -1181.05f, -270.17f, 4.34f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             DoScriptText(SAY_AGGRO3, me, pPlayer);
             break;
-         case 55:
+        case 55:
             DoScriptText(SAY_FINISH, me, pPlayer);
             if (pPlayer)
-                pPlayer->GroupEventHappens(QUEST_CHASING_AME,me);
+                pPlayer->GroupEventHappens(QUEST_CHASING_AME, me);
             break;
 
         }
@@ -90,7 +90,7 @@ struct npc_ameAI : public npc_escortAI
 
     void Reset()
     {
-      DEMORALIZINGSHOUT_Timer = 5000;
+        DEMORALIZINGSHOUT_Timer = 5000;
     }
 
     void JustSummoned(Creature* summoned)
@@ -114,7 +114,8 @@ struct npc_ameAI : public npc_escortAI
         {
             DoCastVictim( SPELL_DEMORALIZINGSHOUT);
             DEMORALIZINGSHOUT_Timer = 70000;
-        } else DEMORALIZINGSHOUT_Timer -= diff;
+        }
+        else DEMORALIZINGSHOUT_Timer -= diff;
 
     }
 };
@@ -125,7 +126,7 @@ bool QuestAccept_npc_ame(Player* pPlayer, Creature* pCreature, Quest const* ques
     {
         CAST_AI(npc_escortAI, (pCreature->AI()))->Start(false, false, pPlayer->GetGUID());
         DoScriptText(SAY_READY, pCreature, pPlayer);
-        pCreature->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
+        pCreature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
         // Change faction so mobs attack
         pCreature->setFaction(113);
     }
@@ -221,7 +222,7 @@ struct npc_ringoAI : public FollowerAI
         {
             SetFollowPaused(true);
 
-            DoScriptText(RAND(SAY_FAINT_1,SAY_FAINT_2,SAY_FAINT_3,SAY_FAINT_4), me);
+            DoScriptText(RAND(SAY_FAINT_1, SAY_FAINT_2, SAY_FAINT_3, SAY_FAINT_4), me);
         }
 
         //what does actually happen here? Emote? Aura?
@@ -235,7 +236,7 @@ struct npc_ringoAI : public FollowerAI
         if (HasFollowState(STATE_FOLLOW_POSTEVENT))
             return;
 
-        DoScriptText(RAND(SAY_WAKE_1,SAY_WAKE_2,SAY_WAKE_3,SAY_WAKE_4), me);
+        DoScriptText(RAND(SAY_WAKE_1, SAY_WAKE_2, SAY_WAKE_3, SAY_WAKE_4), me);
 
         SetFollowPaused(false);
     }
@@ -255,45 +256,45 @@ struct npc_ringoAI : public FollowerAI
                         return;
                     }
 
-                    switch(m_uiEndEventProgress)
+                    switch (m_uiEndEventProgress)
                     {
-                        case 1:
-                            DoScriptText(SAY_RIN_END_1, me);
-                            m_uiEndEventTimer = 3000;
-                            break;
-                        case 2:
-                            DoScriptText(SAY_SPR_END_2, pSpraggle);
-                            m_uiEndEventTimer = 5000;
-                            break;
-                        case 3:
-                            DoScriptText(SAY_RIN_END_3, me);
-                            m_uiEndEventTimer = 1000;
-                            break;
-                        case 4:
-                            DoScriptText(EMOTE_RIN_END_4, me);
-                            SetFaint();
-                            m_uiEndEventTimer = 9000;
-                            break;
-                        case 5:
-                            DoScriptText(EMOTE_RIN_END_5, me);
-                            ClearFaint();
-                            m_uiEndEventTimer = 1000;
-                            break;
-                        case 6:
-                            DoScriptText(SAY_RIN_END_6, me);
-                            m_uiEndEventTimer = 3000;
-                            break;
-                        case 7:
-                            DoScriptText(SAY_SPR_END_7, pSpraggle);
-                            m_uiEndEventTimer = 10000;
-                            break;
-                        case 8:
-                            DoScriptText(EMOTE_RIN_END_8, me);
-                            m_uiEndEventTimer = 5000;
-                            break;
-                        case 9:
-                            SetFollowComplete();
-                            break;
+                    case 1:
+                        DoScriptText(SAY_RIN_END_1, me);
+                        m_uiEndEventTimer = 3000;
+                        break;
+                    case 2:
+                        DoScriptText(SAY_SPR_END_2, pSpraggle);
+                        m_uiEndEventTimer = 5000;
+                        break;
+                    case 3:
+                        DoScriptText(SAY_RIN_END_3, me);
+                        m_uiEndEventTimer = 1000;
+                        break;
+                    case 4:
+                        DoScriptText(EMOTE_RIN_END_4, me);
+                        SetFaint();
+                        m_uiEndEventTimer = 9000;
+                        break;
+                    case 5:
+                        DoScriptText(EMOTE_RIN_END_5, me);
+                        ClearFaint();
+                        m_uiEndEventTimer = 1000;
+                        break;
+                    case 6:
+                        DoScriptText(SAY_RIN_END_6, me);
+                        m_uiEndEventTimer = 3000;
+                        break;
+                    case 7:
+                        DoScriptText(SAY_SPR_END_7, pSpraggle);
+                        m_uiEndEventTimer = 10000;
+                        break;
+                    case 8:
+                        DoScriptText(EMOTE_RIN_END_8, me);
+                        m_uiEndEventTimer = 5000;
+                        break;
+                    case 9:
+                        SetFollowComplete();
+                        break;
                     }
 
                     ++m_uiEndEventProgress;
@@ -343,7 +344,7 @@ bool QuestAccept_npc_ringo(Player* pPlayer, Creature* pCreature, const Quest* pQ
 
 void AddSC_ungoro_crater()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_ame";

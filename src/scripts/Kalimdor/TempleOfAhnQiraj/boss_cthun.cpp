@@ -191,11 +191,11 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
     void SpawnEyeTentacle(float x, float y)
     {
         Creature* Spawned;
-        Spawned = (Creature*)me->SummonCreature(MOB_EYE_TENTACLE,me->GetPositionX()+x,me->GetPositionY()+y,me->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
+        Spawned = (Creature*)me->SummonCreature(MOB_EYE_TENTACLE, me->GetPositionX() + x, me->GetPositionY() + y, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 500);
         if (Spawned)
         {
             Unit* pTarget;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
             if (pTarget)
                 Spawned->AI()->AttackStart(pTarget);
@@ -214,18 +214,18 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
 
         switch (pInst->GetData(DATA_CTHUN_PHASE))
         {
-            case 0:
+        case 0:
             {
                 //BeamTimer
                 if (BeamTimer <= diff)
                 {
                     //SPELL_GREEN_BEAM
                     Unit* pTarget = NULL;
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     if (pTarget)
                     {
                         me->InterruptNonMeleeSpells(false);
-                        DoCast(pTarget,SPELL_GREEN_BEAM);
+                        DoCast(pTarget, SPELL_GREEN_BEAM);
 
                         //Correctly update our target
                         me->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
@@ -233,19 +233,20 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
 
                     //Beam every 3 seconds
                     BeamTimer = 3000;
-                } else BeamTimer -= diff;
+                }
+                else BeamTimer -= diff;
 
                 //ClawTentacleTimer
                 if (ClawTentacleTimer <= diff)
                 {
                     Unit* pTarget = NULL;
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     if (pTarget)
                     {
                         Creature* Spawned = NULL;
 
                         //Spawn claw tentacle on the random target
-                        Spawned = (Creature*)me->SummonCreature(MOB_CLAW_TENTACLE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
+                        Spawned = (Creature*)me->SummonCreature(MOB_CLAW_TENTACLE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 500);
 
                         if (Spawned)
                             Spawned->AI()->AttackStart(pTarget);
@@ -253,7 +254,8 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
 
                     //One claw tentacle every 12.5 seconds
                     ClawTentacleTimer = 12500;
-                } else ClawTentacleTimer -= diff;
+                }
+                else ClawTentacleTimer -= diff;
 
                 //EyeTentacleTimer
                 if (EyeTentacleTimer <= diff)
@@ -272,7 +274,8 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
                     //No point actually putting a timer here since
                     //These shouldn't trigger agian until after phase shifts
                     EyeTentacleTimer = 45000;
-                } else EyeTentacleTimer -= diff;
+                }
+                else EyeTentacleTimer -= diff;
 
                 //PhaseTimer
                 if (PhaseTimer <= diff)
@@ -284,7 +287,7 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
 
                     //Select random target for dark beam to start on
                     Unit* pTarget = NULL;
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
                     if (pTarget)
                     {
@@ -295,22 +298,23 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
                         DarkGlareAngle = me->GetAngle(pTarget);
                         DarkGlareTickTimer = 1000;
                         DarkGlareTick = 0;
-                        ClockWise = rand()%2;
+                        ClockWise = rand() % 2;
                     }
 
                     //Add red coloration to C'thun
-                    DoCast(me,SPELL_RED_COLORATION);
+                    DoCast(me, SPELL_RED_COLORATION);
 
                     //Freeze animation
                     me->setEmoteState(53);
 
                     //Darkbeam for 35 seconds
                     PhaseTimer = 35000;
-                } else PhaseTimer -= diff;
+                }
+                else PhaseTimer -= diff;
 
             }
             break;
-            case 1:
+        case 1:
             {
                 //EyeTentacleTimer
                 if (DarkGlareTick < 35)
@@ -322,8 +326,8 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
 
                         //Set angle and cast
                         if (ClockWise)
-                            me->SetOrientation(DarkGlareAngle + ((float)DarkGlareTick*PI/35));
-                        else me->SetOrientation(DarkGlareAngle - ((float)DarkGlareTick*PI/35));
+                            me->SetOrientation(DarkGlareAngle + ((float)DarkGlareTick * PI / 35));
+                        else me->SetOrientation(DarkGlareAngle - ((float)DarkGlareTick * PI / 35));
 
                         me->StopMoving();
 
@@ -335,7 +339,8 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
 
                         //1 second per tick
                         DarkGlareTickTimer = 1000;
-                    } else DarkGlareTickTimer -= diff;
+                    }
+                    else DarkGlareTickTimer -= diff;
                 }
 
                 //PhaseTimer
@@ -359,26 +364,28 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
 
                     //Eye Beam for 50 seconds
                     PhaseTimer = 50000;
-                } else PhaseTimer -= diff;
-            }break;
+                }
+                else PhaseTimer -= diff;
+            }
+            break;
 
-            //Transition phase
-            case 2:
+        //Transition phase
+        case 2:
             {
                 //Remove any target
                 me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
                 me->SetHealth(0);
             }
 
-            //Dead phase
-            case 5:
+        //Dead phase
+        case 5:
             {
                 me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
             }
         }
     }
 
-    void DamageTaken(Unit* /*done_by*/, uint32 &damage)
+    void DamageTaken(Unit* /*done_by*/, uint32& damage)
     {
         //No instance
         if (!pInst)
@@ -386,8 +393,8 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
 
         switch (pInst->GetData(DATA_CTHUN_PHASE))
         {
-            case 0:
-            case 1:
+        case 0:
+        case 1:
             {
                 //Only if it will kill
                 if (damage < me->GetHealth())
@@ -417,13 +424,13 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
             }
             break;
 
-            case 5:
+        case 5:
             {
                 //Allow death here
                 return;
             }
 
-            default:
+        default:
             {
                 //Prevent death in this phase
                 damage = 0;
@@ -509,7 +516,7 @@ struct cthunAI : public Scripted_NoMovementAI
     void SpawnEyeTentacle(float x, float y)
     {
         Creature* Spawned;
-        Spawned = (Creature*)me->SummonCreature(MOB_EYE_TENTACLE,me->GetPositionX()+x,me->GetPositionY()+y,me->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
+        Spawned = (Creature*)me->SummonCreature(MOB_EYE_TENTACLE, me->GetPositionX() + x, me->GetPositionY() + y, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 500);
         if (Spawned)
         {
             Unit* pTarget;
@@ -539,9 +546,7 @@ struct cthunAI : public Scripted_NoMovementAI
 
             //Only units out of stomach
             if (pUnit && i->second == false)
-            {
                 temp.push_back(pUnit);
-            }
             ++i;
         }
 
@@ -566,10 +571,10 @@ struct cthunAI : public Scripted_NoMovementAI
             //WisperTimer
             if (WisperTimer <= diff)
             {
-                Map *map = me->GetMap();
+                Map* map = me->GetMap();
                 if (!map->IsDungeon()) return;
 
-                Map::PlayerList const &PlayerList = map->GetPlayers();
+                Map::PlayerList const& PlayerList = map->GetPlayers();
                 for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 {
                     if (Player* i_pl = i->getSource())
@@ -580,8 +585,9 @@ struct cthunAI : public Scripted_NoMovementAI
                 }
 
                 //One random wisper every 90 - 300 seconds
-                WisperTimer = 90000 + (rand()% 210000);
-            } else WisperTimer -= diff;
+                WisperTimer = 90000 + (rand() % 210000);
+            }
+            else WisperTimer -= diff;
 
             return;
         }
@@ -594,8 +600,8 @@ struct cthunAI : public Scripted_NoMovementAI
 
         switch (pInst->GetData(DATA_CTHUN_PHASE))
         {
-            //Transition phase
-            case 2:
+        //Transition phase
+        case 2:
             {
                 //PhaseTimer
                 if (PhaseTimer <= diff)
@@ -646,12 +652,14 @@ struct cthunAI : public Scripted_NoMovementAI
                         ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(me->GetGUID());
 
                     PhaseTimer = 0;
-                } else PhaseTimer -= diff;
+                }
+                else PhaseTimer -= diff;
 
-            }break;
+            }
+            break;
 
-            //Body Phase
-            case 3:
+        //Body Phase
+        case 3:
             {
                 //Remove Target field
                 me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
@@ -678,7 +686,7 @@ struct cthunAI : public Scripted_NoMovementAI
                         if (pUnit && i->second == true)
                         {
                             //Teleport each player out
-                            DoTeleportPlayer(pUnit, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()+10, float(rand()%6));
+                            DoTeleportPlayer(pUnit, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ() + 10, float(rand() % 6));
 
                             //Cast knockback on them
                             DoCast(pUnit, SPELL_EXIT_STOMACH_KNOCKBACK, true);
@@ -715,7 +723,7 @@ struct cthunAI : public Scripted_NoMovementAI
                             if (pUnit->GetDistance(KICK_X, KICK_Y, KICK_Z) < 15)
                             {
                                 //Teleport each player out
-                                DoTeleportPlayer(pUnit, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()+10, float(rand()%6));
+                                DoTeleportPlayer(pUnit, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ() + 10, float(rand() % 6));
 
                                 //Cast knockback on them
                                 DoCast(pUnit, SPELL_EXIT_STOMACH_KNOCKBACK, true);
@@ -730,7 +738,8 @@ struct cthunAI : public Scripted_NoMovementAI
                     }
 
                     StomachAcidTimer = 4000;
-                } else StomachAcidTimer -= diff;
+                }
+                else StomachAcidTimer -= diff;
 
                 //Stomach Enter Timer
                 if (StomachEnterTimer <= diff)
@@ -749,7 +758,8 @@ struct cthunAI : public Scripted_NoMovementAI
                     }
 
                     StomachEnterTimer = 13800;
-                } else StomachEnterTimer -= diff;
+                }
+                else StomachEnterTimer -= diff;
 
                 if (StomachEnterVisTimer && StomachEnterTarget)
                 {
@@ -759,13 +769,12 @@ struct cthunAI : public Scripted_NoMovementAI
                         Unit* pUnit = Unit::GetUnit(*me, StomachEnterTarget);
 
                         if (pUnit)
-                        {
                             DoTeleportPlayer(pUnit, STOMACH_X, STOMACH_Y, STOMACH_Z, STOMACH_O);
-                        }
 
                         StomachEnterTarget = 0;
                         StomachEnterVisTimer = 0;
-                    } else StomachEnterVisTimer -= diff;
+                    }
+                    else StomachEnterVisTimer -= diff;
                 }
 
                 //GientClawTentacleTimer
@@ -778,7 +787,7 @@ struct cthunAI : public Scripted_NoMovementAI
                         Creature* Spawned = NULL;
 
                         //Spawn claw tentacle on the random target
-                        Spawned = (Creature*)me->SummonCreature(MOB_GIANT_CLAW_TENTACLE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
+                        Spawned = (Creature*)me->SummonCreature(MOB_GIANT_CLAW_TENTACLE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 500);
 
                         if (Spawned)
                             Spawned->AI()->AttackStart(pTarget);
@@ -786,7 +795,8 @@ struct cthunAI : public Scripted_NoMovementAI
 
                     //One giant claw tentacle every minute
                     GiantClawTentacleTimer = 60000;
-                } else GiantClawTentacleTimer -= diff;
+                }
+                else GiantClawTentacleTimer -= diff;
 
                 //GiantEyeTentacleTimer
                 if (GiantEyeTentacleTimer <= diff)
@@ -799,7 +809,7 @@ struct cthunAI : public Scripted_NoMovementAI
                         Creature* Spawned = NULL;
 
                         //Spawn claw tentacle on the random target
-                        Spawned = (Creature*)me->SummonCreature(MOB_GIANT_EYE_TENTACLE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
+                        Spawned = (Creature*)me->SummonCreature(MOB_GIANT_EYE_TENTACLE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 500);
 
                         if (Spawned)
                             Spawned->AI()->AttackStart(pTarget);
@@ -807,7 +817,8 @@ struct cthunAI : public Scripted_NoMovementAI
 
                     //One giant eye tentacle every minute
                     GiantEyeTentacleTimer = 60000;
-                } else GiantEyeTentacleTimer -= diff;
+                }
+                else GiantEyeTentacleTimer -= diff;
 
                 //EyeTentacleTimer
                 if (EyeTentacleTimer <= diff)
@@ -825,12 +836,14 @@ struct cthunAI : public Scripted_NoMovementAI
 
                     //These spawn at every 30 seconds
                     EyeTentacleTimer = 30000;
-                } else EyeTentacleTimer -= diff;
+                }
+                else EyeTentacleTimer -= diff;
 
-            }break;
+            }
+            break;
 
-            //Weakened state
-            case 4:
+        //Weakened state
+        case 4:
             {
                 //PhaseTimer
                 if (PhaseTimer <= diff)
@@ -863,7 +876,8 @@ struct cthunAI : public Scripted_NoMovementAI
                         ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(me->GetGUID());
 
                     PhaseTimer = 0;
-                } else PhaseTimer -= diff;
+                }
+                else PhaseTimer -= diff;
             }
         }
     }
@@ -875,7 +889,7 @@ struct cthunAI : public Scripted_NoMovementAI
             pInst->SetData(DATA_CTHUN_PHASE, 5);
     }
 
-    void DamageTaken(Unit* /*done_by*/, uint32 &damage)
+    void DamageTaken(Unit* /*done_by*/, uint32& damage)
     {
         //No instance
         if (!pInst)
@@ -883,10 +897,10 @@ struct cthunAI : public Scripted_NoMovementAI
 
         switch (pInst->GetData(DATA_CTHUN_PHASE))
         {
-            case 3:
+        case 3:
             {
                 //Not weakened so reduce damage by 99%
-                if (damage / 99 > 0) damage/= 99;
+                if (damage / 99 > 0) damage /= 99;
                 else damage = 1;
 
                 //Prevent death in non-weakened state
@@ -897,15 +911,15 @@ struct cthunAI : public Scripted_NoMovementAI
             }
             break;
 
-            case 4:
+        case 4:
             {
                 //Weakened - takes normal damage
                 return;
             }
 
-            default:
-                damage = 0;
-                break;
+        default:
+            damage = 0;
+            break;
         }
     }
 
@@ -919,7 +933,7 @@ struct eye_tentacleAI : public Scripted_NoMovementAI
 {
     eye_tentacleAI(Creature* c) : Scripted_NoMovementAI(c)
     {
-        Unit* p = DoSpawnCreature(MOB_SMALL_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
+        Unit* p = DoSpawnCreature(MOB_SMALL_PORTAL, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
         if (p)
             Portal = p->GetGUID();
     }
@@ -961,19 +975,21 @@ struct eye_tentacleAI : public Scripted_NoMovementAI
             me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
 
             return;
-        } else KillSelfTimer -= diff;
+        }
+        else KillSelfTimer -= diff;
 
         //MindflayTimer
         if (MindflayTimer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget && !pTarget->HasAura(SPELL_DIGESTIVE_ACID, 0))
-                DoCast(pTarget,SPELL_MIND_FLAY);
+                DoCast(pTarget, SPELL_MIND_FLAY);
 
             //Mindflay every 10 seconds
             MindflayTimer = 10100;
-        } else MindflayTimer -= diff;
+        }
+        else MindflayTimer -= diff;
     }
 };
 
@@ -981,7 +997,7 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
 {
     claw_tentacleAI(Creature* c) : Scripted_NoMovementAI(c)
     {
-        Unit* p = DoSpawnCreature(MOB_SMALL_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
+        Unit* p = DoSpawnCreature(MOB_SMALL_PORTAL, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
         if (p)
             Portal = p->GetGUID();
     }
@@ -1030,7 +1046,7 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
                 me->SetVisibility(VISIBILITY_OFF);
 
                 Unit* pTarget = NULL;
-                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (!pTarget)
                 {
                     me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
@@ -1040,7 +1056,7 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
                 if (!pTarget->HasAura(SPELL_DIGESTIVE_ACID, 0))
                 {
                     me->GetMap()->CreatureRelocation(me, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0);
-                    Unit* p = DoSpawnCreature(MOB_SMALL_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    Unit* p = DoSpawnCreature(MOB_SMALL_PORTAL, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                     if (p)
                         Portal = p->GetGUID();
 
@@ -1052,7 +1068,8 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
 
                 me->SetVisibility(VISIBILITY_ON);
 
-            } else EvadeTimer -= diff;
+            }
+            else EvadeTimer -= diff;
         }
 
         //GroundRuptureTimer
@@ -1060,14 +1077,16 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
         {
             DoCastVictim(SPELL_GROUND_RUPTURE);
             GroundRuptureTimer = 30000;
-        } else GroundRuptureTimer -= diff;
+        }
+        else GroundRuptureTimer -= diff;
 
         //HamstringTimer
         if (HamstringTimer <= diff)
         {
             DoCastVictim(SPELL_HAMSTRING);
             HamstringTimer = 5000;
-        } else HamstringTimer -= diff;
+        }
+        else HamstringTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -1077,7 +1096,7 @@ struct giant_claw_tentacleAI : public Scripted_NoMovementAI
 {
     giant_claw_tentacleAI(Creature* c) : Scripted_NoMovementAI(c)
     {
-        Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
+        Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
         if (p)
             Portal = p->GetGUID();
     }
@@ -1138,7 +1157,7 @@ struct giant_claw_tentacleAI : public Scripted_NoMovementAI
                 if (!pTarget->HasAura(SPELL_DIGESTIVE_ACID, 0))
                 {
                     me->GetMap()->CreatureRelocation(me, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0);
-                    Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                     if (p)
                         Portal = p->GetGUID();
 
@@ -1151,7 +1170,8 @@ struct giant_claw_tentacleAI : public Scripted_NoMovementAI
 
                 me->SetVisibility(VISIBILITY_ON);
 
-            } else EvadeTimer -= diff;
+            }
+            else EvadeTimer -= diff;
         }
 
         //GroundRuptureTimer
@@ -1159,21 +1179,24 @@ struct giant_claw_tentacleAI : public Scripted_NoMovementAI
         {
             DoCastVictim(SPELL_GROUND_RUPTURE);
             GroundRuptureTimer = 30000;
-        } else GroundRuptureTimer -= diff;
+        }
+        else GroundRuptureTimer -= diff;
 
         //ThrashTimer
         if (ThrashTimer <= diff)
         {
             DoCastVictim(SPELL_THRASH);
             ThrashTimer = 10000;
-        } else ThrashTimer -= diff;
+        }
+        else ThrashTimer -= diff;
 
         //HamstringTimer
         if (HamstringTimer <= diff)
         {
             DoCastVictim(SPELL_HAMSTRING);
             HamstringTimer = 10000;
-        } else HamstringTimer -= diff;
+        }
+        else HamstringTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -1183,7 +1206,7 @@ struct giant_eye_tentacleAI : public Scripted_NoMovementAI
 {
     giant_eye_tentacleAI(Creature* c) : Scripted_NoMovementAI(c)
     {
-        Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
+        Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
         if (p)
             Portal = p->GetGUID();
     }
@@ -1219,13 +1242,14 @@ struct giant_eye_tentacleAI : public Scripted_NoMovementAI
         if (BeamTimer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget && !pTarget->HasAura(SPELL_DIGESTIVE_ACID, 0))
-                DoCast(pTarget,SPELL_GREEN_BEAM);
+                DoCast(pTarget, SPELL_GREEN_BEAM);
 
             //Beam every 2 seconds
             BeamTimer = 2100;
-        } else BeamTimer -= diff;
+        }
+        else BeamTimer -= diff;
     }
 };
 
@@ -1250,7 +1274,8 @@ void flesh_tentacleAI::UpdateAI(const uint32 diff)
             }
 
             CheckTimer = 1000;
-        } else CheckTimer -= diff;
+        }
+        else CheckTimer -= diff;
     }
 
     DoMeleeAttackIfReady();
@@ -1305,7 +1330,7 @@ CreatureAI* GetAI_flesh_tentacle(Creature* pCreature)
 
 void AddSC_boss_cthun()
 {
-    Script *newscript;
+    Script* newscript;
 
     //Eye
     newscript = new Script;

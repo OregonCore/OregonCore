@@ -62,14 +62,14 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
         focusedTarget = NULL;
     }
 
-    void EnterCombat(Unit* )
+    void EnterCombat(Unit*)
     { }
 
     void JustSummoned(Creature* summoned)
     {
         if (summoned && summoned->GetEntry() == ENTRY_FOCUS_FIRE)
         {
-            summoned->CastSpell(summoned,SPELL_FOCUS_FIRE_VISUAL,false);
+            summoned->CastSpell(summoned, SPELL_FOCUS_FIRE_VISUAL, false);
             summoned->setFaction(me->getFaction());
             summoned->SetLevel(me->getLevel());
             summoned->AddUnitState(UNIT_STATE_ROOT);
@@ -85,8 +85,8 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
         if (Inhibitmagic_Timer <= diff)
         {
             float dist;
-            Map *map = me->GetMap();
-            Map::PlayerList const &PlayerList = map->GetPlayers();
+            Map* map = me->GetMap();
+            Map::PlayerList const& PlayerList = map->GetPlayers();
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 if (Player* i_pl = i->getSource())
                     if (i_pl->isAlive() && (dist = i_pl->GetDistance(me)) < 45)
@@ -100,8 +100,9 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
                         if (dist < 15)
                             me->AddAura(SPELL_INHIBITMAGIC, i_pl);
                     }
-            Inhibitmagic_Timer = 3000+(rand()%1000);
-        } else Inhibitmagic_Timer -= diff;
+            Inhibitmagic_Timer = 3000 + (rand() % 1000);
+        }
+        else Inhibitmagic_Timer -= diff;
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -110,38 +111,41 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
         //Attractmagic_Timer
         if (Attractmagic_Timer <= diff)
         {
-            DoCast(me,SPELL_ATTRACTMAGIC);
+            DoCast(me, SPELL_ATTRACTMAGIC);
             Attractmagic_Timer = 30000;
             Carnivorousbite_Timer = 1500;
-        } else Attractmagic_Timer -= diff;
+        }
+        else Attractmagic_Timer -= diff;
 
         //Carnivorousbite_Timer
         if (Carnivorousbite_Timer <= diff)
         {
-            DoCast(me,SPELL_CARNIVOROUSBITE);
+            DoCast(me, SPELL_CARNIVOROUSBITE);
             Carnivorousbite_Timer = 10000;
-        } else Carnivorousbite_Timer -= diff;
+        }
+        else Carnivorousbite_Timer -= diff;
 
         //FocusFire_Timer
         if (FocusFire_Timer <= diff)
         {
             // Summon Focus Fire & Emote
-            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive())
             {
                 focusedTarget = pTarget;
-                me->SummonCreature(ENTRY_FOCUS_FIRE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,5500);
+                me->SummonCreature(ENTRY_FOCUS_FIRE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 5500);
 
                 // Emote
-                std::string *emote = new std::string(EMOTE_FOCUSES_ON);
+                std::string* emote = new std::string(EMOTE_FOCUSES_ON);
                 emote->append(pTarget->GetName());
                 emote->append("!");
                 const char* text = emote->c_str();
                 me->MonsterTextEmote(text, 0, true);
                 delete emote;
             }
-            FocusFire_Timer = 15000+(rand()%5000);
-        } else FocusFire_Timer -= diff;
+            FocusFire_Timer = 15000 + (rand() % 5000);
+        }
+        else FocusFire_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -165,11 +169,11 @@ struct mob_focus_fireAI : public ScriptedAI
 
     void Reset()
     {
-        FieryBlast_Timer = 3000+(rand()%1000);
+        FieryBlast_Timer = 3000 + (rand() % 1000);
         fiery1 = fiery2 = true;
     }
 
-    void EnterCombat(Unit* )
+    void EnterCombat(Unit*)
     { }
 
     void UpdateAI(const uint32 diff)
@@ -181,13 +185,14 @@ struct mob_focus_fireAI : public ScriptedAI
         //FieryBlast_Timer
         if (fiery2 && FieryBlast_Timer <= diff)
         {
-            DoCast(me,SPELL_FIERY_BLAST);
+            DoCast(me, SPELL_FIERY_BLAST);
 
             if (fiery1) fiery1 = false;
             else if (fiery2) fiery2 = false;
 
             FieryBlast_Timer = 1000;
-        } else FieryBlast_Timer -= diff;
+        }
+        else FieryBlast_Timer -= diff;
 
         //DoMeleeAttackIfReady();
     }
@@ -200,7 +205,7 @@ CreatureAI* GetAI_mob_focus_fire(Creature* pCreature)
 
 void AddSC_boss_shirrak_the_dead_watcher()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_shirrak_the_dead_watcher";
     newscript->GetAI = &GetAI_boss_shirrak_the_dead_watcher;

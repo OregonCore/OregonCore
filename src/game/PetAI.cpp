@@ -86,7 +86,7 @@ void PetAI::UpdateAI(const uint32 diff)
     else
         m_updateAlliesTimer -= diff;
 
-    // Must also check if victim is alive 
+    // Must also check if victim is alive
     if (me->getVictim() && me->getVictim()->isAlive())
     {
         if (_needToStop())
@@ -104,15 +104,15 @@ void PetAI::UpdateAI(const uint32 diff)
             AttackStart(nextTarget);
         else
         {
-            // Cancels the attack command so the pet stops chasing the 
+            // Cancels the attack command so the pet stops chasing the
             // target it is attacking, and returns the pet to his owner
             me->GetCharmInfo()->SetIsCommandAttack(false);
             HandleReturnMovement();
         }
     }
     else if (owner && !me->HasUnitState(UNIT_STATE_FOLLOW)) // no charm info and no victim
-        me->GetMotionMaster()->MoveFollow(owner,PET_FOLLOW_DIST, me->GetFollowAngle());
- 
+        me->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, me->GetFollowAngle());
+
     if (!me->GetCharmInfo())
         return;
 
@@ -128,7 +128,7 @@ void PetAI::UpdateAI(const uint32 diff)
             if (!spellID)
                 continue;
 
-            SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellID);
+            SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellID);
             if (!spellInfo)
                 continue;
 
@@ -162,7 +162,7 @@ void PetAI::UpdateAI(const uint32 diff)
                     continue;
             }
 
-            Spell *spell = new Spell(me, spellInfo, false, 0);
+            Spell* spell = new Spell(me, spellInfo, false, 0);
 
             // Fix to allow pets on STAY to autocast
             if (me->getVictim() && _CanAttack(me->getVictim()) && spell->CanAutoCast(me->getVictim()))
@@ -175,7 +175,7 @@ void PetAI::UpdateAI(const uint32 diff)
                 bool spellUsed = false;
                 for (std::set<uint64>::const_iterator tar = m_AllySet.begin(); tar != m_AllySet.end(); ++tar)
                 {
-                    Unit* Target = ObjectAccessor::GetUnit(*me,*tar);
+                    Unit* Target = ObjectAccessor::GetUnit(*me, *tar);
 
                     //only buff targets that are in combat, unless the spell can only be cast while out of combat
                     if (!Target)
@@ -232,9 +232,9 @@ void PetAI::UpdateAI(const uint32 diff)
 void PetAI::UpdateAllies()
 {
     Unit* owner = me->GetCharmerOrOwner();
-    Group *pGroup = NULL;
+    Group* pGroup = NULL;
 
-    m_updateAlliesTimer = 10*IN_MILLISECONDS;                //update friendly targets every 10 seconds, lesser checks increase performance
+    m_updateAlliesTimer = 10 * IN_MILLISECONDS;              //update friendly targets every 10 seconds, lesser checks increase performance
 
     if (!owner)
         return;
@@ -252,7 +252,7 @@ void PetAI::UpdateAllies()
     m_AllySet.insert(me->GetGUID());
     if (pGroup)                                              //add group
     {
-        for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
+        for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
         {
             Player* Target = itr->getSource();
             if (!Target || !pGroup->SameSubGroup(owner->ToPlayer(), Target))
@@ -285,8 +285,8 @@ void PetAI::KilledUnit(Unit* victim)
     if (Unit* nextTarget = SelectNextTarget())
         AttackStart(nextTarget);
     else
-    { 
-        // Cancels the attack command so the pet stops chasing the 
+    {
+        // Cancels the attack command so the pet stops chasing the
         // target it is attacking, and returns the pet to his owner
         me->GetCharmInfo()->SetIsCommandAttack(false);
         HandleReturnMovement();
@@ -303,13 +303,13 @@ void PetAI::AttackStart(Unit* target)
 
     // We can attack, should we chase or not?
     if (me->GetCharmInfo()->HasCommandState(COMMAND_FOLLOW))
-        DoAttack(target,true); // FOLLOW, attack with chase
+        DoAttack(target, true); // FOLLOW, attack with chase
     else
     {
         if (me->GetCharmInfo()->IsCommandAttack())
-            DoAttack(target,true); // STAY or FOLLOW, player clicked "attack" so attack with chase
+            DoAttack(target, true); // STAY or FOLLOW, player clicked "attack" so attack with chase
         else
-            DoAttack(target,false); // STAY, target in range, attack not clicked so attack without chase
+            DoAttack(target, false); // STAY, target in range, attack not clicked so attack without chase
     }
 }
 
@@ -345,12 +345,12 @@ void PetAI::HandleReturnMovement()
             // Return to previous position where stay was clicked
             if (!me->GetCharmInfo()->IsCommandAttack())
             {
-                float x,y,z;
+                float x, y, z;
 
                 me->GetCharmInfo()->GetStayPosition(x, y, z);
                 me->GetCharmInfo()->SetIsReturning(true);
                 me->GetMotionMaster()->Clear();
-                me->GetMotionMaster()->MovePoint(me->GetGUIDLow(),x,y,z);
+                me->GetMotionMaster()->MovePoint(me->GetGUIDLow(), x, y, z);
             }
         }
     }
@@ -382,7 +382,7 @@ void PetAI::DoAttack(Unit* target, bool chase)
 
     if (chase)
     {
-        if (me->Attack(target,true))
+        if (me->Attack(target, true))
         {
             me->GetCharmInfo()->SetIsAtStay(false);
             me->GetCharmInfo()->SetIsFollowing(false);
@@ -396,7 +396,7 @@ void PetAI::DoAttack(Unit* target, bool chase)
         me->GetCharmInfo()->SetIsAtStay(true);
         me->GetCharmInfo()->SetIsFollowing(false);
         me->GetCharmInfo()->SetIsReturning(false);
-        me->Attack(target,true);
+        me->Attack(target, true);
     }
 }
 
@@ -405,7 +405,7 @@ void PetAI::MovementInform(uint32 moveType, uint32 data)
     // Receives notification when pet reaches stay or follow owner
     switch (moveType)
     {
-        case POINT_MOTION_TYPE:
+    case POINT_MOTION_TYPE:
         {
             // Pet is returning to where stay was clicked. data should be
             // pet's GUIDLow since we set that as the waypoint ID
@@ -421,7 +421,7 @@ void PetAI::MovementInform(uint32 moveType, uint32 data)
         }
         break;
 
-        case TARGETED_MOTION_TYPE:
+    case TARGETED_MOTION_TYPE:
         {
             // If data is owner's GUIDLow then we've reached follow point,
             // otherwise we're probably chasing a creature
@@ -436,8 +436,8 @@ void PetAI::MovementInform(uint32 moveType, uint32 data)
         }
         break;
 
-        default:
-            break;
+    default:
+        break;
     }
 }
 

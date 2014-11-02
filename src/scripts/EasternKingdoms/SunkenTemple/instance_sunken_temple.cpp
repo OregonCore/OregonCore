@@ -84,23 +84,37 @@ struct instance_sunken_temple : public ScriptedInstance
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case GO_ATALAI_STATUE1: GOAtalaiStatue1 = pGo->GetGUID();   break;
-            case GO_ATALAI_STATUE2: GOAtalaiStatue2 = pGo->GetGUID();   break;
-            case GO_ATALAI_STATUE3: GOAtalaiStatue3 = pGo->GetGUID();   break;
-            case GO_ATALAI_STATUE4: GOAtalaiStatue4 = pGo->GetGUID();   break;
-            case GO_ATALAI_STATUE5: GOAtalaiStatue5 = pGo->GetGUID();   break;
-            case GO_ATALAI_STATUE6: GOAtalaiStatue6 = pGo->GetGUID();   break;
-            case GO_ATALAI_IDOL:    GOAtalaiIdol = pGo->GetGUID();      break;
+        case GO_ATALAI_STATUE1:
+            GOAtalaiStatue1 = pGo->GetGUID();
+            break;
+        case GO_ATALAI_STATUE2:
+            GOAtalaiStatue2 = pGo->GetGUID();
+            break;
+        case GO_ATALAI_STATUE3:
+            GOAtalaiStatue3 = pGo->GetGUID();
+            break;
+        case GO_ATALAI_STATUE4:
+            GOAtalaiStatue4 = pGo->GetGUID();
+            break;
+        case GO_ATALAI_STATUE5:
+            GOAtalaiStatue5 = pGo->GetGUID();
+            break;
+        case GO_ATALAI_STATUE6:
+            GOAtalaiStatue6 = pGo->GetGUID();
+            break;
+        case GO_ATALAI_IDOL:
+            GOAtalaiIdol = pGo->GetGUID();
+            break;
         }
     }
 
-     virtual void Update(uint32 /*diff*/) // correct order goes form 1-6
-     {
-         switch(State)
-         {
-         case GO_ATALAI_STATUE1:
+    virtual void Update(uint32 /*diff*/) // correct order goes form 1-6
+    {
+        switch (State)
+        {
+        case GO_ATALAI_STATUE1:
             if (!s1 && !s2 && !s3 && !s4 && !s5 && !s6)
             {
                 if (GameObject* pAtalaiStatue1 = instance->GetGameObject(GOAtalaiStatue1))
@@ -109,7 +123,7 @@ struct instance_sunken_temple : public ScriptedInstance
                 State = 0;
             };
             break;
-         case GO_ATALAI_STATUE2:
+        case GO_ATALAI_STATUE2:
             if (s1 && !s2 && !s3 && !s4 && !s5 && !s6)
             {
                 if (GameObject* pAtalaiStatue2 = instance->GetGameObject(GOAtalaiStatue2))
@@ -118,7 +132,7 @@ struct instance_sunken_temple : public ScriptedInstance
                 State = 0;
             };
             break;
-         case GO_ATALAI_STATUE3:
+        case GO_ATALAI_STATUE3:
             if (s1 && s2 && !s3 && !s4 && !s5 && !s6)
             {
                 if (GameObject* pAtalaiStatue3 = instance->GetGameObject(GOAtalaiStatue3))
@@ -127,7 +141,7 @@ struct instance_sunken_temple : public ScriptedInstance
                 State = 0;
             };
             break;
-         case GO_ATALAI_STATUE4:
+        case GO_ATALAI_STATUE4:
             if (s1 && s2 && s3 && !s4 && !s5 && !s6)
             {
                 if (GameObject* pAtalaiStatue4 = instance->GetGameObject(GOAtalaiStatue4))
@@ -136,7 +150,7 @@ struct instance_sunken_temple : public ScriptedInstance
                 State = 0;
             }
             break;
-         case GO_ATALAI_STATUE5:
+        case GO_ATALAI_STATUE5:
             if (s1 && s2 && s3 && s4 && !s5 && !s6)
             {
                 if (GameObject* pAtalaiStatue5 = instance->GetGameObject(GOAtalaiStatue5))
@@ -145,7 +159,7 @@ struct instance_sunken_temple : public ScriptedInstance
                 State = 0;
             }
             break;
-         case GO_ATALAI_STATUE6:
+        case GO_ATALAI_STATUE6:
             if (s1 && s2 && s3 && s4 && s5 && !s6)
             {
                 if (GameObject* pAtalaiStatue6 = instance->GetGameObject(GOAtalaiStatue6))
@@ -154,40 +168,40 @@ struct instance_sunken_temple : public ScriptedInstance
                 State = 0;
             }
             break;
-         }
-     };
+        }
+    };
 
     void UseStatue(GameObject* pGo)
     {
-        pGo->SummonGameObject(GO_ATALAI_LIGHT1,pGo->GetPositionX(),pGo->GetPositionY(),pGo->GetPositionZ(),0,0,0,0,0,0);
+        pGo->SummonGameObject(GO_ATALAI_LIGHT1, pGo->GetPositionX(), pGo->GetPositionY(), pGo->GetPositionZ(), 0, 0, 0, 0, 0, 0);
         pGo->SetUInt32Value(GAMEOBJECT_FLAGS, 4);
     }
 
-     /*
-     void UseLastStatue(GameObject* pGo)
-     {
-         AtalaiStatue1->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue1->GetPositionX(),AtalaiStatue1->GetPositionY(),AtalaiStatue1->GetPositionZ(),0,0,0,0,0,100000);
-         AtalaiStatue2->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue2->GetPositionX(),AtalaiStatue2->GetPositionY(),AtalaiStatue2->GetPositionZ(),0,0,0,0,0,100000);
-         AtalaiStatue3->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue3->GetPositionX(),AtalaiStatue3->GetPositionY(),AtalaiStatue3->GetPositionZ(),0,0,0,0,0,100000);
-         AtalaiStatue4->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue4->GetPositionX(),AtalaiStatue4->GetPositionY(),AtalaiStatue4->GetPositionZ(),0,0,0,0,0,100000);
-         AtalaiStatue5->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue5->GetPositionX(),AtalaiStatue5->GetPositionY(),AtalaiStatue5->GetPositionZ(),0,0,0,0,0,100000);
-         AtalaiStatue6->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue6->GetPositionX(),AtalaiStatue6->GetPositionY(),AtalaiStatue6->GetPositionZ(),0,0,0,0,0,100000);
-         pGo->SummonGameObject(148838,-488.997,96.61,-189.019,-1.52,0,0,0,0,100000);
-     }
-     */
+    /*
+    void UseLastStatue(GameObject* pGo)
+    {
+        AtalaiStatue1->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue1->GetPositionX(),AtalaiStatue1->GetPositionY(),AtalaiStatue1->GetPositionZ(),0,0,0,0,0,100000);
+        AtalaiStatue2->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue2->GetPositionX(),AtalaiStatue2->GetPositionY(),AtalaiStatue2->GetPositionZ(),0,0,0,0,0,100000);
+        AtalaiStatue3->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue3->GetPositionX(),AtalaiStatue3->GetPositionY(),AtalaiStatue3->GetPositionZ(),0,0,0,0,0,100000);
+        AtalaiStatue4->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue4->GetPositionX(),AtalaiStatue4->GetPositionY(),AtalaiStatue4->GetPositionZ(),0,0,0,0,0,100000);
+        AtalaiStatue5->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue5->GetPositionX(),AtalaiStatue5->GetPositionY(),AtalaiStatue5->GetPositionZ(),0,0,0,0,0,100000);
+        AtalaiStatue6->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue6->GetPositionX(),AtalaiStatue6->GetPositionY(),AtalaiStatue6->GetPositionZ(),0,0,0,0,0,100000);
+        pGo->SummonGameObject(148838,-488.997,96.61,-189.019,-1.52,0,0,0,0,100000);
+    }
+    */
 
-     void SetData(uint32 type, uint32 data)
-     {
+    void SetData(uint32 type, uint32 data)
+    {
         if (type == EVENT_STATE)
             State = data;
-     }
+    }
 
-     uint32 GetData(uint32 type)
-     {
+    uint32 GetData(uint32 type)
+    {
         if (type == EVENT_STATE)
             return State;
         return 0;
-     }
+    }
 };
 
 InstanceData* GetInstanceData_instance_sunken_temple(Map* pMap)
@@ -197,7 +211,7 @@ InstanceData* GetInstanceData_instance_sunken_temple(Map* pMap)
 
 void AddSC_instance_sunken_temple()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_sunken_temple";
     newscript->GetInstanceData = &GetInstanceData_instance_sunken_temple;

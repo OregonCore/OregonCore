@@ -31,8 +31,11 @@ void CreatureAI::OnCharmed(bool /*apply*/)
     me->IsAIEnabled = false;
 }
 
-AISpellInfoType * UnitAI::AISpellInfo;
-AISpellInfoType * GetAISpellInfo(uint32 i) { return &CreatureAI::AISpellInfo[i]; }
+AISpellInfoType* UnitAI::AISpellInfo;
+AISpellInfoType* GetAISpellInfo(uint32 i)
+{
+    return &CreatureAI::AISpellInfo[i];
+}
 
 void CreatureAI::DoZoneInCombat(Creature* creature)
 {
@@ -42,7 +45,7 @@ void CreatureAI::DoZoneInCombat(Creature* creature)
     if (!creature->CanHaveThreatList())
         return;
 
-    Map *map = creature->GetMap();
+    Map* map = creature->GetMap();
     if (!map->IsDungeon())                                  //use IsDungeon instead of Instanceable, in case battlegrounds will be instantiated
     {
         sLog.outError("DoZoneInCombat call for map that isn't an instance (creature entry = %d)", creature->GetTypeId() == TYPEID_UNIT ? creature->ToCreature()->GetEntry() : 0);
@@ -72,7 +75,7 @@ void CreatureAI::DoZoneInCombat(Creature* creature)
         return;
     }
 
-    Map::PlayerList const &PlList = map->GetPlayers();
+    Map::PlayerList const& PlList = map->GetPlayers();
 
     if (PlList.isEmpty())
         return;

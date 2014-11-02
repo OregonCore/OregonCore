@@ -71,17 +71,17 @@ struct boss_razuviousAI : public ScriptedAI
 
     void KilledUnit(Unit*)
     {
-        if (rand()%3)
+        if (rand() % 3)
             return;
 
-        switch (rand()%2)
+        switch (rand() % 2)
         {
-            case 0:
-                DoPlaySoundToSet(me, SOUND_SLAY1);
-                break;
-            case 1:
-                DoPlaySoundToSet(me, SOUND_SLAY2);
-                break;
+        case 0:
+            DoPlaySoundToSet(me, SOUND_SLAY1);
+            break;
+        case 1:
+            DoPlaySoundToSet(me, SOUND_SLAY2);
+            break;
         }
     }
 
@@ -92,17 +92,17 @@ struct boss_razuviousAI : public ScriptedAI
 
     void EnterCombat(Unit*)
     {
-        switch (rand()%3)
+        switch (rand() % 3)
         {
-            case 0:
-                DoPlaySoundToSet(me, SOUND_AGGRO1);
-                break;
-            case 1:
-                DoPlaySoundToSet(me, SOUND_AGGRO2);
-                break;
-            case 2:
-                DoPlaySoundToSet(me, SOUND_AGGRO3);
-                break;
+        case 0:
+            DoPlaySoundToSet(me, SOUND_AGGRO1);
+            break;
+        case 1:
+            DoPlaySoundToSet(me, SOUND_AGGRO2);
+            break;
+        case 2:
+            DoPlaySoundToSet(me, SOUND_AGGRO3);
+            break;
         }
     }
 
@@ -116,39 +116,42 @@ struct boss_razuviousAI : public ScriptedAI
         {
             DoCastVictim(SPELL_UNBALANCINGSTRIKE);
             UnbalancingStrike_Timer = 30000;
-        } else UnbalancingStrike_Timer -= diff;
+        }
+        else UnbalancingStrike_Timer -= diff;
 
         //DisruptingShout_Timer
         if (DisruptingShout_Timer <= diff)
         {
             DoCastVictim( SPELL_DISRUPTINGSHOUT);
             DisruptingShout_Timer = 25000;
-        } else DisruptingShout_Timer -= diff;
+        }
+        else DisruptingShout_Timer -= diff;
 
         //CommandSound_Timer
         if (CommandSound_Timer <= diff)
         {
-            switch (rand()%5)
+            switch (rand() % 5)
             {
-                case 0:
-                    DoPlaySoundToSet(me, SOUND_COMMND1);
-                    break;
-                case 1:
-                    DoPlaySoundToSet(me, SOUND_COMMND2);
-                    break;
-                case 2:
-                    DoPlaySoundToSet(me, SOUND_COMMND3);
-                    break;
-                case 3:
-                    DoPlaySoundToSet(me, SOUND_COMMND4);
-                    break;
-                case 4:
-                    DoPlaySoundToSet(me, SOUND_COMMND5);
-                    break;
+            case 0:
+                DoPlaySoundToSet(me, SOUND_COMMND1);
+                break;
+            case 1:
+                DoPlaySoundToSet(me, SOUND_COMMND2);
+                break;
+            case 2:
+                DoPlaySoundToSet(me, SOUND_COMMND3);
+                break;
+            case 3:
+                DoPlaySoundToSet(me, SOUND_COMMND4);
+                break;
+            case 4:
+                DoPlaySoundToSet(me, SOUND_COMMND5);
+                break;
             }
 
             CommandSound_Timer = 40000;
-        } else CommandSound_Timer -= diff;
+        }
+        else CommandSound_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -160,7 +163,7 @@ CreatureAI* GetAI_boss_razuvious(Creature* pCreature)
 
 void AddSC_boss_razuvious()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_razuvious";
     newscript->GetAI = &GetAI_boss_razuvious;

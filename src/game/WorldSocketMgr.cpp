@@ -92,7 +92,10 @@ class ReactorRunnable : protected ACE_Task_Base
             return (m_ThreadId = activate());
         }
 
-        void Wait() { ACE_Task_Base::wait(); }
+        void Wait()
+        {
+            ACE_Task_Base::wait();
+        }
 
         long Connections()
         {
@@ -245,7 +248,7 @@ WorldSocketMgr::StartReactiveIO (ACE_UINT16 port, const char* address)
         return -1;
     }
 
-    WorldSocket::Acceptor *acc = new WorldSocket::Acceptor;
+    WorldSocket::Acceptor* acc = new WorldSocket::Acceptor;
     m_Acceptor = acc;
 
     ACE_INET_Addr listen_addr (port, address);
@@ -311,9 +314,9 @@ WorldSocketMgr::OnSocketOpen (WorldSocket* sock)
     if (m_SockOutKBuff >= 0)
     {
         if (sock->peer().set_option (SOL_SOCKET,
-            SO_SNDBUF,
-            (void*) & m_SockOutKBuff,
-            sizeof (int)) == -1 && errno != ENOTSUP)
+                                     SO_SNDBUF,
+                                     (void*) & m_SockOutKBuff,
+                                     sizeof (int)) == -1 && errno != ENOTSUP)
         {
             sLog.outError ("WorldSocketMgr::OnSocketOpen set_option SO_SNDBUF");
             return -1;
@@ -326,9 +329,9 @@ WorldSocketMgr::OnSocketOpen (WorldSocket* sock)
     if (m_UseNoDelay)
     {
         if (sock->peer().set_option (ACE_IPPROTO_TCP,
-            TCP_NODELAY,
-            (void*)&ndoption,
-            sizeof (int)) == -1)
+                                     TCP_NODELAY,
+                                     (void*)&ndoption,
+                                     sizeof (int)) == -1)
         {
             sLog.outError ("WorldSocketMgr::OnSocketOpen: peer().set_option TCP_NODELAY errno = %s", ACE_OS::strerror (errno));
             return -1;
@@ -352,6 +355,6 @@ WorldSocketMgr::OnSocketOpen (WorldSocket* sock)
 WorldSocketMgr*
 WorldSocketMgr::Instance()
 {
-    return ACE_Singleton<WorldSocketMgr,ACE_Thread_Mutex>::instance();
+    return ACE_Singleton<WorldSocketMgr, ACE_Thread_Mutex>::instance();
 }
 

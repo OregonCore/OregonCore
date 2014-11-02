@@ -62,7 +62,7 @@ struct npc_medivh_bmAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 SpellCorrupt_Timer;
     uint32 Check_Timer;
@@ -79,11 +79,11 @@ struct npc_medivh_bmAI : public ScriptedAI
             return;
 
         if (pInstance->GetData(TYPE_MEDIVH) == IN_PROGRESS)
-            me->CastSpell(me,SPELL_CHANNEL,true);
-        else if (me->HasAura(SPELL_CHANNEL,0))
-            me->RemoveAura(SPELL_CHANNEL,0);
+            me->CastSpell(me, SPELL_CHANNEL, true);
+        else if (me->HasAura(SPELL_CHANNEL, 0))
+            me->RemoveAura(SPELL_CHANNEL, 0);
 
-        me->CastSpell(me,SPELL_PORTAL_RUNE,true);
+        me->CastSpell(me, SPELL_PORTAL_RUNE, true);
     }
 
     void MoveInLineOfSight(Unit* who)
@@ -97,10 +97,10 @@ struct npc_medivh_bmAI : public ScriptedAI
                 return;
 
             DoScriptText(SAY_INTRO, me);
-            pInstance->SetData(TYPE_MEDIVH,IN_PROGRESS);
-            me->CastSpell(me,SPELL_CHANNEL,false);
+            pInstance->SetData(TYPE_MEDIVH, IN_PROGRESS);
+            me->CastSpell(me, SPELL_CHANNEL, false);
             Check_Timer = 5000;
-                 }
+        }
         else if (who->GetTypeId() == TYPEID_UNIT && me->IsWithinDistInMap(who, 15.0f))
         {
             if (pInstance->GetData(TYPE_MEDIVH) != IN_PROGRESS)
@@ -110,12 +110,12 @@ struct npc_medivh_bmAI : public ScriptedAI
             if (entry == C_ASSAS || entry == C_WHELP || entry == C_CHRON || entry == C_EXECU || entry == C_VANQU)
             {
                 who->StopMoving();
-                who->CastSpell(me,SPELL_CORRUPT,false);
+                who->CastSpell(me, SPELL_CORRUPT, false);
             }
             else if (entry == C_AEONUS)
             {
                 who->StopMoving();
-                who->CastSpell(me,SPELL_CORRUPT_AEONUS,false);
+                who->CastSpell(me, SPELL_CORRUPT_AEONUS, false);
             }
         }
     }
@@ -159,15 +159,16 @@ struct npc_medivh_bmAI : public ScriptedAI
         {
             if (SpellCorrupt_Timer <= diff)
             {
-                    pInstance->SetData(TYPE_MEDIVH,SPECIAL);
+                pInstance->SetData(TYPE_MEDIVH, SPECIAL);
 
-                if (me->HasAura(SPELL_CORRUPT_AEONUS,0))
+                if (me->HasAura(SPELL_CORRUPT_AEONUS, 0))
                     SpellCorrupt_Timer = 1000;
-                else if (me->HasAura(SPELL_CORRUPT,0))
+                else if (me->HasAura(SPELL_CORRUPT, 0))
                     SpellCorrupt_Timer = 3000;
                 else
                     SpellCorrupt_Timer = 0;
-            } else SpellCorrupt_Timer -= diff;
+            }
+            else SpellCorrupt_Timer -= diff;
         }
 
         if (Check_Timer)
@@ -210,7 +211,8 @@ struct npc_medivh_bmAI : public ScriptedAI
                     Check_Timer = 0;
                     //TODO: start the post-event here
                 }
-            } else Check_Timer -= diff;
+            }
+            else Check_Timer -= diff;
         }
 
         //if (!UpdateVictim())
@@ -230,7 +232,7 @@ struct Wave
     uint32 PortalMob[4];                                    //spawns for portal waves (in order)
 };
 
-static Wave PortalWaves[]=
+static Wave PortalWaves[] =
 {
     {{C_ASSAS, C_WHELP, C_CHRON, 0}},
     {{C_EXECU, C_CHRON, C_WHELP, C_ASSAS}},
@@ -244,7 +246,7 @@ struct npc_time_riftAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 TimeRiftWave_Timer;
     uint8 mRiftWaveCount;
@@ -291,7 +293,7 @@ struct npc_time_riftAI : public ScriptedAI
 
         if (Unit* Summon = DoSummon(creature_entry, pos, 30000, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT))
             if (Unit* temp = Unit::GetUnit(*me, pInstance ? pInstance->GetData64(DATA_MEDIVH) : 0))
-                Summon->AddThreat(temp,0.0f);
+                Summon->AddThreat(temp, 0.0f);
     }
 
     void DoSelectSummon()
@@ -302,7 +304,7 @@ struct npc_time_riftAI : public ScriptedAI
             mRiftWaveCount = 0;
 
         entry = PortalWaves[mWaveId].PortalMob[mRiftWaveCount];
-        debug_log("OSCR: npc_time_rift: summoning wave creature (Wave %u, Entry %u).",mRiftWaveCount,entry);
+        debug_log("OSCR: npc_time_rift: summoning wave creature (Wave %u, Entry %u).", mRiftWaveCount, entry);
 
         ++mRiftWaveCount;
 
@@ -310,7 +312,8 @@ struct npc_time_riftAI : public ScriptedAI
         {
             for (uint8 i = 0; i < 3; i++)
                 DoSummonAtRift(entry);
-        } else DoSummonAtRift(entry);
+        }
+        else DoSummonAtRift(entry);
     }
 
     void UpdateAI(const uint32 diff)
@@ -322,7 +325,8 @@ struct npc_time_riftAI : public ScriptedAI
         {
             DoSelectSummon();
             TimeRiftWave_Timer = 15000;
-        } else TimeRiftWave_Timer -= diff;
+        }
+        else TimeRiftWave_Timer -= diff;
 
         if (me->IsNonMeleeSpellCast(false))
             return;
@@ -330,7 +334,7 @@ struct npc_time_riftAI : public ScriptedAI
         debug_log("OSCR: npc_time_rift: not casting anylonger, i need to die.");
         me->setDeathState(JUST_DIED);
 
-        pInstance->SetData(TYPE_RIFT,SPECIAL);
+        pInstance->SetData(TYPE_RIFT, SPECIAL);
     }
 };
 
@@ -350,36 +354,36 @@ bool GossipHello_npc_saat(Player* player, Creature* pCreature)
     if (pCreature->isQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (player->GetQuestStatus(QUEST_OPENING_PORTAL) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(ITEM_CHRONO_BEACON,1))
+    if (player->GetQuestStatus(QUEST_OPENING_PORTAL) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(ITEM_CHRONO_BEACON, 1))
     {
-        player->ADD_GOSSIP_ITEM(0,GOSSIP_ITEM_OBTAIN,GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF+1);
-        player->SEND_GOSSIP_MENU(10000,pCreature->GetGUID());
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_OBTAIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        player->SEND_GOSSIP_MENU(10000, pCreature->GetGUID());
         return true;
     }
-    else if (player->GetQuestRewardStatus(QUEST_OPENING_PORTAL) && !player->HasItemCount(ITEM_CHRONO_BEACON,1))
+    else if (player->GetQuestRewardStatus(QUEST_OPENING_PORTAL) && !player->HasItemCount(ITEM_CHRONO_BEACON, 1))
     {
-        player->ADD_GOSSIP_ITEM(0,GOSSIP_ITEM_OBTAIN,GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF+1);
-        player->SEND_GOSSIP_MENU(10001,pCreature->GetGUID());
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_OBTAIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        player->SEND_GOSSIP_MENU(10001, pCreature->GetGUID());
         return true;
     }
 
-    player->SEND_GOSSIP_MENU(10002,pCreature->GetGUID());
+    player->SEND_GOSSIP_MENU(10002, pCreature->GetGUID());
     return true;
 }
 
 bool GossipSelect_npc_saat(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF+1)
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
     {
         player->CLOSE_GOSSIP_MENU();
-        pCreature->CastSpell(player,SPELL_CHRONO_BEACON,false);
+        pCreature->CastSpell(player, SPELL_CHRONO_BEACON, false);
     }
     return true;
 }
 
 void AddSC_dark_portal()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_medivh_bm";

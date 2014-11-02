@@ -59,7 +59,7 @@ void LoadSkillDiscoveryTable()
 
         do
         {
-            Field *fields = result->Fetch();
+            Field* fields = result->Fetch();
 
             uint32 spellId         = fields[0].GetUInt32();
             int32  reqSkillOrSpell = fields[1].GetInt32();
@@ -76,13 +76,13 @@ void LoadSkillDiscoveryTable()
                 SpellEntry const* spellEntry = sSpellStore.LookupEntry(reqSkillOrSpell);
                 if (!spellEntry)
                 {
-                    sLog.outErrorDb("Spell (ID: %u) has invalid spell (ID: %i) in reqSpell field in skill_discovery_template table",spellId,reqSkillOrSpell);
+                    sLog.outErrorDb("Spell (ID: %u) has invalid spell (ID: %i) in reqSpell field in skill_discovery_template table", spellId, reqSkillOrSpell);
                     continue;
                 }
 
                 if (spellEntry->Mechanic != MECHANIC_DISCOVERY)
                 {
-                    sLog.outErrorDb("Spell (ID: %u) does not have MECHANIC_DISCOVERY (28) value in Mechanic field in spell.dbc but listed in skill_discovery_template table",spellId);
+                    sLog.outErrorDb("Spell (ID: %u) does not have MECHANIC_DISCOVERY (28) value in Mechanic field in spell.dbc but listed in skill_discovery_template table", spellId);
                     continue;
                 }
 
@@ -95,31 +95,28 @@ void LoadSkillDiscoveryTable()
 
                 if (lower == upper)
                 {
-                    sLog.outErrorDb("Spell (ID: %u) not listed in SkillLineAbility.dbc but listed with reqSpell=0 in skill_discovery_template table",spellId);
+                    sLog.outErrorDb("Spell (ID: %u) not listed in SkillLineAbility.dbc but listed with reqSpell=0 in skill_discovery_template table", spellId);
                     continue;
                 }
 
                 for (SkillLineAbilityMap::const_iterator _spell_idx = lower; _spell_idx != upper; ++_spell_idx)
-                {
                     SkillDiscoveryStore[-int32(_spell_idx->second->skillId)].push_back(SkillDiscoveryEntry(spellId, chance));
-                }
             }
             else
             {
-                sLog.outErrorDb("Spell (ID: %u) has negative value in reqSpell field in skill_discovery_template table",spellId);
+                sLog.outErrorDb("Spell (ID: %u) has negative value in reqSpell field in skill_discovery_template table", spellId);
                 continue;
             }
             ++count;
-        } while (result->NextRow());
+        }
+        while (result->NextRow());
 
         sLog.outString(">> Loaded %u skill discovery definitions", count);
         if (!ssNonDiscoverableEntries.str().empty())
-            sLog.outErrorDb("Some items can't be successfully discovered: has chance field value < 0.000001 in skill_discovery_template DB table . List:\n%s",ssNonDiscoverableEntries.str().c_str());
+            sLog.outErrorDb("Some items can't be successfully discovered: has chance field value < 0.000001 in skill_discovery_template DB table . List:\n%s", ssNonDiscoverableEntries.str().c_str());
     }
     else
-    {
         sLog.outString(">> Loaded 0 skill discovery definitions. DB table skill_discovery_template is empty.");
-    }
 }
 
 uint32 GetSkillDiscoverySpell(uint32 skillId, uint32 spellId, Player* player)

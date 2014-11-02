@@ -59,12 +59,12 @@ struct boss_nerubenkanAI : public ScriptedAI
     void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
-            pInstance->SetData(TYPE_NERUB,IN_PROGRESS);
+            pInstance->SetData(TYPE_NERUB, IN_PROGRESS);
     }
 
     void RaiseUndeadScarab(Unit* pVictim)
     {
-        if (Creature* pUndeadScarab = DoSpawnCreature(10876, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 180000))
+        if (Creature* pUndeadScarab = DoSpawnCreature(10876, irand(-9, 9), irand(-9, 9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 180000))
             if (pUndeadScarab->AI())
                 pUndeadScarab->AI()->AttackStart(pVictim);
     }
@@ -79,29 +79,33 @@ struct boss_nerubenkanAI : public ScriptedAI
         {
             DoCastVictim( SPELL_ENCASINGWEBS);
             EncasingWebs_Timer = 30000;
-        } else EncasingWebs_Timer -= diff;
+        }
+        else EncasingWebs_Timer -= diff;
 
         //PierceArmor
         if (PierceArmor_Timer <= diff)
         {
-            if (urand(0,3) < 2)
+            if (urand(0, 3) < 2)
                 DoCastVictim( SPELL_PIERCEARMOR);
             PierceArmor_Timer = 35000;
-        } else PierceArmor_Timer -= diff;
+        }
+        else PierceArmor_Timer -= diff;
 
         //CryptScarabs_Timer
         if (CryptScarabs_Timer <= diff)
         {
             DoCastVictim( SPELL_CRYPT_SCARABS);
             CryptScarabs_Timer = 20000;
-        } else CryptScarabs_Timer -= diff;
+        }
+        else CryptScarabs_Timer -= diff;
 
         //RaiseUndeadScarab
         if (RaiseUndeadScarab_Timer <= diff)
         {
             RaiseUndeadScarab(me->getVictim());
             RaiseUndeadScarab_Timer = 16000;
-        } else RaiseUndeadScarab_Timer -= diff;
+        }
+        else RaiseUndeadScarab_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -113,7 +117,7 @@ CreatureAI* GetAI_boss_nerubenkan(Creature* pCreature)
 
 void AddSC_boss_nerubenkan()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_nerubenkan";
     newscript->GetAI = &GetAI_boss_nerubenkan;

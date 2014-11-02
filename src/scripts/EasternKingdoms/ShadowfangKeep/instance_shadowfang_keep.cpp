@@ -47,15 +47,18 @@ enum eEnums
 
 const Position SpawnLocation[] =
 {
-    {-148.199,2165.647,128.448,1.026},
-    {-153.110,2168.620,128.448,1.026},
-    {-145.905,2180.520,128.448,4.183},
-    {-140.794,2178.037,128.448,4.090},
-    {-138.640,2170.159,136.577,2.737}
+    { -148.199, 2165.647, 128.448, 1.026},
+    { -153.110, 2168.620, 128.448, 1.026},
+    { -145.905, 2180.520, 128.448, 4.183},
+    { -140.794, 2178.037, 128.448, 4.090},
+    { -138.640, 2170.159, 136.577, 2.737}
 };
 struct instance_shadowfang_keep : public ScriptedInstance
 {
-    instance_shadowfang_keep(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
+    instance_shadowfang_keep(Map* pMap) : ScriptedInstance(pMap)
+    {
+        Initialize();
+    };
 
     uint32 m_auiEncounter[MAX_ENCOUNTER];
     std::string str_data;
@@ -89,33 +92,39 @@ struct instance_shadowfang_keep : public ScriptedInstance
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-            case NPC_ASH: uiAshGUID = pCreature->GetGUID(); break;
-            case NPC_ADA: uiAdaGUID = pCreature->GetGUID(); break;
-            case NPC_ARCHMAGE_ARUGAL: uiArchmageArugalGUID = pCreature->GetGUID(); break;
+        case NPC_ASH:
+            uiAshGUID = pCreature->GetGUID();
+            break;
+        case NPC_ADA:
+            uiAdaGUID = pCreature->GetGUID();
+            break;
+        case NPC_ARCHMAGE_ARUGAL:
+            uiArchmageArugalGUID = pCreature->GetGUID();
+            break;
         }
     }
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case GO_COURTYARD_DOOR:
-                DoorCourtyardGUID = pGo->GetGUID();
-                if (m_auiEncounter[0] == DONE)
-                    HandleGameObject(0, true, pGo);
-                break;
-            case GO_SORCERER_DOOR:
-                DoorSorcererGUID = pGo->GetGUID();
-                if (m_auiEncounter[2] == DONE)
-                    HandleGameObject(0, true, pGo);
-                break;
-            case GO_ARUGAL_DOOR:
-                DoorArugalGUID = pGo->GetGUID();
-                if (m_auiEncounter[3] == DONE)
-                    HandleGameObject(0, true, pGo);
-                break;
+        case GO_COURTYARD_DOOR:
+            DoorCourtyardGUID = pGo->GetGUID();
+            if (m_auiEncounter[0] == DONE)
+                HandleGameObject(0, true, pGo);
+            break;
+        case GO_SORCERER_DOOR:
+            DoorSorcererGUID = pGo->GetGUID();
+            if (m_auiEncounter[2] == DONE)
+                HandleGameObject(0, true, pGo);
+            break;
+        case GO_ARUGAL_DOOR:
+            DoorArugalGUID = pGo->GetGUID();
+            if (m_auiEncounter[3] == DONE)
+                HandleGameObject(0, true, pGo);
+            break;
         }
     }
 
@@ -126,43 +135,43 @@ struct instance_shadowfang_keep : public ScriptedInstance
 
         if (pAda && pAda->isAlive() && pAsh && pAsh->isAlive())
         {
-            DoScriptText(SAY_BOSS_DIE_AD,pAda);
-            DoScriptText(SAY_BOSS_DIE_AS,pAsh);
+            DoScriptText(SAY_BOSS_DIE_AD, pAda);
+            DoScriptText(SAY_BOSS_DIE_AS, pAsh);
         }
     }
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-            case TYPE_FREE_NPC:
-                if (data == DONE)
-                    DoUseDoorOrButton(DoorCourtyardGUID);
-                m_auiEncounter[0] = data;
+        case TYPE_FREE_NPC:
+            if (data == DONE)
+                DoUseDoorOrButton(DoorCourtyardGUID);
+            m_auiEncounter[0] = data;
+            break;
+        case TYPE_RETHILGORE:
+            if (data == DONE)
+                DoSpeech();
+            m_auiEncounter[1] = data;
+            break;
+        case TYPE_FENRUS:
+            switch (data)
+            {
+            case DONE:
+                uiTimer = 1000;
+                uiPhase = 1;
                 break;
-            case TYPE_RETHILGORE:
-                if (data == DONE)
-                    DoSpeech();
-                m_auiEncounter[1] = data;
+            case 7:
+                DoUseDoorOrButton(DoorSorcererGUID);
                 break;
-            case TYPE_FENRUS:
-                switch(data)
-                {
-                    case DONE:
-                        uiTimer = 1000;
-                        uiPhase = 1;
-                        break;
-                    case 7:
-                        DoUseDoorOrButton(DoorSorcererGUID);
-                        break;
-                }
-                m_auiEncounter[2] = data;
-                break;
-            case TYPE_NANDOS:
-                if (data == DONE)
-                    DoUseDoorOrButton(DoorArugalGUID);
-                m_auiEncounter[3] = data;
-                break;
+            }
+            m_auiEncounter[2] = data;
+            break;
+        case TYPE_NANDOS:
+            if (data == DONE)
+                DoUseDoorOrButton(DoorArugalGUID);
+            m_auiEncounter[3] = data;
+            break;
         }
 
         if (data == DONE)
@@ -181,16 +190,16 @@ struct instance_shadowfang_keep : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            case TYPE_FREE_NPC:
-                return m_auiEncounter[0];
-            case TYPE_RETHILGORE:
-                return m_auiEncounter[1];
-            case TYPE_FENRUS:
-                return m_auiEncounter[2];
-            case TYPE_NANDOS:
-                return m_auiEncounter[3];
+        case TYPE_FREE_NPC:
+            return m_auiEncounter[0];
+        case TYPE_RETHILGORE:
+            return m_auiEncounter[1];
+        case TYPE_FENRUS:
+            return m_auiEncounter[2];
+        case TYPE_NANDOS:
+            return m_auiEncounter[3];
         }
         return 0;
     }
@@ -237,27 +246,28 @@ struct instance_shadowfang_keep : public ScriptedInstance
         {
             if (uiTimer <= uiDiff)
             {
-                switch(uiPhase)
+                switch (uiPhase)
                 {
-                    case 1:
-                        pSummon = pArchmage->SummonCreature(pArchmage->GetEntry(),SpawnLocation[4],TEMPSUMMON_TIMED_DESPAWN,10000);
-                        pSummon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
-                        pSummon->SetReactState(REACT_DEFENSIVE);
-                        pSummon->CastSpell(pSummon,SPELL_ASHCROMBE_TELEPORT,true);
-                        DoScriptText(SAY_ARCHMAGE,pSummon);
-                        uiTimer = 2000;
-                        uiPhase = 2;
-                        break;
-                    case 2:
-                        pArchmage->SummonCreature(NPC_ARUGAL_VOIDWALKER,SpawnLocation[0],TEMPSUMMON_CORPSE_TIMED_DESPAWN,60000);
-                        pArchmage->SummonCreature(NPC_ARUGAL_VOIDWALKER,SpawnLocation[1],TEMPSUMMON_CORPSE_TIMED_DESPAWN,60000);
-                        pArchmage->SummonCreature(NPC_ARUGAL_VOIDWALKER,SpawnLocation[2],TEMPSUMMON_CORPSE_TIMED_DESPAWN,60000);
-                        pArchmage->SummonCreature(NPC_ARUGAL_VOIDWALKER,SpawnLocation[3],TEMPSUMMON_CORPSE_TIMED_DESPAWN,60000);
-                        uiPhase = 0;
-                        break;
+                case 1:
+                    pSummon = pArchmage->SummonCreature(pArchmage->GetEntry(), SpawnLocation[4], TEMPSUMMON_TIMED_DESPAWN, 10000);
+                    pSummon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                    pSummon->SetReactState(REACT_DEFENSIVE);
+                    pSummon->CastSpell(pSummon, SPELL_ASHCROMBE_TELEPORT, true);
+                    DoScriptText(SAY_ARCHMAGE, pSummon);
+                    uiTimer = 2000;
+                    uiPhase = 2;
+                    break;
+                case 2:
+                    pArchmage->SummonCreature(NPC_ARUGAL_VOIDWALKER, SpawnLocation[0], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
+                    pArchmage->SummonCreature(NPC_ARUGAL_VOIDWALKER, SpawnLocation[1], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
+                    pArchmage->SummonCreature(NPC_ARUGAL_VOIDWALKER, SpawnLocation[2], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
+                    pArchmage->SummonCreature(NPC_ARUGAL_VOIDWALKER, SpawnLocation[3], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
+                    uiPhase = 0;
+                    break;
 
                 }
-            } else uiTimer -= uiDiff;
+            }
+            else uiTimer -= uiDiff;
         }
     }
 };
@@ -269,7 +279,7 @@ InstanceData* GetInstanceData_instance_shadowfang_keep(Map* pMap)
 
 void AddSC_instance_shadowfang_keep()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_shadowfang_keep";
     newscript->GetInstanceData = &GetInstanceData_instance_shadowfang_keep;

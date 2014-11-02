@@ -50,7 +50,7 @@ struct boss_azgalorAI : public hyjal_trashAI
         pInstance = c->GetInstanceData();
         pGo = false;
         pos = 0;
-        SpellEntry *TempSpell = GET_SPELL(SPELL_HOWL_OF_AZGALOR);
+        SpellEntry* TempSpell = GET_SPELL(SPELL_HOWL_OF_AZGALOR);
         if (TempSpell)
             TempSpell->EffectRadiusIndex[0] = 12;//100yards instead of 50000?!
     }
@@ -89,20 +89,20 @@ struct boss_azgalorAI : public hyjal_trashAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch (urand(0,2))
+        switch (urand(0, 2))
         {
-            case 0:
-                DoPlaySoundToSet(me, SOUND_ONSLAY1);
-                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
-                break;
-            case 1:
-                DoPlaySoundToSet(me, SOUND_ONSLAY2);
-                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
-                break;
-            case 2:
-                DoPlaySoundToSet(me, SOUND_ONSLAY3);
-                me->MonsterYell(SAY_ONSLAY3, LANG_UNIVERSAL, 0);
-                break;
+        case 0:
+            DoPlaySoundToSet(me, SOUND_ONSLAY1);
+            me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
+            break;
+        case 1:
+            DoPlaySoundToSet(me, SOUND_ONSLAY2);
+            me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
+            break;
+        case 2:
+            DoPlaySoundToSet(me, SOUND_ONSLAY3);
+            me->MonsterYell(SAY_ONSLAY3, LANG_UNIVERSAL, 0);
+            break;
         }
     }
 
@@ -113,7 +113,7 @@ struct boss_azgalorAI : public hyjal_trashAI
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
             if (pTarget && pTarget->isAlive())
-                me->AddThreat(pTarget,0.0f);
+                me->AddThreat(pTarget, 0.0f);
         }
     }
 
@@ -156,27 +156,31 @@ struct boss_azgalorAI : public hyjal_trashAI
 
         if (RainTimer <= diff)
         {
-            DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,30,true), SPELL_RAIN_OF_FIRE);
-            RainTimer = 20000+rand()%15000;
-        } else RainTimer -= diff;
+            DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 30, true), SPELL_RAIN_OF_FIRE);
+            RainTimer = 20000 + rand() % 15000;
+        }
+        else RainTimer -= diff;
 
         if (DoomTimer <= diff)
         {
-            DoCast(SelectTarget(SELECT_TARGET_RANDOM,1,100,true), SPELL_DOOM);//never on tank
-            DoomTimer = 45000+rand()%5000;
-        } else DoomTimer -= diff;
+            DoCast(SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true), SPELL_DOOM); //never on tank
+            DoomTimer = 45000 + rand() % 5000;
+        }
+        else DoomTimer -= diff;
 
         if (HowlTimer <= diff)
         {
             DoCast(me, SPELL_HOWL_OF_AZGALOR);
             HowlTimer = 30000;
-        } else HowlTimer -= diff;
+        }
+        else HowlTimer -= diff;
 
         if (CleaveTimer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
-            CleaveTimer = 10000+rand()%5000;
-        } else CleaveTimer -= diff;
+            CleaveTimer = 10000 + rand() % 5000;
+        }
+        else CleaveTimer -= diff;
 
         if (EnrageTimer <= diff && !enraged)
         {
@@ -184,7 +188,8 @@ struct boss_azgalorAI : public hyjal_trashAI
             DoCast(me, SPELL_BERSERK, true);
             enraged = true;
             EnrageTimer = 600000;
-        } else EnrageTimer -= diff;
+        }
+        else EnrageTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -238,8 +243,8 @@ struct mob_lesser_doomguardAI : public hyjal_trashAI
     {
         if (me->IsWithinDist(who, 50) && !me->isInCombat() && me->IsHostileTo(who))
         {
-            me->AddThreat(who,0.0f);
-            me->Attack(who,false);
+            me->AddThreat(who, 0.0f);
+            me->Attack(who, false);
         }
     }
 
@@ -253,7 +258,7 @@ struct mob_lesser_doomguardAI : public hyjal_trashAI
         {
             if (AzgalorGUID)
             {
-                Creature* boss = Unit::GetCreature((*me),AzgalorGUID);
+                Creature* boss = Unit::GetCreature((*me), AzgalorGUID);
                 if (!boss || (boss && boss->isDead()))
                 {
                     me->setDeathState(JUST_DIED);
@@ -262,7 +267,8 @@ struct mob_lesser_doomguardAI : public hyjal_trashAI
                 }
             }
             CheckTimer = 5000;
-        } else CheckTimer -= diff;
+        }
+        else CheckTimer -= diff;
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -271,14 +277,16 @@ struct mob_lesser_doomguardAI : public hyjal_trashAI
         if (WarstompTimer <= diff)
         {
             DoCast(me, SPELL_WARSTOMP);
-            WarstompTimer = 10000+rand()%5000;
-        } else WarstompTimer -= diff;
+            WarstompTimer = 10000 + rand() % 5000;
+        }
+        else WarstompTimer -= diff;
 
         if (CrippleTimer <= diff)
         {
             DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true), SPELL_CRIPPLE);
-            CrippleTimer = 25000+rand()%5000;
-        } else CrippleTimer -= diff;
+            CrippleTimer = 25000 + rand() % 5000;
+        }
+        else CrippleTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -291,7 +299,7 @@ CreatureAI* GetAI_mob_lesser_doomguard(Creature* pCreature)
 
 void AddSC_boss_azgalor()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_azgalor";
     newscript->GetAI = &GetAI_boss_azgalor;

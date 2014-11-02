@@ -115,16 +115,17 @@ struct boss_selin_fireheartAI : public ScriptedAI
 
             instance->HandleGameObject(instance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), true);
             // Open the big encounter door. Close it in Aggro and open it only in JustDied(and here)
-                                                            // Small door opened after event are expected to be closed by default
+            // Small door opened after event are expected to be closed by default
             // Set Inst data for encounter
             instance->SetData(DATA_SELIN_EVENT, NOT_STARTED);
-        } else error_log(ERROR_INST_DATA);
+        }
+        else error_log(ERROR_INST_DATA);
 
-        DrainLifeTimer = 3000 + rand()%4000;
+        DrainLifeTimer = 3000 + rand() % 4000;
         DrainManaTimer = DrainLifeTimer + 5000;
         FelExplosionTimer = 2100;
-        DrainCrystalTimer = 10000 + rand()%5000;
-        DrainCrystalTimer = 20000 + rand()%5000;
+        DrainCrystalTimer = 10000 + rand() % 5000;
+        DrainCrystalTimer = 20000 + rand() % 5000;
         EmpowerTimer = 10000;
 
         IsDraining = false;
@@ -194,12 +195,12 @@ struct boss_selin_fireheartAI : public ScriptedAI
 
         if (instance)
             instance->HandleGameObject(instance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), false);
-            //Close the encounter door, open it in JustDied/Reset
-     }
+        //Close the encounter door, open it in JustDied/Reset
+    }
 
     void KilledUnit(Unit* /*victim*/)
     {
-        DoScriptText(RAND(SAY_KILL_1,SAY_KILL_2), me);
+        DoScriptText(RAND(SAY_KILL_1, SAY_KILL_2), me);
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -245,13 +246,14 @@ struct boss_selin_fireheartAI : public ScriptedAI
         if (!DrainingCrystal)
         {
             uint32 maxPowerMana = me->GetMaxPower(POWER_MANA);
-            if (maxPowerMana && ((me->GetPower(POWER_MANA)*100 / maxPowerMana) < 10))
+            if (maxPowerMana && ((me->GetPower(POWER_MANA) * 100 / maxPowerMana) < 10))
             {
                 if (DrainLifeTimer <= diff)
                 {
-                    DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), Heroic? H_SPELL_DRAIN_LIFE : SPELL_DRAIN_LIFE);
+                    DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), Heroic ? H_SPELL_DRAIN_LIFE : SPELL_DRAIN_LIFE);
                     DrainLifeTimer = 10000;
-                } else DrainLifeTimer -= diff;
+                }
+                else DrainLifeTimer -= diff;
 
                 // Heroic only
                 if (Heroic)
@@ -260,7 +262,8 @@ struct boss_selin_fireheartAI : public ScriptedAI
                     {
                         DoCast(SelectUnit(SELECT_TARGET_RANDOM, 1), H_SPELL_DRAIN_MANA);
                         DrainManaTimer = 10000;
-                    } else DrainManaTimer -= diff;
+                    }
+                    else DrainManaTimer -= diff;
                 }
             }
 
@@ -271,23 +274,26 @@ struct boss_selin_fireheartAI : public ScriptedAI
                     DoCast(me, SPELL_FEL_EXPLOSION);
                     FelExplosionTimer = 2000;
                 }
-            } else FelExplosionTimer -= diff;
+            }
+            else FelExplosionTimer -= diff;
 
             // If below 10% mana, start recharging
             maxPowerMana = me->GetMaxPower(POWER_MANA);
-            if (maxPowerMana && ((me->GetPower(POWER_MANA)*100 / maxPowerMana) < 10))
+            if (maxPowerMana && ((me->GetPower(POWER_MANA) * 100 / maxPowerMana) < 10))
             {
                 if (DrainCrystalTimer <= diff)
                 {
                     SelectNearestCrystal();
                     if (Heroic)
-                        DrainCrystalTimer = 10000 + rand()%5000;
+                        DrainCrystalTimer = 10000 + rand() % 5000;
                     else
-                        DrainCrystalTimer = 20000 + rand()%5000;
-                } else DrainCrystalTimer -= diff;
+                        DrainCrystalTimer = 20000 + rand() % 5000;
+                }
+                else DrainCrystalTimer -= diff;
             }
 
-        } else
+        }
+        else
         {
             if (IsDraining)
             {
@@ -307,7 +313,8 @@ struct boss_selin_fireheartAI : public ScriptedAI
 
                     me->GetMotionMaster()->Clear();
                     me->GetMotionMaster()->MoveChase(me->getVictim());
-                } else EmpowerTimer -= diff;
+                }
+                else EmpowerTimer -= diff;
             }
         }
 
@@ -350,7 +357,8 @@ struct mob_fel_crystalAI : public ScriptedAI
                     }
                 }
             }
-        } else error_log(ERROR_INST_DATA);
+        }
+        else error_log(ERROR_INST_DATA);
     }
 };
 
@@ -361,7 +369,7 @@ CreatureAI* GetAI_mob_fel_crystal(Creature* creature)
 
 void AddSC_boss_selin_fireheart()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_selin_fireheart";

@@ -22,23 +22,23 @@
 #include "Database/DatabaseEnv.h"
 #include "ItemEnchantmentMgr.h"
 
-void AddItemsSetItem(Player*player,Item* item)
+void AddItemsSetItem(Player* player, Item* item)
 {
-    ItemPrototype const *proto = item->GetProto();
+    ItemPrototype const* proto = item->GetProto();
     uint32 setid = proto->ItemSet;
 
-    ItemSetEntry const *set = sItemSetStore.LookupEntry(setid);
+    ItemSetEntry const* set = sItemSetStore.LookupEntry(setid);
 
     if (!set)
     {
-        sLog.outErrorDb("Item set %u for item (id %u) not found, mods not applied.",setid,proto->ItemId);
+        sLog.outErrorDb("Item set %u for item (id %u) not found, mods not applied.", setid, proto->ItemId);
         return;
     }
 
     if (set->required_skill_id && player->GetSkillValue(set->required_skill_id) < set->required_skill_value)
         return;
 
-    ItemSetEffect *eff = NULL;
+    ItemSetEffect* eff = NULL;
 
     for (size_t x = 0; x < player->ItemSetEff.size(); ++x)
     {
@@ -52,7 +52,7 @@ void AddItemsSetItem(Player*player,Item* item)
     if (!eff)
     {
         eff = new ItemSetEffect;
-        memset(eff,0,sizeof(ItemSetEffect));
+        memset(eff, 0, sizeof(ItemSetEffect));
         eff->setid = setid;
 
         size_t x = 0;
@@ -61,14 +61,14 @@ void AddItemsSetItem(Player*player,Item* item)
                 break;
 
         if (x < player->ItemSetEff.size())
-            player->ItemSetEff[x]=eff;
+            player->ItemSetEff[x] = eff;
         else
             player->ItemSetEff.push_back(eff);
     }
 
     ++eff->item_count;
 
-    for (uint32 x=0; x<8; x++)
+    for (uint32 x = 0; x < 8; x++)
     {
         if (!set->spells [x])
             continue;
@@ -76,8 +76,8 @@ void AddItemsSetItem(Player*player,Item* item)
         if (set->items_to_triggerspell[x] > eff->item_count)
             continue;
 
-        uint32 z=0;
-        for (; z<8; z++)
+        uint32 z = 0;
+        for (; z < 8; z++)
             if (eff->spells[z] && eff->spells[z]->Id == set->spells[x])
                 break;
 
@@ -85,19 +85,19 @@ void AddItemsSetItem(Player*player,Item* item)
             continue;
 
         //new spell
-        for (uint32 y=0; y<8; y++)
+        for (uint32 y = 0; y < 8; y++)
         {
             if (!eff->spells[y])                             // free slot
             {
-                SpellEntry const *spellInfo = sSpellStore.LookupEntry(set->spells[x]);
+                SpellEntry const* spellInfo = sSpellStore.LookupEntry(set->spells[x]);
                 if (!spellInfo)
                 {
-                    sLog.outError("WORLD: unknown spell id %u in items set %u effects", set->spells[x],setid);
+                    sLog.outError("WORLD: unknown spell id %u in items set %u effects", set->spells[x], setid);
                     break;
                 }
 
                 // spell casted only if fit form requirement, in other case will casted at form change
-                player->ApplyEquipSpell(spellInfo,NULL,true);
+                player->ApplyEquipSpell(spellInfo, NULL, true);
                 eff->spells[y] = spellInfo;
                 break;
             }
@@ -105,19 +105,19 @@ void AddItemsSetItem(Player*player,Item* item)
     }
 }
 
-void RemoveItemsSetItem(Player*player,ItemPrototype const *proto)
+void RemoveItemsSetItem(Player* player, ItemPrototype const* proto)
 {
     uint32 setid = proto->ItemSet;
 
-    ItemSetEntry const *set = sItemSetStore.LookupEntry(setid);
+    ItemSetEntry const* set = sItemSetStore.LookupEntry(setid);
 
     if (!set)
     {
-        sLog.outErrorDb("Item set #%u for item #%u not found, mods not removed.",setid,proto->ItemId);
+        sLog.outErrorDb("Item set #%u for item #%u not found, mods not removed.", setid, proto->ItemId);
         return;
     }
 
-    ItemSetEffect *eff = NULL;
+    ItemSetEffect* eff = NULL;
     size_t setindex = 0;
     for (; setindex < player->ItemSetEff.size(); setindex++)
     {
@@ -134,7 +134,7 @@ void RemoveItemsSetItem(Player*player,ItemPrototype const *proto)
 
     --eff->item_count;
 
-    for (uint32 x=0; x<8; x++)
+    for (uint32 x = 0; x < 8; x++)
     {
         if (!set->spells[x])
             continue;
@@ -143,13 +143,13 @@ void RemoveItemsSetItem(Player*player,ItemPrototype const *proto)
         if (set->items_to_triggerspell[x] <= eff->item_count)
             continue;
 
-        for (uint32 z=0; z<8; z++)
+        for (uint32 z = 0; z < 8; z++)
         {
             if (eff->spells[z] && eff->spells[z]->Id == set->spells[x])
             {
                 // spell can be not active if not fit form requirement
-                player->ApplyEquipSpell(eff->spells[z],NULL,false);
-                eff->spells[z]=NULL;
+                player->ApplyEquipSpell(eff->spells[z], NULL, false);
+                eff->spells[z] = NULL;
                 break;
             }
         }
@@ -163,63 +163,63 @@ void RemoveItemsSetItem(Player*player,ItemPrototype const *proto)
     }
 }
 
-bool ItemCanGoIntoBag(ItemPrototype const *pProto, ItemPrototype const *pBagProto)
+bool ItemCanGoIntoBag(ItemPrototype const* pProto, ItemPrototype const* pBagProto)
 {
     if (!pProto || !pBagProto)
         return false;
 
-    switch(pBagProto->Class)
+    switch (pBagProto->Class)
     {
-        case ITEM_CLASS_CONTAINER:
-            switch(pBagProto->SubClass)
-            {
-                case ITEM_SUBCLASS_CONTAINER:
-                    return true;
-                case ITEM_SUBCLASS_SOUL_CONTAINER:
-                    if (!(pProto->BagFamily & BAG_FAMILY_MASK_SOUL_SHARDS))
-                        return false;
-                    return true;
-                case ITEM_SUBCLASS_HERB_CONTAINER:
-                    if (!(pProto->BagFamily & BAG_FAMILY_MASK_HERBS))
-                        return false;
-                    return true;
-                case ITEM_SUBCLASS_ENCHANTING_CONTAINER:
-                    if (!(pProto->BagFamily & BAG_FAMILY_MASK_ENCHANTING_SUPP))
-                        return false;
-                    return true;
-                case ITEM_SUBCLASS_MINING_CONTAINER:
-                    if (!(pProto->BagFamily & BAG_FAMILY_MASK_MINING_SUPP))
-                        return false;
-                    return true;
-                case ITEM_SUBCLASS_ENGINEERING_CONTAINER:
-                    if (!(pProto->BagFamily & BAG_FAMILY_MASK_ENGINEERING_SUPP))
-                        return false;
-                    return true;
-                case ITEM_SUBCLASS_GEM_CONTAINER:
-                    if (!(pProto->BagFamily & BAG_FAMILY_MASK_GEMS))
-                        return false;
-                    return true;
-                case ITEM_SUBCLASS_LEATHERWORKING_CONTAINER:
-                    if (!(pProto->BagFamily & BAG_FAMILY_MASK_LEATHERWORKING_SUPP))
-                        return false;
-                    return true;
-                default:
-                    return false;
-            }
-        case ITEM_CLASS_QUIVER:
-            switch(pBagProto->SubClass)
-            {
-                case ITEM_SUBCLASS_QUIVER:
-                    if (!(pProto->BagFamily & BAG_FAMILY_MASK_ARROWS))
-                        return false;
-                    return true;
-                case ITEM_SUBCLASS_AMMO_POUCH:
-                    if (!(pProto->BagFamily & BAG_FAMILY_MASK_BULLETS))
-                        return false;
-                    return true;
-                default:
-                    return false;
-            }
+    case ITEM_CLASS_CONTAINER:
+        switch (pBagProto->SubClass)
+        {
+        case ITEM_SUBCLASS_CONTAINER:
+            return true;
+        case ITEM_SUBCLASS_SOUL_CONTAINER:
+            if (!(pProto->BagFamily & BAG_FAMILY_MASK_SOUL_SHARDS))
+                return false;
+            return true;
+        case ITEM_SUBCLASS_HERB_CONTAINER:
+            if (!(pProto->BagFamily & BAG_FAMILY_MASK_HERBS))
+                return false;
+            return true;
+        case ITEM_SUBCLASS_ENCHANTING_CONTAINER:
+            if (!(pProto->BagFamily & BAG_FAMILY_MASK_ENCHANTING_SUPP))
+                return false;
+            return true;
+        case ITEM_SUBCLASS_MINING_CONTAINER:
+            if (!(pProto->BagFamily & BAG_FAMILY_MASK_MINING_SUPP))
+                return false;
+            return true;
+        case ITEM_SUBCLASS_ENGINEERING_CONTAINER:
+            if (!(pProto->BagFamily & BAG_FAMILY_MASK_ENGINEERING_SUPP))
+                return false;
+            return true;
+        case ITEM_SUBCLASS_GEM_CONTAINER:
+            if (!(pProto->BagFamily & BAG_FAMILY_MASK_GEMS))
+                return false;
+            return true;
+        case ITEM_SUBCLASS_LEATHERWORKING_CONTAINER:
+            if (!(pProto->BagFamily & BAG_FAMILY_MASK_LEATHERWORKING_SUPP))
+                return false;
+            return true;
+        default:
+            return false;
+        }
+    case ITEM_CLASS_QUIVER:
+        switch (pBagProto->SubClass)
+        {
+        case ITEM_SUBCLASS_QUIVER:
+            if (!(pProto->BagFamily & BAG_FAMILY_MASK_ARROWS))
+                return false;
+            return true;
+        case ITEM_SUBCLASS_AMMO_POUCH:
+            if (!(pProto->BagFamily & BAG_FAMILY_MASK_BULLETS))
+                return false;
+            return true;
+        default:
+            return false;
+        }
     }
     return false;
 }
@@ -228,7 +228,7 @@ Item::Item()
 {
     m_objectType |= TYPEMASK_ITEM;
     m_objectTypeId = TYPEID_ITEM;
-                                                            // 2.3.2 - 0x18
+    // 2.3.2 - 0x18
     m_updateFlag = (UPDATEFLAG_LOWGUID | UPDATEFLAG_HIGHGUID);
 
     m_valuesCount = ITEM_END;
@@ -250,7 +250,7 @@ bool Item::Create(uint32 guidlow, uint32 itemid, Player const* owner)
     SetUInt64Value(ITEM_FIELD_OWNER, owner ? owner->GetGUID() : 0);
     SetUInt64Value(ITEM_FIELD_CONTAINED, owner ? owner->GetGUID() : 0);
 
-    ItemPrototype const *itemProto = sObjectMgr.GetItemPrototype(itemid);
+    ItemPrototype const* itemProto = sObjectMgr.GetItemPrototype(itemid);
     if (!itemProto)
         return false;
 
@@ -259,7 +259,7 @@ bool Item::Create(uint32 guidlow, uint32 itemid, Player const* owner)
     SetUInt32Value(ITEM_FIELD_DURABILITY, itemProto->MaxDurability);
 
     for (int i = 0; i < 5; ++i)
-        SetSpellCharges(i,itemProto->Spells[i].SpellCharges);
+        SetSpellCharges(i, itemProto->Spells[i].SpellCharges);
 
     SetUInt32Value(ITEM_FIELD_FLAGS, itemProto->Flags);
     SetUInt32Value(ITEM_FIELD_DURATION, abs(itemProto->Duration));
@@ -272,7 +272,7 @@ void Item::UpdateDuration(Player* owner, uint32 diff)
     if (!GetUInt32Value(ITEM_FIELD_DURATION))
         return;
 
-    sLog.outDebug("Item::UpdateDuration Item (Entry: %u Duration %u Diff %u)",GetEntry(),GetUInt32Value(ITEM_FIELD_DURATION),diff);
+    sLog.outDebug("Item::UpdateDuration Item (Entry: %u Duration %u Diff %u)", GetEntry(), GetUInt32Value(ITEM_FIELD_DURATION), diff);
 
     if (GetUInt32Value(ITEM_FIELD_DURATION) <= diff)
     {
@@ -289,7 +289,7 @@ void Item::SaveToDB()
     uint32 guid = GetGUIDLow();
     switch (uState)
     {
-        case ITEM_NEW:
+    case ITEM_NEW:
         {
             std::ostringstream ss;
             ss << "REPLACE INTO item_instance (guid, owner_guid, data) VALUES (" << guid << "," << GUID_LOPART(GetOwnerGUID()) << ",'";
@@ -297,8 +297,9 @@ void Item::SaveToDB()
                 ss << GetUInt32Value(i) << " ";
             ss << "')";
             CharacterDatabase.Execute(ss.str().c_str());
-        } break;
-        case ITEM_CHANGED:
+        }
+        break;
+    case ITEM_CHANGED:
         {
             std::ostringstream ss;
             ss << "UPDATE item_instance SET data = '";
@@ -309,9 +310,10 @@ void Item::SaveToDB()
             CharacterDatabase.Execute(ss.str().c_str());
 
             if (HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPED))
-                CharacterDatabase.PExecute("UPDATE character_gifts SET guid = '%u' WHERE item_guid = '%u'", GUID_LOPART(GetOwnerGUID()),GetGUIDLow());
-        } break;
-        case ITEM_REMOVED:
+                CharacterDatabase.PExecute("UPDATE character_gifts SET guid = '%u' WHERE item_guid = '%u'", GUID_LOPART(GetOwnerGUID()), GetGUIDLow());
+        }
+        break;
+    case ITEM_REMOVED:
         {
             if (GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID) > 0)
                 CharacterDatabase.PExecute("DELETE FROM item_text WHERE id = '%u'", GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID));
@@ -321,8 +323,8 @@ void Item::SaveToDB()
             delete this;
             return;
         }
-        case ITEM_UNCHANGED:
-            break;
+    case ITEM_UNCHANGED:
+        break;
     }
     SetState(ITEM_UNCHANGED);
 }
@@ -338,25 +340,25 @@ bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result
 
     if (!result)
     {
-        sLog.outError("Item (GUID: %u owner: %u) not found in table item_instance, can't load. ",guid,GUID_LOPART(owner_guid));
+        sLog.outError("Item (GUID: %u owner: %u) not found in table item_instance, can't load. ", guid, GUID_LOPART(owner_guid));
         return false;
     }
 
-    Field *fields = result->Fetch();
+    Field* fields = result->Fetch();
 
     if (!LoadValues(fields[0].GetString()))
     {
-        sLog.outError("Item #%d has invalid data in data field.  Not loaded.",guid);
+        sLog.outError("Item #%d has invalid data in data field.  Not loaded.", guid);
         return false;
     }
 
     bool need_save = false;                                 // need explicit save data at load fixes
 
     // overwrite possible wrong/corrupted guid
-    uint64 new_item_guid = MAKE_NEW_GUID(guid,0, HIGHGUID_ITEM);
+    uint64 new_item_guid = MAKE_NEW_GUID(guid, 0, HIGHGUID_ITEM);
     if (GetUInt64Value(OBJECT_FIELD_GUID) != new_item_guid)
     {
-        SetUInt64Value(OBJECT_FIELD_GUID, MAKE_NEW_GUID(guid,0, HIGHGUID_ITEM));
+        SetUInt64Value(OBJECT_FIELD_GUID, MAKE_NEW_GUID(guid, 0, HIGHGUID_ITEM));
         need_save = true;
     }
 
@@ -374,14 +376,14 @@ bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result
     // Remove bind flag for items vs NO_BIND set
     if (IsSoulBound() && proto->Bonding == NO_BIND)
     {
-        ApplyModFlag(ITEM_FIELD_FLAGS,ITEM_FLAGS_BINDED, false);
+        ApplyModFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED, false);
         need_save = true;
     }
 
     // update duration if need, and remove if not need
     if ((proto->Duration == 0) != (GetUInt32Value(ITEM_FIELD_DURATION) == 0))
     {
-        SetUInt32Value(ITEM_FIELD_DURATION,abs(proto->Duration));
+        SetUInt32Value(ITEM_FIELD_DURATION, abs(proto->Duration));
         need_save = true;
     }
 
@@ -408,15 +410,15 @@ bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result
 
 void Item::DeleteFromDB()
 {
-    CharacterDatabase.PExecute("DELETE FROM item_instance WHERE guid = '%u'",GetGUIDLow());
+    CharacterDatabase.PExecute("DELETE FROM item_instance WHERE guid = '%u'", GetGUIDLow());
 }
 
 void Item::DeleteFromInventoryDB()
 {
-    CharacterDatabase.PExecute("DELETE FROM character_inventory WHERE item = '%u'",GetGUIDLow());
+    CharacterDatabase.PExecute("DELETE FROM character_inventory WHERE item = '%u'", GetGUIDLow());
 }
 
-ItemPrototype const *Item::GetProto() const
+ItemPrototype const* Item::GetProto() const
 {
     return sObjectMgr.GetItemPrototype(GetEntry());
 }
@@ -439,27 +441,27 @@ uint32 Item::GetSkill()
 
     const static uint32 item_armor_skills[MAX_ITEM_SUBCLASS_ARMOR] =
     {
-        0,SKILL_CLOTH,SKILL_LEATHER,SKILL_MAIL,SKILL_PLATE_MAIL,0,SKILL_SHIELD,0,0,0
+        0, SKILL_CLOTH, SKILL_LEATHER, SKILL_MAIL, SKILL_PLATE_MAIL, 0, SKILL_SHIELD, 0, 0, 0
     };
 
     ItemPrototype const* proto = GetProto();
 
     switch (proto->Class)
     {
-        case ITEM_CLASS_WEAPON:
-            if (proto->SubClass >= MAX_ITEM_SUBCLASS_WEAPON)
-                return 0;
-            else
-                return item_weapon_skills[proto->SubClass];
-
-        case ITEM_CLASS_ARMOR:
-            if (proto->SubClass >= MAX_ITEM_SUBCLASS_ARMOR)
-                return 0;
-            else
-                return item_armor_skills[proto->SubClass];
-
-        default:
+    case ITEM_CLASS_WEAPON:
+        if (proto->SubClass >= MAX_ITEM_SUBCLASS_WEAPON)
             return 0;
+        else
+            return item_weapon_skills[proto->SubClass];
+
+    case ITEM_CLASS_ARMOR:
+        if (proto->SubClass >= MAX_ITEM_SUBCLASS_ARMOR)
+            return 0;
+        else
+            return item_armor_skills[proto->SubClass];
+
+    default:
+        return 0;
     }
 }
 
@@ -469,43 +471,65 @@ uint32 Item::GetSpell()
 
     switch (proto->Class)
     {
-        case ITEM_CLASS_WEAPON:
-            switch (proto->SubClass)
-            {
-                case ITEM_SUBCLASS_WEAPON_AXE:     return  196;
-                case ITEM_SUBCLASS_WEAPON_AXE2:    return  197;
-                case ITEM_SUBCLASS_WEAPON_BOW:     return  264;
-                case ITEM_SUBCLASS_WEAPON_GUN:     return  266;
-                case ITEM_SUBCLASS_WEAPON_MACE:    return  198;
-                case ITEM_SUBCLASS_WEAPON_MACE2:   return  199;
-                case ITEM_SUBCLASS_WEAPON_POLEARM: return  200;
-                case ITEM_SUBCLASS_WEAPON_SWORD:   return  201;
-                case ITEM_SUBCLASS_WEAPON_SWORD2:  return  202;
-                case ITEM_SUBCLASS_WEAPON_STAFF:   return  227;
-                case ITEM_SUBCLASS_WEAPON_DAGGER:  return 1180;
-                case ITEM_SUBCLASS_WEAPON_THROWN:  return 2567;
-                case ITEM_SUBCLASS_WEAPON_SPEAR:   return 3386;
-                case ITEM_SUBCLASS_WEAPON_CROSSBOW:return 5011;
-                case ITEM_SUBCLASS_WEAPON_WAND:    return 5009;
-                default: return 0;
-            }
-        case ITEM_CLASS_ARMOR:
-            switch (proto->SubClass)
-            {
-                case ITEM_SUBCLASS_ARMOR_CLOTH:    return 9078;
-                case ITEM_SUBCLASS_ARMOR_LEATHER:  return 9077;
-                case ITEM_SUBCLASS_ARMOR_MAIL:     return 8737;
-                case ITEM_SUBCLASS_ARMOR_PLATE:    return  750;
-                case ITEM_SUBCLASS_ARMOR_SHIELD:   return 9116;
-                default: return 0;
-            }
+    case ITEM_CLASS_WEAPON:
+        switch (proto->SubClass)
+        {
+        case ITEM_SUBCLASS_WEAPON_AXE:
+            return  196;
+        case ITEM_SUBCLASS_WEAPON_AXE2:
+            return  197;
+        case ITEM_SUBCLASS_WEAPON_BOW:
+            return  264;
+        case ITEM_SUBCLASS_WEAPON_GUN:
+            return  266;
+        case ITEM_SUBCLASS_WEAPON_MACE:
+            return  198;
+        case ITEM_SUBCLASS_WEAPON_MACE2:
+            return  199;
+        case ITEM_SUBCLASS_WEAPON_POLEARM:
+            return  200;
+        case ITEM_SUBCLASS_WEAPON_SWORD:
+            return  201;
+        case ITEM_SUBCLASS_WEAPON_SWORD2:
+            return  202;
+        case ITEM_SUBCLASS_WEAPON_STAFF:
+            return  227;
+        case ITEM_SUBCLASS_WEAPON_DAGGER:
+            return 1180;
+        case ITEM_SUBCLASS_WEAPON_THROWN:
+            return 2567;
+        case ITEM_SUBCLASS_WEAPON_SPEAR:
+            return 3386;
+        case ITEM_SUBCLASS_WEAPON_CROSSBOW:
+            return 5011;
+        case ITEM_SUBCLASS_WEAPON_WAND:
+            return 5009;
+        default:
+            return 0;
+        }
+    case ITEM_CLASS_ARMOR:
+        switch (proto->SubClass)
+        {
+        case ITEM_SUBCLASS_ARMOR_CLOTH:
+            return 9078;
+        case ITEM_SUBCLASS_ARMOR_LEATHER:
+            return 9077;
+        case ITEM_SUBCLASS_ARMOR_MAIL:
+            return 8737;
+        case ITEM_SUBCLASS_ARMOR_PLATE:
+            return  750;
+        case ITEM_SUBCLASS_ARMOR_SHIELD:
+            return 9116;
+        default:
+            return 0;
+        }
     }
     return 0;
 }
 
 int32 Item::GenerateItemRandomPropertyId(uint32 item_id)
 {
-    ItemPrototype const *itemProto = sItemStorage.LookupEntry<ItemPrototype>(item_id);
+    ItemPrototype const* itemProto = sItemStorage.LookupEntry<ItemPrototype>(item_id);
 
     if (!itemProto)
         return 0;
@@ -517,7 +541,7 @@ int32 Item::GenerateItemRandomPropertyId(uint32 item_id)
     // item can have not null only one from field values
     if ((itemProto->RandomProperty) && (itemProto->RandomSuffix))
     {
-        sLog.outErrorDb("Item template %u has RandomProperty == %u and RandomSuffix == %u, but must have one from field =0",itemProto->ItemId,itemProto->RandomProperty,itemProto->RandomSuffix);
+        sLog.outErrorDb("Item template %u has RandomProperty == %u and RandomSuffix == %u, but must have one from field =0", itemProto->ItemId, itemProto->RandomProperty, itemProto->RandomSuffix);
         return 0;
     }
 
@@ -525,10 +549,10 @@ int32 Item::GenerateItemRandomPropertyId(uint32 item_id)
     if (itemProto->RandomProperty)
     {
         uint32 randomPropId = GetItemEnchantMod(itemProto->RandomProperty);
-        ItemRandomPropertiesEntry const *random_id = sItemRandomPropertiesStore.LookupEntry(randomPropId);
+        ItemRandomPropertiesEntry const* random_id = sItemRandomPropertiesStore.LookupEntry(randomPropId);
         if (!random_id)
         {
-            sLog.outErrorDb("Enchantment id #%u used but it doesn't have a record in 'ItemRandomProperties.dbc'",randomPropId);
+            sLog.outErrorDb("Enchantment id #%u used but it doesn't have a record in 'ItemRandomProperties.dbc'", randomPropId);
             return 0;
         }
 
@@ -538,10 +562,10 @@ int32 Item::GenerateItemRandomPropertyId(uint32 item_id)
     else
     {
         uint32 randomPropId = GetItemEnchantMod(itemProto->RandomSuffix);
-        ItemRandomSuffixEntry const *random_id = sItemRandomSuffixStore.LookupEntry(randomPropId);
+        ItemRandomSuffixEntry const* random_id = sItemRandomSuffixStore.LookupEntry(randomPropId);
         if (!random_id)
         {
-            sLog.outErrorDb("Enchantment id #%u used but it doesn't have a record in sItemRandomSuffixStore.",randomPropId);
+            sLog.outErrorDb("Enchantment id #%u used but it doesn't have a record in sItemRandomSuffixStore.", randomPropId);
             return 0;
         }
 
@@ -556,33 +580,33 @@ void Item::SetItemRandomProperties(int32 randomPropId)
 
     if (randomPropId > 0)
     {
-        ItemRandomPropertiesEntry const *item_rand = sItemRandomPropertiesStore.LookupEntry(randomPropId);
+        ItemRandomPropertiesEntry const* item_rand = sItemRandomPropertiesStore.LookupEntry(randomPropId);
         if (item_rand)
         {
             if (GetInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID) != int32(item_rand->ID))
             {
-                SetInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID,item_rand->ID);
+                SetInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID, item_rand->ID);
                 SetState(ITEM_CHANGED, GetOwner());
             }
             for (uint32 i = PROP_ENCHANTMENT_SLOT_2; i < PROP_ENCHANTMENT_SLOT_2 + 3; ++i)
-                SetEnchantment(EnchantmentSlot(i),item_rand->enchant_id[i - PROP_ENCHANTMENT_SLOT_2],0,0);
+                SetEnchantment(EnchantmentSlot(i), item_rand->enchant_id[i - PROP_ENCHANTMENT_SLOT_2], 0, 0);
         }
     }
     else
     {
-        ItemRandomSuffixEntry const *item_rand = sItemRandomSuffixStore.LookupEntry(-randomPropId);
+        ItemRandomSuffixEntry const* item_rand = sItemRandomSuffixStore.LookupEntry(-randomPropId);
         if (item_rand)
         {
             if (GetInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID) != -int32(item_rand->ID) ||
                 !GetItemSuffixFactor())
             {
-                SetInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID,-int32(item_rand->ID));
+                SetInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID, -int32(item_rand->ID));
                 UpdateItemSuffixFactor();
                 SetState(ITEM_CHANGED, GetOwner());
             }
 
             for (uint32 i = PROP_ENCHANTMENT_SLOT_0; i < PROP_ENCHANTMENT_SLOT_0 + 3; ++i)
-                SetEnchantment(EnchantmentSlot(i),item_rand->enchant_id[i - PROP_ENCHANTMENT_SLOT_0],0,0);
+                SetEnchantment(EnchantmentSlot(i), item_rand->enchant_id[i - PROP_ENCHANTMENT_SLOT_0], 0, 0);
         }
     }
 }
@@ -592,7 +616,7 @@ bool Item::UpdateItemSuffixFactor()
     uint32 suffixFactor = GenerateEnchSuffixFactor(GetEntry());
     if (GetItemSuffixFactor() == suffixFactor)
         return false;
-    SetUInt32Value(ITEM_FIELD_PROPERTY_SEED,suffixFactor);
+    SetUInt32Value(ITEM_FIELD_PROPERTY_SEED, suffixFactor);
     return true;
 }
 
@@ -640,7 +664,7 @@ void Item::AddToUpdateQueueOf(Player* player)
         return;
 
     player->m_itemUpdateQueue.push_back(this);
-    uQueuePos = player->m_itemUpdateQueue.size()-1;
+    uQueuePos = player->m_itemUpdateQueue.size() - 1;
 }
 
 void Item::RemoveFromUpdateQueueOf(Player* player)
@@ -686,7 +710,7 @@ bool Item::CanBeTraded() const
 
     if (Player* owner = GetOwner())
     {
-        if (owner->CanUnequipItem(GetPos(),false) != EQUIP_ERR_OK)
+        if (owner->CanUnequipItem(GetPos(), false) != EQUIP_ERR_OK)
             return false;
         if (owner->GetLootGUID() == GetGUID())
             return false;
@@ -757,9 +781,9 @@ void Item::SetEnchantment(EnchantmentSlot slot, uint32 id, uint32 duration, uint
     if ((GetEnchantmentId(slot) == id) && (GetEnchantmentDuration(slot) == duration) && (GetEnchantmentCharges(slot) == charges))
         return;
 
-    SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot*MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_ID_OFFSET,id);
-    SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot*MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_DURATION_OFFSET,duration);
-    SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot*MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_CHARGES_OFFSET,charges);
+    SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot * MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_ID_OFFSET, id);
+    SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot * MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_DURATION_OFFSET, duration);
+    SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot * MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_CHARGES_OFFSET, charges);
     SetState(ITEM_CHANGED, GetOwner());
 }
 
@@ -768,7 +792,7 @@ void Item::SetEnchantmentDuration(EnchantmentSlot slot, uint32 duration, Player*
     if (GetEnchantmentDuration(slot) == duration)
         return;
 
-    SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot*MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_DURATION_OFFSET,duration);
+    SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot * MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_DURATION_OFFSET, duration);
     SetState(ITEM_CHANGED, owner);
     // Cannot use GetOwner() here, has to be passed as an argument to avoid freeze due to hashtable locking
 }
@@ -778,7 +802,7 @@ void Item::SetEnchantmentCharges(EnchantmentSlot slot, uint32 charges)
     if (GetEnchantmentCharges(slot) == charges)
         return;
 
-    SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot*MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_CHARGES_OFFSET,charges);
+    SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot * MAX_ENCHANTMENT_OFFSET + ENCHANTMENT_CHARGES_OFFSET, charges);
     SetState(ITEM_CHANGED, GetOwner());
 }
 
@@ -788,16 +812,16 @@ void Item::ClearEnchantment(EnchantmentSlot slot)
         return;
 
     for (uint8 x = 0; x < 3; ++x)
-        SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot*MAX_ENCHANTMENT_OFFSET + x, 0);
+        SetUInt32Value(ITEM_FIELD_ENCHANTMENT + slot * MAX_ENCHANTMENT_OFFSET + x, 0);
     SetState(ITEM_CHANGED, GetOwner());
 }
 
 bool Item::GemsFitSockets() const
 {
     bool fits = true;
-    for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT+3; ++enchant_slot)
+    for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT + 3; ++enchant_slot)
     {
-        uint8 SocketColor = GetProto()->Socket[enchant_slot-SOCK_ENCHANTMENT_SLOT].Color;
+        uint8 SocketColor = GetProto()->Socket[enchant_slot - SOCK_ENCHANTMENT_SLOT].Color;
 
         uint32 enchant_id = GetEnchantmentId(EnchantmentSlot(enchant_slot));
         if (!enchant_id)
@@ -835,7 +859,7 @@ bool Item::GemsFitSockets() const
 uint8 Item::GetGemCountWithID(uint32 GemID) const
 {
     uint8 count = 0;
-    for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT+3; ++enchant_slot)
+    for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT + 3; ++enchant_slot)
     {
         uint32 enchant_id = GetEnchantmentId(EnchantmentSlot(enchant_slot));
         if (!enchant_id)
@@ -865,7 +889,7 @@ void Item::SendTimeUpdate(Player* owner)
     if (!GetUInt32Value(ITEM_FIELD_DURATION))
         return;
 
-    WorldPacket data(SMSG_ITEM_TIME_UPDATE, (8+4));
+    WorldPacket data(SMSG_ITEM_TIME_UPDATE, (8 + 4));
     data << (uint64)GetGUID();
     data << (uint32)GetUInt32Value(ITEM_FIELD_DURATION);
     owner->GetSession()->SendPacket(&data);
@@ -876,7 +900,7 @@ Item* Item::CreateItem(uint32 item, uint32 count, Player const* player)
     if (count < 1)
         return NULL;                                        //don't create item at zero count
 
-    ItemPrototype const *pProto = sObjectMgr.GetItemPrototype(item);
+    ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(item);
     if (pProto)
     {
         if (count > pProto->Stackable)

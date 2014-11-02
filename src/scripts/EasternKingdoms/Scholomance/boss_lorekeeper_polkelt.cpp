@@ -49,7 +49,7 @@ struct boss_lorekeeperpolkeltAI : public ScriptedAI
 
     void JustDied(Unit* /*killer*/)
     {
-        ScriptedInstance *pInstance = me->GetInstanceData();
+        ScriptedInstance* pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_LOREKEEPERPOLKELT_DEATH, 0);
@@ -73,28 +73,32 @@ struct boss_lorekeeperpolkeltAI : public ScriptedAI
         {
             DoCastVictim( SPELL_VOLATILEINFECTION);
             VolatileInfection_Timer = 32000;
-        } else VolatileInfection_Timer -= diff;
+        }
+        else VolatileInfection_Timer -= diff;
 
         //Darkplague_Timer
         if (Darkplague_Timer <= diff)
         {
             DoCastVictim( SPELL_DARKPLAGUE);
             Darkplague_Timer = 8000;
-        } else Darkplague_Timer -= diff;
+        }
+        else Darkplague_Timer -= diff;
 
         //CorrosiveAcid_Timer
         if (CorrosiveAcid_Timer <= diff)
         {
             DoCastVictim( SPELL_CORROSIVEACID);
             CorrosiveAcid_Timer = 25000;
-        } else CorrosiveAcid_Timer -= diff;
+        }
+        else CorrosiveAcid_Timer -= diff;
 
         //NoxiousCatalyst_Timer
         if (NoxiousCatalyst_Timer <= diff)
         {
             DoCastVictim( SPELL_NOXIOUSCATALYST);
             NoxiousCatalyst_Timer = 38000;
-        } else NoxiousCatalyst_Timer -= diff;
+        }
+        else NoxiousCatalyst_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -106,7 +110,7 @@ CreatureAI* GetAI_boss_lorekeeperpolkelt(Creature* pCreature)
 
 void AddSC_boss_lorekeeperpolkelt()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_lorekeeper_polkelt";
     newscript->GetAI = &GetAI_boss_lorekeeperpolkelt;

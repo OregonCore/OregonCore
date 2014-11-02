@@ -47,7 +47,7 @@ struct boss_kazrogalAI : public hyjal_trashAI
         pInstance = c->GetInstanceData();
         pGo = false;
         pos = 0;
-        SpellEntry *TempSpell = GET_SPELL(SPELL_MARK);
+        SpellEntry* TempSpell = GET_SPELL(SPELL_MARK);
         if (TempSpell && TempSpell->EffectImplicitTargetA[0] != 1)
         {
             TempSpell->EffectImplicitTargetA[0] = 1;
@@ -84,20 +84,20 @@ struct boss_kazrogalAI : public hyjal_trashAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch (urand(0,2))
+        switch (urand(0, 2))
         {
-            case 0:
-                DoPlaySoundToSet(me, SOUND_ONSLAY1);
-                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
-                break;
-            case 1:
-                DoPlaySoundToSet(me, SOUND_ONSLAY2);
-                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
-                break;
-            case 2:
-                DoPlaySoundToSet(me, SOUND_ONSLAY3);
-                me->MonsterYell(SAY_ONSLAY3, LANG_UNIVERSAL, 0);
-                break;
+        case 0:
+            DoPlaySoundToSet(me, SOUND_ONSLAY1);
+            me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
+            break;
+        case 1:
+            DoPlaySoundToSet(me, SOUND_ONSLAY2);
+            me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
+            break;
+        case 2:
+            DoPlaySoundToSet(me, SOUND_ONSLAY3);
+            me->MonsterYell(SAY_ONSLAY3, LANG_UNIVERSAL, 0);
+            break;
         }
     }
 
@@ -108,7 +108,7 @@ struct boss_kazrogalAI : public hyjal_trashAI
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
             if (pTarget && pTarget->isAlive())
-                me->AddThreat(pTarget,0.0f);
+                me->AddThreat(pTarget, 0.0f);
         }
     }
 
@@ -152,47 +152,50 @@ struct boss_kazrogalAI : public hyjal_trashAI
         if (CleaveTimer <= diff)
         {
             DoCast(me, SPELL_CLEAVE);
-            CleaveTimer = 6000+rand()%15000;
-        } else CleaveTimer -= diff;
+            CleaveTimer = 6000 + rand() % 15000;
+        }
+        else CleaveTimer -= diff;
 
         if (WarStompTimer <= diff)
         {
             DoCast(me, SPELL_WARSTOMP);
             WarStompTimer = 60000;
-        } else WarStompTimer -= diff;
+        }
+        else WarStompTimer -= diff;
 
-        if (me->HasAura(SPELL_MARK,0))
+        if (me->HasAura(SPELL_MARK, 0))
             me->RemoveAurasDueToSpell(SPELL_MARK);
         if (MarkTimer <= diff)
         {
             //cast dummy, useful for bos addons
             me->CastCustomSpell(me, SPELL_MARK, NULL, NULL, NULL, false, NULL, NULL, me->GetGUID());
 
-            std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
-            for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
+            std::list<HostileReference*> t_list = me->getThreatManager().getThreatList();
+            for (std::list<HostileReference*>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
                 Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                 if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->getPowerType() == POWER_MANA)
                 {
-                    pTarget->CastSpell(pTarget, SPELL_MARK,true);//only cast on mana users
+                    pTarget->CastSpell(pTarget, SPELL_MARK, true); //only cast on mana users
                 }
             }
             MarkTimerBase -= 5000;
             if (MarkTimerBase < 5500)
                 MarkTimerBase = 5500;
             MarkTimer = MarkTimerBase;
-            switch (urand(0,2))
+            switch (urand(0, 2))
             {
-                case 0:
-                    DoPlaySoundToSet(me, SOUND_MARK1);
-                    me->MonsterYell(SAY_MARK1, LANG_UNIVERSAL, 0);
-                    break;
-                case 1:
-                    DoPlaySoundToSet(me, SOUND_MARK2);
-                    me->MonsterYell(SAY_MARK2, LANG_UNIVERSAL, 0);
-                    break;
+            case 0:
+                DoPlaySoundToSet(me, SOUND_MARK1);
+                me->MonsterYell(SAY_MARK1, LANG_UNIVERSAL, 0);
+                break;
+            case 1:
+                DoPlaySoundToSet(me, SOUND_MARK2);
+                me->MonsterYell(SAY_MARK2, LANG_UNIVERSAL, 0);
+                break;
             }
-        } else MarkTimer -= diff;
+        }
+        else MarkTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -205,7 +208,7 @@ CreatureAI* GetAI_boss_kazrogal(Creature* pCreature)
 
 void AddSC_boss_kazrogal()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_kazrogal";
     newscript->GetAI = &GetAI_boss_kazrogal;

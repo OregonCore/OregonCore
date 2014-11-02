@@ -61,10 +61,10 @@ EndScriptData */
 
 struct Locations
 {
-    float x,y,z;
+    float x, y, z;
 };
 
-static Locations TeleportPoint[]=
+static Locations TeleportPoint[] =
 {
     {959.996f, 212.576f, 193.843f},
     {932.537f, 231.813f, 193.838f},
@@ -102,17 +102,17 @@ struct boss_shahrazAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, NOT_STARTED);
 
-        for (uint8 i = 0; i<3; ++i)
+        for (uint8 i = 0; i < 3; ++i)
             TargetGUID[i] = 0;
 
         BeamTimer = 5000; // Timers may be incorrect
         //BeamCount = 1;
-        CurrentBeam = rand()%4;                                    // 0 - Sinister, 1 - Vile, 2 - Wicked, 3 - Sinful
+        CurrentBeam = rand() % 4;                                  // 0 - Sinister, 1 - Vile, 2 - Wicked, 3 - Sinful
         FatalAttractionTimer = 60000;
         FatalAttractionExplodeTimer = 70000;
         ShriekTimer = 20000;
         SaberTimer = 5000;
-        RandomYellTimer = 70000 + rand()%41 * 1000;
+        RandomYellTimer = 70000 + rand() % 41 * 1000;
         EnrageTimer = 600000;
 
         Enraged = false;
@@ -125,13 +125,13 @@ struct boss_shahrazAI : public ScriptedAI
 
         DoZoneInCombat();
         DoScriptText(SAY_AGGRO, me);
-        DoCast(me,SPELL_PRISMATIC_SHIELD,true);
-        DoCast(me,SPELL_SABER_LASH_TRIGGER,true);
+        DoCast(me, SPELL_PRISMATIC_SHIELD, true);
+        DoCast(me, SPELL_SABER_LASH_TRIGGER, true);
     }
 
     void KilledUnit(Unit* /*victim*/)
     {
-        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
+        DoScriptText(RAND(SAY_SLAY1, SAY_SLAY2), me);
     }
 
     void JustDied(Unit* /*victim*/)
@@ -144,14 +144,14 @@ struct boss_shahrazAI : public ScriptedAI
 
     void TeleportPlayers()
     {
-        uint32 random = rand()%7;
+        uint32 random = rand() % 7;
         float X = TeleportPoint[random].x;
         float Y = TeleportPoint[random].y;
         float Z = TeleportPoint[random].z;
         for (uint8 i = 0; i < 3; ++i)
         {
             Unit* pUnit = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (pUnit && pUnit->isAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER) && !pUnit->HasAura(SPELL_SABER_LASH_IMM,0))
+            if (pUnit && pUnit->isAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER) && !pUnit->HasAura(SPELL_SABER_LASH_IMM, 0))
             {
                 TargetGUID[i] = pUnit->GetGUID();
                 pUnit->CastSpell(pUnit, SPELL_TELEPORT_VISUAL, true);
@@ -164,7 +164,7 @@ struct boss_shahrazAI : public ScriptedAI
     {
         if (me->IsNonMeleeSpellCast(false)) return false;
 
-        DoCast(victim,spellId,triggered);
+        DoCast(victim, spellId, triggered);
         return true;
     }
 
@@ -173,7 +173,7 @@ struct boss_shahrazAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth()*100 / me->GetMaxHealth()) < 10) && !Enraged)
+        if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 10) && !Enraged)
         {
             Enraged = true;
             DoCast(me, SPELL_ENRAGE, true);
@@ -184,38 +184,40 @@ struct boss_shahrazAI : public ScriptedAI
         {
             if (!me->IsNonMeleeSpellCast(false))
             {
-                switch(CurrentBeam)
+                switch (CurrentBeam)
                 {
-                    case 0:
-                        DoCast(me, SPELL_BEAM_SINISTER_TRIGGER);
-                        break;
-                    case 1:
-                        DoCast(me, SPELL_BEAM_VILE_TRIGGER);
-                        break;
-                    case 2:
-                        DoCast(me, SPELL_BEAM_WICKED_TRIGGER);
-                        break;
-                    case 3:
-                        DoCast(me, SPELL_BEAM_SINFUL_TRIGGER);
-                        break;
+                case 0:
+                    DoCast(me, SPELL_BEAM_SINISTER_TRIGGER);
+                    break;
+                case 1:
+                    DoCast(me, SPELL_BEAM_VILE_TRIGGER);
+                    break;
+                case 2:
+                    DoCast(me, SPELL_BEAM_WICKED_TRIGGER);
+                    break;
+                case 3:
+                    DoCast(me, SPELL_BEAM_SINFUL_TRIGGER);
+                    break;
                 }
                 uint32 Beam = CurrentBeam;
                 while (CurrentBeam == Beam)
-                    CurrentBeam = rand()%4;
+                    CurrentBeam = rand() % 4;
 
                 BeamTimer = 30000;
             }
-        } else BeamTimer -= diff;
+        }
+        else BeamTimer -= diff;
 
         // Select 3 random targets (can select same target more than once), teleport to a random location then make them cast explosions until they get away from each other.
         if (FatalAttractionTimer <= diff)
         {
             TeleportPlayers();
 
-            DoScriptText(RAND(SAY_SPELL2,SAY_SPELL3), me);
+            DoScriptText(RAND(SAY_SPELL2, SAY_SPELL3), me);
             FatalAttractionExplodeTimer = 2000;
             FatalAttractionTimer = 30000;
-        } else FatalAttractionTimer -= diff;
+        }
+        else FatalAttractionTimer -= diff;
 
         if (FatalAttractionExplodeTimer <= diff)
         {
@@ -239,7 +241,7 @@ struct boss_shahrazAI : public ScriptedAI
                         isNear = true;
 
                 if (isNear)
-                    targets[0]->CastSpell(targets[0],SPELL_ATTRACTION,true);
+                    targets[0]->CastSpell(targets[0], SPELL_ATTRACTION, true);
                 else
                 {
                     targets[0]->RemoveAurasDueToSpell(SPELL_ATTRACTION_VIS);
@@ -260,7 +262,7 @@ struct boss_shahrazAI : public ScriptedAI
                         isNear = true;
 
                 if (isNear)
-                    targets[1]->CastSpell(targets[1],SPELL_ATTRACTION,true);
+                    targets[1]->CastSpell(targets[1], SPELL_ATTRACTION, true);
                 else
                 {
                     targets[1]->RemoveAurasDueToSpell(SPELL_ATTRACTION_VIS);
@@ -280,7 +282,7 @@ struct boss_shahrazAI : public ScriptedAI
                         isNear = true;
 
                 if (isNear)
-                    targets[2]->CastSpell(targets[1],SPELL_ATTRACTION,true);
+                    targets[2]->CastSpell(targets[1], SPELL_ATTRACTION, true);
                 else
                 {
                     targets[2]->RemoveAurasDueToSpell(SPELL_ATTRACTION_VIS);
@@ -301,13 +303,15 @@ struct boss_shahrazAI : public ScriptedAI
             else
                 FatalAttractionExplodeTimer = 1000;
 
-        } else FatalAttractionExplodeTimer -= diff;
+        }
+        else FatalAttractionExplodeTimer -= diff;
 
         if (ShriekTimer <= diff)
         {
             if (TryDoCast(me->getVictim(), SPELL_SILENCING_SHRIEK))
                 ShriekTimer = 20000;
-        } else ShriekTimer -= diff;
+        }
+        else ShriekTimer -= diff;
 
         //Enrage
         if (!me->HasAura(SPELL_BERSERK, 0))
@@ -316,14 +320,16 @@ struct boss_shahrazAI : public ScriptedAI
             {
                 DoCast(me, SPELL_BERSERK);
                 DoScriptText(SAY_ENRAGE, me);
-            } else EnrageTimer -= diff;
+            }
+            else EnrageTimer -= diff;
         }
         //Random taunts
         if (RandomYellTimer <= diff)
         {
-            DoScriptText(RAND(SAY_TAUNT1,SAY_TAUNT2,SAY_TAUNT3), me);
-            RandomYellTimer = 60000 + rand()%91 * 1000;
-        } else RandomYellTimer -= diff;
+            DoScriptText(RAND(SAY_TAUNT1, SAY_TAUNT2, SAY_TAUNT3), me);
+            RandomYellTimer = 60000 + rand() % 91 * 1000;
+        }
+        else RandomYellTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -336,7 +342,7 @@ CreatureAI* GetAI_boss_shahraz(Creature* pCreature)
 
 void AddSC_boss_mother_shahraz()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_mother_shahraz";
     newscript->GetAI = &GetAI_boss_shahraz;

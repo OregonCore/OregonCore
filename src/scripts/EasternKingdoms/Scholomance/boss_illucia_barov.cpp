@@ -49,7 +49,7 @@ struct boss_illuciabarovAI : public ScriptedAI
 
     void JustDied(Unit* /*killer*/)
     {
-        ScriptedInstance *pInstance = me->GetInstanceData();
+        ScriptedInstance* pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_LADYILLUCIABAROV_DEATH, 0);
@@ -73,31 +73,35 @@ struct boss_illuciabarovAI : public ScriptedAI
         {
             DoCastVictim( SPELL_CURSEOFAGONY);
             CurseOfAgony_Timer = 30000;
-        } else CurseOfAgony_Timer -= diff;
+        }
+        else CurseOfAgony_Timer -= diff;
 
         //ShadowShock_Timer
         if (ShadowShock_Timer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget) DoCast(pTarget, SPELL_SHADOWSHOCK);
 
             ShadowShock_Timer = 12000;
-        } else ShadowShock_Timer -= diff;
+        }
+        else ShadowShock_Timer -= diff;
 
         //Silence_Timer
         if (Silence_Timer <= diff)
         {
             DoCastVictim( SPELL_SILENCE);
             Silence_Timer = 14000;
-        } else Silence_Timer -= diff;
+        }
+        else Silence_Timer -= diff;
 
         //Fear_Timer
         if (Fear_Timer <= diff)
         {
             DoCastVictim( SPELL_FEAR);
             Fear_Timer = 30000;
-        } else Fear_Timer -= diff;
+        }
+        else Fear_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -109,7 +113,7 @@ CreatureAI* GetAI_boss_illuciabarov(Creature* pCreature)
 
 void AddSC_boss_illuciabarov()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_illucia_barov";
     newscript->GetAI = &GetAI_boss_illuciabarov;

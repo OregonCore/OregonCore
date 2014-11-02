@@ -88,7 +88,7 @@ struct boss_nefarianAI : public ScriptedAI
 
     void KilledUnit(Unit* Victim)
     {
-        if (rand()%5)
+        if (rand() % 5)
             return;
 
         DoScriptText(SAY_SLAY, me, Victim);
@@ -101,7 +101,7 @@ struct boss_nefarianAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(RAND(SAY_XHEALTH,SAY_AGGRO,SAY_SHADOWFLAME), me);
+        DoScriptText(RAND(SAY_XHEALTH, SAY_AGGRO, SAY_SHADOWFLAME), me);
 
         DoCast(who, SPELL_SHADOWFLAME_INITIAL);
         DoZoneInCombat();
@@ -114,7 +114,8 @@ struct boss_nefarianAI : public ScriptedAI
             if (!UpdateVictim())
                 me->ForcedDespawn();
             DespawnTimer = 5000;
-        } else DespawnTimer -= diff;
+        }
+        else DespawnTimer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -124,28 +125,32 @@ struct boss_nefarianAI : public ScriptedAI
         {
             DoCastVictim( SPELL_SHADOWFLAME);
             ShadowFlame_Timer = 12000;
-        } else ShadowFlame_Timer -= diff;
+        }
+        else ShadowFlame_Timer -= diff;
 
         //BellowingRoar_Timer
         if (BellowingRoar_Timer <= diff)
         {
             DoCastVictim( SPELL_BELLOWINGROAR);
             BellowingRoar_Timer = 30000;
-        } else BellowingRoar_Timer -= diff;
+        }
+        else BellowingRoar_Timer -= diff;
 
         //VeilOfShadow_Timer
         if (VeilOfShadow_Timer <= diff)
         {
             DoCastVictim( SPELL_VEILOFSHADOW);
             VeilOfShadow_Timer = 15000;
-        } else VeilOfShadow_Timer -= diff;
+        }
+        else VeilOfShadow_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 7000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         //TailLash_Timer
         if (TailLash_Timer <= diff)
@@ -154,7 +159,8 @@ struct boss_nefarianAI : public ScriptedAI
             //DoCastVictim( SPELL_TAILLASH);
 
             TailLash_Timer = 10000;
-        } else TailLash_Timer -= diff;
+        }
+        else TailLash_Timer -= diff;
 
         //ClassCall_Timer
         if (ClassCall_Timer <= diff)
@@ -163,51 +169,52 @@ struct boss_nefarianAI : public ScriptedAI
             //On official it is based on what classes are currently on the hostil list
             //but we can't do that yet so just randomly call one
 
-            switch (urand(0,8))
+            switch (urand(0, 8))
             {
-                case 0:
-                    DoScriptText(SAY_MAGE, me);
-                    DoCast(me, SPELL_MAGE);
-                    break;
-                case 1:
-                    DoScriptText(SAY_WARRIOR, me);
-                    DoCast(me, SPELL_WARRIOR);
-                    break;
-                case 2:
-                    DoScriptText(SAY_DRUID, me);
-                    DoCast(me, SPELL_DRUID);
-                    break;
-                case 3:
-                    DoScriptText(SAY_PRIEST, me);
-                    DoCast(me, SPELL_PRIEST);
-                    break;
-                case 4:
-                    DoScriptText(SAY_PALADIN, me);
-                    DoCast(me, SPELL_PALADIN);
-                    break;
-                case 5:
-                    DoScriptText(SAY_SHAMAN, me);
-                    DoCast(me, SPELL_SHAMAN);
-                    break;
-                case 6:
-                    DoScriptText(SAY_WARLOCK, me);
-                    DoCast(me, SPELL_WARLOCK);
-                    break;
-                case 7:
-                    DoScriptText(SAY_HUNTER, me);
-                    DoCast(me, SPELL_HUNTER);
-                    break;
-                case 8:
-                    DoScriptText(SAY_ROGUE, me);
-                    DoCast(me, SPELL_ROGUE);
-                    break;
+            case 0:
+                DoScriptText(SAY_MAGE, me);
+                DoCast(me, SPELL_MAGE);
+                break;
+            case 1:
+                DoScriptText(SAY_WARRIOR, me);
+                DoCast(me, SPELL_WARRIOR);
+                break;
+            case 2:
+                DoScriptText(SAY_DRUID, me);
+                DoCast(me, SPELL_DRUID);
+                break;
+            case 3:
+                DoScriptText(SAY_PRIEST, me);
+                DoCast(me, SPELL_PRIEST);
+                break;
+            case 4:
+                DoScriptText(SAY_PALADIN, me);
+                DoCast(me, SPELL_PALADIN);
+                break;
+            case 5:
+                DoScriptText(SAY_SHAMAN, me);
+                DoCast(me, SPELL_SHAMAN);
+                break;
+            case 6:
+                DoScriptText(SAY_WARLOCK, me);
+                DoCast(me, SPELL_WARLOCK);
+                break;
+            case 7:
+                DoScriptText(SAY_HUNTER, me);
+                DoCast(me, SPELL_HUNTER);
+                break;
+            case 8:
+                DoScriptText(SAY_ROGUE, me);
+                DoCast(me, SPELL_ROGUE);
+                break;
             }
 
             ClassCall_Timer = 35000 + (rand() % 5000);
-        } else ClassCall_Timer -= diff;
+        }
+        else ClassCall_Timer -= diff;
 
         //Phase3 begins when we are below X health
-        if (!Phase3 && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
+        if (!Phase3 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
         {
             Phase3 = true;
             DoScriptText(SAY_RAISE_SKELETONS, me);
@@ -223,7 +230,7 @@ CreatureAI* GetAI_boss_nefarian(Creature* pCreature)
 
 void AddSC_boss_nefarian()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_nefarian";
     newscript->GetAI = &GetAI_boss_nefarian;

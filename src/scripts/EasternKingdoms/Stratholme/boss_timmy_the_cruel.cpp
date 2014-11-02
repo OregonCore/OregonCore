@@ -45,7 +45,7 @@ struct boss_timmy_the_cruelAI : public ScriptedAI
     {
         if (!HasYelled)
         {
-            me->MonsterYell(SAY_SPAWN,LANG_UNIVERSAL,0);
+            me->MonsterYell(SAY_SPAWN, LANG_UNIVERSAL, 0);
             HasYelled = true;
         }
     }
@@ -63,7 +63,8 @@ struct boss_timmy_the_cruelAI : public ScriptedAI
             DoCastVictim( SPELL_RAVENOUSCLAW);
             //15 seconds until we should cast this again
             RavenousClaw_Timer = 15000;
-        } else RavenousClaw_Timer -= diff;
+        }
+        else RavenousClaw_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -75,7 +76,7 @@ CreatureAI* GetAI_boss_timmy_the_cruel(Creature* pCreature)
 
 void AddSC_boss_timmy_the_cruel()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_timmy_the_cruel";
     newscript->GetAI = &GetAI_boss_timmy_the_cruel;

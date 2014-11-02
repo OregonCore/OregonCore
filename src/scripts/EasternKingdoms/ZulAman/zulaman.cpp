@@ -47,7 +47,7 @@ struct npc_forest_frogAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     void Reset() {}
 
@@ -58,38 +58,58 @@ struct npc_forest_frogAI : public ScriptedAI
         if (pInstance)
         {
             uint32 cEntry = 0;
-            switch(rand()%10)
+            switch (rand() % 10)
             {
-                case 0: cEntry = 24397; break;          //Mannuth
-                case 1: cEntry = 24403; break;          //Deez
-                case 2: cEntry = 24404; break;          //Galathryn
-                case 3: cEntry = 24405; break;          //Adarrah
-                case 4: cEntry = 24406; break;          //Fudgerick
-                case 5: cEntry = 24407; break;          //Darwen
-                case 6: cEntry = 24445; break;          //Mitzi
-                case 7: cEntry = 24448; break;          //Christian
-                case 8: cEntry = 24453; break;          //Brennan
-                case 9: cEntry = 24455; break;          //Hollee
+            case 0:
+                cEntry = 24397;
+                break;          //Mannuth
+            case 1:
+                cEntry = 24403;
+                break;          //Deez
+            case 2:
+                cEntry = 24404;
+                break;          //Galathryn
+            case 3:
+                cEntry = 24405;
+                break;          //Adarrah
+            case 4:
+                cEntry = 24406;
+                break;          //Fudgerick
+            case 5:
+                cEntry = 24407;
+                break;          //Darwen
+            case 6:
+                cEntry = 24445;
+                break;          //Mitzi
+            case 7:
+                cEntry = 24448;
+                break;          //Christian
+            case 8:
+                cEntry = 24453;
+                break;          //Brennan
+            case 9:
+                cEntry = 24455;
+                break;          //Hollee
             }
 
             if (!pInstance->GetData(ENCOUNTER_RAND_VENDOR_1))
-                if (rand()%10 == 1) cEntry = 24408;      //Gunter
+                if (rand() % 10 == 1) cEntry = 24408;    //Gunter
             if (!pInstance->GetData(ENCOUNTER_RAND_VENDOR_2))
-                if (rand()%10 == 1) cEntry = 24409;      //Kyren
+                if (rand() % 10 == 1) cEntry = 24409;    //Kyren
 
             if (cEntry) me->UpdateEntry(cEntry);
 
-            if (cEntry == 24408) pInstance->SetData(ENCOUNTER_RAND_VENDOR_1,DONE);
-            if (cEntry == 24409) pInstance->SetData(ENCOUNTER_RAND_VENDOR_2,DONE);
+            if (cEntry == 24408) pInstance->SetData(ENCOUNTER_RAND_VENDOR_1, DONE);
+            if (cEntry == 24409) pInstance->SetData(ENCOUNTER_RAND_VENDOR_2, DONE);
         }
     }
 
-    void SpellHit(Unit* caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry* spell)
     {
         if (spell->Id == SPELL_REMOVE_AMANI_CURSE && caster->GetTypeId() == TYPEID_PLAYER && me->GetEntry() == ENTRY_FOREST_FROG)
         {
             //increase or decrease chance of mojo?
-            if (rand()%99 == 50) DoCast(caster, SPELL_PUSH_MOJO, true);
+            if (rand() % 99 == 50) DoCast(caster, SPELL_PUSH_MOJO, true);
             else DoSpawnRandom();
         }
     }
@@ -110,7 +130,10 @@ static uint32 ChestEntry[] = {186648, 187021, 186672, 186667};
 
 struct npc_zulaman_hostageAI : public ScriptedAI
 {
-    npc_zulaman_hostageAI(Creature* c) : ScriptedAI(c) {IsLoot = false;}
+    npc_zulaman_hostageAI(Creature* c) : ScriptedAI(c)
+    {
+        IsLoot = false;
+    }
     bool IsLoot;
     uint64 PlayerGUID;
     void Reset() {}
@@ -155,7 +178,7 @@ bool GossipSelect_npc_zulaman_hostage(Player* pPlayer, Creature* pCreature, uint
         {
             if (HostageEntry[i] == entry)
             {
-                pCreature->SummonGameObject(ChestEntry[i], x-2, y, z, 0, 0, 0, 0, 0, 0);
+                pCreature->SummonGameObject(ChestEntry[i], x - 2, y, z, 0, 0, 0, 0, 0, 0);
                 break;
             }
         }
@@ -181,7 +204,7 @@ CreatureAI* GetAI_npc_zulaman_hostage(Creature* pCreature)
 
 static char GOSSIP_HARRISON[] = "Tooltip Missing";
 static char SAY_HARRISON_UNK0[] = "Puzzling. They're clearly harnessing great power from their sacrifices. But for what?";
-static char YELL_HARRISON_FOLLOWME[] = "Suit yourself. At least five of you must assist me if we're to get inside. Follow me..."; 
+static char YELL_HARRISON_FOLLOWME[] = "Suit yourself. At least five of you must assist me if we're to get inside. Follow me...";
 static char YELL_HARRISON_UNK1[] = "According to my calculations, if enough of us bang the gong at once the seal on these doors will break and we can enter.";
 static char YELL_HARRISON_UNK2[] = "I've researched this site extensively and I won't allow any dim-witted treasure hunters to swoop in and steal what belongs in a museum. I'll lead this charge.";
 static char YELL_HARRISON_UNK3[] = "In fact, it would be best if you just stay here. You'd only get in my way....";
@@ -265,7 +288,7 @@ CreatureAI* GetAI_npc_harrison_jones(Creature* pCreature)
 
 void AddSC_zulaman()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_forest_frog";

@@ -73,7 +73,7 @@ struct boss_vectusAI : public ScriptedAI
             m_uiBlastWave_Timer -= uiDiff;
 
         //Frenzy_Timer
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 25)
+        if (me->GetHealth() * 100 / me->GetMaxHealth() < 25)
         {
             if (m_uiFrenzy_Timer <= uiDiff)
             {
@@ -97,7 +97,7 @@ CreatureAI* GetAI_boss_vectus(Creature* pCreature)
 
 void AddSC_boss_vectus()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_vectus";
     newscript->GetAI = &GetAI_boss_vectus;

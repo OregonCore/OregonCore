@@ -81,20 +81,20 @@ bool AddonHandler::BuildAddonPacket(WorldPacket* Source, WorldPacket* Target)
     {
         Target->Initialize(SMSG_ADDON_INFO);
 
-        while(AddOnPacked.rpos() < AddOnPacked.size())
+        while (AddOnPacked.rpos() < AddOnPacked.size())
         {
             std::string AddonNames;
             uint8 unk6;
             uint32 crc, unk7;
 
             // check next addon data format correctness
-            if (AddOnPacked.rpos()+1+4+4+1 > AddOnPacked.size())
+            if (AddOnPacked.rpos() + 1 + 4 + 4 + 1 > AddOnPacked.size())
                 return false;
 
             AddOnPacked >> AddonNames;
 
             // recheck next addon data format correctness
-            if (AddOnPacked.rpos()+4+4+1 > AddOnPacked.size())
+            if (AddOnPacked.rpos() + 4 + 4 + 1 > AddOnPacked.size())
                 return false;
 
             AddOnPacked >> crc >> unk7 >> unk6;

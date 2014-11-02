@@ -61,28 +61,32 @@ struct boss_drakkisathAI : public ScriptedAI
         {
             DoCastVictim( SPELL_FIRENOVA);
             FireNova_Timer = 10000;
-        } else FireNova_Timer -= diff;
+        }
+        else FireNova_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 8000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         //Confliguration_Timer
         if (Confliguration_Timer <= diff)
         {
             DoCastVictim( SPELL_CONFLIGURATION);
             Confliguration_Timer = 18000;
-        } else Confliguration_Timer -= diff;
+        }
+        else Confliguration_Timer -= diff;
 
         //Thunderclap_Timer
         if (Thunderclap_Timer <= diff)
         {
             DoCastVictim( SPELL_THUNDERCLAP);
             Thunderclap_Timer = 20000;
-        } else Thunderclap_Timer -= diff;
+        }
+        else Thunderclap_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -94,7 +98,7 @@ CreatureAI* GetAI_boss_drakkisath(Creature* pCreature)
 
 void AddSC_boss_drakkisath()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_drakkisath";
     newscript->GetAI = &GetAI_boss_drakkisath;

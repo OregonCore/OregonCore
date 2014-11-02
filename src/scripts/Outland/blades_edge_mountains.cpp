@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /* ScriptData
 SDName: Blades_Edge_Mountains
 SD%Complete: 90
@@ -88,60 +88,92 @@ struct mobs_nether_drakeAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) { }
 
-    void SpellHit(Unit* caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry* spell)
     {
         if (spell->Id == SPELL_T_PHASE_MODULATOR && caster->GetTypeId() == TYPEID_PLAYER)
         {
             uint32 cEntry = 0;
 
-            switch(me->GetEntry())
+            switch (me->GetEntry())
             {
-                case ENTRY_WHELP:
-                    switch(rand()%4)
-                    {
-                        case 0: cEntry = ENTRY_PROTO; break;
-                        case 1: cEntry = ENTRY_ADOLE; break;
-                        case 2: cEntry = ENTRY_MATUR; break;
-                        case 3: cEntry = ENTRY_NIHIL; break;
-                    }
+            case ENTRY_WHELP:
+                switch (rand() % 4)
+                {
+                case 0:
+                    cEntry = ENTRY_PROTO;
                     break;
-                case ENTRY_PROTO:
-                    switch(rand()%3)
-                    {
-                        case 0: cEntry = ENTRY_ADOLE; break;
-                        case 1: cEntry = ENTRY_MATUR; break;
-                        case 2: cEntry = ENTRY_NIHIL; break;
-                    }
+                case 1:
+                    cEntry = ENTRY_ADOLE;
                     break;
-                case ENTRY_ADOLE:
-                    switch(rand()%3)
-                    {
-                        case 0: cEntry = ENTRY_PROTO; break;
-                        case 1: cEntry = ENTRY_MATUR; break;
-                        case 2: cEntry = ENTRY_NIHIL; break;
-                    }
+                case 2:
+                    cEntry = ENTRY_MATUR;
                     break;
-                case ENTRY_MATUR:
-                    switch(rand()%3)
-                    {
-                        case 0: cEntry = ENTRY_PROTO; break;
-                        case 1: cEntry = ENTRY_ADOLE; break;
-                        case 2: cEntry = ENTRY_NIHIL; break;
-                    }
+                case 3:
+                    cEntry = ENTRY_NIHIL;
                     break;
-                case ENTRY_NIHIL:
-                    if (NihilSpeech_Phase)
-                    {
-                        DoScriptText(SAY_NIHIL_INTERRUPT, me);
-                        IsNihil = false;
-                        switch(rand()%3)
-                        {
-                            case 0: cEntry = ENTRY_PROTO; break;
-                            case 1: cEntry = ENTRY_ADOLE; break;
-                            case 2: cEntry = ENTRY_MATUR; break;
-                        }
-                    }
+                }
+                break;
+            case ENTRY_PROTO:
+                switch (rand() % 3)
+                {
+                case 0:
+                    cEntry = ENTRY_ADOLE;
                     break;
+                case 1:
+                    cEntry = ENTRY_MATUR;
+                    break;
+                case 2:
+                    cEntry = ENTRY_NIHIL;
+                    break;
+                }
+                break;
+            case ENTRY_ADOLE:
+                switch (rand() % 3)
+                {
+                case 0:
+                    cEntry = ENTRY_PROTO;
+                    break;
+                case 1:
+                    cEntry = ENTRY_MATUR;
+                    break;
+                case 2:
+                    cEntry = ENTRY_NIHIL;
+                    break;
+                }
+                break;
+            case ENTRY_MATUR:
+                switch (rand() % 3)
+                {
+                case 0:
+                    cEntry = ENTRY_PROTO;
+                    break;
+                case 1:
+                    cEntry = ENTRY_ADOLE;
+                    break;
+                case 2:
+                    cEntry = ENTRY_NIHIL;
+                    break;
+                }
+                break;
+            case ENTRY_NIHIL:
+                if (NihilSpeech_Phase)
+                {
+                    DoScriptText(SAY_NIHIL_INTERRUPT, me);
+                    IsNihil = false;
+                    switch (rand() % 3)
+                    {
+                    case 0:
+                        cEntry = ENTRY_PROTO;
+                        break;
+                    case 1:
+                        cEntry = ENTRY_ADOLE;
+                        break;
+                    case 2:
+                        cEntry = ENTRY_MATUR;
+                        break;
+                    }
+                }
+                break;
             }
 
             if (cEntry)
@@ -168,35 +200,36 @@ struct mobs_nether_drakeAI : public ScriptedAI
             {
                 if (NihilSpeech_Timer <= diff)
                 {
-                    switch(NihilSpeech_Phase)
+                    switch (NihilSpeech_Phase)
                     {
-                        case 1:
-                            DoScriptText(SAY_NIHIL_1, me);
-                            ++NihilSpeech_Phase;
-                            break;
-                        case 2:
-                            DoScriptText(SAY_NIHIL_2, me);
-                            ++NihilSpeech_Phase;
-                            break;
-                        case 3:
-                            DoScriptText(SAY_NIHIL_3, me);
-                            ++NihilSpeech_Phase;
-                            break;
-                        case 4:
-                            DoScriptText(SAY_NIHIL_4, me);
-                            ++NihilSpeech_Phase;
-                            break;
-                        case 5:
-                            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                                                            // + MOVEFLAG_LEVITATING
-                            me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
-                            //then take off to random location. creature is initially summoned, so don't bother do anything else.
-                            me->GetMotionMaster()->MovePoint(0, me->GetPositionX()+100, me->GetPositionY(), me->GetPositionZ()+100);
-                            NihilSpeech_Phase = 0;
-                            break;
+                    case 1:
+                        DoScriptText(SAY_NIHIL_1, me);
+                        ++NihilSpeech_Phase;
+                        break;
+                    case 2:
+                        DoScriptText(SAY_NIHIL_2, me);
+                        ++NihilSpeech_Phase;
+                        break;
+                    case 3:
+                        DoScriptText(SAY_NIHIL_3, me);
+                        ++NihilSpeech_Phase;
+                        break;
+                    case 4:
+                        DoScriptText(SAY_NIHIL_4, me);
+                        ++NihilSpeech_Phase;
+                        break;
+                    case 5:
+                        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                        // + MOVEFLAG_LEVITATING
+                        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
+                        //then take off to random location. creature is initially summoned, so don't bother do anything else.
+                        me->GetMotionMaster()->MovePoint(0, me->GetPositionX() + 100, me->GetPositionY(), me->GetPositionZ() + 100);
+                        NihilSpeech_Phase = 0;
+                        break;
                     }
                     NihilSpeech_Timer = 5000;
-                } else NihilSpeech_Timer -=diff;
+                }
+                else NihilSpeech_Timer -= diff;
             }
             return;                                         //anything below here is not interesting for Nihil, so skip it
         }
@@ -207,22 +240,25 @@ struct mobs_nether_drakeAI : public ScriptedAI
         if (IntangiblePresence_Timer <= diff)
         {
             DoCastVictim(SPELL_INTANGIBLE_PRESENCE);
-            IntangiblePresence_Timer = 15000+rand()%15000;
-        } else IntangiblePresence_Timer -= diff;
+            IntangiblePresence_Timer = 15000 + rand() % 15000;
+        }
+        else IntangiblePresence_Timer -= diff;
 
         if (ManaBurn_Timer <= diff)
         {
             Unit* pTarget = me->getVictim();
             if (pTarget && pTarget->getPowerType() == POWER_MANA)
-                DoCast(pTarget,SPELL_MANA_BURN);
-            ManaBurn_Timer = 8000+rand()%8000;
-        } else ManaBurn_Timer -= diff;
+                DoCast(pTarget, SPELL_MANA_BURN);
+            ManaBurn_Timer = 8000 + rand() % 8000;
+        }
+        else ManaBurn_Timer -= diff;
 
         if (ArcaneBlast_Timer <= diff)
         {
             DoCastVictim(SPELL_ARCANE_BLAST);
-            ArcaneBlast_Timer = 2500+rand()%5000;
-        } else ArcaneBlast_Timer -= diff;
+            ArcaneBlast_Timer = 2500 + rand() % 5000;
+        }
+        else ArcaneBlast_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -254,7 +290,7 @@ struct npc_daranelleAI : public ScriptedAI
     {
         if (who->GetTypeId() == TYPEID_PLAYER)
         {
-            if (who->HasAura(36904,0))
+            if (who->HasAura(36904, 0))
             {
                 DoScriptText(SAY_DARANELLE, me, who);
                 //@todo Move the below to updateAI and run if this statement == true
@@ -281,7 +317,7 @@ CreatureAI* GetAI_npc_daranelle(Creature* pCreature)
 bool GossipHello_npc_overseer_nuaar(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10682) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_HON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     player->SEND_GOSSIP_MENU(10532, pCreature->GetGUID());
 
@@ -290,7 +326,7 @@ bool GossipHello_npc_overseer_nuaar(Player* player, Creature* pCreature)
 
 bool GossipSelect_npc_overseer_nuaar(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF+1)
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
     {
         player->SEND_GOSSIP_MENU(10533, pCreature->GetGUID());
         player->AreaExploredOrEventHappens(10682);
@@ -308,7 +344,7 @@ bool GossipSelect_npc_overseer_nuaar(Player* player, Creature* pCreature, uint32
 bool GossipHello_npc_saikkal_the_elder(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10980) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_HSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     player->SEND_GOSSIP_MENU(10794, pCreature->GetGUID());
 
@@ -319,14 +355,14 @@ bool GossipSelect_npc_saikkal_the_elder(Player* player, Creature* pCreature, uin
 {
     switch (action)
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(10795, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            player->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
-            player->SEND_GOSSIP_MENU(10796, pCreature->GetGUID());
-            break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        player->SEND_GOSSIP_MENU(10795, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        player->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
+        player->SEND_GOSSIP_MENU(10796, pCreature->GetGUID());
+        break;
     }
     return true;
 }
@@ -346,11 +382,11 @@ struct npc_bloodmaul_brutebaneAI : public ScriptedAI
 {
     npc_bloodmaul_brutebaneAI(Creature* c) : ScriptedAI(c)
     {
-       if (Creature* pOgre = me->FindNearestCreature(NPC_OGRE_BRUTE, 50, true))
-       {
-           pOgre->SetReactState(REACT_DEFENSIVE);
-           pOgre->GetMotionMaster()->MovePoint(1, me->GetPositionX()-1, me->GetPositionY()+1, me->GetPositionZ());
-       }
+        if (Creature* pOgre = me->FindNearestCreature(NPC_OGRE_BRUTE, 50, true))
+        {
+            pOgre->SetReactState(REACT_DEFENSIVE);
+            pOgre->GetMotionMaster()->MovePoint(1, me->GetPositionX() - 1, me->GetPositionY() + 1, me->GetPositionZ());
+        }
     }
 
     uint64 OgreGUID;
@@ -442,7 +478,7 @@ bool GOUse_go_thunderspike(Player* player, GameObject* /*_GO*/)
 
             return false;
         }
-        
+
         Position dest;
         //player->GetValidPointInAngle(dest, 5.0f, frand(0.0f, 2*M_PI), true);
         player->GetPosition(&dest);
@@ -455,7 +491,7 @@ bool GOUse_go_thunderspike(Player* player, GameObject* /*_GO*/)
 
 void AddSC_blades_edge_mountains()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "mobs_nether_drake";
@@ -488,7 +524,7 @@ void AddSC_blades_edge_mountains()
     newscript->Name = "npc_ogre_brute";
     newscript->GetAI = &GetAI_npc_ogre_brute;
     newscript->RegisterSelf();
-    
+
     newscript = new Script;
     newscript->Name = "go_thunderspike";
     newscript->pGOHello = &GOUse_go_thunderspike;

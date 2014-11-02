@@ -26,25 +26,25 @@
 #include "Player.h"
 
 template<class T>
-void WaypointMovementGenerator<T>::Initialize(T & /*u*/){}
+void WaypointMovementGenerator<T>::Initialize(T& /*u*/) {}
 
 template<>
-void WaypointMovementGenerator<Creature>::Finalize(Creature & /*u*/){}
+void WaypointMovementGenerator<Creature>::Finalize(Creature& /*u*/) {}
 
 template<>
-void WaypointMovementGenerator<Player>::Finalize(Player & /*u*/){}
+void WaypointMovementGenerator<Player>::Finalize(Player& /*u*/) {}
 
 template<class T>
-void WaypointMovementGenerator<T>::MovementInform(T & /*unit*/){}
+void WaypointMovementGenerator<T>::MovementInform(T& /*unit*/) {}
 
 template<>
-void WaypointMovementGenerator<Creature>::MovementInform(Creature &unit)
+void WaypointMovementGenerator<Creature>::MovementInform(Creature& unit)
 {
     unit.AI()->MovementInform(WAYPOINT_MOTION_TYPE, i_currentNode);
 }
 
 template<>
-bool WaypointMovementGenerator<Creature>::GetDestination(float &x, float &y, float &z) const
+bool WaypointMovementGenerator<Creature>::GetDestination(float& x, float& y, float& z) const
 {
     if (i_destinationHolder.HasArrived())
         return false;
@@ -54,45 +54,45 @@ bool WaypointMovementGenerator<Creature>::GetDestination(float &x, float &y, flo
 }
 
 template<>
-bool WaypointMovementGenerator<Player>::GetDestination(float & /*x*/, float & /*y*/, float & /*z*/) const
+bool WaypointMovementGenerator<Player>::GetDestination(float& /*x*/, float& /*y*/, float& /*z*/) const
 {
     return false;
 }
 
 template<>
-void WaypointMovementGenerator<Creature>::Reset(Creature & /*unit*/)
+void WaypointMovementGenerator<Creature>::Reset(Creature& /*unit*/)
 {
     StopedByPlayer = true;
     i_nextMoveTime.Reset(0);
 }
 
 template<>
-void WaypointMovementGenerator<Player>::Reset(Player & /*unit*/){}
+void WaypointMovementGenerator<Player>::Reset(Player& /*unit*/) {}
 
 template<>
 void
-WaypointMovementGenerator<Creature>::MoveToNextNode(CreatureTraveller &traveller)
+WaypointMovementGenerator<Creature>::MoveToNextNode(CreatureTraveller& traveller)
 {
     Creature* owner = &(traveller.i_traveller);
 
     PathInfo sub_path(owner, node->x, node->y, node->z);
     PointPath pointPath = sub_path.getFullPath();
 
-    float speed = traveller.Speed()*0.001f; // in ms
-    uint32 traveltime = uint32(pointPath.GetTotalLength()/speed);
+    float speed = traveller.Speed() * 0.001f; // in ms
+    uint32 traveltime = uint32(pointPath.GetTotalLength() / speed);
     owner->SendMonsterMoveByPath(pointPath, 1, pointPath.size(), traveltime);
 
-    PathNode p = pointPath[pointPath.size()-1];
+    PathNode p = pointPath[pointPath.size() - 1];
     i_destinationHolder.SetDestination(traveller, p.x, p.y, p.z, false);
 
     i_nextMoveTime.Reset(traveltime);
 }
 
 template<>
-void WaypointMovementGenerator<Creature>::InitTraveller(Creature &unit, const WaypointData &node)
+void WaypointMovementGenerator<Creature>::InitTraveller(Creature& unit, const WaypointData& node)
 {
-    node.run ? unit.RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE):
-        unit.AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+    node.run ? unit.RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE) :
+    unit.AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
 
     unit.SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
     unit.SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
@@ -104,7 +104,7 @@ void WaypointMovementGenerator<Creature>::InitTraveller(Creature &unit, const Wa
 }
 
 template<>
-void WaypointMovementGenerator<Creature>::Initialize(Creature &u)
+void WaypointMovementGenerator<Creature>::Initialize(Creature& u)
 {
     u.StopMoving();
     //i_currentNode = -1; // uint32, become 0 in the first update
@@ -130,17 +130,17 @@ void WaypointMovementGenerator<Creature>::Initialize(Creature &u)
 }
 
 template<>
-void WaypointMovementGenerator<Player>::InitTraveller(Player & /*unit*/, const WaypointData & /*node*/){}
+void WaypointMovementGenerator<Player>::InitTraveller(Player& /*unit*/, const WaypointData& /*node*/) {}
 
 template<class T>
 bool
-WaypointMovementGenerator<T>::Update(T & /*unit*/, const uint32 & /*diff*/)
+WaypointMovementGenerator<T>::Update(T& /*unit*/, const uint32& /*diff*/)
 {
     return false;
 }
 
 template<>
-bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &diff)
+bool WaypointMovementGenerator<Creature>::Update(Creature& unit, const uint32& diff)
 {
     if (!path_id)
         return false;
@@ -201,7 +201,7 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &d
                 i_nextMoveTime.Reset(node->delay);
 
             //note: disable "start" for mtmap
-            if (node->event_id && rand()%100 < node->event_chance)
+            if (node->event_id && rand() % 100 < node->event_chance)
                 unit.GetMap()->ScriptsStart(sWaypointScripts, node->event_id, &unit, NULL/*, false*/);
 
             i_destinationHolder.ResetTravelTime();
@@ -232,9 +232,9 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &d
     return true;
 }
 
-template void WaypointMovementGenerator<Player>::Initialize(Player &);
-template bool WaypointMovementGenerator<Player>::Update(Player &, const uint32 &);
-template void WaypointMovementGenerator<Player>::MovementInform(Player &);
+template void WaypointMovementGenerator<Player>::Initialize(Player&);
+template bool WaypointMovementGenerator<Player>::Update(Player&, const uint32&);
+template void WaypointMovementGenerator<Player>::MovementInform(Player&);
 
 //----------------------------------------------------//
 uint32 FlightPathMovementGenerator::GetPathAtMapEnd() const
@@ -252,11 +252,11 @@ uint32 FlightPathMovementGenerator::GetPathAtMapEnd() const
     return i_path->size();
 }
 
-void FlightPathMovementGenerator::Initialize(Player &player)
+void FlightPathMovementGenerator::Initialize(Player& player)
 {
     player.getHostileRefManager().setOnlineOfflineState(false);
     player.AddUnitState(UNIT_STATE_IN_FLIGHT);
-    player.SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
+    player.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
 
     Traveller<Player> traveller(player);
     // do not send movement, it was sent already
@@ -265,12 +265,12 @@ void FlightPathMovementGenerator::Initialize(Player &player)
     InitEndGridInfo();
     TaxiPathNodeList path = GetPath();
     uint32 pathEndPoint = GetPathAtMapEnd();
-    uint32 traveltime = uint32(32.0f*path.GetTotalLength(GetCurrentNode(),pathEndPoint));
-    player.SetUnitMovementFlags(SPLINEFLAG_WALKMODE|SPLINEFLAG_FLYING);
-    player.SendMonsterMoveByPath(path,GetCurrentNode(),pathEndPoint, traveltime);
+    uint32 traveltime = uint32(32.0f * path.GetTotalLength(GetCurrentNode(), pathEndPoint));
+    player.SetUnitMovementFlags(SPLINEFLAG_WALKMODE | SPLINEFLAG_FLYING);
+    player.SendMonsterMoveByPath(path, GetCurrentNode(), pathEndPoint, traveltime);
 }
 
-void FlightPathMovementGenerator::Finalize(Player & player)
+void FlightPathMovementGenerator::Finalize(Player& player)
 {
     // remove flag to prevent send object build movement packets for flight state and crash (movement generator already not at top of stack)
     player.ClearUnitState(UNIT_FLAG_DISABLE_MOVE | UNIT_STATE_IN_FLIGHT);
@@ -292,7 +292,7 @@ void FlightPathMovementGenerator::Finalize(Player & player)
     }
 }
 
-bool FlightPathMovementGenerator::Update(Player &player, const uint32 &diff)
+bool FlightPathMovementGenerator::Update(Player& player, const uint32& diff)
 {
     if (MovementInProgress())
     {
@@ -354,16 +354,16 @@ void FlightPathMovementGenerator::InitEndGridInfo()
     // be reinitialized for each flightmaster at the end of each spline (or stop) in the flight.
 
     uint32 nodeCount = (*i_path).size();        // Get the number of nodes in the path.
-    m_endMapId = (*i_path)[nodeCount -1].mapid; // Get the map ID from the last node
+    m_endMapId = (*i_path)[nodeCount - 1].mapid; // Get the map ID from the last node
     m_preloadTargetNode = nodeCount - 3;        // 2 nodes before the final node, we pre-load the grid
-    m_endGridX = (*i_path)[nodeCount -1].x;     // Get the X position from the last node
-    m_endGridY = (*i_path)[nodeCount -1].y;     // Get the Y position from the last node
+    m_endGridX = (*i_path)[nodeCount - 1].x;    // Get the X position from the last node
+    m_endGridY = (*i_path)[nodeCount - 1].y;    // Get the Y position from the last node
 }
 
 void FlightPathMovementGenerator::PreloadEndGrid()
 {
     // used to preload the final grid where the flightmaster is
-    Map *endMap = MapManager::Instance().FindMap(m_endMapId);
+    Map* endMap = MapManager::Instance().FindMap(m_endMapId);
 
     // Load the grid
     if (endMap)

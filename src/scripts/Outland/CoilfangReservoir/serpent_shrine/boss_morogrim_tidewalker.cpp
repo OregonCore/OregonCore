@@ -80,16 +80,16 @@ EndScriptData */
 
 float MurlocCords[10][5] =
 {
-      {21920, 424.36f, -715.4f, -7.14f, 0.124f},
-       {21920, 425.13f, -719.3f, -7.14f, 0.124f},
-       {21920, 425.05f, -724.23f, -7.14f, 0.124f},
-       {21920, 424.91f, -728.68f, -7.14f, 0.124f},
-      {21920, 424.84f, -732.18f, -7.14f, 0.124f},
-       {21920, 321.05f, -734.2f, -13.15f, 0.124f},
-       {21920, 321.05f, -729.4f, -13.15f, 0.124f},
-       {21920, 321.05f, -724.03f, -13.15f, 0.124f},
-      {21920, 321.05f, -718.73f, -13.15f, 0.124f},
-       {21920, 321.05f, -714.24f, -13.15f, 0.124f}
+    {21920, 424.36f, -715.4f, -7.14f, 0.124f},
+    {21920, 425.13f, -719.3f, -7.14f, 0.124f},
+    {21920, 425.05f, -724.23f, -7.14f, 0.124f},
+    {21920, 424.91f, -728.68f, -7.14f, 0.124f},
+    {21920, 424.84f, -732.18f, -7.14f, 0.124f},
+    {21920, 321.05f, -734.2f, -13.15f, 0.124f},
+    {21920, 321.05f, -729.4f, -13.15f, 0.124f},
+    {21920, 321.05f, -724.03f, -13.15f, 0.124f},
+    {21920, 321.05f, -718.73f, -13.15f, 0.124f},
+    {21920, 321.05f, -714.24f, -13.15f, 0.124f}
 };
 
 //Creatures
@@ -106,7 +106,7 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
 
     ScriptedInstance* pInstance;
 
-    Map::PlayerList const *PlayerList;
+    Map::PlayerList const* PlayerList;
 
     uint32 TidalWave_Timer;
     uint32 WateryGrave_Timer;
@@ -147,11 +147,17 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
-        case 2: DoScriptText(SAY_SLAY3, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_SLAY3, me);
+            break;
         }
     }
 
@@ -172,12 +178,20 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
 
     void ApplyWateryGrave(Unit* pPlayer, uint8 i)
     {
-        switch(i)
+        switch (i)
         {
-        case 0: pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_1, true); break;
-        case 1: pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_2, true); break;
-        case 2: pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_3, true); break;
-        case 3: pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_4, true); break;
+        case 0:
+            pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_1, true);
+            break;
+        case 1:
+            pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_2, true);
+            break;
+        case 2:
+            pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_3, true);
+            break;
+        case 3:
+            pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_4, true);
+            break;
         }
     }
 
@@ -198,31 +212,37 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
             }
             else
             {
-                switch(rand()%2)
+                switch (rand() % 2)
                 {
-                    case 0: DoScriptText(SAY_SUMMON1, me); break;
-                    case 1: DoScriptText(SAY_SUMMON2, me); break;
+                case 0:
+                    DoScriptText(SAY_SUMMON1, me);
+                    break;
+                case 1:
+                    DoScriptText(SAY_SUMMON2, me);
+                    break;
                 }
 
                 for (uint8 i = 0; i < 10; ++i)
                 {
                     Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                    Creature* Murloc = me->SummonCreature(MurlocCords[i][0],MurlocCords[i][1],MurlocCords[i][2],MurlocCords[i][3],MurlocCords[i][4], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+                    Creature* Murloc = me->SummonCreature(MurlocCords[i][0], MurlocCords[i][1], MurlocCords[i][2], MurlocCords[i][3], MurlocCords[i][4], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
                     if (pTarget && Murloc)
                         Murloc->AI()->AttackStart(pTarget);
                 }
                 DoScriptText(EMOTE_EARTHQUAKE, me);
                 Earthquake = false;
-                Earthquake_Timer = 40000+rand()%5000;
+                Earthquake_Timer = 40000 + rand() % 5000;
             }
-        } else Earthquake_Timer -= diff;
+        }
+        else Earthquake_Timer -= diff;
 
         //TidalWave_Timer
         if (TidalWave_Timer <= diff)
         {
             DoCastVictim( SPELL_TIDAL_WAVE);
             TidalWave_Timer = 20000;
-        } else TidalWave_Timer -= diff;
+        }
+        else TidalWave_Timer -= diff;
 
         if (!Phase2)
         {
@@ -245,7 +265,8 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
                         if (pTarget)
                             itr = list.find(pTarget->GetGUID());
                         ++counter;
-                    } while (itr != list.end());
+                    }
+                    while (itr != list.end());
 
                     if (pTarget)
                     {
@@ -254,18 +275,23 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
                     }
                 }
 
-                switch(rand()%2)
+                switch (rand() % 2)
                 {
-                    case 0: DoScriptText(SAY_SUMMON_BUBL1, me); break;
-                    case 1: DoScriptText(SAY_SUMMON_BUBL2, me); break;
+                case 0:
+                    DoScriptText(SAY_SUMMON_BUBL1, me);
+                    break;
+                case 1:
+                    DoScriptText(SAY_SUMMON_BUBL2, me);
+                    break;
                 }
 
                 DoScriptText(EMOTE_WATERY_GRAVE, me);
                 WateryGrave_Timer = 30000;
-            } else WateryGrave_Timer -= diff;
+            }
+            else WateryGrave_Timer -= diff;
 
             //Start Phase2
-            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 25)
+            if ((me->GetHealth() * 100 / me->GetMaxHealth()) < 25)
                 Phase2 = true;
         }
         else
@@ -280,21 +306,24 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
                 for (uint8 g = 0; g < 4; g++)  //one unit can't cast more than one spell per update, so some players have to cast for us XD
                 {
                     counter = 0;
-                    do {
+                    do
+                    {
                         pGlobuleTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true);
                         if (pGlobuleTarget)
                             itr = globulelist.find(pGlobuleTarget->GetGUID());
                         if (counter > Playercount)
                             break;
                         ++counter;
-                    } while (itr != globulelist.end());
+                    }
+                    while (itr != globulelist.end());
                     if (pGlobuleTarget)
                         globulelist.insert(pGlobuleTarget->GetGUID());
                     pGlobuleTarget->CastSpell(pGlobuleTarget, globulespell[g], true);
                 }
                 DoScriptText(EMOTE_WATERY_GLOBULES, me);
                 WateryGlobules_Timer = 25000;
-            } else WateryGlobules_Timer -= diff;
+            }
+            else WateryGlobules_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -351,7 +380,8 @@ struct mob_water_globuleAI : public ScriptedAI
                 return;
             }
             Check_Timer = 500;
-        } else Check_Timer -= diff;
+        }
+        else Check_Timer -= diff;
 
         //do NOT deal any melee damage to the target.
     }
@@ -368,7 +398,7 @@ CreatureAI* GetAI_mob_water_globule(Creature* pCreature)
 
 void AddSC_boss_morogrim_tidewalker()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_morogrim_tidewalker";

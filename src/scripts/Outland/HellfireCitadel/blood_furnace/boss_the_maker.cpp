@@ -46,10 +46,10 @@ enum Spells
 
 struct boss_the_makerAI : public ScriptedAI
 {
-    boss_the_makerAI(Creature* creature) : ScriptedAI(creature) 
-	{
-            instance = creature->GetInstanceData();
-	}
+    boss_the_makerAI(Creature* creature) : ScriptedAI(creature)
+    {
+        instance = creature->GetInstanceData();
+    }
 
     ScriptedInstance* instance;
 
@@ -98,19 +98,19 @@ struct boss_the_makerAI : public ScriptedAI
         if (AcidSpray_Timer <= diff)
         {
             DoCastVictim(SPELL_ACID_SPRAY);
-            AcidSpray_Timer = 15000+rand()%8000;
+            AcidSpray_Timer = 15000 + rand() % 8000;
         }
         else
-             AcidSpray_Timer -=diff;
+            AcidSpray_Timer -= diff;
 
         if (ExplodingBreaker_Timer <= diff)
         {
             if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(target, HeroicMode ? H_SPELL_EXPLODING_BREAKER : SPELL_EXPLODING_BREAKER);
-            ExplodingBreaker_Timer = 4000+rand()%8000;
+            ExplodingBreaker_Timer = 4000 + rand() % 8000;
         }
         else
-            ExplodingBreaker_Timer -=diff;
+            ExplodingBreaker_Timer -= diff;
 
         /* // Disabled until Core Support for mind control
         if (Domination_Timer <= diff)
@@ -122,14 +122,14 @@ struct boss_the_makerAI : public ScriptedAI
         }
         else
             Domination_Timer -=diff; */
-           
+
         if (Knockdown_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_KNOCKDOWN);
-            Knockdown_Timer = 4000+rand()%8000;
+            Knockdown_Timer = 4000 + rand() % 8000;
         }
         else
-            Knockdown_Timer -=diff;
+            Knockdown_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -142,7 +142,7 @@ CreatureAI* GetAI_boss_the_makerAI(Creature* pCreature)
 
 void AddSC_boss_the_maker()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_the_maker";
     newscript->GetAI = &GetAI_boss_the_makerAI;

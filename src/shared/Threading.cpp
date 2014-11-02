@@ -170,9 +170,9 @@ void Thread::resume()
     ACE_Thread::resume(m_hThreadHandle);
 }
 
-ACE_THR_FUNC_RETURN Thread::ThreadTask(void * param)
+ACE_THR_FUNC_RETURN Thread::ThreadTask(void* param)
 {
-    Runnable * _task = (Runnable*)param;
+    Runnable* _task = (Runnable*)param;
     _task->run();
 
     // task execution complete, free referecne added at
@@ -194,16 +194,16 @@ ACE_hthread_t Thread::currentHandle()
     return _handle;
 }
 
-Thread * Thread::current()
+Thread* Thread::current()
 {
-    Thread * _thread = m_ThreadStorage.ts_object();
+    Thread* _thread = m_ThreadStorage.ts_object();
     if (!_thread)
     {
         _thread = new Thread();
         _thread->m_iThreadId = Thread::currentId();
         _thread->m_hThreadHandle = Thread::currentHandle();
 
-        Thread * _oldValue = m_ThreadStorage.ts_object(_thread);
+        Thread* _oldValue = m_ThreadStorage.ts_object(_thread);
         if (_oldValue)
             delete _oldValue;
     }

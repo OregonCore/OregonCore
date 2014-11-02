@@ -37,7 +37,7 @@ WardenMac::~WardenMac()
 {
 }
 
-void WardenMac::Init(WorldSession *pClient, BigNumber *K)
+void WardenMac::Init(WorldSession* pClient, BigNumber* K)
 {
     Client = pClient;
     // Generate Warden Key
@@ -70,9 +70,9 @@ void WardenMac::Init(WorldSession *pClient, BigNumber *K)
     RequestModule();
 }
 
-ClientWardenModule *WardenMac::GetModuleForClient(WorldSession* /*session*/)
+ClientWardenModule* WardenMac::GetModuleForClient(WorldSession* /*session*/)
 {
-    ClientWardenModule *mod = new ClientWardenModule;
+    ClientWardenModule* mod = new ClientWardenModule;
 
     uint32 len = sizeof(Module_0DBBF209A27B1E279A9FEC5C168A15F7_Data);
 
@@ -81,7 +81,7 @@ ClientWardenModule *WardenMac::GetModuleForClient(WorldSession* /*session*/)
     mod->CompressedData = new uint8[len];
     memcpy(mod->CompressedData, Module_0DBBF209A27B1E279A9FEC5C168A15F7_Data, len);
     memcpy(mod->Key, Module_0DBBF209A27B1E279A9FEC5C168A15F7_Key, 16);
-        
+
     // md5 hash
     MD5_CTX ctx;
     MD5_Init(&ctx);
@@ -113,7 +113,7 @@ void WardenMac::RequestHash()
     Client->SendPacket(&pkt);
 }
 
-void WardenMac::HandleHashResult(ByteBuffer &buff)
+void WardenMac::HandleHashResult(ByteBuffer& buff)
 {
 
     // test
@@ -121,10 +121,8 @@ void WardenMac::HandleHashResult(ByteBuffer &buff)
 
     uint8 mod_seed[16] = { 0x4D, 0x80, 0x8D, 0x2C, 0x77, 0xD9, 0x05, 0xC4, 0x1A, 0x63, 0x80, 0xEC, 0x08, 0x58, 0x6A, 0xFE };
 
-    for(int i = 0; i < 4; ++i)
-    {
+    for (int i = 0; i < 4; ++i)
         keyIn[i] = *(int*)(&mod_seed[0] + i * 4);
-    }
 
     int keyOut[4];
     int keyIn1, keyIn2;
@@ -201,7 +199,7 @@ void WardenMac::RequestData()
     m_WardenDataSent = true;
 }
 
-void WardenMac::HandleData(ByteBuffer &buff)
+void WardenMac::HandleData(ByteBuffer& buff)
 {
     sLog.outDebug("Handle data");
 

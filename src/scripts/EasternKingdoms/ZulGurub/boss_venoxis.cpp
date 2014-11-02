@@ -51,7 +51,7 @@ struct boss_venoxisAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 HolyFire_Timer;
     uint32 HolyWrath_Timer;
@@ -77,7 +77,7 @@ struct boss_venoxisAI : public ScriptedAI
         TargetInRange = 0;
 
         PhaseTwo = false;
-        InBerserk= false;
+        InBerserk = false;
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -93,114 +93,112 @@ struct boss_venoxisAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-          if (!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
-            if ((me->GetHealth() * 100 / me->GetMaxHealth() > 50))
+        if ((me->GetHealth() * 100 / me->GetMaxHealth() > 50))
+        {
+            if (Dispell_Timer <= diff)
             {
-                if (Dispell_Timer <= diff)
-                {
-                    DoCast(me, SPELL_DISPELL);
-                    Dispell_Timer = 15000 + rand()%15000;
-                }
-                else
-                    Dispell_Timer -= diff;
-
-                if (Renew_Timer <= diff)
-                {
-                    DoCast(me, SPELL_RENEW);
-                    Renew_Timer = 20000 + rand()%10000;
-                }
-                else
-                    Renew_Timer -= diff;
-
-                if (HolyWrath_Timer <= diff)
-                {
-                    DoCastVictim( SPELL_HOLY_WRATH);
-                    HolyWrath_Timer = 15000 + rand()%10000;
-                }
-                else
-                    HolyWrath_Timer -= diff;
-
-                if (HolyNova_Timer <= diff)
-                {
-                    TargetInRange = 0;
-                    for (uint8 i = 0; i < 10; ++i)
-                    {
-                        if (Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, i))
-                            if (me->IsWithinMeleeRange(pTarget))
-                                ++TargetInRange;
-                    }
-
-                    if (TargetInRange > 1)
-                    {
-                        DoCastVictim( SPELL_HOLY_NOVA);
-                        HolyNova_Timer = 1000;
-                    }
-                    else
-                    {
-                        HolyNova_Timer = 2000;
-                    }
-
-                }
-                else
-                    HolyNova_Timer -= diff;
-
-                if (HolyFire_Timer <= diff && TargetInRange < 3)
-                {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                        DoCast(pTarget, SPELL_HOLY_FIRE);
-
-                    HolyFire_Timer = 8000;
-                }
-                else
-                    HolyFire_Timer -= diff;
+                DoCast(me, SPELL_DISPELL);
+                Dispell_Timer = 15000 + rand() % 15000;
             }
             else
+                Dispell_Timer -= diff;
+
+            if (Renew_Timer <= diff)
             {
-                if (!PhaseTwo)
+                DoCast(me, SPELL_RENEW);
+                Renew_Timer = 20000 + rand() % 10000;
+            }
+            else
+                Renew_Timer -= diff;
+
+            if (HolyWrath_Timer <= diff)
+            {
+                DoCastVictim( SPELL_HOLY_WRATH);
+                HolyWrath_Timer = 15000 + rand() % 10000;
+            }
+            else
+                HolyWrath_Timer -= diff;
+
+            if (HolyNova_Timer <= diff)
+            {
+                TargetInRange = 0;
+                for (uint8 i = 0; i < 10; ++i)
                 {
-                    DoScriptText(SAY_TRANSFORM, me);
-                    me->InterruptNonMeleeSpells(false);
-                    DoCast(me, SPELL_SNAKE_FORM);
-                    me->SetObjectScale(2.0f);
-                    const CreatureInfo *cinfo = me->GetCreatureTemplate();
-                    me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 25)));
-                    me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 25)));
-                    me->UpdateDamagePhysical(BASE_ATTACK);
-                    DoResetThreat();
-                    PhaseTwo = true;
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, i))
+                        if (me->IsWithinMeleeRange(pTarget))
+                            ++TargetInRange;
                 }
 
-                if (PhaseTwo && PoisonCloud_Timer <= diff)
+                if (TargetInRange > 1)
                 {
-                    DoCastVictim( SPELL_POISON_CLOUD);
-                    PoisonCloud_Timer = 15000;
-                }
-
-                PoisonCloud_Timer -=diff;
-
-                if (PhaseTwo && VenomSpit_Timer <= diff)
-                {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                        DoCast(pTarget, SPELL_VENOMSPIT);
-
-                    VenomSpit_Timer = 15000 + rand()%5000;
+                    DoCastVictim( SPELL_HOLY_NOVA);
+                    HolyNova_Timer = 1000;
                 }
                 else
-                    VenomSpit_Timer -= diff;
+                    HolyNova_Timer = 2000;
 
-                if (PhaseTwo && (me->GetHealth() * 100 / me->GetMaxHealth() < 11))
+            }
+            else
+                HolyNova_Timer -= diff;
+
+            if (HolyFire_Timer <= diff && TargetInRange < 3)
+            {
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_HOLY_FIRE);
+
+                HolyFire_Timer = 8000;
+            }
+            else
+                HolyFire_Timer -= diff;
+        }
+        else
+        {
+            if (!PhaseTwo)
+            {
+                DoScriptText(SAY_TRANSFORM, me);
+                me->InterruptNonMeleeSpells(false);
+                DoCast(me, SPELL_SNAKE_FORM);
+                me->SetObjectScale(2.0f);
+                const CreatureInfo* cinfo = me->GetCreatureTemplate();
+                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 25)));
+                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 25)));
+                me->UpdateDamagePhysical(BASE_ATTACK);
+                DoResetThreat();
+                PhaseTwo = true;
+            }
+
+            if (PhaseTwo && PoisonCloud_Timer <= diff)
+            {
+                DoCastVictim( SPELL_POISON_CLOUD);
+                PoisonCloud_Timer = 15000;
+            }
+
+            PoisonCloud_Timer -= diff;
+
+            if (PhaseTwo && VenomSpit_Timer <= diff)
+            {
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_VENOMSPIT);
+
+                VenomSpit_Timer = 15000 + rand() % 5000;
+            }
+            else
+                VenomSpit_Timer -= diff;
+
+            if (PhaseTwo && (me->GetHealth() * 100 / me->GetMaxHealth() < 11))
+            {
+                if (!InBerserk)
                 {
-                    if (!InBerserk)
-                    {
-                        me->InterruptNonMeleeSpells(false);
-                        DoCast(me, SPELL_BERSERK);
-                        InBerserk = true;
-                    }
+                    me->InterruptNonMeleeSpells(false);
+                    DoCast(me, SPELL_BERSERK);
+                    InBerserk = true;
                 }
             }
-            DoMeleeAttackIfReady();
+        }
+        DoMeleeAttackIfReady();
     }
 };
 
@@ -211,7 +209,7 @@ CreatureAI* GetAI_boss_venoxis(Creature* pCreature)
 
 void AddSC_boss_venoxis()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_venoxis";
     newscript->GetAI = &GetAI_boss_venoxis;

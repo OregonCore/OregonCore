@@ -57,7 +57,8 @@ struct boss_gehennasAI : public ScriptedAI
                 DoCast(pTarget, SPELL_SHADOWBOLT);
 
             ShadowBolt_Timer = 7000;
-        } else ShadowBolt_Timer -= diff;
+        }
+        else ShadowBolt_Timer -= diff;
 
         //RainOfFire_Timer
         if (RainOfFire_Timer <= diff)
@@ -65,15 +66,17 @@ struct boss_gehennasAI : public ScriptedAI
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_RAINOFFIRE);
 
-            RainOfFire_Timer = urand(4000,12000);
-        } else RainOfFire_Timer -= diff;
+            RainOfFire_Timer = urand(4000, 12000);
+        }
+        else RainOfFire_Timer -= diff;
 
         //GehennasCurse_Timer
         if (GehennasCurse_Timer <= diff)
         {
             DoCastVictim( SPELL_GEHENNASCURSE);
-            GehennasCurse_Timer = urand(22000,30000);
-        } else GehennasCurse_Timer -= diff;
+            GehennasCurse_Timer = urand(22000, 30000);
+        }
+        else GehennasCurse_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -85,7 +88,7 @@ CreatureAI* GetAI_boss_gehennas(Creature* pCreature)
 
 void AddSC_boss_gehennas()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_gehennas";
     newscript->GetAI = &GetAI_boss_gehennas;

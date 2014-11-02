@@ -64,35 +64,40 @@ struct npc_cairne_bloodhoofAI : public ScriptedAI
 
         if (BerserkerCharge_Timer <= diff)
         {
-            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget)
                 DoCast(pTarget, SPELL_BERSERKER_CHARGE);
             BerserkerCharge_Timer = 25000;
-        } else BerserkerCharge_Timer -= diff;
+        }
+        else BerserkerCharge_Timer -= diff;
 
         if (Uppercut_Timer <= diff)
         {
             DoCastVictim( SPELL_UPPERCUT);
             Uppercut_Timer = 20000;
-        } else Uppercut_Timer -= diff;
+        }
+        else Uppercut_Timer -= diff;
 
         if (Thunderclap_Timer <= diff)
         {
             DoCastVictim( SPELL_THUNDERCLAP);
             Thunderclap_Timer = 15000;
-        } else Thunderclap_Timer -= diff;
+        }
+        else Thunderclap_Timer -= diff;
 
         if (MortalStrike_Timer <= diff)
         {
             DoCastVictim( SPELL_MORTAL_STRIKE);
             MortalStrike_Timer = 15000;
-        } else MortalStrike_Timer -= diff;
+        }
+        else MortalStrike_Timer -= diff;
 
         if (Cleave_Timer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 7000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -127,7 +132,7 @@ bool GossipSelect_npc_cairne_bloodhoof(Player* pPlayer, Creature* pCreature, uin
 
 void AddSC_thunder_bluff()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_cairne_bloodhoof";

@@ -63,75 +63,78 @@ struct boss_kurinnaxxAI : public ScriptedAI
             return;
 
         //If we are <30% cast enrage
-        if (!enraged && me->GetHealth()*100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCast(false))
+        if (!enraged && me->GetHealth() * 100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCast(false))
         {
             enraged = true;
-            DoCast(me,SPELL_ENRAGE,true);
-        } else if (enraged && !me->HasAura(SPELL_ENRAGE,0))
-        {
-            DoCast(me,SPELL_ENRAGE,true);
+            DoCast(me, SPELL_ENRAGE, true);
         }
+        else if (enraged && !me->HasAura(SPELL_ENRAGE, 0))
+            DoCast(me, SPELL_ENRAGE, true);
 
 
         //MORTALWOUND_Timer
         if (MORTALWOUND_Timer <= diff)
         {
             DoCastVictim(SPELL_MORTALWOUND);
-            MORTALWOUND_Timer = 6000 + rand()%2000;
-        } else MORTALWOUND_Timer -= diff;
+            MORTALWOUND_Timer = 6000 + rand() % 2000;
+        }
+        else MORTALWOUND_Timer -= diff;
 
         if (THRASH_Timer <= diff)
         {
-            DoCast(me,SPELL_THRASH);
-            THRASH_Timer = 3000+ rand()%5000;
-        } else THRASH_Timer -= diff;
+            DoCast(me, SPELL_THRASH);
+            THRASH_Timer = 3000 + rand() % 5000;
+        }
+        else THRASH_Timer -= diff;
 
         if (SLASH_Timer <= diff)
         {
             DoCastVictim(SPELL_SLASH);
-            SLASH_Timer = 5000 + rand()%5000;
-        } else SLASH_Timer -= diff;
+            SLASH_Timer = 5000 + rand() % 5000;
+        }
+        else SLASH_Timer -= diff;
 
         if (SUMMON_Timer <= diff)
         {
-            Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM,1,70,true);
+            Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 70, true);
             if (pTarget)
-            {
-                DoCast(pTarget,SPELL_SUMMON);
-            }
-            SUMMON_Timer = 8000 + rand()%2000;
-        } else SUMMON_Timer -= diff;
+                DoCast(pTarget, SPELL_SUMMON);
+            SUMMON_Timer = 8000 + rand() % 2000;
+        }
+        else SUMMON_Timer -= diff;
 
         //SANDTRAP_Timer
         if (SANDTRAP_Timer <= diff)
         {
             if (!sandtrap)
             {
-                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,50,true);
+                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true);
 
                 if (pTarget)
                 {
-                    pTarget->CastSpell(pTarget,SPELL_SANDTRAP,true,0,0,me->GetGUID());
+                    pTarget->CastSpell(pTarget, SPELL_SANDTRAP, true, 0, 0, me->GetGUID());
                     sandtrap = true;
                 }
                 SANDTRAP_Timer = 5000;
-            } else
+            }
+            else
             {
                 if (GameObject* trap = me->FindNearestGameObject(180647, 100))
                 {
-                    float x,y,z;
-                    trap->GetPosition(x,y,z);
+                    float x, y, z;
+                    trap->GetPosition(x, y, z);
 
                     //trap->CastSpell((Unit*)trap,25656);
-                    Creature* trigger = me->SummonCreature(15426,x,y,z,0,TEMPSUMMON_TIMED_DESPAWN,2000);
+                    Creature* trigger = me->SummonCreature(15426, x, y, z, 0, TEMPSUMMON_TIMED_DESPAWN, 2000);
 
-                    trigger->CastSpell(trigger,25656,false);
+                    trigger->CastSpell(trigger, 25656, false);
                     trap->Delete();
                 }
                 SANDTRAP_Timer = 5000;
                 sandtrap = false;
             }
-        } else SANDTRAP_Timer -= diff;
+        }
+        else SANDTRAP_Timer -= diff;
 
 
         DoMeleeAttackIfReady();
@@ -144,7 +147,7 @@ CreatureAI* GetAI_boss_kurinnaxx(Creature* pCreature)
 
 void AddSC_boss_kurinnaxx()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_kurinnaxx";
     newscript->GetAI = &GetAI_boss_kurinnaxx;

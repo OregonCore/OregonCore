@@ -52,13 +52,13 @@ struct boss_kormokAI : public ScriptedAI
 
     void SummonMinions(Unit* victim)
     {
-        if (Creature* SummonedMinion = DoSpawnCreature(16119, irand(-7,7), irand(-7,7), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
+        if (Creature* SummonedMinion = DoSpawnCreature(16119, irand(-7, 7), irand(-7, 7), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
             SummonedMinion->AI()->AttackStart(victim);
     }
 
     void SummonMages(Unit* victim)
     {
-        if (Creature* SummonedMage = DoSpawnCreature(16120, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
+        if (Creature* SummonedMage = DoSpawnCreature(16120, irand(-9, 9), irand(-9, 9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
             SummonedMage->AI()->AttackStart(victim);
     }
 
@@ -72,14 +72,16 @@ struct boss_kormokAI : public ScriptedAI
         {
             DoCastVictim( SPELL_SHADOWBOLTVOLLEY);
             ShadowVolley_Timer = 15000;
-        } else ShadowVolley_Timer -= diff;
+        }
+        else ShadowVolley_Timer -= diff;
 
         //BoneShield_Timer
         if (BoneShield_Timer <= diff)
         {
             DoCastVictim( SPELL_BONESHIELD);
             BoneShield_Timer = 45000;
-        } else BoneShield_Timer -= diff;
+        }
+        else BoneShield_Timer -= diff;
 
         //Minion_Timer
         if (Minion_Timer <= diff)
@@ -91,10 +93,11 @@ struct boss_kormokAI : public ScriptedAI
             SummonMinions(me->getVictim());
 
             Minion_Timer = 12000;
-        } else Minion_Timer -= diff;
+        }
+        else Minion_Timer -= diff;
 
         //Summon 2 Bone Mages
-        if (!Mages && me->GetHealth()*100 / me->GetMaxHealth() < 26)
+        if (!Mages && me->GetHealth() * 100 / me->GetMaxHealth() < 26)
         {
             //Cast
             SummonMages(me->getVictim());
@@ -112,7 +115,7 @@ CreatureAI* GetAI_boss_kormok(Creature* pCreature)
 
 void AddSC_boss_kormok()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_kormok";
     newscript->GetAI = &GetAI_boss_kormok;

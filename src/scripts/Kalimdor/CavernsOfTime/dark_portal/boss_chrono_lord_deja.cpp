@@ -47,7 +47,7 @@ struct boss_chrono_lord_dejaAI : public ScriptedAI
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
     bool HeroicMode;
 
     uint32 ArcaneBlast_Timer;
@@ -69,7 +69,7 @@ struct boss_chrono_lord_dejaAI : public ScriptedAI
         //Despawn Time Keeper
         if (who->GetTypeId() == TYPEID_UNIT && who->GetEntry() == C_TIME_KEEPER)
         {
-            if (me->IsWithinDistInMap(who,20.0f))
+            if (me->IsWithinDistInMap(who, 20.0f))
             {
                 DoScriptText(SAY_BANISH, me);
                 me->DealDamage(who, who->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -81,10 +81,14 @@ struct boss_chrono_lord_dejaAI : public ScriptedAI
 
     void KilledUnit(Unit*)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY1, me); break;
-            case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
         }
     }
 
@@ -93,7 +97,7 @@ struct boss_chrono_lord_dejaAI : public ScriptedAI
         DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
-            pInstance->SetData(TYPE_RIFT,SPECIAL);
+            pInstance->SetData(TYPE_RIFT, SPECIAL);
     }
 
     void UpdateAI(const uint32 diff)
@@ -106,16 +110,18 @@ struct boss_chrono_lord_dejaAI : public ScriptedAI
         if (ArcaneBlast_Timer <= diff)
         {
             DoCastVictim( SPELL_ARCANE_BLAST);
-            ArcaneBlast_Timer = 20000+rand()%5000;
-        } else ArcaneBlast_Timer -= diff;
+            ArcaneBlast_Timer = 20000 + rand() % 5000;
+        }
+        else ArcaneBlast_Timer -= diff;
 
         //Time Lapse
         if (TimeLapse_Timer <= diff)
         {
             DoScriptText(SAY_BANISH, me);
             DoCast(me, SPELL_TIME_LAPSE);
-            TimeLapse_Timer = 15000+rand()%10000;
-        } else TimeLapse_Timer -= diff;
+            TimeLapse_Timer = 15000 + rand() % 10000;
+        }
+        else TimeLapse_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -128,7 +134,7 @@ CreatureAI* GetAI_boss_chrono_lord_deja(Creature* pCreature)
 
 void AddSC_boss_chrono_lord_deja()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_chrono_lord_deja";
     newscript->GetAI = &GetAI_boss_chrono_lord_deja;

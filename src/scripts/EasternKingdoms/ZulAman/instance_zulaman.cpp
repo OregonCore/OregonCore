@@ -110,19 +110,41 @@ struct instance_zulaman : public ScriptedInstance
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case ENTRY_MASSIVE_GATE:          MassiveGate      = pGo->GetGUID(); break;
-            case ENTRY_HALAZZI_EXIT_DOOR:     HalazziExitDoor  = pGo->GetGUID(); break;
-            case ENTRY_HALAZZI_ENTRANCE_DOOR: HalazziEntryDoor = pGo->GetGUID(); break;
-            case ENTRY_HEXLORD_ENTRANCE_DOOR: HexLordEntryDoor = pGo->GetGUID(); break;
-            case ENTRY_HEXLORD_EXIT_DOOR:     HexLordExitDoor  = pGo->GetGUID(); break;
-            case ENTRY_AKILZON_DOOR:          AkilzonDoor      = pGo->GetGUID(); break;
-            case ENTRY_ZULJIN_DOOR:           ZulJinDoor       = pGo->GetGUID(); break;
-            case ENTRY_CHEST_HARKORS:         HarkorsSatchel   = pGo->GetGUID(); break;
-            case ENTRY_CHEST_TANZARS:         TanzarsTrunk     = pGo->GetGUID(); break;
-            case ENTRY_CHEST_ASHLIS:          AshlisBag        = pGo->GetGUID(); break;
-            case ENTRY_CHEST_KRAZS:           KrazsPackage     = pGo->GetGUID(); break;
+        case ENTRY_MASSIVE_GATE:
+            MassiveGate      = pGo->GetGUID();
+            break;
+        case ENTRY_HALAZZI_EXIT_DOOR:
+            HalazziExitDoor  = pGo->GetGUID();
+            break;
+        case ENTRY_HALAZZI_ENTRANCE_DOOR:
+            HalazziEntryDoor = pGo->GetGUID();
+            break;
+        case ENTRY_HEXLORD_ENTRANCE_DOOR:
+            HexLordEntryDoor = pGo->GetGUID();
+            break;
+        case ENTRY_HEXLORD_EXIT_DOOR:
+            HexLordExitDoor  = pGo->GetGUID();
+            break;
+        case ENTRY_AKILZON_DOOR:
+            AkilzonDoor      = pGo->GetGUID();
+            break;
+        case ENTRY_ZULJIN_DOOR:
+            ZulJinDoor       = pGo->GetGUID();
+            break;
+        case ENTRY_CHEST_HARKORS:
+            HarkorsSatchel   = pGo->GetGUID();
+            break;
+        case ENTRY_CHEST_TANZARS:
+            TanzarsTrunk     = pGo->GetGUID();
+            break;
+        case ENTRY_CHEST_ASHLIS:
+            AshlisBag        = pGo->GetGUID();
+            break;
+        case ENTRY_CHEST_KRAZS:
+            KrazsPackage     = pGo->GetGUID();
+            break;
         }
 
         CheckInstanceStatus();
@@ -139,7 +161,7 @@ struct instance_zulaman : public ScriptedInstance
         if (!QuestMinute)
             return;
 
-        Map::PlayerList const &PlayerList = instance->GetPlayers();
+        Map::PlayerList const& PlayerList = instance->GetPlayers();
         if (PlayerList.isEmpty())
             return;
 
@@ -230,14 +252,14 @@ struct instance_zulaman : public ScriptedInstance
             {
                 if (QuestMinute)
                 {
-                        /* Only two bosses should grant extra time:
-                           - Akil'Zon - 10 minutes
-                           - Nalorakk - 15 minutse */
-                        if (type == ENCOUNTER_AKILZON)
-                            QuestMinute += ZA_TIMER_ADDITION_AKILZON;
-                        else if (type == ENCOUNTER_NALORAKK)
-                            QuestMinute += ZA_TIMER_ADDITION_NALORAKK;
-                        // Will be sent to client in CheckInstanceStatus()
+                    /* Only two bosses should grant extra time:
+                       - Akil'Zon - 10 minutes
+                       - Nalorakk - 15 minutse */
+                    if (type == ENCOUNTER_AKILZON)
+                        QuestMinute += ZA_TIMER_ADDITION_AKILZON;
+                    else if (type == ENCOUNTER_NALORAKK)
+                        QuestMinute += ZA_TIMER_ADDITION_NALORAKK;
+                    // Will be sent to client in CheckInstanceStatus()
                 }
 
                 SummonHostage(type);
@@ -286,7 +308,7 @@ InstanceData* GetInstanceData_instance_zulaman(Map* pMap)
 
 void AddSC_instance_zulaman()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_zulaman";
     newscript->GetInstanceData = &GetInstanceData_instance_zulaman;

@@ -58,9 +58,9 @@ struct npc_galen_goodwardAI : public npc_escortAI
         m_uiPostEventTimer = 0;
     }
 
-    void EnterCombat(Unit* )
+    void EnterCombat(Unit*)
     {
-        DoScriptText(RAND(GILAN_SAY_UNDER_ATTACK_1,GILAN_SAY_UNDER_ATTACK_2), me);
+        DoScriptText(RAND(GILAN_SAY_UNDER_ATTACK_1, GILAN_SAY_UNDER_ATTACK_2), me);
     }
 
     void WaypointReached(uint32 uiPointId)
@@ -69,7 +69,7 @@ struct npc_galen_goodwardAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(uiPointId)
+        switch (uiPointId)
         {
         case 1:
             DoScriptText(GILAN_SAY_START_2, me);
@@ -102,7 +102,8 @@ struct npc_galen_goodwardAI : public npc_escortAI
                     return;
                 }
 
-            } else m_uiPostEventTimer -= uiDiff;
+            }
+            else m_uiPostEventTimer -= uiDiff;
 
             return;
         }
@@ -123,7 +124,7 @@ bool QuestAccept_npc_galen_goodward(Player* pPlayer, Creature* pCreature, const 
         if (GameObject* pGo = pCreature->FindNearestGameObject(GO_GALENS_CAGE, INTERACTION_DISTANCE))
             pGo->UseDoorOrButton();
 
-        if (npc_galen_goodwardAI* pEscortAI = CAST_AI(npc_galen_goodwardAI,pCreature->AI()))
+        if (npc_galen_goodwardAI* pEscortAI = CAST_AI(npc_galen_goodwardAI, pCreature->AI()))
             pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
     }
     return true;
@@ -135,7 +136,7 @@ CreatureAI* GetAI_npc_galen_goodward(Creature* pCreature)
 
 void AddSC_swamp_of_sorrows()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_galen_goodward";

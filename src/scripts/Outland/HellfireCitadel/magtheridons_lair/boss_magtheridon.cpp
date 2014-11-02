@@ -30,14 +30,14 @@ struct Yell
     int32 id;
 };
 
-static Yell RandomTaunt[]=
+static Yell RandomTaunt[] =
 {
-    {-1544000},
-    {-1544001},
-    {-1544002},
-    {-1544003},
-    {-1544004},
-    {-1544005},
+    { -1544000},
+    { -1544001},
+    { -1544002},
+    { -1544003},
+    { -1544004},
+    { -1544005},
 };
 
 #define SAY_FREED                   -1544006
@@ -106,7 +106,7 @@ struct mob_abyssalAI : public ScriptedAI
         FireBlast_Timer = 6000;
     }
 
-    void SpellHit(Unit*, const SpellEntry *spell)
+    void SpellHit(Unit*, const SpellEntry* spell)
     {
         if (trigger == 2 && spell->Id == SPELL_BLAZE_TARGET)
         {
@@ -129,9 +129,18 @@ struct mob_abyssalAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit*) {DoZoneInCombat();}
-    void AttackStart(Unit* who) {if (!trigger) ScriptedAI::AttackStart(who);}
-    void MoveInLineOfSight(Unit* who) {if (!trigger) ScriptedAI::MoveInLineOfSight(who);}
+    void EnterCombat(Unit*)
+    {
+        DoZoneInCombat();
+    }
+    void AttackStart(Unit* who)
+    {
+        if (!trigger) ScriptedAI::AttackStart(who);
+    }
+    void MoveInLineOfSight(Unit* who)
+    {
+        if (!trigger) ScriptedAI::MoveInLineOfSight(who);
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -143,7 +152,8 @@ struct mob_abyssalAI : public ScriptedAI
                 {
                     me->CastSpell(me, SPELL_DEBRIS_DAMAGE, true);
                     trigger = 3;
-                } else FireBlast_Timer -= diff;
+                }
+                else FireBlast_Timer -= diff;
             }
             return;
         }
@@ -152,7 +162,8 @@ struct mob_abyssalAI : public ScriptedAI
         {
             me->SetVisibility(VISIBILITY_OFF);
             me->setDeathState(JUST_DIED);
-        } else Despawn_Timer -= diff;
+        }
+        else Despawn_Timer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -160,8 +171,9 @@ struct mob_abyssalAI : public ScriptedAI
         if (FireBlast_Timer <= diff)
         {
             DoCastVictim( SPELL_FIRE_BLAST);
-            FireBlast_Timer = 5000+rand()%10000;
-        } else FireBlast_Timer -= diff;
+            FireBlast_Timer = 5000 + rand() % 10000;
+        }
+        else FireBlast_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -171,12 +183,12 @@ struct boss_magtheridonAI : public ScriptedAI
 {
     boss_magtheridonAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance =me->GetInstanceData();
+        pInstance = me->GetInstanceData();
         me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
         me->SetFloatValue(UNIT_FIELD_COMBATREACH, 10);
 
         // target 7, random target with certain entry spell, need core fix
-        SpellEntry *TempSpell;
+        SpellEntry* TempSpell;
         TempSpell = GET_SPELL(SPELL_BLAZE_TARGET);
         if (TempSpell && TempSpell->EffectImplicitTargetA[0] != 6)
         {
@@ -185,9 +197,7 @@ struct boss_magtheridonAI : public ScriptedAI
         }
         TempSpell = GET_SPELL(SPELL_QUAKE_TRIGGER);
         if (TempSpell && TempSpell->EffectTriggerSpell[0] != SPELL_QUAKE_KNOCKBACK)
-        {
             TempSpell->EffectTriggerSpell[0] = SPELL_QUAKE_KNOCKBACK;
-        }
     }
 
     CubeMap Cube;
@@ -216,7 +226,7 @@ struct boss_magtheridonAI : public ScriptedAI
         Berserk_Timer = 1320000;
         Quake_Timer = 40000;
         Debris_Timer = 10000;
-        Blaze_Timer = 10000+rand()%20000;
+        Blaze_Timer = 10000 + rand() % 20000;
         BlastNova_Timer = 60000;
         Cleave_Timer = 15000;
         RandChat_Timer = 90000;
@@ -262,7 +272,8 @@ struct boss_magtheridonAI : public ScriptedAI
             {
                 DebuffClicker(clicker);
                 (*i).second = 0;
-            } else ClickerNum++;
+            }
+            else ClickerNum++;
         }
 
         // if 5 clickers from other cubes apply shadow cage
@@ -308,7 +319,7 @@ struct boss_magtheridonAI : public ScriptedAI
         me->RemoveAurasDueToSpell(SPELL_SHADOW_CAGE_C);
 
         DoScriptText(SAY_FREED, me);
-   }
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -316,9 +327,10 @@ struct boss_magtheridonAI : public ScriptedAI
         {
             if (RandChat_Timer <= diff)
             {
-                DoScriptText(RandomTaunt[rand()%6].id, me);
+                DoScriptText(RandomTaunt[rand() % 6].id, me);
                 RandChat_Timer = 90000;
-            } else RandChat_Timer -= diff;
+            }
+            else RandChat_Timer -= diff;
         }
 
         if (!UpdateVictim())
@@ -331,13 +343,15 @@ struct boss_magtheridonAI : public ScriptedAI
             me->CastSpell(me, SPELL_BERSERK, true);
             DoScriptText(EMOTE_BERSERK, me);
             Berserk_Timer = 60000;
-        } else Berserk_Timer -= diff;
+        }
+        else Berserk_Timer -= diff;
 
         if (Cleave_Timer <= diff)
         {
             DoCastVictim(SPELL_CLEAVE);
             Cleave_Timer = 10000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         if (BlastNova_Timer <= diff)
         {
@@ -348,7 +362,8 @@ struct boss_magtheridonAI : public ScriptedAI
                 DoCast(me, SPELL_BLASTNOVA);
                 BlastNova_Timer = 60000;
             }
-        } else BlastNova_Timer -= diff;
+        }
+        else BlastNova_Timer -= diff;
 
         if (Quake_Timer <= diff)
         {
@@ -358,7 +373,8 @@ struct boss_magtheridonAI : public ScriptedAI
                 me->CastSpell(me, SPELL_QUAKE_TRIGGER, true);
                 Quake_Timer = 50000;
             }
-        } else Quake_Timer -= diff;
+        }
+        else Quake_Timer -= diff;
 
         if (Blaze_Timer <= diff)
         {
@@ -374,10 +390,11 @@ struct boss_magtheridonAI : public ScriptedAI
                     summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 }
             }
-            Blaze_Timer = 20000 + rand()%20000;
-        } else Blaze_Timer -= diff;
+            Blaze_Timer = 20000 + rand() % 20000;
+        }
+        else Blaze_Timer -= diff;
 
-        if (!Phase3 && me->GetHealth()*10 < me->GetMaxHealth()*3
+        if (!Phase3 && me->GetHealth() * 10 < me->GetMaxHealth() * 3
             && !me->IsNonMeleeSpellCast(false) // blast nova
             && !me->HasUnitState(UNIT_STATE_STUNNED)) // shadow cage and earthquake
         {
@@ -402,7 +419,8 @@ struct boss_magtheridonAI : public ScriptedAI
                     if (summon) ((mob_abyssalAI*)summon->AI())->SetTrigger(1);
                 }
                 Debris_Timer = 10000;
-            } else Debris_Timer -= diff;
+            }
+            else Debris_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -413,7 +431,7 @@ struct mob_hellfire_channelerAI : public ScriptedAI
 {
     mob_hellfire_channelerAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance =me->GetInstanceData();
+        pInstance = me->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -427,10 +445,10 @@ struct mob_hellfire_channelerAI : public ScriptedAI
 
     void Reset()
     {
-        ShadowBoltVolley_Timer = 8000 + rand()%2000;
+        ShadowBoltVolley_Timer = 8000 + rand() % 2000;
         DarkMending_Timer = 10000;
-        Fear_Timer = 15000 + rand()%5000;
-        Infernal_Timer = 10000 + rand()%40000;
+        Fear_Timer = 15000 + rand() % 5000;
+        Infernal_Timer = 10000 + rand() % 40000;
 
         Check_Timer = 5000;
 
@@ -449,11 +467,14 @@ struct mob_hellfire_channelerAI : public ScriptedAI
         DoZoneInCombat();
     }
 
-    void JustSummoned(Creature* summon) {summon->AI()->AttackStart(me->getVictim());}
+    void JustSummoned(Creature* summon)
+    {
+        summon->AI()->AttackStart(me->getVictim());
+    }
 
     void MoveInLineOfSight(Unit*) {}
 
-    void DamageTaken(Unit*, uint32 &damage)
+    void DamageTaken(Unit*, uint32& damage)
     {
         if (damage >= me->GetHealth())
             me->CastSpell(me, SPELL_SOUL_TRANSFER, true);
@@ -473,29 +494,33 @@ struct mob_hellfire_channelerAI : public ScriptedAI
         if (ShadowBoltVolley_Timer <= diff)
         {
             DoCast(me, SPELL_SHADOW_BOLT_VOLLEY);
-            ShadowBoltVolley_Timer = 10000 + rand()%10000;
-        } else ShadowBoltVolley_Timer -= diff;
+            ShadowBoltVolley_Timer = 10000 + rand() % 10000;
+        }
+        else ShadowBoltVolley_Timer -= diff;
 
         if (DarkMending_Timer <= diff)
         {
-            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 50)
+            if ((me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
                 DoCast(me, SPELL_DARK_MENDING);
-            DarkMending_Timer = 10000 +(rand() % 10000);
-        } else DarkMending_Timer -= diff;
+            DarkMending_Timer = 10000 + (rand() % 10000);
+        }
+        else DarkMending_Timer -= diff;
 
         if (Fear_Timer <= diff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                 DoCast(pTarget, SPELL_FEAR);
-            Fear_Timer = 25000 + rand()%15000;
-        } else Fear_Timer -= diff;
+            Fear_Timer = 25000 + rand() % 15000;
+        }
+        else Fear_Timer -= diff;
 
         if (Infernal_Timer <= diff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 me->CastSpell(pTarget, SPELL_BURNING_ABYSSAL, true);
-            Infernal_Timer = 30000 + rand()%10000;
-        } else Infernal_Timer -= diff;
+            Infernal_Timer = 30000 + rand() % 10000;
+        }
+        else Infernal_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -504,10 +529,10 @@ struct mob_hellfire_channelerAI : public ScriptedAI
 //Manticron Cube
 bool GOHello_go_Manticron_Cube(Player* player, GameObject* _GO)
 {
-    ScriptedInstance* pInstance =_GO->GetInstanceData();
+    ScriptedInstance* pInstance = _GO->GetInstanceData();
     if (!pInstance) return true;
     if (pInstance->GetData(DATA_MAGTHERIDON_EVENT) != IN_PROGRESS) return true;
-    Creature* Magtheridon =Unit::GetCreature(*_GO, pInstance->GetData64(DATA_MAGTHERIDON));
+    Creature* Magtheridon = Unit::GetCreature(*_GO, pInstance->GetData64(DATA_MAGTHERIDON));
     if (!Magtheridon || !Magtheridon->isAlive()) return true;
 
     // if exhausted or already channeling return
@@ -538,7 +563,7 @@ CreatureAI* GetAI_mob_abyssalAI(Creature* pCreature)
 
 void AddSC_boss_magtheridon()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_magtheridon";
     newscript->GetAI = &GetAI_boss_magtheridon;

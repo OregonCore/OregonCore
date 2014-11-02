@@ -37,8 +37,8 @@ struct boss_grilekAI : public ScriptedAI
 
     void Reset()
     {
-        Avartar_Timer = 15000 + rand()%10000;
-        GroundTremor_Timer = 8000 + rand()%8000;
+        Avartar_Timer = 15000 + rand() % 10000;
+        GroundTremor_Timer = 8000 + rand() % 8000;
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -58,22 +58,24 @@ struct boss_grilekAI : public ScriptedAI
             DoCast(me, SPELL_AVARTAR);
             Unit* pTarget = NULL;
 
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
 
             if (DoGetThreat(me->getVictim()))
-                DoModifyThreatPercent(me->getVictim(),-50);
+                DoModifyThreatPercent(me->getVictim(), -50);
             if (pTarget)
                 AttackStart(pTarget);
 
-            Avartar_Timer = 25000 + rand()%10000;
-        } else Avartar_Timer -= diff;
+            Avartar_Timer = 25000 + rand() % 10000;
+        }
+        else Avartar_Timer -= diff;
 
         //GroundTremor_Timer
         if (GroundTremor_Timer <= diff)
         {
             DoCastVictim( SPELL_GROUNDTREMOR);
-            GroundTremor_Timer = 12000 + rand()%4000;
-        } else GroundTremor_Timer -= diff;
+            GroundTremor_Timer = 12000 + rand() % 4000;
+        }
+        else GroundTremor_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -85,7 +87,7 @@ CreatureAI* GetAI_boss_grilek(Creature* pCreature)
 
 void AddSC_boss_grilek()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_grilek";
     newscript->GetAI = &GetAI_boss_grilek;

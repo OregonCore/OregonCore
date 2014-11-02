@@ -134,26 +134,34 @@ struct instance_stratholme : public ScriptedInstance
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-        case C_BARON:           baronGUID = pCreature->GetGUID(); break;
-        case C_YSIDA_TRIGGER:   ysidaTriggerGUID = pCreature->GetGUID(); break;
-        case C_CRYSTAL:         crystalsGUID.insert(pCreature->GetGUID()); break;
+        case C_BARON:
+            baronGUID = pCreature->GetGUID();
+            break;
+        case C_YSIDA_TRIGGER:
+            ysidaTriggerGUID = pCreature->GetGUID();
+            break;
+        case C_CRYSTAL:
+            crystalsGUID.insert(pCreature->GetGUID());
+            break;
         case C_ABOM_BILE:
-        case C_ABOM_VENOM:      abomnationGUID.insert(pCreature->GetGUID()); break;
+        case C_ABOM_VENOM:
+            abomnationGUID.insert(pCreature->GetGUID());
+            break;
         }
     }
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
         case GO_SERVICE_ENTRANCE:
             serviceEntranceGUID = pGo->GetGUID();
             break;
         case GO_GAUNTLET_GATE1:
             //weird, but unless flag is set, client will not respond as expected. DB bug?
-            pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_LOCKED);
+            pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
             gauntletGate1GUID = pGo->GetGUID();
             break;
         case GO_ZIGGURAT1:
@@ -199,10 +207,10 @@ struct instance_stratholme : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
         case TYPE_BARON_RUN:
-            switch(data)
+            switch (data)
             {
             case IN_PROGRESS:
                 if (Encounter[0] == IN_PROGRESS || Encounter[0] == FAIL)
@@ -219,8 +227,8 @@ struct instance_stratholme : public ScriptedInstance
                 Encounter[0] = data;
                 if (Creature* pYsidaT = instance->GetCreature(ysidaTriggerGUID))
                     pYsidaT->SummonCreature(C_YSIDA,
-                    pYsidaT->GetPositionX(),pYsidaT->GetPositionY(),pYsidaT->GetPositionZ(),pYsidaT->GetOrientation(),
-                    TEMPSUMMON_TIMED_DESPAWN,1800000);
+                                            pYsidaT->GetPositionX(), pYsidaT->GetPositionY(), pYsidaT->GetPositionZ(), pYsidaT->GetOrientation(),
+                                            TEMPSUMMON_TIMED_DESPAWN, 1800000);
                 BaronRun_Timer = 0;
                 break;
             }
@@ -266,11 +274,11 @@ struct instance_stratholme : public ScriptedInstance
                     //a bit itchy, it should close the door after 10 secs, but it doesn't. skipping it for now.
                     //UpdateGoState(ziggurat4GUID,0,true);
                     if (Creature* pBaron = instance->GetCreature(baronGUID))
-                        pBaron->SummonCreature(C_RAMSTEIN,4032.84,-3390.24,119.73,4.71,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000);
+                        pBaron->SummonCreature(C_RAMSTEIN, 4032.84, -3390.24, 119.73, 4.71, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 1800000);
                     debug_log("OSCR: Instance Stratholme: Ramstein spawned.");
                 }
                 else
-                    debug_log("OSCR: Instance Stratholme: %u Abomnation left to kill.",count);
+                    debug_log("OSCR: Instance Stratholme: %u Abomnation left to kill.", count);
             }
 
             if (data == NOT_STARTED)
@@ -307,7 +315,7 @@ struct instance_stratholme : public ScriptedInstance
                         }
                     }
 
-                    SetData(TYPE_BARON_RUN,DONE);
+                    SetData(TYPE_BARON_RUN, DONE);
                 }
             }
             if (data == DONE || data == NOT_STARTED)
@@ -344,7 +352,7 @@ struct instance_stratholme : public ScriptedInstance
 
         std::ostringstream saveStream;
         saveStream << Encounter[0] << " " << Encounter[1] << " " << Encounter[2] << " "
-            << Encounter[3] << " " << Encounter[4] << " " << Encounter[5];
+                   << Encounter[3] << " " << Encounter[4] << " " << Encounter[5];
 
         OUT_SAVE_INST_DATA_COMPLETE;
         return saveStream.str();
@@ -362,7 +370,7 @@ struct instance_stratholme : public ScriptedInstance
 
         std::istringstream loadStream(in);
         loadStream >> Encounter[0] >> Encounter[1] >> Encounter[2] >> Encounter[3]
-        >> Encounter[4] >> Encounter[5];
+                   >> Encounter[4] >> Encounter[5];
 
         // Do not reset 1, 2 and 3. they are not set to done, yet .
         if (Encounter[0] == IN_PROGRESS)
@@ -377,31 +385,31 @@ struct instance_stratholme : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-          switch(type)
-          {
-          case TYPE_SH_QUEST:
-              if (IsSilverHandDead[0] && IsSilverHandDead[1] && IsSilverHandDead[2] && IsSilverHandDead[3] && IsSilverHandDead[4])
-                  return 1;
-              return 0;
-          case TYPE_BARON_RUN:
-              return Encounter[0];
-          case TYPE_BARONESS:
-              return Encounter[1];
-          case TYPE_NERUB:
-              return Encounter[2];
-          case TYPE_PALLID:
-              return Encounter[3];
-          case TYPE_RAMSTEIN:
-              return Encounter[4];
-          case TYPE_BARON:
-              return Encounter[5];
-          }
-          return 0;
+        switch (type)
+        {
+        case TYPE_SH_QUEST:
+            if (IsSilverHandDead[0] && IsSilverHandDead[1] && IsSilverHandDead[2] && IsSilverHandDead[3] && IsSilverHandDead[4])
+                return 1;
+            return 0;
+        case TYPE_BARON_RUN:
+            return Encounter[0];
+        case TYPE_BARONESS:
+            return Encounter[1];
+        case TYPE_NERUB:
+            return Encounter[2];
+        case TYPE_PALLID:
+            return Encounter[3];
+        case TYPE_RAMSTEIN:
+            return Encounter[4];
+        case TYPE_BARON:
+            return Encounter[5];
+        }
+        return 0;
     }
 
     uint64 GetData64(uint32 data)
     {
-        switch(data)
+        switch (data)
         {
         case DATA_BARON:
             return baronGUID;
@@ -420,8 +428,9 @@ struct instance_stratholme : public ScriptedInstance
                 if (GetData(TYPE_BARON_RUN) != DONE)
                     SetData(TYPE_BARON_RUN, FAIL);
                 BaronRun_Timer = 0;
-                debug_log("OSCR: Instance Stratholme: Baron run event reached end. Event has state %u.",GetData(TYPE_BARON_RUN));
-            } else BaronRun_Timer -= diff;
+                debug_log("OSCR: Instance Stratholme: Baron run event reached end. Event has state %u.", GetData(TYPE_BARON_RUN));
+            }
+            else BaronRun_Timer -= diff;
         }
 
         if (SlaugtherSquare_Timer)
@@ -431,14 +440,15 @@ struct instance_stratholme : public ScriptedInstance
                 if (Creature* pBaron = instance->GetCreature(baronGUID))
                 {
                     for (uint8 i = 0; i < 4; ++i)
-                        pBaron->SummonCreature(C_BLACK_GUARD,4032.84,-3390.24,119.73,4.71,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000);
+                        pBaron->SummonCreature(C_BLACK_GUARD, 4032.84, -3390.24, 119.73, 4.71, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 1800000);
 
                     HandleGameObject(ziggurat4GUID, true);
                     HandleGameObject(ziggurat5GUID, true);
                     debug_log("OSCR: Instance Stratholme: Black guard sentries spawned. Opening gates to baron.");
                 }
                 SlaugtherSquare_Timer = 0;
-            } else SlaugtherSquare_Timer -= diff;
+            }
+            else SlaugtherSquare_Timer -= diff;
         }
     }
 };
@@ -450,7 +460,7 @@ InstanceData* GetInstanceData_instance_stratholme(Map* pMap)
 
 void AddSC_instance_stratholme()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_stratholme";
     newscript->GetInstanceData = &GetInstanceData_instance_stratholme;

@@ -50,7 +50,7 @@ struct boss_amnennar_the_coldbringerAI : public ScriptedAI
     {
         AmnenarsWrath_Timer = 8000;
         FrostBolt_Timer = 1000;
-        FrostNova_Timer = 10000 + rand()%5000;
+        FrostNova_Timer = 10000 + rand() % 5000;
         Spectrals30 = false;
         Spectrals60 = false;
         Hp = false;
@@ -76,35 +76,38 @@ struct boss_amnennar_the_coldbringerAI : public ScriptedAI
         {
             DoCastVictim( SPELL_AMNENNARSWRATH);
             AmnenarsWrath_Timer = 12000;
-        } else AmnenarsWrath_Timer -= diff;
+        }
+        else AmnenarsWrath_Timer -= diff;
 
         //FrostBolt_Timer
         if (FrostBolt_Timer <= diff)
         {
             DoCastVictim( SPELL_FROSTBOLT);
             FrostBolt_Timer = 8000;
-        } else FrostBolt_Timer -= diff;
+        }
+        else FrostBolt_Timer -= diff;
 
         if (FrostNova_Timer <= diff)
         {
             DoCast(me, SPELL_FROST_NOVA);
             FrostNova_Timer = 15000;
-        } else FrostNova_Timer -= diff;
+        }
+        else FrostNova_Timer -= diff;
 
-        if (!Spectrals60 && me->GetHealth()*100 / me->GetMaxHealth() < 60)
+        if (!Spectrals60 && me->GetHealth() * 100 / me->GetMaxHealth() < 60)
         {
             DoScriptText(SAY_SUMMON60, me);
             DoCastVictim( SPELL_FROST_SPECTRES);
             Spectrals60 = true;
         }
 
-        if (!Hp && me->GetHealth()*100 / me->GetMaxHealth() < 50)
+        if (!Hp && me->GetHealth() * 100 / me->GetMaxHealth() < 50)
         {
             DoScriptText(SAY_HP, me);
             Hp = true;
         }
 
-        if (!Spectrals30 && me->GetHealth()*100 / me->GetMaxHealth() < 30)
+        if (!Spectrals30 && me->GetHealth() * 100 / me->GetMaxHealth() < 30)
         {
             DoScriptText(SAY_SUMMON30, me);
             DoCastVictim( SPELL_FROST_SPECTRES);
@@ -122,7 +125,7 @@ CreatureAI* GetAI_boss_amnennar_the_coldbringer(Creature* pCreature)
 
 void AddSC_boss_amnennar_the_coldbringer()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_amnennar_the_coldbringer";
     newscript->GetAI = &GetAI_boss_amnennar_the_coldbringer;

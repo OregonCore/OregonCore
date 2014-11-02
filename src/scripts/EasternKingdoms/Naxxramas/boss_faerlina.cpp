@@ -58,32 +58,44 @@ struct boss_faerlinaAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch (rand()%4)
+        switch (rand() % 4)
         {
-        case 0: DoScriptText(SAY_AGGRO1, me); break;
-        case 1: DoScriptText(SAY_AGGRO2, me); break;
-        case 2: DoScriptText(SAY_AGGRO3, me); break;
-        case 3: DoScriptText(SAY_AGGRO4, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO3, me);
+            break;
+        case 3:
+            DoScriptText(SAY_AGGRO4, me);
+            break;
         }
     }
 
     void MoveInLineOfSight(Unit* who)
     {
-         if (!HasTaunted && me->IsWithinDistInMap(who, 60.0f))
-         {
-                DoScriptText(SAY_GREET, me);
-                HasTaunted = true;
+        if (!HasTaunted && me->IsWithinDistInMap(who, 60.0f))
+        {
+            DoScriptText(SAY_GREET, me);
+            HasTaunted = true;
 
         }
-         ScriptedAI::MoveInLineOfSight(who);
+        ScriptedAI::MoveInLineOfSight(who);
     }
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch (rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY1, me); break;
-            case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
         }
     }
 
@@ -102,22 +114,25 @@ struct boss_faerlinaAI : public ScriptedAI
         {
             DoCastVictim(SPELL_POSIONBOLT_VOLLEY);
             PoisonBoltVolley_Timer = 11000;
-        } else PoisonBoltVolley_Timer -= diff;
+        }
+        else PoisonBoltVolley_Timer -= diff;
 
         //RainOfFire_Timer
         if (RainOfFire_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_RAINOFFIRE);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_RAINOFFIRE);
             RainOfFire_Timer = 16000;
-        } else RainOfFire_Timer -= diff;
+        }
+        else RainOfFire_Timer -= diff;
 
         //Enrage_Timer
         if (Enrage_Timer <= diff)
         {
-            DoCast(me,SPELL_ENRAGE);
+            DoCast(me, SPELL_ENRAGE);
             Enrage_Timer = 61000;
-        } else Enrage_Timer -= diff;
+        }
+        else Enrage_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -129,7 +144,7 @@ CreatureAI* GetAI_boss_faerlina(Creature* pCreature)
 
 void AddSC_boss_faerlina()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_faerlina";
     newscript->GetAI = &GetAI_boss_faerlina;

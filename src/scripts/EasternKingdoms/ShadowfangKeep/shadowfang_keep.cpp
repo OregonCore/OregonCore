@@ -60,42 +60,42 @@ struct npc_shadowfang_prisonerAI : public npc_escortAI
         uiNpcEntry = c->GetEntry();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
     uint32 uiNpcEntry;
 
     void WaypointReached(uint32 uiPoint)
     {
-        switch(uiPoint)
+        switch (uiPoint)
         {
-            case 0:
-                if (uiNpcEntry == NPC_ASH)
-                    DoScriptText(SAY_FREE_AS, me);
-                else
-                    DoScriptText(SAY_FREE_AD, me);
-                break;
-            case 10:
-                if (uiNpcEntry == NPC_ASH)
-                    DoScriptText(SAY_OPEN_DOOR_AS, me);
-                else
-                    DoScriptText(SAY_OPEN_DOOR_AD, me);
-                break;
-            case 11:
-                if (uiNpcEntry == NPC_ASH)
-                    DoCast(me, SPELL_UNLOCK);
-                break;
-            case 12:
-                if (uiNpcEntry == NPC_ASH)
-                    DoScriptText(SAY_POST_DOOR_AS, me);
-                else
-                    DoScriptText(SAY_POST1_DOOR_AD, me);
+        case 0:
+            if (uiNpcEntry == NPC_ASH)
+                DoScriptText(SAY_FREE_AS, me);
+            else
+                DoScriptText(SAY_FREE_AD, me);
+            break;
+        case 10:
+            if (uiNpcEntry == NPC_ASH)
+                DoScriptText(SAY_OPEN_DOOR_AS, me);
+            else
+                DoScriptText(SAY_OPEN_DOOR_AD, me);
+            break;
+        case 11:
+            if (uiNpcEntry == NPC_ASH)
+                DoCast(me, SPELL_UNLOCK);
+            break;
+        case 12:
+            if (uiNpcEntry == NPC_ASH)
+                DoScriptText(SAY_POST_DOOR_AS, me);
+            else
+                DoScriptText(SAY_POST1_DOOR_AD, me);
 
-                if (pInstance)
-                    pInstance->SetData(TYPE_FREE_NPC, DONE);
-                break;
-            case 13:
-                if (uiNpcEntry != NPC_ASH)
-                    DoScriptText(SAY_POST2_DOOR_AD, me);
-                break;
+            if (pInstance)
+                pInstance->SetData(TYPE_FREE_NPC, DONE);
+            break;
+        case 13:
+            if (uiNpcEntry != NPC_ASH)
+                DoScriptText(SAY_POST2_DOOR_AD, me);
+            break;
         }
     }
 
@@ -113,7 +113,7 @@ bool GossipHello_npc_shadowfang_prisoner(Player* pPlayer, Creature* pCreature)
     ScriptedInstance* pInstance = pCreature->GetInstanceData();
 
     if (pInstance && pInstance->GetData(TYPE_FREE_NPC) != DONE && pInstance->GetData(TYPE_RETHILGORE) == DONE)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_DOOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_DOOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
 
@@ -122,7 +122,7 @@ bool GossipHello_npc_shadowfang_prisoner(Player* pPlayer, Creature* pCreature)
 
 bool GossipSelect_npc_shadowfang_prisoner(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
 
@@ -145,7 +145,7 @@ struct npc_arugal_voidwalkerAI : public ScriptedAI
 
     void Reset()
     {
-        uiDarkOffering = urand(290,10);
+        uiDarkOffering = urand(290, 10);
     }
 
     void UpdateAI(uint32 const uiDiff)
@@ -155,15 +155,16 @@ struct npc_arugal_voidwalkerAI : public ScriptedAI
 
         if (uiDarkOffering <= uiDiff)
         {
-            if (Creature* pFriend = me->FindNearestCreature(me->GetEntry(),25.0f,true))
+            if (Creature* pFriend = me->FindNearestCreature(me->GetEntry(), 25.0f, true))
             {
                 if (pFriend)
-                    DoCast(pFriend,SPELL_DARK_OFFERING);
+                    DoCast(pFriend, SPELL_DARK_OFFERING);
             }
             else
-                DoCast(me,SPELL_DARK_OFFERING);
-            uiDarkOffering = urand(4400,12500);
-        } else uiDarkOffering -= uiDiff;
+                DoCast(me, SPELL_DARK_OFFERING);
+            uiDarkOffering = urand(4400, 12500);
+        }
+        else uiDarkOffering -= uiDiff;
 
         DoMeleeAttackIfReady();
     }

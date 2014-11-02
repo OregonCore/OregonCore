@@ -61,23 +61,33 @@ struct npc_professor_phizzlethorpeAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(uiPointId)
+        switch (uiPointId)
         {
-        case 4:DoScriptText(SAY_PROGRESS_2, me, pPlayer);break;
-        case 5:DoScriptText(SAY_PROGRESS_3, me, pPlayer);break;
-        case 8:DoScriptText(EMOTE_PROGRESS_4, me);break;
+        case 4:
+            DoScriptText(SAY_PROGRESS_2, me, pPlayer);
+            break;
+        case 5:
+            DoScriptText(SAY_PROGRESS_3, me, pPlayer);
+            break;
+        case 8:
+            DoScriptText(EMOTE_PROGRESS_4, me);
+            break;
         case 9:
             {
-            me->SummonCreature(MOB_VENGEFUL_SURGE, -2052.96f, -2142.49f, 20.15f, 1.0f, TEMPSUMMON_CORPSE_DESPAWN, 0);
-            me->SummonCreature(MOB_VENGEFUL_SURGE, -2052.96f, -2142.49f, 20.15f, 1.0f, TEMPSUMMON_CORPSE_DESPAWN, 0);
-            break;
+                me->SummonCreature(MOB_VENGEFUL_SURGE, -2052.96f, -2142.49f, 20.15f, 1.0f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                me->SummonCreature(MOB_VENGEFUL_SURGE, -2052.96f, -2142.49f, 20.15f, 1.0f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                break;
             }
-        case 10:DoScriptText(SAY_PROGRESS_5, me, pPlayer);break;
+        case 10:
+            DoScriptText(SAY_PROGRESS_5, me, pPlayer);
+            break;
         case 11:
             DoScriptText(SAY_PROGRESS_6, me, pPlayer);
             SetRun();
             break;
-        case 19:DoScriptText(SAY_PROGRESS_7, me, pPlayer); break;
+        case 19:
+            DoScriptText(SAY_PROGRESS_7, me, pPlayer);
+            break;
         case 20:
             DoScriptText(EMOTE_PROGRESS_8, me);
             DoScriptText(SAY_PROGRESS_9, me, pPlayer);
@@ -123,7 +133,7 @@ CreatureAI* GetAI_npc_professor_phizzlethorpeAI(Creature* pCreature)
 
 void AddSC_arathi_highlands()
 {
-    Script * newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_professor_phizzlethorpe";

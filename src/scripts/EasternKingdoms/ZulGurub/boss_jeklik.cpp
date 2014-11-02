@@ -54,7 +54,7 @@ struct boss_jeklikAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 Charge_Timer;
     uint32 SonicBurst_Timer;
@@ -114,7 +114,7 @@ struct boss_jeklikAI : public ScriptedAI
                         AttackStart(pTarget);
                     }
 
-                    Charge_Timer = 15000 + rand()%15000;
+                    Charge_Timer = 15000 + rand() % 15000;
                 }
                 else
                     Charge_Timer -= diff;
@@ -130,7 +130,7 @@ struct boss_jeklikAI : public ScriptedAI
                 if (Screech_Timer <= diff)
                 {
                     DoCastVictim( SPELL_SCREECH);
-                    Screech_Timer = 18000 + rand()%8000;
+                    Screech_Timer = 18000 + rand() % 8000;
                 }
                 else
                     Screech_Timer -= diff;
@@ -172,11 +172,11 @@ struct boss_jeklikAI : public ScriptedAI
                         if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                         {
                             DoCast(pTarget, SPELL_SHADOW_WORD_PAIN);
-                            ShadowWordPain_Timer = 12000 + rand()%6000;
+                            ShadowWordPain_Timer = 12000 + rand() % 6000;
                         }
                     }
 
-                    ShadowWordPain_Timer -=diff;
+                    ShadowWordPain_Timer -= diff;
 
                     if (MindFlay_Timer <= diff)
                     {
@@ -184,25 +184,25 @@ struct boss_jeklikAI : public ScriptedAI
                         MindFlay_Timer = 16000;
                     }
 
-                    MindFlay_Timer -=diff;
+                    MindFlay_Timer -= diff;
 
                     if (ChainMindFlay_Timer <= diff)
                     {
                         me->InterruptNonMeleeSpells(false);
                         DoCastVictim( SPELL_CHAIN_MIND_FLAY);
-                        ChainMindFlay_Timer = 15000 + rand()%15000;
+                        ChainMindFlay_Timer = 15000 + rand() % 15000;
                     }
 
-                    ChainMindFlay_Timer -=diff;
+                    ChainMindFlay_Timer -= diff;
 
                     if (GreaterHeal_Timer <= diff)
                     {
                         me->InterruptNonMeleeSpells(false);
                         DoCast(me, SPELL_GREATERHEAL);
-                        GreaterHeal_Timer = 25000 + rand()%10000;
+                        GreaterHeal_Timer = 25000 + rand() % 10000;
                     }
 
-                    GreaterHeal_Timer -=diff;
+                    GreaterHeal_Timer -= diff;
 
                     if (SpawnFlyingBats_Timer <= diff)
                     {
@@ -210,14 +210,14 @@ struct boss_jeklikAI : public ScriptedAI
                         if (!pTarget)
                             return;
 
-                        Creature* FlyingBat = me->SummonCreature(14965, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ()+15, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                        Creature* FlyingBat = me->SummonCreature(14965, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ() + 15, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                         if (FlyingBat)
                             FlyingBat->AI()->AttackStart(pTarget);
 
-                        SpawnFlyingBats_Timer = 10000 + rand()%5000;
+                        SpawnFlyingBats_Timer = 10000 + rand() % 5000;
                     }
                     else
-                        SpawnFlyingBats_Timer -=diff;
+                        SpawnFlyingBats_Timer -= diff;
                 }
                 else
                 {
@@ -240,7 +240,7 @@ struct mob_batriderAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 Bomb_Timer;
     uint32 Despawn_Timer;
@@ -306,7 +306,7 @@ CreatureAI* GetAI_mob_batrider(Creature* pCreature)
 
 void AddSC_boss_jeklik()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_jeklik";
     newscript->GetAI = &GetAI_boss_jeklik;

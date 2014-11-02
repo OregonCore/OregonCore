@@ -66,97 +66,97 @@ struct boss_chromaggusAI : public ScriptedAI
         //5 possiblities for the first breath, 4 for the second, 20 total possiblites
         //This way we don't end up casting 2 of the same breath
         //TL TL would be stupid
-        switch (urand(0,19))
+        switch (urand(0, 19))
         {
-            //B1 - Incin
-            case 0:
-                Breath1_Spell = SPELL_INCINERATE;
-                Breath2_Spell = SPELL_TIMELAPSE;
-                break;
-            case 1:
-                Breath1_Spell = SPELL_INCINERATE;
-                Breath2_Spell = SPELL_CORROSIVEACID;
-                break;
-            case 2:
-                Breath1_Spell = SPELL_INCINERATE;
-                Breath2_Spell = SPELL_IGNITEFLESH;
-                break;
-            case 3:
-                Breath1_Spell = SPELL_INCINERATE;
-                Breath2_Spell = SPELL_FROSTBURN;
-                break;
+        //B1 - Incin
+        case 0:
+            Breath1_Spell = SPELL_INCINERATE;
+            Breath2_Spell = SPELL_TIMELAPSE;
+            break;
+        case 1:
+            Breath1_Spell = SPELL_INCINERATE;
+            Breath2_Spell = SPELL_CORROSIVEACID;
+            break;
+        case 2:
+            Breath1_Spell = SPELL_INCINERATE;
+            Breath2_Spell = SPELL_IGNITEFLESH;
+            break;
+        case 3:
+            Breath1_Spell = SPELL_INCINERATE;
+            Breath2_Spell = SPELL_FROSTBURN;
+            break;
 
-                //B1 - TL
-            case 4:
-                Breath1_Spell = SPELL_TIMELAPSE;
-                Breath2_Spell = SPELL_INCINERATE;
-                break;
-            case 5:
-                Breath1_Spell = SPELL_TIMELAPSE;
-                Breath2_Spell = SPELL_CORROSIVEACID;
-                break;
-            case 6:
-                Breath1_Spell = SPELL_TIMELAPSE;
-                Breath2_Spell = SPELL_IGNITEFLESH;
-                break;
-            case 7:
-                Breath1_Spell = SPELL_TIMELAPSE;
-                Breath2_Spell = SPELL_FROSTBURN;
-                break;
+        //B1 - TL
+        case 4:
+            Breath1_Spell = SPELL_TIMELAPSE;
+            Breath2_Spell = SPELL_INCINERATE;
+            break;
+        case 5:
+            Breath1_Spell = SPELL_TIMELAPSE;
+            Breath2_Spell = SPELL_CORROSIVEACID;
+            break;
+        case 6:
+            Breath1_Spell = SPELL_TIMELAPSE;
+            Breath2_Spell = SPELL_IGNITEFLESH;
+            break;
+        case 7:
+            Breath1_Spell = SPELL_TIMELAPSE;
+            Breath2_Spell = SPELL_FROSTBURN;
+            break;
 
-                //B1 - Acid
-            case 8:
-                Breath1_Spell = SPELL_CORROSIVEACID;
-                Breath2_Spell = SPELL_INCINERATE;
-                break;
-            case 9:
-                Breath1_Spell = SPELL_CORROSIVEACID;
-                Breath2_Spell = SPELL_TIMELAPSE;
-                break;
-            case 10:
-                Breath1_Spell = SPELL_CORROSIVEACID;
-                Breath2_Spell = SPELL_IGNITEFLESH;
-                break;
-            case 11:
-                Breath1_Spell = SPELL_CORROSIVEACID;
-                Breath2_Spell = SPELL_FROSTBURN;
-                break;
+        //B1 - Acid
+        case 8:
+            Breath1_Spell = SPELL_CORROSIVEACID;
+            Breath2_Spell = SPELL_INCINERATE;
+            break;
+        case 9:
+            Breath1_Spell = SPELL_CORROSIVEACID;
+            Breath2_Spell = SPELL_TIMELAPSE;
+            break;
+        case 10:
+            Breath1_Spell = SPELL_CORROSIVEACID;
+            Breath2_Spell = SPELL_IGNITEFLESH;
+            break;
+        case 11:
+            Breath1_Spell = SPELL_CORROSIVEACID;
+            Breath2_Spell = SPELL_FROSTBURN;
+            break;
 
-                //B1 - Ignite
-            case 12:
-                Breath1_Spell = SPELL_IGNITEFLESH;
-                Breath2_Spell = SPELL_INCINERATE;
-                break;
-            case 13:
-                Breath1_Spell = SPELL_IGNITEFLESH;
-                Breath2_Spell = SPELL_CORROSIVEACID;
-                break;
-            case 14:
-                Breath1_Spell = SPELL_IGNITEFLESH;
-                Breath2_Spell = SPELL_TIMELAPSE;
-                break;
-            case 15:
-                Breath1_Spell = SPELL_IGNITEFLESH;
-                Breath2_Spell = SPELL_FROSTBURN;
-                break;
+        //B1 - Ignite
+        case 12:
+            Breath1_Spell = SPELL_IGNITEFLESH;
+            Breath2_Spell = SPELL_INCINERATE;
+            break;
+        case 13:
+            Breath1_Spell = SPELL_IGNITEFLESH;
+            Breath2_Spell = SPELL_CORROSIVEACID;
+            break;
+        case 14:
+            Breath1_Spell = SPELL_IGNITEFLESH;
+            Breath2_Spell = SPELL_TIMELAPSE;
+            break;
+        case 15:
+            Breath1_Spell = SPELL_IGNITEFLESH;
+            Breath2_Spell = SPELL_FROSTBURN;
+            break;
 
-                //B1 - Frost
-            case 16:
-                Breath1_Spell = SPELL_FROSTBURN;
-                Breath2_Spell = SPELL_INCINERATE;
-                break;
-            case 17:
-                Breath1_Spell = SPELL_FROSTBURN;
-                Breath2_Spell = SPELL_TIMELAPSE;
-                break;
-            case 18:
-                Breath1_Spell = SPELL_FROSTBURN;
-                Breath2_Spell = SPELL_CORROSIVEACID;
-                break;
-            case 19:
-                Breath1_Spell = SPELL_FROSTBURN;
-                Breath2_Spell = SPELL_IGNITEFLESH;
-                break;
+        //B1 - Frost
+        case 16:
+            Breath1_Spell = SPELL_FROSTBURN;
+            Breath2_Spell = SPELL_INCINERATE;
+            break;
+        case 17:
+            Breath1_Spell = SPELL_FROSTBURN;
+            Breath2_Spell = SPELL_TIMELAPSE;
+            break;
+        case 18:
+            Breath1_Spell = SPELL_FROSTBURN;
+            Breath2_Spell = SPELL_CORROSIVEACID;
+            break;
+        case 19:
+            Breath1_Spell = SPELL_FROSTBURN;
+            Breath2_Spell = SPELL_IGNITEFLESH;
+            break;
         };
 
         EnterEvadeMode();
@@ -204,28 +204,31 @@ struct boss_chromaggusAI : public ScriptedAI
 
             //Cast new random vulnerabilty on self
             uint32 spell = RAND(SPELL_FIRE_VULNERABILITY, SPELL_FROST_VULNERABILITY,
-                SPELL_SHADOW_VULNERABILITY, SPELL_NATURE_VULNERABILITY, SPELL_ARCANE_VULNERABILITY);
+                                SPELL_SHADOW_VULNERABILITY, SPELL_NATURE_VULNERABILITY, SPELL_ARCANE_VULNERABILITY);
 
             DoCast(me, spell);
             CurrentVurln_Spell = spell;
 
             DoScriptText(EMOTE_SHIMMER, me);
             Shimmer_Timer = 45000;
-        } else Shimmer_Timer -= diff;
+        }
+        else Shimmer_Timer -= diff;
 
         //Breath1_Timer
         if (Breath1_Timer <= diff)
         {
             DoCastVictim( Breath1_Spell);
             Breath1_Timer = 60000;
-        } else Breath1_Timer -= diff;
+        }
+        else Breath1_Timer -= diff;
 
         //Breath2_Timer
         if (Breath2_Timer <= diff)
         {
             DoCastVictim( Breath2_Spell);
             Breath2_Timer = 60000;
-        } else Breath2_Timer -= diff;
+        }
+        else Breath2_Timer -= diff;
 
         //Affliction_Timer
         if (Affliction_Timer <= diff)
@@ -266,18 +269,20 @@ struct boss_chromaggusAI : public ScriptedAI
             }
 
             Affliction_Timer = 10000;
-        } else Affliction_Timer -= diff;
+        }
+        else Affliction_Timer -= diff;
 
         //Frenzy_Timer
         if (Frenzy_Timer <= diff)
         {
             DoCast(me, SPELL_FRENZY);
             DoScriptText(EMOTE_FRENZY, me);
-            Frenzy_Timer = urand(10000,15000);
-        } else Frenzy_Timer -= diff;
+            Frenzy_Timer = urand(10000, 15000);
+        }
+        else Frenzy_Timer -= diff;
 
         //Enrage if not already enraged and below 20%
-        if (!Enraged && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
+        if (!Enraged && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
         {
             DoCast(me, SPELL_ENRAGE);
             Enraged = true;
@@ -293,7 +298,7 @@ CreatureAI* GetAI_boss_chromaggus(Creature* pCreature)
 
 void AddSC_boss_chromaggus()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_chromaggus";
     newscript->GetAI = &GetAI_boss_chromaggus;

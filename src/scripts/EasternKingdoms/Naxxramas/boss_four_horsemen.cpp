@@ -88,22 +88,23 @@ struct boss_lady_blaumeuxAI : public ScriptedAI
         {
             DoCastVictim(SPELL_MARK_OF_BLAUMEUX);
             Mark_Timer = 12000;
-        } else Mark_Timer -= diff;
+        }
+        else Mark_Timer -= diff;
 
         // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-        if (ShieldWall1 && (me->GetHealth()*100 / me->GetMaxHealth()) < 50)
+        if (ShieldWall1 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
         {
             if (ShieldWall1)
             {
-                DoCast(me,SPELL_SHIELDWALL);
+                DoCast(me, SPELL_SHIELDWALL);
                 ShieldWall1 = false;
             }
         }
-        if (ShieldWall2 && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
+        if (ShieldWall2 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
         {
             if (ShieldWall2)
             {
-                DoCast(me,SPELL_SHIELDWALL);
+                DoCast(me, SPELL_SHIELDWALL);
                 ShieldWall2 = false;
             }
         }
@@ -113,7 +114,8 @@ struct boss_lady_blaumeuxAI : public ScriptedAI
         {
             DoCastVictim(SPELL_VOIDZONE);
             VoidZone_Timer = 12000;
-        } else VoidZone_Timer -= diff;
+        }
+        else VoidZone_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -152,20 +154,30 @@ struct boss_rivendare_naxxAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_RIVE_AGGRO1, me); break;
-            case 1: DoScriptText(SAY_RIVE_AGGRO2, me); break;
-            case 2: DoScriptText(SAY_RIVE_AGGRO3, me); break;
+        case 0:
+            DoScriptText(SAY_RIVE_AGGRO1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_RIVE_AGGRO2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_RIVE_AGGRO3, me);
+            break;
         }
     }
 
     void KilledUnit(Unit* /*Victim*/)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_RIVE_SLAY1, me); break;
-            case 1: DoScriptText(SAY_RIVE_SLAY2, me); break;
+        case 0:
+            DoScriptText(SAY_RIVE_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_RIVE_SLAY2, me);
+            break;
         }
     }
 
@@ -244,23 +256,24 @@ struct boss_thane_korthazzAI : public ScriptedAI
         {
             DoCastVictim(SPELL_MARK_OF_KORTHAZZ);
             Mark_Timer = 12000;
-        } else Mark_Timer -= diff;
+        }
+        else Mark_Timer -= diff;
 
         // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-        if (ShieldWall1 && (me->GetHealth()*100 / me->GetMaxHealth()) < 50)
+        if (ShieldWall1 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
         {
             if (ShieldWall1)
             {
-                DoCast(me,SPELL_SHIELDWALL);
+                DoCast(me, SPELL_SHIELDWALL);
                 ShieldWall1 = false;
             }
         }
-        if (ShieldWall2 && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
+        if (ShieldWall2 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
         {
             if (ShieldWall2)
             {
-                DoCast(me,SPELL_SHIELDWALL);
-              ShieldWall2 = false;
+                DoCast(me, SPELL_SHIELDWALL);
+                ShieldWall2 = false;
             }
         }
 
@@ -269,7 +282,8 @@ struct boss_thane_korthazzAI : public ScriptedAI
         {
             DoCastVictim(SPELL_METEOR);
             Meteor_Timer = 20000;                                    // wrong
-      } else Meteor_Timer -= diff;
+        }
+        else Meteor_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -340,22 +354,23 @@ struct boss_sir_zeliekAI : public ScriptedAI
         {
             DoCastVictim(SPELL_MARK_OF_ZELIEK);
             Mark_Timer = 12000;
-        } else Mark_Timer -= diff;
+        }
+        else Mark_Timer -= diff;
 
         // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-        if (ShieldWall1 && (me->GetHealth()*100 / me->GetMaxHealth()) < 50)
+        if (ShieldWall1 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
         {
             if (ShieldWall1)
             {
-                DoCast(me,SPELL_SHIELDWALL);
+                DoCast(me, SPELL_SHIELDWALL);
                 ShieldWall1 = false;
             }
-     }
-        if (ShieldWall2 && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
+        }
+        if (ShieldWall2 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
         {
             if (ShieldWall2)
             {
-                DoCast(me,SPELL_SHIELDWALL);
+                DoCast(me, SPELL_SHIELDWALL);
                 ShieldWall2 = false;
             }
         }
@@ -365,7 +380,8 @@ struct boss_sir_zeliekAI : public ScriptedAI
         {
             DoCastVictim(SPELL_HOLY_WRATH);
             HolyWrath_Timer = 12000;
-        } else HolyWrath_Timer -= diff;
+        }
+        else HolyWrath_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -378,7 +394,7 @@ CreatureAI* GetAI_boss_sir_zeliek(Creature* pCreature)
 
 void AddSC_boss_four_horsemen()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_lady_blaumeux";
@@ -401,5 +417,5 @@ void AddSC_boss_four_horsemen()
     newscript = new Script;
     newscript->Name = "boss_sir_zeliek";
     newscript->GetAI = &GetAI_boss_sir_zeliek;
-  newscript->RegisterSelf();
+    newscript->RegisterSelf();
 }

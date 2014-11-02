@@ -33,19 +33,19 @@ RARunnable::RARunnable() : m_Reactor(NULL)
 {
     ACE_Reactor_Impl* imp = 0;
 
-#if defined (ACE_HAS_EVENT_POLL) || defined (ACE_HAS_DEV_POLL)
+    #if defined (ACE_HAS_EVENT_POLL) || defined (ACE_HAS_DEV_POLL)
 
     imp = new ACE_Dev_Poll_Reactor();
 
     imp->max_notify_iterations (128);
     imp->restart (1);
 
-#else
+    #else
 
     imp = new ACE_TP_Reactor();
     imp->max_notify_iterations (128);
 
-#endif
+    #endif
 
     m_Reactor = new ACE_Reactor (imp, 1);
 }

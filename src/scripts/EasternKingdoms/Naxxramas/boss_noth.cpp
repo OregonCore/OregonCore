@@ -65,29 +65,39 @@ struct boss_nothAI : public ScriptedAI
         Summon_Timer = 12000;
     }
 
-    void EnterCombat(Unit* )
+    void EnterCombat(Unit*)
     {
-        switch (rand()%3)
+        switch (rand() % 3)
         {
-        case 0: DoScriptText(SAY_AGGRO1, me); break;
-        case 1: DoScriptText(SAY_AGGRO2, me); break;
-        case 2: DoScriptText(SAY_AGGRO3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO3, me);
+            break;
         }
     }
 
     void KilledUnit(Unit*)
     {
-        switch (rand()%2)
+        switch (rand() % 2)
         {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
         }
     }
 
     void JustSummoned(Creature* summoned)
     {
-        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-            summoned->AddThreat(pTarget,0.0f);
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            summoned->AddThreat(pTarget, 0.0f);
     }
 
     void JustDied(Unit*)
@@ -104,17 +114,19 @@ struct boss_nothAI : public ScriptedAI
         if (Blink_Timer <= diff)
         {
             DoCastVictim(SPELL_CRIPPLE);
-            DoCast(me,SPELL_BLINK);
+            DoCast(me, SPELL_BLINK);
 
             Blink_Timer = 25000;
-        } else Blink_Timer -= diff;
+        }
+        else Blink_Timer -= diff;
 
         //Curse_Timer
         if (Curse_Timer <= diff)
         {
-             DoCastVictim(SPELL_CURSE_PLAGUEBRINGER);
+            DoCastVictim(SPELL_CURSE_PLAGUEBRINGER);
             Curse_Timer = 28000;
-        } else Curse_Timer -= diff;
+        }
+        else Curse_Timer -= diff;
 
         //Summon_Timer
         if (Summon_Timer <= diff)
@@ -122,10 +134,11 @@ struct boss_nothAI : public ScriptedAI
             DoScriptText(SAY_SUMMON, me);
 
             for (uint8 i = 0; i < 6; i++)
-                  me->SummonCreature(C_PLAGUED_WARRIOR,2684.804f,-3502.517f,261.313f,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                me->SummonCreature(C_PLAGUED_WARRIOR, 2684.804f, -3502.517f, 261.313f, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 80000);
 
             Summon_Timer = 30500;
-        } else Summon_Timer -= diff;
+        }
+        else Summon_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -137,7 +150,7 @@ CreatureAI* GetAI_boss_noth(Creature* pCreature)
 
 void AddSC_boss_noth()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_noth";
     newscript->GetAI = &GetAI_boss_noth;

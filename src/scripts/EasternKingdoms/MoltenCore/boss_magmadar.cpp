@@ -64,23 +64,26 @@ struct boss_magmadarAI : public ScriptedAI
             DoScriptText(EMOTE_FRENZY, me);
             DoCast(me, SPELL_FRENZY);
             Frenzy_Timer = 15000;
-        } else Frenzy_Timer -= diff;
+        }
+        else Frenzy_Timer -= diff;
 
         //Panic_Timer
         if (Panic_Timer <= diff)
         {
             DoCastVictim( SPELL_PANIC);
             Panic_Timer = 35000;
-        } else Panic_Timer -= diff;
+        }
+        else Panic_Timer -= diff;
 
         //Lavabomb_Timer
         if (Lavabomb_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_LAVABOMB_ALT);
 
             Lavabomb_Timer = 12000;
-        } else Lavabomb_Timer -= diff;
+        }
+        else Lavabomb_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -92,7 +95,7 @@ CreatureAI* GetAI_boss_magmadar(Creature* pCreature)
 
 void AddSC_boss_magmadar()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_magmadar";
     newscript->GetAI = &GetAI_boss_magmadar;

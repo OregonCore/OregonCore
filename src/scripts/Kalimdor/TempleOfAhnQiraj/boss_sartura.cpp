@@ -56,11 +56,11 @@ struct boss_sarturaAI : public ScriptedAI
     void Reset()
     {
         WhirlWind_Timer = 30000;
-        WhirlWindRandom_Timer = 3000 + rand()%4000;
+        WhirlWindRandom_Timer = 3000 + rand() % 4000;
         WhirlWindEnd_Timer = 15000;
-        AggroReset_Timer = 45000 + rand()%10000;
+        AggroReset_Timer = 45000 + rand() % 10000;
         AggroResetEnd_Timer = 5000;
-        EnrageHard_Timer = 10*60000;
+        EnrageHard_Timer = 10 * 60000;
 
         WhirlWind = false;
         AggroReset = false;
@@ -74,15 +74,15 @@ struct boss_sarturaAI : public ScriptedAI
         DoScriptText(SAY_AGGRO, me);
     }
 
-     void JustDied(Unit* /*Killer*/)
-     {
-         DoScriptText(SAY_DEATH, me);
-     }
+    void JustDied(Unit* /*Killer*/)
+    {
+        DoScriptText(SAY_DEATH, me);
+    }
 
-     void KilledUnit(Unit* /*victim*/)
-     {
-         DoScriptText(SAY_SLAY, me);
-     }
+    void KilledUnit(Unit* /*victim*/)
+    {
+        DoScriptText(SAY_SLAY, me);
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -95,17 +95,19 @@ struct boss_sarturaAI : public ScriptedAI
             if (WhirlWindRandom_Timer <= diff)
             {
                 //Attack random Gamers
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                     AttackStart(pTarget);
 
-                WhirlWindRandom_Timer = 3000 + rand()%4000;
-            } else WhirlWindRandom_Timer -= diff;
+                WhirlWindRandom_Timer = 3000 + rand() % 4000;
+            }
+            else WhirlWindRandom_Timer -= diff;
 
             if (WhirlWindEnd_Timer <= diff)
             {
                 WhirlWind = false;
-                WhirlWind_Timer = 25000 + rand()%15000;
-            } else WhirlWindEnd_Timer -= diff;
+                WhirlWind_Timer = 25000 + rand() % 15000;
+            }
+            else WhirlWindEnd_Timer -= diff;
         }
 
         if (!WhirlWind)
@@ -115,17 +117,19 @@ struct boss_sarturaAI : public ScriptedAI
                 DoCast(me, SPELL_WHIRLWIND);
                 WhirlWind = true;
                 WhirlWindEnd_Timer = 15000;
-            } else WhirlWind_Timer -= diff;
+            }
+            else WhirlWind_Timer -= diff;
 
             if (AggroReset_Timer <= diff)
             {
                 //Attack random Gamers
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                     me->TauntApply(pTarget);
 
-                    AggroReset = true;
-                    AggroReset_Timer = 2000 + rand()%3000;
-            } else AggroReset_Timer -= diff;
+                AggroReset = true;
+                AggroReset_Timer = 2000 + rand() % 3000;
+            }
+            else AggroReset_Timer -= diff;
 
             if (AggroReset)
             {
@@ -133,14 +137,15 @@ struct boss_sarturaAI : public ScriptedAI
                 {
                     AggroReset = false;
                     AggroResetEnd_Timer = 5000;
-                    AggroReset_Timer = 35000 + rand()%10000;
-                } else AggroResetEnd_Timer -= diff;
+                    AggroReset_Timer = 35000 + rand() % 10000;
+                }
+                else AggroResetEnd_Timer -= diff;
             }
 
             //If she is 20% enrage
             if (!Enraged)
             {
-                if (me->GetHealth()*100 / me->GetMaxHealth() <= 20 && !me->IsNonMeleeSpellCast(false))
+                if (me->GetHealth() * 100 / me->GetMaxHealth() <= 20 && !me->IsNonMeleeSpellCast(false))
                 {
                     DoCast(me, SPELL_ENRAGE);
                     Enraged = true;
@@ -154,7 +159,8 @@ struct boss_sarturaAI : public ScriptedAI
                 {
                     DoCast(me, SPELL_ENRAGEHARD);
                     EnragedHard = true;
-                } else EnrageHard_Timer -= diff;
+                }
+                else EnrageHard_Timer -= diff;
             }
 
             DoMeleeAttackIfReady();
@@ -179,9 +185,9 @@ struct mob_sartura_royal_guardAI : public ScriptedAI
     void Reset()
     {
         WhirlWind_Timer = 30000;
-        WhirlWindRandom_Timer = 3000 + rand()%4000;
+        WhirlWindRandom_Timer = 3000 + rand() % 4000;
         WhirlWindEnd_Timer = 15000;
-        AggroReset_Timer = 45000 + rand()%10000;
+        AggroReset_Timer = 45000 + rand() % 10000;
         AggroResetEnd_Timer = 5000;
         KnockBack_Timer = 10000;
 
@@ -203,25 +209,26 @@ struct mob_sartura_royal_guardAI : public ScriptedAI
         {
             DoCast(me, SPELL_WHIRLWINDADD);
             WhirlWind = true;
-            WhirlWind_Timer = 25000 + rand()%15000;
+            WhirlWind_Timer = 25000 + rand() % 15000;
             WhirlWindEnd_Timer = 15000;
-        } else WhirlWind_Timer -= diff;
+        }
+        else WhirlWind_Timer -= diff;
 
         if (WhirlWind)
         {
             if (WhirlWindRandom_Timer <= diff)
             {
                 //Attack random Gamers
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                     me->TauntApply(pTarget);
 
-                WhirlWindRandom_Timer = 3000 + rand()%4000;
-            } else WhirlWindRandom_Timer -= diff;
+                WhirlWindRandom_Timer = 3000 + rand() % 4000;
+            }
+            else WhirlWindRandom_Timer -= diff;
 
             if (WhirlWindEnd_Timer <= diff)
-            {
                 WhirlWind = false;
-            } else WhirlWindEnd_Timer -= diff;
+            else WhirlWindEnd_Timer -= diff;
         }
 
         if (!WhirlWind)
@@ -229,18 +236,20 @@ struct mob_sartura_royal_guardAI : public ScriptedAI
             if (AggroReset_Timer <= diff)
             {
                 //Attack random Gamers
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                     AttackStart(pTarget);
 
                 AggroReset = true;
-                AggroReset_Timer = 2000 + rand()%3000;
-            } else AggroReset_Timer -= diff;
+                AggroReset_Timer = 2000 + rand() % 3000;
+            }
+            else AggroReset_Timer -= diff;
 
             if (KnockBack_Timer <= diff)
             {
                 DoCast(me, SPELL_WHIRLWINDADD);
-                KnockBack_Timer = 10000 + rand()%10000;
-            } else KnockBack_Timer -= diff;
+                KnockBack_Timer = 10000 + rand() % 10000;
+            }
+            else KnockBack_Timer -= diff;
         }
 
         if (AggroReset)
@@ -249,8 +258,9 @@ struct mob_sartura_royal_guardAI : public ScriptedAI
             {
                 AggroReset = false;
                 AggroResetEnd_Timer = 5000;
-                AggroReset_Timer = 30000 + rand()%10000;
-            } else AggroResetEnd_Timer -= diff;
+                AggroReset_Timer = 30000 + rand() % 10000;
+            }
+            else AggroResetEnd_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -269,7 +279,7 @@ CreatureAI* GetAI_mob_sartura_royal_guard(Creature* pCreature)
 
 void AddSC_boss_sartura()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_sartura";
     newscript->GetAI = &GetAI_boss_sartura;

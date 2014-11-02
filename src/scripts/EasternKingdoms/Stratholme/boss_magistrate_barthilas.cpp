@@ -87,28 +87,32 @@ struct boss_magistrate_barthilasAI : public ScriptedAI
 
             ++AngerCount;
             DoCast(me, SPELL_FURIOUS_ANGER, false);
-        } else FuriousAnger_Timer -= diff;
+        }
+        else FuriousAnger_Timer -= diff;
 
         //DrainingBlow
         if (DrainingBlow_Timer <= diff)
         {
             DoCastVictim( SPELL_DRAININGBLOW);
             DrainingBlow_Timer = 15000;
-        } else DrainingBlow_Timer -= diff;
+        }
+        else DrainingBlow_Timer -= diff;
 
         //CrowdPummel
         if (CrowdPummel_Timer <= diff)
         {
             DoCastVictim( SPELL_CROWDPUMMEL);
             CrowdPummel_Timer = 15000;
-        } else CrowdPummel_Timer -= diff;
+        }
+        else CrowdPummel_Timer -= diff;
 
         //MightyBlow
         if (MightyBlow_Timer <= diff)
         {
             DoCastVictim( SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 20000;
-        } else MightyBlow_Timer -= diff;
+        }
+        else MightyBlow_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -120,7 +124,7 @@ CreatureAI* GetAI_boss_magistrate_barthilas(Creature* pCreature)
 
 void AddSC_boss_magistrate_barthilas()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_magistrate_barthilas";
     newscript->GetAI = &GetAI_boss_magistrate_barthilas;

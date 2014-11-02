@@ -70,61 +70,56 @@ struct boss_postmaster_malownAI : public ScriptedAI
         if (WailingDead_Timer <= diff)
         {
             //Cast
-            if (rand()%100 < 65) //65% chance to cast
-            {
+            if (rand() % 100 < 65) //65% chance to cast
                 DoCastVictim( SPELL_WAILINGDEAD);
-            }
             //19 seconds until we should cast this again
             WailingDead_Timer = 19000;
-        } else WailingDead_Timer -= diff;
+        }
+        else WailingDead_Timer -= diff;
 
         //Backhand
         if (Backhand_Timer <= diff)
         {
             //Cast
-            if (rand()%100 < 45) //45% chance to cast
-            {
+            if (rand() % 100 < 45) //45% chance to cast
                 DoCastVictim( SPELL_BACKHAND);
-            }
             //8 seconds until we should cast this again
             Backhand_Timer = 8000;
-        } else Backhand_Timer -= diff;
+        }
+        else Backhand_Timer -= diff;
 
         //CurseOfWeakness
         if (CurseOfWeakness_Timer <= diff)
         {
             //Cast
-            if (rand()%100 < 3) //3% chance to cast
-            {
+            if (rand() % 100 < 3) //3% chance to cast
                 DoCastVictim( SPELL_CURSEOFWEAKNESS);
-            }
             //20 seconds until we should cast this again
             CurseOfWeakness_Timer = 20000;
-        } else CurseOfWeakness_Timer -= diff;
+        }
+        else CurseOfWeakness_Timer -= diff;
 
         //CurseOfTongues
         if (CurseOfTongues_Timer <= diff)
         {
             //Cast
-            if (rand()%100 < 3) //3% chance to cast
-            {
+            if (rand() % 100 < 3) //3% chance to cast
                 DoCastVictim( SPELL_CURSEOFTONGUES);
-            }
             //22 seconds until we should cast this again
             CurseOfTongues_Timer = 22000;
-        } else CurseOfTongues_Timer -= diff;
+        }
+        else CurseOfTongues_Timer -= diff;
 
         //CallOfTheGrave
         if (CallOfTheGrave_Timer <= diff)
         {
             //Cast
-            if (rand()%100 < 5) //5% chance to cast
-            {
+            if (rand() % 100 < 5) //5% chance to cast
                 DoCastVictim( SPELL_CALLOFTHEGRAVE);
-            }
             //25 seconds until we should cast this again
             CallOfTheGrave_Timer = 25000;
-        } else CallOfTheGrave_Timer -= diff;
+        }
+        else CallOfTheGrave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -136,7 +131,7 @@ CreatureAI* GetAI_boss_postmaster_malown(Creature* pCreature)
 
 void AddSC_boss_postmaster_malown()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_postmaster_malown";
     newscript->GetAI = &GetAI_boss_postmaster_malown;

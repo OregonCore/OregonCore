@@ -50,7 +50,7 @@ struct boss_hakkarAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 BloodSiphon_Timer;
     uint32 CorruptedBlood_Timer;
@@ -110,14 +110,16 @@ struct boss_hakkarAI : public ScriptedAI
         {
             DoCastVictim( SPELL_BLOODSIPHON);
             BloodSiphon_Timer = 90000;
-        } else BloodSiphon_Timer -= diff;
+        }
+        else BloodSiphon_Timer -= diff;
 
         //CorruptedBlood_Timer
         if (CorruptedBlood_Timer <= diff)
         {
             DoCastVictim( SPELL_CORRUPTEDBLOOD);
-            CorruptedBlood_Timer = 30000 + rand()%15000;
-        } else CorruptedBlood_Timer -= diff;
+            CorruptedBlood_Timer = 30000 + rand() % 15000;
+        }
+        else CorruptedBlood_Timer -= diff;
 
         //CauseInsanity_Timer
         /*if (CauseInsanity_Timer <= diff)
@@ -131,17 +133,19 @@ struct boss_hakkarAI : public ScriptedAI
         //WillOfHakkar_Timer
         if (WillOfHakkar_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_WILLOFHAKKAR);
 
-            WillOfHakkar_Timer = 25000 + rand()%10000;
-        } else WillOfHakkar_Timer -= diff;
+            WillOfHakkar_Timer = 25000 + rand() % 10000;
+        }
+        else WillOfHakkar_Timer -= diff;
 
         if (!Enraged && Enrage_Timer <= diff)
         {
             DoCast(me, SPELL_ENRAGE);
             Enraged = true;
-        } else Enrage_Timer -= diff;
+        }
+        else Enrage_Timer -= diff;
 
         //Checking if Jeklik is dead. If not we cast her Aspect
         if (CheckJeklik_Timer <= diff)
@@ -153,12 +157,14 @@ struct boss_hakkarAI : public ScriptedAI
                     if (AspectOfJeklik_Timer <= diff)
                     {
                         DoCastVictim( SPELL_ASPECT_OF_JEKLIK);
-                        AspectOfJeklik_Timer = 10000 + rand()%4000;
-                    } else AspectOfJeklik_Timer -= diff;
+                        AspectOfJeklik_Timer = 10000 + rand() % 4000;
+                    }
+                    else AspectOfJeklik_Timer -= diff;
                 }
             }
             CheckJeklik_Timer = 1000;
-        } else CheckJeklik_Timer -= diff;
+        }
+        else CheckJeklik_Timer -= diff;
 
         //Checking if Venoxis is dead. If not we cast his Aspect
         if (CheckVenoxis_Timer <= diff)
@@ -171,11 +177,13 @@ struct boss_hakkarAI : public ScriptedAI
                     {
                         DoCastVictim( SPELL_ASPECT_OF_VENOXIS);
                         AspectOfVenoxis_Timer = 8000;
-                    } else AspectOfVenoxis_Timer -= diff;
+                    }
+                    else AspectOfVenoxis_Timer -= diff;
                 }
             }
             CheckVenoxis_Timer = 1000;
-        } else CheckVenoxis_Timer -= diff;
+        }
+        else CheckVenoxis_Timer -= diff;
 
         //Checking if Marli is dead. If not we cast her Aspect
         if (CheckMarli_Timer <= diff)
@@ -188,12 +196,14 @@ struct boss_hakkarAI : public ScriptedAI
                     {
                         DoCastVictim( SPELL_ASPECT_OF_MARLI);
                         AspectOfMarli_Timer = 10000;
-                    } else AspectOfMarli_Timer -= diff;
+                    }
+                    else AspectOfMarli_Timer -= diff;
 
                 }
             }
             CheckMarli_Timer = 1000;
-        } else CheckMarli_Timer -= diff;
+        }
+        else CheckMarli_Timer -= diff;
 
         //Checking if Thekal is dead. If not we cast his Aspect
         if (CheckThekal_Timer <= diff)
@@ -206,11 +216,13 @@ struct boss_hakkarAI : public ScriptedAI
                     {
                         DoCast(me, SPELL_ASPECT_OF_THEKAL);
                         AspectOfThekal_Timer = 15000;
-                    } else AspectOfThekal_Timer -= diff;
+                    }
+                    else AspectOfThekal_Timer -= diff;
                 }
             }
             CheckThekal_Timer = 1000;
-        } else CheckThekal_Timer -= diff;
+        }
+        else CheckThekal_Timer -= diff;
 
         //Checking if Arlokk is dead. If yes we cast her Aspect
         if (CheckArlokk_Timer <= diff)
@@ -224,12 +236,14 @@ struct boss_hakkarAI : public ScriptedAI
                         DoCast(me, SPELL_ASPECT_OF_ARLOKK);
                         DoResetThreat();
 
-                        AspectOfArlokk_Timer = 10000 + rand()%5000;
-                    } else AspectOfArlokk_Timer -= diff;
+                        AspectOfArlokk_Timer = 10000 + rand() % 5000;
+                    }
+                    else AspectOfArlokk_Timer -= diff;
                 }
             }
             CheckArlokk_Timer = 1000;
-        } else CheckArlokk_Timer -= diff;
+        }
+        else CheckArlokk_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -242,7 +256,7 @@ CreatureAI* GetAI_boss_hakkar(Creature* pCreature)
 
 void AddSC_boss_hakkar()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_hakkar";
     newscript->GetAI = &GetAI_boss_hakkar;

@@ -56,7 +56,7 @@ struct boss_baron_geddonAI : public ScriptedAI
             return;
 
         //If we are <2% hp cast Armageddom
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 2)
+        if (me->GetHealth() * 100 / me->GetMaxHealth() <= 2)
         {
             me->InterruptNonMeleeSpells(true);
             DoCast(me, SPELL_ARMAGEDDOM);
@@ -69,25 +69,28 @@ struct boss_baron_geddonAI : public ScriptedAI
         {
             DoCast(me, SPELL_INFERNO);
             Inferno_Timer = 45000;
-        } else Inferno_Timer -= diff;
+        }
+        else Inferno_Timer -= diff;
 
         //IgniteMana_Timer
         if (IgniteMana_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_IGNITEMANA);
 
             IgniteMana_Timer = 30000;
-        } else IgniteMana_Timer -= diff;
+        }
+        else IgniteMana_Timer -= diff;
 
         //LivingBomb_Timer
         if (LivingBomb_Timer <= diff)
         {
-           if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-               DoCast(pTarget, SPELL_LIVINGBOMB);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_LIVINGBOMB);
 
             LivingBomb_Timer = 35000;
-        } else LivingBomb_Timer -= diff;
+        }
+        else LivingBomb_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -99,7 +102,7 @@ CreatureAI* GetAI_boss_baron_geddon(Creature* pCreature)
 
 void AddSC_boss_baron_geddon()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_baron_geddon";
     newscript->GetAI = &GetAI_boss_baron_geddon;

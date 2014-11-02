@@ -70,10 +70,10 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
     void Reset()
     {
         Summon_Timer = 30000;
-        ManaTap_Timer = 12000 + rand()%8000;
-        ArcaneTorrent_Timer = 16000 + rand()%9000;
-        Domination_Timer = 25000 + rand()%15000;
-        ArcaneExplosion_Timer = 8000 + rand()%5000;
+        ManaTap_Timer = 12000 + rand() % 8000;
+        ArcaneTorrent_Timer = 16000 + rand() % 9000;
+        Domination_Timer = 25000 + rand() % 15000;
+        ArcaneExplosion_Timer = 8000 + rand() % 5000;
 
         Enraged = false;
 
@@ -87,10 +87,14 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-        case 0: DoScriptText(SAY_SLAY_1, me); break;
-        case 1: DoScriptText(SAY_SLAY_2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY_2, me);
+            break;
         }
     }
 
@@ -101,8 +105,14 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
         summons.DespawnAll();
     }
 
-    void JustSummoned(Creature* summon) { summons.Summon(summon); }
-    void SummonedCreatureDespawn(Creature* summon) { summons.Despawn(summon); }
+    void JustSummoned(Creature* summon)
+    {
+        summons.Summon(summon);
+    }
+    void SummonedCreatureDespawn(Creature* summon)
+    {
+        summons.Despawn(summon);
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -112,43 +122,51 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
 
         if (Summon_Timer <= diff)
         {
-            for (int i = 0; i < 3;i++)
+            for (int i = 0; i < 3; i++)
             {
                 Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                Creature* Wraith = me->SummonCreature(21062,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(),0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+                Creature* Wraith = me->SummonCreature(21062, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
                 if (pTarget && Wraith)
                     Wraith->AI()->AttackStart(pTarget);
             }
             DoScriptText(SAY_SUMMON, me);
-            Summon_Timer = 30000 + rand()%15000;
-        } else Summon_Timer -= diff;
+            Summon_Timer = 30000 + rand() % 15000;
+        }
+        else Summon_Timer -= diff;
 
         if (ManaTap_Timer <= diff)
         {
             DoCastVictim(SPELL_MANA_TAP);
-            ManaTap_Timer = 14000 + rand()%8000;
-        } else ManaTap_Timer -= diff;
+            ManaTap_Timer = 14000 + rand() % 8000;
+        }
+        else ManaTap_Timer -= diff;
 
         if (ArcaneTorrent_Timer <= diff)
         {
             DoCastVictim(SPELL_ARCANE_TORRENT);
-            ArcaneTorrent_Timer = 12000 + rand()%6000;
-        } else ArcaneTorrent_Timer -= diff;
+            ArcaneTorrent_Timer = 12000 + rand() % 6000;
+        }
+        else ArcaneTorrent_Timer -= diff;
 
         if (Domination_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
             {
-                switch(rand()%2)
+                switch (rand() % 2)
                 {
-                case 0: DoScriptText(SAY_DOMINATION_1, me); break;
-                case 1: DoScriptText(SAY_DOMINATION_2, me); break;
+                case 0:
+                    DoScriptText(SAY_DOMINATION_1, me);
+                    break;
+                case 1:
+                    DoScriptText(SAY_DOMINATION_2, me);
+                    break;
                 }
 
-                DoCast(pTarget,SPELL_DOMINATION);
+                DoCast(pTarget, SPELL_DOMINATION);
             }
-                Domination_Timer = 25000 + rand()%5000;
-            } else Domination_Timer -= diff;
+            Domination_Timer = 25000 + rand() % 5000;
+        }
+        else Domination_Timer -= diff;
 
         //Only casting if Heroic Mode is used
         if (HeroicMode)
@@ -156,11 +174,12 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
             if (ArcaneExplosion_Timer <= diff)
             {
                 DoCastVictim(H_SPELL_ARCANE_EXPLOSION);
-                ArcaneExplosion_Timer = 10000 + rand()%4000;
-            } else ArcaneExplosion_Timer -= diff;
+                ArcaneExplosion_Timer = 10000 + rand() % 4000;
+            }
+            else ArcaneExplosion_Timer -= diff;
         }
 
-        if (!Enraged && me->GetHealth()*100 / me->GetMaxHealth() < 21)
+        if (!Enraged && me->GetHealth() * 100 / me->GetMaxHealth() < 21)
         {
             DoCast(me, SPELL_FRENZY);
             DoScriptText(SAY_ENRAGE, me);
@@ -180,7 +199,7 @@ struct mob_nether_wraithAI : public ScriptedAI
 {
     mob_nether_wraithAI(Creature* c) : ScriptedAI(c) {}
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 ArcaneMissiles_Timer;
     uint32 Detonation_Timer;
@@ -189,7 +208,7 @@ struct mob_nether_wraithAI : public ScriptedAI
 
     void Reset()
     {
-        ArcaneMissiles_Timer = 1000 + rand()%3000;
+        ArcaneMissiles_Timer = 1000 + rand() % 3000;
         Detonation_Timer = 20000;
         Die_Timer = 2200;
         Detonation = false;
@@ -207,21 +226,23 @@ struct mob_nether_wraithAI : public ScriptedAI
 
         if (ArcaneMissiles_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
-                DoCast(pTarget,SPELL_ARCANE_MISSILES);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
+                DoCast(pTarget, SPELL_ARCANE_MISSILES);
             else
                 DoCastVictim(SPELL_ARCANE_MISSILES);
 
-            ArcaneMissiles_Timer = 5000 + rand()%5000;
-        } else ArcaneMissiles_Timer -=diff;
+            ArcaneMissiles_Timer = 5000 + rand() % 5000;
+        }
+        else ArcaneMissiles_Timer -= diff;
 
         if (!Detonation)
         {
             if (Detonation_Timer <= diff)
             {
-                DoCast(me,SPELL_DETONATION);
+                DoCast(me, SPELL_DETONATION);
                 Detonation = true;
-            } else Detonation_Timer -= diff;
+            }
+            else Detonation_Timer -= diff;
         }
 
         if (Detonation)
@@ -230,7 +251,8 @@ struct mob_nether_wraithAI : public ScriptedAI
             {
                 me->setDeathState(JUST_DIED);
                 me->RemoveCorpse();
-            } else Die_Timer -= diff;
+            }
+            else Die_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -244,7 +266,7 @@ CreatureAI* GetAI_mob_nether_wraith(Creature* pCreature)
 
 void AddSC_boss_pathaleon_the_calculator()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_pathaleon_the_calculator";
     newscript->GetAI = &GetAI_boss_pathaleon_the_calculator;

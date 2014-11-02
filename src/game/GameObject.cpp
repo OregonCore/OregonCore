@@ -43,7 +43,7 @@ GameObject::GameObject() : WorldObject()
 {
     m_objectType |= TYPEMASK_GAMEOBJECT;
     m_objectTypeId = TYPEID_GAMEOBJECT;
-                                                            // 2.3.2 - 0x58
+    // 2.3.2 - 0x58
     m_updateFlag = (UPDATEFLAG_LOWGUID | UPDATEFLAG_HIGHGUID | UPDATEFLAG_HAS_POSITION);
 
     m_valuesCount = GAMEOBJECT_END;
@@ -75,19 +75,19 @@ void GameObject::CleanupsBeforeDelete()
         // Possible crash at access to deleted GO in Unit::m_gameobj
         if (uint64 owner_guid = GetOwnerGUID())
         {
-            Unit* owner = ObjectAccessor::GetUnit(*this,owner_guid);
+            Unit* owner = ObjectAccessor::GetUnit(*this, owner_guid);
             if (owner)
-                owner->RemoveGameObject(this,false);
+                owner->RemoveGameObject(this, false);
             else
             {
-                const char * ownerType = "creature";
+                const char* ownerType = "creature";
                 if (IS_PLAYER_GUID(owner_guid))
                     ownerType = "player";
                 else if (IS_PET_GUID(owner_guid))
                     ownerType = "pet";
 
                 sLog.outError("Delete GameObject (GUID: %u Entry: %u SpellId %u LinkedGO %u) that lost references to owner (GUID %u Type '%s') GO list. Crash possible later.",
-                    GetGUIDLow(), GetGOInfo()->id, m_spellId, GetLinkedGameObjectEntry(), GUID_LOPART(owner_guid), ownerType);
+                              GetGUIDLow(), GetGOInfo()->id, m_spellId, GetLinkedGameObjectEntry(), GUID_LOPART(owner_guid), ownerType);
             }
         }
     }
@@ -118,9 +118,9 @@ void GameObject::RemoveFromWorld()
         if (uint64 owner_guid = GetOwnerGUID())
         {
             if (Unit* owner = GetOwner())
-                owner->RemoveGameObject(this,false);
+                owner->RemoveGameObject(this, false);
             else
-                sLog.outError("Delete GameObject (GUID: %u Entry: %u) that has references in invalid creature %u GO list. Crash possible.",GetGUIDLow(),GetGOInfo()->id,GUID_LOPART(owner_guid));
+                sLog.outError("Delete GameObject (GUID: %u Entry: %u) that has references in invalid creature %u GO list. Crash possible.", GetGUIDLow(), GetGOInfo()->id, GUID_LOPART(owner_guid));
         }
 
         WorldObject::RemoveFromWorld();
@@ -128,22 +128,22 @@ void GameObject::RemoveFromWorld()
     }
 }
 
-bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 artKit)
+bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 artKit)
 {
     ASSERT(map);
     SetMap(map);
 
-    Relocate(x,y,z,ang);
+    Relocate(x, y, z, ang);
     if (!IsPositionValid())
     {
-        sLog.outError("Gameobject (GUID: %u Entry: %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)",guidlow,name_id,x,y);
+        sLog.outError("Gameobject (GUID: %u Entry: %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)", guidlow, name_id, x, y);
         return false;
     }
 
     GameObjectInfo const* goinfo = sObjectMgr.GetGameObjectInfo(name_id);
     if (!goinfo)
     {
-        sLog.outErrorDb("Gameobject (GUID: %u Entry: %u) not created: Invalid entry in gameobject_template. Map: %u  (X: %f Y: %f Z: %f) ang: %f rotation0: %f rotation1: %f rotation2: %f rotation3: %f",guidlow, name_id, map->GetId(), x, y, z, ang, rotation0, rotation1, rotation2, rotation3);
+        sLog.outErrorDb("Gameobject (GUID: %u Entry: %u) not created: Invalid entry in gameobject_template. Map: %u  (X: %f Y: %f Z: %f) ang: %f rotation0: %f rotation1: %f rotation2: %f rotation3: %f", guidlow, name_id, map->GetId(), x, y, z, ang, rotation0, rotation1, rotation2, rotation3);
         return false;
     }
 
@@ -153,7 +153,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, float x, float
 
     if (goinfo->type >= MAX_GAMEOBJECT_TYPE)
     {
-        sLog.outErrorDb("Gameobject (GUID: %u Entry: %u) not created: Invalid GO type '%u' in gameobject_template. It will crash the client if created.",guidlow,name_id,goinfo->type);
+        sLog.outErrorDb("Gameobject (GUID: %u Entry: %u) not created: Invalid GO type '%u' in gameobject_template. It will crash the client if created.", guidlow, name_id, goinfo->type);
         return false;
     }
 
@@ -161,10 +161,10 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, float x, float
     SetFloatValue(GAMEOBJECT_POS_Y, y);
     SetFloatValue(GAMEOBJECT_POS_Z, z);
 
-    SetFloatValue(GAMEOBJECT_ROTATION+0, rotation0);
-    SetFloatValue(GAMEOBJECT_ROTATION+1, rotation1);
+    SetFloatValue(GAMEOBJECT_ROTATION + 0, rotation0);
+    SetFloatValue(GAMEOBJECT_ROTATION + 1, rotation1);
 
-    UpdateRotationFields(rotation2,rotation3);              // GAMEOBJECT_FACING, GAMEOBJECT_ROTATION, GAMEOBJECT_PARENTROTATION+2/3
+    UpdateRotationFields(rotation2, rotation3);             // GAMEOBJECT_FACING, GAMEOBJECT_ROTATION, GAMEOBJECT_PARENTROTATION+2/3
 
     SetObjectScale(goinfo->size);
 
@@ -197,11 +197,11 @@ void GameObject::Update(uint32 diff)
 
     switch (m_lootState)
     {
-        case GO_NOT_READY:
+    case GO_NOT_READY:
         {
-            switch(GetGoType())
+            switch (GetGoType())
             {
-                case GAMEOBJECT_TYPE_TRAP:
+            case GAMEOBJECT_TYPE_TRAP:
                 {
                     // Arming Time for GAMEOBJECT_TYPE_TRAP (6)
                     Unit* owner = GetOwner();
@@ -210,7 +210,7 @@ void GameObject::Update(uint32 diff)
                     m_lootState = GO_READY;
                     break;
                 }
-                case GAMEOBJECT_TYPE_FISHINGNODE:
+            case GAMEOBJECT_TYPE_FISHINGNODE:
                 {
                     // fishing code (bobber ready)
                     if (time(NULL) > m_respawnTime - FISHING_BOBBER_READY_TIME)
@@ -224,7 +224,7 @@ void GameObject::Update(uint32 diff)
 
                             UpdateData udata;
                             WorldPacket packet;
-                            BuildValuesUpdateBlockForPlayer(&udata,caster->ToPlayer());
+                            BuildValuesUpdateBlockForPlayer(&udata, caster->ToPlayer());
                             udata.BuildPacket(&packet);
                             caster->ToPlayer()->GetSession()->SendPacket(&packet);
 
@@ -235,13 +235,13 @@ void GameObject::Update(uint32 diff)
                     }
                     return;
                 }
-                default:
-                    m_lootState = GO_READY;                         // for other GOis same switched without delay to GO_READY
-                    break;
+            default:
+                m_lootState = GO_READY;                         // for other GOis same switched without delay to GO_READY
+                break;
             }
             // NO BREAK for switch (m_lootState)
         }
-        case GO_READY:
+    case GO_READY:
         {
             if (m_respawnTime > 0)                          // timer on
             {
@@ -253,40 +253,40 @@ void GameObject::Update(uint32 diff)
 
                     switch (GetGoType())
                     {
-                        case GAMEOBJECT_TYPE_FISHINGNODE:   //  can't fish now
+                    case GAMEOBJECT_TYPE_FISHINGNODE:   //  can't fish now
                         {
                             Unit* caster = GetOwner();
                             if (caster && caster->GetTypeId() == TYPEID_PLAYER)
                             {
                                 caster->FinishSpell(CURRENT_CHANNELED_SPELL);
 
-                                WorldPacket data(SMSG_FISH_NOT_HOOKED,0);
+                                WorldPacket data(SMSG_FISH_NOT_HOOKED, 0);
                                 caster->ToPlayer()->GetSession()->SendPacket(&data);
                             }
                             // can be delete
                             m_lootState = GO_JUST_DEACTIVATED;
                             return;
                         }
-                        case GAMEOBJECT_TYPE_DOOR:
-                        case GAMEOBJECT_TYPE_BUTTON:
-                            //we need to open doors if they are closed (add there another condition if this code breaks some usage, but it need to be here for battlegrounds)
-                            if (GetGoState() != GO_STATE_READY)
-                                ResetDoorOrButton();
-                            //flags in AB are type_button and we need to add them here so no break!
-                        default:
-                            if (!m_spawnedByDefault)        // despawn timer
-                            {
-                                                            // can be despawned or destroyed
-                                SetLootState(GO_JUST_DEACTIVATED);
-                                return;
-                            }
-                                                            // respawn timer
-                            uint16 poolid = sPoolMgr.IsPartOfAPool<GameObject>(GetDBTableGUIDLow());
-                            if (poolid)
-                                sPoolMgr.UpdatePool<GameObject>(poolid, GetDBTableGUIDLow());
-                            else
-                                GetMap()->AddToMap(this);
-                            break;
+                    case GAMEOBJECT_TYPE_DOOR:
+                    case GAMEOBJECT_TYPE_BUTTON:
+                        //we need to open doors if they are closed (add there another condition if this code breaks some usage, but it need to be here for battlegrounds)
+                        if (GetGoState() != GO_STATE_READY)
+                            ResetDoorOrButton();
+                    //flags in AB are type_button and we need to add them here so no break!
+                    default:
+                        if (!m_spawnedByDefault)        // despawn timer
+                        {
+                            // can be despawned or destroyed
+                            SetLootState(GO_JUST_DEACTIVATED);
+                            return;
+                        }
+                        // respawn timer
+                        uint16 poolid = sPoolMgr.IsPartOfAPool<GameObject>(GetDBTableGUIDLow());
+                        if (poolid)
+                            sPoolMgr.UpdatePool<GameObject>(poolid, GetDBTableGUIDLow());
+                        else
+                            GetMap()->AddToMap(this);
+                        break;
                     }
                 }
             }
@@ -307,14 +307,14 @@ void GameObject::Update(uint32 diff)
                     bool IsBattleGroundTrap = false;
                     //FIXME: this is activation radius (in different casting radius that must be selected from spell data)
                     //@todo move activated state code (cast itself) to GO_ACTIVATED, in this place only check activating and set state
-                    float radius = (float)(goInfo->trap.radius)/2; // TODO rename radius to diameter (goInfo->trap.radius) should be (goInfo->trap.diameter)
+                    float radius = (float)(goInfo->trap.radius) / 2; // TODO rename radius to diameter (goInfo->trap.radius) should be (goInfo->trap.diameter)
                     if (!radius)
                     {
                         if (goInfo->trap.cooldown != 3)            // cast in other case (at some triggering/linked go/etc explicit call)
                         {
                             // try to read radius from trap spell
-                            if (const SpellEntry *spellEntry = sSpellStore.LookupEntry(goInfo->trap.spellId))
-                                radius = GetSpellRadius(spellEntry,0,false);
+                            if (const SpellEntry* spellEntry = sSpellStore.LookupEntry(goInfo->trap.spellId))
+                                radius = GetSpellRadius(spellEntry, 0, false);
                             //    radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(spellEntry->EffectRadiusIndex[0]));
 
                             if (!radius)
@@ -365,7 +365,7 @@ void GameObject::Update(uint32 diff)
                         {
                             //BattleGround gameobjects case
                             if (ok->ToPlayer()->InBattleGround())
-                                if (BattleGround *bg = ok->ToPlayer()->GetBattleGround())
+                                if (BattleGround* bg = ok->ToPlayer()->GetBattleGround())
                                     bg->HandleTriggerBuff(GetGUID());
                         }
                     }
@@ -382,37 +382,35 @@ void GameObject::Update(uint32 diff)
 
             break;
         }
-        case GO_ACTIVATED:
+    case GO_ACTIVATED:
         {
-            switch(GetGoType())
+            switch (GetGoType())
             {
-                case GAMEOBJECT_TYPE_DOOR:
-                case GAMEOBJECT_TYPE_BUTTON:
-                    if (GetAutoCloseTime() && (m_cooldownTime < time(NULL)))
-                        ResetDoorOrButton();
-                    break;
-                case GAMEOBJECT_TYPE_CHEST:
-                    if (m_groupLootTimer && lootingGroupLeaderGUID)
+            case GAMEOBJECT_TYPE_DOOR:
+            case GAMEOBJECT_TYPE_BUTTON:
+                if (GetAutoCloseTime() && (m_cooldownTime < time(NULL)))
+                    ResetDoorOrButton();
+                break;
+            case GAMEOBJECT_TYPE_CHEST:
+                if (m_groupLootTimer && lootingGroupLeaderGUID)
+                {
+                    if (diff <= m_groupLootTimer)
+                        m_groupLootTimer -= diff;
+                    else
                     {
-                        if (diff <= m_groupLootTimer)
-                        {
-                            m_groupLootTimer -= diff;
-                        }
-                        else
-                        {
-                            Group* group = sObjectMgr.GetGroupByLeader(lootingGroupLeaderGUID);
-                            if (group)
-                                group->EndRoll();
-                            m_groupLootTimer = 0;
-                            lootingGroupLeaderGUID = 0;
-                        }
+                        Group* group = sObjectMgr.GetGroupByLeader(lootingGroupLeaderGUID);
+                        if (group)
+                            group->EndRoll();
+                        m_groupLootTimer = 0;
+                        lootingGroupLeaderGUID = 0;
                     }
-                default:
-                    break;
+                }
+            default:
+                break;
             }
             break;
         }
-        case GO_JUST_DEACTIVATED:
+    case GO_JUST_DEACTIVATED:
         {
             //if Gameobject should cast spell, then this, but some GOs (type = 10) should be destroyed
             if (GetGoType() == GAMEOBJECT_TYPE_GOOBER)
@@ -426,9 +424,7 @@ void GameObject::Update(uint32 diff)
                     for (; it != end; ++it)
                     {
                         if (Unit* owner = Unit::GetUnit(*this, uint64(*it)))
-						{
                             owner->CastSpell(owner, spellId, false);
-						}
                     }
 
                     m_unique_users.clear();
@@ -442,10 +438,12 @@ void GameObject::Update(uint32 diff)
                 SetRespawnTime(0);
                 Delete();
                 return;
-			} else {
-				SetRespawnTime(GetRespawnDelay());
-				DestroyForNearbyPlayers();
-			}
+            }
+            else
+            {
+                SetRespawnTime(GetRespawnDelay());
+                DestroyForNearbyPlayers();
+            }
 
             //burning flags in some battlegrounds, if you find better condition, just add it
             if (GetGoAnimProgress() > 0)
@@ -459,7 +457,7 @@ void GameObject::Update(uint32 diff)
                     SetUInt32Value(GAMEOBJECT_FLAGS, (GetGOInfo()->flags & ~(GO_FLAG_LOCKED | GO_FLAG_INTERACT_COND | GO_FLAG_NOT_SELECTABLE)) | currentLockOrInteractFlags);
                 }
                 else
-                SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags);
+                    SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags);
             }
 
             loot.clear();
@@ -520,7 +518,7 @@ void GameObject::Delete()
         AddObjectToRemoveList();
 }
 
-void GameObject::getFishLoot(Loot *fishloot)
+void GameObject::getFishLoot(Loot* fishloot)
 {
     fishloot->clear();
 
@@ -538,7 +536,7 @@ void GameObject::SaveToDB()
 {
     // this should only be used when the gameobject has already been loaded
     // preferably after adding to map, because mapid may not be valid otherwise
-    GameObjectData const *data = sObjectMgr.GetGOData(m_DBTableGuid);
+    GameObjectData const* data = sObjectMgr.GetGOData(m_DBTableGuid);
     if (!data)
     {
         sLog.outError("GameObject::SaveToDB failed, cannot get gameobject data!");
@@ -550,7 +548,7 @@ void GameObject::SaveToDB()
 
 void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask)
 {
-    const GameObjectInfo *goI = GetGOInfo();
+    const GameObjectInfo* goI = GetGOInfo();
 
     if (!goI)
         return;
@@ -567,10 +565,10 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask)
     data.posY = GetFloatValue(GAMEOBJECT_POS_Y);
     data.posZ = GetFloatValue(GAMEOBJECT_POS_Z);
     data.orientation = GetFloatValue(GAMEOBJECT_FACING);
-    data.rotation0 = GetFloatValue(GAMEOBJECT_ROTATION+0);
-    data.rotation1 = GetFloatValue(GAMEOBJECT_ROTATION+1);
-    data.rotation2 = GetFloatValue(GAMEOBJECT_ROTATION+2);
-    data.rotation3 = GetFloatValue(GAMEOBJECT_ROTATION+3);
+    data.rotation0 = GetFloatValue(GAMEOBJECT_ROTATION + 0);
+    data.rotation1 = GetFloatValue(GAMEOBJECT_ROTATION + 1);
+    data.rotation2 = GetFloatValue(GAMEOBJECT_ROTATION + 2);
+    data.rotation3 = GetFloatValue(GAMEOBJECT_ROTATION + 3);
     data.spawntimesecs = m_spawnedByDefault ? m_respawnDelayTime : -(int32)m_respawnDelayTime;
     data.animprogress = GetGoAnimProgress();
     data.go_state = GetGoState();
@@ -580,21 +578,21 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask)
     // updated in DB
     std::ostringstream ss;
     ss << "INSERT INTO gameobject VALUES ("
-        << m_DBTableGuid << ", "
-        << GetUInt32Value (OBJECT_FIELD_ENTRY) << ", "
-        << mapid << ", "
-        << (uint32)spawnMask << ", "
-        << GetFloatValue(GAMEOBJECT_POS_X) << ", "
-        << GetFloatValue(GAMEOBJECT_POS_Y) << ", "
-        << GetFloatValue(GAMEOBJECT_POS_Z) << ", "
-        << GetFloatValue(GAMEOBJECT_FACING) << ", "
-        << GetFloatValue(GAMEOBJECT_ROTATION) << ", "
-        << GetFloatValue(GAMEOBJECT_ROTATION+1) << ", "
-        << GetFloatValue(GAMEOBJECT_ROTATION+2) << ", "
-        << GetFloatValue(GAMEOBJECT_ROTATION+3) << ", "
-        << m_respawnDelayTime << ", "
-        << uint32(GetGoAnimProgress()) << ", "
-        << uint32(GetGoState()) << ")";
+       << m_DBTableGuid << ", "
+       << GetUInt32Value (OBJECT_FIELD_ENTRY) << ", "
+       << mapid << ", "
+       << (uint32)spawnMask << ", "
+       << GetFloatValue(GAMEOBJECT_POS_X) << ", "
+       << GetFloatValue(GAMEOBJECT_POS_Y) << ", "
+       << GetFloatValue(GAMEOBJECT_POS_Z) << ", "
+       << GetFloatValue(GAMEOBJECT_FACING) << ", "
+       << GetFloatValue(GAMEOBJECT_ROTATION) << ", "
+       << GetFloatValue(GAMEOBJECT_ROTATION + 1) << ", "
+       << GetFloatValue(GAMEOBJECT_ROTATION + 2) << ", "
+       << GetFloatValue(GAMEOBJECT_ROTATION + 3) << ", "
+       << m_respawnDelayTime << ", "
+       << uint32(GetGoAnimProgress()) << ", "
+       << uint32(GetGoState()) << ")";
 
     WorldDatabase.BeginTransaction();
     WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
@@ -602,13 +600,13 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask)
     WorldDatabase.CommitTransaction();
 }
 
-bool GameObject::LoadFromDB(uint32 guid, Map *map)
+bool GameObject::LoadFromDB(uint32 guid, Map* map)
 {
     GameObjectData const* data = sObjectMgr.GetGOData(guid);
 
     if (!data)
     {
-        sLog.outErrorDb("ERROR: Gameobject (GUID: %u) not found in table gameobject, can't load. ",guid);
+        sLog.outErrorDb("ERROR: Gameobject (GUID: %u) not found in table gameobject, can't load. ", guid);
         return false;
     }
 
@@ -631,7 +629,7 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
     m_DBTableGuid = guid;
     if (map->GetInstanceId() != 0) guid = sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT);
 
-    if (!Create(guid,entry, map, x, y, z, ang, rotation0, rotation1, rotation2, rotation3, animprogress, go_state, artKit))
+    if (!Create(guid, entry, map, x, y, z, ang, rotation0, rotation1, rotation2, rotation3, animprogress, go_state, artKit))
         return false;
 
     if (data->spawntimesecs >= 0)
@@ -641,8 +639,8 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
         if (!GetDespawnPossibility() && !GetGOInfo()->IsDespawnAtAction())
         {
             SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
-			m_respawnDelayTime = 0;
-			m_respawnTime = 0;
+            m_respawnDelayTime = 0;
+            m_respawnTime = 0;
         }
         else
         {
@@ -653,7 +651,7 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
             if (m_respawnTime && m_respawnTime <= time(NULL))
             {
                 m_respawnTime = 0;
-                sObjectMgr.SaveGORespawnTime(m_DBTableGuid,GetInstanceId(),0);
+                sObjectMgr.SaveGORespawnTime(m_DBTableGuid, GetInstanceId(), 0);
             }
         }
     }
@@ -671,7 +669,7 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
 
 void GameObject::DeleteFromDB()
 {
-    sObjectMgr.SaveGORespawnTime(m_DBTableGuid,GetInstanceId(),0);
+    sObjectMgr.SaveGORespawnTime(m_DBTableGuid, GetInstanceId(), 0);
     sObjectMgr.DeleteGOData(m_DBTableGuid);
     WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
     WorldDatabase.PExecuteLog("DELETE FROM game_event_gameobject WHERE guid = '%u'", m_DBTableGuid);
@@ -687,16 +685,16 @@ uint32 GameObject::GetLootId(GameObjectInfo const* ginfo)
     if (!ginfo)
         return 0;
 
-    switch(ginfo->type)
+    switch (ginfo->type)
     {
-        case GAMEOBJECT_TYPE_CHEST:
-            return ginfo->chest.lootId;
-        case GAMEOBJECT_TYPE_FISHINGHOLE:
-            return ginfo->fishinghole.lootId;
-        case GAMEOBJECT_TYPE_FISHINGNODE:
-            return ginfo->fishnode.lootId;
-        default:
-            return 0;
+    case GAMEOBJECT_TYPE_CHEST:
+        return ginfo->chest.lootId;
+    case GAMEOBJECT_TYPE_FISHINGHOLE:
+        return ginfo->fishinghole.lootId;
+    case GAMEOBJECT_TYPE_FISHINGNODE:
+        return ginfo->fishnode.lootId;
+    default:
+        return 0;
     }
 }
 
@@ -728,7 +726,7 @@ bool GameObject::hasInvolvedQuest(uint32 quest_id) const
 bool GameObject::IsTransport() const
 {
     // If something is marked as a transport, don't transmit an out of range packet for it.
-    GameObjectInfo const * gInfo = GetGOInfo();
+    GameObjectInfo const* gInfo = GetGOInfo();
     if (!gInfo) return false;
     return gInfo->type == GAMEOBJECT_TYPE_TRANSPORT || gInfo->type == GAMEOBJECT_TYPE_MO_TRANSPORT;
 }
@@ -741,7 +739,7 @@ Unit* GameObject::GetOwner() const
 void GameObject::SaveRespawnTime()
 {
     if (m_goData && m_goData->dbData && m_respawnTime > time(NULL) && m_spawnedByDefault)
-        sObjectMgr.SaveGORespawnTime(m_DBTableGuid,GetInstanceId(),m_respawnTime);
+        sObjectMgr.SaveGORespawnTime(m_DBTableGuid, GetInstanceId(), m_respawnTime);
 }
 
 bool GameObject::isVisibleForInState(Player const* u, bool inVisibleList) const
@@ -770,13 +768,13 @@ bool GameObject::isVisibleForInState(Player const* u, bool inVisibleList) const
         }
 
         // Smuggled Mana Cell required 10 invisibility type detection/state
-        if (GetEntry() == 187039 && ((u->m_detectInvisibilityMask | u->m_invisibilityMask) & (1<<10)) == 0)
+        if (GetEntry() == 187039 && ((u->m_detectInvisibilityMask | u->m_invisibilityMask) & (1 << 10)) == 0)
             return false;
     }
 
     // check distance
     return IsWithinDistInMap(u->m_seer, World::GetMaxVisibleDistanceForObject() +
-        (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false);
+                             (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false);
 }
 
 bool GameObject::canDetectTrap(Player const* u, float distance) const
@@ -791,11 +789,11 @@ bool GameObject::canDetectTrap(Player const* u, float distance) const
         return true;
 
     //Visible distance is modified by -Level Diff (every level diff = 0.25f in visible distance)
-    float visibleDistance = (int32(u->getLevel()) - int32(GetOwner()->getLevel()))* 0.25f;
+    float visibleDistance = (int32(u->getLevel()) - int32(GetOwner()->getLevel())) * 0.25f;
     //GetModifier for trap (miscvalue 1)
     //35y for aura 2836
     //WARNING: these values are guessed, may be not blizzlike
-    visibleDistance += u->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_STEALTH_DETECT, 1)* 0.5f;
+    visibleDistance += u->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_STEALTH_DETECT, 1) * 0.5f;
 
     return distance < visibleDistance;
 }
@@ -805,7 +803,7 @@ void GameObject::Respawn()
     if (m_spawnedByDefault && m_respawnTime > 0)
     {
         m_respawnTime = time(NULL);
-        sObjectMgr.SaveGORespawnTime(m_DBTableGuid,GetInstanceId(),0);
+        sObjectMgr.SaveGORespawnTime(m_DBTableGuid, GetInstanceId(), 0);
     }
 }
 
@@ -819,29 +817,29 @@ bool GameObject::ActivateToQuest(Player* pTarget) const
 
     switch (GetGoType())
     {
-        // scan GO chest with loot including quest items
-        case GAMEOBJECT_TYPE_CHEST:
+    // scan GO chest with loot including quest items
+    case GAMEOBJECT_TYPE_CHEST:
         {
             if (LootTemplates_Gameobject.HaveQuestLootForPlayer(GetLootId(), pTarget))
             {
                 //@todo fix this hack
                 //look for battlegroundAV for some objects which are only activated after mine gots captured by own team
                 if (GetEntry() == BG_AV_OBJECTID_MINE_N || GetEntry() == BG_AV_OBJECTID_MINE_S)
-                    if (BattleGround *bg = pTarget->GetBattleGround())
-                        if (bg->GetTypeID() == BATTLEGROUND_AV && !(((BattleGroundAV*)bg)->PlayerCanDoMineQuest(GetEntry(),pTarget->GetTeam())))
+                    if (BattleGround* bg = pTarget->GetBattleGround())
+                        if (bg->GetTypeID() == BATTLEGROUND_AV && !(((BattleGroundAV*)bg)->PlayerCanDoMineQuest(GetEntry(), pTarget->GetTeam())))
                             return false;
                 return true;
             }
             break;
         }
-        case GAMEOBJECT_TYPE_GOOBER:
+    case GAMEOBJECT_TYPE_GOOBER:
         {
             if (pTarget->GetQuestStatus(GetGOInfo()->goober.questId) == QUEST_STATUS_INCOMPLETE)
                 return true;
             break;
         }
-        default:
-            break;
+    default:
+        break;
     }
 
     return false;
@@ -867,8 +865,8 @@ void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
         Cell cell(p);
         cell.data.Part.reserved = ALL_DISTRICT;
 
-        Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*target,trapEntry,range);
-        Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(trapGO,go_check);
+        Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*target, trapEntry, range);
+        Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(trapGO, go_check);
 
         TypeContainerVisitor<Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer > object_checker(checker);
         cell.Visit(p, object_checker, *GetMap(), *target, range);
@@ -877,14 +875,14 @@ void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
     // found correct GO
     // FIXME: when GO casting will be implemented trap must cast spell to target
     if (trapGO)
-        target->CastSpell(target,trapSpell,true);
+        target->CastSpell(target, trapSpell, true);
 }
 
 GameObject* GameObject::LookupFishingHoleAround(float range)
 {
     GameObject* ok = NULL;
 
-    CellPair p(Oregon::ComputeCellPair(GetPositionX(),GetPositionY()));
+    CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
     Cell cell(p);
     cell.data.Part.reserved = ALL_DISTRICT;
     Oregon::NearestGameObjectFishingHole u_check(*this, range);
@@ -923,7 +921,7 @@ void GameObject::UseDoorOrButton(uint32 time_to_restore, bool alternative /* = f
 void GameObject::SetGoArtKit(uint32 kit)
 {
     SetUInt32Value(GAMEOBJECT_ARTKIT, kit);
-    GameObjectData *data = const_cast<GameObjectData*>(sObjectMgr.GetGOData(m_DBTableGuid));
+    GameObjectData* data = const_cast<GameObjectData*>(sObjectMgr.GetGOData(m_DBTableGuid));
     if (data)
         data->artKit = kit;
 }
@@ -957,18 +955,18 @@ void GameObject::Use(Unit* user)
         m_cooldownTime = sWorld.GetGameTime() + cooldown;
     }
 
-    switch(GetGoType())
+    switch (GetGoType())
     {
-        case GAMEOBJECT_TYPE_DOOR:                          //0
-        case GAMEOBJECT_TYPE_BUTTON:                        //1
-            //doors/buttons never really despawn, only reset to default state/flags
-            UseDoorOrButton();
+    case GAMEOBJECT_TYPE_DOOR:                          //0
+    case GAMEOBJECT_TYPE_BUTTON:                        //1
+        //doors/buttons never really despawn, only reset to default state/flags
+        UseDoorOrButton();
 
-            // activate script
-            GetMap()->ScriptsStart(sGameObjectScripts, GetDBTableGUIDLow(), spellCaster, this);
-            return;
+        // activate script
+        GetMap()->ScriptsStart(sGameObjectScripts, GetDBTableGUIDLow(), spellCaster, this);
+        return;
 
-        case GAMEOBJECT_TYPE_QUESTGIVER:                    //2
+    case GAMEOBJECT_TYPE_QUESTGIVER:                    //2
         {
             if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
@@ -979,8 +977,8 @@ void GameObject::Use(Unit* user)
             player->SendPreparedGossip(this);
             return;
         }
-        //Sitting: Wooden bench, chairs enzz
-        case GAMEOBJECT_TYPE_CHAIR:                         //7
+    //Sitting: Wooden bench, chairs enzz
+    case GAMEOBJECT_TYPE_CHAIR:                         //7
         {
             GameObjectInfo const* info = GetGOInfo();
             if (!info)
@@ -998,12 +996,12 @@ void GameObject::Use(Unit* user)
 
                 // the object orientation + 1/2 pi
                 // every slot will be on that straight line
-                float orthogonalOrientation = GetOrientation()+M_PI*0.5f;
+                float orthogonalOrientation = GetOrientation() + M_PI * 0.5f;
                 // find nearest slot
-                for (uint32 i=0; i<info->chair.slots; i++)
+                for (uint32 i = 0; i < info->chair.slots; i++)
                 {
                     // the distance between this slot and the center of the go - imagine a 1D space
-                    float relativeDistance = (info->size*i)-(info->size*(info->chair.slots-1)/2.0f);
+                    float relativeDistance = (info->size * i) - (info->size * (info->chair.slots - 1) / 2.0f);
 
                     float x_i = GetPositionX() + relativeDistance * cos(orthogonalOrientation);
                     float y_i = GetPositionY() + relativeDistance * sin(orthogonalOrientation);
@@ -1025,18 +1023,18 @@ void GameObject::Use(Unit* user)
                         y_lowest = y_i;
                     }
                 }
-                user->NearTeleportTo(x_lowest, y_lowest, GetPositionZ(), GetOrientation(),TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET);
+                user->NearTeleportTo(x_lowest, y_lowest, GetPositionZ(), GetOrientation(), TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET);
             }
             else
             {
                 // fallback, will always work
-                user->NearTeleportTo(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(),TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET);
+                user->NearTeleportTo(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(), TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET);
             }
-            user->SetStandState(UNIT_STAND_STATE_SIT_LOW_CHAIR+info->chair.height);
+            user->SetStandState(UNIT_STAND_STATE_SIT_LOW_CHAIR + info->chair.height);
             return;
         }
-        //big gun, its a spell/aura
-        case GAMEOBJECT_TYPE_GOOBER:                        //10
+    //big gun, its a spell/aura
+    case GAMEOBJECT_TYPE_GOOBER:                        //10
         {
             GameObjectInfo const* info = GetGOInfo();
 
@@ -1068,7 +1066,7 @@ void GameObject::Use(Unit* user)
 
             break;
         }
-        case GAMEOBJECT_TYPE_CAMERA:                        //13
+    case GAMEOBJECT_TYPE_CAMERA:                        //13
         {
             GameObjectInfo const* info = GetGOInfo();
             if (!info)
@@ -1090,8 +1088,8 @@ void GameObject::Use(Unit* user)
 
             return;
         }
-        //fishing bobber
-        case GAMEOBJECT_TYPE_FISHINGNODE:                   //17
+    //fishing bobber
+    case GAMEOBJECT_TYPE_FISHINGNODE:                   //17
         {
             if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
@@ -1101,9 +1099,9 @@ void GameObject::Use(Unit* user)
             if (player->GetGUID() != GetOwnerGUID())
                 return;
 
-            switch(getLootState())
+            switch (getLootState())
             {
-                case GO_READY:                              // ready for loot
+            case GO_READY:                              // ready for loot
                 {
                     // 1) skill must be >= base_zone_skill
                     // 2) if skill == base_zone_skill => 5% chance
@@ -1117,32 +1115,32 @@ void GameObject::Use(Unit* user)
 
                     //provide error, no fishable zone or area should be 0
                     if (!zone_skill)
-                        sLog.outErrorDb("Fishable areaId %u is not properly defined in skill_fishing_base_level.",subzone);
+                        sLog.outErrorDb("Fishable areaId %u is not properly defined in skill_fishing_base_level.", subzone);
 
                     int32 skill = player->GetSkillValue(SKILL_FISHING);
                     int32 chance = skill - zone_skill + 5;
-                    int32 roll = irand(1,100);
+                    int32 roll = irand(1, 100);
 
-                    DEBUG_LOG("Fishing check (skill: %i zone min skill: %i chance %i roll: %i",skill,zone_skill,chance,roll);
+                    DEBUG_LOG("Fishing check (skill: %i zone min skill: %i chance %i roll: %i", skill, zone_skill, chance, roll);
 
                     if (skill >= zone_skill && chance >= roll)
                     {
                         // prevent removing GO at spell cancel
-                        player->RemoveGameObject(this,false);
+                        player->RemoveGameObject(this, false);
                         SetOwnerGUID(player->GetGUID());
                         SetSpellId(0); // prevent removing unintended auras at Unit::RemoveGameObject
-                        
+
                         //fish caught
                         player->UpdateFishingSkill();
 
                         GameObject* ok = LookupFishingHoleAround(DEFAULT_VISIBILITY_DISTANCE);
                         if (ok)
                         {
-                            player->SendLoot(ok->GetGUID(),LOOT_FISHINGHOLE);
+                            player->SendLoot(ok->GetGUID(), LOOT_FISHINGHOLE);
                             SetLootState(GO_JUST_DEACTIVATED);
                         }
                         else
-                            player->SendLoot(GetGUID(),LOOT_FISHING);
+                            player->SendLoot(GetGUID(), LOOT_FISHING);
                     }
                     else
                     {
@@ -1154,9 +1152,9 @@ void GameObject::Use(Unit* user)
                     }
                     break;
                 }
-                case GO_JUST_DEACTIVATED:                   // nothing to do, will be deleted at next update
-                    break;
-                default:
+            case GO_JUST_DEACTIVATED:                   // nothing to do, will be deleted at next update
+                break;
+            default:
                 {
                     SetLootState(GO_JUST_DEACTIVATED);
 
@@ -1170,7 +1168,7 @@ void GameObject::Use(Unit* user)
             return;
         }
 
-        case GAMEOBJECT_TYPE_SUMMONING_RITUAL:              //18
+    case GAMEOBJECT_TYPE_SUMMONING_RITUAL:              //18
         {
             if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
@@ -1247,9 +1245,9 @@ void GameObject::Use(Unit* user)
             // go to end function to spell casting
             break;
         }
-        case GAMEOBJECT_TYPE_SPELLCASTER:                   //22
+    case GAMEOBJECT_TYPE_SPELLCASTER:                   //22
         {
-            SetUInt32Value(GAMEOBJECT_FLAGS,2);
+            SetUInt32Value(GAMEOBJECT_FLAGS, 2);
 
             GameObjectInfo const* info = GetGOInfo();
             if (!info)
@@ -1271,7 +1269,7 @@ void GameObject::Use(Unit* user)
             AddUse();
             break;
         }
-        case GAMEOBJECT_TYPE_MEETINGSTONE:                  //23
+    case GAMEOBJECT_TYPE_MEETINGSTONE:                  //23
         {
             GameObjectInfo const* info = GetGOInfo();
 
@@ -1299,7 +1297,7 @@ void GameObject::Use(Unit* user)
             break;
         }
 
-        case GAMEOBJECT_TYPE_FLAGSTAND:                     // 24
+    case GAMEOBJECT_TYPE_FLAGSTAND:                     // 24
         {
             if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
@@ -1309,7 +1307,7 @@ void GameObject::Use(Unit* user)
             if (player->CanUseBattleGroundObject(this))
             {
                 // in battleground check
-                BattleGround *bg = player->GetBattleGround();
+                BattleGround* bg = player->GetBattleGround();
                 if (!bg)
                     return;
 
@@ -1327,7 +1325,7 @@ void GameObject::Use(Unit* user)
             }
             break;
         }
-        case GAMEOBJECT_TYPE_FLAGDROP:                      // 26
+    case GAMEOBJECT_TYPE_FLAGDROP:                      // 26
         {
             if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
@@ -1337,7 +1335,7 @@ void GameObject::Use(Unit* user)
             if (player->CanUseBattleGroundObject(this))
             {
                 // in battleground check
-                BattleGround *bg = player->GetBattleGround();
+                BattleGround* bg = player->GetBattleGround();
                 if (!bg)
                     return;
 
@@ -1354,21 +1352,21 @@ void GameObject::Use(Unit* user)
                 {
                     user->InterruptNonMeleeSpells(true, 0, true);
 
-                    switch(info->id)
+                    switch (info->id)
                     {
-                        case 179785:                        // Silverwing Flag
-                            // check if it's correct bg
-                            if (bg->GetTypeID() == BATTLEGROUND_WS)
-                                bg->EventPlayerClickedOnFlag(player, this);
-                            break;
-                        case 179786:                        // Warsong Flag
-                            if (bg->GetTypeID() == BATTLEGROUND_WS)
-                                bg->EventPlayerClickedOnFlag(player, this);
-                            break;
-                        case 184142:                        // Netherstorm Flag
-                            if (bg->GetTypeID() == BATTLEGROUND_EY)
-                                bg->EventPlayerClickedOnFlag(player, this);
-                            break;
+                    case 179785:                        // Silverwing Flag
+                        // check if it's correct bg
+                        if (bg->GetTypeID() == BATTLEGROUND_WS)
+                            bg->EventPlayerClickedOnFlag(player, this);
+                        break;
+                    case 179786:                        // Warsong Flag
+                        if (bg->GetTypeID() == BATTLEGROUND_WS)
+                            bg->EventPlayerClickedOnFlag(player, this);
+                        break;
+                    case 184142:                        // Netherstorm Flag
+                        if (bg->GetTypeID() == BATTLEGROUND_EY)
+                            bg->EventPlayerClickedOnFlag(player, this);
+                        break;
                     }
                 }
                 //this cause to call return, all flags must be deleted here!!
@@ -1377,25 +1375,25 @@ void GameObject::Use(Unit* user)
             }
             break;
         }
-        default:
-            sLog.outDebug("Unknown Object Type %u", GetGoType());
-            break;
+    default:
+        sLog.outDebug("Unknown Object Type %u", GetGoType());
+        break;
     }
 
     if (!spellId)
         return;
 
-    SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
+    SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellId);
     if (!spellInfo)
     {
-        if (user->GetTypeId() != TYPEID_PLAYER || !sOutdoorPvPMgr.HandleCustomSpell(user->ToPlayer(),spellId,this))
-            sLog.outError("WORLD: unknown spell id %u at use action for gameobject (Entry: %u GoType: %u)", spellId,GetEntry(),GetGoType());
+        if (user->GetTypeId() != TYPEID_PLAYER || !sOutdoorPvPMgr.HandleCustomSpell(user->ToPlayer(), spellId, this))
+            sLog.outError("WORLD: unknown spell id %u at use action for gameobject (Entry: %u GoType: %u)", spellId, GetEntry(), GetGoType());
         else
             sLog.outDebug("WORLD: %u non-dbc spell was handled by OutdoorPvP", spellId);
         return;
     }
 
-    Spell *spell = new Spell(spellCaster, spellInfo, triggered);
+    Spell* spell = new Spell(spellCaster, spellInfo, triggered);
 
     // spell target is user of GO
     SpellCastTargets targets;
@@ -1406,7 +1404,7 @@ void GameObject::Use(Unit* user)
 
 void GameObject::CastSpell(Unit* target, uint32 spell)
 {
-    SpellEntry const *spellProto = sSpellStore.LookupEntry(spell);
+    SpellEntry const* spellProto = sSpellStore.LookupEntry(spell);
     if (!spellProto)
         return;
 
@@ -1448,7 +1446,7 @@ void GameObject::CastSpell(Unit* target, uint32 spell)
 const char* GameObject::GetNameForLocaleIdx(int32 loc_idx) const
 {
     if (loc_idx >= 0)
-        if (GameObjectLocale const *cl = sObjectMgr.GetGameObjectLocale(GetEntry()))
+        if (GameObjectLocale const* cl = sObjectMgr.GetGameObjectLocale(GetEntry()))
             if (cl->Name.size() > uint32(loc_idx) && !cl->Name[loc_idx].empty())
                 return cl->Name[loc_idx].c_str();
 
@@ -1461,10 +1459,10 @@ void GameObject::UpdateRotationFields(float rotation2 /*=0.0f*/, float rotation3
 
     if (rotation2 == 0.0f && rotation3 == 0.0f)
     {
-        rotation2 = sin(GetOrientation()/2);
-        rotation3 = cos(GetOrientation()/2);
+        rotation2 = sin(GetOrientation() / 2);
+        rotation3 = cos(GetOrientation() / 2);
     }
 
-    SetFloatValue(GAMEOBJECT_ROTATION+2, rotation2);
-    SetFloatValue(GAMEOBJECT_ROTATION+3, rotation3);
+    SetFloatValue(GAMEOBJECT_ROTATION + 2, rotation2);
+    SetFloatValue(GAMEOBJECT_ROTATION + 3, rotation3);
 }

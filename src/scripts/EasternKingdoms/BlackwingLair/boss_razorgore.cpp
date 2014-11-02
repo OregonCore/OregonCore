@@ -72,22 +72,25 @@ struct boss_razorgoreAI : public ScriptedAI
         if (Cleave_Timer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
-            Cleave_Timer = urand(7000,10000);
-        } else Cleave_Timer -= diff;
+            Cleave_Timer = urand(7000, 10000);
+        }
+        else Cleave_Timer -= diff;
 
         //WarStomp_Timer
         if (WarStomp_Timer <= diff)
         {
             DoCastVictim( SPELL_WARSTOMP);
-            WarStomp_Timer = urand(15000,25000);
-        } else WarStomp_Timer -= diff;
+            WarStomp_Timer = urand(15000, 25000);
+        }
+        else WarStomp_Timer -= diff;
 
         //FireballVolley_Timer
         if (FireballVolley_Timer <= diff)
         {
             DoCastVictim( SPELL_FIREBALLVOLLEY);
-            FireballVolley_Timer = urand(12000,15000);
-        } else FireballVolley_Timer -= diff;
+            FireballVolley_Timer = urand(12000, 15000);
+        }
+        else FireballVolley_Timer -= diff;
 
         //Conflagration_Timer
         if (Conflagration_Timer <= diff)
@@ -99,7 +102,8 @@ struct boss_razorgoreAI : public ScriptedAI
             //DoModifyThreatPercent(me->getVictim(),-50);
 
             Conflagration_Timer = 12000;
-        } else Conflagration_Timer -= diff;
+        }
+        else Conflagration_Timer -= diff;
 
         // Aura Check. If the gamer is affected by confliguration we attack a random gamer.
         if (me->getVictim() && me->getVictim()->HasAura(SPELL_CONFLAGRATION, 0))
@@ -117,7 +121,7 @@ CreatureAI* GetAI_boss_razorgore(Creature* pCreature)
 
 void AddSC_boss_razorgore()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_razorgore";
     newscript->GetAI = &GetAI_boss_razorgore;

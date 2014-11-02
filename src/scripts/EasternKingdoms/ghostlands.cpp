@@ -40,8 +40,8 @@ EndContentData */
 
 bool GossipHello_npc_blood_knight_dawnstar(Player* pPlayer, Creature* pCreature)
 {
-    if (pPlayer->GetQuestStatus(9692) == QUEST_STATUS_INCOMPLETE && !pPlayer->HasItemCount(24226,1,true))
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_H_BKD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    if (pPlayer->GetQuestStatus(9692) == QUEST_STATUS_INCOMPLETE && !pPlayer->HasItemCount(24226, 1, true))
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_H_BKD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
 
@@ -50,7 +50,7 @@ bool GossipHello_npc_blood_knight_dawnstar(Player* pPlayer, Creature* pCreature)
 
 bool GossipSelect_npc_blood_knight_dawnstar(Player* pPlayer, Creature* /*pCreature*/, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
     {
         ItemPosCountVec dest;
         uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24226, 1, NULL);
@@ -104,8 +104,9 @@ bool GossipHello_npc_rathis_tomber(Player* pPlayer, Creature* pCreature)
     {
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
         pPlayer->SEND_GOSSIP_MENU(8432, pCreature->GetGUID());
-    }else
-    pPlayer->SEND_GOSSIP_MENU(8431, pCreature->GetGUID());
+    }
+    else
+        pPlayer->SEND_GOSSIP_MENU(8431, pCreature->GetGUID());
 
     return true;
 }
@@ -163,15 +164,15 @@ struct npc_ranger_lilathaAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(i)
+        switch (i)
         {
         case 0:
             {
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-            if (GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20))
-                Cage->SetGoState(GO_STATE_ACTIVE);
-            DoScriptText(SAY_START, me, pPlayer);
-            break;
+                me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+                if (GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20))
+                    Cage->SetGoState(GO_STATE_ACTIVE);
+                DoScriptText(SAY_START, me, pPlayer);
+                break;
             }
         case 5:
             DoScriptText(SAY_PROGRESS1, me, pPlayer);
@@ -181,22 +182,26 @@ struct npc_ranger_lilathaAI : public npc_escortAI
             break;
         case 18:
             {
-            DoScriptText(SAY_PROGRESS3, me, pPlayer);
-            Creature* Summ1 = me->SummonCreature(16342, 7627.083984f, -7532.538086f, 152.128616f, 1.082733f, TEMPSUMMON_DEAD_DESPAWN, 0);
-            Creature* Summ2 = me->SummonCreature(16343, 7620.432129f, -7532.550293f, 152.454865f, 0.827478f, TEMPSUMMON_DEAD_DESPAWN, 0);
-            if (Summ1 && Summ2)
-            {
-                Summ1->Attack(me, true);
-                Summ2->Attack(pPlayer, true);
+                DoScriptText(SAY_PROGRESS3, me, pPlayer);
+                Creature* Summ1 = me->SummonCreature(16342, 7627.083984f, -7532.538086f, 152.128616f, 1.082733f, TEMPSUMMON_DEAD_DESPAWN, 0);
+                Creature* Summ2 = me->SummonCreature(16343, 7620.432129f, -7532.550293f, 152.454865f, 0.827478f, TEMPSUMMON_DEAD_DESPAWN, 0);
+                if (Summ1 && Summ2)
+                {
+                    Summ1->Attack(me, true);
+                    Summ2->Attack(pPlayer, true);
+                }
+                me->AI()->AttackStart(Summ1);
+                break;
             }
-            me->AI()->AttackStart(Summ1);
+        case 19:
+            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
             break;
-            }
-        case 19: me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE); break;
-        case 25: me->AddUnitMovementFlag(MOVEFLAG_WALK_MODE); break;
+        case 25:
+            me->AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            break;
         case 30:
             if (pPlayer && pPlayer->GetTypeId() == TYPEID_PLAYER)
-                CAST_PLR(pPlayer)->GroupEventHappens(QUEST_ESCAPE_FROM_THE_CATACOMBS,me);
+                CAST_PLR(pPlayer)->GroupEventHappens(QUEST_ESCAPE_FROM_THE_CATACOMBS, me);
             break;
         case 32:
             me->SetOrientation(2.978281f);
@@ -207,7 +212,7 @@ struct npc_ranger_lilathaAI : public npc_escortAI
             DoScriptText(SAY_END2, me, pPlayer);
             Unit* CaptainHelios = me->FindNearestCreature(NPC_CAPTAIN_HELIOS, 50);
             if (CaptainHelios)
-            DoScriptText(SAY_CAPTAIN_ANSWER, CaptainHelios, pPlayer);
+                DoScriptText(SAY_CAPTAIN_ANSWER, CaptainHelios, pPlayer);
             break;
         }
     }
@@ -238,7 +243,7 @@ CreatureAI* GetAI_npc_ranger_lilathaAI(Creature* pCreature)
 
 void AddSC_ghostlands()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_blood_knight_dawnstar";

@@ -34,7 +34,10 @@ EndScriptData */
 
 struct instance_gruuls_lair : public ScriptedInstance
 {
-    instance_gruuls_lair(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_gruuls_lair(Map* map) : ScriptedInstance(map)
+    {
+        Initialize();
+    };
 
     uint32 Encounters[ENCOUNTERS];
 
@@ -74,25 +77,37 @@ struct instance_gruuls_lair : public ScriptedInstance
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-            case 18835: KigglerTheCrazed = pCreature->GetGUID(); break;
-            case 18836: BlindeyeTheSeer = pCreature->GetGUID();  break;
-            case 18834: OlmTheSummoner = pCreature->GetGUID();   break;
-            case 18832: KroshFirehand = pCreature->GetGUID();    break;
-            case 18831: Maulgar = pCreature->GetGUID();          break;
+        case 18835:
+            KigglerTheCrazed = pCreature->GetGUID();
+            break;
+        case 18836:
+            BlindeyeTheSeer = pCreature->GetGUID();
+            break;
+        case 18834:
+            OlmTheSummoner = pCreature->GetGUID();
+            break;
+        case 18832:
+            KroshFirehand = pCreature->GetGUID();
+            break;
+        case 18831:
+            Maulgar = pCreature->GetGUID();
+            break;
         }
     }
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case 184468:
-                MaulgarDoor = pGo->GetGUID();
-                if (Encounters[0] == DONE) HandleGameObject(0, true, pGo);
-                break;
-            case 184662: GruulDoor = pGo->GetGUID(); break;
+        case 184468:
+            MaulgarDoor = pGo->GetGUID();
+            if (Encounters[0] == DONE) HandleGameObject(0, true, pGo);
+            break;
+        case 184662:
+            GruulDoor = pGo->GetGUID();
+            break;
         }
     }
 
@@ -104,38 +119,46 @@ struct instance_gruuls_lair : public ScriptedInstance
 
     uint64 GetData64(uint32 identifier)
     {
-        switch(identifier)
+        switch (identifier)
         {
-            case DATA_MAULGAREVENT_TANK:    return MaulgarEvent_Tank;
-            case DATA_KIGGLERTHECRAZED:     return KigglerTheCrazed;
-            case DATA_BLINDEYETHESEER:      return BlindeyeTheSeer;
-            case DATA_OLMTHESUMMONER:       return OlmTheSummoner;
-            case DATA_KROSHFIREHAND:        return KroshFirehand;
-            case DATA_MAULGARDOOR:          return MaulgarDoor;
-            case DATA_GRUULDOOR:            return GruulDoor;
-            case DATA_MAULGAR:              return Maulgar;
+        case DATA_MAULGAREVENT_TANK:
+            return MaulgarEvent_Tank;
+        case DATA_KIGGLERTHECRAZED:
+            return KigglerTheCrazed;
+        case DATA_BLINDEYETHESEER:
+            return BlindeyeTheSeer;
+        case DATA_OLMTHESUMMONER:
+            return OlmTheSummoner;
+        case DATA_KROSHFIREHAND:
+            return KroshFirehand;
+        case DATA_MAULGARDOOR:
+            return MaulgarDoor;
+        case DATA_GRUULDOOR:
+            return GruulDoor;
+        case DATA_MAULGAR:
+            return Maulgar;
         }
         return 0;
     }
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_MAULGAREVENT:
-                if (data == DONE)
-                    HandleGameObject(MaulgarDoor, true);
-                if (Encounters[0] != DONE)
-                    Encounters[0] = data;
-                break;
-            case DATA_GRUULEVENT:
-                if (data == IN_PROGRESS)
-                    HandleGameObject(GruulDoor, false);
-                else
-                    HandleGameObject(GruulDoor, true);
-                if (Encounters[1] != DONE)
+        case DATA_MAULGAREVENT:
+            if (data == DONE)
+                HandleGameObject(MaulgarDoor, true);
+            if (Encounters[0] != DONE)
+                Encounters[0] = data;
+            break;
+        case DATA_GRUULEVENT:
+            if (data == IN_PROGRESS)
+                HandleGameObject(GruulDoor, false);
+            else
+                HandleGameObject(GruulDoor, true);
+            if (Encounters[1] != DONE)
                 Encounters[1] = data;
-                break;
+            break;
         }
 
         if (data == DONE)
@@ -144,10 +167,12 @@ struct instance_gruuls_lair : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_MAULGAREVENT: return Encounters[0];
-            case DATA_GRUULEVENT:   return Encounters[1];
+        case DATA_MAULGAREVENT:
+            return Encounters[0];
+        case DATA_GRUULEVENT:
+            return Encounters[1];
         }
         return 0;
     }
@@ -193,7 +218,7 @@ InstanceData* GetInstanceData_instance_gruuls_lair(Map* map)
 
 void AddSC_instance_gruuls_lair()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_gruuls_lair";
     newscript->GetInstanceData = &GetInstanceData_instance_gruuls_lair;

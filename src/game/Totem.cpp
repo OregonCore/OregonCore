@@ -25,7 +25,7 @@
 #include "SpellMgr.h"
 #include "SpellAuras.h"
 
-Totem::Totem(SummonPropertiesEntry const *properties, Unit* owner) : Minion(properties, owner)
+Totem::Totem(SummonPropertiesEntry const* properties, Unit* owner) : Minion(properties, owner)
 {
     m_summonMask |= SUMMON_MASK_TOTEM;
     m_duration = 0;
@@ -55,7 +55,7 @@ void Totem::InitStats(uint32 duration)
 {
     Minion::InitStats(duration);
 
-    CreatureInfo const *cinfo = GetCreatureTemplate();
+    CreatureInfo const* cinfo = GetCreatureTemplate();
     if (m_owner->GetTypeId() == TYPEID_PLAYER && cinfo)
     {
         uint32 modelid = 0;
@@ -76,11 +76,11 @@ void Totem::InitStats(uint32 duration)
         if (modelid)
             SetDisplayId(modelid);
         else
-            sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.",GetEntry(),m_owner->ToPlayer()->GetTeam());
+            sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.", GetEntry(), m_owner->ToPlayer()->GetTeam());
     }
 
     // Get spell casted by totem
-    SpellEntry const * totemSpell = sSpellStore.LookupEntry(GetSpell());
+    SpellEntry const* totemSpell = sSpellStore.LookupEntry(GetSpell());
     if (totemSpell)
     {
         // If spell have cast time -> so its active totem
@@ -131,14 +131,14 @@ void Totem::UnSummon()
     m_owner->RemoveAurasDueToSpell(GetSpell());
 
     //remove aura all party members too
-    Group *pGroup = NULL;
+    Group* pGroup = NULL;
     if (m_owner->GetTypeId() == TYPEID_PLAYER)
     {
         // Not only the player can summon the totem (scripted AI)
         pGroup = m_owner->ToPlayer()->GetGroup();
         if (pGroup)
         {
-            for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
+            for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
             {
                 Player* Target = itr->getSource();
                 if (Target && pGroup->SameSubGroup(m_owner->ToPlayer(), Target))
@@ -154,29 +154,29 @@ bool Totem::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, boo
 {
     switch (spellInfo->Effect[index])
     {
-        case SPELL_EFFECT_ATTACK_ME:
-        // immune to any type of regeneration effects hp/mana etc.
-        case SPELL_EFFECT_HEAL:
-        case SPELL_EFFECT_HEAL_MAX_HEALTH:
-        case SPELL_EFFECT_HEAL_MECHANICAL:
-        case SPELL_EFFECT_HEAL_PCT:
-        case SPELL_EFFECT_ENERGIZE:
-        case SPELL_EFFECT_ENERGIZE_PCT:
-            return true;
-        default:
-            break;
+    case SPELL_EFFECT_ATTACK_ME:
+    // immune to any type of regeneration effects hp/mana etc.
+    case SPELL_EFFECT_HEAL:
+    case SPELL_EFFECT_HEAL_MAX_HEALTH:
+    case SPELL_EFFECT_HEAL_MECHANICAL:
+    case SPELL_EFFECT_HEAL_PCT:
+    case SPELL_EFFECT_ENERGIZE:
+    case SPELL_EFFECT_ENERGIZE_PCT:
+        return true;
+    default:
+        break;
     }
 
     // @todo possibly all negative auras immuned?
-    switch(spellInfo->EffectApplyAuraName[index])
+    switch (spellInfo->EffectApplyAuraName[index])
     {
-        case SPELL_AURA_PERIODIC_DAMAGE:
-        case SPELL_AURA_PERIODIC_LEECH:
-        case SPELL_AURA_MOD_FEAR:
-        case SPELL_AURA_TRANSFORM:
-            return true;
-        default:
-            break;
+    case SPELL_AURA_PERIODIC_DAMAGE:
+    case SPELL_AURA_PERIODIC_LEECH:
+    case SPELL_AURA_MOD_FEAR:
+    case SPELL_AURA_TRANSFORM:
+        return true;
+    default:
+        break;
     }
 
     return Creature::IsImmuneToSpellEffect(spellInfo, index, castOnSelf);

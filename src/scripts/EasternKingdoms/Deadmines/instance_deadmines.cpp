@@ -44,7 +44,10 @@ enum Misc
 
 struct instance_deadmines : public ScriptedInstance
 {
-    instance_deadmines(Map* pMap) : ScriptedInstance(pMap) { Initialize(); };
+    instance_deadmines(Map* pMap) : ScriptedInstance(pMap)
+    {
+        Initialize();
+    };
 
     uint64 FactoryDoorGUID;
     uint64 MastRoomDoorGUID;
@@ -88,34 +91,36 @@ struct instance_deadmines : public ScriptedInstance
 
         switch (CannonEventState)
         {
-            case CANNON_GUNPOWDER_USED:
-                CannonBlast_Timer = DATA_CANNON_BLAST_TIMER;
-                // it's a hack - Mr. Smite should do that but his too far away
-                pIronCladDoor->SetName("Mr. Smite");
-                pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM1, LANG_UNIVERSAL, 0);
-                DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM1);
-                CannonEventState = CANNON_BLAST_INITIATED;
-                break;
-            case CANNON_BLAST_INITIATED:
-                PiratesDelay_Timer = DATA_PIRATES_DELAY_TIMER;
-                if (CannonBlast_Timer <= diff)
-                {
-                    SummonCreatures();
-                    ShootCannon();
-                    BlastOutDoor();
-                    LeverStucked();
-                    pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM2, LANG_UNIVERSAL, 0);
-                    DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM2);
-                    CannonEventState = PIRATES_ATTACK;
-                } else CannonBlast_Timer -= diff;
-                break;
-            case PIRATES_ATTACK:
-                if (PiratesDelay_Timer <= diff)
-                {
-                    MoveCreaturesInside();
-                    CannonEventState = EVENT_DONE;
-                } else PiratesDelay_Timer -= diff;
-                break;
+        case CANNON_GUNPOWDER_USED:
+            CannonBlast_Timer = DATA_CANNON_BLAST_TIMER;
+            // it's a hack - Mr. Smite should do that but his too far away
+            pIronCladDoor->SetName("Mr. Smite");
+            pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM1, LANG_UNIVERSAL, 0);
+            DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM1);
+            CannonEventState = CANNON_BLAST_INITIATED;
+            break;
+        case CANNON_BLAST_INITIATED:
+            PiratesDelay_Timer = DATA_PIRATES_DELAY_TIMER;
+            if (CannonBlast_Timer <= diff)
+            {
+                SummonCreatures();
+                ShootCannon();
+                BlastOutDoor();
+                LeverStucked();
+                pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM2, LANG_UNIVERSAL, 0);
+                DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM2);
+                CannonEventState = PIRATES_ATTACK;
+            }
+            else CannonBlast_Timer -= diff;
+            break;
+        case PIRATES_ATTACK:
+            if (PiratesDelay_Timer <= diff)
+            {
+                MoveCreaturesInside();
+                CannonEventState = EVENT_DONE;
+            }
+            else PiratesDelay_Timer -= diff;
+            break;
         }
     }
 
@@ -123,9 +128,9 @@ struct instance_deadmines : public ScriptedInstance
     {
         if (GameObject* pIronCladDoor = instance->GetGameObject(IronCladDoorGUID))
         {
-            Creature* DefiasPirate1 = pIronCladDoor->SummonCreature(657,pIronCladDoor->GetPositionX() - 2,pIronCladDoor->GetPositionY()-7,pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
-            Creature* DefiasPirate2 = pIronCladDoor->SummonCreature(657,pIronCladDoor->GetPositionX() + 3,pIronCladDoor->GetPositionY()-6,pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
-            Creature* DefiasCompanion = pIronCladDoor->SummonCreature(3450,pIronCladDoor->GetPositionX() + 2,pIronCladDoor->GetPositionY()-6,pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
+            Creature* DefiasPirate1 = pIronCladDoor->SummonCreature(657, pIronCladDoor->GetPositionX() - 2, pIronCladDoor->GetPositionY() - 7, pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
+            Creature* DefiasPirate2 = pIronCladDoor->SummonCreature(657, pIronCladDoor->GetPositionX() + 3, pIronCladDoor->GetPositionY() - 6, pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
+            Creature* DefiasCompanion = pIronCladDoor->SummonCreature(3450, pIronCladDoor->GetPositionX() + 2, pIronCladDoor->GetPositionY() - 6, pIronCladDoor->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 3000);
 
             DefiasPirate1GUID = DefiasPirate1->GetGUID();
             DefiasPirate2GUID = DefiasPirate2->GetGUID();
@@ -152,7 +157,7 @@ struct instance_deadmines : public ScriptedInstance
     void MoveCreatureInside(Creature* pCreature)
     {
         pCreature->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
-        pCreature->GetMotionMaster()->MovePoint(0, -102.7,-655.9, pCreature->GetPositionZ());
+        pCreature->GetMotionMaster()->MovePoint(0, -102.7, -655.9, pCreature->GetPositionZ());
     }
 
     void ShootCannon()
@@ -183,13 +188,27 @@ struct instance_deadmines : public ScriptedInstance
     {
         switch (pGo->GetEntry())
         {
-            case GO_FACTORY_DOOR:   FactoryDoorGUID  = pGo->GetGUID();  break;
-            case GO_MAST_ROOM_DOOR: MastRoomDoorGUID = pGo->GetGUID();  break;
-            case GO_FOUNDRY_DOOR:   FoundryDoorGUID  = pGo->GetGUID();  break;
-            case GO_IRONCLAD_DOOR:  IronCladDoorGUID = pGo->GetGUID();  break;
-            case GO_DEFIAS_CANNON:  DefiasCannonGUID = pGo->GetGUID();  break;
-            case GO_DOOR_LEVER:     DoorLeverGUID    = pGo->GetGUID();  break;
-            case GO_MR_SMITE_CHEST: uiSmiteChestGUID = pGo->GetGUID();  break;
+        case GO_FACTORY_DOOR:
+            FactoryDoorGUID  = pGo->GetGUID();
+            break;
+        case GO_MAST_ROOM_DOOR:
+            MastRoomDoorGUID = pGo->GetGUID();
+            break;
+        case GO_FOUNDRY_DOOR:
+            FoundryDoorGUID  = pGo->GetGUID();
+            break;
+        case GO_IRONCLAD_DOOR:
+            IronCladDoorGUID = pGo->GetGUID();
+            break;
+        case GO_DEFIAS_CANNON:
+            DefiasCannonGUID = pGo->GetGUID();
+            break;
+        case GO_DOOR_LEVER:
+            DoorLeverGUID    = pGo->GetGUID();
+            break;
+        case GO_MR_SMITE_CHEST:
+            uiSmiteChestGUID = pGo->GetGUID();
+            break;
         }
     }
 
@@ -223,8 +242,8 @@ struct instance_deadmines : public ScriptedInstance
     {
         switch (type)
         {
-            case EVENT_CANNON:
-                return CannonEventState;
+        case EVENT_CANNON:
+            return CannonEventState;
         }
 
         return 0;
@@ -235,7 +254,7 @@ struct instance_deadmines : public ScriptedInstance
         WorldPacket data(4);
         data.SetOpcode(SMSG_PLAY_SOUND);
         data << uint32(sound);
-        unit->SendMessageToSet(&data,false);
+        unit->SendMessageToSet(&data, false);
     }
 
     void DoPlaySoundCreature(Unit* unit, uint32 sound)
@@ -243,7 +262,7 @@ struct instance_deadmines : public ScriptedInstance
         WorldPacket data(4);
         data.SetOpcode(SMSG_PLAY_SOUND);
         data << uint32(sound);
-        unit->SendMessageToSet(&data,false);
+        unit->SendMessageToSet(&data, false);
     }
 };
 
@@ -254,7 +273,7 @@ InstanceData* GetInstanceData_instance_deadmines(Map* pMap)
 
 void AddSC_instance_deadmines()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_deadmines";
     newscript->GetInstanceData = &GetInstanceData_instance_deadmines;

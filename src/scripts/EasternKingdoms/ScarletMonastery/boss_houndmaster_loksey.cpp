@@ -56,7 +56,8 @@ struct boss_houndmaster_lokseyAI : public ScriptedAI
         {
             DoCast(me, SPELL_BLOODLUST);
             BloodLust_Timer = 20000;
-        } else BloodLust_Timer -= diff;
+        }
+        else BloodLust_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -69,7 +70,7 @@ CreatureAI* GetAI_boss_houndmaster_loksey(Creature* pCreature)
 
 void AddSC_boss_houndmaster_loksey()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_houndmaster_loksey";
     newscript->GetAI = &GetAI_boss_houndmaster_loksey;

@@ -29,7 +29,10 @@ EndScriptData */
 
 struct instance_wailing_caverns : public ScriptedInstance
 {
-    instance_wailing_caverns(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
+    instance_wailing_caverns(Map* pMap) : ScriptedInstance(pMap)
+    {
+        Initialize();
+    };
 
     uint32 m_auiEncounter[MAX_ENCOUNTER];
 
@@ -54,16 +57,36 @@ struct instance_wailing_caverns : public ScriptedInstance
     {
         switch (type)
         {
-            case TYPE_LORD_COBRAHN:         m_auiEncounter[0] = data;break;
-            case TYPE_LORD_PYTHAS:          m_auiEncounter[1] = data;break;
-            case TYPE_LADY_ANACONDRA:       m_auiEncounter[2] = data;break;
-            case TYPE_LORD_SERPENTIS:       m_auiEncounter[3] = data;break;
-            case TYPE_NARALEX_EVENT:        m_auiEncounter[4] = data;break;
-            case TYPE_NARALEX_PART1:        m_auiEncounter[5] = data;break;
-            case TYPE_NARALEX_PART2:        m_auiEncounter[6] = data;break;
-            case TYPE_NARALEX_PART3:        m_auiEncounter[7] = data;break;
-            case TYPE_MUTANUS_THE_DEVOURER: m_auiEncounter[8] = data;break;
-            case TYPE_NARALEX_YELLED:       yelled = true;      break;
+        case TYPE_LORD_COBRAHN:
+            m_auiEncounter[0] = data;
+            break;
+        case TYPE_LORD_PYTHAS:
+            m_auiEncounter[1] = data;
+            break;
+        case TYPE_LADY_ANACONDRA:
+            m_auiEncounter[2] = data;
+            break;
+        case TYPE_LORD_SERPENTIS:
+            m_auiEncounter[3] = data;
+            break;
+        case TYPE_NARALEX_EVENT:
+            m_auiEncounter[4] = data;
+            break;
+        case TYPE_NARALEX_PART1:
+            m_auiEncounter[5] = data;
+            break;
+        case TYPE_NARALEX_PART2:
+            m_auiEncounter[6] = data;
+            break;
+        case TYPE_NARALEX_PART3:
+            m_auiEncounter[7] = data;
+            break;
+        case TYPE_MUTANUS_THE_DEVOURER:
+            m_auiEncounter[8] = data;
+            break;
+        case TYPE_NARALEX_YELLED:
+            yelled = true;
+            break;
         }
         if (data == DONE)SaveToDB();
     }
@@ -72,16 +95,26 @@ struct instance_wailing_caverns : public ScriptedInstance
     {
         switch (type)
         {
-            case TYPE_LORD_COBRAHN:         return m_auiEncounter[0];
-            case TYPE_LORD_PYTHAS:          return m_auiEncounter[1];
-            case TYPE_LADY_ANACONDRA:       return m_auiEncounter[2];
-            case TYPE_LORD_SERPENTIS:       return m_auiEncounter[3];
-            case TYPE_NARALEX_EVENT:        return m_auiEncounter[4];
-            case TYPE_NARALEX_PART1:        return m_auiEncounter[5];
-            case TYPE_NARALEX_PART2:        return m_auiEncounter[6];
-            case TYPE_NARALEX_PART3:        return m_auiEncounter[7];
-            case TYPE_MUTANUS_THE_DEVOURER: return m_auiEncounter[8];
-            case TYPE_NARALEX_YELLED:       return yelled;
+        case TYPE_LORD_COBRAHN:
+            return m_auiEncounter[0];
+        case TYPE_LORD_PYTHAS:
+            return m_auiEncounter[1];
+        case TYPE_LADY_ANACONDRA:
+            return m_auiEncounter[2];
+        case TYPE_LORD_SERPENTIS:
+            return m_auiEncounter[3];
+        case TYPE_NARALEX_EVENT:
+            return m_auiEncounter[4];
+        case TYPE_NARALEX_PART1:
+            return m_auiEncounter[5];
+        case TYPE_NARALEX_PART2:
+            return m_auiEncounter[6];
+        case TYPE_NARALEX_PART3:
+            return m_auiEncounter[7];
+        case TYPE_MUTANUS_THE_DEVOURER:
+            return m_auiEncounter[8];
+        case TYPE_NARALEX_YELLED:
+            return yelled;
         }
         return 0;
     }
@@ -98,8 +131,8 @@ struct instance_wailing_caverns : public ScriptedInstance
 
         std::ostringstream saveStream;
         saveStream << m_auiEncounter[0] << " " << m_auiEncounter[1] << " " << m_auiEncounter[2] << " "
-            << m_auiEncounter[3] << " " << m_auiEncounter[4] << " " << m_auiEncounter[5] << " "
-            << m_auiEncounter[6] << " " << m_auiEncounter[7] << " " << m_auiEncounter[8];
+                   << m_auiEncounter[3] << " " << m_auiEncounter[4] << " " << m_auiEncounter[5] << " "
+                   << m_auiEncounter[6] << " " << m_auiEncounter[7] << " " << m_auiEncounter[8];
 
         OUT_SAVE_INST_DATA_COMPLETE;
         return saveStream.str();
@@ -117,7 +150,7 @@ struct instance_wailing_caverns : public ScriptedInstance
 
         std::istringstream loadStream(in);
         loadStream >> m_auiEncounter[0] >> m_auiEncounter[1] >> m_auiEncounter[2] >> m_auiEncounter[3]
-        >> m_auiEncounter[4] >> m_auiEncounter[5] >> m_auiEncounter[6] >> m_auiEncounter[7] >> m_auiEncounter[8];
+                   >> m_auiEncounter[4] >> m_auiEncounter[5] >> m_auiEncounter[6] >> m_auiEncounter[7] >> m_auiEncounter[8];
 
         for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
             if (m_auiEncounter[i] != DONE)
@@ -135,7 +168,7 @@ InstanceData* GetInstanceData_instance_wailing_caverns(Map* pMap)
 
 void AddSC_instance_wailing_caverns()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_wailing_caverns";
     newscript->GetInstanceData = &GetInstanceData_instance_wailing_caverns;

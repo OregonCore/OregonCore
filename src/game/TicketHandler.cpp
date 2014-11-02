@@ -26,7 +26,7 @@
 #include "TicketMgr.h"
 #include "World.h"
 
-void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recv_data)
+void WorldSession::HandleGMTicketCreateOpcode(WorldPacket& recv_data)
 {
     // Let's see if we have a ticket already, if so don't create a new one
     if (ticketmgr.GetGMTicketByPlayer(GetPlayer()->GetGUID()))
@@ -41,7 +41,7 @@ void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recv_data)
     float x, y, z;
     std::string ticketText = "";
     std::string ticketText2 = "";
-    GM_Ticket *ticket = new GM_Ticket;
+    GM_Ticket* ticket = new GM_Ticket;
 
     WorldPacket data(SMSG_GMTICKET_CREATE, 4);
 
@@ -89,7 +89,7 @@ void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recv_data)
 
 }
 
-void WorldSession::HandleGMTicketUpdateOpcode(WorldPacket & recv_data)
+void WorldSession::HandleGMTicketUpdateOpcode(WorldPacket& recv_data)
 {
     std::string message = "";
     time_t t = time(NULL);
@@ -100,7 +100,7 @@ void WorldSession::HandleGMTicketUpdateOpcode(WorldPacket & recv_data)
     recv_data >> message;
 
     // Update Ticket
-    GM_Ticket *ticket = ticketmgr.GetGMTicketByPlayer(GetPlayer()->GetGUID());
+    GM_Ticket* ticket = ticketmgr.GetGMTicketByPlayer(GetPlayer()->GetGUID());
 
     // Check if player has a GM Ticket yet
     if (!ticket)
@@ -128,7 +128,7 @@ void WorldSession::HandleGMTicketUpdateOpcode(WorldPacket & recv_data)
 
 }
 
-void WorldSession::HandleGMTicketDeleteOpcode(WorldPacket & /*recv_data*/)
+void WorldSession::HandleGMTicketDeleteOpcode(WorldPacket& /*recv_data*/)
 {
     // NO recv_data, NO packet check size
 
@@ -150,14 +150,14 @@ void WorldSession::HandleGMTicketDeleteOpcode(WorldPacket & /*recv_data*/)
     }
 }
 
-void WorldSession::HandleGMTicketGetTicketOpcode(WorldPacket & /*recv_data*/)
+void WorldSession::HandleGMTicketGetTicketOpcode(WorldPacket& /*recv_data*/)
 {
     // NO recv_data NO packet size check
 
     WorldPacket data(SMSG_GMTICKET_GETTICKET, 400);
 
     // get Current Ticket
-    GM_Ticket *ticket = ticketmgr.GetGMTicketByPlayer(GetPlayer()->GetGUID());
+    GM_Ticket* ticket = ticketmgr.GetGMTicketByPlayer(GetPlayer()->GetGUID());
 
     // check for existing ticket
     if (!ticket)
@@ -198,7 +198,7 @@ void WorldSession::HandleGMSurveySubmit(WorldPacket& recv_data)
 
     // @todo columns for "playerguid" "playername" and possibly "gm" after `surveyid` but how do we retrieve after ticket deletion?
     // first we must get in basic template so each answer can be inserted to the same field since they are not handled all at once
-    CharacterDatabase.PExecute("INSERT INTO gm_surveys (surveyid) VALUES ('%llu')",nextSurveyID);
+    CharacterDatabase.PExecute("INSERT INTO gm_surveys (surveyid) VALUES ('%llu')", nextSurveyID);
 
     uint8 result[10];
     memset(result, 0, sizeof(result));
@@ -217,24 +217,24 @@ void WorldSession::HandleGMSurveySubmit(WorldPacket& recv_data)
         result[i] = value;
         // if anyone has a better programming method be my guest. this is the only way I see to prevent multiple rows
         if (questionID == 28)
-            CharacterDatabase.PExecute("UPDATE gm_surveys SET AppropriateAnswer = '%u' WHERE surveyid = %llu;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET AppropriateAnswer = '%u' WHERE surveyid = %llu;", value, nextSurveyID);
         if (questionID == 29)
-            CharacterDatabase.PExecute("UPDATE gm_surveys SET Understandability = '%u' WHERE surveyid = %llu;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET Understandability = '%u' WHERE surveyid = %llu;", value, nextSurveyID);
         if (questionID == 30)
-            CharacterDatabase.PExecute("UPDATE gm_surveys SET GMRating = '%u' WHERE surveyid = %llu;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET GMRating = '%u' WHERE surveyid = %llu;", value, nextSurveyID);
         if (questionID == 31)
-            CharacterDatabase.PExecute("UPDATE gm_surveys SET ResponseTime = '%u' WHERE surveyid = %llu;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET ResponseTime = '%u' WHERE surveyid = %llu;", value, nextSurveyID);
         if (questionID == 32)
-            CharacterDatabase.PExecute("UPDATE gm_surveys SET OverallGMExperience = '%u' WHERE surveyid = %llu;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET OverallGMExperience = '%u' WHERE surveyid = %llu;", value, nextSurveyID);
     }
 
     std::string comment;
     recv_data >> comment; // additional comment
     CharacterDatabase.escape_string(comment);
-    CharacterDatabase.PExecute("UPDATE gm_surveys SET comment = '%s' WHERE surveyid = %llu;",comment.c_str(),nextSurveyID);
+    CharacterDatabase.PExecute("UPDATE gm_surveys SET comment = '%s' WHERE surveyid = %llu;", comment.c_str(), nextSurveyID);
 }
 
-void WorldSession::HandleGMTicketSystemStatusOpcode(WorldPacket & /*recv_data*/)
+void WorldSession::HandleGMTicketSystemStatusOpcode(WorldPacket& /*recv_data*/)
 {
     // NO recv_data NO packet size check
 

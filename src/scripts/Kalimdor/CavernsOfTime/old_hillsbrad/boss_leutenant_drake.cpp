@@ -30,7 +30,7 @@ EndScriptData */
 ## go_barrel_old_hillsbrad
 ######*/
 
-bool GOHello_go_barrel_old_hillsbrad(Player* , GameObject* _GO)
+bool GOHello_go_barrel_old_hillsbrad(Player*, GameObject* _GO)
 {
     ScriptedInstance* pInstance = _GO->GetInstanceData();
 
@@ -70,7 +70,7 @@ struct Location
     float z;
 };
 
-static Location DrakeWP[]=
+static Location DrakeWP[] =
 {
     {0, 2125.84f, 88.2535f, 54.8830f},
     {1, 2111.01f, 93.8022f, 52.6356f},
@@ -123,10 +123,14 @@ struct boss_lieutenant_drakeAI : public ScriptedAI
 
     void KilledUnit(Unit*)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY1, me); break;
-            case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
         }
     }
 
@@ -152,24 +156,27 @@ struct boss_lieutenant_drakeAI : public ScriptedAI
         if (Whirlwind_Timer <= diff)
         {
             DoCastVictim( SPELL_WHIRLWIND);
-            Whirlwind_Timer = 20000+rand()%5000;
-        } else Whirlwind_Timer -= diff;
+            Whirlwind_Timer = 20000 + rand() % 5000;
+        }
+        else Whirlwind_Timer -= diff;
 
         //Fear
         if (Fear_Timer <= diff)
         {
             DoScriptText(SAY_SHOUT, me);
             DoCastVictim( SPELL_FRIGHTENING_SHOUT);
-            Fear_Timer = 30000+rand()%10000;
-        } else Fear_Timer -= diff;
+            Fear_Timer = 30000 + rand() % 10000;
+        }
+        else Fear_Timer -= diff;
 
         //Mortal Strike
         if (MortalStrike_Timer <= diff)
         {
             DoScriptText(SAY_MORTAL, me);
             DoCastVictim( SPELL_MORTAL_STRIKE);
-            MortalStrike_Timer = 45000+rand()%5000;
-        } else MortalStrike_Timer -= diff;
+            MortalStrike_Timer = 45000 + rand() % 5000;
+        }
+        else MortalStrike_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -182,7 +189,7 @@ CreatureAI* GetAI_boss_lieutenant_drake(Creature* pCreature)
 
 void AddSC_boss_lieutenant_drake()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "go_barrel_old_hillsbrad";

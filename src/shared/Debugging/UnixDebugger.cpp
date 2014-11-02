@@ -39,7 +39,7 @@
 #include <fstream>
 
 #include <dlfcn.h>
- 
+
 #include <execinfo.h>
 #include <bfd.h>
 
@@ -59,11 +59,22 @@ void SignalHandler(int num, siginfo_t* info, void* ctx)
 
     switch (num)
     {
-        case SIGSEGV: strsig = "SIGSEGV"; break;
-        case SIGBUS:  strsig = "SIGBUG";  break;
-        case SIGILL:  strsig = "SIGILL";  break;
-        case SIGFPE:  strsig = "SIGFPE";  break;
-        case SIGABRT: strsig = "SIGABRT"; segv = false; break;
+    case SIGSEGV:
+        strsig = "SIGSEGV";
+        break;
+    case SIGBUS:
+        strsig = "SIGBUG";
+        break;
+    case SIGILL:
+        strsig = "SIGILL";
+        break;
+    case SIGFPE:
+        strsig = "SIGFPE";
+        break;
+    case SIGABRT:
+        strsig = "SIGABRT";
+        segv = false;
+        break;
     }
 
     if (segv)
@@ -73,57 +84,99 @@ void SignalHandler(int num, siginfo_t* info, void* ctx)
                << (unsigned long) info->si_addr
                << " referenced from: 0x"
                #ifdef __x86_64__
-                   << std::hex << reinterpret_cast<struct sigcontext*> (&reinterpret_cast<ucontext_t*>(ctx)->uc_mcontext)->rip
+               << std::hex << reinterpret_cast<struct sigcontext*> (&reinterpret_cast<ucontext_t*>(ctx)->uc_mcontext)->rip
                #else
-                   << std::hex << reinterpret_cast<struct sigcontext*> (&reinterpret_cast<ucontext_t*>(ctx)->uc_mcontext)->eip
+               << std::hex << reinterpret_cast<struct sigcontext*> (&reinterpret_cast<ucontext_t*>(ctx)->uc_mcontext)->eip
                #endif
                << ": ";
 
         switch (num)
         {
-            /* We can't use just switch(info->si_code), because
-               there would be many duplicates and compiler would refuse to compile */
-            case SIGSEGV:
-                switch (info->si_code)
-                {
-                    case SEGV_MAPERR: reason << "address not mapped to object"; break;
-                    case SEGV_ACCERR: reason << "invalid permissions for mapped object"; break;
-                }
+        /* We can't use just switch(info->si_code), because
+           there would be many duplicates and compiler would refuse to compile */
+        case SIGSEGV:
+            switch (info->si_code)
+            {
+            case SEGV_MAPERR:
+                reason << "address not mapped to object";
                 break;
-            case SIGBUS:
-                switch (info->si_code)
-                {
-                    case BUS_ADRALN: reason << "invalid address alignment"; break;
-                    case BUS_ADRERR: reason << "nonconsistent physical address"; break;
-                    case BUS_OBJERR: reason << "object-specific hardware error"; break;
-                }
+            case SEGV_ACCERR:
+                reason << "invalid permissions for mapped object";
                 break;
-            case SIGILL:
-                switch (info->si_code)
-                {
-                    case ILL_ILLOPC: reason << "illegal opcode"; break;
-                    case ILL_ILLOPN: reason << "illegal operand"; break;
-                    case ILL_ILLADR: reason << "illegal addressing mode"; break;
-                    case ILL_ILLTRP: reason << "illegal trap"; break;
-                    case ILL_PRVOPC: reason << "privileged opcode"; break;
-                    case ILL_PRVREG: reason << "privileged register"; break;
-                    case ILL_COPROC: reason << "coprocessor error"; break;
-                    case ILL_BADSTK: reason << "internal stack error"; break;
-                }
+            }
+            break;
+        case SIGBUS:
+            switch (info->si_code)
+            {
+            case BUS_ADRALN:
+                reason << "invalid address alignment";
                 break;
-            case SIGFPE:
-                switch (info->si_code)
-                {
-                    case FPE_INTDIV: reason << "integer divide b zero"; break;
-                    case FPE_INTOVF: reason << "integer overflow"; break;
-                    case FPE_FLTDIV: reason << "floating-point divide by zero"; break;
-                    case FPE_FLTOVF: reason << "floating-point overflow"; break;
-                    case FPE_FLTUND: reason << "floating-point underflow"; break;
-                    case FPE_FLTRES: reason << "floating-point inexact result"; break;
-                    case FPE_FLTINV: reason << "floating-point invalid operand"; break;
-                    case FPE_FLTSUB: reason << "subscript out of range"; break;
-                }
+            case BUS_ADRERR:
+                reason << "nonconsistent physical address";
                 break;
+            case BUS_OBJERR:
+                reason << "object-specific hardware error";
+                break;
+            }
+            break;
+        case SIGILL:
+            switch (info->si_code)
+            {
+            case ILL_ILLOPC:
+                reason << "illegal opcode";
+                break;
+            case ILL_ILLOPN:
+                reason << "illegal operand";
+                break;
+            case ILL_ILLADR:
+                reason << "illegal addressing mode";
+                break;
+            case ILL_ILLTRP:
+                reason << "illegal trap";
+                break;
+            case ILL_PRVOPC:
+                reason << "privileged opcode";
+                break;
+            case ILL_PRVREG:
+                reason << "privileged register";
+                break;
+            case ILL_COPROC:
+                reason << "coprocessor error";
+                break;
+            case ILL_BADSTK:
+                reason << "internal stack error";
+                break;
+            }
+            break;
+        case SIGFPE:
+            switch (info->si_code)
+            {
+            case FPE_INTDIV:
+                reason << "integer divide b zero";
+                break;
+            case FPE_INTOVF:
+                reason << "integer overflow";
+                break;
+            case FPE_FLTDIV:
+                reason << "floating-point divide by zero";
+                break;
+            case FPE_FLTOVF:
+                reason << "floating-point overflow";
+                break;
+            case FPE_FLTUND:
+                reason << "floating-point underflow";
+                break;
+            case FPE_FLTRES:
+                reason << "floating-point inexact result";
+                break;
+            case FPE_FLTINV:
+                reason << "floating-point invalid operand";
+                break;
+            case FPE_FLTSUB:
+                reason << "subscript out of range";
+                break;
+            }
+            break;
         }
     }
 
@@ -140,16 +193,16 @@ void SignalHandler(int num, siginfo_t* info, void* ctx)
 
 void RegisterDeadlySignalHandler()
 {
-   struct sigaction sa;
-   sa.sa_sigaction = SignalHandler;
-   sigemptyset(&sa.sa_mask);
-   sa.sa_flags = SA_SIGINFO;
+    struct sigaction sa;
+    sa.sa_sigaction = SignalHandler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_SIGINFO;
 
-   sigaction(SIGSEGV, &sa, NULL);
-   sigaction(SIGBUS,  &sa, NULL);
-   sigaction(SIGILL,  &sa, NULL);
-   sigaction(SIGABRT, &sa, NULL);
-   sigaction(SIGFPE,  &sa, NULL);
+    sigaction(SIGSEGV, &sa, NULL);
+    sigaction(SIGBUS,  &sa, NULL);
+    sigaction(SIGILL,  &sa, NULL);
+    sigaction(SIGABRT, &sa, NULL);
+    sigaction(SIGFPE,  &sa, NULL);
 }
 
 void WriteBacktrace(std::stringstream& ss)
@@ -181,23 +234,23 @@ void WriteBacktrace(std::stringstream& ss)
         for (char* p = symbols[i]; *p; ++p)
         {
             if (*p == '(')
-                 module.append(symbols[i] + 0, p - symbols[i]);
-             else if (*p == '+' && module.size())
-                 func.append(symbols[i] + module.size() + 1, p - (symbols[i] + module.size() + 1));
-             else if (*p == ')' && module.size())
-                 offset.append(symbols[i] + module.size() + func.size() + 1, p - (symbols[i] + module.size() + func.size() + 1));
-             else if (*p == '[')
-             {
-                 addr = p + 1;
-                 addr.resize(addr.size() - 1);
-             }
+                module.append(symbols[i] + 0, p - symbols[i]);
+            else if (*p == '+' && module.size())
+                func.append(symbols[i] + module.size() + 1, p - (symbols[i] + module.size() + 1));
+            else if (*p == ')' && module.size())
+                offset.append(symbols[i] + module.size() + func.size() + 1, p - (symbols[i] + module.size() + func.size() + 1));
+            else if (*p == '[')
+            {
+                addr = p + 1;
+                addr.resize(addr.size() - 1);
+            }
         }
 
         unsigned long addrl = strtoul(addr.c_str(), NULL, 0);
 
         atlmIt = atlm.find(module);
         Resolver* atl;
-        
+
         if (atlmIt == atlm.end())
         {
             atl = new Resolver(module.c_str());
@@ -221,7 +274,7 @@ void WriteBacktrace(std::stringstream& ss)
         if (!skip)
         {
             //if (func == "__kernel_sigreturn")
-            if ((void *) (addrl - strtoul(offset.c_str(), 0, 0)) == &SignalHandler)
+            if ((void*) (addrl - strtoul(offset.c_str(), 0, 0)) == &SignalHandler)
                 skip = i + 2;
             continue;
         }
@@ -230,11 +283,11 @@ void WriteBacktrace(std::stringstream& ss)
 
         /* ## 0x## in func +offset
              from module
-                at file:line */ 
-         
-        ss << '#' << (i-skip) << ' ' << addr << " in " << func << ' ' << offset << std::endl
+                at file:line */
+
+        ss << '#' << (i - skip) << ' ' << addr << " in " << func << ' ' << offset << std::endl
            << "  from " << module << std::endl;
-        
+
         if (!resolved)
             continue;
 
@@ -277,7 +330,7 @@ void WriteBacktrace(std::stringstream& ss)
 
         ss << std::endl;
     }
-    
+
     for (atlmIt = atlm.begin(); atlmIt != atlm.end(); atlmIt++)
         delete atlmIt->second;
 
@@ -326,11 +379,11 @@ void DumpDebugInfo(const char* sig, const char* reason)
     #if COMPILER == COMPILER_BORLAND
     ss << "Compiler: Borland" << std::endl;
     #elif COMPILER == COMPILER_GNU
-        #ifdef __clang__
-        ss << "Compiler: clang" << std::endl;
-        #else
-        ss << "Compiler: GNU (or compatible)" << std::endl;
-        #endif
+    #ifdef __clang__
+    ss << "Compiler: clang" << std::endl;
+    #else
+    ss << "Compiler: GNU (or compatible)" << std::endl;
+    #endif
     #elif COMPILER == COMPILER_INTEL
     ss << "Compiler: Intel" << std::endl;
     #endif
@@ -354,10 +407,10 @@ void DumpDebugInfo(const char* sig, const char* reason)
     if (!sysinfo(&si))
     {
         ss << "Load 1,2,15: " << si.loads[0] << ','
-                                << si.loads[1] << ','
-                                << si.loads[2] << std::endl;
+           << si.loads[1] << ','
+           << si.loads[2] << std::endl;
         ss << "Memory: " << (si.totalram - si.freeram) << '/' << si.totalram
-                         << '(' << si.mem_unit << ')' << std::endl;
+           << '(' << si.mem_unit << ')' << std::endl;
         ss << "SWAP: " << (si.totalswap - si.freeswap) << '/' << si.totalswap << std::endl;
     }
 
@@ -425,8 +478,8 @@ void DumpDebugInfo(const char* sig, const char* reason)
 bool Resolver::initialized = false;
 
 Resolver::Resolver(const char* executable)
-:
-abfd(0), syms(0), text(0), function("??"), filename("??"), line(0) 
+    :
+    abfd(0), syms(0), text(0), function("??"), filename("??"), line(0)
 {
     if (!initialized)
     {
@@ -439,10 +492,10 @@ abfd(0), syms(0), text(0), function("??"), filename("??"), line(0)
         return;
 
     /* oddly, this is required for it to work... */
-    bfd_check_format(abfd,bfd_object);
+    bfd_check_format(abfd, bfd_object);
 
     unsigned storage_needed = bfd_get_symtab_upper_bound(abfd);
-    syms = (asymbol **) malloc(storage_needed);
+    syms = (asymbol**) malloc(storage_needed);
     /*unsigned cSymbols = */bfd_canonicalize_symtab(abfd, syms);
 
     text = bfd_get_section_by_name(abfd, ".text");
@@ -465,11 +518,11 @@ bool Resolver::Resolve(unsigned long address)
     if (offset <= 0)
         return false;
 
-    const char *file;
-    const char *func;
-    
+    const char* file;
+    const char* func;
+
     bfd_find_nearest_line(abfd, text, syms, offset, &file, &func, &line);
-    
+
     if (func)
     {
         if (char* demangled = cplus_demangle(func, DMGL_PARAMS | DMGL_ANSI))

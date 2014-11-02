@@ -70,7 +70,7 @@ struct boss_draganthaurissanAI : public ScriptedAI
 
         if (HandOfThaurissan_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_HANDOFTHAURISSAN);
 
             //3 Hands of Thaurissan will be casted
@@ -81,17 +81,19 @@ struct boss_draganthaurissanAI : public ScriptedAI
             //}
             //else
             //{
-                HandOfThaurissan_Timer = 5000;
-                //Counter = 0;
+            HandOfThaurissan_Timer = 5000;
+            //Counter = 0;
             //}
-        } else HandOfThaurissan_Timer -= diff;
+        }
+        else HandOfThaurissan_Timer -= diff;
 
         //AvatarOfFlame_Timer
         if (AvatarOfFlame_Timer <= diff)
         {
             DoCastVictim( SPELL_AVATAROFFLAME);
             AvatarOfFlame_Timer = 18000;
-        } else AvatarOfFlame_Timer -= diff;
+        }
+        else AvatarOfFlame_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -104,7 +106,7 @@ CreatureAI* GetAI_boss_draganthaurissan(Creature* pCreature)
 
 void AddSC_boss_draganthaurissan()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_emperor_dagran_thaurissan";
     newscript->GetAI = &GetAI_boss_draganthaurissan;

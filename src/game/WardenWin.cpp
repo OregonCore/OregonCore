@@ -42,7 +42,7 @@ WardenWin::~WardenWin()
 {
 }
 
-void WardenWin::Init(WorldSession *pClient, BigNumber *K)
+void WardenWin::Init(WorldSession* pClient, BigNumber* K)
 {
     Client = pClient;
     // Generate Warden Key
@@ -75,9 +75,9 @@ void WardenWin::Init(WorldSession *pClient, BigNumber *K)
     RequestModule();
 }
 
-ClientWardenModule *WardenWin::GetModuleForClient(WorldSession* /*session*/)
+ClientWardenModule* WardenWin::GetModuleForClient(WorldSession* /*session*/)
 {
-    ClientWardenModule *mod = new ClientWardenModule;
+    ClientWardenModule* mod = new ClientWardenModule;
 
     uint32 len = sizeof(Module_79C0768D657977D697E10BAD956CCED1_Data);
 
@@ -86,7 +86,7 @@ ClientWardenModule *WardenWin::GetModuleForClient(WorldSession* /*session*/)
     mod->CompressedData = new uint8[len];
     memcpy(mod->CompressedData, Module_79C0768D657977D697E10BAD956CCED1_Data, len);
     memcpy(mod->Key, Module_79C0768D657977D697E10BAD956CCED1_Key, 16);
-        
+
     // md5 hash
     MD5_CTX ctx;
     MD5_Init(&ctx);
@@ -157,7 +157,7 @@ void WardenWin::RequestHash()
     Client->SendPacket(&pkt);
 }
 
-void WardenWin::HandleHashResult(ByteBuffer &buff)
+void WardenWin::HandleHashResult(ByteBuffer& buff)
 {
     buff.rpos(buff.wpos());
 
@@ -203,12 +203,12 @@ void WardenWin::RequestData()
 
     uint32 id;
     uint8 type;
-    WardenData *wd;
+    WardenData* wd;
 
     SendDataId.clear();
 
     for (uint32 i = 0; i < sWorld.getConfig(CONFIG_WARDEN_NUM_CHECKS); ++i)                             // for now include 3 MEM_CHECK's
-    {   
+    {
         if (MemCheck.empty())
             break;
         id = MemCheck.back();
@@ -253,34 +253,34 @@ void WardenWin::RequestData()
         buff << uint8(type ^ xorByte);
         switch (type)
         {
-            case MEM_CHECK:
+        case MEM_CHECK:
             {
                 buff << uint8(0x00);
                 buff << uint32(wd->Address);
                 buff << uint8(wd->Length);
                 break;
             }
-            case PAGE_CHECK_A:
-            case PAGE_CHECK_B:
+        case PAGE_CHECK_A:
+        case PAGE_CHECK_B:
             {
                 buff.append(wd->i.AsByteArray(0), wd->i.GetNumBytes());
                 buff << uint32(wd->Address);
                 buff << uint8(wd->Length);
                 break;
             }
-            case MPQ_CHECK:
-            case LUA_STR_CHECK:
+        case MPQ_CHECK:
+        case LUA_STR_CHECK:
             {
                 buff << uint8(index++);
                 break;
             }
-            case DRIVER_CHECK:
+        case DRIVER_CHECK:
             {
                 buff.append(wd->i.AsByteArray(0), wd->i.GetNumBytes());
                 buff << uint8(index++);
                 break;
             }
-            case MODULE_CHECK:
+        case MODULE_CHECK:
             {
                 uint32 seed = static_cast<uint32>(rand32());
                 buff << uint32(seed);
@@ -290,17 +290,17 @@ void WardenWin::RequestData()
                 buff.append(hmac.GetDigest(), hmac.GetLength());
                 break;
             }
-            /*case PROC_CHECK:
-            {
-                buff.append(wd->i.AsByteArray(0, false), wd->i.GetNumBytes());
-                buff << uint8(index++);
-                buff << uint8(index++);
-                buff << uint32(wd->Address);
-                buff << uint8(wd->Length);
-                break;
-            }*/
-            default:
-                break;                                      // should never happens
+        /*case PROC_CHECK:
+        {
+            buff.append(wd->i.AsByteArray(0, false), wd->i.GetNumBytes());
+            buff << uint8(index++);
+            buff << uint8(index++);
+            buff << uint32(wd->Address);
+            buff << uint8(wd->Length);
+            break;
+        }*/
+        default:
+            break;                                      // should never happens
         }
     }
     buff << uint8(xorByte);
@@ -322,7 +322,7 @@ void WardenWin::RequestData()
     sLog.outDebug("%s", stream.str().c_str());
 }
 
-void WardenWin::HandleData(ByteBuffer &buff)
+void WardenWin::HandleData(ByteBuffer& buff)
 {
     sLog.outDebug("Handle data");
 
@@ -367,8 +367,8 @@ void WardenWin::HandleData(ByteBuffer &buff)
         sLog.outDebug("Ticks diff %u", ourTicks - newClientTicks);
     }
 
-    WardenDataResult *rs;
-    WardenData *rd;
+    WardenDataResult* rs;
+    WardenData* rd;
     uint8 type;
 
     for (std::vector<uint32>::iterator itr = SendDataId.begin(); itr != SendDataId.end(); ++itr)
@@ -379,7 +379,7 @@ void WardenWin::HandleData(ByteBuffer &buff)
         type = rd->Type;
         switch (type)
         {
-            case MEM_CHECK:
+        case MEM_CHECK:
             {
                 uint8 Mem_Result;
                 buff >> Mem_Result;
@@ -403,10 +403,10 @@ void WardenWin::HandleData(ByteBuffer &buff)
                 sLog.outDebug("RESULT MEM_CHECK passed CheckId %u account Id %u", rd->id, Client->GetAccountId());
                 break;
             }
-            case PAGE_CHECK_A:
-            case PAGE_CHECK_B:
-            case DRIVER_CHECK:
-            case MODULE_CHECK:
+        case PAGE_CHECK_A:
+        case PAGE_CHECK_B:
+        case DRIVER_CHECK:
+        case MODULE_CHECK:
             {
                 const uint8 byte = 0xE9;
                 if (memcmp(buff.contents() + buff.rpos(), &byte, sizeof(uint8)) != 0)
@@ -431,7 +431,7 @@ void WardenWin::HandleData(ByteBuffer &buff)
                     sLog.outDebug("RESULT DRIVER_CHECK passed CheckId %u account Id %u", rd->id, Client->GetAccountId());
                 break;
             }
-            case LUA_STR_CHECK:
+        case LUA_STR_CHECK:
             {
                 uint8 Lua_Result;
                 buff >> Lua_Result;
@@ -448,7 +448,7 @@ void WardenWin::HandleData(ByteBuffer &buff)
 
                 if (luaStrLen != 0)
                 {
-                    char *str = new char[luaStrLen + 1];
+                    char* str = new char[luaStrLen + 1];
                     memset(str, 0, luaStrLen + 1);
                     memcpy(str, buff.contents() + buff.rpos(), luaStrLen);
                     sLog.outDebug("Lua string: %s", str);
@@ -458,7 +458,7 @@ void WardenWin::HandleData(ByteBuffer &buff)
                 sLog.outDebug("RESULT LUA_STR_CHECK passed, CheckId %u account Id %u", rd->id, Client->GetAccountId());
                 break;
             }
-            case MPQ_CHECK:
+        case MPQ_CHECK:
             {
                 uint8 Mpq_Result;
                 buff >> Mpq_Result;
@@ -482,8 +482,8 @@ void WardenWin::HandleData(ByteBuffer &buff)
                 sLog.outDebug("RESULT MPQ_CHECK passed, CheckId %u account Id %u", rd->id, Client->GetAccountId());
                 break;
             }
-            default:                                        // should never happens
-                break;
+        default:                                        // should never happens
+            break;
         }
     }
 

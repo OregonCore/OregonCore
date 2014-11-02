@@ -68,7 +68,7 @@ struct boss_midnightAI : public ScriptedAI
         if (Phase == 2)
         {
             if (Unit* pUnit = Unit::GetUnit(*me, Attumen))
-            DoScriptText(SAY_MIDNIGHT_KILL, pUnit);
+                DoScriptText(SAY_MIDNIGHT_KILL, pUnit);
         }
     }
 
@@ -77,7 +77,7 @@ struct boss_midnightAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Phase == 1 && (me->GetHealth()*100)/me->GetMaxHealth() < 95)
+        if (Phase == 1 && (me->GetHealth() * 100) / me->GetMaxHealth() < 95)
         {
             Phase = 2;
             if (Creature* pAttumen = me->SummonCreature(SUMMON_ATTUMEN, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000))
@@ -85,10 +85,10 @@ struct boss_midnightAI : public ScriptedAI
                 Attumen = pAttumen->GetGUID();
                 pAttumen->AI()->AttackStart(me->getVictim());
                 SetMidnight(pAttumen, me->GetGUID());
-                DoScriptText(RAND(SAY_APPEAR1,SAY_APPEAR2,SAY_APPEAR3), pAttumen);
+                DoScriptText(RAND(SAY_APPEAR1, SAY_APPEAR2, SAY_APPEAR3), pAttumen);
             }
         }
-        else if (Phase == 2 && (me->GetHealth()*100)/me->GetMaxHealth() < 25)
+        else if (Phase == 2 && (me->GetHealth() * 100) / me->GetMaxHealth() < 25)
         {
             if (Unit* pAttumen = Unit::GetUnit(*me, Attumen))
                 Mount(pAttumen);
@@ -114,7 +114,8 @@ struct boss_midnightAI : public ScriptedAI
                         pAttumen->SetObjectScale(1);
                         pAttumen->SetHealth(pAttumen->GetMaxHealth());
                     }
-                } else Mount_Timer -= diff;
+                }
+                else Mount_Timer -= diff;
             }
         }
 
@@ -130,16 +131,16 @@ struct boss_midnightAI : public ScriptedAI
         pAttumen->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         float angle = me->GetAngle(pAttumen);
         float distance = me->GetDistance2d(pAttumen);
-        float newX = me->GetPositionX() + cos(angle)*(distance/2) ;
-        float newY = me->GetPositionY() + sin(angle)*(distance/2) ;
+        float newX = me->GetPositionX() + cos(angle) * (distance / 2) ;
+        float newY = me->GetPositionY() + sin(angle) * (distance / 2) ;
         float newZ = 50;
         //me->Relocate(newX,newY,newZ,angle);
         //me->SendMonsterMove(newX, newY, newZ, 0, true, 1000);
         me->GetMotionMaster()->Clear();
         me->GetMotionMaster()->MovePoint(0, newX, newY, newZ);
         distance += 10;
-        newX = me->GetPositionX() + cos(angle)*(distance/2) ;
-        newY = me->GetPositionY() + sin(angle)*(distance/2) ;
+        newX = me->GetPositionX() + cos(angle) * (distance / 2) ;
+        newY = me->GetPositionY() + sin(angle) * (distance / 2) ;
         pAttumen->GetMotionMaster()->Clear();
         pAttumen->GetMotionMaster()->MovePoint(0, newX, newY, newZ);
         //pAttumen->Relocate(newX,newY,newZ,-angle);
@@ -147,7 +148,7 @@ struct boss_midnightAI : public ScriptedAI
         Mount_Timer = 1000;
     }
 
-    void SetMidnight(Creature* , uint64);                   //Below ..
+    void SetMidnight(Creature*, uint64);                    //Below ..
 };
 
 CreatureAI* GetAI_boss_midnight(Creature* pCreature)
@@ -161,9 +162,9 @@ struct boss_attumenAI : public ScriptedAI
     {
         Phase = 1;
 
-        CleaveTimer = urand(10000,15000);
+        CleaveTimer = urand(10000, 15000);
         CurseTimer = 30000;
-        RandomYellTimer = urand(30000,60000);              //Occasionally yell
+        RandomYellTimer = urand(30000, 60000);             //Occasionally yell
         ChargeTimer = 20000;
         ResetTimer = 0;
     }
@@ -183,7 +184,7 @@ struct boss_attumenAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        DoScriptText(RAND(SAY_KILL1,SAY_KILL2), me);
+        DoScriptText(RAND(SAY_KILL1, SAY_KILL2), me);
     }
 
     void JustDied(Unit* /*victim*/)
@@ -210,7 +211,8 @@ struct boss_attumenAI : public ScriptedAI
                 me->SetVisibility(VISIBILITY_OFF);
                 me->Kill(me);
             }
-        } else ResetTimer -= diff;
+        }
+        else ResetTimer -= diff;
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -222,29 +224,32 @@ struct boss_attumenAI : public ScriptedAI
         if (CleaveTimer <= diff)
         {
             DoCastVictim( SPELL_SHADOWCLEAVE);
-            CleaveTimer = urand(10000,15000);
-        } else CleaveTimer -= diff;
+            CleaveTimer = urand(10000, 15000);
+        }
+        else CleaveTimer -= diff;
 
         if (CurseTimer <= diff)
         {
             DoCastVictim( SPELL_INTANGIBLE_PRESENCE);
             CurseTimer = 30000;
-        } else CurseTimer -= diff;
+        }
+        else CurseTimer -= diff;
 
         if (RandomYellTimer <= diff)
         {
-            DoScriptText(RAND(SAY_RANDOM1,SAY_RANDOM2), me);
-            RandomYellTimer = urand(30000,60000);
-        } else RandomYellTimer -= diff;
+            DoScriptText(RAND(SAY_RANDOM1, SAY_RANDOM2), me);
+            RandomYellTimer = urand(30000, 60000);
+        }
+        else RandomYellTimer -= diff;
 
         if (me->GetUInt32Value(UNIT_FIELD_DISPLAYID) == MOUNTED_DISPLAYID)
         {
             if (ChargeTimer <= diff)
             {
                 Unit* pTarget = NULL;
-                std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
+                std::list<HostileReference*> t_list = me->getThreatManager().getThreatList();
                 std::vector<Unit* > target_list;
-                for (std::list<HostileReference *>::const_iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
+                for (std::list<HostileReference*>::const_iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
                 {
                     pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                     if (pTarget && !pTarget->IsWithinDist(me, ATTACK_DISTANCE, false) && pTarget->GetTypeId() == TYPEID_PLAYER)
@@ -252,15 +257,16 @@ struct boss_attumenAI : public ScriptedAI
                     pTarget = NULL;
                 }
                 if (target_list.size())
-                    pTarget = *(target_list.begin()+rand()%target_list.size());
+                    pTarget = *(target_list.begin() + rand() % target_list.size());
 
                 DoCast(pTarget, SPELL_BERSERKER_CHARGE);
                 ChargeTimer = 20000;
-            } else ChargeTimer -= diff;
+            }
+            else ChargeTimer -= diff;
         }
         else
         {
-            if ((me->GetHealth()*100)/me->GetMaxHealth() < 25)
+            if ((me->GetHealth() * 100) / me->GetMaxHealth() < 25)
             {
                 Creature* pMidnight = Unit::GetCreature(*me, Midnight);
                 if (pMidnight && pMidnight->GetTypeId() == TYPEID_UNIT)
@@ -274,7 +280,7 @@ struct boss_attumenAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 
-    void SpellHit(Unit* /*source*/, const SpellEntry *spell)
+    void SpellHit(Unit* /*source*/, const SpellEntry* spell)
     {
         if (spell->Mechanic == MECHANIC_DISARM)
             DoScriptText(SAY_DISARMED, me);
@@ -293,7 +299,7 @@ CreatureAI* GetAI_boss_attumen(Creature* pCreature)
 
 void AddSC_boss_attumen()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_attumen";
     newscript->GetAI = &GetAI_boss_attumen;

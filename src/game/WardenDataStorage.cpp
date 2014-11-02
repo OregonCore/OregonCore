@@ -47,7 +47,7 @@ void CWardenDataStorage::Init(bool reload)
 
 void CWardenDataStorage::LoadWardenDataResult(bool reload)
 {
-    if(reload)
+    if (reload)
     {
         _data_map.clear();
         _result_map.clear();
@@ -69,12 +69,12 @@ void CWardenDataStorage::LoadWardenDataResult(bool reload)
     {
         ++count;
 
-        Field *fields = result->Fetch();
+        Field* fields = result->Fetch();
 
         uint8 type = fields[0].GetUInt8();
 
         uint32 id = GenerateInternalDataID();
-        WardenData *wd = new WardenData();
+        WardenData* wd = new WardenData();
         wd->Type = type;
         wd->id = fields[6].GetUInt16();
 
@@ -111,12 +111,12 @@ void CWardenDataStorage::LoadWardenDataResult(bool reload)
         if (type == MPQ_CHECK || type == MEM_CHECK)
         {
             std::string result = fields[2].GetCppString();
-            WardenDataResult *wr = new WardenDataResult();
+            WardenDataResult* wr = new WardenDataResult();
             wr->res.SetHexStr(result.c_str());
             int len = result.size() / 2;
             if (wr->res.GetNumBytes() < len)
             {
-                uint8 *temp = new uint8[len];
+                uint8* temp = new uint8[len];
                 memset(temp, 0, len);
                 memcpy(temp, wr->res.AsByteArray(), wr->res.GetNumBytes());
                 std::reverse(temp, temp + len);
@@ -125,12 +125,13 @@ void CWardenDataStorage::LoadWardenDataResult(bool reload)
             }
             _result_map[id] = wr;
         }
-    } while (result->NextRow());
+    }
+    while (result->NextRow());
 
     sLog.outString(">> Loaded %u warden data and results", count);
 }
 
-WardenData *CWardenDataStorage::GetWardenDataById(uint32 Id)
+WardenData* CWardenDataStorage::GetWardenDataById(uint32 Id)
 {
     std::map<uint32, WardenData*>::const_iterator itr = _data_map.find(Id);
     if (itr != _data_map.end())
@@ -138,7 +139,7 @@ WardenData *CWardenDataStorage::GetWardenDataById(uint32 Id)
     return NULL;
 }
 
-WardenDataResult *CWardenDataStorage::GetWardenResultById(uint32 Id)
+WardenDataResult* CWardenDataStorage::GetWardenResultById(uint32 Id)
 {
     std::map<uint32, WardenDataResult*>::const_iterator itr = _result_map.find(Id);
     if (itr != _result_map.end())

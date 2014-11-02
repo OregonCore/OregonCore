@@ -78,21 +78,33 @@ struct boss_high_botanist_freywinnAI : public ScriptedAI
 
     void DoSummonSeedling()
     {
-        switch(rand()%4)
+        switch (rand() % 4)
         {
-            case 0: DoCast(me,SPELL_PLANT_WHITE); break;
-            case 1: DoCast(me,SPELL_PLANT_GREEN); break;
-            case 2: DoCast(me,SPELL_PLANT_BLUE); break;
-            case 3: DoCast(me,SPELL_PLANT_RED); break;
+        case 0:
+            DoCast(me, SPELL_PLANT_WHITE);
+            break;
+        case 1:
+            DoCast(me, SPELL_PLANT_GREEN);
+            break;
+        case 2:
+            DoCast(me, SPELL_PLANT_BLUE);
+            break;
+        case 3:
+            DoCast(me, SPELL_PLANT_RED);
+            break;
         }
     }
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-        case 0: DoScriptText(SAY_KILL_1, me); break;
-        case 1: DoScriptText(SAY_KILL_2, me); break;
+        case 0:
+            DoScriptText(SAY_KILL_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_KILL_2, me);
+            break;
         }
     }
 
@@ -108,10 +120,14 @@ struct boss_high_botanist_freywinnAI : public ScriptedAI
 
         if (TreeForm_Timer <= diff)
         {
-            switch(rand()%2)
+            switch (rand() % 2)
             {
-            case 0: DoScriptText(SAY_TREE_1, me); break;
-            case 1: DoScriptText(SAY_TREE_2, me); break;
+            case 0:
+                DoScriptText(SAY_TREE_1, me);
+                break;
+            case 1:
+                DoScriptText(SAY_TREE_2, me);
+                break;
             }
 
             if (me->IsNonMeleeSpellCast(false))
@@ -119,15 +135,16 @@ struct boss_high_botanist_freywinnAI : public ScriptedAI
 
             me->RemoveAllAuras();
 
-            DoCast(me,SPELL_SUMMON_FRAYER,true);
-            DoCast(me,SPELL_TRANQUILITY,true);
-            DoCast(me,SPELL_TREE_FORM,true);
+            DoCast(me, SPELL_SUMMON_FRAYER, true);
+            DoCast(me, SPELL_TRANQUILITY, true);
+            DoCast(me, SPELL_TREE_FORM, true);
 
             me->GetMotionMaster()->MoveIdle();
             MoveFree = false;
 
             TreeForm_Timer = 75000;
-        } else TreeForm_Timer -= diff;
+        }
+        else TreeForm_Timer -= diff;
 
         if (!MoveFree)
         {
@@ -137,7 +154,7 @@ struct boss_high_botanist_freywinnAI : public ScriptedAI
                 {
                     for (std::list<uint64>::iterator itr = Adds_List.begin(); itr != Adds_List.end(); ++itr)
                     {
-                        if (Unit* temp = Unit::GetUnit(*me,*itr))
+                        if (Unit* temp = Unit::GetUnit(*me, *itr))
                         {
                             if (!temp->isAlive())
                             {
@@ -149,7 +166,7 @@ struct boss_high_botanist_freywinnAI : public ScriptedAI
                     }
                 }
 
-                if (DeadAddsCount < 3 && TreeForm_Timer-30000 <= diff)
+                if (DeadAddsCount < 3 && TreeForm_Timer - 30000 <= diff)
                     DeadAddsCount = 3;
 
                 if (DeadAddsCount >= 3)
@@ -177,7 +194,8 @@ struct boss_high_botanist_freywinnAI : public ScriptedAI
         {
             DoSummonSeedling();
             SummonSeedling_Timer = 6000;
-        } else SummonSeedling_Timer -= diff;
+        }
+        else SummonSeedling_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -190,7 +208,7 @@ CreatureAI* GetAI_boss_high_botanist_freywinn(Creature* pCreature)
 
 void AddSC_boss_high_botanist_freywinn()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_high_botanist_freywinn";

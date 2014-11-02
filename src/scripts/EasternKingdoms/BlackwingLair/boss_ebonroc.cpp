@@ -60,30 +60,34 @@ struct boss_ebonrocAI : public ScriptedAI
         if (ShadowFlame_Timer <= diff)
         {
             DoCastVictim( SPELL_SHADOWFLAME);
-            ShadowFlame_Timer = urand(12000,15000);
-        } else ShadowFlame_Timer -= diff;
+            ShadowFlame_Timer = urand(12000, 15000);
+        }
+        else ShadowFlame_Timer -= diff;
 
         //Wing Buffet Timer
         if (WingBuffet_Timer <= diff)
         {
             DoCastVictim( SPELL_WINGBUFFET);
             WingBuffet_Timer = 25000;
-        } else WingBuffet_Timer -= diff;
+        }
+        else WingBuffet_Timer -= diff;
 
         //Shadow of Ebonroc Timer
         if (ShadowOfEbonroc_Timer <= diff)
         {
             DoCastVictim( SPELL_SHADOWOFEBONROC);
-            ShadowOfEbonroc_Timer = urand(25000,350000);
-        } else ShadowOfEbonroc_Timer -= diff;
+            ShadowOfEbonroc_Timer = urand(25000, 350000);
+        }
+        else ShadowOfEbonroc_Timer -= diff;
 
         if (me->getVictim()->HasAura(SPELL_SHADOWOFEBONROC, 0))
         {
             if (Heal_Timer <= diff)
             {
                 DoCast(me, SPELL_HEAL);
-                Heal_Timer = urand(1000,3000);
-            } else Heal_Timer -= diff;
+                Heal_Timer = urand(1000, 3000);
+            }
+            else Heal_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -96,7 +100,7 @@ CreatureAI* GetAI_boss_ebonroc(Creature* pCreature)
 
 void AddSC_boss_ebonroc()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_ebonroc";
     newscript->GetAI = &GetAI_boss_ebonroc;

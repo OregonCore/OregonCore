@@ -67,32 +67,35 @@ struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
             return;
 
         //If we are <25% hp cast Heal
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 25 && !me->IsNonMeleeSpellCast(false) && Heal_Timer <= diff)
+        if (me->GetHealth() * 100 / me->GetMaxHealth() <= 25 && !me->IsNonMeleeSpellCast(false) && Heal_Timer <= diff)
         {
             DoCast(me, SPELL_HEAL);
             Heal_Timer = 30000;
-        } else Heal_Timer -= diff;
+        }
+        else Heal_Timer -= diff;
 
         //Fear_Timer
         if (Fear_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                 DoCast(pTarget, SPELL_FEAR);
 
             Fear_Timer = 40000;
-        } else Fear_Timer -= diff;
+        }
+        else Fear_Timer -= diff;
 
         //Sleep_Timer
         if (Sleep_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0))
                 DoCast(pTarget, SPELL_SLEEP);
 
             Sleep_Timer = 30000;
-        } else Sleep_Timer -= diff;
+        }
+        else Sleep_Timer -= diff;
 
         //PowerWordShield_Timer
-        if (!PowerWordShield && me->GetHealth()*100 / me->GetMaxHealth() <= 25)
+        if (!PowerWordShield && me->GetHealth() * 100 / me->GetMaxHealth() <= 25)
         {
             DoCast(me, SPELL_POWERWORDSHIELD);
             PowerWordShield = true;
@@ -101,18 +104,20 @@ struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
         //Dispel_Timer
         if (Dispel_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_DISPELMAGIC);
 
             DispelMagic_Timer = 30000;
-        } else DispelMagic_Timer -= diff;
+        }
+        else DispelMagic_Timer -= diff;
 
         //CurseOfBlood_Timer
         if (CurseOfBlood_Timer <= diff)
         {
             DoCastVictim( SPELL_CURSEOFBLOOD);
             CurseOfBlood_Timer = 25000;
-        } else CurseOfBlood_Timer -= diff;
+        }
+        else CurseOfBlood_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -125,7 +130,7 @@ CreatureAI* GetAI_boss_high_inquisitor_fairbanks(Creature* pCreature)
 
 void AddSC_boss_high_inquisitor_fairbanks()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_high_inquisitor_fairbanks";
     newscript->GetAI = &GetAI_boss_high_inquisitor_fairbanks;

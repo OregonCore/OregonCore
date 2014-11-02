@@ -65,7 +65,8 @@ struct boss_high_interrogator_gerstahnAI : public ScriptedAI
             if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_SHADOWWORDPAIN);
             ShadowWordPain_Timer = 7000;
-        } else ShadowWordPain_Timer -= diff;
+        }
+        else ShadowWordPain_Timer -= diff;
 
         //ManaBurn_Timer
         if (ManaBurn_Timer <= diff)
@@ -73,21 +74,24 @@ struct boss_high_interrogator_gerstahnAI : public ScriptedAI
             if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_MANABURN);
             ManaBurn_Timer = 10000;
-        } else ManaBurn_Timer -= diff;
+        }
+        else ManaBurn_Timer -= diff;
 
         //PsychicScream_Timer
         if (PsychicScream_Timer <= diff)
         {
             DoCastVictim( SPELL_PSYCHICSCREAM);
             PsychicScream_Timer = 30000;
-        } else PsychicScream_Timer -= diff;
+        }
+        else PsychicScream_Timer -= diff;
 
         //ShadowShield_Timer
         if (ShadowShield_Timer <= diff)
         {
             DoCast(me, SPELL_SHADOWSHIELD);
             ShadowShield_Timer = 25000;
-        } else ShadowShield_Timer -= diff;
+        }
+        else ShadowShield_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -99,7 +103,7 @@ CreatureAI* GetAI_boss_high_interrogator_gerstahn(Creature* pCreature)
 
 void AddSC_boss_high_interrogator_gerstahn()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_high_interrogator_gerstahn";
     newscript->GetAI = &GetAI_boss_high_interrogator_gerstahn;

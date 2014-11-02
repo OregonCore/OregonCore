@@ -48,7 +48,7 @@ enum eUnkor
     QUEST_DONTKILLTHEFATONE     = 9889,
 
     SPELL_PULVERIZE             = 2676
-    //SPELL_QUID9889            = 32174
+                                  //SPELL_QUID9889            = 32174
 };
 
 struct mob_unkor_the_ruthlessAI : public ScriptedAI
@@ -81,33 +81,33 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
         UnkorUnfriendly_Timer = 60000;
     }
 
-    void DamageTaken(Unit* done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32& damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER)
-            if ((me->GetHealth()-damage)*100 / me->GetMaxHealth() < 30)
-        {
-            if (Group* pGroup = CAST_PLR(done_by)->GetGroup())
+            if ((me->GetHealth() - damage) * 100 / me->GetMaxHealth() < 30)
             {
-                for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
+                if (Group* pGroup = CAST_PLR(done_by)->GetGroup())
                 {
-                    Player* pGroupie = itr->getSource();
-                    if (pGroupie &&
-                        pGroupie->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE &&
-                        pGroupie->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10)
+                    for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                     {
-                        pGroupie->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
-                        if (!CanDoQuest)
-                            CanDoQuest = true;
+                        Player* pGroupie = itr->getSource();
+                        if (pGroupie &&
+                            pGroupie->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE &&
+                            pGroupie->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10)
+                        {
+                            pGroupie->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
+                            if (!CanDoQuest)
+                                CanDoQuest = true;
+                        }
                     }
                 }
-            } else
-            if (CAST_PLR(done_by)->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE &&
-                CAST_PLR(done_by)->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10)
-            {
-                CAST_PLR(done_by)->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
-                CanDoQuest = true;
+                else if (CAST_PLR(done_by)->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE &&
+                         CAST_PLR(done_by)->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10)
+                {
+                    CAST_PLR(done_by)->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
+                    CanDoQuest = true;
+                }
             }
-        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -125,7 +125,8 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
                 {
                     EnterEvadeMode();
                     return;
-                } else UnkorUnfriendly_Timer -= diff;
+                }
+                else UnkorUnfriendly_Timer -= diff;
             }
         }
 
@@ -134,9 +135,10 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
 
         if (Pulverize_Timer <= diff)
         {
-            DoCast(me,SPELL_PULVERIZE);
+            DoCast(me, SPELL_PULVERIZE);
             Pulverize_Timer = 9000;
-        } else Pulverize_Timer -= diff;
+        }
+        else Pulverize_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -158,13 +160,13 @@ struct mob_infested_root_walkerAI : public ScriptedAI
     void Reset() { }
     void EnterCombat(Unit* /*who*/) { }
 
-    void DamageTaken(Unit* done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32& damage)
     {
         if (done_by && done_by->GetTypeId() == TYPEID_PLAYER)
             if (me->GetHealth() <= damage)
-                if (rand()%100 < 75)
+                if (rand() % 100 < 75)
                     //Summon Wood Mites
-                    me->CastSpell(me,39130,true);
+                    me->CastSpell(me, 39130, true);
     }
 };
 CreatureAI* GetAI_mob_infested_root_walker(Creature* pCreature)
@@ -183,13 +185,13 @@ struct mob_rotting_forest_ragerAI : public ScriptedAI
     void Reset() { }
     void EnterCombat(Unit* /*who*/) { }
 
-    void DamageTaken(Unit* done_by, uint32 &damage)
+    void DamageTaken(Unit* done_by, uint32& damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER)
             if (me->GetHealth() <= damage)
-                if (rand()%100 < 75)
+                if (rand() % 100 < 75)
                     //Summon Lots of Wood Mights
-                    me->CastSpell(me,39134,true);
+                    me->CastSpell(me, 39134, true);
     }
 };
 CreatureAI* GetAI_mob_rotting_forest_rager(Creature* pCreature)
@@ -222,16 +224,17 @@ struct mob_netherweb_victimAI : public ScriptedAI
         {
             if (CAST_PLR(Killer)->GetQuestStatus(10873) == QUEST_STATUS_INCOMPLETE)
             {
-                if (rand()%100 < 25)
+                if (rand() % 100 < 25)
                 {
-                    DoSpawnCreature(QUEST_TARGET,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
+                    DoSpawnCreature(QUEST_TARGET, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
                     CAST_PLR(Killer)->KilledMonsterCredit(QUEST_TARGET, 0);
-                } else
-                DoSpawnCreature(netherwebVictims[rand()%6],0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
+                }
+                else
+                    DoSpawnCreature(netherwebVictims[rand() % 6], 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
 
-                if (rand()%100 < 75)
-                    DoSpawnCreature(netherwebVictims[rand()%6],0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
-                DoSpawnCreature(netherwebVictims[rand()%6],0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
+                if (rand() % 100 < 75)
+                    DoSpawnCreature(netherwebVictims[rand() % 6], 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+                DoSpawnCreature(netherwebVictims[rand() % 6], 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
             }
         }
     }
@@ -287,19 +290,22 @@ struct npc_floonAI : public ScriptedAI
         {
             DoCastVictim(SPELL_SILENCE);
             Silence_Timer = 30000;
-        } else Silence_Timer -= diff;
+        }
+        else Silence_Timer -= diff;
 
         if (FrostNova_Timer <= diff)
         {
-            DoCast(me,SPELL_FROST_NOVA);
+            DoCast(me, SPELL_FROST_NOVA);
             FrostNova_Timer = 20000;
-        } else FrostNova_Timer -= diff;
+        }
+        else FrostNova_Timer -= diff;
 
         if (Frostbolt_Timer <= diff)
         {
             DoCastVictim(SPELL_FROSTBOLT);
             Frostbolt_Timer = 5000;
-        } else Frostbolt_Timer -= diff;
+        }
+        else Frostbolt_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -322,10 +328,10 @@ bool GossipSelect_npc_floon(Player* player, Creature* pCreature, uint32 /*sender
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
-        player->ADD_GOSSIP_ITEM(1, GOSSIP_FLOON2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM(1, GOSSIP_FLOON2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
         player->SEND_GOSSIP_MENU(9443, pCreature->GetGUID());
     }
-    if (action == GOSSIP_ACTION_INFO_DEF+1)
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
     {
         player->CLOSE_GOSSIP_MENU();
         pCreature->setFaction(FACTION_HOSTILE_FL);
@@ -363,19 +369,26 @@ struct npc_isla_starmaneAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(i)
+        switch (i)
         {
         case 0:
             {
-            GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 10);
-            if (Cage)
-                Cage->SetGoState(GO_STATE_ACTIVE);
+                GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 10);
+                if (Cage)
+                    Cage->SetGoState(GO_STATE_ACTIVE);
             }
             break;
-        case 2: DoScriptText(SAY_PROGRESS_1, me, pPlayer); break;
-        case 5: DoScriptText(SAY_PROGRESS_2, me, pPlayer); break;
-        case 6: DoScriptText(SAY_PROGRESS_3, me, pPlayer); break;
-        case 29:DoScriptText(SAY_PROGRESS_4, me, pPlayer);
+        case 2:
+            DoScriptText(SAY_PROGRESS_1, me, pPlayer);
+            break;
+        case 5:
+            DoScriptText(SAY_PROGRESS_2, me, pPlayer);
+            break;
+        case 6:
+            DoScriptText(SAY_PROGRESS_3, me, pPlayer);
+            break;
+        case 29:
+            DoScriptText(SAY_PROGRESS_4, me, pPlayer);
             if (pPlayer)
             {
                 if (pPlayer->GetTeam() == ALLIANCE)
@@ -383,10 +396,15 @@ struct npc_isla_starmaneAI : public npc_escortAI
                 else if (pPlayer->GetTeam() == HORDE)
                     pPlayer->GroupEventHappens(QUEST_EFTW_H, me);
             }
-            me->SetInFront(pPlayer); break;
-        case 30: me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE); break;
-        case 31: DoCast(me, SPELL_CAT);
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE); break;
+            me->SetInFront(pPlayer);
+            break;
+        case 30:
+            me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
+            break;
+        case 31:
+            DoCast(me, SPELL_CAT);
+            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            break;
         }
     }
 
@@ -446,28 +464,30 @@ bool GossipHello_go_skull_pile(Player* player, GameObject* _GO)
 
 void SendActionMenu_go_skull_pile(Player* player, GameObject* /*_GO*/, uint32 action)
 {
-    switch(action)
+    switch (action)
     {
-        case GOSSIP_ACTION_INFO_DEF + 1:
-              player->CastSpell(player,40642,false);
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 2:
-              player->CastSpell(player,40640,false);
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-              player->CastSpell(player,40632,false);
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 4:
-              player->CastSpell(player,40644,false);
-            break;
+    case GOSSIP_ACTION_INFO_DEF + 1:
+        player->CastSpell(player, 40642, false);
+        break;
+    case GOSSIP_ACTION_INFO_DEF + 2:
+        player->CastSpell(player, 40640, false);
+        break;
+    case GOSSIP_ACTION_INFO_DEF + 3:
+        player->CastSpell(player, 40632, false);
+        break;
+    case GOSSIP_ACTION_INFO_DEF + 4:
+        player->CastSpell(player, 40644, false);
+        break;
     }
 }
 
 bool GossipSelect_go_skull_pile(Player* player, GameObject* _GO, uint32 sender, uint32 action)
 {
-    switch(sender)
+    switch (sender)
     {
-        case GOSSIP_SENDER_MAIN:    SendActionMenu_go_skull_pile(player, _GO, action); break;
+    case GOSSIP_SENDER_MAIN:
+        SendActionMenu_go_skull_pile(player, _GO, action);
+        break;
     }
     return true;
 }
@@ -493,10 +513,10 @@ struct npc_skywingAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(i)
+        switch (i)
         {
         case 7:
-            me->SummonCreature(NPC_LUANGA_IMPRISONER, -3399.274658,4055.948975,18.603474, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            me->SummonCreature(NPC_LUANGA_IMPRISONER, -3399.274658, 4055.948975, 18.603474, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
             break;
         case 8:
             pPlayer->AreaExploredOrEventHappens(10898);
@@ -583,12 +603,15 @@ enum
     NPC_CABAL_SKIRMISHER    = 21661
 };
 
-static float m_afAmbushB1[]= {-2895.525879f, 5336.431641f, -11.800f};
-static float m_afAmbushB2[]= {-2890.604980f, 5331.938965f, -11.282f};
+static float m_afAmbushB1[] = { -2895.525879f, 5336.431641f, -11.800f};
+static float m_afAmbushB2[] = { -2890.604980f, 5331.938965f, -11.282f};
 
 struct npc_akunoAI : public npc_escortAI
 {
-    npc_akunoAI(Creature* pCreature) : npc_escortAI(pCreature) { Reset(); }
+    npc_akunoAI(Creature* pCreature) : npc_escortAI(pCreature)
+    {
+        Reset();
+    }
 
     uint32 m_uiChainLightningTimer;
 
@@ -599,30 +622,30 @@ struct npc_akunoAI : public npc_escortAI
 
     void WaypointReached(uint32 uiPointId)
     {
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 5:
-                DoScriptText(SAY_AKU_AMBUSH_A,me);
-               me->SummonCreature(NPC_CABAL_SKIRMISHER, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-                break;
-            case 14:
-                DoScriptText(SAY_AKU_AMBUSH_B,me);
+        case 5:
+            DoScriptText(SAY_AKU_AMBUSH_A, me);
+            me->SummonCreature(NPC_CABAL_SKIRMISHER, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            break;
+        case 14:
+            DoScriptText(SAY_AKU_AMBUSH_B, me);
 
-                if (Creature* pTemp =me->SummonCreature(NPC_CABAL_SKIRMISHER, m_afAmbushB1[0], m_afAmbushB1[1], m_afAmbushB1[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000))
-                    DoScriptText(SAY_AKU_AMBUSH_B_REPLY, pTemp);
+            if (Creature* pTemp = me->SummonCreature(NPC_CABAL_SKIRMISHER, m_afAmbushB1[0], m_afAmbushB1[1], m_afAmbushB1[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000))
+                DoScriptText(SAY_AKU_AMBUSH_B_REPLY, pTemp);
 
-               me->SummonCreature(NPC_CABAL_SKIRMISHER, m_afAmbushB2[0], m_afAmbushB2[1], m_afAmbushB2[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-                break;
-            case 15:
-                SetRun();
-                break;
-            case 18:
-                DoScriptText(SAY_AKU_COMPLETE,me);
+            me->SummonCreature(NPC_CABAL_SKIRMISHER, m_afAmbushB2[0], m_afAmbushB2[1], m_afAmbushB2[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            break;
+        case 15:
+            SetRun();
+            break;
+        case 18:
+            DoScriptText(SAY_AKU_COMPLETE, me);
 
-                if (Player* pPlayer = GetPlayerForEscort())
-                    pPlayer->GroupEventHappens(QUEST_ESCAPING_TOMB,me);
+            if (Player* pPlayer = GetPlayerForEscort())
+                pPlayer->GroupEventHappens(QUEST_ESCAPING_TOMB, me);
 
-                break;
+            break;
         }
     }
 
@@ -681,7 +704,7 @@ bool GossipHello_npc_skyguard_handler_deesak(Player* pPlayer, Creature* pCreatur
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetReputationRank(1031) >= REP_HONORED)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SKYGUARD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SKYGUARD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
 
@@ -690,10 +713,10 @@ bool GossipHello_npc_skyguard_handler_deesak(Player* pPlayer, Creature* pCreatur
 
 bool GossipSelect_npc_skyguard_handler_deesak(Player* pPlayer, Creature* /*pCreature*/, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
-        pPlayer->CastSpell(pPlayer,41279,true);               //TaxiPath 705 (Taxi - Skettis to Skyguard Outpost)
+        pPlayer->CastSpell(pPlayer, 41279, true);             //TaxiPath 705 (Taxi - Skettis to Skyguard Outpost)
     }
     return true;
 }
@@ -758,7 +781,7 @@ struct npc_letollAI : public npc_escortAI
 
         for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
         {
-            float fAngle = uiCount < MAX_RESEARCHER ? M_PI/MAX_RESEARCHER - (uiCount*2*M_PI/MAX_RESEARCHER) : 0.0f;
+            float fAngle = uiCount < MAX_RESEARCHER ? M_PI / MAX_RESEARCHER - (uiCount * 2 * M_PI / MAX_RESEARCHER) : 0.0f;
 
             if ((*itr)->isAlive() && !(*itr)->isInCombat())
                 (*itr)->GetMotionMaster()->MoveFollow(me, 2.5f, fAngle);
@@ -804,34 +827,30 @@ struct npc_letollAI : public npc_escortAI
 
     void WaypointReached(uint32 uiPointId)
     {
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 0:
-                JustStartedEscort();
-                for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
-                {
-                    (*itr)->SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
-                }
-                if (Player* pPlayer = GetPlayerForEscort())
-                    DoScriptText(SAY_LE_KEEP_SAFE, me, pPlayer);
-                break;
-            case 1:
-                DoScriptText(SAY_LE_NORTH, me);
-                break;
-            case 10:
-                DoScriptText(SAY_LE_ARRIVE, me);
-                break;
-            case 12:
-                DoScriptText(SAY_LE_BURIED, me);
-                SetEscortPaused(true);
-                break;
-            case 13:
-                SetRun();
-                for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
-                {
-                    (*itr)->SetUnitMovementFlags(MOVEFLAG_NONE);
-                }
-                break;
+        case 0:
+            JustStartedEscort();
+            for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
+                (*itr)->SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
+            if (Player* pPlayer = GetPlayerForEscort())
+                DoScriptText(SAY_LE_KEEP_SAFE, me, pPlayer);
+            break;
+        case 1:
+            DoScriptText(SAY_LE_NORTH, me);
+            break;
+        case 10:
+            DoScriptText(SAY_LE_ARRIVE, me);
+            break;
+        case 12:
+            DoScriptText(SAY_LE_BURIED, me);
+            SetEscortPaused(true);
+            break;
+        case 13:
+            SetRun();
+            for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
+                (*itr)->SetUnitMovementFlags(MOVEFLAG_NONE);
+            break;
         }
     }
 
@@ -861,66 +880,66 @@ struct npc_letollAI : public npc_escortAI
                 {
                     m_uiEventTimer = 7000;
 
-                    switch(m_uiEventCount)
+                    switch (m_uiEventCount)
                     {
-                        case 0:
-                            DoScriptText(SAY_LE_ALMOST, me);
-                            break;
-                        case 1:
-                            DoScriptText(SAY_LE_DRUM, me);
-                            break;
-                        case 2:
-                            if (Creature* pResearcher = GetAvailableResearcher(0))
-                                DoScriptText(SAY_LE_DRUM_REPLY, pResearcher);
-                            break;
-                        case 3:
-                            DoScriptText(SAY_LE_DISCOVERY, me);
-                            break;
-                        case 4:
-                            if (Creature* pResearcher = GetAvailableResearcher(0))
-                                DoScriptText(SAY_LE_DISCOVERY_REPLY, pResearcher);
-                            break;
-                        case 5:
-                            DoScriptText(SAY_LE_NO_LEAVE, me);
-                            break;
-                        case 6:
-                            if (Creature* pResearcher = GetAvailableResearcher(1))
-                                DoScriptText(SAY_LE_NO_LEAVE_REPLY1, pResearcher);
-                            break;
-                        case 7:
-                            if (Creature* pResearcher = GetAvailableResearcher(2))
-                                DoScriptText(SAY_LE_NO_LEAVE_REPLY2, pResearcher);
-                            break;
-                        case 8:
-                            if (Creature* pResearcher = GetAvailableResearcher(3))
-                                DoScriptText(SAY_LE_NO_LEAVE_REPLY3, pResearcher);
-                            break;
-                        case 9:
-                            if (Creature* pResearcher = GetAvailableResearcher(4))
-                                DoScriptText(SAY_LE_NO_LEAVE_REPLY4, pResearcher);
-                            break;
-                        case 10:
-                            DoScriptText(SAY_LE_SHUT, me);
-                            break;
-                        case 11:
-                            if (Creature* pResearcher = GetAvailableResearcher(0))
-                                DoScriptText(SAY_LE_REPLY_HEAR, pResearcher);
-                            break;
-                        case 12:
-                            DoScriptText(SAY_LE_IN_YOUR_FACE, me);
-                            me->SummonCreature(NPC_BONE_SIFTER, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                            break;
-                        case 13:
-                            DoScriptText(EMOTE_LE_PICK_UP, me);
+                    case 0:
+                        DoScriptText(SAY_LE_ALMOST, me);
+                        break;
+                    case 1:
+                        DoScriptText(SAY_LE_DRUM, me);
+                        break;
+                    case 2:
+                        if (Creature* pResearcher = GetAvailableResearcher(0))
+                            DoScriptText(SAY_LE_DRUM_REPLY, pResearcher);
+                        break;
+                    case 3:
+                        DoScriptText(SAY_LE_DISCOVERY, me);
+                        break;
+                    case 4:
+                        if (Creature* pResearcher = GetAvailableResearcher(0))
+                            DoScriptText(SAY_LE_DISCOVERY_REPLY, pResearcher);
+                        break;
+                    case 5:
+                        DoScriptText(SAY_LE_NO_LEAVE, me);
+                        break;
+                    case 6:
+                        if (Creature* pResearcher = GetAvailableResearcher(1))
+                            DoScriptText(SAY_LE_NO_LEAVE_REPLY1, pResearcher);
+                        break;
+                    case 7:
+                        if (Creature* pResearcher = GetAvailableResearcher(2))
+                            DoScriptText(SAY_LE_NO_LEAVE_REPLY2, pResearcher);
+                        break;
+                    case 8:
+                        if (Creature* pResearcher = GetAvailableResearcher(3))
+                            DoScriptText(SAY_LE_NO_LEAVE_REPLY3, pResearcher);
+                        break;
+                    case 9:
+                        if (Creature* pResearcher = GetAvailableResearcher(4))
+                            DoScriptText(SAY_LE_NO_LEAVE_REPLY4, pResearcher);
+                        break;
+                    case 10:
+                        DoScriptText(SAY_LE_SHUT, me);
+                        break;
+                    case 11:
+                        if (Creature* pResearcher = GetAvailableResearcher(0))
+                            DoScriptText(SAY_LE_REPLY_HEAR, pResearcher);
+                        break;
+                    case 12:
+                        DoScriptText(SAY_LE_IN_YOUR_FACE, me);
+                        me->SummonCreature(NPC_BONE_SIFTER, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                        break;
+                    case 13:
+                        DoScriptText(EMOTE_LE_PICK_UP, me);
 
-                            if (Player* pPlayer = GetPlayerForEscort())
-                            {
-                                DoScriptText(SAY_LE_THANKS, me, pPlayer);
-                                pPlayer->GroupEventHappens(QUEST_DIGGING_BONES, me);
-                            }
+                        if (Player* pPlayer = GetPlayerForEscort())
+                        {
+                            DoScriptText(SAY_LE_THANKS, me, pPlayer);
+                            pPlayer->GroupEventHappens(QUEST_DIGGING_BONES, me);
+                        }
 
-                            SetEscortPaused(false);
-                            break;
+                        SetEscortPaused(false);
+                        break;
                     }
 
                     ++m_uiEventCount;
@@ -978,7 +997,10 @@ enum
 
 struct npc_mana_bomb_exp_triggerAI : public ScriptedAI
 {
-    npc_mana_bomb_exp_triggerAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
+    npc_mana_bomb_exp_triggerAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+    }
 
     GameObject* pManaBomb;
 
@@ -1001,7 +1023,7 @@ struct npc_mana_bomb_exp_triggerAI : public ScriptedAI
 
         m_bIsActivated = true;
 
-        pPlayer->KilledMonsterCredit(NPC_MANA_BOMB_KILL_TRIGGER,0);
+        pPlayer->KilledMonsterCredit(NPC_MANA_BOMB_KILL_TRIGGER, 0);
 
         pManaBomb = pGo;
     }
@@ -1018,35 +1040,35 @@ struct npc_mana_bomb_exp_triggerAI : public ScriptedAI
             if (m_uiEventCounter < 10)
                 me->CastSpell(me, SPELL_MANA_BOMB_LIGHTNING, false);
 
-            switch(m_uiEventCounter)
+            switch (m_uiEventCounter)
             {
-                case 5:
-                    if (pManaBomb)
-                        pManaBomb->SetGoState(GO_STATE_ACTIVE);
+            case 5:
+                if (pManaBomb)
+                    pManaBomb->SetGoState(GO_STATE_ACTIVE);
 
-                    DoScriptText(SAY_COUNT_1, me);
-                    break;
-                case 6:
-                    DoScriptText(SAY_COUNT_2, me);
-                    break;
-                case 7:
-                    DoScriptText(SAY_COUNT_3, me);
-                    break;
-                case 8:
-                    DoScriptText(SAY_COUNT_4, me);
-                    break;
-                case 9:
-                    DoScriptText(SAY_COUNT_5, me);
-                    break;
-                case 10:
-                    me->CastSpell(me, SPELL_MANA_BOMB_EXPL, false);
-                    break;
-                case 30:
-                    if (pManaBomb)
-                        pManaBomb->SetGoState(GO_STATE_READY);
+                DoScriptText(SAY_COUNT_1, me);
+                break;
+            case 6:
+                DoScriptText(SAY_COUNT_2, me);
+                break;
+            case 7:
+                DoScriptText(SAY_COUNT_3, me);
+                break;
+            case 8:
+                DoScriptText(SAY_COUNT_4, me);
+                break;
+            case 9:
+                DoScriptText(SAY_COUNT_5, me);
+                break;
+            case 10:
+                me->CastSpell(me, SPELL_MANA_BOMB_EXPL, false);
+                break;
+            case 30:
+                if (pManaBomb)
+                    pManaBomb->SetGoState(GO_STATE_READY);
 
-                    Reset();
-                    break;
+                Reset();
+                break;
             }
 
             ++m_uiEventCounter;
@@ -1099,12 +1121,20 @@ bool GOHello_veil_skith_cage(Player* pPlayer, GameObject* pGo)
         {
             pPlayer->KilledMonsterCredit(NPC_CAPTIVE_CHILD, 0);
 
-            switch(urand(0,3))
+            switch (urand(0, 3))
             {
-                case 0: DoScriptText(SAY_THANKS_1, pChild); break;
-                case 1: DoScriptText(SAY_THANKS_2, pChild); break;
-                case 2: DoScriptText(SAY_THANKS_3, pChild); break;
-                case 3: DoScriptText(SAY_THANKS_4, pChild); break;
+            case 0:
+                DoScriptText(SAY_THANKS_1, pChild);
+                break;
+            case 1:
+                DoScriptText(SAY_THANKS_2, pChild);
+                break;
+            case 2:
+                DoScriptText(SAY_THANKS_3, pChild);
+                break;
+            case 3:
+                DoScriptText(SAY_THANKS_4, pChild);
+                break;
             }
 
             pChild->GetMotionMaster()->Clear();
@@ -1116,7 +1146,10 @@ bool GOHello_veil_skith_cage(Player* pPlayer, GameObject* pGo)
 
 struct npc_captive_child : public ScriptedAI
 {
-    npc_captive_child(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
+    npc_captive_child(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+    }
 
     void Reset() {}
 
@@ -1274,7 +1307,7 @@ CreatureAI* GetAI_npc_skyguard_prisoner(Creature* pCreature)
 
 void AddSC_terokkar_forest()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "mob_unkor_the_ruthless";

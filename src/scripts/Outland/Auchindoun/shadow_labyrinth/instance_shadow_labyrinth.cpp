@@ -39,7 +39,10 @@ EndScriptData */
 
 struct instance_shadow_labyrinth : public ScriptedInstance
 {
-    instance_shadow_labyrinth(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_shadow_labyrinth(Map* map) : ScriptedInstance(map)
+    {
+        Initialize();
+    };
 
     uint32 Encounter[ENCOUNTERS];
     std::string str_data;
@@ -72,27 +75,31 @@ struct instance_shadow_labyrinth : public ScriptedInstance
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-        case REFECTORY_DOOR: RefectoryDoorGUID = pGo->GetGUID(); break;
-        case SCREAMING_HALL_DOOR: ScreamingHallDoorGUID = pGo->GetGUID(); break;
+        case REFECTORY_DOOR:
+            RefectoryDoorGUID = pGo->GetGUID();
+            break;
+        case SCREAMING_HALL_DOOR:
+            ScreamingHallDoorGUID = pGo->GetGUID();
+            break;
         }
     }
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(pCreature->GetEntry())
+        switch (pCreature->GetEntry())
         {
-            case 18732:
-                GrandmasterVorpil = pCreature->GetGUID();
-                break;
-            case 18796:
-                if (pCreature->isAlive())
-                {
-                    ++FelOverseerCount;
-                    debug_log("OSCR: Shadow Labyrinth: counting %u Fel Overseers.",FelOverseerCount);
-                }
-                break;
+        case 18732:
+            GrandmasterVorpil = pCreature->GetGUID();
+            break;
+        case 18796:
+            if (pCreature->isAlive())
+            {
+                ++FelOverseerCount;
+                debug_log("OSCR: Shadow Labyrinth: counting %u Fel Overseers.", FelOverseerCount);
+            }
+            break;
         }
     }
 
@@ -115,47 +122,45 @@ struct instance_shadow_labyrinth : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-            case TYPE_HELLMAW:
-                if (Encounter[0] != DONE)
-                    Encounter[0] = data;
-                break;
-            case TYPE_OVERSEER:
-                if (data != DONE)
-                    error_log("OSCR: Shadow Labyrinth: TYPE_OVERSEER did not expect other data than DONE");
-                if (FelOverseerCount)
-                {
-                    --FelOverseerCount;
-                    debug_log("OSCR: Shadow Labyrinth: %u Fel Overseers left to kill.",FelOverseerCount);
-                }
-                if (FelOverseerCount == 0)
-                {
-                    Encounter[1] = DONE;
-                    debug_log("OSCR: Shadow Labyrinth: TYPE_OVERSEER == DONE");
-                }
-                break;
+        case TYPE_HELLMAW:
+            if (Encounter[0] != DONE)
+                Encounter[0] = data;
+            break;
+        case TYPE_OVERSEER:
+            if (data != DONE)
+                error_log("OSCR: Shadow Labyrinth: TYPE_OVERSEER did not expect other data than DONE");
+            if (FelOverseerCount)
+            {
+                --FelOverseerCount;
+                debug_log("OSCR: Shadow Labyrinth: %u Fel Overseers left to kill.", FelOverseerCount);
+            }
+            if (FelOverseerCount == 0)
+            {
+                Encounter[1] = DONE;
+                debug_log("OSCR: Shadow Labyrinth: TYPE_OVERSEER == DONE");
+            }
+            break;
 
-            case DATA_BLACKHEARTTHEINCITEREVENT:
-                if (data == DONE)
-                    DoUseDoorOrButton(RefectoryDoorGUID);
-                if (Encounter[2] != DONE)
-                    Encounter[2] = data;
-                break;
+        case DATA_BLACKHEARTTHEINCITEREVENT:
+            if (data == DONE)
+                DoUseDoorOrButton(RefectoryDoorGUID);
+            if (Encounter[2] != DONE)
+                Encounter[2] = data;
+            break;
 
-            case DATA_GRANDMASTERVORPILEVENT:
-                if (data == DONE)
-                {
-                    HandleGameObject(ScreamingHallDoorGUID, true);
-                }
-                if (Encounter[3] != DONE)
-                    Encounter[3] = data;
-                break;
+        case DATA_GRANDMASTERVORPILEVENT:
+            if (data == DONE)
+                HandleGameObject(ScreamingHallDoorGUID, true);
+            if (Encounter[3] != DONE)
+                Encounter[3] = data;
+            break;
 
-            case DATA_MURMUREVENT:
-                if (Encounter[4] != DONE)
-                    Encounter[4] = data;
-                break;
+        case DATA_MURMUREVENT:
+            if (Encounter[4] != DONE)
+                Encounter[4] = data;
+            break;
         }
 
         if (data == DONE)
@@ -170,12 +175,16 @@ struct instance_shadow_labyrinth : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            case TYPE_HELLMAW: return Encounter[0];
-            case TYPE_OVERSEER: return Encounter[1];
-            case DATA_GRANDMASTERVORPILEVENT: return Encounter[3];
-            case DATA_MURMUREVENT: return Encounter[4];
+        case TYPE_HELLMAW:
+            return Encounter[0];
+        case TYPE_OVERSEER:
+            return Encounter[1];
+        case DATA_GRANDMASTERVORPILEVENT:
+            return Encounter[3];
+        case DATA_MURMUREVENT:
+            return Encounter[4];
         }
         return false;
     }
@@ -194,7 +203,7 @@ struct instance_shadow_labyrinth : public ScriptedInstance
         std::ostringstream saveStream;
 
         saveStream << Encounter[0] << " " << Encounter[1] << " "
-            << Encounter[2] << " " << Encounter[3] << " " << Encounter[4];
+                   << Encounter[2] << " " << Encounter[3] << " " << Encounter[4];
 
         char* out = new char[saveStream.str().length() + 1];
         strcpy(out, saveStream.str().c_str());
@@ -236,7 +245,7 @@ InstanceData* GetInstanceData_instance_shadow_labyrinth(Map* map)
 // ToDo Move creature_fel_overseerAI to a seperate file
 struct mob_fel_overseerAI : public ScriptedAI
 {
-    mob_fel_overseerAI(Creature* c) : ScriptedAI(c) 
+    mob_fel_overseerAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
     }
@@ -256,7 +265,7 @@ CreatureAI* GetAI_mob_fel_overseer(Creature* pCreature)
 
 void AddSC_instance_shadow_labyrinth()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_shadow_labyrinth";
     newscript->GetInstanceData = &GetInstanceData_instance_shadow_labyrinth;

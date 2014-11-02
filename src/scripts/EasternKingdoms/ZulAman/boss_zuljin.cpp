@@ -146,7 +146,7 @@ struct boss_zuljinAI : public ScriptedAI
     {
         pInstance = c->GetInstanceData();
     }
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint64 SpiritGUID[4];
     uint64 ClawTargetGUID;
@@ -182,7 +182,7 @@ struct boss_zuljinAI : public ScriptedAI
 
         Phase = 0;
 
-        health_20 = me->GetMaxHealth()*0.2f;
+        health_20 = me->GetMaxHealth() * 0.2f;
 
         Intro_Timer = 37000;
         Berserk_Timer = 600000;
@@ -219,7 +219,7 @@ struct boss_zuljinAI : public ScriptedAI
 
         DoZoneInCombat();
 
-        me->MonsterYell(YELL_INTRO,LANG_UNIVERSAL,0);
+        me->MonsterYell(YELL_INTRO, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_INTRO);
         SpawnAdds();
         EnterPhase(0);
@@ -230,16 +230,16 @@ struct boss_zuljinAI : public ScriptedAI
         if (Intro_Timer)
             return;
 
-        switch (urand(0,1))
+        switch (urand(0, 1))
         {
-            case 0:
-                me->MonsterYell(YELL_KILL_ONE, LANG_UNIVERSAL, 0);
-                DoPlaySoundToSet(me, SOUND_KILL_ONE);
-                break;
-            case 1:
-                me->MonsterYell(YELL_KILL_TWO, LANG_UNIVERSAL, 0);
-                DoPlaySoundToSet(me, SOUND_KILL_TWO);
-                break;
+        case 0:
+            me->MonsterYell(YELL_KILL_ONE, LANG_UNIVERSAL, 0);
+            DoPlaySoundToSet(me, SOUND_KILL_ONE);
+            break;
+        case 1:
+            me->MonsterYell(YELL_KILL_TWO, LANG_UNIVERSAL, 0);
+            DoPlaySoundToSet(me, SOUND_KILL_TWO);
+            break;
         }
     }
 
@@ -253,7 +253,7 @@ struct boss_zuljinAI : public ScriptedAI
         Summons.DespawnEntry(CREATURE_COLUMN_OF_FIRE);
 
         if (Unit* Temp = Unit::GetUnit(*me, SpiritGUID[3]))
-            Temp->SetUInt32Value(UNIT_FIELD_BYTES_1,UNIT_STAND_STATE_DEAD);
+            Temp->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_DEAD);
     }
 
     void AttackStart(Unit* who)
@@ -279,7 +279,8 @@ struct boss_zuljinAI : public ScriptedAI
                         DoCastVictim( SPELL_OVERPOWER, false);
                         Overpower_Timer = 5000;
                     }
-                } else me->AttackerStateUpdate(me->getVictim());
+                }
+                else me->AttackerStateUpdate(me->getVictim());
                 me->resetAttackTimer();
             }
         }
@@ -331,7 +332,7 @@ struct boss_zuljinAI : public ScriptedAI
 
     void EnterPhase(uint32 NextPhase)
     {
-        switch(NextPhase)
+        switch (NextPhase)
         {
         case 0:
             break;
@@ -349,7 +350,7 @@ struct boss_zuljinAI : public ScriptedAI
             if (Phase > 0)
             {
                 if (Unit* Temp = Unit::GetUnit(*me, SpiritGUID[Phase - 1]))
-                    Temp->SetUInt32Value(UNIT_FIELD_BYTES_1,UNIT_STAND_STATE_DEAD);
+                    Temp->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_DEAD);
             }
             if (Unit* Temp = Unit::GetUnit(*me, SpiritGUID[NextPhase - 1]))
                 Temp->CastSpell(me, SPELL_SIPHON_SOUL, false); // should m cast on temp
@@ -403,7 +404,8 @@ struct boss_zuljinAI : public ScriptedAI
             me->MonsterYell(YELL_BERSERK, LANG_UNIVERSAL, 0);
             DoPlaySoundToSet(me, SOUND_BERSERK);
             Berserk_Timer = 60000;
-        } else Berserk_Timer -= diff;
+        }
+        else Berserk_Timer -= diff;
 
         switch (Phase)
         {
@@ -415,21 +417,24 @@ struct boss_zuljinAI : public ScriptedAI
                     me->MonsterYell(YELL_AGGRO, LANG_UNIVERSAL, 0);
                     DoPlaySoundToSet(me, SOUND_AGGRO);
                     Intro_Timer = 0;
-                } else Intro_Timer -= diff;
+                }
+                else Intro_Timer -= diff;
             }
 
             if (Whirlwind_Timer <= diff)
             {
                 DoCast(me, SPELL_WHIRLWIND);
-                Whirlwind_Timer = 15000 + rand()%5000;
-            } else Whirlwind_Timer -= diff;
+                Whirlwind_Timer = 15000 + rand() % 5000;
+            }
+            else Whirlwind_Timer -= diff;
 
             if (Grievous_Throw_Timer <= diff)
             {
                 if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     DoCast(pTarget, SPELL_GRIEVOUS_THROW, false);
                 Grievous_Throw_Timer = 10000;
-            } else Grievous_Throw_Timer -= diff;
+            }
+            else Grievous_Throw_Timer -= diff;
             break;
 
         case 1:
@@ -437,13 +442,15 @@ struct boss_zuljinAI : public ScriptedAI
             {
                 DoCast(me, SPELL_CREEPING_PARALYSIS);
                 Creeping_Paralysis_Timer = 20000;
-            } else Creeping_Paralysis_Timer -= diff;
+            }
+            else Creeping_Paralysis_Timer -= diff;
 
             if (Overpower_Timer <= diff)
             {
                 // implemented in DoMeleeAttackIfReady()
                 Overpower_Timer = 0;
-            } else Overpower_Timer -= diff;
+            }
+            else Overpower_Timer -= diff;
             break;
 
         case 2:
@@ -480,7 +487,7 @@ struct boss_zuljinAI : public ScriptedAI
                                 ++Claw_Counter;
                                 if (Claw_Counter == 12)
                                 {
-                                    Claw_Rage_Timer = 15000 + rand()%5000;
+                                    Claw_Rage_Timer = 15000 + rand() % 5000;
                                     me->SetSpeed(MOVE_RUN, 1.2f);
                                     AttackStart(Unit::GetUnit(*me, TankGUID));
                                     TankGUID = 0;
@@ -495,9 +502,11 @@ struct boss_zuljinAI : public ScriptedAI
                             EnterEvadeMode(); // if (pTarget)
                             return;
                         }
-                    } else Claw_Loop_Timer -= diff;
+                    }
+                    else Claw_Loop_Timer -= diff;
                 } //if (TankGUID)
-            } else Claw_Rage_Timer -= diff;
+            }
+            else Claw_Rage_Timer -= diff;
 
             if (Lynx_Rush_Timer <= diff)
             {
@@ -528,7 +537,7 @@ struct boss_zuljinAI : public ScriptedAI
                             ++Claw_Counter;
                             if (Claw_Counter == 9)
                             {
-                                Lynx_Rush_Timer = 15000 + rand()%5000;
+                                Lynx_Rush_Timer = 15000 + rand() % 5000;
                                 me->SetSpeed(MOVE_RUN, 1.2f);
                                 AttackStart(Unit::GetUnit(*me, TankGUID));
                                 TankGUID = 0;
@@ -543,7 +552,8 @@ struct boss_zuljinAI : public ScriptedAI
                         return;
                     }
                 } //if (TankGUID)
-            } else Lynx_Rush_Timer -= diff;
+            }
+            else Lynx_Rush_Timer -= diff;
 
             break;
         case 4:
@@ -551,14 +561,16 @@ struct boss_zuljinAI : public ScriptedAI
             {
                 DoCast(me, SPELL_FLAME_WHIRL);
                 Flame_Whirl_Timer = 12000;
-            }Flame_Whirl_Timer -= diff;
+            }
+            Flame_Whirl_Timer -= diff;
 
             if (Pillar_Of_Fire_Timer <= diff)
             {
                 if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_SUMMON_PILLAR);
                 Pillar_Of_Fire_Timer = 10000;
-            } else Pillar_Of_Fire_Timer -= diff;
+            }
+            else Pillar_Of_Fire_Timer -= diff;
 
             if (Flame_Breath_Timer <= diff)
             {
@@ -566,7 +578,8 @@ struct boss_zuljinAI : public ScriptedAI
                     me->SetInFront(pTarget);
                 DoCast(me, SPELL_FLAME_BREATH);
                 Flame_Breath_Timer = 10000;
-            } else Flame_Breath_Timer -= diff;
+            }
+            else Flame_Breath_Timer -= diff;
             break;
 
         default:
@@ -595,7 +608,7 @@ struct feather_vortexAI : public ScriptedAI
 
     void EnterCombat(Unit* /*pTarget*/ ) {}
 
-    void SpellHit(Unit* caster, const SpellEntry *spell)
+    void SpellHit(Unit* caster, const SpellEntry* spell)
     {
         if (caster->GetTypeId() == TYPEID_PLAYER && !PlayerIsInList(CAST_PLR(caster)))
         {
@@ -650,7 +663,7 @@ CreatureAI* GetAI_feather_vortexAI(Creature* pCreature)
 
 void AddSC_boss_zuljin()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_zuljin";
     newscript->GetAI = &GetAI_boss_zuljin;

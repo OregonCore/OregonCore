@@ -27,7 +27,7 @@
 #include "UpdateMask.h"
 #include "SpellAuras.h"
 
-void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
+void WorldSession::HandleLearnTalentOpcode(WorldPacket& recv_data)
 {
     uint32 talent_id, requested_rank;
     recv_data >> talent_id >> requested_rank;
@@ -40,12 +40,12 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
     if (requested_rank > 4)
         return;
 
-    TalentEntry const *talentInfo = sTalentStore.LookupEntry(talent_id);
+    TalentEntry const* talentInfo = sTalentStore.LookupEntry(talent_id);
 
     if (!talentInfo)
         return;
 
-    TalentTabEntry const *talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
+    TalentTabEntry const* talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
 
     if (!talentTabInfo)
         return;
@@ -57,13 +57,13 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
         return;
 
     // prevent skip talent ranks (cheating)
-    if (requested_rank > 0 && !player->HasSpell(talentInfo->RankID[requested_rank-1]))
+    if (requested_rank > 0 && !player->HasSpell(talentInfo->RankID[requested_rank - 1]))
         return;
 
     // Check if it requires another talent
     if (talentInfo->DependsOn > 0)
     {
-        if (TalentEntry const *depTalentInfo = sTalentStore.LookupEntry(talentInfo->DependsOn))
+        if (TalentEntry const* depTalentInfo = sTalentStore.LookupEntry(talentInfo->DependsOn))
         {
             bool hasEnoughRank = false;
             for (int i = talentInfo->DependsOnRank; i <= 4; i++)
@@ -91,7 +91,7 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
         for (unsigned int i = 0; i < numRows; i++)          // Loop through all talents.
         {
             // Someday, someone needs to revamp
-            const TalentEntry *tmpTalent = sTalentStore.LookupEntry(i);
+            const TalentEntry* tmpTalent = sTalentStore.LookupEntry(i);
             if (tmpTalent)                                  // the way talents are tracked
             {
                 if (tmpTalent->TalentTab == tTab)
@@ -101,9 +101,7 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
                         if (tmpTalent->RankID[j] != 0)
                         {
                             if (player->HasSpell(tmpTalent->RankID[j]))
-                            {
                                 spentPoints += j + 1;
-                            }
                         }
                     }
                 }
@@ -135,13 +133,13 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
     GetPlayer()->SetFreeTalentPoints(CurTalentPoints - 1);
 }
 
-void WorldSession::HandleTalentWipeOpcode(WorldPacket & recv_data)
+void WorldSession::HandleTalentWipeOpcode(WorldPacket& recv_data)
 {
     sLog.outDetail("MSG_TALENT_WIPE_CONFIRM");
     uint64 guid;
     recv_data >> guid;
 
-    Creature* unit = GetPlayer()->GetNPCIfCanInteractWith(guid,UNIT_NPC_FLAG_TRAINER);
+    Creature* unit = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_TRAINER);
     if (!unit)
     {
         sLog.outDebug("WORLD: HandleTalentWipeOpcode - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(guid)));
@@ -154,7 +152,7 @@ void WorldSession::HandleTalentWipeOpcode(WorldPacket & recv_data)
 
     if (!(_player->resetTalents()))
     {
-        WorldPacket data(MSG_TALENT_WIPE_CONFIRM, 8+4);    //you have not any talent
+        WorldPacket data(MSG_TALENT_WIPE_CONFIRM, 8 + 4);  //you have not any talent
         data << uint64(0);
         data << uint32(0);
         SendPacket(&data);
@@ -164,7 +162,7 @@ void WorldSession::HandleTalentWipeOpcode(WorldPacket & recv_data)
     unit->CastSpell(_player, 14867, true);                  //spell: "Untalent Visual Effect"
 }
 
-void WorldSession::HandleUnlearnSkillOpcode(WorldPacket & recv_data)
+void WorldSession::HandleUnlearnSkillOpcode(WorldPacket& recv_data)
 {
     uint32 skill_id;
     recv_data >> skill_id;

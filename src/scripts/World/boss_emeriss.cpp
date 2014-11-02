@@ -50,7 +50,7 @@ struct boss_emerissAI : public ScriptedAI
 
     void Reset()
     {
-        m_uiSleep_Timer = 15000 + rand()%5000;
+        m_uiSleep_Timer = 15000 + rand() % 5000;
         m_uiNoxiousBreath_Timer = 8000;
         m_uiTailSweep_Timer = 4000;
         //m_uiMarkOfNature_Timer = 45000;
@@ -75,7 +75,7 @@ struct boss_emerissAI : public ScriptedAI
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_SLEEP);
 
-            m_uiSleep_Timer = 8000 + rand()%8000;
+            m_uiSleep_Timer = 8000 + rand() % 8000;
         }
         else
             m_uiSleep_Timer -= uiDiff;
@@ -84,7 +84,7 @@ struct boss_emerissAI : public ScriptedAI
         if (m_uiNoxiousBreath_Timer <= uiDiff)
         {
             DoCastVictim( SPELL_NOXIOUSBREATH);
-            m_uiNoxiousBreath_Timer = 14000 + rand()%6000;
+            m_uiNoxiousBreath_Timer = 14000 + rand() % 6000;
         }
         else
             m_uiNoxiousBreath_Timer -= uiDiff;
@@ -111,14 +111,14 @@ struct boss_emerissAI : public ScriptedAI
         if (m_uiVolatileInfection_Timer <= uiDiff)
         {
             DoCastVictim( SPELL_VOLATILEINFECTION);
-            m_uiVolatileInfection_Timer = 7000 + rand()%5000;
+            m_uiVolatileInfection_Timer = 7000 + rand() % 5000;
         }
         else
             m_uiVolatileInfection_Timer -= uiDiff;
 
         //CorruptionofEarth_Timer
         //CorruptionofEarth at 75%, 50% and 25%
-        if ((me->GetHealth()*100 / me->GetMaxHealth()) <= (100-(25*m_uiCorruptionsCasted)))
+        if ((me->GetHealth() * 100 / me->GetMaxHealth()) <= (100 - (25 * m_uiCorruptionsCasted)))
         {
             ++m_uiCorruptionsCasted;                        // prevent casting twice on same hp
             DoScriptText(SAY_CASTCORRUPTION, me);
@@ -136,7 +136,7 @@ CreatureAI* GetAI_boss_emeriss(Creature* pCreature)
 
 void AddSC_boss_emeriss()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_emeriss";
     newscript->GetAI = &GetAI_boss_emeriss;

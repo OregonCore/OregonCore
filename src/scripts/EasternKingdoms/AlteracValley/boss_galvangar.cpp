@@ -53,12 +53,12 @@ struct boss_galvangarAI : public ScriptedAI
 
     void Reset()
     {
-        uiCleaveTimer                     = urand(1*IN_MILLISECONDS,9*IN_MILLISECONDS);
-        uiFrighteningShoutTimer           = urand(2*IN_MILLISECONDS,19*IN_MILLISECONDS);
-        uiWhirlwind1Timer                 = urand(1*IN_MILLISECONDS,13*IN_MILLISECONDS);
-        uiWhirlwind2Timer                 = urand(5*IN_MILLISECONDS,20*IN_MILLISECONDS);
-        uiMortalStrikeTimer               = urand(5*IN_MILLISECONDS,20*IN_MILLISECONDS);
-        uiResetTimer                      = 5*IN_MILLISECONDS;
+        uiCleaveTimer                     = urand(1 * IN_MILLISECONDS, 9 * IN_MILLISECONDS);
+        uiFrighteningShoutTimer           = urand(2 * IN_MILLISECONDS, 19 * IN_MILLISECONDS);
+        uiWhirlwind1Timer                 = urand(1 * IN_MILLISECONDS, 13 * IN_MILLISECONDS);
+        uiWhirlwind2Timer                 = urand(5 * IN_MILLISECONDS, 20 * IN_MILLISECONDS);
+        uiMortalStrikeTimer               = urand(5 * IN_MILLISECONDS, 20 * IN_MILLISECONDS);
+        uiResetTimer                      = 5 * IN_MILLISECONDS;
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -79,32 +79,37 @@ struct boss_galvangarAI : public ScriptedAI
         if (uiCleaveTimer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
-            uiCleaveTimer =  urand(10*IN_MILLISECONDS,16*IN_MILLISECONDS);
-        } else uiCleaveTimer -= diff;
+            uiCleaveTimer =  urand(10 * IN_MILLISECONDS, 16 * IN_MILLISECONDS);
+        }
+        else uiCleaveTimer -= diff;
 
         if (uiFrighteningShoutTimer <= diff)
         {
             DoCastVictim( SPELL_FRIGHTENING_SHOUT);
-            uiFrighteningShoutTimer = urand(10*IN_MILLISECONDS,15*IN_MILLISECONDS);
-        } else uiFrighteningShoutTimer -= diff;
+            uiFrighteningShoutTimer = urand(10 * IN_MILLISECONDS, 15 * IN_MILLISECONDS);
+        }
+        else uiFrighteningShoutTimer -= diff;
 
         if (uiWhirlwind1Timer <= diff)
         {
             DoCastVictim( SPELL_WHIRLWIND1);
-            uiWhirlwind1Timer = urand(6*IN_MILLISECONDS,10*IN_MILLISECONDS);
-        } else uiWhirlwind1Timer -= diff;
+            uiWhirlwind1Timer = urand(6 * IN_MILLISECONDS, 10 * IN_MILLISECONDS);
+        }
+        else uiWhirlwind1Timer -= diff;
 
         if (uiWhirlwind2Timer <= diff)
         {
             DoCastVictim( SPELL_WHIRLWIND2);
-            uiWhirlwind2Timer = urand(10*IN_MILLISECONDS,25*IN_MILLISECONDS);
-        } else uiWhirlwind2Timer -= diff;
+            uiWhirlwind2Timer = urand(10 * IN_MILLISECONDS, 25 * IN_MILLISECONDS);
+        }
+        else uiWhirlwind2Timer -= diff;
 
         if (uiMortalStrikeTimer <= diff)
         {
             DoCastVictim( SPELL_MORTAL_STRIKE);
-            uiMortalStrikeTimer = urand(10*IN_MILLISECONDS,30*IN_MILLISECONDS);
-        } else uiMortalStrikeTimer -= diff;
+            uiMortalStrikeTimer = urand(10 * IN_MILLISECONDS, 30 * IN_MILLISECONDS);
+        }
+        else uiMortalStrikeTimer -= diff;
 
         // check if creature is not outside of building
         if (uiResetTimer <= diff)
@@ -114,8 +119,9 @@ struct boss_galvangarAI : public ScriptedAI
                 EnterEvadeMode();
                 DoScriptText(YELL_EVADE, me);
             }
-            uiResetTimer = 5*IN_MILLISECONDS;
-        } else uiResetTimer -= diff;
+            uiResetTimer = 5 * IN_MILLISECONDS;
+        }
+        else uiResetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -128,7 +134,7 @@ CreatureAI* GetAI_boss_galvangar(Creature* pCreature)
 
 void AddSC_boss_galvangar()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_galvangar";
     newscript->GetAI = &GetAI_boss_galvangar;

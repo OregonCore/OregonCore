@@ -45,9 +45,9 @@ void guardAI::Reset()
 void guardAI::EnterCombat(Unit* who)
 {
     if (me->GetEntry() == 15184)
-        DoScriptText(RAND(SAY_GUARD_SIL_AGGRO1,SAY_GUARD_SIL_AGGRO2,SAY_GUARD_SIL_AGGRO3), me, who);
+        DoScriptText(RAND(SAY_GUARD_SIL_AGGRO1, SAY_GUARD_SIL_AGGRO2, SAY_GUARD_SIL_AGGRO3), me, who);
 
-    if (SpellEntry const *spell = me->reachWithSpellAttack(who))
+    if (SpellEntry const* spell = me->reachWithSpellAttack(who))
         DoCastSpell(who, spell);
 }
 
@@ -71,7 +71,7 @@ void guardAI::UpdateAI(const uint32 diff)
         if (BuffTimer <= diff)
         {
             //Find a spell that targets friendly and applies an aura (these are generally buffs)
-            SpellEntry const *info = SelectSpell(me, 0, 0, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);
+            SpellEntry const* info = SelectSpell(me, 0, 0, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);
 
             if (info && !GlobalCooldown)
             {
@@ -85,7 +85,8 @@ void guardAI::UpdateAI(const uint32 diff)
                 BuffTimer = 600000;
             }                                                   //Try again in 30 seconds
             else BuffTimer = 30000;
-        } else BuffTimer -= diff;
+        }
+        else BuffTimer -= diff;
     }
 
     //Return since we have no target
@@ -99,10 +100,10 @@ void guardAI::UpdateAI(const uint32 diff)
         if (me->IsWithinMeleeRange(me->getVictim()))
         {
             bool Healing = false;
-            SpellEntry const *info = NULL;
+            SpellEntry const* info = NULL;
 
             //Select a healing spell if less than 30% hp
-            if (me->GetHealth()*100 / me->GetMaxHealth() < 30)
+            if (me->GetHealth() * 100 / me->GetMaxHealth() < 30)
                 info = SelectSpell(me, 0, 0, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
 
             //No healing spell available, select a hostile spell
@@ -130,10 +131,10 @@ void guardAI::UpdateAI(const uint32 diff)
         if (!me->IsNonMeleeSpellCast(false))
         {
             bool Healing = false;
-            SpellEntry const *info = NULL;
+            SpellEntry const* info = NULL;
 
             //Select a healing spell if less than 30% hp ONLY 33% of the time
-            if (me->GetHealth()*100 / me->GetMaxHealth() < 30 && rand() % 3 == 0)
+            if (me->GetHealth() * 100 / me->GetMaxHealth() < 30 && rand() % 3 == 0)
                 info = SelectSpell(me, 0, 0, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
 
             //No healing spell available, See if we can cast a ranged spell (Range must be greater than ATTACK_DISTANCE)
@@ -151,8 +152,8 @@ void guardAI::UpdateAI(const uint32 diff)
                 }
 
                 //Cast spell
-                if (Healing) DoCastSpell(me,info);
-                else DoCastSpell(me->getVictim(),info);
+                if (Healing) DoCastSpell(me, info);
+                else DoCastSpell(me->getVictim(), info);
 
                 //Set our global cooldown
                 GlobalCooldown = GENERIC_CREATURE_COOLDOWN;
@@ -171,14 +172,24 @@ void guardAI::UpdateAI(const uint32 diff)
 
 void guardAI::DoReplyToTextEmote(uint32 em)
 {
-    switch(em)
+    switch (em)
     {
-        case TEXT_EMOTE_KISS:    me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);    break;
-        case TEXT_EMOTE_WAVE:    me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);   break;
-        case TEXT_EMOTE_SALUTE:  me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE); break;
-        case TEXT_EMOTE_SHY:     me->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);   break;
-        case TEXT_EMOTE_RUDE:
-        case TEXT_EMOTE_CHICKEN: me->HandleEmoteCommand(EMOTE_ONESHOT_POINT);  break;
+    case TEXT_EMOTE_KISS:
+        me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
+        break;
+    case TEXT_EMOTE_WAVE:
+        me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
+        break;
+    case TEXT_EMOTE_SALUTE:
+        me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+        break;
+    case TEXT_EMOTE_SHY:
+        me->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);
+        break;
+    case TEXT_EMOTE_RUDE:
+    case TEXT_EMOTE_CHICKEN:
+        me->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
+        break;
     }
 }
 

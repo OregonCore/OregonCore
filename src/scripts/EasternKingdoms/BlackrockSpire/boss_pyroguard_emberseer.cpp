@@ -58,14 +58,16 @@ struct boss_pyroguard_emberseerAI : public ScriptedAI
         {
             DoCastVictim( SPELL_FIRENOVA);
             FireNova_Timer = 6000;
-        } else FireNova_Timer -= diff;
+        }
+        else FireNova_Timer -= diff;
 
         //FlameBuffet_Timer
         if (FlameBuffet_Timer <= diff)
         {
             DoCastVictim( SPELL_FLAMEBUFFET);
             FlameBuffet_Timer = 14000;
-        } else FlameBuffet_Timer -= diff;
+        }
+        else FlameBuffet_Timer -= diff;
 
         //PyroBlast_Timer
         if (PyroBlast_Timer <= diff)
@@ -73,7 +75,8 @@ struct boss_pyroguard_emberseerAI : public ScriptedAI
             if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_PYROBLAST);
             PyroBlast_Timer = 15000;
-        } else PyroBlast_Timer -= diff;
+        }
+        else PyroBlast_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -85,7 +88,7 @@ CreatureAI* GetAI_boss_pyroguard_emberseer(Creature* pCreature)
 
 void AddSC_boss_pyroguard_emberseer()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_pyroguard_emberseer";
     newscript->GetAI = &GetAI_boss_pyroguard_emberseer;

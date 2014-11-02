@@ -26,9 +26,9 @@
 
 //----- Point Movement Generator
 template<class T>
-void PointMovementGenerator<T>::Initialize(T &unit)
+void PointMovementGenerator<T>::Initialize(T& unit)
 {
-    if(!unit.IsStopped())
+    if (!unit.IsStopped())
         unit.StopMoving();
     Traveller<T> traveller(unit);
 
@@ -43,7 +43,7 @@ void PointMovementGenerator<T>::Initialize(T &unit)
             unit.SetUnitMovementFlags(SPLINEFLAG_WALKMODE);
         unit.SendMonsterMoveByPath(pointPath, 1, pointPath.size(), traveltime);
 
-        PathNode p = pointPath[pointPath.size()-1];
+        PathNode p = pointPath[pointPath.size() - 1];
         i_destinationHolder.SetDestination(traveller, p.x, p.y, p.z, false);
     }
     else
@@ -51,7 +51,7 @@ void PointMovementGenerator<T>::Initialize(T &unit)
 }
 
 template<class T>
-bool PointMovementGenerator<T>::Update(T &unit, const uint32 &diff)
+bool PointMovementGenerator<T>::Update(T& unit, const uint32& diff)
 {
     if (unit.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
     {
@@ -76,7 +76,7 @@ bool PointMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 }
 
 template<class T>
-void PointMovementGenerator<T>:: Finalize(T &unit)
+void PointMovementGenerator<T>:: Finalize(T& unit)
 {
     if (unit.HasUnitState(UNIT_STATE_CHARGING))
         unit.ClearUnitState(UNIT_STATE_CHARGING | UNIT_STATE_JUMPING);
@@ -89,7 +89,7 @@ void PointMovementGenerator<T>::MovementInform(T& /*unit*/)
 {
 }
 
-template <> void PointMovementGenerator<Creature>::MovementInform(Creature &unit)
+template <> void PointMovementGenerator<Creature>::MovementInform(Creature& unit)
 {
     if (id == EVENT_FALL_GROUND)
     {
@@ -100,15 +100,15 @@ template <> void PointMovementGenerator<Creature>::MovementInform(Creature &unit
 }
 
 template void PointMovementGenerator<Player>::Initialize(Player&);
-template bool PointMovementGenerator<Player>::Update(Player &, const uint32 &diff);
+template bool PointMovementGenerator<Player>::Update(Player&, const uint32& diff);
 template void PointMovementGenerator<Player>::MovementInform(Player&);
 template void PointMovementGenerator<Player>::Finalize(Player&);
 
 template void PointMovementGenerator<Creature>::Initialize(Creature&);
-template bool PointMovementGenerator<Creature>::Update(Creature&, const uint32 &diff);
+template bool PointMovementGenerator<Creature>::Update(Creature&, const uint32& diff);
 template void PointMovementGenerator<Creature>::Finalize(Creature&);
 
-void AssistanceMovementGenerator::Finalize(Creature &unit)
+void AssistanceMovementGenerator::Finalize(Creature& unit)
 {
     unit.SetNoCallAssistance(false);
     unit.CallAssistance();

@@ -50,7 +50,7 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     bool HeroicMode;
 
@@ -62,10 +62,10 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
 
     void Reset()
     {
-        frost_attack_Timer = 7000 + rand()%3000;
-        arcane_blast_Timer = 12000 + rand()%6000;
-        dragons_breath_Timer = 18000 + rand()%4000;
-        knockback_Timer = 22000 + rand()%6000;
+        frost_attack_Timer = 7000 + rand() % 3000;
+        arcane_blast_Timer = 12000 + rand() % 6000;
+        dragons_breath_Timer = 18000 + rand() % 4000;
+        knockback_Timer = 22000 + rand() % 6000;
         solarburn_Timer = 30000;
 
         if (pInstance)
@@ -84,10 +84,14 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
         }
     }
 
@@ -109,46 +113,55 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
         if (frost_attack_Timer <= diff)
         {
             DoCastVictim(SPELL_FROST_ATTACK);
-            frost_attack_Timer = 7000 + rand()%30000;
-        } else frost_attack_Timer -= diff;
+            frost_attack_Timer = 7000 + rand() % 30000;
+        }
+        else frost_attack_Timer -= diff;
 
         //Arcane Blast
         if (arcane_blast_Timer <= diff)
         {
             DoCastVictim( SPELL_ARCANE_BLAST);
             arcane_blast_Timer = 15000;
-        } else arcane_blast_Timer -= diff;
+        }
+        else arcane_blast_Timer -= diff;
 
         //Dragons Breath
         if (dragons_breath_Timer <= diff)
         {
             DoCastVictim(SPELL_DRAGONS_BREATH);
             {
-                if (rand()%2)
+                if (rand() % 2)
                     return;
 
-                switch(rand()%2)
+                switch (rand() % 2)
                 {
-                case 0: DoScriptText(SAY_DRAGONS_BREATH_1, me); break;
-                case 1: DoScriptText(SAY_DRAGONS_BREATH_2, me); break;
+                case 0:
+                    DoScriptText(SAY_DRAGONS_BREATH_1, me);
+                    break;
+                case 1:
+                    DoScriptText(SAY_DRAGONS_BREATH_2, me);
+                    break;
                 }
             }
-            dragons_breath_Timer = 12000 + rand()%10000;
-        } else dragons_breath_Timer -= diff;
+            dragons_breath_Timer = 12000 + rand() % 10000;
+        }
+        else dragons_breath_Timer -= diff;
 
         //Knockback
         if (knockback_Timer <= diff)
         {
             DoCastVictim(SPELL_KNOCKBACK);
-            knockback_Timer = 15000 + rand()%10000;
-        } else knockback_Timer -= diff;
+            knockback_Timer = 15000 + rand() % 10000;
+        }
+        else knockback_Timer -= diff;
 
         //Solarburn
         if (solarburn_Timer <= diff)
         {
             DoCastVictim(SPELL_SOLARBURN);
             solarburn_Timer = 30000;
-        } else solarburn_Timer -= diff;
+        }
+        else solarburn_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -167,10 +180,11 @@ struct mob_ragin_flamesAI : public ScriptedAI
 {
     mob_ragin_flamesAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();        HeroicMode = me->GetMap()->IsHeroic();
+        pInstance = c->GetInstanceData();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     bool HeroicMode;
 
@@ -197,7 +211,7 @@ struct mob_ragin_flamesAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-         //Check_Timer
+        //Check_Timer
         if (Check_Timer <= diff)
         {
             if (pInstance)
@@ -210,14 +224,15 @@ struct mob_ragin_flamesAI : public ScriptedAI
                 }
             }
             Check_Timer = 1000;
-        } else Check_Timer -= diff;
+        }
+        else Check_Timer -= diff;
 
         if (!UpdateVictim())
             return;
 
         if (!onlyonce)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 me->GetMotionMaster()->MoveChase(pTarget);
             onlyonce = true;
         }
@@ -227,13 +242,15 @@ struct mob_ragin_flamesAI : public ScriptedAI
             DoCastVictim(HeroicMode ? H_SPELL_INFERNO : SPELL_INFERNO);
             me->TauntApply(me->getVictim());
             inferno_Timer = 10000;
-        } else inferno_Timer -= diff;
+        }
+        else inferno_Timer -= diff;
 
         if (flame_timer <= diff)
         {
-            DoCast(me,SPELL_FIRE_TAIL);
+            DoCast(me, SPELL_FIRE_TAIL);
             flame_timer = 500;
-        } else flame_timer -=diff;
+        }
+        else flame_timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -245,7 +262,7 @@ CreatureAI* GetAI_mob_ragin_flames(Creature* pCreature)
 }
 void AddSC_boss_nethermancer_sepethrea()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_nethermancer_sepethrea";
     newscript->GetAI = &GetAI_boss_nethermancer_sepethrea;

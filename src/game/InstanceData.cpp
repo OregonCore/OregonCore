@@ -52,7 +52,7 @@ bool InstanceData::IsEncounterInProgress() const
     return false;
 }
 
-void InstanceData::LoadMinionData(const MinionData *data)
+void InstanceData::LoadMinionData(const MinionData* data)
 {
     while (data->entry)
     {
@@ -64,7 +64,7 @@ void InstanceData::LoadMinionData(const MinionData *data)
     sLog.outDebug("InstanceData::LoadMinionData: %u minions loaded.", doors.size());
 }
 
-void InstanceData::LoadDoorData(const DoorData *data)
+void InstanceData::LoadDoorData(const DoorData* data)
 {
     while (data->entry)
     {
@@ -80,19 +80,19 @@ void InstanceData::UpdateMinionState(Creature* minion, EncounterState state)
 {
     switch (state)
     {
-        case NOT_STARTED:
-            if (!minion->isAlive())
-                minion->Respawn();
-            else if (minion->isInCombat())
-                minion->AI()->EnterEvadeMode();
-            break;
-        case IN_PROGRESS:
-            if (!minion->isAlive())
-                minion->Respawn();
-            else if (!minion->getVictim())
-                minion->AI()->DoZoneInCombat();
-        default:
-            break;
+    case NOT_STARTED:
+        if (!minion->isAlive())
+            minion->Respawn();
+        else if (minion->isInCombat())
+            minion->AI()->EnterEvadeMode();
+        break;
+    case IN_PROGRESS:
+        if (!minion->isAlive())
+            minion->Respawn();
+        else if (!minion->getVictim())
+            minion->AI()->DoZoneInCombat();
+    default:
+        break;
     }
 }
 
@@ -162,7 +162,7 @@ bool InstanceData::SetBossState(uint32 id, EncounterState state)
 {
     if (id < bosses.size())
     {
-        BossInfo *bossInfo = &bosses[id];
+        BossInfo* bossInfo = &bosses[id];
         if (bossInfo->state == TO_BE_DECIDED) // loading
         {
             bossInfo->state = state;
@@ -189,7 +189,7 @@ bool InstanceData::SetBossState(uint32 id, EncounterState state)
     return false;
 }
 
-std::string InstanceData::LoadBossState(const char * data)
+std::string InstanceData::LoadBossState(const char* data)
 {
     if (!data)
         return NULL;
@@ -225,12 +225,12 @@ void InstanceData::DoUseDoorOrButton(uint64 uiGuid, uint32 uiWithRestoreTime, bo
         if (pGo->GetGoType() == GAMEOBJECT_TYPE_DOOR || pGo->GetGoType() == GAMEOBJECT_TYPE_BUTTON)
         {
             if (pGo->getLootState() == GO_READY)
-                pGo->UseDoorOrButton(uiWithRestoreTime,bUseAlternativeState);
+                pGo->UseDoorOrButton(uiWithRestoreTime, bUseAlternativeState);
             else if (pGo->getLootState() == GO_ACTIVATED)
                 pGo->ResetDoorOrButton();
         }
         else
-            error_log("OSCR: Script call DoUseDoorOrButton, but gameobject entry %u is type %u.",pGo->GetEntry(),pGo->GetGoType());
+            error_log("OSCR: Script call DoUseDoorOrButton, but gameobject entry %u is type %u.", pGo->GetEntry(), pGo->GetGoType());
     }
 }
 
@@ -267,7 +267,7 @@ void InstanceData::DoUpdateWorldState(uint32 uiStateId, uint32 uiStateData)
 // Cast spell on all players in instance
 void InstanceData::DoCastSpellOnPlayers(uint32 spell)
 {
-    Map::PlayerList const &PlayerList = instance->GetPlayers();
+    Map::PlayerList const& PlayerList = instance->GetPlayers();
 
     if (!PlayerList.isEmpty())
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)

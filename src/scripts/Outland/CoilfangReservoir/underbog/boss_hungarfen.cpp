@@ -55,31 +55,33 @@ struct boss_hungarfenAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if ((me->GetHealth()*100) / me->GetMaxHealth() <= 20)
+        if ((me->GetHealth() * 100) / me->GetMaxHealth() <= 20)
         {
             if (!Root)
             {
-                DoCast(me,SPELL_FOUL_SPORES);
+                DoCast(me, SPELL_FOUL_SPORES);
                 Root = true;
             }
         }
 
         if (Mushroom_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                me->SummonCreature(17990, pTarget->GetPositionX()+float(rand()%8), pTarget->GetPositionY()+float(rand()%8), pTarget->GetPositionZ(), float(rand()%5), TEMPSUMMON_TIMED_DESPAWN, 22000);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                me->SummonCreature(17990, pTarget->GetPositionX() + float(rand() % 8), pTarget->GetPositionY() + float(rand() % 8), pTarget->GetPositionZ(), float(rand() % 5), TEMPSUMMON_TIMED_DESPAWN, 22000);
             else
-                me->SummonCreature(17990, me->GetPositionX()+float(rand()%8), me->GetPositionY()+float(rand()%8), me->GetPositionZ(), float(rand()%5), TEMPSUMMON_TIMED_DESPAWN, 22000);
+                me->SummonCreature(17990, me->GetPositionX() + float(rand() % 8), me->GetPositionY() + float(rand() % 8), me->GetPositionZ(), float(rand() % 5), TEMPSUMMON_TIMED_DESPAWN, 22000);
 
             Mushroom_Timer = 10000;
-        } else Mushroom_Timer -= diff;
+        }
+        else Mushroom_Timer -= diff;
 
         if (AcidGeyser_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_ACID_GEYSER);
-            AcidGeyser_Timer = 10000+rand()%7500;
-        } else AcidGeyser_Timer -= diff;
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_ACID_GEYSER);
+            AcidGeyser_Timer = 10000 + rand() % 7500;
+        }
+        else AcidGeyser_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -107,8 +109,8 @@ struct mob_underbog_mushroomAI : public ScriptedAI
         Grow_Timer = 0;
         Shrink_Timer = 20000;
 
-        DoCast(me,SPELL_PUTRID_MUSHROOM,true);
-        DoCast(me,SPELL_SPORE_CLOUD,true);
+        DoCast(me, SPELL_PUTRID_MUSHROOM, true);
+        DoCast(me, SPELL_SPORE_CLOUD, true);
     }
 
     void UpdateAI(const uint32 diff)
@@ -118,15 +120,17 @@ struct mob_underbog_mushroomAI : public ScriptedAI
 
         if (Grow_Timer <= diff)
         {
-            DoCast(me,SPELL_GROW);
+            DoCast(me, SPELL_GROW);
             Grow_Timer = 3000;
-        } else Grow_Timer -= diff;
+        }
+        else Grow_Timer -= diff;
 
         if (Shrink_Timer <= diff)
         {
             me->RemoveAurasDueToSpell(SPELL_GROW);
             Stop = true;
-        } else Shrink_Timer -= diff;
+        }
+        else Shrink_Timer -= diff;
     }
 };
 CreatureAI* GetAI_mob_underbog_mushroom(Creature* pCreature)
@@ -136,7 +140,7 @@ CreatureAI* GetAI_mob_underbog_mushroom(Creature* pCreature)
 
 void AddSC_boss_hungarfen()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_hungarfen";

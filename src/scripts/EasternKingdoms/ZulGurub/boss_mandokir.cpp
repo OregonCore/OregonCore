@@ -74,7 +74,7 @@ struct boss_mandokirAI : public ScriptedAI
     float targetY;
     float targetZ;
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     bool endGaze;
     bool someGazed;
@@ -164,15 +164,13 @@ struct boss_mandokirAI : public ScriptedAI
                     Unit* pUnit = Unit::GetUnit(*me, GazeTarget);
 
                     if (pUnit && (
-                        targetX != pUnit->GetPositionX() ||
-                        targetY != pUnit->GetPositionY() ||
-                        targetZ != pUnit->GetPositionZ() ||
-                        pUnit->isInCombat()))
+                            targetX != pUnit->GetPositionX() ||
+                            targetY != pUnit->GetPositionY() ||
+                            targetZ != pUnit->GetPositionZ() ||
+                            pUnit->isInCombat()))
                     {
                         if (me->IsWithinMeleeRange(pUnit))
-                        {
                             DoCast(pUnit, 24316);
-                        }
                         else
                         {
                             DoCast(pUnit, SPELL_CHARGE);
@@ -251,7 +249,7 @@ struct boss_mandokirAI : public ScriptedAI
                     Fear_Timer = 4000;
                 }
                 else
-                    Fear_Timer -=diff;
+                    Fear_Timer -= diff;
 
                 // Mortal Strike if target is below 50% hp
                 if (me->getVictim() && me->getVictim()->GetHealth() < me->getVictim()->GetMaxHealth() * 0.5f)
@@ -300,7 +298,7 @@ struct mob_ohganAI : public ScriptedAI
     }
 
     uint32 SunderArmor_Timer;
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     void Reset()
     {
@@ -325,7 +323,7 @@ struct mob_ohganAI : public ScriptedAI
         if (SunderArmor_Timer <= diff)
         {
             DoCastVictim( SPELL_SUNDERARMOR);
-            SunderArmor_Timer = 10000 + rand()%5000;
+            SunderArmor_Timer = 10000 + rand() % 5000;
         }
         else
             SunderArmor_Timer -= diff;
@@ -346,7 +344,7 @@ CreatureAI* GetAI_mob_ohgan(Creature* pCreature)
 
 void AddSC_boss_mandokir()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_mandokir";

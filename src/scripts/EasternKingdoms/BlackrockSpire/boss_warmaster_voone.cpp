@@ -67,42 +67,48 @@ struct boss_warmastervooneAI : public ScriptedAI
         {
             DoCastVictim( SPELL_SNAPKICK);
             Snapkick_Timer = 6000;
-        } else Snapkick_Timer -= diff;
+        }
+        else Snapkick_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 12000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         //Uppercut_Timer
         if (Uppercut_Timer <= diff)
         {
             DoCastVictim( SPELL_UPPERCUT);
             Uppercut_Timer = 14000;
-        } else Uppercut_Timer -= diff;
+        }
+        else Uppercut_Timer -= diff;
 
         //MortalStrike_Timer
         if (MortalStrike_Timer <= diff)
         {
             DoCastVictim( SPELL_MORTALSTRIKE);
             MortalStrike_Timer = 10000;
-        } else MortalStrike_Timer -= diff;
+        }
+        else MortalStrike_Timer -= diff;
 
         //Pummel_Timer
         if (Pummel_Timer <= diff)
         {
             DoCastVictim( SPELL_PUMMEL);
             Pummel_Timer = 16000;
-        } else Pummel_Timer -= diff;
+        }
+        else Pummel_Timer -= diff;
 
         //ThrowAxe_Timer
         if (ThrowAxe_Timer <= diff)
         {
             DoCastVictim( SPELL_THROWAXE);
             ThrowAxe_Timer = 8000;
-        } else ThrowAxe_Timer -= diff;
+        }
+        else ThrowAxe_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -114,7 +120,7 @@ CreatureAI* GetAI_boss_warmastervoone(Creature* pCreature)
 
 void AddSC_boss_warmastervoone()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_warmaster_voone";
     newscript->GetAI = &GetAI_boss_warmastervoone;

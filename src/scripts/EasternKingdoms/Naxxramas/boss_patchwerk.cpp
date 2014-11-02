@@ -57,7 +57,7 @@ struct boss_patchwerkAI : public ScriptedAI
 
     void KilledUnit(Unit* /*Victim*/)
     {
-        if (rand()%5)
+        if (rand() % 5)
             return;
 
         DoScriptText(SAY_SLAY, me);
@@ -70,14 +70,10 @@ struct boss_patchwerkAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        if (rand()%2)
-        {
-             DoScriptText(SAY_AGGRO1, me);
-        }
+        if (rand() % 2)
+            DoScriptText(SAY_AGGRO1, me);
         else
-        {
-           DoScriptText(SAY_AGGRO2, me);
-        }
+            DoScriptText(SAY_AGGRO2, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -97,7 +93,7 @@ struct boss_patchwerkAI : public ScriptedAI
 
             for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end();)
             {
-                pTemp = Unit::GetUnit((*me),(*i)->getUnitGuid());
+                pTemp = Unit::GetUnit((*me), (*i)->getUnitGuid());
                 ++i;
                 if (pTemp && pTemp->isAlive() && pTemp->GetHealth() > MostHP && me->GetDistance2d(pTemp) < 5)
                 {
@@ -110,29 +106,32 @@ struct boss_patchwerkAI : public ScriptedAI
                 DoCast(pMostHPTarget, SPELL_HATEFULSTRIKE);
 
             HatefullStrike_Timer = 1200;
-        } else HatefullStrike_Timer -= diff;
+        }
+        else HatefullStrike_Timer -= diff;
 
         //Enrage_Timer
         if (Enrage_Timer <= diff)
         {
             DoCast(me, SPELL_BERSERK);
-             DoScriptText(EMOTE_BERSERK, me);
+            DoScriptText(EMOTE_BERSERK, me);
 
             Enrage_Timer = 300000;
-        } else Enrage_Timer -= diff;
+        }
+        else Enrage_Timer -= diff;
 
         //Slimebolt_Timer
         if (Slimebolt_Timer <= diff)
         {
             DoCastVictim(SPELL_SLIMEBOLT);
             Slimebolt_Timer = 5000;
-        } else Slimebolt_Timer -= diff;
+        }
+        else Slimebolt_Timer -= diff;
 
         //Enrage if not already enraged and below 5%
-        if (!Enraged && (me->GetHealth()*100 / me->GetMaxHealth()) < 5)
+        if (!Enraged && (me->GetHealth() * 100 / me->GetMaxHealth()) < 5)
         {
-            DoCast(me,SPELL_ENRAGE);
-            DoScriptText(EMOTE_ENRAGE,NULL);
+            DoCast(me, SPELL_ENRAGE);
+            DoScriptText(EMOTE_ENRAGE, NULL);
             Enraged = true;
         }
 
@@ -146,7 +145,7 @@ CreatureAI* GetAI_boss_patchwerk(Creature* pCreature)
 
 void AddSC_boss_patchwerk()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_patchwerk";
     newscript->GetAI = &GetAI_boss_patchwerk;

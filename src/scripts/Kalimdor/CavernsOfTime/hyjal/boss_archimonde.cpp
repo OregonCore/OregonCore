@@ -95,7 +95,10 @@ struct mob_ancient_wispAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) {}
 
-    void DamageTaken(Unit* /*done_by*/, uint32 &damage) { damage = 0; }
+    void DamageTaken(Unit* /*done_by*/, uint32& damage)
+    {
+        damage = 0;
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -112,14 +115,15 @@ struct mob_ancient_wispAI : public ScriptedAI
                 Unit* Archimonde = Unit::GetUnit((*me), ArchimondeGUID);
                 if (Archimonde)
                 {
-                    if ((((Archimonde->GetHealth()*100) / Archimonde->GetMaxHealth()) < 2) || !Archimonde->isAlive())
+                    if ((((Archimonde->GetHealth() * 100) / Archimonde->GetMaxHealth()) < 2) || !Archimonde->isAlive())
                         DoCast(me, SPELL_DENOUEMENT_WISP);
                     else
                         DoCast(Archimonde, SPELL_ANCIENT_SPARK);
                 }
             }
             CheckTimer = 1000;
-        } else CheckTimer -= diff;
+        }
+        else CheckTimer -= diff;
     }
 };
 
@@ -149,7 +153,10 @@ struct mob_doomfireAI : public ScriptedAI
         TargetGUID = 0;
     }
 
-    void DamageTaken(Unit* /*done_by*/, uint32 &damage) { damage = 0; }
+    void DamageTaken(Unit* /*done_by*/, uint32& damage)
+    {
+        damage = 0;
+    }
 
     void EnterCombat(Unit* /*who*/) { }
 
@@ -213,7 +220,8 @@ struct mob_doomfireAI : public ScriptedAI
                 CheckTimer = 5000;
             }
             else me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-        } else CheckTimer -= diff;
+        }
+        else CheckTimer -= diff;
     }
 };
 
@@ -247,7 +255,10 @@ struct mob_doomfire_targettingAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/) {}
 
-    void DamageTaken(Unit* /*done_by*/, uint32 &damage) { damage = 0; }
+    void DamageTaken(Unit* /*done_by*/, uint32& damage)
+    {
+        damage = 0;
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -275,31 +286,33 @@ struct mob_doomfire_targettingAI : public ScriptedAI
             }
             else
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-        } else SummonTimer -= diff;
+        }
+        else SummonTimer -= diff;
 
         if (ChangeTargetTimer <= diff)
         {
             Unit* pTarget = NULL;
-            switch(rand()%2)
+            switch (rand() % 2)
             {
-                case 0:                                     // stalk player
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-                    if (pTarget && pTarget->isAlive())
-                    {
-                        me->AddThreat(pTarget, DoGetThreat(me->getVictim()));
-                        me->GetMotionMaster()->MoveChase(pTarget);
-                    }
-                    break;
+            case 0:                                     // stalk player
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+                if (pTarget && pTarget->isAlive())
+                {
+                    me->AddThreat(pTarget, DoGetThreat(me->getVictim()));
+                    me->GetMotionMaster()->MoveChase(pTarget);
+                }
+                break;
 
-                case 1:                                     // random location
-                    Position pos;
-                    me->GetRandomNearPosition(pos, 40);
-                    me->GetMotionMaster()->MovePoint(0, pos.m_positionX, pos.m_positionY, pos.m_positionZ);
-                    break;
+            case 1:                                     // random location
+                Position pos;
+                me->GetRandomNearPosition(pos, 40);
+                me->GetMotionMaster()->MovePoint(0, pos.m_positionX, pos.m_positionY, pos.m_positionZ);
+                break;
             }
 
             ChangeTargetTimer = 5000;
-        } else ChangeTargetTimer -= diff;
+        }
+        else ChangeTargetTimer -= diff;
     }
 };
 
@@ -348,9 +361,9 @@ struct boss_archimondeAI : public hyjal_trashAI
         DrainNordrassilTimer = 0;
         FearTimer = 42000;
         AirBurstTimer = 30000;
-        GripOfTheLegionTimer = 5000 + rand()%20000;
+        GripOfTheLegionTimer = 5000 + rand() % 20000;
         DoomfireTimer = 20000;
-        SoulChargeTimer = 2000 + rand()%27000;
+        SoulChargeTimer = 2000 + rand() % 27000;
         SoulChargeCount = 0;
         MeleeRangeCheckTimer = 15000;
         HandOfDeathTimer = 2000;
@@ -377,7 +390,7 @@ struct boss_archimondeAI : public hyjal_trashAI
 
     void KilledUnit(Unit* victim)
     {
-        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2,SAY_SLAY3), me);
+        DoScriptText(RAND(SAY_SLAY1, SAY_SLAY2, SAY_SLAY3), me);
 
         if (victim && (victim->GetTypeId() == TYPEID_PLAYER))
             GainSoulCharge(CAST_PLR(victim));
@@ -385,26 +398,26 @@ struct boss_archimondeAI : public hyjal_trashAI
 
     void GainSoulCharge(Player* victim)
     {
-        switch(victim->getClass())
+        switch (victim->getClass())
         {
-            case CLASS_PRIEST:
-            case CLASS_PALADIN:
-            case CLASS_WARLOCK:
-                victim->CastSpell(me, SPELL_SOUL_CHARGE_RED, true);
-                break;
-            case CLASS_MAGE:
-            case CLASS_ROGUE:
-            case CLASS_WARRIOR:
-                victim->CastSpell(me, SPELL_SOUL_CHARGE_YELLOW, true);
-                break;
-            case CLASS_DRUID:
-            case CLASS_SHAMAN:
-            case CLASS_HUNTER:
-                victim->CastSpell(me, SPELL_SOUL_CHARGE_GREEN, true);
-                break;
+        case CLASS_PRIEST:
+        case CLASS_PALADIN:
+        case CLASS_WARLOCK:
+            victim->CastSpell(me, SPELL_SOUL_CHARGE_RED, true);
+            break;
+        case CLASS_MAGE:
+        case CLASS_ROGUE:
+        case CLASS_WARRIOR:
+            victim->CastSpell(me, SPELL_SOUL_CHARGE_YELLOW, true);
+            break;
+        case CLASS_DRUID:
+        case CLASS_SHAMAN:
+        case CLASS_HUNTER:
+            victim->CastSpell(me, SPELL_SOUL_CHARGE_GREEN, true);
+            break;
         }
 
-        SoulChargeTimer = urand(2000,30000);
+        SoulChargeTimer = urand(2000, 30000);
         ++SoulChargeCount;
     }
 
@@ -455,7 +468,7 @@ struct boss_archimondeAI : public hyjal_trashAI
 
     void SummonDoomfire(Unit* pTarget)
     {
-        Creature* Doomfire = DoSpawnCreature(CREATURE_DOOMFIRE_TARGETING, float(rand()%30), float(rand()%30), 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
+        Creature* Doomfire = DoSpawnCreature(CREATURE_DOOMFIRE_TARGETING, float(rand() % 30), float(rand() % 30), 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
         if (Doomfire)
         {
             ((mob_doomfire_targettingAI*)Doomfire->AI())->ArchimondeGUID = me->GetGUID();
@@ -470,7 +483,7 @@ struct boss_archimondeAI : public hyjal_trashAI
             if (pTarget)
                 Doomfire->AI()->AttackStart(pTarget);
 
-            if (rand()%2 == 0)
+            if (rand() % 2 == 0)
                 DoScriptText(SAY_DOOMFIRE1, me);
             else
                 DoScriptText(SAY_DOOMFIRE2, me);
@@ -485,20 +498,20 @@ struct boss_archimondeAI : public hyjal_trashAI
         uint32 chargeSpell = 0;
         uint32 unleashSpell = 0;
 
-        switch (urand(0,2))
+        switch (urand(0, 2))
         {
-            case 0:
-                chargeSpell = SPELL_SOUL_CHARGE_RED;
-                unleashSpell = SPELL_UNLEASH_SOUL_RED;
-                break;
-            case 1:
-                chargeSpell = SPELL_SOUL_CHARGE_YELLOW;
-                unleashSpell = SPELL_UNLEASH_SOUL_YELLOW;
-                break;
-            case 2:
-                chargeSpell = SPELL_SOUL_CHARGE_GREEN;
-                unleashSpell = SPELL_UNLEASH_SOUL_GREEN;
-                break;
+        case 0:
+            chargeSpell = SPELL_SOUL_CHARGE_RED;
+            unleashSpell = SPELL_UNLEASH_SOUL_RED;
+            break;
+        case 1:
+            chargeSpell = SPELL_SOUL_CHARGE_YELLOW;
+            unleashSpell = SPELL_UNLEASH_SOUL_YELLOW;
+            break;
+        case 2:
+            chargeSpell = SPELL_SOUL_CHARGE_GREEN;
+            unleashSpell = SPELL_UNLEASH_SOUL_GREEN;
+            break;
         }
 
         if (me->HasAura(chargeSpell, 0))
@@ -510,7 +523,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         }
 
         if (HasCast)
-            SoulChargeTimer = urand(2000,30000);
+            SoulChargeTimer = urand(2000, 30000);
     }
 
     void UpdateAI(const uint32 diff)
@@ -553,27 +566,29 @@ struct boss_archimondeAI : public hyjal_trashAI
                     Nordrassil->CastSpell(me, SPELL_DRAIN_WORLD_TREE_2, true);
                     DrainNordrassilTimer = 1000;
                 }
-            } else DrainNordrassilTimer -= diff;
+            }
+            else DrainNordrassilTimer -= diff;
         }
 
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth()*100 / me->GetMaxHealth()) < 10) && !BelowTenPercent && !Enraged)
+        if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 10) && !BelowTenPercent && !Enraged)
             BelowTenPercent = true;
 
         if (!Enraged)
         {
             if (EnrageTimer <= diff)
             {
-                if ((me->GetHealth()*100 / me->GetMaxHealth()) > 10)
+                if ((me->GetHealth() * 100 / me->GetMaxHealth()) > 10)
                 {
                     me->GetMotionMaster()->Clear(false);
                     me->GetMotionMaster()->MoveIdle();
                     Enraged = true;
                     DoScriptText(SAY_ENRAGE, me);
                 }
-            } else EnrageTimer -= diff;
+            }
+            else EnrageTimer -= diff;
 
             if (CheckDistanceTimer <= diff)
             {
@@ -592,7 +607,8 @@ struct boss_archimondeAI : public hyjal_trashAI
                     }
                 }
                 CheckDistanceTimer = 5000;
-            } else CheckDistanceTimer -= diff;
+            }
+            else CheckDistanceTimer -= diff;
         }
 
         if (BelowTenPercent)
@@ -610,7 +626,7 @@ struct boss_archimondeAI : public hyjal_trashAI
 
             if (SummonWispTimer <= diff)
             {
-                Creature* Wisp = DoSpawnCreature(CREATURE_ANCIENT_WISP, rand()%40, rand()%40, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                Creature* Wisp = DoSpawnCreature(CREATURE_ANCIENT_WISP, rand() % 40, rand() % 40, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                 if (Wisp)
                 {
                     Wisp->AI()->AttackStart(me);
@@ -618,7 +634,8 @@ struct boss_archimondeAI : public hyjal_trashAI
                 }
                 SummonWispTimer = 1500;
                 ++WispCount;
-            } else SummonWispTimer -= diff;
+            }
+            else SummonWispTimer -= diff;
 
             if (WispCount >= 30)
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -630,7 +647,8 @@ struct boss_archimondeAI : public hyjal_trashAI
             {
                 DoCastVictim( SPELL_HAND_OF_DEATH);
                 HandOfDeathTimer = 2000;
-            } else HandOfDeathTimer -= diff;
+            }
+            else HandOfDeathTimer -= diff;
             return;                                         // Don't do anything after this point.
         }
 
@@ -644,31 +662,35 @@ struct boss_archimondeAI : public hyjal_trashAI
         if (GripOfTheLegionTimer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_GRIP_OF_THE_LEGION);
-            GripOfTheLegionTimer = urand(5000,25000);
-        } else GripOfTheLegionTimer -= diff;
+            GripOfTheLegionTimer = urand(5000, 25000);
+        }
+        else GripOfTheLegionTimer -= diff;
 
         if (AirBurstTimer <= diff)
         {
-            if (urand(0,1))
+            if (urand(0, 1))
                 DoScriptText(SAY_AIR_BURST1, me);
             else
                 DoScriptText(SAY_AIR_BURST2, me);
 
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 1), SPELL_AIR_BURST);//not on tank
-            AirBurstTimer = urand(25000,40000);
-        } else AirBurstTimer -= diff;
+            AirBurstTimer = urand(25000, 40000);
+        }
+        else AirBurstTimer -= diff;
 
         if (FearTimer <= diff)
         {
             DoCastVictim( SPELL_FEAR);
             FearTimer = 42000;
-        } else FearTimer -= diff;
+        }
+        else FearTimer -= diff;
 
         if (DoomfireTimer <= diff)
         {
             SummonDoomfire(SelectUnit(SELECT_TARGET_RANDOM, 1));
             DoomfireTimer = 40000;
-        } else DoomfireTimer -= diff;
+        }
+        else DoomfireTimer -= diff;
 
         if (MeleeRangeCheckTimer <= diff)
         {
@@ -679,11 +701,12 @@ struct boss_archimondeAI : public hyjal_trashAI
             }
 
             MeleeRangeCheckTimer = 5000;
-        } else MeleeRangeCheckTimer -= diff;
+        }
+        else MeleeRangeCheckTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
-    void WaypointReached(uint32 /*i*/){}
+    void WaypointReached(uint32 /*i*/) {}
 };
 
 CreatureAI* GetAI_boss_archimonde(Creature* pCreature)
@@ -708,7 +731,7 @@ CreatureAI* GetAI_mob_ancient_wisp(Creature* pCreature)
 
 void AddSC_boss_archimonde()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_archimonde";
     newscript->GetAI = &GetAI_boss_archimonde;

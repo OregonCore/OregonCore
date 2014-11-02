@@ -71,7 +71,7 @@ struct npc_draenei_survivorAI : public ScriptedAI
     void Reset()
     {
         UnSpawnTimer = 2500;
-        ResetlifeTimer= 60000;
+        ResetlifeTimer = 60000;
         SayingTimer    = 5000;
         HealSayTimer = 6000;
         say = false;
@@ -96,34 +96,32 @@ struct npc_draenei_survivorAI : public ScriptedAI
 
         if (who->GetTypeId() == TYPEID_PLAYER && me->IsFriendlyTo(who) && me->IsWithinDistInMap(who, 15) && say && !isRun)
         {
-            switch (rand()%4)                               //Random switch between 4 texts
+            switch (rand() % 4)                             //Random switch between 4 texts
             {
-                case 0:
-                    DoScriptText(HELP1, me);
-                    SayingTimer = 15000;
-                    say = false;
-                    break;
-                case 1:
-                    DoScriptText(HELP2, me);
-                    SayingTimer = 15000;
-                    say = false;
-                    break;
-                case 2:
-                    DoScriptText(HELP3, me);
-                    SayingTimer = 15000;
-                    say = false;
-                    break;
-                case 3:
-                    DoScriptText(HELP4, me);
-                    SayingTimer = 15000;
-                    say = false;
-                    break;
+            case 0:
+                DoScriptText(HELP1, me);
+                SayingTimer = 15000;
+                say = false;
+                break;
+            case 1:
+                DoScriptText(HELP2, me);
+                SayingTimer = 15000;
+                say = false;
+                break;
+            case 2:
+                DoScriptText(HELP3, me);
+                SayingTimer = 15000;
+                say = false;
+                break;
+            case 3:
+                DoScriptText(HELP4, me);
+                SayingTimer = 15000;
+                say = false;
+                break;
             }
         }
         else
-        {
             isRun = false;
-        }
     }
 
     void UpdateAI(const uint32 diff)                        //Is also called each ms for Creature AI Updates...
@@ -137,7 +135,7 @@ struct npc_draenei_survivorAI : public ScriptedAI
                 //set creature health
                 me->SetHealth(int(me->GetMaxHealth()*.1));
                 // ley down
-                me->SetUInt32Value(UNIT_FIELD_BYTES_1,3);
+                me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3);
             }
             else ResetlifeTimer -= diff;
         }
@@ -149,7 +147,8 @@ struct npc_draenei_survivorAI : public ScriptedAI
                 UnSpawn = true;
                 isRun = true;
                 isMove = true;
-            } else HealSayTimer -= diff;
+            }
+            else HealSayTimer -= diff;
         }
 
         if (UnSpawn)
@@ -168,28 +167,36 @@ struct npc_draenei_survivorAI : public ScriptedAI
                 //set creature health
                 me->SetHealth(int(me->GetMaxHealth()*.1));
                 return;
-            } else UnSpawnTimer -= diff;
+            }
+            else UnSpawnTimer -= diff;
         }
 
         if (SayingTimer <= diff)
-        {
             say = true;
-        } else SayingTimer -= diff;
+        else SayingTimer -= diff;
     }
 
-    void SpellHit(Unit* Hitter, const SpellEntry *Spellkind)//Called if you cast a spell and do some things if Specified spell is true!
+    void SpellHit(Unit* Hitter, const SpellEntry* Spellkind)//Called if you cast a spell and do some things if Specified spell is true!
     {
         if (Hitter && Spellkind->Id == 28880)
         {
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
             me->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED);
             me->HandleEmoteCommand(ANIM_RISE);
-            switch (rand()%4)                               //This switch doesn't work at all, creature say nothing!
+            switch (rand() % 4)                             //This switch doesn't work at all, creature say nothing!
             {
-                case 0: DoScriptText(HEAL1, me, Hitter); break;
-                case 1: DoScriptText(HEAL2, me, Hitter); break;
-                case 2: DoScriptText(HEAL3, me, Hitter); break;
-                case 3: DoScriptText(HEAL4, me, Hitter); break;
+            case 0:
+                DoScriptText(HEAL1, me, Hitter);
+                break;
+            case 1:
+                DoScriptText(HEAL2, me, Hitter);
+                break;
+            case 2:
+                DoScriptText(HEAL3, me, Hitter);
+                break;
+            case 3:
+                DoScriptText(HEAL4, me, Hitter);
+                break;
             }
             HealSay    = true;
         }
@@ -225,7 +232,7 @@ struct npc_engineer_spark_overgrindAI : public ScriptedAI
     void Reset()
     {
         Dynamite_Timer = 8000;
-        Emote_Timer = 120000 + rand()%30000;
+        Emote_Timer = 120000 + rand() % 30000;
         me->setFaction(875);
     }
 
@@ -239,8 +246,9 @@ struct npc_engineer_spark_overgrindAI : public ScriptedAI
             {
                 DoScriptText(SAY_TEXT, me);
                 DoScriptText(SAY_EMOTE, me);
-                Emote_Timer = 120000 + rand()%30000;
-            } else Emote_Timer -= diff;
+                Emote_Timer = 120000 + rand() % 30000;
+            }
+            else Emote_Timer -= diff;
         }
 
         if (!UpdateVictim())
@@ -250,7 +258,8 @@ struct npc_engineer_spark_overgrindAI : public ScriptedAI
         {
             DoCastVictim( SPELL_DYNAMITE);
             Dynamite_Timer = 8000;
-        } else Dynamite_Timer -= diff;
+        }
+        else Dynamite_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -294,10 +303,14 @@ struct npc_injured_draeneiAI : public ScriptedAI
     {
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
         me->SetHealth(int(me->GetMaxHealth()*.15));
-        switch (rand()%2)
+        switch (rand() % 2)
         {
-            case 0: me->SetUInt32Value(UNIT_FIELD_BYTES_1, 1); break;
-            case 1: me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3); break;
+        case 0:
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 1);
+            break;
+        case 1:
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3);
+            break;
         }
     }
 
@@ -344,7 +357,7 @@ struct npc_magwinAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(i)
+        switch (i)
         {
         case 0:
             DoScriptText(SAY_START, me, pPlayer);
@@ -358,7 +371,7 @@ struct npc_magwinAI : public npc_escortAI
         case 29:
             DoScriptText(EMOTE_HUG, me, pPlayer);
             DoScriptText(SAY_END2, me, pPlayer);
-            pPlayer->GroupEventHappens(QUEST_A_CRY_FOR_SAY_HELP,me);
+            pPlayer->GroupEventHappens(QUEST_A_CRY_FOR_SAY_HELP, me);
             break;
         }
     }
@@ -404,7 +417,7 @@ CreatureAI* GetAI_npc_magwinAI(Creature* pCreature)
 #define MOB_SPARK       17243
 #define GO_NAGA_FLAG    181694
 
-static float SparkPos[3] = {-5030.95f, -11291.99f, 7.97f};
+static float SparkPos[3] = { -5030.95f, -11291.99f, 7.97f};
 
 struct npc_geezleAI : public ScriptedAI
 {
@@ -424,7 +437,7 @@ struct npc_geezleAI : public ScriptedAI
         StartEvent();
     }
 
-    void EnterCombat(Unit* /*who*/){}
+    void EnterCombat(Unit* /*who*/) {}
 
     void StartEvent()
     {
@@ -446,9 +459,10 @@ struct npc_geezleAI : public ScriptedAI
     {
         Unit* Spark = Unit::GetUnit((*me), SparkGUID);
 
-        switch(Step)
+        switch (Step)
         {
-        case 0: return 99999;
+        case 0:
+            return 99999;
         case 1:
             //DespawnNagaFlag(true);
             DoScriptText(EMOTE_SPARK, Spark);
@@ -461,12 +475,24 @@ struct npc_geezleAI : public ScriptedAI
                 me->SetInFront(Spark);
             }
             return 5000;
-        case 3: DoScriptText(SPARK_SAY_2, Spark); return 7000;
-        case 4: DoScriptText(SPARK_SAY_3, Spark); return 8000;
-        case 5: DoScriptText(GEEZLE_SAY_4, me, Spark); return 8000;
-        case 6: DoScriptText(SPARK_SAY_5, Spark); return 9000;
-        case 7: DoScriptText(SPARK_SAY_6, Spark); return 8000;
-        case 8: DoScriptText(GEEZLE_SAY_7, me, Spark); return 2000;
+        case 3:
+            DoScriptText(SPARK_SAY_2, Spark);
+            return 7000;
+        case 4:
+            DoScriptText(SPARK_SAY_3, Spark);
+            return 8000;
+        case 5:
+            DoScriptText(GEEZLE_SAY_4, me, Spark);
+            return 8000;
+        case 6:
+            DoScriptText(SPARK_SAY_5, Spark);
+            return 9000;
+        case 7:
+            DoScriptText(SPARK_SAY_6, Spark);
+            return 8000;
+        case 8:
+            DoScriptText(GEEZLE_SAY_7, me, Spark);
+            return 2000;
         case 9:
             me->GetMotionMaster()->MoveTargetedHome();
             if (Spark)
@@ -474,17 +500,18 @@ struct npc_geezleAI : public ScriptedAI
             return 20000;
         case 10:
             if (Spark)
-                Spark->DealDamage(Spark,Spark->GetHealth(),NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                Spark->DealDamage(Spark, Spark->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             //DespawnNagaFlag(false);
             me->SetVisibility(VISIBILITY_OFF);
-        default: return 99999999;
+        default:
+            return 99999999;
         }
     }
 
     void DespawnNagaFlag(bool despawn)
     {
         std::list<GameObject*> FlagList;
-        me->GetGameObjectListWithEntryInGrid(FlagList,GO_NAGA_FLAG, 100.0f);
+        me->GetGameObjectListWithEntryInGrid(FlagList, GO_NAGA_FLAG, 100.0f);
 
         if (!FlagList.empty())
         {
@@ -496,7 +523,8 @@ struct npc_geezleAI : public ScriptedAI
                 else
                     (*itr)->Respawn();
             }
-        } else error_log("SD2 ERROR: FlagList is empty!");
+        }
+        else error_log("SD2 ERROR: FlagList is empty!");
     }
 
     void UpdateAI(const uint32 diff)
@@ -504,10 +532,9 @@ struct npc_geezleAI : public ScriptedAI
         if (SayTimer <= diff)
         {
             if (EventStarted)
-            {
                 SayTimer = NextStep(++Step);
-            }
-        } else SayTimer -= diff;
+        }
+        else SayTimer -= diff;
     }
 };
 
@@ -538,7 +565,7 @@ struct mob_nestlewood_owlkinAI : public ScriptedAI
         Hitted = false;
     }
 
-    void EnterCombat(Unit* /*who*/){}
+    void EnterCombat(Unit* /*who*/) {}
 
     void SpellHit(Unit* caster, const SpellEntry* spell)
     {
@@ -560,7 +587,8 @@ struct mob_nestlewood_owlkinAI : public ScriptedAI
             me->RemoveCorpse();
             me->SummonCreature(INOCULATED_OWLKIN, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 180000);
             Channeled = true;
-        } else ChannelTimer -= diff;
+        }
+        else ChannelTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -588,7 +616,7 @@ bool go_ravager_cage(Player* pPlayer, GameObject* pGo)
     {
         if (Creature* ravager = pGo->FindNearestCreature(NPC_DEATH_RAVAGER, 5.0f, true))
         {
-            ravager->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NON_ATTACKABLE);
+            ravager->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             ravager->SetReactState(REACT_AGGRESSIVE);
             ravager->AI()->AttackStart(pPlayer);
         }
@@ -598,7 +626,7 @@ bool go_ravager_cage(Player* pPlayer, GameObject* pGo)
 
 struct npc_death_ravagerAI : public ScriptedAI
 {
-    npc_death_ravagerAI(Creature* c) : ScriptedAI(c){}
+    npc_death_ravagerAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 RendTimer;
     uint32 EnragingBiteTimer;
@@ -659,7 +687,7 @@ enum BristlelimbCage
 
 struct npc_stillpine_capitiveAI : public ScriptedAI
 {
-    npc_stillpine_capitiveAI(Creature* c) : ScriptedAI(c){}
+    npc_stillpine_capitiveAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 FleeTimer;
 
@@ -706,7 +734,7 @@ bool go_bristlelimb_cage(Player* pPlayer, GameObject* pGo)
 
 void AddSC_azuremyst_isle()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_draenei_survivor";
@@ -742,22 +770,22 @@ void AddSC_azuremyst_isle()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_death_ravager";
+    newscript->Name = "npc_death_ravager";
     newscript->GetAI = &GetAI_npc_death_ravagerAI;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_ravager_cage";
+    newscript->Name = "go_ravager_cage";
     newscript->pGOHello = &go_ravager_cage;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_stillpine_capitive";
+    newscript->Name = "npc_stillpine_capitive";
     newscript->GetAI = &GetAI_npc_stillpine_capitiveAI;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_bristlelimb_cage";
+    newscript->Name = "go_bristlelimb_cage";
     newscript->pGOHello = &go_bristlelimb_cage;
     newscript->RegisterSelf();
 

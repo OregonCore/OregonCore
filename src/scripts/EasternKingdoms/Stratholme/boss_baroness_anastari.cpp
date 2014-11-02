@@ -56,11 +56,11 @@ struct boss_baroness_anastariAI : public ScriptedAI
     {
     }
 
-     void JustDied(Unit* /*Killer*/)
-     {
-         if (pInstance)
-             pInstance->SetData(TYPE_BARONESS,IN_PROGRESS);
-     }
+    void JustDied(Unit* /*Killer*/)
+    {
+        if (pInstance)
+            pInstance->SetData(TYPE_BARONESS, IN_PROGRESS);
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -70,29 +70,32 @@ struct boss_baroness_anastariAI : public ScriptedAI
         //BansheeWail
         if (BansheeWail_Timer <= diff)
         {
-            if (rand()%100 < 95)
+            if (rand() % 100 < 95)
                 DoCastVictim( SPELL_BANSHEEWAIL);
             //4 seconds until we should cast this again
             BansheeWail_Timer = 4000;
-        } else BansheeWail_Timer -= diff;
+        }
+        else BansheeWail_Timer -= diff;
 
         //BansheeCurse
         if (BansheeCurse_Timer <= diff)
         {
-            if (rand()%100 < 75)
+            if (rand() % 100 < 75)
                 DoCastVictim( SPELL_BANSHEECURSE);
             //18 seconds until we should cast this again
             BansheeCurse_Timer = 18000;
-        } else BansheeCurse_Timer -= diff;
+        }
+        else BansheeCurse_Timer -= diff;
 
         //Silence
         if (Silence_Timer <= diff)
         {
-            if (rand()%100 < 80)
+            if (rand() % 100 < 80)
                 DoCastVictim( SPELL_SILENCE);
             //13 seconds until we should cast this again
             Silence_Timer = 13000;
-        } else Silence_Timer -= diff;
+        }
+        else Silence_Timer -= diff;
 
         //Possess
         /*           if (Possess_Timer <= diff)
@@ -119,7 +122,7 @@ CreatureAI* GetAI_boss_baroness_anastari(Creature* pCreature)
 
 void AddSC_boss_baroness_anastari()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_baroness_anastari";
     newscript->GetAI = &GetAI_boss_baroness_anastari;

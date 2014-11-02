@@ -45,7 +45,7 @@ enum Spells
     SPELL_ENRAGE            =   8269,
     SPELL_SUMMONTIGERS      =   24183,
     SPELL_TIGER_FORM        =   24169,
-                          
+
 
     // Zealot Lor'Khan Spells
     SPELL_SHIELD            =   20545,
@@ -126,7 +126,7 @@ struct boss_thekalAI : public ScriptedAI
     uint32 Enrage_Timer;
     uint32 Frenzy_Timer;
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     bool Enraged;
 
@@ -150,7 +150,7 @@ struct boss_thekalAI : public ScriptedAI
 
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetStandState(UNIT_STAND_STATE_STAND);
-     }
+    }
 
     void JustDied(Unit* /*Killer*/)
     {
@@ -177,7 +177,7 @@ struct boss_thekalAI : public ScriptedAI
         }
     }
 
-    void DamageTaken(Unit* /*pDoneBy*/, uint32 &uiDamage)
+    void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
         if (uiDamage < me->GetHealth() || ThekalDead)
             return;
@@ -209,13 +209,13 @@ struct boss_thekalAI : public ScriptedAI
                 DoCast(me, SPELL_TIGER_FORM);
                 Resurrect(me);
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                const CreatureInfo *cinfo = me->GetCreatureTemplate();
-                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg / 100) * 40)));
-                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg / 100) * 40)));
+                const CreatureInfo* cinfo = me->GetCreatureTemplate();
+                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 40)));
+                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 40)));
                 me->UpdateDamagePhysical(BASE_ATTACK);
                 DoResetThreat();
                 PhaseTwo = true;
-                DoScriptText(SAY_TRANSFORM,me);
+                DoScriptText(SAY_TRANSFORM, me);
             }
 
             if (ThekalDead)
@@ -242,23 +242,23 @@ struct boss_thekalAI : public ScriptedAI
             if (MortalCleave_Timer <= diff)
             {
                 DoCastVictim( SPELL_MORTALCLEAVE);
-                MortalCleave_Timer = 15000 + rand()%5000;
-            } 
-            else 
+                MortalCleave_Timer = 15000 + rand() % 5000;
+            }
+            else
                 MortalCleave_Timer -= diff;
 
             // Silence Timer
             if (Silence_Timer <= diff)  // Cast on a random target in range?
             {
                 DoCastVictim( SPELL_SILENCE);
-                Silence_Timer = 20000 + rand()%5000;
+                Silence_Timer = 20000 + rand() % 5000;
             }
-            else 
+            else
                 Silence_Timer -= diff;
 
         }
         else
-        // Phase 2 spells
+            // Phase 2 spells
         {
             // Enrage below 25% health
             if (!Enraged && (me->GetHealth() < (me->GetMaxHealth() * 0.25)))
@@ -276,7 +276,7 @@ struct boss_thekalAI : public ScriptedAI
                     DoResetThreat();
                     AttackStart(pTarget);
                 }
-                Charge_Timer = 15000 + rand()%7000;
+                Charge_Timer = 15000 + rand() % 7000;
             }
             else
                 Charge_Timer -= diff;
@@ -286,7 +286,7 @@ struct boss_thekalAI : public ScriptedAI
             {
                 DoCast(me, SPELL_FRENZY);
                 Frenzy_Timer = 30000;
-            } 
+            }
             else
                 Frenzy_Timer -= diff;
 
@@ -294,8 +294,8 @@ struct boss_thekalAI : public ScriptedAI
             if (ForcePunch_Timer <= diff)
             {
                 DoCastVictim( SPELL_SILENCE);
-                ForcePunch_Timer = 16000 + rand()%5000;
-            } 
+                ForcePunch_Timer = 16000 + rand() % 5000;
+            }
             else
                 ForcePunch_Timer -= diff;
 
@@ -303,8 +303,8 @@ struct boss_thekalAI : public ScriptedAI
             if (SummonTigers_Timer <= diff)
             {
                 DoCastVictim( SPELL_SUMMONTIGERS);
-                SummonTigers_Timer = 10000 + rand()%4000;
-            } 
+                SummonTigers_Timer = 10000 + rand() % 4000;
+            }
             else
                 SummonTigers_Timer -= diff;
         }
@@ -325,7 +325,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
     uint32 GreaterHeal_Timer;
     uint32 Disarm_Timer;
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     void Reset()
     {
@@ -351,7 +351,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
         }
     }
 
-    void DamageTaken(Unit* /*pDoneBy*/, uint32 &uiDamage)
+    void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
         if (uiDamage < me->GetHealth() || LorkhanDead)
             return;
@@ -368,7 +368,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
 
         uiDamage = 0;
     }
-    
+
     void UpdateAI (const uint32 diff)
     {
         if (!UpdateVictim())
@@ -401,8 +401,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
                         pThekal->CastSpell(pThekal, SPELL_RESURRECT, false, 0, 0, pThekal->GetGUID());
                 IsResurrecting = true;
             }
-            else
-            if (ThekalDead)
+            else if (ThekalDead)
                 CheckDeath_Timer -= diff;
         }
 
@@ -412,14 +411,14 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
             DoCast(me, SPELL_SHIELD);
             Shield_Timer = 61000;
         }
-        else 
+        else
             Shield_Timer -= diff;
 
         // BloodLust Timer
         if (BloodLust_Timer <= diff)
         {
             DoCast(me, SPELL_BLOODLUST);
-            BloodLust_Timer = 20000 + rand()%8000;
+            BloodLust_Timer = 20000 + rand() % 8000;
         }
         else
             BloodLust_Timer -= diff;
@@ -443,28 +442,24 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
                             DoCast(pThekal, SPELL_GREATERHEAL);
                         else
                             DoCast(me, SPELL_GREATERHEAL);
+                    else if ((pZath->GetHealth() / pZath->GetMaxHealth()) < (me->GetHealth() / me->GetMaxHealth()))
+                        DoCast(pZath, SPELL_GREATERHEAL);
                     else
-                        if ((pZath->GetHealth() / pZath->GetMaxHealth()) < (me->GetHealth() / me->GetMaxHealth()))
-                            DoCast(pZath, SPELL_GREATERHEAL);
-                        else
-                            DoCast(me, SPELL_GREATERHEAL);
-                else
-                if (me->IsWithinMeleeRange(pThekal) && !me->IsWithinMeleeRange(pZath))
+                        DoCast(me, SPELL_GREATERHEAL);
+                else if (me->IsWithinMeleeRange(pThekal) && !me->IsWithinMeleeRange(pZath))
                     if ((pThekal->GetHealth() / pThekal->GetMaxHealth()) < (me->GetHealth() / me->GetMaxHealth()))
-                            DoCast(pThekal, SPELL_GREATERHEAL);
-                        else
-                            DoCast(me, SPELL_GREATERHEAL);
-                else
-                if (!me->IsWithinMeleeRange(pThekal) && me->IsWithinMeleeRange(pZath))
+                        DoCast(pThekal, SPELL_GREATERHEAL);
+                    else
+                        DoCast(me, SPELL_GREATERHEAL);
+                else if (!me->IsWithinMeleeRange(pThekal) && me->IsWithinMeleeRange(pZath))
                     if ((pZath->GetHealth() / pZath->GetMaxHealth()) < (me->GetHealth() / me->GetMaxHealth()))
-                            DoCast(pZath, SPELL_GREATERHEAL);
-                        else
-                            DoCast(me, SPELL_GREATERHEAL);
-                else
-                if (!me->IsWithinMeleeRange(pThekal) && !me->IsWithinMeleeRange(pZath))
+                        DoCast(pZath, SPELL_GREATERHEAL);
+                    else
+                        DoCast(me, SPELL_GREATERHEAL);
+                else if (!me->IsWithinMeleeRange(pThekal) && !me->IsWithinMeleeRange(pZath))
                     DoCast(me, SPELL_GREATERHEAL);
             }
-            GreaterHeal_Timer = 15000 + rand()%5000;
+            GreaterHeal_Timer = 15000 + rand() % 5000;
         }
         else
             GreaterHeal_Timer -= diff;
@@ -473,7 +468,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
         if (Disarm_Timer <= diff)
         {
             DoCastVictim( SPELL_DISARM);
-            Disarm_Timer = 15000 + rand()%10000;
+            Disarm_Timer = 15000 + rand() % 10000;
         }
         else
             Disarm_Timer -= diff;
@@ -495,7 +490,7 @@ struct mob_zealot_zathAI : public ScriptedAI
     uint32 Kick_Timer;
     uint32 Blind_Timer;
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     void Reset()
     {
@@ -522,7 +517,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         }
     }
 
-    void DamageTaken(Unit* /*pDoneBy*/, uint32 &uiDamage)
+    void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
         if (uiDamage < me->GetHealth() || ZathDead)
             return;
@@ -572,8 +567,7 @@ struct mob_zealot_zathAI : public ScriptedAI
                         pThekal->CastSpell(pThekal, SPELL_RESURRECT, false, 0, 0, pThekal->GetGUID());
                 IsResurrecting = true;
             }
-            else
-            if (LorkhanDead && ThekalDead)
+            else if (LorkhanDead && ThekalDead)
                 CheckDeath_Timer -= diff;
         }
 
@@ -581,7 +575,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         if (SweepingStrikes_Timer <= diff)
         {
             DoCastVictim( SPELL_SWEEPINGSTRIKES);
-            SweepingStrikes_Timer = 22000 + rand()%4000;
+            SweepingStrikes_Timer = 22000 + rand() % 4000;
         }
         else
             SweepingStrikes_Timer -= diff;
@@ -590,7 +584,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         if (SinisterStrike_Timer <= diff)
         {
             DoCastVictim( SPELL_SINISTERSTRIKE);
-            SinisterStrike_Timer = 8000 + rand()%8000;
+            SinisterStrike_Timer = 8000 + rand() % 8000;
         }
         else
             SinisterStrike_Timer -= diff;
@@ -603,7 +597,7 @@ struct mob_zealot_zathAI : public ScriptedAI
             if (DoGetThreat(me->getVictim()))
                 DoModifyThreatPercent(me->getVictim(), -100);
 
-            Gouge_Timer = 17000 + rand()%10000;
+            Gouge_Timer = 17000 + rand() % 10000;
         }
         else
             Gouge_Timer -= diff;
@@ -612,7 +606,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         if (Kick_Timer <= diff)
         {
             DoCastVictim( SPELL_KICK);
-            Kick_Timer = 15000 + rand()%10000;
+            Kick_Timer = 15000 + rand() % 10000;
         }
         else
             Kick_Timer -= diff;
@@ -621,7 +615,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         if (Blind_Timer <= diff)
         {
             DoCastVictim( SPELL_BLIND);
-            Blind_Timer = 10000 + rand()%10000;
+            Blind_Timer = 10000 + rand() % 10000;
         }
         else
             Blind_Timer -= diff;
@@ -648,7 +642,7 @@ CreatureAI* GetAI_mob_zealot_zath(Creature* pCreature)
 
 void AddSC_boss_thekal()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_thekal";

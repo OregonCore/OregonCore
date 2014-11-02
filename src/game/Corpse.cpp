@@ -29,11 +29,11 @@
 #include "World.h"
 
 Corpse::Corpse(CorpseType type) : WorldObject()
-, m_type(type)
+    , m_type(type)
 {
     m_objectType |= TYPEMASK_CORPSE;
     m_objectTypeId = TYPEID_CORPSE;
-                                                            // 2.3.2 - 0x58
+    // 2.3.2 - 0x58
     m_updateFlag = (UPDATEFLAG_LOWGUID | UPDATEFLAG_HIGHGUID | UPDATEFLAG_HAS_POSITION);
 
     m_valuesCount = CORPSE_END;
@@ -68,7 +68,7 @@ void Corpse::RemoveFromWorld()
     Object::RemoveFromWorld();
 }
 
-bool Corpse::Create(uint32 guidlow, Map *map)
+bool Corpse::Create(uint32 guidlow, Map* map)
 {
     SetMap(map);
     Object::_Create(guidlow, 0, HIGHGUID_CORPSE);
@@ -79,12 +79,12 @@ bool Corpse::Create(uint32 guidlow, Player* owner, uint32 /*mapid*/, float x, fl
 {
     ASSERT(owner);
 
-    Relocate(x,y,z,ang);
+    Relocate(x, y, z, ang);
 
     if (!IsPositionValid())
     {
         sLog.outError("Corpse (guidlow %d, owner %s) not created. Suggested coordinates isn't valid (X: %f Y: %f)",
-            guidlow, owner->GetName(), x, y);
+                      guidlow, owner->GetName(), x, y);
         return false;
     }
 
@@ -124,7 +124,7 @@ void Corpse::SaveToDB()
         << GetMapId() << ", "
         << GetUInt32Value(CORPSE_FIELD_DISPLAY_ID) << ", '";
     for (uint16 i = 0; i < EQUIPMENT_SLOT_END; ++i)
-        ss << GetUInt32Value(CORPSE_FIELD_ITEM+i) << " ";
+        ss << GetUInt32Value(CORPSE_FIELD_ITEM + i) << " ";
     ss  << "', "
         << GetUInt32Value(CORPSE_FIELD_BYTES_1) << ", "
         << GetUInt32Value(CORPSE_FIELD_BYTES_2) << ", "
@@ -162,7 +162,7 @@ void Corpse::DeleteFromDB()
         CharacterDatabase.PExecute("DELETE FROM corpse WHERE player = '%d' AND corpse_type <> '0'",  GUID_LOPART(GetOwnerGUID()));
 }
 
-bool Corpse::LoadFromDB(uint32 guid, Field *fields)
+bool Corpse::LoadFromDB(uint32 guid, Field* fields)
 {
     //       0           1           2           3            4    5          6          7       8       9      10     11        12    13           14        15    16
     //SELECT position_x, position_y, position_z, orientation, map, displayId, itemCache, bytes1, bytes2, guild, flags, dynFlags, time, corpse_type, instance, guid, player FROM corpse WHERE corpse_type <> 0
@@ -189,7 +189,7 @@ bool Corpse::LoadFromDB(uint32 guid, Field *fields)
 
     if (m_type >= MAX_CORPSE_TYPE)
     {
-        sLog.outError("Corpse (guidlow %d, owner %d) has wrong corpse type.  Not loaded.",GetGUIDLow(),GUID_LOPART(GetOwnerGUID()));
+        sLog.outError("Corpse (guidlow %d, owner %d) has wrong corpse type.  Not loaded.", GetGUIDLow(), GUID_LOPART(GetOwnerGUID()));
         return false;
     }
 
@@ -206,7 +206,7 @@ bool Corpse::LoadFromDB(uint32 guid, Field *fields)
     if (!IsPositionValid())
     {
         sLog.outError("Corpse (guidlow %d, owner %d) not created. Suggested coordinates isn't valid (X: %f Y: %f)",
-            GetGUIDLow(), GUID_LOPART(GetOwnerGUID()), GetPositionX(), GetPositionY());
+                      GetGUIDLow(), GUID_LOPART(GetOwnerGUID()), GetPositionX(), GetPositionY());
         return false;
     }
 

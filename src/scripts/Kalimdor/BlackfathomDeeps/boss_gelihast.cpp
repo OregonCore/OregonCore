@@ -32,11 +32,11 @@ struct boss_gelihastAI : public ScriptedAI
 
     uint32 uiNetTimer;
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     void Reset()
     {
-        uiNetTimer = urand(2000,4000);
+        uiNetTimer = urand(2000, 4000);
         if (pInstance)
             pInstance->SetData(TYPE_GELIHAST, NOT_STARTED);
     }
@@ -61,8 +61,9 @@ struct boss_gelihastAI : public ScriptedAI
         if (uiNetTimer < diff)
         {
             DoCastVictim(SPELL_NET);
-            uiNetTimer = urand(4000,7000);
-        } else uiNetTimer -= diff;
+            uiNetTimer = urand(4000, 7000);
+        }
+        else uiNetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -75,7 +76,7 @@ CreatureAI* GetAI_boss_gelihast(Creature* pCreature)
 
 void AddSC_boss_gelihast()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_gelihast";

@@ -58,21 +58,24 @@ struct boss_rend_blackhandAI : public ScriptedAI
         {
             DoCastVictim( SPELL_WHIRLWIND);
             WhirlWind_Timer = 18000;
-        } else WhirlWind_Timer -= diff;
+        }
+        else WhirlWind_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 10000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         //Thunderclap_Timer
         if (Thunderclap_Timer <= diff)
         {
             DoCastVictim( SPELL_THUNDERCLAP);
             Thunderclap_Timer = 16000;
-        } else Thunderclap_Timer -= diff;
+        }
+        else Thunderclap_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -84,7 +87,7 @@ CreatureAI* GetAI_boss_rend_blackhand(Creature* pCreature)
 
 void AddSC_boss_rend_blackhand()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_rend_blackhand";
     newscript->GetAI = &GetAI_boss_rend_blackhand;

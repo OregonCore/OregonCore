@@ -41,15 +41,15 @@ void MapManager::LoadTransports()
 
     do
     {
-        Transport *t = new Transport;
+        Transport* t = new Transport;
 
-        Field *fields = result->Fetch();
+        Field* fields = result->Fetch();
 
         uint32 entry = fields[0].GetUInt32();
         std::string name = fields[1].GetCppString();
         t->m_period = fields[2].GetUInt32();
 
-        const GameObjectInfo *goinfo = sObjectMgr.GetGameObjectInfo(entry);
+        const GameObjectInfo* goinfo = sObjectMgr.GetGameObjectInfo(entry);
 
         if (!goinfo)
         {
@@ -72,14 +72,18 @@ void MapManager::LoadTransports()
         if (!t->GenerateWaypoints(goinfo->moTransport.taxiPathId, mapsUsed))
             // skip transports with empty waypoints list
         {
-            sLog.outErrorDb("Transport (path id %u) path size = 0. Transport ignored, check DBC files or transport GO data0 field.",goinfo->moTransport.taxiPathId);
+            sLog.outErrorDb("Transport (path id %u) path size = 0. Transport ignored, check DBC files or transport GO data0 field.", goinfo->moTransport.taxiPathId);
             delete t;
             continue;
         }
 
         float x, y, z, o;
         uint32 mapid;
-        x = t->m_WayPoints[0].x; y = t->m_WayPoints[0].y; z = t->m_WayPoints[0].z; mapid = t->m_WayPoints[0].mapid; o = 1;
+        x = t->m_WayPoints[0].x;
+        y = t->m_WayPoints[0].y;
+        z = t->m_WayPoints[0].z;
+        mapid = t->m_WayPoints[0].mapid;
+        o = 1;
 
         // creates the Gameobject
         if (!t->Create(entry, mapid, x, y, z, o, 100, 0))
@@ -99,7 +103,8 @@ void MapManager::LoadTransports()
         //t->GetMap()->Add<GameObject>((GameObject* )t);
 
         ++count;
-    } while (result->NextRow());
+    }
+    while (result->NextRow());
 
     sLog.outString(">> Loaded %u transports", count);
 
@@ -109,12 +114,12 @@ void MapManager::LoadTransports()
     {
         do
         {
-            Field *fields = result->Fetch();
+            Field* fields = result->Fetch();
 
             uint32 guid  = fields[0].GetUInt32();
             uint32 entry = fields[1].GetUInt32();
             std::string name = fields[2].GetCppString();
-            sLog.outErrorDb("Transport %u '%s' has record (GUID: %u) in gameobject. Transports MUST NOT have any records in gameobject or its behavior will be unpredictable/bugged.",entry,name.c_str(),guid);
+            sLog.outErrorDb("Transport %u '%s' has record (GUID: %u) in gameobject. Transports MUST NOT have any records in gameobject or its behavior will be unpredictable/bugged.", entry, name.c_str(), guid);
         }
         while (result->NextRow());
     }
@@ -122,18 +127,18 @@ void MapManager::LoadTransports()
 
 Transport::Transport() : GameObject()
 {
-                                                            // 2.3.2 - 0x5A
+    // 2.3.2 - 0x5A
     m_updateFlag = (UPDATEFLAG_TRANSPORT | UPDATEFLAG_LOWGUID | UPDATEFLAG_HIGHGUID | UPDATEFLAG_HAS_POSITION);
 }
 
 bool Transport::Create(uint32 guidlow, uint32 mapid, float x, float y, float z, float ang, uint32 animprogress, uint32 dynflags)
 {
-    Relocate(x,y,z,ang);
+    Relocate(x, y, z, ang);
 
     if (!IsPositionValid())
     {
         sLog.outError("Transport (GUID: %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)",
-            guidlow,x,y);
+                      guidlow, x, y);
         return false;
     }
 
@@ -143,7 +148,7 @@ bool Transport::Create(uint32 guidlow, uint32 mapid, float x, float y, float z, 
 
     if (!goinfo)
     {
-        sLog.outErrorDb("Transport not created: entry in gameobject_template not found, guidlow: %u map: %u  (X: %f Y: %f Z: %f) ang: %f",guidlow, mapid, x, y, z, ang);
+        sLog.outErrorDb("Transport not created: entry in gameobject_template not found, guidlow: %u map: %u  (X: %f Y: %f Z: %f) ang: %f", guidlow, mapid, x, y, z, ang);
         return false;
     }
 
@@ -174,8 +179,17 @@ struct keyFrame
 {
     keyFrame(float _x, float _y, float _z, uint32 _mapid, int _actionflag, int _delay)
     {
-        x = _x; y = _y; z = _z; mapid = _mapid; actionflag = _actionflag; delay = _delay; distFromPrev = -1; distSinceStop = -1; distUntilStop = -1;
-        tFrom = 0; tTo = 0;
+        x = _x;
+        y = _y;
+        z = _z;
+        mapid = _mapid;
+        actionflag = _actionflag;
+        delay = _delay;
+        distFromPrev = -1;
+        distSinceStop = -1;
+        distUntilStop = -1;
+        tFrom = 0;
+        tTo = 0;
     }
 
     float x;
@@ -190,7 +204,7 @@ struct keyFrame
     float tFrom, tTo;
 };
 
-bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
+bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32>& mapids)
 {
     if (pathid >= sTaxiPathNodesByPath.size())
         return false;
@@ -207,21 +221,17 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
     {
         if (mapChange == 0)
         {
-            if ((path[i].mapid == path[i+1].mapid))
+            if ((path[i].mapid == path[i + 1].mapid))
             {
                 keyFrame k(path[i].x, path[i].y, path[i].z, path[i].mapid, path[i].actionFlag, path[i].delay);
                 keyFrames.push_back(k);
                 mapids.insert(k.mapid);
             }
             else
-            {
                 mapChange = 1;
-            }
         }
         else
-        {
             --mapChange;
-        }
     }
 
     int lastStop = -1;
@@ -230,23 +240,19 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
     // first cell is arrived at by teleportation :S
     keyFrames[0].distFromPrev = 0;
     if (keyFrames[0].actionflag == 2)
-    {
         lastStop = 0;
-    }
 
     // find the rest of the distances between key points
     for (size_t i = 1; i < keyFrames.size(); ++i)
     {
-        if ((keyFrames[i].actionflag == 1) || (keyFrames[i].mapid != keyFrames[i-1].mapid))
-        {
+        if ((keyFrames[i].actionflag == 1) || (keyFrames[i].mapid != keyFrames[i - 1].mapid))
             keyFrames[i].distFromPrev = 0;
-        }
         else
         {
             keyFrames[i].distFromPrev =
                 sqrt(pow(keyFrames[i].x - keyFrames[i - 1].x, 2) +
-                pow(keyFrames[i].y - keyFrames[i - 1].y, 2) +
-                pow(keyFrames[i].z - keyFrames[i - 1].z, 2));
+                     pow(keyFrames[i].y - keyFrames[i - 1].y, 2) +
+                     pow(keyFrames[i].z - keyFrames[i - 1].z, 2));
         }
         if (keyFrames[i].actionflag == 2)
         {
@@ -270,7 +276,7 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
 
     for (int i = int(keyFrames.size()) - 1; i >= 0; i--)
     {
-        int j = (i + (firstStop+1)) % keyFrames.size();
+        int j = (i + (firstStop + 1)) % keyFrames.size();
         tmpDist += keyFrames[(j + 1) % keyFrames.size()].distFromPrev;
         keyFrames[j].distUntilStop = tmpDist;
         if (keyFrames[j].actionflag == 2)
@@ -346,25 +352,17 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
                 if (tFrom < tTo)                            // caught in tFrom dock's "gravitational pull"
                 {
                     if (tFrom <= 30000)
-                    {
                         d = 0.5f * (tFrom / 1000) * (tFrom / 1000);
-                    }
                     else
-                    {
                         d = 0.5f * 30 * 30 + 30 * ((tFrom - 30000) / 1000);
-                    }
                     d = d - keyFrames[i].distSinceStop;
                 }
                 else
                 {
                     if (tTo <= 30000)
-                    {
                         d = 0.5f * (tTo / 1000) * (tTo / 1000);
-                    }
                     else
-                    {
                         d = 0.5f * 30 * 30 + 30 * ((tTo - 30000) / 1000);
-                    }
                     d = keyFrames[i].distUntilStop - d;
                 }
                 t += 100;
@@ -436,9 +434,7 @@ void Transport::TeleportTransport(uint32 newMapid, float x, float y, float z)
         }
 
         if (plr->isDead() && !plr->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_GHOST))
-        {
             plr->ResurrectPlayer(1.0);
-        }
         plr->TeleportTo(newMapid, x, y, z, GetOrientation(), TELE_TO_NOT_LEAVE_TRANSPORT);
 
         //WorldPacket data(SMSG_811, 4);
@@ -450,7 +446,7 @@ void Transport::TeleportTransport(uint32 newMapid, float x, float y, float z)
     //player far teleport would try to create same instance, but we need it NOW for transport...
 
     ResetMap();
-    Map * newMap = MapManager::Instance().CreateMap(newMapid, this, 0);
+    Map* newMap = MapManager::Instance().CreateMap(newMapid, this, 0);
     SetMap(newMap);
     ASSERT(GetMap());
 
@@ -480,7 +476,7 @@ bool Transport::RemovePassenger(Player* passenger)
 
 void Transport::CheckForEvent(uint32 entry, uint32 wp_id)
 {
-    uint32 key = entry*100+wp_id;
+    uint32 key = entry * 100 + wp_id;
     if (sObjectMgr.TransportEventMap.find(key) != sObjectMgr.TransportEventMap.end())
         GetMap()->ScriptsStart(sEventScripts, sObjectMgr.TransportEventMap[key], this, NULL);
 }
@@ -498,13 +494,9 @@ void Transport::Update(uint32 /*p_time*/)
 
         // first check help in case client-server transport coordinates de-synchronization
         if (m_curr->second.mapid != GetMapId() || m_curr->second.teleport)
-        {
             TeleportTransport(m_curr->second.mapid, m_curr->second.x, m_curr->second.y, m_curr->second.z);
-        }
         else
-        {
             Relocate(m_curr->second.x, m_curr->second.y, m_curr->second.z);
-        }
 
         /*
         for (PlayerSet::iterator itr = m_passengers.begin(); itr != m_passengers.end();)

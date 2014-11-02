@@ -49,12 +49,12 @@ struct boss_ouroAI : public ScriptedAI
 
     void Reset()
     {
-        Sweep_Timer = 5000 + rand()%5000;
-        SandBlast_Timer = 20000 + rand()%15000;
-        Submerge_Timer = 90000 + rand()%60000;
-        Back_Timer = 30000 + rand()%15000;
-        ChangeTarget_Timer = 5000 + rand()%3000;
-        Spawn_Timer = 10000 + rand()%10000;
+        Sweep_Timer = 5000 + rand() % 5000;
+        SandBlast_Timer = 20000 + rand() % 15000;
+        Submerge_Timer = 90000 + rand() % 60000;
+        Back_Timer = 30000 + rand() % 15000;
+        ChangeTarget_Timer = 5000 + rand() % 3000;
+        Spawn_Timer = 10000 + rand() % 10000;
 
         Enrage = false;
         Submerged = false;
@@ -75,15 +75,17 @@ struct boss_ouroAI : public ScriptedAI
         if (!Submerged && Sweep_Timer <= diff)
         {
             DoCastVictim( SPELL_SWEEP);
-            Sweep_Timer = 15000 + rand()%15000;
-        } else Sweep_Timer -= diff;
+            Sweep_Timer = 15000 + rand() % 15000;
+        }
+        else Sweep_Timer -= diff;
 
         //SandBlast_Timer
         if (!Submerged && SandBlast_Timer <= diff)
         {
             DoCastVictim( SPELL_SANDBLAST);
-            SandBlast_Timer = 20000 + rand()%15000;
-        } else SandBlast_Timer -= diff;
+            SandBlast_Timer = 20000 + rand() % 15000;
+        }
+        else SandBlast_Timer -= diff;
 
         //Submerge_Timer
         if (!Submerged && Submerge_Timer <= diff)
@@ -95,20 +97,22 @@ struct boss_ouroAI : public ScriptedAI
             DoCast(me, SPELL_DIRTMOUND_PASSIVE);
 
             Submerged = true;
-            Back_Timer = 30000 + rand()%15000;
-        } else Submerge_Timer -= diff;
+            Back_Timer = 30000 + rand() % 15000;
+        }
+        else Submerge_Timer -= diff;
 
         //ChangeTarget_Timer
         if (Submerged && ChangeTarget_Timer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
             if (pTarget)
                 DoTeleportTo(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
 
-            ChangeTarget_Timer = 10000 + rand()%10000;
-        } else ChangeTarget_Timer -= diff;
+            ChangeTarget_Timer = 10000 + rand() % 10000;
+        }
+        else ChangeTarget_Timer -= diff;
 
         //Back_Timer
         if (Submerged && Back_Timer <= diff)
@@ -119,8 +123,9 @@ struct boss_ouroAI : public ScriptedAI
             DoCastVictim( SPELL_GROUND_RUPTURE);
 
             Submerged = false;
-            Submerge_Timer = 60000 + rand()%60000;
-        } else Back_Timer -= diff;
+            Submerge_Timer = 60000 + rand() % 60000;
+        }
+        else Back_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -133,7 +138,7 @@ CreatureAI* GetAI_boss_ouro(Creature* pCreature)
 
 void AddSC_boss_ouro()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_ouro";
     newscript->GetAI = &GetAI_boss_ouro;

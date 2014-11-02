@@ -59,11 +59,17 @@ struct npc_daphne_stilwellAI : public npc_escortAI
     {
         if (HasEscortState(STATE_ESCORT_ESCORTING))
         {
-            switch(uiWPHolder)
+            switch (uiWPHolder)
             {
-                case 7: DoScriptText(SAY_DS_DOWN_1, me); break;
-                case 8: DoScriptText(SAY_DS_DOWN_2, me); break;
-                case 9: DoScriptText(SAY_DS_DOWN_3, me); break;
+            case 7:
+                DoScriptText(SAY_DS_DOWN_1, me);
+                break;
+            case 8:
+                DoScriptText(SAY_DS_DOWN_2, me);
+                break;
+            case 9:
+                DoScriptText(SAY_DS_DOWN_3, me);
+                break;
             }
         }
         else
@@ -81,47 +87,47 @@ struct npc_daphne_stilwellAI : public npc_escortAI
 
         uiWPHolder = uiPoint;
 
-        switch(uiPoint)
+        switch (uiPoint)
         {
-            case 4:
-                SetEquipmentSlots(false, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE, EQUIP_ID_RIFLE);
-                me->SetSheath(SHEATH_STATE_RANGED);
-                me->HandleEmoteCommand(EMOTE_STATE_USESTANDING_NOSHEATHE);
-                break;
-            case 7:
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                break;
-            case 8:
-                me->SetSheath(SHEATH_STATE_RANGED);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.037, 1570.213, 54.961, 4.283, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                break;
-            case 9:
-                me->SetSheath(SHEATH_STATE_RANGED);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.037, 1570.213, 54.961, 4.283, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.018, 1570.738, 54.828, 4.220, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                break;
-            case 10:
-                SetRun(false);
-                break;
-            case 11:
-                DoScriptText(SAY_DS_PROLOGUE, me);
-                break;
-            case 13:
-                SetEquipmentSlots(true);
-                me->SetSheath(SHEATH_STATE_UNARMED);
-                me->HandleEmoteCommand(EMOTE_STATE_USESTANDING_NOSHEATHE);
-                break;
-            case 17:
-                pPlayer->GroupEventHappens(QUEST_TOME_VALOR, me);
-                break;
+        case 4:
+            SetEquipmentSlots(false, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE, EQUIP_ID_RIFLE);
+            me->SetSheath(SHEATH_STATE_RANGED);
+            me->HandleEmoteCommand(EMOTE_STATE_USESTANDING_NOSHEATHE);
+            break;
+        case 7:
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            break;
+        case 8:
+            me->SetSheath(SHEATH_STATE_RANGED);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.037, 1570.213, 54.961, 4.283, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            break;
+        case 9:
+            me->SetSheath(SHEATH_STATE_RANGED);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.037, 1570.213, 54.961, 4.283, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.018, 1570.738, 54.828, 4.220, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            break;
+        case 10:
+            SetRun(false);
+            break;
+        case 11:
+            DoScriptText(SAY_DS_PROLOGUE, me);
+            break;
+        case 13:
+            SetEquipmentSlots(true);
+            me->SetSheath(SHEATH_STATE_UNARMED);
+            me->HandleEmoteCommand(EMOTE_STATE_USESTANDING_NOSHEATHE);
+            break;
+        case 17:
+            pPlayer->GroupEventHappens(QUEST_TOME_VALOR, me);
+            break;
         }
     }
 
@@ -158,7 +164,8 @@ struct npc_daphne_stilwellAI : public npc_escortAI
 
             if (!me->IsWithinDist(me->getVictim(), ATTACK_DISTANCE))
                 DoCastVictim( SPELL_SHOOT);
-        } else uiShootTimer -= diff;
+        }
+        else uiShootTimer -= diff;
     }
 };
 
@@ -194,7 +201,10 @@ CreatureAI* GetAI_npc_daphne_stilwell(Creature* pCreature)
 
 struct npc_defias_traitorAI : public npc_escortAI
 {
-    npc_defias_traitorAI(Creature* c) : npc_escortAI(c) { Reset(); }
+    npc_defias_traitorAI(Creature* c) : npc_escortAI(c)
+    {
+        Reset();
+    }
 
     void WaypointReached(uint32 i)
     {
@@ -205,24 +215,24 @@ struct npc_defias_traitorAI : public npc_escortAI
 
         switch (i)
         {
-            case 35:
-                SetRun(false);
-                break;
-            case 36:
-                DoScriptText(SAY_PROGRESS, me, pPlayer);
-                break;
-            case 44:
-                DoScriptText(SAY_END, me, pPlayer);
-                {
-                    if (pPlayer)
-                        pPlayer->GroupEventHappens(QUEST_DEFIAS_BROTHERHOOD,me);
-                }
-                break;
+        case 35:
+            SetRun(false);
+            break;
+        case 36:
+            DoScriptText(SAY_PROGRESS, me, pPlayer);
+            break;
+        case 44:
+            DoScriptText(SAY_END, me, pPlayer);
+            {
+                if (pPlayer)
+                    pPlayer->GroupEventHappens(QUEST_DEFIAS_BROTHERHOOD, me);
+            }
+            break;
         }
     }
     void EnterCombat(Unit* who)
     {
-        DoScriptText(RAND(SAY_AGGRO_1,SAY_AGGRO_2), me, who);
+        DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2), me, who);
     }
 
     void Reset() {}
@@ -248,7 +258,7 @@ CreatureAI* GetAI_npc_defias_traitor(Creature* pCreature)
 
 void AddSC_westfall()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_daphne_stilwell";

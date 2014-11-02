@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /* ScriptData
 SDName: Boss_Anubshiah
 SD%Complete: 100
@@ -67,7 +67,8 @@ struct boss_anubshiahAI : public ScriptedAI
         {
             DoCastVictim( SPELL_SHADOWBOLT);
             ShadowBolt_Timer = 7000;
-        } else ShadowBolt_Timer -= diff;
+        }
+        else ShadowBolt_Timer -= diff;
 
         //CurseOfTongues_Timer
         if (CurseOfTongues_Timer <= diff)
@@ -75,21 +76,24 @@ struct boss_anubshiahAI : public ScriptedAI
             if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_CURSEOFTONGUES);
             CurseOfTongues_Timer = 18000;
-        } else CurseOfTongues_Timer -= diff;
+        }
+        else CurseOfTongues_Timer -= diff;
 
         //CurseOfWeakness_Timer
         if (CurseOfWeakness_Timer <= diff)
         {
             DoCastVictim( SPELL_CURSEOFWEAKNESS);
             CurseOfWeakness_Timer = 45000;
-        } else CurseOfWeakness_Timer -= diff;
+        }
+        else CurseOfWeakness_Timer -= diff;
 
         //DemonArmor_Timer
         if (DemonArmor_Timer <= diff)
         {
             DoCast(me, SPELL_DEMONARMOR);
             DemonArmor_Timer = 300000;
-        } else DemonArmor_Timer -= diff;
+        }
+        else DemonArmor_Timer -= diff;
 
         //EnvelopingWeb_Timer
         if (EnvelopingWeb_Timer <= diff)
@@ -97,7 +101,8 @@ struct boss_anubshiahAI : public ScriptedAI
             if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_ENVELOPINGWEB);
             EnvelopingWeb_Timer = 12000;
-        } else EnvelopingWeb_Timer -= diff;
+        }
+        else EnvelopingWeb_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -109,7 +114,7 @@ CreatureAI* GetAI_boss_anubshiah(Creature* pCreature)
 
 void AddSC_boss_anubshiah()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_anubshiah";
     newscript->GetAI = &GetAI_boss_anubshiah;

@@ -58,12 +58,10 @@ EndContentData */
 bool ItemUse_item_area_52_special(Player* player, Item* _Item, SpellCastTargets const& /*targets*/)
 {
     if (player->GetAreaId() == 3803)
-    {
         return false;
-    }
     else
     {
-        player->SendEquipError(EQUIP_ERR_OUT_OF_RANGE,_Item,NULL);
+        player->SendEquipError(EQUIP_ERR_OUT_OF_RANGE, _Item, NULL);
         return true;
     }
 }
@@ -78,16 +76,16 @@ bool ItemUse_item_only_for_flight(Player* pPlayer, Item* pItem, SpellCastTargets
     bool disabled = false;
 
     //for special scripts
-    switch(itemId)
+    switch (itemId)
     {
-       case 24538:
-            if (pPlayer->GetAreaId() != 3628)
-                disabled = true;
-                break;
-       case 34489:
-            if (pPlayer->GetZoneId() != 4080)
-                disabled = true;
-                break;
+    case 24538:
+        if (pPlayer->GetAreaId() != 3628)
+            disabled = true;
+        break;
+    case 34489:
+        if (pPlayer->GetZoneId() != 4080)
+            disabled = true;
+        break;
     }
 
     // allow use in flight only
@@ -95,7 +93,7 @@ bool ItemUse_item_only_for_flight(Player* pPlayer, Item* pItem, SpellCastTargets
         return false;
 
     // error
-    pPlayer->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW,pItem,NULL);
+    pPlayer->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, pItem, NULL);
     return true;
 }
 
@@ -115,11 +113,9 @@ bool ItemUse_item_attuned_crystal_cores(Player* player, Item* _Item, SpellCastTa
     if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT &&
         targets.getUnitTarget()->GetEntry() == ERRATIC_SENTRY && targets.getUnitTarget()->isDead() &&
         (player->GetQuestStatus(ERRATIC_BEHAVIOUR) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(FURTHER_CONVERSIONS) == QUEST_STATUS_INCOMPLETE))
-    {
         return false;
-    }
 
-    player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW,_Item,NULL);
+    player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, _Item, NULL);
     return true;
 }
 
@@ -133,7 +129,7 @@ bool ItemUse_item_blackwhelp_net(Player* player, Item* _Item, SpellCastTargets c
         targets.getUnitTarget()->GetEntry() == 21387)
         return false;
 
-    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM,_Item,NULL);
+    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM, _Item, NULL);
     return true;
 }
 
@@ -150,9 +146,9 @@ bool ItemUse_item_draenei_fishing_net(Player* pPlayer, Item* /*pItem*/, SpellCas
     //{
     if (pPlayer->GetQuestStatus(9452) == QUEST_STATUS_INCOMPLETE)
     {
-        if (urand(0,99) < 35)
+        if (urand(0, 99) < 35)
         {
-            Creature* Murloc = pPlayer->SummonCreature(17102, pPlayer->GetPositionX(), pPlayer->GetPositionY()+20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+            Creature* Murloc = pPlayer->SummonCreature(17102, pPlayer->GetPositionX(), pPlayer->GetPositionY() + 20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
             if (Murloc)
                 Murloc->AI()->AttackStart(pPlayer);
         }
@@ -162,10 +158,11 @@ bool ItemUse_item_draenei_fishing_net(Player* pPlayer, Item* /*pItem*/, SpellCas
             uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 23614, 1);
             if (msg == EQUIP_ERR_OK)
             {
-                if (Item* item = pPlayer->StoreNewItem(dest,23614,true))
-                    pPlayer->SendNewItem(item,1,false,true);
-            } else
-                pPlayer->SendEquipError(msg,NULL,NULL);
+                if (Item* item = pPlayer->StoreNewItem(dest, 23614, true))
+                    pPlayer->SendNewItem(item, 1, false, true);
+            }
+            else
+                pPlayer->SendEquipError(msg, NULL, NULL);
         }
     }
     //}
@@ -182,7 +179,7 @@ bool ItemUse_item_disciplinary_rod(Player* player, Item* _Item, SpellCastTargets
         (targets.getUnitTarget()->GetEntry() == 15941 || targets.getUnitTarget()->GetEntry() == 15945))
         return false;
 
-    player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW,_Item,NULL);
+    player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, _Item, NULL);
     return true;
 }
 
@@ -195,8 +192,8 @@ bool ItemUse_item_nether_wraith_beacon(Player* pPlayer, Item* /*pItem*/, SpellCa
     if (pPlayer->GetQuestStatus(10832) == QUEST_STATUS_INCOMPLETE)
     {
         Creature* Nether;
-        Nether = pPlayer->SummonCreature(22408, pPlayer->GetPositionX(), pPlayer->GetPositionY()+20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
-        Nether = pPlayer->SummonCreature(22408, pPlayer->GetPositionX(), pPlayer->GetPositionY()-20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
+        Nether = pPlayer->SummonCreature(22408, pPlayer->GetPositionX(), pPlayer->GetPositionY() + 20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
+        Nether = pPlayer->SummonCreature(22408, pPlayer->GetPositionX(), pPlayer->GetPositionY() - 20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
         if (Nether)
             Nether->AI()->AttackStart(pPlayer);
     }
@@ -218,8 +215,8 @@ bool ItemUse_item_flying_machine(Player* pPlayer, Item* pItem, SpellCastTargets 
         if (pPlayer->GetBaseSkillValue(SKILL_RIDING) == 300)
             return false;
 
-    debug_log("OSCR: Player attempt to use item %u, but did not meet riding requirement",itemId);
-    pPlayer->SendEquipError(EQUIP_ERR_ERR_CANT_EQUIP_SKILL,pItem,NULL);
+    debug_log("OSCR: Player attempt to use item %u, but did not meet riding requirement", itemId);
+    pPlayer->SendEquipError(EQUIP_ERR_ERR_CANT_EQUIP_SKILL, pItem, NULL);
     return true;
 }
 
@@ -233,7 +230,7 @@ bool ItemUse_item_gor_dreks_ointment(Player* pPlayer, Item* pItem, SpellCastTarg
         targets.getUnitTarget()->GetEntry() == 20748 && !targets.getUnitTarget()->HasAura(32578, 0))
         return false;
 
-    pPlayer->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW,pItem,NULL);
+    pPlayer->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, pItem, NULL);
     return true;
 }
 
@@ -252,33 +249,33 @@ bool ItemUse_item_muiseks_vessel(Player* player, Item* _Item, SpellCastTargets c
 
     if (itemSpell)
     {
-        switch(itemSpell)
+        switch (itemSpell)
         {
-            case 11885:                                     //Wandering Forest Walker
-                cEntry =  7584;
-                break;
-            case 11886:                                     //Owlbeasts
-                cEntry =  2927;
-                cEntry2 = 2928;
-                cEntry3 = 2929;
-                cEntry4 = 7808;
-                break;
-            case 11887:                                     //Freyfeather Hippogryphs
-                cEntry =  5300;
-                cEntry2 = 5304;
-                cEntry3 = 5305;
-                cEntry4 = 5306;
-                break;
-            case 11888:                                     //Sprite Dragon Sprite Darters
-                cEntry =  5276;
-                cEntry2 = 5278;
-                break;
-            case 11889:                                     //Zapped Land Walker Land Walker Zapped Cliff Giant Cliff Giant
-                cEntry =  5357;
-                cEntry2 = 5358;
-                cEntry3 = 14640;
-                cEntry4 = 14604;
-                break;
+        case 11885:                                     //Wandering Forest Walker
+            cEntry =  7584;
+            break;
+        case 11886:                                     //Owlbeasts
+            cEntry =  2927;
+            cEntry2 = 2928;
+            cEntry3 = 2929;
+            cEntry4 = 7808;
+            break;
+        case 11887:                                     //Freyfeather Hippogryphs
+            cEntry =  5300;
+            cEntry2 = 5304;
+            cEntry3 = 5305;
+            cEntry4 = 5306;
+            break;
+        case 11888:                                     //Sprite Dragon Sprite Darters
+            cEntry =  5276;
+            cEntry2 = 5278;
+            break;
+        case 11889:                                     //Zapped Land Walker Land Walker Zapped Cliff Giant Cliff Giant
+            cEntry =  5357;
+            cEntry2 = 5358;
+            cEntry3 = 14640;
+            cEntry4 = 14604;
+            break;
         }
         if (uTarget && uTarget->GetTypeId() == TYPEID_UNIT && uTarget->isDead() &&
             (uTarget->GetEntry() == cEntry || uTarget->GetEntry() == cEntry2 || uTarget->GetEntry() == cEntry3 || uTarget->GetEntry() == cEntry4))
@@ -288,12 +285,12 @@ bool ItemUse_item_muiseks_vessel(Player* player, Item* _Item, SpellCastTargets c
         }
     }
 
-    WorldPacket data(SMSG_CAST_FAILED, (4+2));              // prepare packet error message
+    WorldPacket data(SMSG_CAST_FAILED, (4 + 2));            // prepare packet error message
     data << uint32(_Item->GetEntry());                      // itemId
     data << uint8(SPELL_FAILED_BAD_TARGETS);                // reason
     player->GetSession()->SendPacket(&data);                // send message: Invalid target
 
-    player->SendEquipError(EQUIP_ERR_NONE,_Item,NULL);      // break spell
+    player->SendEquipError(EQUIP_ERR_NONE, _Item, NULL);    // break spell
     return true;
 }
 
@@ -307,12 +304,12 @@ bool ItemUse_item_inoculating_crystal(Player* player, Item* _Item, SpellCastTarg
         targets.getUnitTarget()->GetEntry() == 16518)
         return false;
 
-    WorldPacket data(SMSG_CAST_FAILED, (4+2));              // prepare packet error message
+    WorldPacket data(SMSG_CAST_FAILED, (4 + 2));            // prepare packet error message
     data << uint32(_Item->GetEntry());                      // itemId
     data << uint8(SPELL_FAILED_BAD_TARGETS);                // reason
     player->GetSession()->SendPacket(&data);                // send message: Invalid target
 
-    player->SendEquipError(EQUIP_ERR_NONE,_Item,NULL);      // break spell
+    player->SendEquipError(EQUIP_ERR_NONE, _Item, NULL);    // break spell
     return true;
 }
 
@@ -326,7 +323,7 @@ bool ItemUse_item_razorthorn_flayer_gland(Player* player, Item* _Item, SpellCast
         targets.getUnitTarget()->GetEntry() == 24922)
         return false;
 
-    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM,_Item,NULL);
+    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM, _Item, NULL);
     return true;
 }
 
@@ -341,38 +338,74 @@ bool ItemUse_item_tame_beast_rods(Player* player, Item* _Item, SpellCastTargets 
 
     if (itemSpell)
     {
-        switch(itemSpell)
+        switch (itemSpell)
         {
-            case 19548: cEntry =  1196; break;              //Ice Claw Bear
-            case 19674: cEntry =  1126; break;              //Large Crag Boar
-            case 19687: cEntry =  1201; break;              //Snow Leopard
-            case 19688: cEntry =  2956; break;              //Adult Plainstrider
-            case 19689: cEntry =  2959; break;              //Prairie Stalker
-            case 19692: cEntry =  2970; break;              //Swoop
-            case 19693: cEntry =  1998; break;              //Webwood Lurker
-            case 19694: cEntry =  3099; break;              //Dire Mottled Boar
-            case 19696: cEntry =  3107; break;              //Surf Crawler
-            case 19697: cEntry =  3126; break;              //Armored Scorpid
-            case 19699: cEntry =  2043; break;              //Nightsaber Stalker
-            case 19700: cEntry =  1996; break;              //Strigid Screecher
-            case 30646: cEntry = 17217; break;              //Barbed Crawler
-            case 30653: cEntry = 17374; break;              //Greater Timberstrider
-            case 30654: cEntry = 17203; break;              //Nightstalker
-            case 30099: cEntry = 15650; break;              //Crazed Dragonhawk
-            case 30102: cEntry = 15652; break;              //Elder Springpaw
-            case 30105: cEntry = 16353; break;              //Mistbat
+        case 19548:
+            cEntry =  1196;
+            break;              //Ice Claw Bear
+        case 19674:
+            cEntry =  1126;
+            break;              //Large Crag Boar
+        case 19687:
+            cEntry =  1201;
+            break;              //Snow Leopard
+        case 19688:
+            cEntry =  2956;
+            break;              //Adult Plainstrider
+        case 19689:
+            cEntry =  2959;
+            break;              //Prairie Stalker
+        case 19692:
+            cEntry =  2970;
+            break;              //Swoop
+        case 19693:
+            cEntry =  1998;
+            break;              //Webwood Lurker
+        case 19694:
+            cEntry =  3099;
+            break;              //Dire Mottled Boar
+        case 19696:
+            cEntry =  3107;
+            break;              //Surf Crawler
+        case 19697:
+            cEntry =  3126;
+            break;              //Armored Scorpid
+        case 19699:
+            cEntry =  2043;
+            break;              //Nightsaber Stalker
+        case 19700:
+            cEntry =  1996;
+            break;              //Strigid Screecher
+        case 30646:
+            cEntry = 17217;
+            break;              //Barbed Crawler
+        case 30653:
+            cEntry = 17374;
+            break;              //Greater Timberstrider
+        case 30654:
+            cEntry = 17203;
+            break;              //Nightstalker
+        case 30099:
+            cEntry = 15650;
+            break;              //Crazed Dragonhawk
+        case 30102:
+            cEntry = 15652;
+            break;              //Elder Springpaw
+        case 30105:
+            cEntry = 16353;
+            break;              //Mistbat
         }
         if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT &&
             targets.getUnitTarget()->GetEntry() == cEntry)
             return false;
     }
 
-    WorldPacket data(SMSG_CAST_FAILED, (4+2));              // prepare packet error message
+    WorldPacket data(SMSG_CAST_FAILED, (4 + 2));            // prepare packet error message
     data << uint32(_Item->GetEntry());                      // itemId
     data << uint8(SPELL_FAILED_BAD_TARGETS);                // reason
     player->GetSession()->SendPacket(&data);                // send message: Invalid target
 
-    player->SendEquipError(EQUIP_ERR_NONE,_Item,NULL);      // break spell
+    player->SendEquipError(EQUIP_ERR_NONE, _Item, NULL);    // break spell
     return true;
 }
 
@@ -386,7 +419,7 @@ bool ItemUse_item_protovoltaic_magneto_collector(Player* player, Item* _Item, Sp
         targets.getUnitTarget()->GetEntry() == 21729)
         return false;
 
-    player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW,_Item,NULL);
+    player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, _Item, NULL);
     return true;
 }
 
@@ -402,7 +435,7 @@ bool ItemUse_item_soul_cannon(Player* player, Item* _Item, SpellCastTargets cons
         return false;
 
     // error
-    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM,_Item,NULL);
+    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM, _Item, NULL);
     return true;
 }
 
@@ -416,7 +449,7 @@ bool ItemUse_item_sparrowhawk_net(Player* player, Item* _Item, SpellCastTargets 
         targets.getUnitTarget()->GetEntry() == 22979)
         return false;
 
-    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM,_Item,NULL);
+    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM, _Item, NULL);
     return true;
 }
 
@@ -430,12 +463,12 @@ bool ItemUse_item_voodoo_charm(Player* player, Item* _Item, SpellCastTargets con
         targets.getUnitTarget()->GetEntry() == 7318)
         return false;
 
-    WorldPacket data(SMSG_CAST_FAILED, (4+2));              // prepare packet error message
+    WorldPacket data(SMSG_CAST_FAILED, (4 + 2));            // prepare packet error message
     data << uint32(_Item->GetEntry());                      // itemId
     data << uint8(SPELL_FAILED_BAD_TARGETS);                // reason
     player->GetSession()->SendPacket(&data);                // send message: Invalid target
 
-    player->SendEquipError(EQUIP_ERR_NONE,_Item,NULL);      // break spell
+    player->SendEquipError(EQUIP_ERR_NONE, _Item, NULL);    // break spell
     return true;
 }
 
@@ -451,7 +484,7 @@ bool ItemUse_item_vorenthals_presence(Player* player, Item* _Item, SpellCastTarg
         return false;
 
     // error
-    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM,_Item,NULL);
+    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM, _Item, NULL);
     return true;
 }
 
@@ -467,18 +500,18 @@ bool ItemUse_item_yehkinyas_bramble(Player* player, Item* _Item, SpellCastTarget
         if (unit_target &&
             unit_target->GetTypeId() == TYPEID_UNIT &&
             unit_target->isDead() &&
-                                                            // cast only on corpse 5307 or 5308
+            // cast only on corpse 5307 or 5308
             (unit_target->GetEntry() == 5307 || unit_target->GetEntry() == 5308))
         {
             CAST_CRE(unit_target)->RemoveCorpse();       // remove corpse for cancelling second use
             return false;                                   // all ok
         }
     }
-    WorldPacket data(SMSG_CAST_FAILED, (4+2));              // prepare packet error message
+    WorldPacket data(SMSG_CAST_FAILED, (4 + 2));            // prepare packet error message
     data << uint32(10699);                                  // itemId
     data << uint8(SPELL_FAILED_BAD_TARGETS);                // reason
     player->GetSession()->SendPacket(&data);                // send message: Bad target
-    player->SendEquipError(EQUIP_ERR_NONE,_Item,NULL);      // break spell
+    player->SendEquipError(EQUIP_ERR_NONE, _Item, NULL);    // break spell
     return true;
 }
 
@@ -492,13 +525,13 @@ bool ItemUse_item_zezzak_shard(Player* player, Item* _Item, SpellCastTargets con
         targets.getUnitTarget()->GetEntry() == 19440)
         return false;
 
-    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM,_Item,NULL);
+    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM, _Item, NULL);
     return true;
 }
 
 void AddSC_item_scripts()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "item_area_52_special";

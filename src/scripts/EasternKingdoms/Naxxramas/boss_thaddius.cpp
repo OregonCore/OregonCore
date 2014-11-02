@@ -30,7 +30,7 @@ enum eEncounters
     EVENT_FUEGEN   = 0,
     EVENT_STALAGG  = 1,
     EVENT_THADDIUS = 2
-    // rest later
+                     // rest later
 };
 
 //Stalagg
@@ -118,22 +118,23 @@ struct boss_thaddiusAI : public BossAI
             return;
 
         events.Update(diff);
-        while(uint32 eventId = events.ExecuteEvent())
+        while (uint32 eventId = events.ExecuteEvent())
         {
-            switch(eventId)
+            switch (eventId)
             {
-                case EVENT_POLARITY_SHIFT:
+            case EVENT_POLARITY_SHIFT:
                 {
                     //AddAOESpellToCast(SPELL_POLARITY_SHIFT);
                     events.ScheduleEvent(EVENT_POLARITY_SHIFT, 30000);
                     break;
                 }
-                case EVENT_BERSERK:
+            case EVENT_BERSERK:
                 {
                     //AddSpellToCast(me, SPELL_BERSERK);
                     break;
                 }
-                default: break;
+            default:
+                break;
             }
         }
 
@@ -165,28 +166,28 @@ struct boss_stalaggAI : public BossAI
             return;
 
         events.Update(diff);
-        while(uint32 eventId = events.ExecuteEvent())
+        while (uint32 eventId = events.ExecuteEvent())
         {
-            switch(eventId)
+            switch (eventId)
             {
-                case EVENT_CHECK_COIL:
+            case EVENT_CHECK_COIL:
                 {
                     events.ScheduleEvent(EVENT_CHECK_COIL, 2000);
                     break;
                 }
-                case EVENT_POWER_SURGE:
+            case EVENT_POWER_SURGE:
                 {
                     //AddSpellToCast(me, SPELL_POWER_SURGE);
                     events.ScheduleEvent(EVENT_POWER_SURGE, 20000); // guessed timer
                     break;
                 }
-                case EVENT_WAR_STOMP:
+            case EVENT_WAR_STOMP:
                 {
                     //AddSpellToCast(me, SPELL_WAR_STOMP);
                     events.ScheduleEvent(EVENT_WAR_STOMP, 15000); // guessed timer
                     break;
                 }
-                case EVENT_PULL_TANK:
+            case EVENT_PULL_TANK:
                 {
                     //Unit* pFuegen = NULL;
                     // Select Fuegens as target, rest will be handled in scripteffect
@@ -194,7 +195,8 @@ struct boss_stalaggAI : public BossAI
                     events.ScheduleEvent(EVENT_PULL_TANK, 20500);
                     break;
                 }
-                default: break;
+            default:
+                break;
             }
         }
 
@@ -226,28 +228,28 @@ struct boss_fuegenAI : public BossAI
             return;
 
         events.Update(diff);
-        while(uint32 eventId = events.ExecuteEvent())
+        while (uint32 eventId = events.ExecuteEvent())
         {
-            switch(eventId)
+            switch (eventId)
             {
-                case EVENT_CHECK_COIL:
+            case EVENT_CHECK_COIL:
                 {
                     events.ScheduleEvent(EVENT_CHECK_COIL, 2000);
                     break;
                 }
-                case EVENT_MANA_BURN:
+            case EVENT_MANA_BURN:
                 {
                     //AddAOESpellToCast(SPELL_MANA_BURN);
                     events.ScheduleEvent(EVENT_MANA_BURN, 10000); // guessed timer
                     break;
                 }
-                case EVENT_WAR_STOMP:
+            case EVENT_WAR_STOMP:
                 {
                     //AddAOESpellToCast(SPELL_WAR_STOMP);
                     events.ScheduleEvent(EVENT_WAR_STOMP, 15000); // guessed timer
                     break;
                 }
-                case EVENT_PULL_TANK:
+            case EVENT_PULL_TANK:
                 {
                     //Unit* pStalagg = NULL;
                     // Select Stalaggs as target, rest will be handled in scripteffect
@@ -255,7 +257,8 @@ struct boss_fuegenAI : public BossAI
                     events.ScheduleEvent(EVENT_PULL_TANK, 20500);
                     break;
                 }
-                default: break;
+            default:
+                break;
             }
         }
 

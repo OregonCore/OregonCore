@@ -143,11 +143,17 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO_3, me);
+            break;
         }
 
         // Send initial beacons to join the fight if not already
@@ -160,19 +166,23 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
     {
         if (summoned->GetEntry() == ENTRY_BEACON)
         {
-            summoned->CastSpell(summoned,SPELL_ETHEREAL_BEACON_VISUAL,false);
+            summoned->CastSpell(summoned, SPELL_ETHEREAL_BEACON_VISUAL, false);
 
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 summoned->AI()->AttackStart(pTarget);
         }
     }
 
     void KilledUnit(Unit*)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY_1, me); break;
-            case 1: DoScriptText(SAY_SLAY_2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY_2, me);
+            break;
         }
     }
 
@@ -191,22 +201,25 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
             if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(true);
 
-            DoCast(me,SPELL_FROSTNOVA);
-            FrostNova_Timer  = 17500 + rand()%7500;
+            DoCast(me, SPELL_FROSTNOVA);
+            FrostNova_Timer  = 17500 + rand() % 7500;
             CanBlink = true;
-        } else FrostNova_Timer -= diff;
+        }
+        else FrostNova_Timer -= diff;
 
         if (Frostbolt_Timer <= diff)
         {
             DoCastVictim(SPELL_FROSTBOLT);
-            Frostbolt_Timer = 4500 + rand()%1500;
-        } else Frostbolt_Timer -= diff;
+            Frostbolt_Timer = 4500 + rand() % 1500;
+        }
+        else Frostbolt_Timer -= diff;
 
         if (FireBall_Timer <= diff)
         {
             DoCastVictim(SPELL_FIREBALL);
-            FireBall_Timer = 4500 + rand()%1500;
-        } else FireBall_Timer -= diff;
+            FireBall_Timer = 4500 + rand() % 1500;
+        }
+        else FireBall_Timer -= diff;
 
         if (CanBlink)
         {
@@ -215,10 +228,11 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
                 if (me->IsNonMeleeSpellCast(false))
                     me->InterruptNonMeleeSpells(true);
 
-                DoCast(me,SPELL_BLINK);
-                Blink_Timer = 1000 + rand()%1500;
+                DoCast(me, SPELL_BLINK);
+                Blink_Timer = 1000 + rand() % 1500;
                 CanBlink = false;
-            } else Blink_Timer -= diff;
+            }
+            else Blink_Timer -= diff;
         }
 
         if (Beacon_Timer <= diff)
@@ -226,13 +240,14 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
             if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(true);
 
-            if (!urand(0,3))
+            if (!urand(0, 3))
                 DoScriptText(SAY_SUMMON, me);
 
-            DoCast(me,SPELL_ETHEREAL_BEACON);
+            DoCast(me, SPELL_ETHEREAL_BEACON);
 
             Beacon_Timer = 10000;
-        } else Beacon_Timer -= diff;
+        }
+        else Beacon_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -308,25 +323,28 @@ struct mob_ethereal_beaconAI : public ScriptedAI
                 return;
             }
             Check_Timer = 1000;
-        } else Check_Timer -= diff;
+        }
+        else Check_Timer -= diff;
 
         if (ArcaneBolt_Timer <= diff)
         {
             DoCastVictim(SPELL_ARCANE_BOLT);
-            ArcaneBolt_Timer = 2000 + rand()%2500;
-        } else ArcaneBolt_Timer -= diff;
+            ArcaneBolt_Timer = 2000 + rand() % 2500;
+        }
+        else ArcaneBolt_Timer -= diff;
 
         if (Apprentice_Timer <= diff)
         {
             if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(true);
 
-            me->CastSpell(me,SPELL_ETHEREAL_APPRENTICE,true);
+            me->CastSpell(me, SPELL_ETHEREAL_APPRENTICE, true);
             if (me->isPet())
                 ((Pet*)me)->SetDuration(0);
             KillSelf();
             return;
-        } else Apprentice_Timer -= diff;
+        }
+        else Apprentice_Timer -= diff;
     }
 };
 
@@ -365,12 +383,15 @@ struct mob_ethereal_apprenticeAI : public ScriptedAI
             {
                 me->CastSpell(me->getVictim(), SPELL_ETHEREAL_APPRENTICE_FIREBOLT, true);
                 isFireboltTurn = false;
-            } else{
+            }
+            else
+            {
                 me->CastSpell(me->getVictim(), SPELL_ETHEREAL_APPRENTICE_FROSTBOLT, true);
                 isFireboltTurn = true;
             }
             Cast_Timer = 3000;
-        } else Cast_Timer -= diff;
+        }
+        else Cast_Timer -= diff;
     }
 };
 
@@ -381,7 +402,7 @@ CreatureAI* GetAI_mob_ethereal_apprentice(Creature* pCreature)
 
 void AddSC_boss_nexusprince_shaffar()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_nexusprince_shaffar";

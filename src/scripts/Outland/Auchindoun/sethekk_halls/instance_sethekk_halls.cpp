@@ -42,14 +42,17 @@ struct Location
     float fOrient;
 };
 
-static Location SpawnLocation[]=
+static Location SpawnLocation[] =
 {
-    {-158.226898f, 158.690933f, 0.009380f, 1.212f}
+    { -158.226898f, 158.690933f, 0.009380f, 1.212f}
 };
 
 struct instance_sethekk_halls : public ScriptedInstance
 {
-    instance_sethekk_halls(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_sethekk_halls(Map* map) : ScriptedInstance(map)
+    {
+        Initialize();
+    };
 
     uint64 IkissDoorGUID;
     uint32 Encounter[ENCOUNTERS];
@@ -85,9 +88,11 @@ struct instance_sethekk_halls : public ScriptedInstance
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case IKISS_DOOR: IkissDoorGUID = pGo->GetGUID(); break;
+        case IKISS_DOOR:
+            IkissDoorGUID = pGo->GetGUID();
+            break;
         }
     }
 
@@ -110,24 +115,22 @@ struct instance_sethekk_halls : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_SYTHEVENT:
-                if (Encounter[0] != DONE)
-                    Encounter[0] = data;
-                break;
-            case DATA_ANZUEVENT:
-                if (Encounter[1] != DONE)
-                    Encounter[1] = data;
-                break;
-            case DATA_IKISSEVENT:
-                if (data == DONE)
-                {
-                    HandleGameObject(IkissDoorGUID, true);
-                }
-                if (Encounter[2] != DONE)
-                    Encounter[2] = data;
-                break;
+        case DATA_SYTHEVENT:
+            if (Encounter[0] != DONE)
+                Encounter[0] = data;
+            break;
+        case DATA_ANZUEVENT:
+            if (Encounter[1] != DONE)
+                Encounter[1] = data;
+            break;
+        case DATA_IKISSEVENT:
+            if (data == DONE)
+                HandleGameObject(IkissDoorGUID, true);
+            if (Encounter[2] != DONE)
+                Encounter[2] = data;
+            break;
         }
 
         if (data == DONE)
@@ -139,11 +142,14 @@ struct instance_sethekk_halls : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_SYTHEVENT: return Encounter[0];
-            case DATA_ANZUEVENT: return Encounter[1];
-            case DATA_IKISSEVENT: return Encounter[2];
+        case DATA_SYTHEVENT:
+            return Encounter[0];
+        case DATA_ANZUEVENT:
+            return Encounter[1];
+        case DATA_IKISSEVENT:
+            return Encounter[2];
         }
         return false;
     }
@@ -205,14 +211,14 @@ struct npc_lakkaAI : public npc_escortAI
 
     void WaypointReached(uint32 uiPointId)
     {
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 0:
-                me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                SetRun(false);
-                break;
-            case 8:
-                me->ForcedDespawn();
+        case 0:
+            me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+            SetRun(false);
+            break;
+        case 8:
+            me->ForcedDespawn();
         }
     }
 };
@@ -231,9 +237,7 @@ bool GOHello_go_lakka_cage(Player* pPlayer, GameObject* pGo)
     if (pPlayer->GetQuestStatus(QUEST_BROTHER) == QUEST_STATUS_INCOMPLETE)
     {
         if (Creature* pLakka = pGo->FindNearestCreature( NPC_LAKKA, 5, true))
-        {
             ((npc_lakkaAI*)pLakka->AI())->Start(false, false, pPlayer->GetGUID());
-        }
     }
 
     return false;
@@ -241,7 +245,7 @@ bool GOHello_go_lakka_cage(Player* pPlayer, GameObject* pGo)
 
 void AddSC_instance_sethekk_halls()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_sethekk_halls";
     newscript->GetInstanceData = &GetInstanceData_instance_sethekk_halls;

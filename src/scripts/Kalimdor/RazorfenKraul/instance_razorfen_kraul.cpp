@@ -29,7 +29,10 @@ EndScriptData */
 
 struct instance_razorfen_kraul : public ScriptedInstance
 {
-    instance_razorfen_kraul(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
+    instance_razorfen_kraul(Map* pMap) : ScriptedInstance(pMap)
+    {
+        Initialize();
+    };
 
     uint64 DoorWardGUID;
     uint32 WardCheck_Timer;
@@ -60,9 +63,11 @@ struct instance_razorfen_kraul : public ScriptedInstance
 
     void OnGameObjectCreate(GameObject* pGo, bool /*apply*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-        case 21099: DoorWardGUID = pGo->GetGUID(); break;
+        case 21099:
+            DoorWardGUID = pGo->GetGUID();
+            break;
         }
     }
 
@@ -73,18 +78,19 @@ struct instance_razorfen_kraul : public ScriptedInstance
             HandleGameObject(DoorWardGUID, WardKeeperAlive);
             WardKeeperAlive = 0;
             WardCheck_Timer = 4000;
-        } else
+        }
+        else
             WardCheck_Timer -= diff;
     }
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-            case TYPE_WARD_KEEPERS:
-                if (data == NOT_STARTED)
-                    WardKeeperAlive = 1;
-                break;
+        case TYPE_WARD_KEEPERS:
+            if (data == NOT_STARTED)
+                WardKeeperAlive = 1;
+            break;
         }
     }
 
@@ -97,7 +103,7 @@ InstanceData* GetInstanceData_instance_razorfen_kraul(Map* pMap)
 
 void AddSC_instance_razorfen_kraul()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_razorfen_kraul";
     newscript->GetInstanceData = &GetInstanceData_instance_razorfen_kraul;

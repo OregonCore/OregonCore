@@ -78,12 +78,12 @@ struct boss_akilzonAI : public ScriptedAI
 {
     boss_akilzonAI(Creature* c) : ScriptedAI(c)
     {
-        SpellEntry *TempSpell = GET_SPELL(SPELL_ELECTRICAL_DAMAGE);
+        SpellEntry* TempSpell = GET_SPELL(SPELL_ELECTRICAL_DAMAGE);
         if (TempSpell)
             TempSpell->EffectBasePoints[1] = 49;//disable bugged lightning until fixed in core
         pInstance = c->GetInstanceData();
     }
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint64 BirdGUIDs[8];
     uint64 TargetGUID;
@@ -151,16 +151,16 @@ struct boss_akilzonAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch (urand(0,1))
+        switch (urand(0, 1))
         {
-            case 0:
-                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
-                DoPlaySoundToSet(me, SOUND_ONSLAY1);
-                break;
-            case 1:
-                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
-                DoPlaySoundToSet(me, SOUND_ONSLAY2);
-                break;
+        case 0:
+            me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
+            DoPlaySoundToSet(me, SOUND_ONSLAY1);
+            break;
+        case 1:
+            me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
+            DoPlaySoundToSet(me, SOUND_ONSLAY2);
+            break;
         }
     }
 
@@ -168,7 +168,7 @@ struct boss_akilzonAI : public ScriptedAI
     {
         for (uint8 i = 0; i < 8; ++i)
         {
-            Unit* bird = Unit::GetUnit(*me,BirdGUIDs[i]);
+            Unit* bird = Unit::GetUnit(*me, BirdGUIDs[i]);
             if (bird && bird->isAlive())
             {
                 bird->SetVisibility(VISIBILITY_OFF);
@@ -183,7 +183,7 @@ struct boss_akilzonAI : public ScriptedAI
         if (!pMap->IsDungeon())
             return;
 
-        WorldPacket data(SMSG_WEATHER, (4+4+4));
+        WorldPacket data(SMSG_WEATHER, (4 + 4 + 4));
         data << uint32(weather) << float(grade) << uint8(0);
 
         pMap->SendToPlayers(&data);
@@ -219,17 +219,15 @@ struct boss_akilzonAI : public ScriptedAI
             for (std::list<Unit*>::const_iterator i = tempUnitMap.begin(); i != tempUnitMap.end(); ++i)
             {
                 if (!Cloud->IsWithinDist(*i, 6, false))
-                {
                     Cloud->CastCustomSpell(*i, 43137, &bp0, NULL, NULL, true, 0, 0, me->GetGUID());
-                }
             }
             // visual
-            float x,y,z;
+            float x, y, z;
             z = me->GetPositionZ();
-            for (uint8 i = 0; i < 5+rand()%5; ++i)
+            for (uint8 i = 0; i < 5 + rand() % 5; ++i)
             {
-                x = 343+rand()%60;
-                y = 1380+rand()%60;
+                x = 343 + rand() % 60;
+                y = 1380 + rand() % 60;
                 if (Unit* trigger = me->SummonTrigger(x, y, z, 0, 2000))
                 {
                     trigger->setFaction(35);
@@ -237,7 +235,7 @@ struct boss_akilzonAI : public ScriptedAI
                     trigger->SetHealth(100000);
                     trigger->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     if (Cloud)
-                        Cloud->CastCustomSpell(trigger, /*43661*/43137, &bp0, NULL, NULL,true, 0, 0, Cloud->GetGUID());
+                        Cloud->CastCustomSpell(trigger, /*43661*/43137, &bp0, NULL, NULL, true, 0, 0, Cloud->GetGUID());
                 }
             }
         }
@@ -249,7 +247,7 @@ struct boss_akilzonAI : public ScriptedAI
             me->InterruptNonMeleeSpells(false);
             CloudGUID = 0;
             if (Cloud)
-                Cloud->DealDamage(Cloud, Cloud->GetHealth(),NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                Cloud->DealDamage(Cloud, Cloud->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             SetWeather(WEATHER_STATE_FINE, 0.0f);
             isRaining = false;
         }
@@ -297,7 +295,7 @@ struct boss_akilzonAI : public ScriptedAI
             TargetGUID = pTarget->GetGUID();
             DoCast(pTarget, SPELL_STATIC_DISRUPTION, false);
             me->SetInFront(me->getVictim());
-            StaticDisruption_Timer = (diff - StaticDisruption_Timer) + (10+rand()%8)*1000; // < 20s
+            StaticDisruption_Timer = (diff - StaticDisruption_Timer) + (10 + rand() % 8) * 1000; // < 20s
 
             /*if (float dist = me->IsWithinDist3d(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 5.0f) dist = 5.0f;
             SDisruptAOEVisual_Timer = 1000 + floor(dist / 30 * 1000.0f);*/
@@ -310,19 +308,20 @@ struct boss_akilzonAI : public ScriptedAI
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (!pTarget) pTarget = me->getVictim();
             DoCast(pTarget, SPELL_GUST_OF_WIND);
-            GustOfWind_Timer = (diff - GustOfWind_Timer) + (20+rand()%10)*1000; //20 to 30 seconds(bosskillers)
-        } else
+            GustOfWind_Timer = (diff - GustOfWind_Timer) + (20 + rand() % 10) * 1000; //20 to 30 seconds(bosskillers)
+        }
+        else
             GustOfWind_Timer -= diff;
 
         if (CallLighting_Timer <= diff)
         {
             DoCastVictim( SPELL_CALL_LIGHTNING);
-            CallLighting_Timer = (diff - CallLighting_Timer) + (12 + rand()%5)*1000; //totaly random timer. can't find any info on this
+            CallLighting_Timer = (diff - CallLighting_Timer) + (12 + rand() % 5) * 1000; //totaly random timer. can't find any info on this
         }
         else
             CallLighting_Timer -= diff;
 
-        if (!isRaining && ElectricalStorm_Timer < 8000 + urand(0,5000))
+        if (!isRaining && ElectricalStorm_Timer < 8000 + urand(0, 5000))
         {
             SetWeather(WEATHER_STATE_HEAVY_RAIN, 0.9999f);
             isRaining = true;
@@ -339,11 +338,11 @@ struct boss_akilzonAI : public ScriptedAI
             pTarget->CastSpell(pTarget, SPELL_ELECTRICAL_STORM_VISUAL, true);//cloud visual
             DoCast(pTarget, SPELL_ELECTRICAL_STORM, false);//storm cyclon + visual
 
-            float x,y,z;
-            pTarget->GetPosition(x,y,z);
+            float x, y, z;
+            pTarget->GetPosition(x, y, z);
             pTarget->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
-            pTarget->SendMonsterMove(x,y,me->GetPositionZ()+15,0);
-            Unit* Cloud = me->SummonTrigger(x, y, me->GetPositionZ()+16, 0, 15000);
+            pTarget->SendMonsterMove(x, y, me->GetPositionZ() + 15, 0);
+            Unit* Cloud = me->SummonTrigger(x, y, me->GetPositionZ() + 16, 0, 15000);
             if (Cloud)
             {
                 CloudGUID = Cloud->GetGUID();
@@ -380,15 +379,15 @@ struct boss_akilzonAI : public ScriptedAI
 
             for (uint8 i = 0; i < 8; ++i)
             {
-                if (!Unit::GetUnit(*me,BirdGUIDs[i])) // they despawn on death
+                if (!Unit::GetUnit(*me, BirdGUIDs[i])) // they despawn on death
                 {
                     if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
-                        x = pTarget->GetPositionX() + irand(-10,10);
-                        y = pTarget->GetPositionY() + irand(-10,10);
-                        z = pTarget->GetPositionZ() + urand(16,20);
+                        x = pTarget->GetPositionX() + irand(-10, 10);
+                        y = pTarget->GetPositionY() + irand(-10, 10);
+                        z = pTarget->GetPositionZ() + urand(16, 20);
                         if (z > 95)
-                            z = 95 - urand(0,5);
+                            z = 95 - urand(0, 5);
                     }
 
                     if (Creature* pCreature = me->SummonCreature(MOB_SOARING_EAGLE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
@@ -418,7 +417,7 @@ struct mob_soaring_eagleAI : public ScriptedAI
 
     void Reset()
     {
-        EagleSwoop_Timer = 5000 + rand()%5000;
+        EagleSwoop_Timer = 5000 + rand() % 5000;
         arrived = true;
         TargetGUID = 0;
         me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
@@ -438,7 +437,7 @@ struct mob_soaring_eagleAI : public ScriptedAI
                 DoCast(pTarget, SPELL_EAGLE_SWOOP, true);
             TargetGUID = 0;
             me->SetSpeed(MOVE_RUN, 1.2f);
-            EagleSwoop_Timer = 5000 + rand()%5000;
+            EagleSwoop_Timer = 5000 + rand() % 5000;
         }
     }
 
@@ -456,11 +455,11 @@ struct mob_soaring_eagleAI : public ScriptedAI
                 float x, y, z;
                 if (EagleSwoop_Timer)
                 {
-                    x = pTarget->GetPositionX() + irand(-10,10);
-                    y = pTarget->GetPositionY() + irand(-10,10);
-                    z = pTarget->GetPositionZ() + urand(10,15);
+                    x = pTarget->GetPositionX() + irand(-10, 10);
+                    y = pTarget->GetPositionY() + irand(-10, 10);
+                    z = pTarget->GetPositionZ() + urand(10, 15);
                     if (z > 95)
-                        z = 95 - urand(0,5);
+                        z = 95 - urand(0, 5);
                 }
                 else
                 {
@@ -491,7 +490,7 @@ CreatureAI* GetAI_boss_akilzon(Creature* pCreature)
 
 void AddSC_boss_akilzon()
 {
-    Script *newscript = NULL;
+    Script* newscript = NULL;
 
     newscript = new Script;
     newscript->Name = "boss_akilzon";

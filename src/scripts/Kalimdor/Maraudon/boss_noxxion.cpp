@@ -52,7 +52,7 @@ struct boss_noxxionAI : public ScriptedAI
 
     void SummonAdds(Unit* pVictim)
     {
-        if (Creature* Add = DoSpawnCreature(13456, irand(-7,7), irand(-7,7), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000))
+        if (Creature* Add = DoSpawnCreature(13456, irand(-7, 7), irand(-7, 7), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000))
             Add->AI()->AttackStart(pVictim);
     }
 
@@ -67,7 +67,8 @@ struct boss_noxxionAI : public ScriptedAI
             me->SetDisplayId(11172);
             Invisible = false;
             //me->m_canMove = true;
-        } else if (Invisible)
+        }
+        else if (Invisible)
         {
             Invisible_Timer -= diff;
             //Do nothing while invisible
@@ -83,14 +84,16 @@ struct boss_noxxionAI : public ScriptedAI
         {
             DoCastVictim( SPELL_TOXICVOLLEY);
             ToxicVolley_Timer = 9000;
-        } else ToxicVolley_Timer -= diff;
+        }
+        else ToxicVolley_Timer -= diff;
 
         //Uppercut_Timer
         if (Uppercut_Timer <= diff)
         {
             DoCastVictim( SPELL_UPPERCUT);
             Uppercut_Timer = 12000;
-        } else Uppercut_Timer -= diff;
+        }
+        else Uppercut_Timer -= diff;
 
         //Adds_Timer
         if (!Invisible && Adds_Timer <= diff)
@@ -111,7 +114,8 @@ struct boss_noxxionAI : public ScriptedAI
             Invisible_Timer = 15000;
 
             Adds_Timer = 40000;
-        } else Adds_Timer -= diff;
+        }
+        else Adds_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -123,7 +127,7 @@ CreatureAI* GetAI_boss_noxxion(Creature* pCreature)
 
 void AddSC_boss_noxxion()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_noxxion";
     newscript->GetAI = &GetAI_boss_noxxion;

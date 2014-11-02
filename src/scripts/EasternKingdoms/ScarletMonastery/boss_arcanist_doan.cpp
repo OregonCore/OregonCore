@@ -75,7 +75,7 @@ struct boss_arcanist_doanAI : public ScriptedAI
             return;
 
         //If we are <50% hp cast Arcane Bubble
-        if (!bShielded && me->GetHealth()*100 / me->GetMaxHealth() <= 50)
+        if (!bShielded && me->GetHealth() * 100 / me->GetMaxHealth() <= 50)
         {
             //wait if we already casting
             if (me->IsNonMeleeSpellCast(false))
@@ -90,25 +90,28 @@ struct boss_arcanist_doanAI : public ScriptedAI
 
         if (Polymorph_Timer <= diff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                 DoCast(pTarget, SPELL_POLYMORPH);
 
             Polymorph_Timer = 20000;
-        } else Polymorph_Timer -= diff;
+        }
+        else Polymorph_Timer -= diff;
 
         //AoESilence_Timer
         if (AoESilence_Timer <= diff)
         {
             DoCastVictim( SPELL_AOESILENCE);
-            AoESilence_Timer = 15000 + rand()%5000;
-        } else AoESilence_Timer -= diff;
+            AoESilence_Timer = 15000 + rand() % 5000;
+        }
+        else AoESilence_Timer -= diff;
 
         //ArcaneExplosion_Timer
         if (ArcaneExplosion_Timer <= diff)
         {
             DoCastVictim( SPELL_ARCANEEXPLOSION);
             ArcaneExplosion_Timer = 8000;
-        } else ArcaneExplosion_Timer -= diff;
+        }
+        else ArcaneExplosion_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -120,7 +123,7 @@ CreatureAI* GetAI_boss_arcanist_doan(Creature* pCreature)
 
 void AddSC_boss_arcanist_doan()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_arcanist_doan";
     newscript->GetAI = &GetAI_boss_arcanist_doan;

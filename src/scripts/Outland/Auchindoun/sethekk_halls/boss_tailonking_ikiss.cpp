@@ -77,7 +77,7 @@ struct boss_talon_king_ikissAI : public ScriptedAI
         ArcaneVolley_Timer = 5000;
         Sheep_Timer = 8000;
         Blink_Timer = 35000;
-        Slow_Timer = 15000+rand()%15000;
+        Slow_Timer = 15000 + rand() % 15000;
         Blink = false;
         Intro = false;
         ManaShield = false;
@@ -108,13 +108,19 @@ struct boss_talon_king_ikissAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit* )
+    void EnterCombat(Unit*)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO_2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO_3, me);
+            break;
         }
 
         if (pInstance)
@@ -131,10 +137,14 @@ struct boss_talon_king_ikissAI : public ScriptedAI
 
     void KilledUnit(Unit*)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY_1, me); break;
-            case 1: DoScriptText(SAY_SLAY_2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY_1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY_2, me);
+            break;
         }
     }
 
@@ -145,31 +155,33 @@ struct boss_talon_king_ikissAI : public ScriptedAI
 
         if (Blink)
         {
-            DoCast(me,HeroicMode ? H_SPELL_ARCANE_EXPLOSION : SPELL_ARCANE_EXPLOSION);
-            me->CastSpell(me,SPELL_ARCANE_BUBBLE,true);
+            DoCast(me, HeroicMode ? H_SPELL_ARCANE_EXPLOSION : SPELL_ARCANE_EXPLOSION);
+            me->CastSpell(me, SPELL_ARCANE_BUBBLE, true);
             Blink = false;
         }
 
         if (ArcaneVolley_Timer <= diff)
         {
-            DoCast(me,HeroicMode ? H_SPELL_ARCANE_VOLLEY : SPELL_ARCANE_VOLLEY);
-            ArcaneVolley_Timer = 10000+rand()%5000;
-        } else ArcaneVolley_Timer -= diff;
+            DoCast(me, HeroicMode ? H_SPELL_ARCANE_VOLLEY : SPELL_ARCANE_VOLLEY);
+            ArcaneVolley_Timer = 10000 + rand() % 5000;
+        }
+        else ArcaneVolley_Timer -= diff;
 
         if (Sheep_Timer <= diff)
         {
             //second top aggro target in normal, random target in heroic correct?
             Unit* pTarget = NULL;
-            pTarget = HeroicMode ? SelectUnit(SELECT_TARGET_RANDOM,0) : SelectUnit(SELECT_TARGET_TOPAGGRO,1);
+            pTarget = HeroicMode ? SelectUnit(SELECT_TARGET_RANDOM, 0) : SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
             if (pTarget)
-                DoCast(pTarget,HeroicMode ? H_SPELL_POLYMORPH : SPELL_POLYMORPH);
-            Sheep_Timer = 15000+rand()%2500;
-        } else Sheep_Timer -= diff;
+                DoCast(pTarget, HeroicMode ? H_SPELL_POLYMORPH : SPELL_POLYMORPH);
+            Sheep_Timer = 15000 + rand() % 2500;
+        }
+        else Sheep_Timer -= diff;
 
         //may not be correct time to cast
-        if (!ManaShield && ((me->GetHealth()*100) / me->GetMaxHealth() < 20))
+        if (!ManaShield && ((me->GetHealth() * 100) / me->GetMaxHealth() < 20))
         {
-            DoCast(me,SPELL_MANA_SHIELD);
+            DoCast(me, SPELL_MANA_SHIELD);
             ManaShield = true;
         }
 
@@ -177,34 +189,36 @@ struct boss_talon_king_ikissAI : public ScriptedAI
         {
             if (Slow_Timer <= diff)
             {
-                DoCast(me,H_SPELL_SLOW);
-                Slow_Timer = 15000+rand()%25000;
-            } else Slow_Timer -= diff;
+                DoCast(me, H_SPELL_SLOW);
+                Slow_Timer = 15000 + rand() % 25000;
+            }
+            else Slow_Timer -= diff;
         }
 
         if (Blink_Timer <= diff)
         {
             DoScriptText(EMOTE_ARCANE_EXP, me);
 
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 if (me->IsNonMeleeSpellCast(false))
                     me->InterruptNonMeleeSpells(false);
 
                 //Spell doesn't work, but we use for visual effect at least
-                DoCast(pTarget,SPELL_BLINK);
+                DoCast(pTarget, SPELL_BLINK);
 
                 float X = pTarget->GetPositionX();
                 float Y = pTarget->GetPositionY();
                 float Z = pTarget->GetPositionZ();
 
-                DoTeleportTo(X,Y,Z);
+                DoTeleportTo(X, Y, Z);
 
-                DoCast(pTarget,SPELL_BLINK_TELEPORT);
+                DoCast(pTarget, SPELL_BLINK_TELEPORT);
                 Blink = true;
             }
-            Blink_Timer = 35000+rand()%5000;
-        } else Blink_Timer -= diff;
+            Blink_Timer = 35000 + rand() % 5000;
+        }
+        else Blink_Timer -= diff;
 
         if (!Blink)
             DoMeleeAttackIfReady();
@@ -218,7 +232,7 @@ CreatureAI* GetAI_boss_talon_king_ikiss(Creature* pCreature)
 
 void AddSC_boss_talon_king_ikiss()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_talon_king_ikiss";
     newscript->GetAI = &GetAI_boss_talon_king_ikiss;

@@ -47,14 +47,14 @@ EndScriptData */
 
 float IntroWay[8][3] =
 {
-    {-11053.37f,-1794.48f,149},
-    {-11141.07f,-1841.40f,125},
-    {-11187.28f,-1890.23f,125},
-    {-11189.20f,-1931.25f,125},
-    {-11153.76f,-1948.93f,125},
-    {-11128.73f,-1929.75f,125},
-    {-11140   , -1915  ,122},
-    {-11163   , -1903  ,91.473f}
+    { -11053.37f, -1794.48f, 149},
+    { -11141.07f, -1841.40f, 125},
+    { -11187.28f, -1890.23f, 125},
+    { -11189.20f, -1931.25f, 125},
+    { -11153.76f, -1948.93f, 125},
+    { -11128.73f, -1929.75f, 125},
+    { -11140   , -1915  , 122},
+    { -11163   , -1903  , 91.473f}
 };
 
 struct boss_nightbaneAI : public ScriptedAI
@@ -106,7 +106,7 @@ struct boss_nightbaneAI : public ScriptedAI
                 NightbaneGUID = pInstance->GetData64(DATA_NIGHTBANE);
 
                 if (NightbaneGUID)
-                    if (/*Creature* Nightbane = */Creature::GetCreature((*me),NightbaneGUID))
+                    if (/*Creature* Nightbane = */Creature::GetCreature((*me), NightbaneGUID))
                         isCorrectSpawned = false;
             }
             else
@@ -120,9 +120,7 @@ struct boss_nightbaneAI : public ScriptedAI
                 me->RemoveCorpse();
             }
             else
-            {
-                pInstance->SetData64(DATA_NIGHTBANE,me->GetGUID());
-            }
+                pInstance->SetData64(DATA_NIGHTBANE, me->GetGUID());
 
             if (!Intro)
             {
@@ -132,7 +130,8 @@ struct boss_nightbaneAI : public ScriptedAI
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 me->RemoveCorpse();
                 return;
-            } else
+            }
+            else
             {
 
                 BellowingRoarTimer = 30000;
@@ -146,7 +145,7 @@ struct boss_nightbaneAI : public ScriptedAI
                 SearingCindersTimer = 14000;
                 WaitTimer = 1000;
 
-                Phase =1;
+                Phase = 1;
                 FlyCount = 0;
                 MovePhase = 0;
 
@@ -219,7 +218,7 @@ struct boss_nightbaneAI : public ScriptedAI
     void MovementInform(uint32 type, uint32 id)
     {
         if (type != POINT_MOTION_TYPE)
-                return;
+            return;
 
         if (Intro)
         {
@@ -227,7 +226,7 @@ struct boss_nightbaneAI : public ScriptedAI
             {
                 Intro = false;
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                me->SetHomePosition(IntroWay[7][0],IntroWay[7][1],IntroWay[7][2],0);
+                me->SetHomePosition(IntroWay[7][0], IntroWay[7][1], IntroWay[7][2], 0);
                 Phase = 1;
                 return;
             }
@@ -281,11 +280,11 @@ struct boss_nightbaneAI : public ScriptedAI
         me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
         me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
         (*me).GetMotionMaster()->Clear(false);
-        (*me).GetMotionMaster()->MovePoint(0,IntroWay[2][0],IntroWay[2][1],IntroWay[2][2]);
+        (*me).GetMotionMaster()->MovePoint(0, IntroWay[2][0], IntroWay[2][1], IntroWay[2][2]);
 
         Flying = true;
 
-        FlyTimer = urand(45000,60000); //timer wrong between 45 and 60 seconds
+        FlyTimer = urand(45000, 60000); //timer wrong between 45 and 60 seconds
         ++FlyCount;
 
         RainofBonesTimer = 5000; //timer wrong (maybe)
@@ -305,11 +304,11 @@ struct boss_nightbaneAI : public ScriptedAI
                 {
                     me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-                    me->GetMotionMaster()->MovePoint(8,IntroWay[7][0],IntroWay[7][1],IntroWay[7][2]);
+                    me->GetMotionMaster()->MovePoint(8, IntroWay[7][0], IntroWay[7][1], IntroWay[7][2]);
                 }
                 else
                 {
-                    me->GetMotionMaster()->MovePoint(MovePhase,IntroWay[MovePhase][0],IntroWay[MovePhase][1],IntroWay[MovePhase][2]);
+                    me->GetMotionMaster()->MovePoint(MovePhase, IntroWay[MovePhase][0], IntroWay[MovePhase][1], IntroWay[MovePhase][2]);
                     ++MovePhase;
                 }
             }
@@ -320,17 +319,18 @@ struct boss_nightbaneAI : public ScriptedAI
                 {
                     me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-                    me->GetMotionMaster()->MovePoint(8,IntroWay[7][0],IntroWay[7][1],IntroWay[7][2]);
+                    me->GetMotionMaster()->MovePoint(8, IntroWay[7][0], IntroWay[7][1], IntroWay[7][2]);
                 }
                 else
                 {
-                    me->GetMotionMaster()->MovePoint(MovePhase,IntroWay[MovePhase][0],IntroWay[MovePhase][1],IntroWay[MovePhase][2]);
+                    me->GetMotionMaster()->MovePoint(MovePhase, IntroWay[MovePhase][0], IntroWay[MovePhase][1], IntroWay[MovePhase][2]);
                     ++MovePhase;
                 }
             }
 
             WaitTimer = 0;
-        } else WaitTimer -= diff;
+        }
+        else WaitTimer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -350,21 +350,24 @@ struct boss_nightbaneAI : public ScriptedAI
             if (BellowingRoarTimer <= diff)
             {
                 DoCastVictim( SPELL_BELLOWING_ROAR);
-                BellowingRoarTimer = urand(30000,40000);
-            } else BellowingRoarTimer -= diff;
+                BellowingRoarTimer = urand(30000, 40000);
+            }
+            else BellowingRoarTimer -= diff;
 
             if (SmolderingBreathTimer <= diff)
             {
                 DoCastVictim( SPELL_SMOLDERING_BREATH);
                 SmolderingBreathTimer = 20000;
-            } else SmolderingBreathTimer -= diff;
+            }
+            else SmolderingBreathTimer -= diff;
 
             if (CharredEarthTimer <= diff)
             {
                 if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     DoCast(pTarget, SPELL_CHARRED_EARTH);
                 CharredEarthTimer = 20000;
-            } else CharredEarthTimer -= diff;
+            }
+            else CharredEarthTimer -= diff;
 
             if (TailSweepTimer <= diff)
             {
@@ -372,17 +375,19 @@ struct boss_nightbaneAI : public ScriptedAI
                     if (!me->HasInArc(M_PI, pTarget))
                         DoCast(pTarget, SPELL_TAIL_SWEEP);
                 TailSweepTimer = 15000;
-            } else TailSweepTimer -= diff;
+            }
+            else TailSweepTimer -= diff;
 
             if (SearingCindersTimer <= diff)
             {
                 if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     DoCast(pTarget, SPELL_SEARING_CINDERS);
                 SearingCindersTimer = 10000;
-            } else SearingCindersTimer -= diff;
+            }
+            else SearingCindersTimer -= diff;
 
             uint32 Prozent;
-            Prozent = (me->GetHealth()*100) / me->GetMaxHealth();
+            Prozent = (me->GetHealth() * 100) / me->GetMaxHealth();
 
             if (Prozent < 75 && FlyCount == 0) // first take off 75%
                 TakeOff();
@@ -414,50 +419,53 @@ struct boss_nightbaneAI : public ScriptedAI
                     DoCastVictim( SPELL_RAIN_OF_BONES);
                     RainBones = true;
                     SmokingBlastTimer = 20000;
-                } else RainofBonesTimer -= diff;
+                }
+                else RainofBonesTimer -= diff;
 
                 if (DistractingAshTimer <= diff)
                 {
                     if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                         DoCast(pTarget, SPELL_DISTRACTING_ASH);
                     DistractingAshTimer = 2000; //timer wrong
-                } else DistractingAshTimer -= diff;
+                }
+                else DistractingAshTimer -= diff;
             }
 
             if (RainBones)
             {
                 if (SmokingBlastTimer <= diff)
-                 {
+                {
                     DoCastVictim( SPELL_SMOKING_BLAST);
                     SmokingBlastTimer = 1500; //timer wrong
-                 } else SmokingBlastTimer -= diff;
+                }
+                else SmokingBlastTimer -= diff;
             }
 
             if (FireballBarrageTimer <= diff)
             {
-                Map *map = me->GetMap();
+                Map* map = me->GetMap();
                 if (!map->IsDungeon()) return;
-                Map::PlayerList const &PlayerList = map->GetPlayers();
+                Map::PlayerList const& PlayerList = map->GetPlayers();
                 for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 {
                     if (Player* i_pl = i->getSource())
-                        if (i_pl->isAlive() && !me->IsWithinDistInMap(i_pl,80))
-                        {
+                        if (i_pl->isAlive() && !me->IsWithinDistInMap(i_pl, 80))
                             DoCast(i_pl, SPELL_FIREBALL_BARRAGE);
-                        }
                 }
                 FireballBarrageTimer = 20000;
-            } else FireballBarrageTimer -= diff;
+            }
+            else FireballBarrageTimer -= diff;
 
             if (FlyTimer <= diff) //landing
             {
-                me->MonsterYell(RAND(*YELL_LAND_PHASE_1,*YELL_LAND_PHASE_2), LANG_UNIVERSAL, 0);
+                me->MonsterYell(RAND(*YELL_LAND_PHASE_1, *YELL_LAND_PHASE_2), LANG_UNIVERSAL, 0);
 
                 me->GetMotionMaster()->Clear(false);
-                me->GetMotionMaster()->MovePoint(3,IntroWay[3][0],IntroWay[3][1],IntroWay[3][2]);
+                me->GetMotionMaster()->MovePoint(3, IntroWay[3][0], IntroWay[3][1], IntroWay[3][2]);
 
                 Flying = true;
-            } else FlyTimer -= diff;
+            }
+            else FlyTimer -= diff;
         }
     }
 };
@@ -469,7 +477,7 @@ CreatureAI* GetAI_boss_nightbane(Creature* pCreature)
 
 void AddSC_boss_nightbane()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_nightbane";
     newscript->GetAI = &GetAI_boss_nightbane;

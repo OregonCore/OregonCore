@@ -56,8 +56,9 @@ struct boss_gahzrankaAI : public ScriptedAI
         if (Frostbreath_Timer <= diff)
         {
             DoCastVictim( SPELL_FROSTBREATH);
-            Frostbreath_Timer = 7000 + rand()%4000;
-        } else Frostbreath_Timer -= diff;
+            Frostbreath_Timer = 7000 + rand() % 4000;
+        }
+        else Frostbreath_Timer -= diff;
 
         //MassiveGeyser_Timer
         if (MassiveGeyser_Timer <= diff)
@@ -65,15 +66,17 @@ struct boss_gahzrankaAI : public ScriptedAI
             DoCastVictim( SPELL_MASSIVEGEYSER);
             DoResetThreat();
 
-            MassiveGeyser_Timer = 22000 + rand()%10000;
-        } else MassiveGeyser_Timer -= diff;
+            MassiveGeyser_Timer = 22000 + rand() % 10000;
+        }
+        else MassiveGeyser_Timer -= diff;
 
         //Slam_Timer
         if (Slam_Timer <= diff)
         {
             DoCastVictim( SPELL_SLAM);
-            Slam_Timer = 12000 + rand()%8000;
-        } else Slam_Timer -= diff;
+            Slam_Timer = 12000 + rand() % 8000;
+        }
+        else Slam_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -85,7 +88,7 @@ CreatureAI* GetAI_boss_gahzranka(Creature* pCreature)
 
 void AddSC_boss_gahzranka()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_gahzranka";
     newscript->GetAI = &GetAI_boss_gahzranka;

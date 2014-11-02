@@ -48,7 +48,7 @@ enum eSylvanas
     SPELL_RIBBON_OF_SOULS       = 34432                   //the real one to use might be 37099
 };
 
-float HighborneLoc[4][3]=
+float HighborneLoc[4][3] =
 {
     {1285.41f, 312.47f, 0.51f},
     {1286.96f, 310.40f, 1.00f},
@@ -80,10 +80,10 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
     {
         if (summoned->GetEntry() == ENTRY_HIGHBORNE_BUNNY)
         {
-            if (Unit* pTarget = Unit::GetUnit(*summoned,targetGUID))
+            if (Unit* pTarget = Unit::GetUnit(*summoned, targetGUID))
             {
-                pTarget->SendMonsterMove(pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ()+15.0f,0);
-                pTarget->GetMap()->CreatureRelocation(me, pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ()+15.0f, 0.0f);
+                pTarget->SendMonsterMove(pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ() + 15.0f, 0);
+                pTarget->GetMap()->CreatureRelocation(me, pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ() + 15.0f, 0.0f);
                 summoned->CastSpell(pTarget, SPELL_RIBBON_OF_SOULS, false);
             }
 
@@ -107,7 +107,8 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
                     DoScriptText(EMOTE_LAMENT_END, me);
                     LamentEvent = false;
                 }
-            } else LamentEvent_Timer -= diff;
+            }
+            else LamentEvent_Timer -= diff;
         }
 
         if (!UpdateVictim())
@@ -121,13 +122,13 @@ CreatureAI* GetAI_npc_lady_sylvanas_windrunner(Creature* pCreature)
     return new npc_lady_sylvanas_windrunnerAI (pCreature);
 }
 
-bool ChooseReward_npc_lady_sylvanas_windrunner(Player* /*pPlayer*/, Creature* pCreature, const Quest *_Quest, uint32 /*slot*/)
+bool ChooseReward_npc_lady_sylvanas_windrunner(Player* /*pPlayer*/, Creature* pCreature, const Quest* _Quest, uint32 /*slot*/)
 {
     if (_Quest->GetQuestId() == 9180)
     {
         CAST_AI(npc_lady_sylvanas_windrunnerAI, pCreature->AI())->LamentEvent = true;
-        CAST_AI(npc_lady_sylvanas_windrunnerAI, pCreature->AI())->DoPlaySoundToSet(pCreature,SOUND_CREDIT);
-        pCreature->CastSpell(pCreature,SPELL_SYLVANAS_CAST,false);
+        CAST_AI(npc_lady_sylvanas_windrunnerAI, pCreature->AI())->DoPlaySoundToSet(pCreature, SOUND_CREDIT);
+        pCreature->CastSpell(pCreature, SPELL_SYLVANAS_CAST, false);
 
         for (uint8 i = 0; i < 4; ++i)
             pCreature->SummonCreature(ENTRY_HIGHBORNE_LAMENTER, HighborneLoc[i][0], HighborneLoc[i][1], HIGHBORNE_LOC_Y, HighborneLoc[i][2], TEMPSUMMON_TIMED_DESPAWN, 160000);
@@ -166,10 +167,11 @@ struct npc_highborne_lamenterAI : public ScriptedAI
             if (EventMove_Timer <= diff)
             {
                 me->AddUnitMovementFlag(MOVEFLAG_LEVITATING);
-                me->SendMonsterMoveWithSpeed(me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,5000);
-                me->GetMap()->CreatureRelocation(me,me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,me->GetOrientation());
+                me->SendMonsterMoveWithSpeed(me->GetPositionX(), me->GetPositionY(), HIGHBORNE_LOC_Y_NEW, 5000);
+                me->GetMap()->CreatureRelocation(me, me->GetPositionX(), me->GetPositionY(), HIGHBORNE_LOC_Y_NEW, me->GetOrientation());
                 EventMove = false;
-            } else EventMove_Timer -= diff;
+            }
+            else EventMove_Timer -= diff;
         }
         if (EventCast)
         {
@@ -177,7 +179,8 @@ struct npc_highborne_lamenterAI : public ScriptedAI
             {
                 DoCast(me, SPELL_HIGHBORNE_AURA);
                 EventCast = false;
-            } else EventCast_Timer -= diff;
+            }
+            else EventCast_Timer -= diff;
         }
     }
 };
@@ -203,9 +206,9 @@ bool GossipHello_npc_parqual_fintallas(Player* pPlayer, Creature* pCreature)
 
     if (pPlayer->GetQuestStatus(6628) == QUEST_STATUS_INCOMPLETE && !pPlayer->HasAura(SPELL_MARK_OF_SHAME, 0))
     {
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HPF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HPF2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HPF3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HPF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HPF2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HPF3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
         pPlayer->SEND_GOSSIP_MENU(5822, pCreature->GetGUID());
     }
     else
@@ -216,12 +219,12 @@ bool GossipHello_npc_parqual_fintallas(Player* pPlayer, Creature* pCreature)
 
 bool GossipSelect_npc_parqual_fintallas(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
-        pCreature->CastSpell(pPlayer,SPELL_MARK_OF_SHAME,false);
+        pCreature->CastSpell(pPlayer, SPELL_MARK_OF_SHAME, false);
     }
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+2)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 2)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
         pPlayer->AreaExploredOrEventHappens(6628);
@@ -235,7 +238,7 @@ bool GossipSelect_npc_parqual_fintallas(Player* pPlayer, Creature* pCreature, ui
 
 void AddSC_undercity()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_lady_sylvanas_windrunner";

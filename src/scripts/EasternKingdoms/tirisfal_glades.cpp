@@ -73,9 +73,9 @@ struct npc_calvin_montagueAI : public ScriptedAI
         AttackStart(pAttacker);
     }
 
-    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    void DamageTaken(Unit* pDoneBy, uint32& uiDamage)
     {
-        if (uiDamage > me->GetHealth() || ((me->GetHealth() - uiDamage)*100 / me->GetMaxHealth() < 15))
+        if (uiDamage > me->GetHealth() || ((me->GetHealth() - uiDamage) * 100 / me->GetMaxHealth() < 15))
         {
             uiDamage = 0;
 
@@ -101,22 +101,22 @@ struct npc_calvin_montagueAI : public ScriptedAI
                 return;
             }
 
-            switch(m_uiPhase)
+            switch (m_uiPhase)
             {
-                case 1:
-                    DoScriptText(SAY_COMPLETE, me);
-                    ++m_uiPhase;
-                    break;
-                case 2:
-                    if (Player* pPlayer = Unit::GetPlayer(*me, m_uiPlayerGUID))
-                        pPlayer->AreaExploredOrEventHappens(QUEST_590);
+            case 1:
+                DoScriptText(SAY_COMPLETE, me);
+                ++m_uiPhase;
+                break;
+            case 2:
+                if (Player* pPlayer = Unit::GetPlayer(*me, m_uiPlayerGUID))
+                    pPlayer->AreaExploredOrEventHappens(QUEST_590);
 
-                    DoCast(me, SPELL_DRINK, true);
-                    ++m_uiPhase;
-                    break;
-                case 3:
-                    EnterEvadeMode();
-                    break;
+                DoCast(me, SPELL_DRINK, true);
+                ++m_uiPhase;
+                break;
+            case 3:
+                EnterEvadeMode();
+                break;
             }
 
             return;
@@ -180,7 +180,7 @@ bool GOHello_go_mausoleum_trigger(Player* pPlayer, GameObject* pGo)
     if (GameObject* pDoor = pPlayer->FindNearestGameObject(GO_DOOR, 30.0f))
     {
         pGo->SetGoState(GO_STATE_ACTIVE);
-        pDoor->RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_INTERACT_COND);
+        pDoor->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
         return true;
     }
 
@@ -189,7 +189,7 @@ bool GOHello_go_mausoleum_trigger(Player* pPlayer, GameObject* pGo)
 
 void AddSC_tirisfal_glades()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_calvin_montague";

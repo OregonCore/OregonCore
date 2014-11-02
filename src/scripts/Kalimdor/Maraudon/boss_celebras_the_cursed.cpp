@@ -59,18 +59,20 @@ struct celebras_the_cursedAI : public ScriptedAI
         if (Wrath_Timer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget)
                 DoCast(pTarget, SPELL_WRATH);
             Wrath_Timer = 8000;
-        } else Wrath_Timer -= diff;
+        }
+        else Wrath_Timer -= diff;
 
         //EntanglingRoots
         if (EntanglingRoots_Timer <= diff)
         {
             DoCastVictim( SPELL_ENTANGLINGROOTS);
             EntanglingRoots_Timer = 20000;
-        } else EntanglingRoots_Timer -= diff;
+        }
+        else EntanglingRoots_Timer -= diff;
 
         //CorruptForces
         if (CorruptForces_Timer <= diff)
@@ -78,7 +80,8 @@ struct celebras_the_cursedAI : public ScriptedAI
             me->InterruptNonMeleeSpells(false);
             DoCast(me, SPELL_CORRUPT_FORCES);
             CorruptForces_Timer = 20000;
-        } else CorruptForces_Timer -= diff;
+        }
+        else CorruptForces_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -90,7 +93,7 @@ CreatureAI* GetAI_celebras_the_cursed(Creature* pCreature)
 
 void AddSC_boss_celebras_the_cursed()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "celebras_the_cursed";
     newscript->GetAI = &GetAI_celebras_the_cursed;

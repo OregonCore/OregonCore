@@ -44,9 +44,7 @@ struct generic_creatureAI : public ScriptedAI
     void EnterCombat(Unit* who)
     {
         if (!me->IsWithinMeleeRange(who))
-        {
             IsSelfRooted = true;
-        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -62,7 +60,7 @@ struct generic_creatureAI : public ScriptedAI
             if (BuffTimer <= diff)
             {
                 //Find a spell that targets friendly and applies an aura (these are generally buffs)
-                SpellEntry const *info = SelectSpell(me, 0, 0, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);
+                SpellEntry const* info = SelectSpell(me, 0, 0, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);
 
                 if (info && !GlobalCooldown)
                 {
@@ -76,7 +74,8 @@ struct generic_creatureAI : public ScriptedAI
                     BuffTimer = 600000;
                 }//Try agian in 30 seconds
                 else BuffTimer = 30000;
-            } else BuffTimer -= diff;
+            }
+            else BuffTimer -= diff;
         }
         //Return since we have no target
         if (!UpdateVictim())
@@ -89,10 +88,10 @@ struct generic_creatureAI : public ScriptedAI
             if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
             {
                 bool Healing = false;
-                SpellEntry const *info = NULL;
+                SpellEntry const* info = NULL;
 
                 //Select a healing spell if less than 30% hp
-                if (me->GetHealth()*100 / me->GetMaxHealth() < 30)
+                if (me->GetHealth() * 100 / me->GetMaxHealth() < 30)
                     info = SelectSpell(me, 0, 0, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
 
                 //No healing spell available, select a hostile spell
@@ -120,10 +119,10 @@ struct generic_creatureAI : public ScriptedAI
             if (!me->IsNonMeleeSpellCast(false))
             {
                 bool Healing = false;
-                SpellEntry const *info = NULL;
+                SpellEntry const* info = NULL;
 
                 //Select a healing spell if less than 30% hp ONLY 33% of the time
-                if (me->GetHealth()*100 / me->GetMaxHealth() < 30 && rand() % 3 == 0)
+                if (me->GetHealth() * 100 / me->GetMaxHealth() < 30 && rand() % 3 == 0)
                     info = SelectSpell(me, 0, 0, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
 
                 //No healing spell available, See if we can cast a ranged spell (Range must be greater than ATTACK_DISTANCE)
@@ -135,13 +134,11 @@ struct generic_creatureAI : public ScriptedAI
                 {
                     //If we are currently moving stop us and set the movement generator
                     if (!IsSelfRooted)
-                    {
                         IsSelfRooted = true;
-                    }
 
                     //Cast spell
-                    if (Healing) DoCastSpell(me,info);
-                    else DoCastSpell(me->getVictim(),info);
+                    if (Healing) DoCastSpell(me, info);
+                    else DoCastSpell(me->getVictim(), info);
 
                     //Set our global cooldown
                     GlobalCooldown = GENERIC_CREATURE_COOLDOWN;

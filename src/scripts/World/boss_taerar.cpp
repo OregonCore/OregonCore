@@ -46,7 +46,7 @@ enum eEnums
     SPELL_POSIONBREATH      = 20667
 };
 
-uint32 m_auiSpellSummonShade[]=
+uint32 m_auiSpellSummonShade[] =
 {
     SPELL_SUMMONSHADE_1, SPELL_SUMMONSHADE_2, SPELL_SUMMONSHADE_3
 };
@@ -68,7 +68,7 @@ struct boss_taerarAI : public ScriptedAI
 
     void Reset()
     {
-        m_uiSleep_Timer = 15000 + rand()%5000;
+        m_uiSleep_Timer = 15000 + rand() % 5000;
         m_uiNoxiousBreath_Timer = 8000;
         m_uiTailSweep_Timer = 4000;
         //m_uiMarkOfNature_Timer = 45000;
@@ -117,7 +117,7 @@ struct boss_taerarAI : public ScriptedAI
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_SLEEP);
 
-            m_uiSleep_Timer = 8000 + rand()%7000;
+            m_uiSleep_Timer = 8000 + rand() % 7000;
         }
         else
             m_uiSleep_Timer -= uiDiff;
@@ -126,7 +126,7 @@ struct boss_taerarAI : public ScriptedAI
         if (m_uiNoxiousBreath_Timer <= uiDiff)
         {
             DoCastVictim( SPELL_NOXIOUSBREATH);
-            m_uiNoxiousBreath_Timer = 14000 + rand()%6000;
+            m_uiNoxiousBreath_Timer = 14000 + rand() % 6000;
         }
         else
             m_uiNoxiousBreath_Timer -= uiDiff;
@@ -153,7 +153,7 @@ struct boss_taerarAI : public ScriptedAI
         if (m_uiArcaneBlast_Timer <= uiDiff)
         {
             DoCastVictim( SPELL_ARCANEBLAST);
-            m_uiArcaneBlast_Timer = 7000 + rand()%5000;
+            m_uiArcaneBlast_Timer = 7000 + rand() % 5000;
         }
         else
             m_uiArcaneBlast_Timer -= uiDiff;
@@ -162,13 +162,13 @@ struct boss_taerarAI : public ScriptedAI
         if (m_uiBellowingRoar_Timer <= uiDiff)
         {
             DoCastVictim( SPELL_BELLOWINGROAR);
-            m_uiBellowingRoar_Timer = 20000 + rand()%10000;
+            m_uiBellowingRoar_Timer = 20000 + rand() % 10000;
         }
         else
             m_uiBellowingRoar_Timer -= uiDiff;
 
         //Summon 3 Shades at 75%, 50% and 25% (if bShades is true we already left in line 117, no need to check here again)
-        if (!m_bShades && (me->GetHealth()*100 / me->GetMaxHealth()) <= (100-(25*m_uiShadesSummoned)))
+        if (!m_bShades && (me->GetHealth() * 100 / me->GetMaxHealth()) <= (100 - (25 * m_uiShadesSummoned)))
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
@@ -249,7 +249,7 @@ CreatureAI* GetAI_boss_shadeoftaerar(Creature* pCreature)
 
 void AddSC_boss_taerar()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_taerar";

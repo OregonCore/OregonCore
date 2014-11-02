@@ -45,7 +45,7 @@ struct boss_golemaggAI : public ScriptedAI
         pInstance = pCreature->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 uiPyroblastTimer;
     uint32 uiEarthquakeTimer;
@@ -54,8 +54,8 @@ struct boss_golemaggAI : public ScriptedAI
 
     void Reset()
     {
-        uiPyroblastTimer = 7*IN_MILLISECONDS;              // These timers are probably wrong
-        uiEarthquakeTimer = 3*IN_MILLISECONDS;
+        uiPyroblastTimer = 7 * IN_MILLISECONDS;            // These timers are probably wrong
+        uiEarthquakeTimer = 3 * IN_MILLISECONDS;
         uiBuffTimer = 2500;
         bEnraged = false;
 
@@ -79,13 +79,13 @@ struct boss_golemaggAI : public ScriptedAI
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_PYROBLAST);
 
-            uiPyroblastTimer = 7*IN_MILLISECONDS;
+            uiPyroblastTimer = 7 * IN_MILLISECONDS;
         }
         else
             uiPyroblastTimer -= uiDiff;
 
         // Enrage
-        if (!bEnraged && me->GetHealth()*100 / me->GetMaxHealth() < 10)
+        if (!bEnraged && me->GetHealth() * 100 / me->GetMaxHealth() < 10)
         {
             DoCast(me, SPELL_ENRAGE);
             bEnraged = true;
@@ -97,7 +97,7 @@ struct boss_golemaggAI : public ScriptedAI
             if (uiEarthquakeTimer <= uiDiff)
             {
                 DoCastVictim( SPELL_EARTHQUAKE);
-                uiEarthquakeTimer = 3*IN_MILLISECONDS;
+                uiEarthquakeTimer = 3 * IN_MILLISECONDS;
             }
             else
                 uiEarthquakeTimer -= uiDiff;
@@ -125,18 +125,18 @@ struct mob_core_ragerAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint32 uiMangleTimer;
 
     void Reset()
     {
-        uiMangleTimer = 7*IN_MILLISECONDS;                 // These times are probably wrong
+        uiMangleTimer = 7 * IN_MILLISECONDS;               // These times are probably wrong
     }
 
     void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
+        if (me->GetHealth() * 100 / me->GetMaxHealth() < 50)
         {
             if (pInstance)
             {
@@ -163,7 +163,7 @@ struct mob_core_ragerAI : public ScriptedAI
         if (uiMangleTimer <= uiDiff)
         {
             DoCastVictim(SPELL_MANGLE);
-            uiMangleTimer = 10*IN_MILLISECONDS;
+            uiMangleTimer = 10 * IN_MILLISECONDS;
         }
         else
             uiMangleTimer -= uiDiff;

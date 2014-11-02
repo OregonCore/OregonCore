@@ -34,7 +34,7 @@ DynamicObject::DynamicObject() : WorldObject()
 {
     m_objectType |= TYPEMASK_DYNAMICOBJECT;
     m_objectTypeId = TYPEID_DYNAMICOBJECT;
-                                                            // 2.3.2 - 0x58
+    // 2.3.2 - 0x58
     m_updateFlag = (UPDATEFLAG_LOWGUID | UPDATEFLAG_HIGHGUID | UPDATEFLAG_HAS_POSITION);
 
     m_valuesCount = DYNAMICOBJECT_END;
@@ -63,22 +63,20 @@ void DynamicObject::RemoveFromWorld()
                     ((Player*)caster)->SetViewpoint(this, false);
             }
             else
-            {
                 sLog.outCrash("DynamicObject::RemoveFromWorld cannot find viewpoint owner");
-            }
         }
         WorldObject::RemoveFromWorld();
         ObjectAccessor::Instance().RemoveObject(this);
     }
 }
 
-bool DynamicObject::Create(uint32 guidlow, Unit* caster, uint32 spellId, uint32 effIndex, const Position &pos, int32 duration, float radius)
+bool DynamicObject::Create(uint32 guidlow, Unit* caster, uint32 spellId, uint32 effIndex, const Position& pos, int32 duration, float radius)
 {
     SetMap(caster->GetMap());
     Relocate(pos);
     if (!IsPositionValid())
     {
-        sLog.outError("DynamicObject (spell %u eff %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)",spellId,effIndex,GetPositionX(),GetPositionY());
+        sLog.outError("DynamicObject (spell %u eff %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)", spellId, effIndex, GetPositionX(), GetPositionY());
         return false;
     }
 
@@ -141,10 +139,11 @@ void DynamicObject::Update(uint32 p_time)
     {
         if (m_updateTimer < p_time)
         {
-            Oregon::DynamicObjectUpdater notifier(*this,caster);
+            Oregon::DynamicObjectUpdater notifier(*this, caster);
             VisitNearbyObject(GetRadius(), notifier);
             m_updateTimer = 500; // is this official-like?
-        }else m_updateTimer -= p_time;
+        }
+        else m_updateTimer -= p_time;
     }
 
     if (deleteThis)
@@ -164,7 +163,7 @@ void DynamicObject::Delete()
 void DynamicObject::Delay(int32 delaytime)
 {
     m_aliveDuration -= delaytime;
-    for (AffectedSet::iterator iunit= m_affected.begin();iunit != m_affected.end();++iunit)
+    for (AffectedSet::iterator iunit = m_affected.begin(); iunit != m_affected.end(); ++iunit)
         if (*iunit)
             (*iunit)->DelayAura(m_spellId, m_effIndex, delaytime);
 }
@@ -172,6 +171,6 @@ void DynamicObject::Delay(int32 delaytime)
 bool DynamicObject::isVisibleForInState(Player const* u, bool inVisibleList) const
 {
     return IsInWorld() && u->IsInWorld()
-        && (IsWithinDistInMap(u->m_seer, World::GetMaxVisibleDistanceForObject() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false));
+           && (IsWithinDistInMap(u->m_seer, World::GetMaxVisibleDistanceForObject() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false));
 }
 

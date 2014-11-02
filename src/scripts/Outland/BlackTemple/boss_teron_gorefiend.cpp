@@ -25,7 +25,7 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "black_temple.h"
 
- //Speech'n'sound
+//Speech'n'sound
 #define SAY_INTRO                       -1564037
 #define SAY_AGGRO                       -1564038
 #define SAY_SLAY1                       -1564039
@@ -91,17 +91,22 @@ struct mob_doom_blossomAI : public ScriptedAI
                 Despawn();
 
             CheckTeronTimer = 5000;
-        } else CheckTeronTimer -= diff;
+        }
+        else CheckTeronTimer -= diff;
 
         if (ShadowBoltTimer <= diff && me->isInCombat())
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_SHADOWBOLT);
             ShadowBoltTimer = 10000;
-        } else ShadowBoltTimer -= diff;
+        }
+        else ShadowBoltTimer -= diff;
         return;
     }
 
-    void SetTeronGUID(uint64 guid){ TeronGUID = guid; }
+    void SetTeronGUID(uint64 guid)
+    {
+        TeronGUID = guid;
+    }
 };
 
 struct mob_shadowy_constructAI : public ScriptedAI
@@ -133,13 +138,13 @@ struct mob_shadowy_constructAI : public ScriptedAI
         ScriptedAI::MoveInLineOfSight(who);
     }
 
-/* Comment it out for now. NOTE TO FUTURE DEV: UNCOMMENT THIS OUT ONLY AFTER MIND CONTROL IS IMPLEMENTED
-    void DamageTaken(Unit* done_by, uint32 &damage)
-    {
-        if (done_by->GetGUID() != GhostGUID)
-        damage = 0;                                         // Only the ghost can deal damage.
-    }
- */
+    /* Comment it out for now. NOTE TO FUTURE DEV: UNCOMMENT THIS OUT ONLY AFTER MIND CONTROL IS IMPLEMENTED
+        void DamageTaken(Unit* done_by, uint32 &damage)
+        {
+            if (done_by->GetGUID() != GhostGUID)
+            damage = 0;                                         // Only the ghost can deal damage.
+        }
+     */
 
     void CheckPlayers()
     {
@@ -169,7 +174,8 @@ struct mob_shadowy_constructAI : public ScriptedAI
         {
             CheckPlayers();
             CheckPlayerTimer = 3000;
-        } else CheckPlayerTimer -= diff;
+        }
+        else CheckPlayerTimer -= diff;
 
         if (CheckTeronTimer <= diff)
         {
@@ -178,7 +184,8 @@ struct mob_shadowy_constructAI : public ScriptedAI
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
             CheckTeronTimer = 5000;
-        } else CheckTeronTimer -= diff;
+        }
+        else CheckTeronTimer -= diff;
     }
 };
 
@@ -210,7 +217,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_TERONGOREFIENDEVENT, NOT_STARTED);
 
-        IncinerateTimer = 20000 + rand()%11000;
+        IncinerateTimer = 20000 + rand() % 11000;
         SummonDoomBlossomTimer = 12000;
         EnrageTimer = 600000;
         CrushingShadowsTimer = 22000;
@@ -261,7 +268,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
+        DoScriptText(RAND(SAY_SLAY1, SAY_SLAY2), me);
     }
 
     void JustDied(Unit* /*victim*/)
@@ -275,14 +282,14 @@ struct boss_teron_gorefiendAI : public ScriptedAI
     float CalculateRandomLocation(float Loc, uint32 radius)
     {
         float coord = Loc;
-        switch (urand(0,1))
+        switch (urand(0, 1))
         {
-            case 0:
-                coord += rand()%radius;
-                break;
-            case 1:
-                coord -= rand()%radius;
-                break;
+        case 0:
+            coord += rand() % radius;
+            break;
+        case 1:
+            coord -= rand() % radius;
+            break;
         }
         return coord;
     }
@@ -373,7 +380,8 @@ struct boss_teron_gorefiendAI : public ScriptedAI
                     EnterEvadeMode();
                     return;
                 }
-            } else AggroTimer -= diff;
+            }
+            else AggroTimer -= diff;
         }
 
         if (!UpdateVictim() || Intro)
@@ -399,7 +407,8 @@ struct boss_teron_gorefiendAI : public ScriptedAI
                 }
             }
             SummonShadowsTimer = 60000;
-        } else SummonShadowsTimer -= diff;
+        }
+        else SummonShadowsTimer -= diff;
 
         if (SummonDoomBlossomTimer <= diff)
         {
@@ -421,7 +430,8 @@ struct boss_teron_gorefiendAI : public ScriptedAI
                     SummonDoomBlossomTimer = 35000;
                 }
             }
-        } else SummonDoomBlossomTimer -= diff;
+        }
+        else SummonDoomBlossomTimer -= diff;
 
         if (IncinerateTimer <= diff)
         {
@@ -431,19 +441,21 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
             if (pTarget)
             {
-                DoScriptText(RAND(SAY_SPECIAL1,SAY_SPECIAL2), me);
+                DoScriptText(RAND(SAY_SPECIAL1, SAY_SPECIAL2), me);
                 DoCast(pTarget, SPELL_INCINERATE);
-                IncinerateTimer = 20000 + rand()%31 * 1000;
+                IncinerateTimer = 20000 + rand() % 31 * 1000;
             }
-        } else IncinerateTimer -= diff;
+        }
+        else IncinerateTimer -= diff;
 
         if (CrushingShadowsTimer <= diff)
         {
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget && pTarget->isAlive())
                 DoCast(pTarget, SPELL_CRUSHING_SHADOWS);
-            CrushingShadowsTimer = 10000 + rand()%16 * 1000;
-        } else CrushingShadowsTimer -= diff;
+            CrushingShadowsTimer = 10000 + rand() % 16 * 1000;
+        }
+        else CrushingShadowsTimer -= diff;
 
         /*** NOTE FOR FUTURE DEV: UNCOMMENT BELOW ONLY IF MIND CONTROL IS FULLY IMPLEMENTED **/
         /*if (ShadowOfDeathTimer <= diff)
@@ -464,17 +476,19 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
         if (RandomYellTimer <= diff)
         {
-            DoScriptText(RAND(SAY_SPELL1,SAY_SPELL2), me);
-            RandomYellTimer = 50000 + rand()%51 * 1000;
-        } else RandomYellTimer -= diff;
+            DoScriptText(RAND(SAY_SPELL1, SAY_SPELL2), me);
+            RandomYellTimer = 50000 + rand() % 51 * 1000;
+        }
+        else RandomYellTimer -= diff;
 
         if (!me->HasAura(SPELL_BERSERK, 0))
         {
             if (EnrageTimer <= diff)
-        {
-            DoCast(me, SPELL_BERSERK);
-            DoScriptText(SAY_ENRAGE, me);
-        } else EnrageTimer -= diff;
+            {
+                DoCast(me, SPELL_BERSERK);
+                DoScriptText(SAY_ENRAGE, me);
+            }
+            else EnrageTimer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -498,7 +512,7 @@ CreatureAI* GetAI_boss_teron_gorefiend(Creature* pCreature)
 
 void AddSC_boss_teron_gorefiend()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "mob_doom_blossom";
     newscript->GetAI = &GetAI_mob_doom_blossom;

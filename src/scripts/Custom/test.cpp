@@ -57,20 +57,20 @@ struct npc_testAI : public npc_escortAI
         {
             switch (i)
             {
-                case 1:
-                    me->Say(SAY_WALK, LANG_UNIVERSAL, 0);
-                    break;
+            case 1:
+                me->Say(SAY_WALK, LANG_UNIVERSAL, 0);
+                break;
 
-                case 3:
+            case 3:
                 {
                     me->Say(SAY_ATTACK, LANG_UNIVERSAL, 0);
-                    Creature* temp = me->SummonCreature(21878, me->GetPositionX()+5, me->GetPositionY()+7, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 3000);
+                    Creature* temp = me->SummonCreature(21878, me->GetPositionX() + 5, me->GetPositionY() + 7, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 3000);
                     if (temp)
                         temp->AI()->AttackStart(me);
                 }
                 break;
 
-                case 4:
+            case 4:
                 {
                     me->Say(SAY_TIME_TO_GO, LANG_UNIVERSAL, GetPlayerForEscort()->GetGUID());
                     me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
@@ -129,8 +129,10 @@ struct npc_testAI : public npc_escortAI
                     me->CastSpell(me->getVictim(), 33130, false);
 
                     DeathCoilTimer = 4000;
-                } else DeathCoilTimer -= diff;
-            } else
+                }
+                else DeathCoilTimer -= diff;
+            }
+            else
             {
                 //Out of combat but being escorted
                 if (HasEscortState(STATE_ESCORT_ESCORTING))
@@ -141,14 +143,16 @@ struct npc_testAI : public npc_escortAI
                         {
                             me->Say(SAY_FIREWORKS, LANG_UNIVERSAL, 0);
                             me->CastSpell(me, 11540, false);
-                        } else
+                        }
+                        else
                         {
                             me->Say(SAY_BUFF, LANG_UNIVERSAL, 0);
                             me->CastSpell(me, 3593, false);
                         }
 
                         ChatTimer = 12000;
-                    } else ChatTimer -= diff;
+                    }
+                    else ChatTimer -= diff;
                 }
             }
         }
@@ -170,11 +174,11 @@ CreatureAI* GetAI_test(Creature* pCreature)
 bool GossipHello_npc_test(Player* pPlayer, Creature* pCreature)
 {
     pPlayer->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
-    pPlayer->PrepareGossipMenu(pCreature,0);
+    pPlayer->PrepareGossipMenu(pCreature, 0);
 
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEXT1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEXT2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEXT3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEXT1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEXT2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEXT3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
     pPlayer->SendPreparedGossip(pCreature);
     return true;
@@ -182,7 +186,7 @@ bool GossipHello_npc_test(Player* pPlayer, Creature* pCreature)
 
 bool GossipSelect_npc_test(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
         ((npc_escortAI*)(pCreature->AI()))->Start(true, true, pPlayer->GetGUID());
@@ -190,7 +194,7 @@ bool GossipSelect_npc_test(Player* pPlayer, Creature* pCreature, uint32 /*uiSend
         return true;                                        // prevent OREGON core handling
     }
 
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+2)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 2)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
         ((npc_escortAI*)(pCreature->AI()))->Start(false, false, pPlayer->GetGUID());
@@ -198,7 +202,7 @@ bool GossipSelect_npc_test(Player* pPlayer, Creature* pCreature, uint32 /*uiSend
         return true;                                        // prevent OREGON core handling
     }
 
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+3)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 3)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
         ((npc_escortAI*)(pCreature->AI()))->Start(false, false, pPlayer->GetGUID());
@@ -210,7 +214,7 @@ bool GossipSelect_npc_test(Player* pPlayer, Creature* pCreature, uint32 /*uiSend
 
 void AddSC_test()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "test";
     newscript->GetAI = &GetAI_test;

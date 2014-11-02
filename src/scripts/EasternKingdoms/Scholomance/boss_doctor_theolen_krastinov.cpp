@@ -85,7 +85,7 @@ struct boss_theolenkrastinovAI : public ScriptedAI
             m_uiBackhand_Timer -= uiDiff;
 
         //Frenzy_Timer
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 26)
+        if (me->GetHealth() * 100 / me->GetMaxHealth() < 26)
         {
             if (m_uiFrenzy_Timer <= uiDiff)
             {
@@ -109,7 +109,7 @@ CreatureAI* GetAI_boss_theolenkrastinov(Creature* pCreature)
 
 void AddSC_boss_theolenkrastinov()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_doctor_theolen_krastinov";
     newscript->GetAI = &GetAI_boss_theolenkrastinov;

@@ -82,7 +82,7 @@ bool ChatHandler::HandleStartCommand(const char* /*args*/)
     }
 
     // cast spell Stuck
-    chr->CastSpell(chr,7355,false);
+    chr->CastSpell(chr, 7355, false);
     return true;
 }
 
@@ -137,7 +137,7 @@ bool ChatHandler::HandleDismountCommand(const char* /*args*/)
 
 bool ChatHandler::HandleSaveCommand(const char* /*args*/)
 {
-    Player* player=m_session->GetPlayer();
+    Player* player = m_session->GetPlayer();
 
     // save GM account without delay and output message (testing, etc)
     if (m_session->GetSecurity())
@@ -152,7 +152,7 @@ bool ChatHandler::HandleSaveCommand(const char* /*args*/)
 
     // save or plan save after 20 sec (logout delay) if current next save time more this value and _not_ output any messages to prevent cheat planning
     uint32 save_interval = sWorld.getConfig(CONFIG_INTERVAL_SAVE);
-    if (save_interval == 0 || (save_interval > 20*IN_MILLISECONDS && player->GetSaveTimer() <= save_interval - 20*IN_MILLISECONDS))
+    if (save_interval == 0 || (save_interval > 20 * IN_MILLISECONDS && player->GetSaveTimer() <= save_interval - 20 * IN_MILLISECONDS))
         player->SaveToDB();
 
     return true;
@@ -163,7 +163,7 @@ bool ChatHandler::HandleGMListIngameCommand(const char* /*args*/)
     bool first = true;
 
     ObjectAccessor::Guard guard(*HashMapHolder<Player>::GetLock());
-    HashMapHolder<Player>::MapType &m = ObjectAccessor::Instance().GetPlayers();
+    HashMapHolder<Player>::MapType& m = ObjectAccessor::Instance().GetPlayers();
     for (HashMapHolder<Player>::MapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (itr->second->GetSession()->GetSecurity() &&
@@ -191,9 +191,9 @@ bool ChatHandler::HandleAccountPasswordCommand(const char* args)
     if (!*args)
         return false;
 
-    char *old_pass = strtok ((char*)args, " ");
-    char *new_pass = strtok (NULL, " ");
-    char *new_pass_c  = strtok (NULL, " ");
+    char* old_pass = strtok ((char*)args, " ");
+    char* new_pass = strtok (NULL, " ");
+    char* new_pass_c  = strtok (NULL, " ");
 
     if (!old_pass || !new_pass || !new_pass_c)
         return false;
@@ -218,20 +218,20 @@ bool ChatHandler::HandleAccountPasswordCommand(const char* args)
 
     AccountOpResult result = sAccountMgr->ChangePassword(m_session->GetAccountId(), password_new);
 
-    switch(result)
+    switch (result)
     {
-        case AOR_OK:
-            SendSysMessage(LANG_COMMAND_PASSWORD);
-            break;
-        case AOR_PASS_TOO_LONG:
-            SendSysMessage(LANG_PASSWORD_TOO_LONG);
-            SetSentErrorMessage(true);
-            return false;
-        case AOR_NAME_NOT_EXIST:                            // not possible case, don't want get account name for output
-        default:
-            SendSysMessage(LANG_COMMAND_NOTCHANGEPASSWORD);
-            SetSentErrorMessage(true);
-            return false;
+    case AOR_OK:
+        SendSysMessage(LANG_COMMAND_PASSWORD);
+        break;
+    case AOR_PASS_TOO_LONG:
+        SendSysMessage(LANG_PASSWORD_TOO_LONG);
+        SetSentErrorMessage(true);
+        return false;
+    case AOR_NAME_NOT_EXIST:                            // not possible case, don't want get account name for output
+    default:
+        SendSysMessage(LANG_COMMAND_NOTCHANGEPASSWORD);
+        SetSentErrorMessage(true);
+        return false;
     }
 
     return true;
@@ -248,14 +248,14 @@ bool ChatHandler::HandleAccountLockCommand(const char* args)
     std::string argstr = (char*)args;
     if (argstr == "on")
     {
-        LoginDatabase.PExecute("UPDATE account SET locked = '1' WHERE id = '%d'",m_session->GetAccountId());
+        LoginDatabase.PExecute("UPDATE account SET locked = '1' WHERE id = '%d'", m_session->GetAccountId());
         PSendSysMessage(LANG_COMMAND_ACCLOCKLOCKED);
         return true;
     }
 
     if (argstr == "off")
     {
-        LoginDatabase.PExecute("UPDATE account SET locked = '0' WHERE id = '%d'",m_session->GetAccountId());
+        LoginDatabase.PExecute("UPDATE account SET locked = '0' WHERE id = '%d'", m_session->GetAccountId());
         PSendSysMessage(LANG_COMMAND_ACCLOCKUNLOCKED);
         return true;
     }

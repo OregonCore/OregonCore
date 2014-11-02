@@ -48,7 +48,7 @@ enum eQuests
 bool GossipHello_npc_beaten_corpse(Player* pPlayer, Creature* pCreature)
 {
     if (pPlayer->GetQuestStatus(QUEST_LOST_IN_BATTLE) == QUEST_STATUS_INCOMPLETE || pPlayer->GetQuestStatus(QUEST_LOST_IN_BATTLE) == QUEST_STATUS_COMPLETE)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_CORPSE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_CORPSE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     pPlayer->SEND_GOSSIP_MENU(3557, pCreature->GetGUID());
     return true;
@@ -56,7 +56,7 @@ bool GossipHello_npc_beaten_corpse(Player* pPlayer, Creature* pCreature)
 
 bool GossipSelect_npc_beaten_corpse(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (uiAction == GOSSIP_ACTION_INFO_DEF +1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
     {
         pPlayer->SEND_GOSSIP_MENU(3558, pCreature->GetGUID());
         pPlayer->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
@@ -100,34 +100,34 @@ struct npc_giltharesAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 16:
-                DoScriptText(SAY_GIL_AT_LAST, me, pPlayer);
-                break;
-            case 17:
-                DoScriptText(SAY_GIL_PROCEED, me, pPlayer);
-                break;
-            case 18:
-                DoScriptText(SAY_GIL_FREEBOOTERS, me, pPlayer);
-                break;
-            case 37:
-                DoScriptText(SAY_GIL_ALMOST, me, pPlayer);
-                break;
-            case 47:
-                DoScriptText(SAY_GIL_SWEET, me, pPlayer);
-                break;
-            case 53:
-                DoScriptText(SAY_GIL_FREED, me, pPlayer);
-                pPlayer->GroupEventHappens(QUEST_FREE_FROM_HOLD, me);
-                break;
+        case 16:
+            DoScriptText(SAY_GIL_AT_LAST, me, pPlayer);
+            break;
+        case 17:
+            DoScriptText(SAY_GIL_PROCEED, me, pPlayer);
+            break;
+        case 18:
+            DoScriptText(SAY_GIL_FREEBOOTERS, me, pPlayer);
+            break;
+        case 37:
+            DoScriptText(SAY_GIL_ALMOST, me, pPlayer);
+            break;
+        case 47:
+            DoScriptText(SAY_GIL_SWEET, me, pPlayer);
+            break;
+        case 53:
+            DoScriptText(SAY_GIL_FREED, me, pPlayer);
+            pPlayer->GroupEventHappens(QUEST_FREE_FROM_HOLD, me);
+            break;
         }
     }
 
     void EnterCombat(Unit* pWho)
     {
         //not always use
-        if (rand()%4)
+        if (rand() % 4)
             return;
 
         //only aggro text if not player and only in this area
@@ -224,7 +224,7 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
         me->CombatStop();
     }
 
-    void SpellHit(Unit* /*caster*/, const SpellEntry *spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
     {
         if (spell->Id == SPELL_FLARE || spell->Id == SPELL_FOLLY)
         {
@@ -248,7 +248,8 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
             {
                 EnterEvadeMode();
                 return;
-            } else Reset_Timer -= diff;
+            }
+            else Reset_Timer -= diff;
         }
 
         if (!UpdateVictim())
@@ -291,14 +292,14 @@ enum eTwiggyFlathead
     SAY_TWIGGY_FLATHEAD_OVER    = -1000127,
 };
 
-float AffrayChallengerLoc[6][4]=
+float AffrayChallengerLoc[6][4] =
 {
-    {-1683, -4326, 2.79f, 0},
-    {-1682, -4329, 2.79f, 0},
-    {-1683, -4330, 2.79f, 0},
-    {-1680, -4334, 2.79f, 1.49f},
-    {-1674, -4326, 2.79f, 3.49f},
-    {-1677, -4334, 2.79f, 1.66f}
+    { -1683, -4326, 2.79f, 0},
+    { -1682, -4329, 2.79f, 0},
+    { -1683, -4330, 2.79f, 0},
+    { -1680, -4334, 2.79f, 1.49f},
+    { -1674, -4326, 2.79f, 3.49f},
+    { -1677, -4334, 2.79f, 1.66f}
 };
 
 struct npc_twiggy_flatheadAI : public ScriptedAI
@@ -351,7 +352,8 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (EventInProgress) {
+        if (EventInProgress)
+        {
             Player* pWarrior = NULL;
 
             if (PlayerGUID)
@@ -360,7 +362,8 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
             if (!pWarrior)
                 return;
 
-            if (!pWarrior->isAlive() && pWarrior->GetQuestStatus(1719) == QUEST_STATUS_INCOMPLETE) {
+            if (!pWarrior->isAlive() && pWarrior->GetQuestStatus(1719) == QUEST_STATUS_INCOMPLETE)
+            {
                 EventInProgress = false;
                 DoScriptText(SAY_TWIGGY_FLATHEAD_DOWN, me);
                 pWarrior->FailQuest(1719);
@@ -370,7 +373,8 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                     if (AffrayChallenger[i])
                     {
                         Creature* pCreature = Unit::GetCreature((*me), AffrayChallenger[i]);
-                        if (pCreature) {
+                        if (pCreature)
+                        {
                             if (pCreature->isAlive())
                             {
                                 pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
@@ -386,8 +390,10 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                 if (BigWill)
                 {
                     Creature* pCreature = Unit::GetCreature((*me), BigWill);
-                    if (pCreature) {
-                        if (pCreature->isAlive()) {
+                    if (pCreature)
+                    {
+                        if (pCreature->isAlive())
+                        {
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
                             pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             pCreature->setDeathState(JUST_DIED);
@@ -399,10 +405,11 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
 
             if (!EventGrate && EventInProgress)
             {
-                float x,y,z;
+                float x, y, z;
                 pWarrior->GetPosition(x, y, z);
 
-                if (x >= -1684 && x <= -1674 && y >= -4334 && y <= -4324) {
+                if (x >= -1684 && x <= -1674 && y >= -4334 && y <= -4324)
+                {
                     pWarrior->AreaExploredOrEventHappens(1719);
                     DoScriptText(SAY_TWIGGY_FLATHEAD_BEGIN, me);
 
@@ -439,7 +446,8 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                         }
                     }
                     Challenger_checker = 1000;
-                } else Challenger_checker -= diff;
+                }
+                else Challenger_checker -= diff;
 
                 if (Wave_Timer <= diff)
                 {
@@ -458,7 +466,8 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                             Wave_Timer = 20000;
                         }
                     }
-                    else if (Wave >= 6 && !EventBigWill) {
+                    else if (Wave >= 6 && !EventBigWill)
+                    {
                         if (Creature* pCreature = me->SummonCreature(NPC_BIG_WILL, -1722, -4341, 6.12f, 6.26f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 480000))
                         {
                             BigWill = pCreature->GetGUID();
@@ -483,7 +492,8 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                             Wave = 0;
                         }
                     }
-                } else Wave_Timer -= diff;
+                }
+                else Wave_Timer -= diff;
             }
         }
     }
@@ -546,7 +556,7 @@ struct npc_wizzlecrank_shredderAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(uiPointId)
+        switch (uiPointId)
         {
         case 0:
             DoScriptText(SAY_STARTUP1, me);
@@ -574,15 +584,15 @@ struct npc_wizzlecrank_shredderAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(uiPointId)
+        switch (uiPointId)
         {
-            case 9:
-                DoScriptText(SAY_STARTUP2, me, pPlayer);
-                break;
-            case 18:
-                DoScriptText(SAY_PROGRESS_1, me, pPlayer);
-                SetRun();
-                break;
+        case 9:
+            DoScriptText(SAY_STARTUP2, me, pPlayer);
+            break;
+        case 18:
+            DoScriptText(SAY_PROGRESS_1, me, pPlayer);
+            SetRun();
+            break;
         }
     }
 
@@ -603,24 +613,24 @@ struct npc_wizzlecrank_shredderAI : public npc_escortAI
             {
                 if (m_uiPostEventTimer <= uiDiff)
                 {
-                    switch(m_uiPostEventCount)
+                    switch (m_uiPostEventCount)
                     {
-                        case 0:
-                            DoScriptText(SAY_PROGRESS_2, me);
-                            break;
-                        case 1:
-                            DoScriptText(SAY_PROGRESS_3, me);
-                            break;
-                        case 2:
-                            DoScriptText(SAY_END, me);
-                            break;
-                        case 3:
-                            if (Player* pPlayer = GetPlayerForEscort())
-                            {
-                                pPlayer->GroupEventHappens(QUEST_ESCAPE, me);
-                                me->SummonCreature(NPC_PILOT_WIZZ, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 180000);
-                            }
-                            break;
+                    case 0:
+                        DoScriptText(SAY_PROGRESS_2, me);
+                        break;
+                    case 1:
+                        DoScriptText(SAY_PROGRESS_3, me);
+                        break;
+                    case 2:
+                        DoScriptText(SAY_END, me);
+                        break;
+                    case 3:
+                        if (Player* pPlayer = GetPlayerForEscort())
+                        {
+                            pPlayer->GroupEventHappens(QUEST_ESCAPE, me);
+                            me->SummonCreature(NPC_PILOT_WIZZ, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 180000);
+                        }
+                        break;
                     }
 
                     ++m_uiPostEventCount;
@@ -655,7 +665,7 @@ CreatureAI* GetAI_npc_wizzlecrank_shredderAI(Creature* pCreature)
 
 void AddSC_the_barrens()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_beaten_corpse";

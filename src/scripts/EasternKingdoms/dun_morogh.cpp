@@ -60,7 +60,7 @@ struct npc_narm_faulkAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-       if (me->IsStandState())
+        if (me->IsStandState())
         {
             if (lifeTimer <= diff)
             {
@@ -72,7 +72,7 @@ struct npc_narm_faulkAI : public ScriptedAI
         }
     }
 
-    void SpellHit(Unit* /*Hitter*/, const SpellEntry *Spellkind)
+    void SpellHit(Unit* /*Hitter*/, const SpellEntry* Spellkind)
     {
         if (Spellkind->Id == 8593 && !spellHit)
         {
@@ -93,7 +93,7 @@ CreatureAI* GetAI_npc_narm_faulk(Creature* pCreature)
 
 void AddSC_dun_morogh()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_narm_faulk";

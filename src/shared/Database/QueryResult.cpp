@@ -17,16 +17,16 @@
 
 #include "DatabaseEnv.h"
 
-QueryResult::QueryResult(MYSQL_RES *result, MYSQL_FIELD *fields, uint64 rowCount, uint32 fieldCount)
-: mFieldCount(fieldCount)
-, mRowCount(rowCount)
-, mResult(result)
+QueryResult::QueryResult(MYSQL_RES* result, MYSQL_FIELD* fields, uint64 rowCount, uint32 fieldCount)
+    : mFieldCount(fieldCount)
+    , mRowCount(rowCount)
+    , mResult(result)
 {
     mCurrentRow = new Field[mFieldCount];
     ASSERT(mCurrentRow);
 
     for (uint32 i = 0; i < mFieldCount; i++)
-         mCurrentRow[i].SetType(ConvertNativeType(fields[i].type));
+        mCurrentRow[i].SetType(ConvertNativeType(fields[i].type));
 }
 
 QueryResult::~QueryResult()
@@ -73,31 +73,31 @@ enum Field::DataTypes QueryResult::ConvertNativeType(enum_field_types mysqlType)
 {
     switch (mysqlType)
     {
-        case FIELD_TYPE_TIMESTAMP:
+    case FIELD_TYPE_TIMESTAMP:
         case FIELD_TYPE_DATE:
-        case FIELD_TYPE_TIME:
-        case FIELD_TYPE_DATETIME:
-        case FIELD_TYPE_YEAR:
-        case FIELD_TYPE_STRING:
-        case FIELD_TYPE_VAR_STRING:
-        case FIELD_TYPE_BLOB:
-        case FIELD_TYPE_SET:
-        case FIELD_TYPE_NULL:
-            return Field::DB_TYPE_STRING;
-        case FIELD_TYPE_TINY:
+            case FIELD_TYPE_TIME:
+                case FIELD_TYPE_DATETIME:
+                    case FIELD_TYPE_YEAR:
+                        case FIELD_TYPE_STRING:
+                            case FIELD_TYPE_VAR_STRING:
+                                case FIELD_TYPE_BLOB:
+                                    case FIELD_TYPE_SET:
+                                        case FIELD_TYPE_NULL:
+                                                return Field::DB_TYPE_STRING;
+    case FIELD_TYPE_TINY:
 
-        case FIELD_TYPE_SHORT:
-        case FIELD_TYPE_LONG:
-        case FIELD_TYPE_INT24:
-        case FIELD_TYPE_LONGLONG:
-        case FIELD_TYPE_ENUM:
-            return Field::DB_TYPE_INTEGER;
-        case FIELD_TYPE_DECIMAL:
-        case FIELD_TYPE_FLOAT:
-        case FIELD_TYPE_DOUBLE:
-            return Field::DB_TYPE_FLOAT;
-        default:
-            return Field::DB_TYPE_UNKNOWN;
+    case FIELD_TYPE_SHORT:
+    case FIELD_TYPE_LONG:
+    case FIELD_TYPE_INT24:
+    case FIELD_TYPE_LONGLONG:
+    case FIELD_TYPE_ENUM:
+        return Field::DB_TYPE_INTEGER;
+    case FIELD_TYPE_DECIMAL:
+    case FIELD_TYPE_FLOAT:
+    case FIELD_TYPE_DOUBLE:
+        return Field::DB_TYPE_FLOAT;
+    default:
+        return Field::DB_TYPE_UNKNOWN;
     }
 }
 

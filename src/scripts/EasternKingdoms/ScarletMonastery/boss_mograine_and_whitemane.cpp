@@ -80,7 +80,7 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
 
         if (m_pInstance)
             if (me->isAlive())
-                m_pInstance->SetData(TYPE_MOGRAINE_AND_WHITE_EVENT,NOT_STARTED);
+                m_pInstance->SetData(TYPE_MOGRAINE_AND_WHITE_EVENT, NOT_STARTED);
 
         m_bHasDied = false;
         m_bHeal = false;
@@ -109,7 +109,7 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
         DoScriptText(SAY_MO_KILL, me);
     }
 
-    void DamageTaken(Unit* /*pDoneBy*/, uint32 &uiDamage)
+    void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
         if (uiDamage < me->GetHealth() || m_bHasDied || m_bFakeDeath)
             return;
@@ -122,7 +122,7 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
         {
             m_pInstance->SetData(TYPE_MOGRAINE_AND_WHITE_EVENT, IN_PROGRESS);
 
-            Whitemane->GetMotionMaster()->MovePoint(1,1163.113370,1398.856812,32.527786);
+            Whitemane->GetMotionMaster()->MovePoint(1, 1163.113370, 1398.856812, 32.527786);
 
             me->GetMotionMaster()->MovementExpired();
             me->GetMotionMaster()->MoveIdle();
@@ -192,14 +192,16 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
         {
             DoCastVictim( SPELL_CRUSADERSTRIKE);
             m_uiCrusaderStrike_Timer = 10000;
-        } else m_uiCrusaderStrike_Timer -= uiDiff;
+        }
+        else m_uiCrusaderStrike_Timer -= uiDiff;
 
         //m_uiHammerOfJustice_Timer
         if (m_uiHammerOfJustice_Timer <= uiDiff)
         {
             DoCastVictim( SPELL_HAMMEROFJUSTICE);
             m_uiHammerOfJustice_Timer = 60000;
-        } else m_uiHammerOfJustice_Timer -= uiDiff;
+        }
+        else m_uiHammerOfJustice_Timer -= uiDiff;
 
         DoMeleeAttackIfReady();
     }
@@ -276,7 +278,7 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
         }
 
         //Cast Deep sleep when health is less than 50%
-        if (!m_bCanResurrectCheck && me->GetHealth()*100 / me->GetMaxHealth() <= 50)
+        if (!m_bCanResurrectCheck && me->GetHealth() * 100 / me->GetMaxHealth() <= 50)
         {
             if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(false);
@@ -296,7 +298,7 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
         {
             Creature* pTarget = NULL;
 
-            if (me->GetHealth() <= me->GetMaxHealth()*0.75f)
+            if (me->GetHealth() <= me->GetMaxHealth() * 0.75f)
                 pTarget = me;
 
             if (m_pInstance)
@@ -304,7 +306,7 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
                 if (Creature* pMograine = Unit::GetCreature((*me), m_pInstance->GetData64(DATA_MOGRAINE)))
                 {
                     // checking m_bCanResurrectCheck prevents her healing Mograine while he is "faking death"
-                    if (m_bCanResurrectCheck && pMograine->isAlive() && pMograine->GetHealth() <= pMograine->GetMaxHealth()*0.75f)
+                    if (m_bCanResurrectCheck && pMograine->isAlive() && pMograine->GetHealth() <= pMograine->GetMaxHealth() * 0.75f)
                         pTarget = pMograine;
                 }
             }
@@ -313,21 +315,24 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
                 DoCast(pTarget, SPELL_HEAL);
 
             m_uiHeal_Timer = 13000;
-        } else m_uiHeal_Timer -= uiDiff;
+        }
+        else m_uiHeal_Timer -= uiDiff;
 
         //m_uiPowerWordShield_Timer
         if (m_uiPowerWordShield_Timer <= uiDiff)
         {
             DoCast(me, SPELL_POWERWORDSHIELD);
             m_uiPowerWordShield_Timer = 15000;
-        } else m_uiPowerWordShield_Timer -= uiDiff;
+        }
+        else m_uiPowerWordShield_Timer -= uiDiff;
 
         //m_uiHolySmite_Timer
         if (m_uiHolySmite_Timer <= uiDiff)
         {
             DoCastVictim( SPELL_HOLYSMITE);
             m_uiHolySmite_Timer = 6000;
-        } else m_uiHolySmite_Timer -= uiDiff;
+        }
+        else m_uiHolySmite_Timer -= uiDiff;
 
         DoMeleeAttackIfReady();
     }
@@ -345,7 +350,7 @@ CreatureAI* GetAI_boss_high_inquisitor_whitemane(Creature* pCreature)
 
 void AddSC_boss_mograine_and_whitemane()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_scarlet_commander_mograine";

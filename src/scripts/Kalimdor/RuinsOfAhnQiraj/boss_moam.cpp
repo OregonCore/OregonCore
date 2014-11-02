@@ -46,8 +46,8 @@ struct boss_moamAI : public ScriptedAI
 
     void Reset()
     {
-        i=0;
-        j=0;
+        i = 0;
+        j = 0;
         pTarget = NULL;
         TRAMPLE_Timer = 30000;
         DRAINMANA_Timer = 30000;
@@ -74,7 +74,7 @@ struct boss_moamAI : public ScriptedAI
         //If we are <50%HP cast MANA FIEND (Summon Mana) and Sleep
         //if (i == 0 && me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCast(false))
         {
-            i=1;
+            i = 1;
             DoCastVictim(SPELL_SUMMONMANA);
             DoCastVictim(SPELL_GRDRSLEEP);
         }
@@ -84,23 +84,26 @@ struct boss_moamAI : public ScriptedAI
         {
             DoCastVictim(SPELL_SUMMONMANA);
             SUMMONMANA_Timer = 90000;
-        } else SUMMONMANA_Timer -= diff;
+        }
+        else SUMMONMANA_Timer -= diff;
 
         //TRAMPLE_Timer
         if (TRAMPLE_Timer <= diff)
         {
             DoCastVictim(SPELL_TRAMPLE);
-            j=1;
+            j = 1;
 
             TRAMPLE_Timer = 30000;
-        } else TRAMPLE_Timer -= diff;
+        }
+        else TRAMPLE_Timer -= diff;
 
         //DRAINMANA_Timer
         if (DRAINMANA_Timer <= diff)
         {
             DoCastVictim(SPELL_DRAINMANA);
             DRAINMANA_Timer = 30000;
-        } else DRAINMANA_Timer -= diff;
+        }
+        else DRAINMANA_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -112,7 +115,7 @@ CreatureAI* GetAI_boss_moam(Creature* pCreature)
 
 void AddSC_boss_moam()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_moam";
     newscript->GetAI = &GetAI_boss_moam;

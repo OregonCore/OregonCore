@@ -67,8 +67,8 @@ void DisableMgr::LoadDisables()
 
         switch (type)
         {
-            case DISABLE_TYPE_SPELL:
-                {
+        case DISABLE_TYPE_SPELL:
+            {
                 if (!(sSpellStore.LookupEntry(entry) || flags & SPELL_DISABLE_DEPRECATED_SPELL))
                 {
                     sLog.outErrorDb("Spell entry %u from `disables` doesn't exist in dbc, skipped.", entry);
@@ -96,11 +96,12 @@ void DisableMgr::LoadDisables()
                         data.params[1].insert(atoi(tokens[i++].c_str()));
                 }
 
-            }   break;
-            // checked later
-            case DISABLE_TYPE_QUEST:
-                break;
-            case DISABLE_TYPE_MAP:
+            }
+            break;
+        // checked later
+        case DISABLE_TYPE_QUEST:
+            break;
+        case DISABLE_TYPE_MAP:
             {
                 MapEntry const* mapEntry = sMapStore.LookupEntry(entry);
                 if (!mapEntry)
@@ -111,25 +112,25 @@ void DisableMgr::LoadDisables()
                 bool isFlagInvalid = false;
                 switch (mapEntry->map_type)
                 {
-                    case MAP_COMMON:
-                        if (flags)
-                            isFlagInvalid = true;
-                        break;
-                    case MAP_INSTANCE:
-                    case MAP_RAID:
-                        if (flags & DUNGEON_STATUSFLAG_NORMAL && !mapEntry->IsDungeon())
-                            isFlagInvalid = true;
-                        if (flags & DUNGEON_STATUSFLAG_HEROIC && !mapEntry->SupportsHeroicMode())
-                            isFlagInvalid = true;
-                        else if (flags & RAID_STATUSFLAG_10MAN && !mapEntry->IsRaid())
-                            isFlagInvalid = true;
-                        else if (flags & RAID_STATUSFLAG_25MAN && !mapEntry->IsRaid())
-                            isFlagInvalid = true;
-                        break;
-                    case MAP_BATTLEGROUND:
-                    case MAP_ARENA:
-                        sLog.outErrorDb("Battleground map specified to be disabled in map case, skipped.", entry);
-                        continue;
+                case MAP_COMMON:
+                    if (flags)
+                        isFlagInvalid = true;
+                    break;
+                case MAP_INSTANCE:
+                case MAP_RAID:
+                    if (flags & DUNGEON_STATUSFLAG_NORMAL && !mapEntry->IsDungeon())
+                        isFlagInvalid = true;
+                    if (flags & DUNGEON_STATUSFLAG_HEROIC && !mapEntry->SupportsHeroicMode())
+                        isFlagInvalid = true;
+                    else if (flags & RAID_STATUSFLAG_10MAN && !mapEntry->IsRaid())
+                        isFlagInvalid = true;
+                    else if (flags & RAID_STATUSFLAG_25MAN && !mapEntry->IsRaid())
+                        isFlagInvalid = true;
+                    break;
+                case MAP_BATTLEGROUND:
+                case MAP_ARENA:
+                    sLog.outErrorDb("Battleground map specified to be disabled in map case, skipped.", entry);
+                    continue;
                 }
                 if (isFlagInvalid)
                 {
@@ -138,15 +139,15 @@ void DisableMgr::LoadDisables()
                 }
                 break;
             }
-            case DISABLE_TYPE_BATTLEGROUND:
-                if (!sBattlemasterListStore.LookupEntry(entry))
-                {
-                    sLog.outErrorDb("Battleground entry %u from `disables` doesn't exist in dbc, skipped.", entry);
-                    continue;
-                }
-                if (flags)
-                    sLog.outErrorDb("Disable flags specified for battleground %u, useless data.", entry);
-                break;
+        case DISABLE_TYPE_BATTLEGROUND:
+            if (!sBattlemasterListStore.LookupEntry(entry))
+            {
+                sLog.outErrorDb("Battleground entry %u from `disables` doesn't exist in dbc, skipped.", entry);
+                continue;
+            }
+            if (flags)
+                sLog.outErrorDb("Disable flags specified for battleground %u, useless data.", entry);
+            break;
         }
 
         m_DisableMap[type].insert(DisableTypeMap::value_type(entry, data));
@@ -191,7 +192,7 @@ bool DisableMgr::IsDisabledFor(DisableType type, uint32 entry, Unit* pUnit, uint
 
     switch (type)
     {
-        case DISABLE_TYPE_SPELL:
+    case DISABLE_TYPE_SPELL:
         {
             uint8 spellFlags = itr->second.flags;
             if (pUnit)
@@ -204,7 +205,7 @@ bool DisableMgr::IsDisabledFor(DisableType type, uint32 entry, Unit* pUnit, uint
                         std::set<uint32> const& mapIds = itr->second.params[0];
                         if (mapIds.find(pUnit->GetMapId()) != mapIds.end())
                             return true;                                        // Spell is disabled on current map
-                        
+
                         if (!(flags & SPELL_DISABLE_AREA))
                             return false;                                       // Spell is disabled on another map, but not this one, return false
 
@@ -217,7 +218,7 @@ bool DisableMgr::IsDisabledFor(DisableType type, uint32 entry, Unit* pUnit, uint
                         if (areaIds.find(pUnit->GetAreaId()) != areaIds.end())
                             return true;                                        // Spell is disabled in this area
                         return false;                                           // Spell is disabled in another area, but not this one, return false
-                     }
+                    }
                     else
                         return true;                                            // Spell disabled for all maps
                 }
@@ -228,35 +229,35 @@ bool DisableMgr::IsDisabledFor(DisableType type, uint32 entry, Unit* pUnit, uint
             else if (flags & SPELL_DISABLE_LOS)
                 return spellFlags & SPELL_DISABLE_LOS;
         }
-        case DISABLE_TYPE_MAP:
-            if (Player* pPlayer = pUnit->ToPlayer())
+    case DISABLE_TYPE_MAP:
+        if (Player* pPlayer = pUnit->ToPlayer())
+        {
+            MapEntry const* mapEntry = sMapStore.LookupEntry(entry);
+            if (mapEntry->IsDungeon())
             {
-                MapEntry const* mapEntry = sMapStore.LookupEntry(entry);
-                if (mapEntry->IsDungeon())
+                uint8 disabledModes = itr->second.flags;
+                DungeonDifficulties targetDifficulty = pPlayer->GetDifficulty();
+                switch (targetDifficulty)
                 {
-                    uint8 disabledModes = itr->second.flags;
-                    DungeonDifficulties targetDifficulty = pPlayer->GetDifficulty();
-                    switch(targetDifficulty)
-                    {
-                        case DIFFICULTY_NORMAL:
-                            return disabledModes & DUNGEON_STATUSFLAG_NORMAL;
-                        case DIFFICULTY_HEROIC:
-                            return disabledModes & DUNGEON_STATUSFLAG_HEROIC;
-                    }
+                case DIFFICULTY_NORMAL:
+                    return disabledModes & DUNGEON_STATUSFLAG_NORMAL;
+                case DIFFICULTY_HEROIC:
+                    return disabledModes & DUNGEON_STATUSFLAG_HEROIC;
                 }
-                else if (mapEntry->map_type == MAP_COMMON)
-                    return true;
             }
-            return false;
-        case DISABLE_TYPE_QUEST:
-            if (!pUnit)
+            else if (mapEntry->map_type == MAP_COMMON)
                 return true;
-            if (Player const* pPlayer = pUnit->ToPlayer())
-                if (pPlayer->isGameMaster())
-                    return false;
+        }
+        return false;
+    case DISABLE_TYPE_QUEST:
+        if (!pUnit)
             return true;
-        case DISABLE_TYPE_BATTLEGROUND:
-            return true;
+        if (Player const* pPlayer = pUnit->ToPlayer())
+            if (pPlayer->isGameMaster())
+                return false;
+        return true;
+    case DISABLE_TYPE_BATTLEGROUND:
+        return true;
     }
 
     return false;

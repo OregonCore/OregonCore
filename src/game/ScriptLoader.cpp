@@ -390,10 +390,10 @@ void AddSC_onevents();
 
 void AddScripts()
 {
-#ifdef SCRIPTS
-//    AddSC_custom_example();
-//    AddSC_custom_gossip_codebox();
-//    AddSC_test();
+    #ifdef SCRIPTS
+    //    AddSC_custom_example();
+    //    AddSC_custom_gossip_codebox();
+    //    AddSC_test();
     AddSC_areatrigger_scripts();
     AddSC_boss_emeriss();
     AddSC_boss_taerar();
@@ -752,6 +752,6 @@ void AddScripts()
     AddSC_terokkar_forest();
     AddSC_zangarmarsh();
     AddSC_onevents();
-#endif
+    #endif
 }
 

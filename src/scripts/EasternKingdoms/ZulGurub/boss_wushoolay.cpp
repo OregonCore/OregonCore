@@ -37,8 +37,8 @@ struct boss_wushoolayAI : public ScriptedAI
 
     void Reset()
     {
-        LightningCloud_Timer = 5000 + rand()%5000;
-        LightningWave_Timer = 8000 + rand()%8000;
+        LightningCloud_Timer = 5000 + rand() % 5000;
+        LightningWave_Timer = 8000 + rand() % 8000;
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -54,18 +54,20 @@ struct boss_wushoolayAI : public ScriptedAI
         if (LightningCloud_Timer <= diff)
         {
             DoCastVictim( SPELL_LIGHTNINGCLOUD);
-            LightningCloud_Timer = 15000 + rand()%5000;
-        } else LightningCloud_Timer -= diff;
+            LightningCloud_Timer = 15000 + rand() % 5000;
+        }
+        else LightningCloud_Timer -= diff;
 
         //LightningWave_Timer
         if (LightningWave_Timer <= diff)
         {
             Unit* pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget) DoCast(pTarget, SPELL_LIGHTNINGWAVE);
 
-            LightningWave_Timer = 12000 + rand()%4000;
-        } else LightningWave_Timer -= diff;
+            LightningWave_Timer = 12000 + rand() % 4000;
+        }
+        else LightningWave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -77,7 +79,7 @@ CreatureAI* GetAI_boss_wushoolay(Creature* pCreature)
 
 void AddSC_boss_wushoolay()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_wushoolay";
     newscript->GetAI = &GetAI_boss_wushoolay;

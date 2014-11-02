@@ -73,7 +73,7 @@ struct boss_najentusAI : public ScriptedAI
     void Reset()
     {
         EnrageTimer = 480000;
-        SpecialYellTimer = 45000 + (rand()%76)*1000;
+        SpecialYellTimer = 45000 + (rand() % 76) * 1000;
         TidalShieldTimer = 60000;
 
         ResetTimer();
@@ -88,7 +88,7 @@ struct boss_najentusAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        DoScriptText(rand()%2 ? SAY_SLAY1 : SAY_SLAY2, me);
+        DoScriptText(rand() % 2 ? SAY_SLAY1 : SAY_SLAY2, me);
     }
 
     void JustDied(Unit* /*victim*/)
@@ -104,11 +104,11 @@ struct boss_najentusAI : public ScriptedAI
     {
         if (me->IsNonMeleeSpellCast(false)) return false;
 
-        DoCast(victim,spellId,triggered);
+        DoCast(victim, spellId, triggered);
         return true;
     }
 
-    void SpellHit(Unit* /*caster*/, const SpellEntry *spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
     {
         if (spell->Id == SPELL_HURL_SPINE && me->HasAura(SPELL_TIDAL_SHIELD, 0))
         {
@@ -118,12 +118,12 @@ struct boss_najentusAI : public ScriptedAI
         }
     }
 
-    void SpellHitTarget(Unit* pTarget, const SpellEntry *spell)
+    void SpellHitTarget(Unit* pTarget, const SpellEntry* spell)
     {
-        switch(spell->Id)
+        switch (spell->Id)
         {
         case SPELL_NEEDLE_SPINE:
-            me->CastSpell(pTarget,SPELL_NEEDLE_SPINE_DMG,true);
+            me->CastSpell(pTarget, SPELL_NEEDLE_SPINE_DMG, true);
             break;
         }
     }
@@ -143,7 +143,7 @@ struct boss_najentusAI : public ScriptedAI
         Unit* pTarget = Unit::GetUnit(*me, SpineTargetGUID);
         if (pTarget && pTarget->HasAura(SPELL_IMPALING_SPINE, 1))
             pTarget->RemoveAurasDueToSpell(SPELL_IMPALING_SPINE);
-        SpineTargetGUID=0;
+        SpineTargetGUID = 0;
         return true;
     }
 
@@ -158,7 +158,7 @@ struct boss_najentusAI : public ScriptedAI
         //InstanceMap::PlayerList const &playerliste = ((InstanceMap*)me->GetMap())->GetPlayers();
         InstanceMap::PlayerList::const_iterator it;
 
-        Map::PlayerList const &PlayerList = ((InstanceMap*)me->GetMap())->GetPlayers();
+        Map::PlayerList const& PlayerList = ((InstanceMap*)me->GetMap())->GetPlayers();
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
         {
             Player* i_pl = i->getSource();
@@ -179,32 +179,39 @@ struct boss_najentusAI : public ScriptedAI
                 ResetTimer(45000);
                 TidalShieldTimer = 60000;
             }
-        } else TidalShieldTimer -= diff;
+        }
+        else TidalShieldTimer -= diff;
 
-        if (!me->HasAura(SPELL_BERSERK,0))
+        if (!me->HasAura(SPELL_BERSERK, 0))
         {
             if (EnrageTimer <= diff)
             {
                 DoScriptText(SAY_ENRAGE2, me);
                 DoCast(me, SPELL_BERSERK, true);
-            } else EnrageTimer -= diff;
+            }
+            else EnrageTimer -= diff;
         }
 
         if (SpecialYellTimer <= diff)
         {
-            switch(rand()%2)
+            switch (rand() % 2)
             {
-            case 0: DoScriptText(SAY_SPECIAL1, me); break;
-            case 1: DoScriptText(SAY_SPECIAL2, me); break;
+            case 0:
+                DoScriptText(SAY_SPECIAL1, me);
+                break;
+            case 1:
+                DoScriptText(SAY_SPECIAL2, me);
+                break;
             }
-            SpecialYellTimer = 25000 + (rand()%76)*1000;
-        } else SpecialYellTimer -= diff;
+            SpecialYellTimer = 25000 + (rand() % 76) * 1000;
+        }
+        else SpecialYellTimer -= diff;
 
         if (ImpalingSpineTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCast(false))
             {
-                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 80,true);
+                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 80, true);
                 if (!pTarget) pTarget = me->getVictim();
                 if (pTarget)
                 {
@@ -213,15 +220,20 @@ struct boss_najentusAI : public ScriptedAI
                     //must let target summon, otherwise you cannot click the spine
                     pTarget->SummonGameObject(GOBJECT_SPINE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), me->GetOrientation(), 0, 0, 0, 0, 0);
 
-                    switch(rand()%2)
+                    switch (rand() % 2)
                     {
-                    case 0: DoScriptText(SAY_NEEDLE1, me); break;
-                    case 1: DoScriptText(SAY_NEEDLE2, me); break;
+                    case 0:
+                        DoScriptText(SAY_NEEDLE1, me);
+                        break;
+                    case 1:
+                        DoScriptText(SAY_NEEDLE2, me);
+                        break;
                     }
                     ImpalingSpineTimer = 21000;
                 }
             }
-        } else ImpalingSpineTimer -= diff;
+        }
+        else ImpalingSpineTimer -= diff;
 
         if (NeedleSpineTimer <= diff)
         {
@@ -233,7 +245,8 @@ struct boss_najentusAI : public ScriptedAI
                 //    me->CastSpell(*i, 39835, true);
                 NeedleSpineTimer = 3000;
             }
-        } else NeedleSpineTimer -= diff;
+        }
+        else NeedleSpineTimer -= diff;
 
 
         DoMeleeAttackIfReady();
@@ -259,7 +272,7 @@ CreatureAI* GetAI_boss_najentus(Creature* pCreature)
 
 void AddSC_boss_najentus()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_najentus";
     newscript->GetAI = &GetAI_boss_najentus;

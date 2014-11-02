@@ -94,7 +94,8 @@ struct mob_kilrekAI : public ScriptedAI
                 if (Terestian && Terestian->isAlive())
                     DoCast(Terestian, SPELL_BROKEN_PACT, true);
             }
-        } else ERROR_INST_DATA(me);
+        }
+        else ERROR_INST_DATA(me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -108,8 +109,9 @@ struct mob_kilrekAI : public ScriptedAI
             me->InterruptNonMeleeSpells(false);
             DoCastVictim( SPELL_AMPLIFY_FLAMES);
 
-            AmplifyTimer = urand(10000,20000);
-        } else AmplifyTimer -= diff;
+            AmplifyTimer = urand(10000, 20000);
+        }
+        else AmplifyTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -134,7 +136,7 @@ struct mob_demon_chainAI : public ScriptedAI
     {
         if (SacrificeGUID)
         {
-            Unit* Sacrifice = Unit::GetUnit((*me),SacrificeGUID);
+            Unit* Sacrifice = Unit::GetUnit((*me), SacrificeGUID);
             if (Sacrifice)
                 Sacrifice->RemoveAurasDueToSpell(SPELL_SACRIFICE);
         }
@@ -143,7 +145,7 @@ struct mob_demon_chainAI : public ScriptedAI
 
 struct mob_fiendish_portalAI : public PassiveAI
 {
-    mob_fiendish_portalAI(Creature* c) : PassiveAI(c),summons(me){}
+    mob_fiendish_portalAI(Creature* c) : PassiveAI(c), summons(me) {}
 
     SummonList summons;
 
@@ -173,7 +175,7 @@ struct boss_terestianAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
 
     uint64 PortalGUID[2];
     uint8 PortalsCount;
@@ -241,7 +243,7 @@ struct boss_terestianAI : public ScriptedAI
 
             if (pSummoned->GetUInt32Value(UNIT_CREATED_BY_SPELL) == SPELL_FIENDISH_PORTAL_1)
             {
-                DoScriptText(RAND(SAY_SUMMON1,SAY_SUMMON2), me);
+                DoScriptText(RAND(SAY_SUMMON1, SAY_SUMMON2), me);
                 SummonedPortals = true;
             }
         }
@@ -249,7 +251,7 @@ struct boss_terestianAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
+        DoScriptText(RAND(SAY_SLAY1, SAY_SLAY2), me);
     }
 
     void JustDied(Unit* /*killer*/)
@@ -288,17 +290,19 @@ struct boss_terestianAI : public ScriptedAI
                 {
                     CAST_AI(mob_demon_chainAI, Chains->AI())->SacrificeGUID = pTarget->GetGUID();
                     Chains->CastSpell(Chains, SPELL_DEMON_CHAINS, true);
-                    DoScriptText(RAND(SAY_SACRIFICE1,SAY_SACRIFICE2), me);
+                    DoScriptText(RAND(SAY_SACRIFICE1, SAY_SACRIFICE2), me);
                     SacrificeTimer = 30000;
                 }
             }
-        } else SacrificeTimer -= diff;
+        }
+        else SacrificeTimer -= diff;
 
         if (ShadowboltTimer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_TOPAGGRO, 0), SPELL_SHADOW_BOLT);
             ShadowboltTimer = 10000;
-        } else ShadowboltTimer -= diff;
+        }
+        else ShadowboltTimer -= diff;
 
         if (SummonTimer <= diff)
         {
@@ -310,11 +314,12 @@ struct boss_terestianAI : public ScriptedAI
 
             if (PortalGUID[0] && PortalGUID[1])
             {
-                if (Creature* pPortal = Unit::GetCreature(*me, PortalGUID[urand(0,1)]))
+                if (Creature* pPortal = Unit::GetCreature(*me, PortalGUID[urand(0, 1)]))
                     pPortal->CastSpell(me->getVictim(), SPELL_SUMMON_FIENDISIMP, false);
                 SummonTimer = 5000;
             }
-        } else SummonTimer -= diff;
+        }
+        else SummonTimer -= diff;
 
         if (!Berserk)
         {
@@ -322,7 +327,8 @@ struct boss_terestianAI : public ScriptedAI
             {
                 DoCast(me, SPELL_BERSERK);
                 Berserk = true;
-            } else BerserkTimer -= diff;
+            }
+            else BerserkTimer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -356,7 +362,8 @@ struct mob_fiendish_impAI : public ScriptedAI
         {
             DoCastVictim( SPELL_FIREBOLT);
             FireboltTimer = 2200;
-        } else FireboltTimer -= diff;
+        }
+        else FireboltTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -389,7 +396,7 @@ CreatureAI* GetAI_mob_demon_chain(Creature* pCreature)
 
 void AddSC_boss_terestian_illhoof()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_terestian_illhoof";
     newscript->GetAI = &GetAI_boss_terestian_illhoof;
@@ -401,7 +408,7 @@ void AddSC_boss_terestian_illhoof()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name= "mob_fiendish_portal";
+    newscript->Name = "mob_fiendish_portal";
     newscript->GetAI = &GetAI_mob_fiendish_portal;
     newscript->RegisterSelf();
 

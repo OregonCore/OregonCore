@@ -46,7 +46,7 @@ struct boss_ambassador_flamelashAI : public ScriptedAI
 
     void SummonSpirits(Unit* victim)
     {
-        if (Creature* Spirit = DoSpawnCreature(9178, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000))
+        if (Creature* Spirit = DoSpawnCreature(9178, irand(-9, 9), irand(-9, 9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000))
             Spirit->AI()->AttackStart(victim);
     }
 
@@ -61,7 +61,8 @@ struct boss_ambassador_flamelashAI : public ScriptedAI
         {
             DoCastVictim( SPELL_FIREBLAST);
             FireBlast_Timer = 7000;
-        } else FireBlast_Timer -= diff;
+        }
+        else FireBlast_Timer -= diff;
 
         //Spirit_Timer
         if (Spirit_Timer <= diff)
@@ -72,7 +73,8 @@ struct boss_ambassador_flamelashAI : public ScriptedAI
             SummonSpirits(me->getVictim());
 
             Spirit_Timer = 30000;
-        } else Spirit_Timer -= diff;
+        }
+        else Spirit_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -84,7 +86,7 @@ CreatureAI* GetAI_boss_ambassador_flamelash(Creature* pCreature)
 
 void AddSC_boss_ambassador_flamelash()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_ambassador_flamelash";
     newscript->GetAI = &GetAI_boss_ambassador_flamelash;

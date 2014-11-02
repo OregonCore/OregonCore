@@ -27,7 +27,10 @@ EndScriptData */
 
 struct instance_temple_of_ahnqiraj : public ScriptedInstance
 {
-    instance_temple_of_ahnqiraj(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_temple_of_ahnqiraj(Map* map) : ScriptedInstance(map)
+    {
+        Initialize();
+    };
 
     //If Vem is dead...
     bool IsBossDied[3];
@@ -64,11 +67,21 @@ struct instance_temple_of_ahnqiraj : public ScriptedInstance
     {
         switch (creature_entry)
         {
-            case 15263: SkeramGUID = creature->GetGUID(); break;
-            case 15544: VemGUID = creature->GetGUID(); break;
-            case 15511: KriGUID = creature->GetGUID(); break;
-            case 15276: VeklorGUID = creature->GetGUID(); break;
-            case 15275: VeknilashGUID = creature->GetGUID(); break;
+        case 15263:
+            SkeramGUID = creature->GetGUID();
+            break;
+        case 15544:
+            VemGUID = creature->GetGUID();
+            break;
+        case 15511:
+            KriGUID = creature->GetGUID();
+            break;
+        case 15276:
+            VeklorGUID = creature->GetGUID();
+            break;
+        case 15275:
+            VeknilashGUID = creature->GetGUID();
+            break;
         }
     }
 
@@ -80,73 +93,73 @@ struct instance_temple_of_ahnqiraj : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_VEMISDEAD:
-                if (IsBossDied[0])
-                    return 1;
-                break;
+        case DATA_VEMISDEAD:
+            if (IsBossDied[0])
+                return 1;
+            break;
 
-            case DATA_VEKLORISDEAD:
-                if (IsBossDied[1])
-                    return 1;
-                break;
+        case DATA_VEKLORISDEAD:
+            if (IsBossDied[1])
+                return 1;
+            break;
 
-            case DATA_VEKNILASHISDEAD:
-                if (IsBossDied[2])
-                    return 1;
-                break;
+        case DATA_VEKNILASHISDEAD:
+            if (IsBossDied[2])
+                return 1;
+            break;
 
-            case DATA_BUG_TRIO_DEATH:
-                return BugTrioDeathCount;
+        case DATA_BUG_TRIO_DEATH:
+            return BugTrioDeathCount;
 
-            case DATA_CTHUN_PHASE:
-                return CthunPhase;
+        case DATA_CTHUN_PHASE:
+            return CthunPhase;
         }
         return 0;
     }
 
     uint64 GetData64 (uint32 identifier)
     {
-        switch(identifier)
+        switch (identifier)
         {
-            case DATA_SKERAM:
-                return SkeramGUID;
-            case DATA_VEM:
-                return VemGUID;
-            case DATA_KRI:
-                return KriGUID;
-            case DATA_VEKLOR:
-                return VeklorGUID;
-            case DATA_VEKNILASH:
-                return VeknilashGUID;
+        case DATA_SKERAM:
+            return SkeramGUID;
+        case DATA_VEM:
+            return VemGUID;
+        case DATA_KRI:
+            return KriGUID;
+        case DATA_VEKLOR:
+            return VeklorGUID;
+        case DATA_VEKNILASH:
+            return VeknilashGUID;
         }
         return 0;
     }                                                       // end GetData64
 
     void SetData(uint32 type, uint32 data)
     {
-        switch(type)
+        switch (type)
         {
-            case DATA_VEM_DEATH:
-                IsBossDied[0] = true;
-                break;
+        case DATA_VEM_DEATH:
+            IsBossDied[0] = true;
+            break;
 
-            case DATA_BUG_TRIO_DEATH:
-                BugTrioDeathCount++;
-                break;
+        case DATA_BUG_TRIO_DEATH:
+            BugTrioDeathCount++;
+            break;
 
-            case DATA_VEKLOR_DEATH:
-                IsBossDied[1] = true;
-                break;
+        case DATA_VEKLOR_DEATH:
+            IsBossDied[1] = true;
+            break;
 
-            case DATA_VEKNILASH_DEATH:
-                IsBossDied[2] = true;
-                break;
+        case DATA_VEKNILASH_DEATH:
+            IsBossDied[2] = true;
+            break;
 
-            case DATA_CTHUN_PHASE:
-                CthunPhase = data;
-                break;
+        case DATA_CTHUN_PHASE:
+            CthunPhase = data;
+            break;
         }
     }
 };
@@ -158,7 +171,7 @@ InstanceData* GetInstanceData_instance_temple_of_ahnqiraj(Map* map)
 
 void AddSC_instance_temple_of_ahnqiraj()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "instance_temple_of_ahnqiraj";
     newscript->GetInstanceData = &GetInstanceData_instance_temple_of_ahnqiraj;

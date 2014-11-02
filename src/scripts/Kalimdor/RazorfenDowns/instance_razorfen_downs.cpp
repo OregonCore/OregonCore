@@ -51,7 +51,7 @@ struct instance_razorfen_downs : public ScriptedInstance
         std::ostringstream saveStream;
 
         saveStream << "T C " << m_auiEncounter[0]
-            << " " << uiGongWaves;
+                   << " " << uiGongWaves;
 
         str_data = saveStream.str();
 
@@ -84,22 +84,23 @@ struct instance_razorfen_downs : public ScriptedInstance
                     m_auiEncounter[i] = NOT_STARTED;
 
             uiGongWaves = data1;
-        } else OUT_LOAD_INST_DATA_FAIL;
+        }
+        else OUT_LOAD_INST_DATA_FAIL;
 
         OUT_LOAD_INST_DATA_COMPLETE;
     }
 
     void OnGameObjectCreate(GameObject* pGo, bool /*bAdd*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case GO_GONG:
-                uiGongGUID = pGo->GetGUID();
-                if (m_auiEncounter[0] == DONE)
-                    pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_NOT_SELECTABLE);
-                break;
-            default:
-                break;
+        case GO_GONG:
+            uiGongGUID = pGo->GetGUID();
+            if (m_auiEncounter[0] == DONE)
+                pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
+            break;
+        default:
+            break;
         }
     }
 
@@ -109,42 +110,42 @@ struct instance_razorfen_downs : public ScriptedInstance
         {
             uiGongWaves = uiData;
 
-            switch(uiGongWaves)
+            switch (uiGongWaves)
             {
-                case 9:
-                case 14:
-                    if (GameObject* pGo = instance->GetGameObject(uiGongGUID))
-                        pGo->RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_NOT_SELECTABLE);
-                    break;
-                case 1:
-                case 10:
-                case 16:
+            case 9:
+            case 14:
+                if (GameObject* pGo = instance->GetGameObject(uiGongGUID))
+                    pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
+                break;
+            case 1:
+            case 10:
+            case 16:
                 {
                     GameObject* pGo = instance->GetGameObject(uiGongGUID);
 
                     if (!pGo)
                         return;
 
-                    pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_NOT_SELECTABLE);
+                    pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
 
                     uint32 uiCreature = 0;
                     uint8 uiSummonTimes = 0;
 
-                    switch(uiGongWaves)
+                    switch (uiGongWaves)
                     {
-                        case 1:
-                            uiCreature = CREATURE_TOMB_FIEND;
-                            uiSummonTimes = 7;
-                            break;
-                        case 10:
-                            uiCreature = CREATURE_TOMB_REAVER;
-                            uiSummonTimes = 3;
-                            break;
-                        case 16:
-                            uiCreature = CREATURE_TUTEN_KASH;
-                            break;
-                        default:
-                            break;
+                    case 1:
+                        uiCreature = CREATURE_TOMB_FIEND;
+                        uiSummonTimes = 7;
+                        break;
+                    case 10:
+                        uiCreature = CREATURE_TOMB_REAVER;
+                        uiSummonTimes = 3;
+                        break;
+                    case 16:
+                        uiCreature = CREATURE_TUTEN_KASH;
+                        break;
+                    default:
+                        break;
                     }
 
 
@@ -154,16 +155,16 @@ struct instance_razorfen_downs : public ScriptedInstance
                         {
                             for (uint8 i = 0; i < uiSummonTimes; ++i)
                             {
-                                if (Creature* pSummon = pGo->SummonCreature(uiCreature, 2502.635f + float(irand(-5,5)), 844.140f + float(irand(-5,5)), 46.896f, 0.633f, TEMPSUMMON_MANUAL_DESPAWN, 0))
-                                    pSummon->GetMotionMaster()->MovePoint(0,2533.479 + float(irand(-5,5)),870.020 + float(irand(-5,5)),47.678);
+                                if (Creature* pSummon = pGo->SummonCreature(uiCreature, 2502.635f + float(irand(-5, 5)), 844.140f + float(irand(-5, 5)), 46.896f, 0.633f, TEMPSUMMON_MANUAL_DESPAWN, 0))
+                                    pSummon->GetMotionMaster()->MovePoint(0, 2533.479 + float(irand(-5, 5)), 870.020 + float(irand(-5, 5)), 47.678);
                             }
                         }
-                        pCreature->GetMotionMaster()->MovePoint(0,2533.479 + float(irand(-5,5)),870.020 + float(irand(-5,5)),47.678);
+                        pCreature->GetMotionMaster()->MovePoint(0, 2533.479 + float(irand(-5, 5)), 870.020 + float(irand(-5, 5)), 47.678);
                     }
                     break;
                 }
-                default:
-                    break;
+            default:
+                break;
             }
         }
 
@@ -178,10 +179,10 @@ struct instance_razorfen_downs : public ScriptedInstance
 
     uint32 GetData(uint32 uiType)
     {
-        switch(uiType)
+        switch (uiType)
         {
-            case DATA_GONG_WAVES:
-                return uiGongWaves;
+        case DATA_GONG_WAVES:
+            return uiGongWaves;
         }
 
         return 0;
@@ -189,9 +190,10 @@ struct instance_razorfen_downs : public ScriptedInstance
 
     uint64 GetData64(uint32 uiType)
     {
-        switch(uiType)
+        switch (uiType)
         {
-            case DATA_GONG: return uiGongGUID;
+        case DATA_GONG:
+            return uiGongGUID;
         }
 
         return 0;

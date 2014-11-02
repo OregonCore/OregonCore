@@ -43,7 +43,7 @@ struct SkillExtraItemEntry
 };
 
 // map to store the extra item creation info, the key is the spellId of the creation spell, the mapped value is the assigned SkillExtraItemEntry
-typedef std::map<uint32,SkillExtraItemEntry> SkillExtraItemMap;
+typedef std::map<uint32, SkillExtraItemEntry> SkillExtraItemMap;
 
 SkillExtraItemMap SkillExtraItemStore;
 
@@ -62,7 +62,7 @@ void LoadSkillExtraItemTable()
 
         do
         {
-            Field *fields = result->Fetch();
+            Field* fields = result->Fetch();
 
             uint32 spellId = fields[0].GetUInt32();
 
@@ -75,7 +75,7 @@ void LoadSkillExtraItemTable()
             uint32 requiredSpecialization = fields[1].GetUInt32();
             if (!sSpellStore.LookupEntry(requiredSpecialization))
             {
-                sLog.outError("Skill specialization %u has invalid required specialization spell id %u in skill_extra_item_template!", spellId,requiredSpecialization);
+                sLog.outError("Skill specialization %u has invalid required specialization spell id %u in skill_extra_item_template!", spellId, requiredSpecialization);
                 continue;
             }
 
@@ -100,17 +100,16 @@ void LoadSkillExtraItemTable()
             skillExtraItemEntry.additionalMaxNum       = additionalMaxNum;
 
             ++count;
-        } while (result->NextRow());
+        }
+        while (result->NextRow());
 
         sLog.outString(">> Loaded %u spell specialization definitions", count);
     }
     else
-    {
         sLog.outString(">> Loaded 0 spell specialization definitions. DB table skill_extra_item_template is empty.");
-    }
 }
 
-bool canCreateExtraItems(Player* player, uint32 spellId, float &additionalChance, uint8 &additionalMax)
+bool canCreateExtraItems(Player* player, uint32 spellId, float& additionalChance, uint8& additionalMax)
 {
     // get the info for the specified spell
     SkillExtraItemMap::const_iterator ret = SkillExtraItemStore.find(spellId);

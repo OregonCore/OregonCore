@@ -44,7 +44,7 @@ static const char* Menu[] =
     "-------------",
     " Halt Server ",
 };
-static const int MenuItems = sizeof(Menu)/sizeof(*Menu);
+static const int MenuItems = sizeof(Menu) / sizeof(*Menu);
 
 #if PLATFORM == PLATFORM_WINDOWS
 BOOL WINAPI HandleConsoleInterrupt(DWORD)
@@ -76,11 +76,11 @@ Console::~Console()
     endwin();
 
     if (m_loggerFd)
-        #if PLATFORM == PLATFORM_WINDOWS
+    #if PLATFORM == PLATFORM_WINDOWS
         CloseHandle(m_loggerFd);
-        #else
+    #else
         close(m_loggerFd);
-        #endif
+    #endif
 }
 
 void Console::Initialize()
@@ -116,15 +116,15 @@ void Console::Initialize()
     if (!m_logoWindow)
     {
         // win                       height         width                          y                              x
-        m_logoWindow = MakeWindow(sOregonLogoRows, sOregonLogoCols, 1,                               COLS/2 - sOregonLogoCols/2);
-        m_loadWindow = MakeWindow(3,               sOregonLogoCols, 2 + sOregonLogoRows,             COLS/2 - sOregonLogoCols/2);
+        m_logoWindow = MakeWindow(sOregonLogoRows, sOregonLogoCols, 1,                               COLS / 2 - sOregonLogoCols / 2);
+        m_loadWindow = MakeWindow(3,               sOregonLogoCols, 2 + sOregonLogoRows,             COLS / 2 - sOregonLogoCols / 2);
 
         int rows = 0xFFFF / COLS;
         m_logViewer = newpad(rows, COLS);
         idlok(m_logViewer, TRUE);
         idcok(m_logViewer, TRUE);
         scrollok(m_logViewer, TRUE);
-        wmove(m_logViewer, rows-1, COLS-1);
+        wmove(m_logViewer, rows - 1, COLS - 1);
         wprintw(m_logViewer, " ");
 
         m_cmdOutput = dupwin(m_logViewer);
@@ -133,7 +133,7 @@ void Console::Initialize()
     Refresh();
 
     // we abuse stderr to bring us data from logger
-#if PLATFORM == PLATFORM_WINDOWS
+    #if PLATFORM == PLATFORM_WINDOWS
     HANDLE writer, reader;
     char pipeName[MAX_PATH];
     sprintf(pipeName, "\\\\.\\Pipe\\LocalOCAnon.%u", GetCurrentProcessId());
@@ -155,7 +155,7 @@ void Console::Initialize()
     //stderr->_file = _open_osfhandle((long) writer, _O_TEXT);
     dup2(_open_osfhandle((long) writer, 0), fileno(stderr));
     m_loggerFd = reader;
-#else
+    #else
     int fds[2];
     if (!pipe(fds))
     {
@@ -172,10 +172,8 @@ void Console::Initialize()
         }
     }
     else
-    {
         fclose(stderr);
-    }
-#endif
+    #endif
 }
 
 void Console::Refresh()
@@ -244,8 +242,8 @@ void Console::MainLoop()
     time_t startTime = time(0); // we use our own timer due to thread-safety
 
     //                                height            width                    y                         x
-    Window* menuWindow = MakeWindow(MenuItems+2,     19,              1 + sOregonLogoRows + 1,         COLS/2 - 10 - 2);
-    Window* infoWindow = MakeWindow(4,               sOregonLogoCols, 5 + sOregonLogoRows + MenuItems, COLS/2 - sOregonLogoCols/2);
+    Window* menuWindow = MakeWindow(MenuItems + 2,     19,              1 + sOregonLogoRows + 1,         COLS / 2 - 10 - 2);
+    Window* infoWindow = MakeWindow(4,               sOregonLogoCols, 5 + sOregonLogoRows + MenuItems, COLS / 2 - sOregonLogoCols / 2);
 
     flushinp();
 
@@ -263,13 +261,13 @@ void Console::MainLoop()
             if (MenuActiveItem == i)
             {
                 wattron(menuWindow, A_BOLD | TermColor(COLOR_GREEN));
-                mvwprintw(menuWindow, i+1, 1, "* %s *", Menu[i]);
+                mvwprintw(menuWindow, i + 1, 1, "* %s *", Menu[i]);
                 wattroff(menuWindow, A_BOLD | TermColor(COLOR_GREEN));
             }
             else if (Menu[i][0] == '-')
-                mvwprintw(menuWindow, i+1, 1, "--%s--", Menu[i]);
+                mvwprintw(menuWindow, i + 1, 1, "--%s--", Menu[i]);
             else
-                mvwprintw(menuWindow, i+1, 1, "  %s  ", Menu[i]);
+                mvwprintw(menuWindow, i + 1, 1, "  %s  ", Menu[i]);
         }
 
         // draw info
@@ -294,7 +292,7 @@ void Console::MainLoop()
             const char* type;
             InfoValue value;
         } InfoTable[]
-          =
+        =
         {
             { 0,    0,    "Players:",    INFO_PLAYERS_ONLINE },
             { 1,    0,    "        ",    INFO_PLAYERS_QUEUED },
@@ -302,12 +300,12 @@ void Console::MainLoop()
             { 3,    0,    "        ",    INFO_EMPTY,         },
 
             { 0,   34,    "Revision:",   INFO_REVISION,      },
-            { 1,   34,    "Loglevel:",   INFO_LOGLEVEL,      },               
-            { 2,   34,    "Uptime:  ",   INFO_UPTIME,        },              
-            { 3,   34,    "Tickets: ",   INFO_TICKETS,       }               
+            { 1,   34,    "Loglevel:",   INFO_LOGLEVEL,      },
+            { 2,   34,    "Uptime:  ",   INFO_UPTIME,        },
+            { 3,   34,    "Tickets: ",   INFO_TICKETS,       }
         };
 
-        for (uint32 i = 0; i < sizeof(InfoTable)/sizeof(*InfoTable); i++)
+        for (uint32 i = 0; i < sizeof(InfoTable) / sizeof(*InfoTable); i++)
         {
             wmove(infoWindow, InfoTable[i].y, InfoTable[i].x);
             wattron(infoWindow, A_BOLD | TermColor(COLOR_GREEN));
@@ -315,21 +313,34 @@ void Console::MainLoop()
             wattroff(infoWindow, A_BOLD | TermColor(COLOR_GREEN));
             switch (InfoTable[i].value)
             {
-                case INFO_PLAYERS_ONLINE: wprintw(infoWindow, " %u (online)", sWorld.GetActiveSessionCount()); break;
-                case INFO_PLAYERS_QUEUED: wprintw(infoWindow, " %u (queued)", sWorld.GetQueuedSessionCount()); break;
-                case INFO_PLAYERS_MAX:    wprintw(infoWindow, " %u (max)", sWorld.GetMaxActiveSessionCount() + sWorld.GetMaxQueuedSessionCount()); break;
-                case INFO_REVISION:       wprintw(infoWindow, " %s", _REVISION); break;
-                case INFO_LOGLEVEL:       wprintw(infoWindow, " %u", sLog.GetLogLevel()); break;
-                case INFO_UPTIME:         {
-                                              time_t diff = time(0) - startTime;
-                                              uint32 mins = diff/60;
-                                              uint32 hours = mins/60;
-                                              uint32 days = hours/24;
-                                              wprintw(infoWindow, " %ud %uh %um", days, hours%24, mins%60);
-                                          }
-                                          break;
-                case INFO_TICKETS:        wprintw(infoWindow, " %lu", ticketmgr.GM_TicketList.size());
-                default: break;
+            case INFO_PLAYERS_ONLINE:
+                wprintw(infoWindow, " %u (online)", sWorld.GetActiveSessionCount());
+                break;
+            case INFO_PLAYERS_QUEUED:
+                wprintw(infoWindow, " %u (queued)", sWorld.GetQueuedSessionCount());
+                break;
+            case INFO_PLAYERS_MAX:
+                wprintw(infoWindow, " %u (max)", sWorld.GetMaxActiveSessionCount() + sWorld.GetMaxQueuedSessionCount());
+                break;
+            case INFO_REVISION:
+                wprintw(infoWindow, " %s", _REVISION);
+                break;
+            case INFO_LOGLEVEL:
+                wprintw(infoWindow, " %u", sLog.GetLogLevel());
+                break;
+            case INFO_UPTIME:
+                {
+                    time_t diff = time(0) - startTime;
+                    uint32 mins = diff / 60;
+                    uint32 hours = mins / 60;
+                    uint32 days = hours / 24;
+                    wprintw(infoWindow, " %ud %uh %um", days, hours % 24, mins % 60);
+                }
+                break;
+            case INFO_TICKETS:
+                wprintw(infoWindow, " %lu", ticketmgr.GM_TicketList.size());
+            default:
+                break;
             }
         }
 
@@ -340,51 +351,57 @@ void Console::MainLoop()
         UpdateLog();
 
         // align timeout to the next minute
-        timeout((60 - ((time(0)-startTime) % 60)) * 1000);
+        timeout((60 - ((time(0) - startTime) % 60)) * 1000);
         int ch = GetChar();
 
         switch (ch)
         {
-            case KEY_UP:
-                MenuActiveItem = (MenuActiveItem == 0) ? MenuItems - 1 : (MenuActiveItem - 1);
-                if (Menu[MenuActiveItem][0] == '-')
-                    MenuActiveItem--;
+        case KEY_UP:
+            MenuActiveItem = (MenuActiveItem == 0) ? MenuItems - 1 : (MenuActiveItem - 1);
+            if (Menu[MenuActiveItem][0] == '-')
+                MenuActiveItem--;
+            break;
+        case KEY_DOWN:
+            MenuActiveItem = (MenuActiveItem >= MenuItems - 1) ? 0 : (MenuActiveItem + 1);
+            if (Menu[MenuActiveItem][0] == '-')
+                MenuActiveItem++;
+            break;
+        case KEY_ENTER:
+        case '\n':
+        case '\r':
+
+            switch (MenuActiveItem)
+            {
+            case 0: /* Run a Command */
+                RunCommandLoop();
                 break;
-            case KEY_DOWN:
-                MenuActiveItem = (MenuActiveItem >= MenuItems-1) ? 0 : (MenuActiveItem + 1);
-                if (Menu[MenuActiveItem][0] == '-')
-                    MenuActiveItem++;
+            case 1: /* Real-time logs */
+                RunLogViewLoop();
                 break;
-            case KEY_ENTER:
-            case '\n':
-            case '\r':
-
-                switch (MenuActiveItem)
-                {
-                    case 0: /* Run a Command */  RunCommandLoop(); break;
-                    case 1: /* Real-time logs */ RunLogViewLoop(); break;
-                    case 3: /* shutdown */       raise(SIGINT);   break;
-                }
-
-            /* Fallthrough */
-            case KEY_RESIZE:
-
-                erase();
-
-                //           win             height         width                 y                            x
-                ResizeWindow(m_logoWindow, sOregonLogoRows, sOregonLogoCols, 1,                       COLS/2 - sOregonLogoCols/2);
-                ResizeWindow(menuWindow, MenuItems+2,     19,              1 + sOregonLogoRows + 1, std::max<int>(0, COLS/2 - 10 - 2));
-                ResizeWindow(infoWindow, 4,               sOregonLogoCols, 5 + sOregonLogoRows + MenuItems, COLS/2 - sOregonLogoCols/2);
-
-                wattron(menuWindow, A_BOLD | TermColor(COLOR_CYAN));
-                wborder(menuWindow, '|', '|', '-', '-', '+', '+', '+', '+');
-                wattroff(menuWindow, A_BOLD | TermColor(COLOR_CYAN));
-
-                Refresh();
-                DrawLogo();
+            case 3: /* shutdown */
+                raise(SIGINT);
                 break;
-            default:
-                break;;
+            }
+
+        /* Fallthrough */
+        case KEY_RESIZE:
+
+            erase();
+
+            //           win             height         width                 y                            x
+            ResizeWindow(m_logoWindow, sOregonLogoRows, sOregonLogoCols, 1,                       COLS / 2 - sOregonLogoCols / 2);
+            ResizeWindow(menuWindow, MenuItems + 2,     19,              1 + sOregonLogoRows + 1, std::max<int>(0, COLS / 2 - 10 - 2));
+            ResizeWindow(infoWindow, 4,               sOregonLogoCols, 5 + sOregonLogoRows + MenuItems, COLS / 2 - sOregonLogoCols / 2);
+
+            wattron(menuWindow, A_BOLD | TermColor(COLOR_CYAN));
+            wborder(menuWindow, '|', '|', '-', '-', '+', '+', '+', '+');
+            wattroff(menuWindow, A_BOLD | TermColor(COLOR_CYAN));
+
+            Refresh();
+            DrawLogo();
+            break;
+        default:
+            break;;
         }
     }
 
@@ -432,18 +449,18 @@ void Console::RunCommandLoop()
 {
     History::iterator historyCur = m_cmdHistory.begin();
     if (m_cmdHistory.size())
-        std::advance(historyCur, m_cmdHistory.size()-1);
+        std::advance(historyCur, m_cmdHistory.size() - 1);
 
     int no = 1;
 
-    int lineWidth = COLS - (sizeof("Oregon>")-1);
-    Window* cmdLine = MakeWindow(1, lineWidth, LINES-1, (sizeof("Oregon>")-1));
+    int lineWidth = COLS - (sizeof("Oregon>") - 1);
+    Window* cmdLine = MakeWindow(1, lineWidth, LINES - 1, (sizeof("Oregon>") - 1));
 
     erase();
     curs_set(1);
 
     attron(A_BOLD | TermColor(COLOR_GREEN));
-    mvprintw(LINES-1, 0, "Oregon> ");
+    mvprintw(LINES - 1, 0, "Oregon> ");
     attroff(A_BOLD | TermColor(COLOR_GREEN));
     wattrset(cmdLine, A_PROTECT | TermColor(COLOR_WHITE));
 
@@ -455,7 +472,7 @@ void Console::RunCommandLoop()
     leaveok(cmdLine, FALSE);
     wmove(cmdLine, 0, 0);
 
-    pnoutrefresh(m_cmdOutput, y, 0, 0, 0, LINES-2, COLS);
+    pnoutrefresh(m_cmdOutput, y, 0, 0, 0, LINES - 2, COLS);
     wrefresh(stdscr);
     wrefresh(cmdLine);
 
@@ -467,10 +484,10 @@ void Console::RunCommandLoop()
     {
         if (update)
         {
-            pnoutrefresh(m_cmdOutput, y, 0, 0, 0, LINES-2, COLS);
+            pnoutrefresh(m_cmdOutput, y, 0, 0, 0, LINES - 2, COLS);
 
             attron(A_BOLD | TermColor(COLOR_GREEN));
-            mvprintw(LINES-1, 0, "Oregon> ");
+            mvprintw(LINES - 1, 0, "Oregon> ");
             attroff(A_BOLD | TermColor(COLOR_GREEN));
 
             wrefresh(stdscr);
@@ -510,27 +527,27 @@ void Console::RunCommandLoop()
         else if (ch == KEY_BACKSPACE || ch == 0x7F || ch == 0x08)
         {
             if (buffer.size())
-                buffer.resize(buffer.size()-1);
+                buffer.resize(buffer.size() - 1);
         }
         else if (ch == KEY_PPAGE) // page up
         {
             update = true;
-            y = std::max<int>(0, y-pageSize);
+            y = std::max<int>(0, y - pageSize);
         }
         else if (ch == KEY_NPAGE) // page down
         {
             update = true;
-            y = std::min<int>(my-1-pageSize, y+pageSize);
+            y = std::min<int>(my - 1 - pageSize, y + pageSize);
         }
         else if (ch == KEY_SR) // scroll up
         {
             update = true;
-            y = std::max<int>(0, y-1);
+            y = std::max<int>(0, y - 1);
         }
         else if (ch == KEY_SF) // scroll  down
         {
             update = true;
-            y = std::min<int>(my-1-pageSize, y+1);
+            y = std::min<int>(my - 1 - pageSize, y + 1);
         }
         else if ((ch == KEY_ENTER || ch == '\n' || ch == '\r'))
         {
@@ -566,25 +583,25 @@ void Console::RunCommandLoop()
 
             m_cmdHistory.push_back(buffer);
             historyCur = m_cmdHistory.begin();
-            std::advance(historyCur, m_cmdHistory.size()-1);
+            std::advance(historyCur, m_cmdHistory.size() - 1);
 
             buffer.clear();
             curs_set(1);
         }
         else if (ch == KEY_RESIZE)
         {
-            lineWidth = COLS - (sizeof("Oregon>")-1);
+            lineWidth = COLS - (sizeof("Oregon>") - 1);
 
             wresize(m_cmdOutput, 0xFFFF / COLS, COLS);
 
-            ResizeWindow(cmdLine, 1, lineWidth, LINES-1, (sizeof("Oregon>")-1));
-            wmove(m_cmdOutput, LINES-2, COLS-1);
+            ResizeWindow(cmdLine, 1, lineWidth, LINES - 1, (sizeof("Oregon>") - 1));
+            wmove(m_cmdOutput, LINES - 2, COLS - 1);
 
             werase(stdscr);
-            
+
             pageSize = LINES - 4;
             getmaxyx(m_cmdOutput, my, mx);
-            wmove(m_cmdOutput, my-1, mx-1);
+            wmove(m_cmdOutput, my - 1, mx - 1);
             waddch(m_cmdOutput, ' ');
 
             y = my - pageSize;
@@ -601,7 +618,7 @@ void Console::RunCommandLoop()
 void Console::RunLogViewLoop()
 {
     const char info[] = "Use arrows, PgUp/PgDn to scroll. Enter to return. (%lu%%)";
-    size_t len = sizeof(info)-1;
+    size_t len = sizeof(info) - 1;
 
     int y, mx, my;
     int pageSize = LINES - 4;
@@ -610,7 +627,7 @@ void Console::RunLogViewLoop()
 
     y = my - pageSize;
 
-    Window* infoWindow = MakeWindow(2, len, LINES-2, COLS/2 - len/2);
+    Window* infoWindow = MakeWindow(2, len, LINES - 2, COLS / 2 - len / 2);
     wattron(infoWindow, A_BOLD | TermColor(COLOR_GREEN));
 
     wrefresh(infoWindow);
@@ -621,7 +638,7 @@ void Console::RunLogViewLoop()
         if (y == my - pageSize)
         {
             UpdateLog();
-            prefresh(m_logViewer, y, 0, 0, 0, pageSize+1, COLS);
+            prefresh(m_logViewer, y, 0, 0, 0, pageSize + 1, COLS);
         }
         else
             prefresh(m_logViewer, y, 0, 0, 0, pageSize, COLS);
@@ -635,22 +652,22 @@ void Console::RunLogViewLoop()
         if (ch == KEY_ENTER || ch == '\r' || ch == '\n')
             break;
         else if (ch == KEY_PPAGE) // page up
-            y = std::max<int>(0, y-pageSize);
+            y = std::max<int>(0, y - pageSize);
         else if (ch == KEY_NPAGE) // page down
-            y = std::min<int>(my-pageSize, y+pageSize);
+            y = std::min<int>(my - pageSize, y + pageSize);
         else if (ch == KEY_UP || ch == KEY_SR)
-            y = std::max<int>(0, y-1);
+            y = std::max<int>(0, y - 1);
         else if (ch == KEY_DOWN || ch == KEY_SF)
-            y = std::min<int>(my-pageSize, y+1);
+            y = std::min<int>(my - pageSize, y + 1);
         else if (ch == KEY_RESIZE)
         {
-            ResizeWindow(infoWindow, 2, len, LINES-2, COLS/2 - len/2);
+            ResizeWindow(infoWindow, 2, len, LINES - 2, COLS / 2 - len / 2);
 
             wresize(m_logViewer, 0xFFFF / COLS, COLS);
-            
+
             pageSize = LINES - 4;
             getmaxyx(m_logViewer, my, mx);
-            wmove(m_logViewer, my-1, mx-1);
+            wmove(m_logViewer, my - 1, mx - 1);
             waddch(m_logViewer, ' ');
 
             y = my - pageSize;
@@ -668,11 +685,11 @@ void Console::SetLoading(bool on, const char* caption)
     if (on)
     {
         const char stop[] = "Press <CTRL-C> to stop";
-        
+
         wattron(m_loadWindow, A_BOLD);
-        
+
         wprintw(m_loadWindow, "%s ", caption);
-        mvwprintw(m_loadWindow, 0, sOregonLogoCols - (sizeof(stop)-1), "%s", stop);
+        mvwprintw(m_loadWindow, 0, sOregonLogoCols - (sizeof(stop) - 1), "%s", stop);
 
         wattroff(m_loadWindow, A_BOLD);
         wrefresh(m_loadWindow);
@@ -710,13 +727,13 @@ void Console::FatalError(const char* msg)
 
     erase();
 
-    Window* errWin = MakeWindow(LINES - (2+sOregonLogoRows), sOregonLogoCols, 2 + sOregonLogoRows, COLS/2 - sOregonLogoCols/2);
+    Window* errWin = MakeWindow(LINES - (2 + sOregonLogoRows), sOregonLogoCols, 2 + sOregonLogoRows, COLS / 2 - sOregonLogoCols / 2);
     wattrset(errWin, A_BOLD | TermColor(COLOR_RED));
     wprintw(errWin, "FATAL ERROR:"
-                    "\n\n"
-                    "%s"
-                    "\n\n"
-                    "Press enter to exit", msg);
+            "\n\n"
+            "%s"
+            "\n\n"
+            "Press enter to exit", msg);
     wrefresh(stdscr);
     DrawLogo();
     wrefresh(errWin);
@@ -740,9 +757,9 @@ void Console::DrawLogo()
         mvwprintw(m_logoWindow, 0, 0, "%s", sOregonLogo);
         wattroff(m_logoWindow, TermColor(COLOR_GREEN));
         wattron(m_logoWindow, TermColor(COLOR_CYAN));
-        
-        mvwprintw(m_logoWindow, 1, sOregonLogoCols/2 - (sizeof(FavString)-1)/2, "%s", FavString);
-        mvwprintw(m_logoWindow, sOregonLogoRows-1, 0, "%s", "http://bit.ly/oregoncore");
+
+        mvwprintw(m_logoWindow, 1, sOregonLogoCols / 2 - (sizeof(FavString) - 1) / 2, "%s", FavString);
+        mvwprintw(m_logoWindow, sOregonLogoRows - 1, 0, "%s", "http://bit.ly/oregoncore");
 
         wattroff(m_logoWindow, TermColor(COLOR_CYAN));
         wrefresh(m_logoWindow);
@@ -751,7 +768,7 @@ void Console::DrawLogo()
     {
         sLog.outString();
         for (uint32 i = 0; i < sOregonLogoRows; i++)
-            sLog.outString("%.*s", sOregonLogoCols, &sOregonLogo[i*sOregonLogoCols]);
+            sLog.outString("%.*s", sOregonLogoCols, &sOregonLogo[i * sOregonLogoCols]);
         sLog.outString("http://bit.ly/oregoncoren\n");
     }
 }
@@ -780,37 +797,37 @@ void Console::UpdateLog()
     static long control = 0;
     unsigned char buffer[PIPE_BUF];
 
-#if PLATFORM == PLATFORM_WINDOWS
+    #if PLATFORM == PLATFORM_WINDOWS
     unsigned long len, i, total;
     while (PeekNamedPipe(m_loggerFd, NULL, 0, NULL, &total, NULL) &&
            total &&
            ReadFile(m_loggerFd, buffer, std::min<unsigned long>(total, sizeof(buffer)), &len, NULL))
-#else
+    #else
     ssize_t len, i;
     while ((len = read(m_loggerFd, (char*)buffer, sizeof(buffer))) > 0)
-#endif
+    #endif
     {
-        for (i = 0; i < len-1; i++)
+        for (i = 0; i < len - 1; i++)
         {
             switch (buffer[i])
             {
-                case 0xFF:
-                    control = 1;
+            case 0xFF:
+                control = 1;
+                continue;
+            case 0xFE:
+                wattrset(m_logViewer, A_NORMAL);
+                continue;
+            default:
+                if (control)
+                {
+                    control = 0;
+                    if (buffer[i] > 7)
+                        wattrset(m_logViewer, A_BOLD | TermColor(buffer[i] - 8));
+                    else
+                        wattrset(m_logViewer, TermColor(buffer[i]));
                     continue;
-                case 0xFE:
-                    wattrset(m_logViewer, A_NORMAL);
-                    continue;
-                default:
-                    if (control)
-                    {
-                        control = 0;
-                        if (buffer[i] > 7)
-                            wattrset(m_logViewer, A_BOLD | TermColor(buffer[i] - 8));
-                        else
-                            wattrset(m_logViewer, TermColor(buffer[i]));
-                        continue;
-                    }
-                    waddch(m_logViewer, buffer[i]);
+                }
+                waddch(m_logViewer, buffer[i]);
             }
         }
     }

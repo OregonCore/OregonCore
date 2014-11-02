@@ -60,12 +60,12 @@ AccountOpResult AccountMgr::DeleteAccount(uint32 accid)
         return AOR_NAME_NOT_EXIST;                          // account doesn't exist
 
     // existed characters list
-    result = CharacterDatabase.PQuery("SELECT guid FROM characters WHERE account='%d'",accid);
+    result = CharacterDatabase.PQuery("SELECT guid FROM characters WHERE account='%d'", accid);
     if (result)
     {
         do
         {
-            Field *fields = result->Fetch();
+            Field* fields = result->Fetch();
             uint32 guidlo = fields[0].GetUInt32();
             uint64 guid = MAKE_NEW_GUID(guidlo, 0, HIGHGUID_PLAYER);
 
@@ -78,11 +78,12 @@ AccountOpResult AccountMgr::DeleteAccount(uint32 accid)
             }
 
             Player::DeleteFromDB(guid, accid, false);       // no need to update realm characters
-        } while (result->NextRow());
+        }
+        while (result->NextRow());
     }
 
     // table realm specific but common for all characters of account for realm
-    CharacterDatabase.PExecute("DELETE FROM character_tutorial WHERE account = '%u'",accid);
+    CharacterDatabase.PExecute("DELETE FROM character_tutorial WHERE account = '%u'", accid);
 
     LoginDatabase.BeginTransaction();
 
@@ -170,8 +171,8 @@ uint32 AccountMgr::GetSecurity(uint32 acc_id)
 uint32 AccountMgr::GetSecurity(uint32 acc_id, int32 realm_id)
 {
     QueryResult_AutoPtr result = (realm_id == -1)
-        ? LoginDatabase.PQuery("SELECT gmlevel FROM account_access WHERE id = '%u' AND RealmID = '%d'", acc_id, realm_id)
-        : LoginDatabase.PQuery("SELECT gmlevel FROM account_access WHERE id = '%u' AND (RealmID = '%d' OR RealmID = '-1')", acc_id, realm_id);
+                                 ? LoginDatabase.PQuery("SELECT gmlevel FROM account_access WHERE id = '%u' AND RealmID = '%d'", acc_id, realm_id)
+                                 : LoginDatabase.PQuery("SELECT gmlevel FROM account_access WHERE id = '%u' AND (RealmID = '%d' OR RealmID = '-1')", acc_id, realm_id);
     if (result)
     {
         uint32 sec = (*result)[0].GetUInt32();
@@ -181,7 +182,7 @@ uint32 AccountMgr::GetSecurity(uint32 acc_id, int32 realm_id)
     return 0;
 }
 
-bool AccountMgr::GetName(uint32 acc_id, std::string &name)
+bool AccountMgr::GetName(uint32 acc_id, std::string& name)
 {
     QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT username FROM account WHERE id = '%u'", acc_id);
     if (result)
@@ -199,7 +200,7 @@ uint32 AccountMgr::GetCharactersCount(uint32 acc_id)
     QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT COUNT(guid) FROM characters WHERE account = '%d'", acc_id);
     if (result)
     {
-        Field *fields=result->Fetch();
+        Field* fields = result->Fetch();
         uint32 charcount = fields[0].GetUInt32();
         return charcount;
     }
@@ -212,7 +213,7 @@ bool AccountMgr::CheckPassword(uint32 accid, std::string passwd)
     normalizeString(passwd);
     LoginDatabase.escape_string(passwd);
 
-    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT 1 FROM account WHERE id='%d' AND sha_pass_hash=SHA1(CONCAT(UPPER(username),':',UPPER('%s')))",accid, passwd.c_str());
+    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT 1 FROM account WHERE id='%d' AND sha_pass_hash=SHA1(CONCAT(UPPER(username),':',UPPER('%s')))", accid, passwd.c_str());
     if (result)
         return true;
 
@@ -221,15 +222,15 @@ bool AccountMgr::CheckPassword(uint32 accid, std::string passwd)
 
 bool AccountMgr::normalizeString(std::string& utf8str)
 {
-    wchar_t wstr_buf[MAX_ACCOUNT_STR+1];
+    wchar_t wstr_buf[MAX_ACCOUNT_STR + 1];
 
     size_t wstr_len = MAX_ACCOUNT_STR;
-    if (!Utf8toWStr(utf8str,wstr_buf,wstr_len))
+    if (!Utf8toWStr(utf8str, wstr_buf, wstr_len))
         return false;
 
-    std::transform(&wstr_buf[0], wstr_buf+wstr_len, &wstr_buf[0], wcharToUpperOnlyLatin);
+    std::transform(&wstr_buf[0], wstr_buf + wstr_len, &wstr_buf[0], wcharToUpperOnlyLatin);
 
-    return WStrToUtf8(wstr_buf,wstr_len,utf8str);
+    return WStrToUtf8(wstr_buf, wstr_len, utf8str);
 }
 
 std::string AccountMgr::CalculateShaPassHash(std::string& name, std::string& password)

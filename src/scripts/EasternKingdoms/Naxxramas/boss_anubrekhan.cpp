@@ -57,7 +57,7 @@ struct boss_anubrekhanAI : public ScriptedAI
     void Reset()
     {
         Impale_Timer = 15000;                               //15 seconds
-        LocustSwarm_Timer = 80000 + (rand()%40000);         //Random time between 80 seconds and 2 minutes for initial cast
+        LocustSwarm_Timer = 80000 + (rand() % 40000);       //Random time between 80 seconds and 2 minutes for initial cast
         Summon_Timer = LocustSwarm_Timer + 45000;           //45 seconds after initial locust swarm
     }
 
@@ -66,37 +66,53 @@ struct boss_anubrekhanAI : public ScriptedAI
         //Force the player to spawn corpse scarabs via spell
         Victim->CastSpell(Victim, SPELL_SELF_SPAWN_5, true);
 
-        if (rand()%5)
+        if (rand() % 5)
             return;
 
-         DoScriptText(SAY_SLAY, me);
+        DoScriptText(SAY_SLAY, me);
     }
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch(rand()%3)
+        switch (rand() % 3)
         {
-        case 0: DoScriptText(SAY_AGGRO1, me); break;
-        case 1: DoScriptText(SAY_AGGRO2, me); break;
-        case 2: DoScriptText(SAY_AGGRO3, me); break;
+        case 0:
+            DoScriptText(SAY_AGGRO1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_AGGRO2, me);
+            break;
+        case 2:
+            DoScriptText(SAY_AGGRO3, me);
+            break;
         }
     }
 
     void MoveInLineOfSight(Unit* who)
     {
 
-            if (!HasTaunted && me->IsWithinDistInMap(who, 60.0f))
+        if (!HasTaunted && me->IsWithinDistInMap(who, 60.0f))
+        {
+            switch (rand() % 5)
             {
-                switch(rand()%5)
-                {
-                case 0: DoScriptText(SAY_GREET, me); break;
-                case 1: DoScriptText(SAY_TAUNT1, me); break;
-                case 2: DoScriptText(SAY_TAUNT2, me); break;
-                case 3: DoScriptText(SAY_TAUNT3, me); break;
-                case 4: DoScriptText(SAY_TAUNT4, me); break;
-                }
-                HasTaunted = true;
+            case 0:
+                DoScriptText(SAY_GREET, me);
+                break;
+            case 1:
+                DoScriptText(SAY_TAUNT1, me);
+                break;
+            case 2:
+                DoScriptText(SAY_TAUNT2, me);
+                break;
+            case 3:
+                DoScriptText(SAY_TAUNT3, me);
+                break;
+            case 4:
+                DoScriptText(SAY_TAUNT4, me);
+                break;
             }
+            HasTaunted = true;
+        }
         ScriptedAI::MoveInLineOfSight(who);
     }
 
@@ -110,28 +126,31 @@ struct boss_anubrekhanAI : public ScriptedAI
         {
             //Cast Impale on a random target
             //Do NOT cast it when we are afflicted by locust swarm
-            if (!me->HasAura(SPELL_LOCUSTSWARM,1))
+            if (!me->HasAura(SPELL_LOCUSTSWARM, 1))
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(pTarget,SPELL_IMPALE);
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_IMPALE);
             }
 
             Impale_Timer = 15000;
-        } else Impale_Timer -= diff;
+        }
+        else Impale_Timer -= diff;
 
         //LocustSwarm_Timer
         if (LocustSwarm_Timer <= diff)
         {
             DoCast(me, SPELL_LOCUSTSWARM);
             LocustSwarm_Timer = 90000;
-        } else LocustSwarm_Timer -= diff;
+        }
+        else LocustSwarm_Timer -= diff;
 
         //Summon_Timer
         if (Summon_Timer <= diff)
         {
             DoCast(me, SPELL_SUMMONGUARD);
             Summon_Timer = 45000;
-        } else Summon_Timer -= diff;
+        }
+        else Summon_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -143,7 +162,7 @@ CreatureAI* GetAI_boss_anubrekhan(Creature* pCreature)
 
 void AddSC_boss_anubrekhan()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_anubrekhan";
     newscript->GetAI = &GetAI_boss_anubrekhan;

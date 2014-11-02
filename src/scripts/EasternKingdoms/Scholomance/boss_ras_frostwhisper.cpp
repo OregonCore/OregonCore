@@ -54,7 +54,7 @@ struct boss_rasfrostAI : public ScriptedAI
         DoCast(me, SPELL_ICEARMOR, true);
     }
 
-    void EnterCombat(Unit* /*who*/){}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -66,7 +66,8 @@ struct boss_rasfrostAI : public ScriptedAI
         {
             DoCast(me, SPELL_ICEARMOR);
             IceArmor_Timer = 180000;
-        } else IceArmor_Timer -= diff;
+        }
+        else IceArmor_Timer -= diff;
 
         //Frostbolt_Timer
         if (Frostbolt_Timer <= diff)
@@ -75,35 +76,40 @@ struct boss_rasfrostAI : public ScriptedAI
                 DoCast(pTarget, SPELL_FROSTBOLT);
 
             Frostbolt_Timer = 8000;
-        } else Frostbolt_Timer -= diff;
+        }
+        else Frostbolt_Timer -= diff;
 
         //Freeze_Timer
         if (Freeze_Timer <= diff)
         {
             DoCastVictim( SPELL_FREEZE);
             Freeze_Timer = 24000;
-        } else Freeze_Timer -= diff;
+        }
+        else Freeze_Timer -= diff;
 
         //Fear_Timer
         if (Fear_Timer <= diff)
         {
             DoCastVictim( SPELL_FEAR);
             Fear_Timer = 30000;
-        } else Fear_Timer -= diff;
+        }
+        else Fear_Timer -= diff;
 
         //ChillNova_Timer
         if (ChillNova_Timer <= diff)
         {
             DoCastVictim( SPELL_CHILLNOVA);
             ChillNova_Timer = 14000;
-        } else ChillNova_Timer -= diff;
+        }
+        else ChillNova_Timer -= diff;
 
         //FrostVolley_Timer
         if (FrostVolley_Timer <= diff)
         {
             DoCastVictim( SPELL_FROSTVOLLEY);
             FrostVolley_Timer = 15000;
-        } else FrostVolley_Timer -= diff;
+        }
+        else FrostVolley_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -115,7 +121,7 @@ CreatureAI* GetAI_boss_rasfrost(Creature* pCreature)
 
 void AddSC_boss_rasfrost()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_boss_ras_frostwhisper";
     newscript->GetAI = &GetAI_boss_rasfrost;

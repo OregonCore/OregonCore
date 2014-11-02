@@ -45,7 +45,7 @@ struct boss_shadowvoshAI : public ScriptedAI
         //DoCast(me, SPELL_ICEARMOR, true);
     }
 
-    void EnterCombat(Unit* /*who*/){}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -58,7 +58,8 @@ struct boss_shadowvoshAI : public ScriptedAI
         {
             DoCastVictim( SPELL_CURSEOFBLOOD);
             CurseOfBlood_Timer = 45000;
-        } else CurseOfBlood_Timer -= diff;
+        }
+        else CurseOfBlood_Timer -= diff;
 
         //Hex_Timer
         if (Hex_Timer <= diff)
@@ -66,14 +67,16 @@ struct boss_shadowvoshAI : public ScriptedAI
             if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 DoCast(pTarget, SPELL_HEX);
             Hex_Timer = 15000;
-        } else Hex_Timer -= diff;
+        }
+        else Hex_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
             DoCastVictim( SPELL_CLEAVE);
             Cleave_Timer = 7000;
-        } else Cleave_Timer -= diff;
+        }
+        else Cleave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -85,7 +88,7 @@ CreatureAI* GetAI_boss_shadowvosh(Creature* pCreature)
 
 void AddSC_boss_shadowvosh()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_shadow_hunter_voshgajin";
     newscript->GetAI = &GetAI_boss_shadowvosh;

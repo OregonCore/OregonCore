@@ -55,7 +55,10 @@ enum eDyingKodo
 
 struct npc_aged_dying_ancient_kodoAI : public ScriptedAI
 {
-    npc_aged_dying_ancient_kodoAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
+    npc_aged_dying_ancient_kodoAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+    }
 
     uint32 m_uiDespawnTimer;
 
@@ -73,7 +76,7 @@ struct npc_aged_dying_ancient_kodoAI : public ScriptedAI
 
             if (me->GetEntry() == NPC_TAMED_KODO && me->IsWithinDistInMap(pWho, 10.0f))
             {
-                DoScriptText(RAND(SAY_SMEED_HOME_1,SAY_SMEED_HOME_2,SAY_SMEED_HOME_3), pWho);
+                DoScriptText(RAND(SAY_SMEED_HOME_1, SAY_SMEED_HOME_2, SAY_SMEED_HOME_3), pWho);
                 me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                 m_uiDespawnTimer = 60000;
             }
@@ -92,7 +95,8 @@ struct npc_aged_dying_ancient_kodoAI : public ScriptedAI
                 me->Respawn();
                 return;
             }
-        } else m_uiDespawnTimer -= diff;
+        }
+        else m_uiDespawnTimer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -105,17 +109,17 @@ bool EffectDummyCreature_npc_aged_dying_ancient_kodo(Unit* pCaster, uint32 spell
     if (spellId == SPELL_KODO_KOMBO_ITEM && effIndex == 0)
     {
         //no effect if player/creature already have aura from spells
-        if (pCaster->HasAura(SPELL_KODO_KOMBO_PLAYER_BUFF,0) || pCreatureTarget->HasAura(SPELL_KODO_KOMBO_DESPAWN_BUFF,0))
+        if (pCaster->HasAura(SPELL_KODO_KOMBO_PLAYER_BUFF, 0) || pCreatureTarget->HasAura(SPELL_KODO_KOMBO_DESPAWN_BUFF, 0))
             return true;
 
         if (pCreatureTarget->GetEntry() == NPC_AGED_KODO ||
             pCreatureTarget->GetEntry() == NPC_DYING_KODO ||
             pCreatureTarget->GetEntry() == NPC_ANCIENT_KODO)
         {
-            pCaster->CastSpell(pCaster,SPELL_KODO_KOMBO_PLAYER_BUFF,true);
+            pCaster->CastSpell(pCaster, SPELL_KODO_KOMBO_PLAYER_BUFF, true);
 
             pCreatureTarget->UpdateEntry(NPC_TAMED_KODO);
-            pCreatureTarget->CastSpell(pCreatureTarget,SPELL_KODO_KOMBO_DESPAWN_BUFF,false);
+            pCreatureTarget->CastSpell(pCreatureTarget, SPELL_KODO_KOMBO_DESPAWN_BUFF, false);
 
             if (pCreatureTarget->GetMotionMaster()->GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
                 pCreatureTarget->GetMotionMaster()->MoveIdle();
@@ -132,10 +136,10 @@ bool EffectDummyCreature_npc_aged_dying_ancient_kodo(Unit* pCaster, uint32 spell
 
 bool GossipHello_npc_aged_dying_ancient_kodo(Player* pPlayer, Creature* pCreature)
 {
-    if (pPlayer->HasAura(SPELL_KODO_KOMBO_PLAYER_BUFF,0) && pCreature->HasAura(SPELL_KODO_KOMBO_DESPAWN_BUFF,0))
+    if (pPlayer->HasAura(SPELL_KODO_KOMBO_PLAYER_BUFF, 0) && pCreature->HasAura(SPELL_KODO_KOMBO_DESPAWN_BUFF, 0))
     {
         pPlayer->RemoveAurasDueToSpell(SPELL_KODO_KOMBO_PLAYER_BUFF);
-        pPlayer->CastSpell(pCreature,SPELL_KODO_KOMBO_GOSSIP,true);
+        pPlayer->CastSpell(pCreature, SPELL_KODO_KOMBO_GOSSIP, true);
 
         pCreature->RemoveAurasDueToSpell(SPELL_KODO_KOMBO_DESPAWN_BUFF);
         pCreature->GetMotionMaster()->MoveIdle();
@@ -168,13 +172,13 @@ struct npc_dalindaAI : public npc_escortAI
         Player* pPlayer = GetPlayerForEscort();
         switch (i)
         {
-            case 1:
-                me->IsStandState();
-                break;
-            case 15:
-                if (pPlayer)
+        case 1:
+            me->IsStandState();
+            break;
+        case 15:
+            if (pPlayer)
                 pPlayer->GroupEventHappens(QUEST_RETURN_TO_VAHLARRIEL, me);
-                break;
+            break;
         }
     }
 
@@ -207,7 +211,7 @@ CreatureAI* GetAI_npc_dalinda(Creature* pCreature)
 bool QuestAccept_npc_dalinda(Player* pPlayer, Creature* pCreature, Quest const* quest)
 {
     if (quest->GetQuestId() == QUEST_RETURN_TO_VAHLARRIEL)
-   {
+    {
         if (npc_escortAI* pEscortAI = CAST_AI(npc_dalindaAI, pCreature->AI()))
         {
             pEscortAI->Start(true, false, pPlayer->GetGUID());
@@ -236,12 +240,12 @@ enum
     QUEST_GET_ME_OUT_OF_HERE    = 6132
 };
 
-static float m_afAmbushSpawn[4][3]=
+static float m_afAmbushSpawn[4][3] =
 {
-    {-1388.37f, 2427.81f, 88.8286f},
-    {-1388.78f, 2431.85f, 88.7838f},
-    {-1386.95f, 2429.76f, 88.8444f},
-    {-1389.99f, 2429.93f, 88.7692f}
+    { -1388.37f, 2427.81f, 88.8286f},
+    { -1388.78f, 2431.85f, 88.7838f},
+    { -1386.95f, 2429.76f, 88.8444f},
+    { -1389.99f, 2429.93f, 88.7692f}
 };
 
 struct npc_melizza_brimbuzzleAI : public npc_escortAI
@@ -268,11 +272,11 @@ struct npc_melizza_brimbuzzleAI : public npc_escortAI
                 DoScriptText(SAY_START, me, pPlayer);
                 break;
             case 7:
-                 me->SummonCreature(NPC_MARAUDINE_SCOUT, m_afAmbushSpawn[0][0], m_afAmbushSpawn[0][1], m_afAmbushSpawn[0][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
-                 me->SummonCreature(NPC_MARAUDINE_SCOUT, m_afAmbushSpawn[1][0], m_afAmbushSpawn[1][1], m_afAmbushSpawn[1][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
-                 me->SummonCreature(NPC_MARAUDINE_SCOUT, m_afAmbushSpawn[2][0], m_afAmbushSpawn[2][1], m_afAmbushSpawn[2][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
-                 me->SummonCreature(NPC_MARAUDINE_BONEPAW, m_afAmbushSpawn[3][0], m_afAmbushSpawn[3][1], m_afAmbushSpawn[3][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
-                 break;
+                me->SummonCreature(NPC_MARAUDINE_SCOUT, m_afAmbushSpawn[0][0], m_afAmbushSpawn[0][1], m_afAmbushSpawn[0][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+                me->SummonCreature(NPC_MARAUDINE_SCOUT, m_afAmbushSpawn[1][0], m_afAmbushSpawn[1][1], m_afAmbushSpawn[1][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+                me->SummonCreature(NPC_MARAUDINE_SCOUT, m_afAmbushSpawn[2][0], m_afAmbushSpawn[2][1], m_afAmbushSpawn[2][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+                me->SummonCreature(NPC_MARAUDINE_BONEPAW, m_afAmbushSpawn[3][0], m_afAmbushSpawn[3][1], m_afAmbushSpawn[3][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+                break;
             case 10:
                 DoScriptText(SAY_COMPLETE, me);
                 me->RestoreFaction();
@@ -301,21 +305,21 @@ struct npc_melizza_brimbuzzleAI : public npc_escortAI
 
                     if (/*Unit* pPlayer = */GetPlayerForEscort())
                     {
-                        switch(m_uiPostEventCount)
+                        switch (m_uiPostEventCount)
                         {
-                            case 1:
-                                DoScriptText(SAY_POST_EVENT_1, me);
-                                ++m_uiPostEventCount;
-                                break;
-                            case 2:
-                                DoScriptText(SAY_POST_EVENT_2, me);
-                                ++m_uiPostEventCount;
-                                break;
-                            case 3:
-                                DoScriptText(SAY_POST_EVENT_3, me);
-                                m_uiPostEventCount = 0;
-                                me->ForcedDespawn(60000);
-                                break;
+                        case 1:
+                            DoScriptText(SAY_POST_EVENT_1, me);
+                            ++m_uiPostEventCount;
+                            break;
+                        case 2:
+                            DoScriptText(SAY_POST_EVENT_2, me);
+                            ++m_uiPostEventCount;
+                            break;
+                        case 3:
+                            DoScriptText(SAY_POST_EVENT_3, me);
+                            m_uiPostEventCount = 0;
+                            me->ForcedDespawn(60000);
+                            break;
                         }
                     }
                 }
@@ -355,7 +359,7 @@ bool QuestAccept_npc_melizza_brimbuzzle(Player* pPlayer, Creature* pCreature, Qu
 
 void AddSC_desolace()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_aged_dying_ancient_kodo";

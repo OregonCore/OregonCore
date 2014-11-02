@@ -46,7 +46,7 @@ struct boss_temporusAI : public ScriptedAI
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance* pInstance;
     bool HeroicMode;
 
     uint32 Haste_Timer;
@@ -65,10 +65,14 @@ struct boss_temporusAI : public ScriptedAI
 
     void KilledUnit(Unit*)
     {
-        switch(rand()%2)
+        switch (rand() % 2)
         {
-            case 0: DoScriptText(SAY_SLAY1, me); break;
-            case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 0:
+            DoScriptText(SAY_SLAY1, me);
+            break;
+        case 1:
+            DoScriptText(SAY_SLAY2, me);
+            break;
         }
     }
 
@@ -77,7 +81,7 @@ struct boss_temporusAI : public ScriptedAI
         DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
-            pInstance->SetData(TYPE_RIFT,SPECIAL);
+            pInstance->SetData(TYPE_RIFT, SPECIAL);
     }
 
     void MoveInLineOfSight(Unit* who)
@@ -85,7 +89,7 @@ struct boss_temporusAI : public ScriptedAI
         //Despawn Time Keeper
         if (who->GetTypeId() == TYPEID_UNIT && who->GetEntry() == C_TIME_KEEPER)
         {
-            if (me->IsWithinDistInMap(who,20.0f))
+            if (me->IsWithinDistInMap(who, 20.0f))
             {
                 DoScriptText(SAY_BANISH, me);
 
@@ -106,15 +110,17 @@ struct boss_temporusAI : public ScriptedAI
         if (Haste_Timer <= diff)
         {
             DoCast(me, SPELL_HASTE);
-            Haste_Timer = 20000+rand()%5000;
-        } else Haste_Timer -= diff;
+            Haste_Timer = 20000 + rand() % 5000;
+        }
+        else Haste_Timer -= diff;
 
         //Spell Reflection
         if (SpellReflection_Timer <= diff)
         {
             DoCast(me, SPELL_REFLECT);
-            SpellReflection_Timer = 40000+rand()%10000;
-        } else SpellReflection_Timer -= diff;
+            SpellReflection_Timer = 40000 + rand() % 10000;
+        }
+        else SpellReflection_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -127,7 +133,7 @@ CreatureAI* GetAI_boss_temporus(Creature* pCreature)
 
 void AddSC_boss_temporus()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_temporus";
     newscript->GetAI = &GetAI_boss_temporus;

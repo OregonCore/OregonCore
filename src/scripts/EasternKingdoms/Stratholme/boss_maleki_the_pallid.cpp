@@ -57,7 +57,7 @@ struct boss_maleki_the_pallidAI : public ScriptedAI
     void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
-            pInstance->SetData(TYPE_PALLID,IN_PROGRESS);
+            pInstance->SetData(TYPE_PALLID, IN_PROGRESS);
     }
 
     void UpdateAI(const uint32 diff)
@@ -69,26 +69,29 @@ struct boss_maleki_the_pallidAI : public ScriptedAI
         //Frostbolt
         if (Frostbolt_Timer <= diff)
         {
-             if (rand()%100 < 90)
+            if (rand() % 100 < 90)
                 DoCastVictim( SPELL_FROSTBOLT);
             Frostbolt_Timer = 3500;
-        } else Frostbolt_Timer -= diff;
+        }
+        else Frostbolt_Timer -= diff;
 
         //IceTomb
         if (IceTomb_Timer <= diff)
         {
-            if (rand()%100 < 65)
+            if (rand() % 100 < 65)
                 DoCastVictim( SPELL_ICETOMB);
             IceTomb_Timer = 28000;
-        } else IceTomb_Timer -= diff;
+        }
+        else IceTomb_Timer -= diff;
 
         //DrainLife
         if (DrainLife_Timer <= diff)
         {
-              if (rand()%100 < 55)
+            if (rand() % 100 < 55)
                 DoCastVictim( SPELL_DRAINLIFE);
             DrainLife_Timer = 31000;
-        } else DrainLife_Timer -= diff;
+        }
+        else DrainLife_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -100,7 +103,7 @@ CreatureAI* GetAI_boss_maleki_the_pallid(Creature* pCreature)
 
 void AddSC_boss_maleki_the_pallid()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_maleki_the_pallid";
     newscript->GetAI = &GetAI_boss_maleki_the_pallid;

@@ -27,7 +27,7 @@
 INSTANTIATE_SINGLETON_1(ScriptMgr);
 
 int num_sc_scripts;
-Script *m_scripts[MAX_SCRIPTS];
+Script* m_scripts[MAX_SCRIPTS];
 
 void FillSpellSummary();
 void LoadOverridenSQLData();
@@ -40,10 +40,11 @@ void ScriptMgr::LoadDatabase()
     pSystemMgr.LoadScriptWaypoints();
 }
 
-struct TSpellSummary {
+struct TSpellSummary
+{
     uint8 Targets;                                          // set of enum SelectTarget
     uint8 Effects;                                          // set of enum SelectEffect
-}extern *SpellSummary;
+} extern* SpellSummary;
 
 ScriptMgr::ScriptMgr()
 {
@@ -55,7 +56,7 @@ ScriptMgr::~ScriptMgr()
     delete []SpellSummary;
 
     // Free resources before library unload
-    for (uint16 i =0; i<MAX_SCRIPTS; ++i)
+    for (uint16 i = 0; i < MAX_SCRIPTS; ++i)
         delete m_scripts[i];
 
     num_sc_scripts = 0;
@@ -75,8 +76,8 @@ void ScriptMgr::ScriptsInit()
     //Load database (must be called after SD2Config.SetSource).
     LoadDatabase();
 
-    for (uint16 i =0; i<MAX_SCRIPTS; ++i)
-        m_scripts[i]=NULL;
+    for (uint16 i = 0; i < MAX_SCRIPTS; ++i)
+        m_scripts[i] = NULL;
 
     FillSpellSummary();
 
@@ -118,9 +119,7 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
     if (pData->uiSoundId)
     {
         if (GetSoundEntriesStore()->LookupEntry(pData->uiSoundId))
-        {
             pSource->SendPlaySound(pData->uiSoundId, false);
-        }
         else
             error_log("OSCR: DoScriptText entry %i tried to process invalid sound id %u.", iTextEntry, pData->uiSoundId);
     }
@@ -133,39 +132,39 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
             error_log("OSCR: DoScriptText entry %i tried to process emote for invalid TypeId (%u).", iTextEntry, pSource->GetTypeId());
     }
 
-    switch(pData->uiType)
+    switch (pData->uiType)
     {
-        case CHAT_TYPE_SAY:
-            pSource->MonsterSay(iTextEntry, pData->uiLanguage, pTarget ? pTarget->GetGUID() : 0);
-            break;
-        case CHAT_TYPE_YELL:
-            pSource->MonsterYell(iTextEntry, pData->uiLanguage, pTarget ? pTarget->GetGUID() : 0);
-            break;
-        case CHAT_TYPE_TEXT_EMOTE:
-            pSource->MonsterTextEmote(iTextEntry, pTarget ? pTarget->GetGUID() : 0);
-            break;
-        case CHAT_TYPE_BOSS_EMOTE:
-            pSource->MonsterTextEmote(iTextEntry, pTarget ? pTarget->GetGUID() : 0, true);
-            break;
-        case CHAT_TYPE_WHISPER:
-            {
-                if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
-                    pSource->MonsterWhisper(iTextEntry, pTarget->GetGUID());
-                else
-                    error_log("OSCR: DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
-            }
-            break;
-        case CHAT_TYPE_BOSS_WHISPER:
-            {
-                if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
-                    pSource->MonsterWhisper(iTextEntry, pTarget->GetGUID(), true);
-                else
-                    error_log("OSCR: DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
-            }
-            break;
-        case CHAT_TYPE_ZONE_YELL:
-            pSource->MonsterYellToZone(iTextEntry, pData->uiLanguage, pTarget ? pTarget->GetGUID() : 0);
-            break;
+    case CHAT_TYPE_SAY:
+        pSource->MonsterSay(iTextEntry, pData->uiLanguage, pTarget ? pTarget->GetGUID() : 0);
+        break;
+    case CHAT_TYPE_YELL:
+        pSource->MonsterYell(iTextEntry, pData->uiLanguage, pTarget ? pTarget->GetGUID() : 0);
+        break;
+    case CHAT_TYPE_TEXT_EMOTE:
+        pSource->MonsterTextEmote(iTextEntry, pTarget ? pTarget->GetGUID() : 0);
+        break;
+    case CHAT_TYPE_BOSS_EMOTE:
+        pSource->MonsterTextEmote(iTextEntry, pTarget ? pTarget->GetGUID() : 0, true);
+        break;
+    case CHAT_TYPE_WHISPER:
+        {
+            if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
+                pSource->MonsterWhisper(iTextEntry, pTarget->GetGUID());
+            else
+                error_log("OSCR: DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
+        }
+        break;
+    case CHAT_TYPE_BOSS_WHISPER:
+        {
+            if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
+                pSource->MonsterWhisper(iTextEntry, pTarget->GetGUID(), true);
+            else
+                error_log("OSCR: DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
+        }
+        break;
+    case CHAT_TYPE_ZONE_YELL:
+        pSource->MonsterYellToZone(iTextEntry, pData->uiLanguage, pTarget ? pTarget->GetGUID() : 0);
+        break;
     }
 }
 
@@ -220,28 +219,28 @@ void Script::RegisterSelf()
     else
     {
         if (Name.find("example") == std::string::npos)
-            error_db_log("OSCR: RegisterSelf, but script named %s does not have ScriptName assigned in database.",(this)->Name.c_str());
+            error_db_log("OSCR: RegisterSelf, but script named %s does not have ScriptName assigned in database.", (this)->Name.c_str());
         delete this;
     }
 }
 
 void ScriptMgr::OnLogin(Player* pPlayer)
 {
-    Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->pOnLogin) return;
     tmpscript->pOnLogin(pPlayer);
 }
 
 void ScriptMgr::OnLogout(Player* pPlayer)
 {
-    Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->pOnLogout) return;
     tmpscript->pOnLogout(pPlayer);
 }
 
 void ScriptMgr::OnPVPKill(Player* killer, Player* killed)
 {
-    Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->pOnPVPKill) return;
     tmpscript->pOnPVPKill(killer, killed);
 }
@@ -253,7 +252,7 @@ char const* ScriptMgr::ScriptsVersion()
 
 bool ScriptMgr::GossipHello (Player* pPlayer, Creature* pCreature)
 {
-    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
+    Script* tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pGossipHello) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -264,7 +263,7 @@ bool ScriptMgr::GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSend
 {
     debug_log("OSCR: Gossip selection, sender: %d, action: %d", uiSender, uiAction);
 
-    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
+    Script* tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pGossipSelect) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -275,7 +274,7 @@ bool ScriptMgr::GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint3
 {
     debug_log("OSCR: Gossip selection with code, sender: %d, action: %d", uiSender, uiAction);
 
-    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
+    Script* tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pGossipSelectWithCode) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -285,10 +284,10 @@ bool ScriptMgr::GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint3
 bool ScriptMgr::GOSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction)
 {
     if (!pGO)
-    return false;
+        return false;
     debug_log("OSCR: Gossip selection, sender: %d, action: %d", uiSender, uiAction);
 
-    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
+    Script* tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOSelect) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -298,19 +297,19 @@ bool ScriptMgr::GOSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint
 bool ScriptMgr::GOSelectWithCode(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction, const char* sCode)
 {
     if (!pGO)
-    return false;
-    debug_log("OSCR: Gossip selection, sender: %d, action: %d",uiSender, uiAction);
+        return false;
+    debug_log("OSCR: Gossip selection, sender: %d, action: %d", uiSender, uiAction);
 
-    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
+    Script* tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOSelectWithCode) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
-    return tmpscript->pGOSelectWithCode(pPlayer, pGO, uiSender ,uiAction, sCode);
+    return tmpscript->pGOSelectWithCode(pPlayer, pGO, uiSender , uiAction, sCode);
 }
 
 bool ScriptMgr::QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
+    Script* tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestAccept) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -319,7 +318,7 @@ bool ScriptMgr::QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* p
 
 bool ScriptMgr::QuestSelect(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
+    Script* tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestSelect) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -328,7 +327,7 @@ bool ScriptMgr::QuestSelect(Player* pPlayer, Creature* pCreature, Quest const* p
 
 bool ScriptMgr::QuestComplete(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
+    Script* tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestComplete) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -337,7 +336,7 @@ bool ScriptMgr::QuestComplete(Player* pPlayer, Creature* pCreature, Quest const*
 
 bool ScriptMgr::ChooseReward(Player* pPlayer, Creature* pCreature, Quest const* pQuest, uint32 opt)
 {
-    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
+    Script* tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pChooseReward) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -346,7 +345,7 @@ bool ScriptMgr::ChooseReward(Player* pPlayer, Creature* pCreature, Quest const* 
 
 uint32 ScriptMgr::NPCDialogStatus(Player* pPlayer, Creature* pCreature)
 {
-    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
+    Script* tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pNPCDialogStatus) return 100;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -355,7 +354,7 @@ uint32 ScriptMgr::NPCDialogStatus(Player* pPlayer, Creature* pCreature)
 
 uint32 ScriptMgr::GODialogStatus(Player* pPlayer, GameObject* pGO)
 {
-    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
+    Script* tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGODialogStatus) return 100;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -364,7 +363,7 @@ uint32 ScriptMgr::GODialogStatus(Player* pPlayer, GameObject* pGO)
 
 bool ScriptMgr::ItemHello(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[pItem->GetProto()->ScriptId];
+    Script* tmpscript = m_scripts[pItem->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemHello) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -373,7 +372,7 @@ bool ScriptMgr::ItemHello(Player* pPlayer, Item* pItem, Quest const* pQuest)
 
 bool ScriptMgr::ItemQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[pItem->GetProto()->ScriptId];
+    Script* tmpscript = m_scripts[pItem->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemQuestAccept) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -382,7 +381,7 @@ bool ScriptMgr::ItemQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQues
 
 bool ScriptMgr::GOHello(Player* pPlayer, GameObject* pGO)
 {
-    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
+    Script* tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOHello) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -391,7 +390,7 @@ bool ScriptMgr::GOHello(Player* pPlayer, GameObject* pGO)
 
 bool ScriptMgr::GOQuestAccept(Player* pPlayer, GameObject* pGO, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
+    Script* tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOQuestAccept) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -400,7 +399,7 @@ bool ScriptMgr::GOQuestAccept(Player* pPlayer, GameObject* pGO, Quest const* pQu
 
 bool ScriptMgr::GOChooseReward(Player* pPlayer, GameObject* pGO, Quest const* pQuest, uint32 opt)
 {
-    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
+    Script* tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOChooseReward) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
@@ -409,7 +408,7 @@ bool ScriptMgr::GOChooseReward(Player* pPlayer, GameObject* pGO, Quest const* pQ
 
 bool ScriptMgr::AreaTrigger(Player* pPlayer, AreaTriggerEntry const* atEntry)
 {
-    Script *tmpscript = m_scripts[GetAreaTriggerScriptId(atEntry->id)];
+    Script* tmpscript = m_scripts[GetAreaTriggerScriptId(atEntry->id)];
     if (!tmpscript || !tmpscript->pAreaTrigger) return false;
 
     return tmpscript->pAreaTrigger(pPlayer, atEntry);
@@ -417,7 +416,7 @@ bool ScriptMgr::AreaTrigger(Player* pPlayer, AreaTriggerEntry const* atEntry)
 
 CreatureAI* ScriptMgr::GetAI(Creature* pCreature)
 {
-    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
+    Script* tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->GetAI) return NULL;
 
     return tmpscript->GetAI(pCreature);
@@ -425,7 +424,7 @@ CreatureAI* ScriptMgr::GetAI(Creature* pCreature)
 
 bool ScriptMgr::ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
 {
-    Script *tmpscript = m_scripts[pItem->GetProto()->ScriptId];
+    Script* tmpscript = m_scripts[pItem->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemUse) return false;
 
     return tmpscript->pItemUse(pPlayer, pItem, targets);
@@ -433,18 +432,18 @@ bool ScriptMgr::ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& ta
 
 bool ScriptMgr::EffectDummyCreature(Unit* caster, uint32 spellId, uint32 effIndex, Creature* crTarget)
 {
-    Script *tmpscript = m_scripts[crTarget->GetScriptId()];
+    Script* tmpscript = m_scripts[crTarget->GetScriptId()];
 
     if (!tmpscript || !tmpscript->pEffectDummyCreature) return false;
 
     return tmpscript->pEffectDummyCreature(caster, spellId, effIndex, crTarget);
 }
 
-InstanceData* ScriptMgr::CreateInstanceData(Map *map)
+InstanceData* ScriptMgr::CreateInstanceData(Map* map)
 {
     if (!map->IsDungeon()) return NULL;
 
-    Script *tmpscript = m_scripts[((InstanceMap*)map)->GetScriptId()];
+    Script* tmpscript = m_scripts[((InstanceMap*)map)->GetScriptId()];
     if (!tmpscript || !tmpscript->GetInstanceData) return NULL;
 
     return tmpscript->GetInstanceData(map);

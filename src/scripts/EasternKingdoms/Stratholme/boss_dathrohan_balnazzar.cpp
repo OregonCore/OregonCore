@@ -51,7 +51,7 @@ struct SummonDef
     float m_fX, m_fY, m_fZ, m_fOrient;
 };
 
-SummonDef m_aSummonPoint[]=
+SummonDef m_aSummonPoint[] =
 {
     {3444.156, -3090.626, 135.002, 2.240},                  //G1 front, left
     {3449.123, -3087.009, 135.002, 2.240},                  //G1 front, right
@@ -96,12 +96,12 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
 
     void JustDied(Unit* /*Victim*/)
     {
-        static uint32 uiCount = sizeof(m_aSummonPoint)/sizeof(SummonDef);
+        static uint32 uiCount = sizeof(m_aSummonPoint) / sizeof(SummonDef);
 
-        for (uint8 i=0; i<uiCount; ++i)
+        for (uint8 i = 0; i < uiCount; ++i)
             me->SummonCreature(NPC_ZOMBIE,
-            m_aSummonPoint[i].m_fX, m_aSummonPoint[i].m_fY, m_aSummonPoint[i].m_fZ, m_aSummonPoint[i].m_fOrient,
-            TEMPSUMMON_TIMED_DESPAWN, HOUR*IN_MILLISECONDS);
+                               m_aSummonPoint[i].m_fX, m_aSummonPoint[i].m_fY, m_aSummonPoint[i].m_fZ, m_aSummonPoint[i].m_fOrient,
+                               TEMPSUMMON_TIMED_DESPAWN, HOUR * IN_MILLISECONDS);
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -120,32 +120,36 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             if (m_uiMindBlast_Timer <= uiDiff)
             {
                 DoCastVictim( SPELL_MINDBLAST);
-                m_uiMindBlast_Timer = 15000 + rand()%5000;
-            } else m_uiMindBlast_Timer -= uiDiff;
+                m_uiMindBlast_Timer = 15000 + rand() % 5000;
+            }
+            else m_uiMindBlast_Timer -= uiDiff;
 
             //CrusadersHammer
             if (m_uiCrusadersHammer_Timer <= uiDiff)
             {
                 DoCastVictim( SPELL_CRUSADERSHAMMER);
                 m_uiCrusadersHammer_Timer = 12000;
-            } else m_uiCrusadersHammer_Timer -= uiDiff;
+            }
+            else m_uiCrusadersHammer_Timer -= uiDiff;
 
             //CrusaderStrike
             if (m_uiCrusaderStrike_Timer <= uiDiff)
             {
                 DoCastVictim( SPELL_CRUSADERSTRIKE);
                 m_uiCrusaderStrike_Timer = 15000;
-            } else m_uiCrusaderStrike_Timer -= uiDiff;
+            }
+            else m_uiCrusaderStrike_Timer -= uiDiff;
 
             //HolyStrike
             if (m_uiHolyStrike_Timer <= uiDiff)
             {
                 DoCastVictim( SPELL_HOLYSTRIKE);
                 m_uiHolyStrike_Timer = 15000;
-            } else m_uiHolyStrike_Timer -= uiDiff;
+            }
+            else m_uiHolyStrike_Timer -= uiDiff;
 
             //BalnazzarTransform
-            if (me->GetHealth()*100 / me->GetMaxHealth() < 40)
+            if (me->GetHealth() * 100 / me->GetMaxHealth() < 40)
             {
                 if (me->IsNonMeleeSpellCast(false))
                     me->InterruptNonMeleeSpells(false);
@@ -162,40 +166,45 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             if (m_uiMindBlast_Timer <= uiDiff)
             {
                 DoCastVictim( SPELL_MINDBLAST);
-                m_uiMindBlast_Timer = 15000 + rand()%5000;
-            } else m_uiMindBlast_Timer -= uiDiff;
+                m_uiMindBlast_Timer = 15000 + rand() % 5000;
+            }
+            else m_uiMindBlast_Timer -= uiDiff;
 
             //ShadowShock
             if (m_uiShadowShock_Timer <= uiDiff)
             {
                 DoCastVictim( SPELL_SHADOWSHOCK);
                 m_uiShadowShock_Timer = 11000;
-            } else m_uiShadowShock_Timer -= uiDiff;
+            }
+            else m_uiShadowShock_Timer -= uiDiff;
 
             //PsychicScream
             if (m_uiPsychicScream_Timer <= uiDiff)
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_PSYCHICSCREAM);
 
                 m_uiPsychicScream_Timer = 20000;
-            } else m_uiPsychicScream_Timer -= uiDiff;
+            }
+            else m_uiPsychicScream_Timer -= uiDiff;
 
             //DeepSleep
             if (m_uiDeepSleep_Timer <= uiDiff)
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_SLEEP);
 
                 m_uiDeepSleep_Timer = 15000;
-            } else m_uiDeepSleep_Timer -= uiDiff;
+            }
+            else m_uiDeepSleep_Timer -= uiDiff;
 
             //MindControl
             if (m_uiMindControl_Timer <= uiDiff)
             {
                 DoCastVictim( SPELL_MINDCONTROL);
                 m_uiMindControl_Timer = 15000;
-            } else m_uiMindControl_Timer -= uiDiff;
+            }
+            else m_uiMindControl_Timer -= uiDiff;
         }
 
         DoMeleeAttackIfReady();
@@ -209,7 +218,7 @@ CreatureAI* GetAI_boss_dathrohan_balnazzar(Creature* pCreature)
 
 void AddSC_boss_dathrohan_balnazzar()
 {
-    Script *newscript;
+    Script* newscript;
     newscript = new Script;
     newscript->Name = "boss_dathrohan_balnazzar";
     newscript->GetAI = &GetAI_boss_dathrohan_balnazzar;

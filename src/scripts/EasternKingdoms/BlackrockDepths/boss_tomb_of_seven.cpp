@@ -62,26 +62,26 @@ bool GossipSelect_boss_gloomrel(Player* pPlayer, Creature* pCreature, uint32 /*u
 {
     switch (uiAction)
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TEACH_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
-            pPlayer->SEND_GOSSIP_MENU(2606, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+11:
-            pPlayer->CLOSE_GOSSIP_MENU();
-            pPlayer->CastSpell(pPlayer, SPELL_LEARN_SMELT, false);
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TEACH_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);
-            pPlayer->SEND_GOSSIP_MENU(2604, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+22:
-            pPlayer->CLOSE_GOSSIP_MENU();
-            if (ScriptedInstance* pInstance = pCreature->GetInstanceData())
-            {
-                //are 5 minutes expected? go template may have data to despawn when used at quest
-                pInstance->DoRespawnGameObject(pInstance->GetData64(DATA_GO_CHALICE),MINUTE*5);
-            }
-            break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TEACH_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
+        pPlayer->SEND_GOSSIP_MENU(2606, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+11:
+        pPlayer->CLOSE_GOSSIP_MENU();
+        pPlayer->CastSpell(pPlayer, SPELL_LEARN_SMELT, false);
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TEACH_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);
+        pPlayer->SEND_GOSSIP_MENU(2604, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+22:
+        pPlayer->CLOSE_GOSSIP_MENU();
+        if (ScriptedInstance* pInstance = pCreature->GetInstanceData())
+        {
+            //are 5 minutes expected? go template may have data to despawn when used at quest
+            pInstance->DoRespawnGameObject(pInstance->GetData64(DATA_GO_CHALICE), MINUTE * 5);
+        }
+        break;
     }
     return true;
 }
@@ -164,7 +164,8 @@ struct boss_doomrelAI : public ScriptedAI
         {
             DoCastVictim( SPELL_SHADOWBOLTVOLLEY);
             ShadowVolley_Timer = 12000;
-        } else ShadowVolley_Timer -= diff;
+        }
+        else ShadowVolley_Timer -= diff;
 
         //Immolate_Timer
         if (Immolate_Timer <= diff)
@@ -173,24 +174,27 @@ struct boss_doomrelAI : public ScriptedAI
                 DoCast(pTarget, SPELL_IMMOLATE);
 
             Immolate_Timer = 25000;
-        } else Immolate_Timer -= diff;
+        }
+        else Immolate_Timer -= diff;
 
         //CurseOfWeakness_Timer
         if (CurseOfWeakness_Timer <= diff)
         {
             DoCastVictim( SPELL_CURSEOFWEAKNESS);
             CurseOfWeakness_Timer = 45000;
-        } else CurseOfWeakness_Timer -= diff;
+        }
+        else CurseOfWeakness_Timer -= diff;
 
         //DemonArmor_Timer
         if (DemonArmor_Timer <= diff)
         {
             DoCast(me, SPELL_DEMONARMOR);
             DemonArmor_Timer = 300000;
-        } else DemonArmor_Timer -= diff;
+        }
+        else DemonArmor_Timer -= diff;
 
         //Summon Voidwalkers
-        if (!Voidwalkers && me->GetHealth()*100 / me->GetMaxHealth() < 51)
+        if (!Voidwalkers && me->GetHealth() * 100 / me->GetMaxHealth() < 51)
         {
             DoCastVictim( SPELL_SUMMON_VOIDWALKERS, true);
             Voidwalkers = true;
@@ -220,27 +224,27 @@ bool GossipSelect_boss_doomrel(Player* pPlayer, Creature* pCreature, uint32 /*ui
 {
     switch (uiAction)
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_DOOMREL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            pPlayer->SEND_GOSSIP_MENU(2605, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            pPlayer->CLOSE_GOSSIP_MENU();
-            //start event here
-            pCreature->setFaction(FACTION_HOSTILE);
-            pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
-            pCreature->AI()->AttackStart(pPlayer);
-            ScriptedInstance* pInstance = pCreature->GetInstanceData();
-            if (pInstance)
-                pInstance->SetData64(DATA_EVENSTARTER,pPlayer->GetGUID());
-            break;
+    case GOSSIP_ACTION_INFO_DEF+1:
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_DOOMREL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        pPlayer->SEND_GOSSIP_MENU(2605, pCreature->GetGUID());
+        break;
+    case GOSSIP_ACTION_INFO_DEF+2:
+        pPlayer->CLOSE_GOSSIP_MENU();
+        //start event here
+        pCreature->setFaction(FACTION_HOSTILE);
+        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        pCreature->AI()->AttackStart(pPlayer);
+        ScriptedInstance* pInstance = pCreature->GetInstanceData();
+        if (pInstance)
+            pInstance->SetData64(DATA_EVENSTARTER, pPlayer->GetGUID());
+        break;
     }
     return true;
 }
 
 void AddSC_boss_tomb_of_seven()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_gloomrel";
