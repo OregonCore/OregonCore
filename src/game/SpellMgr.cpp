@@ -2594,6 +2594,7 @@ void SpellMgr::LoadSpellCustomAttr()
         case 7922:                        // Charge stun
         case 25274:                       // Intercept stun
         case 2094:                        // Blind
+        case 20424:                       // Seal of Command Trigger
             spellInfo->speed = 590.0f;    // Minor delay
             break;
         case 1833:                        // Cheap Shot

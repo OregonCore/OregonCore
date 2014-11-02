@@ -741,8 +741,10 @@ void Spell::AddUnitTarget(Unit* pVictim, uint32 effIndex)
     {
         // calculate spell incoming interval
         float dist = m_caster->GetDistance(pVictim->GetPositionX(), pVictim->GetPositionY(), pVictim->GetPositionZ());
-        if (dist < 5.0f) dist = 5.0f;
-        target.timeDelay = (uint64) floor(dist / m_spellInfo->speed * 1000.0f);
+
+        if (dist < 5.0f)
+            dist = 5.0f;
+        target.timeDelay = (uint64)std::floor(dist / m_spellInfo->speed * 1000.0f);
 
         // Calculate minimum incoming time
         if (m_delayMoment == 0 || m_delayMoment > target.timeDelay)
