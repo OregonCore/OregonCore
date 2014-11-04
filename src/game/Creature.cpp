@@ -475,11 +475,11 @@ void Creature::Update(uint32 diff)
     switch (m_deathState)
     {
     case JUST_ALIVED:
-        // Don't must be called, see Creature::setDeathState JUST_ALIVED -> ALIVE promoting.
+        // Must not be called, see Creature::setDeathState JUST_ALIVED -> ALIVE promoting.
         sLog.outError("Creature (GUIDLow: %u Entry: %u) in wrong state: JUST_ALIVED (4)", GetGUIDLow(), GetEntry());
         break;
     case JUST_DIED:
-        // Don't must be called, see Creature::setDeathState JUST_DIED -> CORPSE promoting.
+        // Must not be called, see Creature::setDeathState JUST_DIED -> CORPSE promoting.
         sLog.outError("Creature (GUIDLow: %u Entry: %u) in wrong state: JUST_DEAD (1)", GetGUIDLow(), GetEntry());
         break;
     case DEAD:
@@ -986,7 +986,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
             displayId == cinfo->Modelid_H1 || displayId == cinfo->Modelid_H2) displayId = 0;
     }
 
-    // data->guid = guid don't must be update at save
+    // data->guid = guid must not be update at save
     data.id = GetEntry();
     data.mapid = mapid;
     data.displayid = displayId;
@@ -1765,9 +1765,6 @@ bool Creature::IsVisibleInGridForPlayer(Player const* pl) const
     // gamemaster in GM mode see all, including ghosts
     if (pl->isGameMaster())
         return true;
-
-    if (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER)
-        return false;
 
     // Live player (or with not release body see live creatures or death creatures with corpse disappearing time > 0
     if (pl->isAlive() || pl->GetDeathTimer() > 0)
