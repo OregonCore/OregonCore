@@ -1111,6 +1111,8 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
                 }
             case 15352: //earth elemental 36213
                 {
+                    ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
+
                     if (!pInfo)
                         SetCreateHealth(100 + 120 * petlevel);
                     SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel - (petlevel / 4)));
@@ -1119,6 +1121,8 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
                 }
             case 15438: //fire elemental
                 {
+                    ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
+
                     if (!pInfo)
                     {
                         SetCreateHealth(40 * petlevel);
