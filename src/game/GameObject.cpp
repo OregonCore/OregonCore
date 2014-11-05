@@ -419,13 +419,10 @@ void GameObject::Update(uint32 diff)
 
                 if (spellId)
                 {
-                    std::set<uint32>::iterator it = m_unique_users.begin();
-                    std::set<uint32>::iterator end = m_unique_users.end();
-                    for (; it != end; ++it)
-                    {
-                        if (Unit* owner = Unit::GetUnit(*this, uint64(*it)))
+                    for (std::set<uint64>::const_iterator it = m_unique_users.begin(); it != m_unique_users.end(); ++it)
+                        // m_unique_users can contain only player GUIDs
+                        if (Player* owner = ObjectAccessor::GetPlayer(*this, *it))
                             owner->CastSpell(owner, spellId, false);
-                    }
 
                     m_unique_users.clear();
                     m_usetimes = 0;
@@ -501,7 +498,7 @@ void GameObject::AddUniqueUse(Player* player)
     if (m_unique_users.find(player->GetGUIDLow()) != m_unique_users.end())
         return;
     AddUse();
-    m_unique_users.insert(player->GetGUIDLow());
+    m_unique_users.insert(player->GetGUID());
 }
 
 void GameObject::Delete()
