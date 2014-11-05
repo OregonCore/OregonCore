@@ -285,9 +285,7 @@ bool IsPassiveSpell(uint32 spellId)
 
 bool IsPassiveSpell(SpellEntry const* spellInfo)
 {
-    if (spellInfo->Attributes & SPELL_ATTR_PASSIVE)
-        return true;
-    return false;
+   return (spellInfo->Attributes & SPELL_ATTR_PASSIVE) != 0;
 }
 
 bool IsAutocastableSpell(uint32 spellId)
@@ -802,15 +800,6 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
 
     // ok, positive
     return true;
-}
-
-bool IsPassive(uint32 spellId)
-{
-    SpellEntry const* spellproto = sSpellStore.LookupEntry(spellId);
-    if (!spellproto)
-        return false;
-
-    return (spellproto->Attributes & SPELL_ATTR_PASSIVE) != 0;
 }
 
 bool IsPositiveSpell(uint32 spellId)

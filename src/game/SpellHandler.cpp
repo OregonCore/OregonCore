@@ -373,7 +373,7 @@ void WorldSession::HandleCancelAuraOpcode(WorldPacket& recvPacket)
     // non channeled case:
     // don't allow remove non positive spells
     // don't allow cancelling passive auras (some of them are visible)
-    if (!IsPositiveSpell(spellId) || IsPassive(spellId))
+    if (!IsPositiveSpell(spellId) || IsPassiveSpell(spellId))
         return;
 
     // non channeled case
