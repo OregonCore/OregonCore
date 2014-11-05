@@ -804,6 +804,15 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
     return true;
 }
 
+bool IsPassive(uint32 spellId)
+{
+    SpellEntry const* spellproto = sSpellStore.LookupEntry(spellId);
+    if (!spellproto)
+        return false;
+
+    return (spellproto->Attributes & SPELL_ATTR_PASSIVE) != 0;
+}
+
 bool IsPositiveSpell(uint32 spellId)
 {
     SpellEntry const* spellproto = sSpellStore.LookupEntry(spellId);

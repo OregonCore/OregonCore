@@ -264,6 +264,7 @@ inline bool IsNonCombatSpell(SpellEntry const* spellInfo)
     return (spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT) != 0;
 }
 
+bool IsPassive(uint32 spellId);
 bool IsPositiveSpell(uint32 spellId);
 bool IsPositiveEffect(uint32 spellId, uint32 effIndex);
 bool IsPositiveTarget(uint32 targetA, uint32 targetB);
