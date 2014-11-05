@@ -1432,6 +1432,8 @@ void GameObject::CastSpell(Unit* target, uint32 spell)
     if (Unit* owner = GetOwner())
     {
         trigger->setFaction(owner->getFaction());
+        // needed for GO casts for proper target validation checks
+        trigger->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, owner->GetGUID());
         trigger->CastSpell(target ? target : trigger, spell, true, 0, 0, owner->GetGUID());
     }
     else
