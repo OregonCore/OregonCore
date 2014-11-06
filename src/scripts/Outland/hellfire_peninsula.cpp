@@ -855,7 +855,6 @@ struct npc_anchorite_baradaAI : public ScriptedAI
             return 2100;
         case 8:
             me->SetOrientation(colonel);
-            me->SendMovementFlagUpdate();
             return 2000;
         case 9:
             me->CastSpell(me, SPELL_EXORCIM , false);
