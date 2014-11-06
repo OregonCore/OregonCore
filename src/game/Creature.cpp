@@ -66,15 +66,18 @@ TrainerSpell const* TrainerSpellData::Find(uint32 spell_id) const
 
 bool VendorItemData::RemoveItem(uint32 item_id)
 {
-    for (VendorItemList::iterator i = m_items.begin(); i != m_items.end(); ++i)
+    bool found = false;
+    for (VendorItemList::iterator i = m_items.begin(); i != m_items.end();)
     {
         if ((*i)->item == item_id)
         {
-            m_items.erase(i);
-            return true;
+            i = m_items.erase(i++);
+            found = true;
         }
+        else
+            ++i;
     }
-    return false;
+    return found;
 }
 
 size_t VendorItemData::FindItemSlot(uint32 item_id) const
@@ -156,12 +159,14 @@ Creature::Creature() :
 {
     m_valuesCount = UNIT_END;
 
-    for (uint8 i = 0; i < 4; ++i)
+    for (uint8 i = 0; i < CREATURE_MAX_SPELLS; ++i)
         m_spells[i] = 0;
 
     m_CreatureSpellCooldowns.clear();
     m_CreatureCategoryCooldowns.clear();
-    //m_unit_movement_flags = MOVEFLAG_WALK_MODE;
+    
+    m_SightDistance = sWorld.getConfig(CONFIG_SIGHT_MONSTER);
+    m_CombatDistance = 0; // MELEE_RANGE
 }
 
 Creature::~Creature()
