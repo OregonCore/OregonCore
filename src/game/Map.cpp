@@ -871,7 +871,6 @@ Map::CreatureRelocation(Creature* creature, float x, float y, float z, float ang
     ASSERT(CheckGridIntegrity(creature, false));
 
     Cell old_cell = creature->GetCurrentCell();
-
     CellPair new_val = Oregon::ComputeCellPair(x, y);
     Cell new_cell(new_val);
 
