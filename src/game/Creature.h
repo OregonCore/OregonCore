@@ -580,7 +580,6 @@ class Creature : public Unit, public GridObject<Creature>
 
         bool AIM_Initialize(CreatureAI* ai = NULL);
 
-        void AI_SendMoveToPacket(float x, float y, float z, uint32 time, uint32 MovementFlags, uint8 type);
         CreatureAI* AI() const
         {
             return (CreatureAI*)i_AI;

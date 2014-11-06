@@ -313,15 +313,14 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
 
             if (Teleport_Timer <= diff)
             {
-                //temp solution - unit can't be teleported by core using spelleffect 5, only players
-                Map* pMap = me->GetMap();
-                if (pMap)
-                {
-                    pMap->CreatureRelocation(me, 3706.39f, -3969.15f, 35.9118f, 0);
-                    me->AI_SendMoveToPacket(3706.39f, -3969.15f, 35.9118f, 0, 0, 0);
-                }
+                // temp solution - unit can't be teleported by core using spelleffect 5, only players
+                DoTeleportTo(3706.39f, -3969.15f, 35.9118f);
+
                 //begin swimming and summon depth charges
-                //Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
+                Player* player = Unit::GetPlayer(*me, PlayerGUID);
+                if (!player)
+                    return;
+
                 DoScriptText(EMOTE_START, me);
                 DoCast(me, SPELL_PERIODIC_DEPTH_CHARGE);
                 me->SetUnitMovementFlags(MOVEFLAG_FLYING2 | MOVEFLAG_SWIMMING);
