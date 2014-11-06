@@ -66,6 +66,7 @@ float baseMoveSpeed[MAX_MOVE_TYPE] =
     4.5f,                  // MOVE_FLIGHT_BACK
 };
 
+// Used for preapre can/can't trigger aura
 void InitTriggerAuraData();
 
 // auraTypes contains attacker auras capable of proc'ing cast auras
@@ -277,6 +278,7 @@ Unit::Unit()
 
     for (uint8 i = 0; i < MAX_SPELL_IMMUNITY; ++i)
         m_spellImmune[i].clear();
+
     for (uint8 i = 0; i < UNIT_MOD_END; ++i)
     {
         m_auraModifiersGroup[i][BASE_VALUE] = 0.0f;
@@ -287,11 +289,12 @@ Unit::Unit()
     // implement 50% base damage from offhand
     m_auraModifiersGroup[UNIT_MOD_DAMAGE_OFFHAND][TOTAL_PCT] = 0.5f;
 
-    for (uint8 i = 0; i < 3; ++i)
+    for (uint8 i = 0; i < MAX_ATTACK; ++i)
     {
         m_weaponDamage[i][MINDAMAGE] = BASE_MINDAMAGE;
         m_weaponDamage[i][MAXDAMAGE] = BASE_MAXDAMAGE;
     }
+
     for (uint8 i = 0; i < MAX_STATS; ++i)
         m_createStats[i] = 0.0f;
 
@@ -306,10 +309,11 @@ Unit::Unit()
     m_CombatTimer = 0;
     m_lastManaUse = 0;
 
-    //m_victimThreat = 0.0f;
     for (uint8 i = 0; i < MAX_SPELL_SCHOOL; ++i)
         m_threatModifier[i] = 1.0f;
+
     m_isSorted = true;
+
     for (uint8 i = 0; i < MAX_MOVE_TYPE; ++i)
         m_speed_rate[i] = 1.0f;
 
@@ -347,14 +351,12 @@ Unit::~Unit()
 {
     // set current spells as deletable
     for (uint8 i = 0; i < CURRENT_MAX_SPELL; ++i)
-    {
         if (m_currentSpells[i])
         {
             m_currentSpells[i]->SetReferencedFromCurrent(false);
             m_currentSpells[i] = NULL;
         }
-    }
-
+    
     RemoveAllGameObjects();
     RemoveAllDynObjects();
     _DeleteAuras();
@@ -368,13 +370,6 @@ Unit::~Unit()
 
 void Unit::Update(uint32 p_time)
 {
-    /*if (p_time > m_AurasCheck)
-    {
-    m_AurasCheck = 2000;
-    _UpdateAura();
-    } else
-    m_AurasCheck -= p_time;*/
-
     // WARNING! Order of execution here is important, do not change.
     // Spells must be processed with event system BEFORE they go to _UpdateSpells.
     // Or else we may have some SPELL_STATE_FINISHED spells stalled in pointers, that is bad.
@@ -395,7 +390,7 @@ void Unit::Update(uint32 p_time)
         {
             // m_CombatTimer set at aura start and it will be freeze until aura removing
             if (m_CombatTimer <= p_time)
-                CombatStop();
+                ClearInCombat();
             else
                 m_CombatTimer -= p_time;
         }
@@ -415,8 +410,11 @@ void Unit::Update(uint32 p_time)
     // update abilities available only for fraction of time
     UpdateReactives(p_time);
 
-    ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, GetHealth() < GetMaxHealth() * 0.20f);
-    ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, GetHealth() < GetMaxHealth() * 0.35f);
+    if (isAlive())
+    {
+        ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, GetHealth() < GetMaxHealth() * 0.20f);
+        ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, GetHealth() < GetMaxHealth() * 0.35f);
+    }
 
     i_motionMaster.UpdateMotion(p_time);
 }
@@ -425,8 +423,8 @@ bool Unit::haveOffhandWeapon() const
 {
     if (GetTypeId() == TYPEID_PLAYER)
         return ToPlayer()->GetWeaponForAttack(OFF_ATTACK, true);
-    else
-        return m_canDualWield;
+
+    return m_canDualWield;
 }
 
 void Unit::SendMonsterMoveWithSpeedToCurrentDestination(Player* player)
@@ -600,7 +598,8 @@ void Unit::resetAttackTimer(WeaponAttackType type)
 
 bool Unit::IsWithinCombatRange(const Unit* obj, float dist2compare) const
 {
-    if (!obj || !IsInMap(obj)) return false;
+    if (!obj || !IsInMap(obj))
+        return false;
 
     float dx = GetPositionX() - obj->GetPositionX();
     float dy = GetPositionY() - obj->GetPositionY();
@@ -615,7 +614,8 @@ bool Unit::IsWithinCombatRange(const Unit* obj, float dist2compare) const
 
 bool Unit::IsWithinMeleeRange(Unit* obj, float dist) const
 {
-    if (!obj || !IsInMap(obj)) return false;
+    if (!obj || !IsInMap(obj))
+        return false;
 
     float dx = GetPositionX() - obj->GetPositionX();
     float dy = GetPositionY() - obj->GetPositionY();
@@ -641,8 +641,8 @@ void Unit::GetRandomContactPoint(const Unit* obj, float& x, float& y, float& z, 
     uint32 attacker_number = getAttackers().size();
     if (attacker_number > 0)
         --attacker_number;
-    GetNearPoint(obj, x, y, z, obj->GetCombatReach(), distance2dMin + (distance2dMax - distance2dMin)*rand_norm()
-                 , GetAngle(obj) + (attacker_number ? (M_PI / 2 - M_PI * rand_norm()) * float(attacker_number) / combat_reach / 3 : 0));
+    GetNearPoint(obj, x, y, z, obj->GetCombatReach(), distance2dMin + (distance2dMax - distance2dMin) * (float)rand_norm()
+        , GetAngle(obj) + (attacker_number ? (static_cast<float>(M_PI/2) - static_cast<float>(M_PI) * (float)rand_norm()) * float(attacker_number) / combat_reach * 0.3f : 0));
 }
 
 void Unit::RemoveMovementImpairingAuras()
@@ -754,9 +754,10 @@ bool Unit::HasAuraType(AuraType auraType) const
     return (!m_modAuras[auraType].empty());
 }
 
-bool Unit::HasAuraTypeWithFamilyFlags(AuraType auraType, uint32 familyName  , uint64 familyFlags) const
+bool Unit::HasAuraTypeWithFamilyFlags(AuraType auraType, uint32 familyName, uint64 familyFlags) const
 {
-    if (!HasAuraType(auraType)) return false;
+    if (!HasAuraType(auraType))
+        return false;
     AuraList const& auras = GetAurasByType(auraType);
     for (AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
         if (SpellEntry const* iterSpellProto = (*itr)->GetSpellProto())
@@ -1239,7 +1240,6 @@ void Unit::CastCustomSpell(uint32 spellId, CustomSpellValues const& value, Unit*
 void Unit::CastSpell(float x, float y, float z, uint32 spellId, bool triggered, Item* castItem, Aura* triggeredByAura, uint64 originalCaster)
 {
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellId);
-
     if (!spellInfo)
     {
         sLog.outError("CastSpell(x,y,z): unknown spell id %i by caster: %s %u)", spellId, (GetTypeId() == TYPEID_PLAYER ? "player (GUID:" : "creature (Entry:"), (GetTypeId() == TYPEID_PLAYER ? GetGUIDLow() : GetEntry()));
@@ -1321,15 +1321,14 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
 
     SpellSchoolMask damageSchoolMask = SpellSchoolMask(damageInfo->schoolMask);
     uint32 crTypeMask = pVictim->GetCreatureTypeMask();
-    // Check spell crit chance
-    //bool crit = isSpellCrit(pVictim, spellInfo, damageSchoolMask, attackType);
+
     bool blocked = false;
     // Per-school calc
     switch (spellInfo->DmgClass)
     {
-    // Melee and Ranged Spells
-    case SPELL_DAMAGE_CLASS_RANGED:
-    case SPELL_DAMAGE_CLASS_MELEE:
+        // Melee and Ranged Spells
+        case SPELL_DAMAGE_CLASS_RANGED:
+        case SPELL_DAMAGE_CLASS_MELEE:
         {
             // Physical Damage
             if (damageSchoolMask & SPELL_SCHOOL_MASK_NORMAL)
@@ -1358,6 +1357,7 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
                     critPctDamageMod += pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_MELEE_CRIT_DAMAGE);
                     critPctDamageMod += GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_DAMAGE_BONUS_MELEE);
                 }
+
                 // Increase crit damage from SPELL_AURA_MOD_CRIT_PERCENT_VERSUS
                 critPctDamageMod += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_CRIT_PERCENT_VERSUS, crTypeMask);
 
@@ -1368,12 +1368,13 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
                 if (pVictim->GetTypeId() == TYPEID_PLAYER)
                     damage -= pVictim->ToPlayer()->GetMeleeCritDamageReduction(damage);
             }
+
             // Spell weapon based damage CAN BE crit & blocked at same time
             if (blocked)
             {
                 damageInfo->blocked = uint32(pVictim->GetShieldBlockValue());
                 if (damage < int32(damageInfo->blocked))
-                    damageInfo->blocked = damage;
+                    damageInfo->blocked = uint32(damage);
                 damage -= damageInfo->blocked;
             }
         }
@@ -1387,14 +1388,16 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
             {
                 damageInfo->HitInfo |= SPELL_HIT_TYPE_CRIT;
                 damage = SpellCriticalBonus(spellInfo, damage, pVictim);
+
                 // Resilience - reduce crit damage
                 if (pVictim->GetTypeId() == TYPEID_PLAYER)
                     damage -= pVictim->ToPlayer()->GetSpellCritDamageReduction(damage);
             }
         }
         break;
+    default:
+        break;
     }
-
 
     // damage before absorb/resist calculation
     damageInfo->cleanDamage = damage;
@@ -1410,6 +1413,7 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
     }
     else
         damage = 0;
+
     damageInfo->damage = damage;
 }
 
@@ -1423,7 +1427,7 @@ void Unit::DealSpellDamage(SpellNonMeleeDamage* damageInfo, bool durabilityLoss)
     if (!pVictim)
         return;
 
-    if ((!pVictim->isAlive() || pVictim->isInFlight()) || (pVictim->GetTypeId() == TYPEID_UNIT && pVictim->ToCreature()->IsInEvadeMode()))
+    if (!pVictim->isAlive() || pVictim->HasUnitState(UNIT_STATE_IN_FLIGHT) || (pVictim->GetTypeId() == TYPEID_UNIT && pVictim->ToCreature()->IsInEvadeMode()))
         return;
 
     SpellEntry const* spellProto = sSpellStore.LookupEntry(damageInfo->SpellID);
@@ -1461,7 +1465,7 @@ void Unit::DealSpellDamage(SpellNonMeleeDamage* damageInfo, bool durabilityLoss)
     DealDamage(pVictim, damageInfo->damage, &cleanDamage, SPELL_DIRECT_DAMAGE, SpellSchoolMask(damageInfo->schoolMask), spellProto, durabilityLoss);
 }
 
-//TODO for melee need create structure as in
+/// @todo for melee need create structure as in
 void Unit::CalculateMeleeDamage(Unit* pVictim, uint32 damage, CalcDamageInfo* damageInfo, WeaponAttackType attackType)
 {
     damageInfo->attacker         = this;
@@ -1483,30 +1487,31 @@ void Unit::CalculateMeleeDamage(Unit* pVictim, uint32 damage, CalcDamageInfo* da
 
     if (!pVictim)
         return;
+
     if (!isAlive() || !pVictim->isAlive())
         return;
 
     // Select HitInfo/procAttacker/procVictim flag based on attack type
     switch (attackType)
     {
-    case BASE_ATTACK:
-        damageInfo->procAttacker = PROC_FLAG_DONE_MELEE_AUTO_ATTACK | PROC_FLAG_DONE_MAINHAND_ATTACK;
-        damageInfo->procVictim   = PROC_FLAG_TAKEN_MELEE_AUTO_ATTACK;
-        damageInfo->HitInfo      = HITINFO_NORMALSWING2;
-        break;
-    case OFF_ATTACK:
-        damageInfo->procAttacker = PROC_FLAG_DONE_MELEE_AUTO_ATTACK | PROC_FLAG_DONE_OFFHAND_ATTACK;
-        damageInfo->procVictim   = PROC_FLAG_TAKEN_MELEE_AUTO_ATTACK;
-        damageInfo->HitInfo = HITINFO_LEFTSWING;
-        break;
-    case RANGED_ATTACK:
-        damageInfo->procAttacker = PROC_FLAG_DONE_RANGED_AUTO_ATTACK;
-        damageInfo->procVictim   = PROC_FLAG_TAKEN_RANGED_AUTO_ATTACK;
-        damageInfo->HitInfo = 0x08;// test
-        break;
-    default:
-        break;
-    }
+        case BASE_ATTACK:
+            damageInfo->procAttacker = PROC_FLAG_DONE_MELEE_AUTO_ATTACK | PROC_FLAG_DONE_MAINHAND_ATTACK;
+            damageInfo->procVictim   = PROC_FLAG_TAKEN_MELEE_AUTO_ATTACK;
+            damageInfo->HitInfo      = HITINFO_NORMALSWING2;
+            break;
+        case OFF_ATTACK:
+            damageInfo->procAttacker = PROC_FLAG_DONE_MELEE_AUTO_ATTACK | PROC_FLAG_DONE_OFFHAND_ATTACK;
+            damageInfo->procVictim   = PROC_FLAG_TAKEN_MELEE_AUTO_ATTACK;
+            damageInfo->HitInfo = HITINFO_LEFTSWING;
+            break;
+        case RANGED_ATTACK:
+            damageInfo->procAttacker = PROC_FLAG_DONE_RANGED_AUTO_ATTACK;
+            damageInfo->procVictim   = PROC_FLAG_TAKEN_RANGED_AUTO_ATTACK;
+            damageInfo->HitInfo = 0x08;// test
+            break;
+        default:
+            break;
+        }
 
     // Physical Immune check
     if (damageInfo->target->IsImmunedToDamage(SpellSchoolMask(damageInfo->damageSchoolMask), true))
@@ -1519,9 +1524,11 @@ void Unit::CalculateMeleeDamage(Unit* pVictim, uint32 damage, CalcDamageInfo* da
         damageInfo->cleanDamage    = 0;
         return;
     }
+
     damage += CalculateDamage(damageInfo->attackType, false);
     // Add melee damage bonus
     MeleeDamageBonus(damageInfo->target, &damage, damageInfo->attackType);
+
     // Calculate armor reduction
     damageInfo->damage = (damageInfo->damageSchoolMask & SPELL_SCHOOL_MASK_NORMAL) ? CalcArmorReducedDamage(damageInfo->target, damage) : damage;
     damageInfo->cleanDamage += damage - damageInfo->damage;
@@ -1537,31 +1544,25 @@ void Unit::CalculateMeleeDamage(Unit* pVictim, uint32 damage, CalcDamageInfo* da
 
     switch (damageInfo->hitOutCome)
     {
-    case MELEE_HIT_EVADE:
-        {
+        case MELEE_HIT_EVADE:
             damageInfo->HitInfo    |= HITINFO_MISS | HITINFO_SWINGNOHITSOUND;
             damageInfo->TargetState = VICTIMSTATE_EVADES;
-
             damageInfo->procEx |= PROC_EX_EVADE;
             damageInfo->damage = 0;
             damageInfo->cleanDamage = 0;
             return;
-        }
-    case MELEE_HIT_MISS:
-        {
+        case MELEE_HIT_MISS:
             damageInfo->HitInfo    |= HITINFO_MISS;
             damageInfo->TargetState = VICTIMSTATE_NORMAL;
-
             damageInfo->procEx |= PROC_EX_MISS;
             damageInfo->damage  = 0;
             damageInfo->cleanDamage = 0;
             break;
-        }
-    case MELEE_HIT_NORMAL:
-        damageInfo->TargetState = VICTIMSTATE_NORMAL;
-        damageInfo->procEx |= PROC_EX_NORMAL_HIT;
-        break;
-    case MELEE_HIT_CRIT:
+        case MELEE_HIT_NORMAL:
+            damageInfo->TargetState = VICTIMSTATE_NORMAL;
+            damageInfo->procEx |= PROC_EX_NORMAL_HIT;
+            break;
+        case MELEE_HIT_CRIT:
         {
             damageInfo->HitInfo     |= HITINFO_CRITICALHIT;
             damageInfo->TargetState  = VICTIMSTATE_NORMAL;
@@ -12026,9 +12027,9 @@ bool Unit::SetPosition(float x, float y, float z, float orientation, bool telepo
 
         // move and update visible state if need
         if (GetTypeId() == TYPEID_PLAYER)
-            GetMap()->PlayerRelocation((Player*)this, x, y, z, orientation);
+            GetMap()->PlayerRelocation(ToPlayer(), x, y, z, orientation);
         else
-            GetMap()->CreatureRelocation(this->ToCreature(), x, y, z, orientation);
+            GetMap()->CreatureRelocation(ToCreature(), x, y, z, orientation);
     }
     else if (turn)
         SetOrientation(orientation);
