@@ -1419,7 +1419,7 @@ class Unit : public WorldObject
 
         void SendMonsterMoveWithSpeed(float x, float y, float z, uint32 transitTime = 0, Player* player = NULL);
         void SendMonsterMoveWithSpeedToCurrentDestination(Player* player = NULL);
-        void SendMovementFlagUpdate();
+        void SendMovementFlagUpdate(bool self = false);
 
         void BuildHeartBeatMsg(WorldPacket* data) const;
 
