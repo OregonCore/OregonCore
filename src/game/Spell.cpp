@@ -3107,7 +3107,7 @@ void Spell::WriteAmmoToPacket(WorldPacket* data)
                         ammoInventoryType = pProto->InventoryType;
                     }
                 }
-                else if (m_caster->GetDummyAura(46699))      // Requires No Ammo
+                else if (m_caster->HasAura(46699))      // Requires No Ammo
                 {
                     ammoDisplayID = 5996;                   // normal arrow
                     ammoInventoryType = INVTYPE_AMMO;
@@ -3115,7 +3115,40 @@ void Spell::WriteAmmoToPacket(WorldPacket* data)
             }
         }
     }
-    // @todo implement selection ammo data based at ranged weapon stored in equipmodel/equipinfo/equipslot fields
+    else
+    {
+        for (uint8 i = 0; i < 3; ++i)
+        {
+            if (uint32 item_id = m_caster->GetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + i))
+            {
+                if (ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(item_id))
+                {
+                    if (pProto->Class == ITEM_CLASS_WEAPON)
+                    {
+                        switch (pProto->SubClass)
+                        {
+                            case ITEM_SUBCLASS_WEAPON_THROWN:
+                                ammoDisplayID = pProto->DisplayInfoID;
+                                ammoInventoryType = pProto->InventoryType;
+                                break;
+                            case ITEM_SUBCLASS_WEAPON_BOW:
+                            case ITEM_SUBCLASS_WEAPON_CROSSBOW:
+                                ammoDisplayID = 5996;       // is this need fixing?
+                                ammoInventoryType = INVTYPE_AMMO;
+                                break;
+                            case ITEM_SUBCLASS_WEAPON_GUN:
+                                ammoDisplayID = 5998;       // is this need fixing?
+                                ammoInventoryType = INVTYPE_AMMO;
+                                break;
+                        }
+
+                        if (ammoDisplayID)
+                            break;
+                    }
+                }
+            }
+        }
+    }
 
     *data << uint32(ammoDisplayID);
     *data << uint32(ammoInventoryType);
