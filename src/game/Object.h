@@ -220,7 +220,7 @@ class Object
         void BuildOutOfRangeUpdateBlock(UpdateData* data) const;
         void BuildMovementUpdateBlock(UpdateData* data, uint32 flags = 0) const;
 
-        virtual void DestroyForPlayer(Player* target) const;
+        virtual void DestroyForPlayer(Player* target, bool onDeath = false) const;
 
         const int32& GetInt32Value(uint16 index) const
         {
@@ -433,7 +433,7 @@ class Object
         virtual void _SetUpdateBits(UpdateMask* updateMask, Player* target) const;
 
         virtual void _SetCreateBits(UpdateMask* updateMask, Player* target) const;
-        void _BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const;
+        void BuildMovementUpdate(ByteBuffer* data, uint16 flags) const;
         void _BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* updateMask, Player* target) const;
 
         uint16 m_objectType;
@@ -1050,18 +1050,9 @@ class WorldObject : public Object, public WorldLocation
         }
         void setActive(bool isActiveObject);
         void SetWorldObject(bool apply);
-        template<class NOTIFIER> void VisitNearbyObject(const float& radius, NOTIFIER& notifier) const
-        {
-            GetMap()->VisitAll(GetPositionX(), GetPositionY(), radius, notifier);
-        }
-        template<class NOTIFIER> void VisitNearbyGridObject(const float& radius, NOTIFIER& notifier) const
-        {
-            GetMap()->VisitGrid(GetPositionX(), GetPositionY(), radius, notifier);
-        }
-        template<class NOTIFIER> void VisitNearbyWorldObject(const float& radius, NOTIFIER& notifier) const
-        {
-            GetMap()->VisitWorld(GetPositionX(), GetPositionY(), radius, notifier);
-        }
+        template<class NOTIFIER> void VisitNearbyObject(float const& radius, NOTIFIER& notifier) const { if (IsInWorld()) GetMap()->VisitAll(GetPositionX(), GetPositionY(), radius, notifier); }
+        template<class NOTIFIER> void VisitNearbyGridObject(float const& radius, NOTIFIER& notifier) const { if (IsInWorld()) GetMap()->VisitGrid(GetPositionX(), GetPositionY(), radius, notifier); }
+        template<class NOTIFIER> void VisitNearbyWorldObject(float const& radius, NOTIFIER& notifier) const { if (IsInWorld()) GetMap()->VisitWorld(GetPositionX(), GetPositionY(), radius, notifier); }
 
         uint32 m_groupLootTimer;                            // (msecs)timer used for group loot
         uint64 lootingGroupLeaderGUID;                      // used to find group which is looting corpse
