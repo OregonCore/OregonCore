@@ -250,7 +250,7 @@ struct npc_ringoAI : public FollowerAI
                 if (m_uiEndEventTimer <= uiDiff)
                 {
                     Unit* pSpraggle = Unit::GetUnit(*me, SpraggleGUID);
-                    if (!pSpraggle || !pSpraggle->isAlive())
+                    if (!pSpraggle || !pSpraggle->IsAlive())
                     {
                         SetFollowComplete();
                         return;

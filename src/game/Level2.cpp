@@ -1239,7 +1239,7 @@ bool ChatHandler::HandleNpcMoveCommand(const char* args)
         }
         pCreature->GetMap()->CreatureRelocation(pCreature, x, y, z, o);
         pCreature->GetMotionMaster()->Initialize();
-        if (pCreature->isAlive())                            // dead creature will reset movement generator at respawn
+        if (pCreature->IsAlive())                            // dead creature will reset movement generator at respawn
         {
             pCreature->setDeathState(DEAD);
             pCreature->Respawn();
@@ -1372,7 +1372,7 @@ bool ChatHandler::HandleNpcSetMoveTypeCommand(const char* args)
 
         pCreature->SetDefaultMovementType(move_type);
         pCreature->GetMotionMaster()->Initialize();
-        if (pCreature->isAlive())                            // dead creature will reset movement generator at respawn
+        if (pCreature->IsAlive())                            // dead creature will reset movement generator at respawn
         {
             pCreature->setDeathState(JUST_DIED);
             pCreature->Respawn();
@@ -1481,7 +1481,7 @@ bool ChatHandler::HandleNpcSpawnDistCommand(const char* args)
     pCreature->SetRespawnRadius((float)option);
     pCreature->SetDefaultMovementType(mtype);
     pCreature->GetMotionMaster()->Initialize();
-    if (pCreature->isAlive())                                // dead creature will reset movement generator at respawn
+    if (pCreature->IsAlive())                                // dead creature will reset movement generator at respawn
     {
         pCreature->setDeathState(JUST_DIED);
         pCreature->Respawn();

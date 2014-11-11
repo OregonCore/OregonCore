@@ -264,7 +264,7 @@ struct instance_stratholme : public ScriptedInstance
                 {
                     if (Creature* pAbom = instance->GetCreature(*i))
                     {
-                        if (!pAbom->isAlive())
+                        if (!pAbom->IsAlive())
                             --count;
                     }
                 }

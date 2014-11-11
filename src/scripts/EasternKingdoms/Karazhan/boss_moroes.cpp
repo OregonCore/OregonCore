@@ -144,7 +144,7 @@ struct boss_moroesAI : public ScriptedAI
 
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
-                if (i->getSource()->isAlive() && i->getSource()->HasAura(SPELL_GARROTE, 0))
+                if (i->getSource()->IsAlive() && i->getSource()->HasAura(SPELL_GARROTE, 0))
                     i->getSource()->RemoveAurasDueToSpell(SPELL_GARROTE);
             }
         }
@@ -207,7 +207,7 @@ struct boss_moroesAI : public ScriptedAI
             if (AddGUID[i])
             {
                 Temp = Creature::GetCreature((*me), AddGUID[i]);
-                if (Temp && Temp->isAlive())
+                if (Temp && Temp->IsAlive())
                     Temp->DisappearAndDie();
             }
         }
@@ -221,7 +221,7 @@ struct boss_moroesAI : public ScriptedAI
             if (AddGUID[i])
             {
                 Temp = Creature::GetCreature((*me), AddGUID[i]);
-                if (Temp && Temp->isAlive())
+                if (Temp && Temp->IsAlive())
                 {
                     Temp->AI()->AttackStart(me->getVictim());
                     DoZoneInCombat(Temp);
@@ -257,7 +257,7 @@ struct boss_moroesAI : public ScriptedAI
                 if (AddGUID[i])
                 {
                     Temp = Unit::GetCreature((*me), AddGUID[i]);
-                    if (Temp && Temp->isAlive())
+                    if (Temp && Temp->IsAlive())
                         if (!Temp->getVictim())
                             Temp->AI()->AttackStart(me->getVictim());
                 }
@@ -361,7 +361,7 @@ struct boss_moroes_guestAI : public ScriptedAI
         if (TempGUID)
         {
             Unit* pUnit = Unit::GetUnit((*me), TempGUID);
-            if (pUnit && pUnit->isAlive())
+            if (pUnit && pUnit->IsAlive())
                 return pUnit;
         }
 

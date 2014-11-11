@@ -169,7 +169,7 @@ struct boss_akilzonAI : public ScriptedAI
         for (uint8 i = 0; i < 8; ++i)
         {
             Unit* bird = Unit::GetUnit(*me, BirdGUIDs[i]);
-            if (bird && bird->isAlive())
+            if (bird && bird->IsAlive())
             {
                 bird->SetVisibility(VISIBILITY_OFF);
                 bird->setDeathState(JUST_DIED);
@@ -262,7 +262,7 @@ struct boss_akilzonAI : public ScriptedAI
         if (StormCount)
         {
             Unit* pTarget = Unit::GetUnit(*me, CloudGUID);
-            if (!pTarget || !pTarget->isAlive())
+            if (!pTarget || !pTarget->IsAlive())
             {
                 EnterEvadeMode();
                 return;

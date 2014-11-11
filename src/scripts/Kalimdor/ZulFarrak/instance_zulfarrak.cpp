@@ -313,7 +313,7 @@ struct instance_zulfarrak : public ScriptedInstance
     {
         if (Creature* npc = instance->GetCreature(GetData64(entry)))
         {
-            if (npc->isAlive())
+            if (npc->IsAlive())
             {
                 npc->SetWalk(true);
                 npc->GetMotionMaster()->MovePoint(1, x, y, z);
@@ -342,7 +342,7 @@ struct instance_zulfarrak : public ScriptedInstance
         {
             if (Creature* add = instance->GetCreature((*itr)))
             {
-                if (add->isAlive())
+                if (add->IsAlive())
                     return false;
             }
         }
@@ -350,7 +350,7 @@ struct instance_zulfarrak : public ScriptedInstance
         {
             if (Creature* add = instance->GetCreature(((*itr))))
             {
-                if (add->isAlive())
+                if (add->IsAlive())
                     return false;
             }
         }
@@ -364,7 +364,7 @@ struct instance_zulfarrak : public ScriptedInstance
         {
             if (Creature* add = instance->GetCreature(*addsAtBase.begin()))
             {
-                if (add->isAlive())
+                if (add->IsAlive())
                     add->GetMotionMaster()->MovePath(PATH_ADDS, false);
 
                 movedadds.push_back(add->GetGUID());

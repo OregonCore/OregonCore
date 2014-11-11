@@ -75,7 +75,7 @@ struct boss_highlord_mograineAI : public ScriptedAI
 
     void InitialYell()
     {
-        if (!me->isInCombat())
+        if (!me->IsInCombat())
         {
             switch (rand() % 3)
             {

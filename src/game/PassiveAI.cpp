@@ -34,7 +34,7 @@ NullCreatureAI::NullCreatureAI(Creature* c) : CreatureAI(c)
 
 void PassiveAI::UpdateAI(const uint32)
 {
-    if (me->isInCombat() && me->getAttackers().empty())
+    if (me->IsInCombat() && me->getAttackers().empty())
         EnterEvadeMode();
 }
 

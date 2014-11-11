@@ -204,7 +204,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
 
         if (me->getThreatManager().getThreatList().empty())//check if should evade
         {
-            if (me->isInCombat())
+            if (me->IsInCombat())
                 EnterEvadeMode();
             return;
         }
@@ -264,7 +264,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
                     Map::PlayerList const& PlayerList = pMap->GetPlayers();
                     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                     {
-                        if (i->getSource() && i->getSource()->isAlive() && me->HasInArc((double)diff / 20000 * (double)M_PI * 2, i->getSource()) && me->IsWithinDist(i->getSource(), SPOUT_DIST) && !i->getSource()->IsInWater())
+                        if (i->getSource() && i->getSource()->IsAlive() && me->HasInArc((double)diff / 20000 * (double)M_PI * 2, i->getSource()) && me->IsWithinDist(i->getSource(), SPOUT_DIST) && !i->getSource()->IsInWater())
                             DoCast(i->getSource(), SPELL_SPOUT, true);//only knock back palyers in arc, in 100yards, not in water
                     }
                 }
@@ -335,7 +335,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
                 EnterEvadeMode();
                 return;
             }
-            if (!me->isInCombat())
+            if (!me->IsInCombat())
                 DoZoneInCombat();
 
             if (!Spawned)

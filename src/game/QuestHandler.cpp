@@ -111,7 +111,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket& recv_data)
     uint32 quest;
     recv_data >> guid >> quest;
 
-    if (!GetPlayer()->isAlive())
+    if (!GetPlayer()->IsAlive())
         return;
 
     DEBUG_LOG("WORLD: Received CMSG_QUESTGIVER_ACCEPT_QUEST npc = %u, quest = %u", uint32(GUID_LOPART(guid)), quest);
@@ -266,7 +266,7 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recv_data)
         return;
     }
 
-    if (!GetPlayer()->isAlive())
+    if (!GetPlayer()->IsAlive())
         return;
 
     sLog.outDebug("WORLD: Received CMSG_QUESTGIVER_CHOOSE_REWARD npc = %u, quest = %u, reward = %u", uint32(GUID_LOPART(guid)), quest, reward);
@@ -316,7 +316,7 @@ void WorldSession::HandleQuestgiverRequestRewardOpcode(WorldPacket& recv_data)
     uint64 guid;
     recv_data >> guid >> quest;
 
-    if (!GetPlayer()->isAlive())
+    if (!GetPlayer()->IsAlive())
         return;
 
     sLog.outDebug("WORLD: Received CMSG_QUESTGIVER_REQUEST_REWARD npc = %u, quest = %u", uint32(GUID_LOPART(guid)), quest);
@@ -423,7 +423,7 @@ void WorldSession::HandleQuestComplete(WorldPacket& recv_data)
     uint64 guid;
     recv_data >> guid >> quest;
 
-    if (!GetPlayer()->isAlive())
+    if (!GetPlayer()->IsAlive())
         return;
 
     sLog.outDebug("WORLD: Received CMSG_QUESTGIVER_COMPLETE_QUEST npc = %u, quest = %u", uint32(GUID_LOPART(guid)), quest);

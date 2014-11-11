@@ -133,7 +133,7 @@ struct instance_shadowfang_keep : public ScriptedInstance
         Creature* pAda = instance->GetCreature(uiAdaGUID);
         Creature* pAsh = instance->GetCreature(uiAshGUID);
 
-        if (pAda && pAda->isAlive() && pAsh && pAsh->isAlive())
+        if (pAda && pAda->IsAlive() && pAsh && pAsh->IsAlive())
         {
             DoScriptText(SAY_BOSS_DIE_AD, pAda);
             DoScriptText(SAY_BOSS_DIE_AS, pAsh);
@@ -239,7 +239,7 @@ struct instance_shadowfang_keep : public ScriptedInstance
         Creature* pArchmage = instance->GetCreature(uiArchmageArugalGUID);
         Creature* pSummon = NULL;
 
-        if (!pArchmage || !pArchmage->isAlive())
+        if (!pArchmage || !pArchmage->IsAlive())
             return;
 
         if (uiPhase)

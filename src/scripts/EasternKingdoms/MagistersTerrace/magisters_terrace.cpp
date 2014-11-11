@@ -60,9 +60,12 @@ struct npc_kalecgosAI : public ScriptedAI
     {
         m_uiTransformTimer = 0;
 
+        // @todo Remove this requirement
+        me->setActive(true);
+
         // we must assume he appear as dragon somewhere outside the platform of orb, and then move directly to here
         if (me->GetEntry() != NPC_KAEL)
-            me->GetMotionMaster()->MovePoint(POINT_ID_LAND, afKaelLandPoint[0], afKaelLandPoint[1], afKaelLandPoint[2]);
+            me->GetMotionMaster()->MovePoint(POINT_ID_LAND, afKaelLandPoint[0], afKaelLandPoint[1], afKaelLandPoint[2], false);
     }
 
     void MovementInform(uint32 uiType, uint32 uiPointId)

@@ -270,7 +270,7 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T& owner)
 template<class T>
 void TargetedMovementGenerator<T>::Initialize(T& owner)
 {
-    if (owner.isInCombat())
+    if (owner.IsInCombat())
         owner.RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
 
     _setTargetLocation(owner);
@@ -295,7 +295,7 @@ bool TargetedMovementGenerator<T>::Update(T& owner, const uint32& time_diff)
     if (!i_target.isValid() || !i_target->IsInWorld())
         return false;
 
-    if (!owner.isAlive())
+    if (!owner.IsAlive())
         return true;
 
     if (owner.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_FLEEING | UNIT_STATE_DISTRACTED))

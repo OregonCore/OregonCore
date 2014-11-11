@@ -162,7 +162,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
             {
                 if (Player* i_pl = i->getSource())
                 {
-                    if (i_pl && i_pl->isAlive())
+                    if (i_pl && i_pl->IsAlive())
                         targets.push_back(i_pl);
                 }
             }
@@ -177,7 +177,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         for (std::list<Unit* >::iterator itr = targets.begin(); itr != targets.end(); ++itr)
         {
             Unit* pTarget = *itr;
-            if (pTarget && pTarget->isAlive())
+            if (pTarget && pTarget->IsAlive())
                 me->AddAura(SPELL_BLOODBOIL, pTarget);
         }
         targets.clear();
@@ -289,7 +289,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
             if (Phase1)
             {
                 Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                 {
                     Phase1 = false;
 

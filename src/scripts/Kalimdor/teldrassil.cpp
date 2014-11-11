@@ -105,7 +105,7 @@ struct npc_mistAI : public FollowerAI
                     m_uiPostEventTimer = 3000;
 
                     Unit* pArynia = Unit::GetUnit(*me, AryniaGUID);
-                    if (!pArynia || !pArynia->isAlive())
+                    if (!pArynia || !pArynia->IsAlive())
                     {
                         SetFollowComplete();
                         return;

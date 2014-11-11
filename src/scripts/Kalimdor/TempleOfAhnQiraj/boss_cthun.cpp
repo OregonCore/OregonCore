@@ -1266,7 +1266,7 @@ void flesh_tentacleAI::UpdateAI(const uint32 diff)
         {
             Unit* pUnit = Unit::GetUnit(*me, Parent);
 
-            if (!pUnit || !pUnit->isAlive() || !pUnit->isInCombat())
+            if (!pUnit || !pUnit->IsAlive() || !pUnit->IsInCombat())
             {
                 Parent = 0;
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);

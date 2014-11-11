@@ -323,7 +323,7 @@ struct boss_kaelthasAI : public ScriptedAI
         IsCastingFireball = false;
         ChainPyros = false;
 
-        if (me->isInCombat())
+        if (me->IsInCombat())
             PrepareAdvisors();
 
         summons.DespawnAll();

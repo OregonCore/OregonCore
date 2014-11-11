@@ -569,7 +569,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
         pCurrChar->SetRank(0);
     }
 
-    if (!pCurrChar->isAlive())
+    if (!pCurrChar->IsAlive())
         pCurrChar->SendCorpseReclaimDelay(true);
 
     pCurrChar->SendInitialPacketsBeforeAddToMap();

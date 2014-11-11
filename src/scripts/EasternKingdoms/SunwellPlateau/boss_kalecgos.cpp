@@ -571,7 +571,7 @@ struct boss_sathrovarrAI : public ScriptedAI
         if (CheckTimer <= diff)
         {
             Creature* Kalec = Unit::GetCreature(*me, KalecGUID);
-            if (!Kalec || (Kalec && !Kalec->isAlive()))
+            if (!Kalec || (Kalec && !Kalec->IsAlive()))
             {
                 if (Creature* Kalecgos = Unit::GetCreature(*me, KalecgosGUID))
                     Kalecgos->AI()->EnterEvadeMode();
@@ -586,7 +586,7 @@ struct boss_sathrovarrAI : public ScriptedAI
             Creature* Kalecgos = Unit::GetCreature(*me, KalecgosGUID);
             if (Kalecgos)
             {
-                if (!Kalecgos->isInCombat())
+                if (!Kalecgos->IsInCombat())
                 {
                     me->AI()->EnterEvadeMode();
                     return;

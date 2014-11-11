@@ -103,7 +103,7 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
         if (i == 7 && pInstance)
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-            if (pTarget && pTarget->isAlive())
+            if (pTarget && pTarget->IsAlive())
                 me->AddThreat(pTarget, 0.0f);
         }
     }

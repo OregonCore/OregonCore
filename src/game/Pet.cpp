@@ -367,7 +367,7 @@ void Pet::SavePetToDB(PetSaveMode mode)
             RemoveAllAuras();
 
             //only alive hunter pets get auras saved, the others don't
-            if (!(getPetType() == HUNTER_PET && isAlive()))
+            if (!(getPetType() == HUNTER_PET && IsAlive()))
                 m_Auras.clear();
         }
     default:
@@ -622,7 +622,7 @@ void Pet::LooseHappiness()
     if (curValue <= 0)
         return;
     int32 addvalue = (140 >> GetLoyaltyLevel()) * 125;      //value is 70/35/17/8/4 (per min) * 1000 / 8 (timer 7.5 secs)
-    if (isInCombat())                                        //we know in combat happiness fades faster, multiplier guess
+    if (IsInCombat())                                        //we know in combat happiness fades faster, multiplier guess
         addvalue = int32(addvalue * 1.5);
     ModifyPower(POWER_HAPPINESS, -addvalue);
 }
@@ -848,7 +848,7 @@ void Pet::GivePetXP(uint32 xp)
     if (xp < 1)
         return;
 
-    if (!isAlive())
+    if (!IsAlive())
         return;
 
     uint32 level = getLevel();

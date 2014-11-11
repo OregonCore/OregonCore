@@ -607,7 +607,7 @@ struct npc_toogaAI : public FollowerAI
                     m_uiPostEventTimer = 5000;
 
                     Unit* pTorta = Unit::GetUnit(*me, TortaGUID);
-                    if (!pTorta || !pTorta->isAlive())
+                    if (!pTorta || !pTorta->IsAlive())
                     {
                         //something happened, so just complete
                         SetFollowComplete();

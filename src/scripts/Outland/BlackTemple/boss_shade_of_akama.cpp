@@ -156,7 +156,7 @@ struct mob_ashtongue_sorcererAI : public ScriptedAI
         if (CheckTimer <= diff)
         {
             Creature* Shade = Unit::GetCreature((*me), ShadeGUID);
-            if (Shade && Shade->isAlive() && me->isAlive())
+            if (Shade && Shade->IsAlive() && me->IsAlive())
             {
                 if (me->IsWithinDist(Shade, 20, false))
                 {
@@ -245,7 +245,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
         //me->GetMotionMaster()->MoveIdle();
         me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STUN);
 
-        if (pInstance && me->isAlive())
+        if (pInstance && me->IsAlive())
             pInstance->SetData(DATA_SHADEOFAKAMAEVENT, NOT_STARTED);
 
         reseting = false;
@@ -288,7 +288,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
                             Channeler->RemoveAurasDueToSpell(SPELL_SHADE_SOUL_CHANNEL);
                         }
 
-                        if (Channeler->isAlive())
+                        if (Channeler->IsAlive())
                         {
                             Channeler->CastSpell(me, SPELL_SHADE_SOUL_CHANNEL, true);
                             Channeler->CastSpell(me, SPELL_SHADE_SOUL_CHANNEL_2, true);
@@ -460,7 +460,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
                 if (AkamaGUID)
                 {
                     Creature* Akama = Unit::GetCreature((*me), AkamaGUID);
-                    if (Akama && Akama->isAlive())
+                    if (Akama && Akama->IsAlive())
                     {
                         IsBanished = false;
                         me->GetMotionMaster()->Clear(false);
@@ -485,7 +485,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
                 if (AkamaGUID)
                 {
                     Creature* Akama = Unit::GetCreature((*me), AkamaGUID);
-                    if (Akama && Akama->isAlive())
+                    if (Akama && Akama->IsAlive())
                     {
                         //10 % less health every few seconds.
                         me->DealDamage(Akama, Akama->GetMaxHealth() / 10, NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -523,7 +523,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
 void mob_ashtongue_channelerAI::JustDied(Unit* /*killer*/)
 {
     Creature* Shade = (Unit::GetCreature((*me), ShadeGUID));
-    if (Shade && Shade->isAlive())
+    if (Shade && Shade->IsAlive())
         CAST_AI(boss_shade_of_akamaAI, Shade->AI())->IncrementDeathCount();
     else error_log("SD2 ERROR: Channeler dead but unable to increment DeathCount for Shade of Akama.");
 }
@@ -531,7 +531,7 @@ void mob_ashtongue_channelerAI::JustDied(Unit* /*killer*/)
 void mob_ashtongue_sorcererAI::JustDied(Unit* /*killer*/)
 {
     Creature* Shade = (Unit::GetCreature((*me), ShadeGUID));
-    if (Shade && Shade->isAlive())
+    if (Shade && Shade->IsAlive())
         CAST_AI(boss_shade_of_akamaAI, Shade->AI())->IncrementDeathCount(me->GetGUID());
     else error_log("SD2 ERROR: Sorcerer dead but unable to increment DeathCount for Shade of Akama.");
 }
@@ -672,7 +672,7 @@ struct npc_akamaAI : public ScriptedAI
         BrokenList.clear();
         HasYelledOnce = false;
         Creature* Shade = Unit::GetCreature((*me), ShadeGUID);
-        if (Shade && Shade->isAlive())
+        if (Shade && Shade->IsAlive())
             CAST_AI(boss_shade_of_akamaAI, Shade->AI())->HasKilledAkama = true;
         summons.DespawnAll();
     }
@@ -691,7 +691,7 @@ struct npc_akamaAI : public ScriptedAI
         if (ShadeGUID && !StartCombat)
         {
             Creature* Shade = (Unit::GetCreature((*me), ShadeGUID));
-            if (Shade && Shade->isAlive())
+            if (Shade && Shade->IsAlive())
             {
                 if (CAST_AI(boss_shade_of_akamaAI, Shade->AI())->IsBanished)
                 {
@@ -725,14 +725,14 @@ struct npc_akamaAI : public ScriptedAI
                 if (ShadeGUID)
                 {
                     Creature* Shade = Unit::GetCreature((*me), ShadeGUID);
-                    if (Shade && !Shade->isAlive())
+                    if (Shade && !Shade->IsAlive())
                     {
                         ShadeHasDied = true;
                         WayPointId = 0;
                         me->SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
                         me->GetMotionMaster()->MovePoint(WayPointId, AkamaWP[0].x, AkamaWP[0].y, AkamaWP[0].z);
                     }
-                    if (Shade && Shade->isAlive())
+                    if (Shade && Shade->IsAlive())
                     {
                         if (Shade->getThreatManager().getThreatList().size() < 2)
                             Shade->AI()->EnterEvadeMode();
@@ -836,7 +836,7 @@ struct npc_akamaAI : public ScriptedAI
         if (DestructivePoisonTimer <= diff)
         {
             Creature* Shade = Unit::GetCreature((*me), ShadeGUID);
-            if (Shade && Shade->isAlive())
+            if (Shade && Shade->IsAlive())
                 DoCast(Shade, SPELL_DESTRUCTIVE_POISON);
             DestructivePoisonTimer = 15000;
         }

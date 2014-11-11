@@ -241,7 +241,7 @@ struct boss_reliquary_of_soulsAI : public ScriptedAI
                 Timer = 1000;
                 if (Phase == 3)
                 {
-                    if (!Essence->isAlive())
+                    if (!Essence->IsAlive())
                         DoCast(me, 7, true);
                     else return;
                 }
@@ -363,7 +363,7 @@ struct boss_essence_of_sufferingAI : public ScriptedAI
         for (; itr != m_threatlist.end(); ++itr)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*itr)->getUnitGuid());
-            if (pUnit && pUnit->isAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER)) // Only alive players
+            if (pUnit && pUnit->IsAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER)) // Only alive players
                 targets.push_back(pUnit);
         }
         if (targets.empty())
@@ -379,7 +379,7 @@ struct boss_essence_of_sufferingAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (me->isInCombat())
+        if (me->IsInCombat())
         {
             //Supposed to be cast on nearest target
             if (FixateTimer <= diff)

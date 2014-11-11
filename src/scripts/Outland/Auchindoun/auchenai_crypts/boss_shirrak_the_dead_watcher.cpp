@@ -89,7 +89,7 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
             Map::PlayerList const& PlayerList = map->GetPlayers();
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 if (Player* i_pl = i->getSource())
-                    if (i_pl->isAlive() && (dist = i_pl->GetDistance(me)) < 45)
+                    if (i_pl->IsAlive() && (dist = i_pl->GetDistance(me)) < 45)
                     {
                         i_pl->RemoveAurasDueToSpell(SPELL_INHIBITMAGIC);
                         me->AddAura(SPELL_INHIBITMAGIC, i_pl);
@@ -130,7 +130,7 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
         {
             // Summon Focus Fire & Emote
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive())
+            if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->IsAlive())
             {
                 focusedTarget = pTarget;
                 me->SummonCreature(ENTRY_FOCUS_FIRE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 5500);

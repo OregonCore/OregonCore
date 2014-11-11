@@ -472,7 +472,7 @@ void BattleGroundAV::HandleAreaTrigger(Player* Source, uint32 Trigger)
     case 3329:
     case 3330:
     case 3331:
-        //Source->Unmount();
+        //Source->Dismount();
         break;
     default:
         sLog.outDebug("BattleGroundAV: WARNING: Unhandled AreaTrigger in Battleground: %u", Trigger);

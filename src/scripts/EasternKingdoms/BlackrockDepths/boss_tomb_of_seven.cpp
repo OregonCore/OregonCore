@@ -141,7 +141,7 @@ struct boss_doomrelAI : public ScriptedAI
         me->DeleteThreatList();
         me->CombatStop(true);
         me->LoadCreaturesAddon();
-        if (me->isAlive())
+        if (me->IsAlive())
             me->GetMotionMaster()->MoveTargetedHome();
         me->SetLootRecipient(NULL);
         if (pInstance)

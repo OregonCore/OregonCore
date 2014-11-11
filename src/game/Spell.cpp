@@ -1128,7 +1128,7 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
                 m_caster->SetContestedPvP();
                 //m_caster->UpdatePvP(true);
             }
-            if (unit->isInCombat() && !(m_spellInfo->AttributesEx3 & SPELL_ATTR_EX3_NO_INITIAL_AGGRO))
+            if (unit->IsInCombat() && !(m_spellInfo->AttributesEx3 & SPELL_ATTR_EX3_NO_INITIAL_AGGRO))
             {
                 m_caster->SetInCombatState(unit->GetCombatTimer() > 0, unit);
                 unit->getHostileRefManager().threatAssist(m_caster, 0.0f);
@@ -1281,7 +1281,7 @@ bool Spell::IsAliveUnitPresentInTargetList()
         {
             Unit* unit = m_caster->GetGUID() == ihit->targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, ihit->targetGUID);
 
-            if (unit && unit->isAlive())
+            if (unit && unit->IsAlive())
                 needAliveTargetMask &= ~ihit->effectMask;   // remove from need alive mask effect that have alive target
         }
     }
@@ -2271,7 +2271,7 @@ void Spell::cancel(bool sendInterrupt)
                 if (ihit->missCondition == SPELL_MISS_NONE)
                 {
                     Unit* unit = m_caster->GetGUID() == (*ihit).targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, ihit->targetGUID);
-                    if (unit && unit->isAlive())
+                    if (unit && unit->IsAlive())
                         unit->RemoveAurasByCasterSpell(m_spellInfo->Id, m_caster->GetGUID());
                 }
             }
@@ -2318,7 +2318,7 @@ void Spell::cast(bool skipCheck)
     UpdatePointers();
 
     Unit* pTarget = m_targets.getUnitTarget();
-    if (pTarget && pTarget->isAlive() && (pTarget->HasAuraType(SPELL_AURA_MOD_STEALTH) || pTarget->HasAuraType(SPELL_AURA_MOD_INVISIBILITY)) && !pTarget->IsFriendlyTo(m_caster) && !pTarget->isVisibleForOrDetect(m_caster, true))
+    if (pTarget && pTarget->IsAlive() && (pTarget->HasAuraType(SPELL_AURA_MOD_STEALTH) || pTarget->HasAuraType(SPELL_AURA_MOD_INVISIBILITY)) && !pTarget->IsFriendlyTo(m_caster) && !pTarget->isVisibleForOrDetect(m_caster, true))
     {
         SendCastResult(SPELL_FAILED_BAD_TARGETS);
         finish(false);
@@ -3689,7 +3689,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             return SPELL_FAILED_MOVING;
     }
 
-    if (m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT && m_caster->isInCombat())
+    if (m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT && m_caster->IsInCombat())
         return SPELL_FAILED_AFFECTING_COMBAT;
 
     Unit* target = m_targets.getUnitTarget();
@@ -3700,7 +3700,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         if (m_spellInfo->TargetAuraStateNot && target->HasAuraState(AuraState(m_spellInfo->TargetAuraStateNot)))
             return SPELL_FAILED_TARGET_AURASTATE;
 
-        if (!m_IsTriggeredSpell && IsDeathOnlySpell(m_spellInfo) && target->isAlive())
+        if (!m_IsTriggeredSpell && IsDeathOnlySpell(m_spellInfo) && target->IsAlive())
             return SPELL_FAILED_TARGET_NOT_DEAD;
 
         if (target != m_caster)
@@ -3751,7 +3751,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     else
                         return SPELL_FAILED_NO_PET;
                 }
-                else if (!target->isAlive())
+                else if (!target->IsAlive())
                     return SPELL_FAILED_TARGETS_DEAD;
                 break;
             }
@@ -3811,7 +3811,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         }
 
         // check if target is in combat
-        if (target != m_caster && (m_spellInfo->AttributesEx & SPELL_ATTR_EX_NOT_IN_COMBAT_TARGET) && target->isInCombat())
+        if (target != m_caster && (m_spellInfo->AttributesEx & SPELL_ATTR_EX_NOT_IN_COMBAT_TARGET) && target->IsInCombat())
             return SPELL_FAILED_TARGET_AFFECTING_COMBAT;
     }
 
@@ -4143,7 +4143,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (!pet->GetCurrentFoodBenefitLevel(m_targets.getItemTarget()->GetProto()->ItemLevel))
                     return SPELL_FAILED_FOOD_LOWLEVEL;
 
-                if (m_caster->isInCombat() || pet->isInCombat())
+                if (m_caster->IsInCombat() || pet->IsInCombat())
                     return SPELL_FAILED_AFFECTING_COMBAT;
 
                 break;
@@ -4341,7 +4341,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         case SPELL_EFFECT_SUMMON_DEAD_PET:
             {
                 Creature* pet = m_caster->GetGuardianPet();
-                if (pet && pet->isAlive())
+                if (pet && pet->IsAlive())
                     return SPELL_FAILED_ALREADY_HAVE_SUMMON;
 
                 // Do not revive dismissed pets, they are not dead
@@ -4359,7 +4359,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             {
                 // Don't start dismissing the pet if it's dead!
                 Pet* pet = m_caster->ToPlayer()->GetPet();
-                if (!pet || !pet->isAlive())
+                if (!pet || !pet->IsAlive())
                     return SPELL_FAILED_TARGETS_DEAD;
 
                 break;
@@ -4457,7 +4457,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     return SPELL_FAILED_DONT_REPORT;
                 }
 
-                if (!buddy->isAlive())
+                if (!buddy->IsAlive())
                     return SPELL_FAILED_TARGETS_DEAD;
 
                 if (!m_caster->ToPlayer()->IsInPartyWith(buddy))
@@ -4711,17 +4711,17 @@ SpellCastResult Spell::CheckCast(bool strict)
 
 SpellCastResult Spell::CheckPetCast(Unit* target)
 {
-    if (!m_caster->isAlive())
+    if (!m_caster->IsAlive())
         return SPELL_FAILED_CASTER_DEAD;
 
     if (m_caster->IsNonMeleeSpellCast(false) && !m_IsTriggeredSpell)  //prevent spellcast interruption by another spellcast
         return SPELL_FAILED_SPELL_IN_PROGRESS;
-    if (m_caster->isInCombat() && IsNonCombatSpell(m_spellInfo))
+    if (m_caster->IsInCombat() && IsNonCombatSpell(m_spellInfo))
         return SPELL_FAILED_AFFECTING_COMBAT;
 
     //dead owner (pets still alive when owners ressed?)
     if (Unit* owner = m_caster->GetCharmerOrOwner())
-        if (!owner->isAlive())
+        if (!owner->IsAlive())
             return SPELL_FAILED_CASTER_DEAD;
 
     if (!target && m_targets.getUnitTarget())
@@ -4744,7 +4744,7 @@ SpellCastResult Spell::CheckPetCast(Unit* target)
     // for target dead/target not valid
     if (_target)
     {
-        if (!_target->isAlive())
+        if (!_target->IsAlive())
             return SPELL_FAILED_BAD_TARGETS;
 
         if (!IsValidSingleTargetSpell(_target))

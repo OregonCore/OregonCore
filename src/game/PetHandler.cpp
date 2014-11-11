@@ -67,7 +67,7 @@ void WorldSession::HandlePetAction(WorldPacket& recv_data)
         //If a pet is dismissed, m_Controlled will change
         std::vector<Unit*> controlled;
         for (Unit::ControlList::iterator itr = GetPlayer()->m_Controlled.begin(); itr != GetPlayer()->m_Controlled.end(); ++itr)
-            if ((*itr)->GetEntry() == pet->GetEntry() && (*itr)->isAlive())
+            if ((*itr)->GetEntry() == pet->GetEntry() && (*itr)->IsAlive())
                 controlled.push_back(*itr);
         for (std::vector<Unit*>::iterator itr = controlled.begin(); itr != controlled.end(); ++itr)
             HandlePetActionHelper(*itr, guid1, spellid, flag, guid2);

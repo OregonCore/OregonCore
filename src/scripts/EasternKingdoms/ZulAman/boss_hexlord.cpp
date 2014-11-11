@@ -311,7 +311,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
         for (uint8 i = 0; i < 4; ++i)
         {
             Unit* Temp = Unit::GetUnit((*me), AddGUID[i]);
-            if (Temp && Temp->isAlive())
+            if (Temp && Temp->IsAlive())
                 CAST_CRE(Temp)->AI()->AttackStart(me->getVictim());
             else
             {
@@ -347,7 +347,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
         for (uint8 i = 0; i < 4 ; ++i)
         {
             Unit* Temp = Unit::GetUnit((*me), AddGUID[i]);
-            if (Temp && Temp->isAlive())
+            if (Temp && Temp->IsAlive())
                 Temp->DealDamage(Temp, Temp->GetHealth(), 0, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         }
     }
@@ -372,7 +372,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
         for (uint8 i = 0; i < 4; ++i)
         {
             Creature* pCreature = (Unit::GetCreature((*me), AddGUID[i]));
-            if (!pCreature || !pCreature->isAlive())
+            if (!pCreature || !pCreature->IsAlive())
             {
                 if (pCreature) pCreature->setDeathState(DEAD);
                 pCreature = me->SummonCreature(AddEntry[i], Pos_X[i], POS_Y, POS_Z, ORIENT, TEMPSUMMON_DEAD_DESPAWN, 0);
@@ -407,7 +407,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
         {
             for (uint8 i = 0; i < 4; ++i)
                 if (Creature* pTemp = Unit::GetCreature(*me, AddGUID[i]))
-                    if (pTemp->isAlive() && !pTemp->getVictim())
+                    if (pTemp->IsAlive() && !pTemp->getVictim())
                         pTemp->AI()->AttackStart(me->getVictim());
 
             CheckAddState_Timer = 5000;
@@ -423,7 +423,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
                 if (Player* i_pl = i->getSource())
-                    if (i_pl->isAlive())me->AddAura(44132, me); //+1% Damage for each active player on boss (+ActivePlayer_Stack)
+                    if (i_pl->IsAlive())me->AddAura(44132, me); //+1% Damage for each active player on boss (+ActivePlayer_Stack)
             }
             //me->AddAura(44132, me);
             me->MonsterYell(YELL_DRAIN_POWER, LANG_UNIVERSAL, 0);
@@ -485,7 +485,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
         if (PlayerAbility_Timer <= diff)
         {
             //Unit* pTarget = Unit::GetUnit(*me, PlayerGUID);
-            //if (pTarget && pTarget->isAlive())
+            //if (pTarget && pTarget->IsAlive())
             //{
             UseAbility();
             PlayerAbility_Timer = urand(8000, 10000);

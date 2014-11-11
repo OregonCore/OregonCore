@@ -119,7 +119,7 @@ struct boss_anetheronAI : public hyjal_trashAI
         if (i == 7 && pInstance)
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-            if (pTarget && pTarget->isAlive())
+            if (pTarget && pTarget->IsAlive())
                 me->AddThreat(pTarget, 0.0f);
         }
     }
@@ -274,7 +274,7 @@ struct mob_towering_infernalAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (me->IsWithinDist(who, 50) && !me->isInCombat() && me->IsHostileTo(who))
+        if (me->IsWithinDist(who, 50) && !me->IsInCombat() && me->IsHostileTo(who))
             me->Attack(who, false);
     }
 

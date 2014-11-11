@@ -95,7 +95,7 @@ struct boss_patchwerkAI : public ScriptedAI
             {
                 pTemp = Unit::GetUnit((*me), (*i)->getUnitGuid());
                 ++i;
-                if (pTemp && pTemp->isAlive() && pTemp->GetHealth() > MostHP && me->GetDistance2d(pTemp) < 5)
+                if (pTemp && pTemp->IsAlive() && pTemp->GetHealth() > MostHP && me->GetDistance2d(pTemp) < 5)
                 {
                     MostHP = pTemp->GetHealth();
                     pMostHPTarget = pTemp;

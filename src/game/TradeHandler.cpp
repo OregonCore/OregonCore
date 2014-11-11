@@ -470,7 +470,7 @@ void WorldSession::HandleInitiateTradeOpcode(WorldPacket& recvPacket)
     if (GetPlayer()->pTrader)
         return;
 
-    if (!GetPlayer()->isAlive())
+    if (!GetPlayer()->IsAlive())
     {
         SendTradeStatus(TRADE_STATUS_YOU_DEAD);
         return;
@@ -508,7 +508,7 @@ void WorldSession::HandleInitiateTradeOpcode(WorldPacket& recvPacket)
         return;
     }
 
-    if (!pOther->isAlive())
+    if (!pOther->IsAlive())
     {
         SendTradeStatus(TRADE_STATUS_TARGET_DEAD);
         return;

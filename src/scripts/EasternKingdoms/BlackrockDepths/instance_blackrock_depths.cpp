@@ -188,7 +188,7 @@ struct instance_blackrock_depths : public ScriptedInstance
             break;
         case NPC_MAGMUS:
             MagmusGUID = pCreature->GetGUID();
-            if (!pCreature->isAlive())
+            if (!pCreature->IsAlive())
                 HandleGameObject(GetData64(DATA_THRONE_DOOR), true); // if Magmus is dead open door to last boss
             break;
         }
@@ -443,7 +443,7 @@ struct instance_blackrock_depths : public ScriptedInstance
         {
             if (Creature* boss = instance->GetCreature(TombBossGUIDs[i]))
             {
-                if (!boss->isAlive())
+                if (!boss->IsAlive())
                 {
                     //do not call EnterEvadeMode(), it will create infinit loops
                     boss->Respawn();
@@ -493,7 +493,7 @@ struct instance_blackrock_depths : public ScriptedInstance
                 {
                     if (Creature* boss = instance->GetCreature(TombBossGUIDs[i]))
                     {
-                        if (!boss->isAlive())
+                        if (!boss->IsAlive())
                             GhostKillCount = i + 1;
                     }
                 }

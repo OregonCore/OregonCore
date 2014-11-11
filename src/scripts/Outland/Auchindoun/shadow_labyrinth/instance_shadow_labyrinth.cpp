@@ -94,7 +94,7 @@ struct instance_shadow_labyrinth : public ScriptedInstance
             GrandmasterVorpil = pCreature->GetGUID();
             break;
         case 18796:
-            if (pCreature->isAlive())
+            if (pCreature->IsAlive())
             {
                 ++FelOverseerCount;
                 debug_log("OSCR: Shadow Labyrinth: counting %u Fel Overseers.", FelOverseerCount);

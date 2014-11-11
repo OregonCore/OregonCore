@@ -279,7 +279,7 @@ void FlightPathMovementGenerator::Finalize(Player& player)
     i_destinationHolder.GetLocationNow(player.GetBaseMap(), x, y, z);
     player.SetPosition(x, y, z, player.GetOrientation());
 
-    player.Unmount();
+    player.Dismount();
 
     if (player.m_taxi.empty())
     {

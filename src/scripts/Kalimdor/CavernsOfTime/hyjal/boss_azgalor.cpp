@@ -112,7 +112,7 @@ struct boss_azgalorAI : public hyjal_trashAI
         if (i == 7 && pInstance)
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-            if (pTarget && pTarget->isAlive())
+            if (pTarget && pTarget->IsAlive())
                 me->AddThreat(pTarget, 0.0f);
         }
     }
@@ -241,7 +241,7 @@ struct mob_lesser_doomguardAI : public hyjal_trashAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (me->IsWithinDist(who, 50) && !me->isInCombat() && me->IsHostileTo(who))
+        if (me->IsWithinDist(who, 50) && !me->IsInCombat() && me->IsHostileTo(who))
         {
             me->AddThreat(who, 0.0f);
             me->Attack(who, false);

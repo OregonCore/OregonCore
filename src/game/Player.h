@@ -2496,7 +2496,7 @@ class Player : public Unit, public GridObject<Player>
         void HandleFallDamage(MovementInfo& movementInfo);
         void HandleFallUnderMap();
 
-        void SetClientControl(Unit* target, uint8 allowMove);
+        void SetClientControl(Unit* target, bool allowMove);
 
         void SetMover(Unit* target)
         {
@@ -3024,13 +3024,13 @@ class Player : public Unit, public GridObject<Player>
         {
             // we should not execute delayed teleports for now dead players but has been alive at teleport
             // because we don't want player's ghost teleported from graveyard
-            return m_bHasDelayedTeleport && (isAlive() || !m_bHasBeenAliveAtDelayedTeleport);
+            return m_bHasDelayedTeleport && (IsAlive() || !m_bHasBeenAliveAtDelayedTeleport);
         }
 
         bool SetDelayedTeleportFlagIfCan()
         {
             m_bHasDelayedTeleport = m_bCanDelayTeleport;
-            m_bHasBeenAliveAtDelayedTeleport = isAlive();
+            m_bHasBeenAliveAtDelayedTeleport = IsAlive();
             return m_bHasDelayedTeleport;
         }
 

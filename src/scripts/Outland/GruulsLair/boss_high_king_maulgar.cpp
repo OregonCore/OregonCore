@@ -98,7 +98,7 @@ bool CheckAllBossDied(ScriptedInstance* pInstance, Creature* me)
     if (!Maulgar || !Kiggler || !Blindeye || !Olm || !Krosh)
         return false;
 
-    if (!Maulgar->isAlive() && !Kiggler->isAlive() && !Blindeye->isAlive() && !Olm->isAlive() && !Krosh->isAlive())
+    if (!Maulgar->IsAlive() && !Kiggler->IsAlive() && !Blindeye->IsAlive() && !Olm->IsAlive() && !Krosh->IsAlive())
         return true;
 
     return false;
@@ -144,7 +144,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
             if (Council[i])
             {
                 pCreature = (Creature*)(Unit::GetUnit((*me), Council[i]));
-                if (pCreature && !pCreature->isAlive())
+                if (pCreature && !pCreature->IsAlive())
                 {
                     pCreature->Respawn();
                     pCreature->AI()->EnterEvadeMode();
@@ -233,7 +233,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Only if not incombat check if the event is started
-        if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
+        if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
@@ -371,7 +371,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Only if not incombat check if the event is started
-        if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
+        if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
@@ -476,7 +476,7 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Only if not incombat check if the event is started
-        if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
+        if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
@@ -584,7 +584,7 @@ struct boss_blindeye_the_seerAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Only if not incombat check if the event is started
-        if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
+        if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
@@ -675,7 +675,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Only if not incombat check if the event is started
-        if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
+        if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 

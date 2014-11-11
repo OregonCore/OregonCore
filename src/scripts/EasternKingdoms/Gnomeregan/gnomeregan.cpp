@@ -196,7 +196,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
             {
                 if (Creature* pSummon = Unit::GetCreature(*me, *itr))
                 {
-                    if (pSummon->isAlive())
+                    if (pSummon->IsAlive())
                         pSummon->DisappearAndDie();
                     else
                         pSummon->RemoveCorpse();
@@ -218,7 +218,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
                 if (pPlayer->isGameMaster())
                     continue;
 
-                if (pPlayer->isAlive())
+                if (pPlayer->IsAlive())
                 {
                     pTemp->SetInCombatWith(pPlayer);
                     pPlayer->SetInCombatWith(pTemp);

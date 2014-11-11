@@ -79,7 +79,7 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
         me->SetStandState(UNIT_STAND_STATE_STAND);
 
         if (m_pInstance)
-            if (me->isAlive())
+            if (me->IsAlive())
                 m_pInstance->SetData(TYPE_MOGRAINE_AND_WHITE_EVENT, NOT_STARTED);
 
         m_bHasDied = false;
@@ -235,7 +235,7 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
         m_bCanResurrect = false;
 
         if (m_pInstance)
-            if (me->isAlive())
+            if (me->IsAlive())
                 m_pInstance->SetData(TYPE_MOGRAINE_AND_WHITE_EVENT, NOT_STARTED);
     }
 
@@ -306,7 +306,7 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
                 if (Creature* pMograine = Unit::GetCreature((*me), m_pInstance->GetData64(DATA_MOGRAINE)))
                 {
                     // checking m_bCanResurrectCheck prevents her healing Mograine while he is "faking death"
-                    if (m_bCanResurrectCheck && pMograine->isAlive() && pMograine->GetHealth() <= pMograine->GetMaxHealth() * 0.75f)
+                    if (m_bCanResurrectCheck && pMograine->IsAlive() && pMograine->GetHealth() <= pMograine->GetMaxHealth() * 0.75f)
                         pTarget = pMograine;
                 }
             }

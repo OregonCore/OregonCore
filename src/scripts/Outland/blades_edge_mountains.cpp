@@ -421,7 +421,7 @@ struct npc_ogre_bruteAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* pWho)
     {
-        if (!pWho || (!pWho->isAlive()))
+        if (!pWho || (!pWho->IsAlive()))
             return;
 
         if (me->IsWithinDistInMap(pWho, 50.0f) && (pWho->GetTypeId() == TYPEID_PLAYER) && pWho->ToPlayer()->GetQuestStatus(10512) == QUEST_STATUS_INCOMPLETE)

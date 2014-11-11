@@ -102,7 +102,7 @@ struct boss_marliAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (me->getVictim() && me->isAlive())
+        if (me->getVictim() && me->IsAlive())
         {
             if (!PhaseTwo && DrainLife_Timer <= diff)
             {

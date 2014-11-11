@@ -2165,7 +2165,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
     // AT REMOVE
     else
     {
-        if ((IsQuestTameSpell(GetId())) && caster && caster->isAlive() && m_target->isAlive())
+        if ((IsQuestTameSpell(GetId())) && caster && caster->IsAlive() && m_target->IsAlive())
         {
             uint32 finalSpellId = 0;
             switch (GetId())
@@ -2561,7 +2561,7 @@ void Aura::HandleAuraMounted(bool apply, bool Real)
         m_target->Mount(display_id);
     }
     else
-        m_target->Unmount();
+        m_target->Dismount();
 }
 
 void Aura::HandleAuraWaterWalk(bool apply, bool Real)
@@ -3728,12 +3728,12 @@ void Aura::HandleModThreat(bool apply, bool Real)
     if (!Real)
         return;
 
-    if (!m_target->isAlive())
+    if (!m_target->IsAlive())
         return;
 
     Unit* caster = GetCaster();
 
-    if (!caster || !caster->isAlive())
+    if (!caster || !caster->IsAlive())
         return;
 
     int level_diff = 0;
@@ -3767,12 +3767,12 @@ void Aura::HandleAuraModTotalThreat(bool apply, bool Real)
     if (!Real)
         return;
 
-    if (!m_target->isAlive() || m_target->GetTypeId() != TYPEID_PLAYER)
+    if (!m_target->IsAlive() || m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
     Unit* caster = GetCaster();
 
-    if (!caster || !caster->isAlive())
+    if (!caster || !caster->IsAlive())
         return;
 
     float threatMod = apply ? float(GetModifierValue()) : float(-GetModifierValue());
@@ -3786,12 +3786,12 @@ void Aura::HandleModTaunt(bool apply, bool Real)
     if (!Real)
         return;
 
-    if (!m_target->isAlive() || !m_target->CanHaveThreatList())
+    if (!m_target->IsAlive() || !m_target->CanHaveThreatList())
         return;
 
     Unit* caster = GetCaster();
 
-    if (!caster || !caster->isAlive())
+    if (!caster || !caster->IsAlive())
         return;
 
     if (apply)
@@ -4766,7 +4766,7 @@ void Aura::HandleAuraModTotalHealthPercentRegen(bool apply, bool /*Real*/)
     */
     if (apply)
     {
-        if (!m_target->isAlive())
+        if (!m_target->IsAlive())
             return;
 
         if ((GetSpellProto()->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED) && !m_target->IsSitState())
@@ -4814,7 +4814,7 @@ void Aura::HandleModRegen(bool apply, bool /*Real*/)        // eating
 {
     if (apply)
     {
-        if (!m_target->isAlive())
+        if (!m_target->IsAlive())
             return;
 
         if ((GetSpellProto()->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED)  && !m_target->IsSitState())
@@ -4867,7 +4867,7 @@ void Aura::HandleModPowerRegen(bool apply, bool Real)       // drinking
         // so 17 is rounded amount for 5 sec tick grow ~ 1 range grow in 3 sec
         if (pt == POWER_RAGE)
         {
-            if (m_target->isInCombat())
+            if (m_target->IsInCombat())
                 m_target->ModifyPower(pt, m_modifier.m_amount * 3 / 5);
 
             m_periodicTimer += 1000;
@@ -5829,7 +5829,7 @@ void Aura::HandleSchoolAbsorb(bool apply, bool Real)
 
 void Aura::PeriodicTick()
 {
-    if (!m_target->isAlive())
+    if (!m_target->IsAlive())
         return;
 
     switch (m_modifier.m_auraname)
@@ -6006,7 +6006,7 @@ void Aura::PeriodicTick()
             if (!pCaster)
                 return;
 
-            if (!pCaster->isAlive())
+            if (!pCaster->IsAlive())
                 return;
 
             if (GetSpellProto()->Effect[GetEffIndex()] == SPELL_EFFECT_PERSISTENT_AREA_AURA &&
@@ -6121,7 +6121,7 @@ void Aura::PeriodicTick()
             pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, pdamage, BASE_ATTACK, spellProto);
             int32 new_damage = pCaster->DealDamage(target, pdamage, &cleanDamage, DOT, GetSpellSchoolMask(spellProto), spellProto, false);
 
-            if (!target->isAlive() && pCaster->IsNonMeleeSpellCast(false))
+            if (!target->IsAlive() && pCaster->IsNonMeleeSpellCast(false))
                 for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; ++i)
                     if (Spell* spell = pCaster->GetCurrentSpell(i))
                         if (spell->m_spellInfo->Id == spellProto->Id)
@@ -6146,7 +6146,7 @@ void Aura::PeriodicTick()
                 return;
 
             // heal for caster damage (must be alive)
-            if (m_target != pCaster && GetSpellProto()->SpellVisual == 163 && !pCaster->isAlive())
+            if (m_target != pCaster && GetSpellProto()->SpellVisual == 163 && !pCaster->IsAlive())
                 return;
 
             // ignore non positive values (can be result apply spellmods to aura damage
@@ -6234,7 +6234,7 @@ void Aura::PeriodicTick()
             if (!pCaster)
                 return;
 
-            if (!pCaster->isAlive())
+            if (!pCaster->IsAlive())
                 return;
 
             if (GetSpellProto()->Effect[GetEffIndex()] == SPELL_EFFECT_PERSISTENT_AREA_AURA &&
@@ -6397,7 +6397,7 @@ void Aura::PeriodicTick()
 
             Powers powerType = Powers(m_modifier.m_miscvalue);
 
-            if (!m_target->isAlive() || m_target->getPowerType() != powerType)
+            if (!m_target->IsAlive() || m_target->getPowerType() != powerType)
                 return;
 
             // resilience reduce mana draining effect at spell crit damage reduction (added in 2.4)

@@ -112,7 +112,7 @@ void AssistanceMovementGenerator::Finalize(Creature& unit)
 {
     unit.SetNoCallAssistance(false);
     unit.CallAssistance();
-    if (unit.isAlive())
+    if (unit.IsAlive())
         unit.GetMotionMaster()->MoveSeekAssistanceDistract(sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY));
 }
 

@@ -65,7 +65,7 @@ uint32 OPvPCapturePointNA::GetAliveGuardsCount()
             {
                 if (Creature* cr = HashMapHolder<Creature>::Find(itr->second))
                 {
-                    if (cr->isAlive())
+                    if (cr->IsAlive())
                         ++cnt;
                 }
                 else if (CreatureData const* cd = sObjectMgr.GetCreatureData(GUID_LOPART(itr->second)))

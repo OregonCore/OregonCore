@@ -151,7 +151,7 @@ struct boss_shahrazAI : public ScriptedAI
         for (uint8 i = 0; i < 3; ++i)
         {
             Unit* pUnit = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (pUnit && pUnit->isAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER) && !pUnit->HasAura(SPELL_SABER_LASH_IMM, 0))
+            if (pUnit && pUnit->IsAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER) && !pUnit->HasAura(SPELL_SABER_LASH_IMM, 0))
             {
                 TargetGUID[i] = pUnit->GetGUID();
                 pUnit->CastSpell(pUnit, SPELL_TELEPORT_VISUAL, true);
@@ -230,14 +230,14 @@ struct boss_shahrazAI : public ScriptedAI
                     targets[i] = NULL;
             }
 
-            if (targets[0] && targets[0]->isAlive())
+            if (targets[0] && targets[0]->IsAlive())
             {
                 bool isNear = false;
-                if (targets[1] && targets[1]->isAlive() && targets[0]->GetDistance2d(targets[1]) < 25)
+                if (targets[1] && targets[1]->IsAlive() && targets[0]->GetDistance2d(targets[1]) < 25)
                     isNear = true;
 
                 if (!isNear)
-                    if (targets[2] && targets[2]->isAlive() && targets[0]->GetDistance2d(targets[2]) < 25)
+                    if (targets[2] && targets[2]->IsAlive() && targets[0]->GetDistance2d(targets[2]) < 25)
                         isNear = true;
 
                 if (isNear)
@@ -251,14 +251,14 @@ struct boss_shahrazAI : public ScriptedAI
             }
 
 
-            if (targets[1] && targets[1]->isAlive())
+            if (targets[1] && targets[1]->IsAlive())
             {
                 bool isNear = false;
-                if (targets[0] && targets[0]->isAlive() && targets[1]->GetDistance2d(targets[0]) < 25)
+                if (targets[0] && targets[0]->IsAlive() && targets[1]->GetDistance2d(targets[0]) < 25)
                     isNear = true;
 
                 if (!isNear)
-                    if (targets[2] && targets[2]->isAlive() && targets[1]->GetDistance2d(targets[2]) < 25)
+                    if (targets[2] && targets[2]->IsAlive() && targets[1]->GetDistance2d(targets[2]) < 25)
                         isNear = true;
 
                 if (isNear)
@@ -271,14 +271,14 @@ struct boss_shahrazAI : public ScriptedAI
                 }
             }
 
-            if (targets[2] && targets[2]->isAlive())
+            if (targets[2] && targets[2]->IsAlive())
             {
                 bool isNear = false;
-                if (targets[0] && targets[0]->isAlive() && targets[2]->GetDistance2d(targets[0]) < 25)
+                if (targets[0] && targets[0]->IsAlive() && targets[2]->GetDistance2d(targets[0]) < 25)
                     isNear = true;
 
                 if (!isNear)
-                    if (targets[1] && targets[1]->isAlive() && targets[2]->GetDistance2d(targets[1]) < 25)
+                    if (targets[1] && targets[1]->IsAlive() && targets[2]->GetDistance2d(targets[1]) < 25)
                         isNear = true;
 
                 if (isNear)

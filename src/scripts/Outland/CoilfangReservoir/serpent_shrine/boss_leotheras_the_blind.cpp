@@ -273,7 +273,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
         for (uint8 i = 0; i < 3; ++i)
         {
             Unit* add = Unit::GetUnit(*me, SpellBinderGUID[i]);
-            if (add && add->isAlive())
+            if (add && add->IsAlive())
                 ++AliveChannelers;
         }
 
@@ -326,7 +326,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             {
                 //delete creature
                 Creature* pCreature = Unit::GetCreature((*me), InnderDemon[i]);
-                if (pCreature && pCreature->isAlive())
+                if (pCreature && pCreature->IsAlive())
                     pCreature->ForcedDespawn();
                 InnderDemon[i] = 0;
             }
@@ -342,10 +342,10 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             if (InnderDemon[i] > 0)
             {
                 Creature* pUnit = Unit::GetCreature((*me), InnderDemon[i]);
-                if (pUnit && pUnit->isAlive())
+                if (pUnit && pUnit->IsAlive())
                 {
                     Unit* pUnit_pTarget = Unit::GetUnit(*pUnit, CAST_AI(mob_inner_demonAI, pUnit->AI())->victimGUID);
-                    if (pUnit_pTarget && pUnit_pTarget->isAlive())
+                    if (pUnit_pTarget && pUnit_pTarget->IsAlive())
                     {
                         pUnit->CastSpell(pUnit_pTarget, SPELL_CONSUMING_MADNESS, true);
                         DoModifyThreatPercent(pUnit_pTarget, -100);
@@ -534,7 +534,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
                 SpellEntry* spell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_INSIDIOUS_WHISPER);
                 for (std::vector<Unit* >::const_iterator itr = TargetList.begin(); itr != TargetList.end(); ++itr)
                 {
-                    if ((*itr) && (*itr)->isAlive())
+                    if ((*itr) && (*itr)->IsAlive())
                     {
                         Creature* demon = me->SummonCreature(INNER_DEMON_ID, (*itr)->GetPositionX() + 10, (*itr)->GetPositionY() + 10, (*itr)->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                         if (demon)
@@ -709,7 +709,7 @@ struct mob_greyheart_spellbinderAI : public ScriptedAI
         {
             pInstance->SetData64(DATA_LEOTHERAS_EVENT_STARTER, 0);
             Creature* leotheras = Unit::GetCreature(*me, leotherasGUID);
-            if (leotheras && leotheras->isAlive())
+            if (leotheras && leotheras->IsAlive())
                 CAST_AI(boss_leotheras_the_blindAI, leotheras->AI())->CheckChannelers(/*false*/);
         }
     }
@@ -729,12 +729,12 @@ struct mob_greyheart_spellbinderAI : public ScriptedAI
 
     void CastChanneling()
     {
-        if (!me->isInCombat() && !me->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
+        if (!me->IsInCombat() && !me->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
         {
             if (leotherasGUID)
             {
                 Creature* leotheras = Unit::GetCreature(*me, leotherasGUID);
-                if (leotheras && leotheras->isAlive())
+                if (leotheras && leotheras->IsAlive())
                     DoCast(leotheras, BANISH_BEAM);
             }
         }
@@ -747,7 +747,7 @@ struct mob_greyheart_spellbinderAI : public ScriptedAI
             if (!leotherasGUID)
                 leotherasGUID = pInstance->GetData64(DATA_LEOTHERAS);
 
-            if (!me->isInCombat() && pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER))
+            if (!me->IsInCombat() && pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER))
             {
                 Unit* victim = NULL;
                 victim = Unit::GetUnit(*me, pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER));

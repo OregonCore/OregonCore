@@ -191,7 +191,7 @@ struct npc_ancestral_wolfAI : public npc_escortAI
             break;
         case 50:
             if (Creature* pRyga = me->FindNearestCreature(NPC_RYGA, 15.0f))
-                if (pRyga && pRyga->isAlive() && !pRyga->isInCombat())
+                if (pRyga && pRyga->IsAlive() && !pRyga->IsInCombat())
                     DoScriptText(SAY_WOLF_WELCOME, pRyga);
             break;
         }
@@ -1583,7 +1583,7 @@ struct npc_demoniac_scryerAI : public ScriptedAI
         }
         else uiEndTimer -= uiDiff;
 
-        if (IfIsComplete || !me->isAlive())
+        if (IfIsComplete || !me->IsAlive())
             return;
 
         if (uiSpawnButtressTimer <= uiDiff)

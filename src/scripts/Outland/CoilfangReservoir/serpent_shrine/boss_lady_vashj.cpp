@@ -303,7 +303,7 @@ struct boss_lady_vashjAI : public ScriptedAI
                 //if (who->HasStealthAura())
                 //    who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
 
-                if (!me->isInCombat())//AttackStart() sets UNIT_FLAG_IN_COMBAT, so this msut be before attacking
+                if (!me->IsInCombat())//AttackStart() sets UNIT_FLAG_IN_COMBAT, so this msut be before attacking
                     StartEvent();
 
                 if (Phase != 2)
@@ -358,7 +358,7 @@ struct boss_lady_vashjAI : public ScriptedAI
             }
         }
         //to prevent abuses during phase 2
-        if (Phase == 2 && !me->getVictim() && me->isInCombat())
+        if (Phase == 2 && !me->getVictim() && me->IsInCombat())
         {
             EnterEvadeMode();
             return;
@@ -704,7 +704,7 @@ struct mob_enchanted_elementalAI : public ScriptedAI
             }
             if (Vashj)
             {
-                if (!Vashj->isInCombat() || CAST_AI(boss_lady_vashjAI, Vashj->AI())->Phase != 2 || Vashj->isDead())
+                if (!Vashj->IsInCombat() || CAST_AI(boss_lady_vashjAI, Vashj->AI())->Phase != 2 || Vashj->isDead())
                 {
                     //call Unsummon()
                     me->Kill(me);
@@ -864,7 +864,7 @@ struct mob_toxic_sporebatAI : public ScriptedAI
                 //check if vashj is death
                 Unit* Vashj = NULL;
                 Vashj = Unit::GetUnit((*me), pInstance->GetData64(DATA_LADYVASHJ));
-                if (!Vashj || (Vashj && !Vashj->isAlive()) || (Vashj && CAST_AI(boss_lady_vashjAI, CAST_CRE(Vashj)->AI())->Phase != 3))
+                if (!Vashj || (Vashj && !Vashj->IsAlive()) || (Vashj && CAST_AI(boss_lady_vashjAI, CAST_CRE(Vashj)->AI())->Phase != 3))
                 {
                     //remove
                     me->setDeathState(DEAD);
@@ -976,7 +976,7 @@ struct mob_shield_generator_channelAI : public ScriptedAI
             Unit* Vashj = NULL;
             Vashj = Unit::GetUnit((*me), pInstance->GetData64(DATA_LADYVASHJ));
 
-            if (Vashj && Vashj->isAlive())
+            if (Vashj && Vashj->IsAlive())
             {
                 //start visual channel
                 if (!Casted || !Vashj->HasAura(SPELL_MAGIC_BARRIER, 0))

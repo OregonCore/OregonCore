@@ -87,7 +87,7 @@ void CreatureAI::DoZoneInCombat(Creature* creature)
             if (pPlayer->isGameMaster())
                 continue;
 
-            if (pPlayer->isAlive())
+            if (pPlayer->IsAlive())
             {
                 creature->SetInCombatWith(pPlayer);
                 pPlayer->SetInCombatWith(creature);
@@ -131,7 +131,7 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
 
 bool CreatureAI::UpdateVictimByReact()
 {
-    if (!me->isInCombat())
+    if (!me->IsInCombat())
         return false;
 
     if (me->HasReactState(REACT_AGGRESSIVE))

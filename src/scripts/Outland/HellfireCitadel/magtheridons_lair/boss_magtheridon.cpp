@@ -252,7 +252,7 @@ struct boss_magtheridonAI : public ScriptedAI
     //function to interrupt channeling and debuff clicker with mind exh(used if second person clicks with same cube or after dispeling/ending shadow grasp DoT)
     void DebuffClicker(Unit* clicker)
     {
-        if (!clicker || !clicker->isAlive())
+        if (!clicker || !clicker->IsAlive())
             return;
 
         clicker->RemoveAurasDueToSpell(SPELL_SHADOW_GRASP); // cannot interrupt triggered spells
@@ -323,7 +323,7 @@ struct boss_magtheridonAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!me->isInCombat())
+        if (!me->IsInCombat())
         {
             if (RandChat_Timer <= diff)
             {
@@ -533,7 +533,7 @@ bool GOHello_go_Manticron_Cube(Player* player, GameObject* _GO)
     if (!pInstance) return true;
     if (pInstance->GetData(DATA_MAGTHERIDON_EVENT) != IN_PROGRESS) return true;
     Creature* Magtheridon = Unit::GetCreature(*_GO, pInstance->GetData64(DATA_MAGTHERIDON));
-    if (!Magtheridon || !Magtheridon->isAlive()) return true;
+    if (!Magtheridon || !Magtheridon->IsAlive()) return true;
 
     // if exhausted or already channeling return
     if (player->HasAura(SPELL_MIND_EXHAUSTION, 0) || player->HasAura(SPELL_SHADOW_GRASP, 1))

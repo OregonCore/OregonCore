@@ -109,7 +109,7 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
             if (pInstance->GetData64(DATA_WARBRINGER))
             {
                 Creature* pWar = Unit::GetCreature(*me, pInstance->GetData64(DATA_WARBRINGER));
-                if (pWar && pWar->isAlive())
+                if (pWar && pWar->IsAlive())
                     pWar->AI()->AttackStart(me->getVictim());
             }
         }
@@ -170,7 +170,7 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
         for (std::vector<uint64>::iterator itr = adds.begin(); itr != adds.end(); ++itr)
         {
             Unit* temp = Unit::GetUnit((*me), *itr);
-            if (temp && temp->isAlive())
+            if (temp && temp->IsAlive())
             {
                 (*temp).GetMotionMaster()->Clear(true);
                 me->DealDamage(temp, temp->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -182,7 +182,7 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
         for (std::vector<uint64>::iterator itr = assassins.begin(); itr != assassins.end(); ++itr)
         {
             Unit* temp = Unit::GetUnit((*me), *itr);
-            if (temp && temp->isAlive())
+            if (temp && temp->IsAlive())
             {
                 (*temp).GetMotionMaster()->Clear(true);
                 me->DealDamage(temp, temp->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);

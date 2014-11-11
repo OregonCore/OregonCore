@@ -1581,7 +1581,7 @@ struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
             {
                 if (Player* pMember = pRef->getSource())
                 {
-                    if (!pMember->isAlive())
+                    if (!pMember->IsAlive())
                         ++uiDeadMemberCount;
 
                     // if we already failed no need to check other things

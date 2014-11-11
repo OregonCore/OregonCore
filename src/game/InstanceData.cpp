@@ -81,13 +81,13 @@ void InstanceData::UpdateMinionState(Creature* minion, EncounterState state)
     switch (state)
     {
     case NOT_STARTED:
-        if (!minion->isAlive())
+        if (!minion->IsAlive())
             minion->Respawn();
-        else if (minion->isInCombat())
+        else if (minion->IsInCombat())
             minion->AI()->EnterEvadeMode();
         break;
     case IN_PROGRESS:
-        if (!minion->isAlive())
+        if (!minion->IsAlive())
             minion->Respawn();
         else if (!minion->getVictim())
             minion->AI()->DoZoneInCombat();

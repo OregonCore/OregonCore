@@ -192,7 +192,7 @@ struct boss_kelthuzadAI : public ScriptedAI
             {
                 //delete creature
                 Unit* pUnit = Unit::GetUnit((*me), GuardiansOfIcecrown[i]);
-                if (pUnit && pUnit->isAlive())
+                if (pUnit && pUnit->IsAlive())
                     pUnit->DealDamage(pUnit, pUnit->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 GuardiansOfIcecrown[i] = 0;
             }
@@ -218,7 +218,7 @@ struct boss_kelthuzadAI : public ScriptedAI
             if (GuardiansOfIcecrown[i])
             {
                 Unit* pUnit = Unit::GetUnit((*me), GuardiansOfIcecrown[i]);
-                if (!pUnit || !pUnit->isAlive())
+                if (!pUnit || !pUnit->IsAlive())
                     continue;
 
                 pUnit->CombatStop();
@@ -283,7 +283,7 @@ struct boss_kelthuzadAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (me->getVictim() && me->isAlive())
+        if (me->getVictim() && me->IsAlive())
         {
             //Check for Frost Bolt
             if (FrostBolt_Timer <= diff)
@@ -420,7 +420,7 @@ struct boss_kelthuzadAI : public ScriptedAI
                     if (pUnit)
                     {
                         //if we find no one to figth walk to the center
-                        if (!pUnit->isInCombat())
+                        if (!pUnit->IsInCombat())
                             pUnit->SendMonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, MOVEFLAG_WALK_MODE);
 
                         //Safe storing of creatures

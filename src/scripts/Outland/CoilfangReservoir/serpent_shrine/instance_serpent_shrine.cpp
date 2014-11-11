@@ -159,7 +159,7 @@ struct instance_serpentshrine_cavern : public ScriptedInstance
             {
                 if (Player* pPlayer = i->getSource())
                 {
-                    if (pPlayer->isAlive() && /*i->getSource()->GetPositionZ() <= -21.434931f*/pPlayer->IsInWater())
+                    if (pPlayer->IsAlive() && /*i->getSource()->GetPositionZ() <= -21.434931f*/pPlayer->IsInWater())
                     {
                         if (Water == WATERSTATE_SCALDING)
                         {

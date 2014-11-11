@@ -120,14 +120,14 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
     switch (event.event_type)
     {
     case EVENT_T_TIMER:
-        if (!me->isInCombat())
+        if (!me->IsInCombat())
             return false;
 
         //Repeat Timers
         pHolder.UpdateRepeatTimer(me, event.timer.repeatMin, event.timer.repeatMax);
         break;
     case EVENT_T_TIMER_OOC:
-        if (me->isInCombat() || me->IsInEvadeMode())
+        if (me->IsInCombat() || me->IsInEvadeMode())
             return false;
 
         //Repeat Timers
@@ -135,7 +135,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         break;
     case EVENT_T_HP:
         {
-            if (!me->isInCombat() || !me->GetMaxHealth())
+            if (!me->IsInCombat() || !me->GetMaxHealth())
                 return false;
 
             uint32 perc = (me->GetHealth() * 100) / me->GetMaxHealth();
@@ -149,7 +149,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         }
     case EVENT_T_MANA:
         {
-            if (!me->isInCombat() || !me->GetMaxPower(POWER_MANA))
+            if (!me->IsInCombat() || !me->GetMaxPower(POWER_MANA))
                 return false;
 
             uint32 perc = (me->GetPower(POWER_MANA) * 100) / me->GetMaxPower(POWER_MANA);
@@ -188,7 +188,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         break;
     case EVENT_T_TARGET_HP:
         {
-            if (!me->isInCombat() || !me->getVictim() || !me->getVictim()->GetMaxHealth())
+            if (!me->IsInCombat() || !me->getVictim() || !me->getVictim()->GetMaxHealth())
                 return false;
 
             uint32 perc = (me->getVictim()->GetHealth() * 100) / me->getVictim()->GetMaxHealth();
@@ -201,7 +201,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
             break;
         }
     case EVENT_T_TARGET_CASTING:
-        if (!me->isInCombat() || !me->getVictim() || !me->getVictim()->IsNonMeleeSpellCast(false, false, true))
+        if (!me->IsInCombat() || !me->getVictim() || !me->getVictim()->IsNonMeleeSpellCast(false, false, true))
             return false;
 
         //Repeat Timers
@@ -209,7 +209,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         break;
     case EVENT_T_FRIENDLY_HP:
         {
-            if (!me->isInCombat())
+            if (!me->IsInCombat())
                 return false;
 
             Unit* pUnit = DoSelectLowestHpFriendly(event.friendly_hp.radius, event.friendly_hp.hpDeficit);
@@ -224,7 +224,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         }
     case EVENT_T_FRIENDLY_IS_CC:
         {
-            if (!me->isInCombat())
+            if (!me->IsInCombat())
                 return false;
 
             std::list<Creature*> pList;
@@ -275,7 +275,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         }
     case EVENT_T_TARGET_MANA:
         {
-            if (!me->isInCombat() || !me->getVictim() || !me->getVictim()->GetMaxPower(POWER_MANA))
+            if (!me->IsInCombat() || !me->getVictim() || !me->getVictim()->GetMaxPower(POWER_MANA))
                 return false;
 
             uint32 perc = (me->getVictim()->GetPower(POWER_MANA) * 100) / me->getVictim()->GetMaxPower(POWER_MANA);
@@ -332,7 +332,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         }
     case EVENT_T_TARGET_MISSING_AURA:
         {
-            if (!me->isInCombat() || !me->getVictim())
+            if (!me->IsInCombat() || !me->getVictim())
                 return false;
 
             Aura* aura = me->getVictim()->GetAura(event.buffed.spellId, 0);
@@ -613,7 +613,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
         if (CombatMovementEnabled)
         {
             Unit* victim = me->getVictim();
-            if (me->isInCombat() && victim)
+            if (me->IsInCombat() && victim)
             {
                 if (action.combat_movement.melee)
                 {
@@ -629,7 +629,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
         }
         else
         {
-            if (me->isInCombat())
+            if (me->IsInCombat())
             {
                 Unit* victim = me->getVictim();
                 if (action.combat_movement.melee && victim)
@@ -866,7 +866,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
                     me->Mount(action.mount.modelId);
             }
             else
-                me->Unmount();
+                me->Dismount();
 
             break;
         }

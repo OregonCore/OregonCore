@@ -185,7 +185,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
         for (i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
-            if (pUnit && pUnit->isAlive())
+            if (pUnit && pUnit->IsAlive())
             {
                 float threat = me->getThreatManager().getThreat(pUnit);
                 SummonedUnit->AddThreat(pUnit, threat);

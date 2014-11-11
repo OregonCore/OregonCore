@@ -444,7 +444,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
         break;
     case CHAT_MSG_AFK:
         {
-            if (!_player->isInCombat())
+            if (!_player->IsInCombat())
             {
                 if (!msg.empty() || !_player->isAFK())
                 {
@@ -491,7 +491,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleEmoteOpcode(WorldPacket& recv_data)
 {
-    if (!GetPlayer()->isAlive())
+    if (!GetPlayer()->IsAlive())
         return;
 
     uint32 emote;
@@ -501,7 +501,7 @@ void WorldSession::HandleEmoteOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleTextEmoteOpcode(WorldPacket& recv_data)
 {
-    if (!GetPlayer()->isAlive())
+    if (!GetPlayer()->IsAlive())
         return;
 
     if (!GetPlayer()->CanSpeak())

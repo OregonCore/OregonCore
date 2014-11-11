@@ -115,7 +115,7 @@ struct mob_ancient_wispAI : public ScriptedAI
                 Unit* Archimonde = Unit::GetUnit((*me), ArchimondeGUID);
                 if (Archimonde)
                 {
-                    if ((((Archimonde->GetHealth() * 100) / Archimonde->GetMaxHealth()) < 2) || !Archimonde->isAlive())
+                    if ((((Archimonde->GetHealth() * 100) / Archimonde->GetMaxHealth()) < 2) || !Archimonde->IsAlive())
                         DoCast(me, SPELL_DENOUEMENT_WISP);
                     else
                         DoCast(Archimonde, SPELL_ANCIENT_SPARK);
@@ -182,7 +182,7 @@ struct mob_doomfireAI : public ScriptedAI
         if (ArchimondeGUID)
         {
             Creature* Archimonde = (Unit::GetCreature((*me), ArchimondeGUID));
-            if (Archimonde && Archimonde->isAlive())
+            if (Archimonde && Archimonde->IsAlive())
             {
                 suicide = false;
                 Archimonde->AI()->KilledUnit(victim);
@@ -202,7 +202,7 @@ struct mob_doomfireAI : public ScriptedAI
         if (TargetSelected && TargetGUID)
         {
             Unit* pTarget = Unit::GetUnit((*me), TargetGUID);
-            if (pTarget && pTarget->isAlive())
+            if (pTarget && pTarget->IsAlive())
             {
                 pTarget->CastSpell(pTarget, SPELL_DOOMFIRE_DAMAGE, true);
                 TargetGUID = 0;
@@ -215,7 +215,7 @@ struct mob_doomfireAI : public ScriptedAI
             if (ArchimondeGUID)
             {
                 Unit* Archimonde = Unit::GetUnit((*me), ArchimondeGUID);
-                if (!Archimonde || !Archimonde->isAlive())
+                if (!Archimonde || !Archimonde->IsAlive())
                     me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 CheckTimer = 5000;
             }
@@ -270,7 +270,7 @@ struct mob_doomfire_targettingAI : public ScriptedAI
             if (ArchimondeGUID)
             {
                 Unit* Archimonde = Unit::GetUnit((*me), ArchimondeGUID);
-                if (Archimonde && Archimonde->isAlive())
+                if (Archimonde && Archimonde->IsAlive())
                 {
                     Creature* Doomfire = DoSpawnCreature(CREATURE_DOOMFIRE, 0, 0, 2, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
                     if (Doomfire)
@@ -296,7 +296,7 @@ struct mob_doomfire_targettingAI : public ScriptedAI
             {
             case 0:                                     // stalk player
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                 {
                     me->AddThreat(pTarget, DoGetThreat(me->getVictim()));
                     me->GetMotionMaster()->MoveChase(pTarget);
@@ -446,7 +446,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         for (; itr != m_threatlist.end(); ++itr)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*itr)->getUnitGuid());
-            if (pUnit && pUnit->isAlive())
+            if (pUnit && pUnit->IsAlive())
                 targets.push_back(pUnit);
         }
 
@@ -528,7 +528,7 @@ struct boss_archimondeAI : public hyjal_trashAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!me->isInCombat())
+        if (!me->IsInCombat())
         {
             if (pInstance)
             {

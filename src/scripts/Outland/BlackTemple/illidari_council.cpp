@@ -230,7 +230,7 @@ struct mob_illidari_councilAI : public ScriptedAI
         {
             if ((pMember = (Unit::GetCreature((*me), Council[i]))))
             {
-                if (!pMember->isAlive())
+                if (!pMember->IsAlive())
                 {
                     pMember->RemoveCorpse();
                     pMember->Respawn();
@@ -262,7 +262,7 @@ struct mob_illidari_councilAI : public ScriptedAI
         if (!pInstance)
             return;
 
-        if (pTarget && pTarget->isAlive())
+        if (pTarget && pTarget->IsAlive())
         {
             Council[0] = pInstance->GetData64(DATA_GATHIOSTHESHATTERER);
             Council[1] = pInstance->GetData64(DATA_HIGHNETHERMANCERZEREVOR);
@@ -282,7 +282,7 @@ struct mob_illidari_councilAI : public ScriptedAI
                 if (Council[i])
                 {
                     Member = Unit::GetUnit((*me), Council[i]);
-                    if (Member && Member->isAlive())
+                    if (Member && Member->IsAlive())
                         CAST_CRE(Member)->AI()->AttackStart(pTarget);
                 }
             }
@@ -314,7 +314,7 @@ struct mob_illidari_councilAI : public ScriptedAI
                 }
 
                 Creature* pMember = (Unit::GetCreature(*me, Council[DeathCount]));
-                if (pMember && pMember->isAlive())
+                if (pMember && pMember->IsAlive())
                     pMember->DealDamage(pMember, pMember->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 ++DeathCount;
                 EndEventTimer = 1500;
@@ -334,9 +334,9 @@ struct mob_illidari_councilAI : public ScriptedAI
                         if (Creature* Member = (Unit::GetCreature((*me), Council[i])))
                         {
                             // This is the evade/death check.
-                            if (Member->isAlive() && !Member->getVictim())
+                            if (Member->IsAlive() && !Member->getVictim())
                                 ++EvadeCheck;                   //If all members evade, we reset so that players can properly reset the event
-                            else if (!Member->isAlive())         // If even one member dies, kill the rest, set instance data, and kill self.
+                            else if (!Member->IsAlive())         // If even one member dies, kill the rest, set instance data, and kill self.
                             {
                                 EndEventTimer = 1000;
                                 CheckTimer = 0;
@@ -427,7 +427,7 @@ struct boss_illidari_councilAI : public ScriptedAI
         for (uint8 i = 0; i < 4; ++i)
         {
             if (Creature* pUnit = Unit::GetCreature(*me, Council[i]))
-                if (pUnit != me && pUnit->isAlive())
+                if (pUnit != me && pUnit->IsAlive())
                 {
                     if (damage <= pUnit->GetHealth())
                     {

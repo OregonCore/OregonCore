@@ -123,7 +123,7 @@ struct boss_sacrolashAI : public ScriptedAI
             }
         }
 
-        if (!me->isInCombat())
+        if (!me->IsInCombat())
         {
             ShadowbladesTimer = 10000;
             ShadownovaTimer = 30000;
@@ -146,7 +146,7 @@ struct boss_sacrolashAI : public ScriptedAI
         if (pInstance)
         {
             Unit* Temp =  Unit::GetUnit((*me), pInstance->GetData64(DATA_ALYTHESS));
-            if (Temp && Temp->isAlive() && !(Temp->getVictim()))
+            if (Temp && Temp->IsAlive() && !(Temp->getVictim()))
                 CAST_CRE(Temp)->AI()->AttackStart(who);
         }
 
@@ -389,7 +389,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
             }
         }
 
-        if (!me->isInCombat())
+        if (!me->IsInCombat())
         {
             ConflagrationTimer = 45000;
             BlazeTimer = 100;
@@ -413,7 +413,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
         if (pInstance)
         {
             Unit* Temp =  Unit::GetUnit((*me), pInstance->GetData64(DATA_SACROLASH));
-            if (Temp && Temp->isAlive() && !(Temp->getVictim()))
+            if (Temp && Temp->IsAlive() && !(Temp->getVictim()))
                 CAST_CRE(Temp)->AI()->AttackStart(who);
         }
 
@@ -423,7 +423,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
 
     void AttackStart(Unit* who)
     {
-        if (!me->isInCombat())
+        if (!me->IsInCombat())
             Scripted_NoMovementAI::AttackStart(who);
     }
 
@@ -438,7 +438,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
             float attackRadius = me->GetAttackDistance(who);
             if (me->IsWithinDistInMap(who, attackRadius) && me->GetDistanceZ(who) <= CREATURE_Z_ATTACK_RANGE && me->IsWithinLOSInMap(who))
             {
-                if (!me->isInCombat())
+                if (!me->IsInCombat())
                     DoStartNoMovement(who);
             }
         }

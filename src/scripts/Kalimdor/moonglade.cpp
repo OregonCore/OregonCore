@@ -318,7 +318,7 @@ struct npc_clintar_spiritAI : public npc_escortAI
         void EnterEvadeMode()
         {
             Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
-            if (pPlayer && pPlayer->isInCombat() && pPlayer->getAttackerForHelper())
+            if (pPlayer && pPlayer->IsInCombat() && pPlayer->getAttackerForHelper())
             {
                 AttackStart(pPlayer->getAttackerForHelper());
                 return;
@@ -364,12 +364,12 @@ struct npc_clintar_spiritAI : public npc_escortAI
                 return;
             }
 
-            if (!me->isInCombat() && !Event_onWait)
+            if (!me->IsInCombat() && !Event_onWait)
             {
                 if (checkPlayer_Timer <= diff)
                 {
                     Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
-                    if (pPlayer && pPlayer->isInCombat() && pPlayer->getAttackerForHelper())
+                    if (pPlayer && pPlayer->IsInCombat() && pPlayer->getAttackerForHelper())
                         AttackStart(pPlayer->getAttackerForHelper());
                     checkPlayer_Timer = 1000;
                 }
@@ -779,7 +779,7 @@ struct npc_remulosAI : public npc_escortAI
             {
                 if (Creature* pPhantasm = Unit::GetCreature(*me, *itr))
                 {
-                    if (!pPhantasm->isAlive())
+                    if (!pPhantasm->IsAlive())
                     {
                         PhantasmsList.erase(itr);
                         DeadPhantasmsCount++;
@@ -1402,7 +1402,7 @@ struct npc_eranikusAI : public ScriptedAI
         {
             if (Creature* pTyrande = Unit::GetCreature(*me, TyrandeGUID))
             {
-                if (pTyrande->isAlive())
+                if (pTyrande->IsAlive())
                     pTyrande->ForcedDespawn();
             }
 

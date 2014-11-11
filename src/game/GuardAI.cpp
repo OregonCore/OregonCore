@@ -56,7 +56,7 @@ void GuardAI::MoveInLineOfSight(Unit* u)
 
 void GuardAI::EnterEvadeMode()
 {
-    if (!me->isAlive())
+    if (!me->IsAlive())
     {
         DEBUG_LOG("Creature stopped attacking because he's dead [guid=%u]", me->GetGUIDLow());
         me->GetMotionMaster()->MoveIdle();
@@ -73,7 +73,7 @@ void GuardAI::EnterEvadeMode()
 
     if (!victim)
         DEBUG_LOG("Creature stopped attacking because victim is non exist [guid=%u]", me->GetGUIDLow());
-    else if (!victim ->isAlive())
+    else if (!victim ->IsAlive())
         DEBUG_LOG("Creature stopped attacking because victim is dead [guid=%u]", me->GetGUIDLow());
     else if (victim ->HasStealthAura())
         DEBUG_LOG("Creature stopped attacking because victim is using stealth [guid=%u]", me->GetGUIDLow());

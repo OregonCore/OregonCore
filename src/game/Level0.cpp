@@ -74,7 +74,7 @@ bool ChatHandler::HandleStartCommand(const char* /*args*/)
         return false;
     }
 
-    if (chr->isInCombat())
+    if (chr->IsInCombat())
     {
         SendSysMessage(LANG_YOU_IN_COMBAT);
         SetSentErrorMessage(true);
@@ -130,7 +130,7 @@ bool ChatHandler::HandleDismountCommand(const char* /*args*/)
         return false;
     }
 
-    m_session->GetPlayer()->Unmount();
+    m_session->GetPlayer()->Dismount();
     m_session->GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
     return true;
 }

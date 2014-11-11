@@ -419,7 +419,7 @@ struct npc_injured_patientAI : public ScriptedAI
 
     void SpellHit(Unit* caster, const SpellEntry* spell)
     {
-        if (caster->GetTypeId() == TYPEID_PLAYER && me->isAlive() && spell->Id == 20804)
+        if (caster->GetTypeId() == TYPEID_PLAYER && me->IsAlive() && spell->Id == 20804)
         {
             if ((CAST_PLR(caster)->GetQuestStatus(6624) == QUEST_STATUS_INCOMPLETE) || (CAST_PLR(caster)->GetQuestStatus(6622) == QUEST_STATUS_INCOMPLETE))
                 if (Doctorguid)
@@ -459,10 +459,10 @@ struct npc_injured_patientAI : public ScriptedAI
     void UpdateAI(const uint32 /*diff*/)
     {
         //lower HP on every world tick makes it a useful counter, not officlone though
-        if (me->isAlive() && me->GetHealth() > 6)
+        if (me->IsAlive() && me->GetHealth() > 6)
             me->SetHealth(uint32(me->GetHealth() - 5));
 
-        if (me->isAlive() && me->GetHealth() <= 6)
+        if (me->IsAlive() && me->GetHealth() <= 6)
         {
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -710,7 +710,7 @@ struct npc_garments_of_questsAI : public npc_escortAI
         if (Spell->Id == SPELL_LESSER_HEAL_R2 || Spell->Id == SPELL_FORTITUDE_R1)
         {
             //not while in combat
-            if (me->isInCombat())
+            if (me->IsInCombat())
                 return;
 
             //nothing to be done now
@@ -821,7 +821,7 @@ struct npc_garments_of_questsAI : public npc_escortAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (bCanRun && !me->isInCombat())
+        if (bCanRun && !me->IsInCombat())
         {
             if (RunAwayTimer <= diff)
             {

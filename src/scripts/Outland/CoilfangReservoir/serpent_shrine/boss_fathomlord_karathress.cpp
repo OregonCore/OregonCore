@@ -133,7 +133,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
                 if (RAdvisors[i])
                 {
                     pAdvisor = (Unit::GetCreature((*me), RAdvisors[i]));
-                    if (pAdvisor && !pAdvisor->isAlive())
+                    if (pAdvisor && !pAdvisor->IsAlive())
                     {
                         pAdvisor->Respawn();
                         pAdvisor->AI()->EnterEvadeMode();
@@ -211,7 +211,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Only if not incombat check if the event is started
-        if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
+        if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
@@ -275,7 +275,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
                 if (Advisors[i])
                 {
                     Advisor = (Unit::GetCreature(*me, Advisors[i]));
-                    if (Advisor && Advisor->isAlive())
+                    if (Advisor && Advisor->IsAlive())
                     {
                         continueTriggering = true;
                         break;
@@ -322,7 +322,7 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
         pet = false;
 
         Creature* Pet = Unit::GetCreature(*me, SummonedPet);
-        if (Pet && Pet->isAlive())
+        if (Pet && Pet->IsAlive())
             Pet->DealDamage(Pet, Pet->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
         SummonedPet = 0;
@@ -338,7 +338,7 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
             Creature* Karathress = NULL;
             Karathress = Unit::GetCreature((*me), pInstance->GetData64(DATA_KARATHRESS));
 
-            if (Karathress && !me->isAlive())
+            if (Karathress && !me->IsAlive())
                 CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventSharkkisDeath();
         }
     }
@@ -355,7 +355,7 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Only if not incombat check if the event is started
-        if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
+        if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
@@ -395,7 +395,7 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
         {
             DoCast(me, SPELL_THE_BEAST_WITHIN);
             Creature* Pet = Unit::GetCreature(*me, SummonedPet);
-            if (Pet && Pet->isAlive())
+            if (Pet && Pet->IsAlive())
                 Pet->CastSpell(Pet, SPELL_PET_ENRAGE, true);
             TheBeastWithin_Timer = 30000;
         }
@@ -466,7 +466,7 @@ struct boss_fathomguard_tidalvessAI : public ScriptedAI
             Creature* Karathress = NULL;
             Karathress = Unit::GetCreature((*me), pInstance->GetData64(DATA_KARATHRESS));
 
-            if (Karathress && !me->isAlive())
+            if (Karathress && !me->IsAlive())
                 CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventTidalvessDeath();
         }
     }
@@ -484,7 +484,7 @@ struct boss_fathomguard_tidalvessAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Only if not incombat check if the event is started
-        if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
+        if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
@@ -578,7 +578,7 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
             Creature* Karathress = NULL;
             Karathress = Unit::GetCreature((*me), pInstance->GetData64(DATA_KARATHRESS));
 
-            if (Karathress && !me->isAlive())
+            if (Karathress && !me->IsAlive())
                 CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventCaribdisDeath();
         }
     }
@@ -595,7 +595,7 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Only if not incombat check if the event is started
-        if (!me->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
+        if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
@@ -657,10 +657,10 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
             // It can be cast on any of the mobs
             Unit* pUnit = NULL;
 
-            while (pUnit == NULL || !pUnit->isAlive())
+            while (pUnit == NULL || !pUnit->IsAlive())
                 pUnit = selectAdvisorUnit();
 
-            if (pUnit && pUnit->isAlive())
+            if (pUnit && pUnit->IsAlive())
                 DoCast(pUnit, SPELL_HEAL);
             Heal_Timer = 60000;
         }

@@ -461,7 +461,7 @@ void ScriptedAI::DoTeleportAll(float fX, float fY, float fZ, float fO)
     Map::PlayerList const& PlayerList = map->GetPlayers();
     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
         if (Player* i_pl = i->getSource())
-            if (i_pl->isAlive())
+            if (i_pl->IsAlive())
                 i_pl->TeleportTo(me->GetMapId(), fX, fY, fZ, fO, TELE_TO_NOT_LEAVE_COMBAT);
 }
 
@@ -606,7 +606,7 @@ BossAI::BossAI(Creature* c, uint32 id) : ScriptedAI(c)
 
 void BossAI::_Reset()
 {
-    if (!me->isAlive())
+    if (!me->IsAlive())
         return;
 
     events.Reset();
@@ -637,7 +637,7 @@ void BossAI::_EnterCombat()
 void BossAI::JustSummoned(Creature* summon)
 {
     summons.Summon(summon);
-    if (me->isInCombat())
+    if (me->IsInCombat())
         DoZoneInCombat(summon);
 }
 

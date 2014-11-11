@@ -63,7 +63,7 @@ struct boss_thespiaAI : public ScriptedAI
         LungBurst_Timer = 7000;
         EnvelopingWinds_Timer = 9000;
 
-        if (pInstance && me->isAlive())
+        if (pInstance && me->IsAlive())
             pInstance->SetData(TYPE_HYDROMANCER_THESPIA, NOT_STARTED);
     }
 

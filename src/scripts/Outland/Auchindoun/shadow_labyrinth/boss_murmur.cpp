@@ -71,7 +71,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
     // Sonic Boom instant damage (needs core fix instead of this)
     void SpellHitTarget(Unit* pTarget, const SpellEntry* spell)
     {
-        if (pTarget && pTarget->isAlive() && spell && spell->Id == SPELL_SONIC_BOOM_EFFECT)
+        if (pTarget && pTarget->IsAlive() && spell && spell->Id == SPELL_SONIC_BOOM_EFFECT)
             me->DealDamage(pTarget, (pTarget->GetHealth() * 90) / 100, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NATURE, spell);
     }
 
@@ -120,7 +120,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
         if (MagneticPull_Timer <= diff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                if (pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive())
+                if (pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->IsAlive())
                 {
                     DoCast(pTarget, SPELL_MAGNETIC_PULL);
                     MagneticPull_Timer = 20000 + rand() % 15000;
@@ -138,7 +138,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
                 std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
                 for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
                     if (Unit* pTarget = Unit::GetUnit((*me), (*i)->getUnitGuid()))
-                        if (pTarget->isAlive() && me->GetDistance2d(pTarget) > 35)
+                        if (pTarget->IsAlive() && me->GetDistance2d(pTarget) > 35)
                             DoCast(pTarget, SPELL_THUNDERING_STORM, true);
                 ThunderingStorm_Timer = 15000;
             }
@@ -148,7 +148,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
             if (SonicShock_Timer <= diff)
             {
                 if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 20, false))
-                    if (pTarget->isAlive())
+                    if (pTarget->IsAlive())
                         DoCast(pTarget, SPELL_SONIC_SHOCK);
                 SonicShock_Timer = 10000 + rand() % 10000;
             }
@@ -163,7 +163,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
             std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
             for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
                 if (Unit* pTarget = Unit::GetUnit((*me), (*i)->getUnitGuid()))
-                    if (pTarget->isAlive() && me->IsWithinMeleeRange(pTarget))
+                    if (pTarget->IsAlive() && me->IsWithinMeleeRange(pTarget))
                     {
                         me->TauntApply(pTarget);
                         break;

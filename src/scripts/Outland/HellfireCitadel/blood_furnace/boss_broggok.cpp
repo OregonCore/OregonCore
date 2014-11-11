@@ -88,7 +88,7 @@ struct boss_broggokAI : public ScriptedAI
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_PASSIVE);
         Reset();
 
-        if (!me->isAlive())
+        if (!me->IsAlive())
             return;
 
         if (instance)

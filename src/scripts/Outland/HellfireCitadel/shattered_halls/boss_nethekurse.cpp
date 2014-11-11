@@ -175,7 +175,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         {
             if (Creature* pOrc = Creature::GetCreature(*me, *itr))
             {
-                if (pOrc->isAlive())
+                if (pOrc->IsAlive())
                 {
                     DoCast(pOrc, SPELL_SHADOW_SEAR);
                     pOrc->DealDamage(pOrc, pOrc->GetHealth(), 0, DIRECT_DAMAGE);
@@ -277,7 +277,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         me->CombatStop(true);
         Reset();
 
-        if (!me->isAlive())
+        if (!me->IsAlive())
             return;
 
         if (pInstance)
@@ -294,7 +294,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         {
             if (Creature* pOrc = Creature::GetCreature(*me, *itr))
             {
-                if (!pOrc->isAlive())
+                if (!pOrc->IsAlive())
                 {
                     pOrc->ForcedDespawn();
                     pOrc->Respawn();

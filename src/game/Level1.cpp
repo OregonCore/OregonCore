@@ -1143,7 +1143,7 @@ bool ChatHandler::HandleModifyHPCommand(const char* args)
         return false;
     }
 
-    if (!target->isAlive())
+    if (!target->IsAlive())
     {
         SendSysMessage(LANG_NO_SELECTION);
         SetSentErrorMessage(true);

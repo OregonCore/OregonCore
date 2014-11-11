@@ -107,7 +107,7 @@ struct boss_kazrogalAI : public hyjal_trashAI
         if (i == 7 && pInstance)
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-            if (pTarget && pTarget->isAlive())
+            if (pTarget && pTarget->IsAlive())
                 me->AddThreat(pTarget, 0.0f);
         }
     }

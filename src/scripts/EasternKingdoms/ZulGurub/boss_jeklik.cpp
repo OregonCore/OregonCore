@@ -102,7 +102,7 @@ struct boss_jeklikAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (me->getVictim() && me->isAlive())
+        if (me->getVictim() && me->IsAlive())
         {
             if ((me->GetHealth() * 100 / me->GetMaxHealth() > 50))
             {

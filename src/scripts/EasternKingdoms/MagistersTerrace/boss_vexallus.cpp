@@ -201,7 +201,7 @@ struct mob_pure_energyAI : public ScriptedAI
     {
         if (Unit* temp = me->GetOwner())
         {
-            if (temp && temp->isAlive())
+            if (temp && temp->IsAlive())
                 slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, true, 0, 0, temp->GetGUID());
         }
     }

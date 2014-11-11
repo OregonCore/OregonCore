@@ -84,7 +84,7 @@ struct mob_doom_blossomAI : public ScriptedAI
                 DoZoneInCombat();
 
                 Creature* Teron = (Unit::GetCreature((*me), TeronGUID));
-                if ((Teron) && (!Teron->isAlive() || Teron->IsInEvadeMode()))
+                if ((Teron) && (!Teron->IsAlive() || Teron->IsInEvadeMode()))
                     Despawn();
             }
             else
@@ -94,7 +94,7 @@ struct mob_doom_blossomAI : public ScriptedAI
         }
         else CheckTeronTimer -= diff;
 
-        if (ShadowBoltTimer <= diff && me->isInCombat())
+        if (ShadowBoltTimer <= diff && me->IsInCombat())
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_SHADOWBOLT);
             ShadowBoltTimer = 10000;
@@ -132,7 +132,7 @@ struct mob_shadowy_constructAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!who || (!who->isAlive()) || (who->GetGUID() == GhostGUID))
+        if (!who || (!who->IsAlive()) || (who->GetGUID() == GhostGUID))
             return;
 
         ScriptedAI::MoveInLineOfSight(who);
@@ -156,7 +156,7 @@ struct mob_shadowy_constructAI : public ScriptedAI
         for (; itr != m_threatlist.end(); ++itr)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*itr)->getUnitGuid());
-            if (pUnit && pUnit->isAlive())
+            if (pUnit && pUnit->IsAlive())
                 targets.push_back(pUnit);
         }
         targets.sort(Oregon::ObjectDistanceOrderPred(me));
@@ -180,7 +180,7 @@ struct mob_shadowy_constructAI : public ScriptedAI
         if (CheckTeronTimer <= diff)
         {
             Creature* Teron = (Unit::GetCreature((*me), TeronGUID));
-            if (!Teron || !Teron->isAlive() || Teron->IsInEvadeMode())
+            if (!Teron || !Teron->IsAlive() || Teron->IsInEvadeMode())
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
             CheckTeronTimer = 5000;
@@ -237,7 +237,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!who || (!who->isAlive())) return;
+        if (!who || (!who->IsAlive())) return;
 
         if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
         {
@@ -251,7 +251,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
                 me->AddThreat(who, 1.0f);
             }
 
-            if (!me->isInCombat() && !Intro && me->IsWithinDistInMap(who, 60.0f) && (who->GetTypeId() == TYPEID_PLAYER))
+            if (!me->IsInCombat() && !Intro && me->IsWithinDistInMap(who, 60.0f) && (who->GetTypeId() == TYPEID_PLAYER))
             {
                 if (pInstance)
                     pInstance->SetData(DATA_TERONGOREFIENDEVENT, IN_PROGRESS);
@@ -303,7 +303,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         for (i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
-            if (pUnit && pUnit->isAlive())
+            if (pUnit && pUnit->IsAlive())
             {
                 float threat = DoGetThreat(pUnit);
                 Blossom->AddThreat(pUnit, threat);
@@ -323,7 +323,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         Unit* Ghost = NULL;
         if (GhostGUID)
             Ghost = Unit::GetUnit((*me), GhostGUID);
-        if (Ghost && Ghost->isAlive() && Ghost->HasAura(SPELL_SHADOW_OF_DEATH, 0))
+        if (Ghost && Ghost->IsAlive() && Ghost->HasAura(SPELL_SHADOW_OF_DEATH, 0))
         {
             /*float x,y,z;
             Ghost->GetPosition(x,y,z);
@@ -451,7 +451,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         if (CrushingShadowsTimer <= diff)
         {
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (pTarget && pTarget->isAlive())
+            if (pTarget && pTarget->IsAlive())
                 DoCast(pTarget, SPELL_CRUSHING_SHADOWS);
             CrushingShadowsTimer = 10000 + rand() % 16 * 1000;
         }
@@ -465,7 +465,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
             if (!pTarget)
                pTarget = me->getVictim();
 
-            if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
+            if (pTarget && pTarget->IsAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
             {
                 DoCast(pTarget, SPELL_SHADOW_OF_DEATH);
                 GhostGUID = pTarget->GetGUID();

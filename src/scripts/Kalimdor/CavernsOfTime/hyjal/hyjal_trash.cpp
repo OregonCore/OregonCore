@@ -430,7 +430,7 @@ struct mob_giant_infernalAI : public hyjal_trashAI
             if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
         }
@@ -473,7 +473,7 @@ struct mob_giant_infernalAI : public hyjal_trashAI
                     if (pInstance->GetData(DATA_ALLIANCE_RETREAT) && !pInstance->GetData(DATA_HORDE_RETREAT))
                     {
                         Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-                        if (pTarget && pTarget->isAlive())
+                        if (pTarget && pTarget->IsAlive())
                             me->AddThreat(pTarget, 0.0f);
                     }
                     else if (pInstance->GetData(DATA_ALLIANCE_RETREAT) && pInstance->GetData(DATA_HORDE_RETREAT))
@@ -553,13 +553,13 @@ struct mob_abominationAI : public hyjal_trashAI
             if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
             else
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
         }
@@ -655,13 +655,13 @@ struct mob_ghoulAI : public hyjal_trashAI
             if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
             else
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
         }
@@ -769,13 +769,13 @@ struct mob_necromancerAI : public hyjal_trashAI
             if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
             else
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
         }
@@ -882,13 +882,13 @@ struct mob_bansheeAI : public hyjal_trashAI
             if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
             else
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
         }
@@ -982,13 +982,13 @@ struct mob_crypt_fiendAI : public hyjal_trashAI
             if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
             else
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
         }
@@ -1071,13 +1071,13 @@ struct mob_fel_stalkerAI : public hyjal_trashAI
             if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
             else
             {
                 Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                     me->AddThreat(pTarget, 0.0f);
             }
         }
@@ -1162,7 +1162,7 @@ struct mob_frost_wyrmAI : public hyjal_trashAI
         if (i == 2 && pInstance && !IsOverrun)
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-            if (pTarget && pTarget->isAlive())
+            if (pTarget && pTarget->IsAlive())
             {
                 me->AddThreat(pTarget, 0.0f);
                 DoCast(pTarget, SPELL_FROST_BREATH, true);
@@ -1284,7 +1284,7 @@ struct mob_gargoyleAI : public hyjal_trashAI
         if (i == 2 && pInstance && !IsOverrun)
         {
             Unit* pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-            if (pTarget && pTarget->isAlive())
+            if (pTarget && pTarget->IsAlive())
             {
                 me->AddThreat(pTarget, 0.0f);
                 DoCast(pTarget, SPELL_GARGOYLE_STRIKE, true);

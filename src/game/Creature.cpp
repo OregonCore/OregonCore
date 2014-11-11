@@ -207,7 +207,7 @@ void Creature::RemoveFromWorld()
 void Creature::DisappearAndDie()
 {
     DestroyForNearbyPlayers();
-    if (isAlive())
+    if (IsAlive())
         setDeathState(JUST_DIED);
     RemoveCorpse(false);
 }
@@ -479,7 +479,7 @@ void Creature::Update(uint32 diff)
 
     switch (m_deathState)
     {
-    case JUST_ALIVED:
+    case JUST_RESPAWNED:
         // Must not be called, see Creature::setDeathState JUST_ALIVED -> ALIVE promoting.
         sLog.outError("Creature (GUIDLow: %u Entry: %u) in wrong state: JUST_ALIVED (4)", GetGUIDLow(), GetEntry());
         break;
@@ -553,7 +553,7 @@ void Creature::Update(uint32 diff)
 
             // creature can be dead after Unit::Update call
             // CORPSE/DEAD state will processed at next tick (in other case death timer will be updated unexpectedly)
-            if (!isAlive())
+            if (!IsAlive())
                 break;
 
             // if creature is charmed, switch to charmed AI
@@ -574,7 +574,7 @@ void Creature::Update(uint32 diff)
 
             // creature can be dead after UpdateAI call
             // CORPSE/DEAD state will processed at next tick (in other case death timer will be updated unexpectedly)
-            if (!isAlive())
+            if (!IsAlive())
                 break;
             if (m_regenTimer > 0)
             {
@@ -586,7 +586,7 @@ void Creature::Update(uint32 diff)
             if (m_regenTimer != 0)
                 break;
 
-            if (!IsInEvadeMode() && (!isInCombat() || IsPolymorphed())) // regenerate health if not in combat or if polymorphed
+            if (!IsInEvadeMode() && (!IsInCombat() || IsPolymorphed())) // regenerate health if not in combat or if polymorphed
             {
                 if (HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER))
                     SetUInt32Value(UNIT_DYNAMIC_FLAGS, GetCreatureTemplate()->dynamicflags);
@@ -617,7 +617,7 @@ void Creature::RegenerateMana()
     uint32 addvalue = 0;
 
     // Combat and any controlled creature
-    if (isInCombat() || GetCharmerOrOwnerGUID())
+    if (IsInCombat() || GetCharmerOrOwnerGUID())
     {
         if (!IsUnderLastManaUseEffect())
         {
@@ -1336,7 +1336,7 @@ bool Creature::canSeeOrDetect(Unit const* u, bool detect, bool /*inVisibleList*/
         return false;
 
     // all dead creatures/players not visible for any creatures
-    if (!u->isAlive() || !isAlive())
+    if (!u->IsAlive() || !IsAlive())
         return false;
 
     // Always can see self
@@ -1438,7 +1438,7 @@ float Creature::GetAttackDistance(Unit const* pl) const
 
 void Creature::setDeathState(DeathState s)
 {
-    if ((s == JUST_DIED && !m_isDeadByDefault) || (s == JUST_ALIVED && m_isDeadByDefault))
+    if ((s == JUST_DIED && !m_isDeadByDefault) || (s == JUST_RESPAWNED && m_isDeadByDefault))
     {
         m_corpseRemoveTime = time(NULL) + m_corpseDelay;
         m_respawnTime = time(NULL) + m_respawnDelay + m_corpseDelay;
@@ -1483,7 +1483,7 @@ void Creature::setDeathState(DeathState s)
 
         Unit::setDeathState(CORPSE);
     }
-    if (s == JUST_ALIVED)
+    if (s == JUST_RESPAWNED)
     {
         SetHealth(GetMaxHealth());
         SetLootRecipient(NULL);
@@ -1553,7 +1553,7 @@ void Creature::Respawn(bool force)
 
     if (force)
     {
-        if (isAlive())
+        if (IsAlive())
             setDeathState(JUST_DIED);
         else if (getDeathState() != CORPSE)
             setDeathState(CORPSE);
@@ -1585,7 +1585,7 @@ void Creature::Respawn(bool force)
             LoadCreaturesAddon(true);
         }
         else
-            setDeathState(JUST_ALIVED);
+            setDeathState(JUST_RESPAWNED);
 
         GetMotionMaster()->InitDefault();
 
@@ -1611,7 +1611,7 @@ void Creature::ForcedDespawn(uint32 timeMSToDespawn)
         return;
     }
 
-    if (isAlive())
+    if (IsAlive())
         setDeathState(JUST_DIED);
 
     RemoveCorpse(false);
@@ -1749,11 +1749,11 @@ bool Creature::IsVisibleInGridForPlayer(Player const* pl) const
         return true;
 
     // Live player (or with not release body see live creatures or death creatures with corpse disappearing time > 0
-    if (pl->isAlive() || pl->GetDeathTimer() > 0)
+    if (pl->IsAlive() || pl->GetDeathTimer() > 0)
     {
         if (GetEntry() == VISUAL_WAYPOINT && !pl->isGameMaster())
             return false;
-        return (isAlive() || m_corpseRemoveTime > uint32(time(NULL)) || (m_isDeadByDefault && m_deathState == CORPSE));
+        return (IsAlive() || m_corpseRemoveTime > uint32(time(NULL)) || (m_isDeadByDefault && m_deathState == CORPSE));
     }
 
     // Dead player see creatures near own corpse
@@ -1897,7 +1897,7 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
         return false;
 
     // we don't need help from zombies :)
-    if (!isAlive())
+    if (!IsAlive())
         return false;
 
     if (isCivilian())
@@ -1907,7 +1907,7 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
         return false;
 
     // skip fighting creature
-    if (isInCombat())
+    if (IsInCombat())
         return false;
 
     // only from same creature faction
@@ -2079,7 +2079,7 @@ void Creature::SetInCombatWithZone()
             if (pPlayer->isGameMaster())
                 continue;
 
-            if (pPlayer->isAlive())
+            if (pPlayer->IsAlive())
             {
                 pPlayer->SetInCombatWith(this);
                 AddThreat(pPlayer, 0.0f);

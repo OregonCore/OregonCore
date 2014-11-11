@@ -173,7 +173,7 @@ struct aqsentinelAI : public ScriptedAI
             Creature* c = nearby[i];
             if (c)
             {
-                if (!c->isInCombat())
+                if (!c->IsInCombat())
                 {
                     c->SetNoCallAssistance(true);
                     if (c->AI())

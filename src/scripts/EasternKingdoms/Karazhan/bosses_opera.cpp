@@ -227,7 +227,7 @@ struct mob_titoAI : public ScriptedAI
         if (DorotheeGUID)
         {
             Creature* Dorothee = (Unit::GetCreature((*me), DorotheeGUID));
-            if (Dorothee && Dorothee->isAlive())
+            if (Dorothee && Dorothee->IsAlive())
             {
                 CAST_AI(boss_dorotheeAI, Dorothee->AI())->TitoDied = true;
                 DoScriptText(SAY_DOROTHEE_TITO_DEATH, Dorothee);
@@ -1378,7 +1378,7 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
         if (urand(0, 1) && SummonedRomulo)
         {
             Creature* Romulo = (Unit::GetCreature((*me), RomuloGUID));
-            if (Romulo && Romulo->isAlive() && !RomuloDead)
+            if (Romulo && Romulo->IsAlive() && !RomuloDead)
                 DoCast(Romulo, SPELL_ETERNAL_AFFECTION);
         }
         else DoCast(me, SPELL_ETERNAL_AFFECTION);

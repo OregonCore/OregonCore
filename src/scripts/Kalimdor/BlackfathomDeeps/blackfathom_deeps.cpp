@@ -98,7 +98,7 @@ struct npc_blackfathom_deeps_eventAI : public ScriptedAI
                 if (pPlayer->isGameMaster())
                     continue;
 
-                if (pPlayer->isAlive())
+                if (pPlayer->IsAlive())
                 {
                     me->SetInCombatWith(pPlayer);
                     pPlayer->SetInCombatWith(me);

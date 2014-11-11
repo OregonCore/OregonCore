@@ -63,7 +63,7 @@ struct boss_void_reaverAI : public ScriptedAI
 
         Enraged = false;
 
-        if (pInstance && me->isAlive())
+        if (pInstance && me->IsAlive())
             pInstance->SetData(DATA_VOIDREAVEREVENT, NOT_STARTED);
     }
 
@@ -141,7 +141,7 @@ struct boss_void_reaverAI : public ScriptedAI
                     continue;
 
                 //18 yard radius minimum
-                if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive() && pTarget->GetDistance2d(me) >= 18)
+                if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->IsAlive() && pTarget->GetDistance2d(me) >= 18)
                     target_list.push_back(pTarget);
                 pTarget = NULL;
             }

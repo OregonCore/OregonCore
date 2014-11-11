@@ -239,7 +239,7 @@ struct npc_grimstoneAI : public npc_escortAI
                 if (RingBossGUID)
                 {
                     Creature* boss = Unit::GetCreature(*me, RingBossGUID);
-                    if (boss && !boss->isAlive() && boss->isDead())
+                    if (boss && !boss->IsAlive() && boss->isDead())
                     {
                         RingBossGUID = 0;
                         Event_Timer = 5000;
@@ -252,7 +252,7 @@ struct npc_grimstoneAI : public npc_escortAI
                 for (uint8 i = 0; i < MAX_MOB_AMOUNT; ++i)
                 {
                     Creature* mob = Unit::GetCreature(*me, RingMobGUID[i]);
-                    if (mob && !mob->isAlive() && mob->isDead())
+                    if (mob && !mob->IsAlive() && mob->isDead())
                     {
                         RingMobGUID[i] = 0;
                         --MobCount;

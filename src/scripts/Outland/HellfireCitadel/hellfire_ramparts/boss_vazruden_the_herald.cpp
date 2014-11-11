@@ -113,7 +113,7 @@ struct boss_nazanAI : public ScriptedAI
     {
         if (!UpdateVictim())
         {
-            if (UnsummonCheck <= diff && me->isAlive())
+            if (UnsummonCheck <= diff && me->IsAlive())
             {
                 me->SetLootRecipient(NULL);
                 me->SetVisibility(VISIBILITY_OFF);
@@ -135,7 +135,7 @@ struct boss_nazanAI : public ScriptedAI
         if (flight) // phase 1 - the flight
         {
             Creature* Vazruden = Unit::GetCreature(*me, VazrudenGUID);
-            if (Fly_Timer <= diff || !(Vazruden && Vazruden->isAlive() && (Vazruden->GetHealth() * 5 > Vazruden->GetMaxHealth())))
+            if (Fly_Timer <= diff || !(Vazruden && Vazruden->IsAlive() && (Vazruden->GetHealth() * 5 > Vazruden->GetMaxHealth())))
             {
                 flight = false;
                 BellowingRoar_Timer = 6000;
@@ -244,7 +244,7 @@ struct boss_vazrudenAI : public ScriptedAI
     {
         if (!UpdateVictim())
         {
-            if (UnsummonCheck <= diff && me->isAlive())
+            if (UnsummonCheck <= diff && me->IsAlive())
             {
                 if (!WipeSaid)
                 {
@@ -344,7 +344,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
             {
                 if (Creature* pOrc = Creature::GetCreature(*me, *itr))
                 {
-                    if (!pOrc->isAlive())
+                    if (!pOrc->IsAlive())
                     {
                         pOrc->ForcedDespawn();
                         pOrc->Respawn();
@@ -440,7 +440,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
             {
                 Creature* Nazan = Unit::GetCreature(*me, NazanGUID);
                 Creature* Vazruden = Unit::GetCreature(*me, VazrudenGUID);
-                if ((Nazan && Nazan->isAlive()) || (Vazruden && Vazruden->isAlive()))
+                if ((Nazan && Nazan->IsAlive()) || (Vazruden && Vazruden->IsAlive()))
                 {
                     if ((Nazan && Nazan->getVictim()) || (Vazruden && Vazruden->getVictim()))
                         return;

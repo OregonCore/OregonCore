@@ -75,7 +75,7 @@ struct boss_supremusAI : public ScriptedAI
     {
         if (pInstance)
         {
-            if (me->isAlive())
+            if (me->IsAlive())
                 pInstance->SetData(DATA_SUPREMUSEVENT, NOT_STARTED);
         }
 

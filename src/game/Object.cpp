@@ -1686,6 +1686,13 @@ void WorldObject::SendMessageToSet(WorldPacket* data, bool /*fake*/)
     VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), notifier);
 }
 
+void Unit::BuildHeartBeatMsg(WorldPacket* data) const
+{
+    data->Initialize(MSG_MOVE_HEARTBEAT, 32);
+    *data << GetPackGUID();
+    BuildMovementPacket(data);
+}
+
 void WorldObject::SendMessageToSetInRange(WorldPacket* data, float dist, bool /*bToSelf*/)
 {
     Oregon::MessageDistDeliverer notifier(this, data, dist);

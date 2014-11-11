@@ -394,12 +394,12 @@ enum BaseModType
 
 enum DeathState
 {
-    ALIVE       = 0,
-    JUST_DIED   = 1,
-    CORPSE      = 2,
-    DEAD        = 3,
-    JUST_ALIVED = 4,
-    DEAD_FALLING = 5
+    ALIVE           = 0,
+    JUST_DIED       = 1,
+    CORPSE          = 2,
+    DEAD            = 3,
+    JUST_RESPAWNED  = 4,
+    DEAD_FALLING    = 5
 };
 
 enum UnitState
@@ -1181,7 +1181,7 @@ class Unit : public WorldObject
             return GetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID);
         }
         void Mount(uint32 mount);
-        void Unmount();
+        void Dismount();
         bool HasShapeshiftChangingModel() const;
 
         uint16 GetMaxSkillValueForLevel(Unit const* target = NULL) const
@@ -1321,7 +1321,7 @@ class Unit : public WorldObject
         {
             return m_initiatingCombat;
         }
-        bool isInCombat()  const
+        bool IsInCombat()  const
         {
             return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
         }
@@ -1422,6 +1422,7 @@ class Unit : public WorldObject
         void SendMovementFlagUpdate(bool self = false);
 
         void BuildHeartBeatMsg(WorldPacket* data) const;
+        void BuildMovementPacket(ByteBuffer *data) const;
 
         virtual void MoveOutOfRange(Player&) {  };
 
@@ -1429,7 +1430,7 @@ class Unit : public WorldObject
         {
             return (m_movementInfo.GetMovementFlags() & (MOVEFLAG_MOVING | MOVEFLAG_ROOT)) == MOVEFLAG_MOVING;
         }
-        bool isAlive() const
+        bool IsAlive() const
         {
             return (m_deathState == ALIVE);
         };
@@ -1694,6 +1695,9 @@ class Unit : public WorldObject
         // delayed+channeled spells are always interrupted
         void InterruptNonMeleeSpells(bool withDelayed, uint32 spellid = 0, bool withInstant = true);
 
+        uint64 GetTarget() const { return GetUInt64Value(UNIT_FIELD_TARGET); }
+        void SetTarget(uint64 guid = 0) { SetUInt64Value(UNIT_FIELD_TARGET, guid); };
+
         Spell* GetCurrentSpell(CurrentSpellTypes spellType) const
         {
             return m_currentSpells[spellType];
@@ -1733,6 +1737,8 @@ class Unit : public WorldObject
 
         float m_threatModifier[MAX_SPELL_SCHOOL];
         float m_modAttackSpeedPct[3];
+
+        uint32 _oldFactionId;
 
         // Event handler
         EventProcessor m_Events;
@@ -1999,27 +2005,11 @@ class Unit : public WorldObject
         }
         void StopMoving();
 
-        void AddUnitMovementFlag(uint32 f)
-        {
-            m_unit_movement_flags |= f;
-        }
-        void RemoveUnitMovementFlag(uint32 f)
-        {
-            uint32 oldval = m_unit_movement_flags;
-            m_unit_movement_flags = oldval & ~f;
-        }
-        uint32 HasUnitMovementFlag(uint32 f) const
-        {
-            return m_unit_movement_flags & f;
-        }
-        uint32 GetUnitMovementFlags() const
-        {
-            return m_unit_movement_flags;
-        }
-        void SetUnitMovementFlags(uint32 f)
-        {
-            m_unit_movement_flags = f;
-        }
+        void AddUnitMovementFlag(uint32 f) { m_movementInfo.moveFlags |= f; }
+        void RemoveUnitMovementFlag(uint32 f) { m_movementInfo.moveFlags &= ~f; }
+        bool HasUnitMovementFlag(uint32 f) const { return (m_movementInfo.moveFlags & f) == f; }
+        uint32 GetUnitMovementFlags() const { return m_movementInfo.moveFlags; }
+        void SetUnitMovementFlags(uint32 f) { m_movementInfo.moveFlags = f; }
 
         void SetControlled(bool apply, UnitState state);
         void SetFeared(bool apply/*, uint64 casterGUID = 0, uint32 spellID = 0*/);
@@ -2154,7 +2144,6 @@ class Unit : public WorldObject
         virtual SpellSchoolMask GetMeleeDamageSchoolMask() const;
 
         MotionMaster i_motionMaster;
-        uint32 m_unit_movement_flags;
 
         uint32 m_reactiveTimer[MAX_REACTIVE];
 

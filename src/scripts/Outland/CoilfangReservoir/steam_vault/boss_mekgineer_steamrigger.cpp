@@ -75,7 +75,7 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
         Summon50 = false;
         Summon25 = false;
 
-        if (pInstance && me->isAlive())
+        if (pInstance && me->IsAlive())
             pInstance->SetData(TYPE_MEKGINEER_STEAMRIGGER, NOT_STARTED);
     }
 

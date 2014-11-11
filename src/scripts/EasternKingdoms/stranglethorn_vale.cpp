@@ -82,7 +82,7 @@ struct mob_yennikuAI : public ScriptedAI
             }
             else Reset_Timer -= diff;
 
-            if (me->isInCombat() && me->getVictim())
+            if (me->IsInCombat() && me->getVictim())
             {
                 if (me->getVictim()->GetTypeId() == TYPEID_PLAYER)
                 {

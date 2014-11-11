@@ -324,7 +324,7 @@ Player* FollowerAI::GetLeaderForFollower()
 {
     if (Player* pLeader = Unit::GetPlayer(*me, m_uiLeaderGUID))
     {
-        if (pLeader->isAlive())
+        if (pLeader->IsAlive())
             return pLeader;
         else
         {
@@ -334,7 +334,7 @@ Player* FollowerAI::GetLeaderForFollower()
                 {
                     Player* pMember = pRef->getSource();
 
-                    if (pMember && pMember->isAlive() && me->IsWithinDistInMap(pMember, MAX_PLAYER_DISTANCE))
+                    if (pMember && pMember->IsAlive() && me->IsWithinDistInMap(pMember, MAX_PLAYER_DISTANCE))
                     {
                         sLog.outDebug("OSCR: FollowerAI GetLeader changed and returned new leader.");
                         m_uiLeaderGUID = pMember->GetGUID();

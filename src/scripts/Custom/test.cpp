@@ -121,7 +121,7 @@ struct npc_testAI : public npc_escortAI
             npc_escortAI::UpdateAI(diff);
 
             //Combat check
-            if (me->isInCombat() && me->getVictim())
+            if (me->IsInCombat() && me->getVictim())
             {
                 if (DeathCoilTimer <= diff)
                 {

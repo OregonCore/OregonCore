@@ -600,7 +600,7 @@ struct npc_ogronAI : public npc_escortAI
                 if ((*itr)->GetEntry() == NPC_REETHE)
                     continue;
 
-                if ((*itr)->isAlive())
+                if ((*itr)->IsAlive())
                 {
                     (*itr)->setFaction(FACTION_THER_HOSTILE);
                     (*itr)->AI()->AttackStart(me);
@@ -873,7 +873,7 @@ struct npc_private_hendelAI : public ScriptedAI
         {
             for (std::list<Creature*>::iterator itr = lCreatureList.begin(); itr != lCreatureList.end(); ++itr)
             {
-                if ((*itr)->isAlive())
+                if ((*itr)->IsAlive())
                 {
                     (*itr)->setFaction(FACTION_HOSTILE);
                     (*itr)->AI()->AttackStart(pPlayer);
@@ -955,7 +955,7 @@ struct npc_private_hendelAI : public ScriptedAI
 
                 for (std::list<Creature*>::iterator itr = lCreatureList.begin(); itr != lCreatureList.end(); ++itr)
                 {
-                    if ((*itr)->isAlive())
+                    if ((*itr)->IsAlive())
                     {
                         N = N + 1;
                         (*itr)->RestoreFaction();
@@ -1035,7 +1035,7 @@ struct npc_zelfraxAI : public ScriptedAI
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
         SetCombatMovement(true);
 
-        if (me->isInCombat())
+        if (me->IsInCombat())
             if (Unit* pUnit = me->getVictim())
                 me->GetMotionMaster()->MoveChase(pUnit);
     }

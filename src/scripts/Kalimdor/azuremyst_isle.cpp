@@ -240,7 +240,7 @@ struct npc_engineer_spark_overgrindAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!me->isInCombat())
+        if (!me->IsInCombat())
         {
             if (Emote_Timer <= diff)
             {

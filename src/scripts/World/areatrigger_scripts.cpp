@@ -63,7 +63,7 @@ enum eLegionTeleporter
 
 bool AreaTrigger_at_legion_teleporter(Player* pPlayer, const AreaTriggerEntry* /*pAt*/)
 {
-    if (pPlayer->isAlive() && !pPlayer->isInCombat())
+    if (pPlayer->IsAlive() && !pPlayer->IsInCombat())
     {
         if (pPlayer->GetTeam() == ALLIANCE && pPlayer->GetQuestRewardStatus(QUEST_GAINING_ACCESS_A))
         {

@@ -255,7 +255,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
             break;
         case 59:
             me->SummonCreature(SKARLOC_MOUNT, 2488.64f, 625.77f, 58.26f, 4.71f, TEMPSUMMON_TIMED_DESPAWN, 10000);
-            DoUnmount();
+            DoDismount();
             HadMount = false;
             SetRun(false);
             break;
@@ -370,7 +370,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
 
         if (!HasEscortState(STATE_ESCORT_ESCORTING))
         {
-            DoUnmount();
+            DoDismount();
             HadMount = false;
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 0);
@@ -393,9 +393,9 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
         me->Mount(SKARLOC_MOUNT_MODEL);
         me->SetSpeed(MOVE_RUN, SPEED_MOUNT);
     }
-    void DoUnmount()
+    void DoDismount()
     {
-        me->Unmount();
+        me->Dismount();
         me->SetSpeed(MOVE_RUN, SPEED_RUN);
     }
     void EnterCombat(Unit*)
@@ -403,7 +403,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
         DoScriptText(RAND(SAY_TH_RANDOM_AGGRO1, SAY_TH_RANDOM_AGGRO2, SAY_TH_RANDOM_AGGRO3, SAY_TH_RANDOM_AGGRO4), me);
         if (me->IsMounted())
         {
-            DoUnmount();
+            DoDismount();
             HadMount = true;
         }
     }

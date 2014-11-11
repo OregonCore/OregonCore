@@ -168,7 +168,7 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
             else EventCheck_Timer -= diff;
         }
 
-        if (!me->isInCombat() && !IsBanished)
+        if (!me->IsInCombat() && !IsBanished)
         {
             //this is where we add MovePoint()
             //DoWhine("I haz no mount!", LANG_UNIVERSAL, NULL);

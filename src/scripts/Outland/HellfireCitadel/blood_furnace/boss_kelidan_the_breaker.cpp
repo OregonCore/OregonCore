@@ -137,7 +137,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
         for (int i = 0; i < 5; ++i)
         {
             Creature* channeler = Unit::GetCreature(*me, Channelers[i]);
-            if (who && channeler && !channeler->isInCombat())
+            if (who && channeler && !channeler->IsInCombat())
                 channeler->AI()->AttackStart(who);
         }
     }
@@ -147,7 +147,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
         for (int i = 0; i < 5; ++i)
         {
             Creature* channeler = Unit::GetCreature(*me, Channelers[i]);
-            if (channeler && channeler->isAlive())
+            if (channeler && channeler->IsAlive())
                 return;
         }
 

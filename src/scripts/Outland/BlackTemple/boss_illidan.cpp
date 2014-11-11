@@ -932,7 +932,7 @@ struct flame_of_azzinothAI : public ScriptedAI
                 DoCast(me, SPELL_FLAME_ENRAGE, true);
                 DoResetThreat();
                 Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (pTarget && pTarget->isAlive())
+                if (pTarget && pTarget->IsAlive())
                 {
                     me->AddThreat(me->getVictim(), 5000000.0f);
                     AttackStart(me->getVictim());
@@ -1860,7 +1860,7 @@ void boss_illidan_stormrageAI::Reset()
     {
         if (GETCRE(Akama, AkamaGUID))
         {
-            if (!Akama->isAlive())
+            if (!Akama->IsAlive())
                 Akama->Respawn();
             else
             {
@@ -2182,7 +2182,7 @@ void boss_illidan_stormrageAI::EnterPhase(PhaseIllidan NextPhase)
     if (MaievGUID)
     {
         GETCRE(Maiev, MaievGUID);
-        if (Maiev && Maiev->isAlive())
+        if (Maiev && Maiev->IsAlive())
             Maiev->AI()->DoAction(NextPhase);
     }
     Phase = NextPhase;

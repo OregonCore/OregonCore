@@ -425,7 +425,7 @@ struct npc_lord_gregor_lescovarAI : public npc_escortAI
 
         if (Creature* pMarzon = Unit::GetCreature(*me, MarzonGUID))
         {
-            if (pMarzon->isAlive())
+            if (pMarzon->IsAlive())
                 pMarzon->DisappearAndDie();
         }
     }
@@ -463,7 +463,7 @@ struct npc_lord_gregor_lescovarAI : public npc_escortAI
     {
         if (Creature* pMarzon = Unit::GetCreature(*me, MarzonGUID))
         {
-            if (pMarzon->isAlive() && !pMarzon->isInCombat())
+            if (pMarzon->IsAlive() && !pMarzon->IsInCombat())
                 pMarzon->AI()->AttackStart(pWho);
         }
     }

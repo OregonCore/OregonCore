@@ -490,7 +490,7 @@ class CannibalizeObjectCheck
         CannibalizeObjectCheck(Unit* funit, float range) : i_funit(funit), i_range(range) {}
         bool operator()(Player* u)
         {
-            if (i_funit->IsFriendlyTo(u) || u->isAlive() || u->isInFlight())
+            if (i_funit->IsFriendlyTo(u) || u->IsAlive() || u->isInFlight())
                 return false;
 
             return i_funit->IsWithinDistInMap(u, i_range);
@@ -498,7 +498,7 @@ class CannibalizeObjectCheck
         bool operator()(Corpse* u);
         bool operator()(Creature* u)
         {
-            if (i_funit->IsFriendlyTo(u) || u->isAlive() || u->isInFlight() ||
+            if (i_funit->IsFriendlyTo(u) || u->IsAlive() || u->isInFlight() ||
                 (u->GetCreatureTypeMask() & CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD) == 0)
                 return false;
 
@@ -653,7 +653,7 @@ class MostHPMissingInRange
         MostHPMissingInRange(Unit const* obj, float range, uint32 hp) : i_obj(obj), i_range(range), i_hp(hp) {}
         bool operator()(Unit* u)
         {
-            if (u->isAlive() && u->isInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) && u->GetMaxHealth() - u->GetHealth() > i_hp)
+            if (u->IsAlive() && u->IsInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) && u->GetMaxHealth() - u->GetHealth() > i_hp)
             {
                 i_hp = u->GetMaxHealth() - u->GetHealth();
                 return true;
@@ -672,7 +672,7 @@ class FriendlyCCedInRange
         FriendlyCCedInRange(Unit const* obj, float range) : i_obj(obj), i_range(range) {}
         bool operator()(Unit* u)
         {
-            if (u->isAlive() && u->isInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
+            if (u->IsAlive() && u->IsInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
                 (u->isFeared() || u->isCharmed() || u->isFrozen() || u->HasUnitState(UNIT_STATE_STUNNED) || u->HasUnitState(UNIT_STATE_CONFUSED)))
                 return true;
             return false;
@@ -688,7 +688,7 @@ class FriendlyMissingBuffInRange
         FriendlyMissingBuffInRange(Unit const* obj, float range, uint32 spellid) : i_obj(obj), i_range(range), i_spell(spellid) {}
         bool operator()(Unit* u)
         {
-            if (u->isAlive() && u->isInCombat() && /*!i_obj->IsHostileTo(u)*/ i_obj->IsFriendlyTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
+            if (u->IsAlive() && u->IsInCombat() && /*!i_obj->IsHostileTo(u)*/ i_obj->IsFriendlyTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
                 !(u->HasAura(i_spell, 0) || u->HasAura(i_spell, 1) || u->HasAura(i_spell, 2)))
                 return true;
             return false;
@@ -705,7 +705,7 @@ class AnyUnfriendlyUnitInObjectRangeCheck
         AnyUnfriendlyUnitInObjectRangeCheck(WorldObject const* obj, Unit const* funit, float range) : i_obj(obj), i_funit(funit), i_range(range) {}
         bool operator()(Unit* u)
         {
-            if (u->isAlive() && i_obj->IsWithinDistInMap(u, i_range) && !i_funit->IsFriendlyTo(u))
+            if (u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range) && !i_funit->IsFriendlyTo(u))
                 return true;
             else
                 return false;
@@ -722,7 +722,7 @@ class AnyUnfriendlyNoTotemUnitInObjectRangeCheck
         AnyUnfriendlyNoTotemUnitInObjectRangeCheck(WorldObject const* obj, Unit const* funit, float range) : i_obj(obj), i_funit(funit), i_range(range) {}
         bool operator()(Unit* u)
         {
-            if (!u->isAlive())
+            if (!u->IsAlive())
                 return false;
 
             if (u->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET)
@@ -760,7 +760,7 @@ class AnyFriendlyUnitInObjectRangeCheck
         AnyFriendlyUnitInObjectRangeCheck(WorldObject const* obj, Unit const* funit, float range) : i_obj(obj), i_funit(funit), i_range(range) {}
         bool operator()(Unit* u)
         {
-            if (u->isAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_funit->IsFriendlyTo(u))
+            if (u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_funit->IsFriendlyTo(u))
                 return true;
             else
                 return false;
@@ -777,7 +777,7 @@ class AnyUnitInObjectRangeCheck
         AnyUnitInObjectRangeCheck(WorldObject const* obj, float range) : i_obj(obj), i_range(range) {}
         bool operator()(Unit* u)
         {
-            if (u->isAlive() && i_obj->IsWithinDistInMap(u, i_range))
+            if (u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range))
                 return true;
 
             return false;
@@ -880,7 +880,7 @@ struct AnyDeadUnitCheck
 {
     bool operator()(Unit* u)
     {
-        return !u->isAlive();
+        return !u->IsAlive();
     }
 };
 
@@ -972,7 +972,7 @@ class NearestAssistCreatureInCreatureRangeCheck
 
         bool operator()(Creature* u)
         {
-            if (u->getFaction() == i_obj->getFaction() && !u->isInCombat() && !u->GetCharmerOrOwnerGUID() && u->IsHostileTo(i_enemy) && u->isAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_obj->IsWithinLOSInMap(u))
+            if (u->getFaction() == i_obj->getFaction() && !u->IsInCombat() && !u->GetCharmerOrOwnerGUID() && u->IsHostileTo(i_enemy) && u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_obj->IsWithinLOSInMap(u))
             {
                 i_range = i_obj->GetDistance(u);         // use found unit range as new range limit for next check
                 return true;
@@ -1001,7 +1001,7 @@ class NearestCreatureEntryWithLiveStateInObjectRangeCheck
 
         bool operator()(Creature* u)
         {
-            if (u->GetEntry() == i_entry && u->isAlive() == i_alive && i_obj.IsWithinDistInMap(u, i_range))
+            if (u->GetEntry() == i_entry && u->IsAlive() == i_alive && i_obj.IsWithinDistInMap(u, i_range))
             {
                 i_range = i_obj.GetDistance(u);         // use found unit range as new range limit for next check
                 return true;
@@ -1028,7 +1028,7 @@ class AnyPlayerInObjectRangeCheck
         AnyPlayerInObjectRangeCheck(WorldObject const* obj, float range, bool reqAlive = true) : i_obj(obj), i_range(range), _reqAlive(reqAlive) {}
         bool operator()(Player* u)
         {
-            if (_reqAlive && !u->isAlive())
+            if (_reqAlive && !u->IsAlive())
                 return false;
 
             if (!i_obj->IsWithinDistInMap(u, i_range))
@@ -1048,7 +1048,7 @@ class AllFriendlyCreaturesInGrid
         AllFriendlyCreaturesInGrid(Unit const* obj) : pUnit(obj) {}
         bool operator() (Unit* u)
         {
-            if (u->isAlive() && u->GetVisibility() == VISIBILITY_ON && u->IsFriendlyTo(pUnit))
+            if (u->IsAlive() && u->GetVisibility() == VISIBILITY_ON && u->IsFriendlyTo(pUnit))
                 return true;
 
             return false;
@@ -1099,7 +1099,7 @@ class PlayerAtMinimumRangeAway
         bool operator() (Player* pPlayer)
         {
             //No threat list check, must be done explicit if expected to be in combat with creature
-            if (!pPlayer->isGameMaster() && pPlayer->isAlive() && !pUnit->IsWithinDist(pPlayer, fRange, false))
+            if (!pPlayer->isGameMaster() && pPlayer->IsAlive() && !pUnit->IsWithinDist(pPlayer, fRange, false))
                 return true;
 
             return false;

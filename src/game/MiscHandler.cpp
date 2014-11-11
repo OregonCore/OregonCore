@@ -51,7 +51,7 @@ void WorldSession::HandleRepopRequestOpcode(WorldPacket& recv_data)
 
     recv_data.read_skip<uint8>();
 
-    if (GetPlayer()->isAlive() || GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_GHOST))
+    if (GetPlayer()->IsAlive() || GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_GHOST))
         return;
 
     // the world update order is sessions, players, creatures
@@ -343,7 +343,7 @@ void WorldSession::HandleLogoutRequestOpcode(WorldPacket& /*recv_data*/)
         DoLootRelease(lguid);
 
     //Can not logout if...
-    if (GetPlayer()->isInCombat() ||                        //...is in combat
+    if (GetPlayer()->IsInCombat() ||                        //...is in combat
         GetPlayer()->duel         ||                        //...is in Duel
         GetPlayer()->HasAura(9454, 0)         ||            //...is frozen by GM via freeze command
         //...is jumping ...is falling
@@ -702,7 +702,7 @@ void WorldSession::HandleCorpseReclaimOpcode(WorldPacket& recv_data)
     uint64 guid;
     recv_data >> guid;
 
-    if (GetPlayer()->isAlive())
+    if (GetPlayer()->IsAlive())
         return;
 
     // do not allow corpse reclaim in arena
@@ -741,7 +741,7 @@ void WorldSession::HandleResurrectResponseOpcode(WorldPacket& recv_data)
     recv_data >> guid;
     recv_data >> status;
 
-    if (GetPlayer()->isAlive())
+    if (GetPlayer()->IsAlive())
         return;
 
     if (status == 0)
@@ -826,7 +826,7 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket& recv_data)
         return;
 
     uint32 quest_id = sObjectMgr.GetQuestForAreaTrigger(Trigger_ID);
-    if (quest_id && GetPlayer()->isAlive() && GetPlayer()->IsActiveQuest(quest_id))
+    if (quest_id && GetPlayer()->IsAlive() && GetPlayer()->IsActiveQuest(quest_id))
     {
         Quest const* pQuest = sObjectMgr.GetQuestTemplate(quest_id);
         if (pQuest)
@@ -1434,7 +1434,7 @@ void WorldSession::HandleDismountOpcode(WorldPacket& /*recv_data*/)
         return;
     }
 
-    _player->Unmount();
+    _player->Dismount();
     _player->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
 }
 

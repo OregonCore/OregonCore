@@ -142,7 +142,7 @@ struct mob_core_ragerAI : public ScriptedAI
             {
                 if (Unit* pGolemagg = Unit::GetUnit(*me, pInstance->GetData64(DATA_GOLEMAGG)))
                 {
-                    if (pGolemagg->isAlive())
+                    if (pGolemagg->IsAlive())
                     {
                         DoScriptText(EMOTE_LOWHP, me);
                         me->SetHealth(me->GetMaxHealth());

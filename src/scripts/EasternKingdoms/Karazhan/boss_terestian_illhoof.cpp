@@ -91,7 +91,7 @@ struct mob_kilrekAI : public ScriptedAI
             if (TerestianGUID)
             {
                 Unit* Terestian = Unit::GetUnit((*me), TerestianGUID);
-                if (Terestian && Terestian->isAlive())
+                if (Terestian && Terestian->IsAlive())
                     DoCast(Terestian, SPELL_BROKEN_PACT, true);
             }
         }
@@ -220,7 +220,7 @@ struct boss_terestianAI : public ScriptedAI
 
         if (Minion* Kilrek = me->GetFirstMinion())
         {
-            if (!Kilrek->isAlive())
+            if (!Kilrek->IsAlive())
             {
                 Kilrek->UnSummon();
                 DoCast(me, SPELL_SUMMON_IMP, true);
@@ -281,7 +281,7 @@ struct boss_terestianAI : public ScriptedAI
         if (SacrificeTimer <= diff)
         {
             Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
-            if (pTarget && pTarget->isAlive())
+            if (pTarget && pTarget->IsAlive())
             {
                 DoCast(pTarget, SPELL_SACRIFICE, true);
                 DoCast(pTarget, SPELL_SUMMON_DEMONCHAINS, true);

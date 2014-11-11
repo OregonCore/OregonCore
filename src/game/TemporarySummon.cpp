@@ -59,7 +59,7 @@ void TempSummon::Update(uint32 diff)
         }
     case TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT:
         {
-            if (!isInCombat())
+            if (!IsInCombat())
             {
                 if (m_timer <= diff)
                 {
@@ -118,7 +118,7 @@ void TempSummon::Update(uint32 diff)
                 return;
             }
 
-            if (!isInCombat())
+            if (!IsInCombat())
             {
                 if (m_timer <= diff)
                 {
@@ -141,7 +141,7 @@ void TempSummon::Update(uint32 diff)
                 return;
             }
 
-            if (!isInCombat() && isAlive())
+            if (!IsInCombat() && IsAlive())
             {
                 if (m_timer <= diff)
                 {
@@ -348,7 +348,7 @@ void Puppet::Update(uint32 time)
 {
     Minion::Update(time);
     //check if caster is channelling?
-    if (IsInWorld() && !isAlive())
+    if (IsInWorld() && !IsAlive())
     {
         UnSummon();
         m_owner->InterruptNonMeleeSpells(true, GetUInt32Value(UNIT_CREATED_BY_SPELL), false);

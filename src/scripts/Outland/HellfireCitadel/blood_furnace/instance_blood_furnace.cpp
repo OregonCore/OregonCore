@@ -206,7 +206,7 @@ struct instance_blood_furnace : public ScriptedInstance
                         {
                             if (Creature* pOrc = instance->GetCreature(*itr))
                             {
-                                if (!pOrc->isAlive())
+                                if (!pOrc->IsAlive())
                                 {
                                     pOrc->Respawn();
                                     BroggokEventPhase = 0;
@@ -418,7 +418,7 @@ struct instance_blood_furnace : public ScriptedInstance
                         if (pOrc->IsWithinDistInMap(pDoor, 8.0f))
                         {
                             BroggokEvent[i].SortedOrcGuids.insert(pOrc->GetGUID());
-                            if (!pOrc->isAlive())
+                            if (!pOrc->IsAlive())
                             {
                                 pOrc->ForcedDespawn();
                                 pOrc->Respawn();

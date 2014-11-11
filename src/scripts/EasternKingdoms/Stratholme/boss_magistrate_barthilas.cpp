@@ -51,7 +51,7 @@ struct boss_magistrate_barthilasAI : public ScriptedAI
         FuriousAnger_Timer = 5000;
         AngerCount = 0;
 
-        if (me->isAlive())
+        if (me->IsAlive())
             me->SetDisplayId(MODEL_NORMAL);
         else
             me->SetDisplayId(MODEL_HUMAN);

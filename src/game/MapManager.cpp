@@ -195,7 +195,7 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player)
             return false;
         }
 
-        if (!player->isAlive())
+        if (!player->IsAlive())
         {
             if (Corpse* corpse = player->GetCorpse())
             {

@@ -56,7 +56,7 @@ bool PetAI::_needToStop() const
 
 void PetAI::_stopAttack()
 {
-    if (!me->isAlive())
+    if (!me->IsAlive())
     {
         DEBUG_LOG("Creature stoped attacking because he is dead [guid=%u]", me->GetGUIDLow());
         me->GetMotionMaster()->Clear();
@@ -87,7 +87,7 @@ void PetAI::UpdateAI(const uint32 diff)
         m_updateAlliesTimer -= diff;
 
     // Must also check if victim is alive
-    if (me->getVictim() && me->getVictim()->isAlive())
+    if (me->getVictim() && me->getVictim()->IsAlive())
     {
         if (_needToStop())
         {

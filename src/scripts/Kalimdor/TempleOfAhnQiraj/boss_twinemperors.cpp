@@ -146,7 +146,7 @@ struct boss_twinemperorsAI : public ScriptedAI
                 // @todo we should activate the other boss location so he can start attackning even if nobody
                 // is near I dont know how to do that
                 ScriptedAI* otherAI = CAST_AI(ScriptedAI, pOtherBoss->AI());
-                if (!pOtherBoss->isInCombat())
+                if (!pOtherBoss->IsInCombat())
                 {
                     DoPlaySoundToSet(me, IAmVeklor() ? SOUND_VL_AGGRO : SOUND_VN_AGGRO);
                     otherAI->AttackStart(who);

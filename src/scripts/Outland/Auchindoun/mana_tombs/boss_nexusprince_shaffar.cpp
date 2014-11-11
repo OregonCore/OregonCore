@@ -108,7 +108,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
         //Despawn still living initial beacons.
         for (uint8 i = 0; i < NR_INITIAL_BEACONS; i++)
         {
-            if (Beacon[i] && Beacon[i]->isAlive())
+            if (Beacon[i] && Beacon[i]->IsAlive())
             {
                 Beacon[i]->RemoveAllAuras();
                 Beacon[i]->CombatStop();
@@ -158,7 +158,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
 
         // Send initial beacons to join the fight if not already
         for (uint8 i = 0; i < NR_INITIAL_BEACONS; i++)
-            if (Beacon[i] && Beacon[i]->isAlive() && !Beacon[i]->isInCombat())
+            if (Beacon[i] && Beacon[i]->IsAlive() && !Beacon[i]->IsInCombat())
                 Beacon[i]->AI()->AttackStart(who);
     }
 
@@ -294,7 +294,7 @@ struct mob_ethereal_beaconAI : public ScriptedAI
             KillSelf();
             return;
         }
-        if (!Shaffar->isInCombat())
+        if (!Shaffar->IsInCombat())
             Shaffar->AI()->AttackStart(who);
     }
 
@@ -317,7 +317,7 @@ struct mob_ethereal_beaconAI : public ScriptedAI
         if (Check_Timer <= diff)
         {
             Creature* Shaffar = me->FindNearestCreature(ENTRY_SHAFFAR, 100);
-            if (!Shaffar || Shaffar->isDead() || !Shaffar->isInCombat())
+            if (!Shaffar || Shaffar->isDead() || !Shaffar->IsInCombat())
             {
                 KillSelf();
                 return;

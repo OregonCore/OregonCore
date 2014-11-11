@@ -669,7 +669,7 @@ bool AreaTrigger_at_commander_dawnforge(Player* player, const AreaTriggerEntry* 
     if (!player->HasAura(SPELL_SUNFURY_DISGUISE, 0))
         return false;
 
-    if (player->isAlive() && player->GetQuestStatus(QUEST_INFO_GATHERING) == QUEST_STATUS_INCOMPLETE)
+    if (player->IsAlive() && player->GetQuestStatus(QUEST_INFO_GATHERING) == QUEST_STATUS_INCOMPLETE)
     {
         Creature* Dawnforge = SearchDawnforge(player, CreatureEntry[1][0], 30.0f);
 

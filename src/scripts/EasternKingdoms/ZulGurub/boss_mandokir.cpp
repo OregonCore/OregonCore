@@ -124,7 +124,7 @@ struct boss_mandokirAI : public ScriptedAI
                     {
                         if (Unit* jTemp = Unit::GetUnit(*me, JindoGUID))
                         {
-                            if (jTemp->isAlive())
+                            if (jTemp->IsAlive())
                                 DoScriptText(SAY_GRATS_JINDO, jTemp);
                         }
                     }
@@ -145,12 +145,12 @@ struct boss_mandokirAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (me->getVictim() && me->isAlive())
+        if (me->getVictim() && me->IsAlive())
         {
             if (!CombatStart)
             {
                 // At combat Start Mandokir is mounted so we must unmount it first
-                me->Unmount();
+                me->Dismount();
 
                 // And summon his raptor
                 me->SummonCreature(OHGAN, me->getVictim()->GetPositionX(), me->getVictim()->GetPositionY(), me->getVictim()->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
@@ -167,7 +167,7 @@ struct boss_mandokirAI : public ScriptedAI
                             targetX != pUnit->GetPositionX() ||
                             targetY != pUnit->GetPositionY() ||
                             targetZ != pUnit->GetPositionZ() ||
-                            pUnit->isInCombat()))
+                            pUnit->IsInCombat()))
                     {
                         if (me->IsWithinMeleeRange(pUnit))
                             DoCast(pUnit, 24316);

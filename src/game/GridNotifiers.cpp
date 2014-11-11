@@ -114,7 +114,7 @@ VisibleChangesNotifier::Visit(DynamicObjectMapType& m)
 
 inline void CreatureUnitRelocationWorker(Creature* c, Unit* u)
 {
-    if (!u->isAlive() || !c->isAlive() || c == u || u->isInFlight())
+    if (!u->IsAlive() || !c->IsAlive() || c == u || u->isInFlight())
         return;
 
     if (c->HasReactState(REACT_AGGRESSIVE) && !c->HasUnitState(UNIT_STATE_SIGHTLESS))
@@ -171,7 +171,7 @@ void CreatureRelocationNotifier::Visit(PlayerMapType& m)
 
 void CreatureRelocationNotifier::Visit(CreatureMapType& m)
 {
-    if (!i_creature.isAlive())
+    if (!i_creature.IsAlive())
         return;
 
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
@@ -243,7 +243,7 @@ void AIRelocationNotifier::Visit(CreatureMapType& m)
 
 void DynamicObjectUpdater::VisitHelper(Unit* target)
 {
-    if (!target->isAlive() || target->isInFlight())
+    if (!target->IsAlive() || target->isInFlight())
         return;
 
     if (target->GetTypeId() == TYPEID_UNIT && ((Creature*)target)->isTotem())

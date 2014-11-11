@@ -187,7 +187,7 @@ struct boss_aranAI : public ScriptedAI
         {
             Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
             //only on alive players
-            if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
+            if (pTarget && pTarget->IsAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
                 targets.push_back(pTarget);
         }
 

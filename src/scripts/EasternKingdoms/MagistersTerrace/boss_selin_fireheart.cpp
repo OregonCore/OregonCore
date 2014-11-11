@@ -105,7 +105,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
                 Unit* unit = Unit::GetUnit(*me, *itr);
                 if (unit)
                 {
-                    if (!unit->isAlive())
+                    if (!unit->IsAlive())
                         CAST_CRE(unit)->Respawn();      // Let the core handle setting death state, etc.
 
                     // Only need to set unselectable flag. You can't attack unselectable units so non_attackable flag is not necessary here.
@@ -148,7 +148,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
             pCrystal = NULL;
             //pCrystal = Unit::GetUnit(*me, FelCrystals[i]);
             pCrystal = Unit::GetUnit(*me, *itr);
-            if (pCrystal && pCrystal->isAlive())
+            if (pCrystal && pCrystal->IsAlive())
             {
                 // select nearest
                 if (!CrystalChosen || me->GetDistanceOrder(pCrystal, CrystalChosen, false))
@@ -184,7 +184,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
         {
             //Creature* pCrystal = (Unit::GetCreature(*me, FelCrystals[i]));
             Creature* pCrystal = Unit::GetCreature(*me, *itr);
-            if (pCrystal && pCrystal->isAlive())
+            if (pCrystal && pCrystal->IsAlive())
                 pCrystal->Kill(pCrystal);
         }
     }
@@ -208,7 +208,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
         if (type == POINT_MOTION_TYPE && id == 1)
         {
             Unit* CrystalChosen = Unit::GetUnit(*me, CrystalGUID);
-            if (CrystalChosen && CrystalChosen->isAlive())
+            if (CrystalChosen && CrystalChosen->IsAlive())
             {
                 // Make the crystal attackable
                 // We also remove NON_ATTACKABLE in case the database has it set.
@@ -305,7 +305,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
                     DoScriptText(SAY_EMPOWERED, me);
 
                     Unit* CrystalChosen = Unit::GetUnit(*me, CrystalGUID);
-                    if (CrystalChosen && CrystalChosen->isAlive())
+                    if (CrystalChosen && CrystalChosen->IsAlive())
                         // Use Deal Damage to kill it, not setDeathState.
                         CrystalChosen->Kill(CrystalChosen);
 
@@ -342,7 +342,7 @@ struct mob_fel_crystalAI : public ScriptedAI
         if (ScriptedInstance* instance = me->GetInstanceData())
         {
             Creature* Selin = (Unit::GetCreature(*me, instance->GetData64(DATA_SELIN)));
-            if (Selin && Selin->isAlive())
+            if (Selin && Selin->IsAlive())
             {
                 if (CAST_AI(boss_selin_fireheartAI, Selin->AI())->CrystalGUID == me->GetGUID())
                 {
