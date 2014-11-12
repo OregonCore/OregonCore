@@ -7137,41 +7137,25 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
         if (m_attacking == victim)
         {
             // switch to melee attack from ranged/magic
-            if (meleeAttack)
+            if (meleeAttack && !HasUnitState(UNIT_STATE_MELEE_ATTACKING))
             {
-                if (!HasUnitState(UNIT_STATE_MELEE_ATTACKING))
-                {
-                    AddUnitState(UNIT_STATE_MELEE_ATTACKING);
-                    SendMeleeAttackStart(victim);
-                    return true;
-                }
-            }
-            else if (HasUnitState(UNIT_STATE_MELEE_ATTACKING))
-            {
-                ClearUnitState(UNIT_STATE_MELEE_ATTACKING);
-                SendMeleeAttackStop(victim);
+                AddUnitState(UNIT_STATE_MELEE_ATTACKING);
+                SendMeleeAttackStart(victim);
                 return true;
             }
             return false;
         }
-
-        // switch target
-        InterruptSpell(CURRENT_MELEE_SPELL);
-        if (!meleeAttack)
-            ClearUnitState(UNIT_STATE_MELEE_ATTACKING);
+        AttackStop();
     }
-
-    if (m_attacking)
-        m_attacking->_removeAttacker(this);
-
-    m_attacking = victim;
-    m_attacking->_addAttacker(this);
 
     // Set our target
     SetTarget(victim->GetGUID());
 
     if (meleeAttack)
         AddUnitState(UNIT_STATE_MELEE_ATTACKING);
+
+    m_attacking = victim;
+    m_attacking->_addAttacker(this);
 
     if (GetTypeId() == TYPEID_UNIT && !ToCreature()->isPet())
     {
