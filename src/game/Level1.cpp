@@ -954,11 +954,8 @@ bool ChatHandler::HandleGonameCommand(const char* args)
             }
             // if both players are in different bgs
             else if (_player->GetBattleGroundId() && _player->GetBattleGroundId() != target->GetBattleGroundId())
-            {
-                PSendSysMessage(LANG_CANNOT_GO_TO_BG_FROM_BG, target->GetName());
-                SetSentErrorMessage(true);
-                return false;
-            }
+                _player->LeaveBattleground(false); // Note: should be changed so _player gets no Deserter debuff
+
             // all's well, set bg id
             // when porting out from the bg, it will be reset to 0
             _player->SetBattleGroundId(target->GetBattleGroundId());
@@ -992,14 +989,18 @@ bool ChatHandler::HandleGonameCommand(const char* args)
                 }
             }
 
-            // now we need to switch to target's instance
-            if (InstancePlayerBind* pBind = _player->GetBoundInstance(target->GetMapId(), target->GetDifficulty()))
-                if (InstancePlayerBind* tBind = target->GetBoundInstance(target->GetMapId(), target->GetDifficulty()))
-                    if (pBind != tBind)
-                    {
-                        _player->UnbindInstance(target->GetMapId(), target->GetDifficulty());
-                        _player->BindToInstance(tBind->save, !tBind->save->CanReset());
-                    }
+            // if the player or the player's group is bound to another instance
+            // the player will not be bound to another one
+            InstancePlayerBind *pBind = _player->GetBoundInstance(target->GetMapId(), target->GetDifficulty());
+            if (!pBind)
+            {
+                Group *group = _player->GetGroup();
+                // if no bind exists, create a solo bind
+                InstanceGroupBind *gBind = group ? group->GetBoundInstance(target) : NULL;                // if no bind exists, create a solo bind
+                if (!gBind)
+                    if (InstanceSave *save = sInstanceSaveMgr.GetInstanceSave(target->GetInstanceId()))
+                        _player->BindToInstance(save, !save->CanReset());
+            }
 
             _player->SetDifficulty(target->GetDifficulty());
         }
