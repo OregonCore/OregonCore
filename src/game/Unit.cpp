@@ -413,8 +413,8 @@ void Unit::Update(uint32 p_time)
 
     if (IsAlive())
     {
-        ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, GetHealth() < GetMaxHealth() * 0.20f);
-        ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, GetHealth() < GetMaxHealth() * 0.35f);
+        ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, HealthBelowPct(20));
+        ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, HealthBelowPct(35));
     }
 
     i_motionMaster.UpdateMotion(p_time);
@@ -1924,7 +1924,7 @@ void Unit::CalcAbsorbResist(Unit* pVictim, SpellSchoolMask schoolMask, DamageEff
                     pVictim->ToPlayer()->AddSpellCooldown(31231, 0, time(NULL) + 60);
 
                     // with health > 10% lost health until health == 10%, in other case no losses
-                    uint32 health10 = pVictim->GetMaxHealth() / 10;
+                    uint32 health10 = pVictim->CountPctFromMaxHealth(10);
                     RemainingDamage = pVictim->GetHealth() > health10 ? pVictim->GetHealth() - health10 : 0;
                 }
             }
@@ -6287,7 +6287,7 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
                 {
                     if (triggerAmount == 0)
                         return false;
-                    basepoints0 = triggerAmount * GetMaxHealth() / 100;
+                    basepoints0 = int32(CountPctFromMaxHealth(triggerAmount));
                     trigger_spell_id = 34299;
                 }
                 break;
@@ -6561,7 +6561,7 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
     case 31255:
         {
             // whenever you deal damage to a target who is below 20% health.
-            if (!pVictim || !pVictim->IsAlive() || (pVictim->GetHealth() > pVictim->GetMaxHealth() / 5))
+            if (!pVictim || !pVictim->IsAlive() || pVictim->HealthAbovePct(20))
                 return false;
 
             target = this;
@@ -6574,7 +6574,7 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
                 return false;
 
             // Not give if target already have full health
-            if (pVictim->GetHealth() == pVictim->GetMaxHealth())
+            if (pVictim->IsFullHealth())
                 return false;
             // If your Greater Heal brings the target to full health, you gain $37595s1 mana.
             if (pVictim->GetHealth() + damage < pVictim->GetMaxHealth())
@@ -6585,7 +6585,7 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
     case 40971:
         {
             // If your target is below $s1% health
-            if (!pVictim || !pVictim->IsAlive() || (pVictim->GetHealth() > pVictim->GetMaxHealth() * triggerAmount / 100))
+            if (!pVictim || !pVictim->IsAlive() || pVictim->HealthAbovePct(triggerAmount))
                 return false;
             break;
         }
@@ -6593,7 +6593,7 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
     case 45057:
         {
             // reduce you below $s1% health
-            if (GetHealth() - damage > GetMaxHealth() * triggerAmount / 100)
+            if (!HealthBelowPctDamaged(triggerAmount, damage))
                 return false;
             break;
         }
@@ -9470,7 +9470,7 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
     int32 slow_non_stack = GetMaxNegativeAuraModifier(SPELL_AURA_MOD_SPEED_NOT_STACK);
     slow = slow < slow_non_stack ? slow : slow_non_stack;
     if (slow)
-        speed *= (100.0f + slow) / 100.0f;
+        AddPct(speed, slow);
     SetSpeed(mtype, speed * ratio, forced);
 }
 
@@ -11764,7 +11764,7 @@ Pet* Unit::CreateTamedPetFrom(Creature* creatureTarget, uint32 spell_id)
     pet->GetCharmInfo()->SetPetNumber(sObjectMgr.GeneratePetNumber(), true);
     // this enables pet details window (Shift+P)
     pet->InitPetCreateSpells();
-    pet->SetHealth(pet->GetMaxHealth());
+    pet->SetFullHealth();
 
     return pet;
 }
