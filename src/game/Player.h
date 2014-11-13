@@ -761,6 +761,7 @@ enum PlayerDelayedOperations
     DELAYED_SPELL_CAST_DESERTER = 0x04,
     DELAYED_BG_MOUNT_RESTORE    = 0x08,                     // Flag to restore mount state after teleport from BG
     DELAYED_BG_TAXI_RESTORE     = 0x10,                     // Flag to restore taxi state after teleport from BG
+    DELAYED_BG_GROUP_RESTORE    = 0x20,
     DELAYED_END
 };
 
@@ -1162,7 +1163,7 @@ class Player : public Unit, public GridObject<Player>
         Item* GetItemByPos(uint8 bag, uint8 slot) const;
         Item* GetWeaponForAttack(WeaponAttackType attackType, bool useable = false) const;
         Item* GetShield(bool useable = false) const;
-        static uint32 GetAttackBySlot(uint8 slot);        // MAX_ATTACK if not weapon slot
+        static uint8 GetAttackBySlot(uint8 slot);        // MAX_ATTACK if not weapon slot
         std::vector<Item* >& GetItemUpdateQueue()
         {
             return m_itemUpdateQueue;
@@ -1778,6 +1779,7 @@ class Player : public Unit, public GridObject<Player>
         void SendCooldownEvent(SpellEntry const* spellInfo);
         void ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs);
         void RemoveSpellCooldown(uint32 spell_id, bool update = false);
+        void SendClearCooldown(uint32 spell_id, Unit* target);
         void RemoveArenaSpellCooldowns();
         void RemoveAllSpellCooldown();
         void _LoadSpellCooldowns(QueryResult_AutoPtr result);
@@ -2037,7 +2039,7 @@ class Player : public Unit, public GridObject<Player>
         void SendAttackSwingNotStanding();
         void SendAttackSwingNotInRange();
         void SendAttackSwingBadFacingAttack();
-        void SendAutoRepeatCancel();
+        void SendAutoRepeatCancel(Unit* target);
         void SendExplorationExperience(uint32 Area, uint32 Experience);
 
         void SendDungeonDifficulty(bool IsInGroup);
@@ -2095,7 +2097,7 @@ class Player : public Unit, public GridObject<Player>
         void UpdateWeaponSkill (WeaponAttackType attType);
         void UpdateCombatSkills(Unit* pVictim, WeaponAttackType attType, MeleeHitOutcome outcome, bool defence);
 
-        void SetSkill(uint32 id, uint16 currVal, uint16 maxVal);
+        void SetSkill(uint16 id, uint16 currVal, uint16 maxVal);
         uint16 GetMaxSkillValue(uint32 skill) const;        // max + perm. bonus
         uint16 GetPureMaxSkillValue(uint32 skill) const;    // max
         uint16 GetSkillValue(uint32 skill) const;           // skill value + perm. bonus + temp bonus

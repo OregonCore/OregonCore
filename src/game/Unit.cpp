@@ -2524,6 +2524,22 @@ int32 Unit::GetMechanicResistChance(const SpellEntry* spellInfo)
     return resistMech;
 }
 
+bool Unit::CanUseAttackType(uint8 attacktype) const
+{
+    switch (attacktype)
+    {
+        case BASE_ATTACK:
+            return !HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISARMED);
+        /* @todo Implement unit flags 2 properly
+        case OFF_ATTACK:
+            return !HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_DISARM_OFFHAND);
+        case RANGED_ATTACK:
+            return !HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_DISARM_RANGED);*/
+        default:
+            return true;
+    }
+}
+
 // Melee based spells hit result calculations
 SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellEntry const* spellInfo, bool cMiss)
 {
@@ -3256,7 +3272,7 @@ void Unit::InterruptSpell(CurrentSpellTypes spellType, bool withDelayed, bool wi
         // send autorepeat cancel message for autorepeat spells
         if (spellType == CURRENT_AUTOREPEAT_SPELL)
             if (GetTypeId() == TYPEID_PLAYER)
-                ToPlayer()->SendAutoRepeatCancel();
+                ToPlayer()->SendAutoRepeatCancel(getVictim());
 
         if (spell->getState() != SPELL_STATE_FINISHED)
             spell->cancel(true);

@@ -72,11 +72,11 @@
 
 #define SKILL_VALUE(x)         PAIR32_LOPART(x)
 #define SKILL_MAX(x)           PAIR32_HIPART(x)
-#define MAKE_SKILL_VALUE(v, m) MAKE_PAIR32(v,m)
+#define MAKE_SKILL_VALUE(v, m) MAKE_PAIR32(v, m)
 
 #define SKILL_TEMP_BONUS(x)    int16(PAIR32_LOPART(x))
 #define SKILL_PERM_BONUS(x)    int16(PAIR32_HIPART(x))
-#define MAKE_SKILL_BONUS(t, p) MAKE_PAIR32(t,p)
+#define MAKE_SKILL_BONUS(t, p) MAKE_PAIR32(t, p)
 
 enum CharacterFlags
 {
@@ -134,48 +134,24 @@ void PlayerTaxi::InitTaxiNodesForLevel(uint32 race, uint32 level)
     // capital and taxi hub masks
     switch (race)
     {
-    case RACE_HUMAN:
-        SetTaximaskNode(2);
-        break;     // Human
-    case RACE_ORC:
-        SetTaximaskNode(23);
-        break;     // Orc
-    case RACE_DWARF:
-        SetTaximaskNode(6);
-        break;     // Dwarf
-    case RACE_NIGHTELF:
-        SetTaximaskNode(26);
-        SetTaximaskNode(27);
-        break;     // Night Elf
-    case RACE_UNDEAD_PLAYER:
-        SetTaximaskNode(11);
-        break;// Undead
-    case RACE_TAUREN:
-        SetTaximaskNode(22);
-        break;     // Tauren
-    case RACE_GNOME:
-        SetTaximaskNode(6);
-        break;     // Gnome
-    case RACE_TROLL:
-        SetTaximaskNode(23);
-        break;     // Troll
-    case RACE_BLOODELF:
-        SetTaximaskNode(82);
-        break;     // Blood Elf
-    case RACE_DRAENEI:
-        SetTaximaskNode(94);
-        break;     // Draenei
+        case RACE_HUMAN:    SetTaximaskNode(2);  break;     // Human
+        case RACE_ORC:      SetTaximaskNode(23); break;     // Orc
+        case RACE_DWARF:    SetTaximaskNode(6);  break;     // Dwarf
+        case RACE_NIGHTELF: SetTaximaskNode(26);
+                            SetTaximaskNode(27); break;     // Night Elf
+        case RACE_UNDEAD_PLAYER: SetTaximaskNode(11); break;// Undead
+        case RACE_TAUREN:   SetTaximaskNode(22); break;     // Tauren
+        case RACE_GNOME:    SetTaximaskNode(6);  break;     // Gnome
+        case RACE_TROLL:    SetTaximaskNode(23); break;     // Troll
+        case RACE_BLOODELF: SetTaximaskNode(82); break;     // Blood Elf
+        case RACE_DRAENEI:  SetTaximaskNode(94); break;     // Draenei
     }
 
     // new continent starting masks (It will be accessible only at new map)
     switch (Player::TeamForRace(race))
     {
-    case ALLIANCE:
-        SetTaximaskNode(100);
-        break;
-    case HORDE:
-        SetTaximaskNode(99);
-        break;
+        case ALLIANCE: SetTaximaskNode(100); break;
+        case HORDE:    SetTaximaskNode(99);  break;
     }
     // level dependent taxi hubs
     if (level >= 68)
@@ -358,7 +334,7 @@ Player::Player (WorldSession* session): Unit()
     m_DailyQuestChanged = false;
     m_lastDailyQuestTime = 0;
 
-    for (uint8 i = 0; i < MAX_TIMERS; ++i)
+    for (uint8 i = 0; i < MAX_TIMERS; i++)
         m_MirrorTimer[i] = DISABLED_MIRROR_TIMER;
 
     m_MirrorTimerFlags = UNDERWATER_NONE;
@@ -404,9 +380,9 @@ Player::Player (WorldSession* session): Unit()
     ////////////////////Rest System/////////////////////
     time_inn_enter = 0;
     inn_pos_mapid = 0;
-    inn_pos_x = 0;
-    inn_pos_y = 0;
-    inn_pos_z = 0;
+    inn_pos_x = 0.0f;
+    inn_pos_y = 0.0f;
+    inn_pos_z = 0.0f;
     m_rest_bonus = 0;
     rest_type = REST_TYPE_NO;
     ////////////////////Rest System/////////////////////
@@ -463,7 +439,7 @@ Player::Player (WorldSession* session): Unit()
     m_globalCooldowns.clear();
 }
 
-Player::~Player ()
+Player::~Player()
 {
     CleanupsBeforeDelete();
 
@@ -512,6 +488,9 @@ void Player::CleanupsBeforeDelete()
 bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 class_, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair, uint8 /*outfitId*/)
 {
     //FIXME: outfitId not used in player creating
+    /// @todo need more checks against packet modifications
+    // should check that skin, face, hair* are valid via DBC per race/class
+    // also do it in Player::BuildEnumData, Player::LoadFromDB
 
     Object::_Create(guidlow, 0, HIGHGUID_PLAYER);
 
@@ -544,16 +523,16 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
 
     switch (powertype)
     {
-    case POWER_ENERGY:
-    case POWER_MANA:
-        unitfield = 0x00000000;
-        break;
-    case POWER_RAGE:
-        unitfield = 0x00110000;
-        break;
-    default:
-        sLog.outError("Invalid default powertype %u for player (class %u)", powertype, class_);
-        return false;
+        case POWER_ENERGY:
+        case POWER_MANA:
+            unitfield = 0x00000000;
+            break;
+        case POWER_RAGE:
+            unitfield = 0x00110000;
+            break;
+        default:
+            sLog.outError("Invalid default powertype %u for player (class %u)", powertype, class_);
+            return false;
     }
 
     SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, DEFAULT_WORLD_OBJECT_SIZE);
@@ -561,18 +540,18 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
 
     switch (gender)
     {
-    case GENDER_FEMALE:
-        SetDisplayId(info->displayId_f);
-        SetNativeDisplayId(info->displayId_f);
-        break;
-    case GENDER_MALE:
-        SetDisplayId(info->displayId_m);
-        SetNativeDisplayId(info->displayId_m);
-        break;
-    default:
-        sLog.outError("Invalid gender %u for player", gender);
-        return false;
-        break;
+        case GENDER_FEMALE:
+            SetDisplayId(info->displayId_f);
+            SetNativeDisplayId(info->displayId_f);
+            break;
+        case GENDER_MALE:
+            SetDisplayId(info->displayId_m);
+            SetNativeDisplayId(info->displayId_m);
+            break;
+        default:
+            sLog.outError("Invalid gender %u for player", gender);
+            return false;
+            break;
     }
 
     setFactionForRace(race);
@@ -596,7 +575,8 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     SetUInt32Value(PLAYER_GUILDRANK, 0);
     SetUInt32Value(PLAYER_GUILD_TIMESTAMP, 0);
 
-    SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES, 0);        // 0=disabled
+    for (int i = 0; i < KNOWN_TITLES_SIZE; ++i)
+        SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES + i, 0);  // 0=disabled
     SetUInt32Value(PLAYER_CHOSEN_TITLE, 0);
 
     SetUInt32Value(PLAYER_FIELD_KILLS, 0);
@@ -716,13 +696,13 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
         }
     }
 
-    for (PlayerCreateInfoItems::const_iterator item_id_itr = info->item.begin(); item_id_itr != info->item.end(); ++item_id_itr++)
+    for (PlayerCreateInfoItems::const_iterator item_id_itr = info->item.begin(); item_id_itr != info->item.end(); ++item_id_itr)
         StoreNewItemInBestSlots(item_id_itr->item_id, item_id_itr->item_amount);
 
     // bags and main-hand weapon must equipped at this moment
     // now second pass for not equipped (offhand weapon/shield if it attempt equipped before main-hand weapon)
     // or ammo not equipped in special bag
-    for (int i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
+    for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
     {
         if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
         {
@@ -857,9 +837,9 @@ int32 Player::getMaxTimer(MirrorTimerType timer)
 {
     switch (timer)
     {
-    case FATIGUE_TIMER:
-        return MINUTE * IN_MILLISECONDS;
-    case BREATH_TIMER:
+        case FATIGUE_TIMER:
+            return MINUTE * IN_MILLISECONDS;
+        case BREATH_TIMER:
         {
             if (!IsAlive() || HasAuraType(SPELL_AURA_WATER_BREATHING) || GetSession()->GetSecurity() >= sWorld.getConfig(CONFIG_DISABLE_BREATHING))
                 return DISABLED_MIRROR_TIMER;
@@ -869,14 +849,14 @@ int32 Player::getMaxTimer(MirrorTimerType timer)
                 UnderWaterTime = uint32(UnderWaterTime * (100.0f + (*i)->GetModifierValue()) / 100.0f);
             return UnderWaterTime;
         }
-    case FIRE_TIMER:
+        case FIRE_TIMER:
         {
             if (!IsAlive())
                 return DISABLED_MIRROR_TIMER;
             return IN_MILLISECONDS;
         }
-    default:
-        return 0;
+        default:
+            return 0;
     }
 }
 
@@ -978,7 +958,7 @@ void Player::HandleDrowning(uint32 time_diff)
             {
                 m_MirrorTimer[FIRE_TIMER] += 2 * IN_MILLISECONDS;
                 // Calculate and deal damage
-                // @todo Check this formula
+                /// @todo Check this formula
                 uint32 damage = urand(600, 700);
                 if (m_MirrorTimerFlags & UNDERWATER_INLAVA)
                     EnvironmentalDamage(DAMAGE_LAVA, damage);
@@ -1039,7 +1019,7 @@ void Player::SetDrunkValue(uint16 newDrunkenValue, uint32 itemId)
     if (newDrunkenState == oldDrunkenState)
         return;
 
-    WorldPacket data(SMSG_CROSSED_INEBRIATION_THRESHOLD, (8 + 4 + 4));
+    WorldPacket data(SMSG_CROSSED_INEBRIATION_THRESHOLD, (8+4+4));
     data << uint64(GetGUID());
     data << uint32(newDrunkenState);
     data << uint32(itemId);
@@ -1123,14 +1103,14 @@ void Player::Update(uint32 p_time)
 
     if (HasUnitState(UNIT_STATE_MELEE_ATTACKING) && !HasUnitState(UNIT_STATE_CASTING))
     {
-        if (Unit* pVictim = getVictim())
+        if (Unit* victim = getVictim())
         {
             // default combat reach 10
-            // TODO add weapon,skill check
+            /// @todo add weapon, skill check
 
             if (isAttackReady(BASE_ATTACK))
             {
-                if (!IsWithinMeleeRange(pVictim))
+                if (!IsWithinMeleeRange(victim))
                 {
                     setAttackTimer(BASE_ATTACK, 100);
                     if (m_swingErrorMsg != 1)               // send single time (client auto repeat)
@@ -1140,7 +1120,7 @@ void Player::Update(uint32 p_time)
                     }
                 }
                 //120 degrees of radiant range
-                else if (!HasInArc(2 * M_PI / 3, pVictim))
+                else if (!HasInArc(2 * float(M_PI) / 3, victim))
                 {
                     setAttackTimer(BASE_ATTACK, 100);
                     if (m_swingErrorMsg != 2)               // send single time (client auto repeat)
@@ -1160,16 +1140,18 @@ void Player::Update(uint32 p_time)
                         if (off_att < ATTACK_DISPLAY_DELAY)
                             setAttackTimer(OFF_ATTACK, ATTACK_DISPLAY_DELAY);
                     }
-                    AttackerStateUpdate(pVictim, BASE_ATTACK);
+
+                    // do attack
+                    AttackerStateUpdate(victim, BASE_ATTACK);
                     resetAttackTimer(BASE_ATTACK);
                 }
             }
 
             if (haveOffhandWeapon() && isAttackReady(OFF_ATTACK))
             {
-                if (!IsWithinMeleeRange(pVictim))
+                if (!IsWithinMeleeRange(victim))
                     setAttackTimer(OFF_ATTACK, 100);
-                else if (!HasInArc(2 * M_PI / 3, pVictim))
+                else if (!HasInArc(2 * float(M_PI) / 3, victim))
                     setAttackTimer(OFF_ATTACK, 100);
                 else
                 {
@@ -1179,13 +1161,13 @@ void Player::Update(uint32 p_time)
                         setAttackTimer(BASE_ATTACK, ATTACK_DISPLAY_DELAY);
 
                     // do attack
-                    AttackerStateUpdate(pVictim, OFF_ATTACK);
+                    AttackerStateUpdate(victim, OFF_ATTACK);
                     resetAttackTimer(OFF_ATTACK);
                 }
             }
 
-            /*Unit* owner = pVictim->GetOwner();
-            Unit* u = owner ? owner : pVictim;
+            /*Unit* owner = victim->GetOwner();
+            Unit* u = owner ? owner : victim;
             if (u->IsPvP() && (!duel || duel->opponent != u))
             {
                 UpdatePvP(true);
@@ -1265,7 +1247,7 @@ void Player::Update(uint32 p_time)
     {
         if (p_time >= m_nextSave)
         {
-            // m_nextSave reseted in SaveToDB call
+            // m_nextSave reset in SaveToDB call
             SaveToDB();
             sLog.outDetail("Player '%s' (GUID: %u) saved", GetName(), GetGUIDLow());
         }
@@ -1328,7 +1310,9 @@ void Player::Update(uint32 p_time)
     if (pet && !pet->IsWithinDistInMap(this, GetMap()->GetVisibilityDistance()) && !pet->isPossessed())
         RemovePet(pet, PET_SAVE_NOT_IN_SLOT, true);
 
-    if (IsHasDelayedTeleport())
+    //we should execute delayed teleports only for alive(!) players
+    //because we don't want player's ghost teleported from graveyard
+    if (IsHasDelayedTeleport() && IsAlive())
         TeleportTo(m_teleport_dest, m_teleport_options);
 }
 
@@ -1615,7 +1599,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         }
     }
 
-    // The player was ported to another map and looses the duel immediately.
+    // The player was ported to another map and loses the duel immediately.
     // We have to perform this check before the teleport, otherwise the
     // ObjectAccessor won't find the flag.
     if (duel && GetMapId() != mapid && GetMap()->GetGameObject(GetUInt64Value(PLAYER_DUEL_ARBITER)))
@@ -1822,6 +1806,7 @@ bool Player::TeleportToBGEntryPoint()
     {
         ScheduleDelayedOperation(DELAYED_BG_MOUNT_RESTORE);
         ScheduleDelayedOperation(DELAYED_BG_TAXI_RESTORE);
+        ScheduleDelayedOperation(DELAYED_BG_GROUP_RESTORE);
     }
     return TeleportTo(m_bgData.joinPos);
 }
@@ -1878,15 +1863,21 @@ void Player::ProcessDelayedOperations()
         }
     }
 
+    if (m_DelayedOperations & DELAYED_BG_GROUP_RESTORE)
+    {
+        if (Group* g = GetGroup())
+            g->SendUpdate();
+    }
+
     //we have executed ALL delayed ops, so clear the flag
     m_DelayedOperations = 0;
 }
 
 void Player::AddToWorld()
 {
-    // Do not add/remove the player from the object storage
-    // It will crash when updating the ObjectAccessor
-    // The player should only be added when logging in
+    ///- Do not add/remove the player from the object storage
+    ///- It will crash when updating the ObjectAccessor
+    ///- The player should only be added when logging in
     Unit::AddToWorld();
 
     for (uint8 i = PLAYER_SLOT_START; i < PLAYER_SLOT_END; ++i)
@@ -1899,7 +1890,7 @@ void Player::RemoveFromWorld()
     // cleanup
     if (IsInWorld())
     {
-        // Release charmed creatures, unsummon totems and remove pets/guardians
+        ///- Release charmed creatures, unsummon totems and remove pets/guardians
         StopCastingCharm();
         StopCastingBindSight();
         sOutdoorPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
@@ -2035,7 +2026,7 @@ void Player::Regenerate(Powers power)
 
     switch (power)
     {
-    case POWER_MANA:
+        case POWER_MANA:
         {
             bool recentCast = IsUnderLastManaUseEffect();
             float ManaIncreaseRate = sWorld.getRate(RATE_POWER_MANA);
@@ -2047,22 +2038,22 @@ void Player::Regenerate(Powers power)
                 addvalue = GetFloatValue(PLAYER_FIELD_MOD_MANA_REGEN) * ManaIncreaseRate * 2.00f;
         }
         break;
-    case POWER_RAGE:                                    // Regenerate rage
+        case POWER_RAGE:                                    // Regenerate rage
         {
             float RageDecreaseRate = sWorld.getRate(RATE_POWER_RAGE_LOSS);
             addvalue = 30 * RageDecreaseRate;               // 3 rage by tick
         }
         break;
-    case POWER_ENERGY:                                  // Regenerate energy (rogue)
+        case POWER_ENERGY:                                  // Regenerate energy (rogue)
         {
             float EnergyIncreaseRate = sWorld.getRate(RATE_POWER_ENERGY);
             addvalue = 20 * EnergyIncreaseRate;
             break;
         }
-    case POWER_FOCUS:
-    case POWER_HAPPINESS:
-    case POWER_HEALTH:
-        break;
+        case POWER_FOCUS:
+        case POWER_HAPPINESS:
+        case POWER_HEALTH:
+            break;
     }
 
     // Mana regen calculated in Player::UpdateManaRegen()
@@ -2096,48 +2087,62 @@ void Player::RegenerateHealth()
     uint32 curValue = GetHealth();
     uint32 maxValue = GetMaxHealth();
 
-    if (curValue >= maxValue) return;
+    if (curValue >= maxValue)
+        return;
 
     float HealthIncreaseRate = sWorld.getRate(RATE_HEALTH);
 
-    float addvalue = 0.0f;
+    if (getLevel() < 15)
+        HealthIncreaseRate = sWorld.getRate(RATE_HEALTH) * (2.066f - (getLevel() * 0.066f));
+
+    float addValue = 0.0f;
 
     // polymorphed case
     if (IsPolymorphed())
-        addvalue = GetMaxHealth() / 3;
+        addValue = float(GetMaxHealth()) / 3.0f;
     // normal regen case (maybe partly in combat case)
     else if (!IsInCombat() || HasAuraType(SPELL_AURA_MOD_REGEN_DURING_COMBAT))
     {
-        addvalue = OCTRegenHPPerSpirit() * HealthIncreaseRate;
+        addValue = OCTRegenHPPerSpirit() * HealthIncreaseRate;
         if (!IsInCombat())
         {
             AuraList const& mModHealthRegenPct = GetAurasByType(SPELL_AURA_MOD_HEALTH_REGEN_PERCENT);
             for (AuraList::const_iterator i = mModHealthRegenPct.begin(); i != mModHealthRegenPct.end(); ++i)
-                addvalue *= (100.0f + (*i)->GetModifierValue()) / 100.0f;
+                addValue *= (100.0f + (*i)->GetModifierValue()) / 100.0f;
         }
         else if (HasAuraType(SPELL_AURA_MOD_REGEN_DURING_COMBAT))
-            addvalue *= GetTotalAuraModifier(SPELL_AURA_MOD_REGEN_DURING_COMBAT) / 100.0f;
+            addValue *= GetTotalAuraModifier(SPELL_AURA_MOD_REGEN_DURING_COMBAT) / 100.0f;
 
         if (!IsStandState())
-            addvalue *= 1.5;
+            addValue *= 1.5f;
     }
 
     // always regeneration bonus (including combat)
-    addvalue += GetTotalAuraModifier(SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT);
+    addValue += GetTotalAuraModifier(SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT);
 
-    if (addvalue < 0)
-        addvalue = 0;
+    if (addValue < 0.0f)
+        addValue = 0.0f;
 
-    ModifyHealth(int32(addvalue));
+    ModifyHealth(int32(addValue));
 }
 
 void Player::ResetAllPowers()
 {
     SetHealth(GetMaxHealth());
-
-    SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
-    SetPower(POWER_RAGE, 0);
-    SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
+    switch (getPowerType())
+    {
+        case POWER_MANA:
+            SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
+            break;
+        case POWER_RAGE:
+            SetPower(POWER_RAGE, 0);
+            break;
+        case POWER_ENERGY:
+            SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
+            break;
+        default:
+            break;
+    }
 }
 
 Creature* Player::GetNPCIfCanInteractWith(uint64 guid, uint32 npcflagmask)
@@ -2186,18 +2191,18 @@ GameObject* Player::GetGameObjectIfCanInteractWith(uint64 guid, GameobjectTypes 
             float maxdist;
             switch (type)
             {
-            // @todo find out how the client calculates the maximal usage distance to spellless working
-            // gameobjects like guildbanks and mailboxes - 10.0 is a just an abitrary choosen number
-            case GAMEOBJECT_TYPE_GUILD_BANK:
-            case GAMEOBJECT_TYPE_MAILBOX:
-                maxdist = 10.0f;
-                break;
-            case GAMEOBJECT_TYPE_FISHINGHOLE:
-                maxdist = 20.0f + CONTACT_DISTANCE;     // max spell range
-                break;
-            default:
-                maxdist = INTERACTION_DISTANCE;
-                break;
+                // @todo find out how the client calculates the maximal usage distance to spellless working
+                // gameobjects like guildbanks and mailboxes - 10.0 is a just an abitrary choosen number
+                case GAMEOBJECT_TYPE_GUILD_BANK:
+                case GAMEOBJECT_TYPE_MAILBOX:
+                    maxdist = 10.0f;
+                    break;
+                case GAMEOBJECT_TYPE_FISHINGHOLE:
+                    maxdist = 20.0f + CONTACT_DISTANCE;     // max spell range
+                    break;
+                default:
+                    maxdist = INTERACTION_DISTANCE;
+                    break;
             }
 
             if (go->IsWithinDistInMap(this, maxdist))
@@ -2225,7 +2230,7 @@ void Player::SetInWater(bool apply)
     //move player's guid into HateOfflineList of those mobs
     //which can't swim and move guid back into ThreatList when
     //on surface.
-    //@todo exist also swimming mobs, and function must be symmetric to enter/leave water
+    /// @todo exist also swimming mobs, and function must be symmetric to enter/leave water
     m_isInWater = apply;
 
     // remove auras that need water/land
@@ -2242,11 +2247,17 @@ void Player::SetGameMaster(bool on)
         setFaction(35);
         SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_GM);
 
+        if (Pet* pet = GetPet())
+        {
+            pet->setFaction(35);
+            pet->getHostileRefManager().setOnlineOfflineState(false);
+        }
+
         SetFFAPvP(false);
         ResetContestedPvP();
 
         getHostileRefManager().setOnlineOfflineState(false);
-        CombatStop();
+        CombatStopWithPets();
     }
     else
     {
@@ -2296,20 +2307,17 @@ bool Player::IsGroupVisibleFor(Player* p) const
 {
     switch (sWorld.getConfig(CONFIG_GROUP_VISIBILITY))
     {
-    default:
-        return IsInSameGroupWith(p);
-    case 1:
-        return IsInSameRaidWith(p);
-    case 2:
-        return GetTeam() == p->GetTeam();
+        default: return IsInSameGroupWith(p);
+        case 1:  return IsInSameRaidWith(p);
+        case 2:  return GetTeam() == p->GetTeam();
     }
 }
 
 bool Player::IsInSameGroupWith(Player const* p) const
 {
     return p == this || (GetGroup() != NULL &&
-                         GetGroup() == p->GetGroup() &&
-                         GetGroup()->SameSubGroup(this, p));
+        GetGroup() == p->GetGroup() &&
+        GetGroup()->SameSubGroup(this, p));
 }
 
 // If the player is invited, remove him. If the group if then only 1 person, disband the group.
@@ -2330,9 +2338,10 @@ void Player::UninviteFromGroup()
             sObjectMgr.RemoveGroup(group);
         }
         else
+        {
             group->RemoveAllInvites();
-
-        delete group;
+            delete group;
+        }
     }
 }
 
@@ -2367,6 +2376,9 @@ void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP, bool Raf
 
 void Player::GiveXP(uint32 xp, Unit* victim, bool disableRafBonus)
 {
+    if (xp < 1)
+        return;
+
     if (!IsAlive())
         return;
 
@@ -2446,7 +2458,7 @@ void Player::GiveLevel(uint32 level, bool ignoreRAF)
     data << uint32(0);
     data << uint32(0);
     // end for
-    for (int i = STAT_STRENGTH; i < MAX_STATS; ++i)          // Stats loop (0-4)
+    for (uint8 i = STAT_STRENGTH; i < MAX_STATS; ++i)          // Stats loop (0-4)
         data << uint32(int32(info.stats[i]) - GetCreateStat(Stats(i)));
 
     GetSession()->SendPacket(&data);
@@ -2454,13 +2466,14 @@ void Player::GiveLevel(uint32 level, bool ignoreRAF)
     SetUInt32Value(PLAYER_NEXT_LEVEL_XP, Oregon::XP::xp_to_level(level));
 
     //update level, max level of skills
-    if (getLevel() != level)
-        m_Played_time[PLAYED_TIME_LEVEL] = 0;                               // Level Played Time reset
+    m_Played_time[PLAYED_TIME_LEVEL] = 0;                               // Level Played Time reset
+    
     SetLevel(level);
-    UpdateSkillsForLevel ();
+
+    UpdateSkillsForLevel();
 
     // save base values (bonuses already included in stored stats
-    for (int i = STAT_STRENGTH; i < MAX_STATS; ++i)
+    for (uint8 i = STAT_STRENGTH; i < MAX_STATS; ++i)
         SetCreateStat(Stats(i), info.stats[i]);
 
     SetCreateHealth(classInfo.basehealth);
@@ -2495,7 +2508,7 @@ void Player::GiveLevel(uint32 level, bool ignoreRAF)
 
 void Player::InitTalentForLevel()
 {
-    uint32 level = getLevel();
+    uint8 level = getLevel();
     // talents base at level diff (talents = level - 9 but some can be used already)
     if (level < 10)
     {
@@ -2537,7 +2550,10 @@ void Player::InitStatsForLevel(bool reapplyMods)
     SetUInt32Value(PLAYER_FIELD_MAX_LEVEL, sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL));
     SetUInt32Value(PLAYER_NEXT_LEVEL_XP, Oregon::XP::xp_to_level(getLevel()));
 
-    UpdateSkillsForLevel ();
+    // reset before any aura state sources (health set/aura apply)
+    SetUInt32Value(UNIT_FIELD_AURASTATE, 0);
+
+    UpdateSkillsForLevel();
 
     // set default cast time multiplier
     SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
@@ -2546,10 +2562,10 @@ void Player::InitStatsForLevel(bool reapplyMods)
     SetObjectScale(1.0f);
 
     // save base values (bonuses already included in stored stats
-    for (int i = STAT_STRENGTH; i < MAX_STATS; ++i)
+    for (uint8 i = STAT_STRENGTH; i < MAX_STATS; ++i)
         SetCreateStat(Stats(i), info.stats[i]);
 
-    for (int i = STAT_STRENGTH; i < MAX_STATS; ++i)
+    for (uint8 i = STAT_STRENGTH; i < MAX_STATS; ++i)
         SetStat(Stats(i), info.stats[i]);
 
     SetCreateHealth(classInfo.basehealth);
@@ -2566,7 +2582,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
         SetUInt32Value(index, 0);
 
     SetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS, 0);
-    for (int i = 0; i < 7; i++)
+    for (uint8 i = 0; i < 7; ++i)
     {
         SetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + i, 0);
         SetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + i, 0);
@@ -2585,10 +2601,10 @@ void Player::InitStatsForLevel(bool reapplyMods)
     SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE, 0.0f);
     SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE, 0.0f);
 
-    SetInt32Value(UNIT_FIELD_ATTACK_POWER, 0);
-    SetInt32Value(UNIT_FIELD_ATTACK_POWER_MODS, 0 );
+    SetInt32Value(UNIT_FIELD_ATTACK_POWER,            0);
+    SetInt32Value(UNIT_FIELD_ATTACK_POWER_MODS,       0);
     SetFloatValue(UNIT_FIELD_ATTACK_POWER_MULTIPLIER, 0.0f);
-    SetInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER, 0);
+    SetInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER,     0);
     SetInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER_MODS, 0);
     SetFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER, 0.0f);
 
@@ -2613,7 +2629,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
     SetResistanceBuffMods(SpellSchools(0), true, 0.0f);
     SetResistanceBuffMods(SpellSchools(0), false, 0.0f);
     // set other resistance to original value (0)
-    for (int i = 1; i < MAX_SPELL_SCHOOL; ++i)
+    for (uint8 i = 1; i < MAX_SPELL_SCHOOL; ++i)
     {
         SetResistance(SpellSchools(i), 0);
         SetResistanceBuffMods(SpellSchools(i), true, 0.0f);
@@ -2622,7 +2638,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
 
     SetUInt32Value(PLAYER_FIELD_MOD_TARGET_RESISTANCE, 0);
     SetUInt32Value(PLAYER_FIELD_MOD_TARGET_PHYSICAL_RESISTANCE, 0);
-    for (int i = 0; i < MAX_SPELL_SCHOOL; ++i)
+    for (uint8 i = 0; i < MAX_SPELL_SCHOOL; ++i)
     {
         SetFloatValue(UNIT_FIELD_POWER_COST_MODIFIER + i, 0.0f);
         SetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER + i, 0.0f);
@@ -2631,7 +2647,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
     InitDataForForm(reapplyMods);
 
     // save new stats
-    for (int i = POWER_MANA; i < MAX_POWERS; ++i)
+    for (uint8 i = POWER_MANA; i < MAX_POWERS; ++i)
         SetMaxPower(Powers(i),  uint32(GetCreatePowers(Powers(i))));
 
     SetMaxHealth(classInfo.basehealth);                     // stamina bonus will applied later
@@ -2656,7 +2672,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
     // restore if need some important flags
     SetUInt32Value(PLAYER_FIELD_BYTES2, 0);                 // flags empty by default
 
-    if (reapplyMods)                                        //reapply stats values only on .reset stats (level) command
+    if (reapplyMods)                                        // reapply stats values only on .reset stats (level) command
         _ApplyAllStatBonuses();
 
     // set current level health and mana/energy to maximum after applying all mods.
@@ -2673,7 +2689,7 @@ void Player::SendInitialSpells()
 {
     uint16 spellCount = 0;
 
-    WorldPacket data(SMSG_INITIAL_SPELLS, (1 + 2 + 4 * m_spells.size() + 2 + m_spellCooldowns.size() * (2 + 2 + 2 + 4 + 4)));
+    WorldPacket data(SMSG_INITIAL_SPELLS, (1+2+4*m_spells.size()+2+m_spellCooldowns.size()*(2+2+2+4+4)));
     data << uint8(0);
 
     size_t countPos = data.wpos();
@@ -2687,10 +2703,10 @@ void Player::SendInitialSpells()
         if (!itr->second->active || itr->second->disabled)
             continue;
 
-        data << uint16(itr->first);
+        data << uint32(itr->first);
         data << uint16(0);                                  // it's not slot id
 
-        spellCount += 1;
+        spellCount +=1;
     }
 
     data.put<uint16>(countPos, spellCount);                 // write real count value
@@ -2703,7 +2719,7 @@ void Player::SendInitialSpells()
         if (!sEntry)
             continue;
 
-        data << uint16(itr->first);
+        data << uint32(itr->first);
 
         time_t cooldown = 0;
         time_t curTime = time(NULL);
@@ -2744,7 +2760,7 @@ void Player::RemoveMail(uint32 id)
 
 void Player::SendMailResult(uint32 mailId, MailResponseType mailAction, MailResponseResult mailError, uint32 equipError, uint32 item_guid, uint32 item_count)
 {
-    WorldPacket data(SMSG_SEND_MAIL_RESULT, (4 + 4 + 4 + (mailError == MAIL_ERR_EQUIP_ERROR ? 4 : (mailAction == MAIL_ITEM_TAKEN ? 4 + 4 : 0))));
+    WorldPacket data(SMSG_SEND_MAIL_RESULT, (4+4+4+(mailError == MAIL_ERR_EQUIP_ERROR?4:(mailAction == MAIL_ITEM_TAKEN?4+4:0))));
     data << (uint32) mailId;
     data << (uint32) mailAction;
     data << (uint32) mailError;
@@ -2795,7 +2811,7 @@ void Player::AddNewMailDeliverTime(time_t deliver_time)
     else                                                    // not ready and no have ready mails
     {
         if (!m_nextMailDelivereTime || m_nextMailDelivereTime > deliver_time)
-            m_nextMailDelivereTime =  deliver_time;
+            m_nextMailDelivereTime = deliver_time;
     }
 }
 
@@ -2871,23 +2887,23 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool loading,
         }
         else switch (itr->second->state)
             {
-            case PLAYERSPELL_UNCHANGED:                     // known saved spell
-                return false;
-            case PLAYERSPELL_REMOVED:                       // re-learning removed not saved spell
-                {
-                    delete itr->second;
-                    m_spells.erase(itr);
-                    state = PLAYERSPELL_CHANGED;
-                    break;                                      // need re-add
-                }
-            default:                                        // known not saved yet spell (new or modified)
-                {
-                    // can be in case spell loading but learned at some previous spell loading
-                    if (loading && !learning)
-                        itr->second->state = PLAYERSPELL_UNCHANGED;
-
+                case PLAYERSPELL_UNCHANGED:                     // known saved spell
                     return false;
-                }
+                case PLAYERSPELL_REMOVED:                       // re-learning removed not saved spell
+                    {
+                        delete itr->second;
+                        m_spells.erase(itr);
+                        state = PLAYERSPELL_CHANGED;
+                        break;                                      // need re-add
+                    }
+                default:                                        // known not saved yet spell (new or modified)
+                    {
+                        // can be in case spell loading but learned at some previous spell loading
+                        if (loading && !learning)
+                            itr->second->state = PLAYERSPELL_UNCHANGED;
+
+                        return false;
+                    }
             }
     }
 
@@ -3071,17 +3087,17 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool loading,
             {
                 switch (GetSkillRangeType(pSkill, _spell_idx->second->racemask != 0))
                 {
-                case SKILL_RANGE_LANGUAGE:
-                    SetSkill(pSkill->id, 300, 300);
-                    break;
-                case SKILL_RANGE_LEVEL:
-                    SetSkill(pSkill->id, 1, GetMaxSkillValueForLevel());
-                    break;
-                case SKILL_RANGE_MONO:
-                    SetSkill(pSkill->id, 1, 1);
-                    break;
-                default:
-                    break;
+                    case SKILL_RANGE_LANGUAGE:
+                        SetSkill(pSkill->id, 300, 300);
+                        break;
+                    case SKILL_RANGE_LEVEL:
+                        SetSkill(pSkill->id, 1, GetMaxSkillValueForLevel());
+                        break;
+                    case SKILL_RANGE_MONO:
+                        SetSkill(pSkill->id, 1, 1);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -3279,12 +3295,7 @@ void Player::RemoveSpellCooldown(uint32 spell_id, bool update /* = false */)
     m_spellCooldowns.erase(spell_id);
 
     if (update)
-    {
-        WorldPacket data(SMSG_CLEAR_COOLDOWN, (4 + 8));
-        data << uint32(spell_id);
-        data << uint64(GetGUID());
-        SendDirectMessage(&data);
-    }
+        SendClearCooldown(spell_id, this);
 }
 
 void Player::RemoveArenaSpellCooldowns()
@@ -3318,12 +3329,8 @@ void Player::RemoveAllSpellCooldown()
     if (!m_spellCooldowns.empty())
     {
         for (SpellCooldowns::const_iterator itr = m_spellCooldowns.begin(); itr != m_spellCooldowns.end(); ++itr)
-        {
-            WorldPacket data(SMSG_CLEAR_COOLDOWN, (4 + 8));
-            data << uint32(itr->first);
-            data << uint64(GetGUID());
-            GetSession()->SendPacket(&data);
-        }
+            SendClearCooldown(itr->first, this);
+
         m_spellCooldowns.clear();
     }
 }
@@ -3658,7 +3665,7 @@ void Player::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
 {
     if (target == this)
     {
-        for (int i = 0; i < EQUIPMENT_SLOT_END; i++)
+        for (uint8 i = 0; i < EQUIPMENT_SLOT_END; ++i)
         {
             if (m_items[i] == NULL)
                 continue;
@@ -3666,14 +3673,14 @@ void Player::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
             m_items[i]->BuildCreateUpdateBlockForPlayer(data, target);
         }
 
-        for (int i = INVENTORY_SLOT_BAG_START; i < BANK_SLOT_BAG_END; i++)
+        for (uint8 i = INVENTORY_SLOT_BAG_START; i < BANK_SLOT_BAG_END; ++i)
         {
             if (m_items[i] == NULL)
                 continue;
 
             m_items[i]->BuildCreateUpdateBlockForPlayer(data, target);
         }
-        for (int i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; i++)
+        for (uint8 i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; ++i)
         {
             if (m_items[i] == NULL)
                 continue;
@@ -3689,7 +3696,7 @@ void Player::DestroyForPlayer(Player* target) const
 {
     Unit::DestroyForPlayer(target);
 
-    for (int i = 0; i < INVENTORY_SLOT_BAG_END; i++)
+    for (uint8 i = 0; i < INVENTORY_SLOT_BAG_END; ++i)
     {
         if (m_items[i] == NULL)
             continue;
@@ -3699,14 +3706,14 @@ void Player::DestroyForPlayer(Player* target) const
 
     if (target == this)
     {
-        for (uint8 i = INVENTORY_SLOT_BAG_START; i < BANK_SLOT_BAG_END; i++)
+        for (uint8 i = INVENTORY_SLOT_BAG_START; i < BANK_SLOT_BAG_END; ++i)
         {
             if (m_items[i] == NULL)
                 continue;
 
             m_items[i]->DestroyForPlayer(target);
         }
-        for (uint8 i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; i++)
+        for (uint8 i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; ++i)
         {
             if (m_items[i] == NULL)
                 continue;
@@ -3787,7 +3794,7 @@ TrainerSpellState Player::GetTrainerSpellState(TrainerSpell const* trainer_spell
 /**
  * Deletes a character from the database
  *
- * The way, how the characters will be deleted is decided based on the config option.
+ * The way characters will be deleted is decided based on the config option.
  *
  * @see Player::DeleteOldCharacters
  *
@@ -3798,7 +3805,7 @@ TrainerSpellState Player::GetTrainerSpellState(TrainerSpell const* trainer_spell
  */
 void Player::DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmChars, bool deleteFinally)
 {
-    // for not existed account avoid update realm
+    // Avoid realm-update for non-existing account
     if (accountId == 0)
         updateRealmChars = false;
 
@@ -4051,21 +4058,13 @@ void Player::SetMovement(PlayerMovementType pType)
     WorldPacket data;
     switch (pType)
     {
-    case MOVE_ROOT:
-        data.Initialize(SMSG_FORCE_MOVE_ROOT,   GetPackGUID().size() + 4);
-        break;
-    case MOVE_UNROOT:
-        data.Initialize(SMSG_FORCE_MOVE_UNROOT, GetPackGUID().size() + 4);
-        break;
-    case MOVE_WATER_WALK:
-        data.Initialize(SMSG_MOVE_WATER_WALK,   GetPackGUID().size() + 4);
-        break;
-    case MOVE_LAND_WALK:
-        data.Initialize(SMSG_MOVE_LAND_WALK,    GetPackGUID().size() + 4);
-        break;
-    default:
-        sLog.outError("Player::SetMovement: Unsupported move type (%d), data not sent to client.", pType);
-        return;
+        case MOVE_ROOT:       data.Initialize(SMSG_FORCE_MOVE_ROOT,   GetPackGUID().size()+4); break;
+        case MOVE_UNROOT:     data.Initialize(SMSG_FORCE_MOVE_UNROOT, GetPackGUID().size()+4); break;
+        case MOVE_WATER_WALK: data.Initialize(SMSG_MOVE_WATER_WALK,   GetPackGUID().size()+4); break;
+        case MOVE_LAND_WALK:  data.Initialize(SMSG_MOVE_LAND_WALK,    GetPackGUID().size()+4); break;
+        default:
+            sLog.outError("Player::SetMovement: Unsupported move type (%d), data not sent to client.", pType);
+            return;
     }
     data << GetPackGUID();
     data << uint32(0);
@@ -4137,7 +4136,7 @@ void Player::SendDelayResponse(const uint32 /*ml_seconds*/)
 
 void Player::ResurrectPlayer(float restore_percent, bool applySickness)
 {
-    WorldPacket data(SMSG_DEATH_RELEASE_LOC, 4 * 4);        // remove spirit healer position
+    WorldPacket data(SMSG_DEATH_RELEASE_LOC, 4*4);          // remove spirit healer position
     data << uint32(-1);
     data << float(0);
     data << float(0);
@@ -4148,8 +4147,9 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
 
     // remove death flag + set aura
     SetByteValue(UNIT_FIELD_BYTES_1, 3, 0x00);
-    if (getRace() == RACE_NIGHTELF)
-        RemoveAurasDueToSpell(20584);                       // speed bonuses
+
+    // This must be called always even on Players with race != RACE_NIGHTELF in case of faction change
+    RemoveAurasDueToSpell(20584);                           // RACE_NIGHTELF speed bonuses
     RemoveAurasDueToSpell(8326);                            // SPELL_AURA_GHOST
 
     setDeathState(ALIVE);
@@ -4217,7 +4217,7 @@ void Player::KillPlayer()
     setDeathState(CORPSE);
     //SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_IN_PVP);
 
-    SetFlag(UNIT_DYNAMIC_FLAGS, 0x00);
+    SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_NONE);
     ApplyModFlag(PLAYER_FIELD_BYTES, PLAYER_FIELD_BYTE_RELEASE_TIMER, !sMapStore.LookupEntry(GetMapId())->Instanceable());
 
     // 6 minutes until repop at graveyard
@@ -4289,7 +4289,7 @@ void Player::CreateCorpse()
             iDisplayID = m_items[i]->GetProto()->DisplayInfoID;
             iIventoryType = m_items[i]->GetProto()->InventoryType;
 
-            _cfi =  iDisplayID | (iIventoryType << 24);
+            _cfi = iDisplayID | (iIventoryType << 24);
             corpse->SetUInt32Value(CORPSE_FIELD_ITEM + i, _cfi);
         }
     }
@@ -4315,7 +4315,7 @@ Corpse* Player::GetCorpse() const
 
 void Player::DurabilityLossAll(double percent, bool inventory)
 {
-    for (int i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
+    for (uint8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
         if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
             DurabilityLoss(pItem, percent);
 
@@ -4324,14 +4324,14 @@ void Player::DurabilityLossAll(double percent, bool inventory)
         // bags not have durability
         // for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
 
-        for (int i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
+        for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
             if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
                 DurabilityLoss(pItem, percent);
 
         // keys not have durability
         //for (int i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; i++)
 
-        for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
+        for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
             if (Bag* pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i))
                 for (uint32 j = 0; j < pBag->GetBagSize(); j++)
                     if (Item* pItem = GetItemByPos(i, j))
@@ -4344,7 +4344,7 @@ void Player::DurabilityLoss(Item* item, double percent)
     if (!item)
         return;
 
-    uint32 pMaxDurability =  item ->GetUInt32Value(ITEM_FIELD_MAXDURABILITY);
+    uint32 pMaxDurability = item ->GetUInt32Value(ITEM_FIELD_MAXDURABILITY);
 
     if (!pMaxDurability)
         return;
@@ -4359,7 +4359,7 @@ void Player::DurabilityLoss(Item* item, double percent)
 
 void Player::DurabilityPointsLossAll(int32 points, bool inventory)
 {
-    for (int i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
+    for (uint8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
         if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
             DurabilityPointsLoss(pItem, points);
 
@@ -4368,14 +4368,14 @@ void Player::DurabilityPointsLossAll(int32 points, bool inventory)
         // bags not have durability
         // for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
 
-        for (int i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
+        for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
             if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
                 DurabilityPointsLoss(pItem, points);
 
         // keys not have durability
         //for (int i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; i++)
 
-        for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
+        for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
             if (Bag* pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i))
                 for (uint32 j = 0; j < pBag->GetBagSize(); j++)
                     if (Item* pItem = GetItemByPos(i, j))
@@ -4420,14 +4420,14 @@ uint32 Player::DurabilityRepairAll(bool cost, float discountMod, bool guildBank)
 {
     uint32 TotalCost = 0;
     // equipped, backpack, bags itself
-    for (int i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; i++)
+    for (uint8 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; i++)
         TotalCost += DurabilityRepair(((INVENTORY_SLOT_BAG_0 << 8) | i), cost, discountMod, guildBank);
 
     // bank, buyback and keys not repaired
 
     // items in inventory bags
-    for (int j = INVENTORY_SLOT_BAG_START; j < INVENTORY_SLOT_BAG_END; j++)
-        for (int i = 0; i < MAX_BAG_SIZE; i++)
+    for (uint8 j = INVENTORY_SLOT_BAG_START; j < INVENTORY_SLOT_BAG_END; j++)
+        for (uint8 i = 0; i < MAX_BAG_SIZE; i++)
             TotalCost += DurabilityRepair(((j << 8) | i), cost, discountMod, guildBank);
     return TotalCost;
 }
@@ -4560,7 +4560,7 @@ void Player::RepopAtGraveyard()
         TeleportTo(ClosestGrave->map_id, ClosestGrave->x, ClosestGrave->y, ClosestGrave->z, GetOrientation());
         if (isDead())                                        // not send if alive, because it used in TeleportTo()
         {
-            WorldPacket data(SMSG_DEATH_RELEASE_LOC, 4 * 4); // show spirit healer position on minimap
+            WorldPacket data(SMSG_DEATH_RELEASE_LOC, 4*4);  // show spirit healer position on minimap
             data << ClosestGrave->map_id;
             data << ClosestGrave->x;
             data << ClosestGrave->y;
@@ -4599,7 +4599,7 @@ void Player::CleanupChannels()
 void Player::UpdateLocalChannels(uint32 newZone)
 {
     if (GetSession()->PlayerLoading() && !IsBeingTeleportedFar())
-        return; // The client handles it automatically after loading, but not after teleporting
+        return;                                              // The client handles it automatically after loading, but not after teleporting
 
     AreaTableEntry const* current_zone = GetAreaEntryByAreaID(newZone);
     if (!current_zone)
@@ -4661,7 +4661,7 @@ void Player::LeaveLFGChannel()
 void Player::UpdateDefense()
 {
     if (UpdateSkill(SKILL_DEFENSE, sWorld.getConfig(CONFIG_SKILL_GAIN_DEFENSE)))
-        UpdateDefenseBonusesMod();  // update dependent from defense skill part
+        UpdateDefenseBonusesMod(); // update dependent from defense skill part
 }
 
 void Player::HandleBaseModValue(BaseModGroup modGroup, BaseModType modType, float amount, bool apply)
@@ -4682,26 +4682,17 @@ void Player::HandleBaseModValue(BaseModGroup modGroup, BaseModType modType, floa
 
     switch (modGroup)
     {
-    case CRIT_PERCENTAGE:
-        UpdateCritPercentage(BASE_ATTACK);
-        break;
-    case RANGED_CRIT_PERCENTAGE:
-        UpdateCritPercentage(RANGED_ATTACK);
-        break;
-    case OFFHAND_CRIT_PERCENTAGE:
-        UpdateCritPercentage(OFF_ATTACK);
-        break;
-    case SHIELD_BLOCK_VALUE:
-        UpdateShieldBlockValue();
-        break;
-    default:
-        break;
+        case CRIT_PERCENTAGE:              UpdateCritPercentage(BASE_ATTACK);                          break;
+        case RANGED_CRIT_PERCENTAGE:       UpdateCritPercentage(RANGED_ATTACK);                        break;
+        case OFFHAND_CRIT_PERCENTAGE:      UpdateCritPercentage(OFF_ATTACK);                           break;
+        case SHIELD_BLOCK_VALUE:           UpdateShieldBlockValue();                                   break;
+        default: break;
     }
 }
 
 float Player::GetBaseModValue(BaseModGroup modGroup, BaseModType modType) const
 {
-    if (modGroup >= BASEMOD_END || modType > MOD_END)
+    if (modGroup >= BASEMOD_END || modType >= MOD_END)
     {
         sLog.outError("GetBaseModType: Invalid BaseModGroup or invalid BaseModType!");
         return 0.0f;
@@ -4738,7 +4729,7 @@ uint32 Player::GetShieldBlockValue() const
 
 float Player::GetMeleeCritFromAgility()
 {
-    uint32 level = getLevel();
+    uint8 level = getLevel();
     uint32 pclass = getClass();
 
     if (level > GT_MAX_LEVEL)
@@ -4786,7 +4777,7 @@ float Player::GetDodgeFromAgility()
         1.7f       // Druid
     };
 
-    uint32 level = getLevel();
+    uint8 level = getLevel();
     uint32 pclass = getClass();
 
     if (level > GT_MAX_LEVEL)
@@ -4803,7 +4794,7 @@ float Player::GetDodgeFromAgility()
 
 float Player::GetSpellCritFromIntellect()
 {
-    uint32 level = getLevel();
+    uint8 level = getLevel();
     uint32 pclass = getClass();
 
     if (level > GT_MAX_LEVEL)
@@ -4873,19 +4864,19 @@ float Player::GetExpertiseDodgeOrParryReduction(WeaponAttackType attType) const
 {
     switch (attType)
     {
-    case BASE_ATTACK:
-        return GetUInt32Value(PLAYER_EXPERTISE) / 4.0f;
-    case OFF_ATTACK:
-        return GetUInt32Value(PLAYER_OFFHAND_EXPERTISE) / 4.0f;
-    default:
-        break;
+        case BASE_ATTACK:
+            return GetUInt32Value(PLAYER_EXPERTISE) / 4.0f;
+        case OFF_ATTACK:
+            return GetUInt32Value(PLAYER_OFFHAND_EXPERTISE) / 4.0f;
+        default:
+            break;
     }
     return 0.0f;
 }
 
 float Player::OCTRegenHPPerSpirit()
 {
-    uint32 level = getLevel();
+    uint8 level = getLevel();
     uint32 pclass = getClass();
 
     if (level > GT_MAX_LEVEL)
@@ -4908,7 +4899,7 @@ float Player::OCTRegenHPPerSpirit()
 
 float Player::OCTRegenMPPerSpirit()
 {
-    uint32 level = getLevel();
+    uint8 level = getLevel();
     uint32 pclass = getClass();
 
     if (level > GT_MAX_LEVEL)
@@ -4936,88 +4927,88 @@ void Player::ApplyRatingMod(CombatRating cr, int32 value, bool apply)
 
     switch (cr)
     {
-    case CR_WEAPON_SKILL:                               // Implemented in Unit::RollMeleeOutcomeAgainst
-    case CR_DEFENSE_SKILL:
-        UpdateDefenseBonusesMod();
-        break;
-    case CR_DODGE:
-        UpdateDodgePercentage();
-        break;
-    case CR_PARRY:
-        UpdateParryPercentage();
-        break;
-    case CR_BLOCK:
-        UpdateBlockPercentage();
-        break;
-    case CR_HIT_MELEE:
-        RatingChange = value / RatingCoeffecient;
-        m_modMeleeHitChance += apply ? RatingChange : -RatingChange;
-        break;
-    case CR_HIT_RANGED:
-        RatingChange = value / RatingCoeffecient;
-        m_modRangedHitChance += apply ? RatingChange : -RatingChange;
-        break;
-    case CR_HIT_SPELL:
-        RatingChange = value / RatingCoeffecient;
-        m_modSpellHitChance += apply ? RatingChange : -RatingChange;
-        break;
-    case CR_CRIT_MELEE:
+        case CR_WEAPON_SKILL:                               // Implemented in Unit::RollMeleeOutcomeAgainst
+        case CR_DEFENSE_SKILL:
+            UpdateDefenseBonusesMod();
+            break;
+        case CR_DODGE:
+            UpdateDodgePercentage();
+            break;
+        case CR_PARRY:
+            UpdateParryPercentage();
+            break;
+        case CR_BLOCK:
+            UpdateBlockPercentage();
+            break;
+        case CR_HIT_MELEE:
+            RatingChange = value / RatingCoeffecient;
+            m_modMeleeHitChance += apply ? RatingChange : -RatingChange;
+            break;
+        case CR_HIT_RANGED:
+            RatingChange = value / RatingCoeffecient;
+            m_modRangedHitChance += apply ? RatingChange : -RatingChange;
+            break;
+        case CR_HIT_SPELL:
+            RatingChange = value / RatingCoeffecient;
+            m_modSpellHitChance += apply ? RatingChange : -RatingChange;
+            break;
+        case CR_CRIT_MELEE:
         if (affectStats)
         {
             UpdateCritPercentage(BASE_ATTACK);
             UpdateCritPercentage(OFF_ATTACK);
         }
         break;
-    case CR_CRIT_RANGED:
-        if (affectStats)
-            UpdateCritPercentage(RANGED_ATTACK);
-        break;
-    case CR_CRIT_SPELL:
-        if (affectStats)
-            UpdateAllSpellCritChances();
-        break;
-    case CR_HIT_TAKEN_MELEE:                            // Implemented in Unit::MeleeMissChanceCalc
-    case CR_HIT_TAKEN_RANGED:
-        break;
-    case CR_HIT_TAKEN_SPELL:                            // Implemented in Unit::MagicSpellHitResult
-        break;
-    case CR_CRIT_TAKEN_MELEE:                           // Implemented in Unit::RollMeleeOutcomeAgainst (only for chance to crit)
-    case CR_CRIT_TAKEN_RANGED:
-        break;
-    case CR_CRIT_TAKEN_SPELL:                           // Implemented in Unit::SpellCriticalBonus (only for chance to crit)
-        break;
-    case CR_HASTE_MELEE:
-        RatingChange = value / RatingCoeffecient;
-        ApplyAttackTimePercentMod(BASE_ATTACK, RatingChange, apply);
-        ApplyAttackTimePercentMod(OFF_ATTACK, RatingChange, apply);
-        break;
-    case CR_HASTE_RANGED:
-        RatingChange = value / RatingCoeffecient;
-        ApplyAttackTimePercentMod(RANGED_ATTACK, RatingChange, apply);
-        break;
-    case CR_HASTE_SPELL:
-        RatingChange = value / RatingCoeffecient;
-        ApplyCastTimePercentMod(RatingChange, apply);
-        break;
-    case CR_WEAPON_SKILL_MAINHAND:                      // Implemented in Unit::RollMeleeOutcomeAgainst
-    case CR_WEAPON_SKILL_OFFHAND:
-    case CR_WEAPON_SKILL_RANGED:
-        break;
-    case CR_EXPERTISE:
-        if (affectStats)
-        {
-            UpdateExpertise(BASE_ATTACK);
-            UpdateExpertise(OFF_ATTACK);
-        }
-        break;
+        case CR_CRIT_RANGED:
+            if (affectStats)
+                UpdateCritPercentage(RANGED_ATTACK);
+            break;
+        case CR_CRIT_SPELL:
+            if (affectStats)
+                UpdateAllSpellCritChances();
+            break;
+        case CR_HIT_TAKEN_MELEE:                            // Implemented in Unit::MeleeMissChanceCalc
+        case CR_HIT_TAKEN_RANGED:
+            break;
+        case CR_HIT_TAKEN_SPELL:                            // Implemented in Unit::MagicSpellHitResult
+            break;
+        case CR_CRIT_TAKEN_MELEE:                           // Implemented in Unit::RollMeleeOutcomeAgainst (only for chance to crit)
+        case CR_CRIT_TAKEN_RANGED:
+            break;
+        case CR_CRIT_TAKEN_SPELL:                           // Implemented in Unit::SpellCriticalBonus (only for chance to crit)
+            break;
+        case CR_HASTE_MELEE:
+            RatingChange = value / RatingCoeffecient;
+            ApplyAttackTimePercentMod(BASE_ATTACK, RatingChange, apply);
+            ApplyAttackTimePercentMod(OFF_ATTACK, RatingChange, apply);
+            break;
+        case CR_HASTE_RANGED:
+            RatingChange = value / RatingCoeffecient;
+            ApplyAttackTimePercentMod(RANGED_ATTACK, RatingChange, apply);
+            break;
+        case CR_HASTE_SPELL:
+            RatingChange = value / RatingCoeffecient;
+            ApplyCastTimePercentMod(RatingChange, apply);
+            break;
+        case CR_WEAPON_SKILL_MAINHAND:                      // Implemented in Unit::RollMeleeOutcomeAgainst
+        case CR_WEAPON_SKILL_OFFHAND:
+        case CR_WEAPON_SKILL_RANGED:
+            break;
+        case CR_EXPERTISE:
+            if (affectStats)
+            {
+                UpdateExpertise(BASE_ATTACK);
+                UpdateExpertise(OFF_ATTACK);
+            }
+            break;
     }
 }
 
 void Player::SetRegularAttackTime()
 {
-    for (int i = 0; i < MAX_ATTACK; ++i)
+    for (uint8 i = 0; i < MAX_ATTACK; ++i)
     {
-        Item* tmpitem = GetWeaponForAttack(WeaponAttackType(i));
+        Item* tmpitem = GetWeaponForAttack(WeaponAttackType(i), true);
         if (tmpitem && !tmpitem->IsBroken())
         {
             ItemPrototype const* proto = tmpitem->GetProto();
@@ -5025,7 +5016,7 @@ void Player::SetRegularAttackTime()
                 SetAttackTime(WeaponAttackType(i), proto->Delay);
         }
         else
-            SetAttackTime(WeaponAttackType(i), BASE_ATTACK_TIME);
+            SetAttackTime(WeaponAttackType(i), BASE_ATTACK_TIME);  // If there is no weapon reset attack time to base (might have been changed from forms)
     }
 }
 
@@ -5118,20 +5109,20 @@ bool Player::UpdateGatherSkill(uint32 SkillId, uint32 SkillValue, uint32 RedLeve
     // For skinning and Mining chance decrease with level. 1-74 - no decrease, 75-149 - 2 times, 225-299 - 8 times
     switch (SkillId)
     {
-    case SKILL_HERBALISM:
-    case SKILL_LOCKPICKING:
-    case SKILL_JEWELCRAFTING:
-        return UpdateSkillPro(SkillId, SkillGainChance(SkillValue, RedLevel + 100, RedLevel + 50, RedLevel + 25) * Multiplicator, gathering_skill_gain);
-    case SKILL_SKINNING:
-        if (sWorld.getConfig(CONFIG_SKILL_CHANCE_SKINNING_STEPS) == 0)
+        case SKILL_HERBALISM:
+        case SKILL_LOCKPICKING:
+        case SKILL_JEWELCRAFTING:
             return UpdateSkillPro(SkillId, SkillGainChance(SkillValue, RedLevel + 100, RedLevel + 50, RedLevel + 25) * Multiplicator, gathering_skill_gain);
-        else
-            return UpdateSkillPro(SkillId, (SkillGainChance(SkillValue, RedLevel + 100, RedLevel + 50, RedLevel + 25) * Multiplicator) >> (SkillValue / sWorld.getConfig(CONFIG_SKILL_CHANCE_SKINNING_STEPS)), gathering_skill_gain);
-    case SKILL_MINING:
-        if (sWorld.getConfig(CONFIG_SKILL_CHANCE_MINING_STEPS) == 0)
-            return UpdateSkillPro(SkillId, SkillGainChance(SkillValue, RedLevel + 100, RedLevel + 50, RedLevel + 25) * Multiplicator, gathering_skill_gain);
-        else
-            return UpdateSkillPro(SkillId, (SkillGainChance(SkillValue, RedLevel + 100, RedLevel + 50, RedLevel + 25) * Multiplicator) >> (SkillValue / sWorld.getConfig(CONFIG_SKILL_CHANCE_MINING_STEPS)), gathering_skill_gain);
+        case SKILL_SKINNING:
+            if (sWorld.getConfig(CONFIG_SKILL_CHANCE_SKINNING_STEPS) == 0)
+                return UpdateSkillPro(SkillId, SkillGainChance(SkillValue, RedLevel + 100, RedLevel + 50, RedLevel + 25) * Multiplicator, gathering_skill_gain);
+            else
+                return UpdateSkillPro(SkillId, (SkillGainChance(SkillValue, RedLevel + 100, RedLevel + 50, RedLevel + 25) * Multiplicator) >> (SkillValue / sWorld.getConfig(CONFIG_SKILL_CHANCE_SKINNING_STEPS)), gathering_skill_gain);
+        case SKILL_MINING:
+            if (sWorld.getConfig(CONFIG_SKILL_CHANCE_MINING_STEPS) == 0)
+                return UpdateSkillPro(SkillId, SkillGainChance(SkillValue, RedLevel + 100, RedLevel + 50, RedLevel + 25) * Multiplicator, gathering_skill_gain);
+            else
+                return UpdateSkillPro(SkillId, (SkillGainChance(SkillValue, RedLevel + 100, RedLevel + 50, RedLevel + 25) * Multiplicator) >> (SkillValue / sWorld.getConfig(CONFIG_SKILL_CHANCE_MINING_STEPS)), gathering_skill_gain);
     }
     return false;
 }
@@ -5192,7 +5183,7 @@ bool Player::UpdateSkillPro(uint16 SkillId, int32 Chance, uint32 step)
     return false;
 }
 
-void Player::UpdateWeaponSkill (WeaponAttackType attType)
+void Player::UpdateWeaponSkill(WeaponAttackType attType)
 {
     // no skill gain in pvp
     Unit* pVictim = getVictim();
@@ -5219,14 +5210,14 @@ void Player::UpdateWeaponSkill (WeaponAttackType attType)
     {
         switch (tmpWeapon->GetProto()->SubClass)
         {
-        case ITEM_SUBCLASS_WEAPON_FISHING_POLE:
-            break;
-        case ITEM_SUBCLASS_WEAPON_FIST:
-            UpdateSkill(SKILL_UNARMED, weapon_skill_gain);
-        // no break intended
-        default:
-            UpdateSkill(tmpWeapon->GetSkill(), weapon_skill_gain);
-            break;
+            case ITEM_SUBCLASS_WEAPON_FISHING_POLE:
+                break;
+            case ITEM_SUBCLASS_WEAPON_FIST:
+                UpdateSkill(SKILL_UNARMED, weapon_skill_gain);
+            // no break intended
+            default:
+                UpdateSkill(tmpWeapon->GetSkill(), weapon_skill_gain);
+                break;
         }
     }
 
@@ -5235,16 +5226,16 @@ void Player::UpdateWeaponSkill (WeaponAttackType attType)
 
 void Player::UpdateCombatSkills(Unit* pVictim, WeaponAttackType attType, MeleeHitOutcome /*outcome*/, bool defence)
 {
-    uint32 plevel = getLevel();                             // if defense than pVictim == attacker
-    uint32 greylevel = Oregon::XP::GetGrayLevel(plevel);
-    uint32 moblevel = pVictim->getLevelForTarget(this);
+    uint8 plevel = getLevel();                             // if defense than pVictim == attacker
+    uint8 greylevel = Oregon::XP::GetGrayLevel(plevel);
+    uint8 moblevel = pVictim->getLevelForTarget(this);
     if (moblevel < greylevel)
         return;
 
     if (moblevel > plevel + 5)
         moblevel = plevel + 5;
 
-    uint32 lvldif = moblevel - greylevel;
+    uint8 lvldif = moblevel - greylevel;
     if (lvldif < 3)
         lvldif = 3;
 
@@ -5313,17 +5304,17 @@ void Player::UpdateSkillsForLevel()
         uint32 max = SKILL_MAX(data);
         uint32 val = SKILL_VALUE(data);
 
-        // update only level dependent max skill values
+        /// update only level dependent max skill values
         if (max != 1)
         {
-            // maximize skill always
+            /// maximize skill always
             if (alwaysMaxSkill)
             {
                 SetUInt32Value(valueIndex, MAKE_SKILL_VALUE(maxSkill, maxSkill));
                 if (itr->second.uState != SKILL_NEW)
                     itr->second.uState = SKILL_CHANGED;
             }
-            else if (max != maxconfskill)                    // update max skill value if current max skill not maximized
+            else if (max != maxconfskill)                    /// update max skill value if current max skill not maximized
             {
                 SetUInt32Value(valueIndex, MAKE_SKILL_VALUE(val, maxSkill));
                 if (itr->second.uState != SKILL_NEW)
@@ -5345,7 +5336,6 @@ void Player::UpdateSkillsToMaxSkillsForLevel()
             continue;
         uint32 valueIndex = PLAYER_SKILL_VALUE_INDEX(itr->second.pos);
         uint32 data = GetUInt32Value(valueIndex);
-
         uint32 max = SKILL_MAX(data);
 
         if (max > 1)
@@ -5362,7 +5352,7 @@ void Player::UpdateSkillsToMaxSkillsForLevel()
 
 // This functions sets a skill line value (and adds if doesn't exist yet)
 // To "remove" a skill line, set it's values to zero
-void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
+void Player::SetSkill(uint16 id, uint16 currVal, uint16 maxVal)
 {
     if (!id)
         return;
@@ -5531,7 +5521,7 @@ uint16 Player::GetBaseSkillValue(uint32 skill) const
         return 0;
 
     int32 result = int32(SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos))));
-    result +=  SKILL_PERM_BONUS(GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(itr->second.pos)));
+    result += SKILL_PERM_BONUS(GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(itr->second.pos)));
     return result < 0 ? 0 : result;
 }
 
@@ -5834,10 +5824,8 @@ uint32 Player::TeamForRace(uint8 race)
 
     switch (rEntry->TeamID)
     {
-    case 7:
-        return ALLIANCE;
-    case 1:
-        return HORDE;
+        case 1: return HORDE;
+        case 7: return ALLIANCE;
     }
 
     sLog.outError("Race %u has wrong team id in DBC: wrong DBC files?", uint32(race));
@@ -6521,11 +6509,11 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize, float honor, bool pvpt
     // victim_guid - for show victim name in log
     // victim_rank [1..4]  HK: <dishonored rank>
     // victim_rank [5..19] HK: <alliance\horde rank>
-    // victim_rank [0,20+] HK: <>
-    WorldPacket data(SMSG_PVP_CREDIT, 4 + 8 + 4);
-    data << (uint32) honor;
-    data << (uint64) victim_guid;
-    data << (uint32) victim_rank;
+    // victim_rank [0, 20+] HK: <>
+    WorldPacket data(SMSG_PVP_CREDIT, 4+8+4);
+    data << uint32(honor);
+    data << uint64(victim_guid);
+    data << uint32(victim_rank);
 
     GetSession()->SendPacket(&data);
 
@@ -6719,19 +6707,19 @@ void Player::UpdateZone(uint32 newZone)
     // in PvE, only opposition team capital
     switch (zone->team)
     {
-    case AREATEAM_ALLY:
-        pvpInfo.inHostileArea = GetTeam() != ALLIANCE && (sWorld.IsPvPRealm() || zone->flags & AREA_FLAG_CAPITAL);
-        break;
-    case AREATEAM_HORDE:
-        pvpInfo.inHostileArea = GetTeam() != HORDE && (sWorld.IsPvPRealm() || zone->flags & AREA_FLAG_CAPITAL);
-        break;
-    case AREATEAM_NONE:
-        // overwrite for battlegrounds, maybe batter some zone flags but current known not 100% fit to this
-        pvpInfo.inHostileArea = sWorld.IsPvPRealm() || InBattleGround();
-        break;
-    default:                                            // 6 in fact
-        pvpInfo.inHostileArea = false;
-        break;
+        case AREATEAM_ALLY:
+            pvpInfo.inHostileArea = GetTeam() != ALLIANCE && (sWorld.IsPvPRealm() || zone->flags & AREA_FLAG_CAPITAL);
+            break;
+        case AREATEAM_HORDE:
+            pvpInfo.inHostileArea = GetTeam() != HORDE && (sWorld.IsPvPRealm() || zone->flags & AREA_FLAG_CAPITAL);
+            break;
+        case AREATEAM_NONE:
+            // overwrite for battlegrounds, maybe batter some zone flags but current known not 100% fit to this
+            pvpInfo.inHostileArea = sWorld.IsPvPRealm() || InBattleGround();
+            break;
+        default:                                            // 6 in fact
+            pvpInfo.inHostileArea = false;
+            break;
     }
 
     pvpInfo.inNoPvPArea = false;
@@ -6787,7 +6775,7 @@ void Player::UpdateZone(uint32 newZone)
     UpdateZoneDependentAuras(newZone);
 }
 
-//If players are too far way of duel flag... then player loose the duel
+//If players are too far away from the duel flag... they lose the duel
 void Player::CheckDuelDistance(time_t currTime)
 {
     if (!duel)
@@ -6800,7 +6788,7 @@ void Player::CheckDuelDistance(time_t currTime)
 
     if (duel->outOfBound == 0)
     {
-        if (!IsWithinDistInMap(obj, 65))
+        if (!IsWithinDistInMap(obj, 50))
         {
             duel->outOfBound = currTime;
 
@@ -6810,7 +6798,7 @@ void Player::CheckDuelDistance(time_t currTime)
     }
     else
     {
-        if (IsWithinDistInMap(obj, 65))
+        if (IsWithinDistInMap(obj, 40))
         {
             duel->outOfBound = 0;
 
@@ -6851,28 +6839,28 @@ void Player::DuelComplete(DuelCompleteType type)
 
     switch (type)
     {
-    case DUEL_FLED:
-        // if initiator and opponent are on the same team
-        // or initiator and opponent are not PvP enabled, forcibly stop attacking
-        if (duel->initiator->GetTeam() == duel->opponent->GetTeam())
-        {
-            duel->initiator->AttackStop();
-            duel->opponent->AttackStop();
-        }
-        else
-        {
-            if (!duel->initiator->IsPvP())
+        case DUEL_FLED:
+            // if initiator and opponent are on the same team
+            // or initiator and opponent are not PvP enabled, forcibly stop attacking
+            if (duel->initiator->GetTeam() == duel->opponent->GetTeam())
+            {
                 duel->initiator->AttackStop();
-            if (!duel->opponent->IsPvP())
                 duel->opponent->AttackStop();
-        }
-        break;
-    case DUEL_WON:
-        if (duel->opponent)
-            duel->opponent->HandleEmoteCommand(EMOTE_ONESHOT_CHEER);
-        break;
-    default:
-        break;
+            }
+            else
+            {
+                if (!duel->initiator->IsPvP())
+                    duel->initiator->AttackStop();
+                if (!duel->opponent->IsPvP())
+                    duel->opponent->AttackStop();
+            }
+            break;
+        case DUEL_WON:
+            if (duel->opponent)
+                duel->opponent->HandleEmoteCommand(EMOTE_ONESHOT_CHEER);
+            break;
+        default:
+            break;
     }
 
     //Remove Duel Flag object
@@ -6936,18 +6924,22 @@ void Player::_ApplyItemMods(Item* item, uint8 slot, bool apply)
     if (slot >= INVENTORY_SLOT_BAG_END || !item)
         return;
 
-    // not apply mods for broken item
-    if (item->IsBroken() && apply)
-        return;
-
     ItemPrototype const* proto = item->GetProto();
 
     if (!proto)
         return;
 
+    // not apply/remove mods for broken item
+    if (item->IsBroken())
+        return;
+
     sLog.outDetail("applying mods for item %u ", item->GetGUIDLow());
 
-    uint32 attacktype = Player::GetAttackBySlot(slot);
+    uint8 attacktype = Player::GetAttackBySlot(slot);
+
+    if (proto->Socket[0].Color)                              //only (un)equipping of items with sockets can influence metagems, so no need to waste time with normal items
+        CorrectMetaGemEnchants(slot, apply);
+
     if (attacktype < MAX_ATTACK)
         _ApplyWeaponDependentAuraMods(item, WeaponAttackType(attacktype), apply);
 
@@ -6959,8 +6951,6 @@ void Player::_ApplyItemMods(Item* item, uint8 slot, bool apply)
     ApplyItemEquipSpell(item, apply);
     ApplyEnchantment(item, apply);
 
-    if (proto->Socket[0].Color)                              //only (un)equipping of items with sockets can influence metagems, so no need to waste time with normal items
-        CorrectMetaGemEnchants(slot, apply);
 
     sLog.outDebug("_ApplyItemMods complete.");
 }
@@ -6979,119 +6969,119 @@ void Player::_ApplyItemBonuses(ItemPrototype const* proto, uint8 slot, bool appl
 
         switch (proto->ItemStat[i].ItemStatType)
         {
-        case ITEM_MOD_MANA:
-            HandleStatModifier(UNIT_MOD_MANA, BASE_VALUE, float(val), apply);
-            break;
-        case ITEM_MOD_HEALTH:                           // modify HP
-            HandleStatModifier(UNIT_MOD_HEALTH, BASE_VALUE, float(val), apply);
-            break;
-        case ITEM_MOD_AGILITY:                          // modify agility
-            HandleStatModifier(UNIT_MOD_STAT_AGILITY, BASE_VALUE, float(val), apply);
-            ApplyStatBuffMod(STAT_AGILITY, float(val), apply);
-            break;
-        case ITEM_MOD_STRENGTH:                         //modify strength
-            HandleStatModifier(UNIT_MOD_STAT_STRENGTH, BASE_VALUE, float(val), apply);
-            ApplyStatBuffMod(STAT_STRENGTH, float(val), apply);
-            break;
-        case ITEM_MOD_INTELLECT:                        //modify intellect
-            HandleStatModifier(UNIT_MOD_STAT_INTELLECT, BASE_VALUE, float(val), apply);
-            ApplyStatBuffMod(STAT_INTELLECT, float(val), apply);
-            break;
-        case ITEM_MOD_SPIRIT:                           //modify spirit
-            HandleStatModifier(UNIT_MOD_STAT_SPIRIT, BASE_VALUE, float(val), apply);
-            ApplyStatBuffMod(STAT_SPIRIT, float(val), apply);
-            break;
-        case ITEM_MOD_STAMINA:                          //modify stamina
-            HandleStatModifier(UNIT_MOD_STAT_STAMINA, BASE_VALUE, float(val), apply);
-            ApplyStatBuffMod(STAT_STAMINA, float(val), apply);
-            break;
-        case ITEM_MOD_DEFENSE_SKILL_RATING:
-            ApplyRatingMod(CR_DEFENSE_SKILL, int32(val), apply);
-            break;
-        case ITEM_MOD_DODGE_RATING:
-            ApplyRatingMod(CR_DODGE, int32(val), apply);
-            break;
-        case ITEM_MOD_PARRY_RATING:
-            ApplyRatingMod(CR_PARRY, int32(val), apply);
-            break;
-        case ITEM_MOD_BLOCK_RATING:
-            ApplyRatingMod(CR_BLOCK, int32(val), apply);
-            break;
-        case ITEM_MOD_HIT_MELEE_RATING:
-            ApplyRatingMod(CR_HIT_MELEE, int32(val), apply);
-            break;
-        case ITEM_MOD_HIT_RANGED_RATING:
-            ApplyRatingMod(CR_HIT_RANGED, int32(val), apply);
-            break;
-        case ITEM_MOD_HIT_SPELL_RATING:
-            ApplyRatingMod(CR_HIT_SPELL, int32(val), apply);
-            break;
-        case ITEM_MOD_CRIT_MELEE_RATING:
-            ApplyRatingMod(CR_CRIT_MELEE, int32(val), apply);
-            break;
-        case ITEM_MOD_CRIT_RANGED_RATING:
-            ApplyRatingMod(CR_CRIT_RANGED, int32(val), apply);
-            break;
-        case ITEM_MOD_CRIT_SPELL_RATING:
-            ApplyRatingMod(CR_CRIT_SPELL, int32(val), apply);
-            break;
-        case ITEM_MOD_HIT_TAKEN_MELEE_RATING:
-            ApplyRatingMod(CR_HIT_TAKEN_MELEE, int32(val), apply);
-            break;
-        case ITEM_MOD_HIT_TAKEN_RANGED_RATING:
-            ApplyRatingMod(CR_HIT_TAKEN_RANGED, int32(val), apply);
-            break;
-        case ITEM_MOD_HIT_TAKEN_SPELL_RATING:
-            ApplyRatingMod(CR_HIT_TAKEN_SPELL, int32(val), apply);
-            break;
-        case ITEM_MOD_CRIT_TAKEN_MELEE_RATING:
-            ApplyRatingMod(CR_CRIT_TAKEN_MELEE, int32(val), apply);
-            break;
-        case ITEM_MOD_CRIT_TAKEN_RANGED_RATING:
-            ApplyRatingMod(CR_CRIT_TAKEN_RANGED, int32(val), apply);
-            break;
-        case ITEM_MOD_CRIT_TAKEN_SPELL_RATING:
-            ApplyRatingMod(CR_CRIT_TAKEN_SPELL, int32(val), apply);
-            break;
-        case ITEM_MOD_HASTE_MELEE_RATING:
-            ApplyRatingMod(CR_HASTE_MELEE, int32(val), apply);
-            break;
-        case ITEM_MOD_HASTE_RANGED_RATING:
-            ApplyRatingMod(CR_HASTE_RANGED, int32(val), apply);
-            break;
-        case ITEM_MOD_HASTE_SPELL_RATING:
-            ApplyRatingMod(CR_HASTE_SPELL, int32(val), apply);
-            break;
-        case ITEM_MOD_HIT_RATING:
-            ApplyRatingMod(CR_HIT_MELEE, int32(val), apply);
-            ApplyRatingMod(CR_HIT_RANGED, int32(val), apply);
-            break;
-        case ITEM_MOD_CRIT_RATING:
-            ApplyRatingMod(CR_CRIT_MELEE, int32(val), apply);
-            ApplyRatingMod(CR_CRIT_RANGED, int32(val), apply);
-            break;
-        case ITEM_MOD_HIT_TAKEN_RATING:
-            ApplyRatingMod(CR_HIT_TAKEN_MELEE, int32(val), apply);
-            ApplyRatingMod(CR_HIT_TAKEN_RANGED, int32(val), apply);
-            ApplyRatingMod(CR_HIT_TAKEN_SPELL, int32(val), apply);
-            break;
-        case ITEM_MOD_CRIT_TAKEN_RATING:
-            ApplyRatingMod(CR_CRIT_TAKEN_MELEE, int32(val), apply);
-            ApplyRatingMod(CR_CRIT_TAKEN_RANGED, int32(val), apply);
-            ApplyRatingMod(CR_CRIT_TAKEN_SPELL, int32(val), apply);
-            break;
-        case ITEM_MOD_RESILIENCE_RATING:
-            ApplyRatingMod(CR_CRIT_TAKEN_MELEE, int32(val), apply);
-            ApplyRatingMod(CR_CRIT_TAKEN_RANGED, int32(val), apply);
-            ApplyRatingMod(CR_CRIT_TAKEN_SPELL, int32(val), apply);
-            break;
-        case ITEM_MOD_HASTE_RATING:
-            ApplyRatingMod(CR_HASTE_MELEE, int32(val), apply);
-            ApplyRatingMod(CR_HASTE_RANGED, int32(val), apply);
-            break;
-        case ITEM_MOD_EXPERTISE_RATING:
-            ApplyRatingMod(CR_EXPERTISE, int32(val), apply);
-            break;
+            case ITEM_MOD_MANA:
+                HandleStatModifier(UNIT_MOD_MANA, BASE_VALUE, float(val), apply);
+                break;
+            case ITEM_MOD_HEALTH:                           // modify HP
+                HandleStatModifier(UNIT_MOD_HEALTH, BASE_VALUE, float(val), apply);
+                break;
+            case ITEM_MOD_AGILITY:                          // modify agility
+                HandleStatModifier(UNIT_MOD_STAT_AGILITY, BASE_VALUE, float(val), apply);
+                ApplyStatBuffMod(STAT_AGILITY, float(val), apply);
+                break;
+            case ITEM_MOD_STRENGTH:                         //modify strength
+                HandleStatModifier(UNIT_MOD_STAT_STRENGTH, BASE_VALUE, float(val), apply);
+                ApplyStatBuffMod(STAT_STRENGTH, float(val), apply);
+                break;
+            case ITEM_MOD_INTELLECT:                        //modify intellect
+                HandleStatModifier(UNIT_MOD_STAT_INTELLECT, BASE_VALUE, float(val), apply);
+                ApplyStatBuffMod(STAT_INTELLECT, float(val), apply);
+                break;
+            case ITEM_MOD_SPIRIT:                           //modify spirit
+                HandleStatModifier(UNIT_MOD_STAT_SPIRIT, BASE_VALUE, float(val), apply);
+                ApplyStatBuffMod(STAT_SPIRIT, float(val), apply);
+                break;
+            case ITEM_MOD_STAMINA:                          //modify stamina
+                HandleStatModifier(UNIT_MOD_STAT_STAMINA, BASE_VALUE, float(val), apply);
+                ApplyStatBuffMod(STAT_STAMINA, float(val), apply);
+                break;
+            case ITEM_MOD_DEFENSE_SKILL_RATING:
+                ApplyRatingMod(CR_DEFENSE_SKILL, int32(val), apply);
+                break;
+            case ITEM_MOD_DODGE_RATING:
+                ApplyRatingMod(CR_DODGE, int32(val), apply);
+                break;
+            case ITEM_MOD_PARRY_RATING:
+                ApplyRatingMod(CR_PARRY, int32(val), apply);
+                break;
+            case ITEM_MOD_BLOCK_RATING:
+                ApplyRatingMod(CR_BLOCK, int32(val), apply);
+                break;
+            case ITEM_MOD_HIT_MELEE_RATING:
+                ApplyRatingMod(CR_HIT_MELEE, int32(val), apply);
+                break;
+            case ITEM_MOD_HIT_RANGED_RATING:
+                ApplyRatingMod(CR_HIT_RANGED, int32(val), apply);
+                break;
+            case ITEM_MOD_HIT_SPELL_RATING:
+                ApplyRatingMod(CR_HIT_SPELL, int32(val), apply);
+                break;
+            case ITEM_MOD_CRIT_MELEE_RATING:
+                ApplyRatingMod(CR_CRIT_MELEE, int32(val), apply);
+                break;
+            case ITEM_MOD_CRIT_RANGED_RATING:
+                ApplyRatingMod(CR_CRIT_RANGED, int32(val), apply);
+                break;
+            case ITEM_MOD_CRIT_SPELL_RATING:
+                ApplyRatingMod(CR_CRIT_SPELL, int32(val), apply);
+                break;
+            case ITEM_MOD_HIT_TAKEN_MELEE_RATING:
+                ApplyRatingMod(CR_HIT_TAKEN_MELEE, int32(val), apply);
+                break;
+            case ITEM_MOD_HIT_TAKEN_RANGED_RATING:
+                ApplyRatingMod(CR_HIT_TAKEN_RANGED, int32(val), apply);
+                break;
+            case ITEM_MOD_HIT_TAKEN_SPELL_RATING:
+                ApplyRatingMod(CR_HIT_TAKEN_SPELL, int32(val), apply);
+                break;
+            case ITEM_MOD_CRIT_TAKEN_MELEE_RATING:
+                ApplyRatingMod(CR_CRIT_TAKEN_MELEE, int32(val), apply);
+                break;
+            case ITEM_MOD_CRIT_TAKEN_RANGED_RATING:
+                ApplyRatingMod(CR_CRIT_TAKEN_RANGED, int32(val), apply);
+                break;
+            case ITEM_MOD_CRIT_TAKEN_SPELL_RATING:
+                ApplyRatingMod(CR_CRIT_TAKEN_SPELL, int32(val), apply);
+                break;
+            case ITEM_MOD_HASTE_MELEE_RATING:
+                ApplyRatingMod(CR_HASTE_MELEE, int32(val), apply);
+                break;
+            case ITEM_MOD_HASTE_RANGED_RATING:
+                ApplyRatingMod(CR_HASTE_RANGED, int32(val), apply);
+                break;
+            case ITEM_MOD_HASTE_SPELL_RATING:
+                ApplyRatingMod(CR_HASTE_SPELL, int32(val), apply);
+                break;
+            case ITEM_MOD_HIT_RATING:
+                ApplyRatingMod(CR_HIT_MELEE, int32(val), apply);
+                ApplyRatingMod(CR_HIT_RANGED, int32(val), apply);
+                break;
+            case ITEM_MOD_CRIT_RATING:
+                ApplyRatingMod(CR_CRIT_MELEE, int32(val), apply);
+                ApplyRatingMod(CR_CRIT_RANGED, int32(val), apply);
+                break;
+            case ITEM_MOD_HIT_TAKEN_RATING:
+                ApplyRatingMod(CR_HIT_TAKEN_MELEE, int32(val), apply);
+                ApplyRatingMod(CR_HIT_TAKEN_RANGED, int32(val), apply);
+                ApplyRatingMod(CR_HIT_TAKEN_SPELL, int32(val), apply);
+                break;
+            case ITEM_MOD_CRIT_TAKEN_RATING:
+                ApplyRatingMod(CR_CRIT_TAKEN_MELEE, int32(val), apply);
+                ApplyRatingMod(CR_CRIT_TAKEN_RANGED, int32(val), apply);
+                ApplyRatingMod(CR_CRIT_TAKEN_SPELL, int32(val), apply);
+                break;
+            case ITEM_MOD_RESILIENCE_RATING:
+                ApplyRatingMod(CR_CRIT_TAKEN_MELEE, int32(val), apply);
+                ApplyRatingMod(CR_CRIT_TAKEN_RANGED, int32(val), apply);
+                ApplyRatingMod(CR_CRIT_TAKEN_SPELL, int32(val), apply);
+                break;
+            case ITEM_MOD_HASTE_RATING:
+                ApplyRatingMod(CR_HASTE_MELEE, int32(val), apply);
+                ApplyRatingMod(CR_HASTE_RANGED, int32(val), apply);
+                break;
+            case ITEM_MOD_EXPERTISE_RATING:
+                ApplyRatingMod(CR_EXPERTISE, int32(val), apply);
+                break;
         }
     }
 
@@ -7176,6 +7166,10 @@ void Player::_ApplyWeaponDependentAuraMods(Item* item, WeaponAttackType attackTy
 
 void Player::_ApplyWeaponDependentAuraCritMod(Item* item, WeaponAttackType attackType, Aura* aura, bool apply)
 {
+    // don't apply mod if item is broken or cannot be used
+    if (item->IsBroken() || !CanUseAttackType(attackType))
+        return;
+
     // generic not weapon specific case processes in aura code
     if (aura->GetSpellProto()->EquippedItemClass == -1)
         return;
@@ -7183,17 +7177,10 @@ void Player::_ApplyWeaponDependentAuraCritMod(Item* item, WeaponAttackType attac
     BaseModGroup mod = BASEMOD_END;
     switch (attackType)
     {
-    case BASE_ATTACK:
-        mod = CRIT_PERCENTAGE;
-        break;
-    case OFF_ATTACK:
-        mod = OFFHAND_CRIT_PERCENTAGE;
-        break;
-    case RANGED_ATTACK:
-        mod = RANGED_CRIT_PERCENTAGE;
-        break;
-    default:
-        return;
+        case BASE_ATTACK:   mod = CRIT_PERCENTAGE;        break;
+        case OFF_ATTACK:    mod = OFFHAND_CRIT_PERCENTAGE;break;
+        case RANGED_ATTACK: mod = RANGED_CRIT_PERCENTAGE; break;
+        default: return;
     }
 
     if (item->IsFitToSpellRequirements(aura->GetSpellProto()))
@@ -7202,6 +7189,10 @@ void Player::_ApplyWeaponDependentAuraCritMod(Item* item, WeaponAttackType attac
 
 void Player::_ApplyWeaponDependentAuraDamageMod(Item* item, WeaponAttackType attackType, Aura* aura, bool apply)
 {
+    // don't apply mod if item is broken or cannot be used
+    if (item->IsBroken() || !CanUseAttackType(attackType))
+        return;
+
     // ignore spell mods for not wands
     Modifier const* modifier = aura->GetModifier();
     if ((modifier->m_miscvalue & SPELL_SCHOOL_MASK_NORMAL) == 0 && (getClassMask() & CLASSMASK_WAND_USERS) == 0)
@@ -7214,30 +7205,18 @@ void Player::_ApplyWeaponDependentAuraDamageMod(Item* item, WeaponAttackType att
     UnitMods unitMod = UNIT_MOD_END;
     switch (attackType)
     {
-    case BASE_ATTACK:
-        unitMod = UNIT_MOD_DAMAGE_MAINHAND;
-        break;
-    case OFF_ATTACK:
-        unitMod = UNIT_MOD_DAMAGE_OFFHAND;
-        break;
-    case RANGED_ATTACK:
-        unitMod = UNIT_MOD_DAMAGE_RANGED;
-        break;
-    default:
-        return;
+        case BASE_ATTACK:   unitMod = UNIT_MOD_DAMAGE_MAINHAND; break;
+        case OFF_ATTACK:    unitMod = UNIT_MOD_DAMAGE_OFFHAND;  break;
+        case RANGED_ATTACK: unitMod = UNIT_MOD_DAMAGE_RANGED;   break;
+        default: return;
     }
 
     UnitModifierType unitModType = TOTAL_VALUE;
     switch (modifier->m_auraname)
     {
-    case SPELL_AURA_MOD_DAMAGE_DONE:
-        unitModType = TOTAL_VALUE;
-        break;
-    case SPELL_AURA_MOD_DAMAGE_PERCENT_DONE:
-        unitModType = TOTAL_PCT;
-        break;
-    default:
-        return;
+        case SPELL_AURA_MOD_DAMAGE_DONE:         unitModType = TOTAL_VALUE; break;
+        case SPELL_AURA_MOD_DAMAGE_PERCENT_DONE: unitModType = TOTAL_PCT;   break;
+        default: return;
     }
 
     if (item->IsFitToSpellRequirements(aura->GetSpellProto()))
@@ -7262,7 +7241,7 @@ void Player::ApplyItemEquipSpell(Item* item, bool apply, bool form_change)
     if (!proto)
         return;
 
-    for (int i = 0; i < 5; i++)
+    for (uint8 i = 0; i < 5; ++i)
     {
         _Spell const& spellData = proto->Spells[i];
 
@@ -7348,7 +7327,7 @@ void Player::UpdateEquipSpellsAtFormChange()
 {
     for (uint8 i = 0; i < INVENTORY_SLOT_BAG_END; ++i)
     {
-        if (m_items[i] && !m_items[i]->IsBroken())
+        if (m_items[i] && !m_items[i]->IsBroken() && CanUseAttackType(GetAttackBySlot(i)))
         {
             ApplyItemEquipSpell(m_items[i], false, true);   // remove spells that not fit to form
             ApplyItemEquipSpell(m_items[i], true, true);    // add spells that fit form but not active
@@ -7387,7 +7366,7 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
     {
         // If usable, try to cast item spell
         if (Item* item = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
-            if (!item->IsBroken())
+            if (!item->IsBroken() && CanUseAttackType(attType))
                 if (ItemPrototype const* proto = item->GetProto())
                 {
                     // Additional check for weapons
@@ -7397,18 +7376,10 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
                         EquipmentSlots slot;
                         switch (attType)
                         {
-                        case BASE_ATTACK:
-                            slot = EQUIPMENT_SLOT_MAINHAND;
-                            break;
-                        case OFF_ATTACK:
-                            slot = EQUIPMENT_SLOT_OFFHAND;
-                            break;
-                        case RANGED_ATTACK:
-                            slot = EQUIPMENT_SLOT_RANGED;
-                            break;
-                        default:
-                            slot = EQUIPMENT_SLOT_END;
-                            break;
+                            case BASE_ATTACK:   slot = EQUIPMENT_SLOT_MAINHAND; break;
+                            case OFF_ATTACK:    slot = EQUIPMENT_SLOT_OFFHAND;  break;
+                            case RANGED_ATTACK: slot = EQUIPMENT_SLOT_RANGED;   break;
+                            default: slot = EQUIPMENT_SLOT_END; break;
                         }
                         if (slot != i)
                             continue;
@@ -7456,7 +7427,7 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
             if (m_extraAttacks && IsSpellHaveEffect(spellInfo, SPELL_EFFECT_ADD_EXTRA_ATTACKS))
                 return;
 
-            float chance = spellInfo->procChance;
+            float chance = (float)spellInfo->procChance;
 
             if (spellData.SpellPPMRate)
             {
@@ -7472,12 +7443,14 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
     }
 
     // item combat enchantments
-    for (int e_slot = 0; e_slot < MAX_ENCHANTMENT_SLOT; ++e_slot)
+    for (uint8 e_slot = 0; e_slot < MAX_ENCHANTMENT_SLOT; ++e_slot)
     {
         uint32 enchant_id = item->GetEnchantmentId(EnchantmentSlot(e_slot));
         SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(enchant_id);
-        if (!pEnchant) continue;
-        for (int s = 0; s < 3; ++s)
+        if (!pEnchant)
+            continue;
+
+        for (uint8 s = 0; s < 3; ++s)
         {
             if (pEnchant->type[s] != ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL)
                 continue;
@@ -7551,7 +7524,7 @@ void Player::_RemoveAllItemMods()
             if (proto->ItemSet)
                 RemoveItemsSetItem(this, proto);
 
-            if (m_items[i]->IsBroken())
+            if (m_items[i]->IsBroken() || !CanUseAttackType(GetAttackBySlot(i)))
                 continue;
 
             ApplyItemEquipSpell(m_items[i], false);
@@ -7563,7 +7536,7 @@ void Player::_RemoveAllItemMods()
     {
         if (m_items[i])
         {
-            if (m_items[i]->IsBroken())
+            if (m_items[i]->IsBroken() || !CanUseAttackType(GetAttackBySlot(i)))
                 continue;
             ItemPrototype const* proto = m_items[i]->GetProto();
             if (!proto)
@@ -7591,7 +7564,7 @@ void Player::_ApplyAllItemMods()
     {
         if (m_items[i])
         {
-            if (m_items[i]->IsBroken())
+            if (m_items[i]->IsBroken() || !CanUseAttackType(GetAttackBySlot(i)))
                 continue;
 
             ItemPrototype const* proto = m_items[i]->GetProto();
@@ -7621,7 +7594,7 @@ void Player::_ApplyAllItemMods()
             if (proto->ItemSet)
                 AddItemsSetItem(this, m_items[i]);
 
-            if (m_items[i]->IsBroken())
+            if (m_items[i]->IsBroken() || !CanUseAttackType(GetAttackBySlot(i)))
                 continue;
 
             ApplyItemEquipSpell(m_items[i], true);
@@ -7673,17 +7646,17 @@ bool Player::CheckAmmoCompatibility(const ItemPrototype* ammo_proto) const
     // check ammo ws. weapon compatibility
     switch (weapon_proto->SubClass)
     {
-    case ITEM_SUBCLASS_WEAPON_BOW:
-    case ITEM_SUBCLASS_WEAPON_CROSSBOW:
-        if (ammo_proto->SubClass != ITEM_SUBCLASS_ARROW)
+        case ITEM_SUBCLASS_WEAPON_BOW:
+        case ITEM_SUBCLASS_WEAPON_CROSSBOW:
+            if (ammo_proto->SubClass != ITEM_SUBCLASS_ARROW)
+                return false;
+            break;
+        case ITEM_SUBCLASS_WEAPON_GUN:
+            if (ammo_proto->SubClass != ITEM_SUBCLASS_BULLET)
+                return false;
+            break;
+        default:
             return false;
-        break;
-    case ITEM_SUBCLASS_WEAPON_GUN:
-        if (ammo_proto->SubClass != ITEM_SUBCLASS_BULLET)
-            return false;
-        break;
-    default:
-        return false;
     }
 
     return true;
@@ -8107,64 +8080,64 @@ void Player::SendInitWorldStates(bool forceZone, uint32 forceZoneId)
     // may be exist better way to do this...
     switch (zoneid)
     {
-    case 0:
-    case 1:
-    case 4:
-    case 8:
-    case 10:
-    case 11:
-    case 12:
-    case 36:
-    case 38:
-    case 40:
-    case 41:
-    case 51:
-    case 267:
-    case 1519:
-    case 1537:
-    case 2257:
-    case 2918:
-        NumberOfFields = 6;
-        break;
-    case 139:
-        NumberOfFields = 39;
-        break;
-    case 1377:
-        NumberOfFields = 13;
-        break;
-    case 2597:
-        NumberOfFields = 81;
-        break;
-    case 3277:
-        NumberOfFields = 14;
-        break;
-    case 3358:
-    case 3820:
-        NumberOfFields = 38;
-        break;
-    case 3483:
-        NumberOfFields = 25;
-        break;
-    case 3518:
-        NumberOfFields = 37;
-        break;
-    case 3519:
-        NumberOfFields = 36;
-        break;
-    case 3521:
-        NumberOfFields = 35;
-        break;
-    case 3698:
-    case 3702:
-    case 3968:
-        NumberOfFields = 9;
-        break;
-    case 3703:
-        NumberOfFields = 9;
-        break;
-    default:
-        NumberOfFields = 10;
-        break;
+        case 0:
+        case 1:
+        case 4:
+        case 8:
+        case 10:
+        case 11:
+        case 12:
+        case 36:
+        case 38:
+        case 40:
+        case 41:
+        case 51:
+        case 267:
+        case 1519:
+        case 1537:
+        case 2257:
+        case 2918:
+            NumberOfFields = 6;
+            break;
+        case 139:
+            NumberOfFields = 39;
+            break;
+        case 1377:
+            NumberOfFields = 13;
+            break;
+        case 2597:
+            NumberOfFields = 81;
+            break;
+        case 3277:
+            NumberOfFields = 14;
+            break;
+        case 3358:
+        case 3820:
+            NumberOfFields = 38;
+            break;
+        case 3483:
+            NumberOfFields = 25;
+            break;
+        case 3518:
+            NumberOfFields = 37;
+            break;
+        case 3519:
+            NumberOfFields = 36;
+            break;
+        case 3521:
+            NumberOfFields = 35;
+            break;
+        case 3698:
+        case 3702:
+        case 3968:
+            NumberOfFields = 9;
+            break;
+        case 3703:
+            NumberOfFields = 9;
+            break;
+        default:
+            NumberOfFields = 10;
+            break;
     }
 
     WorldPacket data(SMSG_INIT_WORLD_STATES, (4 + 4 + 4 + 2 + (NumberOfFields * 8)));
@@ -8186,18 +8159,18 @@ void Player::SendInitWorldStates(bool forceZone, uint32 forceZoneId)
     }
     switch (zoneid)
     {
-    case 1:
-    case 11:
-    case 12:
-    case 38:
-    case 40:
-    case 51:
-    case 1519:
-    case 1537:
-    case 2257:
-        break;
-    case 139: // EPL
-        {
+        case 1:                                             // Dun Morogh
+        case 11:                                            // Wetlands
+        case 12:                                            // Elwynn Forest
+        case 38:                                            // Loch Modan
+        case 40:                                            // Westfall
+        case 51:                                            // Searing Gorge
+        case 1519:                                          // Stormwind City
+        case 1537:                                          // Ironforge
+        case 2257:                                          // Deeprun Tram
+        case 3703:                                          // Shattrath City
+            break;
+        case 139:                                           // Eastern Plaguelands
             if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_EP)
                 pvp->FillInitialWorldStates(data);
             else
@@ -8236,10 +8209,8 @@ void Player::SendInitWorldStates(bool forceZone, uint32 forceZoneId)
                 data << uint32(0x942) << uint32(0x0); // 8 2370
                 data << uint32(0x943) << uint32(0x0); // 9 2371
             }
-        }
-        break;
-    case 1377: // Silithus
-        {
+            break;
+        case 1377:                                          // Silithus
             if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_SI)
                 pvp->FillInitialWorldStates(data);
             else
@@ -8254,7 +8225,6 @@ void Player::SendInitWorldStates(bool forceZone, uint32 forceZoneId)
             data << uint32(2323) << uint32(0x0); // 11 sandworm S
             data << uint32(2324) << uint32(0x0); // 12 sandworm SW
             data << uint32(2325) << uint32(0x0); // 13 sandworm E
-        }
         break;
     case 2597:                                          // AV
         if (bg && bg->GetTypeID() == BATTLEGROUND_AV)
@@ -8435,7 +8405,6 @@ void Player::SendInitWorldStates(bool forceZone, uint32 forceZoneId)
     // any of these needs change! the client remembers the prev setting!
     // ON EVERY ZONE LEAVE, RESET THE OLD ZONE'S WORLD STATE, BUT AT LEAST THE UI STUFF!
     case 3483:                                          // Hellfire Peninsula
-        {
             if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_HP)
                 pvp->FillInitialWorldStates(data);
             else
@@ -8457,10 +8426,8 @@ void Player::SendInitWorldStates(bool forceZone, uint32 forceZoneId)
                 data << uint32(0x9a7) << uint32(0x0);           // 21 // show the ally stadium icon         // 2471
                 data << uint32(0x9a6) << uint32(0x1);           // 22 // show the horde stadium icon        // 2470
             }
-        }
-        break;
-    case 3518:
-        {
+            break;
+        case 3518:                                          // Nagrand
             if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_NA)
                 pvp->FillInitialWorldStates(data);
             else
@@ -8500,10 +8467,8 @@ void Player::SendInitWorldStates(bool forceZone, uint32 forceZoneId)
                 data << uint32(2672) << uint32(0x0);    // 36
                 data << uint32(2673) << uint32(0x0);    // 37
             }
-        }
-        break;
-    case 3519:                                          // Terokkar Forest
-        {
+            break;
+        case 3519:                                          // Terokkar Forest
             if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_TF)
                 pvp->FillInitialWorldStates(data);
             else
@@ -8536,10 +8501,8 @@ void Player::SendInitWorldStates(bool forceZone, uint32 forceZoneId)
                 data << uint32(0xad0) << uint32(0x0);           // 35 // 2768 horde locked time show
                 data << uint32(0xacf) << uint32(0x1);           // 36 // 2767 ally locked time show
             }
-        }
-        break;
-    case 3521:                                          // Zangarmarsh
-        {
+            break;
+        case 3521:                                          // Zangarmarsh
             if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_ZM)
                 pvp->FillInitialWorldStates(data);
             else
@@ -8571,7 +8534,6 @@ void Player::SendInitWorldStates(bool forceZone, uint32 forceZoneId)
                 data << uint32(0xa60) << uint32(0x1);           // 34
                 data << uint32(0xa5f) << uint32(0x0);           // 35
             }
-        }
         break;
     case 3698:                                          // Nagrand Arena
         if (bg && bg->GetTypeID() == BATTLEGROUND_NA)
@@ -8602,8 +8564,6 @@ void Player::SendInitWorldStates(bool forceZone, uint32 forceZoneId)
             data << uint32(0xbb9) << uint32(0x0);           // 8 green
             data << uint32(0xbba) << uint32(0x0);           // 9 show
         }
-        break;
-    case 3703:                                          // Shattrath City
         break;
     default:
         data << uint32(0x914) << uint32(0x0);           // 7
@@ -8683,28 +8643,26 @@ void Player::SetSheath(SheathState sheathed)
 {
     switch (sheathed)
     {
-    case SHEATH_STATE_UNARMED:                          // no prepared weapon
-        SetVirtualItemSlot(0, NULL);
-        SetVirtualItemSlot(1, NULL);
-        SetVirtualItemSlot(2, NULL);
-        break;
-    case SHEATH_STATE_MELEE:                            // prepared melee weapon
-        {
+        case SHEATH_STATE_UNARMED:                          // no prepared weapon
+            SetVirtualItemSlot(0, NULL);
+            SetVirtualItemSlot(1, NULL);
+            SetVirtualItemSlot(2, NULL);
+            break;
+        case SHEATH_STATE_MELEE:                            // prepared melee weapon
             SetVirtualItemSlot(0, GetWeaponForAttack(BASE_ATTACK, true));
             SetVirtualItemSlot(1, GetWeaponForAttack(OFF_ATTACK, true));
             SetVirtualItemSlot(2, NULL);
-        };
-        break;
-    case SHEATH_STATE_RANGED:                           // prepared ranged weapon
-        SetVirtualItemSlot(0, NULL);
-        SetVirtualItemSlot(1, NULL);
-        SetVirtualItemSlot(2, GetWeaponForAttack(RANGED_ATTACK, true));
-        break;
-    default:
-        SetVirtualItemSlot(0, NULL);
-        SetVirtualItemSlot(1, NULL);
-        SetVirtualItemSlot(2, NULL);
-        break;
+            break;
+        case SHEATH_STATE_RANGED:                           // prepared ranged weapon
+            SetVirtualItemSlot(0, NULL);
+            SetVirtualItemSlot(1, NULL);
+            SetVirtualItemSlot(2, GetWeaponForAttack(RANGED_ATTACK, true));
+            break;
+        default:
+            SetVirtualItemSlot(0, NULL);
+            SetVirtualItemSlot(1, NULL);
+            SetVirtualItemSlot(2, NULL);
+            break;
     }
     Unit::SetSheath(sheathed);                              // this must visualize Sheath changing for other players...
 }
@@ -8720,51 +8678,51 @@ uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap) 
     slots[3] = NULL_SLOT;
     switch (proto->InventoryType)
     {
-    case INVTYPE_HEAD:
-        slots[0] = EQUIPMENT_SLOT_HEAD;
-        break;
-    case INVTYPE_NECK:
-        slots[0] = EQUIPMENT_SLOT_NECK;
-        break;
-    case INVTYPE_SHOULDERS:
-        slots[0] = EQUIPMENT_SLOT_SHOULDERS;
-        break;
-    case INVTYPE_BODY:
-        slots[0] = EQUIPMENT_SLOT_BODY;
-        break;
-    case INVTYPE_CHEST:
-        slots[0] = EQUIPMENT_SLOT_CHEST;
-        break;
-    case INVTYPE_ROBE:
-        slots[0] = EQUIPMENT_SLOT_CHEST;
-        break;
-    case INVTYPE_WAIST:
-        slots[0] = EQUIPMENT_SLOT_WAIST;
-        break;
-    case INVTYPE_LEGS:
-        slots[0] = EQUIPMENT_SLOT_LEGS;
-        break;
-    case INVTYPE_FEET:
-        slots[0] = EQUIPMENT_SLOT_FEET;
-        break;
-    case INVTYPE_WRISTS:
-        slots[0] = EQUIPMENT_SLOT_WRISTS;
-        break;
-    case INVTYPE_HANDS:
-        slots[0] = EQUIPMENT_SLOT_HANDS;
-        break;
-    case INVTYPE_FINGER:
-        slots[0] = EQUIPMENT_SLOT_FINGER1;
-        slots[1] = EQUIPMENT_SLOT_FINGER2;
-        break;
-    case INVTYPE_TRINKET:
-        slots[0] = EQUIPMENT_SLOT_TRINKET1;
-        slots[1] = EQUIPMENT_SLOT_TRINKET2;
-        break;
-    case INVTYPE_CLOAK:
-        slots[0] =  EQUIPMENT_SLOT_BACK;
-        break;
-    case INVTYPE_WEAPON:
+        case INVTYPE_HEAD:
+            slots[0] = EQUIPMENT_SLOT_HEAD;
+            break;
+        case INVTYPE_NECK:
+            slots[0] = EQUIPMENT_SLOT_NECK;
+            break;
+        case INVTYPE_SHOULDERS:
+            slots[0] = EQUIPMENT_SLOT_SHOULDERS;
+            break;
+        case INVTYPE_BODY:
+            slots[0] = EQUIPMENT_SLOT_BODY;
+            break;
+        case INVTYPE_CHEST:
+            slots[0] = EQUIPMENT_SLOT_CHEST;
+            break;
+        case INVTYPE_ROBE:
+            slots[0] = EQUIPMENT_SLOT_CHEST;
+            break;
+        case INVTYPE_WAIST:
+            slots[0] = EQUIPMENT_SLOT_WAIST;
+            break;
+        case INVTYPE_LEGS:
+            slots[0] = EQUIPMENT_SLOT_LEGS;
+            break;
+        case INVTYPE_FEET:
+            slots[0] = EQUIPMENT_SLOT_FEET;
+            break;
+        case INVTYPE_WRISTS:
+            slots[0] = EQUIPMENT_SLOT_WRISTS;
+            break;
+        case INVTYPE_HANDS:
+            slots[0] = EQUIPMENT_SLOT_HANDS;
+            break;
+        case INVTYPE_FINGER:
+            slots[0] = EQUIPMENT_SLOT_FINGER1;
+            slots[1] = EQUIPMENT_SLOT_FINGER2;
+            break;
+        case INVTYPE_TRINKET:
+            slots[0] = EQUIPMENT_SLOT_TRINKET1;
+            slots[1] = EQUIPMENT_SLOT_TRINKET2;
+            break;
+        case INVTYPE_CLOAK:
+            slots[0] = EQUIPMENT_SLOT_BACK;
+            break;
+        case INVTYPE_WEAPON:
         {
             slots[0] = EQUIPMENT_SLOT_MAINHAND;
 
@@ -8773,65 +8731,65 @@ uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap) 
             if (CanDualWield())
                 slots[1] = EQUIPMENT_SLOT_OFFHAND;
             break;
-        };
-    case INVTYPE_SHIELD:
-        slots[0] = EQUIPMENT_SLOT_OFFHAND;
-        break;
-    case INVTYPE_RANGED:
-        slots[0] = EQUIPMENT_SLOT_RANGED;
-        break;
-    case INVTYPE_2HWEAPON:
-        slots[0] = EQUIPMENT_SLOT_MAINHAND;
-        break;
-    case INVTYPE_TABARD:
-        slots[0] = EQUIPMENT_SLOT_TABARD;
-        break;
-    case INVTYPE_WEAPONMAINHAND:
-        slots[0] = EQUIPMENT_SLOT_MAINHAND;
-        break;
-    case INVTYPE_WEAPONOFFHAND:
-        slots[0] = EQUIPMENT_SLOT_OFFHAND;
-        break;
-    case INVTYPE_HOLDABLE:
-        slots[0] = EQUIPMENT_SLOT_OFFHAND;
-        break;
-    case INVTYPE_THROWN:
-        slots[0] = EQUIPMENT_SLOT_RANGED;
-        break;
-    case INVTYPE_RANGEDRIGHT:
-        slots[0] = EQUIPMENT_SLOT_RANGED;
-        break;
-    case INVTYPE_BAG:
-        slots[0] = INVENTORY_SLOT_BAG_START + 0;
-        slots[1] = INVENTORY_SLOT_BAG_START + 1;
-        slots[2] = INVENTORY_SLOT_BAG_START + 2;
-        slots[3] = INVENTORY_SLOT_BAG_START + 3;
-        break;
-    case INVTYPE_RELIC:
+        }
+        case INVTYPE_SHIELD:
+            slots[0] = EQUIPMENT_SLOT_OFFHAND;
+            break;
+        case INVTYPE_RANGED:
+            slots[0] = EQUIPMENT_SLOT_RANGED;
+            break;
+        case INVTYPE_2HWEAPON:
+            slots[0] = EQUIPMENT_SLOT_MAINHAND;
+            break;
+        case INVTYPE_TABARD:
+            slots[0] = EQUIPMENT_SLOT_TABARD;
+            break;
+        case INVTYPE_WEAPONMAINHAND:
+            slots[0] = EQUIPMENT_SLOT_MAINHAND;
+            break;
+        case INVTYPE_WEAPONOFFHAND:
+            slots[0] = EQUIPMENT_SLOT_OFFHAND;
+            break;
+        case INVTYPE_HOLDABLE:
+            slots[0] = EQUIPMENT_SLOT_OFFHAND;
+            break;
+        case INVTYPE_THROWN:
+            slots[0] = EQUIPMENT_SLOT_RANGED;
+            break;
+        case INVTYPE_RANGEDRIGHT:
+            slots[0] = EQUIPMENT_SLOT_RANGED;
+            break;
+        case INVTYPE_BAG:
+            slots[0] = INVENTORY_SLOT_BAG_START + 0;
+            slots[1] = INVENTORY_SLOT_BAG_START + 1;
+            slots[2] = INVENTORY_SLOT_BAG_START + 2;
+            slots[3] = INVENTORY_SLOT_BAG_START + 3;
+            break;
+        case INVTYPE_RELIC:
         {
             switch (proto->SubClass)
             {
-            case ITEM_SUBCLASS_ARMOR_LIBRAM:
-                if (pClass == CLASS_PALADIN)
-                    slots[0] = EQUIPMENT_SLOT_RANGED;
-                break;
-            case ITEM_SUBCLASS_ARMOR_IDOL:
-                if (pClass == CLASS_DRUID)
-                    slots[0] = EQUIPMENT_SLOT_RANGED;
-                break;
-            case ITEM_SUBCLASS_ARMOR_TOTEM:
-                if (pClass == CLASS_SHAMAN)
-                    slots[0] = EQUIPMENT_SLOT_RANGED;
-                break;
-            case ITEM_SUBCLASS_ARMOR_MISC:
-                if (pClass == CLASS_WARLOCK)
-                    slots[0] = EQUIPMENT_SLOT_RANGED;
-                break;
+                case ITEM_SUBCLASS_ARMOR_LIBRAM:
+                    if (pClass == CLASS_PALADIN)
+                        slots[0] = EQUIPMENT_SLOT_RANGED;
+                    break;
+                case ITEM_SUBCLASS_ARMOR_IDOL:
+                    if (pClass == CLASS_DRUID)
+                        slots[0] = EQUIPMENT_SLOT_RANGED;
+                    break;
+                case ITEM_SUBCLASS_ARMOR_TOTEM:
+                    if (pClass == CLASS_SHAMAN)
+                        slots[0] = EQUIPMENT_SLOT_RANGED;
+                    break;
+                case ITEM_SUBCLASS_ARMOR_MISC:
+                    if (pClass == CLASS_WARLOCK)
+                        slots[0] = EQUIPMENT_SLOT_RANGED;
+                    break;
             }
             break;
         }
-    default:
-        return NULL_SLOT;
+        default:
+            return NULL_SLOT;
     }
 
     if (slot != NULL_SLOT)
@@ -9018,20 +8976,13 @@ Item* Player::GetItemByPos(uint8 bag, uint8 slot) const
 
 Item* Player::GetWeaponForAttack(WeaponAttackType attackType, bool useable) const
 {
-    uint16 slot;
+    uint8 slot;
     switch (attackType)
     {
-    case BASE_ATTACK:
-        slot = EQUIPMENT_SLOT_MAINHAND;
-        break;
-    case OFF_ATTACK:
-        slot = EQUIPMENT_SLOT_OFFHAND;
-        break;
-    case RANGED_ATTACK:
-        slot = EQUIPMENT_SLOT_RANGED;
-        break;
-    default:
-        return NULL;
+        case BASE_ATTACK:   slot = EQUIPMENT_SLOT_MAINHAND; break;
+        case OFF_ATTACK:    slot = EQUIPMENT_SLOT_OFFHAND;  break;
+        case RANGED_ATTACK: slot = EQUIPMENT_SLOT_RANGED;   break;
+        default: return NULL;
     }
 
     Item* item = GetItemByPos(INVENTORY_SLOT_BAG_0, slot);
@@ -9062,18 +9013,14 @@ Item* Player::GetShield(bool useable) const
     return item;
 }
 
-uint32 Player::GetAttackBySlot(uint8 slot)
+uint8 Player::GetAttackBySlot(uint8 slot)
 {
     switch (slot)
     {
-    case EQUIPMENT_SLOT_MAINHAND:
-        return BASE_ATTACK;
-    case EQUIPMENT_SLOT_OFFHAND:
-        return OFF_ATTACK;
-    case EQUIPMENT_SLOT_RANGED:
-        return RANGED_ATTACK;
-    default:
-        return MAX_ATTACK;
+        case EQUIPMENT_SLOT_MAINHAND: return BASE_ATTACK;
+        case EQUIPMENT_SLOT_OFFHAND:  return OFF_ATTACK;
+        case EQUIPMENT_SLOT_RANGED:   return RANGED_ATTACK;
+        default:                      return MAX_ATTACK;
     }
 }
 
@@ -12526,20 +12473,20 @@ void Player::SendNewItem(Item* item, uint32 count, bool received, bool created, 
     if (!item)                                               // prevent crash
         return;
 
-    // last check 2.0.10
-    WorldPacket data(SMSG_ITEM_PUSH_RESULT, (8 + 4 + 4 + 4 + 1 + 4 + 4 + 4 + 4 + 4));
-    data << GetGUID();                                      // player GUID
+                                                            // last check 2.0.10
+    WorldPacket data(SMSG_ITEM_PUSH_RESULT, (8+4+4+4+1+4+4+4+4+4));
+    data << uint64(GetGUID());                              // player GUID
     data << uint32(received);                               // 0=looted, 1=from npc
     data << uint32(created);                                // 0=received, 1=created
-    data << uint32(1);                                      // always 0x01 (probably meant to be count of listed items)
-    data << (uint8)item->GetBagSlot();                      // bagslot
-    // item slot, but when added to stack: 0xFFFFFFFF
-    data << (uint32) ((item->GetCount() == count) ? item->GetSlot() : -1);
+    data << uint32(1);                                      // bool print error to chat
+    data << uint8(item->GetBagSlot());                      // bagslot
+                                                            // item slot, but when added to stack: 0xFFFFFFFF
+    data << uint32((item->GetCount() == count) ? item->GetSlot() : -1);
     data << uint32(item->GetEntry());                       // item id
     data << uint32(item->GetItemSuffixFactor());            // SuffixFactor
-    data << uint32(item->GetItemRandomPropertyId());        // random item property id
+    data << int32(item->GetItemRandomPropertyId());         // random item property id
     data << uint32(count);                                  // count of items
-    data << GetItemCount(item->GetEntry());                 // count of items in inventory
+    data << uint32(GetItemCount(item->GetEntry()));         // count of items in inventory
 
     if (broadcast && GetGroup())
         GetGroup()->BroadcastPacket(&data, true);
@@ -13086,14 +13033,8 @@ bool Player::IsActiveQuest(uint32 quest_id) const
 Quest const* Player::GetNextQuest(uint64 guid, Quest const* pQuest)
 {
     Object* pObject;
-    QuestRelations* pObjectQR;
-    //QuestRelations* pObjectQIR;
-
-    if (Creature* pCreature = GetMap()->GetCreature(guid))
-    {
-        pObject = (Object*)pCreature;
-        pObjectQR  = &sObjectMgr.mCreatureQuestRelations;
-        //   pObjectQIR = &sObjectMgr.mCreatureQuestInvolvedRelations;
+    QuestRelations* pObjectQR;a->GetId(),
+                                                  (uint32)aura->GetEffIndex(), (uint32)aura->GetStackAmount(), aura->GetModifier()->m_amount, int(aura->GetAuraMaxDuration()), int(aura->GetAuraDuration()), int(aura->m_procCharges));mCreatureQuestInvolvedRelations;
     }
     else
     {
@@ -14355,8 +14296,8 @@ void Player::CastedCreatureOrGO(uint32 entry, uint64 guid, uint32 spell_id)
 
 void Player::TalkedToCreature(uint32 entry, uint64 guid)
 {
-    uint32 addTalkCount = 1;
-    for (int i = 0; i < MAX_QUEST_LOG_SIZE; ++i)
+    uint16 addTalkCount = 1;
+    for (uint8 i = 0; i < MAX_QUEST_LOG_SIZE; ++i)
     {
         uint32 questid = GetQuestSlotQuestId(i);
         if (!questid)
@@ -14411,7 +14352,7 @@ void Player::TalkedToCreature(uint32 entry, uint64 guid)
 
 void Player::MoneyChanged(uint32 count)
 {
-    for (int i = 0; i < MAX_QUEST_LOG_SIZE; ++i)
+    for (uint8 i = 0; i < MAX_QUEST_LOG_SIZE; ++i)
     {
         uint32 questid = GetQuestSlotQuestId(i);
         if (!questid)
@@ -14558,7 +14499,7 @@ void Player::SendQuestTimerFailed(uint32 quest_id)
     if (quest_id)
     {
         WorldPacket data(SMSG_QUESTUPDATE_FAILEDTIMER, 4);
-        data << quest_id;
+        data << uint32(quest_id);
         GetSession()->SendPacket(&data);
         DEBUG_LOG("WORLD: Sent SMSG_QUESTUPDATE_FAILEDTIMER");
     }
@@ -15333,58 +15274,46 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     {
         switch (sWorld.getConfig(CONFIG_GM_LOGIN_STATE))
         {
-        default:
-        case 0:
-            break;             // disable
-        case 1:
-            SetGameMaster(true);
-            break;             // enable
-        case 2:                                         // save state
-            if (extraflags & PLAYER_EXTRA_GM_ON)
-                SetGameMaster(true);
-            break;
+            default:
+            case 0:                      break;             // disable
+            case 1: SetGameMaster(true); break;             // enable
+            case 2:                                         // save state
+                if (extraflags & PLAYER_EXTRA_GM_ON)
+                    SetGameMaster(true);
+                break;
         }
 
         switch (sWorld.getConfig(CONFIG_GM_VISIBLE_STATE))
         {
-        default:
-        case 0:
-            SetGMVisible(false);
-            break;             // invisible
-        case 1:
-            break;             // visible
-        case 2:                                         // save state
-            if (extraflags & PLAYER_EXTRA_GM_INVISIBLE)
-                SetGMVisible(false);
-            break;
+            default:
+            case 0: SetGMVisible(false); break;             // invisible
+            case 1:                      break;             // visible
+            case 2:                                         // save state
+                if (extraflags & PLAYER_EXTRA_GM_INVISIBLE)
+                    SetGMVisible(false);
+                break;
         }
 
         switch (sWorld.getConfig(CONFIG_GM_CHAT))
         {
-        default:
-        case 0:
-            break;                 // disable
-        case 1:
-            SetGMChat(true);
-            break;                 // enable
-        case 2:                                         // save state
-            if (extraflags & PLAYER_EXTRA_GM_CHAT)
-                SetGMChat(true);
-            break;
+            default:
+            case 0:                  break;                 // disable
+            case 1: SetGMChat(true); break;                 // enable
+            case 2:                                         // save state
+                if (extraflags & PLAYER_EXTRA_GM_CHAT)
+                    SetGMChat(true);
+                break;
         }
 
         switch (sWorld.getConfig(CONFIG_GM_WISPERING_TO))
         {
-        default:
-        case 0:
-            break;         // disable
-        case 1:
-            SetAcceptWhispers(true);
-            break;         // enable
-        case 2:                                         // save state
-            if (extraflags & PLAYER_EXTRA_ACCEPT_WHISPERS)
-                SetAcceptWhispers(true);
-            break;
+            default:
+            case 0:                          break;         // disable
+            case 1: SetAcceptWhispers(true); break;         // enable
+            case 2:                                         // save state
+                if (extraflags & PLAYER_EXTRA_ACCEPT_WHISPERS)
+                    SetAcceptWhispers(true);
+                break;
         }
     }
 
@@ -16064,14 +15993,14 @@ void Player::_LoadSkills(QueryResult_AutoPtr result)
             // set fixed skill ranges
             switch (GetSkillRangeType(pSkill, false))
             {
-            case SKILL_RANGE_LANGUAGE:                      // 300..300
-                value = max = 300;
-                break;
-            case SKILL_RANGE_MONO:                          // 1..1, grey monolite bar
-                value = max = 1;
-                break;
-            default:
-                break;
+                case SKILL_RANGE_LANGUAGE:                      // 300..300
+                    value = max = 300;
+                    break;
+                case SKILL_RANGE_MONO:                          // 1..1, grey monolite bar
+                    value = max = 1;
+                    break;
+                default:
+                    break;
             }
 
             if (value == 0)
@@ -16747,25 +16676,25 @@ void Player::_SaveActions()
     {
         switch (itr->second.uState)
         {
-        case ACTIONBUTTON_NEW:
-            CharacterDatabase.PExecute("INSERT INTO character_action (guid,button,action,type,misc) VALUES ('%u', '%u', '%u', '%u', '%u')",
-                                       GetGUIDLow(), (uint32)itr->first, (uint32)itr->second.action, (uint32)itr->second.type, (uint32)itr->second.misc);
-            itr->second.uState = ACTIONBUTTON_UNCHANGED;
-            ++itr;
-            break;
-        case ACTIONBUTTON_CHANGED:
-            CharacterDatabase.PExecute("UPDATE character_action  SET action = '%u', type = '%u', misc= '%u' WHERE guid= '%u' AND button= '%u' ",
-                                       (uint32)itr->second.action, (uint32)itr->second.type, (uint32)itr->second.misc, GetGUIDLow(), (uint32)itr->first);
-            itr->second.uState = ACTIONBUTTON_UNCHANGED;
-            ++itr;
-            break;
-        case ACTIONBUTTON_DELETED:
-            CharacterDatabase.PExecute("DELETE FROM character_action WHERE guid = '%u' and button = '%u'", GetGUIDLow(), (uint32)itr->first);
-            m_actionButtons.erase(itr++);
-            break;
-        default:
-            ++itr;
-            break;
+            case ACTIONBUTTON_NEW:
+                CharacterDatabase.PExecute("INSERT INTO character_action (guid,button,action,type,misc) VALUES ('%u', '%u', '%u', '%u', '%u')",
+                                           GetGUIDLow(), (uint32)itr->first, (uint32)itr->second.action, (uint32)itr->second.type, (uint32)itr->second.misc);
+                itr->second.uState = ACTIONBUTTON_UNCHANGED;
+                ++itr;
+                break;
+            case ACTIONBUTTON_CHANGED:
+                CharacterDatabase.PExecute("UPDATE character_action  SET action = '%u', type = '%u', misc= '%u' WHERE guid= '%u' AND button= '%u' ",
+                                           (uint32)itr->second.action, (uint32)itr->second.type, (uint32)itr->second.misc, GetGUIDLow(), (uint32)itr->first);
+                itr->second.uState = ACTIONBUTTON_UNCHANGED;
+                ++itr;
+                break;
+            case ACTIONBUTTON_DELETED:
+                CharacterDatabase.PExecute("DELETE FROM character_action WHERE guid = '%u' and button = '%u'", GetGUIDLow(), (uint32)itr->first);
+                m_actionButtons.erase(itr++);
+                break;
+            default:
+                ++itr;
+                break;
         }
     }
 }
@@ -16898,17 +16827,17 @@ void Player::_SaveInventory()
 
         switch (item->GetState())
         {
-        case ITEM_NEW:
-            CharacterDatabase.PExecute("INSERT INTO character_inventory (guid,bag,slot,item,item_template) VALUES ('%u', '%u', '%u', '%u', '%u')", lowGuid, bag_guid, item->GetSlot(), item->GetGUIDLow(), item->GetEntry());
-            break;
-        case ITEM_CHANGED:
-            CharacterDatabase.PExecute("UPDATE character_inventory SET guid='%u', bag='%u', slot='%u', item_template='%u' WHERE item='%u'", lowGuid, bag_guid, item->GetSlot(), item->GetEntry(), item->GetGUIDLow());
-            break;
-        case ITEM_REMOVED:
-            CharacterDatabase.PExecute("DELETE FROM character_inventory WHERE item = '%u'", item->GetGUIDLow());
-            break;
-        case ITEM_UNCHANGED:
-            break;
+            case ITEM_NEW:
+                CharacterDatabase.PExecute("INSERT INTO character_inventory (guid,bag,slot,item,item_template) VALUES ('%u', '%u', '%u', '%u', '%u')", lowGuid, bag_guid, item->GetSlot(), item->GetGUIDLow(), item->GetEntry());
+                break;
+            case ITEM_CHANGED:
+                CharacterDatabase.PExecute("UPDATE character_inventory SET guid='%u', bag='%u', slot='%u', item_template='%u' WHERE item='%u'", lowGuid, bag_guid, item->GetSlot(), item->GetEntry(), item->GetGUIDLow());
+                break;
+            case ITEM_REMOVED:
+                CharacterDatabase.PExecute("DELETE FROM character_inventory WHERE item = '%u'", item->GetGUIDLow());
+                break;
+            case ITEM_UNCHANGED:
+                break;
         }
 
         item->SaveToDB();                                   // item have unchanged inventory record and can be save standalone
@@ -16972,17 +16901,17 @@ void Player::_SaveQuestStatus()
     {
         switch (i->second.uState)
         {
-        case QUEST_NEW:
-            CharacterDatabase.PExecute("INSERT INTO character_queststatus (guid,quest,status,rewarded,explored,timer,mobcount1,mobcount2,mobcount3,mobcount4,itemcount1,itemcount2,itemcount3,itemcount4) "
-                                       "VALUES ('%u', '%u', '%u', '%u', '%u', '" UI64FMTD "', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
-                                       GetGUIDLow(), i->first, i->second.m_status, i->second.m_rewarded, i->second.m_explored, uint64(i->second.m_timer / IN_MILLISECONDS + sWorld.GetGameTime()), i->second.m_creatureOrGOcount[0], i->second.m_creatureOrGOcount[1], i->second.m_creatureOrGOcount[2], i->second.m_creatureOrGOcount[3], i->second.m_itemcount[0], i->second.m_itemcount[1], i->second.m_itemcount[2], i->second.m_itemcount[3]);
-            break;
-        case QUEST_CHANGED:
-            CharacterDatabase.PExecute("UPDATE character_queststatus SET status = '%u',rewarded = '%u',explored = '%u',timer = '" UI64FMTD "',mobcount1 = '%u',mobcount2 = '%u',mobcount3 = '%u',mobcount4 = '%u',itemcount1 = '%u',itemcount2 = '%u',itemcount3 = '%u',itemcount4 = '%u'  WHERE guid = '%u' AND quest = '%u' ",
-                                       i->second.m_status, i->second.m_rewarded, i->second.m_explored, uint64(i->second.m_timer / IN_MILLISECONDS + sWorld.GetGameTime()), i->second.m_creatureOrGOcount[0], i->second.m_creatureOrGOcount[1], i->second.m_creatureOrGOcount[2], i->second.m_creatureOrGOcount[3], i->second.m_itemcount[0], i->second.m_itemcount[1], i->second.m_itemcount[2], i->second.m_itemcount[3], GetGUIDLow(), i->first);
-            break;
-        case QUEST_UNCHANGED:
-            break;
+            case QUEST_NEW:
+                CharacterDatabase.PExecute("INSERT INTO character_queststatus (guid,quest,status,rewarded,explored,timer,mobcount1,mobcount2,mobcount3,mobcount4,itemcount1,itemcount2,itemcount3,itemcount4) "
+                                           "VALUES ('%u', '%u', '%u', '%u', '%u', '" UI64FMTD "', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
+                                           GetGUIDLow(), i->first, i->second.m_status, i->second.m_rewarded, i->second.m_explored, uint64(i->second.m_timer / IN_MILLISECONDS + sWorld.GetGameTime()), i->second.m_creatureOrGOcount[0], i->second.m_creatureOrGOcount[1], i->second.m_creatureOrGOcount[2], i->second.m_creatureOrGOcount[3], i->second.m_itemcount[0], i->second.m_itemcount[1], i->second.m_itemcount[2], i->second.m_itemcount[3]);
+                break;
+            case QUEST_CHANGED:
+                CharacterDatabase.PExecute("UPDATE character_queststatus SET status = '%u',rewarded = '%u',explored = '%u',timer = '" UI64FMTD "',mobcount1 = '%u',mobcount2 = '%u',mobcount3 = '%u',mobcount4 = '%u',itemcount1 = '%u',itemcount2 = '%u',itemcount3 = '%u',itemcount4 = '%u'  WHERE guid = '%u' AND quest = '%u' ",
+                                           i->second.m_status, i->second.m_rewarded, i->second.m_explored, uint64(i->second.m_timer / IN_MILLISECONDS + sWorld.GetGameTime()), i->second.m_creatureOrGOcount[0], i->second.m_creatureOrGOcount[1], i->second.m_creatureOrGOcount[2], i->second.m_creatureOrGOcount[3], i->second.m_itemcount[0], i->second.m_itemcount[1], i->second.m_itemcount[2], i->second.m_itemcount[3], GetGUIDLow(), i->first);
+                break;
+            case QUEST_UNCHANGED:
+                break;
         };
         i->second.uState = QUEST_UNCHANGED;
     }
@@ -17029,17 +16958,17 @@ void Player::_SaveSkills()
 
         switch (itr->second.uState)
         {
-        case SKILL_NEW:
-            CharacterDatabase.PExecute("INSERT INTO character_skills (guid, skill, value, max) VALUES ('%u', '%u', '%u', '%u')",
-                                       GetGUIDLow(), itr->first, value, max);
-            break;
-        case SKILL_CHANGED:
-            CharacterDatabase.PExecute("UPDATE character_skills SET value = '%u',max = '%u'WHERE guid = '%u' AND skill = '%u' ",
-                                       value, max, GetGUIDLow(), itr->first );
-            break;
-        case SKILL_UNCHANGED:
-        case SKILL_DELETED:
-            break;
+            case SKILL_NEW:
+                CharacterDatabase.PExecute("INSERT INTO character_skills (guid, skill, value, max) VALUES ('%u', '%u', '%u', '%u')",
+                                           GetGUIDLow(), itr->first, value, max);
+                break;
+            case SKILL_CHANGED:
+                CharacterDatabase.PExecute("UPDATE character_skills SET value = '%u',max = '%u'WHERE guid = '%u' AND skill = '%u' ",
+                                           value, max, GetGUIDLow(), itr->first );
+                break;
+            case SKILL_UNCHANGED:
+            case SKILL_DELETED:
+                break;
         };
         itr->second.uState = SKILL_UNCHANGED;
 
@@ -17149,7 +17078,7 @@ void Player::UpdateSpeakTime()
         }
     }
     else
-        m_speakCount = 0;
+        m_speakCount = 1;
 
     m_speakTime = current + sWorld.getConfig(CONFIG_CHATFLOOD_MESSAGE_DELAY);
 }
@@ -17268,9 +17197,10 @@ void Player::SendAttackSwingBadFacingAttack()
     GetSession()->SendPacket(&data);
 }
 
-void Player::SendAutoRepeatCancel()
+void Player::SendAutoRepeatCancel(Unit* target)
 {
-    WorldPacket data(SMSG_CANCEL_AUTO_REPEAT, 0);
+    WorldPacket data(SMSG_CANCEL_AUTO_REPEAT, target->GetPackGUID().size());
+    data << target->GetPackGUID();                     // may be it's target guid
     GetSession()->SendPacket(&data);
 }
 
@@ -17372,7 +17302,7 @@ void Player::SendResetInstanceFailed(uint32 reason, uint32 MapId)
 /***             Update timers                        ***/
 /*********************************************************/
 
-// checks the 15 afk reports per 5 minutes limit
+///checks the 15 afk reports per 5 minutes limit
 void Player::UpdateAfkReport(time_t currTime)
 {
     if (m_bgData.bgAfkReportedTimer <= currTime)
@@ -17396,7 +17326,8 @@ void Player::UpdatePvPFlag(time_t currTime)
 {
     if (!IsPvP())
         return;
-    if (pvpInfo.endTimer == 0 || currTime < (pvpInfo.endTimer + 300))
+
+    if (pvpInfo.endTimer == 0 || currTime < (pvpInfo.endTimer + 300) || pvpInfo.inHostileArea)
         return;
 
     UpdatePvP(false);
@@ -17488,13 +17419,13 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
     {
         switch (pet->GetEntry())
         {
-        //warlock pets except imp are removed(?) when logging out
-        case 1860:
-        case 1863:
-        case 417:
-        case 17252:
-            mode = PET_SAVE_NOT_IN_SLOT;
-            break;
+            //warlock pets except imp are removed(?) when logging out
+            case 1860:
+            case 1863:
+            case 417:
+            case 17252:
+                mode = PET_SAVE_NOT_IN_SLOT;
+                break;
         }
     }
 
@@ -17528,6 +17459,10 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
 
     if (pet->isControlled())
     {
+        WorldPacket data(SMSG_PET_SPELLS, 8);
+        data << uint64(0);
+        GetSession()->SendPacket(&data);
+
         if (GetGroup())
             SetGroupUpdateFlag(GROUP_UPDATE_PET);
     }
@@ -17545,11 +17480,7 @@ void Player::StopCastingCharm()
             ((Puppet*)charm)->UnSummon();
     }
     if (GetCharmGUID())
-    {
-        charm->RemoveSpellsCausingAura(SPELL_AURA_MOD_CHARM);
-        charm->RemoveSpellsCausingAura(SPELL_AURA_MOD_POSSESS_PET);
-        charm->RemoveSpellsCausingAura(SPELL_AURA_MOD_POSSESS);
-    }
+        charm->RemoveCharmAuras();
 
     if (GetCharmGUID())
         sLog.outError("CRASH ALARM! Player %s is not able to uncharm unit (Entry: %u, Type: %u)", GetName(), charm->GetEntry(), charm->GetTypeId());
@@ -17651,10 +17582,13 @@ void Player::PetSpellInitialize()
 
     CharmInfo* charmInfo = pet->GetCharmInfo();
 
-    WorldPacket data(SMSG_PET_SPELLS, 8 + 4 + 1 + 1 + 2 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 1);
-    data << (uint64)pet->GetGUID();
-    data << uint32(0);
-    data << uint8(pet->GetReactState()) << uint8(charmInfo->GetCommandState()) << uint16(0);
+    WorldPacket data(SMSG_PET_SPELLS, 8+2+4+4+4*MAX_UNIT_ACTION_BAR_INDEX+1+1);
+    data << uint64(pet->GetGUID());
+    data << uint16(pet->GetCreatureTemplate()->family);         // creature family (required for pet talents)
+    data << uint32(0); // Pet duration?
+    data << uint8(pet->GetReactState());
+    data << uint8(charmInfo->GetCommandState());
+    data << uint16(0); // Flags, mostly unknown
 
     // action bar loop
     for (uint32 i = 0; i < MAX_UNIT_ACTION_BAR_INDEX; i++)
@@ -17724,8 +17658,9 @@ void Player::PossessSpellInitialize()
         return;
     }
 
-    WorldPacket data(SMSG_PET_SPELLS, 8 + 4 + 4 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 1);
+    WorldPacket data(SMSG_PET_SPELLS, 8+2+4+4+4*MAX_UNIT_ACTION_BAR_INDEX+1+1);
     data << uint64(charm->GetGUID());
+    data << uint16(0);
     data << uint32(0);
     data << uint32(0);
 
@@ -17763,14 +17698,15 @@ void Player::CharmSpellInitialize()
         }
     }
 
-    WorldPacket data(SMSG_PET_SPELLS, 8 + 4 + 1 + 1 + 2 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 4 * addlist + 1);
+    WorldPacket data(SMSG_PET_SPELLS, 8+2+4+4+4*MAX_UNIT_ACTION_BAR_INDEX+1+4*addlist+1);
     data << uint64(charm->GetGUID());
+    data << uint16(0);
     data << uint32(0);
 
     if (charm->GetTypeId() != TYPEID_PLAYER)
         data << uint8(charm->ToCreature()->GetReactState()) << uint8(charmInfo->GetCommandState()) << uint16(0);
     else
-        data << uint8(0) << uint8(0) << uint16(0);
+        data << uint32(0);
 
     for (uint32 i = 0; i < MAX_UNIT_ACTION_BAR_INDEX; i++)
         data << uint16(charmInfo->GetActionBarEntry(i)->SpellOrAction) << uint16(charmInfo->GetActionBarEntry(i)->Type);
@@ -17887,7 +17823,7 @@ void Player::AddSpellMod(SpellModifier* mod, bool apply)
                     val += (*itr)->value;
             }
             val += apply ? mod->value : -(mod->value);
-            WorldPacket data(Opcode, (1 + 1 + 4));
+            WorldPacket data(Opcode, (1+1+4));
             data << uint8(eff);
             data << uint8(mod->op);
             data << int32(val);
@@ -17957,7 +17893,7 @@ void Player::SendProficiency(ItemClass itemClass, uint32 itemSubclassMask)
 {
     WorldPacket data(SMSG_SET_PROFICIENCY, 1 + 4);
     data << uint8(itemClass) << uint32(itemSubclassMask);
-    GetSession()->SendPacket (&data);
+    GetSession()->SendPacket(&data);
 }
 
 void Player::RemovePetitionsAndSigns(uint64 guid, uint32 type)
@@ -18338,20 +18274,20 @@ void Player::InitDataForForm(bool reapplyMods)
 
     switch (m_form)
     {
-    case FORM_CAT:
+        case FORM_CAT:
         {
             if (getPowerType() != POWER_ENERGY)
                 setPowerType(POWER_ENERGY);
             break;
         }
-    case FORM_BEAR:
-    case FORM_DIREBEAR:
+        case FORM_BEAR:
+        case FORM_DIREBEAR:
         {
             if (getPowerType() != POWER_RAGE)
                 setPowerType(POWER_RAGE);
             break;
         }
-    default:                                            // 0, for example
+        default:                                            // 0, for example
         {
             ChrClassesEntry const* cEntry = sChrClassesStore.LookupEntry(getClass());
             if (cEntry && cEntry->powerType < MAX_POWERS && uint32(getPowerType()) != cEntry->powerType)
@@ -18614,7 +18550,7 @@ void Player::UpdateHomebindTime(uint32 time)
         if (m_HomebindTimer)                                 // instance valid, but timer not reset
         {
             // hide reminder
-            WorldPacket data(SMSG_RAID_GROUP_ONLY, 4 + 4);
+            WorldPacket data(SMSG_RAID_GROUP_ONLY, 4+4);
             data << uint32(0);
             data << uint32(0);
             GetSession()->SendPacket(&data);
@@ -18637,8 +18573,8 @@ void Player::UpdateHomebindTime(uint32 time)
         // instance is invalid, start homebind timer
         m_HomebindTimer = 60000;
         // send message to player
-        WorldPacket data(SMSG_RAID_GROUP_ONLY, 4 + 4);
-        data << m_HomebindTimer;
+        WorldPacket data(SMSG_RAID_GROUP_ONLY, 4+4);
+        data << uint32(m_HomebindTimer);
         data << uint32(1);
         GetSession()->SendPacket(&data);
         DEBUG_LOG("PLAYER: Player '%s' (GUID: %u) will be teleported to homebind in 60 seconds", GetName(), GetGUIDLow());
@@ -18791,15 +18727,15 @@ bool Player::EnchantmentFitsRequirements(uint32 enchantmentcondition, int8 slot)
 
         switch (Condition->Comparator[i])
         {
-        case 2:                                         // requires less <color> than (<value> || <comparecolor>) gems
-            activate &= (_cur_gem < _cmp_gem) ? true : false;
-            break;
-        case 3:                                         // requires more <color> than (<value> || <comparecolor>) gems
-            activate &= (_cur_gem > _cmp_gem) ? true : false;
-            break;
-        case 5:                                         // requires at least <color> than (<value> || <comparecolor>) gems
-            activate &= (_cur_gem >= _cmp_gem) ? true : false;
-            break;
+            case 2:                                         // requires less <color> than (<value> || <comparecolor>) gems
+                activate &= (_cur_gem < _cmp_gem) ? true : false;
+                break;
+            case 3:                                         // requires more <color> than (<value> || <comparecolor>) gems
+                activate &= (_cur_gem > _cmp_gem) ? true : false;
+                break;
+            case 5:                                         // requires at least <color> than (<value> || <comparecolor>) gems
+                activate &= (_cur_gem >= _cmp_gem) ? true : false;
+                break;
         }
     }
 
@@ -19299,6 +19235,9 @@ void Player::UpdateTriggerVisibility()
     if (m_clientGUIDs.empty())
         return;
 
+    if (!IsInWorld())
+        return;
+
     UpdateData udata;
     WorldPacket packet;
     for (ClientGUIDs::iterator itr = m_clientGUIDs.begin(); itr != m_clientGUIDs.end(); ++itr)
@@ -19321,8 +19260,8 @@ void Player::SendInitialVisiblePackets(Unit* target)
     SendAuraDurationsForTarget(target);
     if (target->IsAlive())
     {
-        if (target->GetMotionMaster()->GetCurrentMovementGeneratorType() != IDLE_MOTION_TYPE)
-            target->SendMonsterMoveWithSpeedToCurrentDestination(this);
+        /*if (target->GetMotionMaster()->GetCurrentMovementGeneratorType() != IDLE_MOTION_TYPE)
+            target->SendMonsterMoveWithSpeedToCurrentDestination(this);*/
         if (target->HasUnitState(UNIT_STATE_MELEE_ATTACKING) && target->getVictim())
             target->SendMeleeAttackStart(target->getVictim());
     }
@@ -19614,7 +19553,7 @@ void Player::SendInstanceResetWarning(uint32 mapid, uint32 time)
     else
         type = RAID_INSTANCE_WARNING_MIN_SOON;
 
-    WorldPacket data(SMSG_RAID_INSTANCE_MESSAGE, 4 + 4 + 4);
+    WorldPacket data(SMSG_RAID_INSTANCE_MESSAGE, 4+4+4+4);
     data << uint32(type);
     data << uint32(mapid);
     data << uint32(time);
@@ -19920,10 +19859,10 @@ uint32 Player::GetBattleGroundQueueIdFromLevel() const
     return (getLevel() - bg->GetMinLevel()) / 10;*/
 }
 
-float Player::GetReputationPriceDiscount(Creature const* pCreature) const
+float Player::GetReputationPriceDiscount(Creature const* creature) const
 {
-    FactionTemplateEntry const* vendor_faction = pCreature->getFactionTemplateEntry();
-    if (!vendor_faction)
+    FactionTemplateEntry const* vendor_faction = creature->getFactionTemplateEntry();
+    if (!vendor_faction || !vendor_faction->faction)
         return 1.0f;
 
     ReputationRank rank = GetReputationRank(vendor_faction->faction);
@@ -20187,24 +20126,12 @@ uint32 Player::GetResurrectionSpellId()
         {
             switch ((*itr)->GetId())
             {
-            case 20707:
-                spell_id =  3026;
-                break;        // rank 1
-            case 20762:
-                spell_id = 20758;
-                break;        // rank 2
-            case 20763:
-                spell_id = 20759;
-                break;        // rank 3
-            case 20764:
-                spell_id = 20760;
-                break;        // rank 4
-            case 20765:
-                spell_id = 20761;
-                break;        // rank 5
-            case 27239:
-                spell_id = 27240;
-                break;        // rank 6
+                case 20707: spell_id =  3026; break;        // rank 1
+                case 20762: spell_id = 20758; break;        // rank 2
+                case 20763: spell_id = 20759; break;        // rank 3
+                case 20764: spell_id = 20760; break;        // rank 4
+                case 20765: spell_id = 20761; break;        // rank 5
+                case 27239: spell_id = 27240; break;        // rank 6
             default:
                 sLog.outError("Unhandled spell %u: S.Resurrection", (*itr)->GetId());
                 continue;
@@ -20407,6 +20334,9 @@ uint32 Player::GetBaseWeaponSkillValue (WeaponAttackType attType) const
 
 void Player::ResurectUsingRequestData()
 {
+    /// Teleport before resurrecting by player, otherwise the player might get attacked from creatures near his corpse
+    TeleportTo(m_resurrectMap, m_resurrectX, m_resurrectY, m_resurrectZ, GetOrientation());
+
     //we cannot resurrect player when we triggered far teleport
     //player will be resurrected upon teleportation
     if (IsBeingTeleportedFar())
@@ -20414,6 +20344,8 @@ void Player::ResurectUsingRequestData()
         ScheduleDelayedOperation(DELAYED_RESURRECT_PLAYER);
         return;
     }
+
+    ResurrectPlayer(0.0f, false);
 
     if (GetMaxHealth() > m_resurrectHealth)
         SetHealth(m_resurrectHealth);
@@ -20430,18 +20362,13 @@ void Player::ResurectUsingRequestData()
     SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
 
     SpawnCorpseBones();
-
-    TeleportTo(m_resurrectMap, m_resurrectX, m_resurrectY, m_resurrectZ, GetOrientation());
-
-    ResurrectPlayer(0.0f, false);
-
 }
 
 void Player::SetClientControl(Unit* target, bool allowMove)
 {
     WorldPacket data(SMSG_CLIENT_CONTROL_UPDATE, target->GetPackGUID().size() + 1);
     data << target->GetPackGUID();
-    data << uint8(allowMove);
+    data << uint8(allowMove? 1 : 0);
     GetSession()->SendPacket(&data);
     if (target == this)
         SetMover(this);
@@ -21094,6 +21021,14 @@ void Player::_SaveBGData()
     }
 }
 
+void Player::SendClearCooldown(uint32 spell_id, Unit* target)
+{
+    WorldPacket data(SMSG_CLEAR_COOLDOWN, 4+8);
+    data << uint32(spell_id);
+    data << uint64(target->GetGUID());
+    SendDirectMessage(&data);
+}
+
 void Player::ResetMap()
 {
     // this may be called during Map::Update
@@ -21138,4 +21073,3 @@ bool Player::AddItem(uint32 itemId, uint32 count)
     else
         return false;
     return true;
-}

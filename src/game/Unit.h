@@ -1216,6 +1216,7 @@ class Unit : public WorldObject
         float GetUnitBlockChance()    const;
         float GetUnitCriticalChance(WeaponAttackType attackType, const Unit* pVictim) const;
         int32 GetMechanicResistChance(const SpellEntry* spell);
+        bool CanUseAttackType(uint8 attacktype) const;
 
         virtual uint32 GetShieldBlockValue() const = 0;
         uint32 GetUnitMeleeSkill(Unit const* target = NULL) const

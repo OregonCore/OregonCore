@@ -2334,6 +2334,7 @@ enum TotemCategory
 
 enum UnitDynFlags
 {
+    UNIT_DYNFLAG_NONE              = 0x0000,
     UNIT_DYNFLAG_LOOTABLE          = 0x0001,
     UNIT_DYNFLAG_TRACK_UNIT        = 0x0002,
     UNIT_DYNFLAG_OTHER_TAGGER      = 0x0004,
