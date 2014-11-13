@@ -92,59 +92,59 @@ FleeingMovementGenerator<T>::_getPoint(T& owner, float& x, float& y, float& z)
             distance /= 4;
             break;
         case 3:
-            angle = i_cur_angle + M_PI / 4.0f;
+            angle = i_cur_angle - static_cast<float>(M_PI/4);
             break;
         case 4:
-            angle = i_cur_angle - M_PI / 4.0f;
+            angle = i_cur_angle - static_cast<float>(M_PI/4);
             break;
         case 5:
-            angle = i_cur_angle + M_PI / 4.0f;
+            angle = i_cur_angle - static_cast<float>(M_PI/4);
             distance /= 2;
             break;
         case 6:
-            angle = i_cur_angle - M_PI / 4.0f;
+            angle = i_cur_angle - static_cast<float>(M_PI/4);
             distance /= 2;
             break;
         case 7:
-            angle = i_cur_angle + M_PI / 2.0f;
+            angle = i_cur_angle + static_cast<float>(M_PI/2);
             break;
         case 8:
-            angle = i_cur_angle - M_PI / 2.0f;
+            angle = i_cur_angle + static_cast<float>(M_PI/2);
             break;
         case 9:
-            angle = i_cur_angle + M_PI / 2.0f;
+            angle = i_cur_angle + static_cast<float>(M_PI/2);
             distance /= 2;
             break;
         case 10:
-            angle = i_cur_angle - M_PI / 2.0f;
+            angle = i_cur_angle + static_cast<float>(M_PI/2);
             distance /= 2;
             break;
         case 11:
-            angle = i_cur_angle + M_PI / 4.0f;
+            angle = i_cur_angle - static_cast<float>(M_PI/4);
             distance /= 4;
             break;
         case 12:
-            angle = i_cur_angle - M_PI / 4.0f;
+            angle = i_cur_angle - static_cast<float>(M_PI/4);
             distance /= 4;
             break;
         case 13:
-            angle = i_cur_angle + M_PI / 2.0f;
+            angle = i_cur_angle + static_cast<float>(M_PI/2);
             distance /= 4;
             break;
         case 14:
-            angle = i_cur_angle - M_PI / 2.0f;
+            angle = i_cur_angle + static_cast<float>(M_PI/2);
             distance /= 4;
             break;
         case 15:
-            angle = i_cur_angle + M_PI * 3 / 4.0f;
+            angle = i_cur_angle + static_cast<float>(M_PI*3/4);
             distance /= 2;
             break;
         case 16:
-            angle = i_cur_angle - M_PI * 3 / 4.0f;
+            angle = i_cur_angle - static_cast<float>(M_PI*3/4);
             distance /= 2;
             break;
         case 17:
-            angle = i_cur_angle + M_PI;
+            angle = i_cur_angle + static_cast<float>(M_PI);
             distance /= 2;
             break;
         }
@@ -294,7 +294,7 @@ FleeingMovementGenerator<T>::Initialize(T& owner)
     owner.CastStop();
     owner.AddUnitState(UNIT_STATE_FLEEING | UNIT_STATE_ROAMING);
     owner.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
-    owner.SetUInt64Value(UNIT_FIELD_TARGET, 0);
+    owner.SetTarget(0);
     owner.RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
 
     if (Unit* fright = ObjectAccessor::GetUnit(owner, i_frightGUID))
@@ -340,7 +340,7 @@ FleeingMovementGenerator<T>::Finalize(T& owner)
     owner.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
     owner.ClearUnitState(UNIT_STATE_FLEEING | UNIT_STATE_ROAMING);
     if (owner.GetTypeId() == TYPEID_UNIT && owner.getVictim())
-        owner.SetUInt64Value(UNIT_FIELD_TARGET, owner.getVictim()->GetGUID());
+        owner.SetTarget(owner.getVictim()->GetGUID());
 }
 
 template<class T>
