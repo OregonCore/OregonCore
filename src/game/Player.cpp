@@ -2703,7 +2703,7 @@ void Player::SendInitialSpells()
         if (!itr->second->active || itr->second->disabled)
             continue;
 
-        data << uint32(itr->first);
+        data << uint16(itr->first);
         data << uint16(0);                                  // it's not slot id
 
         spellCount +=1;
@@ -2719,7 +2719,7 @@ void Player::SendInitialSpells()
         if (!sEntry)
             continue;
 
-        data << uint32(itr->first);
+        data << uint16(itr->first);
 
         time_t cooldown = 0;
         time_t curTime = time(NULL);
