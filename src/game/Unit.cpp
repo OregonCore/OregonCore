@@ -1349,7 +1349,7 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
                 critPctDamageMod += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_CRIT_PERCENT_VERSUS, crTypeMask);
 
                 if (critPctDamageMod != 0)
-                    damage = int32(damage * float((100.0f + critPctDamageMod) / 100.0f));
+                    AddPct(damage, critPctDamageMod);
 
                 // Resilience - reduce crit damage
                 if (pVictim->GetTypeId() == TYPEID_PLAYER)
@@ -1572,7 +1572,7 @@ void Unit::CalculateMeleeDamage(Unit* pVictim, uint32 damage, CalcDamageInfo* da
             // Increase crit damage from SPELL_AURA_MOD_CRIT_PERCENT_VERSUS
             mod += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_CRIT_PERCENT_VERSUS, crTypeMask);
             if (mod != 0)
-                damageInfo->damage = int32((damageInfo->damage) * float((100.0f + mod) / 100.0f));
+                AddPct(damageInfo->damage, mod);
 
             // Resilience - reduce crit damage
             if (pVictim->GetTypeId() == TYPEID_PLAYER)
@@ -2088,7 +2088,7 @@ void Unit::CalcAbsorbResist(Unit* pVictim, SpellSchoolMask schoolMask, DamageEff
             if (!caster || caster == pVictim || !caster->IsInWorld() || !caster->IsAlive())
                 continue;
 
-            uint32 splitted = CalculatePctU(RemainingDamage, (*i)->GetModifier()->m_amount);
+            uint32 splitted = CalculatePct(RemainingDamage, (*i)->GetModifier()->m_amount);
 
             RemainingDamage -= int32(splitted);
 
@@ -7829,7 +7829,7 @@ uint32 Unit::SpellDamageBonus(Unit* pVictim, SpellEntry const* spellProto, uint3
                     // is 22.5% critical strike damage reduction, or 444 resilience.
                     // To calculate for 90%, we multiply the 100% by 4 (22.5% * 4 = 90%)
                     float mod = -1.0f * ToPlayer()->GetMeleeCritDamageReduction(400);
-                    AddPctF(TakenTotalMod, std::max(mod, float((*i)->GetAmount())));
+                    AddPct(TakenTotalMod, std::max(mod, float((*i)->GetAmount())));
                 }
                 break;
             //This is changed in WLK, using aura 255
@@ -8756,7 +8756,7 @@ void Unit::MeleeDamageBonus(Unit* victim, uint32* pdamage, WeaponAttackType attT
                     // is 22.5% critical strike damage reduction, or 444 resilience.
                     // To calculate for 90%, we multiply the 100% by 4 (22.5% * 4 = 90%)
                     float mod = -1.0f * ToPlayer()->GetMeleeCritDamageReduction(400);
-                    AddPctF(TakenTotalMod, std::max(mod, float((*i)->GetAmount())));
+                    AddPct(TakenTotalMod, std::max(mod, float((*i)->GetAmount())));
                 }
                 break;
             //Mangle
@@ -11510,12 +11510,7 @@ Unit* Unit::SelectNearbyTarget(Unit* exclude, float dist) const
         return NULL;
 
     // select random
-    uint32 rIdx = urand(0, targets.size() - 1);
-    std::list<Unit* >::const_iterator tcIter = targets.begin();
-    for (uint32 i = 0; i < rIdx; ++i)
-        ++tcIter;
-
-    return *tcIter;
+    return SelectRandomContainerElement(targets);
 }
 
 void Unit::ApplyAttackTimePercentMod(WeaponAttackType att, float val, bool apply)

@@ -99,58 +99,28 @@ inline void ApplyPercentModFloatVar(float& var, float val, bool apply)
 }
 
 // Percentage calculation
-template <class T>
-inline T CalculatePctF(T base, float pct)
+template <class T, class U>
+inline T CalculatePct(T base, U pct)
 {
-    return T(base * pct / 100.0f);
+    return T(base * static_cast<float>(pct) / 100.0f);
+}
+
+template <class T, class U>
+inline T AddPct(T &base, U pct)
+{
+    return base += CalculatePct(base, pct);
+}
+
+template <class T, class U>
+inline T ApplyPct(T &base, U pct)
+{
+    return base = CalculatePct(base, pct);
 }
 
 template <class T>
-inline T CalculatePctN(T base, int32 pct)
+inline T RoundToInterval(T& num, T floor, T ceil)
 {
-    return T(base * float(pct) / 100.0f);
-}
-
-template <class T>
-inline T CalculatePctU(T base, uint32 pct)
-{
-    return T(base * float(pct) / 100.0f);
-}
-
-template <class T>
-inline T AddPctF(T& base, float pct)
-{
-    return base += CalculatePctF(base, pct);
-}
-
-template <class T>
-inline T AddPctN(T& base, int32 pct)
-{
-    return base += CalculatePctN(base, pct);
-}
-
-template <class T>
-inline T AddPctU(T& base, uint32 pct)
-{
-    return base += CalculatePctU(base, pct);
-}
-
-template <class T>
-inline T ApplyPctF(T& base, float pct)
-{
-    return base = CalculatePctF(base, pct);
-}
-
-template <class T>
-inline T ApplyPctN(T& base, int32 pct)
-{
-    return base = CalculatePctN(base, pct);
-}
-
-template <class T>
-inline T ApplyPctU(T& base, uint32 pct)
-{
-    return base = CalculatePctU(base, pct);
+    return num = std::min(std::max(num, floor), ceil);
 }
 
 // UTF8 handling
@@ -382,5 +352,14 @@ std::string ByteArrayToHexStr(uint8* bytes, uint32 length);
 
 bool IsIPAddress(char const* ipaddress);
 uint32 CreatePIDFile(const std::string& filename);
+
+
+/* Select a random element from a container. Note: make sure you explicitly empty check the container */
+template <class C> typename C::value_type const& SelectRandomContainerElement(C const& container)
+{
+    typename C::const_iterator it = container.begin();
+    std::advance(it, urand(0, container.size() - 1));
+    return *it;
+}
 
 #endif

@@ -3105,7 +3105,7 @@ template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T& bas
             if (mod->op == SPELLMOD_CASTING_TIME  && basevalue >= T(10 * IN_MILLISECONDS) && mod->value <= -100)
                 continue;
 
-            totalpct += CalculatePctF(1.0f, (float)mod->value);
+            totalpct += CalculatePct(1.0f, (float)mod->value);
         }
 
         if (mod->charges > 0)
