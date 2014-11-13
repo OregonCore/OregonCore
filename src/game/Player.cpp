@@ -13033,8 +13033,12 @@ bool Player::IsActiveQuest(uint32 quest_id) const
 Quest const* Player::GetNextQuest(uint64 guid, Quest const* pQuest)
 {
     Object* pObject;
-    QuestRelations* pObjectQR;a->GetId(),
-                                                  (uint32)aura->GetEffIndex(), (uint32)aura->GetStackAmount(), aura->GetModifier()->m_amount, int(aura->GetAuraMaxDuration()), int(aura->GetAuraDuration()), int(aura->m_procCharges));mCreatureQuestInvolvedRelations;
+    QuestRelations* pObjectQR;
+
+    if (Creature* pCreature = GetMap()->GetCreature(guid))
+    {
+        pObject = (Object*)pCreature;
+        pObjectQR  = &sObjectMgr.mCreatureQuestRelations;
     }
     else
     {
@@ -21073,3 +21077,4 @@ bool Player::AddItem(uint32 itemId, uint32 count)
     else
         return false;
     return true;
+}
