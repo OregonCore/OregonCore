@@ -19452,6 +19452,8 @@ void Player::SendInitialPacketsBeforeAddToMap()
 
 void Player::SendInitialPacketsAfterAddToMap()
 {
+    UpdateVisibilityForPlayer();
+
     ResetTimeSync();
     SendTimeSync();
 
