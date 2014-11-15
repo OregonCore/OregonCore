@@ -153,7 +153,7 @@ Creature::Creature() :
     m_CombatDistance(MELEE_RANGE), m_lootMoney(0), m_lootRecipient(0), m_corpseRemoveTime(0), m_respawnTime(0), m_respawnDelay(25), m_corpseDelay(60),
     m_respawnradius(0.0f), m_emoteState(0), m_summonMask(SUMMON_MASK_NONE), m_reactState(REACT_AGGRESSIVE), m_regenTimer(2000),
     m_defaultMovementType(IDLE_MOTION_TYPE), m_DBTableGuid(0), m_equipmentId(0),
-    m_AlreadyCallAssistance(false), m_AlreadySearchedAssistance(false), m_regenHealth(true), m_AI_locked(false), m_isDeadByDefault(false),
+    m_AlreadyCallAssistance(false), m_AlreadySearchedAssistance(false), m_regenHealth(true), m_AI_locked(false),
     m_meleeDamageSchoolMask(SPELL_SCHOOL_MASK_NORMAL), DisableReputationGain(false), m_creatureData(NULL),
     m_formation(NULL), m_creatureInfo(NULL)
 {
@@ -228,7 +228,7 @@ void Creature::SearchFormation()
 
 void Creature::RemoveCorpse(bool setSpawnTime)
 {
-    if ((getDeathState() != CORPSE && !m_isDeadByDefault) || (getDeathState() != ALIVE && m_isDeadByDefault))
+    if (getDeathState() != CORPSE)
         return;
 
     m_corpseRemoveTime = time(NULL);
@@ -511,9 +511,6 @@ void Creature::Update(uint32 diff)
         }
     case CORPSE:
         {
-            if (m_isDeadByDefault)
-                break;
-
             if (m_corpseRemoveTime <= uint32(time(NULL)))
             {
                 RemoveCorpse(false);
@@ -540,15 +537,6 @@ void Creature::Update(uint32 diff)
         }
     case ALIVE:
         {
-            if (m_isDeadByDefault)
-            {
-                if (m_corpseRemoveTime <= uint32(time(NULL)))
-                {
-                    RemoveCorpse(false);
-                    DEBUG_LOG("Removing alive corpse... %u ", GetUInt32Value(OBJECT_FIELD_ENTRY));
-                }
-            }
-
             Unit::Update(diff);
 
             // creature can be dead after Unit::Update call
@@ -983,7 +971,6 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
     data.currentwaypoint = 0;
     data.curhealth = GetHealth();
     data.curmana = GetPower(POWER_MANA);
-    data.is_dead = m_isDeadByDefault;
     // prevent add data integrity problems
     data.movementType = !m_respawnradius && GetDefaultMovementType() == RANDOM_MOTION_TYPE
                         ? IDLE_MOTION_TYPE : GetDefaultMovementType();
@@ -1011,7 +998,6 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
        << (uint32) (0) << ","                              //currentwaypoint
        << GetHealth() << ","                               //curhealth
        << GetPower(POWER_MANA) << ","                      //curmana
-       << (m_isDeadByDefault ? 1 : 0) << ","               //is_dead
        << GetDefaultMovementType() << ")";                 //default movement generator type
 
     WorldDatabase.PExecuteLog("%s", ss.str().c_str());
@@ -1181,8 +1167,7 @@ bool Creature::LoadFromDB(uint32 guid, Map* map)
     m_respawnradius = data->spawndist;
 
     m_respawnDelay = data->spawntimesecs;
-    m_isDeadByDefault = data->is_dead;
-    m_deathState = m_isDeadByDefault ? DEAD : ALIVE;
+    m_deathState = ALIVE;
 
     m_respawnTime  = sObjectMgr.GetCreatureRespawnTime(m_DBTableGuid, GetInstanceId());
     if (m_respawnTime)                          // respawn on Update
@@ -1438,7 +1423,9 @@ float Creature::GetAttackDistance(Unit const* pl) const
 
 void Creature::setDeathState(DeathState s)
 {
-    if ((s == JUST_DIED && !m_isDeadByDefault) || (s == JUST_RESPAWNED && m_isDeadByDefault))
+    Unit::setDeathState(s);
+
+    if (s == JUST_DIED)
     {
         m_corpseRemoveTime = time(NULL) + m_corpseDelay;
         m_respawnTime = time(NULL) + m_respawnDelay + m_corpseDelay;
@@ -1460,11 +1447,6 @@ void Creature::setDeathState(DeathState s)
         if (m_zoneScript)
             m_zoneScript->OnCreatureDeath(this);
 
-    }
-    Unit::setDeathState(s);
-
-    if (s == JUST_DIED)
-    {
         SetUInt64Value (UNIT_FIELD_TARGET, 0);              // remove target selection in any cases (can be set at aura remove in Unit::setDeathState)
         SetUInt32Value(UNIT_NPC_FLAGS, 0);
         //if (!isPet())
@@ -1577,15 +1559,7 @@ void Creature::Respawn(bool force)
         CreatureInfo const* cinfo = GetCreatureTemplate();
         SelectLevel(cinfo);
 
-        if (m_isDeadByDefault)
-        {
-            setDeathState(JUST_DIED);
-            i_motionMaster.Clear();
-            ClearUnitState(UNIT_STATE_ALL_STATE);
-            LoadCreaturesAddon(true);
-        }
-        else
-            setDeathState(JUST_RESPAWNED);
+        setDeathState(JUST_RESPAWNED);
 
         GetMotionMaster()->InitDefault();
 
@@ -1753,7 +1727,7 @@ bool Creature::IsVisibleInGridForPlayer(Player const* pl) const
     {
         if (GetEntry() == VISUAL_WAYPOINT && !pl->isGameMaster())
             return false;
-        return (IsAlive() || m_corpseRemoveTime > uint32(time(NULL)) || (m_isDeadByDefault && m_deathState == CORPSE));
+        return (IsAlive() || m_corpseRemoveTime > uint32(time(NULL)));
     }
 
     // Dead player see creatures near own corpse

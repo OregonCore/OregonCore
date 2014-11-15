@@ -227,7 +227,6 @@ class ChatHandler
         bool HandleNpcUnFollowCommand(const char* args);
         bool HandleNpcWhisperCommand(const char* args);
         bool HandleNpcYellCommand(const char* args);
-        bool HandleNpcSetDeathStateCommand(const char* args);
         bool HandleNpcSetLinkCommand(const char* args);
 
         //----------------------------------------------------------

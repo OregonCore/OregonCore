@@ -1538,8 +1538,11 @@ bool ChatHandler::HandleNpcFollowCommand(const char* /*args*/)
         return false;
     }
 
+    creature->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_NONE);
+    creature->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+    player->UpdateObjectVisibility();
     // Follow player - Using pet's default dist and angle
-    creature->GetMotionMaster()->MoveFollow(player, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+    //creature->GetMotionMaster()->MoveFollow(player, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
 
     PSendSysMessage(LANG_CREATURE_FOLLOW_YOU_NOW, creature->GetName());
     return true;
@@ -1579,36 +1582,6 @@ bool ChatHandler::HandleNpcUnFollowCommand(const char* /*args*/)
     creature->GetMotionMaster()->MovementExpired(true);
 
     PSendSysMessage(LANG_CREATURE_NOT_FOLLOW_YOU_NOW, creature->GetName());
-    return true;
-}
-
-bool ChatHandler::HandleNpcSetDeathStateCommand(const char* args)
-{
-    if (!*args)
-        return false;
-
-    Creature* pCreature = getSelectedCreature();
-    if (!pCreature || pCreature->isPet())
-    {
-        SendSysMessage(LANG_SELECT_CREATURE);
-        SetSentErrorMessage(true);
-        return false;
-    }
-
-    if (strncmp(args, "on", 3) == 0)
-        pCreature->SetDeadByDefault(true);
-    else if (strncmp(args, "off", 4) == 0)
-        pCreature->SetDeadByDefault(false);
-    else
-    {
-        SendSysMessage(LANG_USE_BOL);
-        SetSentErrorMessage(true);
-        return false;
-    }
-
-    pCreature->SaveToDB();
-    pCreature->Respawn();
-
     return true;
 }
 

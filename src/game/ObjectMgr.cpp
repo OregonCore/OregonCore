@@ -1082,10 +1082,10 @@ void ObjectMgr::LoadCreatures()
     uint32 count = 0;
     //                                                       0              1   2    3
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT creature.guid, id, map, modelid,"
-                                 //   4             5           6           7           8            9              10         11
+                                 //4             5           6           7           8            9              10         11
                                  "equipment_id, position_x, position_y, position_z, orientation, spawntimesecs, spawndist, currentwaypoint,"
-                                 //   12         13       14          15            16         17     18
-                                 "curhealth, curmana, DeathState, MovementType, spawnMask, event, pool_entry "
+                                 //12        13       14            15         16     17
+                                 "curhealth, curmana, MovementType, spawnMask, event, pool_entry "
                                  "FROM creature LEFT OUTER JOIN game_event_creature ON creature.guid = game_event_creature.guid "
                                  "LEFT OUTER JOIN pool_creature ON creature.guid = pool_creature.guid");
 
@@ -1134,11 +1134,10 @@ void ObjectMgr::LoadCreatures()
         data.currentwaypoint = fields[11].GetUInt32();
         data.curhealth      = fields[12].GetUInt32();
         data.curmana        = fields[13].GetUInt32();
-        data.is_dead        = fields[14].GetBool();
-        data.movementType   = fields[15].GetUInt8();
-        data.spawnMask      = fields[16].GetUInt8();
-        int16 gameEvent     = fields[17].GetInt16();
-        int32 PoolId        = fields[18].GetInt32();
+        data.movementType   = fields[14].GetUInt8();
+        data.spawnMask      = fields[15].GetUInt8();
+        int16 gameEvent     = fields[16].GetInt16();
+        int32 PoolId        = fields[17].GetInt32();
 
         if (heroicCreatures.find(data.id) != heroicCreatures.end())
         {
@@ -1301,7 +1300,6 @@ uint32 ObjectMgr::AddCreData(uint32 entry, uint32 /*team*/, uint32 mapId, float 
     data.currentwaypoint = 0;
     data.curhealth = cInfo->maxhealth;
     data.curmana = cInfo->maxmana;
-    data.is_dead = false;
     data.movementType = cInfo->MovementType;
     data.spawnMask = 1;
     data.dbData = false;

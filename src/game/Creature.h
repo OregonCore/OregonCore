@@ -264,7 +264,6 @@ struct CreatureData
     uint32 currentwaypoint;
     uint32 curhealth;
     uint32 curmana;
-    bool  is_dead;
     uint8 movementType;
     uint8 spawnMask;
     bool dbData;
@@ -836,11 +835,6 @@ class Creature : public Unit, public GridObject<Creature>
             return m_GlobalCooldown;
         }
 
-        void SetDeadByDefault (bool death_state)
-        {
-            m_isDeadByDefault = death_state;
-        }
-
         uint32 GetWaypointPath()
         {
             return m_path_id;
@@ -932,7 +926,6 @@ class Creature : public Unit, public GridObject<Creature>
         bool m_AlreadySearchedAssistance;
         bool m_regenHealth;
         bool m_AI_locked;
-        bool m_isDeadByDefault;
 
         SpellSchoolMask m_meleeDamageSchoolMask;
         uint32 m_originalEntry;

@@ -68,11 +68,6 @@ uint32 OPvPCapturePointNA::GetAliveGuardsCount()
                     if (cr->IsAlive())
                         ++cnt;
                 }
-                else if (CreatureData const* cd = sObjectMgr.GetCreatureData(GUID_LOPART(itr->second)))
-                {
-                    if (!cd->is_dead)
-                        ++cnt;
-                }
             }
             break;
         default:
