@@ -12917,16 +12917,11 @@ bool CharmInfo::IsReturning()
 void Unit::BuildMovementPacket(ByteBuffer *data) const
 {
     *data << uint32(GetUnitMovementFlags());            // movement flags
-    *data << uint16();                                 // 2.3.0 @todo: Implement extra movement flags
+    *data << uint8(0);                                  // 2.3.0 @todo: Implement extra movement flags
     *data << uint32(getMSTime());                       // time / counter
-    *data << GetPositionX();
-    *data << GetPositionY();
-    *data << GetPositionZ();
-    *data << GetOrientation();
-
-    // 0x02200000
-    if ((GetUnitMovementFlags() & (MOVEFLAG_SWIMMING | MOVEFLAG_FLYING)))
-        *data << (float)m_movementInfo.s_pitch;
-
-    *data << (uint32)m_movementInfo.fallTime;
+    *data << float(GetPositionX());
+    *data << float(GetPositionY());
+    *data << float(GetPositionZ());
+    *data << float(GetOrientation());
+    *data << uint32(0);
 }
