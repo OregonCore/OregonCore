@@ -1,0 +1,1 @@
+UPDATE `creature_template` SET `dynamicflags`=32 WHERE `entry`=20158; -- Slime-Covered Corpse
