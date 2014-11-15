@@ -11967,18 +11967,33 @@ bool Unit::SetPosition(float x, float y, float z, float orientation, bool telepo
     return (relocated || turn);
 }
 
-void Unit::NearTeleportTo(float x, float y, float z, float orientation, bool casting /*= false*/ )
+void Unit::NearTeleportTo(float x, float y, float z, float orientation, bool casting /*= false*/)
 {
     if (GetTypeId() == TYPEID_PLAYER)
         ToPlayer()->TeleportTo(GetMapId(), x, y, z, orientation, TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET | (casting ? TELE_TO_SPELL : 0));
     else
     {
-        GetMap()->CreatureRelocation(ToCreature(), x, y, z, orientation);
-
-        WorldPacket data;
-        BuildHeartBeatMsg(&data);
-        SendMessageToSet(&data, false);
+        Position pos = {x, y, z, orientation};
+        SendTeleportPacket(pos);
+        SetPosition(x, y, z, orientation, true);
+        UpdateObjectVisibility();
     }
+}
+
+void Unit::SendTeleportPacket(Position& pos)
+{
+    Position oldPos = { GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation() };
+    if (GetTypeId() == TYPEID_UNIT)
+        Relocate(&pos);
+
+    WorldPacket data(MSG_MOVE_TELEPORT, 38);
+    data << GetPackGUID();
+    BuildMovementPacket(&data);
+    if (GetTypeId() == TYPEID_UNIT)
+        Relocate(&oldPos);
+    if (GetTypeId() == TYPEID_PLAYER)
+        Relocate(&pos);
+    SendMessageToSet(&data, false);
 }
 
 void Unit::MonsterMoveByPath(float x, float y, float z, uint32 speed, bool forceDest)

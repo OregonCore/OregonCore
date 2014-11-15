@@ -1412,7 +1412,7 @@ class Unit : public WorldObject
         }
 
         void NearTeleportTo(float x, float y, float z, float orientation, bool casting = false);
-
+        void SendTeleportPacket(Position& pos);
         void SendMonsterStop();
         void SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 Time, Player* player = NULL);
         void SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 MoveFlags, uint32 time, float speedZ, Player* player = NULL);

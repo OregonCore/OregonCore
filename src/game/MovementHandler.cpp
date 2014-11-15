@@ -43,7 +43,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
         return;
 
     // get the teleport destination
-    WorldLocation& loc = GetPlayer()->GetTeleportDest();
+    WorldLocation const& loc = GetPlayer()->GetTeleportDest();
 
     // possible errors in the coordinate validity check
     if (!MapManager::IsValidMapCoord(loc))
@@ -344,7 +344,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
         mover->SendMessageToSet(&data, false);
 
     mover->m_movementInfo = movementInfo;
-    mover->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
+    mover->SetPosition(movementInfo.pos);
 
     if (plMover)                                            // nothing is charmed, or player charmed
     {
