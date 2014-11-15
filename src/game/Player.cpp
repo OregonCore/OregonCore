@@ -19306,10 +19306,10 @@ void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& vi
     }
 }
 
-template void Player::UpdateVisibilityOf(Player*       target, UpdateData& data, std::set<Unit*>& visibleNow);
-template void Player::UpdateVisibilityOf(Creature*     target, UpdateData& data, std::set<Unit*>& visibleNow);
-template void Player::UpdateVisibilityOf(Corpse*       target, UpdateData& data, std::set<Unit*>& visibleNow);
-template void Player::UpdateVisibilityOf(GameObject*   target, UpdateData& data, std::set<Unit*>& visibleNow);
+template void Player::UpdateVisibilityOf(Player*        target, UpdateData& data, std::set<Unit*>& visibleNow);
+template void Player::UpdateVisibilityOf(Creature*      target, UpdateData& data, std::set<Unit*>& visibleNow);
+template void Player::UpdateVisibilityOf(Corpse*        target, UpdateData& data, std::set<Unit*>& visibleNow);
+template void Player::UpdateVisibilityOf(GameObject*    target, UpdateData& data, std::set<Unit*>& visibleNow);
 template void Player::UpdateVisibilityOf(DynamicObject* target, UpdateData& data, std::set<Unit*>& visibleNow);
 
 void Player::UpdateObjectVisibility(bool forced)
@@ -19319,15 +19319,13 @@ void Player::UpdateObjectVisibility(bool forced)
     else
     {
         Unit::UpdateObjectVisibility(true);
-        // updates visibility of all objects around point of view for current player
-        Oregon::VisibleNotifier notifier(*this);
-        m_seer->VisitNearbyObject(GetMap()->GetVisibilityDistance(), notifier);
-        notifier.SendToSelf();   // send gathered data
+        UpdateVisibilityForPlayer();
     }
 }
 
 void Player::UpdateVisibilityForPlayer()
 {
+    // updates visibility of all objects around point of view for current player
     Oregon::VisibleNotifier notifier(*this);
     m_seer->VisitNearbyObject(GetMap()->GetVisibilityDistance(), notifier);
     notifier.SendToSelf();   // send gathered data
