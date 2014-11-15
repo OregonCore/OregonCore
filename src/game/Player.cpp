@@ -2508,7 +2508,7 @@ void Player::GiveLevel(uint32 level, bool ignoreRAF)
 
 void Player::InitTalentForLevel()
 {
-    uint8 level = getLevel();
+    uint32 level = getLevel();
     // talents base at level diff (talents = level - 9 but some can be used already)
     if (level < 10)
     {
@@ -4729,7 +4729,7 @@ uint32 Player::GetShieldBlockValue() const
 
 float Player::GetMeleeCritFromAgility()
 {
-    uint8 level = getLevel();
+    uint32 level = getLevel();
     uint32 pclass = getClass();
 
     if (level > GT_MAX_LEVEL)
@@ -4777,7 +4777,7 @@ float Player::GetDodgeFromAgility()
         1.7f       // Druid
     };
 
-    uint8 level = getLevel();
+    uint32 level = getLevel();
     uint32 pclass = getClass();
 
     if (level > GT_MAX_LEVEL)
@@ -4794,7 +4794,7 @@ float Player::GetDodgeFromAgility()
 
 float Player::GetSpellCritFromIntellect()
 {
-    uint8 level = getLevel();
+    uint32 level = getLevel();
     uint32 pclass = getClass();
 
     if (level > GT_MAX_LEVEL)
@@ -4876,7 +4876,7 @@ float Player::GetExpertiseDodgeOrParryReduction(WeaponAttackType attType) const
 
 float Player::OCTRegenHPPerSpirit()
 {
-    uint8 level = getLevel();
+    uint32 level = getLevel();
     uint32 pclass = getClass();
 
     if (level > GT_MAX_LEVEL)
@@ -4899,7 +4899,7 @@ float Player::OCTRegenHPPerSpirit()
 
 float Player::OCTRegenMPPerSpirit()
 {
-    uint8 level = getLevel();
+    uint32 level = getLevel();
     uint32 pclass = getClass();
 
     if (level > GT_MAX_LEVEL)
@@ -5226,16 +5226,16 @@ void Player::UpdateWeaponSkill(WeaponAttackType attType)
 
 void Player::UpdateCombatSkills(Unit* pVictim, WeaponAttackType attType, MeleeHitOutcome /*outcome*/, bool defence)
 {
-    uint8 plevel = getLevel();                             // if defense than pVictim == attacker
-    uint8 greylevel = Oregon::XP::GetGrayLevel(plevel);
-    uint8 moblevel = pVictim->getLevelForTarget(this);
+    uint32 plevel = getLevel();                             // if defense than pVictim == attacker
+    uint32 greylevel = Oregon::XP::GetGrayLevel(plevel);
+    uint32 moblevel = pVictim->getLevelForTarget(this);
     if (moblevel < greylevel)
         return;
 
     if (moblevel > plevel + 5)
         moblevel = plevel + 5;
 
-    uint8 lvldif = moblevel - greylevel;
+    uint32 lvldif = moblevel - greylevel;
     if (lvldif < 3)
         lvldif = 3;
 
@@ -5352,7 +5352,7 @@ void Player::UpdateSkillsToMaxSkillsForLevel()
 
 // This functions sets a skill line value (and adds if doesn't exist yet)
 // To "remove" a skill line, set it's values to zero
-void Player::SetSkill(uint16 id, uint16 currVal, uint16 maxVal)
+void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
 {
     if (!id)
         return;
@@ -6935,7 +6935,7 @@ void Player::_ApplyItemMods(Item* item, uint8 slot, bool apply)
 
     sLog.outDetail("applying mods for item %u ", item->GetGUIDLow());
 
-    uint8 attacktype = Player::GetAttackBySlot(slot);
+    uint32 attacktype = Player::GetAttackBySlot(slot);
 
     if (proto->Socket[0].Color)                              //only (un)equipping of items with sockets can influence metagems, so no need to waste time with normal items
         CorrectMetaGemEnchants(slot, apply);
@@ -8976,7 +8976,7 @@ Item* Player::GetItemByPos(uint8 bag, uint8 slot) const
 
 Item* Player::GetWeaponForAttack(WeaponAttackType attackType, bool useable) const
 {
-    uint8 slot;
+    uint16 slot;
     switch (attackType)
     {
         case BASE_ATTACK:   slot = EQUIPMENT_SLOT_MAINHAND; break;
@@ -9013,7 +9013,7 @@ Item* Player::GetShield(bool useable) const
     return item;
 }
 
-uint8 Player::GetAttackBySlot(uint8 slot)
+uint32 Player::GetAttackBySlot(uint8 slot)
 {
     switch (slot)
     {
@@ -14300,7 +14300,7 @@ void Player::CastedCreatureOrGO(uint32 entry, uint64 guid, uint32 spell_id)
 
 void Player::TalkedToCreature(uint32 entry, uint64 guid)
 {
-    uint16 addTalkCount = 1;
+    uint32 addTalkCount = 1;
     for (uint8 i = 0; i < MAX_QUEST_LOG_SIZE; ++i)
     {
         uint32 questid = GetQuestSlotQuestId(i);
@@ -17463,10 +17463,6 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
 
     if (pet->isControlled())
     {
-        WorldPacket data(SMSG_PET_SPELLS, 8);
-        data << uint64(0);
-        GetSession()->SendPacket(&data);
-
         if (GetGroup())
             SetGroupUpdateFlag(GROUP_UPDATE_PET);
     }
@@ -17586,13 +17582,10 @@ void Player::PetSpellInitialize()
 
     CharmInfo* charmInfo = pet->GetCharmInfo();
 
-    WorldPacket data(SMSG_PET_SPELLS, 8+2+4+4+4*MAX_UNIT_ACTION_BAR_INDEX+1+1);
-    data << uint64(pet->GetGUID());
-    data << uint16(pet->GetCreatureTemplate()->family);         // creature family (required for pet talents)
-    data << uint32(0); // Pet duration?
-    data << uint8(pet->GetReactState());
-    data << uint8(charmInfo->GetCommandState());
-    data << uint16(0); // Flags, mostly unknown
+    WorldPacket data(SMSG_PET_SPELLS, 8 + 4 + 1 + 1 + 2 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 1);
+    data << (uint64)pet->GetGUID();
+    data << uint32(0);
+    data << uint8(pet->GetReactState()) << uint8(charmInfo->GetCommandState()) << uint16(0);
 
     // action bar loop
     for (uint32 i = 0; i < MAX_UNIT_ACTION_BAR_INDEX; i++)
@@ -17662,9 +17655,8 @@ void Player::PossessSpellInitialize()
         return;
     }
 
-    WorldPacket data(SMSG_PET_SPELLS, 8+2+4+4+4*MAX_UNIT_ACTION_BAR_INDEX+1+1);
+    WorldPacket data(SMSG_PET_SPELLS, 8 + 4 + 4 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 1);
     data << uint64(charm->GetGUID());
-    data << uint16(0);
     data << uint32(0);
     data << uint32(0);
 
@@ -17702,15 +17694,14 @@ void Player::CharmSpellInitialize()
         }
     }
 
-    WorldPacket data(SMSG_PET_SPELLS, 8+2+4+4+4*MAX_UNIT_ACTION_BAR_INDEX+1+4*addlist+1);
+    WorldPacket data(SMSG_PET_SPELLS, 8 + 4 + 1 + 1 + 2 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 4 * addlist + 1);
     data << uint64(charm->GetGUID());
-    data << uint16(0);
     data << uint32(0);
 
     if (charm->GetTypeId() != TYPEID_PLAYER)
         data << uint8(charm->ToCreature()->GetReactState()) << uint8(charmInfo->GetCommandState()) << uint16(0);
     else
-        data << uint32(0);
+        data << uint8(0) << uint8(0) << uint16(0);
 
     for (uint32 i = 0; i < MAX_UNIT_ACTION_BAR_INDEX; i++)
         data << uint16(charmInfo->GetActionBarEntry(i)->SpellOrAction) << uint16(charmInfo->GetActionBarEntry(i)->Type);
@@ -19264,8 +19255,8 @@ void Player::SendInitialVisiblePackets(Unit* target)
     SendAuraDurationsForTarget(target);
     if (target->IsAlive())
     {
-        /*if (target->GetMotionMaster()->GetCurrentMovementGeneratorType() != IDLE_MOTION_TYPE)
-            target->SendMonsterMoveWithSpeedToCurrentDestination(this);*/
+        if (target->GetMotionMaster()->GetCurrentMovementGeneratorType() != IDLE_MOTION_TYPE)
+            target->SendMonsterMoveWithSpeedToCurrentDestination(this);
         if (target->HasUnitState(UNIT_STATE_MELEE_ATTACKING) && target->getVictim())
             target->SendMeleeAttackStart(target->getVictim());
     }
