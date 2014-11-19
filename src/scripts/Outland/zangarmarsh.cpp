@@ -32,6 +32,7 @@ EndContentData */
 
 #include "ScriptPCH.h"
 #include "ScriptedEscortAI.h"
+#include "ObjectMgr.h"
 
 /*######
 ## npcs_ashyen_and_keleth
@@ -368,6 +369,146 @@ bool GossipSelect_npc_timothy_daniels(Player* pPlayer, Creature* pCreature, uint
     return true;
 };
 
+/*######
+## npc_baby_murloc
+######*/
+
+enum
+{
+    NPC_PURPLE_MURLOC          = 15357,
+    NPC_GREEN_MURLOC           = 15360,
+    NPC_BLUE_MURLOC            = 15356,
+    NPC_PINK_MURLOC            = 15359,
+    NPC_ORANGE_MURLOC          = 15361,
+    NPC_CREDIT                 = 18152,
+
+    QUEST_HAVE_YOU_EVER        = 9816,
+
+    SPELL_SING                 = 32041
+};
+
+struct Pos
+{
+    float x, y, z;
+};
+
+static Pos M[]=
+{
+    {1206.926f, 8139.298f, 19.70f},
+    {1206.927f, 8158.908f, 19.51f},
+    {1220.742f, 8093.757f, 18.120f},
+    {1128.926f, 8137.008f, 20.664f},
+    {1230.289f, 8156.368f, 18.40f},
+    {1216.511f, 8188.199f, 18.70f}
+};
+
+struct npc_baby_murlocAI : public ScriptedAI
+{
+    npc_baby_murlocAI(Creature* creature) : ScriptedAI(creature) {}
+
+    uint64 PlayerGUID;
+    uint32 CheckTimer;
+    uint32 EndTimer;
+
+    void Reset()
+    {
+        PlayerGUID = 0;
+        CheckTimer = 7000;
+        EndTimer = 15000;
+        DoSummon();
+        me->GetMotionMaster()->MovePoint(0, M[0].x, M[0].y, M[0].z);
+        me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_DANCE);
+    }
+
+    void DoSummon()
+    {
+        float x, y, z;
+        x = me->GetPositionX();
+        y = me->GetPositionY();
+        z = me->GetPositionZ();
+
+        me->SummonCreature(NPC_PURPLE_MURLOC, x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000);
+        me->SummonCreature(NPC_GREEN_MURLOC , x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 9000);
+        me->SummonCreature(NPC_BLUE_MURLOC  , x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 9000);
+        me->SummonCreature(NPC_PINK_MURLOC  , x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 9000);
+        me->SummonCreature(NPC_ORANGE_MURLOC, x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 9000);
+    }
+
+    void JustSummoned(Creature* summoned)
+    {  
+        summoned->SetWalk(false);
+
+        switch(summoned->GetEntry())
+        {
+            case NPC_PURPLE_MURLOC:
+                summoned->GetMotionMaster()->MovePoint(0, M[1].x, M[1].y, M[1].z);
+                summoned->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_DANCE);
+                break;
+            case NPC_GREEN_MURLOC:
+                summoned->GetMotionMaster()->MovePoint(0, M[2].x, M[2].y, M[2].z);
+                break;
+            case NPC_BLUE_MURLOC:
+                summoned->GetMotionMaster()->MovePoint(0, M[3].x, M[3].y, M[3].z);
+                break;
+            case NPC_ORANGE_MURLOC:
+                summoned->GetMotionMaster()->MovePoint(0, M[4].x, M[4].y, M[4].z);
+                break;
+            case NPC_PINK_MURLOC:
+                summoned->GetMotionMaster()->MovePoint(0, M[5].x, M[5].y, M[5].z);
+                break;
+        }
+    }
+
+    void MoveInLineOfSight(Unit *who)
+    {
+        if (who->GetTypeId() == TYPEID_PLAYER)
+        {
+            if (((Player*)who)->GetQuestStatus(QUEST_HAVE_YOU_EVER) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (me->IsWithinDistInMap(((Player*)who), 15))
+                {
+                    PlayerGUID = who->GetGUID();
+                }
+            }
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (CheckTimer <= diff)
+        {
+            if (Player* player = sObjectMgr.GetPlayer(PlayerGUID))
+            {
+                me->SetFacingToObject(player);
+                DoCast(me, SPELL_SING);
+
+                if (Creature* Purple = GetClosestCreatureWithEntry(me, NPC_PURPLE_MURLOC, 20.0f))
+                {
+                    Purple->SetFacingToObject(player);
+                    Purple->CastSpell(Purple, SPELL_SING, true);
+                }
+            }
+
+            CheckTimer = 15000;
+        }
+        else
+            CheckTimer -= diff;
+
+        if (EndTimer <= diff)
+        {
+            if (Player* player = sObjectMgr.GetPlayer(PlayerGUID))
+                player->KilledMonsterCredit(NPC_CREDIT, me->GetGUID());;
+        }
+        else
+            EndTimer -= diff;
+    }
+};
+
+CreatureAI* GetAI_npc_baby_murloc(Creature* creature)
+{
+    return new npc_baby_murlocAI(creature);
+}
+
 void AddSC_zangarmarsh()
 {
     Script* newscript;
@@ -406,6 +547,11 @@ void AddSC_zangarmarsh()
     newscript->Name = "npc_timothy_daniels";
     newscript->pGossipHello =  &GossipHello_npc_timothy_daniels;
     newscript->pGossipSelect = &GossipSelect_npc_timothy_daniels;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_baby_murloc";
+    newscript->GetAI = &GetAI_npc_baby_murloc;
     newscript->RegisterSelf();
 }
 
