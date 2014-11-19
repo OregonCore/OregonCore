@@ -226,6 +226,7 @@ struct npc_secondTrialAI : public ScriptedAI
 
         me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_KNEEL);
         me->setFaction(FACTION_FRIENDLY);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         spellFlashLight = false;
         spellJustice    = false;
@@ -234,26 +235,26 @@ struct npc_secondTrialAI : public ScriptedAI
 
         switch (me->GetEntry())
         {
-        case CHAMPION_BLOODWRATH:
-            spellFlashLight = true;
-            timerFlashLight = TIMER_FLASH_OF_LIGHT;
-            break;
-        case CHAMPION_LIGHTREND:
-            spellJustice    = true;
-            timerJustice    = 500;
-            break;
-        case CHAMPION_SWIFTBLADE:
-            spellJudLight   = false;  // Misses Script Effect // http://www.wowhead.com/?spell=20271
-            timerJudLight   = 500;
-            break;
-        case CHAMPION_SUNSTRIKER:
-            spellFlashLight = true;
-            spellJudLight   = false;  // Misses Script Effect // http://www.wowhead.com/?spell=20271
-            spellCommand    = false;  // Misses Dummy // http://www.wowhead.com/?spell=20375
-            timerFlashLight = TIMER_FLASH_OF_LIGHT;
-            timerJudLight   = 500;
-            timerCommand    = 1500;
-            break;
+            case CHAMPION_BLOODWRATH:
+                spellFlashLight = true;
+                timerFlashLight = TIMER_FLASH_OF_LIGHT;
+                break;
+            case CHAMPION_LIGHTREND:
+                spellJustice    = true;
+                timerJustice    = 500;
+                break;
+            case CHAMPION_SWIFTBLADE:
+                spellJudLight   = false;  // Misses Script Effect // http://www.wowhead.com/?spell=20271
+                timerJudLight   = 500;
+                break;
+            case CHAMPION_SUNSTRIKER:
+                spellFlashLight = true;
+                spellJudLight   = false;  // Misses Script Effect // http://www.wowhead.com/?spell=20271
+                spellCommand    = false;  // Misses Dummy // http://www.wowhead.com/?spell=20375
+                timerFlashLight = TIMER_FLASH_OF_LIGHT;
+                timerJudLight   = 500;
+                timerCommand    = 1500;
+                break;
         }
     }
 
@@ -385,18 +386,26 @@ struct master_kelerun_bloodmournAI : public ScriptedAI
 
                     switch (paladinPhase)
                     {
-                    case 0:
-                        DoScriptText(TEXT_SECOND_TRIAL_1, me);
-                        break;
-                    case 1:
-                        DoScriptText(TEXT_SECOND_TRIAL_2, me);
-                        break;
-                    case 2:
-                        DoScriptText(TEXT_SECOND_TRIAL_3, me);
-                        break;
-                    case 3:
-                        DoScriptText(TEXT_SECOND_TRIAL_4, me);
-                        break;
+                        case 0:
+                            DoScriptText(TEXT_SECOND_TRIAL_1, me);
+                            if(Creature* creature = me->FindNearestCreature(CHAMPION_BLOODWRATH, 20.0f, true))
+                                creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                            break;
+                        case 1:
+                            DoScriptText(TEXT_SECOND_TRIAL_2, me);
+                            if(Creature* creature = me->FindNearestCreature(CHAMPION_LIGHTREND, 20.0f, true))
+                                creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                            break;
+                        case 2:
+                            DoScriptText(TEXT_SECOND_TRIAL_3, me);
+                            if(Creature* creature = me->FindNearestCreature(CHAMPION_SWIFTBLADE, 20.0f, true))
+                                creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                            break;
+                        case 3:
+                            DoScriptText(TEXT_SECOND_TRIAL_4, me);
+                            if(Creature* creature = me->FindNearestCreature(CHAMPION_SUNSTRIKER, 20.0f, true))
+                                creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                            break;
                     }
                 }
                 else
