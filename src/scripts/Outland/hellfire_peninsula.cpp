@@ -630,62 +630,45 @@ enum
 {
     SPELL_SOUL_BURDEN       = 38879,
     SPELL_ENRAGE            = 8599,
-    SPELL_SUMMON_SPIRIT     = 39206,
     SPELL_CHARGE            = 35570,
 
-    NPC_BUNNY               = 22444,
-    NPC_FEL_SPIRIT          = 22454,
-    SAY_SP                  = -1900130
+    NPC_BUNNY               = 22444
 };
 
 struct npc_hand_berserkerAI : public ScriptedAI
 {
-    npc_hand_berserkerAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+    npc_hand_berserkerAI(Creature* creature) : ScriptedAI(creature) {}
 
     void Reset() {}
 
-    void AttackStart(Unit* pWho)
-    {
-        DoMeleeAttackIfReady();
-        ScriptedAI::AttackStart(pWho);
-    }
-
-    void EnterCombat(Unit* pWho)
+    void EnterCombat(Unit* who)
     {
         if (rand() % 60)
-            DoCast(pWho, SPELL_CHARGE);
+            DoCast(who, SPELL_CHARGE);
     }
 
-    void DamageTaken(Unit* pDoneby, uint32& Damage)
+    void DamageTaken(Unit* doneby, uint32& damage)
     {
-        if (me->HasAura(SPELL_ENRAGE, 0))
+        if (me->HasAura(SPELL_ENRAGE))
             return;
 
-        if (pDoneby->GetTypeId() == TYPEID_PLAYER && (me->GetHealth() * 100 - Damage) / me->GetMaxHealth() < 30)
-            DoCast(SPELL_ENRAGE);
+        if (doneby->GetTypeId() == TYPEID_PLAYER && (me->GetHealth() * 100 - damage) / me->GetMaxHealth() < 30)
+            DoCast(me, SPELL_ENRAGE);
     }
 
-    void JustDied(Unit* pWho)
+    void JustDied(Unit* who)
     {
-        if (Creature* Bunny = me->FindNearestCreature(NPC_BUNNY, 17.5f))
+        if (Creature* Bunny = GetClosestCreatureWithEntry(me, NPC_BUNNY, 17.5f))
         {
-            me->CastSpell(Bunny, SPELL_SOUL_BURDEN, false);
-            Bunny->CastSpell(Bunny, SPELL_SUMMON_SPIRIT, false);
+            Bunny->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            DoCast(Bunny, SPELL_SOUL_BURDEN);
         }
-        else return;
-
-        if (Creature* Spirit = me->FindNearestCreature(NPC_FEL_SPIRIT, 18.5f))
-        {
-            DoScriptText(SAY_SP, Spirit);
-            Spirit->AI()->AttackStart(pWho);
-        }
-        else return;
     }
 };
 
-CreatureAI* GetAI_npc_hand_berserker(Creature* pCreature)
+CreatureAI* GetAI_npc_hand_berserker(Creature* creature)
 {
-    return new npc_hand_berserkerAI(pCreature);
+    return new npc_hand_berserkerAI(creature);
 }
 
 /*######
@@ -695,53 +678,82 @@ CreatureAI* GetAI_npc_hand_berserker(Creature* pCreature)
 enum
 {
     NPC_HAND_BERSERKER      = 16878,
+    NPC_FEL_SPIRIT          = 22454,
     SPELL_CHANNELS          = 39184,
-    GO_RELIC                = 185298
+
+    GO_RELIC                = 185298,
+    SAY_SP                  = -1900130
 };
 
 struct npc_anchorite_relic_bunnyAI : public ScriptedAI
 {
-    npc_anchorite_relic_bunnyAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+    npc_anchorite_relic_bunnyAI(Creature* creature) : ScriptedAI(creature) {}
 
-    uint32 uiChTimer;
-    uint32 uiEndTimer;
+    uint32 ChTimer;
+    uint32 EndTimer;
 
     void Reset()
     {
-        uiChTimer = 5000;
-        uiEndTimer = 60000;
+        ChTimer = 2000;
+        EndTimer = 60000;
     }
 
-    void UpdateAI(const uint32 uiDiff)
+    void AttackedBy(Unit* enemy) {}
+    void AttackStart(Unit* enemy) {}
+
+    void JustSummoned(Creature* summoned)
     {
-        if (uiEndTimer <= uiDiff)
+        if (summoned->GetEntry() == NPC_FEL_SPIRIT)
         {
-            if (GameObject* pRelic = me->FindNearestGameObject(GO_RELIC, 5.0f))
+            DoScriptText(SAY_SP, summoned);
+            summoned->AI()->AttackStart(summoned->getVictim());
+        }
+    }
+
+    void SpellHit(Unit* caster, const SpellEntry* spell)
+    {
+        if (spell->Id == SPELL_SOUL_BURDEN)
+        {
+            me->InterruptNonMeleeSpells(false);
+            me->SummonCreature(NPC_FEL_SPIRIT, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            ChTimer = 2000;
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (ChTimer <= diff)
+        {
+            if (Creature* Ber = GetClosestCreatureWithEntry(me, NPC_HAND_BERSERKER, 17.5f, true))
             {
-                pRelic->RemoveFromWorld();
-                me->setDeathState(CORPSE);
+                {
+                    DoCast(Ber, SPELL_CHANNELS, false);
+                    ChTimer = 95000;
+                }
             }
-            else return;
-
-            uiEndTimer = 60000;
-        }
-        else uiEndTimer -= uiDiff;
-
-        if (uiChTimer <= uiDiff)
-        {
-            if (Creature* pBer = me->FindNearestCreature(NPC_HAND_BERSERKER, 17.5f, true))
-                DoCast(pBer, SPELL_CHANNELS);
             else me->InterruptNonMeleeSpells(false);
-
-            uiChTimer = 5000;
         }
-        else uiChTimer -= uiDiff;
+        else ChTimer -= diff;
+
+        if (EndTimer <= diff)
+        {
+            if (GameObject* relic = GetClosestGameObjectWithEntry(me, GO_RELIC, 5.0f))
+            {
+                relic->RemoveFromWorld();
+                me->setDeathState(JUST_DIED);
+                me->RemoveCorpse();
+            }
+
+            EndTimer = 60000;
+        }
+        else EndTimer -= diff;
     }
 };
 
-CreatureAI* GetAI_npc_anchorite_relic_bunny(Creature* pCreature)
+CreatureAI* GetAI_npc_anchorite_relic_bunny(Creature* creature)
 {
-    return new npc_anchorite_relic_bunnyAI(pCreature);
+    return new npc_anchorite_relic_bunnyAI(creature);
 }
 
 /*######
@@ -1931,7 +1943,6 @@ void AddSC_hellfire_peninsula()
     newscript->Name = "go_haaleshi_altar";
     newscript->pGOHello = &GOHello_go_haaleshi_altar;
     newscript->RegisterSelf();
-
 
     newscript = new Script;
     newscript->Name = "npc_naladu";
