@@ -2595,6 +2595,9 @@ void SpellMgr::LoadSpellCustomAttr()
         case 20424:                       // Seal of Command Trigger
             spellInfo->speed = 590.0f;    // Minor delay
             break;
+        case 32220:                       // Judgement of Blood
+            spellInfo->speed = 5.0f;      // Minor delay
+            break;
         case 1833:                        // Cheap Shot
             spellInfo->speed = 1230.0f;   // Tiny delay
             break;
