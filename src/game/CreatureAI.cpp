@@ -26,9 +26,10 @@
 //Disable CreatureAI when charmed
 void CreatureAI::OnCharmed(bool /*apply*/)
 {
-    //me->IsAIEnabled = !apply;*/
     me->NeedChangeAI = true;
-    me->IsAIEnabled = false;
+
+    if(!(me->ToCreature()->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_CHARM_AI))
+        me->IsAIEnabled = false;
 }
 
 AISpellInfoType* UnitAI::AISpellInfo;
