@@ -623,55 +623,6 @@ bool QuestAccept_npc_wounded_blood_elf(Player* pPlayer, Creature* pCreature, Que
 }
 
 /*######
-## npc_hand_berserker
-######*/
-
-enum
-{
-    SPELL_SOUL_BURDEN       = 38879,
-    SPELL_ENRAGE            = 8599,
-    SPELL_CHARGE            = 35570,
-
-    NPC_BUNNY               = 22444
-};
-
-struct npc_hand_berserkerAI : public ScriptedAI
-{
-    npc_hand_berserkerAI(Creature* creature) : ScriptedAI(creature) {}
-
-    void Reset() {}
-
-    void EnterCombat(Unit* who)
-    {
-        if (rand() % 60)
-            DoCast(who, SPELL_CHARGE);
-    }
-
-    void DamageTaken(Unit* doneby, uint32& damage)
-    {
-        if (me->HasAura(SPELL_ENRAGE))
-            return;
-
-        if (doneby->GetTypeId() == TYPEID_PLAYER && (me->GetHealth() * 100 - damage) / me->GetMaxHealth() < 30)
-            DoCast(me, SPELL_ENRAGE);
-    }
-
-    void JustDied(Unit* who)
-    {
-        if (Creature* Bunny = GetClosestCreatureWithEntry(me, NPC_BUNNY, 17.5f))
-        {
-            Bunny->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            DoCast(Bunny, SPELL_SOUL_BURDEN);
-        }
-    }
-};
-
-CreatureAI* GetAI_npc_hand_berserker(Creature* creature)
-{
-    return new npc_hand_berserkerAI(creature);
-}
-
-/*######
 ## npc_anchorite_relic_bunny
 ######*/
 
@@ -680,6 +631,7 @@ enum
     NPC_HAND_BERSERKER      = 16878,
     NPC_FEL_SPIRIT          = 22454,
     SPELL_CHANNELS          = 39184,
+    SPELL_SOUL_BURDEN       = 38879,
 
     GO_RELIC                = 185298,
     SAY_SP                  = -1900130
@@ -710,10 +662,26 @@ struct npc_anchorite_relic_bunnyAI : public ScriptedAI
         }
     }
 
+    void DoSpellHit(Unit* caster)
+    {
+        float x,y,z;
+        x = caster->GetPositionX();
+        y = caster->GetPositionY();
+        z = caster->GetPositionZ();
+
+        me->InterruptNonMeleeSpells(false);
+        me->SummonCreature(NPC_FEL_SPIRIT, x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        ChTimer = 2000;
+    }
+
+    // @todo Fix SpellHit not being called when caster is dead
+    // This may have other implications elsewhere in the core
     void SpellHit(Unit* caster, const SpellEntry* spell)
     {
         if (spell->Id == SPELL_SOUL_BURDEN)
         {
+            sLog.outDebug("SpellHit on dead caster has been resolved. Please remove me from hellfire_peninsula.cpp");
             me->InterruptNonMeleeSpells(false);
             me->SummonCreature(NPC_FEL_SPIRIT, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -754,6 +722,55 @@ struct npc_anchorite_relic_bunnyAI : public ScriptedAI
 CreatureAI* GetAI_npc_anchorite_relic_bunny(Creature* creature)
 {
     return new npc_anchorite_relic_bunnyAI(creature);
+}
+
+/*######
+## npc_hand_berserker
+######*/
+
+enum
+{
+    SPELL_ENRAGE            = 8599,
+    SPELL_CHARGE            = 35570,
+
+    NPC_BUNNY               = 22444
+};
+
+struct npc_hand_berserkerAI : public ScriptedAI
+{
+    npc_hand_berserkerAI(Creature* creature) : ScriptedAI(creature) {}
+
+    void Reset() {}
+
+    void EnterCombat(Unit* who)
+    {
+        if (rand() % 60)
+            DoCast(who, SPELL_CHARGE);
+    }
+
+    void DamageTaken(Unit* doneby, uint32& damage)
+    {
+        if (me->HasAura(SPELL_ENRAGE))
+            return;
+
+        if (doneby->GetTypeId() == TYPEID_PLAYER && (me->GetHealth() * 100 - damage) / me->GetMaxHealth() < 30)
+            DoCast(me, SPELL_ENRAGE);
+    }
+
+    void JustDied(Unit* who)
+    {
+        if (Creature* Bunny = GetClosestCreatureWithEntry(me, NPC_BUNNY, 17.5f))
+        {
+            Bunny->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            DoCast(Bunny, SPELL_SOUL_BURDEN);
+            CAST_AI(npc_anchorite_relic_bunnyAI, Bunny->AI())->DoSpellHit(me);
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_hand_berserker(Creature* creature)
+{
+    return new npc_hand_berserkerAI(creature);
 }
 
 /*######
