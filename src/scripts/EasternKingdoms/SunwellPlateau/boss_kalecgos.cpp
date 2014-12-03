@@ -478,7 +478,6 @@ struct boss_sathrovarrAI : public ScriptedAI
         isBanished = false;
 
         me->CastSpell(me, AURA_DEMONIC_VISUAL, true);
-        TeleportAllPlayersBack();
     }
 
     void EnterCombat(Unit* /*who*/)
