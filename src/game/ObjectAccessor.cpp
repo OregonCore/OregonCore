@@ -284,6 +284,15 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
         return NULL;
     }
 
+    float corpseX = corpse->GetPositionX();
+    float corpseY = corpse->GetPositionY();
+    float corpseZ = corpse->GetPositionZ();
+    float corpseO = corpse->GetOrientation();
+
+    /// @todo: Units die in various ways, for example blood elf woman lies left (-90°)
+    /// but undead woman lies to the front - so we need to gather some info in order
+    /// to modify corpseO properly to fit the model.
+
     DEBUG_LOG("Deleting Corpse and spawned bones.");
 
     Map* map = corpse->FindMap();
@@ -319,7 +328,7 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
         // bones->m_time = m_time;                              // don't overwrite time
         // bones->m_inWorld = m_inWorld;                        // don't overwrite in-world state
         // bones->m_type = m_type;                              // don't overwrite type
-        bones->Relocate(corpse->GetPositionX(), corpse->GetPositionY(), corpse->GetPositionZ(), corpse->GetOrientation());
+        bones->Relocate(corpseX, corpseY, corpseZ, corpseO);
 
         bones->SetUInt32Value(CORPSE_FIELD_FLAGS, CORPSE_FLAG_UNK2 | CORPSE_FLAG_BONES);
         bones->SetUInt64Value(CORPSE_FIELD_OWNER, 0);

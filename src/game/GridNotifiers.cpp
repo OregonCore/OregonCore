@@ -30,7 +30,8 @@
 
 using namespace Oregon;
 
-void VisibleNotifier::SendToSelf()
+void
+VisibleNotifier::SendToSelf()
 {
     // at this moment i_clientGUIDs have guids that not iterate at grid level checks
     // but exist one case when this possible and object not out of range: transports
@@ -56,7 +57,7 @@ void VisibleNotifier::SendToSelf()
         if (IS_PLAYER_GUID(*it))
         {
             Player* plr = ObjectAccessor::FindPlayer(*it);
-            if (plr && !plr->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
+            if (plr && plr->IsInWorld() && !plr->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
                 plr->UpdateVisibilityOf(&i_player);
         }
     }
@@ -72,7 +73,8 @@ void VisibleNotifier::SendToSelf()
         i_player.SendInitialVisiblePackets(*it);
 }
 
-void VisibleChangesNotifier::Visit(PlayerMapType& m)
+void
+VisibleChangesNotifier::Visit(PlayerMapType& m)
 {
     for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
@@ -89,7 +91,8 @@ void VisibleChangesNotifier::Visit(PlayerMapType& m)
     }
 }
 
-void VisibleChangesNotifier::Visit(CreatureMapType& m)
+void
+VisibleChangesNotifier::Visit(CreatureMapType& m)
 {
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
         if (!iter->getSource()->GetSharedVisionList().empty())
@@ -99,7 +102,8 @@ void VisibleChangesNotifier::Visit(CreatureMapType& m)
                     (*i)->UpdateVisibilityOf(&i_object);
 }
 
-void VisibleChangesNotifier::Visit(DynamicObjectMapType& m)
+void
+VisibleChangesNotifier::Visit(DynamicObjectMapType& m)
 {
     for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
         if (IS_PLAYER_GUID(iter->getSource()->GetCasterGUID()))
@@ -114,7 +118,7 @@ inline void CreatureUnitRelocationWorker(Creature* c, Unit* u)
         return;
 
     if (c->HasReactState(REACT_AGGRESSIVE) && !c->HasUnitState(UNIT_STATE_SIGHTLESS))
-        if (c->IsAIEnabled && c->canSeeOrDetect(u, false, true))
+        if (c->_IsWithinDist(u, c->m_SightDistance, true) && c->IsAIEnabled)
             c->AI()->MoveInLineOfSight_Safe(u);
 }
 
@@ -310,13 +314,14 @@ void DynamicObjectUpdater::Visit(PlayerMapType& m)
         VisitHelper(itr->getSource());
 }
 
-void MessageDistDeliverer::Visit(PlayerMapType& m)
+void
+MessageDistDeliverer::Visit(PlayerMapType& m)
 {
     for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
         Player* target = iter->getSource();
 
-        if (target->GetExactDist2dSq(i_source) > i_distSq)
+        if (target->GetExactDistSq(i_source) > i_distSq)
             continue;
 
         // Send packet to all who are sharing the player's vision
@@ -333,11 +338,12 @@ void MessageDistDeliverer::Visit(PlayerMapType& m)
     }
 }
 
-void MessageDistDeliverer::Visit(CreatureMapType& m)
+void
+MessageDistDeliverer::Visit(CreatureMapType& m)
 {
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        if (iter->getSource()->GetExactDist2dSq(i_source) > i_distSq)
+        if (iter->getSource()->GetExactDistSq(i_source) > i_distSq)
             continue;
 
         // Send packet to all who are sharing the creature's vision
@@ -351,11 +357,12 @@ void MessageDistDeliverer::Visit(CreatureMapType& m)
     }
 }
 
-void MessageDistDeliverer::Visit(DynamicObjectMapType& m)
+void
+MessageDistDeliverer::Visit(DynamicObjectMapType& m)
 {
     for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        if (iter->getSource()->GetExactDist2dSq(i_source) > i_distSq)
+        if (iter->getSource()->GetExactDistSq(i_source) > i_distSq)
             continue;
 
         if (iter->getSource()->GetTypeId() == TYPEID_PLAYER)
@@ -379,8 +386,8 @@ MessageDistDeliverer::VisitObject(Player* plr)
 }
 */
 
-template<class T> 
-void ObjectUpdater::Visit(GridRefManager<T>& m)
+template<class T> void
+ObjectUpdater::Visit(GridRefManager<T>& m)
 {
     for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
