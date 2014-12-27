@@ -429,8 +429,7 @@ void WorldSession::HandleGuildDisbandOpcode(WorldPacket& /*recvPacket*/)
     }
 
     guild->Disband();
-
-    delete this;
+    delete guild;
 }
 
 void WorldSession::HandleGuildLeaderOpcode(WorldPacket& recvPacket)
