@@ -31,12 +31,12 @@ struct GameTele;
 class ChatCommand
 {
     public:
-        const char*       Name;
+        const char*        Name;
         uint32             SecurityLevel;                   // function pointer required correct align (use uint32)
         bool               AllowConsole;
         bool (ChatHandler::*Handler)(const char* args);
         std::string        Help;
-        ChatCommand*      ChildCommands;
+        ChatCommand*       ChildCommands;
 };
 
 class ChatHandler
@@ -539,11 +539,11 @@ class ChatHandler
         bool HandleDebugRAFError(const char* args);
         bool HandleSpellCrashTestCommand(const char* args);
 
-        Player*  getSelectedPlayer();
+        Player*   getSelectedPlayer();
         Creature* getSelectedCreature();
-        Unit*    getSelectedUnit();
-        char*    extractKeyFromLink(char* text, char const* linkType, char** something1 = NULL);
-        char*    extractKeyFromLink(char* text, char const* const* linkTypes, int* found_idx, char** something1 = NULL);
+        Unit*     getSelectedUnit();
+        char*     extractKeyFromLink(char* text, char const* linkType, char** something1 = NULL);
+        char*     extractKeyFromLink(char* text, char const* const* linkTypes, int* found_idx, char** something1 = NULL);
         uint32    extractSpellIdFromLink(char* text);
         GameTele const* extractGameTeleFromLink(char* text);
         bool GetPlayerGroupAndGUIDByName(const char* cname, Player*& plr, Group*& group, uint64& guid, bool offline = false);
