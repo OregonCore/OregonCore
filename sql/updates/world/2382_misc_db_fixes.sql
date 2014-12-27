@@ -68,7 +68,7 @@ INSERT INTO `spell_target_position` (`id`,`target_map`,`target_position_x`,`targ
 UPDATE `creature` SET `modelid`='17055' WHERE id = 17407;
 
 -- Update OfferRewardText for quest 396
-UPDATE `quest_template` SET `OfferRewardText`='You are to be commended for the service you have done for Stormwind, $N. If VanCleef had been successful in his machinations, he would no doubt have done considerable harm to the kingdom--something we must obviously avoid.$B$BTake this, $C, as a token of the my appreciation.' WHERE `Id`=396;
+UPDATE `quest_template` SET `OfferRewardText`='You are to be commended for the service you have done for Stormwind, $N. If VanCleef had been successful in his machinations, he would no doubt have done considerable harm to the kingdom--something we must obviously avoid.$B$BTake this, $C, as a token of the my appreciation.' WHERE `entry`=396;
 
 -- Spell Dummy Conditions
 INSERT INTO spell_dummy_condition VALUES

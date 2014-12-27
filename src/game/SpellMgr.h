@@ -25,11 +25,13 @@
 #include "DBCStructure.h"
 #include "DBCStores.h"
 #include "Database/SQLStorage.h"
+#include "SpellAuraDefines.h"
 
 #include "Utilities/UnorderedMap.h"
 #include "VMapFactory.h"
 #include <map>
 
+class Unit;
 class Player;
 class Spell;
 
