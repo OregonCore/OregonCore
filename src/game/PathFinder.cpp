@@ -101,7 +101,7 @@ bool PathInfo::Update(float destX, float destY, float destZ, bool forceDest)
 
     // check if destination moved - if not we can optimize something here
     // we are following old, precalculated path?
-    float dist = m_sourceUnit->GetObjectBoundingRadius();
+    float dist = m_sourceUnit->GetObjectSize();
 
     if (inRange(oldDest, newDest, dist, dist))
     {
@@ -115,8 +115,11 @@ bool PathInfo::Update(float destX, float destY, float destZ, bool forceDest)
             setNextPosition(m_pathPoints[1]);
         }
         else if (!inRange(newDest, m_pathPoints[m_pathPoints.Size() - 1], dist, dist))
-            /* We are struggling under/near the target and don't have path (no nodes left) */
+            // We are struggling under/near the target and don't have path (no nodes left)
             m_type = PATHFIND_NOPATH;
+        else
+            // Prevent unwanted saved state PATHFIND_NOPATH
+            m_type = PATHFIND_NORMAL;
 
         return false;
     }
