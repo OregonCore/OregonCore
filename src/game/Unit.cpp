@@ -851,7 +851,6 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             if (damage >= pVictim->GetHealth())
             {
                 pVictim->setDeathState(JUST_DIED);
-                pVictim->SetHealth(0);
 
                 CreatureInfo const* cInfo = pVictim->ToCreature()->GetCreatureTemplate();
                 if (cInfo && cInfo->lootid)
@@ -9595,21 +9594,6 @@ void Unit::setDeathState(DeathState s)
     // Death state needs to be updated before RemoveAllAurasOnDeath() is called, to prevent entering combat
     m_deathState = s;
 
-    if (s != ALIVE && s != JUST_RESPAWNED)
-    {
-        CombatStop();
-        DeleteThreatList();
-        getHostileRefManager().deleteReferences();
-        ClearComboPointHolders();                           // any combo points pointed to unit lost at it death
-
-        if (IsNonMeleeSpellCast(false))
-            InterruptNonMeleeSpells(false);
-
-        UnsummonAllTotems();
-        RemoveAllControlled();
-        RemoveAllAurasOnDeath();
-    }
-
     if (s == JUST_DIED)
     {
         ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
@@ -9637,6 +9621,21 @@ void Unit::setDeathState(DeathState s)
     }
     else if (s == JUST_RESPAWNED)
         RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE); // clear skinnable for creature and player (at battleground)
+
+    if (s != ALIVE && s != JUST_RESPAWNED)
+    {
+        CombatStop();
+        DeleteThreatList();
+        getHostileRefManager().deleteReferences();
+        ClearComboPointHolders();                           // any combo points pointed to unit lost at it death
+
+        if (IsNonMeleeSpellCast(false))
+            InterruptNonMeleeSpells(false);
+
+        UnsummonAllTotems();
+        RemoveAllControlled();
+        RemoveAllAurasOnDeath();
+    }
 }
 
 /*########################################
