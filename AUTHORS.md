@@ -6,12 +6,12 @@ and - except for third party libraries - licensed under the GPL 2.0,
 which you can read from the file "COPYING"
 
 ## Point of current development
-The project is currently hosted at http://oregoncore.lunar.sk/ and developed under https://bitbucket.org/oregon/oregoncore
+The project is currently hosted at http://oregon-core.net/ and developed under https://bitbucket.org/oregon/oregoncore
 
 ## History of development
 Development of this project dates back to 2010, and was developed under various umbrellas over time:
-* OregonCore project, 2010-2014, located at http://oregoncore.lunar.sk/
-* TrinityCore project, 2008-2012 located at http://www.trinitycore.org/
+* OregonCore project, 2009-2015, located at http://oregon-core.net/
+* TrinityCore project, 2008-2009 located at http://www.trinitycore.org/
 * Mangos project, 2005-2012 located at http://getmangos.com/
 * ScriptDev2 project, 2006-2012 located at http://www.scriptdev2.com/
 
