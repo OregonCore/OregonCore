@@ -7808,6 +7808,11 @@ uint32 Unit::SpellDamageBonus(Unit* pVictim, SpellEntry const* spellProto, uint3
                 if (pVictim->HasAuraState(AURA_STATE_HEALTHLESS_20_PERCENT))
                     TakenTotalMod *= (100.0f + (*i)->GetModifier()->m_amount) / 100.0f;
                 break;
+            // Increased Lightning Damage
+            case 6008:
+                if (spellProto->SpellFamilyName == SPELLFAMILY_SHAMAN && spellProto->SpellFamilyFlags & 0x03)
+                    pdamage += (*i)->GetSpellProto()->EffectBasePoints[(*i)->GetEffIndex()] + 1;
+                break;
         }
     }
 
