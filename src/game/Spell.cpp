@@ -4601,8 +4601,11 @@ SpellCastResult Spell::CheckCast(bool strict)
                     return SPELL_FAILED_HIGHLEVEL;
 
                 if (m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_POSSESS)
-                    if (int32(m_targets.getUnitTarget()->getLevel()) > m_spellInfo->EffectBasePoints[i] + 1)
+                {
+                    int32 lvlBounds = (m_spellInfo->EffectBasePoints[i] + 1) - m_spellInfo->baseLevel;
+                    if (int32(m_targets.getUnitTarget()->getLevel()) > int32(m_caster->getLevel()) + lvlBounds)
                         return SPELL_FAILED_HIGHLEVEL;
+                }
                 break;
             }
         case SPELL_AURA_MOUNTED:

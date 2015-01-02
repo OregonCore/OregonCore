@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -13,6 +13,8 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @file Unit.cpp
  */
 
 #ifndef __UNIT_H
@@ -731,19 +733,21 @@ enum ActiveStates
     ACT_DECIDE   = 0x0001
 };
 
+/// Pet's behavior
 enum ReactStates
 {
-    REACT_PASSIVE    = 0,
-    REACT_DEFENSIVE  = 1,
-    REACT_AGGRESSIVE = 2
+    REACT_PASSIVE    = 0, //!< pet will not attack
+    REACT_DEFENSIVE  = 1, //!< pet will attack only if he or his owner is attacked
+    REACT_AGGRESSIVE = 2  //!<
 };
 
+/// Pet's Commands
 enum CommandStates
 {
-    COMMAND_STAY    = 0,
-    COMMAND_FOLLOW  = 1,
-    COMMAND_ATTACK  = 2,
-    COMMAND_ABANDON = 3
+    COMMAND_STAY    = 0, //!< orders pet to stop moving
+    COMMAND_FOLLOW  = 1, //!< orders pet to follow
+    COMMAND_ATTACK  = 2, //!< orders pet to attack
+    COMMAND_ABANDON = 3  //!< abandons the pet
 };
 
 struct CharmSpellEntry
