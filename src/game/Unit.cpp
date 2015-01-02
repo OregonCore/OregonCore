@@ -12603,7 +12603,7 @@ void Unit::RemoveCharmedBy(Unit* charmer)
         switch (type)
         {
             case CHARM_TYPE_POSSESS:
-                charmer->ToPlayer()->SetClientControl(charmer, false);
+                charmer->ToPlayer()->SetClientControl(charmer, true);
                 charmer->ToPlayer()->SetViewpoint(this, false);
                 charmer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
                 RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
@@ -12632,6 +12632,10 @@ void Unit::RemoveCharmedBy(Unit* charmer)
                 break;
         }
     }
+
+    // if charmed target was player, give him controls back
+    if (ToPlayer())
+        ToPlayer()->SetClientControl(this, true);
 
     //a guardian should always have charminfo
     if (charmer->GetTypeId() == TYPEID_PLAYER && this != charmer->GetFirstControlled())
