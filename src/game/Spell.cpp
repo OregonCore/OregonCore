@@ -2585,7 +2585,7 @@ uint64 Spell::handle_delayed(uint64 t_offset)
 void Spell::_handle_immediate_phase()
 {
     // handle some immediate features of the spell here
-    HandleThreatSpells(m_spellInfo->Id);
+    HandleThreatSpells();
 
     m_needSpellLog = IsNeedSendToClient();
     for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
@@ -3528,12 +3528,9 @@ void Spell::TakeReagents()
     }
 }
 
-void Spell::HandleThreatSpells(uint32 spellId)
+void Spell::HandleThreatSpells()
 {
     if (m_UniqueTargetInfo.empty())
-        return;
-
-    if (!spellId)
         return;
 
     if ((m_spellInfo->AttributesEx  & SPELL_ATTR_EX_NO_THREAT) ||
@@ -3568,19 +3565,15 @@ void Spell::HandleThreatSpells(uint32 spellId)
             continue;
 
         // positive spells distribute threat among all units that are in combat with target, like healing
-        if (IsPositiveSpell(spellId))
+        if (IsPositiveSpell(m_spellInfo->Id))
             target->getHostileRefManager().threatAssist(m_caster, threatToAdd, m_spellInfo);
         // for negative spells threat gets distributed among affected targets
         else
-        {
-            if (!target->CanHaveThreatList())
-                continue;
-
-            target->AddThreat(m_caster, threatToAdd, GetSpellSchoolMask(m_spellInfo), m_spellInfo);
-        }
+            if (!target->IsHostileTo(m_caster))
+                target->AddThreat(m_caster, threatToAdd, GetSpellSchoolMask(m_spellInfo), m_spellInfo);
     }
 
-    sLog.outDebug("Spell %u, added an additional %f threat for %s %u target(s)", m_spellInfo->Id, threat, IsPositiveSpell(spellId) ? "assisting" : "harming", uint32(m_UniqueTargetInfo.size()));
+    sLog.outDebug("Spell %u, added an additional %f threat for %s %u target(s)", m_spellInfo->Id, threat, IsPositiveSpell(m_spellInfo->Id) ? "assisting" : "harming", uint32(m_UniqueTargetInfo.size()));
 }
 
 void Spell::HandleEffects(Unit* pUnitTarget, Item* pItemTarget, GameObject* pGOTarget, uint32 i, float /*DamageMultiplier*/)
