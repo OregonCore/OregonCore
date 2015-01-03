@@ -33,10 +33,7 @@ class HostileRefManager : public RefManager<Unit, ThreatManager>
     private:
         Unit* iOwner;
     public:
-        explicit HostileRefManager(Unit* pOwner)
-        {
-            iOwner = pOwner;
-        }
+        explicit HostileRefManager(Unit *owner) { iOwner = owner; }
         ~HostileRefManager();
 
         Unit* getOwner()
@@ -44,12 +41,12 @@ class HostileRefManager : public RefManager<Unit, ThreatManager>
             return iOwner;
         }
 
-        // send threat to all my hateres for the pVictim
-        // The pVictim is hated than by them as well
+        // send threat to all my hateres for the victim
+        // The victim is hated than by them as well
         // use for buffs and healing threat functionality
-        void threatAssist(Unit* pVictim, float threat, SpellEntry const* threatSpell = 0, bool pSingleTarget = false);
+        void threatAssist(Unit* victim, float baseThreat, SpellEntry const* threatSpell = NULL);
 
-        void addThreatPercent(int32 pValue);
+        void addThreatPercent(int32 percent);
 
         // The references are not needed anymore
         // tell the source to remove them from the list and free the mem
