@@ -30,29 +30,55 @@
 //================= ThreatCalcHelper ===========================
 //==============================================================
 
-// The pHatingUnit is not used yet
-float ThreatCalcHelper::calcThreat(Unit* pHatedUnit, Unit* /*pHatingUnit*/, float pThreat, SpellSchoolMask schoolMask, SpellEntry const* pThreatSpell)
+// The hatingUnit is not used yet
+float ThreatCalcHelper::calcThreat(Unit* hatedUnit, Unit* /*hatingUnit*/, float threat, SpellSchoolMask schoolMask, SpellEntry const* threatSpell)
 {
-    if (pThreatSpell)
+    if (threatSpell)
     {
-        if (pThreatSpell->AttributesEx & SPELL_ATTR_EX_NO_THREAT)
+        if (threatSpell->AttributesEx & SPELL_ATTR_EX_NO_THREAT)
             return 0.0f;
 
-        if (SpellThreatEntry const*  threatEntry = sSpellMgr.GetSpellThreatEntry(pThreatSpell->Id))
+        if (SpellThreatEntry const*  threatEntry = sSpellMgr.GetSpellThreatEntry(threatSpell->Id))
             if (threatEntry->pctMod != 1.0f)
-                pThreat *= threatEntry->pctMod;
+                threat *= threatEntry->pctMod;
 
         // Energize is not affected by Mods
         for (uint8 i = 0; i < MAX_SPELL_EFFECTS; i++)
-            if (pThreatSpell->Effect[i] == SPELL_EFFECT_ENERGIZE || pThreatSpell->EffectApplyAuraName[i] == SPELL_AURA_PERIODIC_ENERGIZE)
-                return pThreat;
+            if (threatSpell->Effect[i] == SPELL_EFFECT_ENERGIZE || threatSpell->EffectApplyAuraName[i] == SPELL_AURA_PERIODIC_ENERGIZE)
+                return threat;
 
-        if (Player* modOwner = pHatedUnit->GetSpellModOwner())
-            modOwner->ApplySpellMod(pThreatSpell->Id, SPELLMOD_THREAT, pThreat);
+        if (Player* modOwner = hatedUnit->GetSpellModOwner())
+            modOwner->ApplySpellMod(threatSpell->Id, SPELLMOD_THREAT, threat);
     }
 
-    float threat = pHatedUnit->ApplyTotalThreatModifier(pThreat, schoolMask);
-    return threat;
+    return hatedUnit->ApplyTotalThreatModifier(threat, schoolMask);
+}
+
+bool ThreatCalcHelper::isValidProcess(Unit* hatedUnit, Unit* hatingUnit, SpellEntry const* /*threatSpell*/)
+{
+    //function deals with adding threat and adding players and pets into ThreatList
+    //mobs, NPCs, guards have ThreatList and HateOfflineList
+    //players and pets have only InHateListOf
+    //HateOfflineList is used co contain unattackable victims (in-flight, in-water, GM etc.)
+
+    if (!hatedUnit || !hatingUnit)
+        return false;
+
+    // not to self
+    if (hatedUnit == hatingUnit)
+        return false;
+
+    // not to GM
+    if (hatedUnit->GetTypeId() == TYPEID_PLAYER && hatedUnit->ToPlayer()->isGameMaster())
+        return false;
+
+    // not to dead and not for dead
+    if (!hatedUnit->IsAlive() || !hatingUnit->IsAlive())
+        return false;
+
+    ASSERT(hatingUnit->GetTypeId() == TYPEID_UNIT);
+
+    return true;
 }
 
 //============================================================
@@ -62,7 +88,7 @@ float ThreatCalcHelper::calcThreat(Unit* pHatedUnit, Unit* /*pHatingUnit*/, floa
 HostileReference::HostileReference(Unit* pUnit, ThreatManager* pThreatManager, float pThreat)
 {
     iThreat = pThreat;
-    iTempThreatModifyer = 0.0f;
+    iTempThreatModifier = 0.0f;
     link(pUnit, pThreatManager);
     iUnitGuid = pUnit->GetGUID();
     iOnline = true;
@@ -121,6 +147,13 @@ void HostileReference::addThreat(float pMod)
         if (victim_owner && victim_owner->IsAlive())
             getSource()->addThreat(victim_owner, 0.0f);     // create a threat to the owner of a pet, if the pet attacks
     }
+}
+
+void HostileReference::addThreatPercent(int32 percent)
+{
+    float tmpThreat = iThreat;
+    AddPct(tmpThreat, percent);
+    addThreat(tmpThreat - iThreat);
 }
 
 //============================================================
@@ -359,56 +392,47 @@ void ThreatManager::clearReferences()
 
 //============================================================
 
-void ThreatManager::addThreat(Unit* pVictim, float pThreat, SpellSchoolMask schoolMask, SpellEntry const* pThreatSpell)
+void ThreatManager::addThreat(Unit* victim, float threat, SpellSchoolMask schoolMask, SpellEntry const *threatSpell)
 {
-    //function deals with adding threat and adding players and pets into ThreatList
-    //mobs, NPCs, guards have ThreatList and HateOfflineList
-    //players and pets have only InHateListOf
-    //HateOfflineList is used co contain unattackable victims (in-flight, in-water, GM etc.)
-
-    // not to self
-    if (pVictim == getOwner())
+    if (!ThreatCalcHelper::isValidProcess(victim, getOwner(), threatSpell))
         return;
 
-    // not to GM
-    if (!pVictim || (pVictim->GetTypeId() == TYPEID_PLAYER && pVictim->ToPlayer()->isGameMaster()))
-        return;
-
-    // not to dead and not for dead
-    if (!pVictim->IsAlive() || !getOwner()->IsAlive())
-        return;
-
-    ASSERT(getOwner()->GetTypeId() == TYPEID_UNIT);
-
-    float threat = ThreatCalcHelper::calcThreat(pVictim, iOwner, pThreat, schoolMask, pThreatSpell);
-
-    // must check > 0.0f, otherwise dead loop
-    if (threat > 0.0f && pVictim->GetReducedThreatPercent())
-    {
-        float reducedThreat = threat * pVictim->GetReducedThreatPercent() / 100;
-        threat -= reducedThreat;
-        if (Unit* unit = pVictim->GetMisdirectionTarget())
-            _addThreat(unit, reducedThreat);
-    }
-
-    _addThreat(pVictim, threat);
+    doAddThreat(victim, ThreatCalcHelper::calcThreat(victim, iOwner, threat, schoolMask, threatSpell));
 }
 
-void ThreatManager::_addThreat(Unit* pVictim, float threat)
+void ThreatManager::doAddThreat(Unit* victim, float threat)
 {
-    HostileReference* ref = iThreatContainer.addThreat(pVictim, threat);
+    uint32 reducedThreadPercent = victim->GetReducedThreatPercent();
+
+    // must check > 0.0f, otherwise dead loop
+    if (threat > 0.0f && reducedThreadPercent)
+    {
+        Unit* redirectTarget = victim->GetMisdirectionTarget();
+
+        float reducedThreat = threat * reducedThreadPercent / 100.0f;
+        threat -= reducedThreat;
+        if (redirectTarget)
+            _addThreat(redirectTarget, reducedThreat);
+    }
+
+    _addThreat(victim, threat);
+}
+
+void ThreatManager::_addThreat(Unit* victim, float threat)
+{
+    HostileReference* ref = iThreatContainer.addThreat(victim, threat);
     // Ref is not in the online refs, search the offline refs next
     if (!ref)
-        ref = iThreatOfflineContainer.addThreat(pVictim, threat);
+        ref = iThreatOfflineContainer.addThreat(victim, threat);
 
-    if (!ref)                                                // there was no ref => create a new one
+    if (!ref) // there was no ref => create a new one
     {
-        // threat has to be 0 here
-        HostileReference* hostileReference = new HostileReference(pVictim, this, 0);
-        iThreatContainer.addReference(hostileReference);
-        hostileReference->addThreat(threat);                 // now we add the real threat
-        if (pVictim->GetTypeId() == TYPEID_PLAYER && pVictim->ToPlayer()->isGameMaster())
-            hostileReference->setOnlineOfflineState(false);  // GM is always offline
+                                                            // threat has to be 0 here
+        HostileReference* hostileRef = new HostileReference(victim, this, 0);
+        iThreatContainer.addReference(hostileRef);
+        hostileRef->addThreat(threat); // now we add the real threat
+        if (victim->GetTypeId() == TYPEID_PLAYER && victim->ToPlayer()->isGameMaster())
+            hostileRef->setOnlineOfflineState(false); // GM is always offline
     }
 }
 
