@@ -14,6 +14,7 @@ project(OregonCore)
 # CMake policies (can not be handled elsewhere)
 cmake_minimum_required(VERSION 2.8)
 cmake_policy(SET CMP0005 NEW)
+cmake_policy(SET CMP0054 OLD)
 
 # Set RPATH-handing (CMake parameters)
 set(CMAKE_SKIP_BUILD_RPATH 0)
