@@ -3878,6 +3878,16 @@ void Aura::HandleAuraModDecreaseSpeed(bool apply, bool Real)
     if (!Real)
         return;
 
+    /// @todo: Not sure if all spells with this aura shouldn't dispel stealth \
+    /// perhaps all not passive negative area auras should?
+    switch (m_spellProto->Id)
+    {
+        case 12323: // Piercing Howl
+            if (apply)
+                m_target->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+            break;
+    }
+
     m_target->UpdateSpeed(MOVE_RUN, true);
     m_target->UpdateSpeed(MOVE_SWIM, true);
     m_target->UpdateSpeed(MOVE_FLIGHT, true);
