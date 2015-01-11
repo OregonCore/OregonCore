@@ -7809,6 +7809,8 @@ uint32 Unit::SpellDamageBonus(Unit* pVictim, SpellEntry const* spellProto, uint3
                     TakenTotalMod *= (100.0f + (*i)->GetModifier()->m_amount) / 100.0f;
                 break;
             // Increased Lightning Damage
+            case 4554:
+            case 5142:
             case 6008:
                 if (spellProto->SpellFamilyName == SPELLFAMILY_SHAMAN && spellProto->SpellFamilyFlags & 0x03)
                     pdamage += (*i)->GetSpellProto()->EffectBasePoints[(*i)->GetEffIndex()] + 1;
