@@ -3872,7 +3872,7 @@ void Aura::HandleAuraModIncreaseSwimSpeed(bool /*apply*/, bool Real)
     m_target->UpdateSpeed(MOVE_SWIM, true);
 }
 
-void Aura::HandleAuraModDecreaseSpeed(bool /*apply*/, bool Real)
+void Aura::HandleAuraModDecreaseSpeed(bool apply, bool Real)
 {
     // all applied/removed only at real aura add/remove
     if (!Real)
@@ -5414,6 +5414,8 @@ void Aura::HandleShapeshiftBoosts(bool apply)
     {
     case FORM_CAT:
         spellId = 3025;
+        if (m_target->HasSpell(5225) && !m_target->GetUInt32Value(PLAYER_TRACK_CREATURES) && !m_target->GetUInt32Value(PLAYER_TRACK_RESOURCES))
+            spellId2 = 5225; // Track Humanoids
         HotWSpellId = 24900;
         break;
     case FORM_TREE:
