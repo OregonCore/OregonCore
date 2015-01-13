@@ -2056,14 +2056,12 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
     {
         switch (GetId())
         {
-            case 29266:
-            {
-                m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
-                m_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
-                m_target->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
-                m_target->AddUnitState(UNIT_STATE_DIED);
-                return;
-            }
+         case 29266:
+            m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
+            m_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
+            m_target->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+            m_target->AddUnitState(UNIT_STATE_DIED);
+            return;
         case 1515:                                      // Tame beast
             // FIX_ME: this is 2.0.12 threat effect replaced in 2.1.x by dummy aura, must be checked for correctness
             if (caster && m_target->CanHaveThreatList())
@@ -2072,7 +2070,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
         case 7057:                                      // Haunting Spirits
             // expected to tick with 30 sec period (tick part see in Aura::PeriodicTick)
             m_isPeriodic = true;
-            m_modifier.periodictime = 30 * IN_MILLISECONDS;
+            m_modifier.periodictime = 30000 * IN_MILLISECONDS;
             m_periodicTimer = m_modifier.periodictime;
             return;
         case 13139:                                     // net-o-matic
