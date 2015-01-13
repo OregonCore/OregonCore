@@ -3626,6 +3626,7 @@ bool Unit::AddAura(Aura* Aur)
                     aur2->SetAuraProcCharges(Aur->m_procCharges);
                     aur2->UpdateAuraDuration();
                     aur2->UpdateAuraCharges();
+                    *aur2->GetModifier() = *Aur->GetModifier();
                     delete Aur;
                     return true;
                 }
