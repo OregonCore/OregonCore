@@ -2055,7 +2055,7 @@ void Unit::CalcAbsorbResist(Unit* pVictim, SpellSchoolMask schoolMask, DamageEff
 
             // Damage can be splitted only if aura has an alive caster
             Unit* caster = (*i)->GetCaster();
-            if (!caster || caster == pVictim || !caster->IsInWorld() || !caster->IsAlive())
+            if (!caster || caster == pVictim || !caster->IsInWorld() || !caster->IsAlive() || caster->IsImmunedToDamage((SpellSchoolMask)(*i)->GetSpellProto()->SchoolMask))
                 continue;
 
             int32 currentAbsorb;
@@ -2084,7 +2084,7 @@ void Unit::CalcAbsorbResist(Unit* pVictim, SpellSchoolMask schoolMask, DamageEff
 
             // Damage can only be split if the aura has an alive caster linked
             Unit* caster = (*i)->GetCaster();
-            if (!caster || caster == pVictim || !caster->IsInWorld() || !caster->isAlive() || caster->IsImmunedToDamage((SpellSchoolMask)(*i)->GetSpellProto()->SchoolMask))
+            if (!caster || caster == pVictim || !caster->IsInWorld() || !caster->IsAlive() || caster->IsImmunedToDamage((SpellSchoolMask)(*i)->GetSpellProto()->SchoolMask))
                 continue;
 
             uint32 splitted = CalculatePct(RemainingDamage, (*i)->GetModifier()->m_amount);
