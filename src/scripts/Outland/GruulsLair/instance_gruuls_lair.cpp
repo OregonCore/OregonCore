@@ -101,14 +101,19 @@ struct instance_gruuls_lair : public ScriptedInstance
     {
         switch (pGo->GetEntry())
         {
-        case 184468:
+        case 183817:
             MaulgarDoor = pGo->GetGUID();
-            if (Encounters[0] == DONE) HandleGameObject(0, true, pGo);
             break;
         case 184662:
             GruulDoor = pGo->GetGUID();
             break;
         }
+    }
+
+    void OpenDoor(uint64 guid, bool open)
+    {
+        if (GameObject* door = instance->GetGameObject(guid))
+            door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
     }
 
     void SetData64(uint32 type, uint64 data)
@@ -147,15 +152,15 @@ struct instance_gruuls_lair : public ScriptedInstance
         {
         case DATA_MAULGAREVENT:
             if (data == DONE)
-                HandleGameObject(MaulgarDoor, true);
+                OpenDoor(MaulgarDoor, true);
             if (Encounters[0] != DONE)
                 Encounters[0] = data;
             break;
         case DATA_GRUULEVENT:
             if (data == IN_PROGRESS)
-                HandleGameObject(GruulDoor, false);
+                OpenDoor(GruulDoor, false);
             else
-                HandleGameObject(GruulDoor, true);
+                OpenDoor(GruulDoor, true);
             if (Encounters[1] != DONE)
                 Encounters[1] = data;
             break;
@@ -182,15 +187,9 @@ struct instance_gruuls_lair : public ScriptedInstance
         OUT_SAVE_INST_DATA;
         std::ostringstream stream;
         stream << Encounters[0] << " " << Encounters[1];
-        char* out = new char[stream.str().length() + 1];
-        strcpy(out, stream.str().c_str());
-        if (out)
-        {
-            OUT_SAVE_INST_DATA_COMPLETE;
-            return out;
-        }
 
-        return NULL;
+        OUT_SAVE_INST_DATA_COMPLETE;
+        return stream.str().c_str();
     }
 
     void Load(const char* in)
@@ -207,6 +206,10 @@ struct instance_gruuls_lair : public ScriptedInstance
         for (uint8 i = 0; i < ENCOUNTERS; ++i)
             if (Encounters[i] == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
                 Encounters[i] = NOT_STARTED;
+
+        SetData(DATA_MAULGAREVENT, Encounters[0]);
+        SetData(DATA_GRUULEVENT, Encounters[1]);
+
         OUT_LOAD_INST_DATA_COMPLETE;
     }
 };
