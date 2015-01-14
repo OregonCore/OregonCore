@@ -50,7 +50,7 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T& owner)
 
     float x, y, z;
     Traveller<T> traveller(owner);
-    if (i_destinationHolder.HasDestination() && !m_pathPointsSent)
+    if (i_destinationHolder.HasDestination())
     {
         if (i_destinationHolder.HasArrived())
         {
@@ -71,12 +71,12 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T& owner)
                     return false;
             }
         }
-        else
+        else if (!m_pathPointsSent)
         {
             bool stop = false;
             if (!i_offset)
             {
-                if (i_target->IsWithinMeleeRange(&owner, 0.0f))
+                if (i_target->IsWithinMeleeRange(&owner))
                     stop = true;
             }
             else if (!i_angle && !owner.HasUnitState(UNIT_STATE_FOLLOW))
@@ -140,8 +140,7 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T& owner)
                 }
                 else
                 {
-                    i_destinationHolder.SetDestination(traveller, x, y, z);
-                    i_destinationHolder.StartTravel(traveller, false);
+                    i_destinationHolder.SetDestination(traveller, x, y, z, false);
                     owner.StopMoving();
                     return false;
                 }
@@ -151,6 +150,7 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T& owner)
         if (i_target->GetExactDistSq(i_targetX, i_targetY, i_targetZ) < 0.01f)
             return false;
     }
+
 
     if (!i_offset)
     {
@@ -381,7 +381,7 @@ bool TargetedMovementGenerator<T>::Update(T& owner, const uint32& time_diff)
             }
 
             // target moved
-            if (!i_path || targetMoved || needNewDest || (targetMoved && forceRecalc))
+            if (!i_path || targetMoved || needNewDest || forceRecalc)
             {
                 // (re)calculate path
                 if (!_setTargetLocation(owner))
