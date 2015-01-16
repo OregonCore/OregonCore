@@ -319,11 +319,8 @@ inline bool IsAreaAuraEffect(uint32 effect)
 inline bool IsDispel(SpellEntry const* spellInfo)
 {
     //spellsteal is also dispel
-    if (spellInfo->Effect[0] == SPELL_EFFECT_DISPEL ||
-        spellInfo->Effect[1] == SPELL_EFFECT_DISPEL ||
-        spellInfo->Effect[2] == SPELL_EFFECT_DISPEL)
-        return true;
-    return false;
+    return IsSpellHaveEffect(spellInfo, SPELL_EFFECT_DISPEL) ||
+           IsSpellHaveEffect(spellInfo, SPELL_EFFECT_DISPEL_MECHANIC);
 }
 inline bool IsDispelSpell(SpellEntry const* spellInfo)
 {
