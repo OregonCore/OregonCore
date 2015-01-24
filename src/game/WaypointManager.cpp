@@ -48,16 +48,15 @@ void WaypointStore::Load()
     }
 
     WaypointPath* path_data = NULL;
-    uint32 total_records = result->GetRowCount();
 
     uint32 count = 0;
     Field* fields;
-    uint32 last_id = 0;
+    uint64 last_id = 0xFFFFFFFF + 1;
 
     do
     {
         fields = result->Fetch();
-        uint32 id = fields[0].GetUInt32();
+        uint64 id = fields[0].GetUInt32();
         count++;
         WaypointData* wp = new WaypointData;
 
