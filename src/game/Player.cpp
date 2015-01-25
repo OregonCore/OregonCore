@@ -1846,6 +1846,8 @@ void Player::ProcessDelayedOperations()
     {
         if (m_bgData.mountSpell)
         {
+            RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
+            RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
             CastSpell(this, m_bgData.mountSpell, true);
             m_bgData.mountSpell = 0;
         }
