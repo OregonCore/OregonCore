@@ -18,6 +18,7 @@
 #include "ObjectMgr.h"
 #include "WorldPacket.h"
 #include "ArenaTeam.h"
+#include "BattleGroundMgr.h"
 
 void ArenaTeamMember::ModifyPersonalRating(Player* plr, int32 mod, uint32 slot)
 {
@@ -276,6 +277,22 @@ void ArenaTeam::DelMember(uint64 guid)
 
     if (Player* player = sObjectMgr.GetPlayer(guid))
     {
+        // remove from arena queue, if queued
+        for (uint8 i = 0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
+        {
+            if (uint32 bgQueueType = player->GetBattleGroundQueueId(i))
+            {
+                BattleGround* bg = sBattleGroundMgr.GetBattleGroundTemplate(bgQueueType);
+                if (!bg || !bg->isArena())
+                    break;
+
+                WorldPacket data;
+                sBattleGroundMgr.BuildBattleGroundStatusPacket(&data, bg, player->GetTeam(), player->GetBattleGroundQueueIndex(bgQueueType), STATUS_NONE, 0, 0);
+                player->GetSession()->SendPacket(&data);
+                sBattleGroundMgr.m_BattleGroundQueues[bgQueueType].RemovePlayer(player->GetGUID(), false);
+            }
+        }
+
         player->SetInArenaTeam(0, GetSlot());
         player->GetSession()->SendArenaTeamCommandResult(ERR_ARENA_TEAM_QUIT_S, GetName(), "", 0);
         // delete all info regarding this team
