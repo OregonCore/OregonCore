@@ -281,7 +281,6 @@ class Spell
         void EffectSummonChangeItem(SpellEffIndex effIndex);
         void EffectOpenSecretSafe(SpellEffIndex effIndex);
         void EffectProficiency(SpellEffIndex effIndex);
-        void EffectApplyAreaAura(SpellEffIndex effIndex);
         void EffectSummonType(SpellEffIndex effIndex);
         void EffectLearnSpell(SpellEffIndex effIndex);
         void EffectDispel(SpellEffIndex effIndex);
