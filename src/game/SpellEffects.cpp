@@ -2925,6 +2925,8 @@ void Spell::EffectPersistentAA(SpellEffIndex effIndex)
 
     Unit* caster = m_caster->GetEntry() == WORLD_TRIGGER ? m_originalCaster : m_caster;
     int32 duration = GetSpellDuration(m_spellInfo);
+    if (Player* modOwner = m_originalCaster->GetSpellModOwner())
+        modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_DURATION, duration);
     DynamicObject* dynObj = new DynamicObject;
     if (!dynObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), caster, m_spellInfo->Id, effIndex, m_targets.m_dstPos, duration, radius))
     {
