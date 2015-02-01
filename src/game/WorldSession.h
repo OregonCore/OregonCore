@@ -712,6 +712,15 @@ class WorldSession
         void LogUnexpectedOpcode(WorldPacket* packet, const char* reason);
         void LogUnprocessedTail(WorldPacket* packet);
 
+        // EnumData helpers
+        bool CharCanLogin(uint32 lowGUID)
+        {
+            return _allowedCharsToLogin.find(lowGUID) != _allowedCharsToLogin.end();
+        }
+        // this stores the GUIDs of the characters who can login
+        // characters who failed on Player::BuildEnumData shouldn't login
+        std::set<uint32> _allowedCharsToLogin;
+
         Player* _player;
         WorldSocket* m_Socket;
         std::string m_Address;

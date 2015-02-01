@@ -142,6 +142,7 @@ void WorldSession::HandleCharEnum(QueryResult_AutoPtr result)
 
     data << num;
 
+    _allowedCharsToLogin.clear();
     if (result)
     {
         do
@@ -149,7 +150,10 @@ void WorldSession::HandleCharEnum(QueryResult_AutoPtr result)
             uint32 guidlow = (*result)[0].GetUInt32();
             sLog.outDetail("Loading char guid %u from account %u.", guidlow, GetAccountId());
             if (Player::BuildEnumData(result, &data))
+            {
+                _allowedCharsToLogin.insert(guidlow);
                 ++num;
+            }
         }
         while (result->NextRow());
     }
@@ -450,7 +454,8 @@ void WorldSession::HandlePlayerLoginOpcode(WorldPacket& recv_data)
 {
     if (PlayerLoading() || GetPlayer() != NULL)
     {
-        sLog.outError("Player tryes to login again, AccountId = %d", GetAccountId());
+        sLog.outError("Player tries to login again, AccountId = %d", GetAccountId());
+        KickPlayer();
         return;
     }
 
@@ -460,6 +465,13 @@ void WorldSession::HandlePlayerLoginOpcode(WorldPacket& recv_data)
     DEBUG_LOG("WORLD: Recvd Player Logon Message");
 
     recv_data >> playerGuid;
+
+    if (!CharCanLogin(GUID_LOPART(playerGuid)))
+    {
+        sLog.outError("Account (%u) can't login with that character (%u).", GetAccountId(), GUID_LOPART(playerGuid));
+        KickPlayer();
+        return;
+    }
 
     if (!CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE guid='%d' AND account='%d'", GUID_LOPART(playerGuid), GetAccountId()))
         KickPlayer();
