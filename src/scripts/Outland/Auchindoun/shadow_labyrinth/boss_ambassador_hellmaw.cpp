@@ -41,7 +41,10 @@ EndScriptData */
 #define SPELL_BANISH            30231
 #define SPELL_CORROSIVE_ACID    23313
 #define SPELL_FEAR              33547
-#define SPELL_ENRAGE            0                           //need to find proper spell
+#define SPELL_ENRAGE            26662
+
+#define PATH_PATROL              2100
+#define PATH_FINAL               2101
 
 struct boss_ambassador_hellmawAI : public ScriptedAI
 {
@@ -55,15 +58,20 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
     bool HeroicMode;
 
     uint32 EventCheck_Timer;
+    uint32 Banish_Timer;
     uint32 CorrosiveAcid_Timer;
     uint32 Fear_Timer;
     uint32 Enrage_Timer;
+    uint32 OnPath_Delay;
     bool Intro;
     bool IsBanished;
+    bool patrol;
 
     void Reset()
     {
+        //me->ApplySpellImmune(SPELL_BANISH, IMMUNITY_EFFECT, 0, false);
         EventCheck_Timer = 5000;
+        Banish_Timer = 0;
         CorrosiveAcid_Timer = 25000;
         Fear_Timer = 40000;
         Enrage_Timer = 180000;
@@ -72,17 +80,11 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
 
         if (pInstance)
         {
-            if (pInstance->GetData(TYPE_HELLMAW) == NOT_STARTED)
+            if (pInstance->GetData(TYPE_HELLMAW) == NOT_STARTED || pInstance->GetData(TYPE_RITUALIST) != DONE)
             {
+                me->RemoveAurasDueToSpell(SPELL_BANISH);
                 DoCast(me, SPELL_BANISH);
                 IsBanished = true;
-            }
-            else pInstance->SetData(TYPE_HELLMAW, FAIL);
-            if (pInstance->GetData(TYPE_OVERSEER) == DONE)
-            {
-                if (me->HasAura(SPELL_BANISH, 0))
-                    me->RemoveAurasDueToSpell(SPELL_BANISH);
-                Intro = true;
             }
         }
     }
@@ -117,17 +119,20 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
 
     void EnterCombat(Unit*)
     {
+        if (me->HasAura(SPELL_BANISH,0))
+            return;
+
         switch (rand() % 3)
         {
-        case 0:
-            DoScriptText(SAY_AGGRO1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_AGGRO2, me);
-            break;
-        case 2:
-            DoScriptText(SAY_AGGRO3, me);
-            break;
+            case 0:
+                DoScriptText(SAY_AGGRO1, me);
+                break;
+            case 1:
+                DoScriptText(SAY_AGGRO2, me);
+                break;
+            case 2:
+                DoScriptText(SAY_AGGRO3, me);
+                break;
         }
     }
 
@@ -135,12 +140,12 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
     {
         switch (rand() % 2)
         {
-        case 0:
-            DoScriptText(SAY_SLAY1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY2, me);
-            break;
+            case 0:
+                DoScriptText(SAY_SLAY1, me);
+                break;
+            case 1:
+                DoScriptText(SAY_SLAY2, me);
+                break;
         }
     }
 
@@ -154,25 +159,52 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
+        if (!pInstance)
+            return;
+
+        if (IsBanished)
+        {
+            if (Banish_Timer < diff)
+            {
+                me->RemoveAurasDueToSpell(SPELL_BANISH);
+                me->CastSpell(me, SPELL_BANISH, false, 0, 0, 0);
+                Banish_Timer = 40000;
+            }
+            else
+                Banish_Timer -= diff;
+        }
+
         if (!Intro)
         {
             if (EventCheck_Timer <= diff)
             {
                 if (pInstance)
                 {
-                    if (pInstance->GetData(TYPE_OVERSEER) == DONE)
+                    if (pInstance->GetData(TYPE_RITUALIST) == DONE)
+                    {
+                        OnPath_Delay = 0;
                         DoIntro();
+                    }
                 }
                 EventCheck_Timer = 5000;
             }
             else EventCheck_Timer -= diff;
         }
 
-        if (!me->IsInCombat() && !IsBanished)
+        if (!me->IsInCombat() && !IsBanished && !OnPath_Delay)
         {
-            //this is where we add MovePoint()
-            //DoWhine("I haz no mount!", LANG_UNIVERSAL, NULL);
+            me->GetMotionMaster()->MovePath(PATH_PATROL, false);
+            OnPath_Delay = 55000;
+            patrol = false;
         }
+
+        if (!me->IsInCombat() && !patrol && OnPath_Delay < diff)
+        {
+            me->GetMotionMaster()->MovePath(PATH_FINAL, true);
+            patrol = true;
+        }
+        else
+            OnPath_Delay -= diff;
 
         if (!UpdateVictim())
             return;
@@ -197,13 +229,14 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
         }
         else Fear_Timer -= diff;
 
-        /*if (HeroicMode)
+        if (HeroicMode)
         {
             if (Enrage_Timer <= diff)
             {
                 DoCast(me,SPELL_ENRAGE);
+                Enrage_Timer = 5*MINUTE*1000;
             } else Enrage_Timer -= diff;
-        }*/
+        }
 
         DoMeleeAttackIfReady();
     }
