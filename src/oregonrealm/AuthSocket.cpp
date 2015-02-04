@@ -189,7 +189,7 @@ AuthSocket::~AuthSocket()
 // Accept the connection and set the s random value for SRP6
 void AuthSocket::OnAccept()
 {
-    sLog.outBasic("Accepting connection from '%s'", get_remote_address().c_str());
+    sLog.outBasic("'%s' Accepting connection", getRemoteAddress().c_str());
 }
 
 // Read the packet from the client
@@ -224,10 +224,10 @@ void AuthSocket::OnRead()
             }
         }
 
-        // Report unknown commands in the debug log
+        // Report unknown packets in the error log
         if (i == AUTH_TOTAL_COMMANDS)
         {
-            DEBUG_LOG("[Auth] got unknown packet %u", (uint32)_cmd);
+            sLog.outError("[Auth] got unknown packet from '%s'", getRemoteAddress().c_str());
             return;
         }
     }
@@ -366,7 +366,7 @@ bool AuthSocket::_HandleLogonChallenge()
 
     // Verify that this IP is not in the ip_banned table
     // No SQL injection possible (paste the IP address as passed by the socket)
-    std::string address = get_remote_address();
+    std::string address = getRemoteAddress();
     LoginDatabase.escape_string(address);
     QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT unbandate FROM ip_banned WHERE "
                                  //    permanent                    still banned
@@ -374,7 +374,8 @@ bool AuthSocket::_HandleLogonChallenge()
     if (result)
     {
         pkt << (uint8)WOW_FAIL_BANNED;
-        sLog.outBasic("[AuthChallenge] Banned ip %s tries to login!", get_remote_address().c_str());
+        sLog.outBasic("'%s' [AuthChallenge] Banned ip tries to login!", getRemoteAddress().c_str());
+
     }
     else
     {
@@ -394,8 +395,8 @@ bool AuthSocket::_HandleLogonChallenge()
             if ((*result)[2].GetUInt8() == 1)                // if ip is locked
             {
                 DEBUG_LOG("[AuthChallenge] Account '%s' is locked to IP - '%s'", _login.c_str(), (*result)[3].GetString());
-                DEBUG_LOG("[AuthChallenge] Player address is '%s'", get_remote_address().c_str());
-                if ( strcmp((*result)[3].GetString(), get_remote_address().c_str()) )
+                DEBUG_LOG("[AuthChallenge] Player address is '%s'", getRemoteAddress().c_str());
+                if ( strcmp((*result)[3].GetString(), getRemoteAddress().c_str()) )
                 {
                     DEBUG_LOG("[AuthChallenge] Account IP differs");
                     pkt << (uint8) WOW_FAIL_LOCKED_ENFORCED;
@@ -645,7 +646,7 @@ bool AuthSocket::_HandleLogonProof()
         // Update the sessionkey, last_ip, last login time and reset number of failed logins in the account table for this account
         // No SQL injection (escaped user name) and IP address as received by socket
         const char* K_hex = K.AsHexStr();
-        LoginDatabase.PExecute("UPDATE account SET sessionkey = '%s', last_ip = '%s', last_login = NOW(), locale = '%u', os = '%s', failed_logins = 0 WHERE username = '%s'", K_hex, get_remote_address().c_str(), GetLocaleByName(_localizationName), _os.c_str(), _safelogin.c_str() );
+        LoginDatabase.PExecute("UPDATE account SET sessionkey = '%s', last_ip = '%s', last_login = NOW(), locale = '%u', os = '%s', failed_logins = 0 WHERE username = '%s'", K_hex, getRemoteAddress().c_str(), GetLocaleByName(_localizationName), _os.c_str(), _safelogin.c_str() );
         OPENSSL_free((void*)K_hex);
 
         // Finish SRP6 and send the final result to the client
@@ -699,7 +700,7 @@ bool AuthSocket::_HandleLogonProof()
                     }
                     else
                     {
-                        std::string current_ip = get_remote_address();
+                        std::string current_ip = getRemoteAddress();
                         LoginDatabase.escape_string(current_ip);
                         LoginDatabase.PExecute("INSERT INTO ip_banned VALUES ('%s',UNIX_TIMESTAMP(),UNIX_TIMESTAMP()+'%u','Oregon realmd','Failed login autoban')",
                                                current_ip.c_str(), WrongPassBanTime);

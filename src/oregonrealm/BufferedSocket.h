@@ -47,7 +47,7 @@ class BufferedSocket: public ACE_Svc_Handler<ACE_SOCK_STREAM, ACE_NULL_SYNCH>
 
         bool send(const char* buf, size_t len);
 
-        const std::string& get_remote_address(void) const;
+        const std::string& getRemoteAddress(void) const;
 
         virtual int open(void*);
 
@@ -66,7 +66,7 @@ class BufferedSocket: public ACE_Svc_Handler<ACE_SOCK_STREAM, ACE_NULL_SYNCH>
         ACE_Message_Block input_buffer_;
 
     protected:
-        std::string remote_address_;
+        std::string _remoteAddress;
 
 };
 

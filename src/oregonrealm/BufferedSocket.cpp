@@ -27,7 +27,7 @@
 
 BufferedSocket::BufferedSocket(void):
     input_buffer_(4096),
-    remote_address_("<unknown>")
+    _remoteAddress("<unknown>")
 {
 }
 
@@ -49,16 +49,16 @@ BufferedSocket::BufferedSocket(void):
 
     addr.get_host_addr(address, 1024);
 
-    this->remote_address_ = address;
+    _remoteAddress = addr.get_host_addr();
 
     this->OnAccept();
 
     return 0;
 }
 
-const std::string& BufferedSocket::get_remote_address(void) const
+const std::string& BufferedSocket::getRemoteAddress(void) const
 {
-    return this->remote_address_;
+    return _remoteAddress;
 }
 
 size_t BufferedSocket::recv_len(void) const
