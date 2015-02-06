@@ -69,20 +69,18 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
 
     void Reset()
     {
-        //me->ApplySpellImmune(SPELL_BANISH, IMMUNITY_EFFECT, 0, false);
         EventCheck_Timer = 5000;
         Banish_Timer = 0;
         CorrosiveAcid_Timer = 25000;
         Fear_Timer = 40000;
         Enrage_Timer = 180000;
-        Intro = false;
         IsBanished = false;
+        Intro = false;
 
         if (pInstance)
         {
-            if (pInstance->GetData(TYPE_HELLMAW) == NOT_STARTED || pInstance->GetData(TYPE_RITUALIST) != DONE)
+            if (pInstance->GetData(TYPE_HELLMAW) == NOT_STARTED)
             {
-                me->RemoveAurasDueToSpell(SPELL_BANISH);
                 DoCast(me, SPELL_BANISH);
                 IsBanished = true;
             }
@@ -119,34 +117,18 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
 
     void EnterCombat(Unit*)
     {
-        if (me->HasAura(SPELL_BANISH,0))
-            return;
-
-        switch (rand() % 3)
+        if (me->HasAura(SPELL_BANISH))
         {
-            case 0:
-                DoScriptText(SAY_AGGRO1, me);
-                break;
-            case 1:
-                DoScriptText(SAY_AGGRO2, me);
-                break;
-            case 2:
-                DoScriptText(SAY_AGGRO3, me);
-                break;
+            EnterEvadeMode();
+            return;
         }
+
+        DoScriptText(RAND(SAY_AGGRO1, SAY_AGGRO2, SAY_AGGRO3), me);
     }
 
     void KilledUnit(Unit*)
     {
-        switch (rand() % 2)
-        {
-            case 0:
-                DoScriptText(SAY_SLAY1, me);
-                break;
-            case 1:
-                DoScriptText(SAY_SLAY2, me);
-                break;
-        }
+        DoScriptText(RAND(SAY_SLAY1, SAY_SLAY2), me);
     }
 
     void JustDied(Unit*)
@@ -166,8 +148,7 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
         {
             if (Banish_Timer < diff)
             {
-                me->RemoveAurasDueToSpell(SPELL_BANISH);
-                me->CastSpell(me, SPELL_BANISH, false, 0, 0, 0);
+                DoCast(me, SPELL_BANISH, true);
                 Banish_Timer = 40000;
             }
             else
@@ -208,12 +189,6 @@ struct boss_ambassador_hellmawAI : public ScriptedAI
 
         if (!UpdateVictim())
             return;
-
-        if (me->HasAura(SPELL_BANISH, 0))
-        {
-            EnterEvadeMode();
-            return;
-        }
 
         if (CorrosiveAcid_Timer <= diff)
         {
