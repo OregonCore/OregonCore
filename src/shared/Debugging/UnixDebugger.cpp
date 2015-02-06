@@ -25,6 +25,7 @@
 #include "SystemConfig.h"
 #include "World.h"
 #include "Log.h"
+#include "Console.h"
 
 #include <sys/resource.h>
 #include <sys/types.h>
@@ -34,7 +35,6 @@
 #include <sys/sysinfo.h>
 #include <sys/ucontext.h>
 #include <execinfo.h>
-#include <cxxabi.h>
 
 #include <fstream>
 
@@ -180,6 +180,9 @@ void SignalHandler(int num, siginfo_t* info, void* ctx)
         }
     }
 
+    // safely end curses (restore terminal)
+    endwin();
+
     DumpDebugInfo(strsig, reason.str().c_str());
 
     struct sigaction sa;
@@ -212,7 +215,7 @@ void WriteBacktrace(std::stringstream& ss)
     char** symbols = backtrace_symbols(buffer, size);
 
     std::string module, func, offset, addr;
-    char* demangled;
+    const char* demangled;
 
     ss << "BackTrace ";
     if (size == BACKTRACE_SIZE)
@@ -263,9 +266,9 @@ void WriteBacktrace(std::stringstream& ss)
 
         if (func.size())
         {
-            if ((demangled = cplus_demangle(func.c_str(), DMGL_PARAMS | DMGL_ANSI)))
+            if ((demangled = atl->Demangle(func.c_str(), DMGL_PARAMS | DMGL_ANSI)))
                 func = demangled;
-            // else func is a C symbol and it needs not to be demangled (or else cplus_demangle will yield NULL)
+            // else func is a C symbol and it needs not to be demangled
         }
         else
             func = atl->GetFunction();
@@ -375,7 +378,12 @@ void DumpDebugInfo(const char* sig, const char* reason)
 
     ss << "Date: " << dateString << std::endl;
     ss << "Version: " << _FULLVERSION << std::endl;
-    ss << "Build Type: " << STRINGIFY(_BUILD_DIRECTIVE) << std::endl;
+    #if _BUILD_DIRECTIVE == Debug
+    ss << "Build Type: Debug" << std::endl;
+    #elif _BUILD_DIRECTIVE == Release
+    ss << "Build Type: Release" << std::endl;
+    #endif
+
     #if COMPILER == COMPILER_BORLAND
     ss << "Compiler: Borland" << std::endl;
     #elif COMPILER == COMPILER_GNU
@@ -431,8 +439,16 @@ void DumpDebugInfo(const char* sig, const char* reason)
     WriteBacktrace(ss);
 
     // We got all info needed now we just need to log it
+    #ifdef linux
+    char execdir[PATH_MAX] = {0};
+    ssize_t size = readlink("/proc/self/exe", execdir, PATH_MAX - 1);
+    execdir[size - (execdir + size - strrchr(execdir, '/'))] = '\0';
+    chdir(execdir);
+    printf("%s\n", execdir);
+    #endif
+
     mkdir(CRASH_DIR, 0777);
-    // not we try to chdir() to the newly created directory,
+    // now we try to chdir() to the newly created directory,
     // so coredump can also be here written if not disabled,
     // or set to absolute path
     chdir(CRASH_DIR);
@@ -468,7 +484,7 @@ void DumpDebugInfo(const char* sig, const char* reason)
     }
 
     // We always use classic stdio instead of streams for output
-    fprintf(stderr, "%s\n", ss.str().c_str());
+    fprintf(stdout, "%s\n", ss.str().c_str());
 }
 
 /* Following code is a C++ wrapper for code written by an unknown author and
@@ -514,9 +530,10 @@ bool Resolver::Resolve(unsigned long address)
     if (!abfd || !syms)
         return false;
 
-    long offset = ((long)address) - text->vma;
-    if (offset <= 0)
+    if (text->vma >= address)
         return false;
+
+    bfd_vma offset = address - text->vma;
 
     const char* file;
     const char* func;
@@ -525,7 +542,7 @@ bool Resolver::Resolve(unsigned long address)
 
     if (func)
     {
-        if (char* demangled = cplus_demangle(func, DMGL_PARAMS | DMGL_ANSI))
+        if (const char* demangled = Demangle(func, DMGL_PARAMS | DMGL_ANSI))
             func = demangled;
         else
             function = func; // doesn't need demangling
@@ -536,6 +553,21 @@ bool Resolver::Resolve(unsigned long address)
     // line has been already written
 
     return true;
+}
+
+const char* Resolver::Demangle(const char* mangled, int options)
+{
+    static char buff[255];
+    char* demangled = bfd_demangle(abfd, mangled, options);
+
+    if (demangled)
+    {
+        strcpy(buff, demangled);
+        free (demangled);
+        return buff;
+    }
+    
+    return NULL;
 }
 
 }; // namespace UnixDebugger
