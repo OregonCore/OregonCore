@@ -712,13 +712,6 @@ void AreaAura::Update(uint32 diff)
                         aur = new AreaAura(actualSpellInfo, m_effIndex, &m_modifier.m_amount, (*tIter), caster, NULL);
                     else
                         aur = new AreaAura(actualSpellInfo, m_effIndex, NULL, (*tIter), caster, NULL);
-                    
-                    if (DynamicObject* dynObj = m_target->GetDynObject(GetId(), GetEffIndex()))
-                        aur->SetAuraDuration(dynObj->GetDuration());
-                    else
-                        aur->SetAuraDuration(m_duration);
-                    aur->SetAuraMaxDuration(m_maxduration);
-
                     (*tIter)->AddAura(aur);
 
                     if (m_areaAuraType == AREA_AURA_ENEMY)
