@@ -5504,7 +5504,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
 
                     break;
                 }
-                m_caster->CastSpell(unitTarget, spellId2, true);
+                m_caster->CastSpell(unitTarget, spellId2, false);
                 return;
             }
         }
