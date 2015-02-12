@@ -1438,7 +1438,7 @@ class Unit : public WorldObject
 
         bool isMoving() const
         {
-            return (m_movementInfo.GetMovementFlags() & (MOVEFLAG_MOVING | MOVEFLAG_ROOT)) == MOVEFLAG_MOVING;
+            return HasUnitMovementFlag(MOVEFLAG_MOVING) && !HasUnitMovementFlag(MOVEFLAG_ROOT);
         }
         bool IsAlive() const
         {
@@ -2017,7 +2017,7 @@ class Unit : public WorldObject
 
         void AddUnitMovementFlag(uint32 f) { m_movementInfo.moveFlags |= f; }
         void RemoveUnitMovementFlag(uint32 f) { m_movementInfo.moveFlags &= ~f; }
-        bool HasUnitMovementFlag(uint32 f) const { return (m_movementInfo.moveFlags & f) == f; }
+        bool HasUnitMovementFlag(uint32 f) const { return m_movementInfo.moveFlags & f; }
         uint32 GetUnitMovementFlags() const { return m_movementInfo.moveFlags; }
         void SetUnitMovementFlags(uint32 f) { m_movementInfo.moveFlags = f; }
 
