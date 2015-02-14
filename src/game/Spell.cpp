@@ -605,8 +605,8 @@ void Spell::prepareDataForTriggerSystem()
         case SPELLFAMILY_HUNTER:  // Hunter Explosive Trap Effect/Immolation Trap Effect/Frost Trap Aura/Snake Trap Effect
             if (m_spellInfo->SpellFamilyFlags & 0x0000200000000014LL) m_canTrigger = true;
             break;
-        case SPELLFAMILY_PALADIN: // For Holy Shock triggers & Seal of Command need to do it
-            if (m_spellInfo->SpellFamilyFlags & 0x0001000002200000LL) m_canTrigger = true;
+        case SPELLFAMILY_PALADIN: // For Holy Shock, SoC and SoB triggers need to do it
+            if (m_spellInfo->SpellFamilyFlags & 0x0001040002200000LL) m_canTrigger = true;
             break;
         case SPELLFAMILY_ROGUE: // mutilate mainhand + offhand
             if (m_spellInfo->SpellFamilyFlags & 0x600000000LL) m_canTrigger = true;
