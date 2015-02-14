@@ -387,6 +387,8 @@ class Spell
 
         int32 CalculateDamage(uint8 i, Unit* target)
         {
+            if (m_originalCaster)
+                return m_originalCaster->CalculateSpellDamage(m_spellInfo, i, m_currentBasePoints[i], target);
             return m_caster->CalculateSpellDamage(m_spellInfo, i, m_currentBasePoints[i], target);
         }
 
