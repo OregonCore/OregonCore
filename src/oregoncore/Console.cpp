@@ -807,7 +807,7 @@ void Console::UpdateLog()
     while ((len = read(m_loggerFd, (char*)buffer, sizeof(buffer))) > 0)
     #endif
     {
-        for (i = 0; i < len - 1; i++)
+        for (i = 0; i < len; i++)
         {
             switch (buffer[i])
             {
