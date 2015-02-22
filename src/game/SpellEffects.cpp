@@ -6805,7 +6805,7 @@ void Spell::EffectBind(SpellEffIndex /*effIndex*/)
 
     // zone update
     data.Initialize(SMSG_PLAYERBOUND, 8 + 4);
-    data << uint64(player->GetGUID());
+    data << uint64(m_caster->GetGUID());
     data << uint32(area_id);
     player->SendDirectMessage(&data);
 }
