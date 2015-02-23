@@ -132,6 +132,7 @@ BattleGround::BattleGround()
     m_IsArena           = false;
     m_Winner            = 2;
     m_StartTime         = 0;
+    m_ValidStartPositionTimer = 0;
     m_Events            = 0;
     m_IsRated           = false;
     m_BuffChange        = false;
@@ -148,6 +149,7 @@ BattleGround::BattleGround()
 
     m_MapId             = 0;
     m_Map               = NULL;
+    m_StartMaxDist      = 0.0f;
 
     m_TeamStartLocX[BG_TEAM_ALLIANCE]   = 0;
     m_TeamStartLocX[BG_TEAM_HORDE]      = 0;
@@ -387,6 +389,7 @@ void BattleGround::Update(uint32 diff)
     if (GetStatus() == STATUS_WAIT_JOIN && GetPlayersSize())
     {
         ModifyStartDelayTime(diff);
+        _CheckSafePositions(diff);
 
         if (!(m_Events & BG_STARTING_EVENT_1))
         {
@@ -1903,5 +1906,32 @@ void BattleGround::Announce()
             q_max_level = sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL);
 
         sWorld.SendWorldText(LANG_BG_QUEUE_ANNOUNCE_START, bgName, q_min_level, q_max_level);
+    }
+}
+
+inline void BattleGround::_CheckSafePositions(uint32 diff)
+{
+    float maxDist = GetStartMaxDist();
+    if (!maxDist)
+        return;
+
+    m_ValidStartPositionTimer += diff;
+    if (m_ValidStartPositionTimer >= CHECK_PLAYER_POSITION_INVERVAL)
+    {
+        m_ValidStartPositionTimer = 0;
+
+        Position pos;
+        float x, y, z, o;
+        for (BattleGroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
+            if (Player* player = ObjectAccessor::FindPlayer(itr->first))
+            {
+                player->GetPosition(&pos);
+                GetTeamStartLoc(player->GetBGTeam(), x, y, z, o);
+                if (pos.GetExactDistSq(x, y, z) > maxDist)
+                {
+                    sLog.outDebug("BATTLEGROUND: Sending %s back to start location (map: %u) (possible exploit)", player->GetName(), GetMapId());
+                    player->TeleportTo(GetMapId(), x, y, z, o);
+                }
+            }
     }
 }

@@ -78,6 +78,7 @@ enum BattleGroundSpells
 
 enum BattleGroundTimeIntervals
 {
+    CHECK_PLAYER_POSITION_INVERVAL  = 1000,                 // ms
     RESURRECTION_INTERVAL           = 30000,                // ms
     REMIND_INTERVAL                 = 30000,                // ms
     INVITE_ACCEPT_WAIT_TIME         = 80000,                // ms
@@ -453,6 +454,10 @@ class BattleGround
         void AddToBGFreeSlotQueue();                        //this queue will be useful when more battlegrounds instances will be available
         void RemoveFromBGFreeSlotQueue();                   //this method could delete whole BG instance, if another free is available
 
+        void _CheckSafePositions(uint32 diff);
+        void SetStartMaxDist(float startMaxDist) { m_StartMaxDist = startMaxDist; }
+        float GetStartMaxDist() const { return m_StartMaxDist; }
+
         void DecreaseInvitedCount(uint32 team)
         {
             (team == ALLIANCE) ? --m_InvitedAlliance : --m_InvitedHorde;
@@ -731,6 +736,7 @@ class BattleGround
         uint32 m_InstanceID;                                //BattleGround Instance's GUID!
         uint32 m_Status;
         uint32 m_StartTime;
+        uint32 m_ValidStartPositionTimer;
         uint32 m_EndTime;
         uint32 m_LastResurrectTime;
         uint32 m_Queue_type;
@@ -784,6 +790,7 @@ class BattleGround
         float m_TeamStartLocY[BG_TEAMS_COUNT];
         float m_TeamStartLocZ[BG_TEAMS_COUNT];
         float m_TeamStartLocO[BG_TEAMS_COUNT];
+        float m_StartMaxDist;
 };
 #endif
 
