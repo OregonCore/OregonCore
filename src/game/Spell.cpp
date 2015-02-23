@@ -2757,11 +2757,7 @@ void Spell::update(uint32 difftime)
         (m_castPositionX != m_caster->GetPositionX() || m_castPositionY != m_caster->GetPositionY() || m_castPositionZ != m_caster->GetPositionZ()) &&
         (m_spellInfo->Effect[0] != SPELL_EFFECT_STUCK || !m_caster->HasUnitMovementFlag(MOVEFLAG_FALLINGFAR)))
     {
-        // always cancel for channeled spells
-        //if (m_spellState == SPELL_STATE_CASTING)
-        //    cancel();
         // don't cancel for melee, autorepeat, triggered and instant spells
-        //else
         if (!IsNextMeleeSwingSpell() && !IsAutoRepeat() && !m_IsTriggeredSpell && (m_spellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_MOVEMENT))
             cancel();
     }
@@ -2871,13 +2867,12 @@ void Spell::finish(bool ok)
 
     if (m_spellState == SPELL_STATE_FINISHED)
         return;
-
     m_spellState = SPELL_STATE_FINISHED;
 
     if (IsChanneledSpell(m_spellInfo))
         m_caster->UpdateInterruptMask();
 
-    if (!m_caster->IsNonMeleeSpellCast(false, false, true))
+    if (m_caster->HasUnitState(UNIT_STATE_CASTING) && !m_caster->IsNonMeleeSpellCast(false, false, true))
         m_caster->ClearUnitState(UNIT_STATE_CASTING);
 
     if (!ok)
@@ -2933,16 +2928,13 @@ void Spell::finish(bool ok)
 
 void Spell::SendCastResult(SpellCastResult result)
 {
-    if (result == SPELL_CAST_OK)
-        return;
-
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
     if (m_caster->ToPlayer()->GetSession()->PlayerLoading())  // don't send cast results at loading time
         return;
 
-    if (result != 0)
+    if (result != SPELL_CAST_OK)
     {
         WorldPacket data(SMSG_CAST_FAILED, (4 + 1 + 1));
         data << uint32(m_spellInfo->Id);
@@ -5241,7 +5233,7 @@ SpellCastResult Spell::CheckRange(bool strict)
     float range_mod = strict ? 1.25f : 6.25;
 
     SpellRangeEntry const* srange = sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex);
-    float max_range = GetSpellMaxRange(srange) + range_mod;
+    float max_range = GetSpellMaxRange(srange);// + range_mod;
     float min_range = GetSpellMinRange(srange);
     uint32 range_type = GetSpellRangeType(srange);
 
