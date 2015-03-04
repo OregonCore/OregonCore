@@ -1556,6 +1556,15 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                     AddUnitTarget(owner, i);
                 break;
             case TARGET_UNIT_PET:
+                if (Player* plr = m_caster->ToPlayer())
+                {
+                    if (Pet* pet = plr->GetPet())
+                    {
+                        AddUnitTarget(pet, i);
+                        break;
+                    }
+                }
+
                 if (Guardian* pet = m_caster->GetGuardianPet())
                     AddUnitTarget(pet, i);
                 break;
