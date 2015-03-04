@@ -103,12 +103,8 @@ void Totem::InitSummon()
     SendMessageToSet(&data, true);
 
     if (m_type == TOTEM_PASSIVE)
-    {
-        CastSpell(this, GetSpell(), true);
-        if (Aura* aura = GetAuraByCasterSpell(GetSpell(), GetGUID()))
-            if (aura->IsPeriodic())
-                aura->PeriodicTick();
-    }
+        for (unsigned long i = 0; i < sizeof(m_spells)/sizeof(m_spells[0]); ++i)
+            CastSpell(this, m_spells[i], true);
 }
 
 void Totem::UnSummon()
