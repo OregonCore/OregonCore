@@ -1550,7 +1550,7 @@ void WorldSession::HandleAcceptGrantLevel(WorldPacket& recv_data)
     if (GetPlayer()->getLevel() >= sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
         return;
 
-    buddy->SetGrantableLevels(buddy->GetFullGrantableLevels() - 1);
+    buddy->SetGrantableLevels(buddy->GetGrantableLevels() - 1.f);
     GetPlayer()->GiveLevel(GetPlayer()->getLevel() + 1.f, true);
 }
 
