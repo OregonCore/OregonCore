@@ -18970,6 +18970,11 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
     if (!u->IsVisibleInGridForPlayer(this))
         return false;
 
+    // player see dead player/ghost from own group/raid
+    if (Player const* pl = u->ToPlayer())
+        if (IsInSameRaidWith(pl))
+            return true;
+
     // always seen by owner
     if (uint64 guid = u->GetCharmerOrOwnerGUID())
         if (GetGUID() == guid)
