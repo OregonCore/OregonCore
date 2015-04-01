@@ -51,7 +51,7 @@ void WaypointStore::Load()
 
     uint32 count = 0;
     Field* fields;
-    uint64 last_id = 0xFFFFFFFF + 1;
+    uint64 last_id = 0xFFFFFFFFULL + 1;
 
     do
     {

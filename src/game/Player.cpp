@@ -16218,8 +16218,12 @@ InstancePlayerBind* Player::BindToInstance(InstanceSave* save, bool permanent, b
 
         bind.save = save;
         bind.perm = permanent;
+        
+        #ifdef OREGON_DEBUG
         if (!load)
             DEBUG_LOG("Player::BindToInstance: %s(%d) is now bound to map %d, instance %d, difficulty %d", GetName(), GetGUIDLow(), save->GetMapId(), save->GetInstanceId(), save->GetDifficulty());
+        #endif
+
         return &bind;
     }
     else

@@ -4845,12 +4845,12 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
 
         if (sdcEntry->bitMaskCondition & SDC_BTM_NEEDS_SCRIPT_CHECK)
         {
-            switch (m_spellInfo->Id)
-            {
-            default:
+            //switch (m_spellInfo->Id)
+            //{
+            //default:
                 sLog.outError("Spell %u has SDC_BTM_NEEDS_SCRIPT_CHECK in bitMaskCondition (spell_dummy_condition), but hasn't been implemented, yet.", m_spellInfo->Id);
-                break;
-            }
+            //    break;
+            //}
         }
     }
 
