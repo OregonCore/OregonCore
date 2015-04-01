@@ -4785,7 +4785,13 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
         //  creature &&  player = TARGET MUST BE ANY UNIT
         // !creature && !player = TARGET is not required
 
-        if ((creature || player) && !unitTarget)
+        // operations with target, prevent crash if there's no target
+        if (sdcEntry->bitMaskCondition & (SDC_BTM_TARGET_MUST_BE_DEAD     |
+                                          SDC_BTM_TARGET_MUST_BE_PLAYER   |
+                                          SDC_BTM_TARGET_MUST_BE_CREATURE |
+                                          SDC_BTM_TARGET_MUST_BE_HOSTILE  |
+                                          SDC_BTM_TARGET_MUST_BE_FRIENDLY |
+                                          SDC_BTM_TARGET_MUST_NOT_BE_HIER_LEVEL) && !unitTarget)
             return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
 
         if (creature)
@@ -4826,6 +4832,9 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
         if (sdcEntry->bitMaskCondition >> 18) // 32 - 14 = 18
         {
             // we have some SDC_BTM_TYPE set
+            if (!unitTarget)
+                return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+
             Creature* c = unitTarget->ToCreature();
             if (!c)
                 return SPELL_FAILED_BAD_TARGETS;
