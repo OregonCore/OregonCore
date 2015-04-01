@@ -2691,6 +2691,9 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->Effect[2] = SPELL_EFFECT_DUMMY;
             spellInfo->EffectImplicitTargetA[2] = TARGET_UNIT_TARGET_ENEMY;
             break;
+        case 5246: // Initimidating Shout - prevent double diminishing
+            spellInfo->Mechanic = MECHANIC_NONE;
+            break;
         default:
             break;
         }

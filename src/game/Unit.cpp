@@ -10015,7 +10015,8 @@ DiminishingLevels Unit::GetDiminishing(DiminishingGroup group)
         // If last spell was casted more than 15 seconds ago - reset the count.
         if (i->stack == 0 && getMSTimeDiff(i->hitTime, getMSTime()) > 15000)
         {
-            i->hitCount = DIMINISHING_LEVEL_1;
+            i->hitCount = 0;
+            i->hitTime = 0;
             return DIMINISHING_LEVEL_1;
         }
         // or else increase the count.
@@ -10109,12 +10110,8 @@ void Unit::ApplyDiminishingAura(DiminishingGroup group, bool apply)
         if (apply)
             i->stack += 1;
         else if (i->stack)
-        {
             i->stack -= 1;
-            // Remember time after last aura from group removed
-            if (i->stack == 0)
-                i->hitTime = getMSTime();
-        }
+
         break;
     }
 }

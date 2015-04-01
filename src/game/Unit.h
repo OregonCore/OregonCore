@@ -607,10 +607,10 @@ struct DiminishingReturn
 {
     DiminishingReturn(DiminishingGroup group, uint32 t, uint32 count) : DRGroup(group), hitTime(t), hitCount(count), stack(0) {}
 
-    DiminishingGroup        DRGroup: 16;
+    DiminishingGroup        DRGroup;
     uint32                  hitTime;
     uint32                  hitCount;
-    uint16                  stack: 16;
+    uint16                  stack;
 };
 
 enum MeleeHitOutcome
