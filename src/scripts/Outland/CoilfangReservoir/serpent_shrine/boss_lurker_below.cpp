@@ -307,7 +307,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
                 else WaterboltTimer -= diff;
             }
 
-            if (!UpdateCombatState())
+            if (!UpdateVictim())
                 return;
 
             DoMeleeAttackIfReady();
