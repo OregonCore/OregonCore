@@ -15,6 +15,14 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+* @file main.cpp
+* @brief Realm Server main program
+*
+* This file contains the main program for the
+* realm server
+*/
+
 #include "Common.h"
 #include "Database/DatabaseEnv.h"
 #include "RealmList.h"
@@ -79,7 +87,7 @@ void usage(const char* prog)
                    , prog);
 }
 
-// Launch the realm server
+/// Launch the realm server
 extern int main(int argc, char** argv)
 {
     // Command line parsing
@@ -304,7 +312,7 @@ extern int main(int argc, char** argv)
     return 0;
 }
 
-// Handle termination signals
+/// Handle realm servers termination signals
 /** Put the global variable stopEvent to 'true' if a termination signal is caught **/
 void OnSignal(int s)
 {
@@ -324,7 +332,7 @@ void OnSignal(int s)
     signal(s, OnSignal);
 }
 
-// Initialize connection to the database
+/// Initialize connection to the database
 bool StartDB()
 {
     std::string dbstring = sConfig.GetStringDefault("LoginDatabaseInfo", "");
@@ -344,7 +352,7 @@ bool StartDB()
     return true;
 }
 
-// Define hook 'OnSignal' for all termination signals
+/// Define hook 'OnSignal' for all termination signals
 void HookSignals()
 {
     signal(SIGINT, OnSignal);
@@ -354,7 +362,7 @@ void HookSignals()
     #endif
 }
 
-// Unhook the signals before leaving
+/// Unhook the signals before leaving
 void UnhookSignals()
 {
     signal(SIGINT, 0);
