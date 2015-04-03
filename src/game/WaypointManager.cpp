@@ -20,54 +20,48 @@
 #include "WaypointManager.h"
 #include "MapManager.h"
 
-void WaypointStore::Free()
+WaypointMgr::WaypointMgr() { }
+
+WaypointMgr::~WaypointMgr()
 {
-    for (UNORDERED_MAP<uint32, WaypointPath*>::const_iterator itr = waypoint_map.begin(); itr != waypoint_map.end(); ++itr)
+    for (WaypointPathContainer::iterator itr = _waypointStore.begin(); itr != _waypointStore.end(); ++itr)
     {
-        for (WaypointPath::const_iterator it = itr->second->begin(); it != itr->second->end(); ++it)
+        for (WaypointPath::const_iterator it = itr->second.begin(); it != itr->second.end(); ++it)
             delete *it;
-        itr->second->clear();
-        delete itr->second;
+
+        itr->second.clear();
     }
-    waypoint_map.clear();
+
+    _waypointStore.clear();
 }
 
-void WaypointStore::Load()
+void WaypointMgr::Load()
 {
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT COUNT(id) FROM waypoint_data");
     if (!result)
         sLog.outFatal("an error occured while loading the table waypoint_data (maybe it doesn't exist ?)");
 
-    records = (*result)[0].GetUInt32();
-
-    result = WorldDatabase.Query("SELECT id,point,position_x,position_y,position_z,orientation,move_flag,delay,action,action_chance FROM waypoint_data ORDER BY id, point");
+    result = WorldDatabase.Query("SELECT id, point, position_x, position_y, position_z, orientation, move_flag, delay, action, action_chance FROM waypoint_data ORDER BY id, point");
     if (!result)
     {
         sLog.outErrorDb("The table waypoint_data is empty or corrupted");
         return;
     }
 
-    WaypointPath* path_data = NULL;
-
     uint32 count = 0;
-    Field* fields;
-    uint64 last_id = 0xFFFFFFFFULL + 1;
 
     do
     {
-        fields = result->Fetch();
-        uint64 id = fields[0].GetUInt32();
-        count++;
-        WaypointData* wp = new WaypointData;
+        Field* fields = result->Fetch();
+        WaypointData* wp = new WaypointData();
 
-        if (last_id != id)
-            path_data = new WaypointPath;
+        uint32 pathId = fields[0].GetUInt32();
+        WaypointPath& path = _waypointStore[pathId];
 
-        float x, y, z, o;
-        x = fields[2].GetFloat();
-        y = fields[3].GetFloat();
-        z = fields[4].GetFloat();
-        o = fields[5].GetFloat();
+        float x = fields[2].GetFloat();
+        float y = fields[3].GetFloat();
+        float z = fields[4].GetFloat();
+        float o = fields[5].GetFloat();
 
         Oregon::NormalizeMapCoord(x);
         Oregon::NormalizeMapCoord(y);
@@ -80,48 +74,42 @@ void WaypointStore::Load()
         wp->run = fields[6].GetBool();
         wp->delay = fields[7].GetUInt32();
         wp->event_id = fields[8].GetUInt32();
-        wp->event_chance = fields[9].GetUInt8();
+        wp->event_chance = fields[9].GetInt16();
 
-        path_data->push_back(wp);
-
-        if (id != last_id)
-            waypoint_map[id] = path_data;
-
-        last_id = id;
-
+        path.push_back(wp);
+        ++count;
     }
-    while (result->NextRow()) ;
+    while (result->NextRow());
 
     sLog.outString(">> Loaded %u waypoints", count);
 }
 
-void WaypointStore::UpdatePath(uint32 id)
+void WaypointMgr::ReloadPath(uint32 id)
 {
-    if (waypoint_map.find(id) != waypoint_map.end())
-        waypoint_map[id]->clear();
+    WaypointPathContainer::iterator itr = _waypointStore.find(id);
+    if (itr != _waypointStore.end())
+    {
+        for (WaypointPath::const_iterator it = itr->second.begin(); it != itr->second.end(); ++it)
+            delete *it;
 
-    QueryResult_AutoPtr result;
+        _waypointStore.erase(itr);
+    }
 
-    result = WorldDatabase.PQuery("SELECT point,position_x,position_y,position_z,orientation,move_flag,delay,action,action_chance FROM waypoint_data WHERE id = %u ORDER BY point", id);
-
+    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT point, position_x, position_y, position_z, orientation, move_flag, delay, action, action_chance FROM waypoint_data WHERE id = %u ORDER BY point", id);
     if (!result)
         return;
 
-    WaypointPath* path_data;
-    path_data = new WaypointPath;
-    Field* fields;
+    WaypointPath& path = _waypointStore[id];
 
     do
     {
-        fields = result->Fetch();
+        Field* fields = result->Fetch();
+        WaypointData *wp = new WaypointData();
 
-        WaypointData* wp = new WaypointData;
-
-        float x, y, z, o;
-        x = fields[1].GetFloat();
-        y = fields[2].GetFloat();
-        z = fields[3].GetFloat();
-        o = fields[4].GetFloat();
+        float x = fields[1].GetFloat();
+        float y = fields[2].GetFloat();
+        float z = fields[3].GetFloat();
+        float o = fields[4].GetFloat();
 
         Oregon::NormalizeMapCoord(x);
         Oregon::NormalizeMapCoord(y);
@@ -136,11 +124,8 @@ void WaypointStore::UpdatePath(uint32 id)
         wp->event_id = fields[7].GetUInt32();
         wp->event_chance = fields[8].GetUInt8();
 
-        path_data->push_back(wp);
+        path.push_back(wp);
 
     }
     while (result->NextRow());
-
-    waypoint_map[id] = path_data;
 }
-

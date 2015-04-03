@@ -100,6 +100,7 @@ void WaypointMovementGenerator<Creature>::InitTraveller(Creature& unit, const Wa
     // @todo make this part of waypoint node, so that creature can walk when desired?
     if (unit.canFly())
         unit.SetByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
+
     unit.AddUnitState(UNIT_STATE_ROAMING);
 }
 
@@ -201,7 +202,7 @@ bool WaypointMovementGenerator<Creature>::Update(Creature& unit, const uint32& d
                 i_nextMoveTime.Reset(node->delay);
 
             //note: disable "start" for mtmap
-            if (node->event_id && rand() % 100 < node->event_chance)
+            if (node->event_id && urand(0,99) < node->event_chance)
                 unit.GetMap()->ScriptsStart(sWaypointScripts, node->event_id, &unit, NULL/*, false*/);
 
             i_destinationHolder.ResetTravelTime();
@@ -275,7 +276,9 @@ void FlightPathMovementGenerator::Finalize(Player& player)
     // remove flag to prevent send object build movement packets for flight state and crash (movement generator already not at top of stack)
     player.ClearUnitState(UNIT_FLAG_DISABLE_MOVE | UNIT_STATE_IN_FLIGHT);
 
-    float x, y, z;
+    float x = 0;
+    float y = 0;
+    float z = 0;
     i_destinationHolder.GetLocationNow(player.GetBaseMap(), x, y, z);
     player.SetPosition(x, y, z, player.GetOrientation());
 
