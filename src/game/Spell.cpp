@@ -1089,9 +1089,12 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
         {
             if (unit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             {
-                m_caster->SendSpellMiss(unit, m_spellInfo->Id, SPELL_MISS_EVADE);
-                m_damage = 0;
-                return;
+                if (! (sSpellMgr.GetSpellCustomAttr(m_spellInfo->Id) & SPELL_ATTR_CU_ANY_TARGET))
+                {
+                    m_caster->SendSpellMiss(unit, m_spellInfo->Id, SPELL_MISS_EVADE);
+                    m_damage = 0;
+                    return;
+                }
             }
         }
         if (m_caster->IsHostileTo(unit))
@@ -5852,12 +5855,17 @@ CurrentSpellTypes Spell::GetCurrentContainer()
 
 bool Spell::CheckTarget(Unit* target, uint32 eff)
 {
+    if (sSpellMgr.GetSpellCustomAttr(m_spellInfo->Id) & SPELL_ATTR_CU_ANY_TARGET)
+        return true;
+
     // Check targets for creature type mask and remove not appropriate (skip explicit self target case, maybe need other explicit targets)
     if (m_spellInfo->EffectImplicitTargetA[eff] != TARGET_UNIT_CASTER)
     {
         if (!CheckTargetCreatureType(target))
             return false;
     }
+
+    //if (sSpellMgr.GetSpellCustomAttr(m_spellProto->Id) & 
 
     // Check targets for not_selectable unit flag and remove
     // A player can cast spells on his pet (or other controlled unit) though in any state

@@ -2694,6 +2694,20 @@ void SpellMgr::LoadSpellCustomAttr()
         case 5246: // Initimidating Shout - prevent double diminishing
             spellInfo->Mechanic = MECHANIC_NONE;
             break;
+        case 33778: // Lifebloom (rank 1) 
+        case   379: // Earth Shield
+        case 38395: // Siphon Essence
+        case 34299: // Improved Leader of the Pack (heal)
+        case 27813: // Blessed Recovery rank 1
+        case 27817: // Blessed Recovery rank 2
+        case 27818: // Blessed Recovery rank 3
+        case 28880: // Gift of Narru
+            mSpellCustomAttr[i] |= SPELL_ATTR_CU_FIXED_AMOUNT;
+            break;
+        case 35372: // Protectorate Igniter
+            spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_TARGET_ENEMY;
+            mSpellCustomAttr[i] |= SPELL_ATTR_CU_ANY_TARGET;
+            break;
         default:
             break;
         }

@@ -690,8 +690,10 @@ enum SpellCustomAttributes
     SPELL_ATTR_CU_LINK_AURA        = 0x00001000,
     SPELL_ATTR_CU_LINK_REMOVE      = 0x00002000,
     SPELL_ATTR_CU_MOVEMENT_IMPAIR  = 0x00004000,
-    SPELL_ATTR_CU_IGNORE_ARMOR     = 0x00008000,
-    SPELL_ATTR_CU_CAST_BY_ITEM_ONLY= 0x00010000
+    SPELL_ATTR_CU_IGNORE_ARMOR     = 0x00008000, 
+    SPELL_ATTR_CU_CAST_BY_ITEM_ONLY= 0x00010000, //!< must be cast from item, never directly
+    SPELL_ATTR_CU_FIXED_AMOUNT     = 0x00020000, //!< ignore bonus healing/damage
+    SPELL_ATTR_CU_ANY_TARGET       = 0x00040000  //!< approves cast on any target, even when its non-attackable @see Spell::CheckTarget, useful with crafted/forced targets
 };
 
 typedef std::vector<uint32> SpellCustomAttribute;

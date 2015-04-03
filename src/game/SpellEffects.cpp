@@ -1444,6 +1444,15 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     m_caster->CastSpell(m_caster, 30452, true, NULL);
                     return;
                 }
+
+             case 35372: // Protectorate Igniter
+                {
+                    if (Creature* victim = unitTarget->ToCreature())
+                    {
+                        victim->setDeathState(JUST_DIED);
+                        victim->RemoveCorpse(true);
+                    }
+                }
             }
 
             //All IconID Check in there
