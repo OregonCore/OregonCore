@@ -1542,6 +1542,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             case TARGET_NONE:
             case TARGET_UNIT_CASTER:
                 AddUnitTarget(m_caster, i);
+                m_targets.setUnitTarget(m_caster);
                 break;
             case TARGET_UNIT_CASTER_FISHING:
                 {
