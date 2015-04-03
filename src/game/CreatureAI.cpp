@@ -38,7 +38,7 @@ AISpellInfoType* GetAISpellInfo(uint32 i)
     return &CreatureAI::AISpellInfo[i];
 }
 
-void CreatureAI::DoZoneInCombat(Creature* creature)
+void CreatureAI::DoZoneInCombat(Creature* creature /*= NULL*/, float maxRangeToNearestTarget /* = 50.0f*/)
 {
     if (!creature)
         creature = me;
@@ -55,8 +55,8 @@ void CreatureAI::DoZoneInCombat(Creature* creature)
 
     if (!creature->HasReactState(REACT_PASSIVE) && !creature->getVictim())
     {
-        if (Unit* target = creature->SelectNearestTarget(50))
-            creature->AI()->AttackStart(target);
+        if (Unit* nearTarget = creature->SelectNearestTarget(maxRangeToNearestTarget))
+            creature->AI()->AttackStart(nearTarget);
         else if (creature->isSummon())
         {
             if (Unit* summoner = ((TempSummon*)creature)->GetSummoner())
@@ -121,6 +121,9 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
 {
     if (me->getVictim())
         return;
+    
+    if (me->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET) // non-combat pets should just stand there and look good;)
+        return;
 
     if (me->canStartAttack(who))
         AttackStart(who);
@@ -150,15 +153,6 @@ bool CreatureAI::UpdateVictimByReact()
     return true;
 }
 
-void CreatureAI::SelectNearestTarget(Unit* who)
-{
-    if (me->getVictim() && me->GetDistanceOrder(who, me->getVictim()) && me->canAttack(who))
-    {
-        me->getThreatManager().modifyThreatPercent(me->getVictim(), -100);
-        me->AddThreat(who, 1000000.0f);
-    }
-}
-
 void CreatureAI::EnterEvadeMode()
 {
     if (!_EnterEvadeMode())
@@ -172,7 +166,12 @@ void CreatureAI::EnterEvadeMode()
         me->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, me->GetFollowAngle(), MOTION_SLOT_ACTIVE);
     }
     else
+    {
+        // Required to prevent attacking creatures that are evading and cause them to reenter combat
+        // Does not apply to MoveFollow
+        me->AddUnitState(UNIT_STATE_EVADE);
         me->GetMotionMaster()->MoveTargetedHome();
+    }
 
     Reset();
 }
@@ -242,6 +241,7 @@ bool CreatureAI::_EnterEvadeMode()
     me->LoadCreaturesAddon();
     me->SetLootRecipient(NULL);
     me->ResetPlayerDamageReq();
+    me->SetLastDamagedTime(0);
 
     if (me->IsInEvadeMode())
         return false;

@@ -234,7 +234,8 @@ Unit::Unit()
       i_motionMaster(this),
       m_ThreatManager(this),
       m_HostileRefManager(this),
-      m_procDeep(0)
+      m_procDeep(0),
+      _lastDamagedTime(0)
 {
     m_objectType |= TYPEMASK_UNIT;
     m_objectTypeId = TYPEID_UNIT;
@@ -977,10 +978,9 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
 
         if (damagetype == DIRECT_DAMAGE || damagetype == SPELL_DIRECT_DAMAGE)
         {
-            //@todo This is from procflag, I do not know which spell needs this
-            //Maim?
-            //if (!spellProto || !(spellProto->AuraInterruptFlags&AURA_INTERRUPT_FLAG_DIRECT_DAMAGE))
             pVictim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DIRECT_DAMAGE, spellProto ? spellProto->Id : 0);
+            if (pVictim->GetTypeId() == TYPEID_UNIT && !pVictim->ToCreature()->isPet())
+                pVictim->SetLastDamagedTime(time(NULL));
         }
 
         if (pVictim->GetTypeId() != TYPEID_PLAYER)
@@ -9855,6 +9855,14 @@ Unit* Creature::SelectVictim()
         return target;
     }
 
+    // Case where mob is being kited.
+    // Mob may not be in range to attack or may have dropped target. In any case,
+    //  don't evade if damage received within the last 10 seconds
+    // Does not apply to world bosses to prevent kiting to cities
+    if (!isWorldBoss() && !GetInstanceId())
+        if (time(NULL) - GetLastDamagedTime() <= MAX_AGGRO_RESET_TIME)
+            return target;
+
     // last case when creature don't must go to evade mode:
     // it in combat but attacker not make any damage and not enter to aggro radius to have record in threat list
     // for example at owner command to pet attack some far away creature
@@ -9871,7 +9879,7 @@ Unit* Creature::SelectVictim()
     // search nearby enemy before enter evade mode
     if (HasReactState(REACT_AGGRESSIVE))
     {
-        target = SelectNearestTarget();
+        target = SelectNearestTargetInAttackDistance();
 
         if (target && !IsOutOfThreatArea(target))
             return target;

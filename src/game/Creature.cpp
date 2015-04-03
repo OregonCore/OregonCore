@@ -1780,6 +1780,7 @@ void Creature::DoFleeToGetAssistance()
 
 }
 
+// select nearest hostile unit within the given distance (regardless of threat list).
 Unit* Creature::SelectNearestTarget(float dist) const
 {
     CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
@@ -1788,6 +1789,36 @@ Unit* Creature::SelectNearestTarget(float dist) const
     cell.SetNoCreate();
 
     Unit* target = NULL;
+
+    {
+        if (dist == 0.0f || dist > MAX_VISIBILITY_DISTANCE)
+            dist = MAX_VISIBILITY_DISTANCE;
+
+        Oregon::NearestHostileUnitCheck u_check(this, dist);
+        Oregon::UnitLastSearcher<Oregon::NearestHostileUnitCheck> searcher(target, u_check);
+
+        TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
+        TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
+
+        cell.Visit(p, world_unit_searcher, *GetMap(), *this, dist);
+        cell.Visit(p, grid_unit_searcher, *GetMap(), *this, dist);
+    }
+
+    return target;
+}
+
+// select nearest hostile unit within the given attack distance (i.e. distance is ignored if > than ATTACK_DISTANCE), regardless of threat list.
+Unit* Creature::SelectNearestTargetInAttackDistance(float dist) const
+{
+    CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
+    Cell cell(p);
+    cell.data.Part.reserved = ALL_DISTRICT;
+    cell.SetNoCreate();
+
+    Unit *target = NULL;
+
+    if (dist > ATTACK_DISTANCE)
+        sLog.outError("Creature (GUID: %u Entry: %u) SelectNearestTargetInAttackDistance called with dist > ATTACK_DISTANCE. Extra distance ignored.",GetGUIDLow(),GetEntry());
 
     {
         Oregon::NearestHostileUnitInAttackDistanceCheck u_check(this, dist);

@@ -240,6 +240,8 @@ enum UnitRename
 #define MAX_SPELL_CHARM         4
 #define MAX_SPELL_POSSESS       8
 
+#define MAX_AGGRO_RESET_TIME    10 // In Seconds
+
 enum Swing
 {
     NOSWING                    = 0,
@@ -2100,6 +2102,10 @@ class Unit : public WorldObject
             m_ThreatManager.clearPastEnemyList();
         }
 
+        // Part of Evade mechanics
+        time_t GetLastDamagedTime() const { return _lastDamagedTime; }
+        void SetLastDamagedTime(time_t val) { _lastDamagedTime = val; }
+
     protected:
         explicit Unit ();
 
@@ -2189,6 +2195,8 @@ class Unit : public WorldObject
         uint64 m_misdirectionTargetGUID;
 
         uint32 m_procDeep;
+
+        time_t _lastDamagedTime; // Part of Evade mechanics
 };
 
 namespace Oregon

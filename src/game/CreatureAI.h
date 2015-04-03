@@ -71,8 +71,6 @@ class CreatureAI : public UnitAI
         bool UpdateVictimWithGaze();
         bool UpdateCombatState();
 
-        void SelectNearestTarget(Unit* who);
-
         void SetGazeOn(Unit* target);
 
         Creature* DoSummon(uint32 uiEntry, const Position& pos, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
@@ -141,7 +139,7 @@ class CreatureAI : public UnitAI
         // Called at reaching home after evade
         virtual void JustReachedHome() {}
 
-        void DoZoneInCombat(Creature* pUnit = NULL);
+        void DoZoneInCombat(Creature* creature = NULL, float maxRangeToNearestTarget = 50.0f);
 
         // Called at text emote receive from player
         virtual void ReceiveEmote(Player* /*pPlayer*/, uint32 /*text_emote*/) {}

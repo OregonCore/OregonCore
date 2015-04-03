@@ -894,6 +894,31 @@ struct AnyStealthedCheck
 
 // Creature checks
 
+    class NearestHostileUnitCheck
+    {
+        public:
+            explicit NearestHostileUnitCheck(Creature const* creature, float dist = 0) : me(creature)
+            {
+                m_range = (dist == 0 ? 9999 : dist);
+            }
+            bool operator()(Unit* u)
+            {
+                if (!me->IsWithinDistInMap(u, m_range))
+                    return false;
+
+                if (!me->canAttack(u))
+                    return false;
+
+                m_range = me->GetDistance(u);   // use found unit range as new range limit for next check
+                return true;
+            }
+
+    private:
+            Creature const *me;
+            float m_range;
+            NearestHostileUnitCheck(NearestHostileUnitCheck const&);
+    };
+
 class NearestHostileUnitInAttackDistanceCheck
 {
     public:
@@ -904,7 +929,6 @@ class NearestHostileUnitInAttackDistanceCheck
         }
         bool operator()(Unit* u)
         {
-            // @todo addthreat for every enemy in range?
             if (!me->IsWithinDistInMap(u, m_range))
                 return false;
 
@@ -919,7 +943,7 @@ class NearestHostileUnitInAttackDistanceCheck
                     return false;
             }
 
-            m_range = me->GetDistance(u);
+            m_range = me->GetDistance(u);   // use found unit range as new range limit for next check
             return true;
         }
         float GetLastRange() const

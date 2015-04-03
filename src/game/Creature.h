@@ -715,6 +715,8 @@ class Creature : public Unit, public GridObject<Creature>
         float GetAttackDistance(Unit const* pl) const;
 
         Unit* SelectNearestTarget(float dist = 0) const;
+        Unit* SelectNearestTargetInAttackDistance(float dist = 0) const;
+
         void DoFleeToGetAssistance();
         void CallForHelp(float fRadius);
         void CallAssistance();
