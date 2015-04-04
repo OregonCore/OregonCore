@@ -283,8 +283,10 @@ struct instance_sunwell_plateau : public ScriptedInstance
         case DATA_KALECGOS_KJ:
             return KalecgosKJ;
         case DATA_PLAYER_GUID:
-            Player* Target = GetPlayerInMap();
-            return Target->GetGUID();
+            if (Player* Target = GetPlayerInMap())
+                return Target->GetGUID();
+            else
+                return 0;
         }
         return 0;
     }
