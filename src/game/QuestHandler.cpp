@@ -119,10 +119,8 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket& recv_data)
     Object* pObject = ObjectAccessor::GetObjectByTypeMask(*_player, guid, TYPEMASK_UNIT | TYPEMASK_GAMEOBJECT | TYPEMASK_ITEM | TYPEMASK_PLAYER);
 
     // no or incorrect quest giver
-    if (!pObject
-        || (pObject->GetTypeId() != TYPEID_PLAYER && !pObject->hasQuest(quest))
-        || (pObject->GetTypeId() == TYPEID_PLAYER && !pObject->ToPlayer()->CanShareQuest(quest))
-       )
+    if (!pObject || (pObject->GetTypeId() != TYPEID_PLAYER && !pObject->hasQuest(quest)) || 
+        (pObject->GetTypeId() == TYPEID_PLAYER && !pObject->ToPlayer()->CanShareQuest(quest)))
     {
         _player->PlayerTalkClass->CloseGossip();
         _player->SetDivider(0);
@@ -245,6 +243,9 @@ void WorldSession::HandleQuestgiverQuestQueryOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleQuestQueryOpcode(WorldPacket& recv_data)
 {
+    if (!_player)
+        return;
+
     uint32 quest;
     recv_data >> quest;
     DEBUG_LOG("WORLD: Received CMSG_QUEST_QUERY quest = %u", quest);
@@ -278,9 +279,15 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recv_data)
     if (!pObject->hasInvolvedQuest(quest))
         return;
 
-    Quest const* pQuest = sObjectMgr.GetQuestTemplate(quest);
-    if (pQuest)
+    if (Quest const *pQuest = sObjectMgr.GetQuestTemplate(quest))
     {
+        if ((!_player->CanSeeStartQuest(pQuest) &&  _player->GetQuestStatus(quest) == QUEST_STATUS_NONE) ||
+            (_player->GetQuestStatus(quest) != QUEST_STATUS_COMPLETE && !pQuest->IsAutoComplete()))
+        {
+            sLog.outError("HACK ALERT: Player %s (guid: %u) is trying to complete quest (id: %u) but he has no right to do it!",
+                           _player->GetName(), _player->GetGUIDLow(), quest);
+            return;
+        }
         if (_player->CanRewardQuest(pQuest, reward, true))
         {
             _player->RewardQuest(pQuest, reward, pObject);
@@ -420,18 +427,24 @@ void WorldSession::HandleQuestComplete(WorldPacket& recv_data)
     uint64 guid;
     recv_data >> guid >> quest;
 
-    if (!GetPlayer()->IsAlive())
+    if (!_player->IsAlive())
         return;
 
     sLog.outDebug("WORLD: Received CMSG_QUESTGIVER_COMPLETE_QUEST npc = %u, quest = %u", uint32(GUID_LOPART(guid)), quest);
 
     if (Quest const* pQuest = sObjectMgr.GetQuestTemplate(quest))
     {
+        if (!_player->CanSeeStartQuest(pQuest) && _player->GetQuestStatus(quest)==QUEST_STATUS_NONE)
+        {
+            sLog.outError("Possible hacking attempt: Player %s [guid: %u] tried to complete quest [entry: %u] without being in possession of the quest!",
+                          _player->GetName(), _player->GetGUIDLow(), quest);
+            return;
+        }
         // @todo need a virtual function
-        if (GetPlayer()->InBattleGround())
-            if (BattleGround* bg = GetPlayer()->GetBattleGround())
+        if (_player->InBattleGround())
+            if (BattleGround* bg = _player->GetBattleGround())
                 if (bg->GetTypeID() == BATTLEGROUND_AV)
-                    ((BattleGroundAV*)bg)->HandleQuestComplete(quest, GetPlayer());
+                    ((BattleGroundAV*)bg)->HandleQuestComplete(quest, _player);
 
         if (_player->GetQuestStatus(quest) != QUEST_STATUS_COMPLETE)
         {
