@@ -39,8 +39,8 @@ void logLazyPrintf(const char* fmt, ...) {
 
 Log* Log::commonLog = NULL;
 
-Log::Log(const std::string& filename, int stripFromStackBottom) :
-    stripFromStackBottom(stripFromStackBottom) {
+Log::Log(const std::string& filename)
+{
 
     this->filename = filename;
 

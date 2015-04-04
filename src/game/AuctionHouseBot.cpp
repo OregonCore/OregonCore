@@ -373,15 +373,10 @@ void AuctionHouseBot::addNewAuctions(Player* AHBplayer, AHBConfig* config)
             uint64 bidPrice = 0;
             uint32 stackCount = 1;
 
-            switch (SellMethod)
-            {
-            case 0:
+            if (SellMethod == 0)
                 buyoutPrice  = prototype->SellPrice;
-                break;
-            case 1:
+            else
                 buyoutPrice  = prototype->BuyPrice;
-                break;
-            }
 
             if (prototype->Quality <= AHB_MAX_QUALITY)
             {
@@ -567,37 +562,32 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player* AHBplayer, AHBConfig* con
         long double bidMax = 0;
 
         // check that bid has acceptable value and take bid based on vendorprice, stacksize and quality
-        switch (BuyMethod)
+        if (BuyMethod == 0)
         {
-        case 0:
+            if ((prototype->Quality <= AHB_MAX_QUALITY))
             {
-                if ((prototype->Quality <= AHB_MAX_QUALITY))
-                {
-                    if (currentprice < prototype->SellPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality))
-                        bidMax = prototype->SellPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality);
-                }
-                else
-                {
-                    // quality is something it shouldn't be, let's get out of here
-                    if (debug_Out) sLog.outError("AHBuyer: Quality %u not Supported", prototype->Quality);
-                    continue;
-                }
-                break;
+                if (currentprice < prototype->SellPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality))
+                    bidMax = prototype->SellPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality);
             }
-        case 1:
+            else
             {
-                if ((prototype->Quality <= AHB_MAX_QUALITY))
-                {
-                    if (currentprice < prototype->BuyPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality))
-                        bidMax = prototype->BuyPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality);
-                }
-                else
-                {
-                    // quality is something it shouldn't be, let's get out of here
-                    if (debug_Out) sLog.outError("AHBuyer: Quality %u not Supported", prototype->Quality);
-                    continue;
-                }
-                break;
+                // quality is something it shouldn't be, let's get out of here
+                if (debug_Out) sLog.outError("AHBuyer: Quality %u not Supported", prototype->Quality);
+                continue;
+            }
+        }
+        else
+        {
+            if ((prototype->Quality <= AHB_MAX_QUALITY))
+            {
+                if (currentprice < prototype->BuyPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality))
+                    bidMax = prototype->BuyPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality);
+            }
+            else
+            {
+                // quality is something it shouldn't be, let's get out of here
+                if (debug_Out) sLog.outError("AHBuyer: Quality %u not Supported", prototype->Quality);
+                continue;
             }
         }
 
@@ -915,16 +905,15 @@ void AuctionHouseBot::Initialize()
                 break;
             }
 
-            switch (SellMethod)
+            if (SellMethod == 0)
             {
-            case 0:
                 if (prototype->SellPrice == 0)
                     continue;
-                break;
-            case 1:
+            }
+            else
+            {
                 if (prototype->BuyPrice == 0)
                     continue;
-                break;
             }
 
             if (prototype->Quality > 6)
@@ -1349,20 +1338,20 @@ void AuctionHouseBot::Initialize()
         }
 
         sLog.outString("AuctionHouseBot:");
-        sLog.outString("loaded %u grey trade goods", greyTradeGoodsBin.size());
-        sLog.outString("loaded %u white trade goods", whiteTradeGoodsBin.size());
-        sLog.outString("loaded %u green trade goods", greenTradeGoodsBin.size());
-        sLog.outString("loaded %u blue trade goods", blueTradeGoodsBin.size());
-        sLog.outString("loaded %u purple trade goods", purpleTradeGoodsBin.size());
-        sLog.outString("loaded %u orange trade goods", orangeTradeGoodsBin.size());
-        sLog.outString("loaded %u yellow trade goods", yellowTradeGoodsBin.size());
-        sLog.outString("loaded %u grey items", greyItemsBin.size());
-        sLog.outString("loaded %u white items", whiteItemsBin.size());
-        sLog.outString("loaded %u green items", greenItemsBin.size());
-        sLog.outString("loaded %u blue items", blueItemsBin.size());
-        sLog.outString("loaded %u purple items", purpleItemsBin.size());
-        sLog.outString("loaded %u orange items", orangeItemsBin.size());
-        sLog.outString("loaded %u yellow items", yellowItemsBin.size());
+        sLog.outString("loaded " UI64FMTD " grey trade goods", greyTradeGoodsBin.size());
+        sLog.outString("loaded " UI64FMTD " white trade goods", whiteTradeGoodsBin.size());
+        sLog.outString("loaded " UI64FMTD " green trade goods", greenTradeGoodsBin.size());
+        sLog.outString("loaded " UI64FMTD " blue trade goods", blueTradeGoodsBin.size());
+        sLog.outString("loaded " UI64FMTD " purple trade goods", purpleTradeGoodsBin.size());
+        sLog.outString("loaded " UI64FMTD " orange trade goods", orangeTradeGoodsBin.size());
+        sLog.outString("loaded " UI64FMTD " yellow trade goods", yellowTradeGoodsBin.size());
+        sLog.outString("loaded " UI64FMTD " grey items", greyItemsBin.size());
+        sLog.outString("loaded " UI64FMTD " white items", whiteItemsBin.size());
+        sLog.outString("loaded " UI64FMTD " green items", greenItemsBin.size());
+        sLog.outString("loaded " UI64FMTD " blue items", blueItemsBin.size());
+        sLog.outString("loaded " UI64FMTD " purple items", purpleItemsBin.size());
+        sLog.outString("loaded " UI64FMTD " orange items", orangeItemsBin.size());
+        sLog.outString("loaded " UI64FMTD " yellow items", yellowItemsBin.size());
     }
     sLog.outString("AuctionHouseBot and AuctionHouseBuyer have been loaded.");
 }

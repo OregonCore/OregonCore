@@ -61,7 +61,7 @@ void InstanceData::LoadMinionData(const MinionData* data)
 
         ++data;
     }
-    sLog.outDebug("InstanceData::LoadMinionData: %u minions loaded.", doors.size());
+    sLog.outDebug("InstanceData::LoadMinionData: " UI64FMTD " minions loaded.", doors.size());
 }
 
 void InstanceData::LoadDoorData(const DoorData* data)
@@ -73,7 +73,7 @@ void InstanceData::LoadDoorData(const DoorData* data)
 
         ++data;
     }
-    sLog.outDebug("InstanceData::LoadDoorData: %u doors loaded.", doors.size());
+    sLog.outDebug("InstanceData::LoadDoorData: " UI64FMTD " doors loaded.", doors.size());
 }
 
 void InstanceData::UpdateMinionState(Creature* minion, EncounterState state)

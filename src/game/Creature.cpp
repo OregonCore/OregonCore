@@ -1253,7 +1253,7 @@ void Creature::SetVirtualItem(VirtualItemSlot slot, uint32 item_id)
     ItemPrototype const* proto = ObjectMgr::GetItemPrototype(item_id);
     if (!proto)
     {
-        sLog.outError("Not listed in 'item_template' item (ID:%u) used as virtual item for %llu", item_id, GetGUID());
+        sLog.outError("Not listed in 'item_template' item (ID:%u) used as virtual item for " UI64FMTD "", item_id, GetGUID());
         return;
     }
 

@@ -1088,7 +1088,7 @@ void WorldSession::SendExternalMails()
 
             if (receiver != 0)
             {
-                sLog.outDebug("External Mail - Sending mail to %llu, Item:%u", receiver_guid, ItemID);
+                sLog.outDebug("External Mail - Sending mail to " UI64FMTD ", Item:%u", receiver_guid, ItemID);
                 uint32 itemTextId = !message.empty() ? sObjectMgr.CreateItemText(message) : 0;
                 if (ItemID != 0)
                 {

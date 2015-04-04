@@ -2028,7 +2028,7 @@ class Player : public Unit, public GridObject<Player>
         }
 
         void BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) const;
-        void DestroyForPlayer(Player* target) const;
+        void DestroyForPlayer(Player* target, bool onDeath = false) const;
         void SendDelayResponse(const uint32);
         void SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP, bool RafBonus = false);
 

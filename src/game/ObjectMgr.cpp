@@ -499,7 +499,7 @@ void ObjectMgr::LoadCreatureLocales()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u creature locale strings", mCreatureLocaleMap.size());
+    sLog.outString(">> Loaded %lu creature locale strings", mCreatureLocaleMap.size());
 }
 
 void ObjectMgr::LoadGossipMenuItemsLocales()
@@ -1053,7 +1053,7 @@ void ObjectMgr::LoadCreatureLinkedRespawn()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u linked respawns", mCreatureLinkedRespawnMap.size());
+    sLog.outString(">> Loaded %lu linked respawns", mCreatureLinkedRespawnMap.size());
 }
 
 bool ObjectMgr::SetCreatureLinkedRespawn(uint32 guid, uint32 linkedGuid)
@@ -1196,7 +1196,7 @@ void ObjectMgr::LoadCreatures()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u creatures", mCreatureDataMap.size());
+    sLog.outString(">> Loaded %lu creatures", mCreatureDataMap.size());
 }
 
 void ObjectMgr::AddCreatureToGrid(uint32 guid, CreatureData const* data)
@@ -1414,7 +1414,7 @@ void ObjectMgr::LoadGameobjects()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u gameobjects", mGameObjectDataMap.size());
+    sLog.outString(">> Loaded %lu gameobjects", mGameObjectDataMap.size());
 }
 
 void ObjectMgr::AddGameobjectToGrid(uint32 guid, GameObjectData const* data)
@@ -1478,7 +1478,7 @@ void ObjectMgr::LoadCreatureRespawnTimes()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u creature respawn times", mCreatureRespawnTimes.size());
+    sLog.outString(">> Loaded %lu creature respawn times", mCreatureRespawnTimes.size());
 }
 
 void ObjectMgr::LoadGameobjectRespawnTimes()
@@ -1513,7 +1513,7 @@ void ObjectMgr::LoadGameobjectRespawnTimes()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u gameobject respawn times", mGORespawnTimes.size());
+    sLog.outString(">> Loaded %lu gameobject respawn times", mGORespawnTimes.size());
 }
 
 // name must be checked to correctness (if received) before call this function
@@ -1642,7 +1642,7 @@ void ObjectMgr::LoadItemLocales()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u Item locale strings", mItemLocaleMap.size());
+    sLog.outString(">> Loaded %lu Item locale strings", mItemLocaleMap.size());
 }
 
 struct SQLItemLoader : public SQLStorageLoaderBase<SQLItemLoader>
@@ -2717,7 +2717,7 @@ void ObjectMgr::LoadReferredFriends()
 
         if ((it = m_referredFriends.find(Id2)) != m_referredFriends.end())
         {
-            sLog.outErrorDb("RAF Conflict! Account %llu is already linked with %llu (attempt to double link with account %llu)", Id2, it->second, Id1);
+            sLog.outErrorDb("RAF Conflict! Account " UI64FMTD " is already linked with " UI64FMTD " (attempt to double link with account " UI64FMTD ")", Id2, it->second, Id1);
             continue;
         }
 
@@ -2727,7 +2727,7 @@ void ObjectMgr::LoadReferredFriends()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %llu Referred Friends", result->GetRowCount());
+    sLog.outString(">> Loaded " UI64FMTD " Referred Friends", result->GetRowCount());
 }
 
 RAFLinkStatus ObjectMgr::GetRAFLinkStatus (uint64 account, uint64* linked) const
@@ -2787,7 +2787,7 @@ void ObjectMgr::LinkIntoRAF(uint64 AccOne, uint64 AccTwo)
 {
     m_referrerFriends[AccOne] = AccTwo;
     m_referredFriends[AccTwo] = AccOne;
-    LoginDatabase.PExecute("REPLACE INTO account_referred (id1, id2) VALUES (%llu, %llu)", AccOne, AccTwo);
+    LoginDatabase.PExecute("REPLACE INTO account_referred (id1, id2) VALUES (" UI64FMTD ", " UI64FMTD ")", AccOne, AccTwo);
 }
 
 void ObjectMgr::UnlinkFromRAF(uint64 AccOne)
@@ -2800,12 +2800,12 @@ void ObjectMgr::UnlinkFromRAF(uint64 AccOne)
     case RAF_LINK_REFERRER:
         m_referrerFriends.erase(m_referrerFriends.find(AccOne));
         m_referredFriends.erase(m_referredFriends.find(AccTwo));
-        LoginDatabase.PExecute("DELETE FROM account_referred WHERE id1 = %llu AND id2 = %llu", AccOne, AccTwo);
+        LoginDatabase.PExecute("DELETE FROM account_referred WHERE id1 = " UI64FMTD " AND id2 = " UI64FMTD "", AccOne, AccTwo);
         break;
     case RAF_LINK_REFERRED:
         m_referrerFriends.erase(m_referrerFriends.find(AccTwo));
         m_referredFriends.erase(m_referredFriends.find(AccOne));
-        LoginDatabase.PExecute("DELETE FROM account_referred WHERE id1 = %llu AND id2 = %llu", AccTwo, AccOne);
+        LoginDatabase.PExecute("DELETE FROM account_referred WHERE id1 = " UI64FMTD " AND id2 = " UI64FMTD "", AccTwo, AccOne);
         break;
     }
 }
@@ -3360,7 +3360,7 @@ void ObjectMgr::LoadQuests()
                     bool found = false;
                     for (int k = 0; k < 3; ++k)
                     {
-                        if (spellInfo->Effect[k] == SPELL_EFFECT_QUEST_COMPLETE && uint32(spellInfo->EffectMiscValue[k]) == qinfo->QuestId ||
+                        if ((spellInfo->Effect[k] == SPELL_EFFECT_QUEST_COMPLETE && uint32(spellInfo->EffectMiscValue[k]) == qinfo->QuestId) ||
                             spellInfo->Effect[k] == SPELL_EFFECT_SEND_EVENT)
                         {
                             found = true;
@@ -4389,7 +4389,7 @@ void ObjectMgr::LoadPageTextLocales()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u PageText locale strings", mPageTextLocaleMap.size());
+    sLog.outString(">> Loaded %lu PageText locale strings", mPageTextLocaleMap.size());
 }
 
 struct SQLInstanceLoader : public SQLStorageLoaderBase<SQLInstanceLoader>
@@ -4577,7 +4577,7 @@ void ObjectMgr::LoadNpcTextLocales()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u NpcText locale strings", mNpcTextLocaleMap.size());
+    sLog.outString(">> Loaded %lu NpcText locale strings", mNpcTextLocaleMap.size());
 }
 
 //not very fast function but it is called only once a day, or on starting-up
@@ -5626,7 +5626,7 @@ void ObjectMgr::LoadGameObjectLocales()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u gameobject locale strings", mGameObjectLocaleMap.size());
+    sLog.outString(">> Loaded %lu gameobject locale strings", mGameObjectLocaleMap.size());
 }
 
 struct SQLGameObjectLoader : public SQLStorageLoaderBase<SQLGameObjectLoader>
@@ -7714,6 +7714,6 @@ void ObjectMgr::LoadTransportEvents()
     }
     while (result->NextRow());
 
-    sLog.outString("\n>> Loaded %llu transport events \n", result->GetRowCount());
+    sLog.outString("\n>> Loaded " UI64FMTD " transport events \n", result->GetRowCount());
 }
 

@@ -118,9 +118,6 @@ void ConfusedMovementGenerator<T>::Reset(T& unit)
 template<class T>
 bool ConfusedMovementGenerator<T>::Update(T& unit, const uint32& diff)
 {
-    if (!&unit)
-        return true;
-
     if (unit.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
         return true;
 

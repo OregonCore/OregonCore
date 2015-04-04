@@ -87,7 +87,7 @@ void TicketMgr::DeleteGMTicketPermanently(uint64 ticketGuid)
     }
 
     // delete database record
-    CharacterDatabase.PExecute("DELETE FROM gm_tickets WHERE guid= '%llu'", ticketGuid);
+    CharacterDatabase.PExecute("DELETE FROM gm_tickets WHERE guid= '" UI64FMTD "'", ticketGuid);
 }
 
 

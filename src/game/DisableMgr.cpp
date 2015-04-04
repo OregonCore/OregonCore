@@ -52,7 +52,7 @@ void DisableMgr::LoadDisables()
     {
         fields = result->Fetch();
         DisableType type = DisableType(fields[0].GetUInt32());
-        if (type >= MAX_DISABLE_TYPES)
+        if (uint32(type) >= MAX_DISABLE_TYPES)
         {
             sLog.outErrorDb("Invalid type %u specified in `disables` table, skipped.", type);
             continue;
@@ -129,7 +129,7 @@ void DisableMgr::LoadDisables()
                     break;
                 case MAP_BATTLEGROUND:
                 case MAP_ARENA:
-                    sLog.outErrorDb("Battleground map specified to be disabled in map case, skipped.", entry);
+                    sLog.outErrorDb("Battleground map %u specified to be disabled in map case, skipped.", entry);
                     continue;
                 }
                 if (isFlagInvalid)
@@ -182,7 +182,7 @@ void DisableMgr::CheckQuestDisables()
 
 bool DisableMgr::IsDisabledFor(DisableType type, uint32 entry, Unit* pUnit, uint8 flags)
 {
-    assert(type < MAX_DISABLE_TYPES);
+    assert(uint32(type) < MAX_DISABLE_TYPES);
     if (m_DisableMap[type].empty())
         return false;
 
@@ -198,7 +198,7 @@ bool DisableMgr::IsDisabledFor(DisableType type, uint32 entry, Unit* pUnit, uint
             if (pUnit)
             {
                 if ((spellFlags & SPELL_DISABLE_PLAYER && pUnit->GetTypeId() == TYPEID_PLAYER) ||
-                    (pUnit->GetTypeId() == TYPEID_UNIT && (pUnit->ToCreature()->isPet() && spellFlags & SPELL_DISABLE_PET || spellFlags & SPELL_DISABLE_CREATURE)))
+                    (pUnit->GetTypeId() == TYPEID_UNIT && (pUnit->ToCreature()->isPet() && spellFlags & (SPELL_DISABLE_PET | SPELL_DISABLE_CREATURE))))
                 {
                     if (spellFlags & SPELL_DISABLE_MAP)
                     {
@@ -236,7 +236,7 @@ bool DisableMgr::IsDisabledFor(DisableType type, uint32 entry, Unit* pUnit, uint
             if (mapEntry->IsDungeon())
             {
                 uint8 disabledModes = itr->second.flags;
-                DungeonDifficulties targetDifficulty = pPlayer->GetDifficulty();
+                uint32 targetDifficulty = pPlayer->GetDifficulty();
                 switch (targetDifficulty)
                 {
                 case DIFFICULTY_NORMAL:

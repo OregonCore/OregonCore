@@ -4289,13 +4289,13 @@ bool ChatHandler::HandleRAFInfoCommand(const char* args)
     switch (sObjectMgr.GetRAFLinkStatus(account, &linked))
     {
     case RAF_LINK_NONE:
-        PSendSysMessage("Account %llu is not linked to any account.", account);
+        PSendSysMessage("Account " UI64FMTD " is not linked to any account.", account);
         break;
     case RAF_LINK_REFERRER:
-        PSendSysMessage("Account %llu is referrer account. (friend is: %llu)", account, linked);
+        PSendSysMessage("Account " UI64FMTD " is referrer account. (friend is: " UI64FMTD ")", account, linked);
         break;
     case RAF_LINK_REFERRED:
-        PSendSysMessage("Account %llu is referred account. (friend is: %llu)", account, linked);
+        PSendSysMessage("Account " UI64FMTD " is referred account. (friend is: " UI64FMTD ")", account, linked);
         if (Player* player = ObjectAccessor::Instance().FindPlayerByAccountId(account))
             PSendSysMessage("Character %s has %.02f grantable levels", player->GetName(), player->GetGrantableLevels());
         break;

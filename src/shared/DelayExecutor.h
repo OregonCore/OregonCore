@@ -25,7 +25,6 @@
 class DelayExecutor : protected ACE_Task_Base
 {
     public:
-
         DelayExecutor();
         virtual ~DelayExecutor();
 
@@ -33,7 +32,8 @@ class DelayExecutor : protected ACE_Task_Base
 
         int execute(ACE_Method_Request* new_req);
 
-        int activate(int num_threads = 1, ACE_Method_Request* pre_svc_hook = NULL, ACE_Method_Request* post_svc_hook = NULL);
+        using ACE_Task_Base::activate; // silence hidden overloaded function warning
+        int activate(int num_threads = 1, ACE_Method_Request* pre_svc_hook = NULL, ACE_Method_Request* post_svc_hook = 0);
 
         int deactivate();
 

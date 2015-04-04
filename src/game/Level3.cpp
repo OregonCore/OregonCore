@@ -4534,7 +4534,7 @@ bool ChatHandler::HandleLevelUpCommand(const char* args)
     else
     {
         // update level and XP at level, all other will be updated at loading
-        CharacterDatabase.PExecute("UPDATE characters SET level = '%u', xp = 0 WHERE guid = '%llu'", newlevel, chr_guid);
+        CharacterDatabase.PExecute("UPDATE characters SET level = '%u', xp = 0 WHERE guid = '" UI64FMTD "'", newlevel, chr_guid);
     }
 
     if (m_session->GetPlayer() != chr)                       // including chr == NULL
@@ -7441,7 +7441,7 @@ bool ChatHandler::HandleUnFreezeCommand(const char* args)
             Field* fields = result->Fetch();
             uint64 pguid = fields[0].GetUInt64();
 
-            CharacterDatabase.PQuery("DELETE FROM character_aura WHERE character_aura.spell = 9454 AND character_aura.guid = '%llu'", pguid);
+            CharacterDatabase.PQuery("DELETE FROM character_aura WHERE character_aura.spell = 9454 AND character_aura.guid = '" UI64FMTD "'", pguid);
             PSendSysMessage(LANG_COMMAND_UNFREEZE, name.c_str());
             return true;
         }

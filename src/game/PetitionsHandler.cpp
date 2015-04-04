@@ -257,7 +257,7 @@ void WorldSession::HandlePetitionShowSignOpcode(WorldPacket& recv_data)
     QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT type FROM petition WHERE petitionguid = '%u'", petitionguid_low);
     if (!result)
     {
-        sLog.outError("Tried to sign petition guid %llu but it didn't exist!", petitionguid);
+        sLog.outError("Tried to sign petition guid " UI64FMTD " but it didn't exist!", petitionguid);
         return;
     }
     Field* fields = result->Fetch();
@@ -454,7 +454,7 @@ void WorldSession::HandlePetitionSignOpcode(WorldPacket& recv_data)
 
     if (!result)
     {
-        sLog.outError("Tried to view signs of petition guid %llu but it didn't exist!", petitionguid);
+        sLog.outError("Tried to view signs of petition guid " UI64FMTD " but it didn't exist!", petitionguid);
         return;
     }
 

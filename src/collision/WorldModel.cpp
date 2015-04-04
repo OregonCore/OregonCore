@@ -43,7 +43,7 @@ bool IntersectTriangle(const MeshTriangle& tri, std::vector<Vector3>::const_iter
     const Vector3 p(ray.direction().cross(e2));
     const float a = e1.dot(p);
 
-    if (abs(a) < EPS)
+    if (fabsf(a) < EPS)
     {
         // Determinant is ill-conditioned; abort early
         return false;
@@ -308,7 +308,7 @@ bool GroupModel::readFromFile(FILE* rf)
 {
     char chunk[8];
     bool result = true;
-    uint32 chunkSize, count;
+    uint32 chunkSize, count = 0;
     triangles.clear();
     vertices.clear();
     delete iLiquid;
@@ -542,7 +542,7 @@ bool WorldModel::readFile(const std::string& filename)
         return false;
 
     bool result = true;
-    uint32 chunkSize, count;
+    uint32 chunkSize, count = 0;
     char chunk[8];                          // Ignore the added magic header
     if (!readChunk(rf, chunk, VMAP_MAGIC, 8)) result = false;
 

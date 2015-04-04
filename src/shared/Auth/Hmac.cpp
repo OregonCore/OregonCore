@@ -26,7 +26,7 @@ HmacHash::HmacHash()
     HMAC_Init_ex(&m_ctx, &m_key, SEED_KEY_SIZE, EVP_sha1(), NULL);
 }
 
-HmacHash::HmacHash(uint32 len, uint8* seed)
+HmacHash::HmacHash(uint32 /*len*/, uint8* /*seed*/)
 {
     HMAC_CTX_init(&m_ctx);
     HMAC_Init_ex(&m_ctx, &m_key, SEED_KEY_SIZE, EVP_sha1(), NULL);

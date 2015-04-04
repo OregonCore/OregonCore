@@ -3694,7 +3694,7 @@ void Player::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
     Unit::BuildCreateUpdateBlockForPlayer(data, target);
 }
 
-void Player::DestroyForPlayer(Player* target) const
+void Player::DestroyForPlayer(Player* target, bool /*onDeath*/) const
 {
     Unit::DestroyForPlayer(target);
 
@@ -4041,10 +4041,10 @@ void Player::DeleteOldCharacters(uint32 keepDays)
 {
     sLog.outString("Player::DeleteOldChars: Deleting all characters which have been deleted %u days before...", keepDays);
 
-    QueryResult_AutoPtr resultChars = CharacterDatabase.PQuery("SELECT guid, deleteInfos_Account FROM characters WHERE deleteDate IS NOT NULL AND deleteDate < %llu", uint64(time(NULL) - time_t(keepDays * DAY)));
+    QueryResult_AutoPtr resultChars = CharacterDatabase.PQuery("SELECT guid, deleteInfos_Account FROM characters WHERE deleteDate IS NOT NULL AND deleteDate < " UI64FMTD "", uint64(time(NULL) - time_t(keepDays * DAY)));
     if (resultChars)
     {
-        sLog.outString("Player::DeleteOldChars: Found %llu character(s) to delete", resultChars->GetRowCount());
+        sLog.outString("Player::DeleteOldChars: Found " UI64FMTD " character(s) to delete", resultChars->GetRowCount());
         do
         {
             Field* charFields = resultChars->Fetch();
@@ -15424,7 +15424,7 @@ void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
             if (remaintime > maxduration)
             {
                 sLog.outError("Player::_LoadAuras: Aura's remaining time exceeds maximum duration time.\n"
-                              "(caster: %llu, Aura: %u, remainTime: %u, maxDuration: %u)",
+                              "(caster: " UI64FMTD ", Aura: %u, remainTime: %u, maxDuration: %u)",
                               caster_guid, spellproto->Id, remaintime, maxduration);
 
                 remaintime = maxduration;
@@ -16375,7 +16375,7 @@ bool Player::Satisfy(AccessRequirement const* ar, uint32 target_map, bool report
 
         if (sDisableMgr.IsDisabledFor(DISABLE_TYPE_MAP, target_map, this))
         {
-            GetSession()->SendAreaTriggerMessage(GetSession()->GetOregonString(LANG_INSTANCE_CLOSED));
+            GetSession()->SendAreaTriggerMessage("%s", GetSession()->GetOregonString(LANG_INSTANCE_CLOSED));
             SendTransferAborted(target_map, TRANSFER_ABORT_DIFFICULTY1);
             return false;
         }
@@ -17458,6 +17458,8 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
             petstatus = (pet->IsAlive()) ?
                         PET_STATUS_DISMISSED : PET_STATUS_DEAD_AND_REMOVED;
         }
+    default:
+        break;
     }
     SetPetStatus(petstatus);  // Update pet status
 

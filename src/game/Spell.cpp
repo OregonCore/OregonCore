@@ -1248,7 +1248,7 @@ void Spell::DoAllEffectOnTarget(GOTargetInfo* target)
         if (effectMask & (1 << effectNumber))
             HandleEffects(NULL, NULL, go, effectNumber);
 
-    sLog.outString("CASTED %u on GUID: %llu, entry: %u", m_spellInfo->Id, go->GetGUID(), go->GetGOInfo()->id);
+    sLog.outString("CASTED %u on GUID: " UI64FMTD ", entry: %u", m_spellInfo->Id, go->GetGUID(), go->GetGOInfo()->id);
 
     // cast at creature (or GO) quest objectives update at successful cast finished (+channel finished)
     // ignore autorepeat/melee casts for speed (not exist quest for spells (hm...)
@@ -2189,7 +2189,7 @@ void Spell::prepare(SpellCastTargets* targets, Aura* triggeredByAura)
         // Periodic auras should be interrupted when aura triggers a spell which can't be cast
         // for example bladestorm aura should be removed on disarm as of patch 3.3.5
         // channeled periodic spells should be affected by this (arcane missiles, penance, etc)
-        // a possible alternative sollution for those would be validating aura target on unit state change
+        // a possible alternative so" UI64FMTD "tion for those would be validating aura target on unit state change
         if (triggeredByAura && triggeredByAura->IsPeriodic() && !triggeredByAura->IsPassive())
         {
             SendChannelUpdate(0);
@@ -3626,14 +3626,10 @@ void Spell::TriggerSpell()
 SpellCastResult Spell::CheckCast(bool strict)
 {
     // check cooldowns to prevent cheating
-    if (!m_IsTriggeredSpell && m_caster->GetTypeId() == TYPEID_PLAYER && (m_caster->ToPlayer()->HasSpellCooldown(m_spellInfo->Id) || (strict && m_caster->ToPlayer()->HasGlobalCooldown(m_spellInfo))))
-    {
-        //triggered spells shouldn't be casted (cooldown check in handleproctriggerspell)
-        // if (m_triggeredByAuraSpell)
-        //     return SPELL_FAILED_DONT_REPORT;
-        // else
-        return SPELL_FAILED_NOT_READY;
-    }
+    if (!m_IsTriggeredSpell)
+        if (Player* plr = m_caster->ToPlayer())
+            if (plr->HasSpellCooldown(m_spellInfo->Id) || (strict && plr->HasGlobalCooldown(m_spellInfo)))
+                return SPELL_FAILED_NOT_READY;
 
     // Check global cooldown
     if (strict && !m_IsTriggeredSpell && HasGlobalCooldown())
@@ -4018,38 +4014,8 @@ SpellCastResult Spell::CheckCast(bool strict)
         case SPELL_EFFECT_DUMMY:
             {
                 if (SpellCastResult result = CheckDummyCast(i))
-                {
                     if (result != SPELL_CAST_OK)
                         return result;
-                    break;
-                }
-
-                // TODO: Remove this in future
-                // we'll let this here for backward compatibility
-
-                if (m_spellInfo->SpellIconID == 1648)        // Execute
-                {
-                    if (!m_targets.getUnitTarget() || m_targets.getUnitTarget()->GetHealth() > m_targets.getUnitTarget()->GetMaxHealth() * 0.2)
-                        return SPELL_FAILED_BAD_TARGETS;
-                }
-                else if (m_spellInfo->Id == 51582)          // Rocket Boots Engaged
-                {
-                    if (m_caster->IsInWater())
-                        return SPELL_FAILED_ONLY_ABOVEWATER;
-                }
-                else if (m_spellInfo->SpellIconID == 156)      // Holy Shock
-                {
-                    // spell different for friends and enemies
-                    // hart version required facing
-                    if (m_targets.getUnitTarget() && !m_caster->IsFriendlyTo(m_targets.getUnitTarget()) && !m_caster->HasInArc(M_PI, target))
-                        return !m_IsTriggeredSpell ? SPELL_FAILED_UNIT_NOT_INFRONT : SPELL_FAILED_DONT_REPORT;
-                }
-                else if (m_spellInfo->Id == 19938)          // Awaken Peon
-                {
-                    Unit* unit = m_targets.getUnitTarget();
-                    if (!unit || !unit->HasAura(17743, 0))
-                        return SPELL_FAILED_BAD_TARGETS;
-                }
                 break;
             }
         case SPELL_EFFECT_SCHOOL_DAMAGE:
@@ -4555,35 +4521,10 @@ SpellCastResult Spell::CheckCast(bool strict)
         case SPELL_AURA_DUMMY:
             {
                 if (SpellCastResult result = CheckDummyCast(i))
-                {
                     if (result != SPELL_CAST_OK)
                         return result;
-                    break;
-                }
-
-                // TODO: Remove this in future
-                // we'll let this here for backward compatibility
-
-                if (m_spellInfo->Id == 1515)
-                {
-                    if (!m_targets.getUnitTarget() || m_targets.getUnitTarget()->GetTypeId() == TYPEID_PLAYER)
-                        return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
-
-                    if (m_targets.getUnitTarget()->getLevel() > m_caster->getLevel())
-                        return SPELL_FAILED_HIGHLEVEL;
-
-                    // use SMSG_PET_TAME_FAILURE?
-                    if (!m_targets.getUnitTarget()->ToCreature()->GetCreatureTemplate()->isTameable())
-                        return SPELL_FAILED_BAD_TARGETS;
-
-                    if (m_caster->GetPetGUID())
-                        return SPELL_FAILED_ALREADY_HAVE_SUMMON;
-
-                    if (m_caster->GetCharmGUID())
-                        return SPELL_FAILED_ALREADY_HAVE_CHARM;
-                }
+                break;
             }
-            break;
         case SPELL_AURA_MOD_POSSESS:
         case SPELL_AURA_MOD_CHARM:
             {
@@ -5252,7 +5193,7 @@ SpellCastResult Spell::CheckRange(bool strict)
     }
 
     //add radius of caster and ~5 yds "give" for non stricred (landing) check
-    float range_mod = strict ? 1.25f : 6.25;
+    //float range_mod = strict ? 1.25f : 6.25;
 
     SpellRangeEntry const* srange = sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex);
     float max_range = GetSpellMaxRange(srange);// + range_mod;

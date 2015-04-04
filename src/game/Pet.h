@@ -295,6 +295,11 @@ class Pet : public Guardian
         bool m_wasOutdoors;
         uint32 m_outdoorBonusCheckTimer;
     private:
+
+        // silence hidden overloaded functions warnings below
+        using Creature::SaveToDB;
+        using Creature::DeleteFromDB;
+        
         void SaveToDB(uint32, uint8)                        // overwrited of Creature::SaveToDB     - don't must be called
         {
             assert(false);

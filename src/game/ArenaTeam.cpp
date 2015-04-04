@@ -83,7 +83,7 @@ bool ArenaTeam::Create(uint64 captainGuid, uint32 type, std::string arenaTeamNam
     CharacterDatabase.CommitTransaction();
 
     AddMember(m_CaptainGuid);
-    sLog.outArena("New ArenaTeam created [Id: %u] [Type: %u] [Captain GUID: %llu]", GetId(), GetType(), GetCaptain());
+    sLog.outArena("New ArenaTeam created [Id: %u] [Type: %u] [Captain GUID: " UI64FMTD "]", GetId(), GetType(), GetCaptain());
     return true;
 }
 
@@ -121,7 +121,7 @@ bool ArenaTeam::AddMember(const uint64& playerGuid)
         // check if player already in arenateam of that size
         if (Player::GetArenaTeamIdFromDB(playerGuid, GetType()) != 0)
         {
-            sLog.outError("Arena::AddMember() : player %llu already in this sized team", playerGuid);
+            sLog.outError("Arena::AddMember() : player " UI64FMTD " already in this sized team", playerGuid);
             return false;
         }
     }

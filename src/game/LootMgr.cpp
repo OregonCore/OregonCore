@@ -87,7 +87,7 @@ void LootStore::Verify() const
 void LootStore::LoadLootTable()
 {
     LootTemplateMap::iterator tab;
-    uint32 count = 0;
+    uint64 count = 0;
 
     // Clearing store (for reloading case)
     Clear();
@@ -150,7 +150,7 @@ void LootStore::LoadLootTable()
 
         Verify();                                           // Checks validity of the loot store
 
-        sLog.outString(">> Loaded %u loot definitions (%d templates)", count, m_LootTemplates.size());
+        sLog.outString(">> Loaded " UI64FMTD " loot definitions (" UI64FMTD " templates)", count, m_LootTemplates.size());
     }
     else
         sLog.outErrorDb(">> Loaded 0 loot definitions. DB table %s is empty.", GetName());
