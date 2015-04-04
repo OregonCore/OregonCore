@@ -743,6 +743,8 @@ void Console::FatalError(const char* msg)
         ;
 
     DestroyWindow(errWin);
+
+    endwin();
 }
 
 void Console::DrawLogo()
