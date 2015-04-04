@@ -803,7 +803,7 @@ struct CharmInfo
         //ReactStates GetReactState() { return m_reactState; }
         //bool HasReactState(ReactStates state) { return (m_reactState == state); }
 
-        void InitPossessCreateSpells();
+        void InitPossessCreateSpells(bool withAttack = true);
         void InitCharmCreateSpells();
         void InitPetActionBar();
         void InitEmptyActionBar(bool withAttack = true);

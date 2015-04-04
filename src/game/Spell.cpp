@@ -364,6 +364,27 @@ Spell::~Spell()
     delete m_spellValue;
 }
 
+void ResizeUnitListByDistance(std::list<Unit*> &_list, WorldObject* source, uint32 _size, bool _keepnearest)
+{	
+	float d;
+	std::list<Unit*>::iterator _i;
+	ASSERT(_size >= 0);
+	while(_list.size() > _size)
+	{
+		d = source->GetDistance((*_list.begin()));
+		_i = _list.begin();
+		for(std::list<Unit*>::iterator itr = _list.begin(); itr != _list.end(); itr++)
+		{
+			if((_keepnearest && source->GetDistance(*itr) > d) || (!_keepnearest && source->GetDistance(*itr) < d))
+			{
+				d = source->GetDistance(*itr);
+				_i = itr;
+			}
+		}
+		_list.erase(_i);
+	}
+}
+
 void Spell::FillTargetMap()
 {
     for (uint32 i = 0; i < MAX_SPELL_EFFECTS; ++i)
@@ -2131,7 +2152,10 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 if (m_spellInfo->Id == 5246) //Intimidating Shout
                     unitList.remove(m_targets.getUnitTarget());
 
-                Oregon::RandomResizeList(unitList, m_spellValue->MaxAffectedTargets);
+                if(sSpellMgr.SpellTargetType[cur] == TARGET_TYPE_AREA_CONE)
+                    ResizeUnitListByDistance(unitList,m_caster,m_spellValue->MaxAffectedTargets,true);
+                else
+                    Oregon::RandomResizeList(unitList, m_spellValue->MaxAffectedTargets);
             }
             else if (m_spellInfo->Id == 27285)  // Seed of Corruption proc spell
                 unitList.remove(m_targets.getUnitTarget());

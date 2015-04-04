@@ -10726,9 +10726,9 @@ void CharmInfo::InitEmptyActionBar(bool withAttack)
     m_barInit = true;
 }
 
-void CharmInfo::InitPossessCreateSpells()
+void CharmInfo::InitPossessCreateSpells(bool withAttack)
 {
-    InitEmptyActionBar();
+    InitEmptyActionBar(withAttack);
 
     if (m_unit->GetTypeId() == TYPEID_UNIT)
     {

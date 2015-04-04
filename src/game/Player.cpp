@@ -16743,7 +16743,10 @@ void Player::_SaveAuras()
                     for (i = 0; i < MAX_SPELL_EFFECTS; i++)
                     {
                         if (spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_SHAPESHIFT ||
-                            spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_STEALTH)
+                            spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_STEALTH ||
+                            spellInfo->EffectApplyAuraName[i] == SPELL_AURA_BIND_SIGHT ||
+                            spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_CHARM ||
+                            spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_POSSESS)
                             break;
                     }
                     // Prevent wrong value of remaining time to be saved to the database
