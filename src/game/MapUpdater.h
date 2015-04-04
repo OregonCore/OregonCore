@@ -28,6 +28,7 @@ class Map;
 class MapUpdater
 {
     public:
+
         MapUpdater();
         virtual ~MapUpdater();
 
@@ -39,16 +40,18 @@ class MapUpdater
 
         int activate(size_t num_threads);
 
-        int deactivate(void);
+        int deactivate();
 
         bool activated();
+
     private:
-        void update_finished();
 
         DelayExecutor m_executor;
         ACE_Condition_Thread_Mutex m_condition;
         ACE_Thread_Mutex m_mutex;
-        size_t pedning_requests;
-};
-#endif //_MAP_UPDATER_H_INCLUDED
+        size_t pending_requests;
 
+        void update_finished();
+};
+
+#endif //_MAP_UPDATER_H_INCLUDED
