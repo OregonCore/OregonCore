@@ -2102,6 +2102,12 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 }
             }
             return;
+        case 30019: //control piece
+            if (caster && caster->GetTypeId() == TYPEID_PLAYER)
+                caster->ToPlayer()->TeleportTo(532, -11105.08, -1845.65, 229.65, 5.42);
+            if (caster && caster->GetCharm())
+                caster->GetCharm()->GetCharmInfo()->SetIsAtStay(true);
+            return;
         case 39850:                                     // Rocket Blast
             if (roll_chance_i(20))                       // backfire stun
                 m_target->CastSpell(m_target, 51581, true, NULL, this);
@@ -2125,6 +2131,20 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 }
             }
             return;
+        case 32260: //Chess: Deactivate Own Field
+            {
+                //Set No_Movement Flag, to disable Field
+                m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                //Add Tempsummon
+                GetCaster()->SummonCreature(22519, m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ(), m_target->GetOrientation());
+                return;
+            }
+        case 32261: //Chess: Create Move Marker
+            {
+                if (m_target->GetEntry() == 17305 || m_target->GetEntry() == 17208) //Only white or black squares are valid targets
+                    GetCaster()->SummonCreature(22519, m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ(), m_target->GetOrientation());
+                return;
+            }
         case 46699:                                     // Requires No Ammo
             if (m_target->GetTypeId() == TYPEID_PLAYER)
                 m_target->ToPlayer()->RemoveAmmo();      // not use ammo and not allow use
@@ -2303,6 +2323,13 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
         case 34477:                                     // Misdirection
             {
                 m_target->SetReducedThreatPercent(0, 0);
+                return;
+            }
+        case 30019: //control piece
+            {
+                m_target->CastSpell(m_target, 30529, true, NULL, this); //conrol piece debuff
+                if (m_target->GetTypeId() == TYPEID_PLAYER)
+                    m_target->ToPlayer()->StopCastingCharm();
                 return;
             }
         }
