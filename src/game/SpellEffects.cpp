@@ -1502,6 +1502,53 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     m_caster->CastCustomSpell(m_caster, 26635, &hasteModBasePoints0, &hasteModBasePoints1, &hasteModBasePoints2, true, NULL);
                     return;
                 }
+            case 30543: //Turn Cooldown : chess event karazhan dummy
+                {
+                    return;
+                }
+            case 32225: //Chess Event: Take Action Melee
+                {
+                    switch (m_caster->GetEntry())
+                    {
+                        case 21684:
+                            m_caster->CastSpell(m_caster, 37150, true);
+                            break;//King Liane Melee Attack
+                        case 21683:
+                            m_caster->CastSpell(m_caster, 37149, true);
+                            break;//Human Conjur Melee Attack
+                        case 21682:
+                            m_caster->CastSpell(m_caster, 37147, true);
+                            break;//Human Cleric Melee Attack
+                        case 21664:
+                            m_caster->CastSpell(m_caster, 37143, true);
+                            break;//Human Charger Melee Attack
+                        case 21160:
+                            m_caster->CastSpell(m_caster, 37142, true);
+                            break; //Water Elemental melee Attack
+                        case 17211:
+                            m_caster->CastSpell(m_caster, 32227, true);
+                            break; //Human Footan Melee Attack
+                        case 21752:
+                            m_caster->CastSpell(m_caster, 37348, true);
+                            break; //Warchief Blackhand Melee Attack
+                        case 21750:
+                            m_caster->CastSpell(m_caster, 37345, true);
+                            break; //Orc Warlock Melee Attack
+                        case 21747:
+                            m_caster->CastSpell(m_caster, 37337, true);
+                            break; //Orc Necrolyte Melee Attack
+                        case 21748:
+                            m_caster->CastSpell(m_caster, 37339, true);
+                            break; //Orc Wolf Melee Attack
+                        case 21726:
+                            m_caster->CastSpell(m_caster, 37220, true);
+                            break; //Summoned Deamon
+                        case 17469:
+                            m_caster->CastSpell(m_caster, 32228, true);
+                            break; //Orc Gunt Melee Attack
+                    }
+                    return;
+                }
             }
         }
     case SPELLFAMILY_MAGE:
@@ -1566,6 +1613,99 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 return;
 
             m_caster->CastSpell(unitTarget, 21887, true); // spell mod
+            return;
+        }
+        if (m_spellInfo->Id == 30284)  //Chess: Change Facing
+        {
+            m_caster->SetInFront(unitTarget);
+
+            // and client
+            WorldPacket data;
+            m_caster->BuildHeartBeatMsg(&data);
+            m_caster->SendMessageToSet(&data, false);
+
+            return;
+        }
+        if (m_spellInfo->Id == 37151 || m_spellInfo->Id == 37148 || m_spellInfo->Id == 37144) //MoveSpells for Chess_Event - dunno why has spellfamilyname for Warrior Spells
+        {
+            if (m_caster->GetDistance(unitTarget) <= (GetSpellMaxRange(m_spellInfo) - GetSpellRadius(m_spellInfo, effIndex, true)))
+            {
+                if (unitTarget->GetTypeId() == TYPEID_UNIT && !(unitTarget->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))) //if UNIT_FLAG_NOT_SELECTABLE than field is occuped
+                {
+                    //cast transform Field
+                    if (m_caster)
+                    {
+                        unitTarget->CastSpell(unitTarget, 32745, true); //implemented
+                        m_caster->CastSpell(m_caster, 30543, true); //not implemented -- handled in this function
+                        m_caster->HandleEmoteCommand(EMOTE_ONESHOT_POINT_NOSHEATHE);
+
+                        // remove old Move Marker
+                        std::list<Unit*> MarkerList;
+                        Oregon::AllCreaturesOfEntryInRange u_check(m_caster, 22519, 200);
+                        Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(MarkerList, u_check);
+                        m_caster->GetMap()->VisitAll(m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), searcher);
+                        for (std::list<Unit*>::iterator itr = MarkerList.begin(); itr != MarkerList.end(); ++itr)
+                        {
+                            Unit* curr;
+                            if (curr = (*itr))
+                            {
+                                if (curr->ToCreature()->isSummon() && dynamic_cast<TempSummon*>(curr)->GetSummoner() && dynamic_cast<TempSummon*>(curr)->GetSummoner()->GetGUID() == m_caster->GetGUID())
+                                {
+                                    curr->ToCreature()->ForcedDespawn(3000);
+                                }
+                            }
+                        }
+
+                        //create new Move Marker
+                        m_caster->CastSpell(unitTarget, 32261, true);
+
+                        //Register Scripts
+                        //prepare Move
+                        float speed = m_caster->GetSpeed(MOVE_WALK);
+                        speed *= 0.001f;
+                        ScriptInfo *si = new ScriptInfo;
+                        si->command = SCRIPT_COMMAND_MOVE_TO;
+                        si->MoveTo.DestX = unitTarget->GetPositionX();
+                        si->MoveTo.DestY = unitTarget->GetPositionY();
+                        si->MoveTo.DestZ = unitTarget->GetPositionZ();
+                        si->MoveTo.TravelTime = m_caster->GetExactDist(unitTarget->GetPositionX(), unitTarget->GetPositionY(), unitTarget->GetPositionZ()) / speed;
+
+                        //prepare change facing
+                        ScriptInfo *si2 = new ScriptInfo;
+                        si2->command = SCRIPT_COMMAND_CAST_SPELL;
+                        si2->CastSpell.SpellID = 38011;
+
+                        //insert scripts
+                        m_caster->GetMap()->ScriptCommandStart((*si2), 2 + 1 + si->MoveTo.TravelTime / IN_MILLISECONDS, m_caster, m_caster);
+                        m_caster->GetMap()->ScriptCommandStart((*si), 2, m_caster, m_caster);
+
+                        //set cooldowns
+                        uint32 cooldown = 12000;
+                        uint32 SpellTurn = 30284;
+                        time_t cd = time(NULL) + cooldown / IN_MILLISECONDS;
+                        m_caster->ToCreature()->_AddCreatureSpellCooldown(m_spellInfo->Id, cd);
+                        m_caster->ToCreature()->_AddCreatureSpellCooldown(SpellTurn, cd);
+                        m_caster->ToCreature()->_AddCreatureCategoryCooldown(30284, cd);
+
+                        //send cooldowns to player
+                        if (m_caster->isCharmed())
+                        {
+                            Unit* charmer = m_caster->GetCharmer();
+                            if (charmer && charmer->GetTypeId() == TYPEID_PLAYER)
+                            {
+                                WorldPacket data(SMSG_SPELL_COOLDOWN, (8 + 1 + 16));
+                                data << m_caster->GetGUID();
+                                data << uint8(0x0);
+                                data << m_spellInfo->Id;
+                                data << cooldown;
+                                data << SpellTurn;
+                                data << cooldown;
+                                charmer->ToPlayer()->GetSession()->SendPacket(&data);
+                            }
+                        }
+                    }
+                }
+            }
             return;
         }
         break;
@@ -5254,6 +5394,15 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     unitTarget->CastSpell(m_caster, 40903, true);
                     break;
                 }
+            case 39395: //win for chessevent
+                {
+                    ScriptInfo* si = new ScriptInfo;
+                    si->command = SCRIPT_COMMAND_DESPAWN_SELF;
+                    si->DespawnSelf.DespawnDelay = urand(10, 20) * 1000;
+                    unitTarget->GetMap()->ScriptCommandStart((*si), 0, unitTarget, unitTarget);
+                    unitTarget->RemoveAurasDueToSpell(32226); //attack timer -- stop attacking;
+                    break;
+                }
             case 48025:                                     // Headless Horseman's Mount
                 {
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
@@ -5441,6 +5590,60 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     unitTarget->ToPlayer()->ModifyMoney(5000 * GOLD);
 
                     break;
+                }
+            case 38011: //After move Facing Chess Event karazhan
+                {
+                    float Orientation[4];
+                    Orientation[0] = 0.615f;
+                    Orientation[1] = 2.234f;
+                    Orientation[2] = 3.829f;
+                    Orientation[3] = 5.378f;
+
+                    //get div to closest orientation
+                    float div = abs(Orientation[0] - m_caster->GetOrientation());
+                    for (int i = 1; i <= 3; i++)
+                    if (abs(Orientation[i] - m_caster->GetOrientation()) < div)
+                        div = abs(Orientation[i] - m_caster->GetOrientation());
+                    if (div > 0.3) //correct orientation
+                    {
+                        //get next orientation
+                        int id = 0;
+                        for (int i = 0; i <= 3; i++)
+                        if (Orientation[i] - m_caster->GetOrientation() > 0)
+                        {
+                            id = i;
+                            break;
+                        }
+                        //don't need to check orientation > 5.378 => it's 0 
+                        m_caster->SetOrientation(Orientation[id]);
+
+                        // and client
+                        WorldPacket data;
+                        m_caster->BuildHeartBeatMsg(&data);
+                        m_caster->SendMessageToSet(&data, false);
+                    }
+                    break;
+                }
+            //handle Melee Attack Spells for Chess Pieces
+            //Alliance Melee Attack (all 1000dmg? need proof for now just use DMG Footman Spell (32247) -- no other related spell like this
+            case 37150:
+            case 37149:
+            case 37147:
+            case 37143:
+            case 37142:
+            case 32227:
+            //Horde Spells
+            case 37348:
+            case 37345:
+            case 37337:
+            case 37339:
+            case 37220:
+            case 32228:
+                {
+                    //we should do extra check her, can't remember we can hit targets that are not on a field in front of us..
+                    if (m_caster->HasInArc(M_PI / 18, unitTarget) && m_caster->GetDistance(unitTarget) <= 4)//sould be in an angel within 10° and Fieldrange
+                        m_caster->CastSpell(unitTarget, 32247, true); //Chess NPC Action: Melee Attack: DAMAGE (Footman)
+                    return;
                 }
             }
             break;
