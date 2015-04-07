@@ -52,7 +52,8 @@ enum eEnums
     DATA_MASTERS_TERRACE_DOOR_1     = 27,
     DATA_MASTERS_TERRACE_DOOR_2     = 28,
     DATA_GO_SIDE_ENTRANCE_DOOR      = 29,
-    DATA_NIGHTBANE                  = 30
+    DATA_NIGHTBANE                  = 30,
+    DATA_ECHO_OF_MEDIVH             = 31
 };
 
 enum OperaEvents

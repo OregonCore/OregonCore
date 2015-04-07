@@ -61,6 +61,8 @@ struct instance_karazhan : public ScriptedInstance
     uint64 m_uiTerestianGUID;
     uint64 m_uiMoroesGUID;
     uint64 m_uiNightBaneGUID;
+    uint64 EchoOfMedivhGUID;
+
     uint64 m_uiLibraryDoor;                                     // Door at Shade of Aran
     uint64 m_uiMassiveDoor;                                     // Door at Netherspite
     uint64 m_uiSideEntranceDoor;                                // Side Entrance
@@ -86,7 +88,8 @@ struct instance_karazhan : public ScriptedInstance
         m_uiKilrekGUID      = 0;
         m_uiTerestianGUID   = 0;
         m_uiMoroesGUID      = 0;
-        m_uiNightBaneGUID   = 0;
+        m_uiNightBaneGUID = 0;
+        EchoOfMedivhGUID = 0;
 
         m_uiLibraryDoor         = 0;
         m_uiMassiveDoor         = 0;
@@ -121,6 +124,9 @@ struct instance_karazhan : public ScriptedInstance
             break;
         case 15687:
             m_uiMoroesGUID = pCreature->GetGUID();
+            break;
+        case 16816:
+            EchoOfMedivhGUID = pCreature->GetGUID();
             break;
         }
     }
@@ -358,6 +364,8 @@ struct instance_karazhan : public ScriptedInstance
             return MastersTerraceDoor[1];
         case DATA_NIGHTBANE:
             return m_uiNightBaneGUID;
+        case DATA_ECHO_OF_MEDIVH:
+            return EchoOfMedivhGUID;
         }
 
         return 0;
