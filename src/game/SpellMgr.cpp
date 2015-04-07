@@ -625,6 +625,8 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
     case 31719:                                         // Suspension
     case 43501:                                         // Siphon Soul (Hexlord Spell)
     case 30457:                                         // Complete vulnerability
+    case 30529:                                         // Recently In Game - Chess Event
+    case 37465:                                         // Rain of Fire
         return false;
     }
 
@@ -638,6 +640,10 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
     case SPELL_EFFECT_ENERGIZE_PCT:
     case SPELL_EFFECT_QUEST_COMPLETE:
         return true;
+
+    //todo: check if needed, added for chess script
+    case SPELL_EFFECT_SCHOOL_DAMAGE:
+        return false;
 
     // non-positive aura use
     case SPELL_EFFECT_APPLY_AURA:
@@ -2593,6 +2599,10 @@ void SpellMgr::LoadSpellCustomAttr()
             break;
         case 34580:
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_IGNORE_ARMOR;
+            break;
+        case 39384:
+            spellInfo->Effect[1] = 0; //Delete this effect, could be fixed also by implementing script_targets for each spell effect..
+            spellInfo->rangeIndex = 16;//1y, don't know why, but with 5y (dbc value) all fields around are effected too, so somethings wrong in range check for those spells propably..
             break;
         case 6774:
             spellInfo->AttributesEx3 |= SPELL_ATTR_EX3_NO_INITIAL_AGGRO; // slice and dice no longer gives combat or remove stealth
