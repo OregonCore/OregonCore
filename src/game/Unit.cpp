@@ -6847,6 +6847,14 @@ bool Unit::IsHostileTo(Unit const* unit) const
     if (getVictim() == unit || unit->getVictim() == this)
         return true;
 
+    //special check for charmed creatures spells
+    const CreatureInfo* tar = sObjectMgr.GetCreatureTemplate(unit->GetEntry());
+    const CreatureInfo* me = sObjectMgr.GetCreatureTemplate(GetEntry());
+
+    if (tar && me)
+    if ((me->faction_A == 1690 && tar->faction_A == 1689) || (me->faction_A == 1689 && tar->faction_A == 1690))
+        return true;
+
     // test pet/charm masters instead pers/charmeds
     Unit const* testerOwner = GetCharmerOrOwner();
     Unit const* targetOwner = unit->GetCharmerOrOwner();
@@ -6959,6 +6967,14 @@ bool Unit::IsFriendlyTo(Unit const* unit) const
 
     // always non-friendly to enemy
     if (getVictim() == unit || unit->getVictim() == this)
+        return false;
+
+    //special check for charmed creatures spells
+    const CreatureInfo* tar = sObjectMgr.GetCreatureTemplate(unit->GetEntry());
+    const CreatureInfo* me = sObjectMgr.GetCreatureTemplate(GetEntry());
+
+    if (tar && me)
+    if ((me->faction_A == 1690 && tar->faction_A == 1689) || (me->faction_A == 1689 && tar->faction_A == 1690))
         return false;
 
     // test pet/charm masters instead pers/charmeds
