@@ -597,6 +597,24 @@ void Spell::FillTargetMap()
             m_delayMoment = (uint64) floor(dist / m_spellInfo->speed * 1000.0f);
         }
     }
+
+    // m_targets is originally sent by client and its values are used
+    // in single target casts. It may occur that we have set implicit
+    // targets but we need to change m_targets too for those checks
+
+    if (!m_targets.getUnitTarget() && m_UniqueTargetInfo.size())
+        if (uint64 targetGUID = (*m_UniqueTargetInfo.begin()).targetGUID)
+            if (Unit* target = m_caster->GetGUID() == targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, targetGUID))
+                m_targets.setUnitTarget(target);
+
+    if (!m_targets.getGOTarget() && m_UniqueGOTargetInfo.size())
+        if (uint64 targetGUID = (*m_UniqueGOTargetInfo.begin()).targetGUID)
+            if (GameObject* target = m_caster->GetMap()->GetGameObject(targetGUID))
+                m_targets.setGOTarget(target);
+
+    if (!m_targets.getGOTarget() && m_UniqueItemInfo.size())
+        if (Item* target = (*m_UniqueItemInfo.begin()).item)
+            m_targets.setItemTarget(target);
 }
 
 void Spell::prepareDataForTriggerSystem()
@@ -1563,7 +1581,6 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             case TARGET_NONE:
             case TARGET_UNIT_CASTER:
                 AddUnitTarget(m_caster, i);
-                m_targets.setUnitTarget(m_caster);
                 break;
             case TARGET_UNIT_CASTER_FISHING:
                 {
