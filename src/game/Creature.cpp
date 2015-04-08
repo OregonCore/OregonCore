@@ -148,9 +148,11 @@ bool ForcedDespawnDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
 Creature::Creature() :
     Unit(),
     lootForPickPocketed(false), lootForBody(false),
+    _skinner(0),
     m_GlobalCooldown(0),
     m_PlayerDamageReq(0), m_SightDistance(sWorld.getConfig(CONFIG_SIGHT_MONSTER)),
-    m_CombatDistance(MELEE_RANGE), m_lootMoney(0), m_lootRecipient(0), m_corpseRemoveTime(0), m_respawnTime(0), m_respawnDelay(25), m_corpseDelay(60),
+    m_CombatDistance(MELEE_RANGE), m_lootMoney(0), m_lootRecipient(0), m_lootRecipientGroup(0), m_corpseRemoveTime(0), m_respawnTime(0), m_respawnDelay(25),
+    m_corpseDelay(60),
     m_respawnradius(0.0f), m_emoteState(0), m_summonMask(SUMMON_MASK_NONE), m_reactState(REACT_AGGRESSIVE), m_regenTimer(2000),
     m_defaultMovementType(IDLE_MOTION_TYPE), m_DBTableGuid(0), m_equipmentId(0),
     m_AlreadyCallAssistance(false), m_AlreadySearchedAssistance(false), m_regenHealth(true), m_AI_locked(false),
@@ -899,8 +901,16 @@ bool Creature::CanTrainAndResetTalentsOf(Player* pPlayer) const
 
 Player* Creature::GetLootRecipient() const
 {
-    if (!m_lootRecipient) return NULL;
-    else return ObjectAccessor::FindPlayer(m_lootRecipient);
+    if (!m_lootRecipient)
+        return NULL;
+    return ObjectAccessor::FindPlayer(m_lootRecipient);
+}
+
+Group *Creature::GetLootRecipientGroup() const
+{
+    if (!m_lootRecipientGroup)
+        return NULL;
+    return sObjectMgr.GetGroupByLeader(m_lootRecipientGroup);
 }
 
 void Creature::SetLootRecipient(Unit* unit)
@@ -912,6 +922,7 @@ void Creature::SetLootRecipient(Unit* unit)
     if (!unit)
     {
         m_lootRecipient = 0;
+        m_lootRecipientGroup = 0;
         RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
         RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER);
         return;
@@ -922,7 +933,23 @@ void Creature::SetLootRecipient(Unit* unit)
         return;
 
     m_lootRecipient = player->GetGUID();
+    if (Group *group = player->GetGroup())
+        m_lootRecipientGroup = group->GetLeaderGUID();
+
     SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER);
+}
+
+// return true if this creature is tapped by the player or by a member of his group.
+bool Creature::isTappedBy(Player const* player) const
+{
+    if (player->GetGUID() == m_lootRecipient)
+        return true;
+
+    Group const* playerGroup = player->GetGroup();
+    if (!playerGroup || playerGroup != GetLootRecipientGroup()) // if we dont have a group we arent the recipient
+        return false;                                           // if creature doesnt have group bound it means it was solo killed by someone else
+
+    return true;
 }
 
 void Creature::SaveToDB()
@@ -1449,12 +1476,8 @@ void Creature::setDeathState(DeathState s)
 
         SetUInt64Value (UNIT_FIELD_TARGET, 0);              // remove target selection in any cases (can be set at aura remove in Unit::setDeathState)
         SetUInt32Value(UNIT_NPC_FLAGS, 0);
-        //if (!isPet())
-        setActive(false);
 
-        if (!isPet() && GetCreatureTemplate()->SkinLootId)
-            if (LootTemplates_Skinning.HaveLootFor(GetCreatureTemplate()->SkinLootId))
-                SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
+        setActive(false);
 
         if (canFly() && FallGround())
             return;
@@ -1552,6 +1575,7 @@ void Creature::Respawn(bool force)
         m_respawnTime = 0;
         lootForPickPocketed = false;
         lootForBody         = false;
+        loot.clear();
 
         if (m_originalEntry != GetEntry())
             UpdateEntry(m_originalEntry);
@@ -2206,27 +2230,28 @@ void Creature::GetRespawnCoord(float& x, float& y, float& z, float* ori, float* 
 
 void Creature::AllLootRemovedFromCorpse()
 {
-    if (!HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE))
-    {
-        time_t now = time(NULL);
-        if (m_corpseRemoveTime <= uint32(now))
-            return;
+    if (loot.loot_type != LOOT_SKINNING && !isPet() && GetCreatureTemplate()->SkinLootId && hasLootRecipient())
+        if (LootTemplates_Skinning.HaveLootFor(GetCreatureTemplate()->SkinLootId))
+            SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 
-        float decayRate;
-        CreatureInfo const* cinfo = GetCreatureTemplate();
+    time_t now = time(NULL);
+    if (m_corpseRemoveTime <= uint32(now))
+        return;
 
-        // corpse was not skinnable -> apply corpse looted timer
-        decayRate = sWorld.getRate(RATE_CORPSE_DECAY_LOOTED);
-        uint32 diff = uint32((m_corpseRemoveTime - now) * decayRate);
+    float decayRate;
+    CreatureInfo const *cinfo = GetCreatureTemplate();
 
-        m_respawnTime -= diff;
+    // corpse was not skinnable -> apply corpse looted timer
+    decayRate = sWorld.getRate(RATE_CORPSE_DECAY_LOOTED);
+    uint32 diff = uint32((m_corpseRemoveTime - now) * decayRate);
 
-        // corpse skinnable, but without skinning flag, and then skinned, corpse will despawn next update
-        if (cinfo && cinfo->SkinLootId)
-            m_corpseRemoveTime = time(NULL);
-        else
-            m_corpseRemoveTime -= diff;
-    }
+    m_respawnTime -= diff;
+
+    // corpse skinnable, but without skinning flag, and then skinned, corpse will despawn next update
+    if (loot.loot_type == LOOT_SKINNING)
+        m_corpseRemoveTime = time(NULL);
+    else
+        m_corpseRemoveTime -= diff;
 }
 
 uint32 Creature::getLevelForTarget(Unit const* target) const

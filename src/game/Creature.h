@@ -693,11 +693,12 @@ class Creature : public Unit, public GridObject<Creature>
         Loot loot;
         bool lootForPickPocketed;
         bool lootForBody;
+        void SetSkinner(uint64 guid) { _skinner = guid; }
+        uint64 GetSkinner() const { return _skinner; } // Returns the player who skinned this creature
         Player* GetLootRecipient() const;
-        bool hasLootRecipient() const
-        {
-            return m_lootRecipient != 0;
-        }
+        Group *GetLootRecipientGroup() const;
+        bool hasLootRecipient() const { return m_lootRecipient || m_lootRecipientGroup; }
+        bool isTappedBy(Player const* player) const;
 
         void SetLootRecipient (Unit* unit);
         void AllLootRemovedFromCorpse();
@@ -905,6 +906,8 @@ class Creature : public Unit, public GridObject<Creature>
 
         uint32 m_lootMoney;
         uint64 m_lootRecipient;
+        uint32 m_lootRecipientGroup;
+        uint64 _skinner;
 
         // Timers
         uint32 m_corpseRemoveTime;                          // (msecs)timer for death or corpse disappearance

@@ -32,10 +32,10 @@
 void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket& recv_data)
 {
     sLog.outDebug("WORLD: CMSG_AUTOSTORE_LOOT_ITEM");
-    Player*  player =   GetPlayer();
-    uint64   lguid =    player->GetLootGUID();
-    Loot*    loot;
-    uint8    lootSlot;
+    Player* player = GetPlayer();
+    uint64 lguid = player->GetLootGUID();
+    Loot* loot = NULL;
+    uint8 lootSlot = 0;
 
     recv_data >> lootSlot;
 
@@ -252,9 +252,9 @@ void WorldSession::HandleLootOpcode(WorldPacket& recv_data)
 
     GetPlayer()->SendLoot(guid, LOOT_CORPSE);
 
-    // Interrupt spell casting on loot
+    /* Interrupt spell casting on loot
     if (GetPlayer()->IsNonMeleeSpellCast(false))
-        GetPlayer()->InterruptNonMeleeSpells(false);
+        GetPlayer()->InterruptNonMeleeSpells(false);*/
 }
 
 void WorldSession::HandleLootReleaseOpcode(WorldPacket& recv_data)
@@ -263,10 +263,12 @@ void WorldSession::HandleLootReleaseOpcode(WorldPacket& recv_data)
 
     // cheaters can modify lguid to prevent correct apply loot release code and re-loot
     // use internal stored guid
-    recv_data.read_skip<uint64>();                          // guid;
+    uint64 guid;
+    recv_data >> guid;
 
     if (uint64 lguid = GetPlayer()->GetLootGUID())
-        DoLootRelease(lguid);
+        if (lguid == guid)
+            DoLootRelease(lguid);
 }
 
 void WorldSession::DoLootRelease(uint64 lguid)
@@ -404,20 +406,31 @@ void WorldSession::DoLootRelease(uint64 lguid)
 
         loot = &pCreature->loot;
 
-        // update next looter
-        if (Player* recipient = pCreature->GetLootRecipient())
-            if (Group* group = recipient->GetGroup())
-                if (group->GetLooterGuid() == player->GetGUID())
-                    group->UpdateLooterGuid(pCreature);
-
         if (loot->isLooted())
         {
-            // skip pickpocketing loot for speed, skinning timer redunction is no-op in fact
+            pCreature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+
+            // skip pickpocketing loot for speed, skinning timer reduction is no-op in fact
             if (!pCreature->IsAlive())
                 pCreature->AllLootRemovedFromCorpse();
 
-            pCreature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
             loot->clear();
+        }
+        else
+        {
+            // if the round robin player release, reset it.
+            if (player->GetGUID() == loot->roundRobinPlayer)
+            {
+                loot->roundRobinPlayer = 0;
+
+                if (Group* group = player->GetGroup())
+                {
+                    group->SendLooter(pCreature, NULL);
+
+                    // force update of dynamic flags, otherwise other group's players still not able to loot.
+                    pCreature->ForceValuesUpdateAtIndex(UNIT_DYNAMIC_FLAGS);
+                }
+            }
         }
     }
 
@@ -432,7 +445,7 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 
     recv_data >> lootguid >> slotid >> target_playerguid;
 
-    if (!_player->GetGroup() || _player->GetGroup()->GetLooterGuid() != _player->GetGUID())
+    if (!_player->GetGroup() || _player->GetGroup()->GetMasterLooterGuid() != _player->GetGUID() || _player->GetGroup()->GetLootMethod() != MASTER_LOOT)
     {
         _player->SendLootRelease(GetPlayer()->GetLootGUID());
         return;

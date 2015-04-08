@@ -12057,7 +12057,73 @@ void Unit::Kill(Unit* pVictim, bool durabilityLoss)
     // Reward player, his pets, and group/raid members
     // call kill spell proc event (before real die and combat stop to triggering auras removed at death/combat stop)
     if (bRewardIsAllowed && player && player != pVictim)
+    {
+        WorldPacket data(SMSG_PARTYKILLLOG, (8+8)); // send event PARTY_KILL
+        data << uint64(player->GetGUID()); // player with killing blow
+        data << uint64(pVictim->GetGUID()); // victim
+
+        Player* looter = player;
+        Group* group = player->GetGroup();
+        bool hasLooterGuid = false;
+
+        if (group)
+        {
+            group->BroadcastPacket(&data, group->GetMemberGroup(player->GetGUID()) != 0);
+
+            if (creature)
+            {
+                group->UpdateLooterGuid(creature, true);
+                if (group->GetLooterGuid())
+                {
+                    looter = ObjectAccessor::FindPlayer(group->GetLooterGuid());
+                    if (looter)
+                    {
+                        hasLooterGuid = true;
+                        creature->SetLootRecipient(looter);   // update creature loot recipient to the allowed looter.
+                    }
+                }
+            }
+        }
+        else
+        {
+            player->SendDirectMessage(&data);
+
+            if (creature)
+            {
+                WorldPacket data2(SMSG_LOOT_LIST, 8 + 1 + 1);
+                data2 << uint64(creature->GetGUID());
+                data2 << uint8(0); // unk1
+                data2 << uint8(0); // no group looter
+                player->SendMessageToSet(&data2, true);
+            }
+        }
+
+        // Generate loot before updating looter
+        if (creature)
+        {
+            Loot* loot = &creature->loot;
+
+            loot->clear();
+            if (uint32 lootid = creature->GetCreatureTemplate()->lootid)
+                loot->FillLoot(lootid, LootTemplates_Creature, looter);
+
+            loot->generateMoneyLoot(creature->GetCreatureTemplate()->mingold, creature->GetCreatureTemplate()->maxgold);
+
+            if (group)
+            {
+                if (hasLooterGuid)
+                    group->SendLooter(creature, looter);
+                else
+                    group->SendLooter(creature, NULL);
+
+                // Update round robin looter only if the creature had loot
+                if (!loot->empty())
+                    group->UpdateLooterGuid(creature);
+            }
+        }
+
         player->RewardPlayerAndGroupAtKill(pVictim);
+    }
 
     // Do KILL and KILLED procs. KILL proc is called only for the unit who landed the killing blow regardless of who tapped the victim
     ProcDamageAndSpell(pVictim, PROC_FLAG_KILL, PROC_FLAG_KILLED, PROC_EX_NONE, 0);
@@ -12132,7 +12198,12 @@ void Unit::Kill(Unit* pVictim, bool durabilityLoss)
         if (!creature->isPet())
         {
             creature->DeleteThreatList();
-            creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+
+            // must be after setDeathState which resets dynamic flags
+            if (!creature->loot.isLooted())
+                creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+            else
+                creature->AllLootRemovedFromCorpse();
         }
 
         // Call KilledUnit for creatures, this needs to be called after the lootable flag is set

@@ -353,23 +353,32 @@ void WorldSession::HandleGroupLeaveOpcode(WorldPacket& /*recv_data*/)
 
 void WorldSession::HandleLootMethodOpcode(WorldPacket& recv_data)
 {
-    Group* group = GetPlayer()->GetGroup();
-    if (!group)
-        return;
-
     uint32 lootMethod;
     uint64 lootMaster;
     uint32 lootThreshold;
     recv_data >> lootMethod >> lootMaster >> lootThreshold;
 
     /** error handling **/
+    Group* group = GetPlayer()->GetGroup();
+    if (!group)
+        return;
+
     if (!group->IsLeader(GetPlayer()->GetGUID()))
+        return;
+
+    if (lootMethod > NEED_BEFORE_GREED)
+        return;
+
+    if (lootThreshold < ITEM_QUALITY_UNCOMMON || lootThreshold > ITEM_QUALITY_ARTIFACT)
+        return;
+
+    if (lootMethod == MASTER_LOOT && !group->IsMember(lootMaster))
         return;
     /********************/
 
     // everything's fine, do it
     group->SetLootMethod((LootMethod)lootMethod);
-    group->SetLooterGuid(lootMaster);
+    group->SetMasterLooterGuid(lootMaster);
     group->SetLootThreshold((ItemQualities)lootThreshold);
     group->SendUpdate();
 }
@@ -381,19 +390,19 @@ void WorldSession::HandleLootRoll(WorldPacket& recv_data)
 
     uint64 Guid;
     uint32 NumberOfPlayers;
-    uint8  Choise;
+    uint8  Choice;
     recv_data >> Guid;                                      //guid of the item rolled
     recv_data >> NumberOfPlayers;
-    recv_data >> Choise;                                    //0: pass, 1: need, 2: greed
+    recv_data >> Choice;                                    //0: pass, 1: need, 2: greed
 
-    //sLog.outDebug("WORLD RECIEVE CMSG_LOOT_ROLL, From:%u, Numberofplayers:%u, Choise:%u", (uint32)Guid, NumberOfPlayers, Choise);
+    //sLog.outDebug("WORLD RECIEVE CMSG_LOOT_ROLL, From:%u, Numberofplayers:%u, Choice:%u", (uint32)Guid, NumberOfPlayers, Choise);
 
     Group* group = GetPlayer()->GetGroup();
     if (!group)
         return;
 
     // everything's fine, do it
-    group->CountRollVote(GetPlayer()->GetGUID(), Guid, NumberOfPlayers, Choise);
+    group->CountRollVote(GetPlayer()->GetGUID(), Guid, NumberOfPlayers, Choice);
 }
 
 void WorldSession::HandleMinimapPingOpcode(WorldPacket& recv_data)
@@ -885,18 +894,17 @@ void WorldSession::HandleGroupPassOnLootOpcode(WorldPacket& recv_data)
 {
     sLog.outDebug("WORLD: Received CMSG_GROUP_PASS_ON_LOOT");
 
-    uint32 unkn;
-    recv_data >> unkn;
+    uint32 passOnLoot;
+    recv_data >> passOnLoot; // 1 always pass, 0 do not pass
 
     // ignore if player not loaded
     if (!GetPlayer())                                        // needed because STATUS_AUTHED
     {
-        if (unkn != 0)
-            sLog.outError("CMSG_GROUP_PASS_ON_LOOT value<>0 for not-loaded character!");
+        if (passOnLoot != 0)
+            sLog.outError("CMSG_OPT_OUT_OF_LOOT value<>0 for not-loaded character!");
         return;
     }
 
-    if (unkn != 0)
-        sLog.outError("CMSG_GROUP_PASS_ON_LOOT: activation not implemented!");
+    GetPlayer()->SetPassOnGroupLoot(passOnLoot);
 }
 

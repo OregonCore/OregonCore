@@ -473,18 +473,6 @@ enum ActivateTaxiReplies
     ERR_TAXINOTSTANDING             = 12
 };
 
-enum LootType
-{
-    LOOT_CORPSE                 = 1,
-    LOOT_SKINNING               = 2,
-    LOOT_FISHING                = 3,
-    LOOT_PICKPOCKETING          = 4,                        // unsupported by client, sending LOOT_SKINNING instead
-    LOOT_DISENCHANTING          = 5,                        // unsupported by client, sending LOOT_SKINNING instead
-    LOOT_PROSPECTING            = 6,                        // unsupported by client, sending LOOT_SKINNING instead
-    LOOT_INSIGNIA               = 7,                        // unsupported by client, sending LOOT_SKINNING instead
-    LOOT_FISHINGHOLE            = 8                         // unsupported by client, sending LOOT_FISHING instead
-};
-
 enum MirrorTimerType
 {
     FATIGUE_TIMER      = 0,
@@ -2757,6 +2745,9 @@ class Player : public Unit, public GridObject<Player>
         }
         void SetOriginalGroup(Group* group, int8 subgroup = -1);
 
+        void SetPassOnGroupLoot(bool bPassOnGroupLoot) { _passOnGroupLoot = bPassOnGroupLoot; }
+        bool GetPassOnGroupLoot() const { return _passOnGroupLoot; }
+
         MapReference& GetMapRef()
         {
             return m_mapRef;
@@ -2991,6 +2982,7 @@ class Player : public Unit, public GridObject<Player>
         Group* m_groupInvite;
         uint32 m_groupUpdateMask;
         uint64 m_auraUpdateMask;
+        bool _passOnGroupLoot;
 
         // Player summoning
         time_t m_summon_expire;
