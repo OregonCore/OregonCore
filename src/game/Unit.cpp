@@ -10471,7 +10471,7 @@ void Unit::SetPower(Powers power, uint32 val)
 
 void Unit::SetMaxPower(Powers power, uint32 val)
 {
-    uint32 cur_power = GetPower(power);
+    float powerPct = GetMaxPower(power);
     SetStatInt32Value(UNIT_FIELD_MAXPOWER1 + power, val);
 
     // group update
@@ -10491,8 +10491,10 @@ void Unit::SetMaxPower(Powers power, uint32 val)
         }
     }
 
-    if (val < cur_power)
-        SetPower(power, val);
+    if (powerPct)
+        SetPower(power, val * (float(GetPower(power)) / powerPct));
+    else
+        SetPower(power, 0);
 }
 
 void Unit::ApplyPowerMod(Powers power, uint32 val, bool apply)
