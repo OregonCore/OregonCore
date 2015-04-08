@@ -65,6 +65,12 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket& recv_data)
         return;
     }
 
+    if (GetPlayer()->InBattleGround())
+    {
+        SendPartyResult(PARTY_OP_INVITE, membername, PARTY_RESULT_OK);
+        return;
+    }
+
     Player* player = sObjectMgr.GetPlayer(membername.c_str());
 
     // no player
@@ -136,6 +142,11 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket& recv_data)
         }
     }
 
+    if (!group)
+        if ((group = GetPlayer()->GetGroupInvite()))
+            if (group && !group->IsCreated() && !group->IsLeader(GetPlayer()->GetGUID()))
+                group = NULL;
+
     // ok, but group not exist, start a new group
     // but don't create and save the group to the DB until
     // at least one person joins
@@ -173,6 +184,12 @@ void WorldSession::HandleGroupAcceptOpcode(WorldPacket& /*recv_data*/)
 {
     Group* group = GetPlayer()->GetGroupInvite();
     if (!group) return;
+
+    if (GetPlayer()->GetGroup())
+    {
+        SendPartyResult(PARTY_OP_INVITE, GetPlayer()->GetName(), PARTY_RESULT_ALREADY_IN_GROUP);
+        return;
+    }
 
     if (group->GetLeaderGUID() == GetPlayer()->GetGUID())
     {

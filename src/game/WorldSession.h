@@ -48,17 +48,18 @@ enum PartyOperation
 
 enum PartyResult
 {
-    PARTY_RESULT_OK                   = 0,
-    PARTY_RESULT_CANT_FIND_TARGET     = 1,
-    PARTY_RESULT_NOT_IN_YOUR_PARTY    = 2,
-    PARTY_RESULT_NOT_IN_YOUR_INSTANCE = 3,
-    PARTY_RESULT_PARTY_FULL           = 4,
-    PARTY_RESULT_ALREADY_IN_GROUP     = 5,
-    PARTY_RESULT_YOU_NOT_IN_GROUP     = 6,
-    PARTY_RESULT_YOU_NOT_LEADER       = 7,
-    PARTY_RESULT_TARGET_UNFRIENDLY    = 8,
-    PARTY_RESULT_TARGET_IGNORE_YOU    = 9,
-    PARTY_RESULT_INVITE_RESTRICTED    = 13
+    PARTY_RESULT_OK                   = 0,  //!< ok, silent
+    PARTY_RESULT_CANT_FIND_TARGET     = 1,  //!< Cannot find player "%s".
+    PARTY_RESULT_NOT_IN_YOUR_PARTY    = 2,  //!< %s is not in your party.
+    PARTY_RESULT_NOT_IN_YOUR_INSTANCE = 3,  //!< is not in your instance.
+    PARTY_RESULT_PARTY_FULL           = 4,  //!< Your party is full.
+    PARTY_RESULT_ALREADY_IN_GROUP     = 5,  //!< %s is already in group.
+    PARTY_RESULT_YOU_NOT_IN_GROUP     = 6,  //!< You aren't in a party.
+    PARTY_RESULT_YOU_NOT_LEADER       = 7,  //!< You are not the party leader.
+    PARTY_RESULT_TARGET_UNFRIENDLY    = 8,  //!< Target is unfriendly
+    PARTY_RESULT_TARGET_IGNORE_YOU    = 9,  //!< %s is ignoring you.
+    PARTY_RESULT_PENDING_MATCH        = 12, //!< You already have a pending match.
+    PARTY_RESULT_INVITE_RESTRICTED    = 13  //!< Trial accounts cannot invite characters into groups.
 };
 
 // Player session in the World

@@ -538,6 +538,7 @@ class ChatHandler
         bool HandleGetInstanceDataCommand(const char* args);
         bool HandleDebugRAFError(const char* args);
         bool HandleSpellCrashTestCommand(const char* args);
+        bool HandlePartyResultCommand(const char* args);
 
         Player*   getSelectedPlayer();
         Creature* getSelectedCreature();

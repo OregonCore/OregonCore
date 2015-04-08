@@ -737,3 +737,16 @@ bool ChatHandler::HandleSpellCrashTestCommand(const char* /*args*/)
     PSendSysMessage("ALL OK!");
     return true;
 }
+
+bool ChatHandler::HandlePartyResultCommand(const char* args)
+{
+    if (!m_session)
+        return false;
+
+    int operation = atoi(args);
+    int result = atoi(std::max<const char*>(strchr(args, ' ')+1, ""));
+
+    m_session->SendPartyResult(PartyOperation(operation), "", PartyResult(result));
+    return true;
+}
+
