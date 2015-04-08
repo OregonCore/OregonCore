@@ -179,7 +179,7 @@ class ThreatContainer
 
         HostileReference* addThreat(Unit* victim, float threat);
 
-        void modifyThreatPercent(Unit *victim, int32 percent);
+        void modifyThreatPercent(Unit* victim, int32 percent);
 
         HostileReference* selectNextVictim(Creature* attacker, HostileReference* currentVictim);
 
@@ -219,9 +219,9 @@ class ThreatManager
 
         void doAddThreat(Unit* victim, float threat);
 
-        void modifyThreatPercent(Unit *victim, int32 percent);
+        void modifyThreatPercent(Unit* victim, int32 percent);
 
-        float getThreat(Unit *victim, bool alsoSearchOfflineList = false);
+        float getThreat(Unit* victim, bool alsoSearchOfflineList = false);
 
         //-----------------------------------------------------
 
@@ -255,7 +255,7 @@ class ThreatManager
         Unit* getHostileTarget();
 
         void tauntApply(Unit* taunter);
-        void tauntFadeOut(Unit *taunter);
+        void tauntFadeOut(Unit* taunter);
 
         void setCurrentVictim(HostileReference* hostileRef);
 
@@ -280,7 +280,7 @@ class ThreatManager
             return iThreatOfflineContainer;
         }
 
-        void _addThreat(Unit *victim, float threat);
+        void _addThreat(Unit* victim, float threat);
     private:
         HostileReference* iCurrentVictim;
         Unit* iOwner;

@@ -27,8 +27,8 @@ HostileRefManager::~HostileRefManager()
 }
 
 //=================================================
-// send threat to all my hateres for the pVictim
-// The pVictim is hated than by them as well
+// send threat to all my hateres for the victim
+// The victim is hated than by them as well
 // use for buffs and healing threat functionality
 
 void HostileRefManager::threatAssist(Unit* victim, float baseThreat, SpellEntry const* threatSpell)
@@ -102,7 +102,7 @@ void HostileRefManager::deleteReferences()
 //=================================================
 // delete one reference, defined by Unit
 
-void HostileRefManager::deleteReference(Unit *creature)
+void HostileRefManager::deleteReference(Unit* creature)
 {
     HostileReference* ref = getFirst();
     while (ref)
