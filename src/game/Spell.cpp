@@ -612,7 +612,7 @@ void Spell::FillTargetMap()
             if (GameObject* target = m_caster->GetMap()->GetGameObject(targetGUID))
                 m_targets.setGOTarget(target);
 
-    if (!m_targets.getGOTarget() && m_UniqueItemInfo.size())
+    if (!m_targets.getItemTarget() && m_UniqueItemInfo.size())
         if (Item* target = (*m_UniqueItemInfo.begin()).item)
             m_targets.setItemTarget(target);
 }
