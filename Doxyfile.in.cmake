@@ -229,9 +229,9 @@ TAB_SIZE               = 4
 # newlines.
 
 ALIASES                = 
-ALIASES                = TODO="\todo"
-ALIASES                = FIXME="\todo"
-ALIASES                = XXX="\todo"
+ALIASES                += TODO="\todo"
+ALIASES                += FIXME="\todo"
+ALIASES                += XXX="\todo"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"
