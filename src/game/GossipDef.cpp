@@ -523,7 +523,7 @@ void PlayerMenu::SendQuestQueryResponse(Quest const* pQuest)
                 EndText = ql->EndText[loc_idx];
 
             for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-                if (ql->ObjectiveText[i].size() > uint32(loc_idx && !ql->ObjectiveText[i][loc_idx].empty()))
+                if (ql->ObjectiveText[i].size() > loc_idx && !ql->ObjectiveText[i][loc_idx].empty())
                     ObjectiveText[i] = ql->ObjectiveText[i][loc_idx];
         }
     }
