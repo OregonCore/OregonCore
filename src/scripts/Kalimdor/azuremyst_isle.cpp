@@ -434,6 +434,7 @@ struct npc_geezleAI : public ScriptedAI
     {
         SparkGUID = 0;
         Step = 0;
+        EventStarted = false;
         StartEvent();
     }
 
@@ -441,7 +442,7 @@ struct npc_geezleAI : public ScriptedAI
 
     void StartEvent()
     {
-        Step = 1;
+        Step = 0;
         EventStarted = true;
         Creature* Spark = me->SummonCreature(MOB_SPARK, SparkPos[0], SparkPos[1], SparkPos[2], 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 1000);
         if (Spark)
@@ -465,6 +466,7 @@ struct npc_geezleAI : public ScriptedAI
             return 99999;
         case 1:
             //DespawnNagaFlag(true);
+            // @todo: this emote doesnt seem to include Spark's name
             DoScriptText(EMOTE_SPARK, Spark);
             return 1000;
         case 2:

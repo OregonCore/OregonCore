@@ -814,7 +814,7 @@ bool IsPositiveSpell(uint32 spellId)
     // spells with at least one negative effect are considered negative
     // some self-applied spells have negative effects but in self casting case negative check ignored.
     for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
-        if (!IsPositiveEffect(spellId, i))
+        if (!IsPositiveEffect(spellId, i) && !IsSelfCastEffect(spellproto, i))
             return false;
     return true;
 }
@@ -2707,6 +2707,9 @@ void SpellMgr::LoadSpellCustomAttr()
         case 35372: // Protectorate Igniter
             spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_TARGET_ENEMY;
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_ANY_TARGET;
+            break;
+        case 30298: // Tree Disguise
+            spellInfo->InterruptFlags |= SPELL_INTERRUPT_FLAG_MOVEMENT;
             break;
         default:
             break;
