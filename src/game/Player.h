@@ -1467,7 +1467,7 @@ class Player : public Unit, public GridObject<Player>
         void ItemAddedQuestCheck(uint32 entry, uint32 count);
         void ItemRemovedQuestCheck(uint32 entry, uint32 count);
         void KilledMonster(CreatureInfo const* cInfo, uint64 guid);
-        void KilledMonsterCredit(uint32 entry, uint64 guid);
+        void KilledMonsterCredit(uint32 entry, uint64 guid = 0);
         void CastedCreatureOrGO(uint32 entry, uint64 guid, uint32 spell_id);
         void TalkedToCreature(uint32 entry, uint64 guid);
         void MoneyChanged(uint32 value);

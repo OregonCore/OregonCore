@@ -14132,11 +14132,9 @@ void Player::ItemAddedQuestCheck(uint32 entry, uint32 count)
                 uint32 curitemcount = q_status.m_itemcount[j];
                 if (curitemcount < reqitemcount)
                 {
-                    uint32 additemcount = (curitemcount + count <= reqitemcount ? count : reqitemcount - curitemcount);
-                    q_status.m_itemcount[j] += additemcount;
-                    if (q_status.uState != QUEST_NEW) q_status.uState = QUEST_CHANGED;
-
-                    SendQuestUpdateAddItem(qInfo, j, additemcount);
+                    q_status.m_itemcount[j] = std::min<uint16>(q_status.m_itemcount[j] + count, reqitemcount);
+                    if (q_status.uState != QUEST_NEW)
+                        q_status.uState = QUEST_CHANGED;
                 }
                 if (CanCompleteQuest(questid))
                     CompleteQuest(questid);
@@ -14154,9 +14152,11 @@ void Player::ItemRemovedQuestCheck(uint32 entry, uint32 count)
         uint32 questid = GetQuestSlotQuestId(i);
         if (!questid)
             continue;
+
         Quest const* qInfo = sObjectMgr.GetQuestTemplate(questid);
         if (!qInfo)
             continue;
+
         if (!qInfo->HasFlag(QUEST_OREGON_FLAGS_DELIVER))
             continue;
 
@@ -14168,16 +14168,18 @@ void Player::ItemRemovedQuestCheck(uint32 entry, uint32 count)
                 QuestStatusData& q_status = mQuestStatus[questid];
 
                 uint32 reqitemcount = qInfo->ReqItemCount[j];
-                uint32 curitemcount;
-                if (q_status.m_status != QUEST_STATUS_COMPLETE)
-                    curitemcount = q_status.m_itemcount[j];
-                else
-                    curitemcount = GetItemCount(entry, true);
-                if (curitemcount < reqitemcount + count)
+                uint16 curitemcount = q_status.m_itemcount[j];
+
+                if ((uint32)q_status.m_itemcount >= reqitemcount) // we may have more than what the status shows
+                    curitemcount = GetItemCount(entry, false);
+
+                uint16 newItemCount = (count > curitemcount) ? 0 : curitemcount - count;
+                newItemCount = std::min<uint16>(newItemCount, reqitemcount);
+                if (newItemCount != q_status.m_itemcount[j])
                 {
-                    uint32 remitemcount = (curitemcount <= reqitemcount ? count : count + reqitemcount - curitemcount);
-                    q_status.m_itemcount[j] = curitemcount - remitemcount;
-                    if (q_status.uState != QUEST_NEW) q_status.uState = QUEST_CHANGED;
+                    q_status.m_itemcount[j] = newItemCount;
+                    if (q_status.uState != QUEST_NEW)
+                        q_status.uState = QUEST_CHANGED;
 
                     IncompleteQuest(questid);
                 }
@@ -14198,9 +14200,18 @@ void Player::KilledMonster(CreatureInfo const* cInfo, uint64 guid)
             KilledMonsterCredit(cInfo->KillCredit[i], 0);
 }
 
-void Player::KilledMonsterCredit(uint32 entry, uint64 guid)
+void Player::KilledMonsterCredit(uint32 entry, uint64 guid /*= 0*/)
 {
-    uint32 addkillcount = 1;
+    uint16 addkillcount = 1;
+    uint32 real_entry = entry;
+    Creature* killed = NULL;
+    if (guid)
+    {
+        killed = GetMap()->GetCreature(guid);
+        if (killed && killed->GetEntry())
+            real_entry = killed->GetEntry();
+    }
+
     for (uint8 i = 0; i < MAX_QUEST_LOG_SIZE; ++i)
     {
         uint32 questid = GetQuestSlotQuestId(i);
@@ -14228,10 +14239,10 @@ void Player::KilledMonsterCredit(uint32 entry, uint64 guid)
 
                     uint32 reqkill = qInfo->ReqCreatureOrGOId[j];
 
-                    if (reqkill == entry)
+                    if (reqkill == real_entry)
                     {
                         uint32 reqkillcount = qInfo->ReqCreatureOrGOCount[j];
-                        uint32 curkillcount = q_status.m_creatureOrGOcount[j];
+                        uint16 curkillcount = q_status.m_creatureOrGOcount[j];
                         if (curkillcount < reqkillcount)
                         {
                             q_status.m_creatureOrGOcount[j] = curkillcount + addkillcount;
@@ -14240,7 +14251,6 @@ void Player::KilledMonsterCredit(uint32 entry, uint64 guid)
 
                             SendQuestUpdateAddCreatureOrGo(qInfo, guid, j, curkillcount, addkillcount);
                         }
-
                         if (CanCompleteQuest(questid))
                             CompleteQuest(questid);
 
@@ -14594,7 +14604,7 @@ void Player::SendQuestUpdateAddCreatureOrGo(Quest const* pQuest, uint64 guid, ui
 {
     ASSERT(old_count + add_count < 256 && "mob/GO count store in 8 bits 2^8 = 256 (0..256)");
 
-    int32 entry = pQuest->ReqCreatureOrGOId[ creatureOrGO_idx ];
+    int32 entry = pQuest->ReqCreatureOrGOId[creatureOrGO_idx ];
     if (entry < 0)
         // client expected gameobject template id in form (id|0x80000000)
         entry = (-entry) | 0x80000000;
