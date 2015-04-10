@@ -7833,6 +7833,8 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
 
         permission = OWNER_PERMISSION;
 
+        loot = &item->loot;
+
         if (!item->m_lootGenerated)
         {
             item->m_lootGenerated = true;
