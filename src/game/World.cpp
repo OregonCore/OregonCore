@@ -1404,6 +1404,9 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Loading Refer-A-Friend...");
     sObjectMgr.LoadReferredFriends();
 
+    sConsole.SetLoadingLabel("Loading Opcode Protection...");
+    LoadOpcodeProtection();
+
     // Load and initialize scripts
     sConsole.SetLoadingLabel("Loading Scripts...");
     sObjectMgr.LoadQuestStartScripts();                         // must be after load Creature/Gameobject(Template/Data) and QuestTemplate
@@ -1638,6 +1641,42 @@ void World::LoadIp2nation()
     }
 
     sLog.outString(">> Loaded %u ip2nation definitions", count);
+}
+
+void World::LoadOpcodeProtection()
+{
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT `opcode`, `threshold`, `interval`, `penalty` FROM opcode_protection");
+    uint64 count = 0;
+
+    if (result)
+    {
+        do
+        {
+            Field* field = result->Fetch();
+            ProtectedOpcodeProperties prop;
+
+            uint32 opcode = field[0].GetUInt32();
+            if (opcode >= NUM_MSG_TYPES)
+                continue;
+
+            prop.threshold = field[1].GetUInt32();
+            prop.interval = field[2].GetUInt32();
+            prop.penalty = (OpcodePenalty) field[3].GetUInt8();
+
+            opcodeTable[opcode].status |= STATUS_PROTECTED;
+            _protectedOpcodesProperties[opcode] = prop;
+
+            count++;
+        }
+        while (result->NextRow());
+    }
+
+    sLog.outString(">> Loaded %lu opcode protections.", count);
+}
+
+ProtectedOpcodeProperties const& World::GetProtectedOpcodeProperties(uint32 opcode)
+{
+    return _protectedOpcodesProperties[opcode];
 }
 
 // Update the World !

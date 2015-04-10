@@ -19,6 +19,7 @@
 #define OREGON_TIMER_H
 
 #include "Platform/CompilerDefs.h"
+#include "Common.h"
 
 #if PLATFORM == PLATFORM_WINDOWS
 #   include <ace/config-all.h>
@@ -37,12 +38,25 @@ inline uint32 getMSTime()
 {
     return GetTickCount();
 }
+
+inline uint64 getMSTime64()
+{
+    SYSTEMTIME st;
+    GetSystemTime(&st);
+    return st.vSecond * 1000 + st.vMilliseconds;
+}
 #else
 inline uint32 getMSTime()
 {
     struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
+    gettimeofday( &tv, NULL );
+    return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+}
+
+inline uint64 getMSTime64()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
 #endif
@@ -54,6 +68,13 @@ inline uint32 getMSTimeDiff(uint32 oldMSTime, uint32 newMSTime)
         return (0xFFFFFFFF - oldMSTime) + newMSTime;
     else
         return newMSTime - oldMSTime;
+}
+
+inline uint64 getMSTimeDiff64(uint64 t1, uint64 t2)
+{
+    if (t1 > t2)
+        return t1 - t2;
+    return t2 - t1;
 }
 
 inline uint32 GetMSTimeDiffToNow(uint32 oldMSTime)

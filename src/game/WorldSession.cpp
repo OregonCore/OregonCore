@@ -183,6 +183,7 @@ bool WorldSession::Update(uint32 diff)
     // Retrieve packets from the receive queue and call the appropriate handlers
     // not proccess packets if socket already closed
     WorldPacket* packet;
+    uint64 now = getMSTime64();
     uint32 packetsThisCycle = 0;
     while (m_Socket && !m_Socket->IsClosed() && ++packetsThisCycle <= 20 && _recvQueue.next(packet))
     {
@@ -200,10 +201,48 @@ bool WorldSession::Update(uint32 diff)
         }
         else
         {
-            OpcodeHandler& opHandle = opcodeTable[packet->GetOpcode()];
+            OpcodeHandler const& opHandle = opcodeTable[packet->GetOpcode()];
+            unsigned long opStatus = opHandle.status;
+
+            if (opStatus & STATUS_PROTECTED)
+            {
+                ProtectedOpcodeMap::iterator op = _protectedOpcodes.find(packet->GetOpcode());
+                if (op == _protectedOpcodes.end())
+                {
+                    ProtectedOpcodeStatus status;
+                    status.lastUsed = now;
+                    status.timesUsed = 1;
+
+                    _protectedOpcodes.insert(std::pair<uint32, ProtectedOpcodeStatus>(packet->GetOpcode(), status));
+                }
+                else
+                {
+                    ProtectedOpcodeProperties const& prop = sWorld.GetProtectedOpcodeProperties(packet->GetOpcode());
+                    if (++op->second.timesUsed > prop.threshold)
+                    {
+                        if (getMSTimeDiff64(now, op->second.lastUsed) <= prop.interval)
+                        {
+                            switch (prop.penalty)
+                            {
+                                case OPCODE_PENALTY_SKIP:
+                                    continue;
+                                case OPCODE_PENALTY_KICK:
+                                    KickPlayer();
+                            }
+                        }
+                        else
+                            op->second.timesUsed = 1;
+                    }
+
+                    op->second.lastUsed = now;
+                }
+
+                opStatus &= ~STATUS_PROTECTED;
+            }
+
             try
             {
-                switch (opHandle.status)
+                switch (opStatus)
                 {
                 case STATUS_LOGGEDIN:
                     if (!_player)

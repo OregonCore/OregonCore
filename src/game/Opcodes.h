@@ -1094,13 +1094,14 @@ enum Opcodes
 // Don't forget to change this value and add opcode name to Opcodes.cpp when you add new opcode!
 #define NUM_MSG_TYPES 0x424
 
-// Player state
+/// Player state
 enum SessionStatus
 {
-    STATUS_AUTHED = 0,                                      // Player authenticated
-    STATUS_LOGGEDIN,                                        // Player in game
-    STATUS_TRANSFER_PENDING,                                // Player transferring to another map
-    STATUS_NEVER                                            // Opcode not accepted from client (deprecated or server side only)
+    STATUS_AUTHED           = 0x01, //!< Player authenticated
+    STATUS_LOGGEDIN         = 0x02, //!< Player in game
+    STATUS_TRANSFER_PENDING = 0x04, //!< Player transferring to another map
+    STATUS_NEVER            = 0x08, //!< Opcode not accepted from client (deprecated or server side only)
+    STATUS_PROTECTED        = 0x10  //!< Using this opcode is time protected
 };
 
 class WorldPacket;
@@ -1108,7 +1109,7 @@ class WorldPacket;
 struct OpcodeHandler
 {
     char const* name;
-    SessionStatus status;
+    unsigned long status;
     void (WorldSession::*handler)(WorldPacket& recvPacket);
 };
 

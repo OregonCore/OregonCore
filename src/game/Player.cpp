@@ -14172,7 +14172,7 @@ void Player::ItemRemovedQuestCheck(uint32 entry, uint32 count)
                 uint32 reqitemcount = qInfo->ReqItemCount[j];
                 uint16 curitemcount = q_status.m_itemcount[j];
 
-                if ((uint32)q_status.m_itemcount >= reqitemcount) // we may have more than what the status shows
+                if (curitemcount >= reqitemcount) // we may have more than what the status shows
                     curitemcount = GetItemCount(entry, false);
 
                 uint16 newItemCount = (count > curitemcount) ? 0 : curitemcount - count;

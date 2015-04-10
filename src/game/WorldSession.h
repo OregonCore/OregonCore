@@ -746,6 +746,15 @@ class WorldSession
         uint32 expireTime;                                  // Time session is kept until force disconnect
         bool forceExit;
 
+        struct ProtectedOpcodeStatus
+        {
+            uint64 lastUsed;
+            uint32 timesUsed;
+        };
+        
+        typedef UNORDERED_MAP<uint32, ProtectedOpcodeStatus> ProtectedOpcodeMap;
+        ProtectedOpcodeMap _protectedOpcodes;
+
         ACE_Based::LockedQueue<WorldPacket*, ACE_Thread_Mutex> _recvQueue;
 };
 #endif

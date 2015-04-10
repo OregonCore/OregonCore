@@ -432,6 +432,21 @@ struct CliCommandHolder
     }
 };
 
+/// What should happen if the threshold per interval is passed.
+enum OpcodePenalty
+{
+    OPCODE_PENALTY_SKIP = 0, //!< Skip the packet without processing
+    OPCODE_PENALTY_KICK = 1  //!< Kick the player
+};
+
+/// Protected Opcode @see Opcodes.h
+struct ProtectedOpcodeProperties
+{
+    uint32 threshold;      //!< Sets the maximum count one protected packet per Interval can be processed per session.
+    uint32 interval;       //!< Interval for threshold, in milliseconds.'
+    OpcodePenalty penalty; //!< What should happen if the threshold per interval is passed.
+};
+
 // The World
 class World
 {
@@ -766,6 +781,9 @@ class World
         void RecordTimeDiff(const char* text, ...);
         void LoadAutobroadcasts();
         void LoadIp2nation();
+        void LoadOpcodeProtection();
+
+        ProtectedOpcodeProperties const& GetProtectedOpcodeProperties(uint32 opcode);
     protected:
         void _UpdateGameTime();
         // callback for UpdateRealmCharacters
@@ -847,6 +865,7 @@ class World
         std::string m_ScriptsVersion;
 
         std::list<std::string> m_Autobroadcasts;
+        UNORDERED_MAP<uint32, ProtectedOpcodeProperties> _protectedOpcodesProperties;
 };
 
 extern uint32 realmID;
