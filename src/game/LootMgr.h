@@ -57,13 +57,13 @@ enum LootType
     LOOT_CORPSE                 = 1,
     LOOT_SKINNING               = 2,
     LOOT_FISHING                = 3,
-    LOOT_PICKPOCKETING          = 4,
-    LOOT_DISENCHANTING          = 5,
-                                                           // ignored always by client
-    LOOT_PROSPECTING            = 6,
-    LOOT_MILLING                = 7,
-    LOOT_FISHINGHOLE            = 8,                      // unsupported by client, sending LOOT_FISHING instead
-    LOOT_INSIGNIA               = 9                       // unsupported by client, sending LOOT_CORPSE instead
+
+    LOOT_PICKPOCKETING          = 4,    //!< unsupported by client, sending LOOT_SKINNING instead
+    LOOT_DISENCHANTING          = 5,    //!< unsupported by client, sending LOOT_SKINNING instead
+    
+    LOOT_PROSPECTING            = 6,    //!< unsupported by client, sending LOOT_SKINNING instead
+    LOOT_INSIGNIA               = 7,    //!< unsupported by client, sending LOOT_SKINNING instead
+    LOOT_FISHINGHOLE            = 8     //!< unsupported by client, sending LOOT_FISHING instead
 };
 
 // type of Loot Item in Loot View

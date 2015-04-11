@@ -8008,9 +8008,17 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
     // LOOT_INSIGNIA and LOOT_FISHINGHOLE unsupported by client
     switch (loot_type)
     {
-        case LOOT_INSIGNIA:    loot_type = LOOT_SKINNING; break;
-        case LOOT_FISHINGHOLE: loot_type = LOOT_FISHING; break;
-        default: break;
+        case LOOT_FISHINGHOLE:
+            loot_type = LOOT_FISHING;
+            break;
+        case LOOT_INSIGNIA:
+        case LOOT_DISENCHANTING:
+        case LOOT_PROSPECTING:
+        case LOOT_PICKPOCKETING:
+            loot_type = LOOT_SKINNING;
+            break;
+        default:
+            break;
     }
 
     loot->loot_type = loot_type;
