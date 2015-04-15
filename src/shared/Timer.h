@@ -43,7 +43,7 @@ inline uint64 getMSTime64()
 {
     SYSTEMTIME st;
     GetSystemTime(&st);
-    return st.vSecond * 1000 + st.vMilliseconds;
+    return st.wSecond * 1000 + st.wMilliseconds;
 }
 #else
 inline uint32 getMSTime()
