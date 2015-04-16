@@ -3583,6 +3583,9 @@ void Spell::HandleThreatSpells()
         (m_spellInfo->AttributesEx3 & SPELL_ATTR_EX3_NO_INITIAL_AGGRO))
         return;
 
+    if (!m_targets.getUnitTarget()->CanHaveThreatList())
+        return;
+
     float threat = 0.0f;
     if (SpellThreatEntry const* threatEntry = sSpellMgr.GetSpellThreatEntry(m_spellInfo->Id))
     {
