@@ -4159,8 +4159,9 @@ SpellCastResult Spell::CheckCast(bool strict)
                 // Can be area effect, Check only for players and not check if target - caster (spell can have multiply drain/burn effects)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                     if (Unit* target = m_targets.getUnitTarget())
-                        if (target != m_caster && int32(target->getPowerType()) != m_spellInfo->EffectMiscValue[i])
-                            return SPELL_FAILED_BAD_TARGETS;
+                        if (target != m_caster && target->getPowerType() != uint32(m_spellInfo->EffectMiscValue[i]))
+                            if (!(target->ToCreature() && target->ToCreature()->ToPet() && m_spellInfo->EffectMiscValue[i] == POWER_HAPPINESS))
+                                return SPELL_FAILED_BAD_TARGETS;
                 break;
             }
         case SPELL_EFFECT_CHARGE:
