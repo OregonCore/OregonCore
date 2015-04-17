@@ -3485,8 +3485,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
 
                 summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_PASSIVE);
 
-                if (summon->AI())
-                    summon->AI()->EnterEvadeMode();
+                summon->AI()->EnterEvadeMode();
                 break;
             }
         default:
@@ -3496,10 +3495,15 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                 if (!summon)
                     return;
 
-                summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
-                summon->setFaction(m_originalCaster->getFaction());
-                summon->SetLevel(m_originalCaster->getLevel());
+                if (properties->Category == SUMMON_CATEGORY_ALLY)
+                {
+                    summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
+                    summon->setFaction(m_originalCaster->getFaction());
+                    summon->SetLevel(m_originalCaster->getLevel());
+                    summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
+                }
             }
+            return;
         }
         break;
     case SUMMON_CATEGORY_PET:
