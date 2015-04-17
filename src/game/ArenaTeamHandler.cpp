@@ -34,7 +34,15 @@ void WorldSession::HandleInspectArenaStatsOpcode(WorldPacket& recv_data)
     recv_data >> guid;
     sLog.outDebug("Inspect Arena stats (GUID: %u TypeId: %u)", GUID_LOPART(guid), GuidHigh2TypeId(GUID_HIPART(guid)));
 
-    if (Player* plr = sObjectMgr.GetPlayer(guid))
+    Player* player = ObjectAccessor::FindPlayer(guid);
+
+    if (!player)
+        return;
+
+    if (!GetPlayer()->IsWithinDistInMap(player, INSPECT_DISTANCE, false))
+        return;
+
+    for (uint8 i = 0; i < MAX_ARENA_SLOT; ++i)
     {
         if (uint32 a_id = player->GetArenaTeamId(i))
             if (ArenaTeam* arenaTeam = sObjectMgr.GetArenaTeamById(a_id))
