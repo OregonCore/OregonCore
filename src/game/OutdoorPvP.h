@@ -195,6 +195,7 @@ class OutdoorPvP : public ZoneScript
         }
 
         void OnGameObjectCreate(GameObject* go, bool add);
+        void OnGameObjectRemove(GameObject* go);
         void OnCreatureCreate(Creature*, bool /*add*/) {}
 
         // send world state update to all players present

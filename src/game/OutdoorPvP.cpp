@@ -275,7 +275,7 @@ bool OPvPCapturePoint::Update(uint32 diff)
         {
             Player* player = *itr;
             ++itr;
-            if (!m_capturePoint->IsWithinDistInMap(player, radius) || !player->IsOutdoorPvPActive())
+            if (!player->IsWithinDistInMap(m_capturePoint, radius) || !player->IsOutdoorPvPActive())
                 HandlePlayerLeave(player);
         }
     }
@@ -574,5 +574,14 @@ void OutdoorPvP::OnGameObjectCreate(GameObject* go, bool add)
 
     if (OPvPCapturePoint* cp = GetCapturePoint(go->GetDBTableGUIDLow()))
         cp->m_capturePoint = add ? go : NULL;
+}
+
+void OutdoorPvP::OnGameObjectRemove(GameObject* go)
+{
+    if (go->GetGoType() != GAMEOBJECT_TYPE_CAPTURE_POINT)
+        return;
+
+    if (OPvPCapturePoint *cp = GetCapturePoint(go->GetDBTableGUIDLow()))
+        cp->m_capturePoint = NULL;
 }
 
