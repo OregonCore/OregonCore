@@ -3728,7 +3728,7 @@ void Player::DestroyForPlayer(Player* target, bool /*onDeath*/) const
 
 bool Player::HasSpell(uint32 spell) const
 {
-    PlayerSpellMap::const_iterator itr = m_spells.find((uint16)spell);
+    PlayerSpellMap::const_iterator itr = m_spells.find(spell);
     return (itr != m_spells.end() && itr->second->state != PLAYERSPELL_REMOVED &&
             !itr->second->disabled);
 }

@@ -33,6 +33,7 @@
 #define CONTACT_DISTANCE            0.5f
 #define INTERACTION_DISTANCE        5.0f
 #define ATTACK_DISTANCE             5.0f
+#define INSPECT_DISTANCE            28.0f
 #define MAX_VISIBILITY_DISTANCE     SIZE_OF_GRIDS       // max distance for visible object show
 #define DEFAULT_VISIBILITY_DISTANCE 90.0f               // default visible distance, 90 yards on continents
 #define DEFAULT_VISIBILITY_INSTANCE 170.0f              // default visible distance in instances, 120 yards

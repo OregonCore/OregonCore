@@ -27,9 +27,6 @@
 #include "World.h"
 #include "ObjectMgr.h"
 #include "WorldSession.h"
-#include "Auth/BigNumber.h"
-#include "Auth/Sha1.h"
-#include "UpdateData.h"
 #include "LootMgr.h"
 #include "Chat.h"
 #include "zlib.h"
@@ -39,11 +36,9 @@
 #include "BattleGround.h"
 #include "OutdoorPvP.h"
 #include "SpellAuras.h"
-#include "Pet.h"
 #include "SocialMgr.h"
-#include "CellImpl.h"
-#include "AccountMgr.h"
 #include "ScriptMgr.h"
+#include "AccountMgr.h"
 
 void WorldSession::HandleRepopRequestOpcode(WorldPacket& recv_data)
 {
@@ -145,7 +140,6 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
 void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
 {
     DEBUG_LOG("WORLD: Recvd CMSG_WHO Message");
-    //recv_data.hexlike();
 
     uint32 matchcount = 0;
 
@@ -369,7 +363,8 @@ void WorldSession::HandleLogoutRequestOpcode(WorldPacket& /*recv_data*/)
     // not set flags if player can't free move to prevent lost state at logout cancel
     if (GetPlayer()->CanFreeMove())
     {
-        GetPlayer()->SetStandState(UNIT_STAND_STATE_SIT);
+        if (GetPlayer()->getStandState() == UNIT_STAND_STATE_STAND)
+            GetPlayer()->SetStandState(UNIT_STAND_STATE_SIT);
 
         WorldPacket data(SMSG_FORCE_MOVE_ROOT, (8 + 4));  // guess size
         data << GetPlayer()->GetPackGUID();
@@ -393,6 +388,10 @@ void WorldSession::HandlePlayerLogoutOpcode(WorldPacket& /*recv_data*/)
 void WorldSession::HandleLogoutCancelOpcode(WorldPacket& /*recv_data*/)
 {
     DEBUG_LOG("WORLD: Recvd CMSG_LOGOUT_CANCEL Message");
+
+    // Player have already logged out serverside, too late to cancel
+    if (!GetPlayer())
+        return;
 
     LogoutRequest(0);
 
@@ -476,13 +475,6 @@ void WorldSession::HandleSetSelectionOpcode(WorldPacket& recv_data)
     recv_data >> guid;
 
     _player->SetSelection(guid);
-
-    // update reputation list if need
-    Unit* unit = ObjectAccessor::GetUnit(*_player, guid);
-    if (!unit)
-        return;
-
-    _player->SetFactionVisibleForFactionTemplateId(unit->getFaction());
 }
 
 void WorldSession::HandleStandStateChangeOpcode(WorldPacket& recv_data)
@@ -559,7 +551,7 @@ void WorldSession::HandleAddFriendOpcodeCallBack(QueryResult_AutoPtr result, uin
                 else
                 {
                     Player* pFriend = ObjectAccessor::FindPlayer(friendGuid);
-                    if (pFriend && pFriend->IsInWorld() && pFriend->IsVisibleGloballyFor(session->GetPlayer()))
+                    if (pFriend && pFriend->IsVisibleGloballyFor(session->GetPlayer()))
                         friendResult = FRIEND_ADDED_ONLINE;
                     else
                         friendResult = FRIEND_ADDED_OFFLINE;
@@ -1029,16 +1021,17 @@ void WorldSession::HandleInspectOpcode(WorldPacket& recv_data)
     recv_data >> guid;
     DEBUG_LOG("Inspected guid is (GUID: %u TypeId: %u)", GUID_LOPART(guid), GuidHigh2TypeId(GUID_HIPART(guid)));
 
-    _player->SetSelection(guid);
+    Player* player = sObjectMgr.GetPlayer(guid);
+    if (!player)                                                // wrong player
+        return;
 
-    Player* plr = sObjectMgr.GetPlayer(guid);
-    if (!plr)                                                // wrong player
+    if (!GetPlayer()->IsWithinDistInMap(player, INSPECT_DISTANCE, false))
         return;
 
     uint32 talent_points = 0x3D;
-    uint32 guid_size = plr->GetPackGUID().size();
+    uint32 guid_size = player->GetPackGUID().size();
     WorldPacket data(SMSG_INSPECT_TALENT, 4 + talent_points);
-    data << plr->GetPackGUID();
+    data << player->GetPackGUID();
     data << uint32(talent_points);
 
     // fill by 0 talents array
@@ -1048,7 +1041,7 @@ void WorldSession::HandleInspectOpcode(WorldPacket& recv_data)
     if (sWorld.getConfig(CONFIG_TALENTS_INSPECTING) || _player->isGameMaster())
     {
         // find class talent tabs (all players have 3 talent tabs)
-        uint32 const* talentTabIds = GetTalentTabPages(plr->getClass());
+        uint32 const* talentTabIds = GetTalentTabPages(player->getClass());
 
         uint32 talentTabPos = 0;                            // pos of first talent rank in tab including all prev tabs
         for (uint32 i = 0; i < 3; ++i)
@@ -1070,7 +1063,7 @@ void WorldSession::HandleInspectOpcode(WorldPacket& recv_data)
                 uint32 curtalent_maxrank = 0;
                 for (uint32 k = 5; k > 0; --k)
                 {
-                    if (talentInfo->RankID[k - 1] && plr->HasSpell(talentInfo->RankID[k - 1]))
+                    if (talentInfo->RankID[k - 1] && player->HasSpell(talentInfo->RankID[k - 1]))
                     {
                         curtalent_maxrank = k;
                         break;
@@ -1122,6 +1115,9 @@ void WorldSession::HandleInspectHonorStatsOpcode(WorldPacket& recv_data)
         sLog.outError("InspectHonorStats: WTF, player not found...");
         return;
     }
+
+    if (!GetPlayer()->IsWithinDistInMap(player, INSPECT_DISTANCE, false))
+        return;
 
     WorldPacket data(MSG_INSPECT_HONOR_STATS, 8 + 1 + 4 * 4);
     data << uint64(player->GetGUID());
@@ -1189,7 +1185,7 @@ void WorldSession::HandleWhoisOpcode(WorldPacket& recv_data)
         return;
     }
 
-    Player* plr = sObjectMgr.GetPlayer(charname.c_str());
+    Player* plr = sObjectMgr.GetPlayer(charname.c_str(), true);
 
     if (!plr)
     {

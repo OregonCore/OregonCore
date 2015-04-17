@@ -36,14 +36,9 @@ void WorldSession::HandleInspectArenaStatsOpcode(WorldPacket& recv_data)
 
     if (Player* plr = sObjectMgr.GetPlayer(guid))
     {
-        for (uint8 i = 0; i < MAX_ARENA_SLOT; ++i)
-        {
-            if (uint32 a_id = plr->GetArenaTeamId(i))
-            {
-                if (ArenaTeam* at = sObjectMgr.GetArenaTeamById(a_id))
-                    at->InspectStats(this, plr->GetGUID());
-            }
-        }
+        if (uint32 a_id = player->GetArenaTeamId(i))
+            if (ArenaTeam* arenaTeam = sObjectMgr.GetArenaTeamById(a_id))
+                arenaTeam->InspectStats(this, player->GetGUID());
     }
 }
 

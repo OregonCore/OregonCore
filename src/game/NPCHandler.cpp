@@ -261,6 +261,9 @@ void WorldSession::HandleGossipHelloOpcode(WorldPacket& recv_data)
         return;
     }
 
+    // Set faction visible if needed
+    _player->SetFactionVisibleForFactionTemplateId(unit->getFaction());
+
     GetPlayer()->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TALK);
     // remove fake death
     //if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
