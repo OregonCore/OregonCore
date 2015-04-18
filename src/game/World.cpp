@@ -849,6 +849,8 @@ void World::LoadConfigSettings(bool reload)
 
     m_configs[CONFIG_EVENT_ANNOUNCE] = sConfig.GetIntDefault("Event.Announce", 0);
 
+    m_configs[CONFIG_CREATURE_PICKPOCKET_REFILL] = sConfig.GetIntDefault("Creature.PickPocketRefillDelay", 10 * MINUTE);
+
     m_configs[CONFIG_CREATURE_FAMILY_FLEE_ASSISTANCE_RADIUS] = sConfig.GetIntDefault("CreatureFamilyFleeAssistanceRadius", 30);
     m_configs[CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS] = sConfig.GetIntDefault("CreatureFamilyAssistanceRadius", 10);
     m_configs[CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY]  = sConfig.GetIntDefault("CreatureFamilyAssistanceDelay", 1500);

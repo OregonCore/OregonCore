@@ -78,11 +78,11 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket& recv_data)
     {
         Creature* pCreature = GetPlayer()->GetMap()->GetCreature(lguid);
 
-        bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->lootForPickPocketed);
+        bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->loot.loot_type == LOOT_SKINNING);
 
-        if (!ok_loot || !player->isAllowedToLoot(pCreature) || !pCreature->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
+        if (!ok_loot || !pCreature->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
         {
-            player->SendLootRelease(lguid);
+            player->SendLootError(lguid, ok_loot ? LOOT_ERROR_TOO_FAR : LOOT_ERROR_DIDNT_KILL);
             return;
         }
 
@@ -194,7 +194,7 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recv_data*/)
         {
             Creature* pCreature = GetPlayer()->GetMap()->GetCreature(guid);
 
-            bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->lootForPickPocketed);
+            bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->loot.loot_type == LOOT_SKINNING);
 
             if (ok_loot && player->isAllowedToLoot(pCreature) && pCreature->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
                 pLoot = &pCreature->loot ;
@@ -400,7 +400,7 @@ void WorldSession::DoLootRelease(uint64 lguid)
     {
         Creature* pCreature = GetPlayer()->GetMap()->GetCreature(lguid);
 
-        bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->lootForPickPocketed);
+        bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->loot.loot_type == LOOT_SKINNING);
         if (!ok_loot || !pCreature->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
             return;
 
@@ -447,13 +447,16 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 
     if (!_player->GetGroup() || _player->GetGroup()->GetMasterLooterGuid() != _player->GetGUID() || _player->GetGroup()->GetLootMethod() != MASTER_LOOT)
     {
-        _player->SendLootRelease(GetPlayer()->GetLootGUID());
+        _player->SendLootError(lootguid, LOOT_ERROR_DIDNT_KILL);
         return;
     }
 
     Player* target = ObjectAccessor::FindPlayer(MAKE_NEW_GUID(target_playerguid, 0, HIGHGUID_PLAYER));
     if (!target)
+    {
+        _player->SendLootError(lootguid, LOOT_ERROR_PLAYER_NOT_FOUND);
         return;
+    }
 
     // TODO : add some error message?
     if (_player->GetMapId() != target->GetMapId() || _player->GetDistance(target) > sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE))
@@ -462,7 +465,10 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
     sLog.outDebug("WorldSession::HandleLootMasterGiveOpcode (CMSG_LOOT_MASTER_GIVE, 0x02A3) Target = [%s].", target->GetName());
 
     if (_player->GetLootGUID() != lootguid)
+    {
+        _player->SendLootError(lootguid, LOOT_ERROR_DIDNT_KILL);
         return;
+    }
 
     Loot* pLoot = NULL;
 
@@ -498,12 +504,18 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
     uint8 msg = target->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, item.itemid, item.count);
     if (msg != EQUIP_ERR_OK)
     {
+        if (msg == EQUIP_ERR_CANT_CARRY_MORE_OF_THIS)
+            _player->SendLootError(lootguid, LOOT_ERROR_MASTER_UNIQUE_ITEM);
+        else if (msg == EQUIP_ERR_INVENTORY_FULL)
+            _player->SendLootError(lootguid, LOOT_ERROR_MASTER_INV_FULL);
+        else
+            _player->SendLootError(lootguid, LOOT_ERROR_MASTER_OTHER);
+
         target->SendEquipError(msg, NULL, NULL);
-        _player->SendEquipError(msg, NULL, NULL);         // send duplicate of error massage to master looter
         return;
     }
 
-    // not move item from loot to target inventory
+    // now move item from loot to target inventory
     Item* newitem = target->StoreNewItem(dest, item.itemid, true, item.randomPropertyId);
     target->SendNewItem(newitem, uint32(item.count), false, false, true);
 

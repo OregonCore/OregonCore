@@ -147,7 +147,7 @@ bool ForcedDespawnDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
 
 Creature::Creature() :
     Unit(),
-    lootForPickPocketed(false), lootForBody(false),
+    _pickpocketLootRestore(0),
     _skinner(0),
     m_GlobalCooldown(0),
     m_PlayerDamageReq(0), m_SightDistance(sWorld.getConfig(CONFIG_SIGHT_MONSTER)),
@@ -566,6 +566,7 @@ void Creature::Update(uint32 diff)
             // CORPSE/DEAD state will processed at next tick (in other case death timer will be updated unexpectedly)
             if (!IsAlive())
                 break;
+
             if (m_regenTimer > 0)
             {
                 if (diff >= m_regenTimer)
@@ -1573,8 +1574,7 @@ void Creature::Respawn(bool force)
 
         DEBUG_LOG("Respawning creature %s (GuidLow: %u, Full GUID: " UI64FMTD " Entry: %u)", GetName(), GetGUIDLow(), GetGUID(), GetEntry());
         m_respawnTime = 0;
-        lootForPickPocketed = false;
-        lootForBody         = false;
+        ResetPickPocketRefillTimer();
         loot.clear();
 
         if (m_originalEntry != GetEntry())
@@ -2235,23 +2235,19 @@ void Creature::AllLootRemovedFromCorpse()
             SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 
     time_t now = time(NULL);
-    if (m_corpseRemoveTime <= uint32(now))
+    // Do not reset corpse remove time if corpse is already removed
+    if (m_corpseRemoveTime <= now)
         return;
 
-    float decayRate;
-    CreatureInfo const *cinfo = GetCreatureTemplate();
-
-    // corpse was not skinnable -> apply corpse looted timer
-    decayRate = sWorld.getRate(RATE_CORPSE_DECAY_LOOTED);
-    uint32 diff = uint32((m_corpseRemoveTime - now) * decayRate);
-
-    m_respawnTime -= diff;
+    float decayRate = sWorld.getRate(RATE_CORPSE_DECAY_LOOTED);
 
     // corpse skinnable, but without skinning flag, and then skinned, corpse will despawn next update
     if (loot.loot_type == LOOT_SKINNING)
-        m_corpseRemoveTime = time(NULL);
+        m_corpseRemoveTime = now;
     else
-        m_corpseRemoveTime -= diff;
+        m_corpseRemoveTime = now + uint32(m_corpseDelay * decayRate);
+
+    m_respawnTime = m_corpseRemoveTime + m_respawnDelay;
 }
 
 uint32 Creature::getLevelForTarget(Unit const* target) const
@@ -2414,3 +2410,7 @@ time_t Creature::GetLinkedCreatureRespawnTime() const
     return 0;
 }
 
+void Creature::StartPickPocketRefillTimer()
+{
+    _pickpocketLootRestore = time(NULL) + sWorld.getConfig(CONFIG_CREATURE_PICKPOCKET_REFILL);
+}

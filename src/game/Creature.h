@@ -691,8 +691,9 @@ class Creature : public Unit, public GridObject<Creature>
         virtual void DeleteFromDB();                          // overwrited in Pet
 
         Loot loot;
-        bool lootForPickPocketed;
-        bool lootForBody;
+        void StartPickPocketRefillTimer();
+        void ResetPickPocketRefillTimer() { _pickpocketLootRestore = 0; }
+        bool CanGeneratePickPocketLoot() const { return _pickpocketLootRestore <= time(NULL); }
         void SetSkinner(uint64 guid) { _skinner = guid; }
         uint64 GetSkinner() const { return _skinner; } // Returns the player who skinned this creature
         Player* GetLootRecipient() const;
@@ -909,7 +910,8 @@ class Creature : public Unit, public GridObject<Creature>
         uint32 m_lootRecipientGroup;
         uint64 _skinner;
 
-        // Timers
+        /// Timers
+        time_t _pickpocketLootRestore;
         uint32 m_corpseRemoveTime;                          // (msecs)timer for death or corpse disappearance
         time_t m_respawnTime;                               // (secs) time of next respawn
         uint32 m_respawnDelay;                              // (secs) delay between corpse disappearance and respawning

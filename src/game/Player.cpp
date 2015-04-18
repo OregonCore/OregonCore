@@ -7906,20 +7906,29 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
 
         if (loot_type == LOOT_PICKPOCKETING)
         {
-            if (!creature->lootForPickPocketed)
+            if (loot->loot_type != LOOT_PICKPOCKETING)
             {
-                creature->lootForPickPocketed = true;
-                loot->clear();
+                if (creature->CanGeneratePickPocketLoot())
+                {
+                    creature->StartPickPocketRefillTimer();
+                    loot->clear();
 
-                if (uint32 lootid = creature->GetCreatureTemplate()->pickpocketLootId)
-                    loot->FillLoot(lootid, LootTemplates_Pickpocketing, this);
+                    if (uint32 lootid = creature->GetCreatureTemplate()->pickpocketLootId)
+                        loot->FillLoot(lootid, LootTemplates_Pickpocketing, this);
 
-                // Generate extra money for pick pocket loot
-                const uint32 a = urand(0, creature->getLevel() / 2);
-                const uint32 b = urand(0, getLevel() / 2);
-                loot->gold = uint32(10 * (a + b) * sWorld.getRate(RATE_DROP_MONEY));
-                permission = OWNER_PERMISSION;
-            }
+                    // Generate extra money for pick pocket loot
+                    const uint32 a = urand(0, creature->getLevel() / 2);
+                    const uint32 b = urand(0, getLevel() / 2);
+                    loot->gold = uint32(10 * (a + b) * sWorld.getRate(RATE_DROP_MONEY));
+                    permission = OWNER_PERMISSION;
+                }
+                else
+                {
+                    permission = NONE_PERMISSION;
+                    SendLootError(guid, LOOT_ERROR_ALREADY_PICKPOCKETED);
+                    return;
+                }
+            } // else - still has pickpocket loot generated & not fully taken
         }
         else
         {
@@ -7927,12 +7936,6 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
             Player* recipient = creature->GetLootRecipient();
             if (!recipient)
                 return;
-
-            if (creature->lootForPickPocketed)
-            {
-                creature->lootForPickPocketed = false;
-                loot->clear();
-            }
 
             if (loot->loot_type == LOOT_NONE)
             {
@@ -8069,10 +8072,20 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
         // add 'this' player as one of the players that are looting 'loot'
         loot->AddLooter(GetGUID());
     }
-    // @todo Loot Errors
+    else
+        SendLootError(GetLootGUID(), LOOT_ERROR_DIDNT_KILL);
 
     if (loot_type == LOOT_CORPSE && !IS_ITEM_GUID(guid))
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_LOOTING);
+}
+
+void Player::SendLootError(uint64 guid, LootError error)
+{
+    WorldPacket data(SMSG_LOOT_RESPONSE, 10);
+    data << uint64(guid);
+    data << uint8(LOOT_NONE);
+    data << uint8(error);
+    SendDirectMessage(&data);
 }
 
 void Player::SendNotifyLootMoneyRemoved()

@@ -1017,6 +1017,11 @@ TalentsInspecting = 1
 #        Creature Health Ammount Modifier.
 #        Examples: 2 - creatures have 2x health, 1.7 - 1.7x.
 #
+#    Creature.PickPocketRefillDelay
+#        Description: Time in seconds that the server will wait before refilling the pickpocket loot 
+#                     for a creature
+#        Default:     600
+#
 #    ListenRange.Say
 #        Distance from player to listen text that creature
 #         (or other world object) says
@@ -1062,6 +1067,7 @@ Rate.Creature.Elite.Elite.HP = 1
 Rate.Creature.Elite.RAREELITE.HP = 1
 Rate.Creature.Elite.WORLDBOSS.HP = 1
 Rate.Creature.Elite.RARE.HP = 1
+Creature.PickPocketRefillDelay = 600
 ListenRange.Say = 40
 ListenRange.TextEmote = 40
 ListenRange.Yell = 300
