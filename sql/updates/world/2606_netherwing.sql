@@ -1,5 +1,6 @@
 -- Remove manually spawned ravagers from DB, now summoned by spell
 DELETE FROM creature WHERE id=19461;
+DELETE FROM `creature` WHERE `guid` IN (52283, 52284, 52285, 52286, 69717, 69718, 69719, 69720);
 
 SET @GUID          := 69717;
 SET @OGUID         := 5510;
@@ -14,12 +15,12 @@ DELETE FROM `gameobject` WHERE `guid` IN (@OGUID);
 INSERT INTO `gameobject` (`guid`,`id`,`map`,`spawnMask`,`position_x`,`position_y`,`position_z`,`orientation`,`rotation0`,`rotation1`,`rotation2`,`rotation3`,`spawntimesecs`,`animprogress`,`state`) VALUES
 (@OGUID,50983,530,1, -5116.788574, 631.188660, 85.055522,0.949811,0,0,0.457254, 0.889336, 300, 0, 1);
 
-UPDATE `creature` SET `position_x`= -5158.237305, `position_y`= 584.302612, `position_z`= 81.074142, `orientation`= 5.954358 WHERE `guid`= 78136; 
-UPDATE `creature` SET `position_x`= -5156.172363, `position_y`= 590.695251, `position_z`= 80.769630, `orientation`= 5.502757 WHERE `guid`= 78135; 
-UPDATE `creature` SET `position_x`= -5152.365723, `position_y`= 592.303040, `position_z`= 81.361931, `orientation`= 4.705578 WHERE `guid`= 78137; 
-UPDATE `creature` SET `position_x`= -5113.345703, `position_y`= 623.850159, `position_z`= 86.736343, `orientation`= 1.033840 WHERE `guid`= 78160; 
-UPDATE `creature` SET `position_x`= -5123.593750, `position_y`= 626.638916, `position_z`= 86.629669, `orientation`= 1.395123 WHERE `guid`= 78159; 
-UPDATE `creature` SET `position_x`= -5165.503418, `position_y`= 568.109131, `position_z`= 80.523895, `orientation`= 2.707489 WHERE `guid`= 52107; 
++UPDATE `creature` SET `position_x`= -5158.237305, `position_y`= 584.302612, `position_z`= 81.074142, `orientation`= 5.954358 WHERE `guid`= 78136;
++UPDATE `creature` SET `position_x`= -5156.172363, `position_y`= 590.695251, `position_z`= 80.769630, `orientation`= 5.502757 WHERE `guid`= 78135;
++UPDATE `creature` SET `position_x`= -5152.365723, `position_y`= 592.303040, `position_z`= 81.361931, `orientation`= 4.705578 WHERE `guid`= 78137;
++UPDATE `creature` SET `position_x`= -5113.345703, `position_y`= 623.850159, `position_z`= 86.736343, `orientation`= 1.033840 WHERE `guid`= 78160;
++UPDATE `creature` SET `position_x`= -5123.593750, `position_y`= 626.638916, `position_z`= 86.629669, `orientation`= 1.395123 WHERE `guid`= 78159;
++UPDATE `creature` SET `position_x`= -5165.503418, `position_y`= 568.109131, `position_z`= 80.523895, `orientation`= 2.707489 WHERE `guid`= 52107;
 
 -- Cleanup on Dragonmaw Ascendant!
 DELETE FROM `creature` WHERE `guid` IN (52283, 52284, 52285, 52286, 52287, 52288, 52289, 52290, 52291, 52292, 52293, 52294, 52295, 52296, 52297, 52298, 52299, 52300, 52301, 52302, 52303, 52304, 52305, 52306, 52307, 52308, 52309, 52310, 52311, 52312, 52313, 52314, 52315, 52316, 52317, 52318, 52319, 52320, 52321, 52322, 52323, 52324, 52325, 52326, 52327, 52328, 52329, 52332, 52333);
