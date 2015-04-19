@@ -911,6 +911,7 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_ARENA_RATING_DISCARD_TIMER]                = sConfig.GetIntDefault("Arena.RatingDiscardTimer", 10 * MINUTE * IN_MILLISECONDS);
     m_configs[CONFIG_ARENA_AUTO_DISTRIBUTE_POINTS]              = sConfig.GetBoolDefault("Arena.AutoDistributePoints", false);
     m_configs[CONFIG_ARENA_AUTO_DISTRIBUTE_INTERVAL_DAYS]       = sConfig.GetIntDefault("Arena.AutoDistributeInterval", 7);
+    m_configs[CONFIG_ARENA_HIDE_FROM_SOCIAL]                    = sConfig.GetBoolDefault("Arena.HideFromSocial", false);
     m_configs[CONFIG_ARENA_LOG_EXTENDED_INFO]                   = sConfig.GetBoolDefault("ArenaLogExtendedInfo", false);
     m_configs[CONFIG_INSTANT_LOGOUT]                            = sConfig.GetIntDefault("InstantLogout", SEC_MODERATOR);
 

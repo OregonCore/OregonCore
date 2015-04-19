@@ -205,6 +205,7 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
     uint32 security = GetSecurity();
     bool allowTwoSideWhoList = sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_WHO_LIST);
     bool gmInWhoList         = sWorld.getConfig(CONFIG_GM_IN_WHO_LIST);
+    bool hideInArena         = sWorld.getConfig(CONFIG_ARENA_HIDE_FROM_SOCIAL);
     uint32 displaycount = 0;
 
     WorldPacket data(SMSG_WHO, 50);                         // guess size
@@ -249,7 +250,14 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
         if (!(racemask & (1 << race)))
             continue;
 
-        uint32 pzoneid = itr->second->GetZoneId();
+        uint32 pzoneid;
+        if (hideInArena)
+            pzoneid = MapManager::Instance().GetZoneId(itr->second->GetBattleGroundEntryPoint().GetMapId(),
+            itr->second->GetBattleGroundEntryPoint().GetPositionX(), itr->second->GetBattleGroundEntryPoint().GetPositionY(),
+            itr->second->GetBattleGroundEntryPoint().GetPositionZ());
+        else
+            pzoneid = itr->second->GetZoneId();
+
         uint8 gender = itr->second->getGender();
 
         bool z_show = true;

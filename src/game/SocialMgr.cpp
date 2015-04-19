@@ -191,8 +191,10 @@ void SocialMgr::GetFriendInfo(Player* player, uint32 friendGUID, FriendInfo& fri
 
     uint32 team = player->GetTeam();
     uint32 security = player->GetSession()->GetSecurity();
+
     bool allowTwoSideWhoList = sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_WHO_LIST);
-    bool gmInWhoList = sWorld.getConfig(CONFIG_GM_IN_WHO_LIST) || security > SEC_PLAYER;
+    bool gmInWhoList         = sWorld.getConfig(CONFIG_GM_IN_WHO_LIST) || security > SEC_PLAYER;
+    bool hideInArena         = sWorld.getConfig(CONFIG_ARENA_HIDE_FROM_SOCIAL);
 
     PlayerSocialMap::iterator itr = player->GetSocial()->m_playerSocialMap.find(friendGUID);
     if (itr != player->GetSocial()->m_playerSocialMap.end())
@@ -216,7 +218,13 @@ void SocialMgr::GetFriendInfo(Player* player, uint32 friendGUID, FriendInfo& fri
         // RAF Status
         sObjectMgr.GetRAFLinkStatus(player, pFriend) ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_RAF) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_RAF);
 
-        friendInfo.Area = pFriend->GetZoneId();
+        if (hideInArena)
+            friendInfo.Area = MapManager::Instance().GetZoneId(pFriend->GetBattleGroundEntryPoint().GetMapId(),
+            pFriend->GetBattleGroundEntryPoint().GetPositionX(), pFriend->GetBattleGroundEntryPoint().GetPositionY(),
+            pFriend->GetBattleGroundEntryPoint().GetPositionZ());
+        else
+            friendInfo.Area = pFriend->GetZoneId();
+
         friendInfo.Level = pFriend->getLevel();
         friendInfo.Class = pFriend->getClass();
     }

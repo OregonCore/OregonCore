@@ -1558,12 +1558,20 @@ Battleground.LeaveWrathMode = 0
 #        If automatic distribution is enabled in days
 #        Default: 7 (weekly)
 #
+#    Arena.HideFromSocial
+#        Boolean used to control whether players show
+#        in social lists such as friend list or who lists
+#		 while in arena.
+#        Default: 0 (disable)
+#				  1 (enable)
+#
 ###############################################################################
 
 Arena.MaxRatingDifference = 150
 Arena.RatingDiscardTimer = 600000
 Arena.AutoDistributePoints = 0
 Arena.AutoDistributeInterval = 7
+Arena.HideFromSocial = 0
 
 ###############################################################################
 # NETWORK CONFIG
