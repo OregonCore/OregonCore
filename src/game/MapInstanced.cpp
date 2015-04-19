@@ -57,7 +57,10 @@ void MapInstanced::Update(const uint32& t)
         else
         {
             // update only here, because it may schedule some bad things before delete
-            i->second->Update(t);
+            if (MapManager::Instance().GetMapUpdater()->activated())
+                MapManager::Instance().GetMapUpdater()->schedule_update(*i->second, t);
+            else
+                i->second->Update(t);
             ++i;
         }
     }
@@ -221,9 +224,11 @@ bool MapInstanced::DestroyInstance(InstancedMaps::iterator& itr)
         // so in the next map creation, (EnsureGridCreated actually) VMaps will be reloaded
         Map::UnloadAll();
     }
+
     // erase map
     delete itr->second;
     m_InstancedMaps.erase(itr++);
+
     return true;
 }
 
