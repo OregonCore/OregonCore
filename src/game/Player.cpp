@@ -6954,7 +6954,6 @@ void Player::_ApplyItemMods(Item* item, uint8 slot, bool apply)
     ApplyItemEquipSpell(item, apply);
     ApplyEnchantment(item, apply);
 
-
     sLog.outDebug("_ApplyItemMods complete.");
 }
 

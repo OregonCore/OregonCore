@@ -2371,23 +2371,15 @@ void Spell::cast(bool skipCheck)
     // update pointers base at GUIDs to prevent access to non-existed already object
     UpdatePointers();
 
-    Unit* pTarget = m_targets.getUnitTarget();
-    if (pTarget && pTarget->IsAlive() && (pTarget->HasAuraType(SPELL_AURA_MOD_STEALTH) || pTarget->HasAuraType(SPELL_AURA_MOD_INVISIBILITY)) && !pTarget->IsFriendlyTo(m_caster) && !pTarget->isVisibleForOrDetect(m_caster, true))
-    {
-        SendCastResult(SPELL_FAILED_BAD_TARGETS);
-        finish(false);
-        return;
-    }
-    SetExecutedCurrently(true);
-    SpellCastResult castResult = SPELL_CAST_OK;
-
     // cancel at lost main target unit
-    if (!m_targets.getUnitTarget() && m_targets.getUnitTargetGUID() && m_targets.getUnitTargetGUID() != m_caster->GetGUID())
+    if (!m_targets.getUnitTarget() && m_targets.getUnitTargetGUID())
     {
         cancel();
-        SetExecutedCurrently(false);
         return;
     }
+
+    SetExecutedCurrently(true);
+    SpellCastResult castResult = SPELL_CAST_OK;
 
     if (m_caster->GetTypeId() != TYPEID_PLAYER && m_targets.getUnitTarget() && m_targets.getUnitTarget() != m_caster)
         m_caster->SetInFront(m_targets.getUnitTarget());
@@ -2413,6 +2405,7 @@ void Spell::cast(bool skipCheck)
         if (castResult != SPELL_CAST_OK)
         {
             SendCastResult(castResult);
+            SendInterrupted(0);
             finish(false);
             SetExecutedCurrently(false);
             return;
@@ -2424,6 +2417,8 @@ void Spell::cast(bool skipCheck)
 
     if (m_spellState == SPELL_STATE_FINISHED)                // stop cast if spell marked as finish somewhere in Take*/FillTargetMap
     {
+        SendInterrupted(0);
+        finish(false);
         SetExecutedCurrently(false);
         return;
     }
@@ -2434,13 +2429,13 @@ void Spell::cast(bool skipCheck)
 
     if (!m_IsTriggeredSpell)
     {
-        //TakePower();
+        TakePower();
         TakeReagents();                                         // we must remove reagents before HandleEffects to allow place crafted item in same slot
     }
 
     // CAST SPELL
     SendSpellCooldown();
-    //SendCastResult(castResult);
+
     SendSpellGo();                                          // we must send smsg_spell_go packet before m_castItem delete in TakeCastItem()...
 
     if (m_customAttr & SPELL_ATTR_CU_DIRECT_DAMAGE)
@@ -2468,7 +2463,7 @@ void Spell::cast(bool skipCheck)
         EffectCharge((SpellEffIndex)0);
 
     // Okay, everything is prepared. Now we need to distinguish between immediate and evented delayed spells
-    if ((m_spellInfo->speed > 0.0f && !IsChanneledSpell(m_spellInfo)) || m_spellInfo->Id == 14157)
+    if ((m_spellInfo->speed > 0.0f && !IsChanneledSpell(m_spellInfo)) || m_spellInfo->AttributesEx4 & SPELL_ATTR_EX4_UNK4)
     {
         // Remove used for cast item if need (it can be already NULL after TakeReagents call
         // in case delayed spell remove item at cast delay start
@@ -2478,6 +2473,9 @@ void Spell::cast(bool skipCheck)
         m_immediateHandled = false;
         m_spellState = SPELL_STATE_DELAYED;
         SetDelayStart(0);
+
+        if (m_caster->HasUnitState(UNIT_STATE_CASTING) && !m_caster->IsNonMeleeSpellCast(false, false, true))
+            m_caster->ClearUnitState(UNIT_STATE_CASTING);
     }
     else
     {

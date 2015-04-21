@@ -4735,13 +4735,13 @@ void Aura::HandleModTotalPercentStat(bool apply, bool /*Real*/)
     uint32 curHPValue = m_target->GetHealth();
     uint32 maxHPValue = m_target->GetMaxHealth();
 
-    for (int32 i = STAT_STRENGTH; i < MAX_STATS; i++)
+    for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i)
     {
         if (m_modifier.m_miscvalue == i || m_modifier.m_miscvalue == -1)
         {
             m_target->HandleStatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_PCT, float(GetModifierValue()), apply);
             if (m_target->GetTypeId() == TYPEID_PLAYER || m_target->ToCreature()->isPet())
-                m_target->ApplyStatPercentBuffMod(Stats(i), GetModifierValue(), apply);
+                m_target->ApplyStatPercentBuffMod(Stats(i), float(GetModifierValue()), apply);
         }
     }
 
