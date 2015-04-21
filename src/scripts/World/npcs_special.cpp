@@ -1562,6 +1562,164 @@ CreatureAI* GetAI_mob_mojo(Creature* pCreature)
     return new mob_mojoAI (pCreature);
 }
 
+/*######
+## mob_rift_spawn
+######*/
+
+#define RIFT_EMOTE_AGGRO    "%s is angered and attacks!"
+#define RIFT_EMOTE_EVADE    "%s escapes into the void!"
+#define RIFT_EMOTE_SUCKED   "%s is sucked into the coffer!"
+
+enum RiftSpawn
+{
+    // Creatures
+    MOB_RIFT_SPAWN                          = 6492,
+
+    // Spells
+    SPELL_SELF_STUN_30SEC                   = 9032,
+    SPELL_RIFT_SPAWN_INVISIBILITY           = 9093,
+    SPELL_CANTATION_OF_MANIFESTATION        = 9095,
+    SPELL_RIFT_SPAWN_MANIFESTATION          = 9096,
+    SPELL_CREATE_FILLED_CONTAINMENT_COFFER  = 9010,
+
+    // Objects
+    GO_CONTAINMENT_COFFER                   = 122088,
+
+    // Factions
+    FACTION_HOSTILE                         = 91,
+    FACTION_NEUTRAL                         = 35,
+
+    // Data 
+    ITEM_USED                               = 1
+};
+
+struct mob_rift_spawnAI : public ScriptedAI
+{
+    mob_rift_spawnAI(Creature* c) : ScriptedAI(c) { }
+
+    bool creatureActive;
+    bool questActive;
+    uint32 escapeTimer;
+
+    void Reset()
+    {
+        DoCast(me, SPELL_RIFT_SPAWN_INVISIBILITY, true);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NON_ATTACKABLE);
+        me->setFaction(FACTION_HOSTILE);
+
+        creatureActive = false;
+        questActive = false;
+        escapeTimer = 0;
+    }
+
+    void JustReachedHome()
+    {
+        Reset();
+    }
+
+    void DamageTaken(Unit* /*attacker*/, uint32& damage)
+    {
+        if(damage && damage > me->GetHealth())
+        {
+            escapeTimer = 31000;
+            damage = 0;
+            me->setFaction(FACTION_NEUTRAL);
+            me->CombatStop();
+            me->RemoveAllAuras();
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NON_ATTACKABLE);
+            me->SetHealth(me->GetMaxHealth());
+            DoCast(me, SPELL_SELF_STUN_30SEC, true);
+        }
+    }
+
+    void EscapeIntoVoid(bool handleQuest)
+    {
+        if(handleQuest)
+        {
+            if(GameObject* container = GetClosestGameObjectWithEntry(me, GO_CONTAINMENT_COFFER, 5.0f))
+            {
+                if (Creature* trigger = me->SummonTrigger(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, 10000))
+                {
+                    trigger->SetVisibility(VISIBILITY_OFF);
+                    trigger->CastSpell(trigger, SPELL_CREATE_FILLED_CONTAINMENT_COFFER, true);
+                }
+                container->Delete();
+            }
+
+            me->MonsterTextEmote(RIFT_EMOTE_SUCKED, 0);
+            me->DisappearAndDie();
+            return;
+        }
+
+        me->MonsterTextEmote(RIFT_EMOTE_EVADE, 0);
+        me->GetMotionMaster()->MoveTargetedHome();
+        DoCast(me, SPELL_RIFT_SPAWN_INVISIBILITY, true);
+    }
+
+    
+    void SetData(uint32 type, uint32 /*data*/)
+    {
+        if(type == ITEM_USED)
+            questActive = true;
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (escapeTimer)
+            if (escapeTimer <= diff)
+                EscapeIntoVoid(questActive);
+            else
+                escapeTimer -= diff;
+
+        if (!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+
+    void SpellHit(Unit* caster, const SpellEntry* spell)
+    {
+        if (!creatureActive && spell->Id == SPELL_CANTATION_OF_MANIFESTATION && me->IsWithinDist(caster, 2.5f, false))
+        {
+            // Prevent reactivating this sequence
+            creatureActive = true;
+
+            // Remove auras
+            me->RemoveAurasDueToSpell(SPELL_RIFT_SPAWN_INVISIBILITY);
+            me->RemoveAurasDueToSpell(SPELL_CANTATION_OF_MANIFESTATION);
+
+            // Spawn animation and engage in combat
+            DoCast(SPELL_RIFT_SPAWN_MANIFESTATION);
+            me->CombatStart(caster);
+
+            me->MonsterTextEmote(RIFT_EMOTE_AGGRO, caster->GetGUID());
+        }
+    }
+};
+
+CreatureAI* GetAI_mob_rift_spawn(Creature* _Creature)
+{
+    return new mob_rift_spawnAI (_Creature);
+}
+
+bool GossipHello_go_containment_coffer(Player* player, GameObject* go)
+{
+    if (Creature* spawn = GetClosestCreatureWithEntry(go, MOB_RIFT_SPAWN, 5.0f, true))
+    {
+        if(spawn->HasAura(SPELL_SELF_STUN_30SEC))
+        {
+            // Send Data State
+            spawn->AI()->SetData(ITEM_USED, 0);
+
+            // Update gameobject anim state
+            go->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+            go->UseDoorOrButton();
+        }
+    }
+
+    return true;
+}
+
 void AddSC_npcs_special()
 {
     Script* newscript;
@@ -1657,5 +1815,16 @@ void AddSC_npcs_special()
     newscript->Name = "mob_mojo";
     newscript->GetAI = &GetAI_mob_mojo;
     newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name="mob_rift_spawn";
+    newscript->GetAI = &GetAI_mob_rift_spawn;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name="go_containment_coffer";
+    newscript->pGOHello  = &GossipHello_go_containment_coffer;
+    newscript->RegisterSelf();
+
 }
 

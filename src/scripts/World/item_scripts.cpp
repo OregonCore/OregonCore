@@ -295,6 +295,34 @@ bool ItemUse_item_muiseks_vessel(Player* player, Item* _Item, SpellCastTargets c
 }
 
 /*#####
+# item_chest_of_containment_coffers
+#####*/
+
+enum ContainmentCoffer
+{
+    // Creatures
+    MOB_RIFT_SPAWN         = 6492,
+
+    // Spells
+    SPELL_SELF_STUN_30SEC  = 9032
+};
+
+bool ItemUse_item_chest_of_containment_coffers(Player* player, Item* _Item, SpellCastTargets const& targets)
+{
+    if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT && targets.getUnitTarget()->IsAlive() &&
+        targets.getUnitTarget()->GetEntry() == MOB_RIFT_SPAWN && targets.getUnitTarget()->HasAura(SPELL_SELF_STUN_30SEC))
+        return false;
+
+    WorldPacket data(SMSG_CAST_FAILED, (4 + 2));            // prepare packet error message
+    data << uint32(_Item->GetEntry());                      // itemId
+    data << uint8(SPELL_FAILED_NOT_READY);                  // reason
+    player->GetSession()->SendPacket(&data);                // send message: Not ready yet
+
+    player->SendEquipError(EQUIP_ERR_NONE, _Item, NULL);    // break spell
+    return true;
+}
+
+/*#####
 # item_inoculating_crystal
 #####*/
 
@@ -631,6 +659,11 @@ void AddSC_item_scripts()
     newscript = new Script;
     newscript->Name = "item_zezzaks_shard";
     newscript->pItemUse = &ItemUse_item_zezzak_shard;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name="item_chest_of_containment_coffers";
+    newscript->pItemUse = &ItemUse_item_chest_of_containment_coffers;
     newscript->RegisterSelf();
 }
 
