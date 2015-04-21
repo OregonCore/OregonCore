@@ -49,6 +49,7 @@ static const int MenuItems = sizeof(Menu) / sizeof(*Menu);
 #if PLATFORM == PLATFORM_WINDOWS
 BOOL WINAPI HandleConsoleInterrupt(DWORD)
 {
+    endwin();
     raise(SIGINT);
     return TRUE;
 }
@@ -379,6 +380,7 @@ void Console::MainLoop()
                 RunLogViewLoop();
                 break;
             case 3: /* shutdown */
+                endwin();
                 raise(SIGINT);
                 break;
             }
@@ -629,6 +631,9 @@ void Console::RunLogViewLoop()
 
     Window* infoWindow = MakeWindow(2, len, LINES - 2, COLS / 2 - len / 2);
     wattron(infoWindow, A_BOLD | TermColor(COLOR_GREEN));
+
+    erase();
+    refresh();
 
     wrefresh(infoWindow);
     timeout(1000);
