@@ -26,6 +26,7 @@
 #include "DBCStores.h"
 #include "Database/SQLStorage.h"
 #include "SpellAuraDefines.h"
+#include "DisableMgr.h"
 
 #include "Utilities/UnorderedMap.h"
 #include "VMapFactory.h"
@@ -159,6 +160,9 @@ inline bool IsSpellIgnoringLOS(SpellEntry const* spellInfo)
         return true;
 
     if (!VMAP::VMapFactory::checkSpellForLoS(spellInfo->Id))
+        return true;
+
+    if (sDisableMgr.IsDisabledFor(DISABLE_TYPE_SPELL, spellInfo->Id, NULL, SPELL_DISABLE_LOS))
         return true;
 
     // Spells with area destinations also belong here
