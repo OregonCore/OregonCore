@@ -3581,9 +3581,6 @@ void Spell::HandleThreatSpells()
         (m_spellInfo->AttributesEx3 & SPELL_ATTR_EX3_NO_INITIAL_AGGRO))
         return;
 
-    if (!m_targets.getUnitTarget()->CanHaveThreatList())
-        return;
-
     float threat = 0.0f;
     if (SpellThreatEntry const* threatEntry = sSpellMgr.GetSpellThreatEntry(m_spellInfo->Id))
     {
@@ -3613,10 +3610,10 @@ void Spell::HandleThreatSpells()
 
         // positive spells distribute threat among all units that are in combat with target, like healing
         if (IsPositiveSpell(m_spellInfo->Id))
-            target->getHostileRefManager().threatAssist(m_caster, threatToAdd, m_spellInfo);
+            target->AddAssistThreat(m_caster, threatToAdd, m_spellInfo);
         // for negative spells threat gets distributed among affected targets
         else
-            if (!target->IsHostileTo(m_caster))
+            if (!target->IsFriendlyTo(m_caster))
                 target->AddThreat(m_caster, threatToAdd, GetSpellSchoolMask(m_spellInfo), m_spellInfo);
     }
 

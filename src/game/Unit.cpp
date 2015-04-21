@@ -9699,6 +9699,15 @@ void Unit::AddThreat(Unit* victim, float fThreat, SpellSchoolMask schoolMask, Sp
 
 //======================================================================
 
+void Unit::AddAssistThreat(Unit* victim, float threatToAdd, SpellEntry const* threatSpell)
+{
+    // Only mobs can manage threat lists
+    if (CanHaveThreatList())
+        getHostileRefManager().threatAssist(victim, threatToAdd, threatSpell);
+}
+
+//======================================================================
+
 void Unit::DeleteThreatList()
 {
     m_ThreatManager.clearReferences();
