@@ -531,18 +531,22 @@ struct boss_sathrovarrAI : public ScriptedAI
 
     void TeleportAllPlayersBack()
     {
-        Map* pMap = me->GetMap();
-        if (!pMap->IsDungeon()) return;
-        Map::PlayerList const& PlayerList = pMap->GetPlayers();
-        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+        Map* map = me->GetMap();
+        if (!map->IsDungeon())
+            return;
+
+        Map::PlayerList const &playerList = map->GetPlayers();
+        Position homePos = me->GetHomePosition();
+        for (Map::PlayerList::const_iterator itr = playerList.begin(); itr != playerList.end(); ++itr)
         {
-            if (i->getSource()->GetPositionZ() <= DRAGON_REALM_Z - 5)
+            Player* player = itr->getSource();
+            if (player->IsInDist(&homePos, 50.0f) && player->GetPositionZ() <= DEMON_REALM_Z + 10.f)
             {
-                if (i->getSource()->HasAura(AURA_SPECTRAL_REALM, 0))
-                    i->getSource()->RemoveAurasDueToSpell(AURA_SPECTRAL_REALM);
-                i->getSource()->TeleportTo(me->GetMap()->GetId(), i->getSource()->GetPositionX(), i->getSource()->GetPositionY(), DRAGON_REALM_Z + 5, i->getSource()->GetOrientation());
+                 player->RemoveAura(AURA_SPECTRAL_REALM, 0);
+                 player->TeleportTo(me->GetMap()->GetId(), player->GetPositionX(),
+                     player->GetPositionY(), DRAGON_REALM_Z + 5, player->GetOrientation());
             }
-        }
+        }    
     }
 
     void DoAction(const int32 param)
