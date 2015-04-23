@@ -29,6 +29,7 @@ npc_overseer_nuaar
 npc_saikkal_the_elder
 npc_ogre_brute
 npc_bloodmaul_brutebane
+npc_light_orb_collector
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -489,6 +490,116 @@ bool GOUse_go_thunderspike(Player* player, GameObject* /*_GO*/)
     return false;
 }
 
+/*######
+## npc_light_orb_collector
+######*/
+
+enum RazaniLightOrb
+{
+    // Creatures
+    NPC_LIGHT_ORB_MINI          = 20771,
+    NPC_KILL_CREDIT_TRIGGER     = 21929,
+
+    // Quests
+    QUEST_LIGHT_FANTASTIC       = 10674,
+    QUEST_GATHER_THE_ORBS       = 10859,
+
+    // Misc
+    MAX_PULL_DISTANCE           = 20
+};
+
+struct npc_light_orb_collectorAI : public ScriptedAI
+{
+    npc_light_orb_collectorAI(Creature* c) : ScriptedAI(c)
+    {
+        Reset();
+    }
+
+    uint64 selectedOrbGUID;
+    bool orbPulled;
+    uint32 startTimer;
+
+    void Reset()
+    {
+        orbPulled    = false;
+        startTimer  = 0;
+    }
+
+    void RewardCredit(uint64 playerGUID)
+    { 
+        Map* map = me->GetMap();
+        Map::PlayerList const &PlayerList = map->GetPlayers();
+
+        for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+            if (Player* player = itr->getSource())
+                if (player->GetGUID() == playerGUID)
+                    if (me->IsWithinDistInMap(player, 15.0f))
+                        if (player->GetQuestStatus(QUEST_LIGHT_FANTASTIC) || player->GetQuestStatus(QUEST_GATHER_THE_ORBS) == QUEST_STATUS_INCOMPLETE)
+                            player->KilledMonsterCredit(NPC_KILL_CREDIT_TRIGGER, me->GetGUID());
+    }
+
+    void MoveInLineOfSight(Unit* who)
+    {
+        if (who->GetTypeId() != TYPEID_UNIT || who->GetEntry() != NPC_LIGHT_ORB_MINI)
+            return;
+
+        // Select an nearby orb to collect
+        if (!startTimer && !orbPulled)
+        {
+            if (me->GetDistance(who) <= MAX_PULL_DISTANCE)
+            {
+                selectedOrbGUID = who->GetGUID();
+                startTimer = 2000;
+            }
+        }
+        else if (orbPulled && who->GetGUID() == selectedOrbGUID && me->IsWithinDistInMap(who, 3.5f))
+        {
+            // Despawn the collected orb if close enough
+            ((Creature*)who)->ForcedDespawn();
+
+            // Give kill credit to the player
+            RewardCredit(who->GetOwnerGUID());
+
+            // Despawn collector
+            me->ForcedDespawn();
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (startTimer)
+        {
+            // Start collecting after some delay
+            if (startTimer <= diff)
+            {
+                Creature* selectedOrb = me->GetMap()->GetCreature(selectedOrbGUID);
+                if (!selectedOrb)
+                    return;
+
+                // Orb is pulled fast
+                selectedOrb->SetWalk(false);
+
+                // Move orb to the collector
+                float fX, fY, fZ;;
+                selectedOrb->GetMotionMaster()->MoveIdle();
+                me->GetContactPoint(selectedOrb, fX, fY, fZ);
+                selectedOrb->GetMotionMaster()->MovePoint(0, fX, fY, fZ);
+
+                orbPulled = true;
+                startTimer = 0;
+            }
+            else
+                startTimer -= diff;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_light_orb_collector(Creature* creature)
+{
+    return new npc_light_orb_collectorAI(creature);
+}
+
+
 void AddSC_blades_edge_mountains()
 {
     Script* newscript;
@@ -528,5 +639,10 @@ void AddSC_blades_edge_mountains()
     newscript = new Script;
     newscript->Name = "go_thunderspike";
     newscript->pGOHello = &GOUse_go_thunderspike;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_light_orb_collector";
+    newscript->GetAI = &GetAI_npc_light_orb_collector;
     newscript->RegisterSelf();
 }
