@@ -136,6 +136,7 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
             me->RemoveAllAuras();
             me->ClearAllReactives();
 
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetStandState(UNIT_STAND_STATE_DEAD);
 
@@ -245,6 +246,19 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
             return;
 
         ScriptedAI::AttackStart(pWho);
+    }
+
+    void DamageTaken(Unit* /*doneBy*/, uint32& damage)
+    {
+        if (damage < me->GetHealth())
+            return;
+ 
+        if (!m_bCanResurrectCheck || m_bCanResurrect)
+        {
+          // prevent killing blow before rezzing commander
+            me->SetHealth(damage + 1);
+            damage = 0;
+        }
     }
 
     void EnterCombat(Unit* /*pWho*/)
