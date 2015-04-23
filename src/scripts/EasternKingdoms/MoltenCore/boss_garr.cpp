@@ -23,57 +23,57 @@ SDCategory: Molten Core
 EndScriptData */
 
 #include "ScriptPCH.h"
+#include "molten_core.h"
 
-// Garr spells
-#define SPELL_ANTIMAGICPULSE        19492
-#define SPELL_MAGMASHACKLES         19496
-#define SPELL_ENRAGE                19516                   //Stacking enrage (stacks to 10 times)
+enum Spells
+{
+    // Garr spells
+    SPELL_ANTIMAGICPULSE       = 19492,
+    SPELL_MAGMASHACKLES        = 19496,
+    SPELL_ENRAGE               = 19516,     //Stacking enrage (stacks to 10 times)
 
-//Add spells
-#define SPELL_ERUPTION              19497
-#define SPELL_IMMOLATE              20294
+    //Add spells
+    SPELL_ERUPTION             = 19497,
+    SPELL_MASSIVE_ERUPTION     = 20483,     // @todo possible on death
+    SPELL_IMMOLATE             = 20294,
+    SPELL_SEPARATION_ANXIETY   = 23492      // Used if separated too far from Garr
+};
 
 struct boss_garrAI : public ScriptedAI
 {
-    boss_garrAI(Creature* c) : ScriptedAI(c) {}
+    boss_garrAI(Creature* c) : ScriptedAI(c) { }
 
-    uint32 AntiMagicPulse_Timer;
-    uint32 MagmaShackles_Timer;
-    uint32 CheckAdds_Timer;
-    uint64 Add[8];
-    bool Enraged[8];
+    uint32 antiMagicPulseTimer;
+    uint32 magmaShacklesTimer;
 
     void Reset()
     {
-        AntiMagicPulse_Timer = 25000;                       //These times are probably wrong
-        MagmaShackles_Timer = 15000;
-        CheckAdds_Timer = 2000;
+        antiMagicPulseTimer = 25000;                       //These times are probably wrong
+        magmaShacklesTimer = 15000;
     }
 
-    void EnterCombat(Unit* /*who*/)
-    {
-    }
+    void EnterCombat(Unit* /*who*/) { }
 
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
 
-        //AntiMagicPulse_Timer
-        if (AntiMagicPulse_Timer <= diff)
+        //antiMagicPulseTimer
+        if (antiMagicPulseTimer <= diff)
         {
             DoCast(me, SPELL_ANTIMAGICPULSE);
-            AntiMagicPulse_Timer = 10000 + rand() % 5000;
+            antiMagicPulseTimer = urand(10000, 15000);
         }
-        else AntiMagicPulse_Timer -= diff;
+        else antiMagicPulseTimer -= diff;
 
-        //MagmaShackles_Timer
-        if (MagmaShackles_Timer <= diff)
+        //magmaShacklesTimer
+        if (magmaShacklesTimer <= diff)
         {
             DoCast(me, SPELL_MAGMASHACKLES);
-            MagmaShackles_Timer = 8000 + rand() % 4000;
+            magmaShacklesTimer = urand(8000, 12000);
         }
-        else MagmaShackles_Timer -= diff;
+        else magmaShacklesTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -81,17 +81,30 @@ struct boss_garrAI : public ScriptedAI
 
 struct mob_fireswornAI : public ScriptedAI
 {
-    mob_fireswornAI(Creature* c) : ScriptedAI(c) {}
+    mob_fireswornAI(Creature* c) : ScriptedAI(c)
+    {
+        instance = c->GetInstanceData();
+        Reset();
+    }
 
-    uint32 Immolate_Timer;
+    ScriptedInstance* instance;
+
+    uint32 immolateTimer;
+    uint32 seperationCheckTimer;
 
     void Reset()
     {
-        Immolate_Timer = 4000;                              //These times are probably wrong
+        immolateTimer = urand(4000, 8000);
+        seperationCheckTimer = 5000;
     }
 
-    void EnterCombat(Unit* /*who*/)
+    void EnterCombat(Unit* /*who*/) { }
+
+    void JustDied(Unit* /*pKiller*/)
     {
+        if (instance)
+            if (Creature* Garr = Creature::GetCreature(*me, instance->GetData64(DATA_GARR)))
+                Garr->CastSpell(Garr, SPELL_ENRAGE, true, NULL, NULL, me->GetGUID());
     }
 
     void UpdateAI(const uint32 diff)
@@ -99,20 +112,35 @@ struct mob_fireswornAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        //Immolate_Timer
-        if (Immolate_Timer <= diff)
+        //immolateTimer
+        if (immolateTimer <= diff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_IMMOLATE);
 
-            Immolate_Timer = urand(5000, 10000);
+            immolateTimer = urand(5000, 10000);
         }
-        else Immolate_Timer -= diff;
+        else immolateTimer -= diff;
+
+        //seperationCheckTimer
+        if (seperationCheckTimer <= diff)
+        {
+            if (instance)
+                return;
+
+            Creature* Garr = Creature::GetCreature(*me, instance->GetData64(DATA_GARR));
+
+             if (Garr && Garr->IsAlive() && !me->IsWithinDist2d(Garr->GetPositionX(), Garr->GetPositionY(), 50.0f))
+                 DoCast(me, SPELL_SEPARATION_ANXIETY, true);
+
+            seperationCheckTimer = 5000;
+        }
+        else seperationCheckTimer -= diff;
 
         //Cast Erruption and let them die
-        if (me->GetHealth() <= me->GetMaxHealth() * 0.10f)
+        if (me->GetHealthPct() <= 10.0f)
         {
-            DoCastVictim( SPELL_ERUPTION);
+            DoCastVictim(SPELL_ERUPTION);
             me->setDeathState(JUST_DIED);
             me->RemoveCorpse();
         }
@@ -120,6 +148,7 @@ struct mob_fireswornAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
+
 CreatureAI* GetAI_boss_garr(Creature* pCreature)
 {
     return new boss_garrAI (pCreature);

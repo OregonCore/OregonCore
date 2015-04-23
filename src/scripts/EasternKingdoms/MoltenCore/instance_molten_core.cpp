@@ -177,6 +177,8 @@ struct instance_molten_core : public ScriptedInstance
     {
         switch (identifier)
         {
+        case DATA_GARR:
+            return Garr;
         case DATA_SULFURON:
             return Sulfuron;
         case DATA_GOLEMAGG:
