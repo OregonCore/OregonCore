@@ -2979,25 +2979,23 @@ void ObjectMgr::LoadQuests()
                                  "Title, Details, Objectives, OfferRewardText, RequestItemsText, EndText, ObjectiveText1, ObjectiveText2, ObjectiveText3, ObjectiveText4,"
                                  //   38          39          40          41          42             43             44             45
                                  "ReqItemId1, ReqItemId2, ReqItemId3, ReqItemId4, ReqItemCount1, ReqItemCount2, ReqItemCount3, ReqItemCount4,"
-                                 //   46            47            48            49            50               51               52               53               54             55             56             57
-                                 "ReqSourceId1, ReqSourceId2, ReqSourceId3, ReqSourceId4, ReqSourceCount1, ReqSourceCount2, ReqSourceCount3, ReqSourceCount4, ReqSourceRef1, ReqSourceRef2, ReqSourceRef3, ReqSourceRef4,"
-                                 //   58                  59                  60                  61                  62                     63                     64                     65
+                                 //   46            47            48            49            50               51               52               53
+                                 "ReqSourceId1, ReqSourceId2, ReqSourceId3, ReqSourceId4, ReqSourceCount1, ReqSourceCount2, ReqSourceCount3, ReqSourceCount4,"
+                                 //   54                  55                  56                  57                  58                     59                     60                     61
                                  "ReqCreatureOrGOId1, ReqCreatureOrGOId2, ReqCreatureOrGOId3, ReqCreatureOrGOId4, ReqCreatureOrGOCount1, ReqCreatureOrGOCount2, ReqCreatureOrGOCount3, ReqCreatureOrGOCount4,"
-                                 //   66             67             68             69
-                                 "ReqSpellCast1, ReqSpellCast2, ReqSpellCast3, ReqSpellCast4,"
-                                 //   70                71                72                73                74                75
+                                 //   62                63                64                65                66                67
                                  "RewChoiceItemId1, RewChoiceItemId2, RewChoiceItemId3, RewChoiceItemId4, RewChoiceItemId5, RewChoiceItemId6,"
-                                 //   76                   77                   78                   79                   80                   81
+                                 //   68                   69                   70                   71                   72                   73
                                  "RewChoiceItemCount1, RewChoiceItemCount2, RewChoiceItemCount3, RewChoiceItemCount4, RewChoiceItemCount5, RewChoiceItemCount6,"
-                                 //   82          83          84          85          86             87             88             89
+                                 //   74          75          76          78          79             80             81             82
                                  "RewItemId1, RewItemId2, RewItemId3, RewItemId4, RewItemCount1, RewItemCount2, RewItemCount3, RewItemCount4,"
-                                 //   90              91              92              93              94              95            96            97            98            99
+                                 //   83              84              85              86              87              88            89            90            91            92
                                  "RewRepFaction1, RewRepFaction2, RewRepFaction3, RewRepFaction4, RewRepFaction5, RewRepValue1, RewRepValue2, RewRepValue3, RewRepValue4, RewRepValue5,"
-                                 //   100                101           102                103      104            105               106               107         108     109    110
+                                 //   93                94           95                96      97            98               99               100         101     102    103
                                  "RewHonorableKills, RewOrReqMoney, RewMoneyMaxLevel, RewSpell, RewSpellCast, RewMailTemplateId, RewMailDelaySecs, PointMapId, PointX, PointY, PointOpt,"
-                                 //   111            112            113            114            115              116            117                118                119                120
+                                 //   104            105            106            107            108              109            110                111                112                113
                                  "DetailsEmote1, DetailsEmote2, DetailsEmote3, DetailsEmote4, IncompleteEmote, CompleteEmote, OfferRewardEmote1, OfferRewardEmote2, OfferRewardEmote3, OfferRewardEmote4,"
-                                 //   121          122
+                                 //   114          115
                                  "StartScript, CompleteScript"
                                  " FROM quest_template");
 
@@ -3035,19 +3033,19 @@ void ObjectMgr::LoadQuests()
         if (qinfo->GetQuestMethod() >= 3)
             sLog.outErrorDb("Quest %u has Method = %u, expected values are 0, 1 or 2.", qinfo->GetQuestId(), qinfo->GetQuestMethod());
 
-        if (qinfo->QuestFlags & ~QUEST_OREGON_FLAGS_DB_ALLOWED)
+        if (qinfo->SpecialFlags & ~QUEST_SPECIAL_FLAGS_DB_ALLOWED)
         {
             sLog.outErrorDb("Quest %u has SpecialFlags = %u > max allowed value. Correct SpecialFlags to value <= %u",
-                            qinfo->GetQuestId(), qinfo->QuestFlags, QUEST_OREGON_FLAGS_DB_ALLOWED >> 16);
-            qinfo->QuestFlags &= QUEST_OREGON_FLAGS_DB_ALLOWED;
+                            qinfo->GetQuestId(), qinfo->SpecialFlags, QUEST_SPECIAL_FLAGS_DB_ALLOWED);
+            qinfo->SpecialFlags &= QUEST_SPECIAL_FLAGS_DB_ALLOWED;
         }
 
         if (qinfo->QuestFlags & QUEST_FLAGS_DAILY)
         {
-            if (!(qinfo->QuestFlags & QUEST_OREGON_FLAGS_REPEATABLE))
+            if (!(qinfo->SpecialFlags & QUEST_SPECIAL_FLAGS_REPEATABLE))
             {
                 sLog.outErrorDb("Daily Quest %u not marked as repeatable in SpecialFlags, added.", qinfo->GetQuestId());
-                qinfo->QuestFlags |= QUEST_OREGON_FLAGS_REPEATABLE;
+                qinfo->SpecialFlags |= QUEST_SPECIAL_FLAGS_REPEATABLE;
             }
         }
 
@@ -3254,7 +3252,7 @@ void ObjectMgr::LoadQuests()
                     // no changes, quest can't be done for this requirement
                 }
 
-                qinfo->SetFlag(QUEST_OREGON_FLAGS_DELIVER);
+                qinfo->SetSpecialFlag(QUEST_SPECIAL_FLAGS_DELIVER);
 
                 if (!sItemStorage.LookupEntry<ItemPrototype>(id))
                 {
@@ -3282,20 +3280,6 @@ void ObjectMgr::LoadQuests()
                                     qinfo->GetQuestId(), j + 1, id, id);
                     // no changes, quest can't be done for this requirement
                 }
-
-                if (!qinfo->ReqSourceCount[j])
-                {
-                    sLog.outErrorDb("Quest %u has ReqSourceId%d = %u but ReqSourceCount%d = 0, quest cannot be completed.",
-                                    qinfo->GetQuestId(), j + 1, id, j + 1);
-                    qinfo->ReqSourceId[j] = 0;              // prevent incorrect work of quest
-                }
-
-                if (!qinfo->ReqSourceRef[j])
-                {
-                    sLog.outErrorDb("Quest %u has ReqSourceId%d = %u but ReqSourceRef%d = 0, quest cannot be completed.",
-                                    qinfo->GetQuestId(), j + 1, id, j + 1);
-                    qinfo->ReqSourceId[j] = 0;              // prevent incorrect work of quest
-                }
             }
             else
             {
@@ -3304,86 +3288,6 @@ void ObjectMgr::LoadQuests()
                     sLog.outErrorDb("Quest %u has ReqSourceId%d = 0 but ReqSourceCount%d = %u.",
                                     qinfo->GetQuestId(), j + 1, j + 1, qinfo->ReqSourceCount[j]);
                     // no changes, quest ignore this data
-                }
-
-                if (qinfo->ReqSourceRef[j] > 0)
-                {
-                    sLog.outErrorDb("Quest %u has ReqSourceId%d = 0 but ReqSourceRef%d = %u.",
-                                    qinfo->GetQuestId(), j + 1, j + 1, qinfo->ReqSourceRef[j]);
-                    // no changes, quest ignore this data
-                }
-            }
-        }
-
-        for (int j = 0; j < QUEST_SOURCE_ITEM_IDS_COUNT; ++j)
-        {
-            uint32 ref = qinfo->ReqSourceRef[j];
-            if (ref)
-            {
-                if (ref > QUEST_OBJECTIVES_COUNT)
-                {
-                    sLog.outErrorDb("Quest %u has ReqSourceRef%d = %u but max value in ReqSourceRef%d is %u, quest cannot be completed.",
-                                    qinfo->GetQuestId(), j + 1, ref, j + 1, QUEST_OBJECTIVES_COUNT);
-                    // no changes, quest can't be done for this requirement
-                }
-                else if (!qinfo->ReqItemId[ref - 1] && !qinfo->ReqSpell[ref - 1])
-                {
-                    sLog.outErrorDb("Quest %u has ReqSourceRef%d = %u but ReqItemId%u = 0 and ReqSpellCast%u = 0, quest cannot be completed.",
-                                    qinfo->GetQuestId(), j + 1, ref, ref, ref);
-                    // no changes, quest can't be done for this requirement
-                }
-                else if (qinfo->ReqItemId[ref - 1] && qinfo->ReqSpell[ref - 1])
-                {
-                    sLog.outErrorDb("Quest %u has ReqItemId%u = %u and ReqSpellCast%u = %u, quest can't have both fields <> 0, quest cannot be completed.",
-                                    qinfo->GetQuestId(), ref, qinfo->ReqItemId[ref - 1], ref, qinfo->ReqSpell[ref - 1]);
-                    // no changes, quest can't be done for this requirement
-                    qinfo->ReqSourceId[j] = 0;              // prevent incorrect work of quest
-                }
-            }
-        }
-
-        for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
-        {
-            uint32 id = qinfo->ReqSpell[j];
-            if (id)
-            {
-                SpellEntry const* spellInfo = sSpellStore.LookupEntry(id);
-                if (!spellInfo)
-                {
-                    sLog.outErrorDb("Quest %u has ReqSpellCast%d = %u but spell %u does not exist, quest cannot be completed.",
-                                    qinfo->GetQuestId(), j + 1, id, id);
-                    // no changes, quest can't be done for this requirement
-                }
-
-                if (!qinfo->ReqCreatureOrGOId[j])
-                {
-                    bool found = false;
-                    for (int k = 0; k < 3; ++k)
-                    {
-                        if ((spellInfo->Effect[k] == SPELL_EFFECT_QUEST_COMPLETE && uint32(spellInfo->EffectMiscValue[k]) == qinfo->QuestId) ||
-                            spellInfo->Effect[k] == SPELL_EFFECT_SEND_EVENT)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (found)
-                    {
-                        if (!qinfo->HasFlag(QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT))
-                        {
-                            sLog.outErrorDb("Spell (id: %u) has SPELL_EFFECT_QUEST_COMPLETE or SPELL_EFFECT_SEND_EVENT for quest %u and ReqCreatureOrGOId%d = 0, but quest does not have flag QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT. Quest flags or ReqCreatureOrGOId%d must be fixed, quest modified to enable objective.", spellInfo->Id, qinfo->QuestId, j + 1, j + 1);
-
-                            // this will prevent quest completing without objective
-                            //const_cast<Quest*>(qinfo)->SetFlag(QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT);
-                        }
-                    }
-                    else
-                    {
-                        sLog.outErrorDb("Quest %u has ReqSpellCast%d = %u and ReqCreatureOrGOId%d = 0 but spell %u does not have SPELL_EFFECT_QUEST_COMPLETE or SPELL_EFFECT_SEND_EVENT effect for this quest, quest cannot be completed.",
-                                        qinfo->GetQuestId(), j + 1, id, j + 1, id);
-                        // no changes, quest can't be done for this requirement
-                    }
                 }
             }
         }
@@ -3409,7 +3313,7 @@ void ObjectMgr::LoadQuests()
             {
                 // In fact SpeakTo and Kill are quite same: either you can speak to mob:SpeakTo or you can't:Kill/Cast
 
-                qinfo->SetFlag(QUEST_OREGON_FLAGS_KILL_OR_CAST | QUEST_OREGON_FLAGS_SPEAKTO);
+                qinfo->SetSpecialFlag(QUEST_SPECIAL_FLAGS_KILL | QUEST_SPECIAL_FLAGS_CAST | QUEST_SPECIAL_FLAGS_SPEAKTO);
 
                 if (!qinfo->ReqCreatureOrGOCount[j])
                 {
@@ -3592,10 +3496,10 @@ void ObjectMgr::LoadQuests()
         if (qinfo->ExclusiveGroup)
             mExclusiveQuestGroups.insert(std::pair<int32, uint32>(qinfo->ExclusiveGroup, qinfo->GetQuestId()));
         if (qinfo->LimitTime)
-            qinfo->SetFlag(QUEST_OREGON_FLAGS_TIMED);
+            qinfo->SetSpecialFlag(QUEST_SPECIAL_FLAGS_TIMED);
     }
 
-    // check QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT for spell with SPELL_EFFECT_QUEST_COMPLETE
+    // check QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT for spell with SPELL_EFFECT_QUEST_COMPLETE
     for (uint32 i = 0; i < sSpellStore.GetNumRows(); ++i)
     {
         SpellEntry const* spellInfo = sSpellStore.LookupEntry(i);
@@ -3615,12 +3519,12 @@ void ObjectMgr::LoadQuests()
             if (!quest)
                 continue;
 
-            if (!quest->HasFlag(QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT))
+            if (!quest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT))
             {
-                sLog.outErrorDb("Spell (id: %u) has SPELL_EFFECT_QUEST_COMPLETE for quest %u , but quest does not have flag QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT. Quest flags must be fixed, quest modified to enable objective.", spellInfo->Id, quest_id);
+                sLog.outErrorDb("Spell (id: %u) has SPELL_EFFECT_QUEST_COMPLETE for quest %u , but quest does not have flag QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT. Quest flags must be fixed, quest modified to enable objective.", spellInfo->Id, quest_id);
 
                 // this will prevent quest completing without objective
-                //const_cast<Quest*>(quest)->SetFlag(QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT);
+                const_cast<Quest*>(quest)->SetSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT);
             }
         }
     }
@@ -3910,13 +3814,13 @@ void ObjectMgr::LoadScripts(ScriptsType type)
                     continue;
                 }
 
-                if (!quest->HasFlag(QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT))
+                if (!quest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT))
                 {
-                    sLog.outErrorDb("Table `%s` has quest (ID: %u) in SCRIPT_COMMAND_QUEST_EXPLORED in `datalong` for script id %u, but quest not have flag QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT in quest flags. Script command or quest flags wrong. Quest modified to require objective.",
+                    sLog.outErrorDb("Table `%s` has quest (ID: %u) in SCRIPT_COMMAND_QUEST_EXPLORED in `datalong` for script id %u, but quest not have flag QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT in quest flags. Script command or quest flags wrong. Quest modified to require objective.",
                                     tableName.c_str(), tmp.QuestExplored.QuestID, tmp.id);
 
                     // this will prevent quest completing without objective
-                    const_cast<Quest*>(quest)->SetFlag(QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT);
+                    const_cast<Quest*>(quest)->SetSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT);
 
                     // continue; - quest objective requirement set and command can be allowed
                 }
@@ -4707,12 +4611,12 @@ void ObjectMgr::LoadQuestAreaTriggers()
             continue;
         }
 
-        if (!quest->HasFlag(QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT))
+        if (!quest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT))
         {
             sLog.outErrorDb("Table areatrigger_involvedrelation has record (id: %u) for not quest %u, but quest does not have flag QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT. Trigger or quest flags must be fixed, quest modified to require objective.", trigger_ID, quest_ID);
 
             // this will prevent quest completing without objective
-            const_cast<Quest*>(quest)->SetFlag(QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT);
+            const_cast<Quest*>(quest)->SetSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT);
 
             // continue; - quest modified to required objective and trigger can be allowed.
         }

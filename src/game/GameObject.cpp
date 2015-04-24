@@ -1055,7 +1055,7 @@ void GameObject::Use(Unit* user)
                     GetMap()->ScriptsStart(sEventScripts, info->goober.eventId, player, this);
 
                 // possible quest objective for active quests
-                player->CastedCreatureOrGO(info->id, GetGUID(), 0);
+                player->KillCreditGO(info->id, GetGUID());
             }
 
             // cast this spell later if provided

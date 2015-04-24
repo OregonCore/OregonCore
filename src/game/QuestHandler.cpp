@@ -378,7 +378,7 @@ void WorldSession::HandleQuestLogRemoveQuest(WorldPacket& recv_data)
 
             if (const Quest* pQuest = sObjectMgr.GetQuestTemplate(quest))
             {
-                if (pQuest->HasFlag(QUEST_OREGON_FLAGS_TIMED))
+                if (pQuest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_TIMED))
                     _player->RemoveTimedQuest(quest);
             }
 

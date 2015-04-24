@@ -110,7 +110,7 @@ enum __QuestGiverStatus
     DIALOG_STATUS_REWARD                   = 8              // yellow dot on minimap
 };
 
-enum __QuestFlags
+enum QuestFlags
 {
     // Flags used at server and sent to client
     QUEST_FLAGS_STAY_ALIVE     = 0x00000001,                // Not used currently
@@ -127,16 +127,24 @@ enum __QuestFlags
     QUEST_FLAGS_TBC_RACES      = 0x00000800,                // Not used currently: Blood elf/Draenei starting zone quests
     QUEST_FLAGS_DAILY          = 0x00001000,                // Used to know quest is Daily one
 
+};
+
+enum QuestSpecialFlags
+{
+    QUEST_SPECIAL_FLAGS_NONE                 = 0x000,
     // Oregon flags for set SpecialFlags in DB if required but used only at server
-    QUEST_OREGON_FLAGS_REPEATABLE           = 0x010000,     // Set by 1 in SpecialFlags from DB
-    QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT = 0x020000,     // Set by 2 in SpecialFlags from DB (if required area explore, spell SPELL_EFFECT_QUEST_COMPLETE casting, table `*_script` command SCRIPT_COMMAND_QUEST_EXPLORED use, set from script DLL)
-    QUEST_OREGON_FLAGS_DB_ALLOWED = 0xFFFF | QUEST_OREGON_FLAGS_REPEATABLE | QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT,
+    QUEST_SPECIAL_FLAGS_REPEATABLE           = 0x001,   // Set by 1 in SpecialFlags from DB
+    QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT = 0x002,   // Set by 2 in SpecialFlags from DB (if required area explore, spell SPELL_EFFECT_QUEST_COMPLETE casting, table `*_script` command SCRIPT_COMMAND_QUEST_EXPLORED use, set from script DLL)
+    QUEST_SPECIAL_FLAGS_AUTO_ACCEPT          = 0x004,   // Set by 4 in SpecialFlags in DB if the quest is to be auto-accepted.    
+    QUEST_SPECIAL_FLAGS_CAST                 = 0x020,   // Set by 32 in SpecialFlags in DB if the quest requires RequiredOrNpcGo killcredit but NOT kill (a spell cast)
+    
+    QUEST_SPECIAL_FLAGS_DB_ALLOWED = QUEST_SPECIAL_FLAGS_REPEATABLE | QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT | QUEST_SPECIAL_FLAGS_CAST,
 
     // Oregon flags for internal use only
-    QUEST_OREGON_FLAGS_DELIVER              = 0x040000,     // Internal flag computed only
-    QUEST_OREGON_FLAGS_SPEAKTO              = 0x080000,     // Internal flag computed only
-    QUEST_OREGON_FLAGS_KILL_OR_CAST         = 0x100000,     // Internal flag computed only
-    QUEST_OREGON_FLAGS_TIMED                = 0x200000,     // Internal flag computed only
+    QUEST_SPECIAL_FLAGS_DELIVER              = 0x080,     // Internal flag computed only
+    QUEST_SPECIAL_FLAGS_SPEAKTO              = 0x100,     // Internal flag computed only
+    QUEST_SPECIAL_FLAGS_KILL                 = 0x200,     // Internal flag computed only
+    QUEST_SPECIAL_FLAGS_TIMED                = 0x400,     // Internal flag computed only
 };
 
 struct QuestLocale
@@ -165,24 +173,16 @@ class Quest
         Quest(Field* questRecord);
         uint32 XPValue(Player* pPlayer) const;
 
-        bool HasFlag(uint32 flag) const
-        {
-            return (QuestFlags & flag) != 0;
-        }
-        void SetFlag(uint32 flag)
-        {
-            QuestFlags |= flag;
-        }
+        bool HasFlag(uint32 flag) const { return (QuestFlags & flag) != 0; }
+        void SetFlag(uint32 flag) { QuestFlags |= flag; }
+
+        bool HasSpecialFlag(uint32 flag) const { return (SpecialFlags & flag) != 0; }
+        void SetSpecialFlag(uint32 flag) { SpecialFlags |= flag; }
 
         // table data accessors:
-        uint32 GetQuestId() const
-        {
-            return QuestId;
-        }
-        uint32 GetQuestMethod() const
-        {
-            return QuestMethod;
-        }
+        uint32 GetQuestId() const { return QuestId; }
+        uint32 GetQuestMethod() const { return QuestMethod; }
+
         int32  GetZoneOrSort() const
         {
             return ZoneOrSort;
@@ -361,10 +361,9 @@ class Quest
         {
             return QuestCompleteScript;
         }
-        bool   IsRepeatable() const
-        {
-            return QuestFlags & QUEST_OREGON_FLAGS_REPEATABLE;
-        }
+
+        bool   IsRepeatable() const { return SpecialFlags & QUEST_SPECIAL_FLAGS_REPEATABLE; }
+        
         bool   IsAutoComplete() const
         {
             return QuestMethod ? false : true;
@@ -384,10 +383,8 @@ class Quest
         uint32 ReqItemCount[QUEST_OBJECTIVES_COUNT];
         uint32 ReqSourceId[QUEST_SOURCE_ITEM_IDS_COUNT];
         uint32 ReqSourceCount[QUEST_SOURCE_ITEM_IDS_COUNT];
-        uint32 ReqSourceRef[QUEST_SOURCE_ITEM_IDS_COUNT];
         int32  ReqCreatureOrGOId[QUEST_OBJECTIVES_COUNT];   // >0 Creature <0 Gameobject
         uint32 ReqCreatureOrGOCount[QUEST_OBJECTIVES_COUNT];
-        uint32 ReqSpell[QUEST_OBJECTIVES_COUNT];
         uint32 RewChoiceItemId[QUEST_REWARD_CHOICES_COUNT];
         uint32 RewChoiceItemCount[QUEST_REWARD_CHOICES_COUNT];
         uint32 RewItemId[QUEST_REWARDS_COUNT];
@@ -397,22 +394,10 @@ class Quest
         uint32 DetailsEmote[QUEST_EMOTE_COUNT];
         uint32 OfferRewardEmote[QUEST_EMOTE_COUNT];
 
-        uint32 GetReqItemsCount() const
-        {
-            return m_reqitemscount;
-        }
-        uint32 GetReqCreatureOrGOcount() const
-        {
-            return m_reqCreatureOrGOcount;
-        }
-        uint32 GetRewChoiceItemsCount() const
-        {
-            return m_rewchoiceitemscount;
-        }
-        uint32 GetRewItemsCount() const
-        {
-            return m_rewitemscount;
-        }
+        uint32 GetReqItemsCount() const { return _reqItemsCount; }
+        uint32 GetReqCreatureOrGOcount() const { return _reqCreatureOrGOcount; }
+        uint32 GetRewChoiceItemsCount() const { return _rewChoiceItemsCount; }
+        uint32 GetRewItemsCount() const { return _rewItemsCount; }
 
         typedef std::vector<int32> PrevQuests;
         PrevQuests prevQuests;
@@ -421,10 +406,10 @@ class Quest
 
         // cached data
     private:
-        uint32 m_reqitemscount;
-        uint32 m_reqCreatureOrGOcount;
-        uint32 m_rewchoiceitemscount;
-        uint32 m_rewitemscount;
+        uint32 _reqItemsCount;
+        uint32 _reqCreatureOrGOcount;
+        uint32 _rewChoiceItemsCount;
+        uint32 _rewItemsCount;
 
         // table data
     protected:
@@ -476,6 +461,8 @@ class Quest
         uint32 CompleteEmote;
         uint32 QuestStartScript;
         uint32 QuestCompleteScript;
+
+        uint32 SpecialFlags; // custom flags, not sniffed/WDB
 };
 
 enum QuestUpdateState

@@ -573,11 +573,6 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
             if (target->GetTypeId() == TYPEID_PLAYER)
                 target->ToPlayer()->AreaExploredOrEventHappens(action.quest_event.questId);
         break;
-    case ACTION_T_CAST_EVENT:
-        if (Unit* target = GetTargetByType(action.cast_event.target, pActionInvoker))
-            if (target->GetTypeId() == TYPEID_PLAYER)
-                target->ToPlayer()->CastedCreatureOrGO(action.cast_event.creatureId, me->GetGUID(), action.cast_event.spellId);
-        break;
     case ACTION_T_SET_UNIT_FIELD:
         {
             Unit* target = GetTargetByType(action.set_unit_field.target, pActionInvoker);
@@ -681,15 +676,6 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
                     Temp->ToPlayer()->GroupEventHappens(action.quest_event_all.questId, me);
         }
         break;
-    case ACTION_T_CAST_EVENT_ALL:
-        {
-            std::list<HostileReference*>& threatList = me->getThreatManager().getThreatList();
-            for (std::list<HostileReference*>::iterator i = threatList.begin(); i != threatList.end(); ++i)
-                if (Unit* Temp = Unit::GetUnit(*me, (*i)->getUnitGuid()))
-                    if (Temp->GetTypeId() == TYPEID_PLAYER)
-                        Temp->ToPlayer()->CastedCreatureOrGO(action.cast_event_all.creatureId, me->GetGUID(), action.cast_event_all.spellId);
-            break;
-        }
     case ACTION_T_REMOVEAURASFROMSPELL:
         if (Unit* target = GetTargetByType(action.remove_aura.target, pActionInvoker))
             target->RemoveAurasDueToSpell(action.remove_aura.spellId);

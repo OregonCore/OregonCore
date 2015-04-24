@@ -40,7 +40,7 @@ Quest::Quest(Field* questRecord)
     SuggestedPlayers = questRecord[16].GetUInt32();
     LimitTime = questRecord[17].GetUInt32();
     QuestFlags = questRecord[18].GetUInt16();
-    uint32 SpecialFlags = questRecord[19].GetUInt16();
+    SpecialFlags = questRecord[19].GetUInt8();
     CharTitleId = questRecord[20].GetUInt32();
     PrevQuestId = questRecord[21].GetInt32();
     NextQuestId = questRecord[22].GetInt32();
@@ -71,85 +71,77 @@ Quest::Quest(Field* questRecord)
     for (int i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
         ReqSourceCount[i] = questRecord[50 + i].GetUInt32();
 
-    for (int i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
-        ReqSourceRef[i] = questRecord[54 + i].GetUInt32();
+    for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
+        ReqCreatureOrGOId[i] = questRecord[54 + i].GetInt32();
 
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-        ReqCreatureOrGOId[i] = questRecord[58 + i].GetInt32();
-
-    for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-        ReqCreatureOrGOCount[i] = questRecord[62 + i].GetUInt32();
-
-    for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-        ReqSpell[i] = questRecord[66 + i].GetUInt32();
+        ReqCreatureOrGOCount[i] = questRecord[58 + i].GetUInt32();
 
     for (int i = 0; i < QUEST_REWARD_CHOICES_COUNT; ++i)
-        RewChoiceItemId[i] = questRecord[70 + i].GetUInt32();
+        RewChoiceItemId[i] = questRecord[62 + i].GetUInt32();
 
     for (int i = 0; i < QUEST_REWARD_CHOICES_COUNT; ++i)
-        RewChoiceItemCount[i] = questRecord[76 + i].GetUInt32();
+        RewChoiceItemCount[i] = questRecord[68 + i].GetUInt32();
 
     for (int i = 0; i < QUEST_REWARDS_COUNT; ++i)
-        RewItemId[i] = questRecord[82 + i].GetUInt32();
+        RewItemId[i] = questRecord[74 + i].GetUInt32();
 
     for (int i = 0; i < QUEST_REWARDS_COUNT; ++i)
-        RewItemCount[i] = questRecord[86 + i].GetUInt32();
+        RewItemCount[i] = questRecord[78 + i].GetUInt32();
 
     for (int i = 0; i < QUEST_REPUTATIONS_COUNT; ++i)
-        RewRepFaction[i] = questRecord[90 + i].GetUInt32();
+        RewRepFaction[i] = questRecord[82 + i].GetUInt32();
 
     for (int i = 0; i < QUEST_REPUTATIONS_COUNT; ++i)
-        RewRepValue[i] = questRecord[95 + i].GetInt32();
+        RewRepValue[i] = questRecord[87 + i].GetInt32();
 
-    RewHonorableKills = questRecord[100].GetUInt32();
-    RewOrReqMoney = questRecord[101].GetInt32();
-    RewMoneyMaxLevel = questRecord[102].GetUInt32();
-    RewSpell = questRecord[103].GetUInt32();
-    RewSpellCast = questRecord[104].GetUInt32();
-    RewMailTemplateId = questRecord[105].GetUInt32();
-    RewMailDelaySecs = questRecord[106].GetUInt32();
-    PointMapId = questRecord[107].GetUInt32();
-    PointX = questRecord[108].GetFloat();
-    PointY = questRecord[109].GetFloat();
-    PointOpt = questRecord[110].GetUInt32();
-
-    for (int i = 0; i < QUEST_EMOTE_COUNT; ++i)
-        DetailsEmote[i] = questRecord[111 + i].GetUInt32();
-
-    IncompleteEmote = questRecord[115].GetUInt32();
-    CompleteEmote = questRecord[116].GetUInt32();
+    RewHonorableKills = questRecord[92].GetUInt32();
+    RewOrReqMoney = questRecord[93].GetInt32();
+    RewMoneyMaxLevel = questRecord[94].GetUInt32();
+    RewSpell = questRecord[95].GetUInt32();
+    RewSpellCast = questRecord[96].GetUInt32();
+    RewMailTemplateId = questRecord[97].GetUInt32();
+    RewMailDelaySecs = questRecord[98].GetUInt32();
+    PointMapId = questRecord[99].GetUInt32();
+    PointX = questRecord[100].GetFloat();
+    PointY = questRecord[101].GetFloat();
+    PointOpt = questRecord[102].GetUInt32();
 
     for (int i = 0; i < QUEST_EMOTE_COUNT; ++i)
-        OfferRewardEmote[i] = questRecord[117 + i].GetInt32();
+        DetailsEmote[i] = questRecord[103 + i].GetUInt32();
 
-    QuestStartScript = questRecord[121].GetUInt32();
-    QuestCompleteScript = questRecord[122].GetUInt32();
+    IncompleteEmote = questRecord[107].GetUInt32();
+    CompleteEmote = questRecord[108].GetUInt32();
 
-    QuestFlags |= SpecialFlags << 16;
+    for (int i = 0; i < QUEST_EMOTE_COUNT; ++i)
+        OfferRewardEmote[i] = questRecord[109 + i].GetInt32();
 
-    m_reqitemscount = 0;
-    m_reqCreatureOrGOcount = 0;
-    m_rewitemscount = 0;
-    m_rewchoiceitemscount = 0;
+    QuestStartScript = questRecord[113].GetUInt32();
+    QuestCompleteScript = questRecord[114].GetUInt32();
+
+    _reqItemsCount = 0;
+    _reqCreatureOrGOcount = 0;
+    _rewItemsCount = 0;
+    _rewChoiceItemsCount = 0;
 
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; i++)
     {
         if (ReqItemId[i])
-            ++m_reqitemscount;
+            ++_reqItemsCount;
         if (ReqCreatureOrGOId[i])
-            ++m_reqCreatureOrGOcount;
+            +_reqCreatureOrGOcount;
     }
 
     for (int i = 0; i < QUEST_REWARDS_COUNT; i++)
     {
         if (RewItemId[i])
-            ++m_rewitemscount;
+            ++_rewItemsCount;
     }
 
     for (int i = 0; i < QUEST_REWARD_CHOICES_COUNT; i++)
     {
         if (RewChoiceItemId[i])
-            ++m_rewchoiceitemscount;
+            ++_rewChoiceItemsCount;
     }
 }
 

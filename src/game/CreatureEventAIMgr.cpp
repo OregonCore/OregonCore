@@ -632,7 +632,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                 case ACTION_T_QUEST_EVENT:
                     if (Quest const* qid = sObjectMgr.GetQuestTemplate(action.quest_event.questId))
                     {
-                        if (!qid->HasFlag(QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT))
+                        if (!qid->HasSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT))
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u. SpecialFlags for quest entry %u does not include |2, Action will not have any effect.", i, j + 1, action.quest_event.questId);
                     }
                     else
@@ -641,14 +641,6 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                     if (action.quest_event.target >= TARGET_T_END)
                         sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses incorrect Target type", i, j + 1);
 
-                    break;
-                case ACTION_T_CAST_EVENT:
-                    if (!sCreatureStorage.LookupEntry<CreatureInfo>(action.cast_event.creatureId))
-                        sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses invalid creature entry %u.", i, j + 1, action.cast_event.creatureId);
-                    if (!sSpellStore.LookupEntry(action.cast_event.spellId))
-                        sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses invalid SpellID %u.", i, j + 1, action.cast_event.spellId);
-                    if (action.cast_event.target >= TARGET_T_END)
-                        sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses incorrect Target type", i, j + 1);
                     break;
                 case ACTION_T_SET_UNIT_FIELD:
                     if (action.set_unit_field.field < OBJECT_END || action.set_unit_field.field >= UNIT_END)
@@ -674,17 +666,11 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                 case ACTION_T_QUEST_EVENT_ALL:
                     if (Quest const* qid = sObjectMgr.GetQuestTemplate(action.quest_event_all.questId))
                     {
-                        if (!qid->HasFlag(QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT))
+                        if (!qid->HasSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT))
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u. SpecialFlags for quest entry %u does not include |2, Action will not have any effect.", i, j + 1, action.quest_event_all.questId);
                     }
                     else
                         sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses non-existent Quest entry %u.", i, j + 1, action.quest_event_all.questId);
-                    break;
-                case ACTION_T_CAST_EVENT_ALL:
-                    if (!sCreatureStorage.LookupEntry<CreatureInfo>(action.cast_event_all.creatureId))
-                        sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses non-existent creature entry %u.", i, j + 1, action.cast_event_all.creatureId);
-                    if (!sSpellStore.LookupEntry(action.cast_event_all.spellId))
-                        sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses non-existent SpellID %u.", i, j + 1, action.cast_event_all.spellId);
                     break;
                 case ACTION_T_REMOVEAURASFROMSPELL:
                     if (!sSpellStore.LookupEntry(action.remove_aura.spellId))

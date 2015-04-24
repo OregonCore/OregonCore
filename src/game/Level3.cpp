@@ -5589,22 +5589,13 @@ bool ChatHandler::HandleCompleteQuest(const char* args)
         int32 creature = pQuest->ReqCreatureOrGOId[i];
         uint32 creaturecount = pQuest->ReqCreatureOrGOCount[i];
 
-        if (uint32 spell_id = pQuest->ReqSpell[i])
-        {
-            for (uint16 z = 0; z < creaturecount; ++z)
-                player->CastedCreatureOrGO(creature, 0, spell_id);
-        }
-        else if (creature > 0)
-        {
+        if (creature > 0)
             if (CreatureInfo const* cInfo = sObjectMgr.GetCreatureTemplate(creature))
                 for (uint16 z = 0; z < creaturecount; ++z)
                     player->KilledMonster(cInfo, 0);
-        }
         else if (creature < 0)
-        {
             for (uint16 z = 0; z < creaturecount; ++z)
-                player->CastedCreatureOrGO(creature, 0, 0);
-        }
+                player->KillCreditGO(creature, 0);
     }
 
     // If the quest requires reputation to complete

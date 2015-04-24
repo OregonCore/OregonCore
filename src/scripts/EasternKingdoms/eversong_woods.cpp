@@ -48,7 +48,7 @@ struct mobs_mana_tappedAI : public ScriptedAI
     {
         if (caster->GetTypeId() == TYPEID_PLAYER)
             if (CAST_PLR(caster)->GetQuestStatus(8346) == QUEST_STATUS_INCOMPLETE && !CAST_PLR(caster)->GetReqKillOrCastCurrentCount(8346, me->GetEntry()) && spell->Id == 28734)
-                CAST_PLR(caster)->CastedCreatureOrGO(15468, me->GetGUID(), spell->Id);
+                CAST_PLR(caster)->KilledMonsterCredit(15468, me->GetGUID());
         return;
     }
 };
