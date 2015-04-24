@@ -20996,19 +20996,20 @@ void Player::AddGlobalCooldown(SpellEntry const* spellInfo, Spell* spell)
     if (!spellInfo || !spellInfo->StartRecoveryTime)
         return;
 
-    float cdTime = float(spellInfo->StartRecoveryTime);
+    uint32 cdTime = spellInfo->StartRecoveryTime;
 
     if (!(spellInfo->Attributes & (SPELL_ATTR_ABILITY | SPELL_ATTR_TRADESPELL)))
         cdTime *= GetFloatValue(UNIT_MOD_CAST_SPEED);
     else if (spell->IsRangedSpell() && !spell->IsAutoRepeat())
         cdTime *= m_modAttackSpeedPct[RANGED_ATTACK];
 
+    ApplySpellMod(spellInfo->Id, SPELLMOD_GLOBAL_COOLDOWN, cdTime, spell);
+
     if (cdTime > 1500)
         cdTime = 1500;
 
-    ApplySpellMod(spellInfo->Id, SPELLMOD_GLOBAL_COOLDOWN, cdTime, spell);
     if (cdTime > 0)
-        m_globalCooldowns[spellInfo->StartRecoveryCategory] = uint32(cdTime);
+        m_globalCooldowns[spellInfo->StartRecoveryCategory] = cdTime;
 
 }
 

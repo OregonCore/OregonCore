@@ -1773,11 +1773,6 @@ class Player : public Unit, public GridObject<Player>
         void _LoadSpellCooldowns(QueryResult_AutoPtr result);
         void _SaveSpellCooldowns();
 
-        GlobalCooldownMgr& GetGlobalCooldownMgr()
-        {
-            return m_GlobalCooldownMgr;
-        }
-
         // global cooldown
         void AddGlobalCooldown(SpellEntry const* spellInfo, Spell* spell);
         bool HasGlobalCooldown(SpellEntry const* spellInfo) const;
@@ -2900,8 +2895,6 @@ class Player : public Unit, public GridObject<Player>
         PlayerSpellMap m_spells;
         SpellCooldowns m_spellCooldowns;
         std::map<uint32, uint32> m_globalCooldowns; // whole start recovery category stored in one
-
-        GlobalCooldownMgr m_GlobalCooldownMgr;
 
         ActionButtonList m_actionButtons;
 

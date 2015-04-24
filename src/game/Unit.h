@@ -700,30 +700,6 @@ enum CurrentSpellTypes
 #define CURRENT_FIRST_NON_MELEE_SPELL 1
 #define CURRENT_MAX_SPELL             4
 
-struct GlobalCooldown
-{
-    explicit GlobalCooldown(uint32 _dur = 0, uint32 _time = 0) : duration(_dur), cast_time(_time) {}
-
-    uint32 duration;
-    uint32 cast_time;
-};
-
-typedef UNORDERED_MAP<uint32 /*category*/, GlobalCooldown> GlobalCooldownList;
-
-class GlobalCooldownMgr                                     // Shared by Player and CharmInfo
-{
-    public:
-        GlobalCooldownMgr() {}
-
-    public:
-        bool HasGlobalCooldown(SpellEntry const* spellInfo) const;
-        void AddGlobalCooldown(SpellEntry const* spellInfo, uint32 gcd);
-        void CancelGlobalCooldown(SpellEntry const* spellInfo);
-
-    private:
-        GlobalCooldownList m_GlobalCooldowns;
-};
-
 enum ActiveStates
 {
     ACT_ENABLED  = 0xC100,
@@ -820,11 +796,6 @@ struct CharmInfo
             return &(m_charmspells[index]);
         }
 
-        GlobalCooldownMgr& GetGlobalCooldownMgr()
-        {
-            return m_GlobalCooldownMgr;
-        }
-
         void SetIsCommandAttack(bool val);
         bool IsCommandAttack();
         void SetIsAtStay(bool val);
@@ -855,8 +826,6 @@ struct CharmInfo
         float m_stayX;
         float m_stayY;
         float m_stayZ;
-
-        GlobalCooldownMgr m_GlobalCooldownMgr;
 };
 
 // for clearing special attacks
