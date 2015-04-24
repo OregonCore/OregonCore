@@ -2436,6 +2436,17 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->DurationIndex = baseInfo->DurationIndex;
         }
 
+        switch (spellInfo->Category)
+        {
+            case SPELL_CATEGORY_CONJURED_POTIONS:
+                // these spells have 2min shared cooldown, But the time doesn't seem to be in dbcs.
+                // I have really no idea from where client gets the data, perhaps hardcoded like this?
+                spellInfo->RecoveryTime = 2 * 60 * IN_MILLISECONDS;
+                spellInfo->StartRecoveryTime = 2 * 60 * IN_MILLISECONDS;
+                spellInfo->StartRecoveryCategory = 2 * 60 * IN_MILLISECONDS;
+                break;
+        }
+
         switch (i)
         {
         case 26029: // dark glare

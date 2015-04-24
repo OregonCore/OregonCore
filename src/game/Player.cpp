@@ -20993,7 +20993,7 @@ void Player::UpdateCharmedAI()
 
 void Player::AddGlobalCooldown(SpellEntry const* spellInfo, Spell* spell)
 {
-    if (!spellInfo || !spellInfo->StartRecoveryTime)
+    if (!spellInfo->StartRecoveryTime)
         return;
 
     uint32 cdTime = spellInfo->StartRecoveryTime;
@@ -21015,18 +21015,12 @@ void Player::AddGlobalCooldown(SpellEntry const* spellInfo, Spell* spell)
 
 bool Player::HasGlobalCooldown(SpellEntry const* spellInfo) const
 {
-    if (!spellInfo)
-        return false;
-
     std::map<uint32, uint32>::const_iterator itr = m_globalCooldowns.find(spellInfo->StartRecoveryCategory);
-    return itr != m_globalCooldowns.end() && (itr->second > sWorld.GetUpdateTime());
+    return itr != m_globalCooldowns.end() && itr->second;
 }
 
 void Player::RemoveGlobalCooldown(SpellEntry const* spellInfo)
 {
-    if (!spellInfo || !spellInfo->StartRecoveryTime)
-        return;
-
     m_globalCooldowns[spellInfo->StartRecoveryCategory] = 0;
 }
 

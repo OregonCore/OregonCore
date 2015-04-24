@@ -227,7 +227,7 @@ enum SpellCategory
     SPELL_CATEGORY_UNK25            = 25,
     SPELL_CATEGORY_REBIRTH          = 26,
     SPELL_CATEGORY_UNK28            = 28,
-    SPELL_CATEGORY_UNK30            = 30,
+    SPELL_CATEGORY_CONJURED_POTIONS = 30,
     SPELL_CATEGORY_UNK31            = 31,
     SPELL_CATEGORY_UNK32            = 32,
     SPELL_CATEGORY_UNK33            = 33,
