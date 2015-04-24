@@ -2414,10 +2414,7 @@ void Spell::cast(bool skipCheck)
     m_targets.updateTradeSlotItem();
 
     if (!m_IsTriggeredSpell)
-    {
-        TakePower();
         TakeReagents();                                         // we must remove reagents before HandleEffects to allow place crafted item in same slot
-    }
 
     // CAST SPELL
     SendSpellCooldown();
