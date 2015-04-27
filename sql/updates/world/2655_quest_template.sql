@@ -1,20 +1,11 @@
--- Drop ReqSpellCast fields
-ALTER TABLE `quest_template` DROP `ReqSpellCast1`;
-ALTER TABLE `quest_template` DROP `ReqSpellCast2`;
-ALTER TABLE `quest_template` DROP `ReqSpellCast3`;
-ALTER TABLE `quest_template` DROP `ReqSpellCast4`;
-
 -- Drop ReqSourceRef fields
 ALTER TABLE quest_template
   DROP COLUMN ReqSourceRef1,
   DROP COLUMN ReqSourceRef2,
   DROP COLUMN ReqSourceRef3,
   DROP COLUMN ReqSourceRef4;
-  
--- Delete now obsolete ai scripts
-DELETE FROM `creature_ai_scripts` WHERE `action1_type`=27 OR `action1_type`=16;
 
--- all quests that used RequiredSpellCastX fields
+-- all quests that use RequiredSpellCastX fields
 UPDATE `quest_template` SET `SpecialFlags`=`SpecialFlags`|32 WHERE `entry` IN
 (28,29,532,553,849,877,905,974,2118,2932,2994,3825,5096,5163,5165,5441,
 6124,6129,6381,6395,6661,8346,8889,9066,9169,9193,9275,9294,9391,9440,

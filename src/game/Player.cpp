@@ -14256,6 +14256,10 @@ void Player::KilledMonsterCredit(uint32 entry, uint64 guid /*= 0*/)
                     if (qInfo->ReqCreatureOrGOId[j] <= 0)
                         continue;
 
+                    // skip Cast at creature objective
+                    if (qInfo->ReqSpell[j] != 0)
+                        continue;
+
                     uint32 reqkill = qInfo->ReqCreatureOrGOId[j];
 
                     if (reqkill == real_entry)
@@ -14282,8 +14286,10 @@ void Player::KilledMonsterCredit(uint32 entry, uint64 guid /*= 0*/)
     }
 }
 
-void Player::KillCreditGO(uint32 entry, uint64 guid)
+void Player::CastedCreatureOrGO(uint32 entry, uint64 guid, uint32 spell_id)
 {
+    bool isCreature = IS_CREATURE_GUID(guid);
+
     uint32 addCastCount = 1;
     for (int i = 0; i < MAX_QUEST_LOG_SIZE; ++i)
     {
@@ -14295,7 +14301,7 @@ void Player::KillCreditGO(uint32 entry, uint64 guid)
         if (!qInfo)
             continue;
 
-        if (qInfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_CAST) /*&& !qInfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_KILL)*/)
+        if (!qInfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_CAST) /*&& !qInfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_KILL)*/)
             continue;
 
         QuestStatusData& q_status = mQuestStatus[questid];
@@ -14305,12 +14311,26 @@ void Player::KillCreditGO(uint32 entry, uint64 guid)
 
         for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
         {
+            // skip kill creature objective (0) or wrong spell casts
+            if (qInfo->ReqSpell[j] != spell_id)
+                continue;
+
             uint32 reqTarget = 0;
 
-            // GO activate objective
-            if (qInfo->ReqCreatureOrGOId[j] < 0)
-                // checked at quest_template loading
-                reqTarget = - qInfo->ReqCreatureOrGOId[j];
+            if (isCreature)
+            {
+                // creature activate objectives
+                if (qInfo->ReqCreatureOrGOId[j] > 0)
+                    // checked at quest_template loading
+                    reqTarget = qInfo->ReqCreatureOrGOId[j];
+            }
+            else
+            {
+                // GO activate objective
+                if (qInfo->ReqCreatureOrGOId[j] < 0)
+                    // checked at quest_template loading
+                    reqTarget = - qInfo->ReqCreatureOrGOId[j];
+            }
 
             // other not this creature/GO related objectives
             if (reqTarget != entry)
@@ -14357,8 +14377,8 @@ void Player::TalkedToCreature(uint32 entry, uint64 guid)
             {
                 for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
                 {
-                    // skip gameobject objectives
-                    if (qInfo->ReqCreatureOrGOId[j] < 0)
+                    // skip spell casts and Gameobject objectives
+                    if (qInfo->ReqSpell[j] > 0 || qInfo->ReqCreatureOrGOId[j] < 0)
                         continue;
 
                     uint32 reqTarget = 0;

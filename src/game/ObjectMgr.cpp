@@ -2983,13 +2983,15 @@ void ObjectMgr::LoadQuests()
                                  "ReqSourceId1, ReqSourceId2, ReqSourceId3, ReqSourceId4, ReqSourceCount1, ReqSourceCount2, ReqSourceCount3, ReqSourceCount4,"
                                  //   54                  55                  56                  57                  58                     59                     60                     61
                                  "ReqCreatureOrGOId1, ReqCreatureOrGOId2, ReqCreatureOrGOId3, ReqCreatureOrGOId4, ReqCreatureOrGOCount1, ReqCreatureOrGOCount2, ReqCreatureOrGOCount3, ReqCreatureOrGOCount4,"
-                                 //   62                63                64                65                66                67
+                                 //   62                63                64                65 
+                                 "ReqSpellCast1, ReqSpellCast2, ReqSpellCast3, ReqSpellCast4,"                                 
+                                 //   66             67             68             69   70                   71                   72
                                  "RewChoiceItemId1, RewChoiceItemId2, RewChoiceItemId3, RewChoiceItemId4, RewChoiceItemId5, RewChoiceItemId6,"
-                                 //   68                   69                   70                   71                   72                   73
+                                 //   73                74                  75                   76                   78                   79
                                  "RewChoiceItemCount1, RewChoiceItemCount2, RewChoiceItemCount3, RewChoiceItemCount4, RewChoiceItemCount5, RewChoiceItemCount6,"
-                                 //   74          75          76          78          79             80             81             82
+                                 //   80      81          82          83          84             85             86             87
                                  "RewItemId1, RewItemId2, RewItemId3, RewItemId4, RewItemCount1, RewItemCount2, RewItemCount3, RewItemCount4,"
-                                 //   83              84              85              86              87              88            89            90            91            92
+                                 //   88          89              90              91              92
                                  "RewRepFaction1, RewRepFaction2, RewRepFaction3, RewRepFaction4, RewRepFaction5, RewRepValue1, RewRepValue2, RewRepValue3, RewRepValue4, RewRepValue5,"
                                  //   93                94           95                96      97            98               99               100         101     102    103
                                  "RewHonorableKills, RewOrReqMoney, RewMoneyMaxLevel, RewSpell, RewSpellCast, RewMailTemplateId, RewMailDelaySecs, PointMapId, PointX, PointY, PointOpt,"
@@ -3288,6 +3290,52 @@ void ObjectMgr::LoadQuests()
                     sLog.outErrorDb("Quest %u has ReqSourceId%d = 0 but ReqSourceCount%d = %u.",
                                     qinfo->GetQuestId(), j + 1, j + 1, qinfo->ReqSourceCount[j]);
                     // no changes, quest ignore this data
+                }
+            }
+        }
+
+        for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
+        {
+            uint32 id = qinfo->ReqSpell[j];
+            if (id)
+            {
+                SpellEntry const* spellInfo = sSpellStore.LookupEntry(id);
+                if (!spellInfo)
+                {
+                    sLog.outErrorDb("Quest %u has ReqSpellCast%d = %u but spell %u does not exist, quest cannot be completed.",
+                                    qinfo->GetQuestId(), j + 1, id, id);
+                    // no changes, quest can't be done for this requirement
+                }
+
+                if (!qinfo->ReqCreatureOrGOId[j])
+                {
+                    bool found = false;
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        if ((spellInfo->Effect[k] == SPELL_EFFECT_QUEST_COMPLETE && uint32(spellInfo->EffectMiscValue[k]) == qinfo->QuestId) ||
+                            spellInfo->Effect[k] == SPELL_EFFECT_SEND_EVENT)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (found)
+                    {
+                        if (!qinfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT))
+                        {
+                            sLog.outErrorDb("Spell (id: %u) has SPELL_EFFECT_QUEST_COMPLETE or SPELL_EFFECT_SEND_EVENT for quest %u and ReqCreatureOrGOId%d = 0, but quest does not have flag QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT. Quest flags or ReqCreatureOrGOId%d must be fixed, quest modified to enable objective.", spellInfo->Id, qinfo->QuestId, j + 1, j + 1);
+
+                            // this will prevent quest completing without objective
+                            //const_cast<Quest*>(qinfo)->SetFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT);
+                        }
+                    }
+                    else
+                    {
+                        sLog.outErrorDb("Quest %u has ReqSpellCast%d = %u and ReqCreatureOrGOId%d = 0 but spell %u does not have SPELL_EFFECT_QUEST_COMPLETE or SPELL_EFFECT_SEND_EVENT effect for this quest, quest cannot be completed.",
+                                        qinfo->GetQuestId(), j + 1, id, j + 1, id);
+                        // no changes, quest can't be done for this requirement
+                    }
                 }
             }
         }

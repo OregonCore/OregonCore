@@ -1078,6 +1078,15 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
             caster->ProcDamageAndSpell(unit, procAttacker, procVictim, procEx, 0, m_attackType, m_spellInfo, m_canTrigger);
     }
 
+    // Call scripted function for AI if this spell is casted upon a creature (except pets)
+    if (IS_CREATURE_GUID(target->targetGUID))
+    {
+        // cast at creature (or GO) quest objectives update at successful cast finished (+channel finished)
+        // ignore autorepeat/melee casts for speed (not exist quest for spells (hm...)
+        if (m_caster->GetTypeId() == TYPEID_PLAYER && !IsAutoRepeat() && !IsNextMeleeSwingSpell() && !IsChannelActive())
+            m_caster->ToPlayer()->CastedCreatureOrGO(unit->GetEntry(), unit->GetGUID(), m_spellInfo->Id);
+    }
+
     if (missInfo != SPELL_MISS_EVADE && missInfo != SPELL_MISS_REFLECT
         && m_caster && !m_caster->IsFriendlyTo(unit) &&
         (!IsPositiveSpell(m_spellInfo->Id) || m_spellInfo->HasEffect(SPELL_EFFECT_DISPEL)))
@@ -1279,6 +1288,11 @@ void Spell::DoAllEffectOnTarget(GOTargetInfo* target)
             HandleEffects(NULL, NULL, go, effectNumber);
 
     sLog.outString("CASTED %u on GUID: " UI64FMTD ", entry: %u", m_spellInfo->Id, go->GetGUID(), go->GetGOInfo()->id);
+
+    // cast at creature (or GO) quest objectives update at successful cast finished (+channel finished)
+    // ignore autorepeat/melee casts for speed (not exist quest for spells (hm...)
+    if (m_caster->GetTypeId() == TYPEID_PLAYER && !IsAutoRepeat() && !IsNextMeleeSwingSpell() && !IsChannelActive())
+        m_caster->ToPlayer()->CastedCreatureOrGO(go->GetEntry(), go->GetGUID(), m_spellInfo->Id);
 }
 
 void Spell::DoAllEffectOnTarget(ItemTargetInfo* target)
@@ -2843,6 +2857,44 @@ void Spell::update(uint32 difftime)
             if (m_timer == 0)
             {
                 SendChannelUpdate(0);
+
+                // channeled spell processed independently for quest targeting
+                // cast at creature (or GO) quest objectives update at successful cast channel finished
+                // ignore autorepeat/melee casts for speed (not exist quest for spells (hm...)
+                if (m_caster->GetTypeId() == TYPEID_PLAYER && !IsAutoRepeat() && !IsNextMeleeSwingSpell())
+                {
+                    for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
+                    {
+                        if (ihit->deleted)
+                            continue;
+
+                        TargetInfo* target = &*ihit;
+
+                        if (!IS_CREATURE_GUID(target->targetGUID))
+                            continue;
+
+                        Unit* unit = m_caster->GetGUID() == target->targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, target->targetGUID);
+                        if (unit == NULL)
+                            continue;
+
+                        m_caster->ToPlayer()->CastedCreatureOrGO(unit->GetEntry(), unit->GetGUID(), m_spellInfo->Id);
+                    }
+
+                    for (std::list<GOTargetInfo>::iterator ihit = m_UniqueGOTargetInfo.begin(); ihit != m_UniqueGOTargetInfo.end(); ++ihit)
+                    {
+                        if (ihit->deleted)
+                            continue;
+
+                        GOTargetInfo* target = &*ihit;
+
+                        GameObject* go = m_caster->GetMap()->GetGameObject(target->targetGUID);
+                        if (!go)
+                            continue;
+
+                        m_caster->ToPlayer()->CastedCreatureOrGO(go->GetEntry(), go->GetGUID(), m_spellInfo->Id);
+                    }
+                }
+
                 finish();
             }
         }
