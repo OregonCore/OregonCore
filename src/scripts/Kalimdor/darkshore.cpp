@@ -377,6 +377,7 @@ enum PlaguedLands
     NPC_THARNARIUN_TREETENDER       = 3701,                 // Npc related to quest-outro
     GO_NIGHT_ELVEN_BEAR_TRAP        = 111148,               // This is actually the (visual) spell-focus GO
 
+    SPELL_PLACE_TRAP                = 9437,
     SPELL_RABIES                    = 3150                  // Spell used in comabt
 };
 
@@ -442,7 +443,7 @@ struct npc_rabid_bearAI : public ScriptedAI
                     if (trapOwner && trapOwner->GetTypeId() == TYPEID_PLAYER &&
                             ((Player*)trapOwner)->GetQuestStatus(QUEST_PLAGUED_LANDS) == QUEST_STATUS_INCOMPLETE)
                     {
-                        ((Player*)trapOwner)->KilledMonsterCredit(NPC_CAPTURED_RABID_THISTLE_BEAR, me->GetGUID());
+                        ((Player*)trapOwner)->CastedCreatureOrGO(NPC_CAPTURED_RABID_THISTLE_BEAR, me->GetGUID(), SPELL_PLACE_TRAP);
                         me->GetMotionMaster()->MoveFollow(trapOwner, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
                     }
                     else                                // Something unexpected happened
