@@ -41,9 +41,7 @@ inline uint32 getMSTime()
 
 inline uint64 getMSTime64()
 {
-    SYSTEMTIME st;
-    GetSystemTime(&st);
-    return st.wSecond * 1000 + st.wMilliseconds;
+    return GetTickCount64();
 }
 #else
 inline uint32 getMSTime()
