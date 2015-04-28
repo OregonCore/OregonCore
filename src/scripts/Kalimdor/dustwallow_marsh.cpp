@@ -18,7 +18,7 @@
 /* ScriptData
 SDName: Dustwallow_Marsh
 SD%Complete: 95
-SDComment: Quest support: 11180, 558, 11126, 1173, 1273, 1324, 11183, 11142, 11209,Vendor Nat Pagle
+SDComment: Quest support: 11180, 558, 11126, 1173, 1273, 1324, 11183, 11142, 11209, Vendor Nat Pagle, 11169
 SDCategory: Dustwallow Marsh
 EndScriptData */
 
@@ -34,6 +34,7 @@ npc_private_hendel
 npc_zelfrax
 npc_cassa_crimsonwing
 at_nats_landing
+npc_mottled_drywallow_crocolisk
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1237,6 +1238,61 @@ bool QuestAccept_npc_stinky(Player* pPlayer, Creature* pCreature, Quest const* q
     return true;
 }
 
+/*######
+## npc_mottled_drywallow_crocolisks
+######*/
+
+enum TheGrimtotemWeapon
+{
+    // Quests
+    QUEST_THE_GRIMTOTEM_WEAPON      = 11169,
+
+    // Spells
+    SPELL_CAPTURED_CREDIT           = 42455,
+
+    // Auras
+    AURA_CAPTURED_TOTEM             = 42454,
+
+    // Creatures
+    NPC_CAPTURED_TOTEM              = 23811
+};
+
+struct npc_mottled_drywallow_crocoliskAI : public ScriptedAI
+{
+   npc_mottled_drywallow_crocoliskAI(Creature* c) : ScriptedAI(c) { }
+
+    void Reset() { }
+
+    void JustDied(Unit* killer)
+    {
+        // Nearby totem check, 8 yards taken from WoWHead
+        if (Unit* totem = GetClosestCreatureWithEntry(me, NPC_CAPTURED_TOTEM, 8.0f)) 
+        {
+            if (killer && killer->GetTypeId() == TYPEID_PLAYER &&
+                ((Player*)killer)->GetQuestStatus(QUEST_THE_GRIMTOTEM_WEAPON) == QUEST_STATUS_INCOMPLETE)
+            {
+                // Ideally the cast should give credit, as the spell works but it does not
+                // @todo fix cast credit for all spells
+                totem->CastSpell(killer, SPELL_CAPTURED_CREDIT, true);
+                ((Player*)killer)->KilledMonsterCredit(NPC_CAPTURED_TOTEM);
+            }
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if(!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_mottled_drywallow_crocolisk(Creature* creature)
+{
+    return new npc_mottled_drywallow_crocoliskAI(creature);
+}
+
 void AddSC_dustwallow_marsh()
 {
     Script* newscript;
@@ -1315,6 +1371,11 @@ void AddSC_dustwallow_marsh()
     newscript->Name = "npc_stinky";
     newscript->GetAI = &GetAI_npc_stinky;
     newscript->pQuestAccept = &QuestAccept_npc_stinky;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name="npc_mottled_drywallow_crocolisk";
+    newscript->GetAI = &GetAI_npc_mottled_drywallow_crocolisk;
     newscript->RegisterSelf();
 }
 
