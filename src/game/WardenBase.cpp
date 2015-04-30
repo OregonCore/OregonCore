@@ -193,7 +193,7 @@ void WorldSession::HandleWardenDataOpcode(WorldPacket& recv_data)
     m_Warden->DecryptData(const_cast<uint8*>(recv_data.contents()), recv_data.size());
     uint8 Opcode;
     recv_data >> Opcode;
-    sLog.outDebug("Got packet, opcode %02X, size " UI64FMTD, Opcode, recv_data.size());
+    sLog.outDebug("Got packet, opcode %02X, size %lu", Opcode, recv_data.size());
     recv_data.hexlike();
 
     switch (Opcode)
@@ -218,7 +218,7 @@ void WorldSession::HandleWardenDataOpcode(WorldPacket& recv_data)
         sLog.outDebug("NYI WARDEN_CMSG_MODULE_FAILED received!");
         break;
     default:
-        sLog.outError("Got unknown warden opcode %02X of size " UI64FMTD ".", Opcode, recv_data.size() - 1);
+        sLog.outError("Got unknown warden opcode %02X of size %lu.", Opcode, recv_data.size() - 1);
         break;
     }
 }

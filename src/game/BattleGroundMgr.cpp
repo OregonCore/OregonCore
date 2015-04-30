@@ -457,7 +457,7 @@ bool BattleGroundQueue::BuildSelectionPool(uint32 bgTypeId, uint32 queue_id, uin
         sLog.outDebug("Battleground-debug: Player size for mode %u is %u", mode, m_SelectionPools[mode].GetPlayerCount());
         for (std::list<GroupQueueInfo* >::iterator itr = m_SelectionPools[mode].SelectedGroups.begin(); itr != m_SelectionPools[mode].SelectedGroups.end(); ++itr)
         {
-            sLog.outDebug("Battleground-debug: queued group in selection with " UI64FMTD " players", (*itr)->Players.size());
+            sLog.outDebug("Battleground-debug: queued group in selection with %lu players", (*itr)->Players.size());
             for (std::map<uint64, PlayerQueueInfo* >::iterator itr2 = (*itr)->Players.begin(); itr2 != (*itr)->Players.end(); ++itr2)
                 sLog.outDebug("Battleground-debug:    player in above group GUID %u", (uint32)(itr2->first));
         }

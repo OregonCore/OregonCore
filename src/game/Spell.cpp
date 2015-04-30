@@ -2230,7 +2230,7 @@ void Spell::prepare(SpellCastTargets* targets, Aura* triggeredByAura)
         // Periodic auras should be interrupted when aura triggers a spell which can't be cast
         // for example bladestorm aura should be removed on disarm as of patch 3.3.5
         // channeled periodic spells should be affected by this (arcane missiles, penance, etc)
-        // a possible alternative so" UI64FMTD "tion for those would be validating aura target on unit state change
+        // a possible alternative solution for those would be validating aura target on unit state change
         if (triggeredByAura && triggeredByAura->IsPeriodic() && !triggeredByAura->IsPassive())
         {
             SendChannelUpdate(0);

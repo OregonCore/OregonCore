@@ -1052,7 +1052,7 @@ void GameEventMgr::GameEventSpawn(int16 event_id)
 
     if (internal_event_id < 0 || uint32(internal_event_id) >= mGameEventGameobjectGuids.size())
     {
-        sLog.outError("GameEventMgr::GameEventSpawn attempt access to out of range mGameEventGameobjectGuids element %i (size: " UI64FMTD ")", internal_event_id, mGameEventGameobjectGuids.size());
+        sLog.outError("GameEventMgr::GameEventSpawn attempt access to out of range mGameEventGameobjectGuids element %i (size: %lu)", internal_event_id, mGameEventGameobjectGuids.size());
         return;
     }
 
@@ -1083,7 +1083,7 @@ void GameEventMgr::GameEventSpawn(int16 event_id)
 
     if (internal_event_id < 0 || uint32(internal_event_id) >= mGameEventPoolIds.size())
     {
-        sLog.outError("GameEventMgr::GameEventSpawn attempt access to out of range mGameEventPoolIds element %i (size: " UI64FMTD ")", internal_event_id, mGameEventPoolIds.size());
+        sLog.outError("GameEventMgr::GameEventSpawn attempt access to out of range mGameEventPoolIds element %i (size: %lu)", internal_event_id, mGameEventPoolIds.size());
         return;
     }
 
@@ -1122,7 +1122,7 @@ void GameEventMgr::GameEventUnspawn(int16 event_id)
 
     if (internal_event_id < 0 || uint32(internal_event_id) >= mGameEventGameobjectGuids.size())
     {
-        sLog.outError("GameEventMgr::GameEventUnspawn attempt access to out of range mGameEventGameobjectGuids element %i (size: " UI64FMTD ")", internal_event_id, mGameEventGameobjectGuids.size());
+        sLog.outError("GameEventMgr::GameEventUnspawn attempt access to out of range mGameEventGameobjectGuids element %i (size: %lu)", internal_event_id, mGameEventGameobjectGuids.size());
         return;
     }
 
@@ -1143,7 +1143,7 @@ void GameEventMgr::GameEventUnspawn(int16 event_id)
 
     if (internal_event_id < 0 || uint32(internal_event_id) >= mGameEventPoolIds.size())
     {
-        sLog.outError("GameEventMgr::GameEventUnspawn attempt access to out of range mGameEventPoolIds element %i (size: " UI64FMTD ")", internal_event_id, mGameEventPoolIds.size());
+        sLog.outError("GameEventMgr::GameEventUnspawn attempt access to out of range mGameEventPoolIds element %i (size: %lu)", internal_event_id, mGameEventPoolIds.size());
         return;
     }
 

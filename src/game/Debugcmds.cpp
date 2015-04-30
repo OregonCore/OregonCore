@@ -575,14 +575,14 @@ bool ChatHandler::HandleGetItemState(const char* args)
 
             if (item->GetOwnerGUID() != player->GetGUID())
             {
-                PSendSysMessage("queue(" UI64FMTD "): for the an item (guid %d), the owner's guid (%d) and player's guid (%d) don't match!", i, item->GetGUIDLow(), GUID_LOPART(item->GetOwnerGUID()), player->GetGUIDLow());
+                PSendSysMessage("queue(%lu): for the an item (guid %d), the owner's guid (%d) and player's guid (%d) don't match!", i, item->GetGUIDLow(), GUID_LOPART(item->GetOwnerGUID()), player->GetGUIDLow());
                 error = true;
                 continue;
             }
 
             if (item->GetQueuePos() != i)
             {
-                PSendSysMessage("queue(" UI64FMTD "): for the an item (guid %d), the queuepos doesn't match it's position in the queue!", i, item->GetGUIDLow());
+                PSendSysMessage("queue(%lu): for the an item (guid %d), the queuepos doesn't match it's position in the queue!", i, item->GetGUIDLow());
                 error = true;
                 continue;
             }
@@ -592,14 +592,14 @@ bool ChatHandler::HandleGetItemState(const char* args)
 
             if (test == NULL)
             {
-                PSendSysMessage("queue(" UI64FMTD "): the bag(%d) and slot(%d) values for the item with guid %d are incorrect, the player doesn't have an item at that position!", i, item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow());
+                PSendSysMessage("queue(%lu): the bag(%d) and slot(%d) values for the item with guid %d are incorrect, the player doesn't have an item at that position!", i, item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow());
                 error = true;
                 continue;
             }
 
             if (test != item)
             {
-                PSendSysMessage("queue(" UI64FMTD "): the bag(%d) and slot(%d) values for the item with guid %d are incorrect, the item with guid %d is there instead!", i, item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow(), test->GetGUIDLow());
+                PSendSysMessage("queue(%lu): the bag(%d) and slot(%d) values for the item with guid %d are incorrect, the item with guid %d is there instead!", i, item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow(), test->GetGUIDLow());
                 error = true;
                 continue;
             }
