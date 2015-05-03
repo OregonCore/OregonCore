@@ -2745,7 +2745,7 @@ RAFLinkStatus ObjectMgr::GetRAFLinkStatus (uint64 account, uint64* linked) const
     }
 
     if (linked)
-        *linked = i->second;
+        *linked = (status == RAF_LINK_NONE) ? RAF_LINK_NONE : i->second;
 
     return status;
 }
