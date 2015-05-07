@@ -411,7 +411,7 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                 if (x >= -1684 && x <= -1674 && y >= -4334 && y <= -4324)
                 {
                     pWarrior->AreaExploredOrEventHappens(1719);
-                    DoScriptText(SAY_TWIGGY_FLATHEAD_BEGIN, me);
+                    DoScriptText(SAY_TWIGGY_FLATHEAD_BEGIN, me, pWarrior);
 
                     for (uint8 i = 0; i < 6; ++i)
                     {
