@@ -22,13 +22,8 @@
 #include "Common.h"
 
 #if PLATFORM == PLATFORM_WINDOWS
-#   include <ace/config-all.h>
 #   include <mmsystem.h>
-#   include <time.h>
 #else
-# if defined(__APPLE_CC__)
-#   include <time.h>
-# endif
 #   include <sys/time.h>
 #   include <sys/timeb.h>
 #endif
@@ -41,21 +36,42 @@ inline uint32 getMSTime()
 
 inline uint64 getMSTime64()
 {
+    #if _WIN32_WINNT >= 0x0600 // Vista and higher
     return GetTickCount64();
+    #else // Backwards compatibility for XP and lower
+    static uint32 previous = 0;
+    static uint64 total = 0;
+    uint32 now = GetTickCount();
+    total += (previous > now) ? (0xFFFFFFFF - previous) + now : (now - previous);
+    previous = now;
+    return total;
+    #endif
 }
 #else
 inline uint32 getMSTime()
 {
+    #if defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 199309L
+    struct timespec tp;
+    clock_gettime(CLOCK_MONOTONIC, &tp);
+    return (tp.tv_sec * 1000) + (tp.tv_nsec / 1000 / 1000);
+    #else // Backwards compatibility
     struct timeval tv;
     gettimeofday( &tv, NULL );
     return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    #endif
 }
 
 inline uint64 getMSTime64()
 {
+    #if defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 199309L
+    struct timespec tp;
+    clock_gettime(CLOCK_MONOTONIC, &tp);
+    return (tp.tv_sec * 1000) + (tp.tv_nsec / 1000 / 1000);
+    #else // Backwards compatibility
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    #endif
 }
 #endif
 

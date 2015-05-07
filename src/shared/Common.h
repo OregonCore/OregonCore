@@ -109,12 +109,9 @@
 
 #if PLATFORM == PLATFORM_WINDOWS
 #  define FD_SETSIZE 4096
+#  include <windows.h>
 #  include <ace/config-all.h>
-// XP winver - needed to compile with standard leak check in MemoryLeaks.h
-// uncomment later if needed
-//#define _WIN32_WINNT 0x0501
 #  include <ws2tcpip.h>
-//#undef WIN32_WINNT
 #else
 #  include <sys/types.h>
 #  include <sys/ioctl.h>
