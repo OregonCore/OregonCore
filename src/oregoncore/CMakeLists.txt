@@ -82,6 +82,7 @@ if( UNIX )
     ${BFD_LIBRARY}
     dl
     ${IBERTY_LIBRARY}
+    rt
   )
 endif()
 
