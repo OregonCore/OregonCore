@@ -3925,11 +3925,11 @@ bool ChatHandler::HandleTempGameObjectCommand(const char* args)
 {
     if (!*args)
         return false;
-    char* charID = strtok((char*)args, " ");
-    if (!charID)
+    char* id = strtok((char*)args, " ");
+    if (!id)
         return false;
 
-    Player* chr = m_session->GetPlayer();
+    Player* player = m_session->GetPlayer();
 
     char* spawntime = strtok(NULL, " ");
     uint32 spawntm = 0;
@@ -3937,17 +3937,24 @@ bool ChatHandler::HandleTempGameObjectCommand(const char* args)
     if (spawntime)
         spawntm = atoi((char*)spawntime);
 
-    float x = chr->GetPositionX();
-    float y = chr->GetPositionY();
-    float z = chr->GetPositionZ();
-    float ang = chr->GetOrientation();
+    float x = player->GetPositionX();
+    float y = player->GetPositionY();
+    float z = player->GetPositionZ();
+    float ang = player->GetOrientation();
 
     float rot2 = sin(ang / 2);
     float rot3 = cos(ang / 2);
 
-    uint32 id = atoi(charID);
+    uint32 objectId = atoi(id);
 
-    chr->SummonGameObject(id, x, y, z, ang, 0, 0, rot2, rot3, spawntm);
+    if (!sObjectMgr.GetGameObjectInfo(objectId))
+    {
+        PSendSysMessage(LANG_GAMEOBJECT_NOT_EXIST, objectId);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    player->SummonGameObject(objectId, x, y, z, ang, 0, 0, rot2, rot3, spawntm);
 
     return true;
 }
