@@ -821,7 +821,9 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
 
     // fill the gameobject data and save to the db
     pGameObj->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
+    delete pGameObj;
 
+    pGameObj = new GameObject();
     // this will generate a new guid if the object is in an instance
     if (!pGameObj->LoadFromDB(db_lowGUID, map))
     {
