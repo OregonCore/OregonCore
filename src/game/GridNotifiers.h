@@ -580,31 +580,32 @@ class NearestGameObjectFishingHole
         NearestGameObjectFishingHole(NearestGameObjectFishingHole const&);
 };
 
-// Find the nearest chair and return true only if source object is in range of chair
-class NearestGameObjectChair
+// Success at unit in range, range update for next check (this can be use with GameobjectLastSearcher to find nearest GO with a certain type)
+class NearestGameObjectTypeInObjectRangeCheck
 {
     public:
-        NearestGameObjectChair(WorldObject const& obj, float range) : i_obj(obj), i_range(range) {}
+        NearestGameObjectTypeInObjectRangeCheck(WorldObject const& obj, GameobjectTypes type, float range) : i_obj(obj), i_type(type), i_range(range) {}
         bool operator()(GameObject* go)
         {
-            if (go->GetGOInfo()->type == GAMEOBJECT_TYPE_CHAIR && go->isSpawned() && i_obj.IsWithinDistInMap(go, i_range))
+            if (go->GetGoType() == i_type && i_obj.IsWithinDistInMap(go, i_range))
             {
-                i_range = i_obj.GetDistance(go);
+                i_range = i_obj.GetDistance(go);        // use found GO range as new range limit for next check
                 return true;
             }
             return false;
         }
-        float GetLastRange() const
-        {
-            return i_range;
-        }
+
+    float GetLastRange() const { return i_range; }
+
     private:
         WorldObject const& i_obj;
+        GameobjectTypes i_type;
         float  i_range;
 
-        // prevent clone
-        NearestGameObjectChair(NearestGameObjectChair const&);
+    // prevent clone this object
+    NearestGameObjectTypeInObjectRangeCheck(NearestGameObjectTypeInObjectRangeCheck const&);
 };
+
 
 // Success at unit in range, range update for next check (this can be use with GameobjectLastSearcher to find nearest GO)
 class NearestGameObjectEntryInObjectRangeCheck

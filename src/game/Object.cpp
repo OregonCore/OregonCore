@@ -2074,11 +2074,11 @@ GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range)
     return go;
 }
 
-GameObject* WorldObject::FindNearestChair(float range)
+GameObject* WorldObject::FindNearestGameObjectOfType(GameobjectTypes type, float range) const
 {
     GameObject* go = NULL;
-    Oregon::NearestGameObjectChair checker(*this, range);
-    Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectChair> searcher(go, checker);
+    Oregon::NearestGameObjectTypeInObjectRangeCheck checker(*this, type, range);
+    Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectTypeInObjectRangeCheck> searcher(go, checker);
     VisitNearbyGridObject(range, searcher);
     return go;
 }
