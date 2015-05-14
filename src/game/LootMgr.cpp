@@ -373,7 +373,7 @@ void Loot::AddItem(LootStoreItem const& item)
 }
 
 // Calls processor of corresponding LootTemplate (which handles everything including references)
-void Loot::FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner)
+void Loot::FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner, bool personal)
 {
     // Must be provided
     if (!loot_owner)
@@ -393,7 +393,7 @@ void Loot::FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner)
     tab->Process(*this, store);                             // Processing is done there, callback via Loot::AddItem()
 
     Group* group = loot_owner->GetGroup();
-    if (group)
+    if (!personal && group)
     {
         roundRobinPlayer = loot_owner->GetGUID();
 
@@ -900,21 +900,6 @@ ByteBuffer& operator<<(ByteBuffer& b, LootView const& lv)
         for (QuestItemList::const_iterator ci = conditional_list->begin(); ci != conditional_list->end(); ++ci)
         {
             LootItem &item = l.items[ci->index];
-            if (!ci->is_looted && !item.is_looted)
-            {
-                b << uint8(ci->index);
-                b << item;
-                b << uint8(LOOT_SLOT_TYPE_ALLOW_LOOT);
-                ++itemsShown;
-            }
-        }
-    }
-
-    if (lv.conditionallist)
-    {
-        for (QuestItemList::iterator ci = lv.conditionallist->begin() ; ci != lv.conditionallist->end(); ++ci)
-        {
-            LootItem& item = l.items[ci->index];
             if (!ci->is_looted && !item.is_looted)
             {
                 b << uint8(ci->index);

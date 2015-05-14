@@ -273,9 +273,15 @@ class LootValidatorRefManager : public RefManager<Loot, LootValidatorRef>
 };
 
 //=====================================================
+struct LootView;
+
+ByteBuffer& operator<<(ByteBuffer& b, LootItem const& li);
+ByteBuffer& operator<<(ByteBuffer& b, LootView const& lv);
 
 struct Loot
 {
+    friend ByteBuffer& operator<<(ByteBuffer& b, LootView const& lv);
+
         QuestItemMap const& GetPlayerQuestItems() const
         {
             return PlayerQuestItems;
@@ -288,11 +294,6 @@ struct Loot
         {
             return PlayerNonQuestNonFFAConditionalItems;
         }
-
-        void FillNotNormalLootFor(Player* player);
-        QuestItemList* FillFFALoot(Player* player);
-        QuestItemList* FillQuestLoot(Player* player);
-        QuestItemList* FillNonQuestNonFFAConditionalLoot(Player* player);
 
         std::vector<LootItem> items;
         std::vector<LootItem> quest_items;
@@ -361,7 +362,7 @@ struct Loot
         }
 
         void generateMoneyLoot(uint32 minAmount, uint32 maxAmount);
-        void FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner);
+        void FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner, bool personal);
 
         // Inserts the item into the loot (called by LootTemplate processors)
         void AddItem(LootStoreItem const& item);
@@ -372,6 +373,11 @@ struct Loot
         bool hasOverThresholdItem() const;
 
     private:
+        void FillNotNormalLootFor(Player* player);
+        QuestItemList* FillFFALoot(Player* player);
+        QuestItemList* FillQuestLoot(Player* player);
+        QuestItemList* FillNonQuestNonFFAConditionalLoot(Player* player);
+
         std::set<uint64> PlayersLooting;
         QuestItemMap PlayerQuestItems;
         QuestItemMap PlayerFFAItems;
@@ -385,13 +391,10 @@ struct Loot
 struct LootView
 {
     Loot& loot;
-    QuestItemList* qlist;
-    QuestItemList* ffalist;
-    QuestItemList* conditionallist;
     Player* viewer;
     PermissionTypes permission;
-    LootView(Loot& _loot, QuestItemList* _qlist, QuestItemList* _ffalist, QuestItemList* _conditionallist, Player* _viewer, PermissionTypes _permission = ALL_PERMISSION)
-        : loot(_loot), qlist(_qlist), ffalist(_ffalist), conditionallist(_conditionallist), viewer(_viewer), permission(_permission) {}
+    LootView(Loot& _loot, Player* _viewer, PermissionTypes _permission = ALL_PERMISSION)
+        : loot(_loot), viewer(_viewer), permission(_permission) {}
 };
 
 extern LootStore LootTemplates_Creature;
@@ -430,7 +433,5 @@ inline void LoadLootTables()
     LoadLootTemplates_Reference();
 }
 
-ByteBuffer& operator<<(ByteBuffer& b, LootItem const& li);
-ByteBuffer& operator<<(ByteBuffer& b, LootView const& lv);
 #endif
 

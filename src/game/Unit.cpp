@@ -12097,7 +12097,7 @@ void Unit::Kill(Unit* pVictim, bool durabilityLoss)
 
             loot->clear();
             if (uint32 lootid = creature->GetCreatureTemplate()->lootid)
-                loot->FillLoot(lootid, LootTemplates_Creature, looter);
+                loot->FillLoot(lootid, LootTemplates_Creature, looter, false);
 
             loot->generateMoneyLoot(creature->GetCreatureTemplate()->mingold, creature->GetCreatureTemplate()->maxgold);
 

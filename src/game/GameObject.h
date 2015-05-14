@@ -659,7 +659,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         }
         void Refresh();
         void Delete();
-        void getFishLoot(Loot* loot);
+        void getFishLoot(Loot* loot, Player* loot_owner);
         GameobjectTypes GetGoType() const
         {
             return GameobjectTypes(GetUInt32Value(GAMEOBJECT_TYPE_ID));

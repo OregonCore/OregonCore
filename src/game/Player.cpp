@@ -7755,13 +7755,13 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
                 loot->clear();
 
                 Group* group = GetGroup();
-                bool groupRules = (group && go->GetGOInfo()->type == GAMEOBJECT_TYPE_CHEST && go->GetGOInfo()->chest.groupLootRules);
+                bool groupRules = (group && go->GetGoType() == GAMEOBJECT_TYPE_CHEST && (go->GetGOInfo()->chest.groupLootRules));
 
                 // check current RR player and get next if necessary
                 if (groupRules)
                     group->UpdateLooterGuid(go, true);
 
-                loot->FillLoot(lootid, LootTemplates_Gameobject, this);
+                loot->FillLoot(lootid, LootTemplates_Gameobject, this, !groupRules);
 
                 // get next RR player (for next loot)
                 if (groupRules && !go->loot.empty())
@@ -7769,7 +7769,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
             }
 
             if (loot_type == LOOT_FISHING)
-                go->getFishLoot(loot);
+                go->getFishLoot(loot, this);
 
             if (go->GetGOInfo()->type == GAMEOBJECT_TYPE_CHEST && go->GetGOInfo()->chest.groupLootRules)
             {
@@ -7842,14 +7842,14 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
            switch (loot_type)
             {
                 case LOOT_DISENCHANTING:
-                    loot->FillLoot(item->GetProto()->DisenchantID, LootTemplates_Disenchant, this);
+                    loot->FillLoot(item->GetProto()->DisenchantID, LootTemplates_Disenchant, this, true);
                     break;
                 case LOOT_PROSPECTING:
-                    loot->FillLoot(item->GetEntry(), LootTemplates_Prospecting, this);
+                    loot->FillLoot(item->GetEntry(), LootTemplates_Prospecting, this, true);
                     break;
                 default:
                     loot->generateMoneyLoot(item->GetProto()->MinMoneyLoot, item->GetProto()->MaxMoneyLoot);
-                    loot->FillLoot(item->GetEntry(), LootTemplates_Item, this);
+                    loot->FillLoot(item->GetEntry(), LootTemplates_Item, this, true);
                     break;
             }
         }
@@ -7873,7 +7873,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
             bones->loot.clear();
             if (BattleGround* bg = GetBattleGround())
                 if (bg->GetTypeID() == BATTLEGROUND_AV)
-                    loot->FillLoot(1, LootTemplates_Creature, this);
+                    loot->FillLoot(1, LootTemplates_Creature, this, true);
             // It may need a better formula
             // Now it works like this: lvl10: ~6copper, lvl70: ~9silver
             bones->loot.gold = (uint32)(urand(50, 150) * 0.016f * pow(((float)pLevel) / 5.76f, 2.5f) * sWorld.getRate(RATE_DROP_MONEY));
@@ -7913,7 +7913,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
                     loot->clear();
 
                     if (uint32 lootid = creature->GetCreatureTemplate()->pickpocketLootId)
-                        loot->FillLoot(lootid, LootTemplates_Pickpocketing, this);
+                        loot->FillLoot(lootid, LootTemplates_Pickpocketing, this, true);
 
                     // Generate extra money for pick pocket loot
                     const uint32 a = urand(0, creature->getLevel() / 2);
@@ -7969,7 +7969,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
             else if (loot_type == LOOT_SKINNING)
             {
                 loot->clear();
-                loot->FillLoot(creature->GetCreatureTemplate()->SkinLootId, LootTemplates_Skinning, this);
+                loot->FillLoot(creature->GetCreatureTemplate()->SkinLootId, LootTemplates_Skinning, this, true);
                 creature->SetSkinner(GetGUID());
                 permission = OWNER_PERMISSION;
             }
@@ -8025,39 +8025,6 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
 
     loot->loot_type = loot_type;
 
-    QuestItemList* q_list = 0;
-    if (permission != NONE_PERMISSION)
-    {
-        QuestItemMap const& lootPlayerQuestItems = loot->GetPlayerQuestItems();
-        QuestItemMap::const_iterator itr = lootPlayerQuestItems.find(GetGUIDLow());
-        if (itr == lootPlayerQuestItems.end())
-            q_list = loot->FillQuestLoot(this);
-        else
-            q_list = itr->second;
-    }
-
-    QuestItemList* ffa_list = 0;
-    if (permission != NONE_PERMISSION)
-    {
-        QuestItemMap const& lootPlayerFFAItems = loot->GetPlayerFFAItems();
-        QuestItemMap::const_iterator itr = lootPlayerFFAItems.find(GetGUIDLow());
-        if (itr == lootPlayerFFAItems.end())
-            ffa_list = loot->FillFFALoot(this);
-        else
-            ffa_list = itr->second;
-    }
-
-    QuestItemList* conditional_list = 0;
-    if (permission != NONE_PERMISSION)
-    {
-        QuestItemMap const& lootPlayerNonQuestNonFFAConditionalItems = loot->GetPlayerNonQuestNonFFAConditionalItems();
-        QuestItemMap::const_iterator itr = lootPlayerNonQuestNonFFAConditionalItems.find(GetGUIDLow());
-        if (itr == lootPlayerNonQuestNonFFAConditionalItems.end())
-            conditional_list = loot->FillNonQuestNonFFAConditionalLoot(this);
-        else
-            conditional_list = itr->second;
-    }
-
     if (permission != NONE_PERMISSION)
     {
         SetLootGUID(guid);
@@ -8065,7 +8032,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
         WorldPacket data(SMSG_LOOT_RESPONSE, (9 + 50));           // we guess size
         data << uint64(guid);
         data << uint8(loot_type);
-        data << LootView(*loot, q_list, ffa_list, conditional_list, this, permission);
+        data << LootView(*loot, this, permission);
         SendDirectMessage(&data);
 
         // add 'this' player as one of the players that are looting 'loot'
