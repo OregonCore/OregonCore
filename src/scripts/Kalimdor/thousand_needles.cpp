@@ -380,16 +380,16 @@ enum ePantherCage
     ENRAGED_PANTHER = 10992
 };
 
-bool go_panther_cage(Player* pPlayer, GameObject* pGo)
+bool go_panther_cage(Player* player, GameObject* go)
 {
-
-    if (pPlayer->GetQuestStatus(5151) == QUEST_STATUS_INCOMPLETE)
+    go->UseDoorOrButton();
+    if (player->GetQuestStatus(5151) == QUEST_STATUS_INCOMPLETE)
     {
-        if (Creature* panther = pGo->FindNearestCreature(ENRAGED_PANTHER, 5, true))
+        if (Creature* panther = go->FindNearestCreature(ENRAGED_PANTHER, 5, true))
         {
             panther->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             panther->SetReactState(REACT_AGGRESSIVE);
-            panther->AI()->AttackStart(pPlayer);
+            panther->AI()->AttackStart(player);
         }
     }
 

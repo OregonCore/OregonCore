@@ -611,16 +611,16 @@ enum eRavegerCage
     QUEST_STRENGTH_ONE      = 9582
 };
 
-bool go_ravager_cage(Player* pPlayer, GameObject* pGo)
+bool go_ravager_cage(Player* player, GameObject* go)
 {
-
-    if (pPlayer->GetQuestStatus(QUEST_STRENGTH_ONE) == QUEST_STATUS_INCOMPLETE)
+    go->UseDoorOrButton();
+    if (player->GetQuestStatus(QUEST_STRENGTH_ONE) == QUEST_STATUS_INCOMPLETE)
     {
-        if (Creature* ravager = pGo->FindNearestCreature(NPC_DEATH_RAVAGER, 5.0f, true))
+        if (Creature* ravager = go->FindNearestCreature(NPC_DEATH_RAVAGER, 5.0f, true))
         {
             ravager->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             ravager->SetReactState(REACT_AGGRESSIVE);
-            ravager->AI()->AttackStart(pPlayer);
+            ravager->AI()->AttackStart(player);
         }
     }
     return true ;
@@ -696,9 +696,11 @@ struct npc_stillpine_capitiveAI : public ScriptedAI
     void Reset()
     {
         FleeTimer = 0;
-        GameObject* cage = me->FindNearestGameObject(GO_BRISTELIMB_CAGE, 5.0f);
-        if (cage)
-            cage->ResetDoorOrButton();
+        if (GameObject* cage = me->FindNearestGameObject(GO_BRISTELIMB_CAGE, 5.0f))
+        {
+            cage->SetLootState(GO_JUST_DEACTIVATED);
+            cage->SetGoState(GO_STATE_READY);
+        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -717,17 +719,17 @@ CreatureAI* GetAI_npc_stillpine_capitiveAI(Creature* pCreature)
     return new npc_stillpine_capitiveAI(pCreature);
 }
 
-bool go_bristlelimb_cage(Player* pPlayer, GameObject* pGo)
+bool go_bristlelimb_cage(Player* player, GameObject* go)
 {
-    if (pPlayer->GetQuestStatus(QUEST_THE_PROPHECY_OF_AKIDA) == QUEST_STATUS_INCOMPLETE)
+    go->SetGoState(GO_STATE_READY);
+    if (player->GetQuestStatus(QUEST_THE_PROPHECY_OF_AKIDA) == QUEST_STATUS_INCOMPLETE)
     {
-        Creature* pCreature = pGo->FindNearestCreature(NPC_STILLPINE_CAPITIVE, 5.0f, true);
-        if (pCreature)
+        if (Creature* creature = go->FindNearestCreature(NPC_STILLPINE_CAPITIVE, 5.0f, true))
         {
-            DoScriptText(RAND(CAPITIVE_SAY_1, CAPITIVE_SAY_2, CAPITIVE_SAY_3), pCreature, pPlayer);
-            pCreature->GetMotionMaster()->MoveFleeing(pPlayer, 3500);
-            pPlayer->KilledMonsterCredit(pCreature->GetEntry(), pCreature->GetGUID());
-            CAST_AI(npc_stillpine_capitiveAI, pCreature->AI())->FleeTimer = 3500;
+            DoScriptText(RAND(CAPITIVE_SAY_1, CAPITIVE_SAY_2, CAPITIVE_SAY_3), creature, player);
+            creature->GetMotionMaster()->MoveFleeing(player, 3500);
+            player->KilledMonsterCredit(creature->GetEntry(), creature->GetGUID());
+            CAST_AI(npc_stillpine_capitiveAI, creature->AI())->FleeTimer = 3500;
             return false;
         }
     }

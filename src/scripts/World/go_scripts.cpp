@@ -201,6 +201,7 @@ const uint32 NpcPrisonEntry[] =
 
 bool GOHello_go_ethereum_prison(Player* player, GameObject* go)
 {
+    go->UseDoorOrButton();
     int Random = rand() % (sizeof(NpcPrisonEntry) / sizeof(uint32));
 
     if (Creature* creature = player->SummonCreature(NpcPrisonEntry[Random], go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), go->GetAngle(player),
@@ -254,12 +255,13 @@ const uint32 NpcStasisEntry[] =
     22825, 20888, 22827, 22826, 22828
 };
 
-bool GOHello_go_ethereum_stasis(Player* pPlayer, GameObject* pGO)
+bool GOHello_go_ethereum_stasis(Player* player, GameObject* go)
 {
+    go->UseDoorOrButton();
     int Random = rand() % (sizeof(NpcStasisEntry) / sizeof(uint32));
 
-    pPlayer->SummonCreature(NpcStasisEntry[Random],
-                            pGO->GetPositionX(), pGO->GetPositionY(), pGO->GetPositionZ(), pGO->GetAngle(pPlayer),
+    player->SummonCreature(NpcStasisEntry[Random],
+                            go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), go->GetAngle(player),
                             TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
 
     return false;
