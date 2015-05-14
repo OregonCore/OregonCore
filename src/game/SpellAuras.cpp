@@ -2731,13 +2731,21 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
     case FORM_FLIGHT_EPIC:
     case FORM_FLIGHT:
     case FORM_MOONKIN:
+        {
         // remove movement affects
         m_target->RemoveMovementImpairingAuras();
 
         // and polymorphic affects
         if (m_target->IsPolymorphed())
             m_target->RemoveAurasDueToSpell(m_target->getTransForm());
-        break;
+        }
+    case FORM_GHOSTWOLF:
+        {
+            // remove water walk aura. @TODO there is probably better way to do this
+            m_target->RemoveSpellsCausingAura(SPELL_AURA_WATER_WALK);
+
+             break;
+        }
     default:
         break;
     }
