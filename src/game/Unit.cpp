@@ -7403,6 +7403,9 @@ void Unit::SetMinion(Minion* minion, bool apply)
             minion->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
         }
 
+        if (minion->m_Properties && minion->m_Properties->Type == SUMMON_TYPE_MINIPET)
+            SetCritterGUID(minion->GetGUID());
+
         // Can only have one pet. If a new one is summoned, dismiss the old one.
         if (minion->isPet() || (minion->m_Properties && minion->m_Properties->Category == SUMMON_CATEGORY_PET))
         {
@@ -7441,6 +7444,10 @@ void Unit::SetMinion(Minion* minion, bool apply)
         }
 
         m_Controlled.erase(minion);
+
+        if (minion->m_Properties && minion->m_Properties->Type == SUMMON_TYPE_MINIPET)
+            if (GetCritterGUID() == minion->GetGUID())
+                SetCritterGUID(0);
 
         if (minion->isPet() || (minion->m_Properties && minion->m_Properties->Category == SUMMON_CATEGORY_PET))
         {

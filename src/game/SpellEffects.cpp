@@ -3481,9 +3481,22 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
             }
         case SUMMON_TYPE_MINIPET:
             {
+                // If "resummoning" the same minipet, despawn only.
+                TempSummon* oldCritter = dynamic_cast<TempSummon*>(ObjectAccessor::GetCreatureOrPet(*m_caster, m_caster->GetCritterGUID()));
+
+                if (oldCritter)
+                {
+                    oldCritter->UnSummon();
+
+                    if (oldCritter->GetEntry() == entry)
+                        return;
+                }
+
                 summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
                 if (!summon || !summon->HasSummonMask(SUMMON_MASK_MINION))
                     return;
+
+                m_caster->SetCritterGUID(summon->GetGUID());
 
                 summon->SelectLevel(summon->GetCreatureTemplate());       // some summoned creaters have different from 1 DB data for level/hp
                 summon->SetUInt32Value(UNIT_NPC_FLAGS, summon->GetCreatureTemplate()->npcflag);

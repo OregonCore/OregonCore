@@ -964,6 +964,10 @@ class Unit : public WorldObject
         void SendMeleeAttackStop(Unit* victim = NULL);
         void SendMeleeAttackStart(Unit* pVictim);
 
+        // Minipet related functions
+        void SetCritterGUID(uint64 guid) { miniPetGuid = guid; }
+        uint64 GetCritterGUID() const { return miniPetGuid; }
+
         void AddUnitState(uint32 f)
         {
             m_state |= f;
@@ -2130,6 +2134,8 @@ class Unit : public WorldObject
         virtual SpellSchoolMask GetMeleeDamageSchoolMask() const;
 
         MotionMaster i_motionMaster;
+
+        uint64 miniPetGuid;
 
         uint32 m_reactiveTimer[MAX_REACTIVE];
 
