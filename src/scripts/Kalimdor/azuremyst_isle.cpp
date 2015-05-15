@@ -404,18 +404,32 @@ CreatureAI* GetAI_npc_magwinAI(Creature* pCreature)
 ## npc_geezle
 ######*/
 
-#define GEEZLE_SAY_1    -1000728
-#define SPARK_SAY_2     -1000729
-#define SPARK_SAY_3     -1000730
-#define GEEZLE_SAY_4    -1000731
-#define SPARK_SAY_5     -1000732
-#define SPARK_SAY_6     -1000733
-#define GEEZLE_SAY_7    -1000734
+enum Geezle
+{
+    // Quests
+    QUEST_TREES_COMPANY = 9531,
 
-#define EMOTE_SPARK     -1000735
+    // Spells
+    SPELL_TREE_DISGUISE = 30298,
 
-#define MOB_SPARK       17243
-#define GO_NAGA_FLAG    181694
+    // Texts
+    GEEZLE_SAY_1   = -1000728,
+    SPARK_SAY_2    = -1000729,
+    SPARK_SAY_3    = -1000730,
+    GEEZLE_SAY_4   = -1000731,
+    SPARK_SAY_5    = -1000732,
+    SPARK_SAY_6    = -1000733,
+    GEEZLE_SAY_7   = -1000734,
+
+    // Emotes
+    EMOTE_SPARK     = -1000735,
+
+    // NPCs
+    NPC_SPARK       = 17243,
+
+    // Gameobjects
+    GO_NAGA_FLAG    = 181694
+};
 
 static float SparkPos[3] = { -5030.95f, -11291.99f, 7.97f};
 
@@ -444,8 +458,7 @@ struct npc_geezleAI : public ScriptedAI
     {
         Step = 0;
         EventStarted = true;
-        Creature* Spark = me->SummonCreature(MOB_SPARK, SparkPos[0], SparkPos[1], SparkPos[2], 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 1000);
-        if (Spark)
+        if (Creature* Spark = me->SummonCreature(NPC_SPARK, SparkPos[0], SparkPos[1], SparkPos[2], 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 1000))
         {
             SparkGUID = Spark->GetGUID();
             Spark->setActive(true);
@@ -458,24 +471,23 @@ struct npc_geezleAI : public ScriptedAI
 
     uint32 NextStep(uint32 Step)
     {
-        Unit* Spark = Unit::GetUnit((*me), SparkGUID);
+        Creature* Spark = Unit::GetCreature((*me), SparkGUID);
+        if (!Spark)
+            return 99999999;
 
         switch (Step)
         {
         case 0:
             return 99999;
         case 1:
-            //DespawnNagaFlag(true);
+            DespawnNagaFlag(true);
             // @todo: this emote doesnt seem to include Spark's name
             DoScriptText(EMOTE_SPARK, Spark);
             return 1000;
         case 2:
             DoScriptText(GEEZLE_SAY_1, me, Spark);
-            if (Spark)
-            {
-                Spark->SetInFront(me);
-                me->SetInFront(Spark);
-            }
+            Spark->SetInFront(me);
+            me->SetInFront(Spark);
             return 5000;
         case 3:
             DoScriptText(SPARK_SAY_2, Spark);
@@ -497,17 +509,30 @@ struct npc_geezleAI : public ScriptedAI
             return 2000;
         case 9:
             me->GetMotionMaster()->MoveTargetedHome();
-            if (Spark)
-                Spark->GetMotionMaster()->MovePoint(0, -5030.95f, -11291.99f, 7.97f);
-            return 20000;
+            Spark->GetMotionMaster()->MovePoint(0, -5030.95f, -11291.99f, 7.97f);
+            CompleteQuest();
+            return 9000;
         case 10:
-            if (Spark)
-                Spark->DealDamage(Spark, Spark->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            //DespawnNagaFlag(false);
-            me->SetVisibility(VISIBILITY_OFF);
+            Spark->DisappearAndDie();
+            DespawnNagaFlag(false);
+            me->DisappearAndDie();
         default:
             return 99999999;
         }
+    }
+
+    // will complete Tree's company quest for all nearby players that are disguised as trees
+    void CompleteQuest()
+    {
+        float radius = 50.0f;
+        std::list<Player*> players;
+        Oregon::AnyPlayerInObjectRangeCheck checker(me, radius);
+        Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(players, checker);
+        me->VisitNearbyWorldObject(radius, searcher);
+
+        for (std::list<Player*>::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            if ((*itr)->GetQuestStatus(QUEST_TREES_COMPANY) == QUEST_STATUS_INCOMPLETE && (*itr)->HasAura(SPELL_TREE_DISGUISE))
+                (*itr)->KilledMonsterCredit(NPC_SPARK);
     }
 
     void DespawnNagaFlag(bool despawn)
@@ -519,9 +544,8 @@ struct npc_geezleAI : public ScriptedAI
         {
             for (std::list<GameObject*>::iterator itr = FlagList.begin(); itr != FlagList.end(); ++itr)
             {
-                //@todo Found how to despawn and respawn
                 if (despawn)
-                    (*itr)->RemoveFromWorld();
+                    (*itr)->SetLootState(GO_JUST_DEACTIVATED);
                 else
                     (*itr)->Respawn();
             }
