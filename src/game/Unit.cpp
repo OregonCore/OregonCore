@@ -7219,6 +7219,7 @@ void Unit::CombatStop(bool includingCast)
 
     AttackStop();
     RemoveAllAttackers();
+    m_HostileRefManager.deleteReferences();
     if (GetTypeId() == TYPEID_PLAYER)
         ToPlayer()->SendAttackSwingCancelAttack();     // melee and ranged forced attack cancel
     ClearInCombat();
@@ -12564,6 +12565,7 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
 
     // Set charmed
     charmer->SetCharm(this, true);
+    SetCharmerGUID(charmer->GetGUID());
 
     if (GetTypeId() == TYPEID_UNIT)
     {
@@ -12641,6 +12643,8 @@ void Unit::RemoveCharmedBy(Unit* charmer)
     else
         type = CHARM_TYPE_CHARM;
 
+    GetMotionMaster()->MovementExpired(true);
+
     CastStop();
     CombatStop(); //@todo CombatStop(true) may cause crash (interrupt spells)
     getHostileRefManager().deleteReferences();
@@ -12653,8 +12657,6 @@ void Unit::RemoveCharmedBy(Unit* charmer)
     }
     else
         RestoreFaction();
-
-    GetMotionMaster()->InitDefault();
 
     if (Creature* creature = ToCreature())
     {
@@ -12670,6 +12672,7 @@ void Unit::RemoveCharmedBy(Unit* charmer)
     ASSERT(type != CHARM_TYPE_POSSESS || charmer->GetTypeId() == TYPEID_PLAYER);
 
     charmer->SetCharm(this, false);
+    SetCharmerGUID(0);
 
     if (charmer->GetTypeId() == TYPEID_PLAYER)
     {

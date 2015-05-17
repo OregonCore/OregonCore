@@ -36,6 +36,7 @@ npc_rogue_trainer            80%    Scripted trainers, so they are able to offer
 npc_sayge                   100%    Darkmoon event fortune teller, buff player based on answers given
 npc_snake_trap_serpents     100%    AI for snakes that summoned by Snake Trap
 npc_force_of_nature_treants 100%    AI for force of nature (druid spell)
+mob_inferno_infernal        100%    AI for Inferno (warlock spell)
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1720,6 +1721,32 @@ bool GossipHello_go_containment_coffer(Player* player, GameObject* go)
     return true;
 }
 
+struct mob_inferno_infernal : public ScriptedAI
+{
+    mob_inferno_infernal(Creature* c) : ScriptedAI(c), initialized(false) { }
+
+    void Reset()
+    {
+        if (!initialized && me->HasSummonMask(~0))
+        {
+            if (Unit* owner = ((TempSummon*)me)->GetSummoner())
+            {
+                owner->CastSpell(me, 11726, true); // Enslave Demon
+                me->CastSpell(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 22703, false, NULL, NULL, owner->GetGUID()); // Inferno Effect (dmg + stun)
+                ((TempSummon*) me)->SetTempSummonType(TEMPSUMMON_TIMED_DESPAWN_OUT_OF_CHARM);
+                initialized = true;
+            }
+        }
+    }
+
+    bool initialized;
+};
+
+CreatureAI* GetAI_mob_inferno_infernal(Creature* _Creature)
+{
+    return new mob_inferno_infernal(_Creature);
+}
+
 void AddSC_npcs_special()
 {
     Script* newscript;
@@ -1826,5 +1853,9 @@ void AddSC_npcs_special()
     newscript->pGOHello  = &GossipHello_go_containment_coffer;
     newscript->RegisterSelf();
 
+    newscript = new Script;
+    newscript->Name = "mob_inferno_infernal";
+    newscript->GetAI = &GetAI_mob_inferno_infernal;
+    newscript->RegisterSelf();
 }
 

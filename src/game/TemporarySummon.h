@@ -31,6 +31,10 @@ class TempSummon : public Creature
         void UnSummon();
         void RemoveFromWorld();
         void SetTempSummonType(TempSummonType type);
+        TempSummonType GetTempSummonType() const
+        {
+            return m_type;
+        }
         void SaveToDB();
         Unit* GetSummoner() const;
 

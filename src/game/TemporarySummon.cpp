@@ -89,6 +89,18 @@ void TempSummon::Update(uint32 diff)
             }
             break;
         }
+    case TEMPSUMMON_TIMED_DESPAWN_OUT_OF_CHARM:
+        if (!isCharmed())
+        {
+            if (m_timer <= diff)
+            {
+                UnSummon();
+                return;
+            }
+            else
+                m_timer -= diff;
+        }
+        break;
     case TEMPSUMMON_CORPSE_DESPAWN:
         {
             // if m_deathState is DEAD, CORPSE was skipped

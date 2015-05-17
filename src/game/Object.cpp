@@ -1878,7 +1878,11 @@ TempSummon* WorldObject::SummonCreature(uint32 entry, const Position& pos, TempS
     {
         if (TempSummon* summon = map->SummonCreature(entry, pos, NULL, duration, isType(TYPEMASK_UNIT) ? (Unit*)this : NULL))
         {
-            summon->SetTempSummonType(spwtype);
+            // CreatureAI::Reset was already called, check if TempSummonType changed, if
+            // so, don't touch it or we may mess up the script. (Example Script: Inferno)
+            // TEMPSUMMON_MANUL_DESPAWN is the default one so we check against it.
+            if (summon->GetTempSummonType() == TEMPSUMMON_MANUAL_DESPAWN)
+                summon->SetTempSummonType(spwtype);
             return summon;
         }
     }
