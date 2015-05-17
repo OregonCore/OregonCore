@@ -42,7 +42,7 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T& owner)
     if (!i_target.isValid() || !i_target->IsInWorld())
         return false;
 
-    if (owner.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
+    if (owner.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED) || owner.isDead())
         return false;
 
     if (owner.GetTypeId() == TYPEID_UNIT && !i_target->isInAccessiblePlaceFor(owner.ToCreature()))
