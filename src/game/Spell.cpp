@@ -2508,10 +2508,11 @@ void Spell::handle_immediate()
             duration = m_spellValue->Duration;
         if (duration > 0)
         {
-            if (m_targets.getUnitTarget())
+            if (m_targets.getUnitTarget() && !m_diminishingApplied)
             {
                 DiminishingGroup DRgroup = GetDiminishingReturnsGroupForSpell(m_spellInfo, false);
                 m_targets.getUnitTarget()->ApplyDiminishingToDuration(DRgroup, duration, m_caster, m_targets.getUnitTarget()->GetDiminishing(DRgroup));
+                m_diminishingApplied = true;
             }
 
             //apply haste mods
