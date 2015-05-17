@@ -187,7 +187,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
 
     ScriptedInstance* pInstance;
 
-    std::list<uint64> Channelers;
+    std::set<uint64> Channelers;
     std::list<uint64> Sorcerers;
     uint64 AkamaGUID;
 
@@ -217,6 +217,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
 
         Sorcerers.clear();
         summons.DespawnAll();//despawn all adds
+        Channelers.clear();
 
         if (Creature* Akama = Unit::GetCreature(*me, AkamaGUID))
         {
@@ -273,9 +274,11 @@ struct boss_shade_of_akamaAI : public ScriptedAI
         {
             FindChannelers();
 
-            if (!Channelers.empty())
+            if (Channelers.size() >= 6)
             {
-                for (std::list<uint64>::iterator itr = Channelers.begin(); itr != Channelers.end(); ++itr)
+                GridSearcherSucceeded = true;
+
+                for (std::set<uint64>::iterator itr = Channelers.begin(); itr != Channelers.end(); ++itr)
                 {
                     Creature* Channeler = (Unit::GetCreature(*me, *itr));
                     if (Channeler)
@@ -293,7 +296,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
                             Channeler->CastSpell(me, SPELL_SHADE_SOUL_CHANNEL, true);
                             Channeler->CastSpell(me, SPELL_SHADE_SOUL_CHANNEL_2, true);
                             Channeler->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                            GridSearcherSucceeded = true;
+                            Channeler->SetFacingToObject(me);
                         }
                     }
                 }
@@ -381,7 +384,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
             for (std::list<Creature*>::iterator itr = ChannelerList.begin(); itr != ChannelerList.end(); ++itr)
             {
                 CAST_AI(mob_ashtongue_channelerAI, (*itr)->AI())->ShadeGUID = me->GetGUID();
-                Channelers.push_back((*itr)->GetGUID());
+                Channelers.insert((*itr)->GetGUID());
                 debug_log("OSCR: Shade of Akama Grid Search found channeler %llu. Adding to list", (*itr)->GetGUID());
             }
         }
@@ -396,7 +399,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
             return;
         }
 
-        for (std::list<uint64>::iterator itr = Channelers.begin(); itr != Channelers.end(); ++itr)
+        for (std::set<uint64>::iterator itr = Channelers.begin(); itr != Channelers.end(); ++itr)
             if (Creature* Channeler = (Unit::GetCreature(*me, *itr)))
                 Channeler->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
@@ -628,6 +631,7 @@ struct npc_akamaAI : public ScriptedAI
             Shade->AddThreat(me, 1000000.0f);
             Shade->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
             Shade->SetUInt64Value(UNIT_FIELD_TARGET, me->GetGUID());
+            me->SetUInt64Value(UNIT_FIELD_TARGET, ShadeGUID);
             if (pl) Shade->AddThreat(pl, 1.0f);
             DoZoneInCombat(Shade);
             EventBegun = true;
