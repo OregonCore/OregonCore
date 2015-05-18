@@ -501,7 +501,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         void UpdateIteratorBack(Player* player);
 
-        TempSummon* SummonCreature(uint32 entry, const Position& pos, SummonPropertiesEntry const* properties = NULL, uint32 duration = 0, Unit* summoner = NULL, SpellEntry const* spellInfo = NULL);
+        TempSummon* SummonCreature(uint32 entry, const Position& pos, SummonPropertiesEntry const* properties = NULL, uint32 duration = 0, Unit* summoner = NULL, SpellEntry const* spellInfo = NULL, TempSummonType spwType = TEMPSUMMON_MANUAL_DESPAWN);
         Creature* GetCreature(uint64 guid);
         GameObject* GetGameObject(uint64 guid);
         DynamicObject* GetDynamicObject(uint64 guid);

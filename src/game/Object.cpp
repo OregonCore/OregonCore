@@ -1774,7 +1774,7 @@ void WorldObject::AddObjectToRemoveList()
     map->AddObjectToRemoveList(this);
 }
 
-TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropertiesEntry const* properties, uint32 duration, Unit* summoner, SpellEntry const* spellInfo)
+TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropertiesEntry const* properties, uint32 duration, Unit* summoner, SpellEntry const* spellInfo, TempSummonType spwType)
 {
     uint32 mask = SUMMON_MASK_SUMMON;
     if (properties)
@@ -1864,7 +1864,11 @@ TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropert
     }
 
     summon->SetHomePosition(pos);
-
+    // CreatureAI::Reset was already called, check if TempSummonType changed, if
+    // so, don't touch it or we may mess up the script. (Example Script: Inferno)
+    // TEMPSUMMON_MANUL_DESPAWN is the default one so we check against it.
+    if (summon->GetTempSummonType() == TEMPSUMMON_MANUAL_DESPAWN)
+        summon->SetTempSummonType(spwType);
     summon->InitStats(duration);
     AddToMap(summon->ToCreature());
     summon->InitSummon();
@@ -1876,15 +1880,8 @@ TempSummon* WorldObject::SummonCreature(uint32 entry, const Position& pos, TempS
 {
     if (Map* map = FindMap())
     {
-        if (TempSummon* summon = map->SummonCreature(entry, pos, NULL, duration, isType(TYPEMASK_UNIT) ? (Unit*)this : NULL))
-        {
-            // CreatureAI::Reset was already called, check if TempSummonType changed, if
-            // so, don't touch it or we may mess up the script. (Example Script: Inferno)
-            // TEMPSUMMON_MANUL_DESPAWN is the default one so we check against it.
-            if (summon->GetTempSummonType() == TEMPSUMMON_MANUAL_DESPAWN)
-                summon->SetTempSummonType(spwtype);
+        if (TempSummon* summon = map->SummonCreature(entry, pos, NULL, duration, isType(TYPEMASK_UNIT) ? (Unit*)this : NULL, NULL, spwtype))
             return summon;
-        }
     }
 
     return NULL;
