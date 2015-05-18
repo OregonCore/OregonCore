@@ -3338,6 +3338,29 @@ void Player::RemoveAllSpellCooldown()
     }
 }
 
+/**
+ * Gets the highest learned rank of a spell.
+ * @param spellid Any rank of spell
+ * @return Spell Id of the highest rank the user has learned.
+ */
+uint32 Player::GetHighestLearnedRankOf(uint32 spellid) const
+{
+    SpellChainNode const* node = sSpellMgr.GetSpellChainNode(spellid);
+    if (!node)
+        return spellid;
+    uint32 i = node->last;
+
+    while (!HasSpell(i))
+    {
+        i = node->prev;
+        node = sSpellMgr.GetSpellChainNode(i);
+        if (!node)
+            break;
+    }
+
+    return i;
+}
+
 void Player::_LoadSpellCooldowns(QueryResult_AutoPtr result)
 {
     m_spellCooldowns.clear();

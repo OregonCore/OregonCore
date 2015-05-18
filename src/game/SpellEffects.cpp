@@ -2424,11 +2424,10 @@ void Spell::EffectApplyAura(SpellEffIndex effIndex)
     int32 duration = Aur->GetAuraMaxDuration();
     if (m_spellValue->CustomDuration)
         duration = m_spellValue->Duration;
-    if (!IsPositiveSpell(m_spellInfo->Id) && !m_diminishingApplied)
+    if (!IsPositiveSpell(m_spellInfo->Id))
     {
         unitTarget->ApplyDiminishingToDuration(m_diminishGroup, duration, caster, m_diminishLevel);
         Aur->setDiminishGroup(m_diminishGroup);
-        m_diminishingApplied = true;
     }
 
     //mod duration of channeled aura by spell haste

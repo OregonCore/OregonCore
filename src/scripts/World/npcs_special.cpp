@@ -1731,7 +1731,7 @@ struct mob_inferno_infernal : public ScriptedAI
         {
             if (Unit* owner = ((TempSummon*)me)->GetSummoner())
             {
-                owner->CastSpell(me, 11726, true); // Enslave Demon
+                owner->CastSpell(me, owner->GetHighestLearnedRankOf(11726), true); // Enslave Demon
                 me->CastSpell(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 22703, false, NULL, NULL, owner->GetGUID()); // Inferno Effect (dmg + stun)
                 ((TempSummon*) me)->SetTempSummonType(TEMPSUMMON_TIMED_DESPAWN_OUT_OF_CHARM);
                 initialized = true;

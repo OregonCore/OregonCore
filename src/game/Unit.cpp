@@ -10068,9 +10068,9 @@ void Unit::ApplyDiminishingToDuration(DiminishingGroup group, int32& duration, U
         Unit const* target = targetOwner ? targetOwner : this;
         Unit const* source = casterOwner ? casterOwner : caster;
 
-        if (target->GetTypeId() == TYPEID_PLAYER
-            && source->GetTypeId() == TYPEID_PLAYER)
-            duration = 10000;
+        if (target->GetTypeId() == TYPEID_PLAYER && source->GetTypeId() == TYPEID_PLAYER)
+            if (source != target || GetTypeId() != TYPEID_UNIT)
+                duration = 10000;
     }
 
     float mod = 1.0f;

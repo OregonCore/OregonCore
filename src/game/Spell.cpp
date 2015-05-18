@@ -1178,7 +1178,6 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
         }
     }
 
-
     // Get Data Needed for Diminishing Returns, some effects may have multiple auras, so this must be done on spell hit, not aura add
     if ((m_diminishGroup = GetDiminishingReturnsGroupForSpell(m_spellInfo, m_triggeredByAuraSpell)))
     {
@@ -1197,23 +1196,8 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
     }
 
     for (uint32 effectNumber = 0; effectNumber < 3; effectNumber++)
-    {
         if (effectMask & (1 << effectNumber))
-        {
-            HandleEffects(unit, NULL, NULL, effectNumber/*,m_damageMultipliers[effectNumber]*/);
-            //Only damage and heal spells need this
-            /*if (m_applyMultiplierMask & (1 << effectNumber))
-            {
-                // Get multiplier
-                float multiplier = m_spellInfo->DmgMultiplier[effectNumber];
-                // Apply multiplier mods
-                if (m_originalCaster)
-                    if (Player* modOwner = m_originalCaster->GetSpellModOwner())
-                        modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_EFFECT_PAST_FIRST, multiplier,this);
-                m_damageMultipliers[effectNumber] *= multiplier;
-            }*/
-        }
-    }
+            HandleEffects(unit, NULL, NULL, effectNumber);
 
     if (unit->GetTypeId() == TYPEID_UNIT && unit->ToCreature()->IsAIEnabled)
         unit->ToCreature()->AI()->SpellHit(m_caster, m_spellInfo);
@@ -2508,11 +2492,10 @@ void Spell::handle_immediate()
             duration = m_spellValue->Duration;
         if (duration > 0)
         {
-            if (m_targets.getUnitTarget() && !m_diminishingApplied)
+            if (m_targets.getUnitTarget())
             {
                 DiminishingGroup DRgroup = GetDiminishingReturnsGroupForSpell(m_spellInfo, false);
                 m_targets.getUnitTarget()->ApplyDiminishingToDuration(DRgroup, duration, m_caster, m_targets.getUnitTarget()->GetDiminishing(DRgroup));
-                m_diminishingApplied = true;
             }
 
             //apply haste mods

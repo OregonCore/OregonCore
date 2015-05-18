@@ -1362,6 +1362,10 @@ class Unit : public WorldObject
         virtual bool IsInWater() const;
         virtual bool IsUnderWater() const;
         bool isInAccessiblePlaceFor(Creature const* c) const;
+        virtual uint32 GetHighestLearnedRankOf(uint32 spellid) const
+        {
+            return spellid;
+        }
 
         void SendHealSpellLog(Unit* pVictim, uint32 SpellID, uint32 Damage, bool critical = false);
         void SendEnergizeSpellLog(Unit* pVictim, uint32 SpellID, uint32 Damage, Powers powertype);

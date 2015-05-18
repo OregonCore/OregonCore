@@ -1712,6 +1712,7 @@ class Player : public Unit, public GridObject<Player>
         void learnQuestRewardedSpells();
         void learnQuestRewardedSpells(Quest const* quest);
         void learnSpellHighRank(uint32 spellid);
+        uint32 GetHighestLearnedRankOf(uint32 spellid) const;
 
         uint32 GetFreeTalentPoints() const
         {
