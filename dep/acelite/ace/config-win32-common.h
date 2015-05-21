@@ -19,7 +19,7 @@
 #endif /* _WIN32_WCE */
 
 // Complain if WIN32 is not already defined.
-#if !defined (WIN32) && !defined (ACE_HAS_WINCE)
+#if !defined (WIN32) && !defined (ACE_HAS_WINCE) && !defined (_WIN32)
 # error Please define WIN32 in your project settings.
 #endif
 
