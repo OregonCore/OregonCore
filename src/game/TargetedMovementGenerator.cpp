@@ -147,7 +147,7 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T& owner)
             }
         }
 
-        if (i_target->GetExactDistSq(i_targetX, i_targetY, i_targetZ) < 0.01f)
+        if (owner.GetExactDistSq(i_targetX, i_targetY, i_targetZ) < 0.01f)
             return false;
     }
 
