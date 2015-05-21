@@ -1813,9 +1813,6 @@ Unit* Creature::SelectNearestTarget(float dist) const
     Unit* target = NULL;
 
     {
-        if (dist == 0.0f || dist > MAX_VISIBILITY_DISTANCE)
-            dist = MAX_VISIBILITY_DISTANCE;
-
         Oregon::NearestHostileUnitCheck u_check(this, dist);
         Oregon::UnitLastSearcher<Oregon::NearestHostileUnitCheck> searcher(target, u_check);
 
