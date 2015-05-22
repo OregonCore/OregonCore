@@ -694,14 +694,6 @@ struct boss_krosh_firehandAI : public ScriptedAI
             return;
         }
 
-        //GreaterFireball_Timer
-        if (GreaterFireball_Timer <= diff || me->GetDistance(me->getVictim()) < 30)
-        {
-            DoCastVictim( SPELL_GREATER_FIREBALL);
-            GreaterFireball_Timer = 2000;
-        }
-        else GreaterFireball_Timer -= diff;
-
         //SpellShield_Timer
         if (SpellShield_Timer <= diff)
         {
@@ -710,6 +702,14 @@ struct boss_krosh_firehandAI : public ScriptedAI
             SpellShield_Timer = 30000;
         }
         else SpellShield_Timer -= diff;
+
+        //GreaterFireball_Timer
+        if (GreaterFireball_Timer <= diff && me->GetDistance(me->getVictim()) < 30)
+        {
+            DoCastVictim( SPELL_GREATER_FIREBALL);
+            GreaterFireball_Timer = 3000;
+        }
+        else GreaterFireball_Timer -= diff;
 
         //BlastWave_Timer
         if (BlastWave_Timer <= diff)
