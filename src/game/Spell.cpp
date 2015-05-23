@@ -2378,6 +2378,16 @@ void Spell::cast(bool skipCheck)
 
     FillTargetMap();
 
+   // Check for unlocking spells, force skip a check and take the key.
+   for (int i = 0; i < 3; i++)
+   {
+       if(m_spellInfo->Effect[i] == SPELL_EFFECT_OPEN_LOCK_ITEM)
+       {
+           TakeCastItem();
+           skipCheck = true;
+       }
+   }
+
     // triggered cast called from Spell::prepare where it was already checked
     if (!skipCheck)
     {
@@ -2621,11 +2631,6 @@ void Spell::_handle_immediate_phase()
     {
         if (m_spellInfo->Effect[j] == 0)
             continue;
-
-        // Remove the key from player's inventory here to make sure that
-        // locked chests open and display loot properly.
-        if (m_spellInfo->Effect[j] == SPELL_EFFECT_OPEN_LOCK_ITEM)
-            TakeCastItem();
 
         // apply Send Event effect to ground in case empty target lists
         if (m_spellInfo->Effect[j] == SPELL_EFFECT_SEND_EVENT && !HaveTargetsForEffect(j))
