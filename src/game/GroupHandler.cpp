@@ -71,7 +71,7 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket& recv_data)
         return;
     }
 
-    Player* player = sObjectMgr.GetPlayer(membername.c_str());
+    Player* player = sObjectMgr.GetPlayer(membername.c_str(), true);
 
     // no player
     if (!player)

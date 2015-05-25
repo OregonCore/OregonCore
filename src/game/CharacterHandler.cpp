@@ -653,10 +653,6 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     LoginDatabase.PExecute("UPDATE account SET active_realm_id = %d WHERE id = '%u'", realmID, GetAccountId());
     pCurrChar->SetInGameTime(getMSTime());
 
-    // announce group about member online (must be after add to player list to receive announce to self)
-    if (Group* group = pCurrChar->GetGroup())
-        group->SendUpdate();
-
     // friend status
     sSocialMgr.SendFriendStatus(pCurrChar, FRIEND_ONLINE, pCurrChar->GetGUIDLow(), true);
 
@@ -700,6 +696,10 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
         pCurrChar->resetTalents(true);
         SendNotification(LANG_RESET_TALENTS);
     }
+
+    // announce group about member online (must be after add to player list to receive announce to self)
+    if (Group* group = pCurrChar->GetGroup())
+        group->SendUpdate();
 
     // show time before shutdown if shutdown planned.
     if (sWorld.IsShuttingDown())
