@@ -211,7 +211,7 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T& owner)
         // allow pets to cheat while generating paths as they should ALWAYS be able to reach thier target.
         if (owner.GetTypeId() == TYPEID_UNIT
             && owner.ToCreature()
-            && owner.ToCreature()->isPet())
+            && owner.ToCreature()->IsPet())
             forceDest = true;
 
         bool newPathCalculated = true;

@@ -57,13 +57,13 @@ Pet::Pet(Player* owner, PetType type) : Guardian(NULL, owner),
     m_removed(false), m_owner(owner), m_happinessTimer(7500),
     m_petType(type), m_duration(0), m_declinedname(NULL)
 {
-    m_summonMask |= SUMMON_MASK_PET;
+    m_unitTypeMask |= UNIT_MASK_PET;
     if (type == HUNTER_PET)
-        m_summonMask |= SUMMON_MASK_HUNTER_PET;
+        m_unitTypeMask |= UNIT_MASK_HUNTER_PET;
 
-    if (!(m_summonMask & SUMMON_MASK_CONTROLABLE_GUARDIAN))
+    if (!(m_unitTypeMask & UNIT_MASK_CONTROLABLE_GUARDIAN))
     {
-        m_summonMask |= SUMMON_MASK_CONTROLABLE_GUARDIAN;
+        m_unitTypeMask |= UNIT_MASK_CONTROLABLE_GUARDIAN;
         InitCharmInfo();
     }
 
@@ -958,7 +958,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
 
     //Determine pet type
     PetType petType = MAX_PET_TYPE;
-    if (isPet() && m_owner->GetTypeId() == TYPEID_PLAYER)
+    if (IsPet() && m_owner->GetTypeId() == TYPEID_PLAYER)
     {
         if ((m_owner->getClass() == CLASS_WARLOCK)
             || (m_owner->getClass() == CLASS_SHAMAN)         // Fire Elemental
@@ -968,7 +968,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
         else if (m_owner->getClass() == CLASS_HUNTER)
         {
             petType = HUNTER_PET;
-            m_summonMask |= SUMMON_MASK_HUNTER_PET;
+            m_unitTypeMask |= UNIT_MASK_HUNTER_PET;
         }
         else
             sLog.outError("Unknown type pet %u is summoned by player class %u", GetEntry(), m_owner->getClass());

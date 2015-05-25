@@ -112,19 +112,6 @@ enum CreatureFlagsExtra
     CREATURE_FLAG_EXTRA_NO_CRIT         = 0x00020000,       // creature can't do critical strikes
 };
 
-enum SummonMask
-{
-    SUMMON_MASK_NONE                  = 0x00000000,
-    SUMMON_MASK_SUMMON                = 0x00000001,
-    SUMMON_MASK_MINION                = 0x00000002,
-    SUMMON_MASK_GUARDIAN              = 0x00000004,
-    SUMMON_MASK_TOTEM                 = 0x00000008,
-    SUMMON_MASK_PET                   = 0x00000010,
-    SUMMON_MASK_PUPPET                = 0x00000020,
-    SUMMON_MASK_HUNTER_PET            = 0x00000040,
-    SUMMON_MASK_CONTROLABLE_GUARDIAN  = 0x00000080,
-};
-
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
 #if defined(__GNUC__)
 #pragma pack(1)
@@ -472,42 +459,6 @@ class Creature : public Unit, public GridObject<Creature>
         void SetVirtualItem(VirtualItemSlot slot, uint32 item_id);
         void SetVirtualItemRaw(VirtualItemSlot slot, uint32 display_id, uint32 info0, uint32 info1);
 
-        uint32 HasSummonMask(uint32 mask) const
-        {
-            return mask & m_summonMask;
-        }
-        bool isSummon() const
-        {
-            return m_summonMask & SUMMON_MASK_SUMMON;
-        }
-        bool isGuardian() const
-        {
-            return m_summonMask & SUMMON_MASK_GUARDIAN;
-        }
-        bool isPet() const
-        {
-            return m_summonMask & SUMMON_MASK_PET;
-        }
-        bool isHunterPet() const
-        {
-            return m_summonMask & SUMMON_MASK_HUNTER_PET;
-        }
-        bool isTotem() const
-        {
-            return m_summonMask & SUMMON_MASK_TOTEM;
-        }
-
-        Pet* ToPet()
-        {
-            if (isPet()) return reinterpret_cast<Pet*>(this);
-            else return NULL;
-        }
-        const Pet* ToPet() const
-        {
-            if (isPet()) return reinterpret_cast<const Pet*>(this);
-            else return NULL;
-        }
-
         void SetCorpseDelay(uint32 delay)
         {
             m_corpseDelay = delay;
@@ -558,7 +509,7 @@ class Creature : public Unit, public GridObject<Creature>
 
         bool isElite() const
         {
-            if (isPet())
+            if (IsPet())
                 return false;
 
             uint32 rank = GetCreatureTemplate()->rank;
@@ -567,7 +518,7 @@ class Creature : public Unit, public GridObject<Creature>
 
         bool isWorldBoss() const
         {
-            if (isPet())
+            if (IsPet())
                 return false;
 
             return GetCreatureTemplate()->rank == CREATURE_ELITE_WORLDBOSS;
@@ -919,7 +870,6 @@ class Creature : public Unit, public GridObject<Creature>
         float m_respawnradius;
 
         uint8 m_emoteState;
-        uint32 m_summonMask;
         ReactStates m_reactState;                           // for AI, not charmInfo
         void RegenerateMana();
         void RegenerateHealth();

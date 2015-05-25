@@ -244,7 +244,7 @@ void DynamicObjectUpdater::VisitHelper(Unit* target)
     if (!target->IsAlive() || target->isInFlight())
         return;
 
-    if (target->GetTypeId() == TYPEID_UNIT && ((Creature*)target)->isTotem())
+    if (target->GetTypeId() == TYPEID_UNIT && ((Creature*)target)->IsTotem())
         return;
 
     if (!i_dynobject.IsWithinDistInMap(target, i_dynobject.GetRadius()))

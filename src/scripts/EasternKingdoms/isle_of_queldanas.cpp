@@ -70,7 +70,7 @@ struct npc_converted_sentryAI : public ScriptedAI
                     DoScriptText(SAY_CONVERTED_2, me);
 
                 DoCast(me, SPELL_CONVERT_CREDIT);
-                if (me->isPet())
+                if (me->IsPet())
                     CAST_PET(me)->SetDuration(7500);
                 Credit = true;
                 me->GetMotionMaster()->MoveConfused();

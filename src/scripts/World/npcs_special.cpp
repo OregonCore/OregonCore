@@ -1727,7 +1727,7 @@ struct mob_inferno_infernal : public ScriptedAI
 
     void Reset()
     {
-        if (!initialized && me->HasSummonMask(~0))
+        if (!initialized && me->HasUnitTypeMask(~0))
         {
             if (Unit* owner = ((TempSummon*)me)->GetSummoner())
             {

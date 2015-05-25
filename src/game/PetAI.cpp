@@ -29,7 +29,7 @@
 
 int PetAI::Permissible(const Creature* creature)
 {
-    if (creature->isPet())
+    if (creature->IsPet())
         return PERMIT_BASE_SPECIAL;
 
     return PERMIT_BASE_NO;
@@ -217,7 +217,7 @@ void PetAI::UpdateAI(const uint32 diff)
             }
 
             me->AddCreatureSpellCooldown(spell->m_spellInfo->Id);
-            if (me->isPet())
+            if (me->IsPet())
                 ((Pet*)me)->CheckLearning(spell->m_spellInfo->Id);
 
             spell->prepare(&targets);

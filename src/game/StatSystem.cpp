@@ -869,11 +869,11 @@ bool Guardian::UpdateStats(Stats stat)
     Unit* owner = GetOwner();
     if (stat == STAT_STAMINA)
     {
-        if (owner && (isHunterPet() || owner->getClass() == CLASS_WARLOCK))
+        if (owner && (IsHunterPet() || owner->getClass() == CLASS_WARLOCK))
             value += float(owner->GetStat(stat)) * 0.3f;
     }
     //warlock's and mage's pets gain 30% of owner's intellect
-    else if (stat == STAT_INTELLECT && isPet())
+    else if (stat == STAT_INTELLECT && IsPet())
     {
         if (owner && (owner->getClass() == CLASS_WARLOCK || owner->getClass() == CLASS_MAGE))
             value += float(owner->GetStat(stat)) * 0.3f;
@@ -925,7 +925,7 @@ void Guardian::UpdateResistances(uint32 school)
 
         Unit* owner = GetOwner();
         // hunter and warlock pets gain 40% of owner's resistance
-        if (owner && (isHunterPet() || (isPet() && owner->getClass() == CLASS_WARLOCK)))
+        if (owner && (IsHunterPet() || (IsPet() && owner->getClass() == CLASS_WARLOCK)))
             value += float(owner->GetResistance(SpellSchools(school))) * 0.4f;
 
         SetResistance(SpellSchools(school), int32(value));
@@ -942,7 +942,7 @@ void Guardian::UpdateArmor()
 
     Unit* owner = GetOwner();
     // hunter and warlock pets gain 35% of owner's armor value
-    if (owner && (isHunterPet() || (isPet() && owner->getClass() == CLASS_WARLOCK)))
+    if (owner && (IsHunterPet() || (IsPet() && owner->getClass() == CLASS_WARLOCK)))
         bonus_armor = 0.35f * float(owner->GetArmor());
 
     value  = GetModifierValue(unitMod, BASE_VALUE);
@@ -998,13 +998,13 @@ void Guardian::UpdateAttackPowerAndDamage(bool ranged)
     Unit* owner = GetOwner();
     if (owner && owner->GetTypeId() == TYPEID_PLAYER)
     {
-        if (isHunterPet())                      //hunter pets benefit from owner's attack power
+        if (IsHunterPet())                      //hunter pets benefit from owner's attack power
         {
             bonusAP = owner->GetTotalAttackPowerValue(RANGED_ATTACK) * 0.22f;
             SetBonusDamage(int32(owner->GetTotalAttackPowerValue(RANGED_ATTACK) * 0.125f));
         }
         //demons benefit from warlocks shadow or fire damage
-        else if (isPet() && owner->getClass() == CLASS_WARLOCK)
+        else if (IsPet() && owner->getClass() == CLASS_WARLOCK)
         {
             int32 fire  = int32(owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FIRE)) - owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + SPELL_SCHOOL_FIRE);
             int32 shadow = int32(owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_SHADOW)) - owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + SPELL_SCHOOL_SHADOW);
@@ -1104,7 +1104,7 @@ void Guardian::UpdateDamagePhysical(WeaponAttackType attType)
     float maxdamage = ((base_value + weapon_maxdamage) * base_pct + total_value) * total_pct;
 
     //  Pet's base damage changes depending on happiness
-    if (isHunterPet() && attType == BASE_ATTACK)
+    if (IsHunterPet() && attType == BASE_ATTACK)
     {
         switch (ToPet()->GetHappinessState())
         {

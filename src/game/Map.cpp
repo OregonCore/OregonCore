@@ -2131,7 +2131,7 @@ void Map::RemoveAllObjectsInRemoveList()
         switch (obj->GetTypeId())
         {
         case TYPEID_UNIT:
-            if (!obj->ToCreature()->isPet())
+            if (!obj->ToCreature()->IsPet())
                 SwitchGridContainers(obj->ToCreature(), on);
             break;
         default:
@@ -2239,7 +2239,7 @@ void Map::AddToActive(Creature* c)
     AddToActiveHelper(c);
 
     // also not allow unloading spawn grid to prevent creating creature clone at load
-    if (!c->isPet() && c->GetDBTableGUIDLow())
+    if (!c->IsPet() && c->GetDBTableGUIDLow())
     {
         float x, y, z;
         c->GetRespawnCoord(x, y, z);
@@ -2260,7 +2260,7 @@ void Map::RemoveFromActive(Creature* c)
     RemoveFromActiveHelper(c);
 
     // also allow unloading spawn grid
-    if (!c->isPet() && c->GetDBTableGUIDLow())
+    if (!c->IsPet() && c->GetDBTableGUIDLow())
     {
         float x, y, z;
         c->GetRespawnCoord(x, y, z);

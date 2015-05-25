@@ -35,7 +35,7 @@ CreatureAI* selectAI(Creature* creature)
     const CreatureAICreator* ai_factory = NULL;
     CreatureAIRegistry& ai_registry(CreatureAIRepository::Instance());
 
-    if (creature->isPet())
+    if (creature->IsPet())
         ai_factory = ai_registry.GetRegistryItem("PetAI");
 
     //scriptname in db
@@ -51,15 +51,15 @@ CreatureAI* selectAI(Creature* creature)
     // select by NPC flags
     if (!ai_factory)
     {
-        if (creature->HasSummonMask(SUMMON_MASK_CONTROLABLE_GUARDIAN) && ((Guardian*)creature)->GetOwner()->GetTypeId() == TYPEID_PLAYER)
+        if (creature->HasUnitTypeMask(UNIT_MASK_CONTROLABLE_GUARDIAN) && ((Guardian*)creature)->GetOwner()->GetTypeId() == TYPEID_PLAYER)
             ai_factory = ai_registry.GetRegistryItem("PetAI");
         else if (creature->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK))
             ai_factory = ai_registry.GetRegistryItem("NullCreatureAI");
         else if (creature->isGuard())
             ai_factory = ai_registry.GetRegistryItem("GuardAI");
-        else if (creature->HasSummonMask(SUMMON_MASK_CONTROLABLE_GUARDIAN))
+        else if (creature->HasUnitTypeMask(UNIT_MASK_CONTROLABLE_GUARDIAN))
             ai_factory = ai_registry.GetRegistryItem("PetAI");
-        else if (creature->isTotem())
+        else if (creature->IsTotem())
             ai_factory = ai_registry.GetRegistryItem("TotemAI");
         else if (creature->isTrigger())
         {
@@ -68,7 +68,7 @@ CreatureAI* selectAI(Creature* creature)
             else
                 ai_factory = ai_registry.GetRegistryItem("NullCreatureAI");
         }
-        else if (creature->GetCreatureType() == CREATURE_TYPE_CRITTER && !creature->HasSummonMask(SUMMON_MASK_GUARDIAN))
+        else if (creature->GetCreatureType() == CREATURE_TYPE_CRITTER && !creature->HasUnitTypeMask(UNIT_MASK_GUARDIAN))
             ai_factory = ai_registry.GetRegistryItem("CritterAI");
     }
 

@@ -339,7 +339,7 @@ struct mob_ethereal_beaconAI : public ScriptedAI
                 me->InterruptNonMeleeSpells(true);
 
             me->CastSpell(me, SPELL_ETHEREAL_APPRENTICE, true);
-            if (me->isPet())
+            if (me->IsPet())
                 ((Pet*)me)->SetDuration(0);
             KillSelf();
             return;

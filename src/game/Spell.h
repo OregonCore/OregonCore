@@ -736,7 +736,7 @@ struct SpellNotifierCreatureAndPlayer
                 break;
             case SPELL_TARGETS_ENEMY:
                 {
-                    if (itr->getSource()->GetTypeId() == TYPEID_UNIT && ((Creature*)itr->getSource())->isTotem())
+                    if (itr->getSource()->GetTypeId() == TYPEID_UNIT && ((Creature*)itr->getSource())->IsTotem())
                         continue;
 
                     if (i_caster->GetCreatureType() == CREATURE_TYPE_TOTEM)

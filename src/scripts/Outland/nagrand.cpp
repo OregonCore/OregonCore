@@ -615,7 +615,7 @@ struct npc_maghar_captiveAI : public npc_escortAI
         if (pSummoned->GetEntry() == NPC_MURK_BRUTE)
             DoScriptText(SAY_MAG_NO_ESCAPE, pSummoned);
 
-        if (pSummoned->isTotem())
+        if (pSummoned->IsTotem())
             return;
 
         pSummoned->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
@@ -1406,7 +1406,7 @@ struct npc_kurenai_captiveAI : public npc_escortAI
         if (pSummoned->GetEntry() == MURK_BRUTE)
             DoScriptText(SAY_KUR_NO_ESCAPE, pSummoned);
 
-        if (pSummoned->isTotem())
+        if (pSummoned->IsTotem())
             return;
 
         pSummoned->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);

@@ -83,7 +83,7 @@ void SummonList::DespawnAll()
         else
         {
             erase(begin());
-            if (summon->isSummon())
+            if (summon->IsSummon())
             {
                 summon->DestroyForNearbyPlayers();
                 CAST_SUM(summon)->UnSummon();

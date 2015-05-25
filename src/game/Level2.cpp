@@ -1101,7 +1101,7 @@ bool ChatHandler::HandleChangeLevelCommand(const char* args)
         return false;
     }
 
-    if (pCreature->isPet())
+    if (pCreature->IsPet())
         ((Pet*)pCreature)->GivePetLevel(lvl);
     else
     {
@@ -1161,7 +1161,7 @@ bool ChatHandler::HandleNpcDeleteCommand(const char* args)
     else
         unit = getSelectedCreature();
 
-    if (!unit || unit->isPet() || unit->isTotem())
+    if (!unit || unit->IsPet() || unit->IsTotem())
     {
         SendSysMessage(LANG_SELECT_CREATURE);
         SetSentErrorMessage(true);
@@ -1322,7 +1322,7 @@ bool ChatHandler::HandleNpcSetMoveTypeCommand(const char* args)
     {
         type_str = guid_str;
         pCreature = getSelectedCreature();
-        if (!pCreature || pCreature->isPet())
+        if (!pCreature || pCreature->IsPet())
             return false;
         lowguid = pCreature->GetDBTableGUIDLow();
     }
@@ -1399,7 +1399,7 @@ bool ChatHandler::HandleNpcSetModelCommand(const char* args)
 
     Creature* pCreature = getSelectedCreature();
 
-    if (!pCreature || pCreature->isPet())
+    if (!pCreature || pCreature->IsPet())
     {
         SendSysMessage(LANG_SELECT_CREATURE);
         SetSentErrorMessage(true);
@@ -3700,7 +3700,7 @@ bool ChatHandler::HandleCreatePetCommand(const char* /*args*/)
     Player* player = m_session->GetPlayer();
     Creature* creatureTarget = getSelectedCreature();
 
-    if (!creatureTarget || creatureTarget->isPet() || creatureTarget->GetTypeId() == TYPEID_PLAYER)
+    if (!creatureTarget || creatureTarget->IsPet() || creatureTarget->GetTypeId() == TYPEID_PLAYER)
     {
         PSendSysMessage(LANG_SELECT_CREATURE);
         SetSentErrorMessage(true);

@@ -545,7 +545,7 @@ struct boss_grubbisAI : public ScriptedAI
 
     void SetDataSummoner()
     {
-        if (!me->isSummon())
+        if (!me->IsSummon())
             return;
 
         if (Unit* pSummon = CAST_SUM(me)->GetSummoner())
@@ -562,7 +562,7 @@ struct boss_grubbisAI : public ScriptedAI
 
     void JustDied(Unit* /*pKiller*/)
     {
-        if (!me->isSummon())
+        if (!me->IsSummon())
             return;
 
         if (Unit* pSummon = CAST_SUM(me)->GetSummoner())

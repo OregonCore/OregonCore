@@ -153,7 +153,7 @@ Creature::Creature() :
     m_PlayerDamageReq(0), m_SightDistance(sWorld.getConfig(CONFIG_SIGHT_MONSTER)),
     m_CombatDistance(MELEE_RANGE), m_lootMoney(0), m_lootRecipient(0), m_lootRecipientGroup(0), m_corpseRemoveTime(0), m_respawnTime(0), m_respawnDelay(25),
     m_corpseDelay(60),
-    m_respawnradius(0.0f), m_emoteState(0), m_summonMask(SUMMON_MASK_NONE), m_reactState(REACT_AGGRESSIVE), m_regenTimer(2000),
+    m_respawnradius(0.0f), m_emoteState(0), m_reactState(REACT_AGGRESSIVE), m_regenTimer(2000),
     m_defaultMovementType(IDLE_MOTION_TYPE), m_DBTableGuid(0), m_equipmentId(0),
     m_AlreadyCallAssistance(false), m_AlreadySearchedAssistance(false), m_regenHealth(true), m_AI_locked(false),
     m_meleeDamageSchoolMask(SPELL_SCHOOL_MASK_NORMAL), DisableReputationGain(false), m_creatureData(NULL),
@@ -216,7 +216,7 @@ void Creature::DisappearAndDie()
 
 void Creature::SearchFormation()
 {
-    if (isPet())
+    if (IsPet())
         return;
 
     uint32 lowguid = GetDBTableGUIDLow();
@@ -448,7 +448,7 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
         AddUnitMovementFlag(MOVEFLAG_LEVITATING);
     }
 
-    if (isTotem() || isTrigger()
+    if (IsTotem() || isTrigger()
         || GetCreatureType() == CREATURE_TYPE_CRITTER)
         SetReactState(REACT_PASSIVE);
     /*else if (isCivilian())
@@ -1035,7 +1035,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
 
 void Creature::SelectLevel(const CreatureInfo* cinfo)
 {
-    uint32 rank = isPet() ? 0 : cinfo->rank;
+    uint32 rank = IsPet() ? 0 : cinfo->rank;
 
     // level
     uint32 minlevel = std::min(cinfo->maxlevel, cinfo->minlevel);
@@ -1855,7 +1855,7 @@ Unit* Creature::SelectNearestTargetInAttackDistance(float dist) const
 
 void Creature::CallAssistance()
 {
-    if (!m_AlreadyCallAssistance && getVictim() && !isPet() && !isCharmed())
+    if (!m_AlreadyCallAssistance && getVictim() && !IsPet() && !isCharmed())
     {
         SetNoCallAssistance(true);
 
@@ -1895,7 +1895,7 @@ void Creature::CallAssistance()
 
 void Creature::CallForHelp(float fRadius)
 {
-    if (fRadius <= 0.0f || !getVictim() || isPet() || isCharmed())
+    if (fRadius <= 0.0f || !getVictim() || IsPet() || isCharmed())
         return;
 
     CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
@@ -1959,7 +1959,7 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
 
 void Creature::SaveRespawnTime()
 {
-    if (isPet() || !m_DBTableGuid || (m_creatureData && !m_creatureData->dbData))
+    if (IsPet() || !m_DBTableGuid || (m_creatureData && !m_creatureData->dbData))
         return;
 
     sObjectMgr.SaveCreatureRespawnTime(m_DBTableGuid, GetInstanceId(), m_respawnTime);
@@ -2225,7 +2225,7 @@ void Creature::GetRespawnCoord(float& x, float& y, float& z, float* ori, float* 
 
 void Creature::AllLootRemovedFromCorpse()
 {
-    if (loot.loot_type != LOOT_SKINNING && !isPet() && GetCreatureTemplate()->SkinLootId && hasLootRecipient())
+    if (loot.loot_type != LOOT_SKINNING && !IsPet() && GetCreatureTemplate()->SkinLootId && hasLootRecipient())
         if (LootTemplates_Skinning.HaveLootFor(GetCreatureTemplate()->SkinLootId))
             SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 

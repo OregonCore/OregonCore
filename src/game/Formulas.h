@@ -100,7 +100,7 @@ inline uint32 BaseGain(uint32 pl_level, uint32 mob_level, ContentLevels content)
 inline uint32 Gain(Player* pl, Unit* u)
 {
     if (u->GetTypeId() == TYPEID_UNIT && (
-            ((Creature*)u)->isTotem() || ((Creature*)u)->isPet() ||
+            ((Creature*)u)->IsTotem() || ((Creature*)u)->IsPet() ||
             (((Creature*)u)->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)))
         return 0;
 
@@ -117,7 +117,7 @@ inline uint32 Gain(Player* pl, Unit* u)
 inline uint32 Gain(Pet* pet, Unit* u)
 {
     if (u->GetTypeId() == TYPEID_UNIT && (
-            ((Creature*)u)->isTotem() || ((Creature*)u)->isPet() ||
+            ((Creature*)u)->IsTotem() || ((Creature*)u)->IsPet() ||
             (((Creature*)u)->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)))
         return 0;
 

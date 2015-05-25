@@ -729,7 +729,7 @@ class AnyUnfriendlyNoTotemUnitInObjectRangeCheck
             if (u->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET)
                 return false;
 
-            if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->isTotem())
+            if (u->GetTypeId() == TYPEID_UNIT && u->IsTotem())
                 return false;
 
             if (!u->isTargetableForAttack(false))
@@ -830,7 +830,7 @@ class AnyAoETargetUnitInObjectRangeCheck
             // Check contains checks for: live, non-selectable, non-attackable flags, flight check and GM check, ignore totems
             if (!u->isTargetableForAttack())
                 return false;
-            if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->isTotem())
+            if (u->GetTypeId() == TYPEID_UNIT && u->IsTotem())
                 return false;
 
             if ((i_targetForPlayer ? !i_funit->IsFriendlyTo(u) : i_funit->IsHostileTo(u)) && i_obj->IsWithinDistInMap(u, i_range))

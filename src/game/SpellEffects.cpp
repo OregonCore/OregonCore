@@ -983,7 +983,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 }
             case 23019:                                 // Crystal Prison Dummy DND
                 {
-                    if (!unitTarget || !unitTarget->IsAlive() || unitTarget->GetTypeId() != TYPEID_UNIT || unitTarget->ToCreature()->isPet())
+                    if (!unitTarget || !unitTarget->IsAlive() || unitTarget->GetTypeId() != TYPEID_UNIT || unitTarget->ToCreature()->IsPet())
                         return;
 
                     Creature* creatureTarget = unitTarget->ToCreature();
@@ -1382,7 +1382,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
             case 34665:                                 //Administer Antidote
                 {
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_UNIT
-                        || unitTarget->GetEntry() != 16880 || unitTarget->ToCreature()->isPet())
+                        || unitTarget->GetEntry() != 16880 || unitTarget->ToCreature()->IsPet())
                         return;
 
                     unitTarget->ToCreature()->UpdateEntry(16992);
@@ -2459,7 +2459,7 @@ void Spell::EffectApplyAura(SpellEffIndex effIndex)
         return;
 
     // TODO Make a way so it works for every related spell!
-    if (unitTarget->GetTypeId() == TYPEID_PLAYER || (unitTarget->GetTypeId() == TYPEID_UNIT && unitTarget->ToCreature()->isPet()))             // Negative buff should only be applied on players
+    if (unitTarget->GetTypeId() == TYPEID_PLAYER || (unitTarget->GetTypeId() == TYPEID_UNIT && unitTarget->ToCreature()->IsPet()))             // Negative buff should only be applied on players
     {
         uint32 spellId = 0;
         if (m_spellInfo->CasterAuraStateNot == AURA_STATE_WEAKENED_SOUL || m_spellInfo->TargetAuraStateNot == AURA_STATE_WEAKENED_SOUL)
@@ -3469,7 +3469,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
         case SUMMON_TYPE_TOTEM:
             {
                 summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
-                if (!summon || !summon->isTotem())
+                if (!summon || !summon->IsTotem())
                     return;
 
                 if (damage)                                            // if not spell info, DB values used
@@ -3493,7 +3493,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                 }
 
                 summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
-                if (!summon || !summon->HasSummonMask(SUMMON_MASK_MINION))
+                if (!summon || !summon->HasUnitTypeMask(UNIT_MASK_MINION))
                     return;
 
                 m_caster->SetCritterGUID(summon->GetGUID());
@@ -4122,7 +4122,7 @@ void Spell::EffectTameCreature(SpellEffIndex /*effIndex*/)
 
     Creature* creatureTarget = unitTarget->ToCreature();
 
-    if (creatureTarget->isPet())
+    if (creatureTarget->IsPet())
         return;
 
     if (m_caster->getClass() != CLASS_HUNTER)
@@ -4165,7 +4165,7 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
     {
         if (m_originalCaster->GetTypeId() == TYPEID_PLAYER)
             owner = m_originalCaster->ToPlayer();
-        else if (m_originalCaster->ToCreature()->isTotem())
+        else if (m_originalCaster->ToCreature()->IsTotem())
             owner = m_originalCaster->GetCharmerOrOwnerPlayerOrPlayerItself();
     }
 
@@ -4222,7 +4222,7 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
 
     if (m_caster->GetTypeId() == TYPEID_UNIT)
     {
-        if (m_caster->ToCreature()->isTotem())
+        if (m_caster->ToCreature()->IsTotem())
             pet->SetReactState(REACT_AGGRESSIVE);
         else
             pet->SetReactState(REACT_DEFENSIVE);
@@ -4247,7 +4247,7 @@ void Spell::SummonClassPet(SpellEffIndex effIndex)
     {
         if (m_originalCaster->GetTypeId() == TYPEID_PLAYER)
             caster = m_originalCaster->ToPlayer();
-        else if (m_originalCaster->ToCreature()->isTotem())
+        else if (m_originalCaster->ToCreature()->IsTotem())
             caster = m_originalCaster->GetCharmerOrOwnerPlayerOrPlayerItself();
     }
 
@@ -6415,7 +6415,7 @@ void Spell::EffectDestroyAllTotems(SpellEffIndex /*effIndex*/)
             continue;
 
         Creature* totem = m_caster->GetMap()->GetCreature(m_caster->m_SummonSlot[slot]);
-        if (totem && totem->isTotem())
+        if (totem && totem->IsTotem())
         {
             uint32 spell_id = totem->GetUInt32Value(UNIT_CREATED_BY_SPELL);
             SpellEntry const* spellInfo = sSpellStore.LookupEntry(spell_id);
@@ -6843,7 +6843,7 @@ void Spell::EffectBind(SpellEffIndex /*effIndex*/)
 void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* properties)
 {
     Unit* caster = m_originalCaster;
-    if (caster && caster->GetTypeId() == TYPEID_UNIT && caster->ToCreature()->isTotem())
+    if (caster && caster->GetTypeId() == TYPEID_UNIT && caster->ToCreature()->IsTotem())
         caster = caster->GetOwner();
     if (!caster)
         return;
@@ -6887,13 +6887,13 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* 
         TempSummon* summon = map->SummonCreature(entry, pos, properties, duration, caster);
         if (!summon)
             return;
-        if (summon->HasSummonMask(SUMMON_MASK_GUARDIAN))
+        if (summon->HasUnitTypeMask(UNIT_MASK_GUARDIAN))
             ((Guardian*)summon)->InitStatsForLevel(level);
 
         if (properties && properties->Category == SUMMON_CATEGORY_ALLY)
             summon->setFaction(caster->getFaction());
 
-        if (summon->HasSummonMask(SUMMON_MASK_MINION) && m_targets.HasDst())
+        if (summon->HasUnitTypeMask(UNIT_MASK_MINION) && m_targets.HasDst())
             ((Minion*)summon)->SetFollowAngle(m_caster->GetAngle(summon));
 
         summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);

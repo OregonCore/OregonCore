@@ -1776,16 +1776,16 @@ void WorldObject::AddObjectToRemoveList()
 
 TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropertiesEntry const* properties, uint32 duration, Unit* summoner, SpellEntry const* spellInfo, TempSummonType spwType)
 {
-    uint32 mask = SUMMON_MASK_SUMMON;
+    uint32 mask = UNIT_MASK_SUMMON;
     if (properties)
     {
         switch (properties->Category)
         {
         case SUMMON_CATEGORY_PET:
-            mask = SUMMON_MASK_GUARDIAN;
+            mask = UNIT_MASK_GUARDIAN;
             break;
         case SUMMON_CATEGORY_PUPPET:
-            mask = SUMMON_MASK_PUPPET;
+            mask = UNIT_MASK_PUPPET;
             break;
         case SUMMON_CATEGORY_WILD:
         case SUMMON_CATEGORY_ALLY:
@@ -1795,17 +1795,17 @@ TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropert
                 case SUMMON_TYPE_MINION:
                 case SUMMON_TYPE_GUARDIAN:
                 case SUMMON_TYPE_GUARDIAN2:
-                    mask = SUMMON_MASK_GUARDIAN;
+                    mask = UNIT_MASK_GUARDIAN;
                     break;
                 case SUMMON_TYPE_TOTEM:
-                    mask = SUMMON_MASK_TOTEM;
+                    mask = UNIT_MASK_TOTEM;
                     break;
                 case SUMMON_TYPE_MINIPET:
-                    mask = SUMMON_MASK_MINION;
+                    mask = UNIT_MASK_MINION;
                     break;
                 default:
                     if (properties->Flags & 512)
-                        mask = SUMMON_MASK_GUARDIAN;
+                        mask = UNIT_MASK_GUARDIAN;
                     break;
                 }
                 break;
@@ -1822,19 +1822,19 @@ TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropert
     TempSummon* summon = NULL;
     switch (mask)
     {
-    case SUMMON_MASK_SUMMON:
+    case UNIT_MASK_SUMMON:
         summon = new TempSummon(properties, summoner);
         break;
-    case SUMMON_MASK_GUARDIAN:
+    case UNIT_MASK_GUARDIAN:
         summon = new Guardian(properties, summoner);
         break;
-    case SUMMON_MASK_PUPPET:
+    case UNIT_MASK_PUPPET:
         summon = new Puppet(properties, summoner);
         break;
-    case SUMMON_MASK_TOTEM:
+    case UNIT_MASK_TOTEM:
         summon = new Totem(properties, summoner);
         break;
-    case SUMMON_MASK_MINION:
+    case UNIT_MASK_MINION:
         summon = new Minion(properties, summoner);
         break;
     default:
@@ -1847,7 +1847,7 @@ TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropert
         return NULL;
     }
 
-    if (mask == SUMMON_MASK_TOTEM && spellInfo)
+    if (mask == UNIT_MASK_TOTEM && spellInfo)
     {
         if (Player* pPlayer = summoner->ToPlayer())
         {

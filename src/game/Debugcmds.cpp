@@ -626,7 +626,7 @@ bool ChatHandler::HandleDebugArenaCommand(const char* /*args*/)
 bool ChatHandler::HandleDebugThreatList(const char* /*args*/)
 {
     Creature* target = getSelectedCreature();
-    if (!target || target->isTotem() || target->isPet())
+    if (!target || target->IsTotem() || target->IsPet())
         return false;
 
     std::list<HostileReference*>& tlist = target->getThreatManager().getThreatList();
