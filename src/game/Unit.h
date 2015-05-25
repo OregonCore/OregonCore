@@ -1307,6 +1307,7 @@ class Unit : public WorldObject
         {
             return HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPIRITHEALER | UNIT_NPC_FLAG_SPIRITGUIDE);
         }
+        bool IsCritter() const { return GetCreatureType() == CREATURE_TYPE_CRITTER; }
 
         //Need fix or use this
         bool isGuard() const

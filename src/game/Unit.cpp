@@ -825,32 +825,6 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
         }
     }
 
-    if (pVictim->GetTypeId() != TYPEID_PLAYER)
-    {
-        // no xp,health if type 8 /critters/
-        if (pVictim->GetCreatureType() == CREATURE_TYPE_CRITTER)
-        {
-            // allow loot only if has loot_id in creature_template
-            if (damage >= pVictim->GetHealth())
-            {
-                pVictim->setDeathState(JUST_DIED);
-
-                CreatureInfo const* cInfo = pVictim->ToCreature()->GetCreatureTemplate();
-                if (cInfo && cInfo->lootid)
-                    pVictim->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-
-                // some critters required for quests
-                if (GetTypeId() == TYPEID_PLAYER)
-                    if (CreatureInfo const* normalInfo = sObjectMgr.GetCreatureTemplate(pVictim->GetEntry()))
-                        this->ToPlayer()->KilledMonster(normalInfo, pVictim->GetGUID());
-            }
-            else
-                pVictim->ModifyHealth(- (int32)damage);
-
-            return damage;
-        }
-    }
-
     DEBUG_LOG("DealDamageStart");
 
     uint32 health = pVictim->GetHealth();
@@ -12123,8 +12097,16 @@ void Unit::Kill(Unit* pVictim, bool durabilityLoss)
         player->RewardPlayerAndGroupAtKill(pVictim);
     }
 
-    // Do KILL and KILLED procs. KILL proc is called only for the unit who landed the killing blow regardless of who tapped the victim
-    ProcDamageAndSpell(pVictim, PROC_FLAG_KILL, PROC_FLAG_KILLED, PROC_EX_NONE, 0);
+    // Do KILL and KILLED procs. KILL proc is called only for the unit who landed the killing blow (and its owner - for pets and totems) regardless of who tapped the victim
+    if (IsPet() || IsTotem())
+        if (Unit* owner = GetOwner())
+            owner->ProcDamageAndSpell(pVictim, PROC_FLAG_KILL, PROC_FLAG_NONE, PROC_EX_NONE, 0);
+
+    if (!pVictim->IsCritter())
+        ProcDamageAndSpell(pVictim, PROC_FLAG_KILL, PROC_FLAG_KILLED, PROC_EX_NONE, 0);
+
+    // Proc auras on death - must be before aura/combat remove
+    pVictim->ProcDamageAndSpell(NULL, PROC_FLAG_DEATH, PROC_FLAG_NONE, PROC_EX_NONE, 0, BASE_ATTACK, 0);
 
     // if talent known but not triggered (check priest class for speedup check)
     bool SpiritOfRedemption = false;
@@ -12156,6 +12138,16 @@ void Unit::Kill(Unit* pVictim, bool durabilityLoss)
     {
         DEBUG_LOG("SET JUST_DIED");
         pVictim->setDeathState(JUST_DIED);
+    }
+
+    // Inform pets (if any) when player kills target)
+    // MUST come after victim->setDeathState(JUST_DIED); or pet next target
+    // selection will get stuck on same target and break pet react state
+    if (player)
+    {
+        Pet* pet = player->GetPet();
+        if (pet && pet->IsAlive() && pet->isControlled())
+            pet->AI()->KilledUnit(pVictim);
     }
 
     // 10% durability loss on death
