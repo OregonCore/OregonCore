@@ -3211,37 +3211,55 @@ void Aura::HandleAuraModSkill(bool apply, bool /*Real*/)
 
 void Aura::HandleChannelDeathItem(bool apply, bool Real)
 {
-    if (Real && !apply)
+    if (apply || m_removeMode != AURA_REMOVE_BY_DEATH)
+        return;
+
+    if (Real)
     {
-        Unit* caster = GetCaster();
-        Unit* victim = GetTarget();
-        if (!caster || caster->GetTypeId() != TYPEID_PLAYER || !victim)
+        Player* plCaster = GetCaster()->ToPlayer();
+        Unit* target = GetTarget();
+
+        if (!plCaster || plCaster->GetTypeId() != TYPEID_PLAYER || !target)
             return;
 
-        //we cannot check removemode = death
-        //talent will remove the caster's aura->interrupt channel->remove victim aura
-        if (victim->GetHealth() > 0)
+        // Item amount
+        if (GetAmount() <= 0)
             return;
 
         SpellEntry const* spellInfo = GetSpellProto();
         if (spellInfo->EffectItemType[m_effIndex] == 0)
             return;
 
-        // Soul Shard only from non-grey units
-        if (spellInfo->EffectItemType[m_effIndex] == 6265 &&
-            (victim->getLevel() <= Oregon::XP::GetGrayLevel(caster->getLevel()) ||
-             (victim->GetTypeId() == TYPEID_UNIT && !caster->ToPlayer()->isAllowedToLoot(victim->ToCreature()))))
-            return;
-        ItemPosCountVec dest;
-        uint8 msg = caster->ToPlayer()->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, spellInfo->EffectItemType[m_effIndex], 1);
-        if (msg != EQUIP_ERR_OK)
+        // Soul Shard
+        if (GetSpellProto()->EffectItemType[m_effIndex] == 6265)
         {
-            caster->ToPlayer()->SendEquipError(msg, NULL, NULL);
-            return;
+            // Soul Shard only from units that grant XP or honor
+            if (!plCaster->isHonorOrXPTarget(target) ||
+                (target->GetTypeId() == TYPEID_UNIT && !target->ToCreature()->isTappedBy(plCaster)))
+                return;
         }
 
-        Item* newitem = caster->ToPlayer()->StoreNewItem(dest, spellInfo->EffectItemType[m_effIndex], true);
-        caster->ToPlayer()->SendNewItem(newitem, 1, true, false);
+        //Adding items
+        uint32 noSpaceForCount = 0;
+        uint32 count = m_modifier.m_amount;
+
+        ItemPosCountVec dest;
+        uint8 msg = plCaster->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, spellInfo->EffectItemType[m_effIndex], count, &noSpaceForCount);
+        if (msg != EQUIP_ERR_OK)
+        {
+            count-=noSpaceForCount;
+            plCaster->SendEquipError(msg, NULL, NULL);
+            if (count == 0)
+                return;
+        }
+
+        Item* newitem = plCaster->StoreNewItem(dest, spellInfo->EffectItemType[m_effIndex], true);
+        if (!newitem)
+        {
+            plCaster->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, NULL);
+            return;
+        }
+        plCaster->SendNewItem(newitem, count, true, true);
     }
 }
 

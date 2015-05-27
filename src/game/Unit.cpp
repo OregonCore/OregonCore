@@ -6134,20 +6134,26 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
                     trigger_spell_id = 18093;
                 }
                 // Drain Soul
-                else if (auraSpellInfo->SpellFamilyFlags & 0x0000000000004000LL)
+                else if (auraSpellInfo->SpellFamilyFlags & 0x4000)
                 {
-                    Unit::AuraList const& mAddFlatModifier = GetAurasByType(SPELL_AURA_ADD_FLAT_MODIFIER);
+                    // Improved Drain Soul
+                    Unit::AuraList const& mAddFlatModifier = GetAurasByType(SPELL_AURA_DUMMY);
                     for (Unit::AuraList::const_iterator i = mAddFlatModifier.begin(); i != mAddFlatModifier.end(); ++i)
                     {
                         if ((*i)->GetModifier()->m_miscvalue == SPELLMOD_CHANCE_OF_SUCCESS && (*i)->GetSpellProto()->SpellIconID == 113)
                         {
                             int32 value2 = CalculateSpellDamage((*i)->GetSpellProto(), 2, (*i)->GetSpellProto()->EffectBasePoints[2], this);
-                            basepoints0 = value2 * GetMaxPower(POWER_MANA) / 100;
+                            basepoints0 = int32(CalculatePct(GetMaxPower(POWER_MANA), value2));
+                            // Drain Soul
+                            CastCustomSpell(this, 18371, &basepoints0, NULL, NULL, true, castItem, triggeredByAura);
+                            break;
                         }
                     }
-                    if (basepoints0 == 0)
-                        return false;
                     trigger_spell_id = 18371;
+
+                    // Not remove charge (aura removed on death in any cases)
+                    // Need for correct work Drain Soul SPELL_AURA_CHANNEL_DEATH_ITEM aura
+                    return false;
                 }
                 break;
             }
