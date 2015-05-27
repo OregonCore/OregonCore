@@ -2378,16 +2378,6 @@ void Spell::cast(bool skipCheck)
 
     FillTargetMap();
 
-   // Check for unlocking spells, force skip a check and take the key.
-   for (int i = 0; i < 3; i++)
-   {
-       if(m_spellInfo->Effect[i] == SPELL_EFFECT_OPEN_LOCK_ITEM)
-       {
-           TakeCastItem();
-           skipCheck = true;
-       }
-   }
-
     // triggered cast called from Spell::prepare where it was already checked
     if (!skipCheck)
     {
@@ -2452,10 +2442,6 @@ void Spell::cast(bool skipCheck)
     // Okay, everything is prepared. Now we need to distinguish between immediate and evented delayed spells
     if ((m_spellInfo->speed > 0.0f && !IsChanneledSpell(m_spellInfo)) || m_spellInfo->AttributesEx4 & SPELL_ATTR_EX4_UNK4)
     {
-        // Remove used for cast item if need (it can be already NULL after TakeReagents call
-        // in case delayed spell remove item at cast delay start
-        TakeCastItem();
-
         // Okay, maps created, now prepare flags
         m_immediateHandled = false;
         m_spellState = SPELL_STATE_DELAYED;
@@ -2622,6 +2608,7 @@ void Spell::_handle_immediate_phase()
 {
     // handle some immediate features of the spell here
     HandleThreatSpells();
+    TakeCastItem();
 
     m_needSpellLog = IsNeedSendToClient();
     for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
