@@ -14094,9 +14094,10 @@ void Player::AreaExploredOrEventHappens(uint32 questId)
                 SetQuestSlotState(log_slot, QUEST_STATE_COMPLETE);
                 SendQuestComplete(questId);
             }
+
+            if (CanCompleteQuest(questId))
+                CompleteQuest(questId);
         }
-        if (CanCompleteQuest(questId))
-            CompleteQuest(questId);
     }
 }
 
