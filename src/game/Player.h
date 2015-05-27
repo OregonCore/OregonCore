@@ -2774,6 +2774,11 @@ class Player : public Unit, public GridObject<Player>
             return m_rafLink;
         }
 
+        void SetRAFStatus(RAFLinkStatus status)
+        {
+            m_rafLink = status;
+        }
+
     protected:
 
         uint32 m_contestedPvPTimer;

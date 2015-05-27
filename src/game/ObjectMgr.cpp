@@ -2708,6 +2708,10 @@ void ObjectMgr::LoadReferredFriends()
     uint64 Id2;
     ReferFriendMap::const_iterator it;
 
+    // clear these in case of reload
+    m_referrerFriends.clear();
+    m_referredFriends.clear();
+
     do
     {
         Field* field = result->Fetch();
@@ -2783,11 +2787,21 @@ RAFLinkStatus ObjectMgr::GetRAFLinkStatus (uint64 AccOne, uint64 AccTwo) const
     return RAF_LINK_NONE;
 }
 
+
+#define UPDATE_PLAYER(plr)                         \
+    if (Player* player = plr)                      \
+    {                                              \
+        player->SetRAFStatus(RAF_LINK_NONE);       \
+        player->SetRestBonus(player->GetRestBonus()); \
+    }
+
 void ObjectMgr::LinkIntoRAF(uint64 AccOne, uint64 AccTwo)
 {
     m_referrerFriends[AccOne] = AccTwo;
     m_referredFriends[AccTwo] = AccOne;
     LoginDatabase.PExecute("REPLACE INTO account_referred (id1, id2) VALUES (" UI64FMTD ", " UI64FMTD ")", AccOne, AccTwo);
+    UPDATE_PLAYER(ObjectAccessor::Instance().FindPlayerByAccountId(AccOne))
+    UPDATE_PLAYER(ObjectAccessor::Instance().FindPlayerByAccountId(AccTwo))
 }
 
 void ObjectMgr::UnlinkFromRAF(uint64 AccOne)
@@ -2801,14 +2815,20 @@ void ObjectMgr::UnlinkFromRAF(uint64 AccOne)
         m_referrerFriends.erase(m_referrerFriends.find(AccOne));
         m_referredFriends.erase(m_referredFriends.find(AccTwo));
         LoginDatabase.PExecute("DELETE FROM account_referred WHERE id1 = " UI64FMTD " AND id2 = " UI64FMTD "", AccOne, AccTwo);
+        UPDATE_PLAYER(ObjectAccessor::Instance().FindPlayerByAccountId(AccOne))
+        UPDATE_PLAYER(ObjectAccessor::Instance().FindPlayerByAccountId(AccTwo))
         break;
     case RAF_LINK_REFERRED:
         m_referrerFriends.erase(m_referrerFriends.find(AccTwo));
         m_referredFriends.erase(m_referredFriends.find(AccOne));
         LoginDatabase.PExecute("DELETE FROM account_referred WHERE id1 = " UI64FMTD " AND id2 = " UI64FMTD "", AccTwo, AccOne);
+        UPDATE_PLAYER(ObjectAccessor::Instance().FindPlayerByAccountId(AccOne))
+        UPDATE_PLAYER(ObjectAccessor::Instance().FindPlayerByAccountId(AccTwo))
         break;
     }
 }
+
+#undef UPDATE_PLAYER
 
 Player* ObjectMgr::GetRAFLinkedBuddyForPlayer(const Player* plr1) const
 {
