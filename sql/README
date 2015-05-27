@@ -8,7 +8,6 @@ Installation: (with OregonDB)
   3: sql/characters.sql
   4: sql/realmd.sql
   5: sql/oregon_database.zip (must be extracted first)
-  6: sql/update/*.sql (apply all patches from the 3 subfolders (charaacters, realmd, world)
   
 Installation: (without OregonDB) (no support from Oregon for DB Problems)
   1: sql/create_mysql.sql
@@ -16,13 +15,8 @@ Installation: (without OregonDB) (no support from Oregon for DB Problems)
   3: sql/characters.sql
   4: sql/realmd.sql
   5: Install your own world DB (or use a different DB Project)
-  6: sql/update/*.sql (apply all patches from the 3 subfolders (charaacters, realmd, world)
 
 Update from existing Oregoncore Rev. (rev. before 1600)
   1: Start to apply all Patches from sql/old/database/ Folder starting at your revision until the last update is applyed
   2: Apply all updates from sql/old/updates/world/ sting from rev 1419
   3: Apply all necessary updates from sql/old/updates/characters/ and sql/old/updates/realmd/
-  4: Continue reading the next block
-  
-Update from existing Oregoncore Rev. (rev. 1600+)
-  1: You must only apply the updates from sql/updates/ folder to the correct Database.

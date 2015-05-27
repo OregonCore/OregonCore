@@ -261,6 +261,7 @@ enum WorldConfigs
     CONFIG_BOOL_MMAP_ENABLED,
     CONFIG_UI_QUESTLEVELS_IN_DIALOGS,
     CONFIG_CREATURE_PICKPOCKET_REFILL,
+    CONFIG_SQLUPDATER_ENABLED,
     CONFIG_VALUE_COUNT
 };
 
@@ -784,6 +785,7 @@ class World
         void LoadAutobroadcasts();
         void LoadIp2nation();
         void LoadOpcodeProtection();
+        void LoadSQLUpdates();
 
         ProtectedOpcodeProperties const& GetProtectedOpcodeProperties(uint32 opcode);
     protected:
@@ -867,6 +869,7 @@ class World
         std::string m_ScriptsVersion;
 
         std::list<std::string> m_Autobroadcasts;
+        std::string m_SQLUpdatesPath;
         UNORDERED_MAP<uint32, ProtectedOpcodeProperties> _protectedOpcodesProperties;
 };
 

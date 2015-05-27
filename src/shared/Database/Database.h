@@ -64,6 +64,8 @@ class Database
         QueryNamedResult* QueryNamed(const char* sql);
         QueryNamedResult* PQueryNamed(const char* format, ...) ATTR_PRINTF(2, 3);
 
+        bool ExecuteFile(const char* file);
+
         // Async queries and query holders, implemented in DatabaseImpl.h
 
         // Query / member

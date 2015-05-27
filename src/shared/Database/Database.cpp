@@ -29,10 +29,12 @@
 #include "Database/SqlOperations.h"
 #include "Timer.h"
 
-
 #include <ctime>
 #include <iostream>
 #include <fstream>
+#ifdef unix
+#include <sys/file.h>
+#endif
 
 size_t Database::db_count = 0;
 
@@ -593,5 +595,72 @@ void Database::HaltDelayThread()
     delete m_delayThread;                                   //This also deletes m_threadBody
     m_delayThread = NULL;
     m_threadBody = NULL;
+}
+
+bool Database::ExecuteFile(const char* file)
+{
+    if (!mMysql)
+        return false;
+
+    if (mysql_set_server_option(mMysql, MYSQL_OPTION_MULTI_STATEMENTS_ON))
+    {
+        sLog.outErrorDb("Cannot turn multi-statements on: %s", mysql_error(mMysql));
+        return false;
+    }
+
+    bool success = false;
+
+    if (FILE* fp = fopen(file, "rb"))
+    {
+        #if PLATFORM == PLATFORM_WINDOWS
+        HANDLE fileHandle = (HANDLE) _get_osfhandle(fileno(fp));
+        LockFile(fileHandle, 0, 0, -1, -1);
+        #else
+        flock(fileno(fp), LOCK_SH);
+        #endif
+        //------
+        
+        struct stat info;
+        fstat(fileno(fp), &info);
+
+        // if less than 1MB allocate on stack, else on heap
+        char* contents = (info.st_size > 1024*1024) ? new char[info.st_size] : (char*) alloca(info.st_size);
+
+        if (fread(contents, info.st_size, 1, fp) == 1)
+        {
+            if (mysql_real_query(mMysql, contents, info.st_size))
+            {
+                sLog.outErrorDb("Cannot execute file %s, size: %lu: %s", file, info.st_size, mysql_error(mMysql));
+            }
+            else
+            {
+                while (!mysql_next_result(mMysql))
+                    ;
+
+                success = true;
+            }
+        }
+        else
+        {
+           sLog.outErrorDb("Couldn't read file %s, size: %lu", file, info.st_size);
+           return false;
+        }
+
+        // if allocated on heap, free memory
+        if (info.st_size > 1024*1024)
+            delete [] contents;
+
+        //------
+        #if PLATFORM == PLATFORM_WINDOWS
+        UnlockFile(fileHandle, 0, 0, -1, -1);
+        close((int)fileHandle);
+        #else
+        flock(fileno(fp), LOCK_UN);
+        #endif
+        fclose(fp);
+    }
+
+    mysql_set_server_option(mMysql, MYSQL_OPTION_MULTI_STATEMENTS_OFF);
+    return success;
 }
 

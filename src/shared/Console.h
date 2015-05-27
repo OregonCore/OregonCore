@@ -19,6 +19,7 @@ class Console
         friend class World;
         friend class Master;
         friend class Log;
+        friend void LoadSQLUpdates();
 
         void Initialize();
 

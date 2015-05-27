@@ -1084,6 +1084,147 @@ void World::LoadConfigSettings(bool reload)
 
     // Misc
     m_configs[CONFIG_UI_QUESTLEVELS_IN_DIALOGS] = sConfig.GetBoolDefault("UI.ShowQuestLevelsInDialogs", false);
+    m_configs[CONFIG_SQLUPDATER_ENABLED] = sConfig.GetBoolDefault("DatabaseUpdater.Enabled", false);
+    m_SQLUpdatesPath = sConfig.GetStringDefault("DatabaseUpdater.PathToUpdates", "");
+	if (!m_SQLUpdatesPath.size() || (*m_SQLUpdatesPath.rbegin() != '\\' && *m_SQLUpdatesPath.rbegin() != '/'))
+    #if PLATFORM == PLATFORM_WINDOWS
+		m_SQLUpdatesPath += '\\';
+    #else
+		m_SQLUpdatesPath += '/';
+    #endif
+}
+
+void World::LoadSQLUpdates()
+{
+    const struct
+    {
+        Database* db;
+        const char* path;
+    } updates[]
+        =
+    {
+        { &LoginDatabase,     "realmd" },
+        { &WorldDatabase,     "world" },
+        { &CharacterDatabase, "characters" }
+    };
+
+    std::string path;
+    std::stringstream label;
+    std::vector<std::string> files;
+
+    for (uint32 i = 0; i < 3; i++)
+    {
+        path = m_SQLUpdatesPath;
+        path += updates[i].path;
+        uint32 currentRev = 0;
+
+        // if table `version` doesnt exist, create it
+        // if it does exist but doesn't have db_revision column, add it
+        // if it has the column, fetch it
+        if (updates[i].db->Query("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = DATABASE() AND table_name = 'version'"))
+        {
+            // table exists
+            if (updates[i].db->Query("SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = DATABASE() AND table_name = 'version' AND column_name = 'db_revision'"))
+            {
+                // column db_revision exists
+                if (QueryResult_AutoPtr result = updates[i].db->Query("SELECT db_revision FROM version"))
+                    currentRev = result->Fetch()[0].GetUInt32();
+                else
+                    updates[i].db->DirectExecute("UPDATE version SET db_revision = 0");
+            }
+            else
+            {
+                // column doesn't exist - let's create it!
+                updates[i].db->DirectExecute("ALTER TABLE version ADD COLUMN db_revision INT UNSIGNED NOT NULL DEFAULT 0");
+            }
+        }
+        else
+        {
+            // table doesn't exist - this case is 'realmd' and 'characters' database only and only first-time
+            updates[i].db->DirectExecute("CREATE TABLE version ( db_revision INT UNSIGNED NOT NULL DEFAULT 0 ) engine = InnoDB");
+            updates[i].db->DirectExecute("INSERT INTO version VALUES (0)");
+        }
+
+        char cwd[PATH_MAX];
+        getcwd(cwd, PATH_MAX);
+        if (-1 == chdir(path.c_str()))
+            sLog.outFatal("Can't change directory to %s: %s", path.c_str(), strerror(errno));
+        files.clear();
+
+        #if PLATFORM == PLATFORM_WINDOWS
+		path += "\\*";
+        WIN32_FIND_DATA findData;
+        HANDLE hItr = FindFirstFile(path.c_str(), &findData);
+		if (hItr != INVALID_HANDLE_VALUE)
+        {
+            do
+            {
+               #ifdef _UNICODE
+               std::string utf8string;
+               WStrToUtf8(findData.cFileName, mcslen(findData.cFileName));
+               files.push_back(utf8string);
+               #else
+               files.push_back(findData.cFileName);
+               #endif
+            }
+            while (FindNextFile(hItr, &findData) != 0);
+
+            FindClose(hItr);
+        }
+        else
+        {
+            DWORD dwLastError = GetLastError();
+            #ifdef _UNICODE
+            TCHAR lpBuffer[256] = L"?";
+			#else
+			TCHAR lpBuffer[256] = "?";
+			#endif
+            FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
+                          NULL,
+                          dwLastError,
+                          MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT), 
+                          lpBuffer,
+                          sizeof(lpBuffer)-1,
+                          NULL);
+            #ifdef _UNICODE
+            sLog.outFatal("Can't open: %s: %ls", path.c_str(), lpBuffer);
+            #else
+            sLog.outFatal("Can't open: %s: %s", path.c_str(), lpBuffer);
+            #endif
+        }
+        #else
+        if (DIR* dir = opendir(path.c_str()))
+        {
+            while (dirent* entry = readdir(dir))
+                files.push_back(entry->d_name);
+            closedir(dir);
+        }
+        else
+            sLog.outFatal("Can't open %s: %s", path.c_str(), strerror(errno));
+        #endif
+ 
+        std::sort(files.begin(), files.end());
+
+        for (size_t j = 0; j < files.size(); ++j)
+        {
+            uint32 revision;
+            char name[PATH_MAX];
+            if (sscanf(files[j].c_str(), "%u_%s.sql", &revision, name) != 2 || currentRev >= revision)
+                continue;
+            
+            label.str("");
+            label << "Applying " << files[j].c_str() << " (" << j << '/' << files.size() << ')';
+            sConsole.SetLoadingLabel(label.str().c_str());
+
+            if (updates[i].db->ExecuteFile(files[j].c_str()))
+                updates[i].db->DirectPExecute("UPDATE version SET db_revision = %u", revision);
+            else
+                sLog.outFatal("Failed to apply %s. See db_errors.log for more details.", files[j].c_str());
+        }
+
+        if (-1 == chdir(cwd))
+            sLog.outFatal("Can't change directory to %s: %s", cwd, strerror(errno));
+    }
 }
 
 // Initialize the World
@@ -1130,6 +1271,12 @@ void World::SetInitialWorldSettings()
 
     // Remove the bones (they should not exist in DB though) and old corpses after a restart
     CharacterDatabase.PExecute("DELETE FROM corpse WHERE corpse_type = '0' OR time < (UNIX_TIMESTAMP()-'%u')", 3 * DAY);
+
+    if (getConfig(CONFIG_SQLUPDATER_ENABLED))
+    {
+        sConsole.SetLoadingLabel("Applying SQL Updates...");
+        LoadSQLUpdates();
+    }
 
     // Load the DBC files
     sConsole.SetLoadingLabel("Initialize data stores...");
