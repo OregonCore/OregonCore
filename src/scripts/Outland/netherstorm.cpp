@@ -28,7 +28,7 @@ go_manaforge_control_console
 npc_commander_dawnforge
 at_commander_dawnforge
 npc_professor_dabiri
-mob_phase_hunter
+npc_phase_hunter
 npc_bessy
 npc_maxx_a_million
 npc_zeppit
@@ -726,32 +726,43 @@ bool QuestAccept_npc_professor_dabiri(Player* player, Creature* creature, Quest 
 }
 
 /*######
-## mob_phase_hunter
+## npc_phase_hunter
 ######*/
 
-#define SUMMONED_MOB            19595
-#define EMOTE_WEAK              -1000303
-
-// Spells
-#define SPELL_PHASE_SLIP        36574
-#define SPELL_MANA_BURN         13321
-#define SPELL_MATERIALIZE       34804
-#define SPELL_DE_MATERIALIZE    34804
-
-struct mob_phase_hunterAI : public ScriptedAI
+enum phaseHunter
 {
+    // NPCs
+    NPC_DRAINED_PHASE_HUNTER    = 19595,
+    NPC_PHASE_HUNTER            = 18879,
 
-    mob_phase_hunterAI(Creature* c) : ScriptedAI(c) {}
+    // Models
+    MODEL_PHASE_HUNTER          = 19435,
+    MODEL_DRAINED_PHASE_HUNTER  = 19436,
+
+    // Spells
+    SPELL_PHASE_SLIP            = 36574,
+    SPELL_MANA_BURN             = 13321,
+    SPELL_MATERIALIZE           = 34804,
+    SPELL_RECHARGING_BATTERY    = 34219,
+
+    // Quest
+    QUEST_RECHARGING_BATTERIES  = 10190,
+
+    // Misc
+    WEAK_PERCENT                = 25
+};
+
+#define EMOTE_WEAK          "is very weak."
+
+struct npc_phase_hunterAI : public ScriptedAI
+{
+    npc_phase_hunterAI(Creature* c) : ScriptedAI(c) {}
 
     bool Weak;
     bool Materialize;
     bool Drained;
 
-    int WeakPercent;
     uint64 PlayerGUID;
-    uint32 Health;
-    uint32 Level;
-    uint32 PhaseSlipVulnerabilityTimer;
     uint32 ManaBurnTimer;
 
     void Reset()
@@ -760,9 +771,11 @@ struct mob_phase_hunterAI : public ScriptedAI
         Materialize = false;
         Drained = false;
 
-        WeakPercent = 25 + (rand() % 16); // 25-40
         PlayerGUID = 0;
-        ManaBurnTimer = 5000 + (rand() % 3 * 1000); // 5-8 sec cd
+        ManaBurnTimer = urand(5000, 8000);
+
+        me->SetEntry(NPC_PHASE_HUNTER);
+        me->SetDisplayId(MODEL_PHASE_HUNTER);
     }
 
     void EnterCombat(Unit* who)
@@ -773,8 +786,16 @@ struct mob_phase_hunterAI : public ScriptedAI
 
     void SpellHit(Unit* /*caster*/, const SpellEntry* /*spell*/)
     {
-        DoCast(me, SPELL_DE_MATERIALIZE);
+        DoCast(me, SPELL_MATERIALIZE);
     }
+
+	void JustDied(Unit* killer)
+	{
+		if (me->GetEntry() == NPC_DRAINED_PHASE_HUNTER)
+			if (Player* plWho = killer->GetCharmerOrOwnerPlayerOrPlayerItself())
+				if (plWho->GetQuestStatus(QUEST_RECHARGING_BATTERIES) == QUEST_STATUS_INCOMPLETE)
+						plWho->KilledMonsterCredit(NPC_DRAINED_PHASE_HUNTER);
+	}
 
     void UpdateAI(const uint32 diff)
     {
@@ -784,65 +805,48 @@ struct mob_phase_hunterAI : public ScriptedAI
             Materialize = true;
         }
 
-        if (me->HasAuraType(SPELL_AURA_MOD_DECREASE_SPEED) || me->HasUnitState(UNIT_STATE_ROOT)) // if the mob is rooted/slowed by spells eg.: Entangling Roots, Frost Nova, Hamstring, Crippling Poison, etc. => remove it
+        if (me->HasAuraType(SPELL_AURA_MOD_DECREASE_SPEED) || me->HasUnitState(UNIT_STATE_ROOT))
             DoCast(me, SPELL_PHASE_SLIP);
 
         if (!UpdateVictim())
             return;
 
-        if (ManaBurnTimer <= diff) // cast Mana Burn
+        if (ManaBurnTimer <= diff)
         {
-            if (me->getVictim()->GetCreateMana() > 0)
+            if (me->getVictim()->getPowerType() == POWER_MANA && me->getVictim()->GetPower(POWER_MANA) > 0)
             {
-                DoCastVictim( SPELL_MANA_BURN);
-                ManaBurnTimer = 8000 + (rand() % 10 * 1000); // 8-18 sec cd
+                DoCastVictim(SPELL_MANA_BURN);
+                urand(8000, 18000);
             }
         }
         else ManaBurnTimer -= diff;
 
-        if (PlayerGUID) // start: support for quest 10190
+        if (PlayerGUID)
         {
             Player* pTarget = Unit::GetPlayer(*me, PlayerGUID);
 
-            if (pTarget && !Weak && me->GetHealth() < (me->GetMaxHealth() / 100 * WeakPercent)
-                && pTarget->GetQuestStatus(10190) == QUEST_STATUS_INCOMPLETE)
+            if (pTarget && !Weak && me->GetHealthPct() < WEAK_PERCENT
+                && pTarget->GetQuestStatus(QUEST_RECHARGING_BATTERIES) == QUEST_STATUS_INCOMPLETE)
             {
-                DoScriptText(EMOTE_WEAK, me);
+                me->MonsterTextEmote(EMOTE_WEAK, 0);
                 Weak = true;
             }
-            if (Weak && !Drained && me->HasAura(34219, 0))
+            if (Weak && !Drained && me->HasAura(SPELL_RECHARGING_BATTERY))
             {
                 Drained = true;
 
-                Health = me->GetHealth(); // get the normal mob's data
-                Level = me->getLevel();
-
-                me->AttackStop(); // delete the normal mob
-                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                me->RemoveCorpse();
-
-                Creature* DrainedPhaseHunter = NULL;
-
-                if (!DrainedPhaseHunter)
-                    DrainedPhaseHunter = me->SummonCreature(SUMMONED_MOB, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000); // summon the mob
-
-                if (DrainedPhaseHunter)
-                {
-                    DrainedPhaseHunter->SetLevel(Level); // set the summoned mob's data
-                    DrainedPhaseHunter->SetHealth(Health);
-                    DrainedPhaseHunter->AddThreat(pTarget, 10000.0f);
-                    DrainedPhaseHunter->AI()->AttackStart(pTarget);
-                }
+                me->SetEntry(NPC_DRAINED_PHASE_HUNTER);
+                me->SetDisplayId(MODEL_DRAINED_PHASE_HUNTER);
             }
-        }// end: support for quest 10190
+        }
 
         DoMeleeAttackIfReady();
     }
 };
 
-CreatureAI* GetAI_mob_phase_hunter(Creature* pCreature)
+CreatureAI* GetAI_npc_phase_hunter(Creature* c)
 {
-    return new mob_phase_hunterAI (pCreature);
+    return new npc_phase_hunterAI (c);
 }
 
 /*######
@@ -1487,8 +1491,8 @@ void AddSC_netherstorm()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "mob_phase_hunter";
-    newscript->GetAI = &GetAI_mob_phase_hunter;
+    newscript->Name = "npc_phase_hunter";
+    newscript->GetAI = &GetAI_npc_phase_hunter;
     newscript->RegisterSelf();
 
     newscript = new Script;

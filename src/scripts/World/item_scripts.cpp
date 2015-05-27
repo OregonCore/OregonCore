@@ -557,6 +557,21 @@ bool ItemUse_item_zezzak_shard(Player* player, Item* _Item, SpellCastTargets con
     return true;
 }
 
+/*#####
+# item_battery
+#####*/
+
+bool ItemUse_item_battery(Player* player, Item* _Item, SpellCastTargets const& targets)
+{
+    if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT &&
+        targets.getUnitTarget()->GetEntry() == 18879 && player->GetQuestStatus(10190) == QUEST_STATUS_INCOMPLETE &&
+        (targets.getUnitTarget()->GetHealthPct() <= 25))
+        return false;
+
+    player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, _Item, NULL);
+    return true;
+}
+
 void AddSC_item_scripts()
 {
     Script* newscript;
@@ -664,6 +679,11 @@ void AddSC_item_scripts()
     newscript = new Script;
     newscript->Name="item_chest_of_containment_coffers";
     newscript->pItemUse = &ItemUse_item_chest_of_containment_coffers;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "item_battery";
+    newscript->pItemUse = &ItemUse_item_battery;
     newscript->RegisterSelf();
 }
 
