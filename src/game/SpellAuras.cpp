@@ -2384,6 +2384,15 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     player->ResummonTemporaryUnsummonedPetIfAny();
                 return;
             }
+
+            // As the crow flies
+            if (GetId() == 31606)
+            {
+                if (apply)
+                    SetAuraDuration(110000);
+                else if (Player* player = m_target->ToPlayer())
+                    player->AreaExploredOrEventHappens(9718);
+            }
             break;
         }
     case SPELLFAMILY_MAGE:
