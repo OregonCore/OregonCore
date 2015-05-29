@@ -14094,13 +14094,13 @@ void Player::AreaExploredOrEventHappens(uint32 questId)
                 q_status.m_explored = true;
                 if (q_status.uState != QUEST_NEW)
                     q_status.uState = QUEST_CHANGED;
+
                 SetQuestSlotState(log_slot, QUEST_STATE_COMPLETE);
-                SendQuestComplete(questId);
             }
+        }
 
             if (CanCompleteQuest(questId))
                 CompleteQuest(questId);
-        }
     }
 }
 
