@@ -234,7 +234,7 @@ void WorldSession::HandleGroupDeclineOpcode(WorldPacket& /*recv_data*/)
     if (!group) return;
 
     // remember leader if online
-    Player* leader = sObjectMgr.GetPlayer(group->GetLeaderGUID());
+    Player* leader = sObjectMgr.GetPlayer(group->GetLeaderGUID(), true);
 
     // uninvite, group can be deleted
     GetPlayer()->UninviteFromGroup();
@@ -337,7 +337,7 @@ void WorldSession::HandleGroupSetLeaderOpcode(WorldPacket& recv_data)
     uint64 guid;
     recv_data >> guid;
 
-    Player* player = sObjectMgr.GetPlayer(guid);
+    Player* player = sObjectMgr.GetPlayer(guid, true);
 
     /** error handling **/
     if (!player || !group->IsLeader(GetPlayer()->GetGUID()) || player->GetGroup() != group)
