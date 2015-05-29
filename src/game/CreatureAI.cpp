@@ -238,13 +238,17 @@ bool CreatureAI::_EnterEvadeMode()
     // sometimes bosses stuck in combat?
     me->DeleteThreatList();
     me->CombatStop(true);
-    me->LoadCreaturesAddon();
     me->SetLootRecipient(NULL);
     me->ResetPlayerDamageReq();
     me->SetLastDamagedTime(0);
 
     if (me->IsInEvadeMode())
         return false;
+
+    me->RemoveAllAuras();
+    me->LoadCreaturesAddon();
+    // @todo Determine if required
+    //me->SetReactState(REACT_AGGRESSIVE);
 
     return true;
 }
