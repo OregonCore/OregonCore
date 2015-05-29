@@ -1317,6 +1317,21 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     m_caster->CastSpell(unitTarget, 40932, true);
                     break;
                 }
+            // Salvage Wreckage
+            case 42287:
+            {
+                if (!gameObjTarget && m_caster->GetTypeId() != TYPEID_PLAYER)
+                    return;
+
+                if (roll_chance_i(66))
+                    m_caster->CastSpell(m_caster, 42289, true, m_CastItem); // Summon Mirefin Burrower
+                else
+                    m_caster->CastSpell(m_caster, 42288, true); // Summon Salvaged Lockbox
+
+                gameObjTarget->DestroyForNearbyPlayers();
+
+                return;
+            }
             // Demon Broiled Surprise
             case 43723:
                 {
