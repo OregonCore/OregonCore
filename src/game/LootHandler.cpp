@@ -162,6 +162,7 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recv_data*/)
         return;
 
     Loot* pLoot = NULL;
+    bool shareMoney = true;
 
     switch (GUID_HIPART(guid))
     {
@@ -180,25 +181,36 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recv_data*/)
             Corpse* bones = ObjectAccessor::GetCorpse(*GetPlayer(), guid);
 
             if (bones && bones->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
+            {
                 pLoot = &bones->loot;
+                shareMoney = false;
+            }
 
             break;
         }
     case HIGHGUID_ITEM:
         {
             if (Item* item = GetPlayer()->GetItemByGuid(guid))
+            {
                 pLoot = &item->loot;
+                shareMoney = false;
+            }
             break;
         }
     case HIGHGUID_UNIT:
         {
-            Creature* pCreature = GetPlayer()->GetMap()->GetCreature(guid);
+            Creature* creature = GetPlayer()->GetMap()->GetCreature(guid);
 
-            bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->loot.loot_type == LOOT_SKINNING);
+            bool ok_loot = creature && creature->IsAlive() == (player->getClass() == CLASS_ROGUE && creature->loot.loot_type == LOOT_SKINNING);
 
-            if (ok_loot && player->isAllowedToLoot(pCreature) && pCreature->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
-                pLoot = &pCreature->loot ;
-
+            if (ok_loot && creature->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
+            {
+                pLoot = &creature->loot;
+                if (creature->IsAlive())
+                    shareMoney = false;
+            }
+            else
+                player->SendLootError(guid, ok_loot ? LOOT_ERROR_TOO_FAR : LOOT_ERROR_DIDNT_KILL);
             break;
         }
     default:
@@ -207,7 +219,8 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recv_data*/)
 
     if (pLoot)
     {
-        if (!IS_ITEM_GUID(guid) && player->GetGroup())      //item can be looted only single player
+        pLoot->NotifyMoneyRemoved();
+        if (shareMoney && player->GetGroup())      //item, pickpocket and players can be looted only single player
         {
             Group* group = player->GetGroup();
 
@@ -226,16 +239,17 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recv_data*/)
             for (std::vector<Player*>::const_iterator i = playersNear.begin(); i != playersNear.end(); ++i)
             {
                 (*i)->ModifyMoney(money_per_player);
-                //Offset surely incorrect, but works
+
                 WorldPacket data(SMSG_LOOT_MONEY_NOTIFY, 4);
                 data << uint32(money_per_player);
+
                 (*i)->GetSession()->SendPacket(&data);
             }
         }
         else
             player->ModifyMoney(pLoot->gold);
+
         pLoot->gold = 0;
-        pLoot->NotifyMoneyRemoved();
     }
 }
 
@@ -252,9 +266,9 @@ void WorldSession::HandleLootOpcode(WorldPacket& recv_data)
 
     GetPlayer()->SendLoot(guid, LOOT_CORPSE);
 
-    /* Interrupt spell casting on loot
+    // Interrupt spell casting on loot
     if (GetPlayer()->IsNonMeleeSpellCast(false))
-        GetPlayer()->InterruptNonMeleeSpells(false);*/
+        GetPlayer()->InterruptNonMeleeSpells(false);
 }
 
 void WorldSession::HandleLootReleaseOpcode(WorldPacket& recv_data)
