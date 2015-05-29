@@ -86,6 +86,7 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket& recv_data)
         SendPartyResult(PARTY_OP_INVITE, membername, PARTY_RESULT_CANT_FIND_TARGET);
         return;
     }
+
     // can't group with
     if (!GetPlayer()->isGameMaster() && !sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP) && GetPlayer()->GetTeam() != player->GetTeam())
     {
@@ -233,7 +234,7 @@ void WorldSession::HandleGroupDeclineOpcode(WorldPacket& /*recv_data*/)
     Group*  group  = GetPlayer()->GetGroupInvite();
     if (!group) return;
 
-    // remember leader if online
+    // Remember leader if online (group pointer will be invalid if group gets disbanded)
     Player* leader = sObjectMgr.GetPlayer(group->GetLeaderGUID(), true);
 
     // uninvite, group can be deleted
@@ -660,17 +661,15 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
         {
             uint16 flag;
             if (player->IsPvP())
-                flag = (uint16) MEMBER_STATUS_PVP;
+                flag = uint16(MEMBER_STATUS_ONLINE | MEMBER_STATUS_PVP);
             else
-                flag = (uint16) MEMBER_STATUS_ONLINE;
+                flag = uint16(MEMBER_STATUS_ONLINE);
 
             if (sObjectMgr.GetRAFLinkStatus(_player, player) != RAF_LINK_NONE)
                 flag |= MEMBER_STATUS_RAF_BUDDY;
 
             *data << flag;
         }
-        else
-            *data << (uint16) MEMBER_STATUS_OFFLINE;
     }
 
     if (mask & GROUP_UPDATE_FLAG_CUR_HP)
@@ -706,8 +705,7 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
         {
             if (auramask & (uint64(1) << i))
             {
-                uint32 updatedAura = player->GetUInt32Value(uint16(UNIT_FIELD_AURA + i));
-                *data << uint16(updatedAura);
+                *data << uint16(player->GetUInt32Value(UNIT_FIELD_AURA + i));
                 *data << uint8(1);
             }
         }
@@ -715,12 +713,7 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
 
     Pet* pet = player->GetPet();
     if (mask & GROUP_UPDATE_FLAG_PET_GUID)
-    {
-        if (pet)
-            *data << (uint64) pet->GetGUID();
-        else
-            *data << (uint64) 0;
-    }
+        *data << uint64(pet ? pet->GetGUID() : 0);
 
     if (mask & GROUP_UPDATE_FLAG_PET_NAME)
     {
@@ -788,8 +781,7 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
             {
                 if (auramask & (uint64(1) << i))
                 {
-                    uint32 updatedAura = pet->GetUInt32Value(uint16(UNIT_FIELD_AURA + i));
-                    *data << uint16(updatedAura);
+                    *data << uint16(pet->GetUInt32Value(UNIT_FIELD_AURA + i));
                     *data << uint8(1);
                 }
             }
@@ -839,9 +831,33 @@ void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket& recv_data)
     data << (uint16) player->GetPower(powerType);           // GROUP_UPDATE_FLAG_CUR_POWER
     data << (uint16) player->GetMaxPower(powerType);        // GROUP_UPDATE_FLAG_MAX_POWER
     data << (uint16) player->getLevel();                    // GROUP_UPDATE_FLAG_LEVEL
-    data << (uint16) player->GetZoneId();                   // GROUP_UPDATE_FLAG_ZONE
-    data << (uint16) player->GetPositionX();                // GROUP_UPDATE_FLAG_POSITION
-    data << (uint16) player->GetPositionY();                // GROUP_UPDATE_FLAG_POSITION
+
+    // Validate location information
+    uint16 zoneId = 0;
+    uint16 locX = 0;
+    uint16 locY = 0;
+
+    if (player->IsInWorld())
+    {
+        zoneId = player->GetZoneId();
+        locX = player->GetPositionX();
+        locY = player->GetPositionY();
+    }
+    else if (player->IsBeingTeleported())               // Player is in teleportation
+    {
+        WorldLocation& loc = player->GetTeleportDest(); // So take teleportation destination
+        zoneId = MapManager::Instance().GetZoneId(loc.m_mapId, loc.m_positionX, loc.m_positionY, loc.m_positionZ);
+        locX = loc.m_positionX;
+        locY = loc.m_positionY;
+    }
+    else
+    {
+        // unknown player status.
+    }
+
+    data << uint16(zoneId);                              // GROUP_UPDATE_FLAG_ZONE
+    data << uint16(locX);                              // GROUP_UPDATE_FLAG_POSITION
+    data << uint16(locY);                              // GROUP_UPDATE_FLAG_POSITION
 
     uint64 auramask = 0;
     size_t maskPos = data.wpos();
