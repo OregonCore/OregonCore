@@ -78,7 +78,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket& recv_data)
     {
         Creature* pCreature = GetPlayer()->GetMap()->GetCreature(lguid);
 
-        bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->loot.loot_type == LOOT_SKINNING);
+        bool ok_loot = pCreature && (pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->loot.loot_type == LOOT_SKINNING)) || (!pCreature->IsAlive() == (pCreature->GetSkinner() && pCreature->loot.loot_type == LOOT_SKINNING));
 
         if (!ok_loot || !pCreature->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
         {
