@@ -1,6 +1,6 @@
 = Oregon Core -- Database information =
 
-Copyright (C) Oregon Core (http://www.oregoncore.com)
+Copyright (C) 2009-2015 OregonCore (http://oregon-core.net)
 
 Installation: (with OregonDB)
   1: sql/create_mysql.sql
