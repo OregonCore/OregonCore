@@ -763,6 +763,12 @@ void Spell::CalculateHitResults()
 
         Unit* pVictim = m_caster->GetGUID() == target.targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, target.targetGUID);
 
+        if (!pVictim)
+        {
+            target.deleted = true;
+            continue;
+        }
+
         // Remove effects the target is immune to
         for (uint32 effIndex = 0; effIndex < 3; ++effIndex)
             if (target.effectMask & (1 << effIndex))
