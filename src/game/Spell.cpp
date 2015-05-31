@@ -729,86 +729,94 @@ void Spell::AddUnitTarget(Unit* pVictim, uint32 effIndex)
     if (!CheckTarget(pVictim, effIndex))
         return;
 
-    // Check for effect immune skip if immuned
-    bool immuned = pVictim->IsImmuneToSpellEffect(m_spellInfo, effIndex, false);
-
-    uint64 targetGUID = pVictim->GetGUID();
-
     // Lookup target in already in list
     for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
     {
         if (ihit->deleted)
             continue;
 
-        if (targetGUID == ihit->targetGUID)                 // Found in list
+        if (pVictim->GetGUID() == ihit->targetGUID)           // Found in list
         {
-            if (!immuned)
-                ihit->effectMask |= 1 << effIndex;          // Add only effect mask if not immuned
+            ihit->effectMask |= 1 << effIndex;               // Add only effect
             return;
         }
     }
 
-    // This is new target calculate data for him
-
     // Get spell hit result on target
     TargetInfo target;
-    target.targetGUID = targetGUID;                         // Store target GUID
-    target.effectMask = immuned ? 0 : 1 << effIndex;        // Store index of effect if not immuned
+    target.targetGUID = pVictim->GetGUID();                 // Store target GUID
+    target.effectMask = 1 << effIndex;
     target.processed  = false;                              // Effects not apply on target
     target.damage     = 0;
     target.crit       = false;
     target.deleted    = false;
 
-    // Calculate hit result
-    if (m_originalCaster)
-    {
-        bool canMiss = (m_triggeredByAuraSpell || !m_IsTriggeredSpell);
-        target.missCondition = m_originalCaster->SpellHitResult(pVictim, m_spellInfo, m_canReflect, canMiss);
-        if (m_skipCheck && target.missCondition != SPELL_MISS_IMMUNE)
-            target.missCondition = SPELL_MISS_NONE;
-    }
-    else
-        target.missCondition = SPELL_MISS_EVADE; //SPELL_MISS_NONE;
-
-    if (target.missCondition == SPELL_MISS_NONE)
-        ++m_countOfHit;
-    else
-        ++m_countOfMiss;
-
-    // Spell have speed - need calculate incoming time
-    if (m_spellInfo->speed > 0.0f)
-    {
-        // calculate spell incoming interval
-        float dist = m_caster->GetDistance(pVictim->GetPositionX(), pVictim->GetPositionY(), pVictim->GetPositionZ());
-
-        if (dist < 5.0f)
-            dist = 5.0f;
-        target.timeDelay = (uint64)std::floor(dist / m_spellInfo->speed * 1000.0f);
-
-        // Calculate minimum incoming time
-        if (m_delayMoment == 0 || m_delayMoment > target.timeDelay)
-            m_delayMoment = target.timeDelay;
-    }
-    else
-        target.timeDelay = 0LL;
-
-    // If target reflect spell back to caster
-    if (target.missCondition == SPELL_MISS_REFLECT)
-    {
-        // Calculate reflected spell result on caster
-        target.reflectResult =  m_caster->SpellHitResult(m_caster, m_spellInfo, m_canReflect);
-
-        if (target.reflectResult == SPELL_MISS_REFLECT)     // Impossible reflect again, so simply deflect spell
-            target.reflectResult = SPELL_MISS_PARRY;
-
-        // Increase time interval for reflected spells by 1.5
-        target.timeDelay += target.timeDelay >> 1;
-    }
-    else
-        target.reflectResult = SPELL_MISS_NONE;
-
     // Add target to list
     m_UniqueTargetInfo.push_back(target);
+}
+
+void Spell::CalculateHitResults()
+{
+    for (std::list<TargetInfo>::iterator it = m_UniqueTargetInfo.begin(); it != m_UniqueTargetInfo.end(); ++it)
+    {
+        TargetInfo& target = *it;
+
+        Unit* pVictim = m_caster->GetGUID() == target.targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, target.targetGUID);
+
+        // Remove effects the target is immune to
+        for (uint32 effIndex = 0; effIndex < 3; ++effIndex)
+            if (target.effectMask & (1 << effIndex))
+                if (pVictim->IsImmuneToSpellEffect(m_spellInfo, effIndex, false))
+                    target.effectMask &= ~(1 << effIndex);
+
+        // Calculate hit result
+        if (m_originalCaster)
+        {
+            bool canMiss = (m_triggeredByAuraSpell || !m_IsTriggeredSpell);
+            target.missCondition = m_originalCaster->SpellHitResult(pVictim, m_spellInfo, m_canReflect, canMiss);
+            if (m_skipCheck && target.missCondition != SPELL_MISS_IMMUNE)
+                target.missCondition = SPELL_MISS_NONE;
+        }
+        else
+            target.missCondition = SPELL_MISS_EVADE; //SPELL_MISS_NONE;
+
+        if (target.missCondition == SPELL_MISS_NONE)
+            ++m_countOfHit;
+        else
+            ++m_countOfMiss;
+
+        // Spell have speed - need calculate incoming time
+        if (m_spellInfo->speed > 0.0f)
+        {
+            // calculate spell incoming interval
+            float dist = m_caster->GetDistance(pVictim->GetPositionX(), pVictim->GetPositionY(), pVictim->GetPositionZ());
+
+            if (dist < 5.0f)
+                dist = 5.0f;
+            target.timeDelay = (uint64)std::floor(dist / m_spellInfo->speed * 1000.0f);
+
+            // Calculate minimum incoming time
+            if (m_delayMoment == 0 || m_delayMoment > target.timeDelay)
+                m_delayMoment = target.timeDelay;
+        }
+        else
+            target.timeDelay = 0LL;
+
+        // If target reflect spell back to caster
+        if (target.missCondition == SPELL_MISS_REFLECT)
+        {
+            // Calculate reflected spell result on caster
+            target.reflectResult =  m_caster->SpellHitResult(m_caster, m_spellInfo, m_canReflect);
+
+            if (target.reflectResult == SPELL_MISS_REFLECT)     // Impossible reflect again, so simply deflect spell
+                target.reflectResult = SPELL_MISS_PARRY;
+
+            // Increase time interval for reflected spells by 1.5
+            target.timeDelay += target.timeDelay >> 1;
+        }
+        else
+            target.reflectResult = SPELL_MISS_NONE;
+    }
 }
 
 void Spell::AddUnitTarget(uint64 unitGUID, uint32 effIndex)
@@ -2412,11 +2420,10 @@ void Spell::cast(bool skipCheck)
 
     // CAST SPELL
     SendSpellCooldown();
+    // calc miss, reflect, parry, etc.
+    CalculateHitResults();
 
     SendSpellGo();                                          // we must send smsg_spell_go packet before m_castItem delete in TakeCastItem()...
-
-    if (m_customAttr & SPELL_ATTR_CU_DIRECT_DAMAGE)
-        CalculateDamageDoneForAllTargets();
 
     //handle SPELL_AURA_ADD_TARGET_TRIGGER auras
     //are there any spells need to be triggered after hit?
@@ -2607,6 +2614,10 @@ uint64 Spell::handle_delayed(uint64 t_offset)
 void Spell::_handle_immediate_phase()
 {
     // handle some immediate features of the spell here
+
+    if (m_customAttr & SPELL_ATTR_CU_DIRECT_DAMAGE)
+        CalculateDamageDoneForAllTargets();
+
     HandleThreatSpells();
     TakeCastItem();
 

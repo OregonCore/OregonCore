@@ -527,6 +527,7 @@ class Spell
         }
 
         void UpdatePointers();                              // must be used at call Spell code after time delay (non triggered spell cast/update spell call/etc)
+        void CalculateHitResults();
 
         bool IsAffectedBy(SpellEntry const* spellInfo, uint32 effectId);
 
