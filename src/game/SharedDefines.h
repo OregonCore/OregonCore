@@ -407,8 +407,8 @@ enum SpellAttributes
     SPELL_ATTR_ABILITY                       = 0x00000010,            // 4 client puts 'ability' instead of 'spell' in game strings for these spells
     SPELL_ATTR_TRADESPELL                    = 0x00000020,            // 5 trade spells, will be added by client to a sublist of profession spell
     SPELL_ATTR_PASSIVE                       = 0x00000040,            // 6 Passive spell
-    SPELL_ATTR_UNK7                          = 0x00000080,            // 7 visible?
-    SPELL_ATTR_UNK8                          = 0x00000100,            // 8
+    SPELL_ATTR_UNK7                          = 0x00000080,            // 7 Can't link in chat
+    SPELL_ATTR_UNK8                          = 0x00000100,            // 8 Hide Cast Time 
     SPELL_ATTR_UNK9                          = 0x00000200,            // 9 used by shaman's totems like Rockbitter/Flametongue/Windfury totems.
     SPELL_ATTR_ON_NEXT_SWING_2               = 0x00000400,            // 10 on next swing 2
     SPELL_ATTR_UNK11                         = 0x00000800,            // 11
@@ -515,7 +515,7 @@ enum SpellAttributesEx3
     SPELL_ATTR_EX3_REBIRTH                   = 0x00000010,            // 4 Druid Rebirth only this spell have this flag
     SPELL_ATTR_EX3_UNK5                      = 0x00000020,            // 5
     SPELL_ATTR_EX3_UNK6                      = 0x00000040,            // 6
-    SPELL_ATTR_EX3_UNK7                      = 0x00000080,            // 7
+    SPELL_ATTR_EX3_UNK7                      = 0x00000080,            // 7 Renew, Rejuvinate, Deadly Poison, Curse of Agony, Tranquility, Regrowth, Gift of the Naruu
     SPELL_ATTR_EX3_PLAYERS_ONLY              = 0x00000100,            // 8 Player only?
     SPELL_ATTR_EX3_UNK9                      = 0x00000200,            // 9
     SPELL_ATTR_EX3_MAIN_HAND                 = 0x00000400,            // 10 Main hand weapon required
@@ -602,7 +602,7 @@ enum SpellAttributesEx5
     SPELL_ATTR_EX5_UNK19                     = 0x00080000,            // 19
     SPELL_ATTR_EX5_SPECIAL_MOUNT             = 0x00100000,            // 20 used by mount transformators, also by black qiraji and dragonmaw illusion
     SPELL_ATTR_EX5_UNK21                     = 0x00200000,            // 21 used by demonice sacrifice, BM Only OFF/ON, BM OFF, Terun Rift, "Damage", Rocket Bot Attack
-    SPELL_ATTR_EX5_UNK22                     = 0x00400000,            // 22
+    SPELL_ATTR_EX5_UNK22                     = 0x00400000,            // 22 used by spells Hex Lord Malacrass casts (player based), Hex Lord Adds also and also Flame Wreath from Aran
     SPELL_ATTR_EX5_UNK23                     = 0x00800000,            // 23 used by ignite, shadow work: death
     SPELL_ATTR_EX5_UNK24                     = 0x01000000,            // 24
     SPELL_ATTR_EX5_UNK25                     = 0x02000000,            // 25 used by one spell - Death Lightning, doesn't seem to be used anywhere
