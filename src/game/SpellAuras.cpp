@@ -618,6 +618,10 @@ bool AreaAura::CheckTarget(Unit* target)
     if (target->HasAura(GetId(), m_effIndex))
         return false;
 
+    // Skip some targets (TODO: Might require better checks, also unclear how the actual caster must/can be handled)
+    if (GetSpellProto()->AttributesEx3 & SPELL_ATTR_EX3_PLAYERS_ONLY && target->GetTypeId() != TYPEID_PLAYER)
+        return false;
+
     // some special cases
     switch (GetId())
     {

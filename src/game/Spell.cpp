@@ -3708,6 +3708,9 @@ SpellCastResult Spell::CheckCast(bool strict)
             if (target->isInFlight())
                 return SPELL_FAILED_BAD_TARGETS;
 
+            if (strict && m_spellInfo->AttributesEx3 & SPELL_ATTR_EX3_PLAYERS_ONLY && target->GetTypeId() != TYPEID_PLAYER && !IsAreaOfEffectSpell(m_spellInfo))
+                return SPELL_FAILED_BAD_TARGETS;
+
             bool isTrigger = (target->ToCreature() && target->ToCreature()->isTrigger());
             if (!isTrigger)
             {
