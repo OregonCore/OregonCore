@@ -24,15 +24,18 @@
 #include "DestinationHolderImp.h"
 #include "WorldPacket.h"
 
-void
-HomeMovementGenerator<Creature>::Initialize(Creature& owner)
+void HomeMovementGenerator<Creature>::Initialize(Creature& owner)
 {
     owner.RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
     _setTargetLocation(owner);
 }
 
-void
-HomeMovementGenerator<Creature>::Reset(Creature&)
+void HomeMovementGenerator<Creature>::Finalize(Creature & owner)
+{
+    owner.ClearUnitState(UNIT_STATE_EVADE);
+}
+
+void HomeMovementGenerator<Creature>::Reset(Creature&)
 {
 }
 
@@ -57,7 +60,7 @@ HomeMovementGenerator<Creature>::_setTargetLocation(Creature& owner)
     modifyTravelTime(traveltime);
     owner.SendMonsterMoveByPath(pointPath, 1, pointPath.size(), traveltime);
 
-    owner.ClearUnitState(UNIT_STATE_ALL_STATE);
+    owner.ClearUnitState(uint32(UNIT_STATE_ALL_STATE & ~(UNIT_STATE_EVADE | UNIT_STATE_IGNORE_PATHFINDING)));
 }
 
 bool
