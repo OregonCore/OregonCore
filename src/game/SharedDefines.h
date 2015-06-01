@@ -546,7 +546,7 @@ enum SpellAttributesEx4
 {
     SPELL_ATTR_EX4_UNK0                      = 0x00000001,            // 0
     SPELL_ATTR_EX4_UNK1                      = 0x00000002,            // 1 proc on finishing move? used by Relentless Strike, Revealed Flow, Rogue Tier 6 Trinket
-    SPELL_ATTR_EX4_UNK2                      = 0x00000004,            // 2
+    SPELL_ATTR_EX4_EXPIRE_OFFLINE            = 0x00000004,            // 2 Continues while logged out (Unsupported)
     SPELL_ATTR_EX4_CANT_PROC_FROM_SELFCAST   = 0x00000008,            // 3
     SPELL_ATTR_EX4_UNK4                      = 0x00000010,            // 4
     SPELL_ATTR_EX4_UNK5                      = 0x00000020,            // 5
