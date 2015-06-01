@@ -188,7 +188,7 @@ void HostileReference::updateOnlineStatus()
         && getTarget()->IsInMap(getSourceUnit())
         )
     {
-        Creature* creature = (Creature*) getSourceUnit();
+        Creature* creature = getSourceUnit()->ToCreature();
         online = getTarget()->isInAccessiblePlaceFor(creature);
         if (!online)
         {

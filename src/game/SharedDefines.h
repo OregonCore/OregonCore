@@ -436,7 +436,7 @@ enum SpellAttributes
 
 enum SpellAttributesEx
 {
-    SPELL_ATTR_EX_UNK0                       = 0x00000001,            // 0 used in summoing / pet-reviving spells
+    SPELL_ATTR_EX_UNK0                       = 0x00000001,            // 0 Related to pets/charms/posession. Used by spells like Mind Control, Summon Imp
     SPELL_ATTR_EX_DRAIN_ALL_POWER            = 0x00000002,            // 1 use all power (Only paladin Lay of Hands and Bunyanize)
     SPELL_ATTR_EX_CHANNELED_1                = 0x00000004,            // 2 channeled 1
     SPELL_ATTR_EX_CANT_BE_REDIRECTED         = 0x00000008,            // 3 guaranteed direct spells (no reflect, no intervene effects)
@@ -457,7 +457,7 @@ enum SpellAttributesEx
     SPELL_ATTR_EX_UNK18                      = 0x00040000,            // 18
     SPELL_ATTR_EX_UNK19                      = 0x00080000,            // 19
     SPELL_ATTR_EX_REQ_COMBO_POINTS1          = 0x00100000,            // 20 Req combo points on target
-    SPELL_ATTR_EX_UNK21                      = 0x00200000,            // 21
+    SPELL_ATTR_EX_UNK21                      = 0x00200000,            // 21 used by spells that modify aggro range such as Mind Soothe, Lurk and Brute Cologne
     SPELL_ATTR_EX_REQ_COMBO_POINTS2          = 0x00400000,            // 22 Req combo points on target
     SPELL_ATTR_EX_UNK23                      = 0x00800000,            // 23 snake trap effect
     SPELL_ATTR_EX_UNK24                      = 0x01000000,            // 24 Req fishing pole??
@@ -465,27 +465,27 @@ enum SpellAttributesEx
     SPELL_ATTR_EX_UNK26                      = 0x04000000,            // 26
     SPELL_ATTR_EX_UNK27                      = 0x08000000,            // 27
     SPELL_ATTR_EX_UNK28                      = 0x10000000,            // 28
-    SPELL_ATTR_EX_UNK29                      = 0x20000000,            // 29
-    SPELL_ATTR_EX_UNK30                      = 0x40000000,            // 30 overpower
+    SPELL_ATTR_EX_UNK29                      = 0x20000000,            // 29 Used by spells that require items such as Defile Uther's Tomb or Fishing
+    SPELL_ATTR_EX_UNK30                      = 0x40000000,            // 30 overpower, possibility related to requiring target to dodge
     SPELL_ATTR_EX_UNK31                      = 0x80000000             // 31
 };
 
 enum SpellAttributesEx2
 {
-    SPELL_ATTR_EX2_UNK0                      = 0x00000001,            // 0
-    SPELL_ATTR_EX2_UNK1                      = 0x00000002,            // 1
+    SPELL_ATTR_EX2_UNK0                      = 0x00000001,            // 0 
+    SPELL_ATTR_EX2_UNK1                      = 0x00000002,            // 1 Used by shadowform, ghost wolf, vanish
     SPELL_ATTR_EX2_IGNORE_LOS                = 0x00000004,            // 2
     SPELL_ATTR_EX2_UNK3                      = 0x00000008,            // 3
-    SPELL_ATTR_EX2_UNK4                      = 0x00000010,            // 4
+    SPELL_ATTR_EX2_UNK4                      = 0x00000010,            // 4 Used by auras such as Devotion Aura, Foreman's Enchanted Helmet (aura) and Concentration Aura
     SPELL_ATTR_EX2_AUTOREPEAT_FLAG           = 0x00000020,            // 5
-    SPELL_ATTR_EX2_REQUIRE_TAPPED_BY_CASTER  = 0x00000040,            // 6 Requires untapped by other players/groups target. Polymorph, Banish, Recharging Battery (Unsupported)
+    SPELL_ATTR_EX2_REQUIRE_TAPPED_BY_CASTER  = 0x00000040,            // 6 Requires untapped by other players/groups target. Polymorph, Banish, Recharging Battery
     SPELL_ATTR_EX2_UNK7                      = 0x00000080,            // 7
     SPELL_ATTR_EX2_UNK8                      = 0x00000100,            // 8 not set in 2.4.2
     SPELL_ATTR_EX2_UNK9                      = 0x00000200,            // 9 used by 30421,30466,42454
     SPELL_ATTR_EX2_UNK10                     = 0x00000400,            // 10
     SPELL_ATTR_EX2_HEALTH_FUNNEL             = 0x00000800,            // 11
     SPELL_ATTR_EX2_UNK12                     = 0x00001000,            // 12
-    SPELL_ATTR_EX2_UNK13                     = 0x00002000,            // 13
+    SPELL_ATTR_EX2_UNK13                     = 0x00002000,            // 13 Item target must be own item. Enchant Rings, Poisons, Glyphs.
     SPELL_ATTR_EX2_UNK14                     = 0x00004000,            // 14
     SPELL_ATTR_EX2_UNK15                     = 0x00008000,            // 15 not set in 2.4.2
     SPELL_ATTR_EX2_TAME_BEAST                = 0x00010000,            // 16
@@ -524,7 +524,7 @@ enum SpellAttributesEx3
     SPELL_ATTR_EX3_UNK13                     = 0x00002000,            // 13
     SPELL_ATTR_EX3_HONORLESS                 = 0x00004000,            // 14 "Honorless Target" only this spells have this flag
     SPELL_ATTR_EX3_AUTO_SHOT                 = 0x00008000,            // 15 Auto Shoot, Shoot, Throw,  - this is autoshot flag
-    SPELL_ATTR_EX3_CANT_TRIGGER_PROC         = 0x00010000,            // 16 confirmed with many patchnotes
+    SPELL_ATTR_EX3_UNK16                     = 0x00010000,            // 16
     SPELL_ATTR_EX3_NO_INITIAL_AGGRO          = 0x00020000,            // 17 no initial aggro
     SPELL_ATTR_EX3_CANT_MISS                 = 0x00040000,            // 18 Spell should always hit its target
     SPELL_ATTR_EX3_UNK19                     = 0x00080000,            // 19
@@ -546,14 +546,14 @@ enum SpellAttributesEx4
 {
     SPELL_ATTR_EX4_UNK0                      = 0x00000001,            // 0
     SPELL_ATTR_EX4_UNK1                      = 0x00000002,            // 1 proc on finishing move? used by Relentless Strike, Revealed Flow, Rogue Tier 6 Trinket
-    SPELL_ATTR_EX4_EXPIRE_OFFLINE            = 0x00000004,            // 2 Continues while logged out (Unsupported)
+    SPELL_ATTR_EX4_EXPIRE_OFFLINE            = 0x00000004,            // 2 Aura continues to expire while logged out
     SPELL_ATTR_EX4_CANT_PROC_FROM_SELFCAST   = 0x00000008,            // 3
     SPELL_ATTR_EX4_UNK4                      = 0x00000010,            // 4
     SPELL_ATTR_EX4_UNK5                      = 0x00000020,            // 5
     SPELL_ATTR_EX4_NOT_STEALABLE             = 0x00000040,            // 6 although such auras might be dispellable, they cannot be stolen
     SPELL_ATTR_EX4_TRIGGERED                 = 0x00000080,            // 7 spells forced to be triggered
     SPELL_ATTR_EX4_UNK8                      = 0x00000100,            // 8
-    SPELL_ATTR_EX4_UNK9                      = 0x00000200,            // 9
+    SPELL_ATTR_EX4_UNK9                      = 0x00000200,            // 9 Execute, Hammer of Wrath, Victory Rush.. Related to instant effect? reset swing timers
     SPELL_ATTR_EX4_SPELL_VS_EXTEND_COST      = 0x00000400,            // 10 Rogue Shiv have this flag
     SPELL_ATTR_EX4_UNK11                     = 0x00000800,            // 11
     SPELL_ATTR_EX4_UNK12                     = 0x00001000,            // 12
@@ -562,12 +562,12 @@ enum SpellAttributesEx4
     SPELL_ATTR_EX4_UNK15                     = 0x00008000,            // 15
     SPELL_ATTR_EX4_NOT_USABLE_IN_ARENA       = 0x00010000,            // 16 not usable in arena
     SPELL_ATTR_EX4_USABLE_IN_ARENA           = 0x00020000,            // 17 usable in arena
-    SPELL_ATTR_EX4_UNK18                     = 0x00040000,            // 18
+    SPELL_ATTR_EX4_UNK18                     = 0x00040000,            // 18 used by spells that jump to 2 other targets. Glaive Throw, Avengers Shield etc.
     SPELL_ATTR_EX4_UNK19                     = 0x00080000,            // 19
     SPELL_ATTR_EX4_UNK20                     = 0x00100000,            // 20
     SPELL_ATTR_EX4_UNK21                     = 0x00200000,            // 21
-    SPELL_ATTR_EX4_UNK22                     = 0x00400000,            // 22
-    SPELL_ATTR_EX4_UNK23                     = 0x00800000,            // 23 used by seal of command (20424,42058)
+    SPELL_ATTR_EX4_UNK22                     = 0x00400000,            // 22 used by seal of command (20424,42058)
+    SPELL_ATTR_EX4_UNK23                     = 0x00800000,            // 23 
     SPELL_ATTR_EX4_AUTOSHOT                  = 0x01000000,            // 24
     SPELL_ATTR_EX4_SCALE_PET                 = 0x02000000,            // 25 pet scaling auras
     SPELL_ATTR_EX4_CAST_ONLY_IN_OUTLAND      = 0x04000000,            // 26 Can only be used in Outland.
