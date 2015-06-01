@@ -270,6 +270,7 @@ void DynamicObjectUpdater::VisitHelper(Unit* target)
 
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(i_dynobject.GetSpellId());
     uint32 eff_index  = i_dynobject.GetEffIndex();
+
     if (spellInfo->EffectImplicitTargetB[eff_index] == TARGET_DEST_DYNOBJ_ALLY
         || spellInfo->EffectImplicitTargetB[eff_index] == TARGET_UNIT_AREA_ALLY_DST)
     {
@@ -280,20 +281,17 @@ void DynamicObjectUpdater::VisitHelper(Unit* target)
     {
         if (i_check->IsFriendlyTo(target))
             return;
-
-        i_check->CombatStart(target);
     }
     else
     {
         if (!i_check->IsHostileTo(target))
             return;
-
-        i_check->CombatStart(target);
     }
 
     // Check target immune to spell or aura
     if (target->IsImmuneToSpell(spellInfo) || target->IsImmuneToSpellEffect(spellInfo, eff_index, false))
         return;
+
     // Apply PersistentAreaAura on target
     PersistentAreaAura* Aur = new PersistentAreaAura(spellInfo, eff_index, NULL, target, i_dynobject.GetCaster());
     target->AddAura(Aur);
