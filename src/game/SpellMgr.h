@@ -211,13 +211,12 @@ inline bool IsSpellHaveEffect(SpellEntry const* spellInfo, SpellEffects effect)
     return false;
 }
 
-//bool IsNoStackAuraDueToAura(uint32 spellId_1, uint32 effIndex_1, uint32 spellId_2, uint32 effIndex_2);
-
 inline bool IsSealSpell(SpellEntry const* spellInfo)
 {
     //Collection of all the seal family flags. No other paladin spell has any of those.
     return spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN &&
-           (spellInfo->SpellFamilyFlags & 0x4000A000200LL);
+           (spellInfo->SpellFamilyFlags & 0x4000A000200LL) &&
+           spellInfo->EffectImplicitTargetA[0] == TARGET_UNIT_CASTER;
 }
 
 inline bool IsElementalShield(SpellEntry const* spellInfo)
@@ -253,13 +252,13 @@ inline bool IsDeathPersistentSpell(SpellEntry const* spellInfo)
 {
     switch (spellInfo->Id)
     {
-    case 40214:                                     // Dragonmaw Illusion
-    case 35480:
-    case 35481:
-    case 35482:             // Human Illusion
-    case 35483:
-    case 39824:                         // Human Illusion
-        return true;
+        case 40214:         // Dragonmaw Illusion
+        case 35480:
+        case 35481:
+        case 35482:         // Human Illusion
+        case 35483:
+        case 39824:         // Human Illusion
+            return true;
     }
 
     return spellInfo->AttributesEx3 & SPELL_ATTR_EX3_DEATH_PERSISTENT;
@@ -278,13 +277,14 @@ inline bool IsSelfCastEffect(SpellEntry const* spellInfo, uint32 eff)
 {
 	switch (spellInfo->EffectImplicitTargetA[eff])
 	{
-	case TARGET_NONE:
-	case TARGET_UNIT_CASTER:
-	case TARGET_UNIT_TARGET_ANY:
-		return true;
-	default:
-		break;
+	    case TARGET_NONE:
+	    case TARGET_UNIT_CASTER:
+	    case TARGET_UNIT_TARGET_ANY:
+		    return true;
+	    default:
+		    break;
 	}
+
     return false;
 }
 
@@ -298,11 +298,11 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
 extern bool IsAreaEffectTarget[TOTAL_SPELL_TARGETS];
 inline bool IsAreaOfEffectSpell(SpellEntry const* spellInfo)
 {
-    if (IsAreaEffectTarget[spellInfo->EffectImplicitTargetA[0]] || IsAreaEffectTarget[spellInfo->EffectImplicitTargetB[0]])
+    if (IsAreaEffectTarget[spellInfo->EffectImplicitTargetA[EFFECT_0]] || IsAreaEffectTarget[spellInfo->EffectImplicitTargetB[EFFECT_0]])
         return true;
-    if (IsAreaEffectTarget[spellInfo->EffectImplicitTargetA[1]] || IsAreaEffectTarget[spellInfo->EffectImplicitTargetB[1]])
+    if (IsAreaEffectTarget[spellInfo->EffectImplicitTargetA[EFFECT_1]] || IsAreaEffectTarget[spellInfo->EffectImplicitTargetB[EFFECT_1]])
         return true;
-    if (IsAreaEffectTarget[spellInfo->EffectImplicitTargetA[2]] || IsAreaEffectTarget[spellInfo->EffectImplicitTargetB[2]])
+    if (IsAreaEffectTarget[spellInfo->EffectImplicitTargetA[EFFECT_2]] || IsAreaEffectTarget[spellInfo->EffectImplicitTargetB[EFFECT_2]])
         return true;
     return false;
 }
@@ -311,9 +311,9 @@ inline bool IsFarUnitTargetEffect(uint32 effect)
 {
     switch (effect)
     {
-    case SPELL_EFFECT_SUMMON_PLAYER:
-    case SPELL_EFFECT_RESURRECT_NEW:
-        return true;
+        case SPELL_EFFECT_SUMMON_PLAYER:
+        case SPELL_EFFECT_RESURRECT_NEW:
+            return true;
     }
 
     return false;
@@ -808,11 +808,11 @@ class SpellMgr
         {
             switch (SpellTargetType[target])
             {
-            case TARGET_TYPE_DEST_CASTER:
-            case TARGET_TYPE_DEST_TARGET:
-            case TARGET_TYPE_DEST_DEST:
-                return true;
-            default:
+                case TARGET_TYPE_DEST_CASTER:
+                case TARGET_TYPE_DEST_TARGET:
+                case TARGET_TYPE_DEST_DEST:
+                    return true;
+                default:
                 break;
             }
             return false;

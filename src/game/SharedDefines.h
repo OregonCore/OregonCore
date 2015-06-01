@@ -446,7 +446,7 @@ enum SpellAttributesEx
     SPELL_ATTR_EX_NEGATIVE                   = 0x00000080,            // 7
     SPELL_ATTR_EX_NOT_IN_COMBAT_TARGET       = 0x00000100,            // 8 Spell req target not to be in combat state
     SPELL_ATTR_EX_UNK9                       = 0x00000200,            // 9
-    SPELL_ATTR_EX_NO_THREAT                  = 0x00000400,            // 10 no generates threat on cast 100% (old NO_INITIAL_AGGRO)
+    SPELL_ATTR_EX_NO_THREAT                  = 0x00000400,            // 10 no generates threat on cast
     SPELL_ATTR_EX_UNK11                      = 0x00000800,            // 11
     SPELL_ATTR_EX_PICKPOCKET                 = 0x00001000,            // 12 pickpocket
     SPELL_ATTR_EX_POSSESSION                 = 0x00002000,            // 13 used by spells like mind control
@@ -1020,18 +1020,15 @@ enum Targets
     TARGET_UNIT_TARGET_ALLY            = 21,
     TARGET_SRC_CASTER                  = 22,
     TARGET_GAMEOBJECT                  = 23,
-    //TARGET_OBJECT_OPEN
     TARGET_UNIT_CONE_ENEMY             = 24,
     TARGET_UNIT_TARGET_ANY             = 25,
     TARGET_GAMEOBJECT_ITEM             = 26,
-    //TARGET_OBJECT_ITEM_PICKLOCK
     TARGET_UNIT_MASTER                 = 27,
     TARGET_DEST_DYNOBJ_ENEMY           = 28,
     TARGET_DEST_DYNOBJ_ALLY            = 29, // only for effect 27
     TARGET_UNIT_AREA_ALLY_SRC          = 30, // in TargetB used only with TARGET_SRC_CASTER and in self casting range in TargetA
     TARGET_UNIT_AREA_ALLY_DST          = 31,
     TARGET_MINION                      = 32,
-    //TARGET_DEST_SUMMON
     TARGET_UNIT_AREA_PARTY_SRC         = 33,
     TARGET_UNIT_AREA_PARTY_DST         = 34, // used in Tranquility
     TARGET_UNIT_TARGET_PARTY           = 35,
