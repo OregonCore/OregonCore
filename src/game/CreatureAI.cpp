@@ -127,6 +127,7 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
 
     if (me->canStartAttack(who))
         AttackStart(who);
+
     //else if (who->getVictim() && me->IsFriendlyTo(who)
     //    && me->IsWithinDistInMap(who, sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS))
     //    && me->canAttack(who->getVictim()))
@@ -271,4 +272,28 @@ Creature* CreatureAI::DoSummonFlyer(uint32 entry, WorldObject* obj, float flight
     obj->GetRandomNearPosition(pos, radius);
     pos.m_positionZ += flightZ;
     return me->SummonCreature(entry, pos, summonType, despawnTime);
+}
+
+void CreatureAI::SetCombatMovement(bool enable)
+{
+    if (CombatMovementEnabled == enable)
+        return;
+
+    CombatMovementEnabled = enable;
+
+        if (enable && me->getVictim())
+        {
+            if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE || ASSISTANCE_MOTION_TYPE)
+            {
+                me->GetMotionMaster()->MoveChase(me->getVictim());
+                me->CastStop();
+            }
+        }
+        else
+        {
+            me->GetMotionMaster()->MovementExpired();
+            me->GetMotionMaster()->Clear(true);
+            me->StopMoving();
+            me->GetMotionMaster()->MoveIdle();
+        }
 }

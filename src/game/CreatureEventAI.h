@@ -615,7 +615,7 @@ class CreatureEventAI : public CreatureAI
         Unit* GetTargetByType(uint32 Target, Unit* pActionInvoker);
 
         void DoScriptText(int32 textEntry, WorldObject* pSource, Unit* target);
-        bool CanCast(Unit* Target, SpellEntry const* Spell, bool Triggered);
+        SpellCastResult CanCast(Unit* target, SpellEntry const* spell, uint32 flags);
 
         bool SpawnedEventConditionsCheck(CreatureEventAI_Event const& event);
 
@@ -631,10 +631,7 @@ class CreatureEventAI : public CreatureAI
 
         //Variables used by Events themselves
         uint8 Phase;                                        // Current phase, max 32 phases
-        bool CombatMovementEnabled;                         // If we allow targeted movment gen (movement twoards top threat)
         bool MeleeEnabled;                                  // If we allow melee auto attack
-        float AttackDistance;                               // Distance to attack from
-        float AttackAngle;                                  // Angle of attack
         uint32 InvinceabilityHpLevel;                       // Minimal health level allowed at damage apply
 };
 #endif
