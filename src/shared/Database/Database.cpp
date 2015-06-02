@@ -634,8 +634,13 @@ bool Database::ExecuteFile(const char* file)
             }
             else
             {
-                while (!mysql_next_result(mMysql))
-                    ;
+                do
+                {
+                    if (mysql_field_count(mMysql))
+                        if (MYSQL_RES* result = mysql_use_result(mMysql))
+                            mysql_free_result(result);
+                }
+                while (!mysql_next_result(mMysql));
 
                 success = true;
             }
