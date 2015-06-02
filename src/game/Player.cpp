@@ -15154,16 +15154,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     uint16 newDrunkenValue = uint16(soberFactor * (GetUInt32Value(PLAYER_BYTES_3) & 0xFFFE));
     SetDrunkValue(newDrunkenValue);
 
-    m_rest_bonus = fields[22].GetFloat();
-    //speed collect rest bonus in offline, in logout, far from tavern, city (section/in hour)
-    float bubble0 = 0.031;
-    //speed collect rest bonus in offline, in logout, in tavern, city (section/in hour)
-    float bubble1 = 0.125;
-
-    float bubble = fields[24].GetUInt32() > 0
-                   ? bubble1 * sWorld.getRate(RATE_REST_OFFLINE_IN_TAVERN_OR_CITY)
-                   : bubble0 * sWorld.getRate(RATE_REST_OFFLINE_IN_WILDERNESS);
-
 
     if ((m_rafLink = sObjectMgr.GetRAFLinkStatus(this)) != RAF_LINK_NONE)
     {
@@ -15175,8 +15165,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
            and also is not shown in the spellbook */
         SetGrantableLevels(m_GrantableLevels);
     }
-
-    SetRestBonus((GetRestBonus() + time_diff * ((float) GetUInt32Value(PLAYER_NEXT_LEVEL_XP) / 72000)) * bubble);
 
     m_cinematic = fields[19].GetUInt32();
     m_Played_time[PLAYED_TIME_TOTAL] = fields[20].GetUInt32();
@@ -15245,6 +15233,22 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     // reset stats before loading any modifiers
     InitStatsForLevel();
     InitTaxiNodesForLevel();
+
+    // rest bonus can only be calculated after InitStatsForLevel()
+    m_rest_bonus = fields[22].GetFloat();
+
+    if (time_diff > 0)
+    {
+        //speed collect rest bonus in offline, in logout, far from tavern, city (section/in hour)
+        float bubble0 = 0.031f;
+        //speed collect rest bonus in offline, in logout, in tavern, city (section/in hour)
+        float bubble1 = 0.125f;
+        float bubble = fields[24].GetUInt32() > 0
+            ? bubble1*sWorld.getRate(RATE_REST_OFFLINE_IN_TAVERN_OR_CITY)
+            : bubble0*sWorld.getRate(RATE_REST_OFFLINE_IN_WILDERNESS);
+
+        SetRestBonus(GetRestBonus()+ time_diff*((float)GetUInt32Value(PLAYER_NEXT_LEVEL_XP)/72000)*bubble);
+    }
 
     // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
 
