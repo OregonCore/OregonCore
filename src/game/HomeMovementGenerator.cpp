@@ -60,7 +60,7 @@ HomeMovementGenerator<Creature>::_setTargetLocation(Creature& owner)
     modifyTravelTime(traveltime);
     owner.SendMonsterMoveByPath(pointPath, 1, pointPath.size(), traveltime);
 
-    owner.ClearUnitState(uint32(UNIT_STATE_ALL_STATE & ~(UNIT_STATE_EVADE | UNIT_STATE_IGNORE_PATHFINDING)));
+    owner.ClearUnitState(UNIT_STATE_ALL_STATE);
 }
 
 bool
