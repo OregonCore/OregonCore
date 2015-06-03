@@ -541,8 +541,10 @@ class ChatHandler
         bool HandlePartyResultCommand(const char* args);
 
         Player*   getSelectedPlayer();
+        Player*   getSelectedPlayerOrSelf();
         Creature* getSelectedCreature();
         Unit*     getSelectedUnit();
+
         char*     extractKeyFromLink(char* text, char const* linkType, char** something1 = NULL);
         char*     extractKeyFromLink(char* text, char const* const* linkTypes, int* found_idx, char** something1 = NULL);
         uint32    extractSpellIdFromLink(char* text);

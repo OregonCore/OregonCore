@@ -1077,9 +1077,7 @@ bool ChatHandler::HandleRecallCommand(const char* args)
 
     if (!*args)
     {
-        target = getSelectedPlayer();
-        if (!target)
-            target = m_session->GetPlayer();
+        target = getSelectedPlayerOrSelf();
     }
     else
     {
@@ -1136,7 +1134,7 @@ bool ChatHandler::HandleModifyHPCommand(const char* args)
         return false;
     }
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1187,7 +1185,7 @@ bool ChatHandler::HandleModifyManaCommand(const char* args)
         return false;
     }
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1232,7 +1230,7 @@ bool ChatHandler::HandleModifyEnergyCommand(const char* args)
         return false;
     }
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1279,7 +1277,7 @@ bool ChatHandler::HandleModifyRageCommand(const char* args)
         return false;
     }
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1403,7 +1401,7 @@ bool ChatHandler::HandleModifySpellCommand(const char* args)
     else
         mark = atoi(pmark);
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1435,7 +1433,7 @@ bool ChatHandler::HandleModifyTalentCommand (const char* args)
     if (tp < 0)
         return false;
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1459,9 +1457,7 @@ bool ChatHandler::HandleTaxiCheatCommand(const char* args)
 
     std::string argstr = (char*)args;
 
-    Player* target = getSelectedPlayer();
-    if (!target)
-        target = m_session->GetPlayer();
+    Player* target = getSelectedPlayerOrSelf();
 
     if (argstr == "on")
     {
@@ -1503,7 +1499,7 @@ bool ChatHandler::HandleModifyASpeedCommand(const char* args)
         return false;
     }
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1545,7 +1541,7 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args)
         return false;
     }
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1584,7 +1580,7 @@ bool ChatHandler::HandleModifySwimCommand(const char* args)
         return false;
     }
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1623,7 +1619,7 @@ bool ChatHandler::HandleModifyBWalkCommand(const char* args)
         return false;
     }
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1662,7 +1658,7 @@ bool ChatHandler::HandleModifyFlyCommand(const char* args)
         return false;
     }
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1939,7 +1935,7 @@ bool ChatHandler::HandleModifyMountCommand(const char* args)
         return false;
     }
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -1976,7 +1972,7 @@ bool ChatHandler::HandleModifyMoneyCommand(const char* args)
     if (!*args)
         return false;
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -2028,7 +2024,7 @@ bool ChatHandler::HandleModifyBitCommand(const char* args)
     if (!*args)
         return false;
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -2078,7 +2074,7 @@ bool ChatHandler::HandleModifyHonorCommand (const char* args)
     if (!*args)
         return false;
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (!target)
     {
         SendSysMessage(LANG_PLAYER_NOT_FOUND);

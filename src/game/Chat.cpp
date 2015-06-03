@@ -1591,6 +1591,24 @@ Player* ChatHandler::getSelectedPlayer()
     return sObjectMgr.GetPlayer(guid);
 }
 
+Player* ChatHandler::getSelectedPlayerOrSelf()
+{
+    if (!m_session)
+        return NULL;
+
+    uint64 selected = m_session->GetPlayer()->GetTarget();
+    if (!selected)
+        return m_session->GetPlayer();
+
+    // first try with selected target
+    Player* targetPlayer = ObjectAccessor::FindPlayer(selected);
+    // if the target is not a player, then return self
+    if (!targetPlayer)
+        targetPlayer = m_session->GetPlayer();
+
+    return targetPlayer;
+}
+
 Unit* ChatHandler::getSelectedUnit()
 {
     if (!m_session)

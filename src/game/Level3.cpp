@@ -1539,7 +1539,7 @@ bool ChatHandler::HandleUnLearnCommand(const char* args)
 
 bool ChatHandler::HandleCooldownCommand(const char* args)
 {
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (!target)
     {
         SendSysMessage(LANG_PLAYER_NOT_FOUND);
@@ -3191,7 +3191,7 @@ bool ChatHandler::HandleLookupSkillCommand(const char* args)
         return false;
 
     // can be NULL in console call
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
 
     std::string namepart = args;
     std::wstring wnamepart;
@@ -5434,7 +5434,7 @@ bool ChatHandler::HandleServerIdleShutDownCommand(const char* args)
 
 bool ChatHandler::HandleAddQuest(const char* args)
 {
-    Player* player = getSelectedPlayer();
+    Player* player = getSelectedPlayerOrSelf();
     if (!player)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -5488,7 +5488,7 @@ bool ChatHandler::HandleAddQuest(const char* args)
 
 bool ChatHandler::HandleRemoveQuest(const char* args)
 {
-    Player* player = getSelectedPlayer();
+    Player* player = getSelectedPlayerOrSelf();
     if (!player)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -5538,7 +5538,7 @@ bool ChatHandler::HandleRemoveQuest(const char* args)
 
 bool ChatHandler::HandleCompleteQuest(const char* args)
 {
-    Player* player = getSelectedPlayer();
+    Player* player = getSelectedPlayerOrSelf();
     if (!player)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
