@@ -25,6 +25,8 @@ EndScriptData */
 /* ContentData
 npc_aged_dying_ancient_kodo
 npc_dalinda
+npc_melizza_brimbuzzle
+go_demon_portal
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -357,6 +359,28 @@ bool QuestAccept_npc_melizza_brimbuzzle(Player* pPlayer, Creature* pCreature, Qu
     return true;
 }
 
+/*######
+## go_demon_portal
+######*/
+
+enum DemonPortal
+{
+    NPC_DEMON_GUARDIAN          = 11937,
+
+    QUEST_PORTAL_OF_THE_LEGION  = 5581,
+};
+
+bool GOHello_go_demon_portal(Player* player, GameObject* go)
+{
+    if (player->GetQuestStatus(QUEST_PORTAL_OF_THE_LEGION) == QUEST_STATUS_INCOMPLETE)
+    {
+        if (Creature* guardian = player->SummonCreature(NPC_DEMON_GUARDIAN, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0.0f, TEMPSUMMON_DEAD_DESPAWN, 0))
+            guardian->AI()->AttackStart(player);
+    }
+
+    return true;
+}
+
 void AddSC_desolace()
 {
     Script* newscript;
@@ -378,5 +402,10 @@ void AddSC_desolace()
     newscript->Name = "npc_melizza_brimbuzzle";
     newscript->GetAI = &GetAI_npc_melizza_brimbuzzle;
     newscript->pQuestAccept = &QuestAccept_npc_melizza_brimbuzzle;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_demon_portal";
+    newscript->pGOHello = &GOHello_go_demon_portal;
     newscript->RegisterSelf();
 }
