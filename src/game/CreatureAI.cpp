@@ -254,6 +254,30 @@ bool CreatureAI::_EnterEvadeMode()
     return true;
 }
 
+void CreatureAI::SetCombatMovement(bool enable)
+{
+    if (CombatMovementEnabled == enable)
+        return;
+
+    CombatMovementEnabled = enable;
+
+    if (enable && me->getVictim())
+    {
+        if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE || ASSISTANCE_MOTION_TYPE)
+        {
+            me->GetMotionMaster()->MoveChase(me->getVictim());
+            me->CastStop();
+        }
+    }
+    else
+    {
+        me->GetMotionMaster()->MovementExpired();
+        me->GetMotionMaster()->Clear(true);
+        me->StopMoving();
+        me->GetMotionMaster()->MoveIdle();
+    }
+}
+
 Creature* CreatureAI::DoSummon(uint32 entry, const Position& pos, uint32 despawnTime, TempSummonType summonType)
 {
     return me->SummonCreature(entry, pos, summonType, despawnTime);
@@ -272,28 +296,4 @@ Creature* CreatureAI::DoSummonFlyer(uint32 entry, WorldObject* obj, float flight
     obj->GetRandomNearPosition(pos, radius);
     pos.m_positionZ += flightZ;
     return me->SummonCreature(entry, pos, summonType, despawnTime);
-}
-
-void CreatureAI::SetCombatMovement(bool enable)
-{
-    if (CombatMovementEnabled == enable)
-        return;
-
-    CombatMovementEnabled = enable;
-
-        if (enable && me->getVictim())
-        {
-            if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE || ASSISTANCE_MOTION_TYPE)
-            {
-                me->GetMotionMaster()->MoveChase(me->getVictim());
-                me->CastStop();
-            }
-        }
-        else
-        {
-            me->GetMotionMaster()->MovementExpired();
-            me->GetMotionMaster()->Clear(true);
-            me->StopMoving();
-            me->GetMotionMaster()->MoveIdle();
-        }
 }
