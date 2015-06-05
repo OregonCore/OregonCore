@@ -507,7 +507,8 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
                     break;
                 }
                 case SPELL_CAST_OK:
-                    SetCombatMovement(false);
+                    /* @TODO: Correctly switch between melee/ranged states.
+                    SetCombatMovement(false);*/
                 default:
                     break;
             }
