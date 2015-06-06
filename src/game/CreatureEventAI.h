@@ -628,6 +628,7 @@ class CreatureEventAI : public CreatureAI
         uint32 EventUpdateTime;                             //Time between event updates
         uint32 EventDiff;                                   //Time between the last event call
         bool bEmptyList;
+        bool hasLosEvents;
 
         //Variables used by Events themselves
         uint8 Phase;                                        // Current phase, max 32 phases
