@@ -10,16 +10,23 @@
 
 # Set projectname (must be done AFTER setting configurationtypes)
 project(OregonCore)
-
-# CMake policies (can not be handled elsewhere)
 cmake_minimum_required(VERSION 2.8)
 
-if (POLICY CMP0005)
+# cmake policies, cannot be handled elsewhere
+# run cmake --help-policy CMPxxxx for details
+# note: I tried to use macro for this, but didnt work
+IF (POLICY CMP0005)
     cmake_policy(SET CMP0005 NEW)
-endif()
-if (POLICY CMP0054)
+ENDIF()
+IF (POLICY CMP0043)
+    cmake_policy(SET CMP0043 OLD)
+ENDIF()
+IF (POLICY CMP0053)
+    cmake_policy(SET CMP0053 OLD)
+ENDIF()
+IF (POLICY CMP0054)
     cmake_policy(SET CMP0054 OLD)
-endif()
+ENDIF()
 
 # Set RPATH-handing (CMake parameters)
 set(CMAKE_SKIP_BUILD_RPATH 0)

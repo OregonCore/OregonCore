@@ -37,8 +37,6 @@ if (CMAKE_CXX_COMPILER MATCHES "/c\\+\\+$")
     set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 endif()
 
-message(STATUS "compiler is: ${CMAKE_CXX_COMPILER} ${CMAKE_COMPILER_IS_GNUXX}")
-
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   include(${CMAKE_SOURCE_DIR}/cmake/compiler/gcc/settings.cmake)
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

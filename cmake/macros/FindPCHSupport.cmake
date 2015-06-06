@@ -1,4 +1,4 @@
-# - Try to find precompiled headers support for GCC 3.4 and 4.x (and MSVC)
+# - Try to find precompiled headers support for GCC 3.4 and 4.x, MSVC and clang
 # Once done this will define:
 #
 # Variable:
@@ -9,8 +9,11 @@
 #   ADD_PRECOMPILED_HEADER_TO_TARGET _targetName _input _pch_output_to_use _dowarn
 #   ADD_NATIVE_PRECOMPILED_HEADER _targetName _input _dowarn
 #   GET_NATIVE_PRECOMPILED_HEADER _targetName _input
+# 
+# Function:
+#   add_clang_pch(target dir header cpp)
 
-IF(CMAKE_COMPILER_IS_GNUCXX)
+IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 
     EXEC_PROGRAM(
       ${CMAKE_CXX_COMPILER}
@@ -28,16 +31,16 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
 
     SET(_PCH_include_prefix "-I")
 
-ELSE(CMAKE_COMPILER_IS_GNUCXX)
-
+ELSEIF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    SET(PCHSupport_FOUND TRUE)
+ELSE()
     IF(WIN32)
       SET(PCHSupport_FOUND TRUE) # for experimental msvc support
       SET(_PCH_include_prefix "/I")
     ELSE(WIN32)
       SET(PCHSupport_FOUND FALSE)
     ENDIF(WIN32)
-
-ENDIF(CMAKE_COMPILER_IS_GNUCXX)
+ENDIF()
 
 MACRO(_PCH_GET_COMPILE_FLAGS _out_compile_flags)
 
@@ -313,3 +316,28 @@ MACRO(ADD_NATIVE_PRECOMPILED_HEADER _targetName _input)
     endif(CMAKE_GENERATOR MATCHES Visual*)
 
 ENDMACRO(ADD_NATIVE_PRECOMPILED_HEADER)
+
+function(add_clang_pch target dir header cpp)
+    get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+    get_property(defs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY COMPILE_DEFINITIONS)
+    foreach(def ${defs})
+      set(definitions "${definitions} -D${def}")
+    endforeach()
+    foreach(_dir ${dirs})
+      set(includes "${includes} -I${_dir}")
+    endforeach()
+
+    # helper target for triggering PCH re-generation
+    add_library(${target}_pch_dephelp STATIC "${dir}/${cpp}")
+
+    separate_arguments(args UNIX_COMMAND "-x c++-header --relocatable-pch -isysroot ${CMAKE_CURRENT_BINARY_DIR} ${dir}/${header} -o ${header}.pch ${definitions} ${includes} ${CMAKE_CXX_FLAGS} -Winvalid-pch")
+    add_custom_command(
+        OUTPUT "${header}.pch"
+        COMMAND ${CMAKE_CXX_COMPILER} ARGS ${args}
+        DEPENDS "${target}_pch_dephelp"
+    )
+    add_custom_target("${target}PCH" DEPENDS "${header}.pch")
+    add_dependencies("${target}PCH" "${target}_pch_dephelp")
+    add_dependencies(${target} "${target}PCH")
+    set_target_properties(${target} PROPERTIES COMPILE_FLAGS "-include-pch ${CMAKE_CURRENT_BINARY_DIR}/${header}.pch")
+endfunction()

@@ -25,27 +25,3 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 endif()
 
-function(add_clang_pch target dir header cpp)
-    get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-    get_property(defs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY COMPILE_DEFINITIONS)
-    foreach(def ${defs})
-      set(definitions "${definitions} -D${def}")
-    endforeach()
-    foreach(_dir ${dirs})
-      set(includes "${includes} -I${_dir}")
-    endforeach()
-
-    # helper target for triggering PCH re-generation
-    add_library(${target}PCH-Trigger STATIC "${dir}/${cpp}")
-
-    separate_arguments(args UNIX_COMMAND "-x c++-header --relocatable-pch -isysroot ${CMAKE_CURRENT_BINARY_DIR} ${dir}/${header} -o ${header}.pch ${definitions} ${includes} ${CMAKE_CXX_FLAGS} -Winvalid-pch")
-    add_custom_command(
-        OUTPUT "${header}.pch"
-        COMMAND ${CMAKE_CXX_COMPILER} ARGS ${args}
-        DEPENDS "${target}PCH-Trigger"
-    )
-    add_custom_target("${target}PCH" DEPENDS "${header}.pch")
-    add_dependencies("${target}PCH" "${target}PCH-Trigger")
-    add_dependencies(${target} "${target}PCH")
-    set_target_properties(${target} PROPERTIES COMPILE_FLAGS "-include-pch ${CMAKE_CURRENT_BINARY_DIR}/${header}.pch")
-endfunction()
