@@ -1909,15 +1909,8 @@ uint32 Map::GetZoneId(uint16 areaflag, uint32 map_id)
 
 bool Map::IsInWater(float x, float y, float pZ, LiquidData* data) const
 {
-    // Check surface in x, y point for liquid
-    if (const_cast<Map*>(this)->GetGrid(x, y))
-    {
-        LiquidData liquid_status;
-        LiquidData* liquid_ptr = data ? data : &liquid_status;
-        if (getLiquidStatus(x, y, pZ, MAP_ALL_LIQUIDS, liquid_ptr))
-            return true;
-    }
-    return false;
+    float waterLevel = GetWaterLevel(x, y);
+    return pZ <= waterLevel;
 }
 
 bool Map::IsUnderWater(float x, float y, float z) const
