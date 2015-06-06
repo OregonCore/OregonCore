@@ -40,10 +40,6 @@
 extern int m_ServiceStatus;
 #endif
 
-#if PLATFORM == PLATFORM_UNIX
-#include "Debugging/UnixDebugger.h"
-#endif
-
 INSTANTIATE_SINGLETON_1(Master);
 
 volatile uint32 Master::m_masterLoopCounter = 0;
@@ -74,11 +70,7 @@ class FreezeDetectorRunnable : public ACE_Based::Runnable
             for (;;)
             {
                 ACE_Based::Thread::Sleep(1000);
-                /* Windows' Sleep() returns void so
-                   we cant be sure if Sleep() was interrupted
-                   by shutdown. So check if world is running here.
-                   Else this will detect false positive. */
-                if (World::IsStopped())
+                if (sWorld.IsStopped())
                     break;
                 uint32 curtime = getMSTime();
                 // normal work
@@ -91,7 +83,7 @@ class FreezeDetectorRunnable : public ACE_Based::Runnable
                 else if (getMSTimeDiff(w_lastchange, curtime) > _delaytime)
                 {
                     sLog.outError("World Thread is stuck.  Terminating server!");
-                    *((uint32 volatile*)NULL) = 0;                       // bang crash
+                    abort();
                 }
             }
             sLog.outString("Anti-freeze thread exiting without problems.");
@@ -110,10 +102,6 @@ Master::~Master()
 int Master::Run()
 {
     int defaultStderr = dup(2);
-
-    #if PLATFORM == PLATFORM_UNIX
-    UnixDebugger::RegisterDeadlySignalHandler();
-    #endif
 
     if (sConfig.GetBoolDefault("Console.Enable", true))
         sConsole.Initialize();
@@ -245,15 +233,15 @@ int Master::Run()
        because it we need the highest priority possible */
     WorldRunnable().run();
 
-    sWorldSocketMgr->Wait();
-
     // Stop freeze protection before shutdown tasks
     if (freeze_thread)
     {
-        freeze_thread->interrupt();
+        freeze_thread->kill(-1); // destroy
         freeze_thread->wait();
         delete freeze_thread;
     }
+    
+    sWorldSocketMgr->Wait();
 
     // Stop soap thread
     if (soap_thread)
@@ -281,7 +269,7 @@ int Master::Run()
 
     if (cliThread)
     {
-        cliThread->interrupt();
+        cliThread->kill(SIGINT);
         cliThread->wait();
         delete cliThread;
     }

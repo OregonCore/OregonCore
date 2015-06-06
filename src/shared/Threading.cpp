@@ -21,6 +21,10 @@
 #include <ace/Sched_Params.h>
 #include <vector>
 
+#if PLATFORM == PLATFORM_UNIX
+#include "Debugging/UnixDebugger.h"
+#endif
+
 using namespace ACE_Based;
 
 ThreadPriority::ThreadPriority()
@@ -98,9 +102,8 @@ int ThreadPriority::getPriority(Priority p) const
 
 Thread::Thread() : m_iThreadId(0), m_hThreadHandle(0), m_task(0)
 {
-
 }
-
+ 
 Thread::Thread(Runnable* instance) : m_iThreadId(0), m_hThreadHandle(0), m_task(instance)
 {
     // register reference to m_task to prevent it deeltion until destructor
@@ -151,13 +154,12 @@ bool Thread::wait()
     return (_res == 0);
 }
 
-void Thread::interrupt()
+bool Thread::kill(int signal)
 {
     if (!m_iThreadId || !m_task)
-        return;
+        return false;
 
-    if (ACE_Thread::kill(m_iThreadId, SIGINT) != 0)
-        return;
+    return ACE_Thread::kill(m_iThreadId, signal) != 0;
 }
 
 void Thread::suspend()
@@ -172,8 +174,21 @@ void Thread::resume()
 
 ACE_THR_FUNC_RETURN Thread::ThreadTask(void* param)
 {
+    #if PLATFORM == PLATFORM_UNIX
+    // unblock signal delivery for this thread
+    sigset_t ss;
+    sigfillset(&ss);
+    ACE_Thread::sigsetmask(SIG_UNBLOCK, &ss, NULL);
+
+    sThreadList.insert(Thread::currentId());
+    #endif
+
     Runnable* _task = (Runnable*)param;
     _task->run();
+
+    #if PLATFORM == PLATFORM_UNIX
+    sThreadList.erase(Thread::currentId());
+    #endif
 
     // task execution complete, free referecne added at
     _task->decReference();
@@ -223,4 +238,3 @@ void Thread::Sleep(unsigned long msecs)
 {
     ACE_OS::sleep(ACE_Time_Value(0, 1000 * msecs));
 }
-

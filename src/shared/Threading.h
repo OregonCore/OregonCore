@@ -18,6 +18,7 @@
 #ifndef THREADING_H
 #define THREADING_H
 
+#include <set>
 #include <ace/Thread.h>
 #include <ace/TSS_T.h>
 #include "ace/Atomic_Op.h"
@@ -79,7 +80,7 @@ class Thread
         bool wait();
 
         void suspend();
-        void interrupt();
+        bool kill(int signal);
         void resume();
 
         void setPriority(Priority type);
@@ -88,6 +89,8 @@ class Thread
         static ACE_thread_t currentId();
         static ACE_hthread_t currentHandle();
         static Thread* current();
+
+        ACE_thread_t getId() const { return m_iThreadId; }
 
     private:
         Thread(const Thread&);

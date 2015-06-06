@@ -21,6 +21,10 @@ void Console::Initialize()
 {
 }
 
+void Console::Restore()
+{
+}
+
 void Console::SetLoading(bool, const char*)
 {
 }

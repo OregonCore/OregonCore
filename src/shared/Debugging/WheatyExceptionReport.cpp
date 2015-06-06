@@ -38,6 +38,8 @@
 #include "SystemConfig.h"
 #include "revision.h"
 
+#include <fstream>
+
 #define CrashFolder _T("Crashes")
 #pragma comment(linker, "/DEFAULTLIB:dbghelp.lib")
 
@@ -174,10 +176,13 @@ LONG WINAPI WheatyExceptionReport::WheatyUnhandledExceptionFilter(
         m_hReportFile = 0;
     }
 
-    if (m_previousFilter)
-        return m_previousFilter(pExceptionInfo);
-    else
-        return EXCEPTION_EXECUTE_HANDLER/*EXCEPTION_CONTINUE_SEARCH*/;
+    //if (m_previousFilter)
+    //    return m_previousFilter(pExceptionInfo);
+    //else
+    //    return EXCEPTION_EXECUTE_HANDLER/*EXCEPTION_CONTINUE_SEARCH*/;
+    TerminateProcess(m_hProcess, EXIT_FAILURE);
+
+    return EXCEPTION_EXECUTE_HANDLER; // unreached
 }
 
 BOOL WheatyExceptionReport::_GetProcessorName(TCHAR* sProcessorName, DWORD maxcount)
@@ -744,12 +749,79 @@ void WheatyExceptionReport::WriteStackDetails(
             #endif
         }
 
+        uint64 myMtime = 0;
+        {
+            TCHAR myFileName[MAX_PATH];
+            DWORD lpdwSize = MAX_PATH;
+            FILETIME mtime;
+            if (QueryFullProcessImageName(m_hProcess, 0, myFileName, &lpdwSize))
+                if (HANDLE hFile = CreateFile(myFileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, 0))
+                {
+                    if (GetFileTime(hFile, NULL, NULL, &mtime))
+                        myMtime = (uint64(mtime.dwHighDateTime) << 32) | uint64(mtime.dwLowDateTime);
+                    CloseHandle(hFile);
+                }
+        }
+
         // Get the source line for this stack frame entry
         IMAGEHLP_LINE64 lineInfo = { sizeof(IMAGEHLP_LINE64) };
         DWORD dwLineDisplacement;
         if (SymGetLineFromAddr64(m_hProcess, sf.AddrPC.Offset,
                                  &dwLineDisplacement, &lineInfo))
+        {
             _tprintf(_T("  %s line %u"), lineInfo.FileName, lineInfo.LineNumber);
+
+            if (HANDLE hFile = CreateFile(lineInfo.FileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, 0))
+            {
+                _tprintf(_T("\r\n"));
+                FILETIME mtime;
+                if (GetFileTime(hFile, NULL, NULL, &mtime))
+                    if (((uint64(mtime.dwHighDateTime) << 32) | uint64(mtime.dwLowDateTime)) > myMtime)
+                        _tprintf(_T("  Source file is newer than executable!\r\n"));
+                CloseHandle(hFile);
+
+                std::string codeline;
+                #ifdef _UNICODE
+                std::string utf8filename;
+                WStrToUtf8(lineInfo.FileName, wcslen(lineInfo.FileName), utf8filename);
+                #else
+                std::string utf8filename = lineInfo.FileName;
+                #endif
+
+                std::ifstream ifs(utf8filename.c_str(), std::ios_base::in | std::ios_base::binary);
+                if (!ifs.is_open())
+                    break;
+
+                for (unsigned int j = 1; j < lineInfo.LineNumber - 1; j++)
+                    std::getline(ifs, codeline);
+
+                if (ifs.eof())
+                    break;
+
+                codeline.clear();
+
+                for (unsigned int j = (lineInfo.LineNumber == 1) ? 1 : 0; j < 3; j++)
+                {
+                    std::getline(ifs, codeline);
+                    if (ifs.eof())
+                        break;
+                    #ifdef _UNICODE
+                    std::wstring wideline;
+                    Utf8ToWStr(codeline, wideline);
+                    _tprintf("%u: %s", ((lineInfo.LineNumber - 1) + j), wideline.c_str());
+                    #else
+                    _tprintf("%u: %s", ((lineInfo.LineNumber - 1) + j), codeline.c_str());
+                    #endif
+                    codeline.clear();
+
+                    if (j < 3)
+                        _tprintf("\r\n");
+                }
+
+                ifs.close();
+
+            }
+        }
 
         _tprintf(_T("\r\n"));
 

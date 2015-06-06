@@ -8,6 +8,7 @@
 
 typedef WINDOW Window;
 class Master;
+class UnixDebugger;
 
 class Console
 {
@@ -19,6 +20,7 @@ class Console
         friend class World;
         friend class Master;
         friend class Log;
+        friend class UnixDebugger;
         friend void LoadSQLUpdates();
 
         void Initialize();
@@ -49,6 +51,8 @@ class Console
             public:
                 void run();
         };
+
+        void Restore();
 
     private:
 
