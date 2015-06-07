@@ -17563,6 +17563,8 @@ void Player::StopCastingCharm()
         charm->SetCharmerGUID(0);
     }
 
+    charm->SendHealthUpdateDueToCharm(this);
+
     if (GetCharmGUID())
         sLog.outError("CRASH ALARM! Player %s is not able to uncharm unit (Entry: %u, Type: %u)", GetName(), charm->GetEntry(), charm->GetTypeId());
 }
@@ -17720,6 +17722,8 @@ void Player::PetSpellInitialize()
     }
 
     GetSession()->SendPacket(&data);
+
+    pet->SendHealthUpdateDueToCharm(this);
 }
 
 void Player::PossessSpellInitialize()
@@ -17748,6 +17752,8 @@ void Player::PossessSpellInitialize()
     data << uint8(0);                                       // cooldowns count
 
     GetSession()->SendPacket(&data);
+    
+    charm->SendHealthUpdateDueToCharm(this);
 }
 
 void Player::CharmSpellInitialize()
@@ -17805,6 +17811,8 @@ void Player::CharmSpellInitialize()
     data << uint8(0);                                       // cooldowns count
 
     GetSession()->SendPacket(&data);
+    
+    charm->SendHealthUpdateDueToCharm(this);
 }
 
 void Player::SendRemoveControlBar()

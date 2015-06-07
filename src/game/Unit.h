@@ -1069,6 +1069,9 @@ class Unit : public WorldObject
         uint32 GetHealth()    const { return GetUInt32Value(UNIT_FIELD_HEALTH); }
         uint32 GetMaxHealth() const { return GetUInt32Value(UNIT_FIELD_MAXHEALTH); }
 
+        bool ShouldRevealHealthTo(Player* player) const;
+        void SendHealthUpdateDueToCharm(Player* charmer);
+
         bool IsFullHealth() const { return GetHealth() == GetMaxHealth(); }
         bool HealthBelowPct(int32 pct) const { return GetHealth() < CountPctFromMaxHealth(pct); }
         bool HealthBelowPctDamaged(int32 pct, uint32 damage) const { return int64(GetHealth()) - int64(damage) < int64(CountPctFromMaxHealth(pct)); }

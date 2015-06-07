@@ -10412,6 +10412,32 @@ void Unit::SetMaxHealth(uint32 val)
         SetHealth(0);
 }
 
+bool Unit::ShouldRevealHealthTo(Player* player) const
+{
+    if (!sWorld.getConfig(CONFIG_HEALTH_IN_PERCENTS))
+        return true;
+
+    if (player == this || player->isGameMaster())
+        return true;
+
+    if (player->IsInRaidWith(this))
+        return true;
+
+    return false;
+}
+
+void Unit::SendHealthUpdateDueToCharm(Player* charmer)
+{
+    ForceValuesUpdateAtIndex(UNIT_FIELD_HEALTH);
+    ForceValuesUpdateAtIndex(UNIT_FIELD_MAXHEALTH);
+
+    if (Group* group = charmer->GetGroup())
+    {
+        charmer->SetGroupUpdateFlag(GROUP_UPDATE_PET);
+        group->UpdatePlayerOutOfRange(charmer);
+    }
+}
+
 void Unit::SetPower(Powers power, uint32 val)
 {
     if (GetPower(power) == val)

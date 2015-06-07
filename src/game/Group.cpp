@@ -1634,11 +1634,21 @@ void Group::BroadcastGroupUpdate(void)
     // -- not very efficient but safe
     for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
     {
-        Player* pp = sObjectMgr.GetPlayer(citr->guid);
-        if (pp && pp->IsInWorld())
+        if (Player* pp = sObjectMgr.GetPlayer(citr->guid))
         {
+            pp->ForceValuesUpdateAtIndex(UNIT_FIELD_HEALTH);
+            pp->ForceValuesUpdateAtIndex(UNIT_FIELD_MAXHEALTH);
             pp->ForceValuesUpdateAtIndex(UNIT_FIELD_BYTES_2);
             pp->ForceValuesUpdateAtIndex(UNIT_FIELD_FACTIONTEMPLATE);
+
+            if (Pet* pet = pp->GetPet())
+            {
+                pet->ForceValuesUpdateAtIndex(UNIT_FIELD_HEALTH);
+                pet->ForceValuesUpdateAtIndex(UNIT_FIELD_MAXHEALTH);
+                pet->ForceValuesUpdateAtIndex(UNIT_FIELD_BYTES_2);
+                pet->ForceValuesUpdateAtIndex(UNIT_FIELD_FACTIONTEMPLATE);
+            }
+
             DEBUG_LOG("-- Forced group value update for '%s'", pp->GetName());
         }
     }

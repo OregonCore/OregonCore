@@ -3,7 +3,7 @@
 ###############################################
 
 [worldserver]
-ConfVersion=2015052759
+ConfVersion=2015060760
 
 # Note to devs, line breaks should be at column 80
 ###############################################################################
@@ -260,7 +260,7 @@ vmap.enableHeight = 1
 vmap.ignoreMapIds = ""
 vmap.ignoreSpellIds = "7720"
 vmap.petLOS = 1
-vmap.totem = 0
+vmap.totem = 1
 vmap.enableIndoorCheck = 1
 DetectPosCollision = 1
 TargetPosRecalculateRange = 1.5
@@ -834,6 +834,11 @@ ChatLogTimestamp = 0
 #        The maximum number of results a .lookup command can return
 #        Default: 0 - unlimited
 #
+#    HealthInPercents
+#        Whether to send client health in percents or exact values
+#        Values: 1 - percents, 0 - values
+#        Default: 1 (blizzlike)
+#
 ###############################################################################
 
 GameType = 1
@@ -880,6 +885,7 @@ BeepAtStart = 1
 Motd = "Welcome to an Oregon Core server."
 Server.LoginInfo = 0
 Command.LookupMaxResults = 0
+HealthInPercents = 1
 
 ###############################################################################
 # PLAYER INTERACTION
