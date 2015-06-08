@@ -10426,6 +10426,11 @@ bool Unit::ShouldRevealHealthTo(Player* player) const
     return false;
 }
 
+/**
+ * Handler for charm/uncharm events,
+ * properly converts health from values to percentages
+ * and vice versa, and notifies all seers about it.
+ */
 void Unit::SendHealthUpdateDueToCharm(Player* charmer)
 {
     ForceValuesUpdateAtIndex(UNIT_FIELD_HEALTH);
@@ -10660,9 +10665,6 @@ CharmInfo* Unit::InitCharmInfo()
 
 void Unit::DeleteCharmInfo()
 {
-    if (!m_charmInfo)
-        return;
-
     delete m_charmInfo;
     m_charmInfo = NULL;
 }
@@ -10686,9 +10688,8 @@ CharmInfo::CharmInfo(Unit* unit)
 
 CharmInfo::~CharmInfo()
 {
-    if (m_unit->GetTypeId() == TYPEID_UNIT)
-        if (Creature* pCreature = m_unit->ToCreature())
-            pCreature->SetReactState(m_oldReactState);
+    if (Creature* pCreature = m_unit->ToCreature())
+        pCreature->SetReactState(m_oldReactState);
 }
 
 void CharmInfo::InitPetActionBar()
@@ -12565,20 +12566,6 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
     CombatStop(); //@todo CombatStop(true) may cause crash (interrupt spells)
     DeleteThreatList();
 
-    // Charmer stop charming
-    if (charmer->GetTypeId() == TYPEID_PLAYER)
-    {
-        charmer->ToPlayer()->StopCastingCharm();
-        charmer->ToPlayer()->StopCastingBindSight();
-    }
-
-    // Charmed stop charming
-    if (GetTypeId() == TYPEID_PLAYER)
-    {
-        ToPlayer()->StopCastingCharm();
-        ToPlayer()->StopCastingBindSight();
-    }
-
     // StopCastingCharm may remove a possessed pet?
     if (!IsInWorld())
     {
@@ -12739,11 +12726,14 @@ void Unit::RemoveCharmedBy(Unit* charmer)
     if (ToPlayer())
         ToPlayer()->SetClientControl(this, true);
 
-    //a guardian should always have charminfo
-    if (charmer->GetTypeId() == TYPEID_PLAYER && this != charmer->GetFirstControlled())
-        charmer->ToPlayer()->SendRemoveControlBar();
-    else if (GetTypeId() == TYPEID_PLAYER || (GetTypeId() == TYPEID_UNIT && !ToCreature()->IsGuardian()))
-        DeleteCharmInfo();
+    DeleteCharmInfo();
+
+    if (Player* playerCharmer = charmer->ToPlayer())
+    {
+        if (this != charmer->GetFirstControlled())
+            charmer->ToPlayer()->SendRemoveControlBar();
+        SendHealthUpdateDueToCharm(playerCharmer);
+    }
 }
 
 void Unit::RestoreFaction()

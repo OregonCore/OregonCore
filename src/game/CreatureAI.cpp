@@ -24,12 +24,12 @@
 #include "Player.h"
 
 //Disable CreatureAI when charmed
-void CreatureAI::OnCharmed(bool /*apply*/)
+void CreatureAI::OnCharmed(bool apply)
 {
     me->NeedChangeAI = true;
 
     if(!(me->ToCreature()->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_CHARM_AI))
-        me->IsAIEnabled = false;
+        me->IsAIEnabled = !apply;
 }
 
 AISpellInfoType* UnitAI::AISpellInfo;
