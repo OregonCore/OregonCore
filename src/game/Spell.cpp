@@ -4649,10 +4649,9 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_targets.getUnitTarget()->GetTypeId() == TYPEID_PLAYER)
                 {
                     Player const* player = static_cast<Player const*>(m_targets.getUnitTarget());
-                    ShapeshiftForm form = player->m_form;
 
                     // Player is not allowed to cast water walk on shapeshifted/mounted player 
-                    if (form != FORM_NONE || player->IsMounted())
+                    if (player->HasShapeshiftChangingModel() || player->IsMounted())
                         return SPELL_FAILED_BAD_TARGETS;
                 }
 
