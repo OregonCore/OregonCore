@@ -4926,16 +4926,15 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
                     return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
 
                 bool below = data < 0;
-                float pct = float(abs(data)) / 100.f;
 
                 if (below)
                 {
-                    if (unitTarget->GetHealth() >= m_caster->GetMaxHealth()*pct)
+                    if (unitTarget->GetHealthPct() <= data)
                         return SPELL_FAILED_BAD_TARGETS;
                 }
                 else
                 {
-                    if (unitTarget->GetHealth() <= m_caster->GetMaxHealth()*pct)
+                    if (unitTarget->GetHealthPct() >= data)
                         return SPELL_FAILED_BAD_TARGETS;
                 }
                 break;
