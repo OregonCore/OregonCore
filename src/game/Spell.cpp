@@ -2254,6 +2254,13 @@ void Spell::prepare(SpellCastTargets* targets, Aura* triggeredByAura)
         return;
     }
 
+    // Set cast time to 0 if .cheat casttime is enabled.
+    if (m_caster->GetTypeId() == TYPEID_PLAYER)
+    {
+        if (m_caster->ToPlayer()->GetCommandStatus(CHEAT_CASTTIME))
+            m_casttime = 0;
+    }
+
     // set timer base at cast time
     ReSetTimer();
 
@@ -2475,6 +2482,13 @@ void Spell::cast(bool skipCheck)
                 else
                     m_caster->CastSpell(m_targets.getUnitTarget() ? m_targets.getUnitTarget() : m_caster, *i, true);
         }
+    }
+
+    // Clear spell cooldowns after every spell is cast if .cheat cooldown is enabled.
+    if (m_caster->GetTypeId() == TYPEID_PLAYER)
+    {
+        if (m_caster->ToPlayer()->GetCommandStatus(CHEAT_COOLDOWN))
+            m_caster->ToPlayer()->RemoveSpellCooldown(m_spellInfo->Id, true);
     }
 
     SetExecutedCurrently(false);
@@ -3452,6 +3466,13 @@ void Spell::TakePower()
 {
     if (m_CastItem || m_triggeredByAuraSpell)
         return;
+
+    //Don't take power if the spell is cast while .cheat power is enabled.
+    if (m_caster->GetTypeId() == TYPEID_PLAYER)
+    {
+        if (m_caster->ToPlayer()->GetCommandStatus(CHEAT_POWER))
+            return;
+    }
 
     bool hit = true;
     if (m_caster->GetTypeId() == TYPEID_PLAYER)

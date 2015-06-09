@@ -583,6 +583,18 @@ ChatCommand* ChatHandler::getCommandTable()
         { NULL,             0,                  false, NULL,                                                "", NULL }
     };
 
+    static ChatCommand cheatCommandTable[] =
+    {
+        { "god",            SEC_GAMEMASTER,     false, &ChatHandler::HandleGodModeCheatCommand,             "", NULL },
+        { "casttime",       SEC_GAMEMASTER,     false, &ChatHandler::HandleCasttimeCheatCommand,            "", NULL },
+        { "cooldown",       SEC_GAMEMASTER,     false, &ChatHandler::HandleCoolDownCheatCommand,            "", NULL },
+        { "power",          SEC_GAMEMASTER,     false, &ChatHandler::HandlePowerCheatCommand,               "", NULL },
+        { "taxicheat",      SEC_GAMEMASTER,     false, &ChatHandler::HandleTaxiCheatCommand,                "", NULL },
+        { "explorecheat",   SEC_GAMEMASTER,     false, &ChatHandler::HandleExploreCheatCommand,             "", NULL },
+        { "waterwalk",      SEC_GAMEMASTER,     false, &ChatHandler::HandleWaterwalkCheatCommand,           "", NULL },
+        { NULL,             0,                  false, NULL,                                                "", NULL }
+    };
+
     static ChatCommand commandTable[] =
     {
         { "account",        SEC_PLAYER,         true,  NULL,                                           "", accountCommandTable  },
@@ -616,6 +628,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "instance",       SEC_ADMINISTRATOR,  true,  NULL,                                           "", instanceCommandTable },
         { "server",         SEC_ADMINISTRATOR,  true,  NULL,                                           "", serverCommandTable   },
         { "pet",            SEC_GAMEMASTER,     false, NULL,                                           "", petCommandTable      },
+        { "cheat",          SEC_GAMEMASTER,     false, NULL,                                           "", cheatCommandTable    },
 
         { "aura",           SEC_ADMINISTRATOR,  false, &ChatHandler::HandleAuraCommand,                "", NULL },
         { "unaura",         SEC_ADMINISTRATOR,  false, &ChatHandler::HandleUnAuraCommand,              "", NULL },
@@ -649,13 +662,10 @@ ChatCommand* ChatHandler::getCommandTable()
         { "baninfo",        SEC_ADMINISTRATOR,  false, NULL,                                           "", baninfoCommandTable },
         { "banlist",        SEC_ADMINISTRATOR,  true,  NULL,                                           "", banlistCommandTable },
         { "start",          SEC_PLAYER,         false, &ChatHandler::HandleStartCommand,               "", NULL },
-        { "taxicheat",      SEC_MODERATOR,      false, &ChatHandler::HandleTaxiCheatCommand,           "", NULL },
         { "allowmove",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleAllowMovementCommand,       "", NULL },
         { "linkgrave",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleLinkGraveCommand,           "", NULL },
         { "neargrave",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleNearGraveCommand,           "", NULL },
-        { "explorecheat",   SEC_ADMINISTRATOR,  false, &ChatHandler::HandleExploreCheatCommand,        "", NULL },
         { "hover",          SEC_ADMINISTRATOR,  false, &ChatHandler::HandleHoverCommand,               "", NULL },
-        { "waterwalk",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleWaterwalkCommand,           "", NULL },
         { "levelup",        SEC_ADMINISTRATOR,  false, &ChatHandler::HandleLevelUpCommand,             "", NULL },
         { "showarea",       SEC_ADMINISTRATOR,  false, &ChatHandler::HandleShowAreaCommand,            "", NULL },
         { "hidearea",       SEC_ADMINISTRATOR,  false, &ChatHandler::HandleHideAreaCommand,            "", NULL },

@@ -378,7 +378,7 @@ Player::Player (WorldSession* session): Unit()
 
     m_petStatus = PET_STATUS_NONE;
 
-    ////////////////////Rest System/////////////////////
+    // Rest system variables
     time_inn_enter = 0;
     inn_pos_mapid = 0;
     inn_pos_x = 0.0f;
@@ -386,8 +386,8 @@ Player::Player (WorldSession* session): Unit()
     inn_pos_z = 0.0f;
     m_rest_bonus = 0;
     rest_type = REST_TYPE_NO;
-    ////////////////////Rest System/////////////////////
 
+    // Mail system variables
     m_mailsLoaded = false;
     m_mailsUpdated = false;
     unReadMails = 0;
@@ -433,6 +433,8 @@ Player::Player (WorldSession* session): Unit()
     m_declinedname = NULL;
 
     m_isActive = true;
+
+    _activeCheats = CHEAT_NONE;
 
     m_ControlledByPlayer = true;
     m_isWorldObject = true;
@@ -21020,6 +21022,9 @@ void Player::UpdateCharmedAI()
 void Player::AddGlobalCooldown(SpellEntry const* spellInfo, Spell* spell)
 {
     if (!spellInfo->StartRecoveryTime)
+        return;
+
+    if (GetCommandStatus(CHEAT_COOLDOWN))
         return;
 
     uint32 cdTime = spellInfo->StartRecoveryTime;

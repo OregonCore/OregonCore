@@ -774,6 +774,11 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             return 0;
     }
 
+    // Handler for god command
+    if(pVictim->GetTypeId() == TYPEID_PLAYER)
+        if (pVictim->ToPlayer()->GetCommandStatus(CHEAT_GOD))
+            return 0;
+
     //Script Event damage taken
     if (pVictim->GetTypeId() == TYPEID_UNIT && (pVictim->ToCreature())->IsAIEnabled)
     {

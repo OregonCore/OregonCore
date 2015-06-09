@@ -403,9 +403,7 @@ class ChatHandler
         bool HandleNearGraveCommand(const char* args);
         bool HandleActivateObjectCommand(const char* args);
         bool HandleSpawnTransportCommand(const char* args);
-        bool HandleExploreCheatCommand(const char* args);
         bool HandleHoverCommand(const char* args);
-        bool HandleWaterwalkCommand(const char* args);
         bool HandleLevelUpCommand(const char* args);
         bool HandleShowAreaCommand(const char* args);
         bool HandleHideAreaCommand(const char* args);
@@ -416,17 +414,27 @@ class ChatHandler
         bool HandlePetLearnCommand(const char* args);
         bool HandleCreatePetCommand(const char* args);
 
+        // Cheat Related
+        bool HandlePowerCheatCommand(const char *args);
+        bool HandleCoolDownCheatCommand(const char *args);
+        bool HandleCasttimeCheatCommand(const char *args);
+        bool HandleGodModeCheatCommand(const char *args);
+        bool HandleExploreCheatCommand(const char* args);
+        bool HandleWaterwalkCheatCommand(const char* args);
+
         // Group Related
         bool HandleGroupLeaderCommand(const char* args);
         bool HandleGroupDisbandCommand(const char* args);
         bool HandleGroupRemoveCommand(const char* args);
         bool HandleGroupJoinCommand(const char* args);
 
+        // Guild Related
         bool HandleGuildCreateCommand(const char* args);
         bool HandleGuildInviteCommand(const char* args);
         bool HandleGuildUninviteCommand(const char* args);
         bool HandleGuildRankCommand(const char* args);
         bool HandleGuildDeleteCommand(const char* args);
+
         bool HandleUpdate(const char* args);
         bool HandleBankCommand(const char* args);
         bool HandleChangeWeather(const char* args);
@@ -436,13 +444,12 @@ class ChatHandler
         bool HandleDelTeleCommand(const char* args);
         bool HandleListAurasCommand(const char* args);
 
+        // Reset commands
         bool HandleResetHonorCommand(const char* args);
         bool HandleResetLevelCommand(const char* args);
         bool HandleResetSpellsCommand(const char* args);
-
         bool HandleResetStatsCommand(const char* args);
         bool HandleResetTalentsCommand(const char* args);
-
         bool HandleResetAllCommand(const char* args);
 
 
