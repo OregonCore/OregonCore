@@ -463,7 +463,7 @@ void Group::SendLootRoll(const uint64& SourceGuid, const uint64& TargetGuid, uin
 
     for (Roll::PlayerVote::const_iterator itr = r.playerVote.begin(); itr != r.playerVote.end(); ++itr)
     {
-        Player* p = sObjectMgr.GetPlayer(itr->first);
+        Player* p = sObjectMgr.GetPlayer(itr->first, true);
         if (!p || !p->GetSession())
             continue;
 
@@ -486,7 +486,7 @@ void Group::SendLootRollWon(const uint64& SourceGuid, const uint64& TargetGuid, 
 
     for (Roll::PlayerVote::const_iterator itr = r.playerVote.begin(); itr != r.playerVote.end(); ++itr)
     {
-        Player* p = sObjectMgr.GetPlayer(itr->first);
+        Player* p = sObjectMgr.GetPlayer(itr->first, true);
         if (!p || !p->GetSession())
             continue;
 
@@ -506,7 +506,7 @@ void Group::SendLootAllPassed(uint32 NumberOfPlayers, const Roll& r)
 
     for (Roll::PlayerVote::const_iterator itr = r.playerVote.begin(); itr != r.playerVote.end(); ++itr)
     {
-        Player* p = sObjectMgr.GetPlayer(itr->first);
+        Player* p = sObjectMgr.GetPlayer(itr->first, true);
         if (!p || !p->GetSession())
             continue;
 
@@ -917,7 +917,7 @@ void Group::SendUpdate()
     Player* player;
     for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
     {
-        player = sObjectMgr.GetPlayer(citr->guid);
+        player = sObjectMgr.GetPlayer(citr->guid, true);
         if (!player || !player->GetSession() || player->GetGroup() != this)
             continue;
 

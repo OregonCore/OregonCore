@@ -484,6 +484,10 @@ void Player::CleanupsBeforeDelete()
     {
         TradeCancel(false);
         DuelComplete(DUEL_INTERUPTED);
+
+        // Send update to group
+        if (Group* group = GetGroup())
+            group->SendUpdate();
     }
     Unit::CleanupsBeforeDelete();
 }

@@ -743,8 +743,6 @@ class WorldSession
         time_t _logoutTime;
         uint32 m_latency;
         uint32 m_clientTimeDelay;
-        uint32 expireTime;                                  // Time session is kept until force disconnect
-        bool forceExit;
 
         struct ProtectedOpcodeStatus
         {
