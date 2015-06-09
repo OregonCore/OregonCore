@@ -7780,7 +7780,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
                 loot->clear();
 
                 Group* group = GetGroup();
-                bool groupRules = (group && go->GetGoType() == GAMEOBJECT_TYPE_CHEST && (go->GetGOInfo()->chest.groupLootRules));
+                bool groupRules = (group && go->GetGoType() == GAMEOBJECT_TYPE_CHEST && go->GetGOInfo()->chest.groupLootRules);
 
                 // check current RR player and get next if necessary
                 if (groupRules)
