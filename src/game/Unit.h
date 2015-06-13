@@ -2099,7 +2099,7 @@ class Unit : public WorldObject
         void SetLevitate(bool apply);
 
         bool IsAIEnabled, NeedChangeAI;
-
+        uint64 LastCharmerGUID;
         bool m_ControlledByPlayer;
 
         // Unit will forget everyone who has ever attacked it

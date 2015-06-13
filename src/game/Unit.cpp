@@ -227,6 +227,7 @@ void MovementInfo::Write(ByteBuffer& data) const
 Unit::Unit()
     : WorldObject(), IsAIEnabled(false),
       NeedChangeAI(false),
+      LastCharmerGUID(0),
       m_ControlledByPlayer(false),
       i_AI(NULL),
       i_disabledAI(NULL),
@@ -12681,6 +12682,8 @@ void Unit::RemoveCharmedBy(Unit* charmer)
         // Creature will restore its old AI on next update
         if (creature->AI())
             creature->AI()->OnCharmed(false);
+
+        LastCharmerGUID = charmer->GetGUID();
     }
 
     // If charmer still exists
