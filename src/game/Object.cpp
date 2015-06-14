@@ -649,7 +649,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                         if (me->ShouldRevealHealthTo(target))
                             *data << m_uint32Values[ index ];
                         else
-                            *data << uint32(me->GetHealthPct());
+                            *data << uint32(std::ceil(me->GetHealthPct()));
                     }
                     else
                         *data << m_uint32Values[ index ];
