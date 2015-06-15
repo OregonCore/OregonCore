@@ -3578,7 +3578,8 @@ bool Unit::AddAura(Aura* Aur)
                 }
 
                 // Non stackable and capped auras do not allow stacking
-                if (!(aurSpellInfo->StackAmount && uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount))
+                if (!(aurSpellInfo->StackAmount && uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount) &&
+                    (aurSpellInfo->SpellFamilyName == SPELLFAMILY_GENERIC || Aur->GetCasterGUID() == aur2->GetCasterGUID()))
                 {
                     // Do not let the stack size exceed the maximum stack limit
                     // Instead of adding a new stack, just set the duration time
