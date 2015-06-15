@@ -60,7 +60,9 @@ class ZoneScript
         }
         virtual void SetData(uint32 /*DataId*/, uint32 /*Value*/) {}
 
-        virtual void ProcessEvent(GameObject* /*obj*/, uint32 /*eventId*/) {}
+        // These functions are called explicitly by scripting stuff, no regular core-link for them, yet.
+        virtual void ProcessEvent(GameObject* /*obj*/, uint32 eventId = 0) {}
+        virtual void ProcessEvent(Unit* /*obj*/, uint32 eventId = 0) {}
 };
 
 #endif

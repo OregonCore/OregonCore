@@ -55,6 +55,7 @@
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
 #include "ScriptMgr.h"
+#include "InstanceData.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
 {
@@ -1472,6 +1473,11 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                         victim->RemoveCorpse(true);
                     }
                 }
+                break;
+            case 45226: // banging the gong
+                if (InstanceData* pInstance = m_caster->GetInstanceData())
+                    pInstance->ProcessEvent(unitTarget, 1);
+                break;
             }
 
             //All IconID Check in there
@@ -1497,7 +1503,6 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     return;
                 }
             }
-            break;
         }
     case SPELLFAMILY_MAGE:
         switch (m_spellInfo->Id)
@@ -3173,13 +3178,18 @@ void Spell::SendLoot(uint64 guid, LootType loottype)
 
 void Spell::EffectOpenLock(SpellEffIndex /*effIndex*/)
 {
-    if (!m_caster || m_caster->GetTypeId() != TYPEID_PLAYER)
+    if (!m_caster)
+        return;
+
+    if (m_caster->GetTypeId() == TYPEID_UNIT && gameObjTarget)
     {
-        sLog.outDebug("WORLD: Open Lock - No Player Caster!");
+        gameObjTarget->UseDoorOrButton();
         return;
     }
 
     Player* player = m_caster->ToPlayer();
+    if (!player)
+        return;
 
     LootType loottype = LOOT_CORPSE;
     uint32 lockId = 0;
@@ -5805,14 +5815,21 @@ void Spell::EffectActivateObject(SpellEffIndex effIndex)
     /* This is not always delay, need more reaseach on this */
     int32 delay_secs = m_spellInfo->EffectMiscValue[effIndex];
 
-    if (gameObjTarget->GetGoType() == GAMEOBJECT_TYPE_DOOR ||
-        gameObjTarget->GetGoType() == GAMEOBJECT_TYPE_BUTTON)
+    switch (gameObjTarget->GetGoType())
     {
+        case GAMEOBJECT_TYPE_DOOR:
+        case GAMEOBJECT_TYPE_BUTTON:
         gameObjTarget->UseDoorOrButton(delay_secs, false);
         return;
+        case GAMEOBJECT_TYPE_SUMMONING_RITUAL:
+            gameObjTarget->SendObjectCustomAnim(gameObjTarget->GetGUID());
+            return;
+        default:
+    gameObjTarget->GetMap()->ScriptCommandStart(activateCommand, delay_secs, m_caster, gameObjTarget);
+            return;
     }
 
-    gameObjTarget->GetMap()->ScriptCommandStart(activateCommand, delay_secs, m_caster, gameObjTarget);
+    return; // not reached
 }
 
 void Spell::EffectEnchantHeldItem(SpellEffIndex effIndex)

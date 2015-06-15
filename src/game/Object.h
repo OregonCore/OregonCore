@@ -941,7 +941,7 @@ class WorldObject : public Object, public WorldLocation
         void PlayDirectSound(uint32 sound_id, Player* target = NULL);
 
         void SendObjectDeSpawnAnim(uint64 guid);
-        void SendGameObjectCustomAnim(uint64 guid);
+        void SendObjectCustomAnim(uint64 guid, uint32 anim = 0);
 
         virtual void SaveRespawnTime() {}
         void AddObjectToRemoveList();

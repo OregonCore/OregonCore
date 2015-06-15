@@ -200,7 +200,7 @@ OpcodeHandler opcodeTable[NUM_MSG_TYPES] =
     /*0x0B0*/ { "SMSG_ITEM_COOLDOWN",               STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
     /*0x0B1*/ { "CMSG_GAMEOBJ_USE",                 STATUS_LOGGEDIN, &WorldSession::HandleGameObjectUseOpcode       },
     /*0x0B2*/ { "CMSG_GAMEOBJ_CHAIR_USE_OBSOLETE",  STATUS_NEVER,    &WorldSession::Handle_NULL                     },
-    /*0x0B3*/ { "SMSG_GAMEOBJECT_CUSTOM_ANIM",      STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
+    /*0x0B3*/ { "SMSG_OBJECT_CUSTOM_ANIM",          STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
     /*0x0B4*/ { "CMSG_AREATRIGGER",                 STATUS_LOGGEDIN, &WorldSession::HandleAreaTriggerOpcode         },
     /*0x0B5*/ { "MSG_MOVE_START_FORWARD",           STATUS_LOGGEDIN, &WorldSession::HandleMovementOpcodes           },
     /*0x0B6*/ { "MSG_MOVE_START_BACKWARD",          STATUS_LOGGEDIN, &WorldSession::HandleMovementOpcodes           },

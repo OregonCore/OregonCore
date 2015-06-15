@@ -2401,6 +2401,11 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 else if (Player* player = m_target->ToPlayer())
                     player->AreaExploredOrEventHappens(9718);
             }
+
+            // Zul'Aman Object Visual (Strange Gong)
+            if (GetId() == 45222)
+                if (apply)
+                    m_target->CastSpell(m_target, 45225, false, NULL, this);
             break;
         }
     case SPELLFAMILY_MAGE:
