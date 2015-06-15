@@ -546,6 +546,7 @@ class ChatHandler
         bool HandleDebugRAFError(const char* args);
         bool HandleSpellCrashTestCommand(const char* args);
         bool HandlePartyResultCommand(const char* args);
+        bool HandleDebugAnimationCommand(const char* args);
 
         Player*   getSelectedPlayer();
         Player*   getSelectedPlayerOrSelf();

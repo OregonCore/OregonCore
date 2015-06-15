@@ -245,6 +245,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "getinstdata",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleGetInstanceDataCommand,     "", NULL },
         { "spellcrashtest", SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSpellCrashTestCommand,      "", NULL },
         { "partyresult",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandlePartyResultCommand,         "", NULL },
+        { "animate",        SEC_GAMEMASTER,     false, &ChatHandler::HandleDebugAnimationCommand,      "", NULL },
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 
