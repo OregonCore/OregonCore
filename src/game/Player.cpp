@@ -17669,7 +17669,7 @@ void Player::PetSpellInitialize()
 
     DEBUG_LOG("Pet Spells Groups");
 
-    CharmInfo* charmInfo = pet->GetCharmInfo();
+    CharmInfo* charmInfo = pet->InitCharmInfo(); // get or create
 
     WorldPacket data(SMSG_PET_SPELLS, 8 + 4 + 1 + 1 + 2 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 1);
     data << (uint64)pet->GetGUID();
