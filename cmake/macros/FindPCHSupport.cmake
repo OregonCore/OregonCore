@@ -328,6 +328,7 @@ function(add_clang_pch target dir header cpp)
     endforeach()
 
     # helper target for triggering PCH re-generation
+    include_directories(${dir})
     add_library(${target}_pch_dephelp STATIC "${dir}/${cpp}")
 
     separate_arguments(args UNIX_COMMAND "-x c++-header --relocatable-pch -isysroot ${CMAKE_CURRENT_BINARY_DIR} ${dir}/${header} -o ${header}.pch ${definitions} ${includes} ${CMAKE_CXX_FLAGS} -Winvalid-pch")
