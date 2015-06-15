@@ -303,6 +303,7 @@ class PetAura;
 class UnitAI;
 class Minion;
 class Guardian;
+class ScriptEvent;
 
 struct SpellImmune
 {
@@ -869,6 +870,8 @@ struct SpellProcEventEntry;                                 // used only private
 
 class Unit : public WorldObject
 {
+    friend class ScriptEvent;
+
     public:
         typedef std::set<Unit*> AttackerSet;
         typedef std::set<Unit*> ControlList;
