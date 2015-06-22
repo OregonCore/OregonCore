@@ -571,8 +571,6 @@ struct SpellTargetEntry
     uint32 targetEntry;
 };
 
-typedef std::multimap<uint32, SpellTargetEntry> SpellScriptTarget;
-
 // coordinates for spells (accessed using sSpellMgr functions)
 struct SpellTargetPosition
 {
@@ -1067,17 +1065,6 @@ class SpellMgr
         static bool IsPrimaryProfessionSpell(uint32 spellId);
         bool IsPrimaryProfessionFirstRankSpell(uint32 spellId) const;
 
-        // Spell script targets
-        SpellScriptTarget::const_iterator GetBeginSpellScriptTarget(uint32 spell_id) const
-        {
-            return mSpellScriptTarget.lower_bound(spell_id);
-        }
-
-        SpellScriptTarget::const_iterator GetEndSpellScriptTarget(uint32 spell_id) const
-        {
-            return mSpellScriptTarget.upper_bound(spell_id);
-        }
-
         // Spell correctess for client using
         static bool IsSpellValid(SpellEntry const* spellInfo, Player* pl = NULL, bool msg = true);
 
@@ -1143,7 +1130,6 @@ class SpellMgr
         void LoadSpellRequired();
         void LoadSpellLearnSkills();
         void LoadSpellLearnSpells();
-        void LoadSpellScriptTarget();
         void LoadSpellAffects();
         void LoadSpellGroups();
         void LoadSpellProcEvents();
@@ -1159,7 +1145,6 @@ class SpellMgr
         void LoadSpellGroupStackRules();
 
     private:
-        SpellScriptTarget  mSpellScriptTarget;
         SpellChainMap      mSpellChains;
         SpellsRequiringSpellMap   mSpellsReqSpell;
         SpellRequiredMap   mSpellReq;
