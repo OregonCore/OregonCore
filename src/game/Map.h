@@ -358,7 +358,8 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         uint8 GetTerrainType(float x, float y) const;
         float GetWaterLevel(float x, float y) const;
-        bool IsInWater(float x, float y, float z, LiquidData* data = 0) const;
+        bool IsInWater(float x, float y, float z) const;
+        bool IsInWater(float x, float y, float z, LiquidData* data) const;
         bool IsUnderWater(float x, float y, float z) const;
 
         static uint32 GetAreaId(uint16 areaflag, uint32 map_id);
