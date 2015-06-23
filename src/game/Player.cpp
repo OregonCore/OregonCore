@@ -378,7 +378,7 @@ Player::Player (WorldSession* session): Unit()
 
     m_petStatus = PET_STATUS_NONE;
 
-    ////////////////////Rest System/////////////////////
+    // Rest system variables
     time_inn_enter = 0;
     inn_pos_mapid = 0;
     inn_pos_x = 0.0f;
@@ -386,8 +386,8 @@ Player::Player (WorldSession* session): Unit()
     inn_pos_z = 0.0f;
     m_rest_bonus = 0;
     rest_type = REST_TYPE_NO;
-    ////////////////////Rest System/////////////////////
 
+    // Mail system variables
     m_mailsLoaded = false;
     m_mailsUpdated = false;
     unReadMails = 0;
@@ -433,6 +433,8 @@ Player::Player (WorldSession* session): Unit()
     m_declinedname = NULL;
 
     m_isActive = true;
+
+    _activeCheats = CHEAT_NONE;
 
     m_ControlledByPlayer = true;
     m_isWorldObject = true;
@@ -482,6 +484,10 @@ void Player::CleanupsBeforeDelete()
     {
         TradeCancel(false);
         DuelComplete(DUEL_INTERUPTED);
+
+        // Send update to group
+        if (Group* group = GetGroup())
+            group->SendUpdate();
     }
     Unit::CleanupsBeforeDelete();
 }
@@ -7778,7 +7784,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
                 loot->clear();
 
                 Group* group = GetGroup();
-                bool groupRules = (group && go->GetGoType() == GAMEOBJECT_TYPE_CHEST && (go->GetGOInfo()->chest.groupLootRules));
+                bool groupRules = (group && go->GetGoType() == GAMEOBJECT_TYPE_CHEST && go->GetGOInfo()->chest.groupLootRules);
 
                 // check current RR player and get next if necessary
                 if (groupRules)
@@ -17563,6 +17569,8 @@ void Player::StopCastingCharm()
         charm->SetCharmerGUID(0);
     }
 
+    charm->SendHealthUpdateDueToCharm(this);
+
     if (GetCharmGUID())
         sLog.outError("CRASH ALARM! Player %s is not able to uncharm unit (Entry: %u, Type: %u)", GetName(), charm->GetEntry(), charm->GetTypeId());
 }
@@ -17661,7 +17669,7 @@ void Player::PetSpellInitialize()
 
     DEBUG_LOG("Pet Spells Groups");
 
-    CharmInfo* charmInfo = pet->GetCharmInfo();
+    CharmInfo* charmInfo = pet->InitCharmInfo(); // get or create
 
     WorldPacket data(SMSG_PET_SPELLS, 8 + 4 + 1 + 1 + 2 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 1);
     data << (uint64)pet->GetGUID();
@@ -17720,6 +17728,8 @@ void Player::PetSpellInitialize()
     }
 
     GetSession()->SendPacket(&data);
+
+    pet->SendHealthUpdateDueToCharm(this);
 }
 
 void Player::PossessSpellInitialize()
@@ -17748,6 +17758,8 @@ void Player::PossessSpellInitialize()
     data << uint8(0);                                       // cooldowns count
 
     GetSession()->SendPacket(&data);
+    
+    charm->SendHealthUpdateDueToCharm(this);
 }
 
 void Player::CharmSpellInitialize()
@@ -17805,6 +17817,8 @@ void Player::CharmSpellInitialize()
     data << uint8(0);                                       // cooldowns count
 
     GetSession()->SendPacket(&data);
+    
+    charm->SendHealthUpdateDueToCharm(this);
 }
 
 void Player::SendRemoveControlBar()
@@ -20794,6 +20808,9 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
         if (damageperc > 0)
         {
             uint32 damage = (uint32)(damageperc * GetMaxHealth() * sWorld.getRate(RATE_DAMAGE_FALL));
+             
+            if (GetCommandStatus(CHEAT_GOD))
+                damage = 0;
 
             float height = movementInfo.GetPos()->GetPositionZ();
             UpdateGroundPositionZ(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), height);
@@ -21012,6 +21029,9 @@ void Player::UpdateCharmedAI()
 void Player::AddGlobalCooldown(SpellEntry const* spellInfo, Spell* spell)
 {
     if (!spellInfo->StartRecoveryTime)
+        return;
+
+    if (GetCommandStatus(CHEAT_COOLDOWN))
         return;
 
     uint32 cdTime = spellInfo->StartRecoveryTime;

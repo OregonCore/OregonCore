@@ -691,6 +691,7 @@ void Map::ScriptsProcess()
                 }
 
                 if (GameObject* pGO = dynamic_cast<GameObject*>(target))
+                    if (pGO->IsUsedBy(pSource->GetGUID()))
                     pGO->Use(pSource);
             }
             break;

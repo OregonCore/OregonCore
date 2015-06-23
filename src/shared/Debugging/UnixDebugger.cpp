@@ -22,8 +22,8 @@
 #endif
 
 #include "UnixDebugger.h"
+#include "Policies/SingletonImp.h"
 #include "SystemConfig.h"
-#include "World.h"
 #include "Log.h"
 #include "Console.h"
 
@@ -35,9 +35,12 @@
 #include <sys/sysinfo.h>
 #include <sys/ucontext.h>
 #include <execinfo.h>
+#include <fcntl.h>
+#include <unistd.h>
 
+#include <ace/Semaphore.h>
 #include <fstream>
-
+#include <iomanip>
 #include <dlfcn.h>
 
 #include <execinfo.h>
@@ -48,10 +51,50 @@ extern char** environ;
 #define CRASH_DIR "Crashes"
 #define BACKTRACE_SIZE 256
 
-namespace UnixDebugger
-{
+INSTANTIATE_SINGLETON_1(std::set<ACE_thread_t>);
 
-void SignalHandler(int num, siginfo_t* info, void* ctx)
+/// our global, ensures implicit instatiation
+UnixDebugger g_UnixDebugger;
+
+static struct sigaction s_OldSignalHandlers[5];
+
+// helpers for WriteBacktraceForAllThreads(), other functions
+// need access to these too, so this are in file scope
+static ACE_sema_t s_AllBacktracesSemaphore;
+static std::stringstream s_AllBacktraces;
+
+UnixDebugger::UnixDebugger()
+{
+    // Register Handler for Deadly Signals
+    struct sigaction sa;
+    sa.sa_sigaction = SignalHandler;
+    sigfillset(&sa.sa_mask);
+    sa.sa_flags = SA_SIGINFO;
+
+    ACE_Thread::sigsetmask(SIG_UNBLOCK, &sa.sa_mask, NULL);
+
+    // assuming this is (should be) main thread, add it to thread list here
+    sThreadList.insert(ACE_Based::Thread::currentId());
+
+    sigaction(SIGSEGV, &sa, &s_OldSignalHandlers[0]);
+    sigaction(SIGBUS,  &sa, &s_OldSignalHandlers[1]);
+    sigaction(SIGILL,  &sa, &s_OldSignalHandlers[2]);
+    sigaction(SIGABRT, &sa, &s_OldSignalHandlers[3]);
+    sigaction(SIGFPE,  &sa, &s_OldSignalHandlers[4]);
+    sigaction(SIGUSR1, &sa, &s_OldSignalHandlers[5]);
+}
+
+UnixDebugger::~UnixDebugger()
+{
+    sigaction(SIGSEGV, &s_OldSignalHandlers[0], NULL);
+    sigaction(SIGBUS,  &s_OldSignalHandlers[1], NULL);
+    sigaction(SIGILL,  &s_OldSignalHandlers[2], NULL);
+    sigaction(SIGABRT, &s_OldSignalHandlers[3], NULL);
+    sigaction(SIGFPE,  &s_OldSignalHandlers[4], NULL);
+    sigaction(SIGUSR1, &s_OldSignalHandlers[5], NULL);
+}
+
+void UnixDebugger::SignalHandler(int num, siginfo_t* info, void* ctx)
 {
     const char* strsig = NULL;
     std::stringstream reason("");
@@ -75,11 +118,16 @@ void SignalHandler(int num, siginfo_t* info, void* ctx)
         strsig = "SIGABRT";
         segv = false;
         break;
+    case SIGUSR1:
+        // requested backtrace
+        WriteBacktrace(s_AllBacktraces);
+        ACE_OS::sema_post(&s_AllBacktracesSemaphore);
+        return;
     }
 
     if (segv)
     {
-        reason << "Fault [code " << info->si_code << "] at "
+        reason << "Fault at "
                << std::hex << "0x"
                << (unsigned long) info->si_addr
                << " referenced from: 0x"
@@ -180,9 +228,6 @@ void SignalHandler(int num, siginfo_t* info, void* ctx)
         }
     }
 
-    // safely end curses (restore terminal)
-    endwin();
-
     DumpDebugInfo(strsig, reason.str().c_str());
 
     struct sigaction sa;
@@ -194,21 +239,38 @@ void SignalHandler(int num, siginfo_t* info, void* ctx)
     raise(num);
 }
 
-void RegisterDeadlySignalHandler()
+void UnixDebugger::WriteBacktraceForAllThreads(std::stringstream& ss)
 {
-    struct sigaction sa;
-    sa.sa_sigaction = SignalHandler;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_SIGINFO;
+    static ACE_Thread_Mutex s_AllBacktracesMutex;
 
-    sigaction(SIGSEGV, &sa, NULL);
-    sigaction(SIGBUS,  &sa, NULL);
-    sigaction(SIGILL,  &sa, NULL);
-    sigaction(SIGABRT, &sa, NULL);
-    sigaction(SIGFPE,  &sa, NULL);
+    using ACE_Based::Thread;
+
+    s_AllBacktracesMutex.acquire();
+
+    ACE_OS::sema_init(&s_AllBacktracesSemaphore, 0);
+
+    WriteBacktrace(s_AllBacktraces);
+
+    for (std::set<ACE_thread_t>::iterator itr = sThreadList.begin(); itr != sThreadList.end(); ++itr)
+    {
+        if (!ACE_OS::thr_equal(*itr, Thread::currentId()))
+        {
+            if (!ACE_OS::thr_kill(*itr, SIGUSR1))
+                ACE_OS::sema_wait(&s_AllBacktracesSemaphore);
+            else
+                ss << "\nCouldn't examine backtrace of a thread!\n" << std::endl;
+        }
+    }
+
+    ACE_OS::sema_destroy(&s_AllBacktracesSemaphore);
+
+    ss << s_AllBacktraces.str();
+    s_AllBacktraces.str().clear();
+    
+    s_AllBacktracesMutex.release();
 }
 
-void WriteBacktrace(std::stringstream& ss)
+void UnixDebugger::WriteBacktrace(std::stringstream& ss)
 {
     void* buffer[BACKTRACE_SIZE];
     int size = backtrace(buffer, BACKTRACE_SIZE);
@@ -219,9 +281,9 @@ void WriteBacktrace(std::stringstream& ss)
 
     ss << "BackTrace ";
     if (size == BACKTRACE_SIZE)
-        ss << "(Might be truncated):";
-    else
-        ss << "(Full):";
+        ss << "(Might be truncated) ";
+    ss << "Thread LWP " << syscall(SYS_gettid);
+    
     ss << std::endl << "=====================================" << std::endl;
 
     std::map<std::string, Resolver*> atlm;
@@ -310,6 +372,11 @@ void WriteBacktrace(std::stringstream& ss)
             if (!ifs.is_open())
                 break;
 
+            struct stat status;
+            if (0 == lstat(file.c_str(), &status))
+                if (status.st_mtime > atl->GetModificationTime())
+                    ss << "Source file is newer than the executable!";
+
             for (unsigned int j = 1; j < line - 1; j++)
                 std::getline(ifs, codeline);
 
@@ -340,7 +407,7 @@ void WriteBacktrace(std::stringstream& ss)
     free(symbols);
 }
 
-void DumpDebugInfo(const char* sig, const char* reason)
+void UnixDebugger::DumpDebugInfo(const char* sig, const char* reason)
 {
     bool coredump = false;
     time_t now = time(0);
@@ -372,7 +439,7 @@ void DumpDebugInfo(const char* sig, const char* reason)
     struct utsname info;
     if (!uname(&info))
     {
-        ss << info.sysname << '(' << info.release << ')' << ' ';
+        ss << info.sysname << " (" << info.release << ") ";
         ss << info.version << ' ' << info.machine << std::endl;;
     }
 
@@ -397,29 +464,15 @@ void DumpDebugInfo(const char* sig, const char* reason)
     #endif
     ss << "ACE version: " << ACE_VERSION << std::endl;
 
-    try
-    {
-        ss << "Active Clients: " << sWorld.GetActiveSessionCount() << std::endl;
-        ss << "Queued Clients: " << sWorld.GetQueuedSessionCount() << std::endl;
-        ss << "Uptime: " << sWorld.GetUptime() << std::endl;
-        ss << "Game Diff: " << sWorld.GetUpdateTime() << std::endl;
-    }
-    catch (...)
-    {
-        // sWorld was already destroyed ("Dead Reference" exception)
-    }
-
     ss << std::endl;
 
     struct sysinfo si;
     if (!sysinfo(&si))
     {
-        ss << "Load 1,2,15: " << si.loads[0] << ','
-           << si.loads[1] << ','
-           << si.loads[2] << std::endl;
-        ss << "Memory: " << (si.totalram - si.freeram) << '/' << si.totalram
-           << '(' << si.mem_unit << ')' << std::endl;
-        ss << "SWAP: " << (si.totalswap - si.freeswap) << '/' << si.totalswap << std::endl;
+        ss << "Memory: " << (si.totalram - si.freeram) << " / " << si.totalram
+           << " (" << ((float(si.totalram) - float(si.freeram))/float(si.totalram)) * 100.f << "% used)" << std::endl;
+        ss << "SWAP:   " << (si.totalswap - si.freeswap) << " / " << si.totalswap
+           << " (" << ((float(si.totalswap) - float(si.freeswap))/float(si.totalswap)) * 100.f << "% used)" << std::endl;
     }
 
     ss << std::endl;
@@ -436,7 +489,7 @@ void DumpDebugInfo(const char* sig, const char* reason)
 
     ss << std::endl;
 
-    WriteBacktrace(ss);
+    g_UnixDebugger.WriteBacktraceForAllThreads(ss);
 
     // We got all info needed now we just need to log it
     #ifdef linux
@@ -483,19 +536,23 @@ void DumpDebugInfo(const char* sig, const char* reason)
         }
     }
 
+    // safely end curses (restore terminal)
+    sConsole.Restore();
+
     // We always use classic stdio instead of streams for output
     fprintf(stdout, "%s\n", ss.str().c_str());
+    fflush(stdout);
 }
 
 /* Following code is a C++ wrapper for code written by an unknown author and
    unknown license, we're very thankful for it. Hopefully no copyrights
    are violated */
 
-bool Resolver::initialized = false;
+bool UnixDebugger::Resolver::initialized = false;
 
-Resolver::Resolver(const char* executable)
+UnixDebugger::Resolver::Resolver(const char* executable)
     :
-    abfd(0), syms(0), text(0), function("??"), filename("??"), line(0)
+    abfd(0), syms(0), text(0), function("??"), filename("??"), line(0), mtime(0)
 {
     if (!initialized)
     {
@@ -507,6 +564,12 @@ Resolver::Resolver(const char* executable)
     if (!abfd)
         return;
 
+    #if linux
+    struct stat st;
+    if (0 == lstat("/proc/self/exe", &st))
+        mtime = st.st_mtime;
+    #endif
+
     /* oddly, this is required for it to work... */
     bfd_check_format(abfd, bfd_object);
 
@@ -517,7 +580,7 @@ Resolver::Resolver(const char* executable)
     text = bfd_get_section_by_name(abfd, ".text");
 }
 
-Resolver::~Resolver()
+UnixDebugger::Resolver::~Resolver()
 {
     if (abfd)
         bfd_close(abfd);
@@ -525,7 +588,7 @@ Resolver::~Resolver()
         free(syms);
 }
 
-bool Resolver::Resolve(unsigned long address)
+bool UnixDebugger::Resolver::Resolve(unsigned long address)
 {
     if (!abfd || !syms)
         return false;
@@ -549,13 +612,13 @@ bool Resolver::Resolve(unsigned long address)
     }
     else
         func = "??";
-    filename = file ? file : "??";
+    filename = file && strlen(file) ? file : "??";
     // line has been already written
 
     return true;
 }
 
-const char* Resolver::Demangle(const char* mangled, int options)
+const char* UnixDebugger::Resolver::Demangle(const char* mangled, int options)
 {
     static char buff[255];
     char* demangled = bfd_demangle(abfd, mangled, options);
@@ -569,7 +632,5 @@ const char* Resolver::Demangle(const char* mangled, int options)
     
     return NULL;
 }
-
-}; // namespace UnixDebugger
 
 #endif // PLATFORM_UNIX

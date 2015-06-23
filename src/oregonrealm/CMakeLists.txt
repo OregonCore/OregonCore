@@ -13,12 +13,12 @@ file(GLOB sources_localdir *.cpp *.h)
 set(oregon-realm_SRCS
   ${oregon-realm_SRCS}
   ${sources_localdir}
+  ${sources_Debugging}
 )
 
 if( WIN32 )
   set(oregon-realm_SRCS
     ${oregon-realm_SRCS}
-    ${sources_Debugging}
     OregonRealm.rc
   )
 endif()
@@ -63,6 +63,16 @@ target_link_libraries(oregon-realm
   ${OPENSSL_EXTRA_LIBRARIES}
   ${OSX_LIBS}
 )
+
+if( UNIX )
+  target_link_libraries(oregon-realm
+    ${BFD_LIBRARY}
+    dl
+    ${IBERTY_LIBRARY}
+    rt
+    ${ZLIB_LIBRARIES}
+  )
+endif()
 
 if( WIN32 )
   add_custom_command(TARGET oregon-realm

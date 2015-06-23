@@ -731,6 +731,11 @@ class GameObject : public WorldObject, public GridObject<GameObject>
             return m_unique_users.size();
         }
 
+        bool IsUsedBy(uint64 guid)
+        {
+            return m_unique_users.find(guid) != m_unique_users.end();
+        }
+
         void SaveRespawnTime();
 
         Loot        loot;
@@ -742,6 +747,8 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         // 0 = use `gameobject`.`spawntimesecs`
         void ResetDoorOrButton();
         // 0 = use `gameobject`.`spawntimesecs`
+
+        void Animate(uint32 anim = 0);
 
         uint32 GetLinkedGameObjectEntry() const
         {

@@ -354,6 +354,10 @@ Spell::Spell(Unit* Caster, SpellEntry const* info, bool triggered, uint64 origin
                    && !(m_spellInfo->AttributesEx & SPELL_ATTR_EX_CANT_BE_REDIRECTED) && !(m_spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
                    && !IsPassiveSpell(m_spellInfo) && !IsPositiveSpell(m_spellInfo->Id);
 
+    m_isNeedSendToClient = m_spellInfo->SpellVisual != 0 || IsChanneledSpell(m_spellInfo) ||
+                           m_spellInfo->speed > 0.0f || (!m_triggeredByAuraSpell && !m_IsTriggeredSpell);
+    m_isCastTimeHidden = m_spellInfo->Attributes & SPELL_ATTR_HIDDEN_CAST_TIME;
+
     CleanupTargetList();
 }
 
@@ -2254,6 +2258,13 @@ void Spell::prepare(SpellCastTargets* targets, Aura* triggeredByAura)
         return;
     }
 
+    // Set cast time to 0 if .cheat casttime is enabled.
+    if (m_caster->GetTypeId() == TYPEID_PLAYER)
+    {
+        if (m_caster->ToPlayer()->GetCommandStatus(CHEAT_CASTTIME))
+            m_casttime = 0;
+    }
+
     // set timer base at cast time
     ReSetTimer();
 
@@ -2477,6 +2488,13 @@ void Spell::cast(bool skipCheck)
         }
     }
 
+    // Clear spell cooldowns after every spell is cast if .cheat cooldown is enabled.
+    if (m_caster->GetTypeId() == TYPEID_PLAYER)
+    {
+        if (m_caster->ToPlayer()->GetCommandStatus(CHEAT_COOLDOWN))
+            m_caster->ToPlayer()->RemoveSpellCooldown(m_spellInfo->Id, true);
+    }
+
     SetExecutedCurrently(false);
 }
 
@@ -2619,7 +2637,7 @@ void Spell::_handle_immediate_phase()
     HandleThreatSpells();
     TakeCastItem();
 
-    m_needSpellLog = IsNeedSendToClient();
+    m_needSpellLog = m_isNeedSendToClient;
     for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
     {
         if (m_spellInfo->Effect[j] == 0)
@@ -3033,7 +3051,7 @@ void Spell::SendCastResult(SpellCastResult result)
 
 void Spell::SendSpellStart()
 {
-    if (!IsNeedSendToClient())
+    if (!m_isNeedSendToClient && m_isCastTimeHidden)
         return;
 
     DEBUG_LOG("Sending SMSG_SPELL_START id=%u", m_spellInfo->Id);
@@ -3066,7 +3084,7 @@ void Spell::SendSpellStart()
 void Spell::SendSpellGo()
 {
     // not send invisible spell casting
-    if (!IsNeedSendToClient())
+    if (!m_isNeedSendToClient)
         return;
 
     DEBUG_LOG("Sending SMSG_SPELL_GO id=%u", m_spellInfo->Id);
@@ -3335,6 +3353,9 @@ void Spell::SendChannelUpdate(uint32 time)
         m_caster->SetUInt32Value(UNIT_CHANNEL_SPELL, 0);
     }
 
+    if (!m_isNeedSendToClient || m_isCastTimeHidden)
+        return;
+
     WorldPacket data(MSG_CHANNEL_UPDATE, 8 + 4);
     data << m_caster->GetPackGUID();
     data << uint32(time);
@@ -3352,18 +3373,21 @@ void Spell::SendChannelStart(uint32 duration)
     else if (m_targets.getCorpseTargetGUID())
         channelTarget = m_targets.getCorpseTargetGUID();
 
-    WorldPacket data(MSG_CHANNEL_START, (8 + 4 + 4));
-    data << m_caster->GetPackGUID();
-    data << uint32(m_spellInfo->Id);
-    data << uint32(duration);
-
-    m_caster->SendMessageToSet(&data, true);
 
     m_timer = duration;
     if (channelTarget)
         m_caster->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, channelTarget);
 
     m_caster->SetUInt32Value(UNIT_CHANNEL_SPELL, m_spellInfo->Id);
+    
+    if (!m_isNeedSendToClient || m_isCastTimeHidden)
+        return;
+
+    WorldPacket data(MSG_CHANNEL_START, (8 + 4 + 4));
+    data << m_caster->GetPackGUID();
+    data << uint32(m_spellInfo->Id);
+    data << uint32(duration);
+    m_caster->SendMessageToSet(&data, true);
 }
 
 void Spell::SendResurrectRequest(Player* target)
@@ -3452,6 +3476,13 @@ void Spell::TakePower()
 {
     if (m_CastItem || m_triggeredByAuraSpell)
         return;
+
+    //Don't take power if the spell is cast while .cheat power is enabled.
+    if (m_caster->GetTypeId() == TYPEID_PLAYER)
+    {
+        if (m_caster->ToPlayer()->GetCommandStatus(CHEAT_POWER))
+            return;
+    }
 
     bool hit = true;
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
@@ -4187,9 +4218,11 @@ SpellCastResult Spell::CheckCast(bool strict)
                     m_spellInfo->EffectImplicitTargetA[i] != TARGET_GAMEOBJECT_ITEM)
                     break;
 
-                if (m_caster->GetTypeId() != TYPEID_PLAYER  // only players can open locks, gather etc.
-                    // we need a go target in case of TARGET_GAMEOBJECT
-                    || (m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT && !m_targets.getGOTarget())
+                if (m_caster->GetTypeId() != TYPEID_PLAYER)
+                    break;
+
+                if (// we need a go target in case of TARGET_GAMEOBJECT
+                    (m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT && !m_targets.getGOTarget())
                     // we need a go target, or an openable item target in case of TARGET_GAMEOBJECT_ITEM
                     || (m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT_ITEM && !m_targets.getGOTarget() &&
                         (!m_targets.getItemTarget() || !m_targets.getItemTarget()->GetProto()->LockID || m_targets.getItemTarget()->GetOwner() != m_caster)))
@@ -4649,10 +4682,9 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_targets.getUnitTarget()->GetTypeId() == TYPEID_PLAYER)
                 {
                     Player const* player = static_cast<Player const*>(m_targets.getUnitTarget());
-                    ShapeshiftForm form = player->m_form;
 
                     // Player is not allowed to cast water walk on shapeshifted/mounted player 
-                    if (form != FORM_NONE || player->IsMounted())
+                    if (player->HasShapeshiftChangingModel() || player->IsMounted())
                         return SPELL_FAILED_BAD_TARGETS;
                 }
 
@@ -4926,16 +4958,15 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
                     return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
 
                 bool below = data < 0;
-                float pct = float(abs(data)) / 100.f;
 
                 if (below)
                 {
-                    if (unitTarget->GetHealth() >= m_caster->GetMaxHealth()*pct)
+                    if (unitTarget->GetHealthPct() <= data)
                         return SPELL_FAILED_BAD_TARGETS;
                 }
                 else
                 {
-                    if (unitTarget->GetHealth() <= m_caster->GetMaxHealth()*pct)
+                    if (unitTarget->GetHealthPct() >= data)
                         return SPELL_FAILED_BAD_TARGETS;
                 }
                 break;
@@ -5978,12 +6009,6 @@ void Spell::HandleHitTriggerAura()
             }
         }
     }
-}
-
-bool Spell::IsNeedSendToClient() const
-{
-    return m_spellInfo->SpellVisual != 0 || IsChanneledSpell(m_spellInfo) ||
-           m_spellInfo->speed > 0.0f || (!m_triggeredByAuraSpell && !m_IsTriggeredSpell);
 }
 
 bool Spell::HaveTargetsForEffect(uint8 effect) const

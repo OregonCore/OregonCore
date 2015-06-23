@@ -20,6 +20,7 @@
 #define _UNIX_DEBUGGER_H_
 
 #include "Common.h"
+#include "Policies/Singleton.h"
 
 // bfd.h requires PACKAGE to be defined
 #ifndef PACKAGE
@@ -40,46 +41,69 @@
 #define DMGL_RET_DROP    (1 << 6)
 #endif
 
-namespace UnixDebugger
-{
-
-void RegisterDeadlySignalHandler();
-void DumpDebugInfo(const char* sig, const char* reason);
-
-class Resolver
+class UnixDebugger
 {
     public:
 
-        Resolver(const char* executable);
-        ~Resolver();
+    /// don't intantiate this ever, it has public visiblity in order
+    /// to be able to instantiate implicitly when program starts
+    UnixDebugger();
+    ~UnixDebugger();
 
-        bool Resolve(unsigned long addr);
-        const char* Demangle(const char* str, int options);
+    /// writes backtrace of the calling thread into ss
+    static void WriteBacktrace(std::stringstream& ss);
 
-        const std::string& GetFunction() const
-        {
-            return function;
-        }
-        const std::string& GetFile() const
-        {
-            return filename;
-        }
-        unsigned int GetLine() const
-        {
-            return line;
-        }
+    /// Writes crash log
+    static void DumpDebugInfo(const char* sig, const char* reason);
+
+    /// Writes backtrace of all threads ino ss
+    void WriteBacktraceForAllThreads(std::stringstream& ss);
+
+    class Resolver
+    {
+        public:
+            Resolver(const char* executable);
+            ~Resolver();
+
+            bool Resolve(unsigned long addr);
+            const char* Demangle(const char* str, int options);
+
+            const std::string& GetFunction() const
+            {
+                return function;
+            }
+            const std::string& GetFile() const
+            {
+                return filename;
+            }
+            unsigned int GetLine() const
+            {
+                return line;
+            }
+            const time_t GetModificationTime() const
+            {
+                return mtime;
+            }
+        private:
+            bfd* abfd;
+            asymbol** syms;
+            asection* text;
+
+            std::string function;
+            std::string filename;
+            unsigned int line;
+
+            time_t mtime;
+
+            static bool initialized;
+    };
+
     private:
-        bfd* abfd;
-        asymbol** syms;
-        asection* text;
 
-        std::string function;
-        std::string filename;
-        unsigned int line;
+    static void SignalHandler(int num, siginfo_t* info, void* ctx);
+};
 
-        static bool initialized;
-};
-};
+#define sThreadList Oregon::Singleton<std::set<ACE_thread_t> >::Instance()
 
 #endif // _UNIX_DEBUGGER_H_
 #endif // PLATFORM_UNIX

@@ -509,8 +509,6 @@ class Spell
             return m_delayMoment;
         }
 
-        bool IsNeedSendToClient() const;
-
         CurrentSpellTypes GetCurrentContainer();
 
         Unit* GetCaster() const
@@ -563,6 +561,9 @@ class Spell
         int32 m_casttime;                                   // Calculated spell cast time initialized only in Spell::prepare
         bool m_canReflect;                                  // can reflect this spell?
         bool m_autoRepeat;
+        bool m_isNeedSendToClient;
+        bool m_isCastTimeHidden;
+
 
         uint8 m_delayAtDamageCount;
         int32 GetNextDelayAtDamageMsTime()

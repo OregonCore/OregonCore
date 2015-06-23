@@ -272,7 +272,7 @@ void PetAI::KilledUnit(Unit* victim)
 {
     // Called from Unit::Kill() in case where pet or owner kills something
     // if owner killed this victim, pet may still be attacking something else
-    if (me->getVictim() && me->getVictim() != victim)
+    if (me == victim || (me->getVictim() && me->getVictim() != victim))
         return;
 
     // Clear target just in case. May help problem where health / focus / mana

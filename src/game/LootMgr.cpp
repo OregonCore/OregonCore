@@ -779,7 +779,7 @@ ByteBuffer& operator<<(ByteBuffer& b, LootView const& lv)
                 {
                     uint8 slot_type;
 
-                   if (!l.items[i].is_underthreshold) // for ML & restricted is_blocked = !is_underthreshold
+                   if (l.items[i].is_blocked) // for ML & restricted is_blocked = !is_underthreshold
                     {
                         switch (lv.permission)
                         {

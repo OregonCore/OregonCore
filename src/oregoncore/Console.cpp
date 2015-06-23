@@ -185,6 +185,12 @@ void Console::Refresh()
         wrefresh(*it);
 }
 
+void Console::Restore()
+{
+    endwin();
+    m_IamEnabled = false;
+}
+
 Window* Console::MakeWindow(int h, int w, int y, int x)
 {
     Window* win = newwin(h, w, y, x);

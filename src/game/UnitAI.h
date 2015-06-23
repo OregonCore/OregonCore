@@ -58,6 +58,9 @@ class UnitAI
 
         virtual void Reset() {};
 
+        virtual void EventHappens(uint32) {}
+        virtual void ScheduleEvent(uint32 data, uint32 delay);
+
         // Called when unit is charmed
         virtual void OnCharmed(bool /*apply*/) = 0;
 
@@ -116,6 +119,27 @@ class SimpleCharmedAI : public PlayerAI
     public:
         void UpdateAI(const uint32 diff);
 };
+
+class ScriptEvent : public BasicEvent
+{
+    public:
+        ScriptEvent(Unit* unit, uint32 data = 0) : BasicEvent(), m_unit(unit), m_data(data) {}
+        bool Execute(uint64, uint32)
+        {
+            if (m_unit->IsAIEnabled)
+                m_unit->i_AI->EventHappens(m_data);
+            return true;
+        }
+
+    private:
+        Unit* m_unit;
+        uint32 m_data;
+};
+
+inline void UnitAI::ScheduleEvent(uint32 data, uint32 delay)
+{
+    me->m_Events.AddEvent(new ScriptEvent(me, data), me->m_Events.CalculateTime(delay), false);
+}
 
 #endif
 

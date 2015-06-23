@@ -303,6 +303,7 @@ class PetAura;
 class UnitAI;
 class Minion;
 class Guardian;
+class ScriptEvent;
 
 struct SpellImmune
 {
@@ -869,6 +870,8 @@ struct SpellProcEventEntry;                                 // used only private
 
 class Unit : public WorldObject
 {
+    friend class ScriptEvent;
+
     public:
         typedef std::set<Unit*> AttackerSet;
         typedef std::set<Unit*> ControlList;
@@ -1068,6 +1071,9 @@ class Unit : public WorldObject
 
         uint32 GetHealth()    const { return GetUInt32Value(UNIT_FIELD_HEALTH); }
         uint32 GetMaxHealth() const { return GetUInt32Value(UNIT_FIELD_MAXHEALTH); }
+
+        bool ShouldRevealHealthTo(Player* player) const;
+        void SendHealthUpdateDueToCharm(Player* charmer);
 
         bool IsFullHealth() const { return GetHealth() == GetMaxHealth(); }
         bool HealthBelowPct(int32 pct) const { return GetHealth() < CountPctFromMaxHealth(pct); }
@@ -2096,7 +2102,7 @@ class Unit : public WorldObject
         void SetLevitate(bool apply);
 
         bool IsAIEnabled, NeedChangeAI;
-
+        uint64 LastCharmerGUID;
         bool m_ControlledByPlayer;
 
         // Unit will forget everyone who has ever attacked it

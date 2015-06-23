@@ -44,7 +44,7 @@ class workerThread(threading.Thread):
         else:
             stInfo = None
             cFlags = 0
-            binName = "./MoveMapGen"
+            binName = "./movements_extractor"
         retcode = subprocess.call([binName, "%u" % (self.mapID),"--silent"], startupinfo=stInfo, creationflags=cFlags)
         print "-- %s" % (name)
 

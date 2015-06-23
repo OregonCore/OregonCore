@@ -208,7 +208,7 @@ enum Opcodes
     SMSG_ITEM_COOLDOWN                              = 0x0B0,
     CMSG_GAMEOBJ_USE                                = 0x0B1,
     CMSG_GAMEOBJ_CHAIR_USE_OBSOLETE                 = 0x0B2,
-    SMSG_GAMEOBJECT_CUSTOM_ANIM                     = 0x0B3,
+    SMSG_OBJECT_CUSTOM_ANIM                         = 0x0B3,
     CMSG_AREATRIGGER                                = 0x0B4,
     MSG_MOVE_START_FORWARD                          = 0x0B5,
     MSG_MOVE_START_BACKWARD                         = 0x0B6,

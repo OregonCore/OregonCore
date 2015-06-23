@@ -4412,7 +4412,111 @@ bool ChatHandler::HandleHoverCommand(const char* args)
     return true;
 }
 
-bool ChatHandler::HandleWaterwalkCommand(const char* args)
+bool ChatHandler::HandleGodModeCheatCommand(const char *args)
+{
+    if (!m_session && !m_session->GetPlayer())
+        return false;
+
+    std::string argstr = (char*)args;
+
+    if (!*args)
+        argstr = (m_session->GetPlayer()->GetCommandStatus(CHEAT_GOD)) ? "off" : "on";
+
+    if (argstr == "off")
+    {
+        m_session->GetPlayer()->SetCommandStatusOff(CHEAT_GOD);
+        SendSysMessage("Godmode is OFF. You can take damage.");
+        return true;
+    }
+    else if (argstr == "on")
+    {
+        m_session->GetPlayer()->SetCommandStatusOn(CHEAT_GOD);
+        SendSysMessage("Godmode is ON. You won't take damage.");
+        return true;
+    }
+
+    return false;
+}
+
+bool ChatHandler::HandleCasttimeCheatCommand(const char *args)
+{
+    if (!m_session && !m_session->GetPlayer())
+        return false;
+
+    std::string argstr = (char*)args;
+
+    if (!*args)
+        argstr = (m_session->GetPlayer()->GetCommandStatus(CHEAT_CASTTIME)) ? "off" : "on";
+
+    if (argstr == "off")
+    {
+        m_session->GetPlayer()->SetCommandStatusOff(CHEAT_CASTTIME);
+        SendSysMessage("CastTime Cheat is OFF. Your spells will have a casttime.");
+        return true;
+    }
+    else if (argstr == "on")
+    {
+        m_session->GetPlayer()->SetCommandStatusOn(CHEAT_CASTTIME);
+        SendSysMessage("CastTime Cheat is ON. Your spells won't have a casttime.");
+        return true;
+    }
+
+    return false;
+}
+
+bool ChatHandler::HandleCoolDownCheatCommand(const char *args)
+{
+    if (!m_session && !m_session->GetPlayer())
+        return false;
+
+    std::string argstr = (char*)args;
+
+    if (!*args)
+        argstr = (m_session->GetPlayer()->GetCommandStatus(CHEAT_COOLDOWN)) ? "off" : "on";
+
+    if (argstr == "off")
+    {
+        m_session->GetPlayer()->SetCommandStatusOff(CHEAT_COOLDOWN);
+        SendSysMessage("Cooldown Cheat is OFF. You are on the global cooldown.");
+        return true;
+    }
+    else if (argstr == "on")
+    {
+        m_session->GetPlayer()->SetCommandStatusOn(CHEAT_COOLDOWN);
+        SendSysMessage("Cooldown Cheat is ON. You are not on the global cooldown.");
+        return true;
+    }
+
+    return false;
+}
+
+bool ChatHandler::HandlePowerCheatCommand(const char *args)
+{
+    if (!m_session && !m_session->GetPlayer())
+        return false;
+
+    std::string argstr = (char*)args;
+
+    if (!*args)
+        argstr = (m_session->GetPlayer()->GetCommandStatus(CHEAT_POWER)) ? "off" : "on";
+
+    if (argstr == "off")
+    {
+        m_session->GetPlayer()->SetCommandStatusOff(CHEAT_POWER);
+        SendSysMessage("Power Cheat is OFF. You need mana/rage/energy to use spells.");
+        return true;
+    }
+    else if (argstr == "on")
+    {
+        m_session->GetPlayer()->SetCommandStatusOn(CHEAT_POWER);
+        SendSysMessage("Power Cheat is ON. You don't need mana/rage/energy to use spells.");
+        return true;
+    }
+
+    return false;
+}
+
+bool ChatHandler::HandleWaterwalkCheatCommand(const char* args)
 {
     if (!*args)
         return false;

@@ -513,6 +513,11 @@ void Creature::Update(uint32 diff)
         }
     case CORPSE:
         {
+            Unit::Update(diff);
+            // deathstate changed on spells update, prevent problems
+            if (m_deathState != CORPSE)
+                break;
+
             if (m_corpseRemoveTime <= uint32(time(NULL)))
             {
                 RemoveCorpse(false);
@@ -552,6 +557,11 @@ void Creature::Update(uint32 diff)
                 UpdateCharmAI();
                 NeedChangeAI = false;
                 IsAIEnabled = true;
+                if (!IsInEvadeMode() && LastCharmerGUID)
+                    if (Unit* charmer = ObjectAccessor::GetUnit(*this, LastCharmerGUID))
+                        i_AI->AttackStart(charmer);
+
+                LastCharmerGUID = 0;
             }
 
             if (!IsInEvadeMode() && IsAIEnabled)

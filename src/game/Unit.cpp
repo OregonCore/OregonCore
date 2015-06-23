@@ -227,6 +227,7 @@ void MovementInfo::Write(ByteBuffer& data) const
 Unit::Unit()
     : WorldObject(), IsAIEnabled(false),
       NeedChangeAI(false),
+      LastCharmerGUID(0),
       m_ControlledByPlayer(false),
       i_AI(NULL),
       i_disabledAI(NULL),
@@ -773,6 +774,11 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
         if (area && area->flags & AREA_FLAG_SANCTUARY)       //sanctuary
             return 0;
     }
+
+    // Handler for god command
+    if(pVictim->GetTypeId() == TYPEID_PLAYER)
+        if (pVictim->ToPlayer()->GetCommandStatus(CHEAT_GOD))
+            return 0;
 
     //Script Event damage taken
     if (pVictim->GetTypeId() == TYPEID_UNIT && (pVictim->ToCreature())->IsAIEnabled)
@@ -4264,8 +4270,7 @@ void Unit::RemoveArenaAuras(bool onleave)
         if (!(iter->second->GetSpellProto()->AttributesEx4 & (1 << 21)) &&
             // don't remove stances, shadowform, pally/hunter auras
             !iter->second->IsPassive() &&                   // don't remove passive auras
-            (!(iter->second->GetSpellProto()->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY) ||
-             !(iter->second->GetSpellProto()->Attributes & SPELL_ATTR_UNK8)) &&
+            !(iter->second->GetSpellProto()->Attributes & (SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY | SPELL_ATTR_HIDDEN_CAST_TIME)) ||
             // not unaffected by invulnerability auras or not having that unknown flag (that seemed the most probable)
             (!onleave || !iter->second->IsPositive()))      // remove all buffs on enter, negative buffs on leave
             RemoveAura(iter);
@@ -10412,6 +10417,37 @@ void Unit::SetMaxHealth(uint32 val)
         SetHealth(0);
 }
 
+bool Unit::ShouldRevealHealthTo(Player* player) const
+{
+    if (!sWorld.getConfig(CONFIG_HEALTH_IN_PERCENTS))
+        return true;
+
+    if (player == this || player->isGameMaster())
+        return true;
+
+    if (player->IsInRaidWith(this))
+        return true;
+
+    return false;
+}
+
+/**
+ * Handler for charm/uncharm events,
+ * properly converts health from values to percentages
+ * and vice versa, and notifies all seers about it.
+ */
+void Unit::SendHealthUpdateDueToCharm(Player* charmer)
+{
+    ForceValuesUpdateAtIndex(UNIT_FIELD_HEALTH);
+    ForceValuesUpdateAtIndex(UNIT_FIELD_MAXHEALTH);
+
+    if (Group* group = charmer->GetGroup())
+    {
+        charmer->SetGroupUpdateFlag(GROUP_UPDATE_PET);
+        group->UpdatePlayerOutOfRange(charmer);
+    }
+}
+
 void Unit::SetPower(Powers power, uint32 val)
 {
     if (GetPower(power) == val)
@@ -10634,9 +10670,6 @@ CharmInfo* Unit::InitCharmInfo()
 
 void Unit::DeleteCharmInfo()
 {
-    if (!m_charmInfo)
-        return;
-
     delete m_charmInfo;
     m_charmInfo = NULL;
 }
@@ -10660,9 +10693,8 @@ CharmInfo::CharmInfo(Unit* unit)
 
 CharmInfo::~CharmInfo()
 {
-    if (m_unit->GetTypeId() == TYPEID_UNIT)
-        if (Creature* pCreature = m_unit->ToCreature())
-            pCreature->SetReactState(m_oldReactState);
+    if (Creature* pCreature = m_unit->ToCreature())
+        pCreature->SetReactState(m_oldReactState);
 }
 
 void CharmInfo::InitPetActionBar()
@@ -12539,20 +12571,6 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
     CombatStop(); //@todo CombatStop(true) may cause crash (interrupt spells)
     DeleteThreatList();
 
-    // Charmer stop charming
-    if (charmer->GetTypeId() == TYPEID_PLAYER)
-    {
-        charmer->ToPlayer()->StopCastingCharm();
-        charmer->ToPlayer()->StopCastingBindSight();
-    }
-
-    // Charmed stop charming
-    if (GetTypeId() == TYPEID_PLAYER)
-    {
-        ToPlayer()->StopCastingCharm();
-        ToPlayer()->StopCastingBindSight();
-    }
-
     // StopCastingCharm may remove a possessed pet?
     if (!IsInWorld())
     {
@@ -12663,6 +12681,8 @@ void Unit::RemoveCharmedBy(Unit* charmer)
         // Creature will restore its old AI on next update
         if (creature->AI())
             creature->AI()->OnCharmed(false);
+
+        LastCharmerGUID = charmer->GetGUID();
     }
 
     // If charmer still exists
@@ -12713,11 +12733,14 @@ void Unit::RemoveCharmedBy(Unit* charmer)
     if (ToPlayer())
         ToPlayer()->SetClientControl(this, true);
 
-    //a guardian should always have charminfo
-    if (charmer->GetTypeId() == TYPEID_PLAYER && this != charmer->GetFirstControlled())
-        charmer->ToPlayer()->SendRemoveControlBar();
-    else if (GetTypeId() == TYPEID_PLAYER || (GetTypeId() == TYPEID_UNIT && !ToCreature()->IsGuardian()))
-        DeleteCharmInfo();
+    DeleteCharmInfo();
+
+    if (Player* playerCharmer = charmer->ToPlayer())
+    {
+        if (this != charmer->GetFirstControlled())
+            charmer->ToPlayer()->SendRemoveControlBar();
+        SendHealthUpdateDueToCharm(playerCharmer);
+    }
 }
 
 void Unit::RestoreFaction()

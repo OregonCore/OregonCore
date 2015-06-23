@@ -48,6 +48,10 @@ message(STATUS "MSVC: Disabled NON-SECURE warnings")
 add_definitions(-D_CRT_NONSTDC_NO_WARNINGS)
 message(STATUS "MSVC: Disabled POSIX warnings")
 
+# Turn off this performance killer!
+add_definitions(-D_HAS_ITERATOR_DEBUGGING=0)
+message(STATUS "MSVC: Iterator Debugging disabled")
+
 # disable warnings in Visual Studio 8 and above if not wanted
 if(NOT WITH_WARNINGS)
   if(MSVC AND NOT CMAKE_GENERATOR MATCHES "Visual Studio 7")

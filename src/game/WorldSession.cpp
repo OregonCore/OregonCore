@@ -43,7 +43,7 @@ WorldSession::WorldSession(uint32 id, WorldSocket* sock, uint32 sec, uint8 expan
     _player(NULL), m_Socket(sock), _security(sec), _accountId(id), m_expansion(expansion), m_Warden(NULL),
     m_inQueue(false), m_playerLoading(false), m_playerLogout(false), m_playerRecentlyLogout(false), m_playerSave(false),
     m_sessionDbcLocale(sWorld.GetAvailableDbcLocale(locale)), m_sessionDbLocaleIndex(sObjectMgr.GetIndexForLocale(locale)),
-    _logoutTime(0), m_latency(0), m_clientTimeDelay(0), expireTime(60000), forceExit(false)
+    _logoutTime(0), m_latency(0), m_clientTimeDelay(0)
 {
     if (sock)
     {
@@ -301,24 +301,17 @@ bool WorldSession::Update(uint32 diff)
     if (m_Socket && !m_Socket->IsClosed() && m_Warden)
         m_Warden->Update();
 
-    ///- If necessary, log the player out
-    time_t currTime = time(NULL);
-    if (ShouldLogOut(currTime) && !m_playerLoading)
+    // If necessary, log the player out (normal logout)
+    if (ShouldLogOut(time(0)) && !m_playerLoading)
         LogoutPlayer(true);
 
-    // Cleanup socket pointer if need
+    // Cleanup socket pointer if need (disconnect)
     if (m_Socket && m_Socket->IsClosed())
     {
-        expireTime -= expireTime > diff ? diff : expireTime;
-        if (expireTime < diff || forceExit)
-        {
-            m_Socket->RemoveReference();
-            m_Socket = NULL;
-        }
+        m_Socket->RemoveReference();
+        m_Socket = NULL;
+        return false;
     }
-
-    if (!m_Socket)
-        return false;                                       //Will remove this session from the world session map
 
     return true;
 }
@@ -455,13 +448,11 @@ void WorldSession::LogoutPlayer(bool Save)
         _player->UninviteFromGroup();
 
         // remove player from the group if he is:
-        // a) in group; b) not in raid group; c) logging out normally (not being kicked or disconnected)
+        // a) in group;
+        // b) not in raid group;
+        // c) logging out normally (not being kicked or disconnected)
         if (_player->GetGroup() && !_player->GetGroup()->isRaidGroup() && m_Socket && !m_Socket->IsClosed())
             _player->RemoveFromGroup();
-
-        // Send update to group
-        if (_player->GetGroup())
-            _player->GetGroup()->SendUpdate();
 
         // Broadcast a logout message to the player's friends
         sSocialMgr.SendFriendStatus(_player, FRIEND_OFFLINE, _player->GetGUIDLow(), true);
@@ -500,10 +491,7 @@ void WorldSession::LogoutPlayer(bool Save)
 void WorldSession::KickPlayer()
 {
     if (m_Socket)
-    {
         m_Socket->CloseSocket();
-        forceExit = true;
-    }
 }
 
 // Cancel channeling handler
