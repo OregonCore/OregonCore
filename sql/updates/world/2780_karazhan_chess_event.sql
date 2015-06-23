@@ -1,4 +1,4 @@
-﻿-- Karazhan: Chess Event
+-- Karazhan: Chess Event
 -- Insert spell_script_targets
 DELETE FROM `spell_script_target` WHERE targetEntry = 22519;
 DELETE FROM `spell_script_target` WHERE targetEntry = 17305;

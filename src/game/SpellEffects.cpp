@@ -1649,7 +1649,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                             Unit* curr;
                             if (curr = (*itr))
                             {
-                                if (curr->ToCreature()->isSummon() && dynamic_cast<TempSummon*>(curr)->GetSummoner() && dynamic_cast<TempSummon*>(curr)->GetSummoner()->GetGUID() == m_caster->GetGUID())
+                                if (curr->ToCreature()->IsSummon() && dynamic_cast<TempSummon*>(curr)->GetSummoner() && dynamic_cast<TempSummon*>(curr)->GetSummoner()->GetGUID() == m_caster->GetGUID())
                                 {
                                     curr->ToCreature()->ForcedDespawn(3000);
                                 }
