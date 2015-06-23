@@ -74,7 +74,9 @@ struct PlayerRelocationNotifier : public VisibleNotifier
 struct CreatureRelocationNotifier
 {
     Creature& i_creature;
-    CreatureRelocationNotifier(Creature& c) : i_creature(c) {}
+    const float i_radius;
+    CreatureRelocationNotifier(Creature& c, float radius) :
+        i_creature(c), i_radius(radius) {}
     template<class T> void Visit(GridRefManager<T>&) {}
     void Visit(CreatureMapType&);
     void Visit(PlayerMapType&);
