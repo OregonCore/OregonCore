@@ -180,21 +180,14 @@ ACE_THR_FUNC_RETURN Thread::ThreadTask(void* param)
     sigfillset(&ss);
     ACE_Thread::sigsetmask(SIG_UNBLOCK, &ss, NULL);
 
-    sThreadList.insert(Thread::currentId());
+    UnixDebugger::InsertThread(currentId());
     #endif
 
     Runnable* _task = (Runnable*)param;
     _task->run();
 
     #if PLATFORM == PLATFORM_UNIX
-    try
-    {
-        sThreadList.erase(Thread::currentId());
-    }
-    catch (...)
-    {
-        // dead reference (can occur if thread didn't exit before main returns)
-    }
+    UnixDebugger::RemoveThread(currentId());
     #endif
 
     // task execution complete, free referecne added at

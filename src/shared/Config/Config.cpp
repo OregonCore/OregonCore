@@ -19,8 +19,6 @@
 #include "ace/Configuration_Import_Export.h"
 #include "ace/Guard_T.h"
 
-#include "Policies/SingletonImp.h"
-
 INSTANTIATE_SINGLETON_1(Config);
 
 static bool GetValueHelper(ACE_Configuration_Heap* mConf, const char* name, ACE_TString& result)

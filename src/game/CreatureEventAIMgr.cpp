@@ -23,7 +23,6 @@
 #include "CreatureEventAI.h"
 #include "CreatureEventAIMgr.h"
 #include "ObjectMgr.h"
-#include "Policies/SingletonImp.h"
 #include "ObjectGuid.h"
 #include "GridDefines.h"
 

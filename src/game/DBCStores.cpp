@@ -16,7 +16,6 @@
  */
 
 #include "DBCStores.h"
-#include "Policies/SingletonImp.h"
 #include "Log.h"
 #include "SharedDefines.h"
 

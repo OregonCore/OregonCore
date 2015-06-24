@@ -18,7 +18,6 @@
 #include "Creature.h"
 #include "CreatureAISelector.h"
 #include "PassiveAI.h"
-#include "Policies/SingletonImp.h"
 #include "MovementGenerator.h"
 #include "Pet.h"
 #include "TemporarySummon.h"

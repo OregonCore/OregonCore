@@ -16,7 +16,6 @@
  */
 
 #include "WorldLog.h"
-#include "Policies/SingletonImp.h"
 #include "Config/Config.h"
 #include "Log.h"
 

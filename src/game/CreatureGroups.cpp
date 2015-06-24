@@ -18,7 +18,6 @@
 #include "Creature.h"
 #include "CreatureGroups.h"
 #include "ObjectMgr.h"
-#include "Policies/SingletonImp.h"
 
 #include "CreatureAI.h"
 

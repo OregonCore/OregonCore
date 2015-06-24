@@ -22,7 +22,6 @@
 #include "Language.h"
 #include "Log.h"
 #include "MapManager.h"
-#include "Policies/SingletonImp.h"
 #include "GossipDef.h"
 #include "Player.h"
 #include "BattleGroundMgr.h"

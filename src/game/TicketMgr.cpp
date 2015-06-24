@@ -16,7 +16,6 @@
  */
 
 #include "TicketMgr.h"
-#include "Policies/SingletonImp.h"
 #include "World.h"
 #include "ObjectMgr.h"
 #include "Language.h"

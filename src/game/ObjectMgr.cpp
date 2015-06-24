@@ -19,7 +19,6 @@
 #include "Database/DatabaseEnv.h"
 #include "Database/SQLStorage.h"
 #include "Database/SQLStorageImpl.h"
-#include "Policies/SingletonImp.h"
 #include "PoolMgr.h"
 #include "Log.h"
 #include "MapManager.h"

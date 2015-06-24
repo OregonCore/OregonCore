@@ -27,7 +27,6 @@
 #include "BattleGroundAA.h"
 #include "BattleGroundRL.h"
 #include "SharedDefines.h"
-#include "Policies/SingletonImp.h"
 #include "MapManager.h"
 #include "Map.h"
 #include "MapInstanced.h"

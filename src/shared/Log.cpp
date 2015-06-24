@@ -17,7 +17,6 @@
 
 #include "Common.h"
 #include "Log.h"
-#include "Policies/SingletonImp.h"
 #include "Config/Config.h"
 #include "Console.h"
 #include "Util.h"
