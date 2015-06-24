@@ -482,7 +482,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
             {
                 if (cheat_timer < diff)
                 {
-                    if (urand(0, 100) < 20) //5% chance orginal
+                    if (urand(0, 100) < 10) //5% chance orginal
                     {
                         std::list<Unit*> Targets;
                         uint32 spellid = 0;
@@ -533,9 +533,9 @@ struct Echo_of_MedivhAI : public ScriptedAI
                             }
                         }
                         DoMedivhEventSay(pInstance, me, CHEAT);
-                        cheat_block = 30000; //allow 30s no cheat
+                        cheat_block = 30000 + (urand(0, 3) * 10000); //30s no cheat orginal
                     }
-                    cheat_timer = 5000;
+                    cheat_timer = 10000; //5sec timer orginal
                 }
                 else
                     cheat_timer -= diff;
@@ -552,7 +552,6 @@ struct chess_npcAI : public Scripted_NoMovementAI
     bool initSpells;
     bool initFlags;
     bool setAITimer;
-    bool won;
     uint32 m_checkTimer;
     uint32 m_AITimer;
     ScriptedInstance* pInstance;
@@ -594,6 +593,7 @@ struct chess_npcAI : public Scripted_NoMovementAI
         if (pInstance && pInstance->GetData(TYPE_CHESS) == IN_PROGRESS)
         {
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); //needed cause AOE hits if spawned at side
 
             if (me->getFaction() == FACTION_ALLIANCE)
                 me->Relocate(CHESS_PIECEBAR_ALLIANCE[0], CHESS_PIECEBAR_ALLIANCE[1], CHESS_PIECEBAR_ALLIANCE[2]);
@@ -628,6 +628,7 @@ struct chess_npcAI : public Scripted_NoMovementAI
                 pInstance->SetData(TYPE_CHESS, DONE);
 
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); //needed cause AOE hits if spawned at side
             //Killer->CastSpell(Killer, SPELL_WIN, true);
             //Killer->CastSpell(Killer, SPELL_GAME_OVER, true);
             DespawnChess();
@@ -961,7 +962,7 @@ struct chess_npcAI : public Scripted_NoMovementAI
 
     void HandleCastSpellForPiece(Unit* who)
     {
-        //handle all negativ spells here propably get available spells, do rnd of max size and target nearest creature
+        //handle all negative spells here propably get available spells, do rnd of max size and target nearest creature
         if (!AvailableSpells.empty())
         {
             std::list<uint32>::iterator itr = AvailableSpells.begin();
@@ -1055,6 +1056,9 @@ struct chess_npcAI : public Scripted_NoMovementAI
             if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
+            if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
             initFlags = true;
         }
 
@@ -1087,8 +1091,11 @@ struct chess_npcAI : public Scripted_NoMovementAI
                 return;
 
             Echo_of_MedivhAI* Medivh = GetMedivh();
+            bool isMedivhControlled = Medivh && Medivh->GetPlayerControlledFaction() != me->getFaction();
 
-            if (Medivh && Medivh->GetPlayerControlledFaction() != me->getFaction() && m_AITimer < diff) //5 Second timer
+            //we dont checked blizz, if player controlled pieces dont attack by AI change this if
+            //if (isMedivhControlled && m_AITimer < diff) //5 Second timer
+            if (m_AITimer < diff) //5 Second timer
             {
                 Unit* target = FindNearestEnemyChessPiece(); //Handles both sides
                 if (target) //found target
@@ -1109,7 +1116,8 @@ struct chess_npcAI : public Scripted_NoMovementAI
                         else if (urand(0, 100) < 25)
                             HandleCastSpellForPiece(target);
                     }
-                    else
+                    //move only if medivh controlled faction
+                    else if (isMedivhControlled)
                     {
                         if (urand(0, 100) < 20) //20% Chance to move
                         {
@@ -1211,11 +1219,14 @@ struct victory_controlerAI : ScriptedAI
     {
         if (!checkedForChest)
         {
-            if (PlayerWon() && me->FindNearestCreature(NPC_CHEST_BUNNY, 100, true))
+            bool playerWins = PlayerWon();
+
+            if (playerWins && me->FindNearestCreature(NPC_CHEST_BUNNY, 100, true))
                 me->Kill(me->FindNearestCreature(NPC_CHEST_BUNNY, 100, true), false);
 
-            /*if (!PlayerWon())
-            pInstance->SetData(TYPE_CHESS, FAIL);*/
+            //this is only needed if you want to respawn chess on fail
+            //if (!playerWins)
+            //    pInstance->SetData(TYPE_CHESS, FAIL);
 
             checkedForChest = true;
         }
@@ -1246,8 +1257,7 @@ bool GossipHello_chess_npc(Player* player, Creature* _Creature)
     std::string Gossip("Control ");
     Gossip += _Creature->GetName();
 
-    bool CanControl;
-    CanControl = true;
+    bool CanControl = true;
 
     if (!pInstance->GetData64(DATA_ECHO_OF_MEDIVH))
         return false;
@@ -1263,6 +1273,9 @@ bool GossipHello_chess_npc(Player* player, Creature* _Creature)
         return false;
 
     if (player->HasAura(SPELL_RECENTLY_IN_GAME)) //shortly controlled a piece debuff is up
+        CanControl = false;
+
+    if (pInstance->GetData(TYPE_CHESS) == DONE)
         CanControl = false;
 
     if (pInstance->GetData(TYPE_CHESS) != IN_PROGRESS  && _Creature->GetEntry() != NPC_KING_H && _Creature->GetEntry() != NPC_KING_A)
@@ -1344,7 +1357,8 @@ bool GossipSelect_chess_npc(Player* player, Creature* _Creature, uint32 sender, 
     return true;
 }
 
-void ReSpawnChess(Creature* me)
+//needs refactoring (better reset)
+void RespawnChess(Creature* me)
 {
     uint32 searchEntry;
     std::list<Unit*> UnitList;
@@ -1369,8 +1383,8 @@ bool GossipHello_echo_of_medivh(Player* player, Creature* _Creature)
 {
     ScriptedInstance* pInstance = ((ScriptedInstance*)_Creature->GetInstanceData());
 
+    //respawn for debugging (not working correctly)
     std::string Gossip("Restart Chess Event");
-
     if (pInstance->GetData(TYPE_CHESS) == FAIL)
         player->ADD_GOSSIP_ITEM(0, Gossip, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
@@ -1387,7 +1401,7 @@ bool GossipSelect_echo_of_medivh(Player* player, Creature* _Creature, uint32 sen
         if (pInstance)
         {
             pInstance->SetData(TYPE_CHESS, NOT_STARTED);
-            ReSpawnChess(_Creature);
+            RespawnChess(_Creature);
         }
     }
 

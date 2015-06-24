@@ -172,6 +172,7 @@ struct instance_karazhan : public ScriptedInstance
                 m_auiEncounter[8]  = uiData;
             break;
         case TYPE_CHESS:
+            //if you want to reset chess comment the if
             if (m_auiEncounter[9] != DONE)
                 m_auiEncounter[9]  = uiData;
             break;
