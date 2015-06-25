@@ -17,7 +17,6 @@
 
 #include "ObjectAccessor.h"
 #include "ObjectMgr.h"
-#include "Policies/SingletonImp.h"
 #include "Player.h"
 #include "Creature.h"
 #include "GameObject.h"

@@ -176,13 +176,10 @@ LONG WINAPI WheatyExceptionReport::WheatyUnhandledExceptionFilter(
         m_hReportFile = 0;
     }
 
-    //if (m_previousFilter)
-    //    return m_previousFilter(pExceptionInfo);
-    //else
-    //    return EXCEPTION_EXECUTE_HANDLER/*EXCEPTION_CONTINUE_SEARCH*/;
-    TerminateProcess(m_hProcess, EXIT_FAILURE);
-
-    return EXCEPTION_EXECUTE_HANDLER; // unreached
+    if (m_previousFilter)
+        return m_previousFilter(pExceptionInfo);
+    else
+        return EXCEPTION_EXECUTE_HANDLER/*EXCEPTION_CONTINUE_SEARCH*/;
 }
 
 BOOL WheatyExceptionReport::_GetProcessorName(TCHAR* sProcessorName, DWORD maxcount)

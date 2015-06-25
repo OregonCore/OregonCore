@@ -21,7 +21,6 @@
 #include "Platform/Define.h"
 #include "Utilities/TypeList.h"
 #include "ObjectRegistry.h"
-#include "Policies/SingletonImp.h"
 
 // FactoryHolder holds a factory object of a specific type
 template<class T, class Key = std::string>

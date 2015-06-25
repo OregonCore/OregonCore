@@ -604,7 +604,7 @@ void Map::Update(const uint32& t_diff)
                     Cell cell(pair);
                     cell.data.Part.reserved = CENTER_DISTRICT;
                     //cell.SetNoCreate();
-                    cell.Visit(pair, grid_object_update,  *this);
+                    cell.Visit(pair, grid_object_update, *this);
                     cell.Visit(pair, world_object_update, *this);
                 }
             }
@@ -654,7 +654,7 @@ void Map::Update(const uint32& t_diff)
                         Cell cell(pair);
                         cell.data.Part.reserved = CENTER_DISTRICT;
                         //cell.SetNoCreate();
-                        cell.Visit(pair, grid_object_update,  *this);
+                        cell.Visit(pair, grid_object_update, *this);
                         cell.Visit(pair, world_object_update, *this);
                     }
                 }
@@ -708,6 +708,7 @@ void Map::ProcessRelocationNotifies(const uint32& diff)
             continue;
 
         uint32 gx = grid->getX(), gy = grid->getY();
+        float monsterSightRadius = (float)sWorld.getConfig(CONFIG_SIGHT_MONSTER);
 
         CellPair cell_min(gx * MAX_NUMBER_OF_CELLS, gy * MAX_NUMBER_OF_CELLS);
         CellPair cell_max(cell_min.x_coord + MAX_NUMBER_OF_CELLS, cell_min.y_coord + MAX_NUMBER_OF_CELLS);
@@ -724,9 +725,10 @@ void Map::ProcessRelocationNotifies(const uint32& diff)
                 Cell cell(pair);
                 cell.SetNoCreate();
 
-                Oregon::DelayedUnitRelocation cell_relocation(cell, pair, *this, GetVisibilityDistance());
-                TypeContainerVisitor<Oregon::DelayedUnitRelocation, GridTypeMapContainer  > grid_object_relocation(cell_relocation);
-                TypeContainerVisitor<Oregon::DelayedUnitRelocation, WorldTypeMapContainer > world_object_relocation(cell_relocation);
+                Oregon::DelayedUnitRelocation cell_relocationCreature(cell, pair, *this, monsterSightRadius);
+                Oregon::DelayedUnitRelocation cell_relocationPlayer(cell, pair, *this, GetVisibilityDistance());
+                TypeContainerVisitor<Oregon::DelayedUnitRelocation, GridTypeMapContainer  > grid_object_relocation(cell_relocationCreature);
+                TypeContainerVisitor<Oregon::DelayedUnitRelocation, WorldTypeMapContainer > world_object_relocation(cell_relocationPlayer);
                 Visit(cell, grid_object_relocation);
                 Visit(cell, world_object_relocation);
             }
@@ -1907,10 +1909,25 @@ uint32 Map::GetZoneId(uint16 areaflag, uint32 map_id)
         return 0;
 }
 
-bool Map::IsInWater(float x, float y, float pZ, LiquidData* data) const
+bool Map::IsInWater(float x, float y, float pZ) const
 {
     float waterLevel = GetWaterLevel(x, y);
     return pZ <= waterLevel;
+}
+
+//this method is not using the same logic as Map::IsInWater its calculates in vmap based data not map based
+//this is much slower and used only for fishing atm
+bool Map::IsInWater(float x, float y, float pZ, LiquidData* data) const
+{
+    // Check surface in x, y point for liquid
+    if (const_cast<Map*>(this)->GetGrid(x, y))
+    {
+        LiquidData liquid_status;
+        LiquidData* liquid_ptr = data ? data : &liquid_status;
+        if (getLiquidStatus(x, y, pZ, MAP_ALL_LIQUIDS, liquid_ptr))
+            return true;
+    }
+    return false;
 }
 
 bool Map::IsUnderWater(float x, float y, float z) const

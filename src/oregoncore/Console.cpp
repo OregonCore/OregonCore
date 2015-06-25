@@ -3,7 +3,6 @@
 #include "Log.h"
 #include "World.h"
 #include "TicketMgr.h"
-#include "Policies/SingletonImp.h"
 #include "revision.h"
 
 #ifdef __PDCURSES__

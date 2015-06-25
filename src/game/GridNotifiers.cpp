@@ -114,11 +114,11 @@ VisibleChangesNotifier::Visit(DynamicObjectMapType& m)
 
 inline void CreatureUnitRelocationWorker(Creature* c, Unit* u)
 {
-    if (!u->IsAlive() || !c->IsAlive() || c == u || u->isInFlight())
+    if (c == u || !u->IsAlive() || !c->IsAlive() || u->isInFlight())
         return;
 
     if (c->HasReactState(REACT_AGGRESSIVE) && !c->HasUnitState(UNIT_STATE_SIGHTLESS))
-        if (c->_IsWithinDist(u, c->m_SightDistance, true) && c->IsAIEnabled)
+        if (c->IsAIEnabled && c->_IsWithinDist(u, c->m_SightDistance, true))
             c->AI()->MoveInLineOfSight_Safe(u);
 }
 
@@ -177,6 +177,11 @@ void CreatureRelocationNotifier::Visit(CreatureMapType& m)
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
         Creature* c = iter->getSource();
+
+        //check distance to improve performance
+        if (!i_creature._IsWithinDist(c, i_radius, true))
+            continue;
+
         CreatureUnitRelocationWorker(&i_creature, c);
 
         if (!c->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
@@ -190,7 +195,7 @@ void DelayedUnitRelocation::Visit(CreatureMapType& m)
     {
         Creature* unit = iter->getSource();
 
-        CreatureRelocationNotifier relocate(*unit);
+        CreatureRelocationNotifier relocate(*unit, i_radius);
 
         TypeContainerVisitor<CreatureRelocationNotifier, WorldTypeMapContainer > c2world_relocation(relocate);
         TypeContainerVisitor<CreatureRelocationNotifier, GridTypeMapContainer >  c2grid_relocation(relocate);

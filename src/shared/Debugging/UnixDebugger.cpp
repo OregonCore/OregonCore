@@ -22,7 +22,6 @@
 #endif
 
 #include "UnixDebugger.h"
-#include "Policies/SingletonImp.h"
 #include "SystemConfig.h"
 #include "Log.h"
 #include "Console.h"
@@ -51,20 +50,21 @@ extern char** environ;
 #define CRASH_DIR "Crashes"
 #define BACKTRACE_SIZE 256
 
-INSTANTIATE_SINGLETON_1(std::set<ACE_thread_t>);
+bool UnixDebugger::s_InstanceExists = false;
 
-/// our global, ensures implicit instatiation
+ACE_sema_t UnixDebugger::s_AllBacktracesSemaphore;
+std::stringstream UnixDebugger::s_AllBacktraces;
+
+std::set<ACE_thread_t> UnixDebugger::s_Threads;
+ACE_Thread_Mutex UnixDebugger::s_Threads_Lock;
+
+/// our global, ensures implicit instantiation
 UnixDebugger g_UnixDebugger;
-
-static struct sigaction s_OldSignalHandlers[5];
-
-// helpers for WriteBacktraceForAllThreads(), other functions
-// need access to these too, so this are in file scope
-static ACE_sema_t s_AllBacktracesSemaphore;
-static std::stringstream s_AllBacktraces;
 
 UnixDebugger::UnixDebugger()
 {
+    s_InstanceExists = true;
+
     // Register Handler for Deadly Signals
     struct sigaction sa;
     sa.sa_sigaction = SignalHandler;
@@ -74,24 +74,19 @@ UnixDebugger::UnixDebugger()
     ACE_Thread::sigsetmask(SIG_UNBLOCK, &sa.sa_mask, NULL);
 
     // assuming this is (should be) main thread, add it to thread list here
-    sThreadList.insert(ACE_Based::Thread::currentId());
+    InsertThread(ACE_Based::Thread::currentId());
 
-    sigaction(SIGSEGV, &sa, &s_OldSignalHandlers[0]);
-    sigaction(SIGBUS,  &sa, &s_OldSignalHandlers[1]);
-    sigaction(SIGILL,  &sa, &s_OldSignalHandlers[2]);
-    sigaction(SIGABRT, &sa, &s_OldSignalHandlers[3]);
-    sigaction(SIGFPE,  &sa, &s_OldSignalHandlers[4]);
-    sigaction(SIGUSR1, &sa, &s_OldSignalHandlers[5]);
+    sigaction(SIGSEGV, &sa, NULL);
+    sigaction(SIGBUS,  &sa, NULL);
+    sigaction(SIGILL,  &sa, NULL);
+    sigaction(SIGABRT, &sa, NULL);
+    sigaction(SIGFPE,  &sa, NULL);
+    sigaction(SIGUSR1, &sa, NULL);
 }
 
 UnixDebugger::~UnixDebugger()
 {
-    sigaction(SIGSEGV, &s_OldSignalHandlers[0], NULL);
-    sigaction(SIGBUS,  &s_OldSignalHandlers[1], NULL);
-    sigaction(SIGILL,  &s_OldSignalHandlers[2], NULL);
-    sigaction(SIGABRT, &s_OldSignalHandlers[3], NULL);
-    sigaction(SIGFPE,  &s_OldSignalHandlers[4], NULL);
-    sigaction(SIGUSR1, &s_OldSignalHandlers[5], NULL);
+    s_InstanceExists = false;
 }
 
 void UnixDebugger::SignalHandler(int num, siginfo_t* info, void* ctx)
@@ -251,7 +246,8 @@ void UnixDebugger::WriteBacktraceForAllThreads(std::stringstream& ss)
 
     WriteBacktrace(s_AllBacktraces);
 
-    for (std::set<ACE_thread_t>::iterator itr = sThreadList.begin(); itr != sThreadList.end(); ++itr)
+    s_Threads_Lock.acquire();
+    for (std::set<ACE_thread_t>::iterator itr = s_Threads.begin(); itr != s_Threads.end(); ++itr)
     {
         if (!ACE_OS::thr_equal(*itr, Thread::currentId()))
         {
@@ -261,6 +257,7 @@ void UnixDebugger::WriteBacktraceForAllThreads(std::stringstream& ss)
                 ss << "\nCouldn't examine backtrace of a thread!\n" << std::endl;
         }
     }
+    s_Threads_Lock.release();
 
     ACE_OS::sema_destroy(&s_AllBacktracesSemaphore);
 
@@ -542,6 +539,26 @@ void UnixDebugger::DumpDebugInfo(const char* sig, const char* reason)
     // We always use classic stdio instead of streams for output
     fprintf(stdout, "%s\n", ss.str().c_str());
     fflush(stdout);
+}
+
+void UnixDebugger::InsertThread(ACE_thread_t thread)
+{
+    if (!s_InstanceExists)
+        return;
+
+    s_Threads_Lock.acquire();
+    s_Threads.insert(thread);
+    s_Threads_Lock.release();
+}
+
+void UnixDebugger::RemoveThread(ACE_thread_t thread)
+{
+    if (!s_InstanceExists)
+        return;
+    
+    s_Threads_Lock.acquire();
+    s_Threads.erase(thread);
+    s_Threads_Lock.release();
 }
 
 /* Following code is a C++ wrapper for code written by an unknown author and

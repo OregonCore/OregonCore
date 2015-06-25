@@ -22,7 +22,6 @@
 #include "ObjectMgr.h"
 #include "ScriptLoader.h"
 #include "ScriptSystem.h"
-#include "Policies/SingletonImp.h"
 
 INSTANTIATE_SINGLETON_1(ScriptMgr);
 

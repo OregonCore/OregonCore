@@ -38,7 +38,6 @@
 #include "Group.h"
 #include "InstanceData.h"
 #include "Policies/Singleton.h"
-#include "Policies/SingletonImp.h"
 
 INSTANTIATE_SINGLETON_1(InstanceSaveManager);
 

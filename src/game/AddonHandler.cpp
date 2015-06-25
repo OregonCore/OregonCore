@@ -19,7 +19,6 @@
 
 #include "AddonHandler.h"
 #include "Database/DatabaseEnv.h"
-#include "Policies/SingletonImp.h"
 #include "Opcodes.h"
 
 #include "Log.h"

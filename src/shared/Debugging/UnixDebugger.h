@@ -59,6 +59,12 @@ class UnixDebugger
     /// Writes backtrace of all threads ino ss
     void WriteBacktraceForAllThreads(std::stringstream& ss);
 
+    /// Call this when new thread spawns
+    static void InsertThread(ACE_thread_t thread);
+
+    /// Call this when thread exits
+    static void RemoveThread(ACE_thread_t thread);
+
     class Resolver
     {
         public:
@@ -101,9 +107,15 @@ class UnixDebugger
     private:
 
     static void SignalHandler(int num, siginfo_t* info, void* ctx);
-};
 
-#define sThreadList Oregon::Singleton<std::set<ACE_thread_t> >::Instance()
+    // helpers for WriteBacktraceForAllThreads(), other functions
+    static ACE_sema_t s_AllBacktracesSemaphore;
+    static std::stringstream s_AllBacktraces;
+
+    static std::set<ACE_thread_t> s_Threads;
+    static ACE_Thread_Mutex s_Threads_Lock;
+    static bool s_InstanceExists;
+};
 
 #endif // _UNIX_DEBUGGER_H_
 #endif // PLATFORM_UNIX

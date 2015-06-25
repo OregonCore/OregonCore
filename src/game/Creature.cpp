@@ -45,8 +45,6 @@
 #include "OutdoorPvPMgr.h"
 #include "GameEventMgr.h"
 #include "CreatureGroups.h"
-// apply implementation of the singletons
-#include "Policies/SingletonImp.h"
 
 void TrainerSpellData::Clear()
 {

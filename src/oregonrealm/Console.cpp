@@ -1,6 +1,5 @@
 
 #include "Console.h"
-#include "Policies/SingletonImp.h"
 
 INSTANTIATE_SINGLETON_1(Console);
 
