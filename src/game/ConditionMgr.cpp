@@ -163,7 +163,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
                         case INSTANCE_INFO_DATA64:
                             condMeets = instance->GetData64(ConditionValue1) == ConditionValue2;
                             break;
-                        /* Condition todo
+                        /* @todo Implement this feature
                         case INSTANCE_INFO_BOSS_STATE:
                             condMeets = instance->GetBossState(ConditionValue1) == ConditionValue2;
                             break;*/
@@ -173,7 +173,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
             break;
         }
         case CONDITION_SPELL_SCRIPT_TARGET:
-            condMeets = true;//spell target condition is handled in spellsystem, here it is always true
+            condMeets = true; //spell target condition is handled in spellsystem, here it is always true
             break;
         case CONDITION_MAPID:
             condMeets = object->GetMapId() == ConditionValue1;
@@ -267,7 +267,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
         }
         case CONDITION_REACTION_TO:
         {
-            /* @ConditionTodo
+            /* @todo Implement this feature
             if (WorldObject* toObject = sourceInfo.mConditionTargets[ConditionValue1])
             {
                 Unit* toUnit = toObject->ToUnit();
@@ -304,7 +304,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
         }
         case CONDITION_WORLD_STATE:
         {
-            /* @ConditionTodo
+            /* @todo Implement this feature
             condMeets = ConditionValue2 == sWorld.getWorldState(ConditionValue1);*/
             condMeets = false;
             break;
@@ -1515,7 +1515,7 @@ bool ConditionMgr::isConditionTypeValid(Condition* cond)
             break;
         case CONDITION_WORLD_STATE:
         {
-            /* @ConditionTodo
+            /* @todo Implement this feature
             if (!sWorld->getWorldState(cond->ConditionValue1))
             {
                 sLog.outErrorDb("World state condition has non existing world state in value1 (%u), skipped", cond->ConditionValue1);

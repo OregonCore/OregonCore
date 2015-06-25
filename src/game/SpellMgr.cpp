@@ -2819,36 +2819,7 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
 
     // elixirs (all area dependent elixirs have family SPELLFAMILY_POTION, use this for speedup)
     if (spellInfo->SpellFamilyName == SPELLFAMILY_POTION)
-    {
-        /*if (uint32 mask = sSpellMgr.GetSpellElixirSpecific(spellInfo->Id))
-        {
-            if (mask & SPELL_BATTLE_ELIXIR)
-            {
-                if (spellInfo->Id == 45373)                    // Bloodberry Elixir
-                    return zone_id == 4075;
-            }
-            /*if (mask & ELIXIR_UNSTABLE_MASK)
-            {
-                // in the Blade's Edge Mountains Plateaus and Gruul's Lair.
-                return zone_id == 3522 || map_id == 565;
-            }
-            if (mask & ELIXIR_SHATTRATH_MASK)
-            {
-                // in Tempest Keep, Serpentshrine Cavern, Caverns of Time: Mount Hyjal, Black Temple, Sunwell Plateau
-                if (zone_id == 3607 || map_id == 534 || map_id == 564 || zone_id == 4075)
-                    return true;
-
-                MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
-                if (!mapEntry)
-                    return false;
-
-                return mapEntry->multimap_id == 206;
-            }*/
-
-        // elixirs not have another limitations
         return true;
-        //}
-    }
 
     // special cases zone check (maps checked by multimap common id)
     switch (spellInfo->Id)
@@ -2884,8 +2855,6 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
 
             return false;
         }
-    case 32307:                                         // Warmaul Ogre Banner
-        return area_id == 3610;
     case 32724:                                         // Gold Team (Alliance)
     case 32725:                                         // Green Team (Alliance)
     case 32727:                                         // Arena Preparation

@@ -154,7 +154,7 @@ enum InstanceInfo
 
 enum MaxConditionTargets
 {
-    MAX_CONDITION_TARGETS = 3,
+    MAX_CONDITION_TARGETS = 3
 };
 
 struct ConditionSourceInfo
