@@ -494,7 +494,7 @@ void ConditionMgr::LoadConditions(bool isReload)
     }
 
     uint32 count = 0;
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT SourceTypeOrReferenceId, SourceGroup, SourceEntry, ElseGroup, ConditionTypeOrReference, ConditionTarget, ConditionValue1, ConditionValue2, ConditionValue3, NegativeCondition, ErrorTextId, ScriptName FROM conditions");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT SourceTypeOrReferenceId, SourceGroup, SourceEntry, ElseGroup, ConditionTypeOrReference, ConditionTarget, ConditionValue1, ConditionValue2, ConditionValue3, NegativeCondition, ErrorType, ErrorTextId, ScriptName FROM conditions");
 
     if (!result)
     {
@@ -508,18 +508,19 @@ void ConditionMgr::LoadConditions(bool isReload)
         Field *fields = result->Fetch();
 
         Condition* cond = new Condition();
-        int32 iSourceTypeOrReferenceId   = fields[0].GetInt32();
+        int32 iSourceTypeOrReferenceId  = fields[0].GetInt32();
         cond->SourceGroup               = fields[1].GetUInt32();
         cond->SourceEntry               = fields[2].GetUInt32();
         cond->ElseGroup                 = fields[3].GetUInt32();
-        int32 iConditionTypeOrReference  = fields[4].GetInt32();
+        int32 iConditionTypeOrReference = fields[4].GetInt32();
         cond->ConditionTarget           = fields[5].GetUInt8();
         cond->ConditionValue1           = fields[6].GetUInt32();
         cond->ConditionValue2           = fields[7].GetUInt32();
         cond->ConditionValue3           = fields[8].GetUInt32();
         cond->NegativeCondition         = fields[9].GetUInt8();
-        cond->ErrorTextId                 = fields[10].GetUInt32();
-        cond->ScriptId                  = sObjectMgr.GetScriptId(fields[11].GetString());
+        cond->ErrorType                 = fields[10].GetUInt32();
+        cond->ErrorTextId               = fields[11].GetUInt32();
+        cond->ScriptId                  = sObjectMgr.GetScriptId(fields[12].GetString());
 
         if (iConditionTypeOrReference >= 0)
             cond->ConditionType = ConditionType(iConditionTypeOrReference);
@@ -580,6 +581,18 @@ void ConditionMgr::LoadConditions(bool isReload)
         {
             delete cond;
             continue;
+        }
+
+        if (cond->ErrorType && cond->SourceType != CONDITION_SOURCE_TYPE_SPELL)
+        {
+            sLog.outError("Condition type %u entry %i can't have ErrorType (%u), set to 0!", uint32(cond->SourceType), cond->SourceEntry, cond->ErrorType);
+            cond->ErrorType = 0;
+        }
+
+        if (cond->ErrorTextId && !cond->ErrorType)
+        {
+            sLog.outError("Condition type %u entry %i has any ErrorType, ErrorTextId (%u) is set, set to 0!", uint32(cond->SourceType), cond->SourceEntry, cond->ErrorTextId);
+            cond->ErrorTextId = 0;
         }
 
         //Grouping is only allowed for some types (loot templates, gossip menus, gossip items)

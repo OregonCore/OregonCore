@@ -27,38 +27,38 @@ class LootTemplate;
 struct Condition;
 
 enum ConditionType
-{                                                           // value1           value2      value3
-    CONDITION_NONE                  = 0,                    // 0                0           0                  always true
-    CONDITION_AURA                  = 1,                    // spell_id         effindex    use target?        true if player (or target, if value3) has aura of spell_id with effect effindex
-    CONDITION_ITEM                  = 2,                    // item_id          count       bank               true if has #count of item_ids (if 'bank' is set it searches in bank slots too)
-    CONDITION_ITEM_EQUIPPED         = 3,                    // item_id          0           0                  true if has item_id equipped
-    CONDITION_ZONEID                = 4,                    // zone_id          0           0                  true if in zone_id
-    CONDITION_REPUTATION_RANK       = 5,                    // faction_id       min_rank    0                  true if has min_rank for faction_id
-    CONDITION_TEAM                  = 6,                    // player_team      0,          0                  469 - Alliance, 67 - Horde)
-    CONDITION_SKILL                 = 7,                    // skill_id         skill_value 0                  true if has skill_value for skill_id
-    CONDITION_QUESTREWARDED         = 8,                    // quest_id         0           0                  true if quest_id was rewarded before
-    CONDITION_QUESTTAKEN            = 9,                    // quest_id         0,          0                  true while quest active
-    CONDITION_DRUNKENSTATE          = 10,                   // DrunkenState     0,          0                  true if player is drunk enough
+{                                                           // value1           value2         value3
+    CONDITION_NONE                  = 0,                    // 0                0              0                  always true
+    CONDITION_AURA                  = 1,                    // spell_id         effindex       use target?        true if player (or target, if value3) has aura of spell_id with effect effindex
+    CONDITION_ITEM                  = 2,                    // item_id          count          bank               true if has #count of item_ids (if 'bank' is set it searches in bank slots too)
+    CONDITION_ITEM_EQUIPPED         = 3,                    // item_id          0              0                  true if has item_id equipped
+    CONDITION_ZONEID                = 4,                    // zone_id          0              0                  true if in zone_id
+    CONDITION_REPUTATION_RANK       = 5,                    // faction_id       min_rank       0                  true if has min_rank for faction_id
+    CONDITION_TEAM                  = 6,                    // player_team      0,             0                  469 - Alliance, 67 - Horde)
+    CONDITION_SKILL                 = 7,                    // skill_id         skill_value    0                  true if has skill_value for skill_id
+    CONDITION_QUESTREWARDED         = 8,                    // quest_id         0              0                  true if quest_id was rewarded before
+    CONDITION_QUESTTAKEN            = 9,                    // quest_id         0,             0                  true while quest active
+    CONDITION_DRUNKENSTATE          = 10,                   // DrunkenState     0,             0                  true if player is drunk enough
     CONDITION_WORLD_STATE           = 11,                   // index            value          0                  true if world has the value for the index
-    CONDITION_ACTIVE_EVENT          = 12,                   // event_id         0           0                  true if event is active
+    CONDITION_ACTIVE_EVENT          = 12,                   // event_id         0              0                  true if event is active
     CONDITION_INSTANCE_INFO         = 13,                   // entry            data           type               true if the instance info defined by type (enum InstanceInfo) equals data.
-    CONDITION_QUEST_NONE            = 14,                   // quest_id         0           0                  true if doesn't have quest saved
-    CONDITION_CLASS                 = 15,                   // class            0           0                  true if player's class is equal to class
-    CONDITION_RACE                  = 16,                   // race             0           0                  true if player's race is equal to race
-    CONDITION_SPELL_SCRIPT_TARGET   = 17,                   // SpellScriptTargetType, TargetEntry,            0
+    CONDITION_QUEST_NONE            = 14,                   // quest_id         0              0                  true if doesn't have quest saved
+    CONDITION_CLASS                 = 15,                   // class            0              0                  true if player's class is equal to class
+    CONDITION_RACE                  = 16,                   // race             0              0                  true if player's race is equal to race
+    CONDITION_SPELL_SCRIPT_TARGET   = 17,                   // SpellScriptTargetType          TargetEntry         
     CONDITION_TITLE                 = 18,                   // title id         0              0                  true if player has title
-    CONDITION_SPAWNMASK             = 19,                   // spawnMask        0              0
+    CONDITION_SPAWNMASK             = 19,                   // spawnMask        0              0                  true if in spawnMask
     CONDITION_GENDER                = 20,                   // gender           0              0                  true if player's gender is equal to gender
     CONDITION_UNIT_STATE            = 21,                   // unitState        0              0                  true if unit has unitState
-    CONDITION_MAPID                 = 22,                   // map_id           0           0                  true if in map_id
-    CONDITION_AREAID                = 23,                   // area_id          0           0                  true if in area_id
+    CONDITION_MAPID                 = 22,                   // map_id           0              0                  true if in map_id
+    CONDITION_AREAID                = 23,                   // area_id          0              0                  true if in area_id
     CONDITION_CREATURE_TYPE         = 24,                   // cinfo.type       0              0                  true if creature_template.type = value1
-    CONDITION_SPELL                 = 25,                   // spell_id         0           0                  true if player has learned spell
+    CONDITION_SPELL                 = 25,                   // spell_id         0              0                  true if player has learned spell
     CONDITION_UNUSED_26             = 26,
-    CONDITION_LEVEL                 = 27,                   // level            opt         0                  true if unit's level is equal to param1 (param2 can modify the statement)
-    CONDITION_QUEST_COMPLETE        = 28,                   // quest_id         0           0                  true if player has quest_id with all objectives complete, but not yet rewarded
-    CONDITION_NEAR_CREATURE         = 29,                   // creature entry   distance    0                  true if there is a creature of entry in range
-    CONDITION_NEAR_GAMEOBJECT       = 30,                   // gameobject entry distance    0                  true if there is a gameobject of entry in range
+    CONDITION_LEVEL                 = 27,                   // level            opt            0                  true if unit's level is equal to param1 (param2 can modify the statement)
+    CONDITION_QUEST_COMPLETE        = 28,                   // quest_id         0              0                  true if player has quest_id with all objectives complete, but not yet rewarded
+    CONDITION_NEAR_CREATURE         = 29,                   // creature entry   distance       0                  true if there is a creature of entry in range
+    CONDITION_NEAR_GAMEOBJECT       = 30,                   // gameobject entry distance       0                  true if there is a gameobject of entry in range
     CONDITION_OBJECT_ENTRY_GUID     = 31,                   // TypeID           entry          guid               true if object is type TypeID and the entry is 0 or matches entry of the object or matches guid of the object
     CONDITION_TYPE_MASK             = 32,                   // TypeMask         0              0                  true if object is type object's TypeMask matches provided TypeMask
     CONDITION_RELATION_TO           = 33,                   // ConditionTarget  RelationType   0                  true if object is in given relation with object specified by ConditionTarget
@@ -152,7 +152,7 @@ enum InstanceInfo
     INSTANCE_INFO_BOSS_STATE
 };
 
-enum
+enum MaxConditionTargets
 {
     MAX_CONDITION_TARGETS = 3,
 };
@@ -199,6 +199,7 @@ struct Condition
         ConditionValue2    = 0;
         ConditionValue3    = 0;
         ReferenceId        = 0;
+        ErrorType          = 0;
         ErrorTextId        = 0;
         ScriptId           = 0;
         NegativeCondition  = false;
