@@ -441,15 +441,15 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
 
                     if (temp.receive_emote.condition)
                     {
-                        Condition* cond = new Condition();
-                        cond->Type = ConditionType(temp.receive_emote.condition);            
-                        cond->ConditionValue1 = temp.receive_emote.conditionValue1;
-                        cond->ConditionValue2 = temp.receive_emote.conditionValue2;
-                        if (!sConditionMgr.isConditionTypeValid(cond))
+                        Condition cond;
+                        cond.Type = ConditionType(temp.receive_emote.condition);            
+                        cond.ConditionValue1 = temp.receive_emote.conditionValue1;
+                        cond.ConditionValue2 = temp.receive_emote.conditionValue2;
+                        if (!sConditionMgr.isConditionTypeValid(&cond))
                         {
                             sLog.outErrorDb("CreatureEventAI: Creature %u using event %u: param2 (Condition: %u) are not valid.",temp.creature_id, i, temp.receive_emote.condition);
-                        continue;
-                    }
+                            continue;
+                        }
                     }
 
                     if (!(temp.event_flags & EFLAG_REPEATABLE))
