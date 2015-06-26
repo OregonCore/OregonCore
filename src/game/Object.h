@@ -375,36 +375,23 @@ class Object
         // FG: some hacky helpers
         void ForceValuesUpdateAtIndex(uint32);
 
-        Player* ToPlayer()
-        {
-            if (GetTypeId() == TYPEID_PLAYER)  return reinterpret_cast<Player*>(this);
-            else return NULL;
-        }
-        const Player* ToPlayer() const
-        {
-            if (GetTypeId() == TYPEID_PLAYER)  return (const Player*)((Player*)this);
-            else return NULL;
-        }
-        Creature* ToCreature()
-        {
-            if (GetTypeId() == TYPEID_UNIT) return reinterpret_cast<Creature*>(this);
-            else return NULL;
-        }
-        const Creature* ToCreature() const
-        {
-            if (GetTypeId() == TYPEID_UNIT) return (const Creature*)((Creature*)this);
-            else return NULL;
-        }
-        const GameObject* ToGameObject() const
-        {
-            if (GetTypeId() == TYPEID_GAMEOBJECT) return reinterpret_cast<const GameObject*>(this);
-            return NULL;
-        }
-        GameObject* ToGameObject()
-        {
-            if (GetTypeId() == TYPEID_GAMEOBJECT) return reinterpret_cast<GameObject*>(this);
-            return NULL;
-        }
+        Player* ToPlayer() { if (GetTypeId() == TYPEID_PLAYER) return reinterpret_cast<Player*>(this); else return NULL; }
+        Player const* ToPlayer() const { if (GetTypeId() == TYPEID_PLAYER) return reinterpret_cast<Player const*>(this); else return NULL; }
+
+        Creature* ToCreature() { if (GetTypeId() == TYPEID_UNIT) return reinterpret_cast<Creature*>(this); else return NULL; }
+        Creature const* ToCreature() const { if (GetTypeId() == TYPEID_UNIT) return reinterpret_cast<Creature const*>(this); else return NULL; }
+
+        Unit* ToUnit() { if (isType(TYPEMASK_UNIT)) return reinterpret_cast<Unit*>(this); else return NULL; }
+        Unit const* ToUnit() const { if (isType(TYPEMASK_UNIT)) return reinterpret_cast<Unit const*>(this); else return NULL; }
+
+        GameObject* ToGameObject() { if (GetTypeId() == TYPEID_GAMEOBJECT) return reinterpret_cast<GameObject*>(this); else return NULL; }
+        GameObject const* ToGameObject() const { if (GetTypeId() == TYPEID_GAMEOBJECT) return reinterpret_cast<GameObject const*>(this); else return NULL; }
+
+        Corpse* ToCorpse() { if (GetTypeId() == TYPEID_CORPSE) return reinterpret_cast<Corpse*>(this); else return NULL; }
+        Corpse const* ToCorpse() const { if (GetTypeId() == TYPEID_CORPSE) return reinterpret_cast<Corpse const*>(this); else return NULL; }
+
+        DynamicObject* ToDynObject() { if (GetTypeId() == TYPEID_DYNAMICOBJECT) return reinterpret_cast<DynamicObject*>(this); else return NULL; }
+        DynamicObject const* ToDynObject() const { if (GetTypeId() == TYPEID_DYNAMICOBJECT) return reinterpret_cast<DynamicObject const*>(this); else return NULL; }
 
     protected:
 

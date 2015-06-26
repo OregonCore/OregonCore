@@ -23,9 +23,7 @@ SDCategory: Items
 EndScriptData */
 
 /* ContentData
-item_area_52_special(i28132)        Prevents abuse of this item
 item_attuned_crystal_cores(i34368)  Prevent abuse(quest 11524 & 11525)
-item_blackwhelp_net(i31129)         Quest Whelps of the Wyrmcult (q10747). Prevents abuse
 item_draenei_fishing_net(i23654)    Hacklike implements chance to spawn item or creature
 item_disciplinary_rod               Prevents abuse
 item_nether_wraith_beacon(i31742)   Summons creatures for quest Becoming a Spellfire Tailor (q10832)
@@ -33,15 +31,12 @@ item_flying_machine(i34060,i34061)  Engineering crafted flying machines
 item_gor_dreks_ointment(i30175)     Protecting Our Own(q10488)
 item_muiseks_vessel                 Cast on creature, they must be dead(q 3123,3124,3125,3126,3127)
 item_only_for_flight                Items which should only useable while flying
-item_protovoltaic_magneto_collector Prevents abuse
 item_razorthorn_flayer_gland        Quest Discovering Your Roots (q11520) and Rediscovering Your Roots (q11521). Prevents abuse
 item_tame_beast_rods(many)          Prevent cast on any other creature than the intended (for all tame beast quests)
 item_soul_cannon(i32825)            Prevents abuse of this item
 item_sparrowhawk_net(i32321)        Quest To Catch A Sparrowhawk (q10987). Prevents abuse
 item_voodoo_charm                   Provide proper error message and target(q2561)
-item_vorenthals_presence(i30259)    Prevents abuse of this item
 item_yehkinyas_bramble(i10699)      Allow cast spell on vale screecher only and remove corpse if cast sucessful (q3520)
-item_zezzak_shard(i31463)           Quest The eyes of Grillok (q10813). Prevents abuse
 item_inoculating_crystal            Quest Inoculating. Prevent abuse
 EndContentData */
 
@@ -49,22 +44,6 @@ EndContentData */
 #include "SpellMgr.h"
 #include "Spell.h"
 #include "WorldPacket.h"
-
-
-/*#####
-# item_area_52_special
-#####*/
-
-bool ItemUse_item_area_52_special(Player* player, Item* _Item, SpellCastTargets const& /*targets*/)
-{
-    if (player->GetAreaId() == 3803)
-        return false;
-    else
-    {
-        player->SendEquipError(EQUIP_ERR_OUT_OF_RANGE, _Item, NULL);
-        return true;
-    }
-}
 
 /*#####
 # item_only_for_flight
@@ -116,20 +95,6 @@ bool ItemUse_item_attuned_crystal_cores(Player* player, Item* _Item, SpellCastTa
         return false;
 
     player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, _Item, NULL);
-    return true;
-}
-
-/*#####
-# item_blackwhelp_net
-#####*/
-
-bool ItemUse_item_blackwhelp_net(Player* player, Item* _Item, SpellCastTargets const& targets)
-{
-    if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT &&
-        targets.getUnitTarget()->GetEntry() == 21387)
-        return false;
-
-    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM, _Item, NULL);
     return true;
 }
 
@@ -198,26 +163,6 @@ bool ItemUse_item_nether_wraith_beacon(Player* pPlayer, Item* /*pItem*/, SpellCa
             Nether->AI()->AttackStart(pPlayer);
     }
     return false;
-}
-
-/*#####
-# item_flying_machine
-#####*/
-
-bool ItemUse_item_flying_machine(Player* pPlayer, Item* pItem, SpellCastTargets const& /*targets*/)
-{
-    uint32 itemId = pItem->GetEntry();
-    if (itemId == 34060)
-        if (pPlayer->GetBaseSkillValue(SKILL_RIDING) >= 225)
-            return false;
-
-    if (itemId == 34061)
-        if (pPlayer->GetBaseSkillValue(SKILL_RIDING) == 300)
-            return false;
-
-    debug_log("OSCR: Player attempt to use item %u, but did not meet riding requirement", itemId);
-    pPlayer->SendEquipError(EQUIP_ERR_ERR_CANT_EQUIP_SKILL, pItem, NULL);
-    return true;
 }
 
 /*#####
@@ -438,20 +383,6 @@ bool ItemUse_item_tame_beast_rods(Player* player, Item* _Item, SpellCastTargets 
 }
 
 /*#####
-# item_protovoltaic_magneto_collector
-#####*/
-
-bool ItemUse_item_protovoltaic_magneto_collector(Player* player, Item* _Item, SpellCastTargets const& targets)
-{
-    if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT &&
-        targets.getUnitTarget()->GetEntry() == 21729)
-        return false;
-
-    player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, _Item, NULL);
-    return true;
-}
-
-/*#####
 # item_soul_cannon
 #####*/
 
@@ -501,22 +432,6 @@ bool ItemUse_item_voodoo_charm(Player* player, Item* _Item, SpellCastTargets con
 }
 
 /*#####
-# item_vorenthals_presence
-#####*/
-
-bool ItemUse_item_vorenthals_presence(Player* player, Item* _Item, SpellCastTargets const& targets)
-{
-    // allow use
-    if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT &&
-        targets.getUnitTarget()->GetEntry() == 20132)
-        return false;
-
-    // error
-    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM, _Item, NULL);
-    return true;
-}
-
-/*#####
 # item_yehkinyas_bramble
 #####*/
 
@@ -544,20 +459,6 @@ bool ItemUse_item_yehkinyas_bramble(Player* player, Item* _Item, SpellCastTarget
 }
 
 /*#####
-# item_zezzak_shard
-#####*/
-
-bool ItemUse_item_zezzak_shard(Player* player, Item* _Item, SpellCastTargets const& targets)
-{
-    if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT &&
-        targets.getUnitTarget()->GetEntry() == 19440)
-        return false;
-
-    player->SendEquipError(EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM, _Item, NULL);
-    return true;
-}
-
-/*#####
 # item_battery
 #####*/
 
@@ -577,11 +478,6 @@ void AddSC_item_scripts()
     Script* newscript;
 
     newscript = new Script;
-    newscript->Name = "item_area_52_special";
-    newscript->pItemUse = &ItemUse_item_area_52_special;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
     newscript->Name = "item_only_for_flight";
     newscript->pItemUse = &ItemUse_item_only_for_flight;
     newscript->RegisterSelf();
@@ -589,11 +485,6 @@ void AddSC_item_scripts()
     newscript = new Script;
     newscript->Name = "item_attuned_crystal_cores";
     newscript->pItemUse = &ItemUse_item_attuned_crystal_cores;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "item_blackwhelp_net";
-    newscript->pItemUse = &ItemUse_item_blackwhelp_net;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -609,11 +500,6 @@ void AddSC_item_scripts()
     newscript = new Script;
     newscript->Name = "item_nether_wraith_beacon";
     newscript->pItemUse = &ItemUse_item_nether_wraith_beacon;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "item_flying_machine";
-    newscript->pItemUse = &ItemUse_item_flying_machine;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -642,11 +528,6 @@ void AddSC_item_scripts()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "item_protovoltaic_magneto_collector";
-    newscript->pItemUse = &ItemUse_item_protovoltaic_magneto_collector;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
     newscript->Name = "item_soul_cannon";
     newscript->pItemUse = &ItemUse_item_soul_cannon;
     newscript->RegisterSelf();
@@ -662,18 +543,8 @@ void AddSC_item_scripts()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "item_vorenthals_presence";
-    newscript->pItemUse = &ItemUse_item_vorenthals_presence;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
     newscript->Name = "item_yehkinyas_bramble";
     newscript->pItemUse = &ItemUse_item_yehkinyas_bramble;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "item_zezzaks_shard";
-    newscript->pItemUse = &ItemUse_item_zezzak_shard;
     newscript->RegisterSelf();
 
     newscript = new Script;

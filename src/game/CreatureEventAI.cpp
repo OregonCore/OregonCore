@@ -30,6 +30,7 @@
 #include "Spell.h"
 #include "SpellMgr.h"
 #include "CreatureAIImpl.h"
+#include "ConditionMgr.h"
 
 bool CreatureEventAIHolder::UpdateRepeatTimer(Creature* creature, uint32 repeatMin, uint32 repeatMax)
 {
@@ -1365,8 +1366,12 @@ void CreatureEventAI::ReceiveEmote(Player* pPlayer, uint32 text_emote)
             if ((*itr).Event.receive_emote.emoteId != text_emote)
                 return;
 
-            PlayerCondition pcon((*itr).Event.receive_emote.condition, (*itr).Event.receive_emote.conditionValue1, (*itr).Event.receive_emote.conditionValue2);
-            if (pcon.Meets(pPlayer))
+            Condition* cond = new Condition();
+            cond->ConditionType = ConditionType((*itr).Event.receive_emote.condition);            
+            cond->ConditionValue1 = (*itr).Event.receive_emote.conditionValue1;
+            cond->ConditionValue2 = (*itr).Event.receive_emote.conditionValue2;
+            
+            if (cond->Meets(ConditionSourceInfo(pPlayer)))
             {
                 sLog.outDebug("CreatureEventAI: ReceiveEmote CreatureEventAI: Condition ok, processing");
                 ProcessEvent(*itr, pPlayer);

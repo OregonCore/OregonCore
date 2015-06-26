@@ -41,7 +41,6 @@
 #include "Util.h"
 #include "WaypointManager.h"
 #include "GossipDef.h"
-#include "InstanceData.h"
 #include "DisableMgr.h"
 
 INSTANTIATE_SINGLETON_1(ObjectMgr);
@@ -301,9 +300,6 @@ ObjectMgr::ObjectMgr()
     mGuildBankTabPrice[3] = 1000;
     mGuildBankTabPrice[4] = 2500;
     mGuildBankTabPrice[5] = 5000;
-
-    // Only zero condition left, others will be added while loading DB tables
-    mConditions.resize(1);
 }
 
 ObjectMgr::~ObjectMgr()
@@ -6652,28 +6648,6 @@ void ObjectMgr::LoadFishingBaseSkillLevel()
     sLog.outString(">> Loaded %u areas for fishing base skill level", count);
 }
 
-// Searches for the same condition already in Conditions store
-// Returns Id if found, else adds it to Conditions and returns Id
-uint16 ObjectMgr::GetConditionId(ConditionType condition, uint32 value1, uint32 value2)
-{
-    PlayerCondition lc = PlayerCondition(condition, value1, value2);
-    for (uint16 i = 0; i < mConditions.size(); ++i)
-    {
-        if (lc == mConditions[i])
-            return i;
-    }
-
-    mConditions.push_back(lc);
-
-    if (mConditions.size() > 0xFFFF)
-    {
-        sLog.outError("Conditions store overflow! Current and later loaded conditions will ignored!");
-        return 0;
-    }
-
-    return mConditions.size() - 1;
-}
-
 bool ObjectMgr::CheckDeclinedNames(std::wstring mainpart, DeclinedName const& names)
 {
     for (int i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
@@ -6694,214 +6668,6 @@ uint32 ObjectMgr::GetAreaTriggerScriptId(uint32 trigger_id)
     if (i != mAreaTriggerScripts.end())
         return i->second;
     return 0;
-}
-
-// Checks if player meets the condition
-bool PlayerCondition::Meets(Player const* player) const
-{
-    if (!player)
-        return false;                                       // player not present, return false
-
-    switch (condition)
-    {
-    case CONDITION_NONE:
-        return true;                                    // empty condition, always met
-    case CONDITION_AURA:
-        return player->HasAura(value1, value2);
-    case CONDITION_ITEM:
-        return player->HasItemCount(value1, value2);
-    case CONDITION_ITEM_EQUIPPED:
-        return player->GetItemOrItemWithGemEquipped(value1) != NULL;
-    case CONDITION_ZONEID:
-        return player->GetZoneId() == value1;
-    case CONDITION_REPUTATION_RANK:
-        {
-            FactionEntry const* faction = sFactionStore.LookupEntry(value1);
-            return faction && player->GetReputationRank(faction) >= value2;
-        }
-    case CONDITION_TEAM:
-        return player->GetTeam() == value1;
-    case CONDITION_SKILL:
-        return player->HasSkill(value1) && player->GetBaseSkillValue(value1) >= value2;
-    case CONDITION_QUESTREWARDED:
-        return player->GetQuestRewardStatus(value1);
-    case CONDITION_QUESTTAKEN:
-        {
-            QuestStatus status = player->GetQuestStatus(value1);
-            return (status == QUEST_STATUS_INCOMPLETE);
-        }
-    case CONDITION_QUEST_NONE:
-        {
-            QuestStatus status = player->GetQuestStatus(value1);
-            return (status == QUEST_STATUS_NONE);
-        }
-    case CONDITION_AD_COMMISSION_AURA:
-        {
-            Unit::AuraMap const& auras = player->GetAuras();
-            for (Unit::AuraMap::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
-                if ((itr->second->GetSpellProto()->Attributes & 0x1000010) && itr->second->GetSpellProto()->SpellVisual == 3580)
-                    return true;
-            return false;
-        }
-    case CONDITION_NO_AURA:
-        return !player->HasAura(value1, value2);
-    case CONDITION_ACTIVE_EVENT:
-        return sGameEventMgr.IsActiveEvent(value1);
-    case CONDITION_INSTANCE_DATA:
-        {
-            Map* map = player->GetMap();
-            if (map && map->IsDungeon() && ((InstanceMap*)map)->GetInstanceData())
-                return ((InstanceMap*)map)->GetInstanceData()->GetData(value1) == value2;
-        }
-    default:
-        return false;
-    }
-}
-
-// Verification of condition values validity
-bool PlayerCondition::IsValid(ConditionType condition, uint32 value1, uint32 value2)
-{
-    if (condition >= MAX_CONDITION)                         // Wrong condition type
-    {
-        sLog.outErrorDb("Condition has invalid type (%u), skipped ", condition);
-        return false;
-    }
-
-    switch (condition)
-    {
-    case CONDITION_AURA:
-        {
-            if (!sSpellStore.LookupEntry(value1))
-            {
-                sLog.outErrorDb("Aura condition has invalid spell (Id: %d), skipped", value1);
-                return false;
-            }
-            if (value2 > 2)
-            {
-                sLog.outErrorDb("Aura condition has invalid effect index (%u) (must be 0..2), skipped", value2);
-                return false;
-            }
-            break;
-        }
-    case CONDITION_ITEM:
-        {
-            ItemPrototype const* proto = sObjectMgr.GetItemPrototype(value1);
-            if (!proto)
-            {
-                sLog.outErrorDb("Item condition has invalid item (%u), skipped", value1);
-                return false;
-            }
-            break;
-        }
-    case CONDITION_ITEM_EQUIPPED:
-        {
-            ItemPrototype const* proto = sObjectMgr.GetItemPrototype(value1);
-            if (!proto)
-            {
-                sLog.outErrorDb("ItemEquipped condition has invalid item (%u), skipped", value1);
-                return false;
-            }
-            break;
-        }
-    case CONDITION_ZONEID:
-        {
-            AreaTableEntry const* areaEntry = GetAreaEntryByAreaID(value1);
-            if (!areaEntry)
-            {
-                sLog.outErrorDb("Zone condition has invalid area (%u), skipped", value1);
-                return false;
-            }
-            if (areaEntry->zone != 0)
-            {
-                sLog.outErrorDb("Zone condition requires a zone, but has a subzone (%u), skipped", value1);
-                return false;
-            }
-            break;
-        }
-    case CONDITION_REPUTATION_RANK:
-        {
-            FactionEntry const* factionEntry = sFactionStore.LookupEntry(value1);
-            if (!factionEntry)
-            {
-                sLog.outErrorDb("Reputation condition has an invalid faction (%u), skipped", value1);
-                return false;
-            }
-            break;
-        }
-    case CONDITION_TEAM:
-        {
-            if (value1 != ALLIANCE && value1 != HORDE)
-            {
-                sLog.outErrorDb("Team condition has an unknown team (%u), skipped", value1);
-                return false;
-            }
-            break;
-        }
-    case CONDITION_SKILL:
-        {
-            SkillLineEntry const* pSkill = sSkillLineStore.LookupEntry(value1);
-            if (!pSkill)
-            {
-                sLog.outErrorDb("Skill condition specifies invalid skill (%u), skipped", value1);
-                return false;
-            }
-            if (value2 < 1 || value2 > sWorld.GetConfigMaxSkillValue())
-            {
-                sLog.outErrorDb("Skill condition specifies invalid skill value (%u), skipped", value2);
-                return false;
-            }
-            break;
-        }
-    case CONDITION_QUESTREWARDED:
-    case CONDITION_QUESTTAKEN:
-        {
-            Quest const* Quest = sObjectMgr.GetQuestTemplate(value1);
-            if (!Quest)
-            {
-                sLog.outErrorDb("Quest condition has invalid quest (%u), skipped", value1);
-                return false;
-            }
-            if (value2)
-                sLog.outErrorDb("Quest condition has useless data in value2 (%u)!", value2);
-            break;
-        }
-    case CONDITION_AD_COMMISSION_AURA:
-        {
-            if (value1)
-                sLog.outErrorDb("Quest condition has useless data in value1 (%u)!", value1);
-            if (value2)
-                sLog.outErrorDb("Quest condition has useless data in value2 (%u)!", value2);
-            break;
-        }
-    case CONDITION_NO_AURA:
-        {
-            if (!sSpellStore.LookupEntry(value1))
-            {
-                sLog.outErrorDb("Aura condition has invalid spell (Id: %d), skipped", value1);
-                return false;
-            }
-            if (value2 > 2)
-            {
-                sLog.outErrorDb("Aura condition has invalid effect index (%u) (must be 0..2), skipped", value2);
-                return false;
-            }
-            break;
-        }
-    case CONDITION_ACTIVE_EVENT:
-        {
-            GameEventMgr::GameEventDataMap const& events = sGameEventMgr.GetEventMap();
-            if (value1 >= events.size() || !events[value1].isValid())
-            {
-                sLog.outErrorDb("Active event condition requires valid event id (%u), skipped", value1);
-                return false;
-            }
-            break;
-        }
-    case CONDITION_INSTANCE_DATA:
-        //@todo need some check
-        break;
-    }
-    return true;
 }
 
 SkillRangeType GetSkillRangeType(SkillLineEntry const* pSkill, bool racial)
@@ -7233,23 +6999,18 @@ void ObjectMgr::LoadGossipMenu()
 {
     m_mGossipMenusMap.clear();
 
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, text_id, "
-                                 "cond_1, cond_1_val_1, cond_1_val_2, cond_2, cond_2_val_1, cond_2_val_2 FROM gossip_menu");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, text_id, FROM gossip_menu");
 
     if (!result)
     {
-
-
         sLog.outDebug(">> Loaded gossip_menu, table is empty!");
         return;
     }
-
 
     uint32 count = 0;
 
     do
     {
-
         Field* fields = result->Fetch();
 
         GossipMenus gMenu;
@@ -7257,33 +7018,11 @@ void ObjectMgr::LoadGossipMenu()
         gMenu.entry             = fields[0].GetUInt32();
         gMenu.text_id           = fields[1].GetUInt32();
 
-        ConditionType cond_1    = (ConditionType)fields[2].GetUInt32();
-        uint32 cond_1_val_1     = fields[3].GetUInt32();
-        uint32 cond_1_val_2     = fields[4].GetUInt32();
-        ConditionType cond_2    = (ConditionType)fields[5].GetUInt32();
-        uint32 cond_2_val_1     = fields[6].GetUInt32();
-        uint32 cond_2_val_2     = fields[7].GetUInt32();
-
         if (!GetGossipText(gMenu.text_id))
         {
             sLog.outErrorDb("Table gossip_menu entry %u is using invalid text_id %u", gMenu.entry, gMenu.text_id);
             continue;
         }
-
-        if (!PlayerCondition::IsValid(cond_1, cond_1_val_1, cond_1_val_2))
-        {
-            sLog.outErrorDb("Table gossip_menu entry %u, invalid condition 1 for id %u", gMenu.entry, gMenu.text_id);
-            continue;
-        }
-
-        if (!PlayerCondition::IsValid(cond_2, cond_2_val_1, cond_2_val_2))
-        {
-            sLog.outErrorDb("Table gossip_menu entry %u, invalid condition 2 for id %u", gMenu.entry, gMenu.text_id);
-            continue;
-        }
-
-        gMenu.cond_1 = GetConditionId(cond_1, cond_1_val_1, cond_1_val_2);
-        gMenu.cond_2 = GetConditionId(cond_2, cond_2_val_1, cond_2_val_2);
 
         m_mGossipMenusMap.insert(GossipMenusMap::value_type(gMenu.entry, gMenu));
 
@@ -7300,20 +7039,14 @@ void ObjectMgr::LoadGossipMenuItems()
 
     QueryResult_AutoPtr result = WorldDatabase.Query(
                                      "SELECT menu_id, id, option_icon, option_text, option_id, npc_option_npcflag, "
-                                     "action_menu_id, action_poi_id, action_script_id, box_coded, box_money, box_text, "
-                                     "cond_1, cond_1_val_1, cond_1_val_2, "
-                                     "cond_2, cond_2_val_1, cond_2_val_2, "
-                                     "cond_3, cond_3_val_1, cond_3_val_2 "
+                                     "action_menu_id, action_poi_id, action_script_id, box_coded, box_money, box_text "
                                      "FROM gossip_menu_option");
 
     if (!result)
     {
-
-
         sLog.outErrorDb(">> Loaded gossip_menu_option, table is empty!");
         return;
     }
-
 
     uint32 count = 0;
 
@@ -7324,7 +7057,6 @@ void ObjectMgr::LoadGossipMenuItems()
 
     do
     {
-
         Field* fields = result->Fetch();
 
         GossipMenuItems gMenuItem;
@@ -7341,32 +7073,6 @@ void ObjectMgr::LoadGossipMenuItems()
         gMenuItem.box_coded             = fields[9].GetUInt8() != 0;
         gMenuItem.box_money             = fields[10].GetUInt32();
         gMenuItem.box_text              = fields[11].GetCppString();
-
-        ConditionType cond_1            = (ConditionType)fields[12].GetUInt32();
-        uint32 cond_1_val_1             = fields[13].GetUInt32();
-        uint32 cond_1_val_2             = fields[14].GetUInt32();
-        ConditionType cond_2            = (ConditionType)fields[15].GetUInt32();
-        uint32 cond_2_val_1             = fields[16].GetUInt32();
-        uint32 cond_2_val_2             = fields[17].GetUInt32();
-        ConditionType cond_3            = (ConditionType)fields[18].GetUInt32();
-        uint32 cond_3_val_1             = fields[19].GetUInt32();
-        uint32 cond_3_val_2             = fields[20].GetUInt32();
-
-        if (!PlayerCondition::IsValid(cond_1, cond_1_val_1, cond_1_val_2))
-        {
-            sLog.outErrorDb("Table gossip_menu_option menu %u, invalid condition 1 for id %u", gMenuItem.menu_id, gMenuItem.id);
-            continue;
-        }
-        if (!PlayerCondition::IsValid(cond_2, cond_2_val_1, cond_2_val_2))
-        {
-            sLog.outErrorDb("Table gossip_menu_option menu %u, invalid condition 2 for id %u", gMenuItem.menu_id, gMenuItem.id);
-            continue;
-        }
-        if (!PlayerCondition::IsValid(cond_3, cond_3_val_1, cond_3_val_2))
-        {
-            sLog.outErrorDb("Table gossip_menu_option menu %u, invalid condition 3 for id %u", gMenuItem.menu_id, gMenuItem.id);
-            continue;
-        }
 
         if (gMenuItem.option_icon >= GOSSIP_ICON_MAX)
         {
@@ -7397,14 +7103,9 @@ void ObjectMgr::LoadGossipMenuItems()
             gossipScriptSet.erase(gMenuItem.action_script_id);
         }
 
-        gMenuItem.cond_1 = GetConditionId(cond_1, cond_1_val_1, cond_1_val_2);
-        gMenuItem.cond_2 = GetConditionId(cond_2, cond_2_val_1, cond_2_val_2);
-        gMenuItem.cond_3 = GetConditionId(cond_3, cond_3_val_1, cond_3_val_2);
-
         m_mGossipMenuItemsMap.insert(GossipMenuItemsMap::value_type(gMenuItem.menu_id, gMenuItem));
 
         ++count;
-
     }
     while (result->NextRow());
 
@@ -7538,6 +7239,8 @@ void ObjectMgr::LoadScriptNames()
                                      "UNION "
                                      "SELECT DISTINCT(ScriptName) FROM areatrigger_scripts WHERE ScriptName <> '' "
                                      "UNION "
+                                      "SELECT DISTINCT(ScriptName) FROM conditions WHERE ScriptName <> '' "
+                                      "UNION "
                                      "SELECT DISTINCT(script) FROM instance_template WHERE script <> ''");
 
     if (result)

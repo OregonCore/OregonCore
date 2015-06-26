@@ -112,14 +112,14 @@ SpellMgr::SpellMgr()
         case TARGET_UNIT_AREA_ALLY_SRC:
         case TARGET_UNIT_AREA_ENTRY_SRC:
         case TARGET_UNIT_AREA_PARTY_SRC:
-        case TARGET_OBJECT_AREA_SRC:
+        case TARGET_GAMEOBJECT_SRC_AREA:
             SpellTargetType[i] = TARGET_TYPE_AREA_SRC;
             break;
         case TARGET_UNIT_AREA_ENEMY_DST:
         case TARGET_UNIT_AREA_ALLY_DST:
         case TARGET_UNIT_AREA_ENTRY_DST:
         case TARGET_UNIT_AREA_PARTY_DST:
-        case TARGET_OBJECT_AREA_DST:
+        case TARGET_GAMEOBJECT_DEST_AREA:
             SpellTargetType[i] = TARGET_TYPE_AREA_DST;
             break;
         case TARGET_UNIT_CONE_ENEMY:
@@ -2127,136 +2127,6 @@ void SpellMgr::LoadSpellLearnSpells()
     sLog.outString(">> Loaded %u spell learn spells + %u found in DBC", count, dbc_count);
 }
 
-void SpellMgr::LoadSpellScriptTarget()
-{
-    mSpellScriptTarget.clear();                             // need for reload case
-
-    uint32 count = 0;
-
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry,type,targetEntry FROM spell_script_target");
-
-    if (!result)
-    {
-
-
-        sLog.outString(">> Loaded 0 spell script target");
-        sLog.outErrorDb("spell_script_target table is empty!");
-        return;
-    }
-
-
-    do
-    {
-        Field* fields = result->Fetch();
-
-        uint32 spellId     = fields[0].GetUInt32();
-        uint32 type        = fields[1].GetUInt32();
-        uint32 targetEntry = fields[2].GetUInt32();
-
-        SpellEntry const* spellProto = sSpellStore.LookupEntry(spellId);
-
-        if (!spellProto)
-        {
-            sLog.outErrorDb("Table spell_script_target: spellId %u listed for TargetEntry %u does not exist.", spellId, targetEntry);
-            continue;
-        }
-
-        /*bool targetfound = false;
-        for (int i = 0; i <3; ++i)
-        {
-            if (spellProto->EffectImplicitTargetA[i] == TARGET_UNIT_NEARBY_ENTRY ||
-                spellProto->EffectImplicitTargetB[i] == TARGET_UNIT_NEARBY_ENTRY ||
-                spellProto->EffectImplicitTargetA[i] == TARGET_DST_NEARBY_ENTRY ||
-                spellProto->EffectImplicitTargetB[i] == TARGET_DST_NEARBY_ENTRY)
-            {
-                targetfound = true;
-                break;
-            }
-        }
-        if (!targetfound)
-        {
-            sLog.outErrorDb("Table spell_script_target: spellId %u listed for TargetEntry %u does not have any implicit target TARGET_UNIT_NEARBY_ENTRY(38) or TARGET_DST_NEARBY_ENTRY (46).",spellId,targetEntry);
-            continue;
-        }*/
-
-        if (type >= MAX_SPELL_TARGET_TYPE)
-        {
-            sLog.outErrorDb("Table spell_script_target: target type %u for TargetEntry %u is incorrect.", type, targetEntry);
-            continue;
-        }
-
-        switch (type)
-        {
-        case SPELL_TARGET_TYPE_GAMEOBJECT:
-            {
-                if (targetEntry == 0)
-                    break;
-
-                if (!sGOStorage.LookupEntry<GameObjectInfo>(targetEntry))
-                {
-                    sLog.outErrorDb("Table spell_script_target: gameobject template entry %u does not exist.", targetEntry);
-                    continue;
-                }
-                break;
-            }
-        default:
-            {
-                //players
-                /*if (targetEntry == 0)
-                {
-                    sLog.outErrorDb("Table spell_script_target: target entry == 0 for not GO target type (%u).",type);
-                    continue;
-                }*/
-                if (targetEntry && !sCreatureStorage.LookupEntry<CreatureInfo>(targetEntry))
-                {
-                    sLog.outErrorDb("Table spell_script_target: creature template entry %u does not exist.", targetEntry);
-                    continue;
-                }
-                const CreatureInfo* cInfo = sCreatureStorage.LookupEntry<CreatureInfo>(targetEntry);
-
-                if (spellId == 30427 && !cInfo->SkinLootId)
-                {
-                    sLog.outErrorDb("Table spell_script_target has creature %u as a target of spellid 30427, but this creature has no skinlootid. Gas extraction will not work!", cInfo->Entry);
-                    continue;
-                }
-                break;
-            }
-        }
-
-        mSpellScriptTarget.insert(SpellScriptTarget::value_type(spellId, SpellTargetEntry(SpellScriptTargetType(type), targetEntry)));
-
-        ++count;
-    }
-    while (result->NextRow());
-
-    // Check all spells
-    /* Disabled (lot errors at this moment)
-    for (uint32 i = 1; i < sSpellStore.nCount; ++i)
-    {
-        SpellEntry const * spellInfo = sSpellStore.LookupEntry(i);
-        if (!spellInfo)
-            continue;
-
-        bool found = false;
-        for (int j=0; j<3; ++j)
-        {
-            if (spellInfo->EffectImplicitTargetA[j] == TARGET_UNIT_NEARBY_ENTRY || spellInfo->EffectImplicitTargetA[j] != TARGET_UNIT_CASTER && spellInfo->EffectImplicitTargetB[j] == TARGET_UNIT_NEARBY_ENTRY)
-            {
-                SpellScriptTarget::const_iterator lower = sSpellMgr.GetBeginSpellScriptTarget(spellInfo->Id);
-                SpellScriptTarget::const_iterator upper = sSpellMgr.GetEndSpellScriptTarget(spellInfo->Id);
-                if (lower == upper)
-                {
-                    sLog.outErrorDb("Spell (ID: %u) has effect EffectImplicitTargetA/EffectImplicitTargetB = %u (TARGET_UNIT_NEARBY_ENTRY), but does not have record in spell_script_target",spellInfo->Id,TARGET_UNIT_NEARBY_ENTRY);
-                    break;                                  // effects of spell
-                }
-            }
-        }
-    }
-    */
-
-    sLog.outString(">> Loaded %u Spell Script Targets", count);
-}
-
 void SpellMgr::LoadSpellPetAuras()
 {
     mSpellPetAuraMap.clear();                                  // need for reload case
@@ -2949,36 +2819,7 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
 
     // elixirs (all area dependent elixirs have family SPELLFAMILY_POTION, use this for speedup)
     if (spellInfo->SpellFamilyName == SPELLFAMILY_POTION)
-    {
-        /*if (uint32 mask = sSpellMgr.GetSpellElixirSpecific(spellInfo->Id))
-        {
-            if (mask & SPELL_BATTLE_ELIXIR)
-            {
-                if (spellInfo->Id == 45373)                    // Bloodberry Elixir
-                    return zone_id == 4075;
-            }
-            /*if (mask & ELIXIR_UNSTABLE_MASK)
-            {
-                // in the Blade's Edge Mountains Plateaus and Gruul's Lair.
-                return zone_id == 3522 || map_id == 565;
-            }
-            if (mask & ELIXIR_SHATTRATH_MASK)
-            {
-                // in Tempest Keep, Serpentshrine Cavern, Caverns of Time: Mount Hyjal, Black Temple, Sunwell Plateau
-                if (zone_id == 3607 || map_id == 534 || map_id == 564 || zone_id == 4075)
-                    return true;
-
-                MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
-                if (!mapEntry)
-                    return false;
-
-                return mapEntry->multimap_id == 206;
-            }*/
-
-        // elixirs not have another limitations
         return true;
-        //}
-    }
 
     // special cases zone check (maps checked by multimap common id)
     switch (spellInfo->Id)
@@ -3014,8 +2855,6 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
 
             return false;
         }
-    case 32307:                                         // Warmaul Ogre Banner
-        return area_id == 3610;
     case 32724:                                         // Gold Team (Alliance)
     case 32725:                                         // Green Team (Alliance)
     case 32727:                                         // Arena Preparation
@@ -3278,4 +3117,3 @@ DiminishingReturnsType GetDiminishingReturnsGroupType(DiminishingGroup group)
 
     return DRTYPE_NONE;
 }
-

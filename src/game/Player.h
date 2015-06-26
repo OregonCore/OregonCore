@@ -1367,7 +1367,7 @@ class Player : public Unit, public GridObject<Player>
         void SendPreparedGossip(WorldObject* pSource);
         void OnGossipSelect(WorldObject* pSource, uint32 gossipListId, uint32 menuId);
 
-        uint32 GetGossipTextId(uint32 menuId);
+        uint32 GetGossipTextId(uint32 menuId, WorldObject* source);
         uint32 GetGossipTextId(WorldObject* pSource);
         uint32 GetDefaultGossipMenuForSource(WorldObject* pSource);
 
@@ -1406,6 +1406,7 @@ class Player : public Unit, public GridObject<Player>
         bool SatisfyQuestRace(Quest const* qInfo, bool msg);
         bool SatisfyQuestReputation(Quest const* qInfo, bool msg);
         bool SatisfyQuestStatus(Quest const* qInfo, bool msg);
+        bool SatisfyQuestConditions(Quest const* qInfo, bool msg);
         bool SatisfyQuestTimed(Quest const* qInfo, bool msg);
         bool SatisfyQuestExclusiveGroup(Quest const* qInfo, bool msg);
         bool SatisfyQuestNextChain(Quest const* qInfo, bool msg);
@@ -1624,7 +1625,8 @@ class Player : public Unit, public GridObject<Player>
         {
             return mQuestStatus;
         };
-
+        Unit *GetSelectedUnit() const;
+        Player *GetSelectedPlayer() const;
         const uint64& GetSelection() const
         {
             return m_curSelection;

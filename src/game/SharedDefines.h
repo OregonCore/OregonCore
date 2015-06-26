@@ -1036,7 +1036,7 @@ enum Targets
     TARGET_UNIT_PARTY_TARGET           = 37,
     TARGET_UNIT_NEARBY_ENTRY           = 38,
     TARGET_UNIT_CASTER_FISHING         = 39,
-    TARGET_OBJECT_USE                  = 40,
+    TARGET_GAMEOBJECT_NEARBY_ENTRY     = 40,
     TARGET_DEST_CASTER_FRONT_LEFT      = 41, //earth totem
     TARGET_DEST_CASTER_BACK_LEFT       = 42, //water totem
     TARGET_DEST_CASTER_BACK_RIGHT      = 43, //air totem
@@ -1047,8 +1047,8 @@ enum Targets
     TARGET_DEST_CASTER_BACK            = 48,
     TARGET_DEST_CASTER_RIGHT           = 49,
     TARGET_DEST_CASTER_LEFT            = 50,
-    TARGET_OBJECT_AREA_SRC             = 51,
-    TARGET_OBJECT_AREA_DST             = 52,
+    TARGET_GAMEOBJECT_SRC_AREA         = 51,
+    TARGET_GAMEOBJECT_DEST_AREA        = 52,
     TARGET_DST_TARGET_ENEMY            = 53, // set unit coordinates as dest, only 16 target B imlemented
     TARGET_UNIT_CONE_ENEMY_UNKNOWN     = 54, // 180 degree, or different angle
     TARGET_DEST_CASTER_FRONT_LEAP      = 55, // for a leap spell

@@ -471,6 +471,8 @@ struct _Socket
     uint32 Content;
 };
 
+#define MAX_ITEM_PROTO_SPELLS  5
+
 struct ItemPrototype
 {
     uint32 ItemId;

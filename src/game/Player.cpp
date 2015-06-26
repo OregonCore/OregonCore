@@ -62,6 +62,8 @@
 #include "Mail.h"
 #include "GameEventMgr.h"
 #include "DisableMgr.h"
+#include "ConditionMgr.h"
+
 #include <cmath>
 
 #define ZONE_UPDATE_INTERVAL (1*IN_MILLISECONDS)
@@ -12561,21 +12563,7 @@ void Player::PrepareGossipMenu(WorldObject* pSource, uint32 menuId)
     {
         bool hasMenuItem = true;
 
-        if (itr->second.cond_1 && !sObjectMgr.IsPlayerMeetToCondition(this, itr->second.cond_1))
-        {
-            if (itr->second.option_id == GOSSIP_OPTION_QUESTGIVER)
-                canSeeQuests = false;
-            continue;
-        }
-
-        if (itr->second.cond_2 && !sObjectMgr.IsPlayerMeetToCondition(this, itr->second.cond_2))
-        {
-            if (itr->second.option_id == GOSSIP_OPTION_QUESTGIVER)
-                canSeeQuests = false;
-            continue;
-        }
-
-        if (itr->second.cond_3 && !sObjectMgr.IsPlayerMeetToCondition(this, itr->second.cond_3))
+        if (!sConditionMgr.IsObjectMeetToConditions(this, pSource, itr->second.conditions))
         {
             if (itr->second.option_id == GOSSIP_OPTION_QUESTGIVER)
                 canSeeQuests = false;
@@ -12741,7 +12729,7 @@ void Player::SendPreparedGossip(WorldObject* pSource)
     uint32 textId = GetGossipTextId(pSource);
 
     if (uint32 menuId = PlayerTalkClass->GetGossipMenu().GetMenuId())
-        textId = GetGossipTextId(menuId);
+        textId = GetGossipTextId(menuId, pSource);
 
     PlayerTalkClass->SendGossipMenu(textId, pSource->GetGUID());
 }
@@ -12886,7 +12874,7 @@ uint32 Player::GetGossipTextId(WorldObject* pSource)
     return DEFAULT_GOSSIP_MESSAGE;
 }
 
-uint32 Player::GetGossipTextId(uint32 menuId)
+uint32 Player::GetGossipTextId(uint32 menuId, WorldObject* source)
 {
     uint32 textId = DEFAULT_GOSSIP_MESSAGE;
 
@@ -12897,7 +12885,7 @@ uint32 Player::GetGossipTextId(uint32 menuId)
 
     for (GossipMenusMap::const_iterator itr = pMenuBounds.first; itr != pMenuBounds.second; ++itr)
     {
-        if (sObjectMgr.IsPlayerMeetToCondition(this, itr->second.cond_1) && sObjectMgr.IsPlayerMeetToCondition(this, itr->second.cond_2))
+        if (sConditionMgr.IsObjectMeetToConditions(this, source, itr->second.conditions))
             textId = itr->second.text_id;
     }
 
@@ -13128,7 +13116,8 @@ bool Player::CanTakeQuest(Quest const* pQuest, bool msg)
            && SatisfyQuestPreviousQuest(pQuest, msg) && SatisfyQuestTimed(pQuest, msg)
            && SatisfyQuestNextChain(pQuest, msg) && SatisfyQuestPrevChain(pQuest, msg)
            && SatisfyQuestDay(pQuest, msg)
-           && !sDisableMgr.IsDisabledFor(DISABLE_TYPE_QUEST, pQuest->GetQuestId(), this);
+           && !sDisableMgr.IsDisabledFor(DISABLE_TYPE_QUEST, pQuest->GetQuestId(), this)
+           && SatisfyQuestConditions(pQuest, msg);
 }
 
 bool Player::CanAddQuest(Quest const* pQuest, bool msg)
@@ -13790,6 +13779,19 @@ bool Player::SatisfyQuestStatus(Quest const* qInfo, bool msg)
     {
         if (msg)
             SendCanTakeQuestResponse(INVALIDREASON_QUEST_ALREADY_ON);
+        return false;
+    }
+    return true;
+}
+
+bool Player::SatisfyQuestConditions(Quest const* qInfo, bool msg)
+{
+    ConditionList conditions = sConditionMgr.GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_QUEST_ACCEPT, qInfo->GetQuestId());
+    if (!sConditionMgr.IsObjectMeetToConditions(this, conditions))
+    {
+        if (msg)
+            SendCanTakeQuestResponse(INVALIDREASON_DONT_HAVE_REQ);
+        sLog.outDebug("Player::SatisfyQuestConditions: conditions not met for quest %u", qInfo->GetQuestId());
         return false;
     }
     return true;
@@ -19425,6 +19427,20 @@ void Player::UpdateVisibilityForPlayer()
 void Player::InitPrimaryProfessions()
 {
     SetFreePrimaryProfessions(sWorld.getConfig(CONFIG_MAX_PRIMARY_TRADE_SKILL));
+}
+
+Unit * Player::GetSelectedUnit() const
+{
+    if (m_curSelection)
+        return ObjectAccessor::GetUnit(*this, m_curSelection);
+    return NULL;
+}
+
+Player * Player::GetSelectedPlayer() const
+{
+    if (m_curSelection)
+        return ObjectAccessor::GetPlayer(*this, m_curSelection);
+    return NULL;
 }
 
 void Player::SendComboPoints()

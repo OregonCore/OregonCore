@@ -30,6 +30,7 @@
 #include "BattleGround.h"
 #include "BattleGroundAV.h"
 #include "ScriptMgr.h"
+#include "ConditionMgr.h"
 
 void WorldSession::HandleQuestgiverStatusQueryOpcode(WorldPacket& recv_data)
 {
@@ -587,6 +588,10 @@ uint32 WorldSession::getDialogStatus(Player* pPlayer, Object* questgiver, uint32
         Quest const* pQuest = sObjectMgr.GetQuestTemplate(quest_id);
         if (!pQuest) continue;
 
+        ConditionList conditions = sConditionMgr.GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_QUEST_SHOW_MARK, pQuest->GetQuestId());
+        if (!sConditionMgr.IsObjectMeetToConditions(pPlayer, conditions))
+            continue;
+
         QuestStatus status = pPlayer->GetQuestStatus(quest_id);
         if ((status == QUEST_STATUS_COMPLETE && !pPlayer->GetQuestRewardStatus(quest_id)) ||
             (pQuest->IsAutoComplete() && pPlayer->CanTakeQuest(pQuest, false)))
@@ -609,6 +614,10 @@ uint32 WorldSession::getDialogStatus(Player* pPlayer, Object* questgiver, uint32
         uint32 quest_id = i->second;
         Quest const* pQuest = sObjectMgr.GetQuestTemplate(quest_id);
         if (!pQuest)
+            continue;
+
+        ConditionList conditions = sConditionMgr.GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_QUEST_SHOW_MARK, pQuest->GetQuestId());
+        if (!sConditionMgr.IsObjectMeetToConditions(pPlayer, conditions))
             continue;
 
         QuestStatus status = pPlayer->GetQuestStatus(quest_id);

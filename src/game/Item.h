@@ -189,6 +189,8 @@ enum ItemUpdateState
     ITEM_REMOVED                                 = 3
 };
 
+#define MAX_ITEM_REQ_TARGET_TYPE 2
+
 bool ItemCanGoIntoBag(ItemPrototype const* proto, ItemPrototype const* pBagProto);
 
 class Item : public Object

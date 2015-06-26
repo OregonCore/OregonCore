@@ -61,6 +61,7 @@
 #include "ScriptMgr.h"
 #include "WardenDataStorage.h"
 #include "DisableMgr.h"
+#include "ConditionMgr.h"
 
 INSTANTIATE_SINGLETON_1(World);
 
@@ -1369,9 +1370,6 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Loading Creature templates...");
     sObjectMgr.LoadCreatureTemplates();
 
-    sConsole.SetLoadingLabel("Loading SpellsScriptTarget...");
-    sSpellMgr.LoadSpellScriptTarget();                       // must be after LoadCreatureTemplates and LoadGameobjectInfo
-
     sConsole.SetLoadingLabel("Loading Creature Reputation OnKill Data...");
     sObjectMgr.LoadReputationOnKill();
 
@@ -1536,6 +1534,9 @@ void World::SetInitialWorldSettings()
 
     sConsole.SetLoadingLabel("Loading Creature Formations...");
     sFormationMgr.LoadCreatureFormations();
+
+    sLog.outString("Loading Conditions...");
+    sConditionMgr.LoadConditions();
 
     sConsole.SetLoadingLabel("Loading GM tickets...");
     ticketmgr.LoadGMTickets();

@@ -52,6 +52,7 @@
 #include "AuctionHouseBot.h"
 #include "CreatureEventAIMgr.h"
 #include "DisableMgr.h"
+#include "ConditionMgr.h"
 
 bool ChatHandler::HandleAHBotOptionsCommand(const char* args)
 {
@@ -496,6 +497,7 @@ bool ChatHandler::HandleReloadAllLootCommand(const char*)
     sLog.outString("Re-Loading Loot Tables...");
     LoadLootTables();
     SendGlobalGMSysMessage("DB tables *_loot_template reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -550,7 +552,6 @@ bool ChatHandler::HandleReloadAllSpellCommand(const char*)
     HandleReloadSpellGroupStackRulesCommand("a");
     HandleReloadSpellLinkedSpellCommand("a");
     HandleReloadSpellProcEventCommand("a");
-    HandleReloadSpellScriptTargetCommand("a");
     HandleReloadSpellTargetPositionCommand("a");
     HandleReloadSpellThreatsCommand("a");
     HandleReloadSpellPetAurasCommand("a");
@@ -644,6 +645,7 @@ bool ChatHandler::HandleReloadGossipMenuCommand(const char*)
     sLog.outString( "Re-Loading `gossip_menu` Table!" );
     sObjectMgr.LoadGossipMenu();
     SendGlobalSysMessage("DB table `gossip_menu` reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -652,6 +654,7 @@ bool ChatHandler::HandleReloadGossipMenuOptionCommand(const char*)
     sLog.outString( "Re-Loading `gossip_menu_option` Table!" );
     sObjectMgr.LoadGossipMenuItems();
     SendGlobalSysMessage("DB table `gossip_menu_option` reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -701,6 +704,7 @@ bool ChatHandler::HandleReloadLootTemplatesCreatureCommand(const char*)
     LoadLootTemplates_Creature();
     LootTemplates_Creature.CheckLootRefs();
     SendGlobalGMSysMessage("DB table creature_loot_template reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -710,6 +714,7 @@ bool ChatHandler::HandleReloadLootTemplatesDisenchantCommand(const char*)
     LoadLootTemplates_Disenchant();
     LootTemplates_Disenchant.CheckLootRefs();
     SendGlobalGMSysMessage("DB table disenchant_loot_template reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -719,6 +724,7 @@ bool ChatHandler::HandleReloadLootTemplatesFishingCommand(const char*)
     LoadLootTemplates_Fishing();
     LootTemplates_Fishing.CheckLootRefs();
     SendGlobalGMSysMessage("DB table fishing_loot_template reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -728,6 +734,7 @@ bool ChatHandler::HandleReloadLootTemplatesGameobjectCommand(const char*)
     LoadLootTemplates_Gameobject();
     LootTemplates_Gameobject.CheckLootRefs();
     SendGlobalGMSysMessage("DB table gameobject_loot_template reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -737,6 +744,7 @@ bool ChatHandler::HandleReloadLootTemplatesItemCommand(const char*)
     LoadLootTemplates_Item();
     LootTemplates_Item.CheckLootRefs();
     SendGlobalGMSysMessage("DB table item_loot_template reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -746,6 +754,7 @@ bool ChatHandler::HandleReloadLootTemplatesPickpocketingCommand(const char*)
     LoadLootTemplates_Pickpocketing();
     LootTemplates_Pickpocketing.CheckLootRefs();
     SendGlobalGMSysMessage("DB table pickpocketing_loot_template reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -755,6 +764,7 @@ bool ChatHandler::HandleReloadLootTemplatesProspectingCommand(const char*)
     LoadLootTemplates_Prospecting();
     LootTemplates_Prospecting.CheckLootRefs();
     SendGlobalGMSysMessage("DB table prospecting_loot_template reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -764,6 +774,7 @@ bool ChatHandler::HandleReloadLootTemplatesMailCommand(const char*)
     LoadLootTemplates_Mail();
     LootTemplates_Mail.CheckLootRefs();
     SendGlobalSysMessage("DB table `mail_loot_template` reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -772,6 +783,7 @@ bool ChatHandler::HandleReloadLootTemplatesReferenceCommand(const char*)
     sLog.outString("Re-Loading Loot Tables... (reference_loot_template)");
     LoadLootTemplates_Reference();
     SendGlobalGMSysMessage("DB table reference_loot_template reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -781,6 +793,7 @@ bool ChatHandler::HandleReloadLootTemplatesSkinningCommand(const char*)
     LoadLootTemplates_Skinning();
     LootTemplates_Skinning.CheckLootRefs();
     SendGlobalGMSysMessage("DB table skinning_loot_template reloaded.");
+    sConditionMgr.LoadConditions(true);
     return true;
 }
 
@@ -901,14 +914,6 @@ bool ChatHandler::HandleReloadSpellProcEventCommand(const char*)
     sLog.outString("Re-Loading Spell Proc Event conditions...");
     sSpellMgr.LoadSpellProcEvents();
     SendGlobalGMSysMessage("DB table spell_proc_event (spell proc trigger requirements) reloaded.");
-    return true;
-}
-
-bool ChatHandler::HandleReloadSpellScriptTargetCommand(const char*)
-{
-    sLog.outString("Re-Loading SpellsScriptTarget...");
-    sSpellMgr.LoadSpellScriptTarget();
-    SendGlobalGMSysMessage("DB table spell_script_target (spell targets selection in case specific creature/GO requirements) reloaded.");
     return true;
 }
 
@@ -1193,6 +1198,14 @@ bool ChatHandler::HandleReloadAuctionsCommand(const char* /*args*/)
     sAuctionMgr->LoadAuctionItems();
     sAuctionMgr->LoadAuctions();
     SendGlobalGMSysMessage("Auctions reloaded.");
+    return true;
+}
+
+bool ChatHandler::HandleReloadConditions(const char* args)
+{
+    sLog.outString("Re-Loading Conditions...");
+    sConditionMgr.LoadConditions(true);
+    SendGlobalGMSysMessage("Conditions reloaded.");
     return true;
 }
 
@@ -6631,7 +6644,11 @@ bool ChatHandler::HandleCastCommand(const char* args)
 
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spell);
     if (!spellInfo)
+    {
+        PSendSysMessage(LANG_COMMAND_NOSPELLFOUND);
+        SetSentErrorMessage(true);
         return false;
+    }
 
     if (!SpellMgr::IsSpellValid(spellInfo, m_session->GetPlayer()))
     {
@@ -6670,7 +6687,11 @@ bool ChatHandler::HandleCastBackCommand(const char* args)
     // number or [name] Shift-click form |color|Hspell:spell_id|h[name]|h|r or Htalent form
     uint32 spell = extractSpellIdFromLink((char*)args);
     if (!spell || !sSpellStore.LookupEntry(spell))
+    {
+        PSendSysMessage(LANG_COMMAND_NOSPELLFOUND);
+        SetSentErrorMessage(true);
         return false;
+    }
 
     char* trig_str = strtok(NULL, " ");
     if (trig_str)
@@ -6701,7 +6722,11 @@ bool ChatHandler::HandleCastDistCommand(const char* args)
 
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spell);
     if (!spellInfo)
+    {
+        PSendSysMessage(LANG_COMMAND_NOSPELLFOUND);
+        SetSentErrorMessage(true);
         return false;
+    }
 
     if (!SpellMgr::IsSpellValid(spellInfo, m_session->GetPlayer()))
     {
@@ -6755,7 +6780,11 @@ bool ChatHandler::HandleCastTargetCommand(const char* args)
     // number or [name] Shift-click form |color|Hspell:spell_id|h[name]|h|r or Htalent form
     uint32 spell = extractSpellIdFromLink((char*)args);
     if (!spell || !sSpellStore.LookupEntry(spell))
+    {
+        PSendSysMessage(LANG_COMMAND_NOSPELLFOUND);
+        SetSentErrorMessage(true);
         return false;
+    }
 
     char* trig_str = strtok(NULL, " ");
     if (trig_str)

@@ -46,6 +46,7 @@
 #include "TemporarySummon.h"
 #include "GameEventMgr.h"
 #include "DisableMgr.h"
+#include "ConditionMgr.h"
 
 #define SPELL_CHANNEL_UPDATE_INTERVAL (1*IN_MILLISECONDS)
 
@@ -1480,11 +1481,10 @@ WorldObject* Spell::SearchNearbyTarget(float range, SpellTargets TargetType)
     {
     case SPELL_TARGETS_ENTRY:
         {
-            SpellScriptTarget::const_iterator lower = sSpellMgr.GetBeginSpellScriptTarget(m_spellInfo->Id);
-            SpellScriptTarget::const_iterator upper = sSpellMgr.GetEndSpellScriptTarget(m_spellInfo->Id);
-            if (lower == upper)
+            ConditionList conditions = sConditionMgr.GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET, m_spellInfo->Id);
+            if (conditions.empty())
             {
-                sLog.outErrorDb("Spell (ID: %u) (caster Entry: %u) does not have record in spell_script_target", m_spellInfo->Id, m_caster->GetEntry());
+                sLog.outDebug("Spell (ID: %u) (caster Entry: %u) does not have record in `conditions` for spell script target (ConditionSourceType 13)", m_spellInfo->Id, m_caster->GetEntry());
                 if (IsPositiveSpell(m_spellInfo->Id))
                     return SearchNearbyTarget(range, SPELL_TARGETS_ALLY);
                 else
@@ -1494,14 +1494,16 @@ WorldObject* Spell::SearchNearbyTarget(float range, SpellTargets TargetType)
             Creature* creatureScriptTarget = NULL;
             GameObject* goScriptTarget = NULL;
 
-            for (SpellScriptTarget::const_iterator i_spellST = lower; i_spellST != upper; ++i_spellST)
+            for (ConditionList::const_iterator i_spellST = conditions.begin(); i_spellST != conditions.end(); ++i_spellST)
             {
-                switch (i_spellST->second.type)
+                if ((*i_spellST)->ConditionType != CONDITION_SPELL_SCRIPT_TARGET)
+                    continue;
+                switch((*i_spellST)->ConditionValue1)
                 {
                 case SPELL_TARGET_TYPE_GAMEOBJECT:
-                    if (i_spellST->second.targetEntry)
+                    if ((*i_spellST)->ConditionValue2)
                     {
-                        if (GameObject* go = m_caster->FindNearestGameObject(i_spellST->second.targetEntry, range))
+                        if (GameObject *go = m_caster->FindNearestGameObject((*i_spellST)->ConditionValue2, range))
                         {
                             // remember found target and range, next attempt will find more near target with another entry
                             goScriptTarget = go;
@@ -1523,7 +1525,7 @@ WorldObject* Spell::SearchNearbyTarget(float range, SpellTargets TargetType)
                 case SPELL_TARGET_TYPE_CREATURE:
                 case SPELL_TARGET_TYPE_DEAD:
                 default:
-                    if (Creature* cre = m_caster->FindNearestCreature(i_spellST->second.targetEntry, range, i_spellST->second.type != SPELL_TARGET_TYPE_DEAD))
+                    if (Creature *cre = m_caster->FindNearestCreature((*i_spellST)->ConditionValue2, range, (*i_spellST)->ConditionValue1 != SPELL_TARGET_TYPE_DEAD))
                     {
                         creatureScriptTarget = cre;
                         goScriptTarget = NULL;
@@ -1986,7 +1988,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             switch (cur)
             {
             case TARGET_GAMEOBJECT:
-            case TARGET_OBJECT_USE:
+            case TARGET_GAMEOBJECT_NEARBY_ENTRY:
                 if (m_targets.getGOTarget())
                     AddGOTarget(m_targets.getGOTarget(), i);
                 else
@@ -2091,17 +2093,16 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
         case TARGET_UNIT_AREA_PARTY_DST:
             m_caster->GetPartyMember(unitList, radius); //fix me
             break;
-        case TARGET_OBJECT_AREA_SRC: // fix me
-        case TARGET_OBJECT_AREA_DST:
+        case TARGET_GAMEOBJECT_SRC_AREA: // fix me
+        case TARGET_GAMEOBJECT_DEST_AREA:
             break;
         case TARGET_UNIT_AREA_ENTRY_SRC:
         case TARGET_UNIT_AREA_ENTRY_DST:
         case TARGET_UNIT_CONE_ENTRY: // fix me
             {
-                SpellScriptTarget::const_iterator lower = sSpellMgr.GetBeginSpellScriptTarget(m_spellInfo->Id);
-                SpellScriptTarget::const_iterator upper = sSpellMgr.GetEndSpellScriptTarget(m_spellInfo->Id);
+                ConditionList conditions = sConditionMgr.GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET, m_spellInfo->Id);
                 radius = GetSpellRadius(m_spellInfo, i, IsPositiveSpell(m_spellInfo->Id));
-                if (lower == upper)
+                if (conditions.empty())
                 {
                     sLog.outErrorDb("Spell (ID: %u) (caster Entry: %u) does not have record in spell_script_target", m_spellInfo->Id, m_caster->GetEntry());
 
@@ -2113,10 +2114,12 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 // let it be done in one check?
                 else
                 {
-                    for (SpellScriptTarget::const_iterator i_spellST = lower; i_spellST != upper; ++i_spellST)
+                    for (ConditionList::const_iterator i_spellST = conditions.begin(); i_spellST != conditions.end(); ++i_spellST)
                     {
-                        if (i_spellST->second.type == SPELL_TARGET_TYPE_CREATURE)
-                            SearchAreaTarget(unitList, radius, pushType, SPELL_TARGETS_ENTRY, i_spellST->second.targetEntry);
+                        if ((*i_spellST)->ConditionType != CONDITION_SPELL_SCRIPT_TARGET)
+                            continue;
+                        if ((*i_spellST)->ConditionValue1 == SPELL_TARGET_TYPE_CREATURE)
+                            SearchAreaTarget(unitList, radius, pushType, SPELL_TARGETS_ENTRY, (*i_spellST)->ConditionValue2);
                     }
                 }
                 break;
@@ -3726,6 +3729,24 @@ SpellCastResult Spell::CheckCast(bool strict)
             return SPELL_FAILED_MOVING;
     }
 
+    // check spell cast conditions from database
+    {
+        ConditionSourceInfo condInfo = ConditionSourceInfo(m_caster);
+        condInfo.mConditionTargets[1] = m_targets.getUnitTarget();
+        ConditionList conditions = sConditionMgr.GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_SPELL, m_spellInfo->Id);
+        if (!conditions.empty() && !sConditionMgr.IsObjectMeetToConditions(condInfo, conditions))
+        {
+            // mLastFailedCondition can be NULL if there was an error processing the condition in Condition::Meets (i.e. wrong data for ConditionTarget or others)
+            if (condInfo.mLastFailedCondition && condInfo.mLastFailedCondition->ErrorType)
+                return SpellCastResult(condInfo.mLastFailedCondition->ErrorType);
+
+            if (!condInfo.mLastFailedCondition || !condInfo.mLastFailedCondition->ConditionTarget)
+                return SPELL_FAILED_CASTER_AURASTATE;
+
+            return SPELL_FAILED_BAD_TARGETS;
+        }
+    }
+
     if (m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT && m_caster->IsInCombat())
         return SPELL_FAILED_AFFECTING_COMBAT;
 
@@ -3908,7 +3929,7 @@ SpellCastResult Spell::CheckCast(bool strict)
     if (castResult != SPELL_CAST_OK)
         return castResult;
 
-    //ImpliciteTargetA-B = 38, If fact there is 0 Spell with  ImpliciteTargetB=38
+    // ImpliciteTargetA-B = 38, If fact there is 0 Spell with  ImpliciteTargetB=38
     if (m_UniqueTargetInfo.empty())                          // skip second canCast apply (for delayed spells for example)
     {
         for (uint8 j = 0; j < MAX_SPELL_EFFECTS; j++)
@@ -3918,10 +3939,9 @@ SpellCastResult Spell::CheckCast(bool strict)
                 (m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY) ||
                 (m_spellInfo->EffectImplicitTargetB[j] == TARGET_DST_NEARBY_ENTRY))
             {
-                SpellScriptTarget::const_iterator lower = sSpellMgr.GetBeginSpellScriptTarget(m_spellInfo->Id);
-                SpellScriptTarget::const_iterator upper = sSpellMgr.GetEndSpellScriptTarget(m_spellInfo->Id);
-                if (lower == upper)
-                    sLog.outErrorDb("Spell (ID: %u) has effect EffectImplicitTargetA/EffectImplicitTargetB = TARGET_UNIT_NEARBY_ENTRY or TARGET_DST_NEARBY_ENTRY, but does not have record in spell_script_target", m_spellInfo->Id);
+                ConditionList conditions = sConditionMgr.GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET, m_spellInfo->Id);
+                if (conditions.empty())
+                    sLog.outErrorDb("Spell (ID: %u) has effect EffectImplicitTargetA/EffectImplicitTargetB = TARGET_UNIT_NEARBY_ENTRY or TARGET_DST_NEARBY_ENTRY, but does not have record in conditions.", m_spellInfo->Id);
 
                 SpellRangeEntry const* srange = sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex);
                 float range = GetSpellMaxRange(srange);
@@ -3929,21 +3949,23 @@ SpellCastResult Spell::CheckCast(bool strict)
                 Creature* creatureScriptTarget = NULL;
                 GameObject* goScriptTarget = NULL;
 
-                for (SpellScriptTarget::const_iterator i_spellST = lower; i_spellST != upper; ++i_spellST)
-                {
-                    switch (i_spellST->second.type)
+            for (ConditionList::const_iterator i_spellST = conditions.begin(); i_spellST != conditions.end(); ++i_spellST)
+            {
+                if ((*i_spellST)->ConditionType != CONDITION_SPELL_SCRIPT_TARGET)
+                    continue;
+                    switch((*i_spellST)->ConditionValue1)
                     {
                     case SPELL_TARGET_TYPE_GAMEOBJECT:
                         {
                             GameObject* p_GameObject = NULL;
 
-                            if (i_spellST->second.targetEntry)
+                            if ((*i_spellST)->ConditionValue2)
                             {
                                 CellPair p(Oregon::ComputeCellPair(m_caster->GetPositionX(), m_caster->GetPositionY()));
                                 Cell cell(p);
                                 cell.data.Part.reserved = ALL_DISTRICT;
 
-                                Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*m_caster, i_spellST->second.targetEntry, range);
+                                Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*m_caster, (*i_spellST)->ConditionValue2, range);
                                 Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(p_GameObject, go_check);
 
                                 TypeContainerVisitor<Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer > object_checker(checker);
@@ -3980,7 +4002,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                             cell.data.Part.reserved = ALL_DISTRICT;
                             cell.SetNoCreate();             // Really don't know what is that???
 
-                            Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*m_caster, i_spellST->second.targetEntry, i_spellST->second.type != SPELL_TARGET_TYPE_DEAD, range);
+                            Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*m_caster, (*i_spellST)->ConditionValue2, (*i_spellST)->ConditionValue1 != SPELL_TARGET_TYPE_DEAD, range);
                             Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(p_Creature, u_check);
 
                             TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
