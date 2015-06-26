@@ -1194,6 +1194,8 @@ void WorldObject::setActive(bool on)
 
 void WorldObject::CleanupsBeforeDelete()
 {
+    if (IsInWorld())
+        RemoveFromWorld();
 }
 
 void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh)

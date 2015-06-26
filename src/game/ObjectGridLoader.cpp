@@ -261,7 +261,10 @@ ObjectGridUnloader::Visit(GridRefManager<T>& m)
         // if option set then object already saved at this moment
         if (!sWorld.getConfig(CONFIG_SAVE_RESPAWN_TIME_IMMEDIATELY))
             obj->SaveRespawnTime();
-        // object will get delinked from the manager when deleted
+        //Some creatures may summon other temp summons in CleanupsBeforeDelete()
+        //So we need this even after cleaner (maybe we can remove cleaner)
+        obj->CleanupsBeforeDelete();
+        ///- object will get delinked from the manager when deleted
         delete obj;
     }
 }
@@ -296,25 +299,19 @@ ObjectGridCleaner::Stop(GridType& grid)
     grid.Visit(stoper);
 }
 
-void
-ObjectGridCleaner::Visit(CreatureMapType& m)
-{
-    for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-        iter->getSource()->CleanupsBeforeDelete();
-}
-
 template<class T>
 void
 ObjectGridCleaner::Visit(GridRefManager<T>& m)
 {
     for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
-        iter->getSource()->RemoveFromWorld();
+        iter->getSource()->CleanupsBeforeDelete();
 }
 
 template void ObjectGridUnloader::Visit(CreatureMapType&);
 template void ObjectGridUnloader::Visit(GameObjectMapType&);
 template void ObjectGridUnloader::Visit(DynamicObjectMapType&);
 template void ObjectGridUnloader::Visit(CorpseMapType&);
+template void ObjectGridCleaner::Visit(CreatureMapType&);
 template void ObjectGridCleaner::Visit<GameObject>(GameObjectMapType&);
 template void ObjectGridCleaner::Visit<DynamicObject>(DynamicObjectMapType&);
 template void ObjectGridCleaner::Visit<Corpse>(CorpseMapType&);

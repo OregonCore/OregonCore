@@ -120,7 +120,6 @@ class ObjectGridCleaner
         }
 
         void Stop(GridType& grid);
-        void Visit(CreatureMapType& m);
         template<class T> void Visit(GridRefManager<T>&);
     private:
         NGridType& i_grid;
