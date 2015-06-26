@@ -1639,12 +1639,13 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                         m_caster->CastSpell(m_caster, 30543, true); //not implemented -- handled in this function
                         m_caster->HandleEmoteCommand(EMOTE_ONESHOT_POINT_NOSHEATHE);
 
-                        // remove old Move Marker
-                        std::list<Unit*> MarkerList;
-                        Oregon::AllCreaturesOfEntryInRange u_check(m_caster, 22519, 200);
-                        Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(MarkerList, u_check);
+                        // remove old Move Marker (can be refactored if needed for performance)
+                        // can be sloved in Move_markerAI script by distance check to summoner
+                        std::list<Unit*> markerList;
+                        Oregon::AllCreaturesOfEntryInRange u_check(m_caster, 22519, 100);
+                        Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(markerList, u_check);
                         m_caster->GetMap()->VisitAll(m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), searcher);
-                        for (std::list<Unit*>::iterator itr = MarkerList.begin(); itr != MarkerList.end(); ++itr)
+                        for (std::list<Unit*>::iterator itr = markerList.begin(); itr != markerList.end(); ++itr)
                         {
                             Unit* curr;
                             if (curr = (*itr))
@@ -1655,6 +1656,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                                 }
                             }
                         }
+                        //end of to refactor part
 
                         //create new Move Marker
                         m_caster->CastSpell(unitTarget, 32261, true);
@@ -5394,7 +5396,8 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     unitTarget->CastSpell(m_caster, 40903, true);
                     break;
                 }
-            case 39395: //win for chessevent
+            //this is not working correctly, handled by script now
+            /*case 39395: //win for chessevent
                 {
                     ScriptInfo* si = new ScriptInfo;
                     si->command = SCRIPT_COMMAND_DESPAWN_SELF;
@@ -5402,7 +5405,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     unitTarget->GetMap()->ScriptCommandStart((*si), 0, unitTarget, unitTarget);
                     unitTarget->RemoveAurasDueToSpell(32226); //attack timer -- stop attacking;
                     break;
-                }
+                }*/
             case 48025:                                     // Headless Horseman's Mount
                 {
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
@@ -5640,8 +5643,8 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
             case 37220:
             case 32228:
                 {
-                    //we should do extra check her, can't remember we can hit targets that are not on a field in front of us..
-                    if (m_caster->HasInArc(M_PI / 18, unitTarget) && m_caster->GetDistance(unitTarget) <= 4)//sould be in an angel within 10° and Fieldrange
+                    //we should do extra check here, can't remember we can hit targets that are not on a field in front of us..
+                    if (m_caster->HasInArc(M_PI / 18, unitTarget) && m_caster->GetDistance(unitTarget) <= 4)//sould be in an angle within 10° and Fieldrange
                         m_caster->CastSpell(unitTarget, 32247, true); //Chess NPC Action: Melee Attack: DAMAGE (Footman)
                     return;
                 }
