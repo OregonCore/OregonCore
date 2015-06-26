@@ -65,7 +65,8 @@ void WorldRunnable::run()
             prevSleepTime = 0;
     }
 
-    sWorld.KickAll();                                       // save and kick all players
+    ObjectAccessor::Instance().SaveAllPlayers();            // save all players
+    sWorld.KickAll();                                       // kick all players
     sWorld.UpdateSessions( 1 );                             // real players unload required UpdateSessions call
 
     // unload battleground templates before different singletons destroyed
