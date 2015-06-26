@@ -1367,11 +1367,12 @@ void CreatureEventAI::ReceiveEmote(Player* pPlayer, uint32 text_emote)
                 return;
 
             Condition* cond = new Condition();
-            cond->ConditionType = ConditionType((*itr).Event.receive_emote.condition);            
+            cond->Type = ConditionType((*itr).Event.receive_emote.condition);            
             cond->ConditionValue1 = (*itr).Event.receive_emote.conditionValue1;
             cond->ConditionValue2 = (*itr).Event.receive_emote.conditionValue2;
             
-            if (cond->Meets(ConditionSourceInfo(pPlayer)))
+            ConditionSourceInfo info(pPlayer);
+            if (cond->Meets(info))
             {
                 sLog.outDebug("CreatureEventAI: ReceiveEmote CreatureEventAI: Condition ok, processing");
                 ProcessEvent(*itr, pPlayer);

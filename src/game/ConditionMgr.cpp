@@ -41,7 +41,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
     }
     bool condMeets = false;
     bool sendErrorMsg = false;
-    switch (ConditionType)
+    switch (Type)
     {
         case CONDITION_NONE:
             condMeets = true;                                    // empty condition, always met
@@ -388,7 +388,7 @@ bool ConditionMgr::IsObjectMeetToConditionList(ConditionSourceInfo& sourceInfo, 
     std::map<uint32, bool> ElseGroupStore;
     for (ConditionList::const_iterator i = conditions.begin(); i != conditions.end(); ++i)
     {
-        sLog.outDebug("ConditionMgr::IsPlayerMeetToConditionList condType: %u val1: %u",(*i)->ConditionType,(*i)->ConditionValue1);
+        sLog.outDebug("ConditionMgr::IsPlayerMeetToConditionList condType: %u val1: %u",(*i)->Type,(*i)->ConditionValue1);
         if ((*i)->isLoaded())
         {
             //! Find ElseGroup in ElseGroupStore
@@ -429,7 +429,8 @@ bool ConditionMgr::IsObjectMeetToConditionList(ConditionSourceInfo& sourceInfo, 
 
 bool ConditionMgr::IsObjectMeetToConditions(WorldObject* object, ConditionList const& conditions)
 {
-    return IsObjectMeetToConditions(ConditionSourceInfo(object), conditions);
+    ConditionSourceInfo info(object);
+    return IsObjectMeetToConditions(info, conditions);
 }
 
 bool ConditionMgr::IsObjectMeetToConditions(WorldObject* object1, WorldObject* object2, ConditionList const& conditions)
@@ -522,7 +523,7 @@ void ConditionMgr::LoadConditions(bool isReload)
         cond->ScriptId                  = sObjectMgr.GetScriptId(fields[12].GetString());
 
         if (iConditionTypeOrReference >= 0)
-            cond->ConditionType = ConditionType(iConditionTypeOrReference);
+            cond->Type = ConditionType(iConditionTypeOrReference);
 
         if (iSourceTypeOrReferenceId >= 0)
             cond->SourceType = ConditionSourceType(iSourceTypeOrReferenceId);
@@ -918,9 +919,9 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
         }
         case CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET:
         {
-            if (cond->ConditionType != CONDITION_SPELL_SCRIPT_TARGET)
+            if (cond->Type != CONDITION_SPELL_SCRIPT_TARGET)
             {
-                sLog.outErrorDb("SourceEntry %u in `condition` table, has ConditionType %u. Only CONDITION_SPELL_SCRIPT_TARGET(17) is valid for CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET(14), ignoring.", cond->SourceEntry, uint32(cond->ConditionType));
+                sLog.outErrorDb("SourceEntry %u in `condition` table, has ConditionType %u. Only CONDITION_SPELL_SCRIPT_TARGET(17) is valid for CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET(14), ignoring.", cond->SourceEntry, uint32(cond->Type));
                 return false;
             }
 
@@ -1012,9 +1013,9 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
 }
 bool ConditionMgr::isConditionTypeValid(Condition* cond)
 {
-    if (cond->ConditionType == CONDITION_NONE || cond->ConditionType >= CONDITION_MAX)
+    if (cond->Type == CONDITION_NONE || cond->Type >= CONDITION_MAX)
     {
-        sLog.outErrorDb("Invalid ConditionType %u at SourceEntry %u in `condition` table, ignoring.", uint32(cond->ConditionType),cond->SourceEntry);
+        sLog.outErrorDb("Invalid ConditionType %u at SourceEntry %u in `condition` table, ignoring.", uint32(cond->Type),cond->SourceEntry);
         return false;
     }
 
@@ -1024,7 +1025,7 @@ bool ConditionMgr::isConditionTypeValid(Condition* cond)
         return false;
     }
 
-    switch (cond->ConditionType)
+    switch (cond->Type)
     {
         case CONDITION_AURA:
         {

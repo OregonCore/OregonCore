@@ -176,7 +176,7 @@ struct Condition
     uint32                  SourceGroup;
     int32                   SourceEntry;
     uint32                  ElseGroup;
-    ConditionType           ConditionType;     //ConditionTypeOrReference
+    ConditionType           Type;     //ConditionTypeOrReference
     uint32                  ConditionValue1;
     uint32                  ConditionValue2;
     uint32                  ConditionValue3;
@@ -193,7 +193,7 @@ struct Condition
         SourceGroup        = 0;
         SourceEntry        = 0;
         ElseGroup          = 0;
-        ConditionType      = CONDITION_NONE;
+        Type               = CONDITION_NONE;
         ConditionTarget    = 0;
         ConditionValue1    = 0;
         ConditionValue2    = 0;
@@ -206,7 +206,7 @@ struct Condition
     }
 
     bool Meets(ConditionSourceInfo& sourceInfo);
-    bool isLoaded() { return ConditionType > CONDITION_NONE || ReferenceId; }
+    bool isLoaded() { return Type > CONDITION_NONE || ReferenceId; }
     uint32 GetMaxAvailableConditionTargets();
 };
 

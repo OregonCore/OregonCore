@@ -1496,7 +1496,7 @@ WorldObject* Spell::SearchNearbyTarget(float range, SpellTargets TargetType)
 
             for (ConditionList::const_iterator i_spellST = conditions.begin(); i_spellST != conditions.end(); ++i_spellST)
             {
-                if ((*i_spellST)->ConditionType != CONDITION_SPELL_SCRIPT_TARGET)
+                if ((*i_spellST)->Type != CONDITION_SPELL_SCRIPT_TARGET)
                     continue;
                 switch((*i_spellST)->ConditionValue1)
                 {
@@ -2116,7 +2116,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 {
                     for (ConditionList::const_iterator i_spellST = conditions.begin(); i_spellST != conditions.end(); ++i_spellST)
                     {
-                        if ((*i_spellST)->ConditionType != CONDITION_SPELL_SCRIPT_TARGET)
+                        if ((*i_spellST)->Type != CONDITION_SPELL_SCRIPT_TARGET)
                             continue;
                         if ((*i_spellST)->ConditionValue1 == SPELL_TARGET_TYPE_CREATURE)
                             SearchAreaTarget(unitList, radius, pushType, SPELL_TARGETS_ENTRY, (*i_spellST)->ConditionValue2);
@@ -3951,7 +3951,7 @@ SpellCastResult Spell::CheckCast(bool strict)
 
             for (ConditionList::const_iterator i_spellST = conditions.begin(); i_spellST != conditions.end(); ++i_spellST)
             {
-                if ((*i_spellST)->ConditionType != CONDITION_SPELL_SCRIPT_TARGET)
+                if ((*i_spellST)->Type != CONDITION_SPELL_SCRIPT_TARGET)
                     continue;
                     switch((*i_spellST)->ConditionValue1)
                     {

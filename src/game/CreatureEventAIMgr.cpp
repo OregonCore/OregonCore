@@ -442,7 +442,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                     if (temp.receive_emote.condition)
                     {
                         Condition* cond = new Condition();
-                        cond->ConditionType = ConditionType(temp.receive_emote.condition);            
+                        cond->Type = ConditionType(temp.receive_emote.condition);            
                         cond->ConditionValue1 = temp.receive_emote.conditionValue1;
                         cond->ConditionValue2 = temp.receive_emote.conditionValue2;
                         if (!sConditionMgr.isConditionTypeValid(cond))
