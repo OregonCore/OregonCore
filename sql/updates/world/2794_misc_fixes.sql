@@ -52,7 +52,7 @@ INSERT INTO creature_loot_template (`entry`,`item`,`ChanceOrQuestChance`,`groupi
 
 -- 108_bugfix_hellfire.sql 
 
-﻿/*
+/*
 
 TODO: fix script core
 
