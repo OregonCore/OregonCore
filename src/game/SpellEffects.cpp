@@ -1639,25 +1639,6 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                         m_caster->CastSpell(m_caster, 30543, true); //not implemented -- handled in this function
                         m_caster->HandleEmoteCommand(EMOTE_ONESHOT_POINT_NOSHEATHE);
 
-                        // remove old Move Marker (can be refactored if needed for performance)
-                        // can be sloved in Move_markerAI script by distance check to summoner
-                        std::list<Unit*> markerList;
-                        Oregon::AllCreaturesOfEntryInRange u_check(m_caster, 22519, 100);
-                        Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(markerList, u_check);
-                        m_caster->GetMap()->VisitAll(m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), searcher);
-                        for (std::list<Unit*>::iterator itr = markerList.begin(); itr != markerList.end(); ++itr)
-                        {
-                            Unit* curr;
-                            if (curr = (*itr))
-                            {
-                                if (curr->ToCreature()->IsSummon() && dynamic_cast<TempSummon*>(curr)->GetSummoner() && dynamic_cast<TempSummon*>(curr)->GetSummoner()->GetGUID() == m_caster->GetGUID())
-                                {
-                                    curr->ToCreature()->ForcedDespawn(3000);
-                                }
-                            }
-                        }
-                        //end of to refactor part
-
                         //create new Move Marker
                         m_caster->CastSpell(unitTarget, 32261, true);
 

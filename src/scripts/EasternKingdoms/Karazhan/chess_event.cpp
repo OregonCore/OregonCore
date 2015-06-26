@@ -209,98 +209,6 @@ struct ChessPieceSpell
         m_spellEntry(entry), m_positive(isPositive) {}
 };
 
-struct Move_markerAI : public ScriptedAI
-{
-    ScriptedInstance* pInstance;
-    uint32 check_timer;
-
-    Move_markerAI(Creature* c) : ScriptedAI(c)
-    {
-        pInstance = c->GetInstanceData();
-        Reset();
-    }
-
-    void Reset()
-    {
-        check_timer = 1000;
-    }
-
-    void Aggro(Unit*) { }
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (pInstance->GetData(TYPE_CHESS) != IN_PROGRESS)
-            CAST_SUM(me)->UnSummon();
-
-        if (check_timer < diff)
-        {
-            if (me->IsSummon() && (!CAST_SUM(me)->GetSummoner()->IsAlive() || CAST_SUM(me)->GetSummoner()->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE)))
-                CAST_SUM(me)->UnSummon();
-
-            check_timer = 1000;
-        }
-        else
-            check_timer -= diff;
-    }
-};
-
-struct Move_triggerAI : public ScriptedAI
-{
-    ScriptedInstance* pInstance;
-    uint32 search_timer;
-
-    Move_triggerAI(Creature* c) : ScriptedAI(c)
-    {
-        pInstance = c->GetInstanceData();
-        Reset();
-    }
-
-    void Reset()
-    {
-        search_timer = 4500;
-    }
-
-    void Aggro(Unit*) { }
-
-    bool HasMoveMarker()
-    {
-        //for more performance refactor this with a other type of check
-        Unit* marker = GetClosestCreatureWithEntry(me, NPC_MOVE_MARKER, 2);
-        if (marker)
-            return true;
-
-        return false;
-    }
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (pInstance->GetData(TYPE_CHESS) != IN_PROGRESS)
-            return;
-
-        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
-        {
-            if (search_timer < diff)
-            {
-                if (!HasMoveMarker())
-                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-
-                search_timer = 2000;
-            }
-            else
-                search_timer -= diff;
-        }
-    }
-
-    void SpellHit(Unit *caster, const SpellEntry* spell)
-    {
-        if (spell->Id == SPELL_TRANSFORM_FIELD)
-        {
-            search_timer = 3000;
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-        }
-    }
-};
-
 struct Echo_of_MedivhAI : public ScriptedAI
 {
     ScriptedInstance* pInstance;
@@ -619,6 +527,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
     uint32 m_AITimer;
     ScriptedInstance* pInstance;
     Unit* pCharmer;
+    uint64 MarkerGuid;
     ChessPieceSpell m_spells[2];
     std::list<uint32> AvailableSpells;
 
@@ -636,6 +545,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
         initSpells = false;
         initFlags = false;
         setAITimer = false;
+        MarkerGuid = 0;
     }
 
     void JustDied(Unit* Killer)
@@ -1165,6 +1075,140 @@ struct Chess_npcAI : public Scripted_NoMovementAI
             }
             else
                 m_AITimer -= diff;
+        }
+    }
+};
+
+struct Move_markerAI : public ScriptedAI
+{
+    ScriptedInstance* pInstance;
+    uint32 check_timer;
+    uint32 unsummon_timer;
+    bool unsummon;
+
+    Move_markerAI(Creature* c) : ScriptedAI(c)
+    {
+        pInstance = c->GetInstanceData();
+        Reset();
+    }
+
+    void Reset()
+    {
+        check_timer = 1000;
+        unsummon_timer = 3000;
+        unsummon = false;
+    }
+
+    void Aggro(Unit*) { }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (pInstance->GetData(TYPE_CHESS) != IN_PROGRESS)
+        {
+            unsummon = true;
+            unsummon_timer = 0; //instant unsummon
+        }
+
+        if (unsummon)
+        {
+            if (unsummon_timer < diff)
+            {
+                if (me->IsSummon())
+                    CAST_SUM(me)->UnSummon();
+
+                return;
+            }
+            else
+                unsummon_timer -= diff;
+        }
+
+        if (check_timer < diff)
+        {
+            if (me->IsSummon() && (!CAST_SUM(me)->GetSummoner()->IsAlive() || CAST_SUM(me)->GetSummoner()->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE)))
+                CAST_SUM(me)->UnSummon();
+
+            check_timer = 1000;
+        }
+        else
+            check_timer -= diff;
+    }
+
+    void TriggerUnsummon()
+    {
+        unsummon = true;
+    }
+
+    void IsSummonedBy(Unit* pSummoner)
+    {
+        Chess_npcAI* chessAI = (Chess_npcAI*)pSummoner->ToCreature()->AI();
+
+        //remove old marker
+        if (chessAI->MarkerGuid != 0)
+        {
+            Creature* existingMarker = Unit::GetCreature(*me, chessAI->MarkerGuid);
+
+            if (existingMarker)
+                ((Move_markerAI*)existingMarker->AI())->TriggerUnsummon();
+        }
+
+        //store markerguid in chess piece
+        chessAI->MarkerGuid = me->GetGUID();
+    }
+};
+
+struct Move_triggerAI : public ScriptedAI
+{
+    ScriptedInstance* pInstance;
+    uint32 search_timer;
+
+    Move_triggerAI(Creature* c) : ScriptedAI(c)
+    {
+        pInstance = c->GetInstanceData();
+        Reset();
+    }
+
+    void Reset()
+    {
+        search_timer = 4500;
+    }
+
+    void Aggro(Unit*) { }
+
+    bool HasMoveMarker()
+    {
+        //for more performance refactor this with a other type of check
+        Unit* marker = GetClosestCreatureWithEntry(me, NPC_MOVE_MARKER, 2);
+        if (marker)
+            return true;
+
+        return false;
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (pInstance->GetData(TYPE_CHESS) != IN_PROGRESS)
+            return;
+
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+        {
+            if (search_timer < diff)
+            {
+                if (!HasMoveMarker())
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+
+                search_timer = 2000;
+            }
+            else
+                search_timer -= diff;
+        }
+    }
+
+    void SpellHit(Unit *caster, const SpellEntry* spell)
+    {
+        if (spell->Id == SPELL_TRANSFORM_FIELD)
+        {
+            search_timer = 3000;
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
         }
     }
 };
