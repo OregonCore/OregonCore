@@ -98,10 +98,7 @@ class DBCFileLoader
         {
             return (fieldsOffset != NULL && id < fieldCount) ? fieldsOffset[id] : 0;
         }
-        bool IsLoaded()
-        {
-            return data != NULL;
-        }
+        bool IsLoaded() const { return data != NULL; }
         char* AutoProduceData(const char* fmt, uint32& count, char**& indexTable);
         char* AutoProduceStrings(const char* fmt, char* dataTable);
         static uint32 GetFormatRecordSize(const char* format, int32* index_pos = NULL);
