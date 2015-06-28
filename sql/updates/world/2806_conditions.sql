@@ -1,0 +1,1 @@
+UPDATE conditions SET ConditionTypeOrReference = 1, ConditionValue1 = 17670 WHERE ConditionTypeOrReference = 10 AND SourceEntry IN (12840, 12841, 12843);
