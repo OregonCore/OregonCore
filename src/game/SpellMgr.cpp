@@ -2543,9 +2543,6 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->Effect[2] = SPELL_EFFECT_DUMMY;
             spellInfo->EffectImplicitTargetA[2] = TARGET_UNIT_TARGET_ENEMY;
             break;
-        case 5246: // Initimidating Shout - prevent double diminishing
-            spellInfo->Mechanic = MECHANIC_NONE;
-            break;
         case 33778: // Lifebloom (rank 1) 
         case   379: // Earth Shield
         case 38395: // Siphon Essence

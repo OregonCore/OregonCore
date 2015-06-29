@@ -1188,8 +1188,14 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
         }
     }
 
+    uint8 aura_effmask = 0;
+    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+        if (effectMask & (1 << i) && m_spellInfo->Effect[i] == SPELL_EFFECT_APPLY_AURA)
+            aura_effmask |= 1 << i;
+
     // Get Data Needed for Diminishing Returns, some effects may have multiple auras, so this must be done on spell hit, not aura add
-    if ((m_diminishGroup = GetDiminishingReturnsGroupForSpell(m_spellInfo, m_triggeredByAuraSpell)))
+    m_diminishGroup = GetDiminishingReturnsGroupForSpell(m_spellInfo, m_triggeredByAuraSpell);
+    if (m_diminishGroup && aura_effmask)
     {
         m_diminishLevel = unit->GetDiminishing(m_diminishGroup);
         // send immunity message if target is immune
@@ -5107,19 +5113,19 @@ SpellCastResult Spell::CheckCasterAuras() const
     //Check whether the cast should be prevented by any state you might have.
     SpellCastResult prevented_reason = SPELL_CAST_OK;
     // Have to check if there is a stun aura. Otherwise will have problems with ghost aura apply while logging out
-    if (m_caster->HasAuraType(SPELL_AURA_MOD_STUN))
+    if (m_caster->HasAuraType(SPELL_AURA_MOD_STUN) && !m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED)
         prevented_reason = SPELL_FAILED_STUNNED;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED))
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED) && !m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED)
         prevented_reason = SPELL_FAILED_CONFUSED;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING))
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING) && !m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED)
         prevented_reason = SPELL_FAILED_FLEEING;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED))
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED) && m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
         prevented_reason = SPELL_FAILED_SILENCED;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED) && m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
         prevented_reason = SPELL_FAILED_PACIFIED;
 
     // Attr must make flag drop spell totally immune from all effects
-    if (prevented_reason)
+    if (prevented_reason != SPELL_CAST_OK)
     {
         if (school_immune || mechanic_immune || dispel_immune)
         {
@@ -5168,34 +5174,7 @@ SpellCastResult Spell::CheckCasterAuras() const
         }
         //You are prevented from casting and the spell casted does not grant immunity. Return a failed error.
         else
-        {
-            switch (prevented_reason)
-            {
-            case SPELL_FAILED_STUNNED:
-                if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED)
-                    return SPELL_CAST_OK; // can cast
-                break;
-            case SPELL_FAILED_CONFUSED:
-                if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED)
-                    return SPELL_CAST_OK;
-                break;
-            case SPELL_FAILED_FLEEING:
-                if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED)
-                    return SPELL_CAST_OK;
-                break;
-            case SPELL_FAILED_SILENCED:
-                if (m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_SILENCE)
-                    return SPELL_CAST_OK;
-                break;
-            case SPELL_FAILED_PACIFIED:
-                if (m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_PACIFY)
-                    return SPELL_CAST_OK;
-            default:
-                break;
-            }
-
             return prevented_reason;
-        }
     }
     return SPELL_CAST_OK;                                               // all ok
 }
