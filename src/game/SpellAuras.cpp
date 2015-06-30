@@ -5283,7 +5283,7 @@ void Aura::HandleModDamageDone(bool apply, bool Real)
     if (Real && m_target->GetTypeId() == TYPEID_PLAYER)
     {
         for (int i = 0; i < MAX_ATTACK; ++i)
-            if (Item* pItem = m_target->ToPlayer()->GetWeaponForAttack(WeaponAttackType(i)))
+            if (Item* pItem = m_target->ToPlayer()->GetWeaponForAttack(WeaponAttackType(i), true))
                 m_target->ToPlayer()->_ApplyWeaponDependentAuraDamageMod(pItem, WeaponAttackType(i), this, apply);
     }
 
@@ -5366,7 +5366,7 @@ void Aura::HandleModDamagePercentDone(bool apply, bool Real)
     if (Real && m_target->GetTypeId() == TYPEID_PLAYER)
     {
         for (int i = 0; i < MAX_ATTACK; ++i)
-            if (Item* pItem = m_target->ToPlayer()->GetWeaponForAttack(WeaponAttackType(i)))
+            if (Item* pItem = m_target->ToPlayer()->GetWeaponForAttack(WeaponAttackType(i), true))
                 m_target->ToPlayer()->_ApplyWeaponDependentAuraDamageMod(pItem, WeaponAttackType(i), this, apply);
     }
 
