@@ -646,13 +646,24 @@ void Group::NeedBeforeGreed(const uint64& playerGUID, Loot* loot, WorldObject* o
     }
 }
 
-void Group::MasterLoot(const uint64& playerGUID, Loot* /*loot*/, WorldObject* object)
+void Group::MasterLoot(const uint64& playerGUID, Loot* loot, WorldObject* object)
 {
     Player* player = sObjectMgr.GetPlayer(playerGUID);
     if (!player)
         return;
 
     sLog.outDebug("Group::MasterLoot (SMSG_LOOT_MASTER_LIST, 330) player = [%s].", player->GetName());
+
+    for (std::vector<LootItem>::iterator i = loot->items.begin(); i != loot->items.end(); ++i)
+    {
+        if (i->freeforall)
+            continue;
+
+        i->is_blocked = !i->is_underthreshold;
+    }
+
+    for (std::vector<LootItem>::iterator i = loot->quest_items.begin(); i != loot->quest_items.end(); ++i)
+        i->is_blocked = !i->is_underthreshold;
 
     uint32 real_count = 0;
 
