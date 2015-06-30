@@ -45,6 +45,8 @@ InstanceSaveManager::InstanceSaveManager() : lock_instLists(false)
 {
 }
 
+uint16 InstanceSaveManager::ResetTimeDelay[] = {3600, 900, 300, 60};
+
 InstanceSaveManager::~InstanceSaveManager()
 {
     // it is undefined whether this or objectmgr will be unloaded first
@@ -492,8 +494,11 @@ void InstanceSaveManager::LoadResetTimes()
         if (!entry || !entry->HasResetTime())
             continue;
 
-        uint32 period = temp->reset_delay * DAY;
-        ASSERT(period != 0);
+        // the reset_delay must be at least one day
+        uint32 period = uint32(((temp->reset_delay * sWorld.getRate(RATE_INSTANCE_RESET_TIME))/DAY) * DAY);
+        if (period < DAY)
+            period = DAY;
+
         time_t t = m_resetTimeByMapId[temp->map];
         if (!t)
         {
@@ -514,11 +519,12 @@ void InstanceSaveManager::LoadResetTimes()
         m_resetTimeByMapId[temp->map] = t;
 
         // schedule the global reset/warning
-        uint8 type = 1;
-        static int tim[4] = {3600, 900, 300, 60};
-        for (; type < 4; type++)
-            if (t - tim[type - 1] > now) break;
-        ScheduleReset(true, t - tim[type - 1], InstResetEvent(type, i));
+        uint8 type;
+        for (type = 1; type < 4; ++type)
+            if (t - ResetTimeDelay[type-1] > now)
+                break;
+
+        ScheduleReset(true, t - ResetTimeDelay[type-1], InstResetEvent(type, i));
     }
 }
 
@@ -568,13 +574,12 @@ void InstanceSaveManager::Update()
         {
             // global reset/warning for a certain map
             time_t resetTime = GetResetTimeFor(event.mapid);
-            _ResetOrWarnAll(event.mapid, event.type != 4, resetTime - now);
+            _ResetOrWarnAll(event.mapid, event.type != 4, resetTime);
             if (event.type != 4)
             {
                 // schedule the next warning/reset
                 event.type++;
-                static int tim[4] = {3600, 900, 300, 60};
-                ScheduleReset(true, resetTime - tim[event.type - 1], event);
+                ScheduleReset(true, resetTime - ResetTimeDelay[event.type-1], event);
             }
             m_resetTimeQueue.erase(m_resetTimeQueue.begin());
         }
@@ -623,7 +628,7 @@ void InstanceSaveManager::_ResetInstance(uint32 mapid, uint32 instanceId)
     else sObjectMgr.DeleteRespawnTimeForInstance(instanceId);   // even if map is not loaded
 }
 
-void InstanceSaveManager::_ResetOrWarnAll(uint32 mapid, bool warn, uint32 timeLeft)
+void InstanceSaveManager::_ResetOrWarnAll(uint32 mapid, bool warn, time_t resetTime)
 {
     // global reset for all instances of the given map
     // note: this isn't fast but it's meant to be executed very rarely
@@ -631,7 +636,7 @@ void InstanceSaveManager::_ResetOrWarnAll(uint32 mapid, bool warn, uint32 timeLe
     if (!map->Instanceable())
         return;
 
-    uint64 now = (uint64)time(NULL);
+    time_t now = time(NULL);
 
     if (!warn)
     {
@@ -661,24 +666,43 @@ void InstanceSaveManager::_ResetOrWarnAll(uint32 mapid, bool warn, uint32 timeLe
 
         // calculate the next reset time
         uint32 diff = sWorld.getConfig(CONFIG_INSTANCE_RESET_TIME_HOUR) * HOUR;
-        uint32 period = temp->reset_delay * DAY;
-        uint64 next_reset = ((now + timeLeft + MINUTE) / DAY * DAY) + period + diff;
-        // update it in the DB
-        CharacterDatabase.PExecute("UPDATE instance_reset SET resettime = '"UI64FMTD"' WHERE mapid = '%d'", next_reset, mapid);
+
+        // the reset_delay must be at least one day
+        uint32 period = uint32(((temp->reset_delay * sWorld.getRate(RATE_INSTANCE_RESET_TIME))/DAY) * DAY);
+        if (period < DAY)
+            period = DAY;
+
+        uint64 next_reset = ((resetTime + MINUTE) / DAY * DAY) + period + diff;
 
         // schedule next reset.
         m_resetTimeByMapId[mapid] = (time_t) next_reset;
         ScheduleReset(true, (time_t) (next_reset - 3600), InstResetEvent(1, mapid));
+
+        // update it in the DB
+        CharacterDatabase.PExecute("UPDATE instance_reset SET resettime = '"UI64FMTD"' WHERE mapid = '%d'", next_reset, mapid);
     }
 
     MapInstanced::InstancedMaps& instMaps = ((MapInstanced*)map)->GetInstancedMaps();
     MapInstanced::InstancedMaps::iterator mitr;
+    uint32 timeLeft;
+
     for (mitr = instMaps.begin(); mitr != instMaps.end(); ++mitr)
     {
         Map* map2 = mitr->second;
-        if (!map2->IsDungeon()) continue;
-        if (warn) ((InstanceMap*)map2)->SendResetWarnings(timeLeft);
-        else ((InstanceMap*)map2)->Reset(INSTANCE_RESET_GLOBAL);
+        if (!map2->IsDungeon())
+            continue;
+
+        if (warn)
+        {            
+            if (now <= resetTime)
+                timeLeft = 0;
+            else
+                timeLeft = uint32(now - resetTime);
+
+            ((InstanceMap*)map2)->SendResetWarnings(timeLeft);
+        }
+        else
+            ((InstanceMap*)map2)->Reset(INSTANCE_RESET_GLOBAL);
     }
 
     // @todo delete creature/gameobject respawn times even if the maps are not loaded

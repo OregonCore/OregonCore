@@ -15,8 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __InstanceSaveMgr_H
-#define __InstanceSaveMgr_H
+#ifndef _INSTANCESAVEMGR_H
+#define _INSTANCESAVEMGR_H
 
 #include "Platform/Define.h"
 #include "Policies/Singleton.h"
@@ -203,8 +203,11 @@ class InstanceSaveManager : public Oregon::Singleton<InstanceSaveManager, Oregon
         uint32 GetNumBoundPlayersTotal();
         uint32 GetNumBoundGroupsTotal();
 
+    protected:
+        static uint16 ResetTimeDelay[];
+
     private:
-        void _ResetOrWarnAll(uint32 mapid, bool warn, uint32 timeleft);
+        void _ResetOrWarnAll(uint32 mapid, bool warn, time_t resetTime);
         void _ResetInstance(uint32 mapid, uint32 instanceId);
         void _ResetSave(InstanceSaveHashMap::iterator& itr);
         void _DelHelper(DatabaseType& db, const char* fields, const char* table, const char* queryTail, ...);
