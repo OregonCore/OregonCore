@@ -37,11 +37,18 @@ EndContentData */
 #include "old_hillsbrad.h"
 #include "ScriptedEscortAI.h"
 
-#define QUEST_ENTRY_HILLSBRAD   10282
-#define QUEST_ENTRY_DIVERSION   10283
-#define QUEST_ENTRY_ESCAPE      10284
-#define QUEST_ENTRY_RETURN      10285
-#define ITEM_ENTRY_BOMBS        25853
+enum Quests
+{
+    QUEST_ENTRY_HILLSBRAD  = 10282,
+    QUEST_ENTRY_DIVERSION  = 10283,
+    QUEST_ENTRY_ESCAPE     = 10284,
+    QUEST_ENTRY_RETURN     = 10285
+};
+
+enum Items
+{
+    ITEM_ENTRY_BOMBS       = 25853
+};
 
 /*######
 ## npc_brazen
@@ -88,9 +95,6 @@ bool GossipHello_npc_erozion(Player *player, Creature *creature)
     if ( pInstance && pInstance->GetData(TYPE_BARREL_DIVERSION) != DONE && !player->HasItemCount(ITEM_ENTRY_BOMBS, 1))
         player->ADD_GOSSIP_ITEM( 0, "I need a pack of Incendiary Bombs.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    //if( !player->GetQuestRewardStatus(QUEST_ENTRY_RETURN) && player->GetQuestStatus(QUEST_ENTRY_RETURN) == QUEST_STATUS_COMPLETE )
-        //player->ADD_GOSSIP_ITEM( 0, "[PH] Teleport please, i'm tired.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-
     player->SEND_GOSSIP_MENU(9778, creature->GetGUID());
 
     return true;
@@ -103,16 +107,10 @@ bool GossipSelect_npc_erozion(Player *player, Creature *creature, uint32 sender,
         ItemPosCountVec dest;
         uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_ENTRY_BOMBS, 1);
         if (msg == EQUIP_ERR_OK)
-        {
              player->StoreNewItem(dest, ITEM_ENTRY_BOMBS, true);
-        }
+
         player->SEND_GOSSIP_MENU(9515, creature->GetGUID());
     }
-
-    /*if (action == GOSSIP_ACTION_INFO_DEF+2)
-    {
-        player->CLOSE_GOSSIP_MENU();
-    }*/
 
     return true;
 }
@@ -261,6 +259,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
         pInstance = (creature->GetInstanceData());
         HadMount = false;
         me->setActive(true);
+        me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
     }
 
     ScriptedInstance *pInstance;
@@ -606,7 +605,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
             for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* player = itr->getSource())
-                    player->KilledMonsterCredit(NPC_THRALL_QUEST_TRIGGER,me->GetGUID());
+                    player->KilledMonsterCredit(NPC_THRALL_QUEST_TRIGGER);
             }
         }
     }

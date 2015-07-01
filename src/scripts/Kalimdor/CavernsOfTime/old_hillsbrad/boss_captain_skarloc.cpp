@@ -158,6 +158,7 @@ struct boss_captain_skarlocAI : public ScriptedAI
     {
         me->SetReactState(REACT_AGGRESSIVE);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->Dismount();
         me->SetWalk(false);
 
         if (Creature* Thrall = me->GetMap()->GetCreature(ThrallinGUID))
