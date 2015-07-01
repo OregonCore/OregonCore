@@ -570,7 +570,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
 
     void DoUnmount()
     {
-        me->RemoveAurasByType(SPELL_AURA_MOUNTED);
+        me->Dismount();
         me->SetSpeed(MOVE_RUN,SPEED_RUN);
     }
 
