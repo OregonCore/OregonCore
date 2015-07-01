@@ -14840,6 +14840,14 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     bytes0 |= fields[6].GetUInt8() << 16;                   // gender
     SetUInt32Value(UNIT_FIELD_BYTES_0, bytes0);
 
+    // check if race/class combination is valid
+    PlayerInfo const* info = sObjectMgr.GetPlayerInfo(getRace(), getClass());
+    if (!info)
+    {
+        sLog.outError("Player (GUID: %u) has wrong race/class (%u/%u), can't be loaded.", guid, getRace(), getClass());
+        return false;
+    }
+
     SetUInt32Value(UNIT_FIELD_LEVEL, fields[7].GetUInt8());
     SetUInt32Value(PLAYER_XP, fields[8].GetUInt32());
 
