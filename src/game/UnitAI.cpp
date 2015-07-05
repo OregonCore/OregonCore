@@ -314,6 +314,12 @@ void UnitAI::FillAISpellInfo()
     }
 }
 
+void UnitAI::ClearAISpellInfo()
+{
+    delete[] AISpellInfo;
+    AISpellInfo = NULL;
+}
+
 //Enable PlayerAI when charmed
 void PlayerAI::OnCharmed(bool apply)
 {

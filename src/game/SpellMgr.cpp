@@ -217,6 +217,7 @@ SpellMgr::SpellMgr()
 
 SpellMgr::~SpellMgr()
 {
+    CreatureAI::ClearAISpellInfo();
 }
 
 SpellMgr& SpellMgr::Instance()

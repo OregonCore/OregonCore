@@ -102,6 +102,7 @@ class UnitAI
 
         static AISpellInfoType* AISpellInfo;
         static void FillAISpellInfo();
+        static void ClearAISpellInfo();
 };
 
 class PlayerAI : public UnitAI
