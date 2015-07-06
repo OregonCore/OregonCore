@@ -19,8 +19,6 @@
 #define OREGON_POINTMOVEMENTGENERATOR_H
 
 #include "MovementGenerator.h"
-#include "DestinationHolder.h"
-#include "Traveller.h"
 #include "FollowerReference.h"
 
 template<class T>
@@ -29,15 +27,16 @@ class PointMovementGenerator
 {
     public:
         PointMovementGenerator(uint32 _id, float _x, float _y, float _z, bool _usePathfinding) :
-            i_x(_x), i_y(_y), i_z(_z), m_usePathfinding(_usePathfinding), i_nextMoveTime(0), id(_id), arrived(false) {}
+            i_x(_x), i_y(_y), i_z(_z), m_usePathfinding(_usePathfinding), id(_id) {}
 
-        virtual void Initialize(T&);
-        virtual void Finalize(T& unit);
-        virtual void Reset(T& unit)
+        void Initialize(T&);
+        void Finalize(T& unit);
+        void Interrupt(T&);
+        void Reset(T& unit)
         {
             unit.StopMoving();
         }
-        virtual bool Update(T&, const uint32& diff);
+        bool Update(T&, const uint32& diff);
 
         void MovementInform(T&);
 
@@ -45,21 +44,10 @@ class PointMovementGenerator
         {
             return POINT_MOTION_TYPE;
         }
-
-        bool GetDestination(float& x, float& y, float& z) const
-        {
-            x = i_x;
-            y = i_y;
-            z = i_z;
-            return true;
-        }
     private:
         float i_x, i_y, i_z;
         bool m_usePathfinding;
-        TimeTracker i_nextMoveTime;
         uint32 id;
-        DestinationHolder< Traveller<T> > i_destinationHolder;
-        bool arrived;
 };
 
 class AssistanceMovementGenerator
@@ -74,6 +62,21 @@ class AssistanceMovementGenerator
             return ASSISTANCE_MOTION_TYPE;
         }
         void Finalize(Creature&);
+};
+
+// Does almost nothing - just doesn't allows previous movegen interrupt current effect. Can be reused for charge effect
+class EffectMovementGenerator : public MovementGenerator
+{
+    public:
+        EffectMovementGenerator(uint32 Id) : m_Id(Id) {}
+        void Initialize(Unit&) {}
+        void Finalize(Unit&);
+        void Interrupt(Unit&) {}
+        void Reset(Unit&) {}
+        bool Update(Unit&, const uint32&);
+        MovementGeneratorType GetMovementGeneratorType() { return EFFECT_MOTION_TYPE; }
+    private:
+        uint32 m_Id;
 };
 
 #endif

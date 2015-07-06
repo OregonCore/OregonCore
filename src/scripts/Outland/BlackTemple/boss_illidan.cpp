@@ -24,6 +24,7 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 #include "black_temple.h"
+#include "MoveSplineInit.h"
 
 #define GETGO(obj, guid)      GameObject* obj = GameObject::GetGameObject(*me, guid)
 #define GETUNIT(unit, guid)   Unit* unit = Unit::GetUnit(*me, guid)
@@ -543,7 +544,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
         {
         case 1://lift off
             me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-            me->SetUnitMovementFlags(MOVEFLAG_LEVITATING + MOVEFLAG_ONTRANSPORT);
+            me->SetLevitate(true);
             me->StopMoving();
             me->MonsterYell(SAY_TAKEOFF, LANG_UNIVERSAL, 0);
             DoPlaySoundToSet(me, SOUND_TAKEOFF);
@@ -613,7 +614,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
             Timer[EVENT_FLIGHT_SEQUENCE] = 2000;
             break;
         case 9://land
-            me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
+            me->SetLevitate(false);
             me->StopMoving();
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             for (uint8 i = 0; i < 2; ++i)
@@ -1149,7 +1150,7 @@ struct npc_akama_illidanAI : public ScriptedAI
 
     void BeginWalk()
     {
-        me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+        me->SetWalk(false);
         me->SetSpeed(MOVE_RUN, 1.0f);
         me->GetMotionMaster()->MovePoint(0, AkamaWP[WalkCount].x, AkamaWP[WalkCount].y, AkamaWP[WalkCount].z);
     }
@@ -1894,7 +1895,7 @@ void boss_illidan_stormrageAI::Reset()
     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 1, 0);
-    me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
+    me->SetLevitate(false);
     me->setActive(false);
     Summons.DespawnAll();
 }
@@ -1957,7 +1958,7 @@ void boss_illidan_stormrageAI::HandleTalkSequence()
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 45479); // Equip our warglaives!
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 1, 45481);
         me->SetSheath(SHEATH_STATE_MELEE);
-        me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+        me->SetWalk(false);
         break;
     case 9:
         if (GETCRE(Akama, AkamaGUID))
@@ -2008,7 +2009,9 @@ void boss_illidan_stormrageAI::HandleTalkSequence()
                 Akama->GetMotionMaster()->Clear(false);
                 //Akama->GetMotionMaster()->MoveIdle();
                 Akama->GetMap()->CreatureRelocation(me, x, y, z, 0.0f);
-                Akama->SendMonsterMove(x, y, z, 0);//Illidan must not die until Akama arrives.
+                Movement::MoveSplineInit init(*Akama);
+                init.MoveTo(x, y, z, true);
+                init.Launch();
                 Akama->GetMotionMaster()->MoveChase(me);
             }
         }
@@ -2062,7 +2065,7 @@ void boss_illidan_stormrageAI::CastEyeBlast()
     if (!Trigger) return;
 
     Trigger->SetSpeed(MOVE_WALK, 3);
-    Trigger->SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
+    Trigger->SetWalk(true);
     Trigger->GetMotionMaster()->MovePoint(0, final.x, final.y, final.z);
 
     //Trigger->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);

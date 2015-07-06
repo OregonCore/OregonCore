@@ -29,6 +29,8 @@ npc_parqual_fintallas
 EndContentData */
 
 #include "ScriptPCH.h"
+#include "MoveSplineInit.h"
+#include "MoveSpline.h"
 
 /*######
 ## npc_lady_sylvanas_windrunner
@@ -82,12 +84,14 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
         {
             if (Unit* pTarget = Unit::GetUnit(*summoned, targetGUID))
             {
-                pTarget->SendMonsterMove(pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ() + 15.0f, 0);
+                Movement::MoveSplineInit init(*me);
+                init.MoveTo(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ() + 15.0f, true);
+                init.Launch();
                 pTarget->GetMap()->CreatureRelocation(me, pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ() + 15.0f, 0.0f);
                 summoned->CastSpell(pTarget, SPELL_RIBBON_OF_SOULS, false);
             }
 
-            summoned->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
+            summoned->SetLevitate(true);
             targetGUID = summoned->GetGUID();
         }
     }
@@ -166,8 +170,14 @@ struct npc_highborne_lamenterAI : public ScriptedAI
         {
             if (EventMove_Timer <= diff)
             {
-                me->AddUnitMovementFlag(MOVEFLAG_LEVITATING);
-                me->SendMonsterMoveWithSpeed(me->GetPositionX(), me->GetPositionY(), HIGHBORNE_LOC_Y_NEW, 5000);
+                me->SetLevitate(true);
+                Movement::MoveSplineInit init(*me);
+                init.MoveTo(me->GetPositionX(), me->GetPositionY(), HIGHBORNE_LOC_Y_NEW, true);
+                int32 duration = init.Launch();
+                if (duration != 5000)
+                    sLog.outError("undercity : Travel time and duration from spline don't match (travel time : 5000, duration : %i). Object (TypeId: %u, Entry: %u, GUID: %u)",
+                    duration,
+                    me->GetTypeId(), me->GetEntry(), me->GetGUIDLow());
                 me->GetMap()->CreatureRelocation(me, me->GetPositionX(), me->GetPositionY(), HIGHBORNE_LOC_Y_NEW, me->GetOrientation());
                 EventMove = false;
             }

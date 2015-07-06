@@ -37,8 +37,9 @@ enum MovementGeneratorType
     WAYPOINT_MOTION_TYPE  = 2,                              // WaypointMovementGenerator.h
     MAX_DB_MOTION_TYPE    = 3,                              // *** this and below motion types can't be set in DB.
     ANIMAL_RANDOM_MOTION_TYPE = MAX_DB_MOTION_TYPE,         // AnimalRandomMovementGenerator.h
+    
     CONFUSED_MOTION_TYPE  = 4,                              // ConfusedMovementGenerator.h
-    TARGETED_MOTION_TYPE  = 5,                              // TargetedMovementGenerator.h
+    CHASE_MOTION_TYPE     = 5,                              // TargetedMovementGenerator.h
     HOME_MOTION_TYPE      = 6,                              // HomeMovementGenerator.h
     FLIGHT_MOTION_TYPE    = 7,                              // WaypointMovementGenerator.h
     POINT_MOTION_TYPE     = 8,                              // PointMovementGenerator.h
@@ -48,7 +49,10 @@ enum MovementGeneratorType
     ASSISTANCE_DISTRACT_MOTION_TYPE = 12,                   // IdleMovementGenerator.h (second part of flee for assistance)
     TIMED_FLEEING_MOTION_TYPE = 13,                         // FleeingMovementGenerator.h (alt.second part of flee for assistance)
     ROTATE_MOTION_TYPE    = 14,
-    NULL_MOTION_TYPE      = 15,
+    FOLLOW_MOTION_TYPE    = 15,                             // TargetedMovementGenerator.h
+    EFFECT_MOTION_TYPE    = 16,
+    NULL_MOTION_TYPE      = 17,
+    TARGETED_MOTION_TYPE = (CHASE_MOTION_TYPE | FOLLOW_MOTION_TYPE),
 };
 
 enum MovementSlot
@@ -85,10 +89,6 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         typedef std::vector<_Ty> ExpireList;
         int i_top;
 
-        bool empty() const
-        {
-            return i_top < 0;
-        }
         void pop()
         {
             Impl[i_top] = NULL;
@@ -124,6 +124,10 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         int size() const
         {
             return i_top + 1;
+        }
+        bool empty() const
+        {
+            return i_top < 0;
         }
         _Ty top() const
         {
@@ -179,8 +183,6 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         void MovePoint(uint32 id, float x, float y, float z, bool usePathfinding = true);
         void MoveCharge(float x, float y, float z, float speed = SPEED_CHARGE, uint32 id = EVENT_CHARGE, bool usePathfinding = true);
         void MoveFall(float z = 0, uint32 id = 0);
-        void MoveJumpTo(float angle, float speedXY, float speedZ);
-        void MoveJump(float x, float y, float z, float speedXY, float speedZ, bool usePathfinding = true);
         void MoveSeekAssistance(float x, float y, float z);
         void MoveSeekAssistanceDistract(uint32 timer);
         void MoveTaxiFlight(uint32 path, uint32 pathnode);

@@ -64,7 +64,7 @@ struct boss_sapphironAI : public ScriptedAI
         Icebolt_Count = 0;
         IsInFly = false;
 
-        me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
+        me->SetLevitate(false);
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -107,7 +107,7 @@ struct boss_sapphironAI : public ScriptedAI
                 {
                     phase = 2;
                     me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-                    me->AddUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
+                    me->SetLevitate(true);
                     me->GetMotionMaster()->Clear(false);
                     me->GetMotionMaster()->MoveIdle();
                     me->SetHover(true);
@@ -148,7 +148,7 @@ struct boss_sapphironAI : public ScriptedAI
             {
                 phase = 1;
                 me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-                me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
+                me->SetLevitate(false);
                 me->GetMotionMaster()->Clear(false);
                 me->GetMotionMaster()->MoveChase(me->getVictim());
                 me->SetHover(true);

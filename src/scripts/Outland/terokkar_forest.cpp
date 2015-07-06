@@ -403,7 +403,7 @@ struct npc_isla_starmaneAI : public npc_escortAI
             break;
         case 31:
             DoCast(me, SPELL_CAT);
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(false);
             break;
         }
     }
@@ -832,7 +832,7 @@ struct npc_letollAI : public npc_escortAI
         case 0:
             JustStartedEscort();
             for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
-                (*itr)->SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
+                (*itr)->SetWalk(true);
             if (Player* pPlayer = GetPlayerForEscort())
                 DoScriptText(SAY_LE_KEEP_SAFE, me, pPlayer);
             break;

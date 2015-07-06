@@ -323,7 +323,7 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
 
                 DoScriptText(EMOTE_START, me);
                 DoCast(me, SPELL_PERIODIC_DEPTH_CHARGE);
-                me->SetUnitMovementFlags(MOVEFLAG_FLYING2 | MOVEFLAG_SWIMMING);
+                me->SetSwim(true);
                 me->SetSpeed(MOVE_RUN, 0.85f, true);
                 me->GetMotionMaster()->MovementExpired();
                 me->GetMotionMaster()->MovePoint(CurrWP, WPs[CurrWP][0], WPs[CurrWP][1], WPs[CurrWP][2]);
@@ -457,7 +457,7 @@ struct mob_depth_chargeAI : public ScriptedAI
 
     void Reset()
     {
-        me->SetUnitMovementFlags(MOVEFLAG_FLYING2 | MOVEFLAG_SWIMMING);
+        me->SetSwim(true);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         we_must_die = false;
         must_die_timer = 1000;

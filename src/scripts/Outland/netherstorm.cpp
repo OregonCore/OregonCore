@@ -1167,7 +1167,7 @@ struct npc_boom_botAI : public ScriptedAI
     {
         Boom = false;
         BoomTimer = 800;
-        me->SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
+        me->SetWalk(true);
     }
 
     void AttackedBy(Unit* /*pWho*/) {}

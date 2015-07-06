@@ -27,7 +27,6 @@
 #include "UpdateMask.h"
 #include "Path.h"
 #include "WaypointMovementGenerator.h"
-#include "DestinationHolderImp.h"
 
 void WorldSession::HandleTaxiNodeStatusQueryOpcode(WorldPacket& recv_data)
 {
@@ -207,6 +206,8 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
         {
             // short preparations to continue flight
             FlightPathMovementGenerator* flight = (FlightPathMovementGenerator*)(GetPlayer()->GetMotionMaster()->top());
+
+            flight->Interrupt(*GetPlayer());
 
             flight->SetCurrentNodeAfterTeleport();
             TaxiPathNodeEntry const& node = flight->GetPath()[flight->GetCurrentNode()];

@@ -42,15 +42,16 @@
 #include "InstanceSaveMgr.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
-#include "Path.h"
 #include "CreatureGroups.h"
 #include "PetAI.h"
 #include "PassiveAI.h"
-#include "Traveller.h"
 #include "TemporarySummon.h"
 #include "PathFinder.h"
 #include "ScriptMgr.h"
 #include "Object.h"
+#include "MovementGenerator.h"
+#include "MoveSplineInit.h"
+#include "MoveSpline.h"
 
 #include <math.h>
 
@@ -236,6 +237,8 @@ Unit::Unit()
       m_ThreatManager(this),
       m_HostileRefManager(this),
       m_procDeep(0),
+      movespline(new Movement::MoveSpline()),
+      m_movesplineTimer(POSITION_UPDATE_DELAY),
       _lastDamagedTime(0)
 {
     m_objectType |= TYPEMASK_UNIT;
@@ -347,6 +350,7 @@ Unit::~Unit()
     _DeleteAuras();
 
     delete m_charmInfo;
+    delete movespline;
 
     ASSERT(!m_attacking);
     ASSERT(m_attackers.empty());
@@ -401,7 +405,9 @@ void Unit::Update(uint32 p_time)
         ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, HealthBelowPct(35));
     }
 
+    UpdateSplineMovement(p_time);
     i_motionMaster.UpdateMotion(p_time);
+	
 }
 
 bool Unit::haveOffhandWeapon() const
@@ -410,156 +416,6 @@ bool Unit::haveOffhandWeapon() const
         return ToPlayer()->GetWeaponForAttack(OFF_ATTACK, true);
 
     return m_canDualWield;
-}
-
-void Unit::SendMonsterMoveWithSpeedToCurrentDestination(Player* player)
-{
-    float x, y, z;
-    if (GetMotionMaster()->GetDestination(x, y, z))
-        SendMonsterMoveWithSpeed(x, y, z, 0, player);
-}
-
-void Unit::SendMonsterMoveWithSpeed(float x, float y, float z, uint32 transitTime, Player* player)
-{
-    if (!transitTime)
-    {
-        if (GetTypeId() == TYPEID_PLAYER)
-        {
-            Traveller<Player> traveller(*ToPlayer());
-            transitTime = traveller.GetTotalTrevelTimeTo(x, y, z);
-        }
-        else
-        {
-            Traveller<Creature> traveller(*ToCreature());
-            transitTime = traveller.GetTotalTrevelTimeTo(x, y, z);
-        }
-    }
-    //float orientation = (float)atan2((double)dy, (double)dx);
-    SendMonsterMove(x, y, z, transitTime, player);
-}
-
-void Unit::SendMonsterStop()
-{
-    WorldPacket data(SMSG_MONSTER_MOVE, (17 + GetPackGUID().size()));
-    data << GetPackGUID();
-    data << GetPositionX() << GetPositionY() << GetPositionZ();
-    data << getMSTime();
-    data << uint8(1);
-    SendMessageToSet(&data, true);
-
-    ClearUnitState(UNIT_STATE_MOVE);
-}
-
-void Unit::SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 Time, Player* player)
-{
-    WorldPacket data(SMSG_MONSTER_MOVE, 12 + 4 + 1 + 4 + 4 + 4 + 12 + GetPackGUID().size());
-    data << GetPackGUID();
-
-    data << GetPositionX() << GetPositionY() << GetPositionZ();
-    data << getMSTime();
-
-    data << uint8(0);
-    data << uint32((GetUnitMovementFlags() & MOVEFLAG_LEVITATING) ? SPLINEFLAG_FLYING : SPLINEFLAG_WALKMODE);
-    data << Time;                                           // Time in between points
-    data << uint32(1);                                      // 1 single waypoint
-    data << NewPosX << NewPosY << NewPosZ;                  // the single waypoint Point B
-
-    if (player)
-        player->GetSession()->SendPacket(&data);
-    else
-        SendMessageToSet(&data, true);
-
-    AddUnitState(UNIT_STATE_MOVE);
-}
-
-void Unit::SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 MoveFlags, uint32 time, float speedZ, Player* player)
-{
-    WorldPacket data(SMSG_MONSTER_MOVE, 12 + 4 + 1 + 4 + 4 + 4 + 12 + GetPackGUID().size());
-    data << GetPackGUID();
-
-    data << uint8(0);                                       // new in 3.1
-    data << GetPositionX() << GetPositionY() << GetPositionZ();
-    data << getMSTime();
-
-    data << uint8(0);
-    data << MoveFlags;
-
-    if (MoveFlags & SPLINEFLAG_JUMP)
-    {
-        data << time;
-        data << speedZ;
-        data << (uint32)0; // walk time after jump
-    }
-    else
-        data << time;
-
-    data << uint32(1);                                      // 1 single waypoint
-    data << NewPosX << NewPosY << NewPosZ;                  // the single waypoint Point B
-
-    if (player)
-        player->GetSession()->SendPacket(&data);
-    else
-        SendMessageToSet(&data, true);
-}
-
-template<typename Elem, typename Node>
-void Unit::SendMonsterMoveByPath(Path<Elem, Node> const& path, uint32 start, uint32 end, uint32 traveltime)
-{
-    uint32 pathSize = end - start;
-
-    if (pathSize < 1)
-    {
-        SendMonsterMove(GetPositionX(), GetPositionY(), GetPositionZ(), 0);
-        return;
-    }
-
-    if (pathSize == 1)
-    {
-        SendMonsterMove(path[start].x, path[start].y, path[start].z, traveltime);
-        return;
-    }
-
-    WorldPacket data(SMSG_MONSTER_MOVE, (GetPackGUID().size() + 4 + 4 + 4 + 4 + 1 + 4 + 4 + 4 + pathSize * 4 * 3));
-    data << GetPackGUID();
-    data << GetPositionX();
-    data << GetPositionY();
-    data << GetPositionZ();
-    data << uint32(getMSTime());
-    data << uint8(0);
-    data << uint32(((GetUnitMovementFlags() & MOVEFLAG_LEVITATING) || isInFlight()) ? (SPLINEFLAG_FLYING | SPLINEFLAG_WALKMODE) : SPLINEFLAG_WALKMODE);
-    data << uint32(traveltime);
-    data << uint32(pathSize);
-
-    if (GetUnitMovementFlags() & UnitFlags(SPLINEFLAG_FLYING))
-    {
-        // sending a taxi flight path
-        for (uint32 i = start; i < end; ++i)
-        {
-            data << float(path[i].x);
-            data << float(path[i].y);
-            data << float(path[i].z);
-        }
-    }
-    else
-    {
-        // sending a series of points
-
-        // destination
-        data << path[end - 1].x;
-        data << path[end - 1].y;
-        data << path[end - 1].z;
-
-        // all other points are relative to the center of the path
-        float mid_X = (GetPositionX() + path[end - 1].x) * 0.5f;
-        float mid_Y = (GetPositionY() + path[end - 1].y) * 0.5f;
-        float mid_Z = (GetPositionZ() + path[end - 1].z) * 0.5f;
-
-        for (uint32 i = start; i < end - 1; ++i)
-            data.appendPackXYZ(mid_X - path[i].x, mid_Y - path[i].y, mid_Z - path[i].z);
-    }
-    SendMessageToSet(&data, true);
-
-    AddUnitState(UNIT_STATE_MOVE);
 }
 
 void Unit::resetAttackTimer(WeaponAttackType type)
@@ -9576,14 +9432,6 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
     }
 }
 
-void Unit::SetHover(bool on)
-{
-    if (on)
-        CastSpell(this, 11010, true);
-    else
-        RemoveAurasDueToSpell(11010);
-}
-
 void Unit::setDeathState(DeathState s)
 {
     // Death state needs to be updated before RemoveAllAurasOnDeath() is called, to prevent entering combat
@@ -11364,18 +11212,34 @@ void Unit::SendPetAIReaction(uint64 guid)
 
 //----------End of Pet responses methods----------
 
-void Unit::StopMoving()
+void Unit::StopMoving(bool forceSendStop /*=false*/)
 {
+    if (IsStopped() && !forceSendStop)
+        return;
+
     ClearUnitState(UNIT_STATE_MOVING);
 
     // not need send any packets if not in world
     if (!IsInWorld())
         return;
 
-    // send explicit stop packet
-    SetPosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+	Movement::MoveSplineInit init(*this);
+	init.Stop();
+}
 
-    SendMonsterStop();
+void Unit::InterruptMoving(bool forceSendStop /*=false*/)
+{
+    bool isMoving = false;
+
+    if (!movespline->Finalized())
+    {
+        Movement::Location loc = movespline->ComputePosition();
+        movespline->_Interrupt();
+        Relocate(loc.x, loc.y, loc.z, loc.orientation);
+        isMoving = true;
+    }
+
+    StopMoving(forceSendStop || isMoving);
 }
 
 void Unit::SendMovementFlagUpdate(bool self /* = false */)
@@ -12006,10 +11870,18 @@ bool Unit::SetPosition(float x, float y, float z, float orientation, bool telepo
 
 void Unit::NearTeleportTo(float x, float y, float z, float orientation, bool casting /*= false*/)
 {
+    DisableSpline();
+
     if (GetTypeId() == TYPEID_PLAYER)
         ToPlayer()->TeleportTo(GetMapId(), x, y, z, orientation, TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET | (casting ? TELE_TO_SPELL : 0));
     else
     {
+        Creature* c = (Creature*)this;
+        // Creature relocation acts like instant movement generator, so current generator expects interrupt/reset calls to react properly
+        if (!c->GetMotionMaster()->empty())
+            if (MovementGenerator* movgen = c->GetMotionMaster()->top())
+                movgen->Interrupt(*c);
+
         Position pos = {x, y, z, orientation};
         SendTeleportPacket(pos);
         SetPosition(x, y, z, orientation, true);
@@ -12033,29 +11905,6 @@ void Unit::SendTeleportPacket(Position& pos)
     SendMessageToSet(&data, false);
 }
 
-void Unit::MonsterMoveByPath(float x, float y, float z, uint32 speed, bool forceDest)
-{
-    PathInfo path(this, x, y, z, forceDest);
-    PointPath pointPath = path.getFullPath();
-
-    uint32 traveltime = uint32(pointPath.GetTotalLength() / float(speed));
-    MonsterMoveByPath(pointPath, 1, pointPath.size(), traveltime);
-}
-
-template<typename PathElem, typename PathNode>
-void Unit::MonsterMoveByPath(Path<PathElem, PathNode> const& path, uint32 start, uint32 end, uint32 transitTime)
-{
-    SplineFlags flags = GetTypeId() == TYPEID_PLAYER ? SPLINEFLAG_WALKMODE : SplineFlags(((Creature*)this)->GetUnitMovementFlags());
-    SetUnitMovementFlags(flags);
-    SendMonsterMoveByPath(path, start, end, transitTime);
-}
-
-template void Unit::MonsterMoveByPath<PathNode>(const Path<PathNode>&, uint32, uint32, uint32);
-
-
-
-template void Unit::SendMonsterMoveByPath<PathNode>(const Path<PathNode>&, uint32, uint32, uint32);
-template void Unit::SendMonsterMoveByPath<TaxiPathNodePtr, const TaxiPathNodeEntry>(const Path<TaxiPathNodePtr, const TaxiPathNodeEntry>&, uint32, uint32, uint32);
 
 /*-----------------------Oregon-----------------------------*/
 
@@ -12406,24 +12255,15 @@ void Unit::SetStunned(bool apply)
         SetTarget(0);
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 
-        // MOVEMENTFLAG_ROOT cannot be used in conjunction with MOVEMENTFLAG_MASK_MOVING (tested 3.3.5a)
-        // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
-        // setting MOVEMENTFLAG_ROOT
-        RemoveUnitMovementFlag(MOVEFLAG_MOVING);
-        AddUnitMovementFlag(MOVEFLAG_ROOT);
-
         // Creature specific
         if (GetTypeId() != TYPEID_PLAYER)
             StopMoving();
         else
             SetStandState(UNIT_STAND_STATE_STAND);
 
-        WorldPacket data(SMSG_FORCE_MOVE_ROOT, 8);
-        data << GetPackGUID();
-        data << uint32(0);
-        SendMessageToSet(&data, true);
-
         CastStop();
+
+        SetRooted(true);
     }
     else
     {
@@ -12436,62 +12276,7 @@ void Unit::SetStunned(bool apply)
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 
         if (!HasUnitState(UNIT_STATE_ROOT))         // prevent allow move if have also root effect
-        {
-            WorldPacket data(SMSG_FORCE_MOVE_UNROOT, 8+4);
-            data << GetPackGUID();
-            data << uint32(0);
-            SendMessageToSet(&data, true);
-
-            RemoveUnitMovementFlag(MOVEFLAG_ROOT);
-        }
-    }
-}
-
-void Unit::SetRooted(bool apply)
-{
-    if (apply)
-    {
-        // MOVEMENTFLAG_ROOT cannot be used in conjunction with MOVEMENTFLAG_MASK_MOVING (tested 3.3.5a)
-        // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
-        // setting MOVEMENTFLAG_ROOT
-        RemoveUnitMovementFlag(MOVEFLAG_MOVING);
-        AddUnitMovementFlag(MOVEFLAG_ROOT);
-
-        if (GetTypeId() == TYPEID_PLAYER)
-        {
-            WorldPacket data(SMSG_FORCE_MOVE_ROOT, 10);
-            data << GetPackGUID();
-            data << (uint32)2;
-            SendMessageToSet(&data, true);
-        }
-        else
-        {
-            WorldPacket data(SMSG_SPLINE_MOVE_ROOT, 8);
-            data << GetPackGUID();
-            SendMessageToSet(&data, true);
-            StopMoving();
-        }
-    }
-    else
-    {
-        if (!HasUnitState(UNIT_STATE_STUNNED))      // prevent moving if it also has stun effect
-        {
-            if (GetTypeId() == TYPEID_PLAYER)
-            {
-                WorldPacket data(SMSG_FORCE_MOVE_UNROOT, 10);
-                data << GetPackGUID();
-                data << (uint32)2;
-                SendMessageToSet(&data, true);
-            }
-            else
-            {
-                WorldPacket data(SMSG_SPLINE_MOVE_UNROOT, 8);
-                data << GetPackGUID();
-                SendMessageToSet(&data, true);
-            }
-
-            RemoveUnitMovementFlag(MOVEFLAG_ROOT);
-        }
+            SetRooted(false);
     }
 }
 
@@ -12951,27 +12736,6 @@ void Unit::SetFlying(bool apply)
     }
 }
 
-void Unit::SetWalk(bool apply)
-{
-    if (apply)
-        AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
-    else
-        RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
-}
-
-void Unit::SetLevitate(bool apply)
-{
-    if (apply)
-        AddUnitMovementFlag(MOVEFLAG_LEVITATING);
-    else
-        RemoveUnitMovementFlag(MOVEFLAG_LEVITATING);
-
-
-    WorldPacket data(apply ? SMSG_SPLINE_MOVE_SET_FLYING : SMSG_SPLINE_MOVE_UNSET_FLYING, 9);
-    data << GetPackGUID();
-    SendMessageToSet(&data, true);
-}
-
 void Unit::UpdateObjectVisibility(bool forced)
 {
     if (!forced)
@@ -13047,4 +12811,56 @@ void Unit::BuildMovementPacket(ByteBuffer *data) const
     *data << float(GetPositionZ());
     *data << float(GetOrientation());
     *data << uint32(0);
+}
+
+void Unit::UpdateSplineMovement(uint32 t_diff)
+{
+    if (movespline->Finalized())
+        return;
+
+    movespline->updateState(t_diff);
+    bool arrived = movespline->Finalized();
+
+    if (arrived)
+        DisableSpline();
+
+    m_movesplineTimer.Update(t_diff);
+    if (m_movesplineTimer.Passed() || arrived)
+    {
+        m_movesplineTimer.Reset(POSITION_UPDATE_DELAY);
+        Movement::Location loc = movespline->ComputePosition();
+
+        if (GetTypeId() == TYPEID_PLAYER)
+            ((Player*)this)->SetPosition(loc.x, loc.y, loc.z, loc.orientation);
+        else
+            GetMap()->CreatureRelocation((Creature*)this, loc.x, loc.y, loc.z, loc.orientation);
+    }
+}
+
+void Unit::DisableSpline()
+{
+    m_movementInfo.RemoveMovementFlag(MovementFlags(MOVEFLAG_SPLINE_ENABLED | MOVEFLAG_FORWARD));
+    movespline->_Interrupt();
+}
+
+void Unit::MonsterMoveWithSpeed(float x, float y, float z, float speed, bool generatePath, bool forceDestination)
+{
+    Movement::MoveSplineInit init(*this);
+    init.MoveTo(x, y, z, generatePath, forceDestination);
+    init.SetVelocity(speed);
+    init.Launch();
+}
+
+void Unit::SendMonsterMoveWithSpeedToCurrentDestination(float speed)
+{
+    float x, y, z;
+    if (movespline->Finalized())
+        return;
+
+    Vector3 dest = movespline->FinalDestination();
+    x = dest.x;
+    y = dest.y;
+    z = dest.z;
+
+    MonsterMoveWithSpeed(x, y, z, speed, true);
 }

@@ -18,8 +18,6 @@
 #include "MotionMaster.h"
 #include "CreatureAISelector.h"
 #include "Creature.h"
-#include "Traveller.h"
-
 #include "ConfusedMovementGenerator.h"
 #include "FleeingMovementGenerator.h"
 #include "HomeMovementGenerator.h"
@@ -28,6 +26,8 @@
 #include "TargetedMovementGenerator.h"
 #include "WaypointMovementGenerator.h"
 #include "RandomMovementGenerator.h"
+#include "MoveSpline.h"
+#include "MoveSplineInit.h"
 
 #include <cassert>
 
@@ -231,14 +231,13 @@ MotionMaster::MoveChase(Unit* target, float dist, float angle)
     if (!target || target == i_owner || i_owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
         return;
 
-    i_owner->ClearUnitState(UNIT_STATE_FOLLOW);
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
     {
         DEBUG_LOG("Player (GUID: %u) chase to %s (GUID: %u)",
                   i_owner->GetGUIDLow(),
                   target->GetTypeId() == TYPEID_PLAYER ? "player" : "creature",
                   target->GetTypeId() == TYPEID_PLAYER ? target->GetGUIDLow() : target->ToCreature()->GetDBTableGUIDLow());
-        Mutate(new TargetedMovementGenerator<Player>(*target, dist, angle), MOTION_SLOT_ACTIVE);
+        Mutate(new ChaseMovementGenerator<Player>(*target, dist, angle), MOTION_SLOT_ACTIVE);
     }
     else
     {
@@ -246,7 +245,7 @@ MotionMaster::MoveChase(Unit* target, float dist, float angle)
                   i_owner->GetEntry(), i_owner->GetGUIDLow(),
                   target->GetTypeId() == TYPEID_PLAYER ? "player" : "creature",
                   target->GetTypeId() == TYPEID_PLAYER ? target->GetGUIDLow() : target->ToCreature()->GetDBTableGUIDLow());
-        Mutate(new TargetedMovementGenerator<Creature>(*target, dist, angle), MOTION_SLOT_ACTIVE);
+        Mutate(new ChaseMovementGenerator<Creature>(*target, dist, angle), MOTION_SLOT_ACTIVE);
     }
 }
 
@@ -257,13 +256,12 @@ MotionMaster::MoveFollow(Unit* target, float dist, float angle, MovementSlot slo
     if (!target || target == i_owner || i_owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
         return;
 
-    i_owner->AddUnitState(UNIT_STATE_FOLLOW);
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
     {
         DEBUG_LOG("Player (GUID: %u) follow to %s (GUID: %u)", i_owner->GetGUIDLow(),
                   target->GetTypeId() == TYPEID_PLAYER ? "player" : "creature",
                   target->GetTypeId() == TYPEID_PLAYER ? target->GetGUIDLow() : target->ToCreature()->GetDBTableGUIDLow());
-        Mutate(new TargetedMovementGenerator<Player>(*target, dist, angle), slot);
+        Mutate(new FollowMovementGenerator<Player>(*target, dist, angle), slot);
     }
     else
     {
@@ -271,7 +269,7 @@ MotionMaster::MoveFollow(Unit* target, float dist, float angle, MovementSlot slo
                   i_owner->GetEntry(), i_owner->GetGUIDLow(),
                   target->GetTypeId() == TYPEID_PLAYER ? "player" : "creature",
                   target->GetTypeId() == TYPEID_PLAYER ? target->GetGUIDLow() : target->ToCreature()->GetDBTableGUIDLow());
-        Mutate(new TargetedMovementGenerator<Creature>(*target, dist, angle), slot);
+        Mutate(new FollowMovementGenerator<Creature>(*target, dist, angle), slot);
     }
 }
 
@@ -289,40 +287,6 @@ MotionMaster::MovePoint(uint32 id, float x, float y, float z, bool usePathfindin
                   i_owner->GetEntry(), i_owner->GetGUIDLow(), id, x, y, z);
         Mutate(new PointMovementGenerator<Creature>(id, x, y, z, usePathfinding), MOTION_SLOT_ACTIVE);
     }
-}
-
-void MotionMaster::MoveJumpTo(float angle, float speedXY, float speedZ)
-{
-    //this function may make players fall below map
-    if (i_owner->GetTypeId() == TYPEID_PLAYER)
-        return;
-
-    float x, y, z;
-    float dist = speedXY * speedZ * 0.1f;
-    i_owner->GetClosePoint(x, y, z, i_owner->GetObjectSize(), dist, angle);
-    MoveJump(x, y, z, speedXY, speedZ);
-}
-
-void MotionMaster::MoveJump(float x, float y, float z, float speedXY, float speedZ, bool usePathfinding)
-{
-    uint32 moveFlag = SPLINEFLAG_JUMP | SPLINEFLAG_WALKMODE;
-    uint32 time = speedZ * 100;
-
-    i_owner->AddUnitState(UNIT_STATE_CHARGING | UNIT_STATE_JUMPING);
-    i_owner->m_TempSpeed = speedXY;
-    if (i_owner->GetTypeId() == TYPEID_PLAYER)
-    {
-        DEBUG_LOG("Player (GUID: %u) jump to point (X: %f Y: %f Z: %f)", i_owner->GetGUIDLow(), x, y, z);
-        Mutate(new PointMovementGenerator<Player>(0, x, y, z, usePathfinding), MOTION_SLOT_CONTROLLED);
-    }
-    else
-    {
-        DEBUG_LOG("Creature (Entry: %u GUID: %u) jump to point (X: %f Y: %f Z: %f)",
-                  i_owner->GetEntry(), i_owner->GetGUIDLow(), x, y, z);
-        Mutate(new PointMovementGenerator<Creature>(0, x, y, z, usePathfinding), MOTION_SLOT_CONTROLLED);
-    }
-
-    i_owner->SendMonsterMove(x, y, z, moveFlag, time, speedZ);
 }
 
 void
@@ -363,10 +327,11 @@ void MotionMaster::MoveFall(float z, uint32 id)
             return;
     }
 
-    i_owner->SetFlying(false);
-    i_owner->SendMovementFlagUpdate();
-    //AddUnitMovementFlag(MOVEFLAG_FALLING);
-    MoveCharge(i_owner->GetPositionX(), i_owner->GetPositionY(), z, SPEED_CHARGE, id);
+    Movement::MoveSplineInit init(*i_owner);
+    init.MoveTo(i_owner->GetPositionX(), i_owner->GetPositionY(), z);
+    init.SetFall();
+    init.Launch();
+    Mutate(new EffectMovementGenerator(0), MOTION_SLOT_ACTIVE);
 }
 
 void
@@ -473,6 +438,9 @@ void MotionMaster::Mutate(MovementGenerator* m, MovementSlot slot)
     if (MovementGenerator* curr = Impl[slot])
     {
         Impl[slot] = NULL; // in case a new one is generated in this slot during directdelete
+
+        curr->Interrupt(*i_owner);
+
         if (i_top == slot && (m_cleanFlag & MMCF_UPDATE))
             DelayedDelete(curr);
         else
@@ -578,9 +546,12 @@ void MotionMaster::DelayedDelete(_Ty curr)
 
 bool MotionMaster::GetDestination(float& x, float& y, float& z)
 {
-    if (empty())
+    if (i_owner->movespline->Finalized())
         return false;
 
-    return top()->GetDestination(x, y, z);
+    const G3D::Vector3& dest = i_owner->movespline->FinalDestination();
+    x = dest.x;
+    y = dest.y;
+    z = dest.z;
+    return true;
 }
-

@@ -1594,7 +1594,8 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         sLog.outDebug("Player %s is being teleported to map %u", GetName(), mapid);
 
     // reset movement flags at teleport, because player will continue move with these flags after teleport
-    SetUnitMovementFlags(0);
+	SetUnitMovementFlags(MOVEFLAG_NONE);
+    DisableSpline();
 
     if (m_transport)
     {
@@ -4082,24 +4083,6 @@ void Player::DeleteOldCharacters(uint32 keepDays)
 
 }
 
-void Player::SetMovement(PlayerMovementType pType)
-{
-    WorldPacket data;
-    switch (pType)
-    {
-        case MOVE_ROOT:       data.Initialize(SMSG_FORCE_MOVE_ROOT,   GetPackGUID().size()+4); break;
-        case MOVE_UNROOT:     data.Initialize(SMSG_FORCE_MOVE_UNROOT, GetPackGUID().size()+4); break;
-        case MOVE_WATER_WALK: data.Initialize(SMSG_MOVE_WATER_WALK,   GetPackGUID().size()+4); break;
-        case MOVE_LAND_WALK:  data.Initialize(SMSG_MOVE_LAND_WALK,    GetPackGUID().size()+4); break;
-        default:
-            sLog.outError("Player::SetMovement: Unsupported move type (%d), data not sent to client.", pType);
-            return;
-    }
-    data << GetPackGUID();
-    data << uint32(0);
-    GetSession()->SendPacket(&data);
-}
-
 /* Preconditions:
   - a resurrectable corpse must not be loaded for the player (only bones)
   - the player must be in world
@@ -4134,9 +4117,9 @@ void Player::BuildPlayerRepop()
     // convert player body to ghost
     SetHealth(1);
 
-    SetMovement(MOVE_WATER_WALK);
+    SetWaterWalk(true);
     if (!GetSession()->isLogingOut())
-        SetMovement(MOVE_UNROOT);
+        SetRooted(false);
 
     // BG - remove insignia related
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
@@ -4183,8 +4166,8 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
 
     setDeathState(ALIVE);
 
-    SetMovement(MOVE_LAND_WALK);
-    SetMovement(MOVE_UNROOT);
+    SetWaterWalk(false);
+    SetRooted(false);
 
     m_deathTimer = 0;
 
@@ -4239,7 +4222,7 @@ void Player::KillPlayer()
     if (IsFlying() && !GetTransport())
         GetMotionMaster()->MoveFall();
 
-    SetMovement(MOVE_ROOT);
+    SetRooted(true);
 
     StopMirrorTimers();                                     //disable timers(bars)
 
@@ -19363,7 +19346,7 @@ void Player::SendInitialVisiblePackets(Unit* target)
     if (target->IsAlive())
     {
         if (target->GetMotionMaster()->GetCurrentMovementGeneratorType() != IDLE_MOTION_TYPE)
-            target->SendMonsterMoveWithSpeedToCurrentDestination(this);
+            target->SendMonsterMoveWithSpeedToCurrentDestination(0.0f);
         if (target->HasUnitState(UNIT_STATE_MELEE_ATTACKING) && target->getVictim())
             target->SendMeleeAttackStart(target->getVictim());
     }
@@ -19585,17 +19568,8 @@ void Player::SendInitialPacketsAfterAddToMap()
             auraList.front()->ApplyModifier(true, true);
     }
 
-    if (HasAuraType(SPELL_AURA_MOD_STUN))
-        SetMovement(MOVE_ROOT);
-
-    // manual send package (have code in ApplyModifier(true,true); that don't must be re-applied.
-    if (HasAuraType(SPELL_AURA_MOD_ROOT))
-    {
-        WorldPacket data(SMSG_FORCE_MOVE_ROOT, 10);
-        data << GetPackGUID();
-        data << (uint32)2;
-        SendMessageToSet(&data, true);
-    }
+	if (HasAuraType(SPELL_AURA_MOD_STUN) || HasAuraType(SPELL_AURA_MOD_ROOT))
+        SetRooted(true);
 
     // setup BG group membership if need
     if (BattleGround* currentBg = GetBattleGround())
@@ -21190,4 +21164,108 @@ bool Player::AddItem(uint32 itemId, uint32 count)
     else
         return false;
     return true;
+}
+
+void Player::SetRooted(bool apply)
+{
+    if (apply)
+    {
+        // MOVEMENTFLAG_ROOT cannot be used in conjunction with MOVEMENTFLAG_MASK_MOVING (tested 3.3.5a)
+        // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
+        // setting MOVEMENTFLAG_ROOT
+        RemoveUnitMovementFlag(MOVEFLAG_MOVING);
+        m_movementInfo.AddMovementFlag(MOVEFLAG_ROOT);
+
+        WorldPacket data(SMSG_FORCE_MOVE_ROOT, 10);
+        data << GetPackGUID();
+        data << (uint32)2;
+        SendMessageToSet(&data, true);
+    }
+    else
+    {
+        if (!HasUnitState(UNIT_STATE_STUNNED))      // prevent moving if it also has stun effect
+        {
+            m_movementInfo.RemoveMovementFlag(MOVEFLAG_ROOT);
+
+            WorldPacket data(SMSG_FORCE_MOVE_UNROOT, 10);
+            data << GetPackGUID();
+            data << (uint32)2;
+            SendMessageToSet(&data, true);
+        }
+    }
+}
+
+void Player::SetFeatherFall(bool apply)
+{
+    WorldPacket data;
+    if (apply)
+        data.Initialize(SMSG_MOVE_FEATHER_FALL, 8 + 4);
+    else
+        data.Initialize(SMSG_MOVE_NORMAL_FALL, 8 + 4);
+
+    data << GetPackGUID();
+    data << uint32(0);
+    SendMessageToSet(&data, true);
+
+    // start fall from current height
+    if (!apply)
+        SetFallInformation(0, GetPositionZ());
+}
+
+void Player::SetHover(bool apply)
+{
+    WorldPacket data;
+    if (apply)
+        data.Initialize(SMSG_MOVE_SET_HOVER, 8 + 4);
+    else
+        data.Initialize(SMSG_MOVE_UNSET_HOVER, 8 + 4);
+
+    data << GetPackGUID();
+    data << uint32(0);
+    SendMessageToSet(&data, true);
+}
+
+void Player::SetCanFly(bool apply)
+{
+    WorldPacket data;
+    if (apply)
+        data.Initialize(SMSG_MOVE_SET_CAN_FLY, 12);
+    else
+        data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 12);
+
+    data << GetPackGUID();
+    data << uint32(0);                                      // unk
+    SendMessageToSet(&data, true);
+
+    data.Initialize(MSG_MOVE_UPDATE_CAN_FLY, 64);
+    data << GetPackGUID();
+    m_movementInfo.Write(data);
+    SendMessageToSet(&data, false);
+}
+
+void Player::SetLevitate(bool apply)
+{
+	// TODO: check if there is something similar for 2.4.3.
+	// WorldPacket data;
+	// if (enable)
+	//    data.Initialize(SMSG_MOVE_GRAVITY_DISABLE, 12);
+	// else
+	//    data.Initialize(SMSG_MOVE_GRAVITY_ENABLE, 12);
+	//
+	// data << GetPackGUID();
+	// data << uint32(0);                                      // unk
+	// SendMessageToSet(&data, true);
+
+	// data.Initialize(MSG_MOVE_GRAVITY_CHNG, 64);
+	// data << GetPackGUID();
+	// m_movementInfo.Write(data);
+	// SendMessageToSet(&data, false);
+}
+
+void Player::SetWaterWalk(bool apply)
+{
+    WorldPacket data(apply ? SMSG_MOVE_WATER_WALK : SMSG_MOVE_LAND_WALK, GetPackGUID().size() + 4);
+    data << GetPackGUID();
+    data << uint32(0);
+    GetSession()->SendPacket(&data);
 }

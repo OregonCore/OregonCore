@@ -569,7 +569,7 @@ struct npc_marzon_silent_bladeAI : public ScriptedAI
 {
     npc_marzon_silent_bladeAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        me->AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+        me->SetWalk(true);
     }
 
     void Reset()
@@ -651,7 +651,7 @@ struct npc_tyrion_spybotAI : public npc_escortAI
             break;
         case 16:
             me->UpdateEntry(NPC_TYRION_SPYBOT);
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(false);
             DoCast(SPELL_FADED);
             break;
         }

@@ -2086,8 +2086,6 @@ class Player : public Unit, public GridObject<Player>
             StopMirrorTimer(FIRE_TIMER);
         }
 
-        void SetMovement(PlayerMovementType pType);
-
         void JoinedChannel(Channel* c);
         void LeftChannel(Channel* c);
         void CleanupChannels();
@@ -2796,6 +2794,12 @@ class Player : public Unit, public GridObject<Player>
             m_rafLink = status;
         }
 
+        void SetRooted(bool apply);
+        void SetFeatherFall(bool apply);
+        void SetHover(bool apply);
+        void SetCanFly(bool apply);
+        void SetLevitate(bool apply);
+        void SetWaterWalk(bool enable);
     protected:
 
         uint32 m_contestedPvPTimer;

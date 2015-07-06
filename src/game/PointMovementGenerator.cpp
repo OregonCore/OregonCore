@@ -20,34 +20,38 @@
 #include "Creature.h"
 #include "CreatureAI.h"
 #include "MapManager.h"
-#include "DestinationHolderImp.h"
 #include "World.h"
 #include "PathFinder.h"
+#include "MoveSplineInit.h"
+#include "MoveSpline.h"
 
 //----- Point Movement Generator
 template<class T>
 void PointMovementGenerator<T>::Initialize(T& unit)
 {
-    if (!unit.IsStopped())
         unit.StopMoving();
-    Traveller<T> traveller(unit);
 
-    if (m_usePathfinding)
+    unit.AddUnitState(UNIT_STATE_ROAMING);
+    Movement::MoveSplineInit init(unit);
+    init.MoveTo(i_x, i_y, i_z, m_usePathfinding);
+    init.Launch();
+}
+
+template<class T>
+void PointMovementGenerator<T>:: Finalize(T& unit)
     {
-        PathInfo path(&unit, i_x, i_y, i_z);
-        PointPath pointPath = path.getFullPath();
+    if (unit.HasUnitState(UNIT_STATE_CHARGING))
+        unit.ClearUnitState(UNIT_STATE_CHARGING | UNIT_STATE_JUMPING);
 
-        float speed = traveller.Speed() * 0.001f; // in ms
-        uint32 traveltime = uint32(pointPath.GetTotalLength() / speed);
-        if (unit.GetTypeId() != TYPEID_UNIT)
-            unit.SetUnitMovementFlags(SPLINEFLAG_WALKMODE);
-        unit.SendMonsterMoveByPath(pointPath, 1, pointPath.size(), traveltime);
+    if (unit.movespline->Finalized())
+        MovementInform(unit);
+}
 
-        PathNode p = pointPath[pointPath.size() - 1];
-        i_destinationHolder.SetDestination(traveller, p.x, p.y, p.z, false);
-    }
-    else
-        i_destinationHolder.SetDestination(traveller, i_x, i_y, i_z, true);
+template<class T>
+void PointMovementGenerator<T>::Interrupt(T& unit)
+{
+    unit.InterruptMoving();
+    unit.ClearUnitState(UNIT_STATE_ROAMING);
 }
 
 template<class T>
@@ -61,27 +65,13 @@ bool PointMovementGenerator<T>::Update(T& unit, const uint32& diff)
             return true;
     }
 
-    Traveller<T> traveller(unit);
-
-    i_destinationHolder.UpdateTraveller(traveller, diff);
-
-    if (i_destinationHolder.HasArrived())
+    if (unit.movespline->Finalized())
     {
         unit.ClearUnitState(UNIT_STATE_MOVE);
-        arrived = true;
         return false;
     }
 
     return true;
-}
-
-template<class T>
-void PointMovementGenerator<T>:: Finalize(T& unit)
-{
-    if (unit.HasUnitState(UNIT_STATE_CHARGING))
-        unit.ClearUnitState(UNIT_STATE_CHARGING | UNIT_STATE_JUMPING);
-    if (arrived) // without this crash!
-        MovementInform(unit);
 }
 
 template<class T>
@@ -100,13 +90,17 @@ template <> void PointMovementGenerator<Creature>::MovementInform(Creature& unit
 }
 
 template void PointMovementGenerator<Player>::Initialize(Player&);
+template void PointMovementGenerator<Player>::Finalize(Player&);
+template void PointMovementGenerator<Player>::Interrupt(Player&);
+template void PointMovementGenerator<Player>::Reset(Player&);
 template bool PointMovementGenerator<Player>::Update(Player&, const uint32& diff);
 template void PointMovementGenerator<Player>::MovementInform(Player&);
-template void PointMovementGenerator<Player>::Finalize(Player&);
 
 template void PointMovementGenerator<Creature>::Initialize(Creature&);
-template bool PointMovementGenerator<Creature>::Update(Creature&, const uint32& diff);
 template void PointMovementGenerator<Creature>::Finalize(Creature&);
+template void PointMovementGenerator<Creature>::Interrupt(Creature&);
+template void PointMovementGenerator<Creature>::Reset(Creature&);
+template bool PointMovementGenerator<Creature>::Update(Creature&, const uint32& diff);
 
 void AssistanceMovementGenerator::Finalize(Creature& unit)
 {
@@ -116,3 +110,24 @@ void AssistanceMovementGenerator::Finalize(Creature& unit)
         unit.GetMotionMaster()->MoveSeekAssistanceDistract(sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY));
 }
 
+bool EffectMovementGenerator::Update(Unit& unit, const uint32&)
+{
+    return !unit.movespline->Finalized();
+}
+
+void EffectMovementGenerator::Finalize(Unit& unit)
+{
+    if (unit.GetTypeId() != TYPEID_UNIT)
+        return;
+
+    if (((Creature&)unit).AI() && unit.movespline->Finalized())
+        ((Creature&)unit).AI()->MovementInform(EFFECT_MOTION_TYPE, m_Id);
+    // Need restore previous movement since we have no proper states system
+    if (unit.IsAlive() && !unit.HasUnitState(UNIT_STATE_CONFUSED | UNIT_STATE_FLEEING | UNIT_STATE_DISTRACTED))
+    {
+        if (Unit* victim = unit.getVictim())
+            unit.GetMotionMaster()->MoveChase(victim);
+        else
+            unit.GetMotionMaster()->Initialize();
+    }
+}

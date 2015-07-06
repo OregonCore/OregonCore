@@ -150,8 +150,8 @@ struct boss_nightbaneAI : public ScriptedAI
                 MovePhase = 0;
 
                 me->SetSpeed(MOVE_RUN, 2.0f);
-                me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
-                me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+                me->SetLevitate(true);
+                me->SetWalk(false);
                 me->setActive(true);
 
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -278,7 +278,7 @@ struct boss_nightbaneAI : public ScriptedAI
 
         me->InterruptSpell(CURRENT_GENERIC_SPELL);
         me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+        me->SetLevitate(true);
         (*me).GetMotionMaster()->Clear(false);
         (*me).GetMotionMaster()->MovePoint(0, IntroWay[2][0], IntroWay[2][1], IntroWay[2][2]);
 
@@ -302,7 +302,7 @@ struct boss_nightbaneAI : public ScriptedAI
             {
                 if (MovePhase >= 7)
                 {
-                    me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+                    me->SetLevitate(false);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
                     me->GetMotionMaster()->MovePoint(8, IntroWay[7][0], IntroWay[7][1], IntroWay[7][2]);
                 }
@@ -317,7 +317,7 @@ struct boss_nightbaneAI : public ScriptedAI
             {
                 if (MovePhase >= 7)
                 {
-                    me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+                    me->SetLevitate(false);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
                     me->GetMotionMaster()->MovePoint(8, IntroWay[7][0], IntroWay[7][1], IntroWay[7][2]);
                 }

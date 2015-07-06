@@ -471,7 +471,7 @@ struct mob_felkael_phoenixAI : public ScriptedAI
     void Reset()
     {
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE + UNIT_FLAG_NON_ATTACKABLE);
-        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
+        me->SetLevitate(true);
         DoCast(me, SPELL_PHOENIX_BURN, true);
         BurnTimer = 2000;
         Death_Timer = 3000;
@@ -602,7 +602,7 @@ struct mob_arcane_sphereAI : public ScriptedAI
         ChangeTargetTimer = urand(6000, 12000);
 
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
+        me->SetLevitate(true);
         me->setFaction(14);
         DoCast(me, SPELL_ARCANE_SPHERE_PASSIVE, true);
     }

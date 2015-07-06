@@ -140,8 +140,8 @@ struct boss_nazanAI : public ScriptedAI
                 flight = false;
                 BellowingRoar_Timer = 6000;
                 ConeOfFire_Timer = 12000;
-                me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
-                me->AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+                me->SetLevitate(false);
+                me->SetWalk(true);
                 me->GetMotionMaster()->Clear();
                 if (Unit* victim = SelectUnit(SELECT_TARGET_NEAREST, 0))
                     me->AI()->AttackStart(victim);
@@ -390,7 +390,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
         if (summoned->GetEntry() == ENTRY_NAZAN)
         {
             ((boss_nazanAI*)summoned->AI())->VazrudenGUID = VazrudenGUID;
-            summoned->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+            summoned->SetLevitate(true);
             summoned->SetSpeed(MOVE_FLIGHT, 2.5f);
             if (victim)
                 summoned->AI()->AttackStart(victim);

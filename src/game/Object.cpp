@@ -38,10 +38,10 @@
 #include "CellImpl.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
-
 #include "TemporarySummon.h"
 #include "Totem.h"
 #include "OutdoorPvPMgr.h"
+#include "packet_builder.h"
 
 uint32 GuidHigh2TypeId(uint32 guid_hi)
 {
@@ -267,7 +267,6 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
             {
                 moveFlags = ((Unit*)this)->GetUnitMovementFlags();
                 moveFlags &= ~MOVEFLAG_ONTRANSPORT;
-                moveFlags &= ~MOVEFLAG_SPLINE_ENABLED;
             }
             break;
         case TYPEID_PLAYER:
@@ -279,14 +278,6 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
                 else
                     moveFlags &= ~MOVEFLAG_ONTRANSPORT;
 
-                // remove unknown, unused etc flags for now
-                moveFlags &= ~MOVEFLAG_SPLINE_ENABLED;            // will be set manually
-
-                if (ToPlayer()->isInFlight())
-                {
-                    ASSERT(const_cast<Player*>(ToPlayer())->GetMotionMaster()->GetCurrentMovementGeneratorType() == FLIGHT_MOTION_TYPE);
-                    moveFlags = (MOVEFLAG_FORWARD | MOVEFLAG_SPLINE_ENABLED);
-                }
             }
             break;
         }
@@ -388,66 +379,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
 
         // 0x08000000
         if (moveFlags & MOVEFLAG_SPLINE_ENABLED)
-        {
-            if (GetTypeId() != TYPEID_PLAYER)
-            {
-                sLog.outDebug("_BuildMovementUpdate: MOVEFLAG_SPLINE_ENABLED for non-player");
-                return;
-            }
-
-            if (!ToPlayer()->isInFlight())
-            {
-                sLog.outDebug("_BuildMovementUpdate: MOVEFLAG_SPLINE_ENABLED but not in flight");
-                return;
-            }
-
-            ASSERT(const_cast<Player*>(ToPlayer())->GetMotionMaster()->GetCurrentMovementGeneratorType() == FLIGHT_MOTION_TYPE);
-
-            FlightPathMovementGenerator* fmg = (FlightPathMovementGenerator*)(const_cast<Player*>(ToPlayer())->GetMotionMaster()->top());
-
-            uint32 flags3 = 0x00000300;
-
-            *data << uint32(flags3);                        // splines flag?
-
-            if (flags3 & 0x10000)                            // probably x,y,z coords there
-            {
-                *data << (float)0;
-                *data << (float)0;
-                *data << (float)0;
-            }
-
-            if (flags3 & 0x20000)                            // probably guid there
-                *data << uint64(0);
-
-            if (flags3 & 0x40000)                            // may be orientation
-                *data << (float)0;
-
-            TaxiPathNodeList& path = const_cast<TaxiPathNodeList&>(fmg->GetPath());
-
-            float x, y, z;
-            ToPlayer()->GetPosition(x, y, z);
-
-            uint32 inflighttime = uint32(path.GetPassedLength(fmg->GetCurrentNode(), x, y, z) * 32);
-            uint32 traveltime = uint32(path.GetTotalLength() * 32);
-
-            *data << uint32(inflighttime);                  // passed move time?
-            *data << uint32(traveltime);                    // full move time?
-            *data << uint32(0);                             // ticks count?
-
-            uint32 poscount = uint32(path.Size());
-            *data << uint32(poscount);                      // points count
-
-            for (uint32 i = 0; i < poscount; ++i)
-            {
-                *data << path[i].x;
-                *data << path[i].y;
-                *data << path[i].z;
-            }
-
-            *data << path[poscount - 1].x;
-            *data << path[poscount - 1].y;
-            *data << path[poscount - 1].z;
-        }
+            Movement::PacketBuilder::WriteCreate(*((Unit*)this)->movespline, *data);
     }
 
     // 0x8

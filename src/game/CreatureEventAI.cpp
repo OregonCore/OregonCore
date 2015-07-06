@@ -504,7 +504,8 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
                     {
                         switch (me->GetMotionMaster()->GetCurrentMovementGeneratorType())
                         {
-                            case TARGETED_MOTION_TYPE:
+                            case CHASE_MOTION_TYPE:
+                            case FOLLOW_MOTION_TYPE:
                             case ASSISTANCE_MOTION_TYPE:
                             case IDLE_MOTION_TYPE:
                                 SetCombatMovement(true);
@@ -653,7 +654,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
 
         if (CombatMovementEnabled)
         {
-            if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == TARGETED_MOTION_TYPE)
+            if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() & TARGETED_MOTION_TYPE)
             {
                 me->GetMotionMaster()->Clear(false);
                 me->GetMotionMaster()->MoveChase(me->getVictim(), AttackDistance, AttackAngle);

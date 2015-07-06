@@ -18,21 +18,26 @@
 #include "HomeMovementGenerator.h"
 #include "Creature.h"
 #include "CreatureAI.h"
-#include "Traveller.h"
 #include "MapManager.h"
 #include "ObjectAccessor.h"
-#include "DestinationHolderImp.h"
 #include "WorldPacket.h"
+#include "MoveSplineInit.h"
+#include "MoveSpline.h"
 
 void HomeMovementGenerator<Creature>::Initialize(Creature& owner)
 {
-    owner.RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
     _setTargetLocation(owner);
 }
 
 void HomeMovementGenerator<Creature>::Finalize(Creature & owner)
 {
     owner.ClearUnitState(UNIT_STATE_EVADE);
+    if (arrived)
+    {
+        owner.SetWalk(!owner.HasUnitState(UNIT_STATE_RUNNING_STATE) && !owner.IsLevitating());
+        owner.LoadCreaturesAddon(true);
+        owner.AI()->JustReachedHome();
+    }
 }
 
 void HomeMovementGenerator<Creature>::Reset(Creature&)
@@ -46,49 +51,23 @@ HomeMovementGenerator<Creature>::_setTargetLocation(Creature& owner)
         return;
 
     float x, y, z;
+    Movement::MoveSplineInit init(owner);
+
     owner.GetHomePosition(x, y, z, ori);
 
-    CreatureTraveller traveller(owner);
+    init.SetFacing(ori);
+    init.MoveTo(x, y, z, true);
+    init.SetWalk(false);
+    init.Launch();
 
-    i_destinationHolder.SetDestination(traveller, x, y, z, false);
-
-    PathInfo path(&owner, x, y, z, true);
-    PointPath pointPath = path.getFullPath();
-
-    float speed = traveller.Speed() * 0.001f; // in ms
-    uint32 traveltime = uint32(pointPath.GetTotalLength() / speed);
-    modifyTravelTime(traveltime);
-    owner.SendMonsterMoveByPath(pointPath, 1, pointPath.size(), traveltime);
-
+    arrived = false;
     owner.ClearUnitState(UNIT_STATE_ALL_STATE);
 }
 
 bool
 HomeMovementGenerator<Creature>::Update(Creature& owner, const uint32& time_diff)
 {
-    CreatureTraveller traveller(owner);
-    i_destinationHolder.UpdateTraveller(traveller, time_diff);
-
-    if (time_diff > i_travel_timer)
-    {
-        owner.AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
-
-        // restore orientation of not moving creature at returning to home
-        if (owner.GetDefaultMovementType() == IDLE_MOTION_TYPE)
-        {
-            owner.SetOrientation(ori);
-            WorldPacket packet;
-            owner.BuildHeartBeatMsg(&packet);
-            owner.SendMessageToSet(&packet, false);
+    arrived = owner.movespline->Finalized();
+    return !arrived;
         }
-
-        owner.LoadCreaturesAddon(true);
-        owner.AI()->JustReachedHome();
-        return false;
-    }
-
-    i_travel_timer -= time_diff;
-
-    return true;
-}
 

@@ -620,7 +620,7 @@ struct mob_hatchlingAI : public ScriptedAI
         else
             me->GetMotionMaster()->MovePoint(0, hatcherway[1][3][0] + rand() % 4 - 2, 1150 + rand() % 4 - 2, hatcherway[1][3][2]);
 
-        me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
+        me->SetLevitate(true);
     }
 
     void EnterCombat(Unit* /*who*/)

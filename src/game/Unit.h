@@ -33,7 +33,6 @@
 #include "Utilities/EventProcessor.h"
 #include "MotionMaster.h"
 #include "DBCStructure.h"
-#include "Path.h"
 #include <list>
 
 #define WORLD_TRIGGER   12999
@@ -433,6 +432,7 @@ enum UnitState
     UNIT_STATE_EVADE           = 0x00400000,
     UNIT_STATE_IGNORE_PATHFINDING    = 0x00800000,
     UNIT_STATE_MOVING          = (UNIT_STATE_ROAMING | UNIT_STATE_CHASE),
+    UNIT_STATE_RUNNING_STATE   = (UNIT_STATE_CHASE | UNIT_STATE_FLEEING),
     UNIT_STATE_LOST_CONTROL    = (UNIT_STATE_CONFUSED | UNIT_STATE_STUNNED | UNIT_STATE_FLEEING | UNIT_STATE_CHARGING),
     UNIT_STATE_SIGHTLESS       = (UNIT_STATE_LOST_CONTROL),
     UNIT_STATE_CANNOT_AUTOATTACK     = (UNIT_STATE_LOST_CONTROL | UNIT_STATE_CASTING),
@@ -852,6 +852,11 @@ enum ReactiveType
     REACTIVE_CRIT         = 3,
     REACTIVE_HUNTER_CRIT  = 4,
     REACTIVE_OVERPOWER    = 5
+};
+
+enum
+{
+    POSITION_UPDATE_DELAY = 400,
 };
 
 #define MAX_REACTIVE 6
@@ -1427,18 +1432,7 @@ class Unit : public WorldObject
 
         void NearTeleportTo(float x, float y, float z, float orientation, bool casting = false);
         void SendTeleportPacket(Position& pos);
-        void SendMonsterStop();
-        void SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 Time, Player* player = NULL);
-        void SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 MoveFlags, uint32 time, float speedZ, Player* player = NULL);
 
-        void MonsterMoveByPath(float x, float y, float z, uint32 speed, bool forceDest = false);
-        template<typename PathElem, typename PathNode>
-        void MonsterMoveByPath(Path<PathElem, PathNode> const& path, uint32 start, uint32 end, uint32 transitTime = 0);
-        template<typename PathElem, typename PathNode>
-        void SendMonsterMoveByPath(Path<PathElem, PathNode> const& path, uint32 start, uint32 end, uint32 traveltime);
-
-        void SendMonsterMoveWithSpeed(float x, float y, float z, uint32 transitTime = 0, Player* player = NULL);
-        void SendMonsterMoveWithSpeedToCurrentDestination(Player* player = NULL);
         void SendMovementFlagUpdate(bool self = false);
 
         void BuildHeartBeatMsg(WorldPacket* data) const;
@@ -1989,7 +1983,7 @@ class Unit : public WorldObject
         void SetSpeed(UnitMoveType mtype, float rate, bool forced = false);
         float m_TempSpeed;
 
-        void SetHover(bool on);
+        virtual void SetHover(bool apply) {}
         bool isHover() const
         {
             return HasAuraType(SPELL_AURA_HOVER);
@@ -2024,7 +2018,8 @@ class Unit : public WorldObject
         {
             return !(HasUnitState(UNIT_STATE_MOVING));
         }
-        void StopMoving();
+        void StopMoving(bool forceSendStop = false);
+        void InterruptMoving(bool forceSendStop = false);
 
         void AddUnitMovementFlag(uint32 f) { m_movementInfo.moveFlags |= f; }
         void RemoveUnitMovementFlag(uint32 f) { m_movementInfo.moveFlags &= ~f; }
@@ -2032,11 +2027,17 @@ class Unit : public WorldObject
         uint32 GetUnitMovementFlags() const { return m_movementInfo.moveFlags; }
         void SetUnitMovementFlags(uint32 f) { m_movementInfo.moveFlags = f; }
 
+        Movement::MoveSpline* movespline;
+
         void SetControlled(bool apply, UnitState state);
         void SetFeared(bool apply/*, uint64 casterGUID = 0, uint32 spellID = 0*/);
         void SetConfused(bool apply/*, uint64 casterGUID = 0, uint32 spellID = 0*/);
         void SetStunned(bool apply);
-        void SetRooted(bool apply);
+        virtual void SetRooted(bool apply) {}
+        virtual void SetFeatherFall(bool apply) {}
+
+        void MonsterMoveWithSpeed(float x, float y, float z, float speed, bool generatePath = false, bool forceDestination = false);
+        void SendMonsterMoveWithSpeedToCurrentDestination(float speed);
 
         void AddComboPointHolder(uint32 lowguid)
         {
@@ -2097,9 +2098,15 @@ class Unit : public WorldObject
             return PET_FOLLOW_ANGLE;
         }
 
+        bool IsLevitating() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_LEVITATING); }
+        bool IsWalking() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE); }
+        bool IsRooted() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_ROOT); }
+
         void SetFlying(bool apply);
-        void SetWalk(bool apply);
-        void SetLevitate(bool apply);
+        virtual void SetSwim(bool /*apply*/) {}
+        virtual void SetLevitate(bool /*apply*/) {}
+        virtual void SetCanFly(bool /*apply*/) {}
+        virtual void SetWaterWalk(bool /*apply*/) {}
 
         bool IsAIEnabled, NeedChangeAI;
         uint64 LastCharmerGUID;
@@ -2177,6 +2184,8 @@ class Unit : public WorldObject
 
         ThreatManager m_ThreatManager;
 
+        void DisableSpline();
+
     private:
         bool IsTriggeredAtSpellProcEvent(Unit* pVictim, Aura* aura, SpellEntry const* procSpell, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, bool isVictim, bool active, SpellProcEventEntry const*& spellProcEvent);
         bool HandleDummyAuraProc(  Unit* pVictim, uint32 damage, Aura* triggredByAura, SpellEntry const* procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown);
@@ -2190,6 +2199,8 @@ class Unit : public WorldObject
         uint32 m_lastManaUse;                               // msecs
 
         Spell* m_currentSpells[CURRENT_MAX_SPELL];
+
+        TimeTrackerSmall m_movesplineTimer;
 
         UnitVisibility m_Visibility;
 
@@ -2209,6 +2220,8 @@ class Unit : public WorldObject
         uint32 m_procDeep;
 
         time_t _lastDamagedTime; // Part of Evade mechanics
+
+        void UpdateSplineMovement(uint32 t_diff);
 };
 
 namespace Oregon

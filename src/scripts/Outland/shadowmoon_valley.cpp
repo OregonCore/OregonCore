@@ -102,7 +102,7 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
         {
             float PlayerX, PlayerY, PlayerZ;
             caster->GetClosePoint(PlayerX, PlayerY, PlayerZ, me->GetObjectSize());
-            me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+            me->SetLevitate(true);
             me->GetMotionMaster()->MovePoint(1, PlayerX, PlayerY, PlayerZ);
             PlayerGUID = caster->GetGUID();
         }
@@ -118,7 +118,7 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
             IsEating = true;
             EatTimer = 5000;
             me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_ATTACKUNARMED);
-            me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+            me->SetLevitate(false);
         }
     }
 
@@ -209,7 +209,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
             me->setFaction(FACTION_DEFAULT);
 
         FlyTimer = 10000;
-        me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+        me->SetLevitate(false);
         me->SetVisibility(VISIBILITY_ON);
     }
 
@@ -258,7 +258,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
                 PlayerGUID = 0;
             }
             me->SetVisibility(VISIBILITY_OFF);
-            me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+            me->SetLevitate(false);
             me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             me->RemoveCorpse();
         }
@@ -296,7 +296,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
                                 pos.m_positionZ += 25;
                             }
 
-                            me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+                            me->SetLevitate(true);
                             me->GetMotionMaster()->MovePoint(1, pos);
                         }
                     }
@@ -349,7 +349,7 @@ struct mob_dragonmaw_peonAI : public ScriptedAI
             float x, y, z;
             caster->GetClosePoint(x, y, z, me->GetObjectSize());
 
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(false);
             me->GetMotionMaster()->MovePoint(1, x, y, z);
         }
     }
@@ -843,7 +843,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
             break;
         case 20:
             Illi->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-            Illi->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+            Illi->SetLevitate(true);
             return 500;
             break;
         case 21:
