@@ -272,6 +272,12 @@ void WorldSession::HandleGroupUninviteGuidOpcode(WorldPacket& recv_data)
     if (!grp)
         return;
 
+    if (grp->IsLeader(guid))
+    {
+        SendPartyResult(PARTY_OP_LEAVE, "", PARTY_RESULT_YOU_NOT_LEADER);
+        return;
+    }
+
     if (grp->IsMember(guid))
     {
         Player::RemoveFromGroup(grp, guid);
