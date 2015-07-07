@@ -34,6 +34,8 @@ void PointMovementGenerator<T>::Initialize(T& unit)
     unit.AddUnitState(UNIT_STATE_ROAMING);
     Movement::MoveSplineInit init(unit);
     init.MoveTo(i_x, i_y, i_z, m_usePathfinding);
+    if (speed > 0.0f)
+        init.SetVelocity(speed);
     init.Launch();
 }
 
@@ -81,11 +83,6 @@ void PointMovementGenerator<T>::MovementInform(T& /*unit*/)
 
 template <> void PointMovementGenerator<Creature>::MovementInform(Creature& unit)
 {
-    if (id == EVENT_FALL_GROUND)
-    {
-        unit.setDeathState(JUST_DIED);
-        unit.SetFlying(true);
-    }
     unit.AI()->MovementInform(POINT_MOTION_TYPE, id);
 }
 

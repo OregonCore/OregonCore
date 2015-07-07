@@ -1981,7 +1981,6 @@ class Unit : public WorldObject
             return m_speed_rate[mtype];
         }
         void SetSpeed(UnitMoveType mtype, float rate, bool forced = false);
-        float m_TempSpeed;
 
         virtual void SetHover(bool apply) {}
         bool isHover() const
