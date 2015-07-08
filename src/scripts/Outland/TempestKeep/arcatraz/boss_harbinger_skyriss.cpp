@@ -30,41 +30,45 @@ EndContentData */
 #include "ScriptPCH.h"
 #include "arcatraz.h"
 
-#define SAY_INTRO               -1552000
-#define SAY_AGGRO               -1552001
-#define SAY_KILL_1              -1552002
-#define SAY_KILL_2              -1552003
-#define SAY_MIND_1              -1552004
-#define SAY_MIND_2              -1552005
-#define SAY_FEAR_1              -1552006
-#define SAY_FEAR_2              -1552007
-#define SAY_IMAGE               -1552008
-#define SAY_DEATH               -1552009
+enum Says
+{
+    SAY_INTRO              = -1552000,
+    SAY_AGGRO              = -1552001,
+    SAY_KILL_1             = -1552002,
+    SAY_KILL_2             = -1552003,
+    SAY_MIND_1             = -1552004,
+    SAY_MIND_2             = -1552005,
+    SAY_FEAR_1             = -1552006,
+    SAY_FEAR_2             = -1552007,
+    SAY_IMAGE              = -1552008,
+    SAY_DEATH              = -1552009
+};
 
-#define SPELL_FEAR              39415
+enum Spells
+{
+    SPELL_FEAR             = 39415,
 
-#define SPELL_MIND_REND         36924
-#define H_SPELL_MIND_REND       39017
+    SPELL_MIND_REND        = 36924,
+    H_SPELL_MIND_REND      = 39017,
 
-#define SPELL_DOMINATION        37162
-#define H_SPELL_DOMINATION      39019
+    SPELL_DOMINATION       = 37162,
+    H_SPELL_DOMINATION     = 39019,
 
-#define H_SPELL_MANA_BURN       39020
+    H_SPELL_MANA_BURN      = 39020,
 
-#define SPELL_66_ILLUSION       36931                       //entry 21466
-#define SPELL_33_ILLUSION       36932                       //entry 21467
+    SPELL_66_ILLUSION      = 36931,                      //entry 21466
+    SPELL_33_ILLUSION      = 36932                       //entry 21467
+};
 
 struct boss_harbinger_skyrissAI : public ScriptedAI
 {
     boss_harbinger_skyrissAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
-        HeroicMode = me->GetMap()->IsHeroic();
+        instance = c->GetInstanceData();
         Intro = false;
     }
 
-    ScriptedInstance* pInstance;
-    bool HeroicMode;
+    ScriptedInstance* instance;
 
     bool Intro;
     bool IsImage33;
@@ -105,8 +109,8 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
     void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
-        if (pInstance)
-            pInstance->SetData(TYPE_HARBINGERSKYRISS, DONE);
+        if (instance)
+            instance->SetData(DATA_HARBINGERSKYRISS, DONE);
     }
 
     void JustSummoned(Creature* summon)
@@ -125,7 +129,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
     void KilledUnit(Unit* victim)
     {
         //won't yell killing pet/other unit
-        if (victim->GetEntry() == 21436)
+        if (victim->GetEntry() == NPC_ALPHA_POD_TARGET)
             return;
 
         switch (rand() % 2)
@@ -156,7 +160,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
     {
         if (!Intro)
         {
-            if (!pInstance)
+            if (!instance)
                 return;
 
             if (Intro_Timer <= diff)
@@ -165,19 +169,19 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
                 {
                 case 1:
                     DoScriptText(SAY_INTRO, me);
-                    if (GameObject* Sphere = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SPHERE_SHIELD)))
+                    if (GameObject* Sphere = GameObject::GetGameObject(*me, instance->GetData64(DATA_SPHERE_SHIELD)))
                         Sphere->SetGoState(GO_STATE_ACTIVE);
                     ++Intro_Phase;
                     Intro_Timer = 25000;
                     break;
                 case 2:
                     DoScriptText(SAY_AGGRO, me);
-                    if (Unit* mellic = Unit::GetUnit(*me, pInstance->GetData64(DATA_MELLICHAR)))
+                    if (Unit* mellic = Unit::GetUnit(*me, instance->GetData64(DATA_MELLICHAR)))
                     {
                         //should have a better way to do this. possibly spell exist.
                         mellic->setDeathState(JUST_DIED);
                         mellic->SetHealth(0);
-                        pInstance->SetData(TYPE_SHIELD_OPEN, IN_PROGRESS);
+                        instance->SetData(DATA_SHIELD_OPEN, IN_PROGRESS);
                     }
                     ++Intro_Phase;
                     Intro_Timer = 3000;
@@ -288,28 +292,29 @@ CreatureAI* GetAI_boss_harbinger_skyriss(Creature* pCreature)
     return new boss_harbinger_skyrissAI (pCreature);
 }
 
-#define SPELL_MIND_REND_IMAGE   36929
-#define H_SPELL_MIND_REND_IMAGE 39021
+enum IllusionSpells
+{
+    SPELL_MIND_REND_IMAGE   = 36929,
+    H_SPELL_MIND_REND_IMAGE = 39021
+};
 
 struct boss_harbinger_skyriss_illusionAI : public ScriptedAI
 {
     boss_harbinger_skyriss_illusionAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
-        HeroicMode = me->GetMap()->IsHeroic();
+        instance = c->GetInstanceData();
     }
 
-    ScriptedInstance* pInstance;
-    bool HeroicMode;
+    ScriptedInstance* instance;
 
     void Reset() { }
 
     void EnterCombat(Unit* /*who*/) { }
 };
 
-CreatureAI* GetAI_boss_harbinger_skyriss_illusion(Creature* pCreature)
+CreatureAI* GetAI_boss_harbinger_skyriss_illusion(Creature* c)
 {
-    return new boss_harbinger_skyriss_illusionAI (pCreature);
+    return new boss_harbinger_skyriss_illusionAI (c);
 }
 
 void AddSC_boss_harbinger_skyriss()

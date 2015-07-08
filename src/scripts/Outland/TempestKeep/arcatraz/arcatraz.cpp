@@ -89,10 +89,10 @@ struct npc_millhouse_manastormAI : public ScriptedAI
 
         if (pInstance)
         {
-            if (pInstance->GetData(TYPE_WARDEN_2) == DONE)
+            if (pInstance->GetData(DATA_WARDEN_2) == DONE)
                 Init = true;
 
-            if (pInstance->GetData(TYPE_HARBINGERSKYRISS) == DONE)
+            if (pInstance->GetData(DATA_HARBINGERSKYRISS) == DONE)
                 DoScriptText(SAY_COMPLETE, me);
         }
     }
@@ -131,7 +131,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI
         DoScriptText(SAY_DEATH, me);
 
         /*for questId 10886 (heroic mode only)
-        if (pInstance && pInstance->GetData(TYPE_HARBINGERSKYRISS) != DONE)
+        if (pInstance && pInstance->GetData(DATA_HARBINGERSKYRISS) != DONE)
             ->FailQuest();*/
     }
 
@@ -174,7 +174,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI
                         break;
                     case 7:
                         if (pInstance)
-                            pInstance->SetData(TYPE_WARDEN_2, DONE);
+                            pInstance->SetData(DATA_WARDEN_2, DONE);
                         Init = true;
                         break;
                     }
@@ -283,7 +283,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
         DoCast(me, SPELL_TARGET_OMEGA);
 
         if (pInstance)
-            pInstance->SetData(TYPE_HARBINGERSKYRISS, NOT_STARTED);
+            pInstance->SetData(DATA_HARBINGERSKYRISS, NOT_STARTED);
     }
 
     void AttackStart(Unit* /*who*/) { }
@@ -313,7 +313,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
 
         if (pInstance)
         {
-            pInstance->SetData(TYPE_HARBINGERSKYRISS, IN_PROGRESS);
+            pInstance->SetData(DATA_HARBINGERSKYRISS, IN_PROGRESS);
             if (GameObject* Sphere = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SPHERE_SHIELD)))
                 Sphere->SetGoState(GO_STATE_READY);
             IsRunning = true;
@@ -324,19 +324,19 @@ struct npc_warden_mellicharAI : public ScriptedAI
     {
         if (pInstance)
         {
-            if (Phase == 7 && pInstance->GetData(TYPE_WARDEN_4) == DONE)
+            if (Phase == 7 && pInstance->GetData(DATA_WARDEN_4) == DONE)
                 return true;
-            if (Phase == 6 && pInstance->GetData(TYPE_WARDEN_3) == DONE)
+            if (Phase == 6 && pInstance->GetData(DATA_WARDEN_3) == DONE)
                 return true;
-            if (Phase == 5 && pInstance->GetData(TYPE_WARDEN_2) == DONE)
+            if (Phase == 5 && pInstance->GetData(DATA_WARDEN_2) == DONE)
                 return true;
             if (Phase == 4)
                 return true;
-            if (Phase == 3 && pInstance->GetData(TYPE_WARDEN_1) == DONE)
+            if (Phase == 3 && pInstance->GetData(DATA_WARDEN_1) == DONE)
                 return true;
-            if (Phase == 2 && pInstance->GetData(TYPE_HARBINGERSKYRISS) == IN_PROGRESS)
+            if (Phase == 2 && pInstance->GetData(DATA_HARBINGERSKYRISS) == IN_PROGRESS)
                 return true;
-            if (Phase == 1 && pInstance->GetData(TYPE_HARBINGERSKYRISS) == IN_PROGRESS)
+            if (Phase == 1 && pInstance->GetData(DATA_HARBINGERSKYRISS) == IN_PROGRESS)
                 return true;
             return false;
         }
@@ -354,24 +354,24 @@ struct npc_warden_mellicharAI : public ScriptedAI
             {
             case 2:
                 DoCast(me, SPELL_TARGET_ALPHA);
-                pInstance->SetData(TYPE_WARDEN_1, IN_PROGRESS);
+                pInstance->SetData(DATA_WARDEN_1, IN_PROGRESS);
                 if (GameObject* Sphere = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SPHERE_SHIELD)))
                     Sphere->SetGoState(GO_STATE_READY);
                 break;
             case 3:
                 DoCast(me, SPELL_TARGET_BETA);
-                pInstance->SetData(TYPE_WARDEN_2, IN_PROGRESS);
+                pInstance->SetData(DATA_WARDEN_2, IN_PROGRESS);
                 break;
             case 5:
                 DoCast(me, SPELL_TARGET_DELTA);
-                pInstance->SetData(TYPE_WARDEN_3, IN_PROGRESS);
+                pInstance->SetData(DATA_WARDEN_3, IN_PROGRESS);
                 break;
             case 6:
                 DoCast(me, SPELL_TARGET_GAMMA);
-                pInstance->SetData(TYPE_WARDEN_4, IN_PROGRESS);
+                pInstance->SetData(DATA_WARDEN_4, IN_PROGRESS);
                 break;
             case 7:
-                pInstance->SetData(TYPE_WARDEN_5, IN_PROGRESS);
+                pInstance->SetData(DATA_WARDEN_5, IN_PROGRESS);
                 break;
             }
             CanSpawn = true;
@@ -387,7 +387,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
         {
             if (pInstance)
             {
-                if (pInstance->GetData(TYPE_HARBINGERSKYRISS) == FAIL)
+                if (pInstance->GetData(DATA_HARBINGERSKYRISS) == FAIL)
                     Reset();
             }
 

@@ -18,17 +18,46 @@
 #ifndef DEF_ARCATRAZ_H
 #define DEF_ARCATRAZ_H
 
-#define TYPE_ZEREKETH           1
-#define TYPE_DALLIAH            2
-#define TYPE_SOCCOTHRATES       3
-#define TYPE_HARBINGERSKYRISS   4
-#define TYPE_WARDEN_1           5
-#define TYPE_WARDEN_2           6
-#define TYPE_WARDEN_3           7
-#define TYPE_WARDEN_4           8
-#define TYPE_WARDEN_5           9
-#define DATA_MELLICHAR          10
-#define TYPE_SHIELD_OPEN        11
-#define DATA_SPHERE_SHIELD      12
-#endif
+uint32 const EncounterCount               = 13;
 
+#define AScriptName "instance_arcatraz"
+
+enum DataTypes
+{
+    DATA_ZEREKETH                         = 1,
+    DATA_DALLIAH                          = 2,
+    DATA_SOCCOTHRATES                     = 3,
+    DATA_HARBINGERSKYRISS                 = 4,
+    DATA_WARDEN_1                         = 5,
+    DATA_WARDEN_2                         = 6,
+    DATA_WARDEN_3                         = 7,
+    DATA_WARDEN_4                         = 8,
+    DATA_WARDEN_5                         = 9,
+    DATA_MELLICHAR                        = 10,
+    DATA_SHIELD_OPEN                      = 11,
+    DATA_SPHERE_SHIELD                    = 12,
+    DATA_CONVERSATION                     = 13
+};
+
+enum CreaturesIds
+{
+    NPC_MELLICHAR                         = 20904, //skyriss will kill this unit
+    NPC_ALPHA_POD_TARGET                  = 21436,
+    NPC_DALLIAH                           = 20885,
+    NPC_SOCCOTHRATES                      = 20886
+};
+
+enum GameObjectsIds
+{
+    CONTAINMENT_CORE_SECURITY_FIELD_ALPHA = 184318, //door opened when Wrath-Scryer Soccothrates dies
+    CONTAINMENT_CORE_SECURITY_FIELD_BETA  = 184319, //door opened when Dalliah the Doomsayer dies
+    POD_ALPHA                             = 183961, //pod first boss wave
+    POD_BETA                              = 183963, //pod second boss wave
+    POD_DELTA                             = 183964, //pod third boss wave
+    POD_GAMMA                             = 183962, //pod fourth boss wave
+    POD_OMEGA                             = 183965, //pod fifth boss wave
+    WARDENS_SHIELD                        = 184802, // warden shield
+    SEAL_SPHERE                           = 184802  //shield 'protecting' mellichar
+};
+
+#endif

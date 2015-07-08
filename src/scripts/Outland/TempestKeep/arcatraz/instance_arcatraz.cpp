@@ -25,21 +25,6 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "arcatraz.h"
 
-#define ENCOUNTERS 9
-
-#define CONTAINMENT_CORE_SECURITY_FIELD_ALPHA 184318        //door opened when Wrath-Scryer Soccothrates dies
-#define CONTAINMENT_CORE_SECURITY_FIELD_BETA  184319        //door opened when Dalliah the Doomsayer dies
-#define POD_ALPHA   183961                                  //pod first boss wave
-#define POD_BETA    183963                                  //pod second boss wave
-#define POD_DELTA   183964                                  //pod third boss wave
-#define POD_GAMMA   183962                                  //pod fourth boss wave
-#define POD_OMEGA   183965                                  //pod fifth boss wave
-#define WARDENS_SHIELD  184802                              // warden shield
-#define SEAL_SPHERE 184802                                  //shield 'protecting' mellichar
-
-#define MELLICHAR   20904                                   //skyriss will kill this unit
-
-
 /* Arcatraz encounters:
 1 - Zereketh the Unbound event
 2 - Dalliah the Doomsayer event
@@ -54,7 +39,7 @@ struct instance_arcatraz : public ScriptedInstance
         Initialize();
     };
 
-    uint32 Encounter[ENCOUNTERS];
+    uint32 Encounter[EncounterCount];
 
     GameObject* Containment_Core_Security_Field_Alpha;
     GameObject* Containment_Core_Security_Field_Beta;
@@ -82,13 +67,13 @@ struct instance_arcatraz : public ScriptedInstance
         GoSphereGUID = 0;
         MellicharGUID = 0;
 
-        for (uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < EncounterCount; i++)
             Encounter[i] = NOT_STARTED;
     }
 
     bool IsEncounterInProgress() const
     {
-        for (uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < EncounterCount; i++)
             if (Encounter[i] == IN_PROGRESS)
                 return true;
 
@@ -129,7 +114,7 @@ struct instance_arcatraz : public ScriptedInstance
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        if (pCreature->GetEntry() == MELLICHAR)
+        if (pCreature->GetEntry() == NPC_MELLICHAR)
             MellicharGUID = pCreature->GetGUID();
     }
 
@@ -137,25 +122,25 @@ struct instance_arcatraz : public ScriptedInstance
     {
         switch (type)
         {
-        case TYPE_ZEREKETH:
+        case DATA_ZEREKETH:
             Encounter[0] = data;
             break;
 
-        case TYPE_DALLIAH:
+        case DATA_DALLIAH:
             if (data == DONE)
                 if (Containment_Core_Security_Field_Beta)
                     Containment_Core_Security_Field_Beta->UseDoorOrButton();
             Encounter[1] = data;
             break;
 
-        case TYPE_SOCCOTHRATES:
+        case DATA_SOCCOTHRATES:
             if (data == DONE)
                 if (Containment_Core_Security_Field_Alpha)
                     Containment_Core_Security_Field_Alpha->UseDoorOrButton();
             Encounter[2] = data;
             break;
 
-        case TYPE_HARBINGERSKYRISS:
+        case DATA_HARBINGERSKYRISS:
             if (data == NOT_STARTED || data == FAIL)
             {
                 Encounter[4] = NOT_STARTED;
@@ -167,45 +152,48 @@ struct instance_arcatraz : public ScriptedInstance
             Encounter[3] = data;
             break;
 
-        case TYPE_WARDEN_1:
+        case DATA_WARDEN_1:
             if (data == IN_PROGRESS)
                 if (Pod_Alpha)
                     Pod_Alpha->UseDoorOrButton();
             Encounter[4] = data;
             break;
 
-        case TYPE_WARDEN_2:
+        case DATA_WARDEN_2:
             if (data == IN_PROGRESS)
                 if (Pod_Beta)
                     Pod_Beta->UseDoorOrButton();
             Encounter[5] = data;
             break;
 
-        case TYPE_WARDEN_3:
+        case DATA_WARDEN_3:
             if (data == IN_PROGRESS)
                 if (Pod_Delta)
                     Pod_Delta->UseDoorOrButton();
             Encounter[6] = data;
             break;
 
-        case TYPE_WARDEN_4:
+        case DATA_WARDEN_4:
             if (data == IN_PROGRESS)
                 if (Pod_Gamma)
                     Pod_Gamma->UseDoorOrButton();
             Encounter[7] = data;
             break;
 
-        case TYPE_WARDEN_5:
+        case DATA_WARDEN_5:
             if (data == IN_PROGRESS)
                 if (Pod_Omega)
                     Pod_Omega->UseDoorOrButton();
             Encounter[8] = data;
             break;
 
-        case TYPE_SHIELD_OPEN:
+        case DATA_SHIELD_OPEN:
             if (data == IN_PROGRESS)
                 if (Wardens_Shield)
                     Wardens_Shield->UseDoorOrButton();
+            break;
+        case DATA_CONVERSATION:
+            Encounter[12] = data;
             break;
         }
     }
@@ -214,18 +202,13 @@ struct instance_arcatraz : public ScriptedInstance
     {
         switch (type)
         {
-        case TYPE_HARBINGERSKYRISS:
-            return Encounter[3];
-        case TYPE_WARDEN_1:
-            return Encounter[4];
-        case TYPE_WARDEN_2:
-            return Encounter[5];
-        case TYPE_WARDEN_3:
-            return Encounter[6];
-        case TYPE_WARDEN_4:
-            return Encounter[7];
-        case TYPE_WARDEN_5:
-            return Encounter[8];
+            case DATA_HARBINGERSKYRISS: return Encounter[3];
+            case DATA_WARDEN_1:         return Encounter[4];
+            case DATA_WARDEN_2:         return Encounter[5];
+            case DATA_WARDEN_3:         return Encounter[6];
+            case DATA_WARDEN_4:         return Encounter[7];
+            case DATA_WARDEN_5:         return Encounter[8];
+            case DATA_CONVERSATION:     return Encounter[12];
         }
         return 0;
     }
