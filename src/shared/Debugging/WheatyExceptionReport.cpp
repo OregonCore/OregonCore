@@ -746,6 +746,7 @@ void WheatyExceptionReport::WriteStackDetails(
             #endif
         }
 
+        #if _WIN32_WINNT >= 0x0600 // Vista and higher
         uint64 myMtime = 0;
         {
             TCHAR myFileName[MAX_PATH];
@@ -819,6 +820,7 @@ void WheatyExceptionReport::WriteStackDetails(
 
             }
         }
+        #endif
 
         _tprintf(_T("\r\n"));
 
