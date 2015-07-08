@@ -111,20 +111,13 @@ struct instance_the_eye : public ScriptedInstance
     {
         switch (identifier)
         {
-        case DATA_THALADREDTHEDARKENER:
-            return ThaladredTheDarkener;
-        case DATA_LORDSANGUINAR:
-            return LordSanguinar;
-        case DATA_GRANDASTROMANCERCAPERNIAN:
-            return GrandAstromancerCapernian;
-        case DATA_MASTERENGINEERTELONICUS:
-            return MasterEngineerTelonicus;
-        case DATA_KAELTHAS:
-            return Kaelthas;
-        case DATA_ASTROMANCER:
-            return Astromancer;
-        case DATA_ALAR:
-            return Alar;
+            case DATA_THALADREDTHEDARKENER:         return ThaladredTheDarkener;
+            case DATA_LORDSANGUINAR:                return LordSanguinar;
+            case DATA_GRANDASTROMANCERCAPERNIAN:    return GrandAstromancerCapernian;
+            case DATA_MASTERENGINEERTELONICUS:      return MasterEngineerTelonicus;
+            case DATA_KAELTHAS:                     return Kaelthas;
+            case DATA_ASTROMANCER:                  return Astromancer;
+            case DATA_ALAR:                         return Alar;
         }
         return 0;
     }
@@ -160,14 +153,10 @@ struct instance_the_eye : public ScriptedInstance
     {
         switch (type)
         {
-        case DATA_ALAREVENT:
-            return AlarEventPhase;
-        case DATA_HIGHASTROMANCERSOLARIANEVENT:
-            return Encounters[1];
-        case DATA_VOIDREAVEREVENT:
-            return Encounters[2];
-        case DATA_KAELTHASEVENT:
-            return KaelthasEventPhase;
+            case DATA_ALAREVENT:                        return AlarEventPhase;
+            case DATA_HIGHASTROMANCERSOLARIANEVENT:     return Encounters[1];
+            case DATA_VOIDREAVEREVENT:                  return Encounters[2];
+            case DATA_KAELTHASEVENT:                    return KaelthasEventPhase;
         }
         return 0;
     }
