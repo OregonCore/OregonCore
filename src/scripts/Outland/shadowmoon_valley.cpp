@@ -102,7 +102,6 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
         {
             float PlayerX, PlayerY, PlayerZ;
             caster->GetClosePoint(PlayerX, PlayerY, PlayerZ, me->GetObjectSize());
-            me->SetLevitate(true);
             me->GetMotionMaster()->MovePoint(1, PlayerX, PlayerY, PlayerZ);
             PlayerGUID = caster->GetGUID();
         }
@@ -118,7 +117,6 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
             IsEating = true;
             EatTimer = 5000;
             me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_ATTACKUNARMED);
-            me->SetLevitate(false);
         }
     }
 

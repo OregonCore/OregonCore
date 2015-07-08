@@ -479,17 +479,9 @@ void Creature::UpdateMovementFlags(bool packetOnly)
     bool isInAir = (G3D::fuzzyGt(GetPositionZ(), ground + 0.05f) || G3D::fuzzyLt(GetPositionZ(), ground - 0.05f)); // Can be underground too, prevent the falling
 
     if (GetCreatureTemplate()->InhabitType & INHABIT_AIR && isInAir && !IsFalling())
-    {
-        if (GetCreatureTemplate()->InhabitType & INHABIT_GROUND)
-            SetCanFly(true, packetOnly);
+        SetLevitate(true, packetOnly);
         else
-            SetLevitate(true, packetOnly);
-    }
-    else
-    {
-        SetCanFly(false);
         SetLevitate(false);
-    }
 
     if (!isInAir)
         RemoveUnitMovementFlag(MOVEFLAG_FALLING);
