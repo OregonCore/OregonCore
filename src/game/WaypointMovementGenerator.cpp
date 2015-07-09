@@ -58,6 +58,7 @@ void WaypointMovementGenerator<Creature>::Reset(Creature& /*unit*/)
 template<>
 void WaypointMovementGenerator<Player>::Reset(Player& /*unit*/) {}
 
+template<>
 void WaypointMovementGenerator<Creature>::Interrupt(Creature& creature)
 {
     creature.InterruptMoving();

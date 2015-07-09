@@ -39,7 +39,7 @@ class RandomMovementGenerator
         bool Update(T&, const uint32&);
         void UpdateMapPosition(uint32 mapid, float& x , float& y, float& z)
         {
-            i_destinationHolder.GetLocationNow(mapid, x, y, z);
+            this->i_destinationHolder.GetLocationNow(mapid, x, y, z);
         }
         MovementGeneratorType GetMovementGeneratorType()
         {

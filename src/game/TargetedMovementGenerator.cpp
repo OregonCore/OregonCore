@@ -224,7 +224,7 @@ bool TargetedMovementGeneratorMedium<T, D>::RequiresNewPosition(T& owner, float 
 template<class T>
 void ChaseMovementGenerator<T>::_reachTarget(T& owner)
 {
-    if (owner.IsWithinMeleeRange(i_target.getTarget()))
+    if (owner.IsWithinMeleeRange(this->i_target.getTarget()))
         owner.Attack(this->i_target.getTarget(), true);
 }
 
