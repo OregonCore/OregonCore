@@ -293,7 +293,6 @@ int Master::Run()
 void Master::_StartDB()
 {
     sConsole.SetLoadingLabel("Connecting to databases...");
-    sLog.SetLogDB(false);
 
     // Get world database info from configuration file
     std::string dbstring = sConfig.GetStringDefault("WorldDatabaseInfo", "");
@@ -328,11 +327,6 @@ void Master::_StartDB()
         sLog.outFatal("Realm ID not defined in configuration file");
 
     sLog.outString("Realm running as realm ID %d", realmID);
-
-    // Initialize the DB logging system
-    sLog.SetLogDBLater(sConfig.GetBoolDefault("EnableLogDB", false)); // set var to enable DB logging once startup finished.
-    sLog.SetLogDB(false);
-    sLog.SetRealmID(realmID);
 
     // Clean the database before starting
     clearOnlineAccounts();

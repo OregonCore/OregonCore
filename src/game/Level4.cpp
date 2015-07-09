@@ -534,17 +534,32 @@ bool ChatHandler::HandleAccountCreateCommand(const char* args)
     return true;
 }
 
-// Set the level of logging
-bool ChatHandler::HandleServerSetLogLevelCommand(const char* args)
+// Sets/gets the mask for logging
+bool ChatHandler::HandleServerSetLogMaskCommand(const char* args)
 {
+    // no arguments, retrieve current log masks
     if (!*args)
-        return false;
+    {
+        PSendSysMessage("Current logging mask: %lu", sLog.GetLogMask());
+        PSendSysMessage("Current logging db mask: %lu", sLog.GetDBLogMask());
+        return true;
+    }
 
-    char* NewLevel = strtok((char*)args, " ");
-    if (!NewLevel)
-        return false;
+    // first argument
+    unsigned long mask = strtoul(args, NULL, 0); // recognize base
+    sLog.SetLogMask(mask);
 
-    sLog.SetLogLevel(NewLevel);
+    PSendSysMessage("Logging mask set to %lu", mask);
+
+    // second argument (if set)
+    if ((args = strchr(args, ' ')))
+    {
+        ++args;
+        mask = strtoul(args, NULL, 0); // recognize base
+        sLog.SetDBLogMask(mask);
+
+        PSendSysMessage("Logging db mask set to %lu", mask);
+    }
     return true;
 }
 

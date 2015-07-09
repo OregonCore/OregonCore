@@ -1670,16 +1670,6 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Initialize AuctionHouseBot...", false);
     auctionbot.Initialize();
 
-    // possibly enable db logging; avoid massive startup spam by doing it here.
-    if (sLog.GetLogDBLater())
-    {
-        sConsole.SetLoadingLabel("Enabling database logging...");
-        sLog.SetLogDBLater(false);
-        sLog.SetLogDB(true);
-    }
-    else
-        sLog.SetLogDB(false);
-
     // Delete all characters which have been deleted X days before
     Player::DeleteOldCharacters();
 

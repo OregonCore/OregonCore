@@ -72,6 +72,8 @@ bool stopEvent = false;                                     // Setting it to tru
 
 DatabaseType LoginDatabase;                                 // Accessor to the realm server database
 
+uint32 realmID = 0;
+
 // Print out the usage string for this program on the console.
 void usage(const char* prog)
 {

@@ -59,7 +59,7 @@ ChatCommand* ChatHandler::getCommandTable()
 
     static ChatCommand serverSetCommandTable[] =
     {
-        { "loglevel",       SEC_CONSOLE,        true,  &ChatHandler::HandleServerSetLogLevelCommand,   "", NULL },
+        { "logmask",        SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleServerSetLogMaskCommand,    "", NULL },
         { "difftime",       SEC_CONSOLE,        true,  &ChatHandler::HandleServerSetDiffTimeCommand,   "", NULL },
         { "motd",           SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleServerSetMotdCommand,       "", NULL },
         { NULL,             0,                  false, NULL,                                           "", NULL }

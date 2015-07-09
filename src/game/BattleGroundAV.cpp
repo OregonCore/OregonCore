@@ -1350,22 +1350,22 @@ void BattleGroundAV::AssaultNode(BG_AV_Nodes node, uint16 team)
 {
     if (m_Nodes[node].TotalOwner == team)
     {
-        sLog.outCrash("Assaulting team is TotalOwner of node");
+        sLog.outError("Crash alert! Assaulting team is TotalOwner of node");
         ASSERT(false);
     }
     if (m_Nodes[node].Owner == team)
     {
-        sLog.outCrash("Assaulting team is owner of node");
+        sLog.outError("Crash alert! Assaulting team is owner of node");
         ASSERT(false);
     }
     if (m_Nodes[node].State == POINT_DESTROYED)
     {
-        sLog.outCrash("Destroyed node is being assaulted");
+        sLog.outError("Crash alert! Destroyed node is being assaulted");
         ASSERT(false);
     }
     if (m_Nodes[node].State == POINT_ASSAULTED && m_Nodes[node].TotalOwner) //only assault an assaulted node if no totalowner exists
     {
-        sLog.outCrash("Assault on an not assaulted node with total owner");
+        sLog.outError("Crash alert! Assault on an not assaulted node with total owner");
         ASSERT(false);
     }
     // the timer gets another time, if the previous owner was 0 == Neutral

@@ -1926,7 +1926,7 @@ void Player::RemoveFromWorld()
     {
         if (WorldObject* viewpoint = GetViewpoint())
         {
-            sLog.outCrash("Player %s has viewpoint %u %u when removed from world", GetName(), viewpoint->GetEntry(), viewpoint->GetTypeId());
+            sLog.outError("Crash alert! Player %s has viewpoint %u %u when removed from world", GetName(), viewpoint->GetEntry(), viewpoint->GetTypeId());
             SetViewpoint(viewpoint, false);
         }
     }
@@ -18088,7 +18088,6 @@ void Player::HandleStealthedUnitsDetection()
                 m_clientGUIDs.insert((*i)->GetGUID());
 
                 #ifdef OREGON_DEBUG
-                if ((sLog.getLogFilter() & LOG_FILTER_VISIBILITY_CHANGES) == 0)
                     sLog.outDebug("Object %u (Type: %u) is detected in stealth by player %u. Distance = %f", (*i)->GetGUIDLow(), (*i)->GetTypeId(), GetGUIDLow(), GetDistance(*i));
                 #endif
 
@@ -19306,7 +19305,6 @@ void Player::UpdateVisibilityOf(WorldObject* target)
             m_clientGUIDs.erase(target->GetGUID());
 
             #ifdef OREGON_DEBUG
-            if ((sLog.getLogFilter() & LOG_FILTER_VISIBILITY_CHANGES) == 0)
                 sLog.outDebug("Object %u (Type: %u) out of range for player %u. Distance = %f", target->GetGUIDLow(), target->GetTypeId(), GetGUIDLow(), GetDistance(target));
             #endif
         }
@@ -19320,7 +19318,6 @@ void Player::UpdateVisibilityOf(WorldObject* target)
                 m_clientGUIDs.insert(target->GetGUID());
 
             #ifdef OREGON_DEBUG
-            if ((sLog.getLogFilter() & LOG_FILTER_VISIBILITY_CHANGES) == 0)
                 sLog.outDebug("Object %u (Type: %u) is visible now for player %u. Distance = %f", target->GetGUIDLow(), target->GetTypeId(), GetGUIDLow(), GetDistance(target));
             #endif
 
@@ -19384,7 +19381,6 @@ void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& vi
             m_clientGUIDs.erase(target->GetGUID());
 
             #ifdef OREGON_DEBUG
-            if ((sLog.getLogFilter() & LOG_FILTER_VISIBILITY_CHANGES) == 0)
                 sLog.outDebug("Object %u (Type: %u, Entry: %u) is out of range for player %u. Distance = %f", target->GetGUIDLow(), target->GetTypeId(), target->GetEntry(), GetGUIDLow(), GetDistance(target));
             #endif
         }
@@ -19397,7 +19393,6 @@ void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& vi
             UpdateVisibilityOf_helper(m_clientGUIDs, target, visibleNow);
 
             #ifdef OREGON_DEBUG
-            if ((sLog.getLogFilter() & LOG_FILTER_VISIBILITY_CHANGES) == 0)
                 sLog.outDebug("Object %u (Type: %u, Entry: %u) is visible now for player %u. Distance = %f", target->GetGUIDLow(), target->GetTypeId(), target->GetEntry(), GetGUIDLow(), GetDistance(target));
             #endif
         }
@@ -20903,7 +20898,7 @@ void Player::SetViewpoint(WorldObject* target, bool apply)
 
         if (!AddUInt64Value(PLAYER_FARSIGHT, target->GetGUID()))
         {
-            sLog.outCrash("Player::CreateViewpoint: Player %s cannot add new viewpoint!", GetName());
+            sLog.outError("Crash alert! Player::CreateViewpoint: Player %s cannot add new viewpoint!", GetName());
             return;
         }
 
@@ -20919,7 +20914,7 @@ void Player::SetViewpoint(WorldObject* target, bool apply)
 
         if (!RemoveUInt64Value(PLAYER_FARSIGHT, target->GetGUID()))
         {
-            sLog.outCrash("Player::CreateViewpoint: Player %s cannot remove current viewpoint!", GetName());
+            sLog.outError("Crash alert! Player::CreateViewpoint: Player %s cannot remove current viewpoint!", GetName());
             return;
         }
 

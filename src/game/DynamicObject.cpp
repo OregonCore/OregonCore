@@ -63,7 +63,7 @@ void DynamicObject::RemoveFromWorld()
                     ((Player*)caster)->SetViewpoint(this, false);
             }
             else
-                sLog.outCrash("DynamicObject::RemoveFromWorld cannot find viewpoint owner");
+                sLog.outError("Crash alert! DynamicObject::RemoveFromWorld cannot find viewpoint owner");
         }
         WorldObject::RemoveFromWorld();
         ObjectAccessor::Instance().RemoveObject(this);

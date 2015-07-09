@@ -323,7 +323,7 @@ class ChatHandler
         bool HandleServerMotdCommand(const char* args);
         bool HandleServerPLimitCommand(const char* args);
         bool HandleServerRestartCommand(const char* args);
-        bool HandleServerSetLogLevelCommand(const char* args);
+        bool HandleServerSetLogMaskCommand(const char* args);
         bool HandleServerSetMotdCommand(const char* args);
         bool HandleServerSetDiffTimeCommand(const char* args);
         bool HandleServerShutDownCommand(const char* args);

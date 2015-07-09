@@ -7395,7 +7395,7 @@ void Unit::SetMinion(Minion* minion, bool apply)
     {
         if (!minion->AddUInt64Value(UNIT_FIELD_SUMMONEDBY, GetGUID()))
         {
-            sLog.outCrash("SetMinion: Minion %u is not the minion of owner %u", minion->GetEntry(), GetEntry());
+            sLog.outError("Crash alert! SetMinion: Minion %u is not the minion of owner %u", minion->GetEntry(), GetEntry());
             return;
         }
 
@@ -7443,7 +7443,7 @@ void Unit::SetMinion(Minion* minion, bool apply)
     {
         if (minion->GetOwnerGUID() != GetGUID())
         {
-            sLog.outCrash("SetMinion: Minion %u is not the minion of owner %u", minion->GetEntry(), GetEntry());
+            sLog.outError("Crash alert! SetMinion: Minion %u is not the minion of owner %u", minion->GetEntry(), GetEntry());
             return;
         }
 
@@ -7524,7 +7524,7 @@ void Unit::SetCharm(Unit* charm, bool apply)
         if (GetTypeId() == TYPEID_PLAYER)
         {
             if (!AddUInt64Value(UNIT_FIELD_CHARM, charm->GetGUID()))
-                sLog.outCrash("Player %s is trying to charm unit %u, but it already has a charmed unit " UI64FMTD "", GetName(), charm->GetEntry(), GetCharmGUID());
+                sLog.outError("Crash alert! Player %s is trying to charm unit %u, but it already has a charmed unit " UI64FMTD "", GetName(), charm->GetEntry(), GetCharmGUID());
 
             charm->m_ControlledByPlayer = true;
             // @todo maybe we can use this flag to check if controlled by player
@@ -7537,7 +7537,7 @@ void Unit::SetCharm(Unit* charm, bool apply)
         charm->SetByteValue(UNIT_FIELD_BYTES_2, 1, GetByteValue(UNIT_FIELD_BYTES_2, 1));
 
         if (!charm->AddUInt64Value(UNIT_FIELD_CHARMEDBY, GetGUID()))
-            sLog.outCrash("Unit %u is being charmed, but it already has a charmer " UI64FMTD "", charm->GetEntry(), charm->GetCharmerGUID());
+            sLog.outError("Crash alert! Unit %u is being charmed, but it already has a charmer " UI64FMTD "", charm->GetEntry(), charm->GetCharmerGUID());
 
         if (charm->HasUnitMovementFlag(MOVEFLAG_WALK_MODE))
         {
@@ -7552,11 +7552,11 @@ void Unit::SetCharm(Unit* charm, bool apply)
         if (GetTypeId() == TYPEID_PLAYER)
         {
             if (!RemoveUInt64Value(UNIT_FIELD_CHARM, charm->GetGUID()))
-                sLog.outCrash("Player %s is trying to uncharm unit %u, but it has another charmed unit " UI64FMTD "", GetName(), charm->GetEntry(), GetCharmGUID());
+                sLog.outError("Crash alert! Player %s is trying to uncharm unit %u, but it has another charmed unit " UI64FMTD "", GetName(), charm->GetEntry(), GetCharmGUID());
         }
 
         if (!charm->RemoveUInt64Value(UNIT_FIELD_CHARMEDBY, GetGUID()))
-            sLog.outCrash("Unit %u is being uncharmed, but it has another charmer " UI64FMTD "", charm->GetEntry(), charm->GetCharmerGUID());
+            sLog.outError("Crash alert! Unit %u is being uncharmed, but it has another charmer " UI64FMTD "", charm->GetEntry(), charm->GetCharmerGUID());
 
         if (charm->GetTypeId() == TYPEID_PLAYER)
         {
@@ -7611,9 +7611,9 @@ void Unit::RemoveAllControlled()
             sLog.outError("Unit %u is trying to release unit %u which is neither charmed nor owned by it", GetEntry(), target->GetEntry());
     }
     if (GetPetGUID() != GetUInt64Value(UNIT_FIELD_SUMMON))
-        sLog.outCrash("Unit %u is not able to release its summon " UI64FMTD "", GetEntry(), GetPetGUID());
+        sLog.outError("Crash alert! Unit %u is not able to release its summon " UI64FMTD "", GetEntry(), GetPetGUID());
     if (GetCharmGUID())
-        sLog.outCrash("Unit %u is not able to release its charm " UI64FMTD "", GetEntry(), GetCharmGUID());
+        sLog.outError("Crash alert! Unit %u is not able to release its charm " UI64FMTD "", GetEntry(), GetCharmGUID());
 }
 
 void Unit::AddPlayerToVision(Player* plr)
@@ -10620,7 +10620,7 @@ void Unit::RemoveFromWorld()
         RemoveAllControlled();
 
         if (GetCharmerGUID())
-            sLog.outCrash("Unit %u has charmer guid when removed from world", GetEntry());
+            sLog.outError("Crash alert! Unit %u has charmer guid when removed from world", GetEntry());
 
         WorldObject::RemoveFromWorld();
     }
@@ -12566,20 +12566,20 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
 
     if (this == charmer)
     {
-        sLog.outCrash("Unit::SetCharmedBy: Unit %u is trying to charm itself!", GetEntry());
+        sLog.outError("Crash alert! Unit::SetCharmedBy: Unit %u is trying to charm itself!", GetEntry());
         return;
     }
 
     if (GetTypeId() == TYPEID_PLAYER && ToPlayer()->GetTransport())
     {
-        sLog.outCrash("Unit::SetCharmedBy: Player on transport is trying to charm %u", GetEntry());
+        sLog.outError("Crash alert! Unit::SetCharmedBy: Player on transport is trying to charm %u", GetEntry());
         return;
     }
 
     // Already charmed
     if (GetCharmerGUID())
     {
-        sLog.outCrash("Unit::SetCharmedBy: %u (GUID %u) has already been charmed but %u (GUID %u) is trying to charm it!", GetEntry(), GetGUIDLow(), charmer->GetEntry(), charmer->GetGUIDLow());
+        sLog.outError("Crash alert! Unit::SetCharmedBy: %u (GUID %u) has already been charmed but %u (GUID %u) is trying to charm it!", GetEntry(), GetGUIDLow(), charmer->GetEntry(), charmer->GetGUIDLow());
         return;
     }
 
@@ -12590,7 +12590,7 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
     // StopCastingCharm may remove a possessed pet?
     if (!IsInWorld())
     {
-        sLog.outCrash("Unit::SetCharmedBy: %u is not in world but %u is trying to charm it!", GetEntry(), charmer->GetEntry());
+        sLog.outError("Crash alert! Unit::SetCharmedBy: %u is not in world but %u is trying to charm it!", GetEntry(), charmer->GetEntry());
         return;
     }
 

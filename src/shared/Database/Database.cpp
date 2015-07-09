@@ -37,7 +37,7 @@
 
 size_t Database::db_count = 0;
 
-Database::Database() : mMysql(NULL)
+Database::Database() : mMysql(NULL), m_connected(false)
 {
     // before first connection
     if (db_count++ == 0)
@@ -153,8 +153,10 @@ bool Database::Initialize(const char* infoString)
 
         // set connection properties to UTF8 to properly handle locales for different
         // server configs - core sends data in UTF8, so MySQL must expect UTF8 too
-        PExecute("SET NAMES `utf8`");
-        PExecute("SET CHARACTER SET `utf8`");
+        // mysql_set_character_set is just like SET NAMES, but also sets encoding in client library
+        // which enforces mysql_real_escape_string to be safe
+        mysql_set_character_set(mMysql, "utf8");
+        Execute("SET CHARACTER SET `utf8`");
 
         #if MYSQL_VERSION_ID >= 50003
         my_bool my_true = (my_bool)1;
@@ -165,6 +167,8 @@ bool Database::Initialize(const char* infoString)
         #else
 #warning "Your mySQL client lib version does not support reconnecting after a timeout.\nIf this causes you any trouble we advice you to upgrade your mySQL client libs to at least mySQL 5.0.13 to resolve this problem."
         #endif
+        
+        m_connected = true;
         return true;
     }
     else
@@ -262,7 +266,7 @@ bool Database::_Query(const char* sql, MYSQL_RES** pResult, MYSQL_FIELD** pField
     {
         // guarded block for thread-safe mySQL request
         ACE_Guard<ACE_Thread_Mutex> query_connection_guard(mMutex);
-        #ifdef TRINITY_DEBUG
+        #ifdef OREGON_DEBUG
         uint32 _s = getMSTime();
         #endif
         if (mysql_query(mMysql, sql))
@@ -273,8 +277,11 @@ bool Database::_Query(const char* sql, MYSQL_RES** pResult, MYSQL_FIELD** pField
         }
         else
         {
-            #ifdef TRINITY_DEBUG
-            sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql );
+            #ifdef OREGON_DEBUG
+            unsigned long oldMask = sLog.GetDBLogMask();
+            sLog.SetDBLogMask(oldMask & ~LOG_TYPE_DEBUG);
+            sLog.outSQL("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
+            sLog.SetDBLogMask(oldMask);
             #endif
         }
 
@@ -436,7 +443,10 @@ bool Database::DirectExecute(const char* sql)
         else
         {
             #ifdef OREGON_DEBUG
-            sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
+            unsigned long oldMask = sLog.GetDBLogMask();
+            sLog.SetDBLogMask(oldMask & ~LOG_TYPE_DEBUG);
+            sLog.outSQL("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
+            sLog.SetDBLogMask(oldMask);
             #endif
         }
     }

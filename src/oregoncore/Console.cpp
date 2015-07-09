@@ -286,7 +286,7 @@ void Console::MainLoop()
             INFO_PLAYERS_MAX,
 
             INFO_REVISION,
-            INFO_LOGLEVEL,
+            INFO_LOGMASK,
             INFO_UPTIME,
             INFO_TICKETS
         };
@@ -306,7 +306,7 @@ void Console::MainLoop()
             { 3,    0,    "        ",    INFO_EMPTY,         },
 
             { 0,   34,    "Revision:",   INFO_REVISION,      },
-            { 1,   34,    "Loglevel:",   INFO_LOGLEVEL,      },
+            { 1,   34,    "LogMask:",    INFO_LOGMASK,      },
             { 2,   34,    "Uptime:  ",   INFO_UPTIME,        },
             { 3,   34,    "Tickets: ",   INFO_TICKETS,       }
         };
@@ -331,8 +331,8 @@ void Console::MainLoop()
             case INFO_REVISION:
                 wprintw(infoWindow, " %s", _REVISION);
                 break;
-            case INFO_LOGLEVEL:
-                wprintw(infoWindow, " %u", sLog.GetLogLevel());
+            case INFO_LOGMASK:
+                wprintw(infoWindow, " %lu", sLog.GetLogMask());
                 break;
             case INFO_UPTIME:
                 {
@@ -839,6 +839,7 @@ void Console::UpdateLog()
                         wattrset(m_logViewer, TermColor(buffer[i]));
                     continue;
                 }
+
                 waddch(m_logViewer, buffer[i]);
             }
         }

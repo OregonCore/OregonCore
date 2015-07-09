@@ -3,7 +3,7 @@
 ###############################################
 
 [worldserver]
-ConfVersion=2015060760
+ConfVersion=2015070961
 
 # Note to devs, line breaks should be at column 80
 ###############################################################################
@@ -289,15 +289,26 @@ MapUpdate.Threads = 1
 #        Default: ""             - do not create PID file
 #                 "./worldd.pid" - create PID file (recommended name)
 #
-#    LogLevel
-#        Server console level of logging
-#                 0 = Minimum
-#        Default: 1 = Basic
-#                 2 = Detail
-#                 3 = Full/Debug
+#    LogMask
+#        Server console/file level of logging
+#        This is a bitmask. Possible values:
+#        STRING = 1, BASIC = 2, DETAIL = 4, DEBUG = 8,
+#        ERROR = 16, ERROR_DB = 32, SQL = 64, ARENA = 128,
+#        WARDEN = 256, CHAT = 512, COMMAND = 1024,
+#        CHAR = 2048, REMOTE = 4096, MAP = 8192, VMAP = 16384
+#        MMAP = 32768, NETWORK = 65536
+#        Example: I want to see basic output and errors:
+#                 STRING + BASIC + ERROR + ERROR_DB =
+#                 1      + 2     + 16    + 32       = 51 
+#        Default: 51
+#
+#    WorldLogFile
+#       Name of log where network packets should go.
+#       Example: "Network.log"
+#       Default: "" - disabled 
 #
 #    LogFile
-#        Logfile name
+#        Logfile name, here will go all messages you don't have specific log for.
 #        Default: "Server.log"
 #                 "" - Empty name disable creating log file
 #
@@ -312,23 +323,9 @@ MapUpdate.Threads = 1
 #        Default: 0 - no timestamp in name
 #                 1 - add timestamp in name
 #
-#    LogFileLevel
-#        Server file level of logging
-#        Default: 0 = Minimum
-#                 1 = Basic
-#                 2 = Detail
-#                 3 = Full/Debug
-#
-#    LogFilter_CreatureMoves
-#    LogFilter_TransportMoves
-#    LogFilter_VisibilityChanges
-#        Log filters
-#        Default: 1 - not include with any log level
-#                 0 - include in log if log level permit
-#
-#    WorldLogFile
+#    NetworkLogFile
 #        Packet logging file for the worldserver
-#        Default: "world.log"
+#        Default: "network.log"
 #
 #    DBErrorLogFile
 #        Log file of DB errors detected at server run
@@ -344,14 +341,6 @@ MapUpdate.Threads = 1
 #         in form Logname_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
 #        Default: 0 - no timestamp in name
 #                 1 - add timestamp in name
-#
-#    CharLogDump
-#        Write character dump before deleting in Char.log
-#         For restoration, cut character data from log starting from
-#         line == START DUMP == to line == END DUMP == (exclusive) in file
-#         and load it using the loadpdump command
-#        Default: 0 - don't include dumping chars to log
-#                 1 - include dumping chars to log
 #
 #    GmLogFile
 #        Log file of gm commands
@@ -387,9 +376,9 @@ MapUpdate.Threads = 1
 #                 1 - extended arena logs on
 #
 #    LogColors
-#        Color for messages (format "normal basic detail debug")
-#        Default: "" - no colors
-#        Colors: 0  - BLACK
+#        Color for messages. See LogMask for entries.
+#        Default: "0 6 4 3 1 1 2 7 5 0 4 0 1 3 2 4 0" - default color scheme
+#        Colors: 0  - BLACK (no color, skip)
 #                1  - RED
 #                2  - GREEN
 #                3  - BROWN
@@ -405,44 +394,12 @@ MapUpdate.Threads = 1
 #                13 - LMAGENTA
 #                14 - LCYAN
 #                15 - WHITE
-#        Example: "13 11 9 5"
+#        Example: "0 6 4 3 1 1 2 7 5 0 4 0 1 3 2 4 0"
 #
-#    EnableLogDB
-#        Enable/disable logging to database (LogDatabaseInfo).
-#        Default: 0 - disabled
-#                 1 - enabled
-#
-#    DBLogLevel
+#    DBLogMask
 #        Log level of DB logging.
-#                 0 = Minimum
-#                 1 = Basic
-#        Default: 2 = Detail
-#                 3 = Full/Debug
-#
-#    LogDB.Char
-#        Enable/disable logging character outputs to DB.
-#        Default: 0 - off
-#                 1 - on
-#
-#    LogDB.GM
-#        Enable/disable logging GM commands to DB.
-#        Default: 0 - off
-#                 1 - on
-#
-#    LogDB.RA
-#        Enable/disable logging remote access events to DB.
-#        Default: 0 - off
-#                 1 - on
-#
-#    LogDB.World
-#        Enable/disable logging world packets to DB.
-#        Default: 0 - off
-#                 1 - on (very heavy)
-#
-#    LogDB.Chat
-#        Enable/disable logging chat messages to the database.
-#        Default: 0 - off
-#                 1 - on
+#        This is a bitmask. See LogMask above for details.
+#        Default: 0 - disabled
 #
 #    ChatLogs.Channel
 #        Enable logging chatting in custom channels.
@@ -494,33 +451,22 @@ MapUpdate.Threads = 1
 
 LogSQL = 1
 PidFile = ""
-LogLevel = 1
+LogMask = 51
 LogFile = "Server.log"
 ChatLogFile = "chat.log"
 LogTimestamp = 0
-LogFileLevel = 0
-LogFilter_CreatureMoves = 1
-LogFilter_TransportMoves = 1
-LogFilter_VisibilityChanges = 1
 WorldLogFile = ""
 DBErrorLogFile = "db_errors.log"
 CharLogFile = "characters.log"
 CharLogTimestamp = 0
-CharLogDump = 0
 GmLogFile = "gm_commands.log"
 GmLogTimestamp = 0
 GmLogPerAccount = 0
 RaLogFile = "ra_commands.log"
-ArenaLogFile = ""
+ArenaLogFile = "arena.log"
 ArenaLogExtendedInfo = 0
-LogColors = ""
-EnableLogDB = 0
-DBLogLevel = 2
-LogDB.Char   = 0
-LogDB.GM     = 0
-LogDB.RA     = 0
-LogDB.World  = 0
-LogDB.Chat   = 0
+LogColors = "0 6 4 3 1 1 2 7 5 0 4 0 1 3 2 4 0"
+DBLogMask = 0
 ChatLogs.Channel      = 0
 ChatLogs.SysChan      = 0
 ChatLogs.Whisper      = 0

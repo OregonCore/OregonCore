@@ -3,7 +3,7 @@
 ##############################################
 
 [authserver]
-ConfVersion=2010101001
+ConfVersion=2015070961
 
 # Note to devs, line breaks should be at column 80
 ###############################################################################
@@ -40,15 +40,21 @@ ConfVersion=2010101001
 #        Default: ""             - do not create PID file
 #                 "./realmd.pid" - create PID file (recommended name)
 #
-#    LogLevel
-#        Server console level of logging
-#        Default: 0 = Minimum
-#                 1 = Basic
-#                 2 = Detail
-#                 3 = Full/Debug
+#    LogMask
+##        Server console/file level of logging
+#        This is a bitmask. Possible values:
+#        STRING = 1, BASIC = 2, DETAIL = 4, DEBUG = 8,
+#        ERROR = 16, ERROR_DB = 32, SQL = 64, ARENA = 128,
+#        WARDEN = 256, CHAT = 512, COMMAND = 1024,
+#        CHAR = 2048, REMOTE = 4096, MAP = 8192, VMAP = 16384
+#        MMAP = 32768, NETWORK = 65536
+#        Example: I want to see basic output and errors:
+#                 STRING + BASIC + ERROR + ERROR_DB =
+#                 1      + 2     + 16    + 32       = 51 
+#        Default: 51
 #
 #    LogFile
-#        Logfile name
+#        Logfile name, here will go all messages you don't have specific log for.
 #        Default: "realmd.log"
 #                 "" - Empty name disable creating log file
 #
@@ -58,17 +64,10 @@ ConfVersion=2010101001
 #        Default: 0 - no timestamp in name
 #                 1 - add timestamp in name
 #
-#    LogFileLevel
-#        Server file level of logging
-#        Default: 0 = Minimum
-#                 1 = Basic
-#                 2 = Detail
-#                 3 = Full/Debug
-#
 #    LogColors
 #        Color for messages (format "normal basic detail debug")
-#        Default: "" - no colors
-#        Colors: 0  - BLACK
+#        Default: "0 6 4 3 1 1 2 7 5 0 4 0 1 3 2 4 0" - default color scheme
+#        Colors: 0  - BLACK (no color, skip)
 #                1  - RED
 #                2  - GREEN
 #                3  - BROWN
@@ -83,19 +82,12 @@ ConfVersion=2010101001
 #                12 - LMAGENTA
 #                13 - LCYAN
 #                14 - WHITE
-#        Example: "13 11 9 5"
+#        Example: "0 6 4 3 1 1 2 7 5 0 4 0 1 3 2 4 0"
 #
-#    EnableLogDB
-#        Enable/disable logging to database (LogDatabaseInfo).
-#        Default: 0 - disabled
-#                 1 - enabled
-#
-#    DBLogLevel
+#    DBLogMask
 #        Log level of DB logging.
-#                 0 = Minimum
-#        Default: 1 = Basic
-#                 2 = Detail
-#                 3 = Full/Debug
+#        This is a bitmask. See LogMask above for details.
+#        Default: 0 - disabled
 #
 #    UseProcessors
 #        Processors mask for multi-processor system (Used only in Windows)
@@ -135,13 +127,12 @@ MaxPingTime = 30
 RealmServerPort = 3724
 BindIP = "0.0.0.0"
 PidFile = ""
-LogLevel = 0
+LogMask = 51
 LogFile = "realmd.log"
 LogTimestamp = 0
-LogFileLevel = 0
-LogColors = ""
+LogColors = "0 6 4 3 1 1 2 7 5 0 4 0 1 3 2 4 0"
 EnableLogDB = 0
-DBLogLevel = 1
+DBLogMask = 0
 UseProcessors = 0
 ProcessPriority = 1
 RealmsStateUpdateDelay = 20

@@ -88,7 +88,7 @@ WorldObject::~WorldObject()
     {
         if (GetTypeId() == TYPEID_CORPSE)
         {
-            sLog.outCrash("Object::~Object Corpse guid="UI64FMTD", type=%d, entry=%u deleted but still in map!!", GetGUID(), ((Corpse*)this)->GetType(), GetEntry());
+            sLog.outError("Crash alert! Object::~Object Corpse guid="UI64FMTD", type=%d, entry=%u deleted but still in map!!", GetGUID(), ((Corpse*)this)->GetType(), GetEntry());
             ASSERT(false);
         }
         ResetMap();
@@ -100,13 +100,13 @@ Object::~Object()
     if (IsInWorld())
     {
         // Do NOT call RemoveFromWorld here, if the object is a player it will crash
-        sLog.outCrash("Object::~Object (GUID: %u TypeId: %u) deleted but still in world!!", GetGUIDLow(), GetTypeId());
+        sLog.outError("Crash alert! Object::~Object (GUID: %u TypeId: %u) deleted but still in world!!", GetGUIDLow(), GetTypeId());
         ASSERT(false);
     }
 
     if (m_objectUpdated)
     {
-        sLog.outCrash("Object::~Object (GUID: %u TypeId: %u) deleted but still has updated status!!", GetGUIDLow(), GetTypeId());
+        sLog.outError("Crash alert! Object::~Object (GUID: %u TypeId: %u) deleted but still has updated status!!", GetGUIDLow(), GetTypeId());
         ASSERT(false);
     }
 
@@ -1760,7 +1760,7 @@ void WorldObject::SetMap(Map* map)
         return;
     if (m_currMap)
     {
-        sLog.outCrash("WorldObject::SetMap: obj %u new map %u %u, old map %u %u", (uint32)GetTypeId(), map->GetId(), map->GetInstanceId(), m_currMap->GetId(), m_currMap->GetInstanceId());
+        sLog.outError("Crash alert! WorldObject::SetMap: obj %u new map %u %u, old map %u %u", (uint32)GetTypeId(), map->GetId(), map->GetInstanceId(), m_currMap->GetId(), m_currMap->GetInstanceId());
         ASSERT(false);
     }
     m_currMap = map;

@@ -24,42 +24,49 @@
 
 class Config;
 
-enum LogFilters
-{
-    LOG_FILTER_TRANSPORT_MOVES     = 1,
-    LOG_FILTER_CREATURE_MOVES      = 2,
-    LOG_FILTER_VISIBILITY_CHANGES  = 4,
-};
-
+/// LogTypes, each value is bit position in logmask
 enum LogTypes
 {
     LOG_TYPE_STRING = 0,
-    LOG_TYPE_ERROR  = 1,
-    LOG_TYPE_BASIC  = 2,
-    LOG_TYPE_DETAIL = 3,
-    LOG_TYPE_DEBUG  = 4,
-    LOG_TYPE_CHAR   = 5,
-    LOG_TYPE_WORLD  = 6,
-    LOG_TYPE_RA     = 7,
-    LOG_TYPE_GM     = 8,
-    LOG_TYPE_CRASH  = 9,
-    LOG_TYPE_CHAT   = 10,
+    LOG_TYPE_BASIC,
+    LOG_TYPE_DETAIL,
+    LOG_TYPE_DEBUG,
+
+    LOG_TYPE_ERROR,
+    LOG_TYPE_ERROR_DB,
+    LOG_TYPE_SQL,
+
+    LOG_TYPE_ARENA,
+    LOG_TYPE_WARDEN,
+    LOG_TYPE_CHAT,
+    LOG_TYPE_COMMAND,
+
+    LOG_TYPE_CHAR,
+    LOG_TYPE_REMOTE,
+
+    LOG_TYPE_MAP,
+    LOG_TYPE_VMAP,
+    LOG_TYPE_MMAP,
+
+    LOG_TYPE_NETWORK,
+
     MAX_LOG_TYPES
 };
 
+/// Presets of bitmasks, exists for backward compatibility
 enum LogLevel
 {
-    LOGL_NORMAL = 0,
+    LOGL_MINIMAL = 0,
     LOGL_BASIC,
     LOGL_DETAIL,
     LOGL_DEBUG
 };
 
-const int LogLevels = int(LOGL_DEBUG) + 1;
-
+/// Colors - 16 possible values, upper 8 are bold and sometimes different in tone
+/// User chooses from lower 8, upper 8 are used for category "[CATEGORY] message"
 enum ColorTypes
 {
-    BLACK,
+    BLACK = 0,
     RED,
     GREEN,
     BROWN,
@@ -74,11 +81,12 @@ enum ColorTypes
     LBLUE,
     LMAGENTA,
     LCYAN,
-    WHITE
+    WHITE,
+
+    MAX_COLORS
 };
 
-const int Colors = int(WHITE) + 1;
-
+/// Main logging class
 class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Thread_Mutex> >
 {
         friend class Oregon::OperatorNew<Log>;
@@ -89,128 +97,108 @@ class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Th
         void Initialize();
 
         void InitColors(const std::string& init_str);
-        void SetColor(bool stdout_stream, ColorTypes color);
-        void ResetColor(bool stdout_stream);
+        void SetColor(ColorTypes color);
+        void ResetColor();
+
+        void outString(const char* fmt, ...)   ATTR_PRINTF(2, 3);
+        void outBasic(const char* fmt, ...)    ATTR_PRINTF(2, 3);
+        void outDetail(const char* fmt, ...)   ATTR_PRINTF(2, 3);
+        void outDebug(const char* fmt, ...)    ATTR_PRINTF(2, 3);
+
+        void outError(const char* fmt, ...)    ATTR_PRINTF(2, 3);
+        void outErrorDb(const char* fmt, ...)  ATTR_PRINTF(2, 3);
+		void outSQL(const char* fmt, ...)      ATTR_PRINTF(2, 3);
+
+        void outArena(const char* fmt, ...)    ATTR_PRINTF(2, 3);
+        void outWarden(const char* fmt, ...)   ATTR_PRINTF(2, 3);
+        void outChat(const char* fmt, ...)     ATTR_PRINTF(2, 3);
+        void outCommand(const char* fmt, ...)  ATTR_PRINTF(2, 3);
+        
+        void outChar(const char* fmt, ...)     ATTR_PRINTF(2, 3);
+        void outRemote(const char* fmt, ...)   ATTR_PRINTF(2, 3);
+        
+        void outMap(const char* fmt, ...)      ATTR_PRINTF(2, 3);
+        void outVMap(const char* fmt, ...)     ATTR_PRINTF(2, 3);
+        void outMMap(const char* fmt, ...)     ATTR_PRINTF(2, 3);
+
+        void outNetwork(const char* fmt, ...)  ATTR_PRINTF(2, 3);
 
         void outDB( LogTypes type, const char* str );
-        void outString( const char* str, ... )                 ATTR_PRINTF(2, 3);
-        void outString( );
-        void outStringInLine( const char* str, ... )           ATTR_PRINTF(2, 3);
-        void outError( const char* err, ... )                  ATTR_PRINTF(2, 3);
+        void outString()
+        {
+            outString("\n");
+        }
+        void outDebugInLine(const char* fmt, ...) ATTR_PRINTF(2, 3);
         void outFatal( const char* err, ... )                  ATTR_PRINTF(2, 3) ATTR_NORETURN;
-        void outCrash( const char* err, ... )                  ATTR_PRINTF(2, 3);
-        void outBasic( const char* str, ... )                  ATTR_PRINTF(2, 3);
-        void outDetail( const char* str, ... )                 ATTR_PRINTF(2, 3);
-        void outDebug( const char* str, ... )                  ATTR_PRINTF(2, 3);
-        void outDebugInLine( const char* str, ... )            ATTR_PRINTF(2, 3);
-        void outErrorDb( const char* str, ... )                ATTR_PRINTF(2, 3);
-        void outChar( const char* str, ... )                   ATTR_PRINTF(2, 3);
-        void outCommand( uint32 account, const char* str, ...) ATTR_PRINTF(3, 4);
-        void outRemote( const char* str, ... )                 ATTR_PRINTF(2, 3);
-        void outChat( const char* str, ... )                   ATTR_PRINTF(2, 3);
-        void outWarden( const char* str, ... )                 ATTR_PRINTF(2, 3);
-        void outArena( const char* str, ... )                  ATTR_PRINTF(2, 3);
         void outCharDump( const char* str, uint32 account_id, uint32 guid, const char* name );
+        void outCommand(uint64 account, const char* fmt, ...) ATTR_PRINTF(3, 4);
 
         static void outTimestamp(FILE* file);
         static std::string GetTimestampStr();
 
-        void SetLogLevel(char* Level);
-        void SetLogFileLevel(char* Level);
-        void SetDBLogLevel(char* Level);
-        void SetRealmID(uint32 id)
+        void SetLogMask(unsigned long mask);
+        void SetDBLogMask(unsigned long mask);
+
+        unsigned long GetLogMask() const
         {
-            realm = id;
-        }
-        uint8 GetLogLevel() const
-        {
-            return m_logLevel;
+            return m_logMask;
         }
 
-        uint32 getLogFilter() const
+        unsigned long GetDBLogMask() const
         {
-            return m_logFilter;
+            return m_logMaskDatabase;
         }
+
+        /// Checks whether outDebug works
         bool IsOutDebug() const
         {
-            return m_logLevel > 2 || (m_logFileLevel > 2 && logfile);
-        }
-        bool IsOutCharDump() const
-        {
-            return m_charLog_Dump;
+            return (m_logMask | m_logMaskDatabase) & LOG_TYPE_DEBUG;
         }
 
-        bool GetLogDB()
+        bool IsLogTypeEnabled(LogTypes type) const
         {
-            return m_enableLogDB;
+            return (m_logMask | m_logMaskDatabase) & (1 << type); 
         }
-        bool GetLogDBLater()
-        {
-            return m_enableLogDBLater;
-        }
-        void SetLogDB(bool enable)
-        {
-            m_enableLogDB = enable;
-        }
-        void SetLogDBLater(bool value)
-        {
-            m_enableLogDBLater = value;
-        }
+
     private:
+        /// Performs logging
+        void DoLog(LogTypes type, bool newline, const char* prefix, const char* fmt, va_list ap, FILE* file = NULL);
+
         FILE* openLogFile(char const* configFileName, char const* configTimeStampFlag, char const* mode);
-        FILE* openGmlogPerAccount(uint32 account);
 
-        FILE* raLogfile;
-        FILE* logfile;
-        FILE* gmLogfile;
-        FILE* charLogfile;
-        FILE* dberLogfile;
-        FILE* chatLogfile;
-        FILE* arenaLogFile;
-        FILE* wardenLogFile;
+        /// opens specific file for account
+        FILE* openGmlogPerAccount(uint64 account);
 
-        // cache values for after initilization use (like gm log per account case)
-        std::string m_logsDir;
+        FILE* m_logFiles[MAX_LOG_TYPES]; //!< files for each message type
+
+        std::string m_logsDir;       //!< directory to put log files in
         std::string m_logsTimestamp;
 
-        // gm log control
-        bool m_gmlog_per_account;
-        std::string m_gmlog_filename_format;
+        bool m_gmlog_per_account;   //!< flag: create separate log for every GM account?
+        std::string m_gmlog_filename_format; //!< format for GM log filename
 
-        bool m_enableLogDBLater;
-        bool m_enableLogDB;
-        uint32 realm;
+        ColorTypes m_colors[MAX_LOG_TYPES]; //!< colors assigned to individual message types
 
-        // log coloring
-        bool m_colored;
-        ColorTypes m_colors[4];
-
-        // log levels:
-        // 0 minimum/string, 1 basic/error, 2 detail, 3 full/debug
-        uint8 m_dbLogLevel;
-        uint8 m_logLevel;
-        uint8 m_logFileLevel;
-        uint8 m_logFilter;
-        bool m_dbChar;
-        bool m_dbRA;
-        bool m_dbGM;
-        bool m_dbChat;
-        bool m_charLog_Dump;
+        unsigned long m_logMask;          //!< mask to filter messages sent to console and files
+        unsigned long m_logMaskDatabase;  //!< mask to filter messages sent to db
 };
 
+/// Log class singleton
 #define sLog Oregon::Singleton<Log>::Instance()
 
 #ifdef OREGON_DEBUG
+/// Works only in debug mode
 #define DEBUG_LOG Oregon::Singleton<Log>::Instance().outDebug
 #else
 #define DEBUG_LOG(...)
 #endif
 
-// primary for script library
+/// Macros meant to be used by scripts
 #define outstring_log Oregon::Singleton<Log>::Instance().outString
 #define detail_log Oregon::Singleton<Log>::Instance().outDetail
 #define debug_log Oregon::Singleton<Log>::Instance().outDebug
 #define error_log Oregon::Singleton<Log>::Instance().outError
 #define error_db_log Oregon::Singleton<Log>::Instance().outErrorDb
+
 #endif
 

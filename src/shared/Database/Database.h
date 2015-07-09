@@ -56,6 +56,8 @@ class Database
         /*! infoString should be formated like hostname;username;password;database. */
         bool Initialize(const char* infoString);
 
+        bool IsConnected() const { return m_connected; }
+
         void InitDelayThread();
         void HaltDelayThread();
 
@@ -140,6 +142,7 @@ class Database
         ACE_Based::Thread* tranThread;
 
         MYSQL* mMysql;
+        bool m_connected;
 
         static size_t db_count;
 
