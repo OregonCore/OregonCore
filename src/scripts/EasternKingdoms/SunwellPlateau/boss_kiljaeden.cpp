@@ -254,7 +254,7 @@ struct boss_kalecgos_kjAI : public ScriptedAI
     {
         OrbsEmpowered = 0;
         EmpowerCount = 0;
-        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+        me->SetLevitate(true);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->setActive(true);
 
@@ -436,7 +436,7 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
             break;
         case CREATURE_ANVEENA:
             summoned->setActive(true);
-            summoned->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+            summoned->SetLevitate(true);
             summoned->SetPosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ() + 40, 0, true);
             summoned->CastSpell(summoned, SPELL_ANVEENA_PRISON, true);
             me->CastSpell(summoned, SPELL_ANVEENA_ENERGY_DRAIN, true);
@@ -1140,7 +1140,7 @@ struct mob_shield_orbAI : public ScriptedAI
 
     void Reset()
     {
-        me->AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+        me->SetLevitate(true);
         bPointReached = true;
         uiTimer = urand(500, 1000);
         uiCheckTimer = 1000;

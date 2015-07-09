@@ -20,6 +20,7 @@
 #include "Spell.h"
 #include "ObjectMgr.h"
 #include "TemporarySummon.h"
+#include "MoveSplineInit.h"
 
 // Spell summary for ScriptedAI::SelectSpell
 struct TSpellSummary
@@ -432,7 +433,13 @@ void ScriptedAI::DoModifyThreatPercent(Unit* pUnit, int32 pct)
 void ScriptedAI::DoTeleportTo(float fX, float fY, float fZ, uint32 uiTime)
 {
     me->Relocate(fX, fY, fZ);
-    me->SendMonsterMove(fX, fY, fZ, uiTime);
+    Movement::MoveSplineInit init(*me);
+    init.MoveTo(fX, fY, fZ, true);
+    int32 duration = init.Launch();
+    if (duration != uiTime)
+        sLog.outError("Scripted Creature - DoTeleportTo : Travel time and duration from spline don't match (travel time : %u, duration : %i). Object (TypeId: %u, Entry: %u, GUID: %u)",
+        uiTime, duration,
+        me->GetTypeId(), me->GetEntry(), me->GetGUIDLow());
 }
 
 void ScriptedAI::DoTeleportTo(const float fPos[4])

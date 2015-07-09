@@ -441,10 +441,7 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
     // trigger creature is always not selectable and can not be attacked
     if (isTrigger())
-    {
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        AddUnitMovementFlag(MOVEFLAG_LEVITATING);
-    }
 
     if (IsTotem() || isTrigger()
         || GetCreatureType() == CREATURE_TYPE_CRITTER)
@@ -460,14 +457,44 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
         ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
     }
 
-    // TODO: In fact monster move flags should be set - not movement flags.
-    if (cInfo->InhabitType & INHABIT_AIR)
-        AddUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
-
-    if (cInfo->InhabitType & INHABIT_WATER)
-        AddUnitMovementFlag(MOVEFLAG_SWIMMING);
-
+    UpdateMovementFlags();
     return true;
+}
+
+void Creature::UpdateMovementFlags()
+{
+    if (IsControlledByPlayer())
+        return;
+
+    CreatureInfo const* cInfo = GetCreatureTemplate();
+
+    // Set the movement flags if the creature is in that mode. (Only fly if actually in air, only swim if in water, etc)
+    float ground = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ(), true, MAX_FALL_DISTANCE);
+    if (ground < INVALID_HEIGHT)
+    {
+        sLog.outDebug("FallGround: creature %u at map %u (x: %f, y: %f, z: %f), not able to retrive a proper GetHeight (z: %f).",
+            GetEntry(), GetMap()->GetId(), GetPositionX(), GetPositionX(), GetPositionZ(), ground);
+    }
+
+    bool isInAir = (G3D::fuzzyGt(GetPositionZ(), ground + 0.05f) || G3D::fuzzyLt(GetPositionZ(), ground - 0.05f)); // Can be underground too, prevent the falling
+
+    if (GetCreatureTemplate()->InhabitType & INHABIT_AIR && isInAir && !IsFalling())
+    {
+        if (GetCreatureTemplate()->InhabitType & INHABIT_GROUND)
+            SetCanFly(true);
+        else
+            SetLevitate(true);
+    }
+    else
+    {
+        SetCanFly(false);
+        SetLevitate(false);
+    }
+
+    if (!isInAir)
+        RemoveUnitMovementFlag(MOVEFLAG_FALLING);
+
+    SetSwim(cInfo->InhabitType & INHABIT_WATER && IsInWater());
 }
 
 void Creature::Update(uint32 diff)
@@ -717,17 +744,6 @@ bool Creature::Create(uint32 guidlow, Map* map, uint32 Entry, uint32 team, float
             break;
         }
         LoadCreaturesAddon();
-
-        if (GetCreatureTemplate()->InhabitType & INHABIT_AIR)
-        {
-            if (GetDefaultMovementType() == IDLE_MOTION_TYPE)
-                AddUnitMovementFlag(MOVEFLAG_FLYING);
-            else
-                SetFlying(true);
-        }
-
-        if (GetCreatureTemplate()->InhabitType & INHABIT_WATER)
-            AddUnitMovementFlag(MOVEFLAG_SWIMMING);
     }
 
     return bResult;
@@ -1490,7 +1506,8 @@ void Creature::setDeathState(DeathState s)
         setActive(false);
 
         // return, since we promote to DEAD_FALLING. DEAD_FALLING is promoted to CORPSE at next update.
-        if (canFly() && FallGround())
+        if (canFly() && IsFlying())
+            if (FallGround())
             return;
 
         Unit::setDeathState(CORPSE);
@@ -1503,11 +1520,9 @@ void Creature::setDeathState(DeathState s)
         Unit::setDeathState(ALIVE);
         CreatureInfo const* cinfo = GetCreatureTemplate();
         RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
-        AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
-        if (GetCreatureTemplate()->InhabitType & INHABIT_AIR)
-            AddUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
-        if (GetCreatureTemplate()->InhabitType & INHABIT_WATER)
-            AddUnitMovementFlag(MOVEFLAG_SWIMMING);
+
+        UpdateMovementFlags();
+
         SetUInt32Value(UNIT_NPC_FLAGS, cinfo->npcflag);
         ClearUnitState(UNIT_STATE_ALL_STATE);
         i_motionMaster.Initialize();
@@ -1540,22 +1555,8 @@ bool Creature::FallGround()
 
     Unit::setDeathState(DEAD_FALLING);
 
-    float dz = ground_Z - GetPositionZ();
-    float distance = sqrt(dz * dz);
+    GetMotionMaster()->MoveFall();
 
-    // run speed * 2 explicit, not verified though but result looks proper
-    double speed = GetSpeed(MOVE_RUN) * 2;
-    speed *= 0.001;                                         // to milliseconds
-    uint32 travelTime = uint32(distance / speed);
-
-    sLog.outDebug("FallGround: traveltime: %u, distance: %f, speed: %f, from %f to %f", travelTime, distance, speed, GetPositionZ(), ground_Z);
-
-    // For creatures that are moving towards target and dies, the visual effect is not nice.
-    // It is possibly caused by a xyz mismatch in DestinationHolder's GetLocationNow and the location
-    // of the mob in client. For mob that are already reached target or dies while not moving
-    // the visual appear to be fairly close to the expected.
-    GetMap()->CreatureRelocation(this, GetPositionX(), GetPositionY(), ground_Z, GetOrientation());
-    SendMonsterMove(GetPositionX(), GetPositionY(), ground_Z, travelTime);
     return true;
 }
 
@@ -2413,4 +2414,120 @@ time_t Creature::GetLinkedCreatureRespawnTime() const
 void Creature::StartPickPocketRefillTimer()
 {
     _pickpocketLootRestore = time(NULL) + sWorld.getConfig(CONFIG_CREATURE_PICKPOCKET_REFILL);
+}
+
+void Creature::SetFeatherFall(bool apply)
+{
+    if (apply)
+        m_movementInfo.AddMovementFlag(MOVEFLAG_SAFE_FALL);
+    else
+        m_movementInfo.RemoveMovementFlag(MOVEFLAG_SAFE_FALL);
+
+    WorldPacket data(apply ? SMSG_SPLINE_MOVE_FEATHER_FALL : SMSG_SPLINE_MOVE_NORMAL_FALL);
+    data << GetPackGUID();
+    SendMessageToSet(&data, true);
+}
+
+void Creature::SetRooted(bool apply)
+{
+    if (apply)
+    {
+        // MOVEMENTFLAG_ROOT cannot be used in conjunction with MOVEMENTFLAG_MASK_MOVING (tested 3.3.5a)
+        // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
+        // setting MOVEMENTFLAG_ROOT
+        RemoveUnitMovementFlag(MOVEFLAG_MOVING);
+        m_movementInfo.AddMovementFlag(MOVEFLAG_ROOT);
+
+        WorldPacket data(SMSG_SPLINE_MOVE_ROOT, 9);
+        data << GetPackGUID();
+        SendMessageToSet(&data, true);
+    }
+    else
+    {
+        if (!HasUnitState(UNIT_STATE_STUNNED))      // prevent moving if it also has stun effect
+        {
+            m_movementInfo.RemoveMovementFlag(MOVEFLAG_ROOT);
+
+            WorldPacket data(SMSG_SPLINE_MOVE_UNROOT, 9);
+            data << GetPackGUID();
+            SendMessageToSet(&data, true);
+        }
+    }
+}
+
+void Creature::SetHover(bool apply)
+{
+    if (apply)
+        m_movementInfo.AddMovementFlag(MOVEFLAG_HOVER);
+    else
+        m_movementInfo.RemoveMovementFlag(MOVEFLAG_HOVER);
+
+    WorldPacket data(apply ? SMSG_SPLINE_MOVE_SET_HOVER : SMSG_SPLINE_MOVE_UNSET_HOVER, 9);
+    data << GetPackGUID();
+    SendMessageToSet(&data, false);
+}
+
+void Creature::SetCanFly(bool apply)
+{
+    if (apply)
+        m_movementInfo.AddMovementFlag(MOVEFLAG_CAN_FLY);
+    else
+        m_movementInfo.RemoveMovementFlag(MOVEFLAG_CAN_FLY);
+
+    WorldPacket data(apply ? SMSG_SPLINE_MOVE_SET_FLYING : SMSG_SPLINE_MOVE_UNSET_FLYING, 9);
+    data << GetPackGUID();
+    SendMessageToSet(&data, true);
+}
+
+void Creature::SetSwim(bool apply)
+{
+    if (apply)
+        m_movementInfo.AddMovementFlag(MOVEFLAG_SWIMMING);
+    else
+        m_movementInfo.RemoveMovementFlag(MOVEFLAG_SWIMMING);
+
+    WorldPacket data(apply ? SMSG_SPLINE_MOVE_START_SWIM : SMSG_SPLINE_MOVE_STOP_SWIM);
+    data << GetPackGUID();
+    SendMessageToSet(&data, true);
+}
+
+void Creature::SetWalk(bool apply)
+{
+    // Nothing changed?
+    if (apply == m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE))
+        return;
+
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+
+    WorldPacket data(apply ? SMSG_SPLINE_MOVE_SET_WALK_MODE : SMSG_SPLINE_MOVE_SET_RUN_MODE, 9);
+    data << GetPackGUID();
+    SendMessageToSet(&data, true);
+}
+
+void Creature::SetLevitate(bool apply)
+{
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_LEVITATING);
+
+
+    WorldPacket data(apply ? SMSG_SPLINE_MOVE_SET_FLYING : SMSG_SPLINE_MOVE_UNSET_FLYING, 9);
+    data << GetPackGUID();
+    SendMessageToSet(&data, true);
+}
+
+void Creature::SetWaterWalk(bool apply)
+{
+    if (apply)
+        m_movementInfo.AddMovementFlag(MOVEFLAG_WATERWALKING);
+    else
+        m_movementInfo.RemoveMovementFlag(MOVEFLAG_WATERWALKING);
+
+    WorldPacket data(apply ? SMSG_SPLINE_MOVE_WATER_WALK : SMSG_SPLINE_MOVE_LAND_WALK, 9);
+    data << GetPackGUID();
+    SendMessageToSet(&data, true);
 }

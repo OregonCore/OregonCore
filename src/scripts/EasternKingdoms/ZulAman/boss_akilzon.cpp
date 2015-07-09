@@ -25,6 +25,8 @@ SQLUpdate:
 EndScriptData */
 
 #include "ScriptPCH.h"
+#include "MoveSplineInit.h"
+#include "MoveSpline.h"
 #include "zulaman.h"
 #include "Weather.h"
 
@@ -340,13 +342,15 @@ struct boss_akilzonAI : public ScriptedAI
 
             float x, y, z;
             pTarget->GetPosition(x, y, z);
-            pTarget->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
-            pTarget->SendMonsterMove(x, y, me->GetPositionZ() + 15, 0);
+            pTarget->SetLevitate(true);
+            Movement::MoveSplineInit init(*me);
+            init.MoveTo(x, y, me->GetPositionZ() + 15.0f, true);
+            init.Launch();
             Unit* Cloud = me->SummonTrigger(x, y, me->GetPositionZ() + 16, 0, 15000);
             if (Cloud)
             {
                 CloudGUID = Cloud->GetGUID();
-                Cloud->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
+                Cloud->SetLevitate(true);
                 Cloud->StopMoving();
                 Cloud->SetObjectScale(1.0f);
                 Cloud->setFaction(35);
@@ -420,7 +424,7 @@ struct mob_soaring_eagleAI : public ScriptedAI
         EagleSwoop_Timer = 5000 + rand() % 5000;
         arrived = true;
         TargetGUID = 0;
-        me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
+        me->SetLevitate(true);
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -468,9 +472,9 @@ struct mob_soaring_eagleAI : public ScriptedAI
                     me->SetSpeed(MOVE_RUN, 5.0f);
                     TargetGUID = pTarget->GetGUID();
                 }
-                me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
+                me->SetLevitate(true);
                 me->GetMotionMaster()->MovePoint(0, x, y, z);
-                me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
+                me->SetLevitate(false);
                 arrived = false;
             }
         }

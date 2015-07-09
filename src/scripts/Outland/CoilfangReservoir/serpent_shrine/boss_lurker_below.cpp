@@ -105,7 +105,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
     }
     void Reset()
     {
-        me->AddUnitMovementFlag(MOVEFLAG_SWIMMING | MOVEFLAG_LEVITATING);
+        me->SetSwim(true);
         SpoutAnimTimer = 1000;
         RotTimer = 0;
         WaterboltTimer = 15000;//give time to get in range when fight starts

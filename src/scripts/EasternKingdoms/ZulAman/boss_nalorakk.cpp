@@ -130,7 +130,7 @@ struct boss_nalorakkAI : public ScriptedAI
             inMove = false;
             waitTimer = 0;
             me->SetSpeed(MOVE_RUN, 2);
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(false);
         }
         else
             (*me).GetMotionMaster()->MovePoint(0, NalorakkWay[7][0], NalorakkWay[7][1], NalorakkWay[7][2]);

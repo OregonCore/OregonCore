@@ -18,25 +18,14 @@
 #include "Creature.h"
 #include "MapManager.h"
 #include "RandomMovementGenerator.h"
-#include "Traveller.h"
 #include "ObjectAccessor.h"
-#include "DestinationHolderImp.h"
 #include "Map.h"
 #include "Util.h"
 #include "CreatureGroups.h"
+#include "MoveSplineInit.h"
+#include "MoveSpline.h"
 
 #define RUNNING_CHANCE_RANDOMMV 20                                  //will be "1 / RUNNING_CHANCE_RANDOMMV"
-
-template<>
-bool
-RandomMovementGenerator<Creature>::GetDestination(float& x, float& y, float& z) const
-{
-    if (i_destinationHolder.HasArrived())
-        return false;
-
-    i_destinationHolder.GetDestination(x, y, z);
-    return true;
-}
 
 template<>
 void
@@ -104,27 +93,19 @@ RandomMovementGenerator<Creature>::_setRandomLocation(Creature& creature)
         }
     }
 
-    Traveller<Creature> traveller(creature);
-
-    creature.SetOrientation(creature.GetAngle(nx, ny));
-    i_destinationHolder.SetDestination(traveller, nx, ny, nz);
     creature.AddUnitState(UNIT_STATE_ROAMING);
 
-    if (is_air_ok)
-    {
-        i_nextMoveTime.Reset(i_destinationHolder.GetTotalTravelTime());
-        creature.AddUnitMovementFlag(MOVEFLAG_FLYING2);
-    }
-    //else if (is_water_ok)                                 // Swimming mode to be done with more than this check
+    Movement::MoveSplineInit init(creature);
+    init.MoveTo(nx, ny, nz, true);
+    if (creature.IsPet() && creature.GetOwner() && !creature.IsWithinDist(creature.GetOwner(), PET_FOLLOW_DIST + 2.5f))
+        init.SetWalk(false);
     else
-    {
+        init.SetWalk(true);
+    init.Launch();
         if (roll_chance_i(MOVEMENT_RANDOM_MMGEN_CHANCE_NO_BREAK))
             i_nextMoveTime.Reset(50);
         else
-            i_nextMoveTime.Reset(i_destinationHolder.GetTotalTravelTime() + urand(1500, 10000));
-
-        creature.SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
-    }
+        i_nextMoveTime.Reset(urand(1500, 10000));       // Keep a short wait time
 }
 
 template<>
@@ -136,9 +117,6 @@ void RandomMovementGenerator<Creature>::Initialize(Creature& creature)
     if (!wander_distance)
         wander_distance = creature.GetRespawnRadius();
 
-    if (irand(0, RUNNING_CHANCE_RANDOMMV) > 0)
-        creature.AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
-
     _setRandomLocation(creature);
 }
 
@@ -149,45 +127,36 @@ void RandomMovementGenerator<Creature>::Reset(Creature& creature)
 }
 
 template<>
-void RandomMovementGenerator<Creature>::Finalize(Creature& /*creature*/) {}
+void RandomMovementGenerator<Creature>::Interrupt(Creature& creature)
+{
+    creature.InterruptMoving();
+    creature.ClearUnitState(UNIT_STATE_ROAMING);
+    creature.SetWalk(!creature.HasUnitState(UNIT_STATE_RUNNING_STATE));
+}
+
+template<>
+void RandomMovementGenerator<Creature>::Finalize(Creature& creature)
+{
+    creature.ClearUnitState(UNIT_STATE_ROAMING);
+    creature.SetWalk(!creature.HasUnitState(UNIT_STATE_RUNNING_STATE));
+}
 
 template<>
 bool RandomMovementGenerator<Creature>::Update(Creature& creature, const uint32& diff)
 {
     if (creature.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
     {
-        i_nextMoveTime.Update(i_nextMoveTime.GetExpiry());  // Expire the timer
+        i_nextMoveTime.Reset(0);  // Expire the timer
         creature.ClearUnitState(UNIT_STATE_ROAMING);
         return true;
     }
 
-    i_nextMoveTime.Update(diff);
-
-    if (i_destinationHolder.HasArrived() && !creature.IsStopped() && !creature.canFly())
-        creature.ClearUnitState(UNIT_STATE_ROAMING | UNIT_STATE_MOVE);
-
-    if (!i_destinationHolder.HasArrived() && creature.IsStopped())
-        creature.AddUnitState(UNIT_STATE_ROAMING);
-
-    CreatureTraveller traveller(creature);
-
-    if (i_destinationHolder.UpdateTraveller(traveller, diff, true))
+    if (creature.movespline->Finalized())
     {
+    i_nextMoveTime.Update(diff);
         if (i_nextMoveTime.Passed())
-        {
-            if (creature.canFly())
-                creature.AddUnitMovementFlag(MOVEFLAG_FLYING2);
-            else
-                creature.SetUnitMovementFlags(irand(0, RUNNING_CHANCE_RANDOMMV) > 0 ? MOVEFLAG_WALK_MODE : MOVEFLAG_NONE);
-
             _setRandomLocation(creature);
         }
-        else if (creature.IsPet() && creature.GetOwner() && !creature.IsWithinDist(creature.GetOwner(), PET_FOLLOW_DIST + 2.5f))
-        {
-            creature.SetUnitMovementFlags(MOVEFLAG_NONE);
-            _setRandomLocation(creature);
-        }
-    }
     return true;
 }
 

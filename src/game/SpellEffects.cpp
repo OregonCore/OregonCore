@@ -56,6 +56,7 @@
 #include "GridNotifiersImpl.h"
 #include "ScriptMgr.h"
 #include "InstanceData.h"
+#include "MoveSplineInit.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
 {
@@ -6438,7 +6439,10 @@ void Spell::EffectCharge(SpellEffIndex /*effIndex*/)
 
     float x, y, z;
     target->GetContactPoint(m_caster, x, y, z);
-    m_caster->MonsterMoveByPath(x, y, z, 25, true);
+    Movement::MoveSplineInit init(*m_caster);
+    init.MoveTo(x, y, z, true);
+    init.SetVelocity(25);
+    init.Launch();
 
     // not all charge effects used in negative spells
     if (!IsPositiveSpell(m_spellInfo->Id) && m_caster->GetTypeId() == TYPEID_PLAYER)

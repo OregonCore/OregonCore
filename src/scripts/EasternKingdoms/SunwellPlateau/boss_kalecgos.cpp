@@ -149,7 +149,7 @@ struct boss_kalecgosAI : public ScriptedAI
         if (!bJustReset) //first reset at create
         {
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
-            me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING);
+            me->SetLevitate(false);
             me->SetVisibility(VISIBILITY_ON);
             me->SetStandState(UNIT_STAND_STATE_SLEEP);
         }
@@ -222,7 +222,7 @@ struct boss_kalecgosAI : public ScriptedAI
                 if (ResetTimer <= diff)
                 {
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-                    me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING);
+                    me->SetLevitate(false);
                     me->SetVisibility(VISIBILITY_ON);
                     me->SetStandState(UNIT_STAND_STATE_SLEEP);
                     ResetTimer = 10000;
@@ -399,7 +399,7 @@ struct boss_kalecgosAI : public ScriptedAI
             TalkTimer = 10000;
             break;
         case 3:
-            me->AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+            me->SetLevitate(true);
             me->GetMotionMaster()->MovePoint(0, FLY_X, FLY_Y, FLY_Z);
             TalkTimer = 600000;
             break;
@@ -417,7 +417,7 @@ struct boss_kalecgosAI : public ScriptedAI
             TalkTimer = 3000;
             break;
         case 2:
-            me->AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+            me->SetLevitate(true);
             me->GetMotionMaster()->MovePoint(0, FLY_X, FLY_Y, FLY_Z);
             TalkTimer = 15000;
             break;

@@ -92,15 +92,10 @@ enum MovementFlags
         MOVEFLAG_TURN_LEFT | MOVEFLAG_TURN_RIGHT,
 };
 
-// used in SMSG_MONSTER_MOVE
-// only some values known as correct for 2.4.3
-enum SplineFlags
+namespace Movement
 {
-    SPLINEFLAG_NONE                 = 0x00000000,
-    SPLINEFLAG_JUMP                 = 0x00000008,
-    SPLINEFLAG_WALKMODE             = 0x00000100,
-    SPLINEFLAG_FLYING               = 0x00000200,
-};
+    class MoveSpline;
+}
 
 class WorldPacket;
 class UpdateData;
@@ -173,6 +168,11 @@ class Object
         ObjectGuid const& GetObjectGUID() const
         {
             return GetGuidValue(OBJECT_FIELD_GUID);
+        }
+
+        std::string GetGuidStr() const
+        {
+            return GetObjectGUID().GetString();
         }
 
         uint32 GetEntry() const

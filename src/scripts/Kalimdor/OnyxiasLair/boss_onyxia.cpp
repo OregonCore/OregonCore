@@ -123,7 +123,7 @@ struct boss_onyxiaAI : public ScriptedAI
         {
             Phase = 2;
             me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-            me->AddUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
+            me->SetLevitate(true);
             me->SetHover(true);
             me->GetMotionMaster()->Clear(false);
             me->GetMotionMaster()->MoveIdle();
@@ -133,12 +133,12 @@ struct boss_onyxiaAI : public ScriptedAI
         if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 40) && (Phase == 2))
         {
             Phase = 3;
-            me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
+            me->SetLevitate(false);
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             me->SetHover(false);
             me->GetMotionMaster()->MovePoint(0, -10.6155f, -219.357f, -87.7344f);
             DoStartMovement(me->getVictim());
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(false);
             DoScriptText(SAY_PHASE_3_TRANS, me);
         }
 

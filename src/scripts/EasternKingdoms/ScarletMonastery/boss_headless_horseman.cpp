@@ -414,7 +414,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
     {
         me->SetVisibility(VISIBILITY_OFF);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+        me->SetLevitate(true);
         me->SetSpeed(MOVE_WALK, 5.0f, true);
         wp_reached = false;
         count = 0;
@@ -447,7 +447,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
                 pInstance->SetData(GAMEOBJECT_PUMPKIN_SHRINE, 0);   //hide gameobject
             break;
         case 19:
-            me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+            me->SetLevitate(false);
             break;
         case 20:
             {

@@ -558,6 +558,7 @@ class Creature : public Unit, public GridObject<Creature>
         bool HasSpell(uint32 spellID) const;
 
         bool UpdateEntry(uint32 entry, uint32 team = ALLIANCE, const CreatureData* data = NULL);
+        void UpdateMovementFlags();
         bool UpdateStats(Stats stat);
         bool UpdateAllStats();
         void UpdateResistances(uint32 school);
@@ -844,6 +845,16 @@ class Creature : public Unit, public GridObject<Creature>
         uint32 m_PlayerDamageReq;
 
         float m_SightDistance, m_CombatDistance;
+
+        void SetRooted(bool apply) override;
+        void SetFeatherFall(bool apply) override;
+        void SetHover(bool apply) override;
+        void SetCanFly(bool apply) override;
+        void SetSwim(bool apply) override;
+        void SetWalk(bool apply);
+        void SetLevitate(bool apply) override;
+        void SetWaterWalk(bool apply) override;
+
     protected:
         bool CreateFromProto(uint32 guidlow, uint32 Entry, uint32 team, const CreatureData* data = NULL);
         bool InitEntry(uint32 entry, uint32 team = ALLIANCE, const CreatureData* data = NULL);

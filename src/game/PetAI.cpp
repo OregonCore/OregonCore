@@ -420,11 +420,9 @@ void PetAI::MovementInform(uint32 moveType, uint32 data)
             }
         }
         break;
-
-    case TARGETED_MOTION_TYPE:
+    case FOLLOW_MOTION_TYPE:
         {
-            // If data is owner's GUIDLow then we've reached follow point,
-            // otherwise we're probably chasing a creature
+            // If data is owner's GUIDLow then we've reached follow point
             if (me->GetCharmerOrOwner() && me->GetCharmInfo() && data == me->GetCharmerOrOwner()->GetGUIDLow() && me->GetCharmInfo()->IsReturning())
             {
                 me->GetCharmInfo()->SetIsAtStay(false);

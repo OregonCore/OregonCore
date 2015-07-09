@@ -194,10 +194,10 @@ struct npc_ranger_lilathaAI : public npc_escortAI
                 break;
             }
         case 19:
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->RemoveUnitMovementFlag(false);
             break;
         case 25:
-            me->AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(true);
             break;
         case 30:
             if (pPlayer && pPlayer->GetTypeId() == TYPEID_PLAYER)

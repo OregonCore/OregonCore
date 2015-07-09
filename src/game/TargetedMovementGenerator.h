@@ -19,8 +19,6 @@
 #define OREGON_TARGETEDMOVEMENTGENERATOR_H
 
 #include "MovementGenerator.h"
-#include "DestinationHolder.h"
-#include "Traveller.h"
 #include "FollowerReference.h"
 #include "PathFinder.h"
 
@@ -36,60 +34,95 @@ class TargetedMovementGeneratorBase
         FollowerReference i_target;
 };
 
-template<class T>
-class TargetedMovementGenerator
-    : public MovementGeneratorMedium< T, TargetedMovementGenerator<T> >, public TargetedMovementGeneratorBase
+template<class T, typename D>
+class TargetedMovementGeneratorMedium
+    : public MovementGeneratorMedium< T, D >, public TargetedMovementGeneratorBase
 {
-    public:
-        TargetedMovementGenerator(Unit& target, float offset = 0, float angle = 0, bool _usePathfinding = true);
-        ~TargetedMovementGenerator()
+    protected:
+        TargetedMovementGeneratorMedium(Unit& target, float offset = 0, float angle = 0) :
+            TargetedMovementGeneratorBase(target),
+            m_evadeTimer(urand(4000, 8000)),
+            i_offset(offset), i_angle(angle),
+            i_recheckDistance(0), i_path(NULL),
+            m_speedChanged(false), i_targetReached(false)
+        {
+        }
+        ~TargetedMovementGeneratorMedium()
         {
             delete i_path;
         }
 
-        void Initialize(T&);
-        void Finalize(T&);
-        void Reset(T&);
+    public:
         bool Update(T&, const uint32&);
-        MovementGeneratorType GetMovementGeneratorType()
-        {
-            return TARGETED_MOTION_TYPE;
-        }
 
-        void MovementInform(T&);
-
-        Unit* GetTarget() const;
-
-        bool GetDestination(float& x, float& y, float& z) const
-        {
-            if (i_destinationHolder.HasArrived() || !i_destinationHolder.HasDestination()) return false;
-            i_destinationHolder.GetDestination(x, y, z);
-            return true;
-        }
+        Unit* GetTarget() const { return i_target.getTarget(); }
 
         bool IsReachable() const
         {
             return (i_path) ? (i_path->getPathType() & PATHFIND_NORMAL) : true;
         }
 
-        void unitSpeedChanged()
-        {
-            i_recalculateTravel = true;
-        }
-        void UpdateFinalDistance(float fDistance);
-    private:
+        void unitSpeedChanged() { m_speedChanged = true; }
 
-        bool _setTargetLocation(T&);
+        virtual void MovementInform(T&) { }
 
+    protected:
+        void _setTargetLocation(T&, bool updateDestination);
+        bool RequiresNewPosition(T& owner, float x, float y, float z) const;
+
+        TimeTrackerSmall i_recheckDistance;
         float i_offset;
         float i_angle;
-        DestinationHolder< Traveller<T> > i_destinationHolder;
-        bool i_recalculateTravel;
-        float i_targetX, i_targetY, i_targetZ;
-        bool m_usePathfinding;
+        bool m_speedChanged : 1;
+        bool i_targetReached : 1;
+
         PathInfo* i_path;
-        uint32 m_pathPointsSent;
         uint32 m_evadeTimer;
 };
-#endif
 
+template<class T>
+class ChaseMovementGenerator : public TargetedMovementGeneratorMedium<T, ChaseMovementGenerator<T> >
+{
+public:
+    ChaseMovementGenerator(Unit& target, float offset, float angle)
+        : TargetedMovementGeneratorMedium<T, ChaseMovementGenerator<T> >(target, offset, angle) {}
+    ~ChaseMovementGenerator() {}
+
+    MovementGeneratorType GetMovementGeneratorType() { return CHASE_MOTION_TYPE; }
+
+    void Initialize(T&);
+    void Finalize(T&);
+    void Interrupt(T&);
+    void Reset(T&);
+    void MovementInform(T&);
+
+    bool EnableWalking() const { return false; }
+    void _reachTarget(T&);
+};
+
+template<class T>
+class FollowMovementGenerator : public TargetedMovementGeneratorMedium<T, FollowMovementGenerator<T> >
+{
+public:
+    FollowMovementGenerator(Unit& target)
+        : TargetedMovementGeneratorMedium<T, FollowMovementGenerator<T> >(target) {}
+    FollowMovementGenerator(Unit& target, float offset, float angle)
+        : TargetedMovementGeneratorMedium<T, FollowMovementGenerator<T> >(target, offset, angle) {}
+    ~FollowMovementGenerator() {}
+
+    MovementGeneratorType GetMovementGeneratorType() { return FOLLOW_MOTION_TYPE; }
+
+    void Initialize(T&);
+    void Finalize(T&);
+    void Interrupt(T&);
+    void Reset(T&);
+    void MovementInform(T&);
+
+    bool EnableWalking() const;
+    void _reachTarget(T&) {}
+
+private:
+    void _updateSpeed(T& u);
+};
+
+#endif

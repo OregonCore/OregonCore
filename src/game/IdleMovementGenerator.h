@@ -26,6 +26,7 @@ class IdleMovementGenerator : public MovementGenerator
 
         void Initialize(Unit&);
         void Finalize(Unit&) {  }
+        void Interrupt(Unit& ) {  }
         void Reset(Unit&);
         bool Update(Unit&, const uint32&)
         {
@@ -46,6 +47,7 @@ class RotateMovementGenerator : public MovementGenerator
 
         void Initialize(Unit& owner);
         void Finalize(Unit& owner);
+        void Interrupt(Unit&) {  }
         void Reset(Unit& owner)
         {
             Initialize(owner);
@@ -68,6 +70,7 @@ class DistractMovementGenerator : public MovementGenerator
 
         void Initialize(Unit& owner);
         void Finalize(Unit& owner);
+        void Interrupt(Unit&) {  }
         void Reset(Unit& owner)
         {
             Initialize(owner);

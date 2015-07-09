@@ -23,6 +23,8 @@ SDCategory: Naxxramas
 EndScriptData */
 
 #include "ScriptPCH.h"
+#include "MoveSplineInit.h"
+#include "MoveSpline.h"
 
 //when shappiron dies. dialog between kel and lich king (in this order)
 #define SAY_SAPP_DIALOG1            -1533084
@@ -258,7 +260,10 @@ struct boss_kelthuzadAI : public ScriptedAI
                     Walk_Pos_Z = ADDZ_RIGHT_NEAR;
                     break;
                 }
-                pUnit->SendMonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, MOVEFLAG_WALK_MODE);
+                Movement::MoveSplineInit init(*pUnit);
+                init.SetWalk(true);
+                init.MoveTo(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, true);
+                init.Launch();
             }
     }
 
@@ -421,7 +426,12 @@ struct boss_kelthuzadAI : public ScriptedAI
                     {
                         //if we find no one to figth walk to the center
                         if (!pUnit->IsInCombat())
-                            pUnit->SendMonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, MOVEFLAG_WALK_MODE);
+						{
+                            Movement::MoveSplineInit init(*pUnit);
+                            init.SetWalk(true);
+                            init.MoveTo(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, true);
+                            init.Launch();
+						}
 
                         //Safe storing of creatures
                         GuardiansOfIcecrown[GuardiansOfIcecrown_Count] = pUnit->GetGUID();

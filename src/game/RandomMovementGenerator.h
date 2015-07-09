@@ -19,8 +19,6 @@
 #define OREGON_RANDOMMOTIONGENERATOR_H
 
 #include "MovementGenerator.h"
-#include "DestinationHolder.h"
-#include "Traveller.h"
 
 // define chance for creature to not stop after reaching a waypoint
 #define MOVEMENT_RANDOM_MMGEN_CHANCE_NO_BREAK 50
@@ -36,9 +34,9 @@ class RandomMovementGenerator
         void _setRandomLocation(T&);
         void Initialize(T&);
         void Finalize(T&);
+        void Interrupt(T&);
         void Reset(T&);
         bool Update(T&, const uint32&);
-        bool GetDestination(float& x, float& y, float& z) const;
         void UpdateMapPosition(uint32 mapid, float& x , float& y, float& z)
         {
             i_destinationHolder.GetLocationNow(mapid, x, y, z);
@@ -50,7 +48,6 @@ class RandomMovementGenerator
     private:
         TimeTrackerSmall i_nextMoveTime;
 
-        DestinationHolder< Traveller<T> > i_destinationHolder;
         float wander_distance;
         uint32 i_nextMove;
 };

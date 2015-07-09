@@ -63,7 +63,7 @@ struct npc_corporal_keeshanAI : public npc_escortAI
             return;
 
         if (uiI >= 65 && me->GetUnitMovementFlags() == MOVEFLAG_WALK_MODE)
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(false);
 
         switch (uiI)
         {
@@ -73,7 +73,7 @@ struct npc_corporal_keeshanAI : public npc_escortAI
             uiPhase = 1;
             break;
         case 65:
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(false);
             break;
         case 115:
             pPlayer->AreaExploredOrEventHappens(QUEST_MISSING_IN_ACTION);

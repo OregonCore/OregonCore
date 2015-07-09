@@ -27,6 +27,8 @@
 #include "MapManager.h"
 #include "ObjectMgr.h"
 #include "MapRefManager.h"
+#include "MoveSplineInit.h"
+#include "MoveSpline.h"
 
 // Put scripts in the execution queue
 void Map::ScriptsStart(ScriptMapMap const& scripts, uint32 id, Object* source, Object* target)
@@ -489,7 +491,13 @@ void Map::ScriptsProcess()
             // Source or target must be Creature.
             if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
             {
-                cSource->SendMonsterMoveWithSpeed(step.script->MoveTo.DestX, step.script->MoveTo.DestY, step.script->MoveTo.DestZ, step.script->MoveTo.TravelTime);
+                Movement::MoveSplineInit init(*cSource);
+                init.MoveTo(step.script->MoveTo.DestX, step.script->MoveTo.DestY, step.script->MoveTo.DestZ, true);
+                int32 duration = init.Launch();
+                if (duration != step.script->MoveTo.TravelTime)
+                    sLog.outError("SCRIPT_COMMAND_MOVE_TO : Travel time and duration from spline don't match (travel time : %u, duration : %i). Object (TypeId: %u, Entry: %u, GUID: %u)",
+                    step.script->MoveTo.TravelTime, duration,
+                    source->GetTypeId(), source->GetEntry(), source->GetGUIDLow());
                 cSource->GetMap()->CreatureRelocation(cSource, step.script->MoveTo.DestX, step.script->MoveTo.DestY, step.script->MoveTo.DestZ, ((Unit *)source)->GetAngle(step.script->MoveTo.DestX, step.script->MoveTo.DestY));
             }
             break;

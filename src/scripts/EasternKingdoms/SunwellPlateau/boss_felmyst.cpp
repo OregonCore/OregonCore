@@ -127,7 +127,7 @@ struct boss_felmystAI : public ScriptedAI
         phase = PHASE_NONE;
         events.Reset();
         uiFlightCount = 0;
-        me->AddUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
+        me->SetLevitate(true);
         me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
         me->SetFloatValue(UNIT_FIELD_COMBATREACH, 10);
         DoScriptText(YELL_BIRTH, me);
@@ -250,7 +250,7 @@ struct boss_felmystAI : public ScriptedAI
             events.ScheduleEvent(EVENT_FLIGHT, 60000);
             break;
         case PHASE_FLIGHT:
-            me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
+            me->SetLevitate(true);
             events.ScheduleEvent(EVENT_FLIGHT_SEQUENCE, 1000);
             uiFlightCount = 0;
             uiBreathCount = 0;
@@ -374,7 +374,7 @@ struct boss_felmystAI : public ScriptedAI
             }
             break;
         case 10:
-            me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
+            me->SetLevitate(false);
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             EnterPhase(PHASE_GROUND);
             AttackStart(SelectTarget(SELECT_TARGET_TOPAGGRO));

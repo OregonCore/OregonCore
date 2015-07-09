@@ -341,9 +341,9 @@ void npc_escortAI::MovementInform(uint32 uiMoveType, uint32 uiPointId)
         debug_log("OSCR: EscortAI has returned to original position before combat");
 
         if (m_bIsRunning && me->HasUnitMovementFlag(MOVEFLAG_WALK_MODE))
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(false);
         else if (!m_bIsRunning && !me->HasUnitMovementFlag(MOVEFLAG_WALK_MODE))
-            me->AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(true);
 
         RemoveEscortState(STATE_ESCORT_RETURNING);
 
@@ -435,14 +435,14 @@ void npc_escortAI::SetRun(bool bRun)
     if (bRun)
     {
         if (!m_bIsRunning)
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(false);
         else
             debug_log("OSCR: EscortAI attempt to set run mode, but is already running.");
     }
     else
     {
         if (m_bIsRunning)
-            me->AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(true);
         else
             debug_log("OSCR: EscortAI attempt to set walk mode, but is already walking.");
     }
@@ -514,9 +514,9 @@ void npc_escortAI::Start(bool bIsActiveAttacker, bool bRun, uint64 uiPlayerGUID,
 
     //Set initial speed
     if (m_bIsRunning)
-        me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+        me->SetWalk(false);
     else
-        me->AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+        me->SetWalk(true);
 
     AddEscortState(STATE_ESCORT_ESCORTING);
 }

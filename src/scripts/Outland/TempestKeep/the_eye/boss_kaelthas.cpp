@@ -25,6 +25,7 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "the_eye.h"
 #include "WorldPacket.h"
+#include "MoveSplineInit.h"
 
 enum
 {
@@ -841,7 +842,9 @@ struct boss_kaelthasAI : public ScriptedAI
                         me->GetMotionMaster()->Clear();
                         me->GetMotionMaster()->MoveIdle();
                         me->Relocate(afGravityPos[0], afGravityPos[1], afGravityPos[2], 0);
-                        me->SendMonsterMove(afGravityPos[0], afGravityPos[1], afGravityPos[2], 0, 0, 0);
+                        Movement::MoveSplineInit init(*me);
+                        init.MoveTo(afGravityPos[0], afGravityPos[1], afGravityPos[2], true);
+                        init.Launch();
 
                         me->InterruptNonMeleeSpells(false);
                         DoCast(me, SPELL_FULLPOWER);
@@ -898,6 +901,7 @@ struct boss_kaelthasAI : public ScriptedAI
                     if (GravityLapse_Timer <= diff)
                     {
                         std::list<HostileReference*>::iterator i = me->getThreatManager().getThreatList().begin();
+                        Movement::MoveSplineInit init(*me);
                         switch (GravityLapse_Phase)
                         {
                         case 0:
@@ -905,7 +909,8 @@ struct boss_kaelthasAI : public ScriptedAI
                             me->GetMotionMaster()->Clear();
                             me->GetMotionMaster()->MoveIdle();
                             me->Relocate(afGravityPos[0], afGravityPos[1], afGravityPos[2], 0);
-                            me->SendMonsterMove(afGravityPos[0], afGravityPos[1], afGravityPos[2], 0, 0, 0);
+                            init.MoveTo(afGravityPos[0], afGravityPos[1], afGravityPos[2], true);
+                            init.Launch();
 
                             // 1) Kael'thas will portal the whole raid right into his body
                             for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); ++i)

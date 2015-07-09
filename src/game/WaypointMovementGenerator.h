@@ -25,17 +25,14 @@
  */
 
 #include "MovementGenerator.h"
-#include "DestinationHolder.h"
 #include "WaypointManager.h"
 #include "Path.h"
-#include "Traveller.h"
 #include "PathFinder.h"
 #include "Player.h"
 
 #include <vector>
 #include <set>
 
-#define FLIGHT_TRAVEL_UPDATE  100
 #define STOP_TIME_FOR_PLAYER  3 * MINUTE * IN_MILLISECONDS          // 3 Minutes
 #define TIMEDIFF_NEXT_WP      250
 
@@ -46,11 +43,6 @@ class PathMovementBase
         PathMovementBase() : i_currentNode(0) {}
         virtual ~PathMovementBase() {};
 
-        bool MovementInProgress(void) const
-        {
-            return i_currentNode < i_path->Size();
-        }
-
         void LoadPath(T&);
         void ReloadPath(T&);
         uint32 GetCurrentNode() const
@@ -58,23 +50,11 @@ class PathMovementBase
             return i_currentNode;
         }
 
-        bool GetDestination(float& x, float& y, float& z) const
-        {
-            i_destinationHolder.GetDestination(x, y, z);
-            return true;
-        }
-        bool GetPosition(float& x, float& y, float& z) const
-        {
-            i_destinationHolder.GetLocationNowNoMicroMovement(x, y, z);
-            return true;
-        }
-
         void PreloadEndGrid();
         void InitEndGridInfo();
 
     protected:
         uint32 i_currentNode;
-        DestinationHolder< Traveller<T> > i_destinationHolder;
         P i_path;
 };
 
@@ -89,19 +69,19 @@ class WaypointMovementGenerator
 
         void Initialize(T&);
         void Finalize(T&);
+		void Interrupt(T&);
         void MovementInform(T&);
-        void InitTraveller(T&, const WaypointData&);
+        void InitTraveller(T&);
         void GeneratePathId(T&);
         void Reset(T& unit);
         bool Update(T&, const uint32&);
-        bool GetDestination(float& x, float& y, float& z) const;
         MovementGeneratorType GetMovementGeneratorType()
         {
             return WAYPOINT_MOTION_TYPE;
         }
 
     private:
-        void MoveToNextNode(CreatureTraveller& traveller);
+        void MoveToNextNode(T&, const WaypointData&);
         WaypointData* node;
         uint32 path_id;
         TimeTrackerSmall i_nextMoveTime;
@@ -126,6 +106,7 @@ class FlightPathMovementGenerator
         }
         void Initialize(Player&);
         void Finalize(Player&);
+        void Interrupt(Player&);
         void Reset(Player&) {}
         bool Update(Player&, const uint32&);
         MovementGeneratorType GetMovementGeneratorType()
@@ -151,11 +132,6 @@ class FlightPathMovementGenerator
         void SkipCurrentNode()
         {
             ++i_currentNode;
-        }
-        bool GetDestination(float& x, float& y, float& z) const
-        {
-            i_destinationHolder.GetDestination(x, y, z);
-            return true;
         }
 
     private:

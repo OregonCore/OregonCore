@@ -306,7 +306,7 @@ struct npc_anchorite_truuenAI : public npc_escortAI
         case 23:
             if (Creature* pUter = me->SummonCreature(NPC_GHOST_UTHER, 971.86, -1825.42 , 81.99 , 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 10000))
             {
-                pUter->AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+                pUter->SetLevitate(true);
                 DoScriptText(SAY_WP_4, pUter, me);
                 UterGUID = pUter->GetGUID();
                 uiPhase = 1;

@@ -197,7 +197,7 @@ struct npc_dancing_flamesAI : public ScriptedAI
         float x, y, z;
         me->GetPosition(x, y, z);
         me->GetMap()->CreatureRelocation(me, x, y, z + 0.94f, 0.0f);
-        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+        me->SetLevitate(true);
         me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
         WorldPacket data;                       //send update position to client
         me->BuildHeartBeatMsg(&data);
@@ -439,7 +439,7 @@ struct npc_injured_patientAI : public ScriptedAI
             DoScriptText(RAND(SAY_DOC1, SAY_DOC2, SAY_DOC3), me);
 
             uint32 mobId = me->GetEntry();
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            me->SetWalk(false);
 
             switch (mobId)
             {

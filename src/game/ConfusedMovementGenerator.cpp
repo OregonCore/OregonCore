@@ -19,8 +19,9 @@
 #include "MapManager.h"
 #include "Opcodes.h"
 #include "ConfusedMovementGenerator.h"
-#include "DestinationHolderImp.h"
 #include "VMapFactory.h"
+#include "MoveSplineInit.h"
+#include "MoveSpline.h"
 
 template<class T>
 void ConfusedMovementGenerator<T>::Initialize(T& unit)
@@ -88,7 +89,6 @@ void ConfusedMovementGenerator<T>::Initialize(T& unit)
     unit.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED);
     unit.CastStop();
     unit.StopMoving();
-    unit.AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
     unit.AddUnitState(UNIT_STATE_CONFUSED);
 }
 
@@ -107,11 +107,16 @@ void ConfusedMovementGenerator<Player>::_InitSpecific(Player&, bool& is_water_ok
 }
 
 template<class T>
+void ConfusedMovementGenerator<T>::Interrupt(T& unit)
+{
+    unit.InterruptMoving();
+}
+
+template<class T>
 void ConfusedMovementGenerator<T>::Reset(T& unit)
 {
     i_nextMove = 1;
     i_nextMoveTime.Reset(0);
-    i_destinationHolder.ResetUpdate();
     unit.StopMoving();
 }
 
@@ -123,11 +128,7 @@ bool ConfusedMovementGenerator<T>::Update(T& unit, const uint32& diff)
 
     if (i_nextMoveTime.Passed())
     {
-        // currently moving, update location
-        Traveller<T> traveller(unit);
-        if (i_destinationHolder.UpdateTraveller(traveller, diff))
-        {
-            if (i_destinationHolder.HasArrived())
+        if (unit.movespline->Finalized())
             {
                 // arrived, stop and wait a bit
                 unit.ClearUnitState(UNIT_STATE_MOVE);
@@ -136,7 +137,6 @@ bool ConfusedMovementGenerator<T>::Update(T& unit, const uint32& diff)
                 i_nextMoveTime.Reset(urand(100, 1000));
             }
         }
-    }
     else
     {
         // waiting for next move
@@ -148,8 +148,10 @@ bool ConfusedMovementGenerator<T>::Update(T& unit, const uint32& diff)
             const float x = i_waypoints[i_nextMove][0];
             const float y = i_waypoints[i_nextMove][1];
             const float z = i_waypoints[i_nextMove][2];
-            Traveller<T> traveller(unit);
-            i_destinationHolder.SetDestination(traveller, x, y, z);
+            Movement::MoveSplineInit init(unit);
+            init.MoveTo(x, y, z, true);
+            init.SetWalk(true);
+            init.Launch();
         }
     }
     return true;
@@ -167,6 +169,8 @@ void ConfusedMovementGenerator<T>::Finalize(T& unit)
 
 template void ConfusedMovementGenerator<Player>::Initialize(Player& player);
 template void ConfusedMovementGenerator<Creature>::Initialize(Creature& creature);
+template void ConfusedMovementGenerator<Player>::Interrupt(Player& player);
+template void ConfusedMovementGenerator<Creature>::Interrupt(Creature& creature);
 template void ConfusedMovementGenerator<Player>::Finalize(Player& player);
 template void ConfusedMovementGenerator<Creature>::Finalize(Creature& creature);
 template void ConfusedMovementGenerator<Player>::Reset(Player& player);

@@ -221,7 +221,7 @@ struct boss_brutallusAI : public ScriptedAI
         case 5:
             me->AttackStop();
             Madrigosa->AttackStop();
-            Madrigosa->SetUnitMovementFlags(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
+            Madrigosa->SetLevitate(true);
             Madrigosa->SetSpeed(MOVE_RUN, 3.0f, true);
             Madrigosa->GetMotionMaster()->MovePath(31000, false);
             Madrigosa->SetInFront(me);
@@ -236,8 +236,8 @@ struct boss_brutallusAI : public ScriptedAI
             IntroPhaseTimer = 6000;
             break;
         case 7:
-            Madrigosa->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
-            Madrigosa->SetUnitMovementFlags(SPLINEFLAG_WALKMODE);
+            Madrigosa->SetLevitate(false);
+            Madrigosa->SetWalk(true);
             Madrigosa->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             Madrigosa->SendMovementFlagUpdate();
             Madrigosa->CastSpell(me, SPELL_INTRO_ENCAPSULATE_CHANELLING, true);
