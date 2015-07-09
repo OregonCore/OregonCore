@@ -327,6 +327,9 @@ void MotionMaster::MoveFall(float z, uint32 id)
             return;
     }
 
+    if (i_owner->GetTypeId() == TYPEID_PLAYER)
+        i_owner->AddUnitMovementFlag(MOVEFLAG_FALLING);
+
     Movement::MoveSplineInit init(*i_owner);
     init.MoveTo(i_owner->GetPositionX(), i_owner->GetPositionY(), z);
     init.SetFall();

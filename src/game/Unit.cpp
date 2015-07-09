@@ -12864,3 +12864,8 @@ void Unit::SendMonsterMoveWithSpeedToCurrentDestination(float speed)
 
     MonsterMoveWithSpeed(x, y, z, speed, true);
 }
+
+bool Unit::IsFalling() const
+{
+	return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEFLAG_FALLING | MOVEFLAG_FALLINGFAR)) || movespline->isFalling();
+}

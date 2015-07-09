@@ -2098,7 +2098,8 @@ class Unit : public WorldObject
             return PET_FOLLOW_ANGLE;
         }
 
-        bool IsLevitating() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_LEVITATING); }
+        bool IsFlying() const   { return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEFLAG_FLYING | MOVEFLAG_LEVITATING)); }
+        bool IsFalling() const;
         bool IsWalking() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE); }
         bool IsRooted() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_ROOT); }
 
@@ -2107,6 +2108,8 @@ class Unit : public WorldObject
         virtual void SetLevitate(bool /*apply*/) {}
         virtual void SetCanFly(bool /*apply*/) {}
         virtual void SetWaterWalk(bool /*apply*/) {}
+
+        bool IsLevitating() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_LEVITATING); }
 
         bool IsAIEnabled, NeedChangeAI;
         uint64 LastCharmerGUID;

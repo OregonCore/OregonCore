@@ -441,10 +441,7 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
     // trigger creature is always not selectable and can not be attacked
     if (isTrigger())
-    {
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        AddUnitMovementFlag(MOVEFLAG_LEVITATING);
-    }
 
     if (IsTotem() || isTrigger()
         || GetCreatureType() == CREATURE_TYPE_CRITTER)
@@ -460,14 +457,44 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
         ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
     }
 
-    // TODO: In fact monster move flags should be set - not movement flags.
-    if (cInfo->InhabitType & INHABIT_AIR)
-        AddUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
-
-    if (cInfo->InhabitType & INHABIT_WATER)
-        AddUnitMovementFlag(MOVEFLAG_SWIMMING);
-
+    UpdateMovementFlags();
     return true;
+}
+
+void Creature::UpdateMovementFlags()
+{
+    if (IsControlledByPlayer())
+        return;
+
+    CreatureInfo const* cInfo = GetCreatureTemplate();
+
+    // Set the movement flags if the creature is in that mode. (Only fly if actually in air, only swim if in water, etc)
+    float ground = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ(), true, MAX_FALL_DISTANCE);
+    if (ground < INVALID_HEIGHT)
+    {
+        sLog.outDebug("FallGround: creature %u at map %u (x: %f, y: %f, z: %f), not able to retrive a proper GetHeight (z: %f).",
+            GetEntry(), GetMap()->GetId(), GetPositionX(), GetPositionX(), GetPositionZ(), ground);
+    }
+
+    bool isInAir = (G3D::fuzzyGt(GetPositionZ(), ground + 0.05f) || G3D::fuzzyLt(GetPositionZ(), ground - 0.05f)); // Can be underground too, prevent the falling
+
+    if (GetCreatureTemplate()->InhabitType & INHABIT_AIR && isInAir && !IsFalling())
+    {
+        if (GetCreatureTemplate()->InhabitType & INHABIT_GROUND)
+            SetCanFly(true);
+        else
+            SetLevitate(true);
+    }
+    else
+    {
+        SetCanFly(false);
+        SetLevitate(false);
+    }
+
+    if (!isInAir)
+        RemoveUnitMovementFlag(MOVEFLAG_FALLING);
+
+    SetSwim(cInfo->InhabitType & INHABIT_WATER && IsInWater());
 }
 
 void Creature::Update(uint32 diff)
@@ -717,17 +744,6 @@ bool Creature::Create(uint32 guidlow, Map* map, uint32 Entry, uint32 team, float
             break;
         }
         LoadCreaturesAddon();
-
-        if (GetCreatureTemplate()->InhabitType & INHABIT_AIR)
-        {
-            if (GetDefaultMovementType() == IDLE_MOTION_TYPE)
-                AddUnitMovementFlag(MOVEFLAG_FLYING);
-            else
-                SetFlying(true);
-        }
-
-        if (GetCreatureTemplate()->InhabitType & INHABIT_WATER)
-            AddUnitMovementFlag(MOVEFLAG_SWIMMING);
     }
 
     return bResult;
@@ -1490,7 +1506,8 @@ void Creature::setDeathState(DeathState s)
         setActive(false);
 
         // return, since we promote to DEAD_FALLING. DEAD_FALLING is promoted to CORPSE at next update.
-        if (canFly() && FallGround())
+        if (canFly() && IsFlying())
+            if (FallGround())
             return;
 
         Unit::setDeathState(CORPSE);
@@ -1503,11 +1520,9 @@ void Creature::setDeathState(DeathState s)
         Unit::setDeathState(ALIVE);
         CreatureInfo const* cinfo = GetCreatureTemplate();
         RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
-        AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
-        if (GetCreatureTemplate()->InhabitType & INHABIT_AIR)
-            AddUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
-        if (GetCreatureTemplate()->InhabitType & INHABIT_WATER)
-            AddUnitMovementFlag(MOVEFLAG_SWIMMING);
+
+        UpdateMovementFlags();
+
         SetUInt32Value(UNIT_NPC_FLAGS, cinfo->npcflag);
         ClearUnitState(UNIT_STATE_ALL_STATE);
         i_motionMaster.Initialize();
@@ -1540,19 +1555,7 @@ bool Creature::FallGround()
 
     Unit::setDeathState(DEAD_FALLING);
 
-    float dz = ground_Z - GetPositionZ();
-
-    // run speed * 2 explicit, not verified though but result looks proper
-    double speed = GetSpeed(MOVE_RUN) * 2;
-
-    // For creatures that are moving towards target and dies, the visual effect is not nice.
-    // It is possibly caused by a xyz mismatch in DestinationHolder's GetLocationNow and the location
-    // of the mob in client. For mob that are already reached target or dies while not moving
-    // the visual appear to be fairly close to the expected.
-    GetMap()->CreatureRelocation(this, GetPositionX(), GetPositionY(), ground_Z, GetOrientation());
-    MonsterMoveWithSpeed(GetPositionX(), GetPositionY(), ground_Z, speed);
-
-    sLog.outDebug("FallGround: speed: %f, from %f to %f", speed, GetPositionZ(), ground_Z);
+    GetMotionMaster()->MoveFall();
 
     return true;
 }
