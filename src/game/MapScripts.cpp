@@ -490,7 +490,7 @@ void Map::ScriptsProcess()
             if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script))
             {
                 cSource->SendMonsterMoveWithSpeed(step.script->MoveTo.DestX, step.script->MoveTo.DestY, step.script->MoveTo.DestZ, step.script->MoveTo.TravelTime);
-                cSource->GetMap()->CreatureRelocation(cSource, step.script->MoveTo.DestX, step.script->MoveTo.DestY, step.script->MoveTo.DestZ, ((Unit *)source)->GetAngle(step.script->MoveTo.DestX, step.script->MoveTo.DestY));
+                cSource->GetMap()->CreatureRelocation(cSource, step.script->MoveTo.DestX, step.script->MoveTo.DestY, step.script->MoveTo.DestZ, 0);
             }
             break;
 
