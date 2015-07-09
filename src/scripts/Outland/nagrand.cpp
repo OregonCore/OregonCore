@@ -1320,7 +1320,7 @@ bool GOHello_corkis_prison3(Player* pPlayer, GameObject* pGo)
     {
         if (Creature* pCor3 = pGo->FindNearestCreature( NPC_CORKI3, 5, true))
         {
-            pPlayer->KilledMonsterCredit(NPC_CORKI_CREDIT_3, 0);
+            pPlayer->KilledMonsterCredit(NPC_CORKI_CREDIT_3, pCor3->GetGUID());
             DoScriptText(SAY_THANKS, pCor3, pPlayer);
             ((npc_corki3AI*)pCor3->AI())->Start(false, false, pPlayer->GetGUID());
         }
