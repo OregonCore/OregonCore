@@ -403,14 +403,14 @@ void Log::DoLog(LogTypes type, bool newline, const char* prefix, const char* fmt
 	va_end(ap2);
 	vsprintf(buffer, fmt, ap);
 
-    if (m_logMaskDatabase & type)
+    if (m_logMaskDatabase & (1 << type))
     {
         // we don't want empty strings in the DB
         if (*buffer && *buffer != ' ' && *buffer != '\n')
             outDB(type, buffer);
     }
 
-    if (m_logMask & type)
+    if (m_logMask & (1 << type))
     {
         if (FILE* logFile = (file ? file : m_logFiles[type]))
         {
