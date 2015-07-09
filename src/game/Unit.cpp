@@ -4267,10 +4267,10 @@ void Unit::RemoveArenaAuras(bool onleave)
     // used to all positive visible auras in arenas
     for (AuraMap::iterator iter = m_Auras.begin(); iter != m_Auras.end();)
     {
-        if (!(iter->second->GetSpellProto()->AttributesEx4 & (1 << 21)) &&
+        if (!(iter->second->GetSpellProto()->AttributesEx4 & SPELL_ATTR_EX4_STANCES) &&
             // don't remove stances, shadowform, pally/hunter auras
             !iter->second->IsPassive() &&                   // don't remove passive auras
-            !(iter->second->GetSpellProto()->Attributes & (SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY | SPELL_ATTR_HIDDEN_CAST_TIME)) ||
+            !(iter->second->GetSpellProto()->Attributes & (SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY | SPELL_ATTR_HIDDEN_CAST_TIME)) &&
             // not unaffected by invulnerability auras or not having that unknown flag (that seemed the most probable)
             (!onleave || !iter->second->IsPositive()))      // remove all buffs on enter, negative buffs on leave
             RemoveAura(iter);

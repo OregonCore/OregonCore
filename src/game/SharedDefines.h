@@ -565,7 +565,7 @@ enum SpellAttributesEx4
     SPELL_ATTR_EX4_UNK18                     = 0x00040000,            // 18 used by spells that jump to 2 other targets. Glaive Throw, Avengers Shield etc.
     SPELL_ATTR_EX4_UNK19                     = 0x00080000,            // 19
     SPELL_ATTR_EX4_UNK20                     = 0x00100000,            // 20
-    SPELL_ATTR_EX4_UNK21                     = 0x00200000,            // 21
+    SPELL_ATTR_EX4_STANCES                   = 0x00200000,            // 21 stances, shapeshifts, etc.
     SPELL_ATTR_EX4_UNK22                     = 0x00400000,            // 22 used by seal of command (20424,42058)
     SPELL_ATTR_EX4_UNK23                     = 0x00800000,            // 23 
     SPELL_ATTR_EX4_AUTOSHOT                  = 0x01000000,            // 24
