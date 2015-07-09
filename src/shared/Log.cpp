@@ -400,8 +400,8 @@ void Log::DoLog(LogTypes type, bool newline, const char* prefix, const char* fmt
     size_t len = vsnprintf(NULL, 0, fmt, ap2) + 1;
     char* buffer = (char*) ((len > 1024) ? malloc(len * sizeof(char)) : alloca(len * sizeof(char)));
     
-    va_end(ap2);
-    vsprintf(buffer, fmt, ap);
+	va_end(ap2);
+	vsprintf(buffer, fmt, ap);
 
     if (m_logMaskDatabase & type)
     {
@@ -412,7 +412,14 @@ void Log::DoLog(LogTypes type, bool newline, const char* prefix, const char* fmt
 
     if (m_logMask & type)
     {
-        --len; // strip ascii null
+        if (FILE* logFile = (file ? file : m_logFiles[type]))
+        {
+            outTimestamp(logFile);
+            fwrite(buffer, len-1, 1, logFile);
+            if (newline)
+                fputc('\n', logFile);
+            fflush(logFile);
+        }
 
         if (prefix)
         {
@@ -426,18 +433,16 @@ void Log::DoLog(LogTypes type, bool newline, const char* prefix, const char* fmt
             SetColor(m_colors[type]);
 
         #if PLATFORM == PLATFORM_WINDOWS
-        char* temp_buf = (char*) _malloca(len * sizeof(char));
         wchar_t* wtemp_buf = (wchar_t*) _malloca(len * sizeof(wchar_t));
-		size_t siz;
-        if (Utf8toWStr(buffer, len, wtemp_buf, siz))
-    {
-			CharToOemBuffW(wtemp_buf, temp_buf, siz);
-			fwrite(temp_buf, siz, 1, stderr);
-		}
-		_freea(temp_buf);
-		_freea(wtemp_buf);
+        size_t siz = len - 1;
+        if (Utf8toWStr(buffer, len-1, wtemp_buf, siz))
+        {
+            CharToOemBuffW(wtemp_buf, buffer, siz);
+            fwrite(buffer, siz, 1, stderr);
+        }
+        _freea(wtemp_buf);
         #else
-        fwrite(buffer, len, 1, stderr);
+        fwrite(buffer, len-1, 1, stderr);
         #endif
 
         if (m_colors[type])
@@ -446,17 +451,8 @@ void Log::DoLog(LogTypes type, bool newline, const char* prefix, const char* fmt
         if (newline)
             fputc('\n', stderr);
         
-        if (FILE* logFile = (file ? file : m_logFiles[type]))
-        {
-            outTimestamp(logFile);
-            fwrite(buffer, len, 1, logFile);
-            if (newline)
-                fputc('\n', logFile);
-            fflush(logFile);
+        fflush(stderr);
     }
-
-    fflush(stderr);
-}
 
     if (len > 1024)
         free(buffer);
