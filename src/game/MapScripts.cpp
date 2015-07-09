@@ -498,7 +498,7 @@ void Map::ScriptsProcess()
                     sLog.outError("SCRIPT_COMMAND_MOVE_TO : Travel time and duration from spline don't match (travel time : %u, duration : %i). Object (TypeId: %u, Entry: %u, GUID: %u)",
                     step.script->MoveTo.TravelTime, duration,
                     source->GetTypeId(), source->GetEntry(), source->GetGUIDLow());
-                cSource->GetMap()->CreatureRelocation(cSource, step.script->MoveTo.DestX, step.script->MoveTo.DestY, step.script->MoveTo.DestZ, 0);
+                cSource->GetMap()->CreatureRelocation(cSource, step.script->MoveTo.DestX, step.script->MoveTo.DestY, step.script->MoveTo.DestZ, ((Unit *)source)->GetAngle(step.script->MoveTo.DestX, step.script->MoveTo.DestY));
             }
             break;
 
