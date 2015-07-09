@@ -768,9 +768,6 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
         break;
 
     // Oregon ONLY
-    case ACTION_T_SET_ACTIVE:
-        me->setActive(action.raw.param1 ? true : false);
-        break;
     case ACTION_T_SET_AGGRESSIVE:
         me->SetReactState(ReactStates(action.raw.param1));
         break;

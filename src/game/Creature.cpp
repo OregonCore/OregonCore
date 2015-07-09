@@ -2042,9 +2042,6 @@ bool Creature::LoadCreaturesAddon(bool reload)
     if (cainfo->path_id != 0)
         m_path_id = cainfo->path_id;
 
-    if (cainfo->isActive)
-        setActive(true);
-
     if (cainfo->auras)
     {
         for (CreatureDataAddonAura const* cAura = cainfo->auras; cAura->spell_id; ++cAura)
