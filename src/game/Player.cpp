@@ -15186,6 +15186,12 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
 
     m_atLoginFlags = fields[34].GetUInt32();
 
+    if (HasAtLoginFlag(AT_LOGIN_RENAME))
+    {
+        sLog.outError("Player (GUID: %u) tried to login while forced to rename, can't load.'", GetGUIDLow());
+        return false;
+    }
+
     // Honor system
     // Update Honor kills data
     m_lastHonorUpdateTime = logoutTime;
