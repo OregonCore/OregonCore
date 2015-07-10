@@ -24,6 +24,7 @@ EndScriptData */
 
 /* ContentData
 npc_draenei_survivor
+npc_tavara
 npc_engineer_spark_overgrind
 npc_injured_draenei
 npc_magwin
@@ -205,6 +206,51 @@ struct npc_draenei_survivorAI : public ScriptedAI
 CreatureAI* GetAI_npc_draenei_survivor(Creature* pCreature)
 {
     return new npc_draenei_survivorAI (pCreature);
+}
+
+/*######
+## npc_tavara
+######*/
+
+enum eTavara
+{
+    // NPCs
+    NPC_TAVARA                  = 17551,
+
+    // Spells
+    SPELL_GIFT_OF_THE_NARUU     = 28880,
+    SPELL_LESSER_HEAL_R1        = 2050,
+    SPELL_LESSER_HEAL_R2        = 2052,
+    SPELL_RENEW_R1              = 139
+};
+
+struct npc_tavaraAI : public ScriptedAI
+{
+    npc_tavaraAI(Creature* c) : ScriptedAI(c) {}
+
+    void Reset() { }
+
+    void SpellHit(Unit* caster, const SpellEntry* spell)
+    {
+        Player* questTarget = caster->ToPlayer();
+        if (questTarget && questTarget->getClass() == CLASS_PRIEST)
+            switch (spell->Id)
+            {
+                case SPELL_GIFT_OF_THE_NARUU:
+                case SPELL_LESSER_HEAL_R1:
+                case SPELL_LESSER_HEAL_R2:
+                case SPELL_RENEW_R1:
+                    {
+                        me->HandleEmoteCommand(ANIM_RISE);
+                        questTarget->KilledMonsterCredit(NPC_TAVARA, me->GetGUID());
+                    }
+            }
+    }
+};
+
+CreatureAI* GetAI_npc_tavara(Creature* creature)
+{
+    return new npc_tavaraAI (creature);
 }
 
 /*######
@@ -767,6 +813,11 @@ void AddSC_azuremyst_isle()
     newscript = new Script;
     newscript->Name = "npc_draenei_survivor";
     newscript->GetAI = &GetAI_npc_draenei_survivor;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_tavara";
+    newscript->GetAI = &GetAI_npc_tavara;
     newscript->RegisterSelf();
 
     newscript = new Script;
