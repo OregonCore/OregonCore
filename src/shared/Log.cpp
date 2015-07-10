@@ -506,7 +506,7 @@ void Log::outCharDump(const char* str, uint32 account_id, uint32 guid, const cha
 }
 
 #define logFunctionImpl(name, type, newline, prefix)                  \
-            void Log::name(const char* fmt, ...) ATTR_PRINTF(2, 3)    \
+            void Log::name(const char* fmt, ...)                      \
             {                                                         \
                 if (!((m_logMask | m_logMaskDatabase) & (1 << type))) \
                     return;                                    \
