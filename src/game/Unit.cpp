@@ -12255,15 +12255,22 @@ void Unit::SetStunned(bool apply)
         SetTarget(0);
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 
-        // Creature specific
-        if (GetTypeId() != TYPEID_PLAYER)
+        // MOVEMENTFLAG_ROOT cannot be used in conjunction with MOVEMENTFLAG_MASK_MOVING (tested 3.3.5a)
+        // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
+        // setting MOVEMENTFLAG_ROOT
+        RemoveUnitMovementFlag(MOVEFLAG_MOVING);
+        m_movementInfo.AddMovementFlag(MOVEFLAG_ROOT);
             StopMoving();
-        else
+
+        if (GetTypeId() == TYPEID_PLAYER)
             SetStandState(UNIT_STAND_STATE_STAND);
 
-        CastStop();
+        WorldPacket data(SMSG_FORCE_MOVE_ROOT, 8);
+        data << GetPackGUID();
+        data << uint32(0);
+        SendMessageToSet(&data, true);
 
-        SetRooted(true);
+        CastStop();
     }
     else
     {
@@ -12275,8 +12282,15 @@ void Unit::SetStunned(bool apply)
         if (!owner || (owner->GetTypeId() == TYPEID_PLAYER && !owner->ToPlayer()->IsMounted()))
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 
-        if (!HasUnitState(UNIT_STATE_ROOT))         // prevent allow move if have also root effect
-            SetRooted(false);
+        if (!HasUnitState(UNIT_STATE_ROOT))         // prevent moving if it also has root effect
+        {
+            WorldPacket data(SMSG_FORCE_MOVE_UNROOT, 8 + 4);
+            data << GetPackGUID();
+            data << uint32(0);
+            SendMessageToSet(&data, true);
+
+            m_movementInfo.RemoveMovementFlag(MOVEFLAG_ROOT);
+        }
     }
 }
 
