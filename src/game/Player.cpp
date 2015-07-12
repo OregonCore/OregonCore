@@ -21196,8 +21196,11 @@ void Player::SetRooted(bool apply)
     }
 }
 
-void Player::SetFeatherFall(bool apply)
+bool Player::SetFeatherFall(bool apply)
 {
+    if (!Unit::SetFeatherFall(apply))
+        return false;
+
     WorldPacket data;
     if (apply)
         data.Initialize(SMSG_MOVE_FEATHER_FALL, 8 + 4);
@@ -21208,12 +21211,19 @@ void Player::SetFeatherFall(bool apply)
     data << uint32(0);
     SendMessageToSet(&data, true);
 
+    data.Initialize(MSG_MOVE_FEATHER_FALL, 64);
+    data << GetPackGUID();
+    m_movementInfo.Write(data);
+    SendMessageToSet(&data, false);
+
     // start fall from current height
     if (!apply)
         SetFallInformation(0, GetPositionZ());
+
+    return true;
 }
 
-void Player::SetHover(bool apply)
+bool Player::SetHover(bool apply)
 {
     WorldPacket data;
     if (apply)
@@ -21224,10 +21234,19 @@ void Player::SetHover(bool apply)
     data << GetPackGUID();
     data << uint32(0);
     SendMessageToSet(&data, true);
+
+    data.Initialize(MSG_MOVE_HOVER, 64);
+    data << GetPackGUID();
+    m_movementInfo.Write(data);
+    SendMessageToSet(&data, false);
+    return true;
 }
 
-void Player::SetCanFly(bool apply)
+bool Player::SetCanFly(bool apply, bool packetOnly /*= false*/)
 {
+    if (!packetOnly && !Unit::SetCanFly(apply))
+        return false;
+
     WorldPacket data;
     if (apply)
         data.Initialize(SMSG_MOVE_SET_CAN_FLY, 12);
@@ -21242,9 +21261,10 @@ void Player::SetCanFly(bool apply)
     data << GetPackGUID();
     m_movementInfo.Write(data);
     SendMessageToSet(&data, false);
+    return true;
 }
 
-void Player::SetLevitate(bool apply)
+bool Player::SetLevitate(bool apply, bool /*packetOnly = false*/)
 {
 	// TODO: check if there is something similar for 2.4.3.
 	// WorldPacket data;
@@ -21261,12 +21281,22 @@ void Player::SetLevitate(bool apply)
 	// data << GetPackGUID();
 	// m_movementInfo.Write(data);
 	// SendMessageToSet(&data, false);
+    return true;
 }
 
-void Player::SetWaterWalk(bool apply)
+bool Player::SetWaterWalk(bool apply)
 {
+    if (!Unit::SetWaterWalk(apply))
+        return false;
+
     WorldPacket data(apply ? SMSG_MOVE_WATER_WALK : SMSG_MOVE_LAND_WALK, GetPackGUID().size() + 4);
     data << GetPackGUID();
     data << uint32(0);
     GetSession()->SendPacket(&data);
+
+    data.Initialize(MSG_MOVE_WATER_WALK, 64);
+    data << GetPackGUID();
+    m_movementInfo.Write(data);
+    SendMessageToSet(&data, false);
+    return true;
 }

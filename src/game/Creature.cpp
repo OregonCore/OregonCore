@@ -45,6 +45,7 @@
 #include "OutdoorPvPMgr.h"
 #include "GameEventMgr.h"
 #include "CreatureGroups.h"
+#include "MoveSpline.h"
 
 void TrainerSpellData::Clear()
 {
@@ -461,7 +462,7 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
     return true;
 }
 
-void Creature::UpdateMovementFlags()
+void Creature::UpdateMovementFlags(bool packetOnly)
 {
     if (IsControlledByPlayer())
         return;
@@ -481,9 +482,9 @@ void Creature::UpdateMovementFlags()
     if (GetCreatureTemplate()->InhabitType & INHABIT_AIR && isInAir && !IsFalling())
     {
         if (GetCreatureTemplate()->InhabitType & INHABIT_GROUND)
-            SetCanFly(true);
+            SetCanFly(true, packetOnly);
         else
-            SetLevitate(true);
+            SetLevitate(true, packetOnly);
     }
     else
     {
@@ -494,7 +495,10 @@ void Creature::UpdateMovementFlags()
     if (!isInAir)
         RemoveUnitMovementFlag(MOVEFLAG_FALLING);
 
-    SetSwim(cInfo->InhabitType & INHABIT_WATER && IsInWater());
+    if (cInfo->InhabitType & INHABIT_WATER && IsInWater())
+        SetSwim(true, packetOnly);
+    else
+        SetSwim(false);
 }
 
 void Creature::Update(uint32 diff)
@@ -503,6 +507,8 @@ void Creature::Update(uint32 diff)
         m_GlobalCooldown = 0;
     else
         m_GlobalCooldown -= diff;
+
+    UpdateMovementFlags();
 
     switch (m_deathState)
     {
@@ -2416,18 +2422,6 @@ void Creature::StartPickPocketRefillTimer()
     _pickpocketLootRestore = time(NULL) + sWorld.getConfig(CONFIG_CREATURE_PICKPOCKET_REFILL);
 }
 
-void Creature::SetFeatherFall(bool apply)
-{
-    if (apply)
-        m_movementInfo.AddMovementFlag(MOVEFLAG_SAFE_FALL);
-    else
-        m_movementInfo.RemoveMovementFlag(MOVEFLAG_SAFE_FALL);
-
-    WorldPacket data(apply ? SMSG_SPLINE_MOVE_FEATHER_FALL : SMSG_SPLINE_MOVE_NORMAL_FALL);
-    data << GetPackGUID();
-    SendMessageToSet(&data, true);
-}
-
 void Creature::SetRooted(bool apply)
 {
     if (apply)
@@ -2455,79 +2449,97 @@ void Creature::SetRooted(bool apply)
     }
 }
 
-void Creature::SetHover(bool apply)
+bool Creature::SetFeatherFall(bool apply)
 {
-    if (apply)
-        m_movementInfo.AddMovementFlag(MOVEFLAG_HOVER);
-    else
-        m_movementInfo.RemoveMovementFlag(MOVEFLAG_HOVER);
+    if (!Unit::SetFeatherFall(apply))
+        return false;
+
+    if (!movespline->Initialized())
+        return true;
+
+    WorldPacket data(apply ? SMSG_SPLINE_MOVE_FEATHER_FALL : SMSG_SPLINE_MOVE_NORMAL_FALL);
+    data << GetPackGUID();
+    SendMessageToSet(&data, true);
+    return true;
+}
+
+bool Creature::SetHover(bool apply)
+{
+    if (!Unit::SetHover(apply))
+        return false;
+
+    if (!movespline->Initialized())
+        return true;
 
     WorldPacket data(apply ? SMSG_SPLINE_MOVE_SET_HOVER : SMSG_SPLINE_MOVE_UNSET_HOVER, 9);
     data << GetPackGUID();
     SendMessageToSet(&data, false);
+    return true;
 }
 
-void Creature::SetCanFly(bool apply)
+bool Creature::SetCanFly(bool apply, bool packetOnly)
 {
-    if (apply)
-        m_movementInfo.AddMovementFlag(MOVEFLAG_CAN_FLY);
-    else
-        m_movementInfo.RemoveMovementFlag(MOVEFLAG_CAN_FLY);
+    if (!packetOnly && !Unit::SetCanFly(apply))
+        return false;
+
+    if (!movespline->Initialized())
+        return true;
 
     WorldPacket data(apply ? SMSG_SPLINE_MOVE_SET_FLYING : SMSG_SPLINE_MOVE_UNSET_FLYING, 9);
     data << GetPackGUID();
     SendMessageToSet(&data, true);
+    return true;
 }
 
-void Creature::SetSwim(bool apply)
+bool Creature::SetSwim(bool apply, bool packetOnly)
 {
-    if (apply)
-        m_movementInfo.AddMovementFlag(MOVEFLAG_SWIMMING);
-    else
-        m_movementInfo.RemoveMovementFlag(MOVEFLAG_SWIMMING);
+    if (!packetOnly && !Unit::SetSwim(apply))
+        return false;
+
+    if (!movespline->Initialized())
+        return true;
 
     WorldPacket data(apply ? SMSG_SPLINE_MOVE_START_SWIM : SMSG_SPLINE_MOVE_STOP_SWIM);
     data << GetPackGUID();
     SendMessageToSet(&data, true);
+    return true;
 }
 
-void Creature::SetWalk(bool apply)
+bool Creature::SetWalk(bool apply)
 {
-    // Nothing changed?
-    if (apply == m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE))
-        return;
-
-    if (apply)
-        AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
-    else
-        RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+    if (!Unit::SetWalk(apply))
+        return false;
 
     WorldPacket data(apply ? SMSG_SPLINE_MOVE_SET_WALK_MODE : SMSG_SPLINE_MOVE_SET_RUN_MODE, 9);
     data << GetPackGUID();
     SendMessageToSet(&data, true);
+    return true;
 }
 
-void Creature::SetLevitate(bool apply)
+bool Creature::SetLevitate(bool apply, bool packetOnly)
 {
-    if (apply)
-        AddUnitMovementFlag(MOVEFLAG_LEVITATING);
-    else
-        RemoveUnitMovementFlag(MOVEFLAG_LEVITATING);
+    if (!packetOnly && !Unit::SetLevitate(apply))
+        return false;
 
+    if (!movespline->Initialized())
+        return true;
 
     WorldPacket data(apply ? SMSG_SPLINE_MOVE_SET_FLYING : SMSG_SPLINE_MOVE_UNSET_FLYING, 9);
     data << GetPackGUID();
     SendMessageToSet(&data, true);
+    return true;
 }
 
-void Creature::SetWaterWalk(bool apply)
+bool Creature::SetWaterWalk(bool apply)
 {
-    if (apply)
-        m_movementInfo.AddMovementFlag(MOVEFLAG_WATERWALKING);
-    else
-        m_movementInfo.RemoveMovementFlag(MOVEFLAG_WATERWALKING);
+    if (!Unit::SetWaterWalk(apply))
+        return false;
+
+    if (!movespline->Initialized())
+        return true;
 
     WorldPacket data(apply ? SMSG_SPLINE_MOVE_WATER_WALK : SMSG_SPLINE_MOVE_LAND_WALK, 9);
     data << GetPackGUID();
     SendMessageToSet(&data, true);
+    return true;
 }

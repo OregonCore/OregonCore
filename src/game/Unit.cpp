@@ -12747,6 +12747,9 @@ void Unit::UpdateObjectVisibility(bool forced)
         Oregon::AIRelocationNotifier notifier(*this);
         VisitNearbyObject(GetMap()->GetVisibilityDistance(), notifier);
     }
+
+    if (GetTypeId() == TYPEID_UNIT)
+        ToCreature()->UpdateMovementFlags(true);
 }
 
 void CharmInfo::SetIsCommandAttack(bool val)
@@ -12868,4 +12871,95 @@ void Unit::SendMonsterMoveWithSpeedToCurrentDestination(float speed)
 bool Unit::IsFalling() const
 {
 	return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEFLAG_FALLING | MOVEFLAG_FALLINGFAR)) || movespline->isFalling();
+}
+
+bool Unit::SetWalk(bool apply)
+{
+    if (apply == IsWalking())
+        return false;
+
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+
+    return true;
+}
+
+bool Unit::SetLevitate(bool apply, bool /*packetOnly = false */)
+{
+    if (apply == IsLevitating())
+        return false;
+
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_LEVITATING);
+
+    return true;
+}
+
+bool Unit::SetSwim(bool apply, bool /*packetOnly = false */)
+{
+    if (apply == HasUnitMovementFlag(MOVEFLAG_SWIMMING))
+        return false;
+
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_SWIMMING);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_SWIMMING);
+
+    return true;
+}
+
+bool Unit::SetCanFly(bool apply, bool /*packetOnly = false */)
+{
+    if (apply == HasUnitMovementFlag(MOVEFLAG_CAN_FLY))
+        return false;
+
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_CAN_FLY);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_CAN_FLY);
+
+    return true;
+}
+
+bool Unit::SetWaterWalk(bool apply)
+{
+    if (apply == HasUnitMovementFlag(MOVEFLAG_WATERWALKING))
+        return false;
+
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_WATERWALKING);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_WATERWALKING);
+
+    return true;
+}
+
+bool Unit::SetFeatherFall(bool apply)
+{
+    if (apply == HasUnitMovementFlag(MOVEFLAG_SAFE_FALL))
+        return false;
+
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_SAFE_FALL);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_SAFE_FALL);
+
+    return true;
+}
+
+bool Unit::SetHover(bool apply)
+{
+    if (apply == HasUnitMovementFlag(MOVEFLAG_HOVER))
+        return false;
+
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_HOVER);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_HOVER);
+
+    return true;
 }

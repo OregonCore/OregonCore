@@ -2795,11 +2795,11 @@ class Player : public Unit, public GridObject<Player>
         }
 
         void SetRooted(bool apply);
-        void SetFeatherFall(bool apply);
-        void SetHover(bool apply);
-        void SetCanFly(bool apply);
-        void SetLevitate(bool apply);
-        void SetWaterWalk(bool enable);
+        bool SetFeatherFall(bool apply);
+        bool SetHover(bool apply);
+        bool SetCanFly(bool apply, bool packetOnly = false);
+        bool SetLevitate(bool apply, bool packetOnly = false);
+        bool SetWaterWalk(bool enable);
     protected:
 
         uint32 m_contestedPvPTimer;
