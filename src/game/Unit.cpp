@@ -8012,9 +8012,18 @@ bool Unit::isSpellCrit(Unit* pVictim, SpellEntry const* spellProto, SpellSchoolM
     float crit_chance = 0.0f;
     switch (spellProto->DmgClass)
     {
-        case SPELL_DAMAGE_CLASS_NONE:  // Exception for Earth Shield and Lifebloom Final Bloom
-            if (spellProto->Id != 379 && spellProto->Id != 33778) // We need more spells to find a general way (if there is any)
-                return false;
+        case SPELL_DAMAGE_CLASS_NONE:
+            // We need more spells to find a general way (if there is any)
+            switch (spellProto->Id)
+            {
+                case 379:   // Earth Shield
+                case 33778: // Lifebloom Final Bloom
+                case 45064: // Item - Vial of the Sunwell
+                    break;
+                default:
+                    return false;
+            }
+        // Do not add a break here, case fallthrough is intentional! Adding a break will make above spells unable to crit.
         case SPELL_DAMAGE_CLASS_MAGIC:
             {
                 if (schoolMask & SPELL_SCHOOL_MASK_NORMAL)
@@ -8024,7 +8033,7 @@ bool Unit::isSpellCrit(Unit* pVictim, SpellEntry const* spellProto, SpellSchoolM
                     crit_chance = GetFloatValue(PLAYER_SPELL_CRIT_PERCENTAGE1 + GetFirstSchoolInMask(schoolMask));
                 else
                 {
-                    crit_chance = m_baseSpellCritChance;
+                    crit_chance = (float)m_baseSpellCritChance;
                     crit_chance += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL, schoolMask);
                 }
                 // taken
