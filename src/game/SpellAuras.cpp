@@ -297,7 +297,7 @@ pAuraHandler AuraHandler[TOTAL_AURAS] =
     &Aura::HandleComprehendLanguage,                        //244 Comprehend language
     &Aura::HandleUnused,                                    //245 SPELL_AURA_MOD_DURATION_OF_MAGIC_EFFECTS
     &Aura::HandleUnused,                                    //246 unused
-    &Aura::HandleUnused,                                    //247 unused
+    &Aura::HandleAuraCloneCaster,                           //247 SPELL_AURA_CLONE_CASTER
     &Aura::HandleNoImmediateEffect,                         //248 SPELL_AURA_MOD_COMBAT_RESULT_CHANCE         implemented in Unit::RollMeleeOutcomeAgainst
     &Aura::HandleNULL,                                      //249
     &Aura::HandleAuraModIncreaseHealth,                     //250 SPELL_AURA_MOD_INCREASE_HEALTH_2
@@ -6838,6 +6838,30 @@ void Aura::HandleAuraReflectSpellSchool(bool apply, bool real)
     }
 }
 
+void Aura::HandleAuraCloneCaster(bool apply, bool Real)
+{
+    if (apply)
+    {
+        Unit* caster = GetCaster();
+        if (!caster || caster == m_target)
+            return;
+
+        switch (m_spellProto->Id)
+        {
+            case 45785:
+                if (m_target->GetEntry() != 25708)
+                    return;
+                break;
+        }
+        m_target->SetDisplayId(caster->GetDisplayId());
+        m_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_MIRROR_IMAGE);
+    }
+    else
+    {
+        m_target->SetDisplayId(m_target->GetNativeDisplayId());
+        m_target->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_MIRROR_IMAGE);
+    }
+}
 void Aura::UnregisterSingleCastAura()
 {
     if (IsSingleTarget())

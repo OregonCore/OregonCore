@@ -210,6 +210,7 @@ class Aura
         void HandleArenaPreparation(bool apply, bool Real);
         void HandleAuraReflectSpellSchool(bool apply, bool Real);
         void HandleIncreasePetOutdoorSpeed(bool apply, bool Real);
+        void HandleAuraCloneCaster(bool apply, bool Real);
 
         virtual ~Aura();
 

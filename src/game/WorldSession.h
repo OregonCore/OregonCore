@@ -703,6 +703,8 @@ class WorldSession
         void HandleGrantLevel(WorldPacket& recv_data);
         void HandleAcceptGrantLevel(WorldPacket& recv_data);
         void HandleReferAFriend(WorldPacket& recv_data);
+
+        void HandleMirrorImageDataRequest(WorldPacket& recvData);
     private:
         // private trade methods
         void moveItems(Item* myItems[], Item* hisItems[]);

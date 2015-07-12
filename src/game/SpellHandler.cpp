@@ -475,3 +475,89 @@ void WorldSession::HandleSelfResOpcode(WorldPacket& /*recv_data*/)
     }
 }
 
+void WorldSession::HandleMirrorImageDataRequest(WorldPacket& recvData)
+{
+    DEBUG_LOG("WORLD: Recvd CMSG_GET_MIRRORIMAGE_DATA Message");
+
+    uint64 guid;
+    recvData >> guid;
+
+    // Get unit for which data is needed by client
+    Unit* unit = ObjectAccessor::GetObjectInWorld(guid, (Unit*)NULL);
+    if (!unit)
+        return;
+
+    if (!unit->HasAuraType(SPELL_AURA_CLONE_CASTER))
+        return;
+
+    // Get creator of the unit (SPELL_AURA_CLONE_CASTER does not stack)
+    Unit* creator = unit->GetAurasByType(SPELL_AURA_CLONE_CASTER).front()->GetCaster();
+    if (!creator)
+        return;
+
+    WorldPacket data(SMSG_MIRRORIMAGE_DATA, 68);
+    data << uint64(guid);
+    data << uint32(creator->GetDisplayId());
+    data << uint8(creator->getRace());
+    data << uint8(creator->getGender());
+
+    if (creator->GetTypeId() == TYPEID_PLAYER)
+    {
+        Player* player = creator->ToPlayer();
+        data << uint8(player->GetByteValue(PLAYER_BYTES, 0));   // skin
+        data << uint8(player->GetByteValue(PLAYER_BYTES, 1));   // face
+        data << uint8(player->GetByteValue(PLAYER_BYTES, 2));   // hair
+        data << uint8(player->GetByteValue(PLAYER_BYTES, 3));   // haircolor
+        data << uint8(player->GetByteValue(PLAYER_BYTES_2, 0)); // facialhair
+        data << uint32(player->GetGuildId());                   // guildId
+
+        static EquipmentSlots const itemSlots[] =
+        {
+            EQUIPMENT_SLOT_HEAD,
+            EQUIPMENT_SLOT_SHOULDERS,
+            EQUIPMENT_SLOT_BODY,
+            EQUIPMENT_SLOT_CHEST,
+            EQUIPMENT_SLOT_WAIST,
+            EQUIPMENT_SLOT_LEGS,
+            EQUIPMENT_SLOT_FEET,
+            EQUIPMENT_SLOT_WRISTS,
+            EQUIPMENT_SLOT_HANDS,
+            EQUIPMENT_SLOT_BACK,
+            EQUIPMENT_SLOT_TABARD,
+            EQUIPMENT_SLOT_END
+        };
+
+        // Display items in visible slots
+        for (EquipmentSlots const* itr = &itemSlots[0]; *itr != EQUIPMENT_SLOT_END; ++itr)
+        {
+            if (*itr == EQUIPMENT_SLOT_HEAD && player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_HIDE_HELM))
+                data << uint32(0);
+            else if (*itr == EQUIPMENT_SLOT_BACK && player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_HIDE_CLOAK))
+                data << uint32(0);
+            else if (Item const* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, *itr))
+                data << uint32(item->GetProto()->DisplayInfoID);
+            else
+                data << uint32(0);
+        }
+    }
+    else
+    {
+        // Skip player data for creatures
+        data << uint8(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+    }
+
+    SendPacket(&data);
+}
