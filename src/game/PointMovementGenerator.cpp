@@ -29,6 +29,7 @@
 template<class T>
 void PointMovementGenerator<T>::Initialize(T& unit)
 {
+    if (!unit.IsStopped())
         unit.StopMoving();
 
     unit.AddUnitState(UNIT_STATE_ROAMING);

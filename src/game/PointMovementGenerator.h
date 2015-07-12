@@ -34,6 +34,7 @@ class PointMovementGenerator
         void Interrupt(T&);
         void Reset(T& unit)
         {
+            if (!unit.IsStopped())
             unit.StopMoving();
         }
         bool Update(T&, const uint32& diff);

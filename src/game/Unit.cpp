@@ -11220,7 +11220,7 @@ void Unit::StopMoving(bool forceSendStop /*=false*/)
     ClearUnitState(UNIT_STATE_MOVING);
 
     // not need send any packets if not in world
-    if (!IsInWorld())
+    if (!IsInWorld() || movespline->Finalized())
         return;
 
 	Movement::MoveSplineInit init(*this);

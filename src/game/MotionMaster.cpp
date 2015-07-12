@@ -148,7 +148,7 @@ MotionMaster::DirectExpire(bool reset)
         DirectDelete(curr);
     }
 
-    while (!top())
+    while (!empty() && !top())
         --i_top;
 
     if (empty())

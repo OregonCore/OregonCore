@@ -103,6 +103,7 @@ struct boss_lieutenant_drakeAI : public ScriptedAI
     ScriptedInstance * pInstance;
 
     bool CanPatrol;
+    bool Endmovement;
     uint32 wpId;
 
     uint32 Whirlwind_Timer;
@@ -112,6 +113,7 @@ struct boss_lieutenant_drakeAI : public ScriptedAI
 
     void Reset()
     {
+        Endmovement = false;
         CanPatrol = true;
         wpId = 0;
         me->SetWalk(true);
@@ -125,16 +127,7 @@ struct boss_lieutenant_drakeAI : public ScriptedAI
     void MovementInform(uint32 type, uint32 id)
     {
         if (type == POINT_MOTION_TYPE)
-        {
-            if (CanPatrol)
-            {
-                ++wpId;
-                me->GetMotionMaster()->MovePoint(DrakeWP[wpId].wpId, DrakeWP[wpId].x, DrakeWP[wpId].y, DrakeWP[wpId].z);
-            
-                if (wpId == 16)
-                    wpId = 2;
-            }
-        }
+            Endmovement = true;
     }
 
     void EnterCombat(Unit *who)
@@ -173,6 +166,19 @@ struct boss_lieutenant_drakeAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
+        if (CanPatrol)
+        {
+            if (Endmovement)
+            {
+                Endmovement = false;
+                ++wpId;
+                me->GetMotionMaster()->MovePoint(DrakeWP[wpId].wpId, DrakeWP[wpId].x, DrakeWP[wpId].y, DrakeWP[wpId].z);
+
+                if (wpId == 16)
+                    wpId = 2;
+            }
+        }
+
         //Return since we have no target
         if (!UpdateVictim())
             return;
