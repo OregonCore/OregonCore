@@ -849,7 +849,7 @@ struct npc_letollAI : public npc_escortAI
         case 13:
             SetRun();
             for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
-                (*itr)->SetUnitMovementFlags(MOVEFLAG_NONE);
+                (*itr)->SetUnitMovementFlags(MOVEMENTFLAG_NONE);
             break;
         }
     }

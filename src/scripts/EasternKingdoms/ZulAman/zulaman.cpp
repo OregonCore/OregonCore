@@ -221,7 +221,7 @@ struct npc_harrison_jonesAI : public ScriptedAI
         {
             me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             me->SetSpeed(MOVE_RUN, 1);
-            //me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            //me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
         }
     }
 

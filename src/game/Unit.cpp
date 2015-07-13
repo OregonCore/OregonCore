@@ -163,7 +163,7 @@ void MovementInfo::Read(ByteBuffer& data)
     data >> pos.m_positionZ;
     data >> pos.m_orientation;
 
-    if (HasMovementFlag(MOVEFLAG_ONTRANSPORT))
+    if (HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
     {
         data >> t_guid;
         data >> t_pos.m_positionX;
@@ -172,12 +172,12 @@ void MovementInfo::Read(ByteBuffer& data)
         data >> t_pos.m_orientation;
         data >> t_time;
     }
-    if (HasMovementFlag(MovementFlags(MOVEFLAG_SWIMMING | MOVEFLAG_FLYING2)))
+    if (HasMovementFlag(MovementFlags(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING2)))
         data >> s_pitch;
 
     data >> fallTime;
 
-    if (HasMovementFlag(MOVEFLAG_FALLING))
+    if (HasMovementFlag(MOVEMENTFLAG_FALLING))
     {
         data >> j_velocity;
         data >> j_sinAngle;
@@ -185,7 +185,7 @@ void MovementInfo::Read(ByteBuffer& data)
         data >> j_xyspeed;
     }
 
-    if (HasMovementFlag(MOVEFLAG_SPLINE_ELEVATION))
+    if (HasMovementFlag(MOVEMENTFLAG_SPLINE_ELEVATION))
         data >> u_unk1;
 }
 
@@ -199,7 +199,7 @@ void MovementInfo::Write(ByteBuffer& data) const
     data << pos.GetPositionZ();
     data << pos.GetOrientation();
 
-    if (HasMovementFlag(MOVEFLAG_ONTRANSPORT))
+    if (HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
     {
         data << t_guid;
         data << t_pos.GetPositionX();
@@ -208,12 +208,12 @@ void MovementInfo::Write(ByteBuffer& data) const
         data << t_pos.GetOrientation();
         data << t_time;
     }
-    if (HasMovementFlag(MovementFlags(MOVEFLAG_SWIMMING | MOVEFLAG_FLYING2)))
+    if (HasMovementFlag(MovementFlags(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING2)))
         data << s_pitch;
 
     data << fallTime;
 
-    if (HasMovementFlag(MOVEFLAG_FALLING))
+    if (HasMovementFlag(MOVEMENTFLAG_FALLING))
     {
         data << j_velocity;
         data << j_sinAngle;
@@ -221,7 +221,7 @@ void MovementInfo::Write(ByteBuffer& data) const
         data << j_xyspeed;
     }
 
-    if (HasMovementFlag(MOVEFLAG_SPLINE_ELEVATION))
+    if (HasMovementFlag(MOVEMENTFLAG_SPLINE_ELEVATION))
         data << u_unk1;
 }
 
@@ -7395,9 +7395,9 @@ void Unit::SetCharm(Unit* charm, bool apply)
         if (!charm->AddUInt64Value(UNIT_FIELD_CHARMEDBY, GetGUID()))
             sLog.outError("Crash alert! Unit %u is being charmed, but it already has a charmer " UI64FMTD "", charm->GetEntry(), charm->GetCharmerGUID());
 
-        if (charm->HasUnitMovementFlag(MOVEFLAG_WALK_MODE))
+        if (charm->HasUnitMovementFlag(MOVEMENTFLAG_WALK_MODE))
         {
-            charm->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            charm->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
             charm->SendMovementFlagUpdate();
         }
 
@@ -12267,8 +12267,8 @@ void Unit::SetStunned(bool apply)
         // MOVEMENTFLAG_ROOT cannot be used in conjunction with MOVEMENTFLAG_MASK_MOVING (tested 3.3.5a)
         // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
         // setting MOVEMENTFLAG_ROOT
-        RemoveUnitMovementFlag(MOVEFLAG_MOVING);
-        m_movementInfo.AddMovementFlag(MOVEFLAG_ROOT);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_MOVING);
+        m_movementInfo.AddMovementFlag(MOVEMENTFLAG_ROOT);
             StopMoving();
 
         if (GetTypeId() == TYPEID_PLAYER)
@@ -12298,7 +12298,7 @@ void Unit::SetStunned(bool apply)
             data << uint32(0);
             SendMessageToSet(&data, true);
 
-            m_movementInfo.RemoveMovementFlag(MOVEFLAG_ROOT);
+            m_movementInfo.RemoveMovementFlag(MOVEMENTFLAG_ROOT);
         }
     }
 }
@@ -12851,7 +12851,7 @@ void Unit::UpdateSplineMovement(uint32 t_diff)
 
 void Unit::DisableSpline()
 {
-    m_movementInfo.RemoveMovementFlag(MovementFlags(MOVEFLAG_SPLINE_ENABLED | MOVEFLAG_FORWARD));
+    m_movementInfo.RemoveMovementFlag(MovementFlags(MOVEMENTFLAG_SPLINE_ENABLED | MOVEMENTFLAG_FORWARD));
     movespline->_Interrupt();
 }
 
@@ -12879,7 +12879,7 @@ void Unit::SendMonsterMoveWithSpeedToCurrentDestination(float speed)
 
 bool Unit::IsFalling() const
 {
-	return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEFLAG_FALLING | MOVEFLAG_FALLINGFAR)) || movespline->isFalling();
+	return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLINGFAR)) || movespline->isFalling();
 }
 
 bool Unit::SetWalk(bool apply)
@@ -12888,9 +12888,9 @@ bool Unit::SetWalk(bool apply)
         return false;
 
     if (apply)
-        AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+        AddUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
     else
-        RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
 
     return true;
 }
@@ -12901,41 +12901,41 @@ bool Unit::SetLevitate(bool apply, bool /*packetOnly = false */)
         return false;
 
     if (apply)
-        AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+        AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
     else
-        RemoveUnitMovementFlag(MOVEFLAG_LEVITATING);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
 
     return true;
 }
 
 bool Unit::SetSwim(bool apply, bool /*packetOnly = false */)
 {
-    if (apply == HasUnitMovementFlag(MOVEFLAG_SWIMMING))
+    if (apply == HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
         return false;
 
     if (apply)
-        AddUnitMovementFlag(MOVEFLAG_SWIMMING);
+        AddUnitMovementFlag(MOVEMENTFLAG_SWIMMING);
     else
-        RemoveUnitMovementFlag(MOVEFLAG_SWIMMING);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_SWIMMING);
 
     return true;
 }
 
 bool Unit::SetCanFly(bool apply, bool /*packetOnly = false */)
 {
-    if (apply == HasUnitMovementFlag(MOVEFLAG_FLYING))
+    if (apply == HasUnitMovementFlag(MOVEMENTFLAG_FLYING))
         return false;
 
     if (apply)
     {
-        AddUnitMovementFlag(MOVEFLAG_CAN_FLY);
-        RemoveUnitMovementFlag(MOVEFLAG_FALLING);
+        AddUnitMovementFlag(MOVEMENTFLAG_CAN_FLY);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
     }
     else
     {
-        RemoveUnitMovementFlag(MOVEFLAG_FLYING | MOVEMENTFLAG_MASK_MOVING_FLY);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_FLYING | MOVEMENTFLAG_MASK_MOVING_FLY);
         if (!IsLevitating())
-            AddUnitMovementFlag(MOVEFLAG_FALLING);
+            AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
     }
 
     return true;
@@ -12943,39 +12943,39 @@ bool Unit::SetCanFly(bool apply, bool /*packetOnly = false */)
 
 bool Unit::SetWaterWalk(bool apply)
 {
-    if (apply == HasUnitMovementFlag(MOVEFLAG_WATERWALKING))
+    if (apply == HasUnitMovementFlag(MOVEMENTFLAG_WATERWALKING))
         return false;
 
     if (apply)
-        AddUnitMovementFlag(MOVEFLAG_WATERWALKING);
+        AddUnitMovementFlag(MOVEMENTFLAG_WATERWALKING);
     else
-        RemoveUnitMovementFlag(MOVEFLAG_WATERWALKING);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_WATERWALKING);
 
     return true;
 }
 
 bool Unit::SetFeatherFall(bool apply)
 {
-    if (apply == HasUnitMovementFlag(MOVEFLAG_SAFE_FALL))
+    if (apply == HasUnitMovementFlag(MOVEMENTFLAG_SAFE_FALL))
         return false;
 
     if (apply)
-        AddUnitMovementFlag(MOVEFLAG_SAFE_FALL);
+        AddUnitMovementFlag(MOVEMENTFLAG_SAFE_FALL);
     else
-        RemoveUnitMovementFlag(MOVEFLAG_SAFE_FALL);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_SAFE_FALL);
 
     return true;
 }
 
 bool Unit::SetHover(bool apply)
 {
-    if (apply == HasUnitMovementFlag(MOVEFLAG_HOVER))
+    if (apply == HasUnitMovementFlag(MOVEMENTFLAG_HOVER))
         return false;
 
     if (apply)
-        AddUnitMovementFlag(MOVEFLAG_HOVER);
+        AddUnitMovementFlag(MOVEMENTFLAG_HOVER);
     else
-        RemoveUnitMovementFlag(MOVEFLAG_HOVER);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_HOVER);
 
     return true;
 }

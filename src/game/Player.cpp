@@ -1594,13 +1594,13 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         sLog.outDebug("Player %s is being teleported to map %u", GetName(), mapid);
 
     // reset movement flags at teleport, because player will continue move with these flags after teleport
-	SetUnitMovementFlags(MOVEFLAG_NONE);
+	SetUnitMovementFlags(MOVEMENTFLAG_NONE);
     DisableSpline();
 
     if (m_transport)
     {
         if (options & TELE_TO_NOT_LEAVE_TRANSPORT)
-            AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
+            AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
         else
         {
             m_transport->RemovePassenger(this);
@@ -6824,7 +6824,7 @@ void Player::CheckDuelDistance(time_t currTime)
 
 bool Player::IsOutdoorPvPActive()
 {
-    return (IsAlive() && !HasInvisibilityAura() && !HasStealthAura() && (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP) || sWorld.IsPvPRealm())  && !HasUnitMovementFlag(MOVEFLAG_FLYING2) && !isInFlight());
+    return (IsAlive() && !HasInvisibilityAura() && !HasStealthAura() && (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP) || sWorld.IsPvPRealm())  && !HasUnitMovementFlag(MOVEMENTFLAG_FLYING2) && !isInFlight());
 }
 
 void Player::DuelComplete(DuelCompleteType type)
@@ -21174,8 +21174,8 @@ void Player::SetRooted(bool apply)
         // MOVEMENTFLAG_ROOT cannot be used in conjunction with MOVEMENTFLAG_MASK_MOVING (tested 3.3.5a)
         // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
         // setting MOVEMENTFLAG_ROOT
-        RemoveUnitMovementFlag(MOVEFLAG_MOVING);
-        m_movementInfo.AddMovementFlag(MOVEFLAG_ROOT);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_MOVING);
+        m_movementInfo.AddMovementFlag(MOVEMENTFLAG_ROOT);
 
         WorldPacket data(SMSG_FORCE_MOVE_ROOT, 10);
         data << GetPackGUID();
@@ -21186,7 +21186,7 @@ void Player::SetRooted(bool apply)
     {
         if (!HasUnitState(UNIT_STATE_STUNNED))      // prevent moving if it also has stun effect
         {
-            m_movementInfo.RemoveMovementFlag(MOVEFLAG_ROOT);
+            m_movementInfo.RemoveMovementFlag(MOVEMENTFLAG_ROOT);
 
             WorldPacket data(SMSG_FORCE_MOVE_UNROOT, 10);
             data << GetPackGUID();

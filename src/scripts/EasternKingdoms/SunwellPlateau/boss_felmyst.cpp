@@ -241,7 +241,7 @@ struct boss_felmystAI : public ScriptedAI
         case PHASE_GROUND:
             me->CastStop(SPELL_FOG_BREATH);
             me->RemoveAurasDueToSpell(SPELL_FOG_BREATH);
-            me->SetUnitMovementFlags(MOVEFLAG_NONE);
+            me->SetUnitMovementFlags(MOVEMENTFLAG_NONE);
             me->SetSpeed(MOVE_RUN, 2.0f);
             events.ScheduleEvent(EVENT_CLEAVE, urand(5000, 10000));
             events.ScheduleEvent(EVENT_CORROSION, urand(10000, 20000));

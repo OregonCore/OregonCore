@@ -484,7 +484,7 @@ void Creature::UpdateMovementFlags(bool packetOnly)
         SetLevitate(false);
 
     if (!isInAir)
-        RemoveUnitMovementFlag(MOVEFLAG_FALLING);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
 
     if (cInfo->InhabitType & INHABIT_WATER && IsInWater())
         SetSwim(true, packetOnly);
@@ -2418,8 +2418,8 @@ void Creature::SetRooted(bool apply)
         // MOVEMENTFLAG_ROOT cannot be used in conjunction with MOVEMENTFLAG_MASK_MOVING (tested 3.3.5a)
         // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
         // setting MOVEMENTFLAG_ROOT
-        RemoveUnitMovementFlag(MOVEFLAG_MOVING);
-        m_movementInfo.AddMovementFlag(MOVEFLAG_ROOT);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_MOVING);
+        m_movementInfo.AddMovementFlag(MOVEMENTFLAG_ROOT);
 
         WorldPacket data(SMSG_SPLINE_MOVE_ROOT, 9);
         data << GetPackGUID();
@@ -2429,7 +2429,7 @@ void Creature::SetRooted(bool apply)
     {
         if (!HasUnitState(UNIT_STATE_STUNNED))      // prevent moving if it also has stun effect
         {
-            m_movementInfo.RemoveMovementFlag(MOVEFLAG_ROOT);
+            m_movementInfo.RemoveMovementFlag(MOVEMENTFLAG_ROOT);
 
             WorldPacket data(SMSG_SPLINE_MOVE_UNROOT, 9);
             data << GetPackGUID();

@@ -1024,8 +1024,8 @@ bool ChatHandler::HandleGonameCommand(const char* args)
         float x, y, z;
         target->GetPosition(x, y, z);
 
-        if (_player->HasUnitMovementFlag(MOVEFLAG_FLYING) ||
-            target->HasUnitMovementFlag(MOVEFLAG_FLYING))
+        if (_player->HasUnitMovementFlag(MOVEMENTFLAG_FLYING) ||
+            target->HasUnitMovementFlag(MOVEMENTFLAG_FLYING))
         {
             WorldPacket data;
             data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
@@ -2127,7 +2127,7 @@ bool ChatHandler::HandleTeleCommand(const char* args)
         _player->SaveRecallPosition();
 
     // let gm fly remain
-    if (_player->HasUnitMovementFlag(MOVEFLAG_FLYING))
+    if (_player->HasUnitMovementFlag(MOVEMENTFLAG_FLYING))
     {
         WorldPacket data;
         data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);

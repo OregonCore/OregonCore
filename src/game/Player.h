@@ -2479,16 +2479,16 @@ class Player : public Unit, public GridObject<Player>
 
         bool isMovingOrTurning() const
         {
-            return HasUnitMovementFlag(MOVEFLAG_TURNING);
+            return HasUnitMovementFlag(MOVEMENTFLAG_TURNING);
         }
 
         bool CanFly() const
         {
-            return HasUnitMovementFlag(MOVEFLAG_CAN_FLY);
+            return HasUnitMovementFlag(MOVEMENTFLAG_CAN_FLY);
         }
         bool IsFlying() const
         {
-            return HasUnitMovementFlag(MOVEFLAG_FLYING2);
+            return HasUnitMovementFlag(MOVEMENTFLAG_FLYING2);
         }
 
         void HandleFallDamage(MovementInfo& movementInfo);

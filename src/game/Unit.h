@@ -1443,7 +1443,7 @@ class Unit : public WorldObject
 
         bool isMoving() const
         {
-            return HasUnitMovementFlag(MOVEFLAG_MOVING) && !HasUnitMovementFlag(MOVEFLAG_ROOT);
+            return HasUnitMovementFlag(MOVEMENTFLAG_MOVING) && !HasUnitMovementFlag(MOVEMENTFLAG_ROOT);
         }
         bool IsAlive() const
         {
@@ -2098,10 +2098,10 @@ class Unit : public WorldObject
             return PET_FOLLOW_ANGLE;
         }
 
-        bool IsFlying() const   { return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEFLAG_FLYING | MOVEFLAG_LEVITATING)); }
+        bool IsFlying() const   { return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEMENTFLAG_FLYING | MOVEMENTFLAG_LEVITATING)); }
         bool IsFalling() const;
-        bool IsWalking() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE); }
-        bool IsRooted() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_ROOT); }
+        bool IsWalking() const { return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_WALK_MODE); }
+        bool IsRooted() const { return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_ROOT); }
 
         virtual bool SetWalk(bool apply);
         virtual bool SetSwim(bool apply, bool packetOnly = false);
@@ -2109,7 +2109,7 @@ class Unit : public WorldObject
         virtual bool SetCanFly(bool apply, bool packetOnly = false);
         virtual bool SetWaterWalk(bool apply);
 
-        bool IsLevitating() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_LEVITATING); }
+        bool IsLevitating() const { return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_LEVITATING); }
 
         bool IsAIEnabled, NeedChangeAI;
         uint64 LastCharmerGUID;

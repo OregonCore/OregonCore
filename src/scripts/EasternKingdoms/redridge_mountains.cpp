@@ -62,7 +62,7 @@ struct npc_corporal_keeshanAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        if (uiI >= 65 && me->GetUnitMovementFlags() == MOVEFLAG_WALK_MODE)
+        if (uiI >= 65 && me->GetUnitMovementFlags() == MOVEMENTFLAG_WALK_MODE)
             me->SetWalk(false);
 
         switch (uiI)

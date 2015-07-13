@@ -255,7 +255,7 @@ void Object::DestroyForPlayer(Player* target, bool onDeath) const
 
 void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
 {
-    uint32 moveFlags = MOVEFLAG_NONE;
+    uint32 moveFlags = MOVEMENTFLAG_NONE;
 
     *data << uint8(updateFlags);                            // update flags
 
@@ -266,7 +266,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
         case TYPEID_UNIT:
             {
                 moveFlags = ((Unit*)this)->GetUnitMovementFlags();
-                moveFlags &= ~MOVEFLAG_ONTRANSPORT;
+                moveFlags &= ~MOVEMENTFLAG_ONTRANSPORT;
             }
             break;
         case TYPEID_PLAYER:
@@ -274,9 +274,9 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
                 moveFlags = ToPlayer()->GetUnitMovementFlags();
 
                 if (ToPlayer()->GetTransport())
-                    moveFlags |= MOVEFLAG_ONTRANSPORT;
+                    moveFlags |= MOVEMENTFLAG_ONTRANSPORT;
                 else
-                    moveFlags &= ~MOVEFLAG_ONTRANSPORT;
+                    moveFlags &= ~MOVEMENTFLAG_ONTRANSPORT;
 
             }
             break;
@@ -311,7 +311,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
     if (updateFlags & UPDATEFLAG_LIVING)
     {
         // 0x00000200
-        if (moveFlags & MOVEFLAG_ONTRANSPORT)
+        if (moveFlags & MOVEMENTFLAG_ONTRANSPORT)
         {
             if (GetTypeId() == TYPEID_PLAYER)
             {
@@ -326,7 +326,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
         }
 
         // 0x02200000
-        if (moveFlags & (MOVEFLAG_SWIMMING | MOVEFLAG_FLYING2))
+        if (moveFlags & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING2))
         {
             if (GetTypeId() == TYPEID_PLAYER)
                 *data << (float)ToPlayer()->m_movementInfo.s_pitch;
@@ -340,7 +340,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
             *data << uint32(0);                             // last fall time
 
         // 0x00001000
-        if (moveFlags & MOVEFLAG_FALLING)
+        if (moveFlags & MOVEMENTFLAG_FALLING)
         {
             if (GetTypeId() == TYPEID_PLAYER)
             {
@@ -359,7 +359,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
         }
 
         // 0x04000000
-        if (moveFlags & MOVEFLAG_SPLINE_ELEVATION)
+        if (moveFlags & MOVEMENTFLAG_SPLINE_ELEVATION)
         {
             if (GetTypeId() == TYPEID_PLAYER)
                 *data << float(ToPlayer()->m_movementInfo.u_unk1);
@@ -378,7 +378,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
         *data << ((Unit*)this)->GetSpeed(MOVE_TURN_RATE);
 
         // 0x08000000
-        if (moveFlags & MOVEFLAG_SPLINE_ENABLED)
+        if (moveFlags & MOVEMENTFLAG_SPLINE_ENABLED)
             Movement::PacketBuilder::WriteCreate(*((Unit*)this)->movespline, *data);
     }
 

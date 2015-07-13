@@ -57,7 +57,7 @@ struct boss_broggokAI : public ScriptedAI
 
     void Reset()
     {
-        me->SetUnitMovementFlags(MOVEFLAG_NONE);
+        me->SetUnitMovementFlags(MOVEMENTFLAG_NONE);
         AcidSpray_Timer = 10000;
         PoisonSpawn_Timer = 5000;
         PoisonBolt_Timer = 7000;
@@ -171,7 +171,7 @@ struct mob_nascent_orcAI : public ScriptedAI
     void Reset()
     {
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->SetUnitMovementFlags(MOVEFLAG_NONE);
+        me->SetUnitMovementFlags(MOVEMENTFLAG_NONE);
         Blow_Timer = 4000 + rand() % 4000;
         Stomp_Timer = 5000 + rand() % 4000;
     }
