@@ -286,14 +286,13 @@ bool FlightPathMovementGenerator::Update(Player& player, const uint32& diff)
     if (pointId > i_currentNode)
     {
                 ++i_currentNode;
-
                     // check if it's time to preload the flightmaster grid at path end
                     if (i_currentNode == m_preloadTargetNode)
                         PreloadEndGrid();
     }
 
     // we have arrived at the end of the path
-    return i_currentNode < (i_path->size() - 1);
+    return i_currentNode < (i_path->Size() - 1);
 }
 
 void FlightPathMovementGenerator::SetCurrentNodeAfterTeleport()
