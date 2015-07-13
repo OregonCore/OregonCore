@@ -2103,7 +2103,6 @@ class Unit : public WorldObject
         bool IsWalking() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE); }
         bool IsRooted() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_ROOT); }
 
-        void SetFlying(bool apply);
         virtual bool SetWalk(bool apply);
         virtual bool SetSwim(bool apply, bool packetOnly = false);
         virtual bool SetLevitate(bool apply, bool packetOnly = false);

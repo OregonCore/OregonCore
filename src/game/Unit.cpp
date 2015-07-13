@@ -12745,20 +12745,6 @@ void Unit::AddAura(uint32 spellId, Unit* target)
     }
 }
 
-void Unit::SetFlying(bool apply)
-{
-    if (apply)
-    {
-        SetByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
-        AddUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
-    }
-    else
-    {
-        RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
-        RemoveUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
-    }
-}
-
 void Unit::UpdateObjectVisibility(bool forced)
 {
     if (!forced)
@@ -12937,13 +12923,20 @@ bool Unit::SetSwim(bool apply, bool /*packetOnly = false */)
 
 bool Unit::SetCanFly(bool apply, bool /*packetOnly = false */)
 {
-    if (apply == HasUnitMovementFlag(MOVEFLAG_CAN_FLY))
+    if (apply == HasUnitMovementFlag(MOVEFLAG_FLYING))
         return false;
 
     if (apply)
+    {
         AddUnitMovementFlag(MOVEFLAG_CAN_FLY);
+        RemoveUnitMovementFlag(MOVEFLAG_FALLING);
+    }
     else
-        RemoveUnitMovementFlag(MOVEFLAG_CAN_FLY);
+    {
+        RemoveUnitMovementFlag(MOVEFLAG_FLYING | MOVEMENTFLAG_MASK_MOVING_FLY);
+        if (!IsLevitating())
+            AddUnitMovementFlag(MOVEFLAG_FALLING);
+    }
 
     return true;
 }

@@ -870,7 +870,7 @@ struct npc_remulosAI : public npc_escortAI
                         //@todo now must be server-wide emote
                         DoScriptText(ERANIKUS_ZONE_EMOTE_ENTER, pEranikus);
                         pEranikus->SetReactState(REACT_PASSIVE);
-                        pEranikus->SetFlying(true);
+                        pEranikus->SetCanFly(true);
                         pEranikus->AI()->IsSummonedBy(me);
                         pEranikus->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
                         EranikusGUID = pEranikus->GetGUID();
@@ -1392,7 +1392,7 @@ struct npc_eranikusAI : public ScriptedAI
             if (uiPointId == POINT_COMBAT_START)
             {
                 CanAttack = true;
-                me->SetFlying(false);
+                me->SetCanFly(false);
                 me->SetReactState(REACT_AGGRESSIVE);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
             }
