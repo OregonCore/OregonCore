@@ -5532,6 +5532,43 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                         unitTarget->RemoveAurasDueToSpell(46394);
                     break;
                 }
+            // Sinister Reflection
+            case 45892:
+            {
+                if (unitTarget)
+                {
+                    // Summon 4 clones of the same player
+                    for (uint8 i = 0; i < 4; ++i)
+                        unitTarget->CastSpell((Unit*)NULL, 45891, true, NULL, NULL, m_caster->GetGUID());
+
+                    unitTarget->CastSpell((Unit*)NULL, 45785, true);
+                }
+                return;
+            }
+            // Copy Weapon
+            case 45785:
+            { 
+                if (!unitTarget || unitTarget->GetEntry() != 25708)
+                    return;
+
+                Player* pCaster = m_caster->ToPlayer();
+                if (!pCaster)
+                    return;
+
+                Item* mainItem = NULL;
+                Item* offItem = NULL;
+                Item* rangedItem = NULL;
+                if (mainItem = pCaster->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
+                    unitTarget->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 0, mainItem->GetProto()->DisplayInfoID);
+
+                if (offItem = pCaster->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
+                    unitTarget->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 1, offItem->GetProto()->DisplayInfoID);
+
+                if (rangedItem = pCaster->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_RANGED))
+                    unitTarget->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 2, rangedItem->GetProto()->DisplayInfoID);
+
+                break;
+            }
             // Negative Energy
             case 46289:
                 {

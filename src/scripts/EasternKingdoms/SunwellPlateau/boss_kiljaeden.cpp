@@ -94,8 +94,7 @@ enum Spells
     SPELL_FIRE_BLOOM                            = 45641, // Places a debuff on 5 raid members, which causes them to deal 2k Fire damage to nearby allies and selves. MIGHT NOT WORK
     SPELL_DESTROY_ALL_DRAKES                    = 46707, // when he use it?
 
-    SPELL_SINISTER_REFLECTION                   = 45785, // Summon shadow copies of 5 raid members that fight against KJ's enemies//dont work
-    //  45892  // right one for SPELL_SINISTER_REFLECTION but no EffectScriptEffect
+    SPELL_SINISTER_REFLECTION                   = 45892, // Summon shadow copies of 5 raid members that fight against KJ's enemies
     SPELL_COPY_WEAPON                           = 41055, // }
     SPELL_COPY_WEAPON2                          = 41054, // }
     SPELL_COPY_OFFHAND                          = 45206, // }- Spells used in Sinister Reflection creation
@@ -632,30 +631,6 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
         Timer[TIMER_ORBS_EMPOWER] = (Phase == PHASE_SACRIFICE) ? 10000 : 5000;
     }
 
-    void CastSinisterReflection()
-    {
-        DoScriptText(RAND(SAY_KJ_REFLECTION1, SAY_KJ_REFLECTION2), me);
-        for (uint8 i = 0; i < 4; ++i)
-        {
-            float x, y, z;
-            Unit* pTarget = NULL;
-            for (uint8 z = 0; z < 6; ++z)
-            {
-                pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
-                if (!pTarget || !pTarget->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT, 0)) break;
-            }
-            if (pTarget)
-            {
-                pTarget->GetPosition(x, y, z);
-                if (Creature* pSinisterReflection = me->SummonCreature(CREATURE_SINISTER_REFLECTION, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
-                {
-                    pSinisterReflection->SetDisplayId(pTarget->GetDisplayId());
-                    pSinisterReflection->AI()->AttackStart(pTarget);
-                }
-            }
-        }
-    }
-
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim() || Phase < PHASE_NORMAL)
@@ -766,7 +741,7 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
                 case TIMER_SHADOW_SPIKE: //Phase 3
                     if (!me->IsNonMeleeSpellCast(false))
                     {
-                        CastSinisterReflection();
+                        DoCastAOE(SPELL_SINISTER_REFLECTION, true);
                         DoCastAOE(SPELL_SHADOW_SPIKE, false);
                         ChangeTimers(true, 30000);
                         Timer[TIMER_SHADOW_SPIKE] = 0;
