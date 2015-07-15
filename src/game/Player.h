@@ -2486,10 +2486,6 @@ class Player : public Unit, public GridObject<Player>
         {
             return HasUnitMovementFlag(MOVEMENTFLAG_CAN_FLY);
         }
-        bool IsFlying() const
-        {
-            return HasUnitMovementFlag(MOVEMENTFLAG_FLYING2);
-        }
 
         void HandleFallDamage(MovementInfo& movementInfo);
         void HandleFallUnderMap();
