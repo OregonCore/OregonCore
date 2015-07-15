@@ -285,10 +285,10 @@ bool FlightPathMovementGenerator::Update(Player& player, const uint32& diff)
     uint32 pointId = (uint32)player.movespline->currentPathIdx();
     if (pointId > i_currentNode)
     {
-                ++i_currentNode;
-                    // check if it's time to preload the flightmaster grid at path end
-                    if (i_currentNode == m_preloadTargetNode)
-                        PreloadEndGrid();
+        ++i_currentNode;
+        // check if it's time to preload the flightmaster grid at path end
+        if (i_currentNode == m_preloadTargetNode)
+            PreloadEndGrid();
     }
 
     // we have arrived at the end of the path

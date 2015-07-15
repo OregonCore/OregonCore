@@ -1800,6 +1800,7 @@ class Unit : public WorldObject
                 SetOrientation(GetAngle(target));
         }
         bool isInBackInMap(Unit const* target, float distance, float arc = M_PI) const;
+        void SetFacingTo(float ori);
         void SetFacingToObject(WorldObject* pObject);
 
         // Visibility system

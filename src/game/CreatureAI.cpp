@@ -38,6 +38,43 @@ AISpellInfoType* GetAISpellInfo(uint32 i)
     return &CreatureAI::AISpellInfo[i];
 }
 
+void CreatureAI::DoZoneInCombatWithPlayers(bool force)
+{
+    Map* map = me->GetMap();
+
+    if (!map->IsDungeon())
+    {
+        sLog.outError("CreatureAI::DoZoneInCombatWithPlayers called on a map that is not an instance (creature entry = %u)", me->GetEntry());
+        return;
+    }
+
+    if (!force)
+    {
+        if (!me->CanHaveThreatList() || me->getThreatManager().isThreatListEmpty())
+        {
+            error_log("CreatureAI::DoZoneInCombatWithPlayers called for a creature that either cannot have a threat list or has empty threat list (creature entry = %u)", me->GetEntry());
+            return;
+        }
+    }
+
+    Map::PlayerList const &PlayerList = map->GetPlayers();
+    for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+    {
+        if (Player* pPlayer = i->getSource())
+        {
+            if (pPlayer->isGameMaster())
+                continue;
+
+            if (pPlayer->IsAlive())
+            {
+                me->SetInCombatWith(pPlayer);
+                pPlayer->SetInCombatWith(me);
+                me->AddThreat(pPlayer, 0.0f);
+            }
+        }
+    }
+}
+
 void CreatureAI::DoZoneInCombat(Creature* creature /*= NULL*/, float maxRangeToNearestTarget /* = 50.0f*/)
 {
     if (!creature)
