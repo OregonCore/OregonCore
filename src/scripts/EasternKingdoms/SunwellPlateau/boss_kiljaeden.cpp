@@ -434,12 +434,10 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
             summoned->CastSpell(summoned, SPELL_SHADOW_CHANNELING, false);
             break;
         case CREATURE_ANVEENA:
-            summoned->setActive(true);
-            summoned->SetLevitate(true);
-            summoned->SetPosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ() + 40, 0, true);
             summoned->CastSpell(summoned, SPELL_ANVEENA_PRISON, true);
             me->CastSpell(summoned, SPELL_ANVEENA_ENERGY_DRAIN, true);
             summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            summoned->SendMovementFlagUpdate(); //Hack : ANVEENA is falling at server start
             break;
         case CREATURE_KILJAEDEN:
             summoned->CastSpell(summoned, SPELL_REBIRTH, false);
@@ -577,13 +575,18 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
 
     void JustSummoned(Creature* summoned)
     {
-        if (summoned->GetEntry() == CREATURE_ARMAGEDDON_TARGET)
+        switch (summoned->GetEntry())
         {
-            summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            case CREATURE_ARMAGEDDON_TARGET:
+                summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                break;
+            case CREATURE_SINISTER_REFLECTION:
+                break;
+            default:
+                summoned->SetLevel(me->getLevel());
+                break;
         }
-        else
-            summoned->SetLevel(me->getLevel());
 
         summoned->setFaction(me->getFaction());
         summons.Summon(summoned);
