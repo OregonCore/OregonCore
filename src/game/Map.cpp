@@ -826,8 +826,6 @@ Map::RemoveFromMap(T* obj, bool remove)
         }
     }
 
-    obj->ResetMap();
-
     if (remove)
     {
         // if option set then object already saved at this moment
@@ -835,6 +833,8 @@ Map::RemoveFromMap(T* obj, bool remove)
             obj->SaveRespawnTime();
         DeleteFromWorld(obj);
     }
+
+    obj->ResetMap();
 }
 
 void
