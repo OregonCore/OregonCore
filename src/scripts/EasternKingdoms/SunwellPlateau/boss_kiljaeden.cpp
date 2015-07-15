@@ -80,6 +80,7 @@ enum Spells
     SPELL_SHADOW_BOLT_VOLLEY                    = 45770, // ~30 yard range Shadow Bolt Volley for ~2k(?) damage
     SPELL_SHADOW_INFUSION                       = 45772, // They gain this at 20% - Immunity to Stun/Silence and makes them look angry!
     SPELL_FELFIRE_PORTAL                        = 46875, // Creates a portal that spawns Felfire Fiends (LIVE FOR THE SWARM!1 FOR THE OVERMIND!)
+    SPELL_SUMMON_FELFIRE_FIEND                  = 46464,
     SPELL_SHADOW_CHANNELING                     = 46757, // Channeling animation out of combat
 
     /* Volatile Felfire Fiend's spells */
@@ -938,16 +939,7 @@ struct mob_hand_of_the_deceiverAI : public ScriptedAI
         // Felfire Portal - Creatres a portal, that spawns Volatile Felfire Fiends, which do suicide bombing.
         if (FelfirePortalTimer <= diff)
         {
-            if (Creature* pPortal = DoSpawnCreature(CREATURE_FELFIRE_PORTAL, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 20000))
-            {
-                std::list<HostileReference*>::iterator itr;
-                for (itr = me->getThreatManager().getThreatList().begin(); itr != me->getThreatManager().getThreatList().end(); ++itr)
-                {
-                    Unit* pUnit = Unit::GetUnit(*me, (*itr)->getUnitGuid());
-                    if (pUnit)
-                        pPortal->AddThreat(pUnit, 1.0f);
-                }
-            }
+            DoCast(me, SPELL_FELFIRE_PORTAL);
             FelfirePortalTimer = 20000;
         }
         else FelfirePortalTimer -= diff;
@@ -987,8 +979,7 @@ struct mob_felfire_portalAI : public Scripted_NoMovementAI
 
         if (uiSpawnFiendTimer <= diff)
         {
-            if (Creature* pFiend = DoSpawnCreature(CREATURE_VOLATILE_FELFIRE_FIEND, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 20000))
-                pFiend->AddThreat(SelectUnit(SELECT_TARGET_RANDOM, 0), 100000.0f);
+            DoCast(me, SPELL_SUMMON_FELFIRE_FIEND);
             uiSpawnFiendTimer = urand(4000, 8000);
         }
         else uiSpawnFiendTimer -= diff;
@@ -1003,15 +994,23 @@ CreatureAI* GetAI_mob_felfire_portal(Creature* pCreature)
 //AI for Felfire Fiend
 struct mob_volatile_felfire_fiendAI : public ScriptedAI
 {
-    mob_volatile_felfire_fiendAI(Creature* c) : ScriptedAI(c) {}
+    mob_volatile_felfire_fiendAI(Creature* c) : ScriptedAI(c)
+    {
+        pInstance = c->GetInstanceData();
+    }
+
+    ScriptedInstance* pInstance;
 
     uint32 uiExplodeTimer;
+    uint32 uiKillTimer;
 
     bool bLockedTarget;
 
     void Reset()
     {
         uiExplodeTimer = 2000;
+        uiKillTimer = 0;
+        DoZoneInCombatWithPlayers(true);
         bLockedTarget = false;
     }
 
@@ -1023,6 +1022,9 @@ struct mob_volatile_felfire_fiendAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
+        if (pInstance && pInstance->GetData(DATA_KILJAEDEN_EVENT) == NOT_STARTED)
+            me->DisappearAndDie();
+
         if (!UpdateVictim())
             return;
 
@@ -1041,7 +1043,14 @@ struct mob_volatile_felfire_fiendAI : public ScriptedAI
         else if (me->IsWithinDistInMap(me->getVictim(), 3)) // Explode if it's close enough to it's target
         {
             DoCastVictim( SPELL_FELFIRE_FISSION);
-            me->Kill(me);
+            uiKillTimer = 500;
+        }
+
+        if (uiKillTimer)
+        {
+            if (uiKillTimer <= diff)
+                me->DisappearAndDie();
+            else uiKillTimer -= diff;
         }
     }
 };
