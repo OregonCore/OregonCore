@@ -25,7 +25,7 @@
 #pragma warning(disable:4996)
 #pragma warning(disable:4312)
 #pragma warning(disable:4311)
-#include <windows.h>
+#include "Common.h"
 #include <tlhelp32.h>
 #include <stdio.h>
 #include <tchar.h>
@@ -34,7 +34,6 @@
 
 #include "WheatyExceptionReport.h"
 
-#include "Common.h"
 #include "SystemConfig.h"
 #include "revision.h"
 
@@ -817,7 +816,6 @@ void WheatyExceptionReport::WriteStackDetails(
                 }
 
                 ifs.close();
-
             }
         }
         #endif
