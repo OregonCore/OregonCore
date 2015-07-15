@@ -2464,7 +2464,8 @@ void Spell::cast(bool skipCheck)
         EffectCharge((SpellEffIndex)0);
 
     // Okay, everything is prepared. Now we need to distinguish between immediate and evented delayed spells
-    if ((m_spellInfo->speed > 0.0f && !IsChanneledSpell(m_spellInfo)) || m_spellInfo->AttributesEx4 & SPELL_ATTR_EX4_UNK4)
+    // @TODO: Find similarities for spells such as Ruthlessness and run the proper check here
+    if ((m_spellInfo->speed > 0.0f && !IsChanneledSpell(m_spellInfo)) || m_spellInfo->Id == 14157)
     {
         // Okay, maps created, now prepare flags
         m_immediateHandled = false;

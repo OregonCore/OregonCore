@@ -89,7 +89,7 @@ void Log::Initialize()
     FILE* logfile = openLogFile("LogFile", "LogTimestamp", "wb");
 
     for (int i = 0; i < MAX_LOG_TYPES; ++i)
-        if (m_logFiles[i])
+        if (!m_logFiles[i])
             m_logFiles[i] = logfile;
 
     InitColors(sConfig.GetStringDefault("LogColors", ""));
