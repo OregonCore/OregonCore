@@ -798,19 +798,8 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
                     TimerIsDeactivated[TIMER_ORBS_EMPOWER] = true;
                     break;
                 case TIMER_ARMAGEDDON: //Phase 4
-                    Unit* pTarget = NULL;
-                    for (uint8 z = 0; z < 6; ++z)
-                    {
-                        pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
-                        if (!pTarget || !pTarget->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT, 0)) break;
-                    }
-                    if (pTarget)
-                    {
-                        float x, y, z;
-                        pTarget->GetPosition(x, y, z);
-                        me->SummonCreature(CREATURE_ARMAGEDDON_TARGET, x, y, z, 0, TEMPSUMMON_TIMED_DESPAWN, 15000);
-                    }
-                    Timer[TIMER_ARMAGEDDON] = 2000; // No, I'm not kidding
+                    DoCast(me, SPELL_ARMAGEDDON_SUMMON_TRIGGER, true);
+                    Timer[TIMER_ARMAGEDDON] = 26000;
                     break;
                 }
             }
@@ -1094,8 +1083,7 @@ struct mob_armageddonAI : public Scripted_NoMovementAI
                 uiTimer = 5000;
                 break;
             case 3:
-                me->Kill(me);
-                me->RemoveCorpse();
+                me->DisappearAndDie();
                 break;
             }
         }
