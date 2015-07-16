@@ -107,7 +107,7 @@ class FlightPathMovementGenerator
         void Initialize(Player&);
         void Finalize(Player&);
         void Interrupt(Player&);
-        void Reset(Player&) {}
+        void Reset(Player&);
         bool Update(Player&, const uint32&);
         MovementGeneratorType GetMovementGeneratorType()
         {
@@ -119,21 +119,13 @@ class FlightPathMovementGenerator
             /* don't reload flight path */
         }
 
-        TaxiPathNodeList const& GetPath()
-        {
-            return *i_path;
-        }
+        TaxiPathNodeList const& GetPath() { return *i_path; }
         uint32 GetPathAtMapEnd() const;
-        bool HasArrived() const
-        {
-            return (i_currentNode >= i_path->size());
-        }
+        bool HasArrived() const { return (i_currentNode >= i_path->size()); }
         void SetCurrentNodeAfterTeleport();
-        void SkipCurrentNode()
-        {
-            ++i_currentNode;
-        }
-
+        void SkipCurrentNode() { ++i_currentNode; }
+        void DoEventIfAny(Player& player, TaxiPathNodeEntry const& node, bool departure);
+        bool GetResetPosition(Player&, float& /*x*/, float& /*y*/, float& /*z*/, float& /*o*/) const;
     private:
         // storage for preloading the flightmaster grid at end
         // before reaching final waypoint

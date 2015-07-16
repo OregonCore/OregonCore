@@ -264,6 +264,7 @@ void FlightPathMovementGenerator::Finalize(Player& player)
     player.ClearUnitState(UNIT_FLAG_DISABLE_MOVE | UNIT_STATE_IN_FLIGHT);
 
     player.Dismount();
+    player.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
 
     if (player.m_taxi.empty())
     {
@@ -271,6 +272,9 @@ void FlightPathMovementGenerator::Finalize(Player& player)
         if (player.pvpInfo.inHostileArea)
             player.CastSpell(&player, 2479, true);
 
+        // update z position to ground and orientation for landing point
+        // this prevent cheating with landing  point at lags
+        // when client side flight end early in comparison server side
         player.StopMoving(true);
     }
 }
@@ -280,19 +284,47 @@ void FlightPathMovementGenerator::Interrupt(Player& player)
     player.ClearUnitState(UNIT_STATE_IN_FLIGHT);
 }
 
+#define PLAYER_FLIGHT_SPEED        32.0f
+
+void FlightPathMovementGenerator::Reset(Player& player)
+{
+    player.getHostileRefManager().setOnlineOfflineState(false);
+    player.AddUnitState(UNIT_STATE_IN_FLIGHT);
+    player.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
+
+    Movement::MoveSplineInit init(player);
+    uint32 end = GetPathAtMapEnd();
+    for (uint32 i = GetCurrentNode(); i != end; ++i)
+    {
+        G3D::Vector3 vertice((*i_path)[i].x, (*i_path)[i].y, (*i_path)[i].z);
+        init.Path().push_back(vertice);
+    }
+    init.SetFirstPointId(GetCurrentNode());
+    init.SetFly();
+    init.SetVelocity(PLAYER_FLIGHT_SPEED);
+    init.Launch();
+}
+
 bool FlightPathMovementGenerator::Update(Player& player, const uint32& diff)
 {
     uint32 pointId = (uint32)player.movespline->currentPathIdx();
     if (pointId > i_currentNode)
     {
-        ++i_currentNode;
-        // check if it's time to preload the flightmaster grid at path end
-        if (i_currentNode == m_preloadTargetNode)
-            PreloadEndGrid();
+        bool departureEvent = true;
+        do
+        {
+            DoEventIfAny(player, (*i_path)[i_currentNode], departureEvent);
+            if (pointId == i_currentNode)
+                break;
+            if (i_currentNode == m_preloadTargetNode)
+                PreloadEndGrid();
+            i_currentNode += (uint32)departureEvent;
+            departureEvent = !departureEvent;
+        }
+        while (true);
     }
 
-    // we have arrived at the end of the path
-    return i_currentNode < (i_path->Size() - 1);
+    return i_currentNode < (i_path->size()-1);
 }
 
 void FlightPathMovementGenerator::SetCurrentNodeAfterTeleport()
@@ -301,7 +333,7 @@ void FlightPathMovementGenerator::SetCurrentNodeAfterTeleport()
         return;
 
     uint32 map0 = (*i_path)[0].mapid;
-    for (uint32 i = 1; i < i_path->size(); ++i)
+    for (size_t i = 1; i < i_path->size(); ++i)
     {
         if ((*i_path)[i].mapid != map0)
         {
@@ -311,16 +343,31 @@ void FlightPathMovementGenerator::SetCurrentNodeAfterTeleport()
     }
 }
 
+void FlightPathMovementGenerator::DoEventIfAny(Player& player, TaxiPathNodeEntry const& node, bool departure)
+{
+    if (uint32 eventid = departure ? node.departureEventID : node.arrivalEventID)
+    {
+        sLog.outDebug("Taxi %s event %u of node %u of path %u for player %s", departure ? "departure" : "arrival", eventid, node.index, node.path, player.GetName());
+        player.GetMap()->ScriptsStart(sEventScripts, eventid, &player, &player);
+    }
+}
+
+bool FlightPathMovementGenerator::GetResetPosition(Player&, float& x, float& y, float& z, float& o) const
+{
+    const TaxiPathNodeEntry& node = (*i_path)[i_currentNode];
+    x = node.x; y = node.y; z = node.z;
+    return true;
+}
+
 void FlightPathMovementGenerator::InitEndGridInfo()
 {
-    // Storage to preload flightmaster grid at end of flight. For multi-stop flights, this will
-    // be reinitialized for each flightmaster at the end of each spline (or stop) in the flight.
-
-    uint32 nodeCount = (*i_path).size();        // Get the number of nodes in the path.
-    m_endMapId = (*i_path)[nodeCount - 1].mapid; // Get the map ID from the last node
-    m_preloadTargetNode = nodeCount - 3;        // 2 nodes before the final node, we pre-load the grid
-    m_endGridX = (*i_path)[nodeCount - 1].x;    // Get the X position from the last node
-    m_endGridY = (*i_path)[nodeCount - 1].y;    // Get the Y position from the last node
+    /*! Storage to preload flightmaster grid at end of flight. For multi-stop flights, this will
+       be reinitialized for each flightmaster at the end of each spline (or stop) in the flight. */
+    uint32 nodeCount = (*i_path).size();         //! Number of nodes in path.
+    m_endMapId = (*i_path)[nodeCount - 1].mapid; //! MapId of last node
+    m_preloadTargetNode = nodeCount - 3;
+    m_endGridX = (*i_path)[nodeCount - 1].x;
+    m_endGridY = (*i_path)[nodeCount - 1].y;
 }
 
 void FlightPathMovementGenerator::PreloadEndGrid()
