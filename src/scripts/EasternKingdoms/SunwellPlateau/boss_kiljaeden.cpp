@@ -254,7 +254,6 @@ struct boss_kalecgos_kjAI : public ScriptedAI
     {
         OrbsEmpowered = 0;
         EmpowerCount = 0;
-        me->SetLevitate(true);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->setActive(true);
 
@@ -1127,15 +1126,15 @@ struct mob_shield_orbAI : public ScriptedAI
 
     void Reset()
     {
-        me->SetLevitate(true);
         bPointReached = true;
         uiTimer = urand(500, 1000);
-        uiCheckTimer = 1000;
+        uiCheckTimer = 2000;
         r = 17;
         c = 0;
         mx = ShieldOrbLocations[0][0];
         my = ShieldOrbLocations[0][1];
         bClockwise = urand(0, 1);
+        DoZoneInCombatWithPlayers(true);
     }
 
     void UpdateAI(const uint32 diff)
@@ -1161,10 +1160,7 @@ struct mob_shield_orbAI : public ScriptedAI
         else
         {
             if (uiCheckTimer <= diff)
-            {
-                DoTeleportTo(x, y, SHIELD_ORB_Z);
                 bPointReached = true;
-            }
             else uiCheckTimer -= diff;
         }
 
