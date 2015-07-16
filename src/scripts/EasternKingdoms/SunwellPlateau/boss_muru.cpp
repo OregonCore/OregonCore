@@ -40,6 +40,7 @@ enum Spells
     SPELL_SUMNON_FURY_MAGE_2      = 46039,
     SPELL_SUMMON_BERSERKER_2      = 46040,
     SPELL_SUMMON_VOID_SENTINEL    = 45988,
+    SPELL_SUMMON_VOID_SENTINEL_VISUAL = 45989,
     SPELL_SUMMON_ENTROPIUS        = 46217,
 
     // Entropius's spells
@@ -59,6 +60,7 @@ enum Spells
     // Void Sentinel's spells
     SPELL_SHADOW_PULSE            = 46087,
     SPELL_VOID_BLAST              = 46161,
+    SPELL_SUMMON_VOID_SPAWN       = 46071,
 
     // Void Spawn's spells
     SPELL_SHADOW_BOLT_VOLLEY      = 46082,
@@ -382,7 +384,6 @@ struct npc_muru_portalAI : public Scripted_NoMovementAI
     SummonList Summons;
 
     bool SummonSentinel;
-    bool InAction;
 
     uint32 SummonTimer;
 
@@ -390,7 +391,6 @@ struct npc_muru_portalAI : public Scripted_NoMovementAI
     {
         SummonTimer = 5000;
 
-        InAction = false;
         SummonSentinel = false;
 
         me->AddUnitState(UNIT_STATE_STUNNED);
@@ -409,10 +409,6 @@ struct npc_muru_portalAI : public Scripted_NoMovementAI
 
     void SpellHit(Unit* /*caster*/, const SpellEntry* Spell)
     {
-        float x, y, z, o;
-        me->GetHomePosition(x, y, z, o);
-        DoTeleportTo(x, y, z);
-        InAction = true;
         switch (Spell->Id)
         {
         case SPELL_OPEN_ALL_PORTALS:
@@ -427,15 +423,17 @@ struct npc_muru_portalAI : public Scripted_NoMovementAI
 
     void UpdateAI(const uint32 diff)
     {
+        if (pInstance && pInstance->GetData(DATA_MURU_EVENT) == NOT_STARTED)
+            Reset();
+
         if (!SummonSentinel)
-        {
-            if (InAction && pInstance && pInstance->GetData(DATA_MURU_EVENT) == NOT_STARTED)
-                Reset();
             return;
-        }
+
         if (SummonTimer <= diff)
         {
-            DoCastAOE(SPELL_SUMMON_VOID_SENTINEL, false);
+            if (Creature* summoner = me->FindNearestCreature(CREATURE_SENTINAL_SUMMONER, 100.0f, true))
+                DoCast(summoner, SPELL_SUMMON_VOID_SENTINEL_VISUAL, false);
+
             SummonTimer = 5000;
             SummonSentinel = false;
         }
@@ -446,6 +444,49 @@ struct npc_muru_portalAI : public Scripted_NoMovementAI
 CreatureAI* GetAI_npc_muru_portal(Creature* pCreature)
 {
     return new npc_muru_portalAI (pCreature);
+}
+
+struct npc_sentinal_summonerAI : public Scripted_NoMovementAI
+{
+    npc_sentinal_summonerAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me)
+    {
+        pInstance = c->GetInstanceData();
+    }
+
+    ScriptedInstance* pInstance;
+
+    SummonList Summons;
+
+    void Reset()
+    {
+        Summons.DespawnAll();
+    }
+
+    void JustSummoned(Creature* summoned)
+    {
+        Summons.Summon(summoned);
+    }
+
+    void SpellHit(Unit* /*caster*/, const SpellEntry* Spell)
+    {
+        switch (Spell->Id)
+        {
+            case SPELL_SUMMON_VOID_SENTINEL_VISUAL:
+                DoCast(me, SPELL_SUMMON_VOID_SENTINEL, false);
+                break;
+        }
+    }
+
+    void update(const uint32 diff)
+    {
+        if (pInstance && pInstance->GetData(DATA_MURU_EVENT) == NOT_STARTED)
+            Summons.DespawnAll();
+    }
+};
+
+CreatureAI* GetAI_npc_sentinal_summoner(Creature* pCreature)
+{
+    return new npc_sentinal_summonerAI(pCreature);
 }
 
 struct npc_dark_fiendAI : public ScriptedAI
@@ -521,10 +562,6 @@ struct npc_void_sentinelAI : public ScriptedAI
         PulseTimer = 3000;
         VoidBlastTimer = 45000; //is this a correct timer?
 
-        float x, y, z, o;
-        me->GetHomePosition(x, y, z, o);
-        DoTeleportTo(x, y, 71);
-
         if (pInstance)
             if (Player* Target = Unit::GetPlayer(*me, pInstance->GetData64(DATA_PLAYER_GUID)))
                 me->AI()->AttackStart(Target);
@@ -532,8 +569,8 @@ struct npc_void_sentinelAI : public ScriptedAI
 
     void JustDied(Unit* /*killer*/)
     {
-        for (uint8 i = 0; i < 8; ++i)
-            me->SummonCreature(CREATURE_VOID_SPAWN, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), rand() % 6, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 180000);
+        for (uint8 i = 0; i < 6; ++i)
+            me->CastSpell(me->GetPositionX() + ((2 * rand() % 1000) / 1000.0f), me->GetPositionY() + ((2 * rand() % 1000) / 1000.0f), me->GetPositionZ(), SPELL_SUMMON_VOID_SPAWN, false);
     }
 
     void UpdateAI(const uint32 diff)
@@ -669,5 +706,10 @@ void AddSC_boss_muru()
     newscript = new Script;
     newscript->Name = "npc_blackhole";
     newscript->GetAI = &GetAI_npc_blackhole;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_sentinal_summoner";
+    newscript->GetAI = &GetAI_npc_sentinal_summoner;
     newscript->RegisterSelf();
 }

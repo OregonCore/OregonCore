@@ -255,11 +255,12 @@ struct boss_kalecgos_kjAI : public ScriptedAI
         OrbsEmpowered = 0;
         EmpowerCount = 0;
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->setActive(true);
 
         for (uint8 i = 0; i < 4; ++i)
             if (GameObject* pOrb = GetOrb(i))
                 pOrb->SetGoType(GAMEOBJECT_TYPE_BUTTON);
+
+        me->SetLevitate(true);
     }
 
     GameObject* GetOrb(int32 index)
