@@ -228,7 +228,7 @@ void GameObject::Update(uint32 diff)
                             udata.BuildPacket(&packet);
                             caster->ToPlayer()->GetSession()->SendPacket(&packet);
 
-                            SendObjectCustomAnim(GetGUID());
+                            SendObjectCustomAnim(GetGUID(), GetGoAnimProgress());
                         }
 
                         m_lootState = GO_READY;                 // can be successfully open with some chance
@@ -272,28 +272,30 @@ void GameObject::Update(uint32 diff)
                         //we need to open doors if they are closed (add there another condition if this code breaks some usage, but it need to be here for battlegrounds)
                         if (GetGoState() != GO_STATE_READY)
                             ResetDoorOrButton();
-                    //flags in AB are type_button and we need to add them here so no break!
+                        break;
                     default:
-                        if (!m_spawnedByDefault)        // despawn timer
-                        {
-                            // can be despawned or destroyed
-                            SetLootState(GO_JUST_DEACTIVATED);
-                            return;
-                        }
-                        // respawn timer
-                        uint16 poolid = sPoolMgr.IsPartOfAPool<GameObject>(GetDBTableGUIDLow());
-                        if (poolid)
-                            sPoolMgr.UpdatePool<GameObject>(poolid, GetDBTableGUIDLow());
-                        else
-                            GetMap()->AddToMap(this);
                         break;
                     }
+
+                    // Despawn timer
+                    if (!m_spawnedByDefault)
+                    {
+                        // Can be despawned or destroyed
+                        SetLootState(GO_JUST_DEACTIVATED);
+                        return;
+                    }
+
+                    // Respawn timer
+                    uint32 poolid = GetDBTableGUIDLow() ? sPoolMgr.IsPartOfAPool<GameObject>(GetDBTableGUIDLow()) : 0;
+                    if (poolid)
+                        sPoolMgr.UpdatePool<GameObject>(poolid, GetDBTableGUIDLow());
+                    else
+                        GetMap()->AddToMap(this);
                 }
             }
 
             if (isSpawned())
             {
-                // traps can have time and can not have
                 GameObjectInfo const* goInfo = GetGOInfo();
                 if (goInfo->type == GAMEOBJECT_TYPE_TRAP)
                 {
@@ -330,19 +332,19 @@ void GameObject::Update(uint32 diff)
                         }
                     }
 
-                    // Note: this hack with search required until GO casting not implemented
-                    // search unfriendly creature
-                    if (owner)                    // hunter trap
+                    /// @todo this hack with search required until GO casting not implemented
+                    if (owner)
                     {
+                        // Hunter trap: Search units which are unfriendly to the trap's owner
                         Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck checker(this, owner, radius);
                         Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck> searcher(ok, checker);
                         VisitNearbyGridObject(radius, searcher);
-                        if (!ok) VisitNearbyWorldObject(radius, searcher);
+                        if (!ok)
+                            VisitNearbyWorldObject(radius, searcher);
                     }
-                    else                                        // environmental trap
+                    else
                     {
-                        // environmental damage spells already have around enemies targeting but this not help in case not existed GO casting support
-                        // affect only players
+                        // Environmental trap: Any player
                         Player* player = NULL;
                         Oregon::AnyPlayerInObjectRangeCheck checker(this, radius);
                         Oregon::PlayerSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(player, checker);
@@ -391,6 +393,15 @@ void GameObject::Update(uint32 diff)
                 if (GetAutoCloseTime() && (m_cooldownTime < time(NULL)))
                     ResetDoorOrButton();
                 break;
+            case GAMEOBJECT_TYPE_GOOBER:
+                if (m_cooldownTime < time(NULL))
+                {
+                    RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+
+                    SetLootState(GO_JUST_DEACTIVATED);
+                    m_cooldownTime = 0;
+                }
+                break;
             case GAMEOBJECT_TYPE_CHEST:
                 if (m_groupLootTimer && lootingGroupLeaderGUID)
                 {
@@ -427,23 +438,29 @@ void GameObject::Update(uint32 diff)
                     m_unique_users.clear();
                     m_usetimes = 0;
                 }
+
+                SetGoState(GO_STATE_READY);
+
                 //any return here in case battleground traps
+                if (GetGOInfo()->flags & GO_FLAG_NODESPAWN)
+                    return;
             }
 
+            loot.clear();
+
+            //! If this is summoned by a spell with ie. SPELL_EFFECT_SUMMON_OBJECT_WILD, with or without owner, we check respawn criteria based on spell
+            //! The GetOwnerGUID() check is mostly for compatibility with hacky scripts - 99% of the time summoning should be done trough spells.
             if (GetSpellId() || GetOwnerGUID())
             {
                 SetRespawnTime(0);
                 Delete();
                 return;
             }
-            else
-            {
-                SetRespawnTime(GetRespawnDelay());
-                DestroyForNearbyPlayers();
-            }
+
+            SetLootState(GO_READY);
 
             //burning flags in some battlegrounds, if you find better condition, just add it
-            if (GetGoAnimProgress() > 0)
+            if (GetGOInfo()->IsDespawnAtAction() || GetGoAnimProgress() > 0)
             {
                 SendObjectDeSpawnAnim(GetGUID());
                 //reset flags
@@ -456,9 +473,6 @@ void GameObject::Update(uint32 diff)
                 else
                     SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags);
             }
-
-            loot.clear();
-            SetLootState(GO_READY);
 
             if (!m_respawnDelayTime)
                 return;
@@ -503,12 +517,14 @@ void GameObject::AddUniqueUse(Player* player)
 
 void GameObject::Delete()
 {
+    SetLootState(GO_NOT_READY);
+
     SendObjectDeSpawnAnim(GetGUID());
 
     SetGoState(GO_STATE_READY);
     SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags);
 
-    uint32 poolid = sPoolMgr.IsPartOfAPool<GameObject>(GetDBTableGUIDLow());
+    uint32 poolid = GetDBTableGUIDLow() ? sPoolMgr.IsPartOfAPool<GameObject>(GetDBTableGUIDLow()) : 0;
     if (poolid)
         sPoolMgr.UpdatePool<GameObject>(poolid, GetDBTableGUIDLow());
     else
@@ -724,7 +740,9 @@ bool GameObject::IsTransport() const
 {
     // If something is marked as a transport, don't transmit an out of range packet for it.
     GameObjectInfo const* gInfo = GetGOInfo();
-    if (!gInfo) return false;
+    if (!gInfo)
+        return false;
+
     return gInfo->type == GAMEOBJECT_TYPE_TRANSPORT || gInfo->type == GAMEOBJECT_TYPE_MO_TRANSPORT;
 }
 
@@ -814,29 +832,35 @@ bool GameObject::ActivateToQuest(Player* pTarget) const
 
     switch (GetGoType())
     {
-    // scan GO chest with loot including quest items
-    case GAMEOBJECT_TYPE_CHEST:
-        {
-            if (LootTemplates_Gameobject.HaveQuestLootForPlayer(GetLootId(), pTarget))
+        // scan GO chest with loot including quest items
+        case GAMEOBJECT_TYPE_CHEST:
             {
-                //@todo fix this hack
-                //look for battlegroundAV for some objects which are only activated after mine gots captured by own team
-                if (GetEntry() == BG_AV_OBJECTID_MINE_N || GetEntry() == BG_AV_OBJECTID_MINE_S)
-                    if (BattleGround* bg = pTarget->GetBattleGround())
-                        if (bg->GetTypeID() == BATTLEGROUND_AV && !(((BattleGroundAV*)bg)->PlayerCanDoMineQuest(GetEntry(), pTarget->GetTeam())))
-                            return false;
-                return true;
+                if (LootTemplates_Gameobject.HaveQuestLootForPlayer(GetLootId(), pTarget))
+                {
+                    //@todo fix this hack
+                    //look for battlegroundAV for some objects which are only activated after mine gots captured by own team
+                    if (GetEntry() == BG_AV_OBJECTID_MINE_N || GetEntry() == BG_AV_OBJECTID_MINE_S)
+                        if (BattleGround* bg = pTarget->GetBattleGround())
+                            if (bg->GetTypeID() == BATTLEGROUND_AV && !(((BattleGroundAV*)bg)->PlayerCanDoMineQuest(GetEntry(), pTarget->GetTeam())))
+                                return false;
+                    return true;
+                }
+                break;
             }
-            break;
-        }
-    case GAMEOBJECT_TYPE_GOOBER:
+        case GAMEOBJECT_TYPE_GENERIC:
         {
-            if (pTarget->GetQuestStatus(GetGOInfo()->goober.questId) == QUEST_STATUS_INCOMPLETE)
+            if (GetGOInfo()->_generic.questID == -1 || pTarget->GetQuestStatus(GetGOInfo()->_generic.questID) == QUEST_STATUS_INCOMPLETE)
                 return true;
             break;
         }
-    default:
-        break;
+        case GAMEOBJECT_TYPE_GOOBER:
+        {
+            if (GetGOInfo()->goober.questId == -1 || pTarget->GetQuestStatus(GetGOInfo()->goober.questId) == QUEST_STATUS_INCOMPLETE)
+                return true;
+            break;
+        }
+        default:
+            break;
     }
 
     return false;
@@ -1045,7 +1069,7 @@ void GameObject::Use(Unit* user)
                     data << GetGUID();
                     player->GetSession()->SendPacket(&data);
                 }
-                else if (info->questgiver.gossipID)
+                else if (info->goober.gossipID)
                 {
                     player->PrepareGossipMenu(this, info->goober.gossipID);
                     player->SendPreparedGossip(this);
@@ -1055,11 +1079,30 @@ void GameObject::Use(Unit* user)
                     GetMap()->ScriptsStart(sEventScripts, info->goober.eventId, player, this);
 
                 // possible quest objective for active quests
+                if (info->goober.questId && sObjectMgr.GetQuestTemplate(info->goober.questId))
+                {
+                    //Quest require to be active for GO using
+                    if (player->GetQuestStatus(info->goober.questId) != QUEST_STATUS_INCOMPLETE)
+                        break;
+                }
+
                 player->CastedCreatureOrGO(info->id, GetGUID(), 0);
             }
 
+            SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+            SetLootState(GO_ACTIVATED);
+
+            // this appear to be ok, however others exist in addition to this that should have custom (ex: 190510, 188692, 187389)
+            if (info->goober.customAnim)
+                SendObjectCustomAnim(GetGUID(), GetGoAnimProgress());
+            else
+                SetGoState(GO_STATE_ACTIVE);
+
+            m_cooldownTime = time(NULL) + GetAutoCloseTime();
+
             // cast this spell later if provided
             spellId = info->goober.spellId;
+            spellCaster = NULL;
 
             break;
         }
@@ -1215,7 +1258,7 @@ void GameObject::Use(Unit* user)
 
             if (info->summoningRitual.animSpell)
             {
-                player->CastSpell(this, info->summoningRitual.animSpell, false);
+                player->CastSpell(player, info->summoningRitual.animSpell, false);
 
                 // for this case, summoningRitual.spellId is always triggered
                 triggered = true;
@@ -1224,7 +1267,8 @@ void GameObject::Use(Unit* user)
             // full amount unique participants including original summoner
             if (GetUniqueUseCount() == info->summoningRitual.reqParticipants)
             {
-                spellCaster = m_ritualOwner ? m_ritualOwner : spellCaster;
+                if (m_ritualOwner)
+                    spellCaster = m_ritualOwner;
 
                 spellId = info->summoningRitual.spellId;
 
@@ -1251,8 +1295,6 @@ void GameObject::Use(Unit* user)
         }
     case GAMEOBJECT_TYPE_SPELLCASTER:                   //22
         {
-            SetUInt32Value(GAMEOBJECT_FLAGS, 2);
-
             GameObjectInfo const* info = GetGOInfo();
             if (!info)
                 return;
@@ -1282,7 +1324,7 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            Player* targetPlayer = ObjectAccessor::FindPlayer(player->GetSelection());
+            Player* targetPlayer = ObjectAccessor::FindPlayer(player->GetTarget());
 
             // accept only use by player from same group for caster except caster itself
             if (!targetPlayer || targetPlayer == player || !targetPlayer->IsInSameRaidWith(player))
@@ -1354,23 +1396,17 @@ void GameObject::Use(Unit* user)
                 GameObjectInfo const* info = GetGOInfo();
                 if (info)
                 {
-                    user->InterruptNonMeleeSpells(true, 0, true);
-
                     switch (info->id)
                     {
-                    case 179785:                        // Silverwing Flag
-                        // check if it's correct bg
-                        if (bg->GetTypeID() == BATTLEGROUND_WS)
-                            bg->EventPlayerClickedOnFlag(player, this);
-                        break;
-                    case 179786:                        // Warsong Flag
-                        if (bg->GetTypeID() == BATTLEGROUND_WS)
-                            bg->EventPlayerClickedOnFlag(player, this);
-                        break;
-                    case 184142:                        // Netherstorm Flag
-                        if (bg->GetTypeID() == BATTLEGROUND_EY)
-                            bg->EventPlayerClickedOnFlag(player, this);
-                        break;
+                        case 179785:                        // Silverwing Flag
+                        case 179786:                        // Warsong Flag
+                            if (bg->GetTypeID() == BATTLEGROUND_WS)
+                                bg->EventPlayerClickedOnFlag(player, this);
+                            break;
+                        case 184142:                        // Netherstorm Flag
+                            if (bg->GetTypeID() == BATTLEGROUND_EY)
+                                bg->EventPlayerClickedOnFlag(player, this);
+                            break;
                     }
                 }
                 //this cause to call return, all flags must be deleted here!!
@@ -1397,18 +1433,20 @@ void GameObject::Use(Unit* user)
         return;
     }
 
+    if (Player* player = user->ToPlayer())
+        sOutdoorPvPMgr.HandleCustomSpell(player, spellId, this);
+
     Spell* spell = new Spell(spellCaster, spellInfo, triggered);
 
-    // spell target is user of GO
-    SpellCastTargets targets;
-    targets.setUnitTarget(user);
-
-    spell->prepare(&targets);
+    if (spellCaster)
+        spellCaster->CastSpell(user, spellInfo, triggered);
+    else
+        CastSpell(user, spellId);
 }
 
-void GameObject::CastSpell(Unit* target, uint32 spell)
+void GameObject::CastSpell(Unit* target, uint32 spellId, bool triggered /*= true*/)
 {
-    SpellEntry const* spellProto = sSpellStore.LookupEntry(spell);
+    SpellEntry const* spellProto = sSpellStore.LookupEntry(spellId);
     if (!spellProto)
         return;
 
@@ -1425,24 +1463,25 @@ void GameObject::CastSpell(Unit* target, uint32 spell)
     if (self)
     {
         if (target)
-            target->CastSpell(target, spellProto, true);
+            target->CastSpell(target, spellProto, triggered);
         return;
     }
 
     //summon world trigger
     Creature* trigger = SummonTrigger(GetPositionX(), GetPositionY(), GetPositionZ(), 0, 1);
-    if (!trigger) return;
+    if (!trigger)
+        return;
 
     if (Unit* owner = GetOwner())
     {
         trigger->setFaction(owner->getFaction());
-        trigger->CastSpell(target ? target : trigger, spell, true, 0, 0, owner->GetGUID());
+        trigger->CastSpell(target ? target : trigger, spellId, triggered, 0, 0, owner->GetGUID());
     }
     else
     {
         trigger->setFaction(14);
         // Set owner guid for target if no owner available - needed by trigger auras
-        trigger->CastSpell(target ? target : trigger, spell, true, 0, 0, target ? target->GetGUID() : 0);
+        trigger->CastSpell(target ? target : trigger, spellId, triggered, 0, 0, target ? target->GetGUID() : 0);
     }
 }
 
@@ -1459,14 +1498,28 @@ const char* GameObject::GetNameForLocaleIdx(int32 loc_idx) const
 
 void GameObject::UpdateRotationFields(float rotation2 /*=0.0f*/, float rotation3 /*=0.0f*/)
 {
-    SetFloatValue(GAMEOBJECT_FACING, GetOrientation());
+    static double const atan_pow = atan(pow(2.0f, -20.0f));
+
+    double f_rot1 = std::sin(GetOrientation() / 2.0f);
+    double f_rot2 = std::cos(GetOrientation() / 2.0f);
+
+    int64 i_rot1 = int64(f_rot1 / atan_pow *(f_rot2 >= 0 ? 1.0f : -1.0f));
+    int64 rotation = (i_rot1 << 43 >> 43) & 0x00000000001FFFFF;
+
+    //float f_rot2 = std::sin(0.0f / 2.0f);
+    //int64 i_rot2 = f_rot2 / atan(pow(2.0f, -20.0f));
+    //rotation |= (((i_rot2 << 22) >> 32) >> 11) & 0x000003FFFFE00000;
+
+    //float f_rot3 = std::sin(0.0f / 2.0f);
+    //int64 i_rot3 = f_rot3 / atan(pow(2.0f, -21.0f));
+    //rotation |= (i_rot3 >> 42) & 0x7FFFFC0000000000;
 
     if (rotation2 == 0.0f && rotation3 == 0.0f)
     {
-        rotation2 = sin(GetOrientation() / 2);
-        rotation3 = cos(GetOrientation() / 2);
+        rotation2 = (float)f_rot1;
+        rotation3 = (float)f_rot2;
     }
 
-    SetFloatValue(GAMEOBJECT_ROTATION + 2, rotation2);
-    SetFloatValue(GAMEOBJECT_ROTATION + 3, rotation3);
+    SetFloatValue(GAMEOBJECT_ROTATION+2, rotation2);
+    SetFloatValue(GAMEOBJECT_ROTATION+3, rotation3);
 }

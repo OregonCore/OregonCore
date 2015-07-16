@@ -755,7 +755,7 @@ bool ChatHandler::HandleDebugAnimationCommand(const char* args)
     if (!m_session || !m_session->GetPlayer())
         return false;
 
-    WorldPacket data(SMSG_OBJECT_CUSTOM_ANIM, 12);
+    WorldPacket data(SMSG_GAMEOBJECT_CUSTOM_ANIM, 12);
     data << (m_session->GetPlayer()->GetSelection() ? m_session->GetPlayer()->GetSelection() : m_session->GetPlayer()->GetGUID());
     data << uint32(atoi(args));
     m_session->SendPacket(&data);
