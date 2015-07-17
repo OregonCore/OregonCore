@@ -1,5 +1,5 @@
 /* Portal effect */
-UPDATE creature_template SET scale = 2, modelid_A = 23377, modelid_H = 23377 where entry = 25770;
+UPDATE creature_template SET scale = 2, modelid_A = 23377, modelid_H = 23377, InhabitType = 4 where entry = 25770;
 
 /* sentinal summoner */
 UPDATE creature_template SET modelid_A = 23377, modelid_H = 23377, flags_extra = 130, ScriptName = 'npc_sentinal_summoner' WHERE entry = 25782;
