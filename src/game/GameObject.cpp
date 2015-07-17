@@ -1102,7 +1102,6 @@ void GameObject::Use(Unit* user)
 
             // cast this spell later if provided
             spellId = info->goober.spellId;
-            spellCaster = NULL;
 
             break;
         }

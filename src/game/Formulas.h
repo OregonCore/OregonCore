@@ -101,7 +101,8 @@ inline uint32 Gain(Player* pl, Unit* u)
 {
     if (u->GetTypeId() == TYPEID_UNIT && (
             ((Creature*)u)->IsTotem() || ((Creature*)u)->IsPet() ||
-            (((Creature*)u)->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)))
+                (((Creature*)u)->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL) ||
+                ((Creature*)u)->GetCreatureTemplate()->type == CREATURE_TYPE_CRITTER))
         return 0;
 
     uint32 xp_gain = BaseGain(pl->getLevel(), u->getLevel(), GetContentLevelsForMapAndZone(u->GetMapId(), u->GetZoneId()));

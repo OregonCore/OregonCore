@@ -2176,7 +2176,7 @@ bool Creature::HasSpellCooldown(uint32 spell_id) const
 
 bool Creature::IsInEvadeMode() const
 {
-    return /*!i_motionMaster.empty() &&*/ i_motionMaster.GetCurrentMovementGeneratorType() == HOME_MOTION_TYPE;
+    return HasUnitState(UNIT_STATE_EVADE);
 }
 
 bool Creature::HasSpell(uint32 spellID) const
