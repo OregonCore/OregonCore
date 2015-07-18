@@ -197,9 +197,6 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32>& mapids)
 
     TaxiPathNodeList const& path = sTaxiPathNodesByPath[pathid];
 
-    if (path.empty())
-        return false;
-
     std::vector<keyFrame> keyFrames;
     int mapChange = 0;
     mapids.clear();
@@ -478,7 +475,6 @@ void Transport::Update(uint32 /*p_time*/)
     m_timer = getMSTime() % m_period;
     while (((m_timer - m_curr->first) % m_pathTime) > ((m_next->first - m_curr->first) % m_pathTime))
     {
-
         DoEventIfAny(*m_curr, true);
 
         m_curr = GetNextWayPoint();

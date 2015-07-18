@@ -4873,47 +4873,6 @@ uint16 ObjectMgr::GetTaxiMount(uint32 id, uint32 team)
     return mount_id;
 }
 
-/* -- didnt compile with mmaps
-void ObjectMgr::GetTaxiPathNodes(uint32 path, Path &pathnodes, std::vector<uint32>& mapIds)
-{
-    if (path >= sTaxiPathNodesByPath.size())
-        return;
-
-    TaxiPathNodeList& nodeList = sTaxiPathNodesByPath[path];
-
-    pathnodes.Resize(nodeList.size());
-    mapIds.resize(nodeList.size());
-
-    for (size_t i = 0; i < nodeList.size(); ++i)
-    {
-        pathnodes[ i ].x = nodeList[i].x;
-        pathnodes[ i ].y = nodeList[i].y;
-        pathnodes[ i ].z = nodeList[i].z;
-
-        mapIds[i] = nodeList[i].mapid;
-    }
-}
-
-void ObjectMgr::GetTransportPathNodes(uint32 path, TransportPath &pathnodes)
-{
-    if (path >= sTaxiPathNodesByPath.size())
-        return;
-
-    TaxiPathNodeList& nodeList = sTaxiPathNodesByPath[path];
-
-    pathnodes.Resize(nodeList.size());
-
-    for (size_t i = 0; i < nodeList.size(); ++i)
-    {
-        pathnodes[ i ].mapid = nodeList[i].mapid;
-        pathnodes[ i ].x = nodeList[i].x;
-        pathnodes[ i ].y = nodeList[i].y;
-        pathnodes[ i ].z = nodeList[i].z;
-        pathnodes[ i ].actionFlag = nodeList[i].actionFlag;
-        pathnodes[ i ].delay = nodeList[i].delay;
-    }
-}
-*/
 void ObjectMgr::LoadGraveyardZones()
 {
     mGraveYardMap.clear();                                  // need for reload case
