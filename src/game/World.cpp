@@ -1535,7 +1535,7 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Loading Creature Formations...");
     sFormationMgr.LoadCreatureFormations();
 
-    sLog.outString("Loading Conditions...");
+    sConsole.SetLoadingLabel("Loading Conditions...");
     sConditionMgr.LoadConditions();
 
     sConsole.SetLoadingLabel("Loading GM tickets...");
