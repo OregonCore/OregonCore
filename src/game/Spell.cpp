@@ -4805,10 +4805,7 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
     SpellDummyConditionEntry const* sdcEntry = sSpellMgr.GetSpellDummyCondition(m_spellInfo->Id, effIndex);
 
     if (!sdcEntry)
-    {
-        sLog.outError("Spell %u has dummy effect/aura but doesn't have a record in spell_dummy_condition. (effIndex: %u)", m_spellInfo->Id, effIndex);
         return SPELL_CAST_OK;
-    }
 
     Unit* unitTarget = m_targets.getUnitTarget();
 
