@@ -409,9 +409,6 @@ void WorldSession::HandleQuestConfirmAccept(WorldPacket& recv_data)
         if (!_player->IsInSameRaidWith(originalPlayer))
             return;
 
-        if (!originalPlayer->CanShareQuest(questId))
-            return;
-
         if (!_player->CanTakeQuest(quest, true))
             return;
 
