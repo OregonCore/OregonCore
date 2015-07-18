@@ -118,7 +118,6 @@ void WorldSession::SendDoFlight(uint16 MountId, uint32 path, uint32 pathNode)
 
     while (GetPlayer()->GetMotionMaster()->GetCurrentMovementGeneratorType() == FLIGHT_MOTION_TYPE)
         GetPlayer()->GetMotionMaster()->MovementExpired(false);
-
     GetPlayer()->Mount(MountId);
     GetPlayer()->GetMotionMaster()->MoveTaxiFlight(path, pathNode);
 }
@@ -244,10 +243,14 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
         if (path && MountId)
             SendDoFlight(MountId, path, 1);               // skip start fly node
         else
-            GetPlayer()->CleanupAfterTaxiFlight();    // clear problematic path and next
+            GetPlayer()->m_taxi.ClearTaxiDestinations();    // clear problematic path and next
+
+        return;
     }
     else
-        GetPlayer()->CleanupAfterTaxiFlight();        // not destinations, clear source node
+        GetPlayer()->m_taxi.ClearTaxiDestinations();        // not destinations, clear source node
+
+    GetPlayer()->CleanupAfterTaxiFlight();
 }
 
 void WorldSession::HandleActivateTaxiOpcode(WorldPacket& recv_data)

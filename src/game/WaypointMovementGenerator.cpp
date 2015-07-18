@@ -239,23 +239,10 @@ uint32 FlightPathMovementGenerator::GetPathAtMapEnd() const
 
 void FlightPathMovementGenerator::Initialize(Player& player)
 {
-    player.getHostileRefManager().setOnlineOfflineState(false);
-    player.AddUnitState(UNIT_STATE_IN_FLIGHT);
-    player.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
+    Reset(player);
 
-    Movement::MoveSplineInit init(player);
     // For preloading end grid
     InitEndGridInfo();
-    uint32 pathEndPoint = GetPathAtMapEnd();
-    for (uint32 i = GetCurrentNode(); i != pathEndPoint; ++i)
-    {
-        G3D::Vector3 vertice((*i_path)[i].x, (*i_path)[i].y, (*i_path)[i].z);
-        init.Path().push_back(vertice);
-    }
-    init.SetFirstPointId(GetCurrentNode());
-    init.SetFly();
-    init.SetVelocity(32.0f);
-    init.Launch();
 }
 
 void FlightPathMovementGenerator::Finalize(Player& player)
