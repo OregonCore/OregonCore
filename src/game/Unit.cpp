@@ -12395,9 +12395,9 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
     }
 
     // Already charmed
-    if (GetCharmerGUID())
+    if (GetCharmerGUID() || (IsPet() && ToPet()->GetOwner() != charmer))
     {
-        sLog.outError("Crash alert! Unit::SetCharmedBy: %u (GUID %u) has already been charmed but %u (GUID %u) is trying to charm it!", GetEntry(), GetGUIDLow(), charmer->GetEntry(), charmer->GetGUIDLow());
+        sLog.outDebug("Unit::SetCharmedBy: %u (GUID %u) has already been charmed but %u (GUID %u) is trying to charm it!", GetEntry(), GetGUIDLow(), charmer->GetEntry(), charmer->GetGUIDLow());
         return;
     }
 

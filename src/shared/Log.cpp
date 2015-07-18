@@ -60,9 +60,14 @@ Log::Log() : m_gmlog_per_account(false), m_logMask(0), m_logMaskDatabase(0)
 
 Log::~Log()
 {
-    for (int i = 0; i < MAX_LOG_TYPES; ++i)
+    std::set<FILE*> openfiles;
+
+    for (size_t i = 0; i < MAX_LOG_TYPES; ++i)
         if (m_logFiles[i])
-            fclose(m_logFiles[i]);
+            openfiles.insert(m_logFiles[i]);
+
+    for (std::set<FILE*>::iterator i = openfiles.begin(); i != openfiles.end(); ++i)
+        fclose(*i);
 }
 
 void Log::SetLogMask(unsigned long mask)

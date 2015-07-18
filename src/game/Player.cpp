@@ -15148,6 +15148,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     uint16 newDrunkenValue = uint16(soberFactor * (GetUInt32Value(PLAYER_BYTES_3) & 0xFFFE));
     SetDrunkValue(newDrunkenValue);
 
+    m_rafLink = sObjectMgr.GetRAFLinkStatus(this);
+
     m_cinematic = fields[19].GetUInt32();
     m_Played_time[PLAYED_TIME_TOTAL] = fields[20].GetUInt32();
     m_Played_time[PLAYED_TIME_LEVEL] = fields[21].GetUInt32();
@@ -19597,7 +19599,7 @@ void Player::SendInitialPacketsAfterAddToMap()
     SendEnchantmentDurations();                             // must be after add to map
     SendItemDurations();                                    // must be after add to map
 
-    if ((m_rafLink = sObjectMgr.GetRAFLinkStatus(this)) != RAF_LINK_NONE)
+    if (m_rafLink != RAF_LINK_NONE)
     {
         SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_REFER_A_FRIEND);
         learnSpell(SPELL_SUMMON_FRIEND);

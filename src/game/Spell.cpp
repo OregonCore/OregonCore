@@ -4624,7 +4624,9 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (!m_targets.getUnitTarget())
                     return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
 
-                if (m_targets.getUnitTarget()->GetCharmerGUID())
+                if (m_targets.getUnitTarget()->GetCharmerGUID() ||
+                    // dont allow charming/possessing of pet that caster doesn't own
+                    (m_targets.getUnitTarget()->HasUnitTypeMask(UNIT_MASK_PET) && m_targets.getUnitTarget()->ToPet()->GetOwner() != m_caster))
                     return SPELL_FAILED_CHARMED;
 
                 if (int32(m_targets.getUnitTarget()->getLevel()) > CalculateDamage(i, m_targets.getUnitTarget()))
