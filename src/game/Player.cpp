@@ -15148,18 +15148,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     uint16 newDrunkenValue = uint16(soberFactor * (GetUInt32Value(PLAYER_BYTES_3) & 0xFFFE));
     SetDrunkValue(newDrunkenValue);
 
-
-    if ((m_rafLink = sObjectMgr.GetRAFLinkStatus(this)) != RAF_LINK_NONE)
-    {
-        SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_REFER_A_FRIEND);
-        learnSpell(SPELL_SUMMON_FRIEND);
-        /* In case of recently RAF-unlinked acc we may
-           unlearn the SPELL_SUMMON_FRIEND, its not necessary
-           though because its unusable by the player anyway,
-           and also is not shown in the spellbook */
-        SetGrantableLevels(m_GrantableLevels);
-    }
-
     m_cinematic = fields[19].GetUInt32();
     m_Played_time[PLAYED_TIME_TOTAL] = fields[20].GetUInt32();
     m_Played_time[PLAYED_TIME_LEVEL] = fields[21].GetUInt32();
@@ -19608,6 +19596,17 @@ void Player::SendInitialPacketsAfterAddToMap()
 
     SendEnchantmentDurations();                             // must be after add to map
     SendItemDurations();                                    // must be after add to map
+
+    if ((m_rafLink = sObjectMgr.GetRAFLinkStatus(this)) != RAF_LINK_NONE)
+    {
+        SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_REFER_A_FRIEND);
+        learnSpell(SPELL_SUMMON_FRIEND);
+        /* In case of recently RAF-unlinked acc we may
+           unlearn the SPELL_SUMMON_FRIEND, its not necessary
+           though because its unusable by the player anyway,
+           and also is not shown in the spellbook */
+        SetGrantableLevels(m_GrantableLevels);
+    }
 }
 
 void Player::SendUpdateToOutOfRangeGroupMembers()
