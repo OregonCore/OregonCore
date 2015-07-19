@@ -441,8 +441,6 @@ void MotionMaster::Mutate(MovementGenerator* m, MovementSlot slot)
     {
         Impl[slot] = NULL; // in case a new one is generated in this slot during directdelete
 
-        curr->Interrupt(*i_owner);
-
         if (i_top == slot && (m_cleanFlag & MMCF_UPDATE))
             DelayedDelete(curr);
         else

@@ -26,7 +26,6 @@ class IdleMovementGenerator : public MovementGenerator
 
         void Initialize(Unit&);
         void Finalize(Unit&) {  }
-        void Interrupt(Unit& ) {  }
         void Reset(Unit&);
         bool Update(Unit&, const uint32&)
         {

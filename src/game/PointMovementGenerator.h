@@ -31,7 +31,6 @@ class PointMovementGenerator
 
         void Initialize(T&);
         void Finalize(T& unit);
-        void Interrupt(T&);
         void Reset(T& unit)
         {
             if (!unit.IsStopped())
@@ -73,7 +72,6 @@ class EffectMovementGenerator : public MovementGenerator
         EffectMovementGenerator(uint32 Id) : m_Id(Id) {}
         void Initialize(Unit&) {}
         void Finalize(Unit&);
-        void Interrupt(Unit&) {}
         void Reset(Unit&) {}
         bool Update(Unit&, const uint32&);
         MovementGeneratorType GetMovementGeneratorType() { return EFFECT_MOTION_TYPE; }

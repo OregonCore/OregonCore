@@ -92,7 +92,6 @@ public:
 
     void Initialize(T&);
     void Finalize(T&);
-    void Interrupt(T&);
     void Reset(T&);
     void MovementInform(T&);
 
@@ -114,7 +113,6 @@ public:
 
     void Initialize(T&);
     void Finalize(T&);
-    void Interrupt(T&);
     void Reset(T&);
     void MovementInform(T&);
 

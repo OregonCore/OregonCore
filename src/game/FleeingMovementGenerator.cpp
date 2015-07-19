@@ -346,12 +346,6 @@ FleeingMovementGenerator<T>::Finalize(T& owner)
 }
 
 template<class T>
-void FleeingMovementGenerator<T>::Interrupt(T& owner)
-{
-    owner.InterruptMoving();
-}
-
-template<class T>
 void
 FleeingMovementGenerator<T>::Reset(T& owner)
 {
@@ -385,8 +379,6 @@ template void FleeingMovementGenerator<Player>::_setTargetLocation(Player&);
 template void FleeingMovementGenerator<Creature>::_setTargetLocation(Creature&);
 template void FleeingMovementGenerator<Player>::Finalize(Player&);
 template void FleeingMovementGenerator<Creature>::Finalize(Creature&);
-template void FleeingMovementGenerator<Player>::Interrupt(Player&);
-template void FleeingMovementGenerator<Creature>::Interrupt(Creature&);
 template void FleeingMovementGenerator<Player>::Reset(Player&);
 template void FleeingMovementGenerator<Creature>::Reset(Creature&);
 template bool FleeingMovementGenerator<Player>::Update(Player&, const uint32&);

@@ -59,17 +59,6 @@ template<>
 void WaypointMovementGenerator<Player>::Reset(Player& /*unit*/) {}
 
 template<>
-void WaypointMovementGenerator<Creature>::Interrupt(Creature& creature)
-{
-    creature.InterruptMoving();
-    creature.ClearUnitState(UNIT_STATE_ROAMING);
-    creature.SetWalk(!creature.HasUnitState(UNIT_STATE_RUNNING_STATE));
-}
-
-template<>
-void WaypointMovementGenerator<Player>::Interrupt(Player& /*unit*/) {}
-
-template<>
 void
 WaypointMovementGenerator<Creature>::MoveToNextNode(Creature& unit, const WaypointData& node)
 {
@@ -264,11 +253,6 @@ void FlightPathMovementGenerator::Finalize(Player& player)
         // when client side flight end early in comparison server side
         player.StopMoving(true);
     }
-}
-
-void FlightPathMovementGenerator::Interrupt(Player& player)
-{
-    player.ClearUnitState(UNIT_STATE_IN_FLIGHT);
 }
 
 #define PLAYER_FLIGHT_SPEED        32.0f

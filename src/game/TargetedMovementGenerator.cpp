@@ -252,13 +252,6 @@ void ChaseMovementGenerator<T>::Finalize(T& owner)
 }
 
 template<class T>
-void ChaseMovementGenerator<T>::Interrupt(T& owner)
-{
-    owner.InterruptMoving();
-    owner.ClearUnitState(UNIT_STATE_CHASE);
-}
-
-template<class T>
 void ChaseMovementGenerator<T>::Reset(T& owner)
 {
     Initialize(owner);
@@ -325,14 +318,6 @@ void FollowMovementGenerator<T>::Finalize(T& owner)
 }
 
 template<class T>
-void FollowMovementGenerator<T>::Interrupt(T& owner)
-{
-    owner.InterruptMoving();
-    owner.ClearUnitState(UNIT_STATE_FOLLOW);
-    _updateSpeed(owner);
-}
-
-template<class T>
 void FollowMovementGenerator<T>::Reset(T& owner)
 {
     Initialize(owner);
@@ -368,8 +353,6 @@ template void ChaseMovementGenerator<Player>::_reachTarget(Player&);
 template void ChaseMovementGenerator<Creature>::_reachTarget(Creature&);
 template void ChaseMovementGenerator<Player>::Finalize(Player&);
 template void ChaseMovementGenerator<Creature>::Finalize(Creature&);
-template void ChaseMovementGenerator<Player>::Interrupt(Player&);
-template void ChaseMovementGenerator<Creature>::Interrupt(Creature&);
 template void ChaseMovementGenerator<Player>::Reset(Player&);
 template void ChaseMovementGenerator<Creature>::Reset(Creature&);
 template void ChaseMovementGenerator<Player>::MovementInform(Player&);
@@ -377,8 +360,6 @@ template void ChaseMovementGenerator<Creature>::MovementInform(Creature&);
 
 template void FollowMovementGenerator<Player>::Finalize(Player&);
 template void FollowMovementGenerator<Creature>::Finalize(Creature&);
-template void FollowMovementGenerator<Player>::Interrupt(Player&);
-template void FollowMovementGenerator<Creature>::Interrupt(Creature&);
 template void FollowMovementGenerator<Player>::Reset(Player&);
 template void FollowMovementGenerator<Creature>::Reset(Creature&);
 template void FollowMovementGenerator<Player>::MovementInform(Player&);

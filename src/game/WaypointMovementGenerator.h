@@ -69,7 +69,6 @@ class WaypointMovementGenerator
 
         void Initialize(T&);
         void Finalize(T&);
-		void Interrupt(T&);
         void MovementInform(T&);
         void InitTraveller(T&);
         void GeneratePathId(T&);
@@ -106,7 +105,6 @@ class FlightPathMovementGenerator
         }
         void Initialize(Player&);
         void Finalize(Player&);
-        void Interrupt(Player&);
         void Reset(Player&);
         bool Update(Player&, const uint32&);
         MovementGeneratorType GetMovementGeneratorType()

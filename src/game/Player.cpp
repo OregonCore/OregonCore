@@ -18160,7 +18160,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_i
     TradeCancel(true);
 
     // clean not finished taxi path if any
-    CleanupAfterTaxiFlight();
+    m_taxi.ClearTaxiDestinations();
 
     // 0 element current node
     m_taxi.AddTaxiDestination(sourcenode);
@@ -18181,7 +18181,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_i
 
         if (!path)
         {
-            CleanupAfterTaxiFlight();
+            m_taxi.ClearTaxiDestinations();
             return false;
         }
 
@@ -18203,7 +18203,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_i
         WorldPacket data(SMSG_ACTIVATETAXIREPLY, 4);
         data << uint32(ERR_TAXIUNSPECIFIEDSERVERERROR);
         GetSession()->SendPacket(&data);
-        CleanupAfterTaxiFlight();
+        m_taxi.ClearTaxiDestinations();
         return false;
     }
 
@@ -18217,7 +18217,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_i
         WorldPacket data(SMSG_ACTIVATETAXIREPLY, 4);
         data << uint32(ERR_TAXINOTENOUGHMONEY);
         GetSession()->SendPacket(&data);
-        CleanupAfterTaxiFlight();
+        m_taxi.ClearTaxiDestinations();
         return false;
     }
 
@@ -21267,21 +21267,21 @@ bool Player::SetCanFly(bool apply, bool packetOnly /*= false*/)
 
 bool Player::SetLevitate(bool apply, bool /*packetOnly = false*/)
 {
-	// TODO: check if there is something similar for 2.4.3.
-	// WorldPacket data;
-	// if (enable)
-	//    data.Initialize(SMSG_MOVE_GRAVITY_DISABLE, 12);
-	// else
-	//    data.Initialize(SMSG_MOVE_GRAVITY_ENABLE, 12);
-	//
-	// data << GetPackGUID();
-	// data << uint32(0);                                      // unk
-	// SendMessageToSet(&data, true);
+    // TODO: check if there is something similar for 2.4.3.
+    // WorldPacket data;
+    // if (enable)
+    //    data.Initialize(SMSG_MOVE_GRAVITY_DISABLE, 12);
+    // else
+    //    data.Initialize(SMSG_MOVE_GRAVITY_ENABLE, 12);
+    //
+    // data << GetPackGUID();
+    // data << uint32(0);                                      // unk
+    // SendMessageToSet(&data, true);
 
-	// data.Initialize(MSG_MOVE_GRAVITY_CHNG, 64);
-	// data << GetPackGUID();
-	// m_movementInfo.Write(data);
-	// SendMessageToSet(&data, false);
+    // data.Initialize(MSG_MOVE_GRAVITY_CHNG, 64);
+    // data << GetPackGUID();
+    // m_movementInfo.Write(data);
+    // SendMessageToSet(&data, false);
     return true;
 }
 

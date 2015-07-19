@@ -206,8 +206,6 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
             // short preparations to continue flight
             FlightPathMovementGenerator* flight = (FlightPathMovementGenerator*)(GetPlayer()->GetMotionMaster()->top());
 
-            flight->Interrupt(*GetPlayer());
-
             flight->SetCurrentNodeAfterTeleport();
             TaxiPathNodeEntry const& node = flight->GetPath()[flight->GetCurrentNode()];
             flight->SkipCurrentNode();

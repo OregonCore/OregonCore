@@ -51,13 +51,6 @@ void PointMovementGenerator<T>:: Finalize(T& unit)
 }
 
 template<class T>
-void PointMovementGenerator<T>::Interrupt(T& unit)
-{
-    unit.InterruptMoving();
-    unit.ClearUnitState(UNIT_STATE_ROAMING);
-}
-
-template<class T>
 bool PointMovementGenerator<T>::Update(T& unit, const uint32& diff)
 {
     if (unit.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
@@ -89,14 +82,12 @@ template <> void PointMovementGenerator<Creature>::MovementInform(Creature& unit
 
 template void PointMovementGenerator<Player>::Initialize(Player&);
 template void PointMovementGenerator<Player>::Finalize(Player&);
-template void PointMovementGenerator<Player>::Interrupt(Player&);
 template void PointMovementGenerator<Player>::Reset(Player&);
 template bool PointMovementGenerator<Player>::Update(Player&, const uint32& diff);
 template void PointMovementGenerator<Player>::MovementInform(Player&);
 
 template void PointMovementGenerator<Creature>::Initialize(Creature&);
 template void PointMovementGenerator<Creature>::Finalize(Creature&);
-template void PointMovementGenerator<Creature>::Interrupt(Creature&);
 template void PointMovementGenerator<Creature>::Reset(Creature&);
 template bool PointMovementGenerator<Creature>::Update(Creature&, const uint32& diff);
 

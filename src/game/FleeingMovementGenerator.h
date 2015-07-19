@@ -30,7 +30,6 @@ class FleeingMovementGenerator
 
         void Initialize(T&);
         void Finalize(T&);
-        void Interrupt(T&);
         void Reset(T&);
         bool Update(T&, const uint32&);
 
