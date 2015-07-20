@@ -1114,7 +1114,6 @@ void SpellMgr::LoadSpellProcEvents()
     {
         Field* fields = result->Fetch();
 
-
         uint16 entry = fields[0].GetUInt16();
 
         const SpellEntry* spell = sSpellStore.LookupEntry(entry);
@@ -1154,77 +1153,8 @@ void SpellMgr::LoadSpellProcEvents()
         sLog.outString(">> Loaded %u custom spell proc event conditions +%u custom",  count, customProc);
     else
         sLog.outString(">> Loaded %u spell proc event conditions", count);
-
-    /*
-    // Commented for now, as it still produces many errors (still quite many spells miss spell_proc_event)
-    for (uint32 id = 0; id < sSpellStore.GetNumRows(); ++id)
-    {
-        SpellEntry const* spellInfo = sSpellStore.LookupEntry(id);
-        if (!spellInfo)
-            continue;
-
-        bool found = false;
-        for (int effectId = 0; effectId < 3; ++effectId)
-        {
-            // at this moment check only SPELL_AURA_PROC_TRIGGER_SPELL
-            if (spellInfo->EffectApplyAuraName[effectId] == SPELL_AURA_PROC_TRIGGER_SPELL)
-            {
-                found = true;
-                break;
-            }
-        }
-
-        if (!found)
-            continue;
-
-        if (GetSpellProcEvent(id))
-            continue;
-
-        sLog.outErrorDb("Spell %u (%s) misses spell_proc_event",id,spellInfo->SpellName[sWorld.GetDBClang()]);
-    }
-    */
 }
 
-/*
-bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const * spellProcEvent, SpellEntry const * procSpell, uint32 procFlags)
-{
-    if ((procFlags & spellProcEvent->procFlags) == 0)
-        return false;
-
-    // Additional checks in case spell cast/hit/crit is the event
-    // Check (if set) school, category, skill line, spell talent mask
-    if (spellProcEvent->schoolMask && (!procSpell || (GetSpellSchoolMask(procSpell) & spellProcEvent->schoolMask) == 0))
-        return false;
-    if (spellProcEvent->category && (!procSpell || procSpell->Category != spellProcEvent->category))
-        return false;
-    if (spellProcEvent->skillId)
-    {
-        if (!procSpell)
-            return false;
-
-        SkillLineAbilityMap::const_iterator lower = sSpellMgr.GetBeginSkillLineAbilityMap(procSpell->Id);
-        SkillLineAbilityMap::const_iterator upper = sSpellMgr.GetEndSkillLineAbilityMap(procSpell->Id);
-
-        bool found = false;
-        for (SkillLineAbilityMap::const_iterator _spell_idx = lower; _spell_idx != upper; ++_spell_idx)
-        {
-            if (_spell_idx->second->skillId == spellProcEvent->skillId)
-            {
-                found = true;
-                break;
-            }
-        }
-        if (!found)
-            return false;
-    }
-    if (spellProcEvent->spellFamilyName && (!procSpell || spellProcEvent->spellFamilyName != procSpell->SpellFamilyName))
-        return false;
-    if (spellProcEvent->spellFamilyMask && (!procSpell || (spellProcEvent->spellFamilyMask & procSpell->SpellFamilyFlags) == 0))
-        return false;
-
-    return true;
-}
-*/
 
 bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const* spellProcEvent, uint32 EventProcFlag, SpellEntry const* procSpell, uint32 procFlags, uint32 procExtra, bool active)
 {
@@ -1240,9 +1170,9 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const* spellPr
     * Both hots and dots can trigger if spell has no PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS
         nor PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG
 
-    *Only Hots can trigger if spell has PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS
+    * Only Hots can trigger if spell has PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS
 
-    *Only dots can trigger if spell has both positivity flags or PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG
+    * Only dots can trigger if spell has both positivity flags or PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG
 
     */
 
@@ -1772,7 +1702,6 @@ void SpellMgr::LoadSpellRequired()
 
     if (!result)
     {
-
         sLog.outString(">> Loaded 0 spell required records");
         sLog.outErrorDb("spell_required table is empty!");
         return;
@@ -2144,9 +2073,6 @@ void SpellMgr::LoadSpellPetAuras()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT spell, pet, aura FROM spell_pet_auras");
     if (!result)
     {
-
-
-
         sLog.outString(">> Loaded %u spell pet auras", count);
         return;
     }
@@ -2155,7 +2081,6 @@ void SpellMgr::LoadSpellPetAuras()
     do
     {
         Field* fields = result->Fetch();
-
 
         uint16 spell = fields[0].GetUInt16();
         uint16 pet = fields[1].GetUInt16();
@@ -2653,7 +2578,6 @@ void SpellMgr::LoadSpellCustomCooldowns()
     {
         Field* fields = result->Fetch();
 
-
         int32 spellid = fields[0].GetInt32();
         uint32 cooldown = fields[1].GetUInt32();
 
@@ -2687,11 +2611,9 @@ void SpellMgr::LoadSpellLinked()
         return;
     }
 
-
     do
     {
         Field* fields = result->Fetch();
-
 
         int32 trigger = fields[0].GetInt32();
         int32 effect = fields[1].GetInt32();

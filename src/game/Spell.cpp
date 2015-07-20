@@ -660,48 +660,50 @@ void Spell::prepareDataForTriggerSystem()
     if (m_CastItem && m_spellInfo->SpellFamilyName != SPELLFAMILY_POTION)
         m_canTrigger = false;         // Do not trigger from item cast spell(except potions)
 
+    m_procVictim = m_procAttacker = 0;
     // Get data for type of attack and fill base info for trigger
     switch (m_spellInfo->DmgClass)
     {
-    case SPELL_DAMAGE_CLASS_MELEE:
-        m_procAttacker = PROC_FLAG_DONE_SPELL_MELEE_DMG_CLASS;
-        if (m_attackType == OFF_ATTACK)
-            m_procAttacker |= PROC_FLAG_DONE_OFFHAND_ATTACK;
-        else
-            m_procAttacker |= PROC_FLAG_DONE_MAINHAND_ATTACK;
-        m_procVictim   = PROC_FLAG_TAKEN_SPELL_MELEE_DMG_CLASS;
-        break;
-    case SPELL_DAMAGE_CLASS_RANGED:
-        // Auto attack
-        if (m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG)
-        {
-            m_procAttacker = PROC_FLAG_DONE_RANGED_AUTO_ATTACK;
-            m_procVictim   = PROC_FLAG_TAKEN_RANGED_AUTO_ATTACK;
-        }
-        else // Ranged spell attack
-        {
-            m_procAttacker = PROC_FLAG_DONE_SPELL_RANGED_DMG_CLASS;
-            m_procVictim   = PROC_FLAG_TAKEN_SPELL_RANGED_DMG_CLASS;
-        }
-        break;
-    default:
-        if (IsPositiveSpell(m_spellInfo->Id))                                 // Check for positive spell
-        {
-            m_procAttacker = PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS;
-            m_procVictim   = PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_POS;
-        }
-        else if (m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG) // Wands auto attack
-        {
-            m_procAttacker = PROC_FLAG_DONE_RANGED_AUTO_ATTACK;
-            m_procVictim   = PROC_FLAG_TAKEN_RANGED_AUTO_ATTACK;
-        }
-        else                                           // Negative spell
-        {
-            m_procAttacker = PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_NEG;
-            m_procVictim   = PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG;
-        }
-        break;
+        case SPELL_DAMAGE_CLASS_MELEE:
+            m_procAttacker = PROC_FLAG_DONE_SPELL_MELEE_DMG_CLASS;
+            if (m_attackType == OFF_ATTACK)
+                m_procAttacker |= PROC_FLAG_DONE_OFFHAND_ATTACK;
+            else
+                m_procAttacker |= PROC_FLAG_DONE_MAINHAND_ATTACK;
+            m_procVictim   = PROC_FLAG_TAKEN_SPELL_MELEE_DMG_CLASS;
+            break;
+        case SPELL_DAMAGE_CLASS_RANGED:
+            // Auto attack
+            if (m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG)
+            {
+                m_procAttacker = PROC_FLAG_DONE_RANGED_AUTO_ATTACK;
+                m_procVictim   = PROC_FLAG_TAKEN_RANGED_AUTO_ATTACK;
+            }
+            else // Ranged spell attack
+            {
+                m_procAttacker = PROC_FLAG_DONE_SPELL_RANGED_DMG_CLASS;
+                m_procVictim   = PROC_FLAG_TAKEN_SPELL_RANGED_DMG_CLASS;
+            }
+            break;
+        default:
+            if (IsPositiveSpell(m_spellInfo->Id))                                 // Check for positive spell
+            {
+                m_procAttacker = PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS;
+                m_procVictim   = PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_POS;
+            }
+            else if (m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG) // Wands auto attack
+            {
+                m_procAttacker = PROC_FLAG_DONE_RANGED_AUTO_ATTACK;
+                m_procVictim   = PROC_FLAG_TAKEN_RANGED_AUTO_ATTACK;
+            }
+            else                                           // Negative spell
+            {
+                m_procAttacker = PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_NEG;
+                m_procVictim   = PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG;
+            }
+            break;
     }
+
     // Hunter traps spells (for Entrapment trigger)
     // Gives your Immolation Trap, Frost Trap, Explosive Trap, and Snake Trap ....
     if (m_spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER && m_spellInfo->SpellFamilyFlags & 0x0000200000000014LL)
