@@ -458,6 +458,7 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
         ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
     }
 
+    UpdateMovementFlags();
     return true;
 }
 
@@ -743,6 +744,7 @@ bool Creature::Create(uint32 guidlow, Map* map, uint32 Entry, uint32 team, float
         LoadCreaturesAddon();
     }
 
+    SetWalk(true);
     return bResult;
 }
 
@@ -1514,15 +1516,21 @@ void Creature::setDeathState(DeathState s)
         SetHealth(GetMaxHealth());
         SetLootRecipient(NULL);
         ResetPlayerDamageReq();
+
+        UpdateMovementFlags();
+
         Unit::setDeathState(ALIVE);
         CreatureInfo const* cinfo = GetCreatureTemplate();
         RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 
         SetUInt32Value(UNIT_NPC_FLAGS, cinfo->npcflag);
         ClearUnitState(UNIT_STATE_ALL_STATE);
-        i_motionMaster.Initialize();
+
         SetMeleeDamageSchool(SpellSchools(cinfo->dmgschool));
         LoadCreaturesAddon(true);
+
+        SetWalk(true);
+        i_motionMaster.Initialize();
 
         // Prevents the creature from re-spawning at the location of it's death
         GetMap()->CreatureRespawnRelocation(this);
@@ -2030,9 +2038,6 @@ bool Creature::LoadCreaturesAddon(bool reload)
 
     if (cainfo->emote != 0)
         SetUInt32Value(UNIT_NPC_EMOTESTATE, cainfo->emote);
-
-    if (cainfo->move_flags != 0)
-        SetUnitMovementFlags(cainfo->move_flags);
 
     //Load Path
     if (cainfo->path_id != 0)

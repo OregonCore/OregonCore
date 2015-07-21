@@ -11231,11 +11231,8 @@ void Unit::SendPetAIReaction(uint64 guid)
 
 //----------End of Pet responses methods----------
 
-void Unit::StopMoving(bool forceSendStop /*=false*/)
+void Unit::StopMoving()
 {
-    if (IsStopped() && !forceSendStop)
-        return;
-
     ClearUnitState(UNIT_STATE_MOVING);
 
     // not need send any packets if not in world
@@ -11244,21 +11241,6 @@ void Unit::StopMoving(bool forceSendStop /*=false*/)
 
 	Movement::MoveSplineInit init(*this);
 	init.Stop();
-}
-
-void Unit::InterruptMoving(bool forceSendStop /*=false*/)
-{
-    bool isMoving = false;
-
-    if (!movespline->Finalized())
-    {
-        Movement::Location loc = movespline->ComputePosition();
-        movespline->_Interrupt();
-        Relocate(loc.x, loc.y, loc.z, loc.orientation);
-        isMoving = true;
-    }
-
-    StopMoving(forceSendStop || isMoving);
 }
 
 void Unit::SendMovementFlagUpdate(bool self /* = false */)

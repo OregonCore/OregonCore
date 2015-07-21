@@ -2019,8 +2019,7 @@ class Unit : public WorldObject
         {
             return !(HasUnitState(UNIT_STATE_MOVING));
         }
-        void StopMoving(bool forceSendStop = false);
-        void InterruptMoving(bool forceSendStop = false);
+        void StopMoving();
 
         void AddUnitMovementFlag(uint32 f) { m_movementInfo.moveFlags |= f; }
         void RemoveUnitMovementFlag(uint32 f) { m_movementInfo.moveFlags &= ~f; }
