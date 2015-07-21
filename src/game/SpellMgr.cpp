@@ -1560,6 +1560,8 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
             return true;
         if (sameCaster && stackRule == SPELL_GROUP_STACK_RULE_EXCLUSIVE_FROM_SAME_CASTER)
             return true;
+        if (stackRule != SPELL_GROUP_STACK_RULE_DEFAULT)
+            return false;
     }
 
     if (spellInfo_1->SpellFamilyName != spellInfo_2->SpellFamilyName)
