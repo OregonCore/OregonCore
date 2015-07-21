@@ -614,7 +614,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "group",          SEC_GAMEMASTER,     false, NULL,                                           "", groupCommandTable    },
 
         //wp commands
-        { "path",           SEC_GAMEMASTER,     false, NULL,                                           "", wpCommandTable },
+        { "wp",             SEC_GAMEMASTER,     false, NULL,                                           "", wpCommandTable },
         { "loadpath",       SEC_ADMINISTRATOR,  false, &ChatHandler::HandleReloadAllPaths,             "", NULL },
 
         { "quest",          SEC_ADMINISTRATOR,  false, NULL,                                           "", questCommandTable    },
