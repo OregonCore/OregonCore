@@ -47,6 +47,11 @@ void SqlDelayThread::run()
 
 void SqlDelayThread::Stop()
 {
+    // wait for queue to become empty, so no query
+    // will be missed and also no memory leak will be created
+    while (m_sqlQueue.method_count())
+        ACE_Based::Thread::Sleep(10);
+
     m_running = false;
     m_sqlQueue.queue()->deactivate();
 }

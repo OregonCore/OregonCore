@@ -24,6 +24,9 @@
 #include "Policies/Singleton.h"
 #include "ace/Thread_Mutex.h"
 #include "ace/Guard_T.h"
+#include "ace/Atomic_Op.h"
+#include "PreparedStatement.h"
+#include "QueryResult.h"
 
 #ifdef WIN32
 #define FD_SETSIZE 1024
@@ -43,17 +46,17 @@ typedef UNORDERED_MAP<ACE_Based::Thread*, SqlResultQueue*> QueryQueues;
 class Database
 {
     protected:
-        TransactionQueues m_tranQueues;                     // Transaction queues from diff. threads
-        QueryQueues m_queryQueues;                          // Query queues from diff threads
-        SqlDelayThread* m_threadBody;                       // Pointer to delay sql executer (owned by m_delayThread)
-        ACE_Based::Thread* m_delayThread;                   // Pointer to executer thread
+        TransactionQueues m_tranQueues;                            // Transaction queues from diff. threads
+        QueryQueues m_queryQueues;                                 // Query queues from diff threads
+        SqlDelayThread* m_threadBody;                              // Pointer to delay sql executer (owned by m_delayThread)
+        ACE_Based::Thread* m_delayThread;                          // Pointer to executer thread
 
     public:
 
         Database();
         ~Database();
 
-        /*! infoString should be formated like hostname;username;password;database. */
+        /// @param infoString should be formated like hostname;username;password;database.
         bool Initialize(const char* infoString);
 
         bool IsConnected() const { return m_connected; }
@@ -63,8 +66,6 @@ class Database
 
         QueryResult_AutoPtr Query(const char* sql);
         QueryResult_AutoPtr PQuery(const char* format, ...) ATTR_PRINTF(2, 3);
-        QueryNamedResult* QueryNamed(const char* sql);
-        QueryNamedResult* PQueryNamed(const char* format, ...) ATTR_PRINTF(2, 3);
 
         bool ExecuteFile(const char* file);
 
@@ -110,15 +111,32 @@ class Database
 
         bool Execute(const char* sql);
         bool PExecute(const char* format, ...) ATTR_PRINTF(2, 3);
-        bool DirectExecute(const char* sql);
+
+        bool DirectExecute(const char* sql)
+        {
+            return DirectExecute(true, sql);
+        }
         bool DirectPExecute(const char* format, ...) ATTR_PRINTF(2, 3);
+        bool DirectExecute(PreparedStatement* stmt, PreparedValues& values, va_list* args);
 
         // Writes SQL commands to a LOG file (see Oregond.conf "LogSQL")
         bool PExecuteLog(const char* format, ...) ATTR_PRINTF(2, 3);
 
+        // Writes SQL commands to a LOG file (see Oregond.conf "LogSQL")
+        // but runs via PreparedStatements
+        bool PreparedExecuteLog(const char* sql, const char* format = NULL, ...);
+        bool PreparedExecuteLog(const char* sql, PreparedValues& values);
+
         bool BeginTransaction();
         bool CommitTransaction();
         bool RollbackTransaction();
+
+        bool ExecuteTransaction(SqlTransaction* transaction);
+
+        PreparedQueryResult_AutoPtr PreparedQuery(const char* sql, const char* format = NULL, ...);
+        PreparedQueryResult_AutoPtr PreparedQuery(const char* sql, PreparedValues& values);
+        bool PreparedExecute(const char* sql, const char* format = NULL, ...);
+        bool PreparedExecute(const char* sql, PreparedValues& values);
 
         operator bool () const
         {
@@ -133,11 +151,14 @@ class Database
         // sets the result queue of the current thread, be careful what thread you call this from
         void SetResultQueue(SqlResultQueue* queue);
 
+    protected:
+        bool DirectExecute(bool lock, const char* sql);
     private:
         bool m_logSQL;
         std::string m_logsDir;
         ACE_Thread_Mutex mMutex;        // For thread safe operations between core and mySQL server
         ACE_Thread_Mutex nMutex;        // For thread safe operations on m_transQueues
+        ACE_Thread_Mutex pMutex;        // For thread safe operations on m_preparedStatements
 
         ACE_Based::Thread* tranThread;
 
@@ -148,6 +169,13 @@ class Database
 
         bool _TransactionCmd(const char* sql);
         bool _Query(const char* sql, MYSQL_RES** pResult, MYSQL_FIELD** pFields, uint64* pRowCount, uint32* pFieldCount);
+
+        PreparedStatement* _GetOrMakePreparedStatement(const char* query, const char* format, PreparedValues* values);
+        bool _ExecutePreparedStatement(PreparedStatement* ps, PreparedValues* values, va_list* args, bool resultset);
+        void _ConvertValistToPreparedValues(va_list ap, PreparedValues& values, const char* fmt);
+
+        typedef UNORDERED_MAP<std::string, PreparedStatement*> PreparedStatementsMap;
+        PreparedStatementsMap m_preparedStatements;
 };
 #endif
 

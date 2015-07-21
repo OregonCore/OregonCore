@@ -372,7 +372,7 @@ void UnixDebugger::WriteBacktrace(std::stringstream& ss)
             struct stat status;
             if (0 == lstat(file.c_str(), &status))
                 if (status.st_mtime > atl->GetModificationTime())
-                    ss << "Source file is newer than the executable!";
+                    ss << "Source file is newer than the executable!\n";
 
             for (unsigned int j = 1; j < line - 1; j++)
                 std::getline(ifs, codeline);

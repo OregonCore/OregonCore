@@ -35,6 +35,8 @@
 #include <sys/file.h>
 #endif
 
+static const my_bool my_true = 1;
+
 size_t Database::db_count = 0;
 
 Database::Database() : mMysql(NULL), m_connected(false)
@@ -54,6 +56,12 @@ Database::~Database()
 {
     if (m_delayThread)
         HaltDelayThread();
+
+    for (PreparedStatementsMap::iterator it = m_preparedStatements.begin(); it != m_preparedStatements.end(); ++it)
+    {
+        mysql_stmt_close(it->second->stmt);
+        delete it->second;
+    }
 
     if (mMysql)
         mysql_close(mMysql);
@@ -226,31 +234,98 @@ bool Database::PExecuteLog(const char* format, ...)
         return false;
     }
 
-    if (m_logSQL)
-    {
-        time_t curr;
-        tm local;
-        time(&curr);                                        // get current time_t value
-        local = *(localtime(&curr));                        // dereference and assign
-        char fName[128];
-        sprintf(fName, "%04d-%02d-%02d_logSQL.sql", local.tm_year + 1900, local.tm_mon + 1, local.tm_mday);
+    sLog.outSQL("%s", szQuery);
+    return Execute(szQuery);
+}
 
-        FILE* log_file;
-        std::string logsDir_fname = m_logsDir + fName;
-        log_file = fopen(logsDir_fname.c_str(), "a");
-        if (log_file)
+bool Database::PreparedExecuteLog(const char* sql, const char* format, ...)
+{
+    if (format)
+    {
+        PreparedValues values(strlen(format));
+
+        va_list ap;
+        va_start(ap, format);
+        _ConvertValistToPreparedValues(ap, values, format);
+        va_end(ap);
+
+        return PreparedExecuteLog(sql, values);
+    }
+ 
+    PreparedValues values(0);
+    return PreparedExecuteLog(sql, values);
+}
+
+bool Database::PreparedExecuteLog(const char* sql, PreparedValues& values)
+{
+    std::string query(sql);
+    std::stringstream ss;
+    size_t pos = 0, i = 0;
+
+    while ((pos = query.find("?", pos)) != std::string::npos)
+    {
+        switch (values[i].type)
         {
-            fprintf(log_file, "%s;\n", szQuery);
-            fclose(log_file);
+            case ARG_TYPE_STRING:
+            case ARG_TYPE_STRING_ALT:
+                {
+                    std::string safeStr(values[i].data.string);
+                    escape_string(safeStr);
+                    safeStr += '\'';
+                    safeStr.insert(0, "'");
+                    query.replace(pos, 1, safeStr);
+                }
+                break;
+            case ARG_TYPE_BINARY:
+            case ARG_TYPE_BINARY_ALT:
+                ss << "0x" << std::hex;
+                for (size_t j = 0; j < values[i].data.length; ++j)
+                    ss << *reinterpret_cast<const char*>(values[i].data.binary);
+                ss.clear();
+                break;
+            case ARG_TYPE_FLOAT:
+                ss << values[i].data.float_;
+                query.replace(pos, 1, ss.str());
+                ss.clear();
+                break;
+            case ARG_TYPE_DOUBLE:
+                ss << values[i].data.double_;
+                query.replace(pos, 1, ss.str());
+                ss.clear();
+                break;
+            case ARG_TYPE_NUMBER:
+            case ARG_TYPE_NUMBER_ALT:
+                ss << values[i].data.number;
+                query.replace(pos, 1, ss.str());
+                ss.clear();
+                break;
+            case ARG_TYPE_UNSIGNED_NUMBER:
+                ss << values[i].data.unsignedNumber;
+                query.replace(pos, 1, ss.str());
+                ss.clear();
+                break;
+            case ARG_TYPE_LARGE_NUMBER:
+            case ARG_TYPE_LARGE_NUMBER_ALT:
+                ss << values[i].data.largeNumber;
+                query.replace(pos, 1, ss.str());
+                ss.clear();
+                break;
+            case ARG_TYPE_LARGE_UNSIGNED_NUMBER:
+                ss << values[i].data.unsignedLargeNumber;
+                query.replace(pos, 1, ss.str());
+                ss.clear();
+                break;
         }
-        else
-        {
-            // The file could not be opened
-            sLog.outError("SQL-Logging is disabled - Log file for the SQL commands could not be openend: %s", fName);
-        }
+
+        ++i;
     }
 
-    return Execute(szQuery);
+    sLog.outSQL("%s", query.c_str());
+
+    if (values.size())
+        return PreparedExecute(sql, values);
+    else
+        return PreparedExecute(sql);
 }
 
 void Database::SetResultQueue(SqlResultQueue* queue)
@@ -278,10 +353,7 @@ bool Database::_Query(const char* sql, MYSQL_RES** pResult, MYSQL_FIELD** pField
         else
         {
             #ifdef OREGON_DEBUG
-            unsigned long oldMask = sLog.GetDBLogMask();
-            sLog.SetDBLogMask(oldMask & ~LOG_TYPE_DEBUG);
-            sLog.outSQL("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
-            sLog.SetDBLogMask(oldMask);
+            sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
             #endif
         }
 
@@ -340,47 +412,6 @@ QueryResult_AutoPtr Database::PQuery(const char* format, ...)
     return Query(szQuery);
 }
 
-QueryNamedResult* Database::QueryNamed(const char* sql)
-{
-    MYSQL_RES* result = NULL;
-    MYSQL_FIELD* fields = NULL;
-    uint64 rowCount = 0;
-    uint32 fieldCount = 0;
-
-    if (!_Query(sql, &result, &fields, &rowCount, &fieldCount))
-        return NULL;
-
-    QueryFieldNames names(fieldCount);
-    for (uint32 i = 0; i < fieldCount; i++)
-        names[i] = fields[i].name;
-
-    QueryResult* queryResult = new QueryResult(result, fields, rowCount, fieldCount);
-
-    queryResult->NextRow();
-
-    return new QueryNamedResult(queryResult, names);
-}
-
-QueryNamedResult* Database::PQueryNamed(const char* format, ...)
-{
-    if (!format)
-        return NULL;
-
-    va_list ap;
-    char szQuery [MAX_QUERY_LEN];
-    va_start(ap, format);
-    int res = vsnprintf(szQuery, MAX_QUERY_LEN, format, ap);
-    va_end(ap);
-
-    if (res == -1)
-    {
-        sLog.outError("SQL Query truncated (and not execute) for format: %s", format);
-        return NULL;
-    }
-
-    return QueryNamed(szQuery);
-}
-
 bool Database::Execute(const char* sql)
 {
     if (!mMysql)
@@ -422,34 +453,34 @@ bool Database::PExecute(const char* format, ...)
     return Execute(szQuery);
 }
 
-bool Database::DirectExecute(const char* sql)
+bool Database::DirectExecute(bool lock, const char* sql)
 {
     if (!mMysql)
         return false;
 
-    {
-        // guarded block for thread-safe mySQL request
-        ACE_Guard<ACE_Thread_Mutex> query_connection_guard(mMutex);
+    if (lock)
+        mMutex.acquire();
 
-        #ifdef OREGON_DEBUG
-        uint32 _s = getMSTime();
-        #endif
-        if (mysql_query(mMysql, sql))
-        {
-            sLog.outErrorDb("SQL: %s", sql);
-            sLog.outErrorDb("SQL ERROR: %s", mysql_error(mMysql));
-            return false;
-        }
-        else
-        {
-            #ifdef OREGON_DEBUG
-            unsigned long oldMask = sLog.GetDBLogMask();
-            sLog.SetDBLogMask(oldMask & ~LOG_TYPE_DEBUG);
-            sLog.outSQL("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
-            sLog.SetDBLogMask(oldMask);
-            #endif
-        }
+    #ifdef OREGON_DEBUG
+    uint32 _s = getMSTime();
+    #endif
+    if (mysql_query(mMysql, sql))
+    {
+        sLog.outErrorDb("SQL: %s", sql);
+        sLog.outErrorDb("SQL ERROR: %s", mysql_error(mMysql));
+        if (lock)
+            mMutex.release();
+        return false;
     }
+    else
+    {
+        #ifdef OREGON_DEBUG
+        sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
+        #endif
+    }
+
+    if (lock)
+        mMutex.release();
 
     return true;
 }
@@ -495,21 +526,6 @@ bool Database::BeginTransaction()
     if (!mMysql)
         return false;
 
-    // don't use queued execution if it has not been initialized
-    if (!m_threadBody)
-    {
-        if (tranThread == ACE_Based::Thread::current())
-            return false;                                   // huh? this thread already started transaction
-
-        mMutex.acquire();
-        if (!_TransactionCmd("START TRANSACTION"))
-        {
-            mMutex.release();                               // can't start transaction
-            return false;
-        }
-        return true;                                        // transaction started
-    }
-
     nMutex.acquire();
     tranThread = ACE_Based::Thread::current();              // owner of this transaction
     TransactionQueues::iterator i = m_tranQueues.find(tranThread);
@@ -530,18 +546,6 @@ bool Database::CommitTransaction()
 
     bool _res = false;
 
-    // don't use queued execution if it has not been initialized
-    if (!m_threadBody)
-    {
-        if (tranThread != ACE_Based::Thread::current())
-            return false;
-
-        _res = _TransactionCmd("COMMIT");
-        tranThread = NULL;
-        mMutex.release();
-        return _res;
-    }
-
     nMutex.acquire();
     tranThread = ACE_Based::Thread::current();
     TransactionQueues::iterator i = m_tranQueues.find(tranThread);
@@ -560,18 +564,6 @@ bool Database::RollbackTransaction()
     if (!mMysql)
         return false;
 
-    // don't use queued execution if it has not been initialized
-    if (!m_threadBody)
-    {
-        if (tranThread != ACE_Based::Thread::current())
-            return false;
-
-        bool _res = _TransactionCmd("ROLLBACK");
-        tranThread = NULL;
-        mMutex.release();
-        return _res;
-    }
-
     nMutex.acquire();
     tranThread = ACE_Based::Thread::current();
     TransactionQueues::iterator i = m_tranQueues.find(tranThread);
@@ -582,6 +574,53 @@ bool Database::RollbackTransaction()
         m_tranQueues.erase(i);
     }
     nMutex.release();
+    return true;
+}
+
+/**
+  * @brief Atomically executed SqlTransaction.
+  * Don't call this directly, use \ref BeginTransaction and \ref CommitTransaction instead.
+  */
+bool Database::ExecuteTransaction(SqlTransaction* transaction)
+{
+    SqlTransaction::QueuedItem item;
+
+    ACE_Guard<ACE_Thread_Mutex> connection_guard(mMutex);
+    ACE_Guard<ACE_Thread_Mutex> transaction_guard(transaction->mutex);
+
+    if (transaction->queue.empty())
+        return true;
+
+    if (mysql_autocommit(mMysql, 0))
+        return false;
+
+    if (mysql_real_query(mMysql, "START TRANSACTION", sizeof("START TRANSACTION")-1))
+        return false;
+    
+    while (!transaction->queue.empty())
+    {
+        item = transaction->queue.front();
+
+        bool ok = (item.isStmt) ? _ExecutePreparedStatement(item.stmt, item.values, NULL, false) : DirectExecute(false, item.sql);
+        if (!ok)
+        {
+            transaction->queue.pop();
+            mysql_rollback(mMysql);
+            mysql_autocommit(mMysql, 1);
+            return false;
+        }
+
+        if (!item.isStmt)
+            free (item.sql);
+        else
+            delete item.values;
+        transaction->queue.pop();
+    }
+
+    if (mysql_commit(mMysql))
+        return false;
+
+    mysql_autocommit(mMysql, 1);
     return true;
 }
 
@@ -678,3 +717,378 @@ bool Database::ExecuteFile(const char* file)
     return success;
 }
 
+PreparedStatement* Database::_GetOrMakePreparedStatement(const char* query, const char* format, PreparedValues* values)
+{
+    ACE_Guard<ACE_Thread_Mutex> guardian(pMutex);
+    PreparedStatementsMap::iterator it = m_preparedStatements.find(query);
+
+    if (it != m_preparedStatements.end())
+        return it->second; // found, ok
+ 
+    MYSQL_STMT* stmt = mysql_stmt_init(mMysql);
+
+    if (!stmt)
+    {
+        sLog.outError("mysql_stmt_init() failed: %s", mysql_error(mMysql));
+        return 0;
+    }
+
+    {
+        // set prefetch rows to maximum, thus making results buffered
+        unsigned long rows = (unsigned long) -1;
+        if (mysql_stmt_attr_set(stmt, STMT_ATTR_PREFETCH_ROWS, &rows))
+            sLog.outError("mysql_stmt_attr_set() failed.");
+
+        if (mysql_stmt_attr_set(stmt, STMT_ATTR_UPDATE_MAX_LENGTH, &my_true))
+            sLog.outError("mysql_stmt_attr_set() failed.");
+    }
+
+    PreparedStatement* prepStmt = new PreparedStatement;
+    prepStmt->stmt = stmt;
+    
+    if (format)
+    {
+        prepStmt->types = format;
+        
+        for (const char* it = format; *it != '\0'; ++it)
+        {
+            switch (*it)
+            {
+                case ARG_TYPE_STRING:
+                case ARG_TYPE_STRING_ALT:
+                case ARG_TYPE_NUMBER:
+                case ARG_TYPE_NUMBER_ALT:
+                case ARG_TYPE_UNSIGNED_NUMBER:
+                case ARG_TYPE_LARGE_NUMBER:
+                case ARG_TYPE_LARGE_NUMBER_ALT:
+                case ARG_TYPE_LARGE_UNSIGNED_NUMBER:
+                case ARG_TYPE_FLOAT:
+                case ARG_TYPE_DOUBLE:
+                case ARG_TYPE_BINARY:
+                case ARG_TYPE_BINARY_ALT:
+                    break;
+                default:
+                    sLog.outError("Unknown format type '%c' for prepared statement (%s)", *it, query);
+                    delete prepStmt;
+                    return 0;
+            }
+        }
+    }
+    else if (values)
+    {
+        for (size_t i = 0; i < values->m_values.size(); ++i)
+            prepStmt->types.append(1, static_cast<char>(values->m_values[i].type));
+    }
+
+    {
+        if (mysql_stmt_prepare(stmt, query, strlen(query)))
+        {
+            sLog.outErrorDb("mysql_stmt_prepare() failed: %s, sql: %s", mysql_stmt_error(stmt), query);
+            delete prepStmt;
+            return 0;
+        }
+    }
+
+    return m_preparedStatements.insert(std::pair<std::string, PreparedStatement*>(query, prepStmt)).first->second;
+}
+
+bool Database::_ExecutePreparedStatement(PreparedStatement* ps, PreparedValues* values, va_list* args, bool resultset)
+{
+    size_t paramCount = mysql_stmt_param_count(ps->stmt);
+    MYSQL_BIND* binding = NULL;
+    bool myValues = false;
+
+    if (paramCount)
+    {
+        if (args)
+        {
+            if (paramCount != ps->types.size())
+            {
+                sLog.outErrorDb("Count of parameters passed doesn't equal to count of parameters in prepared statement!");
+                delete[] binding;
+                return false;
+            }
+
+            if (!values)
+            {
+                values = new PreparedValues(paramCount);
+                myValues = true;
+            }
+
+            _ConvertValistToPreparedValues(*args, *values, ps->types.c_str());
+        }
+        else
+        {
+            ASSERT (values);
+
+            if (paramCount != values->m_values.size())
+            {
+                sLog.outErrorDb("Count of parameters passed doesn't equal to count of parameters in prepared statement!");
+                delete[] binding;
+                return false;
+            }
+        }
+
+        binding = new MYSQL_BIND[paramCount];
+        memset(binding, 0, sizeof(MYSQL_BIND)*paramCount);
+
+        for (size_t i = 0; i < paramCount; ++i)
+        {
+            switch ((*values)[i].type)
+            {
+                case ARG_TYPE_STRING:
+                case ARG_TYPE_STRING_ALT:
+                    binding[i].buffer_type = MYSQL_TYPE_STRING;
+                    binding[i].buffer = const_cast<char*> ((*values)[i].data.string);
+                    binding[i].buffer_length = (*values)[i].data.length;
+                    break;
+                case ARG_TYPE_BINARY:
+                case ARG_TYPE_BINARY_ALT:
+                    binding[i].buffer_type = MYSQL_TYPE_BLOB;
+                    binding[i].buffer = const_cast<void*> ((*values)[i].data.binary);
+                    binding[i].buffer_length = (*values)[i].data.length;
+                    break;
+                case ARG_TYPE_UNSIGNED_NUMBER:
+                    binding[i].is_unsigned = my_true; 
+                    /* FALLTHROUGH */
+                case ARG_TYPE_NUMBER:
+                case ARG_TYPE_NUMBER_ALT:
+                    binding[i].buffer_type = MYSQL_TYPE_LONG;
+                    binding[i].buffer = &(*values)[i].data.number;
+                    binding[i].buffer_length = sizeof((*values)[i].data.number);
+                    break;
+                case ARG_TYPE_LARGE_UNSIGNED_NUMBER:
+                    binding[i].is_unsigned = my_true; 
+                    /* FALLTHROUGH */
+                case ARG_TYPE_LARGE_NUMBER:
+                case ARG_TYPE_LARGE_NUMBER_ALT:
+                    binding[i].buffer_type = MYSQL_TYPE_LONGLONG;
+                    binding[i].buffer = &(*values)[i].data.largeNumber;
+                    binding[i].buffer_length = sizeof(&(*values)[i].data.largeNumber);
+                    break;
+                case ARG_TYPE_FLOAT:
+                    binding[i].buffer_type = MYSQL_TYPE_FLOAT;
+                    binding[i].buffer = &(*values)[i].data.float_;
+                    binding[i].buffer_length = sizeof(&(*values)[i].data.float_);
+                    break;
+                case ARG_TYPE_DOUBLE:
+                    binding[i].buffer_type = MYSQL_TYPE_DOUBLE;
+                    binding[i].buffer = &(*values)[i].data.double_;
+                    binding[i].buffer_length = sizeof((*values)[i].data.double_);
+                    break;
+            }
+        }
+
+        if (mysql_stmt_bind_param(ps->stmt, binding))
+        {
+            sLog.outError("mysql_stmt_bind_param() failed: %s", mysql_stmt_error(ps->stmt));
+            delete[] binding;
+            if (myValues)
+                delete values;
+            return false;
+        }
+    }
+
+    if (mysql_stmt_execute(ps->stmt))
+    {
+        sLog.outError("mysql_stmt_execute() failed: %s", mysql_stmt_error(ps->stmt));
+        delete[] binding;
+        if (myValues)
+            delete values;
+        return false;
+    }
+
+    if (myValues)
+        delete values;
+
+    // this is safe, even if there's no result
+    mysql_stmt_store_result(ps->stmt);
+
+    if (resultset)
+    {
+        if (!mysql_stmt_field_count(ps->stmt))
+        {
+            delete[] binding;
+            return false;
+        }
+
+        if (!mysql_stmt_num_rows(ps->stmt))
+        {
+            mysql_stmt_free_result(ps->stmt);
+            delete[] binding;
+            return false;
+        }
+    }
+    else
+    {
+        if (mysql_stmt_field_count(ps->stmt))
+            mysql_stmt_free_result(ps->stmt);
+        mysql_stmt_reset(ps->stmt);
+    }
+
+    delete[] binding;
+    return true;
+}
+
+void Database::_ConvertValistToPreparedValues(va_list args, PreparedValues& values, const char* fmt)
+{
+    for (const char* i = fmt; *i != '\0'; ++i)
+    {
+        switch (*i)
+        {
+            case ARG_TYPE_STRING:
+            case ARG_TYPE_STRING_ALT:
+                values << va_arg(args, const char*);
+                break;
+            case ARG_TYPE_BINARY:
+            case ARG_TYPE_BINARY_ALT:
+                {
+                    size_t size = va_arg(args, size_t);
+                    const void* data = va_arg(args, const void*);
+                    values << std::pair<const void*, size_t>(data, size);
+                }
+                break;
+            case ARG_TYPE_UNSIGNED_NUMBER:
+                values << va_arg(args, uint32);
+                break;
+            case ARG_TYPE_NUMBER:
+            case ARG_TYPE_NUMBER_ALT:
+                values << va_arg(args, int32);
+                break;
+            case ARG_TYPE_LARGE_UNSIGNED_NUMBER:
+                values << va_arg(args, uint64);
+                break;
+            case ARG_TYPE_LARGE_NUMBER:
+            case ARG_TYPE_LARGE_NUMBER_ALT:
+                values << va_arg(args, int64);
+                break;
+            case ARG_TYPE_FLOAT:
+                // passed floats are promoted to doubles
+                values << (float) va_arg(args, double);
+                break;
+            case ARG_TYPE_DOUBLE:
+                values << va_arg(args, double);
+                break;
+        }
+    }
+}
+
+/**
+  * @brief Runs Query via Prepared Statements.
+  * If statement doesn't exist, it shall be created.
+  * This function blocks calling thread until query is done,
+  * if your query is result-less use \ref PreparedExecute instead.
+  * @param sql The sql to execute in template form
+  * @param format Types of bound variables/values - see \ref PreparedArgType
+  * @returns Result with compatible interface to \ref QueryResult.
+  *
+  * @note For compatiblity reasons, if query result failed or contains no rows,
+  * the result will be NULL and may cause a crash if you don't count with it.
+  *
+  * @see Database::Query, Database::PQuery, Database::PreparedExecute
+  * Example:
+  *
+  *     ...PreparedQuery("SELECT 1, 2, 3 FROM table WHERE id = ? AND name = ?", "is", 20, "john")
+  */
+PreparedQueryResult_AutoPtr Database::PreparedQuery(const char* sql, const char* format, ...)
+{
+    ACE_Guard<ACE_Thread_Mutex> guardian(mMutex);
+    PreparedStatement* stmt = _GetOrMakePreparedStatement(sql, format, NULL);
+
+    if (!stmt)
+        return PreparedQueryResult_AutoPtr(NULL);
+
+    va_list ap;
+    va_start(ap, format);
+
+    if (!_ExecutePreparedStatement(stmt, NULL, &ap, true))
+    {
+        va_end(ap);
+        return PreparedQueryResult_AutoPtr(NULL);
+    }
+    
+    va_end(ap);
+
+    return PreparedQueryResult_AutoPtr(new PreparedQueryResult(stmt->stmt));
+}
+
+PreparedQueryResult_AutoPtr Database::PreparedQuery(const char* sql, PreparedValues& values)
+{
+    ACE_Guard<ACE_Thread_Mutex> guardian(mMutex);
+    PreparedStatement* stmt = _GetOrMakePreparedStatement(sql, NULL, &values);
+
+    if (!stmt)
+        return PreparedQueryResult_AutoPtr(NULL);
+
+    if (!_ExecutePreparedStatement(stmt, &values, NULL, true))
+        return PreparedQueryResult_AutoPtr(NULL);
+
+    return PreparedQueryResult_AutoPtr(new PreparedQueryResult(stmt->stmt));
+}
+
+bool Database::DirectExecute(PreparedStatement* stmt, PreparedValues& values, va_list* args)
+{
+    ACE_Guard<ACE_Thread_Mutex> guardian(mMutex);
+
+    return _ExecutePreparedStatement(stmt, &values, args, false);
+}
+
+
+/**
+  * @brief Executes Query via Prepared Statements.
+  */
+bool Database::PreparedExecute(const char* sql, const char* format, ...)
+{
+    if (!mMysql)
+        return false;
+
+    PreparedValues values(strlen(format));
+
+    va_list args;
+    va_start(args, format);
+    _ConvertValistToPreparedValues(args, values, format);
+    va_end(args);
+    
+    PreparedStatement* stmt = _GetOrMakePreparedStatement(sql, NULL, &values);
+
+    // don't use queued execution if it has not been initialized
+    if (!m_threadBody)
+        return DirectExecute(stmt, values, NULL);
+
+    nMutex.acquire();
+    tranThread = ACE_Based::Thread::current();              // owner of this transaction
+    TransactionQueues::iterator i = m_tranQueues.find(tranThread);
+    if (i != m_tranQueues.end() && i->second != NULL)
+        i->second->DelayExecute(stmt, values);                        // Statement for transaction
+    else
+        m_threadBody->Delay(new SqlPreparedStatement(stmt, values));         // Simple sql statement
+
+    nMutex.release();
+    return true;
+}
+
+/**
+  * @brief Executes Query via Prepared Statements.
+  */
+bool Database::PreparedExecute(const char* sql, PreparedValues& values)
+{
+    if (!mMysql)
+        return false;
+
+    PreparedStatement* stmt = _GetOrMakePreparedStatement(sql, NULL, &values);
+
+    // don't use queued execution if it has not been initialized
+    if (!m_threadBody)
+        return DirectExecute(stmt, values, NULL);
+
+    nMutex.acquire();
+    tranThread = ACE_Based::Thread::current();              // owner of this transaction
+    TransactionQueues::iterator i = m_tranQueues.find(tranThread);
+    if (i != m_tranQueues.end() && i->second != NULL)
+        i->second->DelayExecute(stmt, values);                        // Statement for transaction
+    else
+        m_threadBody->Delay(new SqlPreparedStatement(stmt, values));  // Simple sql statement
+
+    nMutex.release();
+    return true;
+}
