@@ -65,7 +65,7 @@ struct boss_moroesAI : public ScriptedAI
     {
         for (uint8 i = 0; i < 4; ++i)
             AddId[i] = 0;
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -328,7 +328,7 @@ struct boss_moroes_guestAI : public ScriptedAI
         for (uint8 i = 0; i < 4; ++i)
             GuestGUID[i] = 0;
 
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     void Reset()

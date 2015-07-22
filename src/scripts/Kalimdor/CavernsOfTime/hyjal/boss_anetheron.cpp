@@ -56,7 +56,7 @@ struct boss_anetheronAI : public hyjal_trashAI
 {
     boss_anetheronAI(Creature* c) : hyjal_trashAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         pGo = false;
         pos = 0;
         SpellEntry* TempSpell = GET_SPELL(SPELL_SLEEP);
@@ -243,7 +243,7 @@ struct mob_towering_infernalAI : public ScriptedAI
 {
     mob_towering_infernalAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         if (pInstance)
             AnetheronGUID = pInstance->GetData64(DATA_ANETHERON);
     }

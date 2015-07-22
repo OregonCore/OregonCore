@@ -56,7 +56,7 @@ struct boss_arlokkAI : public ScriptedAI
 {
     boss_arlokkAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        pInstance = pCreature->GetInstanceData();
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -288,7 +288,7 @@ struct mob_prowlerAI : public ScriptedAI
 
     mob_prowlerAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        pInstance = pCreature->GetInstanceData();
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

@@ -99,7 +99,7 @@ struct boss_nalorakkAI : public ScriptedAI
     {
         MoveEvent = true;
         MovePhase = 0;
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

@@ -44,7 +44,7 @@ struct boss_kazrogalAI : public hyjal_trashAI
 {
     boss_kazrogalAI(Creature* c) : hyjal_trashAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         pGo = false;
         pos = 0;
         SpellEntry* TempSpell = GET_SPELL(SPELL_MARK);

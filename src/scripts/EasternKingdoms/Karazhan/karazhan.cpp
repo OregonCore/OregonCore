@@ -130,7 +130,7 @@ struct npc_barnesAI : public npc_escortAI
     {
         RaidWiped = false;
         m_uiEventId = 0;
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         SpellEntry* TempSpell = GET_SPELL(29683);
         TempSpell->Effect[2] = 27;
         TempSpell->EffectBaseDice[2] = 1;
@@ -373,7 +373,7 @@ CreatureAI* GetAI_npc_barnesAI(Creature* pCreature)
 
 bool GossipHello_npc_barnes(Player* pPlayer, Creature* pCreature)
 {
-    if (ScriptedInstance* pInstance = pCreature->GetInstanceData())
+    if (ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData())
     {
         // Check for death of Moroes and if opera event is not done already
         if (pInstance->GetData(TYPE_MOROES) == DONE && pInstance->GetData(TYPE_OPERA) != DONE)
@@ -450,7 +450,7 @@ enum eBerthold
 
 bool GossipHello_npc_berthold(Player* pPlayer, Creature* pCreature)
 {
-    if (ScriptedInstance* pInstance = pCreature->GetInstanceData())
+    if (ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData())
     {
         // Check if Shade of Aran event is done
         if (pInstance->GetData(TYPE_ARAN) == DONE)
@@ -497,7 +497,7 @@ struct npc_image_of_medivhAI : public ScriptedAI
 {
     npc_image_of_medivhAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

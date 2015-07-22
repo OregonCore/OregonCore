@@ -110,7 +110,7 @@ struct boss_entropiusAI : public Scripted_NoMovementAI
 {
     boss_entropiusAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -205,7 +205,7 @@ struct boss_muruAI : public Scripted_NoMovementAI
 {
     boss_muruAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -376,7 +376,7 @@ struct npc_muru_portalAI : public Scripted_NoMovementAI
 {
     npc_muru_portalAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -450,7 +450,7 @@ struct npc_sentinal_summonerAI : public Scripted_NoMovementAI
 {
     npc_sentinal_summonerAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -549,7 +549,7 @@ struct npc_void_sentinelAI : public ScriptedAI
 {
     npc_void_sentinelAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -605,7 +605,7 @@ struct npc_blackholeAI : public ScriptedAI
 {
     npc_blackholeAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

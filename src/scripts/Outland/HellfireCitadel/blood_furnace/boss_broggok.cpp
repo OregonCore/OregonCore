@@ -46,7 +46,7 @@ struct boss_broggokAI : public ScriptedAI
 {
     boss_broggokAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = creature->GetInstanceData();
+        instance = (ScriptedInstance*)creature->GetInstanceData();
     }
 
     ScriptedInstance* instance;
@@ -160,7 +160,7 @@ struct mob_nascent_orcAI : public ScriptedAI
 {
     mob_nascent_orcAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = creature->GetInstanceData();
+        instance = (ScriptedInstance*)creature->GetInstanceData();
     }
 
     ScriptedInstance* instance;
@@ -232,7 +232,7 @@ struct mob_broggok_poisoncloudAI : public ScriptedAI
 {
     mob_broggok_poisoncloudAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = creature->GetInstanceData();
+        instance = (ScriptedInstance*)creature->GetInstanceData();
     }
 
     ScriptedInstance* instance;

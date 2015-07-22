@@ -136,7 +136,7 @@ struct boss_lady_vashjAI : public ScriptedAI
 {
     boss_lady_vashjAI (Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         Intro = false;
         JustCreated = true;
         c->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); //set it only once on Creature create (no need do intro if wiped)
@@ -615,7 +615,7 @@ struct mob_enchanted_elementalAI : public ScriptedAI
 {
     mob_enchanted_elementalAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -722,7 +722,7 @@ struct mob_tainted_elementalAI : public ScriptedAI
 {
     mob_tainted_elementalAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -787,7 +787,7 @@ struct mob_toxic_sporebatAI : public ScriptedAI
 {
     mob_toxic_sporebatAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         EnterEvadeMode();
     }
 
@@ -947,7 +947,7 @@ struct mob_shield_generator_channelAI : public ScriptedAI
 {
     mob_shield_generator_channelAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -993,7 +993,7 @@ struct mob_shield_generator_channelAI : public ScriptedAI
 
 bool ItemUse_item_tainted_core(Player* pPlayer, Item* /*_Item*/, SpellCastTargets const& targets)
 {
-    ScriptedInstance* pInstance = pPlayer->GetInstanceData();
+    ScriptedInstance* pInstance = (ScriptedInstance*)pPlayer->GetInstanceData();
 
     if (!pInstance)
     {

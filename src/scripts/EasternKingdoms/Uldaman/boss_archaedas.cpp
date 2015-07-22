@@ -52,7 +52,7 @@ struct boss_archaedasAI : public ScriptedAI
 {
     boss_archaedasAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = me->GetInstanceData();
+        pInstance = (ScriptedInstance*)me->GetInstanceData();
     }
 
     uint32 Tremor_Timer;
@@ -216,7 +216,7 @@ struct mob_archaedas_minionsAI : public ScriptedAI
 {
     mob_archaedas_minionsAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = me->GetInstanceData();
+        pInstance = (ScriptedInstance*)me->GetInstanceData();
     }
 
     uint32 Arcing_Timer;
@@ -347,7 +347,7 @@ bool GOHello_go_altar_of_archaedas(Player* player, GameObject* go)
         return false;            // not enough people
     }
 
-    ScriptedInstance* pInstance = (player->GetInstanceData());
+    ScriptedInstance* pInstance = (ScriptedInstance*)player->GetInstanceData();
     if (!pInstance) return false;
     pInstance->SetData64(0, player->GetGUID());    // activate archaedas
 
@@ -369,7 +369,7 @@ struct mob_stonekeepersAI : public ScriptedAI
 {
     mob_stonekeepersAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (me->GetInstanceData());
+        pInstance = (ScriptedInstance*)me->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -429,7 +429,7 @@ static uint32 altarOfTheKeeperCounter = 0;
 
 bool GOHello_go_altar_of_the_keepers(Player* pPlayer, GameObject* pGo)
 {
-    ScriptedInstance* pInstance = pPlayer->GetInstanceData();
+    ScriptedInstance* pInstance = (ScriptedInstance*)pPlayer->GetInstanceData();
     if (!pInstance)
         return true;
 

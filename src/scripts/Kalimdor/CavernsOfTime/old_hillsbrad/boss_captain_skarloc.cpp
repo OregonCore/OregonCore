@@ -51,7 +51,7 @@ struct boss_captain_skarlocAI : public ScriptedAI
 {
     boss_captain_skarlocAI(Creature *creature) : ScriptedAI(creature)
     {
-        pInstance = (creature->GetInstanceData());
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
@@ -93,8 +93,8 @@ struct boss_captain_skarlocAI : public ScriptedAI
 
         if (Creature *Thrall = (Creature*)(Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL))))
             ThrallinGUID = Thrall->GetGUID();
-		else if (Creature* Thrall = me->FindNearestCreature(17876, 100.0f, true)) 
-			ThrallinGUID = Thrall->GetGUID();
+        else if (Creature* Thrall = me->FindNearestCreature(17876, 100.0f, true)) 
+            ThrallinGUID = Thrall->GetGUID();
 
     }
 

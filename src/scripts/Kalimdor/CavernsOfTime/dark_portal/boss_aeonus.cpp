@@ -43,7 +43,7 @@ struct boss_aeonusAI : public ScriptedAI
 {
     boss_aeonusAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 

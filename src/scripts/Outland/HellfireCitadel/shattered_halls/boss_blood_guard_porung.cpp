@@ -35,7 +35,7 @@ struct boss_blood_guard_porungAI : public ScriptedAI
 {
     boss_blood_guard_porungAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 

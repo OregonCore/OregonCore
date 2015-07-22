@@ -78,7 +78,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
 {
     boss_kelidan_the_breakerAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = creature->GetInstanceData();
+        instance = (ScriptedInstance*)creature->GetInstanceData();
         for (uint8 i = 0; i < 5; ++i)
             Channelers[i] = 0;
     }
@@ -293,7 +293,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
 {
     mob_shadowmoon_channelerAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = creature->GetInstanceData();
+        instance = (ScriptedInstance*)creature->GetInstanceData();
     }
 
     ScriptedInstance* instance;

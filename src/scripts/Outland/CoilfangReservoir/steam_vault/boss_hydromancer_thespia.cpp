@@ -46,7 +46,7 @@ struct boss_thespiaAI : public ScriptedAI
 {
     boss_thespiaAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 

@@ -139,6 +139,9 @@ class CreatureAI : public UnitAI
         // Called at waypoint reached or point movement finished
         virtual void MovementInform(uint32 /*MovementType*/, uint32 /*Data*/) {}
 
+        // Called if a temporary summoned of m_creature reach a move point
+        virtual void SummonedMovementInform(Creature* /*pSummoned*/, uint32 /*uiMotionType*/, uint32 /*uiData*/) {}
+
         void OnCharmed(bool apply);
 
         //virtual void SpellClick(Player* player) {}

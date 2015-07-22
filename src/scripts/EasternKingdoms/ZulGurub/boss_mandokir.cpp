@@ -59,7 +59,7 @@ struct boss_mandokirAI : public ScriptedAI
 {
     boss_mandokirAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     uint32 KillCount;
@@ -294,7 +294,7 @@ struct mob_ohganAI : public ScriptedAI
 {
     mob_ohganAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     uint32 SunderArmor_Timer;

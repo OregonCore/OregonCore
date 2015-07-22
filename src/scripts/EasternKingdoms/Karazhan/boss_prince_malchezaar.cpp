@@ -165,7 +165,7 @@ struct boss_malchezaarAI : public ScriptedAI
 {
     boss_malchezaarAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

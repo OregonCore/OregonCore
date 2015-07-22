@@ -49,7 +49,7 @@ struct boss_lorekeeperpolkeltAI : public ScriptedAI
 
     void JustDied(Unit* /*killer*/)
     {
-        ScriptedInstance* pInstance = me->GetInstanceData();
+        ScriptedInstance* pInstance = (ScriptedInstance*)me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_LOREKEEPERPOLKELT_DEATH, 0);

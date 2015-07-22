@@ -48,7 +48,7 @@ struct boss_venoxisAI : public ScriptedAI
 {
     boss_venoxisAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

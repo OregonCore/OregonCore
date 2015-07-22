@@ -34,7 +34,7 @@ struct boss_nerubenkanAI : public ScriptedAI
 {
     boss_nerubenkanAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = me->GetInstanceData();
+        pInstance = (ScriptedInstance*)me->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

@@ -43,7 +43,7 @@ struct boss_anzuAI : public ScriptedAI
 {
     boss_anzuAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
         DoScriptText(SAY_INTRO1, me);
         DoScriptText(SAY_INTRO2, me);

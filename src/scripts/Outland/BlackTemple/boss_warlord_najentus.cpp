@@ -57,7 +57,7 @@ struct boss_najentusAI : public ScriptedAI
 {
     boss_najentusAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -255,7 +255,7 @@ struct boss_najentusAI : public ScriptedAI
 
 bool GOHello_go_najentus_spine(Player* pPlayer, GameObject* pGo)
 {
-    if (ScriptedInstance* pInstance = pGo->GetInstanceData())
+    if (ScriptedInstance* pInstance = (ScriptedInstance*)pGo->GetInstanceData())
         if (Creature* Najentus = Unit::GetCreature(*pGo, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
             if (CAST_AI(boss_najentusAI, Najentus->AI())->RemoveImpalingSpine())
             {

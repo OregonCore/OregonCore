@@ -47,7 +47,7 @@ struct boss_azgalorAI : public hyjal_trashAI
 {
     boss_azgalorAI(Creature* c) : hyjal_trashAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         pGo = false;
         pos = 0;
         SpellEntry* TempSpell = GET_SPELL(SPELL_HOWL_OF_AZGALOR);
@@ -208,7 +208,7 @@ struct mob_lesser_doomguardAI : public hyjal_trashAI
 {
     mob_lesser_doomguardAI(Creature* c) : hyjal_trashAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         if (pInstance)
             AzgalorGUID = pInstance->GetData64(DATA_AZGALOR);
     }

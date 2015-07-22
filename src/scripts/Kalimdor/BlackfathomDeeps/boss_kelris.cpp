@@ -36,7 +36,7 @@ struct boss_kelrisAI : public ScriptedAI
 {
     boss_kelrisAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     uint32 uiMindBlastTimer;

@@ -83,7 +83,7 @@ struct mob_fireswornAI : public ScriptedAI
 {
     mob_fireswornAI(Creature* c) : ScriptedAI(c)
     {
-        instance = c->GetInstanceData();
+        instance = (ScriptedInstance*)c->GetInstanceData();
         Reset();
     }
 

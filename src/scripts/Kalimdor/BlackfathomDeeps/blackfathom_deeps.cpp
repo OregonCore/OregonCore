@@ -41,7 +41,7 @@ bool GoHello_blackfathom_altar(Player* pPlayer, GameObject* /*pGo*/)
 
 bool GoHello_blackfathom_fire(Player* /*pPlayer*/, GameObject* pGo)
 {
-    ScriptedInstance* pInstance = pGo->GetInstanceData();
+    ScriptedInstance* pInstance = (ScriptedInstance*)pGo->GetInstanceData();
 
     if (pInstance)
     {
@@ -64,7 +64,7 @@ struct npc_blackfathom_deeps_eventAI : public ScriptedAI
             AttackPlayer();
         }
 
-        pInstance = pCreature->GetInstanceData();
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

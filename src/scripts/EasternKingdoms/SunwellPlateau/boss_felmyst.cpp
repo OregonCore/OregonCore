@@ -99,7 +99,7 @@ struct boss_felmystAI : public ScriptedAI
 {
     boss_felmystAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         // wait for core patch be accepted
         SpellEntry* TempSpell = GET_SPELL(SPELL_ENCAPSULATE_EFFECT);
         if (TempSpell->SpellIconID == 2294)

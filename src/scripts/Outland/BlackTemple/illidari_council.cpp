@@ -142,7 +142,7 @@ struct mob_blood_elf_council_voice_triggerAI : public ScriptedAI
     // finds and stores the GUIDs for each Council member using instance data system.
     void LoadCouncilGUIDs()
     {
-        if (ScriptedInstance* pInstance = me->GetInstanceData())
+        if (ScriptedInstance* pInstance = (ScriptedInstance*)me->GetInstanceData())
         {
             Council[0] = pInstance->GetData64(DATA_GATHIOSTHESHATTERER);
             Council[1] = pInstance->GetData64(DATA_VERASDARKSHADOW);
@@ -202,7 +202,7 @@ struct mob_illidari_councilAI : public ScriptedAI
 {
     mob_illidari_councilAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         for (uint8 i = 0; i < 4; ++i)
             Council[i] = 0;
     }
@@ -361,7 +361,7 @@ struct boss_illidari_councilAI : public ScriptedAI
 {
     boss_illidari_councilAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         for (uint8 i = 0; i < 4; ++i)
             Council[i] = 0;
         LoadedGUIDs = false;

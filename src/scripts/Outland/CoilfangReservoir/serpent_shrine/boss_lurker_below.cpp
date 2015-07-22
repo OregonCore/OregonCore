@@ -69,7 +69,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
 {
     boss_the_lurker_belowAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         SpellEntry* TempSpell = GET_SPELL(SPELL_SPOUT_ANIM);
         if (TempSpell)
         {

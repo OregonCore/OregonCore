@@ -390,7 +390,7 @@ float HordeFirePos[65][8] = //spawn points for the fire visuals (GO) in the hord
 
 hyjalAI::hyjalAI(Creature* c) : npc_escortAI(c), Summons(me)
 {
-    pInstance = c->GetInstanceData();
+    pInstance = (ScriptedInstance*)c->GetInstanceData();
     VeinsSpawned[0] = false;
     VeinsSpawned[1] = false;
     for (uint8 i = 0; i < 14; ++i)

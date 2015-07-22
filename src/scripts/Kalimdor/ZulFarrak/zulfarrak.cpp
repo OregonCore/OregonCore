@@ -53,7 +53,7 @@ struct npc_sergeant_blyAI : public ScriptedAI
 {
     npc_sergeant_blyAI(Creature* c) : ScriptedAI(c)
     {
-        instance = c->GetInstanceData();
+        instance = (ScriptedInstance*)c->GetInstanceData();
         postGossipStep = 0;
     }
 
@@ -196,7 +196,7 @@ struct npc_weegli_blastfuseAI : public ScriptedAI
 {
     npc_weegli_blastfuseAI(Creature* c) : ScriptedAI(c)
     {
-        instance = c->GetInstanceData();
+        instance = (ScriptedInstance*)c->GetInstanceData();
         destroyingDoor = false;
     }
 

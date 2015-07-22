@@ -82,7 +82,7 @@ bool GossipSelect_npc_henry_stern (Player* pPlayer, Creature* pCreature, uint32 
 bool GOHello_go_gong(Player* /*pPlayer*/, GameObject* pGO)
 {
     //basic support, not blizzlike data is missing...
-    ScriptedInstance* pInstance = pGO->GetInstanceData();
+    ScriptedInstance* pInstance = (ScriptedInstance*)pGO->GetInstanceData();
 
     if (pInstance)
     {
@@ -102,7 +102,7 @@ struct npc_tomb_creatureAI : public ScriptedAI
 {
     npc_tomb_creatureAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        pInstance = pCreature->GetInstanceData();
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

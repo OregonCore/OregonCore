@@ -55,7 +55,7 @@ struct boss_supremusAI : public ScriptedAI
 {
     boss_supremusAI(Creature* c) : ScriptedAI(c), summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -248,7 +248,7 @@ struct npc_volcanoAI : public ScriptedAI
 {
     npc_volcanoAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

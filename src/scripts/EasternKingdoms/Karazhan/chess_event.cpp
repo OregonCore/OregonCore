@@ -225,7 +225,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
 
     Echo_of_MedivhAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         Reset();
     }
 
@@ -533,7 +533,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
 
     Chess_npcAI(Creature* c) : Scripted_NoMovementAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         pCharmer = NULL;
     }
 
@@ -1088,7 +1088,7 @@ struct Move_markerAI : public ScriptedAI
 
     Move_markerAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         Reset();
     }
 
@@ -1163,7 +1163,7 @@ struct Move_triggerAI : public ScriptedAI
 
     Move_triggerAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         Reset();
     }
 
@@ -1228,7 +1228,7 @@ struct Victory_controlerAI : ScriptedAI
 
     Victory_controlerAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         Reset();
     }
 

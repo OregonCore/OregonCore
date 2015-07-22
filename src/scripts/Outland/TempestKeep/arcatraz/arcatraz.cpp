@@ -64,7 +64,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI
 {
     npc_millhouse_manastormAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -260,7 +260,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
 {
     npc_warden_mellicharAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

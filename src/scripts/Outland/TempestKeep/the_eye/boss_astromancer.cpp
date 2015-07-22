@@ -73,7 +73,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
 {
     boss_high_astromancer_solarianAI(Creature* c) : ScriptedAI(c), Summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
 
         defaultarmor = me->GetArmor();
         defaultsize = me->GetObjectScale();
@@ -408,7 +408,7 @@ struct mob_solarium_priestAI : public ScriptedAI
 {
     mob_solarium_priestAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

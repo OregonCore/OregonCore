@@ -169,7 +169,7 @@ struct mob_healing_wardAI : public ScriptedAI
 {
     mob_healing_wardAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     uint32 Heal_Timer;

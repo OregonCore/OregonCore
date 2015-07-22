@@ -19,6 +19,8 @@
 #include "Errors.h"
 #include "Creature.h"
 #include "CreatureAI.h"
+#include "ScriptedInstance.h"
+#include "TemporarySummon.h"
 #include "MapManager.h"
 #include "World.h"
 #include "PathFinder.h"
@@ -42,7 +44,7 @@ void PointMovementGenerator<T>::Initialize(T& unit)
 
 template<class T>
 void PointMovementGenerator<T>:: Finalize(T& unit)
-    {
+{
     if (unit.HasUnitState(UNIT_STATE_CHARGING))
         unit.ClearUnitState(UNIT_STATE_CHARGING | UNIT_STATE_JUMPING);
 
@@ -78,6 +80,22 @@ void PointMovementGenerator<T>::MovementInform(T& /*unit*/)
 template <> void PointMovementGenerator<Creature>::MovementInform(Creature& unit)
 {
     unit.AI()->MovementInform(POINT_MOTION_TYPE, id);
+
+    if (unit.IsSummon())
+    {
+        TempSummon* pSummon = (TempSummon*)(&unit);
+        if (pSummon->GetSummoner()->GetTypeId() == TYPEID_UNIT)
+        {
+            if (Creature* pSummoner = pSummon->GetSummoner()->ToCreature())
+            {
+                if (ScriptedInstance* pInstance = (ScriptedInstance*)pSummoner->GetInstanceData())
+                    pInstance->MovementInform(&unit, POINT_MOTION_TYPE, id);
+
+                if (pSummoner->AI())
+                    pSummoner->AI()->SummonedMovementInform(&unit, POINT_MOTION_TYPE, id);
+            }
+        }
+    }
 }
 
 template void PointMovementGenerator<Player>::Initialize(Player&);

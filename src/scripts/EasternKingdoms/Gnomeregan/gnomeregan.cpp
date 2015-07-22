@@ -89,7 +89,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
 {
     npc_blastmaster_emi_shortfuseAI(Creature* pCreature) : npc_escortAI(pCreature)
     {
-        pInstance = pCreature->GetInstanceData();
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         pCreature->RestoreFaction();
         Reset();
     }
@@ -511,7 +511,7 @@ CreatureAI* GetAI_npc_blastmaster_emi_shortfuse(Creature* pCreature)
 
 bool GossipHello_npc_blastmaster_emi_shortfuse(Player* pPlayer, Creature* pCreature)
 {
-    ScriptedInstance* pInstance = pCreature->GetInstanceData();
+    ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 
     if (pInstance && pInstance->GetData(TYPE_EVENT) == NOT_STARTED)
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_START_EVENT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);

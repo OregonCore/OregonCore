@@ -62,7 +62,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
 {
     boss_selin_fireheartAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = creature->GetInstanceData();
+        instance = (ScriptedInstance*)creature->GetInstanceData();
 
         Crystals.clear();
         // GUIDs per instance is static, so we only need to load them once.
@@ -339,7 +339,7 @@ struct mob_fel_crystalAI : public ScriptedAI
 
     void JustDied(Unit* /*killer*/)
     {
-        if (ScriptedInstance* instance = me->GetInstanceData())
+        if (ScriptedInstance* instance = (ScriptedInstance*)me->GetInstanceData())
         {
             Creature* Selin = (Unit::GetCreature(*me, instance->GetData64(DATA_SELIN)));
             if (Selin && Selin->IsAlive())

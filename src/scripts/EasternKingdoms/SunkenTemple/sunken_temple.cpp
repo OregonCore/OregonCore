@@ -49,7 +49,7 @@ bool AreaTrigger_at_malfurion_stormrage(Player* pPlayer, const AreaTriggerEntry*
 
 bool GOHello_go_atalai_statue(Player* pPlayer, GameObject* pGo)
 {
-    ScriptedInstance* pInstance = pPlayer->GetInstanceData();
+    ScriptedInstance* pInstance = (ScriptedInstance*)pPlayer->GetInstanceData();
     if (!pInstance)
         return false;
     pInstance->SetData(EVENT_STATE, pGo->GetEntry());

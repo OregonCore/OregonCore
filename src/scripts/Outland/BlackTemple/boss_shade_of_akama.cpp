@@ -178,7 +178,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
 {
     boss_shade_of_akamaAI(Creature* c) : ScriptedAI(c), summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         AkamaGUID = pInstance ? pInstance->GetData64(DATA_AKAMA_SHADE) : 0;
         me->setActive(true);//if view distance is too low
         me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
@@ -545,7 +545,7 @@ struct npc_akamaAI : public ScriptedAI
     {
         ShadeHasDied = false;
         StartCombat = false;
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         ShadeGUID = pInstance ? pInstance->GetData64(DATA_SHADEOFAKAMA) : uint64(NOT_STARTED);
         me->setActive(true);
         EventBegun = false;
@@ -890,7 +890,7 @@ bool GossipSelect_npc_akama(Player* pPlayer, Creature* pCreature, uint32 /*uiSen
 
 bool GossipHello_npc_akama(Player* player, Creature* pCreature)
 {
-    ScriptedInstance* pInstance = (pCreature->GetInstanceData());
+    ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 
     if (pInstance && pInstance->GetData(DATA_SHADEOFAKAMAEVENT) == NOT_STARTED)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);

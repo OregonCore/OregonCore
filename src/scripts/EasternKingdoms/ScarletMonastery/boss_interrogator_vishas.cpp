@@ -40,7 +40,7 @@ struct boss_interrogator_vishasAI : public ScriptedAI
 {
     boss_interrogator_vishasAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = me->GetInstanceData();
+        pInstance = (ScriptedInstance*)me->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

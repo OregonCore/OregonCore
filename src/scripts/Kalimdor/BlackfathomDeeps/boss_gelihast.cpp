@@ -27,7 +27,7 @@ struct boss_gelihastAI : public ScriptedAI
 {
     boss_gelihastAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     uint32 uiNetTimer;

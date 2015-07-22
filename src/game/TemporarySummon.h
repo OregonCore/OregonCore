@@ -37,6 +37,7 @@ class TempSummon : public Creature
         }
         void SaveToDB();
         Unit* GetSummoner() const;
+        void SetSummoner(Unit* summoner) { m_summonerGUID = summoner->GetGUID(); }
 
         SummonPropertiesEntry const* m_Properties;
     private:

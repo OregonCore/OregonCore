@@ -38,7 +38,7 @@ EndContentData */
 
 bool GOHello_go_gauntlet_gate(Player* pPlayer, GameObject* pGo)
 {
-    ScriptedInstance* pInstance = pGo->GetInstanceData();
+    ScriptedInstance* pInstance = (ScriptedInstance*)pGo->GetInstanceData();
 
     if (!pInstance)
         return false;

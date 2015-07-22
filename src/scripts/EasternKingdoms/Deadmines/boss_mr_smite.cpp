@@ -46,7 +46,7 @@ struct boss_mr_smiteAI : public ScriptedAI
 {
     boss_mr_smiteAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        pInstance = pCreature->GetInstanceData();
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

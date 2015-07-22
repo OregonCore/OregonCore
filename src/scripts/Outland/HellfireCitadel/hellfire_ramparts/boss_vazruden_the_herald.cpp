@@ -63,7 +63,7 @@ struct boss_nazanAI : public ScriptedAI
 {
     boss_nazanAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
         VazrudenGUID = 0;
         flight = true;
@@ -186,7 +186,7 @@ struct boss_vazrudenAI : public ScriptedAI
 {
     boss_vazrudenAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
@@ -280,7 +280,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
         sentryDown = false;
         NazanGUID = 0;
         VazrudenGUID = 0;
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 

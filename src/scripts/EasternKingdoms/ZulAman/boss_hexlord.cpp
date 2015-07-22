@@ -232,7 +232,7 @@ struct boss_hexlord_addAI : public ScriptedAI
 
     boss_hexlord_addAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     void Reset() {}
@@ -258,7 +258,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
 {
     boss_hex_lord_malacrassAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         SelectAddEntry();
         for (uint8 i = 0; i < 4; ++i)
             AddGUID[i] = 0;

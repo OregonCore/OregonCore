@@ -112,7 +112,7 @@ struct boss_thekalAI : public ScriptedAI
 {
     boss_thekalAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     // Humanoid Timer
@@ -317,7 +317,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
 {
     mob_zealot_lorkhanAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     uint32 Shield_Timer;
@@ -481,7 +481,7 @@ struct mob_zealot_zathAI : public ScriptedAI
 {
     mob_zealot_zathAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     uint32 SweepingStrikes_Timer;

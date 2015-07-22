@@ -56,7 +56,7 @@ struct npc_shadowfang_prisonerAI : public npc_escortAI
 {
     npc_shadowfang_prisonerAI(Creature* c) : npc_escortAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         uiNpcEntry = c->GetEntry();
     }
 
@@ -110,7 +110,7 @@ CreatureAI* GetAI_npc_shadowfang_prisoner(Creature* pCreature)
 
 bool GossipHello_npc_shadowfang_prisoner(Player* pPlayer, Creature* pCreature)
 {
-    ScriptedInstance* pInstance = pCreature->GetInstanceData();
+    ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 
     if (pInstance && pInstance->GetData(TYPE_FREE_NPC) != DONE && pInstance->GetData(TYPE_RETHILGORE) == DONE)
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_DOOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
@@ -136,7 +136,7 @@ struct npc_arugal_voidwalkerAI : public ScriptedAI
 {
     npc_arugal_voidwalkerAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        pInstance = pCreature->GetInstanceData();
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

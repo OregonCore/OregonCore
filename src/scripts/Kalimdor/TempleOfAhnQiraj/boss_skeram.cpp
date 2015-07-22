@@ -61,7 +61,7 @@ struct boss_skeramAI : public ScriptedAI
 {
     boss_skeramAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         IsImage = false;
     }
 

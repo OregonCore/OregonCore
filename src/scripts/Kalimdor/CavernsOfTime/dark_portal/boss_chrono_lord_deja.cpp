@@ -43,7 +43,7 @@ struct boss_chrono_lord_dejaAI : public ScriptedAI
 {
     boss_chrono_lord_dejaAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 

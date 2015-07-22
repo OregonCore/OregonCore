@@ -32,6 +32,7 @@ EndScriptData */
 4 - M'uru
 5 - Kil'Jaeden
 */
+
 struct instance_sunwell_plateau : public ScriptedInstance
 {
     instance_sunwell_plateau(Map* pMap) : ScriptedInstance(pMap)
@@ -39,6 +40,7 @@ struct instance_sunwell_plateau : public ScriptedInstance
         Initialize();
     };
     uint32 m_auiEncounter[MAX_ENCOUNTER];
+    uint32 m_outro_kj;
     /** Creatures **/
     uint64 Kalecgos_Dragon;
     uint64 Kalecgos_Human;
@@ -64,11 +66,32 @@ struct instance_sunwell_plateau : public ScriptedInstance
     uint64 DragonOrb[4];                                    // Kil'Jaeden Encounter
     /*** Misc ***/
     uint32 SpectralRealmTimer;
+    uint32 m_Outrotimer;
     std::vector<uint64> SpectralRealmList;
+
+    uint64 riftGuid[2];
+    uint64 riftTargets[2];
+    uint64 soldiersGuid[20];
+    uint64 portalGuid;
+    uint64 prophetGuid;
+    uint64 entropiusCoreGuid;
+    uint64 liadrinGuid;
+    float m_currentAngleFirst;
 
     void Initialize()
     {
         memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
+
+        memset(&riftGuid, 0, sizeof(riftGuid));
+        memset(&riftTargets, 0, sizeof(riftTargets));
+        memset(&soldiersGuid, 0, sizeof(soldiersGuid));
+        portalGuid = 0;
+        m_outro_kj = 0;
+        prophetGuid = 0;
+        entropiusCoreGuid = 0;
+        liadrinGuid = 0;
+        m_currentAngleFirst = 0.0f;
+
         /*** Creatures ***/
         Kalecgos_Dragon         = 0;
         Kalecgos_Human          = 0;
@@ -99,6 +122,7 @@ struct instance_sunwell_plateau : public ScriptedInstance
         DragonOrb[3] = 0;
         /*** Misc ***/
         SpectralRealmTimer = 5000;
+        m_Outrotimer = 0;
     }
 
     bool IsEncounterInProgress() const
@@ -238,6 +262,8 @@ struct instance_sunwell_plateau : public ScriptedInstance
             return m_auiEncounter[4];
         case DATA_KILJAEDEN_EVENT:
             return m_auiEncounter[5];
+        case DATA_OUTRO_KJ:
+            return m_outro_kj;
         }
         return 0;
     }
@@ -343,12 +369,434 @@ struct instance_sunwell_plateau : public ScriptedInstance
             }
             m_auiEncounter[4] = data;
             break;
+        case DATA_OUTRO_KJ:
+            m_outro_kj = data;
+            break;
         case DATA_KILJAEDEN_EVENT:
+            switch (data)
+            {
+                case DONE:
+                    SetData(DATA_OUTRO_KJ, POINT_KILJAEDEN_DIE);
+                    m_Outrotimer = 0;
+                    break;
+            }
             m_auiEncounter[5] = data;
             break;
         }
         if (data == DONE)
             SaveToDB();
+    }
+
+    void MovementInform(Creature* creature, uint32 uiType, uint32 uiPointId)
+    {
+        if (uiType != POINT_MOTION_TYPE)
+            return;
+
+        switch (uiPointId)
+        {
+        case 0:
+            switch (creature->GetEntry())
+            {
+            case NPC_RIFTWALKER:
+                if (Creature* riftTarget = GetCreature(riftTargets[0]))
+                {
+                    creature->CastSpell(riftTarget, SPELL_OPEN_PORTAL_KJ, false);
+                    riftTarget->GetMotionMaster()->MovePoint(0, aOutroLocations[9].m_fX, aOutroLocations[9].m_fY, aOutroLocations[9].m_fZ + 13.0f);
+                }
+                break;
+            case NPC_SOLDIER:
+                if (creature->GetGUID() == soldiersGuid[0] || creature->GetGUID() == soldiersGuid[10])
+                    creature->SetStandState(UNIT_STAND_STATE_KNEEL);
+
+                if (Creature* portal = GetCreature(portalGuid))
+                    creature->SetFacingTo(creature->GetAngle(aOutroLocations[5].m_fX, aOutroLocations[5].m_fY));
+
+                break;
+            }
+            break;
+        case 1:
+            switch (creature->GetEntry())
+            {
+            case NPC_RIFTWALKER:
+                if (Creature* riftTarget = GetCreature(riftTargets[1]))
+                {
+                    creature->CastSpell(riftTarget, SPELL_OPEN_PORTAL_KJ, false);
+                    riftTarget->GetMotionMaster()->MovePoint(0, aOutroLocations[10].m_fX, aOutroLocations[10].m_fY, aOutroLocations[10].m_fZ + 13.0f);
+                }
+                break;
+            case NPC_CORE_ENTROPIUS:
+                if (Creature* pVelen = GetCreature(prophetGuid))
+                    pVelen->InterruptNonMeleeSpells(false);
+                break;
+            case CREATURE_PROPHET:
+                creature->ForcedDespawn(1000);
+
+                // Note: portal should despawn only after all the soldiers have reached this point and "teleported" outside
+                if (Creature* pPortal = GetCreature(portalGuid))
+                    pPortal->ForcedDespawn(30000);
+
+                for (uint8 i = 0; i < 2; i++)
+                {
+                    if (Creature* rift = GetCreature(riftGuid[i]))
+                        rift->ForcedDespawn(1000);
+                }
+
+                if (Creature *controller = GetCreature(GetData64(DATA_KILJAEDEN_CONTROLLER)))
+                    controller->ForcedDespawn(300000);
+                break;
+            }
+            break;
+        case 2:
+            if (creature->GetEntry() == NPC_SOLDIER)
+                creature->ForcedDespawn(1000);
+            break;
+        case 10:
+            if (creature->GetEntry() == NPC_SOLDIER)
+                 creature->SetFacingTo(SoldierMiddle[0].m_fO);
+            break;
+        case 11:
+            if (creature->GetEntry() == NPC_SOLDIER)
+                creature->SetFacingTo(SoldierMiddle[1].m_fO);
+            break;
+        }
+    }
+
+    void Update(uint32 diff)
+    {
+        // KilJaeden Outro
+        if (m_Outrotimer <= diff)
+        {
+            switch (GetData(DATA_OUTRO_KJ))
+            {
+                case POINT_KILJAEDEN_DIE:
+                    // While Kil'Jaeden die
+                    if (Creature* Anveena = GetCreature(GetData64(DATA_ANVEENA)))
+                        Anveena->ForcedDespawn(); //this should already be done but let's do it again in case phase was gm rushed
+
+                    m_Outrotimer = 15000;
+                    SetData(DATA_OUTRO_KJ, POINT_TELEPORT_KALECGOS);
+                    break;
+                case POINT_TELEPORT_KALECGOS:
+                    if (Creature* pKalec = GetCreature(GetData64(DATA_KALECGOS_KJ)))
+                    {
+                        pKalec->SetVisibility(VISIBILITY_ON);
+                        pKalec->CastSpell(pKalec, SPELL_KALEC_TELEPORT, true);
+                        pKalec->SendMovementFlagUpdate();
+                    }
+
+                    if (Creature* pKJ = GetCreature(GetData64(DATA_KILJAEDEN)))
+                        pKJ->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE); //allow loot
+
+                    m_Outrotimer = 2000;
+                    SetData(DATA_OUTRO_KJ, SAY_KALECGOS_GOODBYE);
+                    break;
+                case SAY_KALECGOS_GOODBYE:
+                    if (Creature* pKalec = GetCreature(GetData64(DATA_KALECGOS_KJ)))
+                        DoScriptText(-1580090, pKalec);
+
+                    m_Outrotimer = 15000;
+                    SetData(DATA_OUTRO_KJ, POINT_SUMMON_SHATTERED);
+                    break;
+                case POINT_SUMMON_SHATTERED:
+                    if (Creature *controller = GetCreature(GetData64(DATA_KILJAEDEN_CONTROLLER)))
+                    {
+                        if (Creature* portal = controller->SummonCreature(NPC_BOSS_PORTAL, aOutroLocations[0].m_fX, aOutroLocations[0].m_fY, aOutroLocations[0].m_fZ, aOutroLocations[0].m_fO, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                            portalGuid = portal->GetGUID();
+
+                        for (uint8 i = 1; i < 3; i++)
+                        {
+                            if (TempSummon * riftWalker = controller->SummonCreature(NPC_RIFTWALKER, aOutroLocations[i].m_fX, aOutroLocations[i].m_fY, aOutroLocations[i].m_fZ, aOutroLocations[i].m_fO, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                            {
+                                riftGuid[i - 1] = riftWalker->GetGUID();
+
+                                if (i == 1)
+                                    riftWalker->GetMotionMaster()->MovePoint(0, aOutroLocations[7].m_fX, aOutroLocations[7].m_fY, aOutroLocations[7].m_fZ);
+                                else
+                                    riftWalker->GetMotionMaster()->MovePoint(1, aOutroLocations[8].m_fX, aOutroLocations[8].m_fY, aOutroLocations[8].m_fZ);
+
+                                if (Creature * riftTarget = controller->SummonCreature(WORLD_TRIGGER, aOutroLocations[8 + i].m_fX, aOutroLocations[8 + i].m_fY, aOutroLocations[8 + i].m_fZ, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                                {
+                                    riftTargets[i - 1] = riftTarget->GetGUID();
+                                    riftTarget->SetSpeed(MOVE_RUN, 0.5f);
+                                }
+                            }
+                        }
+                    }
+
+                    m_Outrotimer = 15000;
+                    SetData(DATA_OUTRO_KJ, POINT_SUMMON_PORTAL);
+                    break;
+                case POINT_SUMMON_PORTAL:
+                    if (Creature* portal = GetCreature(portalGuid))
+                    {
+                        portal->SetDisplayId(DISPLAYID_PORTAL_OPENING);
+                        for (uint8 i = 0; i < 2; i++)
+                        {
+                            if (Creature* riftTarget = GetCreature(riftTargets[i]))
+                                riftTarget->ForcedDespawn(1000);
+                        }
+                    }
+
+                    m_Outrotimer = 500;
+                    SetData(DATA_OUTRO_KJ, POINT_SUMMON_PORTAL_ENDOPENANIM);
+                    break;
+                case POINT_SUMMON_PORTAL_ENDOPENANIM:
+                    if (Creature* portal = GetCreature(portalGuid))
+                        portal->SetStandState(UNIT_STAND_STATE_SIT); //this smoothly stop the explosion effect and just let the smokes continues
+
+                    m_Outrotimer = 3500;
+                    SetData(DATA_OUTRO_KJ, POINT_SUMMON_SOLDIERS_RIGHT);
+                    break;
+                case POINT_SUMMON_SOLDIERS_RIGHT:
+                    for (uint8 i = 0; i < 2; i++)
+                    {
+                        if (Creature* rift = GetCreature(riftGuid[i]))
+                        {
+                            rift->RemoveAurasDueToSpell(SPELL_OPEN_PORTAL_KJ);
+                            rift->InterruptNonMeleeSpells(false);
+                        }
+                    }
+                    if (Creature *controller = GetCreature(GetData64(DATA_KILJAEDEN_CONTROLLER)))
+                    {
+                        for (uint8 i = 0; i < 10; i++)
+                        {
+                            if (TempSummon *soldier = controller->SummonCreature(NPC_SOLDIER, SoldierLocations[i].m_fX, SoldierLocations[i].m_fY, SoldierLocations[i].m_fZ, SoldierLocations[i].m_fO, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                            {
+                                soldiersGuid[i] = soldier->GetGUID();
+                                soldier->GetMotionMaster()->MovePoint(0, SoldierMiddle[0].m_fX, SoldierMiddle[0].m_fY, SoldierMiddle[0].m_fZ, false);
+
+                                if (i == 0)
+                                    soldier->GetMotionMaster()->MovePoint(0, SoldierMiddle[0].m_fX, SoldierMiddle[0].m_fY, SoldierMiddle[0].m_fZ, false);
+                                else
+                                {
+                                    float sx, sy;
+                                    float angle = m_currentAngleFirst * (2.0f * M_PI) / 360.0f;
+                                    float rayon = 5.0f;
+                                    sx = SoldierMiddle[0].m_fX + cos(angle) * rayon;
+                                    sy = SoldierMiddle[0].m_fY + sin(angle) * rayon;
+                                    soldier->GetMotionMaster()->MovePoint(0, sx, sy, SoldierMiddle[0].m_fZ, false);
+                                    m_currentAngleFirst = m_currentAngleFirst + 36;
+                                }
+                            }
+                        }
+                    }
+
+                    m_Outrotimer = 8000;
+                    SetData(DATA_OUTRO_KJ, POINT_SUMMON_SOLDIERS_LEFT);
+                    break;
+                case POINT_SUMMON_SOLDIERS_LEFT:
+                    if (Creature *controller = GetCreature(GetData64(DATA_KILJAEDEN_CONTROLLER)))
+                    {
+                        for (uint8 i = 10; i < 20; i++)
+                        {
+                            if (Creature *soldier = controller->SummonCreature(NPC_SOLDIER, SoldierLocations[i].m_fX, SoldierLocations[i].m_fY, SoldierLocations[i].m_fZ, SoldierLocations[i].m_fO, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                            {
+                                soldiersGuid[i] = soldier->GetGUID();
+
+                                if (i == 10)
+                                    soldier->GetMotionMaster()->MovePoint(0, SoldierMiddle[1].m_fX, SoldierMiddle[1].m_fY, SoldierMiddle[1].m_fZ, false);
+                                else
+                                {
+                                    float sx, sy;
+                                    float angle = m_currentAngleFirst * (2 * M_PI) / 360;
+                                    float rayon = 5.0f;
+                                    sx = SoldierMiddle[1].m_fX + cos(angle) * rayon;
+                                    sy = SoldierMiddle[1].m_fY + sin(angle) * rayon;
+                                    soldier->GetMotionMaster()->MovePoint(0, sx, sy, SoldierMiddle[1].m_fZ, false);
+                                    m_currentAngleFirst = m_currentAngleFirst + 36;
+                                }
+                            }
+                        }
+                    }
+
+                    m_Outrotimer = 10000;
+                    SetData(DATA_OUTRO_KJ, POINT_SUMMON_PROPHET);
+                    break;
+                case POINT_SUMMON_PROPHET:
+                    if (Creature *controller = GetCreature(GetData64(DATA_KILJAEDEN_CONTROLLER)))
+                    {
+                        if (TempSummon* prophet = controller->SummonCreature(CREATURE_PROPHET, aOutroLocations[3].m_fX, aOutroLocations[3].m_fY, aOutroLocations[3].m_fZ, aOutroLocations[3].m_fO, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                            prophetGuid = prophet->GetGUID();
+
+                        if (TempSummon* core = controller->SummonCreature(NPC_CORE_ENTROPIUS, controller->GetPositionX(), controller->GetPositionY(), 85.0f, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                            entropiusCoreGuid = core->GetGUID();
+                    }
+
+                    m_Outrotimer = 2000;
+                    SetData(DATA_OUTRO_KJ, POINT_SUMMON_LIADRIN);
+                    break;
+                case POINT_SUMMON_LIADRIN:
+                    if (Creature *controller = GetCreature(GetData64(DATA_KILJAEDEN_CONTROLLER)))
+                        if (Creature* liadrin = controller->SummonCreature(CREATURE_LIADRIN, aOutroLocations[4].m_fX, aOutroLocations[4].m_fY, aOutroLocations[4].m_fZ, aOutroLocations[4].m_fO, TEMPSUMMON_TIMED_DESPAWN, 4 * MINUTE * IN_MILLISECONDS))
+                            liadrinGuid = liadrin->GetGUID();
+                    
+                    m_Outrotimer = 4000;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_1);
+                    break;
+                case SAY_OUTRO_1:
+                    if (Creature* prophet = GetCreature(prophetGuid))
+                        DoScriptText(-1580099, prophet);
+
+                    m_Outrotimer = 25000;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_2);
+                    break;
+                case SAY_OUTRO_2:
+                    if (Creature* prophet = GetCreature(prophetGuid))
+                        DoScriptText(-1580100, prophet);
+
+                    m_Outrotimer = 14000;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_3);
+                    break;
+                case SAY_OUTRO_3:
+                    if (Creature* prophet = GetCreature(prophetGuid))
+                        DoScriptText(-1580111, prophet);
+
+                    m_Outrotimer = 10000;
+                    SetData(DATA_OUTRO_KJ, POINT_CALL_ENTROPIUS);
+                    break;
+                case POINT_CALL_ENTROPIUS:
+                    if (Creature *controller = GetCreature(GetData64(DATA_KILJAEDEN_CONTROLLER)))
+                    {
+                        if (Creature* pEntropius = GetCreature(entropiusCoreGuid))
+                        {
+                            if (Creature* pVelen = GetCreature(prophetGuid))
+                                pVelen->CastSpell(pEntropius, SPELL_CALL_ENTROPIUS, false);
+
+                            pEntropius->SetWalk(false);
+                            pEntropius->GetMotionMaster()->MovePoint(1, controller->GetPositionX(), controller->GetPositionY(), 40.0f);
+                        }
+                    }
+
+                    m_Outrotimer = 10000;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_4);
+                    break;
+                case SAY_OUTRO_4:
+                    if (Creature* prophet = GetCreature(prophetGuid))
+                        DoScriptText(-1580101, prophet);
+
+                    m_Outrotimer = 22000;
+                    SetData(DATA_OUTRO_KJ, POINT_MOVE_LIADRIN);
+                    break;
+                case POINT_MOVE_LIADRIN:
+                    if (Creature* pLiadrin = GetCreature(liadrinGuid))
+                        pLiadrin->GetMotionMaster()->MovePoint(0, aOutroLocations[6].m_fX, aOutroLocations[6].m_fY, aOutroLocations[6].m_fZ);
+                    
+                    m_Outrotimer = 6000;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_5);
+                    break;
+                case SAY_OUTRO_5:
+                    if (Creature* pLiadrin = GetCreature(liadrinGuid))
+                        DoScriptText(-1580107, pLiadrin);
+
+                    m_Outrotimer = 10000;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_6);
+                    break;
+                case SAY_OUTRO_6:
+                    if (Creature* prophet = GetCreature(prophetGuid))
+                        DoScriptText(-1580102, prophet);
+
+                    m_Outrotimer = 15000;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_7);
+                    break;
+                case SAY_OUTRO_7:
+                    if (Creature* pLiadrin = GetCreature(liadrinGuid))
+                        DoScriptText(-1580108, pLiadrin);
+
+                    m_Outrotimer = 2500;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_8);
+                    break;
+                case SAY_OUTRO_8:
+                    if (Creature* prophet = GetCreature(prophetGuid))
+                        DoScriptText(-1580103, prophet);
+
+                    m_Outrotimer = 4000;
+                    SetData(DATA_OUTRO_KJ, POINT_BLAZE);
+                    break;
+                case POINT_BLAZE:
+                    if (Creature* pEntropius = GetCreature(entropiusCoreGuid))
+                    {
+                        pEntropius->CastSpell(pEntropius, SPELL_BLAZE_TO_LIGHT, true);
+                        pEntropius->RemoveAurasDueToSpell(SPELL_ENTROPIUS_BODY);
+                    }
+
+                    m_Outrotimer = 10000;
+                    SetData(DATA_OUTRO_KJ, POINT_IGNITE);
+                    break;
+                case POINT_IGNITE:
+                    if (Creature *controller = GetCreature(GetData64(DATA_KILJAEDEN_CONTROLLER)))
+                    {
+                        // When the purified Muru reaches the ground the sunwell ignites and Muru despawns
+                        controller->AI()->DoCast(controller, SPELL_SUNWELL_IGNITION);
+
+                        if (Creature* pLiadrin = GetCreature(liadrinGuid))
+                            pLiadrin->SetStandState(UNIT_STAND_STATE_KNEEL);
+
+                        if (Creature* pEntropius = GetCreature(entropiusCoreGuid))
+                            pEntropius->ForcedDespawn();
+                    }
+
+                    m_Outrotimer = 500;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_9);
+                    break;
+                case SAY_OUTRO_9:
+                    if (Creature* prophet = GetCreature(prophetGuid))
+                        DoScriptText(-1580104, prophet);
+
+                    m_Outrotimer = 15000;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_10);
+                    break;
+                case SAY_OUTRO_10:
+                    if (Creature* pLiadrin = GetCreature(liadrinGuid))
+                        DoScriptText(-1580109, pLiadrin);
+
+                    m_Outrotimer = 20000;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_11);
+                    break;
+                case SAY_OUTRO_11:
+                    if (Creature* prophet = GetCreature(prophetGuid))
+                        DoScriptText(-1580105, prophet);
+
+                    m_Outrotimer = 6000;
+                    SetData(DATA_OUTRO_KJ, SAY_OUTRO_12);
+                    break;
+                case SAY_OUTRO_12:
+                    if (Creature* prophet = GetCreature(prophetGuid))
+                        DoScriptText(-1580106, prophet);
+
+                    m_Outrotimer = 2000;
+                    SetData(DATA_OUTRO_KJ, POINT_EVENT_SOLDIER_EXIT);
+                    break;
+                case POINT_EVENT_SOLDIER_EXIT:
+                    for (uint8 i = 0; i < 20; i++)
+                    {
+                        if (Creature* soldier = GetCreature(soldiersGuid[i]))
+                        {
+                            soldier->SetWalk(false);
+                            soldier->SetSpeed(MOVE_RUN, 1.0f);
+                            soldier->GetMotionMaster()->MovePoint(2, SoldierLocations[i].m_fX, SoldierLocations[i].m_fY, SoldierLocations[i].m_fZ, false);
+                        }
+                    }
+
+                    m_Outrotimer = 8000;
+                    SetData(DATA_OUTRO_KJ, POINT_EVENT_VELEN_EXIT);
+                    break;
+                case POINT_EVENT_VELEN_EXIT:
+                    if (Creature* pVelen = GetCreature(prophetGuid))
+                        pVelen->GetMotionMaster()->MovePoint(1, aOutroLocations[3].m_fX, aOutroLocations[3].m_fY, aOutroLocations[3].m_fZ);
+
+                    if (Creature* pKalec = GetCreature(GetData64(DATA_KALECGOS_KJ)))
+                    {
+                        pKalec->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+                        pKalec->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                    }
+
+                    m_Outrotimer = 0;
+                    SetData(DATA_OUTRO_KJ, OUTRO_DONE);
+                    break;
+            }
+        }
+        else
+            m_Outrotimer -= diff;
     }
 
     std::string GetSaveData()

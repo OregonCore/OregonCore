@@ -106,7 +106,7 @@ struct boss_kalecgosAI : public ScriptedAI
 {
     boss_kalecgosAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         SathGUID = 0;
         bJustReset = false;
         me->setActive(true);
@@ -434,7 +434,7 @@ struct boss_sathrovarrAI : public ScriptedAI
 {
     boss_sathrovarrAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         KalecGUID = 0;
         KalecgosGUID = 0;
     }
@@ -676,7 +676,7 @@ struct boss_kalecAI : public ScriptedAI
 
     boss_kalecAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     void Reset()

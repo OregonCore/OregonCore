@@ -89,7 +89,7 @@ struct boss_sacrolashAI : public ScriptedAI
 {
     boss_sacrolashAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -351,7 +351,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
 {
     boss_alythessAI(Creature* c) : Scripted_NoMovementAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         IntroStepCounter = 10;
     }
 

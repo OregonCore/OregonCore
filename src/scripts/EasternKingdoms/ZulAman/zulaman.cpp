@@ -44,7 +44,7 @@ struct npc_forest_frogAI : public ScriptedAI
 {
     npc_forest_frogAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -166,7 +166,7 @@ bool GossipSelect_npc_zulaman_hostage(Player* pPlayer, Creature* pCreature, uint
         return true;
     pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-    ScriptedInstance* pInstance = pCreature->GetInstanceData();
+    ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
     if (pInstance)
     {
         uint8 progress = pInstance->GetData(ENCOUNTER_CHESTLOOTED);
@@ -214,7 +214,7 @@ struct npc_harrison_jonesAI : public ScriptedAI
 {
     npc_harrison_jonesAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        instance = pCreature->GetInstanceData();
+        instance = (ScriptedInstance*)pCreature->GetInstanceData();
         handleGossips = !!instance;
 
         if (handleGossips)

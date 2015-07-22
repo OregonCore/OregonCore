@@ -76,7 +76,7 @@ struct boss_twinemperorsAI : public ScriptedAI
 
         boss_twinemperorsAI(Creature* c): ScriptedAI(c)
         {
-            pInstance = c->GetInstanceData();
+            pInstance = (ScriptedInstance*)c->GetInstanceData();
         }
 
         void TwinReset()

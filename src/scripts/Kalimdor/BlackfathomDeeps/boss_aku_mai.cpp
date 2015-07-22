@@ -28,7 +28,7 @@ struct boss_aku_maiAI : public ScriptedAI
 {
     boss_aku_maiAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     uint32 uiPoisonCloudTimer;

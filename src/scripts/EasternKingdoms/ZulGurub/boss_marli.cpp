@@ -51,7 +51,7 @@ struct boss_marliAI : public ScriptedAI
 {
     boss_marliAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

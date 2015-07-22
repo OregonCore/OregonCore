@@ -42,7 +42,7 @@ struct boss_void_reaverAI : public ScriptedAI
 {
     boss_void_reaverAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

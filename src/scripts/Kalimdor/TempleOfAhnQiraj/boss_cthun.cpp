@@ -137,7 +137,7 @@ struct eye_of_cthunAI : public Scripted_NoMovementAI
 {
     eye_of_cthunAI(Creature* c) : Scripted_NoMovementAI(c)
     {
-        pInst = c->GetInstanceData();
+        pInst = (ScriptedInstance*)c->GetInstanceData();
         if (!pInst)
             error_log("OSCR: No Instance eye_of_cthunAI");
     }
@@ -445,7 +445,7 @@ struct cthunAI : public Scripted_NoMovementAI
 {
     cthunAI(Creature* c) : Scripted_NoMovementAI(c)
     {
-        pInst = c->GetInstanceData();
+        pInst = (ScriptedInstance*)c->GetInstanceData();
         if (!pInst)
             error_log("OSCR: No Instance eye_of_cthunAI");
     }

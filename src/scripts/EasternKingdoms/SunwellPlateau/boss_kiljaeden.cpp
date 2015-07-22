@@ -62,7 +62,6 @@ enum Yells
     SAY_ANVEENA_KALEC                           = -1580087,
     SAY_KALECGOS_FATE                           = -1580088,
     SAY_ANVEENA_GOODBYE                         = -1580089,
-    SAY_KALECGOS_GOODBYE                        = -1580090,
     SAY_KALECGOS_ENCOURAGE                      = -1580091,
 
     /*** Kalecgos says throughout the fight ***/
@@ -149,8 +148,7 @@ enum Spells
 
     /*** Other Spells (used by players, etc) ***/
     SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT          = 45839, // Possess the blue dragon from the orb to help the raid.
-    SPELL_ENTROPIUS_BODY                        = 46819, // Visual for Entropius at the Epilogue
-    SPELL_RING_OF_BLUE_FLAMES                   = 45825  //Cast this spell when the go is activated
+    SPELL_RING_OF_BLUE_FLAMES                   = 45825,  //Cast this spell when the go is activated
 };
 
 /*** Error messages ***/
@@ -233,9 +231,6 @@ static Speech Speeches[] =
     {SAY_KALECGOS_FATE,         DATA_KALECGOS_KJ,   2000},
     {SAY_ANVEENA_GOODBYE,       DATA_ANVEENA,       6000},
     {SAY_KJ_PHASE5,             DATA_KILJAEDEN,     5500},
-
-    // use in End sequence?
-    {SAY_KALECGOS_GOODBYE,      DATA_KALECGOS_KJ,   12000},
 };
 
 //AI for Kalecgos
@@ -243,7 +238,7 @@ struct boss_kalecgos_kjAI : public ScriptedAI
 {
     boss_kalecgos_kjAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -259,8 +254,6 @@ struct boss_kalecgos_kjAI : public ScriptedAI
         for (uint8 i = 0; i < 4; ++i)
             if (GameObject* pOrb = GetOrb(i))
                 pOrb->SetGoType(GAMEOBJECT_TYPE_BUTTON);
-
-        me->SetLevitate(true);
     }
 
     GameObject* GetOrb(int32 index)
@@ -374,7 +367,7 @@ bool GOHello_go_orb_of_the_blue_flight(Player* pPlayer, GameObject* pGo)
 {
     if (pGo->GetUInt32Value(GAMEOBJECT_FACTION) == 35)
     {
-        ScriptedInstance* pInstance = pGo->GetInstanceData();
+        ScriptedInstance* pInstance = (ScriptedInstance*)pGo->GetInstanceData();
         pPlayer->SummonCreature(CREATURE_POWER_OF_THE_BLUE_DRAGONFLIGHT, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 121000);
         pPlayer->CastSpell(pPlayer, SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT, false);
         pGo->SetUInt32Value(GAMEOBJECT_FACTION, 0);
@@ -392,7 +385,7 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
 {
     mob_kiljaeden_controllerAI(Creature* c) : Scripted_NoMovementAI(c), summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -405,6 +398,8 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
     uint32 phase;
     uint8 deceiverDeathCount;
 
+    uint64 handDeceiver[3];
+
     void InitializeAI()
     {
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -416,15 +411,58 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
 
     void Reset()
     {
-        phase = PHASE_DECEIVERS;
+        for (uint8 i = 0; i < 3; ++i)
+            handDeceiver[i] = 0;
 
         if (Creature* pKalecKJ = Unit::GetCreature((*me), pInstance->GetData64(DATA_KALECGOS_KJ)))
             CAST_AI(boss_kalecgos_kjAI, pKalecKJ->AI())->ResetOrbs();
+
+        if (pInstance)
+        {
+            if (pInstance->GetData(DATA_KILJAEDEN_EVENT) == DONE)
+            {
+                DoCast(me, SPELL_SUNWELL_IGNITION, true);
+                return;
+            }
+            else
+            {
+                DoCast(me, SPELL_ANVEENA_ENERGY_DRAIN, true);
+                pInstance->SetData(DATA_KILJAEDEN_EVENT, NOT_STARTED);
+            }
+        }
+
+        phase = PHASE_DECEIVERS;
+
         deceiverDeathCount = 0;
         bKiljaedenDeath = false;
         uiRandomSayTimer = 30000;
         summons.DespawnAll();
         bSummonedDeceivers = false;
+    }
+
+    void MoveInLineOfSight(Unit* who)
+    {
+        if (pInstance && pInstance->GetData(DATA_KILJAEDEN_EVENT) == DONE)
+            return;
+
+        if (me->canStartAttack(who))
+            AttackStart(who);
+
+        DoZoneInCombatWithPlayers(true);
+
+        if (bSummonedDeceivers)
+        {
+            for (uint8 i = 0; i < 3; ++i)
+            {
+                if (Creature *hand = pInstance->GetCreature(handDeceiver[i]))
+                {
+                    if (!hand->IsInCombat())
+                        hand->AI()->AttackStart(who);
+
+                    hand->AI()->DoZoneInCombatWithPlayers(true);
+                }
+            }
+        }
     }
 
     void JustSummoned(Creature* summoned)
@@ -438,11 +476,29 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
             summoned->CastSpell(summoned, SPELL_ANVEENA_PRISON, true);
             me->CastSpell(summoned, SPELL_ANVEENA_ENERGY_DRAIN, true);
             summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            summoned->SendMovementFlagUpdate(); //Hack : ANVEENA is falling at server start
             break;
         case CREATURE_KILJAEDEN:
             summoned->CastSpell(summoned, SPELL_REBIRTH, false);
             summoned->AddThreat(me->getVictim(), 1.0f);
+            break;
+        case NPC_RIFTWALKER:
+            summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, true);
+            break;
+        case NPC_SOLDIER:
+            summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, true);
+            summoned->SetWalk(false);
+            summoned->SetSpeed(MOVE_RUN, 1.0f);
+            break;
+        case CREATURE_PROPHET:
+            summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, true);
+            summoned->GetMotionMaster()->MovePoint(0, aOutroLocations[5].m_fX, aOutroLocations[5].m_fY, aOutroLocations[5].m_fZ);
+            break;
+        case CREATURE_LIADRIN:
+            summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, true);
+            break;
+        case NPC_CORE_ENTROPIUS:
+            summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            summoned->CastSpell(summoned, SPELL_ENTROPIUS_BODY, true);
             break;
         }
         summons.Summon(summoned);
@@ -450,6 +506,9 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
 
     void UpdateAI(const uint32 diff)
     {
+        if (pInstance && pInstance->GetData(DATA_KILJAEDEN_EVENT) == DONE)
+            return;
+
         if (uiRandomSayTimer < diff)
         {
             if (pInstance && pInstance->GetData(DATA_MURU_EVENT) != DONE && pInstance->GetData(DATA_KILJAEDEN_EVENT) == NOT_STARTED)
@@ -461,7 +520,10 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
         if (!bSummonedDeceivers)
         {
             for (uint8 i = 0; i < 3; ++i)
-                me->SummonCreature(CREATURE_HAND_OF_THE_DECEIVER, DeceiverLocations[i][0], DeceiverLocations[i][1], FLOOR_Z, DeceiverLocations[i][2], TEMPSUMMON_DEAD_DESPAWN, 0);
+            {
+                if (Creature* hand = me->SummonCreature(CREATURE_HAND_OF_THE_DECEIVER, DeceiverLocations[i][0], DeceiverLocations[i][1], FLOOR_Z, DeceiverLocations[i][2], TEMPSUMMON_DEAD_DESPAWN, 0))
+                    handDeceiver[i] = hand->GetGUID();
+            }
 
             DoSpawnCreature(CREATURE_ANVEENA,  0, 0, 40, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
             bSummonedDeceivers = true;
@@ -486,7 +548,7 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
 {
     boss_kiljaedenAI(Creature* c) : Scripted_NoMovementAI(c), summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -598,8 +660,18 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
         DoScriptText(SAY_KJ_DEATH, me);
         summons.DespawnAll();
 
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
         if (pInstance)
             pInstance->SetData(DATA_KILJAEDEN_EVENT, DONE);
+
+        if (Creature *controller = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)))
+        {
+            controller->setFaction(35);
+            controller->RemoveAllAuras();
+            controller->DeleteThreatList();
+            controller->CombatStop();
+        }
     }
 
     void KilledUnit(Unit* /*victim*/)
@@ -861,7 +933,7 @@ struct mob_hand_of_the_deceiverAI : public ScriptedAI
 {
     mob_hand_of_the_deceiverAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -985,7 +1057,7 @@ struct mob_volatile_felfire_fiendAI : public ScriptedAI
 {
     mob_volatile_felfire_fiendAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -1102,7 +1174,7 @@ struct mob_shield_orbAI : public ScriptedAI
 {
     mob_shield_orbAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

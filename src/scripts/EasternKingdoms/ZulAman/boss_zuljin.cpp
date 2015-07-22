@@ -144,7 +144,7 @@ struct boss_zuljinAI : public ScriptedAI
 {
     boss_zuljinAI(Creature* c) : ScriptedAI(c), Summons(me)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
     ScriptedInstance* pInstance;
 

@@ -39,7 +39,7 @@ EndScriptData */
 
 bool GOHello_go_main_chambers_access_panel(Player* /*player*/, GameObject* _GO)
 {
-    ScriptedInstance* pInstance = _GO->GetInstanceData();
+    ScriptedInstance* pInstance = (ScriptedInstance*)_GO->GetInstanceData();
 
     if (!pInstance)
         return false;

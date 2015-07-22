@@ -50,7 +50,7 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
 {
     boss_rage_winterchillAI(Creature* c) : hyjal_trashAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         pGo = false;
         pos = 0;
     }

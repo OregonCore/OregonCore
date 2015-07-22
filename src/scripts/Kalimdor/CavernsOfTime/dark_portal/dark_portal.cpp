@@ -59,7 +59,7 @@ struct npc_medivh_bmAI : public ScriptedAI
 {
     npc_medivh_bmAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -243,7 +243,7 @@ struct npc_time_riftAI : public ScriptedAI
 {
     npc_time_riftAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

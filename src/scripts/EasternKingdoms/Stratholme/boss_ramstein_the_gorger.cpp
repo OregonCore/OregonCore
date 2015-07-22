@@ -34,7 +34,7 @@ struct boss_ramstein_the_gorgerAI : public ScriptedAI
 {
     boss_ramstein_the_gorgerAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = me->GetInstanceData();
+        pInstance = (ScriptedInstance*)me->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

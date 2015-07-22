@@ -72,7 +72,7 @@ struct boss_brutallusAI : public ScriptedAI
 {
     boss_brutallusAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         Intro = true;
     }
 

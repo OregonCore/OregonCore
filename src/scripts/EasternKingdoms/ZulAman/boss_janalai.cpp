@@ -105,7 +105,7 @@ struct boss_janalaiAI : public ScriptedAI
 {
     boss_janalaiAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
 
         SpellEntry* TempSpell = GET_SPELL(SPELL_HATCH_EGG);
         if (TempSpell && TempSpell->EffectImplicitTargetA[0] != 1)
@@ -484,7 +484,7 @@ struct mob_amanishi_hatcherAI : public ScriptedAI
 {
     mob_amanishi_hatcherAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -606,7 +606,7 @@ struct mob_hatchlingAI : public ScriptedAI
 {
     mob_hatchlingAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

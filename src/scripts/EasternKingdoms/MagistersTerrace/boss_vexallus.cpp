@@ -62,7 +62,7 @@ struct boss_vexallusAI : public ScriptedAI
 {
     boss_vexallusAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         Heroic = c->GetMap()->IsHeroic();
     }
 

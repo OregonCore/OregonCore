@@ -89,7 +89,7 @@ struct boss_halazziAI : public ScriptedAI
 {
     boss_halazziAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         // need to find out what controls totem's spell cooldown
         SpellEntry* TempSpell = GET_SPELL(SPELL_LIGHTNING);
         if (TempSpell && TempSpell->CastingTimeIndex != 5)

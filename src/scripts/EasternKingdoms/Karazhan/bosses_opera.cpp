@@ -105,7 +105,7 @@ struct boss_dorotheeAI : public ScriptedAI
 {
     boss_dorotheeAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -267,7 +267,7 @@ struct boss_strawmanAI : public ScriptedAI
 {
     boss_strawmanAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -366,7 +366,7 @@ struct boss_tinheadAI : public ScriptedAI
 {
     boss_tinheadAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -467,7 +467,7 @@ struct boss_roarAI : public ScriptedAI
 {
     boss_roarAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -568,7 +568,7 @@ struct boss_croneAI : public ScriptedAI
 {
     boss_croneAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -749,7 +749,7 @@ struct boss_bigbadwolfAI : public ScriptedAI
 {
     boss_bigbadwolfAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -944,7 +944,7 @@ struct boss_julianneAI : public ScriptedAI
 {
     boss_julianneAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         EntryYellTimer = 1000;
         AggroYellTimer = 10000;
         IsFakingDeath = false;
@@ -1055,7 +1055,7 @@ struct boss_romuloAI : public ScriptedAI
 {
     boss_romuloAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         EntryYellTimer = 8000;
         AggroYellTimer = 15000;
     }

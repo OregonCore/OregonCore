@@ -51,7 +51,7 @@ struct boss_jeklikAI : public ScriptedAI
 {
     boss_jeklikAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -237,7 +237,7 @@ struct mob_batriderAI : public ScriptedAI
 {
     mob_batriderAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

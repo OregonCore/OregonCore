@@ -97,7 +97,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
 {
     boss_priestess_delrissaAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = creature->GetInstanceData();
+        instance = (ScriptedInstance*)creature->GetInstanceData();
         memset(&m_auiLackeyGUID, 0, sizeof(m_auiLackeyGUID));
         LackeyEntryList.clear();
     }
@@ -345,7 +345,7 @@ struct boss_priestess_lackey_commonAI : public ScriptedAI
 {
     boss_priestess_lackey_commonAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = creature->GetInstanceData();
+        instance = (ScriptedInstance*)creature->GetInstanceData();
         memset(&m_auiLackeyGUIDs, 0, sizeof(m_auiLackeyGUIDs));
         AcquireGUIDs();
     }

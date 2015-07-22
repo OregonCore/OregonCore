@@ -59,7 +59,7 @@ struct mob_kilrekAI : public ScriptedAI
 {
     mob_kilrekAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -172,7 +172,7 @@ struct boss_terestianAI : public ScriptedAI
     {
         for (uint8 i = 0; i < 2; ++i)
             PortalGUID[i] = 0;
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

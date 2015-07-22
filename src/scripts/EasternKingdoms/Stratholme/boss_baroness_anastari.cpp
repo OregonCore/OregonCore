@@ -34,7 +34,7 @@ struct boss_baroness_anastariAI : public ScriptedAI
 {
     boss_baroness_anastariAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = me->GetInstanceData();
+        pInstance = (ScriptedInstance*)me->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

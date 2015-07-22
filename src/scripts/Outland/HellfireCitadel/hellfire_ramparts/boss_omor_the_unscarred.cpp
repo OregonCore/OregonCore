@@ -47,7 +47,7 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 {
     boss_omor_the_unscarredAI(Creature* c) : Scripted_NoMovementAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 

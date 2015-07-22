@@ -354,7 +354,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
                     speed->EffectApplyAuraName[1] = SPELL_AURA_MOD_CONFUSE;
                 }
         */
-        pInstance = c->GetInstanceData();
+		pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -835,7 +835,7 @@ struct mob_pulsing_pumpkinAI : public ScriptedAI
 
 bool GOHello_go_loosely_turned_soil(Player* pPlayer, GameObject* soil)
 {
-    ScriptedInstance* pInstance = pPlayer->GetInstanceData();
+	ScriptedInstance* pInstance = (ScriptedInstance*)pPlayer->GetInstanceData();
     if (pInstance)
     {
         if (pInstance->GetData(DATA_HORSEMAN_EVENT) != NOT_STARTED)

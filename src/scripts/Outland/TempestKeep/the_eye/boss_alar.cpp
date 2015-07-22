@@ -70,7 +70,7 @@ struct boss_alarAI : public ScriptedAI
 {
     boss_alarAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         DefaultMoveSpeedRate = me->GetSpeedRate(MOVE_RUN);
     }
 
@@ -439,7 +439,7 @@ struct mob_ember_of_alarAI : public ScriptedAI
 {
     mob_ember_of_alarAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         me->SetLevitate(true);
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
     }

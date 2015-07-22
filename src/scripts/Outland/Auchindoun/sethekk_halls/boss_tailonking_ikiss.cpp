@@ -55,7 +55,7 @@ struct boss_talon_king_ikissAI : public ScriptedAI
 {
     boss_talon_king_ikissAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 

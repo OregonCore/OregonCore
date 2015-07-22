@@ -27,7 +27,13 @@
 #define OUT_LOAD_INST_DATA_COMPLETE    debug_log("OSCR: Instance Data Load for Instance %s (Map %d, Instance Id: %d) is complete.",instance->GetMapName(), instance->GetId(), instance->GetInstanceId())
 #define OUT_LOAD_INST_DATA_FAIL        error_log("OSCR: Unable to load Instance Data for Instance %s (Map %d, Instance Id: %d).",instance->GetMapName(), instance->GetId(), instance->GetInstanceId())
 
-#define ScriptedInstance InstanceData
+class ScriptedInstance : public InstanceData
+{
+public:
+	ScriptedInstance(Map* pMap) : InstanceData(pMap) {}
+	~ScriptedInstance() {}
+
+	virtual void MovementInform(Creature* creature, uint32 uiType, uint32 uiPointId) { }
+};
 
 #endif
-

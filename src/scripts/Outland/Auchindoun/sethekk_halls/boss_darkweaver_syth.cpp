@@ -57,7 +57,7 @@ struct boss_darkweaver_sythAI : public ScriptedAI
 {
     boss_darkweaver_sythAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 

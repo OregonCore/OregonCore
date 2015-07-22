@@ -150,7 +150,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
     boss_leotheras_the_blindAI(Creature* c) : ScriptedAI(c)
     {
         c->GetPosition(x, y, z);
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         Demon = 0;
 
         for (uint8 i = 0; i < 3; ++i)//clear guids
@@ -686,7 +686,7 @@ struct mob_greyheart_spellbinderAI : public ScriptedAI
 {
     mob_greyheart_spellbinderAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         leotherasGUID = 0;
         AddedBanish = false;
     }

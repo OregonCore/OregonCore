@@ -48,7 +48,7 @@ struct boss_the_makerAI : public ScriptedAI
 {
     boss_the_makerAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = creature->GetInstanceData();
+        instance = (ScriptedInstance*)creature->GetInstanceData();
     }
 
     ScriptedInstance* instance;

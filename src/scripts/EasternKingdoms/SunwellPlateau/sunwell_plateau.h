@@ -18,6 +18,53 @@
 #ifndef DEF_SUNWELLPLATEAU_H
 #define DEF_SUNWELLPLATEAU_H
 
+#define DISPLAYID_PORTAL_OPENING 22742
+
+enum Outro
+{
+    POINT_KILJAEDEN_DIE = 1,
+    POINT_TELEPORT_KALECGOS,
+    SAY_KALECGOS_GOODBYE,
+    POINT_SUMMON_SHATTERED,
+    POINT_SUMMON_PORTAL,
+    POINT_SUMMON_PORTAL_ENDOPENANIM,
+    POINT_SUMMON_SOLDIERS_RIGHT,
+    POINT_SUMMON_SOLDIERS_LEFT,
+    POINT_SUMMON_PROPHET,
+    POINT_SUMMON_LIADRIN,
+    SAY_OUTRO_1,
+    SAY_OUTRO_2,
+    SAY_OUTRO_3,
+    POINT_CALL_ENTROPIUS,
+    SAY_OUTRO_4,
+    POINT_MOVE_LIADRIN,
+    SAY_OUTRO_5,
+    SAY_OUTRO_6,
+    SAY_OUTRO_7,
+    SAY_OUTRO_8,
+    POINT_BLAZE,
+    POINT_IGNITE,
+    SAY_OUTRO_9,
+    SAY_OUTRO_10,
+    SAY_OUTRO_11,
+    SAY_OUTRO_12,
+    POINT_EVENT_SOLDIER_EXIT,
+    POINT_EVENT_VELEN_EXIT,
+    OUTRO_DONE,
+};
+
+enum SpellOutro
+{
+    SPELL_TELEPORT_VISUAL           = 41232,
+    SPELL_KALEC_TELEPORT            = 46473, // teleports and transforms Kalec in human form
+    SPELL_CALL_ENTROPIUS            = 46818, // pulling effect
+    SPELL_ENTROPIUS_BODY            = 46819, // Visual for Entropius at the Epilogue
+    SPELL_BLAZE_TO_LIGHT            = 46821,
+    SPELL_SUNWELL_IGNITION          = 46822, // same visual as SPELL_ANVEENA_ENERGY_DRAIN
+    SPELL_OPEN_PORTAL_KJ            = 46801,
+    SPELL_PORTAL_VISUAL             = 42047,
+};
+
 /*** Encounters ***/
 enum Data
 {
@@ -55,6 +102,8 @@ enum Data64
 
     /*** Misc ***/
     DATA_PLAYER_GUID,
+
+    DATA_OUTRO_KJ,
 };
 
 enum Creatures
@@ -78,14 +127,12 @@ enum Creatures
 
     CREATURE_ANVEENA                              = 26046, // Embodiment of the Sunwell
     CREATURE_KALECGOS                             = 25319, // Helps the raid throughout the fight
-    CREATURE_PROPHET                              = 26246, // Outro
     CREATURE_KILJAEDEN                            = 25315, // Give it to 'em KJ!
     CREATURE_HAND_OF_THE_DECEIVER                 = 25588, // Adds found before KJ emerges
     CREATURE_FELFIRE_PORTAL                       = 25603, // Portal spawned be Hand of the Deceivers
     CREATURE_VOLATILE_FELFIRE_FIEND               = 25598, // Fiends spawned by the above portal
     CREATURE_ARMAGEDDON_TARGET                    = 25735, // This mob casts meteor on itself.. I think
     CREATURE_SHIELD_ORB                           = 25502, // Shield orbs circle the room raining shadow bolts on raid
-    CREATURE_THE_CORE_OF_ENTROPIUS                = 26262, // Used in the ending cinematic?
     CREATURE_POWER_OF_THE_BLUE_DRAGONFLIGHT       = 25653, // NPC that players possess when using the Orb of the Blue Dragonflight
     CREATURE_SPIKE_TARGET1                        = 30598, // Should summon these under Shadow Spike Channel on targets place
     CREATURE_SPIKE_TARGET2                        = 30614,
@@ -99,11 +146,69 @@ enum Creatures
     CREATURE_VOID_SPAWN                           = 25824,
     CREATURE_BLACK_HOLE                           = 25855,
     CREATURE_SENTINAL_SUMMONER                    = 25782,
+
+    /* Outro */
+    CREATURE_PROPHET                              = 26246,
+    CREATURE_LIADRIN                              = 26247,
+    NPC_BOSS_PORTAL                               = 24925,
+    NPC_CORE_ENTROPIUS                            = 26262,
+    NPC_SOLDIER                                   = 26259, // summoned in 2 waves before Velen. Should move into 2 circle formations
+    NPC_RIFTWALKER                                = 26289,
 };
 
 enum GameObjects
 {
     GAMEOBJECT_ORB_OF_THE_BLUE_DRAGONFLIGHT       = 188415,
+};
+
+struct EventLocations
+{
+    float m_fX, m_fY, m_fZ, m_fO;
+};
+
+static const EventLocations aOutroLocations[] =
+{
+    { 1728.337f, 656.641f, 28.55f, 3.86f },       // portal summon loc
+    { 1703.159f, 654.043f, 28.05f, 1.06f },       // first shattered summon loc
+    { 1723.888f, 631.342f, 28.05f, 0.16f },       // second shattered summon loc
+    { 1716.969f, 646.407f, 28.05f, 3.91f },       // velen summon loc
+    { 1718.862f, 644.528f, 28.05f, 3.87f },       // liadrin summon loc
+    { 1709.719f, 639.359f, 27.28f },              // velen move forward
+    { 1711.537f, 637.600f, 27.34f },              // liadrin move forward
+    { 1716.962f, 661.839f, 28.05f },              // first shattered move
+    { 1735.141f, 643.680f, 28.23f },              // second shattered move
+    { 1723.220f, 663.026f, 30.00f },              // first shattered spell target
+    { 1734.877f, 649.574f, 30.00f },              // second shattered spell target
+};
+
+static const EventLocations SoldierLocations[] =
+{
+    { 1722.709f, 640.308f, 28.05f, 3.774 }, // summon first
+    { 1727.329f, 639.419f, 28.05f, 3.721 }, // summon first
+    { 1724.606f, 645.376f, 28.05f, 3.755 }, // summon first
+    { 1719.543f, 644.635f, 28.05f, 3.718 }, // summon first
+    { 1720.937f, 649.376f, 28.05f, 3.859 }, // summon first
+    { 1715.420f, 648.200f, 28.05f, 4.507 }, // summon first
+    { 1715.948f, 653.606f, 28.05f, 3.892 }, // summon first
+    { 1710.871f, 651.645f, 28.05f, 4.252 }, // summon first
+    { 1709.924f, 656.442f, 28.05f, 4.035 }, // summon first
+    { 1705.944f, 654.201f, 28.05f, 4.290 }, // summon first
+    { 1707.783f, 653.139f, 28.05f, 4.375 }, // summon second
+    { 1712.047f, 655.015f, 28.05f, 4.208 }, // summon second
+    { 1712.432f, 650.853f, 28.05f, 4.166 }, // summon second
+    { 1717.019f, 652.191f, 28.05f, 3.986 }, // summon second
+    { 1716.611f, 647.399f, 28.05f, 4.060 }, // summon second
+    { 1721.737f, 648.310f, 28.05f, 3.893 }, // summon second
+    { 1720.509f, 643.163f, 28.05f, 3.851 }, // summon second
+    { 1725.338f, 643.300f, 28.05f, 3.634 }, // summon second
+    { 1723.557f, 638.104f, 28.05f, 3.401 }, // summon second
+    { 1728.344f, 636.061f, 28.05f, 3.305 }  // summon second
+};
+
+static const EventLocations SoldierMiddle[] =
+{
+    { 1718.604f, 608.202f, 28.05f, 1.090 }, // first
+    { 1679.347f, 648.365f, 28.05f, 0.368 }, // second
 };
 
 #endif

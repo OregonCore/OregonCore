@@ -64,7 +64,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
 {
     boss_harbinger_skyrissAI(Creature* c) : ScriptedAI(c)
     {
-        instance = c->GetInstanceData();
+        instance = (ScriptedInstance*)c->GetInstanceData();
         Intro = false;
     }
 
@@ -302,7 +302,7 @@ struct boss_harbinger_skyriss_illusionAI : public ScriptedAI
 {
     boss_harbinger_skyriss_illusionAI(Creature* c) : ScriptedAI(c)
     {
-        instance = c->GetInstanceData();
+        instance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* instance;

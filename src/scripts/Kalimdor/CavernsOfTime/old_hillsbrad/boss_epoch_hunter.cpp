@@ -56,7 +56,7 @@ struct boss_epoch_hunterAI : public ScriptedAI
 {
     boss_epoch_hunterAI(Creature *creature) : ScriptedAI(creature)
     {
-        pInstance = (creature->GetInstanceData());
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
@@ -94,11 +94,11 @@ struct boss_epoch_hunterAI : public ScriptedAI
 
         if (Creature *Thrall = (Creature*)(Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL))))
             ThrallGUID = Thrall->GetGUID();
-		else if (Creature* Thrall = me->FindNearestCreature(17876, 300.0f, true)) 
-		{
-			 if (Thrall)
-				ThrallGUID = Thrall->GetGUID();
-		}
+        else if (Creature* Thrall = me->FindNearestCreature(17876, 300.0f, true)) 
+        {
+             if (Thrall)
+                ThrallGUID = Thrall->GetGUID();
+        }
     }
 
     void EnterCombat(Unit *who)
@@ -128,8 +128,8 @@ struct boss_epoch_hunterAI : public ScriptedAI
         {
             if (Creature* Thrall = me->GetMap()->GetCreature(ThrallGUID))
                 Thrall->AI()->DoAction();
-			else if (Creature* Thrall = me->FindNearestCreature(17876, 300.0f, true)) 
-				Thrall->AI()->DoAction();
+            else if (Creature* Thrall = me->FindNearestCreature(17876, 300.0f, true)) 
+                Thrall->AI()->DoAction();
 
             pInstance->SetData(TYPE_THRALL_PART4, DONE);
         }
@@ -198,8 +198,8 @@ struct boss_epoch_hunterAI : public ScriptedAI
 
                     if (Creature* Thrall = me->GetMap()->GetCreature(ThrallGUID))
                         attacker->AI()->AttackStart(Thrall);
-					else if (Creature* Thrall = me->FindNearestCreature(17876, 150.0f, true)) 
-						attacker->AI()->AttackStart(Thrall);
+                    else if (Creature* Thrall = me->FindNearestCreature(17876, 150.0f, true)) 
+                        attacker->AI()->AttackStart(Thrall);
                 }
             }
         }
@@ -286,8 +286,8 @@ struct boss_epoch_hunterAI : public ScriptedAI
                 me->SetLevitate(false);
                 if (Creature* Thrall = me->GetMap()->GetCreature(ThrallGUID))
                     Thrall->AI()->AttackStart(me);
-				else if (Creature* Thrall = me->FindNearestCreature(17876, 100.0f, true)) 
-					Thrall->AI()->AttackStart(me);
+                else if (Creature* Thrall = me->FindNearestCreature(17876, 100.0f, true)) 
+                    Thrall->AI()->AttackStart(me);
                 Intro = false;
                 break;
         }

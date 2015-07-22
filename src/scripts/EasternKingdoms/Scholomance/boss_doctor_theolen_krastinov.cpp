@@ -51,7 +51,7 @@ struct boss_theolenkrastinovAI : public ScriptedAI
 
     void JustDied(Unit* /*pKiller*/)
     {
-        ScriptedInstance* pInstance = me->GetInstanceData();
+        ScriptedInstance* pInstance = (ScriptedInstance*)me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_DOCTORTHEOLENKRASTINOV_DEATH, 0);

@@ -199,7 +199,7 @@ struct boss_magtheridonAI : public ScriptedAI
 {
     boss_magtheridonAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = me->GetInstanceData();
+        instance = (ScriptedInstance*)me->GetInstanceData();
         me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
         me->SetFloatValue(UNIT_FIELD_COMBATREACH, 10);
 
@@ -456,7 +456,7 @@ struct mob_hellfire_channelerAI : public ScriptedAI
 {
     mob_hellfire_channelerAI(Creature* creature) : ScriptedAI(creature)
     {
-        instance = me->GetInstanceData();
+        instance = (ScriptedInstance*)me->GetInstanceData();
     }
 
     ScriptedInstance* instance;
@@ -562,7 +562,7 @@ bool GOHello_go_Manticron_Cube(Player* player, GameObject* go)
     if (player->HasAura(SPELL_MIND_EXHAUSTION) || player->HasAura(SPELL_SHADOW_GRASP))
         return true;
 
-    ScriptedInstance* instance = go->GetInstanceData();
+    ScriptedInstance* instance = (ScriptedInstance*)go->GetInstanceData();
     if (!instance)
         return true;
 

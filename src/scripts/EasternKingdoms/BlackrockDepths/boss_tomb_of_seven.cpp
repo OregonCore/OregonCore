@@ -76,7 +76,7 @@ bool GossipSelect_boss_gloomrel(Player* pPlayer, Creature* pCreature, uint32 /*u
         break;
     case GOSSIP_ACTION_INFO_DEF+22:
         pPlayer->CLOSE_GOSSIP_MENU();
-        if (ScriptedInstance* pInstance = pCreature->GetInstanceData())
+        if (ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData())
         {
             //are 5 minutes expected? go template may have data to despawn when used at quest
             pInstance->DoRespawnGameObject(pInstance->GetData64(DATA_GO_CHALICE), MINUTE * 5);
@@ -99,7 +99,7 @@ struct boss_doomrelAI : public ScriptedAI
 {
     boss_doomrelAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -234,7 +234,7 @@ bool GossipSelect_boss_doomrel(Player* pPlayer, Creature* pCreature, uint32 /*ui
         pCreature->setFaction(FACTION_HOSTILE);
         pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
         pCreature->AI()->AttackStart(pPlayer);
-        ScriptedInstance* pInstance = pCreature->GetInstanceData();
+        ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         if (pInstance)
             pInstance->SetData64(DATA_EVENSTARTER, pPlayer->GetGUID());
         break;

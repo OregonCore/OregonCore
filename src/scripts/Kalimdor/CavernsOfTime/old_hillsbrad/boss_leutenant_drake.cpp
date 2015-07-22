@@ -97,7 +97,7 @@ struct boss_lieutenant_drakeAI : public ScriptedAI
 {
     boss_lieutenant_drakeAI(Creature *creature) : ScriptedAI(creature)
     {
-        pInstance = creature->GetInstanceData();
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
     }
 
     ScriptedInstance * pInstance;

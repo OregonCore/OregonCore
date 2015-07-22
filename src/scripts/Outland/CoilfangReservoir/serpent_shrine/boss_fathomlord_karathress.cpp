@@ -96,7 +96,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
 {
     boss_fathomlord_karathressAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
         Advisors[0] = 0;
         Advisors[1] = 0;
         Advisors[2] = 0;
@@ -298,7 +298,7 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
 {
     boss_fathomguard_sharkkisAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -438,7 +438,7 @@ struct boss_fathomguard_tidalvessAI : public ScriptedAI
 {
     boss_fathomguard_tidalvessAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -550,7 +550,7 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
 {
     boss_fathomguard_caribdisAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
