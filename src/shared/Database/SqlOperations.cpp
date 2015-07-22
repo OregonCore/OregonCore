@@ -28,44 +28,6 @@ void SqlStatement::Execute(Database* db)
     db->DirectExecute(m_sql);
 }
 
-void SqlTransaction::Execute(Database* db)
-{
-    const char* sql;
-
-    m_Mutex.acquire();
-    if (m_queue.empty())
-    {
-        m_Mutex.release();
-        return;
-    }
-
-    db->DirectExecute("START TRANSACTION");
-    while (!m_queue.empty())
-    {
-        sql = m_queue.front();
-
-        if (!db->DirectExecute(sql))
-        {
-            free((void*)const_cast<char*>(sql));
-            m_queue.pop();
-            db->DirectExecute("ROLLBACK");
-            while (!m_queue.empty())
-            {
-                free((void*)const_cast<char*>(m_queue.front()));
-                m_queue.pop();
-            }
-            m_Mutex.release();
-            return;
-        }
-
-        free((void*)const_cast<char*>(sql));
-        m_queue.pop();
-    }
-
-    db->DirectExecute("COMMIT");
-    m_Mutex.release();
-}
-
 // ASYNC QUERIES
 
 void SqlQuery::Execute(Database* db)
@@ -106,13 +68,13 @@ bool SqlQueryHolder::SetQuery(size_t index, const char* sql)
 {
     if (m_queries.size() <= index)
     {
-        sLog.outError("Query index (%u) out of range (size: %u) for query: %s", index, (uint32)m_queries.size(), sql);
+        sLog.outError("Query index (%lu) out of range (size: %u) for query: %s", index, (uint32)m_queries.size(), sql);
         return false;
     }
 
     if (m_queries[index].first != NULL)
     {
-        sLog.outError("Attempt assign query to holder index (%u) where other query stored (Old: [%s] New: [%s])",
+        sLog.outError("Attempt assign query to holder index (%lu) where other query stored (Old: [%s] New: [%s])",
                       index, m_queries[index].first, sql);
         return false;
     }
@@ -126,7 +88,7 @@ bool SqlQueryHolder::SetPQuery(size_t index, const char* format, ...)
 {
     if (!format)
     {
-        sLog.outError("Query (index: %u) is empty.", index);
+        sLog.outError("Query (index: %lu) is empty.", index);
         return false;
     }
 

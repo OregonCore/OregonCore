@@ -20,8 +20,10 @@
 
 #include <ace/Refcounted_Auto_Ptr.h>
 #include <ace/Null_Mutex.h>
+#include <stdexcept>
 
 #include "Field.h"
+#include "Utilities/UnorderedMap.h"
 
 #ifdef WIN32
 #define FD_SETSIZE 1024
@@ -37,97 +39,79 @@ class QueryResult
 
         bool NextRow();
 
-        Field* Fetch() const
-        {
-            return mCurrentRow;
-        }
+        Field* Fetch() const { return mCurrentRow; }
+        Field const& operator [] (int index) const { return mCurrentRow[index]; }
+        Field const& operator [] (const char* name) const { return mCurrentRow[GetField_idx(name)]; }
 
-        const Field& operator [] (int index) const
-        {
-            return mCurrentRow[index];
-        }
+        uint32 GetFieldCount() const { return mFieldCount; }
+        uint64 GetRowCount() const { return mRowCount; }
 
-        uint32 GetFieldCount() const
+        size_t GetField_idx(const char* name) const
         {
-            return mFieldCount;
-        }
-        uint64 GetRowCount() const
-        {
-            return mRowCount;
+            for (size_t i = 0; i < mFieldCount; ++i)
+                if (!strcmp(name, mFields[i].name))
+                    return i;
+
+            std::string err = "No column named ";
+            err += name;
+            err += "in field list!";
+            throw std::invalid_argument(err);
         }
 
     protected:
         Field* mCurrentRow;
         uint32 mFieldCount;
         uint64 mRowCount;
-
+        MYSQL_FIELD* mFields;
+    
     private:
-        enum Field::DataTypes ConvertNativeType(enum_field_types mysqlType) const;
         void EndQuery();
+        
         MYSQL_RES* mResult;
-
 };
 
-typedef ACE_Refcounted_Auto_Ptr<QueryResult, ACE_Null_Mutex> QueryResult_AutoPtr;
-
-typedef std::vector<std::string> QueryFieldNames;
-
-class QueryNamedResult
+class PreparedQueryResult
 {
     public:
-        explicit QueryNamedResult(QueryResult* query, QueryFieldNames const& names) : mQuery(query), mFieldNames(names) {}
-        ~QueryNamedResult()
-        {
-            delete mQuery;
-        }
+        PreparedQueryResult(MYSQL_STMT* stmt);
+        ~PreparedQueryResult();
 
-        // compatible interface with QueryResult
-        bool NextRow()
-        {
-            return mQuery->NextRow();
-        }
-        Field* Fetch() const
-        {
-            return mQuery->Fetch();
-        }
-        uint32 GetFieldCount() const
-        {
-            return mQuery->GetFieldCount();
-        }
-        uint64 GetRowCount() const
-        {
-            return mQuery->GetRowCount();
-        }
-        Field const& operator[] (int index) const
-        {
-            return (*mQuery)[index];
-        }
+        bool NextRow();
 
-        // named access
-        Field const& operator[] (const std::string& name) const
-        {
-            return mQuery->Fetch()[GetField_idx(name)];
-        }
-        QueryFieldNames const& GetFieldNames() const
-        {
-            return mFieldNames;
-        }
+        Field* Fetch() const { return mCurrentRow; }
+        Field const& operator [] (int index) const { return mCurrentRow[index]; }
+        Field const& operator [] (const char* name) const { return mCurrentRow[GetField_idx(name)]; }
 
-        uint32 GetField_idx(const std::string& name) const
+        uint32 GetFieldCount() const { return mFieldCount; }
+        uint64 GetRowCount() const { return mRowCount; }
+
+        size_t GetField_idx(const char* name) const
         {
-            for (size_t idx = 0; idx < mFieldNames.size(); ++idx)
-            {
-                if (mFieldNames[idx] == name)
-                    return idx;
-            }
-            ASSERT(false && "unknown field name");
-            return uint32(-1);
+            for (size_t i = 0; i < mFieldCount; ++i)
+                if (!strcmp(name, mFields[i].name))
+                    return i;
+
+            std::string err = "No column named ";
+            err += name;
+            err += "in field list!";
+            throw std::invalid_argument(err);
         }
 
     protected:
-        QueryResult* mQuery;
-        QueryFieldNames mFieldNames;
+        Field* mCurrentRow;
+        uint32 mFieldCount;
+        uint64 mRowCount;
+        MYSQL_FIELD* mFields;
+    
+    private:
+        void EndQuery();
+
+        std::vector<Field*> mRows;
+        size_t mCursor;
+        MYSQL_RES* mMetaData;
 };
 
-#endif
+typedef ACE_Refcounted_Auto_Ptr<QueryResult, ACE_Null_Mutex> QueryResult_AutoPtr;
+typedef ACE_Refcounted_Auto_Ptr<PreparedQueryResult, ACE_Null_Mutex> PreparedQueryResult_AutoPtr;
 
+#endif

@@ -3,7 +3,7 @@
 ###############################################
 
 [worldserver]
-ConfVersion=2015070961
+ConfVersion=2015071262
 
 # Note to devs, line breaks should be at column 80
 ###############################################################################
@@ -276,14 +276,6 @@ MapUpdate.Threads = 1
 ###############################################################################
 # SERVER LOGGING
 #
-#    LogSQL
-#        Enable logging of SQL commands from in game
-#         All commands are written to a file: YYYY-MM-DD_logSQL.sql
-#         If a new day starts (00:00:00) then a new file is created
-#         the old file will not be deleted.
-#        Default: 1 - Write SQL code to logfile
-#                 0 - Do not log
-#
 #    PidFile
 #        World daemon PID file
 #        Default: ""             - do not create PID file
@@ -298,8 +290,8 @@ MapUpdate.Threads = 1
 #        CHAR = 2048, REMOTE = 4096, MAP = 8192, VMAP = 16384
 #        MMAP = 32768, NETWORK = 65536
 #        Example: I want to see basic output and errors:
-#                 STRING + BASIC + ERROR + ERROR_DB =
-#                 1      + 2     + 16    + 32       = 51 
+#                 STRING + BASIC + ERROR + ERROR_DB + SQL =
+#                 1      + 2     + 16    + 32       + 64  = 115 
 #        Default: 51
 #
 #    WorldLogFile
@@ -319,7 +311,7 @@ MapUpdate.Threads = 1
 #
 #    LogTimestamp
 #        Logfile with timestamp of server start in name
-#         in form Logname_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
+#         in form Logname_YYYY-MM-DD.Ext for Logname.Ext
 #        Default: 0 - no timestamp in name
 #                 1 - add timestamp in name
 #
@@ -338,7 +330,7 @@ MapUpdate.Threads = 1
 #
 #    CharLogTimestamp
 #        Logfile with timestamp of server start in name
-#         in form Logname_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
+#         in form Logname_YYYY-MM-DD.Ext for Logname.Ext
 #        Default: 0 - no timestamp in name
 #                 1 - add timestamp in name
 #
@@ -349,7 +341,7 @@ MapUpdate.Threads = 1
 #
 #    GmLogTimestamp
 #        GM Logfile with timestamp of server start in name
-#         in form Logname_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
+#         in form Logname_YYYY-MM-DD.Ext for Logname.Ext
 #        Default: 0 - no timestamp in name
 #                 1 - add timestamp in name
 #
@@ -358,7 +350,7 @@ MapUpdate.Threads = 1
 #         (Note: logs not created if GmLogFile not set)
 #        Default: 0 - add gm log data to single log file
 #                 1 - add gm log data to account specific log files with name
-#                     in form Logname_#ID_YYYY-MM-DD_HH-MM-SS.Ext
+#                     in form Logname_#ID_YYYY-MM-DD.Ext
 #                     or form Logname_#ID.Ext
 #
 #    RaLogFile
@@ -400,6 +392,18 @@ MapUpdate.Threads = 1
 #        Log level of DB logging.
 #        This is a bitmask. See LogMask above for details.
 #        Default: 0 - disabled
+#
+#    LogSQLFilename
+#        File where to log queries that alter world database.
+#        Beware - you need to have correct LogMask in order
+#        for this option to take any effect!
+#        Default: "logSQL.sql"
+#
+#    LogSQLTimestamp
+#        Whether to add date to log file's name.
+#        Logname.log becomes Logname_YYYY-MM-DD.log
+#        Default: 1 - on
+#                 0 - off
 #
 #    ChatLogs.Channel
 #        Enable logging chatting in custom channels.
@@ -443,15 +447,14 @@ MapUpdate.Threads = 1
 #
 #    ChatLogTimestamp
 #        Chat Logfile with timestamp of server start in name
-#         in form Logname_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
+#        in form Logname_YYYY-MM-DD.Ext for Logname.Ext
 #        Default: 0 - no timestamp in name
 #                 1 - add timestamp in name
 #
 ###############################################################################
 
-LogSQL = 1
 PidFile = ""
-LogMask = 51
+LogMask = 115
 LogFile = "Server.log"
 ChatLogFile = "chat.log"
 LogTimestamp = 0
@@ -467,6 +470,8 @@ ArenaLogFile = "arena.log"
 ArenaLogExtendedInfo = 0
 LogColors = "0 6 4 3 1 1 2 7 5 0 4 0 1 3 2 4 0"
 DBLogMask = 0
+LogSQLFilename = "logSQL.sql"
+LogSQLTimestamp = 1
 ChatLogs.Channel      = 0
 ChatLogs.SysChan      = 0
 ChatLogs.Whisper      = 0

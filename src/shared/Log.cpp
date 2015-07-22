@@ -97,7 +97,7 @@ void Log::Initialize()
         if (!m_logFiles[i])
             m_logFiles[i] = logfile;
 
-    InitColors(sConfig.GetStringDefault("LogColors", ""));
+    InitColors(sConfig.GetStringDefault("LogColors", "0 6 4 3 1 1 2 7 5 0 4 0 1 3 2 4 0"));
 
     m_gmlog_per_account = sConfig.GetBoolDefault("GmLogPerAccount", false);
     if (!m_gmlog_per_account)
@@ -137,6 +137,7 @@ void Log::Initialize()
     m_logFiles[LOG_TYPE_ARENA]    = openLogFile("ArenaLogFile", NULL, "ab");
     m_logFiles[LOG_TYPE_WARDEN]   = openLogFile("Warden.LogFile", NULL, "ab");
     m_logFiles[LOG_TYPE_NETWORK]  = openLogFile("WorldLogFile", NULL, "ab");
+    m_logFiles[LOG_TYPE_SQL]      = openLogFile("LogSQLFilename", "LogSQLTimestamp", "ab");
 
     m_logMask = sConfig.GetIntDefault("LogMask", 51);
     m_logMaskDatabase = sConfig.GetIntDefault("DBLogMask", 0);
@@ -369,11 +370,8 @@ std::string Log::GetTimestampStr()
     //       YYYY   year
     //       MM     month (2 digits 01-12)
     //       DD     day (2 digits 01-31)
-    //       HH     hour (2 digits 00-23)
-    //       MM     minutes (2 digits 00-59)
-    //       SS     seconds (2 digits 00-59)
     char buf[20];
-    snprintf(buf, 20, "%04d-%02d-%02d_%02d-%02d-%02d", aTm->tm_year + 1900, aTm->tm_mon + 1, aTm->tm_mday, aTm->tm_hour, aTm->tm_min, aTm->tm_sec);
+    snprintf(buf, 20, "%04d-%02d-%02d", aTm->tm_year + 1900, aTm->tm_mon + 1, aTm->tm_mday);
     return std::string(buf);
 }
 
@@ -495,10 +493,10 @@ void Log::outCommand(uint64 account, const char* str, ...)
     else
         file = m_logFiles[LOG_TYPE_COMMAND];
 
-        va_list ap;
+    va_list ap;
     va_start(ap, str);
     DoLog(LOG_TYPE_COMMAND, true, "CMD", str, ap, file);
-        va_end(ap);
+    va_end(ap);
 }
 
 void Log::outCharDump(const char* str, uint32 account_id, uint32 guid, const char* name)

@@ -3425,8 +3425,10 @@ bool Unit::AddAura(Aura* Aur)
         for (AuraMap::iterator i2 = m_Auras.lower_bound(spair); i2 != m_Auras.upper_bound(spair);)
         {
             Aura* aur2 = i2->second;
-            if (aur2 && !stackModified && aur2->GetId() == Aur->GetId())
+            if (aur2 && !stackModified)
             {
+                ASSERT(aur2->GetId() == Aur->GetId());
+
                 // @todo: fix this hack
                 // Allow mongoose proc from different weapons... this should be corrected to allow multiple
                 // auras triggered by different enchanted items this is not possible currently since we only have
@@ -3442,6 +3444,11 @@ bool Unit::AddAura(Aura* Aur)
                     if (allow)
                         break;
                 }
+
+                // Not the same caster - might allow stacking - based on spell_group and spell_group_stack_rules tables
+                if (Aur->GetCasterGUID() != aur2->GetCasterGUID())
+                     if (!sSpellMgr.IsNoStackSpellDueToSpell(Aur->GetId(), aur2->GetId(), false))
+                         break;
 
                 // Non stackable and capped auras do not allow stacking
                 if (!(aurSpellInfo->StackAmount && uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount))

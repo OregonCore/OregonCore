@@ -126,7 +126,7 @@ class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Th
         void outDB( LogTypes type, const char* str );
         void outString()
         {
-            outString("\n");
+            outString("");
         }
         void outDebugInLine(const char* fmt, ...) ATTR_PRINTF(2, 3);
         void outFatal( const char* err, ... )                  ATTR_PRINTF(2, 3) ATTR_NORETURN;

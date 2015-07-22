@@ -26,11 +26,13 @@
 #include <queue>
 #include "Utilities/Callback.h"
 #include "QueryResult.h"
+#include "Database.h"
 
 // BASE
 
 class Database;
 class SqlDelayThread;
+struct PreparedStatement;
 
 class SqlOperation
 {
@@ -59,22 +61,81 @@ class SqlStatement : public SqlOperation
         void Execute(Database* db);
 };
 
-class SqlTransaction : public SqlOperation
+class SqlPreparedStatement : public SqlOperation
 {
     private:
-        std::queue<const char*> m_queue;
-        ACE_Thread_Mutex m_Mutex;
+        PreparedStatement* m_stmt;
+        PreparedValues m_values;
     public:
-        SqlTransaction() {}
+        SqlPreparedStatement(PreparedStatement* stmt, PreparedValues& values) : m_stmt(stmt), m_values(values) {}
+
+        void Execute(Database* db)
+        {
+            db->DirectExecute(m_stmt, m_values, NULL);
+        }
+};
+
+class SqlTransaction : public SqlOperation
+{
+    protected:
+        friend class Database;
+        struct QueuedItem
+        {
+            union
+            {
+                char* sql;
+                struct
+                {
+                    PreparedStatement* stmt;
+                    PreparedValues* values;
+                };
+            };
+
+            bool isStmt;
+        };
+
+        std::queue<QueuedItem> queue;
+        ACE_Thread_Mutex mutex;
+    public:
+        ~SqlTransaction()
+        {
+            while (!queue.empty())
+            {
+                QueuedItem item = queue.front();
+                if (!item.isStmt)
+                    free (item.sql);
+                else
+                    delete item.values;
+                queue.pop();
+            }
+        }
+
         void DelayExecute(const char* sql)
         {
-            m_Mutex.acquire();
-            char* _sql = strdup(sql);
-            if (_sql)
-                m_queue.push(_sql);
-            m_Mutex.release();
+            QueuedItem item;
+            item.sql = strdup(sql);
+            item.isStmt = false;
+
+            mutex.acquire();
+            queue.push(item);
+            mutex.release();
         }
-        void Execute(Database* db);
+        void DelayExecute(PreparedStatement* stmt, PreparedValues& values)
+        {
+            QueuedItem item;
+            item.stmt = stmt;
+            item.values = new PreparedValues(values.size());
+            *item.values = values;
+            item.isStmt = true;
+
+            mutex.acquire();
+            queue.push(item);
+            mutex.release();
+        }
+        void Execute(Database* db)
+        {
+            db->ExecuteTransaction(this);
+        }
 };
 
 // ASYNC QUERIES

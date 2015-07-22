@@ -1560,6 +1560,8 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
             return true;
         if (sameCaster && stackRule == SPELL_GROUP_STACK_RULE_EXCLUSIVE_FROM_SAME_CASTER)
             return true;
+        if (stackRule != SPELL_GROUP_STACK_RULE_DEFAULT)
+            return false;
     }
 
     if (spellInfo_1->SpellFamilyName != spellInfo_2->SpellFamilyName)
@@ -1618,6 +1620,51 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
             return false; // need itemtype check? need an example to add that check
 
     return true;
+}
+
+SpellGroupStackRule SpellMgr::CheckSpellGroupStackRules(uint32 spellid_1, uint32 spellid_2) const
+{
+    spellid_1 = GetFirstSpellInChain(spellid_1);
+    spellid_2 = GetFirstSpellInChain(spellid_2);
+    if (spellid_1 == spellid_2)
+        return SPELL_GROUP_STACK_RULE_DEFAULT;
+    // find SpellGroups which are common for both spells
+    SpellSpellGroupMapBounds spellGroup1 = GetSpellSpellGroupMapBounds(spellid_1);
+    std::set<SpellGroup> groups;
+    for (SpellSpellGroupMap::const_iterator itr = spellGroup1.first; itr != spellGroup1.second; ++itr)
+    {
+        if (IsSpellMemberOfSpellGroup(spellid_2, itr->second))
+        {
+            bool add = true;
+            SpellGroupSpellMapBounds groupSpell = GetSpellGroupSpellMapBounds(itr->second);
+            for (SpellGroupSpellMap::const_iterator itr2 = groupSpell.first; itr2 != groupSpell.second; ++itr2)
+            {
+                if (itr2->second < 0)
+                {
+                    SpellGroup currGroup = (SpellGroup)abs(itr2->second);
+                    if (IsSpellMemberOfSpellGroup(spellid_1, currGroup) && IsSpellMemberOfSpellGroup(spellid_2, currGroup))
+                    {
+                        add = false;
+                        break;
+                    }
+                }
+            }
+            if (add)
+                groups.insert(itr->second);
+        }
+    }
+
+    SpellGroupStackRule rule = SPELL_GROUP_STACK_RULE_DEFAULT;
+
+    for (std::set<SpellGroup>::iterator itr = groups.begin(); itr!= groups.end(); ++itr)
+    {
+        SpellGroupStackMap::const_iterator found = mSpellGroupStack.find(*itr);
+        if (found != mSpellGroupStack.end())
+            rule = found->second;
+        if (rule)
+            break;
+    }
+    return rule;
 }
 
 bool SpellMgr::IsProfessionSpell(uint32 spellId)

@@ -86,7 +86,7 @@ class UnixDebugger
             {
                 return line;
             }
-            const time_t GetModificationTime() const
+            time_t GetModificationTime() const
             {
                 return mtime;
             }

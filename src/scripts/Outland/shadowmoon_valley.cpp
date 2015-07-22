@@ -39,6 +39,8 @@ npc_lord_illidan_stormrage
 go_crystal_prison
 npc_enraged_spirit
 npc_jovaan
+npc_azaloth
+npc_sunfurywarlock
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1976,6 +1978,139 @@ bool GossipSelect_npc_grand_commander_ruusk(Player* player, Creature* _Creature,
     return true;
 }
 
+/*######
+## npc_azaloth
+######*/
+
+enum Azaloth
+{
+    // NPCs
+    NPC_SUNFURY_WARLOCK     = 21503,
+    NPC_AZALOTH             = 21506,
+    NPC_AZALOTH_CREDIT      = 21892,
+
+    // Spells
+    SPELL_UNBANISH_AZALOTH  = 37834,
+    SPELL_BANISH            = 37833,
+    SPELL_SPELLBIND_AZALOTH = 38722,
+    SPELL_AZALOTH_CLEAVE    = 40504,
+    SPELL_CRIPPLE           = 11443,
+    SPELL_RAIN_OF_FIRE      = 38741,
+    SPELL_WARSTOMP          = 38750
+};
+
+struct npc_azalothAI : public ScriptedAI
+{
+    npc_azalothAI(Creature* c) : ScriptedAI(c) {}
+
+    uint32 cleaveTimer;
+    uint32 crippleTimer;
+    uint32 rainOfFireTimer;
+    uint32 warstompTimer;
+    uint64 banishTimer;
+
+    void Reset()
+    {
+        cleaveTimer     = 6000;
+        crippleTimer    = 18000;
+        rainOfFireTimer = 15000;
+        warstompTimer   = 10000;
+        banishTimer     = 60000;
+    }
+
+    void SpellHit(Unit* caster, const SpellEntry* spell)
+    {
+        if (caster->GetTypeId() == TYPEID_PLAYER && spell->Id == SPELL_UNBANISH_AZALOTH)
+        {
+            me->RemoveAllAuras();
+            caster->ToPlayer()->KilledMonsterCredit(NPC_AZALOTH_CREDIT, 0);
+            banishTimer = 60000;
+        }
+    }
+    void UpdateAI(const uint32 diff)
+    {
+        if (banishTimer < diff)
+        {
+            DoCast(SPELL_BANISH);
+            banishTimer = 60000;
+        }
+
+        if (!UpdateVictim())
+        {
+            banishTimer -= diff;
+            return;
+        }
+
+        if (cleaveTimer < diff)
+        {
+            DoCastVictim(SPELL_CLEAVE);
+            cleaveTimer = 6000;
+        }
+        else
+            cleaveTimer -= diff;
+
+        if (crippleTimer < diff)
+        {
+            DoCastVictim(SPELL_CRIPPLE);
+            crippleTimer = 40000;
+        }
+        else
+            crippleTimer -= diff;
+
+        if (rainOfFireTimer < diff)
+        {
+            DoCastVictim(SPELL_RAIN_OF_FIRE);
+            rainOfFireTimer = 40000;
+        }
+        else
+            rainOfFireTimer -= diff;
+
+        if (warstompTimer < diff)
+        {
+            DoCastVictim(SPELL_WARSTOMP);
+            warstompTimer = 40000;
+        }
+        else
+            warstompTimer -= diff;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_azaloth(Creature* creature)
+{
+    return new npc_azalothAI(creature);
+}
+
+/*######
+## npc_sunfurywarlock
+######*/
+
+struct npc_sunfurywarlockAI : public ScriptedAI
+{
+    npc_sunfurywarlockAI(Creature* c) : ScriptedAI(c) {}
+
+    void Reset() {}
+
+    void UpdateAI(const uint32 diff)
+    {
+        // Cast Visual Channel OOC
+        if (Unit* azaloth = me->FindNearestCreature(NPC_AZALOTH, 50.0f))
+            if (azaloth->HasAura(SPELL_BANISH) && !me->IsInCombat())
+                DoCast(azaloth, SPELL_SPELLBIND_AZALOTH);
+
+        if (!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_sunfurywarlock(Creature* creature)
+{
+    return new npc_sunfurywarlockAI(creature);
+}
+
 void AddSC_shadowmoon_valley()
 {
     Script* newscript;
@@ -2071,6 +2206,16 @@ void AddSC_shadowmoon_valley()
     newscript->Name = "npc_grand_commander_ruusk";
     newscript->pGossipHello =  &GossipHello_npc_grand_commander_ruusk;
     newscript->pGossipSelect = &GossipSelect_npc_grand_commander_ruusk;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_azaloth";
+    newscript->GetAI = &GetAI_npc_azaloth;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_sunfurywarlock";
+    newscript->GetAI = &GetAI_npc_sunfurywarlock;
     newscript->RegisterSelf();
 }
 

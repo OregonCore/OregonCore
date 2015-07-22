@@ -898,49 +898,6 @@ class SpellMgr
             }
         }
 
-        SpellGroupStackRule CheckSpellGroupStackRules(uint32 spellid_1, uint32 spellid_2) const
-        {
-            spellid_1 = GetFirstSpellInChain(spellid_1);
-            spellid_2 = GetFirstSpellInChain(spellid_2);
-            // find SpellGroups which are common for both spells
-            SpellSpellGroupMapBounds spellGroup1 = GetSpellSpellGroupMapBounds(spellid_1);
-            std::set<SpellGroup> groups;
-            for ( SpellSpellGroupMap::const_iterator itr = spellGroup1.first; itr != spellGroup1.second ; ++itr)
-            {
-                if (IsSpellMemberOfSpellGroup(spellid_2, itr->second))
-                {
-                    bool add = true;
-                    SpellGroupSpellMapBounds groupSpell = GetSpellGroupSpellMapBounds(itr->second);
-                    for ( SpellGroupSpellMap::const_iterator itr2 = groupSpell.first; itr2 != groupSpell.second ; ++itr2)
-                    {
-                        if (itr2->second < 0)
-                        {
-                            SpellGroup currGroup = (SpellGroup)abs(itr2->second);
-                            if (IsSpellMemberOfSpellGroup(spellid_1, currGroup) && IsSpellMemberOfSpellGroup(spellid_2, currGroup))
-                            {
-                                add = false;
-                                break;
-                            }
-                        }
-                    }
-                    if (add)
-                        groups.insert(itr->second);
-                }
-            }
-
-            SpellGroupStackRule rule = SPELL_GROUP_STACK_RULE_DEFAULT;
-
-            for (std::set<SpellGroup>::iterator itr = groups.begin() ; itr != groups.end() ; ++itr)
-            {
-                SpellGroupStackMap::const_iterator found = mSpellGroupStack.find(*itr);
-                if (found != mSpellGroupStack.end())
-                    rule = found->second;
-                if (rule)
-                    break;
-            }
-            return rule;
-        }
-
         SpellThreatEntry const* GetSpellThreatEntry(uint32 spellID) const
         {
             SpellThreatMap::const_iterator itr = mSpellThreatMap.find(spellID);
@@ -1103,6 +1060,9 @@ class SpellMgr
 
         // Spell correctess for client using
         static bool IsSpellValid(SpellEntry const* spellInfo, Player* pl = NULL, bool msg = true);
+
+        // Spell Group Stack Rules table
+        SpellGroupStackRule CheckSpellGroupStackRules(uint32 spellInfo1, uint32 spellInfo2) const;
 
         SkillLineAbilityMap::const_iterator GetBeginSkillLineAbilityMap(uint32 spell_id) const
         {
