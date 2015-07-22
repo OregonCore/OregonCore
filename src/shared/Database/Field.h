@@ -108,7 +108,7 @@ class Field
             return *reinterpret_cast<ctype*> (mRawValue);                                                           \
         }
 
-        GetIntegerDataImpl(GetFloat,  MYSQL_TYPE_FLOAT,      float,  strtof(mValue,   NULL))
+        GetIntegerDataImpl(GetFloat,  MYSQL_TYPE_FLOAT,      float,  STRTOF(mValue,   NULL))
         GetIntegerDataImpl(GetDouble, MYSQL_TYPE_DOUBLE,     double, strtod(mValue,   NULL))
         GetIntegerDataImpl(GetInt8,   MYSQL_TYPE_TINY,       int8,   strtol(mValue,   NULL, 10))
         GetIntegerDataImpl(GetInt16,  MYSQL_TYPE_SHORT,      int16,  strtol(mValue,   NULL, 10))

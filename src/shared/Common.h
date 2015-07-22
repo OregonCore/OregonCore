@@ -135,6 +135,7 @@
 #define strtoll _strtoi64
 #define fileno _fileno
 #define dup2 _dup2
+#define STRTOF strtod
 
 #else
 
@@ -142,6 +143,7 @@
 #define strnicmp strncasecmp
 #define I32FMT "%08X"
 #define I64FMT "%016llX"
+#define STRTOF strtof
 
 #endif
 
