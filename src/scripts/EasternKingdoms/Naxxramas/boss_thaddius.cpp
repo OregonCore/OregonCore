@@ -22,7 +22,8 @@ SDComment: Merge Feugen & Stalagg with this script
 SDCategory: Naxxramas
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 // move it later to header file used by whole instance
 enum eEncounters

@@ -29,7 +29,8 @@ npc_melizza_brimbuzzle
 go_demon_portal
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 enum eDyingKodo

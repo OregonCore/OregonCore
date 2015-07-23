@@ -22,7 +22,8 @@ SDComment: Unknown correct Thrash timer. Threat not resetting for entire raid up
 SDCategory: Zul'Gurub
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "zulgurub.h"
 
 enum Texts

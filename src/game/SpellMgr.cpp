@@ -1622,6 +1622,55 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
     return true;
 }
 
+SpellSpellGroupMapBounds SpellMgr::GetSpellSpellGroupMapBounds(uint32 spell_id) const
+{
+    spell_id = GetFirstSpellInChain(spell_id);
+    return mSpellSpellGroup.equal_range(spell_id);
+}
+
+bool SpellMgr::IsSpellMemberOfSpellGroup(uint32 spellid, SpellGroup groupid) const
+{
+    SpellSpellGroupMapBounds spellGroup = GetSpellSpellGroupMapBounds(spellid);
+    for (SpellSpellGroupMap::const_iterator itr = spellGroup.first; itr != spellGroup.second; ++itr)
+    {
+        if (itr->second == groupid)
+            return true;
+    }
+    return false;
+}
+
+SpellGroupSpellMapBounds SpellMgr::GetSpellGroupSpellMapBounds(SpellGroup group_id) const
+{
+    return mSpellGroupSpell.equal_range(group_id);
+}
+
+void SpellMgr::GetSetOfSpellsInSpellGroup(SpellGroup group_id, std::set<uint32>& foundSpells) const
+{
+    std::set<SpellGroup> usedGroups;
+    GetSetOfSpellsInSpellGroup(group_id, foundSpells, usedGroups);
+}
+
+void SpellMgr::GetSetOfSpellsInSpellGroup(SpellGroup group_id, std::set<uint32>& foundSpells, std::set<SpellGroup>& usedGroups) const
+{
+    if (usedGroups.find(group_id) != usedGroups.end())
+        return;
+    usedGroups.insert(group_id);
+
+    SpellGroupSpellMapBounds groupSpell = GetSpellGroupSpellMapBounds(group_id);
+    for (SpellGroupSpellMap::const_iterator itr = groupSpell.first; itr != groupSpell.second; ++itr)
+    {
+        if (itr->second < 0)
+        {
+            SpellGroup currGroup = (SpellGroup)abs(itr->second);
+            GetSetOfSpellsInSpellGroup(currGroup, foundSpells, usedGroups);
+        }
+        else
+        {
+            foundSpells.insert(itr->second);
+        }
+    }
+}
+
 SpellGroupStackRule SpellMgr::CheckSpellGroupStackRules(uint32 spellid_1, uint32 spellid_2) const
 {
     spellid_1 = GetFirstSpellInChain(spellid_1);

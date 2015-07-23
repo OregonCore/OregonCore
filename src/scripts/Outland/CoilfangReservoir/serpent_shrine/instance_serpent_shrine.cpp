@@ -22,7 +22,8 @@ SDComment: Instance Data Scripts and functions to acquire mobs and set encounter
 SDCategory: Coilfang Resevoir, Serpent Shrine Cavern
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "serpent_shrine.h"
 
 #define MAX_ENCOUNTER 6

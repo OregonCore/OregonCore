@@ -24,7 +24,8 @@ SQLUpdate:
 
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"
 #include "zulaman.h"

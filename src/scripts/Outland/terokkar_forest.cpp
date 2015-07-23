@@ -32,7 +32,8 @@ npc_isla_starmane
 npc_skyguard_prisoner
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 /*######

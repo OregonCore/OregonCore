@@ -15,9 +15,13 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ScriptPCH.h"
+#include "ScriptedCreature.h"
 #include "Item.h"
 #include "Spell.h"
+#include "GridNotifiers.h"
+#include "GridNotifiersImpl.h"
+#include "Cell.h"
+#include "CellImpl.h"
 #include "ObjectMgr.h"
 #include "TemporarySummon.h"
 #include "MoveSplineInit.h"

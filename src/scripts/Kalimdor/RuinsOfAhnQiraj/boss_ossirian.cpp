@@ -22,7 +22,8 @@ SDComment: Place holder
 SDCategory: Ruins of Ahn'Qiraj
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define SAY_SURPREME2   -1509019
 #define SAY_SURPREME3   -1509020

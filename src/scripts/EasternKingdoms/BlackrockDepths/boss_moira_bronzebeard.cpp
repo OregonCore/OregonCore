@@ -22,7 +22,8 @@ SDComment: Healing of Emperor NYI
 SDCategory: Blackrock Depths
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 enum Spells
 {

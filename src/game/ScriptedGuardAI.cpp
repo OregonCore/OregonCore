@@ -22,7 +22,8 @@ SDComment:
 SDCategory: Guards
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedGuardAI.h"
 
 // **** This script is for use within every single guard to save coding time ****

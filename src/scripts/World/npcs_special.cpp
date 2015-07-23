@@ -39,7 +39,8 @@ npc_force_of_nature_treants 100%    AI for force of nature (druid spell)
 mob_inferno_infernal        100%    AI for Inferno (warlock spell)
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 /*######

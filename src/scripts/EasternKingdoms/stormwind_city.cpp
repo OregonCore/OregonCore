@@ -35,7 +35,8 @@ npc_marzon_silent_blade
 npc_stormwind_royal_guard
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 /*######

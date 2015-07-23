@@ -22,7 +22,8 @@ SDComment: some small things to research, correct timers, player vs player chess
 SDCategory: Karazhan
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "karazhan.h"
 
 //this enum let you custom configure your chess script

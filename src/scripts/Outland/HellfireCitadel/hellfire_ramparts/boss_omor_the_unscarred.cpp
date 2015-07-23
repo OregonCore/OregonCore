@@ -22,7 +22,8 @@ SDComment:
 SDCategory: Hellfire Citadel, Hellfire Ramparts
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "hellfire_ramparts.h"
 
 #define SAY_AGGRO_1                 -1543009

@@ -22,7 +22,8 @@ SDComment:
 SDCategory: Scholomance
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 struct boss_death_knight_darkreaverAI : public ScriptedAI
 {

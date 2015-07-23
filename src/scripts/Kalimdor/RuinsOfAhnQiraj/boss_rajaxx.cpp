@@ -22,7 +22,8 @@ SDComment: Place Holder
 SDCategory: Ruins of Ahn'Qiraj
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define SAY_ANDOROV_INTRO   -1509003
 #define SAY_ANDOROV_ATTACK  -1509004

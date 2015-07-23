@@ -27,7 +27,8 @@ boss_twilight_corrupter
 at_twilight_grove
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*#####
 ## Quest: The Nightmare's Corruption

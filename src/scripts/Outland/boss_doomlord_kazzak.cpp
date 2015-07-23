@@ -22,7 +22,8 @@ SDComment: Using incorrect spell for Mark of Kazzak
 SDCategory: Hellfire Peninsula
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 enum eKazzak
 {

@@ -22,7 +22,8 @@ SDComment:
 SDCategory: NPCs
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "GameEventMgr.h"
 
 #define HALLOWEEN_EVENTID       12

@@ -29,7 +29,8 @@ npc_thrall_warchief
 npc_eitrigg
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*######
 ## npc_neeru_fireblade

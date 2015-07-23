@@ -21,7 +21,8 @@ SD%Complete:
 SDComment:
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 enum Yells
 {

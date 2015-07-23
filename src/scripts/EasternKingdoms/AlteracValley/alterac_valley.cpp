@@ -22,7 +22,8 @@ SDComment: Returns AV marshals to inside the building
 SDCategory: Bosses
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 enum Spells
 {

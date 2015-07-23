@@ -22,7 +22,8 @@ SDComment: Combat animation after resurrection is missing. Same issue with the M
 SDCategory: Zul'Gurub
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "zulgurub.h"
 
 enum Texts

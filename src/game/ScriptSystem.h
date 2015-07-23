@@ -18,6 +18,8 @@
 #ifndef SC_SYSTEM_H
 #define SC_SYSTEM_H
 
+#include "ScriptMgr.h"
+
 #define TEXT_SOURCE_RANGE -1000000                          //the amount of entries each text source has available
 
 //@todo find better namings and definitions.

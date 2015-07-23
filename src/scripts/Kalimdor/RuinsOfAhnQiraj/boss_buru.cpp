@@ -22,7 +22,8 @@ SDComment: Place Holder
 SDCategory: Ruins of Ahn'Qiraj
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define EMOTE_TARGET        -1509002
 

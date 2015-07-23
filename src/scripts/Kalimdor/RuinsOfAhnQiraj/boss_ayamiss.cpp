@@ -22,7 +22,8 @@ SDComment: VERIFY SCRIPT
 SDCategory: Ruins of Ahn'Qiraj
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*
 To do:

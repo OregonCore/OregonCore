@@ -28,7 +28,8 @@ npc_torek
 npc_ruul_snowhoof
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 /*####

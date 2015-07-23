@@ -22,7 +22,8 @@ SDName: Boss_Shade_of_Aran
 SDCategory: Karazhan
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedSimpleAI.h"
 #include "karazhan.h"
 #include "GameObject.h"

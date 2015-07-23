@@ -27,7 +27,8 @@ npc_deathly_usher
 npc_fallen_hero_of_horde
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*######
 ## npc_deathly_usher

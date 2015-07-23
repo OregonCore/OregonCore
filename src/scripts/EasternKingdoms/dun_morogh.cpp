@@ -26,7 +26,8 @@ EndScriptData */
 npc_narm_faulk
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*######
 ## npc_narm_faulk

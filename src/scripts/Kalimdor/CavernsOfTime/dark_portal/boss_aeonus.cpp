@@ -22,7 +22,8 @@ SDComment: Some spells not implemented
 SDCategory: Caverns of Time, The Dark Portal
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "dark_portal.h"
 
 #define SAY_ENTER         -1269012

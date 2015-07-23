@@ -22,7 +22,8 @@ SDComment:
 SDCategory: Naxxramas
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define SAY_GREET           -1533000
 #define SAY_AGGRO1          -1533001

@@ -22,7 +22,8 @@ SDComment:Summon event is missing.
 SDCategory: Auchindoun, Sethekk Halls
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "sethekk_halls.h"
 
 #define SAY_INTRO1          -1900169

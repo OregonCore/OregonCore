@@ -22,7 +22,8 @@ SDComment: Missing Balcony stage
 SDCategory: Naxxramas
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define SAY_AGGRO1              -1533075
 #define SAY_AGGRO2              -1533076

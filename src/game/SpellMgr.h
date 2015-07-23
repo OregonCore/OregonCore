@@ -852,52 +852,6 @@ class SpellMgr
             return false;
         }
 
-        SpellSpellGroupMapBounds GetSpellSpellGroupMapBounds(uint32 spell_id) const
-        {
-            spell_id = GetFirstSpellInChain(spell_id);
-            return SpellSpellGroupMapBounds(mSpellSpellGroup.lower_bound(spell_id), mSpellSpellGroup.upper_bound(spell_id));
-        }
-        uint32 IsSpellMemberOfSpellGroup(uint32 spellid, SpellGroup groupid) const
-        {
-            SpellSpellGroupMapBounds spellGroup = GetSpellSpellGroupMapBounds(spellid);
-            for ( SpellSpellGroupMap::const_iterator itr = spellGroup.first; itr != spellGroup.second ; ++itr)
-            {
-                if (itr->second == groupid)
-                    return true;
-            }
-            return false;
-        }
-
-        SpellGroupSpellMapBounds GetSpellGroupSpellMapBounds(SpellGroup group_id) const
-        {
-            return SpellGroupSpellMapBounds(mSpellGroupSpell.lower_bound(group_id), mSpellGroupSpell.upper_bound(group_id));
-        }
-
-        void GetSetOfSpellsInSpellGroup(SpellGroup group_id, std::set<uint32>& foundSpells) const
-        {
-            std::set<SpellGroup> usedGroups;
-            GetSetOfSpellsInSpellGroup(group_id, foundSpells, usedGroups);
-        }
-
-        void GetSetOfSpellsInSpellGroup(SpellGroup group_id, std::set<uint32>& foundSpells, std::set<SpellGroup>& usedGroups) const
-        {
-            if (usedGroups.find(group_id) != usedGroups.end())
-                return;
-            usedGroups.insert(group_id);
-
-            SpellGroupSpellMapBounds groupSpell = GetSpellGroupSpellMapBounds(group_id);
-            for ( SpellGroupSpellMap::const_iterator itr = groupSpell.first; itr != groupSpell.second ; ++itr)
-            {
-                if (itr->second < 0)
-                {
-                    SpellGroup currGroup = (SpellGroup)abs(itr->second);
-                    GetSetOfSpellsInSpellGroup(currGroup, foundSpells, usedGroups);
-                }
-                else
-                    foundSpells.insert(itr->second);
-            }
-        }
-
         SpellThreatEntry const* GetSpellThreatEntry(uint32 spellID) const
         {
             SpellThreatMap::const_iterator itr = mSpellThreatMap.find(spellID);
@@ -1060,6 +1014,14 @@ class SpellMgr
 
         // Spell correctess for client using
         static bool IsSpellValid(SpellEntry const* spellInfo, Player* pl = NULL, bool msg = true);
+
+        // Spell Groups table
+        SpellSpellGroupMapBounds GetSpellSpellGroupMapBounds(uint32 spell_id) const;
+        bool IsSpellMemberOfSpellGroup(uint32 spellid, SpellGroup groupid) const;
+
+        SpellGroupSpellMapBounds GetSpellGroupSpellMapBounds(SpellGroup group_id) const;
+        void GetSetOfSpellsInSpellGroup(SpellGroup group_id, std::set<uint32>& foundSpells) const;
+        void GetSetOfSpellsInSpellGroup(SpellGroup group_id, std::set<uint32>& foundSpells, std::set<SpellGroup>& usedGroups) const;
 
         // Spell Group Stack Rules table
         SpellGroupStackRule CheckSpellGroupStackRules(uint32 spellInfo1, uint32 spellInfo2) const;

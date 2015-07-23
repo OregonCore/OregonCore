@@ -26,7 +26,8 @@ EndScriptData */
 npcs_riverbreeze_and_silversky
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*######
 ## npcs_riverbreeze_and_silversky

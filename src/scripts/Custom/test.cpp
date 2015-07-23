@@ -22,7 +22,8 @@ SDComment: Script used for testing escortAI
 SDCategory: Script Examples
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 #define SAY_WALK        "Hmm a nice day for a walk alright"

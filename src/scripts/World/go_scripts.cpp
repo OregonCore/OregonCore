@@ -43,7 +43,8 @@ go_soulwell
 go_bashir_crystalforge
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*######
 ## go_cat_figurine

@@ -26,7 +26,8 @@ EndScriptData */
 mob_ancient_core_hound
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedSimpleAI.h"
 
 #define SPELL_CONE_OF_FIRE          19630

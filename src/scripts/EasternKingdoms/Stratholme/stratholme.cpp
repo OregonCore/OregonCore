@@ -29,7 +29,8 @@ mob_restless_soul
 mobs_spectral_ghostly_citizen
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "stratholme.h"
 
 /*######

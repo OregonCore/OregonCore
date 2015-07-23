@@ -30,7 +30,8 @@ at_scent_larkorwi               1726,1727,1728,1729,1730,1731,1732,1733,1734,173
 at_ancient_leaf                 3587
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*######
 ## at_coilfang_waterfall

@@ -37,7 +37,8 @@ at_nats_landing
 npc_mottled_drywallow_crocolisk
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 /*######

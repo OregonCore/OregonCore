@@ -22,7 +22,8 @@ SDComment: Intro Dialog and event NYI
 SDCategory: Molten Core
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define SAY_REINFORCEMENTS1         -1409013
 #define SAY_REINFORCEMENTS2         -1409014

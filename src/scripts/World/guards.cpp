@@ -45,7 +45,8 @@ guard_tirisfal
 guard_undercity
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedGuardAI.h"
 
 //script spesific action

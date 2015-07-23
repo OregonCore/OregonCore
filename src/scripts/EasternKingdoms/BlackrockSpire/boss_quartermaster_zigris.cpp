@@ -22,7 +22,8 @@ SDComment: Needs revision
 SDCategory: Blackrock Spire
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define SPELL_SHOOT             16496
 #define SPELL_STUNBOMB          16497

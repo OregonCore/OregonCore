@@ -26,7 +26,8 @@ EndScriptData */
 boss_warchief_kargath_bladefist
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "shattered_halls.h"
 
 #define SAY_AGGRO1                      -1540042

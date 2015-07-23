@@ -28,7 +28,8 @@ npc_lothos_riftwaker
 npc_zamael_lunthistle
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*######
 ## npc_kalaran_windblade

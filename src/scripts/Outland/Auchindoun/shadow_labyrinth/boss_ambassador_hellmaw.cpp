@@ -22,7 +22,8 @@ SDComment: Waypoints after Intro not implemented. Enrage spell missing/not known
 SDCategory: Auchindoun, Shadow Labyrinth
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "shadow_labyrinth.h"
 
 #define SAY_INTRO       -1555000

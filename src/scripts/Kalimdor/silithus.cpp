@@ -31,7 +31,8 @@ npc_anachronos_quest_trigger
 npc_anachronos_the_ancient
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*###
 ## npc_highlord_demitrian

@@ -29,7 +29,8 @@ npc_apprentice_mirveda
 npc_infused_crystal
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 /*######

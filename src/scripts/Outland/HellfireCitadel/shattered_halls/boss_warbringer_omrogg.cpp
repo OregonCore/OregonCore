@@ -27,7 +27,8 @@ mob_omrogg_heads
 boss_warbringer_omrogg
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "shattered_halls.h"
 
 #define ENTRY_LEFT_HEAD             19523

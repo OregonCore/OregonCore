@@ -26,7 +26,8 @@ EndScriptData */
 npc_royal_historian_archesonus
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*######
 ## npc_royal_historian_archesonus

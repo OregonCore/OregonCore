@@ -22,7 +22,8 @@ SDComment: SCRIPT OBSOLETE
 SDCategory: Naxxramas
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 //All horsemen
 #define SPELL_SHIELDWALL           29061

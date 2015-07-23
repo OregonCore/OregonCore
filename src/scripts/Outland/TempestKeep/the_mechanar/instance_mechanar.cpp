@@ -22,7 +22,8 @@ SDComment:
 SDCategory: Mechanar
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "mechanar.h"
 
 #define ENCOUNTERS      1

@@ -22,7 +22,8 @@ SDComment:
 SDCategory: Blackrock Spire
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define SPELL_FIRENOVA                  23462
 #define SPELL_CLEAVE                    20691

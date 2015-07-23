@@ -27,7 +27,8 @@ npc_mountaineer_pebblebitty
 npc_miran
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 /*######

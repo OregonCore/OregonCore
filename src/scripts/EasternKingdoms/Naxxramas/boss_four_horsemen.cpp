@@ -22,7 +22,8 @@ SDComment: Lady Blaumeux, Thane Korthazz, Sir Zeliek, Baron Rivendare (this scri
 SDCategory: Naxxramas
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 //all horsemen
 #define SPELL_SHIELDWALL                29061

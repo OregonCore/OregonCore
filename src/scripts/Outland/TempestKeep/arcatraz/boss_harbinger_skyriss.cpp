@@ -27,7 +27,8 @@ boss_harbinger_skyriss
 boss_harbinger_skyriss_illusion
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "arcatraz.h"
 
 enum Says

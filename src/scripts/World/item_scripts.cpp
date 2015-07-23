@@ -40,7 +40,8 @@ item_yehkinyas_bramble(i10699)      Allow cast spell on vale screecher only and 
 item_inoculating_crystal            Quest Inoculating. Prevent abuse
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "SpellMgr.h"
 #include "Spell.h"
 #include "WorldPacket.h"

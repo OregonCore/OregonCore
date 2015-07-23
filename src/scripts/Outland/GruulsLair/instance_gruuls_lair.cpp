@@ -22,7 +22,8 @@ SDComment:
 SDCategory: Gruul's Lair
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "gruuls_lair.h"
 
 #define ENCOUNTERS 2

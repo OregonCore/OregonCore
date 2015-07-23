@@ -30,7 +30,8 @@ npc_mortog_steamhead
 npc_kayra_longmane
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 #include "ObjectMgr.h"
 

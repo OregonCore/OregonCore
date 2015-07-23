@@ -15,13 +15,14 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ScriptPCH.h"
 #include "Config/Config.h"
 #include "Database/DatabaseEnv.h"
 #include "DBCStores.h"
 #include "ObjectMgr.h"
 #include "ScriptLoader.h"
 #include "ScriptSystem.h"
+#include "GossipDef.h"
+#include "CreatureAI.h"
 
 INSTANTIATE_SINGLETON_1(ScriptMgr);
 

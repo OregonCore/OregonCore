@@ -32,7 +32,8 @@ npc_bloodmaul_brutebane
 npc_light_orb_collector
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*######
 ## mobs_nether_drake

@@ -28,7 +28,8 @@ npc_berthold
 npc_image_of_medivh
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "karazhan.h"
 #include "ScriptedEscortAI.h"
 

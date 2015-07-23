@@ -22,7 +22,8 @@ SDComment: Placeholder
 SDCategory: Naxxramas
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define SAY_SPEECH                  -1533040
 #define SAY_KILL                    -1533041

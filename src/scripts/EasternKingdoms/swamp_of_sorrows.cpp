@@ -30,7 +30,8 @@ EndContentData */
 ##npc_galen_goodward
 #########*/
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 enum eGalen

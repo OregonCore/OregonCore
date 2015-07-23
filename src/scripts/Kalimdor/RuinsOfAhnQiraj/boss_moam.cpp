@@ -22,7 +22,8 @@ SDComment: VERIFY SCRIPT AND SQL
 SDCategory: Ruins of Ahn'Qiraj
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define EMOTE_AGGRO             -1509000
 #define EMOTE_MANA_FULL         -1509001

@@ -28,5 +28,6 @@ Fallout slime 28218
 Mutating Injection 28169
 Enrages 26527*/
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 

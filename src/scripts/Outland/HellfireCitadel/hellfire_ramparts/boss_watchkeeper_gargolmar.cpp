@@ -22,7 +22,8 @@ SDComment: Missing adds to heal him. Should work with ACID.
 SDCategory: Hellfire Citadel, Hellfire Ramparts
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "hellfire_ramparts.h"
 
 #define SAY_TAUNT               -1543000

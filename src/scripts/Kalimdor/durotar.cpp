@@ -26,7 +26,8 @@ EndScriptData */
 npc_lazy_peon
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 /*######
 ## npc_lazy_peon

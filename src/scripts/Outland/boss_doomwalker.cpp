@@ -22,7 +22,8 @@ SDComment:
 SDCategory: Shadowmoon Valley
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 enum eDoomwalker
 {

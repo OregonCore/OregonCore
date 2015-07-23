@@ -30,7 +30,8 @@ npc_clintar_spirit
 npc_clintar_dreamwalker
 EndContentData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 
 /*######

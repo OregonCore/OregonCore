@@ -22,7 +22,8 @@ SDComment: Uncertain how often mother's milk is casted
 SDCategory: Blackrock Spire
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define SPELL_CRYSTALIZE                16104
 #define SPELL_MOTHERSMILK               16468

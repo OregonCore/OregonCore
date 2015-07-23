@@ -30,7 +30,8 @@ update `creature_template` set `npcflag`='1',`ScriptName`='npc_tobias_seecher' w
 update `instance_template` set `script`='instance_blackrock_depths' where `map`='230';
 */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "blackrock_depths.h"
 
 #define TIMER_TOMBOFTHESEVEN    15000

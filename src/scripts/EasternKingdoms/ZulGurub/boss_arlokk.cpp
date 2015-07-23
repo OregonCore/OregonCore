@@ -22,7 +22,8 @@ SDComment: Mark still not causing Panthers to attack a single target.
 SDCategory: Zul'Gurub
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "zulgurub.h"
 
 

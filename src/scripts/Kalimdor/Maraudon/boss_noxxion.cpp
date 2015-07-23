@@ -22,7 +22,8 @@ SDComment:
 SDCategory: Maraudon
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 
 #define SPELL_TOXICVOLLEY           21687
 #define SPELL_UPPERCUT              22916
