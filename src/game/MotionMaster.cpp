@@ -319,6 +319,7 @@ void MotionMaster::MoveFall(float z, uint32 id)
         {
             sLog.outDebug("MotionMaster::MoveFall: unable retrive a proper height at map %u (x: %f, y: %f, z: %f) Z: %f.",
                           i_owner->GetMap()->GetId(), i_owner->GetPositionX(), i_owner->GetPositionX(), i_owner->GetPositionZ(), z);
+            return;
         }
 
         // Abort too if the ground is very near
