@@ -17454,7 +17454,12 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
         pet = GetPet();
 
     if (pet)
+    {
         sLog.outDebug("RemovePet %u, %u, %u", pet->GetEntry(), mode, returnreagent);
+
+        if (pet->m_removed)
+            return;
+    }
 
     if (returnreagent && (pet || m_temporaryUnsummonedPetNumber))
     {
@@ -17533,6 +17538,10 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
 
     if (pet->isControlled())
     {
+        WorldPacket data(SMSG_PET_SPELLS, 8);
+        data << uint64(0);
+        GetSession()->SendPacket(&data);
+
         if (GetGroup())
             SetGroupUpdateFlag(GROUP_UPDATE_PET);
     }
