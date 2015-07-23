@@ -29,6 +29,7 @@ EndContentData */
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 #include "wailing_caverns.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## npc_disciple_of_naralex

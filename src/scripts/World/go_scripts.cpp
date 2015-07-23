@@ -45,6 +45,7 @@ EndContentData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## go_cat_figurine

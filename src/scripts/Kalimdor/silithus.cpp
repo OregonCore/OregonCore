@@ -33,6 +33,7 @@ EndContentData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
 
 /*###
 ## npc_highlord_demitrian

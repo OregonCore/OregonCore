@@ -25,6 +25,7 @@ EndScriptData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "GameEventMgr.h"
+#include "ScriptedGossip.h"
 
 #define HALLOWEEN_EVENTID       12
 #define SPELL_TRICK_OR_TREATED  24755

@@ -32,6 +32,7 @@ EndContentData */
 #include "ScriptedCreature.h"
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## npc_lady_sylvanas_windrunner

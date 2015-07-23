@@ -112,7 +112,7 @@ struct npc_calvin_montagueAI : public ScriptedAI
                 if (Player* pPlayer = Unit::GetPlayer(*me, m_uiPlayerGUID))
                     pPlayer->AreaExploredOrEventHappens(QUEST_590);
 
-                DoCast(me, SPELL_DRINK, true);
+                DoCast(me, SPELL_CALVIN_DRINK, true);
                 ++m_uiPhase;
                 break;
             case 3:

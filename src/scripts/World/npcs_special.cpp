@@ -42,6 +42,10 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
+#include "ScriptedGossip.h"
+#include "ObjectMgr.h"
+#include "World.h"
+#include "WorldPacket.h"
 
 /*######
 ## npc_lunaclaw_spirit

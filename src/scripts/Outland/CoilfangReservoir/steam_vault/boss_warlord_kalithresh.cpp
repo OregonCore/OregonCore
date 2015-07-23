@@ -25,6 +25,9 @@ EndScriptData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "steam_vault.h"
+#include "GridNotifiers.h"
+#include "Cell.h"
+#include "CellImpl.h"
 
 #define SAY_INTRO                   -1545016
 #define SAY_REGEN                   -1545017

@@ -30,6 +30,7 @@ EndContentData */
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 #include "shadowfang_keep.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## npc_shadowfang_prisoner

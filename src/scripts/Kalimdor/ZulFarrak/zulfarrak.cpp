@@ -31,6 +31,7 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "zulfarrak.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## npc_sergeant_bly

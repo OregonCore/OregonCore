@@ -34,6 +34,7 @@ EndContentData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## mobs_nether_drake

@@ -19,6 +19,8 @@
 #define SC_INSTANCE_H
 
 #include "InstanceData.h"
+#include "World.h"
+#include "ObjectMgr.h"
 #include "Map.h"
 
 #define OUT_SAVE_INST_DATA             debug_log("OSCR: Saving Instance Data for Instance %s (Map %d, Instance Id %d)", instance->GetMapName(), instance->GetId(), instance->GetInstanceId())

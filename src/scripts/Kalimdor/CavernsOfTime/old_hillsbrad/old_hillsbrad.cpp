@@ -37,6 +37,7 @@ EndContentData */
 #include "ScriptedCreature.h"
 #include "old_hillsbrad.h"
 #include "ScriptedEscortAI.h"
+#include "ScriptedGossip.h"
 
 enum Quests
 {

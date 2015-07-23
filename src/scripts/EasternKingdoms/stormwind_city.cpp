@@ -38,6 +38,10 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
+#include "ScriptedGossip.h"
+#include "GridNotifiers.h"
+#include "Cell.h"
+#include "CellImpl.h"
 
 /*######
 ## npc_archmage_malin

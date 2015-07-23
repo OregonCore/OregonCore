@@ -30,6 +30,10 @@ EndScriptData */
 #include "Language.h"
 #include "Chat.h"
 #include "Object.h"
+#include "GridNotifiers.h"
+#include "GridNotifiersImpl.h"
+#include "Cell.h"
+#include "CellImpl.h"
 
 #define SPAWN_GARG_GATE 0
 #define SPAWN_WYRM_GATE 1

@@ -46,6 +46,7 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## mob_shattered_rumbler - this should be done with ACID

@@ -23,7 +23,12 @@ EndScriptData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "GridNotifiers.h"
+#include "GridNotifiersImpl.h"
+#include "Cell.h"
+#include "CellImpl.h"
 #include "sunwell_plateau.h"
+
 enum Yells
 {
     YELL_BIRTH                                    = -1580036,

@@ -29,6 +29,7 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "black_temple.h"
+#include "ScriptedGossip.h"
 
 /*###
 # npc_spirit_of_olum

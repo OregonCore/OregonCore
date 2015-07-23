@@ -19,6 +19,7 @@
 #include "ScriptedCreature.h"
 #include "blackfathom_deeps.h"
 #include "ScriptedEscortAI.h"
+#include "ScriptedGossip.h"
 
 enum eSpells
 {

@@ -33,6 +33,7 @@ EndContentData */
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 #include "ScriptedFollowerAI.h"
+#include "ScriptedGossip.h"
 
 /*####
 # npc_kerlonian

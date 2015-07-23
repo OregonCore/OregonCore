@@ -21,6 +21,7 @@
 #include "ObjectMgr.h"
 #include "ScriptLoader.h"
 #include "ScriptSystem.h"
+#include "SpellMgr.h"
 #include "GossipDef.h"
 #include "CreatureAI.h"
 

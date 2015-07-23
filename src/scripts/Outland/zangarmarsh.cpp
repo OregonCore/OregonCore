@@ -34,6 +34,7 @@ EndContentData */
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 #include "ObjectMgr.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## npcs_ashyen_and_keleth

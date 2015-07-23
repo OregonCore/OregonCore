@@ -29,6 +29,7 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "zulaman.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## npc_forest_frog

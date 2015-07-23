@@ -25,6 +25,7 @@ EndScriptData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
+#include "ScriptedGossip.h"
 
 #define SAY_WALK        "Hmm a nice day for a walk alright"
 #define SAY_ATTACK      "Wild Felboar attack!"

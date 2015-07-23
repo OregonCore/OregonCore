@@ -21,7 +21,7 @@
 #include "Creature.h"
 #include "CreatureAI.h"
 #include "CreatureAIImpl.h"
-#include "InstanceData.h"
+#include "ScriptedInstance.h"
 
 #define SCRIPT_CAST_TYPE dynamic_cast
 

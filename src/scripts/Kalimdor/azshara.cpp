@@ -33,6 +33,7 @@ EndContentData */
 #include "ScriptedCreature.h"
 #include "World.h"
 #include "WorldPacket.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## mobs_spitelashes

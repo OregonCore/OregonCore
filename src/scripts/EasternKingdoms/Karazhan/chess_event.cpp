@@ -25,6 +25,11 @@ EndScriptData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "karazhan.h"
+#include "ScriptedGossip.h"
+#include "GridNotifiers.h"
+#include "GridNotifiersImpl.h"
+#include "Cell.h"
+#include "CellImpl.h"
 
 //this enum let you custom configure your chess script
 enum Options

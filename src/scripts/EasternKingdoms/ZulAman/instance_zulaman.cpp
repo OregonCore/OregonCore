@@ -24,6 +24,7 @@ EndScriptData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "WorldPacket.h"
 #include "zulaman.h"
 
 // Chests spawn at bear/eagle/dragonhawk/lynx bosses

@@ -19,8 +19,12 @@
 #define SC_SCRIPTMGR_H
 
 #include "Common.h"
+#include "DBCStores.h"
+#include "QuestDef.h"
+#include "SharedDefines.h"
+#include "World.h"
+#include "Weather.h"
 #include "Platform/CompilerDefs.h"
-#include "DBCStructure.h"
 
 class Player;
 class Creature;

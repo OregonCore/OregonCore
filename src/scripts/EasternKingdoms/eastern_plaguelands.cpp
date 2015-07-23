@@ -31,6 +31,7 @@ EndContentData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
 
 //id8530 - cannibal ghoul
 //id8531 - gibbering ghoul

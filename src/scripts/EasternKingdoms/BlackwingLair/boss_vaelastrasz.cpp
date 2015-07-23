@@ -24,6 +24,7 @@ EndScriptData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
 
 #define SAY_LINE1           -1469026
 #define SAY_LINE2           -1469027

@@ -29,6 +29,7 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "razorfen_downs.h"
+#include "ScriptedGossip.h"
 
 /*###
 # npc_henry_stern

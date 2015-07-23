@@ -24,6 +24,7 @@ EndScriptData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "WorldPacket.h"
 #include "hyjal.h"
 #include "hyjal_trash.h"
 

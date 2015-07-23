@@ -32,6 +32,7 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "uldaman.h"
+#include "ScriptedGossip.h"
 
 #define QUEST_HIDDEN_CHAMBER 2240
 

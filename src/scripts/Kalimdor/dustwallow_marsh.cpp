@@ -40,6 +40,10 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
+#include "ScriptedGossip.h"
+#include "GridNotifiers.h"
+#include "Cell.h"
+#include "CellImpl.h"
 
 /*######
 ## mobs_risen_husk_spirit
