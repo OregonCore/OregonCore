@@ -1550,6 +1550,7 @@ bool Creature::FallGround()
     {
         sLog.outDebug("FallGround: creature %u at map %u (x: %f, y: %f, z: %f), not able to retrive a proper GetHeight (z: %f).",
                       GetEntry(), GetMap()->GetId(), GetPositionX(), GetPositionX(), GetPositionZ(), ground_Z);
+        return false;
     }
 
     // Abort too if the ground is very near
@@ -1558,7 +1559,7 @@ bool Creature::FallGround()
 
     Unit::setDeathState(DEAD_FALLING);
 
-    GetMotionMaster()->MoveFall();
+    GetMotionMaster()->MoveFall(ground_Z);
 
     return true;
 }

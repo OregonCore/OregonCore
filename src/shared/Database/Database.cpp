@@ -353,7 +353,11 @@ bool Database::_Query(const char* sql, MYSQL_RES** pResult, MYSQL_FIELD** pField
         else
         {
             #ifdef OREGON_DEBUG
+            // prevent recursive death
+            unsigned long oldMask = sLog.GetDBLogMask();
+            sLog.SetDBLogMask(oldMask & ~(1 << LOG_TYPE_DEBUG));
             sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
+            sLog.SetDBLogMask(oldMask);
             #endif
         }
 
@@ -475,7 +479,11 @@ bool Database::DirectExecute(bool lock, const char* sql)
     else
     {
         #ifdef OREGON_DEBUG
+        // prevent recursive death
+        unsigned long oldMask = sLog.GetDBLogMask();
+        sLog.SetDBLogMask(oldMask & ~(1 << LOG_TYPE_DEBUG));
         sLog.outDebug("[%u ms] SQL: %s", getMSTimeDiff(_s, getMSTime()), sql);
+        sLog.SetDBLogMask(oldMask);
         #endif
     }
 

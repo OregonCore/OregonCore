@@ -67,7 +67,10 @@ Log::~Log()
             openfiles.insert(m_logFiles[i]);
 
     for (std::set<FILE*>::iterator i = openfiles.begin(); i != openfiles.end(); ++i)
+    {
+        fflush(*i);
         fclose(*i);
+    }
 }
 
 void Log::SetLogMask(unsigned long mask)
@@ -421,7 +424,6 @@ void Log::DoLog(LogTypes type, bool newline, const char* prefix, const char* fmt
             fwrite(buffer, len-1, 1, logFile);
             if (newline)
                 fputc('\n', logFile);
-            fflush(logFile);
         }
 
         if (prefix)
@@ -454,6 +456,7 @@ void Log::DoLog(LogTypes type, bool newline, const char* prefix, const char* fmt
         if (newline)
             fputc('\n', stderr);
         
+        // just to be sure, stderr should be unbuffered anyway
         fflush(stderr);
     }
 
@@ -497,6 +500,12 @@ void Log::outCommand(uint64 account, const char* str, ...)
     va_start(ap, str);
     DoLog(LOG_TYPE_COMMAND, true, "CMD", str, ap, file);
     va_end(ap);
+
+    if (m_gmlog_per_account)
+    {
+        fflush(file);
+        fclose(file);
+    }
 }
 
 void Log::outCharDump(const char* str, uint32 account_id, uint32 guid, const char* name)
@@ -518,7 +527,7 @@ void Log::outCharDump(const char* str, uint32 account_id, uint32 guid, const cha
                 va_start(ap, fmt);                             \
                 DoLog(type, newline, prefix, fmt, ap, NULL);   \
                 va_end(ap);                                    \
-    }
+            }                                                          
 
 logFunctionImpl(outString, LOG_TYPE_STRING,  true, NULL)
 logFunctionImpl(outBasic,  LOG_TYPE_BASIC,   true, NULL)
