@@ -14205,14 +14205,6 @@ void Player::KilledMonster(CreatureInfo const* cInfo, uint64 guid)
 void Player::KilledMonsterCredit(uint32 entry, uint64 guid /*= 0*/)
 {
     uint16 addkillcount = 1;
-    uint32 real_entry = entry;
-    Creature* killed = NULL;
-    if (guid)
-    {
-        killed = GetMap()->GetCreature(guid);
-        if (killed && killed->GetEntry())
-            real_entry = killed->GetEntry();
-    }
 
     for (uint8 i = 0; i < MAX_QUEST_LOG_SIZE; ++i)
     {
@@ -14226,7 +14218,9 @@ void Player::KilledMonsterCredit(uint32 entry, uint64 guid /*= 0*/)
 
         // just if !ingroup || !noraidgroup || raidgroup
         QuestStatusData& q_status = mQuestStatus[questid];
-        if (q_status.m_status == QUEST_STATUS_INCOMPLETE && (!GetGroup() || !GetGroup()->isRaidGroup() || qInfo->GetType() == QUEST_TYPE_RAID))
+        if (q_status.m_status == QUEST_STATUS_INCOMPLETE && // casual
+            // if this is raid quest, allow its completing only in a raid
+            (qInfo->GetType() != QUEST_TYPE_RAID || (GetGroup() && GetGroup()->isRaidGroup())))
         {
             if (qInfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_KILL) /*&& !qInfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_CAST)*/)
             {
@@ -14242,7 +14236,7 @@ void Player::KilledMonsterCredit(uint32 entry, uint64 guid /*= 0*/)
 
                     uint32 reqkill = qInfo->ReqCreatureOrGOId[j];
 
-                    if (reqkill == real_entry)
+                    if (reqkill == entry)
                     {
                         uint32 reqkillcount = qInfo->ReqCreatureOrGOCount[j];
                         uint32 curkillcount = q_status.m_creatureOrGOcount[j];
