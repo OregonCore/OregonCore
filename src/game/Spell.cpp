@@ -5303,13 +5303,13 @@ SpellCastResult Spell::CheckRange(bool strict)
             return !m_IsTriggeredSpell ? SPELL_FAILED_UNIT_NOT_INFRONT : SPELL_FAILED_DONT_REPORT;
     }
 
-    WorldLocation destPos = m_targets.m_dstPos;
-    // @todo: verify that such spells really use bounding radius
-    if (m_targets.m_targetMask == TARGET_FLAG_DEST_LOCATION && destPos.m_positionX != 0 && destPos.m_positionY != 0 && destPos.m_positionZ != 0)
+    if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
     {
-        if (!m_caster->IsWithinDist3d(destPos.m_positionX, destPos.m_positionY, destPos.m_positionZ, max_range))
+        WorldLocation destPos = m_targets.m_dstPos;
+        float distance = m_caster->GetExactDist(destPos.m_positionX, destPos.m_positionY, destPos.m_positionZ);
+        if (distance > max_range)
             return SPELL_FAILED_OUT_OF_RANGE;
-        if (min_range && m_caster->IsWithinDist3d(destPos.m_positionX, destPos.m_positionY, destPos.m_positionZ, min_range))
+        if (distance < min_range)
             return SPELL_FAILED_TOO_CLOSE;
     }
 
