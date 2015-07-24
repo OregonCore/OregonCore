@@ -975,7 +975,10 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
     else if (missInfo == SPELL_MISS_REFLECT)                // In case spell reflect from target, do all effect on caster (if hit)
     {
         if (target->reflectResult == SPELL_MISS_NONE)       // If reflected spell hit caster -> do all effect on him
+        {
             DoSpellHitOnUnit(m_caster, mask);
+            caster = unit;
+        }
     }
 
     // Do not take combo points on dodge and miss
