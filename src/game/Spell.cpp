@@ -369,24 +369,24 @@ Spell::~Spell()
 }
 
 void ResizeUnitListByDistance(std::list<Unit*> &_list, WorldObject* source, uint32 _size, bool _keepnearest)
-{	
-	float d;
-	std::list<Unit*>::iterator _i;
-	ASSERT(_size >= 0);
-	while(_list.size() > _size)
-	{
-		d = source->GetDistance((*_list.begin()));
-		_i = _list.begin();
-		for(std::list<Unit*>::iterator itr = _list.begin(); itr != _list.end(); itr++)
-		{
-			if((_keepnearest && source->GetDistance(*itr) > d) || (!_keepnearest && source->GetDistance(*itr) < d))
-			{
-				d = source->GetDistance(*itr);
-				_i = itr;
-			}
-		}
-		_list.erase(_i);
-	}
+{   
+    float d;
+    std::list<Unit*>::iterator _i;
+    ASSERT(_size >= 0);
+    while(_list.size() > _size)
+    {
+        d = source->GetDistance((*_list.begin()));
+        _i = _list.begin();
+        for(std::list<Unit*>::iterator itr = _list.begin(); itr != _list.end(); itr++)
+        {
+            if((_keepnearest && source->GetDistance(*itr) > d) || (!_keepnearest && source->GetDistance(*itr) < d))
+            {
+                d = source->GetDistance(*itr);
+                _i = itr;
+            }
+        }
+        _list.erase(_i);
+    }
 }
 
 void Spell::FillTargetMap()
@@ -1928,7 +1928,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 dist *= rand_norm();
 
             // must has dst, no need to set flag
-            m_caster->MovePosition(m_targets.m_dstPos, dist, angle);
+            m_caster->MovePositionToFirstCollision(m_targets.m_dstPos, dist, angle);
             break;
         }
 

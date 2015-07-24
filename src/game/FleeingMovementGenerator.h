@@ -40,20 +40,8 @@ class FleeingMovementGenerator
 
     private:
         void _setTargetLocation(T& owner);
-        bool _getPoint(T& owner, float& x, float& y, float& z);
-        bool _setMoveData(T& owner);
-        void _Init(T&);
+        void _getPoint(T& owner, float& x, float& y, float& z);
 
-        bool is_water_ok   : 1;
-        bool is_land_ok    : 1;
-        bool i_only_forward: 1;
-
-        float i_caster_x;
-        float i_caster_y;
-        float i_caster_z;
-        float i_last_distance_from_caster;
-        float i_to_distance_from_caster;
-        float i_cur_angle;
         uint64 i_frightGUID;
         TimeTracker i_nextCheckTime;
 };

@@ -6316,51 +6316,11 @@ void Spell::EffectMomentMove(SpellEffIndex effIndex)
     if (!m_targets.HasDst())
         return;
 
-    uint32 mapid = m_caster->GetMapId();
     float dist = GetSpellRadius(m_spellInfo, effIndex, false);
 
-    float x, y, z;
-    float destx, desty, destz, ground, floor;
-    float orientation = unitTarget->GetOrientation();
-
-    unitTarget->GetPosition(x, y, z);
-    destx = x + dist * cos(orientation);
-    desty = y + dist * sin(orientation);
-    ground = unitTarget->GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
-    floor = unitTarget->GetMap()->GetHeight(destx, desty, z, true);
-    destz = fabs(ground - z) <= fabs(floor - z) ? ground : floor;
-
-    bool col = VMAP::VMapFactory::createOrGetVMapManager()->getObjectHitPos(mapid, x, y, z + 0.5f, destx, desty, destz + 0.5f, destx, desty, destz, -0.5f);
-
-    // collision occured
-    if (col)
-    {
-        // move back a bit
-        destx -= 0.6 * cos(orientation);
-        desty -= 0.6 * sin(orientation);
-        dist = sqrt((x - destx) * (x - destx) + (y - desty) * (y - desty));
-    }
-
-    float step = dist / 10.0f;
-    int j = 0;
-    for (; j < 10; j++)
-    {
-        // do not allow too big z changes
-        if (fabs(z - destz) > 6)
-        {
-            destx -= step * cos(orientation);
-            desty -= step * sin(orientation);
-            ground = unitTarget->GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
-            floor = unitTarget->GetMap()->GetHeight(destx, desty, z, true);
-            destz = fabs(ground - z) <= fabs(floor - z) ? ground : floor;
-        }
-        // we have correct destz now
-        else
-            break;
-    }
-
-    if (j < 10)
-        unitTarget->NearTeleportTo(destx, desty, destz, unitTarget->GetOrientation(), unitTarget == m_caster);
+    Position pos;
+    unitTarget->GetFirstCollisionPosition(pos, dist, 0.0f);
+    unitTarget->NearTeleportTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), unitTarget == m_caster);
 }
 
 void Spell::EffectReputation(SpellEffIndex effIndex)

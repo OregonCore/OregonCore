@@ -20,14 +20,12 @@
 
 #include "MovementGenerator.h"
 
-#define MAX_CONF_WAYPOINTS 24
-
 template<class T>
 class ConfusedMovementGenerator
     : public MovementGeneratorMedium< T, ConfusedMovementGenerator<T> >
 {
     public:
-        explicit ConfusedMovementGenerator() : i_nextMoveTime(0) {}
+        explicit ConfusedMovementGenerator() : i_nextMoveTime(0), i_x(0), i_y(0), i_z(0) {}
 
         void Initialize(T&);
         void Finalize(T&);
@@ -39,10 +37,8 @@ class ConfusedMovementGenerator
             return CONFUSED_MOTION_TYPE;
         }
     private:
-        void _InitSpecific(T&, bool&, bool&);
         TimeTracker i_nextMoveTime;
-        float i_waypoints[MAX_CONF_WAYPOINTS + 1][3];
-        uint32 i_nextMove;
+        float i_x, i_y, i_z;
 };
 #endif
 
