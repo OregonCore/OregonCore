@@ -664,6 +664,13 @@ bool Database::ExecuteFile(const char* file)
         return false;
     }
 
+    mysql_autocommit(mMysql, 0);
+    if (mysql_real_query(mMysql, "START TRANSACTION", sizeof("START TRANSACTION")-1))
+    {
+        sLog.outErrorDb("Couldn't start transaction for db update file: %s", file);
+        return false;
+    }
+
     bool success = false;
 
     if (FILE* fp = fopen(file, "rb"))
@@ -696,10 +703,23 @@ bool Database::ExecuteFile(const char* file)
                         if (MYSQL_RES* result = mysql_use_result(mMysql))
                             mysql_free_result(result);
                 }
-                while (!mysql_next_result(mMysql));
+                while (0 == mysql_next_result(mMysql));
 
+                // check whether the last mysql_next_result ended with an error
+                if (*mysql_error(mMysql))
+                {
+                    success = false;
+                    sLog.outErrorDb("Cannot execute file %s, size: %lu: %s", file, info.st_size, mysql_error(mMysql));
+                    if (mysql_rollback(mMysql))
+                        sLog.outErrorDb("ExecuteFile(): Rollback ended with an error!");
+                }
+                else
+                {
+                    if (mysql_commit(mMysql))
+                        sLog.outErrorDb("mysql_commit() failed. Update %s will not be applied!", file);
                 success = true;
             }
+        }
         }
         else
         {
@@ -722,6 +742,7 @@ bool Database::ExecuteFile(const char* file)
     }
 
     mysql_set_server_option(mMysql, MYSQL_OPTION_MULTI_STATEMENTS_OFF);
+    mysql_autocommit(mMysql, 1);
     return success;
 }
 

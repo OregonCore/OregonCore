@@ -6,6 +6,7 @@ INSERT INTO item_template (entry, class, subclass, NAME, displayid, Quality, Fla
 UPDATE creature_template SET faction_A='1620', faction_H='1620' WHERE entry=21272;
 
 -- Fix quest Murketh and Shadraaz gateways. Thanks PadreWoW.
+DELETE FROM `conditions` where SourceEntry = 33655;
 INSERT INTO `conditions` (`SourceTypeOrReferenceId`,`SourceGroup`,`SourceEntry`,`SourceId`,`ElseGroup`,`ConditionTypeOrReference`,`ConditionTarget`,`ConditionValue1`,`ConditionValue2`,`ConditionValue3`,`NegativeCondition`,`ErrorType`,`ErrorTextId`,`ScriptName`,`Comment`) VALUES
 (13,0,33655,0,0,17,0,1,19291,0,0,0,0,'',NULL),
 (13,0,33655,0,0,17,0,1,19292,0,0,0,0,'',NULL);

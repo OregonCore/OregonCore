@@ -14,11 +14,11 @@ DELETE FROM creature_loot_template WHERE item = 7737;
 UPDATE creature SET position_x = '11077.9', position_y = '1902.37', position_z = '1342.63', orientation = '2.18262' WHERE guid = '2499';
 
 -- This particular mobs drops item 31373 not 31372
-DELETE FROM creature_loot_template WHERE entry='21478' AND item='31372';
+DELETE FROM creature_loot_template WHERE entry in (21478, 21477) AND item='31372';
 
 -- QuestChance requires - until conditions are merged in
-INSERT INTO creature_loot_template (`entry`,`item`,`ChanceOrQuestChance`,`groupid`,`mincountOrRef`,`maxcount`,`lootcondition`,`condition_value1`,`condition_value2`) values (21477,31372,-100,0,1,1,0,0,0);
-INSERT INTO creature_loot_template (`entry`,`item`,`ChanceOrQuestChance`,`groupid`,`mincountOrRef`,`maxcount`,`lootcondition`,`condition_value1`,`condition_value2`) values (21478,31372,-100,0,1,1,0,0,0);
+INSERT INTO creature_loot_template (`entry`,`item`,`Chance`,`groupid`,`MinCount`,`MaxCount`) values (21477,31372,-100,0,1,1);
+INSERT INTO creature_loot_template (`entry`,`item`,`Chance`,`groupid`,`MinCount`,`MaxCount`) values (21478,31372,-100,0,1,1);
 
 -- Set this back to what it actually requires
 UPDATE quest_template
@@ -31,8 +31,8 @@ DELETE FROM creature WHERE guid = '1200310';
 -- Goblin sponsorship fix, nothing was wrong with this quest
 UPDATE creature SET position_x = '-11949.5', position_y = '-500.392', position_z = '30.7014', orientation = '5.06145' WHERE guid = '2208';
 DELETE FROM creature_loot_template WHERE entry='4723' AND item='5851';
-INSERT INTO creature_loot_template (`entry`,`item`,`ChanceOrQuestChance`,`groupid`,`mincountOrRef`,`maxcount`,`lootcondition`,`condition_value1`,`condition_value2`)
- values (4723,5852,-100,0,1,1,0,0,0);
+INSERT INTO creature_loot_template (`entry`,`item`,`Chance`,`groupid`,`MinCount`,`MaxCount`)
+ values (4723,5852,-100,0,1,1);
 
 
 -- Bleeding hollow tormentor has eventai
