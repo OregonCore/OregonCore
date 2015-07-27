@@ -671,6 +671,7 @@ bool Database::ExecuteFile(const char* file)
         return false;
     }
 
+    bool in_transaction = true;
     bool success = false;
 
     if (FILE* fp = fopen(file, "rb"))
@@ -712,11 +713,15 @@ bool Database::ExecuteFile(const char* file)
                     sLog.outErrorDb("Cannot execute file %s, size: %lu: %s", file, info.st_size, mysql_error(mMysql));
                     if (mysql_rollback(mMysql))
                         sLog.outErrorDb("ExecuteFile(): Rollback ended with an error!");
+                    else
+                        in_transaction = false;
                 }
                 else
                 {
                     if (mysql_commit(mMysql))
                         sLog.outErrorDb("mysql_commit() failed. Update %s will not be applied!", file);
+                    else
+                        in_transaction = false;
                 success = true;
             }
         }
@@ -743,6 +748,8 @@ bool Database::ExecuteFile(const char* file)
 
     mysql_set_server_option(mMysql, MYSQL_OPTION_MULTI_STATEMENTS_OFF);
     mysql_autocommit(mMysql, 1);
+    if (in_transaction)
+        mysql_rollback(mMysql);
     return success;
 }
 
