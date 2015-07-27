@@ -5305,6 +5305,10 @@ SpellCastResult Spell::CheckRange(bool strict)
 
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
     {
+        // allow far teleports (e.g. portals)
+        if (IsSpellHaveEffect(m_spellInfo, SPELL_EFFECT_TELEPORT_UNITS))
+            return SPELL_CAST_OK;
+
         WorldLocation destPos = m_targets.m_dstPos;
         float distance = m_caster->GetExactDist(destPos.m_positionX, destPos.m_positionY, destPos.m_positionZ);
         if (distance > max_range)
