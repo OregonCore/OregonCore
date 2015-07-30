@@ -592,9 +592,9 @@ void Spell::FillTargetMap()
         }
     }
 
-    if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
+    if (m_targets.HasDst())
     {
-        if (m_spellInfo->speed > 0.0f && m_targets.HasDst())
+        if (m_spellInfo->speed > 0.0f)
         {
             float dist = m_caster->GetDistance(m_targets.m_dstPos);
             if (dist < 5.0f) dist = 5.0f;
@@ -5303,7 +5303,7 @@ SpellCastResult Spell::CheckRange(bool strict)
             return !m_IsTriggeredSpell ? SPELL_FAILED_UNIT_NOT_INFRONT : SPELL_FAILED_DONT_REPORT;
     }
 
-    if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
+    if (m_targets.HasDst())
     {
         // allow far teleports (e.g. portals)
         if (IsSpellHaveEffect(m_spellInfo, SPELL_EFFECT_TELEPORT_UNITS))
