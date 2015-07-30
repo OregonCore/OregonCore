@@ -129,9 +129,6 @@ class InstanceData : public ZoneScript
             return instance->GetGameObject(guid);
         }
 
-        //sends world state update to all players in instance
-        void DoUpdateWorldState(uint32 uiStateId, uint32 uiStateData);
-
         // Cast spell on all players in instance
         void DoCastSpellOnPlayers(uint32 spell);
 
@@ -142,6 +139,9 @@ class InstanceData : public ZoneScript
 
         //change active state of doors or buttons
         void DoUseDoorOrButton(uint64 uiGuid, uint32 uiWithRestoreTime = 0, bool bUseAlternativeState = false);
+
+        // Sends world state update to all players in instance
+        void DoUpdateWorldState(uint32 worldstateId, uint32 worldstateValue);
 
         //Respawns a GO having negative spawntimesecs in gameobject-table
         void DoRespawnGameObject(uint64 uiGuid, uint32 uiTimeToDespawn = MINUTE);

@@ -166,14 +166,9 @@ class SpellCastTargets
         {
             return m_GOTargetGUID.IsEmpty() && m_unitTargetGUID.IsEmpty() && m_itemTarget == NULL && m_CorpseTargetGUID.IsEmpty();
         }
-        bool HasSrc() const
-        {
-            return m_targetMask & TARGET_FLAG_SOURCE_LOCATION;
-        }
-        bool HasDst() const
-        {
-            return m_targetMask & TARGET_FLAG_DEST_LOCATION;
-        }
+
+        bool HasSrc() const { return (m_targetMask & TARGET_FLAG_SOURCE_LOCATION) != 0; }
+        bool HasDst() const { return (m_targetMask & TARGET_FLAG_DEST_LOCATION) != 0; }
 
         void Update(Unit* caster);
 

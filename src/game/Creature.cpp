@@ -471,6 +471,7 @@ void Creature::UpdateMovementFlags(bool packetOnly)
 
     // Set the movement flags if the creature is in that mode. (Only fly if actually in air, only swim if in water, etc)
     float ground = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ(), true, MAX_FALL_DISTANCE);
+
     if (ground < INVALID_HEIGHT)
     {
         sLog.outDebug("FallGround: creature %u at map %u (x: %f, y: %f, z: %f), not able to retrive a proper GetHeight (z: %f).",
@@ -481,16 +482,13 @@ void Creature::UpdateMovementFlags(bool packetOnly)
 
     if (GetCreatureTemplate()->InhabitType & INHABIT_AIR && isInAir && !IsFalling())
         SetLevitate(true, packetOnly);
-        else
+    else
         SetLevitate(false);
 
     if (!isInAir)
         RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
 
-    if (cInfo->InhabitType & INHABIT_WATER && IsInWater())
-        SetSwim(true, packetOnly);
-    else
-        SetSwim(false);
+    SetSwim(cInfo->InhabitType & INHABIT_WATER && IsInWater(), packetOnly);
 }
 
 void Creature::Update(uint32 diff)
