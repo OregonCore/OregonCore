@@ -63,6 +63,7 @@
 #include "GameEventMgr.h"
 #include "DisableMgr.h"
 #include "ConditionMgr.h"
+#include "ScriptMgr.h"
 
 #include <cmath>
 
@@ -2451,6 +2452,8 @@ void Player::GiveLevel(uint32 level, bool ignoreRAF)
     if (level == getLevel())
         return;
 
+    sScriptMgr.OnPlayerLevelChanged(this, level);
+
     int32 diff = level - getLevel();
 
     PlayerLevelInfo info;
@@ -3456,6 +3459,8 @@ uint32 Player::resetTalentsCost() const
 
 bool Player::resetTalents(bool no_cost)
 {
+    sScriptMgr.OnPlayerTalentsReset(this, no_cost);
+
     // not need after this call
     if (HasAtLoginFlag(AT_LOGIN_RESET_TALENTS))
     {

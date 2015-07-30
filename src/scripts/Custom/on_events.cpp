@@ -37,14 +37,38 @@ void OnPVPKill(Player* /*killer*/, Player* /*killed*/)
 
 }
 
+//This function is called when the player kills a creature
+void OnCreatureKill(Player* /*killer*/, Creature* /*killed*/)
+{
+
+}
+
+//This function is called when the player gets killed by a creature
+void OnPlayerKilledByCreature(Creature* /*killer*/, Player* /*killed*/)
+{
+
+}
+
+//This function is called just before the players level changes
+void OnPlayerLevelChanged(Player* /*player*/, uint8 /*newLevel*/)
+{
+
+}
+
+//This function is called when the player resets his talents
+void OnPlayerTalentsReset(Player* /*player*/, bool /*no_cost*/)
+{
+
+}
+
 void AddSC_onevents()
 {
     Script* newscript;
     newscript = new Script;
     newscript->Name = "scripted_on_events";
-    newscript->pOnLogin = &OnLogin;
-    newscript->pOnLogout = &OnLogout;
-    newscript->pOnPVPKill = &OnPVPKill;
+    newscript->OnLogin = &OnLogin;
+    newscript->OnLogout = &OnLogout;
+    newscript->OnPVPKill = &OnPVPKill;
 
     newscript->RegisterSelf();
 }

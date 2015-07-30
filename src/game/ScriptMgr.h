@@ -46,7 +46,8 @@ struct ItemPrototype;
 struct Script
 {
     Script() :
-        pOnLogin(NULL), pOnLogout(NULL), pOnPVPKill(NULL),
+        OnLogin(NULL), OnLogout(NULL), OnPVPKill(NULL), OnCreatureKill(NULL), OnPlayerKilledByCreature(NULL),
+        OnLevelChanged(NULL), OnTalentsReset(NULL),
         pGossipHello(NULL), pQuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
         pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL), pItemQuestAccept(NULL),
@@ -57,9 +58,15 @@ struct Script
     std::string Name;
 
     //Methods to be scripted
-    void (*pOnLogin             )(Player*);
-    void (*pOnLogout            )(Player*);
-    void (*pOnPVPKill           )(Player*, Player*);
+    // Player Related
+    void (*OnLogin                 )(Player*);
+    void (*OnLogout                )(Player*);
+    void (*OnPVPKill               )(Player*, Player*);
+    void (*OnCreatureKill          )(Player*, Creature*);
+    void (*OnPlayerKilledByCreature)(Creature*, Player*);
+    void (*OnLevelChanged          )(Player*, uint8);
+    void (*OnTalentsReset          )(Player*, bool);
+
     bool (*pGossipHello         )(Player*, Creature*);
     bool (*pQuestAccept         )(Player*, Creature*, Quest const*);
     bool (*pGossipSelect        )(Player*, Creature*, uint32 , uint32);
@@ -100,6 +107,11 @@ class ScriptMgr
         void OnLogin(Player* pPlayer);
         void OnLogout(Player* pPlayer);
         void OnPVPKill(Player* killer, Player* killed);
+        void OnCreatureKill(Player* killer, Creature* killed);
+        void OnPlayerKilledByCreature(Creature* killer, Player* killed);
+        void OnPlayerLevelChanged(Player* player, uint8 newLevel);
+        void OnPlayerTalentsReset(Player* player, bool no_cost);
+
         bool GossipHello (Player* pPlayer, Creature* pCreature);
         bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction);
         bool GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction, const char* sCode);

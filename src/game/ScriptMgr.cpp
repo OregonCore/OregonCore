@@ -225,25 +225,53 @@ void Script::RegisterSelf()
     }
 }
 
-void ScriptMgr::OnLogin(Player* pPlayer)
+void ScriptMgr::OnLogin(Player* player)
 {
     Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-    if (!tmpscript || !tmpscript->pOnLogin) return;
-    tmpscript->pOnLogin(pPlayer);
+    if (!tmpscript || !tmpscript->OnLogin) return;
+    tmpscript->OnLogin(player);
 }
 
-void ScriptMgr::OnLogout(Player* pPlayer)
+void ScriptMgr::OnLogout(Player* player)
 {
     Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-    if (!tmpscript || !tmpscript->pOnLogout) return;
-    tmpscript->pOnLogout(pPlayer);
+    if (!tmpscript || !tmpscript->OnLogout) return;
+    tmpscript->OnLogout(player);
 }
 
 void ScriptMgr::OnPVPKill(Player* killer, Player* killed)
 {
     Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-    if (!tmpscript || !tmpscript->pOnPVPKill) return;
-    tmpscript->pOnPVPKill(killer, killed);
+    if (!tmpscript || !tmpscript->OnPVPKill) return;
+    tmpscript->OnPVPKill(killer, killed);
+}
+
+void ScriptMgr::OnCreatureKill(Player* killer, Creature* killed)
+{
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnCreatureKill) return;
+    tmpscript->OnCreatureKill(killer, killed);
+}
+
+void ScriptMgr::OnPlayerKilledByCreature(Creature* killer, Player* killed)
+{
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnPlayerKilledByCreature) return;
+    tmpscript->OnPlayerKilledByCreature(killer, killed);
+}
+
+void ScriptMgr::OnPlayerLevelChanged(Player* player, uint8 newLevel)
+{
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnLevelChanged) return;
+    tmpscript->OnLevelChanged(player, newLevel);
+}
+
+void ScriptMgr::OnPlayerTalentsReset(Player* player, bool no_cost)
+{
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnTalentsReset) return;
+    tmpscript->OnTalentsReset(player, no_cost);
 }
 
 char const* ScriptMgr::ScriptsVersion()

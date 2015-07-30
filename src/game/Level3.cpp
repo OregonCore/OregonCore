@@ -53,6 +53,7 @@
 #include "CreatureEventAIMgr.h"
 #include "DisableMgr.h"
 #include "ConditionMgr.h"
+#include "ScriptMgr.h"
 
 bool ChatHandler::HandleAHBotOptionsCommand(const char* args)
 {
@@ -5220,7 +5221,10 @@ bool ChatHandler::HandleResetLevelCommand(const char* args)
     if (!HandleResetStatsOrLevelHelper(player))
         return false;
 
-    player->SetLevel(1);
+    // set starting level
+    uint32 startLevel = sWorld.getConfig(CONFIG_START_PLAYER_LEVEL);
+
+    player->SetLevel(startLevel);
     player->InitStatsForLevel(true);
     player->InitTaxiNodesForLevel();
     player->InitTalentForLevel();
@@ -5229,7 +5233,9 @@ bool ChatHandler::HandleResetLevelCommand(const char* args)
     // reset level to summoned pet
     Guardian* pet = player->GetGuardianPet();
     if (pet)
-        pet->InitStatsForLevel(1);
+        pet->InitStatsForLevel(startLevel);
+
+    sScriptMgr.OnPlayerLevelChanged(player, startLevel);
 
     return true;
 }
