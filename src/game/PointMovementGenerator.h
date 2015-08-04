@@ -62,7 +62,7 @@ class AssistanceMovementGenerator
         {
             return ASSISTANCE_MOTION_TYPE;
         }
-        void Finalize(Creature&);
+        void Finalize(Unit&);
 };
 
 // Does almost nothing - just doesn't allows previous movegen interrupt current effect. Can be reused for charge effect

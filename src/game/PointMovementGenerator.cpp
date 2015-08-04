@@ -83,16 +83,18 @@ template <> void PointMovementGenerator<Creature>::MovementInform(Creature& unit
 
     if (unit.IsSummon())
     {
-        TempSummon* pSummon = (TempSummon*)(&unit);
-        if (pSummon->GetSummoner()->GetTypeId() == TYPEID_UNIT)
+        if (TempSummon* pSummon = (TempSummon*)(&unit))
         {
-            if (Creature* pSummoner = pSummon->GetSummoner()->ToCreature())
+            if (Unit* pSummoner = pSummon->GetSummoner())
             {
-                if (ScriptedInstance* pInstance = (ScriptedInstance*)pSummoner->GetInstanceData())
-                    pInstance->MovementInform(&unit, POINT_MOTION_TYPE, id);
+            if (pSummoner->GetTypeId() == TYPEID_UNIT)
+            {
+                    if (ScriptedInstance* pInstance = (ScriptedInstance*)pSummoner->GetInstanceData())
+                        pInstance->MovementInform(&unit, POINT_MOTION_TYPE, id);
 
-                if (pSummoner->AI())
-                    pSummoner->AI()->SummonedMovementInform(&unit, POINT_MOTION_TYPE, id);
+                    if (pSummoner->ToCreature()->AI())
+                        pSummoner->ToCreature()->AI()->SummonedMovementInform(&unit, POINT_MOTION_TYPE, id);
+                }
             }
         }
     }
@@ -109,10 +111,10 @@ template void PointMovementGenerator<Creature>::Finalize(Creature&);
 template void PointMovementGenerator<Creature>::Reset(Creature&);
 template bool PointMovementGenerator<Creature>::Update(Creature&, const uint32& diff);
 
-void AssistanceMovementGenerator::Finalize(Creature& unit)
+void AssistanceMovementGenerator::Finalize(Unit& unit)
 {
-    unit.SetNoCallAssistance(false);
-    unit.CallAssistance();
+    unit.ToCreature()->SetNoCallAssistance(false);
+    unit.ToCreature()->CallAssistance();
     if (unit.IsAlive())
         unit.GetMotionMaster()->MoveSeekAssistanceDistract(sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY));
 }
@@ -127,8 +129,6 @@ void EffectMovementGenerator::Finalize(Unit& unit)
     if (unit.GetTypeId() != TYPEID_UNIT)
         return;
 
-    if (((Creature&)unit).AI() && unit.movespline->Finalized())
-        ((Creature&)unit).AI()->MovementInform(EFFECT_MOTION_TYPE, m_Id);
     // Need restore previous movement since we have no proper states system
     if (unit.IsAlive() && !unit.HasUnitState(UNIT_STATE_CONFUSED | UNIT_STATE_FLEEING | UNIT_STATE_DISTRACTED))
     {
@@ -137,4 +137,7 @@ void EffectMovementGenerator::Finalize(Unit& unit)
         else
             unit.GetMotionMaster()->Initialize();
     }
+
+    if (unit.ToCreature()->AI())
+        unit.ToCreature()->AI()->MovementInform(EFFECT_MOTION_TYPE, m_Id);
 }
