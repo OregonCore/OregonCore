@@ -4072,12 +4072,12 @@ void Player::DeleteOldCharacters()
  */
 void Player::DeleteOldCharacters(uint32 keepDays)
 {
-    sLog.outString("Player::DeleteOldChars: Deleting all characters which have been deleted %u days before...", keepDays);
+    sLog.outString("Player::DeleteOldChars: Removing characters older than %u day(s)", keepDays);
 
     QueryResult_AutoPtr resultChars = CharacterDatabase.PQuery("SELECT guid, deleteInfos_Account FROM characters WHERE deleteDate IS NOT NULL AND deleteDate < " UI64FMTD "", uint64(time(NULL) - time_t(keepDays * DAY)));
     if (resultChars)
     {
-        sLog.outString("Player::DeleteOldChars: Found " UI64FMTD " character(s) to delete", resultChars->GetRowCount());
+        sLog.outString("Player::DeleteOldChars: " UI64FMTD " character(s) to remove", resultChars->GetRowCount());
         do
         {
             Field* charFields = resultChars->Fetch();

@@ -728,7 +728,11 @@ struct SpellNotifierCreatureAndPlayer
             switch (i_TargetType)
             {
             case SPELL_TARGETS_ALLY:
-                if (!itr->getSource()->isAttackableByAOE() || !i_caster->IsFriendlyTo(itr->getSource()))
+                if (!i_caster->IsFriendlyTo(itr->getSource()))
+                    continue;
+                if (itr->getSource()->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
+                    continue;
+                if (itr->getSource()->GetTypeId() == TYPEID_PLAYER && itr->getSource()->ToPlayer()->isGameMaster())
                     continue;
                 break;
             case SPELL_TARGETS_ENEMY:
