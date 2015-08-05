@@ -2358,11 +2358,11 @@ void Player::UninviteFromGroup()
     }
 }
 
-void Player::RemoveFromGroup(Group* group, uint64 guid)
+void Player::RemoveFromGroup(Group* group, uint64 guid, uint8 kicked)
 {
     if (group)
     {
-        if (group->RemoveMember(guid, 0) <= 1)
+		if (group->RemoveMember(guid, kicked) <= 1)
         {
             // group->Disband(); already disbanded in RemoveMember
             sObjectMgr.RemoveGroup(group);
@@ -3893,7 +3893,7 @@ void Player::DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmC
         uint64 leaderGuid = MAKE_NEW_GUID((*resultGroup)[0].GetUInt32(), 0, HIGHGUID_PLAYER);
         Group* group = sObjectMgr.GetGroupByLeader(leaderGuid);
         if (group)
-            RemoveFromGroup(group, playerguid);
+            RemoveFromGroup(group, playerguid, 0);
     }
 
     // remove signs from petitions (also remove petitions if owner);

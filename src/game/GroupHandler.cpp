@@ -280,7 +280,7 @@ void WorldSession::HandleGroupUninviteGuidOpcode(WorldPacket& recv_data)
 
     if (grp->IsMember(guid))
     {
-        Player::RemoveFromGroup(grp, guid);
+        Player::RemoveFromGroup(grp, guid, 1);
         return;
     }
 
@@ -328,7 +328,7 @@ void WorldSession::HandleGroupUninviteNameOpcode(WorldPacket& recv_data)
             return;
         }
 
-        Player::RemoveFromGroup(grp, guid);
+        Player::RemoveFromGroup(grp, guid, 1);
         return;
     }
 
@@ -378,7 +378,7 @@ void WorldSession::HandleGroupLeaveOpcode(WorldPacket& /*recv_data*/)
     // everything's fine, do it
     SendPartyResult(PARTY_OP_LEAVE, GetPlayer()->GetName(), PARTY_RESULT_OK);
 
-    GetPlayer()->RemoveFromGroup();
+    GetPlayer()->RemoveFromGroup(0);
 }
 
 void WorldSession::HandleLootMethodOpcode(WorldPacket& recv_data)
