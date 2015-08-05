@@ -61,6 +61,48 @@ void OnPlayerTalentsReset(Player* /*player*/, bool /*no_cost*/)
 
 }
 
+//This function is called when the player creates a group
+void OnGroupCreated(Group* /*group*/, Player* /*player*/)
+{
+	
+}
+
+//This function is called when the player gets invited to a group
+void OnGroupPlayerInvited(Group* /*group*/, Player* /*player*/)
+{
+	
+}
+
+//This function is called when the player joins a group
+void OnGroupPlayerJoined(Group* /*group*/, Player* /*player*/)
+{
+	
+}
+
+//This function is called when the player leaves a group
+void OnGroupPlayerLeft(Group* /*group*/, Player* /*player*/)
+{
+	
+}
+
+//This function is called when the player gets kicked from a group
+void OnGroupPlayerRemoved(Group* /*group*/, Player* /*player*/)
+{
+	
+}
+
+//This function is called when the leader of a group promotes someone else to leader
+void OnGroupLeaderChanged(Group* /*group*/, Player* /*oldLeader*/, Player* /*newLeader*/)
+{
+	
+}
+
+// This function is called when a group disbands
+void OnGroupDisbanded(Group* /*group*/, Player* /*oldLeader*/)
+{
+	
+}
+
 void AddSC_onevents()
 {
     Script* newscript;
@@ -69,6 +111,14 @@ void AddSC_onevents()
     newscript->OnLogin = &OnLogin;
     newscript->OnLogout = &OnLogout;
     newscript->OnPVPKill = &OnPVPKill;
+
+	newscript->OnGroupCreated = &OnGroupCreated;
+	newscript->OnGroupPlayerInvited = &OnGroupPlayerInvited;
+	newscript->OnGroupPlayerJoined = &OnGroupPlayerJoined;
+	newscript->OnGroupPlayerLeft = &OnGroupPlayerLeft;
+	newscript->OnGroupPlayerRemoved = &OnGroupPlayerRemoved;
+	newscript->OnGroupLeaderChanged = &OnGroupLeaderChanged;
+	newscript->OnGroupDisbanded = &OnGroupDisbanded;
 
     newscript->RegisterSelf();
 }
