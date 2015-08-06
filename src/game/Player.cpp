@@ -1595,7 +1595,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         sLog.outDebug("Player %s is being teleported to map %u", GetName(), mapid);
 
     // reset movement flags at teleport, because player will continue move with these flags after teleport
-	SetUnitMovementFlags(MOVEMENTFLAG_NONE);
+    SetUnitMovementFlags(MOVEMENTFLAG_NONE);
     DisableSpline();
 
     if (m_transport)
@@ -2362,7 +2362,7 @@ void Player::RemoveFromGroup(Group* group, uint64 guid, uint8 kicked)
 {
     if (group)
     {
-		if (group->RemoveMember(guid, kicked) <= 1)
+        if (group->RemoveMember(guid, kicked) <= 1)
         {
             // group->Disband(); already disbanded in RemoveMember
             sObjectMgr.RemoveGroup(group);
@@ -19553,7 +19553,7 @@ void Player::SendInitialPacketsAfterAddToMap()
             auraList.front()->ApplyModifier(true, true);
     }
 
-	if (HasAuraType(SPELL_AURA_MOD_STUN) || HasAuraType(SPELL_AURA_MOD_ROOT))
+    if (HasAuraType(SPELL_AURA_MOD_STUN) || HasAuraType(SPELL_AURA_MOD_ROOT))
         SetRooted(true);
 
     // setup BG group membership if need

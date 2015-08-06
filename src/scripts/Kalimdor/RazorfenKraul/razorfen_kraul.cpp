@@ -137,7 +137,7 @@ struct npc_deaths_head_ward_keeperAI : public ScriptedAI
 {
     npc_deaths_head_ward_keeperAI(Creature* c) : ScriptedAI(c)
     {
-		pInstance = (ScriptedInstance*)c->GetInstanceData();
+        pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

@@ -794,13 +794,13 @@ struct npc_phase_hunterAI : public ScriptedAI
         DoCast(me, SPELL_MATERIALIZE);
     }
 
-	void JustDied(Unit* killer)
-	{
-		if (me->GetEntry() == NPC_DRAINED_PHASE_HUNTER)
-			if (Player* plWho = killer->GetCharmerOrOwnerPlayerOrPlayerItself())
-				if (plWho->GetQuestStatus(QUEST_RECHARGING_BATTERIES) == QUEST_STATUS_INCOMPLETE)
-						plWho->KilledMonsterCredit(NPC_DRAINED_PHASE_HUNTER);
-	}
+    void JustDied(Unit* killer)
+    {
+        if (me->GetEntry() == NPC_DRAINED_PHASE_HUNTER)
+            if (Player* plWho = killer->GetCharmerOrOwnerPlayerOrPlayerItself())
+                if (plWho->GetQuestStatus(QUEST_RECHARGING_BATTERIES) == QUEST_STATUS_INCOMPLETE)
+                        plWho->KilledMonsterCredit(NPC_DRAINED_PHASE_HUNTER);
+    }
 
     void UpdateAI(const uint32 diff)
     {

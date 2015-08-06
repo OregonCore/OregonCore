@@ -109,16 +109,16 @@ struct instance_shadow_labyrinth : public ScriptedInstance
         }
     }
 
-	void OnCreatureDeath(Creature* pCreature)
-	{
-		switch(pCreature->GetEntry())
-		{
+    void OnCreatureDeath(Creature* pCreature)
+    {
+        switch(pCreature->GetEntry())
+        {
             case 18794:
             //case 20645:
                     SetData(TYPE_RITUALIST, DONE);
                 break;
-		}
-	}
+        }
+    }
 
     Player* GetPlayerInMap()
     {
@@ -217,8 +217,8 @@ struct instance_shadow_labyrinth : public ScriptedInstance
 
             if (RitualistCount <= 0)
                 Encounter[1] = DONE;
-			else
-				Encounter[1] = NOT_STARTED;
+            else
+                Encounter[1] = NOT_STARTED;
 
             check = true;
         }

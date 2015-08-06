@@ -35,7 +35,7 @@ EndScriptData */
 #define EPOCH_ENTRY              18096
 #define ORC_PRISONER_ENTRY       18598
 #define DRAKE_ENTRY              17848
-#define SKARLOC_MOUNT_ENTRY		 18798
+#define SKARLOC_MOUNT_ENTRY         18798
 
 #define QUEST_ENTRY_DIVERSION    10283
 #define LODGE_QUEST_TRIGGER      20155
@@ -68,7 +68,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
     uint64 ThrallGUID;
     uint64 TarethaGUID;
     uint64 EpochGUID;
-	uint64 MountGUID;
+    uint64 MountGUID;
 
     std::list<GameObject*> RoaringFlamesList;
     std::list<uint64> LeftPrisonersList;
@@ -83,9 +83,9 @@ struct instance_old_hillsbrad : public ScriptedInstance
         ThrallGUID          = 0;
         TarethaGUID         = 0;
         EpochGUID           = 0;
-		MountGUID			= 0;
+        MountGUID            = 0;
 
-		UpdateOHWorldState();
+        UpdateOHWorldState();
 
         summon = NOT_SUMMONED;
 
@@ -106,7 +106,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
         if (player->isGameMaster())
             return;
 
-		UpdateOHWorldState();
+        UpdateOHWorldState();
 
         if (summon == NOT_SUMMONED)
             summon = WAIT_FOR_SUMMON;
@@ -163,9 +163,9 @@ struct instance_old_hillsbrad : public ScriptedInstance
             case EPOCH_ENTRY:
                 EpochGUID = creature->GetGUID();
                 break;
-			case SKARLOC_MOUNT_ENTRY:
-				MountGUID = creature->GetGUID();
-				break;
+            case SKARLOC_MOUNT_ENTRY:
+                MountGUID = creature->GetGUID();
+                break;
             case ORC_PRISONER_ENTRY:
             if (creature->GetPositionZ() > 53.4f)
             {
@@ -181,9 +181,9 @@ struct instance_old_hillsbrad : public ScriptedInstance
     void OnObjectCreate(GameObject* go)
     {
         if (go->GetEntry() == GO_ROARING_FLAME)
-		{
+        {
             RoaringFlamesList.push_back(go);
-		}
+        }
     }
 
     void SetData(uint32 type, uint32 data)
@@ -229,7 +229,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
                                 if (Creature* Orc = instance->GetCreature(*it))
                                 {
                                     OrcLocPos.Relocate(OrcLoc[0][0], OrcLoc[0][1], OrcLoc[0][2]);
-									Orc->GetRandomPoint(OrcLocPos, 10.0f, x, y, z);
+                                    Orc->GetRandomPoint(OrcLocPos, 10.0f, x, y, z);
                                     Orc->SetWalk(false);
                                     Orc->GetMotionMaster()->MovePoint(0, x, y, z);
                                 }
@@ -240,7 +240,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
                                 if (Creature* Orc = instance->GetCreature(*il))
                                 {
                                     OrcLocPos.Relocate(OrcLoc[1][0], OrcLoc[1][1], OrcLoc[1][2]);
-									Orc->GetRandomPoint(OrcLocPos, 10.0f, x, y, z);
+                                    Orc->GetRandomPoint(OrcLocPos, 10.0f, x, y, z);
                                     Orc->SetWalk(false);
                                     Orc->GetMotionMaster()->MovePoint(0, x, y, z);
                                 }
@@ -365,8 +365,8 @@ struct instance_old_hillsbrad : public ScriptedInstance
                 return TarethaGUID;
             case DATA_EPOCH:
                 return EpochGUID;
-			case DATA_SKARLOC_MOUNT:
-				return MountGUID;
+            case DATA_SKARLOC_MOUNT:
+                return MountGUID;
         }
         return 0;
     }

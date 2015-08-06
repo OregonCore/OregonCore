@@ -48,8 +48,8 @@ struct Script
 {
     Script() :
         OnLogin(NULL), OnLogout(NULL), OnPVPKill(NULL), OnCreatureKill(NULL), OnPlayerKilledByCreature(NULL),
-		OnLevelChanged(NULL), OnTalentsReset(NULL), OnGroupCreated(NULL), OnGroupPlayerInvited(NULL), OnGroupPlayerJoined(NULL), 
-		OnGroupPlayerLeft(NULL), OnGroupPlayerRemoved(NULL), OnGroupLeaderChanged(NULL), OnGroupDisbanded(NULL),
+        OnLevelChanged(NULL), OnTalentsReset(NULL), OnGroupCreated(NULL), OnGroupPlayerInvited(NULL), OnGroupPlayerJoined(NULL), 
+        OnGroupPlayerLeft(NULL), OnGroupPlayerRemoved(NULL), OnGroupLeaderChanged(NULL), OnGroupDisbanded(NULL),
         pGossipHello(NULL), pQuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
         pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL), pItemQuestAccept(NULL),
@@ -69,13 +69,13 @@ struct Script
     void (*OnLevelChanged          )(Player*, uint8);
     void (*OnTalentsReset          )(Player*, bool);
 
-	void (*OnGroupCreated          )(Group*, Player*);
-	void (*OnGroupPlayerInvited    )(Group*, Player*);
-	void (*OnGroupPlayerJoined     )(Group*, Player*);
-	void (*OnGroupPlayerLeft       )(Group*, Player*);
-	void (*OnGroupPlayerRemoved    )(Group*, Player*);
-	void (*OnGroupLeaderChanged    )(Group*, Player*, Player*);
-	void (*OnGroupDisbanded        )(Group*, Player*);
+    void (*OnGroupCreated          )(Group*, Player*);
+    void (*OnGroupPlayerInvited    )(Group*, Player*);
+    void (*OnGroupPlayerJoined     )(Group*, Player*);
+    void (*OnGroupPlayerLeft       )(Group*, Player*);
+    void (*OnGroupPlayerRemoved    )(Group*, Player*);
+    void (*OnGroupLeaderChanged    )(Group*, Player*, Player*);
+    void (*OnGroupDisbanded        )(Group*, Player*);
 
     bool (*pGossipHello         )(Player*, Creature*);
     bool (*pQuestAccept         )(Player*, Creature*, Quest const*);
@@ -122,13 +122,13 @@ class ScriptMgr
         void OnPlayerLevelChanged(Player* player, uint8 newLevel);
         void OnPlayerTalentsReset(Player* player, bool no_cost);
 
-		void OnGroupCreated(Group* group, Player* player);
-		void OnGroupPlayerInvited(Group* group, Player* invited);
-		void OnGroupPlayerJoined(Group* group, Player* player);
-		void OnGroupPlayerLeft(Group* group, Player* player);
-		void OnGroupPlayerRemoved(Group* group, Player* player);
-		void OnGroupLeaderChanged(Group* group, Player* oldLeader, Player* newLeader);
-		void OnGroupDisbanded(Group* group, Player* leader);
+        void OnGroupCreated(Group* group, Player* player);
+        void OnGroupPlayerInvited(Group* group, Player* invited);
+        void OnGroupPlayerJoined(Group* group, Player* player);
+        void OnGroupPlayerLeft(Group* group, Player* player);
+        void OnGroupPlayerRemoved(Group* group, Player* player);
+        void OnGroupLeaderChanged(Group* group, Player* oldLeader, Player* newLeader);
+        void OnGroupDisbanded(Group* group, Player* leader);
 
         bool GossipHello (Player* pPlayer, Creature* pCreature);
         bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction);

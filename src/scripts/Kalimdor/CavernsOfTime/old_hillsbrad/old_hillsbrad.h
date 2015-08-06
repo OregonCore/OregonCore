@@ -32,7 +32,7 @@
 #define DATA_SKARLOC_DEATH      10
 #define DATA_DRAKE_DEATH        11
 #define DATA_EPOCH_DEATH        12
-#define DATA_SKARLOC_MOUNT		13
+#define DATA_SKARLOC_MOUNT        13
 #define WORLD_STATE_OH          2436
 #endif
 

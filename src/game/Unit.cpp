@@ -322,7 +322,7 @@ Unit::Unit()
     for (uint8 i = 0; i < MAX_MOVE_TYPE; ++i)
         m_speed_rate[i] = 1.0f;
 
-	m_unitTypeMask = UNIT_MASK_NONE;
+    m_unitTypeMask = UNIT_MASK_NONE;
 
     m_charmInfo = NULL;
     m_reducedThreatPercent = 0;
@@ -407,7 +407,7 @@ void Unit::Update(uint32 p_time)
 
     UpdateSplineMovement(p_time);
     i_motionMaster.UpdateMotion(p_time);
-	
+    
 }
 
 bool Unit::haveOffhandWeapon() const
@@ -11264,8 +11264,8 @@ void Unit::StopMoving()
     if (!IsInWorld() || movespline->Finalized())
         return;
 
-	Movement::MoveSplineInit init(*this);
-	init.Stop();
+    Movement::MoveSplineInit init(*this);
+    init.Stop();
 }
 
 void Unit::SendMovementFlagUpdate(bool self /* = false */)
@@ -12890,7 +12890,7 @@ void Unit::SendMonsterMoveWithSpeedToCurrentDestination(float speed)
 
 bool Unit::IsFalling() const
 {
-	return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLINGFAR)) || movespline->isFalling();
+    return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLINGFAR)) || movespline->isFalling();
 }
 
 bool Unit::SetWalk(bool apply)

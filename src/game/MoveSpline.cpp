@@ -28,7 +28,7 @@ namespace Movement
 
     Location MoveSpline::ComputePosition() const
     {
-		ASSERT(Initialized());
+        ASSERT(Initialized());
 
         float u = 1.f;
         int32 seg_time = spline.length(point_Idx, point_Idx + 1);
@@ -214,7 +214,7 @@ namespace Movement
         UpdateResult result = Result_None;
 
         int32 minimal_diff = std::min(ms_time_diff, segment_time_elapsed());
-		ASSERT(minimal_diff >= 0);
+        ASSERT(minimal_diff >= 0);
         time_passed += minimal_diff;
         ms_time_diff -= minimal_diff;
 

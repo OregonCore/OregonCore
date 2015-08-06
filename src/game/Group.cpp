@@ -95,7 +95,7 @@ bool Group::Create(const uint64& guid, const char* name)
     m_masterLooterGuid = 0;
 
     m_difficulty = DIFFICULTY_NORMAL;
-	Player* leader = sObjectMgr.GetPlayer(guid);
+    Player* leader = sObjectMgr.GetPlayer(guid);
     if (!isBGGroup())
     {
         if (leader)
@@ -118,8 +118,8 @@ bool Group::Create(const uint64& guid, const char* name)
 
     if (!isBGGroup()) CharacterDatabase.CommitTransaction();
 
-	sScriptMgr.OnGroupCreated(leader->GetGroup(), leader);
-	
+    sScriptMgr.OnGroupCreated(leader->GetGroup(), leader);
+    
     return true;
 }
 
@@ -223,8 +223,8 @@ bool Group::AddInvite(Player* player, bool isLeader)
 
     player->SetGroupInvite(this);
 
-	if (!isLeader)
-		sScriptMgr.OnGroupPlayerInvited(this, player);
+    if (!isLeader)
+        sScriptMgr.OnGroupPlayerInvited(this, player);
 
     return true;
 }
@@ -295,7 +295,7 @@ bool Group::AddMember(const uint64& guid, const char* name)
                 player->SetDifficulty(m_difficulty);
                 player->SendDungeonDifficulty(true);
             }
-			sScriptMgr.OnGroupPlayerJoined(this, player);
+            sScriptMgr.OnGroupPlayerJoined(this, player);
         }
         player->SetGroupUpdateFlag(GROUP_UPDATE_FULL);
         UpdatePlayerOutOfRange(player);
@@ -321,12 +321,12 @@ uint32 Group::RemoveMember(const uint64& guid, const uint8& method)
             {
                 data.Initialize(SMSG_GROUP_UNINVITE, 0);
                 player->GetSession()->SendPacket(&data);
-				sScriptMgr.OnGroupPlayerRemoved(this, player);
+                sScriptMgr.OnGroupPlayerRemoved(this, player);
             }
-			else // Left
-			{
-				sScriptMgr.OnGroupPlayerLeft(this, player);
-			}
+            else // Left
+            {
+                sScriptMgr.OnGroupPlayerLeft(this, player);
+            }
 
             // we already removed player from group and in player->GetGroup() is his original group!
             if (Group* group = player->GetGroup())
@@ -339,7 +339,7 @@ uint32 Group::RemoveMember(const uint64& guid, const uint8& method)
             }
 
             _homebindIfInstance(player);
-			
+            
         }
 
         if (leaderChanged)
@@ -355,7 +355,7 @@ uint32 Group::RemoveMember(const uint64& guid, const uint8& method)
     else
         Disband(true);
 
-	
+    
     return m_memberSlots.size();
 }
 
@@ -366,12 +366,12 @@ void Group::ChangeLeader(const uint64& guid)
     if (slot == m_memberSlots.end())
         return;
 
-	Player* oldLeader = sObjectMgr.GetPlayer(this->GetLeaderGUID());
+    Player* oldLeader = sObjectMgr.GetPlayer(this->GetLeaderGUID());
     _setLeader(guid);
-	Player* newLeader = sObjectMgr.GetPlayer(guid);
+    Player* newLeader = sObjectMgr.GetPlayer(guid);
 
-	if (oldLeader && newLeader)
-		sScriptMgr.OnGroupLeaderChanged(this, oldLeader, newLeader);
+    if (oldLeader && newLeader)
+        sScriptMgr.OnGroupLeaderChanged(this, oldLeader, newLeader);
 
     WorldPacket data(SMSG_GROUP_SET_LEADER, slot->name.size() + 1);
     data << slot->name;
@@ -381,10 +381,10 @@ void Group::ChangeLeader(const uint64& guid)
 
 void Group::Disband(bool hideDestroy)
 {
-	Player* player = sObjectMgr.GetPlayer(this->GetLeaderGUID());
-	
-	if (player && player->GetSession())
-		sScriptMgr.OnGroupDisbanded(this, player);
+    Player* player = sObjectMgr.GetPlayer(this->GetLeaderGUID());
+    
+    if (player && player->GetSession())
+        sScriptMgr.OnGroupDisbanded(this, player);
 
     for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
     {
@@ -1130,7 +1130,7 @@ bool Group::_addMember(const uint64& guid, const char* name, bool isAssistant, u
         CharacterDatabase.PExecute("INSERT INTO group_member(leaderGuid,memberGuid,assistant,subgroup) VALUES('%u','%u','%u','%u')", GUID_LOPART(m_leaderGuid), GUID_LOPART(member.guid), ((member.assistant == 1) ? 1 : 0), member.group);
     }
 
-	// ONCREATEGROUP HOOK
+    // ONCREATEGROUP HOOK
 
     return true;
 }

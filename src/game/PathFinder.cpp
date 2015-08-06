@@ -317,7 +317,7 @@ void PathInfo::BuildPolyPath(const Vector3& startPos, const Vector3& endPos)
         // thus we have less poly to cover
         // sub-path of optimal path is optimal
 
-	    // take ~80% of the original length
+        // take ~80% of the original length
         // TODO : play with the values here
         uint32 prefixPolyLength = uint32(m_polyLength * 0.8f + 0.5f);
         memmove(m_pathPolyRefs, m_pathPolyRefs + pathStartIndex, prefixPolyLength * sizeof(dtPolyRef));

@@ -276,51 +276,51 @@ void ScriptMgr::OnPlayerTalentsReset(Player* player, bool no_cost)
 
 void ScriptMgr::OnGroupCreated(Group* pGroup, Player* pPlayer)
 {
-	Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-	if (!tmpscript || !tmpscript->OnGroupCreated) return;
-	tmpscript->OnGroupCreated(pGroup, pPlayer);
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnGroupCreated) return;
+    tmpscript->OnGroupCreated(pGroup, pPlayer);
 }
 
 void ScriptMgr::OnGroupPlayerInvited(Group* pGroup, Player* pPlayer)
 {
-	Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-	if (!tmpscript || !tmpscript->OnGroupPlayerInvited) return;
-	tmpscript->OnGroupPlayerInvited(pGroup, pPlayer);
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnGroupPlayerInvited) return;
+    tmpscript->OnGroupPlayerInvited(pGroup, pPlayer);
 }
 
 void ScriptMgr::OnGroupPlayerJoined(Group* pGroup, Player* pPlayer)
 {
-	Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-	if (!tmpscript || !tmpscript->OnGroupPlayerJoined) return;
-	tmpscript->OnGroupPlayerJoined(pGroup, pPlayer);
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnGroupPlayerJoined) return;
+    tmpscript->OnGroupPlayerJoined(pGroup, pPlayer);
 }
 
 void ScriptMgr::OnGroupPlayerLeft(Group* pGroup, Player* pPlayer)
 {
-	Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-	if (!tmpscript || !tmpscript->OnGroupPlayerLeft) return;
-	tmpscript->OnGroupPlayerLeft(pGroup, pPlayer);
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnGroupPlayerLeft) return;
+    tmpscript->OnGroupPlayerLeft(pGroup, pPlayer);
 }
 
 void ScriptMgr::OnGroupPlayerRemoved(Group* pGroup, Player* pPlayer)
 {
-	Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-	if (!tmpscript || !tmpscript->OnGroupPlayerRemoved) return;
-	tmpscript->OnGroupPlayerRemoved(pGroup, pPlayer);
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnGroupPlayerRemoved) return;
+    tmpscript->OnGroupPlayerRemoved(pGroup, pPlayer);
 }
 
 void ScriptMgr::OnGroupLeaderChanged(Group* pGroup, Player* pOldLeader, Player* pNewLeader)
 {
-	Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-	if (!tmpscript || !tmpscript->OnGroupLeaderChanged) return;
-	tmpscript->OnGroupLeaderChanged(pGroup, pOldLeader, pNewLeader);
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnGroupLeaderChanged) return;
+    tmpscript->OnGroupLeaderChanged(pGroup, pOldLeader, pNewLeader);
 }
 
 void ScriptMgr::OnGroupDisbanded(Group* pGroup, Player* pLeader)
 {
-	Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-	if (!tmpscript || !tmpscript->OnGroupDisbanded) return;
-	tmpscript->OnGroupDisbanded(pGroup, pLeader);
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnGroupDisbanded) return;
+    tmpscript->OnGroupDisbanded(pGroup, pLeader);
 }
 
 char const* ScriptMgr::ScriptsVersion()

@@ -427,12 +427,12 @@ struct boss_kelthuzadAI : public ScriptedAI
                     {
                         //if we find no one to figth walk to the center
                         if (!pUnit->IsInCombat())
-						{
+                        {
                             Movement::MoveSplineInit init(*pUnit);
                             init.SetWalk(true);
                             init.MoveTo(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, true);
                             init.Launch();
-						}
+                        }
 
                         //Safe storing of creatures
                         GuardiansOfIcecrown[GuardiansOfIcecrown_Count] = pUnit->GetGUID();

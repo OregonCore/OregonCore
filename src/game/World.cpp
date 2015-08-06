@@ -1089,11 +1089,11 @@ void World::LoadConfigSettings(bool reload)
     // SQLUpdater
     m_configs[CONFIG_SQLUPDATER_ENABLED] = sConfig.GetBoolDefault("DatabaseUpdater.Enabled", false);
     m_SQLUpdatesPath = sConfig.GetStringDefault("DatabaseUpdater.PathToUpdates", "");
-	if (!m_SQLUpdatesPath.size() || (*m_SQLUpdatesPath.rbegin() != '\\' && *m_SQLUpdatesPath.rbegin() != '/'))
+    if (!m_SQLUpdatesPath.size() || (*m_SQLUpdatesPath.rbegin() != '\\' && *m_SQLUpdatesPath.rbegin() != '/'))
     #if PLATFORM == PLATFORM_WINDOWS
-		m_SQLUpdatesPath += '\\';
+        m_SQLUpdatesPath += '\\';
     #else
-		m_SQLUpdatesPath += '/';
+        m_SQLUpdatesPath += '/';
     #endif
 }
 
@@ -1155,10 +1155,10 @@ void World::LoadSQLUpdates()
         files.clear();
 
         #if PLATFORM == PLATFORM_WINDOWS
-		path += "\\*";
+        path += "\\*";
         WIN32_FIND_DATA findData;
         HANDLE hItr = FindFirstFile(path.c_str(), &findData);
-		if (hItr != INVALID_HANDLE_VALUE)
+        if (hItr != INVALID_HANDLE_VALUE)
         {
             do
             {
@@ -1179,9 +1179,9 @@ void World::LoadSQLUpdates()
             DWORD dwLastError = GetLastError();
             #ifdef _UNICODE
             TCHAR lpBuffer[256] = L"?";
-			#else
-			TCHAR lpBuffer[256] = "?";
-			#endif
+            #else
+            TCHAR lpBuffer[256] = "?";
+            #endif
             FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
                           NULL,
                           dwLastError,

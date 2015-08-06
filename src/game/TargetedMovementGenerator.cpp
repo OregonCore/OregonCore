@@ -197,7 +197,7 @@ bool TargetedMovementGeneratorMedium<T, D>::Update(T& owner, const uint32& time_
     }
 
     // Implemented for PetAI to handle resetting flags when pet owner reached
-	if (owner.movespline->Finalized())
+    if (owner.movespline->Finalized())
         MovementInform(owner);
 
     return true;

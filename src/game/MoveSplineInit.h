@@ -114,9 +114,9 @@ namespace Movement
     {
         if (generatePath)
         {
-			PathInfo path(&unit);
-			path.Update(dest.x, dest.y, dest.z, forceDestination);
-			MovebyPath(path.getFullPath());
+            PathInfo path(&unit);
+            path.Update(dest.x, dest.y, dest.z, forceDestination);
+            MovebyPath(path.getFullPath());
         }
         else
         {

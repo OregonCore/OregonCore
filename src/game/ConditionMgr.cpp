@@ -36,7 +36,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
     // object not present, return false
     if (!object)
     {
-		sLog.outDebug("Condition object not found for condition (Entry: %u Type: %u Group: %u)", SourceEntry, SourceType, SourceGroup);
+        sLog.outDebug("Condition object not found for condition (Entry: %u Type: %u Group: %u)", SourceEntry, SourceType, SourceGroup);
         return false;                                   // player not present, return false
     }
     bool condMeets = false;
