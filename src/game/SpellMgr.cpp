@@ -2607,6 +2607,7 @@ void SpellMgr::LoadSpellCustomAttr()
             // Roar
             if (spellInfo->SpellFamilyFlags & 0x0000000800000000LL)
                 mSpellCustomAttr[i] |= SPELL_ATTR_CU_AURA_CC;
+            // Rake
             else if (spellInfo->SpellFamilyFlags & 0x1000LL)
                 mSpellCustomAttr[i] |= SPELL_ATTR_CU_IGNORE_ARMOR;
             break;

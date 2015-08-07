@@ -1223,8 +1223,7 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
 
     // damage before absorb/resist calculation
     damageInfo->cleanDamage = damage;
-
-    if (damageSchoolMask & SPELL_SCHOOL_MASK_NORMAL  && (sSpellMgr.GetSpellCustomAttr(spellInfo->Id) & SPELL_ATTR_CU_IGNORE_ARMOR) == 0)
+    if (IsDamageReducedByArmor(damageSchoolMask, spellInfo))
         damage = CalcArmorReducedDamage(pVictim, damage);
 
     // Calculate absorb resist
@@ -1352,8 +1351,13 @@ void Unit::CalculateMeleeDamage(Unit* pVictim, uint32 damage, CalcDamageInfo* da
     MeleeDamageBonus(damageInfo->target, &damage, damageInfo->attackType);
 
     // Calculate armor reduction
-    damageInfo->damage = (damageInfo->damageSchoolMask & SPELL_SCHOOL_MASK_NORMAL) ? CalcArmorReducedDamage(damageInfo->target, damage) : damage;
-    damageInfo->cleanDamage += damage - damageInfo->damage;
+    if (IsDamageReducedByArmor((SpellSchoolMask)(damageInfo->damageSchoolMask)))
+    {
+        damageInfo->damage = CalcArmorReducedDamage(damageInfo->target, damage);
+        damageInfo->cleanDamage += damage - damageInfo->damage;
+    }
+    else
+        damageInfo->damage = damage;
 
     damageInfo->hitOutCome = RollMeleeOutcomeAgainst(damageInfo->target, damageInfo->attackType);
 
@@ -1643,6 +1647,31 @@ void Unit::HandleEmoteCommand(uint32 anim_id)
     data << uint32(anim_id);
     data << uint64(GetGUID());
     SendMessageToSet(&data, true);
+}
+
+bool Unit::IsDamageReducedByArmor(SpellSchoolMask schoolMask, SpellEntry const* spellInfo, uint8 effIndex)
+{
+    // only physical spells damage gets reduced by armor
+    if ((schoolMask & SPELL_SCHOOL_MASK_NORMAL) == 0)
+        return false;
+    if (spellInfo)
+    {
+        // there are spells with no specific attribute but they have "ignores armor" in tooltip
+        
+        if (sSpellMgr.GetSpellCustomAttr(spellInfo->Id) & SPELL_ATTR_CU_IGNORE_ARMOR)
+            return false;
+
+        // bleeding effects are not reduced by armor
+        // @todo Get this to work with Rake.
+        if (effIndex != MAX_SPELL_EFFECTS)
+        {
+            if (spellInfo->EffectApplyAuraName[effIndex] == SPELL_AURA_PERIODIC_DAMAGE ||
+                spellInfo->Effect[effIndex] == SPELL_EFFECT_SCHOOL_DAMAGE)
+                if (spellInfo->GetEffectMechanicMask(effIndex) & (1<<MECHANIC_BLEED))
+                    return false;
+        }
+    }
+    return true;
 }
 
 uint32 Unit::CalcArmorReducedDamage(Unit* pVictim, const uint32 damage)

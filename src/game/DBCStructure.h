@@ -720,6 +720,21 @@ struct SpellEntry
             return false;
         }
 
+        uint32 GetEffectMechanicMask(uint8 effIndex) const
+        {
+            uint32 mask = 0;
+            if (Mechanic)
+                mask |= 1 << Mechanic;
+            if (IsEffect(effIndex) && Mechanic)
+                mask |= 1 << Mechanic;
+            return mask;
+        }
+
+        bool IsEffect(uint8 effIndex) const
+        {
+            return Effect[effIndex] != 0;
+        }
+
     private:
         // prevent creating custom entries (copy data from original in fact)
         SpellEntry(SpellEntry const&);                      // DON'T must have implementation
