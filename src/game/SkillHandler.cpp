@@ -126,7 +126,7 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket& recv_data)
         return;
 
     // learn! (other talent ranks will unlearned at learning)
-    GetPlayer()->learnSpell(spellid);
+    GetPlayer()->LearnSpell(spellid);
     sLog.outDetail("TalentID: %u Rank: %u Spell: %u\n", talent_id, requested_rank, spellid);
 
     // update free talent points
@@ -150,7 +150,7 @@ void WorldSession::HandleTalentWipeOpcode(WorldPacket& recv_data)
     if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
         GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
-    if (!(_player->resetTalents()))
+    if (!(_player->ResetTalents()))
     {
         WorldPacket data(MSG_TALENT_WIPE_CONFIRM, 8 + 4);  //you have not any talent
         data << uint64(0);

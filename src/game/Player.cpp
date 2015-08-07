@@ -637,7 +637,7 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     }
 
     // original spells
-    learnDefaultSpells(true);
+    LearnDefaultSpells(true);
 
     // original action bar
     std::list<uint16>::const_iterator action_itr[4];
@@ -2530,7 +2530,7 @@ void Player::InitTalentForLevel()
         // Remove all talent points
         if (m_usedTalentCount > 0)                           // Free any used talents
         {
-            resetTalents(true);
+            ResetTalents(true);
             SetFreeTalentPoints(0);
         }
     }
@@ -2541,7 +2541,7 @@ void Player::InitTalentForLevel()
         if (m_usedTalentCount > talentPointsForLevel)
         {
             if (GetSession()->GetSecurity() < SEC_ADMINISTRATOR)
-                resetTalents(true);
+                ResetTalents(true);
             else
                 SetFreeTalentPoints(0);
         }
@@ -2830,7 +2830,7 @@ void Player::AddNewMailDeliverTime(time_t deliver_time)
     }
 }
 
-bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool loading, bool disabled)
+bool Player::AddSpell(uint32 spell_id, bool active, bool learning, bool loading, bool disabled)
 {
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spell_id);
     if (!spellInfo)
@@ -2939,7 +2939,7 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool loading,
                     if (!HasSpell(rankSpellId))
                         continue;
 
-                    removeSpell(rankSpellId);
+                    RemoveSpell(rankSpellId);
                 }
             }
         }
@@ -2947,9 +2947,9 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool loading,
         else if (uint32 prev_spell = sSpellMgr.GetPrevSpellInChain(spell_id))
         {
             if (loading)                                     // at spells loading, no output, but allow save
-                addSpell(prev_spell, active, true, loading, disabled);
+                AddSpell(prev_spell, active, true, loading, disabled);
             else                                            // at normal learning
-                learnSpell(prev_spell);
+                LearnSpell(prev_spell);
         }
 
         PlayerSpell newspell;
@@ -3126,9 +3126,9 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool loading,
         if (!itr->second.autoLearned)
         {
             if (loading)                                     // at spells loading, no output, but allow save
-                addSpell(itr->second.spell, true, true, loading);
+                AddSpell(itr->second.spell, true, true, loading);
             else                                            // at normal learning
-                learnSpell(itr->second.spell);
+                LearnSpell(itr->second.spell);
         }
     }
 
@@ -3136,14 +3136,14 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool loading,
     return active && !disabled && !superceded_old;
 }
 
-void Player::learnSpell(uint32 spell_id)
+void Player::LearnSpell(uint32 spell_id)
 {
     PlayerSpellMap::iterator itr = m_spells.find(spell_id);
 
     bool disabled = (itr != m_spells.end()) ? itr->second.disabled : false;
     bool active = disabled ? itr->second.active : true;
 
-    bool learning = addSpell(spell_id, active);
+    bool learning = AddSpell(spell_id, active);
 
     // learn all disabled higher ranks (recursive)
     SpellChainNode const* node = sSpellMgr.GetSpellChainNode(spell_id);
@@ -3151,7 +3151,7 @@ void Player::learnSpell(uint32 spell_id)
     {
         PlayerSpellMap::iterator iter = m_spells.find(node->next);
         if (disabled && iter != m_spells.end() && iter->second.disabled)
-            learnSpell(node->next);
+            LearnSpell(node->next);
     }
 
     // prevent duplicated entires in spell book
@@ -3163,7 +3163,7 @@ void Player::learnSpell(uint32 spell_id)
     GetSession()->SendPacket(&data);
 }
 
-void Player::removeSpell(uint32 spell_id, bool disabled)
+void Player::RemoveSpell(uint32 spell_id, bool disabled)
 {
     PlayerSpellMap::iterator itr = m_spells.find(spell_id);
     if (itr == m_spells.end())
@@ -3177,13 +3177,13 @@ void Player::removeSpell(uint32 spell_id, bool disabled)
     if (node)
     {
         if (HasSpell(node->next) && !GetTalentSpellPos(node->next))
-            removeSpell(node->next, disabled);
+            RemoveSpell(node->next, disabled);
     }
     //unlearn spells dependent from recently removed spells
     SpellsRequiringSpellMap const& reqMap = sSpellMgr.GetSpellsRequiringSpell();
     SpellsRequiringSpellMap::const_iterator itr2 = reqMap.find(spell_id);
     for (uint32 i = reqMap.count(spell_id); i > 0; i--, itr2++)
-        removeSpell(itr2->second, disabled);
+        RemoveSpell(itr2->second, disabled);
 
     // removing
     WorldPacket data(SMSG_REMOVED_SPELL, 4);
@@ -3298,7 +3298,7 @@ void Player::removeSpell(uint32 spell_id, bool disabled)
     SpellLearnSpellMap::const_iterator spell_end   = sSpellMgr.GetEndSpellLearnSpell(spell_id);
 
     for (SpellLearnSpellMap::const_iterator itr2 = spell_begin; itr2 != spell_end; ++itr2)
-        removeSpell(itr2->second.spell, disabled);
+        RemoveSpell(itr2->second.spell, disabled);
 }
 
 void Player::RemoveSpellCooldown(uint32 spell_id, bool update /* = false */)
@@ -3424,7 +3424,7 @@ void Player::_SaveSpellCooldowns()
     }
 }
 
-uint32 Player::resetTalentsCost() const
+uint32 Player::ResetTalentsCost() const
 {
     // The first time reset costs 1 gold
     if (m_resetTalentsCost < 1 * GOLD)
@@ -3457,7 +3457,7 @@ uint32 Player::resetTalentsCost() const
     }
 }
 
-bool Player::resetTalents(bool no_cost)
+bool Player::ResetTalents(bool no_cost)
 {
     sScriptMgr.OnPlayerTalentsReset(this, no_cost);
 
@@ -3481,7 +3481,7 @@ bool Player::resetTalents(bool no_cost)
 
     if (!no_cost && !sWorld.getConfig(CONFIG_NO_RESET_TALENT_COST))
     {
-        cost = resetTalentsCost();
+        cost = ResetTalentsCost();
 
         if (GetMoney() < cost)
         {
@@ -3526,7 +3526,7 @@ bool Player::resetTalents(bool no_cost)
                 // unlearn if first rank is talent or learned by talent
                 if (itrFirstId == talentInfo->RankID[j] || sSpellMgr.IsSpellLearnToSpell(talentInfo->RankID[j], itrFirstId))
                 {
-                    removeSpell(itr->first, !IsPassiveSpell(itr->first));
+                    RemoveSpell(itr->first, !IsPassiveSpell(itr->first));
                     itr = GetSpellMap().begin();
                     continue;
                 }
@@ -5102,7 +5102,7 @@ bool Player::UpdateCraftSkill(uint32 spellid)
             if (spellEntry && spellEntry->Mechanic == MECHANIC_DISCOVERY)
             {
                 if (uint32 discoveredSpell = GetSkillDiscoverySpell(_spell_idx->second->skillId, spellid, this))
-                    learnSpell(discoveredSpell);
+                    LearnSpell(discoveredSpell);
             }
 
             uint32 craft_skill_gain = sWorld.getConfig(CONFIG_SKILL_GAIN_CRAFTING);
@@ -5413,7 +5413,7 @@ void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
                     if (_spell_idx->second->skillId == id)
                     {
                         // this may remove more than one spell (dependents)
-                        removeSpell(itr->first);
+                        RemoveSpell(itr->first);
                         next = m_spells.begin();
                         break;
                     }
@@ -5466,7 +5466,7 @@ void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
                         (*i)->ApplyModifier(true);
 
                 // Learn all spells for skill
-                learnSkillRewardedSpells(id);
+                LearnSkillRewardedSpells(id);
                 return;
             }
         }
@@ -8625,7 +8625,7 @@ void Player::SendTalentWipeConfirm(uint64 guid)
 {
     WorldPacket data(MSG_TALENT_WIPE_CONFIRM, (8 + 4));
     data << uint64(guid);
-    uint32 cost = sWorld.getConfig(CONFIG_NO_RESET_TALENT_COST) ? 0 : resetTalentsCost();
+    uint32 cost = sWorld.getConfig(CONFIG_NO_RESET_TALENT_COST) ? 0 : ResetTalentsCost();
     data << cost;
     GetSession()->SendPacket(&data);
 }
@@ -15254,7 +15254,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
 
     // after spell load
     InitTalentForLevel();
-    learnSkillRewardedSpells();
+    LearnSkillRewardedSpells();
 
     // after spell load, learn rewarded spell if need also
     _LoadQuestStatus(holder->GetResult(PLAYER_LOGIN_QUERY_LOADQUESTSTATUS));
@@ -15912,7 +15912,7 @@ void Player::_LoadQuestStatus(QueryResult_AutoPtr result)
                 if (questStatusData.m_rewarded)
                 {
                     // learn rewarded spell if unknown
-                    learnQuestRewardedSpells(pQuest);
+                    LearnQuestRewardedSpells(pQuest);
 
                     // set rewarded title if any
                     if (pQuest->GetCharTitleId())
@@ -16119,7 +16119,7 @@ void Player::_LoadSpells(QueryResult_AutoPtr result)
         {
             Field* fields = result->Fetch();
 
-            addSpell(fields[0].GetUInt16(), fields[1].GetBool(), false, true, fields[2].GetBool());
+            AddSpell(fields[0].GetUInt16(), fields[1].GetBool(), false, true, fields[2].GetBool());
         }
         while (result->NextRow());
     }
@@ -19596,7 +19596,7 @@ void Player::SendInitialPacketsAfterAddToMap()
     if (m_rafLink != RAF_LINK_NONE)
     {
         SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_REFER_A_FRIEND);
-        learnSpell(SPELL_SUMMON_FRIEND);
+        LearnSpell(SPELL_SUMMON_FRIEND);
         /* In case of recently RAF-unlinked acc we may
            unlearn the SPELL_SUMMON_FRIEND, its not necessary
            though because its unusable by the player anyway,
@@ -19669,7 +19669,7 @@ void Player::ApplyEquipCooldown(Item* pItem)
     }
 }
 
-void Player::resetSpells()
+void Player::ResetSpells()
 {
     // not need after this call
     if (HasAtLoginFlag(AT_LOGIN_RESET_SPELLS))
@@ -19683,13 +19683,13 @@ void Player::resetSpells()
     PlayerSpellMap smap = GetSpellMap();
 
     for (PlayerSpellMap::const_iterator iter = smap.begin(); iter != smap.end(); ++iter)
-        removeSpell(iter->first);                           // only iter->first can be accessed, object by iter->second can be deleted already
+        RemoveSpell(iter->first);                           // only iter->first can be accessed, object by iter->second can be deleted already
 
-    learnDefaultSpells();
-    learnQuestRewardedSpells();
+    LearnDefaultSpells();
+    LearnQuestRewardedSpells();
 }
 
-void Player::learnDefaultSpells(bool loading)
+void Player::LearnDefaultSpells(bool loading)
 {
     // learn default race/class spells
     PlayerInfo const* info = sObjectMgr.GetPlayerInfo(getRace(), getClass());
@@ -19701,14 +19701,14 @@ void Player::learnDefaultSpells(bool loading)
         {
             DEBUG_LOG("PLAYER: Adding initial spell, id = %u", tspell);
             if (loading || !spell_itr->second)               // not care about passive spells or loading case
-                addSpell(tspell, spell_itr->second);
+                AddSpell(tspell, spell_itr->second);
             else                                            // but send in normal spell in game learn case
-                learnSpell(tspell);
+                LearnSpell(tspell);
         }
     }
 }
 
-void Player::learnQuestRewardedSpells(Quest const* quest)
+void Player::LearnQuestRewardedSpells(Quest const* quest)
 {
     uint32 spell_id = quest->GetRewSpellCast();
 
@@ -19779,7 +19779,7 @@ void Player::learnQuestRewardedSpells(Quest const* quest)
     CastSpell(this, spell_id, true);
 }
 
-void Player::learnQuestRewardedSpells()
+void Player::LearnQuestRewardedSpells()
 {
     // learn spells received from quest completing
     for (QuestStatusMap::const_iterator itr = mQuestStatus.begin(); itr != mQuestStatus.end(); ++itr)
@@ -19792,11 +19792,11 @@ void Player::learnQuestRewardedSpells()
         if (!quest)
             continue;
 
-        learnQuestRewardedSpells(quest);
+        LearnQuestRewardedSpells(quest);
     }
 }
 
-void Player::learnSkillRewardedSpells(uint32 skill_id)
+void Player::LearnSkillRewardedSpells(uint32 skill_id)
 {
     uint32 raceMask  = getRaceMask();
     uint32 classMask = getClassMask();
@@ -19815,7 +19815,7 @@ void Player::learnSkillRewardedSpells(uint32 skill_id)
         if (sSpellStore.LookupEntry(pAbility->spellId))
         {
             // Ok need learn spell
-            learnSpell(pAbility->spellId);
+            LearnSpell(pAbility->spellId);
         }
     }
 }
@@ -19832,14 +19832,14 @@ void Player::SendAuraDurationsForTarget(Unit* target)
     }
 }
 
-void Player::learnSkillRewardedSpells()
+void Player::LearnSkillRewardedSpells()
 {
     for (SkillStatusMap::iterator itr = mSkillStatus.begin(); itr != mSkillStatus.end();)
     {
         if (itr->second.uState == SKILL_DELETED)
             continue;
 
-        learnSkillRewardedSpells(itr->first);
+        LearnSkillRewardedSpells(itr->first);
 
         ++itr;
     }

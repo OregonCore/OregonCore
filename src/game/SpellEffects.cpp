@@ -2644,7 +2644,7 @@ void Spell::EffectUnlearnSpecialization(SpellEffIndex effIndex)
     Player* _player = unitTarget->ToPlayer();
     uint32 spellToUnlearn = m_spellInfo->EffectTriggerSpell[effIndex];
 
-    _player->removeSpell(spellToUnlearn);
+    _player->RemoveSpell(spellToUnlearn);
 
     DEBUG_LOG("Spell: Player %u has unlearned spell %u from NpcGUID: %u", _player->GetGUIDLow(), spellToUnlearn, m_caster->GetGUIDLow());
 }
@@ -3722,7 +3722,7 @@ void Spell::EffectLearnSpell(SpellEffIndex effIndex)
     Player* player = unitTarget->ToPlayer();
 
     uint32 spellToLearn = (m_spellInfo->Id == SPELL_GENERIC_LEARN) ? damage : m_spellInfo->EffectTriggerSpell[effIndex];
-    player->learnSpell(spellToLearn);
+    player->LearnSpell(spellToLearn);
 
     DEBUG_LOG("Spell: Player %u has learned spell %u from NpcGUID=%u", player->GetGUIDLow(), spellToLearn, m_caster->GetGUIDLow());
 }

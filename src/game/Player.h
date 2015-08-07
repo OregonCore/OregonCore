@@ -1721,14 +1721,14 @@ class Player : public Unit, public GridObject<Player>
 
         void SendProficiency(ItemClass itemClass, uint32 itemSubclassMask);
         void SendInitialSpells();
-        bool addSpell(uint32 spell_id, bool active, bool learning = true, bool loading = false, bool disabled = false);
-        void learnSpell(uint32 spell_id);
-        void removeSpell(uint32 spell_id, bool disabled = false);
-        void resetSpells();
-        void learnDefaultSpells(bool loading = false);
-        void learnQuestRewardedSpells();
-        void learnQuestRewardedSpells(Quest const* quest);
-        void learnSpellHighRank(uint32 spellid);
+        bool AddSpell(uint32 spell_id, bool active, bool learning = true, bool loading = false, bool disabled = false);
+        void LearnSpell(uint32 spell_id);
+        void RemoveSpell(uint32 spell_id, bool disabled = false);
+        void ResetSpells();
+        void LearnDefaultSpells(bool loading = false);
+        void LearnQuestRewardedSpells();
+        void LearnQuestRewardedSpells(Quest const* quest);
+        void LearnSpellHighestRank(uint32 spellid);
         uint32 GetHighestLearnedRankOf(uint32 spellid) const;
 
         uint32 GetFreeTalentPoints() const
@@ -1739,8 +1739,8 @@ class Player : public Unit, public GridObject<Player>
         {
             SetUInt32Value(PLAYER_CHARACTER_POINTS1, points);
         }
-        bool resetTalents(bool no_cost = false);
-        uint32 resetTalentsCost() const;
+        bool ResetTalents(bool no_cost = false);
+        uint32 ResetTalentsCost() const;
         void InitTalentForLevel();
 
         uint32 GetFreePrimaryProfessionPoints() const
@@ -2104,8 +2104,8 @@ class Player : public Unit, public GridObject<Player>
         uint16 GetPureSkillValue(uint32 skill) const;       // skill value
         int16 GetSkillTempBonusValue(uint32 skill) const;
         bool HasSkill(uint32 skill) const;
-        void learnSkillRewardedSpells(uint32 id);
-        void learnSkillRewardedSpells();
+        void LearnSkillRewardedSpells(uint32 id);
+        void LearnSkillRewardedSpells();
 
         WorldLocation& GetTeleportDest()
         {

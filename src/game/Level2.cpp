@@ -3481,7 +3481,7 @@ bool ChatHandler::HandleLearnAllCraftsCommand(const char* /*args*/)
                 if (!spellInfo || !SpellMgr::IsSpellValid(spellInfo, m_session->GetPlayer(), false))
                     continue;
 
-                m_session->GetPlayer()->learnSpell(skillLine->spellId);
+                m_session->GetPlayer()->LearnSpell(skillLine->spellId);
             }
         }
     }
@@ -3552,7 +3552,7 @@ bool ChatHandler::HandleLearnAllRecipesCommand(const char* args)
                     continue;
 
                 if (!target->HasSpell(spellInfo->Id))
-                    m_session->GetPlayer()->learnSpell(skillLine->spellId);
+                    m_session->GetPlayer()->LearnSpell(skillLine->spellId);
             }
 
             uint16 maxLevel = target->GetPureMaxSkillValue(skillInfo->id);

@@ -240,7 +240,7 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recv_data)
     _player->ModifyMoney(-int32(nSpellCost));
 
     // learn explicitly to prevent lost money at lags, learning spell will be only show spell animation
-    _player->learnSpell(trainer_spell->spell);
+    _player->LearnSpell(trainer_spell->spell);
 
     data.Initialize(SMSG_TRAINER_BUY_SUCCEEDED, 12);
     data << uint64(guid) << uint32(spellId);

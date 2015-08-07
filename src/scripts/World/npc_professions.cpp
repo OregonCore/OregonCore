@@ -254,90 +254,90 @@ void ProfessionUnlearnSpells(Player* pPlayer, uint32 type)
     switch (type)
     {
     case 36436:                                         // S_UNLEARN_WEAPON
-        pPlayer->removeSpell(36125);                     // Light Earthforged Blade
-        pPlayer->removeSpell(36128);                     // Light Emberforged Hammer
-        pPlayer->removeSpell(36126);                     // Light Skyforged Axe
+        pPlayer->RemoveSpell(36125);                     // Light Earthforged Blade
+        pPlayer->RemoveSpell(36128);                     // Light Emberforged Hammer
+        pPlayer->RemoveSpell(36126);                     // Light Skyforged Axe
         break;
     case 36435:                                         // S_UNLEARN_ARMOR
-        pPlayer->removeSpell(36122);                     // Earthforged Leggings
-        pPlayer->removeSpell(36129);                     // Heavy Earthforged Breastplate
-        pPlayer->removeSpell(36130);                     // Stormforged Hauberk
-        pPlayer->removeSpell(34533);                     // Breastplate of Kings
-        pPlayer->removeSpell(34529);                     // Nether Chain Shirt
-        pPlayer->removeSpell(34534);                     // Bulwark of Kings
-        pPlayer->removeSpell(36257);                     // Bulwark of the Ancient Kings
-        pPlayer->removeSpell(36256);                     // Embrace of the Twisting Nether
-        pPlayer->removeSpell(34530);                     // Twisting Nether Chain Shirt
-        pPlayer->removeSpell(36124);                     // Windforged Leggings
+        pPlayer->RemoveSpell(36122);                     // Earthforged Leggings
+        pPlayer->RemoveSpell(36129);                     // Heavy Earthforged Breastplate
+        pPlayer->RemoveSpell(36130);                     // Stormforged Hauberk
+        pPlayer->RemoveSpell(34533);                     // Breastplate of Kings
+        pPlayer->RemoveSpell(34529);                     // Nether Chain Shirt
+        pPlayer->RemoveSpell(34534);                     // Bulwark of Kings
+        pPlayer->RemoveSpell(36257);                     // Bulwark of the Ancient Kings
+        pPlayer->RemoveSpell(36256);                     // Embrace of the Twisting Nether
+        pPlayer->RemoveSpell(34530);                     // Twisting Nether Chain Shirt
+        pPlayer->RemoveSpell(36124);                     // Windforged Leggings
         break;
     case 36441:                                         // S_UNLEARN_HAMMER
-        pPlayer->removeSpell(36262);                     // Dragonstrike
-        pPlayer->removeSpell(34546);                     // Dragonmaw
-        pPlayer->removeSpell(34545);                     // Drakefist Hammer
-        pPlayer->removeSpell(36136);                     // Lavaforged Warhammer
-        pPlayer->removeSpell(34547);                     // Thunder
-        pPlayer->removeSpell(34567);                     // Deep Thunder
-        pPlayer->removeSpell(36263);                     // Stormherald
-        pPlayer->removeSpell(36137);                     // Great Earthforged Hammer
+        pPlayer->RemoveSpell(36262);                     // Dragonstrike
+        pPlayer->RemoveSpell(34546);                     // Dragonmaw
+        pPlayer->RemoveSpell(34545);                     // Drakefist Hammer
+        pPlayer->RemoveSpell(36136);                     // Lavaforged Warhammer
+        pPlayer->RemoveSpell(34547);                     // Thunder
+        pPlayer->RemoveSpell(34567);                     // Deep Thunder
+        pPlayer->RemoveSpell(36263);                     // Stormherald
+        pPlayer->RemoveSpell(36137);                     // Great Earthforged Hammer
         break;
     case 36439:                                         // S_UNLEARN_AXE
-        pPlayer->removeSpell(36260);                     // Wicked Edge of the Planes
-        pPlayer->removeSpell(34562);                     // Black Planar Edge
-        pPlayer->removeSpell(34541);                     // The Planar Edge
-        pPlayer->removeSpell(36134);                     // Stormforged Axe
-        pPlayer->removeSpell(36135);                     // Skyforged Great Axe
-        pPlayer->removeSpell(36261);                     // Bloodmoon
-        pPlayer->removeSpell(34543);                     // Lunar Crescent
-        pPlayer->removeSpell(34544);                     // Mooncleaver
+        pPlayer->RemoveSpell(36260);                     // Wicked Edge of the Planes
+        pPlayer->RemoveSpell(34562);                     // Black Planar Edge
+        pPlayer->RemoveSpell(34541);                     // The Planar Edge
+        pPlayer->RemoveSpell(36134);                     // Stormforged Axe
+        pPlayer->RemoveSpell(36135);                     // Skyforged Great Axe
+        pPlayer->RemoveSpell(36261);                     // Bloodmoon
+        pPlayer->RemoveSpell(34543);                     // Lunar Crescent
+        pPlayer->RemoveSpell(34544);                     // Mooncleaver
         break;
     case 36438:                                         // S_UNLEARN_SWORD
-        pPlayer->removeSpell(36258);                     // Blazefury
-        pPlayer->removeSpell(34537);                     // Blazeguard
-        pPlayer->removeSpell(34535);                     // Fireguard
-        pPlayer->removeSpell(36131);                     // Windforged Rapier
-        pPlayer->removeSpell(36133);                     // Stoneforged Claymore
-        pPlayer->removeSpell(34538);                     // Lionheart Blade
-        pPlayer->removeSpell(34540);                     // Lionheart Champion
-        pPlayer->removeSpell(36259);                     // Lionheart Executioner
+        pPlayer->RemoveSpell(36258);                     // Blazefury
+        pPlayer->RemoveSpell(34537);                     // Blazeguard
+        pPlayer->RemoveSpell(34535);                     // Fireguard
+        pPlayer->RemoveSpell(36131);                     // Windforged Rapier
+        pPlayer->RemoveSpell(36133);                     // Stoneforged Claymore
+        pPlayer->RemoveSpell(34538);                     // Lionheart Blade
+        pPlayer->RemoveSpell(34540);                     // Lionheart Champion
+        pPlayer->RemoveSpell(36259);                     // Lionheart Executioner
         break;
     case 36434:                                         // S_UNLEARN_DRAGON
-        pPlayer->removeSpell(36076);                     // Dragonstrike Leggings
-        pPlayer->removeSpell(36079);                     // Golden Dragonstrike Breastplate
-        pPlayer->removeSpell(35576);                     // Ebon Netherscale Belt
-        pPlayer->removeSpell(35577);                     // Ebon Netherscale Bracers
-        pPlayer->removeSpell(35575);                     // Ebon Netherscale Breastplate
-        pPlayer->removeSpell(35582);                     // Netherstrike Belt
-        pPlayer->removeSpell(35584);                     // Netherstrike Bracers
-        pPlayer->removeSpell(35580);                     // Netherstrike Breastplate
+        pPlayer->RemoveSpell(36076);                     // Dragonstrike Leggings
+        pPlayer->RemoveSpell(36079);                     // Golden Dragonstrike Breastplate
+        pPlayer->RemoveSpell(35576);                     // Ebon Netherscale Belt
+        pPlayer->RemoveSpell(35577);                     // Ebon Netherscale Bracers
+        pPlayer->RemoveSpell(35575);                     // Ebon Netherscale Breastplate
+        pPlayer->RemoveSpell(35582);                     // Netherstrike Belt
+        pPlayer->RemoveSpell(35584);                     // Netherstrike Bracers
+        pPlayer->RemoveSpell(35580);                     // Netherstrike Breastplate
         break;
     case 36328:                                         // S_UNLEARN_ELEMENTAL
-        pPlayer->removeSpell(36074);                     // Blackstorm Leggings
-        pPlayer->removeSpell(36077);                     // Primalstorm Breastplate
-        pPlayer->removeSpell(35590);                     // Primalstrike Belt
-        pPlayer->removeSpell(35591);                     // Primalstrike Bracers
-        pPlayer->removeSpell(35589);                     // Primalstrike Vest
+        pPlayer->RemoveSpell(36074);                     // Blackstorm Leggings
+        pPlayer->RemoveSpell(36077);                     // Primalstorm Breastplate
+        pPlayer->RemoveSpell(35590);                     // Primalstrike Belt
+        pPlayer->RemoveSpell(35591);                     // Primalstrike Bracers
+        pPlayer->RemoveSpell(35589);                     // Primalstrike Vest
         break;
     case 36433:                                         // S_UNLEARN_TRIBAL
-        pPlayer->removeSpell(35585);                     // Windhawk Hauberk
-        pPlayer->removeSpell(35587);                     // Windhawk Belt
-        pPlayer->removeSpell(35588);                     // Windhawk Bracers
-        pPlayer->removeSpell(36075);                     // Wildfeather Leggings
-        pPlayer->removeSpell(36078);                     // Living Crystal Breastplate
+        pPlayer->RemoveSpell(35585);                     // Windhawk Hauberk
+        pPlayer->RemoveSpell(35587);                     // Windhawk Belt
+        pPlayer->RemoveSpell(35588);                     // Windhawk Bracers
+        pPlayer->RemoveSpell(36075);                     // Wildfeather Leggings
+        pPlayer->RemoveSpell(36078);                     // Living Crystal Breastplate
         break;
     case 41299:                                         // S_UNLEARN_SPELLFIRE
-        pPlayer->removeSpell(26752);                     // Spellfire Belt
-        pPlayer->removeSpell(26753);                     // Spellfire Gloves
-        pPlayer->removeSpell(26754);                     // Spellfire Robe
+        pPlayer->RemoveSpell(26752);                     // Spellfire Belt
+        pPlayer->RemoveSpell(26753);                     // Spellfire Gloves
+        pPlayer->RemoveSpell(26754);                     // Spellfire Robe
         break;
     case 41558:                                         // S_UNLEARN_MOONCLOTH
-        pPlayer->removeSpell(26760);                     // Primal Mooncloth Belt
-        pPlayer->removeSpell(26761);                     // Primal Mooncloth Shoulders
-        pPlayer->removeSpell(26762);                     // Primal Mooncloth Robe
+        pPlayer->RemoveSpell(26760);                     // Primal Mooncloth Belt
+        pPlayer->RemoveSpell(26761);                     // Primal Mooncloth Shoulders
+        pPlayer->RemoveSpell(26762);                     // Primal Mooncloth Robe
         break;
     case 41559:                                         // S_UNLEARN_SHADOWEAVE
-        pPlayer->removeSpell(26756);                     // Frozen Shadoweave Shoulders
-        pPlayer->removeSpell(26757);                     // Frozen Shadoweave Boots
-        pPlayer->removeSpell(26758);                     // Frozen Shadoweave Robe
+        pPlayer->RemoveSpell(26756);                     // Frozen Shadoweave Shoulders
+        pPlayer->RemoveSpell(26757);                     // Frozen Shadoweave Boots
+        pPlayer->RemoveSpell(26758);                     // Frozen Shadoweave Robe
         break;
     }
 }
