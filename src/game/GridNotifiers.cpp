@@ -70,7 +70,7 @@ VisibleNotifier::SendToSelf()
     i_player.GetSession()->SendPacket(&packet);
 
     for (std::set<Unit*>::const_iterator it = i_visibleNow.begin(); it != i_visibleNow.end(); ++it)
-        i_player.SendInitialVisiblePackets(*it);
+        i_player.SendAuraDurationsForTarget(*it);
 }
 
 void

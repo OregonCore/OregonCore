@@ -18066,7 +18066,8 @@ void Player::HandleStealthedUnitsDetection()
 
                 // target aura duration for caster show only if target exist at caster client
                 // send data at target visibility change (adding to client)
-                SendInitialVisiblePackets(*i);
+                if ((*i)->isType(TYPEMASK_UNIT))
+                    SendAuraDurationsForTarget((*i));
             }
         }
         else
@@ -19297,7 +19298,7 @@ void Player::UpdateVisibilityOf(WorldObject* target)
             // target aura duration for caster show only if target exist at caster client
             // send data at target visibility change (adding to client)
             if (target->isType(TYPEMASK_UNIT))
-                SendInitialVisiblePackets((Unit*)target);
+                SendAuraDurationsForTarget(reinterpret_cast<Unit*>(target));
         }
     }
 }
@@ -19325,18 +19326,6 @@ void Player::UpdateTriggerVisibility()
     }
     udata.BuildPacket(&packet);
     GetSession()->SendPacket(&packet);
-}
-
-void Player::SendInitialVisiblePackets(Unit* target)
-{
-    SendAuraDurationsForTarget(target);
-    if (target->IsAlive())
-    {
-        if (target->GetMotionMaster()->GetCurrentMovementGeneratorType() != IDLE_MOTION_TYPE)
-            target->SendMonsterMoveWithSpeedToCurrentDestination(0.0f);
-        if (target->HasUnitState(UNIT_STATE_MELEE_ATTACKING) && target->getVictim())
-            target->SendMeleeAttackStart(target->getVictim());
-    }
 }
 
 template<class T>
