@@ -1881,11 +1881,8 @@ class Player : public Unit, public GridObject<Player>
             return p == this || (GetGroup() != NULL && GetGroup() == p->GetGroup());
         }
         void UninviteFromGroup();
-        static void RemoveFromGroup(Group* group, uint64 guid, uint8 kicked);
-        void RemoveFromGroup(uint8 kicked)
-        {
-            RemoveFromGroup(GetGroup(), GetGUID(), kicked);
-        }
+        static void RemoveFromGroup(Group* group, uint64 guid, RemoveMethod method = GROUP_REMOVEMETHOD_DEFAULT, uint64 kicker = 0 , const char* reason = NULL);
+        void RemoveFromGroup(RemoveMethod method = GROUP_REMOVEMETHOD_DEFAULT) { RemoveFromGroup(GetGroup(),GetGUID(), method); }
         void SendUpdateToOutOfRangeGroupMembers();
 
         void SetInGuild(uint32 GuildId)

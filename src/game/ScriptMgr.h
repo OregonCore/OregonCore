@@ -49,7 +49,7 @@ struct Script
     Script() :
         OnLogin(NULL), OnLogout(NULL), OnPVPKill(NULL), OnCreatureKill(NULL), OnPlayerKilledByCreature(NULL),
         OnLevelChanged(NULL), OnTalentsReset(NULL), OnGroupCreated(NULL), OnGroupPlayerInvited(NULL), OnGroupPlayerJoined(NULL), 
-        OnGroupPlayerLeft(NULL), OnGroupPlayerRemoved(NULL), OnGroupLeaderChanged(NULL), OnGroupDisbanded(NULL),
+        OnGroupPlayerRemoved(NULL), OnGroupLeaderChanged(NULL), OnGroupDisbanded(NULL),
         pGossipHello(NULL), pQuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
         pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL), pItemQuestAccept(NULL),
@@ -72,8 +72,7 @@ struct Script
     void (*OnGroupCreated          )(Group*, Player*);
     void (*OnGroupPlayerInvited    )(Group*, Player*);
     void (*OnGroupPlayerJoined     )(Group*, Player*);
-    void (*OnGroupPlayerLeft       )(Group*, Player*);
-    void (*OnGroupPlayerRemoved    )(Group*, Player*);
+    void (*OnGroupPlayerRemoved    )(Group*, Player*, uint8, uint64, const char*);
     void (*OnGroupLeaderChanged    )(Group*, Player*, Player*);
     void (*OnGroupDisbanded        )(Group*, Player*);
 
@@ -125,8 +124,7 @@ class ScriptMgr
         void OnGroupCreated(Group* group, Player* player);
         void OnGroupPlayerInvited(Group* group, Player* invited);
         void OnGroupPlayerJoined(Group* group, Player* player);
-        void OnGroupPlayerLeft(Group* group, Player* player);
-        void OnGroupPlayerRemoved(Group* group, Player* player);
+        void OnGroupPlayerRemoved(Group* group, Player* guid, uint8 method, uint64 kicker, const char* reason);
         void OnGroupLeaderChanged(Group* group, Player* oldLeader, Player* newLeader);
         void OnGroupDisbanded(Group* group, Player* leader);
 

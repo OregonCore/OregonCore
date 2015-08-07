@@ -304,7 +304,7 @@ bool Group::AddMember(const uint64& guid, const char* name)
     return true;
 }
 
-uint32 Group::RemoveMember(const uint64& guid, const uint8& method)
+uint32 Group::RemoveMember(const uint64& guid, const RemoveMethod& method /* = GROUP_REMOVEMETHOD_DEFAULT */, uint64 kicker /* = 0 */, const char* reason /* = NULL */)
 {
     BroadcastGroupUpdate();
 
@@ -317,15 +317,12 @@ uint32 Group::RemoveMember(const uint64& guid, const uint8& method)
         {
             WorldPacket data;
 
-            if (method == 1) // Kicked
+            sScriptMgr.OnGroupPlayerRemoved(this, player, method, kicker, reason);
+
+            if (method == GROUP_REMOVEMETHOD_KICK)
             {
                 data.Initialize(SMSG_GROUP_UNINVITE, 0);
                 player->GetSession()->SendPacket(&data);
-                sScriptMgr.OnGroupPlayerRemoved(this, player);
-            }
-            else // Left
-            {
-                sScriptMgr.OnGroupPlayerLeft(this, player);
             }
 
             // we already removed player from group and in player->GetGroup() is his original group!

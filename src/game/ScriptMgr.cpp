@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ScriptMgr.h"
 #include "Config/Config.h"
 #include "Database/DatabaseEnv.h"
 #include "DBCStores.h"
@@ -23,7 +24,8 @@
 #include "ScriptSystem.h"
 #include "SpellMgr.h"
 #include "GossipDef.h"
-#include "CreatureAI.h"
+#include "CreatureAIImpl.h"
+#include "Player.h"
 
 INSTANTIATE_SINGLETON_1(ScriptMgr);
 
@@ -295,18 +297,11 @@ void ScriptMgr::OnGroupPlayerJoined(Group* pGroup, Player* pPlayer)
     tmpscript->OnGroupPlayerJoined(pGroup, pPlayer);
 }
 
-void ScriptMgr::OnGroupPlayerLeft(Group* pGroup, Player* pPlayer)
-{
-    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
-    if (!tmpscript || !tmpscript->OnGroupPlayerLeft) return;
-    tmpscript->OnGroupPlayerLeft(pGroup, pPlayer);
-}
-
-void ScriptMgr::OnGroupPlayerRemoved(Group* pGroup, Player* pPlayer)
+void ScriptMgr::OnGroupPlayerRemoved(Group* pGroup, Player* pPlayer, uint8 method, uint64 kicker, const char* reason)
 {
     Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->OnGroupPlayerRemoved) return;
-    tmpscript->OnGroupPlayerRemoved(pGroup, pPlayer);
+    tmpscript->OnGroupPlayerRemoved(pGroup, pPlayer, method, kicker, reason);
 }
 
 void ScriptMgr::OnGroupLeaderChanged(Group* pGroup, Player* pOldLeader, Player* pNewLeader)

@@ -79,14 +79,8 @@ void OnGroupPlayerJoined(Group* /*group*/, Player* /*player*/)
     
 }
 
-//This function is called when the player leaves a group
-void OnGroupPlayerLeft(Group* /*group*/, Player* /*player*/)
-{
-    
-}
-
-//This function is called when the player gets kicked from a group
-void OnGroupPlayerRemoved(Group* /*group*/, Player* /*player*/)
+//This function is called when the player is removed from the group
+void OnGroupPlayerRemoved(Group* /*group*/, Player* /*player*/, uint8 /*method*/, uint64 /*kicker*/, const char* /*reason*/)
 {
     
 }
@@ -115,7 +109,6 @@ void AddSC_onevents()
     newscript->OnGroupCreated = &OnGroupCreated;
     newscript->OnGroupPlayerInvited = &OnGroupPlayerInvited;
     newscript->OnGroupPlayerJoined = &OnGroupPlayerJoined;
-    newscript->OnGroupPlayerLeft = &OnGroupPlayerLeft;
     newscript->OnGroupPlayerRemoved = &OnGroupPlayerRemoved;
     newscript->OnGroupLeaderChanged = &OnGroupLeaderChanged;
     newscript->OnGroupDisbanded = &OnGroupDisbanded;
