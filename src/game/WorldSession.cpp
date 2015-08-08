@@ -332,6 +332,9 @@ void WorldSession::LogoutPlayer(bool Save)
 
     if (_player)
     {
+        //Hook for OnLogout Event
+        sScriptMgr.OnLogout(_player);
+
         if (uint64 lguid = GetPlayer()->GetLootGUID())
             DoLootRelease(lguid);
 
@@ -470,9 +473,6 @@ void WorldSession::LogoutPlayer(bool Save)
                                    GetAccountId());
         sLog.outDebug("SESSION: Sent SMSG_LOGOUT_COMPLETE Message");
     }
-
-    //Hook for OnLogout Event
-    sScriptMgr.OnLogout(_player);
 
     m_playerLogout = false;
     m_playerSave = false;
