@@ -2626,7 +2626,7 @@ class Player : public Unit, public GridObject<Player>
             m_oldpetspell = petspell;
         }
 
-        void TemporaryUnsummonPetIfAny();
+        void UnsummonPetTemporaryIfAny();
         void ResummonTemporaryUnsummonedPetIfAny();
 
         // Handle pet status here

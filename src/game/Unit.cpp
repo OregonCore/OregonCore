@@ -8808,7 +8808,7 @@ float Unit::GetPPMProcChance(uint32 WeaponSpeed, float PPM) const
     return result;
 }
 
-void Unit::Mount(uint32 mount)
+void Unit::Mount(uint32 mount, uint32 spellId)
 {
     if (!mount)
         return;
@@ -8822,25 +8822,24 @@ void Unit::Mount(uint32 mount)
     // unsummon pet
     if (GetTypeId() == TYPEID_PLAYER)
     {
-        Pet* pet = ToPlayer()->GetPet();
-        if (pet)
+        // Called by taxi
+        if (!spellId)
+            ToPlayer()->UnsummonPetTemporaryIfAny();
+        // Called by mount aura
+        else if (SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellId))
         {
-            BattleGround* bg = ToPlayer()->GetBattleGround();
-            // don't unsummon pet in arena but SetFlag UNIT_FLAG_STUNNED to disable pet's interface
-            if (bg && bg->isArena())
-                pet->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
-            else
+            // Flying case (Unsummon any pet)
+            if (!GetAurasByType(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED).empty())
+                ToPlayer()->UnsummonPetTemporaryIfAny();
+            // Normal case (Unsummon only permanent pet)
+            else if (Pet* pet = ToPlayer()->GetPet())
             {
-                if (pet->isControlled())
-                {
-                    ToPlayer()->SetTemporaryUnsummonedPetNumber(pet->GetCharmInfo()->GetPetNumber());
-                    ToPlayer()->SetOldPetSpell(pet->GetUInt32Value(UNIT_CREATED_BY_SPELL));
-                }
-                ToPlayer()->RemovePet(NULL, PET_SAVE_NOT_IN_SLOT);
-                return;
+                if (pet->IsPermanentPetFor((Player*)this) && ToPlayer()->InArena())
+                    ToPlayer()->UnsummonPetTemporaryIfAny();
+                else
+                    pet->ApplyModeFlags(PET_MODE_DISABLE_ACTIONS,true);
             }
         }
-        ToPlayer()->SetTemporaryUnsummonedPetNumber(0);
     }
 }
 
@@ -8863,16 +8862,10 @@ void Unit::Dismount()
     // (it could probably happen when logging in after a previous crash)
     if (GetTypeId() == TYPEID_PLAYER && IsInWorld() && IsAlive())
     {
-        if (ToPlayer()->GetTemporaryUnsummonedPetNumber())
-        {
-            Pet* NewPet = new Pet(ToPlayer());
-            if (!NewPet->LoadPetFromDB(ToPlayer(), 0, ToPlayer()->GetTemporaryUnsummonedPetNumber(), true))
-                delete NewPet;
-            ToPlayer()->SetTemporaryUnsummonedPetNumber(0);
-        }
-        else if (Guardian* pPet = GetGuardianPet())
-            if (pPet->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED) && !pPet->HasUnitState(UNIT_STATE_STUNNED))
-                pPet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
+        if(Pet* pet = ToPlayer()->GetPet())
+            pet->ApplyModeFlags(PET_MODE_DISABLE_ACTIONS, false);
+        else
+            ToPlayer()->ResummonTemporaryUnsummonedPetIfAny();
     }
 }
 

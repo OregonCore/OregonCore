@@ -50,6 +50,16 @@ enum PetStatus
     PET_STATUS_DEAD_AND_REMOVED      = 4    // Pet is dead and it's corpse removed from the world
 };
 
+enum PetModeFlags
+{
+    PET_MODE_UNKNOWN_0         = 0x0000001,
+    PET_MODE_UNKNOWN_2         = 0x0000100,
+    PET_MODE_DISABLE_ACTIONS   = 0x8000000,
+
+    // autoset in client at summon
+    PET_MODE_DEFAULT           = PET_MODE_UNKNOWN_0 | PET_MODE_UNKNOWN_2,
+};
+
 enum HappinessState
 {
     UNHAPPY = 1,
@@ -216,6 +226,9 @@ class Pet : public Guardian
         bool   HasTPForSpell(uint32 spellid);
         int32  GetTPForSpell(uint32 spellid);
 
+        void ApplyModeFlags(PetModeFlags mode, bool apply);
+        PetModeFlags GetModeFlags() const { return m_petModeFlags; }
+
         bool HasSpell(uint32 spell) const;
         void AddTeachSpell(uint32 learned_id, uint32 source_id)
         {
@@ -294,6 +307,8 @@ class Pet : public Guardian
 
         bool m_wasOutdoors;
         uint32 m_outdoorBonusCheckTimer;
+
+        PetModeFlags m_petModeFlags;
     private:
 
         // silence hidden overloaded functions warnings below

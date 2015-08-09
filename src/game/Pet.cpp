@@ -55,7 +55,8 @@ uint32 const LevelStartLoyalty[6] =
 Pet::Pet(Player* owner, PetType type) : Guardian(NULL, owner),
     m_resetTalentsCost(0), m_resetTalentsTime(0),
     m_removed(false), m_owner(owner), m_happinessTimer(7500),
-    m_petType(type), m_duration(0), m_declinedname(NULL)
+    m_petType(type), m_duration(0), m_declinedname(NULL), 
+    m_petModeFlags(PET_MODE_DEFAULT)
 {
     m_unitTypeMask |= UNIT_MASK_PET;
     if (type == HUNTER_PET)
@@ -1538,6 +1539,7 @@ bool Pet::addSpell(uint16 spell_id, uint16 active /*= ACT_DECIDE*/, PetSpellStat
 
             oldspell_id = itr2->first;
             removeSpell(itr2->first);
+            break;
         }
     }
 
@@ -1968,3 +1970,19 @@ void Pet::CastPetAura(PetAura const* aura)
         CastSpell(this, auraId, true);
 }
 
+void Pet::ApplyModeFlags(PetModeFlags mode, bool apply)
+{
+    if (apply)
+        m_petModeFlags = PetModeFlags(m_petModeFlags | mode);
+    else
+        m_petModeFlags = PetModeFlags(m_petModeFlags & ~mode);
+
+    Unit* owner = GetOwner();
+    if(!owner || owner->GetTypeId()!=TYPEID_PLAYER)
+        return;
+
+    WorldPacket data(SMSG_PET_MODE, 12);
+    data << uint64(GetGUID());
+    data << uint32(m_petModeFlags);
+    ((Player*)owner)->GetSession()->SendPacket(&data);
+}

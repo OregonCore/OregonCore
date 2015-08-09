@@ -1200,7 +1200,7 @@ class Unit : public WorldObject
         {
             return GetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID);
         }
-        void Mount(uint32 mount);
+        void Mount(uint32 mount, uint32 spellId = 0);
         void Dismount();
         bool HasShapeshiftChangingModel() const;
 

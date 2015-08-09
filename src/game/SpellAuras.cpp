@@ -2413,7 +2413,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     return;
 
                 if (apply)
-                    player->TemporaryUnsummonPetIfAny();
+                    player->UnsummonPetTemporaryIfAny();
                 else
                     player->ResummonTemporaryUnsummonedPetIfAny();
                 return;
@@ -2612,7 +2612,7 @@ void Aura::HandleAuraMounted(bool apply, bool Real)
         if (minfo)
             display_id = minfo->modelid;
 
-        m_target->Mount(display_id);
+        m_target->Mount(display_id, m_spellProto->Id);
     }
     else
         m_target->Dismount();

@@ -57,8 +57,18 @@ void WorldSession::HandlePetAction(WorldPacket& recv_data)
         return;
     }
 
-    if (pet->GetTypeId() == TYPEID_PLAYER && !(flag == ACT_COMMAND && spellid == COMMAND_ATTACK))
-        return;
+    if (pet->GetTypeId() == TYPEID_PLAYER)
+    {
+        // controller player can only do melee attack
+        if (!(flag == ACT_COMMAND && spellid == COMMAND_ATTACK))
+            return;
+    }
+    else if (((Creature*)pet)->IsPet())
+    {
+        // pet can have action bar disabled
+        if (((Pet*)pet)->GetModeFlags() & PET_MODE_DISABLE_ACTIONS)
+            return;
+    }
 
     if (GetPlayer()->m_Controlled.size() == 1)
         HandlePetActionHelper(pet, guid1, spellid, flag, guid2);
@@ -395,6 +405,10 @@ void WorldSession::HandlePetSetAction(WorldPacket& recv_data)
         sLog.outError("HandlePetSetAction: Unknown pet or pet owner.");
         return;
     }
+
+    // pet can have action bar disabled
+    if (pet->IsPet() && ((Pet*)pet)->GetModeFlags() & PET_MODE_DISABLE_ACTIONS)
+        return;
 
     CharmInfo* charmInfo = pet->GetCharmInfo();
     if (!charmInfo)

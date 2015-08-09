@@ -1934,31 +1934,19 @@ void Player::RemoveFromWorld()
     }
 }
 
-void Player::TemporaryUnsummonPetIfAny()
+void Player::UnsummonPetTemporaryIfAny()
 {
     if (!IsInWorld() || !IsAlive())
         return;
 
     Pet* pet = GetPet();
-    if (pet)
-    {
-        BattleGround* bg = GetBattleGround();
-        // don't unsummon pet in arena but SetFlag UNIT_FLAG_STUNNED to disable pet's interface
-        if (bg && bg->isArena())
-            pet->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
-        else
-        {
-            if (pet->isControlled())
-            {
-                SetTemporaryUnsummonedPetNumber(pet->GetCharmInfo()->GetPetNumber());
-                SetOldPetSpell(pet->GetUInt32Value(UNIT_CREATED_BY_SPELL));
-            }
-            RemovePet(NULL, PET_SAVE_NOT_IN_SLOT);
-            return;
-        }
-    }
+    if (!pet)
+        return;
 
-    SetTemporaryUnsummonedPetNumber(0);
+    if (!m_temporaryUnsummonedPetNumber && pet->isControlled() && !pet->isTemporarySummoned())
+        m_temporaryUnsummonedPetNumber = pet->GetCharmInfo()->GetPetNumber();
+
+   RemovePet(NULL, PET_SAVE_NOT_IN_SLOT);
 }
 
 void Player::ResummonTemporaryUnsummonedPetIfAny()
@@ -17460,7 +17448,14 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
             return;
     }
 
-    if (returnreagent && (pet || m_temporaryUnsummonedPetNumber))
+    if (!pet || pet->GetOwnerGUID() != GetGUID())
+        return;
+
+    // not save secondary permanent pet as current
+    if (pet && m_temporaryUnsummonedPetNumber && m_temporaryUnsummonedPetNumber != pet->GetCharmInfo()->GetPetNumber() && mode == PET_SAVE_AS_CURRENT)
+        mode = PET_SAVE_NOT_IN_SLOT;
+
+    if (returnreagent && pet && mode != PET_SAVE_AS_CURRENT)
     {
         //returning of reagents only for players, so best done here
         uint32 spellId = pet ? pet->GetUInt32Value(UNIT_CREATED_BY_SPELL) : m_oldpetspell;
@@ -17483,11 +17478,7 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
                 }
             }
         }
-        m_temporaryUnsummonedPetNumber = 0;
     }
-
-    if (!pet || pet->GetOwnerGUID() != GetGUID())
-        return;
 
     pet->CombatStop();
 
