@@ -39,6 +39,7 @@ class PetAI : public CreatureAI
         void AttackStart(Unit* target);
         void MovementInform(uint32 moveType, uint32 data);
 
+        void ClearCharmInfoFlags();
     private:
         bool _isVisible(Unit*) const;
         bool _needToStop(void) const;
