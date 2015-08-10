@@ -121,6 +121,7 @@ enum Creatures
     MOB_VAPOR                                     = 25265,
     MOB_VAPOR_TRAIL                               = 25267,
 
+    NPC_FELMYST                                   = 25038,
     MOB_GRAND_WARLOCK_ALYTHESS                    = 25166,
     MOB_SHADOW_IMAGE                              = 25214,
     MOB_LADY_SACROLASH                            = 25165,

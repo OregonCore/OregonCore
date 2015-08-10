@@ -140,9 +140,9 @@ struct boss_brutallusAI : public ScriptedAI
             {
                 Madrigosa->CastSpell(Madrigosa, SPELL_SUMMON_FELBLAZE_VISUAL, true);
                 Madrigosa->CastSpell(Madrigosa, 45068, true);
-                // @todo Look at how we summon and determine factions
-                // so that Madrigosa can cast this spell.
-                me->CastSpell(Madrigosa, SPELL_SUMMON_FELBLAZE, true);
+                float x, y, z;
+                Madrigosa->GetPosition(x, y, z);
+                me->SummonCreature(NPC_FELMYST, x, y, z + 40, me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
                 Madrigosa->SetVisibility(VISIBILITY_OFF);
             }
         }
