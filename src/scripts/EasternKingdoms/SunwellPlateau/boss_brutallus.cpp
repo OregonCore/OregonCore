@@ -66,7 +66,10 @@ enum Spells
     SPELL_INTRO_ENCAPSULATE            =   45665,
     SPELL_INTRO_ENCAPSULATE_CHANELLING =   45661,
     SPELL_SUMMON_FELBLAZE_VISUAL       =   44885,
-    SPELL_SUMMON_FELBLAZE              =   45069
+    SPELL_SUMMON_FELBLAZE              =   45069,
+
+    SPELL_SUMMON_FELMYST               =   45069,
+    SPELL_SUMMON_DEATH_CLOUD           =   45884
 };
 
 struct boss_brutallusAI : public ScriptedAI
@@ -75,6 +78,12 @@ struct boss_brutallusAI : public ScriptedAI
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
         Intro = true;
+        if (pInstance && pInstance->GetData(DATA_BRUTALLUS_EVENT) == DONE && pInstance->GetData(DATA_FELMYST_EVENT) != DONE)
+        {
+            float x, y, z;
+            me->GetPosition(x, y, z);
+            me->SummonCreature(NPC_FELMYST, x, y, z + 30, me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
+        }
     }
 
     ScriptedInstance* pInstance;
@@ -111,7 +120,7 @@ struct boss_brutallusAI : public ScriptedAI
 
         DoCast(me, SPELL_DUAL_WIELD, true);
 
-        if (pInstance)
+        if (pInstance && pInstance->GetData(DATA_BRUTALLUS_EVENT) != DONE)
             pInstance->SetData(DATA_BRUTALLUS_EVENT, NOT_STARTED);
     }
 
@@ -137,14 +146,7 @@ struct boss_brutallusAI : public ScriptedAI
         {
             pInstance->SetData(DATA_BRUTALLUS_EVENT, DONE);
             if (Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
-            {
-                Madrigosa->CastSpell(Madrigosa, SPELL_SUMMON_FELBLAZE_VISUAL, true);
-                Madrigosa->CastSpell(Madrigosa, 45068, true);
-                float x, y, z;
-                Madrigosa->GetPosition(x, y, z);
-                me->SummonCreature(NPC_FELMYST, x, y, z + 40, me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
-                Madrigosa->SetVisibility(VISIBILITY_OFF);
-            }
+                Madrigosa->CastSpell(Madrigosa, SPELL_SUMMON_DEATH_CLOUD, true);
         }
     }
 
@@ -157,6 +159,9 @@ struct boss_brutallusAI : public ScriptedAI
     void StartIntro()
     {
         if (!Intro || IsIntro)
+            return;
+
+        if (me->isDead())
             return;
 
         Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
@@ -426,6 +431,58 @@ CreatureAI* GetAI_boss_brutallus(Creature* pCreature)
     return new boss_brutallusAI (pCreature);
 }
 
+struct trigger_death_cloudAI : public ScriptedAI
+{
+    trigger_death_cloudAI(Creature* c) : ScriptedAI(c)
+    {
+        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+    }
+
+    ScriptedInstance* pInstance;
+
+    uint32 bornTimer;
+
+    void Reset()
+    {
+        DoCast(me, 45212, true);
+
+        me->SetSpeed(MOVE_WALK, 2.0f);
+        me->SetSpeed(MOVE_RUN, 2.0f);
+
+        bornTimer = 10000;
+
+        if (Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
+            DoCast(Madrigosa, 44885, true);
+    }
+
+    void EnterCombat(Unit* who) {}
+
+    void UpdateAI(uint32 const diff)
+    {
+        if (!bornTimer)
+            return;
+
+        if (bornTimer <= diff)
+        {
+            if (Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
+            {
+                Madrigosa->RemoveAurasDueToSpell(44885);
+                Madrigosa->SetVisibility(VISIBILITY_OFF);
+                Madrigosa->CastSpell(Madrigosa, SPELL_SUMMON_FELMYST, true);
+                bornTimer = 0;
+                me->DisappearAndDie();
+            }
+        }
+        else
+            bornTimer -= diff;
+    }
+};
+
+CreatureAI* GetAI_trigger_death_cloud(Creature* creature)
+{
+    return new trigger_death_cloudAI(creature);
+}
+
 void AddSC_boss_brutallus()
 {
     Script* newscript;
@@ -433,5 +490,10 @@ void AddSC_boss_brutallus()
     newscript = new Script;
     newscript->Name = "boss_brutallus";
     newscript->GetAI = &GetAI_boss_brutallus;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "trigger_death_cloud";
+    newscript->GetAI = &GetAI_trigger_death_cloud;
     newscript->RegisterSelf();
 }
