@@ -184,6 +184,9 @@ struct boss_brutallusAI : public ScriptedAI
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         Intro = false;
         IsIntro = false;
+
+        if (pInstance)
+            pInstance->SetData(DATA_BRUTALLUS_EVENT, SPECIAL);
     }
 
     void AttackStart(Unit* pWho)
@@ -199,6 +202,7 @@ struct boss_brutallusAI : public ScriptedAI
         if (!Madrigosa)
             return;
 
+        float x, y, z, ground_Z;
         switch (IntroPhase)
         {
         case 0:
@@ -227,47 +231,61 @@ struct boss_brutallusAI : public ScriptedAI
         case 5:
             me->AttackStop();
             Madrigosa->AttackStop();
-            Madrigosa->SetLevitate(true);
             Madrigosa->SetSpeed(MOVE_RUN, 3.0f, true);
-            Madrigosa->GetMotionMaster()->MovePath(31000, false);
+            Madrigosa->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
+            IntroPhaseTimer = 500;
+            break;
+        case 6:
+            Madrigosa->GetMotionMaster()->MovePoint(0, Madrigosa->GetPositionX(), Madrigosa->GetPositionY() + 2, Madrigosa->GetPositionZ() + 8);
+            IntroPhaseTimer = 2000;
+            break;
+        case 7:
             Madrigosa->SetInFront(me);
             Madrigosa->SendMovementFlagUpdate();
             IntroAttackTimer = 3500;
             IntroFrostBoltTimer = 3500;
             IntroPhaseTimer = 13000;
             break;
-        case 6:
-            Madrigosa->SetPosition(Madrigosa->GetPositionX(), Madrigosa->GetPositionY(), Madrigosa->GetPositionZ(), 4.1f, true);
+        case 8:
             DoScriptText(YELL_INTRO_BREAK_ICE, me);
-            IntroPhaseTimer = 6000;
+            IntroPhaseTimer = 5000;
             break;
-        case 7:
-            Madrigosa->SetLevitate(false);
+        case 9:
             Madrigosa->SetWalk(true);
             Madrigosa->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
+            IntroPhaseTimer = 500;
+            break;
+        case 10:
+            Madrigosa->GetPosition(x, y, z);
+            ground_Z = me->GetMap()->GetHeight(x, y, MAX_HEIGHT, true);
+            Madrigosa->GetMotionMaster()->MovePoint(1, x, y, ground_Z);
+            IntroPhaseTimer = 2000;
+            break;
+        case 11:
+            Madrigosa->SetInFront(me);
             Madrigosa->SendMovementFlagUpdate();
             Madrigosa->CastSpell(me, SPELL_INTRO_ENCAPSULATE_CHANELLING, true);
             DoScriptText(YELL_MADR_TRAP, Madrigosa);
             DoCast(me, SPELL_INTRO_ENCAPSULATE);
             me->SetSpeed(MOVE_RUN, 4.0f, true);
-            float x, y, z;
+
             me->GetPosition(x, y, z);
             me->GetMotionMaster()->MovePoint(1, x - 6, y - 15, z + 10);
+
             IntroAttackTimer = 3000;
             IntroPhaseTimer = 6000;
             break;
-        case 8:
+        case 12:
             DoScriptText(YELL_INTRO_CHARGE, me);
             me->SetSpeed(MOVE_RUN, 3.0f, true);
             //me->GetMotionMaster()->MovePath(30000, false);
             me->GetPosition(x, y, z);
-            float ground_Z;
             ground_Z = me->GetMap()->GetHeight(x, y, MAX_HEIGHT, true);
             me->GetMotionMaster()->MoveFall(ground_Z, 1);
             me->GetMotionMaster()->MovePoint(2, x + 6, y + 15, ground_Z);
-            IntroPhaseTimer = 4000;
+            IntroPhaseTimer = 5000;
             break;
-        case 9:
+        case 13:
             me->DealDamage(Madrigosa, Madrigosa->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, true);
             DoScriptText(YELL_MADR_DEATH, Madrigosa);
             me->SetHealth(me->GetMaxHealth());
@@ -275,20 +293,18 @@ struct boss_brutallusAI : public ScriptedAI
             me->SetSpeed(MOVE_RUN, 2.0f, true);
             IntroPhaseTimer = 7000;
             break;
-        case 10:
+        case 14:
             DoScriptText(YELL_INTRO_KILL_MADRIGOSA, me);
             me->StopMoving();
             me->SetSpeed(MOVE_RUN, 1.0f, true);
-            me->GetMotionMaster()->MovePoint(0, me->GetPositionX() + 3, me->GetPositionY(), me->GetPositionZ());
-            me->SetPosition(me->GetPositionX() + 3, me->GetPositionY(), me->GetPositionZ(), 1.1, false);
             Madrigosa->setDeathState(CORPSE);
             IntroPhaseTimer = 8000;
             break;
-        case 11:
+        case 15:
             DoScriptText(YELL_INTRO_TAUNT, me);
             IntroPhaseTimer = 5000;
             break;
-        case 12:
+        case 16:
             EndIntro();
             break;
         }
@@ -298,9 +314,6 @@ struct boss_brutallusAI : public ScriptedAI
     {
         if (!who->isTargetableForAttack() || !me->IsHostileTo(who))
             return;
-
-        //if (pInstance && Intro)
-        //pInstance->SetData(DATA_BRUTALLUS_EVENT, SPECIAL);
 
         if ((Intro && !IsIntro) && (who->GetTypeId() == TYPEID_PLAYER && me->IsWithinDist(who, 70)))
             StartIntro();
@@ -337,7 +350,7 @@ struct boss_brutallusAI : public ScriptedAI
                 else IntroAttackTimer -= diff;
             }
 
-            if (IntroPhase == 4 + 1)
+            if (IntroPhase == 6 + 1)
             {
                 if (IntroAttackTimer < diff)
                 {
@@ -362,7 +375,7 @@ struct boss_brutallusAI : public ScriptedAI
                 else IntroFrostBoltTimer -= diff;
             }
 
-            if (IntroPhase == 7 + 1)
+            if (IntroPhase == 11 + 1)
             {
                 if (IntroAttackTimer < diff)
                 {
