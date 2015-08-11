@@ -342,7 +342,7 @@ void Item::SaveToDB()
 
             ss << "', randomPropertyId = " << GetItemRandomPropertyId();
             ss << ", durability = " << GetUInt32Value(ITEM_FIELD_DURABILITY);
-            ss << ", playedTime = " << GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID);
+            ss << ", itemTextId = " << GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID);
             ss << " WHERE guid = " << guid;
 
             CharacterDatabase.Execute(ss.str().c_str());
@@ -437,7 +437,7 @@ bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, Field* fields)
     if (need_save)                                           // normal item changed state set not work at loading
     {
         std::ostringstream ss;
-        ss << "UPDATE item_instance SET duration = " << GetUInt32Value(ITEM_FIELD_DURABILITY)
+        ss << "UPDATE item_instance SET duration = " << GetUInt32Value(ITEM_FIELD_DURATION)
             << ", flags = " << GetUInt32Value(ITEM_FIELD_FLAGS)
             << ", durability = " << GetUInt32Value(ITEM_FIELD_DURABILITY)
             << " WHERE guid = " << guid;
