@@ -528,7 +528,7 @@ void WorldSession::HandleAddFriendOpcode(WorldPacket& recv_data)
 void WorldSession::HandleAddFriendOpcodeCallBack(QueryResult_AutoPtr result, uint32 accountId, std::string friendNote)
 {
     uint64 friendGuid;
-    uint64 friendAcctid;
+    uint64 friendAccountId;
     uint32 team;
     FriendsResult friendResult;
 
@@ -544,9 +544,9 @@ void WorldSession::HandleAddFriendOpcodeCallBack(QueryResult_AutoPtr result, uin
     {
         friendGuid = MAKE_NEW_GUID((*result)[0].GetUInt32(), 0, HIGHGUID_PLAYER);
         team = Player::TeamForRace((*result)[1].GetUInt8());
-        friendAcctid = (*result)[2].GetUInt32();
+        friendAccountId = (*result)[2].GetUInt32();
 
-        if (session->GetSecurity() >= SEC_MODERATOR || sWorld.getConfig(CONFIG_ALLOW_GM_FRIEND) || sAccountMgr->GetSecurity(friendAcctid) < SEC_MODERATOR)
+        if (session->GetSecurity() >= SEC_MODERATOR || sWorld.getConfig(CONFIG_ALLOW_GM_FRIEND) || sAccountMgr->GetSecurity(friendAccountId, realmID) < SEC_MODERATOR)
         {
             if (friendGuid)
             {
