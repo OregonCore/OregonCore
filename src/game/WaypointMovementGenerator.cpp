@@ -179,13 +179,15 @@ bool WaypointMovementGenerator<Creature>::Update(Creature& unit, const uint32& d
         }
         else
         {
-            //Determine waittime
+            // Determine wait time
             if (node->delay)
                 i_nextMoveTime.Reset(node->delay);
 
-            //note: disable "start" for mtmap
-            if (node->event_id && urand(0,99) < node->event_chance)
-                unit.GetMap()->ScriptsStart(sWaypointScripts, node->event_id, &unit, NULL/*, false*/);
+            if (node->event_id && urand(0, 99) < node->event_chance)
+            {
+                sLog.outDebug("Creature movement start script %u at point %u for " UI64FMTD ".", node->event_id, i_currentNode, unit.GetGUID());
+                unit.GetMap()->ScriptsStart(sWaypointScripts, node->event_id, &unit, NULL);
+            }
 
             MovementInform(unit);
             unit.UpdateWaypointID(i_currentNode);
