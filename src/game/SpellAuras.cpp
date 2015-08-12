@@ -4597,7 +4597,7 @@ void Aura::HandleAuraModResistance(bool apply, bool /*Real*/)
         if (m_modifier.m_miscvalue & int32(1 << x))
         {
             m_target->HandleStatModifier(UnitMods(UNIT_MOD_RESISTANCE_START + x), TOTAL_VALUE, float(GetModifierValue()), apply);
-            if (m_target->GetTypeId() == TYPEID_PLAYER || m_target->ToCreature()->IsPet())
+            if (m_target->GetTypeId() == TYPEID_PLAYER || m_target->IsPet())
                 m_target->ApplyResistanceBuffModsMod(SpellSchools(x), m_positive, GetModifierValue(), apply);
         }
     }
@@ -4616,7 +4616,7 @@ void Aura::HandleAuraModBaseResistancePCT(bool apply, bool /*Real*/)
     if (m_target->GetTypeId() != TYPEID_PLAYER)
     {
         //pets only have base armor
-        if (m_target->ToCreature()->IsPet() && (m_modifier.m_miscvalue & SPELL_SCHOOL_MASK_NORMAL))
+        if (m_target->IsPet() && (m_modifier.m_miscvalue & SPELL_SCHOOL_MASK_NORMAL))
             m_target->HandleStatModifier(UNIT_MOD_ARMOR, BASE_PCT, float(GetModifierValue()), apply);
     }
     else
@@ -4636,7 +4636,7 @@ void Aura::HandleModResistancePercent(bool apply, bool /*Real*/)
         if (m_modifier.m_miscvalue & int32(1 << i))
         {
             m_target->HandleStatModifier(UnitMods(UNIT_MOD_RESISTANCE_START + i), TOTAL_PCT, float(GetModifierValue()), apply);
-            if (m_target->GetTypeId() == TYPEID_PLAYER || m_target->ToCreature()->IsPet())
+            if (m_target->GetTypeId() == TYPEID_PLAYER || m_target->IsPet())
             {
                 m_target->ApplyResistanceBuffModsPercentMod(SpellSchools(i), true, GetModifierValue(), apply);
                 m_target->ApplyResistanceBuffModsPercentMod(SpellSchools(i), false, GetModifierValue(), apply);
@@ -4651,7 +4651,7 @@ void Aura::HandleModBaseResistance(bool apply, bool /*Real*/)
     if (m_target->GetTypeId() != TYPEID_PLAYER)
     {
         //only pets have base stats
-        if (m_target->ToCreature()->IsPet() && (m_modifier.m_miscvalue & SPELL_SCHOOL_MASK_NORMAL))
+        if (m_target->IsPet() && (m_modifier.m_miscvalue & SPELL_SCHOOL_MASK_NORMAL))
             m_target->HandleStatModifier(UNIT_MOD_ARMOR, TOTAL_VALUE, float(GetModifierValue()), apply);
     }
     else
@@ -4688,7 +4688,7 @@ void Aura::HandleAuraModStat(bool apply, bool /*Real*/)
         {
             //m_target->ApplyStatMod(Stats(i), m_modifier.m_amount,apply);
             m_target->HandleStatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(GetModifierValue()), apply);
-            if (m_target->GetTypeId() == TYPEID_PLAYER || m_target->ToCreature()->IsPet())
+            if (m_target->GetTypeId() == TYPEID_PLAYER || m_target->IsPet())
                 m_target->ApplyStatBuffMod(Stats(i), GetModifierValue(), apply);
         }
     }
@@ -4788,7 +4788,7 @@ void Aura::HandleModTotalPercentStat(bool apply, bool /*Real*/)
         if (m_modifier.m_miscvalue == i || m_modifier.m_miscvalue == -1)
         {
             m_target->HandleStatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_PCT, float(GetModifierValue()), apply);
-            if (m_target->GetTypeId() == TYPEID_PLAYER || m_target->ToCreature()->IsPet())
+            if (m_target->GetTypeId() == TYPEID_PLAYER || m_target->IsPet())
                 m_target->ApplyStatPercentBuffMod(Stats(i), float(GetModifierValue()), apply);
         }
     }

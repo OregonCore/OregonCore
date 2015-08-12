@@ -369,7 +369,7 @@ void Unit::Update(uint32 p_time)
     _UpdateSpells(p_time);
 
     // update combat timer only for players and pets
-    if (IsInCombat() && (GetTypeId() == TYPEID_PLAYER || ToCreature()->IsPet() || ToCreature()->isCharmed()))
+    if (IsInCombat() && (GetTypeId() == TYPEID_PLAYER || IsPet() || ToCreature()->isCharmed()))
     {
         // Check UNIT_STATE_MELEE_ATTACKING or UNIT_STATE_CHASE (without UNIT_STATE_FOLLOW in this case) so pets can reach far away
         // targets without stopping half way there and running off.
@@ -641,7 +641,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
         pVictim->ToCreature()->AI()->DamageTaken(this, damage);
 
         // Set tagging
-        if (!pVictim->HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER) && !pVictim->ToCreature()->IsPet())
+        if (!pVictim->HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER) && !pVictim->IsPet())
         {
             //Set Loot
             switch (GetTypeId())
@@ -655,7 +655,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
                 }
             case TYPEID_UNIT:
                 {
-                    if (ToCreature()->IsPet())
+                    if (IsPet())
                     {
                         pVictim->ToCreature()->SetLootRecipient(this->GetOwner());
                         pVictim->ToCreature()->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER);
@@ -749,7 +749,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
         }
     }
 
-    if (pVictim->GetTypeId() == TYPEID_UNIT && !pVictim->ToCreature()->IsPet())
+    if (pVictim->GetTypeId() == TYPEID_UNIT && !pVictim->IsPet())
     {
         if (!pVictim->ToCreature()->hasLootRecipient())
             pVictim->ToCreature()->SetLootRecipient(this);
@@ -814,7 +814,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
         if (damagetype == DIRECT_DAMAGE || damagetype == SPELL_DIRECT_DAMAGE)
         {
             pVictim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DIRECT_DAMAGE, spellProto ? spellProto->Id : 0);
-            if (pVictim->GetTypeId() == TYPEID_UNIT && !pVictim->ToCreature()->IsPet())
+            if (pVictim->GetTypeId() == TYPEID_UNIT && !pVictim->IsPet())
                 pVictim->SetLastDamagedTime(time(NULL));
         }
 
@@ -2158,8 +2158,8 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst (const Unit* victim, WeaponAttackT
 
     // Max 40% chance to score a glancing blow against mobs that are higher level (can do only players and pets and not with ranged weapon)
     if (attType != RANGED_ATTACK && !SpellCasted &&
-        (GetTypeId() == TYPEID_PLAYER || ToCreature()->IsPet()) &&
-        victim->GetTypeId() != TYPEID_PLAYER && !victim->ToCreature()->IsPet() &&
+        (GetTypeId() == TYPEID_PLAYER || IsPet()) &&
+        victim->GetTypeId() != TYPEID_PLAYER && !victim->IsPet() &&
         getLevel() < victim->getLevelForTarget(this))
     {
         // cap possible value (with bonuses > max skill)
@@ -2781,7 +2781,7 @@ float Unit::GetUnitDodgeChance() const
         return GetFloatValue(PLAYER_DODGE_PERCENTAGE);
     else
     {
-        if (ToCreature()->IsTotem())
+        if (IsTotem())
             return 0.0f;
         else
         {
@@ -2843,7 +2843,7 @@ float Unit::GetUnitBlockChance() const
     }
     else
     {
-        if (ToCreature()->IsTotem())
+        if (IsTotem())
             return 0.0f;
         else
         {
@@ -4102,7 +4102,7 @@ void Unit::RemoveAura(AuraMap::iterator& i, AuraRemoveMode mode)
                     }
                 }
 
-                //if (caster->GetTypeId() == TYPEID_UNIT && caster->ToCreature()->IsTotem() && ((Totem*)caster)->GetTotemType() == TOTEM_STATUE)
+                //if (caster->GetTypeId() == TYPEID_UNIT && caster->IsTotem() && ((Totem*)caster)->GetTotemType() == TOTEM_STATUE)
                 //    statue = ((Totem*)caster);
             }
 
@@ -6692,7 +6692,7 @@ void Unit::setPowerType(Powers new_powertype)
         if (ToPlayer()->GetGroup())
             ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_POWER_TYPE);
     }
-    else if (ToCreature()->IsPet())
+    else if (IsPet())
     {
         Pet* pet = ((Pet*)this);
         if (pet->isControlled())
@@ -7074,7 +7074,7 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
     m_attacking = victim;
     m_attacking->_addAttacker(this);
 
-    if (GetTypeId() == TYPEID_UNIT && !ToCreature()->IsPet())
+    if (GetTypeId() == TYPEID_UNIT && !IsPet())
     {
         // should not let player enter combat by right clicking target
         SetInCombatWith(victim);
@@ -7411,7 +7411,7 @@ void Unit::SetMinion(Minion* minion, bool apply)
                     //show another pet bar if there is no charm bar
                     if (GetTypeId() == TYPEID_PLAYER && !GetCharmGUID())
                     {
-                        if ((*itr)->ToCreature()->IsPet())
+                        if ((*itr)->IsPet())
                             ToPlayer()->PetSpellInitialize();
                         else
                             ToPlayer()->CharmSpellInitialize();
@@ -7430,7 +7430,7 @@ void Unit::RemoveAllMinionsByEntry(uint32 entry)
         Unit* unit = *itr;
         ++itr;
         if (unit->GetEntry() == entry && unit->GetTypeId() == TYPEID_UNIT
-            && unit->ToCreature()->IsSummon()) // minion, actually
+            && unit->IsSummon()) // minion, actually
             ((TempSummon*)unit)->UnSummon();
         // i think this is safe because i have never heard that a despawned minion will trigger a same minion
     }
@@ -7632,7 +7632,7 @@ uint32 Unit::SpellDamageBonus(Unit* pVictim, SpellEntry const* spellProto, uint3
                 BonusDamage = ((Guardian*)this)->GetTotalAttackPowerValue(BASE_ATTACK) * 0.07;
         }
         // For totems get damage bonus from owner (statue isn't totem in fact)
-        else if (ToCreature()->IsTotem())
+        else if (IsTotem())
         {
             if (Unit* owner = GetOwner())
                 return owner->SpellDamageBonus(pVictim, spellProto, pdamage, damagetype);
@@ -7994,7 +7994,7 @@ uint32 Unit::SpellDamageBonus(Unit* pVictim, SpellEntry const* spellProto, uint3
 
     tmpDamage = (tmpDamage + TakenActualBenefit) * TakenTotalMod;
 
-    if (GetTypeId() == TYPEID_UNIT && !ToCreature()->IsPet())
+    if (GetTypeId() == TYPEID_UNIT && !IsPet())
         tmpDamage *= ToCreature()->GetSpellDamageMod(ToCreature()->GetCreatureTemplate()->rank);
 
     return tmpDamage > 0 ? uint32(tmpDamage) : 0;
@@ -8198,7 +8198,7 @@ uint32 Unit::SpellCriticalBonus(SpellEntry const* spellProto, uint32 damage, Uni
 uint32 Unit::SpellHealingBonus(SpellEntry const* spellProto, uint32 healamount, DamageEffectType damagetype, Unit* pVictim)
 {
     // For totems get healing bonus from owner (statue isn't totem in fact)
-    if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsTotem())
+    if (GetTypeId() == TYPEID_UNIT && IsTotem())
         if (Unit* owner = GetOwner())
             return owner->SpellHealingBonus(spellProto, healamount, damagetype, pVictim);
 
@@ -8974,7 +8974,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
         }
 
-        if (ToCreature()->IsPet())
+        if (IsPet())
         {
             UpdateSpeed(MOVE_RUN, true);
             UpdateSpeed(MOVE_SWIM, true);
@@ -9344,7 +9344,7 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
             if (GetTypeId() == TYPEID_UNIT)
             {
                 Unit* pOwner = GetCharmerOrOwner();
-                if ((ToCreature()->IsPet() || ToCreature()->IsGuardian()) && !IsInCombat() && pOwner) // Must check for owner or crash on "Tame Beast"
+                if ((IsPet() || IsGuardian()) && !IsInCombat() && pOwner) // Must check for owner or crash on "Tame Beast"
                 {
                     // For every yard over 5, increase speed by 0.01
                     //  to help prevent pet from lagging behind and despawning
@@ -9562,7 +9562,7 @@ bool Unit::CanHaveThreatList() const
         return false;
 
     // totems can not have threat list
-    if (ToCreature()->IsTotem())
+    if (IsTotem())
         return false;
 
     // summons can not have a threat list, unless they are controlled by a creature
@@ -10306,7 +10306,7 @@ void Unit::SetHealth(uint32 val)
         if (ToPlayer()->GetGroup())
             ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_CUR_HP);
     }
-    else if (ToCreature()->IsPet())
+    else if (IsPet())
     {
         Pet* pet = ((Pet*)this);
         if (pet->isControlled())
@@ -10329,7 +10329,7 @@ void Unit::SetMaxHealth(uint32 val)
         if (ToPlayer()->GetGroup())
             ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_MAX_HP);
     }
-    else if (ToCreature()->IsPet())
+    else if (IsPet())
     {
         Pet* pet = ((Pet*)this);
         if (pet->isControlled())
@@ -10394,7 +10394,7 @@ void Unit::SetPower(Powers power, uint32 val)
         if (ToPlayer()->GetGroup())
             ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_CUR_POWER);
     }
-    else if (ToCreature()->IsPet())
+    else if (IsPet())
     {
         Pet* pet = ((Pet*)this);
         if (pet->isControlled())
@@ -10421,7 +10421,7 @@ void Unit::SetMaxPower(Powers power, uint32 val)
         if (ToPlayer()->GetGroup())
             ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_MAX_POWER);
     }
-    else if (ToCreature()->IsPet())
+    else if (IsPet())
     {
         Pet* pet = ((Pet*)this);
         if (pet->isControlled())
@@ -10448,7 +10448,7 @@ void Unit::ApplyPowerMod(Powers power, uint32 val, bool apply)
         if (ToPlayer()->GetGroup())
             ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_CUR_POWER);
     }
-    else if (ToCreature()->IsPet())
+    else if (IsPet())
     {
         Pet* pet = ((Pet*)this);
         if (pet->isControlled())
@@ -10470,7 +10470,7 @@ void Unit::ApplyMaxPowerMod(Powers power, uint32 val, bool apply)
         if (ToPlayer()->GetGroup())
             ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_MAX_POWER);
     }
-    else if (ToCreature()->IsPet())
+    else if (IsPet())
     {
         Pet* pet = ((Pet*)this);
         if (pet->isControlled())
@@ -11192,7 +11192,7 @@ Player* Unit::GetSpellModOwner() const
     if (Player* player = const_cast<Unit*>(this)->ToPlayer())
         return player;
 
-    if (ToCreature()->IsPet() || ToCreature()->IsTotem())
+    if (IsPet() || IsTotem())
     {
         if (Unit* owner = GetOwner())
             if (Player* player = owner->ToPlayer())
@@ -11339,7 +11339,7 @@ void Unit::SetDisplayId(uint32 modelId)
 {
     SetUInt32Value(UNIT_FIELD_DISPLAYID, modelId);
 
-    if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsPet())
+    if (GetTypeId() == TYPEID_UNIT && IsPet())
     {
         Pet* pet = ((Pet*)this);
         if (!pet->isControlled())
@@ -11488,7 +11488,7 @@ void Unit::ApplyCastTimePercentMod(float val, bool apply)
 uint32 Unit::GetCastingTimeForBonus(SpellEntry const* spellProto, DamageEffectType damagetype, uint32 CastingTime)
 {
     // Not apply this to creature casted spells with casttime == 0
-    if (CastingTime == 0 && GetTypeId() == TYPEID_UNIT && !ToCreature()->IsPet())
+    if (CastingTime == 0 && GetTypeId() == TYPEID_UNIT && !IsPet())
         return 3500;
 
     if (CastingTime > 7000) CastingTime = 7000;
@@ -11587,7 +11587,7 @@ void Unit::UpdateAuraForGroup(uint8 slot)
             player->SetAuraUpdateMask(slot);
         }
     }
-    else if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsPet())
+    else if (GetTypeId() == TYPEID_UNIT && IsPet())
     {
         Pet* pet = ((Pet*)this);
         if (pet->isControlled())
@@ -12607,7 +12607,7 @@ void Unit::RestoreFaction()
     {
         CreatureInfo const* cinfo = ToCreature()->GetCreatureTemplate();
 
-        if (ToCreature()->IsPet())
+        if (IsPet())
         {
             if (Unit* owner = GetOwner())
                 setFaction(owner->getFaction());

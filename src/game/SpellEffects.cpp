@@ -982,7 +982,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 }
             case 23019:                                 // Crystal Prison Dummy DND
                 {
-                    if (!unitTarget || !unitTarget->IsAlive() || unitTarget->GetTypeId() != TYPEID_UNIT || unitTarget->ToCreature()->IsPet())
+                    if (!unitTarget || !unitTarget->IsAlive() || unitTarget->GetTypeId() != TYPEID_UNIT || unitTarget->IsPet())
                         return;
 
                     Creature* creatureTarget = unitTarget->ToCreature();
@@ -1396,7 +1396,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
             case 34665:                                 //Administer Antidote
                 {
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_UNIT
-                        || unitTarget->GetEntry() != 16880 || unitTarget->ToCreature()->IsPet())
+                        || unitTarget->GetEntry() != 16880 || unitTarget->IsPet())
                         return;
 
                     unitTarget->ToCreature()->UpdateEntry(16992);
@@ -2599,8 +2599,8 @@ void Spell::EffectApplyAura(SpellEffIndex effIndex)
     if (!Aur)
         return;
 
-    // TODO Make a way so it works for every related spell!
-    if (unitTarget->GetTypeId() == TYPEID_PLAYER || (unitTarget->GetTypeId() == TYPEID_UNIT && unitTarget->ToCreature()->IsPet()))             // Negative buff should only be applied on players
+    // @todo Make a way so it works for every related spell!
+    if (unitTarget->GetTypeId() == TYPEID_PLAYER || (unitTarget->GetTypeId() == TYPEID_UNIT && unitTarget->IsPet()))             // Negative buff should only be applied on players
     {
         uint32 spellId = 0;
         if (m_spellInfo->CasterAuraStateNot == AURA_STATE_WEAKENED_SOUL || m_spellInfo->TargetAuraStateNot == AURA_STATE_WEAKENED_SOUL)
@@ -4300,7 +4300,7 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
     {
         if (m_originalCaster->GetTypeId() == TYPEID_PLAYER)
             owner = m_originalCaster->ToPlayer();
-        else if (m_originalCaster->ToCreature()->IsTotem())
+        else if (m_originalCaster->IsTotem())
             owner = m_originalCaster->GetCharmerOrOwnerPlayerOrPlayerItself();
     }
 
@@ -4357,7 +4357,7 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
 
     if (m_caster->GetTypeId() == TYPEID_UNIT)
     {
-        if (m_caster->ToCreature()->IsTotem())
+        if (m_caster->IsTotem())
             pet->SetReactState(REACT_AGGRESSIVE);
         else
             pet->SetReactState(REACT_DEFENSIVE);
@@ -4382,7 +4382,7 @@ void Spell::SummonClassPet(SpellEffIndex effIndex)
     {
         if (m_originalCaster->GetTypeId() == TYPEID_PLAYER)
             caster = m_originalCaster->ToPlayer();
-        else if (m_originalCaster->ToCreature()->IsTotem())
+        else if (m_originalCaster->IsTotem())
             caster = m_originalCaster->GetCharmerOrOwnerPlayerOrPlayerItself();
     }
 
@@ -7049,7 +7049,7 @@ void Spell::EffectBind(SpellEffIndex /*effIndex*/)
 void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* properties)
 {
     Unit* caster = m_originalCaster;
-    if (caster && caster->GetTypeId() == TYPEID_UNIT && caster->ToCreature()->IsTotem())
+    if (caster && caster->GetTypeId() == TYPEID_UNIT && caster->IsTotem())
         caster = caster->GetOwner();
     if (!caster)
         return;

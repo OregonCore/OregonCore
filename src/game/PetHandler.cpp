@@ -165,7 +165,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
                         pet->ToCreature()->AI()->AttackStart(TargetUnit);
 
                         //10% chance to play special pet attack talk, else growl
-                        if (pet->ToCreature()->IsPet() && ((Pet*)pet)->getPetType() == SUMMON_PET && pet != TargetUnit && urand(0, 100) < 10)
+                        if (pet->IsPet() && ((Pet*)pet)->getPetType() == SUMMON_PET && pet != TargetUnit && urand(0, 100) < 10)
                             pet->SendPetTalk((uint32)PET_TALK_ATTACK);
                         else
                         {
@@ -195,7 +195,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
             else if (pet->GetOwnerGUID() == GetPlayer()->GetGUID())
             {
                 assert(pet->GetTypeId() == TYPEID_UNIT);
-                if (pet->ToCreature()->IsPet())
+                if (pet->IsPet())
                 {
                     if (((Pet*)pet)->getPetType() == HUNTER_PET)
                         GetPlayer()->RemovePet((Pet*)pet, PET_SAVE_AS_DELETED);
@@ -283,14 +283,14 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
             if (result == SPELL_CAST_OK)
             {
                 pet->ToCreature()->AddCreatureSpellCooldown(spellid);
-                if (pet->ToCreature()->IsPet())
+                if (pet->IsPet())
                     ((Pet*)pet)->CheckLearning(spellid);
 
                 unit_target = spell->m_targets.getUnitTarget();
 
                 //10% chance to play special pet attack talk, else growl
                 //actually this only seems to happen on special spells, fire shield for imp, torment for voidwalker, but it's stupid to check every spell
-                if (pet->ToCreature()->IsPet() && (((Pet*)pet)->getPetType() == SUMMON_PET) && (pet != unit_target) && (urand(0, 100) < 10))
+                if (pet->IsPet() && (((Pet*)pet)->getPetType() == SUMMON_PET) && (pet != unit_target) && (urand(0, 100) < 10))
                     pet->SendPetTalk((uint32)PET_TALK_SPECIAL_SPELL);
                 else
                     pet->SendPetAIReaction(guid1);
@@ -432,7 +432,7 @@ void WorldSession::HandlePetSetAction(WorldPacket& recv_data)
             //sign for autocast
             if (act_state == ACT_ENABLED && spell_id)
             {
-                if (pet->GetTypeId() == TYPEID_UNIT && pet->ToCreature()->IsPet())
+                if (pet->GetTypeId() == TYPEID_UNIT && pet->IsPet())
                     ((Pet*)pet)->ToggleAutocast(spell_id, true);
                 else
                     charmInfo->ToggleCreatureAutocast(spell_id, true);
@@ -440,7 +440,7 @@ void WorldSession::HandlePetSetAction(WorldPacket& recv_data)
             //sign for no/turn off autocast
             else if (act_state == ACT_DISABLED && spell_id)
             {
-                if (pet->GetTypeId() == TYPEID_UNIT && pet->ToCreature()->IsPet())
+                if (pet->GetTypeId() == TYPEID_UNIT && pet->IsPet())
                     ((Pet*)pet)->ToggleAutocast(spell_id, false);
                 else
                     charmInfo->ToggleCreatureAutocast(spell_id, false);
