@@ -28,8 +28,6 @@
 #include "Player.h"
 #include "GossipDef.h"
 #include "SpellAuras.h"
-#include "UpdateMask.h"
-#include "ObjectAccessor.h"
 #include "Creature.h"
 #include "MapManager.h"
 #include "Pet.h"

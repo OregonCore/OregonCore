@@ -20,7 +20,6 @@
 #include "CreatureAI.h"
 #include "MapManager.h"
 #include "ObjectAccessor.h"
-#include "WorldPacket.h"
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"
 

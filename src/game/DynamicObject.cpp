@@ -18,7 +18,6 @@
 #include "Common.h"
 #include "GameObject.h"
 #include "UpdateMask.h"
-#include "Opcodes.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "World.h"

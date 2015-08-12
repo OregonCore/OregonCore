@@ -16,16 +16,12 @@
  */
 
 #include "Common.h"
-
 #include "Transports.h"
 #include "MapManager.h"
 #include "ObjectMgr.h"
-#include "Path.h"
-
 #include "WorldPacket.h"
 #include "DBCStores.h"
-
-#include "World.h"
+#include "Player.h"
 
 void MapManager::LoadTransports()
 {

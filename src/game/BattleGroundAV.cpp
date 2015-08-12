@@ -24,7 +24,6 @@
 #include "ObjectAccessor.h"
 #include "MapManager.h"
 #include "Language.h"
-#include "SpellAuras.h"
 #include "Formulas.h"
 
 BattleGroundAV::BattleGroundAV()

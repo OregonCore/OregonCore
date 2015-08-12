@@ -24,7 +24,6 @@
 #include "GridDefines.h"
 #include "MapInstanced.h"
 #include "World.h"
-#include "CellImpl.h"
 #include "Corpse.h"
 #include "ObjectMgr.h"
 

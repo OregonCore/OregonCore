@@ -16,10 +16,6 @@
  */
 #include "ByteBuffer.h"
 #include "ReactorAI.h"
-#include "Errors.h"
-#include "Log.h"
-#include "ObjectAccessor.h"
-#include "CreatureAIImpl.h"
 
 #define REACTOR_VISIBLE_RANGE (26.46f)
 

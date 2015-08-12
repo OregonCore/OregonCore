@@ -16,10 +16,8 @@
  */
 
 #include "Creature.h"
-#include "MapManager.h"
 #include "Opcodes.h"
 #include "ConfusedMovementGenerator.h"
-#include "VMapFactory.h"
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"
 

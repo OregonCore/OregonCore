@@ -17,7 +17,6 @@
 
 #include "WaypointMovementGenerator.h"
 #include "ObjectMgr.h"
-#include "World.h"
 #include "MapManager.h" // for flightmaster grid preloading
 #include "Creature.h"
 #include "CreatureAI.h"

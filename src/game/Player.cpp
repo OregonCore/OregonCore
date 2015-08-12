@@ -34,7 +34,6 @@
 #include "Channel.h"
 #include "ChannelMgr.h"
 #include "MapManager.h"
-#include "MapInstanced.h"
 #include "InstanceSaveMgr.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"

@@ -26,16 +26,9 @@
 #include "WorldPacket.h"
 #include "Item.h"
 #include "GridNotifiers.h"
-#include "MapManager.h"
 #include "Map.h"
-#include "CellImpl.h"
-#include "GridNotifiersImpl.h"
-#include "Opcodes.h"
 #include "ObjectGuid.h"
-#include "MapInstanced.h"
 #include "World.h"
-
-#include <cmath>
 
 #define CLASS_LOCK Oregon::ClassLevelLockable<ObjectAccessor, ACE_Thread_Mutex>
 INSTANTIATE_SINGLETON_2(ObjectAccessor, CLASS_LOCK);

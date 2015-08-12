@@ -19,7 +19,6 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "World.h"
-#include "Opcodes.h"
 #include "Log.h"
 
 void WorldSession::HandleVoiceSettingsOpcode(WorldPacket& recv_data)

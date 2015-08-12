@@ -18,10 +18,8 @@
 #include "Totem.h"
 #include "WorldPacket.h"
 #include "MapManager.h"
-#include "Log.h"
 #include "Group.h"
 #include "Player.h"
-#include "ObjectMgr.h"
 #include "SpellMgr.h"
 #include "SpellAuras.h"
 

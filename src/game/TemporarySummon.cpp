@@ -18,7 +18,6 @@
 #include "Log.h"
 #include "ObjectAccessor.h"
 #include "CreatureAI.h"
-#include "ObjectMgr.h"
 #include "TemporarySummon.h"
 
 TempSummon::TempSummon(SummonPropertiesEntry const* properties, Unit* owner) :

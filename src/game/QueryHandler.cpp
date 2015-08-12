@@ -28,7 +28,6 @@
 #include "Player.h"
 #include "UpdateMask.h"
 #include "NPCHandler.h"
-#include "Pet.h"
 #include "ObjectAccessor.h"
 #include "MapManager.h"
 

@@ -23,7 +23,6 @@
 #include "ObjectMgr.h"
 #include "MapManager.h"
 #include "Language.h"
-#include "World.h"
 #include "Util.h"
 
 // these variables aren't used outside of this file, so declare them only here

@@ -19,7 +19,6 @@
 #include "Totem.h"
 #include "Creature.h"
 #include "Player.h"
-#include "DBCStores.h"
 #include "MapManager.h"
 #include "ObjectAccessor.h"
 #include "SpellMgr.h"

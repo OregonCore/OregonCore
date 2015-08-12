@@ -21,7 +21,6 @@
 #include "Player.h"
 #include "World.h"
 #include "Log.h"
-#include "ObjectMgr.h"
 #include "Util.h"
 
 // Create the Weather object

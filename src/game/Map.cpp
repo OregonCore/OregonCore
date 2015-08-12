@@ -26,7 +26,6 @@
 #include "Transports.h"
 #include "InstanceData.h"
 #include "ObjectAccessor.h"
-#include "MapManager.h"
 #include "ObjectMgr.h"
 #include "MoveMap.h"
 

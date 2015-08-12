@@ -29,7 +29,6 @@
 #include "BattleGround.h"
 #include "MapManager.h"
 #include "Totem.h"
-#include "TemporarySummon.h"
 #include "ScriptMgr.h"
 
 void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)

@@ -21,10 +21,8 @@
 #include "World.h"
 #include "ObjectMgr.h"
 #include "Log.h"
-#include "Opcodes.h"
 #include "Guild.h"
 #include "MapManager.h"
-#include "GossipDef.h"
 #include "SocialMgr.h"
 
 void WorldSession::HandleGuildQueryOpcode(WorldPacket& recvPacket)

@@ -19,7 +19,6 @@
 #include "CreatureAISelector.h"
 #include "PassiveAI.h"
 #include "MovementGenerator.h"
-#include "Pet.h"
 #include "TemporarySummon.h"
 #include "CreatureAIFactory.h"
 #include "ScriptMgr.h"

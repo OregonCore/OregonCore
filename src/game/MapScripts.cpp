@@ -24,9 +24,7 @@
 #include "ScriptedCreature.h"
 #include "WaypointManager.h"
 #include "GossipDef.h"
-#include "MapManager.h"
 #include "ObjectMgr.h"
-#include "MapRefManager.h"
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"
 

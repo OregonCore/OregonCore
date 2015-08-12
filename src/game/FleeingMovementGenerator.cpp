@@ -17,7 +17,6 @@
 
 #include "Creature.h"
 #include "CreatureAI.h"
-#include "MapManager.h"
 #include "FleeingMovementGenerator.h"
 #include "ObjectAccessor.h"
 #include "MoveSplineInit.h"

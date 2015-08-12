@@ -16,11 +16,8 @@
  */
 
 #include "zlib.h"
-
 #include "AddonHandler.h"
-#include "Database/DatabaseEnv.h"
 #include "Opcodes.h"
-
 #include "Log.h"
 
 INSTANTIATE_SINGLETON_1( AddonHandler);
