@@ -778,48 +778,11 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket& recv_data)
         return;
     }
 
-    if (GetPlayer()->GetMapId() != atEntry->mapid)
+    if (!GetPlayer()->IsInAreaTriggerRadius(atEntry))
     {
-        DEBUG_LOG("Player '%s' (GUID: %u) too far (trigger map: %u player map: %u), ignore Area Trigger ID: %u", GetPlayer()->GetName(), atEntry->mapid, GetPlayer()->GetMapId(), GetPlayer()->GetGUIDLow(), Trigger_ID);
+        DEBUG_LOG("Player '%s' (GUID: %u) too far, ignore Area Trigger ID: %u", 
+            GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), Trigger_ID);
         return;
-    }
-
-    // delta is safe radius
-    const float delta = 5.0f;
-    // check if player in the range of areatrigger
-    Player* pl = GetPlayer();
-
-    if (atEntry->radius > 0)
-    {
-        // if we have radius check it
-        float dist = pl->GetDistance(atEntry->x, atEntry->y, atEntry->z);
-        if (dist > atEntry->radius + delta)
-        {
-            DEBUG_LOG("Player '%s' (GUID: %u) too far (radius: %f distance: %f), ignore Area Trigger ID: %u",
-                      pl->GetName(), pl->GetGUIDLow(), atEntry->radius, dist, Trigger_ID);
-            return;
-        }
-    }
-    else
-    {
-        // we have only extent
-        float dx = pl->GetPositionX() - atEntry->x;
-        float dy = pl->GetPositionY() - atEntry->y;
-        float dz = pl->GetPositionZ() - atEntry->z;
-        double es = sin(atEntry->box_orientation);
-        double ec = cos(atEntry->box_orientation);
-        // calc rotated vector based on extent axis
-        double rotateDx = dx * ec - dy * es;
-        double rotateDy = dx * es + dy * ec;
-
-        if ((fabs(rotateDx) > atEntry->box_x / 2 + delta) ||
-            (fabs(rotateDy) > atEntry->box_y / 2 + delta) ||
-            (fabs(dz) > atEntry->box_z / 2 + delta))
-        {
-            DEBUG_LOG("Player '%s' (GUID: %u) too far (1/2 box X: %f 1/2 box Y: %f 1/2 box Z: %f rotate dX: %f rotate dY: %f dZ:%f), ignore Area Trigger ID: %u",
-                      pl->GetName(), pl->GetGUIDLow(), atEntry->box_x / 2, atEntry->box_y / 2, atEntry->box_z / 2, rotateDx, rotateDy, dz, Trigger_ID);
-            return;
-        }
     }
 
     if (sScriptMgr.AreaTrigger(GetPlayer(), atEntry))
@@ -840,7 +803,7 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket& recv_data)
     {
         // set resting flag we are in the inn
         GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
-        GetPlayer()->InnEnter(time(NULL), atEntry->mapid, atEntry->x, atEntry->y, atEntry->z);
+        GetPlayer()->InnEnter(time(nullptr), atEntry->id);
         GetPlayer()->SetRestType(REST_TYPE_IN_TAVERN);
 
         if (sWorld.IsFFAPvPRealm())

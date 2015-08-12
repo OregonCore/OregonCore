@@ -980,11 +980,9 @@ class Player : public Unit, public GridObject<Player>
 
         void SetInWater(bool apply);
 
-        bool IsInWater() const
-        {
-            return m_isInWater;
-        }
+        bool IsInWater() const override { return m_isInWater; }
         bool IsUnderWater() const;
+        bool IsInAreaTriggerRadius(const AreaTriggerEntry* trigger) const;
 
         void SendInitialPacketsBeforeAddToMap();
         void SendInitialPacketsAfterAddToMap();
@@ -1092,12 +1090,9 @@ class Player : public Unit, public GridObject<Player>
 
         void setDeathState(DeathState s);                   // overwrite Unit::setDeathState
 
-        void InnEnter (int time, uint32 mapid, float x, float y, float z)
+        void InnEnter (int time, uint32 triggerId)
         {
-            inn_pos_mapid = mapid;
-            inn_pos_x = x;
-            inn_pos_y = y;
-            inn_pos_z = z;
+            inn_triggerId = triggerId;
             time_inn_enter = time;
         }
 
@@ -1116,31 +1111,10 @@ class Player : public Unit, public GridObject<Player>
             rest_type = n_r_type;
         }
 
-        uint32 GetInnPosMapId() const
-        {
-            return inn_pos_mapid;
-        }
-        float GetInnPosX() const
-        {
-            return inn_pos_x;
-        }
-        float GetInnPosY() const
-        {
-            return inn_pos_y;
-        }
-        float GetInnPosZ() const
-        {
-            return inn_pos_z;
-        }
+        uint32 GetInnTriggerId() const { return inn_triggerId; }
 
-        int GetTimeInnEnter() const
-        {
-            return time_inn_enter;
-        }
-        void UpdateInnerTime (int time)
-        {
-            time_inn_enter = time;
-        }
+        time_t GetTimeInnEnter() const { return time_inn_enter; }
+        void UpdateInnerTime (time_t time) { time_inn_enter = time; }
 
         Pet* GetPet() const;
         Pet* SummonPet(uint32 entry, float x, float y, float z, float ang, PetType petType, uint32 despwtime);
@@ -2971,10 +2945,7 @@ class Player : public Unit, public GridObject<Player>
         float m_ammoDPS;
         ////////////////////Rest System/////////////////////
         int time_inn_enter;
-        uint32 inn_pos_mapid;
-        float  inn_pos_x;
-        float  inn_pos_y;
-        float  inn_pos_z;
+        uint32 inn_triggerId;
         float m_rest_bonus;
         RestType rest_type;
         ////////////////////Rest System/////////////////////

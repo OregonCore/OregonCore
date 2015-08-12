@@ -30,9 +30,9 @@ void HomeMovementGenerator<Creature>::Initialize(Creature& owner)
 
 void HomeMovementGenerator<Creature>::Finalize(Creature & owner)
 {
-    owner.ClearUnitState(UNIT_STATE_EVADE);
     if (arrived)
     {
+        owner.ClearUnitState(UNIT_STATE_EVADE);
         owner.SetWalk(!owner.HasUnitState(UNIT_STATE_RUNNING_STATE) && !owner.IsLevitating());
         owner.LoadCreaturesAddon(true);
         owner.AI()->JustReachedHome();
