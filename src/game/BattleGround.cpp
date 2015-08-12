@@ -1035,8 +1035,6 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
             // if arena, remove the specific arena auras
             if (isArena())
             {
-                player->RemoveArenaAuras(true);    // removes debuffs / dots etc., we don't want the player to die after porting out
-
                 // summon old pet if there was one and there isn't a current pet
                 if (!player->GetGuardianPet() && player->GetTemporaryUnsummonedPetNumber())
                 {

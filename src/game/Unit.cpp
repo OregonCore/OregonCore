@@ -4180,18 +4180,16 @@ void Unit::RemoveAllAuras()
     }
 }
 
-void Unit::RemoveArenaAuras(bool onleave)
+void Unit::RemoveArenaAuras()
 {
-    // in join, all positive buffs, on end, remove negative
-    // used to all positive visible auras in arenas
+    // in join, remove positive buffs, on end, remove negative
+    // used to remove positive visible auras in arenas
     for (AuraMap::iterator iter = m_Auras.begin(); iter != m_Auras.end();)
     {
-        if (!(iter->second->GetSpellProto()->AttributesEx4 & SPELL_ATTR_EX4_STANCES) &&
-            // don't remove stances, shadowform, pally/hunter auras
-            !iter->second->IsPassive() &&                   // don't remove passive auras
-            !(iter->second->GetSpellProto()->Attributes & (SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY | SPELL_ATTR_HIDDEN_CAST_TIME)) &&
-            // not unaffected by invulnerability auras or not having that unknown flag (that seemed the most probable)
-            (!onleave || !iter->second->IsPositive()))      // remove all buffs on enter, negative buffs on leave
+        Aura* aura = iter->second;
+        if (!(aura->GetSpellProto()->AttributesEx4 & SPELL_ATTR_EX4_STANCES)                                    // don't remove stances, shadowform, pally/hunter auras
+            && !aura->IsPassive()                                                                               // don't remove passive auras
+            && (aura->IsPositive() || !(aura->GetSpellProto()->AttributesEx3 & SPELL_ATTR_EX3_DEATH_PERSISTENT))) // not negative death persistent auras
             RemoveAura(iter);
         else
             ++iter;
