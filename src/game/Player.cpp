@@ -15705,7 +15705,7 @@ void Player::_LoadInventory(QueryResult_AutoPtr result, uint32 timediff)
 // load mailed item which should receive current player
 void Player::_LoadMailedItems(Mail* mail)
 {
-    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT itemEntry, creatorGuid, giftCreatorGuid, count, duration, charges, flags, enchantments, randomPropertyId, durability, itemTextId, item_guid, item_template FROM mail_items WHERE mail_id='%u'", mail->messageID);
+    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT itemEntry, creatorGuid, giftCreatorGuid, count, duration, charges, flags, enchantments, randomPropertyId, durability, itemTextId, item_guid, item_template FROM mail_items JOIN item_instance ON item_guid = guid WHERE mail_id='%u'", mail->messageID);
     if (!result)
         return;
 
