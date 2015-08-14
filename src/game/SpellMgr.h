@@ -93,24 +93,24 @@ enum SpellSelectTargetTypes
 // Spell clasification
 enum SpellSpecific
 {
-    SPELL_NORMAL            = 0,
-    SPELL_SEAL              = 1,
-    SPELL_AURA              = 3,
-    SPELL_STING             = 4,
-    SPELL_CURSE             = 5,
-    SPELL_ASPECT            = 6,
-    SPELL_TRACKER           = 7,
-    SPELL_WARLOCK_ARMOR     = 8,
-    SPELL_MAGE_ARMOR        = 9,
-    SPELL_ELEMENTAL_SHIELD  = 10,
-    SPELL_MAGE_POLYMORPH    = 11,
-    SPELL_JUDGEMENT         = 13,
-    SPELL_WARLOCK_CORRUPTION = 17,
-    SPELL_DRINK             = 19,
-    SPELL_FOOD              = 20,
-    SPELL_CHARM             = 21,
-    SPELL_WARRIOR_ENRAGE    = 22,
-    SPELL_ARMOR_REDUCE      = 23,
+    SPELL_SPECIFIC_NORMAL             = 0,
+    SPELL_SPECIFIC_SEAL               = 1,
+    SPELL_SPECIFIC_AURA               = 3,
+    SPELL_SPECIFIC_STING              = 4,
+    SPELL_SPECIFIC_CURSE              = 5,
+    SPELL_SPECIFIC_ASPECT             = 6,
+    SPELL_SPECIFIC_TRACKER            = 7,
+    SPELL_SPECIFIC_WARLOCK_ARMOR      = 8,
+    SPELL_SPECIFIC_MAGE_ARMOR         = 9,
+    SPELL_SPECIFIC_ELEMENTAL_SHIELD   = 10,
+    SPELL_SPECIFIC_MAGE_POLYMORPH     = 11,
+    SPELL_SPECIFIC_JUDGEMENT          = 13,
+    SPELL_SPECIFIC_WARLOCK_CORRUPTION = 17,
+    SPELL_SPECIFIC_DRINK              = 19,
+    SPELL_SPECIFIC_FOOD               = 20,
+    SPELL_SPECIFIC_CHARM              = 21,
+    SPELL_SPECIFIC_WARRIOR_ENRAGE     = 22,
+    SPELL_SPECIFIC_ARMOR_REDUCE       = 23
 };
 
 #define SPELL_LINKED_MAX_SPELLS  200000
@@ -242,8 +242,6 @@ inline bool IsDeathOnlySpell(SpellEntry const* spellInfo)
 
 uint32 CalculatePowerCost(SpellEntry const* spellInfo, Unit const* caster, SpellSchoolMask schoolMask);
 int32 CompareAuraRanks(uint32 spellId_1, uint32 effIndex_1, uint32 spellId_2, uint32 effIndex_2);
-bool IsSingleFromSpellSpecificPerCaster(uint32 spellSpec1, uint32 spellSpec2);
-bool IsSingleFromSpellSpecificPerTarget(uint32 spellSpec1, uint32 spellSpec2);
 bool IsPassiveSpell(uint32 spellId);
 bool IsPassiveSpell(SpellEntry const* spellInfo);
 bool IsAutocastableSpell(uint32 spellId);

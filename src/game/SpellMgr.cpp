@@ -392,7 +392,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
 {
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellId);
     if (!spellInfo)
-        return SPELL_NORMAL;
+        return SPELL_SPECIFIC_NORMAL;
 
     switch (spellInfo->SpellFamilyName)
     {
@@ -404,11 +404,11 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
                 for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
                 {
                     if (spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_POWER_REGEN)
-                        return SPELL_DRINK;
+                        return SPELL_SPECIFIC_DRINK;
 
                     if (spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_REGEN ||
                         spellInfo->EffectApplyAuraName[i] == SPELL_AURA_OBS_MOD_HEALTH)
-                        return SPELL_FOOD;
+                        return SPELL_SPECIFIC_FOOD;
                 }
             }
 
@@ -420,7 +420,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
             case 14203: //           Enrage rank 4
             case 14204: //           Enrage rank 5
             case 12292: //             Death Wish
-                return SPELL_WARRIOR_ENRAGE;
+                return SPELL_SPECIFIC_WARRIOR_ENRAGE;
                 break;
             default:
                 break;
@@ -431,10 +431,10 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         {
             // family flags 18(Molten), 25(Frost/Ice), 28(Mage)
             if (spellInfo->SpellFamilyFlags & 0x12040000)
-                return SPELL_MAGE_ARMOR;
+                return SPELL_SPECIFIC_MAGE_ARMOR;
 
             if ((spellInfo->SpellFamilyFlags & 0x1000000) && spellInfo->EffectApplyAuraName[0] == SPELL_AURA_MOD_CONFUSE)
-                return SPELL_MAGE_POLYMORPH;
+                return SPELL_SPECIFIC_MAGE_POLYMORPH;
 
             break;
         }
@@ -442,7 +442,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         {
             // Sunder Armor (vs Expose Armor)
             if (spellInfo->SpellFamilyFlags & 0x00000000004000LL)
-                return SPELL_ARMOR_REDUCE;
+                return SPELL_SPECIFIC_ARMOR_REDUCE;
 
             break;
         }
@@ -450,45 +450,45 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         {
             // only warlock curses have this
             if (spellInfo->Dispel == DISPEL_CURSE)
-                return SPELL_CURSE;
+                return SPELL_SPECIFIC_CURSE;
 
             // family flag 37 (only part spells have family name)
             if (spellInfo->SpellFamilyFlags & 0x2000000000LL)
-                return SPELL_WARLOCK_ARMOR;
+                return SPELL_SPECIFIC_WARLOCK_ARMOR;
 
             //seed of corruption and corruption
             if (spellInfo->SpellFamilyFlags & 0x1000000002LL)
-                return SPELL_WARLOCK_CORRUPTION;
+                return SPELL_SPECIFIC_WARLOCK_CORRUPTION;
             break;
         }
     case SPELLFAMILY_HUNTER:
         {
             // only hunter stings have this
             if (spellInfo->Dispel == DISPEL_POISON)
-                return SPELL_STING;
+                return SPELL_SPECIFIC_STING;
 
             break;
         }
     case SPELLFAMILY_PALADIN:
         {
             if (IsSealSpell(spellInfo))
-                return SPELL_SEAL;
+                return SPELL_SPECIFIC_SEAL;
 
             if ((spellInfo->SpellFamilyFlags & 0x00000820180400LL) && (spellInfo->AttributesEx3 & 0x200))
-                return SPELL_JUDGEMENT;
+                return SPELL_SPECIFIC_JUDGEMENT;
 
             for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
             {
                 // only paladin auras have this
                 if (spellInfo->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA_PARTY)
-                    return SPELL_AURA;
+                    return SPELL_SPECIFIC_AURA;
             }
             break;
         }
     case SPELLFAMILY_SHAMAN:
         {
             if (IsElementalShield(spellInfo))
-                return SPELL_ELEMENTAL_SHIELD;
+                return SPELL_SPECIFIC_ELEMENTAL_SHIELD;
 
             break;
         }
@@ -496,19 +496,19 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         {
             // Expose Armor (vs Sunder Armor)
             if (spellInfo->SpellFamilyFlags & 0x00000000080000LL)
-                return SPELL_ARMOR_REDUCE;
+                return SPELL_SPECIFIC_ARMOR_REDUCE;
             break;
         }
     }
 
     // only warlock armor/skin have this (in additional to family cases)
     if (spellInfo->SpellVisual == 130 && spellInfo->SpellIconID == 89)
-        return SPELL_WARLOCK_ARMOR;
+        return SPELL_SPECIFIC_WARLOCK_ARMOR;
 
     // only hunter aspects have this (but not all aspects in hunter family)
     if (spellInfo->activeIconID == 122 && (GetSpellSchoolMask(spellInfo) & SPELL_SCHOOL_MASK_NATURE) &&
         (spellInfo->Attributes & 0x50000) != 0 && (spellInfo->Attributes & 0x9000010) == 0)
-        return SPELL_ASPECT;
+        return SPELL_SPECIFIC_ASPECT;
 
     for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
@@ -519,53 +519,16 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
             case SPELL_AURA_MOD_CHARM:
             case SPELL_AURA_MOD_POSSESS_PET:
             case SPELL_AURA_MOD_POSSESS:
-                return SPELL_CHARM;
+                return SPELL_SPECIFIC_CHARM;
             case SPELL_AURA_TRACK_CREATURES:
             case SPELL_AURA_TRACK_RESOURCES:
             case SPELL_AURA_TRACK_STEALTHED:
-                return SPELL_TRACKER;
+                return SPELL_SPECIFIC_TRACKER;
             }
         }
     }
 
-    return SPELL_NORMAL;
-}
-
-bool IsSingleFromSpellSpecificPerCaster(uint32 spellSpec1, uint32 spellSpec2)
-{
-    switch (spellSpec1)
-    {
-    case SPELL_SEAL:
-    case SPELL_AURA:
-    case SPELL_STING:
-    case SPELL_CURSE:
-    case SPELL_ASPECT:
-    case SPELL_JUDGEMENT:
-    case SPELL_WARLOCK_CORRUPTION:
-        return spellSpec1 == spellSpec2;
-    default:
-        return false;
-    }
-}
-
-bool IsSingleFromSpellSpecificPerTarget(uint32 spellSpec1, uint32 spellSpec2)
-{
-    switch (spellSpec1)
-    {
-    case SPELL_TRACKER:
-    case SPELL_WARLOCK_ARMOR:
-    case SPELL_MAGE_ARMOR:
-    case SPELL_ELEMENTAL_SHIELD:
-    case SPELL_MAGE_POLYMORPH:
-    case SPELL_DRINK:
-    case SPELL_FOOD:
-    case SPELL_CHARM:
-    case SPELL_WARRIOR_ENRAGE:
-    case SPELL_ARMOR_REDUCE:
-        return spellSpec1 == spellSpec2;
-    default:
-        return false;
-    }
+    return SPELL_SPECIFIC_NORMAL;
 }
 
 bool IsPositiveTarget(uint32 targetA, uint32 targetB)
@@ -796,7 +759,7 @@ bool IsSingleTargetSpell(SpellEntry const* spellInfo)
     // TODO - need found Judgements rule
     switch (GetSpellSpecific(spellInfo->Id))
     {
-    case SPELL_JUDGEMENT:
+    case SPELL_SPECIFIC_JUDGEMENT:
         return true;
     default:
         break;
@@ -824,8 +787,8 @@ bool IsSingleTargetSpells(SpellEntry const* spellInfo1, SpellEntry const* spellI
     // spell with single target specific types
     switch (spec1)
     {
-    case SPELL_JUDGEMENT:
-    case SPELL_MAGE_POLYMORPH:
+    case SPELL_SPECIFIC_JUDGEMENT:
+    case SPELL_SPECIFIC_MAGE_POLYMORPH:
         if (GetSpellSpecific(spellInfo2->Id) == spec1)
             return true;
     default:

@@ -11330,7 +11330,7 @@ bool Unit::IsPolymorphed() const
     if (!transformId)
         return false;
 
-    return GetSpellSpecific(getTransForm()) == SPELL_MAGE_POLYMORPH;
+    return GetSpellSpecific(getTransForm()) == SPELL_SPECIFIC_MAGE_POLYMORPH;
 }
 
 void Unit::SetDisplayId(uint32 modelId)
