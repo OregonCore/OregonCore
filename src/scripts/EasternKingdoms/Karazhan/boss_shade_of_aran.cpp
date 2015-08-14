@@ -17,8 +17,8 @@
 
 /* ScriptData
 SDName: Boss_Shade_of_Aran
-+SD%Complete: 98
-+SDComment: Elementals should die when Aran is killed.
+SD%Complete: 98
+SDComment: Elementals should die when Aran is killed.
 SDCategory: Karazhan
 EndScriptData */
 
@@ -26,54 +26,63 @@ EndScriptData */
 #include "ScriptedCreature.h"
 #include "ScriptedSimpleAI.h"
 #include "karazhan.h"
-#include "GameObject.h"
 
-#define SAY_AGGRO1                  -1532073
-#define SAY_AGGRO2                  -1532074
-#define SAY_AGGRO3                  -1532075
-#define SAY_FLAMEWREATH1            -1532076
-#define SAY_FLAMEWREATH2            -1532077
-#define SAY_BLIZZARD1               -1532078
-#define SAY_BLIZZARD2               -1532079
-#define SAY_EXPLOSION1              -1532080
-#define SAY_EXPLOSION2              -1532081
-#define SAY_DRINK                   -1532082                //Low Mana / AoE Pyroblast
-#define SAY_ELEMENTALS              -1532083
-#define SAY_KILL1                   -1532084
-#define SAY_KILL2                   -1532085
-#define SAY_TIMEOVER                -1532086
-#define SAY_DEATH                   -1532087
-#define SAY_ATIESH                  -1532088                //Atiesh is equipped by a raid member
+enum Text
+{
+    SAY_AGGRO1                 = -1532073,
+    SAY_AGGRO2                 = -1532074,
+    SAY_AGGRO3                 = -1532075,
+    SAY_FLAMEWREATH1           = -1532076,
+    SAY_FLAMEWREATH2           = -1532077,
+    SAY_BLIZZARD1              = -1532078,
+    SAY_BLIZZARD2              = -1532079,
+    SAY_EXPLOSION1             = -1532080,
+    SAY_EXPLOSION2             = -1532081,
+    SAY_DRINK                  = -1532082,               //Low Mana / AoE Pyroblast
+    SAY_ELEMENTALS             = -1532083,
+    SAY_KILL1                  = -1532084,
+    SAY_KILL2                  = -1532085,
+    SAY_TIMEOVER               = -1532086,
+    SAY_DEATH                  = -1532087,
+    SAY_ATIESH                 = -1532088                //Atiesh is equipped by a raid member
+};
 
-//Spells
-#define SPELL_FROSTBOLT     29954
-#define SPELL_FIREBALL      29953
-#define SPELL_ARCMISSLE     29955
-#define SPELL_CHAINSOFICE   29991
-#define SPELL_DRAGONSBREATH 29964
-#define SPELL_MASSSLOW      30035
-#define SPELL_FLAME_WREATH  30004 // triggers 29946 on targets
-#define SPELL_SUMMON_BLIZZ  29969 // script target on npc 17161 - triggers spell 29952 on target
-#define SPELL_AOE_CS        29961
-#define SPELL_PLAYERPULL    32265
-#define SPELL_AEXPLOSION    29973
-#define SPELL_MASS_POLY     29963
-#define SPELL_BLINK_CENTER  29967
-#define SPELL_ELEMENTALS    29962
-#define SPELL_CONJURE       29975
-#define SPELL_DRINK         30024
-#define SPELL_POTION        32453
-#define SPELL_AOE_PYROBLAST 29978
+enum AranSpells
+{
+    SPELL_FROSTBOLT        = 29954,
+    SPELL_FIREBALL         = 29953,
+    SPELL_ARCMISSLE        = 29955,
+    SPELL_CHAINSOFICE      = 29991,
+    //SPELL_DRAGONSBREATH  = 29964,   Not used since 2.1.0
+    SPELL_MASSSLOW         = 30035,
+    SPELL_FLAME_WREATH     = 30004, // triggers 29946 on targets
+    SPELL_SUMMON_BLIZZ     = 29969, // script target on npc 17161 - triggers spell 29952 on target
+    SPELL_AOE_CS           = 29961,
+    SPELL_PLAYERPULL       = 32265,
+    SPELL_AEXPLOSION       = 29973,
+    SPELL_MASS_POLY        = 29963,
+    SPELL_BLINK_CENTER     = 29967,
+    SPELL_ELEMENTALS       = 29962,
+    SPELL_CONJURE          = 29975,
+    SPELL_DRINK            = 30024,
+    SPELL_POTION           = 32453,
+    SPELL_AOE_PYROBLAST    = 29978
+};
 
-//Creature Spells
-#define SPELL_CIRCULAR_BLIZZARD     29952
-#define SPELL_WATERBOLT             31012
-#define SPELL_SHADOW_PYRO           29978
+enum MiscSpells
+{
+    SPELL_CIRCULAR_BLIZZARD    = 29952,
+    SPELL_WATERBOLT            = 31012,
+    SPELL_SHADOW_PYRO          = 29978
+};
 
 //Creatures
-#define CREATURE_WATER_ELEMENTAL    17167
-#define CREATURE_SHADOW_OF_ARAN     18254
-#define CREATURE_ARAN_BLIZZARD      17161
+enum Creatures
+{
+    NPC_WATER_ELEMENTAL   = 17167,
+    NPC_SHADOW_OF_ARAN    = 18254,
+    NPC_ARAN_BLIZZARD     = 17161
+};
 
 enum SuperSpell
 {
@@ -204,10 +213,16 @@ struct boss_aranAI : public ScriptedAI
                 FlameWreathTarget[i] = (*itr)->GetGUID();
                 FWTargPosX[i] = (*itr)->GetPositionX();
                 FWTargPosY[i] = (*itr)->GetPositionY();
-                me->CastSpell((*itr), SPELL_FLAME_WREATH, false);
+                me->CastSpell((*itr), SPELL_FLAME_WREATH, true);
                 ++i;
             }
         }
+    }
+
+    void SetImmune(bool apply)
+    {
+        me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, apply);                                                
+        me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_INTERRUPT, apply); 
     }
 
     void UpdateAI(const uint32 diff)
@@ -233,21 +248,21 @@ struct boss_aranAI : public ScriptedAI
         {
             if (ArcaneCooldown >= diff)
                 ArcaneCooldown -= diff;
-            else ArcaneCooldown = 0;
+            else ArcaneCooldown = 2000;
         }
 
         if (FireCooldown)
         {
             if (FireCooldown >= diff)
                 FireCooldown -= diff;
-            else FireCooldown = 0;
+            else FireCooldown = 2000;
         }
 
         if (FrostCooldown)
         {
             if (FrostCooldown >= diff)
                 FrostCooldown -= diff;
-            else FrostCooldown = 0;
+            else FrostCooldown = 2000;
         }
 
         if (!Drinking && me->GetMaxPower(POWER_MANA) && (me->GetPower(POWER_MANA) * 100 / me->GetMaxPower(POWER_MANA)) < 20)
@@ -299,8 +314,8 @@ struct boss_aranAI : public ScriptedAI
         {
             if (!me->IsNonMeleeSpellCast(false))
             {
-                Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
-                if (!pTarget)
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
+                if (!target)
                     return;
 
                 uint32 Spells[3];
@@ -327,10 +342,11 @@ struct boss_aranAI : public ScriptedAI
                 if (AvailableSpells)
                 {
                     CurrentNormalSpell = Spells[rand() % AvailableSpells];
-                    DoCast(pTarget, CurrentNormalSpell);
+                    SetImmune(false);
+                    DoCast(target, CurrentNormalSpell);
                 }
             }
-            NormalCastTimer = 1000;
+            NormalCastTimer = 2500;
         }
         else NormalCastTimer -= diff;
 
@@ -342,8 +358,8 @@ struct boss_aranAI : public ScriptedAI
                 DoCast(me, SPELL_AOE_CS);
                 break;
             case 1:
-                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
-                    DoCast(pTarget, SPELL_CHAINSOFICE);
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                    DoCast(target, SPELL_CHAINSOFICE);
                 break;
             }
             SecondarySpellTimer = urand(5000, 20000);
@@ -356,21 +372,22 @@ struct boss_aranAI : public ScriptedAI
 
             switch (LastSuperSpell)
             {
-            case SUPER_AE:
-                Available[0] = SUPER_FLAME;
-                Available[1] = SUPER_BLIZZARD;
-                break;
-            case SUPER_FLAME:
-                Available[0] = SUPER_AE;
-                Available[1] = SUPER_BLIZZARD;
-                break;
-            case SUPER_BLIZZARD:
-                Available[0] = SUPER_FLAME;
-                Available[1] = SUPER_AE;
-                break;
+                case SUPER_AE:
+                    Available[0] = SUPER_FLAME;
+                    Available[1] = SUPER_BLIZZARD;
+                    break;
+                case SUPER_FLAME:
+                    Available[0] = SUPER_AE;
+                    Available[1] = SUPER_BLIZZARD;
+                    break;
+                case SUPER_BLIZZARD:
+                    Available[0] = SUPER_FLAME;
+                    Available[1] = SUPER_AE;
+                    break;
             }
 
             LastSuperSpell = Available[urand(0, 1)];
+            SetImmune(true);
 
             switch (LastSuperSpell)
             {
@@ -400,14 +417,13 @@ struct boss_aranAI : public ScriptedAI
                 DoScriptText(RAND(SAY_BLIZZARD1, SAY_BLIZZARD2), me);
 
                 Creature* Blizzard = NULL;
-                Blizzard = me->SummonCreature(CREATURE_ARAN_BLIZZARD, -11179.080f, -1905.279f, 232.008f, 2.9f, TEMPSUMMON_TIMED_DESPAWN, 25000);
+                Blizzard = me->SummonCreature(NPC_ARAN_BLIZZARD, -11179.080f, -1905.279f, 232.008f, 2.9f, TEMPSUMMON_TIMED_DESPAWN, 25000);
                 if (Blizzard)
                 {
                     Blizzard->SetInCombatWithZone();
                     Blizzard->setFaction(me->getFaction());
                     me->CastSpell(Blizzard, SPELL_SUMMON_BLIZZ, false);
-                    Blizzard->CastSpell(Blizzard, 29952, false);
-                    Blizzard->CastSpell(Blizzard, 29952, false);
+                    Blizzard->CastSpell(Blizzard, SPELL_CIRCULAR_BLIZZARD, false);
                     Blizzard->GetMotionMaster()->MovePath(90000, false);
                 }
                 break;
@@ -426,10 +442,10 @@ struct boss_aranAI : public ScriptedAI
             Creature* ElementalThree = NULL;
             Creature* ElementalFour  = NULL;
 
-            ElementalOne     = me->SummonCreature(CREATURE_WATER_ELEMENTAL, -11168.1f, -1939.29f, 232.092f, 1.46f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
-            ElementalTwo     = me->SummonCreature(CREATURE_WATER_ELEMENTAL, -11138.2f, -1915.38f, 232.092f, 3.00f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
-            ElementalThree   = me->SummonCreature(CREATURE_WATER_ELEMENTAL, -11161.7f, -1885.36f, 232.092f, 4.59f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
-            ElementalFour    = me->SummonCreature(CREATURE_WATER_ELEMENTAL, -11192.4f, -1909.36f, 232.092f, 6.19f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
+            ElementalOne     = me->SummonCreature(NPC_WATER_ELEMENTAL, -11168.1f, -1939.29f, 232.092f, 1.46f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
+            ElementalTwo     = me->SummonCreature(NPC_WATER_ELEMENTAL, -11138.2f, -1915.38f, 232.092f, 3.00f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
+            ElementalThree   = me->SummonCreature(NPC_WATER_ELEMENTAL, -11161.7f, -1885.36f, 232.092f, 4.59f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
+            ElementalFour    = me->SummonCreature(NPC_WATER_ELEMENTAL, -11192.4f, -1909.36f, 232.092f, 6.19f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
 
             if (ElementalOne)
             {
@@ -512,11 +528,11 @@ struct boss_aranAI : public ScriptedAI
                     if (!FlameWreathTarget[i])
                         continue;
 
-                    Unit* pUnit = Unit::GetUnit(*me, FlameWreathTarget[i]);
-                    if (pUnit && !pUnit->IsWithinDist2d(FWTargPosX[i], FWTargPosY[i], 3))
+                    Unit* unit = Unit::GetUnit(*me, FlameWreathTarget[i]);
+                    if (unit && !unit->IsWithinDist2d(FWTargPosX[i], FWTargPosY[i], 3))
                     {
-                        pUnit->CastSpell(pUnit, 20476, true, 0, 0, me->GetGUID());
-                        pUnit->CastSpell(pUnit, 11027, true);
+                        unit->CastSpell(unit, 20476, true, 0, 0, me->GetGUID());
+                        unit->CastSpell(unit, 11027, true);
                         FlameWreathTarget[i] = 0;
                     }
                 }
@@ -551,15 +567,9 @@ struct boss_aranAI : public ScriptedAI
 
         switch (CurrentNormalSpell)
         {
-        case SPELL_ARCMISSLE:
-            ArcaneCooldown = 5000;
-            break;
-        case SPELL_FIREBALL:
-            FireCooldown = 5000;
-            break;
-        case SPELL_FROSTBOLT:
-            FrostCooldown = 5000;
-            break;
+            case SPELL_ARCMISSLE: ArcaneCooldown = 3500; break;
+            case SPELL_FIREBALL: FireCooldown = 3500; break;
+            case SPELL_FROSTBOLT: FrostCooldown = 3500; break;
         }
     }
 };

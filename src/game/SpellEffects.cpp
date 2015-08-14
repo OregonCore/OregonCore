@@ -1150,6 +1150,14 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
 
                     return;
                 }
+            case 30004:                                 // Flame Wreath
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    m_caster->CastSpell(unitTarget, 29946, true);
+                    return;
+                }
             case 30458:                                 // Nigh Invulnerability
                 {
                     if (!m_CastItem)
