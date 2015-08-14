@@ -6769,7 +6769,7 @@ void Player::UpdateZone(uint32 newZone)
     {
         SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
         SetRestType(REST_TYPE_IN_CITY);
-        InnEnter(time(nullptr), 0);
+        InnEnter(time(0), 0);
         pvpInfo.inNoPvPArea = true;
     }
     else                                                    // anywhere else
