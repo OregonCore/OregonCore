@@ -1322,6 +1322,96 @@ CreatureAI* GetAI_npc_winter_reveler(Creature* pCreature)
     return new npc_winter_revelerAI(pCreature);
 }
 
+enum TrainingDummy
+{
+    NPC_ADVANCED_TARGET_DUMMY                  = 2674,
+    NPC_TARGET_DUMMY                           = 2673,
+};
+
+struct npc_training_dummyAI : public ScriptedAI
+{
+    npc_training_dummyAI(Creature* c) : ScriptedAI(c)
+    {
+        SetCombatMovement(false);
+    }
+
+    uint32 combatCheckTimer;
+    uint32 despawnTimer;
+    std::unordered_map<uint64, time_t> _damageTimes;
+
+    void Reset()
+    {
+        me->SetControlled(true, UNIT_STATE_STUNNED);                                // disable rotate
+        me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);    // imune to knock aways
+
+        _damageTimes.clear();
+
+        if (me->GetEntry() != NPC_ADVANCED_TARGET_DUMMY && me->GetEntry() != NPC_TARGET_DUMMY)
+            combatCheckTimer = 1000;
+        else
+            despawnTimer = 15000;
+    }
+
+    void EnterEvadeMode()
+    {
+        if (!_EnterEvadeMode())
+        return;
+
+        Reset();
+    }
+
+    void DamageTaken(Unit* doneBy, uint32& damage)
+    {
+        me->AddThreat(doneBy, float(damage));    // just to create threat reference
+        _damageTimes[doneBy->GetGUID()] = time(NULL);
+        damage = 0;
+    }
+
+    void UpdateAI(uint32 diff) override
+    {
+        if (!me->IsInCombat())
+            return;
+
+        if (!me->HasUnitState(UNIT_STATE_STUNNED))
+            me->SetControlled(true, UNIT_STATE_STUNNED);    // disable rotate
+
+        if (combatCheckTimer <= diff)
+        {
+            time_t now = time(NULL);
+            for (std::unordered_map<uint64, time_t>::iterator itr = _damageTimes.begin(); itr != _damageTimes.end();)
+            {
+                // If unit has not dealt damage to training dummy for 5 seconds, remove him from combat
+                if (itr->second < now - 5)
+                {
+                    if (Unit* unit = ObjectAccessor::GetUnit(*me, itr->first))
+                    unit->getHostileRefManager().deleteReference(me);
+
+                    itr = _damageTimes.erase(itr);
+                }
+                else
+                    ++itr;
+            }
+            combatCheckTimer = 1000;
+        }
+        else 
+            combatCheckTimer -= diff;
+
+        if (despawnTimer <= diff)
+        {
+            me->DisappearAndDie();
+        }
+        else 
+            despawnTimer -= diff;
+    }
+
+        void MoveInLineOfSight(Unit* /*who*/) { }
+};
+
+CreatureAI* GetAI_npc_training_dummy(Creature* creature)
+{
+    return new npc_training_dummyAI(creature);
+}
+
 /************************************************************/
 
 struct npc_force_of_nature_treantsAI : public ScriptedAI
@@ -1824,13 +1914,18 @@ void AddSC_npcs_special()
     newscript->RegisterSelf();
 
     newscript = new Script;
+    newscript->Name = "npc_brewfest_reveler";
+    newscript->GetAI = &GetAI_npc_winter_reveler;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
     newscript->Name = "npc_winter_reveler";
     newscript->GetAI = &GetAI_npc_winter_reveler;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "npc_brewfest_reveler";
-    newscript->GetAI = &GetAI_npc_winter_reveler;
+    newscript->Name = "npc_training_dummy";
+    newscript->GetAI = &GetAI_npc_training_dummy;
     newscript->RegisterSelf();
 
     newscript = new Script;
