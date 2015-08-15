@@ -5230,8 +5230,10 @@ void Player::UpdateWeaponSkill(WeaponAttackType attType)
     if (m_form == FORM_TREE)
         return;                                             // use weapon but not skill up
 
-    uint32 weapon_skill_gain = sWorld.getConfig(CONFIG_SKILL_GAIN_WEAPON);
+    if (pVictim && pVictim->GetTypeId() == TYPEID_UNIT && (((Creature*)pVictim)->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_SKILLGAIN))
+        return;
 
+    uint32 weapon_skill_gain = sWorld.getConfig(CONFIG_SKILL_GAIN_WEAPON);
 
     Item* tmpWeapon = GetWeaponForAttack(attType, true);
     if (!tmpWeapon && attType == BASE_ATTACK)
