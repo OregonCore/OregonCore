@@ -1337,7 +1337,7 @@ struct npc_training_dummyAI : public ScriptedAI
 
     uint32 combatCheckTimer;
     uint32 despawnTimer;
-    std::unordered_map<uint64, time_t> _damageTimes;
+    UNORDERED_MAP<uint64, time_t> _damageTimes;
 
     void Reset()
     {
@@ -1378,7 +1378,7 @@ struct npc_training_dummyAI : public ScriptedAI
         if (combatCheckTimer <= diff)
         {
             time_t now = time(NULL);
-            for (std::unordered_map<uint64, time_t>::iterator itr = _damageTimes.begin(); itr != _damageTimes.end();)
+            for (UNORDERED_MAP<uint64, time_t>::iterator itr = _damageTimes.begin(); itr != _damageTimes.end();)
             {
                 // If unit has not dealt damage to training dummy for 5 seconds, remove him from combat
                 if (itr->second < now - 5)
