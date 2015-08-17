@@ -25,7 +25,7 @@
 #include <fstream>
 #undef min
 #undef max
-#include "mpq_libmpq04.h"
+#include "mpq_libmpq.h"
 
 using namespace std;
 extern uint16 *LiqType;
@@ -128,8 +128,9 @@ bool WMORoot::ConvertToVMAPRootWmo(FILE* pOutfile)
     return true;
 }
 
-WMOGroup::WMOGroup(std::string& filename) : filename(filename),
-    MOPY(0), MOVI(0), MoviEx(0), MOVT(0), MOBA(0), MobaEx(0), hlq(0), LiquEx(0), LiquBytes(0)
+WMOGroup::WMOGroup(std::string& _filename) :
+        MOPY(0), MOVI(0), MoviEx(0), MOVT(0), MOBA(0), MobaEx(0), hlq(0), LiquEx(0), LiquBytes(0),
+        filename(_filename)
 {
 }
 

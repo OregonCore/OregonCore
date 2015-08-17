@@ -47,13 +47,13 @@ void ExtractGameobjectModels()
 
     std::string basepath = szWorkDirWmo;
     basepath += "/";
-    std::string path;
+    std::string path = basepath + "temp_gameobject_models";
 
-    FILE * model_list = fopen((basepath + "temp_gameobject_models").c_str(), "wb");
+    FILE * model_list = fopen(path.c_str(), "wb");
 
     if (!model_list)
     {
-        printf("Fatal error: Could not open file %s\n", modelListPath.c_str());
+        printf("Fatal error: Could not open file %s\n", path.c_str());
         return;
     }
 
@@ -81,7 +81,7 @@ void ExtractGameobjectModels()
         }
         else if (!strcmp(ch_ext, ".mdl"))
         {
-            // TODO: extract .mdl files, if needed
+            // @TODO: extract .mdl files, if needed
             continue;
         }
         else //if (!strcmp(ch_ext, ".mdx") || !strcmp(ch_ext, ".m2"))

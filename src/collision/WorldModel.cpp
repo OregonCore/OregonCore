@@ -42,7 +42,7 @@ bool IntersectTriangle(const MeshTriangle& tri, std::vector<Vector3>::const_iter
     const Vector3 p(ray.direction().cross(e2));
     const float a = e1.dot(p);
 
-        if (abs(a) < EPS) {
+        if (fabsf(a) < EPS) {
         // Determinant is ill-conditioned; abort early
         return false;
     }

@@ -186,12 +186,14 @@ class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Th
 /// Log class singleton
 #define sLog Oregon::Singleton<Log>::Instance()
 
+#ifndef DEBUG_LOG
 #ifdef OREGON_DEBUG
 /// Works only in debug mode
 #define DEBUG_LOG Oregon::Singleton<Log>::Instance().outDebug
 #else
 #define DEBUG_LOG(...)
-#endif
+# endif // OREGON_DEBUG
+#endif // DEBUG_LOG
 
 /// Macros meant to be used by scripts
 #define outstring_log Oregon::Singleton<Log>::Instance().outString

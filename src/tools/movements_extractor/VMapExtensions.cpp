@@ -57,7 +57,7 @@ void GroupModel::getMeshData(vector<Vector3>& vertices, vector<MeshTriangle>& tr
 }
 
 // declared in src/shared/vmap/ModelInstance.h
-WorldModel* const ModelInstance::getWorldModel()
+WorldModel* ModelInstance::getWorldModel()
 {
     return iModel;
 }

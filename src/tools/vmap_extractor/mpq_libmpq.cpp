@@ -15,7 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpq_libmpq04.h"
+#include "mpq_libmpq.h"
 #include <deque>
 #include <cstdio>
 
@@ -69,15 +69,14 @@ MPQFile::MPQFile(const char* filename):
     {
         mpq_archive* mpq_a = (*i)->mpq_a;
 
-        uint32 filenum;
+        uint32_t filenum;
         if (libmpq__file_number(mpq_a, filename, &filenum)) continue;
         libmpq__off_t transferred;
-        libmpq__file_unpacked_size(mpq_a, filenum, &size);
+        libmpq__file_size_unpacked(mpq_a, filenum, &size);
 
         // HACK: in patch.mpq some files don't want to open and give 1 for filesize
-        if (size <= 1)
-        {
-            // printf("info: file %s has size %d; considered dummy file.\n", filename, size);
+        if (size<=1) {
+//            printf("warning: file %s has size %d; cannot read.\n", filename, size);
             eof = true;
             buffer = 0;
             return;
@@ -99,8 +98,7 @@ size_t MPQFile::read(void* dest, size_t bytes)
     if (eof) return 0;
 
     size_t rpos = pointer + bytes;
-    if (rpos > size)
-    {
+    if (rpos > size_t(size)) {
         bytes = size - pointer;
         eof = true;
     }

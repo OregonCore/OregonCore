@@ -58,7 +58,6 @@ class WMORoot
         bool ConvertToVMAPRootWmo(FILE* output);
     private:
         std::string filename;
-        char outfilename;
 };
 
 struct WMOLiquidHeader

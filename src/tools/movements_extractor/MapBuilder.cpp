@@ -33,13 +33,13 @@ MapBuilder::MapBuilder(float maxWalkableAngle, bool skipLiquid,
                        bool debugOutput, bool bigBaseUnit, const char* offMeshFilePath) :
     m_terrainBuilder(NULL),
     m_debugOutput        (debugOutput),
+    m_offMeshFilePath    (offMeshFilePath),
     m_skipContinents     (skipContinents),
     m_skipJunkMaps       (skipJunkMaps),
     m_skipBattlegrounds  (skipBattlegrounds),
     m_maxWalkableAngle   (maxWalkableAngle),
     m_bigBaseUnit        (bigBaseUnit),
-    m_rcContext          (NULL),
-    m_offMeshFilePath    (offMeshFilePath)
+    m_rcContext          (NULL)
 {
     m_terrainBuilder = new TerrainBuilder(skipLiquid);
 
@@ -389,6 +389,9 @@ void MapBuilder::buildNavMesh(uint32 mapID, dtNavMesh*& navMesh)
 
     int tileBits = STATIC_TILE_BITS;
     int polyBits = STATIC_POLY_BITS;
+
+    (void)(tileBits); // unused, kept for some reason
+    (void)(polyBits); // unused, kept for some reason
 
     int maxTiles = tiles->size();
     int maxPolysPerTile = 1 << polyBits;

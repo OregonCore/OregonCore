@@ -18,12 +18,12 @@
 #include "vmapexport.h"
 #include "model.h"
 #include "wmo.h"
-#include "mpq_libmpq04.h"
+#include "mpq_libmpq.h"
 #include <cassert>
 #include <algorithm>
 #include <cstdio>
 
-Model::Model(std::string &filename) : filename(filename), vertices(0), indices(0)
+Model::Model(std::string& _filename) : vertices(0), indices(0), filename(_filename)
 {
 }
 

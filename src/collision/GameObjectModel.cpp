@@ -16,13 +16,14 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef NO_CORE_FUNCS
+
 #include "VMapFactory.h"
 #include "VMapManager2.h"
 #include "VMapDefinitions.h"
 #include "WorldModel.h"
 
 #include "GameObjectModel.h"
-#include "Log.h"
 #include "GameObject.h"
 #include "Creature.h"
 #include "TemporarySummon.h"
@@ -32,8 +33,6 @@
 using G3D::Vector3;
 using G3D::Ray;
 using G3D::AABox;
-
-#ifndef NO_CORE_FUNCS
 
 struct GameobjectModelData
 {

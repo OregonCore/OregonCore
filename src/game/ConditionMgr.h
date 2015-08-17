@@ -67,8 +67,9 @@ enum ConditionType
     CONDITION_ALIVE                 = 36,                   // 0                0              0                  true if unit is alive
     CONDITION_HP_VAL                = 37,                   // hpVal            ComparisonType 0                  true if unit's hp matches given value
     CONDITION_HP_PCT                = 38,                   // hpPct            ComparisonType 0                  true if unit's hp matches given pct
-    CONDITION_MAX                   = 39                    // MAX
 };
+
+#define CONDITION_MAX                 39
 
 /*! Documentation on implementing a new ConditionSourceType:
     Step 1: Check for the lowest free ID. Look for CONDITION_SOURCE_TYPE_UNUSED_XX in the enum.
@@ -131,8 +132,9 @@ enum ComparisionType
     COMP_TYPE_LOW,
     COMP_TYPE_HIGH_EQ,
     COMP_TYPE_LOW_EQ,
-    COMP_TYPE_MAX
 };
+
+#define COMP_TYPE_MAX 5
 
 enum RelationType
 {
@@ -144,6 +146,8 @@ enum RelationType
     RELATION_CREATED_BY,
     RELATION_MAX
 };
+
+#define RELATION_MAX 6
 
 enum InstanceInfo
 {

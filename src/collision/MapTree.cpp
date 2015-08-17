@@ -19,7 +19,6 @@
 #include "MapTree.h"
 #include "ModelInstance.h"
 #include "VMapManager2.h"
-#include "Log.h"
 #include "VMapDefinitions.h"
 
 #include <string>

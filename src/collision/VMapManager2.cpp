@@ -24,7 +24,6 @@
 #include "MapTree.h"
 #include "ModelInstance.h"
 #include "WorldModel.h"
-#include "Log.h"
 #include "VMapDefinitions.h"
 #include <G3D/Vector3.h>
 #include <ace/Null_Mutex.h>
