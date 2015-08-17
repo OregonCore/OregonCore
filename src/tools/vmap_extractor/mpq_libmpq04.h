@@ -38,6 +38,11 @@ class MPQArchive
         mpq_archive_s* mpq_a;
 
         MPQArchive(const char* filename);
+    ~MPQArchive()
+    {
+        close();
+    }
+
         void close();
 
         void GetFileListTo(vector<string>& filelist)
@@ -69,7 +74,6 @@ class MPQArchive
             delete[] buffer;
         }
 };
-
 typedef std::deque<MPQArchive*> ArchiveSet;
 
 class MPQFile
@@ -127,4 +131,3 @@ inline void flipcc(char* fcc)
 }
 
 #endif
-

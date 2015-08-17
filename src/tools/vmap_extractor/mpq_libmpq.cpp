@@ -130,4 +130,3 @@ void MPQFile::close()
     buffer = 0;
     eof = true;
 }
-

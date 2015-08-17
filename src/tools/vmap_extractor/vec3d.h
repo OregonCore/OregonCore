@@ -226,6 +226,7 @@ class Vec2D
             return r;
         }
 
+
         friend std::istream& operator>>(std::istream& in, Vec2D& v)
         {
             in >> v.x >> v.y;
@@ -246,4 +247,3 @@ inline void rotate(float x0, float y0, float* x, float* y, float angle)
 }
 
 #endif
-

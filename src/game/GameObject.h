@@ -463,6 +463,8 @@ enum LootState
 };
 
 class Unit;
+class GameObjectModel;
+class Transport;
 
 // 5 sec for bobber catch
 #define FISHING_BOBBER_READY_TIME 5
@@ -488,6 +490,10 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         {
             return m_goData;
         }
+
+        void SetGoState(GOState state);
+        void SetPhaseMask(uint32 newPhaseMask, bool update);
+        void EnableCollision(bool enable);
 
         bool IsTransport() const;
 
@@ -672,10 +678,6 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         {
             return GOState(GetUInt32Value(GAMEOBJECT_STATE));
         }
-        void SetGoState(GOState state)
-        {
-            SetUInt32Value(GAMEOBJECT_STATE, state);
-        }
         uint32 GetGoArtKit() const
         {
             return GetUInt32Value(GAMEOBJECT_ARTKIT);
@@ -696,10 +698,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         {
             return m_lootState;
         }
-        void SetLootState(LootState s)
-        {
-            m_lootState = s;
-        }
+        void SetLootState(LootState state);
 
         void AddToSkillupList(uint32 PlayerGuidLow)
         {
@@ -812,6 +811,10 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         bool isVisibleForInState(Player const* u, bool inVisibleList) const;
         bool canDetectTrap(Player const* u, float distance) const;
 
+        Transport* ToTransport() { if (GetGOInfo()->type == GAMEOBJECT_TYPE_TRANSPORT) return reinterpret_cast<Transport*>(this); else return NULL; }
+        Transport const* ToTransport() const { if (GetGOInfo()->type == GAMEOBJECT_TYPE_TRANSPORT) return reinterpret_cast<Transport const*>(this); else return NULL; }
+
+        void UpdateModelPosition(); 
         GameObject* LookupFishingHoleAround(float range);
 
         void CastSpell(Unit* target, uint32 spellId, bool triggered = true);
@@ -832,8 +835,13 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         uint32 m_DBTableGuid;                               // For new or temporary gameobjects is 0 for saved it is lowguid
         GameObjectInfo const* m_goInfo;
         GameObjectData const* m_goData;
+        void SetDisplayId(uint32 displayid);
+
+        GameObjectModel * m_model;
     private:
         void SwitchDoorOrButton(bool activate, bool alternative = false);
+
+        void UpdateModel();                                 // updates model in case displayId were changed
 };
 #endif
 

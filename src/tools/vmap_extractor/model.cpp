@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <cstdio>
 
-Model::Model(std::string& filename) : filename(filename)
+Model::Model(std::string &filename) : filename(filename), vertices(0), indices(0)
 {
 }
 
@@ -36,25 +36,28 @@ bool Model::open()
     if (!ok)
     {
         f.close();
-        printf("Error loading model %s\n", filename.c_str());
+        // Do not show this error on console to avoid confusion, the extractor can continue working even if some models fail to load
+        //printf("Error loading model %s\n", filename.c_str());
         return false;
     }
+
+    _unload();
 
     memcpy(&header, f.getBuffer(), sizeof(ModelHeader));
     if (header.nBoundingTriangles > 0)
     {
-        boundingVertices = (ModelBoundingVertex*)(f.getBuffer() + header.ofsBoundingVertices);
+        f.seek(0);
+        f.seekRelative(header.ofsBoundingVertices);
         vertices = new Vec3D[header.nBoundingVertices];
-
-        for (size_t i = 0; i < header.nBoundingVertices; i++)
-            vertices[i] = fixCoordSystem(boundingVertices[i].pos);
-
-        uint16* triangles = (uint16*)(f.getBuffer() + header.ofsBoundingTriangles);
-
-        nIndices = header.nBoundingTriangles; // refers to the number of int16's, not the number of triangles
-        indices = new uint16[nIndices];
-        memcpy(indices, triangles, nIndices * 2);
-
+        f.read(vertices,header.nBoundingVertices*12);
+        for (uint32 i=0; i<header.nBoundingVertices; i++)
+        {
+            vertices[i] = fixCoordSystem(vertices[i]);
+        }
+        f.seek(0);
+        f.seekRelative(header.ofsBoundingTriangles);
+        indices = new uint16[header.nBoundingTriangles];
+        f.read(indices,header.nBoundingTriangles*2);
         f.close();
     }
     else
@@ -66,7 +69,7 @@ bool Model::open()
     return true;
 }
 
-bool Model::ConvertToVMAPModel(char* outfilename)
+bool Model::ConvertToVMAPModel(const char * outfilename)
 {
     int N[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     FILE* output = fopen(outfilename, "wb");
@@ -75,10 +78,9 @@ bool Model::ConvertToVMAPModel(char* outfilename)
         printf("Can't create the output file '%s'\n", outfilename);
         return false;
     }
-    fwrite("VMAP003", 8, 1, output);
+    fwrite(szRawVMAPMagic,8,1,output);
     uint32 nVertices = 0;
     nVertices = header.nBoundingVertices;
-
     fwrite(&nVertices, sizeof(int), 1, output);
     uint32 nofgroups = 1;
     fwrite(&nofgroups, sizeof(uint32), 1, output);
@@ -91,7 +93,8 @@ bool Model::ConvertToVMAPModel(char* outfilename)
     wsize = sizeof(branches) + sizeof(uint32) * branches;
     fwrite(&wsize, sizeof(int), 1, output);
     fwrite(&branches, sizeof(branches), 1, output);
-    uint32 nIndexes = (uint32) nIndices;
+    uint32 nIndexes = 0;
+    nIndexes = header.nBoundingTriangles;
     fwrite(&nIndexes, sizeof(uint32), 1, output);
     fwrite("INDX", 4, 1, output);
     wsize = sizeof(uint32) + sizeof(unsigned short) * nIndexes;
@@ -99,10 +102,9 @@ bool Model::ConvertToVMAPModel(char* outfilename)
     fwrite(&nIndexes, sizeof(uint32), 1, output);
     if (nIndexes > 0)
     {
-        for (uint32 i = 0; i < nIndices; ++i)
+        for (uint32 i = 0; i < nIndexes; ++i)
         {
-            // index[0] -> x, index[1] -> y, index[2] -> z, index[3] -> x ...
-            if ((i % 3) - 1 == 0)
+            if ((i % 3) - 1 == 0 && i + 1 < nIndexes)
             {
                 uint16 tmp = indices[i];
                 indices[i] = indices[i + 1];
@@ -126,17 +128,11 @@ bool Model::ConvertToVMAPModel(char* outfilename)
         fwrite(vertices, sizeof(float) * 3, nVertices, output);
     }
 
-    delete[] vertices;
-    delete[] indices;
-
     fclose(output);
 
     return true;
 }
 
-Model::~Model()
-{
-}
 
 Vec3D fixCoordSystem(Vec3D v)
 {
@@ -212,4 +208,3 @@ ModelInstance::ModelInstance(MPQFile& f, const char* ModelInstName, uint32 mapID
         realx2, realy2
         ); */
 }
-

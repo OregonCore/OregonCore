@@ -46,7 +46,9 @@ typedef uint8_t            uint8;
 
 #define FILE_FORMAT_VERSION    18
 
+//
 // File version chunk
+//
 struct file_MVER
 {
     union
@@ -80,4 +82,3 @@ class FileLoader
         virtual void free();
 };
 #endif
-

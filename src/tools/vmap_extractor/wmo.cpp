@@ -28,6 +28,7 @@
 #include "mpq_libmpq04.h"
 
 using namespace std;
+extern uint16 *LiqType;
 
 WMORoot::WMORoot(std::string& filename) : filename(filename)
 {
@@ -37,10 +38,7 @@ bool WMORoot::open()
 {
     MPQFile f(filename.c_str());
     if (f.isEof())
-    {
-        printf("No such file.\n");
         return false;
-    }
 
     uint32 size;
     char fourcc[5];
@@ -122,16 +120,12 @@ bool WMORoot::ConvertToVMAPRootWmo(FILE* pOutfile)
 {
     //printf("Convert RootWmo...\n");
 
-    fwrite("VMAP003", 1, 8, pOutfile);
+    fwrite(szRawVMAPMagic,1,8,pOutfile);
     unsigned int nVectors = 0;
     fwrite(&nVectors, sizeof(nVectors), 1, pOutfile); // will be filled later
     fwrite(&nGroups, 4, 1, pOutfile);
     fwrite(&RootWMOID, 4, 1, pOutfile);
     return true;
-}
-
-WMORoot::~WMORoot()
-{
 }
 
 WMOGroup::WMOGroup(std::string& filename) : filename(filename),
@@ -155,7 +149,9 @@ bool WMOGroup::open()
         f.read(&size, 4);
         flipcc(fourcc);
         if (!strcmp(fourcc, "MOGP")) //Fix sizeoff = Data size.
+        {
             size = 68;
+        }
         fourcc[4] = 0;
         size_t nextpos = f.getPos() + size;
         LiquEx_size = 0;
@@ -219,6 +215,13 @@ bool WMOGroup::open()
             int nLiquBytes = hlq->xtiles * hlq->ytiles;
             LiquBytes = new char[nLiquBytes];
             f.read(LiquBytes, nLiquBytes);
+
+            /* std::ofstream llog("Buildings/liquid.log", ios_base::out | ios_base::app);
+            llog << filename;
+            llog << "\nbbox: " << bbcorn1[0] << ", " << bbcorn1[1] << ", " << bbcorn1[2] << " | " << bbcorn2[0] << ", " << bbcorn2[1] << ", " << bbcorn2[2];
+            llog << "\nlpos: " << hlq->pos_x << ", " << hlq->pos_y << ", " << hlq->pos_z;
+            llog << "\nx-/yvert: " << hlq->xverts << "/" << hlq->yverts << " size: " << size << " expected size: " << 30 + hlq->xverts*hlq->yverts*8 + hlq->xtiles*hlq->ytiles << std::endl;
+            llog.close(); */
         }
         f.seek((int)nextpos);
     }
@@ -244,7 +247,9 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE* output, WMORoot* rootWMO, bool pPrecis
         int moba_batch = moba_size / 12;
         MobaEx = new int[moba_batch * 4];
         for (int i = 8; i < moba_size; i += 12)
+        {
             MobaEx[k++] = MOBA[i];
+        }
         int moba_size_grp = moba_batch * 4 + 4;
         fwrite(&moba_size_grp, 4, 1, output);
         fwrite(&moba_batch, 4, 1, output);
@@ -313,7 +318,9 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE* output, WMORoot* rootWMO, bool pPrecis
         int moba_batch = moba_size / 12;
         MobaEx = new int[moba_batch * 4];
         for (int i = 8; i < moba_size; i += 12)
+        {
             MobaEx[k++] = MOBA[i];
+        }
 
         int moba_size_grp = moba_batch * 4 + 4;
         fwrite(&moba_size_grp, 4, 1, output);
@@ -321,8 +328,8 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE* output, WMORoot* rootWMO, bool pPrecis
         fwrite(MobaEx, 4, k, output);
         delete [] MobaEx;
 
-        // INDX
-        // MOPY
+        //-------INDX------------------------------------
+        //-------MOPY--------
         MoviEx = new uint16[nTriangles * 3]; // "worst case" size...
         int* IndexRenum = new int[nVertices];
         memset(IndexRenum, 0xFF, nVertices * sizeof(int));
@@ -378,18 +385,67 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE* output, WMORoot* rootWMO, bool pPrecis
         delete [] IndexRenum;
     }
 
-    // LIQU
+    //------LIQU------------------------
     if (LiquEx_size != 0)
     {
         int LIQU_h[] = {0x5551494C, sizeof(WMOLiquidHeader) + LiquEx_size + hlq->xtiles* hlq->ytiles}; // "LIQU"
         fwrite(LIQU_h, 4, 2, output);
 
+        // according to WoW.Dev Wiki:
+        uint32 liquidEntry;
+        if (rootWMO->liquidType & 4)
+            liquidEntry = liquidType;
+        else if (liquidType == 15)
+            liquidEntry = 0;
+        else
+            liquidEntry = liquidType + 1;
+
+        if (!liquidEntry)
+        {
+            int v1; // edx@1
+            int v2; // eax@1
+
+            v1 = hlq->xtiles * hlq->ytiles;
+            v2 = 0;
+            if (v1 > 0)
+            {
+                while ((LiquBytes[v2] & 0xF) == 15)
+                {
+                    ++v2;
+                    if (v2 >= v1)
+                        break;
+                }
+
+                if (v2 < v1 && (LiquBytes[v2] & 0xF) != 15)
+                    liquidEntry = (LiquBytes[v2] & 0xF) + 1;
+            }
+        }
+
+        if (liquidEntry && liquidEntry < 21)
+        {
+            switch ((liquidEntry - 1) & 3)
+            {
+                case 0:
+                    liquidEntry = ((mogpFlags & 0x80000) != 0) + 13;
+                    break;
+                case 1:
+                    liquidEntry = 14;
+                    break;
+                case 2:
+                    liquidEntry = 19;
+                    break;
+                case 3:
+                    liquidEntry = 20;
+                    break;
+            }
+        }
+
+        hlq->type = liquidEntry;
+
         /* std::ofstream llog("Buildings/liquid.log", ios_base::out | ios_base::app);
         llog << filename;
-        llog << ":\ntype: " << hlq->type << " (root:" << rootWMO->liquidType << " group:" << liquidType << ")\n";
+        llog << ":\nliquidEntry: " << liquidEntry << " type: " << hlq->type << " (root:" << rootWMO->liquidType << " group:" << liquidType << ")\n";
         llog.close(); */
-
-        hlq->type = ConvertLiquidType(hlq->type, filename);
 
         fwrite(hlq, sizeof(WMOLiquidHeader), 1, output);
         // only need height values, the other values are unknown anyway
@@ -400,24 +456,6 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE* output, WMORoot* rootWMO, bool pPrecis
     }
 
     return nColTriangles;
-}
-
-int WMOGroup::ConvertLiquidType(int hlqLiquid, std::string& filename)
-{
-    if (hlqLiquid == 4)                                             // lava in Blackrock Mountain, Blackrock Depths, Blackrock Spire and Old Ironforge
-        return 2;
-
-    filename = filename.substr(0, filename.find_last_of("\\"));     // trim filename
-    filename = filename.substr(filename.find_last_of("\\") + 1);    // trim everything except current wmo path part
-
-    if (hlqLiquid == 3 && filename == "AZ_Blackrock")               // lava in Molten Cire
-        return 2;
-    else if (filename == "KL_OrgrimmarLavaDungeon")                 // lava in Ragefire Chasm
-        return 2;
-    else if (hlqLiquid == 8 && filename == "LD_Stratholme")         // slime in Naxxramas
-        return 3;
-    else
-        return 0;
 }
 
 WMOGroup::~WMOGroup()
@@ -451,7 +489,7 @@ WMOInstance::WMOInstance(MPQFile& f, const char* WmoInstName, uint32 mapID, uint
     f.read(&adtId, 2);
     f.read(&trash, 2);
 
-    // add_in _dir_file
+    //-----------add_in _dir_file----------------
 
     char tempname[512];
     sprintf(tempname, "%s/%s", szWorkDirWmo, WmoInstName);
@@ -515,4 +553,3 @@ WMOInstance::WMOInstance(MPQFile& f, const char* WmoInstName, uint32 mapID, uint
 
     // fclose(dirfile);
 }
-

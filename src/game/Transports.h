@@ -42,6 +42,8 @@ class Transport : public GameObject
             return m_passengers;
         }
 
+        void SetDelayedAddModelToMap() { _delayedAddModel = true; }
+
     private:
         struct WayPoint
         {
@@ -78,6 +80,8 @@ class Transport : public GameObject
         void UpdateForMap(Map const* map);
         void DoEventIfAny(WayPointMap::value_type const& node, bool departure);
         WayPointMap::iterator GetNextWayPoint();
+
+        bool _delayedAddModel;
 };
 #endif
 

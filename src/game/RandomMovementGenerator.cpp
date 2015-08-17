@@ -59,7 +59,7 @@ RandomMovementGenerator<Creature>::_setRandomLocation(Creature& creature)
         // Limit height change
         const float distanceZ = rand_norm() * sqrtf(dist) / 2.0f;
         nz = Z + distanceZ;
-        float tz = map->GetHeight(nx, ny, nz - 2.0f, false); // Map check only, vmap needed here but need to alter vmaps checks for height.
+        float tz = map->GetHeight(creature.GetPhaseMask(), nx, ny, nz - 2.0f, false); // Map check only, vmap needed here but need to alter vmaps checks for height.
         float wz = map->GetWaterLevel(nx, ny);
 
         // Problem here, we must fly above the ground and water, not under. Let's try on next tick
@@ -73,16 +73,16 @@ RandomMovementGenerator<Creature>::_setRandomLocation(Creature& creature)
 
         // The fastest way to get an accurate result 90% of the time.
         // Better result can be obtained like 99% accuracy with a ray light, but the cost is too high and the code is too long.
-        nz = map->GetHeight(nx, ny, Z + dist - 2.0f, false);
+        nz = map->GetHeight(creature.GetPhaseMask(), nx, ny, Z + dist - 2.0f, false);
 
         if (fabs(nz - Z) > dist)                            // Map check
         {
-            nz = map->GetHeight(nx, ny, Z - 2.0f, true);    // Vmap Horizontal or above
+            nz = map->GetHeight(creature.GetPhaseMask(), nx, ny, Z - 2.0f, true);    // Vmap Horizontal or above
 
             if (fabs(nz - Z) > dist)
             {
                 // Vmap Higher
-                nz = map->GetHeight(nx, ny, Z + dist - 2.0f, true);
+                nz = map->GetHeight(creature.GetPhaseMask(), nx, ny, Z + dist - 2.0f, true);
 
                 // let's forget this bad coords where a z cannot be find and retry at next tick
                 if (fabs(nz - Z) > dist)

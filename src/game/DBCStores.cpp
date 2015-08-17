@@ -76,6 +76,7 @@ static FactionTeamMap sFactionTeamMap;
 DBCStorage <FactionEntry> sFactionStore(FactionEntryfmt);
 DBCStorage <FactionTemplateEntry> sFactionTemplateStore(FactionTemplateEntryfmt);
 
+DBCStorage <GameObjectDisplayInfoEntry> sGameObjectDisplayInfoStore(GameObjectDisplayInfofmt);
 DBCStorage <GemPropertiesEntry> sGemPropertiesStore(GemPropertiesEntryfmt);
 
 DBCStorage <GtCombatRatingsEntry>         sGtCombatRatingsStore(GtCombatRatingsfmt);
@@ -95,6 +96,7 @@ DBCStorage <ItemRandomPropertiesEntry> sItemRandomPropertiesStore(ItemRandomProp
 DBCStorage <ItemRandomSuffixEntry> sItemRandomSuffixStore(ItemRandomSuffixfmt);
 DBCStorage <ItemSetEntry> sItemSetStore(ItemSetEntryfmt);
 
+DBCStorage <LiquidTypeEntry> sLiquidTypeStore(LiquidTypefmt);
 DBCStorage <LockEntry> sLockStore(LockEntryfmt);
 
 DBCStorage <MailTemplateEntry> sMailTemplateStore(MailTemplateEntryfmt);
@@ -269,6 +271,21 @@ void LoadDBCStores(const std::string& dataPath)
     }
 
     LoadDBC(availableDbcLocales, bad_dbc_files, sFactionTemplateStore,     dbcPath, "FactionTemplate.dbc");
+
+    LoadDBC(availableDbcLocales, bad_dbc_files,sGameObjectDisplayInfoStore,dbcPath,"GameObjectDisplayInfo.dbc");
+    for (uint32 i = 0; i < sGameObjectDisplayInfoStore.GetNumRows(); ++i)
+    {
+        if (GameObjectDisplayInfoEntry const* info = sGameObjectDisplayInfoStore.LookupEntry(i))
+        {
+            if (info->maxX < info->minX)
+                std::swap(*(float*)(&info->maxX), *(float*)(&info->minX));
+            if (info->maxY < info->minY)
+                std::swap(*(float*)(&info->maxY), *(float*)(&info->minY));
+            if (info->maxZ < info->minZ)
+                std::swap(*(float*)(&info->maxZ), *(float*)(&info->minZ));
+        }
+    }
+
     LoadDBC(availableDbcLocales, bad_dbc_files, sGemPropertiesStore,       dbcPath, "GemProperties.dbc");
 
     LoadDBC(availableDbcLocales, bad_dbc_files, sGtCombatRatingsStore,     dbcPath, "gtCombatRatings.dbc");
@@ -291,6 +308,7 @@ void LoadDBCStores(const std::string& dataPath)
     LoadDBC(availableDbcLocales, bad_dbc_files, sItemRandomSuffixStore,    dbcPath, "ItemRandomSuffix.dbc");
     LoadDBC(availableDbcLocales, bad_dbc_files, sItemSetStore,             dbcPath, "ItemSet.dbc");
     LoadDBC(availableDbcLocales, bad_dbc_files, sLockStore,                dbcPath, "Lock.dbc");
+    LoadDBC(availableDbcLocales, bad_dbc_files,sLiquidTypeStore,          dbcPath,"LiquidType.dbc");
     LoadDBC(availableDbcLocales, bad_dbc_files, sMailTemplateStore,        dbcPath, "MailTemplate.dbc");
     LoadDBC(availableDbcLocales, bad_dbc_files, sMapStore,                 dbcPath, "Map.dbc");
     LoadDBC(availableDbcLocales, bad_dbc_files, sQuestSortStore,           dbcPath, "QuestSort.dbc");
@@ -687,6 +705,14 @@ bool IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint32 requiredT
         return false;
 
     return (itemEntry->categoryMask & reqEntry->categoryMask) == reqEntry->categoryMask;
+}
+
+uint32 GetLiquidFlags(uint32 liquidType)
+{
+    if (LiquidTypeEntry const* liq = sLiquidTypeStore.LookupEntry(liquidType))
+        return 1 << liq->Type;
+
+    return 0;
 }
 
 void Zone2MapCoordinates(float& x, float& y, uint32 zone)

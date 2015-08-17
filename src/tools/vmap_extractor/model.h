@@ -34,20 +34,27 @@ class Model
 {
     public:
         ModelHeader header;
-        ModelBoundingVertex* boundingVertices;
-        Vec3D* vertices;
-        uint16* indices;
+    uint32 offsBB_vertices, offsBB_indices;
+    Vec3D *BB_vertices, *vertices;
+    uint16 *BB_indices, *indices;
         size_t nIndices;
 
         bool open();
-        bool ConvertToVMAPModel(char* outfilename);
+    bool ConvertToVMAPModel(const char * outfilename);
 
         bool ok;
 
         Model(std::string& filename);
-        ~Model();
+    ~Model() {_unload();}
 
     private:
+    void _unload()
+    {
+        delete[] vertices;
+        delete[] indices;
+        vertices = NULL;
+        indices = NULL;
+    }
         std::string filename;
         char outfilename;
 };
@@ -68,4 +75,3 @@ class ModelInstance
 };
 
 #endif
-

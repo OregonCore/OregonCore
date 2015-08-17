@@ -38,8 +38,11 @@
 #include "Util.h"
 #include "OutdoorPvPMgr.h"
 #include "BattleGroundAV.h"
+#include "GameObjectModel.h"
+#include "DynamicTree.h"
+#include "Transports.h"
 
-GameObject::GameObject() : WorldObject()
+GameObject::GameObject() : WorldObject(), m_model(NULL)
 {
     m_objectType |= TYPEMASK_GAMEOBJECT;
     m_objectTypeId = TYPEID_GAMEOBJECT;
@@ -63,6 +66,7 @@ GameObject::GameObject() : WorldObject()
 
 GameObject::~GameObject()
 {
+    delete m_model;
 }
 
 void GameObject::CleanupsBeforeDelete()
@@ -102,6 +106,17 @@ void GameObject::AddToWorld()
             m_zoneScript->OnGameObjectCreate(this, true);
 
         ObjectAccessor::Instance().AddObject(this);
+
+        // The state can be changed after GameObject::Create but before GameObject::AddToWorld
+        bool toggledState = GetGoType() == GAMEOBJECT_TYPE_CHEST ? getLootState () == GO_READY : (GetGoState() == GO_STATE_READY || IsTransport());
+        if (m_model)
+        {
+            if (Transport* trans = ToTransport())
+                trans->SetDelayedAddModelToMap();
+            else
+                GetMap()->Insert(*m_model);
+        }
+        EnableCollision(toggledState);
         WorldObject::AddToWorld();
     }
 }
@@ -123,6 +138,9 @@ void GameObject::RemoveFromWorld()
                 sLog.outError("Delete GameObject (GUID: %u Entry: %u) that has references in invalid creature %u GO list. Crash possible.", GetGUIDLow(), GetGOInfo()->id, GUID_LOPART(owner_guid));
         }
 
+        if (m_model)
+            if (GetMap()->Contains(*m_model))
+                GetMap()->Remove(*m_model);
         WorldObject::RemoveFromWorld();
         ObjectAccessor::Instance().RemoveObject(this);
     }
@@ -175,8 +193,9 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, float x, float
 
     SetUInt32Value(GAMEOBJECT_DISPLAYID, goinfo->displayId);
 
-    SetGoState(go_state);
+    m_model = GameObjectModel::Create(*this);
     SetGoType(GameobjectTypes(goinfo->type));
+    SetGoState(go_state);
 
     SetGoAnimProgress(animprogress);
 
@@ -1497,6 +1516,14 @@ const char* GameObject::GetNameForLocaleIdx(int32 loc_idx) const
 
 void GameObject::UpdateRotationFields(float rotation2 /*=0.0f*/, float rotation3 /*=0.0f*/)
 {
+   static double const atan_pow = atan(pow(2.0f, -20.0f));
+
+    double f_rot1 = std::sin(GetOrientation() / 2.0f);
+    double f_rot2 = std::cos(GetOrientation() / 2.0f);
+
+    int64 i_rot1 = int64(f_rot1 / atan_pow *(f_rot2 >= 0 ? 1.0f : -1.0f));
+    int64 rotation = (i_rot1 << 43 >> 43) & 0x00000000001FFFFF;
+
     SetFloatValue(GAMEOBJECT_FACING, GetOrientation());
 
     if (rotation2 == 0.0f && rotation3 == 0.0f)
@@ -1507,4 +1534,85 @@ void GameObject::UpdateRotationFields(float rotation2 /*=0.0f*/, float rotation3
 
     SetFloatValue(GAMEOBJECT_ROTATION+2, rotation2);
     SetFloatValue(GAMEOBJECT_ROTATION+3, rotation3);
+}
+
+void GameObject::SetLootState(LootState state)
+{
+    m_lootState = state;
+    //AI()->OnStateChanged(state, unit);
+    if (m_model)
+    {
+         bool collision = false;
+         // Use the current go state
+         if ((GetGoState() != GO_STATE_READY && (state == GO_ACTIVATED || state == GO_JUST_DEACTIVATED)) || state == GO_READY)
+            collision = !collision;
+         
+        EnableCollision(collision);
+    }
+}
+
+void GameObject::SetGoState(GOState state)
+{
+    SetUInt32Value(GAMEOBJECT_STATE, state);
+    if (m_model && !IsTransport())
+    {
+        if (!IsInWorld())
+            return;
+
+        // startOpen determines whether we are going to add or remove the LoS on activation
+        bool collision = false;
+        if (state == GO_STATE_READY)
+            collision = !collision; 
+ 
+        EnableCollision(collision);
+    }
+}
+
+void GameObject::UpdateModelPosition()
+{
+    if (!m_model)
+        return;
+
+    if (GetMap()->Contains(*m_model))
+    {
+        GetMap()->Remove(*m_model);
+        m_model->Relocate(*this);
+        GetMap()->Insert(*m_model);
+    }
+}
+
+void GameObject::SetDisplayId(uint32 displayid)
+{
+    SetUInt32Value(GAMEOBJECT_DISPLAYID, displayid);
+    UpdateModel();
+}
+
+void GameObject::SetPhaseMask(uint32 newPhaseMask, bool update)
+{
+    //WorldObject::SetPhaseMask(newPhaseMask, update);
+    EnableCollision(true);
+}
+
+void GameObject::EnableCollision(bool enable)
+{
+    if (!m_model)
+       return;
+
+    /*if (enable && !GetMap()->Contains(*m_model))
+       GetMap()->Insert(*m_model);*/
+
+    m_model->enable(enable ? GetPhaseMask() : PHASEMASK_NOMASK);
+}
+
+void GameObject::UpdateModel()
+{
+    if (!IsInWorld())
+        return;
+    if (m_model)
+        if (GetMap()->Contains(*m_model))
+            GetMap()->Remove(*m_model);
+    delete m_model;
+    m_model = GameObjectModel::Create(*this);
+    if (m_model)
+        GetMap()->Insert(*m_model);
 }

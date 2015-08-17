@@ -1,5 +1,6 @@
 /*
- * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -23,7 +24,7 @@
 
 #include "NodeValueAccess.h"
 
-/*
+/**
 The Class is mainly taken from G3D/AABSPTree.h but modified to be able to use our internal data structure.
 This is an iterator that helps us analysing the BSP-Trees.
 The collision detection is modified to return true, if we are inside an object.
@@ -32,18 +33,20 @@ The collision detection is modified to return true, if we are inside an object.
 namespace VMAP
 {
 template<class TValue>
-class IntersectionCallBack
-{
+    class IntersectionCallBack {
     public:
         TValue*      closestEntity;
         G3D::Vector3 hitLocation;
         G3D::Vector3 hitNormal;
 
-        void operator()(const G3D::Ray& ray, const TValue* entity, bool pStopAtFirstHit, float& distance)
-        {
+        void operator()(const G3D::Ray& ray, const TValue* entity, bool pStopAtFirstHit, float& distance) {
             entity->intersect(ray, distance, pStopAtFirstHit, hitLocation, hitNormal);
         }
 };
+
+    //==============================================================
+    //==============================================================
+    //==============================================================
 
 class MyCollisionDetection
 {
@@ -76,7 +79,9 @@ class MyCollisionDetection
 
                     // Calculate T distances to candidate planes
                     if (IR(dir[i]))
+                    {
                         MaxT[i] = (MinB[i] - origin[i]) / dir[i];
+                }
                 }
                 else if (origin[i] > MaxB[i])
                 {
@@ -85,8 +90,10 @@ class MyCollisionDetection
 
                     // Calculate T distances to candidate planes
                     if (IR(dir[i]))
+                    {
                         MaxT[i] = (MaxB[i] - origin[i]) / dir[i];
                 }
+            }
             }
 
             if (Inside)
@@ -99,10 +106,14 @@ class MyCollisionDetection
             // Get largest of the maxT's for final choice of intersection
             int WhichPlane = 0;
             if (MaxT[1] > MaxT[WhichPlane])
+            {
                 WhichPlane = 1;
+            }
 
             if (MaxT[2] > MaxT[WhichPlane])
+            {
                 WhichPlane = 2;
+            }
 
             // Check final candidate actually inside box
             if (IR(MaxT[WhichPlane]) & 0x80000000)
@@ -137,4 +148,3 @@ class MyCollisionDetection
 };
 }
 #endif
-

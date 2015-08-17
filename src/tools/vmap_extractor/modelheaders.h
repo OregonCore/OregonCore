@@ -99,11 +99,5 @@ struct ModelHeader
     uint32 ofsParticleEmitters;
 };
 
-struct ModelBoundingVertex
-{
-    Vec3D pos;
-};
-
 #pragma pack(pop)
 #endif
-

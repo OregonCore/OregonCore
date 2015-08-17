@@ -1,5 +1,6 @@
 /*
- * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -23,24 +24,39 @@
 #include "MapTree.h"
 #include "ModelInstance.h"
 #include "WorldModel.h"
+#include "Log.h"
 #include "VMapDefinitions.h"
+#include <G3D/Vector3.h>
+#include <ace/Null_Mutex.h>
+#include <ace/Singleton.h>
+//#include "DisableMgr.h"
+#include "DBCStores.h"
 
 using G3D::Vector3;
 
 namespace VMAP
 {
+    static uint32 GetLiquidFlagsDummy(uint32)
+    {
+        return 0;
+    }
 
 VMapManager2::VMapManager2()
 {
+        GetLiquidFlagsPtr = &GetLiquidFlagsDummy;
 }
 
 VMapManager2::~VMapManager2(void)
 {
     for (InstanceTreeMap::iterator i = iInstanceMapTrees.begin(); i != iInstanceMapTrees.end(); ++i)
+        {
         delete i->second;
+        }
     for (ModelFileMap::iterator i = iLoadedModelFiles.begin(); i != iLoadedModelFiles.end(); ++i)
+        {
         delete i->second.getModel();
 }
+    }
 
 Vector3 VMapManager2::convertPositionToInternalRep(float x, float y, float z) const
 {
@@ -53,187 +69,169 @@ Vector3 VMapManager2::convertPositionToInternalRep(float x, float y, float z) co
     return pos;
 }
 
-Vector3 VMapManager2::convertPositionToMangosRep(float x, float y, float z) const
-{
-    Vector3 pos;
-    const float mid = 0.5f * 64.0f * 533.33333333f;
-    pos.x = mid - x;
-    pos.y = mid - y;
-    pos.z = z;
-
-    return pos;
-}
-
 // move to MapTree too?
-std::string VMapManager2::getMapFileName(unsigned int pMapId)
+    std::string VMapManager2::getMapFileName(unsigned int mapId)
 {
     std::stringstream fname;
     fname.width(3);
-    fname << std::setfill('0') << pMapId << std::string(MAP_FILENAME_EXTENSION2);
+        fname << std::setfill('0') << mapId << std::string(MAP_FILENAME_EXTENSION2);
+
     return fname.str();
 }
 
-// Block maps from being used.
-void VMapManager2::preventMapsFromBeingUsed(const char* pMapIdString)
-{
-    iIgnoreMapIds.clear();
-    if (pMapIdString != NULL)
-    {
-        std::string map_str;
-        std::stringstream map_ss;
-        map_ss.str(std::string(pMapIdString));
-        while (std::getline(map_ss, map_str, ','))
-        {
-            std::stringstream ss2(map_str);
-            int map_num = -1;
-            ss2 >> map_num;
-            if (map_num >= 0)
-            {
-                DETAIL_LOG("Ignoring Map %i for VMaps", map_num);
-                iIgnoreMapIds[map_num] = true;
-                // unload map in case it is loaded
-                unloadMap(map_num);
-            }
-        }
-    }
-}
-
-VMAPLoadResult VMapManager2::loadMap(const char* pBasePath, unsigned int pMapId, int x, int y)
+    VMAPLoadResult VMapManager2::loadMap(const char* basePath, unsigned int mapId, int x, int y)
 {
     VMAPLoadResult result = VMAP_LOAD_RESULT_IGNORED;
-    if (isMapLoadingEnabled() && !iIgnoreMapIds.count(pMapId))
+        if (isMapLoadingEnabled())
     {
-        if (_loadMap(pMapId, pBasePath, x, y))
+            if (_loadMap(mapId, basePath, x, y))
             result = VMAP_LOAD_RESULT_OK;
         else
             result = VMAP_LOAD_RESULT_ERROR;
     }
+
     return result;
 }
 
 // load one tile (internal use only)
-bool VMapManager2::_loadMap(unsigned int pMapId, const std::string& basePath, uint32 tileX, uint32 tileY)
+    bool VMapManager2::_loadMap(unsigned int mapId, const std::string& basePath, uint32 tileX, uint32 tileY)
 {
-    InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
+        InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(mapId);
     if (instanceTree == iInstanceMapTrees.end())
     {
-        std::string mapFileName = getMapFileName(pMapId);
-        StaticMapTree* newTree = new StaticMapTree(pMapId, basePath);
+            std::string mapFileName = getMapFileName(mapId);
+            StaticMapTree* newTree = new StaticMapTree(mapId, basePath);
         if (!newTree->InitMap(mapFileName, this))
             return false;
-        instanceTree = iInstanceMapTrees.insert(InstanceTreeMap::value_type(pMapId, newTree)).first;
+            instanceTree = iInstanceMapTrees.insert(InstanceTreeMap::value_type(mapId, newTree)).first;
     }
+
     return instanceTree->second->LoadMapTile(tileX, tileY, this);
 }
 
-void VMapManager2::unloadMap(unsigned int pMapId)
+    void VMapManager2::unloadMap(unsigned int mapId)
 {
-    InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
+        InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(mapId);
     if (instanceTree != iInstanceMapTrees.end())
     {
         instanceTree->second->UnloadMap(this);
         if (instanceTree->second->numLoadedTiles() == 0)
         {
             delete instanceTree->second;
-            iInstanceMapTrees.erase(pMapId);
+                iInstanceMapTrees.erase(mapId);
         }
     }
 }
 
-void VMapManager2::unloadMap(unsigned int  pMapId, int x, int y)
+    void VMapManager2::unloadMap(unsigned int mapId, int x, int y)
 {
-    InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
+        InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(mapId);
     if (instanceTree != iInstanceMapTrees.end())
     {
         instanceTree->second->UnloadMapTile(x, y, this);
         if (instanceTree->second->numLoadedTiles() == 0)
         {
             delete instanceTree->second;
-            iInstanceMapTrees.erase(pMapId);
+                iInstanceMapTrees.erase(mapId);
         }
     }
 }
 
-bool VMapManager2::isInLineOfSight(unsigned int pMapId, float x1, float y1, float z1, float x2, float y2, float z2)
+    bool VMapManager2::isInLineOfSight(unsigned int mapId, float x1, float y1, float z1, float x2, float y2, float z2)
 {
-    if (!isLineOfSightCalcEnabled()) return true;
-    bool result = true;
-    InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
+        if (!isLineOfSightCalcEnabled() /*|| DisableMgr::IsDisabledFor(DISABLE_TYPE_VMAP, mapId, NULL, VMAP_DISABLE_LOS)*/)
+            return true;
+
+        InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(mapId);
     if (instanceTree != iInstanceMapTrees.end())
     {
         Vector3 pos1 = convertPositionToInternalRep(x1, y1, z1);
         Vector3 pos2 = convertPositionToInternalRep(x2, y2, z2);
         if (pos1 != pos2)
-            result = instanceTree->second->isInLineOfSight(pos1, pos2);
+            {
+                return instanceTree->second->isInLineOfSight(pos1, pos2);
     }
-    return result;
 }
 
-/*
+        return true;
+    }
+
+    /**
 get the hit position and return true if we hit something
 otherwise the result pos will be the dest pos
 */
-bool VMapManager2::getObjectHitPos(unsigned int pMapId, float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float& ry, float& rz, float pModifyDist)
+    bool VMapManager2::getObjectHitPos(unsigned int mapId, float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float &ry, float& rz, float modifyDist)
 {
-    bool result = false;
-    rx = x2;
-    ry = y2;
-    rz = z2;
-    if (isLineOfSightCalcEnabled())
+        if (isLineOfSightCalcEnabled() /*&& !DisableMgr::IsDisabledFor(DISABLE_TYPE_VMAP, mapId, NULL, VMAP_DISABLE_LOS)*/)
     {
-        InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
+            InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(mapId);
         if (instanceTree != iInstanceMapTrees.end())
         {
             Vector3 pos1 = convertPositionToInternalRep(x1, y1, z1);
             Vector3 pos2 = convertPositionToInternalRep(x2, y2, z2);
             Vector3 resultPos;
-            result = instanceTree->second->getObjectHitPos(pos1, pos2, resultPos, pModifyDist);
-            resultPos = convertPositionToMangosRep(resultPos.x, resultPos.y, resultPos.z);
+                bool result = instanceTree->second->getObjectHitPos(pos1, pos2, resultPos, modifyDist);
+                resultPos = convertPositionToInternalRep(resultPos.x, resultPos.y, resultPos.z);
             rx = resultPos.x;
             ry = resultPos.y;
             rz = resultPos.z;
-        }
-    }
     return result;
 }
+        }
 
-// get height or INVALID_HEIGHT if no height available
-float VMapManager2::getHeight(unsigned int pMapId, float x, float y, float z, float maxSearchDist)
+        rx = x2;
+        ry = y2;
+        rz = z2;
+
+        return false;
+    }
+
+    /**
+    get height or INVALID_HEIGHT if no height available
+    */
+
+    float VMapManager2::getHeight(unsigned int mapId, float x, float y, float z, float maxSearchDist)
 {
-    float height = VMAP_INVALID_HEIGHT_VALUE;           //no height
-    if (isHeightCalcEnabled())
+        if (isHeightCalcEnabled()/* && !DisableMgr::IsDisabledFor(DISABLE_TYPE_VMAP, mapId, NULL, VMAP_DISABLE_HEIGHT)*/)
     {
-        InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
+            InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(mapId);
         if (instanceTree != iInstanceMapTrees.end())
         {
             Vector3 pos = convertPositionToInternalRep(x, y, z);
-            height = instanceTree->second->getHeight(pos, maxSearchDist);
+                float height = instanceTree->second->getHeight(pos, maxSearchDist);
             if (!(height < G3D::inf()))
-            {
-                height = VMAP_INVALID_HEIGHT_VALUE;         //no height
-            }
-        }
-    }
+                    return height = VMAP_INVALID_HEIGHT_VALUE; // No height
+
     return height;
 }
+        }
 
-bool VMapManager2::getAreaInfo(unsigned int pMapId, float x, float y, float& z, uint32& flags, int32& adtId, int32& rootId, int32& groupId) const
+        return VMAP_INVALID_HEIGHT_VALUE;
+    }
+
+    bool VMapManager2::getAreaInfo(unsigned int mapId, float x, float y, float& z, uint32& flags, int32& adtId, int32& rootId, int32& groupId) const
 {
-    bool result = false;
-    InstanceTreeMap::const_iterator instanceTree = iInstanceMapTrees.find(pMapId);
+        if (true/*!DisableMgr::IsDisabledFor(DISABLE_TYPE_VMAP, mapId, NULL, VMAP_DISABLE_AREAFLAG)*/)
+        {
+            InstanceTreeMap::const_iterator instanceTree = iInstanceMapTrees.find(mapId);
     if (instanceTree != iInstanceMapTrees.end())
     {
         Vector3 pos = convertPositionToInternalRep(x, y, z);
-        result = instanceTree->second->getAreaInfo(pos, flags, adtId, rootId, groupId);
-        // z is not touched by convertPositionToMangosRep(), so just copy
+                bool result = instanceTree->second->getAreaInfo(pos, flags, adtId, rootId, groupId);
+                // z is not touched by convertPositionToInternalRep(), so just copy
         z = pos.z;
+                return result;
     }
-    return (result);
 }
 
-bool VMapManager2::GetLiquidLevel(uint32 pMapId, float x, float y, float z, uint8 ReqLiquidType, float& level, float& floor, uint32& type) const
+        return false;
+    }
+
+    bool VMapManager2::GetLiquidLevel(uint32 mapId, float x, float y, float z, uint8 reqLiquidType, float& level, float& floor, uint32& type) const
 {
-    InstanceTreeMap::const_iterator instanceTree = iInstanceMapTrees.find(pMapId);
+        if (true/*!DisableMgr::IsDisabledFor(DISABLE_TYPE_VMAP, mapId, NULL, VMAP_DISABLE_LIQUIDSTATUS)*/)
+        {
+            InstanceTreeMap::const_iterator instanceTree = iInstanceMapTrees.find(mapId);
     if (instanceTree != iInstanceMapTrees.end())
     {
         LocationInfo info;
@@ -241,29 +239,35 @@ bool VMapManager2::GetLiquidLevel(uint32 pMapId, float x, float y, float z, uint
         if (instanceTree->second->GetLocationInfo(pos, info))
         {
             floor = info.ground_Z;
-            type = info.hitModel->GetLiquidType();
-            if (ReqLiquidType && !(type & ReqLiquidType))
+                    ASSERT(floor < std::numeric_limits<float>::max());
+                    type = info.hitModel->GetLiquidType();  // entry from LiquidType.dbc
+                    if (reqLiquidType && !(GetLiquidFlagsPtr(type) & reqLiquidType))
                 return false;
             if (info.hitInstance->GetLiquidLevel(pos, info, level))
                 return true;
         }
     }
+        }
+
     return false;
 }
 
 WorldModel* VMapManager2::acquireModelInstance(const std::string& basepath, const std::string& filename)
 {
+        //! Critical section, thread safe access to iLoadedModelFiles
+        //ACE_GUARD(ACE_Thread_Mutex, LoadedModelFilesLock);
+
     ModelFileMap::iterator model = iLoadedModelFiles.find(filename);
     if (model == iLoadedModelFiles.end())
     {
         WorldModel* worldmodel = new WorldModel();
         if (!worldmodel->readFile(basepath + filename + ".vmo"))
         {
-            ERROR_LOG("VMapManager2: could not load '%s%s.vmo'!", basepath.c_str(), filename.c_str());
+                ERROR_LOG("VMapManager2: could not load '%s%s.vmo'", basepath.c_str(), filename.c_str());
             delete worldmodel;
             return NULL;
         }
-        DEBUG_LOG("VMapManager2: loading file '%s%s'.", basepath.c_str(), filename.c_str());
+            DEBUG_LOG("VMapManager2: loading file '%s%s'", basepath.c_str(), filename.c_str());
         model = iLoadedModelFiles.insert(std::pair<std::string, ManagedModel>(filename, ManagedModel())).first;
         model->second.setModel(worldmodel);
     }
@@ -273,10 +277,13 @@ WorldModel* VMapManager2::acquireModelInstance(const std::string& basepath, cons
 
 void VMapManager2::releaseModelInstance(const std::string& filename)
 {
+        //! Critical section, thread safe access to iLoadedModelFiles
+        //ACE_GUARD(ACE_Thread_Mutex, LoadedModelFilesLock);
+
     ModelFileMap::iterator model = iLoadedModelFiles.find(filename);
     if (model == iLoadedModelFiles.end())
     {
-        ERROR_LOG("VMapManager2: trying to unload non-loaded file '%s'!", filename.c_str());
+            ERROR_LOG("VMapManager2: trying to unload non-loaded file '%s'", filename.c_str());
         return;
     }
     if (model->second.decRefCount() == 0)
@@ -287,10 +294,9 @@ void VMapManager2::releaseModelInstance(const std::string& filename)
     }
 }
 
-bool VMapManager2::existsMap(const char* pBasePath, unsigned int pMapId, int x, int y)
+    bool VMapManager2::existsMap(const char* basePath, unsigned int mapId, int x, int y)
 {
-    return StaticMapTree::CanLoadMap(std::string(pBasePath), pMapId, x, y);
+        return StaticMapTree::CanLoadMap(std::string(basePath), mapId, x, y);
 }
 
 } // namespace VMAP
-
