@@ -937,7 +937,7 @@ void Map::MoveAllCreaturesInMoveList()
                 sLog.outMap("Creature (GUID: %u Entry: %u) cannot be move to unloaded respawn grid.", c->GetGUIDLow(), c->GetEntry());
                 #endif
                 // crash fix for pets moving to unloaded cells.
-                if (c->isPet())
+                if (c->IsPet())
                     ((Pet*)c)->Remove(PET_SAVE_NOT_IN_SLOT, true);
                 else
                     AddObjectToRemoveList(c);
