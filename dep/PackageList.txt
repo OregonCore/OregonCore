@@ -18,7 +18,7 @@ jemalloc (a general-purpose scalable concurrent malloc-implementation)
   
 libMPQ (a library for reading MPQ files)
   https://libmpq.org/
-  Version: 1.0.4
+  Version: 707e6f7c6d70524e2ff895d9907b93df5e9768d0 (November 8, 2011)
 
 MersenneTwister (a very fast random number generator)
   http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
