@@ -47,6 +47,7 @@
 #include "Util.h"
 #include "TemporarySummon.h"
 #include "GridNotifiers.h"
+#include "CellImpl.h"
 #include "ScriptMgr.h"
 #include "InstanceData.h"
 #include "MoveSplineInit.h"
