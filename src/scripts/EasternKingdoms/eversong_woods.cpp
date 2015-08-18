@@ -613,9 +613,9 @@ struct npc_apprentice_mirvedaAI : public ScriptedAI
         if (Summon)
         {
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-            me->SummonCreature(MOB_GHARZUL, 8745, -7134.32f, 35.22f, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
-            me->SummonCreature(MOB_ANGERSHADE, 8745, -7134.32f, 35.22f, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
-            me->SummonCreature(MOB_ANGERSHADE, 8745, -7134.32f, 35.22f, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
+            me->SummonCreature(MOB_GHARZUL, 8726, -7148.23f, 35.22f, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
+            me->SummonCreature(MOB_ANGERSHADE, 8726, -7148.23f, 35.22f, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
+            me->SummonCreature(MOB_ANGERSHADE, 8726, -7148.23f, 35.22f, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
             Summon = false;
         }
     }
