@@ -600,11 +600,19 @@ struct npc_apprentice_mirvedaAI : public ScriptedAI
     void UpdateAI(const uint32 /*diff*/)
     {
         if (KillCount >= 3 && PlayerGUID)
+        {
             if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+            {
+                me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
                 CAST_PLR(pPlayer)->CompleteQuest(QUEST_UNEXPECTED_RESULT);
+                KillCount = 0;
+            }
+        }
+        
 
         if (Summon)
         {
+            me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
             me->SummonCreature(MOB_GHARZUL, 8745, -7134.32f, 35.22f, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
             me->SummonCreature(MOB_ANGERSHADE, 8745, -7134.32f, 35.22f, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
             me->SummonCreature(MOB_ANGERSHADE, 8745, -7134.32f, 35.22f, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
