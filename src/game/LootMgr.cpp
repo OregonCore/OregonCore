@@ -1363,7 +1363,7 @@ void LoadLootTemplates_Gameobject()
     {
         if (GameObjectInfo const* gInfo = sGOStorage.LookupEntry<GameObjectInfo>(i))
         {
-            if (uint32 lootid = GameObject::GetLootId(gInfo))
+            if (uint32 lootid = gInfo->GetLootId())
             {
                 if (ids_set.find(lootid) == ids_set.end())
                     LootTemplates_Gameobject.ReportNonExistingId(lootid);

@@ -6427,7 +6427,7 @@ void ObjectMgr::LoadGameObjectForQuests()
         // scan GO chest with loot including quest items
         case GAMEOBJECT_TYPE_CHEST:
             {
-                uint32 loot_id = GameObject::GetLootId(goInfo);
+                uint32 loot_id = goInfo->GetLootId();
 
                 // find quest loot for GO
                 if (goInfo->chest.questId || LootTemplates_Gameobject.HaveQuestLootFor(loot_id))

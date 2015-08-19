@@ -3353,7 +3353,7 @@ void Spell::EffectOpenLock(SpellEffIndex /*effIndex*/)
         // these objects must have been spawned by outdoorpvp!
         else if (gameObjTarget->GetGOInfo()->type == GAMEOBJECT_TYPE_GOOBER && sOutdoorPvPMgr.HandleOpenGo(player, gameObjTarget->GetGUID()))
             return;
-        lockId = gameObjTarget->GetLockId();
+        lockId = gameObjTarget->GetGOInfo()->GetLockId();
         guid = gameObjTarget->GetGUID();
     }
     else if (itemTarget)
@@ -4950,7 +4950,7 @@ void Spell::EffectSummonObjectWild(SpellEffIndex effIndex)
         }
     }
 
-    if (uint32 linkedEntry = pGameObj->GetLinkedGameObjectEntry())
+    if (uint32 linkedEntry = pGameObj->GetGOInfo()->GetLinkedGameObjectEntry())
     {
         GameObject* linkedGO = new GameObject;
         if (linkedGO->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), linkedEntry, map,
@@ -6319,8 +6319,8 @@ void Spell::EffectMomentMove(SpellEffIndex effIndex)
 
     float dist = GetSpellRadius(m_spellInfo, effIndex, false);
 
-    Position pos;
-    unitTarget->GetFirstCollisionPosition(pos, dist, 0.0f);
+    Position pos = m_targets.m_dstPos;
+    unitTarget->GetFirstCollisionPosition(pos, unitTarget->GetDistance(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ()), 0.0f);
     unitTarget->NearTeleportTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), unitTarget == m_caster);
 }
 
@@ -6827,7 +6827,7 @@ void Spell::EffectTransmitted(SpellEffIndex effIndex)
     data << uint64(pGameObj->GetGUID());
     m_caster->SendMessageToSet(&data, true);
 
-    if (uint32 linkedEntry = pGameObj->GetLinkedGameObjectEntry())
+    if (uint32 linkedEntry = pGameObj->GetGOInfo()->GetLinkedGameObjectEntry())
     {
         GameObject* linkedGO = new GameObject;
         if (linkedGO->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), linkedEntry, cMap,
