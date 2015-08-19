@@ -1858,14 +1858,21 @@ struct npc_jovaanAI : public ScriptedAI
     uint32 NextStep(uint32 uiSteps)
     {
         Creature* pWarbringer = me->FindNearestCreature(NPC_WARBRINGER, 25);
-        GameObject* pInfernal = me->FindNearestGameObject(GO_INFERNAL, 8);
-        GameObject* pInfernalTrap = me->FindNearestGameObject(GO_INFERNAL_TRAP, 8);
+        GameObject* pInfernal = me->FindNearestGameObject(GO_INFERNAL, 15);
+        GameObject* pInfernalTrap = me->FindNearestGameObject(GO_INFERNAL_TRAP, 15);
+
+        if (!pWarbringer || !pInfernal || !pInfernalTrap)
+        {
+            Reset();
+            return 0;
+        }
 
         switch (uiSteps)
         {
         case 1:
             pInfernal->SetRespawnTime(61);
             pInfernal->UpdateObjectVisibility();
+            break;
         case 2:
             pInfernalTrap->SetRespawnTime(61);
             pInfernalTrap->UpdateObjectVisibility();
