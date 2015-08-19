@@ -46,6 +46,7 @@
 #include "SocialMgr.h"
 #include "Util.h"
 #include "TemporarySummon.h"
+#include "CellImpl.h"
 #include "GridNotifiers.h"
 #include "ScriptMgr.h"
 #include "InstanceData.h"
