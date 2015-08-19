@@ -2129,7 +2129,8 @@ float WorldObject::GetPositionZTarget(Position& pos, float destx, float desty)
     // If we were to ignore liquid, the WorldObject would be placed here.
     bottom = fabs(ground - pos.m_positionZ) <= fabs(floor - pos.m_positionZ) ? ground : floor;
 
-    if(pos.m_positionZ > bottom){
+    if(pos.m_positionZ > bottom)
+    {
 
         // We are in the water or in the air.
         // Must be at least above ground.
@@ -2144,7 +2145,9 @@ float WorldObject::GetPositionZTarget(Position& pos, float destx, float desty)
         // When in doubt, send the user to water/ground level.
         return fabs(dest_status.level - pos.m_positionZ) <= fabs(bottom - pos.m_positionZ) ? dest_status.level : bottom;
 
-    } else {
+    }
+    else
+    {
         // Destination is on or under the ground. Use ground Z.
         return bottom;
     }
