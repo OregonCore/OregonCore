@@ -2113,6 +2113,9 @@ void WorldObject::GetNearPoint(WorldObject const* /*searcher*/, float& x, float&
     UpdateAllowedPositionZ(x, y, z);
 }
 
+// @todo: replace with WorldObject::UpdateAllowedPositionZ
+//   To use WorldObject::UpdateAllowedPositionZ at the moment causes a caster of
+//     a leap effect to fall through the ground much too easily.
 float WorldObject::GetPositionZTarget(Position& pos, float destx, float desty)
 {
 
