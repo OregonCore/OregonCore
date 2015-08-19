@@ -2113,6 +2113,40 @@ void WorldObject::GetNearPoint(WorldObject const* /*searcher*/, float& x, float&
     UpdateAllowedPositionZ(x, y, z);
 }
 
+float WorldObject::GetPositionZTarget(Position& pos, float destx, float desty)
+{
+
+    // Added in Bitbucket issue #1105 in order to solve the problem of
+    //   leap effects like Blink taking the caster to the bottom of a body of liquid.
+
+    float bottom, ground, floor;
+
+    ground = GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
+    floor = GetMap()->GetHeight(destx, desty, pos.m_positionZ, true);
+    // If we were to ignore liquid, the WorldObject would be placed here.
+    bottom = fabs(ground - pos.m_positionZ) <= fabs(floor - pos.m_positionZ) ? ground : floor;
+
+    if(pos.m_positionZ > bottom){
+
+        // We are in the water or in the air.
+        // Must be at least above ground.
+
+        LiquidData dest_status;
+        GetMap()->getLiquidStatus(destx, desty, pos.m_positionZ, MAP_ALL_LIQUIDS, &dest_status);
+
+        // Source and destination are underwater.
+        if(dest_status.level > pos.m_positionZ)
+            return pos.m_positionZ;
+
+        // When in doubt, send the user to water/ground level.
+        return fabs(dest_status.level - pos.m_positionZ) <= fabs(bottom - pos.m_positionZ) ? dest_status.level : bottom;
+
+    } else {
+        // Destination is on or under the ground. Use ground Z.
+        return bottom;
+    }
+}
+
 void WorldObject::MovePosition(Position& pos, float dist, float angle)
 {
     angle += m_orientation;
@@ -2161,14 +2195,12 @@ void WorldObject::MovePosition(Position& pos, float dist, float angle)
 void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float angle)
 {
     angle += m_orientation;
-    float destx, desty, destz, ground, floor;
+    float destx, desty, destz;
 
 
     destx = pos.m_positionX + dist * cos(angle);
     desty = pos.m_positionY + dist * sin(angle);
-    ground = GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
-    floor = GetMap()->GetHeight(destx, desty, pos.m_positionZ, true);
-    destz = fabs(ground - pos.m_positionZ) <= fabs(floor - pos.m_positionZ) ? ground : floor;
+    destz = GetPositionZTarget(pos, destx, desty);
 
     bool col = VMAP::VMapFactory::createOrGetVMapManager()->getObjectHitPos(GetMapId(), pos.m_positionX, pos.m_positionY, pos.m_positionZ + 0.5f, destx, desty, destz + 0.5f, destx, desty, destz, -0.5f);
 
@@ -2190,9 +2222,7 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
         {
             destx -= step * cos(angle);
             desty -= step * sin(angle);
-            ground = GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
-            floor = GetMap()->GetHeight(destx, desty, pos.m_positionZ, true);
-            destz = fabs(ground - pos.m_positionZ) <= fabs(floor - pos.m_positionZ) ? ground : floor;
+            destz = GetPositionZTarget(pos, destx, desty);
         }
         // we have correct destz now
         else
@@ -2204,7 +2234,8 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
 
     Oregon::NormalizeMapCoord(pos.m_positionX);
     Oregon::NormalizeMapCoord(pos.m_positionY);
-    UpdateGroundPositionZ(pos.m_positionX, pos.m_positionY, pos.m_positionZ);
+    if(pos.m_positionZ > INVALID_HEIGHT)
+        pos.m_positionZ += 0.05f; // just to be sure that we are not a few pixels under the surface
     pos.m_orientation = m_orientation;
 }
 

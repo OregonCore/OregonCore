@@ -786,6 +786,7 @@ class WorldObject : public Object, public WorldLocation
             GetPosition(&pos);
             MovePositionToFirstCollision(pos, dist, angle);
         }
+        float GetPositionZTarget(Position& pos, float destx, float desty);
         void GetRandomNearPosition(Position& pos, float radius)
         {
             GetPosition(&pos);
