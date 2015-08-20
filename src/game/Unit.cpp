@@ -6059,17 +6059,23 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
                 else if (auraSpellInfo->SpellFamilyFlags & 0x4000)
                 {
                     // Improved Drain Soul
-                    Unit::AuraList const& mAddFlatModifier = GetAurasByType(SPELL_AURA_DUMMY);
+                    Unit::AuraList const& mAddFlatModifier = GetAurasByType(SPELL_AURA_ADD_PCT_MODIFIER);
                     for (Unit::AuraList::const_iterator i = mAddFlatModifier.begin(); i != mAddFlatModifier.end(); ++i)
                     {
-                        if ((*i)->GetModifier()->m_miscvalue == SPELLMOD_CHANCE_OF_SUCCESS && (*i)->GetSpellProto()->SpellIconID == 113)
-                        {
-                            int32 value2 = CalculateSpellDamage((*i)->GetSpellProto(), 2, (*i)->GetSpellProto()->EffectBasePoints[2], this);
-                            basepoints0 = int32(CalculatePct(GetMaxPower(POWER_MANA), value2));
-                            // Drain Soul
-                            CastCustomSpell(this, 18371, &basepoints0, NULL, NULL, true, castItem, triggeredByAura);
-                            break;
-                        }
+
+                        // If the current aura being examined is not a rank of Improved Drain Soul,
+                        //  skip the current aura and keep looking.
+                        if((*i)->GetId() != 18213 && (*i)->GetId() != 18372)
+                            continue; 
+
+                        int32 value2 = CalculateSpellDamage((*i)->GetSpellProto(), 2, (*i)->GetSpellProto()->EffectBasePoints[2], this);
+                        basepoints0 = int32(CalculatePct(GetMaxPower(POWER_MANA), value2));
+                        DEBUG_LOG("Granting %d mana from Improved Drain Soul",basepoints0);
+
+                        // Drain Soul
+                        CastCustomSpell(this, 18371, &basepoints0, NULL, NULL, true, castItem, triggeredByAura);
+                        break;
+
                     }
                     trigger_spell_id = 18371;
 
