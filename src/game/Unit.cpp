@@ -5937,6 +5937,11 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
     Unit* target = NULL;
     int32  basepoints0 = 0;
 
+    // Need to be able to adjust the default behaviour for if the proc makes it all the way through this method.
+    // This will most often be true, telling the server to remove a charge.
+    // However, cases exist where it needs to be false instead to preserve the charge.
+    bool removeCharge = true;
+
     if (triggeredByAura->GetModifier()->m_auraname == SPELL_AURA_PROC_TRIGGER_SPELL_WITH_VALUE)
         basepoints0 = triggerAmount;
 
@@ -6059,21 +6064,19 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
                 else if (auraSpellInfo->SpellFamilyFlags & 0x4000)
                 {
                     // Improved Drain Soul
-                    Unit::AuraList const& mAddFlatModifier = GetAurasByType(SPELL_AURA_ADD_PCT_MODIFIER);
+                    Unit::AuraList const& mAddFlatModifier = GetAurasByType(SPELL_AURA_ADD_FLAT_MODIFIER);
                     for (Unit::AuraList::const_iterator i = mAddFlatModifier.begin(); i != mAddFlatModifier.end(); ++i)
                     {
 
                         // If the current aura being examined is not a rank of Improved Drain Soul,
                         //  skip the current aura and keep looking.
-                        if((*i)->GetId() != 18213 && (*i)->GetId() != 18372)
-                            continue; 
+                        if((*i)->GetSpellProto()->SpellIconID != 113)
+                            continue;
 
                         int32 value2 = CalculateSpellDamage((*i)->GetSpellProto(), 2, (*i)->GetSpellProto()->EffectBasePoints[2], this);
                         basepoints0 = int32(CalculatePct(GetMaxPower(POWER_MANA), value2));
                         DEBUG_LOG("Granting %d mana from Improved Drain Soul",basepoints0);
 
-                        // Drain Soul
-                        CastCustomSpell(this, 18371, &basepoints0, NULL, NULL, true, castItem, triggeredByAura);
                         break;
 
                     }
@@ -6081,7 +6084,7 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
 
                     // Not remove charge (aura removed on death in any cases)
                     // Need for correct work Drain Soul SPELL_AURA_CHANNEL_DEATH_ITEM aura
-                    return false;
+                    removeCharge = false;
                 }
                 break;
             }
@@ -6584,7 +6587,7 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
     else
         CastSpell(target, trigger_spell_id, true, castItem, triggeredByAura);
 
-    return true;
+    return removeCharge;
 }
 
 bool Unit::HandleOverrideClassScriptAuraProc(Unit* pVictim, Aura* triggeredByAura, SpellEntry const* procSpell, uint32 cooldown)
