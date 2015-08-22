@@ -6238,6 +6238,19 @@ void Aura::PeriodicTick()
             data << (uint32)pdamage;
             m_target->SendMessageToSet(&data, true);
 
+            //Do check before because m_modifier.auraName can be invalidate by DealDamage.
+            bool procSpell = (m_modifier.m_auraname == SPELL_AURA_PERIODIC_HEAL && m_target != pCaster);
+            Unit* target = m_target;                        // aura can be deleted in DealDamage
+            SpellEntry const* spellProto = GetSpellProto();
+            bool haveCastItem = GetCastItemGUID() != 0;
+
+            uint32 procAttacker = PROC_FLAG_DONE_PERIODIC;
+            uint32 procVictim   = PROC_FLAG_TAKEN_PERIODIC;
+            uint32 procEx = PROC_EX_INTERNAL_HOT | PROC_EX_NORMAL_HIT;
+            // ignore item heals
+            if (procSpell && !haveCastItem)
+                pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, pdamage, BASE_ATTACK, spellProto);
+
             int32 gain = m_target->ModifyHealth(pdamage);
 
             // add HoTs to amount healed in bgs
@@ -6245,14 +6258,7 @@ void Aura::PeriodicTick()
                 if (BattleGround* bg = pCaster->ToPlayer()->GetBattleGround())
                     bg->UpdatePlayerScore(pCaster->ToPlayer(), SCORE_HEALING_DONE, gain);
 
-            //Do check before because m_modifier.auraName can be invalidate by DealDamage.
-            bool procSpell = (m_modifier.m_auraname == SPELL_AURA_PERIODIC_HEAL && m_target != pCaster);
-
             m_target->getHostileRefManager().threatAssist(pCaster, float(gain) * 0.5f, GetSpellProto());
-
-            Unit* target = m_target;                        // aura can be deleted in DealDamage
-            SpellEntry const* spellProto = GetSpellProto();
-            bool haveCastItem = GetCastItemGUID() != 0;
 
             // heal for caster damage
             if (m_target != pCaster && spellProto->SpellVisual == 163)
@@ -6275,12 +6281,6 @@ void Aura::PeriodicTick()
                 }
             }
 
-            uint32 procAttacker = PROC_FLAG_DONE_PERIODIC;
-            uint32 procVictim   = PROC_FLAG_TAKEN_PERIODIC;
-            uint32 procEx = PROC_EX_INTERNAL_HOT | PROC_EX_NORMAL_HIT;
-            // ignore item heals
-            if (procSpell && !haveCastItem)
-                pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, pdamage, BASE_ATTACK, spellProto);
             break;
         }
     case SPELL_AURA_PERIODIC_MANA_LEECH:
