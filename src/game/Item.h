@@ -229,7 +229,7 @@ class Item : public Object
         }
         bool IsBoundByEnchant() const;
         virtual void SaveToDB();
-        virtual bool LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result = QueryResult_AutoPtr(NULL));
+        virtual bool LoadFromDB(uint32 guid, uint64 owner_guid, Field* fields);
         virtual void DeleteFromDB();
         void DeleteFromInventoryDB();
 
@@ -311,7 +311,7 @@ class Item : public Object
             return GetUInt32Value(ITEM_FIELD_PROPERTY_SEED);
         }
         void SetItemRandomProperties(int32 randomPropId);
-        bool UpdateItemSuffixFactor();
+        void UpdateItemSuffixFactor();
         static int32 GenerateItemRandomPropertyId(uint32 item_id);
         void SetEnchantment(EnchantmentSlot slot, uint32 id, uint32 duration, uint32 charges);
         void SetEnchantmentDuration(EnchantmentSlot slot, uint32 duration, Player* owner);
