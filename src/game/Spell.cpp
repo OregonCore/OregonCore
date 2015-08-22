@@ -4719,26 +4719,6 @@ SpellCastResult Spell::CheckCast(bool strict)
 
                 break;
             }
-        case SPELL_AURA_MOD_ROOT:
-
-            if (IsAreaOfEffectSpell(m_spellInfo)) // frost nova, etc.
-                break;
-
-            if (!m_targets.getUnitTarget())
-                return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
-
-            if (!IsPositiveSpell(m_spellInfo->Id))
-            {
-                if (m_targets.getUnitTarget() == m_caster)
-                    return SPELL_FAILED_BAD_TARGETS;
-
-                if (m_caster->IsFriendlyTo(m_targets.getUnitTarget()))
-                    return SPELL_FAILED_TARGET_FRIENDLY;
-            }
-            else if (!m_caster->IsFriendlyTo(m_targets.getUnitTarget()))
-                return SPELL_FAILED_TARGET_ENEMY;
-
-            break;
         }
     }
 
