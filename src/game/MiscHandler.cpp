@@ -802,9 +802,7 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket& recv_data)
     if (sObjectMgr.IsTavernAreaTrigger(Trigger_ID))
     {
         // set resting flag we are in the inn
-        GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
-        GetPlayer()->InnEnter(time(0), atEntry->id);
-        GetPlayer()->SetRestType(REST_TYPE_IN_TAVERN);
+        GetPlayer()->SetRestFlag(REST_FLAG_IN_TAVERN, atEntry->id);
 
         if (sWorld.IsFFAPvPRealm())
             GetPlayer()->SetFFAPvP(false);

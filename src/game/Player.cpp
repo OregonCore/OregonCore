@@ -349,7 +349,6 @@ Player::Player (WorldSession* session): Unit()
     m_wasOutdoors = false;
     m_drunkTimer = 0;
     m_drunk = 0;
-    m_restTime = 0;
     m_deathTimer = 0;
     m_deathExpireTime = 0;
 
@@ -381,10 +380,10 @@ Player::Player (WorldSession* session): Unit()
     m_petStatus = PET_STATUS_NONE;
 
     // Rest system variables
-    time_inn_enter = 0;
+    _restTime = 0;
     inn_triggerId = 0;
     m_rest_bonus = 0;
-    rest_type = REST_TYPE_NO;
+    _restFlagMask = 0;
 
     // Mail system variables
     m_mailsLoaded = false;
@@ -1184,15 +1183,20 @@ void Player::Update(uint32 p_time)
 
     if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING))
     {
-        if (roll_chance_i(3) && GetTimeInnEnter() > 0)      // freeze update
+        if (roll_chance_i(3) && _restTime > 0)      // freeze update
         {
-            int time_inn = time(NULL) - GetTimeInnEnter();
-            if (time_inn >= 10)                             // freeze update
+            time_t currTime = time(nullptr);
+            time_t timeDiff = currTime - _restTime;
+            if (timeDiff >= 10)                             // freeze update
             {
-                float bubble = 0.125 * sWorld.getRate(RATE_REST_INGAME);
-                //speed collect rest bonus (section/in hour)
-                SetRestBonus(GetRestBonus() + time_inn * ((float)GetUInt32Value(PLAYER_NEXT_LEVEL_XP) / 72000)*bubble);
-                UpdateInnerTime(time(NULL));
+                _restTime = currTime;
+
+                float bubble = 0.125f * sWorld.getRate(RATE_REST_INGAME);
+                float extraPerSec = ((float)GetUInt32Value(PLAYER_NEXT_LEVEL_XP) / 72000.0f) * bubble;
+
+                // speed collect rest bonus (section/in hour)
+                float currRestBonus = GetRestBonus();
+                SetRestBonus(currRestBonus + timeDiff * extraPerSec);
             }
         }
     }
@@ -1218,14 +1222,11 @@ void Player::Update(uint32 p_time)
         if (p_time >= m_zoneUpdateTimer)
         {
             // On zone update tick check if we are still in an inn if we are supposed to be in one
-            if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING) && GetRestType() == REST_TYPE_IN_TAVERN)
+            if (HasRestFlag(REST_FLAG_IN_TAVERN))
             {
                 AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(GetInnTriggerId());
                 if (!atEntry || !IsInAreaTriggerRadius(atEntry))
-                {
-                    RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
-                    SetRestType(REST_TYPE_NO);
-                }
+                    RemoveRestFlag(REST_FLAG_IN_TAVERN);
             }
 
             uint32 newzone = GetZoneId();
@@ -6701,7 +6702,7 @@ void Player::UpdateArea(uint32 newArea)
 {
     // FFA_PVP flags are area and not zone id dependent
     // so apply them accordingly
-    m_areaUpdateId    = newArea;
+    m_areaUpdateId = newArea;
 
     AreaTableEntry const* area = GetAreaEntryByAreaID(newArea);
     pvpInfo.inFFAPvPArea = area && (area->flags & AREA_FLAG_ARENA);
@@ -6769,33 +6770,12 @@ void Player::UpdateZone(uint32 newZone)
 
     if (zone->flags & AREA_FLAG_CAPITAL)                     // in capital city
     {
-        SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
-        SetRestType(REST_TYPE_IN_CITY);
-        InnEnter(time(0), 0);
+        SetRestFlag(REST_FLAG_IN_CITY);
+
         pvpInfo.inNoPvPArea = true;
     }
-    else                                                    // anywhere else
-    {
-        if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING))     // but resting (walk from city or maybe in tavern or leave tavern recently)
-        {
-            if (GetRestType() == REST_TYPE_IN_TAVERN)        // has been in tavern. Is still in?
-            {
-                // check that we are still inside the tavern (in areatrigger radius)
-
-                AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(GetInnTriggerId());
-                if (!atEntry || !IsInAreaTriggerRadius(atEntry))
-                {
-                    RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
-                    SetRestType(REST_TYPE_NO);
-                }
-            }
-            else                                            // not in tavern (leave city then)
-            {
-                RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
-                SetRestType(REST_TYPE_NO);
-            }
-        }
-    }
+    else
+        RemoveRestFlag(REST_FLAG_IN_CITY); // Recently left a capital city
 
     UpdatePvPState();
 
@@ -21308,4 +21288,31 @@ bool Player::SetWaterWalk(bool apply)
     m_movementInfo.Write(data);
     SendMessageToSet(&data, false);
     return true;
+}
+
+void Player::SetRestFlag(RestFlag restFlag, uint32 triggerId /*= 0*/)
+{
+    uint32 oldRestMask = _restFlagMask;
+    _restFlagMask |= restFlag;
+
+    if (!oldRestMask && _restFlagMask) // only set flag/time on the first rest state
+    {
+        _restTime = time(nullptr);
+        SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
+    }
+
+    if (triggerId)
+        inn_triggerId = triggerId;
+}
+
+void Player::RemoveRestFlag(RestFlag restFlag)
+{
+    uint32 oldRestMask = _restFlagMask;
+    _restFlagMask &= ~restFlag;
+
+    if (oldRestMask && !_restFlagMask) // only remove flag/time on the last rest state remove
+    {
+        _restTime = 0;
+        RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
+    }
 }
