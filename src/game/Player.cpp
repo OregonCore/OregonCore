@@ -1185,7 +1185,7 @@ void Player::Update(uint32 p_time)
     {
         if (roll_chance_i(3) && _restTime > 0)      // freeze update
         {
-            time_t currTime = time(nullptr);
+            time_t currTime = time(NULL);
             time_t timeDiff = currTime - _restTime;
             if (timeDiff >= 10)                             // freeze update
             {
@@ -21297,7 +21297,7 @@ void Player::SetRestFlag(RestFlag restFlag, uint32 triggerId /*= 0*/)
 
     if (!oldRestMask && _restFlagMask) // only set flag/time on the first rest state
     {
-        _restTime = time(nullptr);
+        _restTime = time(NULL);
         SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
     }
 
