@@ -466,7 +466,11 @@ QuestItemList* Loot::FillFFALoot(Player* player)
         if (!item.is_looted && item.freeforall && item.AllowedForPlayer(player))
         {
             ql->push_back(QuestItem(i));
-            ++unlootedCount;
+            if (!item.is_counted)
+            {
+                ++unlootedCount;
+                item.is_counted = true;
+            }
         }
     }
     if (ql->empty())
@@ -497,8 +501,11 @@ QuestItemList* Loot::FillQuestLoot(Player* player)
             // player's quest vector
             //
             // increase once if one looter only, looter-times if free for all
-            if (item.freeforall || !item.is_blocked)
+            if ((item.freeforall || !item.is_blocked) && !item.is_counted)
+            {
                 ++unlootedCount;
+                item.is_counted = true;
+            }
 
             if (!player->GetGroup() || (player->GetGroup()->GetLootMethod() != GROUP_LOOT && player->GetGroup()->GetLootMethod() != ROUND_ROBIN))
                 item.is_blocked = true;

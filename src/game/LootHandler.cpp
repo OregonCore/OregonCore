@@ -372,8 +372,13 @@ void WorldSession::DoLootRelease(uint64 lguid)
             loot->clear();
         }
         else
+        {
             // not fully looted object
             go->SetLootState(GO_ACTIVATED);
+
+            if (player->GetGUID() == loot->roundRobinPlayer)
+                loot->roundRobinPlayer = 0;
+        }
     }
     else if (IS_CORPSE_GUID(lguid))        // ONLY remove insignia at BG
     {

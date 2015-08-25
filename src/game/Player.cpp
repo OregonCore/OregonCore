@@ -7787,7 +7787,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
             if (loot_type == LOOT_FISHING)
                 go->getFishLoot(loot, this);
 
-            if (go->GetGOInfo()->type == GAMEOBJECT_TYPE_CHEST && go->GetGOInfo()->chest.groupLootRules)
+            if (go->GetGoType() == GAMEOBJECT_TYPE_CHEST && go->GetGOInfo()->chest.groupLootRules)
             {
                 if (Group* group = GetGroup())
                 {
@@ -7811,6 +7811,9 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
 
             go->SetLootState(GO_ACTIVATED);
         }
+        // Object was not fully looted, check if player can see quest items that were left by previous looter
+        else if (go->getLootState() == GO_ACTIVATED)
+            loot->FillNotNormalLootFor(this);
 
         if (go->getLootState() == GO_ACTIVATED)
         {

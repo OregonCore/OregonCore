@@ -416,6 +416,7 @@ void GameObject::Update(uint32 diff)
                         lootingGroupLeaderGUID = 0;
                     }
                 }
+                break;
             default:
                 break;
             }

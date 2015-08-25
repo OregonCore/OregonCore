@@ -372,6 +372,7 @@ struct Loot
 
         void generateMoneyLoot(uint32 minAmount, uint32 maxAmount);
         void FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner, bool personal);
+        void FillNotNormalLootFor(Player* player);
 
         // Inserts the item into the loot (called by LootTemplate processors)
         void AddItem(LootStoreItem const& item);
@@ -382,7 +383,6 @@ struct Loot
         bool hasOverThresholdItem() const;
 
     private:
-        void FillNotNormalLootFor(Player* player);
         QuestItemList* FillFFALoot(Player* player);
         QuestItemList* FillQuestLoot(Player* player);
         QuestItemList* FillNonQuestNonFFAConditionalLoot(Player* player);
