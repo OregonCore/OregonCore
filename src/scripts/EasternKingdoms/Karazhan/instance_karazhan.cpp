@@ -176,6 +176,9 @@ struct instance_karazhan : public ScriptedInstance
         case TYPE_CHESS:
             if (m_auiEncounter[9] != DONE)
                 m_auiEncounter[9]  = uiData;
+            else
+                if (GameObject* door = instance->GetGameObject(GetData64(DATA_GO_GAME_EXIT_DOOR)))
+                    door->UseDoorOrButton();
             break;
         case TYPE_MALCHEZZAR:
             if (m_auiEncounter[10] != DONE)
