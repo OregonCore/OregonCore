@@ -1480,7 +1480,18 @@ void Creature::setDeathState(DeathState s)
         if (sWorld.getConfig(CONFIG_SAVE_RESPAWN_TIME_IMMEDIATELY) || isWorldBoss())
             SaveRespawnTime();
 
-        SetNoSearchAssistance(false);
+        SetTarget(0);                // remove target selection in any cases (can be set at aura remove in Unit::setDeathState)
+        SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
+
+        SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0); // if creature is mounted on a virtual mount, remove it at death
+
+        setActive(false);
+
+        if (HasSearchedAssistance())
+        {
+            SetNoSearchAssistance(false);
+            UpdateSpeed(MOVE_RUN, false);
+        }
 
         //Dismiss group if is leader
         if (m_formation && m_formation->getLeader() == this)
@@ -1491,13 +1502,6 @@ void Creature::setDeathState(DeathState s)
 
         if (m_zoneScript)
             m_zoneScript->OnCreatureDeath(this);
-
-        SetUInt64Value(UNIT_FIELD_TARGET, 0);               // remove target selection in any cases (can be set at aura remove in Unit::setDeathState)
-        SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
-
-        SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);       // if creature is mounted on a virtual mount, remove it at death
-
-        setActive(false);
 
         // return, since we promote to DEAD_FALLING. DEAD_FALLING is promoted to CORPSE at next update.
         if (canFly() && IsFlying())
