@@ -6000,7 +6000,7 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
                     trigger_spell_id = 31643;
                     break;
                 default:
-                    sLog.outError("Unit::HandleProcTriggerSpell: Spell %u miss posibly Blazing Speed", auraSpellInfo->Id);
+                    sLog.outError("Unit::HandleProcTriggerSpell: Spell %u miss possibly Blazing Speed", auraSpellInfo->Id);
                     return false;
                 }
             }
@@ -6249,11 +6249,30 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
                             trigger_spell_id = 27165;
                             break;  // Rank 4
                         default:
-                            sLog.outError("Unit::HandleProcTriggerSpell: Spell %u miss posibly Judgement of Light/Wisdom", auraSpellInfo->Id);
+                            sLog.outError("Unit::HandleProcTriggerSpell: Spell %u miss possibly Judgement of Light/Wisdom", auraSpellInfo->Id);
                             return false;
                         }
-                        pVictim->CastSpell(pVictim, trigger_spell_id, true, castItem, triggeredByAura);
-                        return true;                       // no hidden cooldown
+
+                        SpellEntry const *triggerSpell = sSpellStore.LookupEntry(trigger_spell_id);
+                        int32 healAmount = triggerSpell->EffectBasePoints[0] + 1;
+
+                        if (Unit* auraCaster = triggeredByAura->GetCaster())
+                        {
+                            // Look through the caster's dummy auras for auras that affect Judgement of Light.
+                            Unit::AuraList const& casterDummyAuras = auraCaster->GetAurasByType(SPELL_AURA_DUMMY);
+                            for (Unit::AuraList::const_iterator i = casterDummyAuras.begin(); i != casterDummyAuras.end(); ++i)
+                            {
+                                // Justicar 2-piece bonus (Holy)
+                                if ((*i)->GetSpellProto()->Id == 37182)
+                                {
+                                    healAmount += (*i)->GetModifier()->m_amount;
+                                    break;
+                                }
+                            }
+                        }
+
+                        pVictim->CastCustomSpell(pVictim, trigger_spell_id, &healAmount, NULL, NULL, true, castItem, triggeredByAura);
+                        return false;
                     }
                     // Illumination
                     if (auraSpellInfo->SpellIconID == 241)
