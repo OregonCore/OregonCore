@@ -28,8 +28,7 @@
 #define MAX_QUIET_DISTANCE 25.0f
 
 template<class T>
-void
-FleeingMovementGenerator<T>::_setTargetLocation(T& owner)
+void FleeingMovementGenerator<T>::_setTargetLocation(T& owner)
 {
     if (owner.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
         return;
@@ -56,10 +55,10 @@ FleeingMovementGenerator<T>::_setTargetLocation(T& owner)
 
     PathInfo path(&owner);
     path.setPathLengthLimit(30.0f);
-    path.Update(x, y, z);
-    if (path.getPathType() & PATHFIND_NOPATH)
+    bool result = path.Update(x, y, z);
+    if (!result || (path.getPathType() & PATHFIND_NOPATH))
     {
-        i_nextCheckTime.Reset(urand(500, 1000));
+        i_nextCheckTime.Reset(100);
         return;
     }
 
@@ -71,8 +70,7 @@ FleeingMovementGenerator<T>::_setTargetLocation(T& owner)
 }
 
 template<class T>
-void
-FleeingMovementGenerator<T>::_getPoint(T& owner, float& x, float& y, float& z)
+void FleeingMovementGenerator<T>::_getPoint(T& owner, float& x, float& y, float& z)
 {
     float dist_from_caster, angle_to_caster;
     if (Unit* fright = ObjectAccessor::GetUnit(owner, i_frightGUID))
@@ -114,8 +112,7 @@ FleeingMovementGenerator<T>::_getPoint(T& owner, float& x, float& y, float& z)
 }
 
 template<class T>
-void
-FleeingMovementGenerator<T>::Initialize(T& owner)
+void FleeingMovementGenerator<T>::Initialize(T& owner)
 {
     owner.CastStop();
     owner.AddUnitState(UNIT_STATE_FLEEING | UNIT_STATE_ROAMING);
@@ -125,8 +122,7 @@ FleeingMovementGenerator<T>::Initialize(T& owner)
 }
 
 template<>
-void
-FleeingMovementGenerator<Player>::Finalize(Player& owner)
+void FleeingMovementGenerator<Player>::Finalize(Player& owner)
 {
     owner.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
     owner.ClearUnitState(UNIT_STATE_FLEEING | UNIT_STATE_ROAMING);
@@ -134,8 +130,7 @@ FleeingMovementGenerator<Player>::Finalize(Player& owner)
 }
 
 template<>
-void
-FleeingMovementGenerator<Creature>::Finalize(Creature& owner)
+void FleeingMovementGenerator<Creature>::Finalize(Creature& owner)
 {
     owner.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
     owner.ClearUnitState(UNIT_STATE_FLEEING | UNIT_STATE_ROAMING);
@@ -144,15 +139,13 @@ FleeingMovementGenerator<Creature>::Finalize(Creature& owner)
 }
 
 template<class T>
-void
-FleeingMovementGenerator<T>::Reset(T& owner)
+void FleeingMovementGenerator<T>::Reset(T& owner)
 {
     Initialize(owner);
 }
 
 template<class T>
-bool
-FleeingMovementGenerator<T>::Update(T& owner, const uint32& time_diff)
+bool FleeingMovementGenerator<T>::Update(T& owner, const uint32& time_diff)
 {
     if (!owner.IsAlive())
         return false;

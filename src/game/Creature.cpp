@@ -1519,12 +1519,10 @@ void Creature::setDeathState(DeathState s)
         RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 
         SetUInt32Value(UNIT_NPC_FLAGS, cinfo->npcflag);
-        ClearUnitState(UNIT_STATE_ALL_STATE);
-
+        ClearUnitState(uint32(UNIT_STATE_ALL_STATE & ~UNIT_STATE_IGNORE_PATHFINDING));
         SetMeleeDamageSchool(SpellSchools(cinfo->dmgschool));
         LoadCreaturesAddon(true);
 
-        SetWalk(true);
         i_motionMaster.Initialize();
 
         // Prevents the creature from re-spawning at the location of it's death
@@ -2420,7 +2418,8 @@ void Creature::SetRooted(bool apply)
         // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
         // setting MOVEMENTFLAG_ROOT
         RemoveUnitMovementFlag(MOVEMENTFLAG_MOVING);
-        m_movementInfo.AddMovementFlag(MOVEMENTFLAG_ROOT);
+        AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
+        StopMoving();
 
         WorldPacket data(SMSG_SPLINE_MOVE_ROOT, 9);
         data << GetPackGUID();

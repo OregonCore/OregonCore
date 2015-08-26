@@ -166,7 +166,7 @@ void PathInfo::BuildPolyPath(const Vector3& startPos, const Vector3& endPos)
     dtStatus dtResult;
 
     // we have a hole in our mesh
-    // make shortcut path and mark it as NOPATH ( with flying exception )
+    // make shortcut path and mark it as NOPATH ( with flying and swimming exception )
     // its up to caller how he will use this info
     if (startPoly == INVALID_POLYREF || endPoly == INVALID_POLYREF)
     {

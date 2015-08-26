@@ -25,9 +25,6 @@
 #include "Pet.h"
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"
-
-#define SMALL_ALPHA 0.05f
-
 #include <cmath>
 
 template<class T, typename D>
@@ -55,9 +52,9 @@ void TargetedMovementGeneratorMedium<T, D>::_setTargetLocation(T& owner, bool up
         {
             if (!owner.movespline->Finalized())
                 return;
-            }
-            else
-            {
+        }
+        else
+        {
     if (!i_offset)
     {
         // to nearest random contact position
@@ -109,16 +106,23 @@ void TargetedMovementGeneratorMedium<T, D>::_setTargetLocation(T& owner, bool up
     // allow pets following their master to cheat while generating paths
     bool forceDest = (owner.GetTypeId() == TYPEID_UNIT && ((Creature*)&owner)->IsPet()
         && owner.HasUnitState(UNIT_STATE_FOLLOW));
-    i_path->Update(x, y, z, forceDest);
-    if (i_path->getPathType() & PATHFIND_NOPATH)
+
+    bool result = i_path->Update(x, y, z, forceDest);
+    if (!result || (i_path->getPathType() & PATHFIND_NOPATH))
+    {
+        // Cant reach target
+        m_speedChanged = true;
         return;
+    }
 
     i_targetReached = false;
     m_speedChanged = false;
+    owner.AddUnitState(UNIT_STATE_CHASE);
 
     Movement::MoveSplineInit init(owner);
     init.MovebyPath(i_path->getFullPath());
     init.SetWalk(((D*)this)->EnableWalking());
+
     init.Launch();
 }
 
@@ -157,40 +161,40 @@ bool TargetedMovementGeneratorMedium<T, D>::Update(T& owner, const uint32& time_
     if (!owner.HasUnitState(UNIT_STATE_FOLLOW) && owner.getVictim() != i_target.getTarget())
         return true;
 
-        if (i_path && i_path->getPathType() & PATHFIND_NOPATH)
+    if (i_path && i_path->getPathType() & PATHFIND_NOPATH)
+    {
+        if (Creature* me = owner.ToCreature())
         {
-            if (Creature* me = owner.ToCreature())
+            if (m_evadeTimer <= time_diff)
             {
-                if (m_evadeTimer <= time_diff)
-                {
-                    if (me->AI())
-                        me->AI()->EnterEvadeMode();
-                }
-                else
-                    m_evadeTimer -= time_diff;
+                if (me->AI())
+                    me->AI()->EnterEvadeMode();
             }
-            return true;
+            else
+                m_evadeTimer -= time_diff;
         }
+        return true;
+    }
 
     bool targetMoved = false;
     i_recheckDistance.Update(time_diff);
     if (i_recheckDistance.Passed())
-        {
+    {
         i_recheckDistance.Reset(this->GetMovementGeneratorType() == FOLLOW_MOTION_TYPE ? 50 : 100);
         G3D::Vector3 dest = owner.movespline->FinalDestination();
         targetMoved = RequiresNewPosition(owner, dest.x, dest.y, dest.z);
-            }
+    }
 
     if (m_speedChanged || targetMoved)
         _setTargetLocation(owner, targetMoved);
 
     if (owner.movespline->Finalized())
-            {
+    {
         if (i_angle == 0.f && !owner.HasInArc(0.01f, i_target.getTarget()))
-                owner.SetInFront(i_target.getTarget());
+            owner.SetInFront(i_target.getTarget());
 
         if (!i_targetReached)
-    {
+        {
             i_targetReached = true;
             static_cast<D*>(this)->_reachTarget(owner);
         }
@@ -217,6 +221,10 @@ bool TargetedMovementGeneratorMedium<T, D>::RequiresNewPosition(T& owner, float 
         targetMoved = i_target->GetDistanceSqr(x, y, z) > dist * dist;
     else
         targetMoved = i_target->GetDistance2d(x, y) > dist;
+
+    // then, if the target is in range, check also Line of Sight.
+    if (!targetMoved)
+        targetMoved = !i_target->IsWithinLOSInMap(&owner);
 
     return targetMoved;
 }
