@@ -650,11 +650,14 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             return 0;
 
     //Script Event damage taken
-    if (pVictim->GetTypeId() == TYPEID_UNIT && (pVictim->ToCreature())->IsAIEnabled)
-    {
+    if (pVictim->IsAIEnabled)
         pVictim->ToCreature()->AI()->DamageTaken(this, damage);
+
+    if (IsAIEnabled)
         ToCreature()->AI()->DamageDealt(pVictim, damage, damagetype);
 
+    if (pVictim->GetTypeId() == TYPEID_UNIT && (pVictim->ToCreature())->IsAIEnabled)
+    {
         // Set tagging
         if (!pVictim->HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER) && !pVictim->IsPet())
         {
