@@ -10631,7 +10631,8 @@ void Unit::DeleteCharmInfo()
 
 CharmInfo::CharmInfo(Unit* unit)
     : m_unit(unit), m_CommandState(COMMAND_FOLLOW), m_petnumber(0), m_barInit(false),
-    m_isCommandAttack(false), m_isAtStay(false), m_isFollowing(false)
+    m_isCommandAttack(false), m_isAtStay(false), m_isFollowing(false), m_isReturning(false),
+    m_stayX(0.0f), m_stayY(0.0f), m_stayZ(0.0f)
 {
     for (int i = 0; i < MAX_SPELL_CHARM; ++i)
     {
