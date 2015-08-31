@@ -81,6 +81,8 @@ enum ListFilesResult
 
 inline ListFilesResult getDirContents(vector<string>& fileList, string dirpath = ".", string filter = "*", bool includeSubDirs = false)
 {
+    (void)(includeSubDirs); // suppresses unused param warning
+
     #ifdef WIN32
     HANDLE hFind;
     WIN32_FIND_DATA findFileInfo;

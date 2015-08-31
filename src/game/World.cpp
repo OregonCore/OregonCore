@@ -62,6 +62,7 @@
 #include "WardenDataStorage.h"
 #include "DisableMgr.h"
 #include "ConditionMgr.h"
+#include "VMapManager2.h"
 
 INSTANTIATE_SINGLETON_1(World);
 
@@ -1014,7 +1015,7 @@ void World::LoadConfigSettings(bool reload)
     bool enableLOS = sConfig.GetBoolDefault("vmap.enableLOS", true);
     bool enableHeight = sConfig.GetBoolDefault("vmap.enableHeight", true);
     bool enablePetLOS = sConfig.GetBoolDefault("vmap.petLOS", true);
-    std::string ignoreMapIds = sConfig.GetStringDefault("vmap.ignoreMapIds", "");
+    //std::string ignoreMapIds = sConfig.GetStringDefault("vmap.ignoreMapIds", "");
     std::string ignoreSpellIds = sConfig.GetStringDefault("vmap.ignoreSpellIds", "");
 
     if (!enableHeight)
@@ -1022,7 +1023,7 @@ void World::LoadConfigSettings(bool reload)
 
     VMAP::VMapFactory::createOrGetVMapManager()->setEnableLineOfSightCalc(enableLOS);
     VMAP::VMapFactory::createOrGetVMapManager()->setEnableHeightCalc(enableHeight);
-    VMAP::VMapFactory::createOrGetVMapManager()->preventMapsFromBeingUsed(ignoreMapIds.c_str());
+    //VMAP::VMapFactory::createOrGetVMapManager()->preventMapsFromBeingUsed(ignoreMapIds.c_str());
     VMAP::VMapFactory::preventSpellsFromBeingTestedForLoS(ignoreSpellIds.c_str());
     sLog.outString("WORLD: VMap support included. LineOfSight:%i, getHeight:%i, indoorCheck:%i, PetLOS:%i", enableLOS, enableHeight, enableIndoor, enablePetLOS);
     sLog.outString("WORLD: VMap data directory is: %svmaps", m_dataPath.c_str());
@@ -1230,11 +1231,17 @@ void World::LoadSQLUpdates()
     }
 }
 
+extern void LoadGameObjectModelList();
+
 // Initialize the World
 void World::SetInitialWorldSettings()
 {
     // Initialize the random number generator
     srand((unsigned int)time(NULL));
+
+    // Initialize VMapManager's function pointers to fix linking between game/collision
+    if (VMAP::VMapManager2* vmapMgr = dynamic_cast<VMAP::VMapManager2*>(VMAP::VMapFactory::createOrGetVMapManager()))
+        vmapMgr->GetLiquidFlagsPtr = &GetLiquidFlags; // implemented in DBCStores.cpp
 
     // Time for server startup
     uint32 uStartTime = getMSTime();
@@ -1447,6 +1454,9 @@ void World::SetInitialWorldSettings()
 
     sConsole.SetLoadingLabel("Loading spell extra attributes...");
     sSpellMgr.LoadSpellCustomAttr();
+
+    sLog.outString("Loading GameObject models...");
+    LoadGameObjectModelList();
 
     sConsole.SetLoadingLabel("Loading linked spells...");
     sSpellMgr.LoadSpellLinked();

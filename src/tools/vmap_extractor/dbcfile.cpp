@@ -16,7 +16,7 @@
  */
 
 #include "dbcfile.h"
-#include "mpq_libmpq04.h"
+#include "mpq_libmpq.h"
 #undef min
 #undef max
 
@@ -92,4 +92,3 @@ DBCFile::Iterator DBCFile::end()
     assert(data);
     return Iterator(*this, stringTable);
 }
-

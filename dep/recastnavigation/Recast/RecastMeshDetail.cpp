@@ -68,21 +68,27 @@ static bool circumCircle(const float* p1, const float* p2, const float* p3,
 						 float* c, float& r)
 {
 	static const float EPS = 1e-6f;
+	// Calculate the circle relative to p1, to avoid some precision issues.
+	const float v1[3] = {0,0,0};
+	float v2[3], v3[3];
+	rcVsub(v2, p2,p1);
+	rcVsub(v3, p3,p1);
 	
-	const float cp = vcross2(p1, p2, p3);
+	const float cp = vcross2(v1, v2, v3);
 	if (fabsf(cp) > EPS)
 	{
-		const float p1Sq = vdot2(p1,p1);
-		const float p2Sq = vdot2(p2,p2);
-		const float p3Sq = vdot2(p3,p3);
-		c[0] = (p1Sq*(p2[2]-p3[2]) + p2Sq*(p3[2]-p1[2]) + p3Sq*(p1[2]-p2[2])) / (2*cp);
-		c[2] = (p1Sq*(p3[0]-p2[0]) + p2Sq*(p1[0]-p3[0]) + p3Sq*(p2[0]-p1[0])) / (2*cp);
-		r = vdist2(c, p1);
+		const float v1Sq = vdot2(v1,v1);
+		const float v2Sq = vdot2(v2,v2);
+		const float v3Sq = vdot2(v3,v3);
+		c[0] = (v1Sq*(v2[2]-v3[2]) + v2Sq*(v3[2]-v1[2]) + v3Sq*(v1[2]-v2[2])) / (2*cp);
+		c[1] = 0;
+		c[2] = (v1Sq*(v3[0]-v2[0]) + v2Sq*(v1[0]-v3[0]) + v3Sq*(v2[0]-v1[0])) / (2*cp);
+		r = vdist2(c, v1);
+		rcVadd(c, c, p1);
 		return true;
 	}
 
-	c[0] = p1[0];
-	c[2] = p1[2];
+	rcVcopy(c, p1);
 	r = 0;
 	return false;
 }
@@ -223,15 +229,6 @@ static unsigned short getHeight(const float fx, const float fy, const float fz,
 				h = nh;
 				dmin = d;
 			}
-			
-/*			const float dx = (nx+0.5f)*cs - fx; 
-			const float dz = (nz+0.5f)*cs - fz;
-			const float d = dx*dx+dz*dz;
-			if (d < dmin)
-			{
-				h = nh;
-				dmin = d;
-			} */
 		}
 	}
 	return h;
@@ -240,8 +237,8 @@ static unsigned short getHeight(const float fx, const float fy, const float fz,
 
 enum EdgeValues
 {
-	UNDEF = -1,
-	HULL = -2,
+	EV_UNDEF = -1,
+	EV_HULL = -2,
 };
 
 static int findEdge(const int* edges, int nedges, int s, int t)
@@ -252,7 +249,7 @@ static int findEdge(const int* edges, int nedges, int s, int t)
 		if ((e[0] == s && e[1] == t) || (e[0] == t && e[1] == s))
 			return i;
 	}
-	return UNDEF;
+	return EV_UNDEF;
 }
 
 static int addEdge(rcContext* ctx, int* edges, int& nedges, const int maxEdges, int s, int t, int l, int r)
@@ -260,12 +257,12 @@ static int addEdge(rcContext* ctx, int* edges, int& nedges, const int maxEdges, 
 	if (nedges >= maxEdges)
 	{
 		ctx->log(RC_LOG_ERROR, "addEdge: Too many edges (%d/%d).", nedges, maxEdges);
-		return UNDEF;
+		return EV_UNDEF;
 	}
 	
 	// Add edge if not already in the triangulation. 
 	int e = findEdge(edges, nedges, s, t);
-	if (e == UNDEF)
+	if (e == EV_UNDEF)
 	{
 		int* edge = &edges[nedges*4];
 		edge[0] = s;
@@ -276,15 +273,15 @@ static int addEdge(rcContext* ctx, int* edges, int& nedges, const int maxEdges, 
 	}
 	else
 	{
-		return UNDEF;
+		return EV_UNDEF;
 	}
 }
 
 static void updateLeftFace(int* e, int s, int t, int f)
 {
-	if (e[0] == s && e[1] == t && e[2] == UNDEF)
+	if (e[0] == s && e[1] == t && e[2] == EV_UNDEF)
 		e[2] = f;
-	else if (e[1] == s && e[0] == t && e[3] == UNDEF)
+	else if (e[1] == s && e[0] == t && e[3] == EV_UNDEF)
 		e[3] = f;
 }	
 
@@ -325,12 +322,12 @@ static void completeFacet(rcContext* ctx, const float* pts, int npts, int* edges
 	
 	// Cache s and t.
 	int s,t;
-	if (edge[2] == UNDEF)
+	if (edge[2] == EV_UNDEF)
 	{
 		s = edge[0];
 		t = edge[1];
 	}
-	else if (edge[3] == UNDEF)
+	else if (edge[3] == EV_UNDEF)
 	{
 		s = edge[1];
 		t = edge[0];
@@ -393,15 +390,15 @@ static void completeFacet(rcContext* ctx, const float* pts, int npts, int* edges
 		
 		// Add new edge or update face info of old edge. 
 		e = findEdge(edges, nedges, pt, s);
-		if (e == UNDEF)
-		    addEdge(ctx, edges, nedges, maxEdges, pt, s, nfaces, UNDEF);
+		if (e == EV_UNDEF)
+		    addEdge(ctx, edges, nedges, maxEdges, pt, s, nfaces, EV_UNDEF);
 		else
 		    updateLeftFace(&edges[e*4], pt, s, nfaces);
 		
 		// Add new edge or update face info of old edge. 
 		e = findEdge(edges, nedges, t, pt);
-		if (e == UNDEF)
-		    addEdge(ctx, edges, nedges, maxEdges, t, pt, nfaces, UNDEF);
+		if (e == EV_UNDEF)
+		    addEdge(ctx, edges, nedges, maxEdges, t, pt, nfaces, EV_UNDEF);
 		else
 		    updateLeftFace(&edges[e*4], t, pt, nfaces);
 		
@@ -409,7 +406,7 @@ static void completeFacet(rcContext* ctx, const float* pts, int npts, int* edges
 	}
 	else
 	{
-		updateLeftFace(&edges[e*4], s, t, HULL);
+		updateLeftFace(&edges[e*4], s, t, EV_HULL);
 	}
 }
 
@@ -423,14 +420,14 @@ static void delaunayHull(rcContext* ctx, const int npts, const float* pts,
 	edges.resize(maxEdges*4);
 	
 	for (int i = 0, j = nhull-1; i < nhull; j=i++)
-		addEdge(ctx, &edges[0], nedges, maxEdges, hull[j],hull[i], HULL, UNDEF);
+		addEdge(ctx, &edges[0], nedges, maxEdges, hull[j],hull[i], EV_HULL, EV_UNDEF);
 	
 	int currentEdge = 0;
 	while (currentEdge < nedges)
 	{
-		if (edges[currentEdge*4+2] == UNDEF)
+		if (edges[currentEdge*4+2] == EV_UNDEF)
 			completeFacet(ctx, pts, npts, &edges[0], nedges, maxEdges, nfaces, currentEdge);
-		if (edges[currentEdge*4+3] == UNDEF)
+		if (edges[currentEdge*4+3] == EV_UNDEF)
 			completeFacet(ctx, pts, npts, &edges[0], nedges, maxEdges, nfaces, currentEdge);
 		currentEdge++;
 	}
@@ -489,6 +486,97 @@ static void delaunayHull(rcContext* ctx, const int npts, const float* pts,
 	}
 }
 
+// Calculate minimum extend of the polygon.
+static float polyMinExtent(const float* verts, const int nverts)
+{
+	float minDist = FLT_MAX;
+	for (int i = 0; i < nverts; i++)
+	{
+		const int ni = (i+1) % nverts;
+		const float* p1 = &verts[i*3];
+		const float* p2 = &verts[ni*3];
+		float maxEdgeDist = 0;
+		for (int j = 0; j < nverts; j++)
+		{
+			if (j == i || j == ni) continue;
+			float d = distancePtSeg2d(&verts[j*3], p1,p2);
+			maxEdgeDist = rcMax(maxEdgeDist, d);
+		}
+		minDist = rcMin(minDist, maxEdgeDist);
+	}
+	return rcSqrt(minDist);
+}
+
+// Last time I checked the if version got compiled using cmov, which was a lot faster than module (with idiv).
+inline int prev(int i, int n) { return i-1 >= 0 ? i-1 : n-1; }
+inline int next(int i, int n) { return i+1 < n ? i+1 : 0; }
+
+static void triangulateHull(const int nverts, const float* verts, const int nhull, const int* hull, rcIntArray& tris)
+{
+	int start = 0, left = 1, right = nhull-1;
+	
+	// Start from an ear with shortest perimeter.
+	// This tends to favor well formed triangles as starting point.
+	float dmin = 0;
+	for (int i = 0; i < nhull; i++)
+	{
+		int pi = prev(i, nhull);
+		int ni = next(i, nhull);
+		const float* pv = &verts[hull[pi]*3];
+		const float* cv = &verts[hull[i]*3];
+		const float* nv = &verts[hull[ni]*3];
+		const float d = vdist2(pv,cv) + vdist2(cv,nv) + vdist2(nv,pv);
+		if (d < dmin)
+		{
+			start = i;
+			left = ni;
+			right = pi;
+			dmin = d;
+		}
+	}
+	
+	// Add first triangle
+	tris.push(hull[start]);
+	tris.push(hull[left]);
+	tris.push(hull[right]);
+	tris.push(0);
+	
+	// Triangulate the polygon by moving left or right,
+	// depending on which triangle has shorter perimeter.
+	// This heuristic was chose emprically, since it seems
+	// handle tesselated straight edges well.
+	while (next(left, nhull) != right)
+	{
+		// Check to see if se should advance left or right.
+		int nleft = next(left, nhull);
+		int nright = prev(right, nhull);
+		
+		const float* cvleft = &verts[hull[left]*3];
+		const float* nvleft = &verts[hull[nleft]*3];
+		const float* cvright = &verts[hull[right]*3];
+		const float* nvright = &verts[hull[nright]*3];
+		const float dleft = vdist2(cvleft, nvleft) + vdist2(nvleft, cvright);
+		const float dright = vdist2(cvright, nvright) + vdist2(cvleft, nvright);
+		
+		if (dleft < dright)
+		{
+			tris.push(hull[left]);
+			tris.push(hull[nleft]);
+			tris.push(hull[right]);
+			tris.push(0);
+			left = nleft;
+		}
+		else
+		{
+			tris.push(hull[left]);
+			tris.push(hull[nright]);
+			tris.push(hull[right]);
+			tris.push(0);
+			right = nright;
+		}
+	}
+}
+
 
 inline float getJitterX(const int i)
 {
@@ -519,8 +607,14 @@ static bool buildPolyDetail(rcContext* ctx, const float* in, const int nin,
 		rcVcopy(&verts[i*3], &in[i*3]);
 	nverts = nin;
 	
+	edges.resize(0);
+	tris.resize(0);
+	
 	const float cs = chf.cs;
 	const float ics = 1.0f/cs;
+	
+	// Calculate minimum extents of the polygon based on input data.
+	float minExtent = polyMinExtent(verts, nverts);
 	
 	// Tessellate outlines.
 	// This is done in separate pass in order to ensure
@@ -628,24 +722,23 @@ static bool buildPolyDetail(rcContext* ctx, const float* in, const int nin,
 		}
 	}
 	
+	// If the polygon minimum extent is small (sliver or small triangle), do not try to add internal points.
+	if (minExtent < sampleDist*2)
+	{
+		triangulateHull(nverts, verts, nhull, hull, tris);
+		return true;
+	}
 
 	// Tessellate the base mesh.
-	edges.resize(0);
-	tris.resize(0);
-
-	delaunayHull(ctx, nverts, verts, nhull, hull, tris, edges);
+	// We're using the triangulateHull instead of delaunayHull as it tends to
+	// create a bit better triangulation for long thing triangles when there
+	// are no internal points.
+	triangulateHull(nverts, verts, nhull, hull, tris);
 	
 	if (tris.size() == 0)
 	{
 		// Could not triangulate the poly, make sure there is some valid data there.
-		ctx->log(RC_LOG_WARNING, "buildPolyDetail: Could not triangulate polygon, adding default data.");
-		for (int i = 2; i < nverts; ++i)
-		{
-			tris.push(0);
-			tris.push(i-1);
-			tris.push(i);
-			tris.push(0);
-		}
+		ctx->log(RC_LOG_WARNING, "buildPolyDetail: Could not triangulate polygon (%d verts).", nverts);
 		return true;
 	}
 
@@ -1119,7 +1212,7 @@ bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompa
 		return false;
 	}
 	dmesh.ntris = 0;
-	dmesh.tris = (unsigned char*)rcAlloc(sizeof(unsigned char*)*tcap*4, RC_ALLOC_PERM);
+	dmesh.tris = (unsigned char*)rcAlloc(sizeof(unsigned char)*tcap*4, RC_ALLOC_PERM);
 	if (!dmesh.tris)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.tris' (%d).", tcap*4);

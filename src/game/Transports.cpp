@@ -121,7 +121,7 @@ void MapManager::LoadTransports()
     }
 }
 
-Transport::Transport() : GameObject()
+Transport::Transport() : GameObject(), _delayedAddModel(false)
 {
     // 2.3.2 - 0x5A
     m_updateFlag = (UPDATEFLAG_TRANSPORT | UPDATEFLAG_LOWGUID | UPDATEFLAG_HIGHGUID | UPDATEFLAG_HAS_POSITION);
@@ -167,6 +167,9 @@ bool Transport::Create(uint32 guidlow, uint32 mapid, float x, float y, float z, 
         SetUInt32Value(GAMEOBJECT_DYN_FLAGS, dynflags);
 
     SetName(goinfo->name);
+//    UpdateRotationFields(.0f, 1.f);
+
+    m_model = GameObjectModel::Create(*this);
 
     return true;
 }
@@ -400,8 +403,15 @@ Transport::WayPointMap::iterator Transport::GetNextWayPoint()
 
 void Transport::TeleportTransport(uint32 newMapid, float x, float y, float z)
 {
-    Map const* oldMap = GetMap();
+    Map* oldMap = GetMap();
     Relocate(x, y, z);
+
+    if (m_model)
+    {
+        if (oldMap->Contains(*m_model))
+            oldMap->Remove(*m_model);
+        SetDelayedAddModelToMap();
+    }
 
     for (PlayerSet::iterator itr = m_passengers.begin(); itr != m_passengers.end();)
     {
@@ -429,8 +439,8 @@ void Transport::TeleportTransport(uint32 newMapid, float x, float y, float z)
 
     ResetMap();
     Map* newMap = MapManager::Instance().CreateMap(newMapid, this, 0);
+    ASSERT(newMap);
     SetMap(newMap);
-    ASSERT(GetMap());
 
     if (oldMap != newMap)
     {
@@ -468,6 +478,14 @@ void Transport::Update(uint32 /*p_time*/)
     if (m_WayPoints.size() <= 1)
         return;
 
+    // Add model to map after we are fully done with moving maps
+    if (_delayedAddModel)
+    {
+        _delayedAddModel = false;
+        if (m_model)
+            GetMap()->Insert(*m_model);
+    }
+
     m_timer = getMSTime() % m_period;
     while (((m_timer - m_curr->first) % m_pathTime) > ((m_next->first - m_curr->first) % m_pathTime))
     {
@@ -482,7 +500,10 @@ void Transport::Update(uint32 /*p_time*/)
         if (m_curr->second.mapid != GetMapId() || m_curr->second.teleport)
             TeleportTransport(m_curr->second.mapid, m_curr->second.x, m_curr->second.y, m_curr->second.z);
         else
+        {
             Relocate(m_curr->second.x, m_curr->second.y, m_curr->second.z);
+            UpdateModelPosition();
+        }
 
         /*
         for (PlayerSet::iterator itr = m_passengers.begin(); itr != m_passengers.end();)

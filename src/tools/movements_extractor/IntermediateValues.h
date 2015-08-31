@@ -29,8 +29,8 @@ namespace MMAP
 // this class gathers all debug info holding and output
 struct IntermediateValues
 {
-    rcHeightfield* heightfield;
     rcCompactHeightfield* compactHeightfield;
+    rcHeightfield* heightfield;
     rcContourSet* contours;
     rcPolyMesh* polyMesh;
     rcPolyMeshDetail* polyMeshDetail;

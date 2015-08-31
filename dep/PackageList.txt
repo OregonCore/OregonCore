@@ -14,11 +14,11 @@ G3D (a commercial-grade C++ 3D engine available as Open Source (BSD License)
 
 jemalloc (a general-purpose scalable concurrent malloc-implementation)
   http://www.canonware.com/jemalloc/
-  Version: 2.1.0
+  Version: 3.6.0-0-g46c0af68bd248b04df75e4f92d5fb804c3d75340
   
 libMPQ (a library for reading MPQ files)
   https://libmpq.org/
-  Version: 1.0.4
+  Version: 707e6f7c6d70524e2ff895d9907b93df5e9768d0 (November 8, 2011)
 
 MersenneTwister (a very fast random number generator)
   http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
@@ -46,7 +46,8 @@ gSOAP (a portable development toolkit for C and C++ XML Web services and XML dat
   
 Recast Navigation (latest Rev Modified by Mangos)
   http://code.google.com/p/recastnavigation/
-  Recast 1.4
+  https://github.com/memononen/recastnavigatio
+  Version: 1dd5cf1883d61e723fef3d4957cf758c50e7a52b (Jun 22 2015)
 
 PDCurses (Command-Line Interface)
   Version: 3.4

@@ -11,6 +11,7 @@
 include_directories(
   ${CMAKE_SOURCE_DIR}/dep/g3dlite/include
   ${CMAKE_SOURCE_DIR}/src/shared
+  ${CMAKE_SOURCE_DIR}/src/shared/Debugging
   ${CMAKE_SOURCE_DIR}/src/collision
   ${CMAKE_SOURCE_DIR}/src/framework
   ${ACE_INCLUDE_DIR}
@@ -20,6 +21,8 @@ include_directories(
 add_definitions(-DNO_CORE_FUNCS)
 add_executable(vmap_assembler VMapAssembler.cpp)
 add_dependencies(vmap_assembler mpq)
+add_dependencies(vmap_assembler collision)
+add_dependencies(vmap_assembler g3dlib)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   set_target_properties(vmap_assembler PROPERTIES LINK_FLAGS "-framework Carbon")

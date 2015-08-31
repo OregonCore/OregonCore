@@ -2034,7 +2034,7 @@ class Unit : public WorldObject
         void SetFeared(bool apply/*, uint64 casterGUID = 0, uint32 spellID = 0*/);
         void SetConfused(bool apply/*, uint64 casterGUID = 0, uint32 spellID = 0*/);
         void SetStunned(bool apply);
-        virtual void SetRooted(bool apply) {}
+        virtual void SetRooted(bool /*apply*/) {}
         virtual bool SetFeatherFall(bool apply);
 
         void MonsterMoveWithSpeed(float x, float y, float z, float speed, bool generatePath = false, bool forceDestination = false);

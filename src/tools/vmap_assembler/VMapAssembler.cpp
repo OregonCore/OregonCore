@@ -24,6 +24,7 @@ int main(int argc, char* argv[])
 {
     if (argc != 3)
     {
+        //printf("\nusage: %s <raw data dir> <vmap dest dir> [config file name]\n", argv[0]);
         std::cout << "usage: " << argv[0] << " <raw data dir> <vmap dest dir>" << std::endl;
         return 1;
     }
@@ -46,4 +47,3 @@ int main(int argc, char* argv[])
     std::cout << "Ok, all done" << std::endl;
     return 0;
 }
-
