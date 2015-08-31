@@ -25,6 +25,15 @@
 #define snprintf _snprintf
 #endif
 
+const char * GetPlainName(const char * FileName)
+{
+    const char * szTemp;
+
+    if((szTemp = strrchr(FileName, '\\')) != NULL)
+        FileName = szTemp + 1;
+    return FileName;
+}
+
 char* GetPlainName(char* FileName)
 {
     char* szTemp;
@@ -39,9 +48,12 @@ void fixnamen(char* name, size_t len)
     for (size_t i = 0; i < len - 3; i++)
     {
         if (i > 0 && name[i] >= 'A' && name[i] <= 'Z' && isalpha(name[i - 1]))
+        {
             name[i] |= 0x20;
-        else if ((i == 0 || !isalpha(name[i - 1])) && name[i] >= 'a' && name[i] <= 'z')
+        } else if ((i==0 || !isalpha(name[i-1])) && name[i]>='a' && name[i]<='z')
+        {
             name[i] &= ~0x20;
+    }
     }
     //extension in lowercase
     for (size_t i = len - 3; i < len; i++)
@@ -55,6 +67,14 @@ void fixname2(char* name, size_t len)
         if (name[i] == ' ')
             name[i] = '_';
     }
+}
+
+char * GetExtension(char * FileName)
+{
+    char * szTemp;
+    if((szTemp = strrchr(FileName, '.')) != NULL)
+        return szTemp;
+    return NULL;
 }
 
 ADTFile::ADTFile(char* filename): ADT(filename)
@@ -121,27 +141,15 @@ bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
                 while (p < buf + size)
                 {
                     fixnamen(p, strlen(p));
-                    string path(p);
                     char* s = GetPlainName(p);
                     fixname2(s, strlen(s));
-                    p = p + strlen(p) + 1;
+
                     ModelInstansName[t++] = s;
 
-                    // replace .mdx -> .m2
-                    path.erase(path.length() - 2, 2);
-                    path.append("2");
+                    string path(p);
+                    ExtractSingleModel(path);
 
-                    char szLocalFile[1024];
-                    snprintf(szLocalFile, 1024, "%s/%s", szWorkDirWmo, s);
-                    FILE* output = fopen(szLocalFile, "rb");
-                    if (!output)
-                    {
-                        Model m2(path);
-                        if (m2.open())
-                            m2.ConvertToVMAPModel(szLocalFile);
-                    }
-                    else
-                        fclose(output);
+                    p = p+strlen(p)+1;
                 }
                 delete[] buf;
             }
@@ -167,6 +175,7 @@ bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
                 delete[] buf;
             }
         }
+        //======================
         else if (!strcmp(fourcc, "MDDF"))
         {
             if (size)
@@ -195,6 +204,7 @@ bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
                 delete[] WmoInstansName;
             }
         }
+        //======================
         ADT.seek(nextpos);
     }
     ADT.close();
@@ -206,4 +216,3 @@ ADTFile::~ADTFile()
 {
     ADT.close();
 }
-

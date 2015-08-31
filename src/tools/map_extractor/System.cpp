@@ -90,7 +90,7 @@ float CONF_flat_height_delta_limit = 0.005f; // If max - min less this value - s
 float CONF_flat_liquid_delta_limit = 0.001f; // If max - min less this value - liquid surface is flat
 
 // List MPQ for extract from
-char* CONF_mpq_list[] =
+const char* CONF_mpq_list[] =
 {
     "common.MPQ",
     "common-2.MPQ",
@@ -103,7 +103,7 @@ char* CONF_mpq_list[] =
     "patch-5.MPQ",
 };
 
-static char* const langs[] = {"enGB", "enUS", "deDE", "esES", "frFR", "koKR", "zhCN", "zhTW", "enCN", "enTW", "esMX", "ruRU" };
+static const char* langs[] = {"enGB", "enUS", "deDE", "esES", "frFR", "koKR", "zhCN", "zhTW", "enCN", "enTW", "esMX", "ruRU" };
 #define LANG_COUNT 12
 
 void CreateDir( const std::string& Path )
@@ -241,7 +241,7 @@ uint32 ReadMapDBC()
         map_ids[x].id = dbc.getRecord(x).getUInt(0);
         strcpy(map_ids[x].name, dbc.getRecord(x).getString(1));
     }
-    printf("Done! (%u maps loaded)\n", map_count);
+    printf("Done! (%lu maps loaded)\n", map_count);
     return map_count;
 }
 
@@ -266,7 +266,7 @@ void ReadAreaTableDBC()
 
     maxAreaId = dbc.getMaxId();
 
-    printf("Done! (%u areas loaded)\n", area_count);
+    printf("Done! (%lu areas loaded)\n", area_count);
 }
 
 void ReadLiquidTypeTableDBC()
@@ -287,7 +287,7 @@ void ReadLiquidTypeTableDBC()
     for (uint32 x = 0; x < LiqType_count; ++x)
         LiqType[dbc.getRecord(x).getUInt(0)] = dbc.getRecord(x).getUInt(3);
 
-    printf("Done! (%u LiqTypes loaded)\n", LiqType_count);
+    printf("Done! (%lu LiqTypes loaded)\n", LiqType_count);
 }
 
 //
@@ -385,7 +385,7 @@ uint8 liquid_type[ADT_CELLS_PER_GRID][ADT_CELLS_PER_GRID];
 bool  liquid_show[ADT_GRID_SIZE][ADT_GRID_SIZE];
 float liquid_height[ADT_GRID_SIZE + 1][ADT_GRID_SIZE + 1];
 
-bool ConvertADT(char* filename, char* filename2, int cell_y, int cell_x, uint32 build)
+bool ConvertADT(char* filename, char* filename2, int /*cell_y*/, int /*cell_x*/, uint32 build)
 {
     ADT_file adt;
 

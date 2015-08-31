@@ -215,7 +215,7 @@ bool TerrainBuilder::loadMap(uint32 mapID, uint32 tileX, uint32 tileY, MeshData&
             fread(liquid_map, sizeof(float), lheader.width * lheader.height, mapFile);
         }
 
-        if (liquid_type && liquid_map)
+        if (liquid_map)
         {
             int count = meshData.liquidVerts.size() / 3;
             float xoffset = (float(tileX) - 32) * GRID_SIZE;
@@ -312,7 +312,7 @@ bool TerrainBuilder::loadMap(uint32 mapID, uint32 tileX, uint32 tileY, MeshData&
             uint8 liquidType = MAP_LIQUID_TYPE_NO_WATER;
 
             // if there is no liquid, don't use liquid
-            if (!liquid_type || !meshData.liquidVerts.size() || !ltriangles.size())
+            if (!meshData.liquidVerts.size() || !ltriangles.size())
                 useLiquid = false;
             else
             {
@@ -826,13 +826,13 @@ void TerrainBuilder::loadOffMeshConnections(uint32 mapID, uint32 tileX, uint32 t
     while (fgets(buf, 512, fp))
     {
         float p0[3], p1[3];
-        int mid, tx, ty;
+        uint32 mid, tx, ty;
         float size;
         if (10 != sscanf(buf, "%d %d,%d (%f %f %f) (%f %f %f) %f", &mid, &tx, &ty,
                          &p0[0], &p0[1], &p0[2], &p1[0], &p1[1], &p1[2], &size))
             continue;
 
-        if (mapID == mid, tileX == tx, tileY == ty)
+        if (mapID == mid && tileX == tx && tileY == ty)
         {
             meshData.offMeshConnections.append(p0[1]);
             meshData.offMeshConnections.append(p0[2]);

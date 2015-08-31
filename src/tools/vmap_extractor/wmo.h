@@ -53,13 +53,11 @@ class WMORoot
         float bbcorn2[3];
 
         WMORoot(std::string& filename);
-        ~WMORoot();
 
         bool open();
         bool ConvertToVMAPRootWmo(FILE* output);
     private:
         std::string filename;
-        char outfilename;
 };
 
 struct WMOLiquidHeader
@@ -137,4 +135,3 @@ class WMOInstance
 };
 
 #endif
-

@@ -464,7 +464,10 @@ Player::~Player()
     delete PlayerTalkClass;
 
     if (m_transport)
+    {
         m_transport->RemovePassenger(this);
+        m_transport = NULL;
+    }
 
     for (size_t x = 0; x < ItemSetEff.size(); x++)
         delete ItemSetEff[x];

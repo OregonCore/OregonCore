@@ -30,7 +30,6 @@ include_directories(
   ${MYSQL_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}/dep/libmpq
   ${CMAKE_SOURCE_DIR}/dep/zlib
-  ${CMAKE_SOURCE_DIR}/dep/acelite
   ${CMAKE_SOURCE_DIR}/dep/g3dlite/include
   ${CMAKE_SOURCE_DIR}/dep/recastnavigation/Recast
   ${CMAKE_SOURCE_DIR}/dep/recastnavigation/Detour
@@ -45,7 +44,6 @@ add_executable(movements_extractor
 )
 
 target_link_libraries(movements_extractor
-  ${MYSQL_LIBRARY}
   ${ACE_LIBRARY}
   ${BZIP2_LIBRARIES}
   ${ZLIB_LIBRARIES}

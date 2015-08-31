@@ -48,6 +48,7 @@ class DBCFile
                 std::string message;
         };
 
+    //
         class NotFound: public Exception
         {
             public:
@@ -110,22 +111,17 @@ class DBCFile
             public:
                 Iterator(DBCFile& file, unsigned char* offset):
                     record(file, offset) {}
-                // Advance (prefix only)
-                Iterator& operator++()
-                {
+        /// Advance (prefix only)
+        Iterator & operator++() {
                     record.offset += record.file.recordSize;
                     return *this;
                 }
-                // Return address of current instance
-                Record const& operator*() const
-                {
-                    return record;
-                }
-                const Record* operator->() const
-                {
+        /// Return address of current instance
+        Record const & operator*() const { return record; }
+        const Record* operator->() const {
                     return &record;
                 }
-                // Comparison
+        /// Comparison
                 bool operator==(const Iterator& b) const
                 {
                     return record.offset == b.record.offset;
@@ -140,19 +136,13 @@ class DBCFile
 
         // Get record by id
         Record getRecord(size_t id);
-        // Get begin iterator over records
+    /// Get begin iterator over records
         Iterator begin();
-        // Get begin iterator over records
+    /// Get begin iterator over records
         Iterator end();
-        // Trivial
-        size_t getRecordCount() const
-        {
-            return recordCount;
-        }
-        size_t getFieldCount() const
-        {
-            return fieldCount;
-        }
+    /// Trivial
+    size_t getRecordCount() const { return recordCount;}
+    size_t getFieldCount() const { return fieldCount; }
 
     private:
         std::string filename;
@@ -165,4 +155,3 @@ class DBCFile
 };
 
 #endif
-

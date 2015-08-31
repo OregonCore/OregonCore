@@ -314,6 +314,20 @@ struct FactionTemplateEntry
     }
 };
 
+struct GameObjectDisplayInfoEntry
+{
+    uint32      Displayid;                                  // 0        m_ID
+    char* filename;                                      // 1
+    //uint32  unk1[10];   //2-11
+    float   minX;
+    float   minY;
+    float   minZ;
+    float   maxX;
+    float   maxY;
+    float   maxZ;
+    //uint32  transport;  //18
+};
+
 struct GemPropertiesEntry
 {
     uint32      ID;
@@ -432,6 +446,15 @@ struct ItemSetEntry
     uint32    items_to_triggerspell[8];                     // 43-50
     uint32    required_skill_id;                            // 51
     uint32    required_skill_value;                         // 52
+};
+
+struct LiquidTypeEntry
+{
+    uint32 Id;
+    //char*  Name;
+    //uint32 Flags;
+    uint32 Type;
+    uint32 SpellId;
 };
 
 struct LockEntry

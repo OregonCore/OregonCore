@@ -33,13 +33,13 @@ MapBuilder::MapBuilder(float maxWalkableAngle, bool skipLiquid,
                        bool debugOutput, bool bigBaseUnit, const char* offMeshFilePath) :
     m_terrainBuilder(NULL),
     m_debugOutput        (debugOutput),
+    m_offMeshFilePath    (offMeshFilePath),
     m_skipContinents     (skipContinents),
     m_skipJunkMaps       (skipJunkMaps),
     m_skipBattlegrounds  (skipBattlegrounds),
     m_maxWalkableAngle   (maxWalkableAngle),
     m_bigBaseUnit        (bigBaseUnit),
-    m_rcContext          (NULL),
-    m_offMeshFilePath    (offMeshFilePath)
+    m_rcContext          (NULL)
 {
     m_terrainBuilder = new TerrainBuilder(skipLiquid);
 
@@ -390,6 +390,9 @@ void MapBuilder::buildNavMesh(uint32 mapID, dtNavMesh*& navMesh)
     int tileBits = STATIC_TILE_BITS;
     int polyBits = STATIC_POLY_BITS;
 
+    (void)(tileBits); // unused, kept for some reason
+    (void)(polyBits); // unused, kept for some reason
+
     int maxTiles = tiles->size();
     int maxPolysPerTile = 1 << polyBits;
 
@@ -622,18 +625,7 @@ void MapBuilder::buildMoveMapTile(uint32 mapID, uint32 tileX, uint32 tileY,
 
     // merge per tile poly and detail meshes
     rcPolyMesh** pmmerge = new rcPolyMesh*[TILES_PER_MAP * TILES_PER_MAP];
-    if (!pmmerge)
-    {
-        printf("%s alloc pmmerge FAILED!          \r", tileString);
-        return;
-    }
-
     rcPolyMeshDetail** dmmerge = new rcPolyMeshDetail*[TILES_PER_MAP * TILES_PER_MAP];
-    if (!dmmerge)
-    {
-        printf("%s alloc dmmerge FAILED!          \r", tileString);
-        return;
-    }
 
     int nmerge = 0;
     for (int y = 0; y < TILES_PER_MAP; ++y)
@@ -654,6 +646,9 @@ void MapBuilder::buildMoveMapTile(uint32 mapID, uint32 tileX, uint32 tileY,
     if (!iv.polyMesh)
     {
         printf("%s alloc iv.polyMesh FAILED!          \r", tileString);
+        delete [] pmmerge;
+        delete [] dmmerge;
+        delete [] tiles;
         return;
     }
     rcMergePolyMeshes(m_rcContext, pmmerge, nmerge, *iv.polyMesh);
@@ -662,6 +657,9 @@ void MapBuilder::buildMoveMapTile(uint32 mapID, uint32 tileX, uint32 tileY,
     if (!iv.polyMeshDetail)
     {
         printf("%s alloc m_dmesh FAILED!          \r", tileString);
+        delete [] pmmerge;
+        delete [] dmmerge;
+        delete [] tiles;
         return;
     }
     rcMergePolyMeshDetails(m_rcContext, dmmerge, nmerge, *iv.polyMeshDetail);
