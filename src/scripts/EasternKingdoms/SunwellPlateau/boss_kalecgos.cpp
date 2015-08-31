@@ -567,8 +567,6 @@ struct boss_sathrovarrAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!me->HasAura(AURA_SPECTRAL_INVISIBILITY, 0))
-            me->CastSpell(me, AURA_SPECTRAL_INVISIBILITY, true);
         if (!UpdateVictim())
             return;
 
@@ -703,8 +701,6 @@ struct boss_kalecAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!me->HasAura(AURA_SPECTRAL_INVISIBILITY, 0))
-            me->CastSpell(me, AURA_SPECTRAL_INVISIBILITY, true);
         if (!UpdateVictim())
             return;
 
