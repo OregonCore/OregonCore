@@ -44,7 +44,6 @@ add_executable(movements_extractor
 )
 
 target_link_libraries(movements_extractor
-  ${MYSQL_LIBRARY}
   ${ACE_LIBRARY}
   ${BZIP2_LIBRARIES}
   ${ZLIB_LIBRARIES}
