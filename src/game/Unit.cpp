@@ -12815,9 +12815,6 @@ void Unit::UpdateObjectVisibility(bool forced)
         Oregon::AIRelocationNotifier notifier(*this);
         VisitNearbyObject(GetMap()->GetVisibilityDistance(), notifier);
     }
-
-    if (GetTypeId() == TYPEID_UNIT)
-        ToCreature()->UpdateMovementFlags(true);
 }
 
 void CharmInfo::SetIsCommandAttack(bool val)
@@ -12905,6 +12902,9 @@ void Unit::UpdateSplineMovement(uint32 t_diff)
             loc.orientation = GetOrientation();
         
         SetPosition(loc.x, loc.y, loc.z, loc.orientation);
+        
+        if (GetTypeId() == TYPEID_UNIT)
+            ToCreature()->UpdateMovementFlags(true);
     }
 }
 
