@@ -3704,7 +3704,12 @@ bool Unit::RemoveNoStackAurasDueToAura(Aura* Aur)
             if (!sSpellMgr.IsNoStackSpellDueToSpell(spellId, i_spellId, sameCaster))
                 continue;
 
-            //some spells should be not removed by lower rank of them (totem, paladin aura)
+            int32 aur1Rank = Aur->GetModifierValue();
+            int32 aur2Rank = (*i).second->GetModifierValue();
+            // Check if effect is "better"
+            if (!sameCaster && (abs(aur1Rank)-abs(aur2Rank)) < 0)
+                return false;
+            // Some spells should be not removed by lower rank of them (totem, paladin aura)
             if (!sameCaster && spellProto->DurationIndex == 21 && sSpellMgr.IsRankSpellDueToSpell(spellProto, i_spellId))
                 if (spellProto->Effect[effIndex] == SPELL_EFFECT_APPLY_AREA_AURA_PARTY)
                     if (CompareAuraRanks(spellId, effIndex, i_spellId, i_effIndex) < 0)
