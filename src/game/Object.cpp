@@ -1766,7 +1766,7 @@ void WorldObject::AddObjectToRemoveList()
     map->AddObjectToRemoveList(this);
 }
 
-TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropertiesEntry const* properties, uint32 duration, Unit* summoner, SpellEntry const* spellInfo, TempSummonType spwType)
+TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropertiesEntry const* properties, uint32 duration, Unit* summoner, uint32 spellId, TempSummonType spwType)
 {
     uint32 mask = UNIT_MASK_SUMMON;
     if (properties)
@@ -1839,22 +1839,7 @@ TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropert
         return NULL;
     }
 
-    if (mask == UNIT_MASK_TOTEM && spellInfo)
-    {
-        if (Player* pPlayer = summoner->ToPlayer())
-        {
-            if (properties->Slot >= SUMMON_SLOT_TOTEM && properties->Slot < MAX_TOTEM_SLOT)
-            {
-                WorldPacket data(SMSG_TOTEM_CREATED, 1 + 8 + 4 + 4);
-                data << uint8(properties->Slot - 1);
-                data << uint64(pPlayer->GetGUID());
-                data << uint32(duration);
-                data << uint32(spellInfo->Id);
-                pPlayer->SendDirectMessage(&data);
-            }
-        }
-    }
-
+    summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, spellId);
     summon->SetHomePosition(pos);
     // CreatureAI::Reset was already called, check if TempSummonType changed, if
     // so, don't touch it or we may mess up the script. (Example Script: Inferno)

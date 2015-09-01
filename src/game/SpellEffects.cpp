@@ -3624,7 +3624,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
             break;
         case SUMMON_TYPE_TOTEM:
             {
-                summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
+                summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster, m_spellInfo->Id);
                 if (!summon || !summon->IsTotem())
                     return;
 

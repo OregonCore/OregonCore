@@ -51,31 +51,43 @@ void Totem::Update(uint32 time)
 
 void Totem::InitStats(uint32 duration)
 {
-    Minion::InitStats(duration);
-
-    CreatureInfo const* cinfo = GetCreatureTemplate();
-    if (m_owner->GetTypeId() == TYPEID_PLAYER && cinfo)
+    if (m_owner->GetTypeId() == TYPEID_PLAYER
+        && m_Properties->Slot >= SUMMON_SLOT_TOTEM
+        && m_Properties->Slot < MAX_TOTEM_SLOT)
     {
-        uint32 modelid = 0;
-        if (m_owner->ToPlayer()->GetTeam() == HORDE)
+        WorldPacket data(SMSG_TOTEM_CREATED, 1 + 8 + 4 + 4);
+        data << uint8(m_Properties->Slot - 1);
+        data << uint64(GetGUID());
+        data << uint32(duration);
+        data << uint32(GetUInt32Value(UNIT_CREATED_BY_SPELL));
+        m_owner->ToPlayer()->SendDirectMessage(&data);
+
+        CreatureInfo const* cinfo = GetCreatureTemplate();
+        if (cinfo)
         {
-            if (cinfo->Modelid_H1)
-                modelid = cinfo->Modelid_H1;
-            else if (cinfo->Modelid_H2)
-                modelid = cinfo->Modelid_H2;
-        }
-        else
-        {
-            if (cinfo->Modelid_A1)
-                modelid = cinfo->Modelid_A1;
-            else if (cinfo->Modelid_A2)
-                modelid = cinfo->Modelid_A2;
-        }
-        if (modelid)
-            SetDisplayId(modelid);
-        else
-            sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.", GetEntry(), m_owner->ToPlayer()->GetTeam());
+            uint32 modelid = 0;
+            if (m_owner->ToPlayer()->GetTeam() == HORDE)
+            {
+                if (cinfo->Modelid_H1)
+                    modelid = cinfo->Modelid_H1;
+                else if (cinfo->Modelid_H2)
+                    modelid = cinfo->Modelid_H2;
+            }
+            else
+            {
+                if (cinfo->Modelid_A1)
+                    modelid = cinfo->Modelid_A1;
+                else if (cinfo->Modelid_A2)
+                    modelid = cinfo->Modelid_A2;
+            }
+            if (modelid)
+                SetDisplayId(modelid);
+            else
+                sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.", GetEntry(), m_owner->ToPlayer()->GetTeam());
+         }
     }
+
+    Minion::InitStats(duration);
 
     // Get spell casted by totem
     SpellEntry const* totemSpell = sSpellStore.LookupEntry(GetSpell());
