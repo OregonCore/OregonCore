@@ -104,7 +104,7 @@ void
 VisibleChangesNotifier::Visit(DynamicObjectMapType& m)
 {
     for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-        if (IS_PLAYER_GUID(iter->getSource()->GetCasterGUID()))
+        if (iter->getSource()->GetTypeId() == TYPEID_PLAYER) // better check to see if the target it a player.
             if (Player* caster = (Player*)iter->getSource()->GetCaster())
                 if (caster->m_seer == iter->getSource())
                     caster->UpdateVisibilityOf(&i_object);
