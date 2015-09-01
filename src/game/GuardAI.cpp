@@ -93,7 +93,7 @@ void GuardAI::EnterEvadeMode()
 void GuardAI::UpdateAI(const uint32 /*diff*/)
 {
     // update i_victimGuid if me->getVictim() != 0 and changed
-    if (!UpdateVictim())
+    if (!UpdateVictim() || !me->getVictim())
         return;
 
     i_victimGuid = me->getVictim()->GetGUID();
