@@ -2331,6 +2331,14 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     m_target->ToPlayer()->StopCastingCharm();
                 return;
             }
+        case 29266:
+            {
+                m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
+                m_target->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
+                m_target->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+                m_target->ClearUnitState(UNIT_STATE_DIED);
+                return;
+            }
         }
     }
 
