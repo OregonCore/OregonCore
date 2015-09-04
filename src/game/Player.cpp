@@ -5687,8 +5687,6 @@ bool Player::SetPosition(float x, float y, float z, float orientation, bool tele
     {
         if (teleport || old_x != x || old_y != y || old_z != z)
             RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_MOVE | AURA_INTERRUPT_FLAG_TURNING);
-        else
-            RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TURNING);
 
         // move and update visible state if need
         m->PlayerRelocation(this, x, y, z, orientation);
