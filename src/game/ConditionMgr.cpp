@@ -1135,7 +1135,7 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 }
             }
             break;
-        case CONDITION_SOURCE_TYPE_UNUSED_18:
+        case CONDITION_SOURCE_TYPE_SPELL_CLICK_EVENT:
             sLog.outErrorDb("Found SourceTypeOrReferenceId = CONDITION_SOURCE_TYPE_UNUSED_18 in `condition` table - ignoring");
             return false;
         case CONDITION_SOURCE_TYPE_GOSSIP_MENU:

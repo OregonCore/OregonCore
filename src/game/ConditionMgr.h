@@ -116,14 +116,15 @@ enum ConditionSourceType
     CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET            = 13,
     CONDITION_SOURCE_TYPE_GOSSIP_MENU                    = 14,
     CONDITION_SOURCE_TYPE_GOSSIP_MENU_OPTION             = 15,
-    CONDITION_SOURCE_TYPE_CREATURE_TEMPLATE_VEHICLE      = 16,
+    CONDITION_SOURCE_TYPE_CREATURE_TEMPLATE_VEHICLE      = 16, // Not used in 2.4.3
     CONDITION_SOURCE_TYPE_SPELL                          = 17,
-    CONDITION_SOURCE_TYPE_UNUSED_18                      = 18,
+    CONDITION_SOURCE_TYPE_SPELL_CLICK_EVENT              = 18, // Not used in 2.4.3
     CONDITION_SOURCE_TYPE_QUEST_ACCEPT                   = 19,
     CONDITION_SOURCE_TYPE_QUEST_SHOW_MARK                = 20,
-    CONDITION_SOURCE_TYPE_SMART_EVENT                    = 21,
+    CONDITION_SOURCE_TYPE_VEHICLE_SPELL                  = 21, // Not used in 2.4.3
+    CONDITION_SOURCE_TYPE_SMART_EVENT                    = 22,
 
-    CONDITION_SOURCE_TYPE_MAX                            = 22  //MAX
+    CONDITION_SOURCE_TYPE_MAX                            = 23  //MAX
 };
 
 enum ComparisionType
