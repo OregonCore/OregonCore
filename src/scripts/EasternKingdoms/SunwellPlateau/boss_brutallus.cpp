@@ -72,12 +72,66 @@ enum Spells
     SPELL_SUMMON_DEATH_CLOUD           =   45884
 };
 
+struct madrigosaAI : public ScriptedAI
+{
+    madrigosaAI(Creature* c) : ScriptedAI(c)
+    {
+        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+    }
+
+    ScriptedInstance* pInstance;
+
+    uint32 IntroPhase;
+
+    void Reset()
+    {
+        IntroPhase = 0;
+    }
+
+    void DamageTaken(Unit* done_by, uint32& damage)
+    {
+        if (done_by->GetEntry() == BOSS_BRUTALLUS)
+            damage = 0;
+    }
+
+    void MoveInLineOfSight(Unit* unit)
+    {
+        if (unit->GetEntry() == BOSS_BRUTALLUS)
+            return;
+
+        CreatureAI::MoveInLineOfSight(unit);
+    }
+
+    void AttackStart(Unit* unit)
+    {
+        if (IntroPhase >= 5 && IntroPhase < 13)
+            return;
+
+        UnitAI::AttackStart(unit);
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (IntroPhase >= 5 && IntroPhase < 13)
+            return;
+
+        if (!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_madrigosa(Creature* creature)
+{
+    return new madrigosaAI(creature);
+}
+
 struct boss_brutallusAI : public ScriptedAI
 {
     boss_brutallusAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
-        Intro = true;
         if (pInstance && pInstance->GetData(DATA_BRUTALLUS_EVENT) == DONE && pInstance->GetData(DATA_FELMYST_EVENT) != DONE)
         {
             float x, y, z;
@@ -100,7 +154,7 @@ struct boss_brutallusAI : public ScriptedAI
     uint32 IntroFlyTimer;
 
     bool Intro;
-    bool IsIntro;
+    bool Intro_Done;
     bool Enraged;
 
     void Reset()
@@ -115,7 +169,8 @@ struct boss_brutallusAI : public ScriptedAI
         IntroFrostBoltTimer = 0;
         IntroAttackTimer = 0;
 
-        IsIntro = false;
+        Intro = false;
+        Intro_Done = false;
         Enraged = false;
 
         DoCast(me, SPELL_DUAL_WIELD, true);
@@ -126,16 +181,16 @@ struct boss_brutallusAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        if (!Intro)
+        if (Intro_Done)
             DoScriptText(YELL_AGGRO, me);
 
-        if (pInstance && !IsIntro)
+        if (pInstance && Intro_Done)
             pInstance->SetData(DATA_BRUTALLUS_EVENT, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* victim)
     {
-        if (!Intro)
+        if (Intro_Done)
             DoScriptText(RAND(YELL_KILL1, YELL_KILL2, YELL_KILL3), me);
     }
 
@@ -158,21 +213,11 @@ struct boss_brutallusAI : public ScriptedAI
 
     void StartIntro()
     {
-        if (!Intro || IsIntro)
-            return;
-
-        if (me->isDead())
+        if (!Intro)
             return;
 
         Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
-        if (Madrigosa)
-        {
-            Madrigosa->setActive(true);
-            IsIntro = true;
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-
-        }
-        else
+        if (!Madrigosa)
         {
             //Madrigosa not found, end intro
             EndIntro();
@@ -181,19 +226,11 @@ struct boss_brutallusAI : public ScriptedAI
 
     void EndIntro()
     {
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         Intro = false;
-        IsIntro = false;
+        Intro_Done = true;
 
         if (pInstance)
             pInstance->SetData(DATA_BRUTALLUS_EVENT, SPECIAL);
-    }
-
-    void AttackStart(Unit* pWho)
-    {
-        if (!pWho || Intro || IsIntro)
-            return;
-        ScriptedAI::AttackStart(pWho);
     }
 
     void DoIntro()
@@ -206,6 +243,8 @@ struct boss_brutallusAI : public ScriptedAI
         switch (IntroPhase)
         {
         case 0:
+            me->SetFacingToObject(Madrigosa);
+            Madrigosa->SetFacingToObject(me);
             IntroPhaseTimer = 1000;
             break;
         case 1:
@@ -214,13 +253,10 @@ struct boss_brutallusAI : public ScriptedAI
             break;
         case 2:
             DoScriptText(YELL_MADR_INTRO, Madrigosa, me);
-            Madrigosa->SetReactState(REACT_PASSIVE);
             IntroPhaseTimer = 7000;
             break;
         case 3:
             DoScriptText(YELL_INTRO, me, Madrigosa);
-            me->SetInFront(Madrigosa);
-            Madrigosa->SetInFront(me);
             IntroPhaseTimer = 4000;
             break;
         case 4:
@@ -281,21 +317,17 @@ struct boss_brutallusAI : public ScriptedAI
             //me->GetMotionMaster()->MovePath(30000, false);
             me->GetPosition(x, y, z);
             ground_Z = me->GetMap()->GetHeight(x, y, MAX_HEIGHT, true);
-            me->GetMotionMaster()->MoveFall(ground_Z, 1);
             me->GetMotionMaster()->MovePoint(2, x + 6, y + 15, ground_Z);
             IntroPhaseTimer = 5000;
             break;
         case 13:
-            me->DealDamage(Madrigosa, Madrigosa->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, true);
+            me->Kill(Madrigosa);
             DoScriptText(YELL_MADR_DEATH, Madrigosa);
-            me->SetHealth(me->GetMaxHealth());
-            me->AttackStop();
             me->SetSpeed(MOVE_RUN, 2.0f, true);
             IntroPhaseTimer = 7000;
             break;
         case 14:
             DoScriptText(YELL_INTRO_KILL_MADRIGOSA, me);
-            me->StopMoving();
             me->SetSpeed(MOVE_RUN, 1.0f, true);
             Madrigosa->setDeathState(CORPSE);
             IntroPhaseTimer = 8000;
@@ -312,42 +344,64 @@ struct boss_brutallusAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
+        if (me->isDead())
+            return;
+
+        if (who->GetTypeId() != TYPEID_PLAYER || !me->IsWithinDist(who, 70))
+            return;
+
         if (!who->isTargetableForAttack() || !me->IsHostileTo(who))
             return;
 
-        if ((Intro && !IsIntro) && (who->GetTypeId() == TYPEID_PLAYER && me->IsWithinDist(who, 70)))
+        if (!Intro_Done)
+        {
+            if (Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
+            {
+                if (!Madrigosa->isDead())
+                    Intro = true;
+                else
+                    Intro_Done = true;
+            }
+        }
+
+        if (Intro)
             StartIntro();
 
-        if (!Intro)
+        if (Intro_Done)
             ScriptedAI::MoveInLineOfSight(who);
+    }
+
+    void AttackStart(Unit* unit)
+    {
+        if (unit->GetEntry() == NPC_MADRIGOSA)
+            if (IntroPhase >= 5 && IntroPhase < 13)
+                return;
+
+        if (unit->GetTypeId() == TYPEID_PLAYER && !Intro_Done)
+            return;
+
+        UnitAI::AttackStart(unit);
+    }
+
+    void DamageTaken(Unit* done_by, uint32& damage)
+    {
+        if (!Intro_Done)
+            damage = 0;
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (IsIntro)
+        if (Intro)
         {
             if (IntroPhaseTimer > diff)
                 IntroPhaseTimer = IntroPhaseTimer - diff;
             else
             {
                 ++IntroPhase;
-                DoIntro();
-            }
+                if (Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
+                    CAST_AI(madrigosaAI, Madrigosa->AI())->IntroPhase = IntroPhase;
 
-            if (IntroPhase == 3 + 1 )
-            {
-                if (IntroAttackTimer < diff)
-                {
-                    if (Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
-                    {
-                        me->Attack(Madrigosa, true);
-                        me->AttackerStateUpdate(Madrigosa, BASE_ATTACK, false);
-                        Madrigosa->Attack(me, true);
-                        Madrigosa->AttackerStateUpdate(me, BASE_ATTACK, false);
-                        IntroAttackTimer = 1000;
-                    }
-                }
-                else IntroAttackTimer -= diff;
+                DoIntro();
             }
 
             if (IntroPhase == 6 + 1)
@@ -392,10 +446,14 @@ struct boss_brutallusAI : public ScriptedAI
             if (!UpdateVictim())
                 return;
 
+            if (IntroPhase >= 5 && IntroPhase < 13)
+                return;
+
             DoMeleeAttackIfReady();
+            return;
         }
 
-        if (!UpdateVictim() || IsIntro)
+        if (!UpdateVictim())
             return;
 
         if (SlashTimer <= diff)
@@ -503,6 +561,11 @@ void AddSC_boss_brutallus()
     newscript = new Script;
     newscript->Name = "boss_brutallus";
     newscript->GetAI = &GetAI_boss_brutallus;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "madrigosa";
+    newscript->GetAI = &GetAI_madrigosa;
     newscript->RegisterSelf();
 
     newscript = new Script;

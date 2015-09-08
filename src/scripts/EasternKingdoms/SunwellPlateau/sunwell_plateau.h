@@ -113,6 +113,7 @@ enum Creatures
     MOB_KALECGOS                                  = 24850,
     MOB_KALEC                                     = 24891,
     MOB_SATHROVARR                                = 24892,
+    BOSS_BRUTALLUS                                = 24882,
 
     MOB_DEAD                                      = 25268,
     MOB_FLIGHT_LEFT                               = 25357,
