@@ -1975,7 +1975,7 @@ class Unit : public WorldObject
 
         static bool IsDamageReducedByArmor(SpellSchoolMask damageSchoolMask, SpellEntry const* spellInfo = NULL, uint8 effIndex = MAX_SPELL_EFFECTS);
         uint32 CalcArmorReducedDamage(Unit* pVictim, const uint32 damage);
-        void CalcAbsorbResist(Unit* pVictim, SpellSchoolMask schoolMask, DamageEffectType damagetype, const uint32 damage, uint32* absorb, uint32* resist);
+        void CalcAbsorbResist(Unit* pVictim, SpellSchoolMask schoolMask, DamageEffectType damagetype, const uint32 damage, uint32* absorb, uint32* resist, SpellEntry const* spellInfo = NULL);
 
         void  UpdateSpeed(UnitMoveType mtype, bool forced, float ratio = 1.0f);
         float GetSpeed(UnitMoveType mtype) const;

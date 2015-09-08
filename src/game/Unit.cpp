@@ -1228,7 +1228,7 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
     // Calculate absorb resist
     if (damage > 0)
     {
-        CalcAbsorbResist(pVictim, damageSchoolMask, SPELL_DIRECT_DAMAGE, damage, &damageInfo->absorb, &damageInfo->resist);
+        CalcAbsorbResist(pVictim, damageSchoolMask, SPELL_DIRECT_DAMAGE, damage, &damageInfo->absorb, &damageInfo->resist, spellInfo);
         damage -= damageInfo->absorb + damageInfo->resist;
     }
     else
@@ -1701,13 +1701,13 @@ uint32 Unit::CalcArmorReducedDamage(Unit* pVictim, const uint32 damage)
     return (newdamage > 1) ? newdamage : 1;
 }
 
-void Unit::CalcAbsorbResist(Unit* pVictim, SpellSchoolMask schoolMask, DamageEffectType damagetype, const uint32 damage, uint32* absorb, uint32* resist)
+void Unit::CalcAbsorbResist(Unit* pVictim, SpellSchoolMask schoolMask, DamageEffectType damagetype, const uint32 damage, uint32* absorb, uint32* resist, SpellEntry const* spellInfo /*= NULL*/)
 {
     if (!pVictim || !pVictim->IsAlive() || !damage)
         return;
 
     // Magic damage, check for resists
-    if ((schoolMask & (SPELL_SCHOOL_MASK_NORMAL | SPELL_SCHOOL_MASK_HOLY)) == 0)
+    if ((schoolMask & (SPELL_SCHOOL_MASK_NORMAL | SPELL_SCHOOL_MASK_HOLY)) == 0 && (!spellInfo || (spellInfo->AttributesEx4 & SPELL_ATTR_EX4_IGNORE_RESISTANCES) == 0))
     {
         // Get base victim resistance for school
         float tmpvalue2 = (float)pVictim->GetResistance(GetFirstSchoolInMask(schoolMask));

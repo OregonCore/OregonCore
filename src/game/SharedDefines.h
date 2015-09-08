@@ -544,7 +544,7 @@ enum SpellAttributesEx3
 
 enum SpellAttributesEx4
 {
-    SPELL_ATTR_EX4_UNK0                      = 0x00000001,            // 0
+    SPELL_ATTR_EX4_IGNORE_RESISTANCES        = 0x00000001,            // 0 spells with this attribute will completely ignore the target's resistance (these spells can't be resisted)
     SPELL_ATTR_EX4_UNK1                      = 0x00000002,            // 1 proc on finishing move? used by Relentless Strike, Revealed Flow, Rogue Tier 6 Trinket
     SPELL_ATTR_EX4_EXPIRE_OFFLINE            = 0x00000004,            // 2 Aura continues to expire while logged out
     SPELL_ATTR_EX4_CANT_PROC_FROM_SELFCAST   = 0x00000008,            // 3
