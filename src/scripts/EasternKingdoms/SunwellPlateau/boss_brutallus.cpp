@@ -72,9 +72,9 @@ enum Spells
     SPELL_SUMMON_DEATH_CLOUD           =   45884
 };
 
-struct madrigosaAI : public ScriptedAI
+struct npc_madrigosaAI : public ScriptedAI
 {
-    madrigosaAI(Creature* c) : ScriptedAI(c)
+    npc_madrigosaAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = ((ScriptedInstance*)c->GetInstanceData());
     }
@@ -122,9 +122,9 @@ struct madrigosaAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_madrigosa(Creature* creature)
+CreatureAI* GetAI_npc_madrigosa(Creature* creature)
 {
-    return new madrigosaAI(creature);
+    return new npc_madrigosaAI(creature);
 }
 
 struct boss_brutallusAI : public ScriptedAI
@@ -564,8 +564,8 @@ void AddSC_boss_brutallus()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "madrigosa";
-    newscript->GetAI = &GetAI_madrigosa;
+    newscript->Name = "npc_madrigosa";
+    newscript->GetAI = &GetAI_npc_madrigosa;
     newscript->RegisterSelf();
 
     newscript = new Script;
