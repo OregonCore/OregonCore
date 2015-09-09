@@ -399,7 +399,7 @@ struct boss_brutallusAI : public ScriptedAI
             {
                 ++IntroPhase;
                 if (Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
-                    CAST_AI(madrigosaAI, Madrigosa->AI())->IntroPhase = IntroPhase;
+                    CAST_AI(npc_madrigosaAI, Madrigosa->AI())->IntroPhase = IntroPhase;
 
                 DoIntro();
             }
