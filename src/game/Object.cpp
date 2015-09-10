@@ -2201,15 +2201,18 @@ void WorldObject::MovePosition(Position& pos, float dist, float angle)
 void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float angle)
 {
     angle += m_orientation;
-    float destx, desty, destz, ground, floor;
-
-
+    float destx, desty, destz;
     destx = pos.m_positionX + dist * cos(angle);
     desty = pos.m_positionY + dist * sin(angle);
-    ground = GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
-    floor = GetMap()->GetHeight(destx, desty, pos.m_positionZ, true);
-    destz = fabs(ground - pos.m_positionZ) <= fabs(floor - pos.m_positionZ) ? ground : floor;
 
+    // Prevent invalid coordinates here, position is unchanged
+    if (!Oregon::IsValidMapCoord(destx, desty))
+    {
+        sLog.outFatal("WorldObject::MovePositionToFirstCollision invalid coordinates X: %f and Y: %f were passed!", destx, desty);
+        return;
+    }
+
+    destz = GetPositionZTarget(pos, destx, desty);
     bool col = VMAP::VMapFactory::createOrGetVMapManager()->getObjectHitPos(GetMapId(), pos.m_positionX, pos.m_positionY, pos.m_positionZ + 0.5f, destx, desty, destz + 0.5f, destx, desty, destz, -0.5f);
 
     // collision occured
@@ -2222,7 +2225,7 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
     }
 
     // check dynamic collision
-    col = GetMap()->getObjectHitPos(GetPhaseMask(), pos.m_positionX, pos.m_positionY, pos.m_positionZ+0.5f, destx, desty, destz+0.5f, destx, desty, destz, -0.5f);
+    col = GetMap()->getObjectHitPos(GetPhaseMask(), pos.m_positionX, pos.m_positionY, pos.m_positionZ + 0.5f, destx, desty, destz + 0.5f, destx, desty, destz, -0.5f);
     
     // Collided with a gameobject
     if (col)
@@ -2234,16 +2237,14 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
 
     float step = dist / 10.0f;
 
-    for (int j = 0; j < 10; j++)
+    for (uint8 j = 0; j < 10; ++j)
     {
         // do not allow too big z changes
-        if (fabs(pos.m_positionZ - destz) > 6)
+        if (fabs(pos.m_positionZ - destz) > 6.0f)
         {
             destx -= step * cos(angle);
             desty -= step * sin(angle);
-            ground = GetMap()->GetHeight(GetPhaseMask(), destx, desty, MAX_HEIGHT, true);
-            floor = GetMap()->GetHeight(GetPhaseMask(), destx, desty, pos.m_positionZ, true);
-            destz = fabs(ground - pos.m_positionZ) <= fabs(floor - pos.m_positionZ) ? ground : floor;
+            destz = GetPositionZTarget(pos, destx, desty);
         }
         // we have correct destz now
         else
@@ -2255,7 +2256,7 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
 
     Oregon::NormalizeMapCoord(pos.m_positionX);
     Oregon::NormalizeMapCoord(pos.m_positionY);
-    UpdateGroundPositionZ(pos.m_positionX, pos.m_positionY, pos.m_positionZ);
+    pos.m_positionZ = GetPositionZTarget(pos, destx, desty);
     pos.m_orientation = m_orientation;
 }
 
