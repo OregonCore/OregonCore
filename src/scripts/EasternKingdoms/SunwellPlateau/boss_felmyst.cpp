@@ -148,7 +148,6 @@ struct boss_felmystAI : public ScriptedAI
     void EnterCombat(Unit* /*who*/)
     {
         events.ScheduleEvent(EVENT_BERSERK, 600000);
-        me->setActive(true);
         DoZoneInCombat();
         EnterPhase(PHASE_GROUND);
         DoCast(me, AURA_SUNWELL_RADIANCE, true);
@@ -254,7 +253,6 @@ struct boss_felmystAI : public ScriptedAI
             events.ScheduleEvent(EVENT_FLIGHT, 60000);
             break;
         case PHASE_FLIGHT:
-            me->SetLevitate(true);
             events.ScheduleEvent(EVENT_FLIGHT_SEQUENCE, 1000);
             uiFlightCount = 0;
             uiBreathCount = 0;
@@ -378,7 +376,6 @@ struct boss_felmystAI : public ScriptedAI
             }
             break;
         case 10:
-            me->SetLevitate(false);
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             EnterPhase(PHASE_GROUND);
             AttackStart(SelectTarget(SELECT_TARGET_TOPAGGRO));
@@ -396,10 +393,10 @@ struct boss_felmystAI : public ScriptedAI
             return;
         }
 
-        events.Update(diff);
-
         if (me->IsNonMeleeSpellCast(false))
             return;
+
+        events.Update(diff);
 
         if (phase == PHASE_GROUND)
         {

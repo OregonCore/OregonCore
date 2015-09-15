@@ -557,7 +557,6 @@ class EventMap
         */
         void ScheduleEvent(uint32 eventId, uint32 time, uint32 group = 0, uint8 phase = 0)
         {
-            time += _time;
             if (group && group <= 8)
                 eventId |= (1 << (group + 15));
 
