@@ -133,15 +133,13 @@ struct boss_felmystAI : public ScriptedAI
         phase = PHASE_NONE;
         events.Reset();
         uiFlightCount = 0;
-        me->SetLevitate(true);
         me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
         me->SetFloatValue(UNIT_FIELD_COMBATREACH, 10);
         DoScriptText(YELL_BIRTH, me);
         DespawnSummons(MOB_VAPOR_TRAIL);
-        me->setActive(false);
         KalecE = false;
         me->SetSpeed(MOVE_RUN, 1.0f, true);
-        me->GetMotionMaster()->MovePath(34000, false);
+        me->GetMotionMaster()->MovePath(34000, true);
 
         if (pInstance)
             pInstance->SetData(DATA_FELMYST_EVENT, NOT_STARTED);
