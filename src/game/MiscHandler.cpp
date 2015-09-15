@@ -251,10 +251,15 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
             continue;
 
         uint32 pzoneid;
-        if (hideInArena)
-            pzoneid = MapManager::Instance().GetZoneId(itr->second->GetBattleGroundEntryPoint().GetMapId(),
-            itr->second->GetBattleGroundEntryPoint().GetPositionX(), itr->second->GetBattleGroundEntryPoint().GetPositionY(),
-            itr->second->GetBattleGroundEntryPoint().GetPositionZ());
+        if (hideInArena && itr->second->InBattleGround())
+        {
+            if (itr->second->GetBattleGroundEntryPoint().GetMapId() == MAPID_INVALID)
+                pzoneid = 0; // unknown
+            else
+                pzoneid = MapManager::Instance().GetZoneId(itr->second->GetBattleGroundEntryPoint().GetMapId(),
+                    itr->second->GetBattleGroundEntryPoint().GetPositionX(), itr->second->GetBattleGroundEntryPoint().GetPositionY(),
+                    itr->second->GetBattleGroundEntryPoint().GetPositionZ());
+        }
         else
             pzoneid = itr->second->GetZoneId();
 
