@@ -1046,6 +1046,11 @@ struct boss_thaladred_the_darkenerAI : public advisorbase_ai
         advisorbase_ai::Reset();
     }
 
+	void EnterCombat(Unit* /*who*/)
+	{
+		DoScriptText(SAY_THALADRED_AGGRO, me);
+	}
+
     void Aggro(Unit* who)
     {
         if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
@@ -1120,6 +1125,11 @@ struct boss_lord_sanguinarAI : public advisorbase_ai
         Fear_Timer = 20000;
         advisorbase_ai::Reset();
     }
+
+	void EnterCombat(Unit* /*who*/)
+	{
+		DoScriptText(SAY_SANGUINAR_AGGRO, me);
+	}
 
     void Aggro(Unit* who)
     {
@@ -1311,6 +1321,11 @@ struct boss_master_engineer_telonicusAI : public advisorbase_ai
         if (m_pInstance && m_pInstance->GetData(DATA_KAELTHASEVENT) == 3)
             DoScriptText(SAY_TELONICUS_DEATH, me);
     }
+
+	void EnterCombat(Unit* /*who*/)
+	{
+		DoScriptText(SAY_TELONICUS_AGGRO, me);
+	}
 
     void Aggro(Unit* who)
     {

@@ -131,6 +131,7 @@ struct boss_alarAI : public ScriptedAI
             pInstance->SetData(DATA_ALAREVENT, IN_PROGRESS);
 
         me->SetLevitate(true); // after enterevademode will be set walk movement
+		me->SetCanFly(true);
         DoZoneInCombat();
         me->setActive(true);
     }

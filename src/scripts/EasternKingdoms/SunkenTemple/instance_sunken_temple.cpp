@@ -163,10 +163,13 @@ struct instance_sunken_temple : public ScriptedInstance
         case GO_ATALAI_STATUE6:
             if (s1 && s2 && s3 && s4 && s5 && !s6)
             {
-                if (GameObject* pAtalaiStatue6 = instance->GetGameObject(GOAtalaiStatue6))
-                    UseStatue(pAtalaiStatue6);
-                s6 = true;
-                State = 0;
+				if (GameObject* pAtalaiStatue6 = instance->GetGameObject(GOAtalaiStatue6))
+				{
+					UseStatue(pAtalaiStatue6);
+					UseLastStatue();
+					s6 = true;
+					State = 0;
+				}
             }
             break;
         }
@@ -177,20 +180,15 @@ struct instance_sunken_temple : public ScriptedInstance
         pGo->SummonGameObject(GO_ATALAI_LIGHT1, pGo->GetPositionX(), pGo->GetPositionY(), pGo->GetPositionZ(), 0, 0, 0, 0, 0, 0);
         pGo->SetUInt32Value(GAMEOBJECT_FLAGS, 4);
     }
-
-    /*
-    void UseLastStatue(GameObject* pGo)
-    {
-        AtalaiStatue1->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue1->GetPositionX(),AtalaiStatue1->GetPositionY(),AtalaiStatue1->GetPositionZ(),0,0,0,0,0,100000);
-        AtalaiStatue2->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue2->GetPositionX(),AtalaiStatue2->GetPositionY(),AtalaiStatue2->GetPositionZ(),0,0,0,0,0,100000);
-        AtalaiStatue3->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue3->GetPositionX(),AtalaiStatue3->GetPositionY(),AtalaiStatue3->GetPositionZ(),0,0,0,0,0,100000);
-        AtalaiStatue4->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue4->GetPositionX(),AtalaiStatue4->GetPositionY(),AtalaiStatue4->GetPositionZ(),0,0,0,0,0,100000);
-        AtalaiStatue5->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue5->GetPositionX(),AtalaiStatue5->GetPositionY(),AtalaiStatue5->GetPositionZ(),0,0,0,0,0,100000);
-        AtalaiStatue6->SummonGameObject(GO_ATALAI_LIGHT2,AtalaiStatue6->GetPositionX(),AtalaiStatue6->GetPositionY(),AtalaiStatue6->GetPositionZ(),0,0,0,0,0,100000);
-        pGo->SummonGameObject(148838,-488.997,96.61,-189.019,-1.52,0,0,0,0,100000);
+   
+    void UseLastStatue()
+    {	
+		if (GameObject* pAtalaiStatue6 = instance->GetGameObject(GOAtalaiStatue6))
+		{
+			pAtalaiStatue6->SummonGameObject(148838, -488.997, 96.61, -189.019, -1.52, 0, 0, 0, 0, 100000);
+		}
     }
-    */
-
+    
     void SetData(uint32 type, uint32 data)
     {
         if (type == EVENT_STATE)
