@@ -461,7 +461,7 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
 void Creature::UpdateMovementFlags(bool packetOnly)
 {
-    if (IsControlledByPlayer())
+    if (IsControlledByPlayer() || GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_DYNAMIC_MOVEMENT_FLAG)
         return;
 
     CreatureInfo const* cInfo = GetCreatureTemplate();
