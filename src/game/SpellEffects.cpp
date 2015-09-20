@@ -2238,7 +2238,21 @@ void Spell::EffectForceCast(SpellEffIndex effIndex)
         return;
     }
 
-    unitTarget->CastSpell(unitTarget, spellInfo, true, NULL, NULL, m_originalCasterGUID);
+    switch (m_spellInfo->Id)
+    {
+        case 45391:
+            unitTarget->CastSpell((Unit*)NULL, triggered_spell_id, true, NULL, NULL, m_originalCasterGUID);
+            break;
+        case 45388:
+            unitTarget->CastSpell(m_caster, triggered_spell_id, true, NULL, NULL, m_originalCasterGUID);
+            break;
+        case 45782:
+            unitTarget->CastSpell((Unit*)NULL, triggered_spell_id, true, NULL, NULL, m_originalCasterGUID);
+            break;
+        default:
+            unitTarget->CastSpell(unitTarget, spellInfo, true, NULL, NULL, m_originalCasterGUID);
+            break;
+    }
 }
 
 void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
@@ -3675,6 +3689,14 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                     summon->setFaction(m_originalCaster->getFaction());
                     summon->SetLevel(m_originalCaster->getLevel());
                     summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
+                }
+
+                switch (m_spellInfo->Id)
+                {
+                    case 45392:
+                        if (summon->IsAIEnabled)
+                            summon->AI()->AttackStart(m_caster);
+                        break;
                 }
             }
             return;
@@ -5659,6 +5681,12 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                         m_caster->CastSpell(unitTarget, 32247, true); //Chess NPC Action: Melee Attack: DAMAGE (Footman)
                     return;
                 }
+            case 45714:
+                unitTarget->CastSpell(m_caster, m_spellInfo->EffectBasePoints[0], true);
+                return;
+            case 45717:
+                m_caster->CastSpell(unitTarget, 45726, true);
+                return;
             }
             break;
         }

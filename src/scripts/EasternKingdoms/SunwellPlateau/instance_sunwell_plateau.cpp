@@ -69,6 +69,7 @@ struct instance_sunwell_plateau : public ScriptedInstance
     uint32 SpectralRealmTimer;
     uint32 m_Outrotimer;
     std::vector<uint64> SpectralRealmList;
+    std::vector<uint64> northList, centerList, southList;
 
     uint64 riftGuid[2];
     uint64 riftTargets[2];
@@ -93,6 +94,10 @@ struct instance_sunwell_plateau : public ScriptedInstance
         liadrinGuid = 0;
         m_currentAngleFirst = 0.0f;
 
+        northList.clear();
+        centerList.clear();
+        southList.clear();
+
         /*** Creatures ***/
         Kalecgos_Dragon         = 0;
         Kalecgos_Human          = 0;
@@ -109,6 +114,7 @@ struct instance_sunwell_plateau : public ScriptedInstance
         Anveena                 = 0;
         KalecgosKJ              = 0;
         SpectralPlayers         = 0;
+
         /*** GameObjects ***/
         ForceField  = 0;
         FireBarrier = 0;
@@ -195,6 +201,15 @@ struct instance_sunwell_plateau : public ScriptedInstance
             break;
         case 25319:
             KalecgosKJ          = pCreature->GetGUID();
+            break;
+        case 23472:
+            if (pCreature->GetPositionX() > 1480.0f)
+                northList.push_back(pCreature->GetGUID());
+            else if (pCreature->GetPositionX() > 1460.0f)
+                centerList.push_back(pCreature->GetGUID());
+            else
+                southList.push_back(pCreature->GetGUID());
+
             break;
         }
     }
@@ -348,6 +363,66 @@ struct instance_sunwell_plateau : public ScriptedInstance
             if (data == DONE)
                 HandleGameObject(FireBarrier, true);
             m_auiEncounter[2] = data;
+            break;
+        case DATA_ACTIVATE_NORTH_TO_LEFT:
+            for (std::vector<uint64>::iterator itr = northList.begin(); itr != northList.end(); itr++)
+            {
+                if (Creature *trigger = instance->GetCreature(*itr))
+                {
+                    if (trigger->GetPositionY() > data)
+                        trigger->CastSpell(trigger, 45582, true);
+                }
+            }
+            break;
+        case DATA_ACTIVATE_CENTER_TO_LEFT:
+            for (std::vector<uint64>::iterator itr = centerList.begin(); itr != centerList.end(); itr++)
+            {
+                if (Creature *trigger = instance->GetCreature(*itr))
+                {
+                    if (trigger->GetPositionY() > data)
+                        trigger->CastSpell(trigger, 45582, true);
+                }
+            }
+            break;
+        case DATA_ACTIVATE_SOUTH_TO_LEFT:
+            for (std::vector<uint64>::iterator itr = southList.begin(); itr != southList.end(); itr++)
+            {
+                if (Creature *trigger = instance->GetCreature(*itr))
+                {
+                    if (trigger->GetPositionY() > data)
+                        trigger->CastSpell(trigger, 45582, true);
+                }
+            }
+            break;
+        case DATA_ACTIVATE_NORTH_TO_RIGHT:
+            for (std::vector<uint64>::iterator itr = northList.begin(); itr != northList.end(); itr++)
+            {
+                if (Creature *trigger = instance->GetCreature(*itr))
+                {
+                    if (trigger->GetPositionY() < data)
+                        trigger->CastSpell(trigger, 45582, true);
+                }
+            }
+            break;
+        case DATA_ACTIVATE_CENTER_TO_RIGHT:
+            for (std::vector<uint64>::iterator itr = centerList.begin(); itr != centerList.end(); itr++)
+            {
+                if (Creature *trigger = instance->GetCreature(*itr))
+                {
+                    if (trigger->GetPositionY() < data)
+                        trigger->CastSpell(trigger, 45582, true);
+                }
+            }
+            break;
+        case DATA_ACTIVATE_SOUTH_TO_RIGHT:
+            for (std::vector<uint64>::iterator itr = southList.begin(); itr != southList.end(); itr++)
+            {
+                if (Creature *trigger = instance->GetCreature(*itr))
+                {
+                    if (trigger->GetPositionY() < data)
+                        trigger->CastSpell(trigger, 45582, true);
+                }
+            }
             break;
         case DATA_EREDAR_TWINS_EVENT:
             m_auiEncounter[3] = data;

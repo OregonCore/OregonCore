@@ -586,6 +586,9 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
                 case 30457:                                         // Complete vulnerability
                 case 30529:                                         // Recently In Game - Chess Event
                 case 37465:                                         // Rain of Fire
+                case 45661:                                         // Encapsulate (Felmyst - Sunwell Plateau)
+                case 45662:
+                case 45665:
                     return false;
                 default:
                     break;
@@ -2582,6 +2585,13 @@ void SpellMgr::LoadSpellCustomAttr()
             break;
         case 30298: // Tree Disguise
             spellInfo->InterruptFlags |= SPELL_INTERRUPT_FLAG_MOVEMENT;
+            break;
+        case 45391: // Vapor Select
+            spellInfo->AttributesEx3 |= SPELL_ATTR_EX3_CANT_MISS;
+            spellInfo->MaxAffectedTargets = 1;
+            break;
+        case 45399:
+            spellInfo->rangeIndex = 2;
             break;
         default:
             break;

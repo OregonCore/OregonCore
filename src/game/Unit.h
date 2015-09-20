@@ -1799,6 +1799,12 @@ class Unit : public WorldObject
             if (!HasUnitState(UNIT_STATE_CANNOT_TURN))
                 SetOrientation(GetAngle(target));
         }
+        void SetInFront(float x, float y)
+        {
+            if(!HasUnitState(UNIT_STATE_CANNOT_TURN)) 
+                SetOrientation(GetAngle(x,y));
+        }
+
         bool isInBackInMap(Unit const* target, float distance, float arc = M_PI) const;
         void SetFacingTo(float ori);
         void SetFacingToObject(WorldObject* pObject);
