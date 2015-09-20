@@ -134,49 +134,45 @@ bool GossipSelect_npc_captured_sunhawk_agent(Player* pPlayer, Creature* pCreatur
     return true;
 }
 
+#define SPELL_SYMBOL_OF_LIFE  8593
+
 struct npc_young_furbolg_shamanAI : public ScriptedAI
 {
-    npc_young_furbolg_shamanAI(Creature* c) : ScriptedAI(c) {}
+	npc_young_furbolg_shamanAI(Creature* c) : ScriptedAI(c) {}
 
-    void Reset()
-    {
-        lifeTimer = 120000;
-        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
-        me->SetStandState(UNIT_STAND_STATE_DEAD);
-    }
+	void Reset()
+	{
+		reset_timer = 900000;
+		me->SetStandState(UNIT_STAND_STATE_DEAD);
+	}
 
-    uint32 lifeTimer;
-    bool spellHit;
+	uint32 reset_timer;
 
-    void SpellHit(Unit* /*Hitter*/, const SpellEntry* Spellkind)
-    {
-        if (Spellkind->Id == 8593 && !spellHit)
-        {
-            DoCast(me, 32343);
-            me->SetStandState(UNIT_STAND_STATE_STAND);
-            me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
-            spellHit = true;
-        }
-    }
+	void SpellHit(Unit* /*pWho*/, const SpellEntry* pSpell)
+	{
+		//When hit with ressurection say text
+		if (pSpell->Id == SPELL_SYMBOL_OF_LIFE)
+		{
+			me->SetStandState(UNIT_STAND_STATE_STAND);
+		}
+	}
 
-    void UpdateAI(const uint32 uiDiff)
-    {
-        if (me->IsStandState())
-        {
-            if (lifeTimer <= uiDiff)
-            {
-                EnterEvadeMode();
-                return;
-            }
-            else
-                lifeTimer -= uiDiff;
-        }
-    }
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{
+			if (reset_timer <= uiDiff)
+			{
+				me->SetStandState(UNIT_STAND_STATE_DEAD);
+				reset_timer = 900000;
+			}
+			else reset_timer -= uiDiff;
+		}
+	}
 };
-
 CreatureAI* GetAI_npc_young_furbolg_shaman(Creature* pCreature)
 {
-    return new npc_young_furbolg_shamanAI(pCreature);
+	return new npc_young_furbolg_shamanAI(pCreature);
 }
 
 void AddSC_bloodmyst_isle()
@@ -192,11 +188,6 @@ void AddSC_bloodmyst_isle()
     newscript->Name = "npc_captured_sunhawk_agent";
     newscript->pGossipHello =  &GossipHello_npc_captured_sunhawk_agent;
     newscript->pGossipSelect = &GossipSelect_npc_captured_sunhawk_agent;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_young_furbolg_shaman";
-    newscript->GetAI = &GetAI_npc_young_furbolg_shaman;
     newscript->RegisterSelf();
 }
 
