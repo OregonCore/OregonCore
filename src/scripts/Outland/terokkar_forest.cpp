@@ -215,7 +215,6 @@ const uint32 netherwebVictims[6] =
 {
     18470, 16805, 21242, 18452, 22482, 21285
 };
-
 struct mob_netherweb_victimAI : public ScriptedAI
 {
     mob_netherweb_victimAI(Creature* c) : ScriptedAI(c) {}
@@ -224,21 +223,24 @@ struct mob_netherweb_victimAI : public ScriptedAI
     void EnterCombat(Unit* /*who*/) { }
     void MoveInLineOfSight(Unit* /*who*/) { }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* Killer)
     {
-        Player* player = killer->ToPlayer();
-        if (!player)
-            return;
-
-        if (player->GetQuestStatus(QUEST_TAKEN_INTHE_NIGHT) == QUEST_STATUS_INCOMPLETE)
+        if (Killer->GetTypeId() == TYPEID_PLAYER)
         {
-            if (rand32() % 100 < 25)
+            if (CAST_PLR(Killer)->GetQuestStatus(10873) == QUEST_STATUS_INCOMPLETE)
             {
-                me->SummonCreature(NPC_QUEST_TARGET, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                player->KilledMonsterCredit(NPC_QUEST_TARGET);
+                if (rand() % 100 < 25)
+                {
+                    DoSpawnCreature(QUEST_TARGET, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+                    CAST_PLR(Killer)->KilledMonsterCredit(QUEST_TARGET, 0);
+                }
+                else
+                    DoSpawnCreature(netherwebVictims[rand() % 6], 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+
+                if (rand() % 100 < 75)
+                    DoSpawnCreature(netherwebVictims[rand() % 6], 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+                DoSpawnCreature(netherwebVictims[rand() % 6], 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
             }
-            else
-                me->SummonCreature(netherwebVictims[rand32() % 6], 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
         }
     }
 };
@@ -470,16 +472,20 @@ void SendActionMenu_go_skull_pile(Player* player, GameObject* /*_GO*/, uint32 ac
     switch (action)
     {
     case GOSSIP_ACTION_INFO_DEF + 1:
-        player->CastSpell(player, 40642, false);
+		//player->CastSpell(player,40642,false);
+		player->SummonCreature(23161, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
         break;
     case GOSSIP_ACTION_INFO_DEF + 2:
-        player->CastSpell(player, 40640, false);
+		//player->CastSpell(player,40640,false);
+		player->SummonCreature(23165, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
         break;
     case GOSSIP_ACTION_INFO_DEF + 3:
-        player->CastSpell(player, 40632, false);
+		//player->CastSpell(player,40632,false);
+		player->SummonCreature(23163, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
         break;
     case GOSSIP_ACTION_INFO_DEF + 4:
-        player->CastSpell(player, 40644, false);
+		//player->CastSpell(player,40644,false);
+		player->SummonCreature(23162, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
         break;
     }
 }
@@ -693,6 +699,35 @@ bool QuestAccept_npc_akuno(Player* pPlayer, Creature* pCreature, const Quest* pQ
 CreatureAI* GetAI_npc_akuno(Creature* pCreature)
 {
     return new npc_akunoAI(pCreature);
+}
+
+/*######
+## npc_skyguard_handler_deesak
+######*/
+
+#define GOSSIP_SKYGUARD "Fly me to Ogri'la please"
+
+bool GossipHello_npc_skyguard_handler_deesak(Player* pPlayer, Creature* pCreature)
+{
+    if (pCreature->isQuestGiver())
+        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
+
+    if (pPlayer->GetReputationRank(1031) >= REP_HONORED)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SKYGUARD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
+
+    return true;
+}
+
+bool GossipSelect_npc_skyguard_handler_deesak(Player* pPlayer, Creature* /*pCreature*/, uint32 /*uiSender*/, uint32 uiAction)
+{
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
+    {
+        pPlayer->CLOSE_GOSSIP_MENU();
+        pPlayer->CastSpell(pPlayer, 41279, true);             //TaxiPath 705 (Taxi - Skettis to Skyguard Outpost)
+    }
+    return true;
 }
 
 /*######
@@ -1280,43 +1315,96 @@ CreatureAI* GetAI_npc_skyguard_prisoner(Creature* pCreature)
 }
 
 /*######
-## QUEST_FIRES_OVER_SKETTIS (11007)
+## npc_darkscreecher_akarai
 ######*/
 
-struct npc_kalliri_triggerAI : public ScriptedAI
+enum Akkarai
 {
-	npc_kalliri_triggerAI(Creature* c) : ScriptedAI(c) { }
+	NPC_AKKARAI_HATCHLING = 23206,
 
-	bool spellHit;
+	SPELL_AKKARAI_FROSTBOLT = 40429,
+	SPELL_FLOCK = 40427,
+	SPELL_CURSE = 15730,
+	SPELL_BLINK = 38981,
+
+	SAY_SPAWN = -1910085,
+	SAY_SUMMON = -1910086
+};
+
+struct npc_darkscreecher_akaraiAI : public ScriptedAI
+{
+	npc_darkscreecher_akaraiAI(Creature* pCreature) : ScriptedAI(pCreature) { }
 
 	void Reset()
 	{
-		spellHit = false;
+		frostbolt_timer = 4500;
+		flock_timer = 10000;
+		curse_timer = 1000;
+		blink_timer = 30000;
 	}
 
-	void SpellHit(Unit* caster, const SpellEntry* spell)
+	uint32 frostbolt_timer;
+	uint32 flock_timer;
+	uint32 curse_timer;
+	uint32 blink_timer;
+
+	void EnterCombat(Unit* /*who*/)
 	{
-		if (caster->GetTypeId() == TYPEID_PLAYER && spell->Id == 39844 && !spellHit)
+		DoScriptText(SAY_SPAWN, me);
+	}
+
+	void UpdateAI(const uint32 diff) override
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
+
+		if (frostbolt_timer <= diff)
 		{
-			if (Player* plWho = caster->GetCharmerOrOwnerPlayerOrPlayerItself())
-			{
-				plWho->KilledMonsterCredit(22991);
-				me->DisappearAndDie();
-
-				if (GameObject* egg = me->FindNearestGameObject(185549, 2.0f))
-				{
-					egg->SetGoState(GO_STATE_ACTIVE);
-				}
-
-				spellHit = true;
-			}
+			DoCastVictim(SPELL_AKKARAI_FROSTBOLT);
+			frostbolt_timer = urand(5000, 8500);
 		}
+		else frostbolt_timer -= diff;
+
+		if (curse_timer <= diff)
+		{
+			DoCastVictim(SPELL_CURSE);
+			curse_timer = 25000;
+		}
+		else curse_timer -= diff;
+
+		if (flock_timer <= diff)
+		{
+			DoCast(SPELL_FLOCK);
+			flock_timer = 12000;
+
+			DoScriptText(SAY_SUMMON, me);
+
+			me->SummonCreature(NPC_AKKARAI_HATCHLING, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN, 30000);
+			me->SummonCreature(NPC_AKKARAI_HATCHLING, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN, 30000);
+			me->SummonCreature(NPC_AKKARAI_HATCHLING, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN, 30000);
+			me->SummonCreature(NPC_AKKARAI_HATCHLING, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN, 30000);
+			me->SummonCreature(NPC_AKKARAI_HATCHLING, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN, 30000);
+			me->SummonCreature(NPC_AKKARAI_HATCHLING, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN, 30000);
+		}
+		else flock_timer -= diff;
+
+		if (blink_timer && HealthBelowPct(80))
+		{
+			DoCast(SPELL_BLINK);
+			blink_timer = 15000;
+		}
+		else blink_timer -= diff;
+
+		DoMeleeAttackIfReady();
 	}
 };
 
-CreatureAI* GetAI_npc_kalliri_trigger(Creature* pCreature)
+CreatureAI* GetAI_npc_darkscreecher_akarai(Creature* pCreature)
 {
-	return new npc_kalliri_triggerAI(pCreature);
+	return new npc_darkscreecher_akaraiAI(pCreature);
 }
 
 void AddSC_terokkar_forest()
@@ -1396,6 +1484,12 @@ void AddSC_terokkar_forest()
     newscript->RegisterSelf();
 
     newscript = new Script;
+    newscript->Name = "npc_skyguard_handler_deesak";
+    newscript->pGossipHello =  &GossipHello_npc_skyguard_handler_deesak;
+    newscript->pGossipSelect = &GossipSelect_npc_skyguard_handler_deesak;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
     newscript->Name = "go_veil_skith_cage";
     newscript->pGOHello =  &GOHello_veil_skith_cage;
     newscript->RegisterSelf();
@@ -1410,10 +1504,10 @@ void AddSC_terokkar_forest()
     newscript->GetAI = &GetAI_npc_skyguard_prisoner;
     newscript->pQuestAccept = &QuestAccept_npc_skyguard_prisoner;
     newscript->RegisterSelf();
-	
+
 	newscript = new Script;
-	newscript->Name = "npc_kalliri_trigger";
-	newscript->GetAI = &GetAI_npc_kalliri_trigger;
-	newscript->RegisterSelf();
+	newscript->Name = "npc_darkscreecher_akarai";
+	newscript->GetAI = &GetAI_npc_darkscreecher_akarai;
+    newscript->RegisterSelf();
 }
 
