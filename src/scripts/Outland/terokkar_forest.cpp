@@ -1391,7 +1391,7 @@ struct npc_darkscreecher_akaraiAI : public ScriptedAI
 		}
 		else flock_timer -= diff;
 
-		if (blink_timer && HealthBelowPct(80))
+		if (blink_timer <= diff && HealthBelowPct(80))
 		{
 			DoCast(SPELL_BLINK);
 			blink_timer = 15000;
