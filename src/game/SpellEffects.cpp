@@ -3160,6 +3160,11 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
     if (damage < 0)
         return;
 
+	// Handle Mana Gems / Serpent-Coil Braid
+	if (m_spellInfo->SpellFamilyName == SPELLFAMILY_MAGE && m_spellInfo->SpellFamilyFlags == 0x10000000000LL)
+		if (unitTarget->HasAura(37447, 0))
+			unitTarget->CastSpell(unitTarget, 37445, true);
+
     Powers power = Powers(m_spellInfo->EffectMiscValue[effIndex]);
 
     if (unitTarget->GetMaxPower(power) == 0)
@@ -5683,7 +5688,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
             case 32228:
                 {
                     //we should do extra check here, can't remember we can hit targets that are not on a field in front of us..
-                    if (m_caster->HasInArc(M_PI / 18, unitTarget) && m_caster->GetDistance(unitTarget) <= 4)//sould be in an angle within 10° and Fieldrange
+                    if (m_caster->HasInArc(M_PI / 18, unitTarget) && m_caster->GetDistance(unitTarget) <= 4)//sould be in an angle within 10ï¿½ and Fieldrange
                         m_caster->CastSpell(unitTarget, 32247, true); //Chess NPC Action: Melee Attack: DAMAGE (Footman)
                     return;
                 }
