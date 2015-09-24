@@ -1903,6 +1903,131 @@ CreatureAI* GetAI_npc_pathaleon_image(Creature* pCreature)
     return new npc_pathaleon_imageAI(pCreature);
 }
 
+////////////////////////
+//*Arrazius the Cruel*//
+////////////////////////
+
+enum AraziusSpells
+{
+	SPELL_ARAZIUS_POWER = 34094,
+	SPELL_INFERNO = 34249,
+	SPELL_SHADOWBOLT_VOLLEY = 19191,
+	SPELL_FEEBLE_WEAPONS = 34088,
+	SPELL_DOUBTING_MIND = 34089,
+	SPELL_CHILLING_WORDS = 34087,
+	SPELL_PYROBLAST = 33975,
+
+	SAY_DIE1 = -1910094,
+	SAY_SLAY1 = -1910093,
+	SAY_AGGRO1 = -1910091,
+	SAY_AGGRO2 = -1910092
+};
+
+struct npc_arrazius_the_cruelAI : public ScriptedAI
+{
+	npc_arrazius_the_cruelAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	uint32 infernoTimer;
+	uint32 pyroblastTimer;
+	uint32 shadowboltTimer;
+	uint32 chillingTimer;
+	uint32 doubtingTimer;
+	uint32 feebleTimer;
+	uint32 arraziusTimer;
+
+	void Reset()
+	{
+		infernoTimer = 5000;
+		pyroblastTimer = 8000;
+		shadowboltTimer = 3000;
+		chillingTimer = 1500;
+		feebleTimer = 1000;
+		doubtingTimer = 2000;
+		arraziusTimer = 0;
+
+		me->ApplySpellImmune(0, IMMUNITY_ID, 18223, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 29539, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 46434, true);
+	}
+
+	void EnterCombat(Unit* /*who*/)
+	{
+		DoScriptText(RAND(SAY_AGGRO1, SAY_AGGRO2), me);
+	}
+
+	void KilledUnit(Unit* /*victim*/)
+	{
+		DoScriptText(SAY_SLAY1, me);
+	}
+
+	void JustDied(Unit* /*killer*/)
+	{
+		DoScriptText(SAY_DIE1, me);
+	}
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (infernoTimer <= uiDiff)
+		{
+			DoCast(SPELL_INFERNO);
+			infernoTimer = 20000;
+		}
+		else infernoTimer -= uiDiff;
+
+		if (pyroblastTimer <= uiDiff)
+		{
+			DoCastVictim(SPELL_PYROBLAST);
+			pyroblastTimer = 10000;
+		}
+		else pyroblastTimer -= uiDiff;
+
+		if (shadowboltTimer <= uiDiff)
+		{
+			DoCast(SPELL_SHADOWBOLT_VOLLEY);
+			shadowboltTimer = 4000;
+		}
+		else shadowboltTimer -= uiDiff;
+
+		if (arraziusTimer <= uiDiff)
+		{
+			DoCast(SPELL_ARAZIUS_POWER);
+			arraziusTimer = 30000;
+		}
+		else arraziusTimer -= uiDiff;
+
+		if (chillingTimer <= uiDiff)
+		{
+			if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 4, 100, true))
+				DoCast(pTarget, SPELL_CHILLING_WORDS);
+			chillingTimer = 13000;
+		}
+		else chillingTimer -= uiDiff;
+
+		if (doubtingTimer <= uiDiff)
+		{
+			if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+				DoCast(pTarget, SPELL_DOUBTING_MIND);
+			doubtingTimer = 13500;
+		}
+		else doubtingTimer -= uiDiff;
+
+		if (feebleTimer <= uiDiff)
+		{
+			if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+				DoCast(pTarget, SPELL_FEEBLE_WEAPONS);
+			feebleTimer = 14000;
+		}
+		else feebleTimer -= uiDiff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_arrazius_the_cruel(Creature* pCreature)
+{
+	return new npc_arrazius_the_cruelAI(pCreature);
+}
+
 void AddSC_hellfire_peninsula()
 {
     Script* newscript;
@@ -2021,4 +2146,9 @@ void AddSC_hellfire_peninsula()
     newscript->Name = "npc_fel_guard_hound";
     newscript->GetAI = &GetAI_npc_fel_guard_hound;
     newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_arrazius_the_cruel";
+	newscript->GetAI = &GetAI_npc_arrazius_the_cruel;
+	newscript->RegisterSelf();
 }
