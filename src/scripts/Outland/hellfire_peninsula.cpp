@@ -1372,6 +1372,7 @@ struct npc_vindicator_sedaiAI : public ScriptedAI
         case 9:
             DoSpawnAmbusher();
             return 1000;
+			//good
         case 10:
             me->AI()->AttackStart(pAmb);
             return 2000;
@@ -1388,8 +1389,7 @@ struct npc_vindicator_sedaiAI : public ScriptedAI
         case 15:
             pEsc->AI()->AttackStart(pAmb);
             return 1000;
-        case 16:
-            me->CastSpell(pAmb, SPELL_HOLYFIRE , false);
+        case 16:		
             return 6000;
         case 17:
             pAmb->DealDamage(pAmb, pAmb->GetHealth(), 0, DIRECT_DAMAGE);
@@ -1411,8 +1411,7 @@ struct npc_vindicator_sedaiAI : public ScriptedAI
         case 22:
             DoSpawnKrun();
             return 1000;
-        case 23:
-            me->CastSpell(pKrun, SPELL_HOLYFIRE, false);
+        case 23:          
             return 3000;
         case 24:
             me->DealDamage(me, me->GetHealth(), 0, DIRECT_DAMAGE);
@@ -2028,6 +2027,289 @@ CreatureAI* GetAI_npc_arrazius_the_cruel(Creature* pCreature)
 	return new npc_arrazius_the_cruelAI(pCreature);
 }
 
+
+enum FelCannonSpells
+{
+	SPELL_FEL_CANNON_BLAST = 36238,
+	SPELL_COSMETIC_IMPACT_FIRE = 40109
+};
+
+struct npc_fel_cannonAI : public ScriptedAI
+{
+	npc_fel_cannonAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	uint32 blastTimer;
+	uint32 shootTimer;
+
+	void Reset()
+	{
+		blastTimer = 8000;
+		shootTimer = 2000;
+
+		SetCombatMovement(false);
+	}
+
+	void EnterCombat(Unit* /*who*/)
+	{		
+	}
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{
+			if (blastTimer <= uiDiff)
+			{
+				if (Unit* target = me->FindNearestCreature(32996, 300, true))
+				DoCast(target, SPELL_COSMETIC_IMPACT_FIRE);
+				blastTimer = 8000;
+			}
+			else blastTimer -= uiDiff;
+		}
+
+		if (shootTimer <= uiDiff)
+		{
+			DoCastVictim(SPELL_FEL_CANNON_BLAST);
+			shootTimer = 5000;
+		}
+		else shootTimer -= uiDiff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_fel_cannon(Creature* pCreature)
+{
+	return new npc_fel_cannonAI(pCreature);
+}
+
+enum Maghar
+{
+	NPC_MAGHAR = 49850,
+	NPC_INJURED_MAGHAR = 16847,
+
+	SAY_THANKS = -1910100
+};
+struct npc_maghar_gruntAI : public ScriptedAI
+{
+	npc_maghar_gruntAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset() 
+	{
+		spellHit = false;
+		lifeTimer = 120000;
+		tTimer = 3000;
+
+		me->SetStandState(UNIT_STAND_STATE_KNEEL);
+
+		if (me->GetEntry() == NPC_MAGHAR)
+			me->UpdateEntry(NPC_INJURED_MAGHAR);
+	}
+
+	bool spellHit;
+	uint32 lifeTimer;
+	uint32 tTimer;
+
+	void EnterCombat(Unit* /*who*/)
+	{
+	}
+
+	void SpellHit(Unit* Hitter, const SpellEntry* Spellkind)
+	{
+		if (Spellkind->Id == 29314 && !spellHit)
+		{		
+			me->hasInvolvedQuest(9447);
+			me->SetStandState(UNIT_STAND_STATE_STAND);				
+			DoScriptText(SAY_THANKS, me);
+			spellHit = true;			
+		}
+	}
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{
+			if (me->GetEntry() == NPC_MAGHAR)
+			{
+				if (lifeTimer <= uiDiff)
+				{
+					me->UpdateEntry(NPC_INJURED_MAGHAR);
+					EnterEvadeMode();
+					return;
+				}
+				else
+					lifeTimer -= uiDiff;							
+			}
+
+			if (spellHit == true)
+			{
+				if (tTimer <= uiDiff)
+				{
+					me->UpdateEntry(NPC_MAGHAR);
+					tTimer = 3000;
+				}
+				else tTimer -= uiDiff;
+			}
+		}
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_maghar_grunt(Creature* pCreature)
+{
+	return new npc_maghar_gruntAI(pCreature);
+}
+
+//* Quest - SOURCE OF CORRUPTION CINEMATIC *//
+/*
+enum CinematicAnim
+{
+	AZETHEN_SAY1 = -1910095,
+	AZETHEN_SAY2 = -1910096,
+	AZETHEN_SAY3 = -1910097,
+	PRISONER_SAY1 = -1910098,
+	AZETHEN_SAY4 = -1910099,
+
+	SOURCE_OF_THE_CORRUPTION = 9387
+};
+
+struct QuestCinematic
+{
+	int32 TextId;
+	uint32 Creature, Timer;
+};
+
+// Creature 0 - Azethen, 1 - Prisoner
+static QuestCinematic EventAnim[] =
+{
+	{ AZETHEN_SAY1, 0, 3000 },
+	{ AZETHEN_SAY2, 0, 4000 },
+	{ 0, 0, 3000 }, // EmoteLaugh
+	{ AZETHEN_SAY3, 0, 3000 },
+	{ PRISONER_SAY1, 1, 3000 },
+	{ 0, 1, 3000 }, // EmoteDrink
+	{ 0, 1, 6000 }, // EmoteStun
+	{ 0, 1, 4000 }, // Die
+	{ AZETHEN_SAY4, 0, 2500 },
+	{ 0, 0, 0 }
+};
+
+struct npc_azethenAI : public ScriptedAI
+{
+	npc_azethenAI(Creature* c) : ScriptedAI(c) {}
+
+	uint64 PlayerGUID;
+	uint64 AzethenGUID;
+	uint64 PrisonerGUID;
+	uint64 TriggerGUID;
+
+	uint32 AnimationTimer;
+	uint8 AnimationCount;
+
+	bool EventStarted;
+	bool eventEnd;
+
+	void Reset()
+	{
+		PlayerGUID = 0;
+		AzethenGUID = 0;
+		PrisonerGUID = 0;
+		TriggerGUID = 0;
+
+		AnimationTimer = 1500;
+		AnimationCount = 0;
+
+		EventStarted = false;
+		eventEnd = false;		
+	}
+
+	void EventStart()
+	{
+		Player* plr = Unit::GetPlayer(*me, PlayerGUID);
+		if (!plr)
+			return;
+
+	//	Unit* azethen = me->FindNearestCreature(16794, 100, me);
+		Unit* prisoner = me->FindNearestCreature(16795, 100, me);
+	
+		if (!prisoner)
+			return;
+
+		if (EventStarted == true)
+		{
+			AnimationTimer = EventAnim[AnimationCount].Timer;
+			if (eventEnd == false)
+			{
+				switch (AnimationCount)
+				{
+				case 0:
+					DoScriptText(AZETHEN_SAY1, me, plr);
+					break;
+				case 1:
+					DoScriptText(AZETHEN_SAY2, me, plr);
+					break;
+				case 2:
+					me->HandleEmoteCommand(ANIM_EMOTE_LAUGH);
+					break;
+				case 3:
+					DoScriptText(AZETHEN_SAY3, me, prisoner);
+					break;
+				case 4:
+					prisoner->SetUInt64Value(UNIT_FIELD_TARGET, me->GetGUID()); // me
+					DoScriptText(PRISONER_SAY1, prisoner, me);
+					break;
+				case 5:
+					prisoner->HandleEmoteCommand(TEXT_EMOTE_DRINK);
+					break;
+				case 6:
+					prisoner->HandleEmoteCommand(ANIM_STUN);
+					break;
+				case 7:
+					prisoner->DealDamage(prisoner, prisoner->GetHealth(), 0, DIRECT_DAMAGE);
+					break;
+				case 8:
+					DoScriptText(AZETHEN_SAY4, me, prisoner);
+					break;
+				case 9:
+					me->AI()->EnterEvadeMode();
+					eventEnd = true;
+					break;
+				}
+			}
+			++AnimationCount;
+		}
+	}	
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (AnimationTimer)
+		{
+			if (AnimationTimer <= diff)
+				EventStart();
+			else AnimationTimer -= diff;
+		}
+		if (AnimationCount < 9)
+			me->CombatStop();
+		if (AnimationCount == 9 || eventEnd)
+			me->AI()->EnterEvadeMode();
+	}
+};
+
+bool OnQuestAccept(Player* plr, Creature* creature, Quest const* quest)
+{
+	if (quest->GetQuestId() == SOURCE_OF_THE_CORRUPTION)
+	{
+		if (npc_azethenAI* azethen = CAST_AI(npc_azethenAI, creature->AI()))
+			azethen->EventStarted = true;	
+	}
+	return true;
+}
+
+CreatureAI* GetAI_npc_azethen(Creature* pCreature)
+{
+	return new npc_azethenAI(pCreature);
+}
+*/
 void AddSC_hellfire_peninsula()
 {
     Script* newscript;
@@ -2151,4 +2433,21 @@ void AddSC_hellfire_peninsula()
 	newscript->Name = "npc_arrazius_the_cruel";
 	newscript->GetAI = &GetAI_npc_arrazius_the_cruel;
 	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_fel_cannon";
+	newscript->GetAI = &GetAI_npc_fel_cannon;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_maghar_grunt";
+	newscript->GetAI = &GetAI_npc_maghar_grunt;
+	newscript->RegisterSelf();
+
+/*	newscript = new Script;
+	newscript->Name = "npc_azethen";
+	newscript->GetAI = &GetAI_npc_azethen;
+	newscript->pQuestAccept = &OnQuestAccept;
+	newscript->RegisterSelf();
+*/
 }
