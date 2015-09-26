@@ -2252,6 +2252,226 @@ CreatureAI* GetAI_npc_dreghood_brute(Creature* pCreature)
 	return new npc_dreghood_bruteAI(pCreature);
 }
 
+//*Dreghood Elders Quest - Gossip*//
+
+#define GOSSIP_ITEM_1 "Walk free, elder. Bring the spirits back to your tribe."
+
+enum Elders
+{
+	ELDER_SAY_1 = -1910104,
+	ELDER_SAY_2 = -1910105,
+	ELDER_SAY_3 = -1910106
+};
+
+struct npc_dreghood_elder1AI : public ScriptedAI
+{
+	npc_dreghood_elder1AI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset() 
+	{
+		lifeTimer = 30000;
+
+		me->SetStandState(UNIT_STAND_STATE_KNEEL);
+	}
+
+	uint32 lifeTimer;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{
+			if (me->IsStandState())
+			{
+				if (lifeTimer <= uiDiff)
+				{
+					EnterEvadeMode();
+					return;
+				}
+				else
+					lifeTimer -= uiDiff;
+			}
+		}
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_dreghood_elder1(Creature* pCreature)
+{
+	return new npc_dreghood_elder1AI(pCreature);
+}
+
+struct npc_dreghood_elder2AI : public ScriptedAI
+{
+	npc_dreghood_elder2AI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		lifeTimer = 30000;
+
+		me->SetStandState(UNIT_STAND_STATE_KNEEL);
+	}
+
+	uint32 lifeTimer;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{
+			if (me->IsStandState())
+			{
+				if (lifeTimer <= uiDiff)
+				{
+					EnterEvadeMode();
+					return;
+				}
+				else
+					lifeTimer -= uiDiff;
+			}
+		}
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_dreghood_elder2(Creature* pCreature)
+{
+	return new npc_dreghood_elder2AI(pCreature);
+}
+
+struct npc_dreghood_elder3AI : public ScriptedAI
+{
+	npc_dreghood_elder3AI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		lifeTimer = 30000;
+
+		me->SetStandState(UNIT_STAND_STATE_KNEEL);
+	}
+
+	uint32 lifeTimer;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{
+			if (me->IsStandState())
+			{
+				if (lifeTimer <= uiDiff)
+				{
+					EnterEvadeMode();
+					return;
+				}
+				else
+					lifeTimer -= uiDiff;
+			}
+		}
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_dreghood_elder3(Creature* pCreature)
+{
+	return new npc_dreghood_elder3AI(pCreature);
+}
+
+bool GossipHello_npc_dreghood_elder1(Player* pPlayer, Creature* pCreature)
+{
+	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+	if (pCreature->isQuestGiver())
+		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
+
+	if (pPlayer->GetQuestStatus(10368) == QUEST_STATUS_INCOMPLETE)
+	pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+	pPlayer->SEND_GOSSIP_MENU(10103, pCreature->GetGUID());
+
+	return true;
+}
+
+bool GossipSelect_npc_dreghood_elder1(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
+{
+	switch (uiAction)
+	{
+	case GOSSIP_ACTION_INFO_DEF + 1:
+		pPlayer->CLOSE_GOSSIP_MENU();
+
+		DoScriptText(ELDER_SAY_1, pCreature, pPlayer);
+		pPlayer->TalkedToCreature(20679, 86006);
+		pCreature->SetStandState(UNIT_STAND_STATE_STAND);
+		break;
+	}
+	return true;
+}
+
+bool GossipHello_npc_dreghood_elder2(Player* pPlayer, Creature* pCreature)
+{
+	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+	if (pCreature->isQuestGiver())
+		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
+
+	if (pPlayer->GetQuestStatus(10368) == QUEST_STATUS_INCOMPLETE)
+	pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+	pPlayer->SEND_GOSSIP_MENU(10104, pCreature->GetGUID());
+
+	return true;
+}
+
+bool GossipSelect_npc_dreghood_elder2(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
+{
+	switch (uiAction)
+	{
+	case GOSSIP_ACTION_INFO_DEF + 1:
+		pPlayer->CLOSE_GOSSIP_MENU();
+		pPlayer->TalkedToCreature(20678, 86008);
+		DoScriptText(ELDER_SAY_2, pCreature, pPlayer);
+		pCreature->SetStandState(UNIT_STAND_STATE_STAND);
+		break;
+	}
+	return true;
+}
+
+bool GossipHello_npc_dreghood_elder3(Player* pPlayer, Creature* pCreature)
+{
+	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+	if (pCreature->isQuestGiver())
+		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
+
+	if (pPlayer->GetQuestStatus(10368) == QUEST_STATUS_INCOMPLETE)
+	pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+	pPlayer->SEND_GOSSIP_MENU(10105, pCreature->GetGUID());
+
+	return true;
+}
+
+bool GossipSelect_npc_dreghood_elder3(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
+{
+	switch (uiAction)
+	{
+	case GOSSIP_ACTION_INFO_DEF + 1:
+		pPlayer->CLOSE_GOSSIP_MENU();
+
+		DoScriptText(ELDER_SAY_3, pCreature, pPlayer);
+		pPlayer->TalkedToCreature(20677, 86007);
+		pCreature->SetStandState(UNIT_STAND_STATE_STAND);
+		break;
+	}
+	return true;
+}
+
 //* Quest - SOURCE OF CORRUPTION CINEMATIC *//
 /*
 enum CinematicAnim
@@ -2539,6 +2759,27 @@ void AddSC_hellfire_peninsula()
 	newscript = new Script;
 	newscript->Name = "npc_dreghood_brute";
 	newscript->GetAI = &GetAI_npc_dreghood_brute;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_dreghood_elder1";
+	newscript->GetAI = &GetAI_npc_dreghood_elder1;
+	newscript->pGossipHello = &GossipHello_npc_dreghood_elder1;
+	newscript->pGossipSelect = &GossipSelect_npc_dreghood_elder1;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_dreghood_elder2";
+	newscript->GetAI = &GetAI_npc_dreghood_elder2;
+	newscript->pGossipHello = &GossipHello_npc_dreghood_elder2;
+	newscript->pGossipSelect = &GossipSelect_npc_dreghood_elder2;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_dreghood_elder3";
+	newscript->GetAI = &GetAI_npc_dreghood_elder3;
+	newscript->pGossipHello = &GossipHello_npc_dreghood_elder3;
+	newscript->pGossipSelect = &GossipSelect_npc_dreghood_elder3;
 	newscript->RegisterSelf();
 
 /*	newscript = new Script;
