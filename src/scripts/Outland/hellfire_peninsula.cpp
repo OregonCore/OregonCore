@@ -2160,6 +2160,98 @@ CreatureAI* GetAI_npc_maghar_grunt(Creature* pCreature)
 	return new npc_maghar_gruntAI(pCreature);
 }
 
+enum Dreghood
+{
+	SPELL_HAMSTRING = 31553,
+
+	SAY_SORRY = -1910101,
+	SAY_RUN = -1910102,
+	SAY_SORRY2 = -1910103,
+
+	NPC_TASKMASTER = 17058,
+};
+
+Position const FleePath = { -414.151f, 4789.621f, 19.757f, 0.0f };
+
+struct npc_dreghood_bruteAI : public ScriptedAI
+{
+	npc_dreghood_bruteAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		hamstring_timer = 1000;
+		flee_timer = 4000;
+
+		me->setFaction(90);
+		flee = false;
+		say = false;
+	}
+	
+	uint32 hamstring_timer;
+	uint32 flee_timer;
+
+	bool flee;
+	bool say;
+
+	void EnterCombat(Unit* /*who*/) 
+	{
+		switch (rand() % 2)
+		{
+		case 0:
+			DoScriptText(SAY_SORRY, me);
+			break;
+		case 1:
+			DoScriptText(SAY_SORRY2, me);
+			break;
+		}
+	}
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{			
+			if (flee == true)
+			{
+				me->GetMotionMaster()->MovePoint(1, FleePath, true);
+				
+				if (!say)
+				{
+					DoScriptText(SAY_RUN, me);
+					say = true;
+				}
+
+				if (flee_timer <= uiDiff)
+				{
+					me->DisappearAndDie();
+					flee_timer = 4000;
+				}
+				else flee_timer -= uiDiff;
+			}
+		}
+
+		if (hamstring_timer <= uiDiff)
+		{
+			DoCastVictim(SPELL_HAMSTRING);
+			hamstring_timer = 12000;
+		}
+		else hamstring_timer -= uiDiff;
+
+		if (Creature* taskmaster = me->FindNearestCreature(NPC_TASKMASTER, 25, false))
+		{
+			me->setFaction(35);
+			me->CombatStop();
+			flee = true;
+		}
+	
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_dreghood_brute(Creature* pCreature)
+{
+	return new npc_dreghood_bruteAI(pCreature);
+}
+
 //* Quest - SOURCE OF CORRUPTION CINEMATIC *//
 /*
 enum CinematicAnim
@@ -2442,6 +2534,11 @@ void AddSC_hellfire_peninsula()
 	newscript = new Script;
 	newscript->Name = "npc_maghar_grunt";
 	newscript->GetAI = &GetAI_npc_maghar_grunt;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_dreghood_brute";
+	newscript->GetAI = &GetAI_npc_dreghood_brute;
 	newscript->RegisterSelf();
 
 /*	newscript = new Script;
