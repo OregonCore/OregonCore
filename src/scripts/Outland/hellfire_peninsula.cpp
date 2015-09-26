@@ -2472,156 +2472,215 @@ bool GossipSelect_npc_dreghood_elder3(Player* pPlayer, Creature* pCreature, uint
 	return true;
 }
 
-//* Quest - SOURCE OF CORRUPTION CINEMATIC *//
-/*
-enum CinematicAnim
-{
-	AZETHEN_SAY1 = -1910095,
-	AZETHEN_SAY2 = -1910096,
-	AZETHEN_SAY3 = -1910097,
-	PRISONER_SAY1 = -1910098,
-	AZETHEN_SAY4 = -1910099,
+/*######
+## npc_viera
+######*/
 
-	SOURCE_OF_THE_CORRUPTION = 9387
+enum VieraSays
+{
+	SAY_GOT_BEER = -1910095,
+	VIERA_SAY1 = -1910096,
+	VIERA_SAY2 = -1910097,
+	SAY_CAT_1 = -1910098,
 };
 
-struct QuestCinematic
+enum VieraSpells
 {
-	int32 TextId;
-	uint32 Creature, Timer;
+	NPC_CAT = 17230,
+	NPC_VIERA = 17226
 };
 
-// Creature 0 - Azethen, 1 - Prisoner
-static QuestCinematic EventAnim[] =
+enum VieraQuests
 {
-	{ AZETHEN_SAY1, 0, 3000 },
-	{ AZETHEN_SAY2, 0, 4000 },
-	{ 0, 0, 3000 }, // EmoteLaugh
-	{ AZETHEN_SAY3, 0, 3000 },
-	{ PRISONER_SAY1, 1, 3000 },
-	{ 0, 1, 3000 }, // EmoteDrink
-	{ 0, 1, 6000 }, // EmoteStun
-	{ 0, 1, 4000 }, // Die
-	{ AZETHEN_SAY4, 0, 2500 },
-	{ 0, 0, 0 }
+	QUEST_ARELION_MISTRESS_SIDEQ = 9483
 };
 
-struct npc_azethenAI : public ScriptedAI
+Position const ChasePath = { -742.759f, 4073.034f, 47.413f, 0.0f };
+
+// cat
+Position const ChasePath1 = { -655.107, 4147.2, 64.1146, 0.0f };
+Position const ChasePath2 = { -664.461, 4147.91, 64.156, 0.0f };
+Position const ChasePath3 = { -681.972, 4146.48, 64.4093, 0.0f };
+Position const ChasePath4 = { -684.262, 4154.27, 62.1889, 0.0f };
+Position const ChasePath5 = { -693.5, 4185.7, 57.0529, 0.0f };
+Position const ChasePath6 = { -708.753, 4187.82, 55.1475, 0.0f };
+Position const ChasePath7 = { -721.51, 4189.59, 51.8167, 0.0f };
+Position const ChasePath8 = { -721.682, 4170.45, 50.7466, 0.0f };
+
+struct npc_vieraAI : public npc_escortAI
 {
-	npc_azethenAI(Creature* c) : ScriptedAI(c) {}
+	npc_vieraAI(Creature* c) : npc_escortAI(c)
+	{
+		me->setActive(true);
+	}
 
-	uint64 PlayerGUID;
-	uint64 AzethenGUID;
-	uint64 PrisonerGUID;
-	uint64 TriggerGUID;
+	uint64 catGUID;
 
-	uint32 AnimationTimer;
-	uint8 AnimationCount;
-
-	bool EventStarted;
-	bool eventEnd;
+	bool spellHit;
 
 	void Reset()
 	{
-		PlayerGUID = 0;
-		AzethenGUID = 0;
-		PrisonerGUID = 0;
-		TriggerGUID = 0;
+		if (HasEscortState(STATE_ESCORT_ESCORTING))
+			return;
 
-		AnimationTimer = 1500;
-		AnimationCount = 0;
-
-		EventStarted = false;
-		eventEnd = false;		
+		catGUID = 0;
+		
+		spellHit = false;
 	}
 
-	void EventStart()
+	void SpellHit(Unit* Hitter, const SpellEntry* Spellkind)
 	{
-		Player* plr = Unit::GetPlayer(*me, PlayerGUID);
-		if (!plr)
-			return;
-
-	//	Unit* azethen = me->FindNearestCreature(16794, 100, me);
-		Unit* prisoner = me->FindNearestCreature(16795, 100, me);
-	
-		if (!prisoner)
-			return;
-
-		if (EventStarted == true)
+		if (Spellkind->Id == 30077 && !spellHit)
 		{
-			AnimationTimer = EventAnim[AnimationCount].Timer;
-			if (eventEnd == false)
-			{
-				switch (AnimationCount)
-				{
-				case 0:
-					DoScriptText(AZETHEN_SAY1, me, plr);
-					break;
-				case 1:
-					DoScriptText(AZETHEN_SAY2, me, plr);
-					break;
-				case 2:
-					me->HandleEmoteCommand(ANIM_EMOTE_LAUGH);
-					break;
-				case 3:
-					DoScriptText(AZETHEN_SAY3, me, prisoner);
-					break;
-				case 4:
-					prisoner->SetUInt64Value(UNIT_FIELD_TARGET, me->GetGUID()); // me
-					DoScriptText(PRISONER_SAY1, prisoner, me);
-					break;
-				case 5:
-					prisoner->HandleEmoteCommand(TEXT_EMOTE_DRINK);
-					break;
-				case 6:
-					prisoner->HandleEmoteCommand(ANIM_STUN);
-					break;
-				case 7:
-					prisoner->DealDamage(prisoner, prisoner->GetHealth(), 0, DIRECT_DAMAGE);
-					break;
-				case 8:
-					DoScriptText(AZETHEN_SAY4, me, prisoner);
-					break;
-				case 9:
-					me->AI()->EnterEvadeMode();
-					eventEnd = true;
-					break;
-				}
-			}
-			++AnimationCount;
+			me->hasInvolvedQuest(9472);
+			DoScriptText(VIERA_SAY2, me);
+			SetEscortPaused(false);
+			spellHit = true;
 		}
-	}	
+	}
+
+	void WaypointReached(uint32 i)
+	{
+		if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			catGUID = kitty->GetGUID();
+
+		switch (i)
+		{
+		case 0:
+			me->SetStandState(UNIT_STAND_STATE_STAND);
+			break;
+		case 1:
+			me->SummonCreature(NPC_CAT, -654.033, 4135.679, 64.625, 2.11, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);			
+			break;
+		case 2:		
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				kitty->GetMotionMaster()->MovePoint(0, ChasePath1, true);
+			}
+			break;
+		case 3:
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				kitty->GetMotionMaster()->MovePoint(1, ChasePath2, true);
+			}
+			break;
+		case 4:
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				kitty->GetMotionMaster()->MovePoint(2, ChasePath3, true);
+			}
+			break;
+		case 5:
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				kitty->GetMotionMaster()->MovePoint(3, ChasePath4, true);
+			}
+			break;
+		case 6:
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				kitty->GetMotionMaster()->MovePoint(4, ChasePath5, true);
+			}
+			break;
+		case 7:
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				kitty->GetMotionMaster()->MovePoint(5, ChasePath6, true);
+			}
+			break;
+		case 8:
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				kitty->GetMotionMaster()->MovePoint(6, ChasePath7, true);
+			}
+			break;
+		case 9:
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				kitty->GetMotionMaster()->MovePoint(7, ChasePath8, true);
+			}
+
+			DoScriptText(VIERA_SAY1, me);
+			SetEscortPaused(true);
+			break;
+		case 10:
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				DoScriptText(SAY_CAT_1, kitty);
+			}		
+			break;
+		case 11:
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				kitty->GetMotionMaster()->MovePoint(8, ChasePath, true);
+			}
+			break;
+		case 12:
+			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
+			{
+				catGUID = kitty->GetGUID();
+				kitty->DisappearAndDie();
+			}
+			me->DisappearAndDie();
+			break;
+		case 13:
+			Reset();
+			break;
+		}
+	}
 
 	void UpdateAI(const uint32 diff)
 	{
-		if (AnimationTimer)
-		{
-			if (AnimationTimer <= diff)
-				EventStart();
-			else AnimationTimer -= diff;
-		}
-		if (AnimationCount < 9)
-			me->CombatStop();
-		if (AnimationCount == 9 || eventEnd)
-			me->AI()->EnterEvadeMode();
+		npc_escortAI::UpdateAI(diff);
 	}
 };
 
-bool OnQuestAccept(Player* plr, Creature* creature, Quest const* quest)
+CreatureAI* GetAI_npc_viera(Creature* pCreature)
 {
-	if (quest->GetQuestId() == SOURCE_OF_THE_CORRUPTION)
+	npc_vieraAI* vieraAI = new npc_vieraAI(pCreature);
+
+	vieraAI->AddWaypoint(0, -655.107, 4147.2, 64.1146, 2000);
+	vieraAI->AddWaypoint(1, -655.107, 4147.2, 64.1146, 0);
+	vieraAI->AddWaypoint(2, -664.461, 4147.91, 64.156, 0);
+	vieraAI->AddWaypoint(3, -681.972, 4146.48, 64.4093, 0);
+	vieraAI->AddWaypoint(4, -684.262, 4154.27, 62.1889, 0);
+	vieraAI->AddWaypoint(5, -689.216, 4171.12, 58.0475, 0);
+	vieraAI->AddWaypoint(6, -693.5, 4185.7, 57.0529, 0);
+	vieraAI->AddWaypoint(7, -708.753, 4187.82, 55.1475, 0);
+	vieraAI->AddWaypoint(8, -721.51, 4189.59, 51.8167, 0); 
+	vieraAI->AddWaypoint(9, -721.682, 4170.45, 50.7466, 0); // end of the road
+	vieraAI->AddWaypoint(10, -721.682, 4170.45, 50.7466, 4000);
+	vieraAI->AddWaypoint(11, -742.759, 4073.034, 47.413, 0);
+	vieraAI->AddWaypoint(12, -742.759, 4073.034, 47.413, 0);
+	vieraAI->AddWaypoint(13, -742.759, 4073.034, 47.413, 0);
+
+	return vieraAI;
+}
+
+bool ChooseReward_npc_viera(Player* pPlayer, Creature* pCreature, const Quest* _Quest, uint32 /*item*/)
+{
+	if (_Quest->GetQuestId() == QUEST_ARELION_MISTRESS_SIDEQ)
 	{
-		if (npc_azethenAI* azethen = CAST_AI(npc_azethenAI, creature->AI()))
-			azethen->EventStarted = true;	
+		{
+			DoScriptText(SAY_GOT_BEER, pCreature);	
+			if (npc_escortAI* pEscortAI = CAST_AI(npc_vieraAI, pCreature->AI()))
+				pEscortAI->Start(false, false, pPlayer->GetGUID());
+		}
 	}
+
 	return true;
 }
 
-CreatureAI* GetAI_npc_azethen(Creature* pCreature)
-{
-	return new npc_azethenAI(pCreature);
-}
-*/
 void AddSC_hellfire_peninsula()
 {
     Script* newscript;
@@ -2782,10 +2841,9 @@ void AddSC_hellfire_peninsula()
 	newscript->pGossipSelect = &GossipSelect_npc_dreghood_elder3;
 	newscript->RegisterSelf();
 
-/*	newscript = new Script;
-	newscript->Name = "npc_azethen";
-	newscript->GetAI = &GetAI_npc_azethen;
-	newscript->pQuestAccept = &OnQuestAccept;
+	newscript = new Script;
+	newscript->Name = "npc_viera";
+	newscript->GetAI = &GetAI_npc_viera;
+	newscript->pChooseReward = &ChooseReward_npc_viera;
 	newscript->RegisterSelf();
-*/
 }
