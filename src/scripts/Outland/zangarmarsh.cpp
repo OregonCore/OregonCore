@@ -511,6 +511,115 @@ CreatureAI* GetAI_npc_baby_murloc(Creature* creature)
     return new npc_baby_murlocAI(creature);
 }
 
+struct npc_scoutjyobaAI : public ScriptedAI
+{
+	npc_scoutjyobaAI(Creature* creature) : ScriptedAI(creature) {}
+
+	void Reset()
+	{
+		me->SetStandState(UNIT_STAND_STATE_DEAD);
+	}
+
+	void UpdateAI(const uint32 diff) { }
+};
+
+CreatureAI* GetAI_npc_scoutjyoba(Creature* creature)
+{
+	return new npc_scoutjyobaAI(creature);
+}
+
+enum WrektSlave
+{
+	SPELL_SHAREDBONDS = 34788,
+	SPELL_KICK = 11978,
+
+	SAY_RUN = -1910102,
+
+	NPC_SLAVEDRIVER = 18089,
+};
+
+Position const FleePath = { 555.669f, 7931.552f, 17.374f, 0.0f };
+
+struct npc_wrektslaveAI : public ScriptedAI
+{
+	npc_wrektslaveAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		kick_timer = 8000;
+		flee_timer = 6000;
+		share_timer = 10000;
+
+		me->setFaction(74);
+		flee = false;
+		say = false;
+	}
+
+	uint32 kick_timer;
+	uint32 flee_timer;
+	uint32 share_timer;
+
+	bool flee;
+	bool say;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{
+			if (flee == true)
+			{
+				me->GetMotionMaster()->MovePoint(1, FleePath, true);
+
+				if (!say)
+				{
+					DoScriptText(SAY_RUN, me);
+					say = true;
+				}
+
+				if (flee_timer <= uiDiff)
+				{
+					me->DisappearAndDie();
+					flee_timer = 4000;
+				}
+				else flee_timer -= uiDiff;
+			}
+		}
+		
+		if (UpdateVictim())
+		{
+			if (kick_timer <= uiDiff)
+			{
+				DoCastVictim(SPELL_KICK);
+				kick_timer = 8000;
+			}
+			else kick_timer -= uiDiff;
+
+			if (me->FindNearestCreature(NPC_SLAVEDRIVER, 25, false))
+			{
+				me->setFaction(35);
+				me->CombatStop();
+				flee = true;
+			}
+
+			if (share_timer <= uiDiff)
+			{
+				DoCast(me, SPELL_SHAREDBONDS);
+				share_timer = 20000;
+			}
+			else share_timer -= uiDiff;
+		}
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_wrektslave(Creature* creature)
+{
+	return new npc_wrektslaveAI(creature);
+}
+
 void AddSC_zangarmarsh()
 {
     Script* newscript;
@@ -555,5 +664,15 @@ void AddSC_zangarmarsh()
     newscript->Name = "npc_baby_murloc";
     newscript->GetAI = &GetAI_npc_baby_murloc;
     newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_scoutjyoba";
+	newscript->GetAI = &GetAI_npc_scoutjyoba;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_wrektslave";
+	newscript->GetAI = &GetAI_npc_wrektslave;
+	newscript->RegisterSelf();
 }
 
