@@ -2681,6 +2681,209 @@ bool ChooseReward_npc_viera(Player* pPlayer, Creature* pCreature, const Quest* _
 	return true;
 }
 
+enum FelIniSpells
+{
+	SPELL_FELCHANNEL = 33535,
+	SPELL_SINISTER_STRIKE = 14873,
+	SPELL_BITTER_WITHDRAWAL = 29098,
+	SPELL_SPELLBREAKER = 35871,
+
+	SAY_FEL1 = -1910107,
+	SAY_FEL2 = -1910108,
+	SAY_FEL3 = -1910109,
+	SAY_FEL4 = -1910110,
+	SAY_FEL5 = -1910111
+};
+
+struct npc_felblood_initiateAI : public ScriptedAI
+{
+	npc_felblood_initiateAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		spellbreakerTimer = urand(8000, 12000);
+		bitterwithdrawalTimer = urand(17000, 22000);
+		sinisterstrikeTimer = urand(4000, 6000);
+		say_timer = urand(1000, 180000);
+		resetTimer = 190000;
+
+		spellHit = false;
+		say = false;
+
+		me->SetStandState(UNIT_STAND_STATE_STAND);
+
+		if (me->GetEntry() == 24955)
+			me->UpdateEntry(22979);
+	}
+
+	uint32 spellbreakerTimer;
+	uint32 bitterwithdrawalTimer;
+	uint32 sinisterstrikeTimer;
+	uint32 say_timer;
+	uint32 resetTimer;
+
+	bool spellHit;
+	bool say;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void SpellHit(Unit* Hitter, const SpellEntry* Spellkind)
+	{
+		if (Spellkind->Id == 44937 && !spellHit)
+		{
+			me->UpdateEntry(24955);
+			me->hasInvolvedQuest(11515);
+			spellHit = true;
+		}
+	}
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{
+			if (Creature* demon = me->FindNearestCreature(24933, 28.0f, true))
+			{
+				DoCast(demon, SPELL_FELCHANNEL);
+			}
+
+			if (say_timer <= uiDiff)
+			{
+				switch (rand() % 5)
+				{
+				case 0:
+					DoScriptText(SAY_FEL1, me);
+					break;
+				case 1:
+					DoScriptText(SAY_FEL2, me);
+					break;
+				case 2:
+					DoScriptText(SAY_FEL3, me);
+					break;
+				case 3:
+					DoScriptText(SAY_FEL4, me);
+					break;
+				case 4:
+					DoScriptText(SAY_FEL5, me);
+					break;
+				}
+				say_timer = urand(1000, 180000);
+				say = true;
+			}
+			else say_timer -= uiDiff;
+
+			if (resetTimer <= uiDiff)
+			{
+				Reset();
+			}
+			else resetTimer -= uiDiff;
+		}
+
+		if (UpdateVictim())
+		{
+
+			if (spellbreakerTimer <= uiDiff)
+			{
+				DoCastVictim(SPELL_SPELLBREAKER);
+				spellbreakerTimer = urand(18000, 22000);
+			}
+			spellbreakerTimer -= uiDiff;
+
+			if (sinisterstrikeTimer <= uiDiff)
+			{
+				DoCastVictim(SPELL_SINISTER_STRIKE);
+				sinisterstrikeTimer = urand(7000, 9000);
+			}
+			sinisterstrikeTimer -= uiDiff;
+
+			if (bitterwithdrawalTimer <= uiDiff)
+			{
+				DoCastVictim(SPELL_BITTER_WITHDRAWAL);
+				bitterwithdrawalTimer = urand(20000, 26000);
+			}
+			bitterwithdrawalTimer -= uiDiff;
+		}
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_felblood_initiate(Creature* pCreature)
+{
+	return new npc_felblood_initiateAI(pCreature);
+}
+
+struct npc_felsparkAI : public ScriptedAI
+{
+	npc_felsparkAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		felfireballTimer = urand(3000, 6000);
+
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
+	}
+
+	uint32 felfireballTimer;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+			return;
+			
+		if (felfireballTimer <= uiDiff)
+		{
+			DoCastVictim(39058);
+			felfireballTimer = urand(9000, 12000);
+		}
+		felfireballTimer -= uiDiff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_felspark(Creature* pCreature)
+{
+	return new npc_felsparkAI(pCreature);
+}
+
+struct npc_camerashakerAI : public ScriptedAI
+{
+	npc_camerashakerAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		explosiveGUID = 0;
+		explo_timer = 5000;
+	}
+
+	uint64 explosiveGUID;
+	uint32 explo_timer;
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{
+			if (GameObject* explosive = me->FindNearestGameObject(183410, 30.0f))
+			{
+				if (explo_timer <= uiDiff)
+				{
+					explosiveGUID = explosive->GetGUID();
+					explosive->SetGoState(GO_STATE_ACTIVE);
+					explo_timer = 5000;
+				}
+				else explo_timer -= uiDiff;
+			}
+		}
+	}
+};
+
+CreatureAI* GetAI_npc_camerashaker(Creature* pCreature)
+{
+	return new npc_camerashakerAI(pCreature);
+}
+
 void AddSC_hellfire_peninsula()
 {
     Script* newscript;
@@ -2845,5 +3048,20 @@ void AddSC_hellfire_peninsula()
 	newscript->Name = "npc_viera";
 	newscript->GetAI = &GetAI_npc_viera;
 	newscript->pChooseReward = &ChooseReward_npc_viera;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_felblood_initiate";
+	newscript->GetAI = &GetAI_npc_felblood_initiate;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_felspark";
+	newscript->GetAI = &GetAI_npc_felspark;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_camerashaker";
+	newscript->GetAI = &GetAI_npc_camerashaker;
 	newscript->RegisterSelf();
 }
