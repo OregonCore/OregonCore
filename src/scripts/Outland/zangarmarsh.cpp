@@ -127,23 +127,27 @@ bool GossipSelect_npcs_ashyen_and_keleth(Player* player, Creature* pCreature, ui
 ## npc_cooshcoosh
 ######*/
 
-#define GOSSIP_COOSH            "You owe Sim'salabim money. Hand them over or die!"
-
-#define FACTION_HOSTILE_CO      45
-#define FACTION_FRIENDLY_CO     35
+#define GOSSIP_COOSH            "I have been sent by Sal'salabim to collect a debt that you owe. Pay up or I'm going to hurt you."
 
 #define SPELL_LIGHTNING_BOLT    9532
+#define SPELL_LIGHTNING_SHIELD  12550
+
+#define SAY_COOSH				-1910148
 
 struct npc_cooshcooshAI : public ScriptedAI
 {
     npc_cooshcooshAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 LightningBolt_Timer;
+	uint32 LighningShield_Timer;
 
     void Reset()
     {
         LightningBolt_Timer = 2000;
-        me->setFaction(FACTION_FRIENDLY_CO);
+		LighningShield_Timer = 25000;
+        me->setFaction(35);
+
+		DoCast(me, SPELL_LIGHTNING_SHIELD);
     }
 
     void EnterCombat(Unit* /*who*/) {}
@@ -152,6 +156,13 @@ struct npc_cooshcooshAI : public ScriptedAI
     {
         if (!UpdateVictim())
             return;
+
+		if (LighningShield_Timer <= diff)
+		{
+			DoCast(me, SPELL_LIGHTNING_SHIELD);
+			LighningShield_Timer = 25000;
+		}
+		else LighningShield_Timer -= diff;
 
         if (LightningBolt_Timer <= diff)
         {
@@ -171,7 +182,7 @@ CreatureAI* GetAI_npc_cooshcoosh(Creature* pCreature)
 bool GossipHello_npc_cooshcoosh(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10009) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(1, GOSSIP_COOSH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_COOSH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     player->SEND_GOSSIP_MENU(9441, pCreature->GetGUID());
     return true;
@@ -182,7 +193,8 @@ bool GossipSelect_npc_cooshcoosh(Player* player, Creature* pCreature, uint32 /*s
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
         player->CLOSE_GOSSIP_MENU();
-        pCreature->setFaction(FACTION_HOSTILE_CO);
+		DoScriptText(SAY_COOSH, pCreature);
+        pCreature->setFaction(45);
         ((npc_cooshcooshAI*)pCreature->AI())->AttackStart(player);
     }
     return true;
@@ -192,9 +204,68 @@ bool GossipSelect_npc_cooshcoosh(Player* player, Creature* pCreature, uint32 /*s
 ## npc_elder_kuruti
 ######*/
 
+enum KurutiSpells
+{
+	SPELL_LIGHTNINGSHIELD = 12550,
+	SPELL_HEALINGWAVE = 11986,
+	SPELL_CHAINLIGHTNING = 12058
+};
+
 #define GOSSIP_ITEM_KUR1 "Offer treat"
 #define GOSSIP_ITEM_KUR2 "Im a messenger for Draenei"
 #define GOSSIP_ITEM_KUR3 "Get message"
+
+struct npc_elder_kurutiAI : public ScriptedAI
+{
+	npc_elder_kurutiAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		chainlight_timer = 8000;
+		healingwave_timer = 2000;
+		lightshield_timer = 1000;
+	}
+
+	uint32 chainlight_timer;
+	uint32 healingwave_timer;
+	uint32 lightshield_timer;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (chainlight_timer <= uiDiff)
+		{
+			DoCastVictim(SPELL_CHAINLIGHTNING);
+			chainlight_timer = 8000;
+		}
+		else chainlight_timer -= uiDiff;
+
+		if (healingwave_timer <= uiDiff && HealthBelowPct(50))
+		{
+			DoCast(me, SPELL_HEALINGWAVE);
+			healingwave_timer = 12000;
+		}
+		else healingwave_timer -= uiDiff;
+
+		if (lightshield_timer <= uiDiff)
+		{
+			DoCast(me, SPELL_LIGHTNINGSHIELD);
+			lightshield_timer = 15000;
+		}
+		else lightshield_timer -= uiDiff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_elder_kuruti(Creature* creature)
+{
+	return new npc_elder_kurutiAI(creature);
+}
 
 bool GossipHello_npc_elder_kuruti(Player* player, Creature* pCreature)
 {
@@ -536,6 +607,7 @@ enum WrektSlave
 	SAY_RUN = -1910102,
 
 	NPC_SLAVEDRIVER = 18089,
+	NPC_WREKTSLAVE = 18123
 };
 
 Position const FleePath = { 555.669f, 7931.552f, 17.374f, 0.0f };
@@ -603,9 +675,10 @@ struct npc_wrektslaveAI : public ScriptedAI
 				flee = true;
 			}
 
+			if (Creature* ally = me->FindNearestCreature(NPC_WREKTSLAVE, 10, true))
 			if (share_timer <= uiDiff)
 			{
-				DoCast(me, SPELL_SHAREDBONDS);
+				DoCast(ally, SPELL_SHAREDBONDS);
 				share_timer = 20000;
 			}
 			else share_timer -= uiDiff;
@@ -618,6 +691,78 @@ struct npc_wrektslaveAI : public ScriptedAI
 CreatureAI* GetAI_npc_wrektslave(Creature* creature)
 {
 	return new npc_wrektslaveAI(creature);
+}
+
+enum DrudgeSlave
+{
+	NPC_DARKSCRESTSLAVER = 19946,
+	NPC_DREGHOODSLAVE = 18122
+};
+
+Position const Flee1Path = { -550.226f, 5535.522f, 22.424f, 0.0f };
+
+struct npc_dreghooddrudgeAI : public ScriptedAI
+{
+	npc_dreghooddrudgeAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		flee_timer = 8000;
+		share_timer = 10000;
+
+		me->setFaction(74);
+		flee = false;
+	}
+
+	uint32 flee_timer;
+	uint32 share_timer;
+
+	bool flee;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (!UpdateVictim())
+		{
+			if (flee == true)
+			{
+				me->GetMotionMaster()->MovePoint(1, Flee1Path, true);
+
+				if (flee_timer <= uiDiff)
+				{
+					me->DisappearAndDie();
+					flee_timer = 8000;
+				}
+				else flee_timer -= uiDiff;
+			}
+		}
+
+		if (UpdateVictim())
+		{
+			if (me->FindNearestCreature(NPC_DARKSCRESTSLAVER, 25, false))
+			{
+				me->setFaction(35);
+				me->CombatStop();
+				flee = true;
+			}
+
+			if (Creature* ally = me->FindNearestCreature(NPC_DREGHOODSLAVE, 10, true))
+			if (share_timer <= uiDiff)
+			{
+				DoCast(ally, SPELL_SHAREDBONDS);
+				share_timer = 20000;
+			}
+			else share_timer -= uiDiff;
+		}
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_dreghooddrudge(Creature* creature)
+{
+	return new npc_dreghooddrudgeAI(creature);
 }
 
 void AddSC_zangarmarsh()
@@ -638,6 +783,7 @@ void AddSC_zangarmarsh()
 
     newscript = new Script;
     newscript->Name = "npc_elder_kuruti";
+	newscript->GetAI = &GetAI_npc_elder_kuruti;
     newscript->pGossipHello =  &GossipHello_npc_elder_kuruti;
     newscript->pGossipSelect = &GossipSelect_npc_elder_kuruti;
     newscript->RegisterSelf();
@@ -673,6 +819,11 @@ void AddSC_zangarmarsh()
 	newscript = new Script;
 	newscript->Name = "npc_wrektslave";
 	newscript->GetAI = &GetAI_npc_wrektslave;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_dreghooddrudge";
+	newscript->GetAI = &GetAI_npc_dreghooddrudge;
 	newscript->RegisterSelf();
 }
 
