@@ -44,7 +44,8 @@ enum eKazzak
     SPELL_CLEAVE                    = 31779,
     SPELL_THUNDERCLAP               = 36706,
     SPELL_VOIDBOLT                  = 39329,
-    SPELL_MARKOFKAZZAK              = 32960,
+    SPELL_MARKOFKAZZAK              = 21056,
+	SPELL_MARKOFKAZZAK_EXPLO		= 32961,
     SPELL_ENRAGE                    = 32964,
     SPELL_CAPTURESOUL               = 32966,
     SPELL_TWISTEDREFLECTION         = 21063
@@ -69,16 +70,17 @@ struct boss_doomlordkazzakAI : public ScriptedAI
         ThunderClap_Timer = 16000 + rand() % 4000;
         VoidBolt_Timer = 30000;
         MarkOfKazzak_Timer = 25000;
-        Enrage_Timer = 60000;
+        Enrage_Timer = 54000;
         Twisted_Reflection_Timer = 33000;                   // Timer may be incorrect
     }
 
-    void JustRespawned()
-    {
-        DoScriptText(SAY_INTRO, me);
-    }
+	void JustRespawned()
+	{			
+		me->MonsterYellToZone(SAY_INTRO, LANG_UNIVERSAL, 0);	
+		DoPlaySoundToSet(me, 11332);
+	}
 
-    void EnterCombat(Unit*)
+    void EnterCombat(Unit* /*who*/)
     {
         switch (rand() % 2)
         {
@@ -163,7 +165,7 @@ struct boss_doomlordkazzakAI : public ScriptedAI
             if (victim->GetPower(POWER_MANA))
             {
                 DoCast(victim, SPELL_MARKOFKAZZAK);
-                MarkOfKazzak_Timer = 20000;
+                MarkOfKazzak_Timer = 20000;			
             }
         }
         else MarkOfKazzak_Timer -= diff;
@@ -172,6 +174,7 @@ struct boss_doomlordkazzakAI : public ScriptedAI
         if (Enrage_Timer <= diff)
         {
             DoScriptText(EMOTE_FRENZY, me);
+			DoPlaySoundToSet(me, 11335);
             DoCast(me, SPELL_ENRAGE);
             Enrage_Timer = 30000;
         }
