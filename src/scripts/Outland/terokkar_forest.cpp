@@ -253,7 +253,7 @@ CreatureAI* GetAI_mob_netherweb_victim(Creature* pCreature)
 ## npc_floon
 ######*/
 
-#define GOSSIP_FLOON1           "You owe Sim'salabim money. Hand them over or die!"
+#define GOSSIP_FLOON1           "I have been sent by Sal'salabim to collect a debt that you owe. Pay up or I'm going to hurt you."
 #define GOSSIP_FLOON2           "Hand over the money or die...again!"
 
 enum eFloon
@@ -323,7 +323,7 @@ CreatureAI* GetAI_npc_floon(Creature* pCreature)
 bool GossipHello_npc_floon(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10009) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(1, GOSSIP_FLOON1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_FLOON1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     player->SEND_GOSSIP_MENU(9442, pCreature->GetGUID());
     return true;
@@ -331,18 +331,20 @@ bool GossipHello_npc_floon(Player* player, Creature* pCreature)
 
 bool GossipSelect_npc_floon(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF)
+	switch (action)
     {
-        player->ADD_GOSSIP_ITEM(1, GOSSIP_FLOON2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+	case GOSSIP_ACTION_INFO_DEF + 1:
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_FLOON2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
         player->SEND_GOSSIP_MENU(9443, pCreature->GetGUID());
-    }
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)
-    {
+		break;
+	case GOSSIP_ACTION_INFO_DEF + 2:
         player->CLOSE_GOSSIP_MENU();
-        pCreature->setFaction(FACTION_HOSTILE_FL);
+		pCreature->setFaction(1738);
         DoScriptText(SAY_FLOON_ATTACK, pCreature, player);
         ((npc_floonAI*)pCreature->AI())->AttackStart(player);
+		break;
     }
+
     return true;
 }
 
@@ -352,10 +354,9 @@ bool GossipSelect_npc_floon(Player* player, Creature* pCreature, uint32 /*sender
 
 enum eIsla
 {
-    SAY_PROGRESS_1  = -1000353,
-    SAY_PROGRESS_2  = -1000354,
-    SAY_PROGRESS_3  = -1000355,
-    SAY_PROGRESS_4  = -1000356,
+    SAY_PROGRESS_1  = -1910149,
+	SAY_PROGRESS_2  = -1910150,
+	SAY_PROGRESS_3  = -1910151,
 
     QUEST_EFTW_H    = 10052,
     QUEST_EFTW_A    = 10051,
@@ -383,17 +384,14 @@ struct npc_isla_starmaneAI : public npc_escortAI
                     Cage->SetGoState(GO_STATE_ACTIVE);
             }
             break;
-        case 2:
+        case 5:
             DoScriptText(SAY_PROGRESS_1, me, pPlayer);
             break;
-        case 5:
+        case 6:
             DoScriptText(SAY_PROGRESS_2, me, pPlayer);
             break;
-        case 6:
-            DoScriptText(SAY_PROGRESS_3, me, pPlayer);
-            break;
         case 29:
-            DoScriptText(SAY_PROGRESS_4, me, pPlayer);
+            DoScriptText(SAY_PROGRESS_3, me, pPlayer);
             if (pPlayer)
             {
                 if (pPlayer->GetTeam() == ALLIANCE)
@@ -471,22 +469,22 @@ void SendActionMenu_go_skull_pile(Player* player, GameObject* _GO, uint32 action
 {
     switch (action)
     {
-    case GOSSIP_ACTION_INFO_DEF + 1:
+	case GOSSIP_ACTION_INFO_DEF + 1:
 		//player->CastSpell(player,40642,false);
 		player->SummonCreature(23161, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-        break;
-    case GOSSIP_ACTION_INFO_DEF + 2:
+		break;
+	case GOSSIP_ACTION_INFO_DEF + 2:
 		//player->CastSpell(player,40640,false);
 		player->SummonCreature(23165, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-        break;
-    case GOSSIP_ACTION_INFO_DEF + 3:
+		break;
+	case GOSSIP_ACTION_INFO_DEF + 3:
 		//player->CastSpell(player,40632,false);
 		player->SummonCreature(23163, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-        break;
-    case GOSSIP_ACTION_INFO_DEF + 4:
+		break;
+	case GOSSIP_ACTION_INFO_DEF + 4:
 		//player->CastSpell(player,40644,false);
 		player->SummonCreature(23162, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-        break;
+		break;
     }
 }
 
@@ -1407,6 +1405,306 @@ CreatureAI* GetAI_npc_darkscreecher_akarai(Creature* pCreature)
 	return new npc_darkscreecher_akaraiAI(pCreature);
 }
 
+/*######
+## npc_private_weeks
+######*/
+
+#define GOSSIP_ITEM1_DISGUISE "Private Weeks, I need another disguise."
+
+bool QuestAccept_npc_private_weeks(Player* pPlayer, Creature* pCreature, Quest const* quest)
+{
+	if (quest->GetQuestId() == 10040)
+	{
+		pPlayer->CastSpell(pPlayer, 32756, true);            // Give Disguise buff
+		pPlayer->CastSpell(pPlayer, 38081, true);			   // Give Female Disguise
+	}
+
+	return true;
+}
+
+bool ChooseReward_npc_private_weeks(Player* pPlayer, Creature* pCreature, const Quest* _Quest, uint32 /*item*/)
+{
+	if (_Quest->GetQuestId() == 10040)
+	{
+		if (pPlayer->HasAura(32756, 0))
+			pPlayer->RemoveAurasDueToSpell(32756);
+
+		if (pPlayer->HasAura(38081, 0))
+			pPlayer->RemoveAurasDueToSpell(38081);
+	}
+
+	return true;
+}
+
+bool GossipHello_npc_private_weeks(Player* player, Creature* pCreature)
+{
+	if (pCreature->isQuestGiver())
+		player->PrepareQuestMenu(pCreature->GetGUID());
+
+	// Give Another Disguise
+	if (player->GetQuestStatus(10040) == QUEST_STATUS_INCOMPLETE)
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM1_DISGUISE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+	player->SEND_GOSSIP_MENU(9517, pCreature->GetGUID());
+
+	return true;
+}
+
+bool GossipSelect_npc_private_weeks(Player* player, Creature* /*pCreature*/, uint32 /*sender*/, uint32 action)
+{
+	if (action == GOSSIP_ACTION_INFO_DEF + 1)
+	{
+		player->CLOSE_GOSSIP_MENU();
+		player->CastSpell(player, 32756, true);            // Give Another Disguise
+		player->CastSpell(player, 38081, true);			   // 38080 Male one
+	}
+
+	return true;
+}
+
+// Executioner Gossip
+bool GossipHello_npc_shadowy_executioner(Player* player, Creature* pCreature)
+{
+	if (player->GetQuestStatus(10040) == QUEST_STATUS_INCOMPLETE)
+		player->SEND_GOSSIP_MENU(23019, pCreature->GetGUID());
+
+	if (player->GetQuestStatus(10041) == QUEST_STATUS_INCOMPLETE)
+		player->SEND_GOSSIP_MENU(23019, pCreature->GetGUID());
+
+	return true;
+}
+
+//Laborer Gossip
+
+#define GOSSIP_LABORER "Why are you fixing all of this up?"
+
+bool GossipHello_npc_shadowy_laborer(Player* player, Creature* pCreature)
+{
+	if (player->GetQuestStatus(10040) == QUEST_STATUS_INCOMPLETE)
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_LABORER, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+		player->SEND_GOSSIP_MENU(9497, pCreature->GetGUID());
+
+	if (player->GetQuestStatus(10041) == QUEST_STATUS_INCOMPLETE)
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_LABORER, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+		player->SEND_GOSSIP_MENU(9497, pCreature->GetGUID());
+
+	return true;
+}
+
+bool GossipSelect_npc_shadowy_laborer(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+{
+	if (action == GOSSIP_ACTION_INFO_DEF + 1)
+	{
+		if (Creature* laborer = pCreature->FindNearestCreature(18717, 5, true))
+		{
+			player->KilledMonsterCredit(18717, laborer->GetGUID());
+		}
+
+		player->SEND_GOSSIP_MENU(23020, pCreature->GetGUID());
+	}
+
+	return true;
+}
+
+//Shadowy Summoner
+
+#define SPELL_SUMMON_SUCUBBUS  8722
+#define SPELL_SCORCH		   13878
+
+struct npc_shadowy_summonerAI : public ScriptedAI
+{
+	npc_shadowy_summonerAI(Creature* pCreature) : ScriptedAI(pCreature) { }
+
+	void Reset()
+	{
+		scorch_timer = 4500;
+		
+		DoCast(SPELL_SUMMON_SUCUBBUS);
+	}
+
+	uint32 scorch_timer;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 diff) override
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
+
+		if (scorch_timer <= diff)
+		{
+			DoCastVictim(SPELL_SCORCH);
+			scorch_timer = urand(5000, 8500);
+		}
+		else scorch_timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_shadowy_summoner(Creature* pCreature)
+{
+	return new npc_shadowy_summonerAI(pCreature);
+}
+
+bool GossipHello_npc_shadowy_summoner(Player* player, Creature* pCreature)
+{
+	if (player->GetQuestStatus(10040) == QUEST_STATUS_INCOMPLETE)
+		player->SEND_GOSSIP_MENU(23021, pCreature->GetGUID());
+
+	if (player->GetQuestStatus(10041) == QUEST_STATUS_INCOMPLETE)
+		player->SEND_GOSSIP_MENU(23021, pCreature->GetGUID());
+
+	return true;
+}
+
+//Shadowy Advisor
+
+#define GOSSIP_ADVISOR "Advisor, what's the lastest news?"
+
+#define SPELL_ADVSHADOWBOLT 9613
+
+struct npc_shadowy_advisorAI : public ScriptedAI
+{
+	npc_shadowy_advisorAI(Creature* pCreature) : ScriptedAI(pCreature) { }
+
+	void Reset()
+	{
+		bolt_timer = 4500;
+	}
+
+	uint32 bolt_timer;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 diff) override
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
+
+		if (bolt_timer <= diff)
+		{
+			DoCastVictim(SPELL_ADVSHADOWBOLT);
+			bolt_timer = urand(5000, 8500);
+		}
+		else bolt_timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_shadowy_advisor(Creature* pCreature)
+{
+	return new npc_shadowy_advisorAI(pCreature);
+}
+
+bool GossipHello_npc_shadowy_advisor(Player* player, Creature* pCreature)
+{
+	if (player->GetQuestStatus(10040) == QUEST_STATUS_INCOMPLETE)
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_ADVISOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+		player->SEND_GOSSIP_MENU(9505, pCreature->GetGUID());
+
+	if (player->GetQuestStatus(10041) == QUEST_STATUS_INCOMPLETE)
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_ADVISOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+		player->SEND_GOSSIP_MENU(9505, pCreature->GetGUID());
+
+	return true;
+}
+
+bool GossipSelect_npc_shadowy_advisor(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+{
+	if (action == GOSSIP_ACTION_INFO_DEF + 1)
+	{
+		if (Creature* advisor = pCreature->FindNearestCreature(18719, 5, true))
+		{
+			player->KilledMonsterCredit(18719, advisor->GetGUID());
+		}
+
+		player->SEND_GOSSIP_MENU(9506, pCreature->GetGUID());
+	}
+
+	return true;
+}
+
+//Shadowy Initiate
+
+#define GOSSIP_INITIATE "What are you doing here?"
+
+#define SPELL_ARCANECHANNEL 23017
+
+struct npc_shadowy_initiateAI : public ScriptedAI
+{
+	npc_shadowy_initiateAI(Creature* pCreature) : ScriptedAI(pCreature) { }
+
+	void Reset()
+	{
+		bolt_timer = 4500;
+
+		DoCast(SPELL_ARCANECHANNEL);
+	}
+
+	uint32 bolt_timer;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 diff) override
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
+
+		if (bolt_timer <= diff)
+		{
+			DoCastVictim(SPELL_ADVSHADOWBOLT);
+			bolt_timer = urand(5000, 8500);
+		}
+		else bolt_timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_shadowy_initiate(Creature* pCreature)
+{
+	return new npc_shadowy_initiateAI(pCreature);
+}
+
+bool GossipHello_npc_shadowy_initiate(Player* player, Creature* pCreature)
+{
+	if (player->GetQuestStatus(10040) == QUEST_STATUS_INCOMPLETE)
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_INITIATE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+	player->SEND_GOSSIP_MENU(9502, pCreature->GetGUID());
+
+	if (player->GetQuestStatus(10041) == QUEST_STATUS_INCOMPLETE)
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_INITIATE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+	player->SEND_GOSSIP_MENU(9502, pCreature->GetGUID());
+
+	return true;
+}
+
+bool GossipSelect_npc_shadowy_initiate(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+{
+	if (action == GOSSIP_ACTION_INFO_DEF + 1)
+	{
+		if (Creature* initiate = pCreature->FindNearestCreature(18716, 5, true))
+		{
+			player->KilledMonsterCredit(18716, initiate->GetGUID());
+		}
+
+		player->SEND_GOSSIP_MENU(9503, pCreature->GetGUID());
+	}
+
+	return true;
+}
+
 void AddSC_terokkar_forest()
 {
     Script* newscript;
@@ -1508,6 +1806,45 @@ void AddSC_terokkar_forest()
 	newscript = new Script;
 	newscript->Name = "npc_darkscreecher_akarai";
 	newscript->GetAI = &GetAI_npc_darkscreecher_akarai;
-    newscript->RegisterSelf();
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_private_weeks";
+	newscript->pGossipHello = &GossipHello_npc_private_weeks;
+	newscript->pGossipSelect = &GossipSelect_npc_private_weeks;
+	newscript->pQuestAccept = &QuestAccept_npc_private_weeks;
+	newscript->pChooseReward = &ChooseReward_npc_private_weeks;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_shadowy_executioner";
+	newscript->pGossipHello = &GossipHello_npc_shadowy_executioner;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_shadowy_laborer";
+	newscript->pGossipHello = &GossipHello_npc_shadowy_laborer;
+	newscript->pGossipSelect = &GossipSelect_npc_shadowy_laborer;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_shadowy_summoner";
+	newscript->GetAI = &GetAI_npc_shadowy_summoner;
+	newscript->pGossipHello = &GossipHello_npc_shadowy_summoner;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_shadowy_advisor";
+	newscript->GetAI = &GetAI_npc_shadowy_advisor;
+	newscript->pGossipHello = &GossipHello_npc_shadowy_advisor;
+	newscript->pGossipSelect = &GossipSelect_npc_shadowy_advisor;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_shadowy_initiate";
+	newscript->GetAI = &GetAI_npc_shadowy_initiate;
+	newscript->pGossipHello = &GossipHello_npc_shadowy_initiate;
+	newscript->pGossipSelect = &GossipSelect_npc_shadowy_initiate;
+	newscript->RegisterSelf();
 }
 
