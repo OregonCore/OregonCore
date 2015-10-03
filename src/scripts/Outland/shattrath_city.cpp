@@ -41,12 +41,11 @@ EndContentData */
 ## npc_raliq_the_drunk
 ######*/
 
-#define GOSSIP_RALIQ            "You owe Sim'salabim money. Hand them over or die!"
-
-#define FACTION_HOSTILE_RD      45
-#define FACTION_FRIENDLY_RD     35
+#define GOSSIP_RALIQ            "I have been sent by Sal'salabim to collect a debt that you owe. Pay up or I'm going to hurt you."
 
 #define SPELL_UPPERCUT          10966
+
+#define SAY_NOWAY				-1910147
 
 struct npc_raliq_the_drunkAI : public ScriptedAI
 {
@@ -57,7 +56,7 @@ struct npc_raliq_the_drunkAI : public ScriptedAI
     void Reset()
     {
         Uppercut_Timer = 5000;
-        me->setFaction(FACTION_FRIENDLY_RD);
+        me->setFaction(35);
     }
 
     void EnterCombat(Unit* /*who*/) {}
@@ -86,9 +85,10 @@ CreatureAI* GetAI_npc_raliq_the_drunk(Creature* pCreature)
 bool GossipHello_npc_raliq_the_drunk(Player* player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10009) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(1, GOSSIP_RALIQ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_RALIQ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     player->SEND_GOSSIP_MENU(9440, pCreature->GetGUID());
+
     return true;
 }
 
@@ -97,7 +97,8 @@ bool GossipSelect_npc_raliq_the_drunk(Player* player, Creature* pCreature, uint3
     if (action == GOSSIP_ACTION_INFO_DEF + 1)
     {
         player->CLOSE_GOSSIP_MENU();
-        pCreature->setFaction(FACTION_HOSTILE_RD);
+		DoScriptText(SAY_NOWAY, pCreature);
+        pCreature->setFaction(45);
         ((npc_raliq_the_drunkAI*)pCreature->AI())->AttackStart(player);
     }
     return true;
@@ -112,6 +113,9 @@ bool GossipSelect_npc_raliq_the_drunk(Player* player, Creature* pCreature, uint3
 #define QUEST_10004                     10004
 
 #define SPELL_MAGNETIC_PULL             31705
+#define SAY_DEMONIC						-1910146
+
+#define GOSSIP_SALADIM "Altruis sent me. He said that you could help me."
 
 struct npc_salsalabimAI : public ScriptedAI
 {
@@ -160,18 +164,27 @@ CreatureAI* GetAI_npc_salsalabim(Creature* pCreature)
 
 bool GossipHello_npc_salsalabim(Player* player, Creature* pCreature)
 {
-    if (player->GetQuestStatus(QUEST_10004) == QUEST_STATUS_INCOMPLETE)
-    {
-        pCreature->setFaction(FACTION_HOSTILE_SA);
-        ((npc_salsalabimAI*)pCreature->AI())->AttackStart(player);
-    }
-    else
-    {
-        if (pCreature->isQuestGiver())
-            player->PrepareQuestMenu(pCreature->GetGUID());
-        player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
-    }
-    return true;
+	if (pCreature->isQuestGiver())
+		player->PrepareQuestMenu(pCreature->GetGUID());
+
+	if (player->GetQuestStatus(QUEST_10004) == QUEST_STATUS_INCOMPLETE)	
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_SALADIM, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+	
+		player->SEND_GOSSIP_MENU(9435, pCreature->GetGUID());
+	
+	return true;
+}
+
+bool GossipSelect_npc_salsalabim(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+{
+	if (action == GOSSIP_ACTION_INFO_DEF + 1)
+	{
+		player->CLOSE_GOSSIP_MENU();
+		DoScriptText(SAY_DEMONIC, pCreature);
+		pCreature->setFaction(FACTION_HOSTILE_SA);
+		((npc_salsalabimAI*)pCreature->AI())->AttackStart(player);
+	}
+	return true;
 }
 
 /*
@@ -903,6 +916,7 @@ void AddSC_shattrath_city()
     newscript->Name = "npc_salsalabim";
     newscript->GetAI = &GetAI_npc_salsalabim;
     newscript->pGossipHello =  &GossipHello_npc_salsalabim;
+	newscript->pGossipSelect = &GossipSelect_npc_salsalabim;
     newscript->RegisterSelf();
 
     newscript = new Script;
