@@ -28,7 +28,7 @@ EndScriptData */
 
 #define SPELL_FIREBALL              (HeroicMode?36920:34653)
 #define SPELL_CONE_OF_FIRE          (HeroicMode?36921:30926)
-#define SPELL_SUMMON_LIQUID_FIRE    (HeroicMode?30928:23971)
+#define SPELL_BLAZE				    (HeroicMode?30542:30542)
 #define SPELL_BELLOWING_ROAR        39427
 #define SPELL_REVENGE               (HeroicMode?40392:19130)
 #define SPELL_KIDNEY_SHOT           30621
@@ -53,7 +53,7 @@ EndScriptData */
 
 #define PATH_ENTRY              2081
 
-const float VazrudenMiddle[3] = { -1406.5f, 1746.5f, 81.2f};
+const float VazrudenMiddle[3] = { -1413.848f, 1756.5f, 81.2f };
 const float VazrudenRing[2][3] =
 {
     { -1430, 1705, 112},
@@ -89,6 +89,9 @@ struct boss_nazanAI : public ScriptedAI
         Fly_Timer = 45000;
         Turn_Timer = 0;
         UnsummonCheck = 5000;
+
+		me->SetCanFly(true);
+		me->SetHover(true);
     }
 
     void EnterCombat(Unit* /*who*/) {}
@@ -99,7 +102,7 @@ struct boss_nazanAI : public ScriptedAI
         {
             summoned->SetLevel(me->getLevel());
             summoned->setFaction(me->getFaction());
-            summoned->CastSpell(summoned, SPELL_SUMMON_LIQUID_FIRE, true);
+            summoned->CastSpell(summoned, SPELL_BLAZE, true);
             summoned->CastSpell(summoned, SPELL_FIRE_NOVA_VISUAL, true);
         }
     }
@@ -125,11 +128,11 @@ struct boss_nazanAI : public ScriptedAI
             return;
         }
 
-        if (Fireball_Timer <= diff)
+		if (Fireball_Timer <= diff && flight == true)
         {
             if (Unit* victim = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(victim, SPELL_FIREBALL, true);
-            Fireball_Timer = 4000 + rand() % 3000;
+            Fireball_Timer = 7000;
         }
         else Fireball_Timer -= diff;
 
@@ -219,6 +222,8 @@ struct boss_vazrudenAI : public ScriptedAI
             DoScriptText(SAY_AGGRO_3, me);
             break;
         }
+
+		me->SetInCombatWithZone();
     }
 
     void KilledUnit(Unit* who)

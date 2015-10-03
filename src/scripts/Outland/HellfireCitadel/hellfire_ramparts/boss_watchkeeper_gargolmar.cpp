@@ -156,7 +156,7 @@ struct boss_watchkeeper_gargolmarAI : public ScriptedAI
         }
         else Surge_Timer -= diff;
 
-        if ((me->GetHealth() * 100) / me->GetMaxHealth() < 20)
+        if ((me->GetHealth() * 100) / me->GetMaxHealth() < 30)
         {
             if (Retaliation_Timer <= diff)
             {

@@ -58,7 +58,9 @@ enum eKelidan
     ENTRY_KELIDAN               = 17377,
     ENTRY_CHANNELER             = 17653,
 
-    ACTION_ACTIVATE_ADDS        = 92
+    ACTION_ACTIVATE_ADDS        = 92,
+	
+	SPELL_BUFF					= 30939
 };
 
 const float ShadowmoonChannelers[5][4] =
@@ -109,6 +111,50 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         if (instance)
             instance->SetData(DATA_KELIDANEVENT, NOT_STARTED);
+
+		//warrior bleeds
+		me->ApplySpellImmune(0, IMMUNITY_ID, 25208, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11574, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11573, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11572, true);
+
+		me->ApplySpellImmune(0, IMMUNITY_ID, 12834, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 12849, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 12867, true);
+
+		//druid bleeds
+		me->ApplySpellImmune(0, IMMUNITY_ID, 33876, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 33878, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 33917, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 33982, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 33983, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 33986, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 33987, true);
+
+		me->ApplySpellImmune(0, IMMUNITY_ID, 27008, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 9492, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 9493, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 9752, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 9894, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 9896, true);
+
+		//rogue bleeds
+		me->ApplySpellImmune(0, IMMUNITY_ID, 26867, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 1943, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 8639, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 8640, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11273, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11274, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11275, true);
+
+		me->ApplySpellImmune(0, IMMUNITY_ID, 26884, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 26839, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11290, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11289, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 8633, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 8632, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 8631, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 703, true);
     }
 
     void EnterCombat(Unit* who)
@@ -275,7 +321,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_kelidan_the_breaker(Creature* pCreature)
 {
-    return GetInstanceAI<boss_kelidan_the_breakerAI>(pCreature);
+    return new boss_kelidan_the_breakerAI (pCreature);
 }
 
 /*######
@@ -372,8 +418,45 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_shadowmoon_channeler(Creature* pCreature)
 {
-    return GetInstanceAI<mob_shadowmoon_channelerAI>(pCreature);
+    return new mob_shadowmoon_channelerAI (pCreature);
 }
+
+struct npc_kelridan_triggerAI : public ScriptedAI
+{
+	ScriptedInstance* pInstance;
+
+	uint32 buffTimer;
+
+	npc_kelridan_triggerAI(Creature* c) : ScriptedAI(c)
+	{
+		pInstance = (ScriptedInstance*)c->GetInstanceData();
+	}
+
+	void Reset()
+	{		
+		buffTimer = 5000;
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+		{
+			if (buffTimer <= diff)
+			{
+				DoCast(me, SPELL_BUFF);
+				buffTimer = 5000;
+			}
+			else buffTimer -= diff;
+		}
+	}
+};
+
+CreatureAI* GetAI_npc_kelridan_trigger(Creature* pCreature)
+{
+	return new npc_kelridan_triggerAI(pCreature);
+}
+
+
 
 void AddSC_boss_kelidan_the_breaker()
 {
@@ -387,6 +470,11 @@ void AddSC_boss_kelidan_the_breaker()
     newscript = new Script;
     newscript->Name = "mob_shadowmoon_channeler";
     newscript->GetAI = &GetAI_mob_shadowmoon_channeler;
+    newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_kelridan_trigger";
+	newscript->GetAI = &GetAI_npc_kelridan_trigger;
     newscript->RegisterSelf();
 }
 

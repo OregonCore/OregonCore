@@ -68,6 +68,7 @@ static Say PeonDies[] =
 #define SPELL_DEATH_COIL            30500
 #define SPELL_DARK_SPIN             30502
 #define SPELL_SHADOW_FISSURE        30496
+#define SPELL_SHADOW_BOLT			30505
 #define SPELL_SHADOW_SEAR           30735
 
 #define SPELL_SHADOW_CLEAVE         30495
@@ -104,6 +105,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
     uint32 DeathCoil_Timer;
     uint32 ShadowFissure_Timer;
     uint32 Cleave_Timer;
+	uint32 shadowbolt_timer;
 
     void Reset()
     {
@@ -122,6 +124,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         DeathCoil_Timer = 20000;
         ShadowFissure_Timer = 8000;
         Cleave_Timer = 5000;
+		shadowbolt_timer = 1000;
 
         me->GetCreatureListWithEntryInGrid(orcs, 17083, 40.0f);
         OrcGUID.clear();
@@ -356,6 +359,13 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
                 SpinOnce = true;
             }
 
+			if (SpinOnce == true && shadowbolt_timer <= diff)
+			{
+				if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+					DoCast(pTarget, SPELL_SHADOW_BOLT);
+				shadowbolt_timer = 1000;
+			}
+			else shadowbolt_timer -= diff;
             if (Cleave_Timer <= diff)
             {
                 DoCastVictim((HeroicMode ? H_SPELL_SHADOW_SLAM : SPELL_SHADOW_CLEAVE));
@@ -460,8 +470,15 @@ struct mob_fel_orc_convertAI : public ScriptedAI
 //NOTE: this creature are also summoned by other spells, for different creatures
 struct mob_lesser_shadow_fissureAI : public ScriptedAI
 {
-    mob_lesser_shadow_fissureAI(Creature* c) : ScriptedAI(c) {}
+    mob_lesser_shadow_fissureAI(Creature* c) : ScriptedAI(c) 
+	{
+		pInstance = (ScriptedInstance*)c->GetInstanceData();
+		HeroicMode = me->GetMap()->IsHeroic();
+	}
 
+	ScriptedInstance* pInstance;
+
+	bool HeroicMode;
     bool Start;
     uint32 Stop_Timer;
 

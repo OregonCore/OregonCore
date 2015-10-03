@@ -405,7 +405,7 @@ struct boss_magtheridonAI : public ScriptedAI
             {
                 float x, y, z;
                 target->GetPosition(x, y, z);
-                Creature* summon = me->SummonCreature(NPC_ABYSSAL, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                Creature* summon = me->SummonCreature(NPC_ABYSSAL, x, y, z, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
                 if (summon)
                 {
                     ((mob_abyssalAI*)summon->AI())->SetTrigger(2);
@@ -510,6 +510,7 @@ struct mob_hellfire_channelerAI : public ScriptedAI
     {
         if (instance)
             instance->SetData(DATA_CHANNELER_EVENT, DONE);
+
     }
 
     void UpdateAI(const uint32 diff)

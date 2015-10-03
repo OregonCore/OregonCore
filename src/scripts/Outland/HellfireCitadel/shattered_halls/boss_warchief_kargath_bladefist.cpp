@@ -36,6 +36,8 @@ EndContentData */
 #define SAY_SLAY1                       -1540045
 #define SAY_SLAY2                       -1540046
 #define SAY_DEATH                       -1540047
+#define SAY_EVADE						-1910122
+#define SAY_EXECUTE						-1910123
 
 #define SPELL_BLADE_DANCE               30739
 #define H_SPELL_CHARGE                  25821
@@ -200,10 +202,22 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
         me->SummonCreature(MOB_SHATTERED_ASSASSIN, AssassExit[0], AssassExit[1] - 8, AssassExit[2], 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
     }
 
+	bool CheckInRoom()
+	{
+		if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 70.0f)
+		{
+			DoScriptText(SAY_EVADE, me);
+			EnterEvadeMode();
+			return false;
+		}
+
+		return true;
+	}
+
     void UpdateAI(const uint32 diff)
     {
-        if (!UpdateVictim())
-            return;
+		if (!UpdateVictim() || !CheckInRoom())
+			return;
 
         if (Assassins_Timer)
         {
