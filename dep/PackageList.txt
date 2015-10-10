@@ -14,7 +14,7 @@ G3D (a commercial-grade C++ 3D engine available as Open Source (BSD License)
 
 jemalloc (a general-purpose scalable concurrent malloc-implementation)
   http://www.canonware.com/jemalloc/
-  Version: 3.6.0-0-g46c0af68bd248b04df75e4f92d5fb804c3d75340
+  Version: 4.0.3-0-ge9192eacf8935e29fc62fddc2701f7942b1cc02c
   
 libMPQ (a library for reading MPQ files)
   https://libmpq.org/
