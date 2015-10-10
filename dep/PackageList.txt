@@ -51,3 +51,6 @@ Recast Navigation (latest Rev Modified by Mangos)
 
 PDCurses (Command-Line Interface)
   Version: 3.4
+
+UTF8-CPP (Powerful utf8 library for c++)
+  Version: v2.3.4 (2014-08-26)
