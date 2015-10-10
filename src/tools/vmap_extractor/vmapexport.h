@@ -19,6 +19,9 @@
 #define VMAPEXPORT_H
 
 #include <string>
+#include <set>
+
+typedef std::set<std::string> StringSet;
 
 enum ModelFlags
 {
@@ -34,7 +37,12 @@ bool FileExists(const char * file);
 void strToLower(char* str);
 
 bool ExtractSingleWmo(std::string& fname);
-bool ExtractSingleModel(std::string& fname);
+
+/* @param origPath = original path of the model, cleaned with fixnamen and fixname2
+ * @param fixedName = will store the translated name (if changed)
+ * @param failedPaths = Set to collect errors
+ */
+bool ExtractSingleModel(std::string& origPath, std::string& fixedName, StringSet& failedPaths);
 
 void ExtractGameobjectModels();
 

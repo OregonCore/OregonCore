@@ -162,7 +162,7 @@ bool ExtractSingleWmo(std::string& fname)
                     if (rchr != NULL)
                     {
                         char cpy[4];
-                        memcpy(cpy,rchr,4);
+                        strncpy((char*)cpy, rchr, 4);
                         for (int i=0;i<4; ++i)
                         {
                             int m = cpy[i];
@@ -175,11 +175,11 @@ bool ExtractSingleWmo(std::string& fname)
         return true;
 
     bool file_ok = true;
+    std::cout << "Extracting " << fname << std::endl;
     WMORoot froot(fname);
     if(!froot.open())
                         {
-                           // printf("Couldn't open RootWmo!!!\n");
-                           // file just doesn't exist in the MPQ
+        printf("Couldn't open RootWmo!!!\n");
         return true;
                         }
                         FILE *output=fopen(szLocalFile,"wb");
@@ -230,6 +230,7 @@ void ParsMapFiles()
     char fn[512];
     //char id_filename[64];
     char id[10];
+    StringSet failedPaths;
     for (unsigned int i = 0; i < map_count; ++i)
     {
         sprintf(id, "%03u", map_ids[i].id);
@@ -245,7 +246,7 @@ void ParsMapFiles()
                     if (ADTFile* ADT = WDT.GetMap(x, y))
                     {
                         //sprintf(id_filename,"%02u %02u %03u",x,y,map_ids[i].id);//!!!!!!!!!
-                        ADT->init(map_ids[i].id, x, y);
+                        ADT->init(map_ids[i].id, x, y, failedPaths);
                         delete ADT;
                     }
                 }
@@ -254,6 +255,14 @@ void ParsMapFiles()
             }
             printf("]\n");
         }
+    }
+
+    if (!failedPaths.empty())
+    {
+        printf("Warning: Some models could not be extracted, see below\n");
+        for (StringSet::const_iterator itr = failedPaths.begin(); itr != failedPaths.end(); ++itr)
+            printf("Could not find file of model %s\n", itr->c_str());
+        printf("A few not found models can be expected and are not alarming.\n");
     }
 }
 

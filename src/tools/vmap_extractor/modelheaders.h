@@ -97,6 +97,12 @@ struct ModelHeader
     uint32 ofsRibbonEmitters;
     uint32 nParticleEmitters;
     uint32 ofsParticleEmitters;
+
+};
+
+struct ModelBoundingVertex
+{
+    Vec3D pos;
 };
 
 #pragma pack(pop)

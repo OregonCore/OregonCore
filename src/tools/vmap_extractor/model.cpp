@@ -27,7 +27,7 @@ Model::Model(std::string& _filename) : vertices(0), indices(0), filename(_filena
 {
 }
 
-bool Model::open()
+bool Model::open(StringSet& failedPaths)
 {
     MPQFile f(filename.c_str());
 
@@ -36,8 +36,7 @@ bool Model::open()
     if (!ok)
     {
         f.close();
-        // Do not show this error on console to avoid confusion, the extractor can continue working even if some models fail to load
-        //printf("Error loading model %s\n", filename.c_str());
+        failedPaths.insert(filename);
         return false;
     }
 
@@ -46,18 +45,20 @@ bool Model::open()
     memcpy(&header, f.getBuffer(), sizeof(ModelHeader));
     if (header.nBoundingTriangles > 0)
     {
-        f.seek(0);
-        f.seekRelative(header.ofsBoundingVertices);
+        boundingVertices = (ModelBoundingVertex*)(f.getBuffer() + header.ofsBoundingVertices);
         vertices = new Vec3D[header.nBoundingVertices];
-        f.read(vertices,header.nBoundingVertices*12);
-        for (uint32 i=0; i<header.nBoundingVertices; i++)
+
+        for (size_t i = 0; i < header.nBoundingVertices; i++)
         {
-            vertices[i] = fixCoordSystem(vertices[i]);
+            vertices[i] = fixCoordSystem(boundingVertices[i].pos);
         }
-        f.seek(0);
-        f.seekRelative(header.ofsBoundingTriangles);
-        indices = new uint16[header.nBoundingTriangles];
-        f.read(indices,header.nBoundingTriangles*2);
+
+        uint16* triangles = (uint16*)(f.getBuffer() + header.ofsBoundingTriangles);
+
+        nIndices = header.nBoundingTriangles; // refers to the number of int16's, not the number of triangles
+        indices = new uint16[nIndices];
+        memcpy(indices, triangles, nIndices * 2);
+
         f.close();
     }
     else
@@ -81,6 +82,7 @@ bool Model::ConvertToVMAPModel(const char * outfilename)
     fwrite(szRawVMAPMagic,8,1,output);
     uint32 nVertices = 0;
     nVertices = header.nBoundingVertices;
+
     fwrite(&nVertices, sizeof(int), 1, output);
     uint32 nofgroups = 1;
     fwrite(&nofgroups, sizeof(uint32), 1, output);
@@ -93,8 +95,7 @@ bool Model::ConvertToVMAPModel(const char * outfilename)
     wsize = sizeof(branches) + sizeof(uint32) * branches;
     fwrite(&wsize, sizeof(int), 1, output);
     fwrite(&branches, sizeof(branches), 1, output);
-    uint32 nIndexes = 0;
-    nIndexes = header.nBoundingTriangles;
+    uint32 nIndexes = (uint32) nIndices;
     fwrite(&nIndexes, sizeof(uint32), 1, output);
     fwrite("INDX", 4, 1, output);
     wsize = sizeof(uint32) + sizeof(unsigned short) * nIndexes;
@@ -102,9 +103,10 @@ bool Model::ConvertToVMAPModel(const char * outfilename)
     fwrite(&nIndexes, sizeof(uint32), 1, output);
     if (nIndexes > 0)
     {
-        for (uint32 i = 0; i < nIndexes; ++i)
+        for (uint32 i = 0; i < nIndices; ++i)
         {
-            if ((i % 3) - 1 == 0 && i + 1 < nIndexes)
+            // index[0] -> x, index[1] -> y, index[2] -> z, index[3] -> x ...
+            if ((i % 3) - 1 == 0)
             {
                 uint16 tmp = indices[i];
                 indices[i] = indices[i + 1];
@@ -152,7 +154,11 @@ ModelInstance::ModelInstance(MPQFile& f, const char* ModelInstName, uint32 mapID
     pos = fixCoords(Vec3D(ff[0], ff[1], ff[2]));
     f.read(ff, 12);
     rot = Vec3D(ff[0], ff[1], ff[2]);
-    f.read(&scale, 4);
+
+    uint16 fFlags;      // dummy var
+    f.read(&scale, 2);
+    f.read(&fFlags, 2); // unknown but flag 1 is used for biodome in Outland, currently this value is not used
+
     // scale factor - divide by 1024. blizzard devs must be on crack, why not just use a float?
     sc = scale / 1024.0f;
 
@@ -191,20 +197,4 @@ ModelInstance::ModelInstance(MPQFile& f, const char* ModelInstName, uint32 mapID
     uint32 nlen = strlen(ModelInstName);
     fwrite(&nlen, sizeof(uint32), 1, pDirfile);
     fwrite(ModelInstName, sizeof(char), nlen, pDirfile);
-
-    /* int realx1 = (int) ((float) pos.x / 533.333333f);
-    int realy1 = (int) ((float) pos.z / 533.333333f);
-    int realx2 = (int) ((float) pos.x / 533.333333f);
-    int realy2 = (int) ((float) pos.z / 533.333333f);
-
-    fprintf(pDirfile,"%s/%s %f,%f,%f_%f,%f,%f %f %d %d %d,%d %d\n",
-        MapName,
-        ModelInstName,
-        (float) pos.x, (float) pos.y, (float) pos.z,
-        (float) rot.x, (float) rot.y, (float) rot.z,
-        sc,
-        nVertices,
-        realx1, realy1,
-        realx2, realy2
-        ); */
 }

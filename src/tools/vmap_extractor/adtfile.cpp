@@ -69,9 +69,9 @@ void fixname2(char* name, size_t len)
     }
 }
 
-char * GetExtension(char * FileName)
+char const* GetExtension(char const* FileName)
 {
-    char * szTemp;
+    char const* szTemp;
     if((szTemp = strrchr(FileName, '.')) != NULL)
         return szTemp;
     return NULL;
@@ -82,7 +82,7 @@ ADTFile::ADTFile(char* filename): ADT(filename)
     Adtfilename.append(filename);
 }
 
-bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
+bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY, StringSet& failedPaths)
 {
     if (ADT.isEof ())
         return false;
@@ -143,11 +143,11 @@ bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
                     fixnamen(p, strlen(p));
                     char* s = GetPlainName(p);
                     fixname2(s, strlen(s));
+                    string path(p);                         // Store copy after name fixed
 
-                    ModelInstansName[t++] = s;
-
-                    string path(p);
-                    ExtractSingleModel(path);
+                    std::string fixedName;
+                    ExtractSingleModel(path, fixedName, failedPaths);
+                    ModelInstansName[t++] = fixedName;
 
                     p = p+strlen(p)+1;
                 }
@@ -209,6 +209,7 @@ bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
     }
     ADT.close();
     fclose(dirfile);
+
     return true;
 }
 
