@@ -26,8 +26,8 @@ add_definitions(-DDEBUG)
 add_definitions(-DNO_vsnprintf)
 
 include_directories(
+  ${JEMALLOC_LIBRARY}
   ${ACE_INCLUDE_DIR}
-  ${MYSQL_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}/dep/libmpq
   ${CMAKE_SOURCE_DIR}/dep/zlib
   ${CMAKE_SOURCE_DIR}/dep/g3dlite/include
@@ -44,6 +44,7 @@ add_executable(movements_extractor
 )
 
 target_link_libraries(movements_extractor
+  ${JEMALLOC_LIBRARY}
   ${ACE_LIBRARY}
   ${BZIP2_LIBRARIES}
   ${ZLIB_LIBRARIES}

@@ -8,20 +8,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-SET(zlib_STAT_SRCS
-  adler32.c                                                                                                                                           
-  compress.c                                                                                                                                          
-  crc32.c                                                                                                                                             
-  deflate.c                                                                                                                                           
-  example.c                                                                                                                                           
-  infback.c                                                                                                                                           
-  inffast.c                                                                                                                                           
-  inflate.c                                                                                                                                           
-  inftrees.c                                                                                                                                          
-  trees.c                                                                                                                                             
-  uncompr.c                                                                                                                                           
-  zutil.c   
-)
+file(GLOB zlib_STAT_SRCS *.c)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}

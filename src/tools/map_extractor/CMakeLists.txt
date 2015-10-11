@@ -34,6 +34,7 @@ add_executable(map_extractor
 )
 
 target_link_libraries(map_extractor
+  ${JEMALLOC_LIBRARY}
   mpq
   ${BZIP2_LIBRARIES}
   ${ZLIB_LIBRARIES}
