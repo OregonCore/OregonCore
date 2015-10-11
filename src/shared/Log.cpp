@@ -424,6 +424,7 @@ void Log::DoLog(LogTypes type, bool newline, const char* prefix, const char* fmt
             fwrite(buffer, len-1, 1, logFile);
             if (newline)
                 fputc('\n', logFile);
+            fflush(logFile);
         }
 
         if (prefix)
