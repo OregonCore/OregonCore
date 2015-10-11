@@ -1,7 +1,5 @@
+#ifdef JEMALLOC_VALGRIND
 #include "jemalloc/internal/jemalloc_internal.h"
-#ifndef JEMALLOC_VALGRIND
-#  error "This source file is for Valgrind integration."
-#endif
 
 #include <valgrind/memcheck.h>
 
@@ -32,3 +30,4 @@ valgrind_freelike_block(void *ptr, size_t usize)
 
 	VALGRIND_FREELIKE_BLOCK(ptr, usize);
 }
+#endif
