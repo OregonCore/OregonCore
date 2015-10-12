@@ -159,7 +159,13 @@ struct mob_infested_root_walkerAI : public ScriptedAI
 {
     mob_infested_root_walkerAI(Creature* c) : ScriptedAI(c) {}
 
-    void Reset() { }
+    void Reset() 
+	{
+		regrowth_timer = 12000;
+	}
+	
+	uint32 regrowth_timer;
+
     void EnterCombat(Unit* /*who*/) { }
 
     void DamageTaken(Unit* done_by, uint32& damage)
@@ -169,7 +175,26 @@ struct mob_infested_root_walkerAI : public ScriptedAI
                 if (rand() % 100 < 75)
                     //Summon Wood Mites
                     me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
     }
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (regrowth_timer <= diff)
+		{
+			DoCast(me, 39000);
+			regrowth_timer = 15000;
+		}
+		else regrowth_timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
 };
 CreatureAI* GetAI_mob_infested_root_walker(Creature* pCreature)
 {
@@ -184,7 +209,13 @@ struct mob_rotting_forest_ragerAI : public ScriptedAI
 {
     mob_rotting_forest_ragerAI(Creature* c) : ScriptedAI(c) {}
 
-    void Reset() { }
+    void Reset() 
+	{
+		thunderclap_timer = 5000;
+	}
+
+	uint32 thunderclap_timer;
+
     void EnterCombat(Unit* /*who*/) { }
 
     void DamageTaken(Unit* done_by, uint32& damage)
@@ -194,7 +225,32 @@ struct mob_rotting_forest_ragerAI : public ScriptedAI
                 if (rand() % 100 < 75)
                     //Summon Lots of Wood Mights
                     me->CastSpell(me, 39134, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
+					me->CastSpell(me, 39130, true);
     }
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (thunderclap_timer <= diff)
+		{
+			DoCast(15548);
+			thunderclap_timer = 12000;
+		}
+		else thunderclap_timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
 };
 CreatureAI* GetAI_mob_rotting_forest_rager(Creature* pCreature)
 {
@@ -1117,7 +1173,6 @@ enum
     SAY_THANKS_1              = -1000590,
     SAY_THANKS_2              = -1000591,
     SAY_THANKS_3              = -1000592,
-    SAY_THANKS_4              = -1000593
 };
 
 bool GOHello_veil_skith_cage(Player* pPlayer, GameObject* pGo)
@@ -1128,7 +1183,7 @@ bool GOHello_veil_skith_cage(Player* pPlayer, GameObject* pGo)
         {
             pPlayer->KilledMonsterCredit(NPC_CAPTIVE_CHILD, 0);
 
-            switch (urand(0, 3))
+            switch (urand(0, 2))
             {
             case 0:
                 DoScriptText(SAY_THANKS_1, pChild);
@@ -1138,9 +1193,6 @@ bool GOHello_veil_skith_cage(Player* pPlayer, GameObject* pGo)
                 break;
             case 2:
                 DoScriptText(SAY_THANKS_3, pChild);
-                break;
-            case 3:
-                DoScriptText(SAY_THANKS_4, pChild);
                 break;
             }
 
@@ -1705,6 +1757,425 @@ bool GossipSelect_npc_shadowy_initiate(Player* player, Creature* pCreature, uint
 	return true;
 }
 
+//Empoor 
+
+#define SPELL_LIGHTNING_SHIELD  12550
+#define SPELL_FROST_SHOCK		12548
+
+#define SAY_MEANING			-1910152
+
+#define GOSSIP_EMPOOR "Empoor, you are going  to tell me what I want to know, or else!"
+
+struct npc_empoorAI : public ScriptedAI
+{
+	npc_empoorAI(Creature* pCreature) : ScriptedAI(pCreature) { }
+
+	void Reset()
+	{
+		me->setFaction(35);
+		me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+
+		if (Creature* guard = me->FindNearestCreature(18483, 15, true))
+		{
+			guard->setFaction(35);
+		}
+
+		reset_timer = 0;
+		fschock_timer = 4000;
+		lightning_shield_timer = 1000;	
+	}
+
+	uint32 reset_timer;
+	uint32 fschock_timer;
+	uint32 lightning_shield_timer;
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void DamageTaken(Unit* done_by, uint32& damage)
+	{
+		if (done_by->GetTypeId() == TYPEID_PLAYER)
+			if ((me->GetHealth() - damage) * 100 / me->GetMaxHealth() < 20)
+			{
+				me->setFaction(35);
+				me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+
+				if (Creature* guard = me->FindNearestCreature(18483, 15, true))
+				{
+					guard->setFaction(35);
+				}
+
+				damage = 0;
+				EnterEvadeMode();
+			}
+	}
+
+	void UpdateAI(const uint32 diff) override
+	{
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
+
+		if (!UpdateVictim())
+			return;
+
+		if (fschock_timer <= diff)
+		{
+			DoCastVictim(SPELL_FROST_SHOCK);
+			fschock_timer = urand(8000, 12000);
+		}
+		else fschock_timer -= diff;
+
+		if (lightning_shield_timer <= diff)
+		{
+			DoCast(me, SPELL_LIGHTNING_SHIELD);
+			lightning_shield_timer = 25000;
+		}
+		else lightning_shield_timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_empoor(Creature* pCreature)
+{
+	return new npc_empoorAI(pCreature);
+}
+
+bool GossipHello_npc_empoor(Player* player, Creature* pCreature)
+{
+	if (pCreature->isQuestGiver())
+		player->PrepareQuestMenu(pCreature->GetGUID());
+
+	if (player->GetQuestStatus(9978) == QUEST_STATUS_COMPLETE)
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_EMPOOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+	player->SEND_GOSSIP_MENU(9405, pCreature->GetGUID());
+
+	return true;
+}
+
+bool GossipSelect_npc_empoor(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
+{
+	if (action == GOSSIP_ACTION_INFO_DEF + 1)
+	{
+		player->CLOSE_GOSSIP_MENU();
+		DoScriptText(SAY_MEANING, pCreature, player);
+		pCreature->setFaction(14);
+
+		((npc_empoorAI*)pCreature->AI())->AttackStart(player);
+
+		if (Creature* guard = pCreature->FindNearestCreature(18483, 15, true))
+		{
+			guard->setFaction(14);
+		}
+	}
+
+	return true;
+}
+
+/*######
+## npc_pathaleon_image
+######*/
+
+enum panthimage
+{
+	SAY_PATHALEON1 = -1910154,
+	SAY_PATHALEON2 = -1910157,
+	SAY_PATHALEON3 = -1910158,
+	SAY_PATHALEON4 = -1910159,
+	SAY_PATHALEON5 = -1910161,
+
+	SAY_PLAYER_ENTER = -1910163,
+	
+	SPELL_TELE = 7741,
+	
+	NPC_VOLDOUN = 18554,
+};
+
+struct npc_pathaleon_image2AI : public ScriptedAI
+{
+	npc_pathaleon_image2AI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	bool Event;
+
+	uint32 uiSumTimer;
+	uint32 uiStepsTimer;
+	uint32 uiSteps;
+
+	void Reset()
+	{
+		uiSumTimer = 5000;
+		uiStepsTimer = 0;
+		uiSteps = 0;
+		Event = false;
+	}
+
+	int32 NextStep(uint32 uiSteps)
+	{
+		switch (uiSteps)
+		{
+		case 1:
+			me->SetVisibility(VISIBILITY_ON);
+			return 5000;
+		case 2:
+			DoScriptText(SAY_PATHALEON1, me, 0);
+			return 12000;
+		case 3:
+			DoScriptText(SAY_PATHALEON2, me, 0);
+			return 8500;
+		case 4:
+			DoScriptText(SAY_PATHALEON3, me, 0);
+			return 8500;
+		case 5:
+			DoScriptText(SAY_PATHALEON4, me, 0);
+			return 12000;
+		case 6:
+			DoScriptText(SAY_PATHALEON5, me, 0);
+			return 300000;
+		case 7:
+			DoScriptText(SAY_PLAYER_ENTER, me, 0);
+			return 4000;
+		case 8:
+			DoCast(SPELL_TELE);
+			return 1000;
+		case 9:		
+			me->DisappearAndDie();
+		default:
+			return 0;
+		}
+	}
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (Creature* vold = me->FindNearestCreature(NPC_VOLDOUN, 10.0f, true))
+		{
+			Event = true;
+		}
+		else
+			Event = false;
+
+		if (uiStepsTimer <= uiDiff)
+		{
+			if (Event)
+				uiStepsTimer = NextStep(++uiSteps);
+		}
+		else uiStepsTimer -= uiDiff;
+		
+	}
+};
+
+CreatureAI* GetAI_npc_pathaleon_image2(Creature* pCreature)
+{
+	return new npc_pathaleon_image2AI(pCreature);
+}
+
+enum voldconv
+{
+	SAY_VOLD_INTRO = -1910153,
+	SAY_VOLD1 = -1910155,
+	SAY_VOLD2 = -1910156,
+	SAY_VOLD3 = -1910160,
+
+	SAY_AGGRO = -1910162,
+
+	SAY_PLAYER_ENTER2 = -1910163,
+
+	NPC_IMAGE = 31000,
+
+	SPELL_HL = 13952,
+	SPELL_SEALHEAL = 15277,
+	SPELL_JUDGMENT = 32917
+};
+
+struct npc_voldounAI : public ScriptedAI
+{
+	npc_voldounAI(Creature* pCreature) : ScriptedAI(pCreature) { }
+
+	void Reset()
+	{
+		me->SetStandState(UNIT_STAND_STATE_STAND);
+
+		intro = false;
+		SayLine1 = false;
+		SayLine2 = false;
+		SayLine3 = false;
+		conversation_timer = 0;
+		conv_timer = 0;
+		conv_timer2 = 0;
+
+		holylight_timer = 15000;
+		sealheal_timer = 2000;
+		judgement_timer = 11000;
+	}
+
+	bool intro;
+	bool SayLine1;
+	bool SayLine2;
+	bool SayLine3;
+	uint32 conversation_timer;
+	uint32 conv_timer;
+	uint32 conv_timer2;
+	uint32 holylight_timer;
+	uint32 sealheal_timer;
+	uint32 judgement_timer;
+
+	void EnterCombat(Unit* /*who*/) 
+	{
+		DoScriptText(SAY_AGGRO, me);
+
+		if (Creature* image = me->FindNearestCreature(NPC_IMAGE, 20.0f, true))
+		{
+			DoScriptText(SAY_PLAYER_ENTER, image, me);
+			image->DisappearAndDie();
+		}
+	}
+
+	void UpdateAI(const uint32 diff) override
+	{
+		if (!UpdateVictim())
+		{
+			if (!intro)
+			{
+				if (Creature* image = me->FindNearestCreature(NPC_IMAGE, 10.0f, true))
+				{
+					DoScriptText(SAY_VOLD_INTRO, me, image);					
+					me->SetStandState(UNIT_STAND_STATE_KNEEL);
+					intro = true;
+					conversation_timer = 10000;
+				}
+			}
+
+			if (conversation_timer <= diff && SayLine1 == false && intro == true)
+			{
+				DoScriptText(SAY_VOLD1, me);
+				SayLine1 = true;
+				me->SetStandState(UNIT_STAND_STATE_STAND);
+				conv_timer = 8000;
+			}
+			else conversation_timer -= diff;
+
+			if (conv_timer <= diff && SayLine2 == false && intro == true)
+			{
+				DoScriptText(SAY_VOLD2, me);
+				SayLine2 = true;
+				conv_timer2 = 18000;
+			}
+			else conv_timer -= diff;
+
+			if (conv_timer2 <= diff && SayLine3 == false && intro == true)
+			{
+				DoScriptText(SAY_VOLD3, me);
+				SayLine3 = true;
+			}
+			else conv_timer2 -= diff;
+		}
+
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
+
+		if (UpdateVictim())
+		{
+			if (holylight_timer <= diff)
+			{
+				DoCast(me, SPELL_HL);
+				holylight_timer = 11000;
+			}
+			else holylight_timer -= diff;
+
+			if (sealheal_timer <= diff)
+			{
+				DoCast(me, SPELL_SEALHEAL);
+				sealheal_timer = 25000;;
+			}
+			else sealheal_timer -= diff;
+
+			if (judgement_timer <= diff)
+			{
+				DoCastVictim(SPELL_JUDGMENT);
+				judgement_timer = 15000;;
+			}
+			else judgement_timer -= diff;
+		}
+
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_voldoun(Creature* pCreature)
+{
+	return new npc_voldounAI(pCreature);
+}
+
+struct mob_mountain_colossusAI : public ScriptedAI
+{
+	mob_mountain_colossusAI(Creature* pCreature) : ScriptedAI(pCreature) { }
+
+	void Reset()
+	{
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
+	}
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void UpdateAI(const uint32 diff) override
+	{
+		if (!UpdateVictim())
+			return;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_mob_mountain_colossus(Creature* pCreature)
+{
+	return new mob_mountain_colossusAI(pCreature);
+}
+
+/*######
+## npc_hungry_nether_ray
+######*/
+
+enum
+{
+	NPC_BLACKWING_WARP_CHASER = 23219,
+	QUEST_HUNGRY_NETHER_RAYS = 11093
+};
+
+struct npc_hungry_nether_rayAI : public ScriptedAI
+{
+	npc_hungry_nether_rayAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	uint32 uiCheckTimer;
+	uint64 uiWarpGUID;
+
+	void Reset()
+	{
+		uiCheckTimer = 4000;
+		uiWarpGUID = 0;
+	}
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (uiCheckTimer <= uiDiff)
+		{
+			if (Creature* pWarp = me->FindNearestCreature(NPC_BLACKWING_WARP_CHASER, 9.0f, false))
+			{
+				if (pWarp->GetGUID() != uiWarpGUID && CAST_PLR(me->GetOwner())->GetQuestStatus(QUEST_HUNGRY_NETHER_RAYS) == QUEST_STATUS_INCOMPLETE)
+				{
+					uiWarpGUID = pWarp->GetGUID();
+					me->HandleEmoteCommand(ANIM_EMOTE_EAT);
+				}
+			}
+			uiCheckTimer = 4000;
+		}
+		else uiCheckTimer -= uiDiff;
+	}
+};
+
+CreatureAI* GetAI_npc_hungry_nether_ray(Creature* pCreature)
+{
+	return new npc_hungry_nether_rayAI(pCreature);
+}
+
 void AddSC_terokkar_forest()
 {
     Script* newscript;
@@ -1845,6 +2316,28 @@ void AddSC_terokkar_forest()
 	newscript->GetAI = &GetAI_npc_shadowy_initiate;
 	newscript->pGossipHello = &GossipHello_npc_shadowy_initiate;
 	newscript->pGossipSelect = &GossipSelect_npc_shadowy_initiate;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_empoor";
+	newscript->GetAI = &GetAI_npc_empoor;
+	newscript->pGossipHello = &GossipHello_npc_empoor;
+	newscript->pGossipSelect = &GossipSelect_npc_empoor;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_pathaleon_image2";
+	newscript->GetAI = &GetAI_npc_pathaleon_image2;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_voldoun";
+	newscript->GetAI = &GetAI_npc_voldoun;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "mob_mountain_colossus";
+	newscript->GetAI = &GetAI_mob_mountain_colossus;
 	newscript->RegisterSelf();
 }
 
