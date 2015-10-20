@@ -706,6 +706,16 @@ enum EnviromentalDamage
     DAMAGE_FALL_TO_VOID = 6                                 // custom case for fall without durability loss
 };
 
+enum PlayerChatTag
+{
+    CHAT_TAG_NONE       = 0x00,
+    CHAT_TAG_AFK        = 0x01,
+    CHAT_TAG_DND        = 0x02,
+    CHAT_TAG_GM         = 0x04,
+    CHAT_TAG_COM        = 0x08, // [Unused WotLK] Commentator
+    CHAT_TAG_DEV        = 0x10 //  [Unused WotLK] 
+};
+
 enum PlayedTimeIndex
 {
     PLAYED_TIME_TOTAL = 0,
@@ -942,8 +952,8 @@ class Player : public Unit, public GridObject<Player>
         friend void Item::AddToUpdateQueueOf(Player* player);
         friend void Item::RemoveFromUpdateQueueOf(Player* player);
     public:
-        explicit Player (WorldSession* session);
-        ~Player ();
+        explicit Player(WorldSession* session);
+        ~Player();
 
         void CleanupsBeforeDelete();
 
@@ -953,35 +963,31 @@ class Player : public Unit, public GridObject<Player>
         void AddToWorld();
         void RemoveFromWorld();
 
-        bool TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options = 0);
-
-        bool TeleportTo(WorldLocation const& loc, uint32 options = 0)
+        void SetObjectScale(float scale)
         {
-            return TeleportTo(loc.GetMapId(), loc.GetPositionX(), loc.GetPositionY(), loc.GetPositionZ(), loc.GetOrientation(), options);
+            Unit::SetObjectScale(scale);
+            SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, scale * DEFAULT_WORLD_OBJECT_SIZE);
+            SetFloatValue(UNIT_FIELD_COMBATREACH, scale * DEFAULT_COMBAT_REACH);
         }
 
+        bool TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options = 0);
+        bool TeleportTo(WorldLocation const &loc, uint32 options = 0);
         bool TeleportToBGEntryPoint();
 
-        void SetSummonPoint(uint32 mapid, float x, float y, float z)
-        {
-            m_summon_expire = time(NULL) + MAX_PLAYER_SUMMON_DELAY;
-            m_summon_mapid = mapid;
-            m_summon_x = x;
-            m_summon_y = y;
-            m_summon_z = z;
-        }
+        void SetSummonPoint(uint32 mapid, float x, float y, float z);
         void SummonIfPossible(bool agree);
 
         bool Create(uint32 guidlow, const std::string& name, uint8 race, uint8 class_, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair, uint8 outfitId);
 
         void Update(uint32 time);
 
-        static bool BuildEnumData(QueryResult_AutoPtr result, WorldPacket* p_data);
+        static bool BuildEnumData(QueryResult_AutoPtr result, WorldPacket* data);
 
         void SetInWater(bool apply);
 
         bool IsInWater() const override { return m_isInWater; }
-        bool IsUnderWater() const;
+        bool IsUnderWater() const override;
+        bool IsFalling() { return GetPositionZ() < m_lastFallZ; }
         bool IsInAreaTriggerRadius(const AreaTriggerEntry* trigger) const;
 
         void SendInitialPacketsBeforeAddToMap();
@@ -989,22 +995,16 @@ class Player : public Unit, public GridObject<Player>
         void SendTransferAborted(uint32 mapid, uint16 reason);
         void SendInstanceResetWarning(uint32 mapid, uint32 time);
 
+        bool CanInteractWithQuestGiver(Object* questGiver);
         Creature* GetNPCIfCanInteractWith(uint64 guid, uint32 npcflagmask);
         GameObject* GetGameObjectIfCanInteractWith(uint64 guid, GameobjectTypes type) const;
 
-        bool ToggleAFK();
-        bool ToggleDND();
-        bool isAFK() const
-        {
-            return HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK);
-        }
-        bool isDND() const
-        {
-            return HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_DND);
-        }
-        uint8 chatTag() const;
-        std::string afkMsg;
-        std::string dndMsg;
+        void ToggleAFK();
+        void ToggleDND();
+        bool isAFK() const { return HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK); }
+        bool isDND() const { return HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_DND); }
+        uint8 GetChatTag() const;
+        std::string autoReplyMsg;
 
         PlayerSocial* GetSocial()
         {

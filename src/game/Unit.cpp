@@ -10579,8 +10579,8 @@ void Unit::CleanupsBeforeDelete()
 
     ASSERT(GetGUID());
 
-    //A unit may be in removelist and not in world, but it is still in grid
-    //and may have some references during delete
+    // A unit may be in removelist and not in world, but it is still in grid
+    // and may have some references during delete
     RemoveAllAuras();
     RemoveAllGameObjects();
 

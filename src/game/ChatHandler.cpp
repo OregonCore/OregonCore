@@ -449,9 +449,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                 if (!msg.empty() || !_player->isAFK())
                 {
                     if (msg.empty())
-                        _player->afkMsg = GetOregonString(LANG_PLAYER_AFK_DEFAULT);
+                        _player->autoReplyMsg = GetOregonString(LANG_PLAYER_AFK_DEFAULT);
                     else
-                        _player->afkMsg = msg;
+                        _player->autoReplyMsg = msg;
                 }
                 if (msg.empty() || !_player->isAFK())
                 {
@@ -470,9 +470,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             if (!msg.empty() || !_player->isDND())
             {
                 if (msg.empty())
-                    _player->dndMsg = GetOregonString(LANG_PLAYER_DND_DEFAULT);
+                    _player->autoReplyMsg = GetOregonString(LANG_PLAYER_DND_DEFAULT);
                 else
-                    _player->dndMsg = msg;
+                    _player->autoReplyMsg = msg;
             }
             if (msg.empty() || !_player->isDND())
             {

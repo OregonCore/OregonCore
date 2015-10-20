@@ -64,7 +64,7 @@ class BattleGroundChatBuilder
             data << uint64(target_guid);
             data << uint32(strlen(text) + 1);
             data << text;
-            data << uint8(i_source ? i_source->chatTag() : uint8(0));
+            data << uint8(i_source ? i_source->GetChatTag() : uint8(0));
         }
 
         ChatMsg i_msgtype;
@@ -96,7 +96,7 @@ class BattleGround2ChatBuilder
             data << uint64(target_guid);
             data << uint32(strlen(str) + 1);
             data << str;
-            data << uint8(i_source ? i_source->chatTag() : uint8(0));
+            data << uint8(i_source ? i_source->GetChatTag() : uint8(0));
         }
     private:
 

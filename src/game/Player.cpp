@@ -471,11 +471,6 @@ Player::~Player()
     for (size_t x = 0; x < ItemSetEff.size(); x++)
         delete ItemSetEff[x];
 
-    // clean up player-instance binds, may unload some instance saves
-    for (uint8 i = 0; i < TOTAL_DIFFICULTIES; i++)
-        for (BoundInstancesMap::iterator itr = m_boundInstances[i].begin(); itr != m_boundInstances[i].end(); ++itr)
-            itr->second.save->RemovePlayer(this);
-
     delete m_declinedname;
 }
 
@@ -490,7 +485,13 @@ void Player::CleanupsBeforeDelete()
         if (Group* group = GetGroup())
             group->SendUpdate();
     }
+
     Unit::CleanupsBeforeDelete();
+
+    // clean up player-instance binds, may unload some instance saves
+    for (uint8 i = 0; i < TOTAL_DIFFICULTIES; i++)
+        for (BoundInstancesMap::iterator itr = m_boundInstances[i].begin(); itr != m_boundInstances[i].end(); ++itr)
+            itr->second.save->RemovePlayer(this);
 }
 
 bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 class_, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair, uint8 /*outfitId*/)
@@ -1513,43 +1514,32 @@ bool Player::BuildEnumData(QueryResult_AutoPtr result, WorldPacket*  p_data)
     return true;
 }
 
-bool Player::ToggleAFK()
+void Player::ToggleAFK()
 {
     ToggleFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK);
 
-    bool state = HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK);
-
     // afk player not allowed in battleground
-    if (state && InBattleGround() && !InArena())
+    if (isAFK() && InBattleGround() && !InArena())
         LeaveBattleground();
-
-    return state;
 }
 
-bool Player::ToggleDND()
+void Player::ToggleDND()
 {
     ToggleFlag(PLAYER_FLAGS, PLAYER_FLAGS_DND);
-
-    return HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_DND);
 }
 
-uint8 Player::chatTag() const
+uint8 Player::GetChatTag() const
 {
-    // it's bitmask
-    // 0x8 - ??
-    // 0x4 - gm
-    // 0x2 - dnd
-    // 0x1 - afk
+    uint8 tag = CHAT_TAG_NONE;
+
     if (isGMChat())
-        return 4;
-
+        tag |= CHAT_TAG_GM;
     if (isDND())
-        return 3;
-
+        tag |= CHAT_TAG_DND;
     if (isAFK())
-        return 1;
+        tag |= CHAT_TAG_AFK;
 
-    return 0;
+    return tag;
 }
 
 bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options)
@@ -1813,6 +1803,11 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
             return false;
     }
     return true;
+}
+
+bool Player::TeleportTo(WorldLocation const &loc, uint32 options /*= 0*/)
+{
+    return TeleportTo(loc.GetMapId(), loc.GetPositionX(), loc.GetPositionY(), loc.GetPositionZ(), loc.GetOrientation(), options);
 }
 
 WorldLocation Player::GetStartPosition() const
@@ -2155,6 +2150,24 @@ void Player::ResetAllPowers()
         default:
             break;
     }
+}
+
+bool Player::CanInteractWithQuestGiver(Object* questGiver)
+{
+    switch (questGiver->GetTypeId())
+    {
+        case TYPEID_UNIT:
+            return GetNPCIfCanInteractWith(questGiver->GetGUID(), UNIT_NPC_FLAG_QUESTGIVER) != NULL;
+        case TYPEID_GAMEOBJECT:
+            return GetGameObjectIfCanInteractWith(questGiver->GetGUID(), GAMEOBJECT_TYPE_QUESTGIVER) != NULL;
+        case TYPEID_PLAYER:
+            return IsAlive() && questGiver->ToPlayer()->IsAlive();
+        case TYPEID_ITEM:
+            return IsAlive();
+        default:
+            break;
+    }
+    return false;
 }
 
 Creature* Player::GetNPCIfCanInteractWith(uint64 guid, uint32 npcflagmask)
@@ -17573,7 +17586,7 @@ void Player::BuildPlayerChat(WorldPacket* data, uint8 msgtype, const std::string
     *data << (uint64)GetGUID();
     *data << (uint32)(text.length() + 1);
     *data << text;
-    *data << (uint8)chatTag();
+    *data << (uint8)GetChatTag();
 }
 
 void Player::Say(const std::string& text, const uint32 language)
@@ -17644,9 +17657,9 @@ void Player::Whisper(const std::string& text, uint32 language, Player* rPlayer)
 
     // announce afk or dnd message if whispered player is either afk or dnd
     if (rPlayer->isAFK())
-        ChatHandler(this).PSendSysMessage(LANG_PLAYER_AFK, rPlayer->GetName(), rPlayer->afkMsg.c_str());
+        ChatHandler(this).PSendSysMessage(LANG_PLAYER_AFK, rPlayer->GetName(), rPlayer->autoReplyMsg.c_str());
     else if (rPlayer->isDND())
-        ChatHandler(this).PSendSysMessage(LANG_PLAYER_DND, rPlayer->GetName(), rPlayer->dndMsg.c_str());
+        ChatHandler(this).PSendSysMessage(LANG_PLAYER_DND, rPlayer->GetName(), rPlayer->autoReplyMsg.c_str());
 }
 
 void Player::PetSpellInitialize()
@@ -20021,6 +20034,15 @@ void Player::UpdateForQuestsGO()
     }
     udata.BuildPacket(&packet);
     GetSession()->SendPacket(&packet);
+}
+
+void Player::SetSummonPoint(uint32 mapid, float x, float y, float z)
+{
+    m_summon_expire = time(NULL) + MAX_PLAYER_SUMMON_DELAY;
+    m_summon_mapid = mapid;
+    m_summon_x = x;
+    m_summon_y = y;
+    m_summon_z = z;
 }
 
 void Player::SummonIfPossible(bool agree)
