@@ -502,10 +502,12 @@ CreatureAI* GetAI_npc_isla_starmaneAI(Creature* pCreature)
 /*######
 ## go_skull_pile
 ######*/
+
 #define GOSSIP_S_DARKSCREECHER_AKKARAI   "Summon Darkscreecher Akkarai"
 #define GOSSIP_S_KARROG                  "Summon Karrog"
 #define GOSSIP_S_GEZZARAK_THE_HUNTRESS   "Summon Gezzarak the Huntress"
 #define GOSSIP_S_VAKKIZ_THE_WINDRAGER    "Summon Vakkiz the Windrager"
+#define ITEM_SKULL_PILE_OFFERING		  32620
 
 bool GossipHello_go_skull_pile(Player* player, GameObject* _GO)
 {
@@ -526,20 +528,32 @@ void SendActionMenu_go_skull_pile(Player* player, GameObject* _GO, uint32 action
     switch (action)
     {
 	case GOSSIP_ACTION_INFO_DEF + 1:
-		//player->CastSpell(player,40642,false);
-		player->SummonCreature(23161, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+		if (player->HasItemCount(ITEM_SKULL_PILE_OFFERING, 10))
+		{
+			player->DestroyItemCount(ITEM_SKULL_PILE_OFFERING, 10, true);
+			player->SummonCreature(23161, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 2:
-		//player->CastSpell(player,40640,false);
-		player->SummonCreature(23165, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+		if (player->HasItemCount(ITEM_SKULL_PILE_OFFERING, 10))
+		{
+			player->DestroyItemCount(ITEM_SKULL_PILE_OFFERING, 10, true);
+			player->SummonCreature(23165, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 3:
-		//player->CastSpell(player,40632,false);
-		player->SummonCreature(23163, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+		if (player->HasItemCount(ITEM_SKULL_PILE_OFFERING, 10))
+		{
+			player->DestroyItemCount(ITEM_SKULL_PILE_OFFERING, 10, true);
+			player->SummonCreature(23163, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 4:
-		//player->CastSpell(player,40644,false);
-		player->SummonCreature(23162, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+		if (player->HasItemCount(ITEM_SKULL_PILE_OFFERING, 10))
+		{
+			player->DestroyItemCount(ITEM_SKULL_PILE_OFFERING, 10, true);
+			player->SummonCreature(23162, _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ(), 0.0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+		}
 		break;
     }
 }
@@ -1514,6 +1528,63 @@ bool GossipSelect_npc_private_weeks(Player* player, Creature* /*pCreature*/, uin
 	return true;
 }
 
+/*######
+## npc_scout_nefris
+######*/
+
+#define GOSSIP_ITEM2_DISGUISE "Scout Nefris, I need another disguise."
+
+bool QuestAccept_npc_scout_nefris(Player* pPlayer, Creature* pCreature, Quest const* quest)
+{
+	if (quest->GetQuestId() == 10041)
+	{
+		pPlayer->CastSpell(pPlayer, 32756, true);            // Give Disguise buff
+		pPlayer->CastSpell(pPlayer, 38081, true);			   // Give Female Disguise
+	}
+
+	return true;
+}
+
+bool ChooseReward_npc_scout_nefris(Player* pPlayer, Creature* pCreature, const Quest* _Quest, uint32 /*item*/)
+{
+	if (_Quest->GetQuestId() == 10041)
+	{
+		if (pPlayer->HasAura(32756, 0))
+			pPlayer->RemoveAurasDueToSpell(32756);
+
+		if (pPlayer->HasAura(38081, 0))
+			pPlayer->RemoveAurasDueToSpell(38081);
+	}
+
+	return true;
+}
+
+bool GossipHello_npc_scout_nefris(Player* player, Creature* pCreature)
+{
+	if (pCreature->isQuestGiver())
+		player->PrepareQuestMenu(pCreature->GetGUID());
+
+	// Give Another Disguise
+	if (player->GetQuestStatus(10041) == QUEST_STATUS_INCOMPLETE)
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM2_DISGUISE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+	player->SEND_GOSSIP_MENU(9520, pCreature->GetGUID());
+
+	return true;
+}
+
+bool GossipSelect_npc_scout_nefris(Player* player, Creature* /*pCreature*/, uint32 /*sender*/, uint32 action)
+{
+	if (action == GOSSIP_ACTION_INFO_DEF + 1)
+	{
+		player->CLOSE_GOSSIP_MENU();
+		player->CastSpell(player, 32756, true);            // Give Another Disguise
+		player->CastSpell(player, 38081, true);			   // 38080 Male one
+	}
+
+	return true;
+}
+
 // Executioner Gossip
 bool GossipHello_npc_shadowy_executioner(Player* player, Creature* pCreature)
 {
@@ -2056,7 +2127,7 @@ struct npc_voldounAI : public ScriptedAI
 			{
 				DoScriptText(SAY_VOLD2, me);
 				SayLine2 = true;
-				conv_timer2 = 18000;
+				conv_timer2 = 20000;
 			}
 			else conv_timer -= diff;
 
@@ -2094,7 +2165,6 @@ struct npc_voldounAI : public ScriptedAI
 			}
 			else judgement_timer -= diff;
 		}
-
 
 		DoMeleeAttackIfReady();
 	}
@@ -2174,6 +2244,292 @@ struct npc_hungry_nether_rayAI : public ScriptedAI
 CreatureAI* GetAI_npc_hungry_nether_ray(Creature* pCreature)
 {
 	return new npc_hungry_nether_rayAI(pCreature);
+}
+
+
+/*######
+## go_ancient_skull_pile
+######*/
+#define GOSSIP_S_TEROKK   "<Call Forth Terokk.>"
+#define ITEM_OFFERING	  32720
+#define NPC_TEROKK        21838
+#define QUEST_TEROKK	  11073
+
+bool GossipHello_go_ancient_skull_pile(Player *player, GameObject* _GO)
+{
+	if (player->GetQuestStatus(QUEST_TEROKK) == QUEST_STATUS_INCOMPLETE)
+	{
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_S_TEROKK, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+	}
+
+	player->SEND_GOSSIP_MENU(921062, _GO->GetGUID());
+	return true;
+}
+
+void SendActionMenu_go_ancient_skull_pile(Player *player, GameObject* _GO, uint32 action)
+{
+	switch (action)
+	{
+	case GOSSIP_ACTION_INFO_DEF + 1:
+		if (player->HasItemCount(ITEM_OFFERING, 1))
+		{
+			player->DestroyItemCount(ITEM_OFFERING, 1, true);
+			player->SummonCreature(NPC_TEROKK, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+		}
+		break;
+	}
+}
+
+bool GossipSelect_go_ancient_skull_pile(Player *player, GameObject* _GO, uint32 sender, uint32 action)
+{
+	switch (sender)
+	{
+	case GOSSIP_SENDER_MAIN:    SendActionMenu_go_ancient_skull_pile(player, _GO, action); break;
+	}
+	return true;
+}
+
+enum Terokk
+{
+	SPELL_WILL_OF_THE_ARRAKOA_GOD = 40722,
+	SPELL_ENRAGE = 20747,
+	SPELL_DIVINE_SHIELD = 40733,
+	SPELL_CLEAVE = 15284,
+	SPELL_SHADOWBOLT_VOLLEY = 40721,
+	SPELL_CHOSEN_ONE = 40726,
+
+	EMOTE_ENRAGE = -1910164,
+	SAY_SHIELDED = -1910165,
+	SAY_CHOSEN_ONE = -1910166,
+	SAY_SUMMONED = -1910167,
+
+	SAY_VICTORY = -1910168,
+	YELL_FORMATION = -1910169,
+	SAY_BOMBING = -1910170,
+	
+	ACE_PATH = 599599507,
+
+	NPC_ACE = 23377,
+	NPC_TEROKK_TRIGGER = 61001,
+
+	SPELL_BOMB = 40657,
+	SPELL_FLARE = 40655
+};
+
+struct npc_skyguard_aceAI : public ScriptedAI
+{
+	npc_skyguard_aceAI(Creature* pCreature) : ScriptedAI(pCreature) { }
+
+	void Reset()
+	{
+		me->SetCanFly(true);
+		me->SetLevitate(true);
+		me->SetHover(true);
+		me->GetMotionMaster()->MovePath(ACE_PATH, true);
+	}
+
+	void Bombing()
+	{
+		if (Creature* BombTrigger = me->FindNearestCreature(NPC_TEROKK_TRIGGER, 150.0f, true))
+			DoCast(BombTrigger, SPELL_BOMB);
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+			return;
+	}
+};
+
+CreatureAI* GetAI_npc_skyguard_ace(Creature* pCreature)
+{
+	return new npc_skyguard_aceAI(pCreature);
+}
+
+struct npc_terokkAI : public ScriptedAI
+{
+	npc_terokkAI(Creature* pCreature) : ScriptedAI(pCreature) { }
+
+	uint32 cleave_timer;
+	uint32 shadowbolt_volley_timer;
+	uint32 ChosenOne_timer;
+	uint32 summon_timer;
+	uint32 bomb_timer;
+
+	//bool enrage;
+	bool spellHit;
+	bool SayShield;
+
+	bool shielded;
+	bool shielded2;
+	bool shielded3;
+
+	bool bombed1;
+	bool bombed2;
+	bool bombed3;
+
+	bool YellFormation;
+
+	void Reset()
+	{
+		cleave_timer = 6000;
+		shadowbolt_volley_timer = 10000;
+		ChosenOne_timer = 20000;
+		summon_timer = 500;
+		bomb_timer = 0;
+		
+		//enrage = false;
+		SayShield = false;
+		spellHit = false;
+
+		shielded = false;
+		shielded2 = false;
+		shielded3 = false;
+
+		bombed1 = false;
+		bombed2 = false;
+		bombed3 = false;
+
+		YellFormation = false;
+	}
+
+	void EnterCombat(Unit* /*who*/) 
+	{
+		DoScriptText(SAY_SUMMONED, me);
+	}
+
+	void SpellHit(Unit* Hitter, const SpellEntry* Spellkind)
+	{
+		if (Spellkind->Id == 40657 && !spellHit)
+		{
+			if (me->HasAura(SPELL_BOMB, 0))
+				me->RemoveAurasDueToSpell(SPELL_DIVINE_SHIELD);
+			DoCast(me, SPELL_ENRAGE);
+			DoScriptText(EMOTE_ENRAGE, me);
+			spellHit = true;
+
+		}
+	}
+
+	void JustDied(Unit* /*victim*/)
+	{
+		DoCast(me, SPELL_WILL_OF_THE_ARRAKOA_GOD);
+
+		if (Creature* ace = me->FindNearestCreature(NPC_ACE, 100.0f, true))
+		{
+			DoScriptText(SAY_VICTORY, ace);
+			ace->DisappearAndDie();
+		}
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (ChosenOne_timer <= diff)
+		{
+			if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 40, true))
+			{
+				DoCast(pTarget, SPELL_CHOSEN_ONE);
+				DoScriptText(SAY_CHOSEN_ONE, me, pTarget);
+				ChosenOne_timer = 45000;
+			}
+		}
+		else ChosenOne_timer -= diff;
+
+		if (cleave_timer <= diff)
+		{
+			DoCastVictim(SPELL_CLEAVE);
+			cleave_timer = 6000;
+		}
+		else cleave_timer -= diff;
+
+		if (shadowbolt_volley_timer <= diff)
+		{
+			DoCastVictim(SPELL_SHADOWBOLT_VOLLEY);
+			shadowbolt_volley_timer = 10000;
+		}
+		else shadowbolt_volley_timer -= diff;
+
+		if (HealthBelowPct(50) && YellFormation == false)
+		{
+			me->SummonCreature(NPC_ACE, -3787.21f, 3503.76f, 324.43f, 2.24f, TEMPSUMMON_MANUAL_DESPAWN, 0);
+
+			if (Creature* ace = me->FindNearestCreature(NPC_ACE, 150.0f, true))
+			{
+				DoScriptText(YELL_FORMATION, ace);
+				YellFormation = true;
+			}
+		}
+
+		if (HealthBelowPct(30) && shielded == false && SayShield == false)
+		{
+			DoCast(me, SPELL_DIVINE_SHIELD);
+			DoScriptText(SAY_SHIELDED, me);
+			bomb_timer = 25000;
+			shielded = true;
+			SayShield = true;
+
+			if (Creature* ace = me->FindNearestCreature(NPC_ACE, 150.0f, true))
+			{
+				DoScriptText(SAY_BOMBING, ace);
+			}
+		}
+
+		if (HealthBelowPct(20) && shielded2 == false)
+		{
+			DoCast(me, SPELL_DIVINE_SHIELD);
+			shielded2 = true;
+			spellHit = false;
+			bomb_timer = 25000;
+		}
+
+		if (HealthBelowPct(10) && shielded3 == false)
+		{
+			DoCast(me, SPELL_DIVINE_SHIELD);
+			shielded3 = true;
+			spellHit = false;
+			bomb_timer = 25000;
+		}
+
+		if (shielded == true && bombed1 == false && bomb_timer <= diff)
+		{
+			if (Creature* ace = me->FindNearestCreature(NPC_ACE, 150.0f, true))
+			{
+				CAST_AI(npc_skyguard_aceAI, me->AI())->Bombing();
+				bombed1 = true;
+			}
+		}
+		else bomb_timer -= diff;
+
+		if (shielded2 == true && bombed2 == false && bomb_timer <= diff)
+		{
+			if (Creature* ace = me->FindNearestCreature(NPC_ACE, 150.0f, true))
+			{
+				CAST_AI(npc_skyguard_aceAI, me->AI())->Bombing();
+				bombed2 = true;
+			}
+		}
+		else bomb_timer -= diff;
+
+		if (shielded3 == true && bombed3 == false && bomb_timer <= diff)
+		{
+			if (Creature* ace = me->FindNearestCreature(NPC_ACE, 150.0f, true))
+			{
+				CAST_AI(npc_skyguard_aceAI, me->AI())->Bombing();
+				bombed3 = true;
+			}
+		}
+		else bomb_timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_terokk(Creature* pCreature)
+{
+	return new npc_terokkAI(pCreature);
 }
 
 void AddSC_terokkar_forest()
@@ -2288,6 +2644,14 @@ void AddSC_terokkar_forest()
 	newscript->RegisterSelf();
 
 	newscript = new Script;
+	newscript->Name = "npc_scout_nefris";
+	newscript->pGossipHello = &GossipHello_npc_scout_nefris;
+	newscript->pGossipSelect = &GossipSelect_npc_scout_nefris;
+	newscript->pQuestAccept = &QuestAccept_npc_scout_nefris;
+	newscript->pChooseReward = &ChooseReward_npc_scout_nefris;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
 	newscript->Name = "npc_shadowy_executioner";
 	newscript->pGossipHello = &GossipHello_npc_shadowy_executioner;
 	newscript->RegisterSelf();
@@ -2338,6 +2702,22 @@ void AddSC_terokkar_forest()
 	newscript = new Script;
 	newscript->Name = "mob_mountain_colossus";
 	newscript->GetAI = &GetAI_mob_mountain_colossus;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "go_ancient_skull_pile";
+	newscript->pGOHello = &GossipHello_go_ancient_skull_pile;
+	newscript->pGOSelect = &GossipSelect_go_ancient_skull_pile;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_terokk";
+	newscript->GetAI = &GetAI_npc_terokk;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_skyguard_ace";
+	newscript->GetAI = &GetAI_npc_skyguard_ace;
 	newscript->RegisterSelf();
 }
 
