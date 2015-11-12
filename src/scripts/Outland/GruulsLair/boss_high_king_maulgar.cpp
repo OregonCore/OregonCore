@@ -18,7 +18,7 @@
 /* ScriptData
 SDName: Boss_High_King_Maulgar
 SD%Complete: 90
-SDComment: Correct timers, after whirlwind melee attack bug, prayer of healing
+SDComment: Correct timers, after whirlwind melee attack bug
 SDCategory: Gruul's Lair
 EndScriptData */
 
@@ -53,7 +53,7 @@ EndScriptData */
 
 //Kiggler the Craed
 #define SPELL_GREATER_POLYMORPH     33173
-#define SPELL_LIGHTNING_BOLT        36152
+#define SPELL_LIGHTNING_BOLT        42024
 #define SPELL_ARCANE_SHOCK          33175
 #define SPELL_ARCANE_EXPLOSION      33237
 
@@ -135,13 +135,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         Charging_Timer = 0;
         Roar_Timer = 0;
 
-		const CreatureInfo* cinfo = me->GetCreatureTemplate();
-		me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 45)));
-		me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 45)));
-		me->UpdateDamagePhysical(BASE_ATTACK);
-
-		if (me->HasAura(SPELL_DUAL_WIELD))
-			me->RemoveAurasDueToSpell(SPELL_DUAL_WIELD);
+        me->CastSpell(me, SPELL_DUAL_WIELD, false);
 
         Phase2 = false;
 
@@ -255,6 +249,13 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
+        //someone evaded!
+        if (pInstance && !pInstance->GetData(DATA_MAULGAREVENT))
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         //ArcingSmash_Timer
         if (ArcingSmash_Timer <= diff)
         {
@@ -284,6 +285,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         {
             Phase2 = true;
             DoScriptText(SAY_ENRAGE, me);
+			DoCast(me, SPELL_FLURRY);
 
             me->CastSpell(me, SPELL_DUAL_WIELD, true);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
@@ -292,11 +294,6 @@ struct boss_high_king_maulgarAI : public ScriptedAI
 
         if (Phase2)
         {
-			const CreatureInfo* cinfo = me->GetCreatureTemplate();
-			me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
-			me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));
-			me->UpdateDamagePhysical(BASE_ATTACK);
-
             //Charging_Timer
             if (Charging_Timer <= diff)
             {
@@ -340,9 +337,9 @@ struct boss_olm_the_summonerAI : public ScriptedAI
 
     void Reset()
     {
-        DarkDecay_Timer = 10000;
-        Summon_Timer = 15000;
-        DeathCoil_Timer = 20000;
+		DarkDecay_Timer = urand(5000, 8000);
+        Summon_Timer = 500;
+        DeathCoil_Timer = 7000;
 
         //reset encounter
         if (pInstance)
@@ -351,6 +348,8 @@ struct boss_olm_the_summonerAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
+		DoCast(me, SPELL_SUMMON_WFH);
+
         if (pInstance)
         {
             pInstance->SetData64(DATA_MAULGAREVENT_TANK, who->GetGUID());
@@ -384,9 +383,6 @@ struct boss_olm_the_summonerAI : public ScriptedAI
                 AttackStart(pTarget);
         }
 
-		if (me->HasUnitState(UNIT_STATE_CASTING))
-			return;
-
         //Return since we have no target
         if (!UpdateVictim())
             return;
@@ -402,7 +398,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
         if (DarkDecay_Timer <= diff)
         {
             DoCastVictim( SPELL_DARK_DECAY);
-            DarkDecay_Timer = 20000;
+			DarkDecay_Timer = urand(5000, 8000);
         }
         else DarkDecay_Timer -= diff;
 
@@ -421,7 +417,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget)
                 DoCast(pTarget, SPELL_DEATH_COIL);
-            DeathCoil_Timer = 20000;
+			DeathCoil_Timer = 7000;
         }
         else DeathCoil_Timer -= diff;
 
@@ -436,6 +432,7 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
     boss_kiggler_the_crazedAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
+		SetCombatMovement(false);
     }
 
     uint32 GreaterPolymorph_Timer;
@@ -446,12 +443,13 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
     ScriptedInstance* pInstance;
 
     void Reset()
-    {
+    {	
         GreaterPolymorph_Timer = 5000;
-        LightningBolt_Timer = 10000;
-        ArcaneShock_Timer = 20000;
-        ArcaneExplosion_Timer = 30000;
+		LightningBolt_Timer = 3000;
+        ArcaneShock_Timer = 10000;
+        ArcaneExplosion_Timer = 20000;
 
+		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
         //reset encounter
         if (pInstance)
             pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
@@ -483,6 +481,8 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
+		SetCombatMovement(false);
+
         //Only if not incombat check if the event is started
         if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
@@ -510,23 +510,39 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
             if (pTarget)
                 DoCast(pTarget, SPELL_GREATER_POLYMORPH);
 
-            GreaterPolymorph_Timer = 20000;
+            GreaterPolymorph_Timer = 10000;
         }
         else GreaterPolymorph_Timer -= diff;
 
         //LightningBolt_Timer
-        if (LightningBolt_Timer <= diff)
-        {
-            DoCastVictim( SPELL_LIGHTNING_BOLT);
-            LightningBolt_Timer = 15000;
-        }
-        else LightningBolt_Timer -= diff;
+		if (me->IsWithinMeleeRange(me->getVictim()))
+		{
+			//Make sure our attack is ready and we arn't currently casting
+			if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
+			{
+				me->AttackerStateUpdate(me->getVictim());
+				me->resetAttackTimer();
+			}
+		}
+		else
+		{			
+			if (LightningBolt_Timer <= diff)
+			{
+				if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0))
+				{
+					DoCastVictim(SPELL_LIGHTNING_BOLT);					
+				}		
+
+				LightningBolt_Timer = 3000;
+			}
+			else LightningBolt_Timer -= diff;
+		}
 
         //ArcaneShock_Timer
         if (ArcaneShock_Timer <= diff)
         {
             DoCastVictim( SPELL_ARCANE_SHOCK);
-            ArcaneShock_Timer = 20000;
+            ArcaneShock_Timer = 10000;
         }
         else ArcaneShock_Timer -= diff;
 
@@ -534,7 +550,7 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
         if (ArcaneExplosion_Timer <= diff)
         {
             DoCastVictim( SPELL_ARCANE_EXPLOSION);
-            ArcaneExplosion_Timer = 30000;
+            ArcaneExplosion_Timer = 20000;
         }
         else ArcaneExplosion_Timer -= diff;
 
@@ -552,13 +568,15 @@ struct boss_blindeye_the_seerAI : public ScriptedAI
 
     uint32 GreaterPowerWordShield_Timer;
     uint32 Heal_Timer;
+	uint32 pOhHeal_Timer;
 
     ScriptedInstance* pInstance;
 
     void Reset()
     {
-        GreaterPowerWordShield_Timer = 5000;
-        Heal_Timer = 30000;
+		GreaterPowerWordShield_Timer = 5000;
+		Heal_Timer = 25000;
+		pOhHeal_Timer = 31000;
 
         //reset encounter
         if (pInstance)
@@ -615,7 +633,7 @@ struct boss_blindeye_the_seerAI : public ScriptedAI
         if (GreaterPowerWordShield_Timer <= diff)
         {
             DoCast(me, SPELL_GREATER_PW_SHIELD);
-            GreaterPowerWordShield_Timer = 40000;
+            GreaterPowerWordShield_Timer = 25000;
         }
         else GreaterPowerWordShield_Timer -= diff;
 
@@ -623,9 +641,16 @@ struct boss_blindeye_the_seerAI : public ScriptedAI
         if (Heal_Timer <= diff)
         {
             DoCast(me, SPELL_HEAL);
-            Heal_Timer = 60000;
+            Heal_Timer = 26000;
         }
         else Heal_Timer -= diff;
+
+		if (pOhHeal_Timer <= diff)
+		{
+			DoCast(me, SPELL_PRAYER_OH);
+			pOhHeal_Timer = 31000;
+		}
+		else pOhHeal_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -648,20 +673,21 @@ struct boss_krosh_firehandAI : public ScriptedAI
     void Reset()
     {
         GreaterFireball_Timer = 1000;
-        SpellShield_Timer = 5000;
+        SpellShield_Timer = 1500;
         BlastWave_Timer = 20000;
 
+		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
         //reset encounter
         if (pInstance)
             pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
     }
 
     void EnterCombat(Unit* who)
-    {
+    {	
         if (pInstance)
         {
             pInstance->SetData64(DATA_MAULGAREVENT_TANK, who->GetGUID());
-            pInstance->SetData(DATA_MAULGAREVENT, IN_PROGRESS);
+            pInstance->SetData(DATA_MAULGAREVENT, IN_PROGRESS);			
         }
     }
 
@@ -702,17 +728,20 @@ struct boss_krosh_firehandAI : public ScriptedAI
             return;
         }
 
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11719, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 1714, true);
+
         //SpellShield_Timer
         if (SpellShield_Timer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
             DoCastVictim( SPELL_SPELLSHIELD);
-            SpellShield_Timer = 30000;
+            SpellShield_Timer = 20000;
         }
         else SpellShield_Timer -= diff;
 
         //GreaterFireball_Timer
-        if (GreaterFireball_Timer <= diff && me->GetDistance(me->getVictim()) < 30)
+        if (GreaterFireball_Timer <= diff && me->GetDistance(me->getVictim()) < 100)
         {
             DoCastVictim( SPELL_GREATER_FIREBALL);
             GreaterFireball_Timer = 3000;
@@ -738,7 +767,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
 
             me->InterruptNonMeleeSpells(false);
             DoCast(pTarget, SPELL_BLAST_WAVE);
-            BlastWave_Timer = 60000;
+            BlastWave_Timer = 5000;
         }
         else BlastWave_Timer -= diff;
 
@@ -748,27 +777,27 @@ struct boss_krosh_firehandAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_high_king_maulgar(Creature* pCreature)
 {
-    return GetInstanceAI<boss_high_king_maulgarAI>(pCreature);
+    return new boss_high_king_maulgarAI (pCreature);
 }
 
 CreatureAI* GetAI_boss_olm_the_summoner(Creature* pCreature)
 {
-    return GetInstanceAI<boss_olm_the_summonerAI>(pCreature);
+    return new boss_olm_the_summonerAI (pCreature);
 }
 
 CreatureAI* GetAI_boss_kiggler_the_crazed(Creature* pCreature)
 {
-    return GetInstanceAI<boss_kiggler_the_crazedAI>(pCreature);
+    return new boss_kiggler_the_crazedAI (pCreature);
 }
 
 CreatureAI* GetAI_boss_blindeye_the_seer(Creature* pCreature)
 {
-    return GetInstanceAI<boss_blindeye_the_seerAI>(pCreature);
+    return new boss_blindeye_the_seerAI (pCreature);
 }
 
 CreatureAI* GetAI_boss_krosh_firehand(Creature* pCreature)
 {
-    return GetInstanceAI<boss_krosh_firehandAI>(pCreature);
+    return new boss_krosh_firehandAI (pCreature);
 }
 
 void AddSC_boss_high_king_maulgar()
