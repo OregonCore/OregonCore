@@ -258,9 +258,10 @@ struct mob_sunspring_villagerAI : public ScriptedAI
 
     void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
     {
-        if (spell->Id == 32146)
+        if (spell->Id == 23970)
         {
             me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+			me->CastSpell(me, 31706, true);
             me->RemoveCorpse();
         }
     }
@@ -1582,7 +1583,15 @@ struct trigger_arenahelperAI : public ScriptedAI
 {
 	trigger_arenahelperAI(Creature* creature) : ScriptedAI(creature){}
 
-	void Reset() { }
+	void Reset() 
+	{
+		PlayerGUID = 0;
+		Yelled = false;
+	}
+
+	bool Yelled;
+	
+	uint64 PlayerGUID;
 
 	void UpdateAI(const uint32 diff)
 	{
@@ -1590,58 +1599,22 @@ struct trigger_arenahelperAI : public ScriptedAI
 		{
 			mogor->setFaction(14);
 		}
+
+		if (Creature* mogor = me->FindNearestCreature(18069, 50.0f, false))
+		{
+			if (!Yelled)
+			{
+				me->MonsterYellToZone(SAY_DEFEAT_MOGOR, LANG_UNIVERSAL, PlayerGUID);
+				me->DisappearAndDie();
+				Yelled = true;
+			}
+		}
 	}
 };
 
 CreatureAI* GetAI_trigger_arenahelper(Creature* pCreature)
 {
 	return new trigger_arenahelperAI(pCreature);
-}
-
-struct trigger_arenacleanerAI : public ScriptedAI
-{
-	trigger_arenacleanerAI(Creature* creature) : ScriptedAI(creature){}
-
-	void Reset() 
-	{
-		reset_timer = 0;
-
-		removed = false;
-		CanReset = false;
-	}
-
-	uint32 reset_timer;
-
-	bool removed;
-	bool CanReset;
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!removed)
-		{
-			if (Creature* mogor = me->FindNearestCreature(18069, 6.0f, true))
-			{
-				mogor->DisappearAndDie();
-				removed = true;
-				CanReset = true;
-				reset_timer = 180000;
-			}
-		}
-
-		if (CanReset)
-		{
-			if (reset_timer <= diff)
-			{
-				Reset();
-			}
-			else reset_timer -= diff;
-		}
-	}
-};
-
-CreatureAI* GetAI_trigger_arenacleaner(Creature* pCreature)
-{
-	return new trigger_arenacleanerAI(pCreature);
 }
 
 uint64 MogorGUID;
@@ -1680,9 +1653,7 @@ struct npc_mogorAI : public ScriptedAI
 	npc_mogorAI(Creature* creature) : ScriptedAI(creature){}
 
 	void Reset()
-	{
-		PlayerGUID = 0;
-		
+	{	
 		reset_timer = 0;
 		chainlight_timer = 5500;
 		healingwave_timer = 0;
@@ -1701,8 +1672,6 @@ struct npc_mogorAI : public ScriptedAI
 		me->SetStandState(UNIT_STAND_STATE_STAND);
 	}
 
-	uint64 PlayerGUID;	
-
 	uint32 reset_timer;
 	uint32 chainlight_timer;
 	uint32 healingwave_timer;
@@ -1717,6 +1686,7 @@ struct npc_mogorAI : public ScriptedAI
 	bool MogorRevived;
 	bool Phase1;
 	bool Phase2;
+	bool GotGUID;
 
 	void EnterCombat(Unit* /*who*/)
 	{
@@ -1773,19 +1743,11 @@ struct npc_mogorAI : public ScriptedAI
 		}
 	}
 
-	void JustDied(Unit* /*killer*/)
-	{
-		if (MogorDead)
-		{
-			if (Creature* pCreature = me->FindNearestCreature(18471, 150.0f, true))
-			{
-				pCreature->MonsterYellToZone(SAY_DEFEAT_MOGOR, LANG_UNIVERSAL, PlayerGUID);				
-			}
-		}
-	}
-
 	void UpdateAI(const uint32 diff)
 	{
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
+
 		if (!UpdateVictim())
 		{
 			if (reset_timer <= diff)
@@ -1997,151 +1959,151 @@ struct npc_gunthockAI : public ScriptedAI
 
 	void UpdateAI(const uint32 diff)
 	{
-		if (CanReset)
-		{
-			if (Reset_Timer <= diff)
-			{
-				Reset();
-			}
-			else Reset_Timer -= diff;
-		}
-
-		if (CanYellBrokentoe)
-		{
-			if (!say_brokentoe1)
-			{
-				if (brokentoe_timer <= diff)
-				{
-					if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-					{
-						me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-						DoScriptText(SAY_START_BROKENTOE, me, pPlayer);
-						say_brokentoe1 = true;
-						CanReset = true;
-						Reset_Timer = 15000;
-						brokentoe_timer = 5000;
-					}			
-				}
-				else brokentoe_timer -= diff;
-			}		
-		}
-
-		if (CanYellTwins)
-		{
-			if (!say_twins1)
-			{
-				if (twins_timer <= diff)
-				{
-					if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-					{
-						me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-						DoScriptText(SAY_START_TWINS, me, pPlayer);
-						say_twins1 = true;
-						CanReset = true;
-						Reset_Timer = 15000;
-						twins_timer = 5000;
-					}
-				}
-				else twins_timer -= diff;
-			}
-		}
-
-		if (CanYellRokdar)
-		{
-			if (!say_rokdar1)
-			{
-				if (rokdar_timer <= diff)
-				{
-					if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-					{
-						me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-						DoScriptText(SAY_START_GOLEM, me, pPlayer);
-						say_rokdar1 = true;
-						CanReset = true;
-						Reset_Timer = 15000;
-						rokdar_timer = 5000;
-					}
-				}
-				else rokdar_timer -= diff;
-			}
-		}
-
-		if (CanYellVoid)
-		{
-			if (!say_void1)
-			{
-				if (void_timer <= diff)
-				{
-					if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-					{
-						me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-						DoScriptText(SAY_START_VOID, me, pPlayer);
-						say_void1 = true;
-						CanReset = true;
-						Reset_Timer = 15000;
-						void_timer = 5000;
-					}
-				}
-				else void_timer -= diff;
-			}
-		}
-
-		if (CanYellChampion)
-		{
-			if (!say_champion1)
-			{
-				if (champion_timer <= diff)
-				{
-					if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-					{
-						me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-						DoScriptText(SAY_START_CHAMPION, me, pPlayer);
-						say_champion1 = true;
-						CanReset = true;
-						Reset_Timer = 15000;
-						champion_timer = 5000;
-					}
-				}
-				else champion_timer -= diff;
-			}
-		}
-
-		if (CanYellMogor)
-		{
-			if (!say_mogor1)
-			{
-				if (mogor_timer <= diff)
-				{
-					if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-					{
-						me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-						DoScriptText(SAY_START_MOGOR, me, pPlayer);
-						say_mogor1 = true;
-						CanReset = true;
-						CanMogorMove = true;
-						Reset_Timer = 15000;
-						mogor_timer = 5000;
-						mogorstart_timer = 7000;
-					}
-				}
-				else mogor_timer -= diff;
-			}
-
-			if (CanMogorMove)
-			{
-				if (mogorstart_timer <= diff)
-				{
-					if (Creature* mogor = me->FindNearestCreature(18069, 50.0f, true))
-					{
-						CAST_AI(npc_mogorAI, mogor->AI())->MogorStart();
-					}			
-				}
-				else mogorstart_timer -= diff;
-			}
-		}
-		
 		if (!UpdateVictim())
-			return;
+		{
+			if (CanReset)
+			{
+				if (Reset_Timer <= diff)
+				{
+					Reset();
+				}
+				else Reset_Timer -= diff;
+			}
+
+			if (CanYellBrokentoe)
+			{
+				if (!say_brokentoe1)
+				{
+					if (brokentoe_timer <= diff)
+					{
+						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+						{
+							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
+							DoScriptText(SAY_START_BROKENTOE, me, pPlayer);
+							say_brokentoe1 = true;
+							CanReset = true;
+							Reset_Timer = 15000;
+							brokentoe_timer = 5000;
+						}
+					}
+					else brokentoe_timer -= diff;
+				}
+			}
+
+			if (CanYellTwins)
+			{
+				if (!say_twins1)
+				{
+					if (twins_timer <= diff)
+					{
+						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+						{
+							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
+							DoScriptText(SAY_START_TWINS, me, pPlayer);
+							say_twins1 = true;
+							CanReset = true;
+							Reset_Timer = 15000;
+							twins_timer = 5000;
+						}
+					}
+					else twins_timer -= diff;
+				}
+			}
+
+			if (CanYellRokdar)
+			{
+				if (!say_rokdar1)
+				{
+					if (rokdar_timer <= diff)
+					{
+						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+						{
+							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
+							DoScriptText(SAY_START_GOLEM, me, pPlayer);
+							say_rokdar1 = true;
+							CanReset = true;
+							Reset_Timer = 15000;
+							rokdar_timer = 5000;
+						}
+					}
+					else rokdar_timer -= diff;
+				}
+			}
+
+			if (CanYellVoid)
+			{
+				if (!say_void1)
+				{
+					if (void_timer <= diff)
+					{
+						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+						{
+							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
+							DoScriptText(SAY_START_VOID, me, pPlayer);
+							say_void1 = true;
+							CanReset = true;
+							Reset_Timer = 15000;
+							void_timer = 5000;
+						}
+					}
+					else void_timer -= diff;
+				}
+			}
+
+			if (CanYellChampion)
+			{
+				if (!say_champion1)
+				{
+					if (champion_timer <= diff)
+					{
+						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+						{
+							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
+							DoScriptText(SAY_START_CHAMPION, me, pPlayer);
+							say_champion1 = true;
+							CanReset = true;
+							Reset_Timer = 15000;
+							champion_timer = 5000;
+						}
+					}
+					else champion_timer -= diff;
+				}
+			}
+
+			if (CanYellMogor)
+			{
+				if (!say_mogor1)
+				{
+					if (mogor_timer <= diff)
+					{
+						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+						{
+							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
+							DoScriptText(SAY_START_MOGOR, me, pPlayer);
+							say_mogor1 = true;
+							CanReset = true;
+							CanMogorMove = true;
+							Reset_Timer = 15000;
+							mogor_timer = 5000;
+							mogorstart_timer = 7000;
+						}
+					}
+					else mogor_timer -= diff;
+				}
+
+				if (CanMogorMove)
+				{
+					if (mogorstart_timer <= diff)
+					{
+						if (Creature* mogor = me->FindNearestCreature(18069, 50.0f, true))
+						{
+							CAST_AI(npc_mogorAI, mogor->AI())->MogorStart();
+						}
+					}
+					else mogorstart_timer -= diff;
+				}
+			}
+		}
 	}
 };
 
@@ -2263,6 +2225,9 @@ struct npc_murkbloodtwinsAI : public ScriptedAI
 		if (!UpdateVictim())
 			return;
 
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
+
 		if (sinister_timer <= diff)
 		{
 			DoCastVictim(SPELL_SINISTERSTRIKE);
@@ -2362,6 +2327,9 @@ struct npc_rockdarAI : public ScriptedAI
 	void UpdateAI(const uint32 diff)
 	{
 		if (!UpdateVictim())
+			return;
+
+		if (me->HasUnitState(UNIT_STATE_CASTING))
 			return;
 
 		if (puncture_timer <= diff)
@@ -2476,6 +2444,9 @@ struct npc_szagathAI : public ScriptedAI
 		if (!UpdateVictim())
 			return;
 
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
+
 		if (piercing_timer <= diff)
 		{
 			DoCastVictim(SPELL_PIERCINGSHADOW);
@@ -2539,6 +2510,9 @@ struct npc_warmaul_championAI : public ScriptedAI
 	void UpdateAI(const uint32 diff)
 	{
 		if (!UpdateVictim())
+			return;
+
+		if (me->HasUnitState(UNIT_STATE_CASTING))
 			return;
 
 		if (charge_timer <= diff)
@@ -2628,9 +2602,9 @@ bool QuestAccept_npc_gunthock(Player* pPlayer, Creature* pCreature, Quest const*
 		CAST_AI(npc_gunthockAI, pCreature->AI())->CanYellMogor = true;
 		CAST_AI(npc_gunthockAI, pCreature->AI())->PlayerGUID = pPlayer->GetGUID();	
 
-		if (Creature* mogor = pCreature->FindNearestCreature(18069, 50.0f, true))
+		if (Creature* trigger = pCreature->FindNearestCreature(61036, 100.0f, true))
 		{
-			CAST_AI(npc_mogorAI, mogor->AI())->PlayerGUID = pPlayer->GetGUID();
+			CAST_AI(trigger_arenahelperAI, trigger->AI())->PlayerGUID = pPlayer->GetGUID();
 		}
 	}
 
@@ -3547,11 +3521,6 @@ void AddSC_nagrand()
 	newscript = new Script;
 	newscript->Name = "trigger_arenahelper";
 	newscript->GetAI = &GetAI_trigger_arenahelper;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "trigger_arenacleaner";
-	newscript->GetAI = &GetAI_trigger_arenacleaner;
 	newscript->RegisterSelf();
 
 	newscript = new Script;
