@@ -9438,6 +9438,10 @@ uint8 Player::_CanStoreItem_InBag(uint8 bag, ItemPosCountVec& dest, ItemPrototyp
     if (!pBagProto)
         return EQUIP_ERR_ITEM_DOESNT_GO_INTO_BAG;
 
+    // prevent bag to try to place itself to itself
+    if (pBag == pSrcItem)
+        return EQUIP_ERR_ITEM_DOESNT_GO_INTO_BAG;
+
     // specialized bag mode or non-specilized
     if (non_specialized != (pBagProto->Class == ITEM_CLASS_CONTAINER && pBagProto->SubClass == ITEM_SUBCLASS_CONTAINER))
         return EQUIP_ERR_ITEM_DOESNT_GO_INTO_BAG;
