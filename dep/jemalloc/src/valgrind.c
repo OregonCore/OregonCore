@@ -1,6 +1,6 @@
-#ifdef JEMALLOC_VALGRIND
 #include "jemalloc/internal/jemalloc_internal.h"
 
+#ifdef JEMALLOC_VALGRIND
 #include <valgrind/memcheck.h>
 
 void
