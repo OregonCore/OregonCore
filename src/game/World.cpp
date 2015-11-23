@@ -1942,7 +1942,7 @@ void World::Update(uint32 diff)
         if (m_timers[WUPDATE_CLEANDB].Passed())
         {
             m_timers[WUPDATE_CLEANDB].Reset();
-            LoginDatabase.PExecute("DELETE FROM logs WHERE (time + %u) < "UI64FMTD";",
+            LoginDatabase.PExecute("DELETE FROM logs WHERE (time + %u) < " UI64FMTD ";",
                                    sWorld.getConfig(CONFIG_LOGDB_CLEARTIME), uint64(time(0)));
         }
     }

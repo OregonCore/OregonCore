@@ -29,14 +29,19 @@ add_custom_target(uninstall
 )
 message(STATUS "UNIX: Created uninstall target")
 
-# prevent using implicit compiler because it is very low-featured,
-# use distributed gcc instead
-if (CMAKE_CXX_COMPILER MATCHES "/c\\+\\+$")
-    set(CMAKE_C_COMPILER "/usr/bin/gcc")
-    set(CMAKE_CPP_COMPILER "/usr/bin/gcc -E")
-    set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+# set c++ standard
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if(COMPILER_SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+elseif(COMPILER_SUPPORTS_CXX0X)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+else()
+    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please update your C++ compiler or use a different one.")
 endif()
 
+# load specific compiler setup
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   include(${CMAKE_SOURCE_DIR}/cmake/compiler/gcc/settings.cmake)
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

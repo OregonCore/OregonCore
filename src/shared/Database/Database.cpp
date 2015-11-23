@@ -31,7 +31,7 @@
 #include <ctime>
 #include <iostream>
 #include <fstream>
-#ifdef unix
+#ifdef PLATFORM == PLATFORM_UNIX
 #include <sys/file.h>
 #endif
 
