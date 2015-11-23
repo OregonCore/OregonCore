@@ -23,6 +23,7 @@
 
 #include "Util.h"
 #include "Platform/Define.h"
+#include "Platform/CompilerDefs.h"
 #include "Threading.h"
 #include "Database/SqlDelayThread.h"
 #include "Database/SqlOperations.h"
@@ -31,7 +32,7 @@
 #include <ctime>
 #include <iostream>
 #include <fstream>
-#ifdef PLATFORM == PLATFORM_UNIX
+#if PLATFORM == PLATFORM_UNIX
 #include <sys/file.h>
 #endif
 
