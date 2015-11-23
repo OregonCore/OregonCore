@@ -134,6 +134,51 @@ bool GossipSelect_npc_captured_sunhawk_agent(Player* pPlayer, Creature* pCreatur
     return true;
 }
 
+struct npc_young_furbolg_shamanAI : public ScriptedAI
+{
+    npc_young_furbolg_shamanAI(Creature* c) : ScriptedAI(c) {}
+
+    void Reset()
+    {
+        lifeTimer = 120000;
+        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+        me->SetStandState(UNIT_STAND_STATE_DEAD);
+    }
+
+    uint32 lifeTimer;
+    bool spellHit;
+
+    void SpellHit(Unit* /*Hitter*/, const SpellEntry* Spellkind)
+    {
+        if (Spellkind->Id == 8593 && !spellHit)
+        {
+            DoCast(me, 32343);
+            me->SetStandState(UNIT_STAND_STATE_STAND);
+            me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+            spellHit = true;
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (me->IsStandState())
+        {
+            if (lifeTimer <= uiDiff)
+            {
+                EnterEvadeMode();
+                return;
+            }
+            else
+                lifeTimer -= uiDiff;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_young_furbolg_shaman(Creature* pCreature)
+{
+    return new npc_young_furbolg_shamanAI(pCreature);
+}
+
 void AddSC_bloodmyst_isle()
 {
     Script* newscript;
@@ -147,6 +192,11 @@ void AddSC_bloodmyst_isle()
     newscript->Name = "npc_captured_sunhawk_agent";
     newscript->pGossipHello =  &GossipHello_npc_captured_sunhawk_agent;
     newscript->pGossipSelect = &GossipSelect_npc_captured_sunhawk_agent;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_young_furbolg_shaman";
+    newscript->GetAI = &GetAI_npc_young_furbolg_shaman;
     newscript->RegisterSelf();
 }
 
