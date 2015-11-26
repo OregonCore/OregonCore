@@ -10659,11 +10659,13 @@ void Unit::RemoveFromWorld()
 
 void Unit::CleanupsBeforeDelete()
 {
+	if (!IsInWorld())
+	 return;
+	
     // This needs to be before RemoveFromWorld to make GetCaster() return a valid pointer on aura removal
     InterruptNonMeleeSpells(true);
 
-    if (IsInWorld())
-        RemoveFromWorld();
+    RemoveFromWorld();
 
     ASSERT(GetGUID());
 
@@ -10675,8 +10677,12 @@ void Unit::CleanupsBeforeDelete()
     m_Events.KillAllEvents(false);                      // non-delatable (currently casted spells) will not deleted now but it will deleted at call in Map::RemoveAllObjectsInRemoveList
     CombatStop();
     ClearComboPointHolders();
-    DeleteThreatList();
-    getHostileRefManager().setOnlineOfflineState(false);
+	if (CanHaveThreatList())
+		 DeleteThreatList();
+	if (GetTypeId() == TYPEID_PLAYER)
+		getHostileRefManager().setOnlineOfflineState(false);
+	else
+		getHostileRefManager().deleteReferences();
     GetMotionMaster()->Clear(false);                    // remove different non-standard movement generators.
 }
 
