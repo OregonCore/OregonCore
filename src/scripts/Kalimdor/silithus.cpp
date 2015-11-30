@@ -42,16 +42,15 @@ EndContentData */
 //It isn't a proper gossip text. Was there any? Can't find source on that.
 #define GOSSIP_LANDION "I've come to obtain your report, Landion."
 
-bool GossipHello_npc_scout_landion(Player* player, Creature* pCreature)
+bool GossipHello_npc_scout_landion(Player* player, Creature* _Creature)
 {
-	if (pCreature->isQuestGiver())
-		player->PrepareQuestMenu(pCreature->GetGUID());
-
 	if (player->GetQuestStatus(8738) == QUEST_STATUS_INCOMPLETE)
+	{
 		player->ADD_GOSSIP_ITEM(0, GOSSIP_LANDION, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+	}
 
 	//Need proper ID of menu text, if there was any.
-	player->SEND_GOSSIP_MENU(68, pCreature->GetGUID());
+	player->SEND_GOSSIP_MENU(68, _Creature->GetGUID());
 
 	return true;
 }
@@ -1178,236 +1177,6 @@ CreatureAI* Getnpc_anachronos_the_ancientAI(Creature* pCreature)
     return new npc_anachronos_the_ancientAI (pCreature);
 }
 
-/*#####
-# go_lesser_windstone
-######*/
-
-#define ITEM_CULTIST_MANTLE 20406
-#define ITEM_CULTIST_ROBE 20407
-#define ITEM_CULTIST_COWL 20408
-
-#define GOSSIP_LESSER_WINDSTONE "I am no cultist, you monster! Come to me and face your destruction!"
-
-#define NPC_HOARY_TEMPLAR 15212
-#define NPC_AZURE_TEMPLAR 15211
-#define NPC_CRIMSON_TEMPLAR 15209
-#define NPC_EARTHEN_TEMPLAR 15307
-
-bool GossipHello_go_lesser_windstone(Player *player, GameObject* _GO)
-{
-	player->SEND_GOSSIP_MENU(7770, _GO->GetGUID());
-
-	//Check if Player has Twilight Cultist Set Passive
-	if (player->HasAura(24746))
-	{
-		player->ADD_GOSSIP_ITEM(0, GOSSIP_LESSER_WINDSTONE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-		player->SEND_GOSSIP_MENU(7771, _GO->GetGUID());
-	}
-	return true;
-}
-
-void SendActionMenu_go_lesser_windstone(Player *player, GameObject* go, uint32 action)
-{
-	switch (action)
-	{
-	case GOSSIP_ACTION_INFO_DEF + 1:	
-
-			//Destroy Player's Cultist Set.
-			player->DestroyItemCount(ITEM_CULTIST_MANTLE, 1, true);
-			player->DestroyItemCount(ITEM_CULTIST_ROBE, 1, true);
-			player->DestroyItemCount(ITEM_CULTIST_COWL, 1, true);
-			player->CastSpell(player, 39990, true);
-
-			//Despawn Crystal and Summon Random Templar.
-			
-			//Need proper Despawn function for GameObject
-			//go->Delete();
-
-			switch (rand() % 4)
-			{
-			case 0:
-				player->SummonCreature(NPC_HOARY_TEMPLAR, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-				break;
-			case 1:
-				player->SummonCreature(NPC_AZURE_TEMPLAR, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-				break;
-			case 2:
-				player->SummonCreature(NPC_CRIMSON_TEMPLAR, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-				break;
-			case 3:
-				player->SummonCreature(NPC_EARTHEN_TEMPLAR, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-				break;
-			}
-			player->CLOSE_GOSSIP_MENU();
-		break;
-	}
-}
-
-bool GossipSelect_go_lesser_windstone(Player *player, GameObject* _GO, uint32 sender, uint32 action)
-{
-	switch (sender)
-	{
-	case GOSSIP_SENDER_MAIN:    SendActionMenu_go_lesser_windstone(player, _GO, action); break;
-	}
-	return true;
-}
-
-/*#####
-# go_windstone
-######*/
-
-#define ITEM_MEDALLION_OF_STATION 20422
-
-#define GOSSIP_WINDSTONE "You will listen to this, vile duke! I am not your Twilight's Hammer lapdog! I am here to challenge you! Come! Come, and meet your death..."
-
-#define NPC_THE_DUKE_OF_CYNDERS 15206
-#define NPC_THE_DUKE_OF_FANTHOMS 15207
-#define NPC_THE_DUKE_OF_SHARDS 15208
-#define NPC_THE_DUKE_OF_ZEPHYRS 15220
-
-bool GossipHello_go_windstone(Player *player, GameObject* _GO)
-{
-	player->SEND_GOSSIP_MENU(7770, _GO->GetGUID());
-
-	if (player->HasAura(24746))
-	{
-		//Send Menu if Player doesn't have all items required.
-		player->SEND_GOSSIP_MENU(7772, _GO->GetGUID());
-	}
-
-	//Check if Player has Twilight Cultist Set Passive [2]
-	if (player->HasAura(24748))
-	{
-		player->ADD_GOSSIP_ITEM(0, GOSSIP_WINDSTONE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-		player->SEND_GOSSIP_MENU(7773, _GO->GetGUID());
-	}
-	return true;
-}
-
-void SendActionMenu_go_windstone(Player *player, GameObject* go, uint32 action)
-{
-	switch (action)
-	{
-	case GOSSIP_ACTION_INFO_DEF + 1:
-
-		//Destroy Player's Cultist Set and Medallion of Station.
-		player->DestroyItemCount(ITEM_CULTIST_MANTLE, 1, true);
-		player->DestroyItemCount(ITEM_CULTIST_ROBE, 1, true);
-		player->DestroyItemCount(ITEM_CULTIST_COWL, 1, true);
-		player->DestroyItemCount(ITEM_MEDALLION_OF_STATION, 1, true);
-		player->CastSpell(player, 39990, true);
-
-		//Despawn Crystal and Summon Random Duke.
-
-		//Need proper Despawn function for GameObject
-		//go->Delete();
-
-		switch (rand() % 4)
-		{
-		case 0:
-			player->SummonCreature(NPC_THE_DUKE_OF_CYNDERS, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-			break;
-		case 1:
-			player->SummonCreature(NPC_THE_DUKE_OF_FANTHOMS, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-			break;
-		case 2:
-			player->SummonCreature(NPC_THE_DUKE_OF_SHARDS, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-			break;
-		case 3:
-			player->SummonCreature(NPC_THE_DUKE_OF_ZEPHYRS, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-			break;
-		}
-		player->CLOSE_GOSSIP_MENU();
-		break;
-	}
-}
-
-bool GossipSelect_go_windstone(Player *player, GameObject* _GO, uint32 sender, uint32 action)
-{
-	switch (sender)
-	{
-	case GOSSIP_SENDER_MAIN:    SendActionMenu_go_windstone(player, _GO, action); break;
-	}
-	return true;
-}
-
-/*#####
-# go_greater_windstone
-######*/
-
-#define ITEM_RING_OF_LORDSHIP 20451
-
-#define GOSSIP_GREATER_WINDSTONE "The day of judgement has come, fiend! I challenge you to battle!"
-
-#define NPC_HIGH_MARSHAL_WHIRLAXIS 15204 //air
-#define NPC_BARON_KAZUM 15205 //earth
-#define NPC_PRINCE_SKALDRENOX 15203 //fire
-#define NPC_LORD_SKWOL 15305 //water
-
-bool GossipHello_go_greater_windstone(Player *player, GameObject* _GO)
-{
-	player->SEND_GOSSIP_MENU(7770, _GO->GetGUID());
-
-	//Check if Player has Twilight Cultist Set Passive [3]
-	if (player->HasAura(24782))
-	{
-		player->ADD_GOSSIP_ITEM(0, GOSSIP_GREATER_WINDSTONE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-		player->SEND_GOSSIP_MENU(7776, _GO->GetGUID());
-	}
-	return true;
-}
-
-void SendActionMenu_go_greater_windstone(Player *player, GameObject* go, uint32 action)
-{
-	switch (action)
-	{
-	case GOSSIP_ACTION_INFO_DEF + 1:
-
-		//Destroy Player's Cultist Set, Medallion of Station and Ring of Lordship.
-		player->DestroyItemCount(ITEM_CULTIST_MANTLE, 1, true);
-		player->DestroyItemCount(ITEM_CULTIST_ROBE, 1, true);
-		player->DestroyItemCount(ITEM_CULTIST_COWL, 1, true);
-		player->DestroyItemCount(ITEM_MEDALLION_OF_STATION, 1, true);
-		player->DestroyItemCount(ITEM_RING_OF_LORDSHIP, 1, true);
-		player->CastSpell(player, 39990, true);
-
-		//Despawn Crystal and Summon Random Lord.
-		
-		//Need proper Despawn function for GameObject
-		//go->Delete();
-
-		switch (rand() % 4)
-		{
-		case 0:
-			player->SummonCreature(NPC_HIGH_MARSHAL_WHIRLAXIS, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000);
-			break;
-		case 1:
-			player->SummonCreature(NPC_BARON_KAZUM, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000);
-			break;
-		case 2:
-			player->SummonCreature(NPC_PRINCE_SKALDRENOX, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000);
-			break;
-		case 3:
-			player->SummonCreature(NPC_LORD_SKWOL, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000);
-			break;
-		}
-		player->CLOSE_GOSSIP_MENU();
-		break;
-	}
-}
-
-bool GossipSelect_go_greater_windstone(Player *player, GameObject* _GO, uint32 sender, uint32 action)
-{
-	switch (sender)
-	{
-	case GOSSIP_SENDER_MAIN:    SendActionMenu_go_greater_windstone(player, _GO, action); break;
-	}
-	return true;
-}
-
 void AddSC_silithus()
 {
     Script* newscript;
@@ -1422,7 +1191,7 @@ void AddSC_silithus()
 	newscript->Name = "npc_scout_landion";
 	newscript->pGossipHello = &GossipHello_npc_scout_landion;
 	newscript->pGossipSelect = &GossipSelect_npc_scout_landion;
-	newscript->RegisterSelf();
+    newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npcs_rutgar_and_frankal";
@@ -1450,23 +1219,5 @@ void AddSC_silithus()
     newscript->Name = "npc_anachronos_the_ancient";
     newscript->GetAI = Getnpc_anachronos_the_ancientAI;
     newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "go_lesser_windstone";
-	newscript->pGOHello = &GossipHello_go_lesser_windstone;
-	newscript->pGOSelect = &GossipSelect_go_lesser_windstone;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "go_windstone";
-	newscript->pGOHello = &GossipHello_go_windstone;
-	newscript->pGOSelect = &GossipSelect_go_windstone;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "go_greater_windstone";
-	newscript->pGOHello = &GossipHello_go_greater_windstone;
-	newscript->pGOSelect = &GossipSelect_go_greater_windstone;
-	newscript->RegisterSelf();
 }
 

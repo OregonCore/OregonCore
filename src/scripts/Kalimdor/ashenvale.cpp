@@ -483,6 +483,7 @@ struct npc_feeroAI : public npc_escortAI
 
 	void Reset() { }
 
+
 	void JustSummoned(Creature* summoned)
 	{
 		summoned->AI()->AttackStart(me);
@@ -642,5 +643,5 @@ void AddSC_ashenvale()
 	newscript->Name = "npc_feero";
 	newscript->GetAI = &GetAI_npc_feero;
 	newscript->pQuestAccept = &QuestAccept_npc_feero;
-	newscript->RegisterSelf();
+    newscript->RegisterSelf();
 }

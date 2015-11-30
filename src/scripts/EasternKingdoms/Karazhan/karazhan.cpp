@@ -678,6 +678,381 @@ CreatureAI* GetAI_npc_image_of_medivh(Creature* pCreature)
     return new npc_image_of_medivhAI(pCreature);
 }
 
+///////////////
+//*Concubine*//
+///////////////
+
+enum ConcubineMisc
+{
+	SPELL_TEMPTATION = 29494,
+	SPELL_SEDUCE = 29490,
+	SPELL_JEALOUSY = 29497,
+	SPELL_TRANSFORM = 29489,
+
+	SAY_CONCUBINE = -1910087,
+	SAY_CONCUBINE2 = -1910088,
+	SAY_CONCUBINE3 = -1910089
+};
+
+struct npc_concubineAI : public ScriptedAI
+{
+	npc_concubineAI(Creature* c) : ScriptedAI(c)
+	{
+		pInstance = (ScriptedInstance*)c->GetInstanceData();
+	}
+
+	ScriptedInstance* pInstance;
+
+	uint32 SecudeTimer;
+	uint32 TemptationTimer;
+	uint32 JealousyTimer;
+
+	bool transform;
+
+	void Reset()
+	{
+		SecudeTimer = 5000;
+		TemptationTimer = 12000;
+		JealousyTimer = 5000;
+
+		transform = false;
+
+		me->ApplySpellImmune(0, IMMUNITY_ID, 1098, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11725, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11726, true);
+	}
+
+	void EnterCombat(Unit* /*who*/) 
+	{
+		DoScriptText(RAND(SAY_CONCUBINE, SAY_CONCUBINE2, SAY_CONCUBINE3), me);
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (TemptationTimer <= diff)
+		{
+			DoCast(me, SPELL_TEMPTATION);
+			TemptationTimer = 12000;
+		}
+		else TemptationTimer -= diff;
+
+		if (JealousyTimer <= diff)
+		{			
+				DoCastVictim(SPELL_JEALOUSY);
+				JealousyTimer = 20000;
+		}
+		else JealousyTimer -= diff;
+
+		if (!transform && HealthBelowPct(50))
+		{
+			DoCast(me, SPELL_TRANSFORM);
+			DoCast(SPELL_SEDUCE);
+			transform = true;		
+		}
+
+		if (SecudeTimer <= diff)
+		{
+			DoCastVictim(SPELL_SEDUCE);
+			SecudeTimer = 30000;
+		}
+		else SecudeTimer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_concubine(Creature* pCreature)
+{
+	return new npc_concubineAI(pCreature);
+}
+
+////////////////////
+//*arcane anomaly*//
+////////////////////
+
+enum anomalyMisc
+{
+	SPELL_MANASHIELD = 29880,
+	SPELL_LOOSEMANA = 29882,
+	SPELL_ARCANEVOLLEY = 29885,
+	SPELL_TELEPORTP = 36967
+};
+
+struct npc_arcane_anomalyAI : public ScriptedAI
+{
+	npc_arcane_anomalyAI(Creature* c) : ScriptedAI(c)
+	{
+		pInstance = (ScriptedInstance*)c->GetInstanceData();
+	}
+
+	ScriptedInstance* pInstance;
+
+	uint32 arcaneTimer;
+	uint32 blink_timer;
+
+	void Reset()
+	{
+		arcaneTimer = 5000;	
+		blink_timer = 15000;
+
+		DoCast(me, SPELL_MANASHIELD);
+
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
+	}
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void JustDied(Unit* /*killer*/)
+	{
+		DoCast(SPELL_LOOSEMANA);
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (arcaneTimer <= diff)
+		{
+			DoCastVictim(SPELL_ARCANEVOLLEY);
+			arcaneTimer = 5000;
+		}
+		else arcaneTimer -= diff;
+
+		if (blink_timer <= diff)
+		{
+			DoCast(SPELL_TELEPORTP);
+			DoResetThreat();
+			blink_timer = 15000;
+		}
+		blink_timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_arcane_anomaly(Creature* pCreature)
+{
+	return new npc_arcane_anomalyAI(pCreature);
+}
+
+///////////////////////
+//*chaotic_sentience*//
+///////////////////////
+
+enum chaoticMisc
+{
+	SPELL_UNSTABLE_MAGIC = 29900
+};
+
+struct npc_chaotic_sentienceAI : public ScriptedAI
+{
+	npc_chaotic_sentienceAI(Creature* c) : ScriptedAI(c)
+	{
+		pInstance = (ScriptedInstance*)c->GetInstanceData();
+	}
+
+	ScriptedInstance* pInstance;
+
+	uint32 magicTimer;
+
+	void Reset()
+	{
+		magicTimer = 1000;
+
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_HOLY, true);
+	}
+
+	void EnterCombat(Unit* /*who*/)
+	{
+		DoCast(SPELL_UNSTABLE_MAGIC);
+	}
+
+	void JustDied(Unit* /*killer*/)
+	{
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (magicTimer <= diff)
+		{
+			DoCast(SPELL_UNSTABLE_MAGIC);
+			magicTimer = 20000;
+		}
+		else magicTimer -= diff;
+
+DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_chaotic_sentience(Creature* pCreature)
+{
+	return new npc_chaotic_sentienceAI(pCreature);
+}
+
+/////////////////
+//*mana_feeder*//
+/////////////////
+
+enum feederMisc
+{
+	SPELL_MANA_BITE = 29908
+};
+
+struct npc_mana_feederAI : public ScriptedAI
+{
+	npc_mana_feederAI(Creature* c) : ScriptedAI(c)
+	{
+		pInstance = (ScriptedInstance*)c->GetInstanceData();
+	}
+
+	ScriptedInstance* pInstance;
+
+	void Reset()
+	{
+		DoCast(me, SPELL_MANA_BITE);
+
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_HOLY, true);
+	}
+
+	void EnterCombat(Unit* /*who*/)
+	{
+	}
+
+	void JustDied(Unit* /*killer*/)
+	{
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+			return;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_mana_feeder(Creature* pCreature)
+{
+	return new npc_mana_feederAI(pCreature);
+}
+
+//////////////////////
+//*arcane_protector*//
+//////////////////////
+
+enum protectorMisc
+{
+	SPELL_FISTOFSTONE = 29837,
+	SPELL_INVI = 41634,
+	SPELL_RETURNFIRE_MEELE = 29788,
+	SPELL_RETURNFIRE_SPELL = 29793,
+	SPELL_RETURNFIRE_RANGED = 29794,
+
+	NPC_ASTRAL_SPARK = 17283
+};
+
+struct npc_arcane_protectorAI : public ScriptedAI
+{
+	npc_arcane_protectorAI(Creature* c) : ScriptedAI(c)
+	{
+		pInstance = (ScriptedInstance*)c->GetInstanceData();
+	}
+
+	ScriptedInstance* pInstance;
+
+	uint32 fistTimer;
+	uint32 summonTimer;
+	uint32 returnfireTimer;
+	uint32 returnfireTimer1;
+	uint32 returnfireTimer2;
+
+	void Reset()
+	{
+		fistTimer = 1000;
+		summonTimer = urand(3000, 8000);
+		returnfireTimer = 24000;
+		returnfireTimer1 = 3000;
+		returnfireTimer2 = 45000;
+
+		DoCast(me, SPELL_INVI);
+	}
+
+	void EnterCombat(Unit* /*who*/)
+	{
+	}
+
+	void JustDied(Unit* /*killer*/)
+	{
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+			return;
+
+		if (fistTimer <= diff)
+		{
+			DoCast(me, SPELL_FISTOFSTONE);
+			fistTimer = urand(18000, 21000);
+		}
+		else fistTimer -= diff;
+
+		if (summonTimer <= diff)
+		{
+			me->SummonCreature(NPC_ASTRAL_SPARK, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+			summonTimer = urand(15000, 19000);
+		}
+		else summonTimer -= diff;
+
+		if (returnfireTimer <= diff)
+		{
+			DoCast(me, SPELL_RETURNFIRE_MEELE);
+			returnfireTimer = 80000;
+		}
+		else returnfireTimer -= diff;
+		
+		if (returnfireTimer1 <= diff)
+		{
+			DoCast(me, SPELL_RETURNFIRE_SPELL);
+			returnfireTimer1 = 60000;
+		}
+		else returnfireTimer1 -= diff;
+
+		if (returnfireTimer2 <= diff)
+		{
+			DoCast(me, SPELL_RETURNFIRE_RANGED);
+			returnfireTimer2 = 100000;
+		}
+		else returnfireTimer2 -= diff;
+
+			
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_arcane_protector(Creature* pCreature)
+{
+	return new npc_arcane_protectorAI(pCreature);
+}
+
 void AddSC_karazhan()
 {
     Script* newscript;
@@ -699,5 +1074,30 @@ void AddSC_karazhan()
     newscript->Name = "npc_image_of_medivh";
     newscript->GetAI = &GetAI_npc_image_of_medivh;
     newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_concubine";
+	newscript->GetAI = &GetAI_npc_concubine;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_arcane_anomaly";
+	newscript->GetAI = &GetAI_npc_arcane_anomaly;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_chaotic_sentience";
+	newscript->GetAI = &GetAI_npc_chaotic_sentience;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_mana_feeder";
+	newscript->GetAI = &GetAI_npc_mana_feeder;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_arcane_protector";
+	newscript->GetAI = &GetAI_npc_arcane_protector;
+	newscript->RegisterSelf();
 }
 
