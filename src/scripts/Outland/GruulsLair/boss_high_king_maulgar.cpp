@@ -135,7 +135,13 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         Charging_Timer = 0;
         Roar_Timer = 0;
 
-        me->CastSpell(me, SPELL_DUAL_WIELD, false);
+		const CreatureInfo* cinfo = me->GetCreatureTemplate();
+		me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 45)));
+		me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 45)));
+		me->UpdateDamagePhysical(BASE_ATTACK);
+
+		if (me->HasAura(SPELL_DUAL_WIELD))
+			me->RemoveAurasDueToSpell(SPELL_DUAL_WIELD);
 
         Phase2 = false;
 
@@ -249,13 +255,6 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        //someone evaded!
-        if (pInstance && !pInstance->GetData(DATA_MAULGAREVENT))
-        {
-            EnterEvadeMode();
-            return;
-        }
-
         //ArcingSmash_Timer
         if (ArcingSmash_Timer <= diff)
         {
@@ -294,6 +293,11 @@ struct boss_high_king_maulgarAI : public ScriptedAI
 
         if (Phase2)
         {
+			const CreatureInfo* cinfo = me->GetCreatureTemplate();
+			me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
+			me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));
+			me->UpdateDamagePhysical(BASE_ATTACK);
+
             //Charging_Timer
             if (Charging_Timer <= diff)
             {
@@ -383,6 +387,9 @@ struct boss_olm_the_summonerAI : public ScriptedAI
                 AttackStart(pTarget);
         }
 
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
+
         //Return since we have no target
         if (!UpdateVictim())
             return;
@@ -432,7 +439,6 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
     boss_kiggler_the_crazedAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
-		SetCombatMovement(false);
     }
 
     uint32 GreaterPolymorph_Timer;
@@ -481,8 +487,6 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-		SetCombatMovement(false);
-
         //Only if not incombat check if the event is started
         if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
