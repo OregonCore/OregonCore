@@ -1,8 +1,3 @@
-/*
-SQLyog Community v12.12 (64 bit)
-MySQL - 5.6.26-log 
-*********************************************************************
-*/
 /*!40101 SET NAMES utf8 */;
 
 create table `waypoints` (
