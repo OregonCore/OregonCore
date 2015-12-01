@@ -42,6 +42,7 @@
 #include <string>
 #include <map>
 #include <limits>
+#include <tuple>
 
 extern SQLStorage sCreatureStorage;
 extern SQLStorage sCreatureDataAddonStorage;
