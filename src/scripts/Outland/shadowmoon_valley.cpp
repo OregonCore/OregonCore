@@ -2384,7 +2384,7 @@ struct legion_hold_device_triggerAI : public ScriptedAI
 
 	void MoveInLineOfSight(Unit *pWho)
 	{
-		if (Player *plWho = pWho->GetCharmerOrOwnerPlayerOrPlayerItself())
+		if (Player* plWho = pWho->GetCharmerOrOwnerPlayerOrPlayerItself())
 		{
 			if (plWho->GetQuestStatus(QUEST_LEGION_HOLD2) == QUEST_STATUS_INCOMPLETE || plWho->GetQuestStatus(QUEST_LEGION_HOLD1) == QUEST_STATUS_INCOMPLETE && plWho->GetDistance(me) < 15.0f && plWho->HasItemCount(30638, 1, false) && plWho->HasAura(SPELL_BOX))
 			{
@@ -2516,7 +2516,6 @@ struct npc_deathbringer_jovaanAI : public ScriptedAI
 		}
 		else uiStepsTimer -= uiDiff;
 	}
-
 };
 
 CreatureAI* GetAI_npc_deathbringer_jovaan(Creature* pCreature)
@@ -2957,7 +2956,7 @@ struct npc_karsius_the_ancient_watcherAI : public ScriptedAI
 		}
 
 		me->MonsterYell(KARSIUS_SAY_TEXT_2, LANG_UNIVERSAL, 0);
-		DoCast(37789);
+		me->SummonCreature(21876, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 15000);
 	}
 
 	void UpdateAI(const uint32 diff)
@@ -3061,7 +3060,6 @@ struct teron_gorefiend_eventAI : public ScriptedAI
 	uint32 outro_timer;
 	uint32 outro1_timer;
 	uint32 leave_timer;
-	uint32 dissapear_timer;
 
 	bool TeronGorefiend;
 	bool TeronGorefiendSay;
@@ -3092,15 +3090,9 @@ struct teron_gorefiend_eventAI : public ScriptedAI
 				if (leave_timer <= diff && TeronGorefiendYell)
 				{
 					me->GetMotionMaster()->MovePath(607607608, false);				
-					dissapear_timer = 10000;
+					me->ForcedDespawn(10000);
 				}
-				else leave_timer -= diff;
-
-				if (dissapear_timer <= diff && TeronGorefiendYell)
-				{
-					me->ForcedDespawn(1000);
-				}
-				else dissapear_timer -= diff;
+				else leave_timer -= diff;				
 			}
 		}
 	}
