@@ -296,6 +296,7 @@ class Group
         {
             return m_memberMgr.getFirst();
         }
+        GroupReference const* GetFirstMember() const { return m_memberMgr.getFirst(); }
         uint32 GetMembersCount() const
         {
             return m_memberSlots.size();
@@ -362,6 +363,20 @@ class Group
         void SendUpdate();
         void UpdatePlayerOutOfRange(Player* pPlayer);
         // ignore: GUID of player that will be ignored
+
+        template<class Worker>
+        void BroadcastWorker(Worker& worker)
+        {
+            for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
+                worker(itr->getSource());
+        }
+
+        template<class Worker>
+        void BroadcastWorker(Worker const& worker) const
+        {
+            for (GroupReference const* itr = GetFirstMember(); itr != NULL; itr = itr->next())
+                worker(itr->getSource());
+        }
         void BroadcastPacket(WorldPacket* packet, bool ignorePlayersInBGRaid, int group = -1, uint64 ignore = 0);
         void BroadcastReadyCheck(WorldPacket* packet);
         void OfflineReadyCheck();

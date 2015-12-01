@@ -575,6 +575,20 @@ void Unit::UpdateInterruptMask()
             m_interruptMask |= spell->m_spellInfo->ChannelInterruptFlags;
 }
 
+uint32 Unit::GetAuraCount(uint32 spellId) const
+{
+    uint32 count = 0;
+    for (AuraMap::const_iterator itr = m_Auras.lower_bound(spellEffectPair(spellId, 0)); itr != m_Auras.upper_bound(spellEffectPair(spellId, 0)); ++itr)
+    {
+        if (!itr->second->GetStackAmount())
+            count++;
+        else
+            count += (uint32)itr->second->GetStackAmount();
+    }
+
+    return count;
+}
+
 bool Unit::HasAuraType(AuraType auraType) const
 {
     return (!m_modAuras[auraType].empty());
@@ -639,6 +653,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
     if (pVictim->GetTypeId() == TYPEID_UNIT && (pVictim->ToCreature())->IsAIEnabled)
     {
         pVictim->ToCreature()->AI()->DamageTaken(this, damage);
+        ToCreature()->AI()->DamageDealt(pVictim, damage, damagetype);
 
         // Set tagging
         if (!pVictim->HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER) && !pVictim->IsPet())
@@ -11490,6 +11505,25 @@ Unit* Unit::SelectNearbyTarget(Unit* exclude, float dist) const
 
     // select random
     return SelectRandomContainerElement(targets);
+}
+
+Player* Unit::SelectNearestPlayer(float distance) const
+{
+    Player* pPlayer = NULL;
+
+    CellPair pair(Oregon::ComputeCellPair(this->GetPositionX(), this->GetPositionY()));
+    Cell cell(pair);
+    cell.data.Part.reserved = ALL_DISTRICT;
+    cell.SetNoCreate();
+
+    Oregon::NearestPlayerInObjectRangeCheck creature_check(*this, distance);
+    Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck> searcher(pPlayer, creature_check);
+
+    TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck>, GridTypeMapContainer> player_searcher(searcher);
+
+    cell.Visit(pair, player_searcher, *GetMap());
+
+    return pPlayer;
 }
 
 void Unit::ApplyAttackTimePercentMod(WeaponAttackType att, float val, bool apply)

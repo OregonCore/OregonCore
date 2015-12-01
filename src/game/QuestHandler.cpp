@@ -30,6 +30,8 @@
 #include "BattleGround.h"
 #include "BattleGroundAV.h"
 #include "ScriptMgr.h"
+#include "CreatureAI.h"
+#include "GameObjectAI.h"
 #include "ConditionMgr.h"
 
 void WorldSession::HandleQuestgiverStatusQueryOpcode(WorldPacket& recv_data)
@@ -104,6 +106,8 @@ void WorldSession::HandleQuestgiverHelloOpcode(WorldPacket& recv_data)
 
     _player->PrepareGossipMenu(pCreature, pCreature->GetCreatureTemplate()->GossipMenuId);
     _player->SendPreparedGossip(pCreature);
+
+    pCreature->AI()->sGossipHello(_player);
 }
 
 void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket& recv_data)
@@ -184,6 +188,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket& recv_data)
             {
             case TYPEID_UNIT:
                 sScriptMgr.QuestAccept(_player, pObject->ToCreature(), qInfo);
+                pObject->ToCreature()->AI()->sQuestAccept(_player, qInfo);
                 break;
             case TYPEID_ITEM:
             case TYPEID_CONTAINER:
@@ -208,6 +213,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket& recv_data)
                 }
             case TYPEID_GAMEOBJECT:
                 sScriptMgr.GOQuestAccept(_player, ((GameObject*)pObject), qInfo);
+                pObject->ToGameObject()->AI()->QuestAccept(_player, qInfo);
                 break;
             }
             _player->PlayerTalkClass->CloseGossip();
@@ -295,22 +301,34 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recv_data)
 
             switch (pObject->GetTypeId())
             {
-            case TYPEID_UNIT:
-                if (!(sScriptMgr.ChooseReward(_player, pObject->ToCreature(), pQuest, reward)))
+                case TYPEID_UNIT:
                 {
-                    // Send next quest
-                    if (Quest const* nextquest = _player->GetNextQuest(guid , pQuest))
-                        _player->PlayerTalkClass->SendQuestGiverQuestDetails(nextquest, guid, true);
+                    Creature* questgiver = pObject->ToCreature();
+                    if (!(sScriptMgr.ChooseReward(_player, pObject->ToCreature(), pQuest, reward)))
+                    {
+                        // Send next quest
+                        if (Quest const* nextquest = _player->GetNextQuest(guid, pQuest))
+                            _player->PlayerTalkClass->SendQuestGiverQuestDetails(nextquest, guid, true);
+
+                        questgiver->AI()->sQuestReward(_player, pQuest, reward);
+                    }
+                    break;
                 }
-                break;
-            case TYPEID_GAMEOBJECT:
-                if (!sScriptMgr.GOChooseReward(_player, ((GameObject*)pObject), pQuest, reward))
+                case TYPEID_GAMEOBJECT:
                 {
-                    // Send next quest
-                    if (Quest const* nextquest = _player->GetNextQuest(guid , pQuest))
-                        _player->PlayerTalkClass->SendQuestGiverQuestDetails(nextquest, guid, true);
+                    GameObject* questGiver = pObject->ToGameObject();
+                    if (!sScriptMgr.GOChooseReward(_player, ((GameObject*)pObject), pQuest, reward))
+                    {
+                        // Send next quest
+                        if (Quest const* nextquest = _player->GetNextQuest(guid, pQuest))
+                            _player->PlayerTalkClass->SendQuestGiverQuestDetails(nextquest, guid, true);
+
+                        questGiver->AI()->QuestReward(_player, pQuest, reward);
+                    }
+                    break;
                 }
-                break;
+                default:
+                    break;
             }
         }
         else

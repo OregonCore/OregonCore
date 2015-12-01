@@ -1017,6 +1017,7 @@ class Player : public Unit, public GridObject<Player>
             m_taxi.InitTaxiNodesForLevel(getRace(), getLevel());
         }
         bool ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_id = 0 , Creature* npc = NULL);
+        bool ActivateTaxiPathTo(uint32 taxi_path_id);
         void CleanupAfterTaxiFlight();
         void ContinueTaxiFlight();
         // mount_id can be used in scripting calls

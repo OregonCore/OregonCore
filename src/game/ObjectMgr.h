@@ -72,6 +72,26 @@ struct GameTele
 
 typedef UNORDERED_MAP<uint32, GameTele > GameTeleMap;
 
+/// Key for storing temp summon data in TempSummonDataContainer
+struct TempSummonGroupKey
+{
+    TempSummonGroupKey(uint32 summonerEntry, SummonerType summonerType, uint8 group)
+        : _summonerEntry(summonerEntry), _summonerType(summonerType), _summonGroup(group)
+    {
+    }
+
+    bool operator<(TempSummonGroupKey const& rhs) const
+    {
+        return std::tie(_summonerEntry, _summonerType, _summonGroup) <
+            std::tie(rhs._summonerEntry, rhs._summonerType, rhs._summonGroup);
+    }
+
+private:
+    uint32 _summonerEntry;      ///< Summoner's entry
+    SummonerType _summonerType; ///< Summoner's type, see SummonerType for available types
+    uint8 _summonGroup;         ///< Summon's group id
+};
+
 enum ScriptsType
 {
     SCRIPTS_FIRST = 1,
@@ -425,6 +445,8 @@ typedef std::multimap<uint32, GossipMenuItems> GossipMenuItemsMap;
 typedef std::pair<GossipMenuItemsMap::const_iterator, GossipMenuItemsMap::const_iterator> GossipMenuItemsMapBounds;
 typedef std::pair<GossipMenuItemsMap::iterator, GossipMenuItemsMap::iterator> GossipMenuItemsMapBoundsNonConst;
 
+typedef std::map<TempSummonGroupKey, std::vector<TempSummonData> > TempSummonDataContainer;
+
 struct PetCreateSpellEntry
 {
     uint32 spellid[4];
@@ -455,6 +477,49 @@ typedef UNORDERED_MAP<uint32, uint32> CacheNpcTextIdMap;
 
 typedef UNORDERED_MAP<uint32, VendorItemData> CacheVendorItemMap;
 typedef UNORDERED_MAP<uint32, TrainerSpellData> CacheTrainerSpellMap;
+
+struct BroadcastText
+{
+    BroadcastText() : Id(0), Language(0), EmoteId0(0), EmoteId1(0), EmoteId2(0),
+        EmoteDelay0(0), EmoteDelay1(0), EmoteDelay2(0), SoundId(0), Unk1(0), Unk2(0)
+    {
+        MaleText.resize(DEFAULT_LOCALE + 1);
+        FemaleText.resize(DEFAULT_LOCALE + 1);
+    }
+
+    uint32 Id;
+    uint32 Language;
+    StringVector MaleText;
+    StringVector FemaleText;
+    uint32 EmoteId0;
+    uint32 EmoteId1;
+    uint32 EmoteId2;
+    uint32 EmoteDelay0;
+    uint32 EmoteDelay1;
+    uint32 EmoteDelay2;
+    uint32 SoundId;
+    uint32 Unk1;
+    uint32 Unk2;
+    // uint32 VerifiedBuild;
+
+    std::string const& GetText(LocaleConstant locale = DEFAULT_LOCALE, uint8 gender = GENDER_MALE, bool forceGender = false) const
+    {
+        if (gender == GENDER_FEMALE && (forceGender || !FemaleText[DEFAULT_LOCALE].empty()))
+        {
+            if (FemaleText.size() > size_t(locale) && !FemaleText[locale].empty())
+                return FemaleText[locale];
+            return FemaleText[DEFAULT_LOCALE];
+        }
+        // else if (gender == GENDER_MALE)
+        {
+            if (MaleText.size() > size_t(locale) && !MaleText[locale].empty())
+                return MaleText[locale];
+            return MaleText[DEFAULT_LOCALE];
+        }
+    }
+};
+
+typedef UNORDERED_MAP<uint32, BroadcastText> BroadcastTextContainer;
 
 enum SkillRangeType
 {
@@ -772,6 +837,7 @@ class ObjectMgr
         void LoadPetCreateSpells();
         void LoadCreatureLocales();
         void LoadCreatureTemplates();
+        void LoadTempSummons();
         void LoadCreatures();
         void LoadCreatureLinkedRespawn();
         bool CheckCreatureLinkedRespawn(uint32 guid, uint32 linkedGuid) const;
@@ -825,6 +891,9 @@ class ObjectMgr
         void LoadVendors();
         void LoadTrainerSpell();
 
+        void LoadBroadcastTexts();
+        void LoadBroadcastTextLocales();
+
         std::string GeneratePetName(uint32 entry);
         uint32 GetBaseXP(uint32 level);
 
@@ -857,6 +926,32 @@ class ObjectMgr
 
         typedef std::multimap<int32, uint32> ExclusiveQuestGroups;
         ExclusiveQuestGroups mExclusiveQuestGroups;
+
+        BroadcastText const* GetBroadcastText(uint32 id) const
+        {
+            BroadcastTextContainer::const_iterator itr = _broadcastTextStore.find(id);
+            if (itr != _broadcastTextStore.end())
+                return &itr->second;
+            return NULL;
+        }
+
+        /**
+        * Gets temp summon data for all creatures of specified group.
+        *
+        * @param summonerId   Summoner's entry.
+        * @param summonerType Summoner's type, see SummonerType for available types.
+        * @param group        Id of required group.
+        *
+        * @return null if group was not found, otherwise reference to the creature group data
+        */
+        std::vector<TempSummonData> const* GetSummonGroup(uint32 summonerId, SummonerType summonerType, uint8 group) const
+        {
+            TempSummonDataContainer::const_iterator itr = _tempSummonDataStore.find(TempSummonGroupKey(summonerId, summonerType, group));
+            if (itr != _tempSummonDataStore.end())
+                return &itr->second;
+
+            return NULL;
+        }
 
         WeatherZoneChances const* GetWeatherChances(uint32 zone_id) const
         {
@@ -1084,6 +1179,13 @@ class ObjectMgr
             return GossipMenuItemsMapBoundsNonConst(m_mGossipMenuItemsMap.lower_bound(uiMenuId),m_mGossipMenuItemsMap.upper_bound(uiMenuId));
         }
 
+        static void AddLocaleString(std::string const& s, LocaleConstant locale, StringVector& data);
+        static inline void GetLocaleString(const StringVector& data, int loc_idx, std::string& value)
+        {
+            if (data.size() > size_t(loc_idx) && !data[loc_idx].empty())
+                value = data[loc_idx];
+        }
+
     protected:
 
         // first free id for selected id type
@@ -1197,12 +1299,17 @@ class ObjectMgr
         RespawnTimes mCreatureRespawnTimes;
         RespawnTimes mGORespawnTimes;
 
+        BroadcastTextContainer _broadcastTextStore;
+
         typedef std::vector<uint32> GuildBankTabPriceMap;
         GuildBankTabPriceMap mGuildBankTabPrice;
 
         CacheNpcTextIdMap m_mCacheNpcTextIdMap;
         CacheVendorItemMap m_mCacheVendorItemMap;
         CacheTrainerSpellMap m_mCacheTrainerSpellMap;
+
+        /// Stores temp summon data grouped by summoner's entry, summoner's type and group id
+        TempSummonDataContainer _tempSummonDataStore;
 };
 
 #define sObjectMgr Oregon::Singleton<ObjectMgr>::Instance()

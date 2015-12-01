@@ -44,6 +44,7 @@
 #include "Util.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
+#include "ScriptMgr.h"
 #include "CellImpl.h"
 
 #define NULL_AURA_SLOT 0xFF
@@ -1944,6 +1945,10 @@ void Aura::TriggerSpell()
         triggeredSpellInfo = sSpellStore.LookupEntry(trigger_spell_id);
         if (triggeredSpellInfo == NULL)
         {
+            Creature* c = target->ToCreature();
+            if (!c || !caster || !sScriptMgr.EffectDummyCreature(caster, GetId(), SpellEffIndex(GetEffIndex()), target->ToCreature()) ||
+                !c->AI()->sOnDummyEffect(caster, GetId(), SpellEffIndex(GetEffIndex())))
+
             sLog.outError("Aura::TriggerSpell: Spell %u has 0 in EffectTriggered[%d], unhandled custom case?", GetId(), GetEffIndex());
             return;
         }
@@ -6236,6 +6241,9 @@ void Aura::PeriodicTick()
 
             sLog.outDetail("PeriodicTick: %u (TypeId: %u) heal of %u (TypeId: %u) for %u health inflicted by %u",
                            GUID_LOPART(GetCasterGUID()), GuidHigh2TypeId(GUID_HIPART(GetCasterGUID())), m_target->GetGUIDLow(), m_target->GetTypeId(), pdamage, GetId());
+
+            if (m_target->IsAIEnabled)
+                m_target->ToCreature()->AI()->HealReceived(pCaster, pdamage);
 
             WorldPacket data(SMSG_PERIODICAURALOG, (21 + 16)); // we guess size
             data << m_target->GetPackGUID();

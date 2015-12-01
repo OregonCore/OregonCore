@@ -361,6 +361,8 @@ struct GameObjectInfo
             uint32 data[24];
         } raw;
     };
+
+    char const* AIName;
     uint32 ScriptId;
 
     // helpers
@@ -500,6 +502,11 @@ struct GameObjectInfo
             default: return 0;
         }
     }
+
+    std::string GetAIName() const
+    {
+        return AIName;
+    }
 };
 
 // GCC have alternative #pragma pack() syntax and old gcc version not support pack(pop), also any gcc version not support it at some platform
@@ -559,6 +566,7 @@ enum LootState
     GO_JUST_DEACTIVATED
 };
 
+class GameObjectAI;
 class Unit;
 class GameObjectModel;
 class Transport;
@@ -738,7 +746,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         {
             return m_lootState;
         }
-        void SetLootState(LootState state);
+        void SetLootState(LootState s, Unit* unit = NULL);
 
         void AddToSkillupList(uint32 PlayerGuidLow)
         {
@@ -782,7 +790,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         bool hasQuest(uint32 quest_id) const;
         bool hasInvolvedQuest(uint32 quest_id) const;
         bool ActivateToQuest(Player* pTarget) const;
-        void UseDoorOrButton(uint32 time_to_restore = 0, bool alternative = false);
+        void UseDoorOrButton(uint32 time_to_restore = 0, bool alternative = false, Unit* user = NULL);
         // 0 = use `gameobject`.`spawntimesecs`
         void ResetDoorOrButton();
 
@@ -813,7 +821,12 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         GameObject* LookupFishingHoleAround(float range);
 
         void CastSpell(Unit* target, uint32 spellId, bool triggered = true);
+
+        GameObjectAI* AI() const { return m_AI; }
+
+        std::string GetAIName() const;
     protected:
+        bool AIM_Initialize();
         uint32      m_spellId;
         time_t      m_respawnTime;                          // (secs) time of next respawn (or despawn if GO have owner()),
         uint32      m_respawnDelayTime;                     // (secs) if 0 then current GO state no dependent from timer
@@ -835,6 +848,8 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         GameObjectModel * m_model;
     private:
         void SwitchDoorOrButton(bool activate, bool alternative = false);
+
+        GameObjectAI* m_AI;
 
         void UpdateModel();                                 // updates model in case displayId were changed
 };

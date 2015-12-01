@@ -374,7 +374,7 @@ void WorldSession::DoLootRelease(uint64 lguid)
         else
         {
             // not fully looted object
-            go->SetLootState(GO_ACTIVATED);
+            go->SetLootState(GO_ACTIVATED, player);
 
             if (player->GetGUID() == loot->roundRobinPlayer)
                 loot->roundRobinPlayer = 0;

@@ -3890,7 +3890,7 @@ bool ChatHandler::HandleActivateObjectCommand(const char* args)
 
     // Activate
     obj->SetLootState(GO_READY);
-    obj->UseDoorOrButton(10000);
+    obj->UseDoorOrButton(10000, false, m_session->GetPlayer());
 
     PSendSysMessage("Object activated!");
 

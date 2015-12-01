@@ -2034,6 +2034,26 @@ Creature* WorldObject::SummonTrigger(float x, float y, float z, float ang, uint3
     return summon;
 }
 
+/**
+* Summons group of creatures. Should be called only by instances of Creature and GameObject classes.
+*
+* @param group Id of group to summon.
+* @param list  List to store pointers to summoned creatures.
+*/
+void WorldObject::SummonCreatureGroup(uint8 group, std::list<TempSummon*>* list /*= NULL*/)
+{
+    ASSERT((GetTypeId() == TYPEID_GAMEOBJECT || GetTypeId() == TYPEID_UNIT) && "Only GOs and creatures can summon npc groups!");
+
+    std::vector<TempSummonData> const* data = sObjectMgr.GetSummonGroup(GetEntry(), GetTypeId() == TYPEID_GAMEOBJECT ? SUMMONER_TYPE_GAMEOBJECT : SUMMONER_TYPE_CREATURE, group);
+    if (!data)
+        return;
+
+    for (std::vector<TempSummonData>::const_iterator itr = data->begin(); itr != data->end(); ++itr)
+        if (TempSummon* summon = SummonCreature(itr->entry, itr->pos, itr->type, itr->time))
+            if (list)
+                list->push_back(summon);
+}
+
 Creature* WorldObject::FindNearestCreature(uint32 entry, float range, bool alive)
 {
     Creature* creature = NULL;
@@ -2087,6 +2107,16 @@ void WorldObject::GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, ui
     TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> visitor(searcher);
 
     cell.Visit(pair, visitor, *(this->GetMap()));
+}
+
+float WorldObject::GetGridActivationRange() const
+{
+    if (ToPlayer())
+        return GetMap()->GetVisibilityDistance();
+    else if (ToCreature())
+        return ToCreature()->m_SightDistance;
+    else
+        return 0.0f;
 }
 
 void WorldObject::GetNearPoint2D(float& x, float& y, float distance2d, float absAngle) const

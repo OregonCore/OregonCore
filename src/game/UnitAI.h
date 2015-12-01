@@ -85,10 +85,16 @@ class UnitAI
             return 0;
         }
 
+        // Called at any Damage to any victim (before damage apply)
+        virtual void DamageDealt(Unit* /*victim*/, uint32& /*damage*/, DamageEffectType /*damageType*/) { }
+
         Unit* SelectTarget(SelectAggroTarget target, uint32 position = 0, float dist = 0, bool playerOnly = false, int32 aura = 0);
         void SelectTargetList(std::list<Unit*>& targetList, uint32 num, SelectAggroTarget target, float dist = 0, bool playerOnly = false, int32 aura = 0);
 
         void AttackStartCaster(Unit* victim, float dist);
+
+        // Called when the creature receives heal
+        virtual void HealReceived(Unit* /*done_by*/, uint32& /*addhealth*/) { }
 
         void DoCast(uint32 spellId);
         void DoCast(Unit* victim, uint32 spellId, bool triggered = false);
@@ -99,6 +105,15 @@ class UnitAI
 
         void DoMeleeAttackIfReady();
         bool DoSpellAttackIfReady(uint32 spell);
+
+        virtual void sGossipHello(Player* /*player*/) { }
+        virtual void sGossipSelect(Player* /*player*/, uint32 /*sender*/, uint32 /*action*/) { }
+        virtual void sGossipSelectCode(Player* /*player*/, uint32 /*sender*/, uint32 /*action*/, char const* /*code*/) { }
+        virtual void sQuestAccept(Player* /*player*/, Quest const* /*quest*/) { }
+        virtual void sQuestSelect(Player* /*player*/, Quest const* /*quest*/) { }
+        virtual void sQuestReward(Player* /*player*/, Quest const* /*quest*/, uint32 /*opt*/) { }
+        virtual bool sOnDummyEffect(Unit* /*caster*/, uint32 /*spellId*/, SpellEffIndex /*effIndex*/) { return false; }
+        virtual void sOnGameEvent(bool /*start*/, uint16 /*eventId*/) { }
 
         static AISpellInfoType* AISpellInfo;
         static void FillAISpellInfo();

@@ -983,6 +983,7 @@ class Unit : public WorldObject
         void CombatStop(bool cast = false);
         void CombatStopWithPets(bool cast = false);
         Unit* SelectNearbyTarget(Unit* exclude = NULL, float dist = NOMINAL_MELEE_RANGE) const;
+        Player* SelectNearestPlayer(float distance = 0) const;
         void SendMeleeAttackStop(Unit* victim = NULL);
         void SendMeleeAttackStart(Unit* pVictim);
 
@@ -1361,6 +1362,7 @@ class Unit : public WorldObject
             return m_CombatTimer;
         }
 
+        uint32 GetAuraCount(uint32 spellId) const;
         bool HasAuraType(AuraType auraType) const;
         bool HasAuraTypeWithFamilyFlags(AuraType auraType, uint32 familyName,  uint64 familyFlags) const;
         bool HasAura(uint32 spellId, uint8 effIndex = 0) const
@@ -2131,6 +2133,9 @@ class Unit : public WorldObject
         // Part of Evade mechanics
         time_t GetLastDamagedTime() const { return _lastDamagedTime; }
         void SetLastDamagedTime(time_t val) { _lastDamagedTime = val; }
+
+        TempSummon* ToTempSummon() { if (IsSummon()) return reinterpret_cast<TempSummon*>(this); else return NULL; }
+        TempSummon const* ToTempSummon() const { if (IsSummon()) return reinterpret_cast<TempSummon const*>(this); else return NULL; }
 
     protected:
         explicit Unit ();

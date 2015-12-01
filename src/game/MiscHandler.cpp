@@ -38,6 +38,8 @@
 #include "SpellAuras.h"
 #include "SocialMgr.h"
 #include "ScriptMgr.h"
+#include "CreatureAI.h"
+#include "GameObjectAI.h"
 #include "AccountMgr.h"
 
 void WorldSession::HandleRepopRequestOpcode(WorldPacket& recv_data)
@@ -119,21 +121,29 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
     {
         if (unit)
         {
+            unit->AI()->sGossipSelectCode(_player, menuId, gossipListId, code.c_str());
             if (!sScriptMgr.GossipSelectWithCode(_player, unit, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId), code.c_str()))
                 _player->OnGossipSelect(unit, gossipListId, menuId);
         }
         else
+        {
+            go->AI()->GossipSelectCode(_player, menuId, gossipListId, code.c_str());
             sScriptMgr.GOSelectWithCode(_player, go, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId), code.c_str());
+        }
     }
     else
     {
         if (unit)
         {
+            unit->AI()->sGossipSelect(_player, menuId, gossipListId);
             if (!sScriptMgr.GossipSelect(_player, unit, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId)))
                 _player->OnGossipSelect(unit, gossipListId, menuId);
         }
         else
+        {
+            go->AI()->GossipSelect(_player, menuId, gossipListId);
             sScriptMgr.GOSelect(_player, go, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId));
+        }
     }
 }
 

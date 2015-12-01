@@ -1367,7 +1367,7 @@ struct npc_training_dummyAI : public ScriptedAI
         damage = 0;
     }
 
-    void UpdateAI(uint32 diff) override
+    void UpdateAI(const uint32 diff) override
     {
         if (!me->IsInCombat())
             return;

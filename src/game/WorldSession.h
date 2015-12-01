@@ -705,6 +705,8 @@ class WorldSession
         void HandleReferAFriend(WorldPacket& recv_data);
 
         void HandleMirrorImageDataRequest(WorldPacket& recvData);
+
+        void HandleSpellClick(WorldPacket& recvData);
     private:
         // private trade methods
         void moveItems(Item* myItems[], Item* hisItems[]);

@@ -228,6 +228,10 @@ extern char const* localeNames[MAX_LOCALE];
 
 LocaleConstant GetLocaleByName(const std::string& name);
 
+#define DEFAULT_LOCALE LOCALE_enUS
+
+typedef std::vector<std::string> StringVector;
+
 // we always use stdlibc++ std::max/std::min, undefine some not C++ standard defines (Win API and some other platforms)
 #ifdef max
 #undef max

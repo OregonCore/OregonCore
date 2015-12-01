@@ -40,6 +40,7 @@ class GroupReference : public Reference<Group, Player>
         {
             return (GroupReference*)Reference<Group, Player>::next();
         }
+        GroupReference const* next() const { return (GroupReference const*)Reference<Group, Player>::next(); }
         uint8 getSubGroup() const
         {
             return iSubGroup;

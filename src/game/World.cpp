@@ -52,12 +52,14 @@
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
 #include "InstanceSaveMgr.h"
+#include "SmartAI.h"
 #include "TicketMgr.h"
 #include "Util.h"
 #include "Language.h"
 #include "CreatureGroups.h"
 #include "Transports.h"
 #include "CreatureEventAIMgr.h"
+#include "CreatureTextMgr.h"
 #include "ScriptMgr.h"
 #include "WardenDataStorage.h"
 #include "DisableMgr.h"
@@ -1309,6 +1311,10 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Packing instances...");
     sInstanceSaveMgr.PackInstances();
 
+    sConsole.SetLoadingLabel("Loading Broadcast texts...");
+    sObjectMgr.LoadBroadcastTexts();
+    sObjectMgr.LoadBroadcastTextLocales();
+
     sConsole.SetLoadingLabel("Loading Localization strings...");
     sObjectMgr.LoadCreatureLocales();
     sObjectMgr.LoadGameObjectLocales();
@@ -1385,6 +1391,9 @@ void World::SetInitialWorldSettings()
 
     sConsole.SetLoadingLabel("Loading Creature Data...");
     sObjectMgr.LoadCreatures();
+
+    sConsole.SetLoadingLabel("Loading Temporary Summon Data...");
+    sObjectMgr.LoadTempSummons();                               // must be after LoadCreatureTemplates() and LoadGameObjectTemplates()
 
     sConsole.SetLoadingLabel("Loading Creature Linked Respawn...");
     sObjectMgr.LoadCreatureLinkedRespawn();                     // must be after LoadCreatures()
@@ -1542,6 +1551,9 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Loading Waypoints...");
     sWaypointMgr->Load();
 
+    sConsole.SetLoadingLabel("Loading SmartAI Waypoints...");
+    sSmartWaypointMgr->LoadFromDB();
+
     sConsole.SetLoadingLabel("Loading Creature Formations...");
     sFormationMgr.LoadCreatureFormations();
 
@@ -1590,6 +1602,15 @@ void World::SetInitialWorldSettings()
 
     sConsole.SetLoadingLabel("Loading CreatureEventAI Scripts...");
     CreatureEAI_Mgr.LoadCreatureEventAI_Scripts();
+
+    sConsole.SetLoadingLabel("Loading Creature Texts...");
+    sCreatureTextMgr->LoadCreatureTexts();
+
+    sConsole.SetLoadingLabel("Loading Creature Text Locales...");
+    sCreatureTextMgr->LoadCreatureTextLocales();
+
+    sConsole.SetLoadingLabel("Loading SmartAI scripts...");
+    sSmartScriptMgr->LoadSmartAIFromDB();
 
     sConsole.SetLoadingLabel("Initializing Scripts...");
     sScriptMgr.ScriptsInit();

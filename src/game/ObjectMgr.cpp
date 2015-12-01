@@ -1072,6 +1072,94 @@ bool ObjectMgr::SetCreatureLinkedRespawn(uint32 guid, uint32 linkedGuid)
     return false;
 }
 
+void ObjectMgr::LoadTempSummons()
+{
+    uint32 oldMSTime = getMSTime();
+
+    _tempSummonDataStore.clear();   // needed for reload case
+
+    //                                               0           1             2        3      4           5           6           7            8           9
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT summonerId, summonerType, groupId, entry, position_x, position_y, position_z, orientation, summonType, summonTime FROM creature_summon_groups");
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 temp summons. DB table `creature_summon_groups` is empty.");
+        return;
+    }
+
+    uint32 count = 0;
+    do
+    {
+        Field* fields = result->Fetch();
+
+        uint32 summonerId = fields[0].GetUInt32();
+        SummonerType summonerType = SummonerType(fields[1].GetUInt8());
+        uint8 group = fields[2].GetUInt8();
+
+        switch (summonerType)
+        {
+        case SUMMONER_TYPE_CREATURE:
+            if (!GetCreatureTemplate(summonerId))
+            {
+                sLog.outError("Table `creature_summon_groups` has summoner with non existing entry %u for creature summoner type, skipped.", summonerId);
+                continue;
+            }
+            break;
+        case SUMMONER_TYPE_GAMEOBJECT:
+            if (!GetGameObjectInfo(summonerId))
+            {
+                sLog.outError("Table `creature_summon_groups` has summoner with non existing entry %u for gameobject summoner type, skipped.", summonerId);
+                continue;
+            }
+            break;
+        case SUMMONER_TYPE_MAP:
+            if (!sMapStore.LookupEntry(summonerId))
+            {
+                sLog.outError("Table `creature_summon_groups` has summoner with non existing entry %u for map summoner type, skipped.", summonerId);
+                continue;
+            }
+            break;
+        default:
+            sLog.outError("Table `creature_summon_groups` has unhandled summoner type %u for summoner %u, skipped.", summonerType, summonerId);
+            continue;
+        }
+
+        TempSummonData data;
+        data.entry = fields[3].GetUInt32();
+
+        if (!GetCreatureTemplate(data.entry))
+        {
+            sLog.outError("Table `creature_summon_groups` has creature in group [Summoner ID: %u, Summoner Type: %u, Group ID: %u] with non existing creature entry %u, skipped.", summonerId, summonerType, group, data.entry);
+            continue;
+        }
+
+        float posX = fields[4].GetFloat();
+        float posY = fields[5].GetFloat();
+        float posZ = fields[6].GetFloat();
+        float orientation = fields[7].GetFloat();
+
+        data.pos.Relocate(posX, posY, posZ, orientation);
+
+        data.type = TempSummonType(fields[8].GetUInt8());
+
+        if (data.type > TEMPSUMMON_MANUAL_DESPAWN)
+        {
+            sLog.outError("Table `creature_summon_groups` has unhandled temp summon type %u in group [Summoner ID: %u, Summoner Type: %u, Group ID: %u] for creature entry %u, skipped.", data.type, summonerId, summonerType, group, data.entry);
+            continue;
+        }
+
+        data.time = fields[9].GetUInt32();
+
+        TempSummonGroupKey key(summonerId, summonerType, group);
+        _tempSummonDataStore[key].push_back(data);
+
+        ++count;
+
+    } while (result->NextRow());
+
+    sLog.outString(">> Loaded %u temp summons in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
+}
+
 void ObjectMgr::LoadCreatures()
 {
     uint32 count = 0;
@@ -7229,6 +7317,141 @@ void ObjectMgr::LoadScriptNames()
     m_scriptNames.push_back("scripted_on_events");
 
     std::sort(m_scriptNames.begin(), m_scriptNames.end());
+}
+
+void ObjectMgr::LoadBroadcastTexts()
+{
+    uint32 oldMSTime = getMSTime();
+
+    _broadcastTextStore.clear(); // for reload case
+
+    //                                               0   1         2         3           4         5         6         7            8            9            10       11    12
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT ID, Language, MaleText, FemaleText, EmoteID0, EmoteID1, EmoteID2, EmoteDelay0, EmoteDelay1, EmoteDelay2, SoundId, Unk1, Unk2 FROM broadcast_text");
+    if (!result)
+    {
+        sLog.outString("server.loading", ">> Loaded 0 broadcast texts. DB table `broadcast_text` is empty.");
+        return;
+    }
+
+    _broadcastTextStore.rehash(result->GetRowCount());
+
+    do
+    {
+        Field* fields = result->Fetch();
+
+        BroadcastText bct;
+
+        bct.Id = fields[0].GetUInt32();
+        bct.Language = fields[1].GetUInt32();
+        bct.MaleText[DEFAULT_LOCALE] = fields[2].GetString();
+        bct.FemaleText[DEFAULT_LOCALE] = fields[3].GetString();
+        bct.EmoteId0 = fields[4].GetUInt32();
+        bct.EmoteId1 = fields[5].GetUInt32();
+        bct.EmoteId2 = fields[6].GetUInt32();
+        bct.EmoteDelay0 = fields[7].GetUInt32();
+        bct.EmoteDelay1 = fields[8].GetUInt32();
+        bct.EmoteDelay2 = fields[9].GetUInt32();
+        bct.SoundId = fields[10].GetUInt32();
+        bct.Unk1 = fields[11].GetUInt32();
+        bct.Unk2 = fields[12].GetUInt32();
+
+        if (bct.SoundId)
+        {
+            if (!sSoundEntriesStore.LookupEntry(bct.SoundId))
+            {
+                sLog.outDebug("BroadcastText (Id: %u) in table `broadcast_text` has SoundId %u but sound does not exist.", bct.Id, bct.SoundId);
+                bct.SoundId = 0;
+            }
+        }
+
+        if (!GetLanguageDescByID(bct.Language))
+        {
+            sLog.outDebug("BroadcastText (Id: %u) in table `broadcast_text` using Language %u but Language does not exist.", bct.Id, bct.Language);
+            bct.Language = LANG_UNIVERSAL;
+        }
+
+        if (bct.EmoteId0)
+        {
+            if (!sEmotesStore.LookupEntry(bct.EmoteId0))
+            {
+                sLog.outDebug("BroadcastText (Id: %u) in table `broadcast_text` has EmoteId0 %u but emote does not exist.", bct.Id, bct.EmoteId0);
+                bct.EmoteId0 = 0;
+            }
+        }
+
+        if (bct.EmoteId1)
+        {
+            if (!sEmotesStore.LookupEntry(bct.EmoteId1))
+            {
+                sLog.outDebug("BroadcastText (Id: %u) in table `broadcast_text` has EmoteId1 %u but emote does not exist.", bct.Id, bct.EmoteId1);
+                bct.EmoteId1 = 0;
+            }
+        }
+
+        if (bct.EmoteId2)
+        {
+            if (!sEmotesStore.LookupEntry(bct.EmoteId2))
+            {
+                sLog.outDebug("BroadcastText (Id: %u) in table `broadcast_text` has EmoteId2 %u but emote does not exist.", bct.Id, bct.EmoteId2);
+                bct.EmoteId2 = 0;
+            }
+        }
+
+        _broadcastTextStore[bct.Id] = bct;
+    } while (result->NextRow());
+
+    sLog.outString(">> Loaded " UI64FMTD " broadcast texts in %u ms", _broadcastTextStore.size(), GetMSTimeDiffToNow(oldMSTime));
+}
+
+void ObjectMgr::LoadBroadcastTextLocales()
+{
+    uint32 oldMSTime = getMSTime();
+
+    //                                               0   1              2              3              4              5              6              7              8              9                10               11               12               13               14               15               16
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT Id, MaleText_loc1, MaleText_loc2, MaleText_loc3, MaleText_loc4, MaleText_loc5, MaleText_loc6, MaleText_loc7, MaleText_loc8, FemaleText_loc1, FemaleText_loc2, FemaleText_loc3, FemaleText_loc4, FemaleText_loc5, FemaleText_loc6, FemaleText_loc7, FemaleText_loc8 FROM locales_broadcast_text");
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 broadcast text locales. DB table `locales_broadcast_text` is empty.");
+        return;
+    }
+
+    uint32 count = 0;
+
+    do
+    {
+        Field* fields = result->Fetch();
+
+        uint32 id = fields[0].GetUInt32();
+        BroadcastTextContainer::iterator bct = _broadcastTextStore.find(id);
+        if (bct == _broadcastTextStore.end())
+        {
+            sLog.outError("BroadcastText (Id: %u) in table `locales_broadcast_text` does not exist. Skipped!", id);
+            continue;
+        }
+
+        for (uint8 i = MAX_LOCALE - 1; i > 0; --i)
+        {
+            LocaleConstant locale = LocaleConstant(i);
+            AddLocaleString(fields[1 + (i - 1)].GetString(), locale, bct->second.MaleText);
+            AddLocaleString(fields[9 + (i - 1)].GetString(), locale, bct->second.FemaleText);
+        }
+
+        ++count;
+    } while (result->NextRow());
+
+    sLog.outString(">> Loaded %u broadcast text locales in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
+}
+
+void ObjectMgr::AddLocaleString(std::string const& s, LocaleConstant locale, StringVector& data)
+{
+    if (!s.empty())
+    {
+        if (data.size() <= size_t(locale))
+            data.resize(locale + 1);
+
+        data[locale] = s;
+    }
 }
 
 uint32 ObjectMgr::GetScriptId(const char* name)
