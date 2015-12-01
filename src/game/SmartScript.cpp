@@ -19,7 +19,6 @@
 #include "G3D/Vector3.h"
 #include "Cell.h"
 #include "CellImpl.h"
-#include "ChatTextBuilder.h"
 #include "CreatureTextMgr.h"
 #include "DatabaseEnv.h"
 #include "GossipDef.h"
@@ -155,7 +154,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                 talkTarget = targetPlayer;
 
             mUseTextTimer = true;
-            DoScriptText(uint8(e.action.talk.textGroupID), talker, talkTarget);
+
             sCreatureTextMgr->SendChat(talker, uint8(e.action.talk.textGroupID), talkTarget);
             sLog.outDebug("SmartScript::ProcessAction: SMART_ACTION_TALK: talker: %s (GuidLow: %u), textGuid: %u",
                 talker->GetName(), talker->GetGUIDLow(), talkTarget ? talkTarget->GetGUIDLow() : 0);
@@ -733,11 +732,6 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                 break;
 
             me->DoFleeToGetAssistance();
-            if (e.action.flee.withEmote)
-            {
-                Oregon::BroadcastTextBuilder builder(me, CHAT_MSG_MONSTER_EMOTE, BROADCAST_TEXT_FLEE_FOR_ASSIST);
-                sCreatureTextMgr->SendChatPacket(me, builder, CHAT_MSG_MONSTER_EMOTE);
-            }
             sLog.outDebug("SmartScript::ProcessAction:: SMART_ACTION_FLEE_FOR_ASSIST: Creature %u DoFleeToGetAssistance", me->GetGUIDLow());
             break;
         }
@@ -972,16 +966,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
         }
         case SMART_ACTION_CALL_FOR_HELP:
         {
-            if (me)
-            {
-                me->CallForHelp((float)e.action.callHelp.range);
-                if (e.action.callHelp.withEmote)
-                {
-                    Oregon::BroadcastTextBuilder builder(me, CHAT_MSG_MONSTER_EMOTE, BROADCAST_TEXT_CALL_FOR_HELP);
-                    sCreatureTextMgr->SendChatPacket(me, builder, CHAT_MSG_MONSTER_EMOTE);
-                }
-                sLog.outDebug("SmartScript::ProcessAction: SMART_ACTION_CALL_FOR_HELP: Creature %u", me->GetGUIDLow());
-            }
+            // not implemented
             break;
         }
         case SMART_ACTION_SET_SHEATH:

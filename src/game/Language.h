@@ -18,12 +18,6 @@
 #ifndef __OREGON_LANGUAGE_H
 #define __OREGON_LANGUAGE_H
 
-enum BroadcastTextIds
-{
-    BROADCAST_TEXT_CALL_FOR_HELP = 2541,
-    BROADCAST_TEXT_FLEE_FOR_ASSIST = 1150
-};
-
 enum OregonStrings
 {
     // for chat commands

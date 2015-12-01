@@ -16,7 +16,6 @@ create table `creature_text` (
 	`emote` mediumint (8),
 	`duration` mediumint (8),
 	`sound` mediumint (8),
-	`BroadcastTextId` mediumint (6),
 	`TextRange` tinyint (3),
 	`comment` varchar (765)
 ); 

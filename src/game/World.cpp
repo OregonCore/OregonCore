@@ -1311,10 +1311,6 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Packing instances...");
     sInstanceSaveMgr.PackInstances();
 
-    sConsole.SetLoadingLabel("Loading Broadcast texts...");
-    sObjectMgr.LoadBroadcastTexts();
-    sObjectMgr.LoadBroadcastTextLocales();
-
     sConsole.SetLoadingLabel("Loading Localization strings...");
     sObjectMgr.LoadCreatureLocales();
     sObjectMgr.LoadGameObjectLocales();
