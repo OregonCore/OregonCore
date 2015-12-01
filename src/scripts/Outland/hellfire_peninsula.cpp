@@ -30,6 +30,7 @@ npc_naladu
 npc_tracy_proudwell
 npc_trollbane
 npc_fel_guard_hound
+npc_wing_commander_dabiree
 npc_gryphoneer_leafbeard
 npc_wing_commander_brack
 npc_wounded_blood_elf
@@ -411,6 +412,46 @@ struct npc_fel_guard_houndAI : public ScriptedAI
 CreatureAI* GetAI_npc_fel_guard_hound(Creature* pCreature)
 {
     return new npc_fel_guard_houndAI(pCreature);
+}
+
+/*######
+## npc_wing_commander_dabiree
+######*/
+
+#define GOSSIP_ITEM1_DAB "Fly me to Murketh and Shaadraz Gateways"
+#define GOSSIP_ITEM2_DAB "Fly me to Shatter Point"
+
+bool GossipHello_npc_wing_commander_dabiree(Player* player, Creature* pCreature)
+{
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
+
+    //Mission: The Murketh and Shaadraz Gateways
+    if (player->GetQuestStatus(10146) == QUEST_STATUS_INCOMPLETE)
+        player->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM1_DAB, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+    //Shatter Point
+    if (!player->GetQuestRewardStatus(10340))
+        player->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM2_DAB, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+
+    return true;
+}
+
+bool GossipSelect_npc_wing_commander_dabiree(Player* player, Creature* /*pCreature*/, uint32 /*sender*/, uint32 action)
+{
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
+    {
+        player->CLOSE_GOSSIP_MENU();
+        player->CastSpell(player, 33768, true);             //TaxiPath 585 (Gateways Murket and Shaadraz)
+    }
+    if (action == GOSSIP_ACTION_INFO_DEF + 2)
+    {
+        player->CLOSE_GOSSIP_MENU();
+        player->CastSpell(player, 35069, true);             //TaxiPath 612 (Taxi - Hellfire Peninsula - Expedition Point to Shatter Point)
+    }
+    return true;
 }
 
 /*######
@@ -2497,7 +2538,7 @@ enum VieraQuests
 
 Position const ChasePath = { -742.759f, 4073.034f, 47.413f, 0.0f };
 
-// cat
+// cat change it into MovePath if possible.
 Position const ChasePath1 = { -655.107, 4147.2, 64.1146, 0.0f };
 Position const ChasePath2 = { -664.461, 4147.91, 64.156, 0.0f };
 Position const ChasePath3 = { -681.972, 4146.48, 64.4093, 0.0f };
@@ -2555,56 +2596,48 @@ struct npc_vieraAI : public npc_escortAI
 		case 2:		
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				catGUID = kitty->GetGUID();
 				kitty->GetMotionMaster()->MovePoint(0, ChasePath1, true);
 			}
 			break;
 		case 3:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				catGUID = kitty->GetGUID();
 				kitty->GetMotionMaster()->MovePoint(1, ChasePath2, true);
 			}
 			break;
 		case 4:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				catGUID = kitty->GetGUID();
 				kitty->GetMotionMaster()->MovePoint(2, ChasePath3, true);
 			}
 			break;
 		case 5:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				catGUID = kitty->GetGUID();
 				kitty->GetMotionMaster()->MovePoint(3, ChasePath4, true);
 			}
 			break;
 		case 6:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				catGUID = kitty->GetGUID();
 				kitty->GetMotionMaster()->MovePoint(4, ChasePath5, true);
 			}
 			break;
 		case 7:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				catGUID = kitty->GetGUID();
 				kitty->GetMotionMaster()->MovePoint(5, ChasePath6, true);
 			}
 			break;
 		case 8:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				catGUID = kitty->GetGUID();
 				kitty->GetMotionMaster()->MovePoint(6, ChasePath7, true);
 			}
 			break;
 		case 9:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				catGUID = kitty->GetGUID();
 				kitty->GetMotionMaster()->MovePoint(7, ChasePath8, true);
 			}
 
@@ -2614,27 +2647,16 @@ struct npc_vieraAI : public npc_escortAI
 		case 10:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				catGUID = kitty->GetGUID();
 				DoScriptText(SAY_CAT_1, kitty);
-			}		
-			break;
-		case 11:
-			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
-			{
-				catGUID = kitty->GetGUID();
-				kitty->GetMotionMaster()->MovePoint(8, ChasePath, true);
+				kitty->GetMotionMaster()->MoveFollow(me, 2.0f, 0);
 			}
 			break;
 		case 12:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				catGUID = kitty->GetGUID();
+				me->DisappearAndDie();
 				kitty->DisappearAndDie();
 			}
-			me->DisappearAndDie();
-			break;
-		case 13:
-			Reset();
 			break;
 		}
 	}
@@ -2884,6 +2906,524 @@ CreatureAI* GetAI_npc_camerashaker(Creature* pCreature)
 	return new npc_camerashakerAI(pCreature);
 }
 
+/*###
+# Quest 10792 "Zeth'Gor Must Burn!" (Horde) - Visual Effect
+####*/
+
+enum Quest10792
+{
+	SPELL_FIRE = 35724,
+	GO_Z_FIRE = 183816
+};
+struct npc_east_hovelAI : public ScriptedAI
+{
+	npc_east_hovelAI(Creature* creature) : ScriptedAI(creature) {}
+
+	bool Summon;
+	uint32 ResetTimer;
+	void Reset()
+	{
+		Summon = true;
+	}
+
+	void SpellHit(Unit* caster, const SpellEntry* spell)
+	{
+		if (spell->Id == SPELL_FIRE)
+		{
+			if (Summon)
+			{
+				me->SummonGameObject(GO_Z_FIRE, -934.393005, 1934.01001, 82.031601, 3.35103, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -927.877991, 1927.44995, 81.048897, 5.25344, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -935.54303, 1921.160034, 82.4132, 2.67035, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -944.015015, 1928.160034, 82.105499, 5.98648, 0, 0, 0, 0, 15);
+				ResetTimer = 15000;
+				Summon = false;
+			}
+		}
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!Summon)
+		{
+			if (ResetTimer <= diff)
+			{
+				Summon = true;
+			}
+			else ResetTimer -= diff;
+		}
+	}
+};
+CreatureAI* GetAI_npc_east_hovel(Creature* creature)
+{
+	return new npc_east_hovelAI(creature);
+}
+
+struct npc_west_hovelAI : public ScriptedAI
+{
+	npc_west_hovelAI(Creature* creature) : ScriptedAI(creature) {}
+
+	bool Summon;
+	uint32 ResetTimer;
+	void Reset()
+	{
+		Summon = true;
+	}
+
+	void SpellHit(Unit* caster, const SpellEntry* spell)
+	{
+		if (spell->Id == SPELL_FIRE)
+		{
+			if (Summon)
+			{
+				me->SummonGameObject(GO_Z_FIRE, -1145.410034, 2064.830078, 80.782600, 5.044, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1156.839966, 2060.870117, 79.176399, 3.83972, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1152.719971, 2073.5, 80.622902, 2.00713, 0, 0, 0, 0, 15);
+				ResetTimer = 15000;
+				Summon = false;
+			}
+		}
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!Summon)
+		{
+			if (ResetTimer <= diff)
+			{
+				Summon = true;
+			}
+			else ResetTimer -= diff;
+		}
+	}
+};
+CreatureAI* GetAI_npc_west_hovel(Creature* creature)
+{
+	return new npc_west_hovelAI(creature);
+}
+
+struct npc_stableAI : public ScriptedAI
+{
+	npc_stableAI(Creature* creature) : ScriptedAI(creature) {}
+
+	bool Summon;
+	uint32 ResetTimer;
+	void Reset()
+	{
+		Summon = true;
+	}
+
+	void SpellHit(Unit* caster, const SpellEntry* spell)
+	{
+		if (spell->Id == SPELL_FIRE)
+		{
+			if (Summon)
+			{
+				me->SummonGameObject(GO_Z_FIRE, -1067.280029, 1998.949951, 76.286301, 5.86431, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1052.189941, 2012.099976, 80.946198, 5.95157, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1043.439941, 2002.140015, 76.030502, 2.00713, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1052.26001, 1996.339966, 79.377502, 0.628319, 0, 0, 0, 0, 15);
+				ResetTimer = 15000;
+				Summon = false;
+			}
+		}
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!Summon)
+		{
+			if (ResetTimer <= diff)
+			{
+				Summon = true;
+			}
+			else ResetTimer -= diff;
+		}
+	}
+};
+CreatureAI* GetAI_npc_stable(Creature* creature)
+{
+	return new npc_stableAI(creature);
+}
+
+struct npc_barracksAI : public ScriptedAI
+{
+	npc_barracksAI(Creature* creature) : ScriptedAI(creature) {}
+
+	bool Summon;
+	uint32 ResetTimer;
+	void Reset()
+	{
+		Summon = true;
+	}
+
+	void SpellHit(Unit* caster, const SpellEntry* spell)
+	{
+		if (spell->Id == SPELL_FIRE)
+		{
+			if (Summon)
+			{
+				me->SummonGameObject(GO_Z_FIRE, -1176.709961, 1972.189941, 107.182999, 5.18363, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1120.219971, 1929.890015, 92.360901, 0.89011, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1137.099976, 1951.25, 94.115898, 2.32129, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1152.890015, 1961.48999, 92.9795, 0.994838, 0, 0, 0, 0, 15);
+				ResetTimer = 15000;
+				Summon = false;
+			}
+		}
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!Summon)
+		{
+			if (ResetTimer <= diff)
+			{
+				Summon = true;
+			}
+			else ResetTimer -= diff;
+		}
+	}
+};
+CreatureAI* GetAI_npc_barracks(Creature* creature)
+{
+	return new npc_barracksAI(creature);
+}
+
+/*###
+# Quest 10895 "Zeth'Gor Must Burn!" (Alliance) - Visual Effect
+####*/
+
+struct npc_tower_forgeAI : public ScriptedAI
+{
+	npc_tower_forgeAI(Creature* creature) : ScriptedAI(creature) {}
+
+	bool Summon;
+	uint32 ResetTimer;
+	void Reset()
+	{
+		Summon = true;
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (me->FindNearestGameObject(184661, 30.0f))
+		{
+			if (Summon)
+			{
+				me->SummonGameObject(GO_Z_FIRE, -900.855103, 1922.618774, 92.219215, 5.980657, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -896.976868, 1921.480347, 82.033356, 5.371974, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -903.249817, 1919.317261, 76.100410, 2.930174, 0, 0, 0, 0, 15);
+				ResetTimer = 15000;
+				Summon = false;
+			}
+		}
+
+		if (!Summon)
+		{
+			if (ResetTimer <= diff)
+			{
+				Summon = true;
+			}
+			else ResetTimer -= diff;
+		}
+	}
+};
+CreatureAI* GetAI_npc_tower_forge(Creature* creature)
+{
+	return new npc_tower_forgeAI(creature);
+}
+
+struct npc_tower_northAI : public ScriptedAI
+{
+	npc_tower_northAI(Creature* creature) : ScriptedAI(creature) {}
+
+	bool Summon;
+	uint32 ResetTimer;
+	void Reset()
+	{
+		Summon = true;
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (me->FindNearestGameObject(184661, 30.0f))
+		{
+			if (Summon)
+			{
+				me->SummonGameObject(GO_Z_FIRE, -825.942, 2034.932, 65.399, 0.841, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -823.178, 2029.728, 54.571, 2.145, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -828.604, 2033.299, 46.497, 1.717, 0, 0, 0, 0, 15);
+				ResetTimer = 15000;
+				Summon = false;
+			}
+		}
+
+		if (!Summon)
+		{
+			if (ResetTimer <= diff)
+			{
+				Summon = true;
+			}
+			else ResetTimer -= diff;
+		}
+	}
+};
+CreatureAI* GetAI_npc_tower_north(Creature* creature)
+{
+	return new npc_tower_northAI(creature);
+}
+
+struct npc_tower_southAI : public ScriptedAI
+{
+	npc_tower_southAI(Creature* creature) : ScriptedAI(creature) {}
+
+	bool Summon;
+	uint32 ResetTimer;
+	void Reset()
+	{
+		Summon = true;
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (me->FindNearestGameObject(184661, 30.0f))
+		{
+			if (Summon)
+			{
+				me->SummonGameObject(GO_Z_FIRE, -1155.282, 2103.080, 93.285, 6.015, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1152.252, 2109.441, 84.187, 6.093, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1149.971, 2112.339, 77.230, 0.205, 0, 0, 0, 0, 15);
+				ResetTimer = 15000;
+				Summon = false;
+			}
+		}
+
+		if (!Summon)
+		{
+			if (ResetTimer <= diff)
+			{
+				Summon = true;
+			}
+			else ResetTimer -= diff;
+		}
+	}
+};
+CreatureAI* GetAI_npc_tower_south(Creature* creature)
+{
+	return new npc_tower_southAI(creature);
+}
+
+struct npc_tower_foothillAI : public ScriptedAI
+{
+	npc_tower_foothillAI(Creature* creature) : ScriptedAI(creature) {}
+
+	bool Summon;
+	uint32 ResetTimer;
+	void Reset()
+	{
+		Summon = true;
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (me->FindNearestGameObject(184661, 30.0f))
+		{
+			if (Summon)
+			{
+				me->SummonGameObject(GO_Z_FIRE, -976.103, 1878.009, 110.138, 1.162, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -977.411, 1878.557, 123.025, 6.093, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -971.595, 1880.863, 101.692, 0.844, 0, 0, 0, 0, 15);
+				ResetTimer = 15000;
+				Summon = false;
+			}
+		}
+
+		if (!Summon)
+		{
+			if (ResetTimer <= diff)
+			{
+				Summon = true;
+			}
+			else ResetTimer -= diff;
+		}
+	}
+};
+CreatureAI* GetAI_npc_tower_foothill(Creature* creature)
+{
+	return new npc_tower_foothillAI(creature);
+}
+
+/*######
+## go_central_beacon
+######*/
+
+bool GOHello_go_central_beacon(Player*, GameObject* _GO)
+{
+	_GO->SummonGameObject(180352, -585.287f, 3779.997f, 31.0f, 0, 0, 0, 0, 0, 60);
+	return false;
+}
+
+/*######
+## go_western_beacon
+######*/
+
+bool GOHello_go_western_beacon(Player*, GameObject* _GO)
+{
+	_GO->SummonGameObject(180352, -605.096f, 3988.93f, 31.3f, 0, 0, 0, 0, 0, 60);
+	return false;
+}
+
+/*######
+## go_southern_beacon
+######*/
+
+bool GOHello_go_southern_beacon(Player*, GameObject* _GO)
+{
+	_GO->SummonGameObject(180352, -769.909, 3674.104f, 29.6f, 0, 0, 0, 0, 0, 60);
+	return false;
+}
+
+/*######
+## trigger_beacon_fire
+######*/
+
+struct trigger_beacon_fireAI : public ScriptedAI
+{
+	trigger_beacon_fireAI(Creature* creature) : ScriptedAI(creature) {}
+
+	bool Delete;
+	uint32 ResetTimer;
+	void Reset()
+	{
+		Delete = false;
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (me->FindNearestGameObject(180352, 10.0f))
+		{
+			if (!Delete)
+			{				
+				ResetTimer = 60000;
+				Delete = true;
+			}
+		}
+
+		if (Delete)
+		{
+			if (ResetTimer <= diff)
+			{
+				if (GameObject* torch = me->FindNearestGameObject(180352, 10.0f))
+				{
+					torch->Delete();
+					Delete = false;
+				}
+			}
+			else ResetTimer -= diff;
+		}
+	}
+};
+CreatureAI* GetAI_trigger_beacon_fire(Creature* creature)
+{
+	return new trigger_beacon_fireAI(creature);
+}
+
+/*######
+## SOURCE_OF_THE_CORRUPTION_EVENT
+######*/
+
+#define SAY_AZETHEN_1 -1910251
+#define SAY_AZETHEN_2 -1910252
+#define SAY_AZETHEN_3 -1910253
+#define SAY_AZETHEN_4 -1910255
+#define SAY_PRISONER  -1910254
+
+struct npc_azethenAI : public ScriptedAI
+{
+	npc_azethenAI(Creature* pCreature) : ScriptedAI(pCreature) { }
+
+	bool SourceComplete;
+
+	uint64 uiPlayerGUID;
+	uint32 uiStepsTimer;
+	uint32 uiSteps;
+
+	void Reset()
+	{
+		SourceComplete = false;
+		uiPlayerGUID = 0;
+		uiStepsTimer = 0;
+		uiSteps = 0;
+	}
+
+	uint32 NextStep(uint32 uiSteps)
+	{
+		Creature* pPrisoner = me->FindNearestCreature(16795, 10);
+		
+		switch (uiSteps)
+		{
+		case 1:			
+			me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+			DoScriptText(SAY_AZETHEN_1, me, 0);
+			return 5000;
+		case 2:
+			DoScriptText(SAY_AZETHEN_2, me, 0);
+			return 5000;
+		case 3:
+			me->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
+			return 3000;
+		case 4:
+			me->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
+			DoScriptText(SAY_AZETHEN_3, me, 0);
+			return 1500;
+		case 5:
+			DoScriptText(SAY_PRISONER, pPrisoner, 0);
+			pPrisoner->HandleEmoteCommand(EMOTE_ONESHOT_EAT);
+			return 1500;
+		case 6:
+			pPrisoner->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STUN);
+			return 5000;
+		case 7:
+			pPrisoner->DealDamage(pPrisoner, pPrisoner->GetHealth());
+			return 3000;
+		case 8:
+			me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+			DoScriptText(SAY_AZETHEN_4, me, 0);			
+			return 1000;
+		case 9:			
+			Reset();
+		default:
+			return 0;
+		}
+	}
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		if (uiStepsTimer <= uiDiff)
+		{
+			if (SourceComplete)
+				uiStepsTimer = NextStep(++uiSteps);
+		}
+		else uiStepsTimer -= uiDiff;
+	}
+};
+
+CreatureAI* GetAI_npc_azethen(Creature* pCreature)
+{
+	return new npc_azethenAI(pCreature);
+}
+
+bool ChooseReward_npc_azethen(Player* pPlayer, Creature* pCreature, const Quest* _Quest, uint32 /*item*/)
+{
+	if (_Quest->GetQuestId() == 9387)
+	{
+		CAST_AI(npc_azethenAI, pCreature->AI())->SourceComplete = true;
+	}
+
+	return true;
+}
+
 void AddSC_hellfire_peninsula()
 {
     Script* newscript;
@@ -2919,6 +3459,12 @@ void AddSC_hellfire_peninsula()
     newscript->Name = "npc_trollbane";
     newscript->pGossipHello = &GossipHello_npc_trollbane;
     newscript->pGossipSelect = &GossipSelect_npc_trollbane;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_wing_commander_dabiree";
+    newscript->pGossipHello =   &GossipHello_npc_wing_commander_dabiree;
+    newscript->pGossipSelect =  &GossipSelect_npc_wing_commander_dabiree;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -3063,5 +3609,71 @@ void AddSC_hellfire_peninsula()
 	newscript = new Script;
 	newscript->Name = "npc_camerashaker";
 	newscript->GetAI = &GetAI_npc_camerashaker;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_east_hovel";
+	newscript->GetAI = &GetAI_npc_east_hovel;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_west_hovel";
+	newscript->GetAI = &GetAI_npc_west_hovel;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_stable";
+	newscript->GetAI = &GetAI_npc_stable;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_barracks";
+	newscript->GetAI = &GetAI_npc_barracks;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_tower_forge";
+	newscript->GetAI = &GetAI_npc_tower_forge;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_tower_north";
+	newscript->GetAI = &GetAI_npc_tower_north;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_tower_south";
+	newscript->GetAI = &GetAI_npc_tower_south;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_tower_foothill";
+	newscript->GetAI = &GetAI_npc_tower_foothill;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "go_central_beacon";
+	newscript->pGOHello = &GOHello_go_central_beacon;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "go_western_beacon";
+	newscript->pGOHello = &GOHello_go_western_beacon;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "go_southern_beacon";
+	newscript->pGOHello = &GOHello_go_southern_beacon;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "trigger_beacon_fire";
+	newscript->GetAI = &GetAI_trigger_beacon_fire;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_azethen";
+	newscript->GetAI = &GetAI_npc_azethen;
+	newscript->pChooseReward = &ChooseReward_npc_azethen;
 	newscript->RegisterSelf();
 }
