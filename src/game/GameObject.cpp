@@ -1483,6 +1483,15 @@ void GameObject::SetLootState(LootState s, Unit* unit)
     m_lootState = s;
 
     AI()->OnStateChanged(s, unit);
+    if (m_model)
+    {
+         bool collision = false;
+         // Use the current go state
+         if ((GetGoState() != GO_STATE_READY && (s == GO_ACTIVATED || s == GO_JUST_DEACTIVATED)) || s == GO_READY)
+            collision = !collision;
+         
+        EnableCollision(collision);
+    }
 }
 
 void GameObject::CastSpell(Unit* target, uint32 spellId, bool triggered /*= true*/)
@@ -1565,21 +1574,6 @@ std::string GameObject::GetAIName() const
         return m_goInfo->AIName;
 
     return "";
-}
-
-void GameObject::SetLootState(LootState state)
-{
-    m_lootState = state;
-    //AI()->OnStateChanged(state, unit);
-    if (m_model)
-    {
-         bool collision = false;
-         // Use the current go state
-         if ((GetGoState() != GO_STATE_READY && (state == GO_ACTIVATED || state == GO_JUST_DEACTIVATED)) || state == GO_READY)
-            collision = !collision;
-         
-        EnableCollision(collision);
-    }
 }
 
 void GameObject::SetGoState(GOState state)
