@@ -11512,19 +11512,23 @@ Unit* Unit::SelectNearbyTarget(Unit* exclude, float dist) const
 
 Player* Unit::SelectNearestPlayer(float distance) const
 {
-    Player* pPlayer = NULL;
-
-    CellPair pair(Oregon::ComputeCellPair(this->GetPositionX(), this->GetPositionY()));
+    CellPair pair(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
     Cell cell(pair);
     cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
-    Oregon::NearestPlayerInObjectRangeCheck creature_check(*this, distance);
-    Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck> searcher(pPlayer, creature_check);
+    Player* pPlayer = NULL;
 
-    TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck>, GridTypeMapContainer> player_searcher(searcher);
+    {
+        Oregon::NearestPlayerInObjectRangeCheck creature_check(*this, distance);
+        Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck> searcher(pPlayer, creature_check);
 
-    cell.Visit(pair, player_searcher, *GetMap());
+        TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck>, WorldTypeMapContainer> world_player_searcher(searcher);
+        TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck>, GridTypeMapContainer> grid_player_searcher(searcher);
+
+        cell.Visit(pair, world_player_searcher, *GetMap(), *this, distance);
+        cell.Visit(pair, grid_player_searcher, *GetMap(), *this, distance);
+    }
 
     return pPlayer;
 }
