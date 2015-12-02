@@ -1861,7 +1861,7 @@ struct npc_jovaanAI : public ScriptedAI
         GameObject* pInfernal = me->FindNearestGameObject(GO_INFERNAL, 15);
         GameObject* pInfernalTrap = me->FindNearestGameObject(GO_INFERNAL_TRAP, 15);
 
-        if (!pInfernal || !pInfernalTrap)
+        if (!pWarbringer || !pInfernal || !pInfernalTrap)
         {
             Reset();
             return 0;
