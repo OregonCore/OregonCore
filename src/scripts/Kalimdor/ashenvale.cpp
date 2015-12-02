@@ -449,6 +449,168 @@ CreatureAI* GetAI_npc_ruul_snowhoofAI(Creature* pCreature)
     return new npc_ruul_snowhoofAI(pCreature);
 }
 
+/*######
+## npc_feero
+######*/
+
+enum Ferro
+{
+	FACTION_ESCORTEE = 774,
+
+	NPC_DARK_STRAND_ASSASSINS = 3879,
+	NPC_FORSAKEN_SCOUT = 3893,
+	NPC_CAEDAKAR_LEFT = 3900,
+	NPC_ALIGAR_MIDDLE = 3898,
+	NPC_BALIZAR_RIGHT = 3899,
+
+	QUEST_SUPPLIES_TO_AUBERDINE = 976
+};
+
+#define SAY_TEXT_1 "It looks like we're in trouble. Look lively, here they come!"
+#define SAY_DEATH_1 "Assassins from that cult you found... Let's get moving before someone else finds us out here."
+#define SAY_TEXT_2 "Hold! I sense an evil presence... Undead!"
+#define SAY_DEATH_2 "They're coming out of the woodwork today. Let's keep moving or we may find more things that want me dead."
+#define SAY_TEXT_3_A "These three again?"
+#define SAY_TEXT_3_B "I'll finish you off for good this time!"
+#define SAY_END_1 "Well done! I should be fine on my own from here. Remember to talk to Delgren when you return to Maestra's Post in Ashenvale."
+
+#define SAY_BALIZAR "Not quite so sure of yourself without the Purifier, hm?"
+#define SAY_SCOUT "A paladin! Slaying him would please the master. Attack!"
+
+struct npc_feeroAI : public npc_escortAI
+{
+	npc_feeroAI(Creature* creature) : npc_escortAI(creature) {}
+
+	void Reset() { }
+
+	void JustSummoned(Creature* summoned)
+	{
+		summoned->AI()->AttackStart(me);
+	}
+
+	void WaypointReached(uint32 waypointId)
+	{
+		Player* player = GetPlayerForEscort();
+		if (!player)
+			return;
+
+		switch (waypointId)
+		{
+		case 18:
+			me->MonsterSay(SAY_TEXT_1, LANG_UNIVERSAL, 0);
+			me->SummonCreature(NPC_DARK_STRAND_ASSASSINS, 3491.09f, 214.76f, 11.36f, 3.30f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+			me->SummonCreature(NPC_DARK_STRAND_ASSASSINS, 3491.18f, 212.28f, 11.25f, 3.03f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+			me->SummonCreature(NPC_DARK_STRAND_ASSASSINS, 3490.74f, 210.59f, 11.32f, 3.03f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+			me->SummonCreature(NPC_DARK_STRAND_ASSASSINS, 3490.46f, 208.78f, 11.39f, 2.93f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+			break;
+		case 19:
+			me->MonsterSay(SAY_DEATH_1, LANG_UNIVERSAL, 0);
+			break;
+		case 27:
+			me->MonsterSay(SAY_TEXT_2, LANG_UNIVERSAL, 0);
+			me->SummonCreature(NPC_FORSAKEN_SCOUT, 3782.51f, 145.57f, 8.54f, 2.93f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+			me->SummonCreature(NPC_FORSAKEN_SCOUT, 3778.84f, 143.46f, 8.41f, 2.93f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+			me->SummonCreature(NPC_FORSAKEN_SCOUT, 3782.26f, 149.61f, 8.34f, 2.93f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+
+			if (Creature* scout = me->FindNearestCreature(NPC_FORSAKEN_SCOUT, 30.0f, true))
+			{
+				scout->MonsterSay(SAY_SCOUT, LANG_UNIVERSAL, 0);
+			}
+
+			break;
+		case 28:
+			me->MonsterSay(SAY_DEATH_2, LANG_UNIVERSAL, 0);
+			break;
+		case 41:
+			me->MonsterSay(SAY_TEXT_3_A, LANG_UNIVERSAL, 0);
+			me->SummonCreature(NPC_CAEDAKAR_LEFT, 4108.34f, 53.69f, 26.18f, 2.93f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+			me->SummonCreature(NPC_ALIGAR_MIDDLE, 4114.55f, 54.48f, 27.21f, 2.93f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+			me->SummonCreature(NPC_BALIZAR_RIGHT, 4116.81f, 50.14f, 26.15f, 2.93f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+			
+			if (Creature* balizar = me->FindNearestCreature(NPC_BALIZAR_RIGHT, 30.0f, true))
+			{
+				balizar->MonsterSay(SAY_BALIZAR, LANG_UNIVERSAL, 0);
+			}
+			break;
+		case 42:
+			me->MonsterSay(SAY_TEXT_3_B, LANG_UNIVERSAL, 0);
+			break;
+		case 43:
+			me->MonsterSay(SAY_END_1, LANG_UNIVERSAL, 0);
+			SetRun();
+			player->GroupEventHappens(QUEST_SUPPLIES_TO_AUBERDINE, me);
+			break;
+		}
+	}
+};
+
+CreatureAI* GetAI_npc_feero(Creature* pCreature)
+{
+	npc_feeroAI* feeroAI = new npc_feeroAI(pCreature);
+
+	feeroAI->AddWaypoint(1, 3175.930908, 193.541306, 3.483540, 0);
+	feeroAI->AddWaypoint(2, 3187.917969, 197.117691, 4.699296, 0);
+	feeroAI->AddWaypoint(3, 3203.483643, 192.349060, 5.908475, 0);
+	feeroAI->AddWaypoint(4, 3219.118408, 182.236420, 6.588406, 0);
+	feeroAI->AddWaypoint(5, 3229.847412, 191.230438, 7.494555, 0);
+	feeroAI->AddWaypoint(6, 3225.035156, 199.438843, 7.096720, 0);
+	feeroAI->AddWaypoint(7, 3227.651855, 210.760071, 8.629334, 0);
+	feeroAI->AddWaypoint(8, 3232.935303, 223.724869, 10.052238, 0);
+	feeroAI->AddWaypoint(9, 3263.071777, 225.984848, 10.645896, 0);
+	feeroAI->AddWaypoint(10, 3284.759521, 220.414124, 10.950543, 0);
+	feeroAI->AddWaypoint(11, 3315.646973, 210.198044, 11.967686, 0);
+	feeroAI->AddWaypoint(12, 3341.024414, 214.290497, 13.320419, 0);
+	feeroAI->AddWaypoint(13, 3367.133789, 224.587524, 11.867117, 0);
+	feeroAI->AddWaypoint(14, 3409.073242, 226.385315, 9.215232, 0);
+	feeroAI->AddWaypoint(15, 3432.292236, 225.396271, 10.028325, 0);
+	feeroAI->AddWaypoint(16, 3454.865723, 219.339172, 12.593150, 0);
+	feeroAI->AddWaypoint(17, 3470.463867, 214.818161, 13.264424, 0);
+	feeroAI->AddWaypoint(18, 3481.416992, 212.556610, 12.354552, 2000);
+	feeroAI->AddWaypoint(19, 3500.315674, 210.936295, 10.226085, 0);
+	feeroAI->AddWaypoint(20, 3532.806641, 215.041473, 8.372272, 0);
+	feeroAI->AddWaypoint(21, 3565.314209, 217.748749, 5.300299, 0);
+	feeroAI->AddWaypoint(22, 3601.654297, 217.771378, 1.299005, 0);
+	feeroAI->AddWaypoint(23, 3638.605713, 212.525879, 1.433142, 0);
+	feeroAI->AddWaypoint(24, 3680.757324, 200.308197, 3.385010, 0);
+	feeroAI->AddWaypoint(25, 3725.670410, 180.395966, 6.314014, 0);
+	feeroAI->AddWaypoint(26, 3762.346924, 159.685959, 7.388617, 0);
+	feeroAI->AddWaypoint(27, 3774.541260, 151.170029, 7.799640, 2000);
+	feeroAI->AddWaypoint(28, 3789.697754, 140.396774, 9.062237, 0);
+	feeroAI->AddWaypoint(29, 3821.424072, 111.609528, .258650, 0);
+	feeroAI->AddWaypoint(30, 3850.376465, 84.710922, 13.941991, 0);
+	feeroAI->AddWaypoint(31, 3875.349121, 60.388409, 14.988914, 0);
+	feeroAI->AddWaypoint(32, 3908.238525, 35.209225, 15.332011, 0);
+	feeroAI->AddWaypoint(33, 3942.200928, 14.888245, 16.969385, 0);
+	feeroAI->AddWaypoint(34, 3976.427246, -0.073566, 16.968657, 0);
+	feeroAI->AddWaypoint(35, 4008.343750, -6.628914, 16.464090, 0);
+	feeroAI->AddWaypoint(36, 4029.483643, -6.640755, 16.549721, 0);
+	feeroAI->AddWaypoint(37, 4050.055908, 1.488156, 15.746178, 0);
+	feeroAI->AddWaypoint(38, 4083.412109, 14.085828, 15.851171, 0);
+	feeroAI->AddWaypoint(39, 4098.462891, 20.032930, 17.252523, 0);
+	feeroAI->AddWaypoint(40, 4105.861816, 34.792000, 20.284599, 0);
+	feeroAI->AddWaypoint(41, 4110.536133, 45.538300, 23.154394, 2000);
+	feeroAI->AddWaypoint(42, 4112.863281, 51.454445, 26.165501, 0);
+	feeroAI->AddWaypoint(43, 4126.177246, 53.689651, 26.399027, 3000);
+	feeroAI->AddWaypoint(44, 4149.127441, 46.833157, 24.660984, 0);
+	feeroAI->AddWaypoint(45, 4164.439941, 55.935448, 26.793362, 0);
+	
+	return feeroAI;
+}
+
+bool QuestAccept_npc_feero(Player* player, Creature* creature, Quest const* quest)
+{
+		if (quest->GetQuestId() == QUEST_SUPPLIES_TO_AUBERDINE)
+		{
+			if (npc_escortAI* pEscortAI = CAST_AI(npc_feeroAI, creature->AI()))
+				pEscortAI->Start(true, false, player->GetGUID());
+
+			creature->setFaction(774);
+			creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+		}
+
+	return true;
+}
+
 void AddSC_ashenvale()
 {
     Script* newscript;
@@ -475,4 +637,10 @@ void AddSC_ashenvale()
     newscript->GetAI = &GetAI_npc_ruul_snowhoofAI;
     newscript->pQuestAccept = &QuestAccept_npc_ruul_snowhoof;
     newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_feero";
+	newscript->GetAI = &GetAI_npc_feero;
+	newscript->pQuestAccept = &QuestAccept_npc_feero;
+	newscript->RegisterSelf();
 }
