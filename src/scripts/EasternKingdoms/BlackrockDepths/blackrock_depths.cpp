@@ -563,102 +563,21 @@ bool GossipSelect_npc_lokhtos_darkbargainer(Player* pPlayer, Creature* pCreature
     return true;
 }
 
-/*######
-## npc_dughal_stormwing
-######*/
+enum Encounters
+{
+    ENCOUNTER_STATE_NOT_STARTED = 1,
+    ENCOUNTER_STATE_IN_PROGRESS = 2,
+    ENCOUNTER_STATE_ENDED = 3,
+    ENCOUNTER_STATE_FAILED = 4,
+    ENCOUNTER_STATE_OBJECTIVE_COMPLETED = 5,
+    ENCOUNTER_STATE_BEFORE_START = 6
+};
 
-enum DughalQuests
+enum JailBreak
 {
     QUEST_JAIL_BREAK                                       = 4322
 };
 
-#define SAY_DUGHAL_FREE         "Thank you, $N! I'm free!!!"
-#define GOSSIP_DUGHAL           "You're free, Dughal! Get out of here!"
-
-/*
-struct npc_dughal_stormwingAI : public npc_escortAI
-{
-    npc_dughal_stormwingAI(Creature* c) : npc_escortAI(c) {}
-
-    void WaypointReached(uint32 i)
-    {
-    switch(i)
-        {
-        case 0:me->Say(SAY_DUGHAL_FREE, LANG_UNIVERSAL, PlayerGUID); break;
-        case 1:pInstance->SetData(DATA_DUGHAL,ENCOUNTER_STATE_OBJECTIVE_COMPLETED);break;
-        case 2:
-            me->SetVisibility(VISIBILITY_OFF);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            pInstance->SetData(DATA_DUGHAL,ENCOUNTER_STATE_ENDED);
-            break;
-        }
-    }
-
-    void EnterCombat(Unit* who) {}
-    void Reset() {}
-
-    void JustDied(Unit* killer)
-    {
-        if (IsBeingEscorted && killer == me)
-        {
-            me->SetVisibility(VISIBILITY_OFF);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            pInstance->SetData(DATA_DUGHAL,ENCOUNTER_STATE_ENDED);
-        }
-    }
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) return;
-        if ((pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_FAILED || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_ENDED)&& pInstance->GetData(DATA_DUGHAL) == ENCOUNTER_STATE_ENDED)
-        {
-            me->SetVisibility(VISIBILITY_OFF);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        }
-        else
-        {
-            me->SetVisibility(VISIBILITY_ON);
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        }
-        npc_escortAI::UpdateAI(diff);
-    }
-};
-CreatureAI* GetAI_npc_dughal_stormwing(Creature* pCreature)
-{
-    npc_dughal_stormwingAI* dughal_stormwingAI = new npc_dughal_stormwingAI(pCreature);
-
-    dughal_stormwingAI->AddWaypoint(0, 280.42,-82.86, -77.12,0);
-    dughal_stormwingAI->AddWaypoint(1, 287.64,-87.01, -76.79,0);
-    dughal_stormwingAI->AddWaypoint(2, 354.63,-64.95, -67.53,0);
-
-    return dughal_stormwingAI;
-}
-bool GossipHello_npc_dughal_stormwing(Player* pPlayer, Creature* pCreature)
-{
-    if (pPlayer->GetQuestStatus(QUEST_JAIL_BREAK) == QUEST_STATUS_INCOMPLETE && pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
-    {
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DUGHAL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-        pPlayer->SEND_GOSSIP_MENU(2846, pCreature->GetGUID());
-    }
-    return true;
-}
-
-bool GossipSelect_npc_dughal_stormwing(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
-{
-    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
-    {
-        pPlayer->CLOSE_GOSSIP_MENU();
-        CAST_AI(npc_escortAI, (pCreature->AI()))->Start(false, true, pPlayer->GetGUID());
-        pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-        pInstance->SetData(DATA_QUEST_JAIL_BREAK,ENCOUNTER_STATE_IN_PROGRESS);
-    }
-    return true;
-}
- */
 /*######
 ## npc_marshal_windsor
 ######*/
@@ -674,26 +593,51 @@ bool GossipSelect_npc_dughal_stormwing(Player* pPlayer, Creature* pCreature, uin
 #define SAY_WINDSOR_9               "Ah, there it is!"
 #define MOB_ENTRY_REGINALD_WINDSOR  9682
 
-Player* pPlayerStart;
-/*
 struct npc_marshal_windsorAI : public npc_escortAI
 {
-    npc_marshal_windsorAI(Creature* c) : npc_escortAI(c)
+    npc_marshal_windsorAI(Creature* creature) : npc_escortAI(creature) 
     {
-        pInstance = c->GetInstanceData();
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
     }
 
-    void WaypointReached(uint32 i)
+    ScriptedInstance* pInstance;
+    uint64 PlayerGUID;
+
+    void Reset() 
     {
-    switch(i)
+        PlayerGUID = 0;
+    }
+
+    void EnterCombat(Unit* who)
+    {
+        switch (urand(0, 2))
+        {
+        case 0: me->Say(SAY_WINDSOR_AGGRO1, LANG_UNIVERSAL, 0); break;
+        case 1: me->Say(SAY_WINDSOR_AGGRO2, LANG_UNIVERSAL, 0); break;
+        case 2: me->Say(SAY_WINDSOR_AGGRO3, LANG_UNIVERSAL, PlayerGUID); break;
+        }
+    }
+
+    void JustDied(Unit* /*killer*/)
+    {
+        pInstance->SetData(DATA_QUEST_JAIL_BREAK, ENCOUNTER_STATE_FAILED);
+    }
+
+    void WaypointReached(uint32 waypointId)
+    {
+        Player* player = GetPlayerForEscort();
+        if (!player)
+            return;
+
+        switch (waypointId)
         {
         case 1:
-            me->Say(SAY_WINDSOR_1, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_WINDSOR_1, LANG_UNIVERSAL, 0);
             break;
         case 7:
             me->HandleEmoteCommand(EMOTE_STATE_POINT);
             me->Say(SAY_WINDSOR_4_1, LANG_UNIVERSAL, PlayerGUID);
-            IsOnHold=true;
+            SetEscortPaused(true);
             break;
         case 10:
             me->setFaction(534);
@@ -710,7 +654,7 @@ struct npc_marshal_windsorAI : public npc_escortAI
             me->setFaction(11);
             break;
         case 16:
-            me->Say(SAY_WINDSOR_9, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_WINDSOR_9, LANG_UNIVERSAL, 0);
             break;
         case 17:
             me->HandleEmoteCommand(EMOTE_STATE_USESTANDING);//EMOTE_STATE_WORK
@@ -720,39 +664,23 @@ struct npc_marshal_windsorAI : public npc_escortAI
             break;
         case 19:
             me->SetVisibility(VISIBILITY_OFF);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->SummonCreature(MOB_ENTRY_REGINALD_WINDSOR,403.61,-51.71,-63.92,3.600434,TEMPSUMMON_DEAD_DESPAWN ,0);
             pInstance->SetData(DATA_SUPPLY_ROOM, ENCOUNTER_STATE_ENDED);
             break;
         }
     }
 
-    void EnterCombat(Unit* who)
-        {
-        switch (urand(0,2))
-        {
-            case 0: me->Say(SAY_WINDSOR_AGGRO1, LANG_UNIVERSAL, PlayerGUID); break;
-            case 1: me->Say(SAY_WINDSOR_AGGRO2, LANG_UNIVERSAL, PlayerGUID); break;
-            case 2: me->Say(SAY_WINDSOR_AGGRO3, LANG_UNIVERSAL, PlayerGUID); break;
-        }
-        }
-
-    void Reset() {}
-
-    void JustDied(Unit* slayer)
-    {
-        pInstance->SetData(DATA_QUEST_JAIL_BREAK,ENCOUNTER_STATE_FAILED);
-    }
-
     void UpdateAI(const uint32 diff)
     {
-        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) return;
+        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) 
+            return;
+
         if (pInstance->GetData(DATA_DUGHAL) == ENCOUNTER_STATE_OBJECTIVE_COMPLETED)
             SetEscortPaused(false);
+
         if (!pInstance->GetData(DATA_GATE_D) && pInstance->GetData(DATA_DUGHAL) == ENCOUNTER_STATE_NOT_STARTED)
             {
-            me->Say(SAY_WINDSOR_4_2, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_WINDSOR_4_2, LANG_UNIVERSAL, 0);
             pInstance->SetData(DATA_DUGHAL, ENCOUNTER_STATE_BEFORE_START);
             }
         if (pInstance->GetData(DATA_DUGHAL) == ENCOUNTER_STATE_OBJECTIVE_COMPLETED)
@@ -775,11 +703,12 @@ struct npc_marshal_windsorAI : public npc_escortAI
         npc_escortAI::UpdateAI(diff);
     }
 };
+
 CreatureAI* GetAI_npc_marshal_windsor(Creature* pCreature)
 {
     npc_marshal_windsorAI* marshal_windsorAI = new npc_marshal_windsorAI(pCreature);
 
-    marshal_windsorAI->AddWaypoint(0, 316.336,-225.528, -77.7258,7000);
+    marshal_windsorAI->AddWaypoint(0, 316.336, -225.528, -77.7258, 3000);
     marshal_windsorAI->AddWaypoint(1, 316.336,-225.528, -77.7258,2000);
     marshal_windsorAI->AddWaypoint(2, 322.96,-207.13, -77.87,0);
     marshal_windsorAI->AddWaypoint(3, 281.05,-172.16, -75.12,0);
@@ -803,21 +732,134 @@ CreatureAI* GetAI_npc_marshal_windsor(Creature* pCreature)
     return marshal_windsorAI;
 }
 
-bool QuestAccept_npc_marshal_windsor(Player* pPlayer, Creature* pCreature, Quest const *quest)
+bool QuestAccept_npc_marshal_windsor(Player* player, Creature* creature, Quest const* quest)
 {
     if (quest->GetQuestId() == 4322)
-        {PlayerStart = player;
-        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED)
         {
-                CAST_AI(npc_escortAI, (pCreature->AI()))->Start(true, false, pPlayer->GetGUID());
-                pInstance->SetData(DATA_QUEST_JAIL_BREAK,ENCOUNTER_STATE_IN_PROGRESS);
-                pCreature->setFaction(11);
+        CAST_AI(npc_marshal_windsorAI, creature->AI())->PlayerGUID = player->GetGUID();
+
+        if (npc_escortAI* pEscortAI = CAST_AI(npc_marshal_windsorAI, creature->AI()))
+            pEscortAI->Start(true, true, player->GetGUID());
+
+        creature->setFaction(11);
         }
 
+    return true;
         }
-    return false;
+
+/*######
+## npc_dughal_stormwing
+######*/
+
+#define SAY_DUGHAL_FREE         "Thank you, $N! I'm free!!!"
+#define GOSSIP_DUGHAL           "You're free, Dughal! Get out of here!"
+
+struct npc_dughal_stormwingAI : public npc_escortAI
+{
+    npc_dughal_stormwingAI(Creature* creature) : npc_escortAI(creature)
+    {
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
 }
-  */
+
+    ScriptedInstance* pInstance;
+    uint64 PlayerGUID;
+
+    void Reset()
+    {
+        me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        PlayerGUID = 0;
+    }
+
+    void JustDied(Unit* /*killer*/)
+    {
+        me->SetVisibility(VISIBILITY_OFF);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        pInstance->SetData(DATA_DUGHAL, ENCOUNTER_STATE_ENDED);
+    }
+
+    void WaypointReached(uint32 waypointId)
+    {
+        Player* player = GetPlayerForEscort();
+        if (!player)
+            return;
+
+        switch (waypointId)
+        {
+        case 0:
+            me->Say(SAY_DUGHAL_FREE, LANG_UNIVERSAL, PlayerGUID);
+            break;
+        case 1:
+            pInstance->SetData(DATA_DUGHAL, ENCOUNTER_STATE_OBJECTIVE_COMPLETED);
+            break;
+        case 2:
+            me->SetVisibility(VISIBILITY_OFF);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            pInstance->SetData(DATA_DUGHAL, ENCOUNTER_STATE_ENDED);
+            break;
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED)
+            return;
+
+        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
+        {
+            me->SetVisibility(VISIBILITY_ON);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        }
+        npc_escortAI::UpdateAI(diff);
+    }
+};
+
+CreatureAI* GetAI_npc_dughal_stormwing(Creature* pCreature)
+{
+    npc_dughal_stormwingAI* dughal_stormwingAI = new npc_dughal_stormwingAI(pCreature);
+
+    dughal_stormwingAI->AddWaypoint(0, 280.42, -82.86, -77.12, 0);
+    dughal_stormwingAI->AddWaypoint(1, 287.64, -87.01, -76.79, 0);
+    dughal_stormwingAI->AddWaypoint(2, 354.63, -64.95, -67.53, 0);
+
+    return dughal_stormwingAI;
+}
+
+bool GossipHello_npc_dughal_stormwing(Player* player, Creature* creature)
+{
+    if (player->GetQuestStatus(QUEST_JAIL_BREAK) == QUEST_STATUS_INCOMPLETE && creature->FindNearestCreature(9023, 20.0f, true))
+    {       
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_DUGHAL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        player->SEND_GOSSIP_MENU(2846, creature->GetGUID());
+    }
+    return true;
+}
+
+bool GossipSelect_npc_dughal_stormwing(Player* player, Creature* creature, uint32 sender, uint32 action)
+{
+    switch (action)
+    {
+    case GOSSIP_ACTION_INFO_DEF + 1:
+
+        CAST_AI(npc_dughal_stormwingAI, creature->AI())->PlayerGUID = player->GetGUID();
+
+        if (npc_escortAI* pEscortAI = CAST_AI(npc_dughal_stormwingAI, creature->AI()))
+            pEscortAI->Start(false, true, player->GetGUID());
+
+        if (Creature* windsor = creature->FindNearestCreature(9023, 20.0f, true))
+        {
+            CAST_AI(npc_marshal_windsorAI, windsor->AI())->SetEscortPaused(false);
+        }
+
+        creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        player->CLOSE_GOSSIP_MENU();
+        break;
+    }
+    return true;
+}
+
 /*######
 ## npc_marshal_reginald_windsor
 ######*/
@@ -831,6 +873,7 @@ bool QuestAccept_npc_marshal_windsor(Player* pPlayer, Creature* pCreature, Quest
 #define SAY_REGINALD_WINDSOR_7_3    "Alright, let's go."
 #define SAY_REGINALD_WINDSOR_13_1   "Open it. We need to hurry up. I can smell those Dark Irons coming a mile away and I can tell you one thing, they're COMING!"
 #define SAY_REGINALD_WINDSOR_13_2   "Administering fists of fury on Crest Killer!"
+#define SAY_REGINALD_WINDSOR_13_4   "I bet you're sorry now, aren't you Crest Killer!?!"
 #define SAY_REGINALD_WINDSOR_13_3   "He has to be in the last cell. Unless... they killed him."
 #define SAY_REGINALD_WINDSOR_14_1   "Get him out of there!"
 #define SAY_REGINALD_WINDSOR_14_2   "Excellent work, $N. Let's find the exit. I think I know the way. Follow me!"
@@ -839,70 +882,36 @@ bool QuestAccept_npc_marshal_windsor(Player* pPlayer, Creature* pCreature, Quest
 #define MOB_ENTRY_SHILL_DINGER      9678
 #define MOB_ENTRY_CREST_KILLER      9680
 
-int wp = 0;
-/*
 struct npc_marshal_reginald_windsorAI : public npc_escortAI
 {
-    npc_marshal_reginald_windsorAI(Creature* c) : npc_escortAI(c)
+    npc_marshal_reginald_windsorAI(Creature* creature) : npc_escortAI(creature)
     {
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
     }
 
-    void WaypointReached(uint32 i)
+    ScriptedInstance* pInstance;
+    uint64 PlayerGUID;
+    bool crest;
+
+    void Reset()
     {
-    wp=i;
-    switch(i)
+        PlayerGUID = 0;
+        crest = false;
+    }
+
+    void EnterCombat(Unit* /*who*/)
         {
-        case 0:
-            me->setFaction(11);
-            me->Say(SAY_REGINALD_WINDSOR_0_1, LANG_UNIVERSAL, PlayerGUID);
-            break;
-        case 1:
-            me->Say(SAY_REGINALD_WINDSOR_0_2, LANG_UNIVERSAL, PlayerGUID);
-            break;
-        case 7:
-            me->HandleEmoteCommand(EMOTE_STATE_POINT);
-            me->Say(SAY_REGINALD_WINDSOR_5_1, LANG_UNIVERSAL, PlayerGUID);
-            IsOnHold=true;
-            break;
-        case 8:
-            me->Say(SAY_REGINALD_WINDSOR_5_2, LANG_UNIVERSAL, PlayerGUID);
-            break;
-        case 11:
-            me->HandleEmoteCommand(EMOTE_STATE_POINT);
-            me->Say(SAY_REGINALD_WINDSOR_7_1, LANG_UNIVERSAL, PlayerGUID);
-            IsOnHold=true;
-            break;
-        case 12:
-            me->Say(SAY_REGINALD_WINDSOR_7_2, LANG_UNIVERSAL, PlayerGUID);
-            break;
-        case 13:
-            me->Say(SAY_REGINALD_WINDSOR_7_3, LANG_UNIVERSAL, PlayerGUID);
-            break;
-        case 20:
-            me->HandleEmoteCommand(EMOTE_STATE_POINT);
-            me->Say(SAY_REGINALD_WINDSOR_13_1, LANG_UNIVERSAL, PlayerGUID);
-            IsOnHold=true;
-            break;
-        case 21:
-            me->Say(SAY_REGINALD_WINDSOR_13_3, LANG_UNIVERSAL, PlayerGUID);
-            break;
-        case 23:
-            me->HandleEmoteCommand(EMOTE_STATE_POINT);
-            me->Say(SAY_REGINALD_WINDSOR_14_1, LANG_UNIVERSAL, PlayerGUID);
-            IsOnHold=true;
-            break;
-        case 24:
-            me->Say(SAY_REGINALD_WINDSOR_14_2, LANG_UNIVERSAL, PlayerGUID);
-            break;
-        case 31:
-            me->Say(SAY_REGINALD_WINDSOR_20_1, LANG_UNIVERSAL, PlayerGUID);
-            break;
-        case 32:
-            me->Say(SAY_REGINALD_WINDSOR_20_2, LANG_UNIVERSAL, PlayerGUID);
-            PlayerStart->GroupEventHappens(QUEST_JAIL_BREAK, me);
-            pInstance->SetData(DATA_SHILL, ENCOUNTER_STATE_ENDED);
-            break;
+        switch (urand(0, 2))
+        {
+        case 0: me->Say(SAY_WINDSOR_AGGRO1, LANG_UNIVERSAL, 0); break;
+        case 1: me->Say(SAY_WINDSOR_AGGRO2, LANG_UNIVERSAL, 0); break;
+        case 2: me->Say(SAY_WINDSOR_AGGRO3, LANG_UNIVERSAL, PlayerGUID); break;
         }
+    }
+
+    void JustDied(Unit* /*killer*/)
+    {
+        pInstance->SetData(DATA_QUEST_JAIL_BREAK, ENCOUNTER_STATE_FAILED);
     }
 
     void MoveInLineOfSight(Unit* who)
@@ -919,74 +928,95 @@ struct npc_marshal_reginald_windsorAI : public npc_escortAI
                 {
                     SetEscortPaused(false);
                     Start(true, false, who->GetGUID());
+
+                    PlayerGUID = who->GetGUID();
                 }
             }
         }
     }
 
-    void EnterCombat(Unit* who)
+    void WaypointReached(uint32 waypointId)
         {
-        switch (urand(0,2))
-        {
-            case 0: me->Say(SAY_WINDSOR_AGGRO1, LANG_UNIVERSAL, PlayerGUID); break;
-            case 1: me->Say(SAY_WINDSOR_AGGRO2, LANG_UNIVERSAL, PlayerGUID); break;
-            case 2: me->Say(SAY_WINDSOR_AGGRO3, LANG_UNIVERSAL, PlayerGUID); break;
-        }
-        }
-    void Reset() {}
+        Player* player = GetPlayerForEscort();
+        if (!player)
+            return;
 
-    void JustDied(Unit* slayer)
-    {
-        pInstance->SetData(DATA_QUEST_JAIL_BREAK,ENCOUNTER_STATE_FAILED);
-    }
+        switch (waypointId)
+        {
+        case 0:
+            me->setFaction(11);
+            me->Say(SAY_REGINALD_WINDSOR_0_1, LANG_UNIVERSAL, PlayerGUID);
+            break;
+        case 1:
+            me->Say(SAY_REGINALD_WINDSOR_0_2, LANG_UNIVERSAL, 0);
+            break;
+        case 7:
+            me->HandleEmoteCommand(EMOTE_STATE_POINT);
+            me->Say(SAY_REGINALD_WINDSOR_5_1, LANG_UNIVERSAL, 0);
+            SetEscortPaused(true);
+            break;
+        case 8:
+            me->Say(SAY_REGINALD_WINDSOR_5_2, LANG_UNIVERSAL, 0);
+            break;
+        case 11:
+            me->HandleEmoteCommand(EMOTE_STATE_POINT);
+            me->Say(SAY_REGINALD_WINDSOR_7_1, LANG_UNIVERSAL, 0);
+            SetEscortPaused(true);
+            break;
+        case 12:
+            me->Say(SAY_REGINALD_WINDSOR_7_2, LANG_UNIVERSAL, 0);
+            break;
+        case 13:
+            me->Say(SAY_REGINALD_WINDSOR_7_3, LANG_UNIVERSAL, 0);
+            break;
+        case 20:
+            me->HandleEmoteCommand(EMOTE_STATE_POINT);
+            me->Say(SAY_REGINALD_WINDSOR_13_1, LANG_UNIVERSAL, 0);
+            SetEscortPaused(true);
+            break;
+        case 21:
+            me->Say(SAY_REGINALD_WINDSOR_13_3, LANG_UNIVERSAL, 0);
+            break;
+        case 23:
+            me->HandleEmoteCommand(EMOTE_STATE_POINT);
+            me->Say(SAY_REGINALD_WINDSOR_14_1, LANG_UNIVERSAL, 0);
+            SetEscortPaused(true);
+            break;
+        case 24:
+            me->Say(SAY_REGINALD_WINDSOR_14_2, LANG_UNIVERSAL, PlayerGUID);
+            break;
+        case 31:
+            me->Say(SAY_REGINALD_WINDSOR_20_1, LANG_UNIVERSAL, 0);
+            break;
+        case 32:
+            me->Say(SAY_REGINALD_WINDSOR_20_2, LANG_UNIVERSAL, 0);
+
+            if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+                pPlayer->GroupEventHappens(QUEST_JAIL_BREAK, me);
+
+            pInstance->SetData(DATA_SHILL, ENCOUNTER_STATE_ENDED);
+            break;
+        }
+        }
 
     void UpdateAI(const uint32 diff)
     {
-        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) return;
-        if (wp == 7)
+        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED)
+            return;
+
+        if (!crest)
             {
-            if (!pInstance->GetData(DATA_GATE_J) && pInstance->GetData(DATA_JAZ) == ENCOUNTER_STATE_NOT_STARTED)
+            if (me->FindNearestCreature(MOB_ENTRY_CREST_KILLER, 10.0f, true))
                 {
-                    pInstance->SetData(DATA_CREATURE_JAZ,1);
-                    pInstance->SetData(DATA_JAZ,ENCOUNTER_STATE_IN_PROGRESS);
+                me->Say(SAY_REGINALD_WINDSOR_13_2, LANG_UNIVERSAL, 0);
+                crest = true;
                 }
-            if (pInstance->GetData(DATA_CREATURE_JAZ) && pInstance->GetData(DATA_CREATURE_OGRABISI) && pInstance->GetData(DATA_JAZ) == ENCOUNTER_STATE_IN_PROGRESS)
-                {
-                    SetEscortPaused(false);
-                    pInstance->SetData(DATA_JAZ,ENCOUNTER_STATE_ENDED);
                 }
-            }
-        else if (wp == 11)
-            {
-            if (!pInstance->GetData(DATA_GATE_S) && pInstance->GetData(DATA_SHILL) == ENCOUNTER_STATE_NOT_STARTED)
-                {
-                    pInstance->SetData(DATA_CREATURE_SHILL,1);
-                    pInstance->SetData(DATA_SHILL,ENCOUNTER_STATE_IN_PROGRESS);
-                }
-            if (pInstance->GetData(DATA_CREATURE_SHILL) && pInstance->GetData(DATA_SHILL) == ENCOUNTER_STATE_IN_PROGRESS)
-                {
-                    pInstance->SetData(DATA_SHILL,ENCOUNTER_STATE_ENDED);
-                    SetEscortPaused(false);
-                }
-            }
-        else if (wp == 20)
-            {
-            if (!pInstance->GetData(DATA_GATE_C) && pInstance->GetData(DATA_CREST) == ENCOUNTER_STATE_NOT_STARTED)
-                {
-                    pInstance->SetData(DATA_CREATURE_CREST,1);
-                    me->Say(SAY_REGINALD_WINDSOR_13_2, LANG_UNIVERSAL, PlayerGUID);
-                    pInstance->SetData(DATA_CREST,ENCOUNTER_STATE_IN_PROGRESS);
-                }
-            if (pInstance->GetData(DATA_CREATURE_CREST) && pInstance->GetData(DATA_CREST) == ENCOUNTER_STATE_IN_PROGRESS)
-                {
-                    SetEscortPaused(false);
-                    pInstance->SetData(DATA_CREST,ENCOUNTER_STATE_ENDED);
-                }
-            }
-        if (pInstance->GetData(DATA_TOBIAS) == ENCOUNTER_STATE_OBJECTIVE_COMPLETED) SetEscortPaused(false);
+
         npc_escortAI::UpdateAI(diff);
     }
 };
+
 CreatureAI* GetAI_npc_marshal_reginald_windsor(Creature* pCreature)
 {
     npc_marshal_reginald_windsorAI* marshal_reginald_windsorAI = new npc_marshal_reginald_windsorAI(pCreature);
@@ -1029,38 +1059,290 @@ CreatureAI* GetAI_npc_marshal_reginald_windsor(Creature* pCreature)
 
     return marshal_reginald_windsorAI;
 }
-*/
+
+/*######
+## npc_ograbisi
+######*/
+
+struct npc_ograbisiAI : public ScriptedAI
+{
+    npc_ograbisiAI(Creature* creature) :ScriptedAI(creature)
+    {
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
+    }
+
+    ScriptedInstance* pInstance;
+
+    void Reset() 
+    {
+        me->setFaction(35);
+
+        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
+        {
+            pInstance->SetData(DATA_OGRABISI, ENCOUNTER_STATE_NOT_STARTED);
+        }
+    }
+
+    void EnterCombat(Unit* /*who*/)
+    {
+        pInstance->SetData(DATA_OGRABISI, ENCOUNTER_STATE_IN_PROGRESS);
+    }
+
+    void JustDied(Unit* killer)
+    {       
+        pInstance->SetData(DATA_OGRABISI, ENCOUNTER_STATE_ENDED);
+
+        if (me->FindNearestCreature(9681, 30.0f, false))
+        {
+            if (Creature* reginald = me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 35.0f, true))
+            {
+                CAST_AI(npc_marshal_reginald_windsorAI, reginald->AI())->SetEscortPaused(false);
+            }
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!UpdateVictim())
+        {
+            if (me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 20.0f, true))
+            {
+                me->setFaction(14);
+            }
+        }
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_ograbisi(Creature* pCreature)
+{
+    return new npc_ograbisiAI(pCreature);
+}
+
+/*######
+## npc_jaz
+######*/
+
+struct npc_jazAI : public ScriptedAI
+{
+    npc_jazAI(Creature* creature) :ScriptedAI(creature)
+    {
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
+    }
+
+    ScriptedInstance* pInstance;
+
+    void Reset()
+    {
+        me->setFaction(35);
+
+        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
+        {
+            pInstance->SetData(DATA_JAZ, ENCOUNTER_STATE_NOT_STARTED);
+        }
+    }
+
+    void EnterCombat(Unit* /*who*/)
+    {
+        pInstance->SetData(DATA_JAZ, ENCOUNTER_STATE_IN_PROGRESS);
+    }
+
+    void JustDied(Unit* killer)
+    {
+        pInstance->SetData(DATA_JAZ, ENCOUNTER_STATE_ENDED);
+
+
+        if (me->FindNearestCreature(9677, 30.0f, false))
+        {
+            if (Creature* reginald = me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 35.0f, true))
+            {
+                CAST_AI(npc_marshal_reginald_windsorAI, reginald->AI())->SetEscortPaused(false);
+            }
+        }       
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!UpdateVictim())
+        {
+            if (me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 20.0f, true))
+            {
+                me->setFaction(14);
+            }
+        }
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_jaz(Creature* pCreature)
+{
+    return new npc_jazAI(pCreature);
+}
+
+/*######
+## npc_shill
+######*/
+
+struct npc_shillAI : public ScriptedAI
+{
+    npc_shillAI(Creature* creature) :ScriptedAI(creature)
+    {
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
+    }
+
+    ScriptedInstance* pInstance;
+
+    void Reset()
+    {
+        me->setFaction(35);
+
+        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
+        {
+            pInstance->SetData(DATA_SHILL, ENCOUNTER_STATE_NOT_STARTED);
+        }
+    }
+
+    void EnterCombat(Unit* /*who*/)
+    {
+        pInstance->SetData(DATA_SHILL, ENCOUNTER_STATE_IN_PROGRESS);
+    }
+
+    void JustDied(Unit* killer)
+    {
+        pInstance->SetData(DATA_SHILL, ENCOUNTER_STATE_ENDED);
+
+        if (Creature* reginald = me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 35.0f, true))
+        {
+            CAST_AI(npc_marshal_reginald_windsorAI, reginald->AI())->SetEscortPaused(false);
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!UpdateVictim())
+        {
+            if (me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 20.0f, true))
+            {
+                me->setFaction(14);
+            }
+        }
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_shill(Creature* pCreature)
+{
+    return new npc_shillAI(pCreature);
+}
+
+/*######
+## npc_crest
+######*/
+
+#define SAY_CREST_1 "Where I come from, you get shanked for opening another inmate's cell door!"
+
+struct npc_crestAI : public ScriptedAI
+{
+    npc_crestAI(Creature* creature) :ScriptedAI(creature)
+    {
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
+    }
+
+    ScriptedInstance* pInstance;
+
+    void Reset()
+    {
+        me->setFaction(35);
+
+        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
+        {
+            pInstance->SetData(DATA_CREST, ENCOUNTER_STATE_NOT_STARTED);
+        }
+    }
+
+    void EnterCombat(Unit* /*who*/)
+    {
+        me->Say(SAY_CREST_1, LANG_UNIVERSAL, 0);
+        pInstance->SetData(DATA_CREST, ENCOUNTER_STATE_IN_PROGRESS);
+    }
+
+    void JustDied(Unit* killer)
+    {
+        pInstance->SetData(DATA_CREST, ENCOUNTER_STATE_ENDED);
+
+        if (Creature* reginald = me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 35.0f, true))
+        {
+            reginald->Say(SAY_REGINALD_WINDSOR_13_4, LANG_UNIVERSAL, 0);
+            CAST_AI(npc_marshal_reginald_windsorAI, reginald->AI())->SetEscortPaused(false);
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!UpdateVictim())
+        {
+            if (me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 20.0f, true))
+            {
+                me->setFaction(14);
+            }
+        }
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_crest(Creature* pCreature)
+{
+    return new npc_crestAI(pCreature);
+}
+
 /*######
 ## npc_tobias_seecher
 ######*/
 
 #define SAY_TOBIAS_FREE         "Thank you! I will run for safety immediately!"
-/*
+
 struct npc_tobias_seecherAI : public npc_escortAI
 {
-    npc_tobias_seecherAI(Creature* c) :npc_escortAI(c) {}
-
-    void EnterCombat(Unit* who) {}
-    void Reset() {}
-
-    void JustDied(Unit* killer)
+    npc_tobias_seecherAI(Creature* creature) : npc_escortAI(creature)
     {
-        if (IsBeingEscorted && killer == me)
+        pInstance = (ScriptedInstance*)creature->GetInstanceData();
+    }
+
+    ScriptedInstance* pInstance;
+    uint64 PlayerGUID;
+
+    void Reset()
+    {
+        me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        PlayerGUID = 0;
+    }
+
+    void JustDied(Unit* /*killer*/)
         {
             me->SetVisibility(VISIBILITY_OFF);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_ENDED);
         }
-    }
 
-    void WaypointReached(uint32 i)
+    void WaypointReached(uint32 waypointId)
     {
-    switch(i)
+        Player* player = GetPlayerForEscort();
+        if (!player)
+            return;
+
+        switch (waypointId)
         {
-        case 0:me->Say(SAY_TOBIAS_FREE, LANG_UNIVERSAL, PlayerGUID); break;
+        case 0:
+            me->Say(SAY_TOBIAS_FREE, LANG_UNIVERSAL, 0); 
+            break;
         case 2:
-            pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_OBJECTIVE_COMPLETED);break;
+            pInstance->SetData(DATA_TOBIAS, ENCOUNTER_STATE_OBJECTIVE_COMPLETED); 
+            break;
         case 4:
             me->SetVisibility(VISIBILITY_OFF);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -1072,14 +1354,10 @@ struct npc_tobias_seecherAI : public npc_escortAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) return;
-        if ((pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_FAILED || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_ENDED)&& pInstance->GetData(DATA_TOBIAS) == ENCOUNTER_STATE_ENDED)
-        {
-            me->SetVisibility(VISIBILITY_OFF);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        }
-        else
+        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) 
+            return;
+
+        if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
         {
             me->SetVisibility(VISIBILITY_ON);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -1102,28 +1380,38 @@ CreatureAI* GetAI_npc_tobias_seecher(Creature* pCreature)
     return tobias_seecherAI;
 }
 
-bool GossipHello_npc_tobias_seecher(Player* pPlayer, Creature* pCreature)
+bool GossipHello_npc_tobias_seecher(Player* player, Creature* creature)
 {
-    if (pPlayer->GetQuestStatus(QUEST_JAIL_BREAK) == QUEST_STATUS_INCOMPLETE && pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
+    if (player->GetQuestStatus(QUEST_JAIL_BREAK) == QUEST_STATUS_INCOMPLETE && creature->FindNearestCreature(9682, 20.0f, true))
     {
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Get out of here, Tobias, you're free!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-        pPlayer->SEND_GOSSIP_MENU(2847, pCreature->GetGUID());
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_DUGHAL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        player->SEND_GOSSIP_MENU(2846, creature->GetGUID());
     }
     return true;
 }
 
-bool GossipSelect_npc_tobias_seecher(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+bool GossipSelect_npc_tobias_seecher(Player* player, Creature* creature, uint32 sender, uint32 action)
 {
-    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
+    switch (action)
     {
-        pPlayer->CLOSE_GOSSIP_MENU();
-        CAST_AI(npc_escortAI, (pCreature->AI()))->Start(false, true, pPlayer->GetGUID());
-        pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-        pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_IN_PROGRESS);
+    case GOSSIP_ACTION_INFO_DEF + 1:
+
+        CAST_AI(npc_tobias_seecherAI, creature->AI())->PlayerGUID = player->GetGUID();
+
+        if (npc_escortAI* pEscortAI = CAST_AI(npc_tobias_seecherAI, creature->AI()))
+            pEscortAI->Start(false, true, player->GetGUID());
+
+        if (Creature* reginald = creature->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 23.0f, true))
+        {
+            CAST_AI(npc_marshal_reginald_windsorAI, reginald->AI())->SetEscortPaused(false);
+        }
+
+        creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        player->CLOSE_GOSSIP_MENU();
+        break;
     }
     return true;
 }
-*/
 
 /*######
 ## npc_rocknot
@@ -1311,32 +1599,52 @@ void AddSC_blackrock_depths()
     newscript->pGossipHello =  &GossipHello_npc_lokhtos_darkbargainer;
     newscript->pGossipSelect = &GossipSelect_npc_lokhtos_darkbargainer;
     newscript->RegisterSelf();
-    /*
+	
         newscript = new Script;
         newscript->Name = "npc_dughal_stormwing";
+    newscript->GetAI = &GetAI_npc_dughal_stormwing;
         newscript->pGossipHello =  &GossipHello_npc_dughal_stormwing;
         newscript->pGossipSelect = &GossipSelect_npc_dughal_stormwing;
-        newscript->GetAI = &GetAI_npc_dughal_stormwing;
         newscript->RegisterSelf();
 
         newscript = new Script;
         newscript->Name = "npc_tobias_seecher";
+    newscript->GetAI = &GetAI_npc_tobias_seecher;
         newscript->pGossipHello =  &GossipHello_npc_tobias_seecher;
         newscript->pGossipSelect = &GossipSelect_npc_tobias_seecher;
-        newscript->GetAI = &GetAI_npc_tobias_seecher;
         newscript->RegisterSelf();
 
         newscript = new Script;
         newscript->Name = "npc_marshal_windsor";
+    newscript->GetAI = &GetAI_npc_marshal_windsor;
         newscript->pQuestAccept = &QuestAccept_npc_marshal_windsor;
-        newscript->GetAI = &GetAI_npc_marshal_windsor;
         newscript->RegisterSelf();
 
         newscript = new Script;
         newscript->Name = "npc_marshal_reginald_windsor";
         newscript->GetAI = &GetAI_npc_marshal_reginald_windsor;
         newscript->RegisterSelf();
-    */
+
+    newscript = new Script;
+    newscript->Name = "npc_crest";
+    newscript->GetAI = &GetAI_npc_crest;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_shill";
+    newscript->GetAI = &GetAI_npc_shill;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_ograbisi";
+    newscript->GetAI = &GetAI_npc_ograbisi;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_jaz";
+    newscript->GetAI = &GetAI_npc_jaz;
+    newscript->RegisterSelf();
+		
     newscript = new Script;
     newscript->Name = "npc_rocknot";
     newscript->GetAI = &GetAI_npc_rocknot;
