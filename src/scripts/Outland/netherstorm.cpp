@@ -1464,6 +1464,156 @@ bool QuestAccept_npc_drijya(Player* pPlayer, Creature* pCreature, const Quest* p
     return true;
 }
 
+/*######
+## npc_talbuk_sire
+######*/
+
+#define EMOTE_TALBUK_SIRE "Talbuk Sire seems to have weakened."
+
+struct npc_talbuk_sireAI : public ScriptedAI
+{
+	npc_talbuk_sireAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		spellHit = false;
+
+		me->RemoveAllAuras();
+		me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+		me->SetStandState(UNIT_STAND_STATE_STAND);
+		me->setFaction(14);
+		reset_timer = 0;
+		stun_timer = urand(8000, 10000);
+	}
+
+	bool spellHit;
+
+	uint32 stun_timer;
+	uint32 reset_timer;
+
+	void SpellHit(Unit* Hitter, const SpellEntry* Spellkind)
+	{
+		if (Spellkind->Id == 35771 && !spellHit)
+		{		
+			if (Player* player = Hitter->GetCharmerOrOwnerPlayerOrPlayerItself())
+			{
+				DoCast(player, 40347);
+				player->ClearInCombat();
+			}
+			
+			me->MonsterTextEmote(EMOTE_TALBUK_SIRE, 0, false);
+			me->CombatStop();
+			me->setFaction(35);
+			DoCast(me, 20373);
+			me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+			me->SetStandState(UNIT_STAND_STATE_DEAD);
+			reset_timer = 120000;
+			spellHit = true;
+		}
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+		{
+			if (reset_timer <= diff)
+			{
+				Reset();
+			}
+			else reset_timer -= diff;
+		}
+
+		if (stun_timer <= diff)
+		{
+			DoCastVictim(32023);
+			stun_timer = urand(18000, 22000);
+		}
+		else stun_timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_talbuk_sire(Creature* pCreature)
+{
+	return new npc_talbuk_sireAI(pCreature);
+}
+
+/*######
+## npc_talbuk_doe
+######*/
+
+#define EMOTE_TALBUK_DOE "Talbuk Doe seems to have weakened."
+
+struct npc_talbuk_doeAI : public ScriptedAI
+{
+	npc_talbuk_doeAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		spellHit = false;
+
+		me->RemoveAllAuras();
+		me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+		me->SetStandState(UNIT_STAND_STATE_STAND);
+		me->setFaction(15);
+		reset_timer = 0;
+		gore_timer = urand(4000, 7000);
+	}
+
+	bool spellHit;
+
+	uint32 gore_timer;
+	uint32 reset_timer;
+
+	void SpellHit(Unit* Hitter, const SpellEntry* Spellkind)
+	{
+		if (Spellkind->Id == 35771 && !spellHit)
+		{
+			if (Player* player = Hitter->GetCharmerOrOwnerPlayerOrPlayerItself())
+			{
+				DoCast(player, 40347);
+				player->ClearInCombat();
+			}
+
+			me->MonsterTextEmote(EMOTE_TALBUK_DOE, 0, false);
+			me->CombatStop();
+			me->setFaction(35);
+			DoCast(me, 20373);
+			me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+			me->SetStandState(UNIT_STAND_STATE_DEAD);
+			reset_timer = 120000;
+			spellHit = true;
+		}
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+		{
+			if (reset_timer <= diff)
+			{
+				Reset();
+			}
+			else reset_timer -= diff;
+		}
+
+		if (gore_timer <= diff)
+		{
+			DoCastVictim(32019);
+			gore_timer = urand(18000, 22000);
+		}
+		else gore_timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_talbuk_doe(Creature* pCreature)
+{
+	return new npc_talbuk_doeAI(pCreature);
+}
+
 void AddSC_netherstorm()
 {
     Script* newscript;
@@ -1532,5 +1682,15 @@ void AddSC_netherstorm()
     newscript->GetAI = &GetAI_npc_drijya;
     newscript->pQuestAccept = &QuestAccept_npc_drijya;
     newscript->RegisterSelf();
+	
+	newscript = new Script;
+	newscript->Name = "npc_talbuk_doe";
+	newscript->GetAI = &GetAI_npc_talbuk_doe;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_talbuk_sire";
+	newscript->GetAI = &GetAI_npc_talbuk_sire;
+	newscript->RegisterSelf();
 }
 
