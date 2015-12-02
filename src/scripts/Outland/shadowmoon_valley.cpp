@@ -1861,7 +1861,7 @@ struct npc_jovaanAI : public ScriptedAI
         GameObject* pInfernal = me->FindNearestGameObject(GO_INFERNAL, 15);
         GameObject* pInfernalTrap = me->FindNearestGameObject(GO_INFERNAL_TRAP, 15);
 
-        if (!pWarbringer || !pInfernal || !pInfernalTrap)
+        if (!pInfernal || !pInfernalTrap)
         {
             Reset();
             return 0;
@@ -1872,7 +1872,7 @@ struct npc_jovaanAI : public ScriptedAI
         case 1:
             pInfernal->SetRespawnTime(61);
             pInfernal->UpdateObjectVisibility();
-            break;
+            return 500;
         case 2:
             pInfernalTrap->SetRespawnTime(61);
             pInfernalTrap->UpdateObjectVisibility();
