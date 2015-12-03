@@ -1,0 +1,1 @@
+UPDATE creature_template SET ScriptName = 'npc_restless_skeleton' WHERE creature_template.entry = 17261; 

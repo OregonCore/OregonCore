@@ -476,6 +476,37 @@ CreatureAI* GetAI_boss_nightbane(Creature* pCreature)
     return new boss_nightbaneAI (pCreature);
 }
 
+/*######
+## npc_restless_skeleton
+######*/
+
+struct npc_restless_skeletonAI : public ScriptedAI
+{
+	npc_restless_skeletonAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	void Reset()
+	{
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!UpdateVictim())
+			return;
+
+		DoMeleeAttackIfReady();
+	}
+};
+
+CreatureAI* GetAI_npc_restless_skeleton(Creature* pCreature)
+{
+	return new npc_restless_skeletonAI(pCreature);
+}
+
 void AddSC_boss_nightbane()
 {
     Script* newscript;
@@ -483,5 +514,10 @@ void AddSC_boss_nightbane()
     newscript->Name = "boss_nightbane";
     newscript->GetAI = &GetAI_boss_nightbane;
     newscript->RegisterSelf();
+	
+	newscript = new Script;
+	newscript->Name = "npc_restless_skeleton";
+	newscript->GetAI = &GetAI_npc_restless_skeleton;
+	newscript->RegisterSelf();
 }
 
