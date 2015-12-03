@@ -36,6 +36,39 @@ EndContentData */
 #include "ScriptedGossip.h"
 
 /*###
+## npc_scout_landion
+###*/
+
+//It isn't a proper gossip text. Was there any? Can't find source on that.
+#define GOSSIP_LANDION "I've come to obtain your report, Landion."
+
+bool GossipHello_npc_scout_landion(Player* player, Creature* pCreature)
+{
+	if (pCreature->isQuestGiver())
+		player->PrepareQuestMenu(pCreature->GetGUID());
+
+	if (player->GetQuestStatus(8738) == QUEST_STATUS_INCOMPLETE)
+		player->ADD_GOSSIP_ITEM(0, GOSSIP_LANDION, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+	//Need proper ID of menu text, if there was any.
+	player->SEND_GOSSIP_MENU(68, pCreature->GetGUID());
+
+	return true;
+}
+
+bool GossipSelect_npc_scout_landion(Player* player, Creature* _Creature, uint32 sender, uint32 action)
+{
+	switch (action)
+	{
+	case GOSSIP_ACTION_INFO_DEF + 1:
+		player->AddItem(21160, 1);
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	}
+	return true;
+}
+
+/*###
 ## npc_highlord_demitrian
 ###*/
 
@@ -1154,6 +1187,12 @@ void AddSC_silithus()
     newscript->pGossipHello =  &GossipHello_npc_highlord_demitrian;
     newscript->pGossipSelect = &GossipSelect_npc_highlord_demitrian;
     newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_scout_landion";
+	newscript->pGossipHello = &GossipHello_npc_scout_landion;
+	newscript->pGossipSelect = &GossipSelect_npc_scout_landion;
+	newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npcs_rutgar_and_frankal";
