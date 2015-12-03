@@ -85,7 +85,7 @@ static InfernalPoint InfernalPoints[] =
 #define SPELL_SUNDER_ARMOR          30901                       //Sunder armor during phase 2
 #define SPELL_THRASH_AURA           3417                        //Passive proc chance for thrash
 #define SPELL_EQUIP_AXES            30857                       //Visual for axe equiping
-#define SPELL_AMPLIFY_DAMAGE        12738                       //Amplifiy during phase 3
+#define SPELL_AMPLIFY_DAMAGE        39095                       //Amplifiy during phase 3
 #define SPELL_CLEAVE                30131                       //Same as Nightbane.
 #define SPELL_HELLFIRE              30859                       //Infenals' hellfire aura
 #define NETHERSPITE_INFERNAL        17646                       //The netherspite infernal creature
