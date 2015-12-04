@@ -2405,6 +2405,8 @@ void SpellMgr::LoadSpellCustomAttr()
         case 38310: // Multi-Shot
             spellInfo->MaxAffectedTargets = 4;
             break;
+		case 32205: // Place Burning Blade Pyre
+		    spellInfo->AttributesEx2 |= SPELL_ATTR_EX2_IGNORE_LOS;
         case 42005: // Bloodboil
         case 38296: // Spitfire Totem
         case 37676: // Insidious Whisper
