@@ -971,7 +971,11 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
         }
         case SMART_ACTION_CALL_FOR_HELP:
         {
-            // not implemented
+            if (me)
+            {
+                me->CallForHelp((float)e.action.callHelp.range);
+                sLog.outDebug("SmartScript::ProcessAction: SMART_ACTION_CALL_FOR_HELP: Creature %u", me->GetGUIDLow());
+            }
             break;
         }
         case SMART_ACTION_SET_SHEATH:
