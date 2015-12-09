@@ -1307,6 +1307,46 @@ CreatureAI* GetAI_npc_skyguard_prisoner(Creature* pCreature)
     return new npc_skyguard_prisonerAI(pCreature);
 }
 
+/*######
+## QUEST_FIRES_OVER_SKETTIS (11007)
+######*/
+
+struct npc_kalliri_triggerAI : public ScriptedAI
+{
+	npc_kalliri_triggerAI(Creature* c) : ScriptedAI(c) { }
+
+	bool spellHit;
+
+	void Reset()
+	{
+		spellHit = false;
+	}
+
+	void SpellHit(Unit* caster, const SpellEntry* spell)
+	{
+		if (caster->GetTypeId() == TYPEID_PLAYER && spell->Id == 39844 && !spellHit)
+		{
+			if (Player* plWho = caster->GetCharmerOrOwnerPlayerOrPlayerItself())
+			{
+				plWho->KilledMonsterCredit(22991);
+				me->DisappearAndDie();
+
+				if (GameObject* egg = me->FindNearestGameObject(185549, 2.0f))
+				{
+					egg->SetGoState(GO_STATE_ACTIVE);
+				}
+
+				spellHit = true;
+			}
+		}
+	}
+};
+
+CreatureAI* GetAI_npc_kalliri_trigger(Creature* pCreature)
+{
+	return new npc_kalliri_triggerAI(pCreature);
+}
+
 void AddSC_terokkar_forest()
 {
     Script* newscript;
@@ -1404,5 +1444,10 @@ void AddSC_terokkar_forest()
     newscript->GetAI = &GetAI_npc_skyguard_prisoner;
     newscript->pQuestAccept = &QuestAccept_npc_skyguard_prisoner;
     newscript->RegisterSelf();
+	
+	newscript = new Script;
+	newscript->Name = "npc_kalliri_trigger";
+	newscript->GetAI = &GetAI_npc_kalliri_trigger;
+	newscript->RegisterSelf();
 }
 
