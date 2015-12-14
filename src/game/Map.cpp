@@ -1933,25 +1933,11 @@ uint32 Map::GetZoneId(uint16 areaflag, uint32 map_id)
         return 0;
 }
 
-bool Map::IsInWater(float x, float y, float pZ) const
-{
-    float waterLevel = GetWaterLevel(x, y);
-    return pZ <= waterLevel;
-}
-
-//this method is not using the same logic as Map::IsInWater its calculates in vmap based data not map based
-//this is much slower and used only for fishing atm
 bool Map::IsInWater(float x, float y, float pZ, LiquidData* data) const
 {
-    // Check surface in x, y point for liquid
-    if (const_cast<Map*>(this)->GetGrid(x, y))
-    {
-        LiquidData liquid_status;
-        LiquidData* liquid_ptr = data ? data : &liquid_status;
-        if (getLiquidStatus(x, y, pZ, MAP_ALL_LIQUIDS, liquid_ptr))
-            return true;
-    }
-    return false;
+    LiquidData liquid_status;
+    LiquidData* liquid_ptr = data ? data : &liquid_status;
+    return (getLiquidStatus(x, y, pZ, MAP_ALL_LIQUIDS, liquid_ptr) & (LIQUID_MAP_IN_WATER | LIQUID_MAP_UNDER_WATER)) != 0;
 }
 
 bool Map::IsUnderWater(float x, float y, float z) const
