@@ -1803,6 +1803,8 @@ void Creature::DoFleeToGetAssistance()
         cell.Visit(p, grid_creature_searcher, *GetMap(), *this, radius);
 
         SetNoSearchAssistance(true);
+        UpdateSpeed(MOVE_RUN, false);
+
         if (!pCreature)
             SetControlled(true, UNIT_STATE_FLEEING);
         else

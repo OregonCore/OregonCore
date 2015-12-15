@@ -12305,16 +12305,16 @@ void Unit::SetControlled(bool apply, UnitState state)
         ClearUnitState(state);
 
         // Unit States might have been already cleared but auras still present. I need to check with HasAuraType
-        if (HasUnitState(UNIT_STATE_STUNNED))
+        if (HasAuraType(SPELL_AURA_MOD_STUN))
             SetStunned(true);
         else
         {
-            if (HasUnitState(UNIT_STATE_ROOT))
+            if (HasAuraType(SPELL_AURA_MOD_ROOT))
                 SetRooted(true);
 
-            if (HasUnitState(UNIT_STATE_CONFUSED))
+            if (HasAuraType(SPELL_AURA_MOD_CONFUSE))
                 SetConfused(true);
-            else if (HasUnitState(UNIT_STATE_FLEEING))
+            else if (HasAuraType(SPELL_AURA_MOD_FEAR))
                 SetFeared(true);
         }
     }
@@ -12331,8 +12331,8 @@ void Unit::SetStunned(bool apply)
         // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
         // setting MOVEMENTFLAG_ROOT
         RemoveUnitMovementFlag(MOVEMENTFLAG_MOVING);
-        m_movementInfo.AddMovementFlag(MOVEMENTFLAG_ROOT);
-            StopMoving();
+        AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
+        StopMoving();
 
         if (GetTypeId() == TYPEID_PLAYER)
             SetStandState(UNIT_STAND_STATE_STAND);
@@ -12361,7 +12361,7 @@ void Unit::SetStunned(bool apply)
             data << uint32(0);
             SendMessageToSet(&data, true);
 
-            m_movementInfo.RemoveMovementFlag(MOVEMENTFLAG_ROOT);
+            RemoveUnitMovementFlag(MOVEMENTFLAG_ROOT);
         }
     }
 }
