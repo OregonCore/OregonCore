@@ -36,6 +36,28 @@
 #include "GameEventMgr.h"
 #include "ScriptMgr.h"
 
+class OregonStringTextBuilder
+{
+    public:
+        OregonStringTextBuilder(WorldObject* obj, ChatMsg msgtype, int32 id, uint32 language, WorldObject* target)
+            : _source(obj), _msgType(msgtype), _textId(id), _language(language), _target(target)
+        {
+        }
+
+        size_t operator()(WorldPacket* data, int locale) const
+        {
+            std::string text = sObjectMgr.GetOregonString(_textId, locale);
+
+            return CreatureTextMgr::BuildMonsterChat(data, _source, _msgType, text, Language(_language), _target, locale);
+        }
+
+        WorldObject* _source;
+        ChatMsg _msgType;
+        int32 _textId;
+        uint32 _language;
+        WorldObject* _target;
+};
+
 SmartScript::SmartScript()
 {
     go = NULL;
@@ -737,6 +759,11 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                 break;
 
             me->DoFleeToGetAssistance();
+            if (e.action.flee.withEmote)
+            {
+                OregonStringTextBuilder builder(me, CHAT_MSG_MONSTER_EMOTE, LANG_FLEE, LANG_UNIVERSAL, NULL);
+                sCreatureTextMgr->SendChatPacket(me, builder, CHAT_MSG_MONSTER_EMOTE);
+            }
             sLog.outDebug("SmartScript::ProcessAction:: SMART_ACTION_FLEE_FOR_ASSIST: Creature %u DoFleeToGetAssistance", me->GetGUIDLow());
             break;
         }
@@ -974,6 +1001,11 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
             if (me)
             {
                 me->CallForHelp((float)e.action.callHelp.range);
+                if (e.action.callHelp.withEmote)
+                {
+                    OregonStringTextBuilder builder(me, CHAT_MSG_MONSTER_EMOTE, LANG_CALL_FOR_HELP, LANG_UNIVERSAL, NULL);
+                    sCreatureTextMgr->SendChatPacket(me, builder, CHAT_MSG_MONSTER_EMOTE);
+                }
                 sLog.outDebug("SmartScript::ProcessAction: SMART_ACTION_CALL_FOR_HELP: Creature %u", me->GetGUIDLow());
             }
             break;
