@@ -257,23 +257,23 @@ void SmartAIMgr::LoadSmartAIFromDB()
     {
         for (SmartAIEventMap::iterator itr = mEventMap[i].begin(); itr != mEventMap[i].end(); ++itr)
         {
-            for (SmartAIEventList::iterator itr2 = itr->second.begin(); itr2 != itr->second.end(); ++itr2)
+            for (SmartScriptHolder const& e : itr->second)
             {
-                if (itr2->link)
+                if (e.link)
                 {
-                    if (!FindLinkedEvent(itr->second, itr2->link))
+                    if (!FindLinkedEvent(itr->second, e.link))
                     {
                         sLog.outError("SmartAIMgr::LoadSmartAIFromDB: Entry %d SourceType %u, Event %u, Link Event %u not found or invalid.",
-                            itr2->entryOrGuid, itr2->GetScriptType(), itr2->event_id, itr2->link);
+                            e.entryOrGuid, e.GetScriptType(), e.event_id, e.link);
                     }
                 }
 
-                if (itr2->GetEventType() == SMART_EVENT_LINK)
+                if (e.GetEventType() == SMART_EVENT_LINK)
                 {
-                    if (!FindLinkedSourceEvent(itr->second, itr2->event_id))
+                    if (!FindLinkedSourceEvent(itr->second, e.event_id))
                     {
                         sLog.outError("SmartAIMgr::LoadSmartAIFromDB: Entry %d SourceType %u, Event %u, Link Source Event not found or invalid. Event will never trigger.",
-                            itr2->entryOrGuid, itr2->GetScriptType(), itr2->event_id);
+                            e.entryOrGuid, e.GetScriptType(), e.event_id);
                     }
                 }
             }
