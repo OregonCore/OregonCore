@@ -9013,13 +9013,16 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
             // Store the new target in unit memory container.
             m_ThreatManager.pushThreatInMemory(enemy);
 
-            if (IsAIEnabled && ToCreature()->AI())
+            if (IsAIEnabled)
+            {
                 ToCreature()->AI()->EnterCombat(enemy);
+                RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE); // unit has engaged in combat, remove immunity so players can fight back
+            }
 
             if (ToCreature()->GetFormation())
                 ToCreature()->GetFormation()->MemberAttackStart((Creature*)this, enemy);
 
-            RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+
         }
 
         if (IsPet())
