@@ -1,6 +1,4 @@
-/*!40101 SET NAMES utf8 */;
-
-create table `waypoints` (
+CREATE TABLE `waypoints` (
 	`entry` mediumint (8),
 	`pointid` mediumint (8),
 	`position_x` float ,

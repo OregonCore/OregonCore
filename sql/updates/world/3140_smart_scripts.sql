@@ -1,6 +1,4 @@
-/*!40101 SET NAMES utf8 */;
-
-create table `smart_scripts` (
+CREATE TABLE `smart_scripts` (
 	`entryorguid` int (11),
 	`source_type` tinyint (3),
 	`id` smallint (5),

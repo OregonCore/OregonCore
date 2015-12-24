@@ -1,6 +1,4 @@
-/*!40101 SET NAMES utf8 */;
-
-create table `creature_text` (
+CREATE TABLE `creature_text` (
 	`entry` mediumint (8),
 	`groupid` tinyint (3),
 	`id` tinyint (3),
