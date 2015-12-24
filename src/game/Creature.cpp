@@ -242,6 +242,9 @@ void Creature::RemoveCorpse(bool setSpawnTime)
     if (setSpawnTime)
         m_respawnTime = time(NULL) + m_respawnDelay;
 
+    if (IsAIEnabled)
+        AI()->CorpseRemoved(m_respawnTime);
+
     float x, y, z, o;
     GetRespawnCoord(x, y, z, &o);
     SetHomePosition(x, y, z, o);
@@ -1606,6 +1609,14 @@ void Creature::Respawn(bool force)
     UpdateObjectVisibility();
 }
 
+void Creature::DespawnOrUnsummon(uint32 msTimeToDespawn /*= 0*/)
+{
+    if (TempSummon* summon = this->ToTempSummon())
+        summon->UnSummon(msTimeToDespawn);
+    else
+        ForcedDespawn(msTimeToDespawn);
+}
+
 void Creature::ForcedDespawn(uint32 timeMSToDespawn)
 {
     if (timeMSToDespawn)
@@ -1814,7 +1825,7 @@ void Creature::DoFleeToGetAssistance()
 }
 
 // select nearest hostile unit within the given distance (regardless of threat list).
-Unit* Creature::SelectNearestTarget(float dist) const
+Unit* Creature::SelectNearestTarget(float dist, bool playerOnly /* = false */) const
 {
     CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
     Cell cell(p);
@@ -1824,7 +1835,7 @@ Unit* Creature::SelectNearestTarget(float dist) const
     Unit* target = NULL;
 
     {
-        Oregon::NearestHostileUnitCheck u_check(this, dist);
+        Oregon::NearestHostileUnitCheck u_check(this, dist, playerOnly);
         Oregon::UnitLastSearcher<Oregon::NearestHostileUnitCheck> searcher(target, u_check);
 
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
@@ -2265,7 +2276,10 @@ uint32 Creature::getLevelForTarget(Unit const* target) const
 
 std::string Creature::GetAIName() const
 {
-    return ObjectMgr::GetCreatureTemplate(GetEntry())->AIName;
+    if (m_creatureInfo)
+        return m_creatureInfo->AIName;
+
+    return "";
 }
 
 std::string Creature::GetScriptName()
@@ -2536,4 +2550,31 @@ bool Creature::SetWaterWalk(bool apply)
     data << GetPackGUID();
     SendMessageToSet(&data, true);
     return true;
+}
+
+void Creature::SetTextRepeatId(uint8 textGroup, uint8 id)
+{
+    CreatureTextRepeatIds& repeats = m_textRepeat[textGroup];
+    if (std::find(repeats.begin(), repeats.end(), id) == repeats.end())
+        repeats.push_back(id);
+    else
+        sLog.outError("CreatureTextMgr: TextGroup %u for Creature(%s) GuidLow %u Entry %u, id %u already added", uint32(textGroup), GetName(), GetGUIDLow(), GetEntry(), uint32(id));
+}
+
+CreatureTextRepeatIds Creature::GetTextRepeatGroup(uint8 textGroup)
+{
+    CreatureTextRepeatIds ids;
+
+    CreatureTextRepeatGroup::const_iterator groupItr = m_textRepeat.find(textGroup);
+    if (groupItr != m_textRepeat.end())
+        ids = groupItr->second;
+
+    return ids;
+}
+
+void Creature::ClearTextRepeatGroup(uint8 textGroup)
+{
+    CreatureTextRepeatGroup::iterator groupItr = m_textRepeat.find(textGroup);
+    if (groupItr != m_textRepeat.end())
+        groupItr->second.clear();
 }

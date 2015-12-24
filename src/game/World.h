@@ -451,6 +451,8 @@ struct ProtectedOpcodeProperties
     OpcodePenalty penalty; //!< What should happen if the threshold per interval is passed.
 };
 
+typedef UNORDERED_MAP<uint32, WorldSession*> SessionMap;
+
 // The World
 class World
 {
@@ -466,6 +468,7 @@ class World
         bool RemoveSession(uint32 id);
         // Get the number of current active sessions
         void UpdateMaxSessionCounters();
+        const SessionMap& GetAllSessions() const { return m_sessions; }
         uint32 GetActiveAndQueuedSessionCount() const
         {
             return m_sessions.size();
@@ -817,7 +820,7 @@ class World
 
         typedef UNORDERED_MAP<uint32, Weather*> WeatherMap;
         WeatherMap m_weathers;
-        typedef UNORDERED_MAP<uint32, WorldSession*> SessionMap;
+
         SessionMap m_sessions;
         typedef UNORDERED_MAP<uint32, time_t> DisconnectMap;
         DisconnectMap m_disconnects;

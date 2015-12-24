@@ -183,6 +183,11 @@ class CreatureAI : public UnitAI
 
         virtual void PassengerBoarded(Unit* /*who*/, int8 /*seatId*/, bool /*apply*/) {}
 
+        // called when the corpse of this creature gets removed
+        virtual void CorpseRemoved(time_t /*respawnDelay*/) { }
+
+        virtual void OnSpellClick(Unit* /*clicker*/) { }
+
     protected:
         virtual void MoveInLineOfSight(Unit*);
 

@@ -57,7 +57,7 @@ enum ConditionType
     CONDITION_UNUSED_26             = 26,
     CONDITION_LEVEL                 = 27,                   // level            opt            0                  true if unit's level is equal to param1 (param2 can modify the statement)
     CONDITION_QUEST_COMPLETE        = 28,                   // quest_id         0              0                  true if player has quest_id with all objectives complete, but not yet rewarded
-    CONDITION_NEAR_CREATURE         = 29,                   // creature entry   distance       0                  true if there is a creature of entry in range
+    CONDITION_NEAR_CREATURE         = 29,                   // creature entry   distance       dead (0/1)         true if there is a creature of entry in range
     CONDITION_NEAR_GAMEOBJECT       = 30,                   // gameobject entry distance       0                  true if there is a gameobject of entry in range
     CONDITION_OBJECT_ENTRY_GUID     = 31,                   // TypeID           entry          guid               true if object is type TypeID and the entry is 0 or matches entry of the object or matches guid of the object
     CONDITION_TYPE_MASK             = 32,                   // TypeMask         0              0                  true if object is type object's TypeMask matches provided TypeMask
@@ -116,13 +116,15 @@ enum ConditionSourceType
     CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET            = 13,
     CONDITION_SOURCE_TYPE_GOSSIP_MENU                    = 14,
     CONDITION_SOURCE_TYPE_GOSSIP_MENU_OPTION             = 15,
-    CONDITION_SOURCE_TYPE_CREATURE_TEMPLATE_VEHICLE      = 16,
+    CONDITION_SOURCE_TYPE_CREATURE_TEMPLATE_VEHICLE      = 16, // Not used in 2.4.3
     CONDITION_SOURCE_TYPE_SPELL                          = 17,
-    CONDITION_SOURCE_TYPE_UNUSED_18                      = 18,
+    CONDITION_SOURCE_TYPE_SPELL_CLICK_EVENT              = 18, // Not used in 2.4.3
     CONDITION_SOURCE_TYPE_QUEST_ACCEPT                   = 19,
     CONDITION_SOURCE_TYPE_QUEST_SHOW_MARK                = 20,
+    CONDITION_SOURCE_TYPE_VEHICLE_SPELL                  = 21, // Not used in 2.4.3
+    CONDITION_SOURCE_TYPE_SMART_EVENT                    = 22,
 
-    CONDITION_SOURCE_TYPE_MAX                            = 21  //MAX
+    CONDITION_SOURCE_TYPE_MAX                            = 23  //MAX
 };
 
 enum ComparisionType
@@ -179,6 +181,7 @@ struct Condition
     ConditionSourceType     SourceType;        //SourceTypeOrReferenceId
     uint32                  SourceGroup;
     int32                   SourceEntry;
+    uint32                  SourceId;          // So far, only used in CONDITION_SOURCE_TYPE_SMART_EVENT
     uint32                  ElseGroup;
     ConditionType           Type;     //ConditionTypeOrReference
     uint32                  ConditionValue1;
@@ -196,6 +199,7 @@ struct Condition
         SourceType         = CONDITION_SOURCE_TYPE_NONE;
         SourceGroup        = 0;
         SourceEntry        = 0;
+        SourceId           = 0;
         ElseGroup          = 0;
         Type               = CONDITION_NONE;
         ConditionTarget    = 0;
@@ -212,11 +216,14 @@ struct Condition
     bool Meets(ConditionSourceInfo& sourceInfo);
     bool isLoaded() { return Type > CONDITION_NONE || ReferenceId; }
     uint32 GetMaxAvailableConditionTargets();
+
+    std::string ToString(bool ext = false) const; /// For logging purpose
 };
 
 typedef std::list<Condition*> ConditionList;
 typedef std::map<uint32, ConditionList> ConditionTypeContainer;
 typedef std::map<ConditionSourceType, ConditionTypeContainer> ConditionContainer;
+typedef std::map<std::pair<int32, uint32 /*SAI source_type*/>, ConditionTypeContainer> SmartEventConditionContainer;
 
 typedef std::map<uint32, ConditionList> ConditionReferenceContainer;//only used for references
 
@@ -234,10 +241,42 @@ class ConditionMgr
         bool IsObjectMeetToConditions(WorldObject* object1, WorldObject* object2, ConditionList const& conditions);
         bool IsObjectMeetToConditions(ConditionSourceInfo& sourceInfo, ConditionList const& conditions);
         ConditionList GetConditionsForNotGroupedEntry(ConditionSourceType sourceType, uint32 entry);
+        ConditionList GetConditionsForSmartEvent(int32 entryOrGuid, uint32 eventId, uint32 sourceType);
+
+        static bool isGroupable(ConditionSourceType sourceType)
+        {
+            return (sourceType == CONDITION_SOURCE_TYPE_CREATURE_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_DISENCHANT_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_FISHING_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_GAMEOBJECT_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_ITEM_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_MAIL_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_MILLING_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_PICKPOCKETING_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_PROSPECTING_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_REFERENCE_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_SKINNING_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_SPELL_LOOT_TEMPLATE ||
+                sourceType == CONDITION_SOURCE_TYPE_GOSSIP_MENU ||
+                sourceType == CONDITION_SOURCE_TYPE_GOSSIP_MENU_OPTION ||
+                sourceType == CONDITION_SOURCE_TYPE_SMART_EVENT);
+        }
+        static bool CanHaveSourceIdSet(ConditionSourceType sourceType);
+
+        struct ConditionTypeInfo
+        {
+            char const* Name;
+            bool HasConditionValue1;
+            bool HasConditionValue2;
+            bool HasConditionValue3;
+        };
+        static char const* StaticSourceTypeData[CONDITION_SOURCE_TYPE_MAX];
+        static ConditionTypeInfo const StaticConditionTypeData[CONDITION_MAX];
 
     protected:
         ConditionContainer                ConditionStore;
         ConditionReferenceContainer       ConditionReferenceStore;
+        SmartEventConditionContainer      SmartEventConditionStore;
 
     private:
         bool isSourceTypeValid(Condition* cond);
@@ -245,24 +284,6 @@ class ConditionMgr
         bool addToGossipMenus(Condition* cond);
         bool addToGossipMenuItems(Condition* cond);
         bool IsObjectMeetToConditionList(ConditionSourceInfo& sourceInfo, ConditionList const& conditions);
-
-        bool isGroupable(ConditionSourceType sourceType) const
-        {
-            return (sourceType == CONDITION_SOURCE_TYPE_CREATURE_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_DISENCHANT_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_FISHING_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_GAMEOBJECT_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_ITEM_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_MAIL_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_MILLING_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_PICKPOCKETING_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_PROSPECTING_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_REFERENCE_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_SKINNING_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_SPELL_LOOT_TEMPLATE ||
-                    sourceType == CONDITION_SOURCE_TYPE_GOSSIP_MENU ||
-                    sourceType == CONDITION_SOURCE_TYPE_GOSSIP_MENU_OPTION);
-        }
 
         void Clean(); // free up resources
         std::list<Condition*> AllocatedMemoryStore; // some garbage collection :)

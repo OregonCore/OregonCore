@@ -742,6 +742,12 @@ struct SpellEntry
                     return true;
             return false;
         }
+        bool HasEffect(uint8 effIndex, uint8 effect) const
+        {
+            if (Effect[effIndex] == effect)
+                return true;
+            return false;
+        }
 
         uint32 GetEffectMechanicMask(uint8 effIndex) const
         {

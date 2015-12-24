@@ -127,6 +127,8 @@ class ObjectGuid
         ObjectGuid(HighGuid hi, uint32 entry, uint32 counter) : m_guid(uint64(counter) | (uint64(entry) << 24) | (uint64(hi) << 48)) {}
 
     public:                                                 // modifiers
+        operator uint64() const { return m_guid; }
+
         PackedGuidReader ReadAsPacked()
         {
             return PackedGuidReader(*this);
@@ -243,6 +245,10 @@ class ObjectGuid
                 return TYPEID_OBJECT;
             }
         }
+        bool operator!() const { return IsEmpty(); }
+        bool operator== (ObjectGuid const& guid) const { return GetRawValue() == guid.GetRawValue(); }
+        bool operator!= (ObjectGuid const& guid) const { return GetRawValue() != guid.GetRawValue(); }
+        bool operator< (ObjectGuid const& guid) const { return GetRawValue() < guid.GetRawValue(); }
 
     public:                                                 // accessors - for debug
         char const* GetTypeName() const;
@@ -270,6 +276,9 @@ class ObjectGuid
     private:                                                // fields
         uint64 m_guid;
 };
+
+// Some Shared defines
+typedef std::list<ObjectGuid> GuidList;
 
 class PackedGuid
 {

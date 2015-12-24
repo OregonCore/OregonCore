@@ -30,6 +30,7 @@
 #include "MapManager.h"
 #include "Totem.h"
 #include "ScriptMgr.h"
+#include "CreatureAI.h"
 
 void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 {
@@ -270,9 +271,6 @@ void WorldSession::HandleGameObjectUseOpcode(WorldPacket& recv_data)
         faction->IsHostileTo(*sFactionTemplateStore.LookupEntry(_player->getFaction())) &&
         !faction->IsNeutralToAll() &&
         !obj->GetOwner())
-        return;
-
-    if (sScriptMgr.GOHello(_player, obj))
         return;
 
     obj->Use(_player);
@@ -559,4 +557,26 @@ void WorldSession::HandleMirrorImageDataRequest(WorldPacket& recvData)
     }
 
     SendPacket(&data);
+}
+
+void WorldSession::HandleSpellClick(WorldPacket& recvData)
+{
+    DEBUG_LOG("WORLD: Recvd CMSG_SPELLCLICK Message");
+
+    uint64 guid;
+    recvData >> guid;
+
+    // this will get something not in world. crash
+    Creature* unit = ObjectAccessor::GetCreatureOrPet(*_player, guid);
+
+    if (!unit)
+        return;
+
+    /// @todo Unit::SetCharmedBy: 28782 is not in world but 0 is trying to charm it! -> crash
+    if (!unit->IsInWorld())
+        return;
+
+    Creature* creature = unit->ToCreature();
+    if (creature && creature->IsAIEnabled)
+        creature->AI()->OnSpellClick(_player);
 }

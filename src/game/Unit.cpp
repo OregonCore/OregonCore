@@ -575,6 +575,20 @@ void Unit::UpdateInterruptMask()
             m_interruptMask |= spell->m_spellInfo->ChannelInterruptFlags;
 }
 
+uint32 Unit::GetAuraCount(uint32 spellId) const
+{
+    uint32 count = 0;
+    for (AuraMap::const_iterator itr = m_Auras.lower_bound(spellEffectPair(spellId, 0)); itr != m_Auras.upper_bound(spellEffectPair(spellId, 0)); ++itr)
+    {
+        if (!itr->second->GetStackAmount())
+            count++;
+        else
+            count += (uint32)itr->second->GetStackAmount();
+    }
+
+    return count;
+}
+
 bool Unit::HasAuraType(AuraType auraType) const
 {
     return (!m_modAuras[auraType].empty());
@@ -636,10 +650,14 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             return 0;
 
     //Script Event damage taken
-    if (pVictim->GetTypeId() == TYPEID_UNIT && (pVictim->ToCreature())->IsAIEnabled)
-    {
+    if (pVictim->IsAIEnabled)
         pVictim->ToCreature()->AI()->DamageTaken(this, damage);
 
+    if (IsAIEnabled)
+        ToCreature()->AI()->DamageDealt(pVictim, damage, damagetype);
+
+    if (pVictim->GetTypeId() == TYPEID_UNIT && (pVictim->ToCreature())->IsAIEnabled)
+    {
         // Set tagging
         if (!pVictim->HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER) && !pVictim->IsPet())
         {
@@ -8995,13 +9013,16 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
             // Store the new target in unit memory container.
             m_ThreatManager.pushThreatInMemory(enemy);
 
-            if (IsAIEnabled && ToCreature()->AI())
+            if (IsAIEnabled)
+            {
                 ToCreature()->AI()->EnterCombat(enemy);
+                RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE); // unit has engaged in combat, remove immunity so players can fight back
+            }
 
             if (ToCreature()->GetFormation())
                 ToCreature()->GetFormation()->MemberAttackStart((Creature*)this, enemy);
 
-            RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+
         }
 
         if (IsPet())
@@ -11490,6 +11511,29 @@ Unit* Unit::SelectNearbyTarget(Unit* exclude, float dist) const
 
     // select random
     return SelectRandomContainerElement(targets);
+}
+
+Player* Unit::SelectNearestPlayer(float distance) const
+{
+    CellPair pair(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
+    Cell cell(pair);
+    cell.data.Part.reserved = ALL_DISTRICT;
+    cell.SetNoCreate();
+
+    Player* pPlayer = NULL;
+
+    {
+        Oregon::NearestPlayerInObjectRangeCheck creature_check(*this, distance);
+        Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck> searcher(pPlayer, creature_check);
+
+        TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck>, WorldTypeMapContainer> world_player_searcher(searcher);
+        TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck>, GridTypeMapContainer> grid_player_searcher(searcher);
+
+        cell.Visit(pair, world_player_searcher, *GetMap(), *this, distance);
+        cell.Visit(pair, grid_player_searcher, *GetMap(), *this, distance);
+    }
+
+    return pPlayer;
 }
 
 void Unit::ApplyAttackTimePercentMod(WeaponAttackType att, float val, bool apply)

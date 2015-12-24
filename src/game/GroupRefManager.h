@@ -31,6 +31,7 @@ class GroupRefManager : public RefManager<Group, Player>
         {
             return ((GroupReference*) RefManager<Group, Player>::getFirst());
         }
+        GroupReference const* getFirst() const { return ((GroupReference const*)RefManager<Group, Player>::getFirst()); }
 };
 #endif
 

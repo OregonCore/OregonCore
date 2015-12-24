@@ -760,10 +760,10 @@ class CreatureWithDbGUIDCheck
 class AnyFriendlyUnitInObjectRangeCheck
 {
     public:
-        AnyFriendlyUnitInObjectRangeCheck(WorldObject const* obj, Unit const* funit, float range) : i_obj(obj), i_funit(funit), i_range(range) {}
+        AnyFriendlyUnitInObjectRangeCheck(WorldObject const* obj, Unit const* funit, float range, bool playerOnly = false) : i_obj(obj), i_funit(funit), i_range(range), i_playerOnly(playerOnly) {}
         bool operator()(Unit* u)
         {
-            if (u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_funit->IsFriendlyTo(u))
+            if (u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_funit->IsFriendlyTo(u) && (!i_playerOnly || u->GetTypeId() == TYPEID_PLAYER))
                 return true;
             else
                 return false;
@@ -772,6 +772,7 @@ class AnyFriendlyUnitInObjectRangeCheck
         WorldObject const* i_obj;
         Unit const* i_funit;
         float i_range;
+        bool i_playerOnly;
 };
 
 class AnyUnitInObjectRangeCheck
@@ -900,7 +901,7 @@ struct AnyStealthedCheck
     class NearestHostileUnitCheck
     {
         public:
-            explicit NearestHostileUnitCheck(Creature const* creature, float dist = 0) : me(creature)
+            explicit NearestHostileUnitCheck(Creature const* creature, float dist = 0, bool playerOnly = false) : me(creature), i_playerOnly(playerOnly)
             {
                 m_range = (dist == 0 ? 9999 : dist);
             }
@@ -912,6 +913,9 @@ struct AnyStealthedCheck
                 if (!me->canAttack(u))
                     return false;
 
+                if (i_playerOnly && u->GetTypeId() != TYPEID_PLAYER)
+                    return false;
+
                 m_range = me->GetDistance(u);   // use found unit range as new range limit for next check
                 return true;
             }
@@ -919,6 +923,7 @@ struct AnyStealthedCheck
     private:
             Creature const *me;
             float m_range;
+            bool i_playerOnly;
             NearestHostileUnitCheck(NearestHostileUnitCheck const&);
     };
 
@@ -1067,6 +1072,43 @@ class AnyPlayerInObjectRangeCheck
         WorldObject const* i_obj;
         float i_range;
         bool _reqAlive;
+};
+
+class NearestPlayerInObjectRangeCheck
+{
+public:
+    NearestPlayerInObjectRangeCheck(WorldObject const& obj, float range)
+        : i_obj(obj), i_range(range) {}
+
+    bool operator()(Player* u)
+    {
+        if (i_obj.IsWithinDistInMap(u, i_range))
+        {
+            i_range = i_obj.GetDistance(u);         // use found unit range as new range limit for next check
+            return true;
+        }
+        return false;
+    }
+    float GetLastRange() const { return i_range; }
+private:
+    WorldObject const& i_obj;
+    float  i_range;
+
+    // prevent clone this object
+    NearestPlayerInObjectRangeCheck(NearestPlayerInObjectRangeCheck const&);
+};
+
+class AllWorldObjectsInRange
+{
+public:
+    AllWorldObjectsInRange(const WorldObject* pObject, float fMaxRange) : m_pObject(pObject), m_fRange(fMaxRange) {}
+    bool operator() (WorldObject* pGo)
+    {
+        return m_pObject->IsWithinDistInMap(pGo, m_fRange, false);
+    }
+private:
+    const WorldObject* m_pObject;
+    float m_fRange;
 };
 
 class AllFriendlyCreaturesInGrid

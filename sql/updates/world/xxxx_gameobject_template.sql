@@ -1,0 +1,1 @@
+ALTER TABLE `gameobject_template` ADD AIName VARCHAR(64) NOT NULL DEFAULT '' AFTER data23;

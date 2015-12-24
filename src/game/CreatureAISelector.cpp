@@ -25,6 +25,7 @@
 
 INSTANTIATE_SINGLETON_1(CreatureAIRegistry);
 INSTANTIATE_SINGLETON_1(MovementGeneratorRegistry);
+INSTANTIATE_SINGLETON_1(GameObjectAIRegistry);
 
 namespace FactorySelector
 {
@@ -124,6 +125,25 @@ MovementGenerator* selectMovementGenerator(Creature* creature)
 
     return (mv_factory == NULL ? NULL : mv_factory->Create(creature));
 
+}
+
+GameObjectAI* SelectGameObjectAI(GameObject* go)
+{
+    const GameObjectAICreator* ai_factory = NULL;
+    GameObjectAIRegistry& ai_registry(GameObjectAIRepository::Instance());
+
+    // AIname in db
+    std::string GobAiName = go->GetAIName();
+    if (!ai_factory && !GobAiName.empty())
+        ai_factory = ai_registry.GetRegistryItem(GobAiName.c_str());
+
+    //future goAI types go here
+
+    std::string ainame = (ai_factory == NULL) ? "NullGameObjectAI" : ai_factory->key();
+
+    DEBUG_LOG("GameObject %u used AI is %s.", go->GetGUIDLow(), ainame.c_str());
+
+    return (ai_factory == NULL ? new NullGameObjectAI(go) : ai_factory->Create(go));
 }
 }
 

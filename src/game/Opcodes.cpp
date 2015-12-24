@@ -1036,7 +1036,7 @@ OpcodeHandler opcodeTable[NUM_MSG_TYPES] =
     /*0x3F4*/ { "SMSG_GOGOGO_OBSOLETE",             STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
     /*0x3F5*/ { "SMSG_ECHO_PARTY_SQUELCH",          STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
     /*0x3F6*/ { "CMSG_SET_TITLE_SUFFIX",            STATUS_NEVER,    &WorldSession::Handle_NULL                     },
-    /*0x3F7*/ { "CMSG_SPELLCLICK",                  STATUS_NEVER,    &WorldSession::Handle_NULL                     },
+    /*0x3F7*/ { "CMSG_SPELLCLICK",                  STATUS_LOGGEDIN, &WorldSession::HandleSpellClick                },
     /*0x3F8*/ { "SMSG_LOOT_LIST",                   STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
     /*0x3F9*/ { "CMSG_GM_CHARACTER_RESTORE",        STATUS_NEVER,    &WorldSession::Handle_NULL                     },
     /*0x3FA*/ { "CMSG_GM_CHARACTER_SAVE",           STATUS_NEVER,    &WorldSession::Handle_NULL                     },

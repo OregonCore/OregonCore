@@ -207,6 +207,11 @@ struct CreatureInfo
     {
         return type == CREATURE_TYPE_BEAST && family != 0 && (type_flags & CREATURE_TYPEFLAGS_TAMEABLE);
     }
+
+    std::string GetAIName() const
+    {
+        return AIName;
+    }
 };
 
 struct CreatureLocale
@@ -425,6 +430,10 @@ typedef std::map<uint32, time_t> CreatureSpellCooldowns;
 
 #define MAX_VENDOR_ITEMS 255                                // Limitation in item count field size in SMSG_LIST_INVENTORY
 
+//used for handling non-repeatable random texts
+typedef std::vector<uint8> CreatureTextRepeatIds;
+typedef UNORDERED_MAP<uint8, CreatureTextRepeatIds> CreatureTextRepeatGroup;
+
 class Creature : public Unit, public GridObject<Creature>
 {
     public:
@@ -569,6 +578,7 @@ class Creature : public Unit, public GridObject<Creature>
         void UpdateMaxPower(Powers power);
         void UpdateAttackPowerAndDamage(bool ranged = false);
         void UpdateDamagePhysical(WeaponAttackType attType);
+        void SetCurrentEquipmentId(uint8 id) { m_equipmentId = id; }
         uint32 GetCurrentEquipmentId()
         {
             return m_equipmentId;
@@ -670,7 +680,7 @@ class Creature : public Unit, public GridObject<Creature>
         bool canStartAttack(Unit const* u) const;
         float GetAttackDistance(Unit const* pl) const;
 
-        Unit* SelectNearestTarget(float dist = 0) const;
+        Unit* SelectNearestTarget(float dist = 0, bool playerOnly = false) const;
         Unit* SelectNearestTargetInAttackDistance(float dist = 0) const;
 
         void DoFleeToGetAssistance();
@@ -713,6 +723,8 @@ class Creature : public Unit, public GridObject<Creature>
 
         void RemoveCorpse(bool setSpawnTime = true);
         void ForcedDespawn(uint32 timeMSToDespawn = 0);
+
+        void DespawnOrUnsummon(uint32 msTimeToDespawn = 0);
 
         time_t const& GetRespawnTime() const
         {
@@ -759,6 +771,8 @@ class Creature : public Unit, public GridObject<Creature>
         {
             return m_regenHealth;
         }
+        void setRegeneratingHealth(bool regenHealth) { m_regenHealth = regenHealth; }
+
         virtual uint8 GetPetAutoSpellSize() const
         {
             return CREATURE_MAX_SPELLS;
@@ -857,6 +871,10 @@ class Creature : public Unit, public GridObject<Creature>
         bool SetLevitate(bool apply, bool packetOnly = false);
         bool SetWaterWalk(bool apply);
 
+        CreatureTextRepeatIds GetTextRepeatGroup(uint8 textGroup);
+        void SetTextRepeatId(uint8 textGroup, uint8 id);
+        void ClearTextRepeatGroup(uint8 textGroup);
+
     protected:
         bool CreateFromProto(uint32 guidlow, uint32 Entry, uint32 team, const CreatureData* data = NULL);
         bool InitEntry(uint32 entry, uint32 team = ALLIANCE, const CreatureData* data = NULL);
@@ -915,6 +933,8 @@ class Creature : public Unit, public GridObject<Creature>
         CreatureGroup* m_formation;
 
         CreatureInfo const* m_creatureInfo;                 // in heroic mode can different from sObjectMgr::GetCreatureTemplate(GetEntry())
+
+        CreatureTextRepeatGroup m_textRepeat;
 };
 
 class AssistDelayEvent : public BasicEvent

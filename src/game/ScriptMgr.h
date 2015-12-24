@@ -34,6 +34,7 @@ class InstanceData;
 class Quest;
 class Item;
 class GameObject;
+class GameObjectAI;
 class SpellCastTargets;
 class Map;
 class Unit;

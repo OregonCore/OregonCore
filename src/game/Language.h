@@ -852,6 +852,9 @@ enum OregonStrings
     LANG_COMMAND_LOOKUP_MAX_RESULTS     = 5010,
     LANG_NPCINFO_AIINFO                 = 5011,
     LANG_INSTANCE_CLOSED                = 5012,
+
+    LANG_FLEE                           = 5030,
+    LANG_CALL_FOR_HELP                  = 5035,
     // Room for more Oregon strings       5013-9999
 
     // Used for GM Announcements

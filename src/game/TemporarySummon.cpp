@@ -231,8 +231,16 @@ void TempSummon::SetTempSummonType(TempSummonType type)
     m_type = type;
 }
 
-void TempSummon::UnSummon()
+void TempSummon::UnSummon(uint32 msTime)
 {
+    if (msTime)
+    {
+        UnsummonDelayEvent* pEvent = new UnsummonDelayEvent(*this);
+
+        m_Events.AddEvent(pEvent, m_Events.CalculateTime(msTime));
+        return;
+    }
+
     if (IsPet())
     {
         ((Pet*)this)->Remove(PET_SAVE_NOT_IN_SLOT);
@@ -245,6 +253,14 @@ void TempSummon::UnSummon()
         owner->ToCreature()->AI()->SummonedCreatureDespawn(this);
 
     AddObjectToRemoveList();
+}
+
+bool UnsummonDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
+{
+    if (TempSummon* summon = m_owner.ToTempSummon())
+        summon->UnSummon();
+
+    return true;
 }
 
 void TempSummon::RemoveFromWorld()

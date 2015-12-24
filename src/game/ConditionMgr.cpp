@@ -27,6 +27,75 @@
 
 INSTANTIATE_SINGLETON_1(ConditionMgr);
 
+char const* ConditionMgr::StaticSourceTypeData[CONDITION_SOURCE_TYPE_MAX] =
+{
+    "None",
+    "Creature Loot",
+    "Disenchant Loot",
+    "Fishing Loot",
+    "GameObject Loot",
+    "Item Loot",
+    "Mail Loot",
+    "Milling Loot",
+    "Pickpocketing Loot",
+    "Prospecting Loot",
+    "Reference Loot",
+    "Skinning Loot",
+    "Spell Loot",
+    "Spell Impl. Target",
+    "Gossip Menu",
+    "Gossip Menu Option",
+    "Creature Vehicle",
+    "Spell Expl. Target",
+    "Spell Click Event",
+    "Quest Accept",
+    "Quest Show Mark",
+    "SmartScript"
+};
+
+ConditionMgr::ConditionTypeInfo const ConditionMgr::StaticConditionTypeData[CONDITION_MAX] =
+{
+    { "None", false, false, false },
+    { "Aura", true, true, true },
+    { "Item Stored", true, true, true },
+    { "Item Equipped", true, false, false },
+    { "Zone", true, false, false },
+    { "Reputation", true, true, false },
+    { "Team", true, false, false },
+    { "Skill", true, true, false },
+    { "Quest Rewarded", true, false, false },
+    { "Quest Taken", true, false, false },
+    { "Drunken", true, false, false },
+    { "WorldState", true, true, false },
+    { "Active Event", true, false, false },
+    { "Instance Info", true, true, true },
+    { "Quest None", true, false, false },
+    { "Class", true, false, false },
+    { "Race", true, false, false },
+    { "Achievement", true, false, false },
+    { "Title", true, false, false },
+    { "SpawnMask", true, false, false },
+    { "Gender", true, false, false },
+    { "Unit State", true, false, false },
+    { "Map", true, false, false },
+    { "Area", true, false, false },
+    { "CreatureType", true, false, false },
+    { "Spell Known", true, false, false },
+    { "PhaseMask", true, false, false },
+    { "Level", true, true, false },
+    { "Quest Completed", true, false, false },
+    { "Near Creature", true, true, true },
+    { "Near GameObject", true, true, false },
+    { "Object Entry or Guid", true, true, true },
+    { "Object TypeMask", true, false, false },
+    { "Relation", true, true, false },
+    { "Reaction", true, true, false },
+    { "Distance", true, true, true },
+    { "Alive", false, false, false },
+    { "Health Value", true, true, false },
+    { "Health Pct", true, true, false }
+};
+
 // Checks if object meets the condition
 // Can have CONDITION_SOURCE_TYPE_NONE && !ReferenceId if called from a special event (ie: eventAI)
 bool Condition::Meets(ConditionSourceInfo& sourceInfo)
@@ -200,7 +269,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
         }
         case CONDITION_NEAR_CREATURE:
         {
-            condMeets = GetClosestCreatureWithEntry(object, ConditionValue1, (float)ConditionValue2) ? true : false;
+            condMeets = GetClosestCreatureWithEntry(object, ConditionValue1, (float)ConditionValue2, bool(!ConditionValue3)) ? true : false;
             break;
         }
         case CONDITION_NEAR_GAMEOBJECT:
@@ -358,10 +427,39 @@ uint32 Condition::GetMaxAvailableConditionTargets()
         case CONDITION_SOURCE_TYPE_SPELL:
         case CONDITION_SOURCE_TYPE_GOSSIP_MENU:
         case CONDITION_SOURCE_TYPE_GOSSIP_MENU_OPTION:
+        case CONDITION_SOURCE_TYPE_SMART_EVENT:
             return 2;
         default:
             return 1;
     }
+}
+
+std::string Condition::ToString(bool ext /*= false*/) const
+{
+    std::ostringstream ss;
+    ss << "[Condition ";
+    ss << "SourceType: " << SourceType;
+    if (SourceType < CONDITION_SOURCE_TYPE_MAX)
+        ss << " (" << ConditionMgr::StaticSourceTypeData[SourceType] << ")";
+    else
+        ss << " (Unknown)";
+    if (ConditionMgr::isGroupable(SourceType))
+        ss << ", SourceGroup: " << SourceGroup;
+    ss << ", SourceEntry: " << SourceEntry;
+    if (ConditionMgr::CanHaveSourceIdSet(SourceType))
+        ss << ", SourceId: " << SourceId;
+
+    if (ext)
+    {
+        ss << ", ConditionType: " << Type;
+        if (Type < CONDITION_MAX)
+            ss << " (" << ConditionMgr::StaticConditionTypeData[Type].Name << ")";
+        else
+            ss << " (Unknown)";
+    }
+
+    ss << "]";
+    return ss.str();
 }
 
 ConditionMgr::ConditionMgr()
@@ -467,6 +565,27 @@ ConditionList ConditionMgr::GetConditionsForNotGroupedEntry(ConditionSourceType 
     return spellCond;
 }
 
+bool ConditionMgr::CanHaveSourceIdSet(ConditionSourceType sourceType)
+{
+    return (sourceType == CONDITION_SOURCE_TYPE_SMART_EVENT);
+}
+
+ConditionList ConditionMgr::GetConditionsForSmartEvent(int32 entryOrGuid, uint32 eventId, uint32 sourceType)
+{
+    ConditionList cond;
+    SmartEventConditionContainer::const_iterator itr = SmartEventConditionStore.find(std::make_pair(entryOrGuid, sourceType));
+    if (itr != SmartEventConditionStore.end())
+    {
+        ConditionTypeContainer::const_iterator i = (*itr).second.find(eventId + 1);
+        if (i != (*itr).second.end())
+        {
+            cond = (*i).second;
+            sLog.outDebug("GetConditionsForSmartEvent: found conditions for Smart Event entry or guid %d eventId %u", entryOrGuid, eventId);
+        }
+    }
+    return cond;
+}
+
 void ConditionMgr::LoadConditions(bool isReload)
 {
     Clean();
@@ -494,7 +613,7 @@ void ConditionMgr::LoadConditions(bool isReload)
     }
 
     uint32 count = 0;
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT SourceTypeOrReferenceId, SourceGroup, SourceEntry, ElseGroup, ConditionTypeOrReference, ConditionTarget, ConditionValue1, ConditionValue2, ConditionValue3, NegativeCondition, ErrorType, ErrorTextId, ScriptName FROM conditions");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT SourceTypeOrReferenceId, SourceGroup, SourceEntry, SourceId, ElseGroup, ConditionTypeOrReference, ConditionTarget, ConditionValue1, ConditionValue2, ConditionValue3, NegativeCondition, ErrorType, ErrorTextId, ScriptName FROM conditions");
 
     if (!result)
     {
@@ -511,16 +630,17 @@ void ConditionMgr::LoadConditions(bool isReload)
         int32 iSourceTypeOrReferenceId  = fields[0].GetInt32();
         cond->SourceGroup               = fields[1].GetUInt32();
         cond->SourceEntry               = fields[2].GetUInt32();
-        cond->ElseGroup                 = fields[3].GetUInt32();
-        int32 iConditionTypeOrReference = fields[4].GetInt32();
-        cond->ConditionTarget           = fields[5].GetUInt8();
-        cond->ConditionValue1           = fields[6].GetUInt32();
-        cond->ConditionValue2           = fields[7].GetUInt32();
-        cond->ConditionValue3           = fields[8].GetUInt32();
-        cond->NegativeCondition         = fields[9].GetUInt8();
-        cond->ErrorType                 = fields[10].GetUInt32();
-        cond->ErrorTextId               = fields[11].GetUInt32();
-        cond->ScriptId                  = sObjectMgr.GetScriptId(fields[12].GetString());
+        cond->SourceId                  = fields[3].GetInt32();
+        cond->ElseGroup                 = fields[4].GetUInt32();
+        int32 iConditionTypeOrReference = fields[5].GetInt32();
+        cond->ConditionTarget           = fields[6].GetUInt8();
+        cond->ConditionValue1           = fields[7].GetUInt32();
+        cond->ConditionValue2           = fields[8].GetUInt32();
+        cond->ConditionValue3           = fields[9].GetUInt32();
+        cond->NegativeCondition         = fields[10].GetUInt8();
+        cond->ErrorType                 = fields[11].GetUInt32();
+        cond->ErrorTextId               = fields[12].GetUInt32();
+        cond->ScriptId                  = sObjectMgr.GetScriptId(fields[13].GetString());
 
         if (iConditionTypeOrReference >= 0)
             cond->Type = ConditionType(iConditionTypeOrReference);
@@ -579,6 +699,13 @@ void ConditionMgr::LoadConditions(bool isReload)
         //if not a reference and SourceType is invalid, skip
         if (iConditionTypeOrReference >= 0 && !isSourceTypeValid(cond))
         {
+            delete cond;
+            continue;
+        }
+
+        if (cond->SourceId && !CanHaveSourceIdSet(cond->SourceType))
+        {
+            sLog.outError("%s has not allowed value of SourceId = %u!", cond->ToString().c_str(), cond->SourceId);
             delete cond;
             continue;
         }
@@ -644,6 +771,15 @@ void ConditionMgr::LoadConditions(bool isReload)
                 case CONDITION_SOURCE_TYPE_GOSSIP_MENU_OPTION:
                     valid = addToGossipMenuItems(cond);
                     break;
+                case CONDITION_SOURCE_TYPE_SMART_EVENT:
+                {
+                    //! TODO: PAIR_32 ?
+                    std::pair<int32, uint32> key = std::make_pair(cond->SourceEntry, cond->SourceId);
+                    SmartEventConditionStore[key][cond->SourceGroup].push_back(cond);
+                    valid = true;
+                    ++count;
+                    continue;
+                }
             }
 
             if (!valid)
@@ -999,11 +1135,12 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 }
             }
             break;
-        case CONDITION_SOURCE_TYPE_UNUSED_18:
+        case CONDITION_SOURCE_TYPE_SPELL_CLICK_EVENT:
             sLog.outErrorDb("Found SourceTypeOrReferenceId = CONDITION_SOURCE_TYPE_UNUSED_18 in `condition` table - ignoring");
             return false;
         case CONDITION_SOURCE_TYPE_GOSSIP_MENU:
         case CONDITION_SOURCE_TYPE_GOSSIP_MENU_OPTION:
+        case CONDITION_SOURCE_TYPE_SMART_EVENT:
         case CONDITION_SOURCE_TYPE_NONE:
         default:
             break;
@@ -1554,6 +1691,19 @@ void ConditionMgr::Clean()
     }
 
     ConditionStore.clear();
+
+    for (SmartEventConditionContainer::iterator itr = SmartEventConditionStore.begin(); itr != SmartEventConditionStore.end(); ++itr)
+    {
+        for (ConditionTypeContainer::iterator it = itr->second.begin(); it != itr->second.end(); ++it)
+        {
+            for (ConditionList::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+                delete *i;
+            it->second.clear();
+        }
+        itr->second.clear();
+    }
+
+    SmartEventConditionStore.clear();
 
     // this is a BIG hack, feel free to fix it if you can figure out the ConditionMgr ;)
     for (std::list<Condition*>::const_iterator itr = AllocatedMemoryStore.begin(); itr != AllocatedMemoryStore.end(); ++itr)

@@ -166,6 +166,7 @@ class ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLev
         }
 
         // these functions return objects only if in map of specified object
+        static WorldObject* GetWorldObject(WorldObject const&, uint64);
         static Object* GetObjectByTypeMask(WorldObject const&, uint64, uint32 typemask);
         static Corpse* GetCorpse(WorldObject const& u, uint64 guid);
         static GameObject* GetGameObject(WorldObject const& u, uint64 guid);
@@ -188,6 +189,18 @@ class ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLev
         HashMapHolder<Player>::MapType& GetPlayers()
         {
             return HashMapHolder<Player>::GetContainer();
+        }
+
+        // when using this, you must use the hashmapholder's lock
+        static HashMapHolder<Creature>::MapType const& GetCreatures()
+        {
+            return HashMapHolder<Creature>::GetContainer();
+        }
+
+        // when using this, you must use the hashmapholder's lock
+        static HashMapHolder<GameObject>::MapType const& GetGameObjects()
+        {
+            return HashMapHolder<GameObject>::GetContainer();
         }
 
         template<class T> void AddObject(T* object)
