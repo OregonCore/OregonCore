@@ -600,53 +600,6 @@ CreatureAI* GetAI_npc_light_orb_collector(Creature* creature)
     return new npc_light_orb_collectorAI(creature);
 }
 
-/*#########
-# npc_thunderstrike_trigger
-#########*/
-
-#define QUEST_VISION_GUIDE 10525
-
-struct npc_thunderstrike_triggerAI : public ScriptedAI
-{
-	npc_thunderstrike_triggerAI(Creature *c) : ScriptedAI(c)
-	{
-		me->SetReactState(REACT_AGGRESSIVE);
-	}
-
-	void Reset() { }
-
-	void MoveInLineOfSight(Unit *pWho)
-	{
-		if (Player* plWho = pWho->GetCharmerOrOwnerPlayerOrPlayerItself())
-		{
-			if (plWho->GetQuestStatus(QUEST_VISION_GUIDE) == QUEST_STATUS_INCOMPLETE && plWho->HasItemCount(30481, 1, false) && plWho->GetDistance(me) < 8.0f)
-			{
-				switch (me->GetEntry())
-				{
-				case 61003:
-					plWho->CompleteQuest(QUEST_VISION_GUIDE);
-					break;
-				}
-			}		
-
-			if (plWho->GetQuestStatus(QUEST_VISION_GUIDE) == QUEST_STATUS_COMPLETE && plWho->HasItemCount(30481, 1, false) && plWho->GetDistance(me) < 8.0f)
-			{
-				switch (me->GetEntry())
-				{
-				case 61003:
-					plWho->TeleportTo(530, 2280.67f, 5983.65f, 142.49f, 3.04f, 0);
-					break;
-				}
-			}
-		}
-	}
-};
-
-CreatureAI* GetAI_npc_thunderstrike_trigger(Creature* pCreature)
-{
-	return new npc_thunderstrike_triggerAI(pCreature);
-}
-
 void AddSC_blades_edge_mountains()
 {
     Script* newscript;
@@ -692,9 +645,4 @@ void AddSC_blades_edge_mountains()
     newscript->Name = "npc_light_orb_collector";
     newscript->GetAI = &GetAI_npc_light_orb_collector;
     newscript->RegisterSelf();
-	
-	newscript = new Script;
-	newscript->Name = "npc_thunderstrike_trigger";
-	newscript->GetAI = &GetAI_npc_thunderstrike_trigger;
-	newscript->RegisterSelf();
 }
