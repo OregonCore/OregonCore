@@ -2,8 +2,8 @@
 SET @CGUID := 45834;
 SET @Triggger:=21321;
 DELETE FROM `creature` WHERE `guid`=@CGUID;
-INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `MovementType`) VALUES
-(@CGUID, 21321, 530, 1, 1316.625854, 6689.878418, -18.672377, 0.160565, 0, 0, 0);
+INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `MovementType`, `curhealth`) VALUES
+(@CGUID, 21321, 530, 1, 1316.625854, 6689.878418, -18.672377, 0.160565, 0, 0, 0, 5000);
 
 DELETE FROM creature WHERE id = 61003;
 DELETE FROM creature_template WHERE entry=61003;
