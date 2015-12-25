@@ -12985,21 +12985,28 @@ void Player::SendPreparedQuest(uint64 guid)
     {
         // Auto open -- maybe also should verify there is no greeting
         QuestMenuItem const& qmi0 = questMenu.GetItem(0);
-        uint32 status = qmi0.m_qIcon;
-        uint32 quest_id = qmi0.m_qId;
+        uint32 questId = qmi0.m_qId;
 
-        Quest const* pQuest = sObjectMgr.GetQuestTemplate(quest_id);
-        if (pQuest)
+        if (Quest const* quest = sObjectMgr.GetQuestTemplate(questId))
         {
-            if (status == DIALOG_STATUS_REWARD_REP && !GetQuestRewardStatus(quest_id))
-                PlayerTalkClass->SendQuestGiverRequestItems(pQuest, guid, CanRewardQuest(pQuest, false), true);
-            else if (status == DIALOG_STATUS_INCOMPLETE)
-                PlayerTalkClass->SendQuestGiverRequestItems(pQuest, guid, false, true);
-            // Send completable on repeatable quest if player don't have quest
-            else if (pQuest->IsRepeatable() && !pQuest->IsDaily())
-                PlayerTalkClass->SendQuestGiverRequestItems(pQuest, guid, CanCompleteRepeatableQuest(pQuest), true);
+            if (qmi0.m_qIcon == 4)
+                PlayerTalkClass->SendQuestGiverRequestItems(quest, guid, CanRewardQuest(quest, false), true);
+            // Send completable on repeatable and autoCompletable quest if player don't have quest
+            /// @todo verify if check for !quest->IsDaily() is really correct (possibly not)
             else
-                PlayerTalkClass->SendQuestGiverQuestDetails(pQuest, guid, true);
+            {
+                Object* object = ObjectAccessor::GetObjectByTypeMask(*this, guid, TYPEMASK_UNIT | TYPEMASK_GAMEOBJECT | TYPEMASK_ITEM);
+                if (!object || (!object->hasQuest(questId) && !object->hasInvolvedQuest(questId)))
+                {
+                    PlayerTalkClass->CloseGossip();
+                    return;
+                }
+
+                if (quest->IsAutoComplete() && quest->IsRepeatable() && !quest->IsDaily())
+                    PlayerTalkClass->SendQuestGiverRequestItems(quest, guid, CanCompleteRepeatableQuest(quest), true);
+                else
+                    PlayerTalkClass->SendQuestGiverQuestDetails(quest, guid, true);
+            }
         }
     }
     // multiply entries
