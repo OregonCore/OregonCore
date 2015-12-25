@@ -87,9 +87,8 @@ bool GossipSelect_npc_lunaclaw_spirit(Player* pPlayer, Creature* pCreature, uint
 
 enum eChicken
 {
-    EMOTE_A_HELLO           = -1000204,
-    EMOTE_H_HELLO           = -1000205,
-    EMOTE_CLUCK_TEXT2       = -1000206,
+    EMOTE_HELLO           = -1000204,
+    EMOTE_CLUCK_TEXT      = -1000206,
 
     QUEST_CLUCK             = 3861,
     FACTION_FRIENDLY        = 35,
@@ -128,31 +127,26 @@ struct npc_chicken_cluckAI : public ScriptedAI
             DoMeleeAttackIfReady();
     }
 
-    void ReceiveEmote(Player* pPlayer, uint32 emote)
+    void ReceiveEmote(Player* player, uint32 emote)
     {
-        if (emote == TEXT_EMOTE_CHICKEN)
+        switch (emote)
         {
-            if (pPlayer->GetTeam() == ALLIANCE)
-            {
-                if (rand() % 30 == 1)
+            case TEXT_EMOTE_CHICKEN:
+                if (player->GetQuestStatus(QUEST_CLUCK) == QUEST_STATUS_NONE && rand32() % 30 == 1)
                 {
-                    if (pPlayer->GetQuestStatus(QUEST_CLUCK) == QUEST_STATUS_NONE)
-                    {
-                        me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-                        me->setFaction(FACTION_FRIENDLY);
-                        DoScriptText(EMOTE_A_HELLO, me);
-                    }
+                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+                    me->setFaction(FACTION_FRIENDLY);
+                    DoScriptText(EMOTE_HELLO, me);
                 }
-            }
-            else
-                DoScriptText(EMOTE_H_HELLO, me);
-        }
-        else if ((emote == TEXT_EMOTE_CHEER && pPlayer->GetTeam() == ALLIANCE) &&
-                 (pPlayer->GetQuestStatus(QUEST_CLUCK) == QUEST_STATUS_COMPLETE))
-        {
-            me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-            me->setFaction(FACTION_FRIENDLY);
-            DoScriptText(EMOTE_CLUCK_TEXT2, me);
+                break;
+            case TEXT_EMOTE_CHEER:
+                if (player->GetQuestStatus(QUEST_CLUCK) == QUEST_STATUS_COMPLETE)
+                {
+                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+                    me->setFaction(FACTION_FRIENDLY);
+                    DoScriptText(EMOTE_CLUCK_TEXT, me);
+                }
+                break;
         }
     }
 };
