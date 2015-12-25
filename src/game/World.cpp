@@ -1215,7 +1215,8 @@ void World::LoadSQLUpdates()
         {
             uint32 revision;
             char name[PATH_MAX];
-            if (sscanf(files[j].c_str(), "%u_%s.sql", &revision, name) != 2 || currentRev >= revision)
+            char trailing;
+            if (sscanf(files[j].c_str(), "%u_%s.sql%c", &revision, name, &trailing) != 2 || currentRev >= revision)
                 continue;
             
             label.str("");
