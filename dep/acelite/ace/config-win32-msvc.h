@@ -2,12 +2,9 @@
 /**
  *  @file   config-win32-msvc.h
  *
- *  $Id: config-win32-msvc.h 92120 2010-10-01 12:00:01Z johnnyw $
- *
  *  @brief  Microsoft Visual C++ configuration file.
  *
- *  This file is the ACE configuration file for Microsoft Visual C++ versions
- *  5.0, 6.0, and 7.0 (.NET)
+ *  This file is the ACE configuration file for Microsoft Visual C++
  *
  *  @author Darrell Brunsch <brunsch@cs.wustl.edu>
  */
@@ -41,7 +38,13 @@
 #endif /* _WIN32_WCE */
 
 //FUZZ: disable check_for_msc_ver
-#if (_MSC_VER >= 1600)
+#if (_MSC_VER >= 1900)
+# include "ace/config-win32-msvc-14.h"
+#elif (_MSC_VER >= 1800)
+# include "ace/config-win32-msvc-12.h"
+#elif (_MSC_VER >= 1700)
+# include "ace/config-win32-msvc-11.h"
+#elif (_MSC_VER >= 1600)
 # include "ace/config-win32-msvc-10.h"
 #elif (_MSC_VER >= 1500)
 # include "ace/config-win32-msvc-9.h"
@@ -96,7 +99,9 @@
 #define ACE_LACKS_NETDB_H
 #define ACE_LACKS_NET_IF_H
 #define ACE_LACKS_NETINET_IN_H
-#define ACE_LACKS_STDINT_H
+#if !defined (ACE_WIN32_VC14)
+# define ACE_LACKS_STDINT_H
+#endif
 #define ACE_LACKS_STROPTS_H
 #define ACE_LACKS_SYS_IOCTL_H
 #define ACE_LACKS_SYS_IPC_H
@@ -156,7 +161,7 @@
 #     pragma warning(disable: 1744)  /* field of class type without a DLL interface used in a class with a DLL interface */
 #     pragma warning(disable: 1738)
 # endif
-#endif /* !ALL_WARNINGS && _MSV_VER && !ghs && !__MINGW32__ */
+#endif /* !ALL_WARNINGS && _MSV_VER && !__MINGW32__ */
 
 // STRICT type checking in WINDOWS.H enhances type safety for Windows
 // programs by using distinct types to represent all the different

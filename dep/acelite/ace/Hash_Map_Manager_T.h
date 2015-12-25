@@ -4,8 +4,6 @@
 /**
  *  @file    Hash_Map_Manager_T.h
  *
- *  $Id: Hash_Map_Manager_T.h 91626 2010-09-07 10:59:20Z johnnyw $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  */
 //=============================================================================
@@ -22,7 +20,7 @@
 
 #include "ace/Default_Constants.h"
 #include "ace/Functor_T.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 #include <iterator>
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL

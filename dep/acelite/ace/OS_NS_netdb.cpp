@@ -1,9 +1,5 @@
 // -*- C++ -*-
-// $Id: OS_NS_netdb.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/OS_NS_netdb.h"
-
-
 
 #if !defined (ACE_HAS_INLINED_OSCALLS)
 # include "ace/OS_NS_netdb.inl"
@@ -17,195 +13,9 @@
 #include "ace/OS_NS_stropts.h"
 #include "ace/OS_NS_sys_socket.h"
 
-ACE_BEGIN_VERSIONED_NAMESPACE_DECL
-
-#if defined (ACE_VXWORKS) && defined (ACE_LACKS_GETHOSTBYADDR)
-
-struct hostent *
-ACE_OS::gethostbyaddr (const char *addr, int length, int type)
-{
-  ACE_OS_TRACE ("ACE_OS::gethostbyaddr");
-
-  if (length != 4 || type != AF_INET)
-    {
-      errno = EINVAL;
-      return 0;
-    }
-
-  // not thread safe!
-  static hostent ret;
-  static char name [MAXNAMELEN + 1];
-  static char *hostaddr[2];
-  static char *aliases[1];
-
-  if (::hostGetByAddr (*(int *) addr, name) != 0)
-    {
-      // errno will have been set to S_hostLib_UNKNOWN_HOST.
-      return 0;
-    }
-
-  // Might not be official: just echo input arg.
-  hostaddr[0] = (char *) addr;
-  hostaddr[1] = 0;
-  aliases[0] = 0;
-
-  ret.h_name = name;
-  ret.h_addrtype = AF_INET;
-  ret.h_length = 4;  // VxWorks 5.2/3 doesn't define IP_ADDR_LEN;
-  ret.h_addr_list = hostaddr;
-  ret.h_aliases = aliases;
-
-  return &ret;
-}
-
-#endif /* ACE_VXWORKS && ACE_LACKS_GETHOSTBYADDR */
-
-#if defined (ACE_VXWORKS) && defined (ACE_LACKS_GETHOSTBYADDR)
-
-struct hostent *
-ACE_OS::gethostbyaddr_r (const char *addr, int length, int type,
-                         hostent *result, ACE_HOSTENT_DATA buffer,
-                         int *h_errnop)
-{
-  ACE_OS_TRACE ("ACE_OS::gethostbyaddr_r");
-  if (length != 4 || type != AF_INET)
-    {
-      errno = EINVAL;
-      return 0;
-    }
-
-  if (ACE_OS::netdb_acquire ())
-    return 0;
-  else
-    {
-      // buffer layout:
-      // buffer[0-3]: h_addr_list[0], the first (and only) addr.
-      // buffer[4-7]: h_addr_list[1], the null terminator for the h_addr_list.
-      // buffer[8]: the name of the host, null terminated.
-
-      // Call ::hostGetByAddr (), which puts the (one) hostname into
-      // buffer.
-      if (::hostGetByAddr (*(int *) addr, &buffer[8]) == 0)
-        {
-          // Store the return values in result.
-          result->h_name = &buffer[8];  // null-terminated host name
-          result->h_addrtype = AF_INET;
-          result->h_length = 4;  // VxWorks 5.2/3 doesn't define IP_ADDR_LEN.
-
-          result->h_addr_list = (char **) buffer;
-          // Might not be official: just echo input arg.
-          result->h_addr_list[0] = (char *) addr;
-          // Null-terminate the list of addresses.
-          result->h_addr_list[1] = 0;
-          // And no aliases, so null-terminate h_aliases.
-          result->h_aliases = &result->h_addr_list[1];
-        }
-      else
-        {
-          // errno will have been set to S_hostLib_UNKNOWN_HOST.
-          result = 0;
-        }
-    }
-
-  ACE_OS::netdb_release ();
-  *h_errnop = errno;
-  return result;
-}
-
-#endif /* ACE_VXWORKS && ACE_LACKS_GETHOSTBYADDR */
-
-#if defined (ACE_VXWORKS) && defined (ACE_LACKS_GETHOSTBYNAME)
-
-struct hostent *
-ACE_OS::gethostbyname (const char *name)
-{
-  ACE_OS_TRACE ("ACE_OS::gethostbyname");
-
-  // not thread safe!
-  static hostent ret;
-  static int first_addr;
-  static char *hostaddr[2];
-  static char *aliases[1];
-
-  if (0 == name || '\0' == name[0])
-    return 0;
-
-  ACE_OSCALL (::hostGetByName (const_cast <char *> (name)), int, -1, first_addr);
-  if (first_addr == -1)
-    return 0;
-
-  hostaddr[0] = (char *) &first_addr;
-  hostaddr[1] = 0;
-  aliases[0] = 0;
-
-  // Might not be official: just echo input arg.
-  ret.h_name = (char *) name;
-  ret.h_addrtype = AF_INET;
-  ret.h_length = 4;  // VxWorks 5.2/3 doesn't define IP_ADDR_LEN;
-  ret.h_addr_list = hostaddr;
-  ret.h_aliases = aliases;
-
-  return &ret;
-}
-
-#endif /* ACE_VXWORKS && ACE_LACKS_GETHOSTBYNAME */
-
-#if defined (ACE_VXWORKS) && defined (ACE_LACKS_GETHOSTBYNAME)
-
-struct hostent *
-ACE_OS::gethostbyname_r (const char *name, hostent *result,
-                         ACE_HOSTENT_DATA buffer,
-                         int *h_errnop)
-{
-  ACE_OS_TRACE ("ACE_OS::gethostbyname_r");
-
-  if (0 == name || '\0' == name[0])
-    return 0;
-
-  if (ACE_OS::netdb_acquire ())
-    return 0;
-  else
-    {
-      int addr;
-      ACE_OSCALL (::hostGetByName (const_cast <char *> (name)), int, -1, addr);
-
-      if (addr == -1)
-        {
-          // errno will have been set to S_hostLib_UNKNOWN_HOST
-          result = 0;
-        }
-      else
-        {
-          // Might not be official: just echo input arg.
-          result->h_name = (char *) name;
-          result->h_addrtype = AF_INET;
-          result->h_length = 4;  // VxWorks 5.2/3 doesn't define IP_ADDR_LEN;
-
-          // buffer layout:
-          // buffer[0-3]: h_addr_list[0], pointer to the addr.
-          // buffer[4-7]: h_addr_list[1], null terminator for the h_addr_list.
-          // buffer[8-11]: the first (and only) addr.
-
-          // Store the address list in buffer.
-          result->h_addr_list = (char **) buffer;
-          // Store the actual address _after_ the address list.
-          result->h_addr_list[0] = (char *) &result->h_addr_list[2];
-          result->h_addr_list[2] = (char *) addr;
-          // Null-terminate the list of addresses.
-          result->h_addr_list[1] = 0;
-          // And no aliases, so null-terminate h_aliases.
-          result->h_aliases = &result->h_addr_list[1];
-        }
-    }
-
-  ACE_OS::netdb_release ();
-  *h_errnop = errno;
-  return result;
-}
-
-#endif /* ACE_VXWORKS && ACE_LACKS_GETHOSTBYNAME*/
-
-ACE_END_VERSIONED_NAMESPACE_DECL
+#if defined (ACE_LINUX) && !defined (ACE_LACKS_NETWORKING)
+#  include "ace/os_include/os_ifaddrs.h"
+#endif /* ACE_LINUX && !ACE_LACKS_NETWORKING */
 
 // Include if_arp so that getmacaddr can use the
 // arp structure.
@@ -356,17 +166,42 @@ ACE_OS::getmacaddress (struct macaddr_node_t *node)
 
   return 0;
 
-#elif defined (linux) && !defined (ACE_LACKS_NETWORKING)
+#elif defined (ACE_LINUX) && !defined (ACE_LACKS_NETWORKING)
+
+  // It's easiest to know the first MAC-using interface. Use the BSD
+  // getifaddrs function that simplifies access to connected interfaces.
+  struct ifaddrs *ifap = 0;
+  struct ifaddrs *p_if = 0;
+
+  if (::getifaddrs (&ifap) != 0)
+    return -1;
+
+  for (p_if = ifap; p_if != 0; p_if = p_if->ifa_next)
+    {
+      if (p_if->ifa_addr == 0)
+        continue;
+
+      // Check to see if it's up and is not either PPP or loopback
+      if ((p_if->ifa_flags & IFF_UP) == IFF_UP &&
+          (p_if->ifa_flags & (IFF_LOOPBACK | IFF_POINTOPOINT)) == 0)
+        break;
+    }
+  if (p_if == 0)
+    {
+      errno = ENODEV;
+      ::freeifaddrs (ifap);
+      return -1;
+    }
 
   struct ifreq ifr;
+  ACE_OS::strcpy (ifr.ifr_name, p_if->ifa_name);
+  ::freeifaddrs (ifap);
 
   ACE_HANDLE handle =
     ACE_OS::socket (PF_INET, SOCK_DGRAM, 0);
 
   if (handle == ACE_INVALID_HANDLE)
     return -1;
-
-  ACE_OS::strcpy (ifr.ifr_name, "eth0");
 
   if (ACE_OS::ioctl (handle/*s*/, SIOCGIFHWADDR, &ifr) < 0)
     {
@@ -385,7 +220,78 @@ ACE_OS::getmacaddress (struct macaddr_node_t *node)
 
   return 0;
 
-#elif defined (ACE_HAS_IPHONE) || defined (ACE_HAS_MAC_OSX)
+#elif defined (__ANDROID_API__) && defined (ACE_HAS_SIOCGIFCONF) && !defined (ACE_LACKS_NETWORKING)
+
+  struct ifconf ifc;
+  struct ifreq ifr_buf[32];
+
+
+  ACE_HANDLE handle =
+    ACE_OS::socket (AF_INET, SOCK_DGRAM, 0);
+
+  if (handle == ACE_INVALID_HANDLE)
+    {
+      return -1;
+    }
+
+
+  ifc.ifc_len = sizeof(ifr_buf);
+  ifc.ifc_req = &ifr_buf[0];
+
+  if (ACE_OS::ioctl (handle, SIOCGIFCONF, &ifc) < 0)
+    {
+      ACE_OS::close (handle);
+      return -1;
+    }
+
+  int numif = ifc.ifc_len / sizeof(struct ifreq);
+
+  // find first eligible device
+  struct ifreq* ifr = 0;
+  for (int i=0; i< numif ;++i)
+    {
+      ifr = &ifr_buf[i];
+
+      // get device flags
+      if (ACE_OS::ioctl (handle, SIOCGIFFLAGS, ifr) < 0)
+        {
+          ACE_OS::close (handle);
+          return -1;
+        }
+
+      // Check to see if it's up and is not either PPP or loopback
+      if ((ifr->ifr_flags & IFF_UP) == IFF_UP &&
+          (ifr->ifr_flags & (IFF_LOOPBACK | IFF_POINTOPOINT)) == 0)
+        break;
+
+      ifr = 0;
+    }
+  // did we find any?
+  if (ifr == 0)
+    {
+      ACE_OS::close (handle);
+      errno = ENODEV;
+      return -1;
+    }
+
+  if (ACE_OS::ioctl (handle, SIOCGIFHWADDR, ifr) < 0)
+    {
+      ACE_OS::close (handle);
+      return -1;
+    }
+
+  struct sockaddr* sa =
+    (struct sockaddr *) &ifr->ifr_hwaddr;
+
+  ACE_OS::close (handle);
+
+  ACE_OS::memcpy (node->node,
+                  sa->sa_data,
+                  6);
+
+  return 0;
+
+#elif defined (ACE_HAS_SIOCGIFCONF) && !defined (__ANDROID_API__)
 
   const long BUFFERSIZE = 4000;
   char buffer[BUFFERSIZE];

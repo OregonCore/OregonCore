@@ -1,5 +1,3 @@
-// $Id: config-kfreebsd.h 91743 2010-09-13 18:24:51Z johnnyw $
-
 #ifndef ACE_CONFIG_KFREEBSD_H
 #define ACE_CONFIG_KFREEBSDH
 #include "ace/config-g++-common.h"
@@ -153,13 +151,6 @@
 /* Platform contains <poll.h> */
 #define ACE_HAS_POLL 1
 
-/* Platform supports "position-independent" features provided by
-   ACE_Based_Pointer<>. */
-#define ACE_HAS_POSITION_INDEPENDENT_POINTERS 1
-
-/* Platform supports POSIX getpwnam_r() function */
-#define ACE_HAS_POSIX_GETPWNAM_R 1
-
 /* Platform supports POSIX O_NONBLOCK semantics */
 #define ACE_HAS_POSIX_NONBLOCK 1
 
@@ -175,9 +166,6 @@
 
 /* Define to 1 if platform has POSIX threads */
 #define ACE_HAS_PTHREADS 1
-
-/* Platform supports POSIX.1c-1995 threads */
-#define ACE_HAS_PTHREADS_STD 1
 
 /* Platform has the UNIX98 extensions to Pthreads (rwlocks) */
 #define ACE_HAS_PTHREADS_UNIX98_EXT 1
@@ -300,7 +288,7 @@
 #define ACE_HAS_SYSCTL 1
 
 /* Platform supports System V IPC (most versions of UNIX, but not Win32) */
-#define ACE_HAS_SYSV_IPC 1
+#define ACE_HAS_SYSV_IPC
 
 /* Platform/compiler supports _sys_errlist symbol */
 #define ACE_HAS_SYS_ERRLIST 1
@@ -555,7 +543,7 @@
 #define LT_OBJDIR ".libs/"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "ace-bugs@cs.wustl.edu"
+#define PACKAGE_BUGREPORT "ace-bugs@list.isis.vanderbilt.edu"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "ACE"

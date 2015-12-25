@@ -4,8 +4,6 @@
 /**
  *  @file    Handle_Set.h
  *
- *  $Id: Handle_Set.h 92298 2010-10-21 11:15:17Z johnnyw $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  */
 //=============================================================================
@@ -29,6 +27,10 @@
 #else /* !FD_SETSIZE */
 #  define ACE_FD_SETSIZE FD_SETSIZE
 #endif /* ACE_FD_SETSIZE */
+
+#if defined(FD_SETSIZE) && defined(__FD_SETSIZE) && (FD_SETSIZE > __FD_SETSIZE)
+#error FD_SETSIZE definition is too large, please correct!
+#endif
 
 #if !defined (ACE_DEFAULT_SELECT_REACTOR_SIZE)
 #  define ACE_DEFAULT_SELECT_REACTOR_SIZE ACE_FD_SETSIZE
@@ -58,7 +60,6 @@ public:
     MAXSIZE = ACE_DEFAULT_SELECT_REACTOR_SIZE
   };
 
-  // = Initialization methods.
   /// Constructor, initializes the bitmask to all 0s.
   ACE_Handle_Set (void);
 

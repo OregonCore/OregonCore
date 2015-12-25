@@ -4,8 +4,6 @@
 /**
  *  @file   OS_NS_sys_time.h
  *
- *  $Id: OS_NS_sys_time.h 87823 2009-11-30 12:38:34Z johnnyw $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  *  @author Jesper S. M|ller<stophph@diku.dk>
  *  @author and a cast of thousands...

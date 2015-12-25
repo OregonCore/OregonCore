@@ -1,7 +1,5 @@
 // -*- C++ -*-
 //
-//$Id: UUID.inl 85331 2009-05-14 00:04:12Z hillj $
-
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
 namespace ACE_Utils

@@ -4,8 +4,6 @@
 /**
  *  @file    TSS_Adapter.h
  *
- *  $Id: TSS_Adapter.h 80826 2008-03-04 14:51:23Z wotte $
- *
  *   Originally in Synch.h
  *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
@@ -30,8 +28,7 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
  * @brief This class encapsulates a TSS object and its associated
  * C++ destructor function.  It is used by the ACE_TSS...
  * methods (in Synch_T.cpp) in order to allow an extern
- * "C" cleanup routine to be used.  Needed by the "frigging"
- * MVS C++ compiler.
+ * "C" cleanup routine to be used.
  *
  * Objects of this class are stored in thread specific
  * storage. ts_obj_ points to the "real" object and

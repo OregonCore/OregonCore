@@ -1,5 +1,3 @@
-// $Id: OS_NS_sys_sendfile.cpp 84216 2009-01-22 18:34:40Z johnnyw $
-
 #include "ace/OS_NS_sys_sendfile.h"
 #include "ace/OS_NS_sys_mman.h"
 

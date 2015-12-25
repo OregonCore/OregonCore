@@ -4,8 +4,6 @@
 /**
  *  @file    Caching_Strategies_T.h
  *
- *  $Id: Caching_Strategies_T.h 92097 2010-09-30 05:41:49Z msmit $
- *
  *  @author Kirthika Parameswaran <kirthika@cs.wustl.edu>
  */
 //=============================================================================

@@ -1,5 +1,3 @@
-// $Id: Based_Pointer_Repository.cpp 80826 2008-03-04 14:51:23Z wotte $
-
 #include "ace/Map_Manager.h"
 #include "ace/Based_Pointer_Repository.h"
 #include "ace/Guard_T.h"
@@ -111,9 +109,7 @@ ACE_Based_Pointer_Repository::unbind (void *addr)
   return 0;
 }
 
-#if defined (ACE_HAS_EXPLICIT_STATIC_TEMPLATE_MEMBER_INSTANTIATION)
-template ACE_Singleton<ACE_Based_Pointer_Repository, ACE_SYNCH_RW_MUTEX> *
-  ACE_Singleton<ACE_Based_Pointer_Repository, ACE_SYNCH_RW_MUTEX>::singleton_;
-#endif /* ACE_HAS_EXPLICIT_STATIC_TEMPLATE_MEMBER_INSTANTIATION */
+ACE_SINGLETON_TEMPLATE_INSTANTIATE(ACE_Singleton, ACE_Based_Pointer_Repository, ACE_SYNCH_RW_MUTEX);
+
 
 ACE_END_VERSIONED_NAMESPACE_DECL

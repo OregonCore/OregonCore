@@ -1,11 +1,7 @@
-// $Id: Thread_Exit.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/Thread_Exit.h"
 #include "ace/Managed_Object.h"
 #include "ace/Thread_Manager.h"
 #include "ace/Guard_T.h"
-
-
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 

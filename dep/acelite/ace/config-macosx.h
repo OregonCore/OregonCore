@@ -1,6 +1,4 @@
 /* -*- C++ -*- */
-// $Id: config-macosx.h 91693 2010-09-09 12:57:54Z johnnyw $
-
 // This configuration file is designed to work with the MacOS X operating system, version 10.2 (Jaguar).
 
 #ifndef ACE_CONFIG_MACOSX_H
@@ -51,6 +49,8 @@
 #define ACE_LACKS_GETPGID
 #define ACE_LACKS_RWLOCK_T
 
+#define ACE_HAS_SIOCGIFCONF
+
 // Optimize ACE_Handle_Set for select().
 #define ACE_HAS_HANDLE_SET_OPTIMIZED_FOR_SELECT
 
@@ -74,9 +74,6 @@
 #define ACE_LACKS_STRRECVFD
 
 #define ACE_HAS_SOCKADDR_IN6_SIN6_LEN
-
-// Platform supports System V IPC (most versions of UNIX, but not Win32)
-//#define ACE_HAS_SYSV_IPC
 
 // Compiler/platform contains the <sys/syscall.h> file.
 #define ACE_HAS_SYS_SYSCALL_H

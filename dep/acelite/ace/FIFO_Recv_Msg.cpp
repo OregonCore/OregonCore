@@ -1,14 +1,10 @@
-// $Id: FIFO_Recv_Msg.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/FIFO_Recv_Msg.h"
 
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 
 #if !defined (__ACE_INLINE__)
 #include "ace/FIFO_Recv_Msg.inl"
 #endif /* __ACE_INLINE__ */
-
-
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -61,7 +57,7 @@ ACE_FIFO_Recv_Msg::ACE_FIFO_Recv_Msg (const ACE_TCHAR *fifo_name,
                                      perms,
                                      persistent,
                                      sa) == -1)
-    ACE_ERROR ((LM_ERROR,  ACE_TEXT ("%p\n"),  ACE_TEXT ("ACE_FIFO_Recv_Msg")));
+    ACELIB_ERROR ((LM_ERROR,  ACE_TEXT ("%p\n"),  ACE_TEXT ("ACE_FIFO_Recv_Msg")));
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL

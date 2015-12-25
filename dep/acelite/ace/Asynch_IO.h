@@ -4,8 +4,6 @@
 /**
  *  @file    Asynch_IO.h
  *
- *  $Id: Asynch_IO.h 84837 2009-03-16 13:01:15Z johnnyw $
- *
  *  This works on Win32 (defined (ACE_WIN32) && !defined
  *  (ACE_HAS_WINCE)) platforms and on POSIX4 platforms with {aio_*}
  *  routines (defined (ACE_HAS_AIO_CALLS))
@@ -1697,6 +1695,7 @@ protected:
   /// Refers to proxy for this handler.
   ACE_Refcounted_Auto_Ptr<Proxy, ACE_SYNCH_MUTEX> proxy_;
 
+private:
   ACE_UNIMPLEMENTED_FUNC (ACE_Handler (const ACE_Handler &))
   ACE_UNIMPLEMENTED_FUNC (ACE_Handler operator= (const ACE_Handler &))
 };

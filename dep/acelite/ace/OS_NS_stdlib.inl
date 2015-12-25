@@ -1,13 +1,13 @@
 // -*- C++ -*-
-//
-// $Id: OS_NS_stdlib.inl 91683 2010-09-09 09:07:49Z johnnyw $
-
 #include "ace/config-all.h"           /* Need ACE_TRACE */
 #include "ace/Object_Manager_Base.h"
 #include "ace/OS_NS_string.h"
 #include "ace/Global_Macros.h"
 #include "ace/os_include/os_errno.h"
 #include "ace/os_include/os_search.h"
+#if defined (ACE_ANDROID) && (__ANDROID_API__ < 19)
+# include "ace/os_include/os_signal.h"
+#endif
 
 #if defined (ACE_WCHAR_IN_STD_NAMESPACE)
 # define ACE_WCHAR_STD_NAMESPACE std
@@ -35,12 +35,13 @@ ACE_OS::_exit (int status)
 ACE_INLINE void
 ACE_OS::abort (void)
 {
-#if !defined (ACE_HAS_WINCE)
+#if defined (ACE_ANDROID) && (__ANDROID_API__ < 19)
+  ACE_OS::_exit (128 + SIGABRT);
+#elif !defined (ACE_LACKS_ABORT)
   ::abort ();
 #else
-  // @@ CE doesn't support abort?
   exit (1);
-#endif /* !ACE_HAS_WINCE */
+#endif /* !ACE_LACKS_ABORT */
 }
 
 ACE_INLINE int
@@ -268,24 +269,26 @@ ACE_OS::mkstemp (wchar_t *s)
 }
 #endif /* ACE_HAS_WCHAR */
 
-#if !defined (ACE_LACKS_MKTEMP)
+#if !defined (ACE_DISABLE_MKTEMP)
+
+#  if !defined (ACE_LACKS_MKTEMP)
 ACE_INLINE char *
 ACE_OS::mktemp (char *s)
 {
-# if defined (ACE_WIN32)
+#    if defined (ACE_WIN32)
   return ::_mktemp (s);
-# else /* ACE_WIN32 */
+#    else /* ACE_WIN32 */
   return ::mktemp (s);
-# endif /* ACE_WIN32 */
+#    endif /* ACE_WIN32 */
 }
 
-#  if defined (ACE_HAS_WCHAR)
+#    if defined (ACE_HAS_WCHAR)
 ACE_INLINE wchar_t *
 ACE_OS::mktemp (wchar_t *s)
 {
-#    if defined (ACE_WIN32)
+#      if defined (ACE_WIN32)
   return ::_wmktemp (s);
-#    else
+#      else
   // For narrow-char filesystems, we must convert the wide-char input to
   // a narrow-char string for mktemp (), then convert the name back to
   // wide-char for the caller.
@@ -295,11 +298,12 @@ ACE_OS::mktemp (wchar_t *s)
   ACE_Ascii_To_Wide wide_s (narrow_s.char_rep ());
   ACE_OS::strcpy (s, wide_s.wchar_rep ());
   return s;
-#    endif
+#      endif
 }
 #  endif /* ACE_HAS_WCHAR */
 
-#endif /* !ACE_LACKS_MKTEMP */
+#  endif /* !ACE_LACKS_MKTEMP */
+#endif /* !ACE_DISABLE_MKTEMP */
 
 ACE_INLINE int
 ACE_OS::putenv (const char *string)
@@ -403,44 +407,24 @@ ACE_OS::rand (void)
   ACE_OSCALL_RETURN (::rand (), int, -1);
 }
 
-#if !defined (ACE_WIN32)
-
 ACE_INLINE int
-ACE_OS::rand_r (ACE_RANDR_TYPE &seed)
+ACE_OS::rand_r (unsigned int *seed)
 {
   ACE_OS_TRACE ("ACE_OS::rand_r");
-# if defined (ACE_HAS_REENTRANT_FUNCTIONS) && \
-    !defined (ACE_LACKS_RAND_REENTRANT_FUNCTIONS)
-#   if defined (ACE_HAS_BROKEN_RANDR)
-  ACE_OSCALL_RETURN (::rand_r (seed), int, -1);
-#   else
-  ACE_OSCALL_RETURN (::rand_r (&seed), int, -1);
-#   endif /* ACE_HAS_BROKEN_RANDR */
-# else
-  ACE_UNUSED_ARG (seed);
-  ACE_OSCALL_RETURN (::rand (), int, -1);
-# endif /* ACE_HAS_REENTRANT_FUNCTIONS */
-}
-
-#else /* ACE_WIN32 */
-
-ACE_INLINE int
-ACE_OS::rand_r (ACE_RANDR_TYPE& seed)
-{
-  ACE_OS_TRACE ("ACE_OS::rand_r");
-
-  long new_seed = (long) (seed);
+#if defined (ACE_LACKS_RAND_R)
+  long new_seed = (long) *seed;
   if (new_seed == 0)
     new_seed = 0x12345987;
   long temp = new_seed / 127773;
   new_seed = 16807 * (new_seed - temp * 127773) - 2836 * temp;
   if (new_seed < 0)
     new_seed += 2147483647;
- (seed) = (unsigned int)new_seed;
+  *seed = (unsigned int)new_seed;
   return (int) (new_seed & RAND_MAX);
+#else
+  return ::rand_r (seed);
+# endif /* ACE_LACKS_RAND_R */
 }
-
-#endif /* !ACE_WIN32 */
 
 #  if !defined (ACE_LACKS_REALPATH)
 ACE_INLINE char *
@@ -612,8 +596,6 @@ ACE_OS::system (const ACE_TCHAR *s)
   ACE_NOTSUP_RETURN (-1);
 #elif defined (ACE_WIN32) && defined (ACE_USES_WCHAR)
   ACE_OSCALL_RETURN (::_wsystem (s), int, -1);
-#elif defined (ACE_TANDEM_T1248_PTHREADS)
-  ACE_OSCALL_RETURN (::spt_system (s), int, -1);
 #else
   ACE_OSCALL_RETURN (::system (ACE_TEXT_ALWAYS_CHAR (s)), int, -1);
 #endif /* ACE_LACKS_SYSTEM */

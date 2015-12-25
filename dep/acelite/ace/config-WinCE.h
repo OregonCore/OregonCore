@@ -1,5 +1,3 @@
-// $Id: config-WinCE.h 89494 2010-03-15 20:11:18Z olli $
-
 // Note: For WinCE build, simply use: #include "ace/config-win32.h"
 //       It is same as config.h for Windows NT/2k so that you can
 //       share same files and directories for both WinCE and NT/2k
@@ -53,6 +51,7 @@
 // the information using getenv.
 #define ACE_DEFAULT_LD_SEARCH_PATH ACE_TEXT (".\\;\\windows")
 
+#define ACE_LACKS_ABORT
 #define ACE_LACKS_FCNTL_H
 #define ACE_LACKS_SYS_TYPES_H
 #define ACE_LACKS_GETCWD
@@ -61,6 +60,7 @@
 #define ACE_LACKS_GMTIME
 #define ACE_LACKS_GMTIME_R
 #define ACE_LACKS_LOCALTIME
+#define ACE_LACKS_STRTOK_R
 #define ACE_LACKS_PERROR
 #define ACE_LACKS_STRFTIME
 #define ACE_LACKS_WIN32_SETFILEPOINTEREX
@@ -73,8 +73,6 @@
 #define ACE_LACKS_TZSET
 #define ACE_LACKS_RAISE
 #define ACE_LACKS_BSEARCH
-
-#define ACE_HAS_POSITION_INDEPENDENT_POINTERS 1
 
 #define ACE_LACKS_MSG_WFMO
 #define ACE_LACKS_UMASK

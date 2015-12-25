@@ -4,8 +4,6 @@
 /**
  *  @file    Barrier.h
  *
- *  $Id: Barrier.h 92069 2010-09-28 11:38:59Z johnnyw $
- *
  *   Moved from Synch.h.
  *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
@@ -101,7 +99,7 @@ public:
                const ACE_TCHAR *name = 0,
                void *arg = 0);
 
-  /// Default dtor.
+  /// Default destructor.
   ~ACE_Barrier (void);
 
   /// Block the caller until all @c count threads have called @c wait and
@@ -170,7 +168,7 @@ public:
   /// Create a Thread_Barrier, passing in the optional @a name.
   ACE_Thread_Barrier (unsigned int count, const ACE_TCHAR *name = 0);
 
-  /// Default dtor.
+  /// Default destructor.
   ~ACE_Thread_Barrier (void);
 
   /// Dump the state of an object.

@@ -1,6 +1,4 @@
 /* -*- C++ -*- */
-// $Id: config-sunos5.4-g++.h 87268 2009-10-29 21:06:06Z olli $
-
 // The following configuration file is designed to work for SunOS 5.4
 // platforms using the GNU g++ compiler.
 
@@ -33,9 +31,6 @@
 
 // Sun has the wrong prototype for sendmsg.
 #define ACE_HAS_NONCONST_SENDMSG
-
-// The SunOS 5.x version of rand_r is inconsistent with the header files...
-#define ACE_HAS_BROKEN_RANDR
 
 // Platform supports system configuration information.
 #define ACE_HAS_SYS_SYSTEMINFO_H

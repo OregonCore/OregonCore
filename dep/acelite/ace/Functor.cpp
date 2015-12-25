@@ -3,12 +3,9 @@
 /**
  *  @file    Functor.cpp
  *
- *  $Id: Functor.cpp 91286 2010-08-05 09:04:31Z johnnyw $
- *
  *  Non-inlinable method definitions for non-templatized classes
  *  and template specializations implementing the GOF Command Pattern,
  *  and STL-style functors.
- *
  *
  *  @author Chris Gill           <cdgill@cs.wustl.edu>
  *
@@ -38,6 +35,16 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
 ACE_Command_Base::~ACE_Command_Base (void)
 {
+}
+
+ACE_Noop_Command::ACE_Noop_Command()
+{
+}
+
+int
+ACE_Noop_Command::execute(void*)
+{
+  return 0;
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL

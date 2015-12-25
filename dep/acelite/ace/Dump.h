@@ -4,9 +4,6 @@
 /**
  *  @file    Dump.h
  *
- *  $Id: Dump.h 80826 2008-03-04 14:51:23Z wotte $
- *
- *
  * A prototype mechanism that allow all ACE objects to be registered
  * with a central in-memory "database" that can dump the state of all
  * live ACE objects (e.g., from within a debugger).
@@ -41,7 +38,6 @@
  *
  * 2. Adding support to allow particular classes of objects to
  *  be selectively dumped.
- *
  *
  *  @author Doug Schmidt
  */
@@ -149,7 +145,7 @@ private:
     /// and we'll have to check for that).
     const ACE_Dumpable_Ptr dumper_;
 
-    Tuple (void) : dumper_(0) {}
+    Tuple (void) : this_ (0), dumper_(0) {}
   };
 
   /// Singleton instance of this class.

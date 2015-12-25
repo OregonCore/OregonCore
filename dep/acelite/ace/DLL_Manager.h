@@ -4,8 +4,6 @@
 /**
  *  @file    DLL_Manager.h
  *
- *  $Id: DLL_Manager.h 91064 2010-07-12 10:11:24Z johnnyw $
- *
  *  @author Don Hinton <dhinton@ieee.org>
  */
 //=============================================================================
@@ -22,7 +20,7 @@
 
 #include "ace/Auto_Ptr.h"
 #include "ace/Containers_T.h"
-#include "ace/SStringfwd.h"
+#include "ace/SString.h"
 #include "ace/os_include/os_dlfcn.h"
 
 #if defined (ACE_MT_SAFE) && (ACE_MT_SAFE != 0)
@@ -52,11 +50,13 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
  * Most of this class came from the original ACE_DLL class.  ACE_DLL
  * is now just an interface that passed all it's calls either directly
  * or via ACE_DLL_Manager to this class for execution.
- *
  */
 class ACE_Export ACE_DLL_Handle
 {
 public:
+
+  /// Error stack. Fixed size should suffice. Ignores any errors exceeding the size.
+  typedef ACE_Fixed_Stack < ACE_TString, 10 >  ERROR_STACK;
 
   /// Default construtor.
   ACE_DLL_Handle (void);
@@ -68,18 +68,51 @@ public:
   const ACE_TCHAR *dll_name () const;
 
   /**
-   * This method opens and dynamically links @a dll_name.  The default
-   * mode is @c RTLD_LAZY, which loads identifier symbols but not the
-   * symbols for functions, which are loaded dynamically on-demand.
-   * Other supported modes include: @c RTLD_NOW, which performs all
-   * necessary relocations when @a dll_name is first loaded and
-   * @c RTLD_GLOBAL, which makes symbols available for relocation
-   * processing of any other DLLs.  Returns -1 on failure and 0 on
-   * success.
+   * This method opens and dynamically links a library/DLL.
+   * @param dll_name  The filename or path of the DLL to load. ACE will
+   *        attempt to apply the platform's standard library/DLL prefixes
+   *        and suffixes, allowing a simple, unadorned name to be passed
+   *        regardless of platform. The set of name transforms is listed
+   *        below. A @i decorator is a platform's name designator for a debug
+   *        vs release build. For example, on Windows it is usually "d".
+   *        @li Prefix + name + decorator + suffix
+   *        @li Prefix + name + suffix
+   *        @li Name + decorator + suffix
+   *        @li Name + suffix
+   *        @li Name
+   *        Note that the transforms with @i decorator will be avoided if
+   *        ACE is built with the @c ACE_DISABLE_DEBUG_DLL_CHECK config macro.
+   *
+   *        @Note There is another mode for locating library/DLL files that
+   *        was used in old versions of ACE. The alternate method builds
+   *        more combinations of pathname by combining the names transforms
+   *        above with locations listed in the platform's standard "path"
+   *        locations (e.g., @c LD_LIBRARY_PATH). It can be enabled by building
+   *        ACE with the @c ACE_MUST_HELP_DLOPEN_SEARCH_PATH config macro.
+   *        Use of this option is discouraged since it avoids the standard
+   *        platform search options and security mechanisms.
+   *
+   * @param open_mode  Flags to alter the actions taken when loading the DLL.
+   *        The possible values are:
+   *        @li @c RTLD_LAZY (this the default): loads identifier symbols but
+   *            not the symbols for functions, which are loaded dynamically
+   *            on demand.
+   *        @li @c RTLD_NOW: performs all necessary relocations when
+   *            @a dll_name is first loaded
+   *        @li @c RTLD_GLOBAL: makes symbols available for relocation
+   *            processing of any other DLLs.
+   * @param handle If a value other than @c ACE_INVALID_HANDLE is supplied,
+   *        this object is assigned the specified handle instead of attempting
+   *        to open the specified @a dll_name.
+   * @param errors Optional address of an error stack to collect any errors
+   *        encountered.
+   * @retval -1 On failure
+   * @retval 0 On success.
    */
   int open (const ACE_TCHAR *dll_name,
             int open_mode,
-            ACE_SHLIB_HANDLE handle);
+            ACE_SHLIB_HANDLE handle,
+            ERROR_STACK *errors = 0);
 
   /// Call to close the DLL object.  If unload = 0, it only decrements
   /// the refcount, but if unload = 1, then it will actually unload
@@ -94,21 +127,25 @@ public:
   /// ignore_errors flag to supress logging errors if symbol_name isn't
   /// found.  This is nice if you just want to probe a dll to see what's
   /// available, since missing functions in that case aren't really errors.
-  void *symbol (const ACE_TCHAR *symbol_name, int ignore_errors = 0);
+  void *symbol (const ACE_TCHAR *symbol_name, bool ignore_errors = false);
+
+  /// Resolves and returns any error encountered.
+  void *symbol (const ACE_TCHAR *symbol_name, bool ignore_errors,
+                ACE_TString &error);
 
   /**
-   * Return the handle to the caller.  If @a become_owner is non-0 then
+   * Return the handle to the caller.  If @a become_owner is true then
    * caller assumes ownership of the handle so we decrement the retcount.
    */
-  ACE_SHLIB_HANDLE get_handle (int become_owner = 0);
+  ACE_SHLIB_HANDLE get_handle (bool become_owner = false);
 
 private:
 
-  /// Returns a pointer to a string explaining why <symbol> or <open>
-  /// failed.  This is used internal to print out the error to the log,
+  /// Returns a string explaining why <symbol> or <open>
+  /// failed in @a err.  This is used internal to print out the error to the log,
   /// but since this object is shared, we can't store or return the error
   /// to the caller.
-  auto_ptr <ACE_TString> error (void);
+  ACE_TString& error (ACE_TString& err);
 
   /// Builds array of DLL names to try to dlopen, based on platform
   /// and configured DLL prefixes/suffixes.
@@ -177,7 +214,6 @@ class ACE_Framework_Repository;
  *
  *  ACE_DLL_UNLOAD_POLICY_DEFAULT - Default policy allows dlls to control
  *  their own destinies, but will unload those that don't make a choice eagerly.
- *
  */
 class ACE_Export ACE_DLL_Manager
 {
@@ -197,7 +233,8 @@ public:
   /// its refcount is incremented.
   ACE_DLL_Handle *open_dll (const ACE_TCHAR *dll_name,
                             int openmode,
-                            ACE_SHLIB_HANDLE handle);
+                            ACE_SHLIB_HANDLE handle,
+                            ACE_DLL_Handle::ERROR_STACK *errors = 0);
 
   /// Close the underlying dll.  Decrements the refcount.
   int close_dll (const ACE_TCHAR *dll_name);

@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: SV_Semaphore_Simple.inl 80826 2008-03-04 14:51:23Z wotte $
-
 #include "ace/Global_Macros.h"
 #include "ace/OS_NS_Thread.h"
 

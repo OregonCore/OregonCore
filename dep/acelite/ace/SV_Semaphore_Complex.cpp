@@ -1,7 +1,5 @@
-// $Id: SV_Semaphore_Complex.cpp 91321 2010-08-09 06:38:18Z johnnyw $
-
 #include "ace/SV_Semaphore_Complex.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 #include "ace/OS_NS_Thread.h"
 
 #if !defined (__ACE_INLINE__)
@@ -218,7 +216,7 @@ ACE_SV_Semaphore_Complex::ACE_SV_Semaphore_Complex (key_t k,
 {
   ACE_TRACE ("ACE_SV_Semaphore_Complex::ACE_SV_Semaphore_Complex");
   if (this->open (k, flags, initial_value, nsems, perms) == -1)
-    ACE_ERROR ((LM_ERROR,  ACE_TEXT ("%p\n"),  ACE_TEXT ("ACE_SV_Semaphore_Complex")));
+    ACELIB_ERROR ((LM_ERROR,  ACE_TEXT ("%p\n"),  ACE_TEXT ("ACE_SV_Semaphore_Complex")));
 }
 
 ACE_SV_Semaphore_Complex::ACE_SV_Semaphore_Complex (const char *name,
@@ -237,7 +235,7 @@ ACE_SV_Semaphore_Complex::ACE_SV_Semaphore_Complex (const char *name,
     key = this->name_2_key (name);
 
   if (this->open (key, flags, initial_value, nsems, perms) == -1)
-    ACE_ERROR ((LM_ERROR,  ACE_TEXT ("%p\n"),  ACE_TEXT ("ACE_SV_Semaphore_Complex")));
+    ACELIB_ERROR ((LM_ERROR,  ACE_TEXT ("%p\n"),  ACE_TEXT ("ACE_SV_Semaphore_Complex")));
 }
 
 ACE_SV_Semaphore_Complex::~ACE_SV_Semaphore_Complex (void)

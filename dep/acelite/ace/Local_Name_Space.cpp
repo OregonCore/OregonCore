@@ -1,5 +1,3 @@
-// $Id: Local_Name_Space.cpp 91287 2010-08-05 10:30:49Z johnnyw $
-
 #include "ace/Local_Name_Space.h"
 #include "ace/ACE.h"
 #include "ace/RW_Process_Mutex.h"

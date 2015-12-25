@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: Service_Repository.inl 84170 2009-01-15 13:31:50Z johnnyw $
-
 // Returns a count of the number of currently valid entries (counting
 // both resumed and suspended entries).
 

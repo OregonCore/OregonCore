@@ -4,8 +4,6 @@
 /**
  *  @file    Trace.h
  *
- *  $Id: Trace.h 87823 2009-11-30 12:38:34Z johnnyw $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  */
 //=============================================================================

@@ -1,19 +1,18 @@
-// $Id: Thread_Hook.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/Thread_Hook.h"
 #include "ace/Object_Manager_Base.h"
 
-
-
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
+
+ACE_Thread_Hook::ACE_Thread_Hook()
+{
+}
 
 ACE_Thread_Hook::~ACE_Thread_Hook ()
 {
 }
 
 ACE_THR_FUNC_RETURN
-ACE_Thread_Hook::start (ACE_THR_FUNC func,
-                        void *arg)
+ACE_Thread_Hook::start (ACE_THR_FUNC func, void *arg)
 {
   return (func) (arg);
 }

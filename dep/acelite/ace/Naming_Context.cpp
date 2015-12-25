@@ -1,11 +1,10 @@
-// $Id: Naming_Context.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/Get_Opt.h"
 #include "ace/Naming_Context.h"
 #include "ace/Remote_Name_Space.h"
 #include "ace/Local_Name_Space_T.h"
 #include "ace/Registry_Name_Space.h"
 #include "ace/MMAP_Memory_Pool.h"
+#include "ace/Lib_Find.h"
 #include "ace/RW_Process_Mutex.h"
 #include "ace/OS_NS_string.h"
 #include "ace/OS_NS_unistd.h"
@@ -110,7 +109,7 @@ ACE_Naming_Context::open (Context_Scope_Type scope_in, int lite)
     }
 
   if (ACE_LOG_MSG->op_status () != 0 || this->name_space_ == 0)
-    ACE_ERROR_RETURN ((LM_ERROR,
+    ACELIB_ERROR_RETURN ((LM_ERROR,
                        ACE_TEXT ("NAME_SPACE::NAME_SPACE\n")),
                       -1);
   return 0;
@@ -140,7 +139,8 @@ ACE_Naming_Context::close (void)
 
 ACE_Naming_Context::ACE_Naming_Context (void)
   : name_options_ (0),
-    name_space_ (0)
+    name_space_ (0),
+    netnameserver_host_ (0)
 {
   ACE_TRACE ("ACE_Naming_Context::ACE_Naming_Context");
 
@@ -161,7 +161,7 @@ ACE_Naming_Context::ACE_Naming_Context (Context_Scope_Type scope_in,
 
   // Initialize.
   if (this->open (scope_in, lite) == -1)
-    ACE_ERROR ((LM_ERROR,
+    ACELIB_ERROR ((LM_ERROR,
                 ACE_TEXT ("%p\n"),
                 ACE_TEXT ("ACE_Naming_Context::ACE_Naming_Context")));
 }
@@ -398,7 +398,7 @@ int
 ACE_Naming_Context::init (int argc, ACE_TCHAR *argv[])
 {
   if (ACE::debug ())
-    ACE_DEBUG ((LM_DEBUG,
+    ACELIB_DEBUG ((LM_DEBUG,
                 ACE_TEXT ("ACE_Naming_Context::init\n")));
   this->name_options_->parse_args (argc, argv);
   return this->open (this->name_options_->context ());
@@ -408,7 +408,7 @@ int
 ACE_Naming_Context::fini (void)
 {
   if (ACE::debug ())
-    ACE_DEBUG ((LM_DEBUG,
+    ACELIB_DEBUG ((LM_DEBUG,
                 ACE_TEXT ("ACE_Naming_Context::fini\n")));
   this->close_down ();
   return 0;
@@ -434,7 +434,7 @@ ACE_Name_Options::ACE_Name_Options (void)
 
   if (ACE::get_temp_dir (this->namespace_dir_, MAXPATHLEN) == -1)
     {
-      ACE_ERROR ((LM_ERROR,
+      ACELIB_ERROR ((LM_ERROR,
                   ACE_TEXT ("Temporary path too long, ")
                   ACE_TEXT ("defaulting to current directory\n")));
       ACE_OS::strcpy (this->namespace_dir_, ACE_TEXT ("."));
@@ -626,7 +626,7 @@ ACE_Name_Options::parse_args (int argc, ACE_TCHAR *argv[])
                          "\t[-b base address]\n"
                          "\t[-v] (verbose)\n"
                          "\t[-r] (use Win32 Registry)\n",
-                         argv[0]);
+                         ACE_TEXT_ALWAYS_CHAR (argv[0]));
         /* NOTREACHED */
         break;
       }

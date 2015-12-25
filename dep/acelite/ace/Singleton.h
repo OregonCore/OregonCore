@@ -4,8 +4,6 @@
 /**
  *  @file    Singleton.h
  *
- *  $Id: Singleton.h 84273 2009-01-30 12:55:25Z johnnyw $
- *
  *  @brief
  *
  *  @author Tim Harrison <harrison@cs.wustl.edu>

@@ -3,8 +3,6 @@
 /**
  *  @file   Codeset_Registry.h
  *
- *  $Id: Codeset_Registry.h 81348 2008-04-14 09:00:32Z johnnyw $
- *
  * ACE wrapper around access functions for the OSF's DCE codeset registry
  * access functions
  *
@@ -32,10 +30,6 @@
 #if !defined (ACE_LACKS_PRAGMA_ONCE)
 # pragma once
 #endif /* ACE_LACKS_PRAGMA_ONCE */
-
-#if defined (ACE_HAS_DCE_CODESET_REGISTRY)
-#include /**/ <dce/rpc.h>
-#endif /* ACE_HAS_DCE_CODESET_REGISTRY */
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 

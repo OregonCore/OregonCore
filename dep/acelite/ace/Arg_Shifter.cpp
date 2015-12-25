@@ -1,5 +1,3 @@
-// $Id: Arg_Shifter.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #ifndef ACE_ARG_SHIFTER_T_CPP
 #define ACE_ARG_SHIFTER_T_CPP
 

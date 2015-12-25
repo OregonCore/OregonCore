@@ -1,9 +1,4 @@
-// $Id: Object_Manager_Base.cpp 92069 2010-09-28 11:38:59Z johnnyw $
-
 #include "ace/Object_Manager_Base.h"
-
-
-
 #include "ace/OS_Memory.h"
 #include "ace/OS_NS_Thread.h"
 #include "ace/OS_NS_sys_socket.h"
@@ -261,10 +256,14 @@ ACE_OS_Object_Manager::init (void)
       // been initialized.
       object_manager_state_ = OBJ_MAN_INITIALIZED;
 
-# if defined (ACE_WIN32)
+# if defined (ACE_WIN32) && defined (ACE_HAS_WIN32_GETVERSION)
+/* Since MS found it necessary to deprecate these. */
+#   pragma warning(push)
+#   pragma warning(disable:4996)
       ACE_OS::win32_versioninfo_.dwOSVersionInfoSize =
         sizeof (ACE_TEXT_OSVERSIONINFO);
       ACE_TEXT_GetVersionEx (&ACE_OS::win32_versioninfo_);
+#   pragma warning(pop)
 # endif /* ACE_WIN32 */
       return 0;
     } else {

@@ -4,8 +4,6 @@
 /**
  *  @file    Malloc_Base.h
  *
- *  $Id: Malloc_Base.h 92085 2010-09-29 12:23:13Z johnnyw $
- *
  *  @author Doug Schmidt and Irfan Pyarali
  */
 //=============================================================================

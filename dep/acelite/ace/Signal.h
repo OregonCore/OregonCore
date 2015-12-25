@@ -4,8 +4,6 @@
 /**
  *  @file    Signal.h
  *
- *  $Id: Signal.h 80826 2008-03-04 14:51:23Z wotte $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  */
 //=============================================================================
@@ -14,7 +12,7 @@
 #define ACE_SIGNAL_H
 #include /**/ "ace/pre.h"
 
-#include "ace/config-lite.h"
+#include /**/ "ace/config-lite.h"
 
 #if defined (ACE_DONT_INCLUDE_ACE_SIGNAL_H)
 # error ace/Signal.h was #included instead of signal.h by ace/OS_NS_signal.h:  fix!!!!
@@ -28,7 +26,7 @@
 
 #include "ace/OS_NS_signal.h"
 
-// Type of the extended signal handler.
+/// Type of the extended signal handler.
 typedef void (*ACE_Sig_Handler_Ex) (int, siginfo_t *siginfo, ucontext_t *ucontext);
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
@@ -45,7 +43,6 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 class ACE_Export ACE_Sig_Set
 {
 public:
-  // = Initialization and termination methods.
   /// Initialize <sigset_> with @a sigset.  If @a sigset == 0 then fill
   /// the set.
   ACE_Sig_Set (sigset_t *sigset);
@@ -136,18 +133,6 @@ public:
                   const ACE_Sig_Set &sigmask,
                   int flags = 0);
 
-
-  // @@ The next two methods have a parameter as "signalss". Please do
-  // not change the argument name as "signals". This causes the
-  // following problem as reported by
-  // <James.Briggs@dsto.defence.gov.au>.
-
-  // In the file Signal.h two of the functions have and argument name
-  // of signals. signals is a Qt macro (to do with their meta object
-  // stuff.
-  // We could as well have it as "signal", but I am nost sure whether
-  // that would cause a problem with something else - Bala <bala@cs>
-
   /**
    * Assigns the various fields of a @c sigaction struct and registers
    * the @a handler to process all @a signalss via the @c sigaction
@@ -236,7 +221,7 @@ class ACE_Export ACE_Sig_Guard
 public:
   // = Initialization and termination methods.
   /// This is kind of conditional Guard, needed when guard should be
-  /// activated only when a spcific condition met. When condition ==
+  /// activated only when a specific condition met. When condition ==
   /// true (default), Guard is activated
   ACE_Sig_Guard (ACE_Sig_Set *mask = 0, bool condition = true);
 

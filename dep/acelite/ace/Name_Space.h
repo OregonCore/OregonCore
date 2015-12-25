@@ -4,8 +4,6 @@
 /**
  *  @file    Name_Space.h
  *
- *  $Id: Name_Space.h 84834 2009-03-16 12:28:51Z johnnyw $
- *
  *  @author Prashant Jain <pjain@cse.wustl.edu>
  */
 //==========================================================================
@@ -99,13 +97,13 @@ public:
   /**
    * Overwrite the value or type of an existing name in a
    * ACE_Name_Space or bind a new name to the context, if it didn't
-   * exist yet. (Wide charcter strings interface).
+   * exist yet. (Wide character strings interface).
    */
   virtual int rebind (const ACE_NS_WString &name_in,
                       const ACE_NS_WString &value_in,
                       const char *type_in = "") = 0;
 
-  /// Delete a name from a ACE_Name_Space (Wide charcter strings
+  /// Delete a name from a ACE_Name_Space (Wide character strings
   /// Interface).
   virtual int unbind (const ACE_NS_WString &name_in) = 0;
 

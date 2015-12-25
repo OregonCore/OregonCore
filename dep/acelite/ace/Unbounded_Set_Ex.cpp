@@ -1,11 +1,9 @@
-// $Id: Unbounded_Set_Ex.cpp 81702 2008-05-15 10:18:07Z johnnyw $
-
 #ifndef ACE_UNBOUNDED_SET_EX_CPP
 #define ACE_UNBOUNDED_SET_EX_CPP
 
 #include "ace/Unbounded_Set.h"
 #include "ace/Malloc_Base.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 
 #if !defined (ACE_LACKS_PRAGMA_ONCE)
 # pragma once
@@ -64,10 +62,10 @@ ACE_Unbounded_Set_Ex<T, C>::dump (void) const
 #if defined (ACE_HAS_DUMP)
   ACE_TRACE ("ACE_Unbounded_Set_Ex<T, C>::dump");
 
-  ACE_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
-  ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("\nhead_ = %u"), this->head_));
-  ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("\nhead_->next_ = %u"), this->head_->next_));
-  ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("\ncur_size_ = %d\n"), this->cur_size_));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
+  ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("\nhead_ = %u"), this->head_));
+  ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("\nhead_->next_ = %u"), this->head_->next_));
+  ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("\ncur_size_ = %d\n"), this->cur_size_));
 
   T *item = 0;
 #if !defined (ACE_NLOGGING)
@@ -76,11 +74,11 @@ ACE_Unbounded_Set_Ex<T, C>::dump (void) const
 
   const_iterator const the_end = this->end ();
   for (const_iterator i (this->begin ());
-       i != end;
+       i != the_end;
        ++i)
-    ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("count = %u\n"), count++));
+    ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("count = %u\n"), count++));
 
-  ACE_DEBUG ((LM_DEBUG, ACE_END_DUMP));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_END_DUMP));
 #endif /* ACE_HAS_DUMP */
 }
 

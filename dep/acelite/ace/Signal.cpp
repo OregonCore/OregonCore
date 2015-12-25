@@ -1,7 +1,5 @@
-// $Id: Signal.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/Signal.h"
-// #include "ace/Log_Msg.h"
+// #include "ace/Log_Category.h"
 
 #if !defined (__ACE_INLINE__)
 #include "ace/Signal.inl"

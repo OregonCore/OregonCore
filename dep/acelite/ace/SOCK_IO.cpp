@@ -1,5 +1,3 @@
-// $Id: SOCK_IO.cpp 91622 2010-09-06 08:26:30Z sma $
-
 #include "ace/SOCK_IO.h"
 
 #include "ace/OS_NS_sys_socket.h"

@@ -4,8 +4,6 @@
 /**
  *  @file    MEM_Stream.h
  *
- *  $Id: MEM_Stream.h 92069 2010-09-28 11:38:59Z johnnyw $
- *
  *  @author Nanbor Wang <nanbor@cs.wustl.edu>
  */
 //=============================================================================
@@ -13,7 +11,10 @@
 
 #ifndef ACE_MEM_STREAM_H
 #define ACE_MEM_STREAM_H
+
 #include /**/ "ace/pre.h"
+
+#include /**/ "ace/ACE_export.h"
 
 #include "ace/MEM_IO.h"
 

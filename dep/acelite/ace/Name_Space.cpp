@@ -1,6 +1,4 @@
 // Name_Space.cpp
-// $Id: Name_Space.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/Name_Space.h"
 #include "ace/OS_NS_string.h"
 #include "ace/OS_NS_stdlib.h"

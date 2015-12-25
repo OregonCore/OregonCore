@@ -1,9 +1,7 @@
-// $Id: SOCK_SEQPACK_Connector.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/SOCK_SEQPACK_Connector.h"
 
 #include "ace/INET_Addr.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 #include "ace/Time_Value.h"
 #include "ace/OS_Memory.h"
 #include "ace/OS_NS_string.h"
@@ -407,7 +405,7 @@ ACE_SOCK_SEQPACK_Connector::ACE_SOCK_SEQPACK_Connector (ACE_SOCK_SEQPACK_Associa
                      protocol) == -1
       && timeout != 0
       && !(errno == EWOULDBLOCK || errno == ETIME || errno == ETIMEDOUT))
-    ACE_ERROR ((LM_ERROR,
+    ACELIB_ERROR ((LM_ERROR,
                 ACE_TEXT ("%p\n"),
                 ACE_TEXT ("ACE_SOCK_SEQPACK_Connector::ACE_SOCK_SEQPACK_Connector")));
 }
@@ -434,7 +432,7 @@ ACE_SOCK_SEQPACK_Connector::ACE_SOCK_SEQPACK_Connector (ACE_SOCK_SEQPACK_Associa
                      protocol) == -1
       && timeout != 0
       && !(errno == EWOULDBLOCK || errno == ETIME || errno == ETIMEDOUT))
-    ACE_ERROR ((LM_ERROR,
+    ACELIB_ERROR ((LM_ERROR,
                 ACE_TEXT ("%p\n"),
                 ACE_TEXT ("ACE_SOCK_SEQPACK_Connector::ACE_SOCK_SEQPACK_Connector")));
 }

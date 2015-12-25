@@ -4,8 +4,6 @@
 /**
  *  @file    Process_Mutex.h
  *
- *  $Id: Process_Mutex.h 87179 2009-10-20 16:27:01Z shuston $
- *
  *   A wrapper for mutexes that can be used across processes on the
  *   same host machine, as well as within a process, of course.
  *

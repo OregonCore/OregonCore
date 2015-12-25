@@ -4,8 +4,6 @@
 /**
  *  @file    Dev_Poll_Reactor.h
  *
- *  $Id: Dev_Poll_Reactor.h 91462 2010-08-25 20:29:17Z shuston $
- *
  *  @c /dev/poll (or Linux @c sys_epoll) based Reactor implementation.
  *
  *  @author  Ossama Othman <ossama@dre.vanderbilt.edu>
@@ -310,7 +308,7 @@ class ACE_Export ACE_Dev_Poll_Reactor : public ACE_Reactor_Impl
    *
    * @note Calls to any method in this class, and any modification to a
    *       Event_Tuple returned from this class's methods, must be made
-   *       while holding the reactor token.
+   *       while holding the repository lock.
    */
   class Handler_Repository
   {
@@ -563,7 +561,7 @@ public:
                                 ACE_Event_Handler *event_handler,
                                 ACE_Reactor_Mask mask);
 
-  /// Register @a event_handler> with all the @a handles> in the @c
+  /// Register @a event_handler with all the @a handles in the @c
   /// Handle_Set.
   virtual int register_handler (const ACE_Handle_Set &handles,
                                 ACE_Event_Handler *event_handler,
@@ -809,13 +807,13 @@ public:
   /// table.
   virtual size_t size (void) const;
 
-  /// Returns a reference to the Reactor's internal lock.
+  /// Returns a reference to the Reactor's internal repository lock.
   virtual ACE_Lock &lock (void);
 
   /// Wake up all threads waiting in the event loop.
   virtual void wakeup_all_threads (void);
 
-  /// Transfers ownership of Reactor_Impl to the new_owner.
+  /// Transfers ownership of Reactor_Impl to the @a new_owner.
   /**
    * @note There is no need to set the owner of the event loop for the
    *       ACE_Dev_Poll_Reactor.  Multiple threads may invoke the
@@ -828,7 +826,7 @@ public:
   /**
    * @note There is no need to set the owner of the event loop for the
    *       ACE_Dev_Poll_Reactor.  Multiple threads may invoke the
-   *       event loop simulataneously.  As such, this method is a
+   *       event loop simultaneously.  As such, this method is a
    *       no-op.
    */
   virtual int owner (ACE_thread_t *owner);
@@ -967,12 +965,18 @@ protected:
                           ACE_Reactor_Mask mask);
 
   /// Remove the event handler associated with the given handle and
-  /// event mask from the "interest set." If @a eh is supplied, only
-  /// do the remove if @eh matches the event handler that's registered
-  /// for @a handle.
+  /// event mask from the "interest set." If @a eh is supplied, only do the
+  /// remove if @eh matches the event handler that's registered for @a handle.
+  /// The caller is expected to be holding the repo token on entry and have
+  /// @repo_guard referencing that token. It will be temporarily released
+  /// during a handle_close() callback if needed; if it is released for the
+  //// callback it will be reacquired before return.
+  // FUZZ: disable check_for_ACE_Guard
   int remove_handler_i (ACE_HANDLE handle,
                         ACE_Reactor_Mask mask,
+                        ACE_Guard<ACE_SYNCH_MUTEX> &repo_guard,
                         ACE_Event_Handler *eh = 0);
+  // FUZZ: enable check_for_ACE_Guard
 
   /// Temporarily remove the given handle from the "interest set."
   int suspend_handler_i (ACE_HANDLE handle);
@@ -1015,17 +1019,6 @@ protected:
   /// epoll_wait() but not yet processed.
   struct epoll_event event_;
 
-  /// Event handlers that are suspended/resumed around upcalls are not
-  /// immediately resumed; they're added to this list for resumption at
-  /// the next epoll_wait() call. This avoids always needing to acquire the
-  /// token just to resume a handler. Of course, if there are no other
-  /// handlers in the to-be-resumed list and an epoll_wait is already in
-  /// progress, the reactor needs to be notified to force another run around
-  /// the epoll_wait() call.
-  typedef ACE_Array_Map<ACE_HANDLE, ACE_Event_Handler *> Resume_Map;
-  Resume_Map to_be_resumed_;
-  volatile bool epoll_wait_in_progress_;
-  ACE_SYNCH_MUTEX to_be_resumed_lock_;
 #else
   /// The pollfd array that `/dev/poll' will feed its results to.
   struct pollfd *dp_fds_;
@@ -1043,15 +1036,20 @@ protected:
   struct pollfd *end_pfds_;
 #endif  /* ACE_HAS_EVENT_POLL */
 
-  /// This flag is used to keep track of whether we are actively handling
-  /// events or not.
-  sig_atomic_t deactivated_;
-
-  /// Lock used for synchronization of reactor state.
+  /// Token serializing event waiter threads.
   ACE_Dev_Poll_Reactor_Token token_;
 
   /// Adapter used to return internal lock to outside world.
   ACE_Lock_Adapter<ACE_Dev_Poll_Reactor_Token> lock_adapter_;
+
+  /// This flag is used to keep track of whether we are actively handling
+  /// events or not.
+  sig_atomic_t deactivated_;
+
+  /// Token used to protect manipulation of the handler repository.
+  /// No need to hold the waiter token to change the repo.
+  //  ACE_DEV_POLL_TOKEN repo_token_;
+  ACE_SYNCH_MUTEX repo_lock_;
 
   /// The repository that contains all registered event handlers.
   Handler_Repository handler_rep_;
@@ -1123,8 +1121,7 @@ protected:
     /// 2) wait quietly for the token, not waking another thread. This
     /// is appropriate for cases where a thread wants to wait for and
     /// dispatch an event, not causing an existing waiter to relinquish the
-    /// token, and also queueing up behind other threads waiting to modify
-    /// event records.
+    /// token.
     int acquire_quietly (ACE_Time_Value *max_wait = 0);
 
     /// A helper method that acquires the token at a high priority, and
@@ -1147,7 +1144,6 @@ protected:
     int owner_;
 
   };
-
 };
 
 

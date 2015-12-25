@@ -1,13 +1,10 @@
 // -*- C++ -*-
-//
-// $Id: OS_NS_netdb.inl 91683 2010-09-09 09:07:49Z johnnyw $
-
 #include "ace/OS_NS_macros.h"
 #include "ace/OS_NS_string.h"
 #include "ace/OS_NS_errno.h"
 
 #if defined (ACE_LACKS_NETDB_REENTRANT_FUNCTIONS)
-# if defined (ACE_MT_SAFE) && (ACE_MT_SAFE != 0)
+# if defined (ACE_MT_SAFE) && (ACE_MT_SAFE != 0) && !defined (HPUX_11)
 #   define ACE_NETDBCALL_RETURN(OP,TYPE,FAILVALUE,TARGET,SIZE) \
   do \
   { \
@@ -25,7 +22,7 @@
         return ace_result_; \
       } \
   } while(0)
-# else /* ! (ACE_MT_SAFE && ACE_MT_SAFE != 0) */
+# else /* ! (ACE_MT_SAFE && ACE_MT_SAFE != 0 && !HPUX_11) */
 #   define ACE_NETDBCALL_RETURN(OP,TYPE,FAILVALUE,TARGET,SIZE) \
   do \
   { \
@@ -41,8 +38,6 @@
 #endif /* ACE_LACKS_NETDB_REENTRANT_FUNCTIONS */
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
-
-#if !(defined (ACE_VXWORKS) && defined (ACE_LACKS_GETHOSTBYADDR))
 
 ACE_INLINE struct hostent *
 ACE_OS::gethostbyaddr (const char *addr, int length, int type)
@@ -85,10 +80,6 @@ ACE_OS::gethostbyaddr (const char *addr, int length, int type)
 #   endif /* ACE_HAS_NONCONST_GETBY */
 # endif /* !ACE_LACKS_GETHOSTBYADDR */
 }
-
-#endif
-
-#if !(defined (ACE_VXWORKS) && defined (ACE_LACKS_GETHOSTBYADDR))
 
 ACE_INLINE struct hostent *
 ACE_OS::gethostbyaddr_r (const char *addr,
@@ -143,6 +134,7 @@ ACE_OS::gethostbyaddr_r (const char *addr,
   else
     return (struct hostent *) 0;
 #   elif defined (ACE_VXWORKS)
+  ACE_UNUSED_ARG (h_errnop);
   // VxWorks 6.x has a threadsafe gethostbyaddr() which returns a heap-allocated
   // data structure which needs to be freed with hostentFree()
   //FUZZ: disable check_for_lack_ACE_OS
@@ -233,10 +225,6 @@ ACE_OS::gethostbyaddr_r (const char *addr,
 # endif /* ACE_LACKS_GETHOSTBYADDR_R */
 }
 
-#endif
-
-#if !(defined (ACE_VXWORKS) && defined (ACE_LACKS_GETHOSTBYNAME))
-
 ACE_INLINE struct hostent *
 ACE_OS::gethostbyname (const char *name)
 {
@@ -272,10 +260,6 @@ ACE_OS::gethostbyname (const char *name)
 #   endif /* ACE_HAS_NONCONST_GETBY */
 # endif /* !ACE_LACKS_GETHOSTBYNAME */
 }
-
-#endif
-
-#if !(defined (ACE_VXWORKS) && defined (ACE_LACKS_GETHOSTBYNAME))
 
 ACE_INLINE struct hostent *
 ACE_OS::gethostbyname_r (const char *name,
@@ -333,6 +317,7 @@ ACE_OS::gethostbyname_r (const char *name,
   else
     return (struct hostent *) 0;
 #   elif defined (ACE_VXWORKS)
+  ACE_UNUSED_ARG (h_errnop);
   // VxWorks 6.x has a threadsafe gethostbyname() which returns a heap-allocated
   // data structure which needs to be freed with hostentFree()
   //FUZZ: disable check_for_lack_ACE_OS
@@ -422,8 +407,6 @@ ACE_OS::gethostbyname_r (const char *name,
   //FUZZ: enable check_for_lack_ACE_OS
 # endif /* defined (ACE_HAS_REENTRANT_FUNCTIONS) */
 }
-
-#endif
 
 ACE_INLINE struct hostent *
 ACE_OS::getipnodebyaddr (const void *src, size_t len, int family)

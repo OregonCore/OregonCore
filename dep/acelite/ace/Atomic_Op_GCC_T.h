@@ -4,8 +4,6 @@
 /**
  *  @file    Atomic_Op_GCC_T.h
  *
- *  $Id: Atomic_Op_GCC_T.h 89339 2010-03-05 12:20:47Z johnnyw $
- *
  *  @author Johnny Willemsen  <jwillemsen@remedy.nl
  */
 //=============================================================================
@@ -73,6 +71,9 @@ public:
 
   /// Atomically check if @c value_ less than rhs.
   bool operator< (T rhs) const;
+
+  /// Exchange value with @a newval.
+  T exchange (T newval);
 
   /// Explicitly return @c value_.
   T value (void) const;

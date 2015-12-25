@@ -1,5 +1,4 @@
 // -*- C++ -*-
-// $Id: ACE_export.h 91683 2010-09-09 09:07:49Z johnnyw $
 // Definition for Win32 Export directives.
 // This file is generated automatically by
 // generate_export_file.pl
@@ -8,7 +7,7 @@
 #ifndef ACE_EXPORT_H
 #define ACE_EXPORT_H
 
-#include "ace/config-lite.h"
+#include /**/ "ace/config-lite.h"
 
 #if defined (ACE_AS_STATIC_LIBS)
 

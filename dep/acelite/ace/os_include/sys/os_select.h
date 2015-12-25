@@ -6,8 +6,6 @@
  *
  *  select types
  *
- *  $Id: os_select.h 85015 2009-04-03 12:27:59Z johnnyw $
- *
  *  @author Don Hinton <dhinton@dresystems.com>
  *  @author This code was originally in various places including ace/OS.h.
  */
@@ -18,7 +16,7 @@
 
 #include /**/ "ace/pre.h"
 
-#include "ace/config-lite.h"
+#include /**/ "ace/config-lite.h"
 
 #if !defined (ACE_LACKS_PRAGMA_ONCE)
 # pragma once
@@ -44,7 +42,7 @@ extern "C"
 
 #if defined (ACE_LACKS_FD_MASK)
    typedef long fd_mask;
-#endif /* __QNX__ */
+#endif /* ACE_LACKS_FD_MASK */
 
 #if defined (ACE_WIN32)
    // This will help until we figure out everything:

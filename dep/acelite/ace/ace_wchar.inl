@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: ace_wchar.inl 80826 2008-03-04 14:51:23Z wotte $
-
 // These are always inlined
 // FUZZ: disable check_for_inline
 

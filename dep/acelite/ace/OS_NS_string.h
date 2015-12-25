@@ -4,8 +4,6 @@
 /**
  *  @file   OS_NS_string.h
  *
- *  $Id: OS_NS_string.h 91995 2010-09-24 12:45:24Z johnnyw $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  *  @author Jesper S. M|ller<stophph@diku.dk>
  *  @author and a cast of thousands...
@@ -449,11 +447,11 @@ namespace ACE_OS {
   wchar_t *strtok_r (ACE_WCHAR_T *s, const ACE_WCHAR_T *tokens, ACE_WCHAR_T **lasts);
 #endif  // ACE_HAS_WCHAR
 
-#if !defined (ACE_HAS_REENTRANT_FUNCTIONS) || defined (ACE_LACKS_STRTOK_R)
+#if defined (ACE_LACKS_STRTOK_R)
   /// Emulated strtok_r.
   extern ACE_Export
   char *strtok_r_emulation (char *s, const char *tokens, char **lasts);
-#endif /* !ACE_HAS_REENTRANT_FUNCTIONS */
+#endif /* ACE_LACKS_STRTOK_R */
 
 # if defined (ACE_HAS_WCHAR) && defined(ACE_LACKS_WCSTOK)
   /// Emulated strtok_r (wchar_t version).

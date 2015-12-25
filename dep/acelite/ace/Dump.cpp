@@ -1,10 +1,8 @@
-// $Id: Dump.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/Dump.h"
 #include "ace/Guard_T.h"
 #include "ace/Thread_Mutex.h"
 #include "ace/Object_Manager.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 
 
 

@@ -2,10 +2,7 @@
 /**
  *  @file   Codeset_Registry.cpp
  *
- *  $Id: Codeset_Registry.cpp 91286 2010-08-05 09:04:31Z johnnyw $
- *
  *  emulated codset regstry functions
- *
  *
  *  @author Phil Mesnier <mesnier_p@ociweb.com>
  */
@@ -14,8 +11,6 @@
 #include "ace/Codeset_Registry.h"
 #include "ace/OS_Memory.h"
 #include "ace/OS_NS_string.h"
-
-// $Id: Codeset_Registry.cpp 91286 2010-08-05 09:04:31Z johnnyw $
 
 #if !defined (__ACE_INLINE__)
 #include "ace/Codeset_Registry.inl"

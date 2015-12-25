@@ -1,5 +1,3 @@
-// $Id: Auto_Ptr.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #ifndef ACE_AUTO_PTR_CPP
 #define ACE_AUTO_PTR_CPP
 

@@ -1,5 +1,3 @@
-// $Id: Synch_Options.cpp 91287 2010-08-05 10:30:49Z johnnyw $
-
 #include "ace/Synch_Options.h"
 
 #include "ace/Global_Macros.h"

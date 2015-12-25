@@ -3,8 +3,6 @@
 /**
  * @file Auto_Functor.h
  *
- * $Id: Auto_Functor.h 80826 2008-03-04 14:51:23Z wotte $
- *
  * @author Carlos O'Ryan <coryan@atdesk.com>
  */
 //=============================================================================
@@ -52,7 +50,6 @@ struct Auto_Functor_Ref
  * Functor(Functor const &) throw();<BR>
  * Functor & operator=(Functor const &) throw();<BR>
  * void operator()(X * p) throw();<BR>
- *
  */
 template<typename X, typename Functor>
 class Auto_Functor
@@ -69,13 +66,11 @@ public:
 
   Auto_Functor<X,Functor>& operator= (Auto_Functor & rhs); // throw()
 
-#if !defined(ACE_LACKS_MEMBER_TEMPLATES)
   template<typename Y>
   Auto_Functor(Auto_Functor<Y,Functor>& rhs); // throw()
 
   template<typename Y>
   Auto_Functor<X,Functor>& operator= (Auto_Functor<Y,Functor>& rhs); // throw()
-#endif /* ACE_LACKS_MEMBER_TEMPLATES */
 
   ~Auto_Functor(); // throw()
 
@@ -97,13 +92,9 @@ public:
 
   Auto_Functor<X,Functor> & operator=(Auto_Functor_Ref<X,Functor> rhs); // throw()
 
-#if !defined(ACE_LACKS_MEMBER_TEMPLATES)
   template<typename Y> operator Auto_Functor_Ref<Y,Functor>(); // throw()
 
   template<typename Y> operator Auto_Functor<Y,Functor>(); // throw()
-#else
-  operator Auto_Functor_Ref<X,Functor>(); // throw()
-#endif /* ACE_LACKS_MEMBER_TEMPLATES */
 
 private:
   X * p_;

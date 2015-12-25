@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: OS_NS_ctype.inl 85785 2009-06-24 18:20:42Z mitza $
-
 #if defined (ACE_LACKS_ISCTYPE)
 #include "ace/OS_NS_errno.h"
 #endif

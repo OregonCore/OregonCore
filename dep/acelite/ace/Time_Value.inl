@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: Time_Value.inl 90689 2010-06-18 11:14:47Z shuston $
-
 #include "ace/Truncate.h"
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
@@ -58,23 +55,11 @@ ACE_INLINE void
 ACE_Time_Value::set (time_t sec, suseconds_t usec)
 {
   // ACE_OS_TRACE ("ACE_Time_Value::set");
-# if defined (_WIN32_WCE) && (_WIN32_WCE == 0x600) && !defined (_USE_32BIT_TIME_T) && defined (_MSC_VER)
-    // The WinCE 6.0 SDK ships with a timeval tv_sec member that uses long as type
-    // not time_t. This resolves in compilation warnings because time_t
-    // can be 64bit. Disable at this momemt the warning for just this method
-    // else we get a compile warnings each time this inline file is included
-    // this file.
-#   pragma warning (push)
-#   pragma warning (disable: 4244)
-# endif
   this->tv_.tv_sec = sec;
-# if defined (_WIN32_WCE) && (_WIN32_WCE == 0x600) && !defined (_USE_32BIT_TIME_T) && defined (_MSC_VER)
-#   pragma warning (pop)
-# endif
   this->tv_.tv_usec = usec;
-#if __GNUC__
-  if (__builtin_constant_p(sec) &&
-      __builtin_constant_p(usec) &&
+#if __GNUC__ && !(__GNUC__ == 3 && __GNUC_MINOR__ == 4)
+  if ((__builtin_constant_p(sec) &
+       __builtin_constant_p(usec)) &&
       (sec >= 0 && usec >= 0 && usec < ACE_ONE_SECOND_IN_USECS))
     return;
 #endif
@@ -85,7 +70,7 @@ ACE_INLINE void
 ACE_Time_Value::set (double d)
 {
   // ACE_OS_TRACE ("ACE_Time_Value::set");
-  long l = (long) d;
+  time_t l = (time_t) d;
   this->tv_.tv_sec = l;
   this->tv_.tv_usec = (suseconds_t) ((d - (double) l) * ACE_ONE_SECOND_IN_USECS + .5);
   this->normalize ();
@@ -131,7 +116,7 @@ ACE_INLINE void
 ACE_Time_Value::sec (time_t sec)
 {
   // ACE_OS_TRACE ("ACE_Time_Value::sec");
-  this->tv_.tv_sec = ACE_Utils::truncate_cast<long> (sec);
+  this->tv_.tv_sec = sec;
 }
 
 /// Converts from Time_Value format into milli-seconds format.
@@ -222,15 +207,7 @@ ACE_INLINE void
 ACE_Time_Value::to_usec (ACE_UINT64 & usec) const
 {
   // ACE_OS_TRACE ("ACE_Time_Value::to_usec");
-
-#if defined (ACE_LACKS_UNSIGNEDLONGLONG_T)
-  usec = ACE_U_LongLong (static_cast<long long> (this->tv_.tv_sec));
-#elif defined (ACE_LACKS_LONGLONG_T)
-  // No native 64-bit type, meaning time_t is most likely 32 bits.
-  usec = ACE_U_LongLong (this->tv_.tv_sec);
-#else
   usec = static_cast<ACE_UINT64> (this->tv_.tv_sec);
-#endif  /* ACE_LACKS_LONGLONG_T */
   usec *= 1000000;
   usec += this->tv_.tv_usec;
 }
@@ -416,3 +393,161 @@ operator - (const ACE_Time_Value &tv1,
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
+
+#if defined (ACE_HAS_CPP11)
+
+// Additional chrono streaming operators.
+
+namespace std
+{
+  namespace chrono
+  {
+    ACE_INLINE nanoseconds&
+    operator <<(nanoseconds &ns, ACE_Time_Value const &tv)
+    {
+      ns = duration_cast<nanoseconds>(seconds{tv.sec ()}) +
+        duration_cast<nanoseconds>(microseconds{tv.usec()});
+      return ns;
+    }
+
+    ACE_INLINE microseconds&
+    operator <<(microseconds &us, ACE_Time_Value const &tv)
+    {
+      us= duration_cast<microseconds>(seconds{tv.sec ()}) +
+        microseconds{tv.usec()};
+      return us;
+    }
+
+    ACE_INLINE milliseconds&
+    operator <<(milliseconds &ms, ACE_Time_Value const &tv)
+    {
+      ms = duration_cast<milliseconds>(seconds{tv.sec ()}) +
+        duration_cast<milliseconds>(microseconds{tv.usec()});
+      return ms;
+    }
+
+    ACE_INLINE seconds&
+    operator <<(seconds &s, ACE_Time_Value const &tv)
+    {
+      s = seconds{tv.sec ()} +
+        duration_cast<seconds>(microseconds{tv.usec()});
+      return s;
+    }
+
+    ACE_INLINE minutes&
+    operator <<(minutes &m, ACE_Time_Value const &tv)
+    {
+      m = duration_cast<minutes>(seconds{tv.sec ()}) +
+        duration_cast<minutes>(microseconds{tv.usec()});
+      return m;
+    }
+
+    ACE_INLINE hours&
+    operator <<(hours &h, ACE_Time_Value const &tv)
+    {
+      h = duration_cast<hours>(seconds{tv.sec ()}) +
+        duration_cast<hours>(microseconds{tv.usec()});
+      return h;
+    }
+
+
+    ACE_INLINE nanoseconds&
+    operator +=(nanoseconds &ns, ACE_Time_Value const &tv)
+    {
+      ns += duration_cast<nanoseconds>(seconds{tv.sec ()}) +
+        duration_cast<nanoseconds>(microseconds{tv.usec()});
+      return ns;
+    }
+
+    ACE_INLINE microseconds&
+    operator +=(microseconds &us, ACE_Time_Value const &tv)
+    {
+      us += duration_cast<microseconds>(seconds{tv.sec ()}) +
+        microseconds{tv.usec()};
+      return us;
+    }
+
+    ACE_INLINE milliseconds&
+    operator +=(milliseconds &ms, ACE_Time_Value const &tv)
+    {
+      ms += duration_cast<milliseconds>(seconds{tv.sec ()}) +
+        duration_cast<milliseconds>(microseconds{tv.usec()});
+      return ms;
+    }
+
+    ACE_INLINE seconds&
+    operator +=(seconds &s, ACE_Time_Value const &tv)
+    {
+      s += seconds{tv.sec ()} +
+        duration_cast<seconds>(microseconds{tv.usec()});
+      return s;
+    }
+
+    ACE_INLINE minutes&
+    operator +=(minutes &m, ACE_Time_Value const &tv)
+    {
+      m += duration_cast<minutes>(seconds{tv.sec ()}) +
+        duration_cast<minutes>(microseconds{tv.usec()});
+      return m;
+    }
+
+    ACE_INLINE hours&
+    operator +=(hours &h, ACE_Time_Value const &tv)
+    {
+      h += duration_cast<hours>(seconds{tv.sec ()}) +
+        duration_cast<hours>(microseconds{tv.usec()});
+      return h;
+    }
+
+
+    ACE_INLINE nanoseconds&
+    operator -=(nanoseconds &ns, ACE_Time_Value const &tv)
+    {
+      ns -= duration_cast<nanoseconds>(seconds{tv.sec ()}) +
+        duration_cast<nanoseconds>(microseconds{tv.usec()});
+      return ns;
+    }
+
+    ACE_INLINE microseconds&
+    operator -=(microseconds &us, ACE_Time_Value const &tv)
+    {
+      us -= duration_cast<microseconds>(seconds{tv.sec ()}) +
+        microseconds{tv.usec()};
+      return us;
+    }
+
+    ACE_INLINE milliseconds&
+    operator -=(milliseconds &ms, ACE_Time_Value const &tv)
+    {
+      ms -= duration_cast<milliseconds>(seconds{tv.sec ()}) +
+        duration_cast<milliseconds>(microseconds{tv.usec()});
+      return ms;
+    }
+
+    ACE_INLINE seconds&
+    operator -=(seconds &s, ACE_Time_Value const &tv)
+    {
+      s -= seconds{tv.sec ()} +
+        duration_cast<seconds>(microseconds{tv.usec()});
+      return s;
+    }
+
+    ACE_INLINE minutes&
+    operator -=(minutes &m, ACE_Time_Value const &tv)
+    {
+      m -= duration_cast<minutes>(seconds{tv.sec ()}) +
+        duration_cast<minutes>(microseconds{tv.usec()});
+      return m;
+    }
+
+    ACE_INLINE hours&
+    operator -=(hours &h, ACE_Time_Value const &tv)
+    {
+      h -= duration_cast<hours>(seconds{tv.sec ()}) +
+        duration_cast<hours>(microseconds{tv.usec()});
+      return h;
+    }
+  }
+}
+
+#endif /* ACE_HAS_CPP11 */

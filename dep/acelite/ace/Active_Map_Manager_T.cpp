@@ -1,5 +1,3 @@
-// $Id: Active_Map_Manager_T.cpp 80826 2008-03-04 14:51:23Z wotte $
-
 #ifndef ACE_ACTIVE_MAP_MANAGER_T_CPP
 #define ACE_ACTIVE_MAP_MANAGER_T_CPP
 

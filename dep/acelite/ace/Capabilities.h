@@ -4,8 +4,6 @@
 /**
  *  @file    Capabilities.h
  *
- *  $Id: Capabilities.h 91077 2010-07-13 14:33:08Z johnnyw $
- *
  *  @author Arturo Montes <mitosys@colomsat.net.co>
  */
 //=============================================================================

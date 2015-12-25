@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: OS_NS_sys_select.inl 80826 2008-03-04 14:51:23Z wotte $
-
 #include "ace/OS_NS_errno.h"
 #include "ace/OS_NS_macros.h"
 #include "ace/Time_Value.h"
@@ -38,9 +35,6 @@ ACE_OS::select (int width,
   ACE_UNUSED_ARG (efds);
   ACE_UNUSED_ARG (timeout);
   ACE_NOTSUP_RETURN (-1);
-#elif defined(ACE_TANDEM_T1248_PTHREADS)
-  ACE_SOCKCALL_RETURN (::spt_select (width, rfds, wfds, efds, timep),
-                       int, -1);
 #else
   ACE_SOCKCALL_RETURN (::select (width, rfds, wfds, efds, timep),
                        int, -1);
@@ -67,9 +61,6 @@ ACE_OS::select (int width,
   ACE_UNUSED_ARG (efds);
   ACE_UNUSED_ARG (timeout);
   ACE_NOTSUP_RETURN (-1);
-#elif defined(ACE_TANDEM_T1248_PTHREADS)
-  ACE_SOCKCALL_RETURN (::spt_select (width, rfds, wfds, efds, ___ACE_TIMEOUT),
-                       int, -1);
 #else
   ACE_SOCKCALL_RETURN (::select (width, rfds, wfds, efds, ___ACE_TIMEOUT),
                        int, -1);

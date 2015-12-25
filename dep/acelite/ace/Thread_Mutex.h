@@ -4,8 +4,6 @@
 /**
  *  @file    Thread_Mutex.h
  *
- *  $Id: Thread_Mutex.h 92060 2010-09-27 18:08:48Z johnnyw $
- *
  *   Moved from Synch.h.
  *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
@@ -49,7 +47,6 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
  */
 class ACE_Export ACE_Thread_Mutex
 {
-  friend class ACE_Condition_Thread_Mutex;
 public:
   /// Constructor.
   ACE_Thread_Mutex (const ACE_TCHAR *name = 0,

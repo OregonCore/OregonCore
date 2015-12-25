@@ -1,12 +1,10 @@
-// $Id: Profile_Timer.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/Profile_Timer.h"
 
 #if !defined (__ACE_INLINE__)
 # include "ace/Profile_Timer.inl"
 #endif /* __ACE_INLINE__ */
 
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 #include "ace/OS_NS_string.h"
 
 #if defined (ACE_HAS_PRUSAGE_T)
@@ -49,7 +47,7 @@ ACE_Profile_Timer::ACE_Profile_Timer (void)
 
   this->proc_handle_ = ACE_OS::open (buf, O_RDONLY, 0);
   if (this->proc_handle_ == -1)
-    ACE_ERROR ((LM_ERROR,
+    ACELIB_ERROR ((LM_ERROR,
                 ACE_TEXT ("%p\n"),
                 buf));
 #  elif defined (ACE_HAS_GETRUSAGE)
@@ -65,7 +63,7 @@ ACE_Profile_Timer::~ACE_Profile_Timer (void)
   ACE_TRACE ("ACE_Profile_Timer::~ACE_Profile_Timer");
 #  if defined (ACE_HAS_PRUSAGE_T)
   if (ACE_OS::close (this->proc_handle_) == -1)
-    ACE_ERROR ((LM_ERROR,
+    ACELIB_ERROR ((LM_ERROR,
                 ACE_TEXT ("ACE_Profile_Timer::~ACE_Profile_Timer")));
 #  endif /* ACE_HAS_PRUSAGE_T */
 }
@@ -308,11 +306,7 @@ ACE_Profile_Timer::elapsed_time (ACE_Elapsed_Time &et)
 
   ACE_hrtime_t delta_t; // nanoseconds
   timer_.elapsed_time (delta_t);
-#  if defined (ACE_LACKS_LONGLONG_T)
-  et.real_time = delta_t / (double) ACE_ONE_SECOND_IN_NSECS;
-#  else
   et.real_time = (__int64) delta_t / (double) ACE_ONE_SECOND_IN_NSECS;
-#  endif /* ACE_LACKS_LONGLONG_T */
 #  if defined (ACE_HAS_GETRUSAGE)
   ACE_Time_Value atv = ACE_Time_Value (this->end_usage_.ru_utime)
                        - ACE_Time_Value (this->begin_usage_.ru_utime);

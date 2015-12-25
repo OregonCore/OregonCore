@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: OS_NS_dlfcn.inl 85341 2009-05-14 11:07:37Z johnnyw $
-
 #include "ace/OS_NS_macros.h"
 #include "ace/OS_NS_errno.h"
 #include "ace/OS_NS_fcntl.h"
@@ -40,11 +37,7 @@ ACE_OS::dlclose (ACE_SHLIB_HANDLE handle)
   if (ptr != 0)
     (*((int (*)(void)) ptr)) (); // Call _fini hook explicitly.
 # endif /* ACE_HAS_AUTOMATIC_INIT_FINI */
-#if defined (_M_UNIX)
-  ACE_OSCALL_RETURN (::_dlclose (handle), int, -1);
-#else /* _MUNIX */
-    ACE_OSCALL_RETURN (::dlclose (handle), int, -1);
-#endif /* _M_UNIX */
+  ACE_OSCALL_RETURN (::dlclose (handle), int, -1);
 #elif defined (ACE_WIN32)
   ACE_WIN32CALL_RETURN (ACE_ADAPT_RETVAL (::FreeLibrary (handle), ace_result_), int, -1);
 #elif defined (__hpux)
@@ -79,11 +72,7 @@ ACE_OS::dlerror (void)
   ACE_OS_TRACE ("ACE_OS::dlerror");
 # if defined (ACE_HAS_SVR4_DYNAMIC_LINKING)
   const char *err = 0;
-#   if defined(_M_UNIX)
-  ACE_OSCALL (::_dlerror (), const char *, 0, err);
-#   else /* _M_UNIX */
   ACE_OSCALL (::dlerror (), const char *, 0, err);
-#   endif /* _M_UNIX */
   if (err == 0)
     return 0;
 #   if defined (ACE_USES_WCHAR)
@@ -128,9 +117,6 @@ ACE_OS::dlopen (const ACE_TCHAR *fname,
 #   if defined (ACE_HAS_SGIDLADD)
   ACE_OSCALL
     (::sgidladd (ACE_TEXT_ALWAYS_CHAR (fname), mode), void *, 0, handle);
-#   elif defined (_M_UNIX)
-  ACE_OSCALL
-    (::_dlopen (ACE_TEXT_ALWAYS_CHAR (fname), mode), void *, 0, handle);
 #   else
   ACE_OSCALL
     (::dlopen (ACE_TEXT_ALWAYS_CHAR (fname), mode), void *, 0, handle);
@@ -165,6 +151,7 @@ ACE_OS::dlopen (const ACE_TCHAR *fname,
   ACE_OSCALL_RETURN (::cxxshl_load(fname, mode, 0L), ACE_SHLIB_HANDLE, 0);
 #   endif  /* aC++ vs. Hp C++ */
 # elif defined (ACE_VXWORKS) && !defined (__RTP__)
+  ACE_UNUSED_ARG (mode);
   MODULE* handle = 0;
   // Open readonly
   ACE_HANDLE filehandle = ACE_OS::open (fname,
@@ -244,8 +231,6 @@ ACE_OS::dlsym (ACE_SHLIB_HANDLE handle,
   ACE_OSCALL (::dlsym (handle, asm_symbolname), void *, 0, ace_result);
   delete [] asm_symbolname;
   return ace_result;
-#   elif defined (_M_UNIX)
-  ACE_OSCALL_RETURN (::_dlsym (handle, symbolname), void *, 0);
 #   else
   ACE_OSCALL_RETURN (::dlsym (handle, symbolname), void *, 0);
 #   endif /* ACE_USES_ASM_SYMBOL_IN_DLSYM */
@@ -265,14 +250,28 @@ ACE_OS::dlsym (ACE_SHLIB_HANDLE handle,
 # elif defined (ACE_VXWORKS) && !defined (__RTP__)
 
   // For now we use the VxWorks global symbol table
-  // which resolves the most recently loaded symbols .. which resolve mostly what we want..
+  // which resolves the most recently loaded symbols, which resolve
+  // mostly what we want..
   ACE_UNUSED_ARG (handle);
+#if (ACE_VXWORKS < 0x690)
   SYM_TYPE symtype;
   char *value = 0;
   STATUS status;
   ACE_OSCALL (::symFindByName(sysSymTbl, symbolname, &value, &symtype), int, -1, status);
 
   return status == OK ? reinterpret_cast <void*>(value) : 0;
+#else
+  STATUS status;
+
+  SYMBOL_DESC symbolDesc;     /* symFind() descriptor */
+  ACE_OS::memset (&symbolDesc, 0, sizeof (SYMBOL_DESC));
+  symbolDesc.mask = SYM_FIND_BY_NAME;
+  symbolDesc.name = symbolname;
+
+  ACE_OSCALL (::symFind(sysSymTbl, &symbolDesc), int, -1, status);
+
+  return status == OK ? reinterpret_cast <void*>(symbolDesc.value) : 0;
+#endif /* (ACE_VXWORKS < 0x690) */
 
 # else
 

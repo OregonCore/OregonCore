@@ -4,8 +4,6 @@
 /**
  *  @file    Asynch_Acceptor.h
  *
- *  $Id: Asynch_Acceptor.h 91693 2010-09-09 12:57:54Z johnnyw $
- *
  *  @author Irfan Pyarali (irfan@cs.wustl.edu)
  */
 //=============================================================================

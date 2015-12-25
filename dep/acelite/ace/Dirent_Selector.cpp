@@ -1,5 +1,3 @@
-// $Id: Dirent_Selector.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/Dirent_Selector.h"
 
 #if !defined (__ACE_INLINE__)

@@ -1,5 +1,3 @@
-// $Id: Process_Manager.cpp 91688 2010-09-09 11:21:50Z johnnyw $
-
 // Process_Manager.cpp
 #include "ace/Process_Manager.h"
 
@@ -12,7 +10,7 @@
 #include "ace/Process.h"
 #include "ace/Signal.h"
 #include "ace/Object_Manager.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 #include "ace/Reactor.h"
 #include "ace/Countdown_Time.h"
 #include "ace/OS_NS_sys_wait.h"
@@ -69,12 +67,12 @@ ACE_Process_Manager::Process_Descriptor::dump (void) const
 #if defined (ACE_HAS_DUMP)
   ACE_TRACE ("ACE_Process_Manager::Process_Descriptor::dump");
 
-  ACE_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
 
-  ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("\nproc_id_ = %d"),
+  ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("\nproc_id_ = %d"),
                           this->process_->getpid( )));
 
-  ACE_DEBUG ((LM_DEBUG, ACE_END_DUMP));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_END_DUMP));
 #endif /* ACE_HAS_DUMP */
 }
 
@@ -84,15 +82,15 @@ ACE_Process_Manager::dump (void) const
 #if defined (ACE_HAS_DUMP)
   ACE_TRACE ("ACE_Process_Manager::dump");
 
-  ACE_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
 
-  ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("\nmax_process_table_size_ = %d"), this->max_process_table_size_));
-  ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("\ncurrent_count_ = %d"), this->current_count_));
+  ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("\nmax_process_table_size_ = %d"), this->max_process_table_size_));
+  ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("\ncurrent_count_ = %d"), this->current_count_));
 
   for (size_t i = 0; i < this->current_count_; i++)
     this->process_table_[i].dump ();
 
-  ACE_DEBUG ((LM_DEBUG, ACE_END_DUMP));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_END_DUMP));
 #endif /* ACE_HAS_DUMP */
 }
 
@@ -259,7 +257,7 @@ ACE_Process_Manager::ACE_Process_Manager (size_t size,
 
   if (this->open (size, r) == -1)
     {
-      ACE_ERROR ((LM_ERROR,
+      ACELIB_ERROR ((LM_ERROR,
                   ACE_TEXT ("%p\n"),
                   ACE_TEXT ("ACE_Process_Manager")));
     }
@@ -329,6 +327,19 @@ ACE_Process_Manager::handle_input (ACE_HANDLE)
   return 0;
 }
 
+int
+ACE_Process_Manager::handle_close (ACE_HANDLE /* handle */,
+                                   ACE_Reactor_Mask close_mask)
+{
+  ACE_TRACE ("ACE_Process_Manager::handle_close");
+  if (close_mask == ACE_Event_Handler::SIGNAL_MASK)
+    {
+      // Reactor is telling us we're gone; don't unregister again later.
+      this->reactor (0);
+    }
+  return 0;
+}
+
 #endif /* !ACE_WIN32 */
 
 // On Unix, this routine is called asynchronously when a SIGCHLD is
@@ -347,8 +358,7 @@ ACE_Process_Manager::handle_signal (int,
 #if defined (ACE_WIN32)
   ACE_HANDLE proc = si->si_handle_;
   ACE_exitcode status = 0;
-  BOOL result = ::GetExitCodeProcess (proc,
-                                      &status);
+  BOOL result = ::GetExitCodeProcess (proc, &status);
   if (result)
     {
       if (status != STILL_ACTIVE)
@@ -370,7 +380,7 @@ ACE_Process_Manager::handle_signal (int,
           return -1; // remove this HANDLE/Event_Handler combination
         }
       else
-        ACE_ERROR_RETURN ((LM_ERROR,
+        ACELIB_ERROR_RETURN ((LM_ERROR,
                            ACE_TEXT ("Process still active")
                            ACE_TEXT (" -- shouldn't have been called yet!\n")),
                           0); // return 0 : stay registered
@@ -378,7 +388,7 @@ ACE_Process_Manager::handle_signal (int,
   else
     {
       // <GetExitCodeProcess> failed.
-      ACE_ERROR_RETURN ((LM_ERROR,
+      ACELIB_ERROR_RETURN ((LM_ERROR,
                          ACE_TEXT ("GetExitCodeProcess failed")),
                         -1); // return -1: unregister
     }
@@ -843,7 +853,7 @@ ACE_Process_Manager::wait (pid_t pid,
           // WAIT_OBJECT_0 is a pointless comparison because
           // WAIT_OBJECT_0 is zero and DWORD is unsigned long, so this
           // test is skipped for Green Hills.  Same for mingw.
-# if defined (ghs) || defined (__MINGW32__) || defined (_MSC_VER)
+# if defined (__MINGW32__) || defined (_MSC_VER)
           ACE_ASSERT (result < WAIT_OBJECT_0 + this->current_count_);
 # else
           ACE_ASSERT (result >= WAIT_OBJECT_0
@@ -869,7 +879,7 @@ ACE_Process_Manager::wait (pid_t pid,
               // uh oh...handle removed from process_table_, even though
               // we're holding a lock!
               delete [] handles;
-              ACE_ERROR_RETURN ((LM_ERROR,
+              ACELIB_ERROR_RETURN ((LM_ERROR,
                                  ACE_TEXT ("Process removed")
                                  ACE_TEXT (" -- somebody's ignoring the lock!\n")),
                                 -1);
@@ -917,7 +927,7 @@ ACE_Process_Manager::wait (pid_t pid,
           for (ACE_Countdown_Time time_left (&tmo); ; time_left.update ())
             {
               pid = ACE_OS::waitpid (-1, status, WNOHANG);
-#   if defined (ACE_VXWORKS) && (ACE_VXWORKS >= 0x600)
+#   if defined (ACE_VXWORKS)
               if (pid > 0 || (pid == ACE_INVALID_PID && errno != EINTR))
 #   else
                 if (pid > 0 || pid == ACE_INVALID_PID)
@@ -952,7 +962,7 @@ ACE_Process_Manager::wait (pid_t pid,
       if (idx == -1)
         {
           // oops, reaped an unmanaged process!
-          ACE_DEBUG ((LM_DEBUG,
+          ACELIB_DEBUG ((LM_DEBUG,
                       ACE_TEXT ("(%P|%t) oops, reaped unmanaged %d\n"),
                       pid));
           return pid;
@@ -999,7 +1009,7 @@ ACE_Process_Manager::notify_proc_handler (size_t i,
     }
   else
     {
-      ACE_DEBUG ((LM_DEBUG,
+      ACELIB_DEBUG ((LM_DEBUG,
                   ACE_TEXT ("(%P:%t|%T) ACE_Process_Manager::notify_proc_handler:")
                   ACE_TEXT (" unknown/unmanaged process reaped\n")));
       return 0;

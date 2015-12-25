@@ -4,8 +4,6 @@
 /**
  * @file Configuration_Import_Export.h
  *
- *  $Id: Configuration_Import_Export.h 80826 2008-03-04 14:51:23Z wotte $
- *
  * @author Jerry D. Odenwelder Jr. <jerry.o@mindspring.com>
  *         Chris Hafey <chris@stentorsoft.com>
  *
@@ -42,7 +40,6 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
  * This class provides base functionality for configuration objects
  * that are persisted in files.  It takes an ACE_Configuration
  * object that it populates with the data read.
- *
  */
 class ACE_Export ACE_Config_ImpExp_Base
 {
@@ -83,13 +80,12 @@ private:
  *        using the Win32 Registry file export format.  This format looks like
  *        [Section]
  *        "key"="String Data"
- *        "key"=dword: numeric data in hexidecimal format
+ *        "key"=dword: numeric data in hexadecimal format
  *        "key"=hex: binary data
  *
  * @todo
  *  - Add dynamic buffer when importing.  currently it will not allow
- *    importing of values greater than a fixed ammount (4096 bytes)
- *
+ *    importing of values greater than a fixed amount (4096 bytes)
  */
 class ACE_Export ACE_Registry_ImpExp : public ACE_Config_ImpExp_Base
 {
@@ -101,7 +97,7 @@ public:
   virtual ~ACE_Registry_ImpExp (void);
 
   /**
-   * Imports the configuration database from filename.
+   * Imports the configuration database from @a filename.
    * No existing data is removed.
    */
   virtual int import_config (const ACE_TCHAR* filename);
@@ -149,7 +145,7 @@ private:
  *              Justification = left_justified
  *
  *        The caller can then retrieve the string with the regular
- *        <get_string_value> function and convert the string to the
+ *        get_string_value() function and convert the string to the
  *        desired data type.
  *
  * @todo
@@ -157,7 +153,7 @@ private:
  *  - Strings with embedded quotes " cause the import to fail
  *  - Importing/exporting for values in the root section does not work
  *  - Add dynamic buffer when importing.  currently it will not allow
- *    importing of values greater than a fixed ammount (4096 bytes)
+ *    importing of values greater than a fixed amount (4096 bytes)
 */
 class ACE_Export ACE_Ini_ImpExp  : public ACE_Config_ImpExp_Base
 {
@@ -173,7 +169,7 @@ public:
   virtual ~ACE_Ini_ImpExp (void);
 
   /**
-   * Imports the configuration database from filename.
+   * Imports the configuration database from @a filename.
    * No existing data is removed.
    */
   virtual int import_config (const ACE_TCHAR* filename);

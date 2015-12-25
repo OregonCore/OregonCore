@@ -4,8 +4,6 @@
 /**
  *  @file    Atomic_Op.h
  *
- *  $Id: Atomic_Op.h 91523 2010-08-27 14:18:02Z johnnyw $
- *
  *  @author Douglas C. Schmidt <schmidt@uci.edu>
  */
 //=============================================================================
@@ -124,6 +122,9 @@ public:
   /// Atomically assign <rhs> to @c value_.
   ACE_Atomic_Op<ACE_Thread_Mutex, long> &operator= (const ACE_Atomic_Op<ACE_Thread_Mutex, long> &rhs);
 
+  /// Exchange value with @a newval.
+  long exchange (long newval);
+
   /// Explicitly return @c value_.
   long value (void) const;
 
@@ -221,6 +222,9 @@ public:
   /// Atomically assign <rhs> to @c value_.
   ACE_Atomic_Op<ACE_Thread_Mutex, unsigned long> &operator= (const ACE_Atomic_Op<ACE_Thread_Mutex, unsigned long> &rhs);
 
+  /// Exchange value with @a newval.
+  unsigned long exchange (unsigned long newval);
+
   /// Explicitly return @c value_.
   unsigned long value (void) const;
 
@@ -305,6 +309,31 @@ public:
   ACE_Atomic_Op (const ACE_Atomic_Op<ACE_Thread_Mutex, unsigned long> &c);
   ACE_Atomic_Op<ACE_Thread_Mutex, unsigned long> &operator= (unsigned long rhs);
 };
+
+// The long long intrinsics are not available on PPC
+#if !defined (__powerpc__)
+template<>
+class ACE_Export ACE_Atomic_Op<ACE_Thread_Mutex, long long>
+: public ACE_Atomic_Op_GCC<long long>
+{
+public:
+  ACE_Atomic_Op (void);
+  ACE_Atomic_Op (long long c);
+  ACE_Atomic_Op (const ACE_Atomic_Op<ACE_Thread_Mutex, long long> &c);
+  ACE_Atomic_Op<ACE_Thread_Mutex, long long> &operator= (long long rhs);
+};
+
+template<>
+class ACE_Export ACE_Atomic_Op<ACE_Thread_Mutex, unsigned long long>
+: public ACE_Atomic_Op_GCC<unsigned long long>
+{
+public:
+  ACE_Atomic_Op (void);
+  ACE_Atomic_Op (unsigned long long c);
+  ACE_Atomic_Op (const ACE_Atomic_Op<ACE_Thread_Mutex, unsigned long long> &c);
+  ACE_Atomic_Op<ACE_Thread_Mutex, unsigned long long> &operator= (unsigned long long rhs);
+};
+#endif /* !__powerpc__ */
 
 #if !defined (ACE_LACKS_GCC_ATOMIC_BUILTINS_2)
 template<>

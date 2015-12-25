@@ -4,8 +4,6 @@
 /**
  *  @file    ARGV.h
  *
- *  $Id: ARGV.h 81156 2008-03-30 20:56:47Z iliyan $
- *
  *  @author Doug Schmidt <schmidt@cs.wustl.edu>
  *  @author Everett Anderson <eea1@cs.wustl.edu>
  */
@@ -206,8 +204,8 @@ public:
    *
    * @param index   Index to the desired element.
    *
-   * @retval   Pointer to the indexed string.
-   * @retval   0 if @a index is out of bounds.
+   * @retval Pointer to the indexed string.
+   * @retval 0 if @a index is out of bounds.
    */
   const CHAR_TYPE *operator[] (size_t index);
 

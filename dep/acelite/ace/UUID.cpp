@@ -1,5 +1,3 @@
-//$Id: UUID.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/UUID.h"
 #include "ace/Guard_T.h"
 
@@ -7,7 +5,7 @@
 #include "ace/UUID.inl"
 #endif /* __ACE_INLINE__ */
 
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 #include "ace/OS_NS_stdio.h"
 #include "ace/OS_NS_string.h"
 #include "ace/OS_NS_sys_time.h"
@@ -131,7 +129,7 @@ namespace ACE_Utils
   {
     if (uuid_string.length () < NIL_UUID.to_string ()->length ())
       {
-        ACE_ERROR ((LM_ERROR,
+        ACELIB_ERROR ((LM_ERROR,
                     "%N ACE_UUID::from_string_i - "
                     "IllegalArgument (incorrect string length)\n"));
         return;
@@ -182,7 +180,7 @@ namespace ACE_Utils
 
         if (nScanned != 11)
           {
-            ACE_DEBUG ((LM_DEBUG,
+            ACELIB_DEBUG ((LM_DEBUG,
                         "UUID::from_string_i - "
                         "IllegalArgument (invalid string representation)\n"));
             return;
@@ -228,7 +226,7 @@ namespace ACE_Utils
 
         if (nScanned != 12)
           {
-            ACE_DEBUG ((LM_DEBUG,
+            ACELIB_DEBUG ((LM_DEBUG,
                         "ACE_UUID::from_string_i - "
                         "IllegalArgument (invalid string representation)\n"));
             return;
@@ -248,7 +246,7 @@ namespace ACE_Utils
     if ((this->uuid_.clock_seq_hi_and_reserved_ & 0xc0) != 0x80 &&
         (this->uuid_.clock_seq_hi_and_reserved_ & 0xc0) != 0xc0)
       {
-        ACE_DEBUG ((LM_DEBUG,
+        ACELIB_DEBUG ((LM_DEBUG,
                     "ACE_UUID::from_string_i - "
                     "IllegalArgument (unsupported variant)\n"));
         return;
@@ -261,7 +259,7 @@ namespace ACE_Utils
         (V1 & 0xF000) != 0x3000 &&
         (V1 & 0xF000) != 0x4000)
       {
-        ACE_DEBUG ((LM_DEBUG,
+        ACELIB_DEBUG ((LM_DEBUG,
                     "ACE_UUID::from_string_i - "
                     "IllegalArgument (unsupported version)\n"));
         return;
@@ -271,7 +269,7 @@ namespace ACE_Utils
       {
         if (uuid_string.length () == NIL_UUID.to_string ()->length ())
           {
-            ACE_DEBUG ((LM_DEBUG,
+            ACELIB_DEBUG ((LM_DEBUG,
                       "ACE_UUID::from_string_i - "
                         "IllegalArgument (Missing Thread and Process Id)\n"));
             return;
@@ -279,7 +277,7 @@ namespace ACE_Utils
         ACE_CString thr_pid_str (thr_pid_buf);
         ssize_t pos = static_cast<ssize_t> (thr_pid_str.find ('-'));
         if (pos == -1)
-          ACE_DEBUG ((LM_DEBUG,
+          ACELIB_DEBUG ((LM_DEBUG,
                       "ACE_UUID::from_string_i - "
                       "IllegalArgument (Thread and Process Id format incorrect)\n"));
 
@@ -348,8 +346,8 @@ namespace ACE_Utils
   UUID_Generator::
   generate_UUID (UUID& uuid, ACE_UINT16 version, u_char variant)
   {
-    UUID_Time timestamp;
-    ACE_UINT16 clock_sequence;
+    UUID_Time timestamp = 0;
+    ACE_UINT16 clock_sequence = 0;
 
     this->get_timestamp_and_clocksequence (timestamp,
                                            clock_sequence);
@@ -359,7 +357,7 @@ namespace ACE_Utils
     uuid.time_mid (static_cast<ACE_UINT16> ((timestamp >> 32) & 0xFFFF));
 
     ACE_UINT16 tHAV = static_cast<ACE_UINT16> ((timestamp >> 48) & 0xFFFF);
-    tHAV |= (version << 12);
+    tHAV = static_cast<ACE_UINT16> (tHAV | (version << 12));
     uuid.time_hi_and_version (tHAV);
 
     u_char cseqHAV;
@@ -367,7 +365,7 @@ namespace ACE_Utils
     cseqHAV = static_cast<u_char> ((clock_sequence & 0x3f00) >> 8);
     uuid_state_.timestamp = timestamp;
 
-    cseqHAV |= variant;
+    cseqHAV = static_cast<u_char> (cseqHAV | variant);
     uuid.clock_seq_hi_and_reserved (cseqHAV);
     uuid.node (uuid_state_.node);
 
@@ -460,13 +458,7 @@ namespace ACE_Utils
   UUID_Generator::get_systemtime (UUID_Time & timestamp)
   {
     const UUID_Time timeOffset =
-#if defined (ACE_LACKS_UNSIGNEDLONGLONG_T)
-      ACE_U_LongLong (ACE_INT64_LITERAL (0x1B21DD213814000));
-#elif defined (ACE_LACKS_LONGLONG_T)
-      ACE_U_LongLong (0x13814000u, 0x1B21DD2u);
-#else
       ACE_UINT64_LITERAL (0x1B21DD213814000);
-#endif  /* ACE_LACKS_UNSIGNEDLONGLONG_T */
 
     /// Get the time of day, convert to 100ns ticks then add the offset.
     ACE_Time_Value now = ACE_OS::gettimeofday ();
@@ -493,9 +485,6 @@ namespace ACE_Utils
   }
 }
 
-#if defined (ACE_HAS_EXPLICIT_STATIC_TEMPLATE_MEMBER_INSTANTIATION)
-  template ACE_Singleton <ACE_Utils::UUID_Generator, ACE_SYNCH_MUTEX> *
-  ACE_Singleton <ACE_Utils::UUID_Generator, ACE_SYNCH_MUTEX>::singleton_;
-#endif /* ACE_HAS_EXPLICIT_STATIC_TEMPLATE_MEMBER_INSTANTIATION */
+ACE_SINGLETON_TEMPLATE_INSTANTIATE(ACE_Singleton, ACE_Utils::UUID_Generator, ACE_SYNCH_MUTEX);
 
 ACE_END_VERSIONED_NAMESPACE_DECL

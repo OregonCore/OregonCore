@@ -1,8 +1,6 @@
-// $Id: Filecache.cpp 91368 2010-08-16 13:03:34Z mhengstmengel $
-
 #include "ace/Filecache.h"
 #include "ace/Object_Manager.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 #include "ace/ACE.h"
 #include "ace/Guard_T.h"
 #include "ace/OS_NS_string.h"
@@ -52,14 +50,14 @@ ACE_Filecache_Handle::init (void)
 }
 
 ACE_Filecache_Handle::ACE_Filecache_Handle (void)
-  : file_ (0), handle_ (0), mapit_ (0)
+  : file_ (0), handle_ (0)
 {
   this->init ();
 }
 
 ACE_Filecache_Handle::ACE_Filecache_Handle (const ACE_TCHAR *filename,
                                             ACE_Filecache_Flag mapit)
-  : file_ (0), handle_ (0), mapit_ (mapit)
+  : file_ (0), handle_ (0)
 {
   this->init ();
   // Fetch the file from the Virtual_Filesystem let the
@@ -72,8 +70,8 @@ ACE_Filecache_Handle::ACE_Filecache_Handle (const ACE_TCHAR *filename,
 
 ACE_Filecache_Handle::ACE_Filecache_Handle (const ACE_TCHAR *filename,
                                             int size,
-                                            ACE_Filecache_Flag mapit)
-  : file_ (0), handle_ (0), mapit_ (mapit)
+                                            ACE_Filecache_Flag )
+  : file_ (0), handle_ (0)
 {
   this->init ();
 
@@ -164,6 +162,7 @@ template <>
 ACE_Filecache_Hash_Entry::ACE_Hash_Map_Entry (ACE_Filecache_Hash_Entry *next,
                                               ACE_Filecache_Hash_Entry *prev)
   : ext_id_ (0),
+    int_id_ (0),
     next_ (next),
     prev_ (prev)
 {
@@ -246,7 +245,7 @@ ACE_Filecache::insert_i (const ACE_TCHAR *filename,
                       ACE_Filecache_Object (filename, filelock, 0, mapit),
                       0);
 
-      //      ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("   (%t) CVF: creating %s\n"), filename));
+      //      ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("   (%t) CVF: creating %s\n"), filename));
 
       if (this->hash_.bind (filename, handle) == -1)
         {
@@ -369,7 +368,7 @@ ACE_Filecache::fetch (const ACE_TCHAR *filename, int mapit)
               filelock.release ();
           }
         }
-      //      ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("   (%t) CVF: found %s\n"), filename));
+      //      ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("   (%t) CVF: found %s\n"), filename));
     }
 
   return handle;
@@ -690,8 +689,8 @@ ACE_Filecache_Object::error (void) const
 int
 ACE_Filecache_Object::error_i (int error_value, const ACE_TCHAR *s)
 {
-  s = s;
-  ACE_ERROR ((LM_ERROR, ACE_TEXT ("%p.\n"), s));
+  ACE_UNUSED_ARG (s);
+  ACELIB_ERROR ((LM_ERROR, ACE_TEXT ("%p.\n"), s));
   this->error_ = error_value;
   return error_value;
 }

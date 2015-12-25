@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: config-suncc-common.h 91685 2010-09-09 09:35:14Z johnnyw $
-
 #ifndef ACE_SUNCC_COMMON_H
 #define ACE_SUNCC_COMMON_H
 #include /**/ "ace/pre.h"

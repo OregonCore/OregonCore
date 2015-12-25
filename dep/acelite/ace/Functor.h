@@ -4,8 +4,6 @@
 /**
  *  @file    Functor.h
  *
- *  $Id: Functor.h 92069 2010-09-28 11:38:59Z johnnyw $
- *
  *   Non-templatized classes and class template specializations for
  *   implementing function objects that are used in  various places
  *   in ACE.  There are currently two major categories of function
@@ -15,7 +13,6 @@
  *   invoked via an operator() () method.
  *  Non-templatized classes for implementing the GoF Command Pattern,
  *  also known as functors or function objects.
- *
  *
  *  @author Chris Gill <cdgill@cs.wustl.edu>
  *  @author Based on Command Pattern implementations originally done by
@@ -75,6 +72,23 @@ public:
    * will never occur.
    */
   virtual int execute (void *arg = 0) = 0;
+};
+
+/**
+ * @class ACE_Noop_Command
+ *
+ * Implements a ACE_Command_Base with an empty execute() body.
+ */
+
+class ACE_Export ACE_Noop_Command
+  : public ACE_Command_Base
+{
+public:
+  /// Constructor
+  ACE_Noop_Command();
+
+  /// Implement the empty execute() member function
+  virtual int execute(void*);
 };
 
 ////////////////////////////////////////////////////////////
@@ -187,7 +201,7 @@ public:
   unsigned long operator () (unsigned long t) const;
 };
 
-#if !defined (ACE_LACKS_LONGLONG_T) && (ACE_SIZEOF_LONG < 8)
+#if (ACE_SIZEOF_LONG < 8)
 /**
  * @brief Function object for hashing a signed 64-bit number
  */
@@ -198,10 +212,8 @@ public:
   /// Simply returns t
   unsigned long operator () (ACE_INT64 t) const;
 };
-#endif /* !ACE_LACKS_LONGLONG_T && ACE_SIZEOF_LONG < 8 */
+#endif /* ACE_SIZEOF_LONG < 8 */
 
-// We can do this even if ACE_LACKS_UNSIGNEDLONGLONG_T because there's an
-// emulation for it in ACE_U_LongLong.
 #if (ACE_SIZEOF_LONG < 8)
 /**
  * @brief Function object for hashing an unsigned 64-bit number
@@ -238,8 +250,7 @@ public:
 };
 
 /**
- * @brief Function object for hashing a void *
- */
+ * @brief Function object for hashing a void */
 template<>
 class ACE_Export ACE_Hash<void *>
 {

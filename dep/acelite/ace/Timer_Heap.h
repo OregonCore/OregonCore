@@ -4,8 +4,6 @@
 /**
  *  @file    Timer_Heap.h
  *
- *  $Id: Timer_Heap.h 80826 2008-03-04 14:51:23Z wotte $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  */
 //=============================================================================
@@ -15,6 +13,7 @@
 #include /**/ "ace/pre.h"
 
 #include "ace/Timer_Heap_T.h"
+#include "ace/Event_Handler_Handle_Timeout_Upcall.h"
 
 #if !defined (ACE_LACKS_PRAGMA_ONCE)
 # pragma once
@@ -26,14 +25,20 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 // compatibility.
 
 typedef ACE_Timer_Heap_T<ACE_Event_Handler *,
-                         ACE_Event_Handler_Handle_Timeout_Upcall<ACE_SYNCH_RECURSIVE_MUTEX>,
+                         ACE_Event_Handler_Handle_Timeout_Upcall,
                          ACE_SYNCH_RECURSIVE_MUTEX>
         ACE_Timer_Heap;
 
 typedef ACE_Timer_Heap_Iterator_T<ACE_Event_Handler *,
-                                  ACE_Event_Handler_Handle_Timeout_Upcall<ACE_SYNCH_RECURSIVE_MUTEX>,
+                                  ACE_Event_Handler_Handle_Timeout_Upcall,
                                   ACE_SYNCH_RECURSIVE_MUTEX>
         ACE_Timer_Heap_Iterator;
+
+typedef ACE_Timer_Heap_T<ACE_Event_Handler *,
+                         ACE_Event_Handler_Handle_Timeout_Upcall,
+                         ACE_SYNCH_RECURSIVE_MUTEX,
+                         ACE_FPointer_Time_Policy>
+        ACE_Timer_Heap_Variable_Time_Source;
 
 ACE_END_VERSIONED_NAMESPACE_DECL
 

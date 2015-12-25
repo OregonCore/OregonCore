@@ -4,8 +4,6 @@
 /**
  *  @file    Argv_Type_Converter.h
  *
- *  $Id: Argv_Type_Converter.h 83891 2008-11-28 11:01:50Z johnnyw $
- *
  *  @author Si Mong Park <spark@ociweb.com>
  */
 //=============================================================================
@@ -78,7 +76,7 @@ private:
   /// argv list.
   void align_wchar_with_char (void);
 
-  /// Clean up removed (comsumed) argv entries and reset the pass flags.
+  /// Clean up removed (consumed) argv entries and reset the pass flags.
   void cleanup (void);
 #endif  // ACE_USES_WCHAR
 

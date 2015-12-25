@@ -1,5 +1,3 @@
-// $Id: OS_NS_Thread.cpp 91693 2010-09-09 12:57:54Z johnnyw $
-
 #include "ace/OS_NS_Thread.h"
 
 #if !defined (ACE_HAS_INLINED_OSCALLS)
@@ -14,11 +12,11 @@
 #include "ace/Object_Manager_Base.h"
 #include "ace/OS_NS_errno.h"
 #include "ace/OS_NS_ctype.h"
-#include "ace/Log_Msg.h" // for ACE_ASSERT
+#include "ace/Log_Category.h" // for ACE_ASSERT
 // This is necessary to work around nasty problems with MVS C++.
 #include "ace/Auto_Ptr.h"
 #include "ace/Thread_Mutex.h"
-#include "ace/Condition_T.h"
+#include "ace/Condition_Thread_Mutex.h"
 #include "ace/Guard_T.h"
 
 extern "C" void
@@ -50,34 +48,17 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 void
 ACE_Thread_ID::to_string (char *thr_string) const
 {
-  char format[128]; // Converted format string
-  char *fp = 0;     // Current format pointer
-  fp = format;
-  *fp++ = '%';   // Copy in the %
-
 #if defined (ACE_WIN32)
-  ACE_OS::strcpy (fp, "u");
-  ACE_OS::sprintf (thr_string,
-                   format,
+  ACE_OS::sprintf (thr_string, "%u",
                    static_cast <unsigned> (this->thread_id_));
 #else
-# if defined (ACE_MVS) || defined (ACE_TANDEM_T1248_PTHREADS)
-                  // MVS's pthread_t is a struct... yuck. So use the ACE 5.0
-                  // code for it.
-                  ACE_OS::strcpy (fp, "u");
-                  ACE_OS::sprintf (thr_string, format, thread_handle_);
-# else
-                  // Yes, this is an ugly C-style cast, but the
-                  // correct C++ cast is different depending on
-                  // whether the t_id is an integral type or a pointer
-                  // type. FreeBSD uses a pointer type, but doesn't
-                  // have a _np function to get an integral type, like
-                  // the OSes above.
-                  ACE_OS::strcpy (fp, "lu");
-                  ACE_OS::sprintf (thr_string,
-                                   format,
-                                   (unsigned long) thread_handle_);
-# endif /* ACE_MVS || ACE_TANDEM_T1248_PTHREADS */
+  // Yes, this is an ugly C-style cast, but the correct C++ cast is
+  // different depending on whether the t_id is an integral type or a
+  // pointer type. FreeBSD uses a pointer type, but doesn't have a _np
+  // function to get an integral type like other OSes, so use the
+  // bigger hammer.
+  ACE_OS::sprintf (thr_string, "%lu",
+                   (unsigned long) thread_handle_);
 #endif /* ACE_WIN32 */
 }
 
@@ -94,7 +75,15 @@ ACE_TSS_Emulation::ACE_TSS_DESTRUCTOR
 ACE_TSS_Emulation::tss_destructor_[ACE_TSS_Emulation::ACE_TSS_THREAD_KEYS_MAX]
  = { 0 };
 
-#  if defined (ACE_HAS_THREAD_SPECIFIC_STORAGE)
+#  if !defined (ACE_HAS_THREAD_SPECIFIC_STORAGE) && defined (ACE_HAS_VXTHREADS)
+
+#     if (defined (_WRS_CONFIG_SMP) || defined (INCLUDE_AMP_CPU))
+__thread void* ACE_TSS_Emulation::ace_tss_keys = 0;
+#     else  /* ! VxWorks SMP */
+void* ACE_TSS_Emulation::ace_tss_keys = 0;
+#     endif /* ! VxWorks SMP */
+
+#  elif defined (ACE_HAS_THREAD_SPECIFIC_STORAGE)
 
 bool ACE_TSS_Emulation::key_created_ = false;
 
@@ -232,13 +221,7 @@ ACE_TSS_Emulation::next_key (ACE_thread_key_t &key)
        // Loop through all possible keys and check whether a key is free
        for ( ;counter < ACE_TSS_THREAD_KEYS_MAX; counter++)
          {
-            ACE_thread_key_t localkey;
-#  if defined (ACE_HAS_NONSCALAR_THREAD_KEY_T)
-              ACE_OS::memset (&localkey, 0, sizeof (ACE_thread_key_t));
-              ACE_OS::memcpy (&localkey, &counter_, sizeof (u_int));
-#  else
-              localkey = counter;
-#  endif /* ACE_HAS_NONSCALAR_THREAD_KEY_T */
+            ACE_thread_key_t localkey = counter;
             // If the key is not set as used, we can give out this key, if not
             // we have to search further
             if (tss_keys_used_->is_set(localkey) == 0)
@@ -397,20 +380,6 @@ ACE_TSS_Info::ACE_TSS_Info (void)
   ACE_OS_TRACE ("ACE_TSS_Info::ACE_TSS_Info");
 }
 
-# if defined (ACE_HAS_NONSCALAR_THREAD_KEY_T)
-static inline bool operator== (const ACE_thread_key_t &lhs,
-                               const ACE_thread_key_t &rhs)
-{
-  return ! ACE_OS::memcmp (&lhs, &rhs, sizeof (ACE_thread_key_t));
-}
-
-static inline bool operator!= (const ACE_thread_key_t &lhs,
-                               const ACE_thread_key_t &rhs)
-{
-  return ! (lhs == rhs);
-}
-# endif /* ACE_HAS_NONSCALAR_THREAD_KEY_T */
-
 // Check for equality.
 bool
 ACE_TSS_Info::operator== (const ACE_TSS_Info &info) const
@@ -436,10 +405,10 @@ ACE_TSS_Info::dump (void)
   //  ACE_OS_TRACE ("ACE_TSS_Info::dump");
 
 #   if 0
-  ACE_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
-  ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("key_ = %u\n"), this->key_));
-  ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("destructor_ = %u\n"), this->destructor_));
-  ACE_DEBUG ((LM_DEBUG, ACE_END_DUMP));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_TEXT ("key_ = %u\n"), this->key_));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_TEXT ("destructor_ = %u\n"), this->destructor_));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_END_DUMP));
 #   endif /* 0 */
 # endif /* ACE_HAS_DUMP */
 }
@@ -466,9 +435,8 @@ ACE_TSS_Keys::find (const u_int key, u_int &word, u_int &bit)
 int
 ACE_TSS_Keys::test_and_set (const ACE_thread_key_t key)
 {
-  ACE_KEY_INDEX (key_index, key);
   u_int word, bit;
-  find (key_index, word, bit);
+  find (key, word, bit);
 
   if (ACE_BIT_ENABLED (key_bit_words_[word], 1 << bit))
     {
@@ -484,9 +452,8 @@ ACE_TSS_Keys::test_and_set (const ACE_thread_key_t key)
 int
 ACE_TSS_Keys::test_and_clear (const ACE_thread_key_t key)
 {
-  ACE_KEY_INDEX (key_index, key);
   u_int word, bit;
-  find (key_index, word, bit);
+  find (key, word, bit);
 
   if (word < ACE_WORDS && ACE_BIT_ENABLED (key_bit_words_[word], 1 << bit))
     {
@@ -502,9 +469,8 @@ ACE_TSS_Keys::test_and_clear (const ACE_thread_key_t key)
 int
 ACE_TSS_Keys::is_set (const ACE_thread_key_t key) const
 {
-  ACE_KEY_INDEX (key_index, key);
   u_int word, bit;
-  find (key_index, word, bit);
+  find (key, word, bit);
 
   return word < ACE_WORDS ? ACE_BIT_ENABLED (key_bit_words_[word], 1 << bit) : 0;
 }
@@ -627,7 +593,7 @@ private:
   static unsigned int reference_count_;
   static ACE_TSS_Cleanup * instance_;
   static ACE_Thread_Mutex* mutex_;
-  static ACE_Thread_Condition<ACE_Thread_Mutex>* condition_;
+  static ACE_Condition_Thread_Mutex* condition_;
 
 private:
   ACE_TSS_Cleanup * ptr_;
@@ -650,7 +616,7 @@ TSS_Cleanup_Instance::TSS_Cleanup_Instance (Purpose purpose)
   if (mutex_ == 0)
     {
       ACE_NEW (mutex_, ACE_Thread_Mutex ());
-      ACE_NEW (condition_, ACE_Thread_Condition<ACE_Thread_Mutex> (*mutex_));
+      ACE_NEW (condition_, ACE_Condition_Thread_Mutex (*mutex_));
     }
 
   ACE_GUARD (ACE_Thread_Mutex, m, *mutex_);
@@ -750,7 +716,7 @@ TSS_Cleanup_Instance::operator ->()
 unsigned int TSS_Cleanup_Instance::reference_count_ = 0;
 ACE_TSS_Cleanup * TSS_Cleanup_Instance::instance_ = 0;
 ACE_Thread_Mutex* TSS_Cleanup_Instance::mutex_ = 0;
-ACE_Thread_Condition<ACE_Thread_Mutex>* TSS_Cleanup_Instance::condition_ = 0;
+ACE_Condition_Thread_Mutex* TSS_Cleanup_Instance::condition_ = 0;
 
 ACE_TSS_Cleanup::~ACE_TSS_Cleanup (void)
 {
@@ -810,7 +776,7 @@ ACE_TSS_Cleanup::thread_exit (void)
       }
 
     // remove the in_use bit vector last
-    ACE_KEY_INDEX (use_index, this->in_use_);
+    u_int use_index = this->in_use_;
     ACE_TSS_Info & info = this->table_[use_index];
     destructor[d_count] = 0;
     tss_obj[d_count] = 0;
@@ -852,7 +818,7 @@ ACE_TSS_Cleanup::insert (ACE_thread_key_t key,
   ACE_OS_TRACE ("ACE_TSS_Cleanup::insert");
   ACE_TSS_CLEANUP_GUARD
 
-  ACE_KEY_INDEX (key_index, key);
+  u_int key_index = key;
   ACE_ASSERT (key_index < ACE_DEFAULT_THREAD_KEYS);
   if (key_index < ACE_DEFAULT_THREAD_KEYS)
     {
@@ -873,7 +839,7 @@ ACE_TSS_Cleanup::free_key (ACE_thread_key_t key)
 {
   ACE_OS_TRACE ("ACE_TSS_Cleanup::free_key");
   ACE_TSS_CLEANUP_GUARD
-  ACE_KEY_INDEX (key_index, key);
+  u_int key_index = key;
   if (key_index < ACE_DEFAULT_THREAD_KEYS)
     {
       return remove_key (this->table_ [key_index]);
@@ -923,9 +889,13 @@ ACE_TSS_Cleanup::thread_detach_key (ACE_thread_key_t key)
   {
     ACE_TSS_CLEANUP_GUARD
 
-    ACE_KEY_INDEX (key_index, key);
-    ACE_ASSERT (key_index < sizeof(this->table_)/sizeof(this->table_[0])
-        && this->table_[key_index].key_ == key);
+    u_int key_index = key;
+    ACE_ASSERT (key_index < sizeof(this->table_)/sizeof(this->table_[0]));
+    // If this entry was never set, just bug out. If it is set, but is the
+    // wrong key, assert.
+    if (this->table_[key_index].key_ == 0)
+      return 0;
+    ACE_ASSERT (this->table_[key_index].key_ == key);
     ACE_TSS_Info &info = this->table_ [key_index];
 
     // sanity check
@@ -979,7 +949,7 @@ ACE_TSS_Cleanup::thread_use_key (ACE_thread_key_t key)
       ACE_TSS_CLEANUP_GUARD
 
       // Retrieve the key's ACE_TSS_Info and increment its thread_count_.
-      ACE_KEY_INDEX (key_index, key);
+      u_int key_index = key;
       ACE_TSS_Info &key_info = this->table_ [key_index];
 
       ACE_ASSERT (key_info.key_in_use ());
@@ -1450,7 +1420,7 @@ ACE_OS::cond_timedwait (ACE_cond_t *cv,
       // Note that we must convert between absolute time (which is
       // passed as a parameter) and relative time (which is what
       // WaitForSingleObjects() expects).
-      ACE_Time_Value relative_time (*timeout - ACE_OS::gettimeofday ());
+      ACE_Time_Value relative_time = timeout->to_relative_time ();
 
       // Watchout for situations where a context switch has caused the
       // current time to be > the timeout.
@@ -1507,7 +1477,7 @@ ACE_OS::cond_timedwait (ACE_cond_t *cv,
     return -1;
 
 #     if defined (ACE_WIN32)
-  if (result != WAIT_OBJECT_0)
+  if (result != (int)WAIT_OBJECT_0)
     {
       switch (result)
         {
@@ -1623,7 +1593,7 @@ ACE_OS::cond_timedwait (ACE_cond_t *cv,
   int msec_timeout = 0;
   int result = 0;
 
-  ACE_Time_Value relative_time (*timeout - ACE_OS::gettimeofday ());
+  ACE_Time_Value relative_time = timeout->to_relative_time ();
   // Watchout for situations where a context switch has caused the
   // current time to be > the timeout.
   if (relative_time > ACE_Time_Value::zero)
@@ -1652,7 +1622,7 @@ ACE_OS::cond_timedwait (ACE_cond_t *cv,
       // Note that we must convert between absolute time (which is
       // passed as a parameter) and relative time (which is what
       // WaitForSingleObjects() expects).
-      ACE_Time_Value relative_time (*timeout - ACE_OS::gettimeofday ());
+      ACE_Time_Value relative_time = timeout->to_relative_time ();
 
       // Watchout for situations where a context switch has caused the
       // current time to be > the timeout.
@@ -1690,7 +1660,7 @@ ACE_OS::cond_timedwait (ACE_cond_t *cv,
   if (ACE_OS::thread_mutex_unlock (&cv->waiters_lock_) != 0)
     return -1;
 
-  if (result != WAIT_OBJECT_0)
+  if (result != (int)WAIT_OBJECT_0)
     {
       switch (result)
         {
@@ -1782,7 +1752,7 @@ ACE_OS::cond_wait (ACE_cond_t *cv,
   if (ACE_OS::thread_mutex_unlock (&cv->waiters_lock_) != 0)
     return -1;
 
-  if (result != WAIT_OBJECT_0)
+  if (result != (int)WAIT_OBJECT_0)
     {
       switch (result)
         {
@@ -2184,7 +2154,7 @@ ACE_OS::mutex_lock (ACE_mutex_t *m,
   // Note that we must convert between absolute time (which is passed
   // as a parameter) and relative time (which is what the system call
   // expects).
-  ACE_Time_Value relative_time (timeout - ACE_OS::gettimeofday ());
+  ACE_Time_Value relative_time = timeout.to_relative_time ();
 
   switch (m->type_)
   {
@@ -2218,7 +2188,7 @@ ACE_OS::mutex_lock (ACE_mutex_t *m,
   // Note that we must convert between absolute time (which is passed
   // as a parameter) and relative time (which is what the system call
   // expects).
-  ACE_Time_Value relative_time (timeout - ACE_OS::gettimeofday ());
+  ACE_Time_Value relative_time = timeout.to_relative_time ();
 
   int ticks_per_sec = ::sysClkRateGet ();
 
@@ -2535,15 +2505,17 @@ ACE_OS::event_destroy (ACE_event_t *event)
 
 int
 ACE_OS::event_init (ACE_event_t *event,
+                    int type,
+                    ACE_condattr_t *attributes,
                     int manual_reset,
                     int initial_state,
-                    int type,
                     const char *name,
                     void *arg,
                     LPSECURITY_ATTRIBUTES sa)
 {
 #if defined (ACE_WIN32)
   ACE_UNUSED_ARG (type);
+  ACE_UNUSED_ARG (attributes);
   ACE_UNUSED_ARG (arg);
   SECURITY_ATTRIBUTES sa_buffer;
   SECURITY_DESCRIPTOR sd_buffer;
@@ -2637,6 +2609,7 @@ ACE_OS::event_init (ACE_event_t *event,
           event->name_ = ACE_OS::strdup (name_p);
           if (event->name_ == 0)
             {
+              ACE_OS::munmap (evtdata, sizeof (ACE_eventdata_t));
               ACE_OS::shm_unlink (ACE_TEXT_CHAR_TO_TCHAR (name_p));
               return -1;
             }
@@ -2651,10 +2624,15 @@ ACE_OS::event_init (ACE_event_t *event,
 # if (defined (ACE_HAS_PTHREADS) && defined (_POSIX_THREAD_PROCESS_SHARED) && !defined (ACE_LACKS_CONDATTR_PSHARED)) || \
     (!defined (ACE_USES_FIFO_SEM) && \
       (!defined (ACE_HAS_POSIX_SEM) || !defined (ACE_HAS_POSIX_SEM_TIMEOUT) || defined (ACE_LACKS_NAMED_POSIX_SEM)))
-          int result = ACE_OS::cond_init (&event->eventdata_->condition_,
-                                          static_cast<short> (type),
-                                          name,
-                                          arg);
+          int result = attributes == 0 ?
+                          ACE_OS::cond_init (&event->eventdata_->condition_,
+                                             type,
+                                             name,
+                                             arg) :
+                          ACE_OS::cond_init (&event->eventdata_->condition_,
+                                             *attributes,
+                                             name,
+                                             arg);
 # else
           char   sem_name[128];
           ACE_OS::strncpy (sem_name,
@@ -2664,6 +2642,7 @@ ACE_OS::event_init (ACE_event_t *event,
           int result = ACE_OS::sema_init (&event->semaphore_,
                                           0,
                                           type,
+                                          attributes,
                                           sem_name,
                                           arg);
 # endif
@@ -2687,6 +2666,7 @@ ACE_OS::event_init (ACE_event_t *event,
             result = ACE_OS::sema_init (&event->lock_,
                                         0,
                                         type,
+                                        attributes,
                                         lck_name,
                                         arg);
             if (result == 0)
@@ -2701,9 +2681,9 @@ ACE_OS::event_init (ACE_event_t *event,
 
           event->name_ = 0;
           event->eventdata_ = evtdata;
-#if (!defined (ACE_HAS_PTHREADS) || !defined (_POSIX_THREAD_PROCESS_SHARED) || defined (ACE_LACKS_CONDATTR_PSHARED)) && \
-  (defined (ACE_USES_FIFO_SEM) || \
-    (defined (ACE_HAS_POSIX_SEM) && defined (ACE_HAS_POSIX_SEM_TIMEOUT) && !defined (ACE_LACKS_NAMED_POSIX_SEM)))
+# if (!defined (ACE_HAS_PTHREADS) || !defined (_POSIX_THREAD_PROCESS_SHARED) || defined (ACE_LACKS_CONDATTR_PSHARED)) && \
+      (defined (ACE_USES_FIFO_SEM) || \
+      (defined (ACE_HAS_POSIX_SEM) && defined (ACE_HAS_POSIX_SEM_TIMEOUT) && !defined (ACE_LACKS_NAMED_POSIX_SEM)))
           char   sem_name[128];
           ACE_OS::strncpy (sem_name,
                            name,
@@ -2712,6 +2692,7 @@ ACE_OS::event_init (ACE_event_t *event,
           result = ACE_OS::sema_init(&event->semaphore_,
                                      0,
                                      type,
+                                     attributes,
                                      sem_name,
                                      arg);
 # endif
@@ -2731,6 +2712,7 @@ ACE_OS::event_init (ACE_event_t *event,
               result = ACE_OS::sema_init (&event->lock_,
                                           0,
                                           type,
+                                          attributes,
                                           lck_name,
                                           arg);
             }
@@ -2753,14 +2735,20 @@ ACE_OS::event_init (ACE_event_t *event,
 # if (defined (ACE_HAS_PTHREADS) && defined (_POSIX_THREAD_PROCESS_SHARED) && !defined (ACE_LACKS_CONDATTR_PSHARED)) || \
     (!defined (ACE_USES_FIFO_SEM) && \
       (!defined (ACE_HAS_POSIX_SEM) || !defined (ACE_HAS_POSIX_SEM_TIMEOUT) || defined (ACE_LACKS_NAMED_POSIX_SEM)))
-      int result = ACE_OS::cond_init (&event->eventdata_->condition_,
-                                      static_cast<short> (type),
-                                      name,
-                                      arg);
+      int result = attributes == 0 ?
+                      ACE_OS::cond_init (&event->eventdata_->condition_,
+                                         type,
+                                         name,
+                                         arg) :
+                      ACE_OS::cond_init (&event->eventdata_->condition_,
+                                         *attributes,
+                                         name,
+                                         arg);
 # else
       int result = ACE_OS::sema_init (&event->semaphore_,
                                       0,
                                       type,
+                                      attributes,
                                       name,
                                       arg);
 # endif
@@ -2777,6 +2765,7 @@ ACE_OS::event_init (ACE_event_t *event,
       result = ACE_OS::sema_init (&event->lock_,
                                   0,
                                   type,
+                                  attributes,
                                   name,
                                   arg);
       if (result == 0)
@@ -2790,6 +2779,7 @@ ACE_OS::event_init (ACE_event_t *event,
   ACE_UNUSED_ARG (manual_reset);
   ACE_UNUSED_ARG (initial_state);
   ACE_UNUSED_ARG (type);
+  ACE_UNUSED_ARG (attributes);
   ACE_UNUSED_ARG (name);
   ACE_UNUSED_ARG (arg);
   ACE_UNUSED_ARG (sa);
@@ -3055,7 +3045,7 @@ ACE_OS::event_timedwait (ACE_event_t *event,
         {
           // Time is given in absolute time, we should use
           // gettimeofday() to calculate relative time
-          ACE_Time_Value relative_time (*timeout - ACE_OS::gettimeofday ());
+          ACE_Time_Value relative_time = timeout->to_relative_time ();
 
           // Watchout for situations where a context switch has caused
           // the current time to be > the timeout.  Thanks to Norbert
@@ -3116,7 +3106,7 @@ ACE_OS::event_timedwait (ACE_event_t *event,
           // cond_timewait() expects absolute time, check
           // <use_absolute_time> flag.
           if (use_absolute_time == 0)
-            absolute_timeout += ACE_OS::gettimeofday ();
+            absolute_timeout = timeout->to_absolute_time ();
 
           while (event->eventdata_->is_signaled_ == 0 &&
                  event->eventdata_->auto_event_signaled_ == false)
@@ -3533,7 +3523,7 @@ ACE_OS::sched_params (const ACE_Sched_Params &sched_params,
 #if defined (ACE_HAS_STHREADS)
   return ACE_OS::set_scheduling_params (sched_params, id);
 #elif defined (ACE_HAS_PTHREADS) && \
-      (!defined (ACE_LACKS_SETSCHED) || defined (ACE_TANDEM_T1248_PTHREADS) || \
+      (!defined (ACE_LACKS_SETSCHED) || \
       defined (ACE_HAS_PTHREAD_SCHEDPARAM))
   if (sched_params.quantum () != ACE_Time_Value::zero)
     {
@@ -3552,15 +3542,15 @@ ACE_OS::sched_params (const ACE_Sched_Params &sched_params,
 
   if (sched_params.scope () == ACE_SCOPE_PROCESS)
     {
-# if defined(ACE_TANDEM_T1248_PTHREADS) || defined (ACE_HAS_PTHREAD_SCHEDPARAM)
+# if defined (ACE_HAS_PTHREAD_SCHEDPARAM)
       ACE_UNUSED_ARG (id);
       ACE_NOTSUP_RETURN (-1);
-# else  /* ! ACE_TANDEM_T1248_PTHREADS */
+# else  /* !ACE_HAS_PTHREAD_SCHEDPARAM */
       int result = ::sched_setscheduler (id == ACE_SELF ? 0 : id,
                                          sched_params.policy (),
                                          &param) == -1 ? -1 : 0;
       return result;
-# endif /* ! ACE_TANDEM_T1248_PTHREADS */
+# endif /* !ACE_HAS_PTHREAD_SCHEDPARAM */
     }
   else if (sched_params.scope () == ACE_SCOPE_THREAD)
     {
@@ -3858,12 +3848,14 @@ ACE_OS::thr_create (ACE_THR_FUNC func,
                     ACE_OS_Thread_Adapter (func, args,
                                            (ACE_THR_C_FUNC) ACE_THREAD_ADAPTER_NAME,
                                            ACE_OS_Object_Manager::seh_except_selector(),
-                                           ACE_OS_Object_Manager::seh_except_handler()),
+                                           ACE_OS_Object_Manager::seh_except_handler(),
+                                           flags),
                     -1);
 #else
   ACE_NEW_RETURN (thread_args,
                   ACE_OS_Thread_Adapter (func, args,
-                                         (ACE_THR_C_FUNC) ACE_THREAD_ADAPTER_NAME),
+                                         (ACE_THR_C_FUNC) ACE_THREAD_ADAPTER_NAME,
+                                         flags),
                   -1);
 
 #endif /* ACE_HAS_WIN32_STRUCTURAL_EXCEPTIONS */
@@ -3873,9 +3865,8 @@ ACE_OS::thr_create (ACE_THR_FUNC func,
   auto_ptr <ACE_Base_Thread_Adapter> auto_thread_args;
 
   if (thread_adapter == 0)
-    ACE_AUTO_PTR_RESET (auto_thread_args,
-                        thread_args,
-                        ACE_Base_Thread_Adapter);
+    ACE_auto_ptr_reset (auto_thread_args,
+                        thread_args);
 
 #if defined (ACE_HAS_THREADS)
 
@@ -4104,6 +4095,7 @@ ACE_OS::thr_create (ACE_THR_FUNC func,
           }
         }
 
+#       if !defined (ACE_LACKS_SETINHERITSCHED)
       // *** Set scheduling explicit or inherited
       if (ACE_BIT_ENABLED (flags, THR_INHERIT_SCHED)
           || ACE_BIT_ENABLED (flags, THR_EXPLICIT_SCHED))
@@ -4117,6 +4109,7 @@ ACE_OS::thr_create (ACE_THR_FUNC func,
               return -1;
             }
         }
+#       endif /* ACE_LACKS_SETINHERITSCHED */
 #   else /* ACE_LACKS_SETSCHED */
       ACE_UNUSED_ARG (priority);
 #   endif /* ACE_LACKS_SETSCHED */
@@ -4140,14 +4133,11 @@ ACE_OS::thr_create (ACE_THR_FUNC func,
       if (ACE_BIT_ENABLED (flags, THR_SCOPE_SYSTEM)
           || ACE_BIT_ENABLED (flags, THR_SCOPE_PROCESS))
         {
-#     if defined (ACE_CONFIG_LINUX_H) || defined (HPUX) || defined (ACE_VXWORKS)
-          // LinuxThreads do not have support for PTHREAD_SCOPE_PROCESS.
-          // Neither does HPUX (up to HP-UX 11.00, as far as I know).
-          // Also VxWorks only delivers scope system
+#     if defined (ACE_LACKS_PTHREAD_SCOPE_PROCESS)
           int scope = PTHREAD_SCOPE_SYSTEM;
-#     else /* ACE_CONFIG_LINUX_H */
+#     else /* ACE_LACKS_PTHREAD_SCOPE_PROCESS */
           int scope = PTHREAD_SCOPE_PROCESS;
-#     endif /* ACE_CONFIG_LINUX_H */
+#     endif /* ACE_LACKS_PTHREAD_SCOPE_PROCESS */
           if (ACE_BIT_ENABLED (flags, THR_SCOPE_SYSTEM))
             scope = PTHREAD_SCOPE_SYSTEM;
 
@@ -4446,9 +4436,9 @@ ACE_OS::thr_create (ACE_THR_FUNC func,
       tid = ::taskSpawn (thr_name && *thr_name ? const_cast <char*> (*thr_name) : 0,
                          priority,
                          (int) flags,
-                         (int) stacksize,
+                         stacksize,
                          thread_args->entry_point (),
-                         (int) thread_args,
+                         (ACE_VX_USR_ARG_T) thread_args,
                          0, 0, 0, 0, 0, 0, 0, 0, 0);
 #   if 0 /* Don't support setting of stack, because it doesn't seem to work. */
     }
@@ -4482,7 +4472,7 @@ ACE_OS::thr_create (ACE_THR_FUNC func,
     }
 #   endif /* 0 */
 
-  if (tid == ERROR)
+  if (tid == ACE_VX_TASK_ID_ERROR)
     return -1;
   else
     {
@@ -4570,8 +4560,8 @@ ACE_OS::thr_exit (ACE_THR_FUNC_RETURN status)
 #   endif /* ACE_HAS_MFC && ACE_HAS_MFS != 0*/
 
 # elif defined (ACE_HAS_VXTHREADS)
-    ACE_thread_t tid = ACE_OS::thr_self ();
-    *((int *) status) = ::taskDelete (tid);
+    ACE_UNUSED_ARG (status);
+    ::taskDelete (ACE_OS::thr_self ());
 # endif /* ACE_HAS_PTHREADS */
 #else
   ACE_UNUSED_ARG (status);
@@ -4746,6 +4736,7 @@ ACE_OS::thr_set_affinity (ACE_hthread_t thr_id,
     }
   return 0;
 #elif defined (ACE_HAS_TASKCPUAFFINITYSET)
+  ACE_UNUSED_ARG (cpu_set_size);
   int result = 0;
   if (ACE_ADAPT_RETVAL (::taskCpuAffinitySet (thr_id, *cpu_mask), result) == -1)
     {
@@ -5141,14 +5132,16 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 int
 spa (FUNCPTR entry, ...)
 {
-  static const unsigned int ACE_MAX_ARGS = 10;
-  static char *argv[ACE_MAX_ARGS];
+  // The called entrypoint can get the function name plus the normal 10
+  // optional arguments.
+  static ACE_VX_USR_ARG_T const ACE_MAX_ARGS = 1 + 10;
+  static char *argv[ACE_MAX_ARGS] = { 0 };
   va_list pvar;
-  unsigned int argc;
+  ACE_VX_USR_ARG_T argc;
 
   // Hardcode a program name because the real one isn't available
   // through the VxWorks shell.
-  argv[0] = "ace_main";
+  argv[0] = const_cast<char*> ("ace_main");
 
   // Peel off arguments to spa () and put into argv.  va_arg () isn't
   // necessarily supposed to return 0 when done, though since the
@@ -5158,7 +5151,7 @@ spa (FUNCPTR entry, ...)
   // number of arguments would have to be passed.
   va_start (pvar, entry);
 
-  for (argc = 1; argc <= ACE_MAX_ARGS; ++argc)
+  for (argc = 1; argc < ACE_MAX_ARGS; ++argc)
     {
       argv[argc] = va_arg (pvar, char *);
 
@@ -5166,41 +5159,45 @@ spa (FUNCPTR entry, ...)
         break;
     }
 
-  if (argc > ACE_MAX_ARGS  &&  argv[argc-1] != 0)
+  if (argc >= ACE_MAX_ARGS && argv[ACE_MAX_ARGS - 1] != 0)
     {
-      // try to read another arg, and warn user if the limit was exceeded
+      // Try to read another arg, and warn user if the limit was exceeded.
+      //
+      // Note that the VxWorks shell arguments change from int to long when
+      // using a 64bit compiler. Cast the argument up so that the format
+      // specifier remains correct for either build type.
       if (va_arg (pvar, char *) != 0)
-        ACE_OS::fprintf (stderr, "spa(): number of arguments limited to %d\n",
-                         ACE_MAX_ARGS);
+        ACE_OS::fprintf (stderr, "spa(): number of arguments limited to %ld\n",
+                         (long)ACE_MAX_ARGS);
     }
   else
     {
       // fill unused argv slots with 0 to get rid of leftovers
       // from previous invocations
-      for (unsigned int i = argc; i <= ACE_MAX_ARGS; ++i)
+      for (ACE_VX_USR_ARG_T i = argc; i < ACE_MAX_ARGS; ++i)
         argv[i] = 0;
     }
 
   // The hard-coded options are what ::sp () uses, except for the
   // larger stack size (instead of ::sp ()'s 20000).
-  int const ret = ::taskSpawn (argv[0],    // task name
-                               100,        // task priority
-                               VX_FP_TASK, // task options
-                               ACE_NEEDS_HUGE_THREAD_STACKSIZE, // stack size
-                               entry,      // entry point
-                               argc,       // first argument to main ()
-                               (int) argv, // second argument to main ()
-                               0, 0, 0, 0, 0, 0, 0, 0);
+  ACE_VX_TASK_ID const ret = ::taskSpawn (argv[0],    // task name
+                                          100,        // task priority
+                                          VX_FP_TASK, // task options
+                                          ACE_NEEDS_HUGE_THREAD_STACKSIZE, // stack size
+                                          entry,      // entry point
+                                          argc,       // first argument to main ()
+                                          (ACE_VX_USR_ARG_T) argv, // second argument to main ()
+                                          0, 0, 0, 0, 0, 0, 0, 0);
   va_end (pvar);
 
   // ::taskSpawn () returns the taskID on success: return 0 instead if
   // successful
-  return ret > 0 ? 0 : ret;
+  return ret > 0 ? 0 : -1;
 }
 
 // A helper function for the extended spa functions
 static void
-add_to_argv (int& argc, char** argv, int max_args, char* string)
+add_to_argv (ACE_VX_USR_ARG_T& argc, char** argv, int max_args, char* string)
 {
   char indouble   = 0;
   size_t previous = 0;
@@ -5276,10 +5273,10 @@ int
 spae (FUNCPTR entry, ...)
 {
   static int const WINDSH_ARGS = 10;
-  static int const ACE_MAX_ARGS    = 128;
-  static char* argv[ACE_MAX_ARGS]  = { "ace_main", 0 };
+  static ACE_VX_USR_ARG_T const ACE_MAX_ARGS = 128;
+  static char* argv[ACE_MAX_ARGS]  = { const_cast<char*> ("ace_main"), 0 };
   va_list pvar;
-  int argc = 1;
+  ACE_VX_USR_ARG_T argc = 1;
 
   // Peel off arguments to spa () and put into argv.  va_arg () isn't
   // necessarily supposed to return 0 when done, though since the
@@ -5301,19 +5298,19 @@ spae (FUNCPTR entry, ...)
 
   // The hard-coded options are what ::sp () uses, except for the
   // larger stack size (instead of ::sp ()'s 20000).
-  int const ret = ::taskSpawn (argv[0],    // task name
-                               100,        // task priority
-                               VX_FP_TASK, // task options
-                               ACE_NEEDS_HUGE_THREAD_STACKSIZE, // stack size
-                               entry,      // entry point
-                               argc,       // first argument to main ()
-                               (int) argv, // second argument to main ()
-                               0, 0, 0, 0, 0, 0, 0, 0);
+  ACE_VX_TASK_ID const ret = ::taskSpawn (argv[0],    // task name
+                                          100,        // task priority
+                                          VX_FP_TASK, // task options
+                                          ACE_NEEDS_HUGE_THREAD_STACKSIZE, // stack size
+                                          entry,      // entry point
+                                          argc,       // first argument to main ()
+                                          (ACE_VX_USR_ARG_T) argv, // second argument to main ()
+                                          0, 0, 0, 0, 0, 0, 0, 0);
   va_end (pvar);
 
   // ::taskSpawn () returns the taskID on success: return 0 instead if
   // successful
-  return ret > 0 ? 0 : ret;
+  return ret > 0 ? 0 : -1;
 }
 
 // This global function can be used from the VxWorks shell to pass
@@ -5330,10 +5327,10 @@ int
 spaef (FUNCPTR entry, ...)
 {
   static int const WINDSH_ARGS = 10;
-  static int const ACE_MAX_ARGS    = 128;
-  static char* argv[ACE_MAX_ARGS]  = { "ace_main", 0 };
+  static ACE_VX_USR_ARG_T const ACE_MAX_ARGS    = 128;
+  static char* argv[ACE_MAX_ARGS]  = { const_cast<char*> ("ace_main"), 0 };
   va_list pvar;
-  int argc = 1;
+  ACE_VX_USR_ARG_T argc = 1;
 
   // Peel off arguments to spa () and put into argv.  va_arg () isn't
   // necessarily supposed to return 0 when done, though since the
@@ -5380,11 +5377,11 @@ _vx_call_entry(FUNCPTR entry, int argc, char* argv[])
 }
 
 int
-vx_execae (FUNCPTR entry, char* arg, int prio, int opt, int stacksz, ...)
+vx_execae (FUNCPTR entry, char* arg, int prio, int opt, size_t stacksz, ...)
 {
-  static int const ACE_MAX_ARGS    = 128;
-  static char* argv[ACE_MAX_ARGS]  = { "ace_main", 0 };
-  int argc = 1;
+  static ACE_VX_USR_ARG_T const ACE_MAX_ARGS = 128;
+  static char* argv[ACE_MAX_ARGS]  = { const_cast<char*> ("ace_main"), 0 };
+  ACE_VX_USR_ARG_T argc = 1;
 
   // Peel off arguments to run_main () and put into argv.
   if (arg)
@@ -5394,22 +5391,22 @@ vx_execae (FUNCPTR entry, char* arg, int prio, int opt, int stacksz, ...)
 
   // fill unused argv slots with 0 to get rid of leftovers
   // from previous invocations
-  for (int i = argc; i < ACE_MAX_ARGS; ++i)
+  for (ACE_VX_USR_ARG_T i = argc; i < ACE_MAX_ARGS; ++i)
     argv[i] = 0;
 
   // The hard-coded options are what ::sp () uses, except for the
   // larger stack size (instead of ::sp ()'s 20000).
-  int const ret = ::taskSpawn (argv[0],    // task name
-                               prio==0 ? 100 : prio,        // task priority
-                               opt==0 ? VX_FP_TASK : opt, // task options
-                               stacksz==0 ? ACE_NEEDS_HUGE_THREAD_STACKSIZE : stacksz, // stack size
-                               (FUNCPTR)_vx_call_entry, // entrypoint caller
-                               (int)entry,              // entry point
-                               argc,                    // first argument to main ()
-                               (int) argv,              // second argument to main ()
-                               0, 0, 0, 0, 0, 0, 0);
+  ACE_VX_TASK_ID const ret = ::taskSpawn (argv[0],              // task name
+                                          prio==0 ? 100 : prio, // task priority
+                                          opt==0 ? VX_FP_TASK : opt, // task options
+                                          stacksz==0 ? ACE_NEEDS_HUGE_THREAD_STACKSIZE : stacksz, // stack size
+                                          (FUNCPTR)_vx_call_entry,   // entrypoint caller
+                                          (ACE_VX_USR_ARG_T)entry,   // entry point
+                                          argc,                      // first argument to main ()
+                                          (ACE_VX_USR_ARG_T) argv,   // second argument to main ()
+                                          0, 0, 0, 0, 0, 0, 0);
 
-  if (ret == ERROR)
+  if (ret == ACE_VX_TASK_ID_ERROR)
     return 255;
 
   while( ret > 0 && ::taskIdVerify (ret) != ERROR )

@@ -1,9 +1,7 @@
-// $Id: SOCK_SEQPACK_Association.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/SOCK_SEQPACK_Association.h"
 
 #include "ace/Auto_Ptr.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 #include "ace/OS_Memory.h"
 #include "ace/OS_NS_string.h"
 

@@ -1,10 +1,7 @@
 // -*- C++ -*-
-//
-// $Id: RB_Tree.inl 80826 2008-03-04 14:51:23Z wotte $
-
 #include "ace/Guard_T.h"
 #include "ace/Malloc_Base.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -194,8 +191,7 @@ ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::bind (const EXT_ID &ext_id,
                                                            const INT_ID &int_id,
                                                            ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)
 {
-  ACE_TRACE ("ACE_RB_Tree::bind (const EXT_ID &ext_id, const INT_ID &int_id, "
-             "ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)");
+  ACE_TRACE ("ACE_RB_Tree::bind (const EXT_ID &ext_id, const INT_ID &int_id, ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)");
   ACE_WRITE_GUARD_RETURN (ACE_LOCK, ace_mon, this->lock_, -1);
 
   return this->insert_i (ext_id, int_id, entry);
@@ -238,8 +234,7 @@ ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::trybind (const EXT_ID &ext_
                                                               INT_ID &int_id,
                                                               ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)
 {
-  ACE_TRACE ("ACE_RB_Tree::trybind (const EXT_ID &ext_id, INT_ID &int_id, "
-             "ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)");
+  ACE_TRACE ("ACE_RB_Tree::trybind (const EXT_ID &ext_id, INT_ID &int_id, ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)");
   ACE_WRITE_GUARD_RETURN (ACE_LOCK, ace_mon, this->lock_, -1);
 
   int result = this->insert_i (ext_id, int_id, entry);
@@ -290,8 +285,7 @@ ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID &ext_i
                                                              const INT_ID &int_id,
                                                              ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)
 {
-  ACE_TRACE ("ACE_RB_Tree::rebind (const EXT_ID &ext_id, const INT_ID &int_id, "
-             "ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)");
+  ACE_TRACE ("ACE_RB_Tree::rebind (const EXT_ID &ext_id, const INT_ID &int_id, ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)");
   ACE_WRITE_GUARD_RETURN (ACE_LOCK, ace_mon, this->lock_, -1);
 
   int result = this->insert_i (ext_id, int_id, entry);
@@ -318,8 +312,7 @@ ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID &ext_i
                                                              const INT_ID &int_id,
                                                              INT_ID &old_int_id)
 {
-  ACE_TRACE ("ACE_RB_Tree::rebind (const EXT_ID &ext_id, "
-             "const INT_ID &int_id, INT_ID &old_int_id)");
+  ACE_TRACE ("ACE_RB_Tree::rebind (const EXT_ID &ext_id, const INT_ID &int_id, INT_ID &old_int_id)");
   ACE_WRITE_GUARD_RETURN (ACE_LOCK, ace_mon, this->lock_, -1);
 
   ACE_RB_Tree_Node<EXT_ID, INT_ID> *entry;
@@ -347,8 +340,7 @@ ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID &ext_i
                                                              INT_ID &old_int_id,
                                                              ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)
 {
-  ACE_TRACE ("ACE_RB_Tree::rebind (const EXT_ID &ext_id, const INT_ID &int_id,"
-             "INT_ID &old_int_id, ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)");
+  ACE_TRACE ("ACE_RB_Tree::rebind (const EXT_ID &ext_id, const INT_ID &int_id,INT_ID &old_int_id, ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)");
   ACE_WRITE_GUARD_RETURN (ACE_LOCK, ace_mon, this->lock_, -1);
 
   int result = this->insert_i (ext_id, int_id, entry);
@@ -380,8 +372,7 @@ ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID &ext_i
                                                              EXT_ID &old_ext_id,
                                                              INT_ID &old_int_id)
 {
-  ACE_TRACE ("ACE_RB_Tree::rebind (const EXT_ID &ext_id, const INT_ID &int_id,"
-             "EXT_ID &old_ext_id, INT_ID &old_int_id)");
+  ACE_TRACE ("ACE_RB_Tree::rebind (const EXT_ID &ext_id, const INT_ID &int_id,EXT_ID &old_ext_id, INT_ID &old_int_id)");
   ACE_WRITE_GUARD_RETURN (ACE_LOCK, ace_mon, this->lock_, -1);
 
   ACE_RB_Tree_Node<EXT_ID, INT_ID> *entry;
@@ -411,9 +402,7 @@ ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID &ext_i
                                                              INT_ID &old_int_id,
                                                              ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)
 {
-  ACE_TRACE ("ACE_RB_Tree::rebind (const EXT_ID &ext_id, const INT_ID &int_id, "
-             "EXT_ID &old_ext_id, INT_ID &old_int_id, "
-             "ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)");
+  ACE_TRACE ("ACE_RB_Tree::rebind (const EXT_ID &ext_id, const INT_ID &int_id, EXT_ID &old_ext_id, INT_ID &old_int_id, ACE_RB_Tree_Node<EXT_ID, INT_ID> *&entry)");
   ACE_WRITE_GUARD_RETURN (ACE_LOCK, ace_mon, this->lock_, -1);
 
   int result = this->insert_i (ext_id, int_id, entry);
@@ -576,13 +565,13 @@ ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::dump (void) const
 {
 #if defined (ACE_HAS_DUMP)
   ACE_TRACE ("ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::dump");
-  ACE_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
-  ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("\ncurrent_size_ = %d\n"), this->current_size_));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
+  ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("\ncurrent_size_ = %d\n"), this->current_size_));
   this->allocator_->dump ();
   this->lock_.dump ();
-  ACE_DEBUG ((LM_DEBUG,  ACE_TEXT ("\nDumping nodes from root\n")));
+  ACELIB_DEBUG ((LM_DEBUG,  ACE_TEXT ("\nDumping nodes from root\n")));
   this->dump_i (this->root_);
-  ACE_DEBUG ((LM_DEBUG, ACE_END_DUMP));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_END_DUMP));
 #endif /* ACE_HAS_DUMP */
 }
 

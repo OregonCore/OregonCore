@@ -4,8 +4,6 @@
 /**
  *  @file    Bound_Ptr.h
  *
- *  $Id: Bound_Ptr.h 82723 2008-09-16 09:35:44Z johnnyw $
- *
  *  @author Christopher Kohlhoff <chris@kohlhoff.com>
  *  @author Boris Kolpackov <boris@codesynthesis.com>
  */

@@ -6,8 +6,6 @@
  *
  *  data returned by the stat() function
  *
- *  $Id: os_stat.h 85057 2009-04-08 10:59:58Z msmit $
- *
  *  @author Don Hinton <dhinton@dresystems.com>
  *  @author This code was originally in various places including ace/OS.h.
  */
@@ -18,7 +16,7 @@
 
 #include /**/ "ace/pre.h"
 
-#include "ace/config-lite.h"
+#include /**/ "ace/config-lite.h"
 
 #if !defined (ACE_LACKS_PRAGMA_ONCE)
 # pragma once
@@ -101,6 +99,11 @@ extern "C"
 # endif /* S_IFLNK */
 #endif /* S_ISLNK */
 
+// Visual Studio doesn't define S_ISDIR
+#if !defined (S_ISDIR)
+# define S_ISDIR(mode)   ((mode&S_IFMT) == S_IFDIR)
+#endif
+
 #if defined (ACE_HAS_WINCE)
 
 // Translate the WinCE bits into names expected by our callers.
@@ -110,6 +113,7 @@ extern "C"
 #  define S_IFDIR FILE_ATTRIBUTE_DIRECTORY
 #  define S_IFREG FILE_ATTRIBUTE_NORMAL
 #  define S_IFLNK 0
+#  define S_IFCHR 0
 
 #  if !defined (__MINGW32__)
    // Since CE does not have _stat by default as NT/2000 does, the 'stat'

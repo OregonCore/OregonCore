@@ -1,8 +1,26 @@
 // -*- C++ -*-
-//
-// $Id: Functor_T.inl 80826 2008-03-04 14:51:23Z wotte $
-
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
+
+template<class RECEIVER> ACE_INLINE
+ACE_Member_Function_Command<RECEIVER>::
+ACE_Member_Function_Command (RECEIVER &recvr, PTMF ptmf)
+  : receiver_(recvr)
+  , ptmf_(ptmf)
+{
+}
+
+template<class RECEIVER> ACE_INLINE
+ACE_Member_Function_Command<RECEIVER>::
+~ACE_Member_Function_Command (void)
+{
+}
+
+template<class RECEIVER> ACE_INLINE int
+ACE_Member_Function_Command<RECEIVER>::execute (void *)
+{
+  (this->receiver_.*ptmf_)();
+  return 0;
+}
 
 template <class TYPE> ACE_INLINE unsigned long
 ACE_Hash<TYPE>::operator () (const TYPE &t) const
@@ -19,7 +37,7 @@ ACE_Pointer_Hash<TYPE>::operator () (TYPE t) const
 #  pragma warning(push)
 #  pragma warning(disable : 4311)   /* Truncate pointer to unsigned long */
 #endif /* ACE_WIN64 */
-  return reinterpret_cast<unsigned long> (t);
+  return ACE_Utils::truncate_cast<unsigned long> ((intptr_t)t);
 #if defined (ACE_WIN64)
 #  pragma warning(pop)
 #endif /* ACE_WIN64 */

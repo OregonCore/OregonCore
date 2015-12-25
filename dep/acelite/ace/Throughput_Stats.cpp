@@ -1,11 +1,9 @@
-// $Id: Throughput_Stats.cpp 92069 2010-09-28 11:38:59Z johnnyw $
-
 #include "ace/Throughput_Stats.h"
 
 #include "ace/OS_NS_stdio.h"
 #include "ace/OS_NS_string.h"
 #include "ace/High_Res_Timer.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 
 
 
@@ -25,10 +23,6 @@ ACE_Throughput_Stats::sample (ACE_UINT64 throughput,
 
   if (this->samples_count () == 1u)
     {
-      this->throughput_last_   = throughput;
-    }
-  else
-    {
       this->throughput_last_ = throughput;
     }
 }
@@ -44,20 +38,20 @@ ACE_Throughput_Stats::accumulate (const ACE_Throughput_Stats &rhs)
   if (this->samples_count () == 0u)
     {
       this->throughput_last_   = rhs.throughput_last_;
-      return;
     }
-
-  if (this->throughput_last_ < rhs.throughput_last_)
-    this->throughput_last_ = rhs.throughput_last_;
+  else if (this->throughput_last_ < rhs.throughput_last_)
+    {
+      this->throughput_last_ = rhs.throughput_last_;
+    }
 }
 
 void
 ACE_Throughput_Stats::dump_results (const ACE_TCHAR* msg,
-                                    ACE_UINT32 sf)
+                                    ACE_Basic_Stats::scale_factor_type sf)
 {
   if (this->samples_count () == 0u)
     {
-      ACE_DEBUG ((LM_DEBUG,
+      ACELIB_DEBUG ((LM_DEBUG,
                   ACE_TEXT ("%s : no data collected\n"), msg));
       return;
     }
@@ -71,25 +65,22 @@ ACE_Throughput_Stats::dump_results (const ACE_TCHAR* msg,
 
 void
 ACE_Throughput_Stats::dump_throughput (const ACE_TCHAR *msg,
-                                       ACE_UINT32 sf,
+                                       ACE_Basic_Stats::scale_factor_type sf,
                                        ACE_UINT64 elapsed_time,
                                        ACE_UINT32 samples_count)
 {
 #ifndef ACE_NLOGGING
   double seconds =
-# if defined ACE_LACKS_LONGLONG_T
-    elapsed_time / sf;
-#elif  defined (ACE_LACKS_UNSIGNEDLONGLONG_T)
-    static_cast<double> (ACE_UINT64_DBLCAST_ADAPTER (
-                           ACE_U_LongLong(elapsed_time / sf)));
-# else  /* ! ACE_LACKS_LONGLONG_T */
     static_cast<double> (ACE_UINT64_DBLCAST_ADAPTER (elapsed_time / sf));
-# endif /* ! ACE_LACKS_LONGLONG_T */
   seconds /= ACE_HR_SCALE_CONVERSION;
 
-  const double t_avg = samples_count / seconds;
+  double t_avg = 0.0;
+  if (seconds > 0.0)
+    {
+      t_avg = samples_count / seconds;
+    }
 
-  ACE_DEBUG ((LM_DEBUG,
+  ACELIB_DEBUG ((LM_DEBUG,
               ACE_TEXT ("%s throughput: %.2f (events/second)\n"),
               msg, t_avg));
 #else

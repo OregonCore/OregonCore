@@ -4,8 +4,6 @@
 /**
  *  @file   OS_NS_errno.h
  *
- *  $Id: OS_NS_errno.h 85321 2009-05-12 08:31:31Z johnnyw $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  *  @author Jesper S. M|ller<stophph@diku.dk>
  *  @author and a cast of thousands...
@@ -84,7 +82,9 @@ private:
 #  define ACE_ERRNO_TYPE ACE_CE_Errno
 #  define ACE_ERRNO_GET ACE_CE_Errno::instance ()->operator int()
 #else
-#  define ACE_ERRNO_TYPE int
+#  if !defined (ACE_ERRNO_TYPE)
+#   define ACE_ERRNO_TYPE int
+#  endif  /* !ACE_ERRNO_TYPE */
 #  define ACE_ERRNO_GET errno
 #endif /* ACE_HAS_WINCE_BROKEN_ERRNO */
 

@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: Log_Record.inl 91764 2010-09-14 13:04:37Z johnnyw $
-
 #include "ace/Global_Macros.h"
 #include "ace/os_include/arpa/os_inet.h"
 #include "ace/Time_Value.h"
@@ -21,6 +18,21 @@ ACE_Log_Record::type (void) const
 {
   ACE_TRACE ("ACE_Log_Record::type");
   return this->type_;
+}
+
+ACE_INLINE void
+ACE_Log_Record::category (ACE_Log_Category_TSS* t)
+{
+  ACE_TRACE ("ACE_Log_Record::category");
+  this->category_ = t;
+}
+
+
+ACE_INLINE ACE_Log_Category_TSS*
+ACE_Log_Record::category (void) const
+{
+  ACE_TRACE ("ACE_Log_Record::category");
+  return this->category_;
 }
 
 ACE_INLINE void

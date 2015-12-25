@@ -4,8 +4,6 @@
 /**
  *  @file    DLL.h
  *
- *  $Id: DLL.h 91064 2010-07-12 10:11:24Z johnnyw $
- *
  *  @author Kirthika Parameswaran <kirthika@cs.wustl.edu>
  */
 //=============================================================================
@@ -22,6 +20,7 @@
 
 #include "ace/Global_Macros.h"
 #include "ace/os_include/os_dlfcn.h"
+#include "ace/SString.h"
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -50,7 +49,7 @@ public:
    * @param close_handle_on_destruction  Indicates whether or not the
    *        close() method will be called to close an open DLL when this
    *        object is destroyed. By default, close() will be called.
-   *        Set this parameter to 0 for situations where the DLL's lifetime
+   *        Set this parameter to false for situations where the DLL's lifetime
    *        is controlled in a scope other than that of this ACE_DLL object.
    *        For example, termination by ACE_DLL_Manager via ACE::fini().
    */
@@ -88,24 +87,37 @@ public:
 
   /**
    * This method opens and dynamically links a specified DLL.
-   * @param dll_name  The filename or path of the DLL to load.
-   *        If a filename is given to @c open(), the @c ACE::ldfind() is used
-   *        to locate DLLs via the following algorithms: (1) DLL filename
-   *        expansion: @c ACE::ldfind() determines the name of the DLL by
-   *        adding the appropriate prefix and suffix, e.g., it adds the @c lib
-   *        prefix and @c .so suffix for Solaris and the @c .dll suffix for
-   *        Windows and (2) DLL search path: @c ACE::ldfind() will also search
-   *        for the designated DLL using the platform's DLL search path
-   *        environment variable, e.g., it searches for DLLs using @c
-   *        LD_LIBRARY_PATH on many UNIX systems and @c PATH on Windows.
+   * @param dll_name  The filename or path of the DLL to load. ACE will
+   *        attempt to apply the platform's standard library/DLL prefixes
+   *        and suffixes, allowing a simple, unadorned name to be passed
+   *        regardless of platform. The set of name transforms is listed
+   *        below. A @i decorator is a platform's name designator for a debug
+   *        vs release build. For example, on Windows it is usually "d".
+   *        @li Prefix + name + decorator + suffix
+   *        @li Prefix + name + suffix
+   *        @li Name + decorator + suffix
+   *        @li Name + suffix
+   *        @li Name
+   *        Note that the transforms with @i decorator will be avoided if
+   *        ACE is built with the @c ACE_DISABLE_DEBUG_DLL_CHECK config macro.
+   *
+   *        @Note There is another mode for locating library/DLL files that
+   *        was used in old versions of ACE. The alternate method builds
+   *        more combinations of pathname by combining the names transforms
+   *        above with locations listed in the platform's standard "path"
+   *        locations (e.g., @c LD_LIBRARY_PATH). It can be enabled by building
+   *        ACE with the @c ACE_MUST_HELP_DLOPEN_SEARCH_PATH config macro.
+   *        Use of this option is discouraged since it avoids the standard
+   *        platform search options and security mechanisms.
+   *
    * @param open_mode  Flags to alter the actions taken when loading the DLL.
    *        The possible values are:
    *        @li @c RTLD_LAZY (this the default): loads identifier symbols but
    *            not the symbols for functions, which are loaded dynamically
-   *            on-demand.
+   *            on demand.
    *        @li @c RTLD_NOW: performs all necessary relocations when
    *            @a dll_name is first loaded
-   *        @li RTLD_GLOBAL: makes symbols available for relocation
+   *        @li @c RTLD_GLOBAL: makes symbols available for relocation
    *            processing of any other DLLs.
    * @param close_handle_on_destruction  Indicates whether or not the
    *        close() method will be called to close an open DLL when this
@@ -148,12 +160,12 @@ public:
   ACE_TCHAR *error (void) const;
 
   /**
-   * Return the handle to the caller.  If @a become_owner is non-0 then
+   * Return the handle to the caller.  If @a become_owner is true then
    * caller assumes ownership of the handle and the ACE_DLL object
    * won't call close() when it goes out of scope, even if
    * @c close_handle_on_destruction is set.
    */
-  ACE_SHLIB_HANDLE get_handle (int become_owner = 0) const;
+  ACE_SHLIB_HANDLE get_handle (bool become_owner = false) const;
 
   /// Set the handle for the DLL object. By default, the close()
   /// operation on / the object will be invoked before it is destroyed.
@@ -188,6 +200,8 @@ public:
   /// Flag to record if the last operation had an error.
   bool error_;
 
+  /// Any error messages encountered during last operation.
+  ACE_TString errmsg_;
 };
 
 ACE_END_VERSIONED_NAMESPACE_DECL

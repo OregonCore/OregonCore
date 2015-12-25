@@ -4,8 +4,6 @@
 /**
  *  @file    SPIPE_Stream.h
  *
- *  $Id: SPIPE_Stream.h 84480 2009-02-16 18:58:16Z johnnyw $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  */
 //=============================================================================

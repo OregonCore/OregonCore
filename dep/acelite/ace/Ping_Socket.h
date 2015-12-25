@@ -4,8 +4,6 @@
 /**
  *  @file    Ping_Socket.h
  *
- *  $Id: Ping_Socket.h 81737 2008-05-20 09:46:39Z johnnyw $
- *
  *  @author Robert S. Iakobashvili <coroberti@gmail.com> <coroberti@walla.co.il>
  *  @author Gonzalo A. Diethelm <gonzalo.diethelm@aditiva.com>
  */
@@ -60,7 +58,7 @@ public:
             int protocol = IPPROTO_ICMP,
             int reuse_addr = 0);
 
-  /// @a toConnect = 1 - makes connect to remote address
+  /// @a to_connect = true - makes connect to remote address
   int send_echo_check (ACE_INET_Addr & remote_addr,
                        bool to_connect = false);
 
@@ -68,7 +66,7 @@ public:
   /// sending @c ICMP_ECHO.
   int process_incoming_dgram (char * ptr, ssize_t len);
 
-  /// @a toConnect = 1 - makes connect to remote address
+  /// @a to_connect = true - makes connect to remote address
   int make_echo_check (ACE_INET_Addr & remote_addr,
                        bool to_connect = false,
                        ACE_Time_Value const * timeout = &time_default_);

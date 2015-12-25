@@ -4,11 +4,8 @@
 /**
  *  @file    Env_Value_T.h
  *
- *  $Id: Env_Value_T.h 91626 2010-09-07 10:59:20Z johnnyw $
- *
  *  Template to encapsulate getting a value from an environment variable
  *  and using a supplied default value if not in the environment.
- *
  *
  *  @author Chris Cleeland (derived from work by Carlos O'Ryan)
  */
@@ -45,7 +42,7 @@ public:
   /**
    * Default constructor which isn't bound to a specific environment
    * variable name or a default value.  Before being useful it must
-   * <open>'d.
+   * open()'d.
    */
   ACE_Env_Value (void);
 

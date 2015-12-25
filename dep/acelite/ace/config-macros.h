@@ -4,8 +4,6 @@
 /**
  *  @file   config-macros.h
  *
- *  $Id: config-macros.h 91685 2010-09-09 09:35:14Z johnnyw $
- *
  *  @author (Originally in OS.h)Doug Schmidt <schmidt@cs.wustl.edu>
  *  @author Jesper S. M|ller<stophph@diku.dk>
  *  @author and a cast of thousands...
@@ -21,11 +19,7 @@
 #ifndef ACE_CONFIG_MACROS_H
 #define ACE_CONFIG_MACROS_H
 
-#ifdef _WIN32
-  #include "ace/config-win32.h"
-#else
-  #include "ace/config.h"
-#endif
+#include "ace/config.h"
 
 #include "ace/Version.h"
 #include "ace/Versioned_Namespace.h"
@@ -69,9 +63,6 @@
 
 # if defined (ACE_MT_SAFE) && (ACE_MT_SAFE != 0)
 #   define ACE_MT(X) X
-#   if !defined (_REENTRANT)
-#     define _REENTRANT
-#   endif /* _REENTRANT */
 # else
 #   define ACE_MT(X)
 # endif /* ACE_MT_SAFE */
@@ -82,6 +73,7 @@
 
 # if defined (ACE_HAS_VALGRIND)
 #   define ACE_INITIALIZE_MEMORY_BEFORE_USE
+#   define ACE_LACKS_DLCLOSE
 # endif /* ACE_HAS_VALGRIND */
 
 // =========================================================================
@@ -188,6 +180,25 @@
 
 #endif /* !ACE_HAS_CUSTOM_EXPORT_MACROS */
 
+#if defined (ACE_HAS_EXPLICIT_TEMPLATE_CLASS_INSTANTIATION)
+# define ACE_SINGLETON_TEMPLATE_INSTANTIATION(T) \
+  template class T;
+# define ACE_SINGLETON_TEMPLATE_INSTANTIATE(SINGLETON_TYPE, CLASS, LOCK) \
+  template class SINGLETON_TYPE < CLASS, LOCK >;
+#elif defined (ACE_HAS_EXPLICIT_STATIC_TEMPLATE_MEMBER_INSTANTIATION)
+# define ACE_SINGLETON_TEMPLATE_INSTANTIATION(T) \
+  template T * T::singleton_;
+# define ACE_SINGLETON_TEMPLATE_INSTANTIATE(SINGLETON_TYPE, CLASS, LOCK) \
+  template SINGLETON_TYPE < CLASS, LOCK > * SINGLETON_TYPE < CLASS, LOCK >::singleton_;
+#endif /* ACE_HAS_EXPLICIT_STATIC_TEMPLATE_MEMBER_INSTANTIATION */
+
+#if !defined(ACE_SINGLETON_TEMPLATE_INSTANTIATION)
+# define ACE_SINGLETON_TEMPLATE_INSTANTIATION(T)
+#endif
+#if !defined(ACE_SINGLETON_TEMPLATE_INSTANTIATE)
+# define ACE_SINGLETON_TEMPLATE_INSTANTIATE(SINGLETON_TYPE, CLASS, LOCK)
+#endif
+
 // This is a whim of mine -- that instead of annotating a class with
 // ACE_Export in its declaration, we make the declaration near the TOP
 // of the file with ACE_DECLARE_EXPORT.
@@ -229,7 +240,7 @@
 // ============================================================================
 
 #if !defined (ACE_UNUSED_ARG)
-# if defined (__GNUC__) && ((__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2)))
+# if defined (__GNUC__) && ((__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2))) || (defined (__BORLANDC__) && defined (__clang__))
 #   define ACE_UNUSED_ARG(a) (void) (a)
 # elif defined (__GNUC__) || defined (ghs) || defined (__hpux) || defined (__DECCXX) || defined (__rational__) || defined (__USLC__) || defined (ACE_RM544) || defined (__DCC__) || defined (__PGI) || defined (__TANDEM)
 // Some compilers complain about "statement with no effect" with (a).
@@ -246,7 +257,7 @@
 # endif /* ghs || __GNUC__ || ..... */
 #endif /* !ACE_UNUSED_ARG */
 
-#if defined (_MSC_VER) || defined (ghs) || defined (__DECCXX) || defined(__BORLANDC__) || defined (ACE_RM544) || defined (__USLC__) || defined (__DCC__) || defined (__PGI) || defined (__TANDEM) || (defined (__HP_aCC) && (__HP_aCC < 40000 || __HP_aCC >= 60500))
+#if defined (_MSC_VER) || defined (ghs) || defined (__DECCXX) || defined(__BORLANDC__) || defined (ACE_RM544) || defined (__USLC__) || defined (__DCC__) || defined (__PGI) || defined (__TANDEM) || (defined (__HP_aCC) && (__HP_aCC < 39000 || __HP_aCC >= 60500))
 # define ACE_NOTREACHED(a)
 #else  /* ghs || ..... */
 # define ACE_NOTREACHED(a) a
@@ -499,8 +510,16 @@ extern "C" u_long CLS##_Export _get_dll_unload_policy (void) \
 #define ACE_HAS_TEMPLATE_TYPEDEFS
 #endif
 
+#ifndef ACE_GCC_FORMAT_ATTRIBUTE
+# define ACE_GCC_FORMAT_ATTRIBUTE(TYPE, STR_INDEX, FIRST_INDEX)
+#endif
+
 #ifndef ACE_DEPRECATED
 # define ACE_DEPRECATED
+#endif
+
+#ifndef ACE_HAS_REACTOR_NOTIFICATION_QUEUE
+# define ACE_HAS_REACTOR_NOTIFICATION_QUEUE
 #endif
 
 #endif /* ACE_CONFIG_MACROS_H */

@@ -1,6 +1,4 @@
 // -*- C++ -*-
-// $Id: OS_NS_arpa_inet.inl 91781 2010-09-15 12:49:15Z johnnyw $
-
 #include "ace/OS_NS_string.h"
 #include "ace/OS_NS_errno.h"
 #include "ace/OS_NS_stdio.h"

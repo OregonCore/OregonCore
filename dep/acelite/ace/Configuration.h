@@ -4,8 +4,6 @@
 /**
  *  @file    Configuration.h
  *
- *  $Id: Configuration.h 91688 2010-09-09 11:21:50Z johnnyw $
- *
  *  @author Chris Hafey <chafey@stentor.com>
  *
  *  The ACE configuration API provides a portable abstraction for

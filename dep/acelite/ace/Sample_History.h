@@ -4,8 +4,6 @@
 /**
  *  @file    Sample_History.h
  *
- *  $Id: Sample_History.h 80826 2008-03-04 14:51:23Z wotte $
- *
  *  @author Carlos O'Ryan <coryan@uci.edu>
  */
 //=============================================================================
@@ -34,6 +32,12 @@ class ACE_Basic_Stats;
 class ACE_Export ACE_Sample_History
 {
 public:
+#if !defined (ACE_WIN32)
+   typedef ACE_UINT32 scale_factor_type;
+#else
+   typedef ACE_UINT64 scale_factor_type;
+#endif
+
   /// Constructor
   /**
    * The number of samples is pre-allocated, and cannot changes once
@@ -62,7 +66,7 @@ public:
    * message.
    */
   void dump_samples (const ACE_TCHAR *msg,
-                     ACE_UINT32 scale_factor) const;
+                     scale_factor_type scale_factor) const;
 
   /// Collect the summary for all the samples
   void collect_basic_stats (ACE_Basic_Stats &) const;

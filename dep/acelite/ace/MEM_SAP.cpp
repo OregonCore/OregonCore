@@ -1,5 +1,3 @@
-// $Id: MEM_SAP.cpp 91286 2010-08-05 09:04:31Z johnnyw $
-
 #include "ace/MEM_SAP.h"
 
 #if (ACE_HAS_POSITION_INDEPENDENT_POINTERS == 1)
@@ -20,12 +18,12 @@ ACE_MEM_SAP::dump (void) const
 #if defined (ACE_HAS_DUMP)
   ACE_TRACE ("ACE_MEM_SAP::dump");
 
-  ACE_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
   if (this->shm_malloc_ != 0)
     this->shm_malloc_->dump ();
   else
-    ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("ACE_MEM_SAP uninitialized.\n")));
-  ACE_DEBUG ((LM_DEBUG, ACE_END_DUMP));
+    ACELIB_DEBUG ((LM_DEBUG, ACE_TEXT ("ACE_MEM_SAP uninitialized.\n")));
+  ACELIB_DEBUG ((LM_DEBUG, ACE_END_DUMP));
 #endif /* ACE_HAS_DUMP */
 }
 

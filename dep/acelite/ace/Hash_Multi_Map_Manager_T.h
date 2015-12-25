@@ -4,8 +4,6 @@
 /**
  * @file    Hash_Multi_Map_Manager_T.h
  *
- * $Id: Hash_Multi_Map_Manager_T.h 91693 2010-09-09 12:57:54Z johnnyw $
- *
  * The code in Hash_Multi_Map_Manager_T.* was based on the code in
  * Hash_Map_Manager_T.*.
  *
@@ -34,7 +32,7 @@
 
 #include "ace/Default_Constants.h"
 #include "ace/Functor_T.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 
 #include "ace/Unbounded_Set.h"
 

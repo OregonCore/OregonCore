@@ -4,8 +4,6 @@
 /**
  *  @file    Timer_List_T.h
  *
- *  $Id: Timer_List_T.h 80826 2008-03-04 14:51:23Z wotte $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  */
 //=============================================================================
@@ -21,7 +19,7 @@
 #endif /* ACE_LACKS_PRAGMA_ONCE */
 
 // Forward declaration.
-template <class TYPE, class FUNCTOR, class ACE_LOCK>
+template <class TYPE, class FUNCTOR, class ACE_LOCK, typename TIME_POLICY>
 class ACE_Timer_List_T;
 
 /**
@@ -32,12 +30,12 @@ class ACE_Timer_List_T;
  * This is a generic iterator that can be used to visit every
  * node of a timer queue.
  */
-template <class TYPE, class FUNCTOR, class ACE_LOCK>
+template <class TYPE, class FUNCTOR, class ACE_LOCK, typename TIME_POLICY = ACE_Default_Time_Policy>
 class ACE_Timer_List_Iterator_T
-: public ACE_Timer_Queue_Iterator_T <TYPE, FUNCTOR, ACE_LOCK>
+: public ACE_Timer_Queue_Iterator_T <TYPE>
 {
 public:
-  typedef ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK> List;
+  typedef ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK, TIME_POLICY> List;
   /// Constructor.
   ACE_Timer_List_Iterator_T (List& lst);
 
@@ -81,19 +79,19 @@ protected:
  * ACE_Timer_Heap will perform substantially faster than the
  * ACE_Timer_List.
  */
-template <class TYPE, class FUNCTOR, class ACE_LOCK>
-class ACE_Timer_List_T : public ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>
+template <class TYPE, class FUNCTOR, class ACE_LOCK, typename TIME_POLICY = ACE_Default_Time_Policy>
+class ACE_Timer_List_T : public ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK, TIME_POLICY>
 {
 public:
   /// Type of iterator
-  typedef ACE_Timer_List_Iterator_T<TYPE, FUNCTOR, ACE_LOCK> Iterator;
+  typedef ACE_Timer_List_Iterator_T<TYPE, FUNCTOR, ACE_LOCK, TIME_POLICY> Iterator;
 
   /// Iterator is a friend
-  friend class ACE_Timer_List_Iterator_T<TYPE, FUNCTOR, ACE_LOCK>;
+  friend class ACE_Timer_List_Iterator_T<TYPE, FUNCTOR, ACE_LOCK, TIME_POLICY>;
 
   typedef ACE_Timer_Node_T<TYPE> Node;
   /// Type inherited from
-  typedef ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK> Base;
+  typedef ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK, TIME_POLICY> Base_Timer_Queue;
   typedef ACE_Free_List<Node> FreeList;
 
   // = Initialization and termination methods.
@@ -103,7 +101,8 @@ public:
    * default FUNCTOR will be created.  @a freelist is the freelist of
    * timer nodes.  If 0, then a default freelist will be created.
    */
-  ACE_Timer_List_T (FUNCTOR* upcall_functor = 0, FreeList* freelist = 0);
+  ACE_Timer_List_T (FUNCTOR* upcall_functor = 0, FreeList* freelist = 0,
+                    TIME_POLICY const & time_policy = TIME_POLICY());
 
   /// Destructor
   virtual ~ACE_Timer_List_T (void);
@@ -126,8 +125,8 @@ public:
                               const ACE_Time_Value& interval);
 
   /**
-   * Cancel all timers associated with @a type.  If dont_call_handle_close is 0
-   * then the @a functor will be invoked.  Returns the number of timers
+   * Cancel all timers associated with @a type.  If @a dont_call_handle_close
+   * is 0 then the @a functor will be invoked.  Returns the number of timers
    * cancelled.
    */
   virtual int cancel (const TYPE& type,
@@ -146,8 +145,13 @@ public:
                       const void** act = 0,
                       int dont_call_handle_close = 1);
 
+  /**
+   * Destroy timer queue. Cancels all timers.
+   */
+  virtual int close (void);
+
   /// Returns a pointer to this ACE_Timer_Queue's iterator.
-  virtual ACE_Timer_Queue_Iterator_T<TYPE, FUNCTOR, ACE_LOCK>& iter (void);
+  virtual ACE_Timer_Queue_Iterator_T<TYPE>& iter (void);
 
   /// Removes the earliest node from the queue and returns it
   virtual ACE_Timer_Node_T<TYPE>* remove_first (void);
@@ -170,8 +174,8 @@ private:
    * in as the value to the <functor>.  If @a interval is != to
    * ACE_Time_Value::zero then it is used to reschedule the @a type
    * automatically, using relative time to the current <gettimeofday>.
-   * This method returns a <timer_id> that uniquely identifies the the
-   * @a type entry in an internal list.  This <timer_id> can be used to
+   * This method returns a timer_id that uniquely identifies the the
+   * @a type entry in an internal list.  This timer_id can be used to
    * cancel the timer before it expires.  The cancellation ensures
    * that <timer_ids> are unique up to values of greater than 2
    * billion timers.  As long as timers don't stay around longer than

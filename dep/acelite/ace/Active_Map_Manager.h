@@ -4,8 +4,6 @@
 /**
  *  @file    Active_Map_Manager.h
  *
- *  $Id: Active_Map_Manager.h 91066 2010-07-12 11:05:04Z johnnyw $
- *
  *  @author Irfan Pyarali
  */
 //=============================================================================
@@ -68,7 +66,7 @@ public:
   void decode (const void *data);
 
   /// Encode state of the active key into @a data.  @a data must be as
-  /// big as the value returned from <size>.
+  /// big as the value returned from size().
   void encode (void *data) const;
 
   /// Compare keys.

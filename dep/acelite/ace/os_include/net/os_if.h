@@ -6,8 +6,6 @@
  *
  *  sockets local interfaces
  *
- *  $Id: os_if.h 91688 2010-09-09 11:21:50Z johnnyw $
- *
  *  @author Don Hinton <dhinton@dresystems.com>
  *  @author This code was originally in various places including ace/OS.h.
  */

@@ -4,8 +4,6 @@
 /**
  *  @file    Multihomed_INET_Addr.h
  *
- *  $Id: Multihomed_INET_Addr.h 91626 2010-09-07 10:59:20Z johnnyw $
- *
  *  @author Edward R. Mulholland <emulholl@atl.lmco.com>
  */
 //=============================================================================

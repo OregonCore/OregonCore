@@ -4,8 +4,6 @@
 /**
  *  @file     MMAP_Memory_Pool.h
  *
- *  $Id: MMAP_Memory_Pool.h 81589 2008-05-02 13:07:33Z johnnyw $
- *
  *  @author Dougls C. Schmidt <schmidt@cs.wustl.edu>
  *  @author Prashant Jain <pjain@cs.wustl.edu>
  */

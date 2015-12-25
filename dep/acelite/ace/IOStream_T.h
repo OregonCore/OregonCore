@@ -4,8 +4,6 @@
 /**
  *  @file    IOStream_T.h
  *
- *  $Id: IOStream_T.h 80826 2008-03-04 14:51:23Z wotte $
- *
  *  @author James CE Johnson <jcej@lads.com>
  *  @author Jim Crossley <jim@lads.com>
  *
@@ -116,7 +114,7 @@ public:
                   u_int streambuf_size = ACE_STREAMBUF_SIZE);
 
   /**
-   * The default constructor.  This will initiailze your STREAM and
+   * The default constructor.  This will initialize your STREAM and
    * then setup the iostream baseclass to use a custom streambuf based
    * on STREAM.
    */
@@ -126,7 +124,7 @@ public:
   /// to the <iostream> base class;
   virtual ~ACE_IOStream (void);
 
-  /// The only ambituity in the multiple inheritance is the <close>
+  /// The only ambiguity in the multiple inheritance is the <close>
   /// function.
   virtual int close (void);
 

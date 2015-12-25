@@ -4,8 +4,6 @@
 /**
  *  @file    Svc_Conf_Param.h
  *
- *  $Id: Svc_Conf_Param.h 81312 2008-04-09 21:01:34Z iliyan $
- *
  *  @author Iliyan Jeliazkov <iliyan@ociweb.com>
  *  @author Based on code originally found in Svc_Conf.h by Doug
             Schmidt and Ossama Othman.

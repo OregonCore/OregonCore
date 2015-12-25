@@ -1,5 +1,3 @@
-// $Id: Tokenizer_T.cpp 91813 2010-09-17 07:52:52Z johnnyw $
-
 #ifndef ACE_TOKENIZER_T_CPP
 #define ACE_TOKENIZER_T_CPP
 

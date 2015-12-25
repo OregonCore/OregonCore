@@ -1,10 +1,6 @@
-// $Id: Netlink_Addr.cpp 80826 2008-03-04 14:51:23Z wotte $
-
 //=============================================================================
 /**
  *  @file    Netlink_Addr.cpp
- *
- *  $Id: Netlink_Addr.cpp 80826 2008-03-04 14:51:23Z wotte $
  *
  *  @author Robert Iakobashvilli <coroberti@gmail.com>
  *  @author Raz Ben Yehuda <raziebe@gmail.com>

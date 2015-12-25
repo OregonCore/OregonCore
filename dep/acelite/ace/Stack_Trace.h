@@ -3,8 +3,6 @@
 /**
  *  @file   Stack_Trace.h
  *
- *  $Id: Stack_Trace.h 91743 2010-09-13 18:24:51Z johnnyw $
- *
  *  @author Chris Cleeland (cleeland.ociweb.com)
  */
 //=============================================================================
@@ -40,10 +38,10 @@
  *  it in an ACE logging message.  The following are functionally equivalent:
  *
  *  \code
- *     ACE_DEBUG((LM_DEBUG, "%?"));
+ *     ACELIB_DEBUG((LM_DEBUG, "%?"));
  *
  *     ACE_Stack_Trace st;
- *     ACE_DEBUG ((LM_DEBUG, "%s", st.c_str() ));
+ *     ACELIB_DEBUG ((LM_DEBUG, "%C", st.c_str() ));
  *  \endcode
  *
  *  These usage examples were shown in $ACE_ROOT/tests/Stack_Trace_Test.cpp.

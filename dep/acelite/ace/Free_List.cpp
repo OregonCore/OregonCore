@@ -1,5 +1,3 @@
-// $Id: Free_List.cpp 81107 2008-03-27 11:12:42Z johnnyw $
-
 #ifndef ACE_FREE_LIST_CPP
 #define ACE_FREE_LIST_CPP
 

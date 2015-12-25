@@ -4,8 +4,6 @@
 /**
  *  @file    SPIPE_Acceptor.h
  *
- *  $Id: SPIPE_Acceptor.h 82723 2008-09-16 09:35:44Z johnnyw $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  *  @author Prashant Jain <pjain@cs.wustl.edu>
  */
@@ -43,7 +41,6 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
  *
  * @warning Works on non-Windows platforms only when @c ACE_HAS_STREAM_PIPES
  * is defined.
- *
  */
 class ACE_Export ACE_SPIPE_Acceptor : public ACE_SPIPE
 {
@@ -148,7 +145,7 @@ private:
   DWORD pipe_mode_;
 
   // On Windows, the handle maintained in the ACE_IPC_SAP class is the
-  // event handle from event_. The pipe handle is useless for telling
+  // event handle from event. The pipe handle is useless for telling
   // when a pipe connect is done/ready, and it changes on each pipe
   // acceptance, quite unlike other acceptor-type classes in ACE.
   // This allows the get_handle()-obtained handle to be used for

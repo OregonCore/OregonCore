@@ -4,8 +4,6 @@
 /**
  *  @file    Timer_Queue.h
  *
- *  $Id: Timer_Queue.h 80826 2008-03-04 14:51:23Z wotte $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  *  @author Irfan Pyarali <irfan@cs.wustl.edu>
  */
@@ -40,9 +38,7 @@ typedef ACE_Timer_Node_Dispatch_Info_T<ACE_Event_Handler *>
 typedef ACE_Timer_Node_T<ACE_Event_Handler *>
         ACE_Timer_Node;
 
-typedef ACE_Timer_Queue_Iterator_T<ACE_Event_Handler *,
-                                   ACE_Event_Handler_Handle_Timeout_Upcall<ACE_SYNCH_RECURSIVE_MUTEX>,
-                                   ACE_SYNCH_RECURSIVE_MUTEX>
+typedef ACE_Timer_Queue_Iterator_T<ACE_Event_Handler *>
         ACE_Timer_Queue_Iterator;
 
 ACE_END_VERSIONED_NAMESPACE_DECL

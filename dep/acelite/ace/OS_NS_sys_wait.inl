@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: OS_NS_sys_wait.inl 91781 2010-09-15 12:49:15Z johnnyw $
-
 #include "ace/OS_NS_errno.h"
 #include "ace/Global_Macros.h"
 
@@ -76,10 +73,6 @@ ACE_OS::waitpid (pid_t pid,
   if (handle == 0)
     ::CloseHandle (phandle);
   return result;
-#elif defined(ACE_TANDEM_T1248_PTHREADS)
-  ACE_UNUSED_ARG (handle);
-  ACE_OSCALL_RETURN (::spt_waitpid (pid, status, wait_options),
-                     pid_t, -1);
 #else
   ACE_UNUSED_ARG (handle);
   ACE_OSCALL_RETURN (::waitpid (pid, status, wait_options),

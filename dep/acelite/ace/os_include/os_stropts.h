@@ -6,8 +6,6 @@
  *
  *  STREAMS interface (STREAMS)
  *
- *  $Id: os_stropts.h 92179 2010-10-08 07:50:07Z olli $
- *
  *  @author Don Hinton <dhinton@dresystems.com>
  *  @author This code was originally in various places including ace/OS.h.
  */
@@ -78,7 +76,7 @@ extern "C"
 #endif /* __cplusplus */
 
 #if defined (ACE_LACKS_STRRECVFD)
-   struct strrecvfd {};
+   struct strrecvfd {  int dummy; };
 #endif /* ACE_LACKS_STRRECVFD */
 
 # if !defined (SIOCGIFBRDADDR)

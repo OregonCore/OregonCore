@@ -4,8 +4,6 @@
 /**
  *  @file   Default_Constants.h
  *
- *  $Id: Default_Constants.h 91688 2010-09-09 11:21:50Z johnnyw $
- *
  *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
  *  @author Jesper S. M|ller<stophph@diku.dk>
  *  @author and a cast of thousands...
@@ -392,7 +390,7 @@
 
 /// Max udp packet size
 #if !defined (ACE_MAX_UDP_PACKET_SIZE)
-#define ACE_MAX_UDP_PACKET_SIZE 65536
+#define ACE_MAX_UDP_PACKET_SIZE 65507
 #endif
 
 /**

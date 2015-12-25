@@ -1,4 +1,3 @@
-// $Id: Svc_Conf_y.cpp 91368 2010-08-16 13:03:34Z mhengstmengel $
 /* A Bison parser, made by GNU Bison 2.3.  */
 
 /* Skeleton implementation for Bison's Yacc-like parsers in C
@@ -104,8 +103,6 @@
 
 /* Copy the first part of user declarations.  */
 
-
-// $Id: Svc_Conf_y.cpp 91368 2010-08-16 13:03:34Z mhengstmengel $
 
 #include "ace/Svc_Conf.h"
 
@@ -1573,7 +1570,7 @@ ace_yyreduce:
 
       if (((ACE_Stream_Type *) sn->record (ACE_SVC_CONF_PARAM->config)->type ())->push (mt) == -1)
         {
-          ACE_ERROR ((LM_ERROR,
+          ACELIB_ERROR ((LM_ERROR,
                       ACE_TEXT ("Problem with static\n")));
           ACE_SVC_CONF_PARAM->yyerrno++;
         }
@@ -1617,7 +1614,7 @@ ace_yyreduce:
         dynamic_cast<ACE_Stream_Type *> (const_cast<ACE_Service_Type_Impl *> (stream->record (ACE_SVC_CONF_PARAM->config)->type ()));
       if (!st || (mt != 0 && st->remove (mt) == -1))
         {
-          ACE_ERROR ((LM_ERROR,
+          ACELIB_ERROR ((LM_ERROR,
                       ACE_TEXT ("cannot remove Module_Type %s from STREAM_Type %s\n"),
                       module->name (),
                       stream->name ()));
@@ -1934,7 +1931,7 @@ ace_yyerror (int ace_yyerrno, int ace_yylineno, ACE_TCHAR const * s)
   ACE_UNUSED_ARG (s);
 #endif /* ACE_NLOGGING */
 
-  ACE_ERROR ((LM_ERROR,
+  ACELIB_ERROR ((LM_ERROR,
               ACE_TEXT ("ACE (%P|%t) [error %d] on line %d: %C\n"),
               ace_yyerrno,
               ace_yylineno,
@@ -1955,16 +1952,15 @@ ace_get_module (ACE_Service_Type const * sr,
                 ACE_TCHAR const * svc_name,
                 int & ace_yyerrno)
 {
-  ACE_Service_Type_Impl const * const type = sr->type ();
   ACE_Stream_Type const * const st =
     (sr == 0
      ? 0
-     : dynamic_cast<ACE_Stream_Type const *> (type));
+     : dynamic_cast<ACE_Stream_Type const *> (sr->type ()));
   ACE_Module_Type const * const mt = (st == 0 ? 0 : st->find (svc_name));
 
   if (sr == 0 || st == 0 || mt == 0)
     {
-      ACE_ERROR ((LM_ERROR,
+      ACELIB_ERROR ((LM_ERROR,
                   ACE_TEXT ("cannot locate Module_Type %s ")
                   ACE_TEXT ("in STREAM_Type %s\n"),
                   svc_name,

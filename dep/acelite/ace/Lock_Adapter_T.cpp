@@ -1,5 +1,3 @@
-// $Id: Lock_Adapter_T.cpp 80826 2008-03-04 14:51:23Z wotte $
-
 #ifndef ACE_LOCK_ADAPTER_T_CPP
 #define ACE_LOCK_ADAPTER_T_CPP
 
@@ -15,17 +13,6 @@
 #endif /* __ACE_INLINE__ */
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
-
-// This constructor isn't inlined, because SunPRO C++ 4.2 + patch
-// 104631-07 has trouble compiling TAO with it inline.
-template <class ACE_LOCKING_MECHANISM>
-ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::ACE_Lock_Adapter (void)
-  : lock_ (0),
-    delete_lock_ (true)
-{
-  ACE_NEW (this->lock_,
-           ACE_LOCKING_MECHANISM);
-}
 
 template <class ACE_LOCKING_MECHANISM>
 ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::~ACE_Lock_Adapter (void)

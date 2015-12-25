@@ -1,10 +1,8 @@
-// $Id: SOCK_Netlink.cpp 80826 2008-03-04 14:51:23Z wotte $
-
 #include /* */  "ace/SOCK_Netlink.h"
 
 #ifdef ACE_HAS_NETLINK
 
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 #include "ace/ACE.h"
 #include "ace/OS_NS_string.h"
 #include "ace/OS_NS_unistd.h"
@@ -51,7 +49,7 @@ ACE_SOCK_Netlink::ACE_SOCK_Netlink (ACE_Netlink_Addr &local,
   if (this->open (local,
                   protocol_family,
                   protocol)  == -1)
-    ACE_ERROR ((LM_ERROR,
+    ACELIB_ERROR ((LM_ERROR,
                 ACE_TEXT ("%p\n"),
                 ACE_TEXT ("ACE_SOCK_Netlink")));
 }

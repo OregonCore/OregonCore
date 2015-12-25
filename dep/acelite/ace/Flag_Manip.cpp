@@ -1,5 +1,3 @@
-// $Id: Flag_Manip.cpp 91368 2010-08-16 13:03:34Z mhengstmengel $
-
 #include "ace/Flag_Manip.h"
 
 #if defined (ACE_LACKS_FCNTL)

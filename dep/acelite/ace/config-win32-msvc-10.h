@@ -3,8 +3,6 @@
 /**
  *  @file   config-win32-msvc-10.h
  *
- *  $Id: config-win32-msvc-10.h 91685 2010-09-09 09:35:14Z johnnyw $
- *
  *  @brief  Microsoft Visual C++ 10.0 configuration file.
  *
  *  This file is the ACE configuration file for Microsoft Visual C++ version 10.
@@ -35,11 +33,10 @@
 #endif
 
 // Windows' timeval is non-conformant (defined in terms of long instead of
-// time_t) and VC9 (on desktop, not CE) changed time_t to a 64-bit value
-// even when compiling a 32-bit application. Therefore, ace/Time_Value
-// needs to rearrange a few things for this compiler. See Time_Value.h
-// for complete details.
-#if !defined (ACE_HAS_WINCE)
+// time_t) and VC8 changed time_t to a 64-bit value even when compiling a
+// 32-bit application. Therefore, ace/Time_Value needs to rearrange a few
+// things for this compiler. See Time_Value.h for complete details.
+#if !defined (_USE_32BIT_TIME_T)
 #  define ACE_HAS_TIME_T_LONG_MISMATCH
 #endif
 
@@ -138,11 +135,12 @@
 # define ACE_NEEDS_FUNC_DEFINITIONS
 
 // Windows Vista and Windows Server 2008 and newer do have native condition
-// variables
-#if defined (WIN32_WINNT) && (WIN32_WINNT >= 0x0600)
-# define ACE_HAS_WTHREADS_CONDITION_VARIABLE
-# undef ACE_LACKS_COND_T
-#endif
+// variables, but this is commented out because the support in ACE hasn't
+// been completed
+// #if defined (_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+// # define ACE_HAS_WTHREADS_CONDITION_VARIABLE
+// # undef ACE_LACKS_COND_T
+// #endif
 
 #include /**/ "ace/post.h"
 #endif /* ACE_CONFIG_WIN32_MSVC_10_H */

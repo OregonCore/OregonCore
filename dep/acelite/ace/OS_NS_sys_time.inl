@@ -1,7 +1,4 @@
 // -*- C++ -*-
-//
-// $Id: OS_NS_sys_time.inl 89266 2010-02-26 18:30:42Z johnnyw $
-
 #include "ace/os_include/sys/os_time.h"
 #include "ace/os_include/os_errno.h"
 

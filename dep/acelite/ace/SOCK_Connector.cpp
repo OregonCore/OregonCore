@@ -1,8 +1,6 @@
-// $Id: SOCK_Connector.cpp 91626 2010-09-07 10:59:20Z johnnyw $
-
 #include "ace/SOCK_Connector.h"
 #include "ace/INET_Addr.h"
-#include "ace/Log_Msg.h"
+#include "ace/Log_Category.h"
 #include "ace/OS_NS_unistd.h"
 #include "ace/OS_NS_sys_socket.h"
 #include "ace/os_include/os_fcntl.h"
@@ -251,7 +249,7 @@ ACE_SOCK_Connector::complete (ACE_SOCK_Stream &new_stream,
   // We failed to get connected.
   if (h == ACE_INVALID_HANDLE)
     {
-#if defined (ACE_WIN32)
+#if defined (ACE_NON_BLOCKING_BUG_DELAY) && ACE_NON_BLOCKING_BUG_DELAY > 0
       // Win32 has a timing problem - if you check to see if the
       // connection has completed too fast, it will fail - so wait
       // <ACE_NON_BLOCKING_BUG_DELAY> microseconds to let it catch up
@@ -261,14 +259,14 @@ ACE_SOCK_Connector::complete (ACE_SOCK_Stream &new_stream,
       h = ACE::handle_timed_complete (new_stream.get_handle (), tv);
       if (h == ACE_INVALID_HANDLE)
         {
-#endif /* ACE_WIN32 */
+#endif /* ACE_NON_BLOCKING_BUG_DELAY */
       // Save/restore errno.
       ACE_Errno_Guard error (errno);
       new_stream.close ();
       return -1;
-#if defined (ACE_WIN32)
+#if defined (ACE_NON_BLOCKING_BUG_DELAY) && ACE_NON_BLOCKING_BUG_DELAY > 0
         }
-#endif /* ACE_WIN32 */
+#endif /* ACE_NON_BLOCKING_BUG_DELAY */
     }
 
   if (remote_sap != 0)
@@ -312,7 +310,7 @@ ACE_SOCK_Connector::ACE_SOCK_Connector (ACE_SOCK_Stream &new_stream,
                      protocol) == -1
       && timeout != 0
       && !(errno == EWOULDBLOCK || errno == ETIME || errno == ETIMEDOUT))
-    ACE_ERROR ((LM_ERROR,
+    ACELIB_ERROR ((LM_ERROR,
                 ACE_TEXT ("%p\n"),
                 ACE_TEXT ("ACE_SOCK_Connector::ACE_SOCK_Connector")));
 }
@@ -343,7 +341,7 @@ ACE_SOCK_Connector::ACE_SOCK_Connector (ACE_SOCK_Stream &new_stream,
                      perms) == -1
       && timeout != 0
       && !(errno == EWOULDBLOCK || errno == ETIME || errno == ETIMEDOUT))
-    ACE_ERROR ((LM_ERROR,
+    ACELIB_ERROR ((LM_ERROR,
                 ACE_TEXT ("%p\n"),
                 ACE_TEXT ("ACE_SOCK_Connector::ACE_SOCK_Connector")));
 }
