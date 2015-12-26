@@ -1563,6 +1563,7 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
 
     if (!sameCaster)
     {
+        // Iterate through effects
         for (uint32 i = 0; i < MAX_SPELL_EFFECTS; ++i)
             if (spellInfo_1->Effect[i] == SPELL_EFFECT_APPLY_AURA
                 || spellInfo_1->Effect[i] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
@@ -1584,6 +1585,22 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
                 default:
                     break;
                 }
+    }
+
+    // Iterate through specifics
+    SpellSpecific spellSpec = GetSpellSpecific(spellId_1);
+    switch (spellSpec)
+    {
+        case SPELL_SPECIFIC_SEAL:
+        case SPELL_SPECIFIC_AURA:
+        case SPELL_SPECIFIC_STING:
+        case SPELL_SPECIFIC_CURSE:
+        case SPELL_SPECIFIC_ASPECT:
+        case SPELL_SPECIFIC_JUDGEMENT:
+        case SPELL_SPECIFIC_WARLOCK_CORRUPTION:
+            return sameCaster == (spellSpec == GetSpellSpecific(spellId_2));
+        default:
+            break;
     }
 
     // generic spells
