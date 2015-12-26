@@ -618,6 +618,7 @@ void BossAI::_Reset()
     if (!me->IsAlive())
         return;
 
+    me->SetCombatPulseDelay(0);
     events.Reset();
     summons.DespawnAll();
     if (instance)
@@ -637,6 +638,7 @@ void BossAI::_JustDied()
 
 void BossAI::_EnterCombat()
 {
+    me->SetCombatPulseDelay(5);
     me->setActive(true);
     DoZoneInCombat();
     if (instance)

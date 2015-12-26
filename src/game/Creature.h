@@ -756,6 +756,14 @@ class Creature : public Unit, public GridObject<Creature>
             m_respawnradius = dist;
         }
 
+        uint32 GetCombatPulseDelay() const { return m_combatPulseDelay; }
+        void SetCombatPulseDelay(uint32 delay) // (secs) interval at which the creature pulses the entire zone into combat (only works in dungeons)
+        {
+            m_combatPulseDelay = delay;
+            if (m_combatPulseTime == 0 || m_combatPulseTime > delay)
+                m_combatPulseTime = delay;
+        }
+
         // Linked Creature Respawning System
         time_t GetLinkedCreatureRespawnTime() const;
         const CreatureData* GetLinkedRespawnCreatureData() const;
@@ -899,6 +907,8 @@ class Creature : public Unit, public GridObject<Creature>
         uint32 m_respawnDelay;                              // (secs) delay between corpse disappearance and respawning
         uint32 m_corpseDelay;                               // (secs) delay between death and corpse disappearance
         float m_respawnradius;
+        uint32 m_combatPulseTime;                           // (msecs) remaining time for next zone-in-combat pulse
+        uint32 m_combatPulseDelay;                          // (secs) how often the creature puts the entire zone in combat (only works in dungeons)
 
         uint8 m_emoteState;
         ReactStates m_reactState;                           // for AI, not charmInfo

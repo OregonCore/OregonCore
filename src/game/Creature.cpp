@@ -148,8 +148,7 @@ Creature::Creature() :
     m_GlobalCooldown(0),
     m_PlayerDamageReq(0), m_SightDistance(sWorld.getConfig(CONFIG_SIGHT_MONSTER)),
     m_CombatDistance(MELEE_RANGE), m_lootMoney(0), m_lootRecipient(0), m_lootRecipientGroup(0), m_corpseRemoveTime(0), m_respawnTime(0), m_respawnDelay(25),
-    m_corpseDelay(60),
-    m_respawnradius(0.0f), m_emoteState(0), m_reactState(REACT_AGGRESSIVE), m_regenTimer(2000),
+    m_corpseDelay(60), m_respawnradius(0.0f), m_combatPulseTime(0), m_combatPulseDelay(0), m_emoteState(0), m_reactState(REACT_AGGRESSIVE), m_regenTimer(2000),
     m_defaultMovementType(IDLE_MOTION_TYPE), m_DBTableGuid(0), m_equipmentId(0),
     m_AlreadyCallAssistance(false), m_AlreadySearchedAssistance(false), m_regenHealth(true), m_AI_locked(false),
     m_meleeDamageSchoolMask(SPELL_SCHOOL_MASK_NORMAL), DisableReputationGain(false), m_creatureData(NULL),
@@ -584,10 +583,44 @@ void Creature::Update(uint32 diff)
                 LastCharmerGUID = 0;
             }
 
+            // if periodic combat pulse is enabled and we are both in combat and in a dungeon, do this now
+            if (m_combatPulseDelay > 0 && IsInCombat() && GetMap()->IsDungeon())
+            {
+                if (diff > m_combatPulseTime)
+                    m_combatPulseTime = 0;
+                else
+                    m_combatPulseTime -= diff;
+
+                if (m_combatPulseTime == 0)
+                {
+                    Map::PlayerList const &players = GetMap()->GetPlayers();
+                    if (!players.isEmpty())
+                        for (Map::PlayerList::const_iterator it = players.begin(); it != players.end(); ++it)
+                        {
+                            if (Player* player = it->getSource())
+                            {
+                                if (player->isGameMaster())
+                                    continue;
+
+                                if (player->IsAlive() && this->IsHostileTo(player))
+                                {
+                                    if (CanHaveThreatList())
+                                        AddThreat(player, 0.0f);
+                                    this->SetInCombatWith(player);
+                                    player->SetInCombatWith(this);
+                                }
+                            }
+                        }
+
+                    m_combatPulseTime = m_combatPulseDelay * IN_MILLISECONDS;
+                }
+            }
+ 
             if (!IsInEvadeMode() && IsAIEnabled)
             {
                 // do not allow the AI to be changed during update
                 m_AI_locked = true;
+
                 i_AI->UpdateAI(diff);
                 m_AI_locked = false;
             }
