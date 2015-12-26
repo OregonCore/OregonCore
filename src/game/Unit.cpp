@@ -772,7 +772,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
         if (!pVictim->ToCreature()->hasLootRecipient())
             pVictim->ToCreature()->SetLootRecipient(this);
 
-        if (GetCharmerOrOwnerPlayerOrPlayerItself())
+        if (GetCharmerOrOwnerPlayerOrPlayerItself() || (ToTempSummon() && ToTempSummon()->GetSummoner() && ToTempSummon()->GetSummoner()->GetTypeId() == TYPEID_PLAYER))
             pVictim->ToCreature()->LowerPlayerDamageReq(health < damage ?  health : damage);
     }
 
