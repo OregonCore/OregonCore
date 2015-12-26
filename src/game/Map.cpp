@@ -455,95 +455,47 @@ Map::AddToMap(T* obj)
     obj->UpdateObjectVisibility(true);
 }
 
-/*
-void Map::MessageBroadcast(Player* player, WorldPacket* msg, bool to_self)
+void Map::VisitNearbyCellsOf(WorldObject* obj, TypeContainerVisitor<Oregon::ObjectUpdater, GridTypeMapContainer> &gridVisitor, TypeContainerVisitor<Oregon::ObjectUpdater, WorldTypeMapContainer> &worldVisitor)
 {
-    CellPair p = Oregon::ComputeCellPair(player->GetPositionX(), player->GetPositionY());
+    // Check for valid position
+    if (!obj->IsPositionValid())
+        return;
 
-    if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
+    CellPair standing_cell(Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY()));
+
+    // Check for correctness of standing_cell, it also avoids problems with update_cell
+    if (standing_cell.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || standing_cell.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
+        return;
+
+    // the overloaded operators handle range checking
+    // so ther's no need for range checking inside the loop
+    CellPair begin_cell(standing_cell), end_cell(standing_cell);
+
+    // Update mobs/objects in ALL visible cells around object!
+    CellArea area = Cell::CalculateCellArea(obj->GetPositionX(), obj->GetPositionY(), obj->GetGridActivationRange());
+
+    area.ResizeBorders(begin_cell, end_cell);
+
+    for (uint32 x = begin_cell.x_coord; x <= end_cell.x_coord; ++x)
     {
-        sLog.outError("Map::MessageBroadcast: Player (GUID: %u) has invalid coordinates X:%f Y:%f grid cell [%u:%u]", player->GetGUIDLow(), player->GetPositionX(), player->GetPositionY(), p.x_coord, p.y_coord);
-        return;
+        for (uint32 y = begin_cell.y_coord; y <= end_cell.y_coord; ++y)
+        {
+            // marked cells are those that have been visited
+            // don't visit the same cell twice
+            uint32 cell_id = (y * TOTAL_NUMBER_OF_CELLS_PER_MAP) + x;
+            if (isCellMarked(cell_id))
+                continue;
+
+            markCell(cell_id);
+            CellPair pair(x, y);
+            Cell cell(pair);
+            cell.data.Part.reserved = CENTER_DISTRICT;
+            cell.SetNoCreate();
+            cell.Visit(pair, gridVisitor, *this);
+            cell.Visit(pair, worldVisitor, *this);
+        }
     }
-
-    Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
-
-    if (!loaded(GridPair(cell.data.Part.grid_x, cell.data.Part.grid_y)))
-        return;
-
-    Oregon::MessageDeliverer post_man(*player, msg, to_self);
-    TypeContainerVisitor<Oregon::MessageDeliverer, WorldTypeMapContainer > message(post_man);
-    cell.Visit(p, message, *this, *player, GetVisibilityDistance());
 }
-
-void Map::MessageBroadcast(WorldObject *obj, WorldPacket* msg)
-{
-    CellPair p = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
-
-    if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
-    {
-        sLog.outError("Map::MessageBroadcast: Object " UI64FMTD " has invalid coordinates X:%f Y:%f grid cell [%u:%u]", obj->GetGUID(), obj->GetPositionX(), obj->GetPositionY(), p.x_coord, p.y_coord);
-        return;
-    }
-
-    Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
-    cell.SetNoCreate();
-
-    if (!loaded(GridPair(cell.data.Part.grid_x, cell.data.Part.grid_y)))
-        return;
-
-    //@todo currently on continents when Visibility.Distance.InFlight > Visibility.Distance.Continents
-    //we have alot of blinking mobs because monster move packet send is broken...
-    Oregon::ObjectMessageDeliverer post_man(*obj, msg);
-    TypeContainerVisitor<Oregon::ObjectMessageDeliverer, WorldTypeMapContainer > message(post_man);
-    cell.Visit(p, message, *this, *obj, GetVisibilityDistance());
-}
-
-void Map::MessageDistBroadcast(Player* player, WorldPacket* msg, float dist, bool to_self, bool own_team_only)
-{
-    CellPair p = Oregon::ComputeCellPair(player->GetPositionX(), player->GetPositionY());
-
-    if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
-    {
-        sLog.outError("Map::MessageBroadcast: Player (GUID: %u) has invalid coordinates X:%f Y:%f grid cell [%u:%u]", player->GetGUIDLow(), player->GetPositionX(), player->GetPositionY(), p.x_coord, p.y_coord);
-        return;
-    }
-
-    Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
-
-    if (!loaded(GridPair(cell.data.Part.grid_x, cell.data.Part.grid_y)))
-        return;
-
-    Oregon::MessageDistDeliverer post_man(*player, msg, dist, to_self, own_team_only);
-    TypeContainerVisitor<Oregon::MessageDistDeliverer , WorldTypeMapContainer > message(post_man);
-    cell.Visit(p, message, *this, *player, dist);
-}
-
-void Map::MessageDistBroadcast(WorldObject *obj, WorldPacket* msg, float dist)
-{
-    CellPair p = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
-
-    if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
-    {
-        sLog.outError("Map::MessageBroadcast: Object " UI64FMTD " has invalid coordinates X:%f Y:%f grid cell [%u:%u]", obj->GetGUID(), obj->GetPositionX(), obj->GetPositionY(), p.x_coord, p.y_coord);
-        return;
-    }
-
-    Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
-    cell.SetNoCreate();
-
-    if (!loaded(GridPair(cell.data.Part.grid_x, cell.data.Part.grid_y)))
-        return;
-
-    Oregon::ObjectMessageDistDeliverer post_man(*obj, msg, dist);
-    TypeContainerVisitor<Oregon::ObjectMessageDistDeliverer, WorldTypeMapContainer > message(post_man);
-    cell.Visit(p, message, *this, *obj, dist);
-}
-*/
 
 bool Map::loaded(const GridPair& p) const
 {
@@ -580,37 +532,28 @@ void Map::Update(const uint32& t_diff)
         if (!plr || !plr->IsInWorld())
             continue;
 
-        CellPair standing_cell(Oregon::ComputeCellPair(plr->GetPositionX(), plr->GetPositionY()));
+        plr->Update(t_diff);
 
-        // Check for correctness of standing_cell, it also avoids problems with update_cell
-        if (standing_cell.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || standing_cell.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
-            continue;
+        VisitNearbyCellsOf(plr, grid_object_update, world_object_update);
 
-        // the overloaded operators handle range checking
-        // so ther's no need for range checking inside the loop
-        CellPair begin_cell(standing_cell), end_cell(standing_cell);
-        //lets update mobs/objects in ALL visible cells around player!
-        CellArea area = Cell::CalculateCellArea(*plr, GetVisibilityDistance());
-        area.ResizeBorders(begin_cell, end_cell);
-
-        for (uint32 x = begin_cell.x_coord; x <= end_cell.x_coord; ++x)
+        // Handle updates for creatures in combat with player and are more than 60 yards away
+        if (plr->IsInCombat())
         {
-            for (uint32 y = begin_cell.y_coord; y <= end_cell.y_coord; ++y)
+            std::vector<Creature*> updateList;
+            HostileReference* ref = plr->getHostileRefManager().getFirst();
+
+            while (ref)
             {
-                // marked cells are those that have been visited
-                // don't visit the same cell twice
-                uint32 cell_id = (y * TOTAL_NUMBER_OF_CELLS_PER_MAP) + x;
-                if (!isCellMarked(cell_id))
-                {
-                    markCell(cell_id);
-                    CellPair pair(x, y);
-                    Cell cell(pair);
-                    cell.data.Part.reserved = CENTER_DISTRICT;
-                    //cell.SetNoCreate();
-                    cell.Visit(pair, grid_object_update, *this);
-                    cell.Visit(pair, world_object_update, *this);
-                }
+                if (Unit* unit = ref->getSource()->getOwner())
+                    if (unit->ToCreature() && unit->GetMapId() == plr->GetMapId() && !unit->IsWithinDistInMap(plr, GetVisibilityDistance(), false))
+                        updateList.push_back(unit->ToCreature());
+
+                ref = ref->next();
             }
+
+            // Process deferred update list for player
+            for (Creature* c : updateList)
+                VisitNearbyCellsOf(c, grid_object_update, world_object_update);
         }
     }
 
@@ -629,39 +572,7 @@ void Map::Update(const uint32& t_diff)
             if (!obj || !obj->IsInWorld())
                 continue;
 
-            CellPair standing_cell(Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY()));
-
-            // Check for correctness of standing_cell, it also avoids problems with update_cell
-            if (standing_cell.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || standing_cell.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
-                continue;
-
-            // the overloaded operators handle range checking
-            // so ther's no need for range checking inside the loop
-            CellPair begin_cell(standing_cell), end_cell(standing_cell);
-            begin_cell << 1;
-            begin_cell -= 1;               // upper left
-            end_cell >> 1;
-            end_cell += 1;                   // lower right
-
-            for (uint32 x = begin_cell.x_coord; x <= end_cell.x_coord; ++x)
-            {
-                for (uint32 y = begin_cell.y_coord; y <= end_cell.y_coord; ++y)
-                {
-                    // marked cells are those that have been visited
-                    // don't visit the same cell twice
-                    uint32 cell_id = (y * TOTAL_NUMBER_OF_CELLS_PER_MAP) + x;
-                    if (!isCellMarked(cell_id))
-                    {
-                        markCell(cell_id);
-                        CellPair pair(x, y);
-                        Cell cell(pair);
-                        cell.data.Part.reserved = CENTER_DISTRICT;
-                        //cell.SetNoCreate();
-                        cell.Visit(pair, grid_object_update, *this);
-                        cell.Visit(pair, world_object_update, *this);
-                    }
-                }
-            }
+            VisitNearbyCellsOf(obj, grid_object_update, world_object_update);
         }
     }
 

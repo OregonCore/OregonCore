@@ -52,6 +52,7 @@ struct ScriptInfo;
 struct ScriptAction;
 struct Position;
 class BattleGround;
+namespace Oregon { struct ObjectUpdater; }
 
 struct ScriptAction
 {
@@ -279,14 +280,8 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         template<class T> void AddToMap(T*);
         template<class T> void RemoveFromMap(T*, bool);
 
+        void VisitNearbyCellsOf(WorldObject* obj, TypeContainerVisitor<Oregon::ObjectUpdater, GridTypeMapContainer> &gridVisitor, TypeContainerVisitor<Oregon::ObjectUpdater, WorldTypeMapContainer> &worldVisitor);
         virtual void Update(const uint32&);
-
-        /*
-        void MessageBroadcast(Player* , WorldPacket* , bool to_self);
-        void MessageBroadcast(WorldObject *, WorldPacket* );
-        void MessageDistBroadcast(Player* , WorldPacket* , float dist, bool to_self, bool own_team_only = false);
-        void MessageDistBroadcast(WorldObject *, WorldPacket* , float dist);
-        */
 
         float GetVisibilityDistance() const
         {
