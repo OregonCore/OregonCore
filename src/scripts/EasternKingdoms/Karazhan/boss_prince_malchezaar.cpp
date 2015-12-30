@@ -255,7 +255,7 @@ struct boss_malchezaarAI : public ScriptedAI
             if (Unit* pInfernal = Unit::GetUnit(*me, *itr))
                 if (pInfernal->IsAlive())
                 {
-                    pInfernal->SetVisibility(VISIBILITY_OFF);
+                    pInfernal->SetVisible(false);
                     pInfernal->setDeathState(JUST_DIED);
                 }
 
@@ -294,14 +294,14 @@ struct boss_malchezaarAI : public ScriptedAI
         if (!info)
             return;
 
-        std::list<HostileReference*> t_list = me->getThreatManager().getThreatList();
+        ThreatContainer::StorageType const &t_list = me->getThreatManager().getThreatList();
         std::vector<Unit* > targets;
 
         if (!t_list.size())
             return;
 
         //begin + 1, so we don't target the one with the highest threat
-        std::list<HostileReference*>::const_iterator itr = t_list.begin();
+        ThreatContainer::StorageType::const_iterator itr = t_list.begin();
         std::advance(itr, 1);
         for (; itr != t_list.end(); ++itr) //store the threat list in a different container
             if (Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid()))

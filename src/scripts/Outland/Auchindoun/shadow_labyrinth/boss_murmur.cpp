@@ -136,8 +136,8 @@ struct boss_murmurAI : public Scripted_NoMovementAI
             // Thundering Storm
             if (ThunderingStorm_Timer <= diff)
             {
-                std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
-                for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
+                ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+                for (ThreatContainer::StorageType::const_iterator i = threatlist.begin(); i != threatlist.end(); ++i)
                     if (Unit* pTarget = Unit::GetUnit((*me), (*i)->getUnitGuid()))
                         if (pTarget->IsAlive() && me->GetDistance2d(pTarget) > 35)
                             DoCast(pTarget, SPELL_THUNDERING_STORM, true);
@@ -161,14 +161,14 @@ struct boss_murmurAI : public Scripted_NoMovementAI
             return;
         if (!me->IsWithinMeleeRange(me->getVictim()))
         {
-            std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
-            for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
-                if (Unit* pTarget = Unit::GetUnit((*me), (*i)->getUnitGuid()))
-                    if (pTarget->IsAlive() && me->IsWithinMeleeRange(pTarget))
-                    {
-                        me->TauntApply(pTarget);
-                        break;
-                    }
+            ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+            for (ThreatContainer::StorageType::const_iterator i = threatlist.begin(); i != threatlist.end(); ++i)
+            if (Unit* pTarget = Unit::GetUnit((*me), (*i)->getUnitGuid()))
+            if (pTarget->IsAlive() && me->IsWithinMeleeRange(pTarget))
+            {
+                me->TauntApply(pTarget);
+                break;
+            }
         }
 
         DoMeleeAttackIfReady();

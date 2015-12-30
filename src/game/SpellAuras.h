@@ -113,8 +113,10 @@ class Aura
         void HandlePeriodicEnergize(bool Apply, bool Real);
         void HandleAuraModResistanceExclusive(bool Apply, bool Real);
         void HandleModStealth(bool Apply, bool Real);
-        void HandleInvisibility(bool Apply, bool Real);
-        void HandleInvisibilityDetect(bool Apply, bool Real);
+        void HandleModInvisibility(bool Apply, bool Real);
+        void HandleModInvisibilityDetect(bool Apply, bool Real);
+        void HandleModStealthDetect(bool Apply, bool Real);
+        void HandleModStealthLevel(bool Apply, bool Real);
         void HandleAuraModTotalHealthPercentRegen(bool Apply, bool Real);
         void HandleAuraModTotalManaPercentRegen(bool Apply, bool Real);
         void HandleAuraModResistance(bool Apply, bool Real);

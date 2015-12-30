@@ -825,15 +825,13 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
 
     pGameObj = new GameObject();
     // this will generate a new guid if the object is in an instance
-    if (!pGameObj->LoadFromDB(db_lowGUID, map))
+    if (!pGameObj->LoadGameObjectFromDB(db_lowGUID, map))
     {
         delete pGameObj;
         return false;
     }
 
     sLog.outDebug(GetOregonString(LANG_GAMEOBJECT_CURRENT), gInfo->name, db_lowGUID, x, y, z, o);
-
-    map->AddToMap(pGameObj);
 
     // @todo is it really necessary to add both the real and DB table guid here ?
     sObjectMgr.AddGameobjectToGrid(db_lowGUID, sObjectMgr.GetGOData(db_lowGUID));
@@ -977,21 +975,24 @@ bool ChatHandler::HandleNpcAddCommand(const char* args)
     float o = chr->GetOrientation();
     Map* map = chr->GetMap();
 
-    Creature* pCreature = new Creature;
-    if (!pCreature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, id, (uint32)teamval, x, y, z, o))
+    Creature* creature = new Creature;
+    if (!creature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, id, (uint32)teamval, x, y, z, o))
     {
-        delete pCreature;
+        delete creature;
         return false;
     }
 
-    pCreature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
+    creature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
 
-    uint32 db_guid = pCreature->GetDBTableGUIDLow();
+    uint32 db_guid = creature->GetDBTableGUIDLow();
 
     // To call _LoadGoods(); _LoadQuests(); CreateTrainerSpells();
-    pCreature->LoadFromDB(db_guid, map);
+    if (!creature->LoadCreatureFromDB(db_guid, map))
+    {
+        delete creature;
+        return false;
+    }
 
-    map->AddToMap(pCreature);
     sObjectMgr.AddCreatureToGrid(db_guid, sObjectMgr.GetCreatureData(db_guid));
     return true;
 }
@@ -2616,8 +2617,13 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
 
                 wpCreature2->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
                 // To call _LoadGoods(); _LoadQuests(); CreateTrainerSpells();
-                wpCreature2->LoadFromDB(wpCreature2->GetDBTableGUIDLow(), map);
-                map->AddToMap(wpCreature2);
+                //TODO: Should we first use "Create" then use "LoadFromDB"?
+                if (!wpCreature2->LoadCreatureFromDB(wpCreature2->GetDBTableGUIDLow(), map))
+                {
+                    PSendSysMessage(LANG_WAYPOINT_VP_NOTCREATED, VISUAL_WAYPOINT);
+                    delete wpCreature2;
+                    return false;
+                }
             }
 
             WorldDatabase.PExecuteLog("UPDATE waypoint_data SET position_x = '%f',position_y = '%f',position_z = '%f' where id = '%u' AND point='%u'",
@@ -2823,8 +2829,12 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             WorldDatabase.PExecuteLog("UPDATE waypoint_data SET wpguid = '%u' WHERE id = '%u' and point = '%u'", wpCreature->GetGUIDLow(), pathid, point);
 
             wpCreature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
-            wpCreature->LoadFromDB(wpCreature->GetDBTableGUIDLow(), map);
-            map->AddToMap(wpCreature);
+            if (!wpCreature->LoadCreatureFromDB(wpCreature->GetDBTableGUIDLow(), map))
+            {
+                PSendSysMessage(LANG_WAYPOINT_VP_NOTCREATED, id);
+                delete wpCreature;
+                return false;
+            }
 
             if (target)
             {
@@ -2860,22 +2870,26 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         Player* chr = m_session->GetPlayer();
         Map* map = chr->GetMap();
 
-        Creature* pCreature = new Creature;
-        if (!pCreature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, id, 0, x, y, z, o))
+        Creature* creature = new Creature;
+        if (!creature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, id, 0, x, y, z, o))
         {
             PSendSysMessage(LANG_WAYPOINT_VP_NOTCREATED, id);
-            delete pCreature;
+            delete creature;
             return false;
         }
 
-        pCreature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
-        pCreature->LoadFromDB(pCreature->GetDBTableGUIDLow(), map);
-        map->AddToMap(pCreature);
+        creature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
+        if (!creature->LoadCreatureFromDB(creature->GetDBTableGUIDLow(), map))
+        {
+            PSendSysMessage(LANG_WAYPOINT_VP_NOTCREATED, id);
+            delete creature;
+            return false;
+        }
 
         if (target)
         {
-            pCreature->SetDisplayId(target->GetDisplayId());
-            pCreature->SetObjectScale(0.5);
+            creature->SetDisplayId(target->GetDisplayId());
+            creature->SetObjectScale(0.5);
         }
 
         return true;
@@ -2908,22 +2922,26 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         Player* chr = m_session->GetPlayer();
         Map* map = chr->GetMap();
 
-        Creature* pCreature = new Creature;
-        if (!pCreature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, id, 0, x, y, z, o))
+        Creature* creature = new Creature;
+        if (!creature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, id, 0, x, y, z, o))
         {
             PSendSysMessage(LANG_WAYPOINT_NOTCREATED, id);
-            delete pCreature;
+            delete creature;
             return false;
         }
 
-        pCreature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
-        pCreature->LoadFromDB(pCreature->GetDBTableGUIDLow(), map);
-        map->AddToMap(pCreature);
+        creature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
+        if (!creature->LoadCreatureFromDB(creature->GetDBTableGUIDLow(), map))
+        {
+            PSendSysMessage(LANG_WAYPOINT_NOTCREATED, id);
+            delete creature;
+            return false;
+        }
 
         if (target)
         {
-            pCreature->SetDisplayId(target->GetDisplayId());
-            pCreature->SetObjectScale(0.5);
+            creature->SetDisplayId(target->GetDisplayId());
+            creature->SetObjectScale(0.5);
         }
 
         return true;
@@ -2943,8 +2961,8 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         {
             Field* fields = result->Fetch();
             uint32 guid = fields[0].GetUInt32();
-            Creature* pCreature = m_session->GetPlayer()->GetMap()->GetCreature(MAKE_NEW_GUID(guid, VISUAL_WAYPOINT, HIGHGUID_UNIT));
-            if (!pCreature)
+            Creature* creature = m_session->GetPlayer()->GetMap()->GetCreature(MAKE_NEW_GUID(guid, VISUAL_WAYPOINT, HIGHGUID_UNIT));
+            if (!creature)
             {
                 PSendSysMessage(LANG_WAYPOINT_NOTREMOVED, guid);
                 hasError = true;
@@ -2952,9 +2970,9 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             }
             else
             {
-                pCreature->CombatStop();
-                pCreature->DeleteFromDB();
-                pCreature->AddObjectToRemoveList();
+                creature->CombatStop();
+                creature->DeleteFromDB();
+                creature->AddObjectToRemoveList();
             }
         }
         while (result->NextRow());

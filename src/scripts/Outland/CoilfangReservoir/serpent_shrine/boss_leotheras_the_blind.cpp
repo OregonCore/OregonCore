@@ -525,9 +525,9 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             //Summon Inner Demon
             if (InnerDemons_Timer <= diff)
             {
-                std::list<HostileReference*>& ThreatList = me->getThreatManager().getThreatList();
+                ThreatContainer::StorageType const & ThreatList = me->getThreatManager().getThreatList();
                 std::vector<Unit* > TargetList;
-                for (std::list<HostileReference*>::const_iterator itr = ThreatList.begin(); itr != ThreatList.end(); ++itr)
+                for (ThreatContainer::StorageType::const_iterator itr = ThreatList.begin(); itr != ThreatList.end(); ++itr)
                 {
                     Unit* tempTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                     if (tempTarget && tempTarget->GetTypeId() == TYPEID_PLAYER && tempTarget->GetGUID() != me->getVictim()->GetGUID() && TargetList.size() < 5)

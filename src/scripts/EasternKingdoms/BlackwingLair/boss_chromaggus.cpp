@@ -234,8 +234,8 @@ struct boss_chromaggusAI : public ScriptedAI
         //Affliction_Timer
         if (Affliction_Timer <= diff)
         {
-            std::list<HostileReference*> threatlist = me->getThreatManager().getThreatList();
-            for (std::list<HostileReference*>::const_iterator i = threatlist.begin(); i != threatlist.end(); ++i)
+            ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+            for (ThreatContainer::StorageType::const_iterator i = threatlist.begin(); i != threatlist.end(); ++i)
             {
                 Unit* pUnit;
                 if ((*i) && (*i)->getSource())

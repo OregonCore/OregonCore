@@ -423,15 +423,14 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
     {
         Creature* pCreature = NULL;
 
-        CellPair pair(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+        CellCoord pair(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
         Cell cell(pair);
-        cell.data.Part.reserved = ALL_DISTRICT;
         cell.SetNoCreate();
 
         Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*me, entry, true, range);
         Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
-        cell.Visit(pair, creature_searcher, *(me->GetMap()));
+        cell.Visit(pair, creature_searcher, *(me->GetMap()), *me, me->GetGridActivationRange());
 
         return pCreature;
     }
@@ -631,7 +630,7 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
         case 9:
             Turn_to_eachother();
             //hide pathaleon, unit will despawn shortly
-            pathaleon->SetVisibility(VISIBILITY_OFF);
+            pathaleon->SetVisible(false);
             PhaseSubphase = 0;
             ++Phase;
             Phase_Timer = 3000;
@@ -655,15 +654,14 @@ Creature* SearchDawnforge(Player* source, uint32 entry, float range)
 {
     Creature* pCreature = NULL;
 
-    CellPair pair(Oregon::ComputeCellPair(source->GetPositionX(), source->GetPositionY()));
+    CellCoord pair(Oregon::ComputeCellCoord(source->GetPositionX(), source->GetPositionY()));
     Cell cell(pair);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*source, entry, true, range);
     Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
     TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
-    cell.Visit(pair, creature_searcher, *(source->GetMap()));
+    cell.Visit(pair, creature_searcher, *(source->GetMap()), *pCreature, pCreature->GetGridActivationRange());
 
     return pCreature;
 }

@@ -1006,7 +1006,7 @@ void Group::UpdatePlayerOutOfRange(Player* pPlayer)
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
         if (Player* player = itr->getSource())
-            if (player != pPlayer && !player->HaveAtClient(pPlayer))
+            if (!player->CanSeeOrDetect(pPlayer))
                 player->GetSession()->SendPacket(&data);
     }
 }

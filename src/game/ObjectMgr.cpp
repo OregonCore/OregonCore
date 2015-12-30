@@ -1289,10 +1289,8 @@ void ObjectMgr::AddCreatureToGrid(uint32 guid, CreatureData const* data)
     {
         if (mask & 1)
         {
-            CellPair cell_pair = Oregon::ComputeCellPair(data->posX, data->posY);
-            uint32 cell_id = (cell_pair.y_coord * TOTAL_NUMBER_OF_CELLS_PER_MAP) + cell_pair.x_coord;
-
-            CellObjectGuids& cell_guids = mMapObjectGuids[MAKE_PAIR32(data->mapid, i)][cell_id];
+            CellCoord cellCoord = Oregon::ComputeCellCoord(data->posX, data->posY);
+            CellObjectGuids& cell_guids = mMapObjectGuids[MAKE_PAIR32(data->mapid, i)][cellCoord.GetId()];
             cell_guids.creatures.insert(guid);
         }
     }
@@ -1305,10 +1303,8 @@ void ObjectMgr::RemoveCreatureFromGrid(uint32 guid, CreatureData const* data)
     {
         if (mask & 1)
         {
-            CellPair cell_pair = Oregon::ComputeCellPair(data->posX, data->posY);
-            uint32 cell_id = (cell_pair.y_coord * TOTAL_NUMBER_OF_CELLS_PER_MAP) + cell_pair.x_coord;
-
-            CellObjectGuids& cell_guids = mMapObjectGuids[MAKE_PAIR32(data->mapid, i)][cell_id];
+            CellCoord cellCoord = Oregon::ComputeCellCoord(data->posX, data->posY);
+            CellObjectGuids& cell_guids = mMapObjectGuids[MAKE_PAIR32(data->mapid, i)][cellCoord.GetId()];
             cell_guids.creatures.erase(guid);
         }
     }
@@ -1347,16 +1343,15 @@ uint32 ObjectMgr::AddGOData(uint32 entry, uint32 artKit, uint32 mapId, float x, 
 
     // Spawn if necessary (loaded grids only)
     // We use spawn coords to spawn
-    if (!map->Instanceable() && map->IsLoaded(x, y))
+    if (!map->Instanceable() && map->IsGridLoaded(x, y))
     {
         GameObject* go = new GameObject;
-        if (!go->LoadFromDB(guid, map))
+        if (!go->LoadGameObjectFromDB(guid, map))
         {
             sLog.outError("AddGOData: cannot add gameobject entry %u to map", entry);
             delete go;
             return 0;
         }
-        map->AddToMap(go);
     }
 
     return guid;
@@ -1396,13 +1391,12 @@ uint32 ObjectMgr::AddCreData(uint32 entry, uint32 /*team*/, uint32 mapId, float 
         if (!map->Instanceable() && !map->IsRemovalGrid(x, y))
         {
             Creature* creature = new Creature;
-            if (!creature->LoadFromDB(guid, map))
+            if (!creature->LoadCreatureFromDB(guid, map))
             {
                 sLog.outError("AddCreature: cannot add creature entry %u to map", entry);
                 delete creature;
                 return 0;
             }
-            map->AddToMap(creature);
         }
     }
 
@@ -1507,10 +1501,8 @@ void ObjectMgr::AddGameobjectToGrid(uint32 guid, GameObjectData const* data)
     {
         if (mask & 1)
         {
-            CellPair cell_pair = Oregon::ComputeCellPair(data->posX, data->posY);
-            uint32 cell_id = (cell_pair.y_coord * TOTAL_NUMBER_OF_CELLS_PER_MAP) + cell_pair.x_coord;
-
-            CellObjectGuids& cell_guids = mMapObjectGuids[MAKE_PAIR32(data->mapid, i)][cell_id];
+            CellCoord cellCoord = Oregon::ComputeCellCoord(data->posX, data->posY);
+            CellObjectGuids& cell_guids = mMapObjectGuids[MAKE_PAIR32(data->mapid, i)][cellCoord.GetId()];
             cell_guids.gameobjects.insert(guid);
         }
     }
@@ -1523,10 +1515,8 @@ void ObjectMgr::RemoveGameobjectFromGrid(uint32 guid, GameObjectData const* data
     {
         if (mask & 1)
         {
-            CellPair cell_pair = Oregon::ComputeCellPair(data->posX, data->posY);
-            uint32 cell_id = (cell_pair.y_coord * TOTAL_NUMBER_OF_CELLS_PER_MAP) + cell_pair.x_coord;
-
-            CellObjectGuids& cell_guids = mMapObjectGuids[MAKE_PAIR32(data->mapid, i)][cell_id];
+            CellCoord cellCoord = Oregon::ComputeCellCoord(data->posX, data->posY);
+            CellObjectGuids& cell_guids = mMapObjectGuids[MAKE_PAIR32(data->mapid, i)][cellCoord.GetId()];
             cell_guids.gameobjects.erase(guid);
         }
     }
@@ -5949,22 +5939,24 @@ void ObjectMgr::LoadCorpses()
 
     if (!result)
     {
-
-
         sLog.outString(">> Loaded %u corpses", count);
         return;
     }
-
 
     do
     {
 
         Field* fields = result->Fetch();
-
         uint32 guid = fields[15].GetUInt32();
+        CorpseType type = CorpseType(fields[13].GetUInt8());
+        if (type >= MAX_CORPSE_TYPE)
+        {
+            sLog.outError("Corpse (guid: %u) have wrong corpse type (%u), not loading.", guid, type);
+            continue;
+        }
 
-        Corpse* corpse = new Corpse;
-        if (!corpse->LoadFromDB(guid, fields))
+        Corpse* corpse = new Corpse(type);
+        if (!corpse->LoadCorpseFromDB(guid, fields))
         {
             delete corpse;
             continue;

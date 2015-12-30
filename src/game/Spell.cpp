@@ -1152,17 +1152,6 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
         }
         if (m_caster->IsHostileTo(unit))
         {
-            // reset damage to 0 if target has Invisibility or Vanish aura (_only_ vanish, not stealth) and isn't visible for caster
-            bool isVisibleForHit = ((unit->HasAuraType(SPELL_AURA_MOD_INVISIBILITY) || unit->HasAuraTypeWithFamilyFlags(SPELL_AURA_MOD_STEALTH, SPELLFAMILY_ROGUE , SPELLFAMILYFLAG_ROGUE_VANISH)) && !unit->isVisibleForOrDetect(m_caster, true)) ? false : true;
-
-            // for delayed spells ignore not visible explicit target
-            if (m_spellInfo->speed > 0.0f && unit == m_targets.getUnitTarget() && !isVisibleForHit)
-            {
-                // that was causing CombatLog errors
-                //m_caster->SendSpellMiss(unit, m_spellInfo->Id, SPELL_MISS_EVADE);
-                m_damage = 0;
-                return;
-            }
             unit->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_HITBYSPELL);
             if (m_customAttr & SPELL_ATTR_CU_AURA_CC)
                 unit->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_CC);
@@ -1432,7 +1421,7 @@ void Spell::SearchChainTarget(std::list<Unit*>& TagUnitMap, float max_range, uin
                 break;
             while ((m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_MELEE
                     && !m_caster->isInFrontInMap(*next, max_range))
-                   || !m_caster->canSeeOrDetect(*next, false)
+                   || !m_caster->CanSeeOrDetect(*next)
                    || !cur->IsWithinLOSInMap(*next))
             {
                 ++next;
@@ -2618,7 +2607,10 @@ uint64 Spell::handle_delayed(uint64 t_offset)
         if (ihit->processed == false)
         {
             if (single_missile || ihit->timeDelay <= t_offset)
+            {
+                ihit->timeDelay = t_offset;
                 DoAllEffectOnTarget(&(*ihit));
+            }
             else if (next_time == 0 || ihit->timeDelay < next_time)
                 next_time = ihit->timeDelay;
         }
@@ -3988,9 +3980,8 @@ SpellCastResult Spell::CheckCast(bool strict)
 
                             if ((*i_spellST)->ConditionValue2)
                             {
-                                CellPair p(Oregon::ComputeCellPair(m_caster->GetPositionX(), m_caster->GetPositionY()));
+                                CellCoord p(Oregon::ComputeCellCoord(m_caster->GetPositionX(), m_caster->GetPositionY()));
                                 Cell cell(p);
-                                cell.data.Part.reserved = ALL_DISTRICT;
 
                                 Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*m_caster, (*i_spellST)->ConditionValue2, range);
                                 Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(p_GameObject, go_check);
@@ -4024,9 +4015,8 @@ SpellCastResult Spell::CheckCast(bool strict)
                         {
                             Creature* p_Creature = NULL;
 
-                            CellPair p(Oregon::ComputeCellPair(m_caster->GetPositionX(), m_caster->GetPositionY()));
+                            CellCoord p(Oregon::ComputeCellCoord(m_caster->GetPositionX(), m_caster->GetPositionY()));
                             Cell cell(p);
-                            cell.data.Part.reserved = ALL_DISTRICT;
                             cell.SetNoCreate();             // Really don't know what is that???
 
                             Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*m_caster, (*i_spellST)->ConditionValue2, (*i_spellST)->ConditionValue1 != SPELL_TARGET_TYPE_DEAD, range);
@@ -5449,9 +5439,8 @@ SpellCastResult Spell::CheckItems()
     // Check spell focus object
     if (m_spellInfo->RequiresSpellFocus)
     {
-        CellPair p(Oregon::ComputeCellPair(m_caster->GetPositionX(), m_caster->GetPositionY()));
+        CellCoord p(Oregon::ComputeCellCoord(m_caster->GetPositionX(), m_caster->GetPositionY()));
         Cell cell(p);
-        cell.data.Part.reserved = ALL_DISTRICT;
 
         GameObject* ok = NULL;
         Oregon::GameObjectFocusCheck go_check(m_caster, m_spellInfo->RequiresSpellFocus);
@@ -5459,7 +5448,7 @@ SpellCastResult Spell::CheckItems()
 
         TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::GameObjectFocusCheck>, GridTypeMapContainer > object_checker(checker);
         Map& map = *m_caster->GetMap();
-        cell.Visit(p, object_checker, map, *m_caster, map.GetVisibilityDistance());
+        cell.Visit(p, object_checker, map, *m_caster, map.GetVisibilityRange());
 
         if (!ok)
             return SPELL_FAILED_REQUIRES_SPELL_FOCUS;
@@ -5903,7 +5892,7 @@ bool Spell::CheckTarget(Unit* target, uint32 eff)
     //Check player targets and remove if in GM mode or GM invisibility (for not self casting case)
     if (target != m_caster && target->GetTypeId() == TYPEID_PLAYER)
     {
-        if (target->ToPlayer()->GetVisibility() == VISIBILITY_OFF)
+        if (!target->ToPlayer()->IsVisible())
             return false;
 
         if (target->ToPlayer()->isGameMaster() && !IsPositiveSpell(m_spellInfo->Id))

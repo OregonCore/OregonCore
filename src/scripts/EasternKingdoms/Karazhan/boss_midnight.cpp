@@ -61,7 +61,7 @@ struct boss_midnightAI : public ScriptedAI
         Mount_Timer = 0;
 
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
     }
 
     void KilledUnit(Unit* /*victim*/)
@@ -101,7 +101,7 @@ struct boss_midnightAI : public ScriptedAI
                 if (Mount_Timer <= diff)
                 {
                     Mount_Timer = 0;
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                     me->GetMotionMaster()->MoveIdle();
                     if (Unit* pAttumen = Unit::GetUnit(*me, Attumen))
                     {
@@ -206,10 +206,10 @@ struct boss_attumenAI : public ScriptedAI
                 if (pMidnight)
                 {
                     pMidnight->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                    pMidnight->SetVisibility(VISIBILITY_ON);
+                    pMidnight->SetVisible(true);
                 }
                 Midnight = 0;
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 me->Kill(me);
             }
         }
@@ -248,9 +248,9 @@ struct boss_attumenAI : public ScriptedAI
             if (ChargeTimer <= diff)
             {
                 Unit* pTarget = NULL;
-                std::list<HostileReference*> t_list = me->getThreatManager().getThreatList();
+                ThreatContainer::StorageType const &t_list = me->getThreatManager().getThreatList();
                 std::vector<Unit* > target_list;
-                for (std::list<HostileReference*>::const_iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
+                for (ThreatContainer::StorageType::const_iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
                 {
                     pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                     if (pTarget && !pTarget->IsWithinDist(me, ATTACK_DISTANCE, false) && pTarget->GetTypeId() == TYPEID_PLAYER)

@@ -234,15 +234,14 @@ struct boss_janalaiAI : public ScriptedAI
         me->GetPosition(x, y, z);
 
         {
-            CellPair pair(Oregon::ComputeCellPair(x, y));
+            CellCoord pair(Oregon::ComputeCellCoord(x, y));
             Cell cell(pair);
-            cell.data.Part.reserved = ALL_DISTRICT;
             cell.SetNoCreate();
 
             Oregon::AllCreaturesOfEntryInRange check(me, MOB_EGG, 100);
             Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
-            cell.Visit(pair, cSearcher, *(me->GetMap()));
+            cell.Visit(pair, cSearcher, *me->GetMap(), *me, me->GetGridActivationRange());
         }
 
         //error_log("Eggs %d at middle", templist.size());
@@ -266,15 +265,14 @@ struct boss_janalaiAI : public ScriptedAI
         me->GetPosition(x, y, z);
 
         {
-            CellPair pair(Oregon::ComputeCellPair(x, y));
+            CellCoord pair(Oregon::ComputeCellCoord(x, y));
             Cell cell(pair);
-            cell.data.Part.reserved = ALL_DISTRICT;
             cell.SetNoCreate();
 
             Oregon::AllCreaturesOfEntryInRange check(me, MOB_FIRE_BOMB, 100);
             Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
-            cell.Visit(pair, cSearcher, *(me->GetMap()));
+            cell.Visit(pair, cSearcher, *me->GetMap(), *me, me->GetGridActivationRange());
         }
         for (std::list<Creature*>::const_iterator i = templist.begin(); i != templist.end(); ++i)
         {
@@ -515,15 +513,14 @@ struct mob_amanishi_hatcherAI : public ScriptedAI
         me->GetPosition(x, y, z);
 
         {
-            CellPair pair(Oregon::ComputeCellPair(x, y));
+            CellCoord pair(Oregon::ComputeCellCoord(x, y));
             Cell cell(pair);
-            cell.data.Part.reserved = ALL_DISTRICT;
             cell.SetNoCreate();
 
             Oregon::AllCreaturesOfEntryInRange check(me, 23817, 50);
             Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
-            cell.Visit(pair, cSearcher, *(me->GetMap()));
+            cell.Visit(pair, cSearcher, *me->GetMap(), *me, me->GetGridActivationRange());
         }
 
         //error_log("Eggs %d at %d", templist.size(), side);

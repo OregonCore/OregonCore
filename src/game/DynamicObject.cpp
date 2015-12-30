@@ -29,7 +29,7 @@
 #include "CellImpl.h"
 #include "GridNotifiersImpl.h"
 
-DynamicObject::DynamicObject() : WorldObject()
+DynamicObject::DynamicObject(bool isWorldObject) : WorldObject(isWorldObject)
 {
     m_objectType |= TYPEMASK_DYNAMICOBJECT;
     m_objectTypeId = TYPEID_DYNAMICOBJECT;
@@ -105,8 +105,8 @@ bool DynamicObject::Create(uint32 guidlow, Unit* caster, uint32 spellId, uint32 
     m_casterGuid = caster->GetGUID();
     m_updateTimer = 0;
 
-    if (m_effIndex == 4)
-        m_isWorldObject = true;
+    //if (m_effIndex == 4)
+       // m_isWorldObject = true;
 
     return true;
 }
@@ -166,10 +166,3 @@ void DynamicObject::Delay(int32 delaytime)
         if (*iunit)
             (*iunit)->DelayAura(m_spellId, m_effIndex, delaytime);
 }
-
-bool DynamicObject::isVisibleForInState(Player const* u, bool inVisibleList) const
-{
-    return IsInWorld() && u->IsInWorld()
-           && (IsWithinDistInMap(u->m_seer, World::GetMaxVisibleDistanceForObject() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false));
-}
-

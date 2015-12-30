@@ -1730,7 +1730,7 @@ struct mob_rift_spawnAI : public ScriptedAI
             {
                 if (Creature* trigger = me->SummonTrigger(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, 10000))
                 {
-                    trigger->SetVisibility(VISIBILITY_OFF);
+                    trigger->SetVisible(false);
                     trigger->CastSpell(trigger, SPELL_CREATE_FILLED_CONTAINMENT_COFFER, true);
                 }
                 container->Delete();

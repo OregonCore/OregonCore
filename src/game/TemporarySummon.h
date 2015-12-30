@@ -39,7 +39,7 @@ struct TempSummonData
 class TempSummon : public Creature
 {
     public:
-        explicit TempSummon(SummonPropertiesEntry const* properties, Unit* owner);
+        explicit TempSummon(SummonPropertiesEntry const* properties, Unit* owner, bool isWorldObject);
         virtual ~TempSummon() {};
         void Update(uint32 time);
         virtual void InitStats(uint32 lifetime);
@@ -66,7 +66,7 @@ class TempSummon : public Creature
 class Minion : public TempSummon
 {
     public:
-        Minion(SummonPropertiesEntry const* properties, Unit* owner);
+        Minion(SummonPropertiesEntry const* properties, Unit* owner, bool isWorldObject);
         void InitStats(uint32 duration);
         void RemoveFromWorld();
         Unit* GetOwner()
@@ -90,7 +90,7 @@ class Minion : public TempSummon
 class Guardian : public Minion
 {
     public:
-        Guardian(SummonPropertiesEntry const* properties, Unit* owner);
+        Guardian(SummonPropertiesEntry const* properties, Unit* owner, bool isWorldObject);
         void InitStats(uint32 duration);
         bool InitStatsForLevel(uint32 level);
         void InitSummon();

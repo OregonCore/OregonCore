@@ -35,7 +35,8 @@
 #define ATTACK_DISTANCE             5.0f
 #define INSPECT_DISTANCE            28.0f
 #define MAX_VISIBILITY_DISTANCE     SIZE_OF_GRIDS       // max distance for visible object show
-#define DEFAULT_VISIBILITY_DISTANCE 90.0f               // default visible distance, 90 yards on continents
+#define SIGHT_RANGE_UNIT            50.0f
+#define DEFAULT_VISIBILITY_DISTANCE 90.0f                   // default visible distance, 90 yards on continents
 #define DEFAULT_VISIBILITY_INSTANCE 170.0f              // default visible distance in instances, 120 yards
 #define DEFAULT_VISIBILITY_BGARENAS 533.0f              // default visible distance in BG/Arenas, 180 yards
 
@@ -757,12 +758,35 @@ template<class T>
 class GridObject
 {
     public:
-        GridReference<T>& GetGridRef()
+        bool IsInGrid() const { return _gridRef.isValid(); }
+        void AddToGrid(GridRefManager<T>& m) { ASSERT(!IsInGrid()); _gridRef.link(&m, (T*)this); }
+        void RemoveFromGrid() { ASSERT(IsInGrid()); _gridRef.unlink(); }
+    private:
+        GridReference<T> _gridRef;
+};
+
+template <class T_VALUES, class T_FLAGS, class FLAG_TYPE, uint8 ARRAY_SIZE>
+class FlaggedValuesArray32
+{
+    public:
+        FlaggedValuesArray32()
         {
-            return m_gridRef;
+            memset(&m_values, 0x00, sizeof(T_VALUES) * ARRAY_SIZE);
+            m_flags = 0;
         }
-    protected:
-        GridReference<T> m_gridRef;
+
+        T_FLAGS  GetFlags() const { return m_flags; }
+        bool     HasFlag(FLAG_TYPE flag) const { return m_flags & (1 << flag); }
+        void     AddFlag(FLAG_TYPE flag) { m_flags |= (1 << flag); }
+        void     DelFlag(FLAG_TYPE flag) { m_flags &= ~(1 << flag); }
+
+        T_VALUES GetValue(FLAG_TYPE flag) const { return m_values[flag]; }
+        void     SetValue(FLAG_TYPE flag, T_VALUES value) { m_values[flag] = value; }
+        void     AddValue(FLAG_TYPE flag, T_VALUES value) { m_values[flag] += value; }
+
+    private:
+        T_VALUES m_values[ARRAY_SIZE];
+        T_FLAGS m_flags;
 };
 
 class WorldObject : public Object, public WorldLocation
@@ -924,8 +948,10 @@ class WorldObject : public Object, public WorldLocation
 
         virtual void CleanupsBeforeDelete();                // used in destructor or explicitly before mass creature delete to remove cross-references to already deleted units
 
-        virtual void SendMessageToSet(WorldPacket* data, bool self);
+        virtual void SendMessageToSet(WorldPacket *data, bool self) { SendMessageToSetInRange(data, GetVisibilityRange(), self); }
         virtual void SendMessageToSetInRange(WorldPacket* data, float dist, bool self);
+
+        virtual uint8 getLevelForTarget(WorldObject const* /*target*/) const { return 1; }
 
         void MonsterSay(const char* text, uint32 language, uint64 TargetGuid);
         void MonsterYell(const char* text, uint32 language, uint64 TargetGuid);
@@ -947,14 +973,27 @@ class WorldObject : public Object, public WorldLocation
         virtual void SaveRespawnTime() {}
         void AddObjectToRemoveList();
 
-        // main visibility check function in normal case (ignore grey zone distance check)
-        bool isVisibleFor(Player const* u) const
-        {
-            return isVisibleForInState(u, false);
-        }
+        virtual bool isValid() const;
 
-        // low level function for visibility change code, must be define in all main world object subclasses
-        virtual bool isVisibleForInState(Player const* u, bool inVisibleList) const = 0;
+        virtual bool IsNeverVisible() const { return !IsInWorld(); }
+        virtual bool IsAlwaysVisibleFor(WorldObject const* seer) const { return false; }
+        virtual bool IsInvisibleDueToDespawn() const { return false; }
+        //difference from IsAlwaysVisibleFor: 1. after distance check; 2. use owner or charmer as seer
+        virtual bool IsAlwaysDetectableFor(WorldObject const* /*seer*/) const { return false; }
+
+        float GetGridActivationRange() const;
+        float GetVisibilityRange() const;
+        float GetSightRange(const WorldObject* target = NULL) const;
+        bool CanSeeOrDetect(WorldObject const* obj, bool ignoreStealth = false, bool distanceCheck = false, bool checkAlert = false) const;
+
+        FlaggedValuesArray32<int32, uint32, StealthType, TOTAL_STEALTH_TYPES> m_stealth;
+        FlaggedValuesArray32<int32, uint32, StealthType, TOTAL_STEALTH_TYPES> m_stealthDetect;
+
+        FlaggedValuesArray32<int32, uint32, InvisibilityType, TOTAL_INVISIBILITY_TYPES> m_invisibility;
+        FlaggedValuesArray32<int32, uint32, InvisibilityType, TOTAL_INVISIBILITY_TYPES> m_invisibilityDetect;
+
+        FlaggedValuesArray32<int32, uint32, ServerSideVisibilityType, TOTAL_SERVERSIDE_VISIBILITY_TYPES> m_serverSideVisibility;
+        FlaggedValuesArray32<int32, uint32, ServerSideVisibilityType, TOTAL_SERVERSIDE_VISIBILITY_TYPES> m_serverSideVisibilityDetect;
 
         // Low Level Packets
         void SendPlaySound(uint32 Sound, bool OnlySelf);
@@ -996,10 +1035,8 @@ class WorldObject : public Object, public WorldLocation
         GameObject* FindNearestGameObject(uint32 entry, float range);
         GameObject* FindNearestGameObjectOfType(GameobjectTypes type, float range) const;
 
-        float GetGridActivationRange() const;
-
-        void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, uint32 uiEntry, float fMaxSearchRange);
-        void GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, uint32 uiEntry, float fMaxSearchRange);
+        void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& gameobjectList, uint32 entry, float maxSearchRange) const;
+        void GetCreatureListWithEntryInGrid(std::list<Creature*>& creatureList, uint32 entry, float maxSearchRange) const;
 
         void DestroyForNearbyPlayers();
         virtual void UpdateObjectVisibility(bool forced = true);
@@ -1038,30 +1075,23 @@ class WorldObject : public Object, public WorldLocation
         }
         void setActive(bool isActiveObject);
         void SetWorldObject(bool apply);
-        template<class NOTIFIER> void VisitNearbyObject(const float& radius, NOTIFIER& notifier) const
-        {
-            GetMap()->VisitAll(GetPositionX(), GetPositionY(), radius, notifier);
-        }
-        template<class NOTIFIER> void VisitNearbyGridObject(const float& radius, NOTIFIER& notifier) const
-        {
-            GetMap()->VisitGrid(GetPositionX(), GetPositionY(), radius, notifier);
-        }
-        template<class NOTIFIER> void VisitNearbyWorldObject(const float& radius, NOTIFIER& notifier) const
-        {
-            GetMap()->VisitWorld(GetPositionX(), GetPositionY(), radius, notifier);
-        }
+        bool IsPermanentWorldObject() const { return m_isWorldObject; }
+        bool IsWorldObject() const;
+
+        template<class NOTIFIER> void VisitNearbyWorldObject(const float &radius, NOTIFIER &notifier) const { if (IsInWorld()) GetMap()->VisitWorld(GetPositionX(), GetPositionY(), radius, notifier); }
+        template<class NOTIFIER> void VisitNearbyObject(float const& radius, NOTIFIER& notifier) const { if (IsInWorld()) GetMap()->VisitAll(GetPositionX(), GetPositionY(), radius, notifier); }
+        template<class NOTIFIER> void VisitNearbyGridObject(float const& radius, NOTIFIER& notifier) const { if (IsInWorld()) GetMap()->VisitGrid(GetPositionX(), GetPositionY(), radius, notifier); }
 
         uint32 m_groupLootTimer;                            // (msecs)timer used for group loot
         uint64 lootingGroupLeaderGUID;                      // used to find group which is looting corpse
 
-        bool m_isWorldObject;
-
         MovementInfo m_movementInfo;
 
     protected:
-        explicit WorldObject();
+        explicit WorldObject(bool isWorldObject); //note: here it means if it is in grid object list or world object list
         std::string m_name;
         bool m_isActive;
+        const bool m_isWorldObject;
         ZoneScript* m_zoneScript;
 
         //these functions are used mostly for Relocate() and Corpse/Player specific stuff...
@@ -1084,6 +1114,12 @@ class WorldObject : public Object, public WorldLocation
 
         uint16 m_notifyflags;
         uint16 m_executed_notifies;
+
+        bool CanNeverSee(WorldObject const* obj) const;
+        virtual bool CanAlwaysSee(WorldObject const* /*obj*/) const { return false; }
+        bool CanDetect(WorldObject const* obj, bool ignoreStealth, bool checkAlert = false) const;
+        bool CanDetectInvisibilityOf(WorldObject const* obj) const;
+        bool CanDetectStealthOf(WorldObject const* obj, bool checkAlert = false) const;
 };
 
 namespace Oregon

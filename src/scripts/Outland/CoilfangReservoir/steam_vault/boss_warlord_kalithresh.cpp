@@ -154,15 +154,14 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
     {
         Creature* pCreature = NULL;
 
-        CellPair pair(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+        CellCoord pair(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
         Cell cell(pair);
-        cell.data.Part.reserved = ALL_DISTRICT;
         cell.SetNoCreate();
 
         Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*me, entry, true, range);
         Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
-        cell.Visit(pair, creature_searcher, *(me->GetMap()));
+        cell.Visit(pair, creature_searcher, *(me->GetMap()), *me, me->GetGridActivationRange());
 
         return pCreature;
     }

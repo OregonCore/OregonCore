@@ -1465,7 +1465,11 @@ bool BattleGround::AddObject(uint32 type, uint32 entry, float x, float y, float 
         data.go_state       = 1;
     */
     // add to world, so it can be later looked up from HashMapHolder
-    map->AddToMap(go);
+    if (!map->AddToMap(go))
+    {
+        delete go;
+        return false;
+    }
     m_BgObjects[type] = go->GetGUID();
     return true;
 }
@@ -1553,22 +1557,27 @@ Creature* BattleGround::AddCreature(uint32 entry, uint32 type, uint32 teamval, f
     if (!map)
         return NULL;
 
-    Creature* pCreature = new Creature;
-    if (!pCreature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, entry, teamval, x, y, z, o))
+    Creature* creature = new Creature;
+    if (!creature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, entry, teamval, x, y, z, o))
     {
         sLog.outError("Can't create creature entry: %u", entry);
-        delete pCreature;
+        delete creature;
         return NULL;
     }
 
-    pCreature->SetHomePosition(x, y, z, o);
+    creature->SetHomePosition(x, y, z, o);
 
-    //pCreature->SetDungeonDifficulty(0);
+    //creature->SetDungeonDifficulty(0);
 
-    map->AddToMap(pCreature);
-    m_BgCreatures[type] = pCreature->GetGUID();
+    if (!map->AddToMap(creature))
+    {
+        delete creature;
+        return NULL;
+    }
 
-    return  pCreature;
+    m_BgCreatures[type] = creature->GetGUID();
+
+    return  creature;
 }
 /*
 void BattleGround::SpawnBGCreature(uint32 type, uint32 respawntime)

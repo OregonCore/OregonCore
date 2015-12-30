@@ -178,7 +178,7 @@ struct boss_akilzonAI : public ScriptedAI
             Unit* bird = Unit::GetUnit(*me, BirdGUIDs[i]);
             if (bird && bird->IsAlive())
             {
-                bird->SetVisibility(VISIBILITY_OFF);
+                bird->SetVisible(false);
                 bird->setDeathState(JUST_DIED);
             }
         }
@@ -205,22 +205,22 @@ struct boss_akilzonAI : public ScriptedAI
             for (uint8 i = 2; i < StormCount; ++i)
                 bp0 *= 2;
 
-            CellPair p(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+            CellCoord p(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
             Cell cell(p);
-            cell.data.Part.reserved = ALL_DISTRICT;
             cell.SetNoCreate();
 
             std::list<Unit* > tempUnitMap;
 
             {
-                Oregon::AnyAoETargetUnitInObjectRangeCheck u_check(me, me, 999);
+                Oregon::AnyAoETargetUnitInObjectRangeCheck u_check(me, me, SIZE_OF_GRIDS);
                 Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck> searcher(tempUnitMap, u_check);
 
                 TypeContainerVisitor<Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
                 TypeContainerVisitor<Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
 
-                cell.Visit(p, world_unit_searcher, *(me->GetMap()));
-                cell.Visit(p, grid_unit_searcher, *(me->GetMap()));
+                cell.Visit(p, world_unit_searcher, *me->GetMap(), *me, SIZE_OF_GRIDS);
+                cell.Visit(p, grid_unit_searcher, *me->GetMap(), *me, SIZE_OF_GRIDS);
+
             }
             //dealdamege
             for (std::list<Unit*>::const_iterator i = tempUnitMap.begin(); i != tempUnitMap.end(); ++i)

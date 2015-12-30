@@ -90,7 +90,7 @@ struct boss_patchwerkAI : public ScriptedAI
             uint32 MostHP = 0;
             Unit* pMostHPTarget = NULL;
             Unit* pTemp = NULL;
-            std::list<HostileReference*>::iterator i = me->getThreatManager().getThreatList().begin();
+            ThreatContainer::StorageType::const_iterator i = me->getThreatManager().getThreatList().begin();
 
             for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end();)
             {

@@ -538,7 +538,7 @@ struct trigger_death_cloudAI : public ScriptedAI
             if (Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
             {
                 Madrigosa->RemoveAurasDueToSpell(44885);
-                Madrigosa->SetVisibility(VISIBILITY_OFF);
+                Madrigosa->SetVisible(false);
                 Madrigosa->CastSpell(Madrigosa, SPELL_SUMMON_FELMYST, true);
                 bornTimer = 0;
                 me->DisappearAndDie();

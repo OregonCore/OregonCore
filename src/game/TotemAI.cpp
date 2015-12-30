@@ -76,11 +76,10 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
     // Search victim if no, not attackable, or out of range, or friendly (possible in case duel end)
     if (!victim ||
         !victim->isTargetableForAttack() || !i_totem.IsWithinDistInMap(victim, max_range) ||
-        i_totem.IsFriendlyTo(victim) || !victim->isVisibleForOrDetect(&i_totem, false))
+        i_totem.IsFriendlyTo(victim) || !i_totem.CanSeeOrDetect(victim))
     {
-        CellPair p(Oregon::ComputeCellPair(i_totem.GetPositionX(), i_totem.GetPositionY()));
+        CellCoord p(Oregon::ComputeCellCoord(i_totem.GetPositionX(), i_totem.GetPositionY()));
         Cell cell(p);
-        cell.data.Part.reserved = ALL_DISTRICT;
 
         victim = NULL;
 
@@ -93,8 +92,8 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
         //@todo Backport mangos-0.12 r638: [7667] Add to CreatureAI field pointing to creature itself
         //cell.Visit(p, grid_object_checker,  *m_creature.GetMap(), *m_creature, max_range);
         //cell.Visit(p, world_object_checker, *m_creature.GetMap(), *m_creature, max_range);
-        cell.Visit(p, grid_object_checker,  *i_totem.GetMap());
-        cell.Visit(p, world_object_checker, *i_totem.GetMap());
+        cell.Visit(p, grid_object_checker,  *i_totem.GetMap(), *me, me->GetGridActivationRange());
+        cell.Visit(p, world_object_checker, *i_totem.GetMap(), *me, me->GetGridActivationRange());
     }
 
     // If have target

@@ -438,7 +438,7 @@ class Creature : public Unit, public GridObject<Creature>
 {
     public:
 
-        explicit Creature();
+        explicit Creature(bool isWorldObject = false);
         virtual ~Creature();
 
         void AddToWorld();
@@ -461,7 +461,7 @@ class Creature : public Unit, public GridObject<Creature>
         }
 
         void Update(uint32 time);                         // overwrited Unit::Update
-        void GetRespawnCoord(float& x, float& y, float& z, float* ori = NULL, float* dist = NULL) const;
+        void GetRespawnPosition(float& x, float& y, float& z, float* ori = NULL, float* dist = NULL) const;
 
         uint32 GetEquipmentId() const
         {
@@ -648,7 +648,8 @@ class Creature : public Unit, public GridObject<Creature>
         void setDeathState(DeathState s);                     // overwrite virtual Unit::setDeathState
         bool FallGround();
 
-        bool LoadFromDB(uint32 guid, Map* map);
+        bool LoadFromDB(uint32 guid, Map* map) { return LoadCreatureFromDB(guid, map, false); }
+        bool LoadCreatureFromDB(uint32 guid, Map* map, bool addToMap = true);
         virtual void SaveToDB();                              // overwrited in TemporarySummon
 
         virtual void SaveToDB(uint32 mapid, uint8 spawnMask); // overwrited in Pet
@@ -676,9 +677,10 @@ class Creature : public Unit, public GridObject<Creature>
         CreatureSpellCooldowns m_CreatureCategoryCooldowns;
         uint32 m_GlobalCooldown;
 
-        bool canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList = false, bool is3dDistance = true) const;
         bool canStartAttack(Unit const* u) const;
         float GetAttackDistance(Unit const* pl) const;
+
+        void SendAIReaction(AiReaction reactionType);
 
         Unit* SelectNearestTarget(float dist = 0, bool playerOnly = false) const;
         Unit* SelectNearestTargetInAttackDistance(float dist = 0) const;
@@ -718,8 +720,6 @@ class Creature : public Unit, public GridObject<Creature>
         {
             m_currentCell = cell;
         }
-
-        bool IsVisibleInGridForPlayer(Player const* pl) const;
 
         void RemoveCorpse(bool setSpawnTime = true);
         void ForcedDespawn(uint32 timeMSToDespawn = 0);
@@ -883,6 +883,8 @@ class Creature : public Unit, public GridObject<Creature>
         void SetTextRepeatId(uint8 textGroup, uint8 id);
         void ClearTextRepeatGroup(uint8 textGroup);
 
+        bool m_isTempWorldObject; //true when possessed
+
     protected:
         bool CreateFromProto(uint32 guidlow, uint32 Entry, uint32 team, const CreatureData* data = NULL);
         bool InitEntry(uint32 entry, uint32 team = ALLIANCE, const CreatureData* data = NULL);
@@ -934,6 +936,8 @@ class Creature : public Unit, public GridObject<Creature>
 
         CreatureData const* m_creatureData;
 
+        bool IsInvisibleDueToDespawn() const override;
+        bool CanAlwaysSee(WorldObject const* obj) const override;
     private:
         //WaypointMovementGenerator vars
         uint32 m_waypointID;

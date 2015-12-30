@@ -51,7 +51,7 @@ uint32 const LevelStartLoyalty[6] =
     17500,
 };
 
-Pet::Pet(Player* owner, PetType type) : Guardian(NULL, owner),
+Pet::Pet(Player* owner, PetType type) : Guardian(NULL, owner, true),
     m_resetTalentsCost(0), m_resetTalentsTime(0),
     m_removed(false), m_owner(owner), m_happinessTimer(7500),
     m_petType(type), m_duration(0), m_declinedname(NULL), 
@@ -86,7 +86,6 @@ Pet::Pet(Player* owner, PetType type) : Guardian(NULL, owner),
     m_CreatureCategoryCooldowns.clear();
     m_autospells.clear();
 
-    m_isWorldObject = true;
     m_wasOutdoors = false;
     m_outdoorBonusCheckTimer = 1000;
 }
@@ -515,7 +514,7 @@ void Pet::Update(uint32 diff)
         {
             // unsummon pet that lost owner
             Player* owner = GetOwner();
-            if (!owner || (!IsWithinDistInMap(owner, GetMap()->GetVisibilityDistance()) && !isPossessed()) || (isControlled() && !owner->GetPetGUID()))
+            if (!owner || (!IsWithinDistInMap(owner, GetMap()->GetVisibilityRange()) && !isPossessed()) || (isControlled() && !owner->GetPetGUID()))
             {
                 sLog.outError("Pet %u is not pet of owner %u, removed", GetEntry(), m_owner->GetGUIDLow());
                 Remove(PET_SAVE_NOT_IN_SLOT, true);

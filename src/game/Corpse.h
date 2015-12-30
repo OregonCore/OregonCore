@@ -58,7 +58,7 @@ class Corpse : public WorldObject, public GridObject<Corpse>
         bool Create(uint32 guidlow, Player* owner, uint32 mapid, float x, float y, float z, float ang);
 
         void SaveToDB();
-        bool LoadFromDB(uint32 guid, Field* fields);
+        bool LoadCorpseFromDB(uint32 guid, Field* fields);
 
         void DeleteBonesFromWorld();
         void DeleteFromDB();
@@ -81,16 +81,14 @@ class Corpse : public WorldObject, public GridObject<Corpse>
             return m_type;
         }
 
-        GridPair const& GetGrid() const
+        GridCoord const& GetGridCoord() const
         {
-            return m_grid;
+            return _gridCoord;
         }
-        void SetGrid(GridPair const& grid)
+        void SetGridCoord(GridCoord const& grid)
         {
-            m_grid = grid;
+            _gridCoord = grid;
         }
-
-        bool isVisibleForInState(Player const* u, bool inVisibleList) const;
 
         Loot loot;                                          // remove insignia ONLY at BG
         Player* lootRecipient;
@@ -134,7 +132,7 @@ class Corpse : public WorldObject, public GridObject<Corpse>
     private:
         CorpseType m_type;
         time_t m_time;
-        GridPair m_grid;                                    // gride for corpse position for fast search
+        GridCoord _gridCoord;                                    // gride for corpse position for fast search
 };
 #endif
 

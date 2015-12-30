@@ -179,9 +179,8 @@ class SmartScript
         {
             GameObject* gameObject = NULL;
 
-            CellPair p(Oregon::ComputeCellPair(searchObject->GetPositionX(), searchObject->GetPositionY()));
+            CellCoord p(Oregon::ComputeCellCoord(searchObject->GetPositionX(), searchObject->GetPositionY()));
             Cell cell(p);
-            cell.data.Part.reserved = ALL_DISTRICT;
 
             Oregon::GameObjectWithDbGUIDCheck goCheck(*searchObject, guid);
             Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck> checker(gameObject, goCheck);
@@ -196,9 +195,8 @@ class SmartScript
         {
             Creature* creature = NULL;
             
-            CellPair p(Oregon::ComputeCellPair(searchObject->GetPositionX(), searchObject->GetPositionY()));
+            CellCoord p(Oregon::ComputeCellCoord(searchObject->GetPositionX(), searchObject->GetPositionY()));
             Cell cell(p);
-            cell.data.Part.reserved = ALL_DISTRICT;
 
             Oregon::CreatureWithDbGUIDCheck target_check(searchObject, guid);
             Oregon::CreatureSearcher<Oregon::CreatureWithDbGUIDCheck> checker(creature, target_check);

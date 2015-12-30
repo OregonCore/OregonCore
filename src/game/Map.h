@@ -195,7 +195,7 @@ class GridMap
     public:
         GridMap();
         ~GridMap();
-        bool  loadData(char* filaname);
+        bool  loadData(const char* filename);
         void  unloadData();
 
         uint16 getArea(float x, float y);
@@ -277,16 +277,14 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         virtual bool AddToMap(Player*);
         virtual void RemoveFromMap(Player*, bool);
-        template<class T> void AddToMap(T*);
+        template<class T> bool AddToMap(T*);
         template<class T> void RemoveFromMap(T*, bool);
 
         void VisitNearbyCellsOf(WorldObject* obj, TypeContainerVisitor<Oregon::ObjectUpdater, GridTypeMapContainer> &gridVisitor, TypeContainerVisitor<Oregon::ObjectUpdater, WorldTypeMapContainer> &worldVisitor);
         virtual void Update(const uint32&);
 
-        float GetVisibilityDistance() const
-        {
-            return m_VisibleDistance;
-        }
+        float GetVisibilityRange() const { return m_VisibleDistance; }
+
         //function for setting up visibility distance for maps on per-type/per-Id basis
         virtual void InitVisibilityDistance();
 
@@ -297,26 +295,25 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         bool IsRemovalGrid(float x, float y) const
         {
-            GridPair p = Oregon::ComputeGridPair(x, y);
+            GridCoord p = Oregon::ComputeGridCoord(x, y);
             return !getNGrid(p.x_coord, p.y_coord) || getNGrid(p.x_coord, p.y_coord)->GetGridState() == GRID_STATE_REMOVAL;
         }
 
-        bool IsLoaded(float x, float y) const
+        bool IsGridLoaded(float x, float y) const
         {
-            GridPair p = Oregon::ComputeGridPair(x, y);
-            return loaded(p);
+            return IsGridLoaded(Oregon::ComputeGridCoord(x, y));
         }
 
-        bool GetUnloadLock(const GridPair& p) const
+        bool GetUnloadLock(const GridCoord& p) const
         {
             return getNGrid(p.x_coord, p.y_coord)->getUnloadLock();
         }
-        void SetUnloadLock(const GridPair& p, bool on)
+        void SetUnloadLock(const GridCoord& p, bool on)
         {
             getNGrid(p.x_coord, p.y_coord)->setUnloadExplicitLock(on);
         }
         void LoadGrid(float x, float y);
-        bool UnloadGrid(const uint32& x, const uint32& y, bool pForce);
+        bool UnloadGrid(NGridType& ngrid, bool pForce);
         virtual void UnloadAll();
 
         void ResetGridExpiry(NGridType& grid, float factor = 1) const
@@ -429,8 +426,8 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         void AddObjectToSwitchList(WorldObject* obj, bool on);
         virtual void DelayedUpdate(const uint32 diff);
 
-        void UpdateObjectVisibility(WorldObject* obj, Cell cell, CellPair cellpair);
-        void UpdateObjectsVisibilityFor(Player* player, Cell cell, CellPair cellpair);
+        void UpdateObjectVisibility(WorldObject* obj, Cell cell, CellCoord cellpair);
+        void UpdateObjectsVisibilityFor(Player* player, Cell cell, CellCoord cellpair);
 
         void resetMarkedCells()
         {
@@ -450,7 +447,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
             return !m_mapRefManager.isEmpty();
         }
         uint32 GetPlayersCountExceptGMs() const;
-        bool ActiveObjectsNearGrid(uint32 x, uint32 y) const;
+        bool ActiveObjectsNearGrid(NGridType const& ngrid) const;
 
         void AddWorldObject(WorldObject* obj)
         {
@@ -491,7 +488,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         void RemoveFromActive(Creature* obj);
 
-        template<class T> void SwitchGridContainers(T* obj, bool active);
+        void SwitchGridContainers(Creature* creature, bool toWorldContainer);
         template<class NOTIFIER> void VisitAll(const float& x, const float& y, float radius, NOTIFIER& notifier);
         template<class NOTIFIER> void VisitWorld(const float& x, const float& y, float radius, NOTIFIER& notifier);
         template<class NOTIFIER> void VisitGrid(const float& x, const float& y, float radius, NOTIFIER& notifier);
@@ -533,10 +530,10 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         void AddCreatureToMoveList(Creature* c, float x, float y, float z, float ang);
         CreatureMoveList i_creaturesToMove;
 
-        bool loaded(const GridPair&) const;
-        void EnsureGridCreated(const GridPair&);
+        bool IsGridLoaded(const GridCoord &) const;
+        void EnsureGridCreated(const GridCoord&);
         bool EnsureGridLoaded(Cell const&);
-        void EnsureGridLoadedAtEnter(Cell const&, Player* player = NULL);
+        void EnsureGridLoadedForActiveObject(Cell const&, WorldObject* object);
 
         void buildNGridLinkage(NGridType* pNGridType)
         {
@@ -567,7 +564,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         void UpdateActiveCells(const float& x, const float& y, const uint32& t_diff);
     protected:
-        void SetUnloadReferenceLock(const GridPair& p, bool on)
+        void SetUnloadReferenceLock(const GridCoord& p, bool on)
         {
             getNGrid(p.x_coord, p.y_coord)->setUnloadReferenceLock(on);
         }
@@ -622,13 +619,10 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         // Type specific code for add/remove to/from grid
         template<class T>
-        void AddToGrid(T*, NGridType*, Cell const&);
+            void AddToGrid(T* object, Cell const& cell);
 
         template<class T>
-        void RemoveFromGrid(T*, NGridType*, Cell const&);
-
-        template<class T>
-        void DeleteFromWorld(T*);
+            void DeleteFromWorld(T*);
 
         template<class T>
         void AddToActiveHelper(T* obj)
@@ -733,28 +727,25 @@ Map::CalculateGridMask(const uint32 &y) const
 */
 
 template<class T, class CONTAINER>
-inline void
-Map::Visit(const Cell& cell, TypeContainerVisitor<T, CONTAINER>& visitor)
+inline void Map::Visit(Cell const& cell, TypeContainerVisitor<T, CONTAINER>& visitor)
 {
     const uint32 x = cell.GridX();
     const uint32 y = cell.GridY();
     const uint32 cell_x = cell.CellX();
     const uint32 cell_y = cell.CellY();
 
-    if (!cell.NoCreate() || loaded(GridPair(x, y)))
+    if (!cell.NoCreate() || IsGridLoaded(GridCoord(x, y)))
     {
         EnsureGridLoaded(cell);
-        getNGrid(x, y)->Visit(cell_x, cell_y, visitor);
+        getNGrid(x, y)->VisitGrid(cell_x, cell_y, visitor);
     }
 }
 
 template<class NOTIFIER>
-inline void
-Map::VisitAll(const float& x, const float& y, float radius, NOTIFIER& notifier)
+inline void Map::VisitAll(float const& x, float const& y, float radius, NOTIFIER& notifier)
 {
-    CellPair p(Oregon::ComputeCellPair(x, y));
+    CellCoord p(Oregon::ComputeCellCoord(x, y));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     TypeContainerVisitor<NOTIFIER, WorldTypeMapContainer> world_object_notifier(notifier);
@@ -764,12 +755,10 @@ Map::VisitAll(const float& x, const float& y, float radius, NOTIFIER& notifier)
 }
 
 template<class NOTIFIER>
-inline void
-Map::VisitWorld(const float& x, const float& y, float radius, NOTIFIER& notifier)
+inline void Map::VisitWorld(const float &x, const float &y, float radius, NOTIFIER &notifier)
 {
-    CellPair p(Oregon::ComputeCellPair(x, y));
+    CellCoord p(Oregon::ComputeCellCoord(x, y));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     TypeContainerVisitor<NOTIFIER, WorldTypeMapContainer> world_object_notifier(notifier);
@@ -777,12 +766,10 @@ Map::VisitWorld(const float& x, const float& y, float radius, NOTIFIER& notifier
 }
 
 template<class NOTIFIER>
-inline void
-Map::VisitGrid(const float& x, const float& y, float radius, NOTIFIER& notifier)
+inline void Map::VisitGrid(const float &x, const float &y, float radius, NOTIFIER &notifier)
 {
-    CellPair p(Oregon::ComputeCellPair(x, y));
+    CellCoord p(Oregon::ComputeCellCoord(x, y));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     TypeContainerVisitor<NOTIFIER, GridTypeMapContainer >  grid_object_notifier(notifier);

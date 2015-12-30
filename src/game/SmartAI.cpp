@@ -77,7 +77,7 @@ void SmartAI::UpdateDespawn(const uint32 diff)
     {
         if (mDespawnState == 2)
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             mDespawnTime = 5000;
             mDespawnState++;
         }
@@ -505,7 +505,7 @@ void SmartAI::JustRespawned()
     mDespawnTime = 0;
     mDespawnState = 0;
     mEscortState = SMART_ESCORT_NONE;
-    me->SetVisibility(VISIBILITY_ON);
+    me->SetVisible(true);
     if (me->getFaction() != me->GetCreatureTemplate()->faction_A)
         me->RestoreFaction();
     mJustReset = true;

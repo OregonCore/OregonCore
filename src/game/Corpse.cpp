@@ -25,8 +25,7 @@
 #include "WorldSession.h"
 #include "WorldPacket.h"
 
-Corpse::Corpse(CorpseType type) : WorldObject()
-    , m_type(type)
+Corpse::Corpse(CorpseType type) : WorldObject(type != CORPSE_BONES), m_type(type)
 {
     m_objectType |= TYPEMASK_CORPSE;
     m_objectTypeId = TYPEID_CORPSE;
@@ -38,9 +37,6 @@ Corpse::Corpse(CorpseType type) : WorldObject()
     m_time = time(NULL);
 
     lootForBody = false;
-
-    if (type != CORPSE_BONES)
-        m_isWorldObject = true;
 }
 
 Corpse::~Corpse()
@@ -98,7 +94,7 @@ bool Corpse::Create(uint32 guidlow, Player* owner, uint32 /*mapid*/, float x, fl
     SetFloatValue(CORPSE_FIELD_FACING, ang);
     SetUInt64Value(CORPSE_FIELD_OWNER, owner->GetGUID());
 
-    m_grid = Oregon::ComputeGridPair(GetPositionX(), GetPositionY());
+    _gridCoord = Oregon::ComputeGridCoord(GetPositionX(), GetPositionY());
 
     return true;
 }
@@ -159,7 +155,7 @@ void Corpse::DeleteFromDB()
         CharacterDatabase.PExecute("DELETE FROM corpse WHERE player = '%d' AND corpse_type <> '0'",  GUID_LOPART(GetOwnerGUID()));
 }
 
-bool Corpse::LoadFromDB(uint32 guid, Field* fields)
+bool Corpse::LoadCorpseFromDB(uint32 guid, Field* fields)
 {
     //       0           1           2           3            4    5          6          7       8       9      10     11        12    13           14        15    16
     //SELECT position_x, position_y, position_z, orientation, map, displayId, itemCache, bytes1, bytes2, guild, flags, dynFlags, time, corpse_type, instance, guid, player FROM corpse WHERE corpse_type <> 0
@@ -182,16 +178,6 @@ bool Corpse::LoadFromDB(uint32 guid, Field* fields)
     SetUInt64Value(CORPSE_FIELD_OWNER, MAKE_NEW_GUID(fields[16].GetUInt32(), 0, HIGHGUID_PLAYER));
 
     m_time = time_t(fields[12].GetUInt64());
-    m_type = CorpseType(fields[13].GetUInt32());
-
-    if (m_type >= MAX_CORPSE_TYPE)
-    {
-        sLog.outError("Corpse (guidlow %d, owner %d) has wrong corpse type.  Not loaded.", GetGUIDLow(), GUID_LOPART(GetOwnerGUID()));
-        return false;
-    }
-
-    if (m_type != CORPSE_BONES)
-        m_isWorldObject = true;
 
     uint32 instanceid  = fields[14].GetUInt32();
 
@@ -207,13 +193,8 @@ bool Corpse::LoadFromDB(uint32 guid, Field* fields)
         return false;
     }
 
-    m_grid = Oregon::ComputeGridPair(GetPositionX(), GetPositionY());
+    _gridCoord = Oregon::ComputeGridCoord(GetPositionX(), GetPositionY());
     return true;
-}
-
-bool Corpse::isVisibleForInState(Player const* u, bool inVisibleList) const
-{
-    return IsInWorld() && u->IsInWorld() && IsWithinDistInMap(u->m_seer, World::GetMaxVisibleDistanceForObject() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false);
 }
 
 bool Corpse::IsExpired(time_t t) const

@@ -117,7 +117,7 @@ struct boss_nazanAI : public ScriptedAI
             if (UnsummonCheck <= diff && me->IsAlive())
             {
                 me->SetLootRecipient(NULL);
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 me->RemoveCorpse();
             }
@@ -253,7 +253,7 @@ struct boss_vazrudenAI : public ScriptedAI
                     WipeSaid = true;
                 }
                 me->SetLootRecipient(NULL);
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 me->RemoveCorpse();
             }
@@ -339,7 +339,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
             }
             summoned = false;
             me->ClearUnitState(UNIT_STATE_ROOT);
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
 
             for (std::vector<uint64>::const_iterator itr = OrcGUID.begin(); itr != OrcGUID.end(); ++itr)
             {
@@ -366,7 +366,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
             if (Nazan)
                 NazanGUID = Nazan->GetGUID();
             summoned = true;
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->AddUnitState(UNIT_STATE_ROOT);
         }
     }

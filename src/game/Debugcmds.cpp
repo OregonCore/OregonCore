@@ -629,8 +629,8 @@ bool ChatHandler::HandleDebugThreatList(const char* /*args*/)
     if (!target || target->IsTotem() || target->IsPet())
         return false;
 
-    std::list<HostileReference*>& tlist = target->getThreatManager().getThreatList();
-    std::list<HostileReference*>::iterator itr;
+    ThreatContainer::StorageType tlist = target->getThreatManager().getThreatList();
+    ThreatContainer::StorageType::iterator itr;
     uint32 cnt = 0;
     PSendSysMessage("Threat list of %s (guid %u)", target->GetName(), target->GetGUIDLow());
     for (itr = tlist.begin(); itr != tlist.end(); ++itr)

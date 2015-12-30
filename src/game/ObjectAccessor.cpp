@@ -233,10 +233,8 @@ void ObjectAccessor::RemoveCorpse(Corpse* corpse)
             return;
 
         // build mapid*cellid -> guid_set map
-        CellPair cell_pair = Oregon::ComputeCellPair(corpse->GetPositionX(), corpse->GetPositionY());
-        uint32 cell_id = (cell_pair.y_coord * TOTAL_NUMBER_OF_CELLS_PER_MAP) + cell_pair.x_coord;
-
-        sObjectMgr.DeleteCorpseCellData(corpse->GetMapId(), cell_id, corpse->GetOwnerGUID());
+        CellCoord cellCoord = Oregon::ComputeCellCoord(corpse->GetPositionX(), corpse->GetPositionY());
+        sObjectMgr.DeleteCorpseCellData(corpse->GetMapId(), cellCoord.GetId(), GUID_LOPART(corpse->GetOwnerGUID()));
 
         i_player2corpse.erase(iter);
     }
@@ -254,20 +252,25 @@ void ObjectAccessor::AddCorpse(Corpse* corpse)
         i_player2corpse[corpse->GetOwnerGUID()] = corpse;
 
         // build mapid*cellid -> guid_set map
-        CellPair cell_pair = Oregon::ComputeCellPair(corpse->GetPositionX(), corpse->GetPositionY());
-        uint32 cell_id = (cell_pair.y_coord * TOTAL_NUMBER_OF_CELLS_PER_MAP) + cell_pair.x_coord;
-
-        sObjectMgr.AddCorpseCellData(corpse->GetMapId(), cell_id, corpse->GetOwnerGUID(), corpse->GetInstanceId());
+        CellCoord cellCoord = Oregon::ComputeCellCoord(corpse->GetPositionX(), corpse->GetPositionY());
+        sObjectMgr.AddCorpseCellData(corpse->GetMapId(), cellCoord.GetId(), GUID_LOPART(corpse->GetOwnerGUID()), corpse->GetInstanceId());
     }
 }
 
-void ObjectAccessor::AddCorpsesToGrid(GridPair const& gridpair, GridType& grid, Map* map)
+void ObjectAccessor::AddCorpsesToGrid(GridCoord const& gridpair, GridType& grid, Map* map)
 {
     Guard guard(i_corpseGuard);
 
     for (Player2CorpsesMapType::iterator iter = i_player2corpse.begin(); iter != i_player2corpse.end(); ++iter)
     {
-        if (iter->second->GetGrid() == gridpair)
+        if (iter->second->IsInGrid())
+        {
+            //TODO: add this assert later
+            //ASSERT(iter->second->GetGridCoord() == gridpair);
+            continue;
+        }
+
+        if (iter->second->GetGridCoord() == gridpair)
         {
             // verify, if the corpse in our instance (add only corpses which are)
             if (map->Instanceable())
@@ -332,7 +335,7 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
         for (int i = 3; i < CORPSE_END; ++i)                    // don't overwrite guid and object type
             bones->SetUInt32Value(i, corpse->GetUInt32Value(i));
 
-        bones->SetGrid(corpse->GetGrid());
+        bones->SetGridCoord(corpse->GetGridCoord());
         // bones->m_time = m_time;                              // don't overwrite time
         // bones->m_inWorld = m_inWorld;                        // don't overwrite in-world state
         // bones->m_type = m_type;                              // don't overwrite type

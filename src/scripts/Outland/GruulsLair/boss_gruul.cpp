@@ -140,7 +140,7 @@ struct boss_gruulAI : public ScriptedAI
                 case 0:
                     {
                         //Begin the whole ordeal
-                        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                        ThreatContainer::StorageType m_threatlist = me->getThreatManager().getThreatList();
 
                         std::vector<Unit*> knockback_targets;
 
@@ -180,7 +180,7 @@ struct boss_gruulAI : public ScriptedAI
                 case 1:
                     {
                         //Players are going to get stoned
-                        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                        ThreatContainer::StorageType m_threatlist = me->getThreatManager().getThreatList();
 
                         for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {

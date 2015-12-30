@@ -111,7 +111,7 @@ void GuardAI::UpdateAI(const uint32 /*diff*/)
 bool GuardAI::IsVisible(Unit* pl) const
 {
     return me->IsWithinDistInMap(pl, sWorld.getConfig(CONFIG_SIGHT_GUARDER))
-           && pl->isVisibleForOrDetect(me, true);
+        && me->CanSeeOrDetect(pl);
 }
 
 void GuardAI::JustDied(Unit* killer)

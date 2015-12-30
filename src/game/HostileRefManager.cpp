@@ -138,3 +138,18 @@ void HostileRefManager::setOnlineOfflineState(Unit *creature, bool isOnline)
 
 //=================================================
 
+void HostileRefManager::UpdateVisibility()
+{
+    HostileReference* ref = getFirst();
+    while (ref)
+    {
+        HostileReference* nextRef = ref->next();
+        if (!ref->getSource()->getOwner()->CanSeeOrDetect(getOwner()))
+        {
+            nextRef = ref->next();
+            ref->removeReference();
+            delete ref;
+        }
+        ref = nextRef;
+    }
+}

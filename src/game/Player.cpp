@@ -251,7 +251,7 @@ const int32 Player::ReputationRank_Length[MAX_REPUTATION_RANK] = {36000, 3000, 3
 
 UpdateMask Player::updateVisualBits;
 
-Player::Player (WorldSession* session): Unit()
+Player::Player (WorldSession* session): Unit(true)
 {
     m_transport = 0;
 
@@ -354,8 +354,6 @@ Player::Player (WorldSession* session): Unit()
 
     m_swingErrorMsg = 0;
 
-    m_DetectInvTimer = 1 * IN_MILLISECONDS;
-
     for (uint8 j = 0; j < PLAYER_MAX_BATTLEGROUND_QUEUES; ++j)
     {
         m_bgBattleGroundQueueID[j].bgQueueType  = 0;
@@ -435,7 +433,6 @@ Player::Player (WorldSession* session): Unit()
     _activeCheats = CHEAT_NONE;
 
     m_ControlledByPlayer = true;
-    m_isWorldObject = true;
 
     m_globalCooldowns.clear();
 }
@@ -1014,16 +1011,19 @@ void Player::SetDrunkValue(uint16 newDrunkenValue, uint32 itemId)
 {
     uint32 oldDrunkenState = Player::GetDrunkenstateByValue(m_drunk);
 
+    if (!newDrunkenValue)
+        m_invisibilityDetect.AddFlag(INVISIBILITY_DRUNK);
+    else
+        m_invisibilityDetect.DelFlag(INVISIBILITY_DRUNK);
+    
+    m_invisibilityDetect.AddValue(INVISIBILITY_DRUNK, int32(newDrunkenValue - m_drunk) / 256);
+
     m_drunk = newDrunkenValue;
     SetUInt32Value(PLAYER_BYTES_3, (GetUInt32Value(PLAYER_BYTES_3) & 0xFFFF0001) | (m_drunk & 0xFFFE));
 
     uint32 newDrunkenState = Player::GetDrunkenstateByValue(m_drunk);
 
-    // special drunk invisibility detection
-    if (newDrunkenState >= DRUNKEN_DRUNK)
-        m_detectInvisibilityMask |= (1 << 6);
-    else
-        m_detectInvisibilityMask &= ~(1 << 6);
+    UpdateObjectVisibility();
 
     if (newDrunkenState == oldDrunkenState)
         return;
@@ -1280,18 +1280,6 @@ void Player::Update(uint32 p_time)
     //Handle Water/drowning
     HandleDrowning(p_time);
 
-    //Handle detect stealth players
-    if (m_DetectInvTimer > 0)
-    {
-        if (p_time >= m_DetectInvTimer)
-        {
-            HandleStealthedUnitsDetection();
-            m_DetectInvTimer = 3000;
-        }
-        else
-            m_DetectInvTimer -= p_time;
-    }
-
     // Played time
     if (now > m_Last_tick)
     {
@@ -1329,7 +1317,7 @@ void Player::Update(uint32 p_time)
     SendUpdateToOutOfRangeGroupMembers();
 
     Pet* pet = GetPet();
-    if (pet && !pet->IsWithinDistInMap(this, GetMap()->GetVisibilityDistance()) && !pet->isPossessed())
+    if (pet && !pet->IsWithinDistInMap(this, GetMap()->GetVisibilityRange()) && !pet->isPossessed())
         RemovePet(pet, PET_SAVE_NOT_IN_SLOT, true);
 
     //we should execute delayed teleports only for alive(!) players
@@ -1636,7 +1624,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         if (!(options & TELE_TO_NOT_UNSUMMON_PET))
         {
             //same map, only remove pet if out of range for new position
-            if (pet && !pet->IsWithinDist3d(x, y, z, GetMap()->GetVisibilityDistance()))
+            if (pet && !pet->IsWithinDist3d(x, y, z, GetMap()->GetVisibilityRange()))
             {
                 if (pet->isControlled() && !pet->isTemporarySummoned())
                     m_temporaryUnsummonedPetNumber = pet->GetCharmInfo()->GetPetNumber();
@@ -2305,6 +2293,7 @@ void Player::SetGameMaster(bool on)
 
         getHostileRefManager().setOnlineOfflineState(false);
         CombatStopWithPets();
+        m_serverSideVisibilityDetect.SetValue(SERVERSIDE_VISIBILITY_GM, GetSession()->GetSecurity());
     }
     else
     {
@@ -2320,6 +2309,7 @@ void Player::SetGameMaster(bool on)
         UpdateArea(m_areaUpdateId);
 
         getHostileRefManager().setOnlineOfflineState(true);
+        m_serverSideVisibilityDetect.SetValue(SERVERSIDE_VISIBILITY_GM, SEC_PLAYER);
     }
 
     UpdateObjectVisibility();
@@ -2331,13 +2321,7 @@ void Player::SetGMVisible(bool on)
     {
         m_ExtraFlags &= ~PLAYER_EXTRA_GM_INVISIBLE;         //remove flag
 
-        // Reapply stealth/invisibility if active or show if not any
-        if (HasAuraType(SPELL_AURA_MOD_STEALTH))
-            SetVisibility(VISIBILITY_GROUP_STEALTH);
-        //else if (HasAuraType(SPELL_AURA_MOD_INVISIBILITY))
-        //    SetVisibility(VISIBILITY_GROUP_INVISIBILITY);
-        else
-            SetVisibility(VISIBILITY_ON);
+        m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GM, SEC_PLAYER);
     }
     else
     {
@@ -2346,11 +2330,11 @@ void Player::SetGMVisible(bool on)
         SetAcceptWhispers(false);
         SetGameMaster(true);
 
-        SetVisibility(VISIBILITY_OFF);
+        m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GM, GetSession()->GetSecurity());
     }
 }
 
-bool Player::IsGroupVisibleFor(Player* p) const
+bool Player::IsGroupVisibleFor(Player const* p) const
 {
     switch (sWorld.getConfig(CONFIG_GROUP_VISIBILITY))
     {
@@ -5733,17 +5717,6 @@ void Player::SaveRecallPosition()
     m_recallY = GetPositionY();
     m_recallZ = GetPositionZ();
     m_recallO = GetOrientation();
-}
-
-void Player::SendMessageToSet(WorldPacket* data, bool self)
-{
-    if (self)
-        GetSession()->SendPacket(data);
-
-    // we use World::GetMaxVisibleDistance() because i cannot see why not use a distance
-    // update: replaced by GetMap()->GetVisibilityDistance()
-    Oregon::MessageDistDeliverer notifier(this, data, GetMap()->GetVisibilityDistance());
-    VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), notifier);
 }
 
 void Player::SendMessageToSetInRange(WorldPacket* data, float dist, bool self)
@@ -18079,49 +18052,6 @@ void Player::SetRestBonus (float rest_bonus_new)
     SetUInt32Value(PLAYER_REST_STATE_EXPERIENCE, uint32(m_rest_bonus));
 }
 
-void Player::HandleStealthedUnitsDetection()
-{
-    std::list<Unit*> stealthedUnits;
-    Oregon::AnyStealthedCheck u_check;
-    Oregon::UnitListSearcher<Oregon::AnyStealthedCheck > searcher(stealthedUnits, u_check);
-    VisitNearbyObject(GetMap()->GetVisibilityDistance(), searcher);
-
-    for (std::list<Unit*>::iterator i = stealthedUnits.begin(); i != stealthedUnits.end(); ++i)
-    {
-        if ((*i) == this)
-            continue;
-
-        bool hasAtClient = HaveAtClient((*i));
-        bool hasDetected = canSeeOrDetect(*i, true);
-
-        if (hasDetected)
-        {
-            if (!hasAtClient)
-            {
-                (*i)->SendUpdateToPlayer(this);
-                m_clientGUIDs.insert((*i)->GetGUID());
-
-                #ifdef OREGON_DEBUG
-                    sLog.outDebug("Object %u (Type: %u) is detected in stealth by player %u. Distance = %f", (*i)->GetGUIDLow(), (*i)->GetTypeId(), GetGUIDLow(), GetDistance(*i));
-                #endif
-
-                // target aura duration for caster show only if target exist at caster client
-                // send data at target visibility change (adding to client)
-                if ((*i)->isType(TYPEMASK_UNIT))
-                    SendAuraDurationsForTarget((*i));
-            }
-        }
-        else
-        {
-            if (hasAtClient)
-            {
-                (*i)->DestroyForPlayer(this);
-                m_clientGUIDs.erase((*i)->GetGUID());
-            }
-        }
-    }
-}
-
 bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_id, Creature* npc)
 {
     if (nodes.size() < 2)
@@ -19058,204 +18988,45 @@ void Player::ReportedAfkBy(Player* reporter)
     }
 }
 
-bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool is3dDistance) const
+bool Player::HaveAtClient(WorldObject const* u) const
 {
-    // Always can see self
-    if (m_mover == u || this == u)
-        return true;
-
-    // Game masters should always see the players
-    if (isGameMaster())
-    {
-        // but not higher GMs which are invisible
-        if (const Player* user = u->ToPlayer())
-            if (GetSession()->GetSecurity() >= user->GetSession()->GetSecurity())
-                return true;
-    }
-
-    // Arena visibility before arena start
-    if (InArena() && GetBattleGround() && GetBattleGround()->GetStatus() == STATUS_WAIT_JOIN)
-        if (const Player* target = u->GetCharmerOrOwnerPlayerOrPlayerItself())
-            return GetBGTeam() == target->GetBGTeam() && target->isGMVisible();
-
-    // player visible for other player if not logout and at same transport
-    // including case when player is out of world
-    bool at_same_transport =
-        GetTransport() && u->GetTypeId() == TYPEID_PLAYER
-        && !GetSession()->PlayerLogout() && !u->ToPlayer()->GetSession()->PlayerLogout()
-        && !GetSession()->PlayerLoading() && !u->ToPlayer()->GetSession()->PlayerLoading()
-        && GetTransport() == u->ToPlayer()->GetTransport();
-
-    // not in world
-    if (!at_same_transport && (!IsInWorld() || !u->IsInWorld()))
-        return false;
-
-    // forbidden to seen (at GM respawn command)
-    //if (u->GetVisibility() == VISIBILITY_RESPAWN)
-    //    return false;
-
-    Map& _map = *u->GetMap();
-    // Grid dead/alive checks
-    // non visible at grid for any stealth state
-    if (!u->IsVisibleInGridForPlayer(this))
-        return false;
-
-    // player see dead player/ghost from own group/raid
-    if (Player const* pl = u->ToPlayer())
-        if (IsInSameRaidWith(pl))
-            return true;
-
-    // always seen by owner
-    if (uint64 guid = u->GetCharmerOrOwnerGUID())
-        if (GetGUID() == guid)
-            return true;
-
-    if (uint64 guid = GetUInt64Value(PLAYER_FARSIGHT))
-        if (u->GetGUID() == guid)
-            return true;
-
-    // different visible distance checks
-    if (isInFlight())                                           // what see player in flight
-    {
-        if (!m_seer->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), is3dDistance))
-            return false;
-    }
-    else if (!u->IsAlive())                                     // distance for show body
-    {
-        if (!m_seer->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), is3dDistance))
-            return false;
-    }
-    else if (u->GetTypeId() == TYPEID_PLAYER)                     // distance for show player
-    {
-        // Players far than max visible distance for player or not in our map are not visible too
-        if (!at_same_transport && !m_seer->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f), is3dDistance))
-            return false;
-    }
-    else if (u->GetCharmerOrOwnerGUID())                        // distance for show pet/charmed
-    {
-        // Pet/charmed far than max visible distance for player or not in our map are not visible too
-        if (!m_seer->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f), is3dDistance))
-            return false;
-    }
-    else                                                    // distance for show creature
-    {
-        // Units farther than max visible distance for creature or not in our map are not visible too
-        if (!m_seer->IsWithinDistInMap(u
-                                       , u->isActiveObject() ? (MAX_VISIBILITY_DISTANCE - (inVisibleList ? 0.0f : World::GetVisibleUnitGreyDistance()))
-                                       : (_map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f))
-                                       , is3dDistance))
-            return false;
-    }
-
-    // isInvisibleForAlive() those units can only be seen by dead or if other
-    // unit is also invisible for alive.. if an isinvisibleforalive unit dies we
-    // should be able to see it too
-    if (u->IsAlive() && IsAlive() && isInvisibleForAlive() != u->isInvisibleForAlive())
-        if (u->GetTypeId() != TYPEID_PLAYER || !((Player*)u)->isGameMaster())
-            return false;
-
-    if (Unit* owner = u->GetCharmerOrOwnerOrSelf())
-    {
-        if (owner->GetVisibility() == VISIBILITY_OFF)
-        {
-            // GMs see any players, not higher GMs and all units
-            if (isGameMaster())
-            {
-                if (owner->GetTypeId() == TYPEID_PLAYER)
-                    return owner->ToPlayer()->GetSession()->GetSecurity() <= GetSession()->GetSecurity();
-                else
-                    return true;
-            }
-        }
-    }
-
-
-    if (u->GetVisibility() == VISIBILITY_OFF)
-    {
-        // GMs see any players, not higher GMs and all units
-        if (isGameMaster())
-        {
-            if (u->GetTypeId() == TYPEID_PLAYER)
-                return u->ToPlayer()->GetSession()->GetSecurity() <= GetSession()->GetSecurity();
-            else
-                return true;
-        }
-        return false;
-    }
-
-    // GM's can see everyone with invisibilitymask with less or equal security level
-    if (m_mover->m_invisibilityMask || u->m_invisibilityMask)
-    {
-        if (isGameMaster())
-        {
-            if (u->GetTypeId() == TYPEID_PLAYER)
-                return u->ToPlayer()->GetSession()->GetSecurity() <= GetSession()->GetSecurity();
-            else
-                return true;
-        }
-
-        // player see other player with stealth/invisibility only if he in same group or raid or same team (raid/team case dependent from conf setting)
-        if (!m_mover->canDetectInvisibilityOf(u))
-            if (!(u->GetTypeId() == TYPEID_PLAYER && !IsHostileTo(u) && IsGroupVisibleFor(const_cast<Player*>(u->ToPlayer()))))
-                return false;
-    }
-
-    // GM invisibility checks early, invisibility if any detectable, so if not stealth then visible
-    if (u->GetVisibility() == VISIBILITY_GROUP_STEALTH && !isGameMaster())
-    {
-        // if player is dead then he can't detect anyone in any cases
-        //do not know what is the use of this detect
-        // stealth and detected and visible for some seconds
-        if (!IsAlive())
-            detect = false;
-        if (m_DetectInvTimer < 300 || !HaveAtClient(u))
-            if (!(u->GetTypeId() == TYPEID_PLAYER && !IsHostileTo(u) && IsGroupVisibleFor(const_cast<Player*>(u->ToPlayer()))))
-                if (!detect || !m_mover->canDetectStealthOf(u, GetDistance(u)))
-                    return false;
-    }
-
-    // If use this server will be too laggy
-    // Now check is target visible with LoS
-    //return u->IsWithinLOS(GetPositionX(),GetPositionY(),GetPositionZ());
-    return true;
+    return u == this || m_clientGUIDs.find(u->GetGUID()) != m_clientGUIDs.end();
 }
 
-bool Player::IsVisibleInGridForPlayer(Player const* pl) const
+bool Player::IsNeverVisible() const
 {
-    // gamemaster in GM mode see all, including ghosts
-    if (pl->isGameMaster() && GetSession()->GetSecurity() <= pl->GetSession()->GetSecurity())
+    if (Unit::IsNeverVisible())
         return true;
 
-    // It seems in battleground everyone sees everyone, except the enemy-faction ghosts
-    if (InBattleGround())
-    {
-        if (!(IsAlive() || m_deathTimer > 0) && !IsFriendlyTo(pl))
-            return false;
-        return true;
-    }
-
-    // Live player see live player or dead player with not realized corpse
-    if (pl->IsAlive() || pl->m_deathTimer > 0)
-        return IsAlive() || m_deathTimer > 0;
-
-    // Ghost see other friendly ghosts, that's for sure
-    if (!(IsAlive() || m_deathTimer > 0) && IsFriendlyTo(pl))
+    if (GetSession()->PlayerLogout() || GetSession()->PlayerLoading())
         return true;
 
-    // Dead player see live players near own corpse
-    if (IsAlive())
-    {
-        Corpse* corpse = pl->GetCorpse();
-        if (corpse)
-        {
-            // 20 - aggro distance for same level, 25 - max additional distance if player level less that creature level
-            if (corpse->IsWithinDistInMap(this, (20 + 25)*sWorld.getRate(RATE_CREATURE_AGGRO)))
-                return true;
-        }
-    }
-
-    // and not see any other
     return false;
+}
+
+bool Player::CanAlwaysSee(WorldObject const* obj) const
+{
+    // Always can see self
+    if (m_mover == obj)
+        return true;
+
+    if (uint64 guid = GetUInt64Value(PLAYER_FARSIGHT))
+        if (obj->GetGUID() == guid)
+            return true;
+
+    return false;
+}
+
+bool Player::IsAlwaysDetectableFor(WorldObject const* seer) const
+{
+    if (Unit::IsAlwaysDetectableFor(seer))
+        return true;
+
+    if (const Player* seerPlayer = seer->ToPlayer())
+        if (IsGroupVisibleFor(seerPlayer))
+            return !(seerPlayer->duel && seerPlayer->duel->startTime != 0 && seerPlayer->duel->opponent == this);
+
+     return false;
 }
 
 bool Player::IsVisibleGloballyFor(Player* u) const
@@ -19268,7 +19039,7 @@ bool Player::IsVisibleGloballyFor(Player* u) const
         return true;
 
     // Visible units, always are visible for all players
-    if (GetVisibility() == VISIBILITY_ON)
+    if (IsVisible())
         return true;
 
     // GMs are visible for higher gms (or players are visible for gms)
@@ -19276,10 +19047,6 @@ bool Player::IsVisibleGloballyFor(Player* u) const
         return GetSession()->GetSecurity() <= u->GetSession()->GetSecurity();
 
     // non faction visibility non-breakable for non-GMs
-    if (GetVisibility() == VISIBILITY_OFF)
-        return false;
-
-    // non-gm stealth/invisibility not hide from global player lists
     return true;
 }
 
@@ -19292,7 +19059,8 @@ inline void UpdateVisibilityOf_helper(std::set<uint64>& s64, T* target, std::set
 template<>
 inline void UpdateVisibilityOf_helper(std::set<uint64>& s64, GameObject* target, std::set<Unit*>& /*v*/)
 {
-    if (!target->IsTransport())
+    // Don't update only GAMEOBJECT_TYPE_TRANSPORT
+    if ((target->GetGOInfo()->type != GAMEOBJECT_TYPE_TRANSPORT))
         s64.insert(target->GetGUID());
 }
 
@@ -19326,7 +19094,7 @@ void Player::UpdateVisibilityOf(WorldObject* target)
 {
     if (HaveAtClient(target))
     {
-        if (!target->isVisibleForInState(this, true))
+        if (!CanSeeOrDetect(target, false, true))
         {
             if (target->GetTypeId() == TYPEID_UNIT)
                 BeforeVisibilityDestroy<Creature>(target->ToCreature(), this);
@@ -19341,7 +19109,7 @@ void Player::UpdateVisibilityOf(WorldObject* target)
     }
     else
     {
-        if (target->isVisibleForInState(this, false))
+        if (CanSeeOrDetect(target, false, true))
         {
             target->SendUpdateToPlayer(this);
             if (target->GetTypeId() != TYPEID_GAMEOBJECT || !((GameObject*)target)->IsTransport())
@@ -19391,7 +19159,7 @@ void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& vi
         return;
     if (HaveAtClient(target))
     {
-        if (!target->isVisibleForInState(this, true))
+        if (!CanSeeOrDetect(target, false, true))
         {
             BeforeVisibilityDestroy<T>(target, this);
 
@@ -19405,7 +19173,7 @@ void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& vi
     }
     else if (visibleNow.size() < 30)
     {
-        if (target->isVisibleForInState(this, false))
+        if (CanSeeOrDetect(target, false, true))
         {
             target->BuildCreateUpdateBlockForPlayer(&data, this);
             UpdateVisibilityOf_helper(m_clientGUIDs, target, visibleNow);
@@ -19438,7 +19206,7 @@ void Player::UpdateVisibilityForPlayer()
 {
     // updates visibility of all objects around point of view for current player
     Oregon::VisibleNotifier notifier(*this);
-    m_seer->VisitNearbyObject(GetMap()->GetVisibilityDistance(), notifier);
+    m_seer->VisitNearbyObject(GetSightRange(), notifier);
     notifier.SendToSelf();   // send gathered data
 }
 
@@ -19530,6 +19298,8 @@ void Player::SetGroup(Group* group, int8 subgroup)
         m_group.link(group, this);
         m_group.setSubGroup((uint8)subgroup);
     }
+
+    UpdateObjectVisibility();
 }
 
 void Player::SendInitialPacketsBeforeAddToMap()

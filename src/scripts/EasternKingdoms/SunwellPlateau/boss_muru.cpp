@@ -229,7 +229,7 @@ struct boss_muruAI : public Scripted_NoMovementAI
         Timer[TIMER_SENTINEL] = 31500;
 
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
 
         Summons.DespawnAll();
 
@@ -276,7 +276,7 @@ struct boss_muruAI : public Scripted_NoMovementAI
         switch (summoned->GetEntry())
         {
         case BOSS_ENTROPIUS:
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             break;
         case CREATURE_DARK_FIENDS:
             summoned->CastSpell(summoned, SPELL_DARKFIEND_VISUAL, false);

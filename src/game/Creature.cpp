@@ -141,8 +141,7 @@ bool ForcedDespawnDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
     return true;
 }
 
-Creature::Creature() :
-    Unit(),
+Creature::Creature(bool isWorldObject): Unit(isWorldObject),
     _pickpocketLootRestore(0),
     _skinner(0),
     m_GlobalCooldown(0),
@@ -164,6 +163,7 @@ Creature::Creature() :
     
     m_SightDistance = sWorld.getConfig(CONFIG_SIGHT_MONSTER);
     m_CombatDistance = 0; // MELEE_RANGE
+    m_isTempWorldObject = false;
 }
 
 Creature::~Creature()
@@ -233,10 +233,6 @@ void Creature::RemoveCorpse(bool setSpawnTime)
     UpdateObjectVisibility();
     loot.clear();
 
-    // Unit will forget everyone who has ever attacked it
-    if (Unit* creature_unit = Unit::GetUnit(*this, GetGUID()))
-        creature_unit->clearPastEnemyList();
-
     // Should get removed later, just keep "compatibility" with scripts
     if (setSpawnTime)
         m_respawnTime = time(NULL) + m_respawnDelay;
@@ -245,7 +241,7 @@ void Creature::RemoveCorpse(bool setSpawnTime)
         AI()->CorpseRemoved(m_respawnTime);
 
     float x, y, z, o;
-    GetRespawnCoord(x, y, z, &o);
+    GetRespawnPosition(x, y, z, &o);
     SetHomePosition(x, y, z, o);
     GetMap()->CreatureRelocation(this, x, y, z, o);
 }
@@ -774,6 +770,18 @@ bool Creature::Create(uint32 guidlow, Map* map, uint32 Entry, uint32 team, float
         LoadCreaturesAddon();
     }
 
+    // TODO: Replace with spell, handle from DB
+    if (isSpiritHealer())
+    {
+        m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GHOST, GHOST_VISIBILITY_GHOST);
+        m_serverSideVisibilityDetect.SetValue(SERVERSIDE_VISIBILITY_GHOST, GHOST_VISIBILITY_GHOST);
+    }
+    else if(isSpiritGuide())
+        m_serverSideVisibilityDetect.SetValue(SERVERSIDE_VISIBILITY_GHOST, GHOST_VISIBILITY_GHOST | GHOST_VISIBILITY_ALIVE);
+
+    if (Entry == VISUAL_WAYPOINT)
+        SetVisible(false);
+
     SetWalk(true);
     return bResult;
 }
@@ -1224,7 +1232,7 @@ bool Creature::CreateFromProto(uint32 guidlow, uint32 Entry, uint32 team, const 
     return true;
 }
 
-bool Creature::LoadFromDB(uint32 guid, Map* map)
+bool Creature::LoadCreatureFromDB(uint32 guid, Map* map, bool addToMap)
 {
     CreatureData const* data = sObjectMgr.GetCreatureData(guid);
 
@@ -1286,6 +1294,9 @@ bool Creature::LoadFromDB(uint32 guid, Map* map)
     m_defaultMovementType = MovementGeneratorType(data->movementType);
 
     m_creatureData = data;
+
+    if (addToMap && !GetMap()->AddToMap(this))
+        return false;
 
     return true;
 }
@@ -1395,46 +1406,23 @@ void Creature::DeleteFromDB()
     WorldDatabase.CommitTransaction();
 }
 
-bool Creature::canSeeOrDetect(Unit const* u, bool detect, bool /*inVisibleList*/, bool /*is3dDistance*/) const
+bool Creature::IsInvisibleDueToDespawn() const
 {
-    // not in world
-    if (!IsInWorld() || !u->IsInWorld())
-        return false;
-
-    // all dead creatures/players not visible for any creatures
-    if (!u->IsAlive() || !IsAlive())
-        return false;
-
-    // Always can see self
-    if (u == this)
+    if (Unit::IsInvisibleDueToDespawn())
         return true;
 
-    // always seen by owner
-    if (GetGUID() == u->GetCharmerOrOwnerGUID())
-        return true;
-
-    if (u->GetVisibility() == VISIBILITY_OFF) //GM
+    if (IsAlive() || isDying() || m_corpseRemoveTime > time(NULL))
         return false;
 
-    // invisible aura
-    if ((m_invisibilityMask || u->m_invisibilityMask) && !canDetectInvisibilityOf(u))
-        return false;
-
-    // unit got in stealth in this moment and must ignore old detected state
-    //if (m_Visibility == VISIBILITY_GROUP_NO_DETECT)
-    //    return false;
-
-    // GM invisibility checks early, invisibility if any detectable, so if not stealth then visible
-    if (u->GetVisibility() == VISIBILITY_GROUP_STEALTH)
-    {
-        //do not know what is the use of this detect
-        if (!detect || !canDetectStealthOf(u, GetDistance(u)))
-            return false;
-    }
-
-    // Now check is target visible with LoS
-    //return u->IsWithinLOS(GetPositionX(),GetPositionY(),GetPositionZ());
     return true;
+}
+
+bool Creature::CanAlwaysSee(WorldObject const* obj) const
+{
+    if (IsAIEnabled && AI()->CanSeeAlways(obj))
+        return true;
+
+    return false;
 }
 
 bool Creature::canStartAttack(Unit const* who) const
@@ -1632,7 +1620,11 @@ void Creature::Respawn(bool force)
 
         //Call AI respawn virtual function
         if (IsAIEnabled)
+        {
+            //reset the AI to be sure no dirty or uninitialized values will be used till next tick
+            AI()->Reset();
             AI()->JustRespawned();
+        }
 
         uint32 poolid = sPoolMgr.IsPartOfAPool<Creature>(GetDBTableGUIDLow());
         if (poolid)
@@ -1791,37 +1783,6 @@ SpellEntry const* Creature::reachWithSpellCure(Unit* pVictim)
     return NULL;
 }
 
-bool Creature::IsVisibleInGridForPlayer(Player const* pl) const
-{
-    // gamemaster in GM mode see all, including ghosts
-    if (pl->isGameMaster())
-        return true;
-
-    // Live player (or with not release body see live creatures or death creatures with corpse disappearing time > 0
-    if (pl->IsAlive() || pl->GetDeathTimer() > 0)
-    {
-        if (GetEntry() == VISUAL_WAYPOINT && !pl->isGameMaster())
-            return false;
-        return (IsAlive() || m_corpseRemoveTime > uint32(time(NULL)));
-    }
-
-    // Dead player see creatures near own corpse
-    Corpse* corpse = pl->GetCorpse();
-    if (corpse)
-    {
-        // 20 - aggro distance for same level, 25 - max additional distance if player level less that creature level
-        if (corpse->IsWithinDistInMap(this, (20 + 25) * sWorld.getRate(RATE_CREATURE_AGGRO)))
-            return true;
-    }
-
-    // Dead player can see ghosts
-    if (GetCreatureTemplate()->type_flags & CREATURE_TYPEFLAGS_GHOST_VISIBLE)
-        return true;
-
-    // and not see any other
-    return false;
-}
-
 void Creature::DoFleeToGetAssistance()
 {
     if (!getVictim())
@@ -1835,9 +1796,8 @@ void Creature::DoFleeToGetAssistance()
     {
         Creature* pCreature = NULL;
 
-        CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
+        CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
         Cell cell(p);
-        cell.data.Part.reserved = ALL_DISTRICT;
         cell.SetNoCreate();
         Oregon::NearestAssistCreatureInCreatureRangeCheck u_check(this, getVictim(), radius);
         Oregon::CreatureLastSearcher<Oregon::NearestAssistCreatureInCreatureRangeCheck> searcher(pCreature, u_check);
@@ -1860,9 +1820,8 @@ void Creature::DoFleeToGetAssistance()
 // select nearest hostile unit within the given distance (regardless of threat list).
 Unit* Creature::SelectNearestTarget(float dist, bool playerOnly /* = false */) const
 {
-    CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Unit* target = NULL;
@@ -1884,9 +1843,8 @@ Unit* Creature::SelectNearestTarget(float dist, bool playerOnly /* = false */) c
 // select nearest hostile unit within the given attack distance (i.e. distance is ignored if > than ATTACK_DISTANCE), regardless of threat list.
 Unit* Creature::SelectNearestTargetInAttackDistance(float dist) const
 {
-    CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Unit *target = NULL;
@@ -1908,6 +1866,18 @@ Unit* Creature::SelectNearestTargetInAttackDistance(float dist) const
     return target;
 }
 
+void Creature::SendAIReaction(AiReaction reactionType)
+{
+    WorldPacket data(SMSG_AI_REACTION, 12);
+
+    data << uint64(GetGUID());
+    data << uint32(reactionType);
+
+    ((WorldObject*)this)->SendMessageToSet(&data, true);
+
+    sLog.outDebug("WORLD: Sent SMSG_AI_REACTION, type %u.", reactionType);
+}
+
 void Creature::CallAssistance()
 {
     if (!m_AlreadyCallAssistance && getVictim() && !IsPet() && !isCharmed())
@@ -1920,9 +1890,8 @@ void Creature::CallAssistance()
             std::list<Creature*> assistList;
 
             {
-                CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
+                CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
                 Cell cell(p);
-                cell.data.Part.reserved = ALL_DISTRICT;
                 cell.SetNoCreate();
 
                 Oregon::AnyAssistCreatureInRangeCheck u_check(this, getVictim(), radius);
@@ -1948,22 +1917,21 @@ void Creature::CallAssistance()
     }
 }
 
-void Creature::CallForHelp(float fRadius)
+void Creature::CallForHelp(float radius)
 {
-    if (fRadius <= 0.0f || !getVictim() || IsPet() || isCharmed())
+    if (radius <= 0.0f || !getVictim() || IsPet() || isCharmed())
         return;
 
-    CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
-    Oregon::CallOfHelpCreatureInRangeDo u_do(this, getVictim(), fRadius);
+    Oregon::CallOfHelpCreatureInRangeDo u_do(this, getVictim(), radius);
     Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo> worker(u_do);
 
     TypeContainerVisitor<Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo>, GridTypeMapContainer >  grid_creature_searcher(worker);
 
-    cell.Visit(p, grid_creature_searcher, *GetMap(), *this, fRadius);
+    cell.Visit(p, grid_creature_searcher, *GetMap(), *this, radius);
 }
 
 bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /*= true*/) const
@@ -2032,9 +2000,6 @@ bool Creature::IsOutOfThreatArea(Unit* pVictim) const
         return true;
 
     if (!pVictim->isInAccessiblePlaceFor(this))
-        return true;
-
-    if (!pVictim->isVisibleForOrDetect(this, true, false))
         return true;
 
     if (sMapStore.LookupEntry(GetMapId())->IsDungeon())
@@ -2245,7 +2210,7 @@ time_t Creature::GetRespawnTimeEx() const
         return now;
 }
 
-void Creature::GetRespawnCoord(float& x, float& y, float& z, float* ori, float* dist) const
+void Creature::GetRespawnPosition(float& x, float& y, float& z, float* ori, float* dist) const
 {
     if (m_DBTableGuid)
     {

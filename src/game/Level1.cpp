@@ -745,7 +745,7 @@ bool ChatHandler::HandleGPSCommand(const char* args)
             return false;
         }
     }
-    CellPair cell_val = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
+    CellCoord cell_val = Oregon::ComputeCellCoord(obj->GetPositionX(), obj->GetPositionY());
     Cell cell(cell_val);
 
     uint32 zone_id = obj->GetZoneId();
@@ -764,7 +764,7 @@ bool ChatHandler::HandleGPSCommand(const char* args)
     float ground_z = map->GetHeight(obj->GetPositionX(), obj->GetPositionY(), MAX_HEIGHT);
     float floor_z = map->GetHeight(obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ());
 
-    GridPair p = Oregon::ComputeGridPair(obj->GetPositionX(), obj->GetPositionY());
+    GridCoord p = Oregon::ComputeGridCoord(obj->GetPositionX(), obj->GetPositionY());
 
     int gx = 63 - p.x_coord;
     int gy = 63 - p.y_coord;

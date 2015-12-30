@@ -80,7 +80,7 @@ Object::Object()
 WorldObject::~WorldObject()
 {
     // this may happen because there are many !create/delete
-    if (m_isWorldObject && m_currMap)
+    if (IsWorldObject() && m_currMap)
     {
         if (GetTypeId() == TYPEID_CORPSE)
         {
@@ -1073,11 +1073,11 @@ bool Position::HasInLine(const Unit* const target, float distance, float width) 
     return fabsf(sinf(angle)) * GetExactDist2d(target->GetPositionX(), target->GetPositionY()) < width;
 }
 
-WorldObject::WorldObject()
-    : WorldLocation()
+WorldObject::WorldObject(bool isWorldObject):
+      WorldLocation()
     , m_groupLootTimer(0)
     , lootingGroupLeaderGUID(0)
-    , m_isWorldObject(false)
+    , m_isWorldObject(isWorldObject)
     , m_name("")
     , m_isActive(false)
     , m_zoneScript(NULL)
@@ -1085,6 +1085,8 @@ WorldObject::WorldObject()
     , m_InstanceId(0)
     , m_notifyflags(0), m_executed_notifies(0)
 {
+    m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GHOST, GHOST_VISIBILITY_ALIVE | GHOST_VISIBILITY_GHOST);
+    m_serverSideVisibilityDetect.SetValue(SERVERSIDE_VISIBILITY_GHOST, GHOST_VISIBILITY_ALIVE);
 }
 
 void WorldObject::SetWorldObject(bool on)
@@ -1093,6 +1095,17 @@ void WorldObject::SetWorldObject(bool on)
         return;
 
     GetMap()->AddObjectToSwitchList(this, on);
+}
+
+bool WorldObject::IsWorldObject() const
+{
+    if (m_isWorldObject)
+        return true;
+
+    if (ToCreature() && ToCreature()->m_isTempWorldObject)
+        return true;
+
+    return false;
 }
 
 void WorldObject::setActive(bool on)
@@ -1551,6 +1564,257 @@ void WorldObject::MonsterWhisper(const char* text, uint64 receiver, bool IsBossW
     player->GetSession()->SendPacket(&data);
 }
 
+bool WorldObject::isValid() const
+{
+    if (!IsInWorld())
+        return false;
+
+    return true;
+}
+
+float WorldObject::GetGridActivationRange() const
+{
+    if (ToPlayer())
+        return GetMap()->GetVisibilityRange();
+    else if (ToCreature())
+        return ToCreature()->m_SightDistance;
+    else
+        return 0.0f;
+}
+
+float WorldObject::GetVisibilityRange() const
+{
+    if (isActiveObject() && !ToPlayer())
+        return MAX_VISIBILITY_DISTANCE;
+    else
+        return GetMap()->GetVisibilityRange();
+}
+
+float WorldObject::GetSightRange(const WorldObject* target) const
+{
+    if (ToUnit())
+    {
+        if (ToPlayer())
+        {
+            if (target && target->isActiveObject())
+                return MAX_VISIBILITY_DISTANCE;
+            else
+                return GetMap()->GetVisibilityRange();
+        }
+        else if (ToCreature())
+            return ToCreature()->m_SightDistance;
+        else
+            return SIGHT_RANGE_UNIT;
+    }
+
+    return 0.0f;
+}
+
+bool WorldObject::CanSeeOrDetect(WorldObject const* obj, bool ignoreStealth, bool distanceCheck, bool checkAlert) const
+{
+    if (this == obj)
+        return true;
+    
+    if (obj->IsNeverVisible() || CanNeverSee(obj))
+        return false;
+
+    if (obj->IsAlwaysVisibleFor(this) || CanAlwaysSee(obj))
+        return true;
+
+    bool corpseVisibility = false;
+    if (distanceCheck)
+    {
+        bool corpseCheck = false;
+        if (const Player* thisPlayer = ToPlayer())
+        {
+            if (thisPlayer->isDead() && thisPlayer->GetHealth() > 0 && // Cheap way to check for ghost state
+                !(obj->m_serverSideVisibility.GetValue(SERVERSIDE_VISIBILITY_GHOST) & m_serverSideVisibility.GetValue(SERVERSIDE_VISIBILITY_GHOST) & GHOST_VISIBILITY_GHOST))
+            {
+                if (Corpse* corpse = thisPlayer->GetCorpse())
+                {
+                    corpseCheck = true;
+                    if (corpse->IsWithinDist(thisPlayer, GetSightRange(obj), false))
+                        if (corpse->IsWithinDist(obj, GetSightRange(obj), false))
+                            corpseVisibility = true;
+                }
+            }
+        }
+
+        WorldObject const* viewpoint = this;
+        if (Player const* player = this->ToPlayer())
+            viewpoint = player->GetViewpoint();
+
+        if (!viewpoint)
+            viewpoint = this;
+
+        if (!corpseCheck && !viewpoint->IsWithinDist(obj, GetSightRange(obj), false))
+            return false;
+    }
+
+    // GM visibility off or hidden NPC
+    if (!obj->m_serverSideVisibility.GetValue(SERVERSIDE_VISIBILITY_GM))
+    {
+        // Stop checking other things for GMs
+        if (m_serverSideVisibilityDetect.GetValue(SERVERSIDE_VISIBILITY_GM))
+            return true;
+    }
+    else
+        return m_serverSideVisibilityDetect.GetValue(SERVERSIDE_VISIBILITY_GM) >= obj->m_serverSideVisibility.GetValue(SERVERSIDE_VISIBILITY_GM);
+
+    // Ghost players, Spirit Healers, and some other NPCs
+    if (!corpseVisibility && !(obj->m_serverSideVisibility.GetValue(SERVERSIDE_VISIBILITY_GHOST) & m_serverSideVisibilityDetect.GetValue(SERVERSIDE_VISIBILITY_GHOST)))
+    {
+        // Alive players can see dead players in some cases, but other objects can't do that
+        if (const Player* thisPlayer = ToPlayer())
+        {
+            if (const Player* objPlayer = obj->ToPlayer())
+            {
+                if (thisPlayer->GetTeam() != objPlayer->GetTeam() || !thisPlayer->IsGroupVisibleFor(objPlayer))
+                    return false;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+
+    if (obj->IsInvisibleDueToDespawn())
+        return false;
+
+    if (!CanDetect(obj, ignoreStealth, checkAlert))
+        return false;
+
+    return true;
+}
+
+bool WorldObject::CanNeverSee(WorldObject const* obj) const
+{
+    return GetMap() != obj->GetMap();
+}
+
+bool WorldObject::CanDetect(WorldObject const* obj, bool ignoreStealth, bool checkAlert) const
+{
+    const WorldObject* seer = this;
+
+    // Pets don't have detection, they use the detection of their masters
+    if (const Unit* thisUnit = ToUnit())
+        if (Unit* controller = thisUnit->GetCharmerOrOwner())
+            seer = controller;
+
+    if (obj->IsAlwaysDetectableFor(seer))
+        return true;
+
+    if (!ignoreStealth && !seer->CanDetectInvisibilityOf(obj))
+        return false;
+
+    if (!ignoreStealth && !seer->CanDetectStealthOf(obj, checkAlert))
+        return false;
+
+    return true;
+}
+
+bool WorldObject::CanDetectInvisibilityOf(WorldObject const* obj) const
+{
+    uint32 mask = obj->m_invisibility.GetFlags() & m_invisibilityDetect.GetFlags();
+
+    // Check for not detected types
+    if (mask != obj->m_invisibility.GetFlags())
+        return false;
+
+    // It isn't possible in invisibility to detect something that can't detect the invisible object
+    // (it's at least true for spell: 66)
+    // It seems like that only Units are affected by this check (couldn't see arena doors with preparation invisibility)
+    if (obj->ToUnit())
+        if ((m_invisibility.GetFlags() & obj->m_invisibilityDetect.GetFlags()) != m_invisibility.GetFlags())
+            return false;
+
+    for (uint32 i = 0; i < TOTAL_INVISIBILITY_TYPES; ++i)
+    {
+        if (!(mask & (1 << i)))
+            continue;
+
+        int32 objInvisibilityValue = obj->m_invisibility.GetValue(InvisibilityType(i));
+        int32 ownInvisibilityDetectValue = m_invisibilityDetect.GetValue(InvisibilityType(i));
+
+        // Too low value to detect
+        if (ownInvisibilityDetectValue < objInvisibilityValue)
+            return false;
+    }
+
+    return true;
+}
+
+bool WorldObject::CanDetectStealthOf(WorldObject const* obj, bool checkAlert) const
+{
+    // Combat reach is the minimal distance (both in front and behind),
+    //   and it is also used in the range calculation.
+    // One stealth point increases the visibility range by 0.3 yard.
+
+    if (!obj->m_stealth.GetFlags())
+        return true;
+
+    float distance = GetExactDist(obj);
+    float combatReach = 0.0f;
+
+    Unit const* unit = ToUnit();
+    if (unit)
+        combatReach = unit->GetCombatReach();
+
+    if (distance < combatReach)
+        return true;
+
+    if (!HasInArc(float(M_PI), obj))
+        return false;
+
+    GameObject const* go = ToGameObject();
+    for (uint32 i = 0; i < TOTAL_STEALTH_TYPES; ++i)
+    {
+        if (!(obj->m_stealth.GetFlags() & (1 << i)))
+            continue;
+
+        if (unit && unit->HasAuraTypeWithMiscvalue(SPELL_AURA_DETECT_STEALTH, i))
+            return true;
+
+        // Starting points
+        int32 detectionValue = 30;
+
+        // Level difference: 5 point / level, starting from level 1.
+        // There may be spells for this and the starting points too, but
+        //   not in the DBCs of the client.
+        detectionValue += int32(getLevelForTarget(obj) - 1) * 5;
+
+        // Apply modifiers
+        detectionValue += m_stealthDetect.GetValue(StealthType(i));
+        if (go)
+            if (Unit* owner = go->GetOwner())
+                detectionValue -= int32(owner->getLevelForTarget(this) - 1) * 5;
+
+        detectionValue -= obj->m_stealth.GetValue(StealthType(i));
+
+        // Calculate max distance
+        float visibilityRange = float(detectionValue) * 0.3f + combatReach;
+
+        // If this unit is an NPC then player detect range doesn't apply
+        if (unit && unit->GetTypeId() == TYPEID_PLAYER && visibilityRange > MAX_PLAYER_STEALTH_DETECT_RANGE)
+            visibilityRange = MAX_PLAYER_STEALTH_DETECT_RANGE;
+
+        // When checking for alert state, look 8% further, and then 1.5 yards more than that.
+        if (checkAlert)
+            visibilityRange += (visibilityRange * 0.08f) + 1.5f;
+
+        // If checking for alert, and creature's visibility range is greater than aggro distance, No alert
+        Unit const* tunit = obj->ToUnit();
+        if (checkAlert && unit && unit->ToCreature() && visibilityRange >= unit->ToCreature()->GetAttackDistance(tunit) + unit->ToCreature()->m_CombatDistance)
+            return false;
+
+        if (distance > visibilityRange)
+            return false;
+    }
+
+    return true;
+}
+
 void WorldObject::SendPlaySound(uint32 Sound, bool OnlySelf)
 {
     WorldPacket data(SMSG_PLAY_SOUND, 4);
@@ -1600,10 +1864,9 @@ class MonsterChatBuilder
 
 void WorldObject::MonsterSay(int32 textId, uint32 language, uint64 TargetGuid)
 {
-    CellPair p = Oregon::ComputeCellPair(GetPositionX(), GetPositionY());
+    CellCoord p = Oregon::ComputeCellCoord(GetPositionX(), GetPositionY());
 
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Oregon::MonsterChatBuilder say_build(*this, CHAT_MSG_MONSTER_SAY, textId, language, TargetGuid);
@@ -1615,10 +1878,9 @@ void WorldObject::MonsterSay(int32 textId, uint32 language, uint64 TargetGuid)
 
 void WorldObject::MonsterYell(int32 textId, uint32 language, uint64 TargetGuid)
 {
-    CellPair p = Oregon::ComputeCellPair(GetPositionX(), GetPositionY());
+    CellCoord p = Oregon::ComputeCellCoord(GetPositionX(), GetPositionY());
 
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Oregon::MonsterChatBuilder say_build(*this, CHAT_MSG_MONSTER_YELL, textId, language, TargetGuid);
@@ -1643,10 +1905,9 @@ void WorldObject::MonsterYellToZone(int32 textId, uint32 language, uint64 Target
 
 void WorldObject::MonsterTextEmote(int32 textId, uint64 TargetGuid, bool IsBossEmote)
 {
-    CellPair p = Oregon::ComputeCellPair(GetPositionX(), GetPositionY());
+    CellCoord p = Oregon::ComputeCellCoord(GetPositionX(), GetPositionY());
 
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Oregon::MonsterChatBuilder say_build(*this, IsBossEmote ? CHAT_MSG_RAID_BOSS_EMOTE : CHAT_MSG_MONSTER_EMOTE, textId, LANG_UNIVERSAL, TargetGuid);
@@ -1688,12 +1949,6 @@ void WorldObject::BuildMonsterChat(WorldPacket* data, uint8 msgtype, char const*
     *data << (uint32)(strlen(text) + 1);
     *data << text;
     *data << (uint8)0;                                      // ChatTag
-}
-
-void WorldObject::SendMessageToSet(WorldPacket* data, bool /*fake*/)
-{
-    Oregon::MessageDistDeliverer notifier(this, data, GetMap()->GetVisibilityDistance());
-    VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), notifier);
 }
 
 void Unit::BuildHeartBeatMsg(WorldPacket* data) const
@@ -1738,7 +1993,7 @@ void WorldObject::SetMap(Map* map)
     m_currMap = map;
     m_mapId = map->GetId();
     m_InstanceId = map->GetInstanceId();
-    if (m_isWorldObject)
+    if (IsWorldObject())
         m_currMap->AddWorldObject(this);
 }
 
@@ -1746,7 +2001,7 @@ void WorldObject::ResetMap()
 {
     ASSERT(m_currMap);
     ASSERT(!IsInWorld());
-    if (m_isWorldObject)
+    if (IsWorldObject())
         m_currMap->RemoveWorldObject(this);
     m_currMap = NULL;
     //maybe not for corpse
@@ -1823,10 +2078,10 @@ TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropert
     switch (mask)
     {
     case UNIT_MASK_SUMMON:
-        summon = new TempSummon(properties, summoner);
+        summon = new TempSummon(properties, summoner, false);
         break;
     case UNIT_MASK_GUARDIAN:
-        summon = new Guardian(properties, summoner);
+        summon = new Guardian(properties, summoner, false);
         break;
     case UNIT_MASK_PUPPET:
         summon = new Puppet(properties, summoner);
@@ -1835,7 +2090,7 @@ TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropert
         summon = new Totem(properties, summoner);
         break;
     case UNIT_MASK_MINION:
-        summon = new Minion(properties, summoner);
+        summon = new Minion(properties, summoner, false);
         break;
     default:
         return NULL;
@@ -2089,42 +2344,30 @@ GameObject* WorldObject::FindNearestGameObjectOfType(GameobjectTypes type, float
     return go;
 }
 
-void WorldObject::GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, uint32 uiEntry, float fMaxSearchRange)
+void WorldObject::GetGameObjectListWithEntryInGrid(std::list<GameObject*>& gameobjectList, uint32 entry, float maxSearchRange) const
 {
-    CellPair pair(Oregon::ComputeCellPair(this->GetPositionX(), this->GetPositionY()));
+    CellCoord pair(Oregon::ComputeCellCoord(this->GetPositionX(), this->GetPositionY()));
     Cell cell(pair);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
-    Oregon::AllGameObjectsWithEntryInRange check(this, uiEntry, fMaxSearchRange);
-    Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInRange> searcher(lList, check);
+    Oregon::AllGameObjectsWithEntryInRange check(this, entry, maxSearchRange);
+    Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInRange> searcher(gameobjectList, check);
     TypeContainerVisitor<Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInRange>, GridTypeMapContainer> visitor(searcher);
 
-    cell.Visit(pair, visitor, *(this->GetMap()));
+    cell.Visit(pair, visitor, *(this->GetMap()), *this, maxSearchRange);
 }
 
-void WorldObject::GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, uint32 uiEntry, float fMaxSearchRange)
+void WorldObject::GetCreatureListWithEntryInGrid(std::list<Creature*>& creatureList, uint32 entry, float maxSearchRange) const
 {
-    CellPair pair(Oregon::ComputeCellPair(this->GetPositionX(), this->GetPositionY()));
+    CellCoord pair(Oregon::ComputeCellCoord(this->GetPositionX(), this->GetPositionY()));
     Cell cell(pair);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
-    Oregon::AllCreaturesOfEntryInRange check(this, uiEntry, fMaxSearchRange);
-    Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(lList, check);
+    Oregon::AllCreaturesOfEntryInRange check(this, entry, maxSearchRange);
+    Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(creatureList, check);
     TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> visitor(searcher);
 
-    cell.Visit(pair, visitor, *(this->GetMap()));
-}
-
-float WorldObject::GetGridActivationRange() const
-{
-    if (ToPlayer())
-        return GetMap()->GetVisibilityDistance();
-    else if (ToCreature())
-        return ToCreature()->m_SightDistance;
-    else
-        return 0.0f;
+    cell.Visit(pair, visitor, *(this->GetMap()), *this, maxSearchRange);
 }
 
 void WorldObject::GetNearPoint2D(float& x, float& y, float distance2d, float absAngle) const
@@ -2325,9 +2568,9 @@ void WorldObject::DestroyForNearbyPlayers()
         return;
 
     std::list<Player*> targets;
-    Oregon::AnyPlayerInObjectRangeCheck check(this, GetMap()->GetVisibilityDistance(), false);
+    Oregon::AnyPlayerInObjectRangeCheck check(this, GetVisibilityRange(), false);
     Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(targets, check);
-    VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), searcher);
+    VisitNearbyWorldObject(GetVisibilityRange(), searcher);
     for (std::list<Player*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
     {
         Player* plr = (*iter);
@@ -2350,7 +2593,7 @@ void WorldObject::UpdateObjectVisibility(bool /*forced*/)
 {
     //updates object's visibility for nearby players
     Oregon::VisibleChangesNotifier notifier(*this);
-    VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), notifier);
+    VisitNearbyWorldObject(GetVisibilityRange(), notifier);
 }
 
 struct WorldObjectChangeAccumulator
@@ -2414,15 +2657,14 @@ struct WorldObjectChangeAccumulator
 
 void WorldObject::BuildUpdate(UpdateDataMapType& data_map)
 {
-    CellPair p = Oregon::ComputeCellPair(GetPositionX(), GetPositionY());
+    CellCoord p = Oregon::ComputeCellCoord(GetPositionX(), GetPositionY());
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
     WorldObjectChangeAccumulator notifier(*this, data_map);
     TypeContainerVisitor<WorldObjectChangeAccumulator, WorldTypeMapContainer > player_notifier(notifier);
     Map& map = *GetMap();
     //we must build packets for all visible players
-    cell.Visit(p, player_notifier, map, *this, map.GetVisibilityDistance());
+    cell.Visit(p, player_notifier, map, *this, GetVisibilityRange());
 
     ClearUpdateMask(false);
 }
