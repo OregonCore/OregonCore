@@ -1337,6 +1337,46 @@ enum SpellCastResult
     SPELL_CAST_OK                               = 0xFF      // custom value, don't must be send to client
 };
 
+enum StealthType
+{
+    STEALTH_GENERAL     = 0,
+    STEALTH_TRAP        = 1,
+
+    TOTAL_STEALTH_TYPES = 2
+};
+
+enum InvisibilityType
+{
+    INVISIBILITY_GENERAL     =  0,
+    INVISIBILITY_UNK1        =  1,
+    INVISIBILITY_UNK2        =  2,
+    INVISIBILITY_TRAP        =  3,
+    INVISIBILITY_UNK4        =  4,
+    INVISIBILITY_UNK5        =  5,
+    INVISIBILITY_DRUNK       =  6,
+    INVISIBILITY_UNK7        =  7,
+    INVISIBILITY_UNK8        =  8,
+    INVISIBILITY_UNK9        =  9,
+    INVISIBILITY_UNK10       = 10,
+    INVISIBILITY_UNK11       = 11,
+
+    TOTAL_INVISIBILITY_TYPES = 12
+};
+
+enum ServerSideVisibilityType
+{
+    SERVERSIDE_VISIBILITY_GM          = 0,
+    SERVERSIDE_VISIBILITY_GHOST       = 1,
+
+    TOTAL_SERVERSIDE_VISIBILITY_TYPES = 2
+};
+
+enum GhostVisibilityType
+{
+    GHOST_VISIBILITY_ALIVE = 0x1,
+    GHOST_VISIBILITY_GHOST = 0x2
+};
+
 /// indexes from SpellRange.dbc, listed only special and used in code
 enum SpellRangeIndex
 {
@@ -2483,10 +2523,11 @@ enum PetDiet
 
 enum AiReaction
 {
-    AI_REACTION_UNK1    = 1,
-    AI_REACTION_AGGRO   = 2,
-    AI_REACTION_UNK3    = 3,
-    AI_REACTION_UNK4    = 4
+    AI_REACTION_ALERT    = 0,                               // pre-aggro (used in client packet handler)
+    AI_REACTION_FRIENDLY = 1,                               // (NOT used in client packet handler)
+    AI_REACTION_HOSTILE  = 2,                               // sent on every attack, triggers aggro sound (used in client packet handler)
+    AI_REACTION_AFRAID   = 3,                               // seen for polymorph (when AI not in control of self?) (NOT used in client packet handler)
+    AI_REACTION_DESTROY  = 4                                // used on object destroy (NOT used in client packet handler)
 };
 
 // Diminishing Returns Types

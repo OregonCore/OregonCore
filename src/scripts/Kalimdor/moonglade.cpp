@@ -1152,7 +1152,7 @@ struct npc_eranikusAI : public ScriptedAI
                         if (Creature* pTyrande = me->SummonCreature(NPC_TYRANDE, 7927.01f, -2573.36f, 489.652f, 2.81f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000))
                         {
                             TyrandeGUID = pTyrande->GetGUID();
-                            pTyrande->SetVisibility(VISIBILITY_OFF);
+                            pTyrande->SetVisible(false);
                             DoScriptText(TYRANDE_YELL_1, pTyrande);
                         }
                         uiPhase++;
@@ -1237,7 +1237,7 @@ struct npc_eranikusAI : public ScriptedAI
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         if (Creature* pTyrande = Unit::GetCreature(*me, TyrandeGUID))
                         {
-                            pTyrande->SetVisibility(VISIBILITY_ON);
+                            pTyrande->SetVisible(true);
                             pTyrande->SetHomePosition(7886.63f, -2565.8f, 486.965f, 6.16066f);
                             pTyrande->GetMotionMaster()->MoveTargetedHome();
                         }

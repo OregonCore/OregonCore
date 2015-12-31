@@ -624,7 +624,7 @@ struct cthunAI : public Scripted_NoMovementAI
                     //Place all units in threat list on outside of stomach
                     Stomach_Map.clear();
 
-                    std::list<HostileReference*>::iterator i = me->getThreatManager().getThreatList().begin();
+                    ThreatContainer::StorageType::const_iterator i = me->getThreatManager().getThreatList().begin();
                     for (; i != me->getThreatManager().getThreatList().end(); ++i)
                     {
                         //Outside stomach
@@ -1044,7 +1044,7 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
                     p->DealDamage(p, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
 
                 //Dissapear and reappear at new position
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
 
                 Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -1067,7 +1067,7 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
                     AttackStart(pTarget);
                 }
 
-                me->SetVisibility(VISIBILITY_ON);
+                me->SetVisible(true);
 
             }
             else EvadeTimer -= diff;
@@ -1145,7 +1145,7 @@ struct giant_claw_tentacleAI : public Scripted_NoMovementAI
                     p->DealDamage(p, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
 
                 //Dissapear and reappear at new position
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
 
                 Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -1169,7 +1169,7 @@ struct giant_claw_tentacleAI : public Scripted_NoMovementAI
                     AttackStart(pTarget);
                 }
 
-                me->SetVisibility(VISIBILITY_ON);
+                me->SetVisible(true);
 
             }
             else EvadeTimer -= diff;

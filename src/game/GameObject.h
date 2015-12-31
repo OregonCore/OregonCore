@@ -20,6 +20,7 @@
 
 #include "Common.h"
 #include "SharedDefines.h"
+#include "Unit.h"
 #include "Object.h"
 #include "LootMgr.h"
 #include "Database/DatabaseEnv.h"
@@ -126,7 +127,7 @@ struct GameObjectInfo
             uint32 serverOnly;                              //8
             uint32 stealthed;                               //9
             uint32 large;                                   //10
-            uint32 stealthAffected;                         //11
+            uint32 invisible;                               //11
             uint32 openTextID;                              //12 can be used to replace castBarCaption?
             uint32 closeTextID;                             //13
         } trap;
@@ -647,7 +648,8 @@ class GameObject : public WorldObject, public GridObject<GameObject>
 
         void SaveToDB();
         void SaveToDB(uint32 mapid, uint8 spawnMask);
-        bool LoadFromDB(uint32 guid, Map* map);
+        bool LoadFromDB(uint32 guid, Map* map) { return LoadGameObjectFromDB(guid, map, false); }
+        bool LoadGameObjectFromDB(uint32 guid, Map* map, bool addToMap = true);
         void DeleteFromDB();
 
         void SetOwnerGUID(uint64 owner)
@@ -811,8 +813,18 @@ class GameObject : public WorldObject, public GridObject<GameObject>
 
         void TriggeringLinkedGameObject(uint32 trapEntry, Unit* target);
 
-        bool isVisibleForInState(Player const* u, bool inVisibleList) const;
-        bool canDetectTrap(Player const* u, float distance) const;
+        bool IsNeverVisible() const override;
+
+        bool IsAlwaysVisibleFor(WorldObject const* seer) const override;
+        bool IsInvisibleDueToDespawn() const override;
+
+        uint8 getLevelForTarget(WorldObject const* target) const override
+        {
+            if (Unit* owner = GetOwner())
+                return owner->getLevelForTarget(target);
+
+            return 1;
+        }
 
         Transport* ToTransport() { if (GetGOInfo()->type == GAMEOBJECT_TYPE_TRANSPORT) return reinterpret_cast<Transport*>(this); else return NULL; }
         Transport const* ToTransport() const { if (GetGOInfo()->type == GAMEOBJECT_TYPE_TRANSPORT) return reinterpret_cast<Transport const*>(this); else return NULL; }

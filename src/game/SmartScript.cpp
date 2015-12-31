@@ -1124,7 +1124,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
         case SMART_ACTION_SET_VISIBILITY:
         {
             if (me)
-                me->SetVisibility(e.action.visibility.state ? VISIBILITY_ON : VISIBILITY_OFF);
+                me->SetVisible(e.action.visibility.state ? true : false);
             break;
         }
         case SMART_ACTION_SET_ACTIVE:
@@ -3532,9 +3532,8 @@ Unit* SmartScript::DoSelectLowestHpFriendly(float range, uint32 MinHPDiff)
     if (!me)
         return NULL;
 
-    CellPair p(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Unit* unit = NULL;
@@ -3553,9 +3552,8 @@ void SmartScript::DoFindFriendlyCC(std::list<Creature*>& _list, float range)
     if (!me)
         return;
 
-    CellPair p(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Oregon::FriendlyCCedInRange u_check(me, range);
@@ -3571,9 +3569,8 @@ void SmartScript::DoFindFriendlyMissingBuff(std::list<Creature*>& list, float ra
     if (!me)
         return;
 
-    CellPair p(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Oregon::FriendlyMissingBuffInRange u_check(me, range, spellid);

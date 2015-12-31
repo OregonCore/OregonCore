@@ -212,7 +212,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
 
         FlyTimer = 10000;
         me->SetLevitate(false);
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
     }
 
     void EnterCombat(Unit*) { }
@@ -259,7 +259,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
 
                 PlayerGUID = 0;
             }
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetLevitate(false);
             me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             me->RemoveCorpse();
@@ -722,7 +722,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
         if (Illidan)
         {
             IllidanGUID = Illidan->GetGUID();
-            Illidan->SetVisibility(VISIBILITY_OFF);
+            Illidan->SetVisible(false);
         }
         if (PlayerGUID)
         {
@@ -769,7 +769,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
             return 2000;
             break;
         case 5:
-            Illi->SetVisibility(VISIBILITY_ON);
+            Illi->SetVisible(true);
             Illi->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             return 350;
             break;
@@ -853,7 +853,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
             return 500;
             break;
         case 22:
-            Illi->SetVisibility(VISIBILITY_OFF);
+            Illi->SetVisible(false);
             Illi->setDeathState(JUST_DIED);
             return 1000;
             break;

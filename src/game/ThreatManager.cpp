@@ -256,7 +256,7 @@ Unit* HostileReference::getSourceUnit()
 
 void ThreatContainer::clearReferences()
 {
-    for (std::list<HostileReference*>::iterator i = iThreatList.begin(); i != iThreatList.end(); ++i)
+    for (ThreatContainer::StorageType::const_iterator i = iThreatList.begin(); i != iThreatList.end(); ++i)
     {
         (*i)->unlink();
         delete (*i);
@@ -266,15 +266,18 @@ void ThreatContainer::clearReferences()
 
 //============================================================
 // Return the HostileReference of NULL, if not found
-HostileReference* ThreatContainer::getReferenceByTarget(Unit* victim)
+HostileReference* ThreatContainer::getReferenceByTarget(Unit* victim) const
 {
     if (!victim)
         return NULL;
 
-    uint64 guid = victim->GetGUID();
-    for (std::list<HostileReference*>::iterator i = iThreatList.begin(); i != iThreatList.end(); ++i)
-        if ((*i) && (*i)->getUnitGuid() == guid)
-            return (*i);
+    uint64 const guid = victim->GetGUID();
+    for (ThreatContainer::StorageType::const_iterator i = iThreatList.begin(); i != iThreatList.end(); ++i)
+    {
+        HostileReference *ref = (*i);
+        if (ref && ref->getUnitGuid() == guid)
+            return ref;
+    }
 
     return NULL;
 }
@@ -320,15 +323,15 @@ void ThreatContainer::update()
 // return the next best victim
 // could be the current victim
 
-HostileReference* ThreatContainer::selectNextVictim(Creature* attacker, HostileReference* currentVictim)
+HostileReference* ThreatContainer::selectNextVictim(Creature* attacker, HostileReference* currentVictim) const
 {
     HostileReference* currentRef = NULL;
     bool found = false;
 
-    std::list<HostileReference*>::iterator lastRef = iThreatList.end();
+    ThreatContainer::StorageType::const_iterator lastRef = iThreatList.end();
     lastRef--;
 
-    for (std::list<HostileReference*>::iterator iter = iThreatList.begin(); iter != iThreatList.end() && !found; ++iter)
+    for (ThreatContainer::StorageType::const_iterator iter = iThreatList.begin(); iter != iThreatList.end() && !found; ++iter)
     {
         currentRef = (*iter);
 
@@ -470,29 +473,6 @@ float ThreatManager::getThreat(Unit* victim, bool alsoSearchOfflineList)
     if (ref)
         threat = ref->getThreat();
     return threat;
-}
-
-//============================================================
-
-// Check if the unit was a threat before (is registered in pastThreatList)
-bool ThreatManager::wasUnitThreat(Unit const* unit) const
-{
-    if (unit && !iThreatContainer.iPastEnemyList.empty())
-    {
-        std::vector<Unit*>::const_iterator it = iThreatContainer.iPastEnemyList.begin();
-        for (; it != iThreatContainer.iPastEnemyList.end(); ++it)
-            if ((*it) && unit == (*it))
-                return true;
-    }
-    return false;
-}
-
-// Push new threat in pastEnemyList
-void ThreatManager::pushThreatInMemory(Unit* unit)
-{
-    // Add the entry only if no duplicate found
-    if (!wasUnitThreat(unit))
-        iThreatContainer.iPastEnemyList.push_back(unit);
 }
 
 //============================================================

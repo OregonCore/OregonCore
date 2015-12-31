@@ -241,7 +241,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
         IsBanished = true;
         HasKilledAkama = false;
 
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         //me->GetMotionMaster()->Clear();

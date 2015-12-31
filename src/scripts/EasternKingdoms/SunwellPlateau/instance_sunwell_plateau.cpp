@@ -555,7 +555,7 @@ struct instance_sunwell_plateau : public ScriptedInstance
                 case POINT_TELEPORT_KALECGOS:
                     if (Creature* pKalec = GetCreature(GetData64(DATA_KALECGOS_KJ)))
                     {
-                        pKalec->SetVisibility(VISIBILITY_ON);
+                        pKalec->SetVisible(true);
                         pKalec->CastSpell(pKalec, SPELL_KALEC_TELEPORT, true);
                         pKalec->SendMovementFlagUpdate();
                     }

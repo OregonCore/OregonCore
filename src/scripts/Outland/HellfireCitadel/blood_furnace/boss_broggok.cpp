@@ -96,7 +96,7 @@ struct boss_broggokAI : public ScriptedAI
         {
             instance->SetData(DATA_BROGGOKEVENT, FAIL);
             float fRespX, fRespY, fRespZ;
-            me->GetRespawnCoord(fRespX, fRespY, fRespZ);
+            me->GetRespawnPosition(fRespX, fRespY, fRespZ);
             me->GetMotionMaster()->MovePoint(0, fRespX, fRespY, fRespZ);
         }
         else

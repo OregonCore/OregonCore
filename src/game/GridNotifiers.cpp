@@ -116,8 +116,13 @@ inline void CreatureUnitRelocationWorker(Creature* c, Unit* u)
         return;
 
     if (c->HasReactState(REACT_AGGRESSIVE) && !c->HasUnitState(UNIT_STATE_SIGHTLESS))
-        if (c->IsAIEnabled && c->_IsWithinDist(u, c->m_SightDistance, true))
+    {
+        if (c->IsAIEnabled && c->CanSeeOrDetect(u, false, true))
             c->AI()->MoveInLineOfSight_Safe(u);
+        else
+            if (u->GetTypeId() == TYPEID_PLAYER && u->HasStealthAura() && c->IsAIEnabled && c->CanSeeOrDetect(u, false, true, true))
+                c->AI()->TriggerAlert(u);
+    }
 }
 
 void PlayerRelocationNotifier::Visit(PlayerMapType& m)
@@ -216,7 +221,7 @@ void DelayedUnitRelocation::Visit(PlayerMapType& m)
         if (player != viewPoint && !viewPoint->IsPositionValid())
             continue;
 
-        CellPair pair2(Oregon::ComputeCellPair(viewPoint->GetPositionX(), viewPoint->GetPositionY()));
+        CellCoord pair2(Oregon::ComputeCellCoord(viewPoint->GetPositionX(), viewPoint->GetPositionY()));
         Cell cell2(pair2);
         //cell.SetNoCreate(); need load cells around viewPoint or player, that's why its commented
 
@@ -265,7 +270,7 @@ void DynamicObjectUpdater::VisitHelper(Unit* target)
         return;
 
     //Check player targets and remove if in GM mode or GM invisibility (for not self casting case)
-    if (target->GetTypeId() == TYPEID_PLAYER && target != i_check && (((Player*)target)->isGameMaster() || ((Player*)target)->GetVisibility() == VISIBILITY_OFF))
+    if (target->GetTypeId() == TYPEID_PLAYER && target != i_check && (((Player*)target)->isGameMaster() || !((Player*)target)->IsVisible()))
         return;
 
     if (i_dynobject.IsAffecting(target))
@@ -320,7 +325,7 @@ MessageDistDeliverer::Visit(PlayerMapType& m)
     {
         Player* target = iter->getSource();
 
-        if (target->GetExactDistSq(i_source) > i_distSq)
+        if (target->GetExactDist2dSq(i_source) > i_distSq)
             continue;
 
         // Send packet to all who are sharing the player's vision
@@ -342,7 +347,7 @@ MessageDistDeliverer::Visit(CreatureMapType& m)
 {
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        if (iter->getSource()->GetExactDistSq(i_source) > i_distSq)
+        if (iter->getSource()->GetExactDist2dSq(i_source) > i_distSq)
             continue;
 
         // Send packet to all who are sharing the creature's vision
@@ -361,7 +366,7 @@ MessageDistDeliverer::Visit(DynamicObjectMapType& m)
 {
     for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        if (iter->getSource()->GetExactDistSq(i_source) > i_distSq)
+        if (iter->getSource()->GetExactDist2dSq(i_source) > i_distSq)
             continue;
 
         if (iter->getSource()->GetTypeId() == TYPEID_PLAYER)

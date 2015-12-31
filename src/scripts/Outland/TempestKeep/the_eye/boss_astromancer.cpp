@@ -128,7 +128,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
 
         me->SetArmor(defaultarmor);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
         me->SetObjectScale(defaultsize);
         me->SetDisplayId(MODEL_HUMAN);
 
@@ -216,7 +216,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
                 if (Phase == 2)
                 {
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                 }
                 AppearDelay_Timer = 2000;
             }
@@ -359,7 +359,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
                         SummonMinion(SOLARIUM_PRIEST, Portals[j][0], Portals[j][1], Portals[j][2]);
 
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                me->SetVisibility(VISIBILITY_ON);
+                me->SetVisible(true);
 
                 DoScriptText(SAY_SUMMON2, me);
                 AppearDelay = true;
@@ -393,7 +393,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
 
             //To make sure she wont be invisible or not selecatble
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             DoScriptText(SAY_VOIDA, me);
             DoScriptText(SAY_VOIDB, me);
             me->SetArmor(WV_ARMOR);

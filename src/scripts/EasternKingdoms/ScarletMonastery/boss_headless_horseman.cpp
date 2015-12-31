@@ -413,7 +413,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
 
     void FlyMode()
     {
-        me->SetVisibility(VISIBILITY_OFF);
+        me->SetVisible(false);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         me->SetLevitate(true);
         me->SetSpeed(MOVE_WALK, 5.0f, true);
@@ -434,7 +434,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
         switch (id)
         {
         case 0:
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             break;
         case 1:
             {
@@ -563,8 +563,8 @@ struct boss_headless_horsemanAI : public ScriptedAI
             caster->GetMotionMaster()->Clear(false);
             caster->GetMotionMaster()->MoveFollow(me, 6, urand(0, 5));
             //DoResetThreat();//not sure if need
-            std::list<HostileReference*>::const_iterator itr;
-            for (itr = caster->getThreatManager().getThreatList().begin(); itr != caster->getThreatManager().getThreatList().end(); ++itr)
+            ThreatContainer::StorageType threatlist = caster->getThreatManager().getThreatList();
+            for (ThreatContainer::StorageType::const_iterator itr = threatlist.begin(); itr != threatlist.end(); ++itr)
             {
                 Unit* pUnit = Unit::GetUnit((*me), (*itr)->getUnitGuid());
                 if (pUnit && pUnit->IsAlive() && pUnit != caster)
@@ -808,7 +808,7 @@ struct mob_pulsing_pumpkinAI : public ScriptedAI
         if (!debuffGUID) return;
         Unit* debuff = Unit::GetUnit((*me), debuffGUID);
         if (debuff)
-            debuff->SetVisibility(VISIBILITY_OFF);
+            debuff->SetVisible(false);
         debuffGUID = 0;
     }
 

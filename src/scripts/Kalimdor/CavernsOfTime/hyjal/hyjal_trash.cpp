@@ -453,7 +453,7 @@ struct mob_giant_infernalAI : public hyjal_trashAI
             Creature* trigger = me->SummonCreature(NPC_TRIGGER, x + 8, y + 8, z + 25 + rand() % 10, me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 1000);
             if (trigger)
             {
-                trigger->SetVisibility(VISIBILITY_OFF);
+                trigger->SetVisible(false);
                 trigger->setFaction(me->getFaction());
                 trigger->SetLevitate(true);
                 trigger->CastSpell(me, SPELL_METEOR, true);

@@ -297,7 +297,7 @@ struct npc_grimstoneAI : public npc_escortAI
                     break;
                 case 4:
                     CanWalk = true;
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                     SummonRingMob();
                     Event_Timer = 8000;
                     break;
@@ -311,7 +311,7 @@ struct npc_grimstoneAI : public npc_escortAI
                     Event_Timer = 0;
                     break;
                 case 7:
-                    me->SetVisibility(VISIBILITY_ON);
+                    me->SetVisible(true);
                     HandleGameObject(DATA_ARENA1, false);
                     DoScriptText(SCRIPT_TEXT6, me);//4
                     CanWalk = true;
@@ -322,7 +322,7 @@ struct npc_grimstoneAI : public npc_escortAI
                     Event_Timer = 5000;
                     break;
                 case 9:
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                     SummonRingBoss();
                     Event_Timer = 0;
                     break;
@@ -663,7 +663,7 @@ struct npc_marshal_windsorAI : public npc_escortAI
             pInstance->SetData(DATA_GATE_SC,0);
             break;
         case 19:
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SummonCreature(MOB_ENTRY_REGINALD_WINDSOR,403.61,-51.71,-63.92,3.600434,TEMPSUMMON_DEAD_DESPAWN ,0);
             pInstance->SetData(DATA_SUPPLY_ROOM, ENCOUNTER_STATE_ENDED);
             break;
@@ -690,13 +690,13 @@ struct npc_marshal_windsorAI : public npc_escortAI
             }
         if ((pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_FAILED || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_ENDED)&& pInstance->GetData(DATA_SUPPLY_ROOM) == ENCOUNTER_STATE_ENDED)
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         else
         {
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
@@ -772,7 +772,7 @@ struct npc_dughal_stormwingAI : public npc_escortAI
 
     void JustDied(Unit* /*killer*/)
     {
-        me->SetVisibility(VISIBILITY_OFF);
+        me->SetVisible(false);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         pInstance->SetData(DATA_DUGHAL, ENCOUNTER_STATE_ENDED);
@@ -793,7 +793,7 @@ struct npc_dughal_stormwingAI : public npc_escortAI
             pInstance->SetData(DATA_DUGHAL, ENCOUNTER_STATE_OBJECTIVE_COMPLETED);
             break;
         case 2:
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_DUGHAL, ENCOUNTER_STATE_ENDED);
@@ -808,7 +808,7 @@ struct npc_dughal_stormwingAI : public npc_escortAI
 
         if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
         {
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
@@ -1323,7 +1323,7 @@ struct npc_tobias_seecherAI : public npc_escortAI
 
     void JustDied(Unit* /*killer*/)
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_ENDED);
@@ -1344,7 +1344,7 @@ struct npc_tobias_seecherAI : public npc_escortAI
             pInstance->SetData(DATA_TOBIAS, ENCOUNTER_STATE_OBJECTIVE_COMPLETED); 
             break;
         case 4:
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_ENDED);
@@ -1359,7 +1359,7 @@ struct npc_tobias_seecherAI : public npc_escortAI
 
         if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
         {
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }

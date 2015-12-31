@@ -313,7 +313,7 @@ struct boss_zuljinAI : public ScriptedAI
             {
                 if ((Temp = Unit::GetUnit(*me, SpiritGUID[i])))
                 {
-                    Temp->SetVisibility(VISIBILITY_OFF);
+                    Temp->SetVisible(false);
                     Temp->setDeathState(DEAD);
                 }
             }

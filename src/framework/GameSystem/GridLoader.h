@@ -27,7 +27,7 @@
   delicate its loading and unloading for the actualy loader and unloader.
   GridLoader manages the grid (both local and remote).
  */
-
+/*
 #include "Platform/Define.h"
 #include "Grid.h"
 #include "TypeContainerVisitor.h"
@@ -69,5 +69,6 @@ class GridLoader
             grid.UnlockGrid();
         }
 };
+*/
 #endif
 

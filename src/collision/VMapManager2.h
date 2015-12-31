@@ -72,11 +72,14 @@ class VMapManager2 : public IVMapManager
         // Tree to check collision
         ModelFileMap iLoadedModelFiles;
         InstanceTreeMap iInstanceMapTrees;
-            // Mutex for iLoadedModelFiles
-            ACE_Thread_Mutex LoadedModelFilesLock;
+        bool thread_safe_environment;
+        // Mutex for iLoadedModelFiles
+        ACE_Thread_Mutex LoadedModelFilesLock;
 
-            bool _loadMap(uint32 mapId, const std::string& basePath, uint32 tileX, uint32 tileY);
+        bool _loadMap(uint32 mapId, const std::string& basePath, uint32 tileX, uint32 tileY);
         /* void _unloadMap(uint32 pMapId, uint32 x, uint32 y); */
+
+        InstanceTreeMap::const_iterator GetMapTree(uint32 mapId) const;
 
     public:
         // public for debug
@@ -88,6 +91,7 @@ class VMapManager2 : public IVMapManager
 
             VMAPLoadResult loadMap(const char* pBasePath, unsigned int mapId, int x, int y);
 
+            void InitializeThreadUnsafe(const std::vector<uint32>& mapIds);
             void unloadMap(unsigned int mapId, int x, int y);
             void unloadMap(unsigned int mapId);
 

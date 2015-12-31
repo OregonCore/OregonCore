@@ -3107,7 +3107,7 @@ void Spell::EffectPersistentAA(SpellEffIndex effIndex)
     int32 duration = GetSpellDuration(m_spellInfo);
     if (Player* modOwner = m_originalCaster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_DURATION, duration);
-    DynamicObject* dynObj = new DynamicObject;
+    DynamicObject* dynObj = new DynamicObject(false);
     if (!dynObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), caster, m_spellInfo->Id, effIndex, m_targets.m_dstPos, duration, radius))
     {
         delete dynObj;
@@ -3978,7 +3978,7 @@ void Spell::EffectAddFarsight(SpellEffIndex effIndex)
     // Caster not in world, might be spell triggered from aura removal
     if (!m_caster->IsInWorld())
         return;
-    DynamicObject* dynObj = new DynamicObject;
+    DynamicObject* dynObj = new DynamicObject(true);
     if (!dynObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), m_caster, m_spellInfo->Id, 4, m_targets.m_dstPos, duration, radius))
     {
         delete dynObj;
@@ -5876,25 +5876,9 @@ void Spell::EffectSanctuary(SpellEffIndex /*effIndex*/)
     if (!unitTarget)
         return;
 
-    std::list<Unit*> targets;
-    Oregon::AnyUnfriendlyUnitInObjectRangeCheck u_check(unitTarget, unitTarget, m_caster->GetMap()->GetVisibilityDistance());
-    Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(targets, u_check);
-    unitTarget->VisitNearbyObject(m_caster->GetMap()->GetVisibilityDistance(), searcher);
-    for (std::list<Unit*>::iterator iter = targets.begin(); iter != targets.end(); ++iter)
-    {
-        if (!(*iter)->HasUnitState(UNIT_STATE_CASTING))
-            continue;
+    unitTarget->getHostileRefManager().UpdateVisibility();
+    unitTarget->m_lastSanctuaryTime = getMSTime();
 
-        for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; i++)
-        {
-            if ((*iter)->GetCurrentSpell(i)
-                && (*iter)->GetCurrentSpell(i)->m_targets.getUnitTargetGUID() == unitTarget->GetGUID())
-                (*iter)->InterruptSpell(CurrentSpellTypes(i), false);
-        }
-    }
-
-    unitTarget->CombatStop();
-    unitTarget->getHostileRefManager().deleteReferences();  // stop all fighting
     // Vanish allows to remove all threat and cast regular stealth so other spells can be used
     if (m_caster->GetTypeId() == TYPEID_PLAYER
         && m_spellInfo->SpellFamilyName == SPELLFAMILY_ROGUE

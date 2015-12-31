@@ -293,7 +293,7 @@ struct aqsentinelAI : public ScriptedAI
 
     Unit* GetHatedManaUser()
     {
-        std::list<HostileReference*>::iterator i;
+        ThreatContainer::StorageType::const_iterator i;
         for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());

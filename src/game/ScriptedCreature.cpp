@@ -174,18 +174,17 @@ Creature* ScriptedAI::DoSpawnCreature(uint32 uiId, float fX, float fY, float fZ,
 
 Unit* ScriptedAI::SelectUnit(SelectAggroTarget pTarget, uint32 uiPosition)
 {
-    //ThreatList m_threatlist;
-    std::list<HostileReference*>& threatlist = me->getThreatManager().getThreatList();
-    std::list<HostileReference*>::iterator itr = threatlist.begin();
-    std::list<HostileReference*>::reverse_iterator ritr = threatlist.rbegin();
+    ThreatContainer::StorageType threatList = me->getThreatManager().getThreatList();
+    ThreatContainer::StorageType::const_iterator itr = threatList.begin();
+    ThreatContainer::StorageType::reverse_iterator ritr = threatList.rbegin();
 
-    if (uiPosition >= threatlist.size() || !threatlist.size())
+    if (uiPosition >= threatList.size() || !threatList.size())
         return NULL;
 
     switch (pTarget)
     {
     case SELECT_TARGET_RANDOM:
-        advance (itr , uiPosition +  (rand() % (threatlist.size() - uiPosition)));
+        advance (itr , uiPosition +  (rand() % (threatList.size() - uiPosition)));
         return Unit::GetUnit((*me), (*itr)->getUnitGuid());
         break;
 
@@ -409,9 +408,9 @@ void ScriptedAI::DoResetThreat()
         return;
     }
 
-    std::list<HostileReference*>& threatlist = me->getThreatManager().getThreatList();
+    ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
 
-    for (std::list<HostileReference*>::iterator itr = threatlist.begin(); itr != threatlist.end(); ++itr)
+    for (ThreatContainer::StorageType::const_iterator itr = threatlist.begin(); itr != threatlist.end(); ++itr)
     {
         Unit* pUnit = Unit::GetUnit((*me), (*itr)->getUnitGuid());
 
@@ -502,20 +501,19 @@ std::list<Creature*> ScriptedAI::DoFindFriendlyMissingBuff(float fRange, uint32 
     return pList;
 }
 
-Player* ScriptedAI::GetPlayerAtMinimumRange(float fMinimumRange)
+Player* ScriptedAI::GetPlayerAtMinimumRange(float minimumRange)
 {
     Player* pPlayer = NULL;
 
-    CellPair pair(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+    CellCoord pair(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
     Cell cell(pair);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
-    Oregon::PlayerAtMinimumRangeAway check(me, fMinimumRange);
+    Oregon::PlayerAtMinimumRangeAway check(me, minimumRange);
     Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway> searcher(pPlayer, check);
     TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway>, GridTypeMapContainer> visitor(searcher);
 
-    cell.Visit(pair, visitor, *(me->GetMap()));
+    cell.Visit(pair, visitor, *me->GetMap(), *me, minimumRange);
 
     return pPlayer;
 }

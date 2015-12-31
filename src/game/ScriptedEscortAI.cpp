@@ -120,7 +120,13 @@ void npc_escortAI::MoveInLineOfSight(Unit* pWho)
             {
                 if (!me->getVictim())
                 {
-                    pWho->RemoveAurasDueToSpell(SPELL_AURA_MOD_STEALTH);
+                    // Clear distracted state on combat
+                    if (me->HasUnitState(UNIT_STATE_DISTRACTED))
+                    {
+                        me->ClearUnitState(UNIT_STATE_DISTRACTED);
+                        me->GetMotionMaster()->Clear();
+                    }
+
                     AttackStart(pWho);
                 }
                 else if (me->GetMap()->IsDungeon())
@@ -247,7 +253,7 @@ void npc_escortAI::UpdateAI(const uint32 uiDiff)
                     if (m_bCanReturnToStart)
                     {
                         float fRetX, fRetY, fRetZ;
-                        me->GetRespawnCoord(fRetX, fRetY, fRetZ);
+                        me->GetRespawnPosition(fRetX, fRetY, fRetZ);
 
                         me->GetMotionMaster()->MovePoint(POINT_HOME, fRetX, fRetY, fRetZ);
 

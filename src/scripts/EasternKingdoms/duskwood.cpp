@@ -64,7 +64,7 @@ bool AreaTrigger_at_twilight_grove(Player* pPlayer, const AreaTriggerEntry* /*at
 
         if (Creature* pCorrupter = pPlayer->SummonCreature(NPC_TWILINGHT_CORRUPTER, -10636.9, -389.254, 102.626, 0, TEMPSUMMON_TIMED_DESPAWN, CORRUPTER_DESPAWN_TIMER))
         {
-            pCorrupter->SetVisibility(VISIBILITY_OFF);
+            pCorrupter->SetVisible(false);
             DoScriptText(CORRUPTER_YELL_COME, pCorrupter, pPlayer);
         }
 

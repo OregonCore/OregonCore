@@ -27,7 +27,7 @@ class DynamicObject : public WorldObject, public GridObject<DynamicObject>
 {
     public:
         typedef std::set<Unit*> AffectedSet;
-        explicit DynamicObject();
+        explicit DynamicObject(bool isWorldObject);
 
         void AddToWorld();
         void RemoveFromWorld();
@@ -69,7 +69,6 @@ class DynamicObject : public WorldObject, public GridObject<DynamicObject>
             m_affected.erase(unit);
         }
         void Delay(int32 delaytime);
-        bool isVisibleForInState(Player const* u, bool inVisibleList) const;
 
         void Say(const char* text, uint32 language, uint64 TargetGuid)
         {

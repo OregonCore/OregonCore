@@ -86,9 +86,9 @@ struct DelayedUnitRelocation
 {
     Map& i_map;
     Cell& cell;
-    CellPair& p;
+    CellCoord& p;
     const float i_radius;
-    DelayedUnitRelocation(Cell& c, CellPair& pair, Map& map, float radius) :
+    DelayedUnitRelocation(Cell& c, CellCoord& pair, Map& map, float radius) :
         i_map(map), cell(c), p(pair), i_radius(radius) {}
     template<class T> void Visit(GridRefManager<T>&) {}
     void Visit(CreatureMapType&);
@@ -158,6 +158,9 @@ struct MessageDistDeliverer
     {
         // never send packet to self
         if (plr == i_source || (team && plr->GetTeam() != team))
+            return;
+
+        if (!plr->HaveAtClient(i_source))
             return;
 
         if (WorldSession* session = plr->GetSession())
@@ -547,7 +550,7 @@ class GameObjectFocusCheck
             if (go->GetGOInfo()->spellFocus.focusId != i_focusId)
                 return false;
 
-            float dist = (float)((go->GetGOInfo()->spellFocus.dist) / 2);
+            float dist = go->GetGOInfo()->spellFocus.dist / 2.f;
 
             return go->IsWithinDistInMap(i_unit, dist);
         }
@@ -799,7 +802,7 @@ class NearestAttackableUnitInObjectRangeCheck
         bool operator()(Unit* u)
         {
             if (u->isTargetableForAttack() && i_obj->IsWithinDistInMap(u, i_range) &&
-                !i_funit->IsFriendlyTo(u) && u->isVisibleForOrDetect(i_funit, false))
+                !i_funit->IsFriendlyTo(u) && u->CanSeeOrDetect(i_funit))
             {
                 i_range = i_obj->GetDistance(u);        // use found unit range as new range limit for next check
                 return true;
@@ -888,14 +891,6 @@ struct AnyDeadUnitCheck
     }
 };
 
-struct AnyStealthedCheck
-{
-    bool operator()(Unit* u)
-    {
-        return u->GetVisibility() == VISIBILITY_GROUP_STEALTH;
-    }
-};
-
 // Creature checks
 
     class NearestHostileUnitCheck
@@ -938,6 +933,9 @@ class NearestHostileUnitInAttackDistanceCheck
         bool operator()(Unit* u)
         {
             if (!me->IsWithinDistInMap(u, m_range))
+                return false;
+
+            if (!me->CanSeeOrDetect(u))
                 return false;
 
             if (m_force)
@@ -1117,7 +1115,7 @@ class AllFriendlyCreaturesInGrid
         AllFriendlyCreaturesInGrid(Unit const* obj) : pUnit(obj) {}
         bool operator() (Unit* u)
         {
-            if (u->IsAlive() && u->GetVisibility() == VISIBILITY_ON && u->IsFriendlyTo(pUnit))
+            if (u->IsAlive() && u->IsVisible() && u->IsFriendlyTo(pUnit))
                 return true;
 
             return false;

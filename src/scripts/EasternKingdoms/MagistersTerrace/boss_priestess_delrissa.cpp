@@ -506,7 +506,7 @@ struct boss_kagani_nightstrikeAI : public boss_priestess_lackey_commonAI
         Eviscerate_Timer = 6000;
         Wait_Timer = 5000;
         InVanish = false;
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
 
         boss_priestess_lackey_commonAI::Reset();
     }
@@ -541,7 +541,7 @@ struct boss_kagani_nightstrikeAI : public boss_priestess_lackey_commonAI
             {
                 DoCastVictim( SPELL_BACKSTAB, true);
                 DoCastVictim( SPELL_KIDNEY_SHOT, true);
-                me->SetVisibility(VISIBILITY_ON);       // ...? Hacklike
+                me->SetVisible(true);       // ...? Hacklike
                 InVanish = false;
             }
             else Wait_Timer -= diff;
@@ -824,8 +824,8 @@ struct boss_yazzaiAI : public boss_priestess_lackey_commonAI
         if (Blink_Timer <= diff)
         {
             bool InMeleeRange = false;
-            std::list<HostileReference*>& t_list = me->getThreatManager().getThreatList();
-            for (std::list<HostileReference*>::const_iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
+            ThreatContainer::StorageType const &t_list = me->getThreatManager().getThreatList();
+            for (ThreatContainer::StorageType::const_iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
             {
                 if (Unit* target = Unit::GetUnit(*me, (*itr)->getUnitGuid()))
                 {
@@ -905,8 +905,8 @@ struct boss_warlord_salarisAI : public boss_priestess_lackey_commonAI
         if (Intercept_Stun_Timer <= diff)
         {
             bool InMeleeRange = false;
-            std::list<HostileReference*>& t_list = me->getThreatManager().getThreatList();
-            for (std::list<HostileReference*>::const_iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
+            ThreatContainer::StorageType const &t_list = me->getThreatManager().getThreatList();
+            for (ThreatContainer::StorageType::const_iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
             {
                 if (Unit* target = Unit::GetUnit(*me, (*itr)->getUnitGuid()))
                 {

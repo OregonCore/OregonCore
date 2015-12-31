@@ -136,9 +136,9 @@ struct boss_supremusAI : public ScriptedAI
         uint32 health = 0;
         Unit* pTarget = NULL;
 
-        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
-        std::list<HostileReference*>::iterator i = m_threatlist.begin();
-        for (i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
+        ThreatContainer::StorageType const &threatlist = me->getThreatManager().getThreatList();
+        ThreatContainer::StorageType::const_iterator i = threatlist.begin();
+        for (i = threatlist.begin(); i != threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && me->IsWithinMeleeRange(pUnit))

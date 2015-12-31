@@ -615,7 +615,7 @@ struct npc_image_of_medivhAI : public ScriptedAI
             me->MonsterYell(SAY_DIALOG_MEDIVH_9, LANG_UNIVERSAL, 0);
             return 10000;
         case 14:
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->ClearInCombat();
 
             if (pMap->IsDungeon())

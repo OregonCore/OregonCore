@@ -45,7 +45,7 @@
 #include "DynamicTree.h"
 #include "Transports.h"
 
-GameObject::GameObject() : WorldObject(), m_model(NULL), m_AI(NULL)
+GameObject::GameObject() : WorldObject(false), m_model(NULL), m_AI(NULL)
 {
     m_objectType |= TYPEMASK_GAMEOBJECT;
     m_objectTypeId = TYPEID_GAMEOBJECT;
@@ -657,7 +657,7 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask)
     WorldDatabase.CommitTransaction();
 }
 
-bool GameObject::LoadFromDB(uint32 guid, Map* map)
+bool GameObject::LoadGameObjectFromDB(uint32 guid, Map* map, bool addToMap)
 {
     GameObjectData const* data = sObjectMgr.GetGOData(guid);
 
@@ -721,6 +721,9 @@ bool GameObject::LoadFromDB(uint32 guid, Map* map)
 
     m_goData = data;
 
+    if (addToMap && !GetMap()->AddToMap(this))
+        return false;
+
     return true;
 }
 
@@ -783,60 +786,53 @@ void GameObject::SaveRespawnTime()
         sObjectMgr.SaveGORespawnTime(m_DBTableGuid, GetInstanceId(), m_respawnTime);
 }
 
-bool GameObject::isVisibleForInState(Player const* u, bool inVisibleList) const
+bool GameObject::IsNeverVisible() const
 {
-    // Not in world
-    if (!IsInWorld() || !u->IsInWorld())
-        return false;
-
-    // Transport always visible at this step implementation
-    if (IsTransport() && IsInMap(u))
+    if (WorldObject::IsNeverVisible())
         return true;
 
-    // quick check visibility false cases for non-GM-mode
-    if (!u->isGameMaster())
-    {
-        // despawned and then not visible for non-GM in GM-mode
-        if (!isSpawned())
-            return false;
+    if (GetGoType() == GAMEOBJECT_TYPE_SPELL_FOCUS && GetGOInfo()->spellFocus.serverOnly == 1)
+        return true;
 
-        // special invisibility cases
-        if (GetGOInfo()->type == GAMEOBJECT_TYPE_TRAP && GetGOInfo()->trap.stealthed)
-        {
-            Unit* owner = GetOwner();
-            if (owner && u->IsHostileTo(owner) && !canDetectTrap(u, GetDistance(u)))
-                return false;
-        }
-
-        // Smuggled Mana Cell required 10 invisibility type detection/state
-        if (GetEntry() == 187039 && ((u->m_detectInvisibilityMask | u->m_invisibilityMask) & (1 << 10)) == 0)
-            return false;
-    }
-
-    // check distance
-    return IsWithinDistInMap(u->m_seer, World::GetMaxVisibleDistanceForObject() +
-                             (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false);
+    return false;
 }
 
-bool GameObject::canDetectTrap(Player const* u, float distance) const
+bool GameObject::IsAlwaysVisibleFor(WorldObject const* seer) const
 {
-    if (u->HasUnitState(UNIT_STATE_STUNNED))
-        return false;
-    if (distance < GetGOInfo()->size) //collision
-        return true;
-    if (!u->HasInArc(M_PI, this)) //behind
-        return false;
-    if (u->HasAuraType(SPELL_AURA_DETECT_STEALTH))
+    if (WorldObject::IsAlwaysVisibleFor(seer))
         return true;
 
-    //Visible distance is modified by -Level Diff (every level diff = 0.25f in visible distance)
-    float visibleDistance = (int32(u->getLevel()) - int32(GetOwner()->getLevel())) * 0.25f;
-    //GetModifier for trap (miscvalue 1)
-    //35y for aura 2836
-    //WARNING: these values are guessed, may be not blizzlike
-    visibleDistance += u->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_STEALTH_DETECT, 1) * 0.5f;
+    if (IsTransport())
+        return true;
+    
+    if (!seer)
+        return false;
 
-    return distance < visibleDistance;
+    // Always seen by owner and friendly units
+    if (ObjectGuid guid = GetOwnerGUID())
+    {
+        if (seer->GetGUID() == guid)
+            return true;
+
+        Unit* owner = GetOwner();
+        if (Unit const* unitSeer = seer->ToUnit())
+            if (owner && owner->IsFriendlyTo(unitSeer))
+                return true;
+    }
+
+    return false;
+}
+
+bool GameObject::IsInvisibleDueToDespawn() const
+{
+    if (WorldObject::IsInvisibleDueToDespawn())
+        return true;
+
+    // Despawned
+    if (!isSpawned())
+        return true;
+
+    return false;
 }
 
 void GameObject::Respawn()
@@ -908,9 +904,8 @@ void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
     GameObject* trapGO = NULL;
     {
         // using original GO distance
-        CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
+        CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
         Cell cell(p);
-        cell.data.Part.reserved = ALL_DISTRICT;
 
         Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*target, trapEntry, range);
         Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(trapGO, go_check);
@@ -929,9 +924,8 @@ GameObject* GameObject::LookupFishingHoleAround(float range)
 {
     GameObject* ok = NULL;
 
-    CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     Oregon::NearestGameObjectFishingHole u_check(*this, range);
     Oregon::GameObjectSearcher<Oregon::NearestGameObjectFishingHole> checker(ok, u_check);
 

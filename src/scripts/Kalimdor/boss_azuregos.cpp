@@ -73,9 +73,9 @@ struct boss_azuregosAI : public ScriptedAI
         if (Teleport_Timer <= diff)
         {
             DoScriptText(SAY_TELEPORT, me);
-            std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
-            std::list<HostileReference*>::iterator i = m_threatlist.begin();
-            for (i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
+            ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+            ThreatContainer::StorageType::const_iterator i = threatlist.begin();
+            for (i = threatlist.begin(); i != threatlist.end(); ++i)
             {
                 Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
                 if (pUnit && (pUnit->GetTypeId() == TYPEID_PLAYER))

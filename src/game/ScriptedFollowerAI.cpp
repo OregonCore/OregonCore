@@ -117,7 +117,13 @@ void FollowerAI::MoveInLineOfSight(Unit* pWho)
             {
                 if (!me->getVictim())
                 {
-                    pWho->RemoveAurasDueToSpell(SPELL_AURA_MOD_STEALTH);
+                    // Clear distracted state on combat
+                    if (me->HasUnitState(UNIT_STATE_DISTRACTED))
+                    {
+                        me->ClearUnitState(UNIT_STATE_DISTRACTED);
+                        me->GetMotionMaster()->Clear();
+                    }
+
                     AttackStart(pWho);
                 }
                 else if (me->GetMap()->IsDungeon())

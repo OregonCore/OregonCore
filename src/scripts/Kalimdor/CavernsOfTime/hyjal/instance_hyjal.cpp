@@ -211,7 +211,7 @@ struct instance_mount_hyjal : public ScriptedInstance
                         Map* pMap = pCreature->GetMap();
                         if (pMap->IsDungeon() && pUnit)
                         {
-                            pUnit->SetVisibility(VISIBILITY_OFF);
+                            pUnit->SetVisible(false);
                             Map::PlayerList const& PlayerList = pMap->GetPlayers();
                             if (PlayerList.isEmpty())
                                 return;

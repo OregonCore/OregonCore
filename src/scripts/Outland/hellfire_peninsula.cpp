@@ -1909,7 +1909,7 @@ struct npc_pathaleon_imageAI : public ScriptedAI
             DoCast(SPELL_TELE);
             return 500;
         case 9:
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             return 60000;
         case 10:
             me->setDeathState(CORPSE);

@@ -181,9 +181,9 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
         if (!SummonedUnit)
             return;
 
-        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
-        std::list<HostileReference*>::const_iterator i = m_threatlist.begin();
-        for (i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
+        ThreatContainer::StorageType const &threatlist = me->getThreatManager().getThreatList();
+        ThreatContainer::StorageType::const_iterator i = threatlist.begin();
+        for (i = threatlist.begin(); i != threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && pUnit->IsAlive())
@@ -199,8 +199,9 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
         float x = KaelLocations[0][0];
         float y = KaelLocations[0][1];
         me->GetMap()->CreatureRelocation(me, x, y, LOCATION_Z, 0.0f);
-        std::list<HostileReference*>::const_iterator i = me->getThreatManager().getThreatList().begin();
-        for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); ++i)
+        ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+        ThreatContainer::StorageType::const_iterator i = threatlist.begin();
+        for (i = threatlist.begin(); i != threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && (pUnit->GetTypeId() == TYPEID_PLAYER))
@@ -211,8 +212,9 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
 
     void CastGravityLapseKnockUp()
     {
-        std::list<HostileReference*>::const_iterator i = me->getThreatManager().getThreatList().begin();
-        for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); ++i)
+        ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+        ThreatContainer::StorageType::const_iterator i = threatlist.begin();
+        for (i = threatlist.begin(); i != threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && (pUnit->GetTypeId() == TYPEID_PLAYER))
@@ -223,8 +225,9 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
 
     void CastGravityLapseFly()                              // Use Fly Packet hack for now as players can't cast "fly" spells unless in map 530. Has to be done a while after they get knocked into the air...
     {
-        std::list<HostileReference*>::const_iterator i = me->getThreatManager().getThreatList().begin();
-        for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); ++i)
+        ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+        ThreatContainer::StorageType::const_iterator i = threatlist.begin();
+        for (i = threatlist.begin(); i != threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && (pUnit->GetTypeId() == TYPEID_PLAYER))
@@ -244,8 +247,9 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
 
     void RemoveGravityLapse()
     {
-        std::list<HostileReference*>::const_iterator i = me->getThreatManager().getThreatList().begin();
-        for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); ++i)
+        ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+        ThreatContainer::StorageType::const_iterator i = threatlist.begin();
+        for (i = threatlist.begin(); i != threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && (pUnit->GetTypeId() == TYPEID_PLAYER))

@@ -56,7 +56,7 @@ enum AuraType
     SPELL_AURA_MOD_STEALTH = 16,
     SPELL_AURA_MOD_STEALTH_DETECT = 17,
     SPELL_AURA_MOD_INVISIBILITY = 18,
-    SPELL_AURA_MOD_INVISIBILITY_DETECTION = 19,
+    SPELL_AURA_MOD_INVISIBILITY_DETECT = 19,
     SPELL_AURA_OBS_MOD_HEALTH = 20,                         // Heal by percentage? - Unofficial
     SPELL_AURA_OBS_MOD_MANA = 21,                           // -||-
     SPELL_AURA_MOD_RESISTANCE = 22,

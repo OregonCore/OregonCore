@@ -548,10 +548,10 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
         break;
     case ACTION_T_THREAT_ALL_PCT:
         {
-            std::list<HostileReference*>& threatList = me->getThreatManager().getThreatList();
-            for (std::list<HostileReference*>::iterator i = threatList.begin(); i != threatList.end(); ++i)
-                if (Unit* Temp = Unit::GetUnit(*me, (*i)->getUnitGuid()))
-                    me->getThreatManager().modifyThreatPercent(Temp, action.threat_all_pct.percent);
+            ThreatContainer::StorageType const& threatList = me->getThreatManager().getThreatList();
+            for (ThreatContainer::StorageType::const_iterator i = threatList.begin(); i != threatList.end(); ++i)
+                if (Unit* unit = Unit::GetUnit(*me, (*i)->getUnitGuid()))
+                    me->getThreatManager().modifyThreatPercent(unit, action.threat_all_pct.percent);
             break;
         }
     case ACTION_T_QUEST_EVENT:
@@ -637,11 +637,11 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
         break;
     case ACTION_T_CAST_EVENT_ALL:
         {
-            std::list<HostileReference*>& threatList = me->getThreatManager().getThreatList();
-            for (std::list<HostileReference*>::iterator i = threatList.begin(); i != threatList.end(); ++i)
-                if (Unit* Temp = Unit::GetUnit(*me, (*i)->getUnitGuid()))
-                    if (Temp->GetTypeId() == TYPEID_PLAYER)
-                        Temp->ToPlayer()->CastedCreatureOrGO(action.cast_event_all.creatureId, me->GetGUID(), action.cast_event_all.spellId);
+            ThreatContainer::StorageType const& threatList = me->getThreatManager().getThreatList();
+            for (ThreatContainer::StorageType::const_iterator i = threatList.begin(); i != threatList.end(); ++i)
+                if (Unit* unit = Unit::GetUnit(*me, (*i)->getUnitGuid()))
+                    if (unit->GetTypeId() == TYPEID_PLAYER)
+                        unit->ToPlayer()->CastedCreatureOrGO(action.cast_event_all.creatureId, me->GetGUID(), action.cast_event_all.spellId);
             break;
         }
     case ACTION_T_REMOVEAURASFROMSPELL:
@@ -1172,9 +1172,8 @@ inline Unit* CreatureEventAI::GetTargetByType(uint32 Target, Unit* pActionInvoke
 
 Unit* CreatureEventAI::DoSelectLowestHpFriendly(float range, uint32 MinHPDiff)
 {
-    CellPair p(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Unit* pUnit = NULL;
@@ -1190,9 +1189,8 @@ Unit* CreatureEventAI::DoSelectLowestHpFriendly(float range, uint32 MinHPDiff)
 
 void CreatureEventAI::DoFindFriendlyCC(std::list<Creature*>& _list, float range)
 {
-    CellPair p(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Oregon::FriendlyCCedInRange u_check(me, range);
@@ -1205,9 +1203,8 @@ void CreatureEventAI::DoFindFriendlyCC(std::list<Creature*>& _list, float range)
 
 void CreatureEventAI::DoFindFriendlyMissingBuff(std::list<Creature*>& _list, float range, uint32 spellid)
 {
-    CellPair p(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Oregon::FriendlyMissingBuffInRange u_check(me, range, spellid);

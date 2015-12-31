@@ -6246,16 +6246,15 @@ bool ChatHandler::HandleRespawnCommand(const char* /*args*/)
         return true;
     }
 
-    CellPair p(Oregon::ComputeCellPair(pl->GetPositionX(), pl->GetPositionY()));
+    CellCoord p(Oregon::ComputeCellCoord(pl->GetPositionX(), pl->GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Oregon::RespawnDo u_do;
     Oregon::WorldObjectWorker<Oregon::RespawnDo> worker(u_do);
 
     TypeContainerVisitor<Oregon::WorldObjectWorker<Oregon::RespawnDo>, GridTypeMapContainer > obj_worker(worker);
-    cell.Visit(p, obj_worker, *pl->GetMap());
+    cell.Visit(p, obj_worker, *pl->GetMap(), *pl, pl->GetGridActivationRange());
 
     return true;
 }

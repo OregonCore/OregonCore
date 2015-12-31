@@ -901,7 +901,9 @@ struct boss_kaelthasAI : public ScriptedAI
                     //GravityLapse_Timer
                     if (GravityLapse_Timer <= diff)
                     {
-                        std::list<HostileReference*>::iterator i = me->getThreatManager().getThreatList().begin();
+                        ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+                        ThreatContainer::StorageType::const_iterator i = threatlist.begin();
+
                         Movement::MoveSplineInit init(*me);
                         switch (GravityLapse_Phase)
                         {
@@ -914,7 +916,7 @@ struct boss_kaelthasAI : public ScriptedAI
                             init.Launch();
 
                             // 1) Kael'thas will portal the whole raid right into his body
-                            for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); ++i)
+                            for (i = threatlist.begin(); i != threatlist.end(); ++i)
                             {
                                 Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
                                 if (pUnit && (pUnit->GetTypeId() == TYPEID_PLAYER))
@@ -942,7 +944,7 @@ struct boss_kaelthasAI : public ScriptedAI
                             }
 
                             // 2) At that point he will put a Gravity Lapse debuff on everyone
-                            for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); i++)
+                            for (i = threatlist.begin(); i != threatlist.end(); ++i)
                             {
                                 if (Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid()))
                                 {
@@ -975,7 +977,7 @@ struct boss_kaelthasAI : public ScriptedAI
 
                         case 3:
                             //Remove flight
-                            for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); i++)
+                            for (i = threatlist.begin(); i != threatlist.end(); ++i)
                             {
                                 if (Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid()))
                                 {
@@ -1264,8 +1266,8 @@ struct boss_grand_astromancer_capernianAI : public advisorbase_ai
         {
             bool InMeleeRange = false;
             Unit* pTarget = NULL;
-            std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
-            for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
+            ThreatContainer::StorageType const &threatlist = me->getThreatManager().getThreatList();
+            for (ThreatContainer::StorageType::const_iterator i = threatlist.begin(); i!= threatlist.end(); ++i)
             {
                 Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
                 //if in melee range

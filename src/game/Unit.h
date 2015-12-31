@@ -511,16 +511,6 @@ enum UnitAuraFlags
     UNIT_AURAFLAG_ALIVE_INVISIBLE   = 0x1,                  // aura which makes unit invisible for alive
 };
 
-enum UnitVisibility
-{
-    VISIBILITY_OFF                = 0,                      // absolute, not detectable, GM-like, can see all other
-    VISIBILITY_ON                 = 1,
-    VISIBILITY_GROUP_STEALTH      = 2,                      // detect chance, seen and can see group members
-    VISIBILITY_GROUP_INVISIBILITY = 3,                      // invisibility, can see and can be seen only another invisible unit or invisible detection unit, set only if not stealthed, and in checks not used (mask used instead)
-    VISIBILITY_GROUP_NO_DETECT    = 4,                      // state just at stealth apply for update Grid state. Don't remove, otherwise stealth spells will break
-    VISIBILITY_RESPAWN            = 5                       // special totally not detectable visibility for force delete object at respawn command
-};
-
 // Value masks for UNIT_FIELD_FLAGS
 enum UnitFlags
 {
@@ -870,7 +860,7 @@ enum
 
 // delay time next attack to prevent client attack animation problems
 #define ATTACK_DISPLAY_DELAY 200
-#define MAX_PLAYER_STEALTH_DETECT_RANGE 45.0f               // max distance for detection targets by player
+#define MAX_PLAYER_STEALTH_DETECT_RANGE 30.0f               // max distance for detection targets by player
 
 struct SpellProcEventEntry;                                 // used only privately
 
@@ -1024,10 +1014,9 @@ class Unit : public WorldObject
         {
             return GetUInt32Value(UNIT_FIELD_LEVEL);
         }
-        virtual uint32 getLevelForTarget(Unit const* /*target*/) const
-        {
-            return getLevel();
-        }
+
+        uint8 getLevelForTarget(WorldObject const* /*target*/) const override { return getLevel(); }
+
         void SetLevel(uint32 lvl);
         uint8 getRace() const
         {
@@ -1344,10 +1333,8 @@ class Unit : public WorldObject
         {
             return m_initiatingCombat;
         }
-        bool IsInCombat()  const
-        {
-            return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
-        }
+        bool IsInCombat()  const { return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT); }
+        bool IsInCombatWith(Unit* who);
         void CombatStart(Unit* target, bool initialAggro = true);
         void SetInCombatState(bool PvP, Unit* enemy = NULL);
         void setInitiatingCombat(bool flag)
@@ -1364,6 +1351,8 @@ class Unit : public WorldObject
 
         uint32 GetAuraCount(uint32 spellId) const;
         bool HasAuraType(AuraType auraType) const;
+        bool HasAuraTypeWithCaster(AuraType auratype, uint64 caster) const;
+        bool HasAuraTypeWithMiscvalue(AuraType auratype, int32 miscvalue) const;
         bool HasAuraTypeWithFamilyFlags(AuraType auraType, uint32 familyName,  uint64 familyFlags) const;
         bool HasAura(uint32 spellId, uint8 effIndex = 0) const
         {
@@ -1729,8 +1718,6 @@ class Unit : public WorldObject
         uint32 m_addDmgOnce;
         uint64 m_SummonSlot[MAX_SUMMON_SLOT];
         uint64 m_ObjectSlot[4];
-        uint32 m_detectInvisibilityMask;
-        uint32 m_invisibilityMask;
 
         uint32 m_ShapeShiftFormSpellId;
         uint32 m_ShapeShiftModelId;
@@ -1812,23 +1799,13 @@ class Unit : public WorldObject
         void SetFacingToObject(WorldObject* pObject);
 
         // Visibility system
-        UnitVisibility GetVisibility() const
-        {
-            return m_Visibility;
-        }
-        void SetVisibility(UnitVisibility x);
+        bool IsVisible() const { return (m_serverSideVisibility.GetValue(SERVERSIDE_VISIBILITY_GM) > SEC_PLAYER) ? false : true; }
+        void SetVisible(bool x);
 
         // common function for visibility checks for player/creatures with detection code
-        virtual bool canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList = false, bool is3dDistance = true) const;
-        bool isVisibleForOrDetect(Unit const* u, bool detect, bool inVisibleList = false, bool is3dDistance = true) const;
-        bool canDetectInvisibilityOf(Unit const* u) const;
-        bool canDetectStealthOf(Unit const* u, float distance) const;
+        bool isValid() const { return WorldObject::isValid(); }       
         void UpdateObjectVisibility(bool forced = true);
 
-        // virtual functions for all world objects types
-        bool isVisibleForInState(Player const* u, bool inVisibleList) const;
-        // function for low level grid visibility checks in player/creature cases
-        virtual bool IsVisibleInGridForPlayer(Player const* pl) const = 0;
         bool isInvisibleForAlive() const;
 
         AuraList&       GetSingleCastAuras()
@@ -1839,7 +1816,9 @@ class Unit : public WorldObject
         {
             return m_scAuras;
         }
+
         SpellImmuneList m_spellImmune[MAX_SPELL_IMMUNITY];
+        uint32 m_lastSanctuaryTime;
 
         // Threat related methods
         bool CanHaveThreatList() const;
@@ -2124,12 +2103,6 @@ class Unit : public WorldObject
         uint64 LastCharmerGUID;
         bool m_ControlledByPlayer;
 
-        // Unit will forget everyone who has ever attacked it
-        void clearPastEnemyList()
-        {
-            m_ThreatManager.clearPastEnemyList();
-        }
-
         // Part of Evade mechanics
         time_t GetLastDamagedTime() const { return _lastDamagedTime; }
         void SetLastDamagedTime(time_t val) { _lastDamagedTime = val; }
@@ -2138,7 +2111,7 @@ class Unit : public WorldObject
         TempSummon const* ToTempSummon() const { if (IsSummon()) return reinterpret_cast<TempSummon const*>(this); else return NULL; }
 
     protected:
-        explicit Unit ();
+        explicit Unit (bool isWorldObject);
 
         UnitAI* i_AI, *i_disabledAI;
 
@@ -2201,6 +2174,9 @@ class Unit : public WorldObject
 
         void DisableSpline();
 
+        bool IsAlwaysVisibleFor(WorldObject const* seer) const;
+        bool IsAlwaysDetectableFor(WorldObject const* seer) const;
+
     private:
         bool IsTriggeredAtSpellProcEvent(Unit* pVictim, Aura* aura, SpellEntry const* procSpell, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, bool isVictim, bool active, SpellProcEventEntry const*& spellProcEvent);
         bool HandleDummyAuraProc(  Unit* pVictim, uint32 damage, Aura* triggredByAura, SpellEntry const* procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown);
@@ -2216,8 +2192,6 @@ class Unit : public WorldObject
         Spell* m_currentSpells[CURRENT_MAX_SPELL];
 
         TimeTrackerSmall m_movesplineTimer;
-
-        UnitVisibility m_Visibility;
 
         Diminishing m_Diminishing;
         // Manage all Units threatening us

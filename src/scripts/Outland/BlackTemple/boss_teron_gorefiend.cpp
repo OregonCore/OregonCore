@@ -149,12 +149,12 @@ struct mob_shadowy_constructAI : public ScriptedAI
 
     void CheckPlayers()
     {
-        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
-        if (m_threatlist.empty())
+        ThreatContainer::StorageType const &threatlist = me->getThreatManager().getThreatList();
+        if (threatlist.empty())
             return;                                         // No threat list. Don't continue.
-        std::list<HostileReference*>::iterator itr = m_threatlist.begin();
+        ThreatContainer::StorageType::const_iterator itr = threatlist.begin();
         std::list<Unit*> targets;
-        for (; itr != m_threatlist.end(); ++itr)
+        for (; itr != threatlist.end(); ++itr)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*itr)->getUnitGuid());
             if (pUnit && pUnit->IsAlive())
@@ -299,9 +299,9 @@ struct boss_teron_gorefiendAI : public ScriptedAI
     {
         if (!Blossom) return;
 
-        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
-        std::list<HostileReference*>::iterator i = m_threatlist.begin();
-        for (i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
+        ThreatContainer::StorageType const &threatlist = me->getThreatManager().getThreatList();
+        ThreatContainer::StorageType::const_iterator i = threatlist.begin();
+        for (i = threatlist.begin(); i != threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && pUnit->IsAlive())

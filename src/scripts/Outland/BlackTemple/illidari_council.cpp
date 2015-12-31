@@ -820,7 +820,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
         EnvenomTimer = 3000;
 
         HasVanished = false;
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 

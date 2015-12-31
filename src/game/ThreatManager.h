@@ -154,51 +154,57 @@ class ThreatManager;
 
 class ThreatContainer
 {
-    private:
-        std::list<HostileReference*> iThreatList;
-        std::vector<Unit*> iPastEnemyList;
-        bool iDirty;
-    protected:
         friend class ThreatManager;
 
-        void remove(HostileReference* hostileRef) { iThreatList.remove(hostileRef); }
-        void addReference(HostileReference* hostileRef) { iThreatList.push_back(hostileRef); }
-        void clearReferences();
-
-        // Sort the list if necessary
-        void update();
     public:
         typedef std::list<HostileReference*> StorageType;
 
-        ThreatContainer()
-        {
-            iDirty = false;
-        }
-        ~ThreatContainer()
-        {
-            clearReferences();
-        }
+        ThreatContainer(): iDirty(false) { }
+
+        ~ThreatContainer() { clearReferences(); }
 
         HostileReference* addThreat(Unit* victim, float threat);
 
         void modifyThreatPercent(Unit* victim, int32 percent);
 
-        HostileReference* selectNextVictim(Creature* attacker, HostileReference* currentVictim);
+        HostileReference* selectNextVictim(Creature* attacker, HostileReference* currentVictim) const;
 
         void setDirty(bool isDirty) { iDirty = isDirty; }
 
         bool isDirty() const { return iDirty; }
 
-        bool empty() const { return iThreatList.empty(); }
-
-        HostileReference* getMostHated() { return iThreatList.empty() ? NULL : iThreatList.front(); }
-
-        HostileReference* getReferenceByTarget(Unit* victim);
-
-        std::list<HostileReference*>& getThreatList()
+        bool empty() const
         {
-            return iThreatList;
+            return iThreatList.empty();
         }
+
+        HostileReference* getMostHated() const
+        {
+            return iThreatList.empty() ? NULL : iThreatList.front();
+        }
+
+        HostileReference* getReferenceByTarget(Unit* victim) const;
+
+        StorageType const & getThreatList() const { return iThreatList; }
+    private:
+        void remove(HostileReference* hostileRef)
+        {
+            iThreatList.remove(hostileRef);
+        }
+
+        void addReference(HostileReference* hostileRef)
+        {
+            iThreatList.push_back(hostileRef);
+        }
+
+        void clearReferences();
+
+        // Sort the list if necessary
+        void update();
+
+        StorageType iThreatList;
+        StorageType iPastEnemyList;
+        bool iDirty;
 };
 
 //=================================================
@@ -225,34 +231,13 @@ class ThreatManager
 
         float getThreat(Unit* victim, bool alsoSearchOfflineList = false);
 
-        //-----------------------------------------------------
-
-        bool wasUnitThreat(Unit const* unit) const;
-        void pushThreatInMemory(Unit* unit);
-
-        void clearPastEnemyList()
-        {
-            iThreatContainer.iPastEnemyList.clear();
-        }
-
-        //-----------------------------------------------------
-
-        bool isThreatListEmpty()
-        {
-            return iThreatContainer.empty();
-        }
+        bool isThreatListEmpty() const { return iThreatContainer.empty(); }
 
         void processThreatEvent(ThreatRefStatusChangeEvent* threatRefStatusChangeEvent);
 
-        HostileReference* getCurrentVictim()
-        {
-            return iCurrentVictim;
-        }
+        HostileReference* getCurrentVictim() const { return iCurrentVictim; }
 
-        Unit* getOwner()
-        {
-            return iOwner;
-        }
+        Unit* getOwner() const { return iOwner; }
 
         Unit* getHostileTarget();
 
@@ -263,24 +248,12 @@ class ThreatManager
 
         void setDirty(bool isDirty) { iThreatContainer.setDirty(isDirty); }
 
-        // methods to access the lists from the outside to do sume dirty manipulation (scriping and such)
+        // methods to access the lists from the outside to do some dirty manipulation (scriping and such)
         // I hope they are used as little as possible.
-        inline std::list<HostileReference*>& getThreatList()
-        {
-            return iThreatContainer.getThreatList();
-        }
-        inline std::list<HostileReference*>& getOfflieThreatList()
-        {
-            return iThreatOfflineContainer.getThreatList();
-        }
-        inline ThreatContainer& getOnlineContainer()
-        {
-            return iThreatContainer;
-        }
-        inline ThreatContainer& getOfflineContainer()
-        {
-            return iThreatOfflineContainer;
-        }
+        ThreatContainer::StorageType const & getThreatList() const { return iThreatContainer.getThreatList(); }
+        ThreatContainer::StorageType const & getOfflineThreatList() const { return iThreatOfflineContainer.getThreatList(); }
+        ThreatContainer& getOnlineContainer() { return iThreatContainer; }
+        ThreatContainer& getOfflineContainer() { return iThreatOfflineContainer; }
 
         void _addThreat(Unit* victim, float threat);
     private:

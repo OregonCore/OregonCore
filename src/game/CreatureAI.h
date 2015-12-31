@@ -94,6 +94,9 @@ class CreatureAI : public UnitAI
         // Called if IsVisible(Unit* who) is true at each *who move, reaction at visibility zone enter
         void MoveInLineOfSight_Safe(Unit* who);
 
+        // Trigger Creature "Alert" state (creature can see stealthed unit)
+        void TriggerAlert(Unit const* who) const;
+
         // Called for reaction at stopping attack at no attackers or targets
         virtual void EnterEvadeMode();
 
@@ -188,6 +191,7 @@ class CreatureAI : public UnitAI
 
         virtual void OnSpellClick(Unit* /*clicker*/) { }
 
+        virtual bool CanSeeAlways(WorldObject const* /*obj*/) { return false; }
     protected:
         virtual void MoveInLineOfSight(Unit*);
 

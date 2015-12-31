@@ -901,10 +901,8 @@ class PlayerTaxi
             m_TaxiDestinations.pop_front();
             return GetTaxiDestination();
         }
-        bool empty() const
-        {
-            return m_TaxiDestinations.empty();
-        }
+
+        bool empty() const { return m_TaxiDestinations.empty(); }
     private:
         TaxiMask m_taximask;
         std::deque<uint32> m_TaxiDestinations;
@@ -1833,7 +1831,7 @@ class Player : public Unit, public GridObject<Player>
         void CheckDuelDistance(time_t currTime);
         void DuelComplete(DuelCompleteType type);
 
-        bool IsGroupVisibleFor(Player* p) const;
+        bool IsGroupVisibleFor(Player const* p) const;
         bool IsInSameGroupWith(Player const* p) const;
         bool IsInSameRaidWith(Player const* p) const
         {
@@ -2012,8 +2010,7 @@ class Player : public Unit, public GridObject<Player>
         }
 
         void UpdateUnderwaterState(Map* m, float x, float y, float z);
-
-        void SendMessageToSet(WorldPacket* data, bool self);// overwrite Object::SendMessageToSet
+        void SendMessageToSet(WorldPacket *data, bool self) {SendMessageToSetInRange(data, GetVisibilityRange(), self); };// overwrite Object::SendMessageToSet
         void SendMessageToSetInRange(WorldPacket* data, float fist, bool self);// overwrite Object::SendMessageToSetInRange
         void SendMessageToSetInRange(WorldPacket* data, float dist, bool self, bool own_team_only);
 
@@ -2516,13 +2513,10 @@ class Player : public Unit, public GridObject<Player>
         typedef std::set<uint64> ClientGUIDs;
         ClientGUIDs m_clientGUIDs;
 
-        bool HaveAtClient(WorldObject const* u) const
-        {
-            return u == this || m_clientGUIDs.find(u->GetGUID()) != m_clientGUIDs.end();
-        }
+        bool HaveAtClient(WorldObject const* u) const;
 
-        bool canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList = false, bool is3dDistance = true) const;
-        bool IsVisibleInGridForPlayer(Player const* pl) const;
+        bool IsNeverVisible() const override;
+
         bool IsVisibleGloballyFor(Player* pl) const;
 
         void UpdateObjectVisibility(bool forced = true);
@@ -2532,9 +2526,6 @@ class Player : public Unit, public GridObject<Player>
 
         template<class T>
         void UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& visibleNow);
-
-        // Stealth detection system
-        void HandleStealthedUnitsDetection();
 
         uint8 m_forced_speed_changes[MAX_MOVE_TYPE];
 
@@ -2941,6 +2932,10 @@ class Player : public Unit, public GridObject<Player>
         float  m_summon_z;
 
         DeclinedName* m_declinedname;
+
+        bool CanAlwaysSee(WorldObject const* obj) const;
+
+        bool IsAlwaysDetectableFor(WorldObject const* seer) const;     
     private:
         // internal common parts for CanStore/StoreItem functions
         uint8 _CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemPrototype const* pProto, uint32& count, bool swap, Item* pSrcItem) const;
@@ -3000,7 +2995,6 @@ class Player : public Unit, public GridObject<Player>
         bool m_bHasDelayedTeleport;
         bool m_bHasBeenAliveAtDelayedTeleport;
 
-        uint32 m_DetectInvTimer;
         RAFLinkStatus m_rafLink;
 
         // Temporary removed pet cache

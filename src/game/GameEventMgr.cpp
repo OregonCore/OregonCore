@@ -1043,14 +1043,12 @@ void GameEventMgr::GameEventSpawn(int16 event_id)
             // Spawn if necessary (loaded grids only)
             Map* map = const_cast<Map*>(MapManager::Instance().CreateBaseMap(data->mapid));
             // We use spawn coords to spawn
-            if (!map->Instanceable() && map->IsLoaded(data->posX, data->posY))
+            if (!map->Instanceable() && map->IsGridLoaded(data->posX, data->posY))
             {
                 Creature* pCreature = new Creature;
                 //sLog.outDebug("Spawning creature %u",*itr);
-                if (!pCreature->LoadFromDB(*itr, map))
+                if (!pCreature->LoadCreatureFromDB(*itr, map))
                     delete pCreature;
-                else
-                    map->AddToMap(pCreature);
             }
         }
     }
@@ -1071,11 +1069,12 @@ void GameEventMgr::GameEventSpawn(int16 event_id)
             // this base map checked as non-instanced and then only existed
             Map* map = const_cast<Map*>(MapManager::Instance().CreateBaseMap(data->mapid));
             // We use current coords to unspawn, not spawn coords since creature can have changed grid
-            if (!map->Instanceable() && map->IsLoaded(data->posX, data->posY))
+            if (!map->Instanceable() && map->IsGridLoaded(data->posX, data->posY))
             {
                 GameObject* pGameobject = new GameObject;
                 //sLog.outDebug("Spawning gameobject %u", *itr);
-                if (!pGameobject->LoadFromDB(*itr, map))
+                //@todo: find out when it is add to map
+                if (!pGameobject->LoadGameObjectFromDB(*itr, map, false))
                     delete pGameobject;
                 else
                 {

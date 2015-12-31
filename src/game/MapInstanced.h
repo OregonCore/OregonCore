@@ -44,17 +44,17 @@ class MapInstanced : public Map
         }
         bool DestroyInstance(InstancedMaps::iterator& itr);
 
-        void AddGridMapReference(const GridPair& p)
+        void AddGridMapReference(const GridCoord& p)
         {
             ++GridMapReference[p.x_coord][p.y_coord];
-            SetUnloadReferenceLock(GridPair(63 - p.x_coord, 63 - p.y_coord), true);
+            SetUnloadReferenceLock(GridCoord((MAX_NUMBER_OF_GRIDS - 1) - p.x_coord, (MAX_NUMBER_OF_GRIDS - 1) - p.y_coord), true);
         }
 
-        void RemoveGridMapReference(const GridPair& p)
+        void RemoveGridMapReference(const GridCoord& p)
         {
             --GridMapReference[p.x_coord][p.y_coord];
             if (!GridMapReference[p.x_coord][p.y_coord])
-                SetUnloadReferenceLock(GridPair(63 - p.x_coord, 63 - p.y_coord), false);
+                SetUnloadReferenceLock(GridCoord((MAX_NUMBER_OF_GRIDS - 1) - p.x_coord, (MAX_NUMBER_OF_GRIDS - 1) - p.y_coord), false);
         }
 
         InstancedMaps& GetInstancedMaps()

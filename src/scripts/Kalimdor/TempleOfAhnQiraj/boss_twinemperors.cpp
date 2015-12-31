@@ -332,9 +332,8 @@ struct boss_twinemperorsAI : public ScriptedAI
 
         Creature* RespawnNearbyBugsAndGetOne()
         {
-            CellPair p(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
+            CellCoord p(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
             Cell cell(p);
-            cell.data.Part.reserved = ALL_DISTRICT;
             cell.SetNoCreate();
 
             std::list<Creature*> unitList;
@@ -342,7 +341,7 @@ struct boss_twinemperorsAI : public ScriptedAI
             AnyBugCheck u_check(me, 150);
             Oregon::CreatureListSearcher<AnyBugCheck> searcher(unitList, u_check);
             TypeContainerVisitor<Oregon::CreatureListSearcher<AnyBugCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
-            cell.Visit(p, grid_creature_searcher, *(me->GetMap()));
+            cell.Visit(p, grid_creature_searcher, *(me->GetMap()), *me, me->GetGridActivationRange());
 
             Creature* nearb = NULL;
 

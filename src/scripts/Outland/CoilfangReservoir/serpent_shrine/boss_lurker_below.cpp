@@ -131,7 +131,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
             pInstance->SetData(DATA_STRANGE_POOL, NOT_STARTED);
         }
         DoCast(me, SPELL_SUBMERGE);//submerge anim
-        me->SetVisibility(VISIBILITY_OFF);//we start invis under water, submerged
+        me->SetVisible(false);//we start invis under water, submerged
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
@@ -177,7 +177,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
             {
                 if (Submerged)
                 {
-                    me->SetVisibility(VISIBILITY_ON);
+                    me->SetVisible(true);
                     Submerged = false;
                     WaitTimer2 = 500;
                 }

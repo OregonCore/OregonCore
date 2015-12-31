@@ -285,7 +285,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         {
             pInstance->SetData(TYPE_NETHEKURSE, FAIL);
             float fRespX, fRespY, fRespZ;
-            me->GetRespawnCoord(fRespX, fRespY, fRespZ);
+            me->GetRespawnPosition(fRespX, fRespY, fRespZ);
             me->GetMotionMaster()->MovePoint(0, fRespX, fRespY, fRespZ);
         }
         else

@@ -151,7 +151,7 @@ struct boss_kalecgosAI : public ScriptedAI
         {
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
             me->SetLevitate(false);
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             me->SetStandState(UNIT_STAND_STATE_SLEEP);
         }
         me->SetHealth(me->GetMaxHealth());//dunno why it does not resets health at evade..
@@ -173,7 +173,7 @@ struct boss_kalecgosAI : public ScriptedAI
     void EnterEvadeMode()
     {
         bJustReset = true;
-        me->SetVisibility(VISIBILITY_OFF);
+        me->SetVisible(false);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
         ScriptedAI::EnterEvadeMode();
     }
@@ -224,7 +224,7 @@ struct boss_kalecgosAI : public ScriptedAI
                 {
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
                     me->SetLevitate(false);
-                    me->SetVisibility(VISIBILITY_ON);
+                    me->SetVisible(true);
                     me->SetStandState(UNIT_STAND_STATE_SLEEP);
                     ResetTimer = 10000;
                     bJustReset = false;
@@ -301,11 +301,20 @@ struct boss_kalecgosAI : public ScriptedAI
 
             if (SpectralBlastTimer <= diff)
             {
-                std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                ThreatContainer::StorageType const& m_threatlist = me->getThreatManager().getThreatList();
                 std::list<Unit*> targetList;
-                for (std::list<HostileReference*>::const_iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
-                    if ((*itr)->getTarget() && (*itr)->getTarget()->GetTypeId() == TYPEID_PLAYER && (*itr)->getTarget()->GetGUID() != me->getVictim()->GetGUID() && !(*itr)->getTarget()->HasAura(AURA_SPECTRAL_EXHAUSTION, 0) && (*itr)->getTarget()->GetPositionZ() > me->GetPositionZ() - 5)
-                        targetList.push_back((*itr)->getTarget());
+                for (ThreatContainer::StorageType::const_iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
+                {
+                    Unit* target = (*itr)->getTarget();
+                    if (target
+                        && target->GetTypeId() == TYPEID_PLAYER
+                        && target->GetGUID() != me->getVictim()->GetGUID()
+                        && target->GetPositionZ() > me->GetPositionZ() - 5
+                        && !target->HasAura(AURA_SPECTRAL_EXHAUSTION))
+                        {
+                            targetList.push_back(target);
+                        }
+                }
                 if (targetList.empty())
                 {
                     SpectralBlastTimer = 1000;
@@ -364,7 +373,7 @@ struct boss_kalecgosAI : public ScriptedAI
     {
         if (type != POINT_MOTION_TYPE)
             return;
-        me->SetVisibility(VISIBILITY_OFF);
+        me->SetVisible(false);
         if (isFriendly)
         {
             me->setDeathState(JUST_DIED);
@@ -619,13 +628,12 @@ struct boss_sathrovarrAI : public ScriptedAI
 
         if (ResetThreat <= diff)
         {
-            for (std::list<HostileReference*>::const_iterator itr = me->getThreatManager().getThreatList().begin(); itr != me->getThreatManager().getThreatList().end(); ++itr)
+            ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+            for (ThreatContainer::StorageType::const_iterator itr = threatlist.begin(); itr != threatlist.end(); ++itr)
             {
                 if (Unit* pUnit = Unit::GetUnit(*me, (*itr)->getUnitGuid()))
-                {
                     if (pUnit->GetPositionZ() > me->GetPositionZ() + 5)
                         me->getThreatManager().modifyThreatPercent(pUnit, -100);
-                }
             }
             ResetThreat = 1000;
         }

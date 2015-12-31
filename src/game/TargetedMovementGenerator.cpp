@@ -146,7 +146,7 @@ bool TargetedMovementGeneratorMedium<T, D>::Update(T& owner, const uint32& time_
         return true;
     }
 
-    if (!owner.HasAuraType(SPELL_AURA_MOD_INVISIBILITY) && !owner.canSeeOrDetect(i_target.getTarget(), true))
+    if (!owner.HasAuraType(SPELL_AURA_MOD_INVISIBILITY) && !owner.CanSeeOrDetect(i_target.getTarget(), true))
     {
         owner.AttackStop();
         if (owner.GetOwner())

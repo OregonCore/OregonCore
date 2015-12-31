@@ -356,12 +356,12 @@ struct boss_essence_of_sufferingAI : public ScriptedAI
 
     void CastFixate()
     {
-        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
-        if (m_threatlist.empty())
+        ThreatContainer::StorageType const &threatlist = me->getThreatManager().getThreatList();
+        if (threatlist.empty())
             return; // No point continuing if empty threatlist.
         std::list<Unit*> targets;
-        std::list<HostileReference*>::const_iterator itr = m_threatlist.begin();
-        for (; itr != m_threatlist.end(); ++itr)
+        ThreatContainer::StorageType::const_iterator itr = threatlist.begin();
+        for (; itr != threatlist.end(); ++itr)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*itr)->getUnitGuid());
             if (pUnit && pUnit->IsAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER)) // Only alive players
