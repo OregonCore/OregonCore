@@ -65,7 +65,7 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket& recv_data)
         return;
     }
 
-    if (GetPlayer()->InBattleGround())
+    if (GetPlayer()->InBattleground())
     {
         SendPartyResult(PARTY_OP_INVITE, membername, PARTY_RESULT_OK);
         return;
@@ -366,7 +366,7 @@ void WorldSession::HandleGroupLeaveOpcode(WorldPacket& /*recv_data*/)
     if (!GetPlayer()->GetGroup())
         return;
 
-    if (_player->InBattleGround())
+    if (_player->InBattleground())
     {
         SendPartyResult(PARTY_OP_INVITE, "", PARTY_RESULT_INVITE_RESTRICTED);
         return;
@@ -516,7 +516,7 @@ void WorldSession::HandleRaidConvertOpcode(WorldPacket& /*recv_data*/)
     if (!group)
         return;
 
-    if (_player->InBattleGround())
+    if (_player->InBattleground())
         return;
 
     /** error handling **/

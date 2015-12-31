@@ -218,14 +218,14 @@ void SocialMgr::GetFriendInfo(Player* player, uint32 friendGUID, FriendInfo& fri
         sObjectMgr.GetRAFLinkStatus(player, pFriend) ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_RAF) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_RAF);
 
 
-        if (hideInArena && pFriend->InBattleGround())
+        if (hideInArena && pFriend->InBattleground())
         {
-            if (pFriend->GetBattleGroundEntryPoint().GetMapId() == MAPID_INVALID)
+            if (pFriend->GetBattlegroundEntryPoint().GetMapId() == MAPID_INVALID)
                 friendInfo.Area = 0; // unknown
             else
-                friendInfo.Area = MapManager::Instance().GetZoneId(pFriend->GetBattleGroundEntryPoint().GetMapId(),
-                    pFriend->GetBattleGroundEntryPoint().GetPositionX(), pFriend->GetBattleGroundEntryPoint().GetPositionY(),
-                    pFriend->GetBattleGroundEntryPoint().GetPositionZ());
+                friendInfo.Area = MapManager::Instance().GetZoneId(pFriend->GetBattlegroundEntryPoint().GetMapId(),
+                    pFriend->GetBattlegroundEntryPoint().GetPositionX(), pFriend->GetBattlegroundEntryPoint().GetPositionY(),
+                    pFriend->GetBattlegroundEntryPoint().GetPositionZ());
         }
         else
             friendInfo.Area = pFriend->GetZoneId();

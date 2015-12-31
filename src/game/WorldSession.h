@@ -215,7 +215,7 @@ class WorldSession
         void SendNotInArenaTeamPacket(uint8 type);
         void SendPetitionShowList(uint64 guid);
         void SendSaveGuildEmblem(uint32 msg);
-        void SendBattleGroundOrArenaJoinError(uint8 err);
+        void SendBattlegroundOrArenaJoinError(uint8 err);
 
         // Looking For Group
         // TRUE values set by client sending CMSG_LFG_SET_AUTOJOIN and CMSG_LFM_CLEAR_AUTOFILL before player login
@@ -622,16 +622,16 @@ class WorldSession
 
         void HandleTotemDestroy(WorldPacket& recv_data);
 
-        //BattleGround
-        void HandleBattleGroundHelloOpcode(WorldPacket& recv_data);
-        void HandleBattleGroundJoinOpcode(WorldPacket& recv_data);
-        void HandleBattleGroundPlayerPositionsOpcode(WorldPacket& recv_data);
-        void HandleBattleGroundPVPlogdataOpcode(WorldPacket& recv_data);
-        void HandleBattleGroundPlayerPortOpcode(WorldPacket& recv_data);
-        void HandleBattleGroundListOpcode(WorldPacket& recv_data);
-        void HandleBattleGroundLeaveOpcode(WorldPacket& recv_data);
-        void HandleBattleGroundArenaJoin(WorldPacket& recv_data);
-        void HandleBattleGroundReportAFK(WorldPacket& recv_data);
+        //Battleground
+        void HandleBattlegroundHelloOpcode(WorldPacket& recv_data);
+        void HandleBattlegroundJoinOpcode(WorldPacket& recv_data);
+        void HandleBattlegroundPlayerPositionsOpcode(WorldPacket& recv_data);
+        void HandleBattlegroundPVPlogdataOpcode(WorldPacket& recv_data);
+        void HandleBattlegroundPlayerPortOpcode(WorldPacket& recv_data);
+        void HandleBattlegroundListOpcode(WorldPacket& recv_data);
+        void HandleBattlegroundLeaveOpcode(WorldPacket& recv_data);
+        void HandleBattlegroundArenaJoin(WorldPacket& recv_data);
+        void HandleBattlegroundReportAFK(WorldPacket& recv_data);
 
         void HandleWardenDataOpcode(WorldPacket& recv_data);
         void HandleWorldTeleportOpcode(WorldPacket& recv_data);

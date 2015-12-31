@@ -17,14 +17,14 @@
 
 #include "Object.h"
 #include "Player.h"
-#include "BattleGround.h"
-#include "BattleGroundNA.h"
+#include "Battleground.h"
+#include "BattlegroundNA.h"
 #include "Creature.h"
 #include "ObjectMgr.h"
 #include "MapManager.h"
 #include "Language.h"
 
-BattleGroundNA::BattleGroundNA()
+BattlegroundNA::BattlegroundNA()
 {
     m_BgObjects.resize(BG_NA_OBJECT_MAX);
 
@@ -39,23 +39,23 @@ BattleGroundNA::BattleGroundNA()
     m_StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_ARENA_HAS_BEGUN;
 }
 
-BattleGroundNA::~BattleGroundNA()
+BattlegroundNA::~BattlegroundNA()
 {
 
 }
 
-void BattleGroundNA::Update(uint32 diff)
+void BattlegroundNA::Update(uint32 diff)
 {
-    BattleGround::Update(diff);
+    Battleground::Update(diff);
 }
 
-void BattleGroundNA::StartingEventCloseDoors()
+void BattlegroundNA::StartingEventCloseDoors()
 {
     for (uint32 i = BG_NA_OBJECT_DOOR_1; i <= BG_NA_OBJECT_DOOR_4; ++i)
         SpawnBGObject(i, RESPAWN_IMMEDIATELY);
 }
 
-void BattleGroundNA::StartingEventOpenDoors()
+void BattlegroundNA::StartingEventOpenDoors()
 {
     for (uint32 i = BG_NA_OBJECT_DOOR_1; i <= BG_NA_OBJECT_DOOR_2; ++i)
         DoorOpen(i);
@@ -64,11 +64,11 @@ void BattleGroundNA::StartingEventOpenDoors()
         SpawnBGObject(i, 60);
 }
 
-void BattleGroundNA::AddPlayer(Player* plr)
+void BattlegroundNA::AddPlayer(Player* plr)
 {
-    BattleGround::AddPlayer(plr);
+    Battleground::AddPlayer(plr);
     //create score and add it to map, default values are set in constructor
-    BattleGroundNAScore* sc = new BattleGroundNAScore;
+    BattlegroundNAScore* sc = new BattlegroundNAScore;
 
     m_PlayerScores[plr->GetGUID()] = sc;
 
@@ -76,7 +76,7 @@ void BattleGroundNA::AddPlayer(Player* plr)
     UpdateWorldState(0xa10, GetAlivePlayersCountByTeam(HORDE));
 }
 
-void BattleGroundNA::RemovePlayer(Player* /*plr*/, uint64 /*guid*/)
+void BattlegroundNA::RemovePlayer(Player* /*plr*/, uint64 /*guid*/)
 {
     if (GetStatus() == STATUS_WAIT_LEAVE)
         return;
@@ -87,18 +87,18 @@ void BattleGroundNA::RemovePlayer(Player* /*plr*/, uint64 /*guid*/)
     CheckArenaWinConditions();
 }
 
-void BattleGroundNA::HandleKillPlayer(Player* player, Player* killer)
+void BattlegroundNA::HandleKillPlayer(Player* player, Player* killer)
 {
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;
 
     if (!killer)
     {
-        sLog.outError("BattleGroundNA: Killer player not found");
+        sLog.outError("BattlegroundNA: Killer player not found");
         return;
     }
 
-    BattleGround::HandleKillPlayer(player, killer);
+    Battleground::HandleKillPlayer(player, killer);
 
     UpdateWorldState(0xa0f, GetAlivePlayersCountByTeam(ALLIANCE));
     UpdateWorldState(0xa10, GetAlivePlayersCountByTeam(HORDE));
@@ -106,7 +106,7 @@ void BattleGroundNA::HandleKillPlayer(Player* player, Player* killer)
     CheckArenaWinConditions();
 }
 
-void BattleGroundNA::HandleAreaTrigger(Player* Source, uint32 Trigger)
+void BattlegroundNA::HandleAreaTrigger(Player* Source, uint32 Trigger)
 {
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;
@@ -128,19 +128,19 @@ void BattleGroundNA::HandleAreaTrigger(Player* Source, uint32 Trigger)
     //    HandleTriggerBuff(buff_guid,Source);
 }
 
-void BattleGroundNA::FillInitialWorldStates(WorldPacket& data)
+void BattlegroundNA::FillInitialWorldStates(WorldPacket& data)
 {
     data << uint32(0xa0f) << uint32(GetAlivePlayersCountByTeam(ALLIANCE));           // 7
     data << uint32(0xa10) << uint32(GetAlivePlayersCountByTeam(HORDE));           // 8
     data << uint32(0xa11) << uint32(1);           // 9
 }
 
-void BattleGroundNA::ResetBGSubclass()
+void BattlegroundNA::ResetBGSubclass()
 {
 
 }
 
-bool BattleGroundNA::SetupBattleGround()
+bool BattlegroundNA::SetupBattleground()
 {
     // gates
     if (  !AddObject(BG_NA_OBJECT_DOOR_1, BG_NA_OBJECT_TYPE_DOOR_1, 4031.854f, 2966.833f, 12.6462f, -2.648788f, 0.0f, 0.0f, 0.9697962f, -0.2439165f, RESPAWN_IMMEDIATELY)

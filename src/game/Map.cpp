@@ -1944,7 +1944,7 @@ void Map::DelayedUpdate(const uint32 t_diff)
 
     // Don't unload grids if it's battleground, since we may have manually added GOs,creatures, those doesn't load from DB at grid re-load !
     // This isn't really bother us, since as soon as we have instanced BG-s, the whole map unloads as the BG gets ended
-    if (!IsBattleGroundOrArena())
+    if (!IsBattlegroundOrArena())
     {
         for (GridRefManager<NGridType>::iterator i = GridRefManager<NGridType>::begin(); i != GridRefManager<NGridType>::end();)
         {
@@ -2505,25 +2505,25 @@ void InstanceMap::SetResetSchedule(bool on)
 
 /* ******* Battleground Instance Maps ******* */
 
-BattleGroundMap::BattleGroundMap(uint32 id, time_t expiry, uint32 InstanceId, Map* _parent)
+BattlegroundMap::BattlegroundMap(uint32 id, time_t expiry, uint32 InstanceId, Map* _parent)
     : Map(id, expiry, InstanceId, DIFFICULTY_NORMAL, _parent)
 {
     //lets initialize visibility distance for BG/Arenas
-    BattleGroundMap::InitVisibilityDistance();
+    BattlegroundMap::InitVisibilityDistance();
 }
 
-BattleGroundMap::~BattleGroundMap()
+BattlegroundMap::~BattlegroundMap()
 {
 }
 
-void BattleGroundMap::InitVisibilityDistance()
+void BattlegroundMap::InitVisibilityDistance()
 {
     //init visibility distance for BG/Arenas
     m_VisibleDistance = sWorld.GetMaxVisibleDistanceInBGArenas();
     m_VisibilityNotifyPeriod = World::GetVisibilityNotifyPeriodInBGArenas();
 }
 
-bool BattleGroundMap::CanEnter(Player* player)
+bool BattlegroundMap::CanEnter(Player* player)
 {
     if (player->GetMapRef().getTarget() == this)
     {
@@ -2532,7 +2532,7 @@ bool BattleGroundMap::CanEnter(Player* player)
         return false;
     }
 
-    if (player->GetBattleGroundId() != GetInstanceId())
+    if (player->GetBattlegroundId() != GetInstanceId())
         return false;
 
     // player number limit is checked in bgmgr, no need to do it here
@@ -2540,7 +2540,7 @@ bool BattleGroundMap::CanEnter(Player* player)
     return Map::CanEnter(player);
 }
 
-bool BattleGroundMap::AddToMap(Player* player)
+bool BattlegroundMap::AddToMap(Player* player)
 {
     {
         Guard guard(*this);
@@ -2552,24 +2552,24 @@ bool BattleGroundMap::AddToMap(Player* player)
     return Map::AddToMap(player);
 }
 
-void BattleGroundMap::RemoveFromMap(Player* player, bool remove)
+void BattlegroundMap::RemoveFromMap(Player* player, bool remove)
 {
     sLog.outDetail("MAP: Removing player '%s' from bg '%u' of map '%s' before relocating to other map", player->GetName(), GetInstanceId(), GetMapName());
     Map::RemoveFromMap(player, remove);
 }
 
-void BattleGroundMap::SetUnload()
+void BattlegroundMap::SetUnload()
 {
     m_unloadTimer = MIN_UNLOAD_DELAY;
 }
 
-void BattleGroundMap::RemoveAllPlayers()
+void BattlegroundMap::RemoveAllPlayers()
 {
     if (HavePlayers())
         for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
             if (Player* plr = itr->getSource())
                 if (!plr->IsBeingTeleportedFar())
-                    plr->TeleportTo(plr->GetBattleGroundEntryPoint());
+                    plr->TeleportTo(plr->GetBattlegroundEntryPoint());
 
 }
 

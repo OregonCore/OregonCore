@@ -25,7 +25,7 @@
 #include "Group.h"
 #include "Formulas.h"
 #include "ObjectAccessor.h"
-#include "BattleGround.h"
+#include "Battleground.h"
 #include "MapManager.h"
 #include "InstanceSaveMgr.h"
 #include "Util.h"
@@ -391,7 +391,7 @@ void Group::Disband(bool hideDestroy)
         // we cannot call _removeMember because it would invalidate member iterator
         // if we are removing player from battleground raid
         if (isBGGroup())
-            player->RemoveFromBattleGroundRaid();
+            player->RemoveFromBattlegroundRaid();
         else
         {
             // we can remove player who is in battleground from his original group
@@ -953,7 +953,7 @@ void Group::SendUpdate()
         // guess size
         WorldPacket data(SMSG_GROUP_LIST, (1 + 1 + 1 + 1 + 8 + 4 + GetMembersCount() * 20));
         data << (uint8)m_groupType;                         // group type
-        data << (uint8)(isBGGroup() ? 1 : 0);               // 2.0.x, isBattleGroundGroup?
+        data << (uint8)(isBGGroup() ? 1 : 0);               // 2.0.x, isBattlegroundGroup?
         data << (uint8)(citr->group);                       // groupid
         data << (uint8)(citr->assistant ? 0x01 : 0);        // 0x2 main assist, 0x4 main tank
         data << uint64(0x50000000FFFFFFFELL);               // related to voice chat?
@@ -1095,9 +1095,9 @@ bool Group::_addMember(const uint64& guid, const char* name, bool isAssistant, u
     if (player)
     {
         player->SetGroupInvite(NULL);
-        // if player is in group and he is being added to BG raid group, then call SetBattleGroundRaid()
+        // if player is in group and he is being added to BG raid group, then call SetBattlegroundRaid()
         if (player->GetGroup() && isBGGroup())
-            player->SetBattleGroundRaid(this, group);
+            player->SetBattlegroundRaid(this, group);
         // if player is in bg raid and we are adding him to normal group, then call SetOriginalGroup()
         else if (player->GetGroup())
             player->SetOriginalGroup(this, group);
@@ -1138,7 +1138,7 @@ bool Group::_removeMember(const uint64& guid)
     {
         // if we are removing player from battleground raid
         if (isBGGroup())
-            player->RemoveFromBattleGroundRaid();
+            player->RemoveFromBattlegroundRaid();
         else
         {
             // we can remove player who is in battleground from his original group
@@ -1425,7 +1425,7 @@ void Group::UpdateLooterGuid(WorldObject* object, bool ifneed)
     }
 }
 
-uint32 Group::CanJoinBattleGroundQueue(uint32 bgTypeId, uint32 bgQueueType, uint32 MinPlayerCount, uint32 MaxPlayerCount, bool isRated, uint32 arenaSlot)
+uint32 Group::CanJoinBattlegroundQueue(uint32 bgTypeId, uint32 bgQueueType, uint32 MinPlayerCount, uint32 MaxPlayerCount, bool isRated, uint32 arenaSlot)
 {
     // check for min / max count
     uint32 memberscount = GetMembersCount();
@@ -1440,7 +1440,7 @@ uint32 Group::CanJoinBattleGroundQueue(uint32 bgTypeId, uint32 bgQueueType, uint
     if (!reference)
         return BG_JOIN_ERR_OFFLINE_MEMBER;
 
-    uint32 bgQueueId = reference->GetBattleGroundQueueIdFromLevel();
+    uint32 bgQueueId = reference->GetBattlegroundQueueIdFromLevel();
     uint32 arenaTeamId = reference->GetArenaTeamId(arenaSlot);
     uint32 team = reference->GetTeam();
 
@@ -1455,19 +1455,19 @@ uint32 Group::CanJoinBattleGroundQueue(uint32 bgTypeId, uint32 bgQueueType, uint
         if (member->GetTeam() != team)
             return BG_JOIN_ERR_MIXED_FACTION;
         // not in the same battleground level braket, don't let join
-        if (member->GetBattleGroundQueueIdFromLevel() != bgQueueId)
+        if (member->GetBattlegroundQueueIdFromLevel() != bgQueueId)
             return BG_JOIN_ERR_MIXED_LEVELS;
         // don't let join rated matches if the arena team id doesn't match
         if (isRated && member->GetArenaTeamId(arenaSlot) != arenaTeamId)
             return BG_JOIN_ERR_MIXED_ARENATEAM;
         // don't let join if someone from the group is already in that bg queue
-        if (member->InBattleGroundQueueForBattleGroundQueueType(bgQueueType))
+        if (member->InBattlegroundQueueForBattlegroundQueueType(bgQueueType))
             return BG_JOIN_ERR_GROUP_MEMBER_ALREADY_IN_QUEUE;
         // check for deserter debuff in case not arena queue
         if (bgTypeId != BATTLEGROUND_AA && !member->CanJoinToBattleground())
             return BG_JOIN_ERR_GROUP_DESERTER;
         // check if member can join any more battleground queues
-        if (!member->HasFreeBattleGroundQueueId())
+        if (!member->HasFreeBattlegroundQueueId())
             return BG_JOIN_ERR_ALL_QUEUES_USED;
     }
     return BG_JOIN_ERR_OK;

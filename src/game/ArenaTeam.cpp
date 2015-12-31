@@ -18,7 +18,7 @@
 #include "ObjectMgr.h"
 #include "WorldPacket.h"
 #include "ArenaTeam.h"
-#include "BattleGroundMgr.h"
+#include "BattlegroundMgr.h"
 
 void ArenaTeamMember::ModifyPersonalRating(Player* plr, int32 mod, uint32 slot)
 {
@@ -280,16 +280,16 @@ void ArenaTeam::DelMember(uint64 guid)
         // remove from arena queue, if queued
         for (uint8 i = 0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
         {
-            if (uint32 bgQueueType = player->GetBattleGroundQueueId(i))
+            if (uint32 bgQueueType = player->GetBattlegroundQueueId(i))
             {
-                BattleGround* bg = sBattleGroundMgr.GetBattleGroundTemplate(bgQueueType);
+                Battleground* bg = sBattlegroundMgr.GetBattlegroundTemplate(bgQueueType);
                 if (!bg || !bg->isArena())
                     break;
 
                 WorldPacket data;
-                sBattleGroundMgr.BuildBattleGroundStatusPacket(&data, bg, player->GetTeam(), player->GetBattleGroundQueueIndex(bgQueueType), STATUS_NONE, 0, 0);
+                sBattlegroundMgr.BuildBattlegroundStatusPacket(&data, bg, player->GetTeam(), player->GetBattlegroundQueueIndex(bgQueueType), STATUS_NONE, 0, 0);
                 player->GetSession()->SendPacket(&data);
-                sBattleGroundMgr.m_BattleGroundQueues[bgQueueType].RemovePlayer(player->GetGUID(), false);
+                sBattlegroundMgr.m_BattlegroundQueues[bgQueueType].RemovePlayer(player->GetGUID(), false);
             }
         }
 

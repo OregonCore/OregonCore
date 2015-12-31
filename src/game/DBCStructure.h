@@ -527,7 +527,7 @@ struct MapEntry
     {
         return map_type == MAP_RAID;
     }
-    bool IsBattleGround() const
+    bool IsBattleground() const
     {
         return map_type == MAP_BATTLEGROUND;
     }
@@ -535,7 +535,7 @@ struct MapEntry
     {
         return map_type == MAP_ARENA;
     }
-    bool IsBattleGroundOrArena() const
+    bool IsBattlegroundOrArena() const
     {
         return map_type == MAP_BATTLEGROUND || map_type == MAP_ARENA;
     }

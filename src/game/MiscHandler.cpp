@@ -33,7 +33,7 @@
 #include "MapManager.h"
 #include "ObjectAccessor.h"
 #include "Object.h"
-#include "BattleGround.h"
+#include "Battleground.h"
 #include "OutdoorPvP.h"
 #include "SpellAuras.h"
 #include "SocialMgr.h"
@@ -261,14 +261,14 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
             continue;
 
         uint32 pzoneid;
-        if (hideInArena && itr->second->InBattleGround())
+        if (hideInArena && itr->second->InBattleground())
         {
-            if (itr->second->GetBattleGroundEntryPoint().GetMapId() == MAPID_INVALID)
+            if (itr->second->GetBattlegroundEntryPoint().GetMapId() == MAPID_INVALID)
                 pzoneid = 0; // unknown
             else
-                pzoneid = MapManager::Instance().GetZoneId(itr->second->GetBattleGroundEntryPoint().GetMapId(),
-                    itr->second->GetBattleGroundEntryPoint().GetPositionX(), itr->second->GetBattleGroundEntryPoint().GetPositionY(),
-                    itr->second->GetBattleGroundEntryPoint().GetPositionZ());
+                pzoneid = MapManager::Instance().GetZoneId(itr->second->GetBattlegroundEntryPoint().GetMapId(),
+                    itr->second->GetBattlegroundEntryPoint().GetPositionX(), itr->second->GetBattlegroundEntryPoint().GetPositionY(),
+                    itr->second->GetBattlegroundEntryPoint().GetPositionZ());
         }
         else
             pzoneid = itr->second->GetZoneId();
@@ -741,7 +741,7 @@ void WorldSession::HandleCorpseReclaimOpcode(WorldPacket& recv_data)
         return;
 
     // resurrect
-    GetPlayer()->ResurrectPlayer(GetPlayer()->InBattleGround() ? 1.0f : 0.5f);
+    GetPlayer()->ResurrectPlayer(GetPlayer()->InBattleground() ? 1.0f : 0.5f);
     
     // spawn bones
     GetPlayer()->SpawnCorpseBones();
@@ -825,9 +825,9 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket& recv_data)
         return;
     }
 
-    if (GetPlayer()->InBattleGround())
+    if (GetPlayer()->InBattleground())
     {
-        BattleGround* bg = GetPlayer()->GetBattleGround();
+        Battleground* bg = GetPlayer()->GetBattleground();
         if (bg)
             if (bg->GetStatus() == STATUS_IN_PROGRESS)
                 bg->HandleAreaTrigger(GetPlayer(), Trigger_ID);

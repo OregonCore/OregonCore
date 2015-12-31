@@ -51,7 +51,7 @@ class CreatureGroup;
 struct ScriptInfo;
 struct ScriptAction;
 struct Position;
-class BattleGround;
+class Battleground;
 namespace Oregon { struct ObjectUpdater; }
 
 struct ScriptAction
@@ -409,17 +409,17 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         {
             return i_spawnMode == DIFFICULTY_HEROIC;
         }
-        bool IsBattleGround() const
+        bool IsBattleground() const
         {
-            return i_mapEntry && i_mapEntry->IsBattleGround();
+            return i_mapEntry && i_mapEntry->IsBattleground();
         }
         bool IsBattleArena() const
         {
             return i_mapEntry && i_mapEntry->IsBattleArena();
         }
-        bool IsBattleGroundOrArena() const
+        bool IsBattlegroundOrArena() const
         {
-            return i_mapEntry && i_mapEntry->IsBattleGroundOrArena();
+            return i_mapEntry && i_mapEntry->IsBattlegroundOrArena();
         }
 
         void AddObjectToRemoveList(WorldObject* obj);
@@ -691,11 +691,11 @@ class InstanceMap : public Map
         uint32 i_script_id;
 };
 
-class BattleGroundMap : public Map
+class BattlegroundMap : public Map
 {
     public:
-        BattleGroundMap(uint32 id, time_t, uint32 InstanceId, Map* _parent);
-        ~BattleGroundMap();
+        BattlegroundMap(uint32 id, time_t, uint32 InstanceId, Map* _parent);
+        ~BattlegroundMap();
 
         bool AddToMap(Player*);
         void RemoveFromMap(Player*, bool);
@@ -704,16 +704,16 @@ class BattleGroundMap : public Map
         void RemoveAllPlayers();
 
         virtual void InitVisibilityDistance();
-        BattleGround* GetBG()
+        Battleground* GetBG()
         {
             return m_bg;
         }
-        void SetBG(BattleGround* bg)
+        void SetBG(Battleground* bg)
         {
             m_bg = bg;
         }
     private:
-        BattleGround* m_bg;
+        Battleground* m_bg;
 };
 
 /*inline

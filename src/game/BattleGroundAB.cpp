@@ -17,8 +17,8 @@
 
 #include "Object.h"
 #include "Player.h"
-#include "BattleGround.h"
-#include "BattleGroundAB.h"
+#include "Battleground.h"
+#include "BattlegroundAB.h"
 #include "Creature.h"
 #include "MapManager.h"
 #include "Language.h"
@@ -37,7 +37,7 @@ uint32 BG_AB_ReputationScoreTicks[BG_HONOR_MODE_NUM] =
     150  // holiday
 };
 
-BattleGroundAB::BattleGroundAB()
+BattlegroundAB::BattlegroundAB()
 {
     m_BuffChange = true;
     m_BgObjects.resize(BG_AB_OBJECT_MAX);
@@ -49,13 +49,13 @@ BattleGroundAB::BattleGroundAB()
     m_StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_BG_AB_HAS_BEGUN;
 }
 
-BattleGroundAB::~BattleGroundAB()
+BattlegroundAB::~BattlegroundAB()
 {
 }
 
-void BattleGroundAB::Update(uint32 diff)
+void BattlegroundAB::Update(uint32 diff)
 {
-    BattleGround::Update(diff);
+    Battleground::Update(diff);
 
     if (GetStatus() == STATUS_IN_PROGRESS)
     {
@@ -158,13 +158,13 @@ void BattleGroundAB::Update(uint32 diff)
 
         // Test win condition
         if (m_TeamScores[BG_TEAM_ALLIANCE] >= BG_AB_MAX_TEAM_SCORE)
-            EndBattleGround(ALLIANCE);
+            EndBattleground(ALLIANCE);
         if (m_TeamScores[BG_TEAM_HORDE] >= BG_AB_MAX_TEAM_SCORE)
-            EndBattleGround(HORDE);
+            EndBattleground(HORDE);
     }
 }
 
-void BattleGroundAB::StartingEventCloseDoors()
+void BattlegroundAB::StartingEventCloseDoors()
 {
     // despawn banners, auras and buffs
     for (int obj = BG_AB_OBJECT_BANNER_NEUTRAL; obj < BG_AB_NODES_MAX * 8; ++obj)
@@ -183,7 +183,7 @@ void BattleGroundAB::StartingEventCloseDoors()
     _NodeOccupied(BG_AB_SPIRIT_HORDE, HORDE);
 }
 
-void BattleGroundAB::StartingEventOpenDoors()
+void BattlegroundAB::StartingEventOpenDoors()
 {
     // spawn neutral banners
     for (int banner = BG_AB_OBJECT_BANNER_NEUTRAL, i = 0; i < 5; banner += 8, ++i)
@@ -198,21 +198,21 @@ void BattleGroundAB::StartingEventOpenDoors()
     DoorOpen(BG_AB_OBJECT_GATE_H);
 }
 
-void BattleGroundAB::AddPlayer(Player* plr)
+void BattlegroundAB::AddPlayer(Player* plr)
 {
-    BattleGround::AddPlayer(plr);
+    Battleground::AddPlayer(plr);
     //create score and add it to map, default values are set in the constructor
-    BattleGroundABScore* sc = new BattleGroundABScore;
+    BattlegroundABScore* sc = new BattlegroundABScore;
 
     m_PlayerScores[plr->GetGUID()] = sc;
 }
 
-void BattleGroundAB::RemovePlayer(Player* /*plr*/, uint64 /*guid*/)
+void BattlegroundAB::RemovePlayer(Player* /*plr*/, uint64 /*guid*/)
 {
 
 }
 
-void BattleGroundAB::HandleAreaTrigger(Player* Source, uint32 Trigger)
+void BattlegroundAB::HandleAreaTrigger(Player* Source, uint32 Trigger)
 {
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;
@@ -248,7 +248,7 @@ void BattleGroundAB::HandleAreaTrigger(Player* Source, uint32 Trigger)
 
 /* type: 0-neutral, 1-contested, 3-occupied
     teamIndex: 0-ally, 1-horde                        */
-void BattleGroundAB::_CreateBanner(uint8 node, uint8 type, uint8 teamIndex, bool delay)
+void BattlegroundAB::_CreateBanner(uint8 node, uint8 type, uint8 teamIndex, bool delay)
 {
     // Just put it into the queue
     if (delay)
@@ -270,7 +270,7 @@ void BattleGroundAB::_CreateBanner(uint8 node, uint8 type, uint8 teamIndex, bool
     SpawnBGObject(obj, RESPAWN_IMMEDIATELY);
 }
 
-void BattleGroundAB::_DelBanner(uint8 node, uint8 type, uint8 teamIndex)
+void BattlegroundAB::_DelBanner(uint8 node, uint8 type, uint8 teamIndex)
 {
     uint8 obj = node * 8 + type + teamIndex;
     SpawnBGObject(obj, RESPAWN_ONE_DAY);
@@ -282,7 +282,7 @@ void BattleGroundAB::_DelBanner(uint8 node, uint8 type, uint8 teamIndex)
     SpawnBGObject(obj, RESPAWN_ONE_DAY);
 }
 
-int32 BattleGroundAB::_GetNodeNameId(uint8 node)
+int32 BattlegroundAB::_GetNodeNameId(uint8 node)
 {
     switch (node)
     {
@@ -302,7 +302,7 @@ int32 BattleGroundAB::_GetNodeNameId(uint8 node)
     return 0;
 }
 
-void BattleGroundAB::FillInitialWorldStates(WorldPacket& data)
+void BattlegroundAB::FillInitialWorldStates(WorldPacket& data)
 {
     const uint8 plusArray[] = {0, 2, 3, 0, 1};
 
@@ -336,7 +336,7 @@ void BattleGroundAB::FillInitialWorldStates(WorldPacket& data)
     data << uint32(0x745) << uint32(0x2);           // 37 1861 unk
 }
 
-void BattleGroundAB::_SendNodeUpdate(uint8 node)
+void BattlegroundAB::_SendNodeUpdate(uint8 node)
 {
     // Send node owner state update to refresh map icons on client
     const uint8 plusArray[] = {0, 2, 3, 0, 1};
@@ -360,7 +360,7 @@ void BattleGroundAB::_SendNodeUpdate(uint8 node)
     UpdateWorldState(BG_AB_OP_OCCUPIED_BASES_HORDE, horde);
 }
 
-void BattleGroundAB::_NodeOccupied(uint8 node, Team team)
+void BattlegroundAB::_NodeOccupied(uint8 node, Team team)
 {
     if (!AddSpiritGuide(node, BG_AB_SpiritGuidePos[node][0], BG_AB_SpiritGuidePos[node][1], BG_AB_SpiritGuidePos[node][2], BG_AB_SpiritGuidePos[node][3], team))
         sLog.outError("Failed to spawn spirit guide! point: %u, team: %u,", node, team);
@@ -377,7 +377,7 @@ void BattleGroundAB::_NodeOccupied(uint8 node, Team team)
         CastSpellOnTeam(SPELL_AB_QUEST_REWARD_4_BASES, team);
 }
 
-void BattleGroundAB::_NodeDeOccupied(uint8 node)
+void BattlegroundAB::_NodeDeOccupied(uint8 node)
 {
     if (node >= BG_AB_NODES_MAX)
         return;
@@ -408,7 +408,7 @@ void BattleGroundAB::_NodeDeOccupied(uint8 node)
 }
 
 /* Invoked if a player used a banner as a GameObject*/
-void BattleGroundAB::EventPlayerClickedOnFlag(Player* source, GameObject* /*target_obj*/)
+void BattlegroundAB::EventPlayerClickedOnFlag(Player* source, GameObject* /*target_obj*/)
 {
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;
@@ -530,7 +530,7 @@ void BattleGroundAB::EventPlayerClickedOnFlag(Player* source, GameObject* /*targ
     PlaySoundToAll(sound);
 }
 
-bool BattleGroundAB::SetupBattleGround()
+bool BattlegroundAB::SetupBattleground()
 {
     for (int i = 0 ; i < BG_AB_NODES_MAX; ++i)
     {
@@ -544,7 +544,7 @@ bool BattleGroundAB::SetupBattleGround()
               || !AddObject(BG_AB_OBJECT_AURA_CONTESTED + 8 * i, BG_AB_OBJECTID_AURA_C, BG_AB_NodePositions[i][0], BG_AB_NodePositions[i][1], BG_AB_NodePositions[i][2], BG_AB_NodePositions[i][3], 0, 0, sin(BG_AB_NodePositions[i][3] / 2), cos(BG_AB_NodePositions[i][3] / 2), RESPAWN_ONE_DAY)
            )
         {
-            sLog.outErrorDb("BatteGroundAB: Failed to spawn some object BattleGround not created!");
+            sLog.outErrorDb("BatteGroundAB: Failed to spawn some object Battleground not created!");
             return false;
         }
     }
@@ -552,7 +552,7 @@ bool BattleGroundAB::SetupBattleGround()
           || !AddObject(BG_AB_OBJECT_GATE_H, BG_AB_OBJECTID_GATE_H, BG_AB_DoorPositions[1][0], BG_AB_DoorPositions[1][1], BG_AB_DoorPositions[1][2], BG_AB_DoorPositions[1][3], BG_AB_DoorPositions[1][4], BG_AB_DoorPositions[1][5], BG_AB_DoorPositions[1][6], BG_AB_DoorPositions[1][7], RESPAWN_IMMEDIATELY)
        )
     {
-        sLog.outErrorDb("BatteGroundAB: Failed to spawn door object BattleGround not created!");
+        sLog.outErrorDb("BatteGroundAB: Failed to spawn door object Battleground not created!");
         return false;
     }
     //buffs
@@ -568,7 +568,7 @@ bool BattleGroundAB::SetupBattleGround()
     return true;
 }
 
-void BattleGroundAB::ResetBGSubclass()
+void BattlegroundAB::ResetBGSubclass()
 {
     m_TeamScores[BG_TEAM_ALLIANCE]          = 0;
     m_TeamScores[BG_TEAM_HORDE]             = 0;
@@ -593,7 +593,7 @@ void BattleGroundAB::ResetBGSubclass()
             DelCreature(i);
 }
 
-WorldSafeLocsEntry const* BattleGroundAB::GetClosestGraveYard(Player* player)
+WorldSafeLocsEntry const* BattlegroundAB::GetClosestGraveYard(Player* player)
 {
     uint8 teamIndex = GetTeamIndexByTeamId(player->GetTeam());
 
@@ -632,22 +632,22 @@ WorldSafeLocsEntry const* BattleGroundAB::GetClosestGraveYard(Player* player)
     return good_entry;
 }
 
-void BattleGroundAB::UpdatePlayerScore(Player* Source, uint32 type, uint32 value)
+void BattlegroundAB::UpdatePlayerScore(Player* Source, uint32 type, uint32 value)
 {
-    BattleGroundScoreMap::iterator itr = m_PlayerScores.find(Source->GetGUID());
+    BattlegroundScoreMap::iterator itr = m_PlayerScores.find(Source->GetGUID());
     if (itr == m_PlayerScores.end())                         // player not found...
         return;
 
     switch (type)
     {
     case SCORE_BASES_ASSAULTED:
-        ((BattleGroundABScore*)itr->second)->BasesAssaulted += value;
+        ((BattlegroundABScore*)itr->second)->BasesAssaulted += value;
         break;
     case SCORE_BASES_DEFENDED:
-        ((BattleGroundABScore*)itr->second)->BasesDefended += value;
+        ((BattlegroundABScore*)itr->second)->BasesDefended += value;
         break;
     default:
-        BattleGround::UpdatePlayerScore(Source, type, value);
+        Battleground::UpdatePlayerScore(Source, type, value);
         break;
     }
 }

@@ -46,7 +46,7 @@
 #include "Config/Config.h"
 #include "Util.h"
 #include "ItemEnchantmentMgr.h"
-#include "BattleGroundMgr.h"
+#include "BattlegroundMgr.h"
 #include "InstanceSaveMgr.h"
 #include "InstanceData.h"
 #include "AuctionHouseBot.h"
@@ -7379,7 +7379,7 @@ bool ChatHandler::HandleSendMessageCommand(const char* args)
 
 bool ChatHandler::HandleFlushArenaPointsCommand(const char* /*args*/)
 {
-    sBattleGroundMgr.DistributeArenaPoints();
+    sBattlegroundMgr.DistributeArenaPoints();
     return true;
 }
 

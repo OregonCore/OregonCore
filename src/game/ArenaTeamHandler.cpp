@@ -211,7 +211,7 @@ void WorldSession::HandleArenaTeamLeaveOpcode(WorldPacket& recv_data)
         return;
 
     // Prevent leaving team while in arena queue
-    if (_player->InBattleGroundQueue())
+    if (_player->InBattlegroundQueue())
     {
         SendArenaTeamCommandResult(ERR_ARENA_TEAM_QUIT_S, "", "", ERR_ARENA_TEAM_INTERNAL);
         return;
@@ -255,7 +255,7 @@ void WorldSession::HandleArenaTeamDisbandOpcode(WorldPacket& recv_data)
     uint32 arenaTeamId;                                     // arena team id
     recv_data >> arenaTeamId;
 
-    if (GetPlayer()->InArena() || GetPlayer()->InBattleGroundQueue())
+    if (GetPlayer()->InArena() || GetPlayer()->InBattlegroundQueue())
         return;
 
     if (ArenaTeam* at = sObjectMgr.GetArenaTeamById(arenaTeamId))

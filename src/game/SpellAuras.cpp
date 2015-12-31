@@ -37,7 +37,7 @@
 #include "Totem.h"
 #include "Creature.h"
 #include "Formulas.h"
-#include "BattleGround.h"
+#include "Battleground.h"
 #include "OutdoorPvP.h"
 #include "OutdoorPvPMgr.h"
 #include "CreatureAI.h"
@@ -2276,7 +2276,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             {
                 // Waiting to resurrect spell cancel, we must remove player from resurrect queue
                 if (m_target->GetTypeId() == TYPEID_PLAYER)
-                    if (BattleGround* bg = m_target->ToPlayer()->GetBattleGround())
+                    if (Battleground* bg = m_target->ToPlayer()->GetBattleground())
                         bg->RemovePlayerFromResurrectQueue(m_target->GetGUID());
                 return;
             }
@@ -2315,7 +2315,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 if (!m_target || m_target->GetTypeId() != TYPEID_PLAYER || m_removeMode != AURA_REMOVE_BY_EXPIRE)
                     return;
 
-                if (m_target->GetMap()->IsBattleGround())
+                if (m_target->GetMap()->IsBattleground())
                     m_target->ToPlayer()->LeaveBattleground();
                 break;
             }
@@ -4068,9 +4068,9 @@ void Aura::HandleAuraModEffectImmunity(bool apply, bool /*Real*/)
     {
         if (m_target->GetTypeId() == TYPEID_PLAYER)
         {
-            if (m_target->ToPlayer()->InBattleGround())
+            if (m_target->ToPlayer()->InBattleground())
             {
-                BattleGround* bg = m_target->ToPlayer()->GetBattleGround();
+                Battleground* bg = m_target->ToPlayer()->GetBattleground();
                 if (bg)
                 {
                     switch (bg->GetTypeID())
@@ -6285,7 +6285,7 @@ void Aura::PeriodicTick()
 
             // add HoTs to amount healed in bgs
             if (pCaster->GetTypeId() == TYPEID_PLAYER)
-                if (BattleGround* bg = pCaster->ToPlayer()->GetBattleGround())
+                if (Battleground* bg = pCaster->ToPlayer()->GetBattleground())
                     bg->UpdatePlayerScore(pCaster->ToPlayer(), SCORE_HEALING_DONE, gain);
 
             m_target->getHostileRefManager().threatAssist(pCaster, float(gain) * 0.5f, GetSpellProto());
@@ -6561,7 +6561,7 @@ void Aura::PeriodicDummyTick()
             {
                 if ((*i)->GetId() == GetId())
                 {
-                    BattleGround* bg = m_target->ToPlayer()->GetBattleGround();
+                    Battleground* bg = m_target->ToPlayer()->GetBattleground();
                     if (!bg || !bg->isArena())
                     {
                         // default case - not in arena

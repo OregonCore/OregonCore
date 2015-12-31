@@ -60,7 +60,7 @@ enum GroupType
     GROUPTYPE_RAID   = 1
 };
 
-class BattleGround;
+class Battleground;
 
 enum GroupUpdateFlags
 {
@@ -314,11 +314,11 @@ class Group
         // some additional raid methods
         void ConvertToRaid();
 
-        void SetBattlegroundGroup(BattleGround* bg)
+        void SetBattlegroundGroup(Battleground* bg)
         {
             m_bgGroup = bg;
         }
-        uint32 CanJoinBattleGroundQueue(uint32 bgTypeId, uint32 bgQueueType, uint32 MinPlayerCount, uint32 MaxPlayerCount, bool isRated, uint32 arenaSlot);
+        uint32 CanJoinBattlegroundQueue(uint32 bgTypeId, uint32 bgQueueType, uint32 MinPlayerCount, uint32 MaxPlayerCount, bool isRated, uint32 arenaSlot);
 
         void ChangeMembersGroup(const uint64& guid, const uint8& group);
         void ChangeMembersGroup(Player* player, const uint8& group);
@@ -493,7 +493,7 @@ class Group
         uint64              m_mainAssistant;
         GroupType           m_groupType;
         DungeonDifficulties m_difficulty;
-        BattleGround*       m_bgGroup;
+        Battleground*       m_bgGroup;
         uint64              m_targetIcons[TARGETICONCOUNT];
         LootMethod          m_lootMethod;
         ItemQualities       m_lootThreshold;

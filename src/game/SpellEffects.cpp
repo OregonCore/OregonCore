@@ -38,9 +38,9 @@
 #include "GossipDef.h"
 #include "Creature.h"
 #include "Totem.h"
-#include "BattleGround.h"
-#include "BattleGroundEY.h"
-#include "BattleGroundWS.h"
+#include "Battleground.h"
+#include "BattlegroundEY.h"
+#include "BattlegroundWS.h"
 #include "OutdoorPvPMgr.h"
 #include "Language.h"
 #include "SocialMgr.h"
@@ -1463,7 +1463,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
-                    if (BattleGround* bg = m_caster->ToPlayer()->GetBattleGround())
+                    if (Battleground* bg = m_caster->ToPlayer()->GetBattleground())
                         bg->EventPlayerDroppedFlag(m_caster->ToPlayer());
 
                     m_caster->CastSpell(m_caster, 30452, true, NULL);
@@ -2718,9 +2718,9 @@ void Spell::EffectPowerDrain(SpellEffIndex effIndex)
 
 void Spell::EffectSendEvent(SpellEffIndex effIndex)
 {
-    if (m_caster->GetTypeId() == TYPEID_PLAYER && m_caster->ToPlayer()->InBattleGround())
+    if (m_caster->GetTypeId() == TYPEID_PLAYER && m_caster->ToPlayer()->InBattleground())
     {
-        BattleGround* bg = m_caster->ToPlayer()->GetBattleGround();
+        Battleground* bg = m_caster->ToPlayer()->GetBattleground();
         if (bg && bg->GetStatus() == STATUS_IN_PROGRESS)
         {
             switch (m_spellInfo->Id)
@@ -2929,7 +2929,7 @@ void Spell::EffectHealPct(SpellEffIndex /*effIndex*/)
         unitTarget->getHostileRefManager().threatAssist(m_caster, float(gain) * 0.5f, m_spellInfo);
 
         if (caster->GetTypeId() == TYPEID_PLAYER)
-            if (BattleGround* bg = caster->ToPlayer()->GetBattleGround())
+            if (Battleground* bg = caster->ToPlayer()->GetBattleground())
                 bg->UpdatePlayerScore(caster->ToPlayer(), SCORE_HEALING_DONE, gain);
     }
 }
@@ -3348,9 +3348,9 @@ void Spell::EffectOpenLock(SpellEffIndex /*effIndex*/)
         if ((goInfo->type == GAMEOBJECT_TYPE_BUTTON && goInfo->button.noDamageImmune) ||
             (goInfo->type == GAMEOBJECT_TYPE_GOOBER && goInfo->goober.losOK))
         {
-            //CanUseBattleGroundObject() already called in CanCast()
+            //CanUseBattlegroundObject() already called in CanCast()
             // in battleground check
-            if (BattleGround* bg = player->GetBattleGround())
+            if (Battleground* bg = player->GetBattleground())
             {
                 // check if it's correct bg
                 if (bg->GetTypeID() == BATTLEGROUND_AB || bg->GetTypeID() == BATTLEGROUND_AV)
@@ -3360,9 +3360,9 @@ void Spell::EffectOpenLock(SpellEffIndex /*effIndex*/)
         }
         else if (goInfo->type == GAMEOBJECT_TYPE_FLAGSTAND)
         {
-            //CanUseBattleGroundObject() already called in CanCast()
+            //CanUseBattlegroundObject() already called in CanCast()
             // in battleground check
-            if (BattleGround* bg = player->GetBattleGround())
+            if (Battleground* bg = player->GetBattleground())
             {
                 if (bg->GetTypeID() == BATTLEGROUND_EY)
                     bg->EventPlayerClickedOnFlag(player, gameObjTarget);
@@ -4956,7 +4956,7 @@ void Spell::EffectSummonObjectWild(SpellEffIndex effIndex)
         case 489:                                       //WS
             {
                 Player* pl = m_caster->ToPlayer();
-                BattleGround* bg = m_caster->ToPlayer()->GetBattleGround();
+                Battleground* bg = m_caster->ToPlayer()->GetBattleground();
                 if (bg && bg->GetTypeID() == BATTLEGROUND_WS && bg->GetStatus() == STATUS_IN_PROGRESS)
                 {
                     uint32 team = ALLIANCE;
@@ -4964,15 +4964,15 @@ void Spell::EffectSummonObjectWild(SpellEffIndex effIndex)
                     if (pl->GetTeam() == team)
                         team = HORDE;
 
-                    ((BattleGroundWS*)bg)->SetDroppedFlagGUID(pGameObj->GetGUID(), team);
+                    ((BattlegroundWS*)bg)->SetDroppedFlagGUID(pGameObj->GetGUID(), team);
                 }
                 break;
             }
         case 566:                                       //EY
             {
-                BattleGround* bg = m_caster->ToPlayer()->GetBattleGround();
+                Battleground* bg = m_caster->ToPlayer()->GetBattleground();
                 if (bg && bg->GetTypeID() == BATTLEGROUND_EY && bg->GetStatus() == STATUS_IN_PROGRESS)
-                    ((BattleGroundEY*)bg)->SetDroppedFlagGUID(pGameObj->GetGUID());
+                    ((BattlegroundEY*)bg)->SetDroppedFlagGUID(pGameObj->GetGUID());
                 break;
             }
         }
@@ -6879,7 +6879,7 @@ void Spell::EffectSkill(SpellEffIndex /*effIndex*/)
     DEBUG_LOG("WORLD: SkillEFFECT");
 }
 
-/* There is currently no need for this effect. We handle it in BattleGround.cpp
+/* There is currently no need for this effect. We handle it in Battleground.cpp
    If we would handle the resurrection here, the spiritguide would instantly disappear as the
    player revives, and so we wouldn't see the spirit heal visual effect on the npc.
    This is why we use a half sec delay between the visual effect and the resurrection itself */

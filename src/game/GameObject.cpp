@@ -37,10 +37,10 @@
 #include "CellImpl.h"
 #include "CreatureAISelector.h"
 #include "InstanceData.h"
-#include "BattleGround.h"
+#include "Battleground.h"
 #include "Util.h"
 #include "OutdoorPvPMgr.h"
-#include "BattleGroundAV.h"
+#include "BattlegroundAV.h"
 #include "GameObjectModel.h"
 #include "DynamicTree.h"
 #include "Transports.h"
@@ -349,7 +349,7 @@ void GameObject::Update(uint32 diff)
                     Unit* owner = GetOwner();
                     Unit* ok = NULL;                            // pointer to appropriate target if found any
 
-                    bool IsBattleGroundTrap = false;
+                    bool IsBattlegroundTrap = false;
                     //FIXME: this is activation radius (in different casting radius that must be selected from spell data)
                     //@todo move activated state code (cast itself) to GO_ACTIVATED, in this place only check activating and set state
                     float radius = (float)(goInfo->trap.radius) / 2; // TODO rename radius to diameter (goInfo->trap.radius) should be (goInfo->trap.diameter)
@@ -371,7 +371,7 @@ void GameObject::Update(uint32 diff)
                                 break;
 
                             radius = goInfo->trap.cooldown;       // battlegrounds gameobjects has data2 == 0 && data5 == 3
-                            IsBattleGroundTrap = true;
+                            IsBattlegroundTrap = true;
                         }
                     }
 
@@ -406,11 +406,11 @@ void GameObject::Update(uint32 diff)
                         if (goInfo->trap.type == 1)
                             SetLootState(GO_JUST_DEACTIVATED);
 
-                        if (IsBattleGroundTrap && ok->GetTypeId() == TYPEID_PLAYER)
+                        if (IsBattlegroundTrap && ok->GetTypeId() == TYPEID_PLAYER)
                         {
-                            //BattleGround gameobjects case
-                            if (ok->ToPlayer()->InBattleGround())
-                                if (BattleGround* bg = ok->ToPlayer()->GetBattleGround())
+                            //Battleground gameobjects case
+                            if (ok->ToPlayer()->InBattleground())
+                                if (Battleground* bg = ok->ToPlayer()->GetBattleground())
                                     bg->HandleTriggerBuff(GetGUID());
                         }
                     }
@@ -862,8 +862,8 @@ bool GameObject::ActivateToQuest(Player* pTarget) const
                     //@todo fix this hack
                     //look for battlegroundAV for some objects which are only activated after mine gots captured by own team
                     if (GetEntry() == BG_AV_OBJECTID_MINE_N || GetEntry() == BG_AV_OBJECTID_MINE_S)
-                        if (BattleGround* bg = pTarget->GetBattleGround())
-                            if (bg->GetTypeID() == BATTLEGROUND_AV && !(((BattleGroundAV*)bg)->PlayerCanDoMineQuest(GetEntry(), pTarget->GetTeam())))
+                        if (Battleground* bg = pTarget->GetBattleground())
+                            if (bg->GetTypeID() == BATTLEGROUND_AV && !(((BattlegroundAV*)bg)->PlayerCanDoMineQuest(GetEntry(), pTarget->GetTeam())))
                                 return false;
                     return true;
                 }
@@ -1378,10 +1378,10 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            if (player->CanUseBattleGroundObject(this))
+            if (player->CanUseBattlegroundObject(this))
             {
                 // in battleground check
-                BattleGround* bg = player->GetBattleGround();
+                Battleground* bg = player->GetBattleground();
                 if (!bg)
                     return;
 
@@ -1406,10 +1406,10 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            if (player->CanUseBattleGroundObject(this))
+            if (player->CanUseBattlegroundObject(this))
             {
                 // in battleground check
-                BattleGround* bg = player->GetBattleGround();
+                Battleground* bg = player->GetBattleground();
                 if (!bg)
                     return;
 

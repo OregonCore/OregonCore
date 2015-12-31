@@ -18,23 +18,23 @@
 #ifndef __BATTLEGROUNDAA_H
 #define __BATTLEGROUNDAA_H
 
-class BattleGround;
+class Battleground;
 
-class BattleGroundAAScore : public BattleGroundScore
+class BattlegroundAAScore : public BattlegroundScore
 {
     public:
-        BattleGroundAAScore() {};
-        virtual ~BattleGroundAAScore() {};
+        BattlegroundAAScore() {};
+        virtual ~BattlegroundAAScore() {};
         // TODO fix me
 };
 
-class BattleGroundAA : public BattleGround
+class BattlegroundAA : public Battleground
 {
-        friend class BattleGroundMgr;
+        friend class BattlegroundMgr;
 
     public:
-        BattleGroundAA();
-        ~BattleGroundAA();
+        BattlegroundAA();
+        ~BattlegroundAA();
         void Update(uint32 diff);
 
         /* inherited from BattlegroundClass */
@@ -44,7 +44,7 @@ class BattleGroundAA : public BattleGround
 
         void RemovePlayer(Player* plr, uint64 guid);
         void HandleAreaTrigger(Player* Source, uint32 Trigger);
-        bool SetupBattleGround();
+        bool SetupBattleground();
         void HandleKillPlayer(Player* player, Player* killer);
 };
 #endif

@@ -35,7 +35,7 @@
 #include "Formulas.h"
 #include "SpellAuras.h"
 #include "InstanceData.h"
-#include "BattleGround.h"
+#include "Battleground.h"
 #include "Util.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"

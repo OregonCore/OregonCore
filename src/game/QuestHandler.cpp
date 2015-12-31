@@ -27,8 +27,8 @@
 #include "QuestDef.h"
 #include "ObjectAccessor.h"
 #include "Group.h"
-#include "BattleGround.h"
-#include "BattleGroundAV.h"
+#include "Battleground.h"
+#include "BattlegroundAV.h"
 #include "ScriptMgr.h"
 #include "CreatureAI.h"
 #include "GameObjectAI.h"
@@ -457,10 +457,10 @@ void WorldSession::HandleQuestComplete(WorldPacket& recv_data)
             return;
         }
         // @todo need a virtual function
-        if (_player->InBattleGround())
-            if (BattleGround* bg = _player->GetBattleGround())
+        if (_player->InBattleground())
+            if (Battleground* bg = _player->GetBattleground())
                 if (bg->GetTypeID() == BATTLEGROUND_AV)
-                    ((BattleGroundAV*)bg)->HandleQuestComplete(quest, _player);
+                    ((BattlegroundAV*)bg)->HandleQuestComplete(quest, _player);
 
         if (_player->GetQuestStatus(quest) != QUEST_STATUS_COMPLETE)
         {

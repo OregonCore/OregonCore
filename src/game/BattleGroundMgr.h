@@ -18,16 +18,16 @@
 #ifndef __BATTLEGROUNDMGR_H
 #define __BATTLEGROUNDMGR_H
 
-#include "BattleGround.h"
+#include "Battleground.h"
 #include "Policies/Singleton.h"
 
-class BattleGround;
+class Battleground;
 
 //TODO it is not possible to have this structure, because we should have BattlegroundSet for each queue
 //so i propose to change this type to array 1..MAX_BATTLEGROUND_TYPES of sets or maps..
-typedef std::map<uint32, BattleGround*> BattleGroundSet;
-//typedef std::map<uint32, BattleGroundQueue*> BattleGroundQueueSet;
-typedef std::list<BattleGround*> BGFreeSlotQueueType;
+typedef std::map<uint32, Battleground*> BattlegroundSet;
+//typedef std::map<uint32, BattlegroundQueue*> BattlegroundQueueSet;
+typedef std::list<Battleground*> BGFreeSlotQueueType;
 
 #define MAX_BATTLEGROUND_QUEUES 7                           // for level ranges 10-19, 20-29, 30-39, 40-49, 50-59, 60-69, 70+
 
@@ -60,12 +60,12 @@ struct GroupQueueInfo                                       // stores informatio
     uint32  OpponentsTeamRating;                            // for rated arena matches
 };
 
-class BattleGround;
-class BattleGroundQueue
+class Battleground;
+class BattlegroundQueue
 {
     public:
-        BattleGroundQueue();
-        ~BattleGroundQueue();
+        BattlegroundQueue();
+        ~BattlegroundQueue();
 
         void Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype = 0, bool isRated = false, uint32 minRating = 0);
 
@@ -73,7 +73,7 @@ class BattleGroundQueue
         void AddPlayer(Player* plr, GroupQueueInfo* ginfo);
         void RemovePlayer(uint64 guid, bool decreaseInvitedCount);
         void DecreaseGroupLength(uint32 queueId, uint32 AsGroup);
-        void BGEndedRemoveInvites(BattleGround* bg);
+        void BGEndedRemoveInvites(Battleground* bg);
 
         typedef std::map<uint64, PlayerQueueInfo> QueuedPlayersMap;
         QueuedPlayersMap m_QueuedPlayers[MAX_BATTLEGROUND_QUEUES];
@@ -127,7 +127,7 @@ class BattleGroundQueue
 
     private:
 
-        bool InviteGroupToBG(GroupQueueInfo* ginfo, BattleGround* bg, uint32 side);
+        bool InviteGroupToBG(GroupQueueInfo* ginfo, Battleground* bg, uint32 side);
 };
 
 /*
@@ -164,22 +164,22 @@ class BGQueueRemoveEvent : public BasicEvent
         uint32 m_PlayersTeam;
 };
 
-class BattleGroundMgr
+class BattlegroundMgr
 {
     public:
         /* Construction */
-        BattleGroundMgr();
-        ~BattleGroundMgr();
+        BattlegroundMgr();
+        ~BattlegroundMgr();
         void Update(uint32 diff);
 
         /* Packet Building */
-        void BuildPlayerJoinedBattleGroundPacket(WorldPacket* data, Player* plr);
-        void BuildPlayerLeftBattleGroundPacket(WorldPacket* data, const uint64& guid);
-        void BuildBattleGroundListPacket(WorldPacket* data, uint64 guid, Player* plr, uint32 bgTypeId);
+        void BuildPlayerJoinedBattlegroundPacket(WorldPacket* data, Player* plr);
+        void BuildPlayerLeftBattlegroundPacket(WorldPacket* data, const uint64& guid);
+        void BuildBattlegroundListPacket(WorldPacket* data, uint64 guid, Player* plr, uint32 bgTypeId);
         void BuildGroupJoinedBattlegroundPacket(WorldPacket* data, uint32 bgTypeId);
         void BuildUpdateWorldStatePacket(WorldPacket* data, uint32 field, uint32 value);
-        void BuildPvpLogDataPacket(WorldPacket* data, BattleGround* bg);
-        void BuildBattleGroundStatusPacket(WorldPacket* data, BattleGround* bg, uint32 team, uint8 QueueSlot, uint8 StatusID, uint32 Time1, uint32 Time2, uint32 arenatype = 0, uint8 israted = 0);
+        void BuildPvpLogDataPacket(WorldPacket* data, Battleground* bg);
+        void BuildBattlegroundStatusPacket(WorldPacket* data, Battleground* bg, uint32 team, uint8 QueueSlot, uint8 StatusID, uint32 Time1, uint32 Time2, uint32 arenatype = 0, uint8 israted = 0);
         void BuildPlaySoundPacket(WorldPacket* data, uint32 soundid);
 
         /* Player invitation */
@@ -187,52 +187,52 @@ class BattleGroundMgr
         void InvitePlayer(Player* plr, uint32 bgInstanceGUID, uint32 team);
 
         /* Battlegrounds */
-        BattleGroundSet::iterator GetBattleGroundsBegin()
+        BattlegroundSet::iterator GetBattlegroundsBegin()
         {
-            return m_BattleGrounds.begin();
+            return m_Battlegrounds.begin();
         };
-        BattleGroundSet::iterator GetBattleGroundsEnd()
+        BattlegroundSet::iterator GetBattlegroundsEnd()
         {
-            return m_BattleGrounds.end();
+            return m_Battlegrounds.end();
         };
 
-        BattleGround* GetBattleGround(uint32 InstanceID)
+        Battleground* GetBattleground(uint32 InstanceID)
         {
             if (!InstanceID)
                 return NULL;
-            BattleGroundSet::iterator i = m_BattleGrounds.find(InstanceID);
-            if (i != m_BattleGrounds.end())
+            BattlegroundSet::iterator i = m_Battlegrounds.find(InstanceID);
+            if (i != m_Battlegrounds.end())
                 return i->second;
             else
                 return NULL;
         };
 
-        BattleGround* GetBattleGroundTemplate(uint32 bgTypeId);
-        BattleGround* CreateNewBattleGround(uint32 bgTypeId, uint8 arenaType, bool isRated);
+        Battleground* GetBattlegroundTemplate(uint32 bgTypeId);
+        Battleground* CreateNewBattleground(uint32 bgTypeId, uint8 arenaType, bool isRated);
 
-        uint32 CreateBattleGround(uint32 bgTypeId, uint32 MinPlayersPerTeam, uint32 MaxPlayersPerTeam, uint32 LevelMin, uint32 LevelMax, char* BattleGroundName, uint32 MapID, float Team1StartLocX, float Team1StartLocY, float Team1StartLocZ, float Team1StartLocO, float Team2StartLocX, float Team2StartLocY, float Team2StartLocZ, float Team2StartLocO, float StartMaxDist);
+        uint32 CreateBattleground(uint32 bgTypeId, uint32 MinPlayersPerTeam, uint32 MaxPlayersPerTeam, uint32 LevelMin, uint32 LevelMax, char* BattlegroundName, uint32 MapID, float Team1StartLocX, float Team1StartLocY, float Team1StartLocZ, float Team1StartLocO, float Team2StartLocX, float Team2StartLocY, float Team2StartLocZ, float Team2StartLocO, float StartMaxDist);
 
-        void AddBattleGround(uint32 ID, BattleGround* BG)
+        void AddBattleground(uint32 ID, Battleground* BG)
         {
-            m_BattleGrounds[ID] = BG;
+            m_Battlegrounds[ID] = BG;
         };
-        void RemoveBattleGround(uint32 instanceID);
+        void RemoveBattleground(uint32 instanceID);
 
-        void CreateInitialBattleGrounds();
-        void DeleteAlllBattleGrounds();
+        void CreateInitialBattlegrounds();
+        void DeleteAlllBattlegrounds();
 
-        void SendToBattleGround(Player* pl, uint32 bgTypeId);
+        void SendToBattleground(Player* pl, uint32 bgTypeId);
 
         /* Battleground queues */
         //these queues are instantiated when creating BattlegroundMrg
-        BattleGroundQueue m_BattleGroundQueues[MAX_BATTLEGROUND_QUEUE_TYPES]; // public, because we need to access them in BG handler code
+        BattlegroundQueue m_BattlegroundQueues[MAX_BATTLEGROUND_QUEUE_TYPES]; // public, because we need to access them in BG handler code
 
         BGFreeSlotQueueType BGFreeSlotQueue[MAX_BATTLEGROUND_TYPES];
 
-        void SendAreaSpiritHealerQueryOpcode(Player* pl, BattleGround* bg, uint64 guid);
+        void SendAreaSpiritHealerQueryOpcode(Player* pl, Battleground* bg, uint64 guid);
 
         bool IsArenaType(uint32 bgTypeId) const;
-        bool IsBattleGroundType(uint32 bgTypeId) const;
+        bool IsBattlegroundType(uint32 bgTypeId) const;
         static uint32 BGQueueTypeId(uint32 bgTypeId, uint8 arenaType);
         uint32 BGTemplateId(uint32 bgQueueTypeId) const;
         uint8 BGArenaType(uint32 bgQueueTypeId) const;
@@ -267,7 +267,7 @@ class BattleGroundMgr
     private:
 
         /* Battlegrounds */
-        BattleGroundSet m_BattleGrounds;
+        BattlegroundSet m_Battlegrounds;
         uint32 m_MaxRatingDifference;
         uint32 m_RatingDiscardTimer;
         uint32 m_NextRatingDiscardUpdate;
@@ -279,6 +279,6 @@ class BattleGroundMgr
         bool   m_Testing;
 };
 
-#define sBattleGroundMgr Oregon::Singleton<BattleGroundMgr>::Instance()
+#define sBattlegroundMgr Oregon::Singleton<BattlegroundMgr>::Instance()
 #endif
 

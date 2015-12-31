@@ -26,7 +26,7 @@
 #include "Opcodes.h"
 #include "Spell.h"
 #include "SpellAuras.h"
-#include "BattleGround.h"
+#include "Battleground.h"
 #include "MapManager.h"
 #include "Totem.h"
 #include "ScriptMgr.h"
