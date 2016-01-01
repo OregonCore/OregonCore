@@ -22,7 +22,7 @@
 #include "Timer.h"
 #include "ObjectAccessor.h"
 #include "MapManager.h"
-#include "BattleGroundMgr.h"
+#include "BattlegroundMgr.h"
 #include "CreatureGroups.h"
 
 #include "Database/DatabaseEnv.h"
