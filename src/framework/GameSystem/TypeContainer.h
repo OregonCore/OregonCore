@@ -75,13 +75,6 @@ class TypeMapContainer
             return (t != NULL);
         }
 
-        //  Removes the object from the container, and returns the removed object
-        template<class SPECIFIC_TYPE> bool remove(SPECIFIC_TYPE* obj)
-        {
-            SPECIFIC_TYPE* t = Oregon::Remove(i_elements, obj);
-            return (t != NULL);
-        }
-
         ContainerMapList<OBJECT_TYPES>& GetElements(void)
         {
             return i_elements;

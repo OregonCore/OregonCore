@@ -118,28 +118,6 @@ class NGrid
         void ResetTimeTracker(time_t interval) { i_GridInfo.ResetTimeTracker(interval); }
         void UpdateTimeTracker(time_t diff) { i_GridInfo.UpdateTimeTracker(diff); }
 
-        /*
-        template<class SPECIFIC_OBJECT> void AddWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
-        {
-            GetGridType(x, y).AddWorldObject(obj);
-        }
-
-        template<class SPECIFIC_OBJECT> void RemoveWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
-        {
-            GetGridType(x, y).RemoveWorldObject(obj);
-        }
-
-        template<class SPECIFIC_OBJECT> void AddGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
-        {
-            GetGridType(x, y).AddGridObject(obj);
-        }
-
-        template<class SPECIFIC_OBJECT> void RemoveGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
-        {
-            GetGridType(x, y).RemoveGridObject(obj);
-        }
-        */
-
         // Visit all Grids (cells) in NGrid (grid)
         template<class T, class TT>
         void VisitAllGrids(TypeContainerVisitor<T, TypeMapContainer<TT> > &visitor)
@@ -156,26 +134,13 @@ class NGrid
             GetGridType(x, y).Visit(visitor);
         }
 
-        //This gets the player count in grid
-        //I disable this to avoid confusion (active object usually means something else)
-        /*
-        uint32 GetActiveObjectCountInGrid() const
-        {
-            uint32 count = 0;
-            for (uint32 x = 0; x < N; ++x)
-                for (uint32 y = 0; y < N; ++y)
-                    count += i_cells[x][y].ActiveObjectsInGrid();
-            return count;
-        }
-        */
-
         template<class T>
         uint32 GetWorldObjectCountInNGrid() const
         {
             uint32 count = 0;
             for (uint32 x = 0; x < N; ++x)
                 for (uint32 y = 0; y < N; ++y)
-                    count += i_cells[x][y].GetWorldObjectCountInGrid<T>();
+                    count += i_cells[x][y].template GetWorldObjectCountInGrid<T>();
             return count;
         }
 
