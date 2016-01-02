@@ -1518,11 +1518,11 @@ bool ChatHandler::HandleModifyASpeedCommand(const char* args)
     if (needReportToTarget(target))
         ChatHandler(target).PSendSysMessage(LANG_YOURS_ASPEED_CHANGED, GetName(), modSpeed);
 
-    target->UpdateSpeed(MOVE_WALK,   true, modSpeed);
-    target->UpdateSpeed(MOVE_RUN,    true, modSpeed);
-    target->UpdateSpeed(MOVE_SWIM,   true, modSpeed);
-    //target->UpdateSpeed(MOVE_TURN,   true, modSpeed);
-    target->UpdateSpeed(MOVE_FLIGHT, true, modSpeed);
+    target->SetSpeed(MOVE_WALK,    modSpeed, true);
+    target->SetSpeed(MOVE_RUN,     modSpeed, true);
+    target->SetSpeed(MOVE_SWIM,    modSpeed, true);
+    //target->SetSpeed(MOVE_TURN,    modSpeed, true);
+    target->SetSpeed(MOVE_FLIGHT,     modSpeed, true);
     return true;
 }
 
@@ -1560,7 +1560,7 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args)
     if (needReportToTarget(target))
         ChatHandler(target).PSendSysMessage(LANG_YOURS_SPEED_CHANGED, GetName(), modSpeed);
 
-    target->UpdateSpeed(MOVE_RUN, true, modSpeed);
+    target->SetSpeed(MOVE_RUN, modSpeed, true);
 
     return true;
 }
@@ -1599,7 +1599,7 @@ bool ChatHandler::HandleModifySwimCommand(const char* args)
     if (needReportToTarget(target))
         ChatHandler(target).PSendSysMessage(LANG_YOURS_SWIM_SPEED_CHANGED, GetName(), modSpeed);
 
-    target->UpdateSpeed(MOVE_SWIM, true, modSpeed);
+    target->SetSpeed(MOVE_SWIM, modSpeed, true);
 
     return true;
 }
@@ -1638,7 +1638,7 @@ bool ChatHandler::HandleModifyBWalkCommand(const char* args)
     if (needReportToTarget(target))
         ChatHandler(target).PSendSysMessage(LANG_YOURS_BACK_SPEED_CHANGED, GetName(), modSpeed);
 
-    target->UpdateSpeed(MOVE_RUN_BACK, true, modSpeed);
+    target->SetSpeed(MOVE_RUN_BACK, modSpeed, true);
 
     return true;
 }
@@ -1670,7 +1670,7 @@ bool ChatHandler::HandleModifyFlyCommand(const char* args)
     if (needReportToTarget(target))
         ChatHandler(target).PSendSysMessage(LANG_YOURS_FLY_SPEED_CHANGED, GetName(), modSpeed);
 
-    target->UpdateSpeed(MOVE_FLIGHT, true, modSpeed);
+    target->SetSpeed(MOVE_FLIGHT, modSpeed, true);
 
     return true;
 }

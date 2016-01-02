@@ -9290,7 +9290,7 @@ void Unit::SetVisible(bool x)
     UpdateObjectVisibility();
 }
 
-void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
+void Unit::UpdateSpeed(UnitMoveType mtype, bool forced)
 {
     int32 main_speed_mod  = 0;
     float stack_bonus     = 1.0f;
@@ -9347,10 +9347,10 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
             return;
     }
 
-    float bonus = non_stack_bonus > stack_bonus ? non_stack_bonus : stack_bonus;
-
     // now we ready for speed calculation
-    float speed  = main_speed_mod ? bonus * (100.0f + main_speed_mod) / 100.0f : bonus;
+    float speed = std::max(non_stack_bonus, stack_bonus);
+    if (main_speed_mod)
+        AddPct(speed, main_speed_mod);
 
     switch (mtype)
     {
@@ -9384,6 +9384,13 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
             // @todo possible affect only on MOVE_RUN
             if (int32 normalization = GetMaxPositiveAuraModifier(SPELL_AURA_USE_NORMAL_MOVEMENT_SPEED))
             {
+                if (Creature* creature = ToCreature())
+                {
+                    uint32 immuneMask = creature->GetCreatureTemplate()->MechanicImmuneMask;
+                    if (immuneMask & (1 << MECHANIC_SNARE) || immuneMask & (1 << MECHANIC_DAZE))
+                        break;
+                }
+
                 // Use speed from aura
                 float max_speed = normalization / baseMoveSpeed[mtype];
                 if (speed > max_speed)
@@ -9408,7 +9415,8 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
     slow = slow < slow_non_stack ? slow : slow_non_stack;
     if (slow)
         AddPct(speed, slow);
-    SetSpeed(mtype, speed * ratio, forced);
+
+    SetSpeed(mtype, speed, forced);
 }
 
 float Unit::GetSpeed(UnitMoveType mtype) const
