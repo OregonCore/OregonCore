@@ -572,22 +572,6 @@ void Spell::FillTargetMap()
                 break;
             }
         }
-
-        if (IsChanneledSpell(m_spellInfo))
-        {
-            uint8 mask = (1 << i);
-            for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
-            {
-                if (ihit->deleted)
-                    continue;
-
-                if (ihit->effectMask & mask)
-                {
-                    m_needAliveTargetMask |= mask;
-                    break;
-                }
-            }
-        }
     }
 
     if (m_targets.HasDst())
@@ -772,9 +756,15 @@ void Spell::CalculateHitResults()
 
         // Remove effects the target is immune to
         for (uint32 effIndex = 0; effIndex < 3; ++effIndex)
+        {
             if (target.effectMask & (1 << effIndex))
                 if (pVictim->IsImmuneToSpellEffect(m_spellInfo, effIndex, false))
                     target.effectMask &= ~(1 << effIndex);
+
+            if (IsChanneledSpell(m_spellInfo))
+                if (target.effectMask & (1 << effIndex))
+                    m_needAliveTargetMask |= (1 << effIndex);
+        }
 
         // Calculate hit result
         if (m_originalCaster)
