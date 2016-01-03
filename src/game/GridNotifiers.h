@@ -867,11 +867,11 @@ class CallOfHelpCreatureInRangeDo
                 return;
 
             // too far
-            if (!i_funit->IsWithinDistInMap(u, i_range))
+            if (!u->IsWithinDistInMap(i_funit, i_range))
                 return;
 
             // only if see assisted creature
-            if (!i_funit->IsWithinLOSInMap(u))
+            if (!u->IsWithinLOSInMap(i_enemy))
                 return;
 
             if (u->AI())
