@@ -9683,8 +9683,8 @@ void Unit::TauntApply(Unit* taunter)
         return;
 
     SetInFront(taunter);
-    if (ToCreature()->IsAIEnabled)
-        ToCreature()->AI()->AttackStart(taunter);
+    if (creature->IsAIEnabled)
+        creature->AI()->AttackStart(taunter);
 
     //m_ThreatManager.tauntApply(taunter);
 }
@@ -9712,8 +9712,8 @@ void Unit::TauntFadeOut(Unit* taunter)
 
     if (m_ThreatManager.isThreatListEmpty())
     {
-        if (ToCreature()->IsAIEnabled)
-            ToCreature()->AI()->EnterEvadeMode();
+        if (creature->IsAIEnabled)
+            creature->AI()->EnterEvadeMode();
         return;
     }
 
@@ -9722,8 +9722,8 @@ void Unit::TauntFadeOut(Unit* taunter)
     if (target && target != taunter)
     {
         SetInFront(target);
-        if (ToCreature()->IsAIEnabled)
-            ToCreature()->AI()->AttackStart(target);
+        if (creature->IsAIEnabled)
+            creature->AI()->AttackStart(target);
     }
 }
 
