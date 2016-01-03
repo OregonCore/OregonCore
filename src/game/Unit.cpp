@@ -8587,20 +8587,49 @@ bool Unit::IsImmuneToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
     if (!spellInfo)
         return false;
 
-    // If Spell has this flag cannot be resisted/immuned/etc
-    if (spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
-        return false;
-
     // Single spell immunity.
     SpellImmuneList const& idList = m_spellImmune[IMMUNITY_ID];
     for (SpellImmuneList::const_iterator itr = idList.begin(); itr != idList.end(); ++itr)
         if (itr->type == spellInfo->Id)
             return true;
 
-    SpellImmuneList const& dispelList = m_spellImmune[IMMUNITY_DISPEL];
-    for (SpellImmuneList::const_iterator itr = dispelList.begin(); itr != dispelList.end(); ++itr)
-        if (itr->type == spellInfo->Dispel)
-            return true;
+    // If Spell has this flag cannot be resisted/immuned/etc
+    if (spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
+        return false;
+
+    if (spellInfo->Dispel)
+    {
+        SpellImmuneList const& dispelList = m_spellImmune[IMMUNITY_DISPEL];
+        for (SpellImmuneList::const_iterator itr = dispelList.begin(); itr != dispelList.end(); ++itr)
+            if (itr->type == spellInfo->Dispel)
+                return true;
+    }
+
+    // Spells that don't have effectMechanics.
+    if (spellInfo->Mechanic)
+    {
+        SpellImmuneList const& mechanicList = m_spellImmune[IMMUNITY_MECHANIC];
+        for (SpellImmuneList::const_iterator itr = mechanicList.begin(); itr != mechanicList.end(); ++itr)
+            if (itr->type == spellInfo->Mechanic)
+                return true;
+    }
+
+    bool immuneToAllEffects = true;
+    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+    {
+        // State/effect immunities applied by aura expect full spell immunity
+        // Ignore effects with mechanic, they are supposed to be checked separately
+        if (!spellInfo->IsEffect(i))
+            continue;
+        if (!IsImmuneToSpellEffect(spellInfo, i, false))
+        {
+            immuneToAllEffects = false;
+            break;
+        }
+    }
+
+    if (immuneToAllEffects) //Return immune only if the target is immune to all spell effects.
+        return true;
 
     if (!(spellInfo->AttributesEx & SPELL_ATTR_EX_UNAFFECTED_BY_SCHOOL_IMMUNE) &&         // unaffected by school immunity
         !(spellInfo->AttributesEx & SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY)               // can remove immune (by dispell or immune it)
@@ -8613,18 +8642,12 @@ bool Unit::IsImmuneToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
                 return true;
     }
 
-    SpellImmuneList const& mechanicList = m_spellImmune[IMMUNITY_MECHANIC];
-    for (SpellImmuneList::const_iterator itr = mechanicList.begin(); itr != mechanicList.end(); ++itr)
-        if (itr->type == spellInfo->Mechanic)
-            return true;
-
     return false;
 }
 
 bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool /*castOnSelf*/) const
 {
-    // @todo Check for isEffect here
-    if (!spellInfo)
+    if (!spellInfo || !spellInfo->IsEffect(index))
         return false;
 
     if (spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
@@ -8637,8 +8660,7 @@ bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool
         if (itr->type == effect)
             return true;
 
-    uint32 mechanic = spellInfo->EffectMechanic[index];
-    if (mechanic)
+    if (uint32 mechanic = spellInfo->EffectMechanic[index])
     {
         SpellImmuneList const& mechanicList = m_spellImmune[IMMUNITY_MECHANIC];
         for (SpellImmuneList::const_iterator itr = mechanicList.begin(); itr != mechanicList.end(); ++itr)
@@ -8646,13 +8668,13 @@ bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool
                 return true;
     }
 
-    uint32 aura = spellInfo->EffectApplyAuraName[index];
-    if (aura)
+    if (uint32 aura = spellInfo->EffectApplyAuraName[index])
     {
         SpellImmuneList const& list = m_spellImmune[IMMUNITY_STATE];
         for (SpellImmuneList::const_iterator itr = list.begin(); itr != list.end(); ++itr)
             if (itr->type == aura)
-                return true;
+                if (!(spellInfo->AttributesEx3 & SPELL_ATTR_EX3_CANT_MISS))
+                    return true;
     }
 
     return false;

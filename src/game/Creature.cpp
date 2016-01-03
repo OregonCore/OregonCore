@@ -1666,6 +1666,22 @@ bool Creature::IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges)
     if (GetCreatureTemplate()->MechanicImmuneMask & (1 << (spellInfo->Mechanic - 1)))
         return true;
 
+    // This check must be done instead of 'if (GetCreatureTemplate()->MechanicImmuneMask & (1 << (spellInfo->Mechanic - 1)))' for not break
+    // the check of mechanic immunity on DB (tested) because GetCreatureTemplate()->MechanicImmuneMask and m_spellImmune[IMMUNITY_MECHANIC] don't have same data.
+    bool immunedToAllEffects = true;
+    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+    {
+        if (!spellInfo->Effect[i])
+            continue;
+        if (!IsImmuneToSpellEffect(spellInfo, i, false))
+        {
+            immunedToAllEffects = false;
+            break;
+        }
+    }
+    if (immunedToAllEffects)
+        return true;
+
     return Unit::IsImmuneToSpell(spellInfo, useCharges);
 }
 
@@ -1674,19 +1690,8 @@ bool Creature::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, 
     if (!castOnSelf && GetCreatureTemplate()->MechanicImmuneMask & (1 << (spellInfo->EffectMechanic[index] - 1)))
         return true;
 
-    // Taunt immunity special flag check
-    if (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_TAUNT)
-    {
-        // Taunt aura apply check
-        if (spellInfo->Effect[index] == SPELL_EFFECT_APPLY_AURA)
-        {
-            if (spellInfo->EffectApplyAuraName[index] == SPELL_AURA_MOD_TAUNT)
-                return true;
-        }
-        // Spell effect taunt check
-        else if (spellInfo->Effect[index] == SPELL_EFFECT_ATTACK_ME)
-            return true;
-    }
+    if (GetCreatureTemplate()->type == CREATURE_TYPE_MECHANICAL && spellInfo->Effect[index] == SPELL_EFFECT_HEAL)
+        return true;
 
     return Unit::IsImmuneToSpellEffect(spellInfo, index, castOnSelf);
 }
