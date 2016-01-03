@@ -3099,20 +3099,29 @@ void Spell::EffectCreateItem(SpellEffIndex effIndex)
 
 void Spell::EffectPersistentAA(SpellEffIndex effIndex)
 {
+    Unit* caster = m_caster->GetEntry() == WORLD_TRIGGER ? m_originalCaster : m_caster;
     float radius = GetSpellRadius(m_spellInfo, effIndex, false);
+    int32 duration = GetSpellDuration(m_spellInfo);
+
+    // Caster not in world, might be spell triggered from aura removal
+    if (!caster->IsInWorld())
+        return;
+
+    // Apply spell mods to radius
     if (Player* modOwner = m_originalCaster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_RADIUS, radius);
 
-    Unit* caster = m_caster->GetEntry() == WORLD_TRIGGER ? m_originalCaster : m_caster;
-    int32 duration = GetSpellDuration(m_spellInfo);
+    // Apply spell mods to duration
     if (Player* modOwner = m_originalCaster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_DURATION, duration);
+
     DynamicObject* dynObj = new DynamicObject(false);
-    if (!dynObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), caster, m_spellInfo->Id, effIndex, m_targets.m_dstPos, duration, radius))
+    if (!dynObj->CreateDynamicObject(sObjectMgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), caster, m_spellInfo->Id, effIndex, m_targets.m_dstPos, duration, radius))
     {
         delete dynObj;
         return;
     }
+
     dynObj->SetUInt32Value(OBJECT_FIELD_TYPE, 65);
     caster->AddDynObject(dynObj);
     dynObj->GetMap()->AddToMap(dynObj);
@@ -3979,7 +3988,7 @@ void Spell::EffectAddFarsight(SpellEffIndex effIndex)
     if (!m_caster->IsInWorld())
         return;
     DynamicObject* dynObj = new DynamicObject(true);
-    if (!dynObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), m_caster, m_spellInfo->Id, 4, m_targets.m_dstPos, duration, radius))
+    if (!dynObj->CreateDynamicObject(sObjectMgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), m_caster, m_spellInfo->Id, 4, m_targets.m_dstPos, duration, radius))
     {
         delete dynObj;
         return;

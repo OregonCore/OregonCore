@@ -4323,7 +4323,7 @@ void Unit::RemoveDynObject(uint32 spellid)
             i = m_dynObjGUIDs.erase(i);
         else if (spellid == 0 || dynObj->GetSpellId() == spellid)
         {
-            dynObj->Delete();
+            dynObj->Remove();
             i = m_dynObjGUIDs.erase(i);
         }
         else
@@ -4337,7 +4337,7 @@ void Unit::RemoveAllDynObjects()
     {
         DynamicObject* dynObj = GetMap()->GetDynamicObject(*m_dynObjGUIDs.begin());
         if (dynObj)
-            dynObj->Delete();
+            dynObj->Remove();
         m_dynObjGUIDs.erase(m_dynObjGUIDs.begin());
     }
 }

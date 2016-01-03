@@ -33,7 +33,7 @@ DynamicObject::DynamicObject(bool isWorldObject) : WorldObject(isWorldObject)
 {
     m_objectType |= TYPEMASK_DYNAMICOBJECT;
     m_objectTypeId = TYPEID_DYNAMICOBJECT;
-    // 2.3.2 - 0x58
+
     m_updateFlag = (UPDATEFLAG_LOWGUID | UPDATEFLAG_HIGHGUID | UPDATEFLAG_HAS_POSITION);
 
     m_valuesCount = DYNAMICOBJECT_END;
@@ -69,7 +69,7 @@ void DynamicObject::RemoveFromWorld()
     }
 }
 
-bool DynamicObject::Create(uint32 guidlow, Unit* caster, uint32 spellId, uint32 effIndex, const Position& pos, int32 duration, float radius)
+bool DynamicObject::CreateDynamicObject(uint32 guidlow, Unit* caster, uint32 spellId, uint32 effIndex, const Position& pos, int32 duration, float radius)
 {
     SetMap(caster->GetMap());
     Relocate(pos);
@@ -93,10 +93,13 @@ bool DynamicObject::Create(uint32 guidlow, Unit* caster, uint32 spellId, uint32 
     SetUInt32Value(DYNAMICOBJECT_BYTES, 0x00000001);
     SetUInt32Value(DYNAMICOBJECT_SPELLID, spellId);
     SetFloatValue(DYNAMICOBJECT_RADIUS, radius);
-    SetFloatValue(DYNAMICOBJECT_POS_X, pos.m_positionX);
-    SetFloatValue(DYNAMICOBJECT_POS_Y, pos.m_positionY);
-    SetFloatValue(DYNAMICOBJECT_POS_Z, pos.m_positionZ);
     SetUInt32Value(DYNAMICOBJECT_CASTTIME, getMSTime());
+
+    if (IsWorldObject())
+        setActive(true);    //must before add to map to be put in world container
+
+    if (!GetMap()->AddToMap(this))
+        return false;
 
     m_aliveDuration = duration;
     m_radius = radius;
@@ -104,9 +107,6 @@ bool DynamicObject::Create(uint32 guidlow, Unit* caster, uint32 spellId, uint32 
     m_spellId = spellId;
     m_casterGuid = caster->GetGUID();
     m_updateTimer = 0;
-
-    //if (m_effIndex == 4)
-       // m_isWorldObject = true;
 
     return true;
 }
@@ -123,40 +123,32 @@ void DynamicObject::Update(uint32 p_time)
     Unit* caster = GetCaster();
     if (!caster)
     {
-        Delete();
+        Remove();
         return;
     }
 
-    bool deleteThis = false;
+    bool expired = false;
 
     if (m_aliveDuration > int32(p_time))
         m_aliveDuration -= p_time;
     else
-        deleteThis = true;
+        expired = true;
 
-    if (m_effIndex < 4)
-    {
-        if (m_updateTimer < p_time)
-        {
-            Oregon::DynamicObjectUpdater notifier(*this, caster);
-            VisitNearbyObject(GetRadius(), notifier);
-            m_updateTimer = 500; // is this official-like?
-        }
-        else m_updateTimer -= p_time;
-    }
-
-    if (deleteThis)
+    if (expired)
     {
         caster->RemoveDynObjectWithGUID(GetGUID());
-        Delete();
+        Remove();
     }
 }
 
-void DynamicObject::Delete()
+void DynamicObject::Remove()
 {
-    SendObjectDeSpawnAnim(GetGUID());
-    RemoveFromWorld();
-    AddObjectToRemoveList();
+    if (IsInWorld())
+    {
+        SendObjectDeSpawnAnim(GetGUID());
+        RemoveFromWorld();
+        AddObjectToRemoveList();
+    }
 }
 
 void DynamicObject::Delay(int32 delaytime)
