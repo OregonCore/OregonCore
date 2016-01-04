@@ -2006,9 +2006,6 @@ bool Creature::CanCreatureAttack(Unit const* victim) const
 
     if (!victim->isTargetableForAttack())
         return false;
-/*
-    if (!IsValidAttackTarget(victim))
-        return false;*/
 
     if (!victim->isInAccessiblePlaceFor(this))
         return false;
@@ -2019,12 +2016,13 @@ bool Creature::CanCreatureAttack(Unit const* victim) const
     if (GetMap()->IsDungeon())
         return true;
 
-    float length = victim->GetDistance(m_homePosition);
-    float AttackDist = GetAttackDistance(victim);
-    uint32 ThreatRadius = sWorld.getConfig(CONFIG_THREAT_RADIUS);
-
     //Use AttackDistance in distance check if threat radius is lower. This prevents creature bounce in and out of combat every update tick.
-    return (length > (ThreatRadius > AttackDist ? ThreatRadius : AttackDist));
+    float dist = std::max(uint32(GetAttackDistance(victim)), sWorld.getConfig(CONFIG_THREAT_RADIUS)) + m_CombatDistance;
+
+    if (Unit* unit = GetCharmerOrOwner())
+        return victim->IsWithinDist(unit, dist);
+    else
+        return victim->IsInDist(&m_homePosition, dist);
 }
 
 CreatureDataAddon const* Creature::GetCreatureAddon() const

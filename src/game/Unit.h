@@ -1359,7 +1359,7 @@ class Unit : public WorldObject
 
         bool isFrozen() const;
 
-        bool isTargetableForAttack(bool inversAlive = false) const;
+        bool isTargetableForAttack(bool checkFakeDeath = true) const;
         bool isAttackableByAOE(float x = 0, float y = 0, float z = 0, bool LosCheck = false) const;
         bool canAttack(Unit const* target, bool force = true) const;
         virtual bool IsInWater() const;
@@ -1488,6 +1488,7 @@ class Unit : public WorldObject
         {
             return IS_PLAYER_GUID(GetCharmerOrOwnerOrOwnGUID());
         }
+        Player* GetAffectingPlayer() const;
 
         Player* GetSpellModOwner() const;
 
