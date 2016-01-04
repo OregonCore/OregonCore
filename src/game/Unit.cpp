@@ -7342,6 +7342,17 @@ Player* Unit::GetCharmerOrOwnerPlayerOrPlayerItself() const
     return GetTypeId() == TYPEID_PLAYER ? (Player*)this : NULL;
 }
 
+Player* Unit::GetAffectingPlayer() const
+{
+    if (!GetCharmerOrOwnerGUID())
+        return const_cast<Unit*>(this)->ToPlayer();
+
+    if (Unit* owner = GetCharmerOrOwner())
+        return owner->GetCharmerOrOwnerPlayerOrPlayerItself();
+
+    return NULL;
+}
+
 Minion* Unit::GetFirstMinion() const
 {
     if (uint64 pet_guid = GetMinionGUID())
