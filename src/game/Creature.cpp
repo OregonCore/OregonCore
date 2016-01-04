@@ -137,7 +137,7 @@ bool AssistDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
 
 bool ForcedDespawnDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
 {
-    m_owner.ForcedDespawn();
+    m_owner.DespawnOrUnsummon();
     return true;
 }
 
@@ -153,6 +153,7 @@ Creature::Creature(bool isWorldObject): Unit(isWorldObject),
     m_meleeDamageSchoolMask(SPELL_SCHOOL_MASK_NORMAL), DisableReputationGain(false), m_creatureData(NULL),
     m_formation(NULL), m_creatureInfo(NULL)
 {
+    m_regenTimer = CREATURE_REGEN_INTERVAL;
     m_valuesCount = UNIT_END;
 
     for (uint8 i = 0; i < CREATURE_MAX_SPELLS; ++i)
@@ -163,9 +164,9 @@ Creature::Creature(bool isWorldObject): Unit(isWorldObject),
     
     m_SightDistance = sWorld.getConfig(CONFIG_SIGHT_MONSTER);
     m_CombatDistance = 0; // MELEE_RANGE
-    m_isTempWorldObject = false;
 
     TriggerJustRespawned = false;
+    m_isTempWorldObject = false;
 }
 
 Creature::~Creature()
@@ -183,6 +184,7 @@ void Creature::AddToWorld()
     {
         if (m_zoneScript)
             m_zoneScript->OnCreatureCreate(this, true);
+
         ObjectAccessor::Instance().AddObject(this);
         Unit::AddToWorld();
         SearchFormation();
@@ -196,9 +198,12 @@ void Creature::RemoveFromWorld()
     {
         if (m_zoneScript)
             m_zoneScript->OnCreatureCreate(this, false);
+
         if (m_formation)
             sFormationMgr.RemoveCreatureFromGroup(m_formation, this);
+
         Unit::RemoveFromWorld();
+
         ObjectAccessor::Instance().RemoveObject(this);
     }
 }
@@ -213,7 +218,7 @@ void Creature::DisappearAndDie()
 
 void Creature::SearchFormation()
 {
-    if (IsPet())
+    if (IsSummon())
         return;
 
     uint32 lowguid = GetDBTableGUIDLow();
@@ -234,13 +239,13 @@ void Creature::RemoveCorpse(bool setSpawnTime)
     setDeathState(DEAD);
     UpdateObjectVisibility();
     loot.clear();
+    uint32 respawnDelay = m_respawnDelay;
+    if (IsAIEnabled)
+        AI()->CorpseRemoved(respawnDelay);
 
     // Should get removed later, just keep "compatibility" with scripts
     if (setSpawnTime)
-        m_respawnTime = time(NULL) + m_respawnDelay;
-
-    if (IsAIEnabled)
-        AI()->CorpseRemoved(m_respawnTime);
+        m_respawnTime = time(NULL) + respawnDelay;
 
     float x, y, z, o;
     GetRespawnPosition(x, y, z, &o);
@@ -352,7 +357,6 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
     SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_AURAS);
 
-    SelectLevel();
     if (team == HORDE)
         SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, cInfo->faction_H);
     else
@@ -363,14 +367,16 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
     else
         SetUInt32Value(UNIT_NPC_FLAGS, cInfo->npcflag);
 
-    SetAttackTime(BASE_ATTACK,  cInfo->baseattacktime);
-    SetAttackTime(OFF_ATTACK,   cInfo->baseattacktime);
-    SetAttackTime(RANGED_ATTACK, cInfo->rangeattacktime);
-
     SetUInt32Value(UNIT_FIELD_FLAGS, cInfo->unit_flags);
     SetUInt32Value(UNIT_DYNAMIC_FLAGS, cInfo->dynamicflags);
 
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
+
+    SetAttackTime(BASE_ATTACK,  cInfo->baseattacktime);
+    SetAttackTime(OFF_ATTACK,   cInfo->baseattacktime);
+    SetAttackTime(RANGED_ATTACK, cInfo->rangeattacktime);
+
+    SelectLevel();
 
     SetMeleeDamageSchool(SpellSchools(cInfo->dmgschool));
     SetModifierValue(UNIT_MOD_ARMOR, BASE_VALUE, float(cInfo->armor));
@@ -435,6 +441,8 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
             if (!(cInfo->flags_extra & CREATURE_FLAG_EXTRA_CIVILIAN) &&
                 (factionEntry->team == ALLIANCE || factionEntry->team == HORDE))
                 SetPvP(true);
+            else
+                SetPvP(false);
     }
 
     // trigger creature is always not selectable and can not be attacked
@@ -450,35 +458,8 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
     }
 
     UpdateMovementFlags();
+    LoadCreaturesAddon();
     return true;
-}
-
-void Creature::UpdateMovementFlags(bool packetOnly)
-{
-    if (IsControlledByPlayer() || GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_DYNAMIC_MOVEMENT_FLAG)
-        return;
-
-    // Set the movement flags if the creature is in that mode. (Only fly if actually in air, only swim if in water, etc)
-    float ground = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
-
-    if (ground < INVALID_HEIGHT)
-    {
-        sLog.outDebug("FallGround: creature %u at map %u (x: %f, y: %f, z: %f), not able to retrive a proper GetHeight (z: %f).",
-            GetEntry(), GetMap()->GetId(), GetPositionX(), GetPositionX(), GetPositionZ(), ground);
-        return;
-    }
-
-    bool isInAir = (G3D::fuzzyGt(GetPositionZ(), ground + 0.05f) || G3D::fuzzyLt(GetPositionZ(), ground - 0.05f)); // Can be underground too, prevent the falling
-
-    if (GetCreatureTemplate()->InhabitType & INHABIT_AIR && isInAir && !IsFalling())
-        SetLevitate(true, packetOnly);
-    else
-        SetLevitate(false);
-
-    if (!isInAir)
-        RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
-
-    SetSwim(GetCreatureTemplate()->InhabitType & INHABIT_WATER && IsInWater());
 }
 
 void Creature::Update(uint32 diff)
@@ -2542,6 +2523,34 @@ bool Creature::SetLevitate(bool apply, bool packetOnly)
     data << GetPackGUID();
     SendMessageToSet(&data, true);
     return true;
+}
+
+void Creature::UpdateMovementFlags(bool packetOnly)
+{
+    if (IsControlledByPlayer() || GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_DYNAMIC_MOVEMENT_FLAG)
+        return;
+
+    // Set the movement flags if the creature is in that mode. (Only fly if actually in air, only swim if in water, etc)
+    float ground = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
+
+    if (ground < INVALID_HEIGHT)
+    {
+        sLog.outDebug("FallGround: creature %u at map %u (x: %f, y: %f, z: %f), not able to retrive a proper GetHeight (z: %f).",
+            GetEntry(), GetMap()->GetId(), GetPositionX(), GetPositionX(), GetPositionZ(), ground);
+        return;
+    }
+
+    bool isInAir = (G3D::fuzzyGt(GetPositionZ(), ground + 0.05f) || G3D::fuzzyLt(GetPositionZ(), ground - 0.05f)); // Can be underground too, prevent the falling
+
+    if (GetCreatureTemplate()->InhabitType & INHABIT_AIR && isInAir && !IsFalling())
+        SetLevitate(true, packetOnly);
+    else
+        SetLevitate(false);
+
+    if (!isInAir)
+        RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
+
+    SetSwim(GetCreatureTemplate()->InhabitType & INHABIT_WATER && IsInWater());
 }
 
 void Creature::StartPickPocketRefillTimer()
