@@ -121,6 +121,8 @@ enum CreatureFlagsExtra
 #pragma pack(push,1)
 #endif
 
+#define CREATURE_REGEN_INTERVAL 2 * IN_MILLISECONDS
+
 #define MAX_KILL_CREDIT 2
 // from `creature_template` table
 struct CreatureInfo
@@ -448,7 +450,7 @@ class Creature : public Unit, public GridObject<Creature>
 
         bool Create(uint32 guidlow, Map* map, uint32 Entry, uint32 team, float x, float y, float z, float ang, const CreatureData* data = NULL);
         bool LoadCreaturesAddon(bool reload = false);
-        void SelectLevel(const CreatureInfo* cinfo);
+        void SelectLevel();
         void LoadEquipment(uint32 equip_entry, bool force = false);
 
         uint32 GetDBTableGUIDLow() const
@@ -498,18 +500,12 @@ class Creature : public Unit, public GridObject<Creature>
         {
             return (GetCreatureTemplate()->InhabitType & INHABIT_AIR) || HasAuraType(SPELL_AURA_FLY);
         }
-        void SetReactState(ReactStates st)
-        {
-            m_reactState = st;
-        }
-        ReactStates GetReactState()
-        {
-            return m_reactState;
-        }
-        bool HasReactState(ReactStates state) const
-        {
-            return (m_reactState == state);
-        }
+
+        void SetReactState(ReactStates st) { m_reactState = st; }
+        ReactStates GetReactState() const { return m_reactState; }
+        bool HasReactState(ReactStates state) const { return (m_reactState == state); }
+        void InitializeReactState();
+
         bool IsTrainerOf(Player* player, bool msg) const;
         bool CanInteractWithBattleMaster(Player* player, bool msg) const;
         bool CanTrainAndResetTalentsOf(Player* pPlayer) const;
@@ -518,28 +514,15 @@ class Creature : public Unit, public GridObject<Creature>
         bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false);
         bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const;
 
-        bool isElite() const
-        {
-            if (IsPet())
-                return false;
+        bool isElite() const;
+        bool isWorldBoss() const;
 
-            uint32 rank = GetCreatureTemplate()->rank;
-            return rank != CREATURE_ELITE_NORMAL && rank != CREATURE_ELITE_RARE;
-        }
-
-        bool isWorldBoss() const
-        {
-            if (IsPet())
-                return false;
-
-            return GetCreatureTemplate()->rank == CREATURE_ELITE_WORLDBOSS;
-        }
-
-        uint32 getLevelForTarget(Unit const* target) const; // overwrite Unit::getLevelForTarget for boss level support
+        uint8 getLevelForTarget(Unit const* target) const; // overwrite Unit::getLevelForTarget for boss level support
 
         bool IsInEvadeMode() const;
 
         bool AIM_Initialize(CreatureAI* ai = NULL);
+        void Motion_Initialize();
 
         CreatureAI* AI() const
         {
@@ -583,7 +566,7 @@ class Creature : public Unit, public GridObject<Creature>
         {
             return m_equipmentId;
         }
-        float GetSpellDamageMod(int32 Rank);
+        float GetSpellDamageMod(int32 Rank) const;
 
         VendorItemData const* GetVendorItems() const;
         uint32 GetVendorItemCurrentCount(VendorItem const* vItem);
@@ -684,22 +667,14 @@ class Creature : public Unit, public GridObject<Creature>
 
         Unit* SelectNearestTarget(float dist = 0, bool playerOnly = false) const;
         Unit* SelectNearestTargetInAttackDistance(float dist = 0) const;
+        Unit* SelectNearestHostileUnitInAggroRange(bool useLOS = false) const;
 
         void DoFleeToGetAssistance();
         void CallForHelp(float fRadius);
         void CallAssistance();
-        void SetNoCallAssistance(bool val)
-        {
-            m_AlreadyCallAssistance = val;
-        }
-        void SetNoSearchAssistance(bool val)
-        {
-            m_AlreadySearchedAssistance = val;
-        }
-        bool HasSearchedAssistance()
-        {
-            return m_AlreadySearchedAssistance;
-        }
+        void SetNoCallAssistance(bool val) { m_AlreadyCallAssistance = val; }
+        void SetNoSearchAssistance(bool val) { m_AlreadySearchedAssistance = val; }
+        bool HasSearchedAssistance() const { return m_AlreadySearchedAssistance; }
         bool CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction = true) const;
 
         MovementGeneratorType GetDefaultMovementType() const
@@ -857,27 +832,25 @@ class Creature : public Unit, public GridObject<Creature>
         {
             return m_PlayerDamageReq == 0;
         }
-        void LowerPlayerDamageReq(uint32 unDamage)
-        {
-            if (m_PlayerDamageReq)
-                m_PlayerDamageReq > unDamage ? m_PlayerDamageReq -= unDamage : m_PlayerDamageReq = 0;
-        }
+        void LowerPlayerDamageReq(uint32 unDamage);
         void ResetPlayerDamageReq()
         {
             m_PlayerDamageReq = GetHealth() / 2;
         }
         uint32 m_PlayerDamageReq;
 
+        uint32 GetOriginalEntry() const { return m_originalEntry; }
+        void SetOriginalEntry(uint32 entry) { m_originalEntry = entry; }
+
         float m_SightDistance, m_CombatDistance;
 
-        void SetRooted(bool apply);
-        bool SetFeatherFall(bool apply);
-        bool SetHover(bool apply);
-        bool SetCanFly(bool apply, bool packetOnly = false);
-        bool SetSwim(bool apply, bool packetOnly = false);
-        bool SetWalk(bool apply);
-        bool SetLevitate(bool apply, bool packetOnly = false);
-        bool SetWaterWalk(bool apply);
+        bool SetLevitate(bool enable, bool packetOnly = false);
+        bool SetWalk(bool enable) override;
+        bool SetSwim(bool enable) override;
+        bool SetCanFly(bool enable, bool packetOnly = false) override;
+        bool SetFeatherFall(bool enable, bool packetOnly = false) override;
+        bool SetWaterWalking(bool enable, bool packetOnly = false) override;
+        bool SetHover(bool enable, bool packetOnly = false) override;
 
         CreatureTextRepeatIds GetTextRepeatGroup(uint8 textGroup);
         void SetTextRepeatId(uint8 textGroup, uint8 id);

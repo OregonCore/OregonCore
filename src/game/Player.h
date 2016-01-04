@@ -2718,7 +2718,6 @@ class Player : public Unit, public GridObject<Player>
             m_rafLink = status;
         }
 
-        void SetRooted(bool apply);
         bool SetFeatherFall(bool apply);
         bool SetHover(bool apply);
         bool SetCanFly(bool apply, bool packetOnly = false);

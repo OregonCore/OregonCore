@@ -12413,6 +12413,54 @@ void Unit::SetStunned(bool apply)
     }
 }
 
+void Unit::SetRooted(bool apply)
+{
+    if (apply)
+    {
+        // MOVEMENTFLAG_ROOT cannot be used in conjunction with MOVEMENTFLAG_MASK_MOVING (tested 3.3.5a)
+        // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
+        // setting MOVEMENTFLAG_ROOT
+        RemoveUnitMovementFlag(MOVEMENTFLAG_MOVING);
+        m_movementInfo.AddMovementFlag(MOVEMENTFLAG_ROOT);
+        StopMoving();
+
+        if (GetTypeId() == TYPEID_PLAYER)
+        {
+            WorldPacket data(SMSG_FORCE_MOVE_ROOT, 10);
+            data << GetPackGUID();
+            data << (uint32)2; // @todo Identify this
+            SendMessageToSet(&data, true);
+        }
+        else
+        {
+            WorldPacket data(SMSG_SPLINE_MOVE_ROOT, 8);
+            data << GetPackGUID();
+            SendMessageToSet(&data, true);
+        }
+    }
+    else
+    {
+        if (!HasUnitState(UNIT_STATE_STUNNED))      // prevent moving if it also has stun effect
+        {
+            if (GetTypeId() == TYPEID_PLAYER)
+            {
+                WorldPacket data(SMSG_FORCE_MOVE_UNROOT, 10);
+                data << GetPackGUID();
+                data << (uint32)2; // @todo Identify this
+                SendMessageToSet(&data, true);
+            }
+            else
+            {
+                WorldPacket data(SMSG_SPLINE_MOVE_UNROOT, 8);
+                data << GetPackGUID();
+                SendMessageToSet(&data, true);
+            }
+
+            m_movementInfo.RemoveMovementFlag(MOVEMENTFLAG_ROOT);
+        }
+    }
+}
+
 void Unit::SetFeared(bool apply)
 {
     if (apply)
@@ -12992,12 +13040,12 @@ bool Unit::IsFalling() const
     return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLINGFAR)) || movespline->isFalling();
 }
 
-bool Unit::SetWalk(bool apply)
+bool Unit::SetWalk(bool enable)
 {
-    if (apply == IsWalking())
+    if (enable == IsWalking())
         return false;
 
-    if (apply)
+    if (enable)
         AddUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
     else
         RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
@@ -13018,12 +13066,12 @@ bool Unit::SetLevitate(bool apply, bool /*packetOnly = false */)
     return true;
 }
 
-bool Unit::SetSwim(bool apply, bool /*packetOnly = false */)
+bool Unit::SetSwim(bool enable)
 {
-    if (apply == HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
+    if (enable == HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
         return false;
 
-    if (apply)
+    if (enable)
         AddUnitMovementFlag(MOVEMENTFLAG_SWIMMING);
     else
         RemoveUnitMovementFlag(MOVEMENTFLAG_SWIMMING);
@@ -13031,12 +13079,12 @@ bool Unit::SetSwim(bool apply, bool /*packetOnly = false */)
     return true;
 }
 
-bool Unit::SetCanFly(bool apply, bool /*packetOnly = false */)
+bool Unit::SetCanFly(bool enable, bool /*packetOnly = false */)
 {
-    if (apply == HasUnitMovementFlag(MOVEMENTFLAG_FLYING))
+    if (enable == HasUnitMovementFlag(MOVEMENTFLAG_FLYING))
         return false;
 
-    if (apply)
+    if (enable)
     {
         AddUnitMovementFlag(MOVEMENTFLAG_CAN_FLY);
         RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
@@ -13051,12 +13099,12 @@ bool Unit::SetCanFly(bool apply, bool /*packetOnly = false */)
     return true;
 }
 
-bool Unit::SetWaterWalk(bool apply)
+bool Unit::SetWaterWalking(bool enable, bool /*packetOnly = false */)
 {
-    if (apply == HasUnitMovementFlag(MOVEMENTFLAG_WATERWALKING))
+    if (enable == HasUnitMovementFlag(MOVEMENTFLAG_WATERWALKING))
         return false;
 
-    if (apply)
+    if (enable)
         AddUnitMovementFlag(MOVEMENTFLAG_WATERWALKING);
     else
         RemoveUnitMovementFlag(MOVEMENTFLAG_WATERWALKING);
@@ -13064,12 +13112,12 @@ bool Unit::SetWaterWalk(bool apply)
     return true;
 }
 
-bool Unit::SetFeatherFall(bool apply)
+bool Unit::SetFeatherFall(bool enable, bool /*packetOnly = false */)
 {
-    if (apply == HasUnitMovementFlag(MOVEMENTFLAG_SAFE_FALL))
+    if (enable == HasUnitMovementFlag(MOVEMENTFLAG_SAFE_FALL))
         return false;
 
-    if (apply)
+    if (enable)
         AddUnitMovementFlag(MOVEMENTFLAG_SAFE_FALL);
     else
         RemoveUnitMovementFlag(MOVEMENTFLAG_SAFE_FALL);
@@ -13077,12 +13125,12 @@ bool Unit::SetFeatherFall(bool apply)
     return true;
 }
 
-bool Unit::SetHover(bool apply)
+bool Unit::SetHover(bool enable, bool /*packetOnly = false*/)
 {
-    if (apply == HasUnitMovementFlag(MOVEMENTFLAG_HOVER))
+    if (enable == HasUnitMovementFlag(MOVEMENTFLAG_HOVER))
         return false;
 
-    if (apply)
+    if (enable)
         AddUnitMovementFlag(MOVEMENTFLAG_HOVER);
     else
         RemoveUnitMovementFlag(MOVEMENTFLAG_HOVER);

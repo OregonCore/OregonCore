@@ -1943,7 +1943,6 @@ class Unit : public WorldObject
         }
         void SetSpeed(UnitMoveType mtype, float rate, bool forced = false);
 
-        virtual bool SetHover(bool apply);
         bool isHover() const
         {
             return HasAuraType(SPELL_AURA_HOVER);
@@ -1992,8 +1991,6 @@ class Unit : public WorldObject
         void SetFeared(bool apply/*, uint64 casterGUID = 0, uint32 spellID = 0*/);
         void SetConfused(bool apply/*, uint64 casterGUID = 0, uint32 spellID = 0*/);
         void SetStunned(bool apply);
-        virtual void SetRooted(bool /*apply*/) {}
-        virtual bool SetFeatherFall(bool apply);
 
         void MonsterMoveWithSpeed(float x, float y, float z, float speed, bool generatePath = false, bool forceDestination = false);
         void SendMonsterMoveWithSpeedToCurrentDestination(float speed);
@@ -2062,11 +2059,15 @@ class Unit : public WorldObject
         bool IsWalking() const { return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_WALK_MODE); }
         bool IsRooted() const { return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_ROOT); }
 
-        virtual bool SetWalk(bool apply);
-        virtual bool SetSwim(bool apply, bool packetOnly = false);
+        void SetRooted(bool apply);
+
+        virtual bool SetWalk(bool enable);
+        virtual bool SetSwim(bool enable);
         virtual bool SetLevitate(bool apply, bool packetOnly = false);
-        virtual bool SetCanFly(bool apply, bool packetOnly = false);
-        virtual bool SetWaterWalk(bool apply);
+        virtual bool SetCanFly(bool enable, bool packetOnly = false);
+        virtual bool SetWaterWalking(bool enable, bool packetOnly = false);
+        virtual bool SetFeatherFall(bool enable, bool packetOnly = false);
+        virtual bool SetHover(bool enable, bool packetOnly = false);
 
         bool IsLevitating() const { return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_LEVITATING); }
 

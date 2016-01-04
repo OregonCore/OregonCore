@@ -20986,35 +20986,6 @@ bool Player::AddItem(uint32 itemId, uint32 count)
     return true;
 }
 
-void Player::SetRooted(bool apply)
-{
-    if (apply)
-    {
-        // MOVEMENTFLAG_ROOT cannot be used in conjunction with MOVEMENTFLAG_MASK_MOVING (tested 3.3.5a)
-        // this will freeze clients. That's why we remove MOVEMENTFLAG_MASK_MOVING before
-        // setting MOVEMENTFLAG_ROOT
-        RemoveUnitMovementFlag(MOVEMENTFLAG_MOVING);
-        m_movementInfo.AddMovementFlag(MOVEMENTFLAG_ROOT);
-
-        WorldPacket data(SMSG_FORCE_MOVE_ROOT, 10);
-        data << GetPackGUID();
-        data << (uint32)2;
-        SendMessageToSet(&data, true);
-    }
-    else
-    {
-        if (!HasUnitState(UNIT_STATE_STUNNED))      // prevent moving if it also has stun effect
-        {
-            m_movementInfo.RemoveMovementFlag(MOVEMENTFLAG_ROOT);
-
-            WorldPacket data(SMSG_FORCE_MOVE_UNROOT, 10);
-            data << GetPackGUID();
-            data << (uint32)2;
-            SendMessageToSet(&data, true);
-        }
-    }
-}
-
 bool Player::SetFeatherFall(bool apply)
 {
     if (!Unit::SetFeatherFall(apply))
@@ -21105,7 +21076,7 @@ bool Player::SetLevitate(bool apply, bool /*packetOnly = false*/)
 
 bool Player::SetWaterWalk(bool apply)
 {
-    if (!Unit::SetWaterWalk(apply))
+    if (!Unit::SetWaterWalking(apply))
         return false;
 
     WorldPacket data(apply ? SMSG_MOVE_WATER_WALK : SMSG_MOVE_LAND_WALK, GetPackGUID().size() + 4);

@@ -3681,7 +3681,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
 
                 m_caster->SetCritterGUID(summon->GetGUID());
 
-                summon->SelectLevel(summon->GetCreatureTemplate());       // some summoned creaters have different from 1 DB data for level/hp
+                summon->SelectLevel();       // some summoned creaters have different from 1 DB data for level/hp
                 summon->SetUInt32Value(UNIT_NPC_FLAGS, summon->GetCreatureTemplate()->npcflag);
 
                 summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
