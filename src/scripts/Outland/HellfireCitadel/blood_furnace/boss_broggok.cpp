@@ -86,7 +86,7 @@ struct boss_broggokAI : public ScriptedAI
         me->RemoveAllAuras();
         me->DeleteThreatList();
         me->CombatStop(true);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_PASSIVE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
         Reset();
 
         if (!me->IsAlive())

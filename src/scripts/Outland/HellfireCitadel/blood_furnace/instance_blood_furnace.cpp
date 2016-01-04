@@ -373,7 +373,7 @@ struct instance_blood_furnace : public ScriptedInstance
                 if (Creature* pBroggok = instance->GetCreature(BroggokGUID))
                 {
                     pBroggok->SetReactState(REACT_AGGRESSIVE);
-                    pBroggok->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_PASSIVE);
+                    pBroggok->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
                     pBroggok->SetInCombatWithZone();
                 }
             }

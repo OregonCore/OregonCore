@@ -139,7 +139,7 @@ struct npc_deserter_agitatorAI : public ScriptedAI
     void Reset()
     {
         me->RestoreFaction();
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
         me->SetReactState(REACT_AGGRESSIVE);
         me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
     }
@@ -188,7 +188,7 @@ bool GossipSelect_npc_deserter_agitator(Player* pPlayer, Creature* pCreature, ui
             pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             pCreature->SetSpeed(MOVE_RUN, pCreature->GetSpeedRate(MOVE_RUN), true);
             pCreature->setFaction(35);
-            pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_NON_ATTACKABLE);
+            pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
             pCreature->SetReactState(REACT_PASSIVE);
             pCreature->GetMotionMaster()->MovePoint(1, DeserterDisappearPos);
             break;
@@ -1037,7 +1037,7 @@ struct npc_zelfraxAI : public ScriptedAI
             return;
 
         me->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         SetCombatMovement(true);
 
         if (me->IsInCombat())

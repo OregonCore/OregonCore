@@ -513,7 +513,7 @@ class Creature : public Unit, public GridObject<Creature>
         bool IsTrainerOf(Player* player, bool msg) const;
         bool CanInteractWithBattleMaster(Player* player, bool msg) const;
         bool CanTrainAndResetTalentsOf(Player* pPlayer) const;
-        bool IsOutOfThreatArea(Unit* pVictim) const;
+        bool CanCreatureAttack(Unit const* victim) const;
 
         bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false);
         bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const;

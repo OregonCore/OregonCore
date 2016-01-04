@@ -149,7 +149,7 @@ bool QuestAccept_npc_oox22fe(Player* pPlayer, Creature* pCreature, const Quest* 
         pCreature->setFaction(113);
         pCreature->SetHealth(pCreature->GetMaxHealth());
         pCreature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         DoScriptText(SAY_OOX_START, pCreature);
 
         if (npc_escortAI* pEscortAI = CAST_AI(npc_oox22feAI, pCreature->AI()))

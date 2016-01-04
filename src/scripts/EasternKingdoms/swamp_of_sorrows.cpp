@@ -120,7 +120,7 @@ bool QuestAccept_npc_galen_goodward(Player* pPlayer, Creature* pCreature, const 
     {
         pCreature->setFaction(113);
         DoScriptText(GILAN_SAY_START_1, pCreature);
-        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
 
         if (GameObject* pGo = pCreature->FindNearestGameObject(GO_GALENS_CAGE, INTERACTION_DISTANCE))
             pGo->UseDoorOrButton();

@@ -1430,7 +1430,10 @@ bool Creature::canStartAttack(Unit const* who) const
     if (isCivilian())
         return false;
 
-    if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE))
+    // This set of checks is should be done only for creatures
+    if ((HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC) && who->GetTypeId() != TYPEID_PLAYER)                                   // flag is valid only for non player characters
+        || (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC) && who->GetTypeId() == TYPEID_PLAYER)                                 // immune to PC and target is a player, return false
+        || (who->GetOwner() && who->GetOwner()->GetTypeId() == TYPEID_PLAYER && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC))) // player pets are immune to pc as well
         return false;
 
     // Do not attack non-combat pets
@@ -1452,16 +1455,16 @@ bool Creature::canStartAttack(Unit const* who) const
     return IsWithinLOSInMap(who);
 }
 
-float Creature::GetAttackDistance(Unit const* pl) const
+float Creature::GetAttackDistance(Unit const* player) const
 {
     float aggroRate = sWorld.getRate(RATE_CREATURE_AGGRO);
     if (aggroRate == 0)
         return 0.0f;
 
-    int32 playerlevel   = pl->getLevelForTarget(this);
-    int32 creaturelevel = getLevelForTarget(pl);
+    uint32 playerlevel   = player->getLevelForTarget(this);
+    uint32 creaturelevel = getLevelForTarget(player);
 
-    int32 leveldif       = playerlevel - creaturelevel;
+    int32 leveldif       = int32(playerlevel) - int32(creaturelevel);
 
     // "The maximum Aggro Radius has a cap of 25 levels under. Example: A level 30 char has the same Aggro Radius of a level 5 char on a level 60 mob."
     if (leveldif < - 25)
@@ -1480,7 +1483,7 @@ float Creature::GetAttackDistance(Unit const* pl) const
         RetDistance += GetTotalAuraModifier(SPELL_AURA_MOD_DETECT_RANGE);
 
         // detected range auras
-        RetDistance += pl->GetTotalAuraModifier(SPELL_AURA_MOD_DETECTED_RANGE);
+        RetDistance += player->GetTotalAuraModifier(SPELL_AURA_MOD_DETECTED_RANGE);
     }
 
     // "Minimum Aggro Radius for a mob seems to be combat range (5 yards)"
@@ -1955,7 +1958,7 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
     if (isCivilian())
         return false;
 
-    if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_PASSIVE))
+    if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_NPC))
         return false;
 
     // skip fighting creature
@@ -1993,25 +1996,31 @@ void Creature::SaveRespawnTime()
     sObjectMgr.SaveCreatureRespawnTime(m_DBTableGuid, GetInstanceId(), m_respawnTime);
 }
 
-bool Creature::IsOutOfThreatArea(Unit* pVictim) const
+bool Creature::CanCreatureAttack(Unit const* victim) const
 {
-    if (!pVictim)
-        return true;
-
-    if (!pVictim->IsInMap(this))
-        return true;
-
-    if (!pVictim->isTargetableForAttack())
-        return true;
-
-    if (!pVictim->isInAccessiblePlaceFor(this))
-        return true;
-
-    if (sMapStore.LookupEntry(GetMapId())->IsDungeon())
+    if (!victim)
         return false;
 
-    float length = pVictim->GetDistance(m_homePosition);
-    float AttackDist = GetAttackDistance(pVictim);
+    if (!victim->IsInMap(this))
+        return false;
+
+    if (!victim->isTargetableForAttack())
+        return false;
+/*
+    if (!IsValidAttackTarget(victim))
+        return false;*/
+
+    if (!victim->isInAccessiblePlaceFor(this))
+        return false;
+
+    if (IsAIEnabled && !AI()->CanAIAttack(victim))
+        return false;
+
+    if (GetMap()->IsDungeon())
+        return true;
+
+    float length = victim->GetDistance(m_homePosition);
+    float AttackDist = GetAttackDistance(victim);
     uint32 ThreatRadius = sWorld.getConfig(CONFIG_THREAT_RADIUS);
 
     //Use AttackDistance in distance check if threat radius is lower. This prevents creature bounce in and out of combat every update tick.

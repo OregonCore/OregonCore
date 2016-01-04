@@ -352,7 +352,7 @@ bool AreaTrigger_at_zumrah(Player* pPlayer, const AreaTriggerEntry* /*at*/)
         return false;
 
     Zumrah->setFaction(ZUMRAH_HOSTILE_FACTION);
-    Zumrah->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+    Zumrah->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
     Zumrah->AI()->AttackStart(pPlayer);
     return true;
 }

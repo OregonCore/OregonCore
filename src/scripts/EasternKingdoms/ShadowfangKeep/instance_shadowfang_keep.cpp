@@ -251,7 +251,7 @@ struct instance_shadowfang_keep : public ScriptedInstance
                 {
                 case 1:
                     pSummon = pArchmage->SummonCreature(pArchmage->GetEntry(), SpawnLocation[4], TEMPSUMMON_TIMED_DESPAWN, 10000);
-                    pSummon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                    pSummon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                     pSummon->SetReactState(REACT_DEFENSIVE);
                     pSummon->CastSpell(pSummon, SPELL_ASHCROMBE_TELEPORT, true);
                     DoScriptText(SAY_ARCHMAGE, pSummon);

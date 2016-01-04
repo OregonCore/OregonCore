@@ -103,7 +103,7 @@ bool QuestAccept_npc_00x09hl(Player* pPlayer, Creature* pCreature, const Quest* 
         pCreature->SetStandState(UNIT_STAND_STATE_STAND);
         pCreature->setFaction(113);
         pCreature->SetHealth(pCreature->GetMaxHealth());
-        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
 
         DoScriptText(SAY_OOX_START, pCreature);
 

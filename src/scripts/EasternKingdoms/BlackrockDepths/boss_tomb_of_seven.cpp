@@ -122,7 +122,7 @@ struct boss_doomrelAI : public ScriptedAI
         me->setFaction(FACTION_FRIEND);
 
         // was set before event start, so set again
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
 
         if (pInstance)
         {
@@ -234,7 +234,7 @@ bool GossipSelect_boss_doomrel(Player* pPlayer, Creature* pCreature, uint32 /*ui
         pPlayer->CLOSE_GOSSIP_MENU();
         //start event here
         pCreature->setFaction(FACTION_HOSTILE);
-        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         pCreature->AI()->AttackStart(pPlayer);
         ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         if (pInstance)

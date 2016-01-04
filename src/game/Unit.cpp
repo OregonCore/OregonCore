@@ -9066,7 +9066,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
             if (IsAIEnabled)
             {
                 ToCreature()->AI()->EnterCombat(enemy);
-                RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE); // unit has engaged in combat, remove immunity so players can fight back
+                RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC); // unit has engaged in combat, remove immunity so players can fight back
             }
 
             if (ToCreature()->GetFormation())
@@ -9096,8 +9096,8 @@ void Unit::ClearInCombat()
     // Player's state will be cleared in Player::UpdateContestedPvP
     if (Creature* creature = ToCreature())
     {
-        if (creature->GetCreatureTemplate() && creature->GetCreatureTemplate()->unit_flags & UNIT_FLAG_OOC_NOT_ATTACKABLE)
-            SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        if (creature->GetCreatureTemplate() && creature->GetCreatureTemplate()->unit_flags & UNIT_FLAG_IMMUNE_TO_PC)
+            SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
 
         ClearUnitState(UNIT_STATE_ATTACK_PLAYER);
         if (HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER))
@@ -9117,21 +9117,19 @@ void Unit::ClearInCombat()
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
 }
 
-
-bool Unit::isTargetableForAttack(bool inverseAlive /*=false*/) const
+bool Unit::isTargetableForAttack(bool checkFakeDeath) const
 {
+    if (!IsAlive())
+        return false;
+
     if (HasFlag(UNIT_FIELD_FLAGS,
-        UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE))
+        UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_PC))
         return false;
 
-    if (GetTypeId() == TYPEID_PLAYER && ((Player*)this)->isGameMaster())
+    if (GetTypeId() == TYPEID_PLAYER && ToPlayer()->isGameMaster())
         return false;
 
-    // inversealive is needed for some spells which need to be casted at dead targets (aoe)
-    if (IsAlive() == inverseAlive)
-        return false;
-
-    return IsInWorld() && !HasUnitState(UNIT_STATE_DIED) && !isInFlight();
+    return !HasUnitState(UNIT_STATE_UNATTACKABLE) && (!checkFakeDeath || !HasUnitState(UNIT_STATE_DIED));
 }
 
 bool Unit::canAttack(Unit const* target, bool force) const
@@ -9169,7 +9167,7 @@ bool Unit::isAttackableByAOE(float x, float y, float z, bool LosCheck) const
         return false;
 
     if (HasFlag(UNIT_FIELD_FLAGS,
-                UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE))
+                UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_PC))
         return false;
 
     if (GetTypeId() == TYPEID_PLAYER && ToPlayer()->isGameMaster())
@@ -9840,7 +9838,7 @@ Unit* Creature::SelectVictim()
     {
         target = SelectNearestTargetInAttackDistance();
 
-        if (target && !IsOutOfThreatArea(target))
+        if (target && CanCreatureAttack(target))
             return target;
     }
 
