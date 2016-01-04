@@ -946,7 +946,7 @@ class Creature : public Unit, public GridObject<Creature>
         //Formation var
         CreatureGroup* m_formation;
 
-        TriggerJustRespawned = false;
+        bool TriggerJustRespawned;
 
         CreatureInfo const* m_creatureInfo;                 // in heroic mode can different from sObjectMgr::GetCreatureTemplate(GetEntry())
 
