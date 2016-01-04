@@ -1000,11 +1000,7 @@ class WorldObject : public Object, public WorldLocation
 
         virtual void SetMap(Map* map);
         virtual void ResetMap();
-        Map* GetMap() const
-        {
-            ASSERT(m_currMap);
-            return m_currMap;
-        }
+        Map* GetMap() const { ASSERT(m_currMap); return m_currMap; }
         Map* FindMap() const
         {
             return m_currMap;

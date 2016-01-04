@@ -164,6 +164,8 @@ Creature::Creature(bool isWorldObject): Unit(isWorldObject),
     m_SightDistance = sWorld.getConfig(CONFIG_SIGHT_MONSTER);
     m_CombatDistance = 0; // MELEE_RANGE
     m_isTempWorldObject = false;
+
+    TriggerJustRespawned = false;
 }
 
 Creature::~Creature()
@@ -491,6 +493,12 @@ void Creature::Update(uint32 diff)
         m_GlobalCooldown = 0;
     else
         m_GlobalCooldown -= diff;
+
+    if (IsAIEnabled && TriggerJustRespawned)
+    {
+        TriggerJustRespawned = false;
+        AI()->JustRespawned();
+    }
 
     UpdateMovementFlags();
 
@@ -1626,7 +1634,7 @@ void Creature::Respawn(bool force)
         {
             //reset the AI to be sure no dirty or uninitialized values will be used till next tick
             AI()->Reset();
-            AI()->JustRespawned();
+            TriggerJustRespawned = true;    //delay event to next tick so all creatures are created on the map before processing
         }
 
         uint32 poolid = sPoolMgr.IsPartOfAPool<Creature>(GetDBTableGUIDLow());

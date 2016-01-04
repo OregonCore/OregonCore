@@ -946,6 +946,8 @@ class Creature : public Unit, public GridObject<Creature>
         //Formation var
         CreatureGroup* m_formation;
 
+        TriggerJustRespawned = false;
+
         CreatureInfo const* m_creatureInfo;                 // in heroic mode can different from sObjectMgr::GetCreatureTemplate(GetEntry())
 
         CreatureTextRepeatGroup m_textRepeat;
