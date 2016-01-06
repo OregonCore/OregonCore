@@ -1,0 +1,29 @@
+
+# build directories
+build*/
+
+# backups
+*.orig
+*.bak
+*~
+*.back
+*.old
+
+# patch rejects
+*.rej
+
+# K-Develop files
+*.kdev*
+
+# patches
+*.patch
+*.diff
+
+# vim files
+*.vim
+*.ycm*
+
+# Mercurial files (foreign dev)
+.hg/
+.hgignore
+.hgtags

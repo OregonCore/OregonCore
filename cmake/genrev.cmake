@@ -10,7 +10,7 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 execute_process(
-  COMMAND hg id -n
+  COMMAND git rev-list HEAD --abbrev-commit --count
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   OUTPUT_VARIABLE rev_id_str
   OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -18,16 +18,16 @@ execute_process(
 )
 
 execute_process(
-  COMMAND hg id -i
+  COMMAND git rev-list HEAD --abbrev-commit -1
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   OUTPUT_VARIABLE rev_hash_str
   OUTPUT_STRIP_TRAILING_WHITESPACE
   ERROR_QUIET
 )
 
-if(EXISTS ${CMAKE_SOURCE_DIR}/.hg_archival.txt)
+if(EXISTS ${CMAKE_SOURCE_DIR}/.git_archival.txt)
   file(READ
-    ${CMAKE_SOURCE_DIR}/.hg_archival.txt rev_hash_str
+    ${CMAKE_SOURCE_DIR}/.git_archival.txt rev_hash_str
     LIMIT 10
     OFFSET 7
     NEWLINE_CONSUME

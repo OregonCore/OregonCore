@@ -1,0 +1,12 @@
+# auto detect text files
+* text=auto
+
+# no trailing space, no tabs, unix line endings
+*.cpp whitespace=trailing-space,space-before-tab,tab-in-indent,cr-at-eol eol=lf
+*.h   whitespace=trailing-space,space-before-tab,tab-in-indent,cr-at-eol eol=lf
+
+# no trailing space, unix lne endings
+*.sql whitespace=trailing-space eol=lf
+*.txt whitespace=trailing-space eol=lf
+*.md  whitespace=trailing-space eol=lf
+*.dox whitespace=trailing-space eol=lf
