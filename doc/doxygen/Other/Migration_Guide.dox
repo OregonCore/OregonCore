@@ -1,0 +1,72 @@
+/*! \page migration_guide Migration Guide BB->GH
+    \tableofcontents
+
+As you may have already noticed, OregonCore moved from Mercurial and Bitbucket to Git and Github.<br>
+
+<strong>We encourage you to first read this guide entirely and then start following its steps.</strong>
+
+- We are not going to talk why we moved here. These kind of question belong on places like forums.
+- If you have not used OC yet, do not follow this guide and jump to installation guide.
+- This will be a straightforward guide how to flawlessly move with us.
+
+What's changed
+==============
+
+ - version control changed from mercurial to git
+ - main repository has been moved to GitHub
+ - issue tracking has been moved as well
+
+Moving
+======
+
+Update as usual
+---------------
+
+This is essential, and almost everything that you need to do.
+
+ - **update your OC copy to the latest bitbucket version**
+ - **update your database to the latest version (with all updates)**
+
+Next step: Backup!
+------------------
+
+You should already be fine, but in case anything goes wrong, you can roll back and start over again.
+
+ - backup all your three databases - realmd, characters and world
+ - if you have done nay custom changes, back them up
+ - backup configuration files oregoncore.conf and oregonrealm.conf
+
+Replace repo with gits
+----------------------
+
+Let's say that you're copy was in 'oregoncore' directory, in that case
+rename it to 'oregoncore_backup' or something like that.
+
+Get new tools to work with git and clone a new repo, this time from git.
+Clone it to directory that was your original (in our case 'oregoncore').
+
+Please refer to installation guide:
+
+ - \ref install_win
+ - \ref install_lin
+
+If needed:
+
+ - copy our old oregoncore.conf as your new
+ - copy our old oregonrealm.conf as your new
+
+Done!
+-----
+
+That's all!
+
+If you're not using automatic updater, first apply all new database updates.
+If you haven't yet, stop your server and run the new one you've just built.
+
+Need help?
+==========
+
+If you encounter any difficulties please come on [forums](https://forums.oregon-core.net/) and let us know.<br>
+If you followed this guide correctly, we will surely find a solution.
+
+*/

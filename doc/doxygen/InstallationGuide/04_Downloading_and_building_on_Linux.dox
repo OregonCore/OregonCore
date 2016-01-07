@@ -1,0 +1,105 @@
+/*!
+\page install_lin Downloading and Building on Linux 
+\tableofcontents
+
+This guide will walk through what tools are needed for building the OregonCore on most modern linux systems. You are responsible for getting the needed software downloaded and configured.
+
+\section tools_you_will_need Tools you will need
+
+- gcc, g++ or clang
+- make
+- cmake - latest stable version possible (at least 2.8)
+- MariaDB (MySQL) Server and Client and the development headers and libraries
+- Git (for checking out the source)
+- OpenSSL and the development headers and libraries
+- zlib including the development includes and libraries
+- build-essential (for Debian and Ubuntu distributions)
+- Linux unzip tools
+- binutils including development includes and libraries
+- ACE including development includes and libraries
+- Some experience with Linux and common sense
+
+
+To fetch the components for Ubuntu :
+
+    apt-get install build-essential cmake mercurial binutils-dev libiberty-dev libbz2-dev \
+    openssl libssl-dev zlib1g-dev libmysqlclient15-dev libtool mysql-client unrar libace-dev
+
+To fetch the components for Debian :
+
+    apt-get install g++ gcc make cmake binutils-dev mercurial openssl \
+    libssl-dev zlib1g-dev libmysqlclient15-dev patch build-essential \
+    mysql-client libreadline5-dev libbz2-dev bzip2 libace-dev libbz2-dev
+
+To fetch the components for Fedora/Centos:
+
+    yum install cpp gcc gcc-c++ make cmake mercurial openssl openssl-devel \
+    mysql-devel mysql-server mysql mysql-libs readline readline-devel \
+    compat-readline5-devel compat-readline5 zlib-devel binutils-devel ace-devel
+
+\section preparing_to_build Preparing to Build (Optional)
+
+First step is to setup a user account to run OregonCore (**NEVER RUN IT AS ROOT!**)
+
+    adduser oregon
+
+Then su to the new oregon user.
+
+    su - oregon
+
+\section setting_up_build_env Setting up your Build Environment
+
+If you are new to Linux, this is an opportunity for you to form good development habits. There are some accepted best-practices on Unix and Linux systems that we will employ in our build.
+
+First, we'll create the basic directory structure in our home directory.
+
+    mkdir src
+    mkdir data
+    mkdir log
+
+The src directory is where we'll put our source files. The data directory will contain the dbc, map, and vmap files that we'll extract from the WoW client. The log directory will have all of our run-time logs, as well as the server pid files. As we build the software, the installation stages will create more directories for us.
+
+Now change directory to the src (`cd src`) directory, and we'll fetch the source files.
+
+\section git_checkout Git Checkout
+
+The OregonCore and OregonDB files are initially cloned from the project's Git repositories.
+To clone the OregonCore repository (core + db) run the following:
+
+    git clone https://github.com/OregonCore/OregonCore.git
+
+\section build_on_lin Building OregonCore
+
+Make sure you have su'd to your oregon user, and are in the src directory!
+Finally, we're ready to build oregoncore. The following will perform the build using common configuration options.
+
+    cd oregoncore
+    mkdir build
+    cd build
+    cmake ../ -DPREFIX=$HOME -DTOOLS=1
+    make
+    make install
+
+As with the other compiles, you cannot continue unless these steps executed successfully.
+Once you have completed a successful build, the server programs will be installed in the $HOME/bin directory.
+
+If you have multiple cores you can speed up your compile times severely by using:
+
+    make -j N
+
+where N is number of your cores.
+
+\section congratz Congratulations!
+
+\subsection keeping_code_up_to_date Keeping the code up to date
+
+OregonCore Developers are always at work fixing and adding new features to the core. You can always check them here.
+To update the source and database, we use the Mercurial pull and update commands.
+
+\subsection to_update_the_core_src To update the core source:
+
+1. Go to the oregoncore source directory (ex: $HOME/src/oregoncore).
+2. Pull the updates with git pull, then apply them with git checkout master.
+3. The source is now in sync with the repo and ready for a new build.
+
+*/

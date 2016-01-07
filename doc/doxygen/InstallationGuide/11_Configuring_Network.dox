@@ -1,0 +1,112 @@
+/*! \page network_conf Configuring network for client connections
+    \tableofcontents
+
+If you want to let players connect from outside your home network, you will need to configure your network hardware to send the traffic to your OregonCore server. The following steps will help you get everything set up.
+
+Under no circumstances should you put your server directly on the internet. Always use a router/firewall to connect your network to the global network.
+
+\section Preparation_CN Preparation
+
+1. Put a static IP address on your server. DHCP changes will break your configs every time if you don't. For this doc, we'll use 192.168.1.8.
+2. Get your outside IP address with [1]. For this doc, we'll use 66.249.250.76 (it's a random example).
+3. Set up DNS somewhere - dyndns.com works well. Set up a host with your outside IP, and the name of your choice. For this doc, we'll use wowsvr.homelinux.net. If you use dyndns, they will read your outside address automatically. If your DNS provider doesn't, use the outside address we got in previous step. 
+
+Make your own list with your real information. We'll add more to the list later:
+
+- Inside IP: 192.168.1.8
+- Outside IP: 66.249.250.76
+- Hostname: wowsvr.homelinux.net 
+
+\section Editing Editing oregoncore.conf
+
+Open oregoncore.conf and go to the beginning of the options and look at this config block:
+
+    RealmID = 1
+    DataDir = "/opt/oregon/data"
+    LogsDir = "/opt/oregon/log"
+    LoginDatabaseInfo = "127.0.0.1;3306;oregon;oregon;realmd"
+    WorldDatabaseInfo = "127.0.0.1;3306;oregon;oregon;world"
+    CharacterDatabaseInfo = "127.0.0.1;3306;oregon;oregon;characters"
+    MaxPingTime = 30
+    WorldServerPort = 8085
+    BindIP = "0.0.0.0"
+
+The important pieces are RealmID, WorldServerPort and BindIP. If you are running one realm, RealmID should be 1. WorldServerPort for the first realm is usually 8085, so leave it. BindIP should be left as 0.0.0.0 so that you can connect clients inside, outside, and from the server itself (where applicable).
+
+Here are some more things to add to your list:
+
+- RealmID: 1
+- WorldServerPort: 8085 
+
+Editing oregonrealm.conf
+
+Open oregonrealm.conf and go to where the options start and look for these:
+
+    RealmServerPort = 3724
+    BindIP = "0.0.0.0"
+
+The default RealmServerPort is traditionally 3724 (same as Blizz). BindIP, again, can stay 0.0.0.0 for best connectivity regardless of the client's place on the network.
+
+Add this to your list:
+
+- RealmServerPort: 3724 
+
+Hosts file (optional)
+
+Set up your hosts file for machines inside your network. This is slightly different, depending on your OS. Use the Inside address and hostname from your list.
+
+- OSX: Add a line to /etc/hosts that looks like this:
+
+    192.168.1.8 wowsvr.homelinux.net wowsvr
+
+- Windows: Add a line to c:\\windows\\system32\\drivers\\etc\\hosts that looks like
+
+    192.168.1.8 wowsvr.homelinux.net
+
+Use your real inside address and hostname, of course.
+
+\section Realmlist Realmlist Table
+
+Set up your realmlist table. This is in the realmd database. If you already have a record with id = 1, edit it, otherwise, create it. For the system name, we'll use OregonCore in this example. The entry should look like this using our example data - use the RealmID, address (hostname) and port (WorldServerPort) from your list:
+
+    id: 1
+    name: OregonCore
+    address: wowsvr.homelinux.net
+    port: 8085
+    icon: 1
+    realmflags: 0
+    timezone: 0
+    allowedSecurityLevel: 0
+    population: 0
+    realmbuilds: 8606
+
+You may want to change the timezone to match your location.
+
+Save the record. You can now start (or restart, if they were running) your oregon-core and oregon-realm programs.
+
+\section Altering Altering realmlist.wtf file
+
+Set the client realmlist.wtf for an inside client. It's in the World of Warcraft folder on your client machines. The file should have one line. It would look like this with our example data — use the hostname from your list:
+
+    set realmlist wowsvr.homelinux.net
+
+If the client is running on the server, make it look like this:
+
+    set realmlist 127.0.0.1
+
+\section Connecting Connecting and forwarding ports
+
+Connect an inside client and test it.
+
+If all worked, we can set up ports on the router now. Routers are pretty similar these days, but you will still need to look at yours to find the place to enter this data. What we want to do is forward some ports. Some routers will have an applications setup page or NAT setup, or maybe just plain Port Forwarding, find the place in your router, and set up the following:
+
+- forward port 3724 (TCP) to address 192.168.1.8 (this is the RealmServerPort and the Inside IP from your list)
+- forward port 8085 (TCP) to address 192.168.1.8 (his is the WorldServerPort and the Inside IP from your list) 
+
+Save the changes (your router may want to restart), and let things get back on line. This might be a good time to set up DDNS (dynamic DNS) on your router to update the DNS service when your provider changes your outside IP. Check the docs for your router to see how this is done.
+
+\section Last Last Step
+
+Congratulations! Everything is back on line. We have a running server that we can connect to from inside, we've set up port forwarding on the router, we have an outside hostname, and we know what belongs in realmlist.wtf. That's it. That's all we need. Now check it from outside, or set up a player account and ask a friend to check it.
+
+*/

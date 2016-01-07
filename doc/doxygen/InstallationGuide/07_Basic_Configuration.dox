@@ -1,0 +1,13 @@
+/*! \page basic_conf Basic Configuration of the core and realm applications
+
+In the introduction, we explained that there are two major applications that make up your server software. Each of these has a configuration file that allow you to tailor the way your server works. Although the system allows a considerable amount of customization, this article will explain only the settings that are required to start the server for the first time.
+
+After running the server, you may want to change various other aspects of the configuration. Each section has an extensive list of the options, and possible settings in most cases, that will be available.
+
+First, copy or rename:
+- oregonrealm.conf.dist to oregonrealm.conf
+- oregoncore.conf.dist to oregoncore.conf
+
+Now, open those files with a text editor and properly read the description of each field and change it appropriately. You've just configured OregonCore.
+
+*/

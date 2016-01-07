@@ -1,0 +1,65 @@
+/*! \page loading_db Loading The Database
+    \tableofcontents
+
+To do any meaningful work with the SQL database, you will need to decide what tool(s) you want to use. On Microsoft Windows, some popular choices are SQLyog, Navicat and Heidi SQL. On Linux systems, most administrators use the command-line mysql tools. Some of us augment those with phpMyAdmin, available in most distributions or as source.
+
+This guide will not assume that you are using any particular tool. It is up to you to learn how to create a database, import an SQL file and the other required actions. A good place to start learning is the on-line help for your SQL tool. If you are using the command-line tools, the MySQL website has a very good help section.
+
+As you may recall, we cloned the oregondb repository as part of the Download and Build phase of our install. If you skipped that step, go back and clone the database repo now. You will need it to continue.
+
+\section Creating Creating
+
+OregonCore requires three databases to function. They are:
+
+- realmd database — manages the data for accounts and other authentication functions.
+- characters database — manages all of the data for every character.
+- world database — contains all sorts of data required for the server to create and run the realm. 
+
+Before we can work with these databases, they must be created in the MySQL server. So let's begin by doing the following:
+
+1. Create a new database called realmd.
+2. Create a new database called characters.
+3. Create a new database called world. 
+
+It is possible to name these anything you like, but for the purpose of learning how to install the server, we will use these names.
+
+You can also use create_mysql.sql file located in OregonCore repository in sql folder to create Oregon user and databases.
+
+\section Loading_realmd Loading realmd database
+
+1. Using whatever SQL tool you have chosen, select the new realmd database.
+2. Execute the realmd.sql file found in your server sql directory.
+
+\section Loading_chars Loading characters database
+
+1. Using whatever SQL tool you have chosen, select the new characters database.
+2. Execute the characters.sql file found in your server sql directory.
+
+\section Loading_world Loading world database
+
+1. Unpack the oregon_database.zip file that we pulled from the repo.
+2. Using whatever SQL tool you have chosen, select the new world database.
+3. Execute the ODB file oregon_database.sql.
+
+\section Updates Updates
+
+Core is capable of updating itself. When you run it, it will automatically update database for you.<br>
+As of revision 2703 ([https://bitbucket.org/oregon/oregoncore/commits/ac4dc7fd707d ac4dc7fd707d])
+
+\section Troubleshooting Troubleshooting
+
+\subsection MySQL MySQL Server has gone away
+
+If you encounter this error  Simply locate file named '''my.cnf''' or also '''my.ini''' - it should be in directory where you installed mysql or on linux its usually /etc/mysql/my.cnf.
+
+Then change max_allowed_packet to some bigger value, like:
+
+<pre>max_allowed_packet = 10M</pre>
+
+\section Next06Step Next Step
+
+Now that our databases are loaded, we can move on to configuration!
+
+Continue to \ref basic_conf
+
+*/

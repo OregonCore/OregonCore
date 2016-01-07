@@ -1,0 +1,14 @@
+/*! \mainpage Introduction
+
+OregonCore is a piece of software that targets emulation of a World of Warcraft: The Burning Crusade game server. Our goal is to create a stable MMO framework and to help teach and learn development among our community. OregonCore has sustained itself with its tight knit community of developers, testers and bug reporters and thanks all those who have been involved with the project over the years. 
+
+--
+
+Warning
+-------
+
+Development on our project went ahead of its documentation. We try to keep the documentation
+up to date but there is a lot of stuff and work to do out there. So please if you find any inaccuraties
+or just need help, do not 100% rely in these docs and see as at our [forums](https://forums.oregon-core.net/).
+
+*/

@@ -1,0 +1,38 @@
+/*! \page starting Starting your new server
+    \tableofcontents
+
+Starting your new server is really quite simple, regardless of your Operating System platform.  
+
+\section Windows Windows
+
+- Open your server directory in Windows Explorer.
+- Double-click the ''oregon-realm'' program.  This will start the authentication server.  You should see '''Added realm "YourRealmName"''' in the console output.
+- Double-click the oregon-core program.  This will start the world server. You will see a lot of output in this console as the core loads the various required data. The server is ready to use when you see '''WORLD: World initialized''' in the console output.
+
+\section Linux Linux
+
+- Open a terminal session, and ''su -'' to your oregon user (ex: '''su - oregon''').
+- Change to the ''bin'' directory ('''cd bin'''), and run the authentication server with '''./oregon-realm'''.  You should see '''Added realm "YourRealmName"''' in the console output.
+- Open a second terminal session, and ''su -'' to your oregon user (ex: '''su - oregon''').
+- Change to the ''bin'' directory ('''cd bin'''), and run the world server with '''./oregon-core'''.  The server is ready to use when you see '''WORLD: World initialized''' in the console output.
+
+\section common_pitfalls Common pitfalls
+
+There are a few common problems that come up frequently when you are starting out. Most of these are easily corrected.
+
+- If you are running Windows, and either of the programs flashes a console for a second then goes away, open cmd.exe, cd to your server directory, and run the program from the command line. This behavior means that you have errors, but you will not be able to see them if you start using a double-click.
+- If either program fails to find the configuration file, make sure that you have named the files ''oregonrealm.conf'' and ''oregoncore.conf''. Usually, this error happens because someone has chosen to edit the example oregon*.conf.dist files, and hasn't renamed them properly.
+- If your oregon-realm program fails to start, check your database settings in the oregonrealm.conf file. They are probably incorrect.
+- If your oregon-realm program does not show a '''Realm added''' message, you have forgotten to add an entry to the realmlist table, or your entry is incorrect. Add or correct the entry.
+- If your oregon-core program stops with a complaint about DBC files or maps, you have misconfigured your DataDir or have not properly extracted the client data. Check the DataDir in oregoncore.conf, if it is correct, repeat the extraction process using the tools created by the compile. You can not use DBC files from another emulator, or a different client version.
+- If your oregon-core program stops because it cannot connect to a database, check the database config lines in oregoncore.conf, and complete them properly.
+- If either program fails because it cannot attach to a port, you probably have another copy running already.
+- If your oregon-core program stops with an error regarding vmaps, then you may not have created them properly, or may have misconfigured the location of the data files. If your DataDir is correct, then you should extract and assemble the vmaps again. You cannot use vmaps that have been built for another emulator, or a different client version.
+
+\section Next08Step Next Step
+
+If there are no errors, you are ready to create an administrator account.
+
+Continue to \ref admin_acc
+
+*/

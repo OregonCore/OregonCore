@@ -1,0 +1,28 @@
+/*! \page admin_acc Creating the Administrator Account
+    \tableofcontents
+
+You will need an Administrator account to begin managing your new server. We'll start in the oregon-core console.
+
+\section CreatingAnAccount Creating an account
+
+This account will have the highest GameMaster level (or gmlevel) on the server. The account username and password can be whatever you choose. Since this account will have a very high privilege level, it is especially important to choose a good password.
+
+The command to add an account is **.account create USERNAME PASSWORD**. So, if we wanted our administrator username to be bobdobbs, and our password to be subgenius1234, we would issue the command **.account create bobdobbs subgenius1234**.
+
+\section SettingExpansion Setting expansion
+
+We want to make sure our administrator has access to the TBC content in the game so we need to add the expansion rights. The command to do this is '''.account set addon USERNAME 1'''. We can also use this command for any players that we want to grant access to the expansion areas of the game. For our example, the command is **.account set addon bobdobbs 1**.
+
+\section GainingPrivileges Gaining privileges
+
+Finally, we want to give our administrator the highest privilege level, which is defined in the code as 3 (actually there is a level 4, but it is meant to be used only in the server console). We set the gmlevel for the administrator with the command '''.account set gmlevel USERNAME 3'''. In our example, this would be **.account set gmlevel bobdobbs 3**.
+
+Some people seem to be tempted to define all sorts of GM levels. This is not necessary, and is not directly supported by the server code. It is best to stay with the 3 levels that are directly supported within the code (4 if we count the console, which we should not).
+
+\section Next09Step Next Step
+
+Congratulations, you now have an Administrator account. At this point you can start a game client, log in, roll a character, and have a look around! When you are finished, come back and continue the guide.
+
+Continue to \ref player_acc
+
+*/

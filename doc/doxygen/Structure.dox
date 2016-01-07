@@ -1,0 +1,65 @@
+/*! \page installation_guide Installation Guide
+
+Here's all the information you need in order to install OregonCore on your machine.
+
+- \subpage intro        "Getting Started: Introduction"
+- \subpage gameclient   "Installing Game Client"
+- \subpage install_win  "Downloading and building on Microsoft Windows"
+- \subpage install_lin  "Downloading and building on Linux"
+- \subpage extracting   "Extracting client data (DBC, Maps, VMaps, MMaps)"
+- \subpage loading_db   "Loading the Database"
+- \subpage basic_conf   "Basic configuration of the core and realm applications"
+- \subpage starting     "Starting your new server"
+- \subpage admin_acc    "Creating the administrator account"
+- \subpage player_acc   "Adding a player account"
+- \subpage network_conf "Configuring network for client connections"
+
+*/
+
+//-----------------------------------------------------------
+
+/*! \page Features Features
+
+- \ref ahbot        "AuctionHouse Bot System"
+- \ref raf          "Refer-A-Friend"
+- \ref dbupdater    "Automatic SQL Updates"
+
+*/
+
+//-----------------------------------------------------------
+
+/*! \page database_docs Database Documentation
+
+- \subpage schema_realmd     "Realmd Database" - contains data about accounts and realms (global)
+- \subpage schema_characters "Characters Database" - contains data about characters (realm specific)
+- \subpage schema_world      "World Database" - contains data about world, creatures, quoests, etc. ('sharable')
+
+*/
+
+//-----------------------------------------------------------
+
+/*! \page content_creation Content Creation
+
+- \subpage Guide to ScriptDev2's EventAI DB Script
+- \subpage HowTo - Creature Movement and Waypoints
+
+*/
+
+//-----------------------------------------------------------
+
+/*! \page ref_data Reference Data
+
+- \subpage DBC Files
+- \subpage Other Reference Information
+
+*/
+
+//-----------------------------------------------------------
+
+/*! \page external_links External Links
+
+- [OregonCore Forums](//forums.oregon-core.net/)
+- [OregonCore Repository](//bitbucket.org/oregon/oregoncore)
+- [OregonCore Bug Tracker](//bugtracker.oregon-core.net/)
+
+*/

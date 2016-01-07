@@ -1,0 +1,51 @@
+/*! \page intro Getting Started: Introduction
+    \tableofcontents
+
+ **OregonCore** is one of the World of Warcraft server emulation platforms. The goal of the project is to create an accurate emulation of the World of Warcraft gaming experience of the Burning Crusade patch.
+
+One of the great things about OregonCore has always been that you have many choices available to you when building a system. For most of us, the first choice has been which operating system to use for our system. It was, quite likely, an easy choice to make, since we all have our preferred system. The two most popular build platforms would seem to be Microsoft Windows and one of the many varieties of Linux in common use.
+
+As a cross-platform system, it would seem that the OS choice for OregonCore would make very little difference, and usually it hasn't. The developers have been very careful to make sure that the code will build no matter which OS you have. There have, however, been occasions when one of the platforms would build, but another would not. This has always caused some frustration for both the devlopers, as well as those of us building the code on our own systems.
+
+At the heart of the problem was one simple detail; the Windows build and the Unix/Linux builds did not use the same method for keeping track of the components of the code during the build process. As a means to avoid this frustration, a great deal of work has gone into creating a build method using cmake, which can be managed in such a way that all of the platforms use the same process to create the software.
+
+If you have been building cores for awhile, this is a new process for you. Don't be intimidated by the number of steps. After a couple of builds, you will probably never need to refer to this document again.
+
+\section Components Components
+
+Emulation project consists of two basic elements:
+
+ **OregonCore server**, which can be further divided into:
+
+- oregon-core — game server engine application,
+- oregon-realm — authentication application, 
+- Game database which contains the content needed to run the emulation. 
+
+\section Requirements Requirements
+
+In order to successfully build and run the emulation, you will need to ensure that you have the following:
+
+- World of Warcraft client with the Burning Crusade expansion — patched to version 2.4.3. 
+    - Please note that the emulation may be played without the expansion, as the system architect you will need it in order to obtain all of the necessary server files. 
+- Machine capable of compiling and running server applications.
+- Minimal practical specs for testing the software would be 1.3+ GHz processor, 1 GB RAM, and 20 GB free disk space. The game client required to obtain server files will take just slightly more than 8 GB of disk space. Server files, including the database, will take approximately 3 GB of disk space. You should plan additional space for backups, build files, etc.
+- In order to host the game for more than one or two players, this should be at least a 2.2+ GHz processor, 2 GB RAM, and 20 GB free disk space.
+- Your hosting capacity increases with higher speed, or multiple processors, and additional RAM. 
+- Operating system software with an appropriate compiler. Detailed information will be provided later in the guide.
+- For building on Microsoft Windows, you should have at least Windows XP SP2 and the VS 2012 C++ compiler (free from Microsoft) and a complete build toolchain.
+- For building on Linux, you should have a distribution with a mainstream kernel, and a complete toolchain with a recent version of a c++ compiler. 
+- MariaDB (or MySQL 5.5 and lower) database installation. This can be on a different machine or the same machine as the server.
+- It is recommended that you build on the same machine when starting out to get acquainted with the basics. 
+- A reasonable internet connection for obtaining the software and allowing game clients to connect from outside your network.
+- OregonCore is not a repack. In order to use the software, you will need to have or develop the necessary skills to compile the software and load the database on your own.
+
+\section Community Community
+
+The project has a very active and helpful community. Most assistance needed as you get started may be found in our forums.
+
+\section intro_next_step Next step
+
+You should feel comfortable that you have sufficient hardware and the willingness to build the system before you begin. The process may be difficult for you at times if you are just starting out working with the tools. The end result, however, is a system that runs very well, and the satisfaction of knowing that you did it yourself.
+
+Continue to \ref gameclient
+*/

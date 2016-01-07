@@ -1,0 +1,13 @@
+p, li { font-size: 13px; }
+
+.title { font-size: 150%; }
+
+h1 { font-size: 130%; }
+h2 { font-size: 120%; }
+h3 { font-size: 110%; }
+
+#projectlogo img { width:68px; height:68px; }
+
+.titlearea { position:relative; text-align:center; display:block;}
+.titlearea table { position:relative; margin:0 auto; width:600px; }
+

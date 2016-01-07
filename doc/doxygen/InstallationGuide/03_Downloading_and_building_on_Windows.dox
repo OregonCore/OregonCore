@@ -1,0 +1,192 @@
+/*! \page install_win Downloading and Building on Microsoft Windows
+    \tableofcontents
+
+\section Introduction  Introduction 
+
+This guide is meant to introduce you to the proper steps in building OregonCore on your Windows system using cmake.
+
+> **Important:** As the OregonCore project is highly active, portions of the guide may be outdated. In case something fails, please check the <a href="https://forums.oregon-core.net/viewforum.php?id=18]">forums</a>, which will usually have an answer to your questions.''
+
+\subsection Software Software Required
+
+1.  <a href="http://sourceforge.net/projects/gitextensions/" rel="nofollow">Git Extensions</a>
+	1.	Includes Git, MySYSGit, and KDiff - be sure to **install all three**
+	2.	View <a href="http://www.trinitycore.org/f/index.php?/topic/345-howto-properly-install-git-on-windows/" rel="nofollow">this thread</a> for important details on how to install Git for best results. Default install options for KDiff and MySYSGit are acceptable.
+		1.	During Git installation - Adjusting your PATH environment. Pick &quot;**Run Git from the Windows Command Prompt**&quot;.  
+
+3. Install the compiler/IDE<a href="https://www.visualstudio.com/news/vs2015-update1-vs" rel="nofollow"> Visual Studio Community 2015 with Update 1</a>
+4. [MariaDB](https://downloads.mariadb.org/) or MySQL 5.5 and **lower**
+    1. Download the Windows MSI Installer. 
+    2. Scroll down to the bottom and click on &quot;No thanks, just take me to the downloads!&quot;
+    3. When the install is almost done, make sure &quot;Launch the MySQL Instance Configuration Wizard&quot; is checked, then click &quot;Finish&quot;.
+    4. When the MySQL Instance Configuration Wizard launches, most default options are fine, but remember the username and password you use (root // whatever). You will need them to log into your chosen database management tool (below) in order to import SQL files later.
+    5. To test if MySQL is set up correctly, hit CTRL+ALT+DEL on your keyboard, enter the Task Manager, and select the &quot;Services&quot; tab. In the list of services you should see &quot;MySQL&quot; with a status of &quot;Running&quot;.
+5. Choose one of these database management tools:
+    1. mysql cli (Fastest (recomended since we use some very big files))
+    2. <a href="https://github.com/webyog/sqlyog-community/wiki/Downloads" rel="nofollow">SQLYog Community Edition</a>
+    3. <a href="http://www.heidisql.com/download.php" rel="nofollow">HeidiSQL</a> (Best for beginners)
+    4. <a href="http://dev.mysql.com/downloads/workbench/" rel="nofollow">MySQL Workbench</a> (already installed if you chose to install full MySQL package)
+6. Try connecting your MySQL instance that you installed above. Depending on the program, you may be looking for &quot;Connect to Host&quot; or &quot;New Connection&quot; or &quot;Session Manager&quot;.
+7. Create a new connection/session. The Hostname/IP address of &quot;127.0.0.1&quot; or &quot;localhost&quot; is fine if you installed MySQL on the same computer that you installed HeidiSQL or SQLYog. Simply fill in your root // whatever password and you should now be able to connect to your database.<a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=333325FD-AE52-4E35-B531-508D977D32A6&amp;amp;displaylang=en" rel="nofollow">NET Framework 3.5</a> or above (you should already have it via your Windows updates.
+8. <a href="https://cmake.org/download/" rel="nofollow">CMake</a>
+    1. Download and install the **Latest Release** win32-x86.exe file, NOT the RC (Release Candidate) versions.
+    2. &ldquo;Visual Studio 12&rdquo; is Microsoft Visual Studio 2013, or Visual C++ 12.0, or MSC 18.0. If you need to build for 64-bit, then choose &ldquo;Visual Studio 12 Win64&rdquo;;
+9. <a href="http://www.slproweb.com/products/Win32OpenSSL.html" rel="nofollow">OpenSSL</a>- Download the 32bit version. Or you can get both if you plan to compile both 32 and 64bit, they can coexist side by side.
+    1. Find the 32bit version by finding the <em>latest </em> **Win32 OpenSSL** that is **NOT** the &quot;light&quot; version.
+        1. Example: **Win32 OpenSSL v1.0.2e**
+    2. Find the 64bit version by finding the <em>latest </em> **Win64 OpenSSL** that is **NOT** the &quot;light&quot; version.
+        1. Example: **Win64 OpenSSL v1.0.2e**
+    3. <em>Note #1: If you get a &quot;Missing Microsoft Visual C++ 2008 Redistributables&quot; error message while installing OpenSSL,  
+    download the ** <a href="http://www.microsoft.com/en-us/download/details.aspx?id=29" rel="nofollow">Microsoft Visual C++ 2008 Redistributable Package (x86)</a> ** (1.7MB Installer) and install it.  
+    If you need 64bit support, download and install the <a href="http://www.microsoft.com/en-us/download/details.aspx?id=15336" rel="nofollow"> **Microsoft Visual C++ 2008 Redistributable Package (x64)** </a>.</em>  
+     
+    4. <em>Note #2: While installing OpenSSL, choose **The OpenSSL binaries (/bin) directory** (NOT &quot;The Windows system directory&quot;)  
+    when given the choice on where to copy the OpenSSL DLLs. These DLLs will need to be located easily for <a href="https://trinitycore.atlassian.net/wiki/display/tc/Requirements#Requirements-windows">Core Installation</a>.</em> 
+
+<!-- this comment fixes formatting issue --> **Optional**
+
+1. If you use different PCs to compile/run TrinityCore, install one of the following packages on your Server-PC to avoid missing dependencies (depending on your Visual Studio Version and your Server-PC Operating System)
+    1. [Microsoft Visual C++ 2015 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=48145)
+    2. NOTE: Whatever you do you CAN'T run TrinityCore on Windows XP or Windows 2003.
+2. [TortoiseGit](http://code.google.com/p/tortoisegit/)
+    1. This instruction supports Git Extensions only, but TortoiseGit is another viable option if you're comfortable with the process.</li>
+
+\section pulling_and_compiling Pulling & Compiling the Source
+
+\subsection pulling_the_source  Pulling the Source
+
+  1. Create a directory in which Core files will be pulled (for example: **D:\\OregonCore**).
+  2. Right-click on the directory and click on **Git Extensions -&gt; Clone.**
+  3. Fill in the data as follows:
+
+   - Repository to clone: [https://github.com/OregonCore/OregonCore.git](https://github.com/OregonCore/OregonCore.git)
+   - Destination: **D:\\OregonCore**  
+   - Subdirectory to create: **none**
+   - Branch: **master**  
+   - Personal Repository: **Yes**
+
+  4. Click **Clone**. Within a few minutes all of the OregonCore source files will be pulled into the directory **D:\\OregonCore**.
+
+\subsection config_and_generate Configuring and generating Visual C++ solutions with CMake
+
+Before you begin, create an empty directory called  **build**. In this example, we will use **D:\\build**.
+
+<table>
+    <tr>
+        <td>
+        <img src="Images/Step2.png" style="height:250px" />
+
+        Click **Browse Source...** -&gt; Select   
+        the source directory (D:/OregonCore)
+        </td>
+        <td>
+        <img src="Images/Step3.png" style="height:250px" />
+
+        2. Click  **Browse Build...**  -&gt; Select   
+        the build directory (D:/build)
+        </td>
+        <td>
+        <img src="Images/Step4.png" style="height:250px" />
+
+        3. Click **Configure**
+        </td>
+    </tr>
+    <tr>
+        <td>
+        <img src="Images/Step5.png" style="height:250px" />
+
+        4. Make sure  **Use default native **  
+        compilers**  is checked
+        </td>
+        <td>
+        <img src="Images/Step6.png" style="height:250px" />
+
+        5. In the drop-down menu, choose the   
+        version of the compiler you downloaded.
+        </td>
+        <td>
+        <img src="Images/Step7.png" style="height:250px" />
+
+        6. Click **Finish**.
+        </td>
+    </tr>
+    <tr>
+        <td>
+        <img src="Images/Step8.png" style="height:250px" />
+
+        7. Make sure **Tools** is checked. This will   
+        compile the map extractors needed later   
+        in the setup. 
+        </td>
+        <td>
+        <img src="Images/Step9.png" style="height:250px" />
+
+        8. Click **Configure** again.
+        </td>
+        <td>
+        <img src="Images/Step10.png" style="height:250px" />
+
+        9. Click **Generate**. This will install the   
+        selected build files into your D:/build folder.
+        </td>
+    </tr>
+</table>
+
+<!-- --> **Note**: If you have installed MySQL version other than 5.1, be sure to UNCHECK the WITH_MYSQL_SOURCES option. This tells CMake to look for include files and libraries in your MySQL installation instead of using the MySQL source files provided with OregonCore (which are 5.1.50). Remember, unchecking WITH_MYSQL_SOURCES requires that you have full MySQL package (not Essentials) and that your selected compiler is for the same architecture (32bit/64bit) as your MySQL. If you have 5.1.x, you need not worry - just leave WITH_MYSQL_SOURCES checked.
+
+ 
+
+\subsection compiling  Compiling the Source
+
+Browse into your **D:\\build** folder and open **OregonCore.sln** with Visual Studio Community.
+
+On the menu at the top, click **build** and select **Configuration Manager**.
+
+Set **Active Solution Configuration** to **Release**
+
+In the list menus below &quot;Help&quot;, set** Active Solution Platform** to **Win32 **(if you set 64-bit compilation during the CMake configuration, select Win64)  
+click Close (settings get saved instantly). On some versions of Visual Studio, this will be read and automatically set based on the CMake settings.
+
+Right-click  **ALL_BUILD**  in the Solution Explorer on the left sidebar and select  **Clean** .  
+(on some VS2013 versions, click the **build** menu and select  **Clean**  **Solution**.)
+
+Right-click **ALL_BUILD** and select **build**.
+
+  1. Compilation length differs from machine to machine, you should expect it to take 5-30 minutes.</li>
+  2. If you are asked to &quot;Reload build files&quot; during the compile, do so.</li>
+  3. When the build is complete, you will find a message similar to the one below (the numbers may be different).</li>
+
+        ========== Build: 14 completed, 0 failed, 0 up-to-date, 1 skipped ==========
+
+You will find your freshly compiled binaries in the **D:\\build\\bin\\Release** or **D:\\build\\bin\\Debug** folder. These are all used to run your server at the end of this instruction.
+
+You will need the following files in order for the core to function properly:
+
+ - ACE.dll
+ - libeay32.dll
+ - libmySQL.dll
+ - ssleay32.dll
+ - oregoncore.conf.dist
+ - oregon-core.exe
+ - oregonrealm.conf.dist
+ - oregon-realm.exe
+
+Some files might not be there (i.e. libeay32.dll, libmySQL.dll, ssleay32.dll) and so you might have to copy them over from the original installation/bin directories (OpenSSL/MySQL).
+
+\section up_to_date  Keeping the Source Up-to-Date
+
+OregonCore Developers are always at work fixing and adding new features to the core. You can always check them <a href="https://github.com/OregonCore/OregonCore/" rel="nofollow">here</a>, or by viewing them from within Git Extensions.
+
+Open your OregonCore repository in GitExtensions.
+
+  1. Click on the blue arrow</li>
+  2. In the new window, click Pull.
+
+This will sync your local repo to the latest commits from the branch you have setup as default.
+
+Now you will need to re-run CMake Configure &amp; Generate to update your SLN files.
+
+Once synced, compile the core. You may need to rebuild, and it is encouraged to delete your old executables to ensure everything is rebuilt
+
+
+*/

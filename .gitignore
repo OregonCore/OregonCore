@@ -27,3 +27,6 @@ build*/
 .hg/
 .hgignore
 .hgtags
+
+# database documentation - generated files
+doc/doxygen/Database/*.dox

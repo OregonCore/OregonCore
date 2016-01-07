@@ -1,0 +1,39 @@
+/*! \page gameclient Installing the Game Client
+    \tableofcontents
+    
+The first thing you need to build your server is a proper installation of the client patched to 2.4.3 build 8606.
+
+\section checking_client_version Checking client version
+
+You can check you current version by loading up WoW and looking at the bottom left corner of the screen. If you already have 2.4.3, great! If like most people you have a newer patch or just want to start with a fresh copy do the following:
+
+1. install the original World of Warcraft from disc (6 CD-ROM/1 DVD) (as normal or use the alt install below),
+2. install The Burning Crusade expansion pack (4 CD-ROM/1 DVD) (as normal or use alt install below). 
+
+\section alternate_installation Alternate installation
+
+This still requires original media.
+
+You can minimize the install time or help multiple client installs over network (LAN party) by creating a folder for the install set (WoW or TBC) and copying (1) the whole first disc, and then (2) the MPQ files from each of the remaining disks. Then run the Installer.exe (or appropriate) from the folder and you no longer have to swap discs - the installer will automatically load from the MPQ files within the directory.
+
+\section internet_installation Internet Installation
+
+Game client is still more and more valueable, since 2.4.3 can not be officialy downloaded. You can find the client on many distributions like torrents. Some private servers also point their players to places where they can download it. Go ahead and grab you copy. Some private servers have modified Wow.exe to allow only their realms. In that case you can ask someone in our community to upload clean Wow.exe just for you.
+
+\section updating_the_client Updating the client
+
+Once the install of the client is complete you can then patch the client to 2.4.3 build 8606.
+
+The patch files are becoming harder to find as the retail servers have been upgraded many times since version 2.4.3. You can often find what you need with an internet search. There have also been reports of torrent files on the internet that have the client and all of the patches needed to get to version 2.4.3.
+
+There are often listings on eBay for the older client install CD and DVD sets. This is a reasonable way to obtain the client for the purpose of emulation, since you will not require a working license key for the retail servers, and the listings rarely have one.
+
+<div style="border: 1px solid red; color: red; background-color: #fee; padding: 6pt">It is absolutely crucial that you have the right client version.  Just like the retail servers, OregonCore will only allow a client to connect at the proper version. Once you have version 2.4.3 <b>do not connect</b> this client to the retail servers.  They will attempt to automatically update your install to the current retail version.</div>
+
+\section next_step Next step
+
+You should not proceed until you have the 2.4.3 client and TBC expansion available. They are required to complete your server.
+
+- Continue to \ref install_win
+- Continue to \ref install_lin
+*/

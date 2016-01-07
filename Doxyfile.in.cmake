@@ -38,7 +38,7 @@ PROJECT_NAME           = "OregonCore"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = "@rev_id_str@"
+PROJECT_NUMBER         = "@rev_hash_str@-git (@rev_id_str@)"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -675,7 +675,8 @@ FILE_VERSION_FILTER    =
 # DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
 # tag is left empty.
 
-LAYOUT_FILE            = @CMAKE_SOURCE_DIR@/doc/DoxyLayout.xml
+LAYOUT_FILE            =
+#@CMAKE_SOURCE_DIR@/doc/DoxyLayout.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib
@@ -756,7 +757,7 @@ WARN_LOGFILE           =
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @CMAKE_SOURCE_DIR@/doc/wiki @CMAKE_SOURCE_DIR@/src
+INPUT                  = @CMAKE_SOURCE_DIR@/doc/doxygen @CMAKE_SOURCE_DIR@/src
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1048,7 +1049,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = @CMAKE_SOURCE_DIR@/doc/DoxyHeader.html
+HTML_HEADER            = @CMAKE_SOURCE_DIR@/doc/doxygen/DoxyHeader.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1058,7 +1059,7 @@ HTML_HEADER            = @CMAKE_SOURCE_DIR@/doc/DoxyHeader.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = @CMAKE_SOURCE_DIR@/doc/DoxyFooter.html
+HTML_FOOTER            = @CMAKE_SOURCE_DIR@/doc/doxygen/DoxyFooter.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1083,7 +1084,7 @@ HTML_STYLESHEET        =
 # list). For an example see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = @CMAKE_SOURCE_DIR@/doc/DoxySheet.css
+HTML_EXTRA_STYLESHEET  = @CMAKE_SOURCE_DIR@/doc/doxygen/DoxySheet.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1093,7 +1094,7 @@ HTML_EXTRA_STYLESHEET  = @CMAKE_SOURCE_DIR@/doc/DoxySheet.css
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = @CMAKE_SOURCE_DIR@/doc/DoxyScript.js
+HTML_EXTRA_FILES       =
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the stylesheet and background images according to
@@ -1804,7 +1805,7 @@ MAN_LINKS              = NO
 # captures the structure of the code including all documentation.
 # The default value is: NO.
 
-GENERATE_XML           = NO
+GENERATE_XML           = YES
 
 # The XML_OUTPUT tag is used to specify where the XML pages will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of

@@ -1,0 +1,36 @@
+/*! \page player_acc Creating a Player Account
+    \tableofcontents
+
+Adding a player account is very similar to Creating the Administrator Account. We'll use most of the same steps that we used before, and it should be quite familiar to you. Again, we'll start in the oregon-core console.
+
+\section Creating_Account Creating account
+
+You will recall that the command to add an account is .account create USERNAME PASSWORD.
+
+So, if we are creating an account with the username of bloodninja, and our password is to be wizardhat, we would issue the command .account create bloodninja wizardhat.
+
+\section Setting_Expansion Setting expansion
+
+If we want our new player to have access to the TBC content in the game, we need to add the expansion rights. The command to do this is .account set addon USERNAME 1. For our example, the command is .account set addon bloodninja 1.
+
+\section Privileges Privileges
+
+Finally, if our new user is going to be a GameMaster, we have to modify their privilege level. Regular users will default to level 0, which is where we would normally want them. Level 0 is not a GM account.
+
+To set the gmlevel for our GameMasters we use the command .account set gmlevel USERNAME GMLEVEL.
+
+The possible values for GMLEVEL are 0, 1, 2 and 3. As we saw before, 0 is a regular player. Level 3 is reserved for administrator level - the highest in-game prvileges. Level 1 is commonly referred to as the GameMaster level. Level 2 is commonly referred to as the Moderator level. The amount of additional privileges increases with the GM Level. The commands that each level has available are set in the command table in the world database.
+
+If we want our new user to be a GameMaster, our command would be .account set gmlevel bloodninja 1.
+
+Some people seem to be tempted to define all sorts of GM levels. This is not necessary, and is not directly supported by the server code. It is best to stay with the 3 levels that are directly supported within the code (4 if we count the console, which we should not).
+
+\section Next10Step Next Step
+
+At this point, the new player will be able to log in and begin playing.
+
+If you have a low-population server and don't like that empty Auction House, continue to The AHBot AuctionHouse System →.
+
+Otherwise continue to \ref network_conf
+
+*/
