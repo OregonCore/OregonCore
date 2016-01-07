@@ -36,15 +36,14 @@ class HostileRefManager : public RefManager<Unit, ThreatManager>
         explicit HostileRefManager(Unit *owner) { iOwner = owner; }
         ~HostileRefManager();
 
-        Unit* getOwner()
-        {
-            return iOwner;
-        }
+        Unit* GetOwner() { return iOwner; }
 
         // send threat to all my hateres for the victim
         // The victim is hated than by them as well
         // use for buffs and healing threat functionality
         void threatAssist(Unit* victim, float baseThreat, SpellEntry const* threatSpell = NULL);
+
+        void addTempThreat(float threat, bool apply);
 
         void addThreatPercent(int32 percent);
 
@@ -52,20 +51,20 @@ class HostileRefManager : public RefManager<Unit, ThreatManager>
         // tell the source to remove them from the list and free the mem
         void deleteReferences();
 
-        HostileReference* getFirst()
-        {
-            return ((HostileReference*) RefManager<Unit, ThreatManager>::getFirst());
-        }
+        // Remove specific faction references
+        void deleteReferencesForFaction(uint32 faction);
+
+        HostileReference* getFirst() { return ((HostileReference*) RefManager<Unit, ThreatManager>::getFirst()); }
 
         void updateThreatTables();
 
         void setOnlineOfflineState(bool pIsOnline);
 
         // set state for one reference, defined by Unit
-        void setOnlineOfflineState(Unit* pCreature, bool pIsOnline);
+        void setOnlineOfflineState(Unit* creature, bool isOnline);
 
         // delete one reference, defined by Unit
-        void deleteReference(Unit* pCreature);
+        void deleteReference(Unit* creature);
 
         void UpdateVisibility();
 };

@@ -647,6 +647,25 @@ bool Unit::HasAuraTypeWithFamilyFlags(AuraType auraType, uint32 familyName, uint
     return false;
 }
 
+bool Unit::HasNegativeAuraWithInterruptFlag(uint32 flag)
+{
+    if (!(m_interruptMask & flag))
+        return false;
+
+    // interrupt auras
+    AuraList::iterator iter;
+    for (iter = m_interruptableAuras.begin(); iter != m_interruptableAuras.end();)
+    {
+        Aura* aur = *iter;
+        ++iter;
+        if (!aur->IsPositive() && aur->GetSpellProto()->AuraInterruptFlags & flag)
+            return true;
+    }
+
+    return false;
+}
+
+
 /* Called by DealDamage for auras that have a chance to be dispelled on damage taken. */
 void Unit::RemoveSpellbyDamageTaken(uint32 damage, uint32 spell)
 {

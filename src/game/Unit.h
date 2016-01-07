@@ -1324,6 +1324,7 @@ class Unit : public WorldObject
         bool HasAuraTypeWithCaster(AuraType auratype, uint64 caster) const;
         bool HasAuraTypeWithMiscvalue(AuraType auratype, int32 miscvalue) const;
         bool HasAuraTypeWithFamilyFlags(AuraType auraType, uint32 familyName,  uint64 familyFlags) const;
+        bool HasNegativeAuraWithInterruptFlag(uint32 flag);
         bool HasAura(uint32 spellId, uint8 effIndex = 0) const
         {
             return m_Auras.find(spellEffectPair(spellId, effIndex)) != m_Auras.end();

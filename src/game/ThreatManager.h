@@ -56,17 +56,11 @@ class HostileReference : public Reference<Unit, ThreatManager>
 
         float getThreat() const { return iThreat; }
 
-        bool isOnline() const
-        {
-            return iOnline;
-        }
+        bool isOnline() const { return iOnline; }
 
         // The Unit might be in water and the creature can not enter the water, but has range attack
         // in this case online = true, but accessible = false
-        bool isAccessible() const
-        {
-            return iAccessible;
-        }
+        bool isAccessible() const { return iAccessible; }
 
         // used for temporary setting a threat and reducting it later again.
         // the threat modification is stored
@@ -91,10 +85,7 @@ class HostileReference : public Reference<Unit, ThreatManager>
             }
         }
 
-        float getTempThreatModifyer()
-        {
-            return iTempThreatModifier;
-        }
+        float getTempThreatModifier() { return iTempThreatModifier; }
 
         //=================================================
         // check, if source can reach target and set the status
@@ -109,10 +100,7 @@ class HostileReference : public Reference<Unit, ThreatManager>
 
         //=================================================
 
-        uint64 getUnitGuid() const
-        {
-            return iUnitGuid;
-        }
+        uint64 getUnitGuid() const { return iUnitGuid; }
 
         //=================================================
         // reference is not needed anymore. realy delete it !
@@ -121,21 +109,18 @@ class HostileReference : public Reference<Unit, ThreatManager>
 
         //=================================================
 
-        HostileReference* next()
-        {
-            return ((HostileReference*) Reference<Unit, ThreatManager>::next());
-        }
+        HostileReference* next() { return ((HostileReference*) Reference<Unit, ThreatManager>::next()); }
 
         //=================================================
 
         // Tell our refTo (target) object that we have a link
-        void targetObjectBuildLink();
+        void targetObjectBuildLink() override;
 
         // Tell our refTo (taget) object, that the link is cut
-        void targetObjectDestroyLink();
+        void targetObjectDestroyLink() override;
 
         // Tell our refFrom (source) object, that the link is cut (Target destroyed)
-        void sourceObjectDestroyLink();
+        void sourceObjectDestroyLink() override;
     private:
         // Inform the source, that the status of that reference was changed
         void fireStatusChanged(ThreatRefStatusChangeEvent& threatRefStatusChangeEvent);
@@ -186,6 +171,7 @@ class ThreatContainer
         HostileReference* getReferenceByTarget(Unit* victim) const;
 
         StorageType const & getThreatList() const { return iThreatList; }
+
     private:
         void remove(HostileReference* hostileRef)
         {
@@ -203,7 +189,6 @@ class ThreatContainer
         void update();
 
         StorageType iThreatList;
-        StorageType iPastEnemyList;
         bool iDirty;
 };
 
@@ -216,10 +201,7 @@ class ThreatManager
 
         explicit ThreatManager(Unit *owner);
 
-        ~ThreatManager()
-        {
-            clearReferences();
-        }
+        ~ThreatManager() { clearReferences(); }
 
         void clearReferences();
 
@@ -248,15 +230,37 @@ class ThreatManager
 
         void setDirty(bool isDirty) { iThreatContainer.setDirty(isDirty); }
 
+        // Reset all aggro without modifying the threadlist.
+        void resetAllAggro();
+
+        // Reset all aggro of unit in threadlist satisfying the predicate.
+        template<class PREDICATE> void resetAggro(PREDICATE predicate)
+        {
+            ThreatContainer::StorageType &threatList = iThreatContainer.iThreatList;
+            if (threatList.empty())
+                return;
+
+            for (ThreatContainer::StorageType::iterator itr = threatList.begin(); itr != threatList.end(); ++itr)
+            {
+                HostileReference* ref = (*itr);
+
+                if (predicate(ref->getTarget()))
+                {
+                    ref->setThreat(0);
+                    setDirty(true);
+                }
+            }
+        }
+
         // methods to access the lists from the outside to do some dirty manipulation (scriping and such)
         // I hope they are used as little as possible.
         ThreatContainer::StorageType const & getThreatList() const { return iThreatContainer.getThreatList(); }
         ThreatContainer::StorageType const & getOfflineThreatList() const { return iThreatOfflineContainer.getThreatList(); }
         ThreatContainer& getOnlineContainer() { return iThreatContainer; }
         ThreatContainer& getOfflineContainer() { return iThreatOfflineContainer; }
-
-        void _addThreat(Unit* victim, float threat);
     private:
+        void _addThreat(Unit* victim, float threat);
+
         HostileReference* iCurrentVictim;
         Unit* iOwner;
         ThreatContainer iThreatContainer;
@@ -264,5 +268,21 @@ class ThreatManager
 };
 
 //=================================================
+
+namespace Oregon
+{
+    // Binary predicate for sorting HostileReferences based on threat value
+    class ThreatOrderPred
+    {
+        public:
+            ThreatOrderPred(bool ascending = false) : m_ascending(ascending) { }
+            bool operator() (HostileReference const* a, HostileReference const* b) const
+            { 
+                return m_ascending ? a->getThreat() < b->getThreat() : a->getThreat() > b->getThreat();  
+            }
+        private:
+            const bool m_ascending;
+    };
+}
 #endif
 
