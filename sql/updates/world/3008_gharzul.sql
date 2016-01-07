@@ -1,1 +1,0 @@
-DELETE FROM creature WHERE guid=86933 AND id=15958;

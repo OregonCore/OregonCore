@@ -1,2 +1,0 @@
-ALTER TABLE `conditions`   
-  ADD COLUMN `ErrorType` MEDIUMINT(8) UNSIGNED DEFAULT 0 NOT NULL AFTER `NegativeCondition`;

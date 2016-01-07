@@ -1,1 +1,0 @@
-UPDATE creature_template SET ScriptName = 'npc_scout_landion' WHERE creature_template.entry = 15609; 

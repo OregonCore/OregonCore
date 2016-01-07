@@ -1,1 +1,0 @@
-DELETE FROM `spell_script_target` WHERE `targetEntry` IN (8313,38968);

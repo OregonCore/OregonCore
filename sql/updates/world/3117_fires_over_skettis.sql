@@ -1,3 +1,0 @@
-INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorType`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES (13, 0, 39844, 0, 0, 17, 0, 1, 22991, 0, 0, 0, 0, '', NULL);
-
-UPDATE creature_template SET ScriptName = 'npc_kalliri_trigger' WHERE creature_template.entry = 22991; 

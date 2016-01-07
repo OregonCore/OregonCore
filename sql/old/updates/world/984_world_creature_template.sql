@@ -1,1 +1,0 @@
-UPDATE `creature_template` SET `ScriptName`='npc_volcano' WHERE `entry`='23085';
