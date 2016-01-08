@@ -4708,7 +4708,7 @@ void Aura::HandleAuraModStat(bool apply, bool /*Real*/)
             //m_target->ApplyStatMod(Stats(i), m_modifier.m_amount,apply);
             m_target->HandleStatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(GetModifierValue()), apply);
             if (m_target->GetTypeId() == TYPEID_PLAYER || m_target->IsPet())
-                m_target->ApplyStatBuffMod(Stats(i), GetModifierValue(), apply);
+                m_target->ApplyStatBuffMod(Stats(i), (float)GetModifierValue(), apply);
         }
     }
 }
@@ -4798,9 +4798,9 @@ void Aura::HandleModTotalPercentStat(bool apply, bool /*Real*/)
         return;
     }
 
-    //save current and max HP before applying aura
-    uint32 curHPValue = m_target->GetHealth();
-    uint32 maxHPValue = m_target->GetMaxHealth();
+    // save current health state
+    float healthPct = m_target->GetHealthPct();
+    bool alive = m_target->IsAlive();
 
     for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i)
     {
@@ -4813,12 +4813,8 @@ void Aura::HandleModTotalPercentStat(bool apply, bool /*Real*/)
     }
 
     //recalculate current HP/MP after applying aura modifications (only for spells with 0x10 flag)
-    if ((m_modifier.m_miscvalue == STAT_STAMINA) && (maxHPValue > 0) && (m_spellProto->Attributes & 0x10))
-    {
-        // newHP = (curHP / maxHP) * newMaxHP = (newMaxHP * curHP) / maxHP -> which is better because no int -> double -> int conversion is needed
-        uint32 newHPValue = (m_target->GetMaxHealth() * curHPValue) / maxHPValue;
-        m_target->SetHealth(newHPValue);
-    }
+    if ((m_modifier.m_miscvalue == STAT_STAMINA) && (m_spellProto->Attributes & SPELL_ATTR_ABILITY))
+        m_target->SetHealth(std::max<uint32>(uint32(healthPct * m_target->GetMaxHealth() * 0.01f), (alive ? 1 : 0)));
 }
 
 void Aura::HandleAuraModResistenceOfStatPercent(bool /*apply*/, bool /*Real*/)
