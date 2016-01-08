@@ -1957,6 +1957,9 @@ class Player : public Unit, public GridObject<Player>
         void UpdateAllCritPercentages();
         void UpdateParryPercentage();
         void UpdateDodgePercentage();
+        void UpdateMeleeHitChances();
+        void UpdateRangedHitChances();
+        void UpdateSpellHitChances();
         void UpdateAllSpellCritChances();
         void UpdateSpellCritChance(uint32 school);
         void UpdateExpertise(WeaponAttackType attType);
