@@ -385,6 +385,11 @@ struct mob_dragonmaw_peonAI : public ScriptedAI
             }
             else PoisonTimer -= diff;
         }
+
+        if (!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
     }
 };
 
