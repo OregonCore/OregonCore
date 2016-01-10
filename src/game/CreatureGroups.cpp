@@ -25,35 +25,33 @@
 
 INSTANTIATE_SINGLETON_1(FormationMgr);
 
-//CreatureGroupInfoType   CreatureGroupMap;
-
 FormationMgr::~FormationMgr()
 {
     for (CreatureGroupInfoType::iterator itr = CreatureGroupMap.begin(); itr != CreatureGroupMap.end(); ++itr)
         delete itr->second;
 }
 
-void FormationMgr::AddCreatureToGroup(uint32 groupId, Creature* member)
+void FormationMgr::AddCreatureToGroup(uint32 leaderGuid, Creature* creature)
 {
-    Map* map = member->FindMap();
+    Map* map = creature->FindMap();
     if (!map)
         return;
 
-    CreatureGroupHolderType::iterator itr = map->CreatureGroupHolder.find(groupId);
+    CreatureGroupHolderType::iterator itr = map->CreatureGroupHolder.find(leaderGuid);
 
     //Add member to an existing group
     if (itr != map->CreatureGroupHolder.end())
     {
-        sLog.outDebug("Group found: %u, inserting creature GUID: %u, Group InstanceID %u", groupId, member->GetGUIDLow(), member->GetInstanceId());
-        itr->second->AddMember(member);
+        sLog.outDebug("Group found: %u, inserting creature GUID: %u, Group InstanceID %u", leaderGuid, creature->GetGUIDLow(), creature->GetInstanceId());
+        itr->second->AddMember(creature);
     }
     //Create new group
     else
     {
-        sLog.outDebug("entities.unit", "Group not found: %u. Creating new group.", groupId);
-        CreatureGroup* group = new CreatureGroup(groupId);
-        map->CreatureGroupHolder[groupId] = group;
-        group->AddMember(member);
+        sLog.outDebug("Group not found: %u. Creating new group.", leaderGuid);
+        CreatureGroup* group = new CreatureGroup(leaderGuid);
+        map->CreatureGroupHolder[leaderGuid] = group;
+        group->AddMember(creature);
     }
 }
 
@@ -120,16 +118,14 @@ void FormationMgr::LoadCreatureFormations()
 
         // check data correctness
         {
-            QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT guid FROM creature WHERE guid = %u", group_member->leaderGUID);
-            if (!result)
+            if (!sObjectMgr.GetCreatureData(group_member->leaderGUID))
             {
                 sLog.outErrorDb("creature_formations table leader guid %u incorrect (not exist)", group_member->leaderGUID);
                 delete group_member;
                 continue;
             }
 
-            result = WorldDatabase.PQuery("SELECT guid FROM creature WHERE guid = %u", memberGUID);
-            if (!result)
+            if (!sObjectMgr.GetCreatureData(memberGUID))
             {
                 sLog.outErrorDb("creature_formations table member guid %u incorrect (not exist)", memberGUID);
                 delete group_member;
@@ -138,9 +134,9 @@ void FormationMgr::LoadCreatureFormations()
         }
 
         CreatureGroupMap[memberGUID] = group_member;
-        count++;
+        ++count;
     }
-    while (result->NextRow()) ;
+    while (result->NextRow());
 
     sLog.outString(">> Loaded %u creatures in formations", count);
 }
@@ -152,7 +148,7 @@ void CreatureGroup::AddMember(Creature* member)
     //Check if it is a leader
     if (member->GetDBTableGUIDLow() == m_groupID)
     {
-        sLog.outDebug("entities.unit", "Unit GUID: %u is formation leader. Adding group.", member->GetGUIDLow());
+        sLog.outDebug("Unit GUID: %u is formation leader. Adding group.", member->GetGUIDLow());
         m_leader = member;
     }
 
@@ -232,12 +228,8 @@ void CreatureGroup::LeaderMoveTo(float x, float y, float z)
             continue;
 
         if (itr->second->point_1)
-        {
-            if (m_leader->GetCurrentWaypointID() == itr->second->point_1)
-                itr->second->follow_angle = (2 * float(M_PI)) - itr->second->follow_angle;
-            if (m_leader->GetCurrentWaypointID() == itr->second->point_2)
-                itr->second->follow_angle = (2 * float(M_PI)) + itr->second->follow_angle;
-        }
+            if (m_leader->GetCurrentWaypointID() == itr->second->point_1 - 1 || m_leader->GetCurrentWaypointID() == itr->second->point_2 - 1)
+                itr->second->follow_angle = float(M_PI) * 2 - itr->second->follow_angle;
 
         float angle = itr->second->follow_angle;
         float dist = itr->second->follow_dist;

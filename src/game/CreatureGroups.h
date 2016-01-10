@@ -22,6 +22,8 @@
 #include <ace/Basic_Types.h>
 #include <ace/Singleton.h>
 #include <ace/Thread_Mutex.h>
+#include <unordered_map>
+#include <map>
 
 class Creature;
 class CreatureGroup;
@@ -32,11 +34,11 @@ struct FormationInfo
     float follow_dist;
     float follow_angle;
     uint8 groupAI;
-    uint16 point_1;
-    uint16 point_2;
+    uint32 point_1;
+    uint32 point_2;
 };
 
-typedef UNORDERED_MAP<uint32/*memberDBGUID*/, FormationInfo*>   CreatureGroupInfoType;
+typedef std::unordered_map<uint32/*memberDBGUID*/, FormationInfo*>   CreatureGroupInfoType;
 
 class FormationMgr
 {
@@ -65,22 +67,10 @@ class CreatureGroup
         explicit CreatureGroup(uint32 id) : m_leader(NULL), m_groupID(id), m_Formed(false) { }
         ~CreatureGroup() { }
 
-        Creature* getLeader() const
-        {
-            return m_leader;
-        }
-        uint32 GetId() const
-        {
-            return m_groupID;
-        }
-        bool isEmpty() const
-        {
-            return m_members.empty();
-        }
-        bool isFormed() const
-        {
-            return m_Formed;
-        }
+        Creature* getLeader() const { return m_leader; }
+        uint32 GetId() const { return m_groupID; }
+        bool isEmpty() const { return m_members.empty(); }
+        bool isFormed() const { return m_Formed; }
 
         void AddMember(Creature* member);
         void RemoveMember(Creature* member);
