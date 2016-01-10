@@ -205,13 +205,17 @@ CreatureAI* GetAI_mob_rotting_forest_rager(Creature* pCreature)
 ## mob_netherweb_victim
 ######*/
 
-#define QUEST_TARGET        22459
-//#define SPELL_FREE_WEBBED   38950
+enum TakenintheNight
+{
+    NPC_QUEST_TARGET        = 22459,
+    QUEST_TAKEN_INTHE_NIGHT = 10873
+};
 
 const uint32 netherwebVictims[6] =
 {
     18470, 16805, 21242, 18452, 22482, 21285
 };
+
 struct mob_netherweb_victimAI : public ScriptedAI
 {
     mob_netherweb_victimAI(Creature* c) : ScriptedAI(c) {}
@@ -220,24 +224,21 @@ struct mob_netherweb_victimAI : public ScriptedAI
     void EnterCombat(Unit* /*who*/) { }
     void MoveInLineOfSight(Unit* /*who*/) { }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* killer)
     {
-        if (Killer->GetTypeId() == TYPEID_PLAYER)
-        {
-            if (CAST_PLR(Killer)->GetQuestStatus(10873) == QUEST_STATUS_INCOMPLETE)
-            {
-                if (rand() % 100 < 25)
-                {
-                    DoSpawnCreature(QUEST_TARGET, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                    CAST_PLR(Killer)->KilledMonsterCredit(QUEST_TARGET, 0);
-                }
-                else
-                    DoSpawnCreature(netherwebVictims[rand() % 6], 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+        Player* player = killer->ToPlayer();
+        if (!player)
+            return;
 
-                if (rand() % 100 < 75)
-                    DoSpawnCreature(netherwebVictims[rand() % 6], 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                DoSpawnCreature(netherwebVictims[rand() % 6], 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+        if (player->GetQuestStatus(QUEST_TAKEN_INTHE_NIGHT) == QUEST_STATUS_INCOMPLETE)
+        {
+            if (rand32() % 100 < 25)
+            {
+                me->SummonCreature(NPC_QUEST_TARGET, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+                player->KilledMonsterCredit(NPC_QUEST_TARGET);
             }
+            else
+                me->SummonCreature(netherwebVictims[rand32() % 6], 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
         }
     }
 };
