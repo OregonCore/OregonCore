@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -29,11 +28,11 @@
 
 namespace VMAP
 {
-    /**
+/**
 This Class is used to convert raw vector data into balanced BSP-Trees.
 To start the conversion call convertWorld().
 */
-    //===============================================
+//===============================================
 
 class ModelPosition
 {
@@ -48,7 +47,7 @@ class ModelPosition
             iRotation = G3D::Matrix3::fromEulerAnglesZYX(G3D::pi() * iDir.y / 180.f, G3D::pi() * iDir.x / 180.f, G3D::pi() * iDir.z / 180.f);
         }
         G3D::Vector3 transform(const G3D::Vector3& pIn) const;
-            void moveToBasePos(const G3D::Vector3& pBasePos) { iPos -= pBasePos; }
+        void moveToBasePos(const G3D::Vector3& pBasePos) { iPos -= pBasePos; }
 };
 
 typedef std::map<uint32, ModelSpawn> UniqueEntryMap;
@@ -61,7 +60,7 @@ struct MapSpawns
 };
 
 typedef std::map<uint32, MapSpawns*> MapData;
-    //===============================================
+//===============================================
 
     struct GroupModel_Raw
     {
@@ -97,7 +96,7 @@ class TileAssembler
         G3D::Table<std::string, unsigned int > iUniqueNameIds;
         unsigned int iCurrentUniqueNameId;
         MapData mapData;
-            std::set<std::string> spawnedModelFiles;
+        std::set<std::string> spawnedModelFiles;
 
     public:
         TileAssembler(const std::string& pSrcDirName, const std::string& pDestDirName);
@@ -106,10 +105,10 @@ class TileAssembler
         bool convertWorld2();
         bool readMapSpawns();
         bool calculateTransformedBound(ModelSpawn& spawn);
-            void exportGameobjectModels();
+        void exportGameobjectModels();
 
         bool convertRawFile(const std::string& pModelFilename);
-            void setModelNameFilterMethod(bool (*pFilterMethod)(char *pName)) { iFilterMethod = pFilterMethod; }
+        void setModelNameFilterMethod(bool (*pFilterMethod)(char *pName)) { iFilterMethod = pFilterMethod; }
         std::string getDirEntryNameFromModName(unsigned int pMapId, const std::string& pModPosName);
 };
 

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -51,10 +50,10 @@ class ModelSpawn
         float iScale;
         G3D::AABox iBound;
         std::string name;
-            bool operator==(const ModelSpawn &other) const { return ID == other.ID; }
+        bool operator==(const ModelSpawn &other) const { return ID == other.ID; }
         //uint32 hashCode() const { return ID; }
         // temp?
-            const G3D::AABox& getBounds() const { return iBound; }
+        const G3D::AABox& getBounds() const { return iBound; }
 
         static bool readFromFile(FILE* rf, ModelSpawn& spawn);
         static bool writeToFile(FILE* rw, const ModelSpawn& spawn);
@@ -65,7 +64,7 @@ class ModelInstance: public ModelSpawn
     public:
         ModelInstance(): iModel(0) {}
         ModelInstance(const ModelSpawn& spawn, WorldModel* model);
-            void setUnloaded() { iModel = 0; }
+        void setUnloaded() { iModel = 0; }
         bool intersectRay(const G3D::Ray& pRay, float& pMaxDist, bool pStopAtFirstHit) const;
         void intersectPoint(const G3D::Vector3& p, AreaInfo& info) const;
         bool GetLocationInfo(const G3D::Vector3& p, LocationInfo& info) const;

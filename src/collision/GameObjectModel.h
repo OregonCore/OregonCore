@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -34,15 +33,9 @@ namespace VMAP
 class GameObject;
 struct GameObjectDisplayInfoEntry;
 
-enum Phases                       // oregon hack, allow use DynVMap without phases in core
-{
-    PHASEHACK_NOMASK   = 0x00000000, 
-    PHASEHACK_NORMAL   = 0x00000001,
-};
-
 class GameObjectModel /*, public Intersectable*/
 {
-    uint32 phasemask;
+    bool collision_enabled;
     G3D::AABox iBound;
     G3D::Matrix3 iInvRot;
     G3D::Vector3 iPos;
@@ -51,27 +44,27 @@ class GameObjectModel /*, public Intersectable*/
     float iScale;
     VMAP::WorldModel* iModel;
 
-    GameObjectModel() : phasemask(PHASEHACK_NORMAL), iModel(NULL) {}
+    GameObjectModel() : collision_enabled(false), iModel(nullptr) {}
     bool initialize(const GameObject& go, const GameObjectDisplayInfoEntry& info);
 
-public:
-    std::string name;
+    public:
+        std::string name;
 
-    const G3D::AABox& getBounds() const { return iBound; }
+        const G3D::AABox& getBounds() const { return iBound; }
 
-    ~GameObjectModel();
+        ~GameObjectModel();
 
-    const G3D::Vector3& getPosition() const { return iPos;}
+        const G3D::Vector3& getPosition() const { return iPos;}
 
-    /**    Enables\disables collision. */
-    void disable() { phasemask = PHASEHACK_NOMASK;}
-    void enable(uint32 ph_mask) { phasemask = ph_mask;}
+        /**    Enables\disables collision. */
+        void disable() { collision_enabled = false;}
+        void enable(bool enable) { collision_enabled = enable;}
 
-    bool intersectRay(const G3D::Ray& Ray, float& MaxDist, bool StopAtFirstHit, uint32 ph_mask) const;
+        bool intersectRay(const G3D::Ray& Ray, float& MaxDist, bool StopAtFirstHit) const;
 
-    static GameObjectModel* Create(const GameObject& go);
+        static GameObjectModel* Create(const GameObject& go);
 
-    bool Relocate(GameObject const& go); 
+        bool Relocate(GameObject const& go); 
 };
 
 #endif // _GAMEOBJECT_MODEL_H

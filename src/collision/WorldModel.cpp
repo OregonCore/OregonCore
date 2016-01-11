@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -42,27 +41,21 @@ bool IntersectTriangle(const MeshTriangle& tri, std::vector<Vector3>::const_iter
     const Vector3 p(ray.direction().cross(e2));
     const float a = e1.dot(p);
 
-        if (fabsf(a) < EPS) {
-        // Determinant is ill-conditioned; abort early
-        return false;
-    }
+    if (fabsf(a) < EPS)
+        return false;   // Determinant is ill-conditioned; abort early
 
     const float f = 1.0f / a;
     const Vector3 s(ray.origin() - points[tri.idx0]);
     const float u = f * s.dot(p);
 
-        if ((u < 0.0f) || (u > 1.0f)) {
-        // We hit the plane of the m_geometry, but outside the m_geometry
-        return false;
-    }
+    if ((u < 0.0f) || (u > 1.0f))
+        return false;   // We hit the plane of the m_geometry, but outside the m_geometry
 
     const Vector3 q(s.cross(e1));
     const float v = f * ray.direction().dot(q);
 
-        if ((v < 0.0f) || ((u + v) > 1.0f)) {
-        // We hit the plane of the triangle, but outside the triangle
-        return false;
-    }
+    if ((v < 0.0f) || ((u + v) > 1.0f))
+        return false;   // We hit the plane of the triangle, but outside the triangle
 
     const float t = f * e2.dot(q);
 
@@ -305,12 +298,12 @@ bool GroupModel::readFromFile(FILE* rf)
 {
     char chunk[8];
     bool result = true;
-        uint32 chunkSize = 0;
-        uint32 count = 0;
+    uint32 chunkSize = 0;
+    uint32 count = 0;
     triangles.clear();
     vertices.clear();
     delete iLiquid;
-        iLiquid = NULL;
+    iLiquid = NULL;
 
     if (result && fread(&iBound, sizeof(G3D::AABox), 1, rf) != 1) result = false;
     if (result && fread(&iMogpFlags, sizeof(uint32), 1, rf) != 1) result = false;
@@ -361,7 +354,7 @@ struct GModelRayCallback
 
 bool GroupModel::IntersectRay(const G3D::Ray& ray, float& distance, bool stopAtFirstHit) const
 {
-        if (triangles.empty())
+    if (triangles.empty())
         return false;
 
     GModelRayCallback callback(triangles, vertices);
@@ -371,7 +364,7 @@ bool GroupModel::IntersectRay(const G3D::Ray& ray, float& distance, bool stopAtF
 
 bool GroupModel::IsInsideObject(const Vector3& pos, const Vector3& down, float& z_dist) const
 {
-        if (triangles.empty() || !iBound.contains(pos))
+    if (triangles.empty() || !iBound.contains(pos))
         return false;
     GModelRayCallback callback(triangles, vertices);
     Vector3 rPos = pos - 0.1f * down;
@@ -393,7 +386,7 @@ bool GroupModel::GetLiquidLevel(const Vector3& pos, float& liqHeight) const
 uint32 GroupModel::GetLiquidType() const
 {
     if (iLiquid)
-            return iLiquid->GetType();
+        return iLiquid->GetType();
     return 0;
 }
 
@@ -465,11 +458,11 @@ bool WorldModel::IntersectRay(const G3D::Ray& ray, float& distance, bool stopAtF
             //}
             //std::cout << "trying to intersect '" << prims[entry].name << "'\n";
         }
-};
+    };
 
 bool WorldModel::IntersectPoint(const G3D::Vector3& p, const G3D::Vector3& down, float& dist, AreaInfo& info) const
 {
-        if (groupModels.empty())
+    if (groupModels.empty())
         return false;
 
     WModelAreaCallback callback(groupModels, down);
@@ -488,7 +481,7 @@ bool WorldModel::IntersectPoint(const G3D::Vector3& p, const G3D::Vector3& down,
 
 bool WorldModel::GetLocationInfo(const G3D::Vector3& p, const G3D::Vector3& down, float& dist, LocationInfo& info) const
 {
-        if (groupModels.empty())
+    if (groupModels.empty())
         return false;
 
     WModelAreaCallback callback(groupModels, down);
@@ -509,7 +502,7 @@ bool WorldModel::writeFile(const std::string& filename)
         return false;
 
     uint32 chunkSize, count;
-        bool result = fwrite(VMAP_MAGIC, 1, 8, wf) == 8;
+    bool result = fwrite(VMAP_MAGIC, 1, 8, wf) == 8;
     if (result && fwrite("WMOD", 1, 4, wf) != 4) result = false;
     chunkSize = sizeof(uint32) + sizeof(uint32);
     if (result && fwrite(&chunkSize, sizeof(uint32), 1, wf) != 1) result = false;
@@ -542,8 +535,8 @@ bool WorldModel::readFile(const std::string& filename)
         return false;
 
     bool result = true;
-        uint32 chunkSize = 0;
-        uint32 count = 0;
+    uint32 chunkSize = 0;
+    uint32 count = 0;
     char chunk[8];                          // Ignore the added magic header
     if (!readChunk(rf, chunk, VMAP_MAGIC, 8)) result = false;
 

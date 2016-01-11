@@ -167,7 +167,6 @@ bool Transport::Create(uint32 guidlow, uint32 mapid, float x, float y, float z, 
         SetUInt32Value(GAMEOBJECT_DYN_FLAGS, dynflags);
 
     SetName(goinfo->name);
-//    UpdateRotationFields(.0f, 1.f);
 
     m_model = GameObjectModel::Create(*this);
 

@@ -56,13 +56,6 @@ enum NotifyFlags
     NOTIFY_ALL                      = 0xFF
 };
 
-enum PhaseMasks
-{
-    PHASEMASK_NOMASK   = 0x00000000, // oregon hack, allow use DynVMap without phases in core
-    PHASEMASK_NORMAL   = 0x00000001,
-    PHASEMASK_ANYWHERE = 0xFFFFFFFF
-};
-
 enum MovementFlags
 {
     MOVEMENTFLAG_NONE                   = 0x00000000,
@@ -859,7 +852,6 @@ class WorldObject : public Object, public WorldLocation
             return m_InstanceId;
         }
 
-        uint32 GetPhaseMask() const { return PHASEMASK_NORMAL; }
         uint32 GetZoneId() const;
         uint32 GetAreaId() const;
 

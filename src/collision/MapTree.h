@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -61,8 +60,8 @@ class StaticMapTree
         //bool containsLoadedMapTile(unsigned int pTileIdent) const { return(iLoadedMapTiles.containsKey(pTileIdent)); }
     public:
         static std::string getTileFileName(uint32 mapID, uint32 tileX, uint32 tileY);
-            static uint32 packTileID(uint32 tileX, uint32 tileY) { return tileX<<16 | tileY; }
-            static void unpackTileID(uint32 ID, uint32 &tileX, uint32 &tileY) { tileX = ID>>16; tileY = ID&0xFF; }
+        static uint32 packTileID(uint32 tileX, uint32 tileY) { return tileX<<16 | tileY; }
+        static void unpackTileID(uint32 ID, uint32 &tileX, uint32 &tileY) { tileX = ID>>16; tileY = ID&0xFF; }
         static bool CanLoadMap(const std::string& basePath, uint32 mapID, uint32 tileX, uint32 tileY);
 
         StaticMapTree(uint32 mapID, const std::string& basePath);
@@ -78,8 +77,8 @@ class StaticMapTree
         void UnloadMap(VMapManager2* vm);
         bool LoadMapTile(uint32 tileX, uint32 tileY, VMapManager2* vm);
         void UnloadMapTile(uint32 tileX, uint32 tileY, VMapManager2* vm);
-            bool isTiled() const { return iIsTiled; }
-            uint32 numLoadedTiles() const { return iLoadedTiles.size(); }
+        bool isTiled() const { return iIsTiled; }
+        uint32 numLoadedTiles() const { return iLoadedTiles.size(); }
         #ifdef MMAP_GENERATOR
     public:
         void getModelInstances(ModelInstance*& models, uint32& count);

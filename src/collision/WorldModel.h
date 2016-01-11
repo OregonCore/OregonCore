@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -52,9 +51,9 @@ class WmoLiquid
         ~WmoLiquid();
         WmoLiquid& operator=(const WmoLiquid& other);
         bool GetLiquidHeight(const Vector3& pos, float& liqHeight) const;
-            uint32 GetType() const { return iType; }
-            float *GetHeightStorage() { return iHeight; }
-            uint8 *GetFlagsStorage() { return iFlags; }
+        uint32 GetType() const { return iType; }
+        float* GetHeightStorage() { return iHeight; }
+        uint8* GetFlagsStorage() { return iFlags; }
         uint32 GetFileSize();
         bool writeToFile(FILE* wf);
         static bool readFromFile(FILE* rf, WmoLiquid*& liquid);
@@ -80,21 +79,21 @@ class GroupModel
         GroupModel(): iLiquid(0) {}
         GroupModel(const GroupModel& other);
         GroupModel(uint32 mogpFlags, uint32 groupWMOID, const AABox& bound):
-            iBound(bound), iMogpFlags(mogpFlags), iGroupWMOID(groupWMOID), iLiquid(0) {}
-            ~GroupModel() { delete iLiquid; }
+        iBound(bound), iMogpFlags(mogpFlags), iGroupWMOID(groupWMOID), iLiquid(0) {}
+        ~GroupModel() { delete iLiquid; }
 
-            //! pass mesh data to object and create BIH. Passed vectors get get swapped with old geometry!
+        //! pass mesh data to object and create BIH. Passed vectors get get swapped with old geometry!
         void setMeshData(std::vector<Vector3>& vert, std::vector<MeshTriangle>& tri);
-            void setLiquidData(WmoLiquid*& liquid) { iLiquid = liquid; liquid = NULL; }
+        void setLiquidData(WmoLiquid*& liquid) { iLiquid = liquid; liquid = NULL; }
         bool IntersectRay(const G3D::Ray& ray, float& distance, bool stopAtFirstHit) const;
         bool IsInsideObject(const Vector3& pos, const Vector3& down, float& z_dist) const;
         bool GetLiquidLevel(const Vector3& pos, float& liqHeight) const;
         uint32 GetLiquidType() const;
         bool writeToFile(FILE* wf);
         bool readFromFile(FILE* rf);
-            const G3D::AABox& GetBound() const { return iBound; }
-            uint32 GetMogpFlags() const { return iMogpFlags; }
-            uint32 GetWmoID() const { return iGroupWMOID; }
+        const G3D::AABox& GetBound() const { return iBound; }
+        uint32 GetMogpFlags() const { return iMogpFlags; }
+        uint32 GetWmoID() const { return iGroupWMOID; }
     protected:
         G3D::AABox iBound;
         uint32 iMogpFlags;// 0x8 outdor; 0x2000 indoor
@@ -117,7 +116,7 @@ class WorldModel
 
             //! pass group models to WorldModel and create BIH. Passed vector is swapped with old geometry!
         void setGroupModels(std::vector<GroupModel>& models);
-            void setRootWmoID(uint32 id) { RootWMOID = id; }
+        void setRootWmoID(uint32 id) { RootWMOID = id; }
         bool IntersectRay(const G3D::Ray& ray, float& distance, bool stopAtFirstHit) const;
         bool IntersectPoint(const G3D::Vector3& p, const G3D::Vector3& down, float& dist, AreaInfo& info) const;
         bool GetLocationInfo(const G3D::Vector3& p, const G3D::Vector3& down, float& dist, LocationInfo& info) const;

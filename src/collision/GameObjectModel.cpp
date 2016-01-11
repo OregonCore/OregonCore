@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -15,8 +14,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef NO_CORE_FUNCS
 
 #include "VMapFactory.h"
 #include "VMapManager2.h"
@@ -43,7 +40,7 @@ struct GameobjectModelData
     std::string name;
 };
 
-typedef UNORDERED_MAP<uint32, GameobjectModelData> ModelList;
+typedef std::unordered_map<uint32, GameobjectModelData> ModelList;
 ModelList model_list;
 
 void LoadGameObjectModelList()
@@ -116,7 +113,6 @@ bool GameObjectModel::initialize(const GameObject& go, const GameObjectDisplayIn
     //adtId = 0;
     //ID = 0;
     iPos = Vector3(go.GetPositionX(), go.GetPositionY(), go.GetPositionZ());
-    phasemask = go.GetPhaseMask();
     iScale = go.GetFloatValue(OBJECT_FIELD_SCALE_X);
     iInvScale = 1.f / iScale;
 
@@ -201,11 +197,8 @@ bool GameObjectModel::Relocate(const GameObject& go)
     return true;
 }
 
-bool GameObjectModel::intersectRay(const G3D::Ray& ray, float& MaxDist, bool StopAtFirstHit, uint32 ph_mask) const
+bool GameObjectModel::intersectRay(const G3D::Ray& ray, float& MaxDist, bool StopAtFirstHit) const
 {
-    if (!(phasemask & ph_mask))
-        return false;
-
     float time = ray.intersectionTime(iBound);
     if (time == G3D::inf())
         return false;
@@ -222,5 +215,3 @@ bool GameObjectModel::intersectRay(const G3D::Ray& ray, float& MaxDist, bool Sto
     }
     return hit;
 }
-
-#endif

@@ -1521,48 +1521,29 @@ float Map::GetWaterOrGroundLevel(float x, float y, float z, float* ground /*= NU
     return VMAP_INVALID_HEIGHT_VALUE;
 }
 
-float Map::GetHeight(float x, float y, float z, bool pUseVmaps, float maxSearchDist) const
+float Map::GetHeight(float x, float y, float z, bool checkVMap, float maxSearchDist) const
 {
     // find raw .map surface under Z coordinates
-    float mapHeight;
-    float z2 = z + 2.f;
+    float mapHeight = VMAP_INVALID_HEIGHT_VALUE;
+    float realHeight = VMAP_INVALID_HEIGHT_VALUE;
     if (GridMap* gmap = const_cast<Map*>(this)->GetGrid(x, y))
     {
-        float _mapheight = gmap->getHeight(x, y);
-
+        float gridHeight = gmap->getHeight(x, y);
         // look from a bit higher pos to find the floor, ignore under surface case
-        if (z2 > _mapheight)
-            mapHeight = _mapheight;
-        else
-            mapHeight = VMAP_INVALID_HEIGHT_VALUE;
+        if (z + 2.0f > gridHeight)
+            mapHeight = gridHeight;
     }
-    else
-        mapHeight = VMAP_INVALID_HEIGHT_VALUE;
 
-    float vmapHeight;
-    if (pUseVmaps)
+    float vmapHeight = VMAP_INVALID_HEIGHT_VALUE;
+    if (checkVMap)
     {
         VMAP::IVMapManager* vmgr = VMAP::VMapFactory::createOrGetVMapManager();
         if (vmgr->isHeightCalcEnabled())
-        {
-            // if mapHeight has been found search vmap height at least until mapHeight point
-            // this prevent case when original Z "too high above ground and vmap height search fail"
-            // this will not affect most normal cases (no map in instance, or stay at ground at continent)
-            if (mapHeight > INVALID_HEIGHT && z2 - mapHeight > maxSearchDist)
-                maxSearchDist = z2 - mapHeight + 1.0f;      // 1.0 make sure that we not fail for case when map height near but above for vamp height
-
-            // look from a bit higher pos to find the floor
-            vmapHeight = vmgr->getHeight(GetId(), x, y, z2, maxSearchDist);
-        }
-        else
-            vmapHeight = VMAP_INVALID_HEIGHT_VALUE;
+            vmapHeight = vmgr->getHeight(GetId(), x, y, z + 2.0f, maxSearchDist);   // look from a bit higher pos to find the floor
     }
-    else
-        vmapHeight = VMAP_INVALID_HEIGHT_VALUE;
 
     // mapHeight set for any above raw ground Z or <= INVALID_HEIGHT
     // vmapheight set for any under Z value or <= INVALID_HEIGHT
-
     if (vmapHeight > INVALID_HEIGHT)
     {
         if (mapHeight > INVALID_HEIGHT)
@@ -1571,17 +1552,19 @@ float Map::GetHeight(float x, float y, float z, bool pUseVmaps, float maxSearchD
 
             // we are already under the surface or vmap height above map heigt
             // or if the distance of the vmap height is less the land height distance
-            if (z < mapHeight || vmapHeight > mapHeight || fabs(mapHeight - z) > fabs(vmapHeight - z))
-                return vmapHeight;
+            if (z < mapHeight || vmapHeight > mapHeight || std::fabs(mapHeight - z) > std::fabs(vmapHeight - z))
+                realHeight = vmapHeight;
             else
-                return mapHeight;                           // better use .map surface height
+                realHeight = mapHeight;                           // better use .map surface height
 
         }
         else
-            return vmapHeight;                              // we have only vmapHeight (if have)
+            realHeight = vmapHeight;                              // we have only vmapHeight (if have)
     }
 
-    return mapHeight;
+    realHeight = mapHeight;                                   // explicitly use map data
+
+    return std::max<float>(realHeight, m_dyn_tree.getHeight(x, y, z, maxSearchDist));
 }
 
 inline bool IsOutdoorWMO(uint32 mogpFlags, uint32 mapId)
@@ -1732,29 +1715,24 @@ float Map::GetWaterLevel(float x, float y) const
         return 0;
 }
 
-bool Map::isInLineOfSight(float x1, float y1, float z1, float x2, float y2, float z2, uint32 phasemask) const
+bool Map::isInLineOfSight(float x1, float y1, float z1, float x2, float y2, float z2) const
 {
     return VMAP::VMapFactory::createOrGetVMapManager()->isInLineOfSight(GetId(), x1, y1, z1, x2, y2, z2)
-        && m_dyn_tree.isInLineOfSight(x1, y1, z1, x2, y2, z2, phasemask);
+        && m_dyn_tree.isInLineOfSight(x1, y1, z1, x2, y2, z2);
 }
 
-bool Map::getObjectHitPos(uint32 phasemask, float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float& ry, float& rz, float modifyDist)
+bool Map::getObjectHitPos(float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float& ry, float& rz, float modifyDist)
 {
-    Vector3 startPos = Vector3(x1, y1, z1);
-    Vector3 dstPos = Vector3(x2, y2, z2);
+    G3D::Vector3 startPos = G3D::Vector3(x1, y1, z1);
+    G3D::Vector3 dstPos = G3D::Vector3(x2, y2, z2);
 
-    Vector3 resultPos;
-    bool result = m_dyn_tree.getObjectHitPos(phasemask, startPos, dstPos, resultPos, modifyDist);
+    G3D::Vector3 resultPos;
+    bool result = m_dyn_tree.getObjectHitPos(startPos, dstPos, resultPos, modifyDist);
 
     rx = resultPos.x;
     ry = resultPos.y;
     rz = resultPos.z;
     return result;
-}
-
-float Map::GetHeight(uint32 phasemask, float x, float y, float z, bool vmap/*=true*/, float maxSearchDist/*=DEFAULT_HEIGHT_SEARCH*/) const
-{
-    return std::max<float>(GetHeight(x, y, z, vmap, maxSearchDist), m_dyn_tree.getHeight(x, y, z, maxSearchDist, phasemask));
 }
 
 uint32 Map::GetAreaId(uint16 areaflag, uint32 map_id)

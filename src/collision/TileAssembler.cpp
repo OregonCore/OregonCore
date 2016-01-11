@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -90,7 +89,7 @@ bool TileAssembler::convertWorld2()
             }
             else if (entry->second.flags & MOD_WORLDSPAWN) // WMO maps and terrain maps use different origin, so we need to adapt :/
             {
-                    // TODO: remove extractor hack and uncomment below line:
+                // @todo: remove extractor hack and uncomment below line:
                 //entry->second.iPos += Vector3(533.33333f*32, 533.33333f*32, 0.f);
                 entry->second.iBound = entry->second.iBound + Vector3(533.33333f * 32, 533.33333f * 32, 0.f);
             }
@@ -98,18 +97,18 @@ bool TileAssembler::convertWorld2()
             spawnedModelFiles.insert(entry->second.name);
         }
 
-            printf("Creating map tree for map %u...\n", map_iter->first);
+        printf("Creating map tree for map %u...\n", map_iter->first);
         BIH pTree;
         pTree.build(mapSpawns, BoundsTrait<ModelSpawn*>::getBounds);
 
-            // ===> possibly move this code to StaticMapTree class
+        // ===> possibly move this code to StaticMapTree class
         std::map<uint32, uint32> modelNodeIdx;
         for (uint32 i = 0; i < mapSpawns.size(); ++i)
             modelNodeIdx.insert(pair<uint32, uint32>(mapSpawns[i]->ID, i));
 
         // write map tree file
         std::stringstream mapfilename;
-            mapfilename << iDestDir << '/' << std::setfill('0') << std::setw(3) << map_iter->first << ".vmtree";
+        mapfilename << iDestDir << '/' << std::setfill('0') << std::setw(3) << map_iter->first << ".vmtree";
         FILE* mapfile = fopen(mapfilename.str().c_str(), "wb");
         if (!mapfile)
         {
@@ -131,13 +130,11 @@ bool TileAssembler::convertWorld2()
         if (success && fwrite("GOBJ", 4, 1, mapfile) != 1) success = false;
 
         for (TileMap::iterator glob = globalRange.first; glob != globalRange.second && success; ++glob)
-            {
             success = ModelSpawn::writeToFile(mapfile, map_iter->second->UniqueEntries[glob->second]);
-            }
 
         fclose(mapfile);
 
-            // <====
+        // <====
 
         // write map tile files, similar to ADT files, only with extra BSP tree node info
         TileMap& tileEntries = map_iter->second->TileEntries;
@@ -150,10 +147,10 @@ bool TileAssembler::convertWorld2()
             uint32 nSpawns = tileEntries.count(tile->first);
             std::stringstream tilefilename;
             tilefilename.fill('0');
-                tilefilename << iDestDir << '/' << std::setw(3) << map_iter->first << '_';
+            tilefilename << iDestDir << '/' << std::setw(3) << map_iter->first << '_';
             uint32 x, y;
             StaticMapTree::unpackTileID(tile->first, x, y);
-                tilefilename << std::setw(2) << x << '_' << std::setw(2) << y << ".vmtile";
+            tilefilename << std::setw(2) << x << '_' << std::setw(2) << y << ".vmtile";
             FILE* tilefile = fopen(tilefilename.str().c_str(), "wb");
             // file header
             if (success && fwrite(VMAP_MAGIC, 1, 8, tilefile) != 8) success = false;
@@ -175,8 +172,8 @@ bool TileAssembler::convertWorld2()
             // break; //test, extract only first map; TODO: remvoe this line
     }
 
-        // add an object models, listed in temp_gameobject_models file
-        exportGameobjectModels();
+    // add an object models, listed in temp_gameobject_models file
+    exportGameobjectModels();
     // export objects
     std::cout << "\nConverting Model Files" << std::endl;
     for (std::set<std::string>::iterator mfile = spawnedModelFiles.begin(); mfile != spawnedModelFiles.end(); ++mfile)
@@ -192,9 +189,8 @@ bool TileAssembler::convertWorld2()
 
     //cleanup:
     for (MapData::iterator map_iter = mapData.begin(); map_iter != mapData.end(); ++map_iter)
-        {
         delete map_iter->second;
-        }
+
     return success;
 }
 
@@ -241,40 +237,40 @@ bool TileAssembler::readMapSpawns()
 
 bool TileAssembler::calculateTransformedBound(ModelSpawn& spawn)
 {
-        std::string modelFilename(iSrcDir);
-        modelFilename.push_back('/');
-        modelFilename.append(spawn.name);
+    std::string modelFilename(iSrcDir);
+    modelFilename.push_back('/');
+    modelFilename.append(spawn.name);
 
     ModelPosition modelPosition;
     modelPosition.iDir = spawn.iRot;
     modelPosition.iScale = spawn.iScale;
     modelPosition.init();
 
-        WorldModel_Raw raw_model;
-        if (!raw_model.Read(modelFilename.c_str()))
+    WorldModel_Raw raw_model;
+    if (!raw_model.Read(modelFilename.c_str()))
         return false;
 
-        uint32 groups = raw_model.groupsArray.size();
-        if (groups != 1)
-            printf("Warning: '%s' does not seem to be a M2 model!\n", modelFilename.c_str());
+    uint32 groups = raw_model.groupsArray.size();
+    if (groups != 1)
+        printf("Warning: '%s' does not seem to be a M2 model!\n", modelFilename.c_str());
 
     AABox modelBound;
     bool boundEmpty = true;
 
     for (uint32 g = 0; g < groups; ++g) // should be only one for M2 files...
     {
-            std::vector<Vector3>& vertices = raw_model.groupsArray[g].vertexArray;
+        std::vector<Vector3>& vertices = raw_model.groupsArray[g].vertexArray;
 
-            if (vertices.empty())
+        if (vertices.empty())
         {
             std::cout << "error: model '" << spawn.name << "' has no geometry!" << std::endl;
                 continue;
         }
 
-            uint32 nvectors = vertices.size();
-            for (uint32 i = 0; i < nvectors; ++i)
+        uint32 nvectors = vertices.size();
+        for (uint32 i = 0; i < nvectors; ++i)
         {
-                Vector3 v = modelPosition.transform(vertices[i]);
+            Vector3 v = modelPosition.transform(vertices[i]);
 
             if (boundEmpty)
                 modelBound = AABox(v, v), boundEmpty = false;
@@ -301,36 +297,36 @@ bool TileAssembler::convertRawFile(const std::string& pModelFilename)
     bool success = true;
     std::string filename = iSrcDir;
     if (filename.length() > 0)
-            filename.push_back('/');
+        filename.push_back('/');
     filename.append(pModelFilename);
 
-        WorldModel_Raw raw_model;
-        if (!raw_model.Read(filename.c_str()))
-            return false;
+    WorldModel_Raw raw_model;
+    if (!raw_model.Read(filename.c_str()))
+        return false;
 
-        // write WorldModel
-        WorldModel model;
-        model.setRootWmoID(raw_model.RootWMOID);
-        if (raw_model.groupsArray.size())
+    // write WorldModel
+    WorldModel model;
+    model.setRootWmoID(raw_model.RootWMOID);
+    if (raw_model.groupsArray.size())
     {
-            std::vector<GroupModel> groupsArray;
+        std::vector<GroupModel> groupsArray;
 
-            uint32 groups = raw_model.groupsArray.size();
-            for (uint32 g = 0; g < groups; ++g)
-            {
-                GroupModel_Raw& raw_group = raw_model.groupsArray[g];
-                groupsArray.push_back(GroupModel(raw_group.mogpflags, raw_group.GroupWMOID, raw_group.bounds ));
-                groupsArray.back().setMeshData(raw_group.vertexArray, raw_group.triangles);
-                groupsArray.back().setLiquidData(raw_group.liquid);
-    }
-
-            model.setGroupModels(groupsArray);
+        uint32 groups = raw_model.groupsArray.size();
+        for (uint32 g = 0; g < groups; ++g)
+        {
+            GroupModel_Raw& raw_group = raw_model.groupsArray[g];
+            groupsArray.push_back(GroupModel(raw_group.mogpflags, raw_group.GroupWMOID, raw_group.bounds ));
+            groupsArray.back().setMeshData(raw_group.vertexArray, raw_group.triangles);
+            groupsArray.back().setLiquidData(raw_group.liquid);
         }
+
+        model.setGroupModels(groupsArray);
+    }
 
         success = model.writeFile(iDestDir + "/" + pModelFilename + ".vmo");
         //std::cout << "readRawFile2: '" << pModelFilename << "' tris: " << nElements << " nodes: " << nNodes << std::endl;
         return success;
-    }
+}
 
     void TileAssembler::exportGameobjectModels()
     {
@@ -401,9 +397,9 @@ bool TileAssembler::convertRawFile(const std::string& pModelFilename)
 
     bool GroupModel_Raw::Read(FILE* rf)
     {
-    char blockId[5];
-    blockId[4] = 0;
-    int blocksize;
+        char blockId[5];
+        blockId[4] = 0;
+        int blocksize;
         int readOperation = 0;
 
         READ_OR_RETURN(&mogpflags, sizeof(uint32));

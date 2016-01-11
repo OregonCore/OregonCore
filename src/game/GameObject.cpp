@@ -1606,21 +1606,12 @@ void GameObject::SetDisplayId(uint32 displayid)
     UpdateModel();
 }
 
-void GameObject::SetPhaseMask(uint32 newPhaseMask, bool update)
-{
-    //WorldObject::SetPhaseMask(newPhaseMask, update);
-    EnableCollision(true);
-}
-
 void GameObject::EnableCollision(bool enable)
 {
     if (!m_model)
        return;
 
-    /*if (enable && !GetMap()->Contains(*m_model))
-       GetMap()->Insert(*m_model);*/
-
-    m_model->enable(enable ? GetPhaseMask() : PHASEMASK_NOMASK);
+    m_model->enable(enable);
 }
 
 void GameObject::UpdateModel()

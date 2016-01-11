@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -35,23 +34,12 @@ ModelInstance::ModelInstance(const ModelSpawn& spawn, WorldModel* model): ModelS
 bool ModelInstance::intersectRay(const G3D::Ray& pRay, float& pMaxDist, bool pStopAtFirstHit) const
 {
     if (!iModel)
-    {
-            //std::cout << "<object not loaded>\n";
         return false;
-    }
+
     float time = pRay.intersectionTime(iBound);
     if (time == G3D::inf())
-    {
-//            std::cout << "Ray does not hit '" << name << "'\n";
-
         return false;
-    }
-//        std::cout << "Ray crosses bound of '" << name << "'\n";
-/*        std::cout << "ray from:" << pRay.origin().x << ", " << pRay.origin().y << ", " << pRay.origin().z
-                  << " dir:" << pRay.direction().x << ", " << pRay.direction().y << ", " << pRay.direction().z
-                  << " t/tmax:" << time << '/' << pMaxDist;
-        std::cout << "\nBound lo:" << iBound.low().x << ", " << iBound.low().y << ", " << iBound.low().z << " hi: "
-                  << iBound.high().x << ", " << iBound.high().y << ", " << iBound.high().z << std::endl; */
+
     // child bounds are defined in object space:
     Vector3 p = iInvRot * (pRay.origin() - iPos) * iInvScale;
     Ray modRay(p, iInvRot * pRay.direction());
@@ -140,12 +128,12 @@ bool ModelInstance::GetLiquidLevel(const G3D::Vector3& p, LocationInfo& info, fl
     // child bounds are defined in object space:
     Vector3 pModel = iInvRot * (p - iPos) * iInvScale;
     //Vector3 zDirModel = iInvRot * Vector3(0.f, 0.f, -1.f);
-        float zDist;
-        if (info.hitModel->GetLiquidLevel(pModel, zDist))
+    float zDist;
+    if (info.hitModel->GetLiquidLevel(pModel, zDist))
     {
         // calculate world height (zDist in model coords):
-            // assume WMO not tilted (wouldn't make much sense anyway)
-            liqHeight = zDist * iScale + iPos.z;
+        // assume WMO not tilted (wouldn't make much sense anyway)
+        liqHeight = zDist * iScale + iPos.z;
         return true;
     }
     return false;
@@ -176,7 +164,7 @@ bool ModelSpawn::readFromFile(FILE* rf, ModelSpawn& spawn)
         spawn.iBound = G3D::AABox(bLow, bHigh);
     }
     check += fread(&nameLen, sizeof(uint32), 1, rf);
-        if (check != uint32(has_bound ? 17 : 11))
+    if (check != uint32(has_bound ? 17 : 11))
     {
         std::cout << "Error reading ModelSpawn!\n";
         return false;
@@ -214,7 +202,7 @@ bool ModelSpawn::writeToFile(FILE* wf, const ModelSpawn& spawn)
     }
     uint32 nameLen = spawn.name.length();
     check += fwrite(&nameLen, sizeof(uint32), 1, wf);
-        if (check != uint32(has_bound ? 17 : 11)) return false;
+    if (check != uint32(has_bound ? 17 : 11)) return false;
     check = fwrite(spawn.name.c_str(), sizeof(char), nameLen, wf);
     if (check != nameLen) return false;
     return true;

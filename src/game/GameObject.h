@@ -598,7 +598,6 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         }
 
         void SetGoState(GOState state);
-        void SetPhaseMask(uint32 newPhaseMask, bool update);
         void EnableCollision(bool enable);
 
         bool IsTransport() const;
