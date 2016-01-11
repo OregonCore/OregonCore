@@ -44,9 +44,6 @@ EndScriptData
 #define GOSSIP_VERONIA          "Fly me to Manaforge Coruu please"
 #define GOSSIP_DEESAK           "Fly me to Ogri'la please"
 #define GOSSIP_CRIMSONWING      "<Ride the gryphons to Survey Alcaz Island>"
-#define GOSSIP_WILLIAMKEILAR1   "Take me to Northpass Tower."
-#define GOSSIP_WILLIAMKEILAR2   "Take me to Eastwall Tower."
-#define GOSSIP_WILLIAMKEILAR3   "Take me to Crown Guard Tower."
 
 bool GossipHello_npc_taxi(Player* pPlayer, Creature* pCreature)
 {
@@ -124,11 +121,6 @@ bool GossipHello_npc_taxi(Player* pPlayer, Creature* pCreature)
     case 23704: // Dustwallow Marsh - Cassa Crimsonwing
         if (pPlayer->GetQuestStatus(11142) == QUEST_STATUS_INCOMPLETE)
             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_CRIMSONWING, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 16);
-        break;
-    case 17209:
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_WILLIAMKEILAR1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 17);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_WILLIAMKEILAR2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 18);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_WILLIAMKEILAR3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 19);
         break;
     }
 
@@ -223,30 +215,6 @@ bool GossipSelect_npc_taxi(Player* pPlayer, Creature* pCreature, uint32 /*uiSend
     case GOSSIP_ACTION_INFO_DEF + 16:
         pPlayer->CLOSE_GOSSIP_MENU();
         pPlayer->CastSpell(pPlayer, 42295, true);
-        break;
-    case GOSSIP_ACTION_INFO_DEF + 17:
-        pPlayer->CLOSE_GOSSIP_MENU();
-
-        nodes.resize(2);
-        nodes[0] = 84;
-        nodes[1] = 85;
-        pPlayer->ActivateTaxiPathTo(nodes);
-        break;
-    case GOSSIP_ACTION_INFO_DEF + 18:
-        pPlayer->CLOSE_GOSSIP_MENU();
-
-        nodes.resize(2);
-        nodes[0] = 84;
-        nodes[1] = 86;
-        pPlayer->ActivateTaxiPathTo(nodes);
-        break;
-    case GOSSIP_ACTION_INFO_DEF + 19:
-        pPlayer->CLOSE_GOSSIP_MENU();
-
-        nodes.resize(2);
-        nodes[0] = 84;
-        nodes[1] = 87;
-        pPlayer->ActivateTaxiPathTo(nodes);
         break;
     }
 

@@ -18,7 +18,7 @@
 /* ScriptData
 SDName: Shattrath_City
 SD%Complete: 100
-SDComment: Quest support: 10004, 10009, 10211, 10231. Flask vendors, Teleport to Caverns of Time
+SDComment: Quest support: 10004, 10009, 10211, Flask vendors, Teleport to Caverns of Time
 SDCategory: Shattrath City
 EndScriptData */
 
@@ -28,7 +28,6 @@ npc_salsalabim
 npc_shattrathflaskvendors
 npc_zephyr
 npc_kservant
-npc_dirty_larry
 npc_ishanah
 npc_khadgar
 EndContentData */
@@ -537,210 +536,6 @@ CreatureAI* GetAI_npc_khadgars_servant(Creature* pCreature)
 }
 
 /*######
-# npc_dirty_larry
-######*/
-
-#define GOSSIP_BOOK "Ezekiel said that you might have a certain book..."
-
-enum eLarry
-{
-    SAY_1       = -1000274,
-    SAY_2       = -1000275,
-    SAY_3       = -1000276,
-    SAY_4       = -1000277,
-    SAY_5       = -1000278,
-    SAY_GIVEUP  = -1000279,
-
-    QUEST_WBI       = 10231,
-    NPC_CREEPJACK   = 19726,
-    NPC_MALONE      = 19725
-};
-
-struct npc_dirty_larryAI : public ScriptedAI
-{
-    npc_dirty_larryAI(Creature* c) : ScriptedAI(c) {}
-
-    bool Event;
-    bool Attack;
-    bool Done;
-
-    uint64 PlayerGUID;
-
-    uint32 SayTimer;
-    uint32 Step;
-
-    void Reset()
-    {
-        Event = false;
-        Attack = false;
-        Done = false;
-
-        PlayerGUID = 0;
-        SayTimer = 0;
-        Step = 0;
-
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->setFaction(1194);
-        Unit* Creepjack = me->FindNearestCreature(NPC_CREEPJACK, 20);
-        if (Creepjack)
-        {
-            CAST_CRE(Creepjack)->AI()->EnterEvadeMode();
-            Creepjack->setFaction(1194);
-            Creepjack->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        }
-        Unit* Malone = me->FindNearestCreature(NPC_MALONE, 20);
-        if (Malone)
-        {
-            CAST_CRE(Malone)->AI()->EnterEvadeMode();
-            Malone->setFaction(1194);
-            Malone->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        }
-    }
-
-    uint32 NextStep(uint32 Step)
-    {
-        Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
-
-        switch (Step)
-        {
-        case 0:
-            {
-                me->SetInFront(pPlayer);
-                Unit* Creepjack = me->FindNearestCreature(NPC_CREEPJACK, 20);
-                if (Creepjack)
-                    Creepjack->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                Unit* Malone = me->FindNearestCreature(NPC_MALONE, 20);
-                if (Malone)
-                    Malone->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-            }
-            return 2000;
-        case 1:
-            DoScriptText(SAY_1, me, pPlayer);
-            return 3000;
-        case 2:
-            DoScriptText(SAY_2, me, pPlayer);
-            return 5000;
-        case 3:
-            DoScriptText(SAY_3, me, pPlayer);
-            return 2000;
-        case 4:
-            DoScriptText(SAY_4, me, pPlayer);
-            return 2000;
-        case 5:
-            DoScriptText(SAY_5, me, pPlayer);
-            return 2000;
-        case 6:
-            Attack = true;
-            return 2000;
-        default:
-            return 0;
-        }
-    }
-
-    void EnterCombat(Unit* /*who*/) {}
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (SayTimer <= diff)
-        {
-            if (Event)
-                SayTimer = NextStep(++Step);
-        }
-        else SayTimer -= diff;
-
-        if (Attack)
-        {
-            Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
-            me->setFaction(14);
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            if (pPlayer)
-            {
-                Unit* Creepjack = me->FindNearestCreature(NPC_CREEPJACK, 20);
-                if (Creepjack)
-                {
-                    Creepjack->Attack(pPlayer, true);
-                    Creepjack->setFaction(14);
-                    Creepjack->GetMotionMaster()->MoveChase(pPlayer);
-                    Creepjack->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                }
-                Unit* Malone = me->FindNearestCreature(NPC_MALONE, 20);
-                if (Malone)
-                {
-                    Malone->Attack(pPlayer, true);
-                    Malone->setFaction(14);
-                    Malone->GetMotionMaster()->MoveChase(pPlayer);
-                    Malone->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                }
-                DoStartMovement(pPlayer);
-                AttackStart(pPlayer);
-            }
-            Attack = false;
-        }
-
-        if ((me->GetHealth() * 100) / me->GetMaxHealth() < 15 && !Done)
-        {
-            Unit* Creepjack = me->FindNearestCreature(NPC_CREEPJACK, 20);
-            if (Creepjack)
-            {
-                CAST_CRE(Creepjack)->AI()->EnterEvadeMode();
-                Creepjack->setFaction(1194);
-                Creepjack->GetMotionMaster()->MoveTargetedHome();
-                Creepjack->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            }
-            Unit* Malone = me->FindNearestCreature(NPC_MALONE, 20);
-            if (Malone)
-            {
-                CAST_CRE(Malone)->AI()->EnterEvadeMode();
-                Malone->setFaction(1194);
-                Malone->GetMotionMaster()->MoveTargetedHome();
-                Malone->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            }
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            me->setFaction(1194);
-            Done = true;
-            DoScriptText(SAY_GIVEUP, me, NULL);
-            me->DeleteThreatList();
-            me->CombatStop();
-            me->GetMotionMaster()->MoveTargetedHome();
-            Player* player = Unit::GetPlayer(*me, PlayerGUID);
-            if (player)
-                player->GroupEventHappens(QUEST_WBI, me);
-        }
-        DoMeleeAttackIfReady();
-    }
-};
-
-bool GossipHello_npc_dirty_larry(Player* player, Creature* creature)
-{
-    if (creature->isQuestGiver())
-        player->PrepareQuestMenu(creature->GetGUID());
-
-    if (player->GetQuestStatus(QUEST_WBI) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_BOOK, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(creature), creature->GetGUID());
-    return true;
-}
-
-bool GossipSelect_npc_dirty_larry(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
-{
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)
-    {
-        ((npc_dirty_larryAI*)creature->AI())->Event = true;
-        ((npc_dirty_larryAI*)creature->AI())->PlayerGUID = player->GetGUID();
-        player->CLOSE_GOSSIP_MENU();
-    }
-
-    return true;
-}
-
-CreatureAI* GetAI_npc_dirty_larryAI(Creature* pCreature)
-{
-    return new npc_dirty_larryAI (pCreature);
-}
-
-/*######
 # npc_ishanah
 ######*/
 
@@ -861,13 +656,6 @@ void AddSC_shattrath_city()
     newscript = new Script;
     newscript->Name = "npc_khadgars_servant";
     newscript->GetAI = &GetAI_npc_khadgars_servant;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_dirty_larry";
-    newscript->GetAI = &GetAI_npc_dirty_larryAI;
-    newscript->pGossipHello =   &GossipHello_npc_dirty_larry;
-    newscript->pGossipSelect = &GossipSelect_npc_dirty_larry;
     newscript->RegisterSelf();
 
     newscript = new Script;
