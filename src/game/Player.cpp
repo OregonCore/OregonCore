@@ -4140,7 +4140,7 @@ void Player::BuildPlayerRepop()
     // convert player body to ghost
     SetHealth(1);
 
-    SetWaterWalk(true);
+    SetWaterWalking(true);
     if (!GetSession()->isLogingOut())
         SetRooted(false);
 
@@ -4189,7 +4189,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
 
     setDeathState(ALIVE);
 
-    SetWaterWalk(false);
+    SetWaterWalking(false);
     SetRooted(false);
 
     m_deathTimer = 0;
@@ -20986,17 +20986,12 @@ bool Player::AddItem(uint32 itemId, uint32 count)
     return true;
 }
 
-bool Player::SetFeatherFall(bool apply)
+bool Player::SetFeatherFall(bool apply, bool packetOnly /*= false*/)
 {
-    if (!Unit::SetFeatherFall(apply))
+    if (!packetOnly && !Unit::SetFeatherFall(apply))
         return false;
 
-    WorldPacket data;
-    if (apply)
-        data.Initialize(SMSG_MOVE_FEATHER_FALL, 8 + 4);
-    else
-        data.Initialize(SMSG_MOVE_NORMAL_FALL, 8 + 4);
-
+    WorldPacket data(apply ? SMSG_MOVE_FEATHER_FALL : SMSG_MOVE_NORMAL_FALL, 12);
     data << GetPackGUID();
     data << uint32(0);
     SendMessageToSet(&data, true);
@@ -21013,14 +21008,12 @@ bool Player::SetFeatherFall(bool apply)
     return true;
 }
 
-bool Player::SetHover(bool apply)
+bool Player::SetHover(bool apply, bool packetOnly /*= false*/)
 {
-    WorldPacket data;
-    if (apply)
-        data.Initialize(SMSG_MOVE_SET_HOVER, 8 + 4);
-    else
-        data.Initialize(SMSG_MOVE_UNSET_HOVER, 8 + 4);
+    if (!packetOnly && !Unit::SetHover(apply))
+        return false;
 
+    WorldPacket data(apply ? SMSG_MOVE_SET_HOVER : SMSG_MOVE_UNSET_HOVER, 12);
     data << GetPackGUID();
     data << uint32(0);
     SendMessageToSet(&data, true);
@@ -21074,9 +21067,9 @@ bool Player::SetLevitate(bool apply, bool /*packetOnly = false*/)
     return true;
 }
 
-bool Player::SetWaterWalk(bool apply)
+bool Player::SetWaterWalking(bool apply, bool packetOnly /*= false*/)
 {
-    if (!Unit::SetWaterWalking(apply))
+    if (!packetOnly && !Unit::SetWaterWalking(apply))
         return false;
 
     WorldPacket data(apply ? SMSG_MOVE_WATER_WALK : SMSG_MOVE_LAND_WALK, GetPackGUID().size() + 4);

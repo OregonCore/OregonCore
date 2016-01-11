@@ -2721,11 +2721,11 @@ class Player : public Unit, public GridObject<Player>
             m_rafLink = status;
         }
 
-        bool SetFeatherFall(bool apply);
-        bool SetHover(bool apply);
+        bool SetFeatherFall(bool apply, bool packetOnly = false);
+        bool SetHover(bool apply, bool packetOnly = false);
         bool SetCanFly(bool apply, bool packetOnly = false);
         bool SetLevitate(bool apply, bool packetOnly = false);
-        bool SetWaterWalk(bool enable);
+        bool SetWaterWalking(bool enable, bool packetOnly = false);
     protected:
 
         uint32 m_contestedPvPTimer;

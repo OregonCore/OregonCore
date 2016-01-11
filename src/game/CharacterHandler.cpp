@@ -670,7 +670,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
 
         pCurrChar->CastSpell(pCurrChar, 8326, true, 0);     // auras SPELL_AURA_GHOST, SPELL_AURA_INCREASE_SPEED(why?), SPELL_AURA_INCREASE_SWIM_SPEED(why?)
 
-        pCurrChar->SetWaterWalk(true);
+        pCurrChar->SetWaterWalking(true);
     }
 
     pCurrChar->ContinueTaxiFlight();
