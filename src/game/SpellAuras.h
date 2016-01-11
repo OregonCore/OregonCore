@@ -436,6 +436,8 @@ class Aura
         void PeriodicTick();
         void PeriodicDummyTick();
 
+        AuraType GetAuraType() const { return (AuraType)m_modifier.m_auraname; }
+
         int32 GetStackAmount()
         {
             return m_stackAmount;

@@ -407,7 +407,7 @@ enum SpellAttributes
     SPELL_ATTR_ABILITY                       = 0x00000010,            // 4 client puts 'ability' instead of 'spell' in game strings for these spells
     SPELL_ATTR_TRADESPELL                    = 0x00000020,            // 5 trade spells, will be added by client to a sublist of profession spell
     SPELL_ATTR_PASSIVE                       = 0x00000040,            // 6 Passive spell
-    SPELL_ATTR_UNK7                          = 0x00000080,            // 7 Can't link in chat
+    SPELL_ATTR_HIDDEN_CLIENTSIDE             = 0x00000080,            // 7 Spells with this attribute are not visible in spellbook or aura bar
     SPELL_ATTR_HIDDEN_CAST_TIME              = 0x00000100,            // 8 Hide Cast Time 
     SPELL_ATTR_UNK9                          = 0x00000200,            // 9 used by shaman's totems like Rockbitter/Flametongue/Windfury totems.
     SPELL_ATTR_ON_NEXT_SWING_2               = 0x00000400,            // 10 on next swing 2
