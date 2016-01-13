@@ -2565,19 +2565,26 @@ void WorldObject::DestroyForNearbyPlayers()
     VisitNearbyWorldObject(GetVisibilityRange(), searcher);
     for (std::list<Player*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
     {
-        Player* plr = (*iter);
+        Player* player = (*iter);
 
-        if (plr == this)
+        if (player == this)
             continue;
 
-        if (!plr->HaveAtClient(this))
+        if (!player->HaveAtClient(this))
             continue;
 
-        if (isType(TYPEMASK_UNIT) && ((Unit*)this)->GetCharmerGUID() == plr->GetGUID()) // @todo this is for puppet
+        if (isType(TYPEMASK_UNIT) && ((Unit*)this)->GetCharmerGUID() == player->GetGUID()) // @todo this is for puppet
             continue;
 
-        DestroyForPlayer(plr);
-        plr->m_clientGUIDs.erase(GetGUID());
+        if (GetTypeId() == TYPEID_UNIT)
+        {
+            // at remove from world (destroy) show kill animation
+            DestroyForPlayer(player, ToUnit()->IsDuringRemoveFromWorld() && ToCreature()->isDead());
+        }
+        else
+            DestroyForPlayer(player);
+
+        player->m_clientGUIDs.erase(GetGUID());
     }
 }
 
