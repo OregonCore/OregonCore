@@ -10610,9 +10610,6 @@ void Unit::RemoveFromWorld()
         UnsummonAllTotems();
         RemoveAllControlled();
 
-        if (isCharmed())
-            RemoveCharmedBy(nullptr);
-
         if (GetCharmerGUID())
             sLog.outFatal("Crash alert! Unit %u has charmer guid when removed from world", GetEntry());
 
