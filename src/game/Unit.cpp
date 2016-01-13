@@ -329,6 +329,8 @@ Unit::Unit(bool isWorldObject):
     for (uint8 i = 0; i < MAX_REACTIVE; ++i)
         m_reactiveTimer[i] = 0;
 
+    m_duringRemoveFromWorld = false;
+
     _oldFactionId = 0;
 
     m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GHOST, GHOST_VISIBILITY_ALIVE);
@@ -351,6 +353,7 @@ Unit::~Unit()
     delete m_charmInfo;
     delete movespline;
 
+    ASSERT(!m_duringRemoveFromWorld);
     ASSERT(!m_attacking);
     ASSERT(m_attackers.empty());
     ASSERT(m_sharedVision.empty());
@@ -10595,6 +10598,8 @@ void Unit::RemoveFromWorld()
 
     if (IsInWorld())
     {
+        m_duringRemoveFromWorld = true;
+
         RemoveCharmAuras();
         RemoveBindSightAuras();
         RemoveNotOwnSingleTargetAuras();
@@ -10605,10 +10610,14 @@ void Unit::RemoveFromWorld()
         UnsummonAllTotems();
         RemoveAllControlled();
 
+        if (isCharmed())
+            RemoveCharmedBy(nullptr);
+
         if (GetCharmerGUID())
-            sLog.outError("Crash alert! Unit %u has charmer guid when removed from world", GetEntry());
+            sLog.outFatal("Crash alert! Unit %u has charmer guid when removed from world", GetEntry());
 
         WorldObject::RemoveFromWorld();
+        m_duringRemoveFromWorld = false;
     }
 }
 

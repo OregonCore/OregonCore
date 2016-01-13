@@ -1010,6 +1010,8 @@ class Unit : public WorldObject
         bool IsHunterPet() const{ return (m_unitTypeMask & UNIT_MASK_HUNTER_PET) != 0; }
         bool IsTotem() const    { return (m_unitTypeMask & UNIT_MASK_TOTEM) != 0; }
 
+        bool IsDuringRemoveFromWorld() const {return m_duringRemoveFromWorld;}
+
         Pet* ToPet() { if (IsPet()) return reinterpret_cast<Pet*>(this); else return NULL; }
         Pet const* ToPet() const { if (IsPet()) return reinterpret_cast<Pet const*>(this); else return NULL; }
 
@@ -2179,6 +2181,8 @@ class Unit : public WorldObject
 
         uint32 m_reducedThreatPercent;
         uint64 m_misdirectionTargetGUID;
+
+        bool m_duringRemoveFromWorld; // lock made to not add stuff after begining removing from world
 
         uint32 m_procDeep;
 
