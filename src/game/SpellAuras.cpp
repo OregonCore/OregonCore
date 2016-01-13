@@ -5748,38 +5748,17 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
     {
         if (m_target->GetTypeId() == TYPEID_PLAYER)
         {
-            // disable breath/etc timers
-            m_target->ToPlayer()->StopMirrorTimers();
-
             // set stand state (expected in this form)
             if (!m_target->IsStandState())
                 m_target->SetStandState(UNIT_STAND_STATE_STAND);
 
             // Interrupt currently casted spell
             m_target->InterruptNonMeleeSpells(true);
-
-            // Apply flags
-            m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // should not be attackable
-            m_target->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD); // This is unfortunately here, but interrupts all attacks (Melee swings, wands etc.)
-
-            // Apply root state
-            m_target->SetRooted(apply);
         }
-
-        m_target->SetHealth(1);
     }
     // die at aura end
     else
-    {
-        // Unapply flags
-        m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // reactive attackable flag
-        m_target->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD); // Reactive auto attacks etc.
-
-        // Unapply root state
-        m_target->SetRooted(apply);
-
         m_target->setDeathState(JUST_DIED);
-    }
 }
 
 void Aura::CleanupTriggeredSpells()

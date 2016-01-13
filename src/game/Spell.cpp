@@ -3770,6 +3770,11 @@ SpellCastResult Spell::CheckCast(bool strict)
         if (!m_IsTriggeredSpell && IsDeathOnlySpell(m_spellInfo) && target->IsAlive())
             return SPELL_FAILED_TARGET_NOT_DEAD;
 
+        // @todo Find a way to check for form instead of checking byte flag, probably no problem either way
+        // Not allow casting on Spirit of Redemption form, includes the priest IN redemption form, except for triggered spells  
+        if (!m_IsTriggeredSpell && target->HasByteFlag(UNIT_FIELD_BYTES_2, 3, FORM_SPIRITOFREDEMPTION))
+            return SPELL_FAILED_BAD_TARGETS;
+
         if (target != m_caster)
         {
             // target state requirements (apply to non-self only), to allow cast affects to self like Dirty Deeds

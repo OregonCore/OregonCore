@@ -2000,7 +2000,8 @@ void Player::RegenerateAll()
     if (!IsInCombat() || HasAuraType(SPELL_AURA_MOD_REGEN_DURING_COMBAT) ||
         HasAuraType(SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT) || IsPolymorphed())
     {
-        RegenerateHealth();
+        if (!HasAuraType(SPELL_AURA_INTERRUPT_REGEN))
+            RegenerateHealth();
         if (!IsInCombat() && !HasAuraType(SPELL_AURA_INTERRUPT_REGEN))
             Regenerate(POWER_RAGE);
     }

@@ -12158,14 +12158,19 @@ void Unit::Kill(Unit* pVictim, bool durabilityLoss)
         {
             if ((*itr)->GetSpellProto()->SpellIconID == 1654)
             {
-                // save value before aura remove
+                // Save value before aura remove
                 uint32 ressSpellId = pVictim->GetUInt32Value(PLAYER_SELF_RES_SPELL);
                 if (!ressSpellId)
                     ressSpellId = pVictim->ToPlayer()->GetResurrectionSpellId();
+
                 //Remove all expected to remove at death auras (most important negative case like DoT or periodic triggers)
                 pVictim->RemoveAllAurasOnDeath();
-                // restore for use at real death
+
+                // Restore for use at real death
                 pVictim->SetUInt32Value(PLAYER_SELF_RES_SPELL, ressSpellId);
+
+                // Set health to 0 to simulate death
+                pVictim->SetHealth(0);
 
                 // FORM_SPIRITOFREDEMPTION and related auras
                 pVictim->CastSpell(pVictim, 27827, true, NULL, *itr);
