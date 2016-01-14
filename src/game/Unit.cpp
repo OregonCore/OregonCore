@@ -4686,17 +4686,6 @@ bool Unit::HandleDummyAuraProc(Unit* pVictim, uint32 damage, Aura* triggeredByAu
         {
             switch (dummySpell->Id)
             {
-            // Blackout
-            case 15268:
-            case 15323:
-            case 15324:
-            case 15325:
-            case 15326:
-                {
-                    // should only proc from spell that deal damage
-                    if (target || procSpell->Id == 15487 || procSpell->Id == 10909 || procSpell->Id == 605)
-                        return false;
-                }
             // Eye for an Eye
             case 9799:
             case 25988:
@@ -6656,15 +6645,17 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
     case 15269:
         {
             // Should not proc on self (Needs confirmation for SW:Death)
+            // Should not proc on self
             if (!pVictim || pVictim == this)
                 return false;
 
-            // Should not proc from periodic ticks of Shadow Word: Pain or Mind Flay. Only initial cast.
-            if (!procSpell || (procSpell->manaCost == 0 && procSpell->ManaCostPercentage == 0 && procSpell->manaCostPerlevel == 0))
+            // Should not proc from periodic ticks of Shadow Word: Pain or Mind Flay, only the initial cast. Should also proc from Shadowguard trigger.
+            if (!procSpell || (procSpell->EffectApplyAuraName[0] == SPELL_AURA_PERIODIC_DAMAGE && procSpell->manaCost == 0 && procSpell->ManaCostPercentage == 0 && procSpell->manaCostPerlevel == 0))
                 return false;
 
             // Should not proc from spells that don't deal damage.
             // Silence           // Mind Vision         // Mind Control
+                // Silence                // Mind Vision           // Mind Control
             if (procSpell->Id == 15487 || procSpell->Id == 2096 || procSpell->Id == 605)
                 return false;
 

@@ -637,6 +637,10 @@ void Spell::prepareDataForTriggerSystem()
             if (m_spellInfo->SpellFamilyFlags & 0x600000000LL) m_canTrigger = true;
             break;
         }
+
+        if (m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_TRIGGERED_CAN_TRIGGER_PROC ||
+            m_spellInfo->AttributesEx3 & SPELL_ATTR_EX3_TRIGGERED_CAN_TRIGGER_PROC_2)
+            m_canTrigger = true;
     }
 
     if (m_CastItem && m_spellInfo->SpellFamilyName != SPELLFAMILY_POTION)

@@ -518,6 +518,7 @@ enum SpellAttributesEx3
     SPELL_ATTR_EX3_UNK7                      = 0x00000080,            // 7 Renew, Rejuvinate, Deadly Poison, Curse of Agony, Tranquility, Regrowth, Gift of the Naruu
     SPELL_ATTR_EX3_PLAYERS_ONLY              = 0x00000100,            // 8 Player only?
     SPELL_ATTR_EX3_UNK9                      = 0x00000200,            // 9
+    SPELL_ATTR_EX3_TRIGGERED_CAN_TRIGGER_PROC_2 = 0x00000200,         //  9 triggered from effect?
     SPELL_ATTR_EX3_MAIN_HAND                 = 0x00000400,            // 10 Main hand weapon required
     SPELL_ATTR_EX3_BATTLEGROUND              = 0x00000800,            // 11 Can casted only on battleground
     SPELL_ATTR_EX3_CAST_ON_DEAD              = 0x00001000,            // 12 target is a dead player (not every spell has this flag)
