@@ -6644,7 +6644,6 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
     // Blackout
     case 15269:
         {
-            // Should not proc on self (Needs confirmation for SW:Death)
             // Should not proc on self
             if (!pVictim || pVictim == this)
                 return false;
@@ -6654,7 +6653,6 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
                 return false;
 
             // Should not proc from spells that don't deal damage.
-            // Silence           // Mind Vision         // Mind Control
                 // Silence                // Mind Vision           // Mind Control
             if (procSpell->Id == 15487 || procSpell->Id == 2096 || procSpell->Id == 605)
                 return false;
