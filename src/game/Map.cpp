@@ -1542,6 +1542,9 @@ float Map::GetHeight(float x, float y, float z, bool checkVMap, float maxSearchD
             vmapHeight = vmgr->getHeight(GetId(), x, y, z + 2.0f, maxSearchDist);   // look from a bit higher pos to find the floor
     }
 
+    // Explicitly set map data, and use it if no change.
+    realHeight = mapHeight;
+
     // mapHeight set for any above raw ground Z or <= INVALID_HEIGHT
     // vmapheight set for any under Z value or <= INVALID_HEIGHT
     if (vmapHeight > INVALID_HEIGHT)
@@ -1556,13 +1559,10 @@ float Map::GetHeight(float x, float y, float z, bool checkVMap, float maxSearchD
                 realHeight = vmapHeight;
             else
                 realHeight = mapHeight;                           // better use .map surface height
-
         }
         else
             realHeight = vmapHeight;                              // we have only vmapHeight (if have)
     }
-
-    realHeight = mapHeight;                                   // explicitly use map data
 
     return std::max<float>(realHeight, m_dyn_tree.getHeight(x, y, z, maxSearchDist));
 }
