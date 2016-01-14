@@ -5453,21 +5453,21 @@ void Aura::HandleShapeshiftBoosts(bool apply)
 
     if (apply)
     {
-        // Remove cooldown of spells triggered on stance change - they may share cooldown with stance spell
-        if (spellId)
-        {
-            m_target->ToPlayer()->RemoveSpellCooldown(spellId);
-            m_target->CastSpell(m_target, spellId, true, NULL, this);
-        }
-
-        if (spellId2)
-        {
-            m_target->ToPlayer()->RemoveSpellCooldown(spellId2);
-            m_target->CastSpell(m_target, spellId2, true, NULL, this);
-        }
-
         if (m_target->GetTypeId() == TYPEID_PLAYER)
         {
+            // Remove cooldown of spells triggered on stance change - they may share cooldown with stance spell
+            if (spellId)
+            {
+                m_target->ToPlayer()->RemoveSpellCooldown(spellId);
+                m_target->CastSpell(m_target, spellId, true, NULL, this);
+            }
+
+            if (spellId2)
+            {
+                m_target->ToPlayer()->RemoveSpellCooldown(spellId2);
+                m_target->CastSpell(m_target, spellId2, true, NULL, this);
+            }
+
             const PlayerSpellMap& sp_list = m_target->ToPlayer()->GetSpellMap();
             for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
             {
