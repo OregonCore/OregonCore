@@ -10980,7 +10980,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
         return;
     }
     // For melee/ranged based attack need update skills and set some Aura states
-    if (procFlag & MELEE_BASED_TRIGGER_MASK)
+    if (procFlag & MELEE_BASED_TRIGGER_MASK && pTarget)
     {
         // Update skills here for players
         if (GetTypeId() == TYPEID_PLAYER)
@@ -10988,7 +10988,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
             // On melee based hit/miss/resist need update skill (for victim and attacker)
             if (procExtra & (PROC_EX_NORMAL_HIT | PROC_EX_MISS | PROC_EX_RESIST))
             {
-                if (pTarget->GetTypeId() != TYPEID_PLAYER && pTarget->GetCreatureType() != CREATURE_TYPE_CRITTER)
+                if (pTarget->GetTypeId() != TYPEID_PLAYER && !pTarget->IsCritter())
                     ToPlayer()->UpdateCombatSkills(pTarget, attType, MELEE_HIT_MISS, isVictim);
             }
             // Update defence if player is victim and parry/dodge/block
@@ -11067,13 +11067,12 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
         SpellEntry const* spellproto = sSpellStore.LookupEntry(itr->second->GetId());
 
         for (uint32 i = 0; i < MAX_SPELL_EFFECTS; ++i)
-        {
             if (spellproto->Effect[i] == SPELL_EFFECT_TRIGGER_SPELL)
                 active = true;
-        }
 
         if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, active, spellProcEvent))
             continue;
+
         procTriggered.push_back(ProcTriggeredData(spellProcEvent, itr->second));
     }
     // Handle effects proceed this time
@@ -11110,6 +11109,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
         Modifier* auraModifier = triggeredByAura->GetModifier();
         SpellEntry const* spellInfo = triggeredByAura->GetSpellProto();
         bool useCharges = triggeredByAura->m_procCharges > 0;
+
         // For players set spell cooldown if need
         uint32 cooldown = 0;
         if (GetTypeId() == TYPEID_PLAYER && spellProcEvent && spellProcEvent->cooldown)
