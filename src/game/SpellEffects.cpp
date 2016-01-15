@@ -2380,7 +2380,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
     if (spellInfo->EquippedItemClass >= 0 && m_caster->GetTypeId() == TYPEID_PLAYER)
     {
         // main hand weapon required
-        if (spellInfo->AttributesEx3 & SPELL_ATTR_EX3_MAIN_HAND)
+        if (spellInfo->AttributesEx3 & SPELL_ATTR3_MAIN_HAND)
         {
             Item* item = m_caster->ToPlayer()->GetWeaponForAttack(BASE_ATTACK);
 
@@ -2394,7 +2394,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
         }
 
         // offhand hand weapon required
-        if (spellInfo->AttributesEx3 & SPELL_ATTR_EX3_REQ_OFFHAND)
+        if (spellInfo->AttributesEx3 & SPELL_ATTR3_REQ_OFFHAND)
         {
             Item* item = m_caster->ToPlayer()->GetWeaponForAttack(OFF_ATTACK);
 
@@ -2884,21 +2884,17 @@ void Spell::SpellDamageHeal(SpellEffIndex /*effIndex*/)
                 tickheal = auraCaster->SpellHealingBonus(targetAura->GetSpellProto(), tickheal, DOT, unitTarget);
             //int32 tickheal = targetAura->GetSpellProto()->EffectBasePoints[idx] + 1;
             //It is said that talent bonus should not be included
-            //int32 tickheal = targetAura->GetModifierValue();
+
             int32 tickcount = 0;
-            if (targetAura->GetSpellProto()->SpellFamilyName == SPELLFAMILY_DRUID)
-            {
-                switch (targetAura->GetSpellProto()->SpellFamilyFlags)
-                {
-                case 0x10:
-                    tickcount = 4;
-                    break; // Rejuvenation
-                case 0x40:
-                    tickcount = 6;
-                    break; // Regrowth
-                }
-            }
+            // Rejuvenation
+            if (targetAura->GetSpellProto()->SpellFamilyFlags & 0x10)
+                tickcount = 4;
+            // Regrowth
+            else // if (targetAura->GetSpellInfo()->SpellFamilyFlags[0] & 0x40)
+                tickcount = 6;
+
             addhealth += tickheal * tickcount;
+
             unitTarget->RemoveAurasByCasterSpell(targetAura->GetId(), targetAura->GetCasterGUID());
 
             //addhealth += tickheal * tickcount;
@@ -3987,6 +3983,7 @@ void Spell::EffectAddFarsight(SpellEffIndex effIndex)
     // Caster not in world, might be spell triggered from aura removal
     if (!m_caster->IsInWorld())
         return;
+
     DynamicObject* dynObj = new DynamicObject(true);
     if (!dynObj->CreateDynamicObject(sObjectMgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), m_caster, m_spellInfo->Id, 4, m_targets.m_dstPos, duration, radius))
     {
@@ -6936,7 +6933,7 @@ void Spell::EffectStealBeneficialBuff(SpellEffIndex effIndex)
         if (aur && (1 << aur->GetSpellProto()->Dispel) & dispelMask)
         {
             // Need check for passive? this
-            if (aur->IsPositive() && !aur->IsPassive() && !(aur->GetSpellProto()->AttributesEx4 & SPELL_ATTR_EX4_NOT_STEALABLE))
+            if (aur->IsPositive() && !aur->IsPassive() && !(aur->GetSpellProto()->AttributesEx4 & SPELL_ATTR4_NOT_STEALABLE))
                 steal_list.push_back(aur);
         }
     }

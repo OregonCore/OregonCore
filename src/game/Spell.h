@@ -460,11 +460,11 @@ class Spell
         }
         bool IsNextMeleeSwingSpell() const
         {
-            return m_spellInfo->Attributes & (SPELL_ATTR_ON_NEXT_SWING_1 | SPELL_ATTR_ON_NEXT_SWING_2);
+            return m_spellInfo->Attributes & (SPELL_ATTR0_ON_NEXT_SWING_1 | SPELL_ATTR0_ON_NEXT_SWING_2);
         }
         bool IsRangedSpell() const
         {
-            return  m_spellInfo->Attributes & SPELL_ATTR_RANGED;
+            return  m_spellInfo->Attributes & SPELL_ATTR0_RANGED;
         }
         bool IsChannelActive() const
         {

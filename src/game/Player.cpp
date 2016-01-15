@@ -5765,7 +5765,7 @@ void Player::CheckAreaExploreAndOutdoor()
     if (sWorld.getConfig(CONFIG_VMAP_INDOOR_CHECK))
     {
         if (!isOutdoor && !isGameMaster())
-            RemoveAurasWithAttribute(SPELL_ATTR_OUTDOORS_ONLY);
+            RemoveAurasWithAttribute(SPELL_ATTR0_OUTDOORS_ONLY);
 
         /* Process passive spells which 'works only while outdoors';
            when we enter indoor, the above line will take care of that,
@@ -5775,7 +5775,7 @@ void Player::CheckAreaExploreAndOutdoor()
             for (PlayerSpellMap::const_iterator it = m_spells.begin(); it != m_spells.end(); it++)
             {
                 SpellEntry const* spellInfo = sSpellStore.LookupEntry(it->first);
-                if (spellInfo->Attributes & SPELL_ATTR_OUTDOORS_ONLY && spellInfo->Stances == (1 << (m_form - 1)))
+                if (spellInfo->Attributes & SPELL_ATTR0_OUTDOORS_ONLY && spellInfo->Stances == (1 << (m_form - 1)))
                 {
                     sLog.outDetail("Reseting outdoor aura: %u", spellInfo->Id);
                     CastSpell(this, spellInfo, true);
@@ -7361,7 +7361,7 @@ void Player::UpdateEquipSpellsAtFormChange()
 void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 procVictim, uint32 procEx, SpellEntry const* spellInfo)
 {
 
-    if (spellInfo && ((spellInfo->Attributes & SPELL_ATTR_STOP_ATTACK_TARGET) ||
+    if (spellInfo && ((spellInfo->Attributes & SPELL_ATTR0_STOP_ATTACK_TARGET) ||
                       (spellInfo->DmgClass == SPELL_DAMAGE_CLASS_MAGIC || spellInfo->DmgClass == SPELL_DAMAGE_CLASS_NONE)))
         return;
 
@@ -15503,7 +15503,7 @@ void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
             }
 
             // negative effects should continue counting down after logout
-            if (remaintime != -1 && !IsPositiveEffect(spellid, effindex) || spellproto->AttributesEx4 & SPELL_ATTR_EX4_EXPIRE_OFFLINE)
+            if (remaintime != -1 && !IsPositiveEffect(spellid, effindex) || spellproto->AttributesEx4 & SPELL_ATTR4_EXPIRE_OFFLINE)
             {
                 if (remaintime / IN_MILLISECONDS <= int32(timediff))
                     continue;
@@ -18301,7 +18301,7 @@ void Player::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs)
         }
 
         // Not send cooldown for this spells
-        if (spellInfo->Attributes & SPELL_ATTR_DISABLED_WHILE_ACTIVE)
+        if (spellInfo->Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE)
             continue;
 
         if (spellInfo->PreventionType != SPELL_PREVENTION_TYPE_SILENCE)
@@ -18699,7 +18699,7 @@ void Player::AddSpellCooldown(uint32 spellid, uint32 itemid, time_t end_time)
 
 void Player::SendCooldownEvent(SpellEntry const* spellInfo)
 {
-    if (!(spellInfo->Attributes & SPELL_ATTR_DISABLED_WHILE_ACTIVE))
+    if (!(spellInfo->Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE))
         return;
 
     // Get spell cooldown
@@ -19982,8 +19982,8 @@ bool Player::HasItemFitToSpellReqirements(SpellEntry const* spellInfo, Item cons
 
 bool Player::CanCastNoReagents(SpellEntry const* spellInfo) const
 {
-    // don't take reagents for spells with SPELL_ATTR_EX5_NO_REAGENT_WHILE_PREP
-    if (spellInfo->AttributesEx5 & SPELL_ATTR_EX5_NO_REAGENT_WHILE_PREP &&
+    // don't take reagents for spells with SPELL_ATTR5_NO_REAGENT_WHILE_PREP
+    if (spellInfo->AttributesEx5 & SPELL_ATTR5_NO_REAGENT_WHILE_PREP &&
         HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PREPARATION))
         return true;
 
@@ -20852,7 +20852,7 @@ void Player::AddGlobalCooldown(SpellEntry const* spellInfo, Spell* spell)
 
     uint32 cdTime = spellInfo->StartRecoveryTime;
 
-    if (!(spellInfo->Attributes & (SPELL_ATTR_ABILITY | SPELL_ATTR_TRADESPELL)))
+    if (!(spellInfo->Attributes & (SPELL_ATTR0_ABILITY | SPELL_ATTR0_TRADESPELL)))
         cdTime *= GetFloatValue(UNIT_MOD_CAST_SPEED);
     else if (spell->IsRangedSpell() && !spell->IsAutoRepeat())
         cdTime *= m_modAttackSpeedPct[RANGED_ATTACK];
