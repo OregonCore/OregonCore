@@ -1408,7 +1408,7 @@ void Unit::CalculateMeleeDamage(Unit* pVictim, uint32 damage, CalcDamageInfo* da
         case RANGED_ATTACK:
             damageInfo->procAttacker = PROC_FLAG_DONE_RANGED_AUTO_ATTACK;
             damageInfo->procVictim   = PROC_FLAG_TAKEN_RANGED_AUTO_ATTACK;
-            damageInfo->HitInfo = 0x08;// test
+            damageInfo->HitInfo = HITINFO_UNK3; // HitInfo flag not confirmed.
             break;
         default:
             break;
@@ -6582,6 +6582,18 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
             if (!HealthBelowPctDamaged(triggerAmount, damage))
                 return false;
             break;
+        }
+        // Molten Shields
+        case 30482:
+        {
+            if (procFlags & (PROC_FLAG_TAKEN_RANGED_AUTO_ATTACK | PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG))
+            {
+                float chance = HasSpell(11094) ? 50.0f : HasSpell(13043) ? 100.0f : 0.0f;
+                if (!roll_chance_f(chance))
+                    return false;
+            }
+            else if (!(procFlags & (PROC_FLAG_TAKEN_MELEE_AUTO_ATTACK | PROC_FLAG_TAKEN_SPELL_MELEE_DMG_CLASS)))
+                return false;
         }
     }
 
