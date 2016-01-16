@@ -58,15 +58,18 @@ if( NOPCH )
   set(USE_SCRIPTPCH 0)
 endif()
 
+# platform detection
 include(CheckPlatform)
 
-# basic packagesearching and setup (further support will be needed, this is a preliminary release!)
+# basic package searching and setup
 find_package(PCHSupport)
 find_package(ACE REQUIRED)
 find_package(OpenSSL REQUIRED)
 if( NOT USE_MYSQL_SOURCES )
   find_package(MySQL REQUIRED)
 endif()
+
+find_package(Git)
 
 if( UNIX )
   find_package(Curses)

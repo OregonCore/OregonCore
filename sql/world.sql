@@ -2681,17 +2681,15 @@ CREATE TABLE `transports` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Transports';
 
 --
--- Table structure for table `version`
+-- Table structure for table `updates`
 --
 
-DROP TABLE IF EXISTS `version`;
-CREATE TABLE `version` (
-  `core_version` varchar(120) DEFAULT NULL COMMENT 'Core revision dumped at startup.',
-  `core_revision` bigint(20) unsigned DEFAULT NULL,
-  `db_version` varchar(120) DEFAULT NULL COMMENT 'Version of world DB.',
-  `db_revision` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Revision of world db',
-  `script_version` varchar(120) DEFAULT NULL COMMENT 'Version of scripts DB.'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Version Notes';
+DROP TABLE IF EXISTS `updates`;
+CREATE TABLE `updates`
+(
+    `update`  varchar(255) not null primary key comment 'Filename of the update',
+    `applied` timestamp not null comment 'Date when the update was applied.'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT 'DB versioning information (Used by auto-updater)';
 
 --
 -- Table structure for table `warden_data_result`
@@ -2763,6 +2761,5 @@ CREATE TABLE `waypoints` (
   `position_z` float DEFAULT NULL,
   `point_comment` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 -- Dump completed on 2016-01-07  2:53:47

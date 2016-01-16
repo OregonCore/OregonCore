@@ -1306,21 +1306,15 @@ CREATE TABLE `saved_variables` (
 -- Dumping data for table `saved_variables`
 --
 
-
 --
--- Table structure for table `version`
---
-
-DROP TABLE IF EXISTS `version`;
-CREATE TABLE `version` (
-  `db_revision` int(10) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `version`
+-- Table structure for table `updates`
 --
 
-INSERT INTO `version` VALUES (3206);
-
+DROP TABLE IF EXISTS `updates`;
+CREATE TABLE `updates`
+(
+    `update`  varchar(255) not null primary key comment 'Filename of the update',
+    `applied` timestamp not null comment 'Date when the update was applied.'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT 'DB versioning information (Used by auto-updater)';
 
 -- Dump completed on 2016-01-07  2:52:44

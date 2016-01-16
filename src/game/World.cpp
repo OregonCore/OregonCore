@@ -66,6 +66,8 @@
 #include "ConditionMgr.h"
 #include "VMapManager2.h"
 
+#include <ace/Dirent.h>
+
 INSTANTIATE_SINGLETON_1(World);
 
 volatile bool World::m_stopEvent = false;
@@ -1066,7 +1068,9 @@ void World::LoadSQLUpdates()
 {
     const struct
     {
+        // db pointer
         Database* db;
+        // path - sql/updates/(path)
         const char* path;
     } updates[]
         =
@@ -1076,122 +1080,79 @@ void World::LoadSQLUpdates()
         { &CharacterDatabase, "characters" }
     };
 
+    // directory path
     std::string path;
+    // label used for console output
     std::stringstream label;
+    // files to be applied
     std::vector<std::string> files;
+    // already applied before (from db)
+    std::set<std::string> alreadyAppliedFiles;
 
+    // iterate all three databases
     for (uint32 i = 0; i < 3; i++)
     {
+        // clear from previous iteration
+        files.clear();
+        // clear from previous iteration
+        alreadyAppliedFiles.clear();
+
+        // refresh path
         path = m_SQLUpdatesPath;
         path += updates[i].path;
-        uint32 currentRev = 0;
 
-        // if table `version` doesnt exist, create it
-        // if it does exist but doesn't have db_revision column, add it
-        // if it has the column, fetch it
-        if (updates[i].db->Query("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = DATABASE() AND table_name = 'version'"))
-        {
-            // table exists
-            if (updates[i].db->Query("SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = DATABASE() AND table_name = 'version' AND column_name = 'db_revision'"))
-            {
-                // column db_revision exists
-                if (QueryResult_AutoPtr result = updates[i].db->Query("SELECT db_revision FROM version"))
-                    currentRev = result->Fetch()[0].GetUInt32();
-                else
-                    updates[i].db->DirectExecute("UPDATE version SET db_revision = 0");
-            }
-            else
-            {
-                // column doesn't exist - let's create it!
-                updates[i].db->DirectExecute("ALTER TABLE version ADD COLUMN db_revision INT UNSIGNED NOT NULL DEFAULT 0");
-            }
-        }
-        else
-        {
-            // table doesn't exist - this case is 'realmd' and 'characters' database only and only first-time
-            updates[i].db->DirectExecute("CREATE TABLE version ( db_revision INT UNSIGNED NOT NULL DEFAULT 0 ) engine = InnoDB");
-            updates[i].db->DirectExecute("INSERT INTO version VALUES (0)");
-        }
-
-        char cwd[PATH_MAX];
-        getcwd(cwd, PATH_MAX);
-        if (-1 == chdir(path.c_str()))
-            sLog.outFatal("Can't change directory to %s: %s", path.c_str(), strerror(errno));
-        files.clear();
-
-        #if PLATFORM == PLATFORM_WINDOWS
-        path += "\\*";
-        WIN32_FIND_DATA findData;
-        HANDLE hItr = FindFirstFile(path.c_str(), &findData);
-        if (hItr != INVALID_HANDLE_VALUE)
+        // Get updates that were alraedy applied before
+        if (QueryResult_AutoPtr result = updates[i].db->Query("SELECT `update` FROM `updates`"))
         {
             do
-            {
-               #ifdef _UNICODE
-               std::string utf8string;
-               WStrToUtf8(findData.cFileName, mcslen(findData.cFileName));
-               files.push_back(utf8string);
-               #else
-               files.push_back(findData.cFileName);
-               #endif
-            }
-            while (FindNextFile(hItr, &findData) != 0);
+                alreadyAppliedFiles.insert(result->Fetch()[0].GetString());
+            while (result->NextRow());
+        }
 
-            FindClose(hItr);
-        }
-        else
+        // Record current working directory
+        char cwd[PATH_MAX];
+        ACE_OS::getcwd(cwd, PATH_MAX);
+        
+        // Change current directory to sql/updates/(path)
+        if (-1 == ACE_OS::chdir(path.c_str()))
+            sLog.outFatal("Can't change directory to %s: %s", path.c_str(), strerror(errno));
+
+        // get files in sql/updates/(path)/ directory
+        if (ACE_DIR* dir = ACE_OS::opendir(path.c_str()))
         {
-            DWORD dwLastError = GetLastError();
-            #ifdef _UNICODE
-            TCHAR lpBuffer[256] = L"?";
-            #else
-            TCHAR lpBuffer[256] = "?";
-            #endif
-            FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
-                          NULL,
-                          dwLastError,
-                          MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT), 
-                          lpBuffer,
-                          sizeof(lpBuffer)-1,
-                          NULL);
-            #ifdef _UNICODE
-            sLog.outFatal("Can't open: %s: %ls", path.c_str(), lpBuffer);
-            #else
-            sLog.outFatal("Can't open: %s: %s", path.c_str(), lpBuffer);
-            #endif
-        }
-        #else
-        if (DIR* dir = opendir(path.c_str()))
-        {
-            while (dirent* entry = readdir(dir))
-                files.push_back(entry->d_name);
-            closedir(dir);
+            while (ACE_DIRENT* entry = ACE_OS::readdir(dir))
+                // continue only if file is not already applied
+                if (alreadyAppliedFiles.find(entry->d_name) == alreadyAppliedFiles.end())
+                    // make sure the file is an .sql one
+                    if (!strcmp(entry->d_name + strlen(entry->d_name) - 4, ".sql"))
+                        files.push_back(entry->d_name);
+
+            ACE_OS::closedir(dir);
         }
         else
             sLog.outFatal("Can't open %s: %s", path.c_str(), strerror(errno));
-        #endif
  
+        // sort our files in ascending order
         std::sort(files.begin(), files.end());
 
+        // iterate not applied files now
         for (size_t j = 0; j < files.size(); ++j)
         {
-            uint32 revision;
-            char name[PATH_MAX];
-            char trailing;
-            if (sscanf(files[j].c_str(), "%u_%s.sql%c", &revision, name, &trailing) != 2 || currentRev >= revision)
-                continue;
-            
             label.str("");
-            label << "Applying " << files[j].c_str() << " (" << j << '/' << files.size() << ')';
+            label << "Applying " << files[j].c_str() << " (" << (j + 1) << '/' << files.size() << ')';
             sConsole.SetLoadingLabel(label.str().c_str());
 
             if (updates[i].db->ExecuteFile(files[j].c_str()))
-                updates[i].db->DirectPExecute("UPDATE version SET db_revision = %u", revision);
+            {
+                updates[i].db->escape_string(files[j]);
+                updates[i].db->DirectPExecute("INSERT INTO `updates` VALUES ('%s', UNIX_TIMESTAMP(NOW()))", files[j].c_str());
+            }
             else
                 sLog.outFatal("Failed to apply %s. See db_errors.log for more details.", files[j].c_str());
         }
 
-        if (-1 == chdir(cwd))
+        // Return to original working directory
+        if (-1 == ACE_OS::chdir(cwd))
             sLog.outFatal("Can't change directory to %s: %s", cwd, strerror(errno));
     }
 }
@@ -1594,12 +1555,9 @@ void World::SetInitialWorldSettings()
     time_t curr;
     time(&curr);
     local = *(localtime(&curr));                            // dereference and assign
-    char isoDate[128];
-    sprintf(isoDate, "%04d-%02d-%02d %02d:%02d:%02d",
-            local.tm_year + 1900, local.tm_mon + 1, local.tm_mday, local.tm_hour, local.tm_min, local.tm_sec);
 
-    WorldDatabase.PExecute("INSERT INTO uptime (startstring, starttime, uptime) VALUES('%s', " UI64FMTD ", 0)",
-                           isoDate, uint64(m_startTime));
+    LoginDatabase.PExecute("INSERT INTO uptime (realmid, starttime, uptime, revision) VALUES(%u, " UI64FMTD ", 0, '%s')",
+                           realmID, uint64(m_startTime), _FULLVERSION);
 
     m_timers[WUPDATE_AUTOBROADCAST].SetInterval(m_configs[CONFIG_AUTOBROADCAST_TIMER]);
     m_timers[WUPDATE_OBJECTS].SetInterval(IN_MILLISECONDS / 2);
@@ -1924,7 +1882,7 @@ void World::Update(uint32 diff)
         uint32 maxClientsNum = sWorld.GetMaxActiveSessionCount();
 
         m_timers[WUPDATE_UPTIME].Reset();
-        WorldDatabase.PExecute("UPDATE uptime SET uptime = %d, maxplayers = %d WHERE starttime = " UI64FMTD, tmpDiff, maxClientsNum, uint64(m_startTime));
+        LoginDatabase.PExecute("UPDATE uptime SET uptime = %d, maxplayers = %d WHERE starttime = " UI64FMTD, tmpDiff, maxClientsNum, uint64(m_startTime));
     }
 
     // Clean logs table
