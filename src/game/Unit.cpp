@@ -329,6 +329,8 @@ Unit::Unit(bool isWorldObject):
     for (uint8 i = 0; i < MAX_REACTIVE; ++i)
         m_reactiveTimer[i] = 0;
 
+    m_duringRemoveFromWorld = false;
+
     _oldFactionId = 0;
 
     m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GHOST, GHOST_VISIBILITY_ALIVE);
@@ -351,6 +353,7 @@ Unit::~Unit()
     delete m_charmInfo;
     delete movespline;
 
+    ASSERT(!m_duringRemoveFromWorld);
     ASSERT(!m_attacking);
     ASSERT(m_attackers.empty());
     ASSERT(m_sharedVision.empty());
@@ -748,7 +751,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
     {
         if (spellProto)
         {
-            if (!(spellProto->AttributesEx4 & SPELL_ATTR_EX4_DAMAGE_DOESNT_BREAK_AURAS))
+            if (!(spellProto->AttributesEx4 & SPELL_ATTR4_DAMAGE_DOESNT_BREAK_AURAS))
                 pVictim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DAMAGE, spellProto->Id);
         }
         else
@@ -1636,7 +1639,7 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
 
     // If this is a creature and it attacks from behind it has a probability to daze it's victim
     if ((damageInfo->hitOutCome == MELEE_HIT_CRIT || damageInfo->hitOutCome == MELEE_HIT_CRUSHING || damageInfo->hitOutCome == MELEE_HIT_NORMAL || damageInfo->hitOutCome == MELEE_HIT_GLANCING) &&
-        GetTypeId() != TYPEID_PLAYER && !ToCreature()->IsControlledByPlayer() && !victim->HasInArc(float(M_PI), this)
+        GetTypeId() != TYPEID_PLAYER && !ToCreature()->IsControlledByPlayer() && !victim->HasInArc(float(M_PI), this) && damageInfo->damage
         && (victim->GetTypeId() == TYPEID_PLAYER || !victim->ToCreature()->isWorldBoss()))
     {
         // -probability is between 0% and 40%
@@ -1785,7 +1788,7 @@ void Unit::CalcAbsorbResist(Unit* pVictim, SpellSchoolMask schoolMask, DamageEff
         return;
 
     // Magic damage, check for resists
-    if ((schoolMask & (SPELL_SCHOOL_MASK_NORMAL | SPELL_SCHOOL_MASK_HOLY)) == 0 && (!spellInfo || (spellInfo->AttributesEx4 & SPELL_ATTR_EX4_IGNORE_RESISTANCES) == 0))
+    if ((schoolMask & (SPELL_SCHOOL_MASK_NORMAL | SPELL_SCHOOL_MASK_HOLY)) == 0 && (!spellInfo || (spellInfo->AttributesEx4 & SPELL_ATTR4_IGNORE_RESISTANCES) == 0))
     {
         // Get base victim resistance for school
         float tmpvalue2 = (float)pVictim->GetResistance(GetFirstSchoolInMask(schoolMask));
@@ -2365,7 +2368,7 @@ void Unit::SendMeleeAttackStop(Unit* victim)
 bool Unit::isSpellBlocked(Unit* victim, SpellEntry const* spellProto, WeaponAttackType attackType)
 {
     // These spells can't be blocked
-    if (spellProto && spellProto->Attributes & SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK)
+    if (spellProto && spellProto->Attributes & SPELL_ATTR0_IMPOSSIBLE_DODGE_PARRY_BLOCK)
         return false;
 
     if (victim->HasInArc(float(M_PI), this))
@@ -2486,7 +2489,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellEntry const* spellInf
 {
     // Spells with SPELL_ATTR3_IGNORE_HIT_RESULT will additionally fully ignore
     // resist and deflect chances
-    if (spellInfo->AttributesEx3 & SPELL_ATTR_EX3_CANT_MISS)
+    if (spellInfo->AttributesEx3 & SPELL_ATTR3_CANT_MISS)
         return SPELL_MISS_NONE;
 
     WeaponAttackType attType = BASE_ATTACK;
@@ -2498,7 +2501,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellEntry const* spellInf
 
     int32 attackerWeaponSkill;
     // skill value for these spells (for example judgements) is 5* level
-    if (spellInfo->DmgClass == SPELL_DAMAGE_CLASS_RANGED && !(spellInfo->Attributes & SPELL_ATTR_RANGED))
+    if (spellInfo->DmgClass == SPELL_DAMAGE_CLASS_RANGED && !(spellInfo->Attributes & SPELL_ATTR0_RANGED))
         attackerWeaponSkill = getLevel() * 5;
     // bonus from skills is 0.04% per skill Diff
     else
@@ -2512,8 +2515,8 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellEntry const* spellInf
 
     bool canDodge = true;
     bool canParry = true;
-    bool canBlock = (spellInfo->AttributesEx3 & SPELL_ATTR_EX3_CAN_BE_BLOCKED) != 0;
-    bool canMiss = !(spellInfo->AttributesEx3 & SPELL_ATTR_EX3_CANT_MISS) && cMiss;
+    bool canBlock = (spellInfo->AttributesEx3 & SPELL_ATTR3_CAN_BE_BLOCKED) != 0;
+    bool canMiss = !(spellInfo->AttributesEx3 & SPELL_ATTR3_CANT_MISS) && cMiss;
 
     if (canMiss)
     {
@@ -2548,7 +2551,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellEntry const* spellInf
         return SPELL_MISS_NONE;
 
     // Some spells cannot be parry/dodge
-    if (spellInfo->Attributes & SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK)
+    if (spellInfo->Attributes & SPELL_ATTR0_IMPOSSIBLE_DODGE_PARRY_BLOCK)
         return SPELL_MISS_NONE;
 
     // Check for attack from behind
@@ -2648,7 +2651,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellEntry const* spellInf
 SpellMissInfo Unit::MagicSpellHitResult(Unit* victim, SpellEntry const* spellInfo)
 {
     // Can`t miss on dead target (on skinning for example)
-    if ((!victim->IsAlive() && victim->GetTypeId() != TYPEID_PLAYER) || spellInfo->AttributesEx3 & SPELL_ATTR_EX3_CANT_MISS)
+    if ((!victim->IsAlive() && victim->GetTypeId() != TYPEID_PLAYER) || spellInfo->AttributesEx3 & SPELL_ATTR3_CANT_MISS)
         return SPELL_MISS_NONE;
 
     SpellSchoolMask schoolMask = GetSpellSchoolMask(spellInfo);
@@ -2735,7 +2738,7 @@ SpellMissInfo Unit::SpellHitResult(Unit* pVictim, SpellEntry const* spell, bool 
 
     // Check for immune (use charges)
     // Check if Spell cannot be immuned
-    if (!(spell->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY))
+    if (!(spell->Attributes & SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY))
         if (pVictim->IsImmunedToDamage(GetSpellSchoolMask(spell), true))
             return SPELL_MISS_IMMUNE;
 
@@ -3244,7 +3247,7 @@ bool Unit::IsNonMeleeSpellCast(bool withDelayed, bool skipChanneled, bool skipAu
         (m_currentSpells[CURRENT_GENERIC_SPELL]->getState() != SPELL_STATE_FINISHED) &&
         (withDelayed || m_currentSpells[CURRENT_GENERIC_SPELL]->getState() != SPELL_STATE_DELAYED))
     {
-        if (!(m_currentSpells[CURRENT_GENERIC_SPELL]->m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_NOT_RESET_AUTO_ACTIONS))
+        if (!(m_currentSpells[CURRENT_GENERIC_SPELL]->m_spellInfo->AttributesEx2 & SPELL_ATTR2_NOT_RESET_AUTO_ACTIONS))
             return (true);
     }
 
@@ -3252,7 +3255,7 @@ bool Unit::IsNonMeleeSpellCast(bool withDelayed, bool skipChanneled, bool skipAu
     else if (!skipChanneled && m_currentSpells[CURRENT_CHANNELED_SPELL] &&
              (m_currentSpells[CURRENT_CHANNELED_SPELL]->getState() != SPELL_STATE_FINISHED))
     {
-        if (!(m_currentSpells[CURRENT_CHANNELED_SPELL]->m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_NOT_RESET_AUTO_ACTIONS))
+        if (!(m_currentSpells[CURRENT_CHANNELED_SPELL]->m_spellInfo->AttributesEx2 & SPELL_ATTR2_NOT_RESET_AUTO_ACTIONS))
             return (true);
     }
 
@@ -3660,7 +3663,7 @@ bool Unit::AddAura(Aura* Aur)
             m_interruptableAuras.push_back(Aur);
             AddInterruptMask(Aur->GetSpellProto()->AuraInterruptFlags);
         }
-        if ((Aur->GetSpellProto()->Attributes & SPELL_ATTR_BREAKABLE_BY_DAMAGE)
+        if ((Aur->GetSpellProto()->Attributes & SPELL_ATTR0_HEARTBEAT_RESIST_CHECK)
             && (Aur->GetModifier()->m_auraname != SPELL_AURA_MOD_POSSESS)) //only dummy aura is breakable
             m_ccAuras.push_back(Aur);
     }
@@ -4149,7 +4152,7 @@ void Unit::RemoveAura(AuraMap::iterator& i, AuraRemoveMode mode)
             UpdateInterruptMask();
         }
 
-        if ((Aur->GetSpellProto()->Attributes & SPELL_ATTR_BREAKABLE_BY_DAMAGE)
+        if ((Aur->GetSpellProto()->Attributes & SPELL_ATTR0_HEARTBEAT_RESIST_CHECK)
             && (Aur->GetModifier()->m_auraname != SPELL_AURA_MOD_POSSESS)) //only dummy aura is breakable
             m_ccAuras.remove(Aur);
     }
@@ -4270,9 +4273,9 @@ void Unit::RemoveArenaAuras()
     for (AuraMap::iterator iter = m_Auras.begin(); iter != m_Auras.end();)
     {
         Aura* aura = iter->second;
-        if (!(aura->GetSpellProto()->AttributesEx4 & SPELL_ATTR_EX4_STANCES)                                    // don't remove stances, shadowform, pally/hunter auras
+        if (!(aura->GetSpellProto()->AttributesEx4 & SPELL_ATTR4_STANCES)                                    // don't remove stances, shadowform, pally/hunter auras
             && !aura->IsPassive()                                                                               // don't remove passive auras
-            && (aura->IsPositive() || !(aura->GetSpellProto()->AttributesEx3 & SPELL_ATTR_EX3_DEATH_PERSISTENT))) // not negative death persistent auras
+            && (aura->IsPositive() || !(aura->GetSpellProto()->AttributesEx3 & SPELL_ATTR3_DEATH_PERSISTENT))) // not negative death persistent auras
             RemoveAura(iter);
         else
             ++iter;
@@ -4431,7 +4434,7 @@ void Unit::RemoveGameObject(GameObject* gameObj, bool del)
         {
             SpellEntry const* createBySpell = sSpellStore.LookupEntry(spellid);
             // Need activate spell use for owner
-            if (createBySpell && createBySpell->Attributes & SPELL_ATTR_DISABLED_WHILE_ACTIVE)
+            if (createBySpell && createBySpell->Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE)
                 // note: item based cooldowns and cooldown spell mods with charges ignored (unknown existed cases)
                 ToPlayer()->SendCooldownEvent(createBySpell);
         }
@@ -4683,17 +4686,6 @@ bool Unit::HandleDummyAuraProc(Unit* pVictim, uint32 damage, Aura* triggeredByAu
         {
             switch (dummySpell->Id)
             {
-            // Blackout
-            case 15268:
-            case 15323:
-            case 15324:
-            case 15325:
-            case 15326:
-                {
-                    // should only proc from spell that deal damage
-                    if (target || procSpell->Id == 15487 || procSpell->Id == 10909 || procSpell->Id == 605)
-                        return false;
-                }
             // Eye for an Eye
             case 9799:
             case 25988:
@@ -6652,17 +6644,17 @@ bool Unit::HandleProcTriggerSpell(Unit* pVictim, uint32 damage, Aura* triggeredB
     // Blackout
     case 15269:
         {
-            // Should not proc on self (Needs confirmation for SW:Death)
+            // Should not proc on self
             if (!pVictim || pVictim == this)
                 return false;
 
-            // Should not proc from periodic ticks of Shadow Word: Pain or Mind Flay. Only initial cast.
-            if (!procSpell || (procSpell->manaCost == 0 && procSpell->ManaCostPercentage == 0 && procSpell->manaCostPerlevel == 0))
+            // Should not proc from periodic ticks of Shadow Word: Pain or Mind Flay, only the initial cast. Should also proc from Shadowguard trigger.
+            if (!procSpell || (procSpell->EffectApplyAuraName[0] == SPELL_AURA_PERIODIC_DAMAGE && procSpell->manaCost == 0 && procSpell->ManaCostPercentage == 0 && procSpell->manaCostPerlevel == 0))
                 return false;
 
             // Should not proc from spells that don't deal damage.
-            // Silence           // Mind Vision         // Mind Control
-            if (procSpell->Id == 15487 || procSpell->Id == 2096 || procSpell->Id == 605)
+            // Silence               // Mind Control
+            if (procSpell->Id == 15487 || procSpell->Id == 605)
                 return false;
 
             break;
@@ -8179,7 +8171,7 @@ bool Unit::isSpellCrit(Unit* pVictim, SpellEntry const* spellProto, SpellSchoolM
         return false;
 
     // not critting spell
-    if ((spellProto->AttributesEx2 & SPELL_ATTR_EX2_CANT_CRIT))
+    if ((spellProto->AttributesEx2 & SPELL_ATTR2_CANT_CRIT))
         return false;
 
     float crit_chance = 0.0f;
@@ -8624,7 +8616,7 @@ bool Unit::IsImmuneToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
             return true;
 
     // If Spell has this flag cannot be resisted/immuned/etc
-    if (spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
+    if (spellInfo->Attributes & SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY)
         return false;
 
     if (spellInfo->Dispel)
@@ -8661,8 +8653,8 @@ bool Unit::IsImmuneToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
     if (immuneToAllEffects) //Return immune only if the target is immune to all spell effects.
         return true;
 
-    if (!(spellInfo->AttributesEx & SPELL_ATTR_EX_UNAFFECTED_BY_SCHOOL_IMMUNE) &&         // unaffected by school immunity
-        !(spellInfo->AttributesEx & SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY)               // can remove immune (by dispell or immune it)
+    if (!(spellInfo->AttributesEx & SPELL_ATTR1_UNAFFECTED_BY_SCHOOL_IMMUNE) &&         // unaffected by school immunity
+        !(spellInfo->AttributesEx & SPELL_ATTR1_DISPEL_AURAS_ON_IMMUNITY)               // can remove immune (by dispell or immune it)
         && (spellInfo->Id != 42292))
     {
         SpellImmuneList const& schoolList = m_spellImmune[IMMUNITY_SCHOOL];
@@ -8680,7 +8672,7 @@ bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool
     if (!spellInfo || !spellInfo->IsEffect(index))
         return false;
 
-    if (spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
+    if (spellInfo->Attributes & SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY)
         return false;
 
     //If m_immuneToEffect type contain this effect type, IMMUNE effect.
@@ -8703,7 +8695,7 @@ bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool
         SpellImmuneList const& list = m_spellImmune[IMMUNITY_STATE];
         for (SpellImmuneList::const_iterator itr = list.begin(); itr != list.end(); ++itr)
             if (itr->type == aura)
-                if (!(spellInfo->AttributesEx3 & SPELL_ATTR_EX3_CANT_MISS))
+                if (!(spellInfo->AttributesEx3 & SPELL_ATTR3_CANT_MISS))
                     return true;
     }
 
@@ -8913,7 +8905,7 @@ void Unit::ApplySpellDispelImmunity(const SpellEntry* spellProto, DispelType typ
 {
     ApplySpellImmune(spellProto->Id, IMMUNITY_DISPEL, type, apply);
 
-    if (apply && spellProto->AttributesEx & SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY)
+    if (apply && spellProto->AttributesEx & SPELL_ATTR1_DISPEL_AURAS_ON_IMMUNITY)
         RemoveAurasWithDispelType(type);
 }
 
@@ -9079,7 +9071,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
     {
         if (m_currentSpells[CURRENT_GENERIC_SPELL] && m_currentSpells[CURRENT_GENERIC_SPELL]->getState() != SPELL_STATE_FINISHED)
         {
-            if (m_currentSpells[CURRENT_GENERIC_SPELL]->m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT)
+            if (m_currentSpells[CURRENT_GENERIC_SPELL]->m_spellInfo->Attributes & SPELL_ATTR0_CANT_USED_IN_COMBAT)
                 InterruptSpell(CURRENT_GENERIC_SPELL);
         }
     }
@@ -9252,11 +9244,30 @@ void Unit::ModSpellCastTime(SpellEntry const* spellProto, int32& castTime, Spell
     if (Player* modOwner = GetSpellModOwner())
         modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_CASTING_TIME, castTime, spell);
 
-    if (!((spellProto->Attributes & (SPELL_ATTR_ABILITY | SPELL_ATTR_TRADESPELL)) || (spellProto->AttributesEx3 & SPELL_ATTR_EX3_UNK29)) &&
+    if (!((spellProto->Attributes & (SPELL_ATTR0_ABILITY | SPELL_ATTR0_TRADESPELL)) || (spellProto->AttributesEx3 & SPELL_ATTR3_NO_DONE_BONUS)) &&
         ((GetTypeId() == TYPEID_PLAYER && spellProto->SpellFamilyName) || GetTypeId() == TYPEID_UNIT))
         castTime = int32(float(castTime) * GetFloatValue(UNIT_MOD_CAST_SPEED));
-    else if (spellProto->Attributes & SPELL_ATTR_RANGED && !(spellProto->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG))
+    else if (spellProto->Attributes & SPELL_ATTR0_RANGED && !(spellProto->AttributesEx2 & SPELL_ATTR2_AUTOREPEAT_FLAG))
         castTime = int32 (float(castTime) * m_modAttackSpeedPct[RANGED_ATTACK]);
+}
+
+void Unit::ModSpellDurationTime(SpellEntry const* spellProto, int32& duration, Spell* spell)
+{
+    if (!spellProto || duration < 0)
+        return;
+
+    if (IsChanneledSpell(spellProto) && !(spellProto->AttributesEx5 & SPELL_ATTR5_HASTE_AFFECT_DURATION))
+        return;
+
+    // called from caster
+    if (Player* modOwner = GetSpellModOwner())
+        modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_CASTING_TIME, duration, spell);
+
+    if (!((spellProto->Attributes & (SPELL_ATTR0_ABILITY | SPELL_ATTR0_TRADESPELL)) || (spellProto->AttributesEx3 & SPELL_ATTR3_NO_DONE_BONUS)) &&
+        ((GetTypeId() == TYPEID_PLAYER && spellProto->SpellFamilyName) || GetTypeId() == TYPEID_UNIT))
+        duration = int32(float(duration) * GetFloatValue(UNIT_MOD_CAST_SPEED));
+    else if (spellProto->Attributes & SPELL_ATTR0_RANGED && !(spellProto->AttributesEx2 & SPELL_ATTR2_AUTOREPEAT_FLAG))
+        duration = int32 (float(duration) * m_modAttackSpeedPct[RANGED_ATTACK]);
 }
 
 int32 Unit::ModifyPower(Powers power, int32 dVal)
@@ -9942,7 +9953,7 @@ int32 Unit::CalculateSpellDamage(SpellEntry const* spellProto, uint8 effect_inde
         }
     }
 
-    if (!basePointsPerLevel && (spellProto->Attributes & SPELL_ATTR_LEVEL_DAMAGE_CALCULATION && spellProto->spellLevel) &&
+    if (!basePointsPerLevel && (spellProto->Attributes & SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION && spellProto->spellLevel) &&
         spellProto->Effect[effect_index] != SPELL_EFFECT_WEAPON_PERCENT_DAMAGE &&
         spellProto->Effect[effect_index] != SPELL_EFFECT_KNOCK_BACK &&
         spellProto->EffectApplyAuraName[effect_index] != SPELL_AURA_MOD_SPEED_ALWAYS &&
@@ -10595,6 +10606,8 @@ void Unit::RemoveFromWorld()
 
     if (IsInWorld())
     {
+        m_duringRemoveFromWorld = true;
+
         RemoveCharmAuras();
         RemoveBindSightAuras();
         RemoveNotOwnSingleTargetAuras();
@@ -10606,9 +10619,10 @@ void Unit::RemoveFromWorld()
         RemoveAllControlled();
 
         if (GetCharmerGUID())
-            sLog.outError("Crash alert! Unit %u has charmer guid when removed from world", GetEntry());
+            sLog.outFatal("Crash alert! Unit %u has charmer guid when removed from world", GetEntry());
 
         WorldObject::RemoveFromWorld();
+        m_duringRemoveFromWorld = false;
     }
 }
 
@@ -10985,7 +10999,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
         return;
     }
     // For melee/ranged based attack need update skills and set some Aura states
-    if (procFlag & MELEE_BASED_TRIGGER_MASK)
+    if (procFlag & MELEE_BASED_TRIGGER_MASK && pTarget)
     {
         // Update skills here for players
         if (GetTypeId() == TYPEID_PLAYER)
@@ -10993,7 +11007,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
             // On melee based hit/miss/resist need update skill (for victim and attacker)
             if (procExtra & (PROC_EX_NORMAL_HIT | PROC_EX_MISS | PROC_EX_RESIST))
             {
-                if (pTarget->GetTypeId() != TYPEID_PLAYER && pTarget->GetCreatureType() != CREATURE_TYPE_CRITTER)
+                if (pTarget->GetTypeId() != TYPEID_PLAYER && !pTarget->IsCritter())
                     ToPlayer()->UpdateCombatSkills(pTarget, attType, MELEE_HIT_MISS, isVictim);
             }
             // Update defence if player is victim and parry/dodge/block
@@ -11072,13 +11086,12 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
         SpellEntry const* spellproto = sSpellStore.LookupEntry(itr->second->GetId());
 
         for (uint32 i = 0; i < MAX_SPELL_EFFECTS; ++i)
-        {
             if (spellproto->Effect[i] == SPELL_EFFECT_TRIGGER_SPELL)
                 active = true;
-        }
 
         if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, active, spellProcEvent))
             continue;
+
         procTriggered.push_back(ProcTriggeredData(spellProcEvent, itr->second));
     }
     // Handle effects proceed this time
@@ -11115,10 +11128,14 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
         Modifier* auraModifier = triggeredByAura->GetModifier();
         SpellEntry const* spellInfo = triggeredByAura->GetSpellProto();
         bool useCharges = triggeredByAura->m_procCharges > 0;
+
         // For players set spell cooldown if need
         uint32 cooldown = 0;
         if (GetTypeId() == TYPEID_PLAYER && spellProcEvent && spellProcEvent->cooldown)
             cooldown = spellProcEvent->cooldown;
+
+        if (spellInfo->AttributesEx3 & SPELL_ATTR3_DISABLE_PROC)
+            ++m_procDeep;
 
         switch (auraModifier->m_auraname)
         {
@@ -11244,6 +11261,9 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
                 }
             }
         }
+
+        if (spellInfo->AttributesEx3 & SPELL_ATTR3_DISABLE_PROC)
+            --m_procDeep;
     }
     if (removedSpells.size())
     {
@@ -12158,14 +12178,19 @@ void Unit::Kill(Unit* pVictim, bool durabilityLoss)
         {
             if ((*itr)->GetSpellProto()->SpellIconID == 1654)
             {
-                // save value before aura remove
+                // Save value before aura remove
                 uint32 ressSpellId = pVictim->GetUInt32Value(PLAYER_SELF_RES_SPELL);
                 if (!ressSpellId)
                     ressSpellId = pVictim->ToPlayer()->GetResurrectionSpellId();
+
                 //Remove all expected to remove at death auras (most important negative case like DoT or periodic triggers)
                 pVictim->RemoveAllAurasOnDeath();
-                // restore for use at real death
+
+                // Restore for use at real death
                 pVictim->SetUInt32Value(PLAYER_SELF_RES_SPELL, ressSpellId);
+
+                // Set health to 0 to simulate death
+                pVictim->SetHealth(0);
 
                 // FORM_SPIRITOFREDEMPTION and related auras
                 pVictim->CastSpell(pVictim, 27827, true, NULL, *itr);
@@ -12891,11 +12916,14 @@ bool Unit::HasShapeshiftChangingModel() const
 
 void Unit::AddAura(uint32 spellId, Unit* target)
 {
-    if (!target || !target->IsAlive())
+    if (!target)
         return;
 
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellId);
     if (!spellInfo)
+        return;
+
+    if (!target->IsAlive() && !(spellInfo->AttributesEx & SPELL_ATTR0_PASSIVE) && !(spellInfo->AttributesEx2 & SPELL_ATTR2_CAN_TARGET_DEAD))
         return;
 
     if (target->IsImmuneToSpell(spellInfo))

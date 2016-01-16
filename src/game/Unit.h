@@ -522,7 +522,7 @@ enum UnitFlags
     UNIT_FLAG_DISABLE_MOVE          = 0x00000004,
     UNIT_FLAG_PVP_ATTACKABLE        = 0x00000008,           // allow apply pvp rules to attackable state in addition to faction dependent state
     UNIT_FLAG_RENAME                = 0x00000010,
-    UNIT_FLAG_PREPARATION           = 0x00000020,           // don't take reagents for spells with SPELL_ATTR_EX5_NO_REAGENT_WHILE_PREP
+    UNIT_FLAG_PREPARATION           = 0x00000020,           // don't take reagents for spells with SPELL_ATTR5_NO_REAGENT_WHILE_PREP
     UNIT_FLAG_UNK_6                 = 0x00000040,
     UNIT_FLAG_NOT_ATTACKABLE_1      = 0x00000080,           // ?? (UNIT_FLAG_PVP_ATTACKABLE | UNIT_FLAG_NOT_ATTACKABLE_1) is NON_PVP_ATTACKABLE
     UNIT_FLAG_IMMUNE_TO_PC          = 0x00000100,           // disables actions by PlayerCharacters (PC) on unit - see Unit::_IsValidAttackTarget, Unit::_IsValidAssistTarget
@@ -1009,6 +1009,8 @@ class Unit : public WorldObject
         bool IsPet() const      { return (m_unitTypeMask & UNIT_MASK_PET) != 0; }
         bool IsHunterPet() const{ return (m_unitTypeMask & UNIT_MASK_HUNTER_PET) != 0; }
         bool IsTotem() const    { return (m_unitTypeMask & UNIT_MASK_TOTEM) != 0; }
+
+        bool IsDuringRemoveFromWorld() const {return m_duringRemoveFromWorld;}
 
         Pet* ToPet() { if (IsPet()) return reinterpret_cast<Pet*>(this); else return NULL; }
         Pet const* ToPet() const { if (IsPet()) return reinterpret_cast<Pet const*>(this); else return NULL; }
@@ -1957,6 +1959,7 @@ class Unit : public WorldObject
         int32 CalculateSpellDuration(SpellEntry const* spellProto, uint8 effect_index, Unit const* target);
         float CalculateLevelPenalty(SpellEntry const* spellProto) const;
         void ModSpellCastTime(SpellEntry const* spellProto, int32& castTime, Spell* spell);
+        void ModSpellDurationTime(SpellEntry const* spellProto, int32& duration, Spell* spell);
 
         void addFollower(FollowerReference* pRef)
         {
@@ -2179,6 +2182,8 @@ class Unit : public WorldObject
 
         uint32 m_reducedThreatPercent;
         uint64 m_misdirectionTargetGUID;
+
+        bool m_duringRemoveFromWorld; // lock made to not add stuff after begining removing from world
 
         uint32 m_procDeep;
 

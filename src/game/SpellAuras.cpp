@@ -408,7 +408,7 @@ Aura::Aura(SpellEntry const* spellproto, uint32 eff, int32* currentBasePoints, U
         modOwner->ApplySpellMod(GetId(), SPELLMOD_ACTIVATION_TIME, m_periodicTimer);
 
     // Start periodic on next tick or at aura apply
-    if (!(m_spellProto->AttributesEx5 & SPELL_ATTR_EX5_START_PERIODIC_AT_APPLY))
+    if (!(m_spellProto->AttributesEx5 & SPELL_ATTR5_START_PERIODIC_AT_APPLY))
         m_periodicTimer += m_modifier.periodictime;
 
     m_isDeathPersist = IsDeathPersistentSpell(m_spellProto);
@@ -425,7 +425,7 @@ Aura::Aura(SpellEntry const* spellproto, uint32 eff, int32* currentBasePoints, U
 
     m_amplitude = m_modifier.periodictime;
     if (IsChanneledSpell(m_spellProto) && caster)
-        caster->ModSpellCastTime(m_spellProto, m_amplitude, NULL);
+        caster->ModSpellDurationTime(m_spellProto, m_amplitude, NULL);
 
     m_isRemovedOnShapeLost = (m_caster_guid == m_target->GetGUID() && m_spellProto->Stances &&
                               !(m_spellProto->AttributesEx2 & 0x80000) && !(m_spellProto->Attributes & 0x10000));
@@ -623,7 +623,7 @@ bool AreaAura::CheckTarget(Unit* target)
         return false;
 
     // Skip some targets (TODO: Might require better checks, also unclear how the actual caster must/can be handled)
-    if (GetSpellProto()->AttributesEx3 & SPELL_ATTR_EX3_PLAYERS_ONLY && target->GetTypeId() != TYPEID_PLAYER)
+    if (GetSpellProto()->AttributesEx3 & SPELL_ATTR3_PLAYERS_ONLY && target->GetTypeId() != TYPEID_PLAYER)
         return false;
 
     // some special cases
@@ -917,7 +917,7 @@ void Aura::_AddAura()
         m_target->ApplyDiminishingAura(getDiminishGroup(), true);
 
     // Show the buff (if any) on the target
-    if ((m_spellProto->AttributesEx3 & SPELL_ATTR_EX3_HAS_VISUAL_EFFECT || !IsPassive()) &&
+    if ((m_spellProto->AttributesEx3 & SPELL_ATTR3_HAS_VISUAL_EFFECT || !IsPassive()) &&
         (m_spellProto->Effect[GetEffIndex()] != SPELL_EFFECT_APPLY_AREA_AURA_ENEMY || m_target != caster))
     {
         if (!secondaura)                                     // new slot need
@@ -1064,7 +1064,7 @@ void Aura::_RemoveAura()
         // reset cooldown state for spells
         if (caster && caster->GetTypeId() == TYPEID_PLAYER)
         {
-            if (GetSpellProto()->Attributes & SPELL_ATTR_DISABLED_WHILE_ACTIVE)
+            if (GetSpellProto()->Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE)
                 caster->ToPlayer()->SendCooldownEvent(GetSpellProto());
         }
     }
@@ -3905,7 +3905,7 @@ void Aura::HandleModMechanicImmunity(bool apply, bool /*Real*/)
     if (IsSpellRemoveAllMovementAndControlLossEffects(GetSpellProto()))
         mechanic = IMMUNE_TO_MOVEMENT_IMPAIRMENT_AND_LOSS_CONTROL_MASK;
 
-    if (apply && GetSpellProto()->AttributesEx & SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY)
+    if (apply && GetSpellProto()->AttributesEx & SPELL_ATTR1_DISPEL_AURAS_ON_IMMUNITY)
     {
         Unit::AuraMap& Auras = m_target->GetAuras();
         for (Unit::AuraMap::iterator iter = Auras.begin(), next; iter != Auras.end(); iter = next)
@@ -3913,7 +3913,7 @@ void Aura::HandleModMechanicImmunity(bool apply, bool /*Real*/)
             next = iter;
             ++next;
             SpellEntry const* spell = iter->second->GetSpellProto();
-            if (!(spell->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)  // spells unaffected by invulnerability
+            if (!(spell->Attributes & SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY)  // spells unaffected by invulnerability
                 && !iter->second->IsPositive()                                    // only remove negative spells
                 && spell->Id != GetId())
             {
@@ -4011,7 +4011,7 @@ void Aura::HandleAuraModStateImmunity(bool apply, bool Real)
     if (!Real)
         return;
 
-    if (apply && GetSpellProto()->AttributesEx & SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY)
+    if (apply && GetSpellProto()->AttributesEx & SPELL_ATTR1_DISPEL_AURAS_ON_IMMUNITY)
     {
         Unit::AuraList const& auraList = m_target->GetAurasByType(AuraType(m_modifier.m_miscvalue));
         for (Unit::AuraList::const_iterator itr = auraList.begin(); itr != auraList.end();)
@@ -4036,7 +4036,7 @@ void Aura::HandleAuraModSchoolImmunity(bool apply, bool Real)
 
     m_target->ApplySpellImmune(GetId(), IMMUNITY_SCHOOL, m_modifier.m_miscvalue, apply);
 
-    if (Real && apply && GetSpellProto()->AttributesEx & SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY)
+    if (Real && apply && GetSpellProto()->AttributesEx & SPELL_ATTR1_DISPEL_AURAS_ON_IMMUNITY)
     {
         if (IsPositiveSpell(GetId()))                        //Only positive immunity removes auras
         {
@@ -4048,7 +4048,7 @@ void Aura::HandleAuraModSchoolImmunity(bool apply, bool Real)
                 ++next;
                 SpellEntry const* spell = iter->second->GetSpellProto();
                 if ((GetSpellSchoolMask(spell) & school_mask)//Check for school mask
-                    && !(spell->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)   //Spells unaffected by invulnerability
+                    && !(spell->Attributes & SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY)   //Spells unaffected by invulnerability
                     && !iter->second->IsPositive()          //Don't remove positive spells
                     && spell->Id != GetId())               //Don't remove self
                 {
@@ -4097,7 +4097,7 @@ void Aura::HandleAuraModDispelImmunity(bool apply, bool Real)
             for (Unit::AuraMap::iterator iter = Auras.begin(); iter != Auras.end(); ++iter)
             {
                 SpellEntry const* spell = iter->second->GetSpellProto();
-                if (!(spell->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)  // spells unaffected by invulnerability
+                if (!(spell->Attributes & SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY)  // spells unaffected by invulnerability
                     && !iter->second->IsPositive()                                    // only remove negative spells
                     && spell->Id != GetId()
                     && (GetSpellMechanicMask(spell, iter->second->GetEffIndex()) & mechanic))
@@ -4720,7 +4720,7 @@ void Aura::HandleModTotalPercentStat(bool apply, bool /*Real*/)
     }
 
     //recalculate current HP/MP after applying aura modifications (only for spells with 0x10 flag)
-    if ((m_modifier.m_miscvalue == STAT_STAMINA) && (m_spellProto->Attributes & SPELL_ATTR_ABILITY))
+    if ((m_modifier.m_miscvalue == STAT_STAMINA) && (m_spellProto->Attributes & SPELL_ATTR0_ABILITY))
         m_target->SetHealth(std::max<uint32>(uint32(healthPct * m_target->GetMaxHealth() * 0.01f), (alive ? 1 : 0)));
 }
 
@@ -5453,21 +5453,21 @@ void Aura::HandleShapeshiftBoosts(bool apply)
 
     if (apply)
     {
-        // Remove cooldown of spells triggered on stance change - they may share cooldown with stance spell
-        if (spellId)
-        {
-            m_target->ToPlayer()->RemoveSpellCooldown(spellId);
-            m_target->CastSpell(m_target, spellId, true, NULL, this);
-        }
-
-        if (spellId2)
-        {
-            m_target->ToPlayer()->RemoveSpellCooldown(spellId2);
-            m_target->CastSpell(m_target, spellId2, true, NULL, this);
-        }
-
         if (m_target->GetTypeId() == TYPEID_PLAYER)
         {
+            // Remove cooldown of spells triggered on stance change - they may share cooldown with stance spell
+            if (spellId)
+            {
+                m_target->ToPlayer()->RemoveSpellCooldown(spellId);
+                m_target->CastSpell(m_target, spellId, true, NULL, this);
+            }
+
+            if (spellId2)
+            {
+                m_target->ToPlayer()->RemoveSpellCooldown(spellId2);
+                m_target->CastSpell(m_target, spellId2, true, NULL, this);
+            }
+
             const PlayerSpellMap& sp_list = m_target->ToPlayer()->GetSpellMap();
             for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
             {
@@ -5478,7 +5478,7 @@ void Aura::HandleShapeshiftBoosts(bool apply)
                     continue;
 
                 SpellEntry const* spellInfo = sSpellStore.LookupEntry(itr->first);
-                if (!spellInfo || !(spellInfo->Attributes & (SPELL_ATTR_PASSIVE | SPELL_ATTR_HIDDEN_CLIENTSIDE)))
+                if (!spellInfo || !(spellInfo->Attributes & (SPELL_ATTR0_PASSIVE | SPELL_ATTR0_HIDDEN_CLIENTSIDE)))
                     continue;
 
                 if (spellInfo->Stances & (1 << form))
@@ -5748,38 +5748,17 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
     {
         if (m_target->GetTypeId() == TYPEID_PLAYER)
         {
-            // disable breath/etc timers
-            m_target->ToPlayer()->StopMirrorTimers();
-
             // set stand state (expected in this form)
             if (!m_target->IsStandState())
                 m_target->SetStandState(UNIT_STAND_STATE_STAND);
 
             // Interrupt currently casted spell
             m_target->InterruptNonMeleeSpells(true);
-
-            // Apply flags
-            m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // should not be attackable
-            m_target->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD); // This is unfortunately here, but interrupts all attacks (Melee swings, wands etc.)
-
-            // Apply root state
-            m_target->SetRooted(apply);
         }
-
-        m_target->SetHealth(1);
     }
     // die at aura end
     else
-    {
-        // Unapply flags
-        m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // reactive attackable flag
-        m_target->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD); // Reactive auto attacks etc.
-
-        // Unapply root state
-        m_target->SetRooted(apply);
-
         m_target->setDeathState(JUST_DIED);
-    }
 }
 
 void Aura::CleanupTriggeredSpells()

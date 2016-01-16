@@ -156,7 +156,7 @@ int32 GetSpellMaxDuration(SpellEntry const* spellInfo);
 
 inline bool IsSpellIgnoringLOS(SpellEntry const* spellInfo)
 {
-    if (spellInfo->AttributesEx2 & SPELL_ATTR_EX2_IGNORE_LOS)
+    if (spellInfo->AttributesEx2 & SPELL_ATTR2_IGNORE_LOS)
         return true;
 
     if (!VMAP::VMapFactory::checkSpellForLoS(spellInfo->Id))
@@ -231,12 +231,12 @@ inline bool IsSpellRemoveAllMovementAndControlLossEffects(SpellEntry const* spel
            spellProto->EffectMiscValue[EFFECT_0] == 1 &&
            spellProto->EffectApplyAuraName[EFFECT_1] == 0 &&
            spellProto->EffectApplyAuraName[EFFECT_2] == 0 &&
-           (spellProto->AttributesEx & SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY);
+           (spellProto->AttributesEx & SPELL_ATTR1_DISPEL_AURAS_ON_IMMUNITY);
 }
 
 inline bool IsDeathOnlySpell(SpellEntry const* spellInfo)
 {
-    return spellInfo->AttributesEx3 & SPELL_ATTR_EX3_CAST_ON_DEAD
+    return spellInfo->AttributesEx3 & SPELL_ATTR3_CAST_ON_DEAD
            || spellInfo->Id == 2584;
 }
 
@@ -259,12 +259,12 @@ inline bool IsDeathPersistentSpell(SpellEntry const* spellInfo)
             return true;
     }
 
-    return spellInfo->AttributesEx3 & SPELL_ATTR_EX3_DEATH_PERSISTENT;
+    return spellInfo->AttributesEx3 & SPELL_ATTR3_DEATH_PERSISTENT;
 }
 
 inline bool IsNonCombatSpell(SpellEntry const* spellInfo)
 {
-    return (spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT) != 0;
+    return (spellInfo->Attributes & SPELL_ATTR0_CANT_USED_IN_COMBAT) != 0;
 }
 
 bool IsPositiveSpell(uint32 spellId);
@@ -351,24 +351,24 @@ inline bool IsDispelSpell(SpellEntry const* spellInfo)
 
 inline bool isSpellBreakStealth(SpellEntry const* spellInfo)
 {
-    return !(spellInfo->AttributesEx & SPELL_ATTR_EX_NOT_BREAK_STEALTH);
+    return !(spellInfo->AttributesEx & SPELL_ATTR1_NOT_BREAK_STEALTH);
 }
 
 inline bool IsAutoRepeatRangedSpell(SpellEntry const* spellInfo)
 {
-    return (spellInfo->Attributes & SPELL_ATTR_RANGED) && (spellInfo->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG);
+    return (spellInfo->Attributes & SPELL_ATTR0_RANGED) && (spellInfo->AttributesEx2 & SPELL_ATTR2_AUTOREPEAT_FLAG);
 }
 
 SpellCastResult GetErrorAtShapeshiftedCast (SpellEntry const* spellInfo, uint32 form);
 
 inline bool IsChanneledSpell(SpellEntry const* spellInfo)
 {
-    return (spellInfo->AttributesEx & (SPELL_ATTR_EX_CHANNELED_1 | SPELL_ATTR_EX_CHANNELED_2));
+    return (spellInfo->AttributesEx & (SPELL_ATTR1_CHANNELED_1 | SPELL_ATTR1_CHANNELED_2));
 }
 
 inline bool NeedsComboPoints(SpellEntry const* spellInfo)
 {
-    return (spellInfo->AttributesEx & (SPELL_ATTR_EX_REQ_COMBO_POINTS1 | SPELL_ATTR_EX_REQ_COMBO_POINTS2));
+    return (spellInfo->AttributesEx & (SPELL_ATTR1_REQ_COMBO_POINTS1 | SPELL_ATTR1_REQ_COMBO_POINTS2));
 }
 
 inline SpellSchoolMask GetSpellSchoolMask(SpellEntry const* spellInfo)

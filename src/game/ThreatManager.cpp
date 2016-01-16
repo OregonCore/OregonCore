@@ -33,7 +33,7 @@ float ThreatCalcHelper::calcThreat(Unit* hatedUnit, Unit* /*hatingUnit*/, float 
 {
     if (threatSpell)
     {
-        if (threatSpell->AttributesEx & SPELL_ATTR_EX_NO_THREAT)
+        if (threatSpell->AttributesEx & SPELL_ATTR1_NO_THREAT)
             return 0.0f;
 
         if (SpellThreatEntry const*  threatEntry = sSpellMgr.GetSpellThreatEntry(threatSpell->Id))
@@ -79,7 +79,7 @@ bool ThreatCalcHelper::isValidProcess(Unit* hatedUnit, Unit* hatingUnit, SpellEn
         return false;
 
     // spell not causing threat
-    if (threatSpell && threatSpell->AttributesEx & SPELL_ATTR_EX_NO_THREAT)
+    if (threatSpell && threatSpell->AttributesEx & SPELL_ATTR1_NO_THREAT)
         return false;
 
     ASSERT(hatingUnit->GetTypeId() == TYPEID_UNIT);
