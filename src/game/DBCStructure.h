@@ -759,6 +759,17 @@ struct SpellEntry
             return mask;
         }
 
+        uint32 GetAllEffectsMechanicMask() const
+        {
+            uint32 mask = 0;
+            if (Mechanic)
+                mask |= 1 << Mechanic;
+            for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+                if (IsEffect(i) && EffectMechanic[i])
+                    mask |= 1 << EffectMechanic[i];
+            return mask;
+        }
+
         bool IsEffect(uint8 effIndex) const
         {
             return Effect[effIndex] != 0;

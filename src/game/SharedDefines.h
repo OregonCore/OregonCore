@@ -2543,28 +2543,26 @@ enum DiminishingGroup
 {
     // Common Groups
     DIMINISHING_NONE,
-    DIMINISHING_CONTROL_STUN,                               // Player Controlled stuns
-    DIMINISHING_TRIGGER_STUN,                               // By aura proced stuns, usualy chance on hit talents
-    DIMINISHING_SLEEP,
-    DIMINISHING_CONTROLLED_ROOT,                            // Immobilizing effects from casted spells
-    DIMINISHING_TRIGGER_ROOT,                               // Immobilizing effects from triggered spells like Frostbite
-    DIMINISHING_FEAR,                                       // Non-warlock fears
-    DIMINISHING_CHARM,
-    // Mage Specific
-    DIMINISHING_POLYMORPH,
-    // Rogue Specific
-    DIMINISHING_KIDNEYSHOT,                                 // Kidney Shot is not diminished with Cheap Shot
-    // Warlock Specific
-    DIMINISHING_DEATHCOIL,                                  // Death Coil Diminish only with another Death Coil
-    DIMINISHING_WARLOCK_FEAR,                               // Also with Sedduction
-    DIMINISHING_UNSTABLE_AFFLICTION,                        // Only with itself
-    // Shared Class Specific
-    DIMINISHING_BLIND_CYCLONE,                              // From 2.3.0
-    DIMINISHING_DISARM,                                     // From 2.3.0
-    //DIMINISHING_SILENCE,                                  // Only Unstable affliction is DR'd silence
-    DIMINISHING_FREEZE,                                     // Hunter's Freezing Trap
-    DIMINISHING_KNOCKOUT,                                   // Also with Sap, all Knockout mechanics are here
     DIMINISHING_BANISH,
+    DIMINISHING_CONTROLLED_STUN,
+    DIMINISHING_CONTROLLED_ROOT,
+    DIMINISHING_BLIND_CYCLONE,
+    DIMINISHING_DISARM,
+    DIMINISHING_DISORIENT,
+    DIMINISHING_ENTRAPMENT,
+    DIMINISHING_FEAR,
+    DIMINISHING_HORROR,
+    DIMINISHING_MIND_CONTROL,
+    DIMINISHING_ROOT,
+    DIMINISHING_STUN,
+    DIMINISHING_SILENCE,
+    DIMINISHING_SLEEP,
+    // Rogue Specific
+    DIMINISHING_KIDNEYSHOT,
+    // Warlock Specific
+    DIMINISHING_WARLOCK_FEAR,
+    // Shared Class Specifics
+    DIMINISHING_FREEZE,                                     // Hunter's Freezing Trap
     // Other
     // Don't Diminish, but limit duration to 10s
     DIMINISHING_LIMITONLY

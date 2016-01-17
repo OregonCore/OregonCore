@@ -2985,7 +2985,7 @@ void SpellMgr::LoadSkillLineAbilityMap()
 
 DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto, bool triggered)
 {
-    if (!spellproto)
+    if (!spellproto || IsPositiveSpell(spellproto->Id))
         return DIMINISHING_NONE;
 
     // Explicit Diminishing Groups
@@ -2993,32 +2993,12 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
     {
     // Event + General spells
     case SPELLFAMILY_UNK1:
-    case SPELLFAMILY_POTION:
         return DIMINISHING_NONE;
     case SPELLFAMILY_MAGE:
         {
-            // Polymorph
-            if ((spellproto->SpellFamilyFlags & 0x00001000000LL) && spellproto->EffectApplyAuraName[0] == SPELL_AURA_MOD_CONFUSE)
-                return DIMINISHING_POLYMORPH;
             // Frost Nova / Freeze (Water Elemental)
-            else if (spellproto->SpellIconID == 193)
+            if (spellproto->SpellIconID == 193)
                 return DIMINISHING_CONTROLLED_ROOT;
-            break;
-        }
-    case SPELLFAMILY_ROGUE:
-        {
-            // Kidney Shot
-            if (spellproto->SpellFamilyFlags & 0x00000200000LL)
-                return DIMINISHING_KIDNEYSHOT;
-            // Sap
-            else if (spellproto->SpellFamilyFlags & 0x00000000080LL)
-                return DIMINISHING_POLYMORPH;
-            // Gouge
-            else if (spellproto->SpellFamilyFlags & 0x00000000008LL)
-                return DIMINISHING_POLYMORPH;
-            // Blind
-            else if (spellproto->SpellFamilyFlags & 0x00001000000LL)
-                return DIMINISHING_BLIND_CYCLONE;
             break;
         }
     case SPELLFAMILY_WARRIOR:
@@ -3032,19 +3012,16 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
         {
             // Death Coil
             if (spellproto->SpellFamilyFlags & 0x00000080000LL)
-                return DIMINISHING_DEATHCOIL;
+                return DIMINISHING_HORROR;
             // Seduction
             else if (spellproto->SpellFamilyFlags & 0x00040000000LL)
                 return DIMINISHING_FEAR;
-            // Fear
-            //else if (spellproto->SpellFamilyFlags & 0x40840000000LL)
-            //    return DIMINISHING_WARLOCK_FEAR;
             // Curses/etc
             else if (spellproto->SpellFamilyFlags & 0x00080000000LL)
                 return DIMINISHING_LIMITONLY;
             // Unstable affliction dispel silence
             else if (spellproto->Id == 31117)
-                return DIMINISHING_UNSTABLE_AFFLICTION;
+                return DIMINISHING_SILENCE;
             break;
         }
     case SPELLFAMILY_DRUID:
@@ -3057,6 +3034,19 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
                 return DIMINISHING_CONTROLLED_ROOT;
             break;
         }
+    case SPELLFAMILY_ROGUE:
+        {
+            // Kidney Shot
+            if (spellproto->SpellFamilyFlags & 0x00000200000LL)
+                return DIMINISHING_KIDNEYSHOT;
+            // Gouge
+            else if (spellproto->SpellFamilyFlags & 0x00000000008LL)
+                return DIMINISHING_DISORIENT;
+            // Blind
+            else if (spellproto->SpellFamilyFlags & 0x00001000000LL)
+                return DIMINISHING_BLIND_CYCLONE;
+            break;
+        }
     case SPELLFAMILY_HUNTER:
         {
             // Freezing trap
@@ -3064,7 +3054,10 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
                 return DIMINISHING_FREEZE;
             // Intimidation
             else if (spellproto->Id == 24394)
-                return DIMINISHING_CONTROL_STUN;
+                return DIMINISHING_CONTROLLED_STUN;
+            // Entrapment (own diminishing)
+            else if (spellproto->SpellVisual == 7484 && spellproto->SpellIconID == 20)
+                return DIMINISHING_ENTRAPMENT;
             break;
         }
     case SPELLFAMILY_PALADIN:
@@ -3077,34 +3070,35 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
     default:
         {
             if (spellproto->Id == 12494) // frostbite
-                return DIMINISHING_TRIGGER_ROOT;
+                return DIMINISHING_ROOT;
             break;
         }
     }
 
-    // Get by mechanic
-    for (uint8 i = 0; i < 3; ++i)
-    {
-        if (spellproto->Mechanic == MECHANIC_STUN    || spellproto->EffectMechanic[i] == MECHANIC_STUN)
-            return triggered ? DIMINISHING_TRIGGER_STUN : DIMINISHING_CONTROL_STUN;
-        else if (spellproto->Mechanic == MECHANIC_SLEEP   || spellproto->EffectMechanic[i] == MECHANIC_SLEEP)
-            return DIMINISHING_SLEEP;
-        else if (spellproto->Mechanic == MECHANIC_ROOT    || spellproto->EffectMechanic[i] == MECHANIC_ROOT)
-            return triggered ? DIMINISHING_TRIGGER_ROOT : DIMINISHING_CONTROLLED_ROOT;
-        else if (spellproto->Mechanic == MECHANIC_FEAR    || spellproto->EffectMechanic[i] == MECHANIC_FEAR)
-            return DIMINISHING_FEAR;
-        else if (spellproto->Mechanic == MECHANIC_CHARM   || spellproto->EffectMechanic[i] == MECHANIC_CHARM)
-            return DIMINISHING_CHARM;
-        else if (spellproto->Mechanic == MECHANIC_DISARM  || spellproto->EffectMechanic[i] == MECHANIC_DISARM)
-            return DIMINISHING_DISARM;
-        else if (spellproto->Mechanic == MECHANIC_FREEZE  || spellproto->EffectMechanic[i] == MECHANIC_FREEZE)
-            return DIMINISHING_FREEZE;
-        else if (spellproto->Mechanic == MECHANIC_KNOCKOUT || spellproto->EffectMechanic[i] == MECHANIC_KNOCKOUT ||
-                 spellproto->Mechanic == MECHANIC_SAPPED  || spellproto->EffectMechanic[i] == MECHANIC_SAPPED)
-            return DIMINISHING_KNOCKOUT;
-        else if (spellproto->Mechanic == MECHANIC_BANISH  || spellproto->EffectMechanic[i] == MECHANIC_BANISH)
-            return DIMINISHING_BANISH;
-    }
+    // Lastly - Set diminishing depending on mechanic
+    uint32 mechanic = spellproto->GetAllEffectsMechanicMask();
+    if (mechanic & (1 << MECHANIC_CHARM))
+        return DIMINISHING_MIND_CONTROL;
+    if (mechanic & (1 << MECHANIC_SLEEP))
+        return DIMINISHING_SLEEP;
+    if (mechanic & ((1 << MECHANIC_SAPPED) | (1 << MECHANIC_POLYMORPH) | (1 << MECHANIC_SHACKLE)))
+        return DIMINISHING_DISORIENT;
+    if (mechanic & (1 << MECHANIC_KNOCKOUT))
+        return DIMINISHING_DISORIENT;
+    if (mechanic & (1 << MECHANIC_DISARM))
+        return DIMINISHING_DISARM;
+    if (mechanic & (1 << MECHANIC_FEAR))
+        return DIMINISHING_FEAR;
+    if (mechanic & (1 << MECHANIC_STUN))
+        return triggered ? DIMINISHING_STUN : DIMINISHING_CONTROLLED_STUN;
+    if (mechanic & (1 << MECHANIC_BANISH))
+        return DIMINISHING_BANISH;
+    if (mechanic & (1 << MECHANIC_ROOT))
+        return triggered ? DIMINISHING_ROOT : DIMINISHING_CONTROLLED_ROOT;
+    if (mechanic & (1 << MECHANIC_FREEZE))
+        return DIMINISHING_FREEZE;
+    if (mechanic & (1 << MECHANIC_HORROR))
+        return DIMINISHING_HORROR;
 
     return DIMINISHING_NONE;
 }
@@ -3113,18 +3107,17 @@ bool IsDiminishingReturnsGroupDurationLimited(DiminishingGroup group)
 {
     switch (group)
     {
-    case DIMINISHING_CONTROL_STUN:
-    case DIMINISHING_TRIGGER_STUN:
+    case DIMINISHING_CONTROLLED_STUN:
+    case DIMINISHING_STUN:
     case DIMINISHING_KIDNEYSHOT:
     case DIMINISHING_SLEEP:
     case DIMINISHING_CONTROLLED_ROOT:
-    case DIMINISHING_TRIGGER_ROOT:
+    case DIMINISHING_ROOT:
     case DIMINISHING_FEAR:
     case DIMINISHING_WARLOCK_FEAR:
-    case DIMINISHING_CHARM:
-    case DIMINISHING_POLYMORPH:
+    case DIMINISHING_MIND_CONTROL:
+    case DIMINISHING_DISORIENT:
     case DIMINISHING_FREEZE:
-    case DIMINISHING_KNOCKOUT:
     case DIMINISHING_BLIND_CYCLONE:
     case DIMINISHING_BANISH:
     case DIMINISHING_LIMITONLY:
@@ -3140,23 +3133,22 @@ DiminishingReturnsType GetDiminishingReturnsGroupType(DiminishingGroup group)
     switch (group)
     {
     case DIMINISHING_BLIND_CYCLONE:
-    case DIMINISHING_CONTROL_STUN:
-    case DIMINISHING_TRIGGER_STUN:
+    case DIMINISHING_CONTROLLED_STUN:
+    case DIMINISHING_STUN:
     case DIMINISHING_KIDNEYSHOT:
         return DRTYPE_ALL;
     case DIMINISHING_SLEEP:
     case DIMINISHING_CONTROLLED_ROOT:
-    case DIMINISHING_TRIGGER_ROOT:
+    case DIMINISHING_ROOT:
     case DIMINISHING_FEAR:
-    case DIMINISHING_CHARM:
-    case DIMINISHING_POLYMORPH:
+    case DIMINISHING_MIND_CONTROL:
+    case DIMINISHING_DISORIENT:
     case DIMINISHING_DISARM:
-    case DIMINISHING_DEATHCOIL:
+    case DIMINISHING_HORROR:
     case DIMINISHING_FREEZE:
     case DIMINISHING_BANISH:
     case DIMINISHING_WARLOCK_FEAR:
-    case DIMINISHING_KNOCKOUT:
-    case DIMINISHING_UNSTABLE_AFFLICTION:
+    case DIMINISHING_SILENCE:
         return DRTYPE_PLAYER;
     default:
         break;
