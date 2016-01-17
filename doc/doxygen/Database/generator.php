@@ -24,11 +24,14 @@ ini_set("precision", "4");
 
 define ("MYSQL_DSN", "mysql:host=127.0.0.1");
 define ("MYSQL_USR", "root");
-define ("MYSQL_PWD", "root");
+define ("MYSQL_PWD", "");
 define ("WRAPPER_NAMESPACE", "Database::");
 define ("TABSIZE", 4);
 
-use function sprintf as f;
+function f()
+{
+    return call_user_func_array('sprintf', func_get_args());
+}
 
 $schemas = array ("realmd", "characters", "world");
 $Outputs = array ();

@@ -38,7 +38,7 @@ PROJECT_NAME           = "OregonCore"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = "@rev_hash_str@-git (@rev_id_str@)"
+PROJECT_NUMBER         = "@rev_hash_str@-git"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -675,8 +675,7 @@ FILE_VERSION_FILTER    =
 # DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
 # tag is left empty.
 
-LAYOUT_FILE            =
-#@CMAKE_SOURCE_DIR@/doc/DoxyLayout.xml
+LAYOUT_FILE            = @CMAKE_SOURCE_DIR@/doc/doxygen/DoxyLayout.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib

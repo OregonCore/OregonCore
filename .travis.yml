@@ -1,0 +1,72 @@
+language: cpp
+compiler:
+  - clang
+
+# whitelisted packages can be obtained quickly without downloading
+# doxygen is out of date, tho so we download its binaries
+addons:
+  mariadb: '10.0'
+  apt:
+    packages:
+      - cmake
+      - build-essential
+      - cppcheck
+      - git
+      - make
+      - binutils-dev
+      - openssl
+      - libssl-dev
+      - zlib1g-dev
+      - zip
+      - unzip
+      - php5-cli
+      - php5-mysql
+
+git:
+  depth: 1
+
+before_install:
+  - sudo apt-get -qq install mariadb-client libace-dev
+  - test "$TRAVIS_PULL_REQUEST" == "false"
+  - curl -o doxygen.tar.gz https://oregon-core.net/travis/doxygen.tar.gz
+  - tar xzf doxygen.tar.gz
+  - sudo install -m 755 doxygen /usr/bin
+  - sudo install -m 755 doxyindexer /usr/bin
+
+install:
+  - mkdir build
+  - cd build
+  - cmake .. -DSERVERS=1 -DSCRIPTS=1 -DWITH_DOCS=1 -DWITH_WARNINGS=1 -DWITH_COREDEBUG=0
+# we have 1.5 cpu so 2 jobs at a time are sufficient
+  - make -j2
+
+# apply all updates to db and catch possible errors
+script:
+  - cd $TRAVIS_BUILD_DIR/sql
+  - mysql -u root --password='' < create_mysql.sql
+  - mysql -u oregon -poregon realmd < realmd.sql
+  - mysql -u oregon -poregon characters < characters.sql
+  - mysql -u oregon -poregon world < world.sql
+  - curl --retry 3 -o OregonDatabase.zip https://oregon-core.net/travis/OregonDatabase.zip
+  - unzip OregonDatabase.zip
+  - mysql -u oregon -poregon world < OregonDatabase.sql
+  - cat updates/realmd/*.sql | mysql -u oregon -poregon realmd
+  - cat updates/characters/*.sql | mysql -u oregon -poregon characters
+  - cat updates/world/*.sql | mysql -u oregon -poregon world
+  - curl --retry 3 -o documentation.sql https://oregon-core.net/travis/documentation.sql
+
+# generate and deploy doxygen documentation now
+after_success:
+  - test "$TRAVIS_PULL_REQUEST" == "false"
+  - echo 'create database documentation' | mysql -u root --password=''
+  - mysql -u root --password='' documentation < documentation.sql
+  - cd $TRAVIS_BUILD_DIR/build
+  - make docs 2> /dev/null
+  - cd ../doc/doxygen/Database
+  - php generator.php
+  - cd ../../../build
+  - make docs 2> /dev/null
+  - cd doc/html
+  - zip -q -r -9 html.zip ./*
+  - export URL="https://oregon-core.net/Deploy?secret=$TRAVIS_SECRET"
+  - curl -F 'userfile=@html.zip' $URL

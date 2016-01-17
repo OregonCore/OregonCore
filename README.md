@@ -1,4 +1,4 @@
-Welcome to OregonCore!
+Welcome to OregonCore! [![Build Status](https://travis-ci.org/Zaffy/OregonCore.svg?branch=master)](https://travis-ci.org/OregonCore/OregonCore)
 ======================
 
 OregonCore is a piece of software that targets emulation of a World of Warcraft: The Burning Crusade game server. Our goal is to create a stable MMO framework and to help teach and learn development among our community. OregonCore has sustained itself with its tight knit community of developers, testers and bug reporters and thanks all those who have been involved with the project over the years. 
