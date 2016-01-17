@@ -2366,7 +2366,16 @@ void Spell::cancel(bool sendInterrupt)
 
     m_caster->RemoveDynObject(m_spellInfo->Id);
     if (IsChanneledSpell(m_spellInfo)) // if not channeled then the object for the current cast wasn't summoned yet
+    {
         m_caster->RemoveGameObject(m_spellInfo->Id, true);
+
+        // reset cooldown state for disabled while active spells
+        if (m_caster->GetTypeId() == TYPEID_PLAYER)
+        {
+            if (m_spellInfo->Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE)
+                m_caster->ToPlayer()->RemoveSpellCooldown(m_spellInfo->Id, true);
+        }
+    }
 
     //set state back so finish will be processed
     m_spellState = oldState;
@@ -2443,6 +2452,7 @@ void Spell::cast(bool skipCheck)
 
     // CAST SPELL
     SendSpellCooldown();
+
     // calc miss, reflect, parry, etc.
     CalculateHitResults();
 
@@ -2719,11 +2729,8 @@ void Spell::SendSpellCooldown()
     // Add cooldown for max (disable spell)
     // Cooldown started on SendCooldownEvent call
     if (m_spellInfo->Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE)
-    {
-        _player->AddSpellCooldown(m_spellInfo->Id, 0, time(NULL) - 1);
         return;
-    }
-
+  
     // init cooldown values
     uint32 cat   = 0;
     int32 rec    = -1;
