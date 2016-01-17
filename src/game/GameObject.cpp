@@ -1340,7 +1340,6 @@ void GameObject::Use(Unit* user)
             user->RemoveAurasByType(SPELL_AURA_MOUNTED);
             spellId = info->spellcaster.spellId;
 
-            AddUse();
             break;
         }
     case GAMEOBJECT_TYPE_MEETINGSTONE:                  //23
@@ -1465,6 +1464,13 @@ void GameObject::Use(Unit* user)
         sOutdoorPvPMgr.HandleCustomSpell(player, spellId, this);
 
     Spell* spell = new Spell(spellCaster, spellInfo, triggered);
+
+    // Check cast is OK, and only add use if we are really casting the spell
+    // to prevent taking charges on spell fail
+    if (spell->CheckCast(true) != SPELL_CAST_OK)
+        return;
+
+    AddUse();
 
     if (spellCaster)
         spellCaster->CastSpell(user, spellInfo, triggered);
