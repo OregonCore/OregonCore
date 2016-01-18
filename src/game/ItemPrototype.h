@@ -473,7 +473,7 @@ struct _Socket
 
 #define MAX_ITEM_PROTO_SPELLS  5
 
-struct ItemPrototype
+struct ItemTemplate
 {
     uint32 ItemId;
     uint32 Class;                                           // id from ItemClass.dbc

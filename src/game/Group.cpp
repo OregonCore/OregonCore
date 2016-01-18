@@ -557,7 +557,7 @@ void Group::SendLooter(Creature* creature, Player* groupLooter)
 void Group::GroupLoot(const uint64& playerGUID, Loot* loot, WorldObject* object)
 {
     std::vector<LootItem>::iterator i;
-    ItemPrototype const* item;
+    ItemTemplate const* item;
     uint8 itemSlot = 0;
     Player* player = sObjectMgr.GetPlayer(playerGUID);
     Group* group = player->GetGroup();
@@ -567,7 +567,7 @@ void Group::GroupLoot(const uint64& playerGUID, Loot* loot, WorldObject* object)
         if (i->freeforall)
             continue;
 
-        item = sObjectMgr.GetItemPrototype(i->itemid);
+        item = sObjectMgr.GetItemTemplate(i->itemid);
         if (!item)
         {
             //sLog.outDebug("Group::GroupLoot: missing item prototype for item with id: %d", i->itemid);
@@ -614,14 +614,14 @@ void Group::GroupLoot(const uint64& playerGUID, Loot* loot, WorldObject* object)
 
 void Group::NeedBeforeGreed(const uint64& playerGUID, Loot* loot, WorldObject* object)
 {
-    ItemPrototype const* item;
+    ItemTemplate const* item;
     Player* player = sObjectMgr.GetPlayer(playerGUID);
     Group* group = player->GetGroup();
 
     uint8 itemSlot = 0;
     for (std::vector<LootItem>::iterator i = loot->items.begin(); i != loot->items.end(); ++i, ++itemSlot)
     {
-        item = sObjectMgr.GetItemPrototype(i->itemid);
+        item = sObjectMgr.GetItemTemplate(i->itemid);
 
         //only roll for one-player items, not for ones everyone can get
         if (item->Quality >= uint32(m_lootThreshold) && !i->freeforall)

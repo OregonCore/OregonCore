@@ -2742,7 +2742,7 @@ void Spell::SendSpellCooldown()
 
     if (m_CastItem)
     {
-        ItemPrototype const* proto = m_CastItem->GetProto();
+        ItemTemplate const* proto = m_CastItem->GetProto();
         if (proto)
         {
             for (int idx = 0; idx < 5; ++idx)
@@ -3166,7 +3166,7 @@ void Spell::WriteAmmoToPacket(WorldPacket* data)
                 uint32 ammoID = m_caster->ToPlayer()->GetUInt32Value(PLAYER_AMMO_ID);
                 if (ammoID)
                 {
-                    ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(ammoID);
+                    ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(ammoID);
                     if (pProto)
                     {
                         ammoDisplayID = pProto->DisplayInfoID;
@@ -3187,7 +3187,7 @@ void Spell::WriteAmmoToPacket(WorldPacket* data)
         {
             if (uint32 item_id = m_caster->GetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + i))
             {
-                if (ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(item_id))
+                if (ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(item_id))
                 {
                     if (pProto->Class == ITEM_CLASS_WEAPON)
                     {
@@ -3445,7 +3445,7 @@ void Spell::TakeCastItem()
     if (m_IsTriggeredSpell)
         return;
 
-    ItemPrototype const* proto = m_CastItem->GetProto();
+    ItemTemplate const* proto = m_CastItem->GetProto();
 
     if (!proto)
     {
@@ -3581,7 +3581,7 @@ void Spell::TakeReagents()
         // if CastItem is also spell reagent
         if (m_CastItem)
         {
-            ItemPrototype const* proto = m_CastItem->GetProto();
+            ItemTemplate const* proto = m_CastItem->GetProto();
             if (proto && proto->ItemId == itemid)
             {
                 for (int s = 0; s < 5; s++)
@@ -5362,7 +5362,7 @@ SpellCastResult Spell::CheckItems()
             return SPELL_FAILED_ITEM_NOT_READY;
         else
         {
-            ItemPrototype const* proto = m_CastItem->GetProto();
+            ItemTemplate const* proto = m_CastItem->GetProto();
             if (!proto)
                 return SPELL_FAILED_ITEM_NOT_READY;
 
@@ -5479,7 +5479,7 @@ SpellCastResult Spell::CheckItems()
             // if CastItem is also spell reagent
             if (m_CastItem && m_CastItem->GetEntry() == itemid)
             {
-                ItemPrototype const* proto = m_CastItem->GetProto();
+                ItemTemplate const* proto = m_CastItem->GetProto();
                 if (!proto)
                     return SPELL_FAILED_ITEM_NOT_READY;
                 for (int s = 0; s < 5; s++)
@@ -5602,7 +5602,7 @@ SpellCastResult Spell::CheckItems()
                 if (m_targets.getItemTarget()->GetOwnerGUID() != m_caster->GetGUID())
                     return SPELL_FAILED_CANT_BE_DISENCHANTED;
 
-                ItemPrototype const* itemProto = m_targets.getItemTarget()->GetProto();
+                ItemTemplate const* itemProto = m_targets.getItemTarget()->GetProto();
                 if (!itemProto)
                     return SPELL_FAILED_CANT_BE_DISENCHANTED;
 
@@ -5677,7 +5677,7 @@ SpellCastResult Spell::CheckItems()
                             return SPELL_FAILED_NO_AMMO;
                         }
 
-                        ItemPrototype const* ammoProto = sObjectMgr.GetItemPrototype(ammo);
+                        ItemTemplate const* ammoProto = sObjectMgr.GetItemTemplate(ammo);
                         if (!ammoProto)
                             return SPELL_FAILED_NO_AMMO;
 

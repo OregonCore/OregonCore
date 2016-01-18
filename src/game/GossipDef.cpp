@@ -442,7 +442,7 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const* pQuest, uint64 npcGUID,
     }
     else
     {
-        ItemPrototype const* IProto;
+        ItemTemplate const* IProto;
 
         data << uint32(pQuest->GetRewChoiceItemsCount());
         for (uint32 i = 0; i < QUEST_REWARD_CHOICES_COUNT; ++i)
@@ -453,7 +453,7 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const* pQuest, uint64 npcGUID,
             data << uint32(pQuest->RewChoiceItemId[i]);
             data << uint32(pQuest->RewChoiceItemCount[i]);
 
-            IProto = sObjectMgr.GetItemPrototype(pQuest->RewChoiceItemId[i]);
+            IProto = sObjectMgr.GetItemTemplate(pQuest->RewChoiceItemId[i]);
             if (IProto)
                 data << uint32(IProto->DisplayInfoID);
             else
@@ -470,7 +470,7 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const* pQuest, uint64 npcGUID,
             data << uint32(pQuest->RewItemId[i]);
             data << uint32(pQuest->RewItemCount[i]);
 
-            IProto = sObjectMgr.GetItemPrototype(pQuest->RewItemId[i]);
+            IProto = sObjectMgr.GetItemTemplate(pQuest->RewItemId[i]);
             if (IProto)
                 data << uint32(IProto->DisplayInfoID);
             else
@@ -657,12 +657,12 @@ void PlayerMenu::SendQuestGiverOfferReward(Quest const* pQuest, uint64 npcGUID, 
         data << uint32(pQuest->OfferRewardEmote[i]);
     }
 
-    ItemPrototype const* pItem;
+    ItemTemplate const* pItem;
 
     data << uint32(pQuest->GetRewChoiceItemsCount());
     for (uint32 i = 0; i < pQuest->GetRewChoiceItemsCount(); ++i)
     {
-        pItem = sObjectMgr.GetItemPrototype(pQuest->RewChoiceItemId[i]);
+        pItem = sObjectMgr.GetItemTemplate(pQuest->RewChoiceItemId[i]);
 
         data << uint32(pQuest->RewChoiceItemId[i]);
         data << uint32(pQuest->RewChoiceItemCount[i]);
@@ -676,7 +676,7 @@ void PlayerMenu::SendQuestGiverOfferReward(Quest const* pQuest, uint64 npcGUID, 
     data << uint32(pQuest->GetRewItemsCount());
     for (uint32 i = 0; i < pQuest->GetRewItemsCount(); ++i)
     {
-        pItem = sObjectMgr.GetItemPrototype(pQuest->RewItemId[i]);
+        pItem = sObjectMgr.GetItemTemplate(pQuest->RewItemId[i]);
         data << uint32(pQuest->RewItemId[i]);
         data << uint32(pQuest->RewItemCount[i]);
 
@@ -753,13 +753,13 @@ void PlayerMenu::SendQuestGiverRequestItems(Quest const* pQuest, uint64 npcGUID,
     data << uint32(pQuest->GetRewOrReqMoney() < 0 ? -pQuest->GetRewOrReqMoney() : 0);
 
     data << uint32(pQuest->GetReqItemsCount());
-    ItemPrototype const* pItem;
+    ItemTemplate const* pItem;
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
     {
         if (!pQuest->ReqItemId[i])
             continue;
 
-        pItem = sObjectMgr.GetItemPrototype(pQuest->ReqItemId[i]);
+        pItem = sObjectMgr.GetItemTemplate(pQuest->ReqItemId[i]);
 
         data << uint32(pQuest->ReqItemId[i]);
         data << uint32(pQuest->ReqItemCount[i]);

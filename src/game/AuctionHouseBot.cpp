@@ -349,7 +349,7 @@ void AuctionHouseBot::addNewAuctions(Player* AHBplayer, AHBConfig* config)
             if (config->IsIgnoringItem(itemID))
                 continue;
 
-            ItemPrototype const* prototype = sObjectMgr.GetItemPrototype(itemID);
+            ItemTemplate const* prototype = sObjectMgr.GetItemTemplate(itemID);
             if (prototype == NULL)
             {
                 if (debug_Out) sLog.outError("AHSeller: Huh?!?! prototype == NULL");
@@ -547,7 +547,7 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player* AHBplayer, AHBConfig* con
         }
 
         // get item prototype
-        ItemPrototype const* prototype = sObjectMgr.GetItemPrototype(auction->item_template);
+        ItemTemplate const* prototype = sObjectMgr.GetItemTemplate(auction->item_template);
 
         // check which price we have to use, startbid or if it is bidded already
         uint32 currentprice;
@@ -872,7 +872,7 @@ void AuctionHouseBot::Initialize()
 
         for (uint32 itemID = 0; itemID < sItemStorage.MaxEntry; itemID++)
         {
-            ItemPrototype const* prototype = sObjectMgr.GetItemPrototype(itemID);
+            ItemTemplate const* prototype = sObjectMgr.GetItemTemplate(itemID);
 
             if (prototype == NULL)
                 continue;
@@ -1368,7 +1368,7 @@ void AuctionHouseBot::IncrementItemCounts(AuctionEntry* ah)
     }
 
     // get item prototype
-    ItemPrototype const* prototype = sObjectMgr.GetItemPrototype(ah->item_template);
+    ItemTemplate const* prototype = sObjectMgr.GetItemTemplate(ah->item_template);
 
     AHBConfig* config;
 
@@ -1400,7 +1400,7 @@ void AuctionHouseBot::IncrementItemCounts(AuctionEntry* ah)
 void AuctionHouseBot::DecrementItemCounts(AuctionEntry* ah, uint32 item_template)
 {
     // get item prototype
-    ItemPrototype const* prototype = sObjectMgr.GetItemPrototype(item_template);
+    ItemTemplate const* prototype = sObjectMgr.GetItemTemplate(item_template);
 
     AHBConfig* config;
 
@@ -1770,7 +1770,7 @@ void AuctionHouseBot::LoadValues(AHBConfig* config)
                 Item* item = sAuctionMgr->GetAItem(Aentry->item_guidlow);
                 if (item)
                 {
-                    ItemPrototype const* prototype = item->GetProto();
+                    ItemTemplate const* prototype = item->GetProto();
                     if (prototype)
                     {
                         switch (prototype->Quality)

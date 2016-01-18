@@ -24,7 +24,7 @@
 
 void AddItemsSetItem(Player* player, Item* item)
 {
-    ItemPrototype const* proto = item->GetProto();
+    ItemTemplate const* proto = item->GetProto();
     uint32 setid = proto->ItemSet;
 
     ItemSetEntry const* set = sItemSetStore.LookupEntry(setid);
@@ -105,7 +105,7 @@ void AddItemsSetItem(Player* player, Item* item)
     }
 }
 
-void RemoveItemsSetItem(Player* player, ItemPrototype const* proto)
+void RemoveItemsSetItem(Player* player, ItemTemplate const* proto)
 {
     uint32 setid = proto->ItemSet;
 
@@ -163,7 +163,7 @@ void RemoveItemsSetItem(Player* player, ItemPrototype const* proto)
     }
 }
 
-bool ItemCanGoIntoBag(ItemPrototype const* pProto, ItemPrototype const* pBagProto)
+bool ItemCanGoIntoBag(ItemTemplate const* pProto, ItemTemplate const* pBagProto)
 {
     if (!pProto || !pBagProto)
         return false;
@@ -250,7 +250,7 @@ bool Item::Create(uint32 guidlow, uint32 itemid, Player const* owner)
     SetUInt64Value(ITEM_FIELD_OWNER, owner ? owner->GetGUID() : 0);
     SetUInt64Value(ITEM_FIELD_CONTAINED, owner ? owner->GetGUID() : 0);
 
-    ItemPrototype const* itemProto = sObjectMgr.GetItemPrototype(itemid);
+    ItemTemplate const* itemProto = sObjectMgr.GetItemTemplate(itemid);
     if (!itemProto)
         return false;
 
@@ -380,7 +380,7 @@ bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, Field* fields)
     SetEntry(fields[0].GetUInt32());
     SetObjectScale(1.0f);
 
-    ItemPrototype const* proto = GetProto();
+    ItemTemplate const* proto = GetProto();
     if (!proto)
         return false;
 
@@ -458,9 +458,9 @@ void Item::DeleteFromInventoryDB()
     CharacterDatabase.PExecute("DELETE FROM character_inventory WHERE item = '%u'", GetGUIDLow());
 }
 
-ItemPrototype const* Item::GetProto() const
+ItemTemplate const* Item::GetProto() const
 {
-    return sObjectMgr.GetItemPrototype(GetEntry());
+    return sObjectMgr.GetItemTemplate(GetEntry());
 }
 
 Player* Item::GetOwner()const
@@ -484,7 +484,7 @@ uint32 Item::GetSkill()
         0, SKILL_CLOTH, SKILL_LEATHER, SKILL_MAIL, SKILL_PLATE_MAIL, 0, SKILL_SHIELD, 0, 0, 0
     };
 
-    ItemPrototype const* proto = GetProto();
+    ItemTemplate const* proto = GetProto();
 
     switch (proto->Class)
     {
@@ -507,7 +507,7 @@ uint32 Item::GetSkill()
 
 uint32 Item::GetSpell()
 {
-    ItemPrototype const* proto = GetProto();
+    ItemTemplate const* proto = GetProto();
 
     switch (proto->Class)
     {
@@ -569,7 +569,7 @@ uint32 Item::GetSpell()
 
 int32 Item::GenerateItemRandomPropertyId(uint32 item_id)
 {
-    ItemPrototype const* itemProto = sItemStorage.LookupEntry<ItemPrototype>(item_id);
+    ItemTemplate const* itemProto = sItemStorage.LookupEntry<ItemTemplate>(item_id);
 
     if (!itemProto)
         return 0;
@@ -772,7 +772,7 @@ bool Item::IsBoundByEnchant() const
     return false;
 }
 
-uint8 Item::CanBeMergedPartlyWith(ItemPrototype const* proto) const
+uint8 Item::CanBeMergedPartlyWith(ItemTemplate const* proto) const
 {
     // not allow merge looting currently items
     if (m_lootGenerated)
@@ -791,7 +791,7 @@ uint8 Item::CanBeMergedPartlyWith(ItemPrototype const* proto) const
 
 bool Item::IsFitToSpellRequirements(SpellEntry const* spellInfo) const
 {
-    ItemPrototype const* proto = GetProto();
+    ItemTemplate const* proto = GetProto();
 
     if (spellInfo->EquippedItemClass != -1)                 // -1 == any item class
     {
@@ -881,7 +881,7 @@ bool Item::GemsFitSockets() const
         uint32 gemid = enchantEntry->GemID;
         if (gemid)
         {
-            ItemPrototype const* gemProto = sItemStorage.LookupEntry<ItemPrototype>(gemid);
+            ItemTemplate const* gemProto = sItemStorage.LookupEntry<ItemTemplate>(gemid);
             if (gemProto)
             {
                 GemPropertiesEntry const* gemProperty = sGemPropertiesStore.LookupEntry(gemProto->GemProperties);
@@ -916,7 +916,7 @@ uint8 Item::GetGemCountWithID(uint32 GemID) const
 
 bool Item::IsLimitedToAnotherMapOrZone(uint32 cur_mapId, uint32 cur_zoneId) const
 {
-    ItemPrototype const* proto = GetProto();
+    ItemTemplate const* proto = GetProto();
     return proto && ((proto->Map && proto->Map != cur_mapId) || (proto->Area && proto->Area != cur_zoneId));
 }
 
@@ -939,7 +939,7 @@ Item* Item::CreateItem(uint32 item, uint32 count, Player const* player)
     if (count < 1)
         return NULL;                                        //don't create item at zero count
 
-    ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(item);
+    ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(item);
     if (pProto)
     {
         if (count > pProto->Stackable)

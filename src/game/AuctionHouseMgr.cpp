@@ -291,7 +291,7 @@ void AuctionHouseMgr::LoadAuctionItems()
         uint32 item_guid        = fields[11].GetUInt32();
         uint32 item_template    = fields[12].GetUInt32();
 
-        ItemPrototype const* proto = sObjectMgr.GetItemPrototype(item_template);
+        ItemTemplate const* proto = sObjectMgr.GetItemTemplate(item_template);
 
         if (!proto)
         {
@@ -612,7 +612,7 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPacket& data, Player* player
         if (!item)
             continue;
 
-        ItemPrototype const* proto = item->GetProto();
+        ItemTemplate const* proto = item->GetProto();
 
         if (itemClass != 0xffffffff && proto->Class != itemClass)
             continue;

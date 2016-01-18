@@ -1263,7 +1263,7 @@ void Guild::LoadGuildBankFromDB()
             continue;
         }
 
-        ItemPrototype const* proto = sObjectMgr.GetItemPrototype(ItemEntry);
+        ItemTemplate const* proto = sObjectMgr.GetItemTemplate(ItemEntry);
 
         if (!proto)
         {

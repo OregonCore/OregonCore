@@ -191,7 +191,7 @@ enum ItemUpdateState
 
 #define MAX_ITEM_REQ_TARGET_TYPE 2
 
-bool ItemCanGoIntoBag(ItemPrototype const* proto, ItemPrototype const* pBagProto);
+bool ItemCanGoIntoBag(ItemTemplate const* proto, ItemTemplate const* pBagProto);
 
 class Item : public Object
 {
@@ -203,7 +203,7 @@ class Item : public Object
 
         virtual bool Create(uint32 guidlow, uint32 itemid, Player const* owner);
 
-        ItemPrototype const* GetProto() const;
+        ItemTemplate const* GetProto() const;
 
         uint64 const& GetOwnerGUID()    const
         {
@@ -268,7 +268,7 @@ class Item : public Object
             return GetProto()->Stackable;
         }
         uint8 GetGemCountWithID(uint32 GemID) const;
-        uint8 CanBeMergedPartlyWith(ItemPrototype const* proto) const;
+        uint8 CanBeMergedPartlyWith(ItemTemplate const* proto) const;
 
         uint8 GetSlot() const
         {
@@ -369,7 +369,7 @@ class Item : public Object
 
         bool hasQuest(uint32 quest_id) const
         {
-            ItemPrototype const* itemProto = GetProto();
+            ItemTemplate const* itemProto = GetProto();
             return itemProto && itemProto->StartQuest == quest_id;
         }
         bool hasInvolvedQuest(uint32 /*quest_id*/) const

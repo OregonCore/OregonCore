@@ -209,7 +209,7 @@ class Pet : public Guardian
         void GivePetXP(uint32 xp);
         void GivePetLevel(uint32 level);
         void InitPetAuras(const uint32 Entry);
-        bool HaveInDiet(ItemPrototype const* item) const;
+        bool HaveInDiet(ItemTemplate const* item) const;
         uint32 GetCurrentFoodBenefitLevel(uint32 itemlevel);
         void SetDuration(int32 dur)
         {

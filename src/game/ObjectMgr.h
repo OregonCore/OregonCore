@@ -624,9 +624,9 @@ class ObjectMgr
             return sCreatureInfoAddonStorage.LookupEntry<CreatureDataAddon>(entry);
         }
 
-        static ItemPrototype const* GetItemPrototype(uint32 id)
+        static ItemTemplate const* GetItemTemplate(uint32 id)
         {
-            return sItemStorage.LookupEntry<ItemPrototype>(id);
+            return sItemStorage.LookupEntry<ItemTemplate>(id);
         }
 
         static InstanceTemplate const* GetInstanceTemplate(uint32 map)

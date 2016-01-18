@@ -1028,7 +1028,7 @@ bool ChatHandler::isValidChatMessage(const char* message)
 
     uint32 color = 0;
 
-    ItemPrototype const* linkedItem;
+    ItemTemplate const* linkedItem;
     Quest const* linkedQuest;
     SpellEntry const* linkedSpell = NULL;
 
@@ -1137,7 +1137,7 @@ bool ChatHandler::isValidChatMessage(const char* message)
                 // read item entry
                 reader.getline(buffer, 256, ':');
 
-                linkedItem = sObjectMgr.GetItemPrototype(atoi(buffer));
+                linkedItem = sObjectMgr.GetItemTemplate(atoi(buffer));
                 if (!linkedItem)
                 {
                     #ifdef OREGON_DEBUG

@@ -2497,7 +2497,7 @@ bool ChatHandler::HandleAddItemCommand(const char* args)
 
     sLog.outDetail(GetOregonString(LANG_ADDITEM), itemId, count);
 
-    ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(itemId);
+    ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(itemId);
     if (!pProto)
     {
         PSendSysMessage(LANG_COMMAND_ITEMIDINVALID, itemId);
@@ -2579,7 +2579,7 @@ bool ChatHandler::HandleAddItemSetCommand(const char* args)
     bool found = false;
     for (uint32 id = 0; id < sItemStorage.MaxEntry; id++)
     {
-        ItemPrototype const* pProto = sItemStorage.LookupEntry<ItemPrototype>(id);
+        ItemTemplate const* pProto = sItemStorage.LookupEntry<ItemTemplate>(id);
         if (!pProto)
             continue;
 
@@ -2636,7 +2636,7 @@ bool ChatHandler::HandleListItemCommand(const char* args)
         return false;
     }
 
-    ItemPrototype const* itemProto = sObjectMgr.GetItemPrototype(item_id);
+    ItemTemplate const* itemProto = sObjectMgr.GetItemTemplate(item_id);
     if (!itemProto)
     {
         PSendSysMessage(LANG_COMMAND_ITEMIDINVALID, item_id);
@@ -3065,7 +3065,7 @@ bool ChatHandler::HandleLookupItemCommand(const char* args)
     // Search in item_template
     for (uint32 id = 0; id < sItemStorage.MaxEntry; id++)
     {
-        ItemPrototype const* pProto = sItemStorage.LookupEntry<ItemPrototype >(id);
+        ItemTemplate const* pProto = sItemStorage.LookupEntry<ItemTemplate >(id);
         if (!pProto)
             continue;
 
@@ -3923,7 +3923,7 @@ bool ChatHandler::HandleAddWeaponCommand(const char* /*args*/)
     uint32 ItemID = atoi(pItemID);
     uint32 SlotID = atoi(pSlotID);
 
-    ItemPrototype* tmpItem = sObjectMgr.GetItemPrototype(ItemID);
+    ItemTemplate* tmpItem = sObjectMgr.GetItemTemplate(ItemID);
 
     bool added = false;
     if (tmpItem)
@@ -5586,7 +5586,7 @@ bool ChatHandler::HandleAddQuest(const char* args)
     // check item starting quest (it can work incorrectly if added without item in inventory)
     for (uint32 id = 0; id < sItemStorage.MaxEntry; id++)
     {
-        ItemPrototype const* pProto = sItemStorage.LookupEntry<ItemPrototype>(id);
+        ItemTemplate const* pProto = sItemStorage.LookupEntry<ItemTemplate>(id);
         if (!pProto)
             continue;
 
@@ -7174,7 +7174,7 @@ bool ChatHandler::HandleSendItemsCommand(const char* args)
         if (!item_id)
             return false;
 
-        ItemPrototype const* item_proto = sObjectMgr.GetItemPrototype(item_id);
+        ItemTemplate const* item_proto = sObjectMgr.GetItemTemplate(item_id);
         if (!item_proto)
         {
             PSendSysMessage(LANG_COMMAND_ITEMIDINVALID, item_id);

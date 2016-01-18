@@ -1378,7 +1378,7 @@ void Creature::SetVirtualItem(VirtualItemSlot slot, uint32 item_id)
         return;
     }
 
-    ItemPrototype const* proto = ObjectMgr::GetItemPrototype(item_id);
+    ItemTemplate const* proto = ObjectMgr::GetItemTemplate(item_id);
     if (!proto)
     {
         sLog.outError("Not listed in 'item_template' item (ID:%u) used as virtual item for " UI64FMTD "", item_id, GetGUID());
@@ -2323,7 +2323,7 @@ uint32 Creature::GetVendorItemCurrentCount(VendorItem const* vItem)
     time_t ptime = time(NULL);
 
     if (vCount->lastIncrementTime + vItem->incrtime <= uint32(ptime))
-        if (ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(vItem->item))
+        if (ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(vItem->item))
         {
             uint32 diff = uint32((ptime - vCount->lastIncrementTime) / vItem->incrtime);
             if ((vCount->count + diff * pProto->BuyCount) >= vItem->maxcount)
@@ -2361,7 +2361,7 @@ uint32 Creature::UpdateVendorItemCurrentCount(VendorItem const* vItem, uint32 us
     time_t ptime = time(NULL);
 
     if (vCount->lastIncrementTime + vItem->incrtime <= uint32(ptime))
-        if (ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(vItem->item))
+        if (ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(vItem->item))
         {
             uint32 diff = uint32((ptime - vCount->lastIncrementTime) / vItem->incrtime);
             if ((vCount->count + diff * pProto->BuyCount) < vItem->maxcount)

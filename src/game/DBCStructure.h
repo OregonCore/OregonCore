@@ -400,8 +400,8 @@ struct ItemDisplayInfoEntry
 //struct ItemCondExtCostsEntry
 //{
 //    uint32      ID;
-//    uint32      condExtendedCost;                         // ItemPrototype::CondExtendedCost
-//    uint32      itemextendedcostentry;                    // ItemPrototype::ExtendedCost
+//    uint32      condExtendedCost;                         // ItemTemplate::CondExtendedCost
+//    uint32      itemextendedcostentry;                    // ItemTemplate::ExtendedCost
 //    uint32      arenaseason;                              // arena season number(1-4)
 //};
 
@@ -440,7 +440,7 @@ struct ItemSetEntry
     //uint32    id                                          // 0 item set ID
     char*    name[16];                                     // 1-16
     // 17 string flags, unused
-    // 18-28 items from set, but not have all items listed, use ItemPrototype::ItemSet instead
+    // 18-28 items from set, but not have all items listed, use ItemTemplate::ItemSet instead
     // 29-34 unused
     uint32    spells[8];                                    // 35-42
     uint32    items_to_triggerspell[8];                     // 43-50

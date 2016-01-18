@@ -69,7 +69,7 @@ void Bag::RemoveFromWorld()
 
 bool Bag::Create(uint32 guidlow, uint32 itemid, Player const* owner)
 {
-    ItemPrototype const* itemProto = sObjectMgr.GetItemPrototype(itemid);
+    ItemTemplate const* itemProto = sObjectMgr.GetItemTemplate(itemid);
 
     if (!itemProto || itemProto->ContainerSlots > MAX_BAG_SIZE)
         return false;
@@ -110,7 +110,7 @@ bool Bag::LoadFromDB(uint32 guid, uint64 owner_guid, Field* fields)
     if (!Item::LoadFromDB(guid, owner_guid, fields))
         return false;
 
-    ItemPrototype const* itemProto = sObjectMgr.GetItemPrototype(GetEntry());
+    ItemTemplate const* itemProto = sObjectMgr.GetItemTemplate(GetEntry());
 
     if (!itemProto || itemProto->ContainerSlots > MAX_BAG_SIZE)
         return false;

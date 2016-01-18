@@ -236,7 +236,7 @@ bool LootStoreItem::Roll() const
     if (reference > 0)                                   // reference case
         return roll_chance_f(chance * sWorld.getRate(RATE_DROP_ITEM_REFERENCED));
 
-    ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(itemid);
+    ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(itemid);
 
     float qualityModifier = pProto ? sWorld.getRate(qualityToRate[pProto->Quality]) : 1.0f;
 
@@ -254,7 +254,7 @@ bool LootStoreItem::IsValid(LootStore const& store, uint32 entry) const
 
     if (reference == 0)                                 // item (quest or non-quest) entry, maybe grouped
     {
-        ItemPrototype const* proto = sObjectMgr.GetItemPrototype(itemid);
+        ItemTemplate const* proto = sObjectMgr.GetItemTemplate(itemid);
         if (!proto)
         {
             sLog.outErrorDb("Table '%s' Entry %d Item %d: item entry not listed in item_template - skipped", store.GetName(), entry, itemid);
@@ -304,7 +304,7 @@ LootItem::LootItem(LootStoreItem const& li)
     itemid      = li.itemid;
     conditions  = li.conditions;
 
-    ItemPrototype const* proto = sObjectMgr.GetItemPrototype(itemid);
+    ItemTemplate const* proto = sObjectMgr.GetItemTemplate(itemid);
     freeforall  = proto && (proto->Flags & ITEM_FLAGS_PARTY_LOOT);
 
     needs_quest = li.needs_quest;
@@ -325,7 +325,7 @@ bool LootItem::AllowedForPlayer(Player const* player) const
     if (!sConditionMgr.IsObjectMeetToConditions(const_cast<Player*>(player), conditions))
         return false;
 
-    ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(itemid);
+    ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(itemid);
     if (!pProto)
         return false;
 
@@ -362,7 +362,7 @@ bool LootItem::AllowedForPlayer(Player const* player) const
 // Inserts the item into the loot (called by LootTemplate processors)
 void Loot::AddItem(LootStoreItem const& item)
 {
-    ItemPrototype const* proto = sObjectMgr.GetItemPrototype(item.itemid);
+    ItemTemplate const* proto = sObjectMgr.GetItemTemplate(item.itemid);
     if (!proto)
         return;
 
@@ -417,7 +417,7 @@ void Loot::FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner, 
 
         for (uint8 i = 0; i < items.size(); ++i)
         {
-            if (ItemPrototype const* proto = sObjectMgr.GetItemPrototype(items[i].itemid))
+            if (ItemTemplate const* proto = sObjectMgr.GetItemTemplate(items[i].itemid))
                 if (proto->Quality < uint32(group->GetLootThreshold()))
                     items[i].is_underthreshold = true;
         }
@@ -756,7 +756,7 @@ ByteBuffer& operator<<(ByteBuffer& b, LootItem const& li)
 {
     b << uint32(li.itemid);
     b << uint32(li.count);                                  // nr of items of this type
-    b << uint32(sObjectMgr.GetItemPrototype(li.itemid)->DisplayInfoID);
+    b << uint32(sObjectMgr.GetItemTemplate(li.itemid)->DisplayInfoID);
     b << uint32(li.randomSuffix);
     b << uint32(li.randomPropertyId);
     //b << uint8(0);                                        // slot type - will send after this function call
@@ -1323,7 +1323,7 @@ void LoadLootTemplates_Disenchant()
     // remove real entries and check existence loot
     for (uint32 i = 1; i < sItemStorage.MaxEntry; ++i)
     {
-        if (ItemPrototype const* proto = sItemStorage.LookupEntry<ItemPrototype>(i))
+        if (ItemTemplate const* proto = sItemStorage.LookupEntry<ItemTemplate>(i))
         {
             if (uint32 lootid = proto->DisenchantID)
             {
@@ -1388,7 +1388,7 @@ void LoadLootTemplates_Item()
 
     // remove real entries and check existence loot
     for (uint32 i = 1; i < sItemStorage.MaxEntry; ++i)
-        if (ItemPrototype const* proto = sItemStorage.LookupEntry<ItemPrototype>(i))
+        if (ItemTemplate const* proto = sItemStorage.LookupEntry<ItemTemplate>(i))
             if (ids_set.find(proto->ItemId) != ids_set.end())
                 ids_set.erase(proto->ItemId);
 
@@ -1429,7 +1429,7 @@ void LoadLootTemplates_Prospecting()
 
     // remove real entries and check existence loot
     for (uint32 i = 1; i < sItemStorage.MaxEntry; ++i)
-        if (ItemPrototype const* proto = sItemStorage.LookupEntry<ItemPrototype>(i))
+        if (ItemTemplate const* proto = sItemStorage.LookupEntry<ItemTemplate>(i))
             if (ids_set.find(proto->ItemId) != ids_set.end())
                 ids_set.erase(proto->ItemId);
 

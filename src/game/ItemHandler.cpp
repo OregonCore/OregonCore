@@ -275,7 +275,7 @@ void WorldSession::HandleItemQuerySingleOpcode(WorldPacket& recv_data)
 
     sLog.outDetail("STORAGE: Item Query = %u", item);
 
-    ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(item);
+    ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(item);
     if (pProto)
     {
         std::string Name        = pProto->Name1;
@@ -532,7 +532,7 @@ void WorldSession::HandleSellItemOpcode(WorldPacket& recv_data)
             }
         }
 
-        ItemPrototype const* pProto = pItem->GetProto();
+        ItemTemplate const* pProto = pItem->GetProto();
         if (pProto)
         {
             if (pProto->SellPrice > 0)
@@ -737,7 +737,7 @@ void WorldSession::SendListInventory(uint64 vendorguid)
     {
         if (VendorItem const* crItem = vItems->GetItem(i))
         {
-            if (ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(crItem->item))
+            if (ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(crItem->item))
             {
                 if ((pProto->AllowableClass & _player->getClassMask()) == 0 && pProto->Bonding == BIND_WHEN_PICKED_UP && !_player->isGameMaster())
                     continue;
@@ -983,7 +983,7 @@ void WorldSession::HandleItemNameQueryOpcode(WorldPacket& recv_data)
     recv_data.read_skip<uint64>();                          // guid
 
     sLog.outDebug("WORLD: CMSG_ITEM_NAME_QUERY %u", itemid);
-    ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(itemid);
+    ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(itemid);
     if (pProto)
     {
         std::string Name;
