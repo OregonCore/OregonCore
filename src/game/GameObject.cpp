@@ -1525,6 +1525,8 @@ void GameObject::CastSpell(Unit* target, uint32 spellId, bool triggered /*= true
     if (Unit* owner = GetOwner())
     {
         trigger->setFaction(owner->getFaction());
+        if (owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE))
+            trigger->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
         trigger->CastSpell(target ? target : trigger, spellId, triggered, 0, 0, owner->GetGUID());
     }
     else
