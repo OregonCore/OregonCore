@@ -1470,7 +1470,7 @@ bool ChatHandler::HandleSetSkillCommand(const char* args)
 
     int32 level = atol (level_p);
 
-    Player* target = getSelectedPlayer();
+    Player* target = getSelectedPlayerOrSelf();
     if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
@@ -2408,7 +2408,7 @@ bool ChatHandler::HandleLearnAllDefaultCommand(const char* args)
 
 bool ChatHandler::HandleLearnCommand(const char* args)
 {
-    Player* targetPlayer = getSelectedPlayer();
+    Player* targetPlayer = getSelectedPlayerOrSelf();
 
     if (!targetPlayer)
     {
