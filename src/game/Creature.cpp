@@ -97,20 +97,20 @@ uint32 CreatureInfo::GetRandomValidModelId() const
     uint32 c = 0;
     uint32 modelIDs[4];
 
-    if (Modelid_A1) modelIDs[c++] = Modelid_A1;
-    if (Modelid_A2) modelIDs[c++] = Modelid_A2;
-    if (Modelid_H1) modelIDs[c++] = Modelid_H1;
-    if (Modelid_H2) modelIDs[c++] = Modelid_H2;
+    if (modelid1) modelIDs[c++] = modelid1;
+    if (modelid2) modelIDs[c++] = modelid2;
+    if (modelid3) modelIDs[c++] = modelid3;
+    if (modelid4) modelIDs[c++] = modelid4;
 
     return ((c > 0) ? modelIDs[urand(0, c - 1)] : 0);
 }
 
 uint32 CreatureInfo::GetFirstValidModelId() const
 {
-    if (Modelid_A1) return Modelid_A1;
-    if (Modelid_A2) return Modelid_A2;
-    if (Modelid_H1) return Modelid_H1;
-    if (Modelid_H2) return Modelid_H2;
+    if (modelid1) return modelid1;
+    if (modelid2) return modelid2;
+    if (modelid3) return modelid3;
+    if (modelid4) return modelid4;
     return 0;
 }
 
@@ -1065,8 +1065,8 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
     CreatureInfo const* cinfo = GetCreatureTemplate();
     if (cinfo)
     {
-        if (displayId == cinfo->Modelid_A1 || displayId == cinfo->Modelid_A2 ||
-            displayId == cinfo->Modelid_H1 || displayId == cinfo->Modelid_H2)
+        if (displayId == cinfo->modelid1 || displayId == cinfo->modelid2 ||
+            displayId == cinfo->modelid3 || displayId == cinfo->modelid4)
             displayId = 0;
     }
 

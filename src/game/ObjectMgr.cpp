@@ -651,25 +651,25 @@ void ObjectMgr::LoadCreatureTemplates()
             sLog.outErrorDb("Creature (Entry: %u) has invalid faction template (%u)", cInfo->Entry, cInfo->faction);
 
         // check model ids, supplying and sending non-existent ids to the client might crash them
-        if (cInfo->Modelid_A1 && !sCreatureModelStorage.LookupEntry<CreatureModelInfo>(cInfo->Modelid_A1))
+        if (cInfo->modelid1 && !sCreatureModelStorage.LookupEntry<CreatureModelInfo>(cInfo->modelid1))
         {
-            sLog.outErrorDb("Creature (Entry: %u) has invalid Modelid_A1 (%u), setting it to 0", cInfo->Entry, cInfo->Modelid_A1);
-            const_cast<CreatureInfo*>(cInfo)->Modelid_A1 = 0;
+            sLog.outErrorDb("Creature (Entry: %u) has invalid modelid1 (%u), setting it to 0", cInfo->Entry, cInfo->modelid1);
+            const_cast<CreatureInfo*>(cInfo)->modelid1 = 0;
         }
-        if (cInfo->Modelid_A2 && !sCreatureModelStorage.LookupEntry<CreatureModelInfo>(cInfo->Modelid_A2))
+        if (cInfo->modelid2 && !sCreatureModelStorage.LookupEntry<CreatureModelInfo>(cInfo->modelid2))
         {
-            sLog.outErrorDb("Creature (Entry: %u) has invalid Modelid_A2 (%u), setting it to 0", cInfo->Entry, cInfo->Modelid_A2);
-            const_cast<CreatureInfo*>(cInfo)->Modelid_A2 = 0;
+            sLog.outErrorDb("Creature (Entry: %u) has invalid modelid2 (%u), setting it to 0", cInfo->Entry, cInfo->modelid2);
+            const_cast<CreatureInfo*>(cInfo)->modelid2 = 0;
         }
-        if (cInfo->Modelid_H1 && !sCreatureModelStorage.LookupEntry<CreatureModelInfo>(cInfo->Modelid_H1))
+        if (cInfo->modelid3 && !sCreatureModelStorage.LookupEntry<CreatureModelInfo>(cInfo->modelid3))
         {
-            sLog.outErrorDb("Creature (Entry: %u) has invalid Modelid_H1 (%u), setting it to 0", cInfo->Entry, cInfo->Modelid_H1);
-            const_cast<CreatureInfo*>(cInfo)->Modelid_H1 = 0;
+            sLog.outErrorDb("Creature (Entry: %u) has invalid modelid3 (%u), setting it to 0", cInfo->Entry, cInfo->modelid3);
+            const_cast<CreatureInfo*>(cInfo)->modelid3 = 0;
         }
-        if (cInfo->Modelid_H2 && !sCreatureModelStorage.LookupEntry<CreatureModelInfo>(cInfo->Modelid_H2))
+        if (cInfo->modelid4 && !sCreatureModelStorage.LookupEntry<CreatureModelInfo>(cInfo->modelid4))
         {
-            sLog.outErrorDb("Creature (Entry: %u) has invalid Modelid_H2 (%u), setting it to 0", cInfo->Entry, cInfo->Modelid_H2);
-            const_cast<CreatureInfo*>(cInfo)->Modelid_H2 = 0;
+            sLog.outErrorDb("Creature (Entry: %u) has invalid modelid4 (%u), setting it to 0", cInfo->Entry, cInfo->modelid4);
+            const_cast<CreatureInfo*>(cInfo)->modelid4 = 0;
         }
 
         for (int k = 0; k < MAX_KILL_CREDIT; ++k)
