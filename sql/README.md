@@ -1,6 +1,7 @@
 Database Installation Order:
 ======================
 Run the following SQL files in order in your database to successfully set up this section of the OregonCore project.
+
   1. sql/create_mysql.sql
   2. sql/world.sql
   3. sql/characters.sql
