@@ -2675,22 +2675,12 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
                 modelid = 2289;
             PowerType = POWER_RAGE;
             break;
-        case FORM_GHOUL:
-            if (Player::TeamForRace(m_target->getRace()) == ALLIANCE)
-                modelid = 10045;
-            break;
         case FORM_DIREBEAR:
             if (Player::TeamForRace(m_target->getRace()) == ALLIANCE)
                 modelid = 2281;
             else
                 modelid = 2289;
             PowerType = POWER_RAGE;
-            break;
-        case FORM_CREATUREBEAR:
-            modelid = 902;
-            break;
-        case FORM_GHOSTWOLF:
-            modelid = 4613;
             break;
         case FORM_FLIGHT:
             if (Player::TeamForRace(m_target->getRace()) == ALLIANCE)
@@ -2710,26 +2700,15 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
             else
                 modelid = 21244;
             break;
-        case FORM_MASTER_ANGLER:
-            modelid = 15234;
-            break;
-        case FORM_AMBIENT:
-        case FORM_SHADOW:
-        case FORM_STEALTH:
-            break;
-        case FORM_TREE:
-            modelid = 864;
-            break;
         case FORM_BATTLESTANCE:
         case FORM_BERSERKERSTANCE:
         case FORM_DEFENSIVESTANCE:
             PowerType = POWER_RAGE;
             break;
-        case FORM_SPIRITOFREDEMPTION:
-            modelid = 16031;
-            break;
         default:
-            sLog.outError("Auras: Unknown Shapeshift Type: %u", m_modifier.m_miscvalue);
+            SpellShapeshiftEntry const* formEntry = sSpellShapeshiftStore.LookupEntry(form);
+            if (formEntry && formEntry->modelID_A)
+                modelid = formEntry->modelID_A;
     }
 
     // remove polymorph before changing display id to keep new display id
