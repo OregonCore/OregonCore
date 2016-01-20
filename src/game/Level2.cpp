@@ -1446,12 +1446,11 @@ bool ChatHandler::HandleNpcFactionIdCommand(const char* args)
     // update in memory
     if (CreatureInfo const* cinfo = pCreature->GetCreatureTemplate())
     {
-        const_cast<CreatureInfo*>(cinfo)->faction_A = factionId;
-        const_cast<CreatureInfo*>(cinfo)->faction_H = factionId;
+        const_cast<CreatureInfo*>(cinfo)->faction = factionId;
     }
 
     // and DB
-    WorldDatabase.PExecuteLog("UPDATE creature_template SET faction_A = '%u', faction_H = '%u' WHERE entry = '%u'", factionId, factionId, pCreature->GetEntry());
+    WorldDatabase.PExecuteLog("UPDATE creature_template SET faction = '%u' WHERE entry = '%u'", factionId, pCreature->GetEntry());
 
     return true;
 }

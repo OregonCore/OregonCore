@@ -6879,7 +6879,7 @@ bool Unit::IsHostileTo(Unit const* unit) const
     const CreatureInfo* me = sObjectMgr.GetCreatureTemplate(GetEntry());
 
     if (tar && me)
-    if ((me->faction_A == 1690 && tar->faction_A == 1689) || (me->faction_A == 1689 && tar->faction_A == 1690))
+    if ((me->faction == 1690 && tar->faction == 1689) || (me->faction == 1689 && tar->faction == 1690))
         return true;
 
     // test pet/charm masters instead pers/charmeds
@@ -6996,7 +6996,7 @@ bool Unit::IsFriendlyTo(Unit const* unit) const
     const CreatureInfo* me = sObjectMgr.GetCreatureTemplate(GetEntry());
 
     if (tar && me)
-    if ((me->faction_A == 1690 && tar->faction_A == 1689) || (me->faction_A == 1689 && tar->faction_A == 1690))
+    if ((me->faction == 1690 && tar->faction == 1689) || (me->faction == 1689 && tar->faction == 1690))
         return false;
 
     // test pet/charm masters instead pers/charmeds
@@ -12794,10 +12794,10 @@ void Unit::RestoreFaction()
             if (Unit* owner = GetOwner())
                 setFaction(owner->getFaction());
             else if (cinfo)
-                setFaction(cinfo->faction_A);
+                setFaction(cinfo->faction);
         }
         else if (cinfo)  // normal creature
-            setFaction(cinfo->faction_A);
+            setFaction(cinfo->faction);
     }
 }
 

@@ -170,8 +170,8 @@ void FollowerAI::JustRespawned()
     if (!IsCombatMovement())
         SetCombatMovement(true);
 
-    if (me->getFaction() != me->GetCreatureTemplate()->faction_A)
-        me->setFaction(me->GetCreatureTemplate()->faction_A);
+    if (me->getFaction() != me->GetCreatureTemplate()->faction)
+        me->setFaction(me->GetCreatureTemplate()->faction);
 
     Reset();
 }

@@ -646,13 +646,9 @@ void ObjectMgr::LoadCreatureTemplates()
             heroicEntries.insert(cInfo->HeroicEntry);
         }
 
-        FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(cInfo->faction_A);
+        FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(cInfo->faction);
         if (!factionTemplate)
-            sLog.outErrorDb("Creature (Entry: %u) has invalid faction_A template (%u)", cInfo->Entry, cInfo->faction_A);
-
-        factionTemplate = sFactionTemplateStore.LookupEntry(cInfo->faction_H);
-        if (!factionTemplate)
-            sLog.outErrorDb("Creature (Entry: %u) has invalid faction_H template (%u)", cInfo->Entry, cInfo->faction_H);
+            sLog.outErrorDb("Creature (Entry: %u) has invalid faction template (%u)", cInfo->Entry, cInfo->faction);
 
         // check model ids, supplying and sending non-existent ids to the client might crash them
         if (cInfo->Modelid_A1 && !sCreatureModelStorage.LookupEntry<CreatureModelInfo>(cInfo->Modelid_A1))

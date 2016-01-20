@@ -357,10 +357,7 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
     SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_AURAS);
 
-    if (team == HORDE)
-        SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, cInfo->faction_H);
-    else
-        SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, cInfo->faction_A);
+    setFaction(cInfo->faction);
 
     if (cInfo->flags_extra & CREATURE_FLAG_EXTRA_WORLDEVENT)
         SetUInt32Value(UNIT_NPC_FLAGS, cInfo->npcflag | sGameEventMgr.GetNPCFlag(this));
@@ -434,7 +431,7 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
     UpdateAllStats();
 
     // checked and error show at loading templates
-    if (FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(cInfo->faction_A))
+    if (FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(cInfo->faction))
     {
         FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplate->faction);
         if (factionEntry)

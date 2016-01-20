@@ -379,12 +379,12 @@ void AuctionHouseMgr::LoadAuctions()
             continue;
         }
 
-        aItem->auctionHouseEntry = AuctionHouseMgr::GetAuctionHouseEntry(auctioneerInfo->faction_A);
+        aItem->auctionHouseEntry = AuctionHouseMgr::GetAuctionHouseEntry(auctioneerInfo->faction);
         if (!aItem->auctionHouseEntry)
         {
             aItem->DeleteFromDB();
             sLog.outError("Auction %u has auctioneer (GUID : %u Entry: %u) with wrong faction %u",
-                          aItem->Id, aItem->auctioneer, auctioneerData->id, auctioneerInfo->faction_A);
+                          aItem->Id, aItem->auctioneer, auctioneerData->id, auctioneerInfo->faction);
             delete aItem;
             continue;
         }
@@ -399,7 +399,7 @@ void AuctionHouseMgr::LoadAuctions()
             continue;
         }
 
-        GetAuctionsMap(auctioneerInfo->faction_A)->AddAuction(aItem);
+        GetAuctionsMap(auctioneerInfo->faction)->AddAuction(aItem);
 
     }
     while (result->NextRow());

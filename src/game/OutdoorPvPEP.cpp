@@ -457,7 +457,7 @@ void OPvPCapturePointEP::SummonFlightMaster(uint32 team)
         Creature* c = HashMapHolder<Creature>::Find(m_Creatures[EP_PWT_FLIGHTMASTER]);
         if (c && team == HORDE)
         {
-            c->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, c->GetCreatureTemplate()->faction_H);
+            c->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, c->GetCreatureTemplate()->faction);
             c->SetUInt32Value(UNIT_FIELD_AURA, EP_PWT_FlightMasterAura);
         }
     }
