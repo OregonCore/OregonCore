@@ -32,17 +32,17 @@ Development of this project dates back to 2010, and was developed under various 
 *Please inform us, if you find somebody who is missing!*
 
  * 3mogorgon
-  * aikon lee
-  * alexandro
-  * alexsot
-  * Alex_Step
-  * amkurek
-  * Andreas Suter
-  * andri_000@Dirty
+ * aikon lee
+ * alexandro
+ * alexsot
+ * Alex_Step
+ * amkurek
+ * Andreas Suter
+ * andri_000@Dirty
  *  Anondev
  *  Anonymous@anonym-f86526fa
  *  apple
-  * Areradon
+ * Areradon
  *  Arnaud KAPP
  * ArtemisCZSK
  *  aszek
@@ -60,119 +60,116 @@ Development of this project dates back to 2010, and was developed under various 
  *  Colby@Colby-PC.sbcglobal.net
  *  danqu
  *  darion
- *  Dave <davevmb@gmail.com>
- *  Deni <deni81@arcor.de>
-  * desteny
-  *  devun
-  * Dirty
-  * djoneill
-  * djwhisper
-  * doomscaler doomscaler123
-  * dragos14
-  * dx15
-  * effik
-  * Efonius
-  * egon
-  * eina
-  * el iminussi
-  * enolux
-  * faramir118
-  * Filipoliko
-  * _flawless
-  * Flywithme
-  * funn3r
-  * fury.1337
-  * Fuu
-  * galaxyman
-  * Henhouse <henry925@gmail.com>
-  * huade
-  * iyo
-  * jakob sojak
-  * Je7
-  * jonok
-  * Jonx1000
-  * joval
-  * kerhong
-  * kingston
-  * L30m4nc3r
-  * Lenny
-  * LilleCarl
-  * LilleCarl@LilleCarlPC
-  * LordUsagi <lovelessusagi@gmail.com>
-  * lovelol
-  * lukaasm
-  * Lukáš Vyskočil
-  * maikale
-  * Marcelo
-  * marcelo_20xx
-  * mateo0169
-  * Micha2903
-  * midna
-  * Mikołaj <>
-  * MiLk <emilien_kenler@hotmail.com>
-  * MiLk <milk@world-of-warriors.com>
-  * Naxx Admin
-  * Niklas Schäffer
-  * niyo
-  * nr7gaming
-  * obana
-  * odistu
-  * oneb1t
-  * oregon
-  * oregonnsk
-  * orm
-  * oslayer
-  * PadreWoW
-  * pdx15
-  * pitbull123
-  * Qoneek
-  * regon
-  * release_ok <andriy1231@yandex.ua>
-  * reno
-  * reradon
-  * Rescr1pt
-  * rescr1pt
-  * rescr1pt@ya.ru
-  * retret
-  * Rideen
-  * Rimovals2
-  * rogas
-  * roid
-  * Saeed Avatar
-  * Schtomy Arfe
-  * ScullyNY
-  * Siarkowy
-  * silvermcd123
-  * Skyner25
-  * smoldar <pavelobolecky@seznam.cz>
-  * spenner
-  * squarecoding
-  * stfx
-  * Swyxe
-  * Sysmafik Yarrr
-  * taite nazifi
-  * tfx
-  * tobad90
-  * Tomáš Kolinger
-  * tylerx
-  * ukas22
-  * urki
-  * Usagi
-  * vincebee
-  * void
-  * Waqv
-  * WoWBixx
-  * xmaks
-  * xpert976
-  * xtylerx
-  * Yooki <notavailabletoyou@hush.com>
-  * youyou135
-  * Zaffy <zaffy@lunar.sk>
-  * ZaxarPal
-  * zlokobni
-  * аксим Аго
-  * Максим Аго
-  * Михаил Фатеев
+ *  Dave
+ *  Deni
+ * desteny
+ *  devun
+ * Dirty
+ * djoneill
+ * djwhisper
+ * doomscaler doomscaler123
+ * dragos14
+ * dx15
+ * effik
+ * Efonius
+ * egon
+ * eina
+ * el iminussi
+ * enolux
+ * faramir118
+ * Filipoliko
+ * _flawless
+ * Flywithme
+ * funn3r
+ * fury.1337
+ * Fuu
+ * galaxyman
+ * Henhouse
+ * huade
+ * iyo
+ * jakob sojak
+ * Je7
+ * jonok
+ * Jonx1000
+ * joval
+ * kerhong
+ * kingston
+ * L30m4nc3r
+ * Lenny
+ * LilleCarl
+ * LilleCarl@LilleCarlPC
+ * LordUsagi
+ * lovelol
+ * lukaasm
+ * Lukáš Vyskočil
+ * maikale
+ * Marcelo
+ * marcelo_20xx
+ * mateo0169
+ * Micha2903
+ * midna
+ * Mikołaj
+ * MiLk
+ * Naxx Admin
+ * Niklas Schäffer
+ * niyo
+ * nr7gaming
+ * obana
+ * odistu
+ * oneb1t
+ * oregon
+ * oregonnsk
+ * orm
+ * oslayer
+ * PadreWoW
+ * pdx15
+ * pitbull123
+ * Qoneek
+ * regon
+ * release_ok
+ * reno
+ * reradon
+ * rescr1pt
+ * retret
+ * Rideen
+ * Rimovals2
+ * rogas
+ * roid
+ * Saeed Avatar
+ * Schtomy Arfe
+ * ScullyNY
+ * Siarkowy
+ * silvermcd123
+ * Skyner25
+ * smoldar
+ * spenner
+ * squarecoding
+ * stfx
+ * Swyxe
+ * Sysmafik Yarrr
+ * taite nazifi
+ * tfx
+ * tobad90
+ * Tomáš Kolinger
+ * tylerx
+ * ukas22
+ * urki
+ * Usagi
+ * vincebee
+ * void
+ * Waqv
+ * WoWBixx
+ * xmaks
+ * xpert976
+ * xtylerx
+ * Yooki
+ * youyou135
+ * Zaffy
+ * ZaxarPal
+ * zlokobni
+ * аксим Аго
+ * Максим Аго
+ * Михаил Фатеев
 
 ## Copyright Information
 = Oregon Core -- General information =
