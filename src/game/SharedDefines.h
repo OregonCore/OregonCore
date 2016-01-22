@@ -95,6 +95,17 @@ enum Classes
      (1<<(CLASS_ROGUE-1))  |(1<<(CLASS_PRIEST-1)) |(1<<(CLASS_SHAMAN-1))| \
      (1<<(CLASS_MAGE-1))   |(1<<(CLASS_WARLOCK-1))|(1<<(CLASS_DRUID-1)))
 
+// valid classes for creature_template.unit_class
+enum UnitClass
+{
+    UNIT_CLASS_WARRIOR                  = 1,
+    UNIT_CLASS_PALADIN                  = 2,
+    UNIT_CLASS_ROGUE                    = 4,
+    UNIT_CLASS_MAGE                     = 8
+};
+
+#define CLASSMASK_ALL_CREATURES ((1<<(UNIT_CLASS_WARRIOR-1)) | (1<<(UNIT_CLASS_PALADIN-1)) | (1<<(UNIT_CLASS_ROGUE-1)) | (1<<(UNIT_CLASS_MAGE-1)))
+
 #define CLASSMASK_WAND_USERS ((1<<(CLASS_PRIEST-1))|(1<<(CLASS_MAGE-1))|(1<<(CLASS_WARLOCK-1)))
 
 #define PLAYER_MAX_BATTLEGROUND_QUEUES 3

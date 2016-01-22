@@ -612,6 +612,12 @@ void ObjectMgr::LoadCreatureTemplates()
                 continue;
             }
 
+            if (cInfo->unit_class != heroicInfo->unit_class)
+            {
+                sLog.outErrorDb("Creature (Entry: %u, class %u) has different `unit_class` in heroic mode (Entry: %u, class %u).",i, cInfo->unit_class, cInfo->HeroicEntry, heroicInfo->unit_class);
+                continue;
+            }
+
             if (cInfo->npcflag != heroicInfo->npcflag)
             {
                 sLog.outErrorDb("Creature (Entry: %u) listed in creature_template_substitution has different npcflag in heroic mode.", i);
@@ -682,6 +688,12 @@ void ObjectMgr::LoadCreatureTemplates()
                     const_cast<CreatureInfo*>(cInfo)->KillCredit[k] = 0;
                 }
             }
+        }
+
+        if (!cInfo->unit_class || ((1 << (cInfo->unit_class-1)) & CLASSMASK_ALL_CREATURES) == 0)
+        {
+            sLog.outErrorDb("Creature (Entry: %u) has invalid unit_class (%u) in creature_template. Set to 1 (UNIT_CLASS_WARRIOR).", cInfo->Entry, cInfo->unit_class);
+            const_cast<CreatureInfo*>(cInfo)->unit_class = UNIT_CLASS_WARRIOR;
         }
 
         if (cInfo->dmgschool >= MAX_SPELL_SCHOOL)

@@ -12749,11 +12749,7 @@ void Unit::RemoveCharmedBy(Unit* charmer)
                     CreatureInfo const* cinfo = ToCreature()->GetCreatureTemplate();
                     if (cinfo && cinfo->type == CREATURE_TYPE_DEMON)
                     {
-                        CreatureDataAddon const* cainfo = ToCreature()->GetCreatureAddon();
-                        if (cainfo && cainfo->bytes0 != 0)
-                            SetUInt32Value(UNIT_FIELD_BYTES_0, cainfo->bytes0);
-                        else
-                            RemoveFlag(UNIT_FIELD_BYTES_0, 2048);
+                        SetByteValue(UNIT_FIELD_BYTES_0, 1, uint8(cinfo->unit_class));
 
                         if (GetCharmInfo())
                             GetCharmInfo()->SetPetNumber(0, true);

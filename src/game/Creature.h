@@ -157,6 +157,7 @@ struct CreatureInfo
     uint32  attackpower;
     uint32  baseattacktime;
     uint32  rangeattacktime;
+    uint32  unit_class;                                     // enum Classes. Note only 4 classes are known for creatures.
     uint32  unit_flags;                                     // enum UnitFlags mask values
     uint32  dynamicflags;
     uint32  family;                                         // enum CreatureFamily values for type == CREATURE_TYPE_BEAST, or 0 in another cases
@@ -277,7 +278,6 @@ struct CreatureDataAddon
     uint32 guidOrEntry;
     uint32 path_id;
     uint32 mount;
-    uint32 bytes0;
     uint32 bytes1;
     uint32 bytes2;
     uint32 emote;
