@@ -1133,29 +1133,47 @@ void Creature::SelectLevel()
     uint32 rank = IsPet() ? 0 : cInfo->rank;
 
     // level
-    uint8 minlevel = std::min(cInfo->maxlevel, cInfo->minlevel);
-    uint8 maxlevel = std::max(cInfo->maxlevel, cInfo->minlevel);
+    uint32 const minlevel = cInfo->minlevel;
+    uint32 const maxlevel = cInfo->maxlevel;
     uint8 level = minlevel == maxlevel ? minlevel : urand(minlevel, maxlevel);
     SetLevel(level);
 
-    float rellevel = maxlevel == minlevel ? 0 : (float(level - minlevel)) / (maxlevel - minlevel);
+    uint32 health;
+    uint32 mana;
 
-    // health
-    float healthmod = _GetHealthMod(rank);
+    if (CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(level, cInfo->unit_class, cInfo->exp))
+    {
+        // Use Creature Stats to calculate stat values
 
-    uint32 minhealth = std::min(cInfo->maxhealth, cInfo->minhealth);
-    uint32 maxhealth = std::max(cInfo->maxhealth, cInfo->minhealth);
-    uint32 health = uint32(healthmod * (minhealth + uint32(rellevel * (maxhealth - minhealth))));
+        // health
+        health = cCLS->BaseHealth * cInfo->ModHealth;
+
+        // mana
+        mana = cCLS->BaseMana * cInfo->ModMana;
+    }
+    else
+    {
+        // Use old style to calculate stat values
+        float rellevel = maxlevel == minlevel ? 0 : (float(level - minlevel)) / (maxlevel - minlevel);
+
+        uint32 minhealth = std::min(cInfo->maxhealth, cInfo->minhealth);
+        uint32 maxhealth = std::max(cInfo->maxhealth, cInfo->minhealth);
+        health = uint32(minhealth + uint32(rellevel * (maxhealth - minhealth)));
+
+        // mana
+        uint32 minmana = std::min(cInfo->maxmana, cInfo->minmana);
+        uint32 maxmana = std::max(cInfo->maxmana, cInfo->minmana);
+        mana = minmana + uint32(rellevel * (maxmana - minmana));
+    }
+
+    health *= _GetHealthMod(rank); // Apply custom config settting
+    if (health < 1)
+        health = 1;
 
     SetCreateHealth(health);
     SetMaxHealth(health);
     SetHealth(health);
     ResetPlayerDamageReq();
-
-    // mana
-    uint32 minmana = std::min(cInfo->maxmana, cInfo->minmana);
-    uint32 maxmana = std::max(cInfo->maxmana, cInfo->minmana);
-    uint32 mana = minmana + uint32(rellevel * (maxmana - minmana));
 
     SetCreateMana(mana);
     SetMaxPower(POWER_MANA, mana);                          //MAX Mana

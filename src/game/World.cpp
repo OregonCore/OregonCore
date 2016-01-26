@@ -1311,6 +1311,9 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Loading Equipment templates...");
     sObjectMgr.LoadEquipmentTemplates();
 
+    sConsole.SetLoadingLabel("Loading Creature Base Stats...");
+    sObjectMgr.LoadCreatureClassLevelStats();
+
     sConsole.SetLoadingLabel("Loading Creature templates...");
     sObjectMgr.LoadCreatureTemplates();
 

@@ -140,6 +140,7 @@ struct CreatureInfo
     uint32  GossipMenuId;
     uint32  minlevel;
     uint32  maxlevel;
+    int32 exp;
     uint32  minhealth;
     uint32  maxhealth;
     uint32  minmana;
@@ -186,6 +187,8 @@ struct CreatureInfo
     char const* AIName;
     uint32  MovementType;
     uint32  InhabitType;
+    float   ModHealth;
+    float   ModMana;
     bool    RacialLeader;
     bool    RegenHealth;
     uint32  equipmentId;
@@ -215,6 +218,17 @@ struct CreatureInfo
     {
         return AIName;
     }
+};
+
+// Bases values for given Level and UnitClass
+struct CreatureBaseStats
+{
+    uint32  BaseHealth;
+    uint32  BaseMana;
+    float   BaseDamage;
+    float   BaseMeleeAttackPower;
+    float   BaseRangedAttackPower;
+    uint32  BaseArmor;
 };
 
 struct CreatureLocale

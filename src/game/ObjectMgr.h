@@ -765,6 +765,8 @@ class ObjectMgr
             return &mCreatureQuestRelations;
         }
 
+        CreatureBaseStats const* GetCreatureClassLvlStats(uint32 level, uint32 unitClass, int32 expansion) const;
+
         void LoadGameobjectQuestRelations();
         void LoadGameobjectInvolvedRelations();
         void LoadCreatureQuestRelations();
@@ -802,6 +804,7 @@ class ObjectMgr
         bool SetCreatureLinkedRespawn(uint32 guid, uint32 linkedGuid);
         void LoadCreatureRespawnTimes();
         void LoadCreatureAddons();
+        void LoadCreatureClassLevelStats();
         void LoadCreatureModelInfo();
         void LoadEquipmentTemplates();
         void LoadGameObjectLocales();
@@ -1231,6 +1234,9 @@ class ObjectMgr
         typedef std::map<uint32, std::vector<std::string> > HalfNameMap;
         HalfNameMap PetHalfName0;
         HalfNameMap PetHalfName1;
+
+        // Array to store creature stats, Max creature level + 1 (for data alignement with in game level)
+        CreatureBaseStats m_creatureClassLvlStats[DEFAULT_MAX_CREATURE_LEVEL + 1][MAX_CREATURE_CLASS][MAX_EXPANSION + 1];
 
         MapObjectGuids mMapObjectGuids;
         CreatureDataMap mCreatureDataMap;
