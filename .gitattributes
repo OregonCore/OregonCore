@@ -10,3 +10,6 @@
 *.txt whitespace=trailing-space eol=lf
 *.md  whitespace=trailing-space eol=lf
 *.dox whitespace=trailing-space eol=lf
+
+# ignore dependencies
+dep/* text=auto !eol

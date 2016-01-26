@@ -24,7 +24,6 @@ add_definitions(-std=gnu99 -pipe -fvisibility=hidden -O3 -funroll-loops --no-war
 
 add_custom_command(
     OUTPUT jemallocs_internals
-    COMMAND chmod -R +x ${CMAKE_CURRENT_SOURCE_DIR} #we need to make shells scripts executable
     COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/configure CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} --quiet
     COMMAND cmake -E touch jemallocs_internals
 )
