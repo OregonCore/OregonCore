@@ -59,7 +59,7 @@ void DynamicObject::RemoveFromWorld()
             if (Unit* caster = GetCaster())
             {
                 if (caster->GetTypeId() == TYPEID_PLAYER)
-                    ((Player*)caster)->SetViewpoint(this, false);
+                    caster->ToPlayer()->SetViewpoint(this, false);
             }
             else
                 sLog.outError("Crash alert! DynamicObject::RemoveFromWorld cannot find viewpoint owner");
@@ -90,7 +90,7 @@ bool DynamicObject::CreateDynamicObject(uint32 guidlow, Unit* caster, uint32 spe
     // If any other value is used, the client will _always_ use the radius provided in DYNAMICOBJECT_RADIUS, but
     // precompensation is necessary (eg radius *= 2) for many spells. Anyway, blizz sends 0x0001 for all the spells
     // I saw sniffed...
-    SetUInt32Value(DYNAMICOBJECT_BYTES, 0x00000001);
+    SetByteValue(DYNAMICOBJECT_BYTES, 0, 0x00000001);
     SetUInt32Value(DYNAMICOBJECT_SPELLID, spellId);
     SetFloatValue(DYNAMICOBJECT_RADIUS, radius);
     SetUInt32Value(DYNAMICOBJECT_CASTTIME, getMSTime());
@@ -133,6 +133,17 @@ void DynamicObject::Update(uint32 p_time)
         m_aliveDuration -= p_time;
     else
         expired = true;
+
+    if (m_effIndex < 4)
+    {
+        if (m_updateTimer < p_time)
+        {
+            Oregon::DynamicObjectUpdater notifier(*this, caster);
+            VisitNearbyObject(GetRadius(), notifier);
+            m_updateTimer = 500; // is this official-like?
+        }
+        else m_updateTimer -= p_time;
+    }
 
     if (expired)
     {
