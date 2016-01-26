@@ -379,7 +379,7 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE* output, WMORoot* rootWMO, bool pPrecis
         fwrite(MoviEx, 2, nColTriangles * 3, output);
 
         // write vertices
-        int VERT[] = {0x54524556, static_cast<int>(nColVertices * 3 * sizeof(float) + 4, nColVertices)}; // "VERT"
+        int VERT[] = {0x54524556, nColVertices * 3 * static_cast<int>(sizeof(float)) + 4, nColVertices}; // "VERT"
         int check = 3 * nColVertices;
         fwrite(VERT, 4, 3, output);
         for (uint32 i = 0; i < nVertices; ++i)
