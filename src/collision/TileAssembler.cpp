@@ -513,7 +513,8 @@ bool TileAssembler::convertRawFile(const std::string& pModelFilename)
         for (uint32 g = 0; g < groups && succeed; ++g)
             succeed = groupsArray[g].Read(rf);
 
-        fclose(rf);
+        if (succeed) // if not, fr was already closed
+            fclose(rf);
         return succeed;
     }
 
