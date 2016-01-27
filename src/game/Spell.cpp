@@ -3952,11 +3952,15 @@ SpellCastResult Spell::CheckCast(bool strict)
             return castResult;
     }
 
-    // Triggered spells also have range check
-    // TODO: determine if there is some flag to enable/disable the check
-    castResult = CheckRange(strict);
-    if (castResult != SPELL_CAST_OK)
-        return castResult;
+    if (!m_IsTriggeredSpell)
+    {
+        if (!m_triggeredByAuraSpell)
+        {
+            castResult = CheckRange(strict);
+            if (castResult != SPELL_CAST_OK)
+                return castResult;
+        }
+    }
 
     // ImpliciteTargetA-B = 38, If fact there is 0 Spell with  ImpliciteTargetB=38
     if (m_UniqueTargetInfo.empty())                          // skip second canCast apply (for delayed spells for example)
