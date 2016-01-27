@@ -9,8 +9,10 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+find_package(Git)
+
 execute_process(
-  COMMAND ${GIT_EXECUTABLE} rev-list HEAD --abbrev-commit --count
+  COMMAND "${GIT_EXECUTABLE}" rev-list HEAD --abbrev-commit --count
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   OUTPUT_VARIABLE rev_id_str
   OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -18,7 +20,7 @@ execute_process(
 )
 
 execute_process(
-  COMMAND ${GIT_EXECUTABLE} rev-list HEAD --abbrev-commit -1
+  COMMAND "${GIT_EXECUTABLE}" rev-list HEAD --abbrev-commit -1
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   OUTPUT_VARIABLE rev_hash_str
   OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -26,7 +28,7 @@ execute_process(
 )
 
 execute_process(
-  COMMAND ${GIT_EXECUTABLE} diff --quiet HEAD
+  COMMAND "${GIT_EXECUTABLE}" diff --quiet HEAD
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   RESULT_VARIABLE rev_unstaged_changes
 )
@@ -34,8 +36,9 @@ execute_process(
 # Last minute check - ensure that we have a proper revision
 # If everything above fails (means the user has erased the git revisional control directory, or runs archive and erased their .git_archival.txt)
 if(NOT "${rev_id_str}")
-  message(STATUS "WARNING - No revision-information found? Although this is not fatal, if you want any support in the future, please install git and clone the source properly - (do not just download files)")
-
+  if (CMAKE_BUILD_TYPE)
+      message(STATUS "WARNING - No revision-information found? Although this is not fatal, if you want any support in the future, please install git and clone the source properly - (do not just download files)")
+  endif()
   # Ok, since we have no valid ways of finding/setting the revision, let's force some defaults
   set(rev_hash_str "Unknown")
   set(rev_hash "0")
@@ -45,7 +48,9 @@ endif()
 
 # Detect is source is actually modified
 if(rev_unstaged_changes)
-  message(STATUS "WARNING - Unstaged (uncommitted) changes were found.")
+  if (CMAKE_BUILD_TYPE)
+      message(STATUS "WARNING - Unstaged (uncommitted) changes were found.")
+  endif()
   set(rev_id_str "${rev_id_str}+")
   set(rev_hash_str "${rev_hash_str}+")
 endif()
