@@ -74,6 +74,10 @@ void PetAI::_stopAttack()
 
 void PetAI::UpdateAI(const uint32 diff)
 {
+    // We're a pet, so we must have charm info
+    if (!me->GetCharmInfo())
+        return;
+
     Unit* owner = me->GetCharmerOrOwner();
 
     if (m_updateAlliesTimer <= diff)
@@ -98,7 +102,7 @@ void PetAI::UpdateAI(const uint32 diff)
 
         DoMeleeAttackIfReady();
     }
-    else if (owner && me->GetCharmInfo()) //no victim
+    else if (owner) //no victim
     {
         if (Unit* nextTarget = SelectNextTarget())
             AttackStart(nextTarget);
@@ -112,9 +116,6 @@ void PetAI::UpdateAI(const uint32 diff)
     }
     else if (owner && !me->HasUnitState(UNIT_STATE_FOLLOW)) // no charm info and no victim
         me->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, me->GetFollowAngle());
-
-    if (!me->GetCharmInfo())
-        return;
 
     // Autocast (casted only in combat or persistent spells in any state)
     if (me->GetGlobalCooldown() == 0 && !me->HasUnitState(UNIT_STATE_CASTING))
@@ -289,6 +290,9 @@ void PetAI::KilledUnit(Unit* victim)
         AttackStart(nextTarget);
     else
     {
+        if (!me->GetCharmInfo())
+            return;
+
         // Cancels the attack command so the pet stops chasing the
         // target it is attacking, and returns the pet to his owner
         me->GetCharmInfo()->SetIsCommandAttack(false);
@@ -301,7 +305,7 @@ void PetAI::AttackStart(Unit* target)
     // Overrides Unit::AttackStart to correctly evaluate Pet states
 
     // Check all pet states to decide if we can attack this target
-    if (!_CanAttack(target))
+    if (!me->GetCharmInfo() || !_CanAttack(target))
         return;
 
     // Only chase if not commanded to stay or if stay but commanded to attack
@@ -392,9 +396,12 @@ void PetAI::DoAttack(Unit* target, bool chase)
     }
 }
 
+/// Receives notification when pet reaches stay or follow owner
 void PetAI::MovementInform(uint32 moveType, uint32 data)
 {
-    // Receives notification when pet reaches stay or follow owner
+    if (!me->GetCharmInfo())
+        return;
+
     switch (moveType)
     {
         case POINT_MOTION_TYPE:
@@ -413,7 +420,7 @@ void PetAI::MovementInform(uint32 moveType, uint32 data)
         case FOLLOW_MOTION_TYPE:
         {
             // If data is owner's GUIDLow then we've reached follow point
-            if (me->GetCharmerOrOwner() && me->GetCharmInfo() && data == me->GetCharmerOrOwner()->GetGUIDLow() && me->GetCharmInfo()->IsReturning())
+            if (me->GetCharmerOrOwner() && data == me->GetCharmerOrOwner()->GetGUIDLow() && me->GetCharmInfo()->IsReturning())
             {
                 ClearCharmInfoFlags();
                 me->GetCharmInfo()->SetIsFollowing(true);
