@@ -2239,7 +2239,7 @@ void Spell::prepare(SpellCastTargets* targets, Aura* triggeredByAura)
     SpellCastResult result = CheckCast(true);
     if (result != SPELL_CAST_OK && !IsAutoRepeat())                      //always cast autorepeat dummy for triggering
     {
-        if (triggeredByAura && !IsPassiveSpell(m_spellInfo))
+        if (triggeredByAura && !triggeredByAura->IsPassive())
         {
             SendChannelUpdate(0);
             triggeredByAura->SetAuraDuration(0);
