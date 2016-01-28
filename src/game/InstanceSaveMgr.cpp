@@ -558,6 +558,7 @@ void InstanceSaveManager::ScheduleReset(bool add, time_t time, InstResetEvent ev
 void InstanceSaveManager::Update()
 {
     time_t now = time(NULL), t;
+
     while (!m_resetTimeQueue.empty() && (t = m_resetTimeQueue.begin()->first) < now)
     {
         InstResetEvent& event = m_resetTimeQueue.begin()->second;
@@ -617,11 +618,18 @@ void InstanceSaveManager::_ResetInstance(uint32 mapid, uint32 instanceId)
         return;
 
     InstanceSaveHashMap::iterator itr = m_instanceSaveById.find(instanceId);
-    if (itr != m_instanceSaveById.end()) _ResetSave(itr);
+    if (itr != m_instanceSaveById.end())
+        _ResetSave(itr);
+
     DeleteInstanceFromDB(instanceId);                       // even if save not loaded
 
     Map* iMap = ((MapInstanced*)map)->FindMap(instanceId);
-    if (iMap && iMap->IsDungeon()) ((InstanceMap*)iMap)->Reset(INSTANCE_RESET_RESPAWN_DELAY);
+
+    if (iMap)
+    {
+        if (iMap->IsDungeon())
+            ((InstanceMap*)iMap)->Reset(INSTANCE_RESET_RESPAWN_DELAY);
+    }
     else sObjectMgr.DeleteRespawnTimeForInstance(instanceId);   // even if map is not loaded
 }
 
