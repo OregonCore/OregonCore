@@ -32,7 +32,6 @@ npc_morokk
 npc_ogron
 npc_private_hendel
 npc_zelfrax
-npc_cassa_crimsonwing
 at_nats_landing
 npc_mottled_drywallow_crocolisk
 EndContentData */
@@ -1068,37 +1067,6 @@ CreatureAI* GetAI_npc_zelfrax(Creature* pCreature)
 }
 
 /*######
-## npc_cassa_crimsonwing
-######*/
-
-enum
-{
-    QUEST_SURVEY_ALCAZ          = 11142,
-    SPELL_ALCAZ_SURVEY          = 42295
-};
-
-#define GOSSIP_RIDE             "<Ride the gryphons to Survey Alcaz Island>"
-
-bool GossipHello_npc_cassa_crimsonwing(Player* pPlayer, Creature* pCreature)
-{
-    if (pPlayer->GetQuestStatus(QUEST_SURVEY_ALCAZ) == QUEST_STATUS_INCOMPLETE)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_RIDE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
-    return true;
-}
-
-bool GossipSelect_npc_cassa_crimsonwing(Player* pPlayer, Creature* /*pCreature*/, uint32 /*uiSender*/, uint32 uiAction)
-{
-    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
-    {
-        pPlayer->CLOSE_GOSSIP_MENU();
-        pPlayer->CastSpell(pPlayer, SPELL_ALCAZ_SURVEY, false);
-    }
-    return true;
-}
-
-/*######
 ## at_nats_landing
 ######*/
 enum
@@ -1358,12 +1326,6 @@ void AddSC_dustwallow_marsh()
     newscript = new Script;
     newscript->Name = "npc_zelfrax";
     newscript->GetAI = &GetAI_npc_zelfrax;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_cassa_crimsonwing";
-    newscript->pGossipHello = &GossipHello_npc_cassa_crimsonwing;
-    newscript->pGossipSelect = &GossipSelect_npc_cassa_crimsonwing;
     newscript->RegisterSelf();
 
     newscript = new Script;

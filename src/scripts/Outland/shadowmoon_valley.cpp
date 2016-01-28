@@ -30,7 +30,6 @@ npcs_flanis_swiftwing_and_kagrosh
 npc_murkblood_overseer
 npc_neltharaku
 npc_karynaku
-npc_oronok_tornheart
 npc_overlord_morghor
 npc_earthmender_wilda
 mob_torloth_the_magnificent
@@ -566,75 +565,6 @@ bool GossipSelect_npc_neltharaku(Player* player, Creature* pCreature, uint32 /*s
     case GOSSIP_ACTION_INFO_DEF+4:
         player->CLOSE_GOSSIP_MENU();
         player->AreaExploredOrEventHappens(10814);
-        break;
-    }
-    return true;
-}
-
-/*######
-## npc_oronok
-######*/
-
-#define GOSSIP_ORONOK1 "I am ready to hear your story, Oronok."
-#define GOSSIP_ORONOK2 "How do I find the cipher?"
-#define GOSSIP_ORONOK3 "How do you know all of this?"
-#define GOSSIP_ORONOK4 "Yet what? What is it, Oronok?"
-#define GOSSIP_ORONOK5 "Continue, please."
-#define GOSSIP_ORONOK6 "So what of the cipher now? And your boys?"
-#define GOSSIP_ORONOK7 "I will find your boys and the cipher, Oronok."
-
-bool GossipHello_npc_oronok_tornheart(Player* player, Creature* pCreature)
-{
-    if (pCreature->isQuestGiver())
-        player->PrepareQuestMenu(pCreature->GetGUID());
-    if (pCreature->isVendor())
-        player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-
-    if (player->GetQuestStatus(10519) == QUEST_STATUS_INCOMPLETE)
-    {
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-        player->SEND_GOSSIP_MENU(10312, pCreature->GetGUID());
-    }
-    else
-        player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
-
-    return true;
-}
-
-bool GossipSelect_npc_oronok_tornheart(Player* player, Creature* pCreature, uint32 /*sender*/, uint32 action)
-{
-    switch (action)
-    {
-    case GOSSIP_ACTION_TRADE:
-        player->SEND_VENDORLIST(pCreature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF:
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-        player->SEND_GOSSIP_MENU(10313, pCreature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+1:
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-        player->SEND_GOSSIP_MENU(10314, pCreature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+2:
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-        player->SEND_GOSSIP_MENU(10315, pCreature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+3:
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-        player->SEND_GOSSIP_MENU(10316, pCreature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+4:
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
-        player->SEND_GOSSIP_MENU(10317, pCreature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+5:
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
-        player->SEND_GOSSIP_MENU(10318, pCreature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+6:
-        player->CLOSE_GOSSIP_MENU();
-        player->AreaExploredOrEventHappens(10519);
         break;
     }
     return true;
@@ -2181,12 +2111,6 @@ void AddSC_shadowmoon_valley()
     newscript = new Script;
     newscript->Name = "npc_karynaku";
     newscript->pQuestAccept = &QuestAccept_npc_karynaku;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_oronok_tornheart";
-    newscript->pGossipHello =  &GossipHello_npc_oronok_tornheart;
-    newscript->pGossipSelect = &GossipSelect_npc_oronok_tornheart;
     newscript->RegisterSelf();
 
     newscript = new Script;

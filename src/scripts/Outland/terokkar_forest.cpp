@@ -696,35 +696,6 @@ CreatureAI* GetAI_npc_akuno(Creature* pCreature)
 }
 
 /*######
-## npc_skyguard_handler_deesak
-######*/
-
-#define GOSSIP_SKYGUARD "Fly me to Ogri'la please"
-
-bool GossipHello_npc_skyguard_handler_deesak(Player* pPlayer, Creature* pCreature)
-{
-    if (pCreature->isQuestGiver())
-        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
-
-    if (pPlayer->GetReputationRank(1031) >= REP_HONORED)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SKYGUARD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
-
-    return true;
-}
-
-bool GossipSelect_npc_skyguard_handler_deesak(Player* pPlayer, Creature* /*pCreature*/, uint32 /*uiSender*/, uint32 uiAction)
-{
-    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
-    {
-        pPlayer->CLOSE_GOSSIP_MENU();
-        pPlayer->CastSpell(pPlayer, 41279, true);             //TaxiPath 705 (Taxi - Skettis to Skyguard Outpost)
-    }
-    return true;
-}
-
-/*######
 ## npc_letoll
 ######*/
 
@@ -1422,12 +1393,6 @@ void AddSC_terokkar_forest()
     newscript = new Script;
     newscript->Name = "go_mana_bomb";
     newscript->pGOHello = &GOHello_go_mana_bomb;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_skyguard_handler_deesak";
-    newscript->pGossipHello =  &GossipHello_npc_skyguard_handler_deesak;
-    newscript->pGossipSelect = &GossipSelect_npc_skyguard_handler_deesak;
     newscript->RegisterSelf();
 
     newscript = new Script;

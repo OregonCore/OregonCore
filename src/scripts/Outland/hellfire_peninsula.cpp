@@ -30,7 +30,6 @@ npc_naladu
 npc_tracy_proudwell
 npc_trollbane
 npc_fel_guard_hound
-npc_wing_commander_dabiree
 npc_gryphoneer_leafbeard
 npc_wing_commander_brack
 npc_wounded_blood_elf
@@ -412,46 +411,6 @@ struct npc_fel_guard_houndAI : public ScriptedAI
 CreatureAI* GetAI_npc_fel_guard_hound(Creature* pCreature)
 {
     return new npc_fel_guard_houndAI(pCreature);
-}
-
-/*######
-## npc_wing_commander_dabiree
-######*/
-
-#define GOSSIP_ITEM1_DAB "Fly me to Murketh and Shaadraz Gateways"
-#define GOSSIP_ITEM2_DAB "Fly me to Shatter Point"
-
-bool GossipHello_npc_wing_commander_dabiree(Player* player, Creature* pCreature)
-{
-    if (pCreature->isQuestGiver())
-        player->PrepareQuestMenu(pCreature->GetGUID());
-
-    //Mission: The Murketh and Shaadraz Gateways
-    if (player->GetQuestStatus(10146) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM1_DAB, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-    //Shatter Point
-    if (!player->GetQuestRewardStatus(10340))
-        player->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM2_DAB, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
-
-    return true;
-}
-
-bool GossipSelect_npc_wing_commander_dabiree(Player* player, Creature* /*pCreature*/, uint32 /*sender*/, uint32 action)
-{
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)
-    {
-        player->CLOSE_GOSSIP_MENU();
-        player->CastSpell(player, 33768, true);             //TaxiPath 585 (Gateways Murket and Shaadraz)
-    }
-    if (action == GOSSIP_ACTION_INFO_DEF + 2)
-    {
-        player->CLOSE_GOSSIP_MENU();
-        player->CastSpell(player, 35069, true);             //TaxiPath 612 (Taxi - Hellfire Peninsula - Expedition Point to Shatter Point)
-    }
-    return true;
 }
 
 /*######
@@ -1979,12 +1938,6 @@ void AddSC_hellfire_peninsula()
     newscript->Name = "npc_trollbane";
     newscript->pGossipHello = &GossipHello_npc_trollbane;
     newscript->pGossipSelect = &GossipSelect_npc_trollbane;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_wing_commander_dabiree";
-    newscript->pGossipHello =   &GossipHello_npc_wing_commander_dabiree;
-    newscript->pGossipSelect =  &GossipSelect_npc_wing_commander_dabiree;
     newscript->RegisterSelf();
 
     newscript = new Script;
