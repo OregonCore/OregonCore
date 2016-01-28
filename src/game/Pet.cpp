@@ -576,7 +576,7 @@ void Pet::Update(uint32 diff)
     }
 
     // Handle outdoor movements speed bonuses (every 1sec check for change)
-    if (sWorld.getConfig(CONFIG_VMAP_INDOOR_CHECK) && m_owner)
+    if (m_owner)
     {
         if (m_outdoorBonusCheckTimer <= diff)
         {

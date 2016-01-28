@@ -172,11 +172,6 @@ EAIErrorLevel = 2
 #        Default: 0 (disable, less CPU usage)
 #                 1 (enable, each totem created check LOS)
 #
-#    vmap.enableIndoorCheck
-#        Enable/Disable VMap based indoor check to remove outdoor-only auras (mounts etc.)
-#                 0 (disabled, somewhat less CPU usage)
-#        Default: 1 (enabled)
-#
 #    DetectPosCollision
 #        Check final move position, summon position, etc for visible collision
 #         with other objects or wall (wall only if vmaps are enabled)
@@ -253,7 +248,6 @@ vmap.enableHeight = 1
 vmap.ignoreSpellIds = "7720"
 vmap.petLOS = 1
 vmap.totem = 1
-vmap.enableIndoorCheck = 1
 DetectPosCollision = 1
 TargetPosRecalculateRange = 1.5
 mmap.enabled = 1

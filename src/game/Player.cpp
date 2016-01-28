@@ -5762,29 +5762,26 @@ void Player::CheckAreaExploreAndOutdoor()
     bool isOutdoor;
     uint16 areaFlag = GetBaseMap()->GetAreaFlag(GetPositionX(), GetPositionY(), GetPositionZ(), &isOutdoor);
 
-    if (sWorld.getConfig(CONFIG_VMAP_INDOOR_CHECK))
-    {
-        if (!isOutdoor && !isGameMaster())
-            RemoveAurasWithAttribute(SPELL_ATTR0_OUTDOORS_ONLY);
+    if (!isOutdoor && !isGameMaster())
+        RemoveAurasWithAttribute(SPELL_ATTR0_OUTDOORS_ONLY);
 
-        /* Process passive spells which 'works only while outdoors';
-           when we enter indoor, the above line will take care of that,
-           however we need to reset back if we enter outdoors again */
-        if (!m_wasOutdoors && isOutdoor)
+    /* Process passive spells which 'works only while outdoors';
+    when we enter indoor, the above line will take care of that,
+    however we need to reset back if we enter outdoors again */
+    if (!m_wasOutdoors && isOutdoor)
+    {
+        for (PlayerSpellMap::const_iterator it = m_spells.begin(); it != m_spells.end(); it++)
         {
-            for (PlayerSpellMap::const_iterator it = m_spells.begin(); it != m_spells.end(); it++)
+            SpellEntry const* spellInfo = sSpellStore.LookupEntry(it->first);
+            if (spellInfo->Attributes & SPELL_ATTR0_OUTDOORS_ONLY && spellInfo->Stances == (1 << (m_form - 1)))
             {
-                SpellEntry const* spellInfo = sSpellStore.LookupEntry(it->first);
-                if (spellInfo->Attributes & SPELL_ATTR0_OUTDOORS_ONLY && spellInfo->Stances == (1 << (m_form - 1)))
-                {
-                    sLog.outDetail("Reseting outdoor aura: %u", spellInfo->Id);
-                    CastSpell(this, spellInfo, true);
-                }
+                sLog.outDetail("Reseting outdoor aura: %u", spellInfo->Id);
+                CastSpell(this, spellInfo, true);
             }
         }
-
-        m_wasOutdoors = isOutdoor;
     }
+
+    m_wasOutdoors = isOutdoor;
 
     if (areaFlag == 0xffff)
         return;
