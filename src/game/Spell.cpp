@@ -2263,9 +2263,7 @@ void Spell::prepare(SpellCastTargets* targets, Aura* triggeredByAura)
 
     // don't allow channeled spells / spells with cast time to be casted while moving
     // (even if they are interrupted on moving, spells with almost immediate effect get to have their effect processed before movement interrupter kicks in)
-    if ((IsChanneledSpell(m_spellInfo) || m_casttime)
-        && m_caster->GetTypeId() == TYPEID_PLAYER && m_caster->isMoving()
-        && m_spellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_MOVEMENT)
+    if ((IsChanneledSpell(m_spellInfo) || m_casttime) && m_caster->GetTypeId() == TYPEID_PLAYER && m_caster->isMoving() && m_spellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_MOVEMENT)
     {
         SendCastResult(SPELL_FAILED_MOVING);
         finish(false);
@@ -2297,9 +2295,8 @@ void Spell::prepare(SpellCastTargets* targets, Aura* triggeredByAura)
         if (m_caster->GetTypeId() == TYPEID_PLAYER)
             m_caster->ToPlayer()->AddGlobalCooldown(m_spellInfo, this);
 
-        if (!m_casttime && !m_spellInfo->StartRecoveryTime
-            && !m_castItemGUID     //item: first cast may destroy item and second cast causes crash
-            && GetCurrentContainer() == CURRENT_GENERIC_SPELL)
+        // item: first cast may destroy item and second cast causes crash
+        if (!m_casttime && !m_spellInfo->StartRecoveryTime && !m_castItemGUID && GetCurrentContainer() == CURRENT_GENERIC_SPELL)
             cast(true);
     }
 }
@@ -3699,13 +3696,17 @@ void Spell::TriggerSpell()
 
 SpellCastResult Spell::CheckCast(bool strict)
 {
+    // check death state
+    if (!m_caster->IsAlive() && !m_spellInfo->Attributes & SPELL_ATTR0_PASSIVE && !(m_spellInfo->Attributes & SPELL_ATTR0_CASTABLE_WHILE_DEAD || (m_IsTriggeredSpell && !m_triggeredByAuraSpell)))
+        return SPELL_FAILED_CASTER_DEAD;
+
     // check cooldowns to prevent cheating
     if (!m_IsTriggeredSpell)
         if (Player* plr = m_caster->ToPlayer())
             if (plr->HasSpellCooldown(m_spellInfo->Id) || (strict && plr->HasGlobalCooldown(m_spellInfo)))
                 return SPELL_FAILED_NOT_READY;
 
-    // only allow triggered spells if at an ended battleground
+    // only triggered spells can be processed an ended battleground
     if (!m_IsTriggeredSpell && m_caster->GetTypeId() == TYPEID_PLAYER)
         if (Battleground* bg = m_caster->ToPlayer()->GetBattleground())
             if (bg->GetStatus() == STATUS_WAIT_LEAVE)
@@ -3798,6 +3799,15 @@ SpellCastResult Spell::CheckCast(bool strict)
             if (target->isInFlight())
                 return SPELL_FAILED_BAD_TARGETS;
 
+            // Must be behind the target.
+            if (m_spellInfo->AttributesEx2 == 0x100000 && (m_spellInfo->AttributesEx & 0x200) == 0x200 && target->HasInArc(static_cast<float>(M_PI), m_caster)
+                && (m_spellInfo->SpellFamilyName != SPELLFAMILY_DRUID || m_spellInfo->SpellFamilyFlags != 0x0000000000020000LL))
+                return SPELL_FAILED_NOT_BEHIND;
+
+            // Target must be facing you.
+            if ((m_spellInfo->Attributes == 0x150010) && !target->HasInArc(static_cast<float>(M_PI), m_caster))
+                return SPELL_FAILED_NOT_INFRONT;
+
             // Do not allow these spells to target creatures not tapped by us (Banish, Polymorph, many quest spells)
             if (m_spellInfo->AttributesEx2 & SPELL_ATTR2_REQUIRE_TAPPED_BY_CASTER)
                 if (Creature const* targetCreature = target->ToCreature())
@@ -3832,7 +3842,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
         }
 
-        // check pet presents
+        // check pet presence
         for (int j = 0; j < MAX_SPELL_EFFECTS; ++j)
         {
             if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_UNIT_PET)
@@ -3882,34 +3892,12 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
         }
 
-        /* This prevented to cast heal on players in cyclone, which should be possible
-        if (IsPositiveSpell(m_spellInfo->Id))
-        {
-            if (target->IsImmunedToSpell(m_spellInfo,false))
-                return SPELL_FAILED_TARGET_AURASTATE;
-        }*/
-
-        //Must be behind the target.
-        if (m_spellInfo->AttributesEx2 == 0x100000 && (m_spellInfo->AttributesEx & 0x200) == 0x200 && target->HasInArc(M_PI, m_caster)
-            && (m_spellInfo->SpellFamilyName != SPELLFAMILY_DRUID || m_spellInfo->SpellFamilyFlags != 0x0000000000020000LL))
-        {
-            SendInterrupted(2);
-            return SPELL_FAILED_NOT_BEHIND;
-        }
-
-        //Target must be facing you.
-        if ((m_spellInfo->Attributes == 0x150010) && !target->HasInArc(M_PI, m_caster))
-        {
-            SendInterrupted(2);
-            return SPELL_FAILED_NOT_INFRONT;
-        }
-
         // check if target is in combat
         if (target != m_caster && (m_spellInfo->AttributesEx & SPELL_ATTR1_CANT_TARGET_IN_COMBAT) && target->IsInCombat())
             return SPELL_FAILED_TARGET_AFFECTING_COMBAT;
     }
 
-    // Spell casted only on battleground
+    // Spell casted only in battleground
     if ((m_spellInfo->AttributesEx3 & SPELL_ATTR3_BATTLEGROUND) &&  m_caster->GetTypeId() == TYPEID_PLAYER)
         if (!m_caster->ToPlayer()->InBattleground())
             return SPELL_FAILED_ONLY_BATTLEGROUNDS;
@@ -4242,7 +4230,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     return SPELL_FAILED_TARGET_UNSKINNABLE;
 
                 Creature* creature = m_targets.getUnitTarget()->ToCreature();
-                if (creature->GetCreatureType() != CREATURE_TYPE_CRITTER && !creature->loot.isLooted())
+                if (!creature->IsCritter() && !creature->loot.isLooted())
                     return SPELL_FAILED_TARGET_NOT_LOOTED;
 
                 uint32 skill = creature->GetCreatureTemplate()->GetRequiredLootSkill();
@@ -4445,6 +4433,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 case SUMMON_CATEGORY_PET:
                     if (m_caster->GetPetGUID())
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
+                    // intentional missing break, check both GetPetGUID() and GetCharmGUID for SUMMON_CATEGORY_PET
                 case SUMMON_CATEGORY_PUPPET:
                     if (m_caster->GetCharmGUID())
                         return SPELL_FAILED_ALREADY_HAVE_CHARM;
@@ -4465,13 +4454,13 @@ SpellCastResult Spell::CheckCast(bool strict)
                     if (m_caster->ToPlayer()->isPetDeadAndRemoved())
                         return SPELL_FAILED_TARGETS_DEAD;
                 }
-                if (m_caster->GetPetGUID())  //let warlock do a replacement summon
+                if (m_caster->GetPetGUID())  // let warlock do a replacement summon
                 {
                     if (m_caster->isPlayer() && m_caster->getClass() == CLASS_WARLOCK)
                     {
-                        //starting cast, trigger pet stun (cast by pet so it doesn't attack player)
-                        if (Pet* pet = m_caster->ToPlayer()->GetPet())
-                            if (strict) pet->CastSpell(pet, 32752, true, NULL, NULL, pet->GetGUID());
+                        if (strict)          // starting cast, trigger pet stun (cast by pet so it doesn't attack player)
+                            if (Pet* pet = m_caster->ToPlayer()->GetPet())
+                                pet->CastSpell(pet, 32752, true, NULL, NULL, pet->GetGUID());
                     }
                     else
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
@@ -4516,7 +4505,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
         case SPELL_EFFECT_SUMMON_FRIEND:
             {
-                if (!m_caster->ToPlayer())
+                if (m_caster->GetTypeId() != TYPEID_PLAYER)
                     return SPELL_FAILED_BAD_TARGETS;
 
                 Player* buddy = sObjectMgr.GetRAFLinkedBuddyForPlayer(m_caster->ToPlayer());
@@ -4631,17 +4620,35 @@ SpellCastResult Spell::CheckCast(bool strict)
                         return result;
                 break;
             }
+        case SPELL_AURA_MOD_POSSESS_PET:
+            {
+                if (m_caster->GetTypeId() != TYPEID_PLAYER)
+                    return SPELL_FAILED_NO_PET;
+
+                Pet* pet = m_caster->ToPlayer()->GetPet();
+                if (!pet)
+                    return SPELL_FAILED_NO_PET;
+
+                if (pet->GetCharmerGUID())
+                    return SPELL_FAILED_CHARMED;
+                break;
+            }
         case SPELL_AURA_MOD_POSSESS:
         case SPELL_AURA_MOD_CHARM:
+        case SPELL_AURA_AOE_CHARM:
             {
-                if (m_caster->GetPetGUID())
-                    return SPELL_FAILED_ALREADY_HAVE_SUMMON;
-
-                if (m_caster->GetCharmGUID())
-                    return SPELL_FAILED_ALREADY_HAVE_CHARM;
-
                 if (m_caster->GetCharmerGUID())
                     return SPELL_FAILED_CHARMED;
+
+                if (m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_CHARM
+                    || m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_POSSESS)
+                {
+                    if (m_caster->GetPetGUID())
+                        return SPELL_FAILED_ALREADY_HAVE_SUMMON;
+
+                    if (m_caster->GetCharmGUID())
+                        return SPELL_FAILED_ALREADY_HAVE_CHARM;
+                }
 
                 if (!m_targets.getUnitTarget())
                     return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
@@ -4678,9 +4685,6 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER && !AllowMount && !m_IsTriggeredSpell && m_spellInfo->AreaId && m_spellInfo->AreaId != m_caster->GetAreaId())
                     return SPELL_FAILED_NO_MOUNTS_ALLOWED;
 
-                //if (m_caster->GetAreaId() == 35)
-                //return SPELL_FAILED_NO_MOUNTS_ALLOWED;
-
                 ShapeshiftForm form = m_caster->m_form;
                 if (form == FORM_CAT          || form == FORM_TREE      || form == FORM_TRAVEL   ||
                     form == FORM_AQUA         || form == FORM_BEAR      || form == FORM_DIREBEAR ||
@@ -4701,8 +4705,8 @@ SpellCastResult Spell::CheckCast(bool strict)
 
                 break;
             }
-        case SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED:
         case SPELL_AURA_FLY:
+        case SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED:
             {
                 // not allow cast fly spells at old maps by players (all spells is self target)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
@@ -5883,8 +5887,6 @@ bool Spell::CheckTarget(Unit* target, uint32 eff)
             return false;
     }
 
-    //if (sSpellMgr.GetSpellCustomAttr(m_spellProto->Id) & 
-
     // Check targets for not_selectable unit flag and remove
     // A player can cast spells on his pet (or other controlled unit) though in any state
     if (target != m_caster && target->GetCharmerOrOwnerGUID() != m_caster->GetGUID())
@@ -5914,6 +5916,19 @@ bool Spell::CheckTarget(Unit* target, uint32 eff)
     //Do not check LOS for triggered spells
     if (m_IsTriggeredSpell || IsSpellIgnoringLOS(m_spellInfo))
         return true;
+
+    switch (m_spellInfo->EffectApplyAuraName[eff])
+    {
+        case SPELL_AURA_BIND_SIGHT:
+            if (target == m_caster)
+                return false;
+
+            if (target->GetMapId() != m_caster->GetMapId())
+                return false;
+            break;
+        default:
+            break;
+    };
 
     //Check targets for LOS visibility (except spells without range limitations)
     switch (m_spellInfo->Effect[eff])
