@@ -46,6 +46,11 @@ enum Quests
     QUEST_ENTRY_RETURN     = 10285
 };
 
+enum Items
+{
+    ITEM_ENTRY_BOMBS       = 25853
+};
+
 /*######
 ## npc_erozion
 ######*/
