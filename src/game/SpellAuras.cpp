@@ -3099,10 +3099,10 @@ void Aura::HandleForceReaction(bool apply, bool Real)
         return;
 
     uint32 factionId = m_modifier.m_miscvalue;
-    ReputationRank factionRank = ReputationRank(m_modifier.m_amount);
+    uint32 factionRank = m_modifier.m_amount;
 
     if (apply)
-        player->m_forcedReactions[factionId] = factionRank;
+        player->m_forcedReactions[factionId] = ReputationRank(factionRank);
     else
         player->m_forcedReactions.erase(factionId);
 
