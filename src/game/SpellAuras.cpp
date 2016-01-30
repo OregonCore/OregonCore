@@ -3095,7 +3095,7 @@ void Aura::HandleForceReaction(bool apply, bool Real)
         return;
 
     Player* player = m_target->ToPlayer();
-    if (player)
+    if (!player)
         return;
 
     uint32 factionId = m_modifier.m_miscvalue;
