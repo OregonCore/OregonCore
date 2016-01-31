@@ -1852,7 +1852,7 @@ GameTele const* ChatHandler::extractGameTeleFromLink(char* text)
 
 char* ChatHandler::extractQuotedArg(char* args)
 {
-    if (!*args)
+    if (!args || !*args)
         return NULL;
 
     if (*args == '"')
