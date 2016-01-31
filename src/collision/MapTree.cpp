@@ -381,13 +381,11 @@ bool StaticMapTree::LoadMapTile(uint32 tileX, uint32 tileY, VMapManager2* vm)
                 {
                     if (!iLoadedSpawns.count(referencedVal))
                     {
-                        #ifdef VMAP_DEBUG
                         if (referencedVal > iNTreeValues)
                         {
-                            DEBUG_LOG("StaticMapTree::LoadMapTile() : invalid tree element (%u/%u)", referencedVal, iNTreeValues);
+                            ERROR_LOG("StaticMapTree::LoadMapTile() : invalid tree element (%u/%u) referenced in tile %s", referencedVal, iNTreeValues, tilefile.c_str());
                             continue;
                         }
-                        #endif
                         iTreeValues[referencedVal] = ModelInstance(spawn, model);
                         iLoadedSpawns[referencedVal] = 1;
                     }
