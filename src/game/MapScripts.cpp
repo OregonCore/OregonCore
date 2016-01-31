@@ -835,10 +835,9 @@ void Map::ScriptsProcess()
                 }
 
                 Creature* cTarget = NULL;
-                if (source) //using grid searcher
+                WorldObject* wSource = dynamic_cast <WorldObject*> (source);
+                if (wSource) //using grid searcher
                 {
-                    WorldObject* wSource = dynamic_cast <WorldObject*> (source);
-
                     CellCoord p(Oregon::ComputeCellCoord(wSource->GetPositionX(), wSource->GetPositionY()));
                     Cell cell(p);
 
