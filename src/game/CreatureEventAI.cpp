@@ -1301,7 +1301,7 @@ SpellCastResult CreatureEventAI::CanCast(Unit* target, SpellEntry const* spell, 
 
     if (!spell)
     {
-        sLog.outErrorDb("CreatureEventAI::CanCast by creature entry %u attempt to cast spell %u but spell does not exist.", me->GetEntry(), spell->Id);
+        sLog.outErrorDb("CreatureEventAI::CanCast by creature entry %u attempt to cast spell but spell does not exist.", me->GetEntry());
         return SPELL_FAILED_UNKNOWN;
     }
 

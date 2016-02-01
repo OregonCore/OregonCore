@@ -876,7 +876,7 @@ bool ChatHandler::HandleModifyRepCommand(const char* args)
 
     int32 amount = 0;
     char* rankTxt = strtok(NULL, " ");
-    if (!factionTxt || !rankTxt)
+    if (!rankTxt)
         return false;
 
     amount = atoi(rankTxt);

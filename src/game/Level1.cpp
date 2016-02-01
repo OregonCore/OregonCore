@@ -443,7 +443,7 @@ bool ChatHandler::HandleGMTicketCloseByIdCommand(const char* args)
         SendSysMessage(LANG_COMMAND_TICKETNOTEXIST);
         return true;
     }
-    if (ticket && ticket->assignedToGM != 0 && ticket->assignedToGM != m_session->GetPlayer()->GetGUID())
+    if (ticket->assignedToGM != 0 && ticket->assignedToGM != m_session->GetPlayer()->GetGUID())
     {
         PSendSysMessage(LANG_COMMAND_TICKETCANNOTCLOSE, ticket->guid);
         return true;

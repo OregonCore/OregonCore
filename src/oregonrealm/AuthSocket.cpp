@@ -904,7 +904,7 @@ void AuthSocket::LoadRealmlist(ByteBuffer& pkt, uint32 acctid)
                 if (realmflags & REALM_FLAG_SPECIFYBUILD)
                 {
                     char buf[20];
-                    snprintf(buf, 20, " (%u,%u,%u)", buildInfo->major_version, buildInfo->minor_version, buildInfo->bugfix_version);
+                    snprintf(buf, 20, " (%d,%d,%d)", buildInfo->major_version, buildInfo->minor_version, buildInfo->bugfix_version);
                     name += buf;
                 }
 
@@ -979,7 +979,7 @@ void AuthSocket::LoadRealmlist(ByteBuffer& pkt, uint32 acctid)
                 pkt << uint8(i->second.timezone);           // realm category (Cfg_Categories.dbc)
                 pkt << uint8(0x2C);                         // unk, may be realm number/id?
 
-                if (realmFlags & REALM_FLAG_SPECIFYBUILD)
+                if (buildInfo && realmFlags & REALM_FLAG_SPECIFYBUILD)
                 {
                     pkt << uint8(buildInfo->major_version);
                     pkt << uint8(buildInfo->minor_version);
