@@ -432,12 +432,12 @@ struct boss_illidari_councilAI : public ScriptedAI
                 {
                     if (damage <= pUnit->GetHealth())
                     {
-                        pUnit->LowerPlayerDamageReq(damage);
+                        pUnit->SetPlayerDamaged(true);
                         pUnit->SetHealth(pUnit->GetHealth() - damage);
                     }
                     else
                     {
-                        pUnit->LowerPlayerDamageReq(damage);
+                        pUnit->SetPlayerDamaged(true);
                         pUnit->Kill(pUnit, false);
                     }
                 }

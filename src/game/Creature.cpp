@@ -145,7 +145,7 @@ Creature::Creature(bool isWorldObject): Unit(isWorldObject),
     _pickpocketLootRestore(0),
     _skinner(0),
     m_GlobalCooldown(0),
-    m_PlayerDamageReq(0), m_SightDistance(sWorld.getConfig(CONFIG_SIGHT_MONSTER)),
+    hasPlayerDamaged(false), m_SightDistance(sWorld.getConfig(CONFIG_SIGHT_MONSTER)),
     m_CombatDistance(MELEE_RANGE), m_lootMoney(0), m_lootRecipient(0), m_lootRecipientGroup(0), m_corpseRemoveTime(0), m_respawnTime(0), m_respawnDelay(25),
     m_corpseDelay(60), m_respawnradius(0.0f), m_combatPulseTime(0), m_combatPulseDelay(0), m_emoteState(0), m_reactState(REACT_AGGRESSIVE), m_regenTimer(2000),
     m_defaultMovementType(IDLE_MOTION_TYPE), m_DBTableGuid(0), m_equipmentId(0),
@@ -1173,7 +1173,7 @@ void Creature::SelectLevel()
     SetCreateHealth(health);
     SetMaxHealth(health);
     SetHealth(health);
-    ResetPlayerDamageReq();
+    SetPlayerDamaged(false);
 
     SetCreateMana(mana);
     SetMaxPower(POWER_MANA, mana);                          //MAX Mana
@@ -1219,10 +1219,9 @@ float Creature::_GetHealthMod(int32 Rank)
     }
 }
 
-void Creature::LowerPlayerDamageReq(uint32 unDamage)
+void Creature::SetPlayerDamaged(bool set)
 {
-    if (m_PlayerDamageReq)
-        m_PlayerDamageReq > unDamage ? m_PlayerDamageReq -= unDamage : m_PlayerDamageReq = 0;
+    hasPlayerDamaged = set;
 }
 
 float Creature::_GetDamageMod(int32 Rank)
@@ -1596,7 +1595,7 @@ void Creature::setDeathState(DeathState s)
     {
         SetFullHealth();
         SetLootRecipient(NULL);
-        ResetPlayerDamageReq();
+        SetPlayerDamaged(false);
 
         UpdateMovementFlags();
 

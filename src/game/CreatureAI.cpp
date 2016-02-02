@@ -301,7 +301,7 @@ bool CreatureAI::_EnterEvadeMode()
     me->DeleteThreatList();
     me->CombatStop(true);
     me->SetLootRecipient(NULL);
-    me->ResetPlayerDamageReq();
+    me->SetPlayerDamaged(false);
     me->SetLastDamagedTime(0);
 
     if (me->IsInEvadeMode())

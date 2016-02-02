@@ -64,7 +64,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
         //database should have `RegenHealth`=0 to prevent regen
         uint32 hp = (me->GetMaxHealth() * 40) / 100;
         if (hp) me->SetHealth(hp);
-        me->ResetPlayerDamageReq();
+        me->SetPlayerDamaged(false);
     }
 
     void EnterCombat(Unit*) { }

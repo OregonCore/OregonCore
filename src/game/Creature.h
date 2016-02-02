@@ -844,14 +844,10 @@ class Creature : public Unit, public GridObject<Creature>
         }
         bool IsDamageEnoughForLootingAndReward() const
         {
-            return m_PlayerDamageReq == 0;
+            return hasPlayerDamaged;
         }
-        void LowerPlayerDamageReq(uint32 unDamage);
-        void ResetPlayerDamageReq()
-        {
-            m_PlayerDamageReq = GetHealth() / 2;
-        }
-        uint32 m_PlayerDamageReq;
+        void SetPlayerDamaged(bool set);
+        bool hasPlayerDamaged;
 
         uint32 GetOriginalEntry() const { return m_originalEntry; }
         void SetOriginalEntry(uint32 entry) { m_originalEntry = entry; }
