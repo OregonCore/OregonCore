@@ -2996,6 +2996,11 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
         return DIMINISHING_NONE;
     case SPELLFAMILY_MAGE:
         {
+            // Item "Magic Dust" shouldn't be limited in PvP and
+            // does not share DR with other sleep mechanics.
+             if (spellproto->SpellIconID == 44)
+                return DIMINISHING_NONE;
+            break;
             // Frost Nova / Freeze (Water Elemental)
             if (spellproto->SpellIconID == 193)
                 return DIMINISHING_CONTROLLED_ROOT;
