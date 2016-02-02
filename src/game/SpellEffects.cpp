@@ -5998,22 +5998,37 @@ void Spell::EffectStuck(SpellEffIndex /*effIndex*/)
         return;
 
     DEBUG_LOG("Spell Effect: Stuck");
-    sLog.outDetail("Player %s (guid %u) used auto-unstuck future at map %u (%f, %f, %f)", pTarget->GetName(), pTarget->GetGUIDLow(), m_caster->GetMapId(), m_caster->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
+    sLog.outDetail("Player %s (guid %u) used auto-unstuck feature at map %u (%f, %f, %f)", pTarget->GetName(), pTarget->GetGUIDLow(), m_caster->GetMapId(), m_caster->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
 
-    if (pTarget->isInFlight())
+    // If the player is dead, it will return them to the graveyard closest to their corpse.
+    if (pTarget->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_GHOST))
+    {
+        pTarget->RepopAtGraveyard();
         return;
+    }
+    
+    // If the player is alive, and their hearthstone is in their inventory, and their hearthstone
+    // is cooled down, it will activate their hearthstone. The 30 minute hearthstone cooldown is activated as usual.
+    if (!pTarget->HasSpellCooldown(8690) && pTarget->HasItemCount(6948, 1, false))
+    {
+        pTarget->TeleportTo(pTarget->GetStartPosition(), TELE_TO_SPELL);
 
-    pTarget->TeleportTo(pTarget->GetStartPosition(), TELE_TO_SPELL);
-    // homebind location is loaded always
-    // Only leaving this here so users can change back if need be
-    // pTarget->TeleportToHomebind(unitTarget == m_caster ? TELE_TO_SPELL : 0);
-
-    // Stuck spell trigger Hearthstone cooldown
-    SpellEntry const* spellInfo = sSpellStore.LookupEntry(8690);
-    if (!spellInfo)
-        return;
-    Spell spell(pTarget, spellInfo, true, 0);
-    spell.SendSpellCooldown();
+        // Trigger cooldown
+        SpellEntry const* spellInfo = sSpellStore.LookupEntry(8690);
+        if (!spellInfo)
+            return;
+        Spell spell(pTarget, spellInfo, true, 0);
+        spell.SendSpellCooldown();
+    }
+    else
+    {
+        // If the player is alive, but their hearthstone is either not in their inventory (e.g. in the bank) or 
+        // their hearthstone is on cooldown, then the game will try to "nudge" the player in a seemingly random direction.
+        // @todo This check could possibly more accurately find a safe position to port to, has the potential for porting underground.
+        float x, y, z;
+        pTarget->GetNearPoint(pTarget, x, y, z, DEFAULT_WORLD_OBJECT_SIZE, 10.0f, pTarget->GetOrientation());
+        pTarget->NearTeleportTo(x, y, z, pTarget->GetOrientation());
+    }
 }
 
 void Spell::EffectSummonPlayer(SpellEffIndex /*effIndex*/)
