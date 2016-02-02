@@ -1299,7 +1299,7 @@ void World::SetInitialWorldSettings()
     LoadRandomEnchantmentsTable();
 
     sConsole.SetLoadingLabel("Loading Items...");                     // must be after LoadRandomEnchantmentsTable and LoadPageTexts
-    sObjectMgr.LoadItemPrototypes();
+    sObjectMgr.LoadItemTemplates();
 
     sConsole.SetLoadingLabel("Loading Item Texts...");
     sObjectMgr.LoadItemTexts();

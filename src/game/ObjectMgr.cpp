@@ -1806,7 +1806,7 @@ struct SQLItemLoader : public SQLStorageLoaderBase<SQLItemLoader>
     }
 };
 
-void ObjectMgr::LoadItemPrototypes()
+void ObjectMgr::LoadItemTemplates()
 {
     SQLItemLoader loader;
     loader.Load(sItemStorage);

@@ -14762,15 +14762,6 @@ uint32 Player::GetUInt32ValueFromDB(uint16 index, uint64 guid)
     return GetUInt32ValueFromArray(data, index);
 }
 
-float Player::GetFloatValueFromDB(uint16 index, uint64 guid)
-{
-    float result;
-    uint32 temp = Player::GetUInt32ValueFromDB(index, guid);
-    memcpy(&result, &temp, sizeof(result));
-
-    return result;
-}
-
 bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
 {
     //                                                       0     1        2     3     4     5      6       7      8   9      10           11            12
@@ -17239,13 +17230,6 @@ void Player::SetUInt32ValueInDB(uint16 index, uint32 value, uint64 guid)
     tokens[index] = buf;
 
     SaveValuesArrayInDB(tokens, guid);
-}
-
-void Player::SetFloatValueInDB(uint16 index, float value, uint64 guid)
-{
-    uint32 temp;
-    memcpy(&temp, &value, sizeof(value));
-    Player::SetUInt32ValueInDB(index, temp, guid);
 }
 
 void Player::SendAttackSwingNotStanding()
