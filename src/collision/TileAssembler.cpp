@@ -160,7 +160,11 @@ bool TileAssembler::convertWorld2()
             for (uint32 s = 0; s < nSpawns; ++s)
             {
                 if (s)
+                {
                     ++tile;
+                    if (tile == tileEntries.end())
+                        break;
+                }
                 const ModelSpawn& spawn2 = map_iter->second->UniqueEntries[tile->second];
                 success = success && ModelSpawn::writeToFile(tilefile, spawn2);
                 // MapTree nodes to update when loading tile:

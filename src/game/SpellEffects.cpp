@@ -6212,8 +6212,7 @@ void Spell::EffectSummonObject(SpellEffIndex effIndex)
     if (uint64 guid = m_caster->m_ObjectSlot[slot])
     {
         GameObject* obj = NULL;
-        if (m_caster)
-            obj = m_caster->GetMap()->GetGameObject(guid);
+        obj = m_caster->GetMap()->GetGameObject(guid);
 
         if (obj) obj->Delete();
         m_caster->m_ObjectSlot[slot] = 0;

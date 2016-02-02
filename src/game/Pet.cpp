@@ -1002,7 +1002,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
 
     //resistance
     int32 createResistance[MAX_SPELL_SCHOOL] = {0, 0, 0, 0, 0, 0, 0};
-    if (cinfo && petType != HUNTER_PET)
+    if (petType != HUNTER_PET)
     {
         createResistance[SPELL_SCHOOL_HOLY]   = cinfo->resistance1;
         createResistance[SPELL_SCHOOL_FIRE]   = cinfo->resistance2;
