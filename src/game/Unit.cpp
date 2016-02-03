@@ -2059,7 +2059,6 @@ void Unit::AttackerStateUpdate (Unit* victim, WeaponAttackType attType, bool ext
     if ((attType == BASE_ATTACK || attType == OFF_ATTACK) && !IsWithinLOSInMap(victim))
         return;
 
-    CombatStart(victim);
     RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_ATTACK);
 
     if (attType != BASE_ATTACK && attType != OFF_ATTACK)
@@ -2080,6 +2079,11 @@ void Unit::AttackerStateUpdate (Unit* victim, WeaponAttackType attType, bool ext
     ProcDamageAndSpell(damageInfo.target, damageInfo.procAttacker, damageInfo.procVictim, damageInfo.procEx, damageInfo.damage, damageInfo.attackType);
 
     DealMeleeDamage(&damageInfo, true);
+
+    // We call this last because DealMeleeDamage has to check for sit state to
+    // allow critical hits, but we set STANDING in CombatStart, therefore always
+    // nullifying the check.
+    CombatStart(victim);
 
     #ifdef OREGON_DEBUG
     if (GetTypeId() == TYPEID_PLAYER)
@@ -8179,7 +8183,8 @@ int32 Unit::SpellBaseDamageBonusForVictim(SpellSchoolMask schoolMask, Unit* pVic
 
 bool Unit::isSpellCrit(Unit* pVictim, SpellEntry const* spellProto, SpellSchoolMask schoolMask, WeaponAttackType attackType)
 {
-    if (IS_CREATURE_GUID(GetGUID())) // creatures cannot spell crit in TBC
+    // Mobs can't crit with spells
+    if (IS_CREATURE_GUID(GetGUID()))
         return false;
 
     // not critting spell
@@ -8280,33 +8285,39 @@ bool Unit::isSpellCrit(Unit* pVictim, SpellEntry const* spellProto, SpellSchoolM
 uint32 Unit::SpellCriticalBonus(SpellEntry const* spellProto, uint32 damage, Unit* pVictim)
 {
     // Calculate critical bonus
-    int32 crit_bonus;
+    int32 crit_bonus = damage;
+    float crit_mod = 0.0f;
+
     switch (spellProto->DmgClass)
     {
         case SPELL_DAMAGE_CLASS_MELEE:                      // for melee based spells is 100%
         case SPELL_DAMAGE_CLASS_RANGED:
             // @todo write here full calculation for melee/ranged spells
-            crit_bonus = damage;
+            crit_bonus += damage;
             break;
         default:
-            crit_bonus = damage / 2;                        // for spells is 50%
+            crit_bonus += damage / 2;                        // for spells is 50%
             break;
     }
 
-    // adds additional damage to crit_bonus (from talents)
-    if (Player* modOwner = GetSpellModOwner())
-        modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_CRIT_DAMAGE_BONUS, crit_bonus);
-
     if (pVictim)
+        crit_mod += GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_CRIT_PERCENT_VERSUS, pVictim->GetCreatureTypeMask());
+
+    if (crit_bonus != 0)
+        AddPct(crit_bonus, crit_mod);
+
+    crit_bonus -= damage;
+
+    if (damage > uint32(crit_bonus))
     {
-        uint32 creatureTypeMask = pVictim->GetCreatureTypeMask();
-        crit_bonus = int32(crit_bonus * GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_CRIT_PERCENT_VERSUS, creatureTypeMask));
+        // adds additional damage to crit_bonus (from talents)
+        if (Player* modOwner = GetSpellModOwner())
+            modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_CRIT_DAMAGE_BONUS, crit_bonus);
     }
 
-    if (crit_bonus > 0)
-        damage += crit_bonus;
+    crit_bonus += damage;
 
-    return damage;
+    return crit_bonus;
 }
 
 uint32 Unit::SpellHealingBonus(SpellEntry const* spellProto, uint32 healamount, DamageEffectType damagetype, Unit* pVictim)
