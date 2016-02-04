@@ -197,6 +197,8 @@ void DelayedUnitRelocation::Visit(CreatureMapType& m)
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
         Creature* unit = iter->getSource();
+        if (!unit->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
+            continue;
 
         CreatureRelocationNotifier relocate(*unit, i_radius);
 
