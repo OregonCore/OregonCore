@@ -635,8 +635,15 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPacket& data, Player* player
         if (levelmin != 0x00 && (proto->RequiredLevel < levelmin || (levelmax != 0x00 && proto->RequiredLevel > levelmax)))
             continue;
 
-        if (usable != 0x00 && player->CanUseItem(item) != EQUIP_ERR_OK)
-            continue;
+        if (usable != 0x00)
+        {
+            if (player->CanUseItem(item) != EQUIP_ERR_OK)
+                continue;
+
+            if (proto->Class == ITEM_CLASS_RECIPE)
+                if (player->HasSpell(proto->Spells[1].SpellId))
+                    continue;
+        }
 
         std::string name = proto->Name1;
         if (name.empty())
