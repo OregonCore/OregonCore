@@ -18,10 +18,11 @@
 #ifndef OREGON_CELLIMPL_H
 #define OREGON_CELLIMPL_H
 
+#include <cmath>
+
 #include "Cell.h"
 #include "Map.h"
 #include "Object.h"
-#include <cmath>
 
 inline Cell::Cell(CellCoord const& p)
 {
@@ -44,7 +45,6 @@ inline Cell::Cell(float x, float y)
     data.Part.reserved = 0;
 }
 
-
 inline CellArea Cell::CalculateCellArea(float x, float y, float radius)
 {
     if (radius <= 0.0f)
@@ -62,7 +62,7 @@ inline CellArea Cell::CalculateCellArea(float x, float y, float radius)
 template<class T, class CONTAINER>
 inline void Cell::Visit(CellCoord const& standing_cell, TypeContainerVisitor<T, CONTAINER>& visitor, Map& map, float radius, float x_off, float y_off) const
 {
-    if (standing_cell.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || standing_cell.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
+    if (!standing_cell.IsCoordValid())
         return;
 
     //no jokes here... Actually placing ASSERT() here was good idea, but
@@ -110,7 +110,7 @@ inline void Cell::Visit(CellCoord const& standing_cell, TypeContainerVisitor<T, 
             if (cellCoord != standing_cell)
             {
                 Cell r_zone(cellCoord);
-                r_zone.data.Part.nocreate = data.Part.nocreate;
+                r_zone.data.Part.nocreate = this->data.Part.nocreate;
                 map.Visit(r_zone, visitor);
             }
         }
@@ -141,7 +141,7 @@ inline void Cell::VisitCircle(TypeContainerVisitor<T, CONTAINER>& visitor, Map& 
         {
             CellCoord cellCoord(x, y);
             Cell r_zone(cellCoord);
-            r_zone.data.Part.nocreate = data.Part.nocreate;
+            r_zone.data.Part.nocreate = this->data.Part.nocreate;
             map.Visit(r_zone, visitor);
         }
     }
@@ -165,17 +165,16 @@ inline void Cell::VisitCircle(TypeContainerVisitor<T, CONTAINER>& visitor, Map& 
             //e.g. filling 2 trapezoids after filling central cell strip...
             CellCoord cellCoord_left(x_start - step, y);
             Cell r_zone_left(cellCoord_left);
-            r_zone_left.data.Part.nocreate = data.Part.nocreate;
+            r_zone_left.data.Part.nocreate = this->data.Part.nocreate;
             map.Visit(r_zone_left, visitor);
 
             //right trapezoid cell visit
             CellCoord cellCoord_right(x_end + step, y);
             Cell r_zone_right(cellCoord_right);
-            r_zone_right.data.Part.nocreate = data.Part.nocreate;
+            r_zone_right.data.Part.nocreate = this->data.Part.nocreate;
             map.Visit(r_zone_right, visitor);
         }
     }
 }
-
 #endif
 
