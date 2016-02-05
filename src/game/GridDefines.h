@@ -121,6 +121,11 @@ struct CoordPair
             y_coord = LIMIT - 1;
     }
 
+    bool IsCoordValid() const
+    {
+        return x_coord < LIMIT && y_coord < LIMIT;
+    }
+
     CoordPair& normalize()
     {
         x_coord = std::min(x_coord, LIMIT - 1);
