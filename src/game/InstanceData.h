@@ -19,6 +19,7 @@
 #define OREGON_INSTANCE_DATA_H
 
 #include "ZoneScript.h"
+#include "ObjectMgr.h"
 //#include "GameObject.h"
 //#include "Map.h"
 
