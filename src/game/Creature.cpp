@@ -1591,7 +1591,7 @@ void Creature::setDeathState(DeathState s)
 
         Unit::setDeathState(CORPSE);
     }
-    if (s == JUST_RESPAWNED)
+    else if (s == JUST_RESPAWNED)
     {
         SetFullHealth();
         SetLootRecipient(NULL);
@@ -1599,10 +1599,18 @@ void Creature::setDeathState(DeathState s)
 
         UpdateMovementFlags();
 
-        CreatureInfo const* cinfo = GetCreatureTemplate();
-        SetUInt32Value(UNIT_NPC_FLAGS, cinfo->npcflag);
         ClearUnitState(uint32(UNIT_STATE_ALL_STATE & ~UNIT_STATE_IGNORE_PATHFINDING));
-        SetMeleeDamageSchool(SpellSchools(cinfo->dmgschool));
+
+        if (!IsPet())
+        {
+            CreatureInfo  const* cinfo = GetCreatureTemplate();
+
+            SetUInt32Value(UNIT_NPC_FLAGS, cinfo->npcflag);
+
+            RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
+
+            SetMeleeDamageSchool(SpellSchools(cinfo->dmgschool));
+        }
 
         Unit::setDeathState(ALIVE);
         LoadCreaturesAddon(true);
