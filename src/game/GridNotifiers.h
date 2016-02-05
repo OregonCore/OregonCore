@@ -61,12 +61,9 @@ struct VisibleChangesNotifier
 
 struct PlayerRelocationNotifier : public VisibleNotifier
 {
-    PlayerRelocationNotifier(Player& pl) : VisibleNotifier(pl) {}
+    PlayerRelocationNotifier(Player& player) : VisibleNotifier(player) { }
 
-    template<class T> void Visit(GridRefManager<T>& m)
-    {
-        VisibleNotifier::Visit(m);
-    }
+    template<class T> void Visit(GridRefManager<T> &m) { VisibleNotifier::Visit(m); }
     void Visit(CreatureMapType&);
     void Visit(PlayerMapType&);
 };

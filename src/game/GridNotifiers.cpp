@@ -112,7 +112,7 @@ VisibleChangesNotifier::Visit(DynamicObjectMapType& m)
 
 inline void CreatureUnitRelocationWorker(Creature* c, Unit* u)
 {
-    if (c == u || !u->IsAlive() || !c->IsAlive() || u->isInFlight())
+    if (!u->IsAlive() || !c->IsAlive() || c == u || u->isInFlight())
         return;
 
     if (c->HasReactState(REACT_AGGRESSIVE) && !c->HasUnitState(UNIT_STATE_SIGHTLESS))
