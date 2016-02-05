@@ -325,7 +325,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_selin_fireheart(Creature* creature)
 {
-    return new boss_selin_fireheartAI (creature);
+    return GetInstanceAI<boss_selin_fireheartAI>(creature);
 };
 
 struct mob_fel_crystalAI : public ScriptedAI
@@ -365,7 +365,7 @@ struct mob_fel_crystalAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_fel_crystal(Creature* creature)
 {
-    return new mob_fel_crystalAI (creature);
+    return GetInstanceAI<mob_fel_crystalAI>(creature);
 };
 
 void AddSC_boss_selin_fireheart()

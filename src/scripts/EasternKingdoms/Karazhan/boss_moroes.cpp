@@ -747,37 +747,37 @@ struct boss_lord_crispin_ferenceAI : public boss_moroes_guestAI
 
 CreatureAI* GetAI_boss_moroes(Creature* pCreature)
 {
-    return new boss_moroesAI (pCreature);
+    return GetInstanceAI<boss_moroesAI>(pCreature);
 }
 
 CreatureAI* GetAI_baroness_dorothea_millstipe(Creature* pCreature)
 {
-    return new boss_baroness_dorothea_millstipeAI (pCreature);
+    return GetInstanceAI<boss_baroness_dorothea_millstipeAI>(pCreature);
 }
 
 CreatureAI* GetAI_baron_rafe_dreuger(Creature* pCreature)
 {
-    return new boss_baron_rafe_dreugerAI (pCreature);
+    return GetInstanceAI<boss_baron_rafe_dreugerAI>(pCreature);
 }
 
 CreatureAI* GetAI_lady_catriona_von_indi(Creature* pCreature)
 {
-    return new boss_lady_catriona_von_indiAI (pCreature);
+    return GetInstanceAI<boss_lady_catriona_von_indiAI>(pCreature);
 }
 
 CreatureAI* GetAI_lady_keira_berrybuck(Creature* pCreature)
 {
-    return new boss_lady_keira_berrybuckAI (pCreature);
+    return GetInstanceAI<boss_lady_keira_berrybuckAI>(pCreature);
 }
 
 CreatureAI* GetAI_lord_robin_daris(Creature* pCreature)
 {
-    return new boss_lord_robin_darisAI (pCreature);
+    return GetInstanceAI<boss_lord_robin_darisAI>(pCreature);
 }
 
 CreatureAI* GetAI_lord_crispin_ference(Creature* pCreature)
 {
-    return new boss_lord_crispin_ferenceAI (pCreature);
+    return GetInstanceAI<boss_lord_crispin_ferenceAI>(pCreature);
 }
 
 void AddSC_boss_moroes()

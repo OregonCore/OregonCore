@@ -506,23 +506,23 @@ struct mob_hellfire_sentryAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_vazruden_the_herald(Creature* pCreature)
 {
-    return new boss_vazruden_the_heraldAI (pCreature);
+    return GetInstanceAI<boss_vazruden_the_heraldAI>(pCreature);
 }
 
 CreatureAI* GetAI_boss_vazruden(Creature* pCreature)
 {
-    return new boss_vazrudenAI (pCreature);
+    return GetInstanceAI<boss_vazrudenAI>(pCreature);
 }
 
 
 CreatureAI* GetAI_boss_nazan(Creature* pCreature)
 {
-    return new boss_nazanAI (pCreature);
+    return GetInstanceAI<boss_nazanAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_hellfire_sentry(Creature* pCreature)
 {
-    return new mob_hellfire_sentryAI (pCreature);
+    return GetInstanceAI<mob_hellfire_sentryAI>(pCreature);
 }
 
 void AddSC_boss_vazruden_the_herald()

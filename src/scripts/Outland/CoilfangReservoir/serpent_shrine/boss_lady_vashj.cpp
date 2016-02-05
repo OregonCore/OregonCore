@@ -1068,7 +1068,7 @@ bool ItemUse_item_tainted_core(Player* pPlayer, Item* /*_Item*/, SpellCastTarget
 
 CreatureAI* GetAI_boss_lady_vashj(Creature* pCreature)
 {
-    return new boss_lady_vashjAI (pCreature);
+    return GetInstanceAI<boss_lady_vashjAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_enchanted_elemental(Creature* pCreature)

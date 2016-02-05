@@ -189,7 +189,7 @@ struct boss_vexallusAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_vexallus(Creature* pCreature)
 {
-    return new boss_vexallusAI (pCreature);
+    return GetInstanceAI<boss_vexallusAI>(pCreature);
 };
 
 struct mob_pure_energyAI : public ScriptedAI

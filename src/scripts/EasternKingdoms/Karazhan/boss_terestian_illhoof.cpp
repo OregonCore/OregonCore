@@ -373,7 +373,7 @@ struct mob_fiendish_impAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_kilrek(Creature* pCreature)
 {
-    return new mob_kilrekAI (pCreature);
+    return GetInstanceAI<mob_kilrekAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_fiendish_imp(Creature* pCreature)
@@ -383,12 +383,12 @@ CreatureAI* GetAI_mob_fiendish_imp(Creature* pCreature)
 
 CreatureAI* GetAI_mob_fiendish_portal(Creature* pCreature)
 {
-    return new mob_fiendish_portalAI (pCreature);
+    return GetInstanceAI<mob_fiendish_portalAI>(pCreature);
 }
 
 CreatureAI* GetAI_boss_terestian_illhoof(Creature* pCreature)
 {
-    return new boss_terestianAI (pCreature);
+    return GetInstanceAI<boss_terestianAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_demon_chain(Creature* pCreature)

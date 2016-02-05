@@ -433,7 +433,7 @@ struct boss_alarAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_alar(Creature* pCreature)
 {
-    return new boss_alarAI(pCreature);
+    return GetInstanceAI<boss_alarAI>(pCreature);
 }
 
 struct mob_ember_of_alarAI : public ScriptedAI
@@ -503,7 +503,7 @@ struct mob_ember_of_alarAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_ember_of_alar(Creature* pCreature)
 {
-    return new mob_ember_of_alarAI(pCreature);
+    return GetInstanceAI<mob_ember_of_alarAI>(pCreature);
 }
 
 struct mob_flame_patch_alarAI : public ScriptedAI

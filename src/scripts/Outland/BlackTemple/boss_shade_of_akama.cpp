@@ -861,7 +861,7 @@ struct npc_akamaAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_shade_of_akama(Creature* pCreature)
 {
-    return new boss_shade_of_akamaAI (pCreature);
+    return GetInstanceAI<boss_shade_of_akamaAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_ashtongue_channeler(Creature* pCreature)

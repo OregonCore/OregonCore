@@ -390,7 +390,7 @@ struct mob_water_globuleAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_morogrim_tidewalker(Creature* pCreature)
 {
-    return new boss_morogrim_tidewalkerAI (pCreature);
+    return GetInstanceAI<boss_morogrim_tidewalkerAI>(pCreature);
 }
 CreatureAI* GetAI_mob_water_globule(Creature* pCreature)
 {

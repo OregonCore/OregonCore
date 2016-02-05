@@ -326,7 +326,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
 };
 CreatureAI* GetAI_boss_grandmaster_vorpil(Creature* pCreature)
 {
-    return new boss_grandmaster_vorpilAI (pCreature);
+    return GetInstanceAI<boss_grandmaster_vorpilAI>(pCreature);
 }
 
 void AddSC_boss_grandmaster_vorpil()

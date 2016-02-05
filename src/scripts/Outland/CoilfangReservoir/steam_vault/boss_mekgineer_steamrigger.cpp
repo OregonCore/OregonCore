@@ -201,7 +201,7 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_mekgineer_steamrigger(Creature* pCreature)
 {
-    return new boss_mekgineer_steamriggerAI (pCreature);
+    return GetInstanceAI<boss_mekgineer_steamriggerAI>(pCreature);
 }
 
 #define SPELL_DISPEL_MAGIC          17201
@@ -277,7 +277,7 @@ struct mob_steamrigger_mechanicAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_steamrigger_mechanic(Creature* pCreature)
 {
-    return new mob_steamrigger_mechanicAI (pCreature);
+    return GetInstanceAI<mob_steamrigger_mechanicAI>(pCreature);
 }
 
 void AddSC_boss_mekgineer_steamrigger()

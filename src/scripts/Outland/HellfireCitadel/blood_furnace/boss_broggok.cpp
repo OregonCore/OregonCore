@@ -144,7 +144,7 @@ struct boss_broggokAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_broggokAI(Creature* pCreature)
 {
-    return new boss_broggokAI (pCreature);
+    return GetInstanceAI<boss_broggokAI>(pCreature);
 }
 
 /*######
@@ -222,7 +222,7 @@ struct mob_nascent_orcAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_nascent_orc(Creature* pCreature)
 {
-    return new mob_nascent_orcAI (pCreature);
+    return GetInstanceAI<mob_nascent_orcAI>(pCreature);
 }
 
 /*######
@@ -249,7 +249,7 @@ struct mob_broggok_poisoncloudAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_broggok_poisoncloud(Creature* pCreature)
 {
-    return new mob_broggok_poisoncloudAI (pCreature);
+    return GetInstanceAI<mob_broggok_poisoncloudAI>(pCreature);
 }
 
 void AddSC_boss_broggok()

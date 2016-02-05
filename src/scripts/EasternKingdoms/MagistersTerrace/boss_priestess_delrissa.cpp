@@ -333,7 +333,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_priestess_delrissa(Creature* creature)
 {
-    return new boss_priestess_delrissaAI(creature);
+    return GetInstanceAI<boss_priestess_delrissaAI>(creature);
 }
 
 enum eHealingPotion
@@ -575,7 +575,7 @@ struct boss_kagani_nightstrikeAI : public boss_priestess_lackey_commonAI
 
 CreatureAI* GetAI_boss_kagani_nightstrike(Creature* creature)
 {
-    return new boss_kagani_nightstrikeAI(creature);
+    return GetInstanceAI<boss_kagani_nightstrikeAI>(creature);
 }
 
 enum eWarlockSpells
@@ -670,7 +670,7 @@ struct boss_ellris_duskhallowAI : public boss_priestess_lackey_commonAI
 
 CreatureAI* GetAI_ellris_duskhallow(Creature* creature)
 {
-    return new boss_ellris_duskhallowAI(creature);
+    return GetInstanceAI<boss_ellris_duskhallowAI>(creature);
 }
 
 enum eKickDown
@@ -722,7 +722,7 @@ struct boss_eramas_brightblazeAI : public boss_priestess_lackey_commonAI
 
 CreatureAI* GetAI_eramas_brightblaze(Creature* creature)
 {
-    return new boss_eramas_brightblazeAI(creature);
+    return GetInstanceAI<boss_eramas_brightblazeAI>(creature);
 }
 
 enum eMageSpells
@@ -852,7 +852,7 @@ struct boss_yazzaiAI : public boss_priestess_lackey_commonAI
 
 CreatureAI* GetAI_yazzai(Creature* creature)
 {
-    return new boss_yazzaiAI(creature);
+    return GetInstanceAI<boss_yazzaiAI>(creature);
 }
 
 enum eWarriorSpells
@@ -971,7 +971,7 @@ struct boss_warlord_salarisAI : public boss_priestess_lackey_commonAI
 
 CreatureAI* GetAI_warlord_salaris(Creature* creature)
 {
-    return new boss_warlord_salarisAI(creature);
+    return GetInstanceAI<boss_warlord_salarisAI>(creature);
 }
 
 enum eHunterSpells
@@ -1094,7 +1094,7 @@ struct boss_garaxxasAI : public boss_priestess_lackey_commonAI
 
 CreatureAI* GetAI_garaxxas(Creature* creature)
 {
-    return new boss_garaxxasAI(creature);
+    return GetInstanceAI<boss_garaxxasAI>(creature);
 }
 
 enum ApokoSpells
@@ -1194,7 +1194,7 @@ struct boss_apokoAI : public boss_priestess_lackey_commonAI
 
 CreatureAI* GetAI_apoko(Creature* creature)
 {
-    return new boss_apokoAI(creature);
+    return GetInstanceAI<boss_apokoAI>(creature);
 }
 
 enum eEngineerSpells
@@ -1287,7 +1287,7 @@ struct boss_zelfanAI : public boss_priestess_lackey_commonAI
 
 CreatureAI* GetAI_zelfan(Creature* creature)
 {
-    return new boss_zelfanAI(creature);
+    return GetInstanceAI<boss_zelfanAI>(creature);
 }
 
 //struct mob_high_explosive_sheepAI : public ScriptedAI

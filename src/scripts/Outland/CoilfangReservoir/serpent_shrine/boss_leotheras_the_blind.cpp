@@ -811,17 +811,17 @@ struct mob_greyheart_spellbinderAI : public ScriptedAI
 };
 CreatureAI* GetAI_boss_leotheras_the_blind(Creature* pCreature)
 {
-    return new boss_leotheras_the_blindAI (pCreature);
+    return GetInstanceAI<boss_leotheras_the_blindAI>(pCreature);
 }
 
 CreatureAI* GetAI_boss_leotheras_the_blind_demonform(Creature* pCreature)
 {
-    return new boss_leotheras_the_blind_demonformAI (pCreature);
+    return GetInstanceAI<boss_leotheras_the_blind_demonformAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_greyheart_spellbinder(Creature* pCreature)
 {
-    return new mob_greyheart_spellbinderAI (pCreature);
+    return GetInstanceAI<mob_greyheart_spellbinderAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_inner_demon(Creature* pCreature)

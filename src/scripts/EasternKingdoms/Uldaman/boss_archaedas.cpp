@@ -201,7 +201,7 @@ struct boss_archaedasAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_archaedas(Creature* pCreature)
 {
-    return new boss_archaedasAI (pCreature);
+    return GetInstanceAI<boss_archaedasAI>(pCreature);
 }
 
 /* ScriptData
@@ -292,7 +292,7 @@ struct mob_archaedas_minionsAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_archaedas_minions(Creature* pCreature)
 {
-    return new mob_archaedas_minionsAI (pCreature);
+    return GetInstanceAI<mob_archaedas_minionsAI>(pCreature);
 }
 
 /* ScriptData
@@ -412,7 +412,7 @@ struct mob_stonekeepersAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_stonekeepers(Creature* pCreature)
 {
-    return new mob_stonekeepersAI (pCreature);
+    return GetInstanceAI<mob_stonekeepersAI>(pCreature);
 }
 
 /* ScriptData

@@ -302,7 +302,7 @@ struct boss_gruulAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_gruul(Creature* pCreature)
 {
-    return new boss_gruulAI (pCreature);
+    return GetInstanceAI<boss_gruulAI>(pCreature);
 }
 
 void AddSC_boss_gruul()

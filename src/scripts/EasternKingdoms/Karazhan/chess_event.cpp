@@ -1514,27 +1514,27 @@ bool GossipSelect_echo_of_medivh(Player* player, Creature* _Creature, uint32 sen
 //GetAI Declarations
 CreatureAI* GetAI_chess_npc(Creature *_Creature)
 {
-    return new Chess_npcAI(_Creature);
+    return GetInstanceAI<Chess_npcAI>(_Creature);
 }
 
 CreatureAI* GetAI_move_trigger(Creature *_Creature)
 {
-    return new Move_triggerAI(_Creature);
+    return GetInstanceAI<Move_triggerAI>(_Creature);
 }
 
 CreatureAI* GetAI_move_marker(Creature *_Creature)
 {
-    return new Move_markerAI(_Creature);
+    return GetInstanceAI<Move_markerAI>(_Creature);
 }
 
 CreatureAI* GetAI_victory_controler(Creature *_Creature)
 {
-    return new Victory_controlerAI(_Creature);
+    return GetInstanceAI<Victory_controlerAI>(_Creature);
 }
 
 CreatureAI* GetAI_echo_of_medivh(Creature *_Creature)
 {
-    return new Echo_of_MedivhAI(_Creature);
+    return GetInstanceAI<Echo_of_MedivhAI>(_Creature);
 }
 
 //Add Scripts

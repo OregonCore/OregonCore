@@ -603,7 +603,7 @@ struct water_elementalAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_aran(Creature* pCreature)
 {
-    return new boss_aranAI (pCreature);
+    return GetInstanceAI<boss_aranAI>(pCreature);
 }
 
 CreatureAI* GetAI_water_elemental(Creature* pCreature)

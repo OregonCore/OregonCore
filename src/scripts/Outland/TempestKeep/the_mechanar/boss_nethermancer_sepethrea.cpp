@@ -170,7 +170,7 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_nethermancer_sepethrea(Creature* pCreature)
 {
-    return new boss_nethermancer_sepethreaAI (pCreature);
+    return GetInstanceAI<boss_nethermancer_sepethreaAI>(pCreature);
 }
 
 #define SPELL_INFERNO                   35268
@@ -259,7 +259,7 @@ struct mob_ragin_flamesAI : public ScriptedAI
 };
 CreatureAI* GetAI_mob_ragin_flames(Creature* pCreature)
 {
-    return new mob_ragin_flamesAI (pCreature);
+    return GetInstanceAI<mob_ragin_flamesAI>(pCreature);
 }
 void AddSC_boss_nethermancer_sepethrea()
 {

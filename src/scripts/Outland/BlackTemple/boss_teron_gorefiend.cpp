@@ -508,7 +508,7 @@ CreatureAI* GetAI_mob_shadowy_construct(Creature* pCreature)
 
 CreatureAI* GetAI_boss_teron_gorefiend(Creature* pCreature)
 {
-    return new boss_teron_gorefiendAI (pCreature);
+    return GetInstanceAI<boss_teron_gorefiendAI>(pCreature);
 }
 
 void AddSC_boss_teron_gorefiend()

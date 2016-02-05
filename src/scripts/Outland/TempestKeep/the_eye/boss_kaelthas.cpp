@@ -1492,27 +1492,27 @@ struct mob_phoenix_egg_tkAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_kaelthas(Creature* pCreature)
 {
-    return new boss_kaelthasAI (pCreature);
+    return GetInstanceAI<boss_kaelthasAI>(pCreature);
 }
 
 CreatureAI* GetAI_boss_thaladred_the_darkener(Creature* pCreature)
 {
-    return new boss_thaladred_the_darkenerAI (pCreature);
+    return GetInstanceAI<boss_thaladred_the_darkenerAI>(pCreature);
 }
 
 CreatureAI* GetAI_boss_lord_sanguinar(Creature* pCreature)
 {
-    return new boss_lord_sanguinarAI (pCreature);
+    return GetInstanceAI<boss_lord_sanguinarAI>(pCreature);
 }
 
 CreatureAI* GetAI_boss_grand_astromancer_capernian(Creature* pCreature)
 {
-    return new boss_grand_astromancer_capernianAI (pCreature);
+    return GetInstanceAI<boss_grand_astromancer_capernianAI>(pCreature);
 }
 
 CreatureAI* GetAI_boss_master_engineer_telonicus(Creature* pCreature)
 {
-    return new boss_master_engineer_telonicusAI (pCreature);
+    return GetInstanceAI<boss_master_engineer_telonicusAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_kael_flamestrike(Creature* pCreature)

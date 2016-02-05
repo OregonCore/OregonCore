@@ -168,5 +168,27 @@ class InstanceData : public ZoneScript
         DoorInfoMap doors;
         MinionInfoMap minions;
 };
+
+template<class AI, class T>
+AI* GetInstanceAI(T* obj, char const* scriptName)
+{
+    if (InstanceMap* instance = obj->GetMap()->ToInstanceMap())
+        if (instance->GetInstanceData())
+            if (instance->GetScriptId() == sObjectMgr.GetScriptId(scriptName))
+                return new AI(obj);
+  
+    return NULL;
+};
+
+template<class AI, class T>
+AI* GetInstanceAI(T* obj)
+{
+    if (InstanceMap* instance = obj->GetMap()->ToInstanceMap())
+        if (instance->GetInstanceData())
+            return new AI(obj);
+ 
+    return NULL;
+};
+
 #endif
 

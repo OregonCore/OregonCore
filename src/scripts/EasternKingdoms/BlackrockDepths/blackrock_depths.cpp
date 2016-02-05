@@ -347,7 +347,7 @@ struct npc_grimstoneAI : public npc_escortAI
 
 CreatureAI* GetAI_npc_grimstone(Creature* pCreature)
 {
-    return new npc_grimstoneAI(pCreature);
+    return GetInstanceAI<npc_grimstoneAI>(pCreature);
 }
 
 /*######
@@ -1527,7 +1527,7 @@ struct npc_rocknotAI : public npc_escortAI
 
 CreatureAI* GetAI_npc_rocknot(Creature* pCreature)
 {
-    return new npc_rocknotAI(pCreature);
+    return GetInstanceAI<npc_rocknotAI>(pCreature);
 }
 
 bool ChooseReward_npc_rocknot(Player* /*pPlayer*/, Creature* pCreature, const Quest* _Quest, uint32 /*item*/)

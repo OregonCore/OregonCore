@@ -188,7 +188,7 @@ struct mob_coilfang_waterelementalAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_thespiaAI(Creature* pCreature)
 {
-    return new boss_thespiaAI (pCreature);
+    return GetInstanceAI<boss_thespiaAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_coilfang_waterelementalAI(Creature* pCreature)

@@ -2198,7 +2198,7 @@ void boss_illidan_stormrageAI::EnterPhase(PhaseIllidan NextPhase)
 
 CreatureAI* GetAI_boss_illidan_stormrage(Creature* pCreature)
 {
-    return new boss_illidan_stormrageAI (pCreature);
+    return GetInstanceAI<boss_illidan_stormrageAI>(pCreature);
 }
 
 CreatureAI* GetAI_npc_akama_at_illidan(Creature* pCreature)

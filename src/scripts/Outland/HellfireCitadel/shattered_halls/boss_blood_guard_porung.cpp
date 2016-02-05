@@ -83,7 +83,7 @@ struct boss_blood_guard_porungAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_blood_guard_porungAI(Creature* pCreature)
 {
-    return new boss_blood_guard_porungAI (pCreature);
+    return GetInstanceAI<boss_blood_guard_porungAI>(pCreature);
 }
 
 void AddSC_boss_blood_guard_porung()

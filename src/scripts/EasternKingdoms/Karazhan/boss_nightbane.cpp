@@ -473,7 +473,7 @@ struct boss_nightbaneAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_nightbane(Creature* pCreature)
 {
-    return new boss_nightbaneAI (pCreature);
+    return GetInstanceAI<boss_nightbaneAI>(pCreature);
 }
 
 /*######

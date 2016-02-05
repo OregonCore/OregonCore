@@ -298,7 +298,7 @@ struct npc_volcanoAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_supremus(Creature* pCreature)
 {
-    return new boss_supremusAI (pCreature);
+    return GetInstanceAI<boss_supremusAI>(pCreature);
 }
 
 CreatureAI* GetAI_molten_flame(Creature* pCreature)
@@ -308,7 +308,7 @@ CreatureAI* GetAI_molten_flame(Creature* pCreature)
 
 CreatureAI* GetAI_npc_volcano(Creature* pCreature)
 {
-    return new npc_volcanoAI (pCreature);
+    return GetInstanceAI<npc_volcanoAI>(pCreature);
 }
 
 void AddSC_boss_supremus()

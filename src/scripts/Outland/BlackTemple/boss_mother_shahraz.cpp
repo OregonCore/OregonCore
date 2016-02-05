@@ -338,7 +338,7 @@ struct boss_shahrazAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_shahraz(Creature* pCreature)
 {
-    return new boss_shahrazAI (pCreature);
+    return GetInstanceAI<boss_shahrazAI>(pCreature);
 }
 
 void AddSC_boss_mother_shahraz()

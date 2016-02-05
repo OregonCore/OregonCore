@@ -443,7 +443,7 @@ CreatureAI* GetAI_mob_coilfang_ambusher(Creature* pCreature)
 
 CreatureAI* GetAI_boss_the_lurker_below(Creature* pCreature)
 {
-    return new boss_the_lurker_belowAI (pCreature);
+    return GetInstanceAI<boss_the_lurker_belowAI>(pCreature);
 }
 
 void AddSC_boss_the_lurker_below()

@@ -52,6 +52,7 @@ struct ScriptInfo;
 struct ScriptAction;
 struct Position;
 class Battleground;
+class InstanceMap;
 namespace Oregon { struct ObjectUpdater; }
 
 struct ScriptAction
@@ -340,6 +341,9 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         {
             return m_parentMap;
         }
+
+        InstanceMap* ToInstanceMap() { if (IsDungeon()) return reinterpret_cast<InstanceMap*>(this); else return NULL;  }
+        InstanceMap const* ToInstanceMap() const { if (IsDungeon()) return reinterpret_cast<InstanceMap const*>(this); return NULL; }
 
         float GetWaterOrGroundLevel(float x, float y, float z, float* ground = NULL, bool swim = false) const;
         float GetHeight(float x, float y, float z, bool checkVMap = true, float maxSearchDist = DEFAULT_HEIGHT_SEARCH) const;

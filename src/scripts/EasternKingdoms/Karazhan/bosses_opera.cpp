@@ -693,7 +693,7 @@ CreatureAI* GetAI_boss_roar(Creature* pCreature)
 
 CreatureAI* GetAI_boss_crone(Creature* pCreature)
 {
-    return new boss_croneAI(pCreature);
+    return GetInstanceAI<boss_croneAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_tito(Creature* pCreature)
@@ -866,7 +866,7 @@ struct boss_bigbadwolfAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_bigbadwolf(Creature* pCreature)
 {
-    return new boss_bigbadwolfAI(pCreature);
+    return GetInstanceAI<boss_bigbadwolfAI>(pCreature);
 }
 
 /**********************************************/

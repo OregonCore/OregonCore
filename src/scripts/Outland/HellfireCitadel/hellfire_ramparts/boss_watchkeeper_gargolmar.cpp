@@ -181,7 +181,7 @@ struct boss_watchkeeper_gargolmarAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_watchkeeper_gargolmarAI(Creature* pCreature)
 {
-    return new boss_watchkeeper_gargolmarAI (pCreature);
+    return GetInstanceAI<boss_watchkeeper_gargolmarAI>(pCreature);
 }
 
 void AddSC_boss_watchkeeper_gargolmar()

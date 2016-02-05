@@ -609,7 +609,7 @@ void npc_enslaved_soulAI::JustDied(Unit* /*killer*/)
 
 CreatureAI* GetAI_boss_reliquary_of_souls(Creature* pCreature)
 {
-    return new boss_reliquary_of_soulsAI (pCreature);
+    return GetInstanceAI<boss_reliquary_of_soulsAI>(pCreature);
 }
 
 CreatureAI* GetAI_boss_essence_of_suffering(Creature* pCreature)

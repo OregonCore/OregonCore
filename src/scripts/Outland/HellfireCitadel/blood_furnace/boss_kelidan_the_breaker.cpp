@@ -275,7 +275,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_kelidan_the_breaker(Creature* pCreature)
 {
-    return new boss_kelidan_the_breakerAI (pCreature);
+    return GetInstanceAI<boss_kelidan_the_breakerAI>(pCreature);
 }
 
 /*######
@@ -372,7 +372,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_shadowmoon_channeler(Creature* pCreature)
 {
-    return new mob_shadowmoon_channelerAI (pCreature);
+    return GetInstanceAI<mob_shadowmoon_channelerAI>(pCreature);
 }
 
 void AddSC_boss_kelidan_the_breaker()

@@ -343,7 +343,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_gurtogg_bloodboil(Creature* pCreature)
 {
-    return new boss_gurtogg_bloodboilAI (pCreature);
+    return GetInstanceAI<boss_gurtogg_bloodboilAI>(pCreature);
 }
 
 void AddSC_boss_gurtogg_bloodboil()

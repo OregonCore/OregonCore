@@ -897,7 +897,7 @@ CreatureAI* GetAI_mob_blood_elf_council_voice_trigger(Creature* c)
 
 CreatureAI* GetAI_mob_illidari_council(Creature* pCreature)
 {
-    return new mob_illidari_councilAI (pCreature);
+    return GetInstanceAI<mob_illidari_councilAI>(pCreature);
 }
 
 CreatureAI* GetAI_boss_gathios_the_shatterer(Creature* pCreature)

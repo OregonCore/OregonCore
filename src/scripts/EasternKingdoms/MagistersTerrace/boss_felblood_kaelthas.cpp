@@ -642,7 +642,7 @@ struct mob_arcane_sphereAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_felblood_kaelthas(Creature* c)
 {
-    return new boss_felblood_kaelthasAI(c);
+    return GetInstanceAI<boss_felblood_kaelthasAI>(c);
 }
 
 CreatureAI* GetAI_mob_arcane_sphere(Creature* c)
@@ -652,7 +652,7 @@ CreatureAI* GetAI_mob_arcane_sphere(Creature* c)
 
 CreatureAI* GetAI_mob_felkael_phoenix(Creature* c)
 {
-    return new mob_felkael_phoenixAI(c);
+    return GetInstanceAI<mob_felkael_phoenixAI>(c);
 }
 
 CreatureAI* GetAI_mob_felkael_phoenix_egg(Creature* c)

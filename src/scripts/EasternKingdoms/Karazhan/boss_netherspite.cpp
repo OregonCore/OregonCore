@@ -339,7 +339,7 @@ struct boss_netherspiteAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_netherspite(Creature* pCreature)
 {
-    return new boss_netherspiteAI(pCreature);
+    return GetInstanceAI<boss_netherspiteAI>(pCreature);
 }
 
 void AddSC_boss_netherspite()

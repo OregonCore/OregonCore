@@ -290,7 +290,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_harbinger_skyriss(Creature* pCreature)
 {
-    return new boss_harbinger_skyrissAI (pCreature);
+    return GetInstanceAI<boss_harbinger_skyrissAI>(pCreature);
 }
 
 enum IllusionSpells
@@ -315,7 +315,7 @@ struct boss_harbinger_skyriss_illusionAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_harbinger_skyriss_illusion(Creature* c)
 {
-    return new boss_harbinger_skyriss_illusionAI (c);
+    return GetInstanceAI<boss_harbinger_skyriss_illusionAI>(c);
 }
 
 void AddSC_boss_harbinger_skyriss()

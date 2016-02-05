@@ -225,12 +225,12 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
 
 CreatureAI* GetAI_mob_naga_distiller(Creature* pCreature)
 {
-    return new mob_naga_distillerAI (pCreature);
+    return GetInstanceAI<mob_naga_distillerAI>(pCreature);
 }
 
 CreatureAI* GetAI_boss_warlord_kalithresh(Creature* pCreature)
 {
-    return new boss_warlord_kalithreshAI (pCreature);
+    return GetInstanceAI<boss_warlord_kalithreshAI>(pCreature);
 }
 
 void AddSC_boss_warlord_kalithresh()

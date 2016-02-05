@@ -268,7 +268,7 @@ bool GOHello_go_najentus_spine(Player* pPlayer, GameObject* pGo)
 
 CreatureAI* GetAI_boss_najentus(Creature* pCreature)
 {
-    return new boss_najentusAI (pCreature);
+    return GetInstanceAI<boss_najentusAI>(pCreature);
 }
 
 void AddSC_boss_najentus()

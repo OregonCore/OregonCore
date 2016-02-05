@@ -504,12 +504,12 @@ struct mob_lesser_shadow_fissureAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_grand_warlock_nethekurse(Creature* pCreature)
 {
-    return new boss_grand_warlock_nethekurseAI (pCreature);
+    return GetInstanceAI<boss_grand_warlock_nethekurseAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_fel_orc_convert(Creature* pCreature)
 {
-    return new mob_fel_orc_convertAI (pCreature);
+    return GetInstanceAI<mob_fel_orc_convertAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_lesser_shadow_fissure(Creature* pCreature)

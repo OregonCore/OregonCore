@@ -138,7 +138,7 @@ struct boss_the_makerAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_the_makerAI(Creature* pCreature)
 {
-    return new boss_the_makerAI (pCreature);
+    return GetInstanceAI<boss_the_makerAI>(pCreature);
 }
 
 void AddSC_boss_the_maker()

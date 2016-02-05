@@ -614,7 +614,7 @@ CreatureAI* GetAI_netherspite_infernal(Creature* pCreature)
 
 CreatureAI* GetAI_boss_malchezaar(Creature* pCreature)
 {
-    return new boss_malchezaarAI (pCreature);
+    return GetInstanceAI<boss_malchezaarAI>(pCreature);
 }
 
 void AddSC_boss_malchezaar()

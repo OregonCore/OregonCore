@@ -589,12 +589,12 @@ bool GOHello_go_Manticron_Cube(Player* player, GameObject* go)
 
 CreatureAI* GetAI_boss_magtheridon(Creature* creature)
 {
-    return new boss_magtheridonAI(creature);
+    return GetInstanceAI<boss_magtheridonAI>(creature);
 }
 
 CreatureAI* GetAI_mob_hellfire_channeler(Creature* creature)
 {
-    return new mob_hellfire_channelerAI(creature);
+    return GetInstanceAI<mob_hellfire_channelerAI>(creature);
 }
 
 CreatureAI* GetAI_mob_abyssalAI(Creature* creature)

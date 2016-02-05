@@ -147,7 +147,7 @@ struct boss_gatewatcher_iron_handAI : public ScriptedAI
 };
 CreatureAI* GetAI_boss_gatewatcher_iron_hand(Creature* pCreature)
 {
-    return new boss_gatewatcher_iron_handAI (pCreature);
+    return GetInstanceAI<boss_gatewatcher_iron_handAI>(pCreature);
 }
 
 void AddSC_boss_gatewatcher_iron_hand()

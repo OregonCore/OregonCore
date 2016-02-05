@@ -224,7 +224,7 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 
 CreatureAI* GetAI_boss_omor_the_unscarredAI(Creature* pCreature)
 {
-    return new boss_omor_the_unscarredAI (pCreature);
+    return GetInstanceAI<boss_omor_the_unscarredAI>(pCreature);
 }
 
 void AddSC_boss_omor_the_unscarred()

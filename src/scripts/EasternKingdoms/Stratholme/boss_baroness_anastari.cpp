@@ -118,7 +118,7 @@ struct boss_baroness_anastariAI : public ScriptedAI
 };
 CreatureAI* GetAI_boss_baroness_anastari(Creature* pCreature)
 {
-    return new boss_baroness_anastariAI (pCreature);
+    return GetInstanceAI<boss_baroness_anastariAI>(pCreature);
 }
 
 void AddSC_boss_baroness_anastari()

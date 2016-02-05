@@ -384,7 +384,7 @@ struct boss_warbringer_omroggAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_warbringer_omrogg(Creature* pCreature)
 {
-    return new boss_warbringer_omroggAI (pCreature);
+    return GetInstanceAI<boss_warbringer_omroggAI>(pCreature);
 }
 
 CreatureAI* GetAI_mob_omrogg_heads(Creature* pCreature)
