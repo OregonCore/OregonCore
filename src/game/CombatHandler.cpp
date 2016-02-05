@@ -46,8 +46,6 @@ void WorldSession::HandleAttackSwingOpcode(WorldPacket& recv_data)
 
     if (!_player->canAttack(pEnemy))
     {
-        sLog.outError("WORLD: Enemy %s is friendly", guid.GetString().c_str());
-
         // stop attack state at client
         SendAttackStop(pEnemy);
         return;
