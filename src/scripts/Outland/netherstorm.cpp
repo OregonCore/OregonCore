@@ -650,22 +650,6 @@ CreatureAI* GetAI_npc_commander_dawnforge(Creature* pCreature)
     return new npc_commander_dawnforgeAI(pCreature);
 }
 
-Creature* SearchDawnforge(Player* source, uint32 entry, float range)
-{
-    Creature* pCreature = NULL;
-
-    CellCoord pair(Oregon::ComputeCellCoord(source->GetPositionX(), source->GetPositionY()));
-    Cell cell(pair);
-    cell.SetNoCreate();
-
-    Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*source, entry, true, range);
-    Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
-    TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
-    cell.Visit(pair, creature_searcher, *(source->GetMap()), *pCreature, pCreature->GetGridActivationRange());
-
-    return pCreature;
-}
-
 bool AreaTrigger_at_commander_dawnforge(Player* player, const AreaTriggerEntry* /*at*/)
 {
     //if player lost aura or not have at all, we should not try start event.
@@ -674,7 +658,7 @@ bool AreaTrigger_at_commander_dawnforge(Player* player, const AreaTriggerEntry* 
 
     if (player->IsAlive() && player->GetQuestStatus(QUEST_INFO_GATHERING) == QUEST_STATUS_INCOMPLETE)
     {
-        Creature* Dawnforge = SearchDawnforge(player, CreatureEntry[1][0], 30.0f);
+        Creature* Dawnforge = player->FindNearestCreature(CreatureEntry[1][0], 30.0f);
 
         if (!Dawnforge)
             return false;
