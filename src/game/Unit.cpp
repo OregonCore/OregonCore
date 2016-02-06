@@ -4727,7 +4727,7 @@ bool Unit::HandleDummyAuraProc(Unit* pVictim, uint32 damage, Aura* triggeredByAu
                         cooldown = 1;
 
                     triggered_spell_id = 12723;
-                    basepoints0 = damage;
+                    basepoints0 = CalcArmorReducedDamage(target, damage);
                     break;
                 }
             // Unstable Power
