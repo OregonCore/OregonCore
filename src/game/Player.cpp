@@ -3191,24 +3191,8 @@ void Player::RemoveSpell(uint32 spell_id, bool disabled)
     if (itr->second.state == PLAYERSPELL_REMOVED || (disabled && itr->second.disabled))
         return;
 
-    // unlearn non talent higher ranks (recursive)
-    SpellChainNode const* node = sSpellMgr.GetSpellChainNode(spell_id);
-    if (node)
-    {
-        if (HasSpell(node->next) && !GetTalentSpellPos(node->next))
-            RemoveSpell(node->next, disabled);
-    }
-    //unlearn spells dependent from recently removed spells
-    SpellsRequiringSpellMap const& reqMap = sSpellMgr.GetSpellsRequiringSpell();
-    SpellsRequiringSpellMap::const_iterator itr2 = reqMap.find(spell_id);
-    for (uint32 i = reqMap.count(spell_id); i > 0; i--, itr2++)
-        RemoveSpell(itr2->second, disabled);
-
-    // removing
-    WorldPacket data(SMSG_REMOVED_SPELL, 4);
-    data << uint16(spell_id);
-    GetSession()->SendPacket(&data);
-
+    // remove / guard first so upcoming
+    // recursive calls cannot corrupt m_spells
     if (disabled)
     {
         itr->second.disabled = disabled;
@@ -3222,6 +3206,24 @@ void Player::RemoveSpell(uint32 spell_id, bool disabled)
         else
             itr->second.state = PLAYERSPELL_REMOVED;
     }
+
+    // unlearn non talent higher ranks (recursive)
+    SpellChainNode const* node = sSpellMgr.GetSpellChainNode(spell_id);
+    if (node)
+    {
+        if (HasSpell(node->next) && !GetTalentSpellPos(node->next))
+            RemoveSpell(node->next, disabled);
+    }
+    //unlearn spells dependent from recently removed spells
+    SpellsRequiringSpellMap const& reqMap = sSpellMgr.GetSpellsRequiringSpell();
+    SpellsRequiringSpellMap::const_iterator itr2 = reqMap.find(spell_id);
+    for (uint32 i = reqMap.count(spell_id); i > 0; i--, ++itr2)
+        RemoveSpell(itr2->second, disabled);
+
+    // removing
+    WorldPacket data(SMSG_REMOVED_SPELL, 4);
+    data << uint16(spell_id);
+    GetSession()->SendPacket(&data);
 
     RemoveAurasDueToSpell(spell_id);
 
@@ -3566,17 +3568,6 @@ bool Player::ResetTalents(bool no_cost)
     }
 
     return true;
-}
-
-bool Player::_removeSpell(uint16 spell_id)
-{
-    PlayerSpellMap::iterator itr = m_spells.find(spell_id);
-    if (itr != m_spells.end())
-    {
-        m_spells.erase(itr);
-        return true;
-    }
-    return false;
 }
 
 Mail* Player::GetMail(uint32 id)
@@ -5770,7 +5761,7 @@ void Player::CheckAreaExploreAndOutdoor()
     however we need to reset back if we enter outdoors again */
     if (!m_wasOutdoors && isOutdoor)
     {
-        for (PlayerSpellMap::const_iterator it = m_spells.begin(); it != m_spells.end(); it++)
+        for (PlayerSpellMap::const_iterator it = m_spells.begin(); it != m_spells.end(); ++it)
         {
             SpellEntry const* spellInfo = sSpellStore.LookupEntry(it->first);
             if (spellInfo->Attributes & SPELL_ATTR0_OUTDOORS_ONLY && spellInfo->Stances == (1 << (m_form - 1)))
@@ -13285,7 +13276,7 @@ bool Player::CanRewardQuest(Quest const* pQuest, uint32 reward, bool msg)
                 rewardItems.push_back(Reward(pQuest->RewItemId[i], pQuest->RewItemCount[i]));
 
     // give all reward to player
-    for (std::list<Reward>::iterator it = rewardItems.begin(); it != rewardItems.end(); it++)
+    for (std::list<Reward>::iterator it = rewardItems.begin(); it != rewardItems.end(); ++it)
     {
         ItemPosCountVec dest; // dont move this outside of loop
         res = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, it->first, it->second);
@@ -13296,7 +13287,7 @@ bool Player::CanRewardQuest(Quest const* pQuest, uint32 reward, bool msg)
     }
 
     // now take them back
-    for (std::list<Reward2>::iterator it = takenItems.begin(); it != takenItems.end(); it++)
+    for (std::list<Reward2>::iterator it = takenItems.begin(); it != takenItems.end(); ++it)
         DestroyItemCount(it->first, it->second, false);
 
     if (res != EQUIP_ERR_OK)
@@ -16786,7 +16777,7 @@ void Player::_SaveAuras()
         {
             AuraMap::const_iterator itr2 = itr;
             // save previous spellEffectPair to db
-            itr2--;
+            --itr2;
 
             Aura* aura = itr2->second;
             SpellEntry const* spellInfo = aura->GetSpellProto();
@@ -17063,16 +17054,17 @@ void Player::_SaveReputation()
 
 void Player::_SaveSpells()
 {
-    for (PlayerSpellMap::iterator itr = m_spells.begin(), next = m_spells.begin(); itr != m_spells.end(); itr = next)
+    for (PlayerSpellMap::iterator itr = m_spells.begin(), next = itr; itr != m_spells.end(); itr = next)
     {
         ++next;
+
         if (itr->second.state == PLAYERSPELL_REMOVED || itr->second.state == PLAYERSPELL_CHANGED)
             CharacterDatabase.PExecute("DELETE FROM character_spell WHERE guid = '%u' and spell = '%u'", GetGUIDLow(), itr->first);
         if (itr->second.state == PLAYERSPELL_NEW || itr->second.state == PLAYERSPELL_CHANGED)
             CharacterDatabase.PExecute("INSERT INTO character_spell (guid,spell,active,disabled) VALUES ('%u', '%u', '%u', '%u')", GetGUIDLow(), itr->first, itr->second.active ? 1 : 0, itr->second.disabled ? 1 : 0);
 
         if (itr->second.state == PLAYERSPELL_REMOVED)
-            _removeSpell(itr->first);
+            m_spells.erase(itr->first);
         else
             itr->second.state = PLAYERSPELL_UNCHANGED;
     }
@@ -20308,7 +20300,7 @@ void Player::UpdateAreaDependentAuras(uint32 newArea)
                     RemoveAurasDueToSpell(iter->second->GetSpellProto()->EffectTriggerSpell[i]);
             }
             if (sSpellMgr.IsSpellMemberOfSpellGroup(iter->second->GetSpellProto()->Id, SPELL_GROUP_ELIXIR_SHATTRATH))    // for shattrath flasks we want only to remove it's triggered effect, not flask itself.
-                iter++;
+                ++iter;
             else
             RemoveAura(iter);
         }
