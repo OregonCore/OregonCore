@@ -3697,7 +3697,7 @@ void Spell::TriggerSpell()
 SpellCastResult Spell::CheckCast(bool strict)
 {
     // check death state
-    if (!m_caster->IsAlive() && !m_spellInfo->Attributes & SPELL_ATTR0_PASSIVE && !(m_spellInfo->Attributes & SPELL_ATTR0_CASTABLE_WHILE_DEAD || (m_IsTriggeredSpell && !m_triggeredByAuraSpell)))
+    if (!m_caster->IsAlive() && !(m_spellInfo->Attributes & SPELL_ATTR0_PASSIVE) && !(m_spellInfo->Attributes & SPELL_ATTR0_CASTABLE_WHILE_DEAD || (m_IsTriggeredSpell && !m_triggeredByAuraSpell)))
         return SPELL_FAILED_CASTER_DEAD;
 
     // check cooldowns to prevent cheating
