@@ -2559,12 +2559,25 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellEntry const* spellInf
         return SPELL_MISS_NONE;
 
     // Check for attack from behind
-    if (!victim->HasInArc(float(M_PI), this) || victim->HasUnitState(UNIT_STATE_STUNNED))
+    // This is the only Dodge/Block check that can't be done from behind
+    // based on unit type.
+    if (!victim->HasInArc(float(M_PI), this))
     {
         // Can`t dodge from behind in PvP (but its possible in PvE)
         if (victim->GetTypeId() == TYPEID_PLAYER)
             canDodge = false;
-        // Can`t parry or block
+        // Can`t parry
+        canParry = false;
+        // Can't block from behind in PvE (but its possible in PvP)
+        if (victim->GetTypeId() == TYPEID_UNIT)
+            canBlock = false;
+    }
+
+    // Check for victim casting spell OR victim under CC effect
+    // This check is not subject to unit type.
+    if (victim->IsNonMeleeSpellCast(false, false, true) || victim->HasUnitState(UNIT_STATE_CONTROLLED))
+    {
+        canDodge = false;
         canParry = false;
         canBlock = false;
     }
