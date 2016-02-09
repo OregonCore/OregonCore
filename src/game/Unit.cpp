@@ -2573,15 +2573,6 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellEntry const* spellInf
             canBlock = false;
     }
 
-    // Check for victim casting spell OR victim under CC effect
-    // This check is not subject to unit type.
-    if (victim->IsNonMeleeSpellCast(false, false, true) || victim->HasUnitState(UNIT_STATE_CONTROLLED))
-    {
-        canDodge = false;
-        canParry = false;
-        canBlock = false;
-    }
-
     // Check creatures flags_extra for disable parry
     if (victim->GetTypeId() == TYPEID_UNIT)
     {
