@@ -8269,6 +8269,10 @@ bool Unit::isSpellCrit(Unit* pVictim, SpellEntry const* spellProto, SpellSchoolM
                     crit_chance = GetUnitCriticalChance(attackType, pVictim);
                     crit_chance += (int32(GetMaxSkillValueForLevel(pVictim)) - int32(pVictim->GetDefenseSkillValue(this))) * 0.04f;
                     crit_chance += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL, schoolMask);
+
+                    // Autoshot must crit if target is sitting down and crit chance not 0
+                    if ((spellProto->AttributesEx4 & SPELL_ATTR4_AUTOSHOT) && pVictim->GetTypeId() == TYPEID_PLAYER && crit_chance > 0 && !pVictim->IsStandState())
+                        return true;
                 }
                 break;
             }
