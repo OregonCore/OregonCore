@@ -638,8 +638,8 @@ enum SpellAttr6
 {
     SPELL_ATTR6_UNK0                             = 0x00000001, // 0 Only Move spell have this flag
     SPELL_ATTR6_UNK1                             = 0x00000002, // 1 not set in 2.4.2
-    SPELL_ATTR6_UNK2                             = 0x00000004, // 2
-    SPELL_ATTR6_UNK3                             = 0x00000008, // 3
+    SPELL_ATTR6_IGNORE_CASTER_AURAS              = 0x00000004, // 2
+    SPELL_ATTR6_ASSIST_IGNORE_IMMUNE_FLAG        = 0x00000008, // 3 [NYI] skips checking UNIT_FLAG_IMMUNE_TO_PC and UNIT_FLAG_IMMUNE_TO_NPC flags on assist
     SPELL_ATTR6_UNK4                             = 0x00000010, // 4 not set in 2.4.2
     SPELL_ATTR6_UNK5                             = 0x00000020, // 5
     SPELL_ATTR6_UNK6                             = 0x00000040, // 6

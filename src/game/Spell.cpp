@@ -5093,10 +5093,8 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
 
 SpellCastResult Spell::CheckCasterAuras() const
 {
-    // Flag drop spells totally immuned to caster auras
-    // FIXME: find more nice check for all totally immuned spells
-    // AttributesEx3 & 0x10000000?
-    if (m_spellInfo->Id == 23336 || m_spellInfo->Id == 23334 || m_spellInfo->Id == 34991)
+    // spells totally immuned to caster auras (wsg flag drop, give marks etc)
+    if (m_spellInfo->AttributesEx6 & SPELL_ATTR6_IGNORE_CASTER_AURAS)
         return SPELL_CAST_OK;
 
     uint8 school_immune = 0;
