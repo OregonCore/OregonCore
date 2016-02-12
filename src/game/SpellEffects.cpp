@@ -3707,8 +3707,8 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                             summon->AI()->AttackStart(m_caster);
                         break;
                     default:
-                        if (summon->IsAIEnabled && (m_originalCaster->IsInCombat() && m_originalCaster->getVictim()))
-                            summon->AI()->AttackStart(m_originalCaster->getVictim());
+                        if (summon->IsAIEnabled && m_originalCaster->IsInCombat())
+                            summon->AI()->EnterCombat(nullptr);
                         break;
                 }
             }
