@@ -4866,29 +4866,21 @@ void Spell::EffectThreat(SpellEffIndex /*effIndex*/)
 
 void Spell::EffectHealMaxHealth(SpellEffIndex /*effIndex*/)
 {
-    if (!unitTarget)
-        return;
-
-    if (!unitTarget->IsAlive())
+    if (!unitTarget || !unitTarget->IsAlive())
         return;
 
     if (unitTarget->GetMaxNegativeAuraModifier(SPELL_AURA_MOD_HEALING_PCT) <= -100)
         return;
 
-    uint32 addhealth = unitTarget->GetMaxHealth() - unitTarget->GetHealth();
+    int32 addhealth = 0;
 
-    // Lay on Hands
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN && m_spellInfo->SpellFamilyFlags & 0x0000000000008000)
-    {
-        if (!m_originalCaster)
-            return;
-        addhealth = addhealth > m_originalCaster->GetMaxHealth() ? m_originalCaster->GetMaxHealth() : addhealth;
-        uint32 LoHamount = unitTarget->GetHealth() + m_originalCaster->GetMaxHealth();
-        LoHamount = LoHamount > unitTarget->GetMaxHealth() ? unitTarget->GetMaxHealth() : LoHamount;
-        unitTarget->SetHealth(LoHamount);
-    }
+    // damage == 0 - heal for caster max health
+    if (damage == 0)
+        addhealth = m_caster->GetMaxHealth();
     else
-        unitTarget->SetHealth(unitTarget->GetMaxHealth());
+        addhealth = unitTarget->GetMaxHealth() - unitTarget->GetHealth();
+
+    unitTarget->SetHealth(addhealth);
 
     if (m_originalCaster)
         m_originalCaster->SendHealSpellLog(unitTarget, m_spellInfo->Id, addhealth, false);
