@@ -493,6 +493,14 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                             PlayerGUID = 0;
                             Wave = 0;
                         }
+                        else if (pCreature) // Makes BIG WILL attackable.
+                        {
+                            pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                            pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_ROAR);
+                            pCreature->setFaction(14);
+                            pCreature->AI()->AttackStart(pWarrior);
+                        }
                     }
                 }
                 else Wave_Timer -= diff;
