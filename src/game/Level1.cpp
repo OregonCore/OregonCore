@@ -804,7 +804,7 @@ bool ChatHandler::HandleGPSCommand(const char* args)
     LiquidData liquid_status;
     ZLiquidStatus res = map->getLiquidStatus(obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), MAP_ALL_LIQUIDS, &liquid_status);
     if (res)
-        PSendSysMessage(LANG_LIQUID_STATUS, liquid_status.level, liquid_status.depth_level, liquid_status.type, res);
+        PSendSysMessage(LANG_LIQUID_STATUS, liquid_status.level, liquid_status.depth_level, liquid_status.entry, liquid_status.type_flags, res);
     return true;
 }
 

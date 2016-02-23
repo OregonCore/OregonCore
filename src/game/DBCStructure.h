@@ -44,9 +44,10 @@ struct AreaTableEntry
     uint32  flags;                                          // 4, unknown value but 312 for all cities
     // 5-9 unused
     int32   area_level;                                     // 10
-    char*  area_name[16];                                  // 11-26
+    char*  area_name[16];                                   // 11-26
     // 27, string flags, unused
     uint32  team;                                           // 28
+    uint32  LiquidTypeOverride[4];                          // 29-32 liquid override by type
 };
 
 struct AreaTriggerEntry

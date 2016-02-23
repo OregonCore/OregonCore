@@ -564,7 +564,7 @@ NavTerrain PathInfo::getNavTerrain(float x, float y, float z)
     if (liquidStatus == LIQUID_MAP_NO_WATER)
         return NAV_GROUND;
 
-    switch (data.type)
+    switch (data.type_flags)
     {
     case MAP_LIQUID_TYPE_WATER:
     case MAP_LIQUID_TYPE_OCEAN:

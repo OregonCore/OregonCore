@@ -47,13 +47,10 @@ void fixnamen(char* name, size_t len)
 {
     for (size_t i = 0; i < len - 3; i++)
     {
-        if (i > 0 && name[i] >= 'A' && name[i] <= 'Z' && isalpha(name[i - 1]))
-        {
+        if (i > 0 && name[i] >= 'A' && name[i] <= 'Z' && isalpha(name[i-1]))
             name[i] |= 0x20;
-        } else if ((i==0 || !isalpha(name[i-1])) && name[i]>='a' && name[i]<='z')
-        {
+        else if ((i == 0 || !isalpha(name[i-1])) && name[i]>='a' && name[i]<='z')
             name[i] &= ~0x20;
-    }
     }
     //extension in lowercase
     for (size_t i = len - 3; i < len; i++)
@@ -209,7 +206,6 @@ bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY, StringSet& failed
     }
     ADT.close();
     fclose(dirfile);
-
     return true;
 }
 
