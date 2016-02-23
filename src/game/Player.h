@@ -802,7 +802,8 @@ enum PlayerRestState
 {
     REST_STATE_RESTED       = 1, // 200% xp
     REST_STATE_NORMAL       = 2, // 100% xp
-    REST_STATE_TIRED        = 4, //  50% xp
+    REST_STATE_TIRED_1      = 3, // 100% xp
+    REST_STATE_TIRED_2      = 4, //  50% xp
     REST_STATE_EXHAUSTED    = 5, //  25% xp
     REST_STATE_RAF_LINKED   = 6  // 200% xp
 };
@@ -2943,6 +2944,7 @@ class Player : public Unit, public GridObject<Player>
         uint8 _CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool merge, Item* pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
         Item* _StoreItem(uint16 pos, Item* pItem, uint32 count, bool clone, bool update);
 
+        LiquidTypeEntry const* _lastLiquid;
         int32 m_MirrorTimer[MAX_TIMERS];
         uint8 m_MirrorTimerFlags;
         uint8 m_MirrorTimerFlagsLast;
