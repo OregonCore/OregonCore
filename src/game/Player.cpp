@@ -63,6 +63,7 @@
 #include "DisableMgr.h"
 #include "ConditionMgr.h"
 #include "ScriptMgr.h"
+#include "PoolMgr.h"
 
 #include <cmath>
 
@@ -14009,7 +14010,16 @@ bool Player::CanShareQuest(uint32 quest_id) const
     {
         QuestStatusMap::const_iterator itr = mQuestStatus.find(quest_id);
         if (itr != mQuestStatus.end())
-            return itr->second.m_status == QUEST_STATUS_NONE || itr->second.m_status == QUEST_STATUS_INCOMPLETE;
+        {
+            if (itr->second.m_status != QUEST_STATUS_NONE || itr->second.m_status != QUEST_STATUS_INCOMPLETE)
+                return false;
+
+            // Pooled daily quests that aren't available should not be shareable
+            if (sPoolMgr.IsPartOfAPool<Quest>(quest_id) && !sPoolMgr.IsSpawnedObject<Quest>(quest_id))
+				return false;
+
+            return true;
+        }
     }
     return false;
 }
