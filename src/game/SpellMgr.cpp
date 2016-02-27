@@ -2420,6 +2420,7 @@ void SpellMgr::LoadSpellCustomAttr()
             break;
 		case 32205: // Place Burning Blade Pyre
 		    spellInfo->AttributesEx2 |= SPELL_ATTR2_IGNORE_LOS;
+            break;
         case 42005: // Bloodboil
         case 38296: // Spitfire Totem
         case 37676: // Insidious Whisper
