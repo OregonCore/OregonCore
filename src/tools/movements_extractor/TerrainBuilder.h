@@ -61,7 +61,7 @@ static const float INVALID_MAP_LIQ_HEIGHT_MAX = 5000.0f;
 // see following files:
 // contrib/extractor/system.cpp
 // src/game/GridMap.cpp
-static char const* MAP_VERSION_MAGIC = "w0.6";
+static char const* MAP_VERSION_MAGIC = "v1.3";
 
 struct MeshData
 {
