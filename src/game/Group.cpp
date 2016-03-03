@@ -94,7 +94,11 @@ bool Group::Create(const uint64& guid, const char* name)
     m_masterLooterGuid = 0;
 
     m_difficulty = DIFFICULTY_NORMAL;
-    Player* leader = sObjectMgr.GetPlayer(guid);
+    Player* leader = sObjectMgr.GetPlayer(guid, true);
+
+    if (!leader)
+        return false;
+
     if (!isBGGroup())
     {
         if (leader)
@@ -280,7 +284,7 @@ bool Group::AddMember(const uint64& guid, const char* name)
         return false;
     SendUpdate();
 
-    Player* player = sObjectMgr.GetPlayer(guid);
+    Player* player = sObjectMgr.GetPlayer(guid, true);
     if (player)
     {
         if (!IsLeader(player->GetGUID()) && !isBGGroup())
@@ -312,7 +316,7 @@ uint32 Group::RemoveMember(const uint64& guid, const RemoveMethod& method /* = G
     {
         bool leaderChanged = _removeMember(guid);
 
-        if (Player* player = sObjectMgr.GetPlayer(guid))
+        if (Player* player = sObjectMgr.GetPlayer(guid, true))
         {
             WorldPacket data;
 
@@ -384,7 +388,7 @@ void Group::Disband(bool hideDestroy)
 
     for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
     {
-        player = sObjectMgr.GetPlayer(citr->guid);
+        player = sObjectMgr.GetPlayer(citr->guid, true);
         if (!player)
             continue;
 
@@ -950,6 +954,13 @@ void Group::SendUpdate()
         if (!player || !player->GetSession() || player->GetGroup() != this)
             continue;
 
+        // client would crash if this is sent while he's at aloading screen
+        if (!player->IsInWorld())
+        {
+            player->ScheduleDelayedOperation(DELAYED_GROUP_RESTORE);
+            continue;
+        }
+
         // guess size
         WorldPacket data(SMSG_GROUP_LIST, (1 + 1 + 1 + 1 + 8 + 4 + GetMembersCount() * 20));
         data << (uint8)m_groupType;                         // group type
@@ -963,7 +974,7 @@ void Group::SendUpdate()
             if (citr->guid == citr2->guid)
                 continue;
 
-            Player* member = sObjectMgr.GetPlayer(citr2->guid);
+            Player* member = sObjectMgr.GetPlayer(citr2->guid, true);
             uint8 onlineState = (member) ? MEMBER_STATUS_ONLINE : MEMBER_STATUS_OFFLINE;
             onlineState = onlineState | ((isBGGroup()) ? MEMBER_STATUS_PVP : 0);
 
@@ -1039,7 +1050,7 @@ void Group::OfflineReadyCheck()
 {
     for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
     {
-        Player* pl = sObjectMgr.GetPlayer(citr->guid);
+        Player* pl = sObjectMgr.GetPlayer(citr->guid, true);
         if (!pl || !pl->GetSession())
         {
             WorldPacket data(MSG_RAID_READY_CHECK_CONFIRM, 9);
@@ -1081,7 +1092,7 @@ bool Group::_addMember(const uint64& guid, const char* name, bool isAssistant, u
     if (!guid)
         return false;
 
-    Player* player = sObjectMgr.GetPlayer(guid);
+    Player* player = sObjectMgr.GetPlayer(guid, true);
 
     MemberSlot member;
     member.guid      = guid;
@@ -1133,7 +1144,7 @@ bool Group::_addMember(const uint64& guid, const char* name, bool isAssistant, u
 
 bool Group::_removeMember(const uint64& guid)
 {
-    Player* player = sObjectMgr.GetPlayer(guid);
+    Player* player = sObjectMgr.GetPlayer(guid, true);
     if (player)
     {
         // if we are removing player from battleground raid
@@ -1194,7 +1205,7 @@ void Group::_setLeader(const uint64& guid)
             ")", GUID_LOPART(m_leaderGuid), GUID_LOPART(slot->guid)
         );
 
-        Player* player = sObjectMgr.GetPlayer(slot->guid);
+        Player* player = sObjectMgr.GetPlayer(slot->guid, true);
         if (player)
         {
             for (uint8 i = 0; i < TOTAL_DIFFICULTIES; i++)
@@ -1321,7 +1332,7 @@ void Group::ChangeMembersGroup(const uint64& guid, const uint8& group)
 {
     if (!isRaidGroup())
         return;
-    Player* player = sObjectMgr.GetPlayer(guid);
+    Player* player = sObjectMgr.GetPlayer(guid, true);
 
     if (player)
     {

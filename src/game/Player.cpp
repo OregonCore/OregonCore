@@ -1813,7 +1813,7 @@ bool Player::TeleportToBGEntryPoint()
     {
         ScheduleDelayedOperation(DELAYED_BG_MOUNT_RESTORE);
         ScheduleDelayedOperation(DELAYED_BG_TAXI_RESTORE);
-        ScheduleDelayedOperation(DELAYED_BG_GROUP_RESTORE);
+        ScheduleDelayedOperation(DELAYED_GROUP_RESTORE);
     }
     return TeleportTo(m_bgData.joinPos);
 }
@@ -1872,7 +1872,7 @@ void Player::ProcessDelayedOperations()
         }
     }
 
-    if (m_DelayedOperations & DELAYED_BG_GROUP_RESTORE)
+    if (m_DelayedOperations & DELAYED_GROUP_RESTORE)
     {
         if (Group* g = GetGroup())
             g->SendUpdate();

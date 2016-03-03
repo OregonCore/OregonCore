@@ -759,7 +759,7 @@ enum PlayerDelayedOperations
     DELAYED_SPELL_CAST_DESERTER = 0x04,
     DELAYED_BG_MOUNT_RESTORE    = 0x08,                     // Flag to restore mount state after teleport from BG
     DELAYED_BG_TAXI_RESTORE     = 0x10,                     // Flag to restore taxi state after teleport from BG
-    DELAYED_BG_GROUP_RESTORE    = 0x20,
+    DELAYED_GROUP_RESTORE       = 0x20,                     // Flag to tell player he's in a group (client would crash if this is sent at loading screen)
     DELAYED_END
 };
 
@@ -2725,6 +2725,12 @@ class Player : public Unit, public GridObject<Player>
         bool SetCanFly(bool apply, bool packetOnly = false);
         bool SetLevitate(bool apply, bool packetOnly = false);
         bool SetWaterWalking(bool enable, bool packetOnly = false);
+
+        void ScheduleDelayedOperation(uint32 operation)
+        {
+            if (operation < DELAYED_END)
+                m_DelayedOperations |= operation;
+        }
     protected:
 
         uint32 m_contestedPvPTimer;
@@ -2936,7 +2942,8 @@ class Player : public Unit, public GridObject<Player>
 
         bool CanAlwaysSee(WorldObject const* obj) const;
 
-        bool IsAlwaysDetectableFor(WorldObject const* seer) const;     
+        bool IsAlwaysDetectableFor(WorldObject const* seer) const;
+
     private:
         // internal common parts for CanStore/StoreItem functions
         uint8 _CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool swap, Item* pSrcItem) const;
@@ -2970,11 +2977,6 @@ class Player : public Unit, public GridObject<Player>
             return m_bHasDelayedTeleport;
         }
 
-        void ScheduleDelayedOperation(uint32 operation)
-        {
-            if (operation < DELAYED_END)
-                m_DelayedOperations |= operation;
-        }
 
         MapReference m_mapRef;
 
