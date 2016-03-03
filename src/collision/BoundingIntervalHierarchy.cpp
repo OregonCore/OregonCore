@@ -165,7 +165,7 @@ void BIH::subdivide(int left, int right, std::vector<uint32> &tempTree, buildDat
         else
         {
             // we are actually splitting stuff
-            if (prevAxis != -1 && !isnan(prevClip))
+            if (prevAxis != -1 && !std::isnan(prevClip))
             {
                 // second time through - lets create the previous split
                 // since it produced empty space
