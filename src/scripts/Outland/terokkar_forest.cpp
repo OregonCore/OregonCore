@@ -1984,7 +1984,7 @@ struct npc_pathaleon_image2AI : public ScriptedAI
 		switch (uiSteps)
 		{
 		case 1:
-			me->SetVisibility(VISIBILITY_ON);
+			me->SetVisible(true);
 			return 5000;
 		case 2:
 			DoScriptText(SAY_PATHALEON1, me, 0);

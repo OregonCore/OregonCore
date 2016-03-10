@@ -1397,7 +1397,7 @@ struct npc_gocAI : public ScriptedAI
 		switch (uiSteps)
 		{
 		case 1:
-			me->SetVisibility(VISIBILITY_ON);		
+			me->SetVisible(true);		
 			return 100;
 		case 2:
 			DoScriptText(SAY_GROC_ENTRY, me, 0);

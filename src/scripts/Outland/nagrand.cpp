@@ -2702,7 +2702,7 @@ struct npc_warmaul_pyreAI : public ScriptedAI
 		Steps = 0;
 		CorpseCount = 0;
 		MoveCount = 1;
-		me->SetVisibility(VISIBILITY_OFF);
+		me->SetVisible(false);
 	}
 
 	void EnterCombat(Unit *who){}
