@@ -24,6 +24,7 @@ EndScriptData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "ScriptedEscortAI.h"
 #include "Maraudon.h"
 
 #define SPELL_WRATH                 21807
@@ -278,7 +279,7 @@ bool QuestAccept_npc_celebras(Player* pPlayer, Creature* pCreature, Quest const*
 	{
 		pCreature->SetHealth(pCreature->GetMaxHealth());
 		pCreature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-		pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+		pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 		DoScriptText(SAY_START, pCreature);
 
 		if (npc_escortAI* pEscortAI = CAST_AI(npc_celebrasAI, pCreature->AI()))

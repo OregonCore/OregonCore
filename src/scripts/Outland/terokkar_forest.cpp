@@ -231,8 +231,8 @@ struct mob_netherweb_victimAI : public ScriptedAI
             {
                 if (rand() % 100 < 25)
                 {
-                    DoSpawnCreature(QUEST_TARGET, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
-                    CAST_PLR(Killer)->KilledMonsterCredit(QUEST_TARGET, 0);
+                    DoSpawnCreature(NPC_QUEST_TARGET, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+                    CAST_PLR(Killer)->KilledMonsterCredit(NPC_QUEST_TARGET, 0);
                 }
                 else
                     DoSpawnCreature(netherwebVictims[rand() % 6], 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
@@ -467,7 +467,7 @@ bool GossipHello_go_skull_pile(Player* player, GameObject* _GO)
     return true;
 }
 
-void SendActionMenu_go_skull_pile(Player* player, GameObject* /*_GO*/, uint32 action)
+void SendActionMenu_go_skull_pile(Player* player, GameObject* _GO, uint32 action)
 {
     switch (action)
     {
