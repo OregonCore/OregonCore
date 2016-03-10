@@ -874,7 +874,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
             return 2000;
             break;
         case 5:
-            Illi->SetVisibility(VISIBILITY_ON);
+            Illi->SetVisible(true);
             Illi->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             return 350;
             break;
@@ -958,7 +958,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
             return 500;
             break;
         case 22:
-            Illi->SetVisibility(VISIBILITY_OFF);
+            Illi->SetVisible(false);
             Illi->setDeathState(JUST_DIED);
             return 1000;
             break;
@@ -2135,7 +2135,7 @@ struct npc_azalothAI : public ScriptedAI
 		PlayerGUID = 0;
 		me->CombatStop();
 		me->DeleteThreatList();
-		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC); // passive
 		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
 		me->setFaction(1813);
@@ -2158,7 +2158,7 @@ struct npc_azalothAI : public ScriptedAI
 
 			free = true;
 			PlayerGUID = caster->GetGUID();
-			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC); // passive
 			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);		
 			me->setFaction(954);
@@ -2364,27 +2364,6 @@ CreatureAI* GetAI_legion_infernal_summoner_trigger(Creature* pCreature)
 /*######
 ## legion_hold_device_trigger
 ######*/
-
-enum
-{
-	SPELL_BOX = 37097,
-	NPC_WARBRINGER = 21502,
-
-	SAY_JOVAAN1 = -1900140,
-	SAY_JOVAAN2 = -1900142,
-	SAY_JOVAAN3 = -1900144,
-	SAY_JOVAAN4 = -1900146,
-	SAY_WARBRINGER1 = -1900141,
-	SAY_WARBRINGER2 = -1900143,
-	SAY_WARBRINGER3 = -1900145,
-	SAY_WARBRINGER4 = -1900147,
-
-	QUEST_LEGION_HOLD1 = 10563,
-	QUEST_LEGION_HOLD2 = 10596,
-
-	GO_INFERNAL = 184834,
-	GO_INFERNAL_TRAP = 184835
-};
 
 struct legion_hold_device_triggerAI : public ScriptedAI
 {
@@ -3553,7 +3532,7 @@ struct npc_envoy_icariusAI : public ScriptedAI
 
 	void Reset()
 	{
-		me->SetVisibility(VISIBILITY_OFF);
+        me->SetVisible(false);
 		me->GetMotionMaster()->MoveTargetedHome();
 		me->setFaction(14);
 		me->SetReactState(REACT_DEFENSIVE);
@@ -3562,7 +3541,7 @@ struct npc_envoy_icariusAI : public ScriptedAI
 		if (Creature* zarath = me->FindNearestCreature(21410, 30.0f, true))
 		{
 			zarath->setFaction(35);
-			zarath->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
 			zarath->GetMotionMaster()->MoveTargetedHome();
 		}
 
@@ -3595,13 +3574,13 @@ struct npc_envoy_icariusAI : public ScriptedAI
 						CAST_AI(npc_icarus_triggerAI, IcarusTrig->AI())->WhisperAllow = true;
 					}
 
-					me->SetVisibility(VISIBILITY_ON);
+                    me->SetVisible(true);
 					me->GetMotionMaster()->MovePoint(0, -4055.3f, 1522.17f, 92.348f);
 
 					if (Creature* zarath = me->FindNearestCreature(21410, 30.0f, true))
 					{
 						zarath->setFaction(14);
-						zarath->SetVisibility(VISIBILITY_ON);
+						zarath->SetVisible(true);
 						zarath->GetMotionMaster()->MovePoint(0, -4062.35f, 1517.71f, 91.783f);
 					}
 
@@ -3744,7 +3723,7 @@ struct npc_guldanAI : public ScriptedAI
 
 		if (Creature* pOronok = me->FindNearestCreature(NPC_ORONOK, 90))
 		{
-			pOronok->SetVisibility(VISIBILITY_OFF);
+			pOronok->SetVisible(false);
 		}
 	}
 
@@ -3782,7 +3761,7 @@ struct npc_guldanAI : public ScriptedAI
 		switch (uiSteps)
 		{
 		case 1:		
-			pCyrukh->SetVisibility(VISIBILITY_OFF);
+			pCyrukh->SetVisible(false);
 			me->SetStandState(UNIT_STAND_STATE_STAND);
 			return 1000;
 		case 2:
@@ -3806,7 +3785,7 @@ struct npc_guldanAI : public ScriptedAI
 			return 4800;
 		case 7:
 			DoScriptText(GULDAN_4, me);
-			pCyrukh->SetVisibility(VISIBILITY_ON);
+			pCyrukh->SetVisible(true);
 			return 500;
 		case 8:
 			DoScriptText(CYRUKH_1, pCyrukh);
