@@ -18,6 +18,7 @@ In order for us to keep track of SQL fixes we prefix our SQL files with a date f
  -  **DELETE before INSERT & Use exact fields**
  -  **If you're referencing a value more than 3 times, use a variable**
  - **Comments and Author references must be provided where applicable**
+ - If the last line of the file is a comment - add a new line after it (because when concatenating files the first statement after your file will not be execued)
 
 Wrong:
 
