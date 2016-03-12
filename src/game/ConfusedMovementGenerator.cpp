@@ -17,6 +17,7 @@
 
 #include "Creature.h"
 #include "Opcodes.h"
+#include "Player.h"
 #include "ConfusedMovementGenerator.h"
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"

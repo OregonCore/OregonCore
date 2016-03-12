@@ -21,6 +21,7 @@
 #include "Platform/Define.h"
 #include <list>
 #include "Unit.h"
+#include "QuestDef.h"
 
 class Unit;
 class Player;

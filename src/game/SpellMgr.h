@@ -21,6 +21,7 @@
 // For static or at-server-startup loaded spell data
 // For more high level function for sSpellStore data
 
+#include <ace/Singleton.h>
 #include "SharedDefines.h"
 #include "DBCStructure.h"
 #include "DBCStores.h"

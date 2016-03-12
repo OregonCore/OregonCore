@@ -23,6 +23,8 @@
 #include "CreatureAI.h"
 #include "Unit.h"
 #include "Spell.h"
+#include "ObjectAccessor.h"
+#include "ObjectMgr.h"
 
 //#include "SmartScript.h"
 //#include "SmartAI.h"

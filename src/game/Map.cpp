@@ -16,6 +16,7 @@
  */
 
 #include "Map.h"
+#include "MapManager.h"
 #include "GridStates.h"
 #include "ScriptMgr.h"
 #include "VMapFactory.h"
