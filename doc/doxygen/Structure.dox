@@ -20,9 +20,9 @@ Here's all the information you need in order to install OregonCore on your machi
 
 /*! \page Features Features
 
-- \ref ahbot        "AuctionHouse Bot System"
-- \ref raf          "Refer-A-Friend"
-- \ref dbupdater    "Automatic SQL Updates"
+- \subpage ahbot        "AuctionHouse Bot System"
+- \subpage raf          "Refer-A-Friend"
+- \subpage dbupdater    "Automatic SQL Updates"
 
 */
 
