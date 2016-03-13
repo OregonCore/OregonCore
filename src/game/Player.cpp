@@ -18192,6 +18192,20 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_i
         return false;
     }
 
+    // prevent stealth flight
+    //RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TALK);
+
+    if (sWorld.getConfig(CONFIG_INSTANT_TAXI))
+    {
+        TaxiNodesEntry const* lastPathNode = sTaxiNodesStore.LookupEntry(nodes[nodes.size()-1]);
+        ASSERT(lastPathNode);
+        m_taxi.ClearTaxiDestinations();
+        ModifyMoney(-(int32)totalcost);
+        TeleportTo(lastPathNode->map_id, lastPathNode->x, lastPathNode->y, lastPathNode->z, GetOrientation());
+        return false;
+    }
+    else
+    {
     //Checks and preparations done, DO FLIGHT
     ModifyMoney(-(int32)totalcost);
 
@@ -18205,8 +18219,9 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_i
     DEBUG_LOG("WORLD: Sent SMSG_ACTIVATETAXIREPLY");
 
     GetSession()->SendDoFlight(mount_id, sourcepath);
-
-    return true;
+    }
+    return true;	
+	
 }
 
 bool Player::ActivateTaxiPathTo(uint32 taxi_path_id)
