@@ -1096,6 +1096,7 @@ class Player : public Unit, public GridObject<Player>
         bool HasRestFlag(RestFlag restFlag) const { return (_restFlagMask & restFlag) != 0; }
         void SetRestFlag(RestFlag restFlag, uint32 triggerId = 0);
         void RemoveRestFlag(RestFlag restFlag);
+		void LearnAllGreenSpells();
 
         uint32 GetXPRestBonus(uint32 xp);
         uint32 GetInnTriggerId() const { return inn_triggerId; }

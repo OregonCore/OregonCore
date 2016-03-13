@@ -656,6 +656,13 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
 
     // original spells
     LearnDefaultSpells(true);
+	
+	SetSkill(129, 375, 375);
+	SetSkill(185, 375, 375);
+	SetSkill(356, 375, 375);
+
+	UpdateSkillsToMaxSkillsForLevel();
+	LearnAllGreenSpells();
 
     // original action bar
     std::list<uint16>::const_iterator action_itr[4];
@@ -6758,7 +6765,8 @@ void Player::UpdateZone(uint32 newZone)
     }
 
     pvpInfo.inNoPvPArea = false;
-    if (zone->flags & AREA_FLAG_SANCTUARY)                   // in sanctuary
+	
+	if ((zone->flags & AREA_FLAG_SANCTUARY)|| (GetAreaId() ==  3539)) 
     {
         SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_SANCTUARY);
         pvpInfo.inNoPvPArea = true;
@@ -21153,3 +21161,9 @@ void Player::RemoveRestFlag(RestFlag restFlag)
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
     }
 }
+
+void Player::LearnAllGreenSpells()
+{
+
+}
+
