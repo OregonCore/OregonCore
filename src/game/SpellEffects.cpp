@@ -1728,7 +1728,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 // Mana Feed
                 int32 manaFeedVal = m_caster->CalculateSpellDamage(m_spellInfo, 1, m_spellInfo->EffectBasePoints[1], m_caster);
                 manaFeedVal = manaFeedVal * mana / 100;
-                if (manaFeedVal > 0)
+                if (manaFeedVal > 0 && m_caster->isPlayer() && m_caster->ToPlayer()->GetPet())
                     m_caster->CastCustomSpell(m_caster, 32553, &manaFeedVal, NULL, NULL, true, NULL);
             }
             else
