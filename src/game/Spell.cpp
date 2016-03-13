@@ -4770,8 +4770,9 @@ SpellCastResult Spell::CheckPetCast(Unit* target)
     if (!m_caster->IsAlive())
         return SPELL_FAILED_CASTER_DEAD;
 
-    if (m_caster->IsNonMeleeSpellCast(false) && !m_IsTriggeredSpell)  //prevent spellcast interruption by another spellcast
-        return SPELL_FAILED_SPELL_IN_PROGRESS;
+/*    if (m_caster->IsNonMeleeSpellCast(false) && !m_IsTriggeredSpell)  //prevent spellcast interruption by another spellcast
+        return SPELL_FAILED_SPELL_IN_PROGRESS;*/
+
     if (m_caster->IsInCombat() && IsNonCombatSpell(m_spellInfo))
         return SPELL_FAILED_AFFECTING_COMBAT;
 
