@@ -863,6 +863,9 @@ enum OregonStrings
     LANG_GM_ANNOUNCE_COLOR               = 6615,
 
     LANG_GM_SILENCE                      = 6616,              // GM Silenced Spell 1852
+    LANG_GM_AC_ANNOUNCE                  = 6620,              // GM AC Announce    
+    LANG_GM_AC_KICK_ANNOUNCE             = 6621,              // GM AC Kick Announce    
+    LANG_GM_AC_BAN_ANNOUNCE              = 6622,              // GM AC Ban Announce
 
     // Use for not-in-offcial-sources patches
     //                                    10000-10999

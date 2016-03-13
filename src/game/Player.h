@@ -2912,6 +2912,24 @@ class Player : public Unit, public GridObject<Player>
         float m_rest_bonus;
         uint32 _restFlagMask;
         ////////////////////Rest System/////////////////////
+ 
+        // Movement Anticheat
+        uint32 m_anti_lastmovetime;          // last movement time
+        uint64 m_anti_transportGUID;         // current transport GUID
+        float  m_anti_last_hspeed;           // horizontal speed, default RUN speed
+        uint32 m_anti_lastspeed_changetime;  // last speed change time
+        float  m_anti_last_vspeed;           // vertical speed, default max jump height
+        uint32 m_anti_beginfalltime;         // alternative falling begin time
+        bool m_anti_justteleported;          // seted when player was teleported
+        bool m_anti_flymounted;              // seted when player is mounted on flymount
+        bool m_anti_wasflymounted;           // seted when player was mounted on flymount
+        bool m_anti_ontaxipath;              // seted when player is on a taxi fight
+        bool m_anti_isjumping;               // seted when player is in jump phase
+        bool m_anti_isknockedback;           // seted when player is knocked back
+        bool m_anti_speedchanged;            // seted when player changed speed
+        uint32 m_anti_justjumped;            // jump already began, anti-air jump check
+        std::string m_anti_lastcheat;        // stores last cheat as string
+        float m_anti_jumpbase;               // Anti-Gravitation
 
         // Transports
         Transport* m_transport;

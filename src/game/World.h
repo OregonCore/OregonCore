@@ -728,6 +728,13 @@ class World
         {
             return m_visibility_notify_periodInBGArenas;
         }
+ 
+        // Movement Anticheat
+        static bool GetEnableMvAnticheat()              { return m_EnableMvAnticheat;       }
+        static bool GetMvAnticheatDebug()               { return m_MvAnticheatDebug ;       }
+        static uint32 GetMvAnticheatGmLevel()           { return m_MvAnticheatGmLevel;      }
+        static uint32 GetMvAnticheatAction()            { return m_MvAnticheatAction;       }
+        static uint32 GetMvAnticheatBanDuration()       { return m_MvAnticheatBanDuration;  }
 
         void ProcessCliCommands();
         void QueueCliCommand(CliCommandHolder* commandHolder)
@@ -830,6 +837,13 @@ class World
         static int32 m_visibility_notify_periodOnContinents;
         static int32 m_visibility_notify_periodInInstances;
         static int32 m_visibility_notify_periodInBGArenas;
+ 
+        // Movement Anticheat
+        static bool m_EnableMvAnticheat;
+        static bool m_MvAnticheatDebug;
+        static uint32 m_MvAnticheatGmLevel;
+        static uint32 m_MvAnticheatAction;
+        static uint32 m_MvAnticheatBanDuration;
 
         // CLI command holder to be thread safe
         ACE_Based::LockedQueue<CliCommandHolder*, ACE_Thread_Mutex> cliCmdQueue;

@@ -2092,3 +2092,38 @@ RAF.GrantableLevelsPerLevel = 0.5
 
 DatabaseUpdater.Enabled = 0
 DatabaseUpdater.PathToUpdates = ""
+
+###############################################################################
+# MOVEMENT ANTICHEAT
+#
+#    Anticheat.Movement.Enable
+#        Enable Movement Anticheat
+#        Default: 1 - (Enabled)
+#                 0 - (Disabled)
+#
+#    Anticheat.Movement.Debug
+#        Debug messages in console
+#        Default: 0 - (Disabled)
+#                 1 - (Enabled)
+#
+#    Anticheat.Movement.GmLevel
+#        Detection occurs below and at the same GmLevel
+#        Default: 0 - (Only Players)
+#
+#    Anticheat.Movement.Action
+#        Action on failed check
+#        Default: 0 (SendGMsMessage)
+#                 1 (Kick)
+#                 2 (Ban)
+#
+#    Anticheat.Movement.BanDuration
+#        Time (in seconds) an account will be banned.
+#        Default: 86400 - (24 hours)
+#
+###############################################################################
+
+Anticheat.Movement.Enable = 1
+Anticheat.Movement.Debug = 0
+Anticheat.Movement.GmLevel = 0
+Anticheat.Movement.Action = 0
+Anticheat.Movement.BanDuration = 86400
