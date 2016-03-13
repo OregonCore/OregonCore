@@ -12206,6 +12206,9 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
     if (!item->IsEquipped())
         return;
 
+    if (!CanUseAttackType(Player::GetAttackBySlot(item->GetSlot())))
+        return;
+
     if (slot >= MAX_ENCHANTMENT_SLOT)
         return;
 
