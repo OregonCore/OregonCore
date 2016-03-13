@@ -615,7 +615,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
             if (movementInfo.GetPos()->GetPositionZ() < 0.0001f && movementInfo.GetPos()->GetPositionZ() > -0.0001f && ((movementInfo.GetMovementFlags() & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING | MOVEMENTFLAG_FLYING2)) == 0))
             {
                 // Prevent using TeleportToPlane.
-                Map *map = plMover->GetMap();
+                Map* map = plMover->GetMap();
                 if (map)
                 {
                     float plane_z = map->GetHeight(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), MAX_HEIGHT) - movementInfo.GetPos()->GetPositionZ();
