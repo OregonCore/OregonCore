@@ -271,6 +271,10 @@ uint32 GetSpellCastTime(SpellEntry const* spellInfo, Spell const* spell)
 
     if (spellInfo->Attributes & SPELL_ATTR0_RANGED && (!spell || !spell->IsAutoRepeat()))
         castTime += 500;
+	
+	if (spellInfo->Mechanic == MECHANIC_MOUNT)
+		castTime = 500;
+
 
     return (castTime > 0) ? uint32(castTime) : 0;
 }
