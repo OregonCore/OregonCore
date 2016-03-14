@@ -674,7 +674,7 @@ void Unit::RemoveSpellbyDamageTaken(uint32 damage, uint32 spell)
 {
     // The chance to dispel an aura depends on the damage taken with respect to the casters level.
     uint32 max_dmg = getLevel() > 8 ? 30 * getLevel() - 100 : 50;
-    float chance = float(damage) / max_dmg * 100.0f;
+    float chance = (float(damage) / max_dmg * 100.0f)*0.8;
 
     AuraList::iterator i, next;
     for (i = m_ccAuras.begin(); i != m_ccAuras.end(); i = next)
