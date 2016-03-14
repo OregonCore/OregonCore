@@ -20,6 +20,7 @@
 #include "CellImpl.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
+#include "MapManager.h"
 #include "Transports.h"
 #include "ScriptedCreature.h"
 #include "WaypointManager.h"

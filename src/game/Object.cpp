@@ -38,6 +38,7 @@
 #include "Totem.h"
 #include "OutdoorPvPMgr.h"
 #include "packet_builder.h"
+#include "MapManager.h"
 
 uint32 GuidHigh2TypeId(uint32 guid_hi)
 {

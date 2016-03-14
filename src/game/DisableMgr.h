@@ -15,6 +15,9 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <ace/Singleton.h>
+#include "Unit.h"
+
 #ifndef _DISABLEMGR_H
 #define _DISABLEMGR_H
 

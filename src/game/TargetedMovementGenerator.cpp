@@ -22,6 +22,7 @@
 #include "CreatureAI.h"
 #include "World.h"
 #include "Unit.h"
+#include "Player.h"
 #include "Pet.h"
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"

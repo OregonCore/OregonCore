@@ -18,6 +18,7 @@
 #ifndef _MOVE_MAP_H
 #define _MOVE_MAP_H
 
+#include <vector>
 #include "Utilities/UnorderedMap.h"
 
 #include "DetourAlloc.h"
