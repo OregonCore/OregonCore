@@ -13,3 +13,7 @@ Next place is our [forums](https://forums.oregon-core.net/), you can get support
 We have also a public IRC `#OregonCore` at [irc.foonetic.net](irc://irc.foonetic.net), this is a place for developers to hang out and discuss all things. Mentioning issues in IRC is strictly forbidden.
 
 If you have found a bug you may report it on our bugtracker, issues must include revision hash and as many details as possible to aide us in resolving it as quickly as possible.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/kotishe/foton.core/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
