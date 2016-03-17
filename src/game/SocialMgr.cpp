@@ -22,6 +22,7 @@
 #include "WorldSession.h"
 #include "Player.h"
 #include "ObjectMgr.h"
+#include "MapManager.h"
 #include "World.h"
 #include "Util.h"
 

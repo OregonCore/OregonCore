@@ -21,6 +21,7 @@
 #include "WorldSession.h"
 #include "World.h"
 #include "ObjectMgr.h"
+#include "MapManager.h"
 #include "SpellMgr.h"
 #include "Creature.h"
 #include "QuestDef.h"

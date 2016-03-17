@@ -22,6 +22,7 @@ SDComment: Elementals should die when Aran is killed.
 SDCategory: Karazhan
 EndScriptData */
 
+#include "WorldPacket.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedSimpleAI.h"

@@ -18,6 +18,7 @@
 #ifndef OREGON_CREATUREAI_H
 #define OREGON_CREATUREAI_H
 
+#include "Creature.h"
 #include "UnitAI.h"
 #include "Common.h"
 
