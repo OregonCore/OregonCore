@@ -1,0 +1,121 @@
+/*! 
+    \page raf Refer-A-Friend
+    \tableofcontents
+
+    Refer-A-Friend is also known as Recruit-A-Friend.
+    This feature allows you to link your account with your friend and gain certain benefits:
+
+    - You can summon and be summoned by your Friend anywhere in the world (CD 1hour)
+    - 3x Bonus XP Rate to you and your friend while you're in group and near to each other [configurable]
+    - For every 2 levels your friend gains, he can grant you 1 instant level [configurable], in order to grant a level you must be higher level then your friend (referrer). This is useful for alt characters.
+
+    These features are available for all characters, which are on linked accounts.
+
+    <table>
+        <tr>
+            <th>Summon Friend Example:</th>
+            <th>Grant a level Example:</th>
+        </tr>
+        <tr>
+            <td>
+            <img src="Images/RAF_1.jpg" width="400" alt="Summon Friend Image">
+            </td>
+            <td>
+            <img src="Images/RAF_2.jpg" width="400" alt="Grant a level Image">
+            </td>
+        </tr>
+    </table>
+
+    \section raf_conf Configuring
+
+    In the oregoncore.conf file you can find these options:
+
+        ###############################################################################
+        #
+        #    RAF.LevelLimit
+        #        Sets LevelLimit for Refer-a-Friend features.
+        #        On blizz there was a level cap of 60, so you could use
+        #        'Summon Friend' and 'Grant a Level' feature only until 60 lvl.
+        #        Default: 60 (blizzlike)
+        #        Values:  1 - 255
+        #
+        #    RAF.BonusXPGain
+        #        Multiplier for XP gain for RAF friends, they must be in the same
+        #        group and also be nearby. Applies for all xp gains.
+        #        Default: 3 (blizzlike)
+        #        Values:  1 - No Bonus XP
+        #                 2 and more
+        #
+        #    RAF.GrantableLevelsPerLevel
+        #        How many grantable levels will referred player gain after a levelup
+        #        Default: 0.5 (blizzlike) (can grant 1 level after 2 levelups)
+        #        Values:  0 and more
+        #
+        ###############################################################################
+
+        RAF.LevelLimit = 60
+        RAF.BonusXPGain = 3
+        RAF.GrantableLevelsPerLevel = 0.5
+
+    DB Table \ref schema_realmd_table_account_referred account_referred
+
+    There are two columns id1 (referrer) and id2 (referred).
+    So for example if account with id 1 referred his friend with account id 2, they will be linked as follows:
+
+        INSERT INTO account_referred VALUES (1, 2)
+
+    \section raf_cmds In-Game Commands
+
+    Following in-game commands are now available:
+
+    <table>
+        <tr>
+            <th>Command</th>
+            <th>Help</th>
+        </tr>
+        <tr>
+            <td>.raf info</td>
+            <td>Syntax: .raf info &lt;accountId%gt;
+            <br><br>
+            Displays Refer-a-Friend info for given account</td>
+        </tr>
+        <tr>
+            <td>.raf link</td>
+            <td>Syntax: .raf link &lt;linkerAcc&gt; &lt;linkedAcc&gt;
+            <br><br>
+            Link two account with Refer-A-Friend.
+            linkerAcc: ID of referring Account
+            linkedAcc: ID of referred Account
+            To get account id you can use .pinfo command
+            For example if Bob referred Suse, use .raf link Bob Suse</td>
+        </tr>
+        <tr>
+            <td>.raf unlink</td>
+            <td>Syntax: .raf unlink &lt;linkerAcc&gt; &lt;linkedAcc&gt;
+            <br><br>
+            Unlink two RaF-linked accounts. See .raf link for more details.</td>
+        </tr>
+        <tr>
+            <td>.raf summon</td>
+            <td>Summons your Refer-A-Friend (Usable also by playars)</td>
+        </tr>
+        <tr>
+            <td>.raf grantlevel</td>
+            <td>Grants your referrer a level (Usable also by players)</td>
+        </tr>
+        <tr>
+            <td>.reload account_referred</td>
+            <td>Reloads account_referred table. Useful if table was updated outside of OC.</td>
+        </tr>
+    </table>
+
+    \section raf_limitations Limitations
+
+    Blizzard has hardcoded level limit to 60, so you won't be able to click Summon Friend and Grant a Level once you or your friend reach level 60 and above.
+    As a workaround you can use commands <strong>.raf summon</strong> and <strong>.raf grantlevel</strong> instead.
+
+    \section raf_further_reading Further Reading
+
+    - [Recruit-A-Friend at WowWiki](http://wowwiki.wikia.com/wiki/Recruit-A-Friend)
+    - [Recruit-A-Friend at Wowpedia](http://wow.gamepedia.com/Recruit-A-Friend)
+*/

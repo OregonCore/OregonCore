@@ -1144,7 +1144,7 @@ void World::LoadSQLUpdates()
             if (updates[i].db->ExecuteFile(files[j].c_str()))
             {
                 updates[i].db->escape_string(files[j]);
-                updates[i].db->DirectPExecute("INSERT INTO `updates` VALUES ('%s', UNIX_TIMESTAMP(NOW()))", files[j].c_str());
+                updates[i].db->DirectPExecute("INSERT INTO `updates` VALUES ('%s', NOW())", files[j].c_str());
             }
             else
                 sLog.outFatal("Failed to apply %s. See db_errors.log for more details.", files[j].c_str());
