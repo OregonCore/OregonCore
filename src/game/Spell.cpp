@@ -354,7 +354,6 @@ Spell::Spell(Unit* Caster, SpellEntry const* info, bool triggered, uint64 origin
 
     m_isNeedSendToClient = m_spellInfo->SpellVisual != 0 || IsChanneledSpell(m_spellInfo) ||
                            m_spellInfo->speed > 0.0f || (!m_triggeredByAuraSpell && !m_IsTriggeredSpell);
-    m_isCastTimeHidden = m_spellInfo->Attributes & SPELL_ATTR0_HIDDEN_CAST_TIME;
 
     CleanupTargetList();
 }
@@ -3080,7 +3079,7 @@ void Spell::SendCastResult(SpellCastResult result)
 
 void Spell::SendSpellStart()
 {
-    if (!m_isNeedSendToClient && m_isCastTimeHidden)
+    if (!m_isNeedSendToClient)
         return;
 
     DEBUG_LOG("Sending SMSG_SPELL_START id=%u", m_spellInfo->Id);
@@ -3382,7 +3381,7 @@ void Spell::SendChannelUpdate(uint32 time)
         m_caster->SetUInt32Value(UNIT_CHANNEL_SPELL, 0);
     }
 
-    if (!m_isNeedSendToClient || m_isCastTimeHidden)
+    if (!m_isNeedSendToClient)
         return;
 
     WorldPacket data(MSG_CHANNEL_UPDATE, 8 + 4);
@@ -3409,7 +3408,7 @@ void Spell::SendChannelStart(uint32 duration)
 
     m_caster->SetUInt32Value(UNIT_CHANNEL_SPELL, m_spellInfo->Id);
     
-    if (!m_isNeedSendToClient || m_isCastTimeHidden)
+    if (!m_isNeedSendToClient)
         return;
 
     WorldPacket data(MSG_CHANNEL_START, (8 + 4 + 4));
