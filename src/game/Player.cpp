@@ -20709,7 +20709,10 @@ void Player::SetViewpoint(WorldObject* target, bool apply)
         UpdateVisibilityOf(target);
 
         if (target->isType(TYPEMASK_UNIT))
+        {
             ((Unit*)target)->AddPlayerToVision(this);
+            SetSeer(target);
+        }
     }
     else
     {
@@ -20725,7 +20728,7 @@ void Player::SetViewpoint(WorldObject* target, bool apply)
             ((Unit*)target)->RemovePlayerFromVision(this);
 
         //must immediately set seer back otherwise may crash
-        m_seer = this;
+        SetSeer(this);
 
         //WorldPacket data(SMSG_CLEAR_FAR_SIGHT_IMMEDIATE, 0);
         //GetSession()->SendPacket(&data);
