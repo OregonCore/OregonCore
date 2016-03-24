@@ -20697,11 +20697,11 @@ void Player::SetViewpoint(WorldObject* target, bool apply)
 {
     if (apply)
     {
-        DEBUG_LOG("Player::CreateViewpoint: Player %s create seer %u (TypeId: %u).", GetName(), target->GetEntry(), target->GetTypeId());
+        DEBUG_LOG("Player::SetViewpoint: Player %s create seer %u (TypeId: %u).", GetName(), target->GetEntry(), target->GetTypeId());
 
         if (!AddUInt64Value(PLAYER_FARSIGHT, target->GetGUID()))
         {
-            sLog.outError("Crash alert! Player::CreateViewpoint: Player %s cannot add new viewpoint!", GetName());
+            sLog.outError("Crash alert! Player::SetViewpoint: Player %s cannot add new viewpoint!", GetName());
             return;
         }
 
@@ -20716,11 +20716,11 @@ void Player::SetViewpoint(WorldObject* target, bool apply)
     }
     else
     {
-        DEBUG_LOG("Player::CreateViewpoint: Player %s remove seer", GetName());
+        DEBUG_LOG("Player::SetViewpoint: Player %s remove seer", GetName());
 
         if (!RemoveUInt64Value(PLAYER_FARSIGHT, target->GetGUID()))
         {
-            sLog.outError("Crash alert! Player::CreateViewpoint: Player %s cannot remove current viewpoint!", GetName());
+            sLog.outError("Crash alert! Player::SetViewpoint: Player %s cannot remove current viewpoint!", GetName());
             return;
         }
 
