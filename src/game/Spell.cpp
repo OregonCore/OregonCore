@@ -4103,6 +4103,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             return castResult;
     }
 
+    // check for effect-specific restrictions
     for (uint32 i = 0; i < MAX_SPELL_EFFECTS; i++)
     {
         // for effects of spells that have only one target
@@ -4125,6 +4126,21 @@ SpellCastResult Spell::CheckCast(bool strict)
 
                     if (m_targets.getUnitTarget()->GetHealth() > m_targets.getUnitTarget()->GetMaxHealth() * 0.2)
                         return SPELL_FAILED_BAD_TARGETS;
+                }
+                break;
+            }
+        case SPELL_EFFECT_APPLY_AURA:
+            {
+                switch(m_spellInfo->EffectApplyAuraName[i])
+                {
+                    case SPELL_AURA_BIND_SIGHT:
+                        {
+                            // Cannot bind sight across instances/continents.
+                            // Does not affect the same instance/continent, no matter the range.
+                            if(target == m_caster)
+                                return SPELL_FAILED_BAD_TARGETS;
+                            break;
+                        }
                 }
                 break;
             }
