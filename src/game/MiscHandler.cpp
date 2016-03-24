@@ -1282,7 +1282,7 @@ void WorldSession::HandleFarSightOpcode(WorldPacket& recv_data)
         _player->SetSeer(_player);
         break;
     case 1:
-        DEBUG_LOG("Added FarSight targetting of " UI64FMTD " to player %u", _player->GetUInt64Value(PLAYER_FARSIGHT), _player->GetGUIDLow());
+        DEBUG_LOG("Added FarSight " UI64FMTD " to player %u", _player->GetUInt64Value(PLAYER_FARSIGHT), _player->GetGUIDLow());
         if (WorldObject* target = _player->GetViewpoint())
             _player->SetSeer(target);
         else
