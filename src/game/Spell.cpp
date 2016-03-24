@@ -3917,7 +3917,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             if (mapEntry->IsBattleArena())
                 return SPELL_FAILED_NOT_IN_ARENA;
 
-    // zone check
+    // zone check, can only be case in specific zones
     if (!IsSpellAllowedInLocation(m_spellInfo, m_caster->GetMapId(), m_caster->GetZoneId(), m_caster->GetAreaId()))
         return SPELL_FAILED_REQUIRES_AREA;
 
