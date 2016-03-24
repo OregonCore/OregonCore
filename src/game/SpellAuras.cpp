@@ -6016,6 +6016,8 @@ void Aura::PeriodicTick()
             uint32 absorb = 0;
             uint32 resist = 0;
 
+            bool applyHealingThreat = true;
+
             uint32 pdamage = GetModifierValuePerStack() > 0 ? GetModifierValuePerStack() : 0;
 
             CleanDamage cleanDamage =  CleanDamage(pdamage, BASE_ATTACK, MELEE_HIT_NORMAL);
@@ -6035,6 +6037,11 @@ void Aura::PeriodicTick()
             // talent Soul Siphon add bonus to Drain Life spells
             if (GetSpellProto()->SpellFamilyName == SPELLFAMILY_WARLOCK && (GetSpellProto()->SpellFamilyFlags & 0x8))
             {
+                // Spell is Drain Life
+
+                // Drain Life healing should not generate threat (Issue #1232)
+                applyHealingThreat = false;
+
                 // find talent max bonus percentage
                 Unit::AuraList const& mClassScriptAuras = pCaster->GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
                 for (Unit::AuraList::const_iterator i = mClassScriptAuras.begin(); i != mClassScriptAuras.end(); ++i)
@@ -6115,6 +6122,7 @@ void Aura::PeriodicTick()
             if (pdamage)
                 procVictim |= PROC_FLAG_TAKEN_DAMAGE;
             pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, pdamage, BASE_ATTACK, spellProto);
+            // Apply damage to target
             int32 new_damage = pCaster->DealDamage(target, pdamage, &cleanDamage, DOT, GetSpellSchoolMask(spellProto), spellProto, false);
 
             if (!target->IsAlive() && pCaster->IsNonMeleeSpellCast(false))
@@ -6128,8 +6136,11 @@ void Aura::PeriodicTick()
 
             uint32 heal = pCaster->SpellHealingBonus(spellProto, uint32(new_damage * multiplier), DOT, pCaster);
 
+            // Apply healing to caster
             int32 gain = pCaster->ModifyHealth(heal);
-            pCaster->getHostileRefManager().threatAssist(pCaster, gain * 0.5f, spellProto);
+            // Apply threat to caster for the amount healed.
+            if (applyHealingThreat)
+                pCaster->getHostileRefManager().threatAssist(pCaster, gain * 0.5f, spellProto);
 
             pCaster->SendHealSpellLog(pCaster, spellProto->Id, heal);
             break;
