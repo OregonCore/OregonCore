@@ -31,118 +31,27 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 
-#define SPELL_MOONFIRE          37328
-#define SPELL_FIREBALL          37329
-#define SPELL_MIND_FLAY         37330
-#define SPELL_HEMORRHAGE        37331
-#define SPELL_FROSTSHOCK        37332
-#define SPELL_CURSE_OF_AGONY    37334
-#define SPELL_MORTAL_STRIKE     37335
-#define SPELL_FREEZING_TRAP     37368
-#define SPELL_HAMMER_OF_JUSTICE 37369
-
-struct mob_stolen_soulAI : public ScriptedAI
+enum ExarchMaladaar
 {
-    mob_stolen_soulAI(Creature* c) : ScriptedAI(c) {}
+    SAY_INTRO                   = -1558000,
+    SAY_SUMMON                  = -1558001,
+    SAY_AGGRO_1                 = -1558002,
+    SAY_AGGRO_2                 = -1558003,
+    SAY_AGGRO_3                 = -1558004,
+    SAY_ROAR                    = -1558005,
+    SAY_SOUL_CLEAVE             = -1558006,
+    SAY_SLAY_1                  = -1558007,
+    SAY_SLAY_2                  = -1558008,
+    SAY_DEATH                   = -1558009,
 
-    uint8 myClass;
-    uint32 Class_Timer;
+    SPELL_RIBBON_OF_SOULS       = 32422,
+    SPELL_SOUL_SCREAM           = 32421,
+    SPELL_STOLEN_SOUL           = 32346,
+    SPELL_STOLEN_SOUL_VISUAL    = 32395,
+    SPELL_SUMMON_AVATAR         = 32424,
 
-    void Reset()
-    {
-        Class_Timer = 1000;
-    }
-
-    void EnterCombat(Unit*)
-    { }
-
-    void SetMyClass(uint8 myclass)
-    {
-        myClass = myclass;
-    }
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (!UpdateVictim())
-            return;
-
-        if (Class_Timer <= diff)
-        {
-            switch (myClass)
-            {
-            case CLASS_WARRIOR:
-                DoCastVictim( SPELL_MORTAL_STRIKE);
-                Class_Timer = 6000;
-                break;
-            case CLASS_PALADIN:
-                DoCastVictim( SPELL_HAMMER_OF_JUSTICE);
-                Class_Timer = 6000;
-                break;
-            case CLASS_HUNTER:
-                DoCastVictim( SPELL_FREEZING_TRAP);
-                Class_Timer = 20000;
-                break;
-            case CLASS_ROGUE:
-                DoCastVictim( SPELL_HEMORRHAGE);
-                Class_Timer = 10000;
-                break;
-            case CLASS_PRIEST:
-                DoCastVictim( SPELL_MIND_FLAY);
-                Class_Timer = 5000;
-                break;
-            case CLASS_SHAMAN:
-                DoCastVictim( SPELL_FROSTSHOCK);
-                Class_Timer = 8000;
-                break;
-            case CLASS_MAGE:
-                DoCastVictim( SPELL_FIREBALL);
-                Class_Timer = 5000;
-                break;
-            case CLASS_WARLOCK:
-                DoCastVictim( SPELL_CURSE_OF_AGONY);
-                Class_Timer = 20000;
-                break;
-            case CLASS_DRUID:
-                DoCastVictim( SPELL_MOONFIRE);
-                Class_Timer = 10000;
-                break;
-            }
-        }
-        else Class_Timer -= diff;
-
-        DoMeleeAttackIfReady();
-    }
+    ENTRY_STOLEN_SOUL           = 18441
 };
-
-CreatureAI* GetAI_mob_stolen_soul(Creature* pCreature)
-{
-    return new mob_stolen_soulAI (pCreature);
-}
-
-#define SAY_INTRO                   -1558000
-#define SAY_SUMMON                  -1558001
-
-#define SAY_AGGRO_1                 -1558002
-#define SAY_AGGRO_2                 -1558003
-#define SAY_AGGRO_3                 -1558004
-
-#define SAY_ROAR                    -1558005
-#define SAY_SOUL_CLEAVE             -1558006
-
-#define SAY_SLAY_1                  -1558007
-#define SAY_SLAY_2                  -1558008
-
-#define SAY_DEATH                   -1558009
-
-#define SPELL_RIBBON_OF_SOULS       32422
-#define SPELL_SOUL_SCREAM           32421
-
-#define SPELL_STOLEN_SOUL           32346
-#define SPELL_STOLEN_SOUL_VISUAL    32395
-
-#define SPELL_SUMMON_AVATAR         32424
-
-#define ENTRY_STOLEN_SOUL           18441
 
 struct boss_exarch_maladaarAI : public ScriptedAI
 {
@@ -215,7 +124,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
             if (Unit* pTarget = Unit::GetUnit(*me, soulholder))
             {
 
-                ((mob_stolen_soulAI*)summoned->AI())->SetMyClass(soulclass);
+                //((mob_stolen_soulAI*)summoned->AI())->SetMyClass(soulclass);
                 summoned->AI()->AttackStart(pTarget);
             }
         }
@@ -352,6 +261,97 @@ struct mob_avatar_of_martyredAI : public ScriptedAI
 CreatureAI* GetAI_mob_avatar_of_martyred(Creature* pCreature)
 {
     return new mob_avatar_of_martyredAI (pCreature);
+}
+
+enum stolenSoul
+{
+	SPELL_MOONFIRE				= 37328,
+	SPELL_FIREBALL				= 37329,
+	SPELL_MIND_FLAY				= 37330,
+	SPELL_HEMORRHAGE			= 37331,
+	SPELL_FROSTSHOCK			= 37332,
+	SPELL_CURSE_OF_AGONY		= 37334,
+	SPELL_MORTAL_STRIKE			= 37335,
+	SPELL_FREEZING_TRAP			= 37368,
+	SPELL_HAMMER_OF_JUSTICE		= 37369
+};
+
+struct mob_stolen_soulAI : public ScriptedAI
+{
+    mob_stolen_soulAI(Creature* c) : ScriptedAI(c) {}
+
+    uint8 myClass;
+    uint32 Class_Timer;
+
+    void Reset()
+    {
+        myClass = CLASS_WARRIOR;
+        Class_Timer = 1000;
+    }
+
+    void EnterCombat(Unit*) { }
+
+    void SetMyClass(uint8 myclass)
+    {
+        myClass = myclass;
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!UpdateVictim())
+            return;
+
+        if (Class_Timer <= diff)
+        {
+            switch (myClass)
+            {
+                case CLASS_WARRIOR:
+                    DoCastVictim( SPELL_MORTAL_STRIKE);
+                    Class_Timer = 6000;
+                    break;
+                case CLASS_PALADIN:
+                    DoCastVictim( SPELL_HAMMER_OF_JUSTICE);
+                    Class_Timer = 6000;
+                    break;
+                case CLASS_HUNTER:
+                    DoCastVictim( SPELL_FREEZING_TRAP);
+                    Class_Timer = 20000;
+                    break;
+                case CLASS_ROGUE:
+                    DoCastVictim( SPELL_HEMORRHAGE);
+                    Class_Timer = 10000;
+                    break;
+                case CLASS_PRIEST:
+                    DoCastVictim( SPELL_MIND_FLAY);
+                    Class_Timer = 5000;
+                    break;
+                case CLASS_SHAMAN:
+                    DoCastVictim( SPELL_FROSTSHOCK);
+                    Class_Timer = 8000;
+                    break;
+                case CLASS_MAGE:
+                    DoCastVictim( SPELL_FIREBALL);
+                    Class_Timer = 5000;
+                    break;
+                case CLASS_WARLOCK:
+                    DoCastVictim( SPELL_CURSE_OF_AGONY);
+                    Class_Timer = 20000;
+                    break;
+                case CLASS_DRUID:
+                    DoCastVictim( SPELL_MOONFIRE);
+                    Class_Timer = 10000;
+                    break;
+            }
+        }
+        else Class_Timer -= diff;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_mob_stolen_soul(Creature* creature)
+{
+    return new mob_stolen_soulAI (creature);
 }
 
 void AddSC_boss_exarch_maladaar()

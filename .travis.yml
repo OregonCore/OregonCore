@@ -27,7 +27,7 @@ git:
 
 before_install:
   - sudo apt-get -qq install mariadb-client libace-dev
-  - test "$TRAVIS_PULL_REQUEST" == "false"
+  - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
   - curl -o doxygen.tar.gz https://oregon-core.net/travis/doxygen.tar.gz
   - tar xzf doxygen.tar.gz
   - sudo install -m 755 doxygen /usr/bin
@@ -57,7 +57,7 @@ script:
 
 # generate and deploy doxygen documentation now
 after_success:
-  - test "$TRAVIS_PULL_REQUEST" == "false"
+  - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
   - echo 'create database documentation' | mysql -u root --password=''
   - mysql -u root --password='' documentation < documentation.sql
   - cd $TRAVIS_BUILD_DIR/build

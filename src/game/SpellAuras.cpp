@@ -3531,7 +3531,7 @@ void Aura::HandleModStealth(bool apply, bool Real)
         m_target->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_UNATTACKABLE);
     }
 
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 void Aura::HandleModStealthLevel(bool apply, bool Real)
@@ -3543,7 +3543,7 @@ void Aura::HandleModStealthLevel(bool apply, bool Real)
     else
         m_target->m_stealth.AddValue(type, -GetAmount());
 
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 void Aura::HandleModInvisibility(bool apply, bool Real)
@@ -3592,7 +3592,7 @@ void Aura::HandleModInvisibility(bool apply, bool Real)
     if (apply && Real)
         m_target->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_UNATTACKABLE);  // drop flag at invisibiliy in bg
 
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 void Aura::HandleModStealthDetect(bool apply, bool Real)
@@ -3612,7 +3612,7 @@ void Aura::HandleModStealthDetect(bool apply, bool Real)
         m_target->m_stealthDetect.AddValue(type, -GetAmount());
     }
 
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 void Aura::HandleModInvisibilityDetect(bool apply, bool Real)
@@ -3632,7 +3632,7 @@ void Aura::HandleModInvisibilityDetect(bool apply, bool Real)
         m_target->m_invisibilityDetect.AddValue(type, -GetAmount());
     }
 
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 void Aura::HandleAuraModRoot(bool apply, bool Real)
@@ -4124,7 +4124,7 @@ void Aura::HandleAuraModStalked(bool apply, bool /*Real*/)
     }
 
     // call functions which may have additional effects after chainging state of unit
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 /*********************************************************/
