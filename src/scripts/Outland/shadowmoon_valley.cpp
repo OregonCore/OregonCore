@@ -38,7 +38,6 @@ mob_illidari_spawn
 npc_lord_illidan_stormrage
 go_crystal_prison
 npc_enraged_spirit
-npc_jovaan
 npc_azaloth
 npc_sunfurywarlock
 EndContentData */
@@ -1905,142 +1904,6 @@ struct npc_enraged_spiritAI : public ScriptedAI
 CreatureAI* GetAI_npc_enraged_spirit(Creature* pCreature)
 {
     return new npc_enraged_spiritAI(pCreature);
-}
-
-/*######
-# npc_jovaan
-#####*/
-
-enum
-{
-    SPELL_BOX             = 37097,
-    NPC_WARBRINGER        = 21502,
-
-    SAY_JOVAAN1           = -1900140,
-    SAY_JOVAAN2           = -1900142,
-    SAY_JOVAAN3           = -1900144,
-    SAY_JOVAAN4           = -1900146,
-    SAY_WARBRINGER1       = -1900141,
-    SAY_WARBRINGER2       = -1900143,
-    SAY_WARBRINGER3       = -1900145,
-    SAY_WARBRINGER4       = -1900147,
-
-    QUEST_LEGION_HOLD1    = 10563,
-    QUEST_LEGION_HOLD2    = 10596,
-
-    GO_INFERNAL           = 184834,
-    GO_INFERNAL_TRAP      = 184835
-};
-
-struct npc_jovaanAI : public ScriptedAI
-{
-    npc_jovaanAI(Creature* pCreature) : ScriptedAI(pCreature) {}
-
-    bool Image;
-
-    uint64 uiPlayerGUID;
-    uint32 uiStepsTimer;
-    uint32 uiSteps;
-
-    void Reset()
-    {
-        me->setFaction(7);
-        Image = false;
-        uiPlayerGUID = 0;
-        uiStepsTimer = 0;
-        uiSteps = 0;
-    }
-
-    void MoveInLineOfSight(Unit* pWho)
-    {
-        if (pWho->GetTypeId() == TYPEID_PLAYER)
-        {
-            if (me->IsWithinDistInMap(((Player*)pWho), 15) && ((Player*)pWho)->HasAura(SPELL_BOX, 0))
-            {
-                uiPlayerGUID = pWho->GetGUID();
-                if ((CAST_PLR(pWho)->GetQuestStatus(QUEST_LEGION_HOLD1) == QUEST_STATUS_INCOMPLETE) || (CAST_PLR(pWho)->GetQuestStatus(QUEST_LEGION_HOLD2) == QUEST_STATUS_INCOMPLETE))
-                    Image = true;
-            }
-            else uiPlayerGUID = 0;
-        }
-    }
-
-    uint32 NextStep(uint32 uiSteps)
-    {
-        Creature* pWarbringer = me->FindNearestCreature(NPC_WARBRINGER, 25);
-        GameObject* pInfernal = me->FindNearestGameObject(GO_INFERNAL, 15);
-        GameObject* pInfernalTrap = me->FindNearestGameObject(GO_INFERNAL_TRAP, 15);
-
-        if (!pWarbringer || !pInfernal || !pInfernalTrap)
-        {
-            Reset();
-            return 0;
-        }
-
-        switch (uiSteps)
-        {
-        case 1:
-            pInfernal->SetRespawnTime(61);
-            pInfernal->UpdateObjectVisibility();
-            break;
-        case 2:
-            pInfernalTrap->SetRespawnTime(61);
-            pInfernalTrap->UpdateObjectVisibility();
-            return 500;
-        case 3:
-            me->setFaction(35);
-            me->SummonCreature(NPC_WARBRINGER, -3300.479, 2927.177, 173.894, 2.5f, TEMPSUMMON_TIMED_DESPAWN, 60000);
-            return 1000;
-        case 4:
-            DoScriptText(SAY_JOVAAN1, me, 0);
-            return 6000;
-        case 5:
-            DoScriptText(SAY_WARBRINGER1, pWarbringer, 0);
-            pWarbringer->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_TALK);
-            return 6800;
-        case 6:
-            DoScriptText(SAY_JOVAAN2, me, 0);
-            return 6800;
-        case 7:
-            DoScriptText(SAY_WARBRINGER2, pWarbringer, 0);
-            return 6800;
-        case 8:
-            DoScriptText(SAY_JOVAAN3, me, 0);
-            return 6800;
-        case 9:
-            DoScriptText(SAY_WARBRINGER3, pWarbringer, 0);
-            return 6800;
-        case 10:
-            DoScriptText(SAY_JOVAAN4, me, 0);
-            return 6800;
-        case 11:
-            DoScriptText(SAY_WARBRINGER4, pWarbringer, 0);
-            return 6000;
-        case 12:
-            if (Player* pPlayer = Unit::GetPlayer(*me, uiPlayerGUID))
-                pPlayer->KilledMonsterCredit(NPC_WARBRINGER, 0);;
-            return 2000;
-        case 13:
-            Reset();
-        default:
-            return 0;
-        }
-    }
-
-    void UpdateAI(const uint32 uiDiff)
-    {
-        if (uiStepsTimer <= uiDiff)
-        {
-            if (Image)
-                uiStepsTimer = NextStep(++uiSteps);
-        }
-        else uiStepsTimer -= uiDiff;
-    }
-};
-
-CreatureAI* GetAI_npc_jovaan(Creature* pCreature)
-{
-    return new npc_jovaanAI(pCreature);
 }
 
 /*######
@@ -4183,11 +4046,6 @@ void AddSC_shadowmoon_valley()
     newscript = new Script;
     newscript->Name = "npc_enraged_spirit";
     newscript->GetAI = &GetAI_npc_enraged_spirit;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_jovaan";
-    newscript->GetAI = &GetAI_npc_jovaan;
     newscript->RegisterSelf();
 
     newscript = new Script;
