@@ -47,6 +47,27 @@ EndContentData */
 #include "ScriptedEscortAI.h"
 #include "ScriptedGossip.h"
 
+enum
+{
+    SPELL_BOX             = 37097,
+    NPC_WARBRINGER        = 21502,
+
+    SAY_JOVAAN1           = -1900140,
+    SAY_JOVAAN2           = -1900142,
+    SAY_JOVAAN3           = -1900144,
+    SAY_JOVAAN4           = -1900146,
+    SAY_WARBRINGER1       = -1900141,
+    SAY_WARBRINGER2       = -1900143,
+    SAY_WARBRINGER3       = -1900145,
+    SAY_WARBRINGER4       = -1900147,
+
+    QUEST_LEGION_HOLD1    = 10563,
+    QUEST_LEGION_HOLD2    = 10596,
+
+    GO_INFERNAL           = 184834,
+    GO_INFERNAL_TRAP      = 184835
+};
+
 /*#####
 # mob_mature_netherwing_drake
 #####*/
