@@ -551,12 +551,12 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_INTERVAL_SAVE] = sConfig.GetIntDefault("PlayerSaveInterval", 900000);
     m_configs[CONFIG_INTERVAL_DISCONNECT_TOLERANCE] = sConfig.GetIntDefault("DisconnectToleranceInterval", 0);
 
-    m_configs[CONFIG_INTERVAL_GRIDCLEAN] = sConfig.GetIntDefault("GridCleanUpDelay", 300000);
-    if (m_configs[CONFIG_INTERVAL_GRIDCLEAN] < MIN_GRID_DELAY)
-    {
-        sLog.outError("GridCleanUpDelay (%i) must be greater %u. Use this minimal value.", m_configs[CONFIG_INTERVAL_GRIDCLEAN], MIN_GRID_DELAY);
-        m_configs[CONFIG_INTERVAL_GRIDCLEAN] = MIN_GRID_DELAY;
-    }
+    m_configs[CONFIG_INTERVAL_GRIDCLEAN] = sConfig.GetIntDefault("GridCleanUpDelay", 60000);
+    //if (m_configs[CONFIG_INTERVAL_GRIDCLEAN] < MIN_GRID_DELAY)
+    //{
+    //    sLog.outError("GridCleanUpDelay (%i) must be greater %u. Use this minimal value.", m_configs[CONFIG_INTERVAL_GRIDCLEAN], MIN_GRID_DELAY);
+    //    m_configs[CONFIG_INTERVAL_GRIDCLEAN] = MIN_GRID_DELAY;
+    //}
     if (reload)
         MapManager::Instance().SetGridCleanUpDelay(m_configs[CONFIG_INTERVAL_GRIDCLEAN]);
 

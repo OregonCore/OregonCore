@@ -67,7 +67,7 @@ struct ScriptAction
 // Map file format defines
 //******************************************
 static const uint32 MAP_MAGIC         = 0x5350414D; // SPAM
-static const uint32 MAP_VERSION_MAGIC = 0x332E3176; // 6.0w
+static const uint32 MAP_VERSION_MAGIC = 0x332E3176; // 3.1v
 static const uint32 MAP_AREA_MAGIC    = 0x41455241; // AERA
 static const uint32 MAP_HEIGHT_MAGIC  = 0x5447484D; // TGHM
 static const uint32 MAP_LIQUID_MAGIC  = 0x51494C4D; // QILM
