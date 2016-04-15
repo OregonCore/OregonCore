@@ -2837,11 +2837,10 @@ struct npc_warmaul_pyreAI : public ScriptedAI
 				((Player*)player)->KilledMonsterCredit(18395, me->GetGUID());
 		}
 				return 2000;
-		case 27:for (std::list<Creature*>::iterator itr = SaboteurList.begin(); itr != SaboteurList.end(); ++itr)
-		{
-			(*itr)->ForcedDespawn();
-		}
-				Reset();
+        case 27:
+            for (std::list<Creature*>::iterator itr = SaboteurList.begin(); itr != SaboteurList.end(); ++itr)
+                (*itr)->DespawnOrUnsummon();
+            Reset();
 		default: return 0;
 		}
 	}
