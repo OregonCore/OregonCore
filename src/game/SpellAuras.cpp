@@ -3300,8 +3300,6 @@ void Aura::HandleModPossessPet(bool apply, bool Real)
     }
     else
     {
-        pet->RemoveCharmedBy(caster);
-
         if (!pet->IsWithinDistInMap(caster, pet->GetMap()->GetVisibilityRange()))
             pet->Remove(PET_SAVE_NOT_IN_SLOT, true);
         else
@@ -3318,6 +3316,8 @@ void Aura::HandleModPossessPet(bool apply, bool Real)
                 m_target->GetCharmInfo()->SetCommandState(COMMAND_FOLLOW);
             }
         }
+
+        pet->RemoveCharmedBy(caster);
     }
 }
 

@@ -347,7 +347,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
 
 void Pet::SavePetToDB(PetSaveMode mode)
 {
-    if (!GetEntry())
+    if (!GetEntry() || !m_charmInfo)
         return;
 
     // save only fully controlled creature

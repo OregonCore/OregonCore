@@ -1028,10 +1028,9 @@ bool GridMap::loadData(const char* filename)
     unloadData();
 
     map_fileheader header;
-    // Not return error if file not found
     FILE* in = fopen(filename, "rb");
     if (!in)
-        return true;
+        return false;
 
     if (fread(&header, sizeof(header), 1, in) != 1)
     {
