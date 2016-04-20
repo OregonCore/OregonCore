@@ -1606,7 +1606,7 @@ float Map::GetHeight(float x, float y, float z, bool checkVMap, float maxSearchD
 
             // we are already under the surface or vmap height above map heigt
             // or if the distance of the vmap height is less the land height distance
-            if (z < mapHeight || vmapHeight > mapHeight || std::fabs(mapHeight - z) > std::fabs(vmapHeight - z))
+            if (vmapHeight > mapHeight || std::fabs(mapHeight - z) > std::fabs(vmapHeight - z))
                 realHeight = vmapHeight;
             else
                 realHeight = mapHeight;                           // better use .map surface height
