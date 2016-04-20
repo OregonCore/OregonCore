@@ -15453,13 +15453,14 @@ void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
         {
             Field* fields = result->Fetch();
             uint64 caster_guid = fields[0].GetUInt64();
-            uint32 spellid = fields[1].GetUInt32();
-            uint32 effindex = fields[2].GetUInt32();
-            uint32 stackcount = fields[3].GetUInt32();
-            int32 damage     = (int32)fields[4].GetUInt32();
-            int32 maxduration = (int32)fields[5].GetUInt32();
-            int32 remaintime = (int32)fields[6].GetUInt32();
-            int32 remaincharges = (int32)fields[7].GetUInt32();
+            uint64 item_caster_guid = fields[1].GetUInt64();
+            uint32 spellid = fields[2].GetUInt32();
+            uint32 effindex = fields[3].GetUInt32();
+            uint32 stackcount = fields[4].GetUInt32();
+            int32 damage     = fields[5].GetInt32();
+            int32 maxduration = fields[6].GetInt32();
+            int32 remaintime = fields[7].GetInt32();
+            int32 remaincharges = fields[8].GetInt32();
 
             if (spellid == SPELL_ARENA_PREPARATION || spellid == SPELL_PREPARATION)
             {
@@ -15519,7 +15520,7 @@ void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
                 Aura* aura = CreateAura(spellproto, effindex, NULL, this, NULL);
                 if (!damage)
                     damage = aura->GetModifier()->m_amount;
-                aura->SetLoadedState(caster_guid, damage, maxduration, remaintime, remaincharges);
+                aura->SetLoadedState(caster_guid, item_caster_guid, damage, maxduration, remaintime, remaincharges);
                 AddAura(aura);
                 sLog.outDetail("Added aura spellid %u, effect %u", spellproto->Id, effindex);
             }
@@ -16817,9 +16818,9 @@ void Player::_SaveAuras()
 
                     if (i == 3)
                     {
-                        CharacterDatabase.PExecute("INSERT INTO character_aura (guid,caster_guid,spell,effect_index,stackcount,amount,maxduration,remaintime,remaincharges) "
-                                                   "VALUES ('%u', '" UI64FMTD "' ,'%u', '%u', '%u', '%d', '%d', '%d', '%d')", GetGUIDLow(), aura->GetCasterGUID(), (uint32)aura->GetId(),
-                                                   (uint32)aura->GetEffIndex(), (uint32)aura->GetStackAmount(), aura->GetModifier()->m_amount, int(aura->GetAuraMaxDuration()), int(aura->GetAuraDuration()), int(aura->m_procCharges));
+                        CharacterDatabase.PExecute("INSERT INTO character_aura (guid,caster_guid,item_caster_guid,spell,effect_index,stackcount,amount,maxduration,remaintime,remaincharges) "
+                                                   "VALUES ('%u', '" UI64FMTD "', '" UI64FMTD "', '%u', '%u', '%u', '%d', '%d', '%d', '%d')", GetGUIDLow(), aura->GetCasterGUID(), (uint32)aura->GetId(),
+                                                   (uint32)aura->GetEffIndex(), (uint32)aura->GetStackAmount(), aura->GetCastItemGUID(), aura->GetModifier()->m_amount, int(aura->GetAuraMaxDuration()), int(aura->GetAuraDuration()), int(aura->m_procCharges));
                     }
                 }
             }
