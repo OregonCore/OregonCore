@@ -1483,6 +1483,39 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 if (InstanceData* pInstance = m_caster->GetInstanceData())
                     pInstance->ProcessEvent(unitTarget, 1);
                 break;
+            // Arcane Torrent (Mana)
+            case 28730:
+                {
+                    Unit* caster = GetCaster();
+                    if (!caster)
+                        break;
+
+                    Aura* dummy = caster->GetDummyAura(28734);
+                    if (dummy)
+                    {
+                        int32 bp = m_spellInfo->EffectBasePoints[effIndex] * dummy->GetStackAmount();
+                        caster->CastCustomSpell(caster, 28733, &bp, NULL, NULL, true);
+                        caster->RemoveAurasDueToSpell(28734);
+                    }
+                    break;
+                }
+            // Arcane Torrent (Energy)
+            case 25046:
+                {
+                    Unit* caster = GetCaster();
+                    if (!caster)
+                        break;
+
+                    // Search Mana Tap auras on caster
+                    Aura* dummy = caster->GetDummyAura(28734);
+                    if (dummy)
+                    {
+                        int32 bp = dummy->GetStackAmount() * 10;
+                        caster->CastCustomSpell(caster, 25048, &bp, NULL, NULL, true);
+                        caster->RemoveAurasDueToSpell(28734);
+                    }
+                    break;
+                }
             }
 
             //All IconID Check in there

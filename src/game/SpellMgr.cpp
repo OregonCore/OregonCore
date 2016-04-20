@@ -2610,8 +2610,15 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->AttributesEx3 |= SPELL_ATTR3_CANT_MISS;
             spellInfo->MaxAffectedTargets = 1;
             break;
-        case 45399:
+        case 45399: // Demonic Vapor Trail Periodic
             spellInfo->rangeIndex = 2;
+            break;
+        case 28730: // arcane torrent (mana)
+            spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_CASTER;
+            break;
+        case 25046: // arcane torrent (energy)
+            spellInfo->Effect[1] = SPELL_EFFECT_DUMMY;
+            spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_CASTER;
             break;
         default:
             break;
