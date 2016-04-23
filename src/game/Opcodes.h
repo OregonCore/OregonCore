@@ -1104,12 +1104,20 @@ enum SessionStatus
     STATUS_PROTECTED        = 0x10  //!< Using this opcode is time protected
 };
 
+enum PacketProcessing
+{
+    PROCESS_INPLACE = 0,                                    //process packet whenever we receive it - mostly for non-handled or non-implemented packets
+    PROCESS_THREADUNSAFE,                                   //packet is not thread-safe - process it in World::UpdateSessions()
+    PROCESS_THREADSAFE                                      //packet is thread-safe - process it in Map::Update()
+};
+
 class WorldPacket;
 
 struct OpcodeHandler
 {
     char const* name;
     unsigned long status;
+    PacketProcessing packetProcessing;
     void (WorldSession::*handler)(WorldPacket& recvPacket);
 };
 

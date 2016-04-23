@@ -22,6 +22,7 @@
 #include "Policies/ThreadingModel.h"
 #include "ace/RW_Thread_Mutex.h"
 #include "ace/Thread_Mutex.h"
+#include <unordered_set>
 
 #include "DBCStructure.h"
 #include "GridDefines.h"
@@ -514,6 +515,16 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         void Insert(const GameObjectModel& mdl) { m_dyn_tree.insert(mdl); }
         bool Contains(const GameObjectModel& mdl) const { return m_dyn_tree.contains(mdl);}
         bool getObjectHitPos(float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float &ry, float& rz, float modifyDist);
+        void AddUpdateObject(Object* obj)
+        {
+            _updateObjects.insert(obj);
+        }
+
+        void RemoveUpdateObject(Object* obj)
+        {
+            _updateObjects.erase(obj);
+        }
+
     private:
         void LoadMapAndVMap(int gx, int gy);
         void LoadVMap(int gx, int gy);
@@ -567,6 +578,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         void setNGrid(NGridType* grid, uint32 x, uint32 y);
         void ScriptsProcess();
+        void SendObjectUpdates();
 
         void UpdateActiveCells(const float& x, const float& y, const uint32& t_diff);
     protected:
@@ -622,6 +634,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         std::map<WorldObject*, bool> i_objectsToSwitch;
         std::set<WorldObject*> i_worldObjects;
         std::multimap<time_t, ScriptAction> m_scriptSchedule;
+        std::unordered_set<Object*> _updateObjects;
 
         // Type specific code for add/remove to/from grid
         template<class T>
