@@ -16819,8 +16819,8 @@ void Player::_SaveAuras()
                     if (i == 3)
                     {
                         CharacterDatabase.PExecute("INSERT INTO character_aura (guid,caster_guid,item_caster_guid,spell,effect_index,stackcount,amount,maxduration,remaintime,remaincharges) "
-                                                   "VALUES ('%u', '" UI64FMTD "', '" UI64FMTD "', '%u', '%u', '%u', '%d', '%d', '%d', '%d')", GetGUIDLow(), aura->GetCasterGUID(), (uint32)aura->GetId(),
-                                                   (uint32)aura->GetEffIndex(), (uint32)aura->GetStackAmount(), aura->GetCastItemGUID(), aura->GetModifier()->m_amount, int(aura->GetAuraMaxDuration()), int(aura->GetAuraDuration()), int(aura->m_procCharges));
+                                                   "VALUES ('%u', '" UI64FMTD "', '" UI64FMTD "', '%u', '%u', '%u', '%d', '%d', '%d', '%d')", GetGUIDLow(), aura->GetCasterGUID(),  aura->GetCastItemGUID(), (uint32)aura->GetId(),
+                                                   (uint32)aura->GetEffIndex(), (uint32)aura->GetStackAmount(), aura->GetModifier()->m_amount, int(aura->GetAuraMaxDuration()), int(aura->GetAuraDuration()), int(aura->m_procCharges));
                     }
                 }
             }

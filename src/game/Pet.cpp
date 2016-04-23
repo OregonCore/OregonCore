@@ -1448,7 +1448,7 @@ void Pet::_SaveAuras()
                     {
                         CharacterDatabase.PExecute("INSERT INTO pet_aura (guid,caster_guid,item_caster_guid,spell,effect_index,stackcount,amount,maxduration,remaintime,remaincharges) "
                                                    "VALUES ('%u', '" UI64FMTD "', '" UI64FMTD "', '%u', '%u', '%u', '%d', '%d', '%d', '%d')",
-                                                   m_charmInfo->GetPetNumber(), itr2->second->GetCasterGUID(), (uint32)itr2->second->GetId(), (uint32)itr2->second->GetEffIndex(), (uint32)itr2->second->GetStackAmount(), itr2->second->GetModifier()->m_amount, int(itr2->second->GetAuraMaxDuration()), int(itr2->second->GetAuraDuration()), int(itr2->second->m_procCharges));
+                                                   m_charmInfo->GetPetNumber(), itr2->second->GetCasterGUID(), itr2->second->GetCastItemGUID(), (uint32)itr2->second->GetId(), (uint32)itr2->second->GetEffIndex(), (uint32)itr2->second->GetStackAmount(), itr2->second->GetModifier()->m_amount, int(itr2->second->GetAuraMaxDuration()), int(itr2->second->GetAuraDuration()), int(itr2->second->m_procCharges));
                     }
                 }
             }
