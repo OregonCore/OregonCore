@@ -194,7 +194,7 @@ struct npc_general_marcus_jonathanAI : public ScriptedAI
                 me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
             }
             if (emote == TEXT_EMOTE_WAVE)
-                me->MonsterSay("Greetings citizen", LANG_COMMON, 0);
+                me->MonsterSay("Greetings, citizen.", LANG_COMMON, 0);
         }
     }
 };

@@ -24,6 +24,7 @@ EndScriptData */
 
 /* ContentData
 npc_raliq_the_drunk
+npc_kylene
 npc_salsalabim
 npc_shattrathflaskvendors
 npc_zephyr
@@ -103,6 +104,70 @@ bool GossipSelect_npc_raliq_the_drunk(Player* player, Creature* pCreature, uint3
         ((npc_raliq_the_drunkAI*)pCreature->AI())->AttackStart(player);
     }
     return true;
+}
+
+/*######
+## npc_kylene
+######*/
+
+enum eKylene
+{
+	SAY_KYLENE1_MALE = -1910256,
+	SAY_KYLENE1_FEMALE = -1910257,
+	SAY_KYLENE2 = -1910258,
+
+	EMOTE_BARMAID_RUDE = -1910259,
+};
+
+struct npc_kyleneAI : public ScriptedAI
+{
+	npc_kyleneAI(Creature* c) : ScriptedAI(c) {}
+
+	void ReceiveEmote(Player* pPlayer, uint32 emote)
+	{
+		switch (emote) 
+		{
+			case TEXT_EMOTE_APPLAUD:
+			case TEXT_EMOTE_BOW:
+				me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
+				break;
+			case TEXT_EMOTE_DANCE:
+				me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
+				break;
+			case TEXT_EMOTE_FLEX:
+				me->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
+				break;
+			case TEXT_EMOTE_KISS:
+				me->HandleEmoteCommand(EMOTE_ONESHOT_SHY);
+				break;
+			case TEXT_EMOTE_RUDE:
+				me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
+				DoScriptText(EMOTE_BARMAID_RUDE, me, pPlayer);
+				break;
+			case TEXT_EMOTE_SHY:
+				me->HandleEmoteCommand(EMOTE_ONESHOT_KISS);
+				break;
+			case TEXT_EMOTE_WAVE:
+				switch (urand(0, 1))
+				{
+					case 0:
+						if (pPlayer->getGender() == 0)
+							DoScriptText(SAY_KYLENE1_MALE, me);
+						else
+							DoScriptText(SAY_KYLENE1_FEMALE, me);
+						break;
+					case 1:
+						DoScriptText(SAY_KYLENE2, me, pPlayer);
+						break;
+				}
+				break;
+		}
+	}
+};
+
+CreatureAI* GetAI_npc_kylene(Creature* pCreature)
+{
+	return new npc_kyleneAI(pCreature);
 }
 
 /*######
@@ -1116,6 +1181,11 @@ void AddSC_shattrath_city()
     newscript->pGossipHello =  &GossipHello_npc_raliq_the_drunk;
     newscript->pGossipSelect = &GossipSelect_npc_raliq_the_drunk;
     newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_kylene";
+	newscript->GetAI = &GetAI_npc_kylene;
+	newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_salsalabim";

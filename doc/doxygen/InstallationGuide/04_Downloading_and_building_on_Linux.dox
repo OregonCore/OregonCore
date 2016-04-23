@@ -23,7 +23,7 @@ This guide will walk through what tools are needed for building the OregonCore o
 To fetch the components for Ubuntu :
 
     apt-get install build-essential cmake mercurial binutils-dev libiberty-dev libbz2-dev \
-    openssl libssl-dev zlib1g-dev libmysqlclient15-dev libtool mysql-client unrar libace-dev
+    openssl libssl-dev zlib1g-dev libmysqlclient15-dev libtool mysql-client unrar libace-dev unzip libncurses-dev
 
 To fetch the components for Debian :
 
