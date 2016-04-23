@@ -2422,13 +2422,16 @@ void World::UpdateSessions(time_t diff)
         if (!itr->second)
             continue;
 
-        // and remove not active sessions from the list
-        if (!itr->second->Update(diff))                      // As interval = 0
+        WorldSession * pSession = itr->second;
+        WorldSessionFilter updater(pSession);
+        
+        if (!pSession->Update(diff, updater))    // As interval = 0
         {
             if (!RemoveQueuedPlayer(itr->second) && itr->second && getConfig(CONFIG_INTERVAL_DISCONNECT_TOLERANCE))
                 m_disconnects[itr->second->GetAccountId()] = time(NULL);
-            delete itr->second;
+            RemoveQueuedPlayer(pSession);
             m_sessions.erase(itr);
+            delete pSession;
         }
     }
 }
