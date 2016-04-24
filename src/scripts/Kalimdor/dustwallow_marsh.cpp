@@ -26,6 +26,7 @@ EndScriptData */
 mobs_risen_husk_spirit
 npc_restless_apparition
 npc_deserter_agitator
+npc_gavis_greysheild
 npc_lady_jaina_proudmoore
 npc_nat_pagle
 npc_morokk
@@ -195,6 +196,106 @@ bool GossipSelect_npc_deserter_agitator(Player* pPlayer, Creature* pCreature, ui
     }
 
     return true;
+}
+
+/*######
+## npc_gavis_greyshield
+######*/
+
+enum eGavisGreyshield
+{
+	NPC_GAVIS_GREYSHIELD = 23941,
+
+	SAY_GAVIS1 = -1910267,
+	SAY_GAVIS2 = -1910268,
+
+	QUEST_THE_END_OF_THE_DESERTERS = 11134,
+	SPELL_GAVIS_GREYSHIELD_CREDIT = 42660,
+
+	PHASE_GAVIS_ATTACK = 1,
+	PHASE_GAVIS_SURRENDER = 2
+};
+
+struct npc_gavis_greyshieldAI : public ScriptedAI
+{
+	npc_gavis_greyshieldAI(Creature* pCreature) : ScriptedAI(pCreature) 
+	{
+		Reset();
+	}
+
+	uint32 phase;
+	uint32 phaseTimer;
+	uint32 phaseCounter;
+
+	void Reset()
+	{
+		me->setFaction(54);
+		phase = PHASE_GAVIS_ATTACK;
+		phaseTimer = 0;
+		phaseCounter = 0;
+	}
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void DamageTaken(Unit* done_by, uint32& damage)
+	{
+		if (done_by->GetTypeId() == TYPEID_PLAYER)
+		{
+			if (damage > me->GetHealth())
+			{
+				me->SetHealth(1);
+				damage = 0;
+			}
+
+			if ((me->GetHealth() - damage) * 100 / me->GetMaxHealth() < 20)
+			{
+				if (CAST_PLR(done_by)->GetQuestStatus(QUEST_THE_END_OF_THE_DESERTERS) == QUEST_STATUS_INCOMPLETE)
+					me->CastSpell(done_by, SPELL_GAVIS_GREYSHIELD_CREDIT, true);
+
+				phase = PHASE_GAVIS_SURRENDER;
+			}
+		}
+	}
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		switch (phase)
+		{
+			case PHASE_GAVIS_ATTACK:
+				break;
+
+			case PHASE_GAVIS_SURRENDER:
+				if (phaseTimer <= uiDiff)
+				{
+					switch (phaseCounter)
+					{
+						case 0:
+							me->CombatStop(true);
+							me->setFaction(35);
+							DoScriptText(SAY_GAVIS1, me);
+							phaseTimer = 5000;
+							break;
+						case 1:
+							DoScriptText(SAY_GAVIS2, me);
+							phaseTimer = 10000;
+							break;
+						case 2:
+							me->DespawnOrUnsummon();
+							break;
+					}
+					++phaseCounter;
+				}
+				else
+				{
+					phaseTimer -= uiDiff;
+				}
+		}
+	}
+};
+
+CreatureAI* GetAI_npc_gavis_greyshield(Creature* pCreature)
+{
+	return new npc_gavis_greyshieldAI(pCreature);
 }
 
 /*######
@@ -1279,12 +1380,17 @@ void AddSC_dustwallow_marsh()
     newscript->pGossipHello =   &GossipHello_npc_restless_apparition;
     newscript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "npc_deserter_agitator";
-    newscript->GetAI = &GetAI_npc_deserter_agitator;
-    newscript->pGossipHello = &GossipHello_npc_deserter_agitator;
-    newscript->pGossipSelect = &GossipSelect_npc_deserter_agitator;
-    newscript->RegisterSelf();
+	newscript = new Script;
+	newscript->Name = "npc_deserter_agitator";
+	newscript->GetAI = &GetAI_npc_deserter_agitator;
+	newscript->pGossipHello = &GossipHello_npc_deserter_agitator;
+	newscript->pGossipSelect = &GossipSelect_npc_deserter_agitator;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_gavis_greyshield";
+	newscript->GetAI = &GetAI_npc_gavis_greyshield;
+	newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_theramore_guard";
