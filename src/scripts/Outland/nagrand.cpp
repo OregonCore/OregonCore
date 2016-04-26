@@ -244,25 +244,26 @@ bool GossipSelect_mob_lump(Player* player, Creature* pCreature, uint32 /*sender*
 # mob_sunspring_villager - should be done with ACID
 ####*/
 
+enum eSunspringVillager
+{
+	SPELL_LIQUID_FIRE_QUEST_ITEM = 32146,
+	SPELL_SUMMON_LIQUID_FIRE = 31706,
+	NPC_SUNSPRING_VILLAGER = 18240
+};
+
 struct mob_sunspring_villagerAI : public ScriptedAI
 {
     mob_sunspring_villagerAI(Creature* c) : ScriptedAI(c) {}
 
-    void Reset()
-    {
-        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
-        me->SetUInt32Value(UNIT_FIELD_BYTES_1, 7);  // lay down
-    }
-
     void EnterCombat(Unit* /*who*/) {}
 
-    void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
+    void SpellHit(Unit* caster, const SpellEntry* spell)
     {
-        if (spell->Id == 23970)
+        if (spell->Id == SPELL_LIQUID_FIRE_QUEST_ITEM)
         {
-            me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-			me->CastSpell(me, 31706, true);
-            me->RemoveCorpse();
+			CAST_PLR(caster)->KilledMonsterCredit(NPC_SUNSPRING_VILLAGER, me->GetGUID());
+			me->CastSpell(me, SPELL_SUMMON_LIQUID_FIRE, true);
+			me->DespawnOrUnsummon(5000);
         }
     }
 };
