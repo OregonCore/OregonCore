@@ -41,6 +41,26 @@ npc_corki2
 go_corkis_prison3
 npc_corki3
 npc_kurenai_captive
+npc_gunthock
+npc_brokentoe
+npc_murkbloodtwins
+npc_rockdar
+npc_szagath
+npc_warmaul_champion
+npc_mogor
+trigger_arenahelper
+npc_warmaul_pyre
+npc_fel_cannon_haf
+npc_living_cyclone
+npc_enraged_crusher
+npc_storm_rager
+npc_lake_surger
+npc_lake_spirit
+npc_tortured_earth_spirit
+npc_crashing_wave_spirit
+npc_raging_fire_soul
+npc_storming_wind_ripper
+npc_rumbling_earth_heart
 EndContentData */
 
 #include "ScriptMgr.h"
@@ -568,8 +588,8 @@ enum eMagharCaptive
     NPC_MURK_PUTRIFIER          = 18202
 };
 
-static float m_afAmbushA[] = { -1568.805786, 8533.873047, 1.958};
-static float m_afAmbushB[] = { -1491.554321, 8506.483398, 1.248};
+static float m_afAmbushA[] = { -1568.805786f, 8533.873047f, 1.958f};
+static float m_afAmbushB[] = { -1491.554321f, 8506.483398f, 1.248f};
 
 struct npc_maghar_captiveAI : public npc_escortAI
 {
@@ -1362,8 +1382,8 @@ enum
     MURK_PUTRIFIER           = 18202
 };
 
-static float m_afAmbushC[] = { -1531.204712, 8456.174805, -4.102};
-static float m_afAmbushD[] = { -1442.524780, 8500.364258, 6.381};
+static float m_afAmbushC[] = { -1531.204712f, 8456.174805f, -4.102f};
+static float m_afAmbushD[] = { -1442.524780f, 8500.364258f, 6.381f};
 
 struct npc_kurenai_captiveAI : public npc_escortAI
 {
@@ -2621,16 +2641,23 @@ enum
 	NPC_SABOTEUR = 18396,
 	NPC_CORPSE = 18397,
 
+	// Opening chat
 	SAY_SABOTEUR1 = -1900192,
 	SAY_SABOTEUR2 = -1900193,
 	SAY_SABOTEUR3 = -1900194,
 	SAY_SABOTEUR4 = -1900195,
+
+	// Random phrases to say
 	SAY_SABOTEUR5 = -1900196,
 	SAY_SABOTEUR6 = -1900197,
 	SAY_SABOTEUR7 = -1900198,
 	SAY_SABOTEUR8 = -1900199,
 	SAY_SABOTEUR9 = -1900200,
-	SAY_SABOTEUR10 = -1900201
+	SAY_SABOTEUR10 = -1900201,
+	SAY_SABOTEUR11 = -1900202,
+
+	// Quest complete phrase
+	SAY_SABOTEUR_COMPLETE = -1900203
 };
 
 struct Move
@@ -2728,11 +2755,12 @@ struct npc_warmaul_pyreAI : public ScriptedAI
 	{
 		if (who->GetTypeId() == TYPEID_PLAYER)
 		{
-			if (((Player*)who)->GetQuestStatus(9932) == QUEST_STATUS_INCOMPLETE)
+			Player* player = (Player*) who;
+			if (player->GetQuestStatus(9932) == QUEST_STATUS_INCOMPLETE)
 			{
-				if (me->IsWithinDistInMap(((Player *)who), 3.0f))
+				if (me->IsWithinDistInMap(player, 3.0f))
 				{
-					PlayerGUID = who->GetGUID();
+					PlayerGUID = player->GetGUID();
 					Event = true;                     // this is not the best way to start the event :)
 				}
 			}
@@ -2772,77 +2800,103 @@ struct npc_warmaul_pyreAI : public ScriptedAI
 	{
 		switch (Steps)
 		{
-		case 1:DoSpawn();
+		case 1:
+			DoSpawn();
 			return 4000;
-		case 2:Started();
-			return 2900;
-		case 3:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR1, Saboteur);
+		case 2:
+			Started();
+			return 3000;
+		case 3:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(SAY_SABOTEUR1, Saboteur);
 			return 5000;
-		case 4:if (Creature* Saboteur = GetSaboteur(1))
-			DoScriptText(SAY_SABOTEUR2, Saboteur);
+		case 4:
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(SAY_SABOTEUR2, Saboteur);
 			return 5000;
-		case 5:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR3, Saboteur);
+		case 5:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(SAY_SABOTEUR3, Saboteur);
 			return 5000;
-		case 6:if (Creature* Saboteur = GetSaboteur(1))
-			DoScriptText(SAY_SABOTEUR4, Saboteur);
+		case 6:
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(SAY_SABOTEUR4, Saboteur);
 			return 4000;
-		case 7:Move();
+		case 7:
+			Move();
 			return 6000;
-		case 8:DoSummon();
+		case 8:
+			DoSummon();
 			return 2000;
-		case 9:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR5, Saboteur);
+		case 9:
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
 			return 2000;
-		case 10:Move();
+		case 10:
+			Move();
 			return 7000;
-		case 11:DoSummon();
+		case 11:
+			DoSummon();
 			return 2000;
-		case 12:if (Creature* Saboteur = GetSaboteur(1))
-			DoScriptText(SAY_SABOTEUR6, Saboteur);
+		case 12:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
 			return 2000;
-		case 13:Move();
+		case 13:
+			Move();
 			return 7000;
-		case 14:DoSummon();
+		case 14:
+			DoSummon();
 			return 2000;
-		case 15:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR7, Saboteur);
-			return 3000;
-		case 16:if (Creature* Saboteur = GetSaboteur(1))
-			DoScriptText(SAY_SABOTEUR7, Saboteur);
+		case 15:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
 			return 2000;
-		case 17:Move();
+		case 16:
+			Move();
 			return 7000;
-		case 18:DoSummon();
+		case 17:
+			DoSummon();
 			return 2000;
-		case 19:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR8, Saboteur);
-			return 3000;
-		case 21:if (Creature* Saboteur = GetSaboteur(1))
-			DoScriptText(SAY_SABOTEUR9, Saboteur);
+		case 18:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
 			return 2000;
-		case 22:Move();
+		case 19:
+			Move();
 			return 7000;
-		case 23:DoSummon();
+		case 20:
+			DoSummon();
 			return 2000;
-		case 24:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR10, Saboteur);
+		case 21:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(SAY_SABOTEUR_COMPLETE, Saboteur);
 			return 2000;
-		case 25:Move();
+		case 22:
+			Move();
 			return 7000;
-		case 26:if (Player* player = Unit::GetPlayer(*me, PlayerGUID))
-		{
-			float Radius = 15.0f;
-			if (me->IsWithinDistInMap(player, Radius))
-				((Player*)player)->KilledMonsterCredit(18395, me->GetGUID());
-		}
-				return 2000;
-        case 27:
+		case 23:
+			if (Player* player = Unit::GetPlayer(*me, PlayerGUID))
+			{
+				float Radius = 15.0f;
+				if (me->IsWithinDistInMap(player, Radius))
+					((Player*)player)->KilledMonsterCredit(18395, me->GetGUID());
+			}
+			return 2000;
+        case 24:
             for (std::list<Creature*>::iterator itr = SaboteurList.begin(); itr != SaboteurList.end(); ++itr)
                 (*itr)->DespawnOrUnsummon();
             Reset();
-		default: return 0;
+		default:
+			return 0;
 		}
 	}
 
