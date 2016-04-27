@@ -2613,12 +2613,16 @@ void SpellMgr::LoadSpellCustomAttr()
         case 45399: // Demonic Vapor Trail Periodic
             spellInfo->rangeIndex = 2;
             break;
-        case 28730: // arcane torrent (mana)
+        case 28730: // Arcane Torrent (mana)
             spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_CASTER;
             break;
-        case 25046: // arcane torrent (energy)
+        case 25046: // Arcane Torrent (energy)
             spellInfo->Effect[1] = SPELL_EFFECT_DUMMY;
             spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_CASTER;
+            break;
+        case 23505: // Berserking
+        case 23451: // Speed
+            spellInfo->Attributes |= SPELL_ATTR0_NEGATIVE_1;
             break;
         default:
             break;
