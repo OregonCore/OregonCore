@@ -178,9 +178,9 @@ struct instance_old_hillsbrad : public ScriptedInstance
         }
     }
 
-    void OnObjectCreate(GameObject* go)
+    void OnGameObjectCreate(GameObject* go, bool add) override
     {
-        if (go->GetEntry() == GO_ROARING_FLAME)
+        if (add && go->GetEntry() == GO_ROARING_FLAME)
         {
             RoaringFlamesList.push_back(go);
         }
@@ -219,32 +219,33 @@ struct instance_old_hillsbrad : public ScriptedInstance
 
                         Encounter[0] = DONE;
                         Position OrcLocPos;
+                        
+                        // move the orcs outside the houses
+                        float x, y, z;
+                        for (std::list<uint64>::iterator it = RightPrisonersList.begin(); it != RightPrisonersList.end(); ++it)
+                        {
+                            if (Creature* Orc = instance->GetCreature(*it))
+                            {
+                                OrcLocPos.Relocate(OrcLoc[0][0], OrcLoc[0][1], OrcLoc[0][2]);
+                                Orc->GetRandomPoint(OrcLocPos, 10.0f, x, y, z);
+                                Orc->SetWalk(false);
+                                Orc->GetMotionMaster()->MovePoint(0, x, y, z);
+                            }
+                        }
+
+                        for (std::list<uint64>::iterator il = LeftPrisonersList.begin(); il != LeftPrisonersList.end(); ++il)
+                        {
+                            if (Creature* Orc = instance->GetCreature(*il))
+                            {
+                                OrcLocPos.Relocate(OrcLoc[1][0], OrcLoc[1][1], OrcLoc[1][2]);
+                                Orc->GetRandomPoint(OrcLocPos, 10.0f, x, y, z);
+                                Orc->SetWalk(false);
+                                Orc->GetMotionMaster()->MovePoint(0, x, y, z);
+                            }
+                        }
 
                         for (std::list<GameObject*>::iterator itr = RoaringFlamesList.begin(); itr != RoaringFlamesList.end(); ++itr)
                         {
-                            // move the orcs outside the houses
-                            float x, y, z;
-                            for (std::list<uint64>::iterator it = RightPrisonersList.begin(); it != RightPrisonersList.end(); ++it)
-                            {
-                                if (Creature* Orc = instance->GetCreature(*it))
-                                {
-                                    OrcLocPos.Relocate(OrcLoc[0][0], OrcLoc[0][1], OrcLoc[0][2]);
-                                    Orc->GetRandomPoint(OrcLocPos, 10.0f, x, y, z);
-                                    Orc->SetWalk(false);
-                                    Orc->GetMotionMaster()->MovePoint(0, x, y, z);
-                                }
-                            }
-
-                            for (std::list<uint64>::iterator il = LeftPrisonersList.begin(); il != LeftPrisonersList.end(); ++il)
-                            {
-                                if (Creature* Orc = instance->GetCreature(*il))
-                                {
-                                    OrcLocPos.Relocate(OrcLoc[1][0], OrcLoc[1][1], OrcLoc[1][2]);
-                                    Orc->GetRandomPoint(OrcLocPos, 10.0f, x, y, z);
-                                    Orc->SetWalk(false);
-                                    Orc->GetMotionMaster()->MovePoint(0, x, y, z);
-                                }
-                            }
                             (*itr)->SetRespawnTime(1800);
                             (*itr)->UpdateObjectVisibility();
                         }
