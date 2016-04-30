@@ -1482,7 +1482,7 @@ bool QuestAccept_npc_private_weeks(Player* pPlayer, Creature* pCreature, Quest c
 	if (quest->GetQuestId() == 10040)
 	{
 		pPlayer->CastSpell(pPlayer, 32756, true);            // Give Disguise buff
-		pPlayer->CastSpell(pPlayer, 38081, true);			   // Give Female Disguise
+		pPlayer->CastSpell(pPlayer, pPlayer->getGender() == GENDER_FEMALE ? 38081 : 38080, true); // Give Disguise
 	}
 
 	return true;
@@ -1495,11 +1495,14 @@ bool ChooseReward_npc_private_weeks(Player* pPlayer, Creature* pCreature, const 
 		if (pPlayer->HasAura(32756, 0))
 			pPlayer->RemoveAurasDueToSpell(32756);
 
+		if (pPlayer->HasAura(38080, 0))
+			pPlayer->RemoveAurasDueToSpell(38080);
+
 		if (pPlayer->HasAura(38081, 0))
 			pPlayer->RemoveAurasDueToSpell(38081);
 	}
 
-	return true;
+	return false;
 }
 
 bool GossipHello_npc_private_weeks(Player* player, Creature* pCreature)
@@ -1522,7 +1525,7 @@ bool GossipSelect_npc_private_weeks(Player* player, Creature* /*pCreature*/, uin
 	{
 		player->CLOSE_GOSSIP_MENU();
 		player->CastSpell(player, 32756, true);            // Give Another Disguise
-		player->CastSpell(player, 38081, true);			   // 38080 Male one
+		player->CastSpell(player, player->getGender() == GENDER_FEMALE ? 38081 : 38080, true); // Give Disguise
 	}
 
 	return true;
@@ -1539,7 +1542,7 @@ bool QuestAccept_npc_scout_nefris(Player* pPlayer, Creature* pCreature, Quest co
 	if (quest->GetQuestId() == 10041)
 	{
 		pPlayer->CastSpell(pPlayer, 32756, true);            // Give Disguise buff
-		pPlayer->CastSpell(pPlayer, 38081, true);			   // Give Female Disguise
+		pPlayer->CastSpell(pPlayer, pPlayer->getGender() == GENDER_FEMALE ? 38081 : 38080, true); // Give Disguise
 	}
 
 	return true;
@@ -1552,11 +1555,14 @@ bool ChooseReward_npc_scout_nefris(Player* pPlayer, Creature* pCreature, const Q
 		if (pPlayer->HasAura(32756, 0))
 			pPlayer->RemoveAurasDueToSpell(32756);
 
+		if (pPlayer->HasAura(38080, 0))
+			pPlayer->RemoveAurasDueToSpell(38080);
+
 		if (pPlayer->HasAura(38081, 0))
 			pPlayer->RemoveAurasDueToSpell(38081);
 	}
 
-	return true;
+	return false;
 }
 
 bool GossipHello_npc_scout_nefris(Player* player, Creature* pCreature)
@@ -1579,7 +1585,7 @@ bool GossipSelect_npc_scout_nefris(Player* player, Creature* /*pCreature*/, uint
 	{
 		player->CLOSE_GOSSIP_MENU();
 		player->CastSpell(player, 32756, true);            // Give Another Disguise
-		player->CastSpell(player, 38081, true);			   // 38080 Male one
+		player->CastSpell(player, player->getGender() == GENDER_FEMALE ? 38081 : 38080, true); // Give Disguise
 	}
 
 	return true;
