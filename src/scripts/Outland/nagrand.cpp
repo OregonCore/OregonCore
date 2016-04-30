@@ -281,7 +281,8 @@ struct mob_sunspring_villagerAI : public ScriptedAI
     {
         if (spell->Id == SPELL_LIQUID_FIRE_QUEST_ITEM)
         {
-			CAST_PLR(caster)->KilledMonsterCredit(NPC_SUNSPRING_VILLAGER, me->GetGUID());
+            if (Player* player = caster->ToPlayer())
+                player->KilledMonsterCredit(NPC_SUNSPRING_VILLAGER, me->GetGUID());
 			me->CastSpell(me, SPELL_SUMMON_LIQUID_FIRE, true);
 			me->DespawnOrUnsummon(5000);
         }
@@ -2895,6 +2896,7 @@ struct npc_warmaul_pyreAI : public ScriptedAI
             for (std::list<Creature*>::iterator itr = SaboteurList.begin(); itr != SaboteurList.end(); ++itr)
                 (*itr)->DespawnOrUnsummon();
             Reset();
+            break;
 		default:
 			return 0;
 		}
