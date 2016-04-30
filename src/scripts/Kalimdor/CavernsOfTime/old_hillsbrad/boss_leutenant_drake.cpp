@@ -46,7 +46,7 @@ bool GOHello_go_barrel_old_hillsbrad(Player *player, GameObject* go)
 
     go->UseDoorOrButton(1800);
 
-    return false;
+    return true;
 }
 
 /*######
