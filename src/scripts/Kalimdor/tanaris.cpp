@@ -164,7 +164,16 @@ enum eCustodian
 
 struct npc_custodian_of_timeAI : public npc_escortAI
 {
-    npc_custodian_of_timeAI(Creature* c) : npc_escortAI(c) {}
+    npc_custodian_of_timeAI(Creature* c) : npc_escortAI(c) 
+    {
+        TempSummon* summon = c->ToTempSummon();
+        if (summon)
+        {
+            Unit* summoner = summon->GetSummoner();
+            if (summoner && summoner->GetTypeId() == TYPEID_PLAYER)
+                Start(false, false, summoner->GetGUID());
+        }
+    }
 
     void WaypointReached(uint32 i)
     {
@@ -234,21 +243,7 @@ struct npc_custodian_of_timeAI : public npc_escortAI
         }
     }
 
-    void MoveInLineOfSight(Unit* who)
-    {
-        if (HasEscortState(STATE_ESCORT_ESCORTING))
-            return;
-
-        if (who->GetTypeId() == TYPEID_PLAYER)
-        {
-            if (who->HasAura(34877, 1) && CAST_PLR(who)->GetQuestStatus(10277) == QUEST_STATUS_INCOMPLETE)
-            {
-                float Radius = 10.0f;
-                if (me->IsWithinDistInMap(who, Radius))
-                    Start(false, false, who->GetGUID());
-            }
-        }
-    }
+    void MoveInLineOfSight(Unit* who) {}
 
     void EnterCombat(Unit* /*who*/) {}
     void Reset() { }
