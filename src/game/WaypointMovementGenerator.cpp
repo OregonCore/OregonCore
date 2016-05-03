@@ -176,7 +176,7 @@ bool WaypointMovementGenerator<Creature>::Update(Creature& unit, const uint32& d
             if (unit.GetFormation() && unit.GetFormation()->getLeader() == &unit)
                 unit.GetFormation()->LeaderMoveTo(node->x, node->y, node->z);
         }
-        else
+        else if (i_nextMoveTime.Passed()) //don't begin delay until movement is actually finished
         {
             // Determine wait time
             if (node->delay)
