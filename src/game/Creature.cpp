@@ -377,11 +377,12 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
-    SetAttackTime(BASE_ATTACK,  cInfo->baseattacktime);
-    SetAttackTime(OFF_ATTACK,   cInfo->baseattacktime);
-    SetAttackTime(RANGED_ATTACK, cInfo->rangeattacktime);
+    uint32 attackTimer = GetCreatureTemplate()->baseattacktime;
 
-    SelectLevel();
+    SetAttackTime(BASE_ATTACK, attackTimer);
+    SetAttackTime(OFF_ATTACK, attackTimer - attackTimer / 4);
+    SetAttackTime(RANGED_ATTACK, GetCreatureTemplate()->rangeattacktime);;
+
 
     SetMeleeDamageSchool(SpellSchools(cInfo->dmgschool));
     SetModifierValue(UNIT_MOD_ARMOR, BASE_VALUE, float(cInfo->armor));
@@ -1127,7 +1128,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
     WorldDatabase.CommitTransaction();
 }
 
-void Creature::SelectLevel()
+void Creature::SelectLevel(const CreatureInfo *cinfo)
 {
     CreatureInfo const* cInfo = GetCreatureTemplate();
 
@@ -1186,12 +1187,14 @@ void Creature::SelectLevel()
     // damage
     float damagemod = _GetDamageMod(rank);
 
-    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, cInfo->mindmg * damagemod);
-    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, cInfo->maxdmg * damagemod);
-    SetBaseWeaponDamage(OFF_ATTACK, MINDAMAGE, cInfo->mindmg * damagemod);
-    SetBaseWeaponDamage(OFF_ATTACK, MAXDAMAGE, cInfo->maxdmg * damagemod);
-    SetBaseWeaponDamage(RANGED_ATTACK, MINDAMAGE, cInfo->minrangedmg * damagemod);
-    SetBaseWeaponDamage(RANGED_ATTACK, MAXDAMAGE, cInfo->maxrangedmg * damagemod);
+    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, cinfo->mindmg * damagemod);
+    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, cinfo->maxdmg * damagemod);
+
+    SetBaseWeaponDamage(OFF_ATTACK, MINDAMAGE, cinfo->mindmg * damagemod);
+    SetBaseWeaponDamage(OFF_ATTACK, MAXDAMAGE, cinfo->maxdmg * damagemod);
+
+    SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE, cinfo->minrangedmg * damagemod);
+    SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE, cinfo->maxrangedmg * damagemod);
 
     // this value is not accurate, but should be close to the real value
     SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, level * 5);
@@ -1648,8 +1651,6 @@ void Creature::Respawn(bool force)
         loot.clear();
         if (m_originalEntry != GetEntry())
             UpdateEntry(m_originalEntry);
-
-        SelectLevel();
 
         setDeathState(JUST_RESPAWNED);
 
