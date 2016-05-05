@@ -1990,6 +1990,9 @@ class Player : public Unit, public GridObject<Player>
         void SendDelayResponse(const uint32);
         void SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP, bool RafBonus = false);
 
+        uint8 LastSwingErrorMsg() const { return m_swingErrorMsg; }
+        void SwingErrorMsg(uint8 val) { m_swingErrorMsg = val; }
+
         //notifiers
         void SendAttackSwingCantAttack();
         void SendAttackSwingCancelAttack();

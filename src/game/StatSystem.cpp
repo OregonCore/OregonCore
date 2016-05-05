@@ -822,7 +822,7 @@ void Creature::UpdateAttackPowerAndDamage(bool ranged)
         index_mult = UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER;
     }
 
-    float base_attPower  = GetModifierValue(unitMod, BASE_VALUE) * GetModifierValue(unitMod, BASE_PCT);
+    float base_attPower = GetModifierValue(unitMod, BASE_VALUE) * GetModifierValue(unitMod, BASE_PCT);
     float attPowerMod = GetModifierValue(unitMod, TOTAL_VALUE);
     float attPowerMultiplier = GetModifierValue(unitMod, TOTAL_PCT) - 1.0f;
 
@@ -830,74 +830,37 @@ void Creature::UpdateAttackPowerAndDamage(bool ranged)
     SetInt32Value(index_mod, (uint32)attPowerMod);          //UNIT_FIELD_(RANGED)_ATTACK_POWER_MODS field
     SetFloatValue(index_mult, attPowerMultiplier);          //UNIT_FIELD_(RANGED)_ATTACK_POWER_MULTIPLIER field
 
-    //automatically update weapon damage after attack power modification
     if (ranged)
-        UpdateDamagePhysical(RANGED_ATTACK);
-    else
-    {
-        UpdateDamagePhysical(BASE_ATTACK);
-        UpdateDamagePhysical(OFF_ATTACK);
-    }
+        return;
+
+    //automatically update weapon damage after attack power modification
+    UpdateDamagePhysical(BASE_ATTACK);
+    UpdateDamagePhysical(OFF_ATTACK);
 }
 
 void Creature::UpdateDamagePhysical(WeaponAttackType attType)
 {
-    UnitMods unitMod;
-    switch (attType)
-    {
-    case BASE_ATTACK:
-    default:
-        unitMod = UNIT_MOD_DAMAGE_MAINHAND;
-        break;
-    case OFF_ATTACK:
-        unitMod = UNIT_MOD_DAMAGE_OFFHAND;
-        break;
-    case RANGED_ATTACK:
-        unitMod = UNIT_MOD_DAMAGE_RANGED;
-        break;
-    }
+    if (attType > OFF_ATTACK)
+        return;
 
-    //float att_speed = float(GetAttackTime(attType))/1000.0f;
+    UnitMods unitMod = (attType == BASE_ATTACK ? UNIT_MOD_DAMAGE_MAINHAND : UNIT_MOD_DAMAGE_OFFHAND);
+
+    /* difference in AP between current attack power and base value from DB */
+    float att_pwr_change = GetTotalAttackPowerValue(attType) - GetCreatureTemplate()->attackpower;
+    float base_value = GetModifierValue(unitMod, BASE_VALUE) + (att_pwr_change * GetAPMultiplier(attType, false) / 14.0f);
+    float base_pct = GetModifierValue(unitMod, BASE_PCT);
+    float total_value = GetModifierValue(unitMod, TOTAL_VALUE);
+    float total_pct = GetModifierValue(unitMod, TOTAL_PCT);
+    float dmg_multiplier = GetCreatureTemplate()->dmg_multiplier;
 
     float weapon_mindamage = GetWeaponDamageRange(attType, MINDAMAGE);
     float weapon_maxdamage = GetWeaponDamageRange(attType, MAXDAMAGE);
 
-    //This formula is not correct
-    //The correct one is (Damage_from_AttackPower + Base_Weapon_Damage) * Multiplier
-    //We do not know the multiplier, so we assume attack power is about 25% damage
-    //float base_value  = GetModifierValue(unitMod, BASE_VALUE) + GetTotalAttackPowerValue(attType)/ 14.0f * att_speed;
-    float base_value  = GetModifierValue(unitMod, BASE_VALUE)
-                        + (weapon_mindamage + weapon_maxdamage) / 6
-                        * GetTotalAttackPowerValue(attType) / (getLevel() * 5);
-    float base_pct    = GetModifierValue(unitMod, BASE_PCT);
-    float total_value = GetModifierValue(unitMod, TOTAL_VALUE);
-    float total_pct   = GetModifierValue(unitMod, TOTAL_PCT);
+    float mindamage = ((base_value + weapon_mindamage) * dmg_multiplier * base_pct + total_value) * total_pct;
+    float maxdamage = ((base_value + weapon_maxdamage) * dmg_multiplier * base_pct + total_value) * total_pct;
 
-    if (attType == BASE_ATTACK && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISARMED))
-    {
-        weapon_mindamage = 0;
-        weapon_maxdamage = 0;
-    }
-
-    float mindamage = ((base_value + weapon_mindamage) * base_pct + total_value) * total_pct ;
-    float maxdamage = ((base_value + weapon_maxdamage) * base_pct + total_value) * total_pct ;
-
-    switch (attType)
-    {
-    case BASE_ATTACK:
-    default:
-        SetStatFloatValue(UNIT_FIELD_MINDAMAGE, mindamage);
-        SetStatFloatValue(UNIT_FIELD_MAXDAMAGE, maxdamage);
-        break;
-    case OFF_ATTACK:
-        SetStatFloatValue(UNIT_FIELD_MINOFFHANDDAMAGE, mindamage);
-        SetStatFloatValue(UNIT_FIELD_MAXOFFHANDDAMAGE, maxdamage);
-        break;
-    case RANGED_ATTACK:
-        SetStatFloatValue(UNIT_FIELD_MINRANGEDDAMAGE, mindamage);
-        SetStatFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE, maxdamage);
-        break;
-    }
+    SetStatFloatValue(attType == BASE_ATTACK ? UNIT_FIELD_MINDAMAGE : UNIT_FIELD_MINOFFHANDDAMAGE, mindamage);
+    SetStatFloatValue(attType == BASE_ATTACK ? UNIT_FIELD_MAXDAMAGE : UNIT_FIELD_MAXOFFHANDDAMAGE, maxdamage);
 }
 
 /*#######################################

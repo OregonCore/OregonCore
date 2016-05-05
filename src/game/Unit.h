@@ -900,7 +900,7 @@ class Unit : public WorldObject
         //target dependent checks
         uint32 GetSpellRadiusForTarget(Unit* target, const SpellRadiusEntry* radiusEntry);
 
-        virtual void Update(uint32 time);
+        virtual void Update(uint32 p_time);
 
         void setAttackTimer(WeaponAttackType type, uint32 time)
         {
@@ -916,6 +916,22 @@ class Unit : public WorldObject
             return m_attackTimer[type] == 0;
         }
         bool haveOffhandWeapon() const;
+        bool UpdateMeleeAttackingState();
+        bool CanUseEquippedWeapon(WeaponAttackType attackType) const
+        {
+            if (IsInFeralForm())
+                return false;
+
+            switch (attackType)
+            {
+            default:
+            case BASE_ATTACK:
+                return !HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISARMED);
+            case OFF_ATTACK:
+            case RANGED_ATTACK:
+                return true;
+            }
+        }
         bool CanDualWield() const
         {
             return m_canDualWield;
@@ -1403,7 +1419,6 @@ class Unit : public WorldObject
         void BuildHeartBeatMsg(WorldPacket* data) const;
         void BuildMovementPacket(ByteBuffer *data) const;
 
-        virtual void MoveOutOfRange(Player&) {  };
 
         bool isMoving() const
         {
@@ -1689,7 +1704,6 @@ class Unit : public WorldObject
         Spell* FindCurrentSpellBySpellId(uint32 spell_id) const;
         int32 GetCurrentSpellCastTime(uint32 spell_id) const;
 
-        uint32 m_addDmgOnce;
         uint64 m_SummonSlot[MAX_SUMMON_SLOT];
         uint64 m_ObjectSlot[4];
 
