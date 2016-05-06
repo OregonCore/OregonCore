@@ -4360,6 +4360,162 @@ CreatureAI* GetAI_npc_dimensius_devourer(Creature* pCreature)
 	return new npc_dimensius_devourerAI(pCreature);
 }
 
+/*######
+## npc_commander_ameer
+######*/
+
+#define ENTRY_PRISON  184488
+#define ENTRY_PRISONER 22900
+
+#define QUEST_A_MISSION_OF_MERCY 10970
+
+#define AMEER_TEXT_1 "Stand back, $n. This may be an Ethereum trap."
+#define AMEER_EMOTE_1 "Commander Ameer uses the Ethereum prison key on the salvaged Ethereum prison"
+#define AMEER_TEXT_2 "Those fools! What have they done! What horrors \
+do they hold? And for what purpose? I will need \
+your help again, hero. Help us. Help your people."
+
+#define PRISONER_TEXT "Commander... I am not long for this world... \
+Taken to a holding pen... hundreds... thousands... \
+beings from other worlds... Imprisoned... \
+Imprisoned by Ethereum. Many of them our \
+allies. Must... Must save the others... It... It's not \
+too late..."
+
+
+struct npc_commander_ameerAI : public ScriptedAI
+{
+	npc_commander_ameerAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+	bool eventInProgress = false;
+	int32 timer;
+	uint32 currentPhase;
+	uint64 playerTarget;
+
+	void BeginEvent(uint64 starter)
+	{
+		if (eventInProgress)
+			return;
+		eventInProgress = true;
+		timer = 3000;
+		currentPhase = 0;
+		playerTarget = starter;
+	}
+
+	void UpdateAI(const uint32 diff)
+	{
+		if (!eventInProgress)
+			return;
+		timer -= diff;
+		if (timer <= 0)
+		{
+			HandlePhaseComplete();
+			currentPhase++;
+		}
+	}
+
+	void HandlePhaseComplete()
+	{
+		Creature* prisoner = me->FindNearestCreature(ENTRY_PRISONER, 10.0);
+		GameObject* prison = me->FindNearestGameObject(ENTRY_PRISON, 10.0);
+
+		switch (currentPhase)
+		{
+		case 0: //play first emote and say stuff
+			me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+			me->MonsterSay(AMEER_TEXT_1, LANG_UNIVERSAL, playerTarget);
+			timer = 3500;
+			break;
+		case 1: //walk to the prison
+			me->SetWalk(true);
+			me->GetMotionMaster()->MovePoint(0, 4249.01, 2168.73, 137.67);
+			timer = 4000;
+			break;
+		case 2: //play emote at prison
+			me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+			timer = 3000;
+			break;
+		case 3: //begin opening prison
+			me->HandleEmoteCommand(EMOTE_STATE_WORK);
+			me->MonsterTextEmote(AMEER_EMOTE_1, 0);
+			timer = 5000;
+			break;
+		case 4: //open prison and spawn prisoner
+			me->HandleEmoteCommand(EMOTE_STATE_STAND);
+			if (prison)
+			{
+				prison->SetLootState(GO_READY);
+				prison->UseDoorOrButton();
+			}
+
+			me->SummonCreature(ENTRY_PRISONER, prison->m_positionX, prison->m_positionY, prison->m_positionZ,
+				0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
+			timer = 2500;
+			break;
+		case 5: //prisoner speaks
+			if (prisoner)
+			{
+				prisoner->SetFacingToObject(me);
+				prisoner->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+				prisoner->MonsterSay(PRISONER_TEXT, LANG_UNIVERSAL, 0);
+			}
+			timer = 15000;
+			break;
+		case 6: //prisoner dies
+			if (prisoner)
+				me->Kill(prisoner);
+			timer = 500;
+			break;
+		case 7: //close prison
+			if (prison)
+			{
+				prison->SetLootState(GO_READY);
+				prison->UseDoorOrButton();
+			}
+			if (prisoner)
+				prisoner->DisappearAndDie();
+			timer = 4500;
+			break;
+		case 8: //ameer talks some more
+			me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+			me->MonsterSay(AMEER_TEXT_2, LANG_UNIVERSAL, playerTarget);
+			timer = 6000;
+			break;
+		case 9: //ameer walks back to home pos
+			me->SetWalk(true);
+			me->GetMotionMaster()->MovePoint(0, me->GetHomePosition());
+			timer = 2000;
+			break;
+		case 10: //event done
+			me->SetWalk(false);
+			me->SetFacingTo(me->GetHomePosition().m_orientation);
+
+			eventInProgress = false;
+			currentPhase = 0;
+			timer = 0;
+			playerTarget = 0;
+			break;
+		}
+	}
+};
+
+CreatureAI* GetAI_npc_commander_ameer(Creature* pCreature)
+{
+	return new npc_commander_ameerAI(pCreature);
+}
+
+bool ChooseReward_npc_commander_ameer(Player* pPlayer, Creature* pCreature, Quest const* quest, uint32 /* item */)
+{
+	if (quest->GetQuestId() == QUEST_A_MISSION_OF_MERCY)
+	{
+		npc_commander_ameerAI* ai = CAST_AI(npc_commander_ameerAI, pCreature->AI());
+		if (ai)
+			ai->BeginEvent(pPlayer->GetGUID());
+	}
+
+	return false;
+}
+
 void AddSC_netherstorm()
 {
     Script* newscript;
@@ -4601,5 +4757,11 @@ void AddSC_netherstorm()
 	newscript->Name = "npc_dimensius_devourer";
 	newscript->GetAI = &GetAI_npc_dimensius_devourer;
     newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_commander_ameer";
+	newscript->GetAI = &GetAI_npc_commander_ameer;
+	newscript->pChooseReward = &ChooseReward_npc_commander_ameer;
+	newscript->RegisterSelf();
 }
 
