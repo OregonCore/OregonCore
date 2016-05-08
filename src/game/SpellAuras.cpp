@@ -2068,7 +2068,8 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
     {
         switch (GetId())
         {
-         case 29266:
+        case 31261:
+        case 29266:
             m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
             m_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
             m_target->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
@@ -2287,6 +2288,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     m_target->ToPlayer()->StopCastingCharm();
                 return;
             }
+        case 31261:
         case 29266:
             {
                 m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
