@@ -500,7 +500,7 @@ void WorldSession::HandleMoveKnockBackAck(WorldPacket& recv_data)
     mstime = getMSTime();
     if(m_clientTimeDelay == 0)
         m_clientTimeDelay = mstime - movementInfo.time;
-    move_time = (movementInfo.time - (mstime - m_clientTimeDelay)) + mstime + 500;
+    move_time = (movementInfo.time - (mstime - m_clientTimeDelay)) + mstime;
     movementInfo.time = move_time;
 
     // Save movement flags
