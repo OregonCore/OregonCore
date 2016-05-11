@@ -8,6 +8,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+# ToDo: Clean up CMake and opt
 file(GLOB sources_localdir *.cpp *.h)
 
 set(oregon-realm_SRCS

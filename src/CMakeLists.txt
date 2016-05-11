@@ -10,6 +10,7 @@
 
 set(sources_Debugging "")
 
+# ToDo: Clean up CMake and opt
 if( SERVERS )
   if (WIN32)
       set(sources_Debugging
