@@ -653,7 +653,7 @@ struct npc_anger_campAI : public ScriptedAI
 
 		if (Count == 5)
 		{
-			me->SummonCreature(NPC_DOOMCRYER, 2878.467, 4817.107, 282.800, 0.329514, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+			me->SummonCreature(NPC_DOOMCRYER, 2878.467f, 4817.107f, 282.800f, 0.329514f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
 			Reset();
 		}
 	}
@@ -2061,7 +2061,7 @@ CreatureAI* GetAI_npc_vimgol_circle_trigger(Creature* pCreature)
 ## npc_vimgol_the_vile
 ######*/
 
-#define YELL_AGGRO "YOU DARE SUMMON ME!?"
+#define YELL_VIMGOL_AGGRO "YOU DARE SUMMON ME!?"
 #define YELL_ENRAGE "Now me grow bigger and crush you!"
 #define SPELL_SHADOW_BOLT_VOLLEY 46082
 #define SPELL_GROWTH 40545
@@ -2086,7 +2086,7 @@ struct npc_vimgol_the_vileAI : public ScriptedAI
 
 	void EnterCombat(Unit* /*who*/)
 	{
-		me->Yell(YELL_AGGRO, LANG_UNIVERSAL, 0);
+		me->Yell(YELL_VIMGOL_AGGRO, LANG_UNIVERSAL, 0);
 	}
 
 	void UpdateAI(const uint32 diff)
@@ -2113,7 +2113,7 @@ struct npc_vimgol_the_vileAI : public ScriptedAI
 
 		if (!enrage && HealthBelowPct(50))
 		{
-			me->GetMotionMaster()->MovePoint(1, 3280.1f, 4640.3f, 216.5f, 4.8f);
+			me->GetMotionMaster()->MovePoint(1, 3280.1f, 4640.3f, 216.5f);
 			me->Yell(YELL_ENRAGE, LANG_UNIVERSAL, 0);
 			DoCast(me, SPELL_GROWTH);
 			enrage = true;

@@ -2054,10 +2054,7 @@ class Unit : public WorldObject
         {
             return m_misdirectionTargetGUID ? GetUnit(*this, m_misdirectionTargetGUID) : NULL;
         }
-        virtual float GetFollowAngle() const
-        {
-            return PET_FOLLOW_ANGLE;
-        }
+        virtual float GetFollowAngle() const { return static_cast<float>(M_PI/2); }
 
         bool IsFlying() const   { return m_movementInfo.HasMovementFlag((MovementFlags)(MOVEMENTFLAG_FLYING | MOVEMENTFLAG_LEVITATING)); }
         bool IsFalling() const;

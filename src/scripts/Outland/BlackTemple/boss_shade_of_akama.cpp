@@ -65,7 +65,7 @@ static Location AkamaWP[] =
 
 static Location BrokenCoords[] =
 {
-    {541.375916f, 401.439575f, M_PI, 112.783997f},             // The place where Akama channels
+    {541.375916f, 401.439575f, float(M_PI), 112.783997f},             // The place where Akama channels
     {534.130005f, 352.394531f, 2.164150f, 112.783737f},         // Behind a 'pillar' which is behind the east alcove
     {499.621185f, 341.534729f, 1.652856f, 112.783730f},         // East Alcove
     {499.151093f, 461.036438f, 4.770888f, 112.78370f},          // West Alcove

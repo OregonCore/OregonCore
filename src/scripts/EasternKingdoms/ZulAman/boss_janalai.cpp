@@ -186,7 +186,7 @@ struct boss_janalaiAI : public ScriptedAI
     {
         if (isFlameBreathing)
         {
-            if (!me->HasInArc(M_PI / 6, pTarget))
+            if (!me->HasInArc(float(M_PI) / 6, pTarget))
                 damage = 0;
         }
     }

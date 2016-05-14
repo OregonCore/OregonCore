@@ -192,9 +192,9 @@ enum KilJaedenTimers
 // Locations of the Hand of Deceiver adds
 float DeceiverLocations[3][3] =
 {
-    {1682.045, 631.299, 5.936},
-    {1684.099, 618.848, 0.589},
-    {1694.170, 612.272, 1.416},
+    {1682.045f, 631.299f, 5.936f},
+    {1684.099f, 618.848f, 0.589f},
+    {1694.170f, 612.272f, 1.416f},
 };
 
 // Locations, where Shield Orbs will spawn
@@ -1216,7 +1216,7 @@ struct mob_shield_orbAI : public ScriptedAI
             bPointReached = false;
             uiCheckTimer = 1000;
             me->GetMotionMaster()->MovePoint(1, x, y, SHIELD_ORB_Z);
-            c += M_PI / 32;
+            c += float(M_PI) / 32;
             if (c >= 2 * M_PI) c = 0;
         }
         else

@@ -1285,18 +1285,18 @@ struct npc_drijyaAI : public npc_escortAI
     void SpawnImp()
     {
         ++Count;
-        me->SummonCreature(NPC_IMP, 3025.752f, 2715.122, 113.758, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+        me->SummonCreature(NPC_IMP, 3025.752f, 2715.122f, 113.758f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
     }
 
     void SpawnTrooper()
     {
         ++Count;
-        me->SummonCreature(NPC_TROOPER, 3025.752f, 2715.122, 113.758, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+        me->SummonCreature(NPC_TROOPER, 3025.752f, 2715.122f, 113.758f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
     }
 
     void SpawnDestroyer()
     {
-        me->SummonCreature(NPC_DESTROYER, 3019.741f, 2720.757, 115.189, 2.5f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+        me->SummonCreature(NPC_DESTROYER, 3019.741f, 2720.757f, 115.189f, 2.5f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
     }
 
     void JustSummoned(Creature* pSummoned)
@@ -3518,22 +3518,22 @@ CreatureAI* GetAI_npc_captured_protectorate(Creature* pCreature)
 {
 	npc_captured_protectorateAI* protectorateAI = new npc_captured_protectorateAI(pCreature);
 
-	protectorateAI->AddWaypoint(0, 4072.77, 2300.59, 111.727, 0);
-	protectorateAI->AddWaypoint(1, 4107.44, 2295.81, 106.518, 0);
-	protectorateAI->AddWaypoint(2, 4132.99, 2296.5, 103.481, 0);
-	protectorateAI->AddWaypoint(3, 4153.95, 2297.79, 102.345, 0);
-	protectorateAI->AddWaypoint(4, 4169.84, 2302.15, 104.521, 0); 
-	protectorateAI->AddWaypoint(5, 4188.36, 2302.81, 111.182, 0);
-	protectorateAI->AddWaypoint(6, 4207.3, 2297.2, 118.857, 0);
-	protectorateAI->AddWaypoint(7, 4227.99, 2295.01, 126.434, 0);
-	protectorateAI->AddWaypoint(8, 4246.5, 2292.62, 129.425, 0);
-	protectorateAI->AddWaypoint(9, 4263.98, 2290.41, 126.291, 0);
-	protectorateAI->AddWaypoint(10, 4277.22, 2278.08, 125.221, 0);
-	protectorateAI->AddWaypoint(11, 4284.31, 2252.51, 123.878, 0);
-	protectorateAI->AddWaypoint(12, 4286.75, 2234.23, 124.217, 0);
-	protectorateAI->AddWaypoint(13, 4276.17, 2217.82, 125.582, 0);
-	protectorateAI->AddWaypoint(14, 4263.86, 2196.86, 135.513, 0);
-	protectorateAI->AddWaypoint(15, 4254.55, 2180.13, 137.052, 0);
+	protectorateAI->AddWaypoint(0, 4072.77f, 2300.59f, 111.727f, 0);
+	protectorateAI->AddWaypoint(1, 4107.44f, 2295.81f, 106.518f, 0);
+	protectorateAI->AddWaypoint(2, 4132.99f, 2296.5f, 103.481f, 0);
+	protectorateAI->AddWaypoint(3, 4153.95f, 2297.79f, 102.345f, 0);
+	protectorateAI->AddWaypoint(4, 4169.84f, 2302.15f, 104.521f, 0); 
+	protectorateAI->AddWaypoint(5, 4188.36f, 2302.81f, 111.182f, 0);
+	protectorateAI->AddWaypoint(6, 4207.3f, 2297.2f, 118.857f, 0);
+	protectorateAI->AddWaypoint(7, 4227.99f, 2295.01f, 126.434f, 0);
+	protectorateAI->AddWaypoint(8, 4246.5f, 2292.62f, 129.425f, 0);
+	protectorateAI->AddWaypoint(9, 4263.98f, 2290.41f, 126.291f, 0);
+	protectorateAI->AddWaypoint(10, 4277.22f, 2278.08f, 125.221f, 0);
+	protectorateAI->AddWaypoint(11, 4284.31f, 2252.51f, 123.878f, 0);
+	protectorateAI->AddWaypoint(12, 4286.75f, 2234.23f, 124.217f, 0);
+	protectorateAI->AddWaypoint(13, 4276.17f, 2217.82f, 125.582f, 0);
+	protectorateAI->AddWaypoint(14, 4263.86f, 2196.86f, 135.513f, 0);
+	protectorateAI->AddWaypoint(15, 4254.55f, 2180.13f, 137.052f, 0);
 
 	return protectorateAI;
 }
@@ -3652,20 +3652,20 @@ CreatureAI* GetAI_npc_protectorate_demolitionist(Creature* pCreature)
 {
 	npc_protectorate_demolitionistAI* protectorateAI = new npc_protectorate_demolitionistAI(pCreature);
 
-	protectorateAI->AddWaypoint(0, 3982.6, 2330.1, 113.8, 7000);
-	protectorateAI->AddWaypoint(1, 3953.7, 2330.1, 113.9, 0);
-	protectorateAI->AddWaypoint(2, 3918.4, 2338.6, 113.5, 0);
-	protectorateAI->AddWaypoint(3, 3883.5, 2373.3, 114.0, 0);
-	protectorateAI->AddWaypoint(4, 3876.7, 2383.2, 113.9, 7000);
-	protectorateAI->AddWaypoint(5, 3854.6, 2349.8, 114.7, 0);
-	protectorateAI->AddWaypoint(6, 3867.1, 2334.6, 115.1, 0);
-	protectorateAI->AddWaypoint(7, 3872.9, 2321.5, 114.5, 5000);
-	protectorateAI->AddWaypoint(8, 3872.9, 2321.5, 114.5, 12000);
-	protectorateAI->AddWaypoint(9, 3872.9, 2321.5, 114.5, 0);
-	protectorateAI->AddWaypoint(10, 3861.2, 2349.6, 115.0, 5000);
-	protectorateAI->AddWaypoint(11, 3861.2, 2349.6, 115.0, 6000);
-	protectorateAI->AddWaypoint(12, 3861.2, 2349.6, 115.0, 1000);
-	protectorateAI->AddWaypoint(13, 3861.2, 2349.6, 115.0, 0);
+	protectorateAI->AddWaypoint(0, 3982.6f, 2330.1f, 113.8f, 7000);
+	protectorateAI->AddWaypoint(1, 3953.7f, 2330.1f, 113.9f, 0);
+	protectorateAI->AddWaypoint(2, 3918.4f, 2338.6f, 113.5f, 0);
+	protectorateAI->AddWaypoint(3, 3883.5f, 2373.3f, 114.0f, 0);
+	protectorateAI->AddWaypoint(4, 3876.7f, 2383.2f, 113.9f, 7000);
+	protectorateAI->AddWaypoint(5, 3854.6f, 2349.8f, 114.7f, 0);
+	protectorateAI->AddWaypoint(6, 3867.1f, 2334.6f, 115.1f, 0);
+	protectorateAI->AddWaypoint(7, 3872.9f, 2321.5f, 114.5f, 5000);
+	protectorateAI->AddWaypoint(8, 3872.9f, 2321.5f, 114.5f, 12000);
+	protectorateAI->AddWaypoint(9, 3872.9f, 2321.5f, 114.5f, 0);
+	protectorateAI->AddWaypoint(10, 3861.2f, 2349.6f, 115.0f, 5000);
+	protectorateAI->AddWaypoint(11, 3861.2f, 2349.6f, 115.0f, 6000);
+	protectorateAI->AddWaypoint(12, 3861.2f, 2349.6f, 115.0f, 1000);
+	protectorateAI->AddWaypoint(13, 3861.2f, 2349.6f, 115.0f, 0);
 
 	return protectorateAI;
 }
@@ -4164,28 +4164,28 @@ CreatureAI* GetAI_npc_captain_saeed(Creature* pCreature)
 {
 	npc_captain_saeedAI* captain_saeedAI = new npc_captain_saeedAI(pCreature);
 
-	captain_saeedAI->AddWaypoint(0, 4264.2, 2102.7, 140.8, 3000);
-	captain_saeedAI->AddWaypoint(1, 4264.2, 2102.7, 140.8, 2000);
-	captain_saeedAI->AddWaypoint(2, 4264.2, 2102.7, 140.8, 500);
-	captain_saeedAI->AddWaypoint(3, 4188.8, 2140.9, 154.8, 0);
-	captain_saeedAI->AddWaypoint(4, 4186.5, 2089.6, 159.7, 0);
-	captain_saeedAI->AddWaypoint(5, 4171.3, 2060.7, 168.0, 0);
-	captain_saeedAI->AddWaypoint(6, 4188.0, 2032.7, 181.0, 0);
-	captain_saeedAI->AddWaypoint(7, 4176.2, 1997.5, 201.6, 0);
-	captain_saeedAI->AddWaypoint(8, 4124.0, 1975.5, 221.9, 0);
-	captain_saeedAI->AddWaypoint(9, 4089.0, 2033.5, 238.2, 0);
-	captain_saeedAI->AddWaypoint(10, 4054.4, 2063.2, 251.4, 0);
-	captain_saeedAI->AddWaypoint(11, 4002.6, 2097.1, 254.2, 0);
-	captain_saeedAI->AddWaypoint(12, 3995.4, 2091.9, 254.3, 0);      // Entrance to Dimensius
-	captain_saeedAI->AddWaypoint(13, 3995.4, 2091.9, 254.3, 10000);  // Make new formation // SetWalk
-	captain_saeedAI->AddWaypoint(14, 3978.9, 2067.8, 256.4, 0);
-	captain_saeedAI->AddWaypoint(15, 3958.5, 2037.2, 257.8, 0); 
-	captain_saeedAI->AddWaypoint(16, 3948.4, 2021.4, 256.4, 5000);   // End of Road -> wait 5s
-	captain_saeedAI->AddWaypoint(17, 3948.4, 2021.4, 256.4, 0);
-	captain_saeedAI->AddWaypoint(18, 3948.4, 2021.4, 256.4, 7000);   // wait 3s. for AttackStart
-	captain_saeedAI->AddWaypoint(19, 3948.4, 2021.4, 256.4, 3000);
-	captain_saeedAI->AddWaypoint(20, 3948.4, 2021.4, 256.4, 6000);   // Say Kill Dimensius
-	captain_saeedAI->AddWaypoint(21, 3948.4, 2021.4, 256.4, 0);	     // Disappear with all adds
+	captain_saeedAI->AddWaypoint(0, 4264.2f, 2102.7f, 140.8f, 3000);
+	captain_saeedAI->AddWaypoint(1, 4264.2f, 2102.7f, 140.8f, 2000);
+	captain_saeedAI->AddWaypoint(2, 4264.2f, 2102.7f, 140.8f, 500);
+	captain_saeedAI->AddWaypoint(3, 4188.8f, 2140.9f, 154.8f, 0);
+	captain_saeedAI->AddWaypoint(4, 4186.5f, 2089.6f, 159.7f, 0);
+	captain_saeedAI->AddWaypoint(5, 4171.3f, 2060.7f, 168.0f, 0);
+	captain_saeedAI->AddWaypoint(6, 4188.0f, 2032.7f, 181.0f, 0);
+	captain_saeedAI->AddWaypoint(7, 4176.2f, 1997.5f, 201.6f, 0);
+	captain_saeedAI->AddWaypoint(8, 4124.0f, 1975.5f, 221.9f, 0);
+	captain_saeedAI->AddWaypoint(9, 4089.0f, 2033.5f, 238.2f, 0);
+	captain_saeedAI->AddWaypoint(10, 4054.4f, 2063.2f, 251.4f, 0);
+	captain_saeedAI->AddWaypoint(11, 4002.6f, 2097.1f, 254.2f, 0);
+	captain_saeedAI->AddWaypoint(12, 3995.4f, 2091.9f, 254.3f, 0);      // Entrance to Dimensius
+	captain_saeedAI->AddWaypoint(13, 3995.4f, 2091.9f, 254.3f, 10000);  // Make new formation // SetWalk
+	captain_saeedAI->AddWaypoint(14, 3978.9f, 2067.8f, 256.4f, 0);
+	captain_saeedAI->AddWaypoint(15, 3958.5f, 2037.2f, 257.8f, 0); 
+	captain_saeedAI->AddWaypoint(16, 3948.4f, 2021.4f, 256.4f, 5000);   // End of Road -> wait 5s
+	captain_saeedAI->AddWaypoint(17, 3948.4f, 2021.4f, 256.4f, 0);
+	captain_saeedAI->AddWaypoint(18, 3948.4f, 2021.4f, 256.4f, 7000);   // wait 3s. for AttackStart
+	captain_saeedAI->AddWaypoint(19, 3948.4f, 2021.4f, 256.4f, 3000);
+	captain_saeedAI->AddWaypoint(20, 3948.4f, 2021.4f, 256.4f, 6000);   // Say Kill Dimensius
+	captain_saeedAI->AddWaypoint(21, 3948.4f, 2021.4f, 256.4f, 0);	     // Disappear with all adds
 
 	return captain_saeedAI;
 }
@@ -4387,7 +4387,7 @@ struct npc_commander_ameerAI : public ScriptedAI
 {
 	npc_commander_ameerAI(Creature* pCreature) : ScriptedAI(pCreature) {}
 
-	bool eventInProgress = false;
+	bool eventInProgress;
 	int32 timer;
 	uint32 currentPhase;
 	uint64 playerTarget;
@@ -4428,7 +4428,7 @@ struct npc_commander_ameerAI : public ScriptedAI
 			break;
 		case 1: //walk to the prison
 			me->SetWalk(true);
-			me->GetMotionMaster()->MovePoint(0, 4249.01, 2168.73, 137.67);
+			me->GetMotionMaster()->MovePoint(0, 4249.01f, 2168.73f, 137.67f);
 			timer = 4000;
 			break;
 		case 2: //play emote at prison

@@ -15,7 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined(QUERYRESULT_H)
+#ifndef QUERYRESULT_H
 #define QUERYRESULT_H
 
 #include <ace/Refcounted_Auto_Ptr.h>
@@ -26,7 +26,6 @@
 #include "Utilities/UnorderedMap.h"
 
 #ifdef WIN32
-#define FD_SETSIZE 1024
 #include <winsock2.h>
 #endif
 #include <mysql.h>

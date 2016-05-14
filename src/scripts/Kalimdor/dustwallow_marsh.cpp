@@ -1148,7 +1148,7 @@ struct npc_zelfraxAI : public ScriptedAI
     void MoveToDock()
     {
         SetCombatMovement(false);
-        me->GetMotionMaster()->MovePoint(0, -2967.030, -3872.1799, 35.620);
+        me->GetMotionMaster()->MovePoint(0, -2967.030f, -3872.1799f, 35.620f);
         DoScriptText(SAY_ZELFRAX, me);
         DoScriptText(SAY_ZELFRAX_2, me);
     }

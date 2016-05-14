@@ -185,7 +185,7 @@ struct instance_sunken_temple : public ScriptedInstance
     {	
 		if (GameObject* pAtalaiStatue6 = instance->GetGameObject(GOAtalaiStatue6))
 		{
-			pAtalaiStatue6->SummonGameObject(148838, -488.997, 96.61, -189.019, -1.52, 0, 0, 0, 0, 100000);
+			pAtalaiStatue6->SummonGameObject(148838, -488.997f, 96.61f, -189.019f, -1.52f, 0, 0, 0, 0, 100000);
 		}
     }
     

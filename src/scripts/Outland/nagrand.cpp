@@ -2900,6 +2900,8 @@ struct npc_warmaul_pyreAI : public ScriptedAI
 		default:
 			return 0;
 		}
+
+        return 0;
 	}
 
 	void UpdateAI(const uint32 diff)

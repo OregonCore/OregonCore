@@ -104,19 +104,19 @@ enum EventFelmyst
     EVENT_DEMONIC_VAPOR,
 };
 
-Position flightMobLeft = {1468.380005, 730.267029, 60.083302};
-Position flightMobRight = {1458.170044, 501.295013, 60.083302};
+Position flightMobLeft = {1468.380005f, 730.267029f, 60.083302f};
+Position flightMobRight = {1458.170044f, 501.295013f, 60.083302f};
 
-Position lefts[3] = { {1446.540039, 702.570007, 52.083302},    //south
-                      {1469.939941, 704.239014, 52.083302},    //middle
-                      {1494.760010, 705.000000, 52.083302}, }; //north
+Position lefts[3] = { {1446.540039f, 702.570007f, 52.083302f},    //south
+                      {1469.939941f, 704.239014f, 52.083302f},    //middle
+                      {1494.760010f, 705.000000f, 52.083302f}, }; //north
 
-Position rights[3] = { {1441.640015, 520.520020, 52.083302},   //south
-                       {1467.219971, 516.318970, 52.083302},   //middle
-                       {1492.819946, 515.668030, 52.083302}, };//north
+Position rights[3] = { {1441.640015f, 520.520020f, 52.083302f},   //south
+                       {1467.219971f, 516.318970f, 52.083302f},   //middle
+                       {1492.819946f, 515.668030f, 52.083302f}, };//north
 
-Position prepareLandingLoc[2] = {  {1482.709961, 649.406006, 21.081100},
-                                   {1491.119995, 553.672974, 24.921900}  };
+Position prepareLandingLoc[2] = {  {1482.709961f, 649.406006f, 21.081100f},
+                                   {1491.119995f, 553.672974f, 24.921900f}  };
 
 struct boss_felmystAI : public ScriptedAI
 {

@@ -2288,7 +2288,7 @@ class Player : public Unit, public GridObject<Player>
             for (uint8 i = 0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
                 if (m_bgBattlegroundQueueID[i].bgQueueType == bgQueueType)
                     return m_bgBattlegroundQueueID[i].invitedToInstance != 0;
-            return PLAYER_MAX_BATTLEGROUND_QUEUES;
+            return false;
         }
         bool InBattlegroundQueueForBattlegroundQueueType(uint32 bgQueueType) const
         {

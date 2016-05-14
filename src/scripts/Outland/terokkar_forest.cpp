@@ -593,7 +593,7 @@ struct npc_skywingAI : public npc_escortAI
         switch (i)
         {
         case 7:
-            me->SummonCreature(NPC_LUANGA_IMPRISONER, -3399.274658, 4055.948975, 18.603474, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            me->SummonCreature(NPC_LUANGA_IMPRISONER, -3399.274658f, 4055.948975f, 18.603474f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
             break;
         case 8:
             pPlayer->AreaExploredOrEventHappens(10898);
@@ -1292,36 +1292,36 @@ struct npc_skyguard_prisonerAI : public npc_escortAI
         switch (CalculateWaypointID())
         {
         case 1:
-            AddWaypoint(0, -4108.25, 3032.18, 344.799, 3000);
-            AddWaypoint(1, -4114.41, 3036.73, 344.039);
-            AddWaypoint(2, -4126.41, 3026.07, 344.156);
-            AddWaypoint(3, -4145.17, 3029.69, 337.423);
-            AddWaypoint(4, -4173.69, 3035.72, 343.346);
-            AddWaypoint(5, -4173.70, 3047.37, 343.888);
-            AddWaypoint(6, -4183.47, 3060.62, 344.157, 3000);
-            AddWaypoint(7, -4179.13, 3090.20, 323.971, 30000);
+            AddWaypoint(0, -4108.25f, 3032.18f, 344.799f, 3000);
+            AddWaypoint(1, -4114.41f, 3036.73f, 344.039f);
+            AddWaypoint(2, -4126.41f, 3026.07f, 344.156f);
+            AddWaypoint(3, -4145.17f, 3029.69f, 337.423f);
+            AddWaypoint(4, -4173.69f, 3035.72f, 343.346f);
+            AddWaypoint(5, -4173.70f, 3047.37f, 343.888f);
+            AddWaypoint(6, -4183.47f, 3060.62f, 344.157f, 3000);
+            AddWaypoint(7, -4179.13f, 3090.20f, 323.971f, 30000);
             Start(false, false, pPlayer->GetGUID(), pQuest);
             break;
         case 2:
-            AddWaypoint(0, -3718.81, 3787.24, 302.890, 3000);
-            AddWaypoint(1, -3714.44, 3780.35, 302.075);
-            AddWaypoint(2, -3698.33, 3788.04, 302.171);
-            AddWaypoint(3, -3679.36, 3780.25, 295.077);
-            AddWaypoint(4, -3654.82, 3770.43, 301.291);
-            AddWaypoint(5, -3656.07, 3757.31, 301.985);
-            AddWaypoint(6, -3648.83, 3743.07, 302.173, 3000);
-            AddWaypoint(7, -3659.16, 3714.94, 281.576, 30000);
+            AddWaypoint(0, -3718.81f, 3787.24f, 302.890f, 3000);
+            AddWaypoint(1, -3714.44f, 3780.35f, 302.075f);
+            AddWaypoint(2, -3698.33f, 3788.04f, 302.171f);
+            AddWaypoint(3, -3679.36f, 3780.25f, 295.077f);
+            AddWaypoint(4, -3654.82f, 3770.43f, 301.291f);
+            AddWaypoint(5, -3656.07f, 3757.31f, 301.985f);
+            AddWaypoint(6, -3648.83f, 3743.07f, 302.173f, 3000);
+            AddWaypoint(7, -3659.16f, 3714.94f, 281.576f, 30000);
             Start(false, false, pPlayer->GetGUID(), pQuest);
             break;
         case 3:
-            AddWaypoint(0, -3671.51, 3385.36, 312.956, 3000);
-            AddWaypoint(1, -3677.74, 3379.05, 312.136);
-            AddWaypoint(2, -3667.52, 3366.45, 312.233);
-            AddWaypoint(3, -3672.87, 3343.52, 304.994);
-            AddWaypoint(4, -3679.35, 3319.01, 311.419);
-            AddWaypoint(5, -3692.93, 3318.69, 312.081);
-            AddWaypoint(6, -3704.08, 3309.56, 312.233, 3000);
-            AddWaypoint(7, -3733.99, 3315.77, 292.093, 30000);
+            AddWaypoint(0, -3671.51f, 3385.36f, 312.956f, 3000);
+            AddWaypoint(1, -3677.74f, 3379.05f, 312.136f);
+            AddWaypoint(2, -3667.52f, 3366.45f, 312.233f);
+            AddWaypoint(3, -3672.87f, 3343.52f, 304.994f);
+            AddWaypoint(4, -3679.35f, 3319.01f, 311.419f);
+            AddWaypoint(5, -3692.93f, 3318.69f, 312.081f);
+            AddWaypoint(6, -3704.08f, 3309.56f, 312.233f, 3000);
+            AddWaypoint(7, -3733.99f, 3315.77f, 292.093f, 30000);
             Start(false, false, pPlayer->GetGUID(), pQuest);
             break;
         }

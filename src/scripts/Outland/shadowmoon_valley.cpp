@@ -2353,7 +2353,7 @@ struct npc_deathbringer_jovaanAI : public ScriptedAI
 			return 500;
 		case 3:
 			me->setFaction(35);
-			me->SummonCreature(NPC_WARBRINGER, -3300.479, 2927.177, 173.894, 2.5f, TEMPSUMMON_TIMED_DESPAWN, 60000);
+			me->SummonCreature(NPC_WARBRINGER, -3300.479f, 2927.177f, 173.894f, 2.5f, TEMPSUMMON_TIMED_DESPAWN, 60000);
 			return 1000;
 		case 4:
 			DoScriptText(SAY_JOVAAN1, me, 0);

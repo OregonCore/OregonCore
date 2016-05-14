@@ -839,7 +839,7 @@ struct npc_anchorite_baradaAI : public ScriptedAI
 
     void DoSpawnDarkness()
     {
-        me->SummonCreature(NPC_DARKNESS_RELEASED, -710.924, 2754.683, 105.0, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 20000);
+        me->SummonCreature(NPC_DARKNESS_RELEASED, -710.924f, 2754.683f, 105.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 20000);
     }
 
     void MoveInLineOfSight(Unit* pWho)
@@ -1269,8 +1269,8 @@ struct npc_sedai_quest_credit_markerAI : public ScriptedAI
 
     void DoSpawn()
     {
-        me->SummonCreature(NPC_SEDAI, 225.908, 4124.034, 82.505, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 100000);
-        me->SummonCreature(NPC_ESCORT1, 229.257, 4125.271, 83.388, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 40000);
+        me->SummonCreature(NPC_SEDAI, 225.908f, 4124.034f, 82.505f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 100000);
+        me->SummonCreature(NPC_ESCORT1, 229.257f, 4125.271f, 83.388f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 40000);
     }
 
     void JustSummoned(Creature* pSummoned)
@@ -2539,14 +2539,14 @@ enum VieraQuests
 Position const ChasePath = { -742.759f, 4073.034f, 47.413f, 0.0f };
 
 // cat change it into MovePath if possible.
-Position const ChasePath1 = { -655.107, 4147.2, 64.1146, 0.0f };
-Position const ChasePath2 = { -664.461, 4147.91, 64.156, 0.0f };
-Position const ChasePath3 = { -681.972, 4146.48, 64.4093, 0.0f };
-Position const ChasePath4 = { -684.262, 4154.27, 62.1889, 0.0f };
-Position const ChasePath5 = { -693.5, 4185.7, 57.0529, 0.0f };
-Position const ChasePath6 = { -708.753, 4187.82, 55.1475, 0.0f };
-Position const ChasePath7 = { -721.51, 4189.59, 51.8167, 0.0f };
-Position const ChasePath8 = { -721.682, 4170.45, 50.7466, 0.0f };
+Position const ChasePath1 = { -655.107f, 4147.2f, 64.1146f, 0.0f };
+Position const ChasePath2 = { -664.461f, 4147.91f, 64.156f, 0.0f };
+Position const ChasePath3 = { -681.972f, 4146.48f, 64.4093f, 0.0f };
+Position const ChasePath4 = { -684.262f, 4154.27f, 62.1889f, 0.0f };
+Position const ChasePath5 = { -693.5f, 4185.7f, 57.0529f, 0.0f };
+Position const ChasePath6 = { -708.753f, 4187.82f, 55.1475f, 0.0f };
+Position const ChasePath7 = { -721.51f, 4189.59f, 51.8167f, 0.0f };
+Position const ChasePath8 = { -721.682f, 4170.45f, 50.7466f, 0.0f };
 
 struct npc_vieraAI : public npc_escortAI
 {
@@ -2591,7 +2591,7 @@ struct npc_vieraAI : public npc_escortAI
 			me->SetStandState(UNIT_STAND_STATE_STAND);
 			break;
 		case 1:
-			me->SummonCreature(NPC_CAT, -654.033, 4135.679, 64.625, 2.11, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);			
+			me->SummonCreature(NPC_CAT, -654.033f, 4135.679f, 64.625f, 2.11f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);			
 			break;
 		case 2:		
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
@@ -2671,20 +2671,20 @@ CreatureAI* GetAI_npc_viera(Creature* pCreature)
 {
 	npc_vieraAI* vieraAI = new npc_vieraAI(pCreature);
 
-	vieraAI->AddWaypoint(0, -655.107, 4147.2, 64.1146, 2000);
-	vieraAI->AddWaypoint(1, -655.107, 4147.2, 64.1146, 0);
-	vieraAI->AddWaypoint(2, -664.461, 4147.91, 64.156, 0);
-	vieraAI->AddWaypoint(3, -681.972, 4146.48, 64.4093, 0);
-	vieraAI->AddWaypoint(4, -684.262, 4154.27, 62.1889, 0);
-	vieraAI->AddWaypoint(5, -689.216, 4171.12, 58.0475, 0);
-	vieraAI->AddWaypoint(6, -693.5, 4185.7, 57.0529, 0);
-	vieraAI->AddWaypoint(7, -708.753, 4187.82, 55.1475, 0);
-	vieraAI->AddWaypoint(8, -721.51, 4189.59, 51.8167, 0); 
-	vieraAI->AddWaypoint(9, -721.682, 4170.45, 50.7466, 0); // end of the road
-	vieraAI->AddWaypoint(10, -721.682, 4170.45, 50.7466, 4000);
-	vieraAI->AddWaypoint(11, -742.759, 4073.034, 47.413, 0);
-	vieraAI->AddWaypoint(12, -742.759, 4073.034, 47.413, 0);
-	vieraAI->AddWaypoint(13, -742.759, 4073.034, 47.413, 0);
+	vieraAI->AddWaypoint(0, -655.107f, 4147.2f, 64.1146f, 2000);
+	vieraAI->AddWaypoint(1, -655.107f, 4147.2f, 64.1146f, 0);
+	vieraAI->AddWaypoint(2, -664.461f, 4147.91f, 64.156f, 0);
+	vieraAI->AddWaypoint(3, -681.972f, 4146.48f, 64.4093f, 0);
+	vieraAI->AddWaypoint(4, -684.262f, 4154.27f, 62.1889f, 0);
+	vieraAI->AddWaypoint(5, -689.216f, 4171.12f, 58.0475f, 0);
+	vieraAI->AddWaypoint(6, -693.5f, 4185.7f, 57.0529f, 0);
+	vieraAI->AddWaypoint(7, -708.753f, 4187.82f, 55.1475f, 0);
+	vieraAI->AddWaypoint(8, -721.51f, 4189.59f, 51.8167f, 0); 
+	vieraAI->AddWaypoint(9, -721.682f, 4170.45f, 50.7466f, 0); // end of the road
+	vieraAI->AddWaypoint(10, -721.682f, 4170.45f, 50.7466f, 4000);
+	vieraAI->AddWaypoint(11, -742.759f, 4073.034f, 47.413f, 0);
+	vieraAI->AddWaypoint(12, -742.759f, 4073.034f, 47.413f, 0);
+	vieraAI->AddWaypoint(13, -742.759f, 4073.034f, 47.413f, 0);
 
 	return vieraAI;
 }
@@ -2932,10 +2932,10 @@ struct npc_east_hovelAI : public ScriptedAI
 		{
 			if (Summon)
 			{
-				me->SummonGameObject(GO_Z_FIRE, -934.393005, 1934.01001, 82.031601, 3.35103, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -927.877991, 1927.44995, 81.048897, 5.25344, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -935.54303, 1921.160034, 82.4132, 2.67035, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -944.015015, 1928.160034, 82.105499, 5.98648, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -934.393005f, 1934.01001f, 82.031601f, 3.35103f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -927.877991f, 1927.44995f, 81.048897f, 5.25344f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -935.54303f, 1921.160034f, 82.4132f, 2.67035f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -944.015015f, 1928.160034f, 82.105499f, 5.98648f, 0, 0, 0, 0, 15);
 				ResetTimer = 15000;
 				Summon = false;
 			}
@@ -2976,9 +2976,9 @@ struct npc_west_hovelAI : public ScriptedAI
 		{
 			if (Summon)
 			{
-				me->SummonGameObject(GO_Z_FIRE, -1145.410034, 2064.830078, 80.782600, 5.044, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -1156.839966, 2060.870117, 79.176399, 3.83972, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -1152.719971, 2073.5, 80.622902, 2.00713, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1145.410034f, 2064.830078f, 80.782600f, 5.044f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1156.839966f, 2060.870117f, 79.176399f, 3.83972f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1152.719971f, 2073.5f, 80.622902f, 2.00713f, 0, 0, 0, 0, 15);
 				ResetTimer = 15000;
 				Summon = false;
 			}
@@ -3019,10 +3019,10 @@ struct npc_stableAI : public ScriptedAI
 		{
 			if (Summon)
 			{
-				me->SummonGameObject(GO_Z_FIRE, -1067.280029, 1998.949951, 76.286301, 5.86431, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -1052.189941, 2012.099976, 80.946198, 5.95157, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -1043.439941, 2002.140015, 76.030502, 2.00713, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -1052.26001, 1996.339966, 79.377502, 0.628319, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1067.280029f, 1998.949951f, 76.286301f, 5.86431f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1052.189941f, 2012.099976f, 80.946198f, 5.95157f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1043.439941f, 2002.140015f, 76.030502f, 2.00713f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1052.26001f, 1996.339966f, 79.377502f, 0.628319f, 0, 0, 0, 0, 15);
 				ResetTimer = 15000;
 				Summon = false;
 			}
@@ -3063,10 +3063,10 @@ struct npc_barracksAI : public ScriptedAI
 		{
 			if (Summon)
 			{
-				me->SummonGameObject(GO_Z_FIRE, -1176.709961, 1972.189941, 107.182999, 5.18363, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -1120.219971, 1929.890015, 92.360901, 0.89011, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -1137.099976, 1951.25, 94.115898, 2.32129, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -1152.890015, 1961.48999, 92.9795, 0.994838, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1176.709961f, 1972.189941f, 107.182999f, 5.18363f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1120.219971f, 1929.890015f, 92.360901f, 0.89011f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1137.099976f, 1951.25f, 94.115898f, 2.32129f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1152.890015f, 1961.48999f, 92.9795f, 0.994838f, 0, 0, 0, 0, 15);
 				ResetTimer = 15000;
 				Summon = false;
 			}
@@ -3111,9 +3111,9 @@ struct npc_tower_forgeAI : public ScriptedAI
 		{
 			if (Summon)
 			{
-				me->SummonGameObject(GO_Z_FIRE, -900.855103, 1922.618774, 92.219215, 5.980657, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -896.976868, 1921.480347, 82.033356, 5.371974, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -903.249817, 1919.317261, 76.100410, 2.930174, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -900.855103f, 1922.618774f, 92.219215f, 5.980657f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -896.976868f, 1921.480347f, 82.033356f, 5.371974f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -903.249817f, 1919.317261f, 76.100410f, 2.930174f, 0, 0, 0, 0, 15);
 				ResetTimer = 15000;
 				Summon = false;
 			}
@@ -3151,9 +3151,9 @@ struct npc_tower_northAI : public ScriptedAI
 		{
 			if (Summon)
 			{
-				me->SummonGameObject(GO_Z_FIRE, -825.942, 2034.932, 65.399, 0.841, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -823.178, 2029.728, 54.571, 2.145, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -828.604, 2033.299, 46.497, 1.717, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -825.942f, 2034.932f, 65.399f, 0.841f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -823.178f, 2029.728f, 54.571f, 2.145f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -828.604f, 2033.299f, 46.497f, 1.717f, 0, 0, 0, 0, 15);
 				ResetTimer = 15000;
 				Summon = false;
 			}
@@ -3191,9 +3191,9 @@ struct npc_tower_southAI : public ScriptedAI
 		{
 			if (Summon)
 			{
-				me->SummonGameObject(GO_Z_FIRE, -1155.282, 2103.080, 93.285, 6.015, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -1152.252, 2109.441, 84.187, 6.093, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -1149.971, 2112.339, 77.230, 0.205, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1155.282f, 2103.080f, 93.285f, 6.015f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1152.252f, 2109.441f, 84.187f, 6.093f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -1149.971f, 2112.339f, 77.230f, 0.205f, 0, 0, 0, 0, 15);
 				ResetTimer = 15000;
 				Summon = false;
 			}
@@ -3231,9 +3231,9 @@ struct npc_tower_foothillAI : public ScriptedAI
 		{
 			if (Summon)
 			{
-				me->SummonGameObject(GO_Z_FIRE, -976.103, 1878.009, 110.138, 1.162, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -977.411, 1878.557, 123.025, 6.093, 0, 0, 0, 0, 15);
-				me->SummonGameObject(GO_Z_FIRE, -971.595, 1880.863, 101.692, 0.844, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -976.103f, 1878.009f, 110.138f, 1.162f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -977.411f, 1878.557f, 123.025f, 6.093f, 0, 0, 0, 0, 15);
+				me->SummonGameObject(GO_Z_FIRE, -971.595f, 1880.863f, 101.692f, 0.844f, 0, 0, 0, 0, 15);
 				ResetTimer = 15000;
 				Summon = false;
 			}
@@ -3280,7 +3280,7 @@ bool GOHello_go_western_beacon(Player*, GameObject* _GO)
 
 bool GOHello_go_southern_beacon(Player*, GameObject* _GO)
 {
-	_GO->SummonGameObject(180352, -769.909, 3674.104f, 29.6f, 0, 0, 0, 0, 0, 60);
+	_GO->SummonGameObject(180352, -769.909f, 3674.104f, 29.6f, 0, 0, 0, 0, 0, 60);
 	return false;
 }
 
