@@ -735,7 +735,9 @@ void World::LoadConfigSettings(bool reload)
         m_configs[CONFIG_START_ARENA_POINTS] = m_configs[CONFIG_MAX_ARENA_POINTS];
     }
 
+    // Custom Flight Path Config Options
     m_configs[CONFIG_ALL_TAXI_PATHS] = sConfig.GetBoolDefault("AllFlightPaths", false);
+    m_configs[CONFIG_INSTANT_TAXI] = sConfig.GetBoolDefault("InstantFlightPaths", false);
 
     m_configs[CONFIG_INSTANCE_IGNORE_LEVEL] = sConfig.GetBoolDefault("Instance.IgnoreLevel", false);
     m_configs[CONFIG_INSTANCE_IGNORE_RAID]  = sConfig.GetBoolDefault("Instance.IgnoreRaid", false);
