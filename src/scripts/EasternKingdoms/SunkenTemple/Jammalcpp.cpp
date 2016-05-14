@@ -77,8 +77,8 @@ struct boss_JammalAI : public ScriptedAI
 
 	void JustDied(Unit* /*killer*/) override 
 	{
-		me->SummonCreature(NPC_WEAVER, -467.098, 85.294, -94.731, 3.95, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 90000);
-		me->SummonCreature(NPC_DREAMSCYTHE, -472.019, 105.822, -94.629, 0.03, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 90000);
+		me->SummonCreature(NPC_WEAVER, -467.098f, 85.294f, -94.731f, 3.95f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 90000);
+		me->SummonCreature(NPC_DREAMSCYTHE, -472.019f, 105.822f, -94.629f, 0.03f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 90000);
 	}
 
 	void KilledUnit(Unit* /*victim*/)

@@ -157,7 +157,7 @@ struct instance_razorfen_downs : public ScriptedInstance
                             for (uint8 i = 0; i < uiSummonTimes; ++i)
                             {
                                 if (Creature* pSummon = pGo->SummonCreature(uiCreature, 2502.635f + float(irand(-5, 5)), 844.140f + float(irand(-5, 5)), 46.896f, 0.633f, TEMPSUMMON_MANUAL_DESPAWN, 0))
-                                    pSummon->GetMotionMaster()->MovePoint(0, 2533.479 + float(irand(-5, 5)), 870.020 + float(irand(-5, 5)), 47.678);
+                                    pSummon->GetMotionMaster()->MovePoint(0, 2533.479f + float(irand(-5, 5)), 870.020f + float(irand(-5, 5)), 47.678f);
                             }
                         }
                         pCreature->GetMotionMaster()->MovePoint(0, 2533.479 + float(irand(-5, 5)), 870.020 + float(irand(-5, 5)), 47.678);

@@ -5721,7 +5721,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
             case 32228:
                 {
                     //we should do extra check here, can't remember we can hit targets that are not on a field in front of us..
-                    if (m_caster->HasInArc(M_PI / 18, unitTarget) && m_caster->GetDistance(unitTarget) <= 4)//sould be in an angle within 10� and Fieldrange
+                    if (m_caster->HasInArc(float(M_PI) / 18, unitTarget) && m_caster->GetDistance(unitTarget) <= 4)//sould be in an angle within 10� and Fieldrange
                         m_caster->CastSpell(unitTarget, 32247, true); //Chess NPC Action: Melee Attack: DAMAGE (Footman)
                     return;
                 }
@@ -6357,7 +6357,7 @@ void Spell::EffectAddExtraAttacks(SpellEffIndex /*effIndex*/)
 
     // attack prevented
     // fixme, some attacks may not target current victim, this is right now not handled
-    if (!victim || !unitTarget->IsWithinMeleeRange(victim) || !unitTarget->HasInArc(2 * M_PI / 3, victim))
+    if (!victim || !unitTarget->IsWithinMeleeRange(victim) || !unitTarget->HasInArc(2 * float(M_PI) / 3, victim))
         return;
 
     // Only for proc/log informations

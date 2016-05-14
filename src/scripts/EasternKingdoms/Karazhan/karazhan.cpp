@@ -130,6 +130,7 @@ struct npc_barnesAI : public npc_escortAI
 {
     npc_barnesAI(Creature* c) : npc_escortAI(c)
     {
+        SetDespawnAtEnd(false);
         RaidWiped = false;
         m_uiEventId = 0;
         pInstance = (ScriptedInstance*)c->GetInstanceData();
@@ -195,7 +196,7 @@ struct npc_barnesAI : public npc_escortAI
         switch (i)
         {
         case 0:
-            DoCast(me, SPELL_TUXEDO, false);
+            DoCast(me, SPELL_TUXEDO, true);
             pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GO_STAGEDOORLEFT));
             break;
         case 2:
@@ -231,6 +232,7 @@ struct npc_barnesAI : public npc_escortAI
             PerformanceReady = true;
             PrepareEncounter();
             pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GO_CURTAINS));
+            me->SetFacingTo(1.41372f);
             break;
         }
     }

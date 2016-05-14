@@ -193,32 +193,32 @@ static const EventLocations aOutroLocations[] =
 
 static const EventLocations SoldierLocations[] =
 {
-    { 1722.709f, 640.308f, 28.05f, 3.774 }, // summon first
-    { 1727.329f, 639.419f, 28.05f, 3.721 }, // summon first
-    { 1724.606f, 645.376f, 28.05f, 3.755 }, // summon first
-    { 1719.543f, 644.635f, 28.05f, 3.718 }, // summon first
-    { 1720.937f, 649.376f, 28.05f, 3.859 }, // summon first
-    { 1715.420f, 648.200f, 28.05f, 4.507 }, // summon first
-    { 1715.948f, 653.606f, 28.05f, 3.892 }, // summon first
-    { 1710.871f, 651.645f, 28.05f, 4.252 }, // summon first
-    { 1709.924f, 656.442f, 28.05f, 4.035 }, // summon first
-    { 1705.944f, 654.201f, 28.05f, 4.290 }, // summon first
-    { 1707.783f, 653.139f, 28.05f, 4.375 }, // summon second
-    { 1712.047f, 655.015f, 28.05f, 4.208 }, // summon second
-    { 1712.432f, 650.853f, 28.05f, 4.166 }, // summon second
-    { 1717.019f, 652.191f, 28.05f, 3.986 }, // summon second
-    { 1716.611f, 647.399f, 28.05f, 4.060 }, // summon second
-    { 1721.737f, 648.310f, 28.05f, 3.893 }, // summon second
-    { 1720.509f, 643.163f, 28.05f, 3.851 }, // summon second
-    { 1725.338f, 643.300f, 28.05f, 3.634 }, // summon second
-    { 1723.557f, 638.104f, 28.05f, 3.401 }, // summon second
-    { 1728.344f, 636.061f, 28.05f, 3.305 }  // summon second
+    { 1722.709f, 640.308f, 28.05f, 3.774f }, // summon first
+    { 1727.329f, 639.419f, 28.05f, 3.721f }, // summon first
+    { 1724.606f, 645.376f, 28.05f, 3.755f }, // summon first
+    { 1719.543f, 644.635f, 28.05f, 3.718f }, // summon first
+    { 1720.937f, 649.376f, 28.05f, 3.859f }, // summon first
+    { 1715.420f, 648.200f, 28.05f, 4.507f }, // summon first
+    { 1715.948f, 653.606f, 28.05f, 3.892f }, // summon first
+    { 1710.871f, 651.645f, 28.05f, 4.252f }, // summon first
+    { 1709.924f, 656.442f, 28.05f, 4.035f }, // summon first
+    { 1705.944f, 654.201f, 28.05f, 4.290f }, // summon first
+    { 1707.783f, 653.139f, 28.05f, 4.375f }, // summon second
+    { 1712.047f, 655.015f, 28.05f, 4.208f }, // summon second
+    { 1712.432f, 650.853f, 28.05f, 4.166f }, // summon second
+    { 1717.019f, 652.191f, 28.05f, 3.986f }, // summon second
+    { 1716.611f, 647.399f, 28.05f, 4.060f }, // summon second
+    { 1721.737f, 648.310f, 28.05f, 3.893f }, // summon second
+    { 1720.509f, 643.163f, 28.05f, 3.851f }, // summon second
+    { 1725.338f, 643.300f, 28.05f, 3.634f }, // summon second
+    { 1723.557f, 638.104f, 28.05f, 3.401f }, // summon second
+    { 1728.344f, 636.061f, 28.05f, 3.305f }  // summon second
 };
 
 static const EventLocations SoldierMiddle[] =
 {
-    { 1718.604f, 608.202f, 28.05f, 1.090 }, // first
-    { 1679.347f, 648.365f, 28.05f, 0.368 }, // second
+    { 1718.604f, 608.202f, 28.05f, 1.090f }, // first
+    { 1679.347f, 648.365f, 28.05f, 0.368f }, // second
 };
 
 #endif

@@ -1932,7 +1932,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 angle = 3 * M_PI / 4;
                 break;
             case TARGET_DEST_DEST_FRONT_RIGHT:
-                angle = M_PI / 4;
+                angle = float(M_PI) / 4;
                 break;
             default:
                 angle = rand_norm() * 2 * M_PI;
@@ -5078,7 +5078,7 @@ SpellCastResult Spell::CheckDummyCast(uint32 effIndex)
             if (data == 1 && !m_caster->IsHostileTo(unitTarget))
                 break;
 
-            if (!m_caster->HasInArc(M_PI, unitTarget))
+            if (!m_caster->HasInArc(float(M_PI), unitTarget))
                 return SPELL_FAILED_NOT_INFRONT;
             break;
         case SDC_TARGET_EXACT_ENTRY:
@@ -5278,7 +5278,7 @@ SpellCastResult Spell::CheckRange(bool strict)
                     return SPELL_CAST_OK;
 
                 if (m_caster->GetTypeId() == TYPEID_PLAYER &&
-                    (m_spellInfo->FacingCasterFlags & SPELL_FACING_FLAG_INFRONT) && !m_caster->HasInArc(M_PI, target))
+                    (m_spellInfo->FacingCasterFlags & SPELL_FACING_FLAG_INFRONT) && !m_caster->HasInArc(float(M_PI), target))
                     return !m_IsTriggeredSpell ? SPELL_FAILED_UNIT_NOT_INFRONT : SPELL_FAILED_DONT_REPORT;
 
                 float base = ATTACK_DISTANCE;
@@ -5328,7 +5328,7 @@ SpellCastResult Spell::CheckRange(bool strict)
             return SPELL_FAILED_TOO_CLOSE;
 
         if (m_caster->GetTypeId() == TYPEID_PLAYER &&
-            (m_spellInfo->FacingCasterFlags & SPELL_FACING_FLAG_INFRONT) && !m_caster->HasInArc(M_PI, target))
+            (m_spellInfo->FacingCasterFlags & SPELL_FACING_FLAG_INFRONT) && !m_caster->HasInArc(float(M_PI), target))
             return !m_IsTriggeredSpell ? SPELL_FAILED_UNIT_NOT_INFRONT : SPELL_FAILED_DONT_REPORT;
     }
 

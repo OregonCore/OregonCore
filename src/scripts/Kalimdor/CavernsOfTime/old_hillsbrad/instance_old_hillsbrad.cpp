@@ -214,7 +214,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
 
                     if (BarrelCount == 5)
                     {
-                        if (Creature* drake = player->SummonCreature(DRAKE_ENTRY, 2128.43f, 71.01f, 64.42, 1.74f, TEMPSUMMON_DEAD_DESPAWN, 15000))
+                        if (Creature* drake = player->SummonCreature(DRAKE_ENTRY, 2128.43f, 71.01f, 64.42f, 1.74f, TEMPSUMMON_DEAD_DESPAWN, 15000))
                             DoScriptText(SAY_DRAKE_ENTER, drake, player);
 
                         Encounter[0] = DONE;

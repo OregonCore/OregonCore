@@ -201,7 +201,7 @@ const float CHESS_RIGHT_VECTOR[3] = { -27.665f, 34.6075f, 0.0f };
 const float CHESS_UP_VECTOR[3] = { -34.6375f, -27.3475f, 0.0f };
 
 const float CHESS_PIECEBAR_ALLIANCE[3] = { -11082.1709f, -1910.06103f, 221.07f };
-const float CHESS_PIECEBAR_HORDE[3] = { -11079.038f, -1842.5085, 221.07f };
+const float CHESS_PIECEBAR_HORDE[3] = { -11079.038f, -1842.5085f, 221.07f };
 
 uint32 ChessPieceEntrysHorde[6] = { NPC_PAWN_H, NPC_ROOK_H, NPC_QUEEN_H, NPC_KNIGHT_H, NPC_BISHOP_H, NPC_KING_H };
 uint32 ChessPieceEntrysAlliance[6] = { NPC_PAWN_A, NPC_ROOK_A, NPC_QUEEN_A, NPC_BISHOP_A, NPC_KNIGHT_A, NPC_KING_A };

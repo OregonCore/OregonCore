@@ -1073,12 +1073,12 @@ void GameObject::Use(Unit* user)
                         y_lowest = y_i;
                     }
                 }
-                user->NearTeleportTo(x_lowest, y_lowest, GetPositionZ(), GetOrientation(), TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET);
+                user->NearTeleportTo(x_lowest, y_lowest, GetPositionZ(), GetOrientation(), (TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET));
             }
             else
             {
                 // fallback, will always work
-                user->NearTeleportTo(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(), TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET);
+                user->NearTeleportTo(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(), (TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET));
             }
             user->SetStandState(UNIT_STAND_STATE_SIT_LOW_CHAIR + info->chair.height);
             return;

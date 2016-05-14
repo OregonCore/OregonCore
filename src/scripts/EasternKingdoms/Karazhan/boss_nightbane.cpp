@@ -388,7 +388,7 @@ struct boss_nightbaneAI : public ScriptedAI
 				if (TailSweepTimer <= diff)
 				{
 					if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
-						if (!me->HasInArc(M_PI, pTarget))
+						if (!me->HasInArc(float(M_PI), pTarget))
 							DoCast(pTarget, SPELL_TAIL_SWEEP);
 					TailSweepTimer = 15000;
 				}

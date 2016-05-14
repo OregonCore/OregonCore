@@ -155,7 +155,7 @@ struct boss_onyxiaAI : public ScriptedAI
             if (TailSweepTimer <= diff)
             {
                 Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-                if (pTarget && !me->HasInArc(M_PI, pTarget))
+                if (pTarget && !me->HasInArc(float(M_PI), pTarget))
                     DoCast(pTarget, SPELL_TAILSWEEP);
 
                 TailSweepTimer = 10000;

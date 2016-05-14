@@ -160,7 +160,7 @@ struct instance_deadmines : public ScriptedInstance
     void MoveCreatureInside(Creature* pCreature)
     {
         pCreature->SetWalk(false);
-        pCreature->GetMotionMaster()->MovePoint(0, -102.7, -655.9, pCreature->GetPositionZ());
+        pCreature->GetMotionMaster()->MovePoint(0, -102.7f, -655.9f, pCreature->GetPositionZ());
     }
 
     void ShootCannon()

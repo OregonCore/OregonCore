@@ -101,7 +101,7 @@ struct boss_mr_smiteAI : public ScriptedAI
                 switch (uiPhase)
                 {
                 case 1:
-                    me->GetMotionMaster()->MovePoint(1, 1.37994, -780.29, 9.81929);
+                    me->GetMotionMaster()->MovePoint(1, 1.37994f, -780.29f, 9.81929f);
                     uiPhase = 2;
                     break;
                 case 3:

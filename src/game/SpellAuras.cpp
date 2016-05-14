@@ -2102,7 +2102,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             return;
         case 30019: //control piece
             if (caster && caster->GetTypeId() == TYPEID_PLAYER)
-                caster->ToPlayer()->TeleportTo(532, -11105.08, -1845.65, 229.65, 5.42);
+                caster->ToPlayer()->TeleportTo(532, -11105.08f, -1845.65f, 229.65f, 5.42f);
             if (caster && caster->GetCharm())
                 caster->GetCharm()->GetCharmInfo()->SetIsAtStay(true);
             return;

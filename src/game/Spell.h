@@ -786,11 +786,11 @@ struct SpellNotifierCreatureAndPlayer
             switch (i_push_type)
             {
             case PUSH_IN_FRONT:
-                if (i_caster->isInFrontInMap((Unit*)(itr->getSource()), i_radius, M_PI / 3))
+                if (i_caster->isInFrontInMap((Unit*)(itr->getSource()), i_radius, float(M_PI) / 3))
                     i_data->push_back(itr->getSource());
                 break;
             case PUSH_IN_BACK:
-                if (i_caster->isInBackInMap((Unit*)(itr->getSource()), i_radius, M_PI / 3))
+                if (i_caster->isInBackInMap((Unit*)(itr->getSource()), i_radius, float(M_PI) / 3))
                     i_data->push_back(itr->getSource());
                 break;
             case PUSH_IN_LINE:

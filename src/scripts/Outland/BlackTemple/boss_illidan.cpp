@@ -306,10 +306,10 @@ static Locations HoverPosition[] =
 
 static Locations GlaivePosition[] =
 {
-    {695.105, 305.303, 354.256},
-    {659.338, 305.303, 354.256},//the distance between two glaives is 36
-    {700.105, 305.303, 354.256},
-    {664.338, 305.303, 354.256}
+    {695.105f, 305.303f, 354.256f},
+    {659.338f, 305.303f, 354.256f},//the distance between two glaives is 36
+    {700.105f, 305.303f, 354.256f},
+    {664.338f, 305.303f, 354.256f}
 };
 
 static Locations EyeBlast[] =

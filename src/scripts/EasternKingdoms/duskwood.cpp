@@ -62,13 +62,13 @@ bool AreaTrigger_at_twilight_grove(Player* pPlayer, const AreaTriggerEntry* /*at
             return false;
         }
 
-        if (Creature* pCorrupter = pPlayer->SummonCreature(NPC_TWILINGHT_CORRUPTER, -10636.9, -389.254, 102.626, 0, TEMPSUMMON_TIMED_DESPAWN, CORRUPTER_DESPAWN_TIMER))
+        if (Creature* pCorrupter = pPlayer->SummonCreature(NPC_TWILINGHT_CORRUPTER, -10636.9f, -389.254f, 102.626f, 0, TEMPSUMMON_TIMED_DESPAWN, CORRUPTER_DESPAWN_TIMER))
         {
             pCorrupter->SetVisible(false);
             DoScriptText(CORRUPTER_YELL_COME, pCorrupter, pPlayer);
         }
 
-        if (Creature* TCorrupter = pPlayer->SummonCreature(NPC_TWILINGHT_CORRUPTER, -10328.16, -489.57, 49.95, 0, TEMPSUMMON_MANUAL_DESPAWN, 60000))
+        if (Creature* TCorrupter = pPlayer->SummonCreature(NPC_TWILINGHT_CORRUPTER, -10328.16f, -489.57f, 49.95f, 0, TEMPSUMMON_MANUAL_DESPAWN, 60000))
         {
             TCorrupter->setFaction(14);
             TCorrupter->SetMaxHealth(832750);

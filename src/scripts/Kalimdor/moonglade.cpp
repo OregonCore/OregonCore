@@ -828,7 +828,7 @@ struct npc_remulosAI : public npc_escortAI
             SetEscortPaused(true);
             if (/*Creature* pEranikus = */Unit::GetCreature(*me, EranikusGUID))
             {
-                me->SetOrientation(1.46);
+                me->SetOrientation(1.46f);
                 me->SendMovementFlagUpdate();
             }
             break;
@@ -988,7 +988,7 @@ struct npc_remulosAI : public npc_escortAI
                         for (int i = 0; i < NPC_MOONGLADE_WARDENS_COUNT; i++)
                             me->SummonCreature(NPC_MOONGLADE_WARDEN,
                                                pEranikus->GetPositionX(), pEranikus->GetPositionY(),
-                                               pEranikus->GetPositionZ(), 0.02, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                                               pEranikus->GetPositionZ(), 0.02f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
                     }
                     EventTimer = 60000;
                     break;

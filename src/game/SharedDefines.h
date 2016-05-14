@@ -2529,8 +2529,8 @@ enum PetDiet
 
 #define MAX_PET_DIET 9
 
-#define PET_FOLLOW_DIST  (0.2f)
-#define PET_FOLLOW_ANGLE (M_PI/2)
+#define PET_FOLLOW_DIST  0.2f   // Trinity has 1.0f
+#define PET_FOLLOW_ANGLE float(M_PI/2)
 
 #define CHAIN_SPELL_JUMP_RADIUS 10
 

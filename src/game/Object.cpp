@@ -1067,9 +1067,11 @@ bool Object::PrintIndexError(uint32 index, bool set) const
 
 bool Position::HasInLine(const Unit* const target, float distance, float width) const
 {
-    if (!HasInArc(M_PI, target) || !target->IsWithinDist3d(m_positionX, m_positionY, m_positionZ, distance))
+    if (!HasInArc(float(M_PI), target) || !target->IsWithinDist3d(m_positionX, m_positionY, m_positionZ, distance))
         return false;
+
     width += target->GetObjectSize() * 0.5f;
+
     float angle = GetRelativeAngle(target);
     return fabsf(sinf(angle)) * GetExactDist2d(target->GetPositionX(), target->GetPositionY()) < width;
 }
@@ -1354,19 +1356,19 @@ bool WorldObject::HasInArc(const float arcangle, const float x, const float y) c
     float arc = arcangle;
 
     // move arc to range 0.. 2*pi
-    while ( arc >= 2.0f * M_PI )
-        arc -=  2.0f * M_PI;
+    while ( arc >= 2.0f * float(M_PI) )
+        arc -=  2.0f * float(M_PI);
     while ( arc < 0 )
-        arc +=  2.0f * M_PI;
+        arc +=  2.0f * float(M_PI);
 
     float angle = GetAngle( x, y );
     angle -= m_orientation;
 
     // move angle to range -pi ... +pi
-    while ( angle > M_PI)
-        angle -= 2.0f * M_PI;
+    while ( angle > float(M_PI))
+        angle -= 2.0f * float(M_PI);
     while (angle < -M_PI)
-        angle += 2.0f * M_PI;
+        angle += 2.0f * float(M_PI);
 
     float lborder =  -1 * (arc / 2.0f);                     // in range -pi..0
     float rborder = (arc / 2.0f);                           // in range 0..pi
@@ -1420,8 +1422,8 @@ bool Position::HasInArc(float arc, const Position* obj) const
 
     // move angle to range -pi ... +pi
     angle = MapManager::NormalizeOrientation(angle);
-    if (angle > M_PI)
-        angle -= 2.0f * M_PI;
+    if (angle > float(M_PI))
+        angle -= 2.0f * float(M_PI);
 
     float lborder =  -1 * (arc / 2.0f);                     // in range -pi..0
     float rborder = (arc / 2.0f);                           // in range 0..pi
