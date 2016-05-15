@@ -43,16 +43,16 @@ install:
 # apply all updates to db and catch possible errors
 script:
   - cd $TRAVIS_BUILD_DIR/sql
-  - mysql -v -u root --password='' < create_mysql.sql
-  - mysql -v -u oregon -poregon realmd < realmd.sql
-  - mysql -v -u oregon -poregon characters < characters.sql
-  - mysql -v -u oregon -poregon world < world.sql
+  - mysql -u root --password='' < create_mysql.sql
+  - mysql -u oregon -poregon realmd < realmd.sql
+  - mysql -u oregon -poregon characters < characters.sql
+  - mysql -u oregon -poregon world < world.sql
   - curl --retry 3 -o OregonDatabase.zip https://oregon-core.net/travis/OregonDatabase.zip
   - unzip OregonDatabase.zip
-  - mysql -v -u oregon -poregon world < OregonDatabase.sql
-  - cat updates/realmd/*.sql | mysql -v -u oregon -poregon realmd
-  - cat updates/characters/*.sql | mysql -v -u oregon -poregon characters
-  - cat updates/world/*.sql | mysql -v -u oregon -poregon world
+  - mysql -u oregon -poregon world < OregonDatabase.sql
+  - cat updates/realmd/*.sql | mysql -u oregon -poregon realmd
+  - cat updates/characters/*.sql | mysql -u oregon -poregon characters
+  - cat updates/world/*.sql | mysql -u oregon -poregon world
   - curl --retry 3 -o documentation.sql https://oregon-core.net/travis/documentation.sql
 
 # generate and deploy doxygen documentation now
@@ -69,4 +69,4 @@ after_success:
   - cd doc/html
   - zip -q -r -9 html.zip ./*
   - export URL="https://oregon-core.net/Deploy?secret=$TRAVIS_SECRET"
-  - curl -v -F 'userfile=@html.zip' $URL
+  - curl -F 'userfile=@html.zip' $URL
