@@ -30,6 +30,7 @@
 #include "Group.h"
 #include "Bag.h"
 #include "WorldSession.h"
+#include "CinematicMgr.h"
 #include "Pet.h"
 #include "MapReference.h"
 #include "Util.h"                                           // for Tokens typedef
@@ -948,6 +949,8 @@ struct BGData
 class Player : public Unit, public GridObject<Player>
 {
         friend class WorldSession;
+        friend class CinematicMgr;
+
         friend void Item::AddToUpdateQueueOf(Player* player);
         friend void Item::RemoveFromUpdateQueueOf(Player* player);
     public:
@@ -1274,6 +1277,9 @@ class Player : public Unit, public GridObject<Player>
         }
         void ClearTrade();
         void TradeCancel(bool sendback);
+
+        CinematicMgr* GetCinematicMgr() const { return _cinematicMgr; }
+
         Item* GetItemByTradeSlot(uint8 slot) const
         {
             if (slot < TRADE_SLOT_COUNT && tradeItems[slot])
@@ -2950,6 +2956,8 @@ class Player : public Unit, public GridObject<Player>
         uint8 _CanStoreItem_InBag(uint8 bag, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool merge, bool non_specialized, Item* pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
         uint8 _CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool merge, Item* pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
         Item* _StoreItem(uint16 pos, Item* pItem, uint32 count, bool clone, bool update);
+
+        CinematicMgr* _cinematicMgr;
 
         LiquidTypeEntry const* _lastLiquid;
         int32 m_MirrorTimer[MAX_TIMERS];
