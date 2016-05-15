@@ -26,7 +26,7 @@ class DelayExecutor : protected ACE_Task_Base
 {
     public:
         DelayExecutor();
-        virtual ~DelayExecutor();
+        ~DelayExecutor() override;
 
         static DelayExecutor* instance();
 
@@ -39,7 +39,7 @@ class DelayExecutor : protected ACE_Task_Base
 
         bool activated();
 
-        virtual int svc();
+        int svc() override;
 
     private:
 

@@ -455,10 +455,10 @@ class Creature : public Unit, public GridObject<Creature>
     public:
 
         explicit Creature(bool isWorldObject = false);
-        virtual ~Creature();
+        ~Creature() override;
 
-        void AddToWorld();
-        void RemoveFromWorld();
+        void AddToWorld() override;
+        void RemoveFromWorld() override;
 
         void DisappearAndDie();
 
@@ -476,7 +476,7 @@ class Creature : public Unit, public GridObject<Creature>
             return GetCreatureTemplate()->SubName;
         }
 
-        void Update(uint32 time);                         // overwrited Unit::Update
+        void Update(uint32 time) override;                         // overwrited Unit::Update
         void GetRespawnPosition(float& x, float& y, float& z, float* ori = NULL, float* dist = NULL) const;
 
         uint32 GetEquipmentId() const
@@ -525,8 +525,8 @@ class Creature : public Unit, public GridObject<Creature>
         bool CanTrainAndResetTalentsOf(Player* pPlayer) const;
         bool CanCreatureAttack(Unit const* victim) const;
 
-        bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false);
-        bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const;
+        bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false) override;
+        bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const override;
 
         bool isElite() const;
         bool isWorldBoss() const;
@@ -543,12 +543,12 @@ class Creature : public Unit, public GridObject<Creature>
             return (CreatureAI*)i_AI;
         }
 
-        uint32 GetShieldBlockValue() const                  //dunno mob block value
+        uint32 GetShieldBlockValue() const override                  //dunno mob block value
         {
             return (getLevel() / 2 + uint32(GetStat(STAT_STRENGTH) / 20));
         }
 
-        SpellSchoolMask GetMeleeDamageSchoolMask() const
+        SpellSchoolMask GetMeleeDamageSchoolMask() const override
         {
             return m_meleeDamageSchoolMask;
         }
@@ -563,18 +563,18 @@ class Creature : public Unit, public GridObject<Creature>
         bool HasSpellCooldown(uint32 spell_id) const;
         bool HasCategoryCooldown(uint32 spell_id) const;
 
-        bool HasSpell(uint32 spellID) const;
+        bool HasSpell(uint32 spellID) const override;
 
         bool UpdateEntry(uint32 entry, uint32 team = ALLIANCE, const CreatureData* data = NULL);
         void UpdateMovementFlags(bool packetOnly = false);
-        bool UpdateStats(Stats stat);
-        bool UpdateAllStats();
-        void UpdateResistances(uint32 school);
-        void UpdateArmor();
-        void UpdateMaxHealth();
-        void UpdateMaxPower(Powers power);
-        void UpdateAttackPowerAndDamage(bool ranged = false);
-        void UpdateDamagePhysical(WeaponAttackType attType);
+        bool UpdateStats(Stats stat) override;
+        bool UpdateAllStats() override;
+        void UpdateResistances(uint32 school) override;
+        void UpdateArmor() override;
+        void UpdateMaxHealth() override;
+        void UpdateMaxPower(Powers power) override;
+        void UpdateAttackPowerAndDamage(bool ranged = false) override;
+        void UpdateDamagePhysical(WeaponAttackType attType) override;
         void SetCurrentEquipmentId(uint8 id) { m_equipmentId = id; }
         uint32 GetCurrentEquipmentId()
         {
@@ -640,9 +640,9 @@ class Creature : public Unit, public GridObject<Creature>
         }
 
         // overwrite WorldObject function for proper name localization
-        const char* GetNameForLocaleIdx(int32 locale_idx) const;
+        const char* GetNameForLocaleIdx(int32 locale_idx) const override;
 
-        void setDeathState(DeathState s);                     // overwrite virtual Unit::setDeathState
+        void setDeathState(DeathState s) override;                     // overwrite virtual Unit::setDeathState
         bool FallGround();
 
         bool LoadFromDB(uint32 guid, Map* map) { return LoadCreatureFromDB(guid, map, false); }
@@ -725,7 +725,7 @@ class Creature : public Unit, public GridObject<Creature>
             m_respawnTime = time(NULL) + respawn;
         }
         void Respawn(bool force = false);
-        void SaveRespawnTime();
+        void SaveRespawnTime() override;
 
         uint32 GetRespawnDelay() const
         {
@@ -761,8 +761,8 @@ class Creature : public Unit, public GridObject<Creature>
 
         void SetInCombatWithZone();
 
-        bool hasQuest(uint32 quest_id) const;
-        bool hasInvolvedQuest(uint32 quest_id)  const;
+        bool hasQuest(uint32 quest_id) const override;
+        bool hasInvolvedQuest(uint32 quest_id)  const override;
 
         bool isRegeneratingHealth()
         {
@@ -854,7 +854,7 @@ class Creature : public Unit, public GridObject<Creature>
 
         float m_SightDistance, m_CombatDistance;
 
-        bool SetLevitate(bool enable, bool packetOnly = false);
+        bool SetLevitate(bool enable, bool packetOnly = false) override;
         bool SetWalk(bool enable) override;
         bool SetSwim(bool enable) override;
         bool SetCanFly(bool enable, bool packetOnly = false) override;
@@ -941,7 +941,7 @@ class AssistDelayEvent : public BasicEvent
     public:
         AssistDelayEvent(const uint64& victim, Unit& owner) : BasicEvent(), m_victim(victim), m_owner(owner) { }
 
-        bool Execute(uint64 e_time, uint32 p_time);
+        bool Execute(uint64 e_time, uint32 p_time) override;
         void AddAssistant(const uint64& guid)
         {
             m_assistants.push_back(guid);
@@ -958,7 +958,7 @@ class ForcedDespawnDelayEvent : public BasicEvent
 {
     public:
         ForcedDespawnDelayEvent(Creature& owner) : BasicEvent(), m_owner(owner) { }
-        bool Execute(uint64 e_time, uint32 p_time);
+        bool Execute(uint64 e_time, uint32 p_time) override;
 
     private:
         Creature& m_owner;

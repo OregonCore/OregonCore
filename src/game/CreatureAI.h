@@ -88,7 +88,7 @@ class CreatureAI : public UnitAI
             AttackAngle(0.0f)
         {}
 
-        virtual ~CreatureAI() {}
+        ~CreatureAI() override {}
 
         // == Reactions At =================================
 
@@ -146,7 +146,7 @@ class CreatureAI : public UnitAI
         // Called if a temporary summoned of m_creature reach a move point
         virtual void SummonedMovementInform(Creature* /*pSummoned*/, uint32 /*uiMotionType*/, uint32 /*uiData*/) {}
 
-        void OnCharmed(bool apply);
+        void OnCharmed(bool apply) override;
 
         //virtual void SpellClick(Player* player) {}
 

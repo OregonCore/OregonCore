@@ -268,7 +268,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         friend class MapReference;
     public:
         Map(uint32 id, time_t, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent = NULL);
-        virtual ~Map();
+        ~Map() override;
 
         // currently unused for normal maps
         bool CanUnload(uint32 diff)
@@ -668,10 +668,10 @@ class InstanceMap : public Map
 {
     public:
         InstanceMap(uint32 id, time_t, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent);
-        ~InstanceMap();
-        bool AddToMap(Player*);
-        void RemoveFromMap(Player*, bool);
-        void Update(const uint32&);
+        ~InstanceMap() override;
+        bool AddToMap(Player*) override;
+        void RemoveFromMap(Player*, bool) override;
+        void Update(const uint32&) override;
         void CreateInstanceData(bool load);
         bool Reset(uint8 method);
         uint32 GetScriptId()
@@ -684,12 +684,12 @@ class InstanceMap : public Map
         }
         void PermBindAllPlayers(Player* player);
         time_t GetResetTime();
-        void UnloadAll();
-        bool CanEnter(Player* player);
+        void UnloadAll() override;
+        bool CanEnter(Player* player) override;
         void SendResetWarnings(uint32 timeLeft) const;
         void SetResetSchedule(bool on);
 
-        virtual void InitVisibilityDistance();
+        void InitVisibilityDistance() override;
     private:
         bool m_resetAfterUnload;
         bool m_unloadWhenEmpty;
@@ -701,15 +701,15 @@ class BattlegroundMap : public Map
 {
     public:
         BattlegroundMap(uint32 id, time_t, uint32 InstanceId, Map* _parent);
-        ~BattlegroundMap();
+        ~BattlegroundMap() override;
 
-        bool AddToMap(Player*);
-        void RemoveFromMap(Player*, bool);
-        bool CanEnter(Player* player);
+        bool AddToMap(Player*) override;
+        void RemoveFromMap(Player*, bool) override;
+        bool CanEnter(Player* player) override;
         void SetUnload();
-        void RemoveAllPlayers();
+        void RemoveAllPlayers() override;
 
-        virtual void InitVisibilityDistance();
+        void InitVisibilityDistance() override;
         Battleground* GetBG()
         {
             return m_bg;

@@ -787,7 +787,7 @@ class FlaggedValuesArray32
 class WorldObject : public Object, public WorldLocation
 {
     public:
-        virtual ~WorldObject();
+        ~WorldObject() override;
 
         virtual void Update (uint32 /*time_diff*/) { }
 
@@ -1030,7 +1030,7 @@ class WorldObject : public Object, public WorldLocation
 
         void DestroyForNearbyPlayers();
         virtual void UpdateObjectVisibility(bool forced = true);
-        void BuildUpdate(UpdateDataMapType&);
+        void BuildUpdate(UpdateDataMapType&) override;
 
         //relocation and visibility system functions
         void AddToNotify(uint16 f)

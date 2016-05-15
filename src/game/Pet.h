@@ -147,10 +147,10 @@ class Pet : public Guardian
 {
     public:
         explicit Pet(Player* owner, PetType type = MAX_PET_TYPE);
-        virtual ~Pet();
+        ~Pet() override;
 
-        void AddToWorld();
-        void RemoveFromWorld();
+        void AddToWorld() override;
+        void RemoveFromWorld() override;
 
         PetType getPetType() const
         {
@@ -178,14 +178,14 @@ class Pet : public Guardian
         void Remove(PetSaveMode mode, bool returnreagent = false);
         static void DeleteFromDB(uint32 guidlow);
 
-        void setDeathState(DeathState s);                   // overwrite virtual Creature::setDeathState and Unit::setDeathState
-        void Update(uint32 diff);                           // overwrite virtual Creature::Update and Unit::Update
+        void setDeathState(DeathState s) override;                   // overwrite virtual Creature::setDeathState and Unit::setDeathState
+        void Update(uint32 diff) override;                           // overwrite virtual Creature::Update and Unit::Update
 
-        uint8 GetPetAutoSpellSize() const
+        uint8 GetPetAutoSpellSize() const override
         {
             return m_autospells.size();
         }
-        uint32 GetPetAutoSpellOnPos(uint8 pos) const
+        uint32 GetPetAutoSpellOnPos(uint8 pos) const override
         {
             if (pos >= m_autospells.size())
                 return 0;
@@ -216,7 +216,7 @@ class Pet : public Guardian
             m_duration = dur;
         }
 
-        bool canSwim() const
+        bool canSwim() const override
         {
             return true;
         }
@@ -229,7 +229,7 @@ class Pet : public Guardian
         void ApplyModeFlags(PetModeFlags mode, bool apply);
         PetModeFlags GetModeFlags() const { return m_petModeFlags; }
 
-        bool HasSpell(uint32 spell) const;
+        bool HasSpell(uint32 spell) const override;
         void AddTeachSpell(uint32 learned_id, uint32 source_id)
         {
             m_teachspells[learned_id] = source_id;
@@ -315,11 +315,11 @@ class Pet : public Guardian
         using Creature::SaveToDB;
         using Creature::DeleteFromDB;
         
-        void SaveToDB(uint32, uint8)                        // overwrited of Creature::SaveToDB     - don't must be called
+        void SaveToDB(uint32, uint8) override                        // overwrited of Creature::SaveToDB     - don't must be called
         {
             assert(false);
         }
-        void DeleteFromDB()                                 // overwrited of Creature::DeleteFromDB - don't must be called
+        void DeleteFromDB() override                                 // overwrited of Creature::DeleteFromDB - don't must be called
         {
             assert(false);
         }

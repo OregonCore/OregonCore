@@ -42,7 +42,7 @@ class SqlDelayThread : public ACE_Based::Runnable
         bool Delay(SqlOperation* sql);
 
         void Stop();                                // Stop event
-        virtual void run();                                 // Main Thread loop
+        void run() override;                                 // Main Thread loop
 };
 #endif                                                      //__SQLDELAYTHREAD_H
 

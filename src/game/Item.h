@@ -367,17 +367,17 @@ class Item : public Object
             uState = state;
         }
 
-        bool hasQuest(uint32 quest_id) const
+        bool hasQuest(uint32 quest_id) const override
         {
             ItemTemplate const* itemProto = GetProto();
             return itemProto && itemProto->StartQuest == quest_id;
         }
-        bool hasInvolvedQuest(uint32 /*quest_id*/) const
+        bool hasInvolvedQuest(uint32 /*quest_id*/) const override
         {
             return false;
         }
 
-        void BuildUpdate(UpdateDataMapType&);
+        void BuildUpdate(UpdateDataMapType&) override;
 
     private:
         uint8 m_slot;

@@ -128,20 +128,20 @@ class PlayerAI : public UnitAI
     public:
         explicit PlayerAI(Player* p) : UnitAI((Unit*)p), me(p) {}
 
-        void OnCharmed(bool apply);
+        void OnCharmed(bool apply) override;
 };
 
 class SimpleCharmedAI : public PlayerAI
 {
     public:
-        void UpdateAI(const uint32 diff);
+        void UpdateAI(const uint32 diff) override;
 };
 
 class ScriptEvent : public BasicEvent
 {
     public:
         ScriptEvent(Unit* unit, uint32 data = 0) : BasicEvent(), m_unit(unit), m_data(data) {}
-        bool Execute(uint64, uint32)
+        bool Execute(uint64, uint32) override
         {
             if (m_unit->IsAIEnabled)
                 m_unit->i_AI->EventHappens(m_data);
