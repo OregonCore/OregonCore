@@ -463,7 +463,7 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
     }
 
     UpdateMovementFlags();
-    LoadCreaturesAddon();
+    LoadCreaturesAddon(true);
     return true;
 }
 
@@ -801,8 +801,6 @@ bool Creature::Create(uint32 guidlow, Map* map, uint32 entry, uint32 team, float
             m_corpseDelay = sWorld.getConfig(CONFIG_CORPSE_DECAY_NORMAL);
             break;
     }
-
-    LoadCreaturesAddon();
 
     /// @todo Replace with spell, handle from DB
     if (isSpiritHealer() || isSpiritGuide())
