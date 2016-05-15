@@ -1127,7 +1127,7 @@ class AllGameObjectsWithEntryInRange
         AllGameObjectsWithEntryInRange(const WorldObject* pObject, uint32 uiEntry, float fMaxRange) : m_pObject(pObject), m_uiEntry(uiEntry), m_fRange(fMaxRange) {}
         bool operator() (GameObject* pGo)
         {
-            if (pGo->GetEntry() == m_uiEntry && m_pObject->IsWithinDist(pGo, m_fRange, false))
+            if ((!m_uiEntry || pGo->GetEntry() == m_uiEntry) && m_pObject->IsWithinDist(pGo, m_fRange, false))
                 return true;
 
             return false;
@@ -1144,7 +1144,7 @@ class AllCreaturesOfEntryInRange
         AllCreaturesOfEntryInRange(const WorldObject* pObject, uint32 uiEntry, float fMaxRange) : m_pObject(pObject), m_uiEntry(uiEntry), m_fRange(fMaxRange) {}
         bool operator() (Unit* pUnit)
         {
-            if (pUnit->GetEntry() == m_uiEntry && m_pObject->IsWithinDist(pUnit, m_fRange, false))
+            if ((!m_uiEntry || pUnit->GetEntry() == m_uiEntry) && m_pObject->IsWithinDist(pUnit, m_fRange, false))
                 return true;
 
             return false;

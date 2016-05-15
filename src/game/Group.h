@@ -109,7 +109,7 @@ class Roll : public LootValidatorRef
         Roll(uint64 _guid, LootItem const& li)
             : itemGUID(_guid), itemid(li.itemid), itemRandomPropId(li.randomPropertyId), itemRandomSuffix(li.randomSuffix),
               totalPlayersRolling(0), totalNeed(0), totalGreed(0), totalPass(0), itemSlot(0) {}
-        ~Roll() { }
+        ~Roll() override { }
         void setLoot(Loot* pLoot)
         {
             link(pLoot, this);
@@ -118,7 +118,7 @@ class Roll : public LootValidatorRef
         {
             return getTarget();
         }
-        void targetObjectBuildLink();
+        void targetObjectBuildLink() override;
 
         uint64 itemGUID;
         uint32 itemid;

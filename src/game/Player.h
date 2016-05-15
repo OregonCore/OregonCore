@@ -952,15 +952,15 @@ class Player : public Unit, public GridObject<Player>
         friend void Item::RemoveFromUpdateQueueOf(Player* player);
     public:
         explicit Player(WorldSession* session);
-        ~Player();
+        ~Player() override;
 
-        void CleanupsBeforeDelete();
+        void CleanupsBeforeDelete() override;
 
         static UpdateMask updateVisualBits;
         static void InitVisibleBits();
 
-        void AddToWorld();
-        void RemoveFromWorld();
+        void AddToWorld() override;
+        void RemoveFromWorld() override;
 
         void SetObjectScale(float scale)
         {
@@ -978,7 +978,7 @@ class Player : public Unit, public GridObject<Player>
 
         bool Create(uint32 guidlow, const std::string& name, uint8 race, uint8 class_, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair, uint8 outfitId);
 
-        void Update(uint32 time);
+        void Update(uint32 time) override;
 
         static bool BuildEnumData(QueryResult_AutoPtr result, WorldPacket* data);
 
@@ -1088,7 +1088,7 @@ class Player : public Unit, public GridObject<Player>
         void ResetTimeSync();
         void SendTimeSync();
 
-        void setDeathState(DeathState s);                   // overwrite Unit::setDeathState
+        void setDeathState(DeathState s) override;                   // overwrite Unit::setDeathState
 
         float GetRestBonus() const { return m_rest_bonus; }
         void SetRestBonus(float rest_bonus_new);
@@ -1117,7 +1117,7 @@ class Player : public Unit, public GridObject<Player>
         /*********************************************************/
 
         void SetVirtualItemSlot(uint8 i, Item* item);
-        void SetSheath(SheathState sheathed);             // overwrite Unit version
+        void SetSheath(SheathState sheathed) override;             // overwrite Unit version
         uint8 FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) const;
         uint32 GetItemCount(uint32 item, bool inBankAlso = false, Item* skipItem = NULL) const;
         Item* GetItemByGuid(uint64 guid) const;
@@ -1671,7 +1671,7 @@ class Player : public Unit, public GridObject<Player>
         void CharmSpellInitialize();
         void PossessSpellInitialize();
         void SendRemoveControlBar();
-        bool HasSpell(uint32 spell) const;
+        bool HasSpell(uint32 spell) const override;
         bool HasActiveSpell(uint32 spell) const;            // shown in spellbook
         TrainerSpellState GetTrainerSpellState(TrainerSpell const* trainer_spell) const;
         bool IsSpellFitByClassAndRace(uint32 spell_id) const;
@@ -1686,7 +1686,7 @@ class Player : public Unit, public GridObject<Player>
         void LearnQuestRewardedSpells();
         void LearnQuestRewardedSpells(Quest const* quest);
         void LearnSpellHighestRank(uint32 spellid);
-        uint32 GetHighestLearnedRankOf(uint32 spellid) const;
+        uint32 GetHighestLearnedRankOf(uint32 spellid) const override;
 
         uint32 GetFreeTalentPoints() const
         {
@@ -1740,7 +1740,7 @@ class Player : public Unit, public GridObject<Player>
         }
         void AddSpellCooldown(uint32 spell_id, uint32 itemid, time_t end_time);
         void SendCooldownEvent(SpellEntry const* spellInfo);
-        void ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs);
+        void ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs) override;
         void RemoveSpellCooldown(uint32 spell_id, bool update = false);
         void SendClearCooldown(uint32 spell_id, Unit* target);
         void RemoveArenaSpellCooldowns();
@@ -1924,15 +1924,15 @@ class Player : public Unit, public GridObject<Player>
         float GetHealthBonusFromStamina();
         float GetManaBonusFromIntellect();
 
-        bool UpdateStats(Stats stat);
-        bool UpdateAllStats();
-        void UpdateResistances(uint32 school);
-        void UpdateArmor();
-        void UpdateMaxHealth();
-        void UpdateMaxPower(Powers power);
-        void UpdateAttackPowerAndDamage(bool ranged = false);
+        bool UpdateStats(Stats stat) override;
+        bool UpdateAllStats() override;
+        void UpdateResistances(uint32 school) override;
+        void UpdateArmor() override;
+        void UpdateMaxHealth() override;
+        void UpdateMaxPower(Powers power) override;
+        void UpdateAttackPowerAndDamage(bool ranged = false) override;
         void UpdateShieldBlockValue();
-        void UpdateDamagePhysical(WeaponAttackType attType);
+        void UpdateDamagePhysical(WeaponAttackType attType) override;
         void UpdateSpellDamageAndHealingBonus();
 
         void CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, float& min_damage, float& max_damage);
@@ -1985,8 +1985,8 @@ class Player : public Unit, public GridObject<Player>
             m_session = s;
         }
 
-        void BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) const;
-        void DestroyForPlayer(Player* target, bool onDeath = false) const;
+        void BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) const override;
+        void DestroyForPlayer(Player* target, bool onDeath = false) const override;
         void SendDelayResponse(const uint32);
         void SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP, bool RafBonus = false);
 
@@ -2009,15 +2009,15 @@ class Player : public Unit, public GridObject<Player>
         void SendResetInstanceFailed(uint32 reason, uint32 MapId);
         void SendResetFailedNotify(uint32 mapid);
 
-        virtual bool SetPosition(float x, float y, float z, float orientation, bool teleport = false);
+        bool SetPosition(float x, float y, float z, float orientation, bool teleport = false) override;
         bool SetPosition(const Position& pos, bool teleport = false)
         {
             return SetPosition(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), teleport);
         }
 
         void UpdateUnderwaterState(Map* m, float x, float y, float z);
-        void SendMessageToSet(WorldPacket *data, bool self) {SendMessageToSetInRange(data, GetVisibilityRange(), self); };// overwrite Object::SendMessageToSet
-        void SendMessageToSetInRange(WorldPacket* data, float fist, bool self);// overwrite Object::SendMessageToSetInRange
+        void SendMessageToSet(WorldPacket *data, bool self) override {SendMessageToSetInRange(data, GetVisibilityRange(), self); };// overwrite Object::SendMessageToSet
+        void SendMessageToSetInRange(WorldPacket* data, float fist, bool self) override;// overwrite Object::SendMessageToSetInRange
         void SendMessageToSetInRange(WorldPacket* data, float dist, bool self, bool own_team_only);
 
         Corpse* GetCorpse() const;
@@ -2185,7 +2185,7 @@ class Player : public Unit, public GridObject<Player>
         void UpdateCorpseReclaimDelay();
         void SendCorpseReclaimDelay(bool load = false);
 
-        uint32 GetShieldBlockValue() const;                 // overwrite Unit version (virtual)
+        uint32 GetShieldBlockValue() const override;                 // overwrite Unit version (virtual)
         bool CanParry() const
         {
             return m_canParry;
@@ -2525,7 +2525,7 @@ class Player : public Unit, public GridObject<Player>
 
         bool IsVisibleGloballyFor(Player* pl) const;
 
-        void UpdateObjectVisibility(bool forced = true);
+        void UpdateObjectVisibility(bool forced = true) override;
         void UpdateVisibilityForPlayer();
         void UpdateVisibilityOf(WorldObject* target);
         void UpdateTriggerVisibility();
@@ -2696,8 +2696,8 @@ class Player : public Unit, public GridObject<Player>
         }
 
         // Set map to player and add reference
-        void SetMap(Map* map);
-        void ResetMap();
+        void SetMap(Map* map) override;
+        void ResetMap() override;
 
         bool isAllowedToLoot(const Creature* creature);
 
@@ -2724,11 +2724,11 @@ class Player : public Unit, public GridObject<Player>
             m_rafLink = status;
         }
 
-        bool SetFeatherFall(bool apply, bool packetOnly = false);
-        bool SetHover(bool apply, bool packetOnly = false);
-        bool SetCanFly(bool apply, bool packetOnly = false);
-        bool SetLevitate(bool apply, bool packetOnly = false);
-        bool SetWaterWalking(bool enable, bool packetOnly = false);
+        bool SetFeatherFall(bool apply, bool packetOnly = false) override;
+        bool SetHover(bool apply, bool packetOnly = false) override;
+        bool SetCanFly(bool apply, bool packetOnly = false) override;
+        bool SetLevitate(bool apply, bool packetOnly = false) override;
+        bool SetWaterWalking(bool enable, bool packetOnly = false) override;
 
         void ScheduleDelayedOperation(uint32 operation)
         {
@@ -2805,8 +2805,8 @@ class Player : public Unit, public GridObject<Player>
         void _SaveTutorials();
         void _SaveBGData();
 
-        void _SetCreateBits(UpdateMask* updateMask, Player* target) const;
-        void _SetUpdateBits(UpdateMask* updateMask, Player* target) const;
+        void _SetCreateBits(UpdateMask* updateMask, Player* target) const override;
+        void _SetUpdateBits(UpdateMask* updateMask, Player* target) const override;
 
         /*********************************************************/
         /***             ENVIRONMENTAL SYSTEM                 ***/
@@ -2962,9 +2962,9 @@ class Player : public Unit, public GridObject<Player>
 
         DeclinedName* m_declinedname;
 
-        bool CanAlwaysSee(WorldObject const* obj) const;
+        bool CanAlwaysSee(WorldObject const* obj) const override;
 
-        bool IsAlwaysDetectableFor(WorldObject const* seer) const;
+        bool IsAlwaysDetectableFor(WorldObject const* seer) const override;
 
     private:
         // internal common parts for CanStore/StoreItem functions

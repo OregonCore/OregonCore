@@ -32,10 +32,10 @@ class Totem : public Minion
 {
     public:
         explicit Totem(SummonPropertiesEntry const* properties, Unit* owner);
-        virtual ~Totem() {};
-        void Update(uint32 time);
-        void InitStats(uint32 duration);
-        void InitSummon();
+        ~Totem() override {};
+        void Update(uint32 time) override;
+        void InitStats(uint32 duration) override;
+        void InitSummon() override;
         void UnSummon();
         uint32 GetSpell() const
         {
@@ -50,22 +50,22 @@ class Totem : public Minion
             return m_type;
         }
 
-        bool UpdateStats(Stats /*stat*/)
+        bool UpdateStats(Stats /*stat*/) override
         {
             return true;
         }
-        bool UpdateAllStats()
+        bool UpdateAllStats() override
         {
             return true;
         }
-        void UpdateResistances(uint32 /*school*/) {}
-        void UpdateArmor() {}
-        void UpdateMaxHealth() {}
-        void UpdateMaxPower(Powers /*power*/) {}
-        void UpdateAttackPowerAndDamage(bool /*ranged*/) {}
-        void UpdateDamagePhysical(WeaponAttackType /*attType*/) {}
+        void UpdateResistances(uint32 /*school*/) override {}
+        void UpdateArmor() override {}
+        void UpdateMaxHealth() override {}
+        void UpdateMaxPower(Powers /*power*/) override {}
+        void UpdateAttackPowerAndDamage(bool /*ranged*/) override {}
+        void UpdateDamagePhysical(WeaponAttackType /*attType*/) override {}
 
-        bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const;
+        bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const override;
 
     protected:
         TotemType m_type;

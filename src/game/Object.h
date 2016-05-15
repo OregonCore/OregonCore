@@ -46,6 +46,8 @@
 #define NOMINAL_MELEE_RANGE         5.0f
 #define MELEE_RANGE                 (NOMINAL_MELEE_RANGE - MIN_MELEE_REACH * 2) //center to center for players
 
+#define GRID_SEARCH_ALL_ENTRIES     0
+
 uint32 GuidHigh2TypeId(uint32 guid_hi);
 
 enum NotifyFlags
@@ -785,7 +787,7 @@ class FlaggedValuesArray32
 class WorldObject : public Object, public WorldLocation
 {
     public:
-        virtual ~WorldObject();
+        ~WorldObject() override;
 
         virtual void Update (uint32 /*time_diff*/) { }
 
@@ -1023,12 +1025,12 @@ class WorldObject : public Object, public WorldLocation
         GameObject* FindNearestGameObject(uint32 entry, float range);
         GameObject* FindNearestGameObjectOfType(GameobjectTypes type, float range) const;
 
-        void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& gameobjectList, uint32 entry, float maxSearchRange) const;
-        void GetCreatureListWithEntryInGrid(std::list<Creature*>& creatureList, uint32 entry, float maxSearchRange) const;
+        void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& gameobjectList, uint32 entry = GRID_SEARCH_ALL_ENTRIES, float maxSearchRange = 250.0f) const;
+        void GetCreatureListWithEntryInGrid(std::list<Creature*>& creatureList, uint32 entry = GRID_SEARCH_ALL_ENTRIES, float maxSearchRange = 250.0f) const;
 
         void DestroyForNearbyPlayers();
         virtual void UpdateObjectVisibility(bool forced = true);
-        void BuildUpdate(UpdateDataMapType&);
+        void BuildUpdate(UpdateDataMapType&) override;
 
         //relocation and visibility system functions
         void AddToNotify(uint16 f)

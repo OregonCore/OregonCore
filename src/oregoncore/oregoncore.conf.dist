@@ -665,6 +665,11 @@ ChatLogTimestamp = 0
 #        Default: 0 (false)
 #                 1 (true)
 #
+#    InstantFlightPaths
+#        Flight paths will teleport players instantly, instead of activating the taxi path.
+#        Default: 0 (false)
+#                 1 (true)
+#
 #    AlwaysMaxSkillForLevel
 #        Players will automatically gain max level dependent (weapon/defense)
 #         skill when logging in, leveling up etc.
@@ -801,6 +806,7 @@ StartArenaPoints = 0
 InstantLogout = 1
 DisableWaterBreath = 4
 AllFlightPaths = 0
+InstantFlightPaths = 0
 AlwaysMaxSkillForLevel = 0
 ActivateWeather = 1
 CastUnstuck = 1
