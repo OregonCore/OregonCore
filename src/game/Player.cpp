@@ -18177,7 +18177,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_i
     ModifyMoney(-(int32)totalcost);
 
     // Check for Instant Flight configuration
-    if (sWorld.getConfig(CONFIG_INSTANT_TAXI))
+    if (sWorld.getConfig(CONFIG_INSTANT_TAXI) && !totalcost)
     {
         TaxiNodesEntry const* lastnode = sTaxiNodesStore.LookupEntry(nodes[nodes.size()-1]);
         m_taxi.ClearTaxiDestinations();
