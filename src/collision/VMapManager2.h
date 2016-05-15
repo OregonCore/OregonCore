@@ -22,6 +22,7 @@
 #include "Utilities/UnorderedMap.h"
 #include "Platform/Define.h"
 #include <ace/Thread_Mutex.h>
+#include <vector>
 
 //===========================================================
 
