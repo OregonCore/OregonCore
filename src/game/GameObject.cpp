@@ -518,6 +518,10 @@ void GameObject::Update(uint32 diff)
                     SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags);
             }
 
+            GameObject* linkedTrap = FindLinkedTrap();
+            if (linkedTrap)
+                linkedTrap->SetLootState(GO_JUST_DEACTIVATED);
+
             if (!m_respawnDelayTime)
                 return;
 
@@ -888,6 +892,31 @@ bool GameObject::ActivateToQuest(Player* pTarget) const
     return false;
 }
 
+GameObject* GameObject::FindLinkedTrap()
+{
+    uint32 trapEntry = GetGOInfo()->GetLinkedGameObjectEntry();
+    GameObjectInfo const* trapInfo = sGOStorage.LookupEntry<GameObjectInfo>(trapEntry);
+    if (!trapInfo || trapInfo->type != GAMEOBJECT_TYPE_TRAP)
+        return NULL;
+
+    float range = 1.0f;
+
+    GameObject* trapGO = NULL;
+    {
+        // using original GO distance
+        CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
+        Cell cell(p);
+
+        Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*this, trapEntry, range);
+        Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(trapGO, go_check);
+
+        TypeContainerVisitor<Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer > object_checker(checker);
+        cell.Visit(p, object_checker, *GetMap(), *this, range);
+    }
+
+    return trapGO;
+}
+
 void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
 {
     GameObjectInfo const* trapInfo = sGOStorage.LookupEntry<GameObjectInfo>(trapEntry);
@@ -898,26 +927,12 @@ void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
     if (!trapSpell)                                          // checked at load already
         return;
 
-    float range = GetSpellMaxRange(sSpellRangeStore.LookupEntry(trapSpell->rangeIndex));
-
-    // search nearest linked GO
-    GameObject* trapGO = NULL;
-    {
-        // using original GO distance
-        CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
-        Cell cell(p);
-
-        Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*target, trapEntry, range);
-        Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(trapGO, go_check);
-
-        TypeContainerVisitor<Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer > object_checker(checker);
-        cell.Visit(p, object_checker, *GetMap(), *target, range);
-    }
+    GameObject* trapGO = FindLinkedTrap();
 
     // found correct GO
     // FIXME: when GO casting will be implemented trap must cast spell to target
     if (trapGO)
-        target->CastSpell(target, trapSpell, true);
+        trapGO->CastSpell(target, trapInfo->trap.spellId, true);
 }
 
 GameObject* GameObject::LookupFishingHoleAround(float range)
