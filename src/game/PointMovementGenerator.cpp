@@ -137,6 +137,10 @@ void EffectMovementGenerator::Finalize(Unit& unit)
         else
             unit.GetMotionMaster()->Initialize();
     }
+    else if (!unit.IsAlive())
+    {
+        unit.GetMotionMaster()->MoveIdle();
+    }
 
     if (unit.ToCreature()->AI())
         unit.ToCreature()->AI()->MovementInform(EFFECT_MOTION_TYPE, m_Id);
