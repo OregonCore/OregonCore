@@ -899,6 +899,8 @@ void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
         return;
 
     float range = GetSpellMaxRange(sSpellRangeStore.LookupEntry(trapSpell->rangeIndex));
+    if (range < CONTACT_DISTANCE)
+        range = CONTACT_DISTANCE;
 
     // search nearest linked GO
     GameObject* trapGO = NULL;
