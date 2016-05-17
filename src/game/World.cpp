@@ -65,6 +65,7 @@
 #include "DisableMgr.h"
 #include "ConditionMgr.h"
 #include "VMapManager2.h"
+#include "M2Stores.h"
 
 #include <ace/Dirent.h>
 
@@ -1244,6 +1245,8 @@ void World::SetInitialWorldSettings()
  
     MMAP::MMapManager* mmmgr = MMAP::MMapFactory::createOrGetMMapManager();
     mmmgr->InitializeThreadUnsafe(mapIds);
+
+    LoadM2Cameras(m_dataPath);
 
     sConsole.SetLoadingLabel("Loading Script Names...");
     sObjectMgr.LoadScriptNames();
