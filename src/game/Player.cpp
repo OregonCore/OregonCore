@@ -1150,9 +1150,79 @@ void Player::Update(uint32 p_time)
         }
     }
 
-    if (HasUnitState(UNIT_STATE_MELEE_ATTACKING))
+    if (HasUnitState(UNIT_STATE_MELEE_ATTACKING) && !HasUnitState(UNIT_STATE_CASTING))
     {
-        UpdateMeleeAttackingState();
+        if (Unit* victim = getVictim())
+        {
+            // default combat reach 10
+            /// @todo add weapon, skill check
+
+            if (isAttackReady(BASE_ATTACK))
+            {
+                if (!IsWithinMeleeRange(victim))
+                {
+                    setAttackTimer(BASE_ATTACK, 100);
+                    if (m_swingErrorMsg != 1)               // send single time (client auto repeat)
+                    {
+                        SendAttackSwingNotInRange();
+                        m_swingErrorMsg = 1;
+                    }
+                }
+                //120 degrees of radiant range
+                else if (!HasInArc(2 * float(M_PI) / 3, victim))
+                {
+                    setAttackTimer(BASE_ATTACK, 100);
+                    if (m_swingErrorMsg != 2)               // send single time (client auto repeat)
+                    {
+                        SendAttackSwingBadFacingAttack();
+                        m_swingErrorMsg = 2;
+                    }
+                }
+                else
+                {
+                    m_swingErrorMsg = 0;                    // reset swing error state
+
+                    // prevent base and off attack in same time, delay attack at 0.2 sec
+                    if (haveOffhandWeapon())
+                    {
+                        uint32 off_att = getAttackTimer(OFF_ATTACK);
+                        if (off_att < ATTACK_DISPLAY_DELAY)
+                            setAttackTimer(OFF_ATTACK, ATTACK_DISPLAY_DELAY);
+                    }
+
+                    // do attack
+                    AttackerStateUpdate(victim, BASE_ATTACK);
+                    resetAttackTimer(BASE_ATTACK);
+                }
+            }
+
+            if (haveOffhandWeapon() && isAttackReady(OFF_ATTACK))
+            {
+                if (!IsWithinMeleeRange(victim))
+                    setAttackTimer(OFF_ATTACK, 100);
+                else if (!HasInArc(2 * float(M_PI) / 3, victim))
+                    setAttackTimer(OFF_ATTACK, 100);
+                else
+                {
+                    // prevent base and off attack in same time, delay attack at 0.2 sec
+                    uint32 base_att = getAttackTimer(BASE_ATTACK);
+                    if (base_att < ATTACK_DISPLAY_DELAY)
+                        setAttackTimer(BASE_ATTACK, ATTACK_DISPLAY_DELAY);
+
+                    // do attack
+                    AttackerStateUpdate(victim, OFF_ATTACK);
+                    resetAttackTimer(OFF_ATTACK);
+                }
+            }
+
+            /*Unit* owner = victim->GetOwner();
+            Unit* u = owner ? owner : victim;
+            if (u->IsPvP() && (!duel || duel->opponent != u))
+            {
+                UpdatePvP(true);
+                RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_ENTER_PVP_COMBAT);
+            }*/
+        }
     }
 
     if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING))
