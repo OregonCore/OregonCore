@@ -2755,12 +2755,15 @@ CreatureAI* GetAI_npc_socrethar(Creature* pCreature)
 #define KAYLAN_TEXT_4 "You're wrong, Adyen. My mind has never been clearer."
 #define KAYLAN_TEXT_5 "Yes... master."
 #define ADYEN_TEXT_3 "Socrethar is clouding your mind, Kaylaan! You do not mean these words! I remember training you when you were but a youngling. Your will was stron even then!"
+#define KAYLAAN_A_DARK_PACT_COMPLETE_TEXT "It is hopeless... I've done all I can."
 
 #define SPELL_HOLY_SLAM 37572
 #define SPELL_DIVINE_SHIELD 13874
 #define SPELL_BURNING_LIGHT 37552
 #define SPELL_AVENGERS_SHIELD 37554
 #define SPELL_RESSURECTION 35599
+
+#define QUEST_A_DARK_PACT 10380
 
 struct npc_kaylaanAI : public ScriptedAI
 {
@@ -3053,6 +3056,14 @@ struct npc_kaylaanAI : public ScriptedAI
 CreatureAI* GetAI_npc_kaylaan(Creature* pCreature)
 {
 	return new npc_kaylaanAI(pCreature);
+}
+
+bool ChooseReward_npc_kaylaan(Player* pPlayer, Creature* pCreature, Quest const* quest, uint32 /* item */)
+{
+	if (quest->GetQuestId() == QUEST_A_DARK_PACT)
+		pCreature->Say(KAYLAAN_A_DARK_PACT_COMPLETE_TEXT, LANG_UNIVERSAL, pPlayer->GetGUID());
+	
+	return false;
 }
 
 #define GOSSIP_ITEM_ALDOR_EVENT_START "I'm ready, Adyen."
@@ -4691,6 +4702,7 @@ void AddSC_netherstorm()
 	newscript = new Script;
 	newscript->Name = "npc_kaylaan";
 	newscript->GetAI = &GetAI_npc_kaylaan;
+	newscript->pChooseReward = &ChooseReward_npc_kaylaan;
 	newscript->RegisterSelf();
 
 	newscript = new Script;
