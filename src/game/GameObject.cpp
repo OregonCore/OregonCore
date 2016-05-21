@@ -900,6 +900,8 @@ GameObject* GameObject::FindLinkedTrap()
         return NULL;
 
     float range = 1.0f;
+    if (range < CONTACT_DISTANCE)
+        range = CONTACT_DISTANCE;
 
     GameObject* trapGO = NULL;
     {

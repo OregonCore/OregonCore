@@ -1,64 +1,77 @@
-/*! \page loading_db Loading The Database
+/*! \page loading_db Setting up the Database
     \tableofcontents
-
-To do any meaningful work with the SQL database, you will need to decide what tool(s) you want to use. On Microsoft Windows, some popular choices are SQLyog, Navicat and Heidi SQL. On Linux systems, most administrators use the command-line mysql tools. Some of us augment those with phpMyAdmin, available in most distributions or as source.
 
 This guide will not assume that you are using any particular tool. It is up to you to learn how to create a database, import an SQL file and the other required actions. A good place to start learning is the on-line help for your SQL tool. If you are using the command-line tools, the MySQL website has a very good help section.
 
-As you may recall, we cloned the oregondb repository as part of the Download and Build phase of our install. If you skipped that step, go back and clone the database repo now. You will need it to continue.
+Some of our suggested SQL editor choices for **Microsoft Windows** are:
 
-\section Creating Creating
+ - SQLyog
+ - NaviCat
+ - Heidi SQL
+
+For Unix based operating systems, most opt for the SQL CLI (*command-line interface*), but you are welcome to use whichever you please.
+
+\section The_Initial_Setup The Initial Setup
 
 OregonCore requires three databases to function. They are:
 
-- realmd database — manages the data for accounts and other authentication functions.
-- characters database — manages all of the data for every character.
-- world database — contains all sorts of data required for the server to create and run the realm. 
+- **realmd database** — This database manages the data for accounts and other authentication functions.
+- **characters database** — This database manages all of the data for each individual character.
+- **world database** — This database contains all sorts of data required for the world server to function, including but not limited to mob data and pathing information.
 
-Before we can work with these databases, they must be created in the MySQL server. So let's begin by doing the following:
+Before we can work with these databases, they must be created in the MySQL server. The three databases that must be setup are:
 
-1. Create a new database called realmd.
-2. Create a new database called characters.
-3. Create a new database called world. 
+ - **realmd**
+ - **characters**
+ - **world**
+ 
+ A simple way to do this is to use the create_mysql.sql file located in the SQL folder of your OregonCore repository. This will create the Oregon SQL user and databases.
+ 
+> **Important:** The names of each database is not restricted to what you see above and in the case you need to name them differently, it won't cause any problems as long as you update your configuration information.
 
-It is possible to name these anything you like, but for the purpose of learning how to install the server, we will use these names.
 
-You can also use create_mysql.sql file located in OregonCore repository in sql folder to create Oregon user and databases.
 
-\section Loading_realmd Loading realmd database
+\section Loading_realmd Loading the "realmd" database
 
 1. Using whatever SQL tool you have chosen, select the new realmd database.
-2. Execute the realmd.sql file found in your server sql directory.
+2. Execute the realmd.sql file found in the OregonCore SQL directory.
 
-\section Loading_chars Loading characters database
+\section Loading_chars Loading the "characters" database
 
 1. Using whatever SQL tool you have chosen, select the new characters database.
-2. Execute the characters.sql file found in your server sql directory.
+2. Execute the characters.sql file found in the OregonCore SQL directory.
 
-\section Loading_world Loading world database
+\section Loading_world Loading the "world" database
 
-1. Unpack the oregon_database.zip file that we pulled from the repo.
-2. Using whatever SQL tool you have chosen, select the new world database.
-3. Execute the ODB file oregon_database.sql.
+1. Using whatever SQL tool you have chosen, select the new world database.
+2. Execute the world.sql file found in the OregonCore SQL directory.
 
-\section Updates Updates
+\section Populating_world Populating the "world" database
+Frequently, OregonCore releases official dumps of our most up to date databases. These are made for easy installation and can be downloaded from our <a href="https://github.com/OregonCore/OregonCore/releases/tag/BaseDatabase" rel="nofollow">GitHub page.</a>
 
-Core is capable of updating itself. When you run it, it will automatically update database for you.<br>
-As of revision 2703 ([https://bitbucket.org/oregon/oregoncore/commits/ac4dc7fd707d ac4dc7fd707d])
+Once you've downloaded the latest database dump, execute it on your "world" database.
+
+\section Updating Updating the Database
+
+A fantastic feature of OregonCore is that our databases are capable of updating themselves upon starting the core. This feature must be enabled in your server configuration files.
+This feature was added in <a href="https://bitbucket.org/oregon/oregoncore/commits/ac4dc7fd707d ac4dc7fd707d" rel="nofollow">Revision 2703</a> 
 
 \section Troubleshooting Troubleshooting
 
 \subsection MySQL MySQL Server has gone away
 
-If you encounter this error  Simply locate file named '''my.cnf''' or also '''my.ini''' - it should be in directory where you installed mysql or on linux its usually /etc/mysql/my.cnf.
+On a default configuration of MySQL, the max allowed data transfer is limited and installing a large database such as OregonCores can throw this error repeatedly. 
 
-Then change max_allowed_packet to some bigger value, like:
+Fortunately, the fix is simple. Locate your "**my.cnf**" or "**my.ini**", which will be located in the directory where you installed mysql. On unix based machines it is usually located at */etc/mysql/my.cnf.*
 
+Then change max_allowed_packet to a bigger value, such as:
 <pre>max_allowed_packet = 10M</pre>
+
+Re-run all the steps on the approriate database that you received the errors on, otherwise you might be at risk of losing data.
 
 \section Next06Step Next Step
 
-Now that our databases are loaded, we can move on to configuration!
+Now that our databases are setup and populated, we can move on to configuration!
 
 Continue to \ref basic_conf
 
