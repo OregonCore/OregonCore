@@ -1043,7 +1043,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         if (missInfo != SPELL_MISS_REFLECT)
         {
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, damageInfo.damage, m_attackType, m_spellInfo, m_canTrigger);
-            if (caster->GetTypeId() == TYPEID_PLAYER)
+			if (caster->GetTypeId() == TYPEID_PLAYER && !(m_spellInfo->AttributesEx4 & SPELL_ATTR4_CANT_TRIGGER_ITEM_SPELLS))
                 caster->ToPlayer()->CastItemCombatSpell(unitTarget, m_attackType, procVictim, procEx, m_spellInfo);
         }
 
