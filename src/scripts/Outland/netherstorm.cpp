@@ -4563,6 +4563,8 @@ struct npc_reflection_of_ya_sixAI : public ScriptedAI
 	Unit* FindTarget()
 	{
 		Unit* owner = me->GetOwner();
+		if (!owner)
+			return NULL;
 
 		Unit* target = owner->getAttackerForHelper();
 		if (target && !target->isCharmedOwnedByPlayerOrPlayer())
