@@ -1516,6 +1516,21 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     }
                     break;
                 }
+            case 39105: //Activate Nether-wraith Beacon
+                {
+                    Player* player = m_caster->ToPlayer();
+                    if (!player)
+                        break;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float x, y, z;
+                        player->GetClosePoint(x, y, z, player->GetObjectBoundingRadius(), 20.0f, i * static_cast<float>(M_PI));
+                        Creature* nether = player->SummonCreature(22408, x, y, z, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 180000);
+                        if (nether)
+                            nether->AI()->AttackStart(player);
+                    }
+                    break;
+                }
             }
 
             //All IconID Check in there
