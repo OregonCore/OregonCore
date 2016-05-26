@@ -4527,6 +4527,134 @@ bool ChooseReward_npc_commander_ameer(Player* pPlayer, Creature* pCreature, Ques
 	return false;
 }
 
+/*######
+## npc_reflection_of_ya_six
+######*/
+
+#define SPELL_BACKSTAB 7159
+#define SPELL_SINISTER_STRIKE 14873
+#define SPELL_SLICE_AND_DICE 6434
+
+#define YA_SIX_SPAWN_TEXT "Look at that handsome grouping of chaotic energies!"
+#define YA_SIX_WARN_ARCONUS_TEXT "Arconus is close. I can feel him. Take the northwest passage. He should be just up and around the corner. Be ready to battle!"
+#define YA_SIX_EXIT_CAVE_TEXT "This is the wrong way. Arconus is at the other end of the mine. You're not chickening out, are you, fleshling? I won't follow a coward."
+
+struct npc_reflection_of_ya_sixAI : public ScriptedAI
+{
+	npc_reflection_of_ya_sixAI(Creature* pCreature) : ScriptedAI(pCreature), doSpawnText(true),
+		doSenseArconusText(true), doExitCaveText(true) {}
+
+	bool doSpawnText;
+	bool doSenseArconusText;
+	bool doExitCaveText;
+	int32 backstabTimer;
+	int32 sinisterStrikeTimer;
+	int32 sliceAndDiceTimer;
+
+	void Reset() override
+	{
+		if (Unit* target = FindTarget())
+		{
+			me->SetInCombatWith(target);
+			AttackStart(target);
+		}
+	}
+
+	Unit* FindTarget()
+	{
+		Unit* owner = me->GetOwner();
+		if (!owner)
+			return NULL;
+
+		Unit* target = owner->getAttackerForHelper();
+		if (target && !target->isCharmedOwnedByPlayerOrPlayer())
+			return target;
+
+		target = me->getAttackerForHelper();
+		if (target && !target->isCharmedOwnedByPlayerOrPlayer())
+			return target;
+
+		return NULL;
+	}
+
+	void UpdateAI(const uint32 diff) override
+	{
+		Unit* owner = me->GetOwner();
+
+		if (!owner)
+			return;
+
+		if (doSpawnText)
+		{
+			doSpawnText = false;
+			me->MonsterSay(YA_SIX_SPAWN_TEXT, LANG_UNIVERSAL, 0);
+			me->setFaction(1797);
+		}
+
+		if (doSenseArconusText && me->GetDistance(3908.9350f, 2087.8901f, 156.0805f) < 8.0f)
+		{
+			doSenseArconusText = false;
+			me->MonsterSay(YA_SIX_WARN_ARCONUS_TEXT, LANG_UNIVERSAL, 0);
+		}
+
+		if (doExitCaveText && me->GetDistance(3759.427f, 2079.8112f, 152.6318f) < 8.0f)
+		{
+			doExitCaveText = false;
+			me->MonsterSay(YA_SIX_EXIT_CAVE_TEXT, LANG_UNIVERSAL, 0);
+		}
+
+		Unit* victim = me->getVictim();
+
+		if (!victim)
+		{
+			if (Unit* target = FindTarget())
+			{
+				me->SetInCombatWith(target);
+				AttackStart(target);
+			}
+			else if (!me->HasUnitState(UNIT_STATE_FOLLOW))
+			{
+				me->GetMotionMaster()->Clear();
+				me->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+			}
+		}
+		else
+		{
+			if (backstabTimer <= 0 && !victim->HasInArc(static_cast<float>(M_PI), me))
+			{
+				DoCastVictim(SPELL_BACKSTAB);
+				backstabTimer = 10000;
+			}
+			else
+				backstabTimer -= diff;
+
+			if (sinisterStrikeTimer <= 0)
+			{
+				DoCastVictim(SPELL_SINISTER_STRIKE);
+				sinisterStrikeTimer = 8000;
+			}
+			else
+				sinisterStrikeTimer -= diff;
+
+			if (sliceAndDiceTimer <= 0)
+			{
+				DoCast(me, SPELL_SLICE_AND_DICE);
+				sliceAndDiceTimer = 60000;
+			}
+			else
+				sliceAndDiceTimer -= diff;
+
+			DoMeleeAttackIfReady();
+		}
+	}
+};	
+
+CreatureAI* GetAI_reflection_of_ya_six(Creature* pCreature)
+{
+	return new npc_reflection_of_ya_sixAI(pCreature);
+}
+
+
 void AddSC_netherstorm()
 {
     Script* newscript;
@@ -4774,6 +4902,11 @@ void AddSC_netherstorm()
 	newscript->Name = "npc_commander_ameer";
 	newscript->GetAI = &GetAI_npc_commander_ameer;
 	newscript->pChooseReward = &ChooseReward_npc_commander_ameer;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_reflection_of_ya_six";
+	newscript->GetAI = &GetAI_reflection_of_ya_six;
 	newscript->RegisterSelf();
 }
 
