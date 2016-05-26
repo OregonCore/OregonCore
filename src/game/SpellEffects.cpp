@@ -2299,8 +2299,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
     // Vanish
     case 18461:
         {
-            m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_ROOT);
-            m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_DECREASE_SPEED);
+			m_caster->RemoveMovementImpairingAuras();
             m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_STALKED);
 
             // if this spell is given to NPC it must handle rest by it's own AI
