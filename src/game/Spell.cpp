@@ -1252,15 +1252,6 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
                     unit->CastSpell(unit, *i, true, 0, 0, m_caster->GetGUID());
         }
     }
-
-    //This is not needed with procflag patch
-    /*if (m_originalCaster)
-    {
-        if (m_customAttr & SPELL_ATTR_CU_EFFECT_HEAL)
-            m_originalCaster->ProcDamageAndSpell(unit, PROC_FLAG_HEAL, PROC_FLAG_NONE, 0, GetSpellSchoolMask(m_spellInfo), m_spellInfo);
-        if (m_originalCaster != unit && (m_customAttr & SPELL_ATTR_CU_EFFECT_DAMAGE))
-            m_originalCaster->ProcDamageAndSpell(unit, PROC_FLAG_HIT_SPELL, PROC_FLAG_STRUCK_SPELL, 0, GetSpellSchoolMask(m_spellInfo), m_spellInfo);
-    }*/
 }
 
 void Spell::DoAllEffectOnTarget(GOTargetInfo* target)
