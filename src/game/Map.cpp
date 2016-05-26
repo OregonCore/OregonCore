@@ -390,10 +390,11 @@ void Map::LoadGrid(float x, float y)
     EnsureGridLoaded(Cell(x, y));
 }
 
-bool Map::AddToMap(Player* player)
+bool Map::AddPlayerToMap(Player* player)
 {
     // Check if we are adding to correct map
     ASSERT (player->GetMap() == this);
+
     CellCoord p = Oregon::ComputeCellCoord(player->GetPositionX(), player->GetPositionY());
     if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
     {
@@ -407,6 +408,7 @@ bool Map::AddToMap(Player* player)
     EnsureGridLoadedForActiveObject(cell, player);
     AddToGrid(player, cell);
 
+	player->SetMap(this);
     player->AddToWorld();
 
     SendInitSelf(player);
@@ -421,6 +423,12 @@ bool Map::AddToMap(Player* player)
 template<class T>
 bool Map::AddToMap(T *obj)
 {
+	if (obj->IsInWorld()) // need some clean up later
+	{
+		obj->UpdateObjectVisibility(true);
+		return true;
+	}
+
     CellCoord p = Oregon::ComputeCellCoord(obj->GetPositionX(), obj->GetPositionY());
     if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
     {
@@ -429,12 +437,6 @@ bool Map::AddToMap(T *obj)
     }
 
     Cell cell(p);
-    if (obj->IsInWorld()) // need some clean up later
-    {
-        obj->UpdateObjectVisibility(true);
-        return true;
-    }
-
     if (obj->isActiveObject())
         EnsureGridLoadedForActiveObject(cell, obj);
     else
@@ -667,13 +669,16 @@ void Map::ProcessRelocationNotifies(const uint32& diff)
     }
 }
 
-void Map::RemoveFromMap(Player* player, bool remove)
+void Map::RemovePlayerFromMap(Player* player, bool remove)
 {
     player->RemoveFromWorld();
     SendRemoveTransports(player);
 
     player->UpdateObjectVisibility(true);
-    player->RemoveFromGrid();
+	if (player->IsInGrid())
+		player->RemoveFromGrid();
+	else
+		ASSERT(remove); //maybe deleted in logoutplayer when player is not in a map
 
     if (remove)
         DeleteFromWorld(player);
@@ -2303,7 +2308,7 @@ bool InstanceMap::CanEnter(Player* player)
 /*
     Do map specific checks and add the player to the map if successful.
 */
-bool InstanceMap::AddToMap(Player* player)
+bool InstanceMap::AddPlayerToMap(Player* player)
 {
     // @todo Not sure about checking player level: already done in HandleAreaTriggerOpcode
     // GMs still can teleport player in instance.
@@ -2406,7 +2411,7 @@ bool InstanceMap::AddToMap(Player* player)
     }
 
     // this will acquire the same mutex so it cannot be in the previous block
-    Map::AddToMap(player);
+	Map::AddPlayerToMap(player);
 
     if (i_data)
         i_data->OnPlayerEnter(player);
@@ -2422,13 +2427,13 @@ void InstanceMap::Update(const uint32& t_diff)
         i_data->Update(t_diff);
 }
 
-void InstanceMap::RemoveFromMap(Player* player, bool remove)
+void InstanceMap::RemovePlayerFromMap(Player* player, bool remove)
 {
     sLog.outDetail("MAP: Removing player '%s' from instance '%u' of map '%s' before relocating to another map", player->GetName(), GetInstanceId(), GetMapName());
     //if last player set unload timer
     if (!m_unloadTimer && m_mapRefManager.getSize() == 1)
         m_unloadTimer = m_unloadWhenEmpty ? MIN_UNLOAD_DELAY : std::max(sWorld.getConfig(CONFIG_INSTANCE_UNLOAD_DELAY), (uint32)MIN_UNLOAD_DELAY);
-    Map::RemoveFromMap(player, remove);
+	Map::RemovePlayerFromMap(player, remove);
     // for normal instances schedule the reset after all players have left
     SetResetSchedule(true);
 }
@@ -2612,7 +2617,7 @@ bool BattlegroundMap::CanEnter(Player* player)
     return Map::CanEnter(player);
 }
 
-bool BattlegroundMap::AddToMap(Player* player)
+bool BattlegroundMap::AddPlayerToMap(Player* player)
 {
     {
         Guard guard(*this);
@@ -2621,13 +2626,13 @@ bool BattlegroundMap::AddToMap(Player* player)
         // reset instance validity, battleground maps do not homebind
         player->m_InstanceValid = true;
     }
-    return Map::AddToMap(player);
+	return Map::AddPlayerToMap(player);
 }
 
-void BattlegroundMap::RemoveFromMap(Player* player, bool remove)
+void BattlegroundMap::RemovePlayerFromMap(Player* player, bool remove)
 {
     sLog.outDetail("MAP: Removing player '%s' from bg '%u' of map '%s' before relocating to other map", player->GetName(), GetInstanceId(), GetMapName());
-    Map::RemoveFromMap(player, remove);
+	Map::RemovePlayerFromMap(player, remove);
 }
 
 void BattlegroundMap::SetUnload()

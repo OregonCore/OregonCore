@@ -1031,6 +1031,11 @@ class WorldObject : public Object, public WorldLocation
 
         void DestroyForNearbyPlayers();
         virtual void UpdateObjectVisibility(bool forced = true);
+		virtual void UpdateObjectVisibilityOnCreate()
+		{
+			UpdateObjectVisibility(true);
+		}
+
         void BuildUpdate(UpdateDataMapType&) override;
 
         //relocation and visibility system functions
