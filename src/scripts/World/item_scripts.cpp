@@ -150,23 +150,6 @@ bool ItemUse_item_disciplinary_rod(Player* player, Item* _Item, SpellCastTargets
 }
 
 /*#####
-# item_nether_wraith_beacon
-#####*/
-
-bool ItemUse_item_nether_wraith_beacon(Player* pPlayer, Item* /*pItem*/, SpellCastTargets const& /*targets*/)
-{
-    if (pPlayer->GetQuestStatus(10832) == QUEST_STATUS_INCOMPLETE)
-    {
-        Creature* Nether;
-        Nether = pPlayer->SummonCreature(22408, pPlayer->GetPositionX(), pPlayer->GetPositionY() + 20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
-        Nether = pPlayer->SummonCreature(22408, pPlayer->GetPositionX(), pPlayer->GetPositionY() - 20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
-        if (Nether)
-            Nether->AI()->AttackStart(pPlayer);
-    }
-    return false;
-}
-
-/*#####
 # item_gor_dreks_ointment
 #####*/
 
@@ -496,11 +479,6 @@ void AddSC_item_scripts()
     newscript = new Script;
     newscript->Name = "item_draenei_fishing_net";
     newscript->pItemUse = &ItemUse_item_draenei_fishing_net;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "item_nether_wraith_beacon";
-    newscript->pItemUse = &ItemUse_item_nether_wraith_beacon;
     newscript->RegisterSelf();
 
     newscript = new Script;
