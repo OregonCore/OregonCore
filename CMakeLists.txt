@@ -10,8 +10,16 @@
 
 # Set projectname (must be done AFTER setting configurationtypes)
 project(OregonCore)
+
+# We require cmake >= 2.8
 cmake_minimum_required(VERSION 2.8)
-cmake_policy(VERSION 2.8)
+
+# CMake policies
+cmake_policy(SET CMP0005 OLD)
+cmake_policy(SET CMP0054 OLD)
+if (POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
+endif(POLICY CMP0043)
 
 # Set RPATH-handing (CMake parameters)
 set(CMAKE_SKIP_BUILD_RPATH 0)
@@ -23,12 +31,8 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH 1)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/macros")
 
 # build in preferred mode
-if( NOT CMAKE_BUILD_TYPE )
-    if (WITH_COREDEBUG)
-        set(CMAKE_BUILD_TYPE "Debug")
-    else()
-        set(CMAKE_BUILD_TYPE "Release")
-    endif()
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
 endif()
 
 include(CheckCXXSourceRuns)
@@ -50,6 +54,7 @@ include(CheckPlatform)
 find_package(PCHSupport)
 find_package(ACE REQUIRED)
 find_package(OpenSSL REQUIRED)
+
 if( NOT USE_MYSQL_SOURCES )
   find_package(MySQL REQUIRED)
 endif()

@@ -8,6 +8,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+# ToDo: Clean up CMake and opt
 SET(oregonframework_STAT_SRCS
    Policies/ObjectLifeTime.cpp
    Utilities/EventProcessor.cpp

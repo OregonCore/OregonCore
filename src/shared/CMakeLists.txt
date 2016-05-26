@@ -8,6 +8,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+# ToDo: Clean up CMake and opt
 file(GLOB_RECURSE sources_auth Auth/*.cpp Auth/*.h)
 file(GLOB_RECURSE sources_config Config/*.cpp Config/*.h)
 file(GLOB_RECURSE sources_database Database/*.cpp Database/*.h)
