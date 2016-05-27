@@ -1683,7 +1683,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
         {
             if (m_caster->GetDistance(unitTarget) <= (GetSpellMaxRange(m_spellInfo) - GetSpellRadius(m_spellInfo, effIndex, true)))
             {
-                if (unitTarget->GetTypeId() == TYPEID_UNIT && !(unitTarget->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))) //if UNIT_FLAG_NOT_SELECTABLE than field is occuped
+				if (unitTarget->GetTypeId() == TYPEID_UNIT && !(unitTarget->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL))) //if UNIT_FLAG_NOT_SELECTABLE than field is occuped
                 {
                     //cast transform Field
                     if (m_caster)

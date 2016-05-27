@@ -12676,7 +12676,7 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
             case CHARM_TYPE_POSSESS:
                 AddUnitState(UNIT_STATE_POSSESSED);
                 SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
-                charmer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+				charmer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
                 charmer->ToPlayer()->SetClientControl(this, true);
                 charmer->ToPlayer()->SetViewpoint(this, true);
                 charmer->ToPlayer()->PossessSpellInitialize();
@@ -12762,7 +12762,7 @@ void Unit::RemoveCharmedBy(Unit* charmer)
             case CHARM_TYPE_POSSESS:
                 charmer->ToPlayer()->SetClientControl(charmer, true);
                 charmer->ToPlayer()->SetViewpoint(this, false);
-                charmer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+				charmer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
                 RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
                 ClearUnitState(UNIT_STATE_POSSESSED);
                 break;

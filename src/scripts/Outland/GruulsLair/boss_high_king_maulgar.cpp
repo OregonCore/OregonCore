@@ -455,7 +455,7 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
         ArcaneShock_Timer = 10000;
         ArcaneExplosion_Timer = 20000;
 
-		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		me->SetRooted(true);
         //reset encounter
         if (pInstance)
             pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
@@ -680,7 +680,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
         SpellShield_Timer = 1500;
         BlastWave_Timer = 20000;
 
-		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		me->SetRooted(true);
         //reset encounter
         if (pInstance)
             pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);

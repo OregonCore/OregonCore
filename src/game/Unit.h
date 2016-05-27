@@ -519,7 +519,7 @@ enum UnitFlags
 {
     UNIT_FLAG_UNK_0                 = 0x00000001,
     UNIT_FLAG_NON_ATTACKABLE        = 0x00000002,           // not attackable
-    UNIT_FLAG_DISABLE_MOVE          = 0x00000004,
+	UNIT_FLAG_REMOVE_CLIENT_CONTROL = 0x00000004,           // This is a legacy flag used to disable movement player's movement while controlling other units, SMSG_CLIENT_CONTROL replaces this functionality clientside now. CONFUSED and FLEEING flags have the same effect on client movement as DISABLE_MOVE_CONTROL in addition to preventing spell casts/autoattack (they all allow climbing steeper hills and emotes while moving)
     UNIT_FLAG_PVP_ATTACKABLE        = 0x00000008,           // allow apply pvp rules to attackable state in addition to faction dependent state
     UNIT_FLAG_RENAME                = 0x00000010,
     UNIT_FLAG_PREPARATION           = 0x00000020,           // don't take reagents for spells with SPELL_ATTR5_NO_REAGENT_WHILE_PREP
@@ -531,7 +531,7 @@ enum UnitFlags
     UNIT_FLAG_PET_IN_COMBAT         = 0x00000800,           // in combat?, 2.0.8
     UNIT_FLAG_PVP                   = 0x00001000,
     UNIT_FLAG_SILENCED              = 0x00002000,           // silenced, 2.1.1
-    UNIT_FLAG_UNK_14                = 0x00004000,           // 2.0.8
+    UNIT_FLAG_CANNOT_SWIM           = 0x00004000,           // 2.0.8
     UNIT_FLAG_UNK_15                = 0x00008000,
     UNIT_FLAG_NOT_PL_SPELL_TARGET   = 0x00010000,           // Unit with that flag can not be direct target of player spell.
     UNIT_FLAG_PACIFIED              = 0x00020000,

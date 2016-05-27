@@ -79,7 +79,7 @@ struct boss_archaedasAI : public ScriptedAI
             pInstance->SetData (DATA_MINIONS, NOT_STARTED);    // respawn any dead minions
         me->setFaction(35);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		me->SetRooted(true);
 
     }
 
@@ -96,9 +96,9 @@ struct boss_archaedasAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        me->setFaction (14);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->setFaction(14);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+		me->SetRooted(false);
     }
 
     void SpellHit (Unit* /*caster*/, const SpellEntry* spell)
@@ -237,16 +237,16 @@ struct mob_archaedas_minionsAI : public ScriptedAI
 
         me->setFaction(35);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		me->SetRooted(true);
         me->RemoveAllAuras();
     }
 
     void EnterCombat(Unit* /*who*/)
     {
-        me->setFaction (14);
+        me->setFaction(14);
         me->RemoveAllAuras();
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+		me->SetRooted(false);
         amIAwake = true;
     }
 
@@ -380,15 +380,15 @@ struct mob_stonekeepersAI : public ScriptedAI
     {
         me->setFaction(35);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		me->SetRooted(true);
         me->RemoveAllAuras();
     }
 
     void EnterCombat(Unit* /*who*/)
     {
-        me->setFaction (14);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->setFaction(14);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+		me->SetRooted(false);
     }
 
     void UpdateAI(const uint32 /*diff*/)
