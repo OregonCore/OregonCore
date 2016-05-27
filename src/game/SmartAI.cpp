@@ -468,8 +468,7 @@ bool SmartAI::AssistPlayerInCombat(Unit* who)
     if (!who || !who->getVictim())
         return false;
 
-    //experimental (unknown) flag not present
-    if (!(me->GetCreatureTemplate()->type_flags & 0x001000/*CREATURE_TYPEFLAGS_AID_PLAYERS*/))
+	if (!(me->GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_CAN_ASSIST))
         return false;
 
     //not a player

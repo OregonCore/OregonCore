@@ -68,8 +68,7 @@ bool FollowerAI::AssistPlayerInCombat(Unit* pWho)
     if (!pWho || !pWho->getVictim())
         return false;
 
-    //experimental (unknown) flag not present
-    if (!(me->GetCreatureTemplate()->type_flags & CREATURE_TYPEFLAGS_UNK13))
+	if (!(me->GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_CAN_ASSIST))
         return false;
 
     //not a player

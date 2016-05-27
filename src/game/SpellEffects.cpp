@@ -4535,9 +4535,9 @@ void Spell::SummonClassPet(SpellEffIndex effIndex)
     if (m_CastItem)
     {
         ItemTemplate const *proto = m_CastItem->GetProto();
-        if (proto && proto->RequiredSkill == SKILL_ENGINERING)
+        if (proto && proto->RequiredSkill == SKILL_ENGINEERING)
         {
-            uint16 skill202 = caster->GetSkillValue(SKILL_ENGINERING);
+            uint16 skill202 = caster->GetSkillValue(SKILL_ENGINEERING);
             if (skill202)
             {
                 level = skill202 / 5;
@@ -7140,9 +7140,9 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* 
     if (m_CastItem && caster->GetTypeId() == TYPEID_PLAYER)
     {
         ItemTemplate const* proto = m_CastItem->GetProto();
-        if (proto && proto->RequiredSkill == SKILL_ENGINERING)
+        if (proto && proto->RequiredSkill == SKILL_ENGINEERING)
         {
-            uint16 skill202 = caster->ToPlayer()->GetSkillValue(SKILL_ENGINERING);
+            uint16 skill202 = caster->ToPlayer()->GetSkillValue(SKILL_ENGINEERING);
             if (skill202)
                 level = skill202 / 5;
         }

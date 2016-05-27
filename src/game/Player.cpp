@@ -2174,39 +2174,45 @@ bool Player::CanInteractWithQuestGiver(Object* questGiver)
 
 Creature* Player::GetNPCIfCanInteractWith(uint64 guid, uint32 npcflagmask)
 {
-    // unit checks
-    if (!guid || !IsInWorld() || isInFlight())
-        return NULL;
+	// unit checks
+	if (!guid)
+		return nullptr;
+
+	if (!IsInWorld())
+		return nullptr;
+
+	if (isInFlight())
+		return nullptr;
 
     // exist
-    Creature* unit = GetMap()->GetCreature(guid);
-    if (!unit)
-        return NULL;
-
-    // appropriate npc type
-    if (npcflagmask && !unit->HasFlag( UNIT_NPC_FLAGS, npcflagmask ))
-        return NULL;
+	Creature* creature = GetMap()->GetCreature(guid);
+	if (!creature)
+		return nullptr;
 
     // if a dead unit should be able to talk - the creature must be alive and have special flags
-    if (!unit->IsAlive())
-        return NULL;
+	if (!IsAlive() && !(creature->GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_GHOST_VISIBLE))
+		return nullptr;
 
-    if (IsAlive() && unit->isInvisibleForAlive())
-        return NULL;
+	if (IsAlive() && creature->isInvisibleForAlive())
+		return nullptr;
+
+	// appropriate npc type
+	if (npcflagmask && !creature->HasFlag(UNIT_NPC_FLAGS, npcflagmask))
+		return nullptr;
 
     // not allow interaction under control
-    if (unit->GetCharmerGUID())
-        return NULL;
+    if (creature->GetCharmerGUID())
+		return nullptr;
 
     // not enemy
-    if (unit->IsHostileTo(this))
-        return NULL;
+    if (creature->IsHostileTo(this))
+		return nullptr;
 
     // not too far
-    if (!unit->IsWithinDistInMap(this, INTERACTION_DISTANCE))
-        return NULL;
+    if (!creature->IsWithinDistInMap(this, INTERACTION_DISTANCE))
+		return nullptr;
 
-    return unit;
+    return creature;
 }
 
 GameObject* Player::GetGameObjectIfCanInteractWith(uint64 guid, GameobjectTypes type) const
@@ -2239,7 +2245,7 @@ GameObject* Player::GetGameObjectIfCanInteractWith(uint64 guid, GameobjectTypes 
                           go->GetGUIDLow(), GetName(), GetGUIDLow(), go->GetDistance(this));
         }
     }
-    return NULL;
+	return nullptr;
 }
 
 bool Player::IsUnderWater() const

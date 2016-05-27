@@ -125,7 +125,7 @@ bool GOHello_go_barov_journal(Player* pPlayer, GameObject* /*pGO*/)
 
 bool GOHello_go_field_repair_bot_74A(Player* pPlayer, GameObject* /*pGO*/)
 {
-    if (pPlayer->HasSkill(SKILL_ENGINERING) && pPlayer->GetBaseSkillValue(SKILL_ENGINERING) >= 300 && !pPlayer->HasSpell(22704))
+	if (pPlayer->HasSkill(SKILL_ENGINEERING) && pPlayer->GetBaseSkillValue(SKILL_ENGINEERING) >= 300 && !pPlayer->HasSpell(22704))
         pPlayer->CastSpell(pPlayer, 22864, false);
     return true;
 }

@@ -1748,7 +1748,7 @@ bool Creature::isWorldBoss() const
     if (IsPet())
         return false;
 
-    return GetCreatureTemplate()->rank == CREATURE_ELITE_WORLDBOSS;
+	return (GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_BOSS_MOB) != 0;
 }
 
 SpellEntry const* Creature::reachWithSpellAttack(Unit* victim)
