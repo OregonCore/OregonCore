@@ -954,7 +954,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
         //check black fields first
         for (std::list<Unit*>::iterator itr = medivhAI->BlackFieldList.begin(); itr != medivhAI->BlackFieldList.end(); itr++)
         {
-            if ((*itr)->GetDistance(me) <= SpellRange && (*itr)->GetDistance(target) < distance && !(*itr)->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+			if ((*itr)->GetDistance(me) <= SpellRange && (*itr)->GetDistance(target) < distance && !(*itr)->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL))
             {
                 victim = (*itr);
                 distance = (*itr)->GetDistance(target);
@@ -964,7 +964,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
         //now check for closer white fields
         for (std::list<Unit*>::iterator itr = medivhAI->WhiteFieldList.begin(); itr != medivhAI->WhiteFieldList.end(); itr++)
         {
-            if ((*itr)->GetDistance(me) <= SpellRange && (*itr)->GetDistance(target) < distance && !(*itr)->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+			if ((*itr)->GetDistance(me) <= SpellRange && (*itr)->GetDistance(target) < distance && !(*itr)->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL))
             {
                 victim = (*itr);
                 distance = (*itr)->GetDistance(target);
@@ -1195,12 +1195,12 @@ struct Move_triggerAI : public ScriptedAI
         if (pInstance->GetData(TYPE_CHESS) != IN_PROGRESS)
             return;
 
-        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+		if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL))
         {
             if (search_timer < diff)
             {
                 if (!HasMoveMarker())
-                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+					me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
 
                 search_timer = 2000;
             }
@@ -1214,7 +1214,7 @@ struct Move_triggerAI : public ScriptedAI
         if (spell->Id == SPELL_TRANSFORM_FIELD)
         {
             search_timer = 3000;
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+			me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
         }
     }
 };
@@ -1455,7 +1455,7 @@ bool GossipSelect_chess_npc(Player* player, Creature* _Creature, uint32 sender, 
         if (pInstance && _Creature)
         {
             player->CastSpell(_Creature, SPELL_CONTROL_PIECE, true);
-            _Creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+			_Creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
             player->SetClientControl(_Creature, false);
 
             if ((_Creature->GetEntry() == NPC_KING_A || _Creature->GetEntry() == NPC_KING_H) && pInstance->GetData(TYPE_CHESS) == NOT_STARTED)

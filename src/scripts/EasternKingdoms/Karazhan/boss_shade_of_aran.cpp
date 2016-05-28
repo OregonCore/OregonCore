@@ -511,7 +511,7 @@ struct boss_aranAI : public ScriptedAI
                 ElementalOne->SetInCombatWithZone();
                 ElementalOne->CombatStart(pTarget);
                 ElementalOne->setFaction(me->getFaction());
-                ElementalOne->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+				ElementalOne->SetRooted(true);
                 ElementalOne->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                 ElementalOne->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
             }
@@ -526,7 +526,7 @@ struct boss_aranAI : public ScriptedAI
                 ElementalTwo->SetInCombatWithZone();
                 ElementalTwo->CombatStart(pTarget);
                 ElementalTwo->setFaction(me->getFaction());
-                ElementalTwo->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+				ElementalTwo->SetRooted(true);
                 ElementalTwo->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                 ElementalTwo->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
             }
@@ -541,7 +541,7 @@ struct boss_aranAI : public ScriptedAI
                 ElementalThree->SetInCombatWithZone();
                 ElementalThree->CombatStart(pTarget);
                 ElementalThree->setFaction(me->getFaction());
-                ElementalThree->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+				ElementalThree->SetRooted(true);
                 ElementalThree->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                 ElementalThree->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
             }
@@ -556,7 +556,7 @@ struct boss_aranAI : public ScriptedAI
                 ElementalFour->SetInCombatWithZone();
                 ElementalFour->CombatStart(pTarget);
                 ElementalFour->setFaction(me->getFaction());
-                ElementalFour->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+				ElementalFour->SetRooted(true);
                 ElementalFour->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                 ElementalFour->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
             }

@@ -142,9 +142,8 @@ struct instance_uldaman : public ScriptedInstance
     {
         pCreature->setFaction(35);
         pCreature->RemoveAllAuras();
-        //creature->RemoveFlag (UNIT_FIELD_FLAGS,UNIT_FLAG_ANIMATION_FROZEN);
         pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		pCreature->SetRooted(true);
     }
 
     void SetDoor(uint64 guid, bool open)
@@ -172,7 +171,7 @@ struct instance_uldaman : public ScriptedInstance
             Creature* pTarget = instance->GetCreature(*i);
             if (!pTarget || !pTarget->IsAlive() || pTarget->getFaction() == 14)
                 continue;
-            pTarget->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+			pTarget->SetRooted(false);
             pTarget->setFaction(14);
             pTarget->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             return;        // only want the first one we find
@@ -253,7 +252,7 @@ struct instance_uldaman : public ScriptedInstance
             return;
 
         ironaya->setFaction(415);
-        ironaya->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		ironaya->SetRooted(false);
         ironaya->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 

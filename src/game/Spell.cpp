@@ -1043,7 +1043,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         if (missInfo != SPELL_MISS_REFLECT)
         {
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, damageInfo.damage, m_attackType, m_spellInfo, m_canTrigger);
-			if (caster->GetTypeId() == TYPEID_PLAYER && !(m_spellInfo->AttributesEx4 & SPELL_ATTR4_CANT_TRIGGER_ITEM_SPELLS))
+            if (caster->GetTypeId() == TYPEID_PLAYER && !(m_spellInfo->AttributesEx4 & SPELL_ATTR4_CANT_TRIGGER_ITEM_SPELLS))
                 caster->ToPlayer()->CastItemCombatSpell(unitTarget, m_attackType, procVictim, procEx, m_spellInfo);
         }
 
@@ -1256,15 +1256,6 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
                     unit->CastSpell(unit, *i, true, 0, 0, m_caster->GetGUID());
         }
     }
-
-    //This is not needed with procflag patch
-    /*if (m_originalCaster)
-    {
-        if (m_customAttr & SPELL_ATTR_CU_EFFECT_HEAL)
-            m_originalCaster->ProcDamageAndSpell(unit, PROC_FLAG_HEAL, PROC_FLAG_NONE, 0, GetSpellSchoolMask(m_spellInfo), m_spellInfo);
-        if (m_originalCaster != unit && (m_customAttr & SPELL_ATTR_CU_EFFECT_DAMAGE))
-            m_originalCaster->ProcDamageAndSpell(unit, PROC_FLAG_HIT_SPELL, PROC_FLAG_STRUCK_SPELL, 0, GetSpellSchoolMask(m_spellInfo), m_spellInfo);
-    }*/
 }
 
 void Spell::DoAllEffectOnTarget(GOTargetInfo* target)
@@ -2448,6 +2439,10 @@ void Spell::cast(bool skipCheck)
         SetExecutedCurrently(false);
         return;
     }
+
+    if (m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET)
+        if (Creature* pet = ObjectAccessor::GetCreature(*m_caster, m_caster->GetPetGUID()))
+            pet->DespawnOrUnsummon();
 
     // traded items have trade slot instead of guid in m_itemTargetGUID
     // set to real guid to be sent later to the client
@@ -4460,7 +4455,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 switch (SummonProperties->Category)
                 {
                 case SUMMON_CATEGORY_PET:
-                    if (m_caster->GetPetGUID())
+                    if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET && m_caster->GetPetGUID())
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
                     // intentional missing break, check both GetPetGUID() and GetCharmGUID for SUMMON_CATEGORY_PET
                 case SUMMON_CATEGORY_PUPPET:
@@ -4485,13 +4480,13 @@ SpellCastResult Spell::CheckCast(bool strict)
                 }
                 if (m_caster->GetPetGUID())  // let warlock do a replacement summon
                 {
-                    if (m_caster->isPlayer() && m_caster->getClass() == CLASS_WARLOCK)
+                    if (m_caster->isPlayer())
                     {
                         if (strict)          // starting cast, trigger pet stun (cast by pet so it doesn't attack player)
                             if (Pet* pet = m_caster->ToPlayer()->GetPet())
                                 pet->CastSpell(pet, 32752, true, NULL, NULL, pet->GetGUID());
                     }
-                    else
+                    else if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET)
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
                 }
 
@@ -4672,7 +4667,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_CHARM
                     || m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_POSSESS)
                 {
-                    if (m_caster->GetPetGUID())
+                    if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET && m_caster->GetPetGUID())
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
 
                     if (m_caster->GetCharmGUID())

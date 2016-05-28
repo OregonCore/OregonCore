@@ -1516,6 +1516,21 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     }
                     break;
                 }
+            case 39105: //Activate Nether-wraith Beacon
+                {
+                    Player* player = m_caster->ToPlayer();
+                    if (!player)
+                        break;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float x, y, z;
+                        player->GetClosePoint(x, y, z, player->GetObjectBoundingRadius(), 20.0f, i * static_cast<float>(M_PI));
+                        Creature* nether = player->SummonCreature(22408, x, y, z, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 180000);
+                        if (nether)
+                            nether->AI()->AttackStart(player);
+                    }
+                    break;
+                }
             }
 
             //All IconID Check in there
@@ -1668,7 +1683,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
         {
             if (m_caster->GetDistance(unitTarget) <= (GetSpellMaxRange(m_spellInfo) - GetSpellRadius(m_spellInfo, effIndex, true)))
             {
-                if (unitTarget->GetTypeId() == TYPEID_UNIT && !(unitTarget->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))) //if UNIT_FLAG_NOT_SELECTABLE than field is occuped
+                if (unitTarget->GetTypeId() == TYPEID_UNIT && !(unitTarget->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL))) //if UNIT_FLAG_NOT_SELECTABLE than field is occuped
                 {
                     //cast transform Field
                     if (m_caster)
@@ -2299,8 +2314,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
     // Vanish
     case 18461:
         {
-            m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_ROOT);
-            m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_DECREASE_SPEED);
+            m_caster->RemoveMovementImpairingAuras();
             m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_STALKED);
 
             // if this spell is given to NPC it must handle rest by it's own AI
@@ -3193,10 +3207,10 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
     if (damage < 0)
         return;
 
-	// Handle Mana Gems / Serpent-Coil Braid
-	if (m_spellInfo->SpellFamilyName == SPELLFAMILY_MAGE && m_spellInfo->SpellFamilyFlags == 0x10000000000LL)
-		if (unitTarget->HasAura(37447, 0))
-			unitTarget->CastSpell(unitTarget, 37445, true);
+    // Handle Mana Gems / Serpent-Coil Braid
+    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_MAGE && m_spellInfo->SpellFamilyFlags == 0x10000000000LL)
+        if (unitTarget->HasAura(37447, 0))
+            unitTarget->CastSpell(unitTarget, 37445, true);
 
     Powers power = Powers(m_spellInfo->EffectMiscValue[effIndex]);
 
@@ -4521,9 +4535,9 @@ void Spell::SummonClassPet(SpellEffIndex effIndex)
     if (m_CastItem)
     {
         ItemTemplate const *proto = m_CastItem->GetProto();
-        if (proto && proto->RequiredSkill == SKILL_ENGINERING)
+        if (proto && proto->RequiredSkill == SKILL_ENGINEERING)
         {
-            uint16 skill202 = caster->GetSkillValue(SKILL_ENGINERING);
+            uint16 skill202 = caster->GetSkillValue(SKILL_ENGINEERING);
             if (skill202)
             {
                 level = skill202 / 5;
@@ -7126,9 +7140,9 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* 
     if (m_CastItem && caster->GetTypeId() == TYPEID_PLAYER)
     {
         ItemTemplate const* proto = m_CastItem->GetProto();
-        if (proto && proto->RequiredSkill == SKILL_ENGINERING)
+        if (proto && proto->RequiredSkill == SKILL_ENGINEERING)
         {
-            uint16 skill202 = caster->ToPlayer()->GetSkillValue(SKILL_ENGINERING);
+            uint16 skill202 = caster->ToPlayer()->GetSkillValue(SKILL_ENGINEERING);
             if (skill202)
                 level = skill202 / 5;
         }

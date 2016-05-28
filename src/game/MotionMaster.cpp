@@ -226,7 +226,7 @@ void
 MotionMaster::MoveChase(Unit* target, float dist, float angle)
 {
     // ignore movement request if target not exist
-    if (!target || target == i_owner || i_owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+    if (!target || target == i_owner)
         return;
 
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
@@ -251,7 +251,7 @@ void
 MotionMaster::MoveFollow(Unit* target, float dist, float angle, MovementSlot slot)
 {
     // ignore movement request if target not exist
-    if (!target || target == i_owner || i_owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+    if (!target || target == i_owner)
         return;
 
     if (i_owner->GetTypeId() == TYPEID_PLAYER)

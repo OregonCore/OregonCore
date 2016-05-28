@@ -135,15 +135,13 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         Charging_Timer = 0;
         Roar_Timer = 0;
 
-        const CreatureInfo* cinfo = me->GetCreatureTemplate();
-        // damage
-        float damagemod = me->_GetDamageMod(cinfo->rank);
-        me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 45)));
-        me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 45)));
-        me->UpdateDamagePhysical(BASE_ATTACK);
+		const CreatureInfo* cinfo = me->GetCreatureTemplate();
+		me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 45)));
+		me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 45)));
+		me->UpdateDamagePhysical(BASE_ATTACK);
 
-        if (me->HasAura(SPELL_DUAL_WIELD))
-            me->RemoveAurasDueToSpell(SPELL_DUAL_WIELD);
+		if (me->HasAura(SPELL_DUAL_WIELD))
+			me->RemoveAurasDueToSpell(SPELL_DUAL_WIELD);
 
         Phase2 = false;
 
@@ -286,7 +284,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         {
             Phase2 = true;
             DoScriptText(SAY_ENRAGE, me);
-            DoCast(me, SPELL_FLURRY);
+			DoCast(me, SPELL_FLURRY);
 
             me->CastSpell(me, SPELL_DUAL_WIELD, true);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
@@ -295,10 +293,10 @@ struct boss_high_king_maulgarAI : public ScriptedAI
 
         if (Phase2)
         {
-            const CreatureInfo* cinfo = me->GetCreatureTemplate();
-            me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
-            me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));
-            me->UpdateDamagePhysical(BASE_ATTACK);
+			const CreatureInfo* cinfo = me->GetCreatureTemplate();
+			me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
+			me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));
+			me->UpdateDamagePhysical(BASE_ATTACK);
 
             //Charging_Timer
             if (Charging_Timer <= diff)
@@ -343,7 +341,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
 
     void Reset()
     {
-        DarkDecay_Timer = urand(5000, 8000);
+		DarkDecay_Timer = urand(5000, 8000);
         Summon_Timer = 500;
         DeathCoil_Timer = 7000;
 
@@ -354,7 +352,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        DoCast(me, SPELL_SUMMON_WFH);
+		DoCast(me, SPELL_SUMMON_WFH);
 
         if (pInstance)
         {
@@ -389,8 +387,8 @@ struct boss_olm_the_summonerAI : public ScriptedAI
                 AttackStart(pTarget);
         }
 
-        if (me->HasUnitState(UNIT_STATE_CASTING))
-            return;
+		if (me->HasUnitState(UNIT_STATE_CASTING))
+			return;
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -407,7 +405,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
         if (DarkDecay_Timer <= diff)
         {
             DoCastVictim( SPELL_DARK_DECAY);
-            DarkDecay_Timer = urand(5000, 8000);
+			DarkDecay_Timer = urand(5000, 8000);
         }
         else DarkDecay_Timer -= diff;
 
@@ -426,7 +424,7 @@ struct boss_olm_the_summonerAI : public ScriptedAI
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget)
                 DoCast(pTarget, SPELL_DEATH_COIL);
-            DeathCoil_Timer = 7000;
+			DeathCoil_Timer = 7000;
         }
         else DeathCoil_Timer -= diff;
 
@@ -453,11 +451,11 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
     void Reset()
     {	
         GreaterPolymorph_Timer = 5000;
-        LightningBolt_Timer = 3000;
+		LightningBolt_Timer = 3000;
         ArcaneShock_Timer = 10000;
         ArcaneExplosion_Timer = 20000;
 
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		me->SetRooted(true);
         //reset encounter
         if (pInstance)
             pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
@@ -521,28 +519,28 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
         else GreaterPolymorph_Timer -= diff;
 
         //LightningBolt_Timer
-        if (me->IsWithinMeleeRange(me->getVictim()))
-        {
-            //Make sure our attack is ready and we arn't currently casting
-            if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
-            {
-                me->AttackerStateUpdate(me->getVictim());
-                me->resetAttackTimer();
-            }
-        }
-        else
-        {			
-            if (LightningBolt_Timer <= diff)
-            {
-                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                {
-                    DoCastVictim(SPELL_LIGHTNING_BOLT);					
-                }		
+		if (me->IsWithinMeleeRange(me->getVictim()))
+		{
+			//Make sure our attack is ready and we arn't currently casting
+			if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
+			{
+				me->AttackerStateUpdate(me->getVictim());
+				me->resetAttackTimer();
+			}
+		}
+		else
+		{			
+			if (LightningBolt_Timer <= diff)
+			{
+				if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0))
+				{
+					DoCastVictim(SPELL_LIGHTNING_BOLT);					
+				}		
 
-                LightningBolt_Timer = 3000;
-            }
-            else LightningBolt_Timer -= diff;
-        }
+				LightningBolt_Timer = 3000;
+			}
+			else LightningBolt_Timer -= diff;
+		}
 
         //ArcaneShock_Timer
         if (ArcaneShock_Timer <= diff)
@@ -574,15 +572,15 @@ struct boss_blindeye_the_seerAI : public ScriptedAI
 
     uint32 GreaterPowerWordShield_Timer;
     uint32 Heal_Timer;
-    uint32 pOhHeal_Timer;
+	uint32 pOhHeal_Timer;
 
     ScriptedInstance* pInstance;
 
     void Reset()
     {
-        GreaterPowerWordShield_Timer = 5000;
-        Heal_Timer = 25000;
-        pOhHeal_Timer = 31000;
+		GreaterPowerWordShield_Timer = 5000;
+		Heal_Timer = 25000;
+		pOhHeal_Timer = 31000;
 
         //reset encounter
         if (pInstance)
@@ -651,12 +649,12 @@ struct boss_blindeye_the_seerAI : public ScriptedAI
         }
         else Heal_Timer -= diff;
 
-        if (pOhHeal_Timer <= diff)
-        {
-            DoCast(me, SPELL_PRAYER_OH);
-            pOhHeal_Timer = 31000;
-        }
-        else pOhHeal_Timer -= diff;
+		if (pOhHeal_Timer <= diff)
+		{
+			DoCast(me, SPELL_PRAYER_OH);
+			pOhHeal_Timer = 31000;
+		}
+		else pOhHeal_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -682,7 +680,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
         SpellShield_Timer = 1500;
         BlastWave_Timer = 20000;
 
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		me->SetRooted(true);
         //reset encounter
         if (pInstance)
             pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
@@ -734,8 +732,8 @@ struct boss_krosh_firehandAI : public ScriptedAI
             return;
         }
 
-        me->ApplySpellImmune(0, IMMUNITY_ID, 11719, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 1714, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 11719, true);
+		me->ApplySpellImmune(0, IMMUNITY_ID, 1714, true);
 
         //SpellShield_Timer
         if (SpellShield_Timer <= diff)

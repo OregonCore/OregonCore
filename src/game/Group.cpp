@@ -1003,22 +1003,23 @@ void Group::SendUpdate()
     }
 }
 
-void Group::UpdatePlayerOutOfRange(Player* pPlayer)
+void Group::UpdatePlayerOutOfRange(Player* player)
 {
-    if (!pPlayer || !pPlayer->IsInWorld())
+    if (!player || !player->IsInWorld())
         return;
 
-    if (pPlayer->GetGroupUpdateFlag() == GROUP_UPDATE_FLAG_NONE)
+    if (player->GetGroupUpdateFlag() == GROUP_UPDATE_FLAG_NONE)
         return;
 
     WorldPacket data;
-    pPlayer->GetSession()->BuildPartyMemberStatsChangedPacket(pPlayer, &data);
+    player->GetSession()->BuildPartyMemberStatsChangedPacket(player, &data);
 
+    Player* member;
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        if (Player* player = itr->getSource())
-            if (!player->CanSeeOrDetect(pPlayer))
-                player->GetSession()->SendPacket(&data);
+        member = itr->getSource();
+        if (member && member != player && (!member->IsInMap(player) || !member->IsWithinDist(player, member->GetSightRange(), false)))
+            member->GetSession()->SendPacket(&data);
     }
 }
 

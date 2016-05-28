@@ -2128,7 +2128,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
         case 32260: //Chess: Deactivate Own Field
             {
                 //Set No_Movement Flag, to disable Field
-                m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
                 //Add Tempsummon
                 GetCaster()->SummonCreature(22519, m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ(), m_target->GetOrientation());
                 return;
@@ -5708,12 +5708,6 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
 
 void Aura::CleanupTriggeredSpells()
 {
-    /*if(sSpellMgr.GetSpellElixirSpecific(m_spellProto->Id) & SPELL_GROUP_ELIXIR_SHATTRATH)
-    {
-        m_target->RemoveAurasDueToSpell( m_spellProto->EffectTriggerSpell[1]);  // remove triggered effect of shattrath flask, when removing it
-        return;
-    }*/
-
     uint32 tSpellId = m_spellProto->EffectTriggerSpell[GetEffIndex()];
     if (!tSpellId)
         return;
