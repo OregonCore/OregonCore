@@ -1613,7 +1613,7 @@ float WorldObject::GetSightRange(const WorldObject* target) const
     {
         if (ToPlayer())
         {
-            if (target && target->isActiveObject())
+            if (target && target->isActiveObject() && !target->ToPlayer())
                 return MAX_VISIBILITY_DISTANCE;
             else if (ToPlayer()->GetCinematicMgr()->IsOnCinematic())
                 return DEFAULT_VISIBILITY_INSTANCE;
