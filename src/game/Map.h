@@ -279,7 +279,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
             return false;
         }
 
-		virtual bool AddPlayerToMap(Player*);
+        virtual bool AddPlayerToMap(Player*);
         virtual void RemovePlayerFromMap(Player*, bool);
 
         template<class T> bool AddToMap(T*);

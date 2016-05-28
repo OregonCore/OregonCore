@@ -1157,12 +1157,12 @@ void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh)
 
 void WorldObject::RemoveFromWorld()
 {
-	if (!IsInWorld())
-		return;
+    if (!IsInWorld())
+        return;
 
-	DestroyForNearbyPlayers();
+    DestroyForNearbyPlayers();
 
-	Object::RemoveFromWorld();
+    Object::RemoveFromWorld();
 }
 
 uint32 WorldObject::GetZoneId() const

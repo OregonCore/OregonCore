@@ -1039,7 +1039,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         if (missInfo != SPELL_MISS_REFLECT)
         {
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, damageInfo.damage, m_attackType, m_spellInfo, m_canTrigger);
-			if (caster->GetTypeId() == TYPEID_PLAYER && !(m_spellInfo->AttributesEx4 & SPELL_ATTR4_CANT_TRIGGER_ITEM_SPELLS))
+            if (caster->GetTypeId() == TYPEID_PLAYER && !(m_spellInfo->AttributesEx4 & SPELL_ATTR4_CANT_TRIGGER_ITEM_SPELLS))
                 caster->ToPlayer()->CastItemCombatSpell(unitTarget, m_attackType, procVictim, procEx, m_spellInfo);
         }
 
@@ -2436,9 +2436,9 @@ void Spell::cast(bool skipCheck)
         return;
     }
 
-	if (m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET)
-		if (Creature* pet = ObjectAccessor::GetCreature(*m_caster, m_caster->GetPetGUID()))
-			pet->DespawnOrUnsummon();
+    if (m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET)
+        if (Creature* pet = ObjectAccessor::GetCreature(*m_caster, m_caster->GetPetGUID()))
+            pet->DespawnOrUnsummon();
 
     // traded items have trade slot instead of guid in m_itemTargetGUID
     // set to real guid to be sent later to the client
@@ -4451,7 +4451,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 switch (SummonProperties->Category)
                 {
                 case SUMMON_CATEGORY_PET:
-					if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET && m_caster->GetPetGUID())
+                    if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET && m_caster->GetPetGUID())
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
                     // intentional missing break, check both GetPetGUID() and GetCharmGUID for SUMMON_CATEGORY_PET
                 case SUMMON_CATEGORY_PUPPET:
@@ -4482,7 +4482,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                             if (Pet* pet = m_caster->ToPlayer()->GetPet())
                                 pet->CastSpell(pet, 32752, true, NULL, NULL, pet->GetGUID());
                     }
-					else if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET)
+                    else if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET)
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
                 }
 
@@ -4663,7 +4663,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_CHARM
                     || m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_POSSESS)
                 {
-					if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET && m_caster->GetPetGUID())
+                    if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET && m_caster->GetPetGUID())
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
 
                     if (m_caster->GetCharmGUID())

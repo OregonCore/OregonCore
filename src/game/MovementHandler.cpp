@@ -72,7 +72,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     if (GetPlayer()->IsInWorld())
     {
         sLog.outError("Crash alert! Player is still in world when teleported from map %u! to new map %u", oldMap->GetId(), loc.GetMapId());
-		oldMap->RemovePlayerFromMap(GetPlayer(), false);
+        oldMap->RemovePlayerFromMap(GetPlayer(), false);
     }
 
     // relocate the player to the teleport destination
@@ -95,7 +95,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     bool reset_notify = (GetPlayer()->GetBoundInstance(GetPlayer()->GetMapId(), GetPlayer()->GetDifficulty()) == NULL);
 
     GetPlayer()->SendInitialPacketsBeforeAddToMap();
-	if (!GetPlayer()->GetMap()->AddPlayerToMap(GetPlayer()))
+    if (!GetPlayer()->GetMap()->AddPlayerToMap(GetPlayer()))
     {
         sLog.outError("WORLD: failed to teleport player %s (%d) to map %d because of unknown reason!", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), loc.GetMapId());
         GetPlayer()->ResetMap();

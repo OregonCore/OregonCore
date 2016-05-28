@@ -71,7 +71,7 @@ bool npc_escortAI::AssistPlayerInCombat(Unit* pWho)
     if (!pWho || !pWho->getVictim())
         return false;
 
-	if (!(me->GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_CAN_ASSIST))
+    if (!(me->GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_CAN_ASSIST))
         return false;
 
     //not a player

@@ -1683,7 +1683,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
         {
             if (m_caster->GetDistance(unitTarget) <= (GetSpellMaxRange(m_spellInfo) - GetSpellRadius(m_spellInfo, effIndex, true)))
             {
-				if (unitTarget->GetTypeId() == TYPEID_UNIT && !(unitTarget->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL))) //if UNIT_FLAG_NOT_SELECTABLE than field is occuped
+                if (unitTarget->GetTypeId() == TYPEID_UNIT && !(unitTarget->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL))) //if UNIT_FLAG_NOT_SELECTABLE than field is occuped
                 {
                     //cast transform Field
                     if (m_caster)
@@ -2314,7 +2314,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
     // Vanish
     case 18461:
         {
-			m_caster->RemoveMovementImpairingAuras();
+            m_caster->RemoveMovementImpairingAuras();
             m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_STALKED);
 
             // if this spell is given to NPC it must handle rest by it's own AI
@@ -3207,10 +3207,10 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
     if (damage < 0)
         return;
 
-	// Handle Mana Gems / Serpent-Coil Braid
-	if (m_spellInfo->SpellFamilyName == SPELLFAMILY_MAGE && m_spellInfo->SpellFamilyFlags == 0x10000000000LL)
-		if (unitTarget->HasAura(37447, 0))
-			unitTarget->CastSpell(unitTarget, 37445, true);
+    // Handle Mana Gems / Serpent-Coil Braid
+    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_MAGE && m_spellInfo->SpellFamilyFlags == 0x10000000000LL)
+        if (unitTarget->HasAura(37447, 0))
+            unitTarget->CastSpell(unitTarget, 37445, true);
 
     Powers power = Powers(m_spellInfo->EffectMiscValue[effIndex]);
 

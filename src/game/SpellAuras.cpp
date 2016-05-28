@@ -2128,7 +2128,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
         case 32260: //Chess: Deactivate Own Field
             {
                 //Set No_Movement Flag, to disable Field
-				m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
+                m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
                 //Add Tempsummon
                 GetCaster()->SummonCreature(22519, m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ(), m_target->GetOrientation());
                 return;

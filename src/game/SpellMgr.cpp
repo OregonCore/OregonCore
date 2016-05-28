@@ -2418,8 +2418,8 @@ void SpellMgr::LoadSpellCustomAttr()
         case 38310: // Multi-Shot
             spellInfo->MaxAffectedTargets = 4;
             break;
-		case 32205: // Place Burning Blade Pyre
-		    spellInfo->AttributesEx2 |= SPELL_ATTR2_IGNORE_LOS;
+        case 32205: // Place Burning Blade Pyre
+            spellInfo->AttributesEx2 |= SPELL_ATTR2_IGNORE_LOS;
             break;
         case 42005: // Bloodboil
         case 38296: // Spitfire Totem
@@ -2533,10 +2533,10 @@ void SpellMgr::LoadSpellCustomAttr()
         case 31830: // Blessed Life (Rank 3)
             spellInfo->EffectApplyAuraName[0] = SPELL_AURA_REUSED_BLESSED_LIFE;
             break;
-		case 39095: // Amplify Damage (Prince Malchaazar)
-			spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_TARGET_ENEMY;
-			spellInfo->EffectImplicitTargetB[0] = 0;
-			break;
+        case 39095: // Amplify Damage (Prince Malchaazar)
+            spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_TARGET_ENEMY;
+            spellInfo->EffectImplicitTargetB[0] = 0;
+            break;
         case 42389: // Nalorakk's Mangle
             spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
             spellInfo->EffectImplicitTargetB[1] = 0;
