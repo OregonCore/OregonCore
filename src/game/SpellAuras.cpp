@@ -842,7 +842,7 @@ void Aura::UpdateAuraDuration()
         {
             for (GroupReference* itr = CasterGroup->GetFirstMember(); itr != NULL; itr = itr->next())
             {
-                Player* player = itr->getSource();
+                Player* player = itr->GetSource();
                 if (player && player != caster)
                     SendAuraDurationForCaster(player);
             }

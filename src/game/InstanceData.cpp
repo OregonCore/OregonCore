@@ -257,7 +257,7 @@ void InstanceData::DoUpdateWorldState(uint32 uiStateId, uint32 uiStateData)
     if (!lPlayers.isEmpty())
     {
         for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
-            if (Player* pPlayer = itr->getSource())
+            if (Player* pPlayer = itr->GetSource())
                 pPlayer->SendUpdateWorldState(uiStateId, uiStateData);
     }
     else
@@ -271,6 +271,6 @@ void InstanceData::DoCastSpellOnPlayers(uint32 spell)
 
     if (!PlayerList.isEmpty())
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-            if (Player* player = i->getSource())
+            if (Player* player = i->GetSource())
                 player->CastSpell(player, spell, true);
 }

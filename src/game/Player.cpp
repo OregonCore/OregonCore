@@ -14128,7 +14128,7 @@ void Player::GroupEventHappens(uint32 questId, WorldObject const* pEventObject)
     {
         for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player* pGroupGuy = itr->getSource();
+            Player* pGroupGuy = itr->GetSource();
 
             // for any leave or dead (with not released body) group member at appropriate distance
             if (pGroupGuy && pGroupGuy->IsAtGroupRewardDistance(pEventObject) && !pGroupGuy->GetCorpse())
@@ -20124,7 +20124,7 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
 
             for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
             {
-                Player* pGroupGuy = itr->getSource();
+                Player* pGroupGuy = itr->GetSource();
                 if (!pGroupGuy)
                     continue;
 
@@ -20209,7 +20209,7 @@ void Player::RewardPlayerAndGroupAtEvent(uint32 creature_id, WorldObject* pRewar
     {
         for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player* pGroupGuy = itr->getSource();
+            Player* pGroupGuy = itr->GetSource();
             if (!pGroupGuy)
                 continue;
 
@@ -20469,7 +20469,7 @@ Player* Player::GetNextRandomRaidMember(float radius)
 
     for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* Target = itr->getSource();
+        Player* Target = itr->GetSource();
 
         // IsHostileTo check duel and controlled by enemy
         if (Target && Target != this && IsWithinDistInMap(Target, radius) &&

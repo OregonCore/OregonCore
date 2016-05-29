@@ -1711,7 +1711,7 @@ struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
 
             for (GroupReference* pRef = pEventGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
             {
-                if (Player* pMember = pRef->getSource())
+                if (Player* pMember = pRef->GetSource())
                 {
                     if (!pMember->IsAlive())
                         ++uiDeadMemberCount;
@@ -1742,7 +1742,7 @@ struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
             {
                 for (GroupReference* pRef = pEventGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
                 {
-                    if (Player* pMember = pRef->getSource())
+                    if (Player* pMember = pRef->GetSource())
                     {
                         if (pMember->GetQuestStatus(QUEST_BATTLE_OF_THE_CRIMSON_WATCH) == QUEST_STATUS_INCOMPLETE)
                             pMember->FailQuest(QUEST_BATTLE_OF_THE_CRIMSON_WATCH);

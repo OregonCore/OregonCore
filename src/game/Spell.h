@@ -722,32 +722,32 @@ struct SpellNotifierCreatureAndPlayer
 
         for (typename GridRefManager<T>::iterator itr = m.begin(); itr != m.end(); ++itr)
         {
-            if (!itr->getSource()->IsAlive() || (itr->getSource()->GetTypeId() == TYPEID_PLAYER && ((Player*)itr->getSource())->isInFlight()))
+            if (!itr->GetSource()->IsAlive() || (itr->GetSource()->GetTypeId() == TYPEID_PLAYER && ((Player*)itr->GetSource())->isInFlight()))
                 continue;
 
             switch (i_TargetType)
             {
             case SPELL_TARGETS_ALLY:
-                if (!i_caster->IsFriendlyTo(itr->getSource()))
+                if (!i_caster->IsFriendlyTo(itr->GetSource()))
                     continue;
-                if (itr->getSource()->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
+                if (itr->GetSource()->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
                     continue;
-                if (itr->getSource()->GetTypeId() == TYPEID_PLAYER && itr->getSource()->ToPlayer()->isGameMaster())
+                if (itr->GetSource()->GetTypeId() == TYPEID_PLAYER && itr->GetSource()->ToPlayer()->isGameMaster())
                     continue;
                 break;
             case SPELL_TARGETS_ENEMY:
                 {
-                    if (itr->getSource()->GetTypeId() == TYPEID_UNIT && ((Creature*)itr->getSource())->IsTotem())
+                    if (itr->GetSource()->GetTypeId() == TYPEID_UNIT && ((Creature*)itr->GetSource())->IsTotem())
                         continue;
 
                     if (i_caster->GetCreatureType() == CREATURE_TYPE_TOTEM)
                     {
-                        if (!itr->getSource()->isAttackableByAOE(i_pos->GetPositionX(), i_pos->GetPositionY(), i_pos->GetPositionZ(), true))
+                        if (!itr->GetSource()->isAttackableByAOE(i_pos->GetPositionX(), i_pos->GetPositionY(), i_pos->GetPositionZ(), true))
                             continue;
                     }
                     else
                     {
-                        if (!itr->getSource()->isAttackableByAOE())
+                        if (!itr->GetSource()->isAttackableByAOE())
                             continue;
                     }
 
@@ -755,17 +755,17 @@ struct SpellNotifierCreatureAndPlayer
 
                     if (check->IsControlledByPlayer())
                     {
-                        if (check->IsFriendlyTo(itr->getSource()))
+                        if (check->IsFriendlyTo(itr->GetSource()))
                             continue;
                     }
                     else
                     {
-                        if (!check->IsHostileTo(itr->getSource()))
+                        if (!check->IsHostileTo(itr->GetSource()))
                             continue;
                     }
 
                     if ( check->GetTypeId() == TYPEID_PLAYER &&             // Victim is Player
-                         itr->getSource()->GetTypeId() == TYPEID_PLAYER &&   // Source is Player
+                         itr->GetSource()->GetTypeId() == TYPEID_PLAYER &&   // Source is Player
                          !((Player*)check)->duel &&                          // Not in duel
                          !((Player*)check)->InArena() &&                     // Not in arena
                          !((Player*)check)->IsPvP())                         // PVP Deactivated (Not in BG by default)
@@ -775,7 +775,7 @@ struct SpellNotifierCreatureAndPlayer
                 break;
             case SPELL_TARGETS_ENTRY:
                 {
-                    if (itr->getSource()->GetEntry() != i_entry)
+                    if (itr->GetSource()->GetEntry() != i_entry)
                         continue;
                 }
                 break;
@@ -786,27 +786,27 @@ struct SpellNotifierCreatureAndPlayer
             switch (i_push_type)
             {
             case PUSH_IN_FRONT:
-                if (i_caster->isInFrontInMap((Unit*)(itr->getSource()), i_radius, float(M_PI) / 3))
-                    i_data->push_back(itr->getSource());
+                if (i_caster->isInFrontInMap((Unit*)(itr->GetSource()), i_radius, float(M_PI) / 3))
+                    i_data->push_back(itr->GetSource());
                 break;
             case PUSH_IN_BACK:
-                if (i_caster->isInBackInMap((Unit*)(itr->getSource()), i_radius, float(M_PI) / 3))
-                    i_data->push_back(itr->getSource());
+                if (i_caster->isInBackInMap((Unit*)(itr->GetSource()), i_radius, float(M_PI) / 3))
+                    i_data->push_back(itr->GetSource());
                 break;
             case PUSH_IN_LINE:
-                if (i_caster->HasInLine((Unit*)(itr->getSource()), i_radius, i_caster->GetObjectSize()))
-                    i_data->push_back(itr->getSource());
+                if (i_caster->HasInLine((Unit*)(itr->GetSource()), i_radius, i_caster->GetObjectSize()))
+                    i_data->push_back(itr->GetSource());
                 break;
             default:
                 if (i_TargetType != SPELL_TARGETS_ENTRY && i_push_type == PUSH_SRC_CENTER && i_caster) // if caster then check distance from caster to target (because of model collision)
                 {
-                    if (i_caster->IsWithinDistInMap(itr->getSource(), i_radius))
-                        i_data->push_back(itr->getSource());
+                    if (i_caster->IsWithinDistInMap(itr->GetSource(), i_radius))
+                        i_data->push_back(itr->GetSource());
                 }
                 else
                 {
-                    if ((itr->getSource()->GetExactDistSq(i_pos) < i_radiusSq))
-                        i_data->push_back(itr->getSource());
+                    if ((itr->GetSource()->GetExactDistSq(i_pos) < i_radiusSq))
+                        i_data->push_back(itr->GetSource());
                 }
                 break;
             }

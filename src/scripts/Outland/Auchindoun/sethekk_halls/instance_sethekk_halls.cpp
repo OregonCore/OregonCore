@@ -105,7 +105,7 @@ struct instance_sethekk_halls : public ScriptedInstance
         {
             for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
-                if (Player* plr = itr->getSource())
+                if (Player* plr = itr->GetSource())
                     return plr;
             }
         }

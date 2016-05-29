@@ -161,7 +161,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
             InstanceMap::PlayerList const& PlayerList = ((InstanceMap*)map)->GetPlayers();
             for (InstanceMap::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
-                if (Player* i_pl = i->getSource())
+                if (Player* i_pl = i->GetSource())
                 {
                     if (i_pl && i_pl->IsAlive())
                         targets.push_back(i_pl);

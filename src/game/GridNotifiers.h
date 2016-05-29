@@ -110,7 +110,7 @@ struct GridUpdater
     template<class T> void updateObjects(GridRefManager<T>& m)
     {
         for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
-            iter->getSource()->Update(i_timeDiff);
+            iter->GetSource()->Update(i_timeDiff);
     }
 
     void Visit(PlayerMapType& m)
@@ -242,30 +242,30 @@ struct WorldObjectWorker
     void Visit(GameObjectMapType& m)
     {
         for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     void Visit(PlayerMapType& m)
     {
         for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
     void Visit(CreatureMapType& m)
     {
         for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     void Visit(CorpseMapType& m)
     {
         for (CorpseMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     void Visit(DynamicObjectMapType& m)
     {
         for (DynamicObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -413,7 +413,7 @@ struct CreatureWorker
     void Visit(CreatureMapType& m)
     {
         for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -459,7 +459,7 @@ struct PlayerWorker
     void Visit(PlayerMapType& m)
     {
         for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -477,7 +477,7 @@ struct PlayerDistWorker
     void Visit(PlayerMapType& m)
     {
         for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}

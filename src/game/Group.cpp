@@ -587,7 +587,7 @@ void Group::GroupLoot(const uint64& playerGUID, Loot* loot, WorldObject* object)
             //a vector is filled with only near party members
             for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
             {
-                Player* member = itr->getSource();
+                Player* member = itr->GetSource();
                 if (!member || !member->GetSession())
                     continue;
                 if (i->AllowedForPlayer(member))
@@ -635,7 +635,7 @@ void Group::NeedBeforeGreed(const uint64& playerGUID, Loot* loot, WorldObject* o
 
             for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
             {
-                Player* playerToRoll = itr->getSource();
+                Player* playerToRoll = itr->GetSource();
                 if (!playerToRoll || !playerToRoll->GetSession())
                     continue;
 
@@ -694,7 +694,7 @@ void Group::MasterLoot(const uint64& playerGUID, Loot* loot, WorldObject* object
 
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* looter = itr->getSource();
+        Player* looter = itr->GetSource();
         if (!looter->IsInWorld())
             continue;
 
@@ -709,7 +709,7 @@ void Group::MasterLoot(const uint64& playerGUID, Loot* loot, WorldObject* object
 
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* looter = itr->getSource();
+        Player* looter = itr->GetSource();
         if (looter->GetDistance2d(object) < sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE))
             looter->GetSession()->SendPacket(&data);
     }
@@ -904,7 +904,7 @@ void Group::GetDataForXPAtKill(Unit const* victim, uint32& count, uint32& sum_le
 {
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* member = itr->getSource();
+        Player* member = itr->GetSource();
         if (!member || !member->IsAlive())                   // only for alive
             continue;
 
@@ -1017,7 +1017,7 @@ void Group::UpdatePlayerOutOfRange(Player* player)
     Player* member;
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        member = itr->getSource();
+        member = itr->GetSource();
         if (member && member != player && (!member->IsInMap(player) || !member->IsWithinDist(player, member->GetSightRange(), false)))
             member->GetSession()->SendPacket(&data);
     }
@@ -1027,7 +1027,7 @@ void Group::BroadcastPacket(WorldPacket* packet, bool ignorePlayersInBGRaid, int
 {
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* pl = itr->getSource();
+        Player* pl = itr->GetSource();
         if (!pl || (ignore != 0 && pl->GetGUID() == ignore) || (ignorePlayersInBGRaid && pl->GetGroup() != this))
             continue;
 
@@ -1040,7 +1040,7 @@ void Group::BroadcastReadyCheck(WorldPacket* packet)
 {
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* pl = itr->getSource();
+        Player* pl = itr->GetSource();
         if (pl && pl->GetSession())
             if (IsLeader(pl->GetGUID()) || IsAssistant(pl->GetGUID()))
                 pl->GetSession()->SendPacket(packet);
@@ -1447,7 +1447,7 @@ uint32 Group::CanJoinBattlegroundQueue(uint32 bgTypeId, uint32 bgQueueType, uint
         return BG_JOIN_ERR_GROUP_TOO_MANY;
 
     // get a player as reference, to compare other players' stats to (arena team id, queue id based on level, etc.)
-    Player* reference = GetFirstMember()->getSource();
+    Player* reference = GetFirstMember()->GetSource();
     // no reference found, can't join this way
     if (!reference)
         return BG_JOIN_ERR_OFFLINE_MEMBER;
@@ -1459,7 +1459,7 @@ uint32 Group::CanJoinBattlegroundQueue(uint32 bgTypeId, uint32 bgQueueType, uint
     // check every member of the group to be able to join
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* member = itr->getSource();
+        Player* member = itr->GetSource();
         // offline member? don't let join
         if (!member)
             return BG_JOIN_ERR_OFFLINE_MEMBER;
@@ -1502,7 +1502,7 @@ void Group::SetDifficulty(DungeonDifficulties difficulty)
 
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* player = itr->getSource();
+        Player* player = itr->GetSource();
         if (!player->GetSession() || player->getLevel() < LEVELREQUIREMENT_HEROIC)
             continue;
         player->SetDifficulty(difficulty);
@@ -1514,7 +1514,7 @@ bool Group::InCombatToInstance(uint32 instanceId)
 {
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* pPlayer = itr->getSource();
+        Player* pPlayer = itr->GetSource();
         if (pPlayer && pPlayer->getAttackers().size() && pPlayer->GetInstanceId() == instanceId && (pPlayer->GetMap()->IsRaid() || pPlayer->GetMap()->IsHeroic()))
             for (std::set<Unit*>::const_iterator i = pPlayer->getAttackers().begin(); i != pPlayer->getAttackers().end(); ++i)
                 if ((*i) && (*i)->GetTypeId() == TYPEID_UNIT && (*i)->ToCreature()->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_INSTANCE_BIND)

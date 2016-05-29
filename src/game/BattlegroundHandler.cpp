@@ -163,7 +163,7 @@ void WorldSession::HandleBattlegroundJoinOpcode(WorldPacket& recv_data)
         GroupQueueInfo* ginfo = sBattlegroundMgr.m_BattlegroundQueues[bgQueueTypeId].AddGroup(_player, bgTypeId, 0, false, 0);
         for (GroupReference* itr = grp->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player* member = itr->getSource();
+            Player* member = itr->GetSource();
             if (!member) continue;   // this should never happen
 
             uint32 queueSlot = member->AddBattlegroundQueueId(bgQueueTypeId);           // add to queue
@@ -772,7 +772,7 @@ void WorldSession::HandleBattlegroundArenaJoin(WorldPacket& recv_data)
         uint32 avg_pers_rating = 0;
         for (GroupReference* itr = grp->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player* member = itr->getSource();
+            Player* member = itr->GetSource();
 
             // calc avg personal rating
             avg_pers_rating += member->GetArenaPersonalRating(arenaslot);
@@ -794,7 +794,7 @@ void WorldSession::HandleBattlegroundArenaJoin(WorldPacket& recv_data)
             sLog.outDebug("Battleground: arena team id %u, leader %s queued with rating %u for type %u", _player->GetArenaTeamId(arenaslot), _player->GetName(), arenaRating, arenatype);
         for (GroupReference* itr = grp->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player* member = itr->getSource();
+            Player* member = itr->GetSource();
             if (!member) continue;
 
             uint32 queueSlot = member->AddBattlegroundQueueId(bgQueueTypeId);// add to queue

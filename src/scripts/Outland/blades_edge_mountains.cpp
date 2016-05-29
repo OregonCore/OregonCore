@@ -553,7 +553,7 @@ struct npc_light_orb_collectorAI : public ScriptedAI
         Map::PlayerList const &PlayerList = map->GetPlayers();
 
         for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
-            if (Player* player = itr->getSource())
+            if (Player* player = itr->GetSource())
                 if (player->GetGUID() == playerGUID)
                     if (me->IsWithinDistInMap(player, 15.0f))
                         if (player->GetQuestStatus(QUEST_LIGHT_FANTASTIC) || player->GetQuestStatus(QUEST_GATHER_THE_ORBS) == QUEST_STATUS_INCOMPLETE)

@@ -92,7 +92,7 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
                 {
                     for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                     {
-                        Player* pGroupie = itr->getSource();
+                        Player* pGroupie = itr->GetSource();
                         if (pGroupie &&
                             pGroupie->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE &&
                             pGroupie->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10)

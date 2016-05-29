@@ -162,7 +162,7 @@ struct boss_najentusAI : public ScriptedAI
         Map::PlayerList const& PlayerList = ((InstanceMap*)me->GetMap())->GetPlayers();
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
         {
-            Player* i_pl = i->getSource();
+            Player* i_pl = i->GetSource();
             if (i_pl)
                 i_pl->DestroyItemCount(32408, i_pl->GetItemCount(32408), true);
         }

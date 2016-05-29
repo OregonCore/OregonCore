@@ -120,7 +120,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
         {
             for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
-                if (Player* plr = itr->getSource())
+                if (Player* plr = itr->GetSource())
                     return plr;
             }
         }
@@ -137,7 +137,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
         {
             for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
-                if (Player* player = itr->getSource())
+                if (Player* player = itr->GetSource())
                 {
                     player->SendUpdateWorldState(WORLD_STATE_OH, BarrelCount);
 
@@ -379,7 +379,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
             if (instance->GetPlayers().isEmpty())
                 return;
 
-            Player* player = instance->GetPlayers().begin()->getSource();
+            Player* player = instance->GetPlayers().begin()->GetSource();
 
             if (GetData(TYPE_THRALL_PART1) == NOT_STARTED)
                 player->SummonCreature(THRALL_ENTRY, 2231.51f, 119.84f, 82.297f, 4.15f,TEMPSUMMON_DEAD_DESPAWN,15000);

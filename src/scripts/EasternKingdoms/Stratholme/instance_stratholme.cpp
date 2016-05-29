@@ -305,7 +305,7 @@ struct instance_stratholme : public ScriptedInstance
                     {
                         for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
                         {
-                            if (Player* pPlayer = itr->getSource())
+                            if (Player* pPlayer = itr->GetSource())
                             {
                                 if (pPlayer->HasAura(SPELL_BARON_ULTIMATUM, 0))
                                     pPlayer->RemoveAurasDueToSpell(SPELL_BARON_ULTIMATUM);

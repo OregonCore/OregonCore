@@ -95,7 +95,7 @@ struct npc_blackfathom_deeps_eventAI : public ScriptedAI
 
         for (Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
         {
-            if (Player* pPlayer = i->getSource())
+            if (Player* pPlayer = i->GetSource())
             {
                 if (pPlayer->isGameMaster())
                     continue;

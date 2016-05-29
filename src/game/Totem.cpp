@@ -146,7 +146,7 @@ void Totem::UnSummon()
         {
             for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
             {
-                Player* Target = itr->getSource();
+                Player* Target = itr->GetSource();
                 if (Target && pGroup->SameSubGroup(m_owner->ToPlayer(), Target))
                     Target->RemoveAurasDueToSpell(GetSpell());
             }

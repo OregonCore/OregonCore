@@ -227,7 +227,7 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recv_data*/)
             std::vector<Player*> playersNear;
             for (GroupReference* itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
             {
-                Player* playerGroup = itr->getSource();
+                Player* playerGroup = itr->GetSource();
                 if (!playerGroup)
                     continue;
                 if (player->GetDistance2d(playerGroup) < sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE))

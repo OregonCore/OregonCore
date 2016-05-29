@@ -377,8 +377,8 @@ void CreatureTextMgr::SendNonChatPacket(WorldPacket* data, WorldObject* source, 
                 uint32 areaId = source->GetAreaId();
                 Map::PlayerList const& pList = source->GetMap()->GetPlayers();
                 for (Map::PlayerList::const_iterator itr = pList.begin(); itr != pList.end(); ++itr)
-                    if (itr->getSource()->GetAreaId() == areaId && (!team || (team && itr->getSource()->GetTeam() == team)) && (!gmOnly || itr->getSource()->isGameMaster()))
-                        itr->getSource()->GetSession()->SendPacket(data);
+                    if (itr->GetSource()->GetAreaId() == areaId && (!team || (team && itr->GetSource()->GetTeam() == team)) && (!gmOnly || itr->GetSource()->isGameMaster()))
+                        itr->GetSource()->GetSession()->SendPacket(data);
             }
             return;
         case TEXT_RANGE_ZONE:
@@ -386,16 +386,16 @@ void CreatureTextMgr::SendNonChatPacket(WorldPacket* data, WorldObject* source, 
                 uint32 zoneId = source->GetZoneId();
                 Map::PlayerList const& pList = source->GetMap()->GetPlayers();
                 for (Map::PlayerList::const_iterator itr = pList.begin(); itr != pList.end(); ++itr)
-                    if (itr->getSource()->GetZoneId() == zoneId && (!team || (team && itr->getSource()->GetTeam() == team)) && (!gmOnly || itr->getSource()->isGameMaster()))
-                        itr->getSource()->GetSession()->SendPacket(data);
+                    if (itr->GetSource()->GetZoneId() == zoneId && (!team || (team && itr->GetSource()->GetTeam() == team)) && (!gmOnly || itr->GetSource()->isGameMaster()))
+                        itr->GetSource()->GetSession()->SendPacket(data);
             }
             return;
         case TEXT_RANGE_MAP:
             {
                 Map::PlayerList const& pList = source->GetMap()->GetPlayers();
                 for (Map::PlayerList::const_iterator itr = pList.begin(); itr != pList.end(); ++itr)
-                    if (!team || ((team && itr->getSource()->GetTeam() == team) && (!gmOnly || itr->getSource()->isGameMaster())))
-                        itr->getSource()->GetSession()->SendPacket(data);
+                    if (!team || ((team && itr->GetSource()->GetTeam() == team) && (!gmOnly || itr->GetSource()->isGameMaster())))
+                        itr->GetSource()->GetSession()->SendPacket(data);
             }
             return;
         case TEXT_RANGE_WORLD:

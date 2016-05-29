@@ -128,8 +128,8 @@ void HostileReference::sourceObjectDestroyLink()
 
 void HostileReference::fireStatusChanged(ThreatRefStatusChangeEvent& threatRefStatusChangeEvent)
 {
-    if (getSource())
-        getSource()->processThreatEvent(&threatRefStatusChangeEvent);
+    if (GetSource())
+        GetSource()->processThreatEvent(&threatRefStatusChangeEvent);
 }
 
 //============================================================
@@ -151,7 +151,7 @@ void HostileReference::addThreat(float modThreat)
     {
         Unit* victimOwner = getTarget()->GetCharmerOrOwner();
         if (victimOwner && victimOwner->IsAlive())
-            getSource()->addThreat(victimOwner, 0.0f);     // create a threat to the owner of a pet, if the pet attacks
+            GetSource()->addThreat(victimOwner, 0.0f);     // create a threat to the owner of a pet, if the pet attacks
     }
 }
 
@@ -172,7 +172,7 @@ void HostileReference::updateOnlineStatus()
 
     if (!isValid())
         if (Unit* target = ObjectAccessor::GetUnit(*getSourceUnit(), getUnitGuid()))
-            link(target, getSource());
+            link(target, GetSource());
 
     // only check for online status if
     // ref is valid
@@ -243,7 +243,7 @@ void HostileReference::removeReference()
 
 Unit* HostileReference::getSourceUnit()
 {
-    return (getSource()->getOwner());
+    return (GetSource()->getOwner());
 }
 
 //============================================================

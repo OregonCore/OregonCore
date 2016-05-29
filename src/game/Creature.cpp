@@ -574,7 +574,7 @@ void Creature::Update(uint32 diff)
                     if (!players.isEmpty())
                         for (Map::PlayerList::const_iterator it = players.begin(); it != players.end(); ++it)
                         {
-                            if (Player* player = it->getSource())
+                            if (Player* player = it->GetSource())
                             {
                                 if (player->isGameMaster())
                                     continue;
@@ -2150,7 +2150,7 @@ void Creature::SetInCombatWithZone()
 
     for (Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
     {
-        if (Player* pPlayer = i->getSource())
+        if (Player* pPlayer = i->GetSource())
         {
             if (pPlayer->isGameMaster())
                 continue;

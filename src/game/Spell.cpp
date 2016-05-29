@@ -2155,7 +2155,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 {
                     for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                     {
-                        Player* Target = itr->getSource();
+                        Player* Target = itr->GetSource();
 
                         // IsHostileTo check duel and controlled by enemy
                         if (Target && targetPlayer->IsWithinDistInMap(Target, radius) &&
