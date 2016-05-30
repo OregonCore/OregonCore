@@ -1877,103 +1877,6 @@ CreatureAI* GetAI_npc_naberius(Creature* pCreature)
 }
 
 /*######
-## npc_towercurse_trigger
-######*/
-
-#define SPELL_CURSE_OF_THE_VIOLET_TOWER 34102
-
-
-struct npc_towercurse_triggerAI : public ScriptedAI
-{
-	npc_towercurse_triggerAI(Creature* pCreature) : ScriptedAI(pCreature) {}
-
-	void Reset()
-	{
-		me->SetReactState(REACT_AGGRESSIVE);
-	}
-
-	void MoveInLineOfSight(Unit *pWho)
-	{
-		if (Player *plWho = pWho->GetCharmerOrOwnerPlayerOrPlayerItself())
-		{
-			if (plWho->GetDistance(me) < 3.0f)
-			{
-				switch (me->GetEntry())
-				{
-				case 61016:	
-					plWho->CastSpell(plWho, SPELL_CURSE_OF_THE_VIOLET_TOWER, true);
-					break;
-				}
-			}
-		}
-	}
-};
-
-CreatureAI* GetAI_npc_towercurse_trigger(Creature* pCreature)
-{
-	return new npc_towercurse_triggerAI(pCreature);
-}
-
-/*######
-## npc_towerchannel_trigger
-######*/
-
-#define SPELL_ETHEREAL_CHANNEL 35518
-
-
-struct npc_towerchannel_triggerAI : public ScriptedAI
-{
-	npc_towerchannel_triggerAI(Creature* pCreature) : ScriptedAI(pCreature) {}
-
-	void Reset()
-	{
-		
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-		{
-			if (Creature* channeler = me->FindNearestCreature(61018, 8.0f, true))
-			{
-				DoCast(channeler, SPELL_ETHEREAL_CHANNEL);
-			}
-		}
-	}
-};
-
-CreatureAI* GetAI_npc_towerchannel_trigger(Creature* pCreature)
-{
-	return new npc_towerchannel_triggerAI(pCreature);
-}
-
-struct npc_towerchanneler_triggerAI : public ScriptedAI
-{
-	npc_towerchanneler_triggerAI(Creature* pCreature) : ScriptedAI(pCreature) {}
-
-	void Reset()
-	{
-
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-		{
-			if (Creature* channel = me->FindNearestCreature(19656, 12.0f, true))
-			{
-				DoCast(channel, SPELL_ETHEREAL_CHANNEL);
-			}
-		}
-	}
-};
-
-CreatureAI* GetAI_npc_towerchanneler_trigger(Creature* pCreature)
-{
-	return new npc_towerchanneler_triggerAI(pCreature);
-}
-
-/*######
 ## QUEST_YOU_ROBOT!
 ######*/
 
@@ -3681,65 +3584,6 @@ CreatureAI* GetAI_npc_protectorate_demolitionist(Creature* pCreature)
 	return protectorateAI;
 }
 
-struct demolitionist_triggerAI : public ScriptedAI
-{
-	demolitionist_triggerAI(Creature* pCreature) : ScriptedAI(pCreature) {}
-
-	void Reset()
-	{
-		demo_found = false;
-
-		PlayerGUID = 0;
-	}
-
-	bool demo_found;
-
-	uint64 PlayerGUID;
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-		{
-			if (!demo_found)
-			{
-				if (Creature* demolitionist = me->FindNearestCreature(20802, 10.0f, true))
-				{
-					if (npc_protectorate_demolitionistAI* pEscortAI = CAST_AI(npc_protectorate_demolitionistAI, demolitionist->AI()))
-					{
-						CAST_AI(npc_protectorate_demolitionistAI, demolitionist->AI())->PlayerGUID;
-						pEscortAI->Start(false, false, PlayerGUID);
-
-						demo_found = true;
-						me->DisappearAndDie();
-					}
-				}
-			}
-		}
-	}
-};
-
-CreatureAI* GetAI_demolitionist_trigger(Creature* pCreature)
-{
-	return new demolitionist_triggerAI(pCreature);
-}
-
-bool QuestAccept_npc_image_of_commander_ameer(Player* pPlayer, Creature* pCreature, Quest const* quest)
-{
-	if (quest->GetQuestId() == QUEST_DELIVERING_THE_MESSAGE)
-	{
-		pCreature->MonsterSay(QUEST_START_SAY, LANG_UNIVERSAL, 0);
-		pCreature->DisappearAndDie();
-		pPlayer->CastSpell(pPlayer, 35679, true);	
-
-		if (Creature* demotrigger = pCreature->FindNearestCreature(61027, 30.0f, true))
-		{
-			CAST_AI(demolitionist_triggerAI, demotrigger->AI())->PlayerGUID = pPlayer->GetGUID();
-		}
-	}
-
-	return true;
-}
-
 /*######
 ## npc_salhadaar
 ######*/
@@ -4755,21 +4599,6 @@ void AddSC_netherstorm()
 	newscript->RegisterSelf();
 
 	newscript = new Script;
-	newscript->Name = "npc_towercurse_trigger";
-	newscript->GetAI = &GetAI_npc_towercurse_trigger;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_towerchannel_trigger";
-	newscript->GetAI = &GetAI_npc_towerchannel_trigger;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_towerchanneler_trigger";
-	newscript->GetAI = &GetAI_npc_towerchanneler_trigger;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
 	newscript->Name = "npc_doctor_vomisa";
 	newscript->GetAI = &GetAI_npc_doctor_vomisa;
 	newscript->pQuestAccept = &QuestAccept_npc_doctor_vomisa;
@@ -4862,18 +4691,8 @@ void AddSC_netherstorm()
 	newscript->RegisterSelf();
 
 	newscript = new Script;
-	newscript->Name = "npc_image_of_commander_ameer";
-	newscript->pQuestAccept = &QuestAccept_npc_image_of_commander_ameer;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
 	newscript->Name = "npc_protectorate_demolitionist";
 	newscript->GetAI = &GetAI_npc_protectorate_demolitionist;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "demolitionist_trigger";
-	newscript->GetAI = &GetAI_demolitionist_trigger;
 	newscript->RegisterSelf();
 
 	newscript = new Script;

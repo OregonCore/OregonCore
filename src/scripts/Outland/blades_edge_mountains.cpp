@@ -2943,101 +2943,6 @@ CreatureAI* GetAI_npc_abyssal_flamebringer(Creature* pCreature)
 	return new npc_abyssal_flamebringerAI(pCreature);
 }
 
-struct npc_vilefire_soulAI : public ScriptedAI
-{
-	npc_vilefire_soulAI(Creature *c) : ScriptedAI(c) {}
-
-	void Reset()
-	{
-		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
-
-		fireball_timer = 6000;
-	}
-
-	uint32 fireball_timer;
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-
-		if (fireball_timer <= diff)
-		{
-			DoCastVictim(9053);
-			fireball_timer = 8000;
-		}
-		else fireball_timer -= diff;
-
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_vilefire_soul(Creature* pCreature)
-{
-	return new npc_vilefire_soulAI(pCreature);
-}
-
-struct npc_searing_elementalAI : public ScriptedAI
-{
-	npc_searing_elementalAI(Creature *c) : ScriptedAI(c) {}
-
-	void Reset()
-	{
-		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);		
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_searing_elemental(Creature* pCreature)
-{
-	return new npc_searing_elementalAI(pCreature);
-}
-
-// make it work -.-
-
-#define QUEST_THE_STONES_OF_VEKHNIR 10565
-
-struct npc_veknir_triggerAI : public ScriptedAI 
-{
-	npc_veknir_triggerAI(Creature *c) : ScriptedAI(c) {}
-
-	void Reset() { }
-
-	void MoveInLineOfSight(Unit *pWho)
-	{
-		if (Player *plWho = pWho->GetCharmerOrOwnerPlayerOrPlayerItself())
-		{
-			if (plWho->GetQuestStatus(QUEST_THE_STONES_OF_VEKHNIR) == QUEST_STATUS_INCOMPLETE && plWho->HasItemCount(30561, 1, false) && plWho->GetDistance(me) < 5.0f)
-			{
-				switch (me->GetEntry())
-				{
-				case 61015:
-					plWho->AddItem(30567, 1);
-					break;
-				}
-			}
-		}
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-	}
-};
-
-CreatureAI* GetAI_npc_veknir_trigger(Creature* pCreature)
-{
-	return new npc_veknir_triggerAI(pCreature);
-}
-
 void AddSC_blades_edge_mountains()
 {
     Script* newscript;
@@ -3296,20 +3201,5 @@ void AddSC_blades_edge_mountains()
 	newscript = new Script;
 	newscript->Name = "npc_abyssal_flamebringer";
 	newscript->GetAI = &GetAI_npc_abyssal_flamebringer;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_vilefire_soul";
-	newscript->GetAI = &GetAI_npc_vilefire_soul;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_searing_elemental";
-	newscript->GetAI = &GetAI_npc_searing_elemental;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_veknir_trigger";
-	newscript->GetAI = &GetAI_npc_veknir_trigger;
 	newscript->RegisterSelf();
 }
