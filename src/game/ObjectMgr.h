@@ -700,6 +700,7 @@ class ObjectMgr
         void AddGossipText(GossipText* pGText);
         GossipText* GetGossipText(uint32 Text_ID);
 
+        WorldSafeLocsEntry const* GetDefaultGraveYard(uint32 team);
         WorldSafeLocsEntry const* GetClosestGraveYard(float x, float y, float z, uint32 MapId, uint32 team);
         bool AddGraveYardLink(uint32 id, uint32 zone, uint32 team, bool inDB = true);
         void RemoveGraveYardLink(uint32 id, uint32 zone, uint32 team, bool inDB = false);

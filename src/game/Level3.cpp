@@ -1117,7 +1117,7 @@ bool ChatHandler::HandleReloadGameGraveyardZoneCommand(const char* /*arg*/)
 
     sObjectMgr.LoadGraveyardZones();
 
-    SendGlobalGMSysMessage("DB table game_graveyard_zone reloaded.");
+    SendGlobalGMSysMessage("DB table `graveyard_zone` reloaded.");
 
     return true;
 }
