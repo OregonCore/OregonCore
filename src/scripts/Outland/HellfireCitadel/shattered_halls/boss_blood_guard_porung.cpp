@@ -193,9 +193,6 @@ struct boss_blood_guard_porungAI : public ScriptedAI
 			{
 				DoScriptText(FORM_4, me);
 				form4 = true;
-
-				if (Creature* ranger = me->FindNearestCreature(17427, 20.0f, true))
-					CAST_AI(npc_shattered_shooterAI, ranger->AI())->Shoot(diff);
 			}
 			form4_timer -= diff;
 
@@ -303,9 +300,6 @@ struct npc_blood_guardAI : public ScriptedAI
 			{
 				DoScriptText(FORM_4, me);
 				form4 = true;
-
-				if (Creature* ranger = me->FindNearestCreature(17427, 20.0f, true))
-					CAST_AI(npc_shattered_shooterAI, ranger->AI())->Shoot(diff);
 			}
 			form4_timer -= diff;
 
