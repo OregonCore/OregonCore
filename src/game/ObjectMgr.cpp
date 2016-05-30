@@ -5031,19 +5031,18 @@ uint16 ObjectMgr::GetTaxiMount(uint32 id, uint32 team)
 
 void ObjectMgr::LoadGraveyardZones()
 {
-    mGraveYardMap.clear();                                  // need for reload case
+    mGraveYardMap.clear();  // need for reload case
 
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT id,ghost_zone,faction FROM game_graveyard_zone");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT ID, GhostZone, Faction FROM graveyard_zone");
 
     uint32 count = 0;
 
     if (!result)
     {
 
-        sLog.outString(">> Loaded %u graveyard-zone links", count);
+        sLog.outString(">> Loaded 0 graveyard-zone links. DB table `graveyard_zone` is empty.");
         return;
     }
-
 
     do
     {
@@ -5058,35 +5057,50 @@ void ObjectMgr::LoadGraveyardZones()
         WorldSafeLocsEntry const* entry = sWorldSafeLocsStore.LookupEntry(safeLocId);
         if (!entry)
         {
-            sLog.outErrorDb("Table game_graveyard_zone has record for invalid graveyard (WorldSafeLocs.dbc id) %u, skipped.", safeLocId);
+            sLog.outErrorDb("Table `graveyard_zone` has a record for non-existing graveyard (WorldSafeLocsID: %u), skipped.", safeLocId);
             continue;
         }
 
         AreaTableEntry const* areaEntry = GetAreaEntryByAreaID(zoneId);
         if (!areaEntry)
         {
-            sLog.outErrorDb("Table game_graveyard_zone has record for invalid zone id (%u), skipped.", zoneId);
+            sLog.outErrorDb("Table `graveyard_zone` has a record for non-existing Zone (ID: %u), skipped.", zoneId);
             continue;
         }
 
         if (areaEntry->zone != 0)
         {
-            sLog.outErrorDb("Table game_graveyard_zone has record subzone id (%u) instead of zone, skipped.", zoneId);
+            sLog.outErrorDb("Table `graveyard_zone` has a record for SubZone (ID: %u) instead of zone, skipped.", zoneId);
             continue;
         }
 
         if (team != 0 && team != HORDE && team != ALLIANCE)
         {
-            sLog.outErrorDb("Table game_graveyard_zone has record for non player faction (%u), skipped.", team);
+            sLog.outErrorDb("Table `graveyard_zone` has a record for non player faction (%u), skipped.", team);
             continue;
         }
 
         if (!AddGraveYardLink(safeLocId, zoneId, team, false))
-            sLog.outErrorDb("Table game_graveyard_zone has a duplicate record for Graveyard (ID: %u) and Zone (ID: %u), skipped.", safeLocId, zoneId);
+            sLog.outErrorDb("Table `graveyard_zone` has a duplicate record for Graveyard (ID: %u) and Zone (ID: %u), skipped.", safeLocId, zoneId);
     }
     while (result->NextRow());
 
     sLog.outString(">> Loaded %u graveyard-zone links", count);
+}
+
+WorldSafeLocsEntry const* ObjectMgr::GetDefaultGraveYard(uint32 team)
+{
+    enum DefaultGraveyard
+    {
+        HORDE_GRAVEYARD = 10, // Crossroads
+        ALLIANCE_GRAVEYARD = 4   // Westfall
+    };
+
+    if (team == HORDE)
+        return sWorldSafeLocsStore.LookupEntry(HORDE_GRAVEYARD);
+    else if (team == ALLIANCE)
+        return sWorldSafeLocsStore.LookupEntry(ALLIANCE_GRAVEYARD);
+    else return NULL;
 }
 
 WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float z, uint32 MapId, uint32 team)
@@ -5094,6 +5108,14 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
     // search for zone associated closest graveyard
     uint32 zoneId = MapManager::Instance().GetZoneId(MapId, x, y, z);
 
+    if (!zoneId)
+    {
+        if (z > -500)
+        {
+            sLog.outError("ZoneId not found for map %u coords (%f, %f, %f)", MapId, x, y, z);
+            return GetDefaultGraveYard(team);
+        }
+    }
     // Simulate std. algorithm:
     //   found some graveyard associated to (ghost_zone,ghost_map)
     //
@@ -5105,18 +5127,18 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
     GraveYardMap::const_iterator graveUp   = mGraveYardMap.upper_bound(zoneId);
     if (graveLow == graveUp)
     {
-        sLog.outErrorDb("Table game_graveyard_zone incomplete: Zone %u Team %u does not have a linked graveyard.", zoneId, team);
+        sLog.outErrorDb("Table `graveyard_zone` incomplete: Zone %u Team %u does not have a linked graveyard.", zoneId, team);
         return NULL;
     }
 
     // at corpse map
     bool foundNear = false;
-    float distNear;
+    float distNear = 10000;
     WorldSafeLocsEntry const* entryNear = NULL;
 
     // at entrance map for corpse map
     bool foundEntr = false;
-    float distEntr;
+    float distEntr = 10000;
     WorldSafeLocsEntry const* entryEntr = NULL;
 
     // some where other
@@ -5131,7 +5153,7 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
         WorldSafeLocsEntry const* entry = sWorldSafeLocsStore.LookupEntry(data.safeLocId);
         if (!entry)
         {
-            sLog.outErrorDb("Table game_graveyard_zone has record for invalid graveyard (WorldSafeLocs.dbc id) %u, skipped.", data.safeLocId);
+            sLog.outErrorDb("Table `graveyard_zone` has record for not existing graveyard (WorldSafeLocsID %u), skipped.", data.safeLocId);
             continue;
         }
 
@@ -5144,8 +5166,10 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
         if (MapId != entry->map_id)
         {
             // if find graveyard at different map from where entrance placed (or no entrance data), use any first
-            if (!mapEntry || mapEntry->entrance_map < 0 || mapEntry->entrance_map != entry->map_id ||
-                mapEntry->entrance_x == 0 && mapEntry->entrance_y == 0)
+            if (!mapEntry 
+                || mapEntry->entrance_map < 0
+                || mapEntry->entrance_map != entry->map_id
+                || mapEntry->entrance_x == 0 && mapEntry->entrance_y == 0)
             {
                 // not have any corrdinates for check distance anyway
                 entryFar = entry;
@@ -5229,7 +5253,7 @@ bool ObjectMgr::AddGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool inD
     // add link to DB
     if (inDB)
     {
-        WorldDatabase.PExecuteLog("INSERT INTO game_graveyard_zone (id,ghost_zone,faction) "
+        WorldDatabase.PExecuteLog("INSERT INTO graveyard_zone (ID, GhostZone, Faction) "
                                   "VALUES ('%u', '%u','%u')", id, zoneId, team);
     }
 
@@ -5242,7 +5266,7 @@ void ObjectMgr::RemoveGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool 
     GraveYardMap::iterator graveUp   = mGraveYardMap.upper_bound(zoneId);
     if (graveLow == graveUp)
     {
-        //sLog.outErrorDb("Table game_graveyard_zone incomplete: Zone %u Team %u does not have a linked graveyard.",zoneId,team);
+        //sLog.outErrorDb("Table graveyard_zone incomplete: Zone %u Team %u does not have a linked graveyard.",zoneId,team);
         return;
     }
 
@@ -5276,7 +5300,7 @@ void ObjectMgr::RemoveGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool 
 
     // remove link from DB
     if (inDB)
-        WorldDatabase.PExecute("DELETE FROM game_graveyard_zone WHERE id = '%u' AND ghost_zone = '%u' AND faction = '%u'", id, zoneId, team);
+        WorldDatabase.PExecute("DELETE FROM graveyard_zone WHERE ID = '%u' AND GhostZone = '%u' AND Faction = '%u'", id, zoneId, team);
 
     return;
 }
@@ -5291,10 +5315,7 @@ void ObjectMgr::LoadAreaTriggerTeleports()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT id, access_id, target_map, target_position_x, target_position_y, target_position_z, target_orientation FROM areatrigger_teleport");
     if (!result)
     {
-
-
-
-        sLog.outString(">> Loaded %u area trigger teleport definitions", count);
+        sLog.outString(">> Loaded 0 area trigger teleport definitions.", count);
         return;
     }
 
@@ -5302,13 +5323,9 @@ void ObjectMgr::LoadAreaTriggerTeleports()
     do
     {
         Field* fields = result->Fetch();
-
-
-        ++count;
-
         uint32 Trigger_ID = fields[0].GetUInt32();
-
         AreaTrigger at;
+        ++count;
 
         at.access_id                = fields[1].GetUInt32();
         at.target_mapId             = fields[2].GetUInt32();
