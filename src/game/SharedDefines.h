@@ -2053,6 +2053,7 @@ uint32 const CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD = (1 << (CREATURE_TYPE_HUMANOI
 
 enum CreatureFamily
 {
+    CREATURE_FAMILY_NONE           = 0,
     CREATURE_FAMILY_WOLF           = 1,
     CREATURE_FAMILY_CAT            = 2,
     CREATURE_FAMILY_SPIDER         = 3,
