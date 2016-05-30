@@ -457,7 +457,7 @@ struct boss_nightbaneAI : public ScriptedAI
 					Map::PlayerList const &PlayerList = map->GetPlayers();
 					for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
 					{
-						if (Player* i_pl = i->getSource())
+						if (Player* i_pl = i->GetSource())
 							if (i_pl->IsAlive() && !me->IsWithinDistInMap(i_pl, 80))
 							{
 								DoCast(i_pl, SPELL_FIREBALL_BARRAGE);

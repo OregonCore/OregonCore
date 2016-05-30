@@ -238,7 +238,7 @@ struct boss_chromaggusAI : public ScriptedAI
             for (ThreatContainer::StorageType::const_iterator i = threatlist.begin(); i != threatlist.end(); ++i)
             {
                 Unit* pUnit;
-                if ((*i) && (*i)->getSource())
+                if ((*i) && (*i)->GetSource())
                 {
                     pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
                     if (pUnit)

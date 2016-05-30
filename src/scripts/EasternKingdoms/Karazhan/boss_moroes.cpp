@@ -145,8 +145,8 @@ struct boss_moroesAI : public ScriptedAI
 
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
-                if (i->getSource()->IsAlive() && i->getSource()->HasAura(SPELL_GARROTE, 0))
-                    i->getSource()->RemoveAurasDueToSpell(SPELL_GARROTE);
+                if (i->GetSource()->IsAlive() && i->GetSource()->HasAura(SPELL_GARROTE, 0))
+                    i->GetSource()->RemoveAurasDueToSpell(SPELL_GARROTE);
             }
         }
     }

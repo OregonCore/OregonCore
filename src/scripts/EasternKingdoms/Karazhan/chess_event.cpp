@@ -256,9 +256,9 @@ struct Echo_of_MedivhAI : public ScriptedAI
         Map::PlayerList const &PlList = me->GetMap()->GetPlayers();
         for (Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
         {
-            if (i->getSource())
+            if (i->GetSource())
             {
-                if (i->getSource()->GetTeam() == ALLIANCE)
+                if (i->GetSource()->GetTeam() == ALLIANCE)
                     PlayerControlledFaction = FACTION_ALLIANCE;
                 else
                     PlayerControlledFaction = FACTION_HORDE;
@@ -706,7 +706,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
         Map::PlayerList const &PlList = me->GetMap()->GetPlayers();
         for (Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
         {
-            i->getSource()->RemoveAurasDueToSpellByCancel(SPELL_CONTROL_PIECE);
+            i->GetSource()->RemoveAurasDueToSpellByCancel(SPELL_CONTROL_PIECE);
         }
     }
 

@@ -383,7 +383,7 @@ struct boss_kalecgosAI : public ScriptedAI
             {
                 for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
                 {
-                    Player* pPlayer = itr->getSource();
+                    Player* pPlayer = itr->GetSource();
                     if (pPlayer)
                         ((InstanceMap*)me->GetMap())->PermBindAllPlayers(pPlayer);
                 }
@@ -549,7 +549,7 @@ struct boss_sathrovarrAI : public ScriptedAI
         Position homePos = me->GetHomePosition();
         for (Map::PlayerList::const_iterator itr = playerList.begin(); itr != playerList.end(); ++itr)
         {
-            Player* player = itr->getSource();
+            Player* player = itr->GetSource();
             if (player->IsInDist(&homePos, 50.0f) && player->GetPositionZ() <= DEMON_REALM_Z + 10.f)
             {
                  player->RemoveAura(AURA_SPECTRAL_REALM, 0);
@@ -766,7 +766,7 @@ bool GOkalecgos_teleporter(Player* pPlayer, GameObject* pGo)
     Map::PlayerList const& PlayerList = pMap->GetPlayers();
     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
     {
-        if (i->getSource() && i->getSource()->GetPositionZ() < DEMON_REALM_Z + 5)
+        if (i->GetSource() && i->GetSource()->GetPositionZ() < DEMON_REALM_Z + 5)
             ++SpectralPlayers;
     }
     if (pPlayer->HasAura(AURA_SPECTRAL_EXHAUSTION, 0) || (MAX_PLAYERS_IN_SPECTRAL_REALM && SpectralPlayers >= MAX_PLAYERS_IN_SPECTRAL_REALM))

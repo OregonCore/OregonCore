@@ -33,7 +33,7 @@ void ObjectGridEvacuator::Visit(CreatureMapType &m)
     // move to respawn point to prevent this case. For player view in respawn grid this will be normal respawn.
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end();)
     {
-        Creature* c = iter->getSource();
+        Creature* c = iter->GetSource();
         ++iter;
 
         ASSERT(!c->IsPet() && "ObjectGridRespawnMover don't must be called for pets");
@@ -202,7 +202,7 @@ void ObjectGridUnloader::Visit(GridRefManager<T> &m)
 {
     while (!m.isEmpty())
     {
-        T* obj = m.getFirst()->getSource();
+        T* obj = m.getFirst()->GetSource();
         // if option set then object already saved at this moment
         if (!sWorld.getConfig(CONFIG_SAVE_RESPAWN_TIME_IMMEDIATELY))
             obj->SaveRespawnTime();
@@ -219,13 +219,13 @@ void ObjectGridStoper::Visit(CreatureMapType &m)
     // stop any fights at grid de-activation and remove dynobjects created at cast by creatures
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        iter->getSource()->RemoveAllDynObjects();
-        if (iter->getSource()->IsInCombat())
+        iter->GetSource()->RemoveAllDynObjects();
+        if (iter->GetSource()->IsInCombat())
         {
-            iter->getSource()->CombatStop();
-            iter->getSource()->DeleteThreatList();
-            if (iter->getSource()->IsAIEnabled)
-                iter->getSource()->AI()->EnterEvadeMode();
+            iter->GetSource()->CombatStop();
+            iter->GetSource()->DeleteThreatList();
+            if (iter->GetSource()->IsAIEnabled)
+                iter->GetSource()->AI()->EnterEvadeMode();
         }
     }
 }
@@ -234,7 +234,7 @@ template<class T>
 void ObjectGridCleaner::Visit(GridRefManager<T> &m)
 {
     for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
-        iter->getSource()->CleanupsBeforeDelete();
+        iter->GetSource()->CleanupsBeforeDelete();
 }
 
 template void ObjectGridUnloader::Visit(CreatureMapType&);

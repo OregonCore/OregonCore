@@ -12871,7 +12871,7 @@ void Unit::GetRaidMember(std::list<Unit*>& nearMembers, float radius)
 
     for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* Target = itr->getSource();
+        Player* Target = itr->GetSource();
 
         // IsHostileTo check duel and controlled by enemy
         if (Target && Target != this && Target->IsAlive()
@@ -12893,7 +12893,7 @@ void Unit::GetPartyMember(std::list<Unit*>& TagUnitMap, float radius)
 
         for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player* Target = itr->getSource();
+            Player* Target = itr->GetSource();
 
             // IsHostileTo check duel and controlled by enemy
             if (Target && Target->GetSubGroup() == subgroup && !IsHostileTo(Target))

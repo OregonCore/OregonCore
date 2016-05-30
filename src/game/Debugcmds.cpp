@@ -673,7 +673,7 @@ bool ChatHandler::HandleDebugHostilRefList(const char* /*args*/)
     PSendSysMessage("Hostil reference list of %s (guid %u)", target->GetName(), target->GetGUIDLow());
     while (ref)
     {
-        if (Unit* unit = ref->getSource()->getOwner())
+        if (Unit* unit = ref->GetSource()->getOwner())
         {
             ++cnt;
             PSendSysMessage("   %u.   %s   (guid %u)  - threat %f", cnt, unit->GetName(), unit->GetGUIDLow(), ref->getThreat());

@@ -2516,7 +2516,7 @@ bool ChatHandler::HandleGroupTeleCommand(const char* args)
 
     for (GroupReference* itr = grp->GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* pl = itr->getSource();
+        Player* pl = itr->GetSource();
 
         if (!pl || !pl->GetSession())
             continue;
@@ -2595,7 +2595,7 @@ bool ChatHandler::HandleGroupgoCommand(const char* args)
 
     for (GroupReference* itr = grp->GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* pl = itr->getSource();
+        Player* pl = itr->GetSource();
 
         if (!pl || pl == m_session->GetPlayer() || !pl->GetSession())
             continue;

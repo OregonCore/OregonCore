@@ -25,7 +25,7 @@ EndScriptData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
-#include "Maraudon.h"
+#include "instance_maraudon.h"
 
 #define SPELL_WRATH                 21807
 #define SPELL_ENTANGLINGROOTS       12747
@@ -35,9 +35,9 @@ EndScriptData */
 #define NPC_CELEBRAS				13716
 #define SAY_SUMMONED			 -1910034
 
-struct celebras_the_cursedAI : public ScriptedAI
+struct npc_celebras_the_cursedAI : public ScriptedAI
 {
-    celebras_the_cursedAI(Creature* c) : ScriptedAI(c) {}
+    npc_celebras_the_cursedAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Wrath_Timer;
     uint32 EntanglingRoots_Timer;
@@ -117,9 +117,9 @@ struct celebras_the_cursedAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_celebras_the_cursed(Creature* pCreature)
+CreatureAI* GetAI_npc_celebras_the_cursed(Creature* pCreature)
 {
-    return new celebras_the_cursedAI (pCreature);
+    return new npc_celebras_the_cursedAI (pCreature);
 }
 
 /////////////////////////////////
@@ -305,8 +305,8 @@ void AddSC_boss_celebras_the_cursed()
 {
     Script* newscript;
     newscript = new Script;
-    newscript->Name = "celebras_the_cursed";
-    newscript->GetAI = &GetAI_celebras_the_cursed;
+    newscript->Name = "npc_celebras_the_cursed";
+    newscript->GetAI = &GetAI_npc_celebras_the_cursed;
     newscript->RegisterSelf();
 
 	newscript = new Script;

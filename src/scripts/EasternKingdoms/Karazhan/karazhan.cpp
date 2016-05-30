@@ -347,7 +347,7 @@ struct npc_barnesAI : public npc_escortAI
                     RaidWiped = true;
                     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                     {
-                        if (i->getSource()->IsAlive() && !i->getSource()->isGameMaster())
+                        if (i->GetSource()->IsAlive() && !i->GetSource()->isGameMaster())
                         {
                             RaidWiped = false;
                             break;
@@ -625,10 +625,10 @@ struct npc_image_of_medivhAI : public ScriptedAI
                 InstanceMap::PlayerList const& PlayerList = pMap->GetPlayers();
                 for (InstanceMap::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 {
-                    if (i->getSource()->IsAlive())
+                    if (i->GetSource()->IsAlive())
                     {
-                        if (i->getSource()->GetQuestStatus(9645) == QUEST_STATUS_INCOMPLETE)
-                            i->getSource()->CompleteQuest(9645);
+                        if (i->GetSource()->GetQuestStatus(9645) == QUEST_STATUS_INCOMPLETE)
+                            i->GetSource()->CompleteQuest(9645);
                     }
                 }
             }

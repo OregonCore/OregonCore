@@ -423,7 +423,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
             Map::PlayerList const& PlayerList = map->GetPlayers();
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
-                if (Player* i_pl = i->getSource())
+                if (Player* i_pl = i->GetSource())
                     if (i_pl->IsAlive())me->AddAura(44132, me); //+1% Damage for each active player on boss (+ActivePlayer_Stack)
             }
             //me->AddAura(44132, me);

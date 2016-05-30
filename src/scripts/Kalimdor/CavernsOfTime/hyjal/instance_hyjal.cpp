@@ -218,15 +218,15 @@ struct instance_mount_hyjal : public ScriptedInstance
 
                             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                             {
-                                if (i->getSource())
+                                if (i->GetSource())
                                 {
                                     WorldPacket data(SMSG_MESSAGECHAT, 200);
-                                    pUnit->BuildMonsterChat(&data, CHAT_MSG_MONSTER_YELL, YELL_EFFORTS, 0, YELL_EFFORTS_NAME, i->getSource()->GetGUID());
-                                    i->getSource()->GetSession()->SendPacket(&data);
+                                    pUnit->BuildMonsterChat(&data, CHAT_MSG_MONSTER_YELL, YELL_EFFORTS, 0, YELL_EFFORTS_NAME, i->GetSource()->GetGUID());
+                                    i->GetSource()->GetSession()->SendPacket(&data);
 
                                     WorldPacket data2(SMSG_PLAY_SOUND, 4);
                                     data2 << 10986;
-                                    i->getSource()->GetSession()->SendPacket(&data2);
+                                    i->GetSource()->GetSession()->SendPacket(&data2);
                                 }
                             }
                         }
@@ -306,7 +306,7 @@ struct instance_mount_hyjal : public ScriptedInstance
         {
             for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
-                if (Player* player = itr->getSource())
+                if (Player* player = itr->GetSource())
                     player->SendUpdateWorldState(id, state);
             }
         }

@@ -1921,8 +1921,8 @@ void WorldObject::MonsterYellToZone(int32 textId, uint32 language, uint64 Target
 
     Map::PlayerList const& pList = GetMap()->GetPlayers();
     for (Map::PlayerList::const_iterator itr = pList.begin(); itr != pList.end(); ++itr)
-        if (itr->getSource()->GetZoneId() == zoneid)
-            say_do(itr->getSource());
+        if (itr->GetSource()->GetZoneId() == zoneid)
+            say_do(itr->GetSource());
 }
 
 void WorldObject::MonsterTextEmote(int32 textId, uint64 TargetGuid, bool IsBossEmote)
@@ -2634,11 +2634,11 @@ struct WorldObjectChangeAccumulator
     {
         for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
         {
-            BuildPacket(iter->getSource());
-            if (!iter->getSource()->GetSharedVisionList().empty())
+            BuildPacket(iter->GetSource());
+            if (!iter->GetSource()->GetSharedVisionList().empty())
             {
-                SharedVisionList::const_iterator it = iter->getSource()->GetSharedVisionList().begin();
-                for (; it != iter->getSource()->GetSharedVisionList().end(); ++it)
+                SharedVisionList::const_iterator it = iter->GetSource()->GetSharedVisionList().begin();
+                for (; it != iter->GetSource()->GetSharedVisionList().end(); ++it)
                     BuildPacket(*it);
             }
         }
@@ -2648,10 +2648,10 @@ struct WorldObjectChangeAccumulator
     {
         for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
         {
-            if (!iter->getSource()->GetSharedVisionList().empty())
+            if (!iter->GetSource()->GetSharedVisionList().empty())
             {
-                SharedVisionList::const_iterator it = iter->getSource()->GetSharedVisionList().begin();
-                for (; it != iter->getSource()->GetSharedVisionList().end(); ++it)
+                SharedVisionList::const_iterator it = iter->GetSource()->GetSharedVisionList().begin();
+                for (; it != iter->GetSource()->GetSharedVisionList().end(); ++it)
                     BuildPacket(*it);
             }
         }
@@ -2660,12 +2660,12 @@ struct WorldObjectChangeAccumulator
     {
         for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
         {
-            uint64 guid = iter->getSource()->GetCasterGUID();
+            uint64 guid = iter->GetSource()->GetCasterGUID();
             if (IS_PLAYER_GUID(guid))
             {
                 //Caster may be NULL if DynObj is in removelist
                 if (Player* caster = ObjectAccessor::FindPlayer(guid))
-                    if (caster->GetUInt64Value(PLAYER_FARSIGHT) == iter->getSource()->GetGUID())
+                    if (caster->GetUInt64Value(PLAYER_FARSIGHT) == iter->GetSource()->GetGUID())
                         BuildPacket(caster);
             }
         }

@@ -3725,10 +3725,10 @@ bool ChatHandler::HandleCreatePetCommand(const char* /*args*/)
     }
 
     CreatureInfo const* cInfo = sObjectMgr.GetCreatureTemplate(creatureTarget->GetEntry());
-    // Creatures with family 0 crashes the server
-    if (cInfo->family == 0)
+    // Creatures with family CREATURE_FAMILY_NONE crashes the server
+    if (cInfo->family == CREATURE_FAMILY_NONE)
     {
-        PSendSysMessage("This creature cannot be tamed. (family id: 0).");
+        PSendSysMessage("This creature cannot be tamed. Family id: 0 (CREATURE_FAMILY_NONE).");
         SetSentErrorMessage(true);
         return false;
     }

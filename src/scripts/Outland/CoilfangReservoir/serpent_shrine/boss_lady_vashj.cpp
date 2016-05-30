@@ -275,7 +275,7 @@ struct boss_lady_vashjAI : public ScriptedAI
             Map::PlayerList const& PlayerList = pMap->GetPlayers();
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
-                if (Player* i_pl = i->getSource())
+                if (Player* i_pl = i->GetSource())
                     i_pl->DestroyItemCount(31088, 1, true);
             }
         }

@@ -147,7 +147,7 @@ void FollowerAI::JustDied(Unit* /*pKiller*/)
         {
             for (GroupReference* pRef = pGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
             {
-                if (Player* pMember = pRef->getSource())
+                if (Player* pMember = pRef->GetSource())
                 {
                     if (pMember->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
                         pMember->FailQuest(m_pQuestForFollow->GetQuestId());
@@ -232,7 +232,7 @@ void FollowerAI::UpdateAI(const uint32 uiDiff)
                 {
                     for (GroupReference* pRef = pGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
                     {
-                        Player* pMember = pRef->getSource();
+                        Player* pMember = pRef->GetSource();
 
                         if (pMember && me->IsWithinDistInMap(pMember, MAX_PLAYER_DISTANCE))
                         {
@@ -339,7 +339,7 @@ Player* FollowerAI::GetLeaderForFollower()
             {
                 for (GroupReference* pRef = pGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
                 {
-                    Player* pMember = pRef->getSource();
+                    Player* pMember = pRef->GetSource();
 
                     if (pMember && pMember->IsAlive() && me->IsWithinDistInMap(pMember, MAX_PLAYER_DISTANCE))
                     {

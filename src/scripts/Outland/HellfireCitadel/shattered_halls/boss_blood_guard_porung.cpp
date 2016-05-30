@@ -104,109 +104,6 @@ CreatureAI* GetAI_npc_shattered_zealot(Creature* pCreature)
 	return new npc_shattered_zealotAI(pCreature);
 }
 
-struct npc_shattered_helperAI : public ScriptedAI
-{
-	npc_shattered_helperAI(Creature* c) : ScriptedAI(c)
-	{
-		pInstance = (ScriptedInstance*)c->GetInstanceData();
-		HeroicMode = me->GetMap()->IsHeroic();
-	}
-
-	ScriptedInstance* pInstance;
-	bool Heroic;
-
-	void Reset()
-	{
-
-	}
-
-	void HelpShoot()
-	{
-		if (Unit* dummy = me->FindNearestCreature(ARROW_DUMMY_TARGET, 75.0f, true))
-		{
-			DoCast(dummy, SPELL_EXPLO_ARROW);
-		}
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-	}
-};
-
-CreatureAI* GetAI_npc_shattered_helper(Creature* pCreature)
-{
-	return new npc_shattered_helperAI(pCreature);
-}
-
-struct npc_shattered_shooterAI : public ScriptedAI
-{
-	npc_shattered_shooterAI(Creature* c) : ScriptedAI(c)		
-	{
-		pInstance = (ScriptedInstance*)c->GetInstanceData();
-		HeroicMode = me->GetMap()->IsHeroic();
-	}
-
-	uint32 porung;
-
-	uint32 ready_timer;
-	uint32 multishoot_timer;
-
-	ScriptedInstance* pInstance;
-	bool Heroic;
-
-	void Reset()
-	{
-		ready_timer = 10000;
-		multishoot_timer = 4000;
-	}
-
-	void EnterCombat(Unit* /*who*/) {}
-	void MoveInLineOfSight(Unit* /*who*/) {}
-
-	void Shoot(const uint32 /*diff*/)
-	{
-		if (Unit* dummy = me->FindNearestCreature(ARROW_DUMMY_TARGET, 200.0f, true))
-		{
-			DoCast(dummy, SPELL_EXPLO_ARROW);
-
-		if (Creature* helper = me->FindNearestCreature(31994, 200.0f, true))
-			CAST_AI(npc_shattered_helperAI, helper->AI())->HelpShoot();
-		}	
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-		{
-			if (ready_timer <= diff)
-			{
-				Shoot(diff);
-			}
-			else ready_timer -= diff;
-		}
-
-		if (UpdateVictim())
-		{
-			if (multishoot_timer <= diff)
-			{
-				Unit* victim = SelectUnit(SELECT_TARGET_RANDOM, 0);
-				DoCast(victim, SPELL_MULTI_SHOOT);
-				multishoot_timer = 9000;
-			}
-			else multishoot_timer -= diff;
-		}
-
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_shattered_shooter(Creature* pCreature)
-{
-	return new npc_shattered_shooterAI(pCreature);
-}
-
 struct boss_blood_guard_porungAI : public ScriptedAI
 {
     boss_blood_guard_porungAI(Creature* c) : ScriptedAI(c)
@@ -296,9 +193,6 @@ struct boss_blood_guard_porungAI : public ScriptedAI
 			{
 				DoScriptText(FORM_4, me);
 				form4 = true;
-
-				if (Creature* ranger = me->FindNearestCreature(17427, 20.0f, true))
-					CAST_AI(npc_shattered_shooterAI, ranger->AI())->Shoot(diff);
 			}
 			form4_timer -= diff;
 
@@ -406,9 +300,6 @@ struct npc_blood_guardAI : public ScriptedAI
 			{
 				DoScriptText(FORM_4, me);
 				form4 = true;
-
-				if (Creature* ranger = me->FindNearestCreature(17427, 20.0f, true))
-					CAST_AI(npc_shattered_shooterAI, ranger->AI())->Shoot(diff);
 			}
 			form4_timer -= diff;
 
@@ -431,38 +322,7 @@ CreatureAI* GetAI_npc_blood_guard(Creature* pCreature)
 	return new npc_blood_guardAI(pCreature);
 }
 
-struct npc_shattered_targetAI : public ScriptedAI
-{
-	npc_shattered_targetAI(Creature* c) : ScriptedAI(c)
-	{
-		pInstance = (ScriptedInstance*)c->GetInstanceData();
-		HeroicMode = me->GetMap()->IsHeroic();
-	}
 
-	ScriptedInstance* pInstance;
-	bool Heroic;
-
-	void Reset() { }
-
-	void SpellHit(Unit* /*who*/, const SpellEntry* spell)
-	{
-		if (spell->Id == SPELL_EXPLO_ARROW)
-		{
-			DoCast(me, FIRE);
-		}
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-	}
-};
-
-CreatureAI* GetAI_npc_shattered_target(Creature* pCreature)
-{
-	return new npc_shattered_targetAI(pCreature);
-}
 
 void AddSC_boss_blood_guard_porung()
 {
@@ -473,23 +333,8 @@ void AddSC_boss_blood_guard_porung()
     newscript->RegisterSelf();
 
 	newscript = new Script;
-	newscript->Name = "npc_shattered_shooter";
-	newscript->GetAI = &GetAI_npc_shattered_shooter;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_shattered_target";
-	newscript->GetAI = &GetAI_npc_shattered_target;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
 	newscript->Name = "npc_shattered_zealot";
 	newscript->GetAI = &GetAI_npc_shattered_zealot;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_shattered_helper";
-	newscript->GetAI = &GetAI_npc_shattered_helper;
 	newscript->RegisterSelf();
 
 	newscript = new Script;

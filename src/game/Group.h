@@ -370,14 +370,14 @@ class Group
         void BroadcastWorker(Worker& worker)
         {
             for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
-                worker(itr->getSource());
+                worker(itr->GetSource());
         }
 
         template<class Worker>
         void BroadcastWorker(Worker const& worker) const
         {
             for (GroupReference const* itr = GetFirstMember(); itr != NULL; itr = itr->next())
-                worker(itr->getSource());
+                worker(itr->GetSource());
         }
         void BroadcastPacket(WorldPacket* packet, bool ignorePlayersInBGRaid, int group = -1, uint64 ignore = 0);
         void BroadcastReadyCheck(WorldPacket* packet);

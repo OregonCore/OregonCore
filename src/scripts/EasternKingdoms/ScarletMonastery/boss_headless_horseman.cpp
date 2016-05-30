@@ -511,9 +511,9 @@ struct boss_headless_horsemanAI : public ScriptedAI
         std::list<Player*>::const_iterator j;
 
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-            if ((me->IsWithinLOSInMap(i->getSource()) || !checkLoS) && me->getVictim() != i->getSource() &&
-                me->IsWithinDistInMap(i->getSource(), range) && i->getSource()->IsAlive())
-                temp.push_back(i->getSource());
+            if ((me->IsWithinLOSInMap(i->GetSource()) || !checkLoS) && me->getVictim() != i->GetSource() &&
+                me->IsWithinDistInMap(i->GetSource(), range) && i->GetSource()->IsAlive())
+                temp.push_back(i->GetSource());
 
         if (temp.size())
         {

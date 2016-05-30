@@ -60,7 +60,7 @@ void CreatureAI::DoZoneInCombatWithPlayers(bool force)
     Map::PlayerList const &PlayerList = map->GetPlayers();
     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
     {
-        if (Player* pPlayer = i->getSource())
+        if (Player* pPlayer = i->GetSource())
         {
             if (pPlayer->isGameMaster())
                 continue;
@@ -120,7 +120,7 @@ void CreatureAI::DoZoneInCombat(Creature* creature /*= NULL*/, float maxRangeToN
 
     for (Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
     {
-        if (Player* pPlayer = i->getSource())
+        if (Player* pPlayer = i->GetSource())
         {
             if (pPlayer->isGameMaster())
                 continue;
