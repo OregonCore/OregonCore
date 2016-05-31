@@ -794,7 +794,7 @@ struct SpellNotifierCreatureAndPlayer
                     i_data->push_back(itr->GetSource());
                 break;
             case PUSH_IN_LINE:
-                if (i_caster->HasInLine((Unit*)(itr->GetSource()), i_radius, i_caster->GetObjectSize()))
+                if (i_caster->HasInLine((Unit*)(itr->GetSource()), i_caster->GetObjectSize()))
                     i_data->push_back(itr->GetSource());
                 break;
             default:

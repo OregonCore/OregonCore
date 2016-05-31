@@ -341,7 +341,7 @@ struct boss_malchezaarAI : public ScriptedAI
         InfernalPoint* point = NULL;
         Position pos;
         if ((me->GetMapId() != 532) || positions.empty())
-            me->GetRandomNearPosition(pos, 60);
+            pos = me->GetRandomNearPosition(60.0f);
         else
         {
             std::vector<InfernalPoint*>::iterator itr = positions.begin() + rand() % positions.size();

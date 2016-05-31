@@ -289,8 +289,7 @@ struct instance_dark_portal : public ScriptedInstance
 
         debug_log("OSCR: Instance Dark Portal: Summoning rift boss entry %u.", entry);
 
-        Position pos;
-        source->GetRandomNearPosition(pos, 10.0f);
+        Position pos = source->GetRandomNearPosition(10.0f);
 
         //normalize Z-level if we can, if rift is not at ground level.
         pos.m_positionZ = std::max(source->GetMap()->GetHeight(pos.m_positionX, pos.m_positionY, MAX_HEIGHT), source->GetMap()->GetWaterLevel(pos.m_positionX, pos.m_positionY));

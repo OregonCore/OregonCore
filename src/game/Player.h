@@ -2474,7 +2474,7 @@ class Player : public Unit, public GridObject<Player>
         }
         float GetTransOffsetO() const
         {
-            return m_movementInfo.GetTransportPos()->m_orientation;
+            return m_movementInfo.GetTransportPos()->GetOrientation();
         }
         uint32 GetTransTime() const
         {

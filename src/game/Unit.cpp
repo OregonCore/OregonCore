@@ -160,7 +160,7 @@ void MovementInfo::Read(ByteBuffer& data)
     data >> pos.m_positionX;
     data >> pos.m_positionY;
     data >> pos.m_positionZ;
-    data >> pos.m_orientation;
+    pos.SetOrientation(data.read<float>());
 
     if (HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
     {
@@ -168,7 +168,7 @@ void MovementInfo::Read(ByteBuffer& data)
         data >> t_pos.m_positionX;
         data >> t_pos.m_positionY;
         data >> t_pos.m_positionZ;
-        data >> t_pos.m_orientation;
+        t_pos.SetOrientation(data.read<float>());
         data >> t_time;
     }
     if (HasMovementFlag(MovementFlags(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING2)))
