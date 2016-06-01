@@ -5236,8 +5236,6 @@ bool ChatHandler::HandleResetLevelCommand(const char* args)
     if (pet)
         pet->InitStatsForLevel(startLevel);
 
-    sScriptMgr.OnPlayerLevelChanged(player, startLevel);
-
     return true;
 }
 

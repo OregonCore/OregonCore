@@ -2490,7 +2490,7 @@ void Player::GiveLevel(uint32 level, bool ignoreRAF)
     if (level == getLevel())
         return;
 
-    sScriptMgr.OnPlayerLevelChanged(this, level);
+    sScriptMgr.OnPlayerLevelChanged(this, getLevel(), level);
 
     int32 diff = level - getLevel();
 

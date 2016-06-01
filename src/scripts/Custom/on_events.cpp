@@ -50,7 +50,7 @@ void OnPlayerKilledByCreature(Creature* /*killer*/, Player* /*killed*/)
 }
 
 //This function is called just before the players level changes
-void OnPlayerLevelChanged(Player* /*player*/, uint8 /*newLevel*/)
+void OnPlayerLevelChanged(Player* /*player*/, uint8 /*oldLevel*/, uint8 /*newLevel*/)
 {
 
 }
