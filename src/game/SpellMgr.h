@@ -921,7 +921,7 @@ class SpellMgr
             return spell_id;
         }
 
-        uint32 SpellMgr::GetNextSpellInChain(uint32 spell_id) const
+        uint32 GetNextSpellInChain(uint32 spell_id) const
         {
             if (SpellChainNode const* node = GetSpellChainNode(spell_id))
                 if (node->next)
