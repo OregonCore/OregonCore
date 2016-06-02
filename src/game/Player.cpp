@@ -3183,22 +3183,24 @@ void Player::LearnSpell(uint32 spell_id)
 
     bool learning = AddSpell(spell_id, active);
 
-    // learn all disabled higher ranks (recursive)
-    SpellChainNode const* node = sSpellMgr.GetSpellChainNode(spell_id);
-    if (node)
+    // prevent duplicated entries in spell book
+    if (learning && IsInWorld())
     {
-        PlayerSpellMap::iterator iter = m_spells.find(node->next);
-        if (disabled && iter != m_spells.end() && iter->second.disabled)
-            LearnSpell(node->next);
+        WorldPacket data(SMSG_LEARNED_SPELL, 4);
+        data << uint32(spell_id);
+        GetSession()->SendPacket(&data);
     }
 
-    // prevent duplicated entires in spell book
-    if (!learning)
-        return;
-
-    WorldPacket data(SMSG_LEARNED_SPELL, 4);
-    data << uint32(spell_id);
-    GetSession()->SendPacket(&data);
+    // learn all disabled higher ranks (recursive)
+    if (disabled)
+    {
+        if (uint32 nextSpell = sSpellMgr.GetNextSpellInChain(spell_id))
+        {
+            PlayerSpellMap::iterator iter = m_spells.find(nextSpell);
+            if (iter != m_spells.end() && iter->second.disabled)
+                LearnSpell(nextSpell);
+        }
+    }
 }
 
 void Player::RemoveSpell(uint32 spell_id, bool disabled)
@@ -16049,6 +16051,14 @@ void Player::_LoadReputation(QueryResult_AutoPtr result)
         }
         while (result->NextRow());
     }
+}
+
+void Player::LearnSpellHighestRank(uint32 spellid)
+{
+    LearnSpell(spellid);
+
+    if (uint32 next = sSpellMgr.GetNextSpellInChain(spellid))
+        LearnSpellHighestRank(next);
 }
 
 void Player::_LoadSkills(QueryResult_AutoPtr result)
