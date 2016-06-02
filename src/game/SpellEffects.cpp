@@ -6426,7 +6426,7 @@ void Spell::EffectReputation(SpellEffIndex effIndex)
     if (!factionEntry)
         return;
 
-    _player->ModifyFactionReputation(factionEntry, rep_change);
+    _player->GetReputationMgr().ModifyReputation(factionEntry, rep_change);
 }
 
 void Spell::EffectQuestComplete(SpellEffIndex effIndex)

@@ -1324,6 +1324,9 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Loading Creature Reputation OnKill Data...");
     sObjectMgr.LoadReputationOnKill();
 
+    sConsole.SetLoadingLabel("Loading Reputation Spillover Data...");
+    sObjectMgr.LoadReputationSpilloverTemplate();
+
     sConsole.SetLoadingLabel("Loading Pet Create Spells...");
     sObjectMgr.LoadPetCreateSpells();
 
@@ -1592,7 +1595,7 @@ void World::SetInitialWorldSettings()
     mail_timer_expires = ((DAY * IN_MILLISECONDS) / (m_timers[WUPDATE_AUCTIONS].GetInterval()));
     sLog.outDebug("Mail timer set to: %u, mail return is called every %u minutes", mail_timer, mail_timer_expires);
 
-    // Initilize static helper structures
+    // Initialize static helper structures
     AIRegistry::Initialize();
     Player::InitVisibleBits();
 

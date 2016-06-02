@@ -441,13 +441,10 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
     // checked and error show at loading templates
     if (FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(cInfo->faction))
     {
-        FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplate->faction);
-        if (factionEntry)
-            if (!(cInfo->flags_extra & CREATURE_FLAG_EXTRA_CIVILIAN) &&
-                (factionEntry->team == ALLIANCE || factionEntry->team == HORDE))
-                SetPvP(true);
-            else
-                SetPvP(false);
+        if (factionTemplate->factionFlags & FACTION_TEMPLATE_FLAG_PVP)
+            SetPvP(true);
+        else
+            SetPvP(false);
     }
 
     // trigger creature is always not selectable and can not be attacked
@@ -816,10 +813,6 @@ void Creature::InitializeReactState()
 {
     if (IsTotem() || isTrigger() || IsCritter() || isSpiritService())
         SetReactState(REACT_PASSIVE);
-    /*
-    else if (IsCivilian())
-        SetReactState(REACT_DEFENSIVE);
-    */
     else
         SetReactState(REACT_AGGRESSIVE);
 }

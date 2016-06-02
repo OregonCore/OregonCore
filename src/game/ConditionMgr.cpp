@@ -24,6 +24,7 @@
 #include "ConditionMgr.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "ReputationMgr.h"
 
 INSTANTIATE_SINGLETON_1(ConditionMgr);
 
@@ -146,7 +147,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
             if (Player* player = object->ToPlayer())
             {
                 if (FactionEntry const* faction = sFactionStore.LookupEntry(ConditionValue1))
-                    condMeets = (ConditionValue2 & (1 << player->GetReputationRank(faction)));
+                    condMeets = (ConditionValue2 & (1 << player->GetReputationMgr().GetRank(faction))) != 0;
             }
             break;
         }

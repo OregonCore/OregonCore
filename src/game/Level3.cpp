@@ -838,6 +838,14 @@ bool ChatHandler::HandleReloadReservedNameCommand(const char*)
     return true;
 }
 
+bool ChatHandler::HandleReloadReputationSpilloverTemplateCommand(const char*)
+{
+    sLog.outString("Re-Loading `reputation_spillover_template` Table!");
+    sObjectMgr.LoadReputationSpilloverTemplate();
+    SendGlobalSysMessage("DB table `reputation_spillover_template` reloaded.");
+    return true;
+}
+
 bool ChatHandler::HandleReloadSkillDiscoveryTemplateCommand(const char* /*args*/)
 {
     sLog.outString("Re-Loading Skill Discovery Table...");
@@ -5790,11 +5798,11 @@ bool ChatHandler::HandleCompleteQuest(const char* args)
     if (uint32 repFaction = pQuest->GetRepObjectiveFaction())
     {
         uint32 repValue = pQuest->GetRepObjectiveValue();
-        uint32 curRep = player->GetReputation(repFaction);
+        uint32 curRep = player->GetReputationMgr().GetReputation(repFaction);
         if (curRep < repValue)
         {
             FactionEntry const* factionEntry = sFactionStore.LookupEntry(repFaction);
-            player->SetFactionReputation(factionEntry, repValue);
+            player->GetReputationMgr().SetReputation(factionEntry, repValue);
         }
     }
 

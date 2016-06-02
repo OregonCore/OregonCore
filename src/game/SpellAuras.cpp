@@ -3103,20 +3103,8 @@ void Aura::HandleForceReaction(bool apply, bool Real)
     uint32 factionId = m_modifier.m_miscvalue;
     uint32 factionRank = m_modifier.m_amount;
 
-    if (apply)
-        player->m_forcedReactions[factionId] = ReputationRank(factionRank);
-    else
-        player->m_forcedReactions.erase(factionId);
-
-    WorldPacket data;
-    data.Initialize(SMSG_SET_FORCED_REACTIONS, 4 + player->m_forcedReactions.size() * (4 + 4));
-    data << uint32(player->m_forcedReactions.size());
-    for (ForcedReactions::const_iterator itr = player->m_forcedReactions.begin(); itr != player->m_forcedReactions.end(); ++itr)
-    {
-        data << uint32(itr->first);                         // faction_id (Faction.dbc)
-        data << uint32(itr->second);                        // reputation rank
-    }
-    player->SendDirectMessage(&data);
+    player->GetReputationMgr().ApplyForceReaction(factionId, ReputationRank(factionRank), apply);
+    player->GetReputationMgr().SendForceReactions();
 }
 
 void Aura::HandleAuraModSkill(bool apply, bool /*Real*/)
