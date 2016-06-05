@@ -353,6 +353,29 @@ void ReputationMgr::SetAtWar(FactionState* faction, bool atWar)
     faction->needSave = true;
 }
 
+bool ReputationMgr::IsAtWar(uint32 faction_id) const
+{
+    FactionEntry const* factionEntry = sFactionStore.LookupEntry(faction_id);
+
+    if (!factionEntry)
+    {
+        sLog.outError("ReputationMgr::IsAtWar: Can't get AtWat flag of %s for unknown faction (faction id) #%u.", _player->GetName(), faction_id);
+        return 0;
+    }
+
+    return IsAtWar(factionEntry);
+}
+
+bool ReputationMgr::IsAtWar(FactionEntry const* factionEntry) const
+{
+    if (!factionEntry)
+        return false;
+
+    if (FactionState const* factionState = GetState(factionEntry))
+        return (factionState->Flags & FACTION_FLAG_AT_WAR);
+    return false;
+}
+
 void ReputationMgr::SetInactive(RepListID repListID, bool on)
 {
     FactionStateList::iterator itr = _factions.find(repListID);

@@ -211,7 +211,7 @@ bool GOHello_go_ethereum_prison(Player* player, GameObject* go)
     {
         if (!creature->IsHostileTo(player))
         {
-            if (FactionTemplateEntry const* pFaction = creature->getFactionTemplateEntry())
+            if (FactionTemplateEntry const* pFaction = creature->GetFactionTemplateEntry())
             {
                 uint32 Spell = 0;
 

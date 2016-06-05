@@ -563,8 +563,8 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                             else if (index == UNIT_FIELD_FACTIONTEMPLATE)
                             {
                                 FactionTemplateEntry const* ft1, *ft2;
-                                ft1 = ToPlayer()->getFactionTemplateEntry();
-                                ft2 = target->ToPlayer()->getFactionTemplateEntry();
+                                ft1 = ToPlayer()->GetFactionTemplateEntry();
+                                ft2 = target->ToPlayer()->GetFactionTemplateEntry();
                                 if (ft1 && ft2 && !ft1->IsFriendlyTo(*ft2))
                                 {
                                     uint32 faction = target->ToPlayer()->getFaction(); // pretend that all other HOSTILE players have own faction, to allow follow, heal, rezz (trade wont work)

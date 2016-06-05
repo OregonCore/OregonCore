@@ -336,14 +336,13 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
         }
         case CONDITION_REACTION_TO:
         {
-            /* @todo Implement this feature
             if (WorldObject* toObject = sourceInfo.mConditionTargets[ConditionValue1])
             {
                 Unit* toUnit = toObject->ToUnit();
                 Unit* unit = object->ToUnit();
                 if (toUnit && unit)
                     condMeets = (1 << unit->GetReactionTo(toUnit)) & ConditionValue2;
-            }*/
+            }
             condMeets = false;
             break;
         }

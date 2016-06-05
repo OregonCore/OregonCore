@@ -885,7 +885,7 @@ bool Creature::IsTrainerOf(Player* pPlayer, bool msg) const
         if (GetCreatureTemplate()->race && pPlayer->getRace() != GetCreatureTemplate()->race)
         {
             // Allowed to train if exalted
-            if (FactionTemplateEntry const* faction_template = getFactionTemplateEntry())
+            if (FactionTemplateEntry const* faction_template = GetFactionTemplateEntry())
             {
                 if (pPlayer->GetReputationRank(faction_template->faction) == REP_EXALTED)
                     return true;

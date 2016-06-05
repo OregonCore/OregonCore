@@ -83,6 +83,9 @@ public:                                                 // accessors
         return repItr != _factions.end() ? &repItr->second : NULL;
     }
 
+    bool IsAtWar(uint32 faction_id) const;
+    bool IsAtWar(FactionEntry const* factionEntry) const;
+
     int32 GetReputation(uint32 faction_id) const;
     int32 GetReputation(FactionEntry const* factionEntry) const;
     int32 GetBaseReputation(FactionEntry const* factionEntry) const;
