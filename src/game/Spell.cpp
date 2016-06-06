@@ -4743,7 +4743,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 // not allow cast fly spells at old maps by players (all spells is self target)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                 {
-                    if (!m_caster->ToPlayer()->isGameMaster() &&
+                    if (!m_caster->ToPlayer()->IsGameMaster() &&
                         GetVirtualMapForMapAndZone(m_caster->GetMapId(), m_caster->GetZoneId()) != 530)
                         return SPELL_FAILED_NOT_HERE;
                 }
@@ -5939,7 +5939,7 @@ bool Spell::CheckTarget(Unit* target, uint32 eff)
         if (!target->ToPlayer()->IsVisible())
             return false;
 
-        if (target->ToPlayer()->isGameMaster() && !IsPositiveSpell(m_spellInfo->Id))
+        if (target->ToPlayer()->IsGameMaster() && !IsPositiveSpell(m_spellInfo->Id))
             return false;
     }
 

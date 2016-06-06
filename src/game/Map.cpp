@@ -2118,7 +2118,7 @@ uint32 Map::GetPlayersCountExceptGMs() const
 {
     uint32 count = 0;
     for (MapRefManager::const_iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
-        if (!itr->GetSource()->isGameMaster())
+        if (!itr->GetSource()->IsGameMaster())
             ++count;
     return count;
 }
@@ -2259,7 +2259,7 @@ bool InstanceMap::CanEnter(Player* player)
     }
 
     // allow GM's to enter
-    if (player->isGameMaster())
+    if (player->IsGameMaster())
         return Map::CanEnter(player);
 
     // cannot enter if the instance is full (player cap), GMs don't count
@@ -2286,7 +2286,7 @@ bool InstanceMap::CanEnter(Player* player)
         for (PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
             if (Player* iPlayer = i->GetSource())
             {
-                if (iPlayer->isGameMaster()) // bypass GMs
+                if (iPlayer->IsGameMaster()) // bypass GMs
                     continue;
                 if (!player->GetGroup()) // player has not group and there is someone inside, deny entry
                 {

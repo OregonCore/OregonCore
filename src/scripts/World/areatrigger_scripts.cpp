@@ -111,7 +111,7 @@ enum eLarkorwi
 
 bool AreaTrigger_at_scent_larkorwi(Player* player, AreaTriggerEntry const* at)
 {
-    if (player->IsAlive() && !player->isGameMaster() && player->GetQuestStatus(QUEST_SCENT_OF_LARKORWI) == QUEST_STATUS_INCOMPLETE)
+    if (player->IsAlive() && !player->IsGameMaster() && player->GetQuestStatus(QUEST_SCENT_OF_LARKORWI) == QUEST_STATUS_INCOMPLETE)
     {
         if (!GetClosestCreatureWithEntry(player, NPC_LARKORWI_MATE, 25.0f, false))
             player->SummonCreature(NPC_LARKORWI_MATE, at->x, at->y, at->z, 3.3f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 2 * MINUTE * IN_MILLISECONDS);
@@ -150,7 +150,7 @@ static const AncientSpawn afSpawnLocations[MAX_ANCIENTS] =
 
 bool AreaTrigger_at_ancient_leaf(Player* player, AreaTriggerEntry const* /*at*/)
 {
-    if (player->isGameMaster() || !player->IsAlive())
+    if (player->IsGameMaster() || !player->IsAlive())
         return false;
 
     // Handle Call Ancients event start - The area trigger summons 3 ancients
@@ -180,7 +180,7 @@ static const WorldLocation haramadTeleportDest(530, -1810.465f, 5323.083f, -12.4
 
 bool AreaTrigger_at_haramad_teleport(Player* player, AreaTriggerEntry const* /*at*/)
 {
-    if (player->isGameMaster() || !player->IsAlive())
+    if (player->IsGameMaster() || !player->IsAlive())
         return false;
 
     if (player->GetQuestStatus(QUEST_SPECIAL_DELIVERY_TO_SHATTRATH) == QUEST_STATUS_INCOMPLETE)

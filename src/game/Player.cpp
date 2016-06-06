@@ -809,7 +809,7 @@ void Player::StopMirrorTimer(MirrorTimerType Type)
 
 void Player::EnvironmentalDamage(EnviromentalDamage type, uint32 damage)
 {
-    if (!IsAlive() || isGameMaster())
+    if (!IsAlive() || IsGameMaster())
         return;
 
     // Absorb, resist some environmental damage type
@@ -5774,7 +5774,7 @@ void Player::CheckAreaExploreAndOutdoor()
     bool isOutdoor;
     uint16 areaFlag = GetBaseMap()->GetAreaFlag(GetPositionX(), GetPositionY(), GetPositionZ(), &isOutdoor);
 
-    if (!isOutdoor && !isGameMaster())
+    if (!isOutdoor && !IsGameMaster())
         RemoveAurasWithAttribute(SPELL_ATTR0_OUTDOORS_ONLY);
 
     /* Process passive spells which 'works only while outdoors';
@@ -15967,7 +15967,7 @@ void Player::ConvertInstancesToGroup(Player* player, Group* group, uint64 player
 
 bool Player::Satisfy(AccessRequirement const* ar, uint32 target_map, bool report)
 {
-    if (!isGameMaster() && ar)
+    if (!IsGameMaster() && ar)
     {
         uint8 LevelMin = 0;
         uint8 LevelMax = 0;
@@ -17171,7 +17171,7 @@ void Player::Whisper(const std::string& text, uint32 language, Player* rPlayer)
         GetSession()->SendPacket(&data);
     }
 
-    if (!isAcceptWhispers() && !(isGameMaster() && rPlayer->isGameMaster()))
+    if (!isAcceptWhispers() && !(IsGameMaster() && rPlayer->IsGameMaster()))
     {
         SetAcceptWhispers(true);
         ChatHandler(this).SendSysMessage(LANG_COMMAND_WHISPERON);
@@ -18140,7 +18140,7 @@ uint32 Player::GetMaxPersonalArenaRatingRequirement()
 void Player::UpdateHomebindTime(uint32 time)
 {
     // GMs never get homebind timer online
-    if (m_InstanceValid || isGameMaster())
+    if (m_InstanceValid || IsGameMaster())
     {
         if (m_HomebindTimer)                                 // instance valid, but timer not reset
         {
@@ -18179,7 +18179,7 @@ void Player::UpdateHomebindTime(uint32 time)
 void Player::UpdatePvPState(bool onlyFFA)
 {
     // @todo should we always synchronize UNIT_FIELD_BYTES_2, 1 of controller and controlled?
-    if (!pvpInfo.inNoPvPArea && !isGameMaster()
+    if (!pvpInfo.inNoPvPArea && !IsGameMaster()
         && (pvpInfo.inFFAPvPArea || sWorld.IsFFAPvPRealm()))
     {
         if (!IsFFAPvP())
@@ -18471,7 +18471,7 @@ void Player::LeaveBattleground(bool teleportToEntryPoint)
         bg->RemovePlayerAtLeave(GetGUID(), teleportToEntryPoint, true);
 
         // call after remove to be sure that player resurrected for correct cast
-        if (bg->isBattleground() && !isGameMaster() && sWorld.getConfig(CONFIG_BATTLEGROUND_CAST_DESERTER))
+        if (bg->isBattleground() && !IsGameMaster() && sWorld.getConfig(CONFIG_BATTLEGROUND_CAST_DESERTER))
         {
             if (bg->GetStatus() == STATUS_IN_PROGRESS || bg->GetStatus() == STATUS_WAIT_JOIN)
             {
@@ -19831,7 +19831,7 @@ void Player::SetClientControl(Unit* target, bool allowMove)
 void Player::UpdateZoneDependentAuras(uint32 newZone)
 {
     // remove new continent flight forms
-    if (!isGameMaster() &&
+    if (!IsGameMaster() &&
         GetVirtualMapForMapAndZone(GetMapId(), newZone) != 530)
     {
         RemoveSpellsCausingAura(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED);
@@ -20182,7 +20182,7 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
 
     //Players with low fall distance, Feather Fall or physical immunity (charges used) are ignored
     // 14.57 can be calculated by resolving damageperc formular below to 0
-    if (z_diff >= 14.57f && !isDead() && !isGameMaster() &&
+    if (z_diff >= 14.57f && !isDead() && !IsGameMaster() &&
         !HasAuraType(SPELL_AURA_HOVER) && !HasAuraType(SPELL_AURA_FEATHER_FALL) &&
         !HasAuraType(SPELL_AURA_FLY) && !IsImmunedToDamage(SPELL_SCHOOL_MASK_NORMAL, true))
     {

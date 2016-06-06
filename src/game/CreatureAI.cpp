@@ -62,7 +62,7 @@ void CreatureAI::DoZoneInCombatWithPlayers(bool force)
     {
         if (Player* pPlayer = i->GetSource())
         {
-            if (pPlayer->isGameMaster())
+            if (pPlayer->IsGameMaster())
                 continue;
 
             if (pPlayer->IsAlive())
@@ -122,7 +122,7 @@ void CreatureAI::DoZoneInCombat(Creature* creature /*= NULL*/, float maxRangeToN
     {
         if (Player* pPlayer = i->GetSource())
         {
-            if (pPlayer->isGameMaster())
+            if (pPlayer->IsGameMaster())
                 continue;
 
             if (pPlayer->IsAlive())

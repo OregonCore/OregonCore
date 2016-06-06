@@ -1008,7 +1008,7 @@ class Player : public Unit, public GridObject<Player>
             if (on) m_ExtraFlags |= PLAYER_EXTRA_ACCEPT_WHISPERS;
             else m_ExtraFlags &= ~PLAYER_EXTRA_ACCEPT_WHISPERS;
         }
-        bool isGameMaster() const
+        bool IsGameMaster() const
         {
             return m_ExtraFlags & PLAYER_EXTRA_GM_ON;
         }

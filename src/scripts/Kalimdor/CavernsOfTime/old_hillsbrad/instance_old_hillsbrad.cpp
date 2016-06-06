@@ -103,7 +103,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
 
     void OnPlayerEnter(Player* player)
     {
-        if (player->isGameMaster())
+        if (player->IsGameMaster())
             return;
 
         UpdateOHWorldState();

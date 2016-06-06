@@ -573,7 +573,7 @@ void Creature::Update(uint32 diff)
                         {
                             if (Player* player = it->GetSource())
                             {
-                                if (player->isGameMaster())
+                                if (player->IsGameMaster())
                                     continue;
 
                                 if (player->IsAlive() && this->IsHostileTo(player))
@@ -2145,7 +2145,7 @@ void Creature::SetInCombatWithZone()
     {
         if (Player* pPlayer = i->GetSource())
         {
-            if (pPlayer->isGameMaster())
+            if (pPlayer->IsGameMaster())
                 continue;
 
             if (pPlayer->IsAlive())

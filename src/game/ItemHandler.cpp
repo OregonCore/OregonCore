@@ -739,7 +739,7 @@ void WorldSession::SendListInventory(uint64 vendorguid)
         {
             if (ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(crItem->item))
             {
-                if ((pProto->AllowableClass & _player->getClassMask()) == 0 && pProto->Bonding == BIND_WHEN_PICKED_UP && !_player->isGameMaster())
+                if ((pProto->AllowableClass & _player->getClassMask()) == 0 && pProto->Bonding == BIND_WHEN_PICKED_UP && !_player->IsGameMaster())
                     continue;
 
                 ++count;

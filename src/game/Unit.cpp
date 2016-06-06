@@ -7049,7 +7049,7 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
     // nobody can attack GM in GM-mode
     if (victim->GetTypeId() == TYPEID_PLAYER)
     {
-        if (victim->ToPlayer()->isGameMaster())
+        if (victim->ToPlayer()->IsGameMaster())
             return false;
     }
     else
@@ -9084,7 +9084,7 @@ bool Unit::isTargetableForAttack(bool checkFakeDeath) const
         UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_PC))
         return false;
 
-    if (GetTypeId() == TYPEID_PLAYER && ToPlayer()->isGameMaster())
+    if (GetTypeId() == TYPEID_PLAYER && ToPlayer()->IsGameMaster())
         return false;
 
     return !HasUnitState(UNIT_STATE_UNATTACKABLE) && (!checkFakeDeath || !HasUnitState(UNIT_STATE_DIED));
@@ -9128,7 +9128,7 @@ bool Unit::isAttackableByAOE(float x, float y, float z, bool LosCheck) const
                 UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_PC))
         return false;
 
-    if (GetTypeId() == TYPEID_PLAYER && ToPlayer()->isGameMaster())
+    if (GetTypeId() == TYPEID_PLAYER && ToPlayer()->IsGameMaster())
         return false;
 
     if (LosCheck)
@@ -9642,7 +9642,7 @@ void Unit::TauntApply(Unit* taunter)
 {
     ASSERT(GetTypeId() == TYPEID_UNIT);
 
-    if (!taunter || (taunter->GetTypeId() == TYPEID_PLAYER && taunter->ToPlayer()->isGameMaster()))
+    if (!taunter || (taunter->GetTypeId() == TYPEID_PLAYER && taunter->ToPlayer()->IsGameMaster()))
         return;
 
     if (!CanHaveThreatList())
@@ -9670,7 +9670,7 @@ void Unit::TauntFadeOut(Unit* taunter)
 {
     ASSERT(GetTypeId() == TYPEID_UNIT);
 
-    if (!taunter || (taunter->GetTypeId() == TYPEID_PLAYER && taunter->ToPlayer()->isGameMaster()))
+    if (!taunter || (taunter->GetTypeId() == TYPEID_PLAYER && taunter->ToPlayer()->IsGameMaster()))
         return;
 
     if (!CanHaveThreatList())
@@ -10372,7 +10372,7 @@ bool Unit::ShouldRevealHealthTo(Player* player) const
     if (!sWorld.getConfig(CONFIG_HEALTH_IN_PERCENTS))
         return true;
 
-    if (player == this || player->isGameMaster())
+    if (player == this || player->IsGameMaster())
         return true;
 
     if (player->IsInRaidWith(this))

@@ -819,7 +819,7 @@ MailSender::MailSender(Object* sender, MailStationery stationery ) : m_stationer
         m_messageType = MAIL_NORMAL;
         m_senderId = sender->GetGUIDLow();
         if (sWorld.getConfig(CONFIG_GM_MAIL))
-            if (static_cast<Player*>(sender)->isGameMaster())
+            if (static_cast<Player*>(sender)->IsGameMaster())
                 m_stationery = MAIL_STATIONERY_GM;
         break;
     default:

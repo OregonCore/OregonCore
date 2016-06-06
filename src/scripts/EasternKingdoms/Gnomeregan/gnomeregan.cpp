@@ -218,7 +218,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
         {
             if (Player* pPlayer = i->GetSource())
             {
-                if (pPlayer->isGameMaster())
+                if (pPlayer->IsGameMaster())
                     continue;
 
                 if (pPlayer->IsAlive())

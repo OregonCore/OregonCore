@@ -732,7 +732,7 @@ struct SpellNotifierCreatureAndPlayer
                     continue;
                 if (itr->GetSource()->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
                     continue;
-                if (itr->GetSource()->GetTypeId() == TYPEID_PLAYER && itr->GetSource()->ToPlayer()->isGameMaster())
+                if (itr->GetSource()->GetTypeId() == TYPEID_PLAYER && itr->GetSource()->ToPlayer()->IsGameMaster())
                     continue;
                 break;
             case SPELL_TARGETS_ENEMY:
