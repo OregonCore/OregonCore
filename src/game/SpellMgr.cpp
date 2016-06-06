@@ -568,6 +568,7 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
         case SPELLFAMILY_GENERIC:
             switch (spellproto->Id)
             {
+                case 6716:                                          // Test of Faith
                 case 23333:                                         // Warsong Flag
                 case 23335:                                         // Silverwing Flag
                 case 34976:                                         // Netherstorm Flag
@@ -596,6 +597,10 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
             break;
         case SPELLFAMILY_MAGE:
         {
+            // Amplify Magic, Dampen Magic
+            if (spellproto->SpellFamilyFlags == 0x00002000)
+                return true;
+
             switch (spellproto->Id)
             {
                 case 31579:                                         // Arcane Empowerment Rank1 talent aura with one positive and one negative (check not needed in wotlk)
@@ -762,18 +767,10 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
 
 bool IsPositiveSpell(uint32 spellId)
 {
-    SpellEntry const* spellproto = sSpellStore.LookupEntry(spellId);
-    if (!spellproto)
-        return false;
-
-    // talents
-    if (IsPassiveSpell(spellId) && GetTalentSpellCost(spellId))
-        return true;
-
     // spells with at least one negative effect are considered negative
     // some self-applied spells have negative effects but in self casting case negative check ignored.
-    for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
-        if (!IsPositiveEffect(spellId, i) && !IsSelfCastEffect(spellproto, i))
+    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+        if (!IsPositiveEffect(spellId, i))
             return false;
     return true;
 }

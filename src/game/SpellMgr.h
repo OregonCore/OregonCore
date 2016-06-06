@@ -272,21 +272,6 @@ bool IsPositiveSpell(uint32 spellId);
 bool IsPositiveEffect(uint32 spellId, uint32 effIndex);
 bool IsPositiveTarget(uint32 targetA, uint32 targetB);
 
-inline bool IsSelfCastEffect(SpellEntry const* spellInfo, uint32 eff)
-{
-    switch (spellInfo->EffectImplicitTargetA[eff])
-    {
-        case TARGET_NONE:
-        case TARGET_UNIT_CASTER:
-        case TARGET_UNIT_TARGET_ANY:
-            return true;
-        default:
-            break;
-    }
-
-    return false;
-}
-
 bool IsSingleTargetSpell(SpellEntry const* spellInfo);
 bool IsSingleTargetSpells(SpellEntry const* spellInfo1, SpellEntry const* spellInfo2);
 
