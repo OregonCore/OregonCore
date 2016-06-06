@@ -9780,7 +9780,7 @@ uint8 Player::CanEquipItem(uint8 slot, uint16& dest, Item* pItem, bool swap, boo
                 return EQUIP_ERR_NO_EQUIPMENT_SLOT_AVAILABLE;
 
             // check unique-equipped on item
-            if (pProto->Flags & ITEM_FLAGS_UNIQUE_EQUIPPED)
+            if (pProto->Flags & ITEM_PROTO_FLAG_UNIQUE_EQUIPPED)
             {
                 // there is an equip limit on this item
                 Item* tItem = GetItemOrItemWithGemEquipped(pProto->ItemId);
@@ -9799,7 +9799,7 @@ uint8 Player::CanEquipItem(uint8 slot, uint16& dest, Item* pItem, bool swap, boo
                     continue;
 
                 ItemTemplate const* pGem = sObjectMgr.GetItemTemplate(enchantEntry->GemID);
-                if (pGem && (pGem->Flags & ITEM_FLAGS_UNIQUE_EQUIPPED))
+                if (pGem && (pGem->Flags & ITEM_PROTO_FLAG_UNIQUE_EQUIPPED))
                 {
                     Item* tItem = GetItemOrItemWithGemEquipped(enchantEntry->GemID);
                     if (tItem && (!swap || tItem->GetSlot() != eslot))
@@ -10700,7 +10700,7 @@ void Player::DestroyItem(uint8 bag, uint8 slot, bool update)
                 DestroyItem(slot, i, update);
         }
 
-        if (pItem->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPED))
+        if (pItem->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_WRAPPED))
             CharacterDatabase.PExecute("DELETE FROM character_gifts WHERE item_guid = '%u'", pItem->GetGUIDLow());
 
         RemoveEnchantmentDurations(pItem);
@@ -10934,7 +10934,7 @@ void Player::DestroyConjuredItems(bool update)
         Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
         if (pItem && pItem->GetProto() &&
             (pItem->GetProto()->Class == ITEM_CLASS_CONSUMABLE) &&
-            (pItem->GetProto()->Flags & ITEM_FLAGS_CONJURED))
+            (pItem->GetProto()->Flags & ITEM_PROTO_FLAG_CONJURED))
             DestroyItem(INVENTORY_SLOT_BAG_0, i, update);
     }
 
@@ -10949,7 +10949,7 @@ void Player::DestroyConjuredItems(bool update)
                 Item* pItem = pBag->GetItemByPos(j);
                 if (pItem && pItem->GetProto() &&
                     (pItem->GetProto()->Class == ITEM_CLASS_CONSUMABLE) &&
-                    (pItem->GetProto()->Flags & ITEM_FLAGS_CONJURED))
+                    (pItem->GetProto()->Flags & ITEM_PROTO_FLAG_CONJURED))
                     DestroyItem(i, j, update);
             }
         }
@@ -10961,7 +10961,7 @@ void Player::DestroyConjuredItems(bool update)
         Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
         if (pItem && pItem->GetProto() &&
             (pItem->GetProto()->Class == ITEM_CLASS_CONSUMABLE) &&
-            (pItem->GetProto()->Flags & ITEM_FLAGS_CONJURED))
+            (pItem->GetProto()->Flags & ITEM_PROTO_FLAG_CONJURED))
             DestroyItem(INVENTORY_SLOT_BAG_0, i, update);
     }
 }
@@ -15210,7 +15210,7 @@ void Player::_LoadInventory(QueryResult_AutoPtr result, uint32 timediff)
             }
 
             // "Conjured items disappear if you are logged out for more than 15 minutes"
-            if (timediff > 15 * MINUTE && item->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_CONJURED))
+            if (timediff > 15 * MINUTE && proto->Flags & ITEM_PROTO_FLAG_CONJURED)
             {
                 CharacterDatabase.PExecute("DELETE FROM character_inventory WHERE item = '%u'", item_guid);
                 item->FSetState(ITEM_REMOVED);
@@ -19004,7 +19004,10 @@ void Player::SendInstanceResetWarning(uint32 mapid, uint32 time)
 
 void Player::ApplyEquipCooldown(Item* pItem)
 {
-    for (uint8 i = 0; i < 5; ++i)
+    if (pItem->HasFlag(ITEM_FIELD_FLAGS, ITEM_PROTO_FLAG_NO_EQUIP_COOLDOWN))
+        return;
+
+    for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
     {
         _Spell const& spellData = pItem->GetProto()->Spells[i];
 
@@ -19018,7 +19021,7 @@ void Player::ApplyEquipCooldown(Item* pItem)
 
         AddSpellCooldown(spellData.SpellId, pItem->GetEntry(), time(NULL) + 30);
 
-        WorldPacket data(SMSG_ITEM_COOLDOWN, 12);
+        WorldPacket data(SMSG_ITEM_COOLDOWN, 8 + 4);
         data << pItem->GetGUID();
         data << uint32(spellData.SpellId);
         GetSession()->SendPacket(&data);

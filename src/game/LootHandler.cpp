@@ -400,14 +400,17 @@ void WorldSession::DoLootRelease(uint64 lguid)
         if (!pItem)
             return;
 
-        if ((pItem->GetProto()->BagFamily & BAG_FAMILY_MASK_MINING_SUPP) &&
-            pItem->GetProto()->Class == ITEM_CLASS_TRADE_GOODS &&
-            pItem->GetCount() >= 5)
+        if (pItem->GetProto()->Flags & ITEM_PROTO_FLAG_PROSPECTABLE)
         {
             pItem->m_lootGenerated = false;
             pItem->loot.clear();
 
-            uint32 count = 5;
+            uint32 count = pItem->GetCount();
+
+            // >=5 checked in spell code, but will work for cheating cases also with removing from another stacks.
+            if (count > 5)
+                count = 5;
+
             player->DestroyItemCount(pItem, count, true);
         }
         else

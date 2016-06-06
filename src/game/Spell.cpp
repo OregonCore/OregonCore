@@ -3566,8 +3566,13 @@ void Spell::TakeReagents()
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player* p_caster = m_caster->ToPlayer();
+    ItemTemplate const* castItemTemplate = m_CastItem ? m_CastItem->GetProto() : NULL;
 
+    // do not take reagents for these item casts
+    if (castItemTemplate && castItemTemplate->Flags & ITEM_PROTO_FLAG_TRIGGERED_CAST)
+        return;
+
+    Player* p_caster = m_caster->ToPlayer();
     if (p_caster->CanCastNoReagents(m_spellInfo))
         return;
 
@@ -4279,11 +4284,18 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_caster->GetTypeId() != TYPEID_PLAYER)
                     break;
 
+                uint32 spellId = m_spellInfo->Id;
+
                 if (// we need a go target in case of TARGET_GAMEOBJECT
-                    (m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT && !m_targets.getGOTarget())
-                    // we need a go target, or an openable item target in case of TARGET_GAMEOBJECT_ITEM
-                    || (m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT_ITEM && !m_targets.getGOTarget() &&
-                        (!m_targets.getItemTarget() || !m_targets.getItemTarget()->GetProto()->LockID || m_targets.getItemTarget()->GetOwner() != m_caster)))
+                    m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT && !m_targets.getGOTarget())
+                    return SPELL_FAILED_BAD_TARGETS;
+
+                Item *pTempItem = NULL;
+
+                // we need a go target, or an openable item target in case of TARGET_GAMEOBJECT_ITEM
+                if (m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT_ITEM &&
+                    !m_targets.getGOTarget() &&
+                    (!pTempItem || !pTempItem->GetProto()->LockID || !pTempItem->IsLocked()))
                     return SPELL_FAILED_BAD_TARGETS;
 
                 // In Battleground players can use only flags and banners
@@ -5650,7 +5662,7 @@ SpellCastResult Spell::CheckItems()
                 if (!m_targets.getItemTarget())
                     return SPELL_FAILED_CANT_BE_PROSPECTED;
                 //ensure item is a prospectable ore
-                if (!(m_targets.getItemTarget()->GetProto()->BagFamily & BAG_FAMILY_MASK_MINING_SUPP) || m_targets.getItemTarget()->GetProto()->Class != ITEM_CLASS_TRADE_GOODS)
+                if (!(m_targets.getItemTarget()->GetProto()->Flags & ITEM_PROTO_FLAG_PROSPECTABLE))
                     return SPELL_FAILED_CANT_BE_PROSPECTED;
                 //prevent prospecting in trade slot
                 if (m_targets.getItemTarget()->GetOwnerGUID() != m_caster->GetGUID())

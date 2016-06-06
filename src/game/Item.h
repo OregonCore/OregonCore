@@ -215,14 +215,9 @@ class Item : public Object
         }
         Player* GetOwner()const;
 
-        void SetBinding(bool val)
-        {
-            ApplyModFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED, val);
-        }
-        bool IsSoulBound() const
-        {
-            return HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED);
-        }
+        void SetBinding(bool val) { ApplyModFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_SOULBOUND, val); }
+        bool IsSoulBound() const { return HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_SOULBOUND); }
+
         bool IsBindedNotWith(uint64 guid) const
         {
             return IsSoulBound() && GetOwnerGUID() != guid;
@@ -233,6 +228,7 @@ class Item : public Object
         virtual void DeleteFromDB();
         void DeleteFromInventoryDB();
 
+        bool IsLocked() const { return !HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_UNLOCKED); }
         bool IsBag() const
         {
             return GetProto()->InventoryType == INVTYPE_BAG;

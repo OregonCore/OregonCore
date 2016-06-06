@@ -6926,7 +6926,7 @@ void Spell::EffectProspecting(SpellEffIndex /*effIndex*/)
         return;
 
     Player* p_caster = m_caster->ToPlayer();
-    if (!itemTarget || !(itemTarget->GetProto()->BagFamily & BAG_FAMILY_MASK_MINING_SUPP))
+    if (!itemTarget || !(itemTarget->GetProto()->Flags & ITEM_PROTO_FLAG_PROSPECTABLE))
         return;
 
     if (itemTarget->GetCount() < 5)
