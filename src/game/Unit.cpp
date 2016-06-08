@@ -13070,11 +13070,7 @@ bool Unit::SetCanFly(bool enable, bool /*packetOnly = false */)
         RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
     }
     else
-    {
         RemoveUnitMovementFlag(MOVEMENTFLAG_FLYING | MOVEMENTFLAG_MASK_MOVING_FLY);
-        if (!IsLevitating())
-            AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
-    }
 
     return true;
 }

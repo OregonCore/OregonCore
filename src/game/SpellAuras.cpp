@@ -3765,7 +3765,9 @@ void Aura::HandleAuraModIncreaseFlightSpeed(bool apply, bool Real)
     // Enable Fly mode for flying mounts
     if (GetAuraType() == SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED)
     {
-        m_target->SetCanFly(apply);
+        if (m_target->SetCanFly(apply))
+            if (!apply && !m_target->IsLevitating())
+                m_target->GetMotionMaster()->MoveFall();
 
         if (!apply && m_target->GetTypeId() == TYPEID_UNIT && !m_target->IsLevitating())
             m_target->GetMotionMaster()->MoveFall();
@@ -5569,7 +5571,7 @@ void Aura::HandleAuraAllowFlight(bool apply, bool Real)
 
     m_target->SetCanFly(apply);
 
-    if (!apply && m_target->GetTypeId() == TYPEID_UNIT && !m_target->IsLevitating())
+    if (!apply && !m_target->IsLevitating())
         m_target->GetMotionMaster()->MoveFall();
 }
 
