@@ -2133,7 +2133,8 @@ class Player : public Unit, public GridObject<Player>
         }
         uint32 GetCorpseReclaimDelay(bool pvp) const;
         void UpdateCorpseReclaimDelay();
-        void SendCorpseReclaimDelay(bool load = false);
+        int32 CalculateCorpseReclaimDelay(bool load = false);
+        void SendCorpseReclaimDelay(uint32 delay);
 
         uint32 GetShieldBlockValue() const override;                 // overwrite Unit version (virtual)
         bool CanParry() const
