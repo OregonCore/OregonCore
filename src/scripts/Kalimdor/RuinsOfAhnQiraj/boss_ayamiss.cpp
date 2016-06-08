@@ -65,7 +65,7 @@ struct boss_ayamissAI : public ScriptedAI
             return;
 
         //If he is 70% start phase 2
-        if (phase == 1 && me->GetHealth() * 100 / me->GetMaxHealth() <= 70 && !me->IsNonMeleeSpellCast(false))
+        if (phase == 1 && HealthBelowPct(70) && !me->IsNonMeleeSpellCast(false))
             phase = 2;
 
         //STINGERSPRAY_Timer (only in phase2)

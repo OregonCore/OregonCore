@@ -68,7 +68,7 @@ struct boss_magmusAI : public ScriptedAI
         else FieryBurst_Timer -= diff;
 
         //WarStomp_Timer
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 51)
+        if (HealthBelowPct(50))
         {
             if (WarStomp_Timer <= diff)
             {

@@ -573,14 +573,14 @@ struct boss_archimondeAI : public hyjal_trashAI
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 10) && !BelowTenPercent && !Enraged)
+        if (HealthBelowPct(10) && !BelowTenPercent && !Enraged)
             BelowTenPercent = true;
 
         if (!Enraged)
         {
             if (EnrageTimer <= diff)
             {
-                if ((me->GetHealth() * 100 / me->GetMaxHealth()) > 10)
+                if (HealthBelowPct(10))
                 {
                     me->GetMotionMaster()->Clear(false);
                     me->GetMotionMaster()->MoveIdle();

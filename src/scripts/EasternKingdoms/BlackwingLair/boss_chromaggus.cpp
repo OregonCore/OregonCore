@@ -283,7 +283,7 @@ struct boss_chromaggusAI : public ScriptedAI
         else Frenzy_Timer -= diff;
 
         //Enrage if not already enraged and below 20%
-        if (!Enraged && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
+        if (!Enraged && HealthBelowPct(20))
         {
             DoCast(me, SPELL_ENRAGE);
             Enraged = true;

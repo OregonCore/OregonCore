@@ -247,7 +247,7 @@ struct npc_gavis_greyshieldAI : public ScriptedAI
 				damage = 0;
 			}
 
-			if ((me->GetHealth() - damage) * 100 / me->GetMaxHealth() < 20)
+            if (me->HealthBelowPctDamaged(20, damage))
 			{
 				if (CAST_PLR(done_by)->GetQuestStatus(QUEST_THE_END_OF_THE_DESERTERS) == QUEST_STATUS_INCOMPLETE)
 					me->CastSpell(done_by, SPELL_GAVIS_GREYSHIELD_CREDIT, true);

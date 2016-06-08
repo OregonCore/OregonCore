@@ -180,7 +180,7 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
             else ArcaneExplosion_Timer -= diff;
         }
 
-        if (!Enraged && me->GetHealth() * 100 / me->GetMaxHealth() < 21)
+        if (!Enraged && HealthBelowPct(20))
         {
             DoCast(me, SPELL_FRENZY);
             DoScriptText(SAY_ENRAGE, me);

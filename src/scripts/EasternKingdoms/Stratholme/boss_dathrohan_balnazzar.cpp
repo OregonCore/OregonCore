@@ -150,7 +150,7 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             else m_uiHolyStrike_Timer -= uiDiff;
 
             //BalnazzarTransform
-            if (me->GetHealth() * 100 / me->GetMaxHealth() < 40)
+            if (HealthBelowPct(40))
             {
                 if (me->IsNonMeleeSpellCast(false))
                     me->InterruptNonMeleeSpells(false);

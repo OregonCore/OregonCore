@@ -288,7 +288,7 @@ struct npc_secondTrialAI : public ScriptedAI
         // healer
         if (spellFlashLight)
         {
-            if (me->GetHealth() * 100 / me->GetMaxHealth() < 70)
+            if (HealthBelowPct(70))
             {
                 if (timerFlashLight <= diff)
                 {

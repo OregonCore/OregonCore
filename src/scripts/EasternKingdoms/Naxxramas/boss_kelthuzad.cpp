@@ -357,7 +357,7 @@ struct boss_kelthuzadAI : public ScriptedAI
             else FrostBlast_Timer -= diff;
 
             //start phase 3 when we are 40% health
-            if (!Phase3 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 40)
+            if (!Phase3 && HealthBelowPct(40))
             {
                 Phase3 = true;
                 DoScriptText(SAY_REQUEST_AID, me);

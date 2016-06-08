@@ -387,7 +387,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
         }
 
         //When Solarian reaches 20% she will transform into a huge void walker.
-        if (Phase != 4 && ((me->GetHealth() * 100 / me->GetMaxHealth()) < 20))
+        if (Phase != 4 && HealthBelowPct(20))
         {
             Phase = 4;
 
