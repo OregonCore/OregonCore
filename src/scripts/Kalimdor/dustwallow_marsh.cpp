@@ -906,6 +906,11 @@ struct npc_private_hendelAI : public ScriptedAI
 {
     npc_private_hendelAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
+        PlayerGUID = 0;
+        m_uiPhase = 0;
+        m_uiEventTimer = 0;
+        m_uiPhaseCounter = 0;
+        lCreatureList.clear();
         Reset();
     }
 
@@ -918,11 +923,7 @@ struct npc_private_hendelAI : public ScriptedAI
 
     void Reset()
     {
-        PlayerGUID = 0;
-        m_uiPhase = 0;
-        m_uiEventTimer = 0;
-        m_uiPhaseCounter = 0;
-        lCreatureList.clear();
+        me->RestoreFaction();
     }
 
     void AttackedBy(Unit* pAttacker)
@@ -1037,22 +1038,14 @@ struct npc_private_hendelAI : public ScriptedAI
 
     void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
-        if (uiDamage > me->GetHealth() || ((me->GetHealth() - uiDamage) * 100 / me->GetMaxHealth() < 20))
+        if (uiDamage > me->GetHealth() || me->HealthBelowPctDamaged(20, uiDamage))
         {
             uiDamage = 0;
+
+            EnterEvadeMode();
+
             m_uiPhase = PHASE_COMPLETE;
             m_uiEventTimer = 2000;
-
-            me->RestoreFaction();
-            me->RemoveAllAuras();
-            me->DeleteThreatList();
-            me->CombatStop(true);
-            me->SetWalk(false);
-            me->SetHomePosition(-2892.28f, -3347.81f, 31.8609f, 0.160719f);
-            me->GetMotionMaster()->MoveTargetedHome();
-
-            if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-                pPlayer->CombatStop(true);
 
             if (!lCreatureList.empty())
             {
@@ -1064,9 +1057,7 @@ struct npc_private_hendelAI : public ScriptedAI
                     {
                         N = N + 1;
                         (*itr)->RestoreFaction();
-                        (*itr)->RemoveAllAuras();
-                        (*itr)->DeleteThreatList();
-                        (*itr)->CombatStop(true);
+                        EnterEvadeMode();
                         (*itr)->SetWalk(false);
                         (*itr)->GetMotionMaster()->MovePoint(0, m_afEventMoveTo[N].m_fX,  m_afEventMoveTo[N].m_fY,  m_afEventMoveTo[N].m_fZ);
                         (*itr)->ForcedDespawn(5000);
