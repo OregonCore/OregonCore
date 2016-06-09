@@ -2328,7 +2328,7 @@ bool ChatHandler::HandleLearnAllMySpellsCommand(const char* /*args*/)
         break;
     case CLASS_PALADIN:
         if (teamID == TEAM_ALLIANCE)
-            trainerID = 20407;
+            trainerID = 928;
         else
             trainerID = 16681;
         break;
