@@ -1114,12 +1114,8 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
                 unit->SetStandState(UNIT_STAND_STATE_STAND);
     }
 
-    // if target is flagged for pvp also flag caster if a player
-    if (unit->IsPvP())
-    {
-        if ((m_caster->GetTypeId() == TYPEID_PLAYER) && (m_caster != unit))
-            m_caster->ToPlayer()->UpdatePvP(true);
-    }
+    if (unit->IsPvP() && m_caster->GetTypeId() == TYPEID_PLAYER && (unit->GetTypeId() == TYPEID_PLAYER || unit->IsInCombat()))
+        m_caster->ToPlayer()->UpdatePvP(true);
 }
 
 void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
