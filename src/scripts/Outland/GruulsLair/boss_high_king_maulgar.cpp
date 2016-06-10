@@ -280,7 +280,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         else MightyBlow_Timer -= diff;
 
         //Entering Phase 2
-        if (!Phase2 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
+        if (!Phase2 && HealthBelowPct(50))
         {
             Phase2 = true;
             DoScriptText(SAY_ENRAGE, me);

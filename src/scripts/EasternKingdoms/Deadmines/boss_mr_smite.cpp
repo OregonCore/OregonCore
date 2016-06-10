@@ -170,7 +170,7 @@ struct boss_mr_smiteAI : public ScriptedAI
         else uiNimbleReflexesTimer -= uiDiff;
         /*END ACID-AI*/
 
-        if ((uiHealth == 0 && me->GetHealth() * 100 / me->GetMaxHealth() <= 66) || (uiHealth == 1 && me->GetHealth() * 100 / me->GetMaxHealth() <= 33))
+        if ((uiHealth == 0 && HealthBelowPct(66)) || (uiHealth == 1 && HealthBelowPct(33)))
         {
             DoCastAOE(SPELL_SMITE_STOMP, false);
             if (uiHealth == 0)

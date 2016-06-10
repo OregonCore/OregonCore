@@ -97,7 +97,7 @@ struct boss_venoxisAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if ((me->GetHealth() * 100 / me->GetMaxHealth() > 50))
+        if (HealthAbovePct(50))
         {
             if (Dispell_Timer <= diff)
             {
@@ -189,7 +189,7 @@ struct boss_venoxisAI : public ScriptedAI
             else
                 VenomSpit_Timer -= diff;
 
-            if (PhaseTwo && (me->GetHealth() * 100 / me->GetMaxHealth() < 11))
+            if (PhaseTwo && HealthBelowPct(10))
             {
                 if (!InBerserk)
                 {

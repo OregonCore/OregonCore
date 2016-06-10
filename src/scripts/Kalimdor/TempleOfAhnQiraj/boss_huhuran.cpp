@@ -128,7 +128,7 @@ struct boss_huhuranAI : public ScriptedAI
         }
         else FrenzyBack_Timer -= diff;
 
-        if (!Berserk && me->GetHealth() * 100 / me->GetMaxHealth() < 31)
+        if (!Berserk && HealthBelowPct(30))
         {
             me->InterruptNonMeleeSpells(false);
             DoScriptText(EMOTE_GENERIC_BERSERK, me);

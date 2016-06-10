@@ -129,7 +129,7 @@ struct boss_patchwerkAI : public ScriptedAI
         else Slimebolt_Timer -= diff;
 
         //Enrage if not already enraged and below 5%
-        if (!Enraged && (me->GetHealth() * 100 / me->GetMaxHealth()) < 5)
+        if (!Enraged && HealthBelowPct(5))
         {
             DoCast(me, SPELL_ENRAGE);
             DoScriptText(EMOTE_ENRAGE, NULL);

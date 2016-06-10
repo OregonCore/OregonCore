@@ -739,7 +739,7 @@ void WorldSession::SendListInventory(uint64 vendorguid)
         {
             if (ItemTemplate const* pProto = sObjectMgr.GetItemTemplate(crItem->item))
             {
-                if ((pProto->AllowableClass & _player->getClassMask()) == 0 && pProto->Bonding == BIND_WHEN_PICKED_UP && !_player->isGameMaster())
+                if ((pProto->AllowableClass & _player->getClassMask()) == 0 && pProto->Bonding == BIND_WHEN_PICKED_UP && !_player->IsGameMaster())
                     continue;
 
                 ++count;
@@ -1038,7 +1038,7 @@ void WorldSession::HandleWrapItemOpcode(WorldPacket& recv_data)
         return;
     }
 
-    if (!gift->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPER))// cheating: non-wrapper wrapper
+    if (!(gift->GetProto()->Flags & ITEM_PROTO_FLAG_IS_WRAPPER)) // cheating: non-wrapper wrapper
     {
         _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, gift, NULL);
         return;
@@ -1121,7 +1121,7 @@ void WorldSession::HandleWrapItemOpcode(WorldPacket& recv_data)
         break;
     }
     item->SetUInt64Value(ITEM_FIELD_GIFTCREATOR, _player->GetGUID());
-    item->SetUInt32Value(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPED);
+    item->SetUInt32Value(ITEM_FIELD_FLAGS, ITEM_FLAG_WRAPPED);
     item->SetState(ITEM_CHANGED, _player);
 
     if (item->GetState() == ITEM_NEW)                          // save new item, to have alway for `character_gifts` record in `item_instance`
@@ -1187,7 +1187,7 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recv_data)
     // check unique-equipped conditions
     for (int i = 0; i < 3; ++i)
     {
-        if (Gems[i] && (Gems[i]->GetProto()->Flags & ITEM_FLAGS_UNIQUE_EQUIPPED))
+        if (Gems[i] && (Gems[i]->GetProto()->Flags & ITEM_PROTO_FLAG_UNIQUE_EQUIPPED))
         {
             // for equipped item check all equipment for duplicate equipped gems
             if (itemTarget->IsEquipped())

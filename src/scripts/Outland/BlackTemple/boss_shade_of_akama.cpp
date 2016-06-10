@@ -688,7 +688,7 @@ struct npc_akamaAI : public ScriptedAI
         if (!EventBegun)
             return;
 
-        if ((me->GetHealth() * 100 / me->GetMaxHealth()) < 15 && !HasYelledOnce)
+        if (HealthBelowPct(15) && !HasYelledOnce)
         {
             DoScriptText(SAY_LOW_HEALTH, me);
             HasYelledOnce = true;

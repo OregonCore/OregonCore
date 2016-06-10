@@ -261,7 +261,6 @@ bool Item::Create(uint32 guidlow, uint32 itemid, Player const* owner)
     for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
         SetSpellCharges(i, itemProto->Spells[i].SpellCharges);
 
-    SetUInt32Value(ITEM_FIELD_FLAGS, itemProto->Flags);
     SetUInt32Value(ITEM_FIELD_DURATION, abs(itemProto->Duration));
 
     return true;
@@ -347,7 +346,7 @@ void Item::SaveToDB()
 
             CharacterDatabase.Execute(ss.str().c_str());
 
-            if (HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPED))
+            if (HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_WRAPPED))
                 CharacterDatabase.PExecute("UPDATE character_gifts SET guid = '%u' WHERE item_guid = '%u'", GUID_LOPART(GetOwnerGUID()), GetGUIDLow());
         }
         break;
@@ -356,7 +355,7 @@ void Item::SaveToDB()
             if (GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID) > 0)
                 CharacterDatabase.PExecute("DELETE FROM item_text WHERE id = '%u'", GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID));
             CharacterDatabase.PExecute("DELETE FROM item_instance WHERE guid = '%u'", guid);
-            if (HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPED))
+            if (HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_WRAPPED))
                 CharacterDatabase.PExecute("DELETE FROM character_gifts WHERE item_guid = '%u'", GetGUIDLow());
             delete this;
             return;
@@ -411,7 +410,7 @@ bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, Field* fields)
     // Remove bind flag for items vs NO_BIND set
     if (IsSoulBound() && proto->Bonding == NO_BIND)
     {
-        ApplyModFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED, false);
+        ApplyModFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_SOULBOUND, false);
         need_save = true;
     }
 

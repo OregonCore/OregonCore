@@ -120,7 +120,7 @@ struct boss_onyxiaAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 60) && (Phase == 1))
+        if (HealthBelowPct(60) && (Phase == 1))
         {
             Phase = 2;
             me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
@@ -131,7 +131,7 @@ struct boss_onyxiaAI : public ScriptedAI
             DoScriptText(SAY_PHASE_2_TRANS, me);
         }
 
-        if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 40) && (Phase == 2))
+        if (HealthBelowPct(40) && (Phase == 2))
         {
             Phase = 3;
             me->SetLevitate(false);

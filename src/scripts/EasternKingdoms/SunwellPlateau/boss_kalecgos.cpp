@@ -242,7 +242,7 @@ struct boss_kalecgosAI : public ScriptedAI
                     me->AI()->EnterEvadeMode();
                     return;
                 }
-                if ((me->GetHealth() * 100 / me->GetMaxHealth() < 10) && !isEnraged)
+                if (HealthBelowPct(10) && !isEnraged)
                 {
                     if (Creature* Sath = Unit::GetCreature(*me, SathGUID))
                         Sath->AI()->DoAction(DO_ENRAGE);
@@ -588,7 +588,7 @@ struct boss_sathrovarrAI : public ScriptedAI
                     Kalecgos->AI()->EnterEvadeMode();
                 return;
             }
-            if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 10) && !isEnraged)
+            if (HealthBelowPct(10) && !isEnraged)
             {
                 if (Creature* Kalecgos = Unit::GetCreature(*me, KalecgosGUID))
                     Kalecgos->AI()->DoAction(DO_ENRAGE);
@@ -603,7 +603,7 @@ struct boss_sathrovarrAI : public ScriptedAI
                     return;
                 }
             }
-            if (!isBanished && me->GetHealth() * 100 / me->GetMaxHealth() < 1)
+            if (!isBanished && HealthBelowPct(1))
             {
                 if (Kalecgos)
                 {

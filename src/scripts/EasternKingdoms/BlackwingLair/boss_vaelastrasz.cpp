@@ -148,7 +148,7 @@ struct boss_vaelAI : public ScriptedAI
             return;
 
         // Yell if hp lower than 15%
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 15 && !HasYelled)
+        if (HealthBelowPct(15) && !HasYelled)
         {
             DoScriptText(SAY_HALFLIFE, me);
             HasYelled = true;

@@ -215,7 +215,7 @@ struct boss_nefarianAI : public ScriptedAI
         else ClassCall_Timer -= diff;
 
         //Phase3 begins when we are below X health
-        if (!Phase3 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
+        if (!Phase3 && HealthBelowPct(20))
         {
             Phase3 = true;
             DoScriptText(SAY_RAISE_SKELETONS, me);

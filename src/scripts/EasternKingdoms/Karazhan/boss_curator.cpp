@@ -159,7 +159,7 @@ struct boss_curatorAI : public ScriptedAI
             }
             else AddTimer -= diff;
 
-            if (me->GetHealth() * 100 / me->GetMaxHealth() <= 15)
+            if (HealthBelowPct(15))
             {
                 Enraged = true;
                 DoCast(me, SPELL_ENRAGE);

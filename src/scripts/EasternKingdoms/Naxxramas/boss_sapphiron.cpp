@@ -102,7 +102,7 @@ struct boss_sapphironAI : public ScriptedAI
             }
             else Blizzard_Timer -= diff;
 
-            if (me->GetHealth() * 100 / me->GetMaxHealth() > 10)
+            if (HealthAbovePct(10))
             {
                 if (Fly_Timer <= diff)
                 {

@@ -150,7 +150,7 @@ struct boss_archaedasAI : public ScriptedAI
         else WallMinionTimer -= diff;
 
         //If we are <66 summon the guardians
-        if (!guardiansAwake && me->GetHealth() * 100 / me->GetMaxHealth() <= 66)
+        if (!guardiansAwake && HealthBelowPct(66))
         {
             ActivateMinion(pInstance->GetData64(5), true);  // EarthenGuardian1
             ActivateMinion(pInstance->GetData64(6), true);  // EarthenGuardian2
@@ -164,7 +164,7 @@ struct boss_archaedasAI : public ScriptedAI
         }
 
         //If we are <33 summon the vault walkers
-        if (!vaultWalkersAwake && me->GetHealth() * 100 / me->GetMaxHealth() <= 33)
+        if (!vaultWalkersAwake && HealthBelowPct(33))
         {
             ActivateMinion(pInstance->GetData64(1), true);   // VaultWalker1
             ActivateMinion(pInstance->GetData64(2), true);   // VaultWalker2

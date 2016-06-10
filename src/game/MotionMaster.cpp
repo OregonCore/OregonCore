@@ -325,11 +325,14 @@ void MotionMaster::MoveFall(float z, uint32 id)
             return;
     }
 
+    i_owner->AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
+
+    // don't run spline movement for players
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
-        i_owner->AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
+        return;
 
     Movement::MoveSplineInit init(*i_owner);
-    init.MoveTo(i_owner->GetPositionX(), i_owner->GetPositionY(), z);
+    init.MoveTo(i_owner->GetPositionX(), i_owner->GetPositionY(), z, false);
     init.SetFall();
     init.Launch();
     Mutate(new EffectMovementGenerator(0), MOTION_SLOT_ACTIVE);

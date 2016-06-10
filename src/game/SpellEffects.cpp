@@ -6406,7 +6406,7 @@ void Spell::EffectMomentMove(SpellEffIndex effIndex)
     float dist = GetSpellRadius(m_spellInfo, effIndex, false);
 
     Position pos = m_targets.m_dstPos;
-    unitTarget->GetFirstCollisionPosition(pos, unitTarget->GetDistance(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ()), 0.0f);
+    pos = unitTarget->GetFirstCollisionPosition(unitTarget->GetDistance(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ()), 0.0f);
     unitTarget->NearTeleportTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), unitTarget == m_caster);
 }
 
@@ -6426,7 +6426,7 @@ void Spell::EffectReputation(SpellEffIndex effIndex)
     if (!factionEntry)
         return;
 
-    _player->ModifyFactionReputation(factionEntry, rep_change);
+    _player->GetReputationMgr().ModifyReputation(factionEntry, rep_change);
 }
 
 void Spell::EffectQuestComplete(SpellEffIndex effIndex)
@@ -6926,7 +6926,7 @@ void Spell::EffectProspecting(SpellEffIndex /*effIndex*/)
         return;
 
     Player* p_caster = m_caster->ToPlayer();
-    if (!itemTarget || !(itemTarget->GetProto()->BagFamily & BAG_FAMILY_MASK_MINING_SUPP))
+    if (!itemTarget || !(itemTarget->GetProto()->Flags & ITEM_PROTO_FLAG_PROSPECTABLE))
         return;
 
     if (itemTarget->GetCount() < 5)
@@ -7197,7 +7197,7 @@ void Spell::GetSummonPosition(uint32 i, Position& pos, float radius)
         case TARGET_MINION:
         case TARGET_DEST_CASTER_RANDOM:
             radius = std::max<float>(radius, m_caster->GetObjectSize());
-            m_caster->GetNearPosition(pos, radius * rand_norm(), rand_norm() * 2 * M_PI);
+            pos = m_caster->GetNearPosition(radius * rand_norm(), rand_norm() * 2 * M_PI);
             break;
         case TARGET_DEST_DEST_RANDOM:
         case TARGET_DEST_TARGET_RANDOM:

@@ -293,7 +293,7 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
         }
 
         //Cast Deep sleep when health is less than 50%
-        if (!m_bCanResurrectCheck && me->GetHealth() * 100 / me->GetMaxHealth() <= 50)
+        if (!m_bCanResurrectCheck && HealthBelowPct(50))
         {
             if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(false);

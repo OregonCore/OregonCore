@@ -200,7 +200,7 @@ struct npc_salsalabimAI : public ScriptedAI
     void DamageTaken(Unit* done_by, uint32& damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER)
-            if ((me->GetHealth() - damage) * 100 / me->GetMaxHealth() < 20)
+            if (me->HealthBelowPctDamaged(20, damage))
             {
                 CAST_PLR(done_by)->GroupEventHappens(QUEST_10004, me);
                 damage = 0;

@@ -136,7 +136,7 @@ struct boss_azuregosAI : public ScriptedAI
         else Cleave_Timer -= diff;
 
         //Enrage_Timer
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 26 && !Enraged)
+        if (HealthBelowPct(25) && !Enraged)
         {
             DoCast(me, SPELL_ENRAGE);
             Enraged = true;

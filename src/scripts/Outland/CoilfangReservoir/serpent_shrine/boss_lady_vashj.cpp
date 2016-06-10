@@ -423,7 +423,7 @@ struct boss_lady_vashjAI : public ScriptedAI
             if (Phase == 1)
             {
                 //Start phase 2
-                if ((me->GetHealth() * 100 / me->GetMaxHealth()) < 70)
+                if (HealthBelowPct(70))
                 {
                     //Phase 2 begins when Vashj hits 70%. She will run to the middle of her platform and surround herself in a shield making her invulerable.
                     Phase = 2;

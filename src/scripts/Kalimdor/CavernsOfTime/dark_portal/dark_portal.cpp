@@ -287,8 +287,7 @@ struct npc_time_riftAI : public ScriptedAI
             return;
         }
 
-        Position pos;
-        me->GetRandomNearPosition(pos, 10.0f);
+        Position pos = me->GetRandomNearPosition(10.0f);
 
         //normalize Z-level if we can, if rift is not at ground level.
         pos.m_positionZ = std::max(me->GetMap()->GetHeight(pos.m_positionX, pos.m_positionY, MAX_HEIGHT), me->GetMap()->GetWaterLevel(pos.m_positionX, pos.m_positionY));

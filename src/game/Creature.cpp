@@ -441,13 +441,10 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
     // checked and error show at loading templates
     if (FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(cInfo->faction))
     {
-        FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplate->faction);
-        if (factionEntry)
-            if (!(cInfo->flags_extra & CREATURE_FLAG_EXTRA_CIVILIAN) &&
-                (factionEntry->team == ALLIANCE || factionEntry->team == HORDE))
-                SetPvP(true);
-            else
-                SetPvP(false);
+        if (factionTemplate->factionFlags & FACTION_TEMPLATE_FLAG_PVP || IsPvP()) // PvP state may be set in UnitFlags.. Prevent overwrite
+            SetPvP(true);
+        else
+            SetPvP(false);
     }
 
     // trigger creature is always not selectable and can not be attacked
@@ -576,7 +573,7 @@ void Creature::Update(uint32 diff)
                         {
                             if (Player* player = it->GetSource())
                             {
-                                if (player->isGameMaster())
+                                if (player->IsGameMaster())
                                     continue;
 
                                 if (player->IsAlive() && this->IsHostileTo(player))
@@ -816,10 +813,6 @@ void Creature::InitializeReactState()
 {
     if (IsTotem() || isTrigger() || IsCritter() || isSpiritService())
         SetReactState(REACT_PASSIVE);
-    /*
-    else if (IsCivilian())
-        SetReactState(REACT_DEFENSIVE);
-    */
     else
         SetReactState(REACT_AGGRESSIVE);
 }
@@ -892,7 +885,7 @@ bool Creature::IsTrainerOf(Player* pPlayer, bool msg) const
         if (GetCreatureTemplate()->race && pPlayer->getRace() != GetCreatureTemplate()->race)
         {
             // Allowed to train if exalted
-            if (FactionTemplateEntry const* faction_template = getFactionTemplateEntry())
+            if (FactionTemplateEntry const* faction_template = GetFactionTemplateEntry())
             {
                 if (pPlayer->GetReputationRank(faction_template->faction) == REP_EXALTED)
                     return true;
@@ -2152,7 +2145,7 @@ void Creature::SetInCombatWithZone()
     {
         if (Player* pPlayer = i->GetSource())
         {
-            if (pPlayer->isGameMaster())
+            if (pPlayer->IsGameMaster())
                 continue;
 
             if (pPlayer->IsAlive())

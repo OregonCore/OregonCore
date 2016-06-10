@@ -262,11 +262,11 @@ void ScriptMgr::OnPlayerKilledByCreature(Creature* killer, Player* killed)
     tmpscript->OnPlayerKilledByCreature(killer, killed);
 }
 
-void ScriptMgr::OnPlayerLevelChanged(Player* player, uint8 newLevel)
+void ScriptMgr::OnPlayerLevelChanged(Player* player, uint8 oldLevel, uint8 newLevel)
 {
     Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->OnLevelChanged) return;
-    tmpscript->OnLevelChanged(player, newLevel);
+    tmpscript->OnLevelChanged(player, oldLevel, newLevel);
 }
 
 void ScriptMgr::OnPlayerTalentsReset(Player* player, bool no_cost)

@@ -1795,10 +1795,10 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             case TARGET_DEST_CASTER_BACK_LEFT:
             case TARGET_DEST_CASTER_BACK_RIGHT:
             case TARGET_DEST_CASTER_FRONT_RIGHT:
-                m_caster->GetFirstCollisionPosition(pos, dist, angle);
+                pos = m_caster->GetFirstCollisionPosition(dist, angle);
                 break;
             default:
-                m_caster->GetNearPosition(pos, dist, angle);
+                pos = m_caster->GetNearPosition(dist, angle);
                 break;
             }
             m_targets.setDst(&pos); // also flag
@@ -1873,11 +1873,11 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             case TARGET_DEST_TARGET_FRONT_RIGHT:
                 {
                     target->GetContactPoint(m_caster, pos.m_positionX, pos.m_positionY, pos.m_positionZ, dist);
-                    target->GetFirstCollisionPosition(pos, dist, angle);
+                    pos = target->GetFirstCollisionPosition(dist, angle);
                 }
                 break;
             default:
-                target->GetNearPosition(pos, dist, angle);
+                pos = target->GetNearPosition(dist, angle);
                 break;
             }
             m_targets.setDst(&pos);
@@ -3570,8 +3570,13 @@ void Spell::TakeReagents()
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player* p_caster = m_caster->ToPlayer();
+    ItemTemplate const* castItemTemplate = m_CastItem ? m_CastItem->GetProto() : NULL;
 
+    // do not take reagents for these item casts
+    if (castItemTemplate && castItemTemplate->Flags & ITEM_PROTO_FLAG_TRIGGERED_CAST)
+        return;
+
+    Player* p_caster = m_caster->ToPlayer();
     if (p_caster->CanCastNoReagents(m_spellInfo))
         return;
 
@@ -4283,11 +4288,18 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_caster->GetTypeId() != TYPEID_PLAYER)
                     break;
 
+                uint32 spellId = m_spellInfo->Id;
+
                 if (// we need a go target in case of TARGET_GAMEOBJECT
-                    (m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT && !m_targets.getGOTarget())
-                    // we need a go target, or an openable item target in case of TARGET_GAMEOBJECT_ITEM
-                    || (m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT_ITEM && !m_targets.getGOTarget() &&
-                        (!m_targets.getItemTarget() || !m_targets.getItemTarget()->GetProto()->LockID || m_targets.getItemTarget()->GetOwner() != m_caster)))
+                    m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT && !m_targets.getGOTarget())
+                    return SPELL_FAILED_BAD_TARGETS;
+
+                Item *pTempItem = NULL;
+
+                // we need a go target, or an openable item target in case of TARGET_GAMEOBJECT_ITEM
+                if (m_spellInfo->EffectImplicitTargetA[i] == TARGET_GAMEOBJECT_ITEM &&
+                    !m_targets.getGOTarget() &&
+                    (!pTempItem || !pTempItem->GetProto()->LockID || !pTempItem->IsLocked()))
                     return SPELL_FAILED_BAD_TARGETS;
 
                 // In Battleground players can use only flags and banners
@@ -4735,7 +4747,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 // not allow cast fly spells at old maps by players (all spells is self target)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                 {
-                    if (!m_caster->ToPlayer()->isGameMaster() &&
+                    if (!m_caster->ToPlayer()->IsGameMaster() &&
                         GetVirtualMapForMapAndZone(m_caster->GetMapId(), m_caster->GetZoneId()) != 530)
                         return SPELL_FAILED_NOT_HERE;
                 }
@@ -5655,7 +5667,7 @@ SpellCastResult Spell::CheckItems()
                 if (!m_targets.getItemTarget())
                     return SPELL_FAILED_CANT_BE_PROSPECTED;
                 //ensure item is a prospectable ore
-                if (!(m_targets.getItemTarget()->GetProto()->BagFamily & BAG_FAMILY_MASK_MINING_SUPP) || m_targets.getItemTarget()->GetProto()->Class != ITEM_CLASS_TRADE_GOODS)
+                if (!(m_targets.getItemTarget()->GetProto()->Flags & ITEM_PROTO_FLAG_PROSPECTABLE))
                     return SPELL_FAILED_CANT_BE_PROSPECTED;
                 //prevent prospecting in trade slot
                 if (m_targets.getItemTarget()->GetOwnerGUID() != m_caster->GetGUID())
@@ -5932,7 +5944,7 @@ bool Spell::CheckTarget(Unit* target, uint32 eff)
         if (!target->ToPlayer()->IsVisible())
             return false;
 
-        if (target->ToPlayer()->isGameMaster() && !IsPositiveSpell(m_spellInfo->Id))
+        if (target->ToPlayer()->IsGameMaster() && !IsPositiveSpell(m_spellInfo->Id))
             return false;
     }
 

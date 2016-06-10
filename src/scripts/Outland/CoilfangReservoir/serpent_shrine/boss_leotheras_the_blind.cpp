@@ -586,7 +586,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             else SwitchToHuman_Timer -= diff;
         }
 
-        if (!IsFinalForm && (me->GetHealth() * 100 / me->GetMaxHealth()) < 15)
+        if (!IsFinalForm && HealthBelowPct(15))
         {
             //at this point he divides himself in two parts
             CastConsumingMadness();

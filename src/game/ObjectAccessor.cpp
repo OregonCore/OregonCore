@@ -220,7 +220,10 @@ void ObjectAccessor::RemoveCorpse(Corpse* corpse)
     ASSERT(corpse && corpse->GetType() != CORPSE_BONES);
 
     if (corpse->FindMap())
+    {
+        corpse->DestroyForNearbyPlayers();
         corpse->FindMap()->RemoveFromMap(corpse, false);
+    }
     else
         corpse->RemoveFromWorld();
 
@@ -310,13 +313,6 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
 
     // remove corpse from player_guid -> corpse map
     RemoveCorpse(corpse);
-
-    // done in removecorpse
-    // remove resurrectable corpse from grid object registry (loaded state checked into call)
-    // do not load the map if it's not loaded
-    //Map *map = MapManager::Instance().FindMap(corpse->GetMapId(), corpse->GetInstanceId());
-    //if (map)
-    //    map->Remove(corpse, false);
 
     // remove corpse from DB
     corpse->DeleteFromDB();

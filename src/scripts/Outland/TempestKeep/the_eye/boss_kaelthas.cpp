@@ -831,7 +831,7 @@ struct boss_kaelthasAI : public ScriptedAI
                 //Phase 4 specific spells
                 if (Phase == 4)
                 {
-                    if (me->GetHealth() * 100 / me->GetMaxHealth() < 50)
+                    if (HealthBelowPct(50))
                     {
                         m_pInstance->SetData(DATA_KAELTHASEVENT, 4);
                         Phase = 5;

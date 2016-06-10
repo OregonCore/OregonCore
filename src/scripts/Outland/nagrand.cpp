@@ -142,7 +142,7 @@ struct mob_lumpAI : public ScriptedAI
 
     void DamageTaken(Unit* done_by, uint32& damage)
     {
-        if (done_by->GetTypeId() == TYPEID_PLAYER && (me->GetHealth() - damage) * 100 / me->GetMaxHealth() < 30)
+        if (done_by->GetTypeId() == TYPEID_PLAYER && me->HealthBelowPctDamaged(30, damage))
         {
             if (!bReset && CAST_PLR(done_by)->GetQuestStatus(9918) == QUEST_STATUS_INCOMPLETE)
             {
