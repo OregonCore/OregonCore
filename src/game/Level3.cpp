@@ -838,6 +838,14 @@ bool ChatHandler::HandleReloadReservedNameCommand(const char*)
     return true;
 }
 
+bool ChatHandler::HandleReloadReputationSpilloverTemplateCommand(const char*)
+{
+    sLog.outString("Re-Loading `reputation_spillover_template` Table!");
+    sObjectMgr.LoadReputationSpilloverTemplate();
+    SendGlobalSysMessage("DB table `reputation_spillover_template` reloaded.");
+    return true;
+}
+
 bool ChatHandler::HandleReloadSkillDiscoveryTemplateCommand(const char* /*args*/)
 {
     sLog.outString("Re-Loading Skill Discovery Table...");
@@ -2256,62 +2264,120 @@ bool ChatHandler::HandleLearnAllGMCommand(const char* /*args*/)
 
 bool ChatHandler::HandleLearnAllMyClassCommand(const char* /*args*/)
 {
-    HandleLearnAllMySpellsCommand("");
     HandleLearnAllMyTalentsCommand("");
+    HandleLearnAllMySpellsCommand("");
     return true;
 }
 
 bool ChatHandler::HandleLearnAllMySpellsCommand(const char* /*args*/)
 {
-    ChrClassesEntry const* clsEntry = sChrClassesStore.LookupEntry(m_session->GetPlayer()->getClass());
-    if (!clsEntry)
-        return true;
-    uint32 family = clsEntry->spellfamily;
+    Player* player = m_session->GetPlayer();
+    uint8 level = player->getLevel();
+    uint32 teamID = player->GetTeamId();
+    uint32 trainerID;
 
-    for (uint32 i = 0; i < sSpellStore.GetNumRows(); ++i)
+    switch (player->getClass())
     {
-        SpellEntry const* spellInfo = sSpellStore.LookupEntry(i);
+    case CLASS_WARRIOR:
+        if (teamID == TEAM_ALLIANCE)
+            trainerID = 17504;
+        else
+            trainerID = 985;
+        break;
+    case CLASS_ROGUE:
+        if (teamID == TEAM_ALLIANCE)
+            trainerID = 13283;
+        else
+            trainerID = 3401;
+        break;
+    case CLASS_SHAMAN:
+        if (teamID == TEAM_ALLIANCE)
+            trainerID = 20407;
+        else
+            trainerID = 13417;
+        break;
+    case CLASS_PRIEST:
+        if (teamID == TEAM_ALLIANCE)
+            trainerID = 11406;
+        else
+            trainerID = 16658;
+        break;
+    case CLASS_MAGE:
+        if (teamID == TEAM_ALLIANCE)
+            trainerID = 7312;
+        else
+            trainerID = 16653;
+        break;
+    case CLASS_WARLOCK:
+        if (teamID == TEAM_ALLIANCE)
+            trainerID = 5172;
+        else
+            trainerID = 16648;
+        break;
+    case CLASS_HUNTER:
+        if (teamID == TEAM_ALLIANCE)
+            trainerID = 5516;
+        else
+            trainerID = 3039;
+        break;
+    case CLASS_DRUID:
+        if (teamID == TEAM_ALLIANCE)
+            trainerID = 5504;
+        else
+            trainerID = 16655;
+        break;
+    case CLASS_PALADIN:
+        if (teamID == TEAM_ALLIANCE)
+            trainerID = 928;
+        else
+            trainerID = 16681;
+        break;
+    default:
+        sLog.outDebug("HandleLearnAllMySpellsCommand Failed. Invalid Class %u.", player->getClass());
+        return false;
+    }
+
+    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT spell FROM npc_trainer WHERE reqlevel BETWEEN 1 AND %i AND entry = %i", level, trainerID);
+
+    if (!result)
+    {
+        sLog.outErrorDb("0 spells found for HandleLearnAllMySpellsCommand function.");
+        return false;
+    }
+
+    do
+    {
+        Field* fields = result->Fetch();
+
+        uint32 spellID = fields[0].GetUInt32();
+
+        SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellID);
+
         if (!spellInfo)
             continue;
 
         // skip wrong class/race skills
-        if (!m_session->GetPlayer()->IsSpellFitByClassAndRace(spellInfo->Id))
+        if (!player->IsSpellFitByClassAndRace(spellInfo->Id))
             continue;
 
-        // skip other spell families
-        if (spellInfo->SpellFamilyName != family)
+        // Skip known spells
+        if (player->HasSpell(spellInfo->Id))
             continue;
 
-        //@todo skip triggered spells
-
-        // skip spells with first rank learned as talent (and all talents then also)
-        uint32 first_rank = sSpellMgr.GetFirstSpellInChain(spellInfo->Id);
-        if (GetTalentSpellCost(first_rank) > 0)
+        // Skip spells with first rank learned as talent (and all talents then also)
+        if (GetTalentSpellCost(sSpellMgr.GetFirstSpellInChain(spellInfo->Id)) > 0)
             continue;
 
-        // skip broken spells
-        if (!SpellMgr::IsSpellValid(spellInfo, m_session->GetPlayer(), false))
+        // Skip broken spells
+        if (!SpellMgr::IsSpellValid(spellInfo, player, false))
             continue;
 
-        m_session->GetPlayer()->LearnSpell(i);
+        player->LearnSpell(spellInfo->Id);
     }
+    while (result->NextRow());
 
     SendSysMessage(LANG_COMMAND_LEARN_CLASS_SPELLS);
     return true;
-}
-
-static void learnAllHighRanks(Player* player, uint32 spellid)
-{
-    SpellChainNode const* node;
-    do
-    {
-        node = sSpellMgr.GetSpellChainNode(spellid);
-        player->LearnSpell(spellid);
-        if (!node)
-            break;
-        spellid = node->next;
-    }
-    while (node->next);
 }
 
 bool ChatHandler::HandleLearnAllMyTalentsCommand(const char* /*args*/)
@@ -2333,30 +2399,29 @@ bool ChatHandler::HandleLearnAllMyTalentsCommand(const char* /*args*/)
             continue;
 
         // search highest talent rank
-        uint32 spellid = 0;
+        uint32 spellId = 0;
         int rank = 4;
         for (; rank >= 0; --rank)
         {
             if (talentInfo->RankID[rank] != 0)
             {
-                spellid = talentInfo->RankID[rank];
+                spellId = talentInfo->RankID[rank];
                 break;
             }
         }
 
-        if (!spellid)                                        // ??? none spells in talent
+        if (!spellId)                                        // ??? none spells in talent
             continue;
 
-        SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellid);
+        SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellId);
         if (!spellInfo || !SpellMgr::IsSpellValid(spellInfo, m_session->GetPlayer(), false))
             continue;
 
         // learn highest rank of talent
-        player->LearnSpell(spellid);
-
-        // and learn all non-talent spell ranks (recursive by tree)
-        learnAllHighRanks(player, spellid);
+        player->LearnSpellHighestRank(spellId);
     }
+
+    player->SetFreeTalentPoints(0);
 
     SendSysMessage(LANG_COMMAND_LEARN_CLASS_TALENTS);
     return true;
@@ -5236,8 +5301,6 @@ bool ChatHandler::HandleResetLevelCommand(const char* args)
     if (pet)
         pet->InitStatsForLevel(startLevel);
 
-    sScriptMgr.OnPlayerLevelChanged(player, startLevel);
-
     return true;
 }
 
@@ -5735,11 +5798,11 @@ bool ChatHandler::HandleCompleteQuest(const char* args)
     if (uint32 repFaction = pQuest->GetRepObjectiveFaction())
     {
         uint32 repValue = pQuest->GetRepObjectiveValue();
-        uint32 curRep = player->GetReputation(repFaction);
+        uint32 curRep = player->GetReputationMgr().GetReputation(repFaction);
         if (curRep < repValue)
         {
             FactionEntry const* factionEntry = sFactionStore.LookupEntry(repFaction);
-            player->SetFactionReputation(factionEntry, repValue);
+            player->GetReputationMgr().SetReputation(factionEntry, repValue);
         }
     }
 

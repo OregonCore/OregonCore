@@ -1415,7 +1415,7 @@ struct npc_akama_illidanAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 20)
+        if (HealthBelowPct(20))
             DoCast(me, SPELL_HEALING_POTION);
 
         DoMeleeAttackIfReady();
@@ -1618,7 +1618,7 @@ struct boss_maievAI : public ScriptedAI
             break;
         }
 
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 50)
+        if (HealthBelowPct(50))
         {
             me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);

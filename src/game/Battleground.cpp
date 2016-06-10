@@ -648,7 +648,7 @@ void Battleground::RewardReputationToTeam(uint32 faction_id, uint32 Reputation, 
             uint32 repGain = Reputation;
             AddPct(repGain, plr->GetTotalAuraModifier(SPELL_AURA_MOD_REPUTATION_GAIN));
             AddPct(repGain, plr->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_FACTION_REPUTATION_GAIN, faction_id));
-            plr->ModifyFactionReputation(factionEntry, Reputation);
+            plr->GetReputationMgr().ModifyReputation(factionEntry, Reputation);
         }
     }
 }
@@ -1930,7 +1930,7 @@ inline void Battleground::_CheckSafePositions(uint32 diff)
         for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
             if (Player* player = ObjectAccessor::FindPlayer(itr->first))
             {
-                player->GetPosition(&pos);
+                pos = player->GetPosition();
                 GetTeamStartLoc(player->GetBGTeam(), x, y, z, o);
                 if (pos.GetExactDistSq(x, y, z) > maxDist)
                 {

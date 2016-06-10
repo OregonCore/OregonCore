@@ -662,8 +662,7 @@ struct mob_cycloneAI : public ScriptedAI
 
         if (MoveTimer <= diff)
         {
-            Position pos;
-            me->GetRandomNearPosition(pos, 10);
+            Position pos = me->GetRandomNearPosition(10.0f);
             me->GetMotionMaster()->MovePoint(0, pos);
             MoveTimer = urand(5000, 8000);
         }

@@ -732,7 +732,7 @@ struct SpellNotifierCreatureAndPlayer
                     continue;
                 if (itr->GetSource()->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
                     continue;
-                if (itr->GetSource()->GetTypeId() == TYPEID_PLAYER && itr->GetSource()->ToPlayer()->isGameMaster())
+                if (itr->GetSource()->GetTypeId() == TYPEID_PLAYER && itr->GetSource()->ToPlayer()->IsGameMaster())
                     continue;
                 break;
             case SPELL_TARGETS_ENEMY:
@@ -794,7 +794,7 @@ struct SpellNotifierCreatureAndPlayer
                     i_data->push_back(itr->GetSource());
                 break;
             case PUSH_IN_LINE:
-                if (i_caster->HasInLine((Unit*)(itr->GetSource()), i_radius, i_caster->GetObjectSize()))
+                if (i_caster->HasInLine((Unit*)(itr->GetSource()), i_caster->GetObjectSize()))
                     i_data->push_back(itr->GetSource());
                 break;
             default:

@@ -187,13 +187,13 @@ void WorldSession::HandleSendMail(WorldPacket& recv_data)
             return;
         }
 
-        if (item->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_CONJURED) || item->GetUInt32Value(ITEM_FIELD_DURATION))
+        if (item->GetProto()->Flags & ITEM_PROTO_FLAG_CONJURED || item->GetUInt32Value(ITEM_FIELD_DURATION))
         {
             pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_EQUIP_ERROR, EQUIP_ERR_MAIL_BOUND_ITEM);
             return;
         }
 
-        if (COD && item->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPED))
+        if (COD && item->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_WRAPPED))
         {
             pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_CANT_SEND_WRAPPED_COD);
             return;
@@ -819,7 +819,7 @@ MailSender::MailSender(Object* sender, MailStationery stationery ) : m_stationer
         m_messageType = MAIL_NORMAL;
         m_senderId = sender->GetGUIDLow();
         if (sWorld.getConfig(CONFIG_GM_MAIL))
-            if (static_cast<Player*>(sender)->isGameMaster())
+            if (static_cast<Player*>(sender)->IsGameMaster())
                 m_stationery = MAIL_STATIONERY_GM;
         break;
     default:

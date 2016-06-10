@@ -311,10 +311,10 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
 
                             Position pos;
                             if (Unit* EscapeDummy = me->FindNearestCreature(CREATURE_ESCAPE_DUMMY, 30))
-                                EscapeDummy->GetPosition(&pos);
+                                pos = EscapeDummy->GetPosition();
                             else
                             {
-                                me->GetRandomNearPosition(pos, 20);
+                                pos = me->GetRandomNearPosition(20);
                                 pos.m_positionZ += 25;
                             }
 

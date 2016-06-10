@@ -261,7 +261,8 @@ void WorldSession::HandleGossipHelloOpcode(WorldPacket& recv_data)
     }
 
     // Set faction visible if needed
-    _player->SetFactionVisibleForFactionTemplateId(unit->getFaction());
+    if (FactionTemplateEntry const* factionTemplateEntry = sFactionTemplateStore.LookupEntry(unit->getFaction()))
+        _player->GetReputationMgr().SetVisible(factionTemplateEntry);
 
     GetPlayer()->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TALK);
     // remove fake death

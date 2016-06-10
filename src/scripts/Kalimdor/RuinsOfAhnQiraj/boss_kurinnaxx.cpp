@@ -64,7 +64,7 @@ struct boss_kurinnaxxAI : public ScriptedAI
             return;
 
         //If we are <30% cast enrage
-        if (!enraged && me->GetHealth() * 100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCast(false))
+        if (!enraged && HealthBelowPct(30) && !me->IsNonMeleeSpellCast(false))
         {
             enraged = true;
             DoCast(me, SPELL_ENRAGE, true);

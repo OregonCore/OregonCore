@@ -93,7 +93,7 @@ struct boss_lady_blaumeuxAI : public ScriptedAI
         else Mark_Timer -= diff;
 
         // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-        if (ShieldWall1 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
+        if (ShieldWall1 && HealthBelowPct(50))
         {
             if (ShieldWall1)
             {
@@ -101,7 +101,7 @@ struct boss_lady_blaumeuxAI : public ScriptedAI
                 ShieldWall1 = false;
             }
         }
-        if (ShieldWall2 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
+        if (ShieldWall2 && HealthBelowPct(20))
         {
             if (ShieldWall2)
             {
@@ -261,7 +261,7 @@ struct boss_thane_korthazzAI : public ScriptedAI
         else Mark_Timer -= diff;
 
         // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-        if (ShieldWall1 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
+        if (ShieldWall1 && HealthBelowPct(50))
         {
             if (ShieldWall1)
             {
@@ -269,7 +269,7 @@ struct boss_thane_korthazzAI : public ScriptedAI
                 ShieldWall1 = false;
             }
         }
-        if (ShieldWall2 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
+        if (ShieldWall2 && HealthBelowPct(20))
         {
             if (ShieldWall2)
             {
@@ -359,7 +359,7 @@ struct boss_sir_zeliekAI : public ScriptedAI
         else Mark_Timer -= diff;
 
         // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-        if (ShieldWall1 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
+        if (ShieldWall1 && HealthBelowPct(50))
         {
             if (ShieldWall1)
             {
@@ -367,7 +367,7 @@ struct boss_sir_zeliekAI : public ScriptedAI
                 ShieldWall1 = false;
             }
         }
-        if (ShieldWall2 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
+        if (ShieldWall2 && HealthBelowPct(20))
         {
             if (ShieldWall2)
             {

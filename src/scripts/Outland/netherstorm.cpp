@@ -4343,7 +4343,7 @@ struct npc_commander_ameerAI : public ScriptedAI
 			break;
 		case 10: //event done
 			me->SetWalk(false);
-			me->SetFacingTo(me->GetHomePosition().m_orientation);
+			me->SetFacingTo(me->GetHomePosition().GetOrientation());
 
 			eventInProgress = false;
 			currentPhase = 0;

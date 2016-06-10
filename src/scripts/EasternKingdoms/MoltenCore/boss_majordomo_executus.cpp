@@ -87,7 +87,7 @@ struct boss_majordomoAI : public ScriptedAI
             return;
 
         //Cast Ageis if less than 50% hp
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 50)
+        if (HealthBelowPct(50))
             DoCast(me, SPELL_AEGIS);
 
         //MagicReflection_Timer

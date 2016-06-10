@@ -180,7 +180,7 @@ struct boss_gythAI : public ScriptedAI
             else Flamebreath_Timer -= diff;
 
             //Summon Rend
-            if (!SummonedRend && me->GetHealth() * 100 / me->GetMaxHealth() < 11
+            if (!SummonedRend && HealthBelowPct(11)
                 && me->GetHealth() > 0)
             {
                 //summon Rend and Change model to normal Gyth

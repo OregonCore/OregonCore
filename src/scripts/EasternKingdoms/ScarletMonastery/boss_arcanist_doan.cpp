@@ -76,7 +76,7 @@ struct boss_arcanist_doanAI : public ScriptedAI
             return;
 
         //If we are <50% hp cast Arcane Bubble
-        if (!bShielded && me->GetHealth() * 100 / me->GetMaxHealth() <= 50)
+        if (!bShielded && HealthBelowPct(50))
         {
             //wait if we already casting
             if (me->IsNonMeleeSpellCast(false))

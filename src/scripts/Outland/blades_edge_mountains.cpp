@@ -504,7 +504,7 @@ bool GOUse_go_thunderspike(Player* player, GameObject* /*_GO*/)
 
         Position dest;
         //player->GetValidPointInAngle(dest, 5.0f, frand(0.0f, 2*M_PI), true);
-        player->GetPosition(&dest);
+        dest = player->GetPosition();
         if (Creature* pGor = player->SummonCreature(GOR_GRIMGUT_ENTRY, dest.m_positionX, dest.m_positionY, dest.m_positionZ, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000))
             pGor->AI()->AttackStart(player);
     }

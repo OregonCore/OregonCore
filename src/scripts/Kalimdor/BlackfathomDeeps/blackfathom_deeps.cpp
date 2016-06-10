@@ -97,7 +97,7 @@ struct npc_blackfathom_deeps_eventAI : public ScriptedAI
         {
             if (Player* pPlayer = i->GetSource())
             {
-                if (pPlayer->isGameMaster())
+                if (pPlayer->IsGameMaster())
                     continue;
 
                 if (pPlayer->IsAlive())

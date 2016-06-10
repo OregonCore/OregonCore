@@ -908,9 +908,9 @@ bool ChatHandler::HandleModifyRepCommand(const char* args)
                 if (deltaTxt)
                 {
                     int32 delta = atoi(deltaTxt);
-                    if ((delta < 0) || (delta > Player::ReputationRank_Length[r] - 1))
+                    if ((delta < 0) || (delta > ReputationMgr::PointsInRank[r] - 1))
                     {
-                        PSendSysMessage(LANG_COMMAND_FACTION_DELTA, (Player::ReputationRank_Length[r] - 1));
+                        PSendSysMessage(LANG_COMMAND_FACTION_DELTA, (ReputationMgr::PointsInRank[r] - 1));
                         SetSentErrorMessage(true);
                         return false;
                     }
@@ -918,7 +918,7 @@ bool ChatHandler::HandleModifyRepCommand(const char* args)
                 }
                 break;
             }
-            amount += Player::ReputationRank_Length[r];
+            amount += ReputationMgr::PointsInRank[r];
         }
         if (r >= MAX_REPUTATION_RANK)
         {
@@ -944,8 +944,8 @@ bool ChatHandler::HandleModifyRepCommand(const char* args)
         return false;
     }
 
-    target->SetFactionReputation(factionEntry, amount);
-    PSendSysMessage(LANG_COMMAND_MODIFY_REP, factionEntry->name[m_session->GetSessionDbcLocale()], factionId, target->GetName(), target->GetReputation(factionId));
+    target->GetReputationMgr().SetReputation(factionEntry, amount);
+    PSendSysMessage(LANG_COMMAND_MODIFY_REP, factionEntry->name[m_session->GetSessionDbcLocale()], factionId, target->GetName(), target->GetReputationMgr().GetReputation(factionEntry));
     return true;
 }
 
@@ -2050,17 +2050,18 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
         }
 
         const char* FactionName;
-        for (FactionStateList::const_iterator itr = target->m_factions.begin(); itr != target->m_factions.end(); ++itr)
+        FactionStateList const& targetFSL = target->GetReputationMgr().GetStateList();
+        for (FactionStateList::const_iterator itr = targetFSL.begin(); itr != targetFSL.end(); ++itr)
         {
             FactionEntry const* factionEntry = sFactionStore.LookupEntry(itr->second.ID);
             if (factionEntry)
                 FactionName = factionEntry->name[m_session->GetSessionDbcLocale()];
             else
                 FactionName = "#Not found#";
-            ReputationRank rank = target->GetReputationRank(factionEntry);
+            ReputationRank rank = target->GetReputationMgr().GetRank(factionEntry);
             std::string rankName = GetOregonString(ReputationRankStrIndex[rank]);
             std::ostringstream ss;
-            ss << itr->second.ID << ": |cffffffff|Hfaction:" << itr->second.ID << "|h[" << FactionName << "]|h|r " << rankName << "|h|r (" << target->GetReputation(factionEntry) << ")";
+            ss << itr->second.ID << ": |cffffffff|Hfaction:" << itr->second.ID << "|h[" << FactionName << "]|h|r " << rankName << "|h|r (" << target->GetReputationMgr().GetReputation(factionEntry) << ")";
 
             if (itr->second.Flags & FACTION_FLAG_VISIBLE)
                 ss << GetOregonString(LANG_FACTION_VISIBLE);
@@ -3070,13 +3071,7 @@ bool ChatHandler::HandleLookupFactionCommand(const char* args)
         FactionEntry const* factionEntry = sFactionStore.LookupEntry (id);
         if (factionEntry)
         {
-            FactionState const* repState = NULL;
-            if (target)
-            {
-                FactionStateList::const_iterator repItr = target->m_factions.find (factionEntry->reputationListID);
-                if (repItr != target->m_factions.end())
-                    repState = &repItr->second;
-            }
+            FactionState const* factionState = target ? target->GetReputationMgr().GetState(factionEntry) : NULL;
 
             int loc = m_session ? int(m_session->GetSessionDbcLocale()) : sWorld.GetDefaultDbcLocale();
             std::string name = factionEntry->name[loc];
@@ -3110,24 +3105,24 @@ bool ChatHandler::HandleLookupFactionCommand(const char* args)
                 else
                     ss << id << " - " << name << " " << localeNames[loc];
 
-                if (repState)                               // and then target != NULL also
+                if (factionState)                               // and then target != NULL also
                 {
-                    ReputationRank rank = target->GetReputationRank(factionEntry);
+                    ReputationRank rank = target->GetReputationMgr().GetRank(factionEntry);
                     std::string rankName = GetOregonString(ReputationRankStrIndex[rank]);
 
-                    ss << " " << rankName << "|h|r (" << target->GetReputation(factionEntry) << ")";
+                    ss << " " << rankName << "|h|r (" << target->GetReputationMgr().GetReputation(factionEntry) << ")";
 
-                    if (repState->Flags & FACTION_FLAG_VISIBLE)
+                    if (factionState->Flags & FACTION_FLAG_VISIBLE)
                         ss << GetOregonString(LANG_FACTION_VISIBLE);
-                    if (repState->Flags & FACTION_FLAG_AT_WAR)
+                    if (factionState->Flags & FACTION_FLAG_AT_WAR)
                         ss << GetOregonString(LANG_FACTION_ATWAR);
-                    if (repState->Flags & FACTION_FLAG_PEACE_FORCED)
+                    if (factionState->Flags & FACTION_FLAG_PEACE_FORCED)
                         ss << GetOregonString(LANG_FACTION_PEACE_FORCED);
-                    if (repState->Flags & FACTION_FLAG_HIDDEN)
+                    if (factionState->Flags & FACTION_FLAG_HIDDEN)
                         ss << GetOregonString(LANG_FACTION_HIDDEN);
-                    if (repState->Flags & FACTION_FLAG_INVISIBLE_FORCED)
+                    if (factionState->Flags & FACTION_FLAG_INVISIBLE_FORCED)
                         ss << GetOregonString(LANG_FACTION_INVISIBLE_FORCED);
-                    if (repState->Flags & FACTION_FLAG_INACTIVE)
+                    if (factionState->Flags & FACTION_FLAG_INACTIVE)
                         ss << GetOregonString(LANG_FACTION_INACTIVE);
                 }
                 else

@@ -305,8 +305,7 @@ struct mob_doomfire_targettingAI : public ScriptedAI
                 break;
 
             case 1:                                     // random location
-                Position pos;
-                me->GetRandomNearPosition(pos, 40);
+                Position pos = me->GetRandomNearPosition(40.0f);
                 me->GetMotionMaster()->MovePoint(0, pos.m_positionX, pos.m_positionY, pos.m_positionZ);
                 break;
             }
@@ -574,14 +573,14 @@ struct boss_archimondeAI : public hyjal_trashAI
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 10) && !BelowTenPercent && !Enraged)
+        if (HealthBelowPct(10) && !BelowTenPercent && !Enraged)
             BelowTenPercent = true;
 
         if (!Enraged)
         {
             if (EnrageTimer <= diff)
             {
-                if ((me->GetHealth() * 100 / me->GetMaxHealth()) > 10)
+                if (HealthBelowPct(10))
                 {
                     me->GetMotionMaster()->Clear(false);
                     me->GetMotionMaster()->MoveIdle();
