@@ -497,7 +497,7 @@ void Map::Update(const uint32& t_diff)
     /// update worldsessions for existing players
     for (m_mapRefIter = m_mapRefManager.begin(); m_mapRefIter != m_mapRefManager.end(); ++m_mapRefIter)
     {
-        Player* player = m_mapRefIter->getSource();
+        Player* player = m_mapRefIter->GetSource();
         if (player && player->IsInWorld())
         {
             //player->Update(t_diff);
