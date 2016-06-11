@@ -1672,13 +1672,13 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
         // Check enter rights before map getting to avoid creating instance copy for player
         // this check not dependent from map instance copy and same for all instance copies of selected map
-        if (!MapManager::Instance().CanPlayerEnter(mapid, this))
+        if (MapManager::Instance().PlayerCannotEnter(mapid, this))
             return false;
 
         // If the map is not created, assume it is possible to enter it.
         // It will be created in the WorldPortAck.
-        Map* map = MapManager::Instance().FindMap(mapid);
-        if (!map ||  map->CanEnter(this))
+        //Map* map = MapManager::Instance().FindMap(mapid);
+        //if (!map || map->CannotEnter(this))
         {
             //lets reset near teleport flag if it wasn't reset during chained teleports
             SetSemaphoreTeleportNear(false);
@@ -1798,8 +1798,8 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
             // code for finish transfer to new map called in WorldSession::HandleMoveWorldportAckOpcode at client packet
             SetSemaphoreTeleportFar(true);
         }
-        else
-            return false;
+        //else
+            //return false;
     }
     return true;
 }
@@ -14490,7 +14490,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     uint32 instanceId = fields[56].GetFloat();
     m_GrantableLevels = fields[57].GetFloat();
 
-    SetDifficulty((DungeonDifficulties)fields[39].GetUInt8());                  // may be changed in _LoadGroup
+    SetDifficulty((DungeonDifficulty)fields[39].GetUInt8());                  // may be changed in _LoadGroup
     std::string taxi_nodes = fields[38].GetCppString();
 
 #define RelocateToHomebind() { mapId = m_homebindMapId; instanceId = 0; Relocate(m_homebindX, m_homebindY, m_homebindZ); if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE)) { m_movementInfo.ClearTransportData(); transGUID = 0; } }
@@ -14696,8 +14696,28 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     }
     else if (map->IsDungeon()) // if map is dungeon...
     {
-        if (!((InstanceMap*)map)->CanEnter(this)) // ... and can't enter map, then look for entry point.
+        if (Map::EnterState denyReason = ((InstanceMap*)map)->CannotEnter(this)) // ... and can't enter map, then look for entry point.
         {
+            switch (denyReason)
+            {
+            case Map::CANNOT_ENTER_DIFFICULTY_UNAVAILABLE:
+                SendTransferAborted(map->GetId(), TRANSFER_ABORT_DIFFICULTY2);
+                break;
+            case Map::CANNOT_ENTER_INSTANCE_BIND_MISMATCH:
+                ChatHandler(GetSession()).PSendSysMessage(GetSession()->GetOregonString(LANG_INSTANCE_BIND_MISMATCH), map->GetMapName());
+                break;
+            case Map::CANNOT_ENTER_TOO_MANY_INSTANCES:
+                SendTransferAborted(map->GetId(), TRANSFER_ABORT_TOO_MANY_INSTANCES);
+                break;
+            case Map::CANNOT_ENTER_MAX_PLAYERS:
+                SendTransferAborted(map->GetId(), TRANSFER_ABORT_MAX_PLAYERS);
+                break;
+            case Map::CANNOT_ENTER_ZONE_IN_COMBAT:
+                SendTransferAborted(map->GetId(), TRANSFER_ABORT_ZONE_IN_COMBAT);
+                break;
+            default:
+                break;
+            }
             areaTrigger = sObjectMgr.GetGoBackTrigger(mapId);
             check = true;
         }
@@ -14740,6 +14760,10 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     }
 
     SetMap(map);
+
+    // now that map position is determined, check instance validity
+    if (!CheckInstanceValidity(true) && !IsInstanceLoginGameMasterException())
+        m_InstanceValid = false;
 
     // randomize first save time in range [CONFIG_INTERVAL_SAVE] around [CONFIG_INTERVAL_SAVE]
     // this must help in case next save after mass player load after server startup
@@ -15746,7 +15770,7 @@ void Player::_LoadBoundInstances(QueryResult_AutoPtr result)
             bool perm = fields[1].GetBool();
             uint32 mapId = fields[2].GetUInt32();
             uint32 instanceId = fields[0].GetUInt32();
-            DungeonDifficulties difficulty = (DungeonDifficulties)fields[3].GetUInt8();
+            DungeonDifficulty difficulty = (DungeonDifficulty)fields[3].GetUInt8();
             time_t resetTime = (time_t)fields[4].GetUInt64();
             // the resettime for normal instances is only saved when the InstanceSave is unloaded
             // so the value read from the DB may be wrong here but only if the InstanceSave is loaded
@@ -16044,6 +16068,67 @@ bool Player::Satisfy(AccessRequirement const* ar, uint32 target_map, bool report
             return false;
         }
     }
+    return true;
+}
+
+bool Player::IsInstanceLoginGameMasterException() const
+{
+    if (IsGameMaster())
+        return true;
+    else
+        return false;
+}
+
+bool Player::CheckInstanceValidity(bool /*isLogin*/)
+{
+    // game masters' instances are always valid
+    if (IsGameMaster())
+        return true;
+
+    // non-instances are always valid
+    Map* map = GetMap();
+    if (!map || !map->IsDungeon())
+        return true;
+
+    // raid instances require the player to be in a raid group to be valid
+    if (map->IsRaid() && !sWorld.getConfig(CONFIG_INSTANCE_IGNORE_RAID))
+        if (!GetGroup() || !GetGroup()->isRaidGroup())
+            return false;
+
+    if (Group* group = GetGroup())
+    {
+        // check if player's group is bound to this instance
+        InstanceGroupBind* bind = group->GetBoundInstance(map);
+        if (!bind || !bind->save || bind->save->GetInstanceId() != map->GetInstanceId())
+            return false;
+
+        Map::PlayerList const& players = map->GetPlayers();
+        if (!players.isEmpty())
+            for (Map::PlayerList::const_iterator it = players.begin(); it != players.end(); ++it)
+            {
+                if (Player* otherPlayer = it->GetSource())
+                {
+                    if (otherPlayer->IsGameMaster())
+                        continue;
+                    if (!otherPlayer->m_InstanceValid) // ignore players that currently have a homebind timer active
+                        continue;
+                    if (group != otherPlayer->GetGroup())
+                        return false;
+                }
+            }
+    }
+    else
+    {
+        // instance is invalid if we are not grouped and there are other players
+        if (map->GetPlayersCountExceptGMs() > 1)
+            return false;
+
+        // check if the player is bound to this instance
+        InstancePlayerBind* bind = GetBoundInstance(map->GetId(), map->GetDifficulty());
+        if (!bind || !bind->save || bind->save->GetInstanceId() != map->GetInstanceId())
+            return false;
+    }
+
     return true;
 }
 

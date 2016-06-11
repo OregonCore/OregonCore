@@ -35,12 +35,13 @@ class MapInstanced : public Map
         void DelayedUpdate(const uint32 diff);
         //void RelocationNotify();
         void UnloadAll();
-        bool CanEnter(Player* player);
+        EnterState CannotEnter(Player* /*player*/) override;
 
-        Map* CreateInstance(const uint32 mapId, Player* player);
-        Map* FindMap(uint32 InstanceId) const
+        Map* CreateInstanceForPlayer(const uint32 mapId, Player* player, uint32 loginInstanceId = 0);
+        Map* FindInstanceMap(uint32 InstanceId) const
         {
-            return _FindMap(InstanceId);
+            InstancedMaps::const_iterator i = m_InstancedMaps.find(InstanceId);
+            return (i == m_InstancedMaps.end() ? nullptr : i->second);
         }
         bool DestroyInstance(InstancedMaps::iterator& itr);
 
@@ -65,16 +66,10 @@ class MapInstanced : public Map
 
     private:
 
-        InstanceMap* CreateInstance(uint32 InstanceId, InstanceSave* save, DungeonDifficulties difficulty);
+        InstanceMap* CreateInstance(uint32 InstanceId, InstanceSave* save, DungeonDifficulty difficulty);
         BattlegroundMap* CreateBattleground(uint32 InstanceId, Battleground* bg);
 
         InstancedMaps m_InstancedMaps;
-
-        Map* _FindMap(uint32 InstanceId) const
-        {
-            InstancedMaps::const_iterator i = m_InstancedMaps.find(InstanceId);
-            return (i == m_InstancedMaps.end() ? NULL : i->second);
-        }
 
         uint16 GridMapReference[MAX_NUMBER_OF_GRIDS][MAX_NUMBER_OF_GRIDS];
 };

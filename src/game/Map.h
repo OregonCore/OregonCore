@@ -267,7 +267,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 {
         friend class MapReference;
     public:
-        Map(uint32 id, time_t, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent = NULL);
+        Map(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode, Map* _parent = NULL);
         ~Map() override;
 
         // currently unused for normal maps
@@ -390,15 +390,33 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         {
             return i_InstanceId;
         }
-        DungeonDifficulties GetSpawnMode() const
+        uint8 GetSpawnMode() const
         {
             return (i_spawnMode);
         }
-        virtual bool CanEnter(Player* /*player*/)
+
+        enum EnterState
         {
-            return true;
-        }
+            CAN_ENTER = 0,
+            CANNOT_ENTER_ALREADY_IN_MAP = 1, // Player is already in the map
+            CANNOT_ENTER_NO_ENTRY, // No map entry was found for the target map ID
+            CANNOT_ENTER_UNINSTANCED_DUNGEON, // No instance template was found for dungeon map
+            CANNOT_ENTER_DIFFICULTY_UNAVAILABLE, // Requested instance difficulty is not available for target map
+            CANNOT_ENTER_NOT_IN_RAID, // Target instance is a raid instance and the player is not in a raid group
+            CANNOT_ENTER_CORPSE_IN_DIFFERENT_INSTANCE, // Player is dead and their corpse is not in target instance
+            CANNOT_ENTER_INSTANCE_BIND_MISMATCH, // Player's permanent instance save is not compatible with their group's current instance bind
+            CANNOT_ENTER_TOO_MANY_INSTANCES, // Player has entered too many instances recently
+            CANNOT_ENTER_MAX_PLAYERS, // Target map already has the maximum number of players allowed
+            CANNOT_ENTER_ZONE_IN_COMBAT, // A boss encounter is currently in progress on the target map
+            CANNOT_ENTER_UNSPECIFIED_REASON
+        };
+        virtual EnterState CannotEnter(Player* /*player*/) { return CAN_ENTER; }
+
         const char* GetMapName() const;
+
+        // have meaning only for instanced map (that have set real difficulty)
+        DungeonDifficulty GetDifficulty() const { return DungeonDifficulty(GetSpawnMode()); }
+        bool IsRegularDifficulty() const { return GetDifficulty() == DIFFICULTY_NORMAL; }
 
         bool Instanceable() const
         {
@@ -579,7 +597,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         typedef Oregon::ObjectLevelLockable<Map, ACE_Thread_Mutex>::Lock Guard;
 
         MapEntry const* i_mapEntry;
-        DungeonDifficulties i_spawnMode;
+        uint8 i_spawnMode;
         uint32 i_InstanceId;
         uint32 m_unloadTimer;
         float m_VisibleDistance;
@@ -668,7 +686,7 @@ enum InstanceResetMethod
 class InstanceMap : public Map
 {
     public:
-        InstanceMap(uint32 id, time_t, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent);
+        InstanceMap(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode, Map* _parent);
         ~InstanceMap() override;
         bool AddPlayerToMap(Player*) override;
         void RemovePlayerFromMap(Player*, bool) override;
@@ -686,7 +704,7 @@ class InstanceMap : public Map
         void PermBindAllPlayers(Player* player);
         time_t GetResetTime();
         void UnloadAll() override;
-        bool CanEnter(Player* player) override;
+        EnterState CannotEnter(Player* player) override;
         void SendResetWarnings(uint32 timeLeft) const;
         void SetResetSchedule(bool on);
 
@@ -706,7 +724,7 @@ class BattlegroundMap : public Map
 
         bool AddPlayerToMap(Player*) override;
         void RemovePlayerFromMap(Player*, bool) override;
-        bool CanEnter(Player* player) override;
+        EnterState CannotEnter(Player* player) override;
         void SetUnload();
         void RemoveAllPlayers() override;
 
