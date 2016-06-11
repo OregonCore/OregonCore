@@ -12639,6 +12639,10 @@ void Unit::RemoveCharmedBy(Unit* charmer)
     else
         RestoreFaction();
 
+    // If charmer still exists
+    if (!charmer)
+        return;
+
     if (Creature* creature = ToCreature())
     {
         // Creature will restore its old AI on next update
@@ -12647,10 +12651,6 @@ void Unit::RemoveCharmedBy(Unit* charmer)
 
         LastCharmerGUID = charmer->GetGUID();
     }
-
-    // If charmer still exists
-    if (!charmer)
-        return;
 
     ASSERT(type != CHARM_TYPE_POSSESS || charmer->GetTypeId() == TYPEID_PLAYER);
 

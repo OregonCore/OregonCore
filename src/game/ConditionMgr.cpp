@@ -343,7 +343,6 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
                 if (toUnit && unit)
                     condMeets = (1 << unit->GetReactionTo(toUnit)) & ConditionValue2;
             }
-            condMeets = false;
             break;
         }
         case CONDITION_DISTANCE_TO:

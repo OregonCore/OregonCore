@@ -54,7 +54,7 @@ struct Script
         pGossipHello(NULL), pQuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
         pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL), pItemQuestAccept(NULL),
-        pGOQuestAccept(NULL), pGOChooseReward(NULL), pItemUse(NULL), pEffectDummyCreature(NULL),
+        pGOQuestAccept(NULL), pGOChooseReward(NULL), pGOSelect(NULL), pGOSelectWithCode(NULL), pItemUse(NULL), pEffectDummyCreature(NULL),
         GetAI(NULL), GetInstanceData(NULL)
     {}
 

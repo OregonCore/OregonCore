@@ -437,7 +437,6 @@ struct PlayerSearcher
 template<class Check>
 struct PlayerListSearcher
 {
-    uint32 i_phaseMask;
     std::list<Player*>& i_objects;
     Check& i_check;
 

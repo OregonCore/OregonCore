@@ -132,6 +132,7 @@ Battleground::Battleground()
     m_StartTime         = 0;
     m_ValidStartPositionTimer = 0;
     m_Events            = 0;
+    m_StartDelayTime    = 0;
     m_IsRated           = false;
     m_BuffChange        = false;
     m_Name              = "";
@@ -176,8 +177,11 @@ Battleground::Battleground()
     m_TeamScores[BG_TEAM_ALLIANCE]      = 0;
     m_TeamScores[BG_TEAM_HORDE]         = 0;
 
+    m_score[BG_TEAM_ALLIANCE]   = m_TeamScores[BG_TEAM_ALLIANCE];
+    m_score[BG_TEAM_HORDE]      = m_TeamScores[BG_TEAM_HORDE];
+
     m_PrematureCountDown = false;
-    m_PrematureCountDown = 0;
+    m_PrematureCountDownTimer = 0;
 
     m_HonorMode = BG_NORMAL;
 
@@ -869,11 +873,11 @@ uint32 Battleground::GetBattlemasterEntry() const
 
 void Battleground::RewardMark(Player* plr, uint32 count)
 {
-    // 'Inactive' this aura prevents the player from gaining honor points and battleground tokens
-    if (plr->GetDummyAura(SPELL_AURA_PLAYER_INACTIVE))
+    if (!plr || !count)
         return;
 
-    if (!plr || !count)
+    // 'Inactive' this aura prevents the player from gaining honor points and battleground tokens
+    if (plr->GetDummyAura(SPELL_AURA_PLAYER_INACTIVE))
         return;
 
     BattlegroundMarks mark;

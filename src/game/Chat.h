@@ -42,8 +42,8 @@ class ChatCommand
 class ChatHandler
 {
     public:
-        explicit ChatHandler(WorldSession* session) : m_session(session) {}
-        explicit ChatHandler(Player* player) : m_session(player->GetSession()) {}
+        explicit ChatHandler(WorldSession* session) : m_session(session), sentErrorMessage(false) { }
+        explicit ChatHandler(Player* player) : m_session(player->GetSession()) { }
         ~ChatHandler() {}
 
         static void FillMessageData(WorldPacket* data, WorldSession* session, uint8 type, uint32 language, const char* channelName, uint64 target_guid, const char* message, Unit* speaker);
@@ -87,7 +87,7 @@ class ChatHandler
         }
         virtual char const* GetName() const;
     protected:
-        explicit ChatHandler() : m_session(NULL) {}      // for CLI subclass
+        explicit ChatHandler() : m_session(NULL), sentErrorMessage(false) { }      // for CLI subclass
 
         bool hasStringAbbr(const char* name, const char* part);
 

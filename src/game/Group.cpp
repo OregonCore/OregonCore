@@ -43,6 +43,7 @@ Group::Group()
     m_masterLooterGuid  = 0;
     m_lootThreshold     = ITEM_QUALITY_UNCOMMON;
     m_subGroupsCounts   = NULL;
+    m_difficulty        = DIFFICULTY_NORMAL;
 
     for (uint8 i = 0; i < TARGETICONCOUNT; ++i)
         m_targetIcons[i] = 0;

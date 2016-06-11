@@ -288,9 +288,12 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
         {
             // if player is in battleground, he cannot say to battleground members by /p
             Group* group = GetPlayer()->GetOriginalGroup();
-            // so if player hasn't OriginalGroup and his player->GetGroup() is BG raid, then return
-            if (!group && (!(group = GetPlayer()->GetGroup()) || group->isBGGroup()))
-                return;
+            if (!group)
+            {
+                group = GetPlayer()->GetGroup();
+                if (!group || group->isBGGroup())
+                    return;
+            }
 
             WorldPacket data;
             ChatHandler::FillMessageData(&data, this, type, lang, NULL, 0, msg.c_str(), NULL);

@@ -6737,10 +6737,10 @@ void Aura::HandleAuraReflectSpellSchool(bool apply, bool real)
         {
             // Fire Ward
             if (GetSpellProto()->SpellFamilyFlags & 0x8)
-                GetModifier()->m_amount += pTarget->HasSpell(11094) ? 10.0f : pTarget->HasSpell(13043) ? 20.0f : 0.0f;
+                GetModifier()->m_amount += pTarget->HasSpell(11094) ? 10 : pTarget->HasSpell(13043) ? 20 : 0;
             // Frost Ward
             else if (GetSpellProto()->SpellFamilyFlags & 0x80100)
-                GetModifier()->m_amount += pTarget->HasSpell(11189) ? 10.0f : pTarget->HasSpell(28332) ? 20.0f : 0.0f;
+                GetModifier()->m_amount += pTarget->HasSpell(11189) ? 10 : pTarget->HasSpell(28332) ? 20 : 0;
         }
     }
 }
