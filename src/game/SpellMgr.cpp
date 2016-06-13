@@ -1532,6 +1532,13 @@ bool SpellMgr::canStackSpellRanks(SpellEntry const* spellInfo)
     return true;
 }
 
+/**
+* @name IsNoStackSpellDueToSpell
+* @brief Determines whether a spell can stack, based on parameters of another spell
+* @param spellId_1 Spell to compare
+* @param spellId_2 Spell we are comparing to
+* @param sameCaster Are these spells casted by the same entity?
+*/
 bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool sameCaster) const
 {
     SpellEntry const* spellInfo_1 = sSpellStore.LookupEntry(spellId_1);
