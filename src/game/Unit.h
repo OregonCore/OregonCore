@@ -1336,6 +1336,7 @@ class Unit : public WorldObject
         {
             return m_Auras.find(spellEffectPair(spellId, effIndex)) != m_Auras.end();
         }
+        bool HasHigherRankOfAura(uint32 spellid, uint8 effIndex) const;
 
         bool virtual HasSpell(uint32 /*spellID*/) const
         {
@@ -1693,6 +1694,9 @@ class Unit : public WorldObject
         }
         Spell* FindCurrentSpellBySpellId(uint32 spell_id) const;
         int32 GetCurrentSpellCastTime(uint32 spell_id) const;
+
+        // Check if our current channel spell has attribute SPELL_ATTR5_CAN_CHANNEL_WHEN_MOVING
+        bool CanMoveDuringChannel() const;
 
         uint32 m_addDmgOnce;
         uint64 m_SummonSlot[MAX_SUMMON_SLOT];

@@ -134,7 +134,7 @@ GameObjectAI* SelectGameObjectAI(GameObject* go)
 
     // AIname in db
     std::string GobAiName = go->GetAIName();
-    if (!ai_factory && !GobAiName.empty())
+    if (!GobAiName.empty())
         ai_factory = ai_registry.GetRegistryItem(GobAiName.c_str());
 
     //future goAI types go here

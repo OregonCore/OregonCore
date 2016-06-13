@@ -1118,12 +1118,8 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
                 unit->SetStandState(UNIT_STAND_STATE_STAND);
     }
 
-    // if target is flagged for pvp also flag caster if a player
-    if (unit->IsPvP())
-    {
-        if ((m_caster->GetTypeId() == TYPEID_PLAYER) && (m_caster != unit))
-            m_caster->ToPlayer()->UpdatePvP(true);
-    }
+    if (unit->IsPvP() && m_caster->GetTypeId() == TYPEID_PLAYER && (unit->GetTypeId() == TYPEID_PLAYER || unit->IsInCombat()))
+        m_caster->ToPlayer()->UpdatePvP(true);
 }
 
 void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
@@ -2189,8 +2185,23 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             else if (m_spellInfo->Id == 27285)  // Seed of Corruption proc spell
                 unitList.remove(m_targets.getUnitTarget());
 
-            for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); ++itr)
+            bool massbuff = IsPositiveSpell(m_spellInfo->Id) && sSpellMgr.IsNoStackSpellDueToSpell(m_spellInfo->Id, m_spellInfo->Id, false);
+
+            for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); )
+            {
+                // for mass-buffs skip targets that have higher ranks already applied.on them
+                if (*itr != m_caster && massbuff)
+                {
+                    if ((*itr)->HasHigherRankOfAura(m_spellInfo->Id, i))
+                    {
+                        itr = unitList.erase(itr);
+                        continue;
+                    }
+                }
+
                 AddUnitTarget(*itr, i);
+                ++itr;
+            }
         }
     }
 }
@@ -4138,6 +4149,16 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
         case SPELL_EFFECT_APPLY_AURA:
             {
+                // report single-target "buff degrading" (dont report for triggered spells)
+                // also works only for positive spells and the buffed is always able to degrade
+                // his own buffs
+                if (strict && target != m_caster && target)
+                    if (!m_IsTriggeredSpell && !m_triggeredByAuraSpell)
+                        if (IsPositiveSpell(m_spellInfo->Id) && !IsAreaOfEffectSpell(m_spellInfo))
+                            if (sSpellMgr.IsNoStackSpellDueToSpell(m_spellInfo->Id, m_spellInfo->Id, false))
+                                if (target->HasHigherRankOfAura(m_spellInfo->Id, i))
+                                    return SPELL_FAILED_AURA_BOUNCED;
+
                 switch(m_spellInfo->EffectApplyAuraName[i])
                 {
                     case SPELL_AURA_BIND_SIGHT:
@@ -4524,7 +4545,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (map->IsDungeon())
                 {
                     uint32 mapId = m_caster->GetMap()->GetId();
-                    DungeonDifficulties difficulty = m_caster->GetMap()->GetSpawnMode();
+                    DungeonDifficulty difficulty = m_caster->GetMap()->GetDifficulty();
                     if (map->IsRaid())
                         if (InstancePlayerBind* targetBind = target->GetBoundInstance(mapId, difficulty))
                             if (InstancePlayerBind* casterBind = m_caster->ToPlayer()->GetBoundInstance(mapId, difficulty))

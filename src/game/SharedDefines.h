@@ -2591,7 +2591,7 @@ enum DiminishingGroup
     DIMINISHING_LIMITONLY
 };
 
-enum DungeonDifficulties
+enum DungeonDifficulty
 {
     DIFFICULTY_NORMAL = 0,
     DIFFICULTY_HEROIC = 1,

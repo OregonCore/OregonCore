@@ -198,9 +198,7 @@ struct PlayerLevelInfo
 struct PlayerInfo
 {
     // existence checked by displayId != 0             // existence checked by displayId != 0
-    PlayerInfo() : displayId_m(0), displayId_f(0), levelInfo(NULL)
-    {
-    }
+    PlayerInfo() : mapId(0), areaId(0), positionX(0.0f), positionY(0.0f), positionZ(0.0f), orientation(0.0f), displayId_m(0), displayId_f(0), levelInfo(nullptr) { }
 
     uint32 mapId;
     uint32 areaId;
@@ -623,7 +621,6 @@ enum TransferAbortReason
     TRANSFER_ABORT_INSUF_EXPAN_LVL1     = 0x0106,           // You must have TBC expansion installed to access this area.
     TRANSFER_ABORT_DIFFICULTY1          = 0x0007,           // Normal difficulty mode is not available for %s.
     TRANSFER_ABORT_DIFFICULTY2          = 0x0107,           // Heroic difficulty mode is not available for %s.
-    TRANSFER_ABORT_DIFFICULTY3          = 0x0207            // Epic difficulty mode is not available for %s.
 };
 
 enum InstanceResetWarningType
@@ -1879,11 +1876,11 @@ class Player : public Unit, public GridObject<Player>
             return m_ArenaTeamIdInvited;
         }
 
-        void SetDifficulty(DungeonDifficulties dungeon_difficulty)
+        void SetDifficulty(DungeonDifficulty dungeon_difficulty)
         {
             m_dungeonDifficulty = dungeon_difficulty;
         }
-        DungeonDifficulties GetDifficulty()
+        DungeonDifficulty GetDifficulty()
         {
             return m_dungeonDifficulty;
         }
@@ -2567,6 +2564,7 @@ class Player : public Unit, public GridObject<Player>
         InstancePlayerBind* BindToInstance(InstanceSave* save, bool permanent, bool load = false);
         void SendRaidInfo();
         void SendSavedInstances();
+        bool CheckInstanceValidity(bool /*isLogin*/);
         static void ConvertInstancesToGroup(Player* player, Group* group = NULL, uint64 player_guid = 0);
         bool Satisfy(AccessRequirement const*, uint32 target_map, bool report = false);
 
@@ -2780,7 +2778,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 m_nextSave;
         time_t m_speakTime;
         uint32 m_speakCount;
-        DungeonDifficulties m_dungeonDifficulty;
+        DungeonDifficulty m_dungeonDifficulty;
 
         uint32 m_atLoginFlags;
 
@@ -2953,6 +2951,7 @@ class Player : public Unit, public GridObject<Player>
             return m_bHasDelayedTeleport;
         }
 
+        bool IsInstanceLoginGameMasterException() const;
 
         MapReference m_mapRef;
 

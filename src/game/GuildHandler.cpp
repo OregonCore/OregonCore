@@ -1349,10 +1349,9 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket& recv_data)
                 {
                     pl->MoveItemFromInventory(PlayerBag, PlayerSlot, true);
                     pItemChar->DeleteFromInventoryDB();
+                    pGuild->StoreItem(BankTab, gDest, pItemChar);
                 }
 
-                if (pItemChar)
-                    pGuild->StoreItem(BankTab, gDest, pItemChar);
                 pl->MoveItemToInventory(iDest, pItemBank, true);
                 pl->SaveInventoryAndGoldToDB();
 

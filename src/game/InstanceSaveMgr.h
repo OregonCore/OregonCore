@@ -46,7 +46,7 @@ class InstanceSave
            - any new instance is being generated
            - the first time a player bound to InstanceId logs in
            - when a group bound to the instance is loaded */
-        InstanceSave(uint16 MapId, uint32 InstanceId, DungeonDifficulties difficulty, time_t resetTime, bool canReset);
+        InstanceSave(uint16 MapId, uint32 InstanceId, DungeonDifficulty difficulty, time_t resetTime, bool canReset);
 
         /* Unloaded when m_playerList and m_groupList become empty
            or when the instance is reset */
@@ -129,7 +129,7 @@ class InstanceSave
 
         /* currently it is possible to omit this information from this structure
            but that would depend on a lot of things that can easily change in future */
-        DungeonDifficulties GetDifficulty()
+        DungeonDifficulty GetDifficulty()
         {
             return m_difficulty;
         }
@@ -144,7 +144,7 @@ class InstanceSave
         uint16 m_mapid;
         uint32 m_instanceid;
         time_t m_resetTime;
-        DungeonDifficulties m_difficulty;
+        DungeonDifficulty m_difficulty;
         bool m_canReset;
         PlayerListType m_playerList;
         GroupListType m_groupList;
@@ -189,7 +189,7 @@ class InstanceSaveManager : public Oregon::Singleton<InstanceSaveManager, Oregon
 
         void Update();
 
-        InstanceSave* AddInstanceSave(uint32 mapId, uint32 instanceId, DungeonDifficulties difficulty, time_t resetTime, bool canReset, bool load = false);
+        InstanceSave* AddInstanceSave(uint32 mapId, uint32 instanceId, DungeonDifficulty difficulty, time_t resetTime, bool canReset, bool load = false);
         void RemoveInstanceSave(uint32 InstanceId);
         static void DeleteInstanceFromDB(uint32 instanceid);
 

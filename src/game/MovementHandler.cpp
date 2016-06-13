@@ -84,9 +84,9 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
     // relocate the player to the teleport destination
     Map* newMap = MapManager::Instance().CreateMap(loc.GetMapId(), GetPlayer(), 0);
-    // the CanEnter checks are done in TeleporTo but conditions may change
+    // the CannotEnter checks are done in TeleporTo but conditions may change
     // while the player is in transit, for example the map may get full
-    if (!newMap || !newMap->CanEnter(GetPlayer()))
+    if (!newMap || newMap->CannotEnter(GetPlayer()))
     {
         sLog.outError("Map %d could not be created for player %d, porting player to homebind", loc.GetMapId(), GetPlayer()->GetGUIDLow());
         GetPlayer()->TeleportToHomebind();
@@ -165,6 +165,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     {
         if (reset_notify)
         {
+            // check if this instance has a reset time and send it to player if so
             if (uint32 timeReset = sInstanceSaveMgr.GetResetTimeFor(mEntry->MapID))
             {
                 uint32 timeleft = timeReset - time(NULL);
@@ -172,6 +173,12 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
             }
         }
+
+        // check if instance is valid
+        if (!GetPlayer()->CheckInstanceValidity(false))
+            GetPlayer()->m_InstanceValid = false;
+
+        // instance mounting is handled in InstanceTemplate
         allowMount = mInstance->allowMount;
     }
 
