@@ -47,6 +47,13 @@ AuctionHouseBot::AuctionHouseBot()
     AHBSeller = false;
     AHBBuyer = false;
 
+    BuyMethod = false;
+    SellMethod = false;
+
+    AHBplayerAccount = 0;
+    AHBplayerGUID = 0;
+    ItemsPerCycle = 0;
+
     //Begin Filters
 
     Vendor_Items = false;

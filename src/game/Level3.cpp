@@ -4494,7 +4494,7 @@ bool ChatHandler::HandleHoverCommand(const char* args)
 
 bool ChatHandler::HandleGodModeCheatCommand(const char *args)
 {
-    if (!m_session && !m_session->GetPlayer())
+    if (!m_session || !m_session->GetPlayer())
         return false;
 
     std::string argstr = (char*)args;
@@ -4520,7 +4520,7 @@ bool ChatHandler::HandleGodModeCheatCommand(const char *args)
 
 bool ChatHandler::HandleCasttimeCheatCommand(const char *args)
 {
-    if (!m_session && !m_session->GetPlayer())
+    if (!m_session || !m_session->GetPlayer())
         return false;
 
     std::string argstr = (char*)args;
@@ -4546,7 +4546,7 @@ bool ChatHandler::HandleCasttimeCheatCommand(const char *args)
 
 bool ChatHandler::HandleCoolDownCheatCommand(const char *args)
 {
-    if (!m_session && !m_session->GetPlayer())
+    if (!m_session || !m_session->GetPlayer())
         return false;
 
     std::string argstr = (char*)args;
@@ -4572,7 +4572,7 @@ bool ChatHandler::HandleCoolDownCheatCommand(const char *args)
 
 bool ChatHandler::HandlePowerCheatCommand(const char *args)
 {
-    if (!m_session && !m_session->GetPlayer())
+    if (!m_session || !m_session->GetPlayer())
         return false;
 
     std::string argstr = (char*)args;
@@ -7586,7 +7586,7 @@ bool ChatHandler::HandleFreezeCommand(const char* args)
             {
                 pet->SavePetToDB(PET_SAVE_AS_CURRENT);
                 // not let dismiss dead pet
-                if (pet && pet->IsAlive())
+                if (pet->IsAlive())
                     player->RemovePet(pet, PET_SAVE_NOT_IN_SLOT);
             }
         }

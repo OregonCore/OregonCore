@@ -43,6 +43,7 @@ Group::Group()
     m_masterLooterGuid  = 0;
     m_lootThreshold     = ITEM_QUALITY_UNCOMMON;
     m_subGroupsCounts   = NULL;
+    m_difficulty        = DIFFICULTY_NORMAL;
 
     for (uint8 i = 0; i < TARGETICONCOUNT; ++i)
         m_targetIcons[i] = 0;
@@ -150,7 +151,7 @@ bool Group::LoadGroupFromDB(const uint64& leaderGuid, QueryResult_AutoPtr result
     if (m_groupType == GROUPTYPE_RAID)
         _initRaidSubGroupsCounter();
 
-    m_difficulty = (DungeonDifficulties)(*result)[14].GetUInt8();
+    m_difficulty = (DungeonDifficulty)(*result)[14].GetUInt8();
     m_mainTank = (*result)[0].GetUInt64();
     m_mainAssistant = (*result)[1].GetUInt64();
     m_lootMethod = (LootMethod)(*result)[2].GetUInt8();
@@ -1495,7 +1496,7 @@ void Roll::targetObjectBuildLink()
     getTarget()->addLootValidatorRef(this);
 }
 
-void Group::SetDifficulty(DungeonDifficulties difficulty)
+void Group::SetDifficulty(DungeonDifficulty difficulty)
 {
     m_difficulty = difficulty;
     if (!isBGGroup()) CharacterDatabase.PExecute("UPDATE groups SET difficulty = %u WHERE leaderGuid ='%u'", m_difficulty, GUID_LOPART(m_leaderGuid));

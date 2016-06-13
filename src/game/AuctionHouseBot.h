@@ -854,7 +854,7 @@ class AHBConfig
                 else if ((greenip - diff) > 0)
                     greenip -= diff;
             }
-            else if (diff < 0)
+            else if (diff > 0)
                 whiteip += diff;
         }
         uint32 GetPercents(uint32 color)

@@ -29,6 +29,12 @@ template<>
 void
 RandomMovementGenerator<Creature>::_setRandomLocation(Creature& creature)
 {
+    if (creature.HasUnitState(UNIT_STATE_CASTING) && !creature.CanMoveDuringChannel())
+    {
+        creature.CastStop();
+        return;
+    }
+
     float X, Y, Z, nx, ny, nz, ori, dist;
     creature.GetHomePosition(X, Y, Z, ori);
     Map const* map = creature.GetBaseMap();
@@ -143,6 +149,9 @@ void RandomMovementGenerator<Creature>::Finalize(Creature& creature)
 template<>
 bool RandomMovementGenerator<Creature>::Update(Creature& creature, const uint32& diff)
 {
+    if (!creature.IsAlive())
+        return false;
+
     if (creature.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
     {
         i_nextMoveTime.Reset(0);  // Expire the timer

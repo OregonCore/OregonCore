@@ -365,7 +365,7 @@ void Loot::AddItem(LootStoreItem const& item)
         // non-ffa conditionals are counted in FillNonQuestNonFFAConditionalLoot()
         if (item.conditions.empty())
         {
-            if (!proto || (proto->Flags & ITEM_PROTO_FLAG_MULTI_DROP) == 0)
+            if ((proto->Flags & ITEM_PROTO_FLAG_MULTI_DROP) == 0)
                 ++unlootedCount;
         }
     }

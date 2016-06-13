@@ -350,8 +350,8 @@ class Group
         }
 
         void SetTargetIcon(uint8 id, uint64 guid);
-        void SetDifficulty(DungeonDifficulties difficulty);
-        DungeonDifficulties GetDifficulty()
+        void SetDifficulty(DungeonDifficulty difficulty);
+        DungeonDifficulty GetDifficulty()
         {
             return m_difficulty;
         }
@@ -494,7 +494,7 @@ class Group
         uint64              m_mainTank;
         uint64              m_mainAssistant;
         GroupType           m_groupType;
-        DungeonDifficulties m_difficulty;
+        DungeonDifficulty   m_difficulty;
         Battleground*       m_bgGroup;
         uint64              m_targetIcons[TARGETICONCOUNT];
         LootMethod          m_lootMethod;

@@ -326,7 +326,6 @@ struct Loot
         // void clear();
         void clear()
         {
-            items.clear();
             gold = 0;
             PlayersLooting.clear();
             for (QuestItemMap::iterator itr = PlayerQuestItems.begin(); itr != PlayerQuestItems.end(); ++itr)

@@ -37,7 +37,7 @@ class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockab
 
     public:
 
-        Map* CreateMap(uint32, const WorldObject* obj, uint32 instanceId);
+        Map* CreateMap(uint32 mapId, const WorldObject* obj, uint32 loginInstanceId = 0);
         Map const* CreateBaseMap(uint32 id) const
         {
             return const_cast<MapManager*>(this)->_createBaseMap(id);
@@ -129,7 +129,7 @@ class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockab
         typedef std::map<uint32, TransportSet> TransportMap;
         TransportMap m_TransportsByMap;
 
-        bool CanPlayerEnter(uint32 mapid, Player* player);
+        Map::EnterState PlayerCannotEnter(uint32 mapid, Player* player, bool loginCheck = false);
         uint32 GenerateInstanceId()
         {
             return ++i_MaxInstanceId;

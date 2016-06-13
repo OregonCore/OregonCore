@@ -96,6 +96,9 @@ class FlightPathMovementGenerator
         {
             i_path = &pathnodes;
             i_currentNode = startNode;
+            m_endGridX = 0.0f;
+            m_endGridY = 0.0f;
+            m_endMapId = 0;
         }
         void Initialize(Player&);
         void Finalize(Player&);

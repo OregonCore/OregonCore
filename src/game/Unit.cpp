@@ -615,6 +615,34 @@ uint32 Unit::GetAuraCount(uint32 spellId) const
     return count;
 }
 
+/**
+  * Checks whether a higher rank of aura is present on the target.
+  * @param spellid Spell to be checked
+  * @param effIndex Spell Effect Index
+  * @returns true if target has a higher rank, false otherwise
+  */
+bool Unit::HasHigherRankOfAura(uint32 spellid, uint8 effIndex) const
+{
+    if (SpellChainNode const* curr = sSpellMgr.GetSpellChainNode(spellid))
+    {
+        SpellChainNode const* node = sSpellMgr.GetSpellChainNode(curr->first);
+        uint32 spell = curr->first;
+
+        while (spell)
+        {
+            AuraMap::const_iterator aura = m_Auras.find(spellEffectPair(spell, effIndex));
+            if (aura != m_Auras.end())
+                if (node->rank > curr->rank)
+                    return true;
+
+            spell = node->next;
+            node = sSpellMgr.GetSpellChainNode(node->next);
+        }
+    }
+
+    return false;
+}
+
 bool Unit::HasAuraType(AuraType auraType) const
 {
     return (!m_modAuras[auraType].empty());
@@ -3302,6 +3330,15 @@ int32 Unit::GetCurrentSpellCastTime(uint32 spell_id) const
     if (Spell const* spell = FindCurrentSpellBySpellId(spell_id))
         return spell->GetCastTime();
     return 0;
+}
+
+bool Unit::CanMoveDuringChannel() const
+{
+    if (Spell* spell = m_currentSpells[CURRENT_CHANNELED_SPELL])
+        if (spell->getState() != SPELL_STATE_FINISHED)
+            return spell->m_spellInfo->AttributesEx5 & SPELL_ATTR5_CAN_CHANNEL_WHEN_MOVING && spell->IsChannelActive();
+
+    return false;
 }
 
 bool Unit::isInFrontInMap(Unit const* target, float distance,  float arc) const
@@ -12646,6 +12683,10 @@ void Unit::RemoveCharmedBy(Unit* charmer)
     else
         RestoreFaction();
 
+    // If charmer still exists
+    if (!charmer)
+        return;
+
     if (Creature* creature = ToCreature())
     {
         // Creature will restore its old AI on next update
@@ -12654,10 +12695,6 @@ void Unit::RemoveCharmedBy(Unit* charmer)
 
         LastCharmerGUID = charmer->GetGUID();
     }
-
-    // If charmer still exists
-    if (!charmer)
-        return;
 
     ASSERT(type != CHARM_TYPE_POSSESS || charmer->GetTypeId() == TYPEID_PLAYER);
 
