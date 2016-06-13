@@ -108,11 +108,20 @@ Map* MapInstanced::CreateInstanceForPlayer(const uint32 mapId, Player* player, u
         // instantiate or find existing bg map for player
         // the instance id is set in battlegroundid
         newInstanceId = player->GetBattlegroundId();
-        if (!newInstanceId) return nullptr;
+        if (!newInstanceId)
+            return nullptr;
 
         map = MapManager::Instance().FindMap(mapId, newInstanceId);
         if (!map)
-            map = CreateBattleground(newInstanceId, player->GetBattleground());
+        {
+            if (Battleground* bg = player->GetBattleground())
+                map = CreateBattleground(newInstanceId, bg);
+            else
+            {
+                player->TeleportToBGEntryPoint();
+                return nullptr;
+            }
+        }
     }
     else
     {
@@ -139,7 +148,11 @@ Map* MapInstanced::CreateInstanceForPlayer(const uint32 mapId, Player* player, u
             {
                 groupBind = group->GetBoundInstance(this);
                 if (groupBind)
+                {
+                    // solo saves should be reset when entering a group's instance
+                    player->UnbindInstance(GetId(), player->GetDifficulty());
                     pSave = groupBind->save;
+                }
             }
         }
 
@@ -147,7 +160,7 @@ Map* MapInstanced::CreateInstanceForPlayer(const uint32 mapId, Player* player, u
         {
             // solo/perm/group
             newInstanceId = pSave->GetInstanceId();
-            map = MapManager::Instance().FindMap(newInstanceId);
+            map = FindInstanceMap(newInstanceId);
             // it is possible that the save exists but the map doesn't
             if (!map)
                 map = CreateInstance(newInstanceId, pSave, pSave->GetDifficulty());
@@ -157,7 +170,13 @@ Map* MapInstanced::CreateInstanceForPlayer(const uint32 mapId, Player* player, u
             // if no instanceId via group members or instance saves is found
             // the instance will be created for the first time
             newInstanceId = MapManager::Instance().GenerateInstanceId();
-            map = CreateInstance(newInstanceId, NULL, player->GetDifficulty());
+
+            DungeonDifficulty diff = player->GetGroup() ? player->GetGroup()->GetDifficulty() : player->GetDifficulty();
+            //Seems it is now possible, but I do not know if it should be allowed
+            //ASSERT(!FindInstanceMap(NewInstanceId));
+            map = FindInstanceMap(newInstanceId);
+            if (!map)
+                map = CreateInstance(newInstanceId, NULL, diff);
         }
     }
 
