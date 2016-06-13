@@ -615,6 +615,34 @@ uint32 Unit::GetAuraCount(uint32 spellId) const
     return count;
 }
 
+/**
+  * Checks whether a higher rank of aura is present on the target.
+  * @param spellid Spell to be checked
+  * @param effIndex Spell Effect Index
+  * @returns true if target has a higher rank, false otherwise
+  */
+bool Unit::HasHigherRankOfAura(uint32 spellid, uint8 effIndex) const
+{
+    if (SpellChainNode const* curr = sSpellMgr.GetSpellChainNode(spellid))
+    {
+        SpellChainNode const* node = sSpellMgr.GetSpellChainNode(curr->first);
+        uint32 spell = curr->first;
+
+        while (spell)
+        {
+            AuraMap::const_iterator aura = m_Auras.find(spellEffectPair(spell, effIndex));
+            if (aura != m_Auras.end())
+                if (node->rank > curr->rank)
+                    return true;
+
+            spell = node->next;
+            node = sSpellMgr.GetSpellChainNode(node->next);
+        }
+    }
+
+    return false;
+}
+
 bool Unit::HasAuraType(AuraType auraType) const
 {
     return (!m_modAuras[auraType].empty());
