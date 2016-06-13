@@ -948,6 +948,9 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         return;
     }
 
+    if (getState() == SPELL_STATE_DELAYED && !IsPositiveSpell(m_spellInfo->Id) && (getMSTime() - target->timeDelay) <= unit->m_lastSanctuaryTime)
+        return;                                             // No missinfo in that case
+
     // Get original caster (if exist) and calculate damage/healing from him data
     Unit* caster = m_originalCasterGUID ? m_originalCaster : m_caster;
 
