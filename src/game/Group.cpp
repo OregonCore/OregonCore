@@ -1592,31 +1592,37 @@ InstanceGroupBind* Group::GetBoundInstance(Player* player)
 {
     uint32 mapid = player->GetMapId();
     MapEntry const* mapEntry = sMapStore.LookupEntry(mapid);
-    if (!mapEntry)
+    return GetBoundInstance(mapEntry);
+}
+
+InstanceGroupBind* Group::GetBoundInstance(Map* aMap)
+{
+    // Currently spawn numbering not different from map difficulty
+    DungeonDifficulty difficulty = GetDifficulty();
+    return GetBoundInstance(difficulty, aMap->GetId());
+}
+
+InstanceGroupBind* Group::GetBoundInstance(MapEntry const* mapEntry)
+{
+    if (!mapEntry || !mapEntry->IsDungeon())
         return NULL;
 
-    uint8 difficulty = player->GetDifficulty();
+    DungeonDifficulty difficulty = GetDifficulty();
+    return GetBoundInstance(difficulty, mapEntry->MapID);
+}
 
-    // some instances only have one difficulty
-    if (!mapEntry->SupportsHeroicMode())
-        difficulty = DIFFICULTY_NORMAL;
-
-    BoundInstancesMap::iterator itr = m_boundInstances[difficulty].find(mapid);
+InstanceGroupBind* Group::GetBoundInstance(DungeonDifficulty difficulty, uint32 mapId)
+{
+    BoundInstancesMap::iterator itr = m_boundInstances[difficulty].find(mapId);
     if (itr != m_boundInstances[difficulty].end())
         return &itr->second;
     else
         return NULL;
 }
 
-InstanceGroupBind* Group::GetBoundInstance(Map* aMap)
+Group::BoundInstancesMap& Group::GetBoundInstances(DungeonDifficulty difficulty)
 {
-    uint8 difficulty = GetDifficulty();
-
-    BoundInstancesMap::iterator itr = m_boundInstances[difficulty].find(aMap->GetId());
-    if (itr != m_boundInstances[difficulty].end())
-        return &itr->second;
-    else
-        return NULL;
+    return m_boundInstances[difficulty];
 }
 
 InstanceGroupBind* Group::BindToInstance(InstanceSave* save, bool permanent, bool load)
