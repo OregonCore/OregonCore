@@ -952,6 +952,9 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         return;
     }
 
+    if (getState() == SPELL_STATE_DELAYED && !IsPositiveSpell(m_spellInfo->Id) && (getMSTime() - target->timeDelay) <= unit->m_lastSanctuaryTime)
+        return;                                             // No missinfo in that case
+
     // Get original caster (if exist) and calculate damage/healing from him data
     Unit* caster = m_originalCasterGUID ? m_originalCaster : m_caster;
 
@@ -2424,11 +2427,11 @@ void Spell::cast(bool skipCheck)
         }
     }
 
-    FillTargetMap();
-
     // triggered cast called from Spell::prepare where it was already checked
     if (!skipCheck)
     {
+        FillTargetMap();
+
         castResult = CheckCast(false);
         if (castResult != SPELL_CAST_OK)
         {
@@ -6038,21 +6041,37 @@ Unit* Spell::SelectMagnetTarget()
                 if ((*itr)->m_procCharges > 0)
                 {
                     (*itr)->SetAuraProcCharges((*itr)->m_procCharges - 1);
-                    target = magnet;
-                    m_targets.setUnitTarget(target);
-                    AddUnitTarget(target, 0);
+
                     uint64 targetGUID = target->GetGUID();
+                    uint64 magnetGUID = magnet->GetGUID();
+
+                    AddUnitTarget(magnet, 0);
+
                     for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
                     {
                         if (ihit->deleted)
                             continue;
 
-                        if (targetGUID == ihit->targetGUID)                 // Found in list
+                        // remove original target, since the
+                        // magnet target should redirect the cast
+                        // to itself
+                        if (targetGUID == ihit->targetGUID)
+                        {
+                            ihit->deleted = true;
+                            --m_countOfHit;
+                            if (ihit->missCondition != SPELL_MISS_NONE)
+                                --m_countOfMiss;
+                            continue;
+                        }
+
+                        if (magnetGUID == ihit->targetGUID)                 // Found in list
                         {
                             (*ihit).damage = target->GetHealth();
-                            break;
+                            break; // should be the last cycle anyway
                         }
                     }
+
+                    m_targets.setUnitTarget(magnet);
                     break;
                 }
             }

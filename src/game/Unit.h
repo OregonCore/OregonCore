@@ -1394,6 +1394,7 @@ class Unit : public WorldObject
         void SendSpellNonMeleeDamageLog(SpellNonMeleeDamage* log);
         void SendSpellNonMeleeDamageLog(Unit* target, uint32 SpellID, uint32 Damage, SpellSchoolMask damageSchoolMask, uint32 AbsorbedDamage, uint32 Resist, bool PhysicalDamage, uint32 Blocked, bool CriticalHit = false);
         void SendSpellMiss(Unit* target, uint32 spellID, SpellMissInfo missInfo);
+        void SendSpellDamageImmune(Unit* target, uint32 spellId);
 
         virtual bool SetPosition(float x, float y, float z, float orientation, bool teleport = false);
         bool SetPosition(const Position& pos, bool teleport = false)
@@ -1938,11 +1939,10 @@ class Unit : public WorldObject
 
         void ApplySpellImmune(uint32 spellId, uint32 op, uint32 type, bool apply);
         void ApplySpellDispelImmunity(const SpellEntry* spellProto, DispelType type, bool apply);
-        virtual bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false);
-        // redefined in Creature
+        virtual bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false); // redefined in Creature
         bool IsImmunedToDamage(SpellSchoolMask meleeSchoolMask, bool useCharges = false);
-        virtual bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const;
-        // redefined in Creature
+        bool IsImmunedToDamage(SpellEntry const* spellInfo) const;
+        virtual bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const; // redefined in Creature
 
         static bool IsDamageReducedByArmor(SpellSchoolMask damageSchoolMask, SpellEntry const* spellInfo = NULL, uint8 effIndex = MAX_SPELL_EFFECTS);
         uint32 CalcArmorReducedDamage(Unit* pVictim, const uint32 damage);

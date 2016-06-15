@@ -6993,7 +6993,7 @@ bool ChatHandler::HandleInstanceListBindsCommand(const char* /*args*/)
     {
         for (uint8 i = 0; i < TOTAL_DIFFICULTIES; ++i)
         {
-            Group::BoundInstancesMap& binds = group->GetBoundInstances(i);
+            Group::BoundInstancesMap& binds = group->GetBoundInstances(DungeonDifficulty(i));
             for (Group::BoundInstancesMap::iterator itr = binds.begin(); itr != binds.end(); ++itr)
             {
                 InstanceSave* save = itr->second.save;
