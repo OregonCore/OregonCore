@@ -419,10 +419,9 @@ class Group
         void UnbindInstance(uint32 mapid, uint8 difficulty, bool unload = false);
         InstanceGroupBind* GetBoundInstance(Player* player);
         InstanceGroupBind* GetBoundInstance(Map* aMap);
-        BoundInstancesMap& GetBoundInstances(uint8 difficulty)
-        {
-            return m_boundInstances[difficulty];
-        }
+        InstanceGroupBind* GetBoundInstance(MapEntry const* mapEntry);
+        InstanceGroupBind* GetBoundInstance(DungeonDifficulty difficulty, uint32 mapId);
+        BoundInstancesMap& GetBoundInstances(DungeonDifficulty difficulty);
 
         // FG: evil hacks
         void BroadcastGroupUpdate(void);

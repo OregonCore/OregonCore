@@ -1723,11 +1723,26 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
             ++next;
             if (alreadyDone.find(*i) == alreadyDone.end())
             {
-                alreadyDone.insert(*i);
-                uint32 damage = (*i)->GetModifier()->m_amount;
                 SpellEntry const* spellProto = sSpellStore.LookupEntry((*i)->GetId());
                 if (!spellProto)
                     continue;
+
+                // Damage shield can be resisted...
+                if (SpellMissInfo missInfo = victim->SpellHitResult(this, spellProto, false))
+                {
+                    victim->SendSpellMiss(this, spellProto->Id, missInfo);
+                    continue;
+                }
+
+                // ...or immuned
+                if (IsImmunedToDamage(spellProto))
+                {
+                    victim->SendSpellDamageImmune(this, spellProto->Id);
+                    continue;
+                }
+
+                alreadyDone.insert(*i);
+                uint32 damage = (*i)->GetModifier()->m_amount;
 
                 WorldPacket data(SMSG_SPELLDAMAGESHIELD, (8 + 8 + 4 + 4 + 4));
                 data << uint64(victim->GetGUID());
@@ -2758,28 +2773,25 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit* victim, SpellEntry const* spellInf
 //   Resist
 SpellMissInfo Unit::SpellHitResult(Unit* pVictim, SpellEntry const* spell, bool CanReflect, bool canMiss)
 {
-    // Return evade for units in evade mode
-    if (pVictim->GetTypeId() == TYPEID_UNIT && pVictim->ToCreature()->IsInEvadeMode() && this != pVictim)
-        return SPELL_MISS_EVADE;
-
     // Check for immune (use charges)
     if (pVictim->IsImmuneToSpell(spell, true))
         return SPELL_MISS_IMMUNE;
 
     // All positive spells can`t miss
     // @todo client not show miss log for this spells - so need find info for this in dbc and use it!
-    if (IsPositiveSpell(spell->Id)
-        && (!IsHostileTo(pVictim))) //prevent from affecting enemy by "positive" spell
+    if (IsPositiveSpell(spell->Id) && !IsHostileTo(pVictim)) //prevent from affecting enemy by "positive" spell
         return SPELL_MISS_NONE;
 
-    // Check for immune (use charges)
-    // Check if Spell cannot be immuned
-    if (!(spell->Attributes & SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY))
-        if (pVictim->IsImmunedToDamage(GetSpellSchoolMask(spell), true))
-            return SPELL_MISS_IMMUNE;
+    // Check for immune
+    if (pVictim->IsImmunedToDamage(spell))
+        return SPELL_MISS_IMMUNE;
 
     if (this == pVictim)
         return SPELL_MISS_NONE;
+
+    // Return evade for units in evade mode
+    if (pVictim->GetTypeId() == TYPEID_UNIT && pVictim->ToCreature()->IsInEvadeMode() && this != pVictim)
+        return SPELL_MISS_EVADE;
 
     // Try victim reflect spell
     if (CanReflect)
@@ -4596,6 +4608,16 @@ void Unit::SendSpellMiss(Unit* target, uint32 spellID, SpellMissInfo missInfo)
     data << uint64(target->GetGUID());                      // target GUID
     data << uint8(missInfo);
     // end loop
+    SendMessageToSet(&data, true);
+}
+
+void Unit::SendSpellDamageImmune(Unit* target, uint32 spellId)
+{
+    WorldPacket data(SMSG_SPELLORDAMAGE_IMMUNE, 8 + 8 + 4 + 1);
+    data << uint64(GetGUID());
+    data << uint64(target->GetGUID());
+    data << uint32(spellId);
+    data << uint8(0); // bool - log format: 0-default, 1-debug
     SendMessageToSet(&data, true);
 }
 
@@ -8581,6 +8603,30 @@ bool Unit::IsImmunedToDamage(SpellSchoolMask shoolMask, bool /*useCharges*/)
     return false;
 }
 
+bool Unit::IsImmunedToDamage(SpellEntry const* spellInfo) const
+{
+    if (spellInfo->Attributes & SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY)
+        return false;
+
+    uint32 shoolMask = GetSpellSchoolMask(spellInfo);
+    if (spellInfo->Id != 42292 && spellInfo->Id != 59752)
+    {
+        // If m_immuneToSchool type contain this school type, IMMUNE damage.
+        SpellImmuneList const& schoolList = m_spellImmune[IMMUNITY_SCHOOL];
+        for (SpellImmuneList::const_iterator itr = schoolList.begin(); itr != schoolList.end(); ++itr)
+            if (itr->type & shoolMask)
+                return true;
+    }
+
+    // If m_immuneToDamage type contain magic, IMMUNE damage.
+    SpellImmuneList const& damageList = m_spellImmune[IMMUNITY_DAMAGE];
+    for (SpellImmuneList::const_iterator itr = damageList.begin(); itr != damageList.end(); ++itr)
+        if (itr->type & shoolMask)
+            return true;
+
+    return false;
+}
+
 bool Unit::IsImmuneToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
 {
     if (!spellInfo)
@@ -8631,8 +8677,8 @@ bool Unit::IsImmuneToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
         return true;
 
     if (!(spellInfo->AttributesEx & SPELL_ATTR1_UNAFFECTED_BY_SCHOOL_IMMUNE) &&         // unaffected by school immunity
-        !(spellInfo->AttributesEx & SPELL_ATTR1_DISPEL_AURAS_ON_IMMUNITY)               // can remove immune (by dispell or immune it)
-        && (spellInfo->Id != 42292))
+        !(spellInfo->AttributesEx & SPELL_ATTR1_DISPEL_AURAS_ON_IMMUNITY) &&            // can remove immune (by dispell or immune it)
+        (spellInfo->Id != 42292))
     {
         SpellImmuneList const& schoolList = m_spellImmune[IMMUNITY_SCHOOL];
         for (SpellImmuneList::const_iterator itr = schoolList.begin(); itr != schoolList.end(); ++itr)
