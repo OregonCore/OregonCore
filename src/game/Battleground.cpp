@@ -1936,7 +1936,7 @@ inline void Battleground::_CheckSafePositions(uint32 diff)
             {
                 pos = player->GetPosition();
                 GetTeamStartLoc(player->GetBGTeam(), x, y, z, o);
-                if (pos.GetExactDistSq(x, y, z) > maxDist)
+                if (!pos.IsInDist2d(x, y, maxDist))
                 {
                     sLog.outDebug("BATTLEGROUND: Sending %s back to start location (map: %u) (possible exploit)", player->GetName(), GetMapId());
                     player->TeleportTo(GetMapId(), x, y, z, o);
