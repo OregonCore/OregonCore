@@ -9149,7 +9149,8 @@ void Unit::ClearInCombat()
     
         if (creature->IsPet() || creature->IsGuardian())
         {
-            if (Unit* owner = GetOwner())
+            // creatures' pets only
+            if (Creature* owner = dynamic_cast<Creature*>(GetOwner()))
                 for (uint8 i = 0; i < MAX_MOVE_TYPE; ++i)
                     if (owner->GetSpeedRate(UnitMoveType(i)) > GetSpeedRate(UnitMoveType(i)))
                         SetSpeed(UnitMoveType(i), owner->GetSpeedRate(UnitMoveType(i)), true);
