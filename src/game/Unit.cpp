@@ -4581,13 +4581,16 @@ void Unit::SendSpellNonMeleeDamageLog(Unit* target, uint32 SpellID, uint32 Damag
 
 void Unit::ProcDamageAndSpell(Unit* victim, uint32 procAttacker, uint32 procVictim, uint32 procExtra, uint32 amount, WeaponAttackType attType, SpellEntry const* procSpell, bool canTrigger)
 {
-    // Not much to do if no flags are set.
-    if (procAttacker && canTrigger)
-        ProcDamageAndSpellFor(false, victim, procAttacker, procExtra, attType, procSpell, amount);
+    // Proc all effects (auras/talents/whatever) on on victim first, then on caster
+
     // Now go on with a victim's events'n'auras
     // Not much to do if no flags are set or there is no victim
     if (victim && victim->IsAlive() && procVictim)
         victim->ProcDamageAndSpellFor(true, this, procVictim, procExtra, attType, procSpell, amount);
+
+    // Not much to do if no flags are set.
+    if (procAttacker && canTrigger)
+        ProcDamageAndSpellFor(false, victim, procAttacker, procExtra, attType, procSpell, amount);
 }
 
 void Unit::SendSpellMiss(Unit* target, uint32 spellID, SpellMissInfo missInfo)
