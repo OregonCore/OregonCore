@@ -15,7 +15,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (13415, 13415, 0, 0, 2),
 (13415, 13414, 3, 90, 2);
 
--- Pathing for Aqueous Spawn Entry: 22883 
+-- Pathing for Aqueous Spawn Entry: 22883
 SET @NPC := 13415;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=467.9448,`position_y`=847.3433,`position_z`=15.00103 WHERE `guid`=@NPC;
@@ -61,7 +61,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (13418, 13418, 0, 0, 2),
 (13418, 13416, 3, 90, 2);
 
--- Pathing for Aqueous Spawn Entry: 22883 
+-- Pathing for Aqueous Spawn Entry: 22883
 SET @NPC := 13418;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=277.868,`position_y`=842.4459,`position_z`=-23.75307 WHERE `guid`=@NPC;
@@ -125,7 +125,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (13774, 13774, 0, 0, 2),
 (13774, 13429, 3, 270, 2);
 
--- Pathing for Aqueous Spawn Entry: 22883 
+-- Pathing for Aqueous Spawn Entry: 22883
 SET @NPC := 13774;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=226.3641,`position_y`=842.9598,`position_z`=-23.60787 WHERE `guid`=@NPC;
@@ -219,7 +219,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (13411, 13411, 0, 0, 2),
 (13411, 13410, 3, 90, 2);
 
--- Pathing for Aqueous Spawn Entry: 22883 
+-- Pathing for Aqueous Spawn Entry: 22883
 SET @NPC := 13411;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=341.5303,`position_y`=833.1406,`position_z`=3.273792 WHERE `guid`=@NPC;
@@ -254,7 +254,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (13412, 13412, 0, 0, 2),
 (13412, 13413, 3, 270, 2);
 
--- Pathing for Aqueous Spawn Entry: 22883 
+-- Pathing for Aqueous Spawn Entry: 22883
 SET @NPC := 13412;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=225.5994,`position_y`=787.1674,`position_z`=-24.18544 WHERE `guid`=@NPC;
@@ -301,7 +301,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 -- Update spawn distance & movementype so they move around randomly
 UPDATE `creature` SET `spawndist`=5, `MovementType`=1 WHERE `guid` IN (13393, 13395, 13399, 13396, 13236, 13268, 13398, 13255, 13316, 13397, 13408, 13401, 13407, 13403, 13402, 13409, 13406, 13404, 13405, 13400);
 
--- Pathing for Bonechewer Taskmaster Entry: 23028 
+-- Pathing for Bonechewer Taskmaster Entry: 23028
 SET @NPC := 53819;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=824.2386,`position_y`=922.0986,`position_z`=56.91497 WHERE `guid`=@NPC;
@@ -330,7 +330,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (53817, 53817, 0, 0, 2),
 (53817, 53818, 4, 270, 2);
 
--- Pathing for Bonechewer Taskmaster Entry: 23028 
+-- Pathing for Bonechewer Taskmaster Entry: 23028
 SET @NPC := 53817;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=779.7964,`position_y`=907.3997,`position_z`=55.31417 WHERE `guid`=@NPC;
@@ -353,7 +353,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 (@PATH,13,783.3309,914.0374,55.27817,0,0,0,0,100,0); -- 20:25:27
 -- 0x1C16F44680167D00006A5B00009D4972 .go 779.7964 907.3997 55.31417
 
--- Pathing for Bonechewer Taskmaster Entry: 23028 
+-- Pathing for Bonechewer Taskmaster Entry: 23028
 SET @NPC := 53815;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=614.9688,`position_y`=905.1718,`position_z`=59.02773 WHERE `guid`=@NPC;
@@ -376,7 +376,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (53820, 53820, 0, 0, 2),
 (53820, 53821, 4, 270, 2);
 
--- Pathing for Bonechewer Taskmaster Entry: 23028 
+-- Pathing for Bonechewer Taskmaster Entry: 23028
 SET @NPC := 53820;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=633.2257,`position_y`=963.4147,`position_z`=55.95343 WHERE `guid`=@NPC;
@@ -400,7 +400,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (52890, 52890, 0, 0, 2),
 (52890, 52889, 4, 270, 2);
 
--- Pathing for Dragonmaw Wyrmcaller Entry: 22960 
+-- Pathing for Dragonmaw Wyrmcaller Entry: 22960
 SET @NPC := 52890;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=648.1636,`position_y`=938.5795,`position_z`=55.75506 WHERE `guid`=@NPC;
@@ -423,7 +423,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (52887, 52887, 0, 0, 2),
 (52887, 52888, 4, 270, 2);
 
--- Pathing for Dragonmaw Wyrmcaller Entry: 22960 
+-- Pathing for Dragonmaw Wyrmcaller Entry: 22960
 SET @NPC := 52887;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=785.6938,`position_y`=775.3997,`position_z`=66.39993 WHERE `guid`=@NPC;
@@ -448,7 +448,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (52873, 52873, 0, 0, 2),
 (52873, 52874, 4, 270, 2);
 
--- Pathing for Dragonmaw Wyrmcaller Entry: 22960 
+-- Pathing for Dragonmaw Wyrmcaller Entry: 22960
 SET @NPC := 52873;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=703.7258,`position_y`=793.4444,`position_z`=63.46073 WHERE `guid`=@NPC;
@@ -473,3 +473,4 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 (@PATH,15,700.8631,765.6361,65.94987,0,0,0,0,100,0), -- 20:23:52
 (@PATH,16,700.9891,782.0386,64.53194,0,0,0,0,100,0); -- 20:24:04
 -- 0x1C16F44680166C00006A5B00011D4972 .go 703.7258 793.4444 63.46073
+

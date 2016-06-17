@@ -22,7 +22,7 @@ CREATE TABLE `creature_classlevelstats` (
 
 -- Add creature base stats data for TBC
 DELETE FROM creature_classlevelstats;
-INSERT INTO `creature_classlevelstats` (`level`, `class`, `basehp0`, `basehp1`, `basemana`, `basedamage_exp0`, `basedamage_exp1`, `attackpower`, `rangedattackpower`, `basearmor`) VALUES 
+INSERT INTO `creature_classlevelstats` (`level`, `class`, `basehp0`, `basehp1`, `basemana`, `basedamage_exp0`, `basedamage_exp1`, `attackpower`, `rangedattackpower`, `basearmor`) VALUES
 ('1','1','42','42','0','0.1321','0.1321','9','0','15'),
 ('2','1','55','55','0','0.2888','0.2888','11','0','16'),
 ('3','1','71','71','0','0.5547','0.5547','13','0','41'),
