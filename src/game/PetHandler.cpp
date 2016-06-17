@@ -150,9 +150,9 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
 
                 pet->ClearUnitState(UNIT_STATE_FOLLOW);
                 // This is true if pet has no target or has target but targets differs.
-                if (pet->getVictim() != TargetUnit || (pet->getVictim() == TargetUnit && !pet->GetCharmInfo()->IsCommandAttack()))
+                if (pet->GetVictim() != TargetUnit || (pet->GetVictim() == TargetUnit && !pet->GetCharmInfo()->IsCommandAttack()))
                 {
-                    if (pet->getVictim())
+                    if (pet->GetVictim())
                         pet->AttackStop();
 
                     if (pet->GetTypeId() != TYPEID_PLAYER && pet->ToCreature()->IsAIEnabled)
@@ -175,7 +175,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
                     }
                     else                                // charmed player
                     {
-                        if (pet->getVictim() && pet->getVictim() != TargetUnit)
+                        if (pet->GetVictim() && pet->GetVictim() != TargetUnit)
                             pet->AttackStop();
 
                         charmInfo->SetIsCommandAttack(true);
@@ -298,9 +298,9 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
                 if (unit_target && !GetPlayer()->IsFriendlyTo(unit_target) && !pet->isPossessed())
                 {
                     // This is true if pet has no target or has target but targets differs.
-                    if (pet->getVictim() != unit_target)
+                    if (pet->GetVictim() != unit_target)
                     {
-                        if (pet->getVictim())
+                        if (pet->GetVictim())
                             pet->AttackStop();
                         pet->GetMotionMaster()->Clear();
                         if (pet->ToCreature()->IsAIEnabled)

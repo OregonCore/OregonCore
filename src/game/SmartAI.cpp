@@ -465,14 +465,14 @@ bool SmartAI::CanAIAttack(const Unit* /*who*/) const
 
 bool SmartAI::AssistPlayerInCombat(Unit* who)
 {
-    if (!who || !who->getVictim())
+    if (!who || !who->GetVictim())
         return false;
 
     if (!(me->GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_CAN_ASSIST))
         return false;
 
     //not a player
-    if (!who->getVictim()->GetCharmerOrOwnerPlayerOrPlayerItself())
+    if (!who->GetVictim()->GetCharmerOrOwnerPlayerOrPlayerItself())
         return false;
 
     //never attack friendly
@@ -483,7 +483,7 @@ bool SmartAI::AssistPlayerInCombat(Unit* who)
     if (me->IsWithinDistInMap(who, SMART_MAX_AID_DIST) && me->IsWithinLOSInMap(who))
     {
         //already fighting someone?
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             AttackStart(who);
             return true;
@@ -726,12 +726,12 @@ void SmartAI::SetCombatMove(bool on)
     mCanCombatMove = on;
     if (!HasEscortState(SMART_ESCORT_ESCORTING))
     {
-        if (on && me->getVictim())
+        if (on && me->GetVictim())
         {
             if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE)
             {
                 SetRun(mRun);
-                me->GetMotionMaster()->MoveChase(me->getVictim());
+                me->GetMotionMaster()->MoveChase(me->GetVictim());
                 me->CastStop();
             }
         }

@@ -1508,10 +1508,27 @@ bool SpellMgr::IsRankSpellDueToSpell(SpellEntry const* spellInfo_1, uint32 spell
     return GetFirstSpellInChain(spellInfo_1->Id) == GetFirstSpellInChain(spellId_2);
 }
 
+/**
+ * Checks whether spell should stack in spellbook with its ranks.
+ * If spell can stack it means that all its ranks will be shown in the spellbook.
+ * @param spellinfo Pointer to the spell entry
+ * @returns true if spell ranks stack, false otherwise
+ */
 bool SpellMgr::canStackSpellRanks(SpellEntry const* spellInfo)
 {
     if (spellInfo->powerType != POWER_MANA && spellInfo->powerType != POWER_HEALTH)
+    {
+        // These spells do not cost energy/rage/focus and their cost does not
+        // change between ranks so we will allow only the highest rank in spellbook
+
+        // One exception - Faerie Fire (feral) need to stack in order to properly show
+        // up in talent tree otherwise on higher rank it will be seen as not used
+        if (spellInfo->SpellFamilyName == SPELLFAMILY_DRUID && spellInfo->SpellFamilyFlags & 0x400)
+            return true;
+
         return false;
+    }
+
     if (IsProfessionSpell(spellInfo->Id))
         return false;
 
@@ -2030,16 +2047,16 @@ void SpellMgr::LoadSpellChains()
             mSpellChains[spell_id].last = RankedSpells.back();
 
             itr2++;
+
             if (spell_rank < 2)
                 mSpellChains[spell_id].prev = 0;
+            else
+                mSpellChains[*itr2].prev = spell_id;
 
             if (spell_id == RankedSpells.back())
                 mSpellChains[spell_id].next = 0;
             else
-            {
-                mSpellChains[*itr2].prev = spell_id;
                 mSpellChains[spell_id].next = *itr2;
-            }
         }
     }
 
@@ -2707,7 +2724,6 @@ void SpellMgr::LoadSpellCustomCooldowns()
         sLog.outString(">> Loaded %u custom spell cooldowns", count);
         return;
     }
-
 
     do
     {

@@ -308,7 +308,7 @@ struct boss_kalecgosAI : public ScriptedAI
                     Unit* target = (*itr)->getTarget();
                     if (target
                         && target->GetTypeId() == TYPEID_PLAYER
-                        && target->GetGUID() != me->getVictim()->GetGUID()
+                        && target->GetGUID() != me->GetVictim()->GetGUID()
                         && target->GetPositionZ() > me->GetPositionZ() - 5
                         && !target->HasAura(AURA_SPECTRAL_EXHAUSTION))
                         {
@@ -340,7 +340,7 @@ struct boss_kalecgosAI : public ScriptedAI
         if (bJustReset)//boss is invisible, don't attack
             return;
 
-        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)))
+        if (!me->GetVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)))
         {
             float attackRadius = me->GetAttackDistance(who);
             if (me->IsWithinDistInMap(who, attackRadius))
@@ -650,7 +650,7 @@ struct boss_sathrovarrAI : public ScriptedAI
         if (AgonyCurseTimer <= diff)
         {
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (!pTarget) pTarget = me->getVictim();
+            if (!pTarget) pTarget = me->GetVictim();
             DoCast(pTarget, SPELL_AGONY_CURSE);
             AgonyCurseTimer = 20000;
         }

@@ -200,7 +200,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 
 -- Correct reputation gain for Terrorclaw
 DELETE FROM `creature_onkill_reputation` WHERE `creature_id`=20477;
-INSERT INTO `creature_onkill_reputation` (`creature_id`, `RewOnKillRepFaction1`, `RewOnKillRepFaction2`, `MaxStanding1`, `IsTeamAward1`, `RewOnKillRepValue1`, `MaxStanding2`, `IsTeamAward2`, `RewOnKillRepValue2`, `TeamDependent`) VALUES 
+INSERT INTO `creature_onkill_reputation` (`creature_id`, `RewOnKillRepFaction1`, `RewOnKillRepFaction2`, `MaxStanding1`, `IsTeamAward1`, `RewOnKillRepValue1`, `MaxStanding2`, `IsTeamAward2`, `RewOnKillRepValue2`, `TeamDependent`) VALUES
 (20477, 942, 0, 5, 0, 7, 0, 0, 0, 0);
 
 -- Add stealth detection to creatures in Steamvault
@@ -208,8 +208,8 @@ DELETE FROM `creature_template_addon` WHERE `entry` IN (21694,21914,17796,17797,
 INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `bytes2`, `auras`) VALUES
 (21694,0,0x0,0x1,'18950 0 18950 1'), -- 21694 - 18950
 (21914,0,0x0,0x1,'18950 0 18950 1'), -- 21914 - 18950
-(17796,0,0x0,0x1,'18950 0 18950 1'), -- 17796 - 18950 
-(17797,0,0x0,0x1,'18950 0 18950 1'), -- 17797 - 18950 
+(17796,0,0x0,0x1,'18950 0 18950 1'), -- 17796 - 18950
+(17797,0,0x0,0x1,'18950 0 18950 1'), -- 17797 - 18950
 (20629,0,0x0,0x1,'18950 0 18950 1'), -- 20629 - 18950
 (20630,0,0x0,0x1,'18950 0 18950 1'); -- 20630 - 18950
 
@@ -628,7 +628,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 -- Add missing Exodar Peace Keepers
 SET @CGUID:=87912;
 DELETE FROM `creature` WHERE `guid` BETWEEN @CGUID+0 AND @CGUID+15;
-INSERT INTO `creature` (`guid`, `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `curhealth`) VALUES 
+INSERT INTO `creature` (`guid`, `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `curhealth`) VALUES
 (@CGUID+0, 16733, 530, -4014.95, -11691.79, -134.8826, 3.211406, 120, 0), -- 16733 (Area: -1) (Auras: )
 (@CGUID+1, 16733, 530, -3872.768, -11745.65, -107.2824, 1.937315, 120, 0), -- 16733 (Area: -1) (Auras: )
 (@CGUID+2, 16733, 530, -3858.128, -11736.21, -107.0747, 2.111848, 120, 0), -- 16733 (Area: -1) (Auras: )
@@ -645,3 +645,4 @@ INSERT INTO `creature` (`guid`, `id`, `map`, `position_x`, `position_y`, `positi
 (@CGUID+13, 16733, 530, -3914.363, -11441.08, -132.8212, 0.01745329, 120, 0), -- 16733 (Area: -1) (Auras: )
 (@CGUID+14, 16733, 530, -3915.224, -11430.32, -132.7888, 0, 120, 0), -- 16733 (Area: -1) (Auras: )
 (@CGUID+15, 16733, 530, -3735.099, -11505.95, -133.9994, 2.722714, 120, 0); -- 16733 (Area: -1) (Auras: )
+

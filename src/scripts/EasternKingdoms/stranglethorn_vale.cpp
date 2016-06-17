@@ -83,11 +83,11 @@ struct mob_yennikuAI : public ScriptedAI
             }
             else Reset_Timer -= diff;
 
-            if (me->IsInCombat() && me->getVictim())
+            if (me->IsInCombat() && me->GetVictim())
             {
-                if (me->getVictim()->GetTypeId() == TYPEID_PLAYER)
+                if (me->GetVictim()->GetTypeId() == TYPEID_PLAYER)
                 {
-                    Unit* victim = me->getVictim();
+                    Unit* victim = me->GetVictim();
                     if (CAST_PLR(victim)->GetTeam() == HORDE)
                     {
                         me->CombatStop();

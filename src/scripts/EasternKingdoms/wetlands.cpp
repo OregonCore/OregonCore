@@ -92,7 +92,7 @@ struct npc_tapoke_slim_jahnAI : public npc_escortAI
 
     void AttackedBy(Unit* pAttacker)
     {
-        if (me->getVictim())
+        if (me->GetVictim())
             return;
 
         if (me->IsFriendlyTo(pAttacker))

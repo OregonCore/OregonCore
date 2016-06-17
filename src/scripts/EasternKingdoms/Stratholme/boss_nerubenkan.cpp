@@ -103,7 +103,7 @@ struct boss_nerubenkanAI : public ScriptedAI
         //RaiseUndeadScarab
         if (RaiseUndeadScarab_Timer <= diff)
         {
-            RaiseUndeadScarab(me->getVictim());
+            RaiseUndeadScarab(me->GetVictim());
             RaiseUndeadScarab_Timer = 16000;
         }
         else RaiseUndeadScarab_Timer -= diff;

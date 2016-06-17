@@ -140,7 +140,7 @@ struct boss_halazziAI : public ScriptedAI
 
     void JustSummoned(Creature* summon)
     {
-        summon->AI()->AttackStart(me->getVictim());
+        summon->AI()->AttackStart(me->GetVictim());
         if (summon->GetEntry() == MOB_SPIRIT_LYNX)
             LynxGUID = summon->GetGUID();
     }
@@ -172,8 +172,8 @@ struct boss_halazziAI : public ScriptedAI
             if (Phase == PHASE_MERGE)
             {
                 DoCast(me, SPELL_TRANSFORM_MERGE, true);
-                me->Attack(me->getVictim(), true);
-                me->GetMotionMaster()->MoveChase(me->getVictim());
+                me->Attack(me->GetVictim(), true);
+                me->GetMotionMaster()->MoveChase(me->GetVictim());
             }
             if (Creature* Lynx = Unit::GetCreature(*me, LynxGUID))
                 Lynx->DisappearAndDie();

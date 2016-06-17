@@ -159,7 +159,7 @@ bool TargetedMovementGeneratorMedium<T, D>::Update(T& owner, const uint32& time_
     }
 
     // prevent crash after creature killed pet
-    if (!owner.HasUnitState(UNIT_STATE_FOLLOW) && owner.getVictim() != i_target.getTarget())
+    if (!owner.HasUnitState(UNIT_STATE_FOLLOW) && owner.GetVictim() != i_target.getTarget())
         return true;
 
     if (i_path && i_path->getPathType() & PATHFIND_NOPATH)

@@ -1892,7 +1892,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
 
             // additional damage from pet to pet target
             Unit* pet = m_caster->GetGuardianPet();
-            if (!pet || !pet->getVictim())
+            if (!pet || !pet->GetVictim())
                 return;
 
             uint32 spell_id = 0;
@@ -1906,7 +1906,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 return;
             }
 
-            pet->CastSpell(pet->getVictim(), spell_id, true);
+            pet->CastSpell(pet->GetVictim(), spell_id, true);
             return;
         }
 
@@ -2033,7 +2033,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 }
 
                 // 31989 -> dummy effect (step 1) + dummy effect (step 2) -> 31709 (taunt like spell for each target)
-                Unit* friendTarget = !unitTarget || unitTarget->IsFriendlyTo(m_caster) ? unitTarget : unitTarget->getVictim();
+                Unit* friendTarget = !unitTarget || unitTarget->IsFriendlyTo(m_caster) ? unitTarget : unitTarget->GetVictim();
                 if (friendTarget)
                 {
                     Player* player = friendTarget->GetCharmerOrOwnerPlayerOrPlayerItself();
@@ -4609,7 +4609,7 @@ void Spell::EffectTaunt(SpellEffIndex /*effIndex*/)
     // this effect use before aura Taunt apply for prevent taunt already attacking target
     // for spell as marked "non effective at already attacking target"
     if (!unitTarget || !unitTarget->CanHaveThreatList()
-        || unitTarget->getVictim() == m_caster)
+        || unitTarget->GetVictim() == m_caster)
     {
         SendCastResult(SPELL_FAILED_DONT_REPORT);
         return;
@@ -6377,7 +6377,7 @@ void Spell::EffectAddExtraAttacks(SpellEffIndex /*effIndex*/)
     //if (unitTarget->m_extraAttacks)
     //    return;
 
-    Unit* victim = unitTarget->getVictim();
+    Unit* victim = unitTarget->GetVictim();
 
     // attack prevented
     // fixme, some attacks may not target current victim, this is right now not handled

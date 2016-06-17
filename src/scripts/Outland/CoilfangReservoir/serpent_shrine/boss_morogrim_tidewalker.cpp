@@ -353,7 +353,7 @@ struct mob_water_globuleAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!who || me->getVictim())
+        if (!who || me->GetVictim())
             return;
 
         if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
@@ -372,7 +372,7 @@ struct mob_water_globuleAI : public ScriptedAI
 
         if (Check_Timer <= diff)
         {
-            if (me->IsWithinDistInMap(me->getVictim(), 5))
+            if (me->IsWithinDistInMap(me->GetVictim(), 5))
             {
                 DoCastVictim( SPELL_GLOBULE_EXPLOSION);
 

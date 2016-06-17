@@ -212,7 +212,7 @@ struct boss_nightbaneAI : public ScriptedAI
 	void MoveInLineOfSight(Unit *who)
 	{
 		if (!Intro && !Flying)
-			if (!me->getVictim() && me->canStartAttack(who))
+			if (!me->GetVictim() && me->canStartAttack(who))
 				if (Phase == 1)
 					ScriptedAI::AttackStart(who);
 				else
@@ -243,7 +243,7 @@ struct boss_nightbaneAI : public ScriptedAI
 			if (id == 0)
 			{
 				DoResetThreat();
-				DoStartNoMovement(me->getVictim());
+				DoStartNoMovement(me->GetVictim());
 				me->MonsterTextEmote(EMOTE_BREATH, 0, true);
 				Skeletons = false;
 				Flying = false;
@@ -273,7 +273,7 @@ struct boss_nightbaneAI : public ScriptedAI
 
 	void JustSummoned(Creature *summoned)
 	{
-		summoned->AI()->AttackStart(me->getVictim());
+		summoned->AI()->AttackStart(me->GetVictim());
 	}
 
 	void TakeOff()
@@ -351,20 +351,20 @@ struct boss_nightbaneAI : public ScriptedAI
 			{
 				if (Movement)
 				{
-					DoStartMovement(me->getVictim());
+					DoStartMovement(me->GetVictim());
 					Movement = false;
 				}
 
 				if (BellowingRoarTimer <= diff)
 				{
-					DoCast(me->getVictim(), SPELL_BELLOWING_ROAR);
+					DoCast(me->GetVictim(), SPELL_BELLOWING_ROAR);
 					BellowingRoarTimer = urand(30000, 40000);
 				}
 				else BellowingRoarTimer -= diff;
 
 				if (SmolderingBreathTimer <= diff)
 				{
-					DoCast(me->getVictim(), SPELL_SMOLDERING_BREATH);
+					DoCast(me->GetVictim(), SPELL_SMOLDERING_BREATH);
 					SmolderingBreathTimer = 20000;
 				}
 				else SmolderingBreathTimer -= diff;
@@ -428,12 +428,12 @@ struct boss_nightbaneAI : public ScriptedAI
 						if (!Skeletons)
 						{
                             for (int i = 0; i < 6; i++)
-                                DoCast(me->getVictim(), SPELL_SUMMON_SKELETON, true);
+                                DoCast(me->GetVictim(), SPELL_SUMMON_SKELETON, true);
                             RainofBonesTimer = 10000;
 							Skeletons = true;
 						}
 
-						DoCast(me->getVictim(), SPELL_RAIN_OF_BONES);
+						DoCast(me->GetVictim(), SPELL_RAIN_OF_BONES);
 						RainBones = true;
 						SmokingBlastTimer = 20000;
 					}
@@ -444,7 +444,7 @@ struct boss_nightbaneAI : public ScriptedAI
 				{
 					if (SmokingBlastTimer <= diff)
 					{
-						DoCast(me->getVictim(), SPELL_SMOKING_BLAST);
+						DoCast(me->GetVictim(), SPELL_SMOKING_BLAST);
 						SmokingBlastTimer = 1500; //timer wrong
 					}
 					else SmokingBlastTimer -= diff;

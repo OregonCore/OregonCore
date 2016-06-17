@@ -335,7 +335,7 @@ struct mob_illidari_councilAI : public ScriptedAI
                         if (Creature* Member = (Unit::GetCreature((*me), Council[i])))
                         {
                             // This is the evade/death check.
-                            if (Member->IsAlive() && !Member->getVictim())
+                            if (Member->IsAlive() && !Member->GetVictim())
                                 ++EvadeCheck;                   //If all members evade, we reset so that players can properly reset the event
                             else if (!Member->IsAlive())         // If even one member dies, kill the rest, set instance data, and kill self.
                             {
@@ -410,9 +410,9 @@ struct boss_illidari_councilAI : public ScriptedAI
         for (uint8 i = 0; i < 4; ++i)
         {
             if (Unit* pUnit = Unit::GetUnit(*me, Council[i]))
-                if (pUnit != me && pUnit->getVictim())
+                if (pUnit != me && pUnit->GetVictim())
                 {
-                    AttackStart(pUnit->getVictim());
+                    AttackStart(pUnit->GetVictim());
                     return;
                 }
         }
@@ -558,7 +558,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
             {
                 if (me->HasAura(SPELL_SEAL_OF_COMMAND, 0))
                 {
-                    if (TryDoCast(me->getVictim(), SPELL_JUDGEMENT_OF_COMMAND))
+                    if (TryDoCast(me->GetVictim(), SPELL_JUDGEMENT_OF_COMMAND))
                     {
                         me->RemoveAurasDueToSpell(SPELL_SEAL_OF_COMMAND);
                         JudgeTimer = 45000;
@@ -566,7 +566,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
                 }
                 if (me->HasAura(SPELL_SEAL_OF_BLOOD, 0))
                 {
-                    if (TryDoCast(me->getVictim(), SPELL_JUDGEMENT_OF_BLOOD))
+                    if (TryDoCast(me->GetVictim(), SPELL_JUDGEMENT_OF_BLOOD))
                     {
                         me->RemoveAurasDueToSpell(SPELL_SEAL_OF_BLOOD);
                         JudgeTimer = 45000;
@@ -679,7 +679,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
         {
             if (!me->IsNonMeleeSpellCast(false))
             {
-                if (me->GetDistance2d(me->getVictim()) <= 5)
+                if (me->GetDistance2d(me->GetVictim()) <= 5)
                 {
                     DoCastVictim( SPELL_ARCANE_EXPLOSION);
                     ArcaneExplosionTimer = 14000;

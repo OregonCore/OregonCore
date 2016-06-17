@@ -166,7 +166,7 @@ struct boss_doomwalkerAI : public ScriptedAI
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
 
             if (!pTarget)
-                pTarget = me->getVictim();
+                pTarget = me->GetVictim();
 
             if (pTarget)
                 DoCast(pTarget, SPELL_CHAIN_LIGHTNING);

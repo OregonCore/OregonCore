@@ -210,8 +210,8 @@ struct boss_netherspiteAI : public ScriptedAI
                     }
                 }
                 // aggro target if Red Beam
-                if (j == RED_PORTAL && me->getVictim() != pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
-                    me->getThreatManager().addThreat(pTarget, 100000.0f + DoGetThreat(me->getVictim()));
+                if (j == RED_PORTAL && me->GetVictim() != pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
+                    me->getThreatManager().addThreat(pTarget, 100000.0f + DoGetThreat(me->GetVictim()));
             }
     }
 

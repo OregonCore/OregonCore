@@ -313,7 +313,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
         {
             Unit* Temp = Unit::GetUnit((*me), AddGUID[i]);
             if (Temp && Temp->IsAlive())
-                CAST_CRE(Temp)->AI()->AttackStart(me->getVictim());
+                CAST_CRE(Temp)->AI()->AttackStart(me->GetVictim());
             else
             {
                 EnterEvadeMode();
@@ -408,8 +408,8 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
         {
             for (uint8 i = 0; i < 4; ++i)
                 if (Creature* pTemp = Unit::GetCreature(*me, AddGUID[i]))
-                    if (pTemp->IsAlive() && !pTemp->getVictim())
-                        pTemp->AI()->AttackStart(me->getVictim());
+                    if (pTemp->IsAlive() && !pTemp->GetVictim())
+                        pTemp->AI()->AttackStart(me->GetVictim());
 
             CheckAddState_Timer = 5000;
         }
@@ -507,7 +507,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
             pTarget = me;
             break;
         case ABILITY_TARGET_VICTIM:
-            pTarget = me->getVictim();
+            pTarget = me->GetVictim();
             break;
         case ABILITY_TARGET_ENEMY:
         default:
@@ -828,7 +828,7 @@ struct boss_fenstalkerAI : public boss_hexlord_addAI
         if (volatileinf_timer <= diff)
         {
             // core bug
-            me->getVictim()->CastSpell(me->getVictim(), SPELL_VOLATILE_INFECTION, false);
+            me->GetVictim()->CastSpell(me->GetVictim(), SPELL_VOLATILE_INFECTION, false);
             volatileinf_timer = 12000;
         }
         else volatileinf_timer -= diff;

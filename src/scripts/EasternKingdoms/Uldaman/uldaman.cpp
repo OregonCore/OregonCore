@@ -75,7 +75,7 @@ struct mob_jadespine_basiliskAI : public ScriptedAI
 
             Unit* Target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
 
-            if (!Target || Target == me->getVictim())
+            if (!Target || Target == me->GetVictim())
                 Target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
 
             if (Target)

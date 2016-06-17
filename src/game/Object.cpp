@@ -431,8 +431,8 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
     {
         if (Unit const* me = ToUnit())
         {
-            if (me->getVictim())
-                *data << me->getVictim()->GetPackGUID();
+            if (me->GetVictim())
+                *data << me->GetVictim()->GetPackGUID();
             else
                 *data << uint8(0);
         }

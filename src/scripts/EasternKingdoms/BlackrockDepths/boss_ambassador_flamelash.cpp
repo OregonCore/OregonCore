@@ -68,10 +68,10 @@ struct boss_ambassador_flamelashAI : public ScriptedAI
         //Spirit_Timer
         if (Spirit_Timer <= diff)
         {
-            SummonSpirits(me->getVictim());
-            SummonSpirits(me->getVictim());
-            SummonSpirits(me->getVictim());
-            SummonSpirits(me->getVictim());
+            SummonSpirits(me->GetVictim());
+            SummonSpirits(me->GetVictim());
+            SummonSpirits(me->GetVictim());
+            SummonSpirits(me->GetVictim());
 
             Spirit_Timer = 30000;
         }

@@ -502,7 +502,7 @@ struct npc_morokkAI : public npc_escortAI
 
     void AttackedBy(Unit* pAttacker)
     {
-        if (me->getVictim())
+        if (me->GetVictim())
             return;
 
         if (me->IsFriendlyTo(pAttacker))
@@ -533,7 +533,7 @@ struct npc_morokkAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 /*uiDiff*/)
     {
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             if (HasEscortState(STATE_ESCORT_PAUSED))
             {
@@ -928,7 +928,7 @@ struct npc_private_hendelAI : public ScriptedAI
 
     void AttackedBy(Unit* pAttacker)
     {
-        if (me->getVictim())
+        if (me->GetVictim())
             return;
 
         if (me->IsFriendlyTo(pAttacker))
@@ -1132,7 +1132,7 @@ struct npc_zelfraxAI : public ScriptedAI
         SetCombatMovement(true);
 
         if (me->IsInCombat())
-            if (Unit* pUnit = me->getVictim())
+            if (Unit* pUnit = me->GetVictim())
                 me->GetMotionMaster()->MoveChase(pUnit);
     }
 

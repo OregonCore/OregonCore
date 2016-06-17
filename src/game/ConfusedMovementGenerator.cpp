@@ -108,8 +108,8 @@ void ConfusedMovementGenerator<Creature>::Finalize(Creature& unit)
     unit.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED);
     unit.ClearUnitState(UNIT_STATE_CONFUSED);
 
-    if (unit.getVictim())
-        unit.SetUInt64Value(UNIT_FIELD_TARGET, unit.getVictim()->GetGUID());
+    if (unit.GetVictim())
+        unit.SetUInt64Value(UNIT_FIELD_TARGET, unit.GetVictim()->GetGUID());
 }
 
 template void ConfusedMovementGenerator<Player>::Initialize(Player& player);

@@ -68,7 +68,7 @@ struct npc_mistAI : public FollowerAI
     {
         FollowerAI::MoveInLineOfSight(pWho);
 
-        if (!me->getVictim() && !HasFollowState(STATE_FOLLOW_COMPLETE | STATE_FOLLOW_POSTEVENT) && pWho->GetEntry() == NPC_ARYNIA)
+        if (!me->GetVictim() && !HasFollowState(STATE_FOLLOW_COMPLETE | STATE_FOLLOW_POSTEVENT) && pWho->GetEntry() == NPC_ARYNIA)
         {
             if (me->IsWithinDistInMap(pWho, INTERACTION_DISTANCE))
             {

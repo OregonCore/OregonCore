@@ -99,15 +99,15 @@ struct boss_razorgoreAI : public ScriptedAI
             DoCastVictim( SPELL_CONFLAGRATION);
             //We will remove this threat reduction and add an aura check.
 
-            //if (DoGetThreat(me->getVictim()))
-            //DoModifyThreatPercent(me->getVictim(),-50);
+            //if (DoGetThreat(me->GetVictim()))
+            //DoModifyThreatPercent(me->GetVictim(),-50);
 
             Conflagration_Timer = 12000;
         }
         else Conflagration_Timer -= diff;
 
         // Aura Check. If the gamer is affected by confliguration we attack a random gamer.
-        if (me->getVictim() && me->getVictim()->HasAura(SPELL_CONFLAGRATION, 0))
+        if (me->GetVictim() && me->GetVictim()->HasAura(SPELL_CONFLAGRATION, 0))
             if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
                 me->TauntApply(pTarget);
 

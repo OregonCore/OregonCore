@@ -159,7 +159,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
         // Select nearest most aggro target if top aggro too far
         if (!me->isAttackReady())
             return;
-        if (!me->IsWithinMeleeRange(me->getVictim()))
+        if (!me->IsWithinMeleeRange(me->GetVictim()))
         {
             ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
             for (ThreatContainer::StorageType::const_iterator i = threatlist.begin(); i != threatlist.end(); ++i)

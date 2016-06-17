@@ -309,7 +309,7 @@ struct boss_shahrazAI : public ScriptedAI
 
         if (ShriekTimer <= diff)
         {
-            if (TryDoCast(me->getVictim(), SPELL_SILENCING_SHRIEK))
+            if (TryDoCast(me->GetVictim(), SPELL_SILENCING_SHRIEK))
                 ShriekTimer = 20000;
         }
         else ShriekTimer -= diff;

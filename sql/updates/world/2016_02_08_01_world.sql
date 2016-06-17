@@ -1,4 +1,4 @@
--- Pathing for Bloodcursed Naga Entry: 17713 'TDB FORMAT' 
+-- Pathing for Bloodcursed Naga Entry: 17713 'TDB FORMAT'
 SET @NPC := 63485;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=-1928.789,`position_y`=-12869.43,`position_z`=86.3521 WHERE `guid`=@NPC;
@@ -56,7 +56,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 (@PATH,48,-1928.858,-12869.55,86.33754,0,0,0,0,100,0); -- 09:22:43
 -- 0x1C09E44240114C4000002500002C696C .go -1928.789 -12869.43 86.3521
 
--- Pathing for Bloodcursed Naga Entry: 17713 'TDB FORMAT' 
+-- Pathing for Bloodcursed Naga Entry: 17713 'TDB FORMAT'
 SET @NPC := 63492;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=-1796.121,`position_y`=-12771.99,`position_z`=2.181608 WHERE `guid`=@NPC;
@@ -123,7 +123,7 @@ DELETE FROM `smart_scripts` WHERE `entryorguid`=@ENTRY AND `source_type`=0;
 INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type`,`event_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action_type`,`action_param1`,`action_param2`,`action_param3`,`action_param4`,`action_param5`,`action_param6`,`target_type`,`target_param1`,`target_param2`,`target_param3`,`target_x`,`target_y`,`target_z`,`target_o`,`comment`) VALUES
 (@ENTRY,0,0,0,25,0,100,0,0,0,0,0,11,12544,0,0,0,0,0,1,0,0,0,0,0,0,0,"Bloodcursed Naga - On Reset - Cast 'Frost Armor'");
 
--- Pathing for Lord Xiz Entry: 17701 'TDB FORMAT' 
+-- Pathing for Lord Xiz Entry: 17701 'TDB FORMAT'
 SET @NPC := 63448;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=-2226.604,`position_y`=-12321.21,`position_z`=57.54912 WHERE `guid`=@NPC;
@@ -134,3 +134,4 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 (@PATH,1,-2253.258,-12320.91,57.29495,0,0,0,0,100,0), -- 09:08:14
 (@PATH,2,-2214.95,-12321.52,57.30329,0,0,0,0,100,0); -- 09:08:29
 -- 0x1C09E4424011494000002500002C576E .go -2226.604 -12321.21 57.54912
+

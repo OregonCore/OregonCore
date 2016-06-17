@@ -6861,7 +6861,7 @@ bool ChatHandler::HandleCastTargetCommand(const char* args)
         return false;
     }
 
-    if (!caster->getVictim())
+    if (!caster->GetVictim())
     {
         SendSysMessage(LANG_SELECTED_TARGET_NOT_HAVE_VICTIM);
         SetSentErrorMessage(true);
@@ -6889,7 +6889,7 @@ bool ChatHandler::HandleCastTargetCommand(const char* args)
 
     caster->SetFacingToObject(m_session->GetPlayer());
 
-    caster->CastSpell(caster->getVictim(), spell, triggered);
+    caster->CastSpell(caster->GetVictim(), spell, triggered);
 
     return true;
 }

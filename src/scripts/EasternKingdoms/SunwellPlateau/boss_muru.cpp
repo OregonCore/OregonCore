@@ -529,7 +529,7 @@ struct npc_dark_fiendAI : public ScriptedAI
             }
             else
             {
-                if (me->GetDistance(me->getVictim()) < 5)
+                if (me->GetDistance(me->GetVictim()) < 5)
                 {
                     DoCastAOE(SPELL_DARKFIEND_AOE, false);
                     me->DisappearAndDie();
@@ -654,7 +654,7 @@ struct npc_blackholeAI : public ScriptedAI
             case 3:
                 SpellTimer = urand(400, 900);
                 NeedForAHack = 1;
-                if (Unit* Temp = me->getVictim())
+                if (Unit* Temp = me->GetVictim())
                 {
                     if (Temp->GetPositionZ() > 73 && Victim)
                         AttackStart(Victim);

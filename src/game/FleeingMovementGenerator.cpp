@@ -138,8 +138,8 @@ void FleeingMovementGenerator<Creature>::Finalize(Creature& owner)
 {
     owner.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
     owner.ClearUnitState(UNIT_STATE_FLEEING | UNIT_STATE_ROAMING);
-    if (owner.GetTypeId() == TYPEID_UNIT && owner.getVictim())
-        owner.SetTarget(owner.getVictim()->GetGUID());
+    if (owner.GetTypeId() == TYPEID_UNIT && owner.GetVictim())
+        owner.SetTarget(owner.GetVictim()->GetGUID());
 }
 
 template<class T>
@@ -179,7 +179,7 @@ void TimedFleeingMovementGenerator::Finalize(Unit& owner)
 {
     owner.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
     owner.ClearUnitState(UNIT_STATE_FLEEING | UNIT_STATE_ROAMING);
-    if (Unit* victim = owner.getVictim())
+    if (Unit* victim = owner.GetVictim())
     {
         if (owner.IsAlive())
         {

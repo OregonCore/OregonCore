@@ -660,7 +660,7 @@ struct npc_anchorite_relic_bunnyAI : public ScriptedAI
         if (summoned->GetEntry() == NPC_FEL_SPIRIT)
         {
             DoScriptText(SAY_SP, summoned);
-            summoned->AI()->AttackStart(summoned->getVictim());
+            summoned->AI()->AttackStart(summoned->GetVictim());
         }
     }
 
@@ -779,7 +779,7 @@ CreatureAI* GetAI_npc_hand_berserker(Creature* creature)
 ## npc_anchorite_barada
 ######*/
 
-#define GOSSIP_ITEM_START      "I am ready Amchorite.Let us begin the exorcim."
+#define GOSSIP_ITEM_START      "I am ready Anchorite. Let us begin the exorcism."
 #define SAY_BARADA1            -1900100
 #define SAY_BARADA2            -1900101
 #define SAY_BARADA3            -1900104
@@ -903,8 +903,9 @@ struct npc_anchorite_baradaAI : public ScriptedAI
         case 14:
             pColonel->CastSpell(pColonel, SPELL_COLONEL1, false);
         case 15:
-            pColonel->SetLevitate(true);
+            pColonel->SetCanFly(true);
             pColonel->SetSpeed(MOVE_RUN, 0.17f);
+
             pColonel->GetMotionMaster()->MovePoint(0, -710.611f, 2753.435f, 103.774f);
             pColonel->CastSpell(pColonel, SPELL_COLONEL3, false);
             return 14000;

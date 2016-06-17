@@ -213,7 +213,7 @@ struct boss_najentusAI : public ScriptedAI
             if (!me->IsNonMeleeSpellCast(false))
             {
                 Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 80, true);
-                if (!pTarget) pTarget = me->getVictim();
+                if (!pTarget) pTarget = me->GetVictim();
                 if (pTarget)
                 {
                     DoCast(pTarget, SPELL_IMPALING_SPINE);

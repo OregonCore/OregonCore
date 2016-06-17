@@ -260,7 +260,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (who && !me->getVictim() && me->canStartAttack(who))
+        if (who && !me->GetVictim() && me->canStartAttack(who))
             AttackStart(who);
         if (!Intro && who && me->IsWithinLOSInMap(who) && me->IsWithinDistInMap(who, 100) && me->IsHostileTo(who))
         {
