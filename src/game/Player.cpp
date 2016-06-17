@@ -3021,7 +3021,7 @@ bool Player::AddSpell(uint32 spell_id, bool active, bool learning, bool loading,
                             itr->second.state = PLAYERSPELL_CHANGED;
                             superceded_old = true;          // new spell replace old in action bars and spell book.
                         }
-                        else if (sSpellMgr.IsHighRankOfSpell(itr->first, spell_id))
+                        else // rank of known spell is higher than this one being added
                         {
                             if (!loading)                    // not send spell (re-/over-)learn packets at loading
                             {
