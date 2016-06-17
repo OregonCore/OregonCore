@@ -2028,7 +2028,7 @@ class Player : public Unit, public GridObject<Player>
 
         void UpdateDefense();
         void UpdateWeaponSkill (WeaponAttackType attType);
-        void UpdateCombatSkills(Unit* pVictim, WeaponAttackType attType, MeleeHitOutcome outcome, bool defence);
+        void UpdateCombatSkills(Unit* victim, WeaponAttackType attType, MeleeHitOutcome outcome, bool defence);
 
         void SetSkill(uint32 id, uint16 currVal, uint16 maxVal);
         uint16 GetMaxSkillValue(uint32 skill) const;        // max + perm. bonus
@@ -2082,14 +2082,14 @@ class Player : public Unit, public GridObject<Player>
         void setFactionForRace(uint8 race);
 
         bool IsAtGroupRewardDistance(WorldObject const* pRewardSource) const;
-        void RewardPlayerAndGroupAtKill(Unit* pVictim);
+        void RewardPlayerAndGroupAtKill(Unit* victim);
         void RewardPlayerAndGroupAtEvent(uint32 creature_id, WorldObject* pRewardSource);
-        bool isHonorOrXPTarget(Unit* pVictim) const;
+        bool isHonorOrXPTarget(Unit* victim) const;
 
         ReputationMgr&       GetReputationMgr()       { return m_reputationMgr; }
         ReputationMgr const& GetReputationMgr() const { return m_reputationMgr; }
         ReputationRank GetReputationRank(uint32 faction_id) const;
-        void RewardReputation(Unit* pVictim, float rate);
+        void RewardReputation(Unit* victim, float rate);
         void RewardReputation(Quest const* pQuest);
  
         int32 CalculateReputationGain(uint32 creatureOrQuestLevel, int32 rep, bool for_quest);
@@ -2102,7 +2102,7 @@ class Player : public Unit, public GridObject<Player>
         /***                 PVP SYSTEM                       ***/
         /*********************************************************/
         void UpdateHonorFields();
-        bool RewardHonor(Unit* pVictim, uint32 groupsize, float honor = -1, bool pvptoken = false);
+        bool RewardHonor(Unit* victim, uint32 groupsize, float honor = -1, bool pvptoken = false);
         uint32 GetHonorPoints()
         {
             return GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY);

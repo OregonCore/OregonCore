@@ -5238,8 +5238,8 @@ bool Player::UpdateSkillPro(uint16 SkillId, int32 Chance, uint32 step)
 void Player::UpdateWeaponSkill(WeaponAttackType attType)
 {
     // no skill gain in pvp
-    Unit* pVictim = GetVictim();
-    if (pVictim && pVictim->isCharmedOwnedByPlayerOrPlayer())
+    Unit* victim = GetVictim();
+    if (victim && victim->isCharmedOwnedByPlayerOrPlayer())
         return;
 
     if (IsInFeralForm())
@@ -5248,7 +5248,7 @@ void Player::UpdateWeaponSkill(WeaponAttackType attType)
     if (m_form == FORM_TREE)
         return;                                             // use weapon but not skill up
 
-    if (pVictim && pVictim->GetTypeId() == TYPEID_UNIT && (((Creature*)pVictim)->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_SKILLGAIN))
+    if (victim && victim->GetTypeId() == TYPEID_UNIT && (((Creature*)victim)->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_SKILLGAIN))
         return;
 
     uint32 weapon_skill_gain = sWorld.getConfig(CONFIG_SKILL_GAIN_WEAPON);
@@ -5278,11 +5278,11 @@ void Player::UpdateWeaponSkill(WeaponAttackType attType)
     UpdateAllCritPercentages();
 }
 
-void Player::UpdateCombatSkills(Unit* pVictim, WeaponAttackType attType, MeleeHitOutcome /*outcome*/, bool defence)
+void Player::UpdateCombatSkills(Unit* victim, WeaponAttackType attType, MeleeHitOutcome /*outcome*/, bool defence)
 {
-    uint32 plevel = getLevel();                             // if defense than pVictim == attacker
+    uint32 plevel = getLevel();                             // if defense than victim == attacker
     uint32 greylevel = Oregon::XP::GetGrayLevel(plevel);
-    uint32 moblevel = pVictim->getLevelForTarget(this);
+    uint32 moblevel = victim->getLevelForTarget(this);
     if (moblevel < greylevel)
         return;
 
@@ -5913,15 +5913,15 @@ int32 Player::CalculateReputationGain(uint32 creatureOrQuestLevel, int32 rep, bo
 }
 
 //Calculates how many reputation points player gains in victim's enemy factions
-void Player::RewardReputation(Unit* pVictim, float rate)
+void Player::RewardReputation(Unit* victim, float rate)
 {
-    if (!pVictim || pVictim->GetTypeId() == TYPEID_PLAYER)
+    if (!victim || victim->GetTypeId() == TYPEID_PLAYER)
         return;
 
-    if (pVictim->ToCreature()->IsReputationGainDisabled())
+    if (victim->ToCreature()->IsReputationGainDisabled())
         return;
 
-    ReputationOnKillEntry const* Rep = sObjectMgr.GetReputationOnKilEntry(pVictim->ToCreature()->GetCreatureTemplate()->Entry);
+    ReputationOnKillEntry const* Rep = sObjectMgr.GetReputationOnKilEntry(victim->ToCreature()->GetCreatureTemplate()->Entry);
 
     if (!Rep)
         return;
@@ -5937,7 +5937,7 @@ void Player::RewardReputation(Unit* pVictim, float rate)
 
     if (Rep->repfaction1 && (!Rep->team_dependent || GetTeam() == ALLIANCE))
     {
-        int32 donerep1 = CalculateReputationGain(pVictim->getLevel(), Rep->repvalue1, false);
+        int32 donerep1 = CalculateReputationGain(victim->getLevel(), Rep->repvalue1, false);
         donerep1 = int32(donerep1 * rate);
         FactionEntry const* factionEntry1 = sFactionStore.LookupEntry(Rep->repfaction1);
         uint32 current_reputation_rank1 = GetReputationMgr().GetRank(factionEntry1);
@@ -5955,7 +5955,7 @@ void Player::RewardReputation(Unit* pVictim, float rate)
 
     if (Rep->repfaction2 && (!Rep->team_dependent || GetTeam() == HORDE))
     {
-        int32 donerep2 = CalculateReputationGain(pVictim->getLevel(), Rep->repvalue2, false);
+        int32 donerep2 = CalculateReputationGain(victim->getLevel(), Rep->repvalue2, false);
         donerep2 = int32(donerep2 * rate);
         FactionEntry const* factionEntry2 = sFactionStore.LookupEntry(Rep->repfaction2);
         uint32 current_reputation_rank2 = GetReputationMgr().GetRank(factionEntry2);
@@ -6062,15 +6062,15 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize, float honor, bool pvpt
 
         if (uVictim->GetTypeId() == TYPEID_PLAYER)
         {
-            Player* pVictim = uVictim->ToPlayer();
+            Player* victim = uVictim->ToPlayer();
 
-            if (GetTeam() == pVictim->GetTeam() && !sWorld.IsFFAPvPRealm())
+            if (GetTeam() == victim->GetTeam() && !sWorld.IsFFAPvPRealm())
                 return false;
 
             float f = 1;                                    //need for total kills (?? need more info)
             uint32 k_grey = 0;
             uint32 k_level = getLevel();
-            uint32 v_level = pVictim->getLevel();
+            uint32 v_level = victim->getLevel();
 
             {
                 // PLAYER_CHOSEN_TITLE VALUES DESCRIPTION
@@ -6079,7 +6079,7 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize, float honor, bool pvpt
                 //  [15..28] Horde honor titles and player name
                 //  [29..38] Other title and player name
                 //  [39+]    Nothing
-                uint32 victim_title = pVictim->GetUInt32Value(PLAYER_CHOSEN_TITLE);
+                uint32 victim_title = victim->GetUInt32Value(PLAYER_CHOSEN_TITLE);
                 // Get Killer titles, CharTitlesEntry::bit_index
                 // Ranks:
                 //  title[1..14]  -> rank[5..18]
@@ -19700,28 +19700,28 @@ uint32 Player::GetResurrectionSpellId()
 }
 
 // Used in triggers for check "Only to targets that grant experience or honor" req
-bool Player::isHonorOrXPTarget(Unit* pVictim) const
+bool Player::isHonorOrXPTarget(Unit* victim) const
 {
-    uint32 v_level = pVictim->getLevel();
+    uint32 v_level = victim->getLevel();
     uint32 k_grey  = Oregon::XP::GetGrayLevel(getLevel());
 
     // Victim level less gray level
     if (v_level <= k_grey)
         return false;
 
-    if (pVictim->GetTypeId() == TYPEID_UNIT)
+    if (victim->GetTypeId() == TYPEID_UNIT)
     {
-        if (pVictim->IsTotem() ||
-            pVictim->IsPet() ||
-            pVictim->ToCreature()->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)
+        if (victim->IsTotem() ||
+            victim->IsPet() ||
+            victim->ToCreature()->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)
             return false;
     }
     return true;
 }
 
-void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
+void Player::RewardPlayerAndGroupAtKill(Unit* victim)
 {
-    bool PvP = pVictim->isCharmedOwnedByPlayerOrPlayer();
+    bool PvP = victim->isCharmedOwnedByPlayerOrPlayer();
 
     // prepare data for near group iteration (PvP and !PvP cases)
     uint32 xp = 0;
@@ -19734,13 +19734,13 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
         Player* member_with_max_level = NULL;
         Player* not_gray_member_with_max_level = NULL;
 
-        pGroup->GetDataForXPAtKill(pVictim, count, sum_level, member_with_max_level, not_gray_member_with_max_level);
+        pGroup->GetDataForXPAtKill(victim, count, sum_level, member_with_max_level, not_gray_member_with_max_level);
 
         if (member_with_max_level)
         {
             // PvP kills doesn't yield experience
             // also no XP gained if there is no member below gray level
-            xp = (PvP || !not_gray_member_with_max_level) ? 0 : Oregon::XP::Gain(not_gray_member_with_max_level, pVictim);
+            xp = (PvP || !not_gray_member_with_max_level) ? 0 : Oregon::XP::Gain(not_gray_member_with_max_level, victim);
 
             // skip in check PvP case (for speed, not used)
             bool is_raid = PvP ? false : sMapStore.LookupEntry(GetMapId())->IsRaid() && pGroup->isRaidGroup();
@@ -19753,12 +19753,12 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
                 if (!pGroupGuy)
                     continue;
 
-                if (!pGroupGuy->IsAtGroupRewardDistance(pVictim))
+                if (!pGroupGuy->IsAtGroupRewardDistance(victim))
                     continue;                               // member (alive or dead) or his corpse at req. distance
 
                 // honor can be in PvP and !PvP (racial leader) cases (for alive)
                 if (pGroupGuy->IsAlive())
-                    pGroupGuy->RewardHonor(pVictim, count, -1, true);
+                    pGroupGuy->RewardHonor(victim, count, -1, true);
 
                 // xp and reputation only in !PvP case
                 if (!PvP)
@@ -19767,7 +19767,7 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
 
                     // if is in dungeon then all receive full reputation at kill
                     // rewarded any alive/dead/near_corpse group member
-                    pGroupGuy->RewardReputation(pVictim, is_dungeon ? 1.0f : rate);
+                    pGroupGuy->RewardReputation(victim, is_dungeon ? 1.0f : rate);
 
                     // XP updated only for alive group member
                     if (pGroupGuy->IsAlive() && not_gray_member_with_max_level &&
@@ -19779,7 +19779,7 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
                         if (trivialTarget)
                             itr_xp /= 2;
 
-                        pGroupGuy->GiveXP(itr_xp, pVictim, trivialTarget);
+                        pGroupGuy->GiveXP(itr_xp, victim, trivialTarget);
                         if (Pet* pet = pGroupGuy->GetPet())
                             pet->GivePetXP(itr_xp / 2);
                     }
@@ -19788,9 +19788,9 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
                     if (pGroupGuy->IsAlive() || !pGroupGuy->GetCorpse())
                     {
                         // normal creature (not pet/etc) can be only in !PvP case
-                        if (pVictim->GetTypeId() == TYPEID_UNIT)
-                            if (CreatureInfo const* normalInfo = ObjectMgr::GetCreatureTemplate(pVictim->GetEntry()))
-                                pGroupGuy->KilledMonster(normalInfo, pVictim->GetGUID());
+                        if (victim->GetTypeId() == TYPEID_UNIT)
+                            if (CreatureInfo const* normalInfo = ObjectMgr::GetCreatureTemplate(victim->GetEntry()))
+                                pGroupGuy->KilledMonster(normalInfo, victim->GetGUID());
                     }
                 }
             }
@@ -19798,27 +19798,27 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
     }
     else                                                    // if (!pGroup)
     {
-        xp = PvP ? 0 : Oregon::XP::Gain(this, pVictim);
+        xp = PvP ? 0 : Oregon::XP::Gain(this, victim);
 
         if (Pet* pet = GetPet())
-            petXP = PvP ? 0 : Oregon::XP::Gain(pet, pVictim);
+            petXP = PvP ? 0 : Oregon::XP::Gain(pet, victim);
 
         // honor can be in PvP and !PvP (racial leader) cases
-        RewardHonor(pVictim, 1, -1, true);
+        RewardHonor(victim, 1, -1, true);
 
         // xp and reputation only in !PvP case
         if (!PvP)
         {
-            RewardReputation(pVictim, 1);
-            GiveXP(xp, pVictim);
+            RewardReputation(victim, 1);
+            GiveXP(xp, victim);
 
             if (Pet* pet = GetPet())
                 pet->GivePetXP(petXP);
 
             // normal creature (not pet/etc) can be only in !PvP case
-            if (pVictim->GetTypeId() == TYPEID_UNIT)
-                if (CreatureInfo const* normalInfo = ObjectMgr::GetCreatureTemplate(pVictim->GetEntry()))
-                    KilledMonster(normalInfo, pVictim->GetGUID());
+            if (victim->GetTypeId() == TYPEID_UNIT)
+                if (CreatureInfo const* normalInfo = ObjectMgr::GetCreatureTemplate(victim->GetEntry()))
+                    KilledMonster(normalInfo, victim->GetGUID());
         }
     }
 }

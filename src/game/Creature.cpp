@@ -1829,7 +1829,7 @@ SpellEntry const* Creature::reachWithSpellCure(Unit* victim)
         float range = GetSpellMaxRange(srange);
         float minrange = GetSpellMinRange(srange);
         float dist = GetDistance(victim);
-        //if (!isInFront(pVictim, range) && spellInfo->AttributesEx)
+        //if (!isInFront(victim, range) && spellInfo->AttributesEx)
         //    continue;
         if (dist > range || dist < minrange)
             continue;
