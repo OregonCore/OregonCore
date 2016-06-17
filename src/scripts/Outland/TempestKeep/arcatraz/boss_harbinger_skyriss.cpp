@@ -122,7 +122,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
             summon->SetHealth((summon->GetMaxHealth() * 33) / 100);
         else
             summon->SetHealth((summon->GetMaxHealth() * 66) / 100);
-        if (me->getVictim())
+        if (me->GetVictim())
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 summon->AI()->AttackStart(pTarget);
     }

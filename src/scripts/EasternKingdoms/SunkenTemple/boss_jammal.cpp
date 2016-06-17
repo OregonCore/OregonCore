@@ -65,7 +65,7 @@ struct boss_JammalAI : public ScriptedAI
 		{
 			if (Creature* creature = *itr)
 			{
-				creature->AI()->AttackStart(me->getVictim());
+				creature->AI()->AttackStart(me->GetVictim());
 			}
 		}
 

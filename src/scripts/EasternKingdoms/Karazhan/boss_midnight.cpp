@@ -84,7 +84,7 @@ struct boss_midnightAI : public ScriptedAI
             if (Creature* pAttumen = me->SummonCreature(SUMMON_ATTUMEN, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000))
             {
                 Attumen = pAttumen->GetGUID();
-                pAttumen->AI()->AttackStart(me->getVictim());
+                pAttumen->AI()->AttackStart(me->GetVictim());
                 SetMidnight(pAttumen, me->GetGUID());
                 DoScriptText(RAND(SAY_APPEAR1, SAY_APPEAR2, SAY_APPEAR3), pAttumen);
             }
@@ -107,10 +107,10 @@ struct boss_midnightAI : public ScriptedAI
                     {
                         pAttumen->SetDisplayId(MOUNTED_DISPLAYID);
                         pAttumen->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        if (pAttumen->getVictim())
+                        if (pAttumen->GetVictim())
                         {
-                            pAttumen->GetMotionMaster()->MoveChase(pAttumen->getVictim());
-                            pAttumen->SetUInt64Value(UNIT_FIELD_TARGET, pAttumen->getVictim()->GetGUID());
+                            pAttumen->GetMotionMaster()->MoveChase(pAttumen->GetVictim());
+                            pAttumen->SetUInt64Value(UNIT_FIELD_TARGET, pAttumen->GetVictim()->GetGUID());
                         }
                         pAttumen->SetObjectScale(1);
                         pAttumen->SetHealth(pAttumen->GetMaxHealth());

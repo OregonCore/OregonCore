@@ -192,8 +192,8 @@ struct boss_supremusAI : public ScriptedAI
             {
                 if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
                 {
-                    if (me->GetDistance2d(me->getVictim()) < 40)
-                        me->CastSpell(me->getVictim(), SPELL_CHARGE, false);
+                    if (me->GetDistance2d(me->GetVictim()) < 40)
+                        me->CastSpell(me->GetVictim(), SPELL_CHARGE, false);
 
                     DoResetThreat();
                     me->AddThreat(pTarget, 5000000.0f);

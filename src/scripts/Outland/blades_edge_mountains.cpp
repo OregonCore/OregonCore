@@ -255,7 +255,7 @@ struct mobs_nether_drakeAI : public ScriptedAI
 
         if (ManaBurn_Timer <= diff)
         {
-            Unit* pTarget = me->getVictim();
+            Unit* pTarget = me->GetVictim();
             if (pTarget && pTarget->getPowerType() == POWER_MANA)
                 DoCast(pTarget, SPELL_MANA_BURN);
             ManaBurn_Timer = 8000 + rand() % 8000;
@@ -496,7 +496,7 @@ bool GOUse_go_thunderspike(Player* player, GameObject* /*_GO*/)
         // to prevent spawn spam :)
         if (Creature* pGor = GetClosestCreatureWithEntry(player, GOR_GRIMGUT_ENTRY, 50.0f, true))
         {
-            if (!pGor->getVictim())
+            if (!pGor->GetVictim())
                 pGor->AI()->AttackStart(player);
 
             return false;
@@ -1200,7 +1200,7 @@ struct npc_evergrove_ancientAI : public ScriptedAI
 
 		if (Creature* baelmon = me->FindNearestCreature(19747, 30.0f, true))
 		{
-			if (!baelmon->getVictim())
+			if (!baelmon->GetVictim())
 				me->AI()->AttackStart(baelmon);
 		}
 

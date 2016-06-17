@@ -122,7 +122,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
+        if (!me->GetVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
         {
             if (!HasTaunted && me->IsWithinDistInMap(who, 100.0f))
             {
@@ -301,7 +301,7 @@ struct mob_ethereal_beaconAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        summoned->AI()->AttackStart(me->getVictim());
+        summoned->AI()->AttackStart(me->GetVictim());
     }
 
     void JustDied(Unit*)
@@ -382,12 +382,12 @@ struct mob_ethereal_apprenticeAI : public ScriptedAI
         {
             if (isFireboltTurn)
             {
-                me->CastSpell(me->getVictim(), SPELL_ETHEREAL_APPRENTICE_FIREBOLT, true);
+                me->CastSpell(me->GetVictim(), SPELL_ETHEREAL_APPRENTICE_FIREBOLT, true);
                 isFireboltTurn = false;
             }
             else
             {
-                me->CastSpell(me->getVictim(), SPELL_ETHEREAL_APPRENTICE_FROSTBOLT, true);
+                me->CastSpell(me->GetVictim(), SPELL_ETHEREAL_APPRENTICE_FROSTBOLT, true);
                 isFireboltTurn = true;
             }
             Cast_Timer = 3000;

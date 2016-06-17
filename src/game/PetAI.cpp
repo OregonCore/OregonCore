@@ -46,10 +46,10 @@ void PetAI::EnterEvadeMode()
 bool PetAI::_needToStop() const
 {
     // This is needed for charmed creatures, as once their target was reset other effects can trigger threat
-    if (me->isCharmed() && me->getVictim() == me->GetCharmer())
+    if (me->isCharmed() && me->GetVictim() == me->GetCharmer())
         return true;
 
-    return !me->canAttack(me->getVictim());
+    return !me->canAttack(me->GetVictim());
 }
 
 void PetAI::_stopAttack()
@@ -87,11 +87,11 @@ void PetAI::UpdateAI(const uint32 diff)
         m_updateAlliesTimer -= diff;
 
     // Must also check if victim is alive
-    if (inCombat && (!me->getVictim() || (me->ToPet() && me->ToPet()->GetModeFlags() & PET_MODE_DISABLE_ACTIONS)))
+    if (inCombat && (!me->GetVictim() || (me->ToPet() && me->ToPet()->GetModeFlags() & PET_MODE_DISABLE_ACTIONS)))
         _stopAttack();
 
-    // i_pet.getVictim() can't be used for check in case stop fighting, i_pet.getVictim() clear at Unit death etc.
-    if (me->getVictim())
+    // i_pet.GetVictim() can't be used for check in case stop fighting, i_pet.GetVictim() clear at Unit death etc.
+    if (me->GetVictim())
     {
         if (_needToStop())
         {
@@ -134,7 +134,7 @@ void PetAI::UpdateAI(const uint32 diff)
                 continue;
 
             // ignore some combinations of combat state and combat/noncombat spells
-            if (!me->getVictim())
+            if (!me->GetVictim())
             {
                 // ignore attacking spells, and allow only self/around spells
                 if (!IsPositiveSpell(spellInfo->Id))
@@ -166,9 +166,9 @@ void PetAI::UpdateAI(const uint32 diff)
             Spell* spell = new Spell(me, spellInfo, false, 0);
 
             // Fix to allow pets on STAY to autocast
-            if (me->getVictim() && _CanAttack(me->getVictim()) && spell->CanAutoCast(me->getVictim()))
+            if (me->GetVictim() && _CanAttack(me->GetVictim()) && spell->CanAutoCast(me->GetVictim()))
             {
-                targetSpellStore.push_back(std::pair<Unit*, Spell*>(me->getVictim(), spell));
+                targetSpellStore.push_back(std::pair<Unit*, Spell*>(me->GetVictim(), spell));
                 continue;
             }
             else
@@ -274,7 +274,7 @@ void PetAI::KilledUnit(Unit* victim)
 {
     // Called from Unit::Kill() in case where pet or owner kills something
     // if owner killed this victim, pet may still be attacking something else
-    if (me == victim || (me->getVictim() && me->getVictim() != victim))
+    if (me == victim || (me->GetVictim() && me->GetVictim() != victim))
         return;
 
     // Clear target just in case. May help problem where health / focus / mana
@@ -466,14 +466,14 @@ bool PetAI::_CanAttack(Unit* target)
         return (me->IsWithinMeleeRange(target, MELEE_RANGE) || me->GetCharmInfo()->IsCommandAttack());
 
     //  Pets attacking something (or chasing) should only switch targets if owner tells them to
-    if (me->getVictim() && me->getVictim() != target)
+    if (me->GetVictim() && me->GetVictim() != target)
     {
         // Check if our owner selected this target and clicked "attack"
         Unit* ownerTarget = NULL;
         if (Player* owner = me->GetCharmerOrOwner()->ToPlayer())
             ownerTarget = owner->GetSelectedUnit();
         else
-            ownerTarget = me->GetCharmerOrOwner()->getVictim();
+            ownerTarget = me->GetCharmerOrOwner()->GetVictim();
 
         if (ownerTarget && me->GetCharmInfo()->IsCommandAttack())
             return (target->GetGUID() == ownerTarget->GetGUID());

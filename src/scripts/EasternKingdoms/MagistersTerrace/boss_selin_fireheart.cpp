@@ -313,7 +313,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
                     CrystalGUID = 0;
 
                     me->GetMotionMaster()->Clear();
-                    me->GetMotionMaster()->MoveChase(me->getVictim());
+                    me->GetMotionMaster()->MoveChase(me->GetVictim());
                 }
                 else EmpowerTimer -= diff;
             }
@@ -351,10 +351,10 @@ struct mob_fel_crystalAI : public ScriptedAI
                     CAST_AI(boss_selin_fireheartAI, Selin->AI())->DrainingCrystal = false;
                     CAST_AI(boss_selin_fireheartAI, Selin->AI())->IsDraining = false;
                     CAST_AI(boss_selin_fireheartAI, Selin->AI())->EmpowerTimer = 10000;
-                    if (Selin->getVictim())
+                    if (Selin->GetVictim())
                     {
-                        Selin->AI()->AttackStart(Selin->getVictim());
-                        Selin->GetMotionMaster()->MoveChase(Selin->getVictim());
+                        Selin->AI()->AttackStart(Selin->GetVictim());
+                        Selin->GetMotionMaster()->MoveChase(Selin->GetVictim());
                     }
                 }
             }

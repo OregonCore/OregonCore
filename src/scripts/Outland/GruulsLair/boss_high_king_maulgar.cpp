@@ -519,12 +519,12 @@ struct boss_kiggler_the_crazedAI : public ScriptedAI
         else GreaterPolymorph_Timer -= diff;
 
         //LightningBolt_Timer
-		if (me->IsWithinMeleeRange(me->getVictim()))
+		if (me->IsWithinMeleeRange(me->GetVictim()))
 		{
 			//Make sure our attack is ready and we arn't currently casting
 			if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
 			{
-				me->AttackerStateUpdate(me->getVictim());
+				me->AttackerStateUpdate(me->GetVictim());
 				me->resetAttackTimer();
 			}
 		}
@@ -745,7 +745,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
         else SpellShield_Timer -= diff;
 
         //GreaterFireball_Timer
-        if (GreaterFireball_Timer <= diff && me->GetDistance(me->getVictim()) < 100)
+        if (GreaterFireball_Timer <= diff && me->GetDistance(me->GetVictim()) < 100)
         {
             DoCastVictim( SPELL_GREATER_FIREBALL);
             GreaterFireball_Timer = 3000;

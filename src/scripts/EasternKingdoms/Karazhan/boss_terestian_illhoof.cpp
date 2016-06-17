@@ -317,7 +317,7 @@ struct boss_terestianAI : public ScriptedAI
             if (PortalGUID[0] && PortalGUID[1])
             {
                 if (Creature* pPortal = Unit::GetCreature(*me, PortalGUID[urand(0, 1)]))
-                    pPortal->CastSpell(me->getVictim(), SPELL_SUMMON_FIENDISIMP, false);
+                    pPortal->CastSpell(me->GetVictim(), SPELL_SUMMON_FIENDISIMP, false);
                 SummonTimer = 5000;
             }
         }

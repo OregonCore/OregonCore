@@ -177,7 +177,7 @@ struct boss_high_botanist_freywinnAI : public ScriptedAI
 
                     me->InterruptNonMeleeSpells(true);
                     me->RemoveAllAuras();
-                    me->GetMotionMaster()->MoveChase(me->getVictim());
+                    me->GetMotionMaster()->MoveChase(me->GetVictim());
                     MoveFree = true;
                 }
                 MoveCheck_Timer = 500;

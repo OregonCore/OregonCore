@@ -104,7 +104,7 @@ struct custom_exampleAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Out of combat timers
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             //Random Say timer
             if (Say_Timer <= diff)
@@ -161,7 +161,7 @@ struct custom_exampleAI : public ScriptedAI
             //Cast spell one on our current target.
             if (rand() % 50 > 10)
                 DoCastVictim(SPELL_ONE_ALT);
-            else if (me->GetDistance(me->getVictim()) < 25)
+            else if (me->GetDistance(me->GetVictim()) < 25)
                 DoCastVictim(SPELL_ONE);
 
             Spell_1_Timer = 5000;
@@ -198,7 +198,7 @@ struct custom_exampleAI : public ScriptedAI
             {
                 //Say our line then cast uber death spell
                 DoPlaySoundToSet(me, 8588);
-                me->MonsterYell(SAY_BESERK, LANG_UNIVERSAL, me->getVictim()->GetGUID());
+                me->MonsterYell(SAY_BESERK, LANG_UNIVERSAL, me->GetVictim()->GetGUID());
                 DoCastVictim(SPELL_BESERK);
 
                 //Cast our beserk spell agian in 12 seconds if we didn't kill everyone

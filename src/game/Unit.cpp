@@ -906,10 +906,10 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
 
         if (damagetype != DOT)
         {
-            if (!getVictim())
+            if (!GetVictim())
                 /*{
                     // if have target and damage pVictim just call AI reaction
-                    if (pVictim != getVictim() && pVictim->GetTypeId() == TYPEID_UNIT && pVictim->ToCreature()->IsAIEnabled)
+                    if (pVictim != GetVictim() && pVictim->GetTypeId() == TYPEID_UNIT && pVictim->ToCreature()->IsAIEnabled)
                         pVictim->ToCreature()->AI()->AttackedBy(this);
                 }
                 else*/
@@ -9740,7 +9740,7 @@ void Unit::TauntApply(Unit* taunter)
     if (creature->HasReactState(REACT_PASSIVE))
         return;
 
-    Unit* target = getVictim();
+    Unit* target = GetVictim();
     if (target && target == taunter)
         return;
 
@@ -9768,7 +9768,7 @@ void Unit::TauntFadeOut(Unit* taunter)
     if (creature->HasReactState(REACT_PASSIVE))
         return;
 
-    Unit* target = getVictim();
+    Unit* target = GetVictim();
     if (!target || target != taunter)
         return;
 
@@ -9810,7 +9810,7 @@ Unit* Creature::SelectVictim()
 
         // The last taunt aura caster is alive an we are happy to attack him
         if (caster && caster->IsAlive())
-            return getVictim();
+            return GetVictim();
         else if (tauntAuras.size() > 1)
         {
             // We do not have last taunt aura caster but we have more taunt auras,
@@ -9830,7 +9830,7 @@ Unit* Creature::SelectVictim()
             } while (aura != tauntAuras.begin());
         }
         else
-            target = getVictim();
+            target = GetVictim();
     }
 
     if (!m_ThreatManager.isThreatListEmpty())
@@ -9838,7 +9838,7 @@ Unit* Creature::SelectVictim()
         if (!HasAuraType(SPELL_AURA_MOD_TAUNT))
             target = m_ThreatManager.getHostileTarget();
         else
-            target = getVictim();
+            target = GetVictim();
     }
 
     if (target)
@@ -11553,8 +11553,8 @@ Unit* Unit::SelectNearbyTarget(Unit* exclude, float dist) const
     VisitNearbyObject(dist, searcher);
 
     // remove current target
-    if (getVictim())
-        targets.remove(getVictim());
+    if (GetVictim())
+        targets.remove(GetVictim());
 
     if (exclude)
         targets.remove(exclude);
@@ -12461,8 +12461,8 @@ void Unit::SetStunned(bool apply)
     }
     else
     {
-        if (IsAlive() && getVictim())
-           SetTarget(getVictim()->GetGUID());
+        if (IsAlive() && GetVictim())
+           SetTarget(GetVictim()->GetGUID());
 
         // don't remove UNIT_FLAG_STUNNED for pet when owner is mounted (disabled pet's interface)
         Unit* owner = GetOwner();
@@ -12549,8 +12549,8 @@ void Unit::SetFeared(bool apply)
         {
             if (GetMotionMaster()->GetCurrentMovementGeneratorType() == FLEEING_MOTION_TYPE)
                 GetMotionMaster()->MovementExpired();
-            if (getVictim())
-                SetTarget(getVictim()->GetGUID());
+            if (GetVictim())
+                SetTarget(GetVictim()->GetGUID());
         }
     }
 
@@ -12572,8 +12572,8 @@ void Unit::SetConfused(bool apply)
         {
             if (GetMotionMaster()->GetCurrentMovementGeneratorType() == CONFUSED_MOTION_TYPE)
                 GetMotionMaster()->MovementExpired();
-            if (getVictim())
-                SetTarget(getVictim()->GetGUID());
+            if (GetVictim())
+                SetTarget(GetVictim()->GetGUID());
         }
     }
 

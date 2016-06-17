@@ -1632,7 +1632,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 if (Player* player = m_caster->ToPlayer())
                     target = ObjectAccessor::GetUnit(*player, player->GetSelection());
                 else
-                    target = m_caster->getVictim();
+                    target = m_caster->GetVictim();
 
                 if (target)
                     m_targets.setUnitTarget(target);

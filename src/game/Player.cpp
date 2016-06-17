@@ -1123,7 +1123,7 @@ void Player::Update(uint32 p_time)
 
     if (HasUnitState(UNIT_STATE_MELEE_ATTACKING) && !HasUnitState(UNIT_STATE_CASTING))
     {
-        if (Unit* victim = getVictim())
+        if (Unit* victim = GetVictim())
         {
             // default combat reach 10
             /// @todo add weapon, skill check
@@ -5238,7 +5238,7 @@ bool Player::UpdateSkillPro(uint16 SkillId, int32 Chance, uint32 step)
 void Player::UpdateWeaponSkill(WeaponAttackType attType)
 {
     // no skill gain in pvp
-    Unit* pVictim = getVictim();
+    Unit* pVictim = GetVictim();
     if (pVictim && pVictim->isCharmedOwnedByPlayerOrPlayer())
         return;
 
@@ -20490,7 +20490,7 @@ void Player::UpdateCharmedAI()
     if (!charmer->IsInCombat())
         GetMotionMaster()->MoveFollow(charmer, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
 
-    Unit* target = getVictim();
+    Unit* target = GetVictim();
     if (!target || !charmer->canAttack(target))
     {
         target = charmer->SelectNearestTarget();

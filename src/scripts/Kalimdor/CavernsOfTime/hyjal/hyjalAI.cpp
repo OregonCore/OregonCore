@@ -999,7 +999,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     break;
                 case TARGETTYPE_VICTIM:
-                    pTarget = me->getVictim();
+                    pTarget = me->GetVictim();
                     break;
                 }
 

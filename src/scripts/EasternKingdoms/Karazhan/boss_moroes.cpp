@@ -224,7 +224,7 @@ struct boss_moroesAI : public ScriptedAI
                 Temp = Creature::GetCreature((*me), AddGUID[i]);
                 if (Temp && Temp->IsAlive())
                 {
-                    Temp->AI()->AttackStart(me->getVictim());
+                    Temp->AI()->AttackStart(me->GetVictim());
                     DoZoneInCombat(Temp);
                 }
                 else
@@ -259,8 +259,8 @@ struct boss_moroesAI : public ScriptedAI
                 {
                     Temp = Unit::GetCreature((*me), AddGUID[i]);
                     if (Temp && Temp->IsAlive())
-                        if (!Temp->getVictim())
-                            Temp->AI()->AttackStart(me->getVictim());
+                        if (!Temp->GetVictim())
+                            Temp->AI()->AttackStart(me->GetVictim());
                 }
             }
             CheckAdds_Timer = 5000;

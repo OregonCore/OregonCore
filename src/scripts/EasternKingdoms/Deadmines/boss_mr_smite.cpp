@@ -130,10 +130,10 @@ struct boss_mr_smiteAI : public ScriptedAI
                     break;
                 case 5:
                     SetCombatMovement(true);
-                    me->AI()->AttackStart(me->getVictim());
+                    me->AI()->AttackStart(me->GetVictim());
                     me->SetReactState(REACT_AGGRESSIVE);
                     me->SetStandState(UNIT_STAND_STATE_STAND);
-                    me->GetMotionMaster()->MoveChase(me->getVictim(), me->m_CombatDistance);
+                    me->GetMotionMaster()->MoveChase(me->GetVictim(), me->m_CombatDistance);
                     uiPhase = 0;
                     break;
                 }

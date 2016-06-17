@@ -927,7 +927,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
 
         if (StrikeTimer < diff)
         {
-            DoCast(me->getVictim(), SPELL_STRIKE);
+            DoCast(me->GetVictim(), SPELL_STRIKE);
             StrikeTimer = urand(4000, 7000);
         }
         else StrikeTimer -= diff;

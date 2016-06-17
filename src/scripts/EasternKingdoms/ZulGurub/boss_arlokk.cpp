@@ -214,8 +214,8 @@ struct boss_arlokkAI : public ScriptedAI
             {
                 DoCastVictim( SPELL_GOUGE);
 
-                if (DoGetThreat(me->getVictim()))
-                    DoModifyThreatPercent(me->getVictim(), -80);
+                if (DoGetThreat(me->GetVictim()))
+                    DoModifyThreatPercent(me->GetVictim(), -80);
 
                 m_uiGouge_Timer = 17000 + rand() % 10000;
             }
@@ -310,8 +310,8 @@ struct mob_prowlerAI : public ScriptedAI
         if (m_uiUpdateTarget_Timer <= uiDiff)
         {
             Unit* pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID);
-            if (DoGetThreat(me->getVictim()))
-                DoModifyThreatPercent(me->getVictim(), -100);
+            if (DoGetThreat(me->GetVictim()))
+                DoModifyThreatPercent(me->GetVictim(), -100);
             me->AI()->AttackStart(pMarkedTarget);
             m_uiUpdateTarget_Timer = 2000;
         }

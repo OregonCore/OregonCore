@@ -111,8 +111,8 @@ struct mob_aquementasAI : public ScriptedAI
         {
             if (SendItem_Timer <= diff)
             {
-                if (me->getVictim()->GetTypeId() == TYPEID_PLAYER)
-                    SendItem(me->getVictim());
+                if (me->GetVictim()->GetTypeId() == TYPEID_PLAYER)
+                    SendItem(me->GetVictim());
                 SendItem_Timer = 5000;
             }
             else SendItem_Timer -= diff;
@@ -565,7 +565,7 @@ struct npc_toogaAI : public FollowerAI
     {
         FollowerAI::MoveInLineOfSight(pWho);
 
-        if (!me->getVictim() && !HasFollowState(STATE_FOLLOW_COMPLETE | STATE_FOLLOW_POSTEVENT) && pWho->GetEntry() == NPC_TORTA)
+        if (!me->GetVictim() && !HasFollowState(STATE_FOLLOW_COMPLETE | STATE_FOLLOW_POSTEVENT) && pWho->GetEntry() == NPC_TORTA)
         {
             if (me->IsWithinDistInMap(pWho, INTERACTION_DISTANCE))
             {

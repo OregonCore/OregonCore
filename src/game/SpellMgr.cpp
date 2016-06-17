@@ -2704,7 +2704,6 @@ void SpellMgr::LoadSpellCustomCooldowns()
         return;
     }
 
-
     do
     {
         Field* fields = result->Fetch();

@@ -269,19 +269,19 @@ struct boss_zuljinAI : public ScriptedAI
     {
         if (!me->IsNonMeleeSpellCast(false))
         {
-            if (me->isAttackReady() && me->IsWithinMeleeRange(me->getVictim()))
+            if (me->isAttackReady() && me->IsWithinMeleeRange(me->GetVictim()))
             {
                 if (Phase == 1 && !Overpower_Timer)
                 {
-                    uint32 health = me->getVictim()->GetHealth();
-                    me->AttackerStateUpdate(me->getVictim());
-                    if (me->getVictim() && health == me->getVictim()->GetHealth())
+                    uint32 health = me->GetVictim()->GetHealth();
+                    me->AttackerStateUpdate(me->GetVictim());
+                    if (me->GetVictim() && health == me->GetVictim()->GetHealth())
                     {
                         DoCastVictim( SPELL_OVERPOWER, false);
                         Overpower_Timer = 5000;
                     }
                 }
-                else me->AttackerStateUpdate(me->getVictim());
+                else me->AttackerStateUpdate(me->GetVictim());
                 me->resetAttackTimer();
             }
         }
@@ -374,12 +374,12 @@ struct boss_zuljinAI : public ScriptedAI
                 }
             }
             else
-                me->AI()->AttackStart(me->getVictim());
+                me->AI()->AttackStart(me->GetVictim());
             if (NextPhase == 3)
             {
                 me->RemoveAurasDueToSpell(SPELL_ENERGY_STORM);
                 Summons.DespawnEntry(CREATURE_FEATHER_VORTEX);
-                me->GetMotionMaster()->MoveChase(me->getVictim());
+                me->GetMotionMaster()->MoveChase(me->GetVictim());
             }
             break;
         default:
@@ -464,7 +464,7 @@ struct boss_zuljinAI : public ScriptedAI
                 {
                     if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
-                        TankGUID = me->getVictim()->GetGUID();
+                        TankGUID = me->GetVictim()->GetGUID();
                         me->SetSpeed(MOVE_RUN, 5.0f);
                         AttackStart(pTarget); // change victim
                         Claw_Rage_Timer = 0;
@@ -476,7 +476,7 @@ struct boss_zuljinAI : public ScriptedAI
                 {
                     if (Claw_Loop_Timer <= diff)
                     {
-                        Unit* pTarget = me->getVictim();
+                        Unit* pTarget = me->GetVictim();
                         if (!pTarget || !pTarget->isTargetableForAttack()) pTarget = Unit::GetUnit(*me, TankGUID);
                         if (!pTarget || !pTarget->isTargetableForAttack()) pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                         if (pTarget)
@@ -515,7 +515,7 @@ struct boss_zuljinAI : public ScriptedAI
                 {
                     if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
-                        TankGUID = me->getVictim()->GetGUID();
+                        TankGUID = me->GetVictim()->GetGUID();
                         me->SetSpeed(MOVE_RUN, 5.0f);
                         AttackStart(pTarget); // change victim
                         Lynx_Rush_Timer = 0;
@@ -524,7 +524,7 @@ struct boss_zuljinAI : public ScriptedAI
                 }
                 else if (!Lynx_Rush_Timer)
                 {
-                    Unit* pTarget = me->getVictim();
+                    Unit* pTarget = me->GetVictim();
                     if (!pTarget || !pTarget->isTargetableForAttack())
                     {
                         pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -624,7 +624,7 @@ struct feather_vortexAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //if the vortex reach the target, it change his target to another player
-        if (me->IsWithinMeleeRange(me->getVictim()))
+        if (me->IsWithinMeleeRange(me->GetVictim()))
             AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0));
 
         if (ResetTimer < diff)

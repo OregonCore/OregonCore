@@ -495,7 +495,7 @@ struct mob_hellfire_channelerAI : public ScriptedAI
 
     void JustSummoned(Creature* summon)
     {
-        summon->AI()->AttackStart(me->getVictim());
+        summon->AI()->AttackStart(me->GetVictim());
     }
 
     void MoveInLineOfSight(Unit*) {}

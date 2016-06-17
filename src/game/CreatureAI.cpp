@@ -90,7 +90,7 @@ void CreatureAI::DoZoneInCombat(Creature* creature /*= NULL*/, float maxRangeToN
         return;
     }
 
-    if (!creature->HasReactState(REACT_PASSIVE) && !creature->getVictim())
+    if (!creature->HasReactState(REACT_PASSIVE) && !creature->GetVictim())
     {
         if (Unit* nearTarget = creature->SelectNearestTarget(maxRangeToNearestTarget))
             creature->AI()->AttackStart(nearTarget);
@@ -109,7 +109,7 @@ void CreatureAI::DoZoneInCombat(Creature* creature /*= NULL*/, float maxRangeToN
 
     // Intended duplicated check, the code above this should select a victim
     // If it can't find a suitable attack target then we should error out.
-    if (!creature->HasReactState(REACT_PASSIVE) && !creature->getVictim())
+    if (!creature->HasReactState(REACT_PASSIVE) && !creature->GetVictim())
     {
         sLog.outError("DoZoneInCombat called for creature that has empty threat list (creature entry = %u)", creature->GetEntry());
         return;
@@ -158,7 +158,7 @@ void CreatureAI::MoveInLineOfSight_Safe(Unit* who)
 
 void CreatureAI::MoveInLineOfSight(Unit* who)
 {
-    if (me->getVictim())
+    if (me->GetVictim())
         return;
     
     if (me->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET) // non-combat pets should just stand there and look good;)
@@ -167,10 +167,10 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
     if (me->canStartAttack(who))
         AttackStart(who);
 
-    //else if (who->getVictim() && me->IsFriendlyTo(who)
+    //else if (who->GetVictim() && me->IsFriendlyTo(who)
     //    && me->IsWithinDistInMap(who, sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS))
-    //    && me->canAttack(who->getVictim()))
-    //    AttackStart(who->getVictim());
+    //    && me->canAttack(who->GetVictim()))
+    //    AttackStart(who->GetVictim());
 }
 
 // Distract creature, if player gets too close while stealthed/prowling
@@ -206,7 +206,7 @@ bool CreatureAI::UpdateVictimByReact()
     {
         if (Unit* victim = me->SelectVictim())
             AttackStart(victim);
-        return me->getVictim();
+        return me->GetVictim();
     }
     else if (me->getThreatManager().isThreatListEmpty())
     {
@@ -242,7 +242,7 @@ void CreatureAI::EnterEvadeMode()
 
 /*void CreatureAI::AttackedBy(Unit* attacker)
 {
-    if (!me->getVictim())
+    if (!me->GetVictim())
         AttackStart(attacker);
 }*/
 
@@ -263,7 +263,7 @@ bool CreatureAI::UpdateVictimWithGaze()
 
     if (me->HasReactState(REACT_PASSIVE))
     {
-        if (me->getVictim())
+        if (me->GetVictim())
             return true;
         else
             me->SetReactState(REACT_AGGRESSIVE);
@@ -271,7 +271,7 @@ bool CreatureAI::UpdateVictimWithGaze()
 
     if (Unit* victim = me->SelectVictim())
         AttackStart(victim);
-    return me->getVictim();
+    return me->GetVictim();
 }
 
 bool CreatureAI::UpdateVictim()
@@ -283,7 +283,7 @@ bool CreatureAI::UpdateVictim()
     {
         if (Unit* victim = me->SelectVictim())
             AttackStart(victim);
-        return me->getVictim();
+        return me->GetVictim();
     }
     else if (me->getThreatManager().isThreatListEmpty())
     {
@@ -324,11 +324,11 @@ void CreatureAI::SetCombatMovement(bool enable)
 
     CombatMovementEnabled = enable;
 
-    if (enable && me->getVictim())
+    if (enable && me->GetVictim())
     {
         if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE || ASSISTANCE_MOTION_TYPE)
         {
-            me->GetMotionMaster()->MoveChase(me->getVictim());
+            me->GetMotionMaster()->MoveChase(me->GetVictim());
             me->CastStop();
         }
     }

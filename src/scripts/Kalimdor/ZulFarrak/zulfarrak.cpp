@@ -60,7 +60,7 @@ struct npc_sergeant_blyAI : public ScriptedAI
     }
 
     uint32 ShieldBash_Timer;
-    uint32 Revenge_Timer;                                   //this is wrong, spell should never be used unless me->getVictim() dodge, parry or block attack. Trinity support required.
+    uint32 Revenge_Timer;                                   //this is wrong, spell should never be used unless me->GetVictim() dodge, parry or block attack. Trinity support required.
     ScriptedInstance* instance;
     uint32 postGossipStep;
     uint32 Text_Timer;

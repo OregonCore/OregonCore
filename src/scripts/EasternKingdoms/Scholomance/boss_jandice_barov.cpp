@@ -100,7 +100,7 @@ struct boss_jandicebarovAI : public ScriptedAI
             me->setFaction(35);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetDisplayId(11686);  // Invisible Model
-            DoModifyThreatPercent(me->getVictim(), -99);
+            DoModifyThreatPercent(me->GetVictim(), -99);
 
             //Summon 10 Illusions attacking random gamers
             Unit* pTarget = NULL;

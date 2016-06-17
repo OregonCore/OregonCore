@@ -289,7 +289,7 @@ struct boss_kelthuzadAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (me->getVictim() && me->IsAlive())
+        if (me->GetVictim() && me->IsAlive())
         {
             //Check for Frost Bolt
             if (FrostBolt_Timer <= diff)

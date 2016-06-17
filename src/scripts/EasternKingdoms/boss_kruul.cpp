@@ -137,9 +137,9 @@ struct boss_kruulAI : public ScriptedAI
         //Hound_Timer
         if (Hound_Timer <= diff)
         {
-            SummonHounds(me->getVictim());
-            SummonHounds(me->getVictim());
-            SummonHounds(me->getVictim());
+            SummonHounds(me->GetVictim());
+            SummonHounds(me->GetVictim());
+            SummonHounds(me->GetVictim());
 
             Hound_Timer = 45000;
         }

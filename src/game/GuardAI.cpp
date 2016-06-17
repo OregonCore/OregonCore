@@ -38,8 +38,8 @@ void GuardAI::MoveInLineOfSight(Unit* u)
     if (!me->canFly() && me->GetDistanceZ(u) > CREATURE_Z_ATTACK_RANGE)
         return;
 
-    if (!me->getVictim() && me->canAttack(u) &&
-        (u->IsHostileToPlayers() || me->IsHostileTo(u) /*|| u->getVictim() && me->IsFriendlyTo(u->getVictim())*/) &&
+    if (!me->GetVictim() && me->canAttack(u) &&
+        (u->IsHostileToPlayers() || me->IsHostileTo(u) /*|| u->GetVictim() && me->IsFriendlyTo(u->GetVictim())*/) &&
         u->isInAccessiblePlaceFor(me))
     {
         float attackRadius = me->GetAttackDistance(u);
@@ -93,17 +93,17 @@ void GuardAI::EnterEvadeMode()
 
 void GuardAI::UpdateAI(const uint32 /*diff*/)
 {
-    // update i_victimGuid if me->getVictim() != 0 and changed
-    if (!UpdateVictim() || !me->getVictim())
+    // update i_victimGuid if me->GetVictim() != 0 and changed
+    if (!UpdateVictim() || !me->GetVictim())
         return;
 
-    i_victimGuid = me->getVictim()->GetGUID();
+    i_victimGuid = me->GetVictim()->GetGUID();
 
     if (me->isAttackReady())
     {
-        if (me->IsWithinMeleeRange(me->getVictim()))
+        if (me->IsWithinMeleeRange(me->GetVictim()))
         {
-            me->AttackerStateUpdate(me->getVictim());
+            me->AttackerStateUpdate(me->GetVictim());
             me->resetAttackTimer();
         }
     }

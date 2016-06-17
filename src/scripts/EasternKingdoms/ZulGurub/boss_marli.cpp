@@ -103,7 +103,7 @@ struct boss_marliAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (me->getVictim() && me->IsAlive())
+        if (me->GetVictim() && me->IsAlive())
         {
             if (!PhaseTwo && DrainLife_Timer <= diff)
             {
@@ -206,8 +206,8 @@ struct boss_marliAI : public ScriptedAI
                     {
                         DoCast(pTarget, SPELL_CHARGE);
 
-                        if (DoGetThreat(me->getVictim()))
-                            DoModifyThreatPercent(me->getVictim(), -100);
+                        if (DoGetThreat(me->GetVictim()))
+                            DoModifyThreatPercent(me->GetVictim(), -100);
 
                         AttackStart(pTarget);
                     }

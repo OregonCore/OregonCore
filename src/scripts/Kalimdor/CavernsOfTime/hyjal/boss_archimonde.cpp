@@ -299,7 +299,7 @@ struct mob_doomfire_targettingAI : public ScriptedAI
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                 if (pTarget && pTarget->IsAlive())
                 {
-                    me->AddThreat(pTarget, DoGetThreat(me->getVictim()));
+                    me->AddThreat(pTarget, DoGetThreat(me->GetVictim()));
                     me->GetMotionMaster()->MoveChase(pTarget);
                 }
                 break;
@@ -433,7 +433,7 @@ struct boss_archimondeAI : public hyjal_trashAI
     bool CanUseFingerOfDeath()
     {
         // First we check if our current victim is in melee range or not.
-        Unit* victim = me->getVictim();
+        Unit* victim = me->GetVictim();
         if (victim && me->IsWithinDistInMap(victim, me->GetAttackDistance(victim)))
             return false;
 
@@ -460,7 +460,7 @@ struct boss_archimondeAI : public hyjal_trashAI
             if (!me->IsWithinDistInMap(pTarget, me->GetAttackDistance(pTarget)))
                 return true;                                // Cast Finger of Death
             else                                            // This target is closest, he is our new tank
-                me->AddThreat(pTarget, DoGetThreat(me->getVictim()));
+                me->AddThreat(pTarget, DoGetThreat(me->GetVictim()));
         }
 
         return false;

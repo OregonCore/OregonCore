@@ -89,8 +89,8 @@ struct boss_broodlordAI : public ScriptedAI
         {
             DoCastVictim( SPELL_KNOCKBACK);
             //Drop 50% aggro
-            if (DoGetThreat(me->getVictim()))
-                DoModifyThreatPercent(me->getVictim(), -50);
+            if (DoGetThreat(me->GetVictim()))
+                DoModifyThreatPercent(me->GetVictim(), -50);
 
             KnockBack_Timer = urand(15000, 30000);
         }

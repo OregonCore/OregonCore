@@ -94,7 +94,7 @@ struct npc_galen_goodwardAI : public npc_escortAI
         {
             if (m_uiPostEventTimer && m_uiPostEventTimer <= uiDiff)
             {
-                if (!me->getVictim() && me->IsAlive())
+                if (!me->GetVictim() && me->IsAlive())
                 {
                     Player* pPlayer = GetPlayerForEscort();
 

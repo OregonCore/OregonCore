@@ -825,7 +825,7 @@ struct npc_phase_hunterAI : public ScriptedAI
 
         if (ManaBurnTimer <= diff)
         {
-            if (me->getVictim()->getPowerType() == POWER_MANA && me->getVictim()->GetPower(POWER_MANA) > 0)
+            if (me->GetVictim()->getPowerType() == POWER_MANA && me->GetVictim()->GetPower(POWER_MANA) > 0)
             {
                 DoCastVictim(SPELL_MANA_BURN);
                 urand(8000, 18000);
@@ -1141,13 +1141,13 @@ struct npc_dr_boomAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (!me->IsWithinDistInMap(me->getVictim(), 30.0f))
+        if (!me->IsWithinDistInMap(me->GetVictim(), 30.0f))
         {
             EnterEvadeMode();
             return;
         }
 
-        if (me->isAttackReady() && me->IsWithinDistInMap(me->getVictim(), 13.0f))
+        if (me->isAttackReady() && me->IsWithinDistInMap(me->GetVictim(), 13.0f))
         {
             DoCastVictim( THROW_DYNAMITE, true);
             me->resetAttackTimer();
@@ -4447,7 +4447,7 @@ struct npc_reflection_of_ya_sixAI : public ScriptedAI
 			me->MonsterSay(YA_SIX_EXIT_CAVE_TEXT, LANG_UNIVERSAL, 0);
 		}
 
-		Unit* victim = me->getVictim();
+		Unit* victim = me->GetVictim();
 
 		if (!victim)
 		{

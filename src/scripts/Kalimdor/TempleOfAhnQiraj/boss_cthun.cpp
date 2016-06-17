@@ -1035,7 +1035,7 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
             return;
 
         //EvadeTimer
-        if (!me->IsWithinMeleeRange(me->getVictim()))
+        if (!me->IsWithinMeleeRange(me->GetVictim()))
         {
             if (EvadeTimer <= diff)
             {
@@ -1136,7 +1136,7 @@ struct giant_claw_tentacleAI : public Scripted_NoMovementAI
             return;
 
         //EvadeTimer
-        if (!me->IsWithinMeleeRange(me->getVictim()))
+        if (!me->IsWithinMeleeRange(me->GetVictim()))
         {
             if (EvadeTimer <= diff)
             {

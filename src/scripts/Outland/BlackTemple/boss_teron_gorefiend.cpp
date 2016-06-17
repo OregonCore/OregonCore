@@ -348,7 +348,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
                     CAST_AI(mob_shadowy_constructAI, Construct->AI())->GhostGUID = GhostGUID;
                     Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                     if (!pTarget)                             // someone's trying to solo.
-                        pTarget = me->getVictim();
+                        pTarget = me->GetVictim();
 
                     if (pTarget)
                         Construct->GetMotionMaster()->MoveChase(pTarget);
@@ -401,7 +401,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
                 {
                     Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                     if (!pTarget)
-                        pTarget = me->getVictim();
+                        pTarget = me->GetVictim();
 
                     if (pTarget)
                         Shadow->AI()->AttackStart(pTarget);
@@ -438,7 +438,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         {
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (!pTarget)
-                pTarget = me->getVictim();
+                pTarget = me->GetVictim();
 
             if (pTarget)
             {
@@ -464,7 +464,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
 
             if (!pTarget)
-               pTarget = me->getVictim();
+               pTarget = me->GetVictim();
 
             if (pTarget && pTarget->IsAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
             {

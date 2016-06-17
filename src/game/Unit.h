@@ -952,8 +952,8 @@ class Unit : public WorldObject
         }
         Unit* getAttackerForHelper()                       // If someone wants to help, who to give them
         {
-            if (getVictim() != NULL)
-                return getVictim();
+            if (GetVictim() != NULL)
+                return GetVictim();
 
             if (!m_attackers.empty())
                 return *(m_attackers.begin());
@@ -969,10 +969,7 @@ class Unit : public WorldObject
             return m_attackers;
         }
         bool isAttackingPlayer() const;
-        Unit* getVictim() const
-        {
-            return m_attacking;
-        }
+        Unit* GetVictim() const { return m_attacking; }
 
         void CombatStop(bool cast = false);
         void CombatStopWithPets(bool cast = false);
