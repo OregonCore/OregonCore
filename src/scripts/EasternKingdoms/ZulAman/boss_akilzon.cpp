@@ -298,10 +298,10 @@ struct boss_akilzonAI : public ScriptedAI
         if (StaticDisruption_Timer <= diff)
         {
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (!pTarget) pTarget = me->getVictim();
+            if (!pTarget) pTarget = me->GetVictim();
             TargetGUID = pTarget->GetGUID();
             DoCast(pTarget, SPELL_STATIC_DISRUPTION, false);
-            me->SetInFront(me->getVictim());
+            me->SetInFront(me->GetVictim());
             StaticDisruption_Timer = (diff - StaticDisruption_Timer) + (10 + rand() % 8) * 1000; // < 20s
 
             /*if (float dist = me->IsWithinDist3d(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 5.0f) dist = 5.0f;
@@ -313,7 +313,7 @@ struct boss_akilzonAI : public ScriptedAI
         if (GustOfWind_Timer <= diff)
         {
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (!pTarget) pTarget = me->getVictim();
+            if (!pTarget) pTarget = me->GetVictim();
             DoCast(pTarget, SPELL_GUST_OF_WIND);
             GustOfWind_Timer = (diff - GustOfWind_Timer) + (20 + rand() % 10) * 1000; //20 to 30 seconds(bosskillers)
         }
@@ -401,8 +401,8 @@ struct boss_akilzonAI : public ScriptedAI
 
                     if (Creature* pCreature = me->SummonCreature(MOB_SOARING_EAGLE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
                     {
-                        pCreature->AddThreat(me->getVictim(), 1.0f);
-                        pCreature->AI()->AttackStart(me->getVictim());
+                        pCreature->AddThreat(me->GetVictim(), 1.0f);
+                        pCreature->AI()->AttackStart(me->GetVictim());
                         BirdGUIDs[i] = pCreature->GetGUID();
                     }
                 }

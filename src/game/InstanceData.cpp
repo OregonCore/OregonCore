@@ -89,7 +89,7 @@ void InstanceData::UpdateMinionState(Creature* minion, EncounterState state)
     case IN_PROGRESS:
         if (!minion->IsAlive())
             minion->Respawn();
-        else if (!minion->getVictim())
+        else if (!minion->GetVictim())
             minion->AI()->DoZoneInCombat();
     default:
         break;

@@ -259,7 +259,7 @@ struct advisorbase_ai : public ScriptedAI
 
                 Unit* pTarget = Unit::GetUnit((*me), DelayRes_Target);
                 if (!pTarget)
-                    pTarget = me->getVictim();
+                    pTarget = me->GetVictim();
 
                 DoResetThreat();
                 AttackStart(pTarget);
@@ -402,7 +402,7 @@ struct boss_kaelthasAI : public ScriptedAI
             float attackRadius = me->GetAttackDistance(who);
             if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
             {
-                if (!me->getVictim() && Phase >= 4)
+                if (!me->GetVictim() && Phase >= 4)
                 {
                     who->RemoveAurasDueToSpell(SPELL_AURA_MOD_STEALTH);
                     AttackStart(who);
@@ -754,7 +754,7 @@ struct boss_kaelthasAI : public ScriptedAI
                                 //interruptable
                                 me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, false);
                                 int32 dmg = 20000 + rand() % 5000;
-                                me->CastCustomSpell(me->getVictim(), SPELL_FIREBALL, &dmg, 0, 0, false);
+                                me->CastCustomSpell(me->GetVictim(), SPELL_FIREBALL, &dmg, 0, 0, false);
                                 IsCastingFireball = true;
                                 Fireball_Timer = 2500;
                             }
@@ -889,7 +889,7 @@ struct boss_kaelthasAI : public ScriptedAI
                         DoCast(me, SPELL_EXPLODE);
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         Phase = 6;
-                        AttackStart(me->getVictim());
+                        AttackStart(me->GetVictim());
                     }
                     else Phase_Timer -= diff;
                 }
@@ -993,7 +993,7 @@ struct boss_kaelthasAI : public ScriptedAI
                             InGravityLapse = false;
                             GravityLapse_Timer = 60000;
                             GravityLapse_Phase = 0;
-                            AttackStart(me->getVictim());
+                            AttackStart(me->GetVictim());
                             break;
                         }
                     }
@@ -1487,7 +1487,7 @@ struct mob_phoenix_egg_tkAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        summoned->AddThreat(me->getVictim(), 0.0f);
+        summoned->AddThreat(me->GetVictim(), 0.0f);
         summoned->CastSpell(summoned, SPELL_REBIRTH, false);
     }
 

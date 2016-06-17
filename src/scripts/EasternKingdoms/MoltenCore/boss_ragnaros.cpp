@@ -259,12 +259,12 @@ struct boss_ragnarosAI : public Scripted_NoMovementAI
         else Submerge_Timer -= diff;
 
         //If we are within range melee the target
-        if (me->IsWithinMeleeRange(me->getVictim()))
+        if (me->IsWithinMeleeRange(me->GetVictim()))
         {
             //Make sure our attack is ready and we arn't currently casting
             if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
             {
-                me->AttackerStateUpdate(me->getVictim());
+                me->AttackerStateUpdate(me->GetVictim());
                 me->resetAttackTimer();
             }
         }

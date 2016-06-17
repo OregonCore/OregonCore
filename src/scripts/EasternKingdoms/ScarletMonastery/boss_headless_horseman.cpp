@@ -287,7 +287,7 @@ struct mob_headAI : public ScriptedAI
             DoCast(me, SPELL_HEAD, false);
             SaySound(SAY_LOST_HEAD);
             me->GetMotionMaster()->Clear(false);
-            me->GetMotionMaster()->MoveFleeing(caster->getVictim());
+            me->GetMotionMaster()->MoveFleeing(caster->GetVictim());
         }
     }
     void Disappear();//we must set returned=true(this will prevent from "body calls head" while head flying to body), see function below
@@ -298,9 +298,9 @@ struct mob_headAI : public ScriptedAI
             if (wait <= diff)
             {
                 wait = 1000;
-                if (!me->getVictim()) return;
+                if (!me->GetVictim()) return;
                 me->GetMotionMaster()->Clear(false);
-                me->GetMotionMaster()->MoveFleeing(me->getVictim());
+                me->GetMotionMaster()->MoveFleeing(me->GetVictim());
             }
             else wait -= diff;
 
@@ -511,7 +511,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
         std::list<Player*>::const_iterator j;
 
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-            if ((me->IsWithinLOSInMap(i->GetSource()) || !checkLoS) && me->getVictim() != i->GetSource() &&
+            if ((me->IsWithinLOSInMap(i->GetSource()) || !checkLoS) && me->GetVictim() != i->GetSource() &&
                 me->IsWithinDistInMap(i->GetSource(), range) && i->GetSource()->IsAlive())
                 temp.push_back(i->GetSource());
 
@@ -799,7 +799,7 @@ struct mob_pulsing_pumpkinAI : public ScriptedAI
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
             DoCast(me, SPELL_SPROUT_BODY, true);
             me->UpdateEntry(PUMPKIN_FIEND);
-            DoStartMovement(me->getVictim());
+            DoStartMovement(me->GetVictim());
         }
     }
 
@@ -819,7 +819,7 @@ struct mob_pulsing_pumpkinAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!who || !who->isTargetableForAttack() || !me->IsHostileTo(who) || me->getVictim())
+        if (!who || !who->isTargetableForAttack() || !me->IsHostileTo(who) || me->GetVictim())
             return;
 
         me->AddThreat(who, 0.0f);

@@ -705,7 +705,7 @@ void Creature::RegenerateHealth()
 
 void Creature::DoFleeToGetAssistance()
 {
-    if (!getVictim())
+    if (!GetVictim())
         return;
 
     if (HasAuraType(SPELL_AURA_PREVENTS_FLEEING))
@@ -719,7 +719,7 @@ void Creature::DoFleeToGetAssistance()
         CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
         Cell cell(p);
         cell.SetNoCreate();
-        Oregon::NearestAssistCreatureInCreatureRangeCheck u_check(this, getVictim(), radius);
+        Oregon::NearestAssistCreatureInCreatureRangeCheck u_check(this, GetVictim(), radius);
         Oregon::CreatureLastSearcher<Oregon::NearestAssistCreatureInCreatureRangeCheck> searcher(creature, u_check);
 
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestAssistCreatureInCreatureRangeCheck>, GridTypeMapContainer > grid_creature_searcher(searcher);
@@ -1829,7 +1829,7 @@ SpellEntry const* Creature::reachWithSpellCure(Unit* victim)
         float range = GetSpellMaxRange(srange);
         float minrange = GetSpellMinRange(srange);
         float dist = GetDistance(victim);
-        //if (!isInFront(pVictim, range) && spellInfo->AttributesEx)
+        //if (!isInFront(victim, range) && spellInfo->AttributesEx)
         //    continue;
         if (dist > range || dist < minrange)
             continue;
@@ -1908,7 +1908,7 @@ void Creature::SendAIReaction(AiReaction reactionType)
 
 void Creature::CallAssistance()
 {
-    if (!m_AlreadyCallAssistance && getVictim() && !IsPet() && !isCharmed())
+    if (!m_AlreadyCallAssistance && GetVictim() && !IsPet() && !isCharmed())
     {
         SetNoCallAssistance(true);
 
@@ -1923,7 +1923,7 @@ void Creature::CallAssistance()
                 Cell cell(p);
                 cell.SetNoCreate();
 
-                Oregon::AnyAssistCreatureInRangeCheck u_check(this, getVictim(), radius);
+                Oregon::AnyAssistCreatureInRangeCheck u_check(this, GetVictim(), radius);
                 Oregon::CreatureListSearcher<Oregon::AnyAssistCreatureInRangeCheck> searcher(assistList, u_check);
 
                 TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AnyAssistCreatureInRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
@@ -1933,7 +1933,7 @@ void Creature::CallAssistance()
 
             if (!assistList.empty())
             {
-                AssistDelayEvent* e = new AssistDelayEvent(getVictim()->GetGUID(), *this);
+                AssistDelayEvent* e = new AssistDelayEvent(GetVictim()->GetGUID(), *this);
                 while (!assistList.empty())
                 {
                     // Pushing guids because in delay can happen some creature gets despawned => invalid pointer
@@ -1948,14 +1948,14 @@ void Creature::CallAssistance()
 
 void Creature::CallForHelp(float radius)
 {
-    if (radius <= 0.0f || !getVictim() || IsPet() || isCharmed())
+    if (radius <= 0.0f || !GetVictim() || IsPet() || isCharmed())
         return;
 
     CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
     Cell cell(p);
     cell.SetNoCreate();
 
-    Oregon::CallOfHelpCreatureInRangeDo u_do(this, getVictim(), radius);
+    Oregon::CallOfHelpCreatureInRangeDo u_do(this, GetVictim(), radius);
     Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo> worker(u_do);
 
     TypeContainerVisitor<Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo>, GridTypeMapContainer >  grid_creature_searcher(worker);

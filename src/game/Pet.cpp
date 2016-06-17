@@ -317,6 +317,9 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
         _LoadSpells();
         _LoadSpellCooldowns();
         LearnPetPassives();
+        if (map->IsBattleArena())
+            RemoveArenaAuras();
+
         CastPetAuras(current);
     }
 
@@ -340,6 +343,14 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
             for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
                 m_declinedname->name[i] = fields[i].GetCppString();
         }
+
+        // set speed to be at least the base character speed.
+        // pet shoudln't sync its speed with master because some of its
+        // talents wouldn't be useful at all i.e. speed boosts, but the pet
+        // should be also able to follow its master at normal speed levels
+        for (uint8 i = 0; i < MAX_MOVE_TYPE; ++i)
+            if (baseMoveSpeed[i] > GetSpeedRate(UnitMoveType(i)))
+                SetSpeed(UnitMoveType(i), baseMoveSpeed[i], true);
     }
 
     return true;

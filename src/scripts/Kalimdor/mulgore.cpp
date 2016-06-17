@@ -98,7 +98,7 @@ struct npc_kyle_the_frenziedAI : public ScriptedAI
 
     void SpellHit(Unit* pCaster, SpellEntry const* pSpell)
     {
-        if (!me->getVictim() && !m_bEvent && pSpell->Id == SPELL_LUNCH)
+        if (!me->GetVictim() && !m_bEvent && pSpell->Id == SPELL_LUNCH)
         {
             if (pCaster->GetTypeId() == TYPEID_PLAYER)
                 m_uiPlayerGUID = pCaster->GetGUID();

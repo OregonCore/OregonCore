@@ -211,7 +211,7 @@ CreatureAI* GetAI_boss_rivendare_naxx(Creature* pCreature)
 #define SAY_KORT_DEATH                  -1533057
 
 #define SPELL_MARK_OF_KORTHAZZ        28832
-#define SPELL_METEOR                     26558                         // me->getVictim() auto-area spell but with a core problem
+#define SPELL_METEOR                     26558                         // me->GetVictim() auto-area spell but with a core problem
 
 #define C_SPIRIT_OF_KORTHAZZ          16778
 

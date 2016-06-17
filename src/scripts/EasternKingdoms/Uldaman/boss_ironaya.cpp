@@ -65,7 +65,7 @@ struct boss_ironayaAI : public ScriptedAI
             // current aggro target is knocked away pick new target
             Unit* Target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
 
-            if (!Target || Target == me->getVictim())
+            if (!Target || Target == me->GetVictim())
                 Target = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
 
             if (Target)

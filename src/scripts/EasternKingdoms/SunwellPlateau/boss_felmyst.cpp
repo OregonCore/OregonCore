@@ -563,7 +563,7 @@ struct mob_felmyst_vaporAI : public ScriptedAI
     {
         if (startFollow)
         {
-            if (!me->getVictim())
+            if (!me->GetVictim())
             {
                 if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 {

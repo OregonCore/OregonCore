@@ -68,14 +68,14 @@ void npc_escortAI::AttackStart(Unit* pWho)
 //see followerAI
 bool npc_escortAI::AssistPlayerInCombat(Unit* pWho)
 {
-    if (!pWho || !pWho->getVictim())
+    if (!pWho || !pWho->GetVictim())
         return false;
 
     if (!(me->GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_CAN_ASSIST))
         return false;
 
     //not a player
-    if (!pWho->getVictim()->GetCharmerOrOwnerPlayerOrPlayerItself())
+    if (!pWho->GetVictim()->GetCharmerOrOwnerPlayerOrPlayerItself())
         return false;
 
     //never attack friendly
@@ -86,7 +86,7 @@ bool npc_escortAI::AssistPlayerInCombat(Unit* pWho)
     if (me->IsWithinDistInMap(pWho, GetMaxPlayerDistance()) && me->IsWithinLOSInMap(pWho))
     {
         //already fighting someone?
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             AttackStart(pWho);
             return true;
@@ -117,7 +117,7 @@ void npc_escortAI::MoveInLineOfSight(Unit* pWho)
             float fAttackRadius = me->GetAttackDistance(pWho);
             if (me->IsWithinDistInMap(pWho, fAttackRadius) && me->IsWithinLOSInMap(pWho))
             {
-                if (!me->getVictim())
+                if (!me->GetVictim())
                 {
                     // Clear distracted state on combat
                     if (me->HasUnitState(UNIT_STATE_DISTRACTED))
@@ -238,7 +238,7 @@ bool npc_escortAI::IsPlayerOrGroupInRange()
 void npc_escortAI::UpdateAI(const uint32 uiDiff)
 {
     //Waypoint Updating
-    if (HasEscortState(STATE_ESCORT_ESCORTING) && !me->getVictim() && m_uiWPWaitTimer && !HasEscortState(STATE_ESCORT_RETURNING))
+    if (HasEscortState(STATE_ESCORT_ESCORTING) && !me->GetVictim() && m_uiWPWaitTimer && !HasEscortState(STATE_ESCORT_RETURNING))
     {
         if (m_uiWPWaitTimer <= uiDiff)
         {
@@ -301,7 +301,7 @@ void npc_escortAI::UpdateAI(const uint32 uiDiff)
     }
 
     //Check if player or any member of his group is within range
-    if (HasEscortState(STATE_ESCORT_ESCORTING) && m_uiPlayerGUID && !me->getVictim() && !HasEscortState(STATE_ESCORT_RETURNING))
+    if (HasEscortState(STATE_ESCORT_ESCORTING) && m_uiPlayerGUID && !me->GetVictim() && !HasEscortState(STATE_ESCORT_RETURNING))
     {
         if (m_uiPlayerCheckTimer <= uiDiff)
         {
@@ -459,7 +459,7 @@ void npc_escortAI::SetRun(bool bRun)
 //@todo get rid of this many variables passed in function.
 void npc_escortAI::Start(bool bIsActiveAttacker, bool bRun, uint64 uiPlayerGUID, const Quest* pQuest, bool bInstantRespawn, bool bCanLoopPath)
 {
-    if (me->getVictim())
+    if (me->GetVictim())
     {
         error_log("OSCR ERROR: EscortAI attempt to Start while in combat. Scriptname: %s, creature entry: %u", me->GetScriptName().c_str(), me->GetEntry());
         return;

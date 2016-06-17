@@ -178,8 +178,8 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
                 m_uiCrusaderStrike_Timer = 10000;
                 m_uiHammerOfJustice_Timer = 10000;
 
-                if (me->getVictim())
-                    me->GetMotionMaster()->MoveChase(me->getVictim());
+                if (me->GetVictim())
+                    me->GetMotionMaster()->MoveChase(me->GetVictim());
 
                 m_bHeal = true;
             }

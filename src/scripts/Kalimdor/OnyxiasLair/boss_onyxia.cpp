@@ -138,7 +138,7 @@ struct boss_onyxiaAI : public ScriptedAI
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             me->SetHover(false);
             me->GetMotionMaster()->MovePoint(0, -10.6155f, -219.357f, -87.7344f);
-            DoStartMovement(me->getVictim());
+            DoStartMovement(me->GetVictim());
             me->SetWalk(false);
             DoScriptText(SAY_PHASE_3_TRANS, me);
         }

@@ -41,8 +41,8 @@ void RotateMovementGenerator::Initialize(Unit& owner)
     if (owner.HasUnitState(UNIT_STATE_MOVE))
         owner.StopMoving();
 
-    if (owner.getVictim())
-        owner.SetInFront(owner.getVictim());
+    if (owner.GetVictim())
+        owner.SetInFront(owner.GetVictim());
 
     owner.AddUnitState(UNIT_STATE_ROTATING);
 

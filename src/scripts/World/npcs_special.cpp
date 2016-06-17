@@ -1435,7 +1435,7 @@ struct npc_force_of_nature_treantsAI : public ScriptedAI
         if (!Owner)
             return;
 
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             if (Unit* target = Owner->getAttackerForHelper())
                 AttackStart(target);
@@ -1510,7 +1510,7 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
         if (!Owner)
             return;
 
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             if (Owner->getAttackerForHelper())
                 AttackStart(Owner->getAttackerForHelper());

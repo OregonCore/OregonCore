@@ -403,7 +403,7 @@ struct boss_nalorakkAI : public ScriptedAI
 
             if (Mangle_Timer <= diff)
             {
-                if (me->getVictim() && !me->getVictim()->HasAura(SPELL_MANGLEEFFECT, 0))
+                if (me->GetVictim() && !me->GetVictim()->HasAura(SPELL_MANGLEEFFECT, 0))
                 {
                     DoCastVictim( SPELL_MANGLE);
                     Mangle_Timer = 1000;

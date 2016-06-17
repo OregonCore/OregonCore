@@ -329,7 +329,7 @@ struct npc_shatteredscoutAI : public ScriptedAI
 
 	void MoveInLineOfSight(Unit* who)
 	{
-		if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor(me))
+		if (!me->GetVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor(me))
 		{
 			if (!spotted && me->IsWithinDistInMap(who, 65))
 			{

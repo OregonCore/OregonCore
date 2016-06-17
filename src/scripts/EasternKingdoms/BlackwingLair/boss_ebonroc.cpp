@@ -81,7 +81,7 @@ struct boss_ebonrocAI : public ScriptedAI
         }
         else ShadowOfEbonroc_Timer -= diff;
 
-        if (me->getVictim()->HasAura(SPELL_SHADOWOFEBONROC, 0))
+        if (me->GetVictim()->HasAura(SPELL_SHADOWOFEBONROC, 0))
         {
             if (Heal_Timer <= diff)
             {

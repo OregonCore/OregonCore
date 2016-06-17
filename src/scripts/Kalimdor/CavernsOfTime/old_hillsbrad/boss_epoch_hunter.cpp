@@ -361,7 +361,7 @@ struct boss_epoch_hunterAI : public ScriptedAI
             if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(false);
 
-            DoCast(me->getVictim(),SPELL_SAND_BREATH);
+            DoCast(me->GetVictim(),SPELL_SAND_BREATH);
 
             DoScriptText(RAND(SAY_BREATH1, SAY_BREATH2), me);
 

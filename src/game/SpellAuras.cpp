@@ -3300,7 +3300,7 @@ void Aura::HandleModPossessPet(bool apply, bool Real)
             // Follow owner only if not fighting or owner didn't click "stay" at new location
             // This may be confusing because pet bar shows "stay" when under the spell but it retains
             //  the "follow" flag. Player MUST click "stay" while under the spell.
-            if (!pet->getVictim() && !pet->GetCharmInfo()->HasCommandState(COMMAND_STAY))
+            if (!pet->GetVictim() && !pet->GetCharmInfo()->HasCommandState(COMMAND_STAY))
             {
                 m_target->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
                 m_target->GetCharmInfo()->SetCommandState(COMMAND_FOLLOW);

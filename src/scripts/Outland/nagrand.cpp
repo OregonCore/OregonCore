@@ -657,7 +657,7 @@ struct npc_maghar_captiveAI : public npc_escortAI
     void UpdateAI(const uint32 uiDiff)
     {
         npc_escortAI::UpdateAI(uiDiff);
-        if (!me->getVictim())
+        if (!me->GetVictim())
             return;
 
         if (m_uiChainLightningTimer <= uiDiff)
@@ -1456,7 +1456,7 @@ struct npc_kurenai_captiveAI : public npc_escortAI
     {
         npc_escortAI::UpdateAI(uiDiff);
 
-        if (!me->getVictim())
+        if (!me->GetVictim())
             return;
 
         if (m_uiChainLightningTimer <= uiDiff)

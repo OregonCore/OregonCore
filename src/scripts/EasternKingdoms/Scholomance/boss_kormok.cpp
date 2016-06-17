@@ -88,10 +88,10 @@ struct boss_kormokAI : public ScriptedAI
         if (Minion_Timer <= diff)
         {
             //Cast
-            SummonMinions(me->getVictim());
-            SummonMinions(me->getVictim());
-            SummonMinions(me->getVictim());
-            SummonMinions(me->getVictim());
+            SummonMinions(me->GetVictim());
+            SummonMinions(me->GetVictim());
+            SummonMinions(me->GetVictim());
+            SummonMinions(me->GetVictim());
 
             Minion_Timer = 12000;
         }
@@ -101,8 +101,8 @@ struct boss_kormokAI : public ScriptedAI
         if (!Mages && HealthBelowPct(25))
         {
             //Cast
-            SummonMages(me->getVictim());
-            SummonMages(me->getVictim());
+            SummonMages(me->GetVictim());
+            SummonMages(me->GetVictim());
             Mages = true;
         }
 

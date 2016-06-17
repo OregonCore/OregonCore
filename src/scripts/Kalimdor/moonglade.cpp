@@ -748,7 +748,7 @@ struct npc_remulosAI : public npc_escortAI
 
     void FindVictim(Creature* pCreature)
     {
-        if (!pCreature->getVictim())
+        if (!pCreature->GetVictim())
         {
             if (PhantasmPhase)
             {
@@ -1067,7 +1067,7 @@ struct npc_remulosAI : public npc_escortAI
         {
             if (Creature* pEranikus = Unit::GetCreature(*me, EranikusGUID))
             {
-                if (Unit* pTarget = pEranikus->getVictim())
+                if (Unit* pTarget = pEranikus->GetVictim())
                     if (pTarget->GetHealth() * 100 < pTarget->GetMaxHealth() * 90)
                         return pTarget;
                 return NULL;
@@ -1432,7 +1432,7 @@ struct npc_eranikusAI : public ScriptedAI
 
         void FindVictim()
         {
-            if (!me->getVictim())
+            if (!me->GetVictim())
             {
                 if (Unit* pTarget = me->SelectNearestTarget(20))
                 {
