@@ -2350,6 +2350,9 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
             if (m_caster->ToPlayer()->HasSpellCooldown(spellInfo->Id))
                 m_caster->ToPlayer()->RemoveSpellCooldown(spellInfo->Id);
 
+           // Remove from combat
+           m_caster->CombatStop();
+
             m_TriggerSpells.push_back(spellInfo);
             return;
         }
