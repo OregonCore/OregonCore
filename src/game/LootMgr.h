@@ -378,6 +378,7 @@ struct Loot
 
         LootItem* LootItemInSlot(uint32 lootslot, Player* player, QuestItem** qitem = NULL, QuestItem** ffaitem = NULL, QuestItem** conditem = NULL);
         uint32 GetMaxSlotInLootFor(Player* player) const;
+        bool hasItemForAll() const;
         bool hasItemFor(Player* player) const;
         bool hasOverThresholdItem() const;
 

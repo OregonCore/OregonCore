@@ -446,13 +446,10 @@ void WorldSession::DoLootRelease(uint64 lguid)
                 loot->roundRobinPlayer = 0;
 
                 if (Group* group = player->GetGroup())
-                {
                     group->SendLooter(pCreature, NULL);
-
-                    // force update of dynamic flags, otherwise other group's players still not able to loot.
-                    pCreature->ForceValuesUpdateAtIndex(UNIT_DYNAMIC_FLAGS);
-                }
             }
+            // force update of dynamic flags, otherwise other group's players still not able to loot.
+            pCreature->ForceValuesUpdateAtIndex(UNIT_DYNAMIC_FLAGS);
         }
     }
 
