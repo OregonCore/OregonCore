@@ -2314,6 +2314,9 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->speed = SPEED_CHARGE;
                 mSpellCustomAttr[i] |= SPELL_ATTR_CU_CHARGE;
                 break;
+            case SPELL_EFFECT_PICKPOCKET:
+                mSpellCustomAttr[i] |= SPELL_ATTR_CU_PICKPOCKET;
+                break;
             case SPELL_EFFECT_TRIGGER_SPELL:
                 if (IsPositionTarget(spellInfo->EffectImplicitTargetA[j]) ||
                     spellInfo->Targets & (TARGET_FLAG_SOURCE_LOCATION | TARGET_FLAG_DEST_LOCATION))

@@ -1095,6 +1095,14 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         // Do triggers for unit (reflect triggers passed on hit phase for correct drop charge)
         if (missInfo != SPELL_MISS_REFLECT)
             caster->ProcDamageAndSpell(unit, procAttacker, procVictim, procEx, 0, m_attackType, m_spellInfo, m_canTrigger);
+
+        // Failed Pickpocket, reveal rogue
+        if (missInfo == SPELL_MISS_RESIST && m_customAttr & SPELL_ATTR_CU_PICKPOCKET && unitTarget->GetTypeId() == TYPEID_UNIT)
+        {
+            m_caster->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TALK);
+            if (unitTarget->ToCreature()->IsAIEnabled)
+                unitTarget->ToCreature()->AI()->AttackStart(m_caster);
+        }
     }
 
     // Call scripted function for AI if this spell is casted upon a creature (except pets)

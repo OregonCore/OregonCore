@@ -4013,23 +4013,7 @@ void Spell::EffectPickPocket(SpellEffIndex /*effIndex*/)
 
     // victim have to be alive and humanoid or undead
     if (unitTarget->IsAlive() && (unitTarget->GetCreatureTypeMask() &CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD) != 0)
-    {
-        int32 chance = 10 + int32(m_caster->getLevel()) - int32(unitTarget->getLevel());
-
-        if (chance > irand(0, 19))
-        {
-            // Stealing successful
-            //sLog.outDebug("Sending loot from pickpocket");
-            m_caster->ToPlayer()->SendLoot(unitTarget->GetGUID(), LOOT_PICKPOCKETING);
-        }
-        else
-        {
-            // Reveal action + get attack
-            m_caster->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TALK);
-            if (unitTarget->ToCreature()->IsAIEnabled)
-                unitTarget->ToCreature()->AI()->AttackStart(m_caster);
-        }
-    }
+        m_caster->ToPlayer()->SendLoot(unitTarget->GetGUID(), LOOT_PICKPOCKETING);
 }
 
 void Spell::EffectAddFarsight(SpellEffIndex effIndex)
