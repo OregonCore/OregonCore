@@ -194,7 +194,7 @@ class Pet : public Guardian
         }
 
         void RegenerateFocus();
-        void LooseHappiness();
+        void LoseHappiness();
         void TickLoyaltyChange();
         void ModifyLoyalty(int32 addvalue);
         HappinessState GetHappinessState();

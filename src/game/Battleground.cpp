@@ -335,11 +335,12 @@ void Battleground::Update(uint32 diff)
     {
         for (std::vector<uint64>::iterator itr = m_ResurrectQueue.begin(); itr != m_ResurrectQueue.end(); ++itr)
         {
-            Player* plr = sObjectMgr.GetPlayer(*itr);
-            if (!plr)
+            Player* player = sObjectMgr.GetPlayer(*itr);
+            if (!player)
                 continue;
-            plr->ResurrectPlayer(1.0f);
-            plr->CastSpell(plr, SPELL_SPIRIT_HEAL_MANA, true);
+            player->ResurrectPlayer(1.0f);
+            player->CastSpell(player, SPELL_SUMMON_PET, true);
+            player->CastSpell(player, SPELL_SPIRIT_HEAL_MANA, true);
             ObjectAccessor::Instance().ConvertCorpseForPlayer(*itr);
         }
         m_ResurrectQueue.clear();
