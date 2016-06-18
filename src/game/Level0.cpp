@@ -81,8 +81,8 @@ bool ChatHandler::HandleStartCommand(const char* /*args*/)
         return false;
     }
 
-    // cast spell Stuck
-    chr->CastSpell(chr, 7355, false);
+    // Teleport to starting location
+    chr->TeleportTo(chr->GetStartPosition());
     return true;
 }
 

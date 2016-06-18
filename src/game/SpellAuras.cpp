@@ -2855,6 +2855,9 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
                 break;
         }
 
+        // Remove auras linked to forms, such as Vanish and Stealth
+        m_target->RemoveAurasWithAttribute(SPELL_ATTR2_UNK1);
+
         /* We need to re-apply any of transform auras:
            Great example is OHF, when you are in cat form and unshapeshift,
            you should be a human not your original model */

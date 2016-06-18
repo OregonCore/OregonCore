@@ -2350,6 +2350,9 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
             if (m_caster->ToPlayer()->HasSpellCooldown(spellInfo->Id))
                 m_caster->ToPlayer()->RemoveSpellCooldown(spellInfo->Id);
 
+           // Remove from combat
+           m_caster->CombatStop();
+
             m_TriggerSpells.push_back(spellInfo);
             return;
         }
@@ -4010,23 +4013,7 @@ void Spell::EffectPickPocket(SpellEffIndex /*effIndex*/)
 
     // victim have to be alive and humanoid or undead
     if (unitTarget->IsAlive() && (unitTarget->GetCreatureTypeMask() &CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD) != 0)
-    {
-        int32 chance = 10 + int32(m_caster->getLevel()) - int32(unitTarget->getLevel());
-
-        if (chance > irand(0, 19))
-        {
-            // Stealing successful
-            //sLog.outDebug("Sending loot from pickpocket");
-            m_caster->ToPlayer()->SendLoot(unitTarget->GetGUID(), LOOT_PICKPOCKETING);
-        }
-        else
-        {
-            // Reveal action + get attack
-            m_caster->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TALK);
-            if (unitTarget->ToCreature()->IsAIEnabled)
-                unitTarget->ToCreature()->AI()->AttackStart(m_caster);
-        }
-    }
+        m_caster->ToPlayer()->SendLoot(unitTarget->GetGUID(), LOOT_PICKPOCKETING);
 }
 
 void Spell::EffectAddFarsight(SpellEffIndex effIndex)
@@ -5063,6 +5050,40 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
         {
             switch (m_spellInfo->Id)
             {
+            // Pet Summoned
+            case 6962:
+            {
+                Player* player = GetCaster()->ToPlayer();
+                if (player->GetLastPetNumber())
+                {
+                    PetType newPetType = (player->getClass() == CLASS_HUNTER) ? HUNTER_PET : SUMMON_PET;
+                    Pet* newPet = new Pet(player, newPetType);
+                    if (newPet->LoadPetFromDB(player, 0, player->GetLastPetNumber(), true))
+                    {
+                        // revive the pet if it is dead
+                        if (newPet->getDeathState() == DEAD)
+                            newPet->setDeathState(ALIVE);
+
+                        newPet->SetFullHealth();
+                        newPet->SetPower(newPet->getPowerType(), newPet->GetMaxPower(newPet->getPowerType()));
+
+                        // Exact numbers are unknown, but we should increase happiness state
+                        newPet->SetPower(POWER_HAPPINESS, HAPPINESS_LEVEL_SIZE * 2);
+
+                        switch (newPet->GetEntry())
+                        {
+                        case 11859:
+                        case 89:
+                            newPet->SetEntry(416);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                    else
+                        delete newPet;
+                }
+            }
             // Bending Shinbone
             case 8856:
                 {
