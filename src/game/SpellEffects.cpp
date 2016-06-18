@@ -5050,6 +5050,40 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
         {
             switch (m_spellInfo->Id)
             {
+            // Pet Summoned
+            case 6962:
+            {
+                Player* player = GetCaster()->ToPlayer();
+                if (player->GetLastPetNumber())
+                {
+                    PetType newPetType = (player->getClass() == CLASS_HUNTER) ? HUNTER_PET : SUMMON_PET;
+                    Pet* newPet = new Pet(player, newPetType);
+                    if (newPet->LoadPetFromDB(player, 0, player->GetLastPetNumber(), true))
+                    {
+                        // revive the pet if it is dead
+                        if (newPet->getDeathState() == DEAD)
+                            newPet->setDeathState(ALIVE);
+
+                        newPet->SetFullHealth();
+                        newPet->SetPower(newPet->getPowerType(), newPet->GetMaxPower(newPet->getPowerType()));
+
+                        // Exact numbers are unknown, but we should increase happiness state
+                        newPet->SetPower(POWER_HAPPINESS, HAPPINESS_LEVEL_SIZE * 2);
+
+                        switch (newPet->GetEntry())
+                        {
+                        case 11859:
+                        case 89:
+                            newPet->SetEntry(416);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                    else
+                        delete newPet;
+                }
+            }
             // Bending Shinbone
             case 8856:
                 {

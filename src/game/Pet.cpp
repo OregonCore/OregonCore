@@ -353,6 +353,10 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
                 SetSpeed(UnitMoveType(i), baseMoveSpeed[i], true);
     }
 
+    //set last used pet number (for use in BG's)
+    if (owner->GetTypeId() == TYPEID_PLAYER && isControlled() && !isTemporarySummoned() && (getPetType() == SUMMON_PET || getPetType() == HUNTER_PET))
+        owner->ToPlayer()->SetLastPetNumber(pet_number);
+
     return true;
 }
 
@@ -566,7 +570,7 @@ void Pet::Update(uint32 diff)
 
             if (m_happinessTimer <= diff)
             {
-                LooseHappiness();
+                LoseHappiness();
                 m_happinessTimer = 7500;
             }
             else
@@ -626,7 +630,7 @@ void Pet::RegenerateFocus()
     ModifyPower(POWER_FOCUS, (int32)addvalue);
 }
 
-void Pet::LooseHappiness()
+void Pet::LoseHappiness()
 {
     uint32 curValue = GetPower(POWER_HAPPINESS);
     if (curValue <= 0)
