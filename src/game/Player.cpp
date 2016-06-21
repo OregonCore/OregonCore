@@ -1719,7 +1719,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
             if (pet)
             {
                 //leaving map -> delete pet right away (doing this later will cause problems)
-                if (pet->isControlled() && !pet->isTemporarySummoned())
+                if (pet->isControlled() && !pet->isTemporarySummoned() && pet->GetCharmInfo())
                     m_temporaryUnsummonedPetNumber = pet->GetCharmInfo()->GetPetNumber();
                 else
                     m_temporaryUnsummonedPetNumber = 0;
