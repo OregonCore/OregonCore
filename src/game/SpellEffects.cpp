@@ -6090,7 +6090,7 @@ void Spell::EffectStuck(SpellEffIndex /*effIndex*/)
     // is cooled down, it will activate their hearthstone. The 30 minute hearthstone cooldown is activated as usual.
     if (!pTarget->HasSpellCooldown(8690) && pTarget->HasItemCount(6948, 1, false))
     {
-        pTarget->TeleportTo(pTarget->GetStartPosition(), TELE_TO_SPELL);
+        pTarget->TeleportToHomebind(TELE_TO_SPELL);
 
         // Trigger cooldown
         SpellEntry const* spellInfo = sSpellStore.LookupEntry(8690);
