@@ -2050,13 +2050,14 @@ void SpellMgr::LoadSpellChains()
 
             if (spell_rank < 2)
                 mSpellChains[spell_id].prev = 0;
-            else
-                mSpellChains[*itr2].prev = spell_id;
 
             if (spell_id == RankedSpells.back())
                 mSpellChains[spell_id].next = 0;
             else
+            {
+                mSpellChains[*itr2].prev = spell_id;
                 mSpellChains[spell_id].next = *itr2;
+            }
         }
     }
 
