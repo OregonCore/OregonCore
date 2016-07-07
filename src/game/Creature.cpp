@@ -1697,22 +1697,6 @@ bool Creature::IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges)
     if (GetCreatureTemplate()->MechanicImmuneMask & (1 << (spellInfo->Mechanic - 1)))
         return true;
 
-    // This check must be done instead of 'if (GetCreatureTemplate()->MechanicImmuneMask & (1 << (spellInfo->Mechanic - 1)))' for not break
-    // the check of mechanic immunity on DB (tested) because GetCreatureTemplate()->MechanicImmuneMask and m_spellImmune[IMMUNITY_MECHANIC] don't have same data.
-    bool immunedToAllEffects = true;
-    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
-    {
-        if (!spellInfo->Effect[i])
-            continue;
-        if (!IsImmuneToSpellEffect(spellInfo, i, false))
-        {
-            immunedToAllEffects = false;
-            break;
-        }
-    }
-    if (immunedToAllEffects)
-        return true;
-
     return Unit::IsImmuneToSpell(spellInfo, useCharges);
 }
 
