@@ -183,6 +183,10 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     if (GetPlayer()->pvpInfo.inHostileArea)
         GetPlayer()->CastSpell(GetPlayer(), 2479, true);
 
+    // allow waterwalking for ghost players at map change
+    if (GetPlayer()->GetCorpse())
+        GetPlayer()->SetWaterWalking(true);
+
     // resummon pet
     if (GetPlayer()->m_temporaryUnsummonedPetNumber)
     {
