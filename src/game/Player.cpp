@@ -12602,24 +12602,16 @@ void Player::SendPreparedQuest(uint64 guid)
 
         if (Quest const* quest = sObjectMgr.GetQuestTemplate(questId))
         {
-            if (qmi0.m_qIcon == 4)
+            if (qmi0.m_qIcon == DIALOG_STATUS_REWARD_REP && !GetQuestRewardStatus(questId))
                 PlayerTalkClass->SendQuestGiverRequestItems(quest, guid, CanRewardQuest(quest, false), true);
-            // Send completable on repeatable and autoCompletable quest if player don't have quest
-            /// @todo verify if check for !quest->IsDaily() is really correct (possibly not)
-            else
-            {
-                Object* object = ObjectAccessor::GetObjectByTypeMask(*this, guid, TYPEMASK_UNIT | TYPEMASK_GAMEOBJECT | TYPEMASK_ITEM);
-                if (!object || (!object->hasQuest(questId) && !object->hasInvolvedQuest(questId)))
-                {
-                    PlayerTalkClass->CloseGossip();
-                    return;
-                }
+            else if (qmi0.m_qIcon == DIALOG_STATUS_INCOMPLETE)
+                PlayerTalkClass->SendQuestGiverRequestItems(quest, guid, false, true);
 
-                if (quest->IsAutoComplete() && quest->IsRepeatable() && !quest->IsDaily())
-                    PlayerTalkClass->SendQuestGiverRequestItems(quest, guid, CanCompleteRepeatableQuest(quest), true);
-                else
-                    PlayerTalkClass->SendQuestGiverQuestDetails(quest, guid, true);
-            }
+            // Repeatable quests such as donations can be completed without taking....
+            else if (quest->IsRepeatable() && !quest->IsDaily())
+                PlayerTalkClass->SendQuestGiverRequestItems(quest, guid, CanCompleteRepeatableQuest(quest), true);
+            else
+                PlayerTalkClass->SendQuestGiverQuestDetails(quest, guid, true);
         }
     }
     // multiply entries
@@ -15043,8 +15035,6 @@ bool Player::isAllowedToLoot(const Creature* creature)
 
     const Loot* loot = &creature->loot;
     if (loot->isLooted()) // nothing to loot or everything looted.
-        return false;
-    if (!loot->hasItemForAll() && !loot->hasItemFor(this)) // no loot in creature for this player
         return false;
 
     if (loot->loot_type == LOOT_SKINNING)
