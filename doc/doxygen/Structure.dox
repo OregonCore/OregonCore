@@ -38,6 +38,15 @@ Here's all the information you need in order to install OregonCore on your machi
 
 //-----------------------------------------------------------
 
+/*! \page oc_internals Internals
+
+- \subpage oc_spell_system "Spell System"
+- \subpage dbc_structure "DBC File Structure"
+
+*/
+
+//-----------------------------------------------------------
+
 /*! \page content_creation Content Creation
 
 - \subpage Guide to ScriptDev2's EventAI DB Script
