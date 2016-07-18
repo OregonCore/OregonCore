@@ -56,40 +56,31 @@ void TargetedMovementGeneratorMedium<T, D>::_setTargetLocation(T& owner, bool up
         }
         else
         {
-    if (!i_offset)
-    {
-        // to nearest random contact position
-        i_target->GetRandomContactPoint(&owner, x, y, z, 0, CONTACT_DISTANCE);
-
-        // Sometimes target is available only from certain angles
-        if (fabsf(i_target->GetPositionZ() - z) > owner.GetObjectSize())
-        {
-            float angles[] = { 0.f, 90.f, 180.f, 270.f, 45.f, 125.f, 225.f, 315.f };
-            bool needExact = true;
-            for (uint32 i = 0; i < sizeof(angles) / sizeof(*angles); i++)
+            if (!i_offset)
             {
-                i_target->GetClosePoint(x, y, z, owner.GetObjectSize(), CONTACT_DISTANCE, angles[i]);
-                if (fabsf(i_target->GetPositionZ() - z) <= owner.GetObjectSize())
-                {
-                    needExact = false;
-                    break;
-                }
-            }
+                // to nearest random contact position
+                i_target->GetRandomContactPoint(&owner, x, y, z, 0, CONTACT_DISTANCE);
 
-            if (needExact)
-                i_target->GetPosition(x, y, z);
-        }
-    }
-    else if (!i_angle && !owner.HasUnitState(UNIT_STATE_FOLLOW))
-    {
-        // caster chase
-        i_target->GetContactPoint(&owner, x, y, z, i_offset * urand(80, 95) * 0.01f);
-    }
-    else
-    {
-        // to at i_offset distance from target and i_angle from target facing
-        i_target->GetClosePoint(x, y, z, owner.GetObjectSize(), i_offset, i_angle);
-    }
+                // Sometimes target is available only from certain angles
+                // in that case we use the exact location (blizzlike hahavior)
+                if (fabsf(i_target->GetPositionZ() - z) > owner.GetObjectSize())
+                    i_target->GetPosition(x, y, z);
+            }
+            else if (!i_angle && !owner.HasUnitState(UNIT_STATE_FOLLOW))
+            {
+                // caster chase
+                i_target->GetContactPoint(&owner, x, y, z, i_offset * urand(80, 95) * 0.01f);
+            }
+            else
+            {
+                // to at i_offset distance from target and i_angle from target facing
+                i_target->GetClosePoint(x, y, z, owner.GetObjectSize(), i_offset, i_angle);
+
+                // Sometimes target is available only from certain angles
+                // in that case we use the exact location (blizzlike hahavior)
+                if (fabsf(i_target->GetPositionZ() - z) > (owner.GetObjectSize() + i_offset))
+                    i_target->GetPosition(x, y, z);
+            }
         }
     }
     else
