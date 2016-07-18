@@ -836,6 +836,11 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket& recv_data)
     bool teleported = false;
     if (GetPlayer()->GetMapId() != at->target_mapId)
     {
+        if (at->access_id)
+            if (AccessRequirement const* arEntry = sObjectMgr.GetAccessRequirement(at->access_id))
+                if (!GetPlayer()->Satisfy(arEntry, at->target_mapId, true))
+                    return;
+
         if (Map::EnterState denyReason = MapManager::Instance().PlayerCannotEnter(at->target_mapId, GetPlayer(), false))
         {
             bool reviveAtTrigger = false; // should we revive the player if he is trying to enter the correct instance?

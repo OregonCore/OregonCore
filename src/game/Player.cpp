@@ -16036,6 +16036,7 @@ bool Player::Satisfy(AccessRequirement const* ar, uint32 target_map, bool report
         if (ar->levelMax >= ar->levelMin && getLevel() > ar->levelMax && !sWorld.getConfig(CONFIG_INSTANCE_IGNORE_LEVEL))
             LevelMax = ar->levelMax;
 
+        uint32 missingKey = 0;
         uint32 missingItem = 0;
         if (ar->item)
         {
@@ -16046,14 +16047,6 @@ bool Player::Satisfy(AccessRequirement const* ar, uint32 target_map, bool report
         else if (ar->item2 && !HasItemCount(ar->item2, 1))
             missingItem = ar->item2;
 
-        if (sDisableMgr.IsDisabledFor(DISABLE_TYPE_MAP, target_map, this))
-        {
-            GetSession()->SendAreaTriggerMessage("%s", GetSession()->GetOregonString(LANG_INSTANCE_CLOSED));
-            SendTransferAborted(target_map, TRANSFER_ABORT_DIFFICULTY1);
-            return false;
-        }
-
-        uint32 missingKey = 0;
         uint32 missingHeroicQuest = 0;
         if (GetDifficulty() == DIFFICULTY_HEROIC)
         {
@@ -16081,13 +16074,19 @@ bool Player::Satisfy(AccessRequirement const* ar, uint32 target_map, bool report
                 if (missingItem)
                     GetSession()->SendAreaTriggerMessage(GetSession()->GetOregonString(LANG_LEVEL_MINREQUIRED_AND_ITEM), ar->levelMin, sObjectMgr.GetItemTemplate(missingItem)->Name1);
                 else if (missingKey)
+                {
+                    // on screen chat
+                    GetSession()->SendAreaTriggerMessage("%s", mapEntry->heroicIntroText[GetSession()->GetSessionDbcLocale()]);
+                    // on chat text (legacy way?)
                     SendTransferAborted(target_map, TRANSFER_ABORT_DIFFICULTY2);
+                }
                 else if (missingHeroicQuest)
                     GetSession()->SendAreaTriggerMessage("%s", ar->heroicQuestFailedText.c_str());
                 else if (missingQuest)
                     GetSession()->SendAreaTriggerMessage("%s", ar->questFailedText.c_str());
                 else if (LevelMin)
                     GetSession()->SendAreaTriggerMessage(GetSession()->GetOregonString(LANG_LEVEL_MINREQUIRED), LevelMin);
+                // @todo implement LevelMax
             }
             return false;
         }
