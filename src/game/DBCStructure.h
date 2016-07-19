@@ -522,7 +522,7 @@ struct MapEntry
     // 63-65 not used
     //chat*    unknownText1                                // 66-81 unknown empty text fields, possible normal Intro text.
     // 82 text flags
-    //chat*    heroicIntroText                             // 83-98 heroic mode requirement text
+    char*       heroicIntroText[16];                       // 83-98 heroic mode requirement text
     // 99 text flags
     //chat*    unknownText2                                // 100-115 unknown empty text fields
     // 116 text flags

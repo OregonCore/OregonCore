@@ -3381,7 +3381,7 @@ void Spell::SendLoot(uint64 guid, LootType loottype)
     player->SendLoot(guid, loottype);
 }
 
-void Spell::EffectOpenLock(SpellEffIndex /*effIndex*/)
+void Spell::EffectOpenLock(SpellEffIndex effIndex)
 {
     if (!m_caster)
         return;
@@ -3406,33 +3406,20 @@ void Spell::EffectOpenLock(SpellEffIndex /*effIndex*/)
         GameObjectInfo const* goInfo = gameObjTarget->GetGOInfo();
         // Arathi Basin banner opening !
         if ((goInfo->type == GAMEOBJECT_TYPE_BUTTON && goInfo->button.noDamageImmune) ||
-            (goInfo->type == GAMEOBJECT_TYPE_GOOBER && goInfo->goober.losOK))
+            (goInfo->type == GAMEOBJECT_TYPE_GOOBER && goInfo->goober.losOK) ||
+            (goInfo->type == GAMEOBJECT_TYPE_FLAGSTAND))
         {
-            //CanUseBattlegroundObject() already called in CanCast()
+            // CanUseBattlegroundObject() already called in CanCast()
             // in battleground check
             if (Battleground* bg = player->GetBattleground())
-            {
-                // check if it's correct bg
-                if (bg->GetTypeID() == BATTLEGROUND_AB || bg->GetTypeID() == BATTLEGROUND_AV)
-                    bg->EventPlayerClickedOnFlag(player, gameObjTarget);
+                bg->EventPlayerClickedOnFlag(player, gameObjTarget);
                 return;
-            }
-        }
-        else if (goInfo->type == GAMEOBJECT_TYPE_FLAGSTAND)
-        {
-            //CanUseBattlegroundObject() already called in CanCast()
-            // in battleground check
-            if (Battleground* bg = player->GetBattleground())
-            {
-                if (bg->GetTypeID() == BATTLEGROUND_EY)
-                    bg->EventPlayerClickedOnFlag(player, gameObjTarget);
-                return;
-            }
         }
         // handle outdoor pvp object opening, return true if go was registered for handling
         // these objects must have been spawned by outdoorpvp!
         else if (gameObjTarget->GetGOInfo()->type == GAMEOBJECT_TYPE_GOOBER && sOutdoorPvPMgr.HandleOpenGo(player, gameObjTarget->GetGUID()))
             return;
+
         lockId = gameObjTarget->GetGOInfo()->GetLockId();
         guid = gameObjTarget->GetGUID();
     }
@@ -3443,7 +3430,7 @@ void Spell::EffectOpenLock(SpellEffIndex /*effIndex*/)
     }
     else
     {
-        sLog.outDebug("WORLD: Open Lock - No GameObject/Item Target!");
+        sLog.outError("WORLD: Open Lock - No GameObject/Item Target! SpellId; %u", m_spellInfo->Id);
         return;
     }
 
@@ -3460,7 +3447,6 @@ void Spell::EffectOpenLock(SpellEffIndex /*effIndex*/)
     {
         sLog.outError("Spell::EffectOpenLock: %s [guid = %u] has an unknown lockId: %u!",
                       (gameObjTarget ? "gameobject" : "item"), GUID_LOPART(guid), lockId);
-        SendCastResult(SPELL_FAILED_BAD_TARGETS);
         return;
     }
 
@@ -3477,41 +3463,19 @@ void Spell::EffectOpenLock(SpellEffIndex /*effIndex*/)
 
     uint32 SkillId = 0;
     // Check and skill-up skill
-    if (m_spellInfo->Effect[1] == SPELL_EFFECT_SKILL)
-        SkillId = m_spellInfo->EffectMiscValue[1];
+    if (m_spellInfo->Effect[EFFECT_1] == SPELL_EFFECT_SKILL)
+        SkillId = m_spellInfo->EffectMiscValue[EFFECT_1];
     // pickpocketing spells
-    else if (m_spellInfo->EffectMiscValue[0] == LOCKTYPE_PICKLOCK)
+    else if (m_spellInfo->EffectMiscValue[EFFECT_0] == LOCKTYPE_PICKLOCK)
         SkillId = SKILL_LOCKPICKING;
 
-    // skill bonus provided by casting spell (mostly item spells)
-    uint32 spellSkillBonus = uint32(damage/*m_currentBasePoints[0]+1*/);
-
     uint32 reqSkillValue = lockInfo->requiredminingskill;
-
-    if (lockInfo->requiredlockskill)                         // required pick lock skill applying
-    {
-        if (SkillId != SKILL_LOCKPICKING)                    // wrong skill (cheating?)
-        {
-            SendCastResult(SPELL_FAILED_FIZZLE);
-            return;
-        }
-
+    if (m_spellInfo->EffectMiscValue[effIndex] == LOCKTYPE_PICKLOCK)
         reqSkillValue = lockInfo->requiredlockskill;
-    }
-    else if (SkillId == SKILL_LOCKPICKING)                   // apply picklock skill to wrong target
-    {
-        SendCastResult(SPELL_FAILED_BAD_TARGETS);
-        return;
-    }
 
     if (SkillId)
     {
         loottype = LOOT_SKINNING;
-        if (player->GetSkillValue(SkillId) + spellSkillBonus < reqSkillValue)
-        {
-            SendCastResult(SPELL_FAILED_LOW_CASTLEVEL);
-            return;
-        }
 
         // update skill if really known
         uint32 SkillValue = player->GetPureSkillValue(SkillId);
@@ -3520,8 +3484,7 @@ void Spell::EffectOpenLock(SpellEffIndex /*effIndex*/)
             if (gameObjTarget)
             {
                 // Allow one skill-up until respawned
-                if (!gameObjTarget->IsInSkillupList(player->GetGUIDLow()) &&
-                    player->UpdateGatherSkill(SkillId, SkillValue, reqSkillValue))
+                if (!gameObjTarget->IsInSkillupList(player->GetGUIDLow()) && player->UpdateGatherSkill(SkillId, SkillValue, reqSkillValue))
                     gameObjTarget->AddToSkillupList(player->GetGUIDLow());
             }
             else if (itemTarget)

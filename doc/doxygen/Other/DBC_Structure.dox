@@ -1,0 +1,75 @@
+/*!
+\page dbc_structure DBC File Structure
+\tableofcontents
+
+DBC (DatabaseClient) files are compact binary files to store data about world needed by client
+at its runtime - they actually contain far more data than the client neccesarily needs.
+
+This documentation will describe its binary structure (for 2.4.3 patch). DBC file is just a "table" of data.
+Metadata of DBC tells you about number of fields, number of records and size of a record, but
+does not contain any information of how big a field is nor what its meaning is - that must be
+reverse engineered. Generally, a field can be a byte, 32bit integer, 64bit integer, 32bit float or
+32bit pointer to string. All data are stored with little-endianess.
+
+File structure
+==============
+
+<table>
+    <tr>
+        <th>Offset</th>
+        <th>Size</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>0</td>
+        <td>4</td>
+        <td>unsigned integer</td>
+        <td>Should be always 0x43424457 - in ascii it is "WDBC"</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>4</td>
+        <td>unsigned integer</td>
+        <td>Number of records (rows)</td>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td>4</td>
+        <td>unsigned integer</td>
+        <td>Number of fields (columns)</td>
+    </tr>
+    <tr>
+        <td>12</td>
+        <td>4</td>
+        <td>unsigned integer</td>
+        <td>Size of one record (row)</td>
+    </tr>
+    <tr>
+        <td>16</td>
+        <td>4</td>
+        <td>unsigned integer</td>
+        <td>Size of string pool</td>
+    </tr>
+    <tr>
+        <td>20</td>
+        <td>RecordCount * RecordSize</td>
+        <td>Byte Stream</td>
+        <td>All the records (rows)</td>
+    </tr>
+    <tr>
+        <td>20 + RecordCount * RecordSize</td>
+        <td>Size of string pool</td>
+        <td>Byte Stream</td>
+        <td>String pool used to store all strings</td>
+    </tr>
+</table>
+
+Strings
+=======
+
+If a data type of columns refer to a string - i.e. is a 32bit pointer to a string, the pointer is relative
+to the string pool. So if pointer is zero, it points to the start of the pool string. Each strings terminates
+by ascii nul.
+
+*/
