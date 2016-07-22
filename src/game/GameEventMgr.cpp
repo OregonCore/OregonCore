@@ -1471,7 +1471,7 @@ void GameEventMgr::RunSmartAIScripts(uint16 event_id, bool activate)
         ObjectAccessor::Guard guard(*HashMapHolder<Creature>::GetLock());
         HashMapHolder<Creature>::MapType const& m = ObjectAccessor::Instance().GetCreatures();
         for (HashMapHolder<Creature>::MapType::const_iterator iter = m.begin(); iter != m.end(); ++iter)
-            if (iter->second->IsInWorld())
+            if (iter->second && iter->second->IsInWorld())
                 if (iter->second->AI())
                     iter->second->AI()->sOnGameEvent(activate, event_id);
     }
@@ -1479,7 +1479,7 @@ void GameEventMgr::RunSmartAIScripts(uint16 event_id, bool activate)
         ObjectAccessor::Guard guard(*HashMapHolder<GameObject>::GetLock());
         HashMapHolder<GameObject>::MapType const& m = ObjectAccessor::GetGameObjects();
         for (HashMapHolder<GameObject>::MapType::const_iterator iter = m.begin(); iter != m.end(); ++iter)
-            if (iter->second->IsInWorld())
+            if (iter->second && iter->second->IsInWorld())
                 if (iter->second->AI())
                     iter->second->AI()->OnGameEvent(activate, event_id);
     }
