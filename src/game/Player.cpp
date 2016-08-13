@@ -658,10 +658,6 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
 
     // original spells
     LearnDefaultSpells(true);
-	
-	SetSkill(129, 375, 375);
-	SetSkill(185, 375, 375);
-	SetSkill(356, 375, 375);
 
 	UpdateSkillsToMaxSkillsForLevel();
 	LearnAllGreenSpells();
