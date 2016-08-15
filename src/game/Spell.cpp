@@ -2417,6 +2417,9 @@ void Spell::cast(bool skipCheck)
 		}
 	}
 
+	if (m_caster->HasAura(27089,0))
+		m_caster->RemoveAurasDueToSpell(27089);
+
     // update pointers base at GUIDs to prevent access to non-existed already object
     UpdatePointers();
 
