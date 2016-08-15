@@ -11830,6 +11830,9 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
     if (slot >= MAX_ENCHANTMENT_SLOT)
         return;
 
+	if (HasAuraType(SPELL_AURA_MOD_DISARM))
+		return;
+	
     uint32 enchant_id = item->GetEnchantmentId(slot);
     if (!enchant_id)
         return;
