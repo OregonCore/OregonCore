@@ -1544,13 +1544,13 @@ void GameObject::CastSpell(Unit* target, uint32 spellId, bool triggered /*= true
         trigger->setFaction(owner->getFaction());
         if (owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE))
             trigger->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
-        trigger->CastSpell(target ? target : trigger, spellId, triggered, 0, 0, owner->GetGUID());
+        trigger->CastSpell(target ? target : trigger, spellId, triggered, 0, 0, owner ? owner->GetGUID() : NULL);
     }
     else
     {
         trigger->setFaction(14);
         // Set owner guid for target if no owner available - needed by trigger auras
-        trigger->CastSpell(target ? target : trigger, spellId, triggered, 0, 0, target ? target->GetGUID() : 0);
+        trigger->CastSpell(target ? target : trigger, spellId, triggered, 0, 0, target ? target->GetGUID() : NULL);
     }
 }
 
