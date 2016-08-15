@@ -2407,6 +2407,16 @@ void Spell::cast(bool skipCheck)
     if (m_spellInfo->Id > MAX_SPELL_ID)
         return;
 
+	if (m_caster->HasAura(12043,0) || m_caster->HasAura(16188,0) || m_caster->HasAura(17116,0))
+	{
+		if (m_spellInfo->CastingTimeIndex != 1)
+		{
+			m_caster->RemoveAurasDueToSpell(16188);
+			m_caster->RemoveAurasDueToSpell(12043);
+			m_caster->RemoveAurasDueToSpell(17116);
+		}
+	}
+
     // update pointers base at GUIDs to prevent access to non-existed already object
     UpdatePointers();
 
