@@ -11120,7 +11120,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
             if (spellproto->Effect[i] == SPELL_EFFECT_TRIGGER_SPELL)
                 active = true;
 
-        if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, active, spellProcEvent))
+        if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, damage, spellProcEvent))
             continue;
 
         procTriggered.push_back(ProcTriggeredData(spellProcEvent, itr->second));
