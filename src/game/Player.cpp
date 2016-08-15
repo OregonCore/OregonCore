@@ -3263,6 +3263,18 @@ void Player::RemoveSpell(uint32 spell_id, bool disabled)
     for (uint32 i = reqMap.count(spell_id); i > 0; i--, ++itr2)
         RemoveSpell(itr2->second, disabled);
 
+	if (CanDualWield())
+    {
+        SpellEntry const *spellInfo = sSpellStore.LookupEntry(spell_id);
+
+        if (spellInfo)
+			if (spellInfo->Effect[0] != SPELL_EFFECT_DUAL_WIELD || 
+				spellInfo->Effect[1] != SPELL_EFFECT_DUAL_WIELD ||
+				spellInfo->Effect[2] != SPELL_EFFECT_DUAL_WIELD ||
+				spellInfo->Effect[3] != SPELL_EFFECT_DUAL_WIELD)
+            SetCanDualWield(false);
+    }
+
     // removing
     WorldPacket data(SMSG_REMOVED_SPELL, 4);
     data << uint16(spell_id);
