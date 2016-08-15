@@ -258,7 +258,13 @@ uint32 GetSpellCastTime(SpellEntry const* spellInfo, Spell const* spell)
     if (spell)
     {
         if (Player* modOwner = spell->GetCaster()->GetSpellModOwner())
+		{
+			// Add -castTime to Cyclone if Nature's Grace is active
+			if (modOwner->HasAura(16886, 0) && spellInfo->Id == 33786)
+				castTime -= 500;
+
             modOwner->ApplySpellMod(spellInfo->Id, SPELLMOD_CASTING_TIME, castTime, spell);
+		}
 
         if (!(spellInfo->Attributes & (SPELL_ATTR0_ABILITY | SPELL_ATTR0_TRADESPELL)))
             castTime = int32(castTime * spell->GetCaster()->GetFloatValue(UNIT_MOD_CAST_SPEED));
