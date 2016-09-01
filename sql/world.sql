@@ -36,7 +36,7 @@ CREATE TABLE `areatrigger_involvedrelation` (
   `id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'Identifier',
   `quest` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'Quest Identifier',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Trigger System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Trigger System';
 
 --
 -- Table structure for table `areatrigger_scripts`
@@ -58,7 +58,7 @@ CREATE TABLE `areatrigger_tavern` (
   `id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'Identifier',
   `name` text,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Trigger System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Trigger System';
 
 --
 -- Table structure for table `areatrigger_teleport`
@@ -75,7 +75,7 @@ CREATE TABLE `areatrigger_teleport` (
   `target_position_z` float NOT NULL DEFAULT '0',
   `target_orientation` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Trigger System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Trigger System';
 
 --
 -- Table structure for table `autobroadcast`
@@ -128,7 +128,7 @@ CREATE TABLE `command` (
   `security` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `help` longtext,
   PRIMARY KEY (`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Chat System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Chat System';
 
 --
 -- Table structure for table `conditions`
@@ -230,7 +230,7 @@ CREATE TABLE `creature_ai_scripts` (
   `action3_param3` int(11) NOT NULL DEFAULT '0',
   `comment` varchar(255) NOT NULL DEFAULT '' COMMENT 'Event Comment',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=19228131 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='EventAI Scripts';
+) ENGINE=MyISAM AUTO_INCREMENT=19228131 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='EventAI Scripts';
 
 --
 -- Table structure for table `creature_ai_summons`
@@ -246,7 +246,7 @@ CREATE TABLE `creature_ai_summons` (
   `spawntimesecs` int(11) unsigned NOT NULL DEFAULT '120',
   `comment` varchar(255) NOT NULL DEFAULT '' COMMENT 'Summon Comment',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='EventAI Summoning Locations';
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='EventAI Summoning Locations';
 
 --
 -- Table structure for table `creature_ai_texts`
@@ -270,7 +270,7 @@ CREATE TABLE `creature_ai_texts` (
   `emote` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `comment` text,
   PRIMARY KEY (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Script Texts';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Script Texts';
 
 --
 -- Table structure for table `creature_equip_template`
@@ -329,7 +329,7 @@ CREATE TABLE `creature_involvedrelation` (
   `id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'Identifier',
   `quest` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'Quest Identifier',
   PRIMARY KEY (`id`,`quest`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Creature System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Creature System';
 
 --
 -- Table structure for table `creature_linked_respawn`
@@ -402,7 +402,7 @@ CREATE TABLE `creature_questrelation` (
   `id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'Identifier',
   `quest` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'Quest Identifier',
   PRIMARY KEY (`id`,`quest`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Creature System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Creature System';
 
 --
 -- Table structure for table `creature_respawn`
@@ -511,7 +511,7 @@ CREATE TABLE `creature_template` (
   `ScriptName` char(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`entry`),
   KEY `idx_name` (`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Creature System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Creature System';
 
 --
 -- Table structure for table `creature_template_addon`
@@ -574,7 +574,7 @@ CREATE TABLE `custom_texts` (
   `emote` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `comment` text,
   PRIMARY KEY (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Custom Texts';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Custom Texts';
 
 --
 -- Table structure for table `db_script_string`
@@ -626,7 +626,7 @@ CREATE TABLE `disenchant_loot_template` (
   `MaxCount` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `Comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Entry`,`Item`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Loot System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Loot System';
 
 --
 -- Table structure for table `event_scripts`
@@ -656,7 +656,7 @@ CREATE TABLE `exploration_basexp` (
   `level` tinyint(4) NOT NULL DEFAULT '0',
   `basexp` mediumint(9) NOT NULL DEFAULT '0',
   PRIMARY KEY (`level`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Exploration System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Exploration System';
 
 --
 -- Table structure for table `fishing_loot_template`
@@ -901,7 +901,7 @@ CREATE TABLE `game_weather` (
   `winter_snow_chance` tinyint(3) unsigned NOT NULL DEFAULT '25',
   `winter_storm_chance` tinyint(3) unsigned NOT NULL DEFAULT '25',
   PRIMARY KEY (`zone`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Weather System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Weather System';
 
 --
 -- Table structure for table `gameobject`
@@ -925,7 +925,7 @@ CREATE TABLE `gameobject` (
   `animprogress` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `state` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`)
-) ENGINE=MyISAM AUTO_INCREMENT=11006284 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Gameobject System';
+) ENGINE=MyISAM AUTO_INCREMENT=11006284 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Gameobject System';
 
 --
 -- Table structure for table `gameobject_involvedrelation`
@@ -1041,7 +1041,7 @@ CREATE TABLE `gameobject_template` (
   `ScriptName` varchar(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`entry`),
   KEY `idx_name` (`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Gameobject System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Gameobject System';
 
 --
 -- Table structure for table `gossip_menu`
@@ -1152,7 +1152,7 @@ CREATE TABLE `item_enchantment_template` (
   `ench` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `chance` float unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`,`ench`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Item Random Enchantment System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Item Random Enchantment System';
 
 --
 -- Table structure for table `item_loot_template`
@@ -1170,7 +1170,7 @@ CREATE TABLE `item_loot_template` (
   `MaxCount` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `Comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Entry`,`Item`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Loot System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Loot System';
 
 --
 -- Table structure for table `item_template`
@@ -1321,7 +1321,7 @@ CREATE TABLE `item_template` (
   PRIMARY KEY (`entry`),
   KEY `idx_name` (`name`),
   KEY `items_index` (`class`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Item System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Item System';
 
 --
 -- Table structure for table `locales_creature`
@@ -1709,7 +1709,7 @@ CREATE TABLE `mail_loot_template` (
   `MaxCount` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `Comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Entry`,`Item`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Loot System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Loot System';
 
 --
 -- Table structure for table `npc_gossip`
@@ -1839,7 +1839,7 @@ CREATE TABLE `npc_vendor` (
   `incrtime` int(10) unsigned NOT NULL DEFAULT '0',
   `ExtendedCost` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`,`item`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Npc System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Npc System';
 
 --
 -- Table structure for table `opcode_protection`
@@ -1948,7 +1948,7 @@ CREATE TABLE `pickpocketing_loot_template` (
   `MaxCount` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `Comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Entry`,`Item`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Loot System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Loot System';
 
 --
 -- Table structure for table `player_classlevelstats`
@@ -2137,7 +2137,7 @@ CREATE TABLE `prospecting_loot_template` (
   `MaxCount` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `Comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Entry`,`Item`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Loot System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Loot System';
 
 --
 -- Table structure for table `quest_end_scripts`
@@ -2321,7 +2321,7 @@ CREATE TABLE `reference_loot_template` (
   `MaxCount` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `Comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Entry`,`Item`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Loot System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Loot System';
 
 --
 -- Table structure for table `reserved_name`
@@ -2355,7 +2355,7 @@ CREATE TABLE `script_texts` (
   `emote` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `comment` text,
   PRIMARY KEY (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Script Texts';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Script Texts';
 
 --
 -- Table structure for table `script_waypoint`
@@ -2371,7 +2371,7 @@ CREATE TABLE `script_waypoint` (
   `waittime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'waittime in millisecs',
   `point_comment` text,
   PRIMARY KEY (`entry`,`pointid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Script Creature waypoints';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Script Creature waypoints';
 
 --
 -- Table structure for table `skill_discovery_template`
@@ -2383,7 +2383,7 @@ CREATE TABLE `skill_discovery_template` (
   `reqSpell` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'spell requirement',
   `chance` float NOT NULL DEFAULT '0' COMMENT 'chance to discover',
   PRIMARY KEY (`spellId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Skill Discovery System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Skill Discovery System';
 
 --
 -- Table structure for table `skill_extra_item_template`
@@ -2396,7 +2396,7 @@ CREATE TABLE `skill_extra_item_template` (
   `additionalCreateChance` float NOT NULL DEFAULT '0' COMMENT 'chance to create add',
   `additionalMaxNum` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'max num of adds',
   PRIMARY KEY (`spellId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Skill Specialization System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Skill Specialization System';
 
 --
 -- Table structure for table `skill_fishing_base_level`
@@ -2407,7 +2407,7 @@ CREATE TABLE `skill_fishing_base_level` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'Area identifier',
   `skill` smallint(6) NOT NULL DEFAULT '0' COMMENT 'Base skill level requirement',
   PRIMARY KEY (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Fishing system';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Fishing system';
 
 --
 -- Table structure for table `skinning_loot_template`
@@ -2425,7 +2425,7 @@ CREATE TABLE `skinning_loot_template` (
   `MaxCount` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `Comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Entry`,`Item`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Loot System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Loot System';
 
 --
 -- Table structure for table `smart_scripts`
@@ -2520,7 +2520,7 @@ CREATE TABLE `spell_enchant_proc_data` (
   `PPMChance` float unsigned NOT NULL DEFAULT '0',
   `procEx` float unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Spell enchant proc data';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Spell enchant proc data';
 
 --
 -- Table structure for table `spell_group`
@@ -2531,7 +2531,7 @@ CREATE TABLE `spell_group` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
   `spell_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`spell_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Spell System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Spell System';
 
 --
 -- Table structure for table `spell_group_stack_rules`
@@ -2553,7 +2553,7 @@ CREATE TABLE `spell_learn_spell` (
   `entry` smallint(5) unsigned NOT NULL DEFAULT '0',
   `SpellID` smallint(5) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`,`SpellID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Item System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Item System';
 
 --
 -- Table structure for table `spell_linked_spell`
@@ -2607,7 +2607,7 @@ CREATE TABLE `spell_required` (
   `spell_id` mediumint(9) NOT NULL DEFAULT '0',
   `req_spell` mediumint(9) NOT NULL DEFAULT '0',
   PRIMARY KEY (`spell_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Spell Additinal Data';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Spell Additinal Data';
 
 --
 -- Table structure for table `spell_scripts`
@@ -2641,7 +2641,7 @@ CREATE TABLE `spell_target_position` (
   `target_position_z` float NOT NULL DEFAULT '0',
   `target_orientation` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Spell System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Spell System';
 
 --
 -- Table structure for table `spell_threat`
@@ -2654,7 +2654,7 @@ CREATE TABLE `spell_threat` (
   `pctMod` float NOT NULL DEFAULT '1' COMMENT 'threat multiplier for damage/healing',
   `apPctMod` float NOT NULL DEFAULT '0' COMMENT 'additional threat bonus from attack power',
   PRIMARY KEY (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 --
 -- Table structure for table `transport_events`
@@ -2678,7 +2678,7 @@ CREATE TABLE `transports` (
   `name` text,
   `period` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Transports';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Transports';
 
 --
 -- Table structure for table `updates`
