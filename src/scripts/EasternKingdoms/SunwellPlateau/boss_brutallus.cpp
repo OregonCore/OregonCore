@@ -136,7 +136,7 @@ struct boss_brutallusAI : public ScriptedAI
         {
             float x, y, z;
             me->GetPosition(x, y, z);
-            me->SummonCreature(NPC_FELMYST, x, y, z + 30, me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
+            me->SummonCreature(NPC_FELMYST, x, y, z + 20, me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
         }
     }
 

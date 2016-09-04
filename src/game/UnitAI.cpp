@@ -182,6 +182,9 @@ void UnitAI::SelectTargetList(std::list<Unit*>& targetList, uint32 num, SelectAg
     if (targetType == SELECT_TARGET_FARTHEST || targetType == SELECT_TARGET_BOTTOMAGGRO)
         targetList.reverse();
 
+	if (targetList.size() < num)
+        return;
+
     if (targetType == SELECT_TARGET_RANDOM)
     {
         while (num < targetList.size())
