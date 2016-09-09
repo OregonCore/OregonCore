@@ -679,11 +679,11 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
             ++action_itr[i];
     }
 
-    learnSpell(27028);
+    LearnSpell(27028);
     SetSkill(129,375,375);
-    learnSpell(33359);
+    LearnSpell(33359);
     SetSkill(185,375,375);
-    learnSpell(33095);
+    LearnSpell(33095);
     SetSkill(356,375,375);
 
     // bags and main-hand weapon must equipped at this moment
