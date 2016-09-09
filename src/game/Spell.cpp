@@ -4768,7 +4768,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                 {
                     if (!m_caster->ToPlayer()->IsGameMaster() &&
-                        GetVirtualMapForMapAndZone(m_caster->GetMapId(), m_caster->GetZoneId()) != 530)
+                        GetVirtualMapForMapAndZone(GetMapId(), newZone) != 530 && GetVirtualMapForMapAndZone(GetMapId(), newZone) != 876)
                         return SPELL_FAILED_NOT_HERE;
                 }
                 break;
