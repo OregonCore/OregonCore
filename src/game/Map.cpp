@@ -494,19 +494,6 @@ void Map::Update(const uint32& t_diff)
 {
     m_dyn_tree.update(t_diff);
 
-    /// update worldsessions for existing players
-    for (m_mapRefIter = m_mapRefManager.begin(); m_mapRefIter != m_mapRefManager.end(); ++m_mapRefIter)
-    {
-        Player* player = m_mapRefIter->GetSource();
-        if (player && player->IsInWorld())
-        {
-            //player->Update(t_diff);
-            WorldSession* session = player->GetSession();
-            MapSessionFilter updater(session);
-            session->Update(t_diff, updater);
-        }
-    }
-
     // update active cells around players and active objects
     resetMarkedCells();
 
@@ -571,8 +558,6 @@ void Map::Update(const uint32& t_diff)
         VisitNearbyCellsOf(obj, grid_object_update, world_object_update);
     }
 
-    //SendObjectUpdates();
-
     // Process necessary scripts
     if (!m_scriptSchedule.empty())
     {
@@ -636,9 +621,10 @@ void Map::ProcessRelocationNotifies(const uint32& diff)
                 Cell cell(pair);
                 cell.SetNoCreate();
 
-                Oregon::DelayedUnitRelocation cell_relocation(cell, pair, *this, MAX_VISIBILITY_DISTANCE);
-                TypeContainerVisitor<Oregon::DelayedUnitRelocation, GridTypeMapContainer  > grid_object_relocation(cell_relocation);
-                TypeContainerVisitor<Oregon::DelayedUnitRelocation, WorldTypeMapContainer > world_object_relocation(cell_relocation);
+                Oregon::DelayedUnitRelocation cell_relocationCreature(cell, pair, *this, monsterSightRadius);
+                Oregon::DelayedUnitRelocation cell_relocationPlayer(cell, pair, *this, MAX_VISIBILITY_DISTANCE);
+                TypeContainerVisitor<Oregon::DelayedUnitRelocation, GridTypeMapContainer  > grid_object_relocation(cell_relocationCreature);
+                TypeContainerVisitor<Oregon::DelayedUnitRelocation, WorldTypeMapContainer > world_object_relocation(cell_relocationPlayer);
                 Visit(cell, grid_object_relocation);
                 Visit(cell, world_object_relocation);
             }
@@ -2029,27 +2015,6 @@ inline void Map::setNGrid(NGridType* grid, uint32 x, uint32 y)
         ASSERT(false);
     }
     i_grids[x][y] = grid;
-}
-
-void Map::SendObjectUpdates()
-{
-    UpdateDataMapType update_players;
-
-    while (!_updateObjects.empty())
-    {
-        Object* obj = *_updateObjects.begin();
-        ASSERT(obj->IsInWorld());
-        _updateObjects.erase(_updateObjects.begin());
-        obj->BuildUpdate(update_players);
-    }
-
-    WorldPacket packet;                                     // here we allocate a std::vector with a size of 0x10000
-    for (UpdateDataMapType::iterator iter = update_players.begin(); iter != update_players.end(); ++iter)
-    {
-        iter->second.BuildPacket(&packet);
-        iter->first->GetSession()->SendPacket(&packet);
-        packet.clear();                                     // clean the string
-    }
 }
 
 void Map::DelayedUpdate(const uint32 t_diff)
