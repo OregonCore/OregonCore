@@ -85,6 +85,7 @@ find_path(MYSQL_INCLUDE_DIR
     ${MYSQL_ADD_INCLUDE_PATH}
     /usr/include
     /usr/include/mysql
+    /usr/include/mariadb
     /usr/local/include
     /usr/local/include/mysql
     /usr/local/mysql/include

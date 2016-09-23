@@ -810,7 +810,7 @@ CREATE TABLE `group_member` (
   `assistant` tinyint(1) unsigned NOT NULL,
   `subgroup` smallint(6) unsigned NOT NULL,
   PRIMARY KEY (`leaderGuid`,`memberGuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Groups';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Groups';
 
 --
 -- Dumping data for table `group_member`
@@ -841,7 +841,7 @@ CREATE TABLE `groups` (
   `difficulty` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `masterLooterGuid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`leaderGuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Groups';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Groups';
 
 --
 -- Dumping data for table `groups`
@@ -1006,7 +1006,7 @@ CREATE TABLE `guild_member` (
   KEY `guildid_key` (`guildid`),
   KEY `guildid_rank_key` (`guildid`,`rank`),
   KEY `guid_key` (`guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Guild System';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Guild System';
 
 --
 -- Dumping data for table `guild_member`
@@ -1106,7 +1106,7 @@ CREATE TABLE `item_text` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
   `text` longtext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Item System';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Item System';
 
 --
 -- Dumping data for table `item_text`
@@ -1300,7 +1300,7 @@ CREATE TABLE `pool_quest_save` (
 DROP TABLE IF EXISTS `saved_variables`;
 CREATE TABLE `saved_variables` (
   `NextArenaPointDistributionTime` bigint(40) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Variable Saves';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Variable Saves';
 
 --
 -- Dumping data for table `saved_variables`
