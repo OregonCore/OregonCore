@@ -876,7 +876,7 @@ class WorldObject : public Object, public WorldLocation
         }
         bool isNeedNotify(uint16 f) const
         {
-            return (m_notifyflags & f) != 0;
+            return m_notifyflags & f;
         }
         uint16 GetNotifyFlags() const
         {

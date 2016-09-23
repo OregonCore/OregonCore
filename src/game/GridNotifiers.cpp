@@ -217,8 +217,8 @@ void DelayedUnitRelocation::Visit(PlayerMapType& m)
         Player* player = iter->GetSource();
         WorldObject const* viewPoint = player->m_seer;
 
-        /*if (!viewPoint->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
-            continue;*/
+        if (!viewPoint->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
+            continue;
 
         if (player != viewPoint && !viewPoint->IsPositionValid())
             continue;
