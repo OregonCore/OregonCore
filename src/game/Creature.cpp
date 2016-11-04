@@ -2552,7 +2552,7 @@ void Creature::UpdateMovementFlags(bool packetOnly)
     if (!isInAir)
         RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
 
-    SetSwim(GetCreatureTemplate()->InhabitType & INHABIT_WATER && IsInWater());
+    SetSwim(canSwim() && GetBaseMap()->IsSwimmable(GetPositionX(), GetPositionY(), GetPositionZ()));
 }
 
 void Creature::StartPickPocketRefillTimer()
