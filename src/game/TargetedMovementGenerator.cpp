@@ -113,7 +113,7 @@ void TargetedMovementGeneratorMedium<T, D>::_setTargetLocation(T& owner, bool up
 
     Movement::MoveSplineInit init(owner);
     init.MovebyPath(i_path->getFullPath());
-    init.SetWalk(((D*)this)->EnableWalking());
+    init.SetWalk(((D*)this)->EnableWalking(owner));
     static_cast<D*>(this)->_updateSpeed(owner);
 
     init.Launch();
@@ -264,15 +264,16 @@ void ChaseMovementGenerator<T>::MovementInform(T& /*unit*/)
 }
 
 template<>
-bool FollowMovementGenerator<Creature>::EnableWalking() const
+bool FollowMovementGenerator<Player>::EnableWalking(Player& /*owner*/) const
 {
-    return i_target.isValid() && i_target->IsWalking();
+    return false;
 }
 
 template<>
-bool FollowMovementGenerator<Player>::EnableWalking() const
+bool FollowMovementGenerator<Creature>::EnableWalking(Creature& owner) const
 {
-    return false;
+    return i_target.isValid() && i_target->IsWalking() &&
+        i_target->GetDistance(owner) < (owner.GetCombatReach() + (sWorld.getRate(RATE_TARGET_POS_RECALCULATION_RANGE) * 2));
 }
 
 template<>

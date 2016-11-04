@@ -95,7 +95,7 @@ public:
     void Reset(T&);
     void MovementInform(T&);
 
-    bool EnableWalking() const { return false; }
+    bool EnableWalking(T&) const { return false; }
     void _reachTarget(T&);
     void _updateSpeed(T&) {}
 };
@@ -117,7 +117,7 @@ public:
     void Reset(T&);
     void MovementInform(T&);
 
-    bool EnableWalking() const;
+    bool EnableWalking(T&) const;
     void _reachTarget(T&) {}
     void _updateSpeed(T&);
 };
