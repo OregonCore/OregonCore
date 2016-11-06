@@ -2529,7 +2529,7 @@ bool Creature::SetLevitate(bool apply, bool packetOnly)
 
 void Creature::UpdateMovementFlags(bool packetOnly)
 {
-    if (IsControlledByPlayer() || GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_DYNAMIC_MOVEMENT_FLAG)
+    if (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_DYNAMIC_MOVEMENT_FLAG)
         return;
 
     // Set the movement flags if the creature is in that mode. (Only fly if actually in air, only swim if in water, etc)
@@ -2552,7 +2552,7 @@ void Creature::UpdateMovementFlags(bool packetOnly)
     if (!isInAir)
         RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
 
-    SetSwim(GetCreatureTemplate()->InhabitType & INHABIT_WATER && IsInWater());
+    SetSwim(canSwim() && GetBaseMap()->IsSwimmable(GetPositionX(), GetPositionY(), GetPositionZ()));
 }
 
 void Creature::StartPickPocketRefillTimer()
