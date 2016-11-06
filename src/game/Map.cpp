@@ -1873,6 +1873,19 @@ bool Map::IsUnderWater(float x, float y, float z) const
     return false;
 }
 
+bool Map::IsSwimmable(float x, float y, float z, LiquidData* data) const
+{
+    LiquidData liquid_status;
+    LiquidData* liquid_ptr = data ? data : &liquid_status;
+    if (getLiquidStatus(x, y, z, MAP_ALL_LIQUIDS, liquid_ptr) & (LIQUID_MAP_IN_WATER | LIQUID_MAP_UNDER_WATER))
+    {
+        if (liquid_ptr->level - liquid_ptr->depth_level > 1.5f)
+            return true;
+    }
+
+    return false;
+}
+
 bool Map::CheckGridIntegrity(Creature* c, bool moved) const
 {
     Cell const& cur_cell = c->GetCurrentCell();

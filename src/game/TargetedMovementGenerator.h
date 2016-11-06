@@ -95,8 +95,9 @@ public:
     void Reset(T&);
     void MovementInform(T&);
 
-    bool EnableWalking() const { return false; }
+    bool EnableWalking(T&) const { return false; }
     void _reachTarget(T&);
+    void _updateSpeed(T&) {}
 };
 
 template<class T>
@@ -116,11 +117,9 @@ public:
     void Reset(T&);
     void MovementInform(T&);
 
-    bool EnableWalking() const;
+    bool EnableWalking(T&) const;
     void _reachTarget(T&) {}
-
-private:
-    void _updateSpeed(T& u);
+    void _updateSpeed(T&);
 };
 
 #endif

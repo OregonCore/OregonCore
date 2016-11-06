@@ -513,7 +513,7 @@ class Creature : public Unit, public GridObject<Creature>
         }
         virtual bool canSwim() const
         {
-            return GetCreatureTemplate()->InhabitType & INHABIT_WATER;
+            return GetCreatureTemplate()->InhabitType & INHABIT_WATER || isCharmedOwnedByPlayerOrPlayer();
         }
         bool canFly()  const
         {

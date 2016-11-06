@@ -85,7 +85,7 @@ CREATE TABLE `account_referred` (
   `id2` bigint(20) unsigned NOT NULL COMMENT 'Referred Account',
   PRIMARY KEY (`id1`),
   KEY `id2` (`id2`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Refer-A-Friend';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Refer-A-Friend';
 
 --
 -- Dumping data for table `account_referred`

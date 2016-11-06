@@ -86,6 +86,18 @@ void PetAI::UpdateAI(const uint32 diff)
     else
         m_updateAlliesTimer -= diff;
 
+    // Prevent losing the pet action bar after reloading the user interface
+    if (owner && owner->GetTypeId() == TYPEID_PLAYER)
+    {
+        if (m_updatePetSpellTimer <= diff)
+        {
+            owner->ToPlayer()->PetSpellInitialize();
+            m_updatePetSpellTimer = 5 * IN_MILLISECONDS;
+        }
+        else
+            m_updatePetSpellTimer -= diff;
+    }
+
     // Must also check if victim is alive
     if (inCombat && (!me->GetVictim() || (me->ToPet() && me->ToPet()->GetModeFlags() & PET_MODE_DISABLE_ACTIONS)))
         _stopAttack();
