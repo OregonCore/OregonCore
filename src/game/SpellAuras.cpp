@@ -3206,8 +3206,9 @@ void Aura::HandleAuraTrackCreatures(bool apply, bool /*Real*/)
         return;
 
     if (apply)
-        m_target->RemoveNoStackAurasDueToAura(this);
-    m_target->SetUInt32Value(PLAYER_TRACK_CREATURES, apply ? ((uint32)1) << (m_modifier.m_miscvalue - 1) : 0);
+        m_target->SetFlag(PLAYER_TRACK_CREATURES, uint32(1) << (m_modifier.m_miscvalue - 1));
+    else
+        m_target->RemoveFlag(PLAYER_TRACK_CREATURES, uint32(1) << (m_modifier.m_miscvalue - 1));
 }
 
 void Aura::HandleAuraTrackResources(bool apply, bool /*Real*/)
@@ -3216,23 +3217,15 @@ void Aura::HandleAuraTrackResources(bool apply, bool /*Real*/)
         return;
 
     if (apply)
-        m_target->RemoveNoStackAurasDueToAura(this);
-    m_target->SetUInt32Value(PLAYER_TRACK_RESOURCES, apply ? ((uint32)1) << (m_modifier.m_miscvalue - 1) : 0);
+        m_target->SetFlag(PLAYER_TRACK_RESOURCES, uint32(1) << (m_modifier.m_miscvalue - 1));
+    else
+        m_target->RemoveFlag(PLAYER_TRACK_RESOURCES, uint32(1) << (m_modifier.m_miscvalue - 1));
 }
 
 void Aura::HandleAuraTrackStealthed(bool apply, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
-
-    if (apply)
-        m_target->RemoveNoStackAurasDueToAura(this);
-    else
-    {
-        // do not remove unit flag if there are more than this auraEffect of that kind on unit
-        if (m_target->HasAuraType(GetAuraType()))
-            return;
-    }
 
     m_target->ApplyModFlag(PLAYER_FIELD_BYTES, PLAYER_FIELD_BYTE_TRACK_STEALTHED, apply);
 }
