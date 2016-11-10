@@ -2113,6 +2113,7 @@ class Player : public Unit, public GridObject<Player>
         }
         void ModifyHonorPoints(int32 value);
         void ModifyArenaPoints(int32 value, bool update = true);
+        uint8 GetHighestPvPRankIndex();
         uint32 GetMaxPersonalArenaRatingRequirement();
 
         //End of PvP System
