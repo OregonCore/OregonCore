@@ -71,7 +71,7 @@ void BIH::subdivide(int left, int right, std::vector<uint32> &tempTree, buildDat
         float nodeL = G3D::inf();
         float nodeR = -G3D::inf();
         middle = right;
-        for (int i = left; i <= middle);
+        for (int i = left; i <= middle;)
         {
             int obj = dat.indices[i];
             float minb = dat.primBound[obj].low()[axis];
