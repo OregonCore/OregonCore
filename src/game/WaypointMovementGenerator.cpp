@@ -242,6 +242,7 @@ void FlightPathMovementGenerator::Finalize(Player& player)
 
     player.Dismount();
     player.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL | UNIT_FLAG_TAXI_FLIGHT);
+    player.SetClientControl(&player, 1)
 
     if (player.m_taxi.empty())
     {
@@ -263,6 +264,7 @@ void FlightPathMovementGenerator::Reset(Player& player)
     player.getHostileRefManager().setOnlineOfflineState(false);
     player.AddUnitState(UNIT_STATE_IN_FLIGHT);
     player.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL | UNIT_FLAG_TAXI_FLIGHT);
+    player.SetClientControl(&player, 0);
 
     Movement::MoveSplineInit init(player);
     uint32 end = GetPathAtMapEnd();
