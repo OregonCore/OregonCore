@@ -41,7 +41,8 @@ void BIH::subdivide(int left, int right, std::vector<uint32> &tempTree, buildDat
         return;
     }
     // calculate extents
-    int axis = -1, prevAxis, rightOrig;
+    int axis = -1, prevAxis;
+    int middle;
     float clipL = G3D::fnan(), clipR = G3D::fnan(), prevClip = G3D::fnan();
     float split = G3D::fnan(), prevSplit;
     bool wasLeft = true;
@@ -67,10 +68,10 @@ void BIH::subdivide(int left, int right, std::vector<uint32> &tempTree, buildDat
         // partition L/R subsets
         clipL = -G3D::inf();
         clipR = G3D::inf();
-        rightOrig = right; // save this for later
         float nodeL = G3D::inf();
         float nodeR = -G3D::inf();
-        for (int i = left; i <= right;)
+        middle = right;
+        for (int i = left; i <= middle);
         {
             int obj = dat.indices[i];
             float minb = dat.primBound[obj].low()[axis];
@@ -87,9 +88,9 @@ void BIH::subdivide(int left, int right, std::vector<uint32> &tempTree, buildDat
             {
                 // move to the right most
                 int t = dat.indices[i];
-                dat.indices[i] = dat.indices[right];
-                dat.indices[right] = t;
-                right--;
+                dat.indices[i] = dat.indices[middle];
+                dat.indices[middle] = t;
+                middle--;
                 if (clipR > minb)
                     clipR = minb;
             }
@@ -118,12 +119,12 @@ void BIH::subdivide(int left, int right, std::vector<uint32> &tempTree, buildDat
                 // update nodebox and recurse
                 nodeBox.lo[axis] = nodeL;
                 nodeBox.hi[axis] = nodeR;
-                subdivide(left, rightOrig, tempTree, dat, gridBox, nodeBox, nextIndex, depth + 1, stats);
+                subdivide(left, right, tempTree, dat, gridBox, nodeBox, nextIndex, depth + 1, stats);
                 return;
             }
         }
         // ensure we are making progress in the subdivision
-        if (right == rightOrig)
+        if (middle == right)
         {
             // all left
             if (prevAxis == axis && G3D::fuzzyEq(prevSplit, split)) {
@@ -142,7 +143,7 @@ void BIH::subdivide(int left, int right, std::vector<uint32> &tempTree, buildDat
             gridBox.hi[axis] = split;
             prevClip = G3D::fnan();
         }
-        else if (left > right)
+        else if (left > middle)
         {
             // all right
             if (prevAxis == axis && G3D::fuzzyEq(prevSplit, split)) {
@@ -151,7 +152,6 @@ void BIH::subdivide(int left, int right, std::vector<uint32> &tempTree, buildDat
                 createNode(tempTree, nodeIndex, left, right);
                 return;
             }
-            right = rightOrig;
             if (clipR >= split) {
                 // keep looping on right half
                 gridBox.lo[axis] = split;
@@ -201,8 +201,8 @@ void BIH::subdivide(int left, int right, std::vector<uint32> &tempTree, buildDat
     // compute index of child nodes
     int nextIndex = tempTree.size();
     // allocate left node
-    int nl = right - left + 1;
-    int nr = rightOrig - (right + 1) + 1;
+    int nl = middle - left + 1;
+    int nr = right - (middle + 1) + 1;
     if (nl > 0) {
         tempTree.push_back(0);
         tempTree.push_back(0);
@@ -228,11 +228,11 @@ void BIH::subdivide(int left, int right, std::vector<uint32> &tempTree, buildDat
     nodeBoxR.lo[axis] = clipR;
     // recurse
     if (nl > 0)
-        subdivide(left, right, tempTree, dat, gridBoxL, nodeBoxL, nextIndex, depth + 1, stats);
+        subdivide(left, middle, tempTree, dat, gridBoxL, nodeBoxL, nextIndex, depth + 1, stats);
     else
         stats.updateLeaf(depth + 1, 0);
     if (nr > 0)
-        subdivide(right + 1, rightOrig, tempTree, dat, gridBoxR, nodeBoxR, nextIndex + 3, depth + 1, stats);
+        subdivide(middle + 1, right, tempTree, dat, gridBoxR, nodeBoxR, nextIndex + 3, depth + 1, stats);
     else
         stats.updateLeaf(depth + 1, 0);
 }
