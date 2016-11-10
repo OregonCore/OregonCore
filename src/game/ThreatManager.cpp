@@ -136,6 +136,9 @@ void HostileReference::fireStatusChanged(ThreatRefStatusChangeEvent& threatRefSt
 
 void HostileReference::addThreat(float modThreat)
 {
+    if (modThreat + iThreat < 0)
+        modThreat = -iThreat;
+
     iThreat += modThreat;
     // the threat is changed. Source and target unit have to be availabe
     // if the link was cut before relink it again
