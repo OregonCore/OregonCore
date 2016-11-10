@@ -17247,13 +17247,13 @@ void Player::Whisper(const std::string& text, uint32 language, Player* rPlayer)
     BuildPlayerChat(&data, CHAT_MSG_WHISPER, text, language);
     rPlayer->GetSession()->SendPacket(&data);
 
-    // not send confirmation for addon messages
-    if (language != LANG_ADDON)
-    {
-        data.Initialize(SMSG_MESSAGECHAT, 200);
-        rPlayer->BuildPlayerChat(&data, CHAT_MSG_REPLY, text, language);
-        GetSession()->SendPacket(&data);
-    }
+    if (language == LANG_ADDON)
+        return;
+
+    data.Initialize(SMSG_MESSAGECHAT, 200);
+    rPlayer->BuildPlayerChat(&data, CHAT_MSG_REPLY, text, language);
+    GetSession()->SendPacket(&data);
+
 
     if (!isAcceptWhispers() && !(IsGameMaster() && rPlayer->IsGameMaster()))
     {
