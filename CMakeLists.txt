@@ -9,9 +9,21 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 # Set projectname (must be done AFTER setting configurationtypes)
+
 project(OregonCore)
+
+# We require CMake >= 2.8
 cmake_minimum_required(VERSION 2.8)
-cmake_policy(VERSION 2.8)
+
+# CMake policies (can not be handled elsewhere)
+cmake_policy(SET CMP0005 OLD)
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
+endif()
+
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif()
 
 # Set RPATH-handing (CMake parameters)
 set(CMAKE_SKIP_BUILD_RPATH 0)
