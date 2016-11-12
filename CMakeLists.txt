@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 2.8)
 # CMake policies (can not be handled elsewhere)
 cmake_policy(VERSION 2.8)
 
-if(CMP0005)
+if(POLICY CMP0005)
   cmake_policy(SET CMP0005 OLD)
 endif()
  
