@@ -29,6 +29,10 @@ add_custom_target(uninstall
 )
 message(STATUS "UNIX: Created uninstall target")
 
+# Some distributions prefer to place libraries elsewhere
+list(APPEND CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu" "/usr/lib/x86_64-linux-gnu")
+list(APPEND CMAKE_PREFIX_PATH "/usr/lib/i386-linux-gnu"   "/usr/include/i386-linux-gnu")
+
 # set c++ standard
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
