@@ -12774,7 +12774,8 @@ void Unit::RemoveCharmedBy(Unit* charmer)
     if (ToPlayer())
         ToPlayer()->SetClientControl(this, true);
 
-    DeleteCharmInfo();
+    if (GetTypeId() == TYPEID_PLAYER || (GetTypeId() == TYPEID_UNIT && !IsGuardian()))
+        DeleteCharmInfo();
 
     if (Player* playerCharmer = charmer->ToPlayer())
     {
