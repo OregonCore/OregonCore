@@ -5194,7 +5194,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     switch (m_spellInfo->Id)
                     {
                     case 25140:
-                        spellid =  32571;
+                        spellid =  32568;
                         break;
                     case 25143:
                         spellid =  32572;
@@ -5206,7 +5206,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                         spellid =  30141;
                         break;
                     case 29128:
-                        spellid =  32568;
+                        spellid =  32571;
                         break;
                     case 29129:
                         spellid =  32569;
