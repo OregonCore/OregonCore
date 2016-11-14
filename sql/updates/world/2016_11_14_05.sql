@@ -37,7 +37,7 @@ INSERT INTO `pool_template` VALUES
 -- Zerillis (10082)
 -- ----------------------------
 DELETE FROM `creature` WHERE `guid` IN (@GUID + 4);
-INSERT INTO `creature` VALUES (@GUID + 4, 10082, 209, 1, 0, 0, 1628.94, 952.042, 8.87684, 5.43152, 7200, 0, 0, 5544, 0, 1); -- Zerillis
+INSERT INTO `creature` VALUES (@GUID + 4, 10082, 209, 1, 0, 0, 1628.94, 952.042, 8.87684, 5.43152, 7200, 15, 0, 5544, 0, 1); -- Zerillis
 
 DELETE FROM `pool_creature` WHERE `guid` IN (@GUID + 4, 44170);
 INSERT INTO `pool_creature` VALUES
