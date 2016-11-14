@@ -1385,6 +1385,14 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     m_caster->CastSpell(m_caster, 42337, true, NULL);
                     return;
                 }
+            case 37473:                                 // Detect Whispers (related to quest 10607 - Whispers of the Raven God_Whispers of the Raven God)
+                {
+                    if (!unitTarget)
+                        return;
+
+                    unitTarget->CastSpell(unitTarget, damage, true);
+                    break;
+                }
             case 37573:                                 //Temporal Phase Modulator
                 {
                     if (!unitTarget)
@@ -5425,6 +5433,14 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                 break;
             }*/
             // Tidal Surge
+            case 37473:                                 // Detect Whispers (related to quest 10607 - Whispers of the Raven God_Whispers of the Raven God)
+                {
+                    if (!unitTarget)
+                        return;
+
+                    unitTarget->CastSpell(unitTarget, damage, true);
+                    break;
+                }
             case 38358:
                 if (unitTarget)
                     m_caster->CastSpell(unitTarget, 38353, true);
