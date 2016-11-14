@@ -1153,6 +1153,14 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
 
                     return;
                 }
+            case 29970:                                 // Deactivate Blizzard (Naxxramas: Sapphiron)
+                {
+                    if (!unitTarget)
+                        return;
+
+                    unitTarget->RemoveAurasDueToSpell(29952);
+                    return;
+                }
             case 30004:                                 // Flame Wreath
                 {
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
