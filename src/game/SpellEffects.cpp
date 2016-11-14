@@ -1856,6 +1856,8 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 if (!item)
                     return;
 
+                ((Player*)m_caster)->AddComboPoints(unitTarget, 1);
+
                 // all poison enchantments is temporary
                 if (uint32 enchant_id = item->GetEnchantmentId(TEMP_ENCHANTMENT_SLOT))
                 {
