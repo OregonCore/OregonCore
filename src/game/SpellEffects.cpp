@@ -1243,6 +1243,9 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 }
             case 40109:                                 // Knockdown Fel Cannon: The Bolt
                 {
+                    if (!unitTarget)
+                        return;
+
                     unitTarget->CastSpell(unitTarget, 40075, true);
                     return;
                 }
