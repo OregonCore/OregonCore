@@ -6815,6 +6815,18 @@ void Spell::EffectTransmitted(SpellEffIndex effIndex)
 {
     uint32 name_id = m_spellInfo->EffectMiscValue[effIndex];
 
+    switch (m_spellInfo->Id)
+    {
+        case 29886: // Create Soulwell
+            if (m_caster->HasAura(18692))
+                name_id = 183510;
+            else if (m_caster->HasAura(18693))
+                name_id = 183511;
+            break;
+        default:
+            break;
+    }
+
     GameObjectInfo const* goinfo = sObjectMgr.GetGameObjectInfo(name_id);
 
     if (!goinfo)
