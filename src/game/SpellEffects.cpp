@@ -2775,8 +2775,6 @@ void Spell::EffectPowerDrain(SpellEffIndex effIndex)
     if (drain_power == POWER_MANA)
     {
         float manaMultiplier = m_spellInfo->EffectMultipleValue[effIndex];
-        if (manaMultiplier == 0)
-            manaMultiplier = 1;
 
         if (Player* modOwner = m_caster->GetSpellModOwner())
             modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_MULTIPLE_VALUE, manaMultiplier);
