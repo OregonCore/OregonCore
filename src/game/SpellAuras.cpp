@@ -5937,9 +5937,9 @@ void Aura::PeriodicTick()
 
             if (pdamage)
                 procVictim |= PROC_FLAG_TAKEN_DAMAGE;
-            pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, pdamage, BASE_ATTACK, spellProto);
 
             pCaster->DealDamage(target, pdamage, &cleanDamage, DOT, GetSpellSchoolMask(spellProto), spellProto, true);
+            pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, pdamage, BASE_ATTACK, spellProto);
             break;
         }
     case SPELL_AURA_PERIODIC_LEECH:
