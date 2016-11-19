@@ -286,6 +286,9 @@ struct boss_nightbaneAI : public ScriptedAI
 		(*me).GetMotionMaster()->Clear(false);
 		(*me).GetMotionMaster()->MovePoint(0, IntroWay[2][0], IntroWay[2][1], IntroWay[2][2]);
 
+		// Set Flight Speed to normal at begin of takeoff
+		me->SetSpeed(MOVE_FLIGHT, 1.0f);
+
 		Flying = true;
 
 		FlyTimer = urand(45000, 60000); //timer wrong between 45 and 60 seconds
@@ -480,6 +483,9 @@ struct boss_nightbaneAI : public ScriptedAI
 					me->GetMotionMaster()->MovePoint(3, IntroWay[3][0], IntroWay[3][1], IntroWay[3][2]);
 
 					Flying = true;
+
+				// Set flying speed to x6.0 so doesnt take so long to land
+				me->SetSpeed(MOVE_FLIGHT, 6.0f);
 				}
 				else FlyTimer -= diff;
 			}
