@@ -667,7 +667,7 @@ enum SpellAttr6
     SPELL_ATTR6_UNK26                            = 0x04000000, // 26 not set in 2.4.2
     SPELL_ATTR6_UNK27                            = 0x08000000, // 27 not set in 2.4.2
     SPELL_ATTR6_UNK28                            = 0x10000000, // 28 not set in 2.4.2
-    SPELL_ATTR6_UNK29                            = 0x20000000, // 29 not set in 2.4.2
+    SPELL_ATTR6_NO_DMG_PERCENT_MODS              = 0x20000000, // 29 not set in 2.4.2
     SPELL_ATTR6_UNK30                            = 0x40000000, // 30 not set in 2.4.2
     SPELL_ATTR6_UNK31                            = 0x80000000  // 31 not set in 2.4.2
 };

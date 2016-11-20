@@ -7717,7 +7717,7 @@ void Unit::EnergizeBySpell(Unit* victim, uint32 SpellID, uint32 damage, Powers p
 
 uint32 Unit::SpellDamageBonus(Unit* victim, SpellEntry const* spellProto, uint32 pdamage, DamageEffectType damagetype)
 {
-    if (!spellProto || !victim || damagetype == DIRECT_DAMAGE)
+    if (!spellProto || !victim || damagetype == DIRECT_DAMAGE || spellProto->Attributes & SPELL_ATTR6_NO_DMG_PERCENT_MODS)
         return pdamage;
 
     int32 BonusDamage = 0;
@@ -8746,7 +8746,7 @@ bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool
 
 void Unit::MeleeDamageBonus(Unit* victim, uint32* pdamage, WeaponAttackType attType, SpellEntry const* spellProto)
 {
-    if (!victim || pdamage == 0)
+    if (!victim || pdamage == 0 || (spellProto && spellProto->Attributes & SPELL_ATTR6_NO_DMG_PERCENT_MODS))
         return;
 
     uint32 creatureTypeMask = victim->GetCreatureTypeMask();
