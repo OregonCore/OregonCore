@@ -151,6 +151,8 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
 {
     DEBUG_LOG("WORLD: Recvd CMSG_WHO Message");
 
+    uint32 matchcount = 0;
+
     uint32 level_min, level_max, racemask, classmask, zones_count, str_count;
     uint32 zoneids[10];                                     // 10 is client limit
     std::string player_name, guild_name;
@@ -214,8 +216,6 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
     bool allowTwoSideWhoList = sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_WHO_LIST);
     bool gmInWhoList         = sWorld.getConfig(CONFIG_GM_IN_WHO_LIST);
     bool hideInArena         = sWorld.getConfig(CONFIG_ARENA_HIDE_FROM_SOCIAL);
-
-    uint32 matchcount = 0;
     uint32 displaycount = 0;
 
     WorldPacket data(SMSG_WHO, 50);                         // guess size
@@ -334,8 +334,6 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
         if ((++matchcount) == sWorld.getConfig(CONFIG_MAX_WHO))
             continue;
 
-        ++displaycount;
-
         data << pname;                                      // player name
         data << gname;                                      // guild name
         data << uint32(lvl);                                // player level
@@ -343,6 +341,8 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
         data << uint32(race);                               // player race
         data << uint8(gender);                              // player gender
         data << uint32(pzoneid);                            // player zone id
+
+        ++displaycount;
     }
 
     data.put(0, displaycount);                             // insert right count, count of matches

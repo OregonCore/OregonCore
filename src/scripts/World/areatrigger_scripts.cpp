@@ -176,13 +176,15 @@ enum
     QUEST_SPECIAL_DELIVERY_TO_SHATTRATH = 10280
 };
 
+static const WorldLocation haramadTeleportDest(530, -1810.465f, 5323.083f, -12.428f, 2.040f);
+
 bool AreaTrigger_at_haramad_teleport(Player* player, AreaTriggerEntry const* /*at*/)
 {
     if (player->IsGameMaster() || !player->IsAlive())
         return false;
 
     if (player->GetQuestStatus(QUEST_SPECIAL_DELIVERY_TO_SHATTRATH) == QUEST_STATUS_INCOMPLETE)
-        player->TeleportTo(530, -1810.465f, 5323.083f, -12.428f, 2.040f);
+        player->TeleportTo(haramadTeleportDest);
 
     return false;
 }

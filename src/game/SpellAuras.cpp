@@ -3206,9 +3206,8 @@ void Aura::HandleAuraTrackCreatures(bool apply, bool /*Real*/)
         return;
 
     if (apply)
-        m_target->SetFlag(PLAYER_TRACK_CREATURES, uint32(1) << (m_modifier.m_miscvalue - 1));
-    else
-        m_target->RemoveFlag(PLAYER_TRACK_CREATURES, uint32(1) << (m_modifier.m_miscvalue - 1));
+        m_target->RemoveNoStackAurasDueToAura(this);
+    m_target->SetUInt32Value(PLAYER_TRACK_CREATURES, apply ? ((uint32)1) << (m_modifier.m_miscvalue - 1) : 0);
 }
 
 void Aura::HandleAuraTrackResources(bool apply, bool /*Real*/)
@@ -3217,15 +3216,23 @@ void Aura::HandleAuraTrackResources(bool apply, bool /*Real*/)
         return;
 
     if (apply)
-        m_target->SetFlag(PLAYER_TRACK_RESOURCES, uint32(1) << (m_modifier.m_miscvalue - 1));
-    else
-        m_target->RemoveFlag(PLAYER_TRACK_RESOURCES, uint32(1) << (m_modifier.m_miscvalue - 1));
+        m_target->RemoveNoStackAurasDueToAura(this);
+    m_target->SetUInt32Value(PLAYER_TRACK_RESOURCES, apply ? ((uint32)1) << (m_modifier.m_miscvalue - 1) : 0);
 }
 
 void Aura::HandleAuraTrackStealthed(bool apply, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
+
+    if (apply)
+        m_target->RemoveNoStackAurasDueToAura(this);
+    else
+    {
+        // do not remove unit flag if there are more than this auraEffect of that kind on unit
+        if (m_target->HasAuraType(GetAuraType()))
+            return;
+    }
 
     m_target->ApplyModFlag(PLAYER_FIELD_BYTES, PLAYER_FIELD_BYTE_TRACK_STEALTHED, apply);
 }
@@ -3286,6 +3293,8 @@ void Aura::HandleModPossessPet(bool apply, bool Real)
     }
     else
     {
+        pet->RemoveCharmedBy(caster);
+
         if (!pet->IsWithinDistInMap(caster, pet->GetMap()->GetVisibilityRange()))
             pet->Remove(PET_SAVE_NOT_IN_SLOT, true);
         else
@@ -3298,12 +3307,10 @@ void Aura::HandleModPossessPet(bool apply, bool Real)
             //  the "follow" flag. Player MUST click "stay" while under the spell.
             if (!pet->GetVictim() && !pet->GetCharmInfo()->HasCommandState(COMMAND_STAY))
             {
-                m_target->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
-                m_target->GetCharmInfo()->SetCommandState(COMMAND_FOLLOW);
+                pet->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+                pet->GetCharmInfo()->SetCommandState(COMMAND_FOLLOW);
             }
         }
-
-        pet->RemoveCharmedBy(caster);
     }
 }
 
