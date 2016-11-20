@@ -1,4 +1,4 @@
 
 -- Proper orientation
-DELETE FROM `worlddb`.`creature_onkill_reputation` WHERE  `creature_id`=9699;
+DELETE FROM `creature_onkill_reputation` WHERE  `creature_id`=9699;
 
