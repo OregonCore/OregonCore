@@ -641,6 +641,10 @@ void Spell::prepareDataForTriggerSystem()
         case SPELLFAMILY_ROGUE: // mutilate mainhand + offhand
             if (m_spellInfo->SpellFamilyFlags & 0x600000000LL) m_canTrigger = true;
             break;
+        case SPELLFAMILY_SHAMAN:
+        // Lightning Shield
+            if (m_spellInfo->SpellFamilyFlags & 0x0000000000000400LL) m_canTrigger = true;
+            break;
         }
     }
 
