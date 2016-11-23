@@ -231,9 +231,9 @@ struct boss_attumenAI : public ScriptedAI
                 Midnight = 0;
                 me->SetVisible(false);
                 me->Kill(me);
-            }
         }
         else ResetTimer -= diff;
+    }
 
         //Return since we have no target
         if (!UpdateVictim())
