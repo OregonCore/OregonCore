@@ -223,8 +223,12 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
         return;
     }
     else
+    {
         GetPlayer()->m_taxi.ClearTaxiDestinations();        // not destinations, clear source node
 
+         // has taxi flight just finished reset fall information to avoid receiving fall damage
+        GetPlayer()->SetFallInformation(0, movementInfo.GetPos()->GetPositionZ());
+    }
     GetPlayer()->CleanupAfterTaxiFlight();
 }
 
