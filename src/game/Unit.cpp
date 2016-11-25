@@ -9654,6 +9654,7 @@ void Unit::setDeathState(DeathState s)
         //do not why since in IncreaseMaxHealth currenthealth is checked
         SetHealth(0);
         SetPower(getPowerType(), 0);
+        SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
     }
     else if (s == JUST_RESPAWNED)
         RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE); // clear skinnable for creature and player (at Battleground)
