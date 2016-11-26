@@ -99,10 +99,6 @@ struct instance_deadmines : public ScriptedInstance
         {
         case CANNON_GUNPOWDER_USED:
             CannonBlast_Timer = DATA_CANNON_BLAST_TIMER;
-            // it's a hack - Mr. Smite should do that but his too far away
-            //pIronCladDoor->SetName("Mr. Smite");
-            //pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM1, LANG_UNIVERSAL, 0);
-            //DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM1);
             CannonEventState = CANNON_BLAST_INITIATED;
             break;
         case CANNON_BLAST_INITIATED:
@@ -117,8 +113,6 @@ struct instance_deadmines : public ScriptedInstance
                 if (Creature* smite = instance->GetCreature(MrSmiteGUID))
                     pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM1, LANG_UNIVERSAL, 0);
                     DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM1);
-                //pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM2, LANG_UNIVERSAL, 0);
-                //DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM2);
                 CannonEventState = PIRATES_ATTACK;
             }
             else CannonBlast_Timer -= diff;
