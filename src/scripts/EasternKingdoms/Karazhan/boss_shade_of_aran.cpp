@@ -656,7 +656,7 @@ struct boss_aranAI : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit* who) override
+    void MoveInLineOfSight(Unit* who)
     {
         ScriptedAI::MoveInLineOfSight(who);
 
