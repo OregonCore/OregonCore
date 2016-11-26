@@ -111,8 +111,8 @@ struct instance_deadmines : public ScriptedInstance
                 BlastOutDoor();
                 LeverStucked();
                 if (Creature* smite = instance->GetCreature(MrSmiteGUID))
-                    pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM1, LANG_UNIVERSAL, 0);
-                    DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM1);
+                    smite->AI()->DoPlaySound(SOUND_MR_SMITE_ALARM1);
+                    smite->AI()->MonsterYell(SAY_MR_SMITE_ALARM1, LANG_UNIVERSAL, 0);
                 CannonEventState = PIRATES_ATTACK;
             }
             else CannonBlast_Timer -= diff;
@@ -129,8 +129,8 @@ struct instance_deadmines : public ScriptedInstance
             if (SmiteAlarmDelay_Timer <= diff)
             {
                 if (Creature* smite = instance->GetCreature(MrSmiteGUID))
-                    pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM2, LANG_UNIVERSAL, 0);
-                    DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM2);
+                    smite->AI()->DoPlaySound(SOUND_MR_SMITE_ALARM2);
+                    smite->AI()->MonsterYell(SAY_MR_SMITE_ALARM2, LANG_UNIVERSAL, 0);
                 CannonEventState = EVENT_DONE;
             } else SmiteAlarmDelay_Timer -= diff;
             break;
