@@ -274,7 +274,7 @@ bool VMapManager2::GetLiquidLevel(uint32 mapId, float x, float y, float z, uint8
     return false;
 }
 
-WorldModel* VMapManager2::acquireModelInstance(const std::string& basepath, const std::string& filename)
+WorldModel* VMapManager2::acquireModelInstance(const std::string& basepath, const std::string& filename, uint32 flags/* Only used when creating the model */)
 {
     //! Critical section, thread safe access to iLoadedModelFiles
     //ACE_GUARD(ACE_Thread_Mutex, LoadedModelFilesLock);
@@ -290,6 +290,7 @@ WorldModel* VMapManager2::acquireModelInstance(const std::string& basepath, cons
             return NULL;
         }
         DEBUG_LOG("VMapManager2: loading file '%s%s'", basepath.c_str(), filename.c_str());
+        worldmodel->Flags = flags;
         model = iLoadedModelFiles.insert(std::pair<std::string, ManagedModel>(filename, ManagedModel())).first;
         model->second.setModel(worldmodel);
     }
