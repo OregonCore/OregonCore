@@ -7717,7 +7717,7 @@ void Unit::EnergizeBySpell(Unit* victim, uint32 SpellID, uint32 damage, Powers p
 
 uint32 Unit::SpellDamageBonus(Unit* victim, SpellEntry const* spellProto, uint32 pdamage, DamageEffectType damagetype)
 {
-    if (!spellProto || !victim || damagetype == DIRECT_DAMAGE || spellProto->Attributes & SPELL_ATTR6_NO_DMG_PERCENT_MODS)
+    if (!spellProto || !victim || damagetype == DIRECT_DAMAGE || spellProto->AttributesEx6 & SPELL_ATTR6_NO_DMG_PERCENT_MODS)
         return pdamage;
 
     int32 BonusDamage = 0;
@@ -8746,7 +8746,7 @@ bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool
 
 void Unit::MeleeDamageBonus(Unit* victim, uint32* pdamage, WeaponAttackType attType, SpellEntry const* spellProto)
 {
-    if (!victim || pdamage == 0 || (spellProto && spellProto->Attributes & SPELL_ATTR6_NO_DMG_PERCENT_MODS))
+    if (!victim || pdamage == 0 || (spellProto && spellProto->AttributesEx6 & SPELL_ATTR6_NO_DMG_PERCENT_MODS))
         return;
 
     uint32 creatureTypeMask = victim->GetCreatureTypeMask();
@@ -9573,6 +9573,7 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
                 return;
         }
 
+        data << GetPackGUID();
         BuildMovementPacket(&data);
         data << float(GetSpeed(mtype));
         SendMessageToSet(&data, true);
@@ -9654,6 +9655,7 @@ void Unit::setDeathState(DeathState s)
         //do not why since in IncreaseMaxHealth currenthealth is checked
         SetHealth(0);
         SetPower(getPowerType(), 0);
+        SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
     }
     else if (s == JUST_RESPAWNED)
         RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE); // clear skinnable for creature and player (at Battleground)
@@ -12801,7 +12803,8 @@ void Unit::RemoveCharmedBy(Unit* charmer)
     if (ToPlayer())
         ToPlayer()->SetClientControl(this, true);
 
-    DeleteCharmInfo();
+    if (GetTypeId() == TYPEID_PLAYER || (GetTypeId() == TYPEID_UNIT && !IsGuardian()))
+        DeleteCharmInfo();
 
     if (Player* playerCharmer = charmer->ToPlayer())
     {

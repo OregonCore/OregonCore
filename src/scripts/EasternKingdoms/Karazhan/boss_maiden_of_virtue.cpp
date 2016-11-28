@@ -24,6 +24,7 @@ EndScriptData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "karazhan.h"
 
 #define SAY_AGGRO               -1532018
 #define SAY_SLAY1               -1532019
@@ -33,35 +34,31 @@ EndScriptData */
 #define SAY_REPENTANCE2         -1532023
 #define SAY_DEATH               -1532024
 
-#define SPELL_REPENTANCE        29511
-#define SPELL_HOLYFIRE          29522
-#define SPELL_HOLYWRATH         32445
-#define SPELL_HOLYGROUND        29512
-#define SPELL_BERSERK           26662
-
-struct boss_maiden_of_virtueAI : public ScriptedAI
+enum eSpells 
 {
-    boss_maiden_of_virtueAI(Creature* c) : ScriptedAI(c) {}
+    SPELL_REPENTANCE    = 29511,
+    SPELL_HOLYFIRE      = 29522,
+    SPELL_HOLYWRATH     = 32445,
+    SPELL_HOLYGROUND    = 29512,
+    SPELL_BERSERK       = 26662
+};
 
-    uint32 Repentance_Timer;
-    uint32 Holyfire_Timer;
-    uint32 Holywrath_Timer;
-    uint32 Holyground_Timer;
-    uint32 Enrage_Timer;
+enum eEvents
+{
+    EVENT_REPENTANCE    = 1,
+    EVENT_HOLYFIRE      = 2,
+    EVENT_HOLYWRATH     = 3,
+    EVENT_HOLYGROUND    = 4,
+    EVENT_ENRAGE        = 5
+};
 
-    bool Enraged;
+struct boss_maiden_of_virtueAI : public BossAI
+{
+    boss_maiden_of_virtueAI(Creature* c) : BossAI(c, TYPE_MAIDEN) { }
 
     void Reset()
     {
-        Repentance_Timer    = 30000 + (rand() % 15000);
-        Holyfire_Timer      = 8000 + (rand() % 17000);
-        Holywrath_Timer     = 20000 + (rand() % 10000);
-        Holyground_Timer    = 3000;
-        Enrage_Timer        = 600000;
-
-		me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_AURA_PERIODIC_MANA_LEECH, true);
-
-        Enraged = false;
+        _Reset();
     }
 
     void KilledUnit(Unit* /*Victim*/)
@@ -73,11 +70,19 @@ struct boss_maiden_of_virtueAI : public ScriptedAI
     void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
+        _JustDied();
     }
 
     void EnterCombat(Unit* /*who*/)
     {
+        _EnterCombat();
         DoScriptText(SAY_AGGRO, me);
+
+        events.ScheduleEvent(EVENT_REPENTANCE, urand(33, 45) * IN_MILLISECONDS);
+        events.ScheduleEvent(EVENT_HOLYFIRE, 12 * IN_MILLISECONDS);
+        events.ScheduleEvent(EVENT_HOLYWRATH, urand(15, 25) * IN_MILLISECONDS);
+        events.ScheduleEvent(EVENT_HOLYGROUND, 3 * IN_MILLISECONDS);
+        events.ScheduleEvent(EVENT_ENRAGE, 600 * IN_MILLISECONDS);
     }
 
     void UpdateAI(const uint32 diff)
@@ -85,46 +90,41 @@ struct boss_maiden_of_virtueAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Enrage_Timer <= diff && !Enraged)
+        events.Update(diff);
+
+        if (me->HasUnitState(UNIT_STATE_CASTING))
+        return;
+
+        while (uint32 eventId = events.ExecuteEvent())
         {
-            DoCast(me, SPELL_BERSERK, true);
-            Enraged = true;
+            switch (eventId)
+            {
+                case EVENT_REPENTANCE:
+                    DoCastVictim(SPELL_REPENTANCE);
+                    DoScriptText(RAND(SAY_REPENTANCE1, SAY_REPENTANCE2), me);
+                    events.ScheduleEvent(EVENT_REPENTANCE, urand(33, 45) * IN_MILLISECONDS);
+                    break;
+                case EVENT_HOLYFIRE:
+                    if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true))
+                        DoCast(pTarget, SPELL_HOLYFIRE);
+                    events.ScheduleEvent(EVENT_HOLYFIRE, 12 * IN_MILLISECONDS);
+                    break;
+                case EVENT_HOLYWRATH:
+                    if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 80, true))
+                        DoCast(pTarget, SPELL_HOLYWRATH);
+                    events.ScheduleEvent(EVENT_HOLYWRATH, urand(15, 25) * IN_MILLISECONDS);
+                    break;
+                case EVENT_HOLYGROUND:
+                    DoCast(me, SPELL_HOLYGROUND, true);
+                    events.ScheduleEvent(EVENT_HOLYGROUND, 3 * IN_MILLISECONDS);
+                    break;
+                case EVENT_ENRAGE:
+                    DoCast(me, SPELL_BERSERK, true);
+                    break;
+                default:
+                    break;
+            }
         }
-        else Enrage_Timer -= diff;
-
-        if (Holyground_Timer <= diff)
-        {
-            DoCast(me, SPELL_HOLYGROUND, true);   //Triggered so it doesn't interrupt her at all
-			Holyground_Timer = 1500;
-        }
-        else Holyground_Timer -= diff;
-
-        if (Repentance_Timer <= diff)
-        {
-            DoCastVictim( SPELL_REPENTANCE);
-            DoScriptText(RAND(SAY_REPENTANCE1, SAY_REPENTANCE2), me);
-
-			Repentance_Timer = 32000;
-        }
-        else Repentance_Timer -= diff;
-
-        if (Holyfire_Timer <= diff)
-        {
-            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
-                DoCast(pTarget, SPELL_HOLYFIRE);
-
-			Holyfire_Timer = urand(10000, 17000);     //Anywhere from 8 to 25 seconds, good luck having several of those in a row!
-        }
-        else Holyfire_Timer -= diff;
-
-        if (Holywrath_Timer <= diff)
-        {
-            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
-                DoCast(pTarget, SPELL_HOLYWRATH);
-
-			Holywrath_Timer = urand(8000, 15000);
-        }
-        else Holywrath_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

@@ -3286,6 +3286,8 @@ void Aura::HandleModPossessPet(bool apply, bool Real)
     }
     else
     {
+        pet->RemoveCharmedBy(caster);
+
         if (!pet->IsWithinDistInMap(caster, pet->GetMap()->GetVisibilityRange()))
             pet->Remove(PET_SAVE_NOT_IN_SLOT, true);
         else
@@ -3298,12 +3300,10 @@ void Aura::HandleModPossessPet(bool apply, bool Real)
             //  the "follow" flag. Player MUST click "stay" while under the spell.
             if (!pet->GetVictim() && !pet->GetCharmInfo()->HasCommandState(COMMAND_STAY))
             {
-                m_target->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
-                m_target->GetCharmInfo()->SetCommandState(COMMAND_FOLLOW);
+                pet->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+                pet->GetCharmInfo()->SetCommandState(COMMAND_FOLLOW);
             }
         }
-
-        pet->RemoveCharmedBy(caster);
     }
 }
 

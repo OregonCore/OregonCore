@@ -580,6 +580,7 @@ struct boss_croneAI : public ScriptedAI
 
     void Reset()
     {
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
         CycloneTimer = 30000;
         ChainLightningTimer = 10000;
     }
@@ -592,8 +593,6 @@ struct boss_croneAI : public ScriptedAI
     void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(RAND(SAY_CRONE_AGGRO, SAY_CRONE_AGGRO2), me);
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
     }
 
     void JustDied(Unit* /*killer*/)
@@ -615,9 +614,6 @@ struct boss_croneAI : public ScriptedAI
     {
         if (!UpdateVictim())
             return;
-
-        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         if (CycloneTimer <= diff)
         {
