@@ -2903,6 +2903,23 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
     if (spellInfo->AreaId && spellInfo->AreaId != zone_id && spellInfo->AreaId != area_id)
         return false;
 
+    // continent limitation (virtual continent)
+    if (spellInfo->HasAttribute(SPELL_ATTR4_CAST_ONLY_IN_OUTLAND))
+    {
+        uint32 v_map = GetVirtualMapForMapAndZone(map_id, zone_id);
+        MapEntry const* mapEntry = sMapStore.LookupEntry(v_map);
+        if (!mapEntry || mapEntry->addon < 1 || !mapEntry->IsContinent())
+            return SPELL_FAILED_REQUIRES_AREA;
+    }
+
+    // raid instance limitation
+    if (spellInfo->HasAttribute(SPELL_ATTR6_NOT_IN_RAID_INSTANCE))
+    {
+        MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
+        if (!mapEntry || mapEntry->IsRaid())
+            return SPELL_FAILED_REQUIRES_AREA;
+    }
+
     // elixirs (all area dependent elixirs have family SPELLFAMILY_POTION, use this for speedup)
     if (spellInfo->SpellFamilyName == SPELLFAMILY_POTION)
         return true;

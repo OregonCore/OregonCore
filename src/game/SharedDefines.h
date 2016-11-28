@@ -649,7 +649,7 @@ enum SpellAttributesEx6
     SPELL_ATTR6_UNK8                             = 0x00000100, // 8
     SPELL_ATTR6_UNK9                             = 0x00000200, // 9 not set in 2.4.2
     SPELL_ATTR6_UNK10                            = 0x00000400, // 10
-    SPELL_ATTR6_UNK11                            = 0x00000800, // 11
+    SPELL_ATTR6_NOT_IN_RAID_INSTANCE             = 0x00000800, // 11
     SPELL_ATTR6_UNK12                            = 0x00001000, // 12 not set in 2.4.2
     SPELL_ATTR6_UNK13                            = 0x00002000, // 13 not set in 2.4.2
     SPELL_ATTR6_UNK14                            = 0x00004000, // 14 not set in 2.4.2

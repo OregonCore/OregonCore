@@ -578,6 +578,11 @@ struct MapEntry
     {
         return resetTimeHeroic || resetTimeRaid;
     }
+
+    bool IsContinent() const
+    {
+        return MapID == 0 || MapID == 1 || MapID == 530;
+    }
 };
 
 struct QuestSortEntry
