@@ -420,7 +420,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] =
 // Spell Attributes definitions
 // ***********************************
 
-enum SpellAttr0
+enum SpellAttributes
 {
     SPELL_ATTR0_UNK0                             = 0x00000001, // 0
     SPELL_ATTR0_RANGED                           = 0x00000002, // 1 All ranged abilities have this flag
@@ -456,7 +456,7 @@ enum SpellAttr0
     SPELL_ATTR0_CANT_CANCEL                      = 0x80000000  // 31 positive aura can't be canceled
 };
 
-enum SpellAttr1
+enum SpellAttributesEx
 {
     SPELL_ATTR1_DISMISS_PET                      = 0x00000001, // 0 for spells without this flag client doesn't allow to summon pet if caster has a pet
     SPELL_ATTR1_DRAIN_ALL_POWER                  = 0x00000002, // 1 use all power (Only paladin Lay of Hands and Bunyanize)
@@ -492,7 +492,7 @@ enum SpellAttr1
     SPELL_ATTR1_UNK31                            = 0x80000000  // 31
 };
 
-enum SpellAttr2
+enum SpellAttributesEx2
 {
     SPELL_ATTR2_CAN_TARGET_DEAD                  = 0x00000001, // 0 can target dead unit or corpse
     SPELL_ATTR2_UNK1                             = 0x00000002, // 1 Used by shadowform, ghost wolf, vanish
@@ -528,7 +528,7 @@ enum SpellAttr2
     SPELL_ATTR2_FOOD                             = 0x80000000  // 31 food, well-fed, and a few others
 };
 
-enum SpellAttr3
+enum SpellAttributesEx3
 {
     SPELL_ATTR3_UNK0                             = 0x00000001, // 0
     SPELL_ATTR3_UNK1                             = 0x00000002, // 1
@@ -564,7 +564,7 @@ enum SpellAttr3
     SPELL_ATTR3_UNK31                            = 0x80000000  // 31
 };
 
-enum SpellAttr4
+enum SpellAttributesEx4
 {
     SPELL_ATTR4_IGNORE_RESISTANCES               = 0x00000001, // 0 spells with this attribute will completely ignore the target's resistance (these spells can't be resisted)
     SPELL_ATTR4_PROC_ONLY_ON_CASTER              = 0x00000002, // 1 proc only on effects with TARGET_UNIT_CASTER?
@@ -600,7 +600,7 @@ enum SpellAttr4
     SPELL_ATTR4_UNK31                            = 0x80000000  // 31 Polymorph: Chicken (228), Sonic Boom (38052,38488)
 };
 
-enum SpellAttr5
+enum SpellAttributesEx5
 {
     SPELL_ATTR5_CAN_CHANNEL_WHEN_MOVING          = 0x00000001, // 0 don't interrupt channeling spells when moving
     SPELL_ATTR5_NO_REAGENT_WHILE_PREP            = 0x00000002, // 1 not need reagents if UNIT_FLAG_PREPARATION
@@ -636,7 +636,7 @@ enum SpellAttr5
     SPELL_ATTR5_TAUNT                            = 0x80000000  // 31 Forces all nearby enemies to focus attacks to caster Taunt, Challenging Roar, etc.
 };
 
-enum SpellAttr6
+enum SpellAttributesEx6
 {
     SPELL_ATTR6_UNK0                             = 0x00000001, // 0 Only Move spell have this flag
     SPELL_ATTR6_UNK1                             = 0x00000002, // 1 not set in 2.4.2
@@ -756,6 +756,7 @@ enum Team
 
 enum SpellEffects
 {
+    SPELL_EFFECT_NONE                      = 0,
     SPELL_EFFECT_INSTAKILL                 = 1,
     SPELL_EFFECT_SCHOOL_DAMAGE             = 2,
     SPELL_EFFECT_DUMMY                     = 3,
@@ -1762,7 +1763,8 @@ enum Emote
     EMOTE_ONESHOT_CUSTOMSPELL10        = 411,
     EMOTE_STATE_EXCLAIM                = 412,
     EMOTE_STATE_SIT_CHAIR_MED          = 415,
-    EMOTE_STATE_SPELLEFFECT_HOLD       = 422
+    EMOTE_STATE_SPELLEFFECT_HOLD       = 422,
+    EMOTE_STATE_EAT_NO_SHEATHE         = 423
 };
 
 enum Anim
@@ -2202,6 +2204,8 @@ inline uint8 ClassByQuestSort(int32 QuestSort)
 
 enum SkillType
 {
+    SKILL_NONE                     = 0,
+
     SKILL_FROST                    = 6,
     SKILL_FIRE                     = 8,
     SKILL_ARMS                     = 26,
