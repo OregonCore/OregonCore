@@ -18,7 +18,7 @@
 #ifndef DBCSFRM_H
 #define DBCSFRM_H
 
-const char AreaTableEntryfmt[] = "iiinixxxxxissssssssssssssssxiiiiixx";
+const char AreaTableEntryfmt[] = "iiinixxxxxissssssssssssssssxiixxxxx";
 const char AuctionHouseEntryfmt[] = "niiixxxxxxxxxxxxxxxxx";
 const char AreaTriggerEntryfmt[] = "niffffffff";
 const char BankBagSlotPricesEntryfmt[] = "ni";
