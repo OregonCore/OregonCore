@@ -303,7 +303,7 @@ bool StaticMapTree::InitMap(const std::string& fname, VMapManager2* vm)
         #endif
         if (!iIsTiled && ModelSpawn::readFromFile(rf, spawn))
         {
-            WorldModel* model = vm->acquireModelInstance(iBasePath, spawn.name, spawn.flags);
+            WorldModel* model = vm->acquireModelInstance(iBasePath, spawn.name);
             DEBUG_LOG("StaticMapTree::InitMap(): loading %s", spawn.name.c_str());
             if (model)
             {
@@ -374,7 +374,7 @@ bool StaticMapTree::LoadMapTile(uint32 tileX, uint32 tileY, VMapManager2* vm)
             if (result)
             {
                 // acquire model instance
-                WorldModel* model = vm->acquireModelInstance(iBasePath, spawn.name, spawn.flags);
+                WorldModel* model = vm->acquireModelInstance(iBasePath, spawn.name);
                 if (!model)
                         ERROR_LOG("StaticMapTree::LoadMapTile() : could not acquire WorldModel pointer [%u, %u]", tileX, tileY);
 
