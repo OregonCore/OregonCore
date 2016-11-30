@@ -5702,14 +5702,14 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, Aura* triggeredByAur
                     AuraList const& auras = target->GetAurasByType(SPELL_AURA_PERIODIC_DAMAGE);
                     for (AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
                     {
-                        if (((*itr)->GetId() == 31803) && (*itr)->GetCasterGUID() == GetObjectGUID())
+                        if (((*itr)->GetId() == 31803) && (*itr)->GetCasterGUID() == GetGUID())
                         {
                             stacks = (*itr)->GetStackAmount();
                             break;
                         }
                     }
                     if (stacks >= 5)
-                        CastSpell(target, 42463, true, nullptr, triggeredByAura);
+                        CastSpell(target, 42463, true, NULL, triggeredByAura);
                     break;
                 }
             // Spiritual Att.
