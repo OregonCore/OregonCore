@@ -275,6 +275,11 @@ bool IsPositiveTarget(uint32 targetA, uint32 targetB);
 bool IsSingleTargetSpell(SpellEntry const* spellInfo);
 bool IsSingleTargetSpells(SpellEntry const* spellInfo1, SpellEntry const* spellInfo2);
 
+inline bool IsBinarySpell(SpellEntry const* spellInfo)
+{
+    return false;
+}
+
 bool IsAuraAddedBySpell(uint32 auraType, uint32 spellId);
 
 bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32 zone_id, uint32 area_id);

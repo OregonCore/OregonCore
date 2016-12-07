@@ -2760,6 +2760,22 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit* victim, SpellEntry const* spellInf
     if (rand > HitChance)
         return SPELL_MISS_RESIST;
 
+    if ((schoolMask & SPELL_SCHOOL_MASK_NORMAL) == 0 && IsBinarySpell(spellInfo) && !spellInfo->HasAttribute(SPELL_ATTR4_IGNORE_RESISTANCES))
+    {
+        // Get base victim resistance for school
+        int32 targetResistance = victim->GetResistance(GetFirstSchoolInMask(schoolMask));
+        // Ignore resistance by self SPELL_AURA_MOD_TARGET_RESISTANCE aura
+        targetResistance += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_TARGET_RESISTANCE, schoolMask);
+
+        rand = irand(0,9999); // exactly 10000 number range
+
+        float averageResistance = float(targetResistance) / (getLevel() * 5) * 0.75;
+        averageResistance = averageResistance > 0.75 ? 0.75 : averageResistance; // cant have more than cap
+
+        if (rand < averageResistance*10000) // compute resistance percentage for binary spell
+            return SPELL_MISS_RESIST;
+    }
+
     return SPELL_MISS_NONE;
 }
 
