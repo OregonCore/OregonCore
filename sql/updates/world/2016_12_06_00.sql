@@ -28,7 +28,7 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@PIT_COMMANDER_ENTRY,0,0,2,11,0,100,0,0,0,0,0,48,1,0,0,0,0,0,1,0,0,0,0,0,0,0,"Pit Commander - On Respawn - Set Active"),
 (@PIT_COMMANDER_ENTRY,0,1,0,36,0,100,0,0,0,0,0,48,1,0,0,0,0,0,1,0,0,0,0,0,0,0,"Pit Commander - On Corpse Removed - Set Active"),
 (@PIT_COMMANDER_ENTRY,0,2,3,61,0,100,0,0,0,0,0,22,0,0,0,0,0,0,1,0,0,0,0,0,0,0,"Pit Commander - On Respawn - Set Event Phase 0"),
-(@PIT_COMMANDER_ENTRY,0,3,4,61,0,100,0,0,0,0,0,11,51347,0,0,0,0,0,1,0,0,0,0,0,0,0,"Pit Commander - On Respawn - Cast Teleport Visual Only"),
+(@PIT_COMMANDER_ENTRY,0,3,4,61,0,100,0,0,0,0,0,11,41232,0,0,0,0,0,1,0,0,0,0,0,0,0,"Pit Commander - On Respawn - Cast Teleport Visual Only"),
 (@PIT_COMMANDER_ENTRY,0,4,0,61,0,100,0,0,0,0,0,67,1,4000,4000,0,0,100,1,0,0,0,0,0,0,0,"Pit Commander - On Respawn - Create Timed Event"),
 (@PIT_COMMANDER_ENTRY,0,5,0,59,0,100,0,1,0,0,0,53,0,@PIT_COMMANDER_ENTRY,0,0,0,2,1,0,0,0,0,0,0,0,"Pit Commander - On Timed Event - Start WP"),
 (@PIT_COMMANDER_ENTRY,0,6,7,40,0,100,0,43,0,0,0,22,1,0,0,0,0,0,1,0,0,0,0,0,0,0,"Pit Commander - On WP Reached - Set Event Phase"),
@@ -149,7 +149,7 @@ INSERT INTO `smart_scripts` VALUES
 (@WRATH_MASTER_ENTRY*100+3, 9, 7, 0, 0, 0, 100, 0, 0, 0, 0, 0, 45, 4, 4, 0, 0, 0, 0, 12, 1, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Script - Set Data'),
 (-68311, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Set Active'),
 (-68311, 0, 1, 0, 36, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Corpse Removed - Set Active'),
-(-68311, 0, 2, 3, 11, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Cast Teleport Visual Only'),
+(-68311, 0, 2, 3, 11, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Cast Teleport Visual Only'),
 (-68311, 0, 3, 4, 61, 0, 100, 0, 0, 0, 0, 0, 67, 1, 6000, 6000, 0, 0, 100, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Create Timed Event'),
 (-68311, 0, 4, 0, 61, 0, 100, 0, 0, 0, 0, 0, 80, @WRATH_MASTER_ENTRY*100+0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Run Script'),
 (-68311, 0, 5, 0, 59, 0, 100, 0, 1, 0, 0, 0, 53, 0, 68311, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Timed Event - Start WP'),
@@ -160,7 +160,7 @@ INSERT INTO `smart_scripts` VALUES
 (-68311, 0, 11, 0, 0, 0, 100, 0, 6000, 19000, 21000, 36000, 11, 35871, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - In Combat - Cast Spellbreaker'),
 (-68312, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Set Active'),
 (-68312, 0, 1, 0, 36, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Corpse Removed - Set Active'),
-(-68312, 0, 2, 3, 11, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Cast Teleport Visual Only'),
+(-68312, 0, 2, 3, 11, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Cast Teleport Visual Only'),
 (-68312, 0, 3, 4, 61, 0, 100, 0, 0, 0, 0, 0, 67, 1, 1500, 1500, 0, 0, 100, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Create Timed Event'),
 (-68312, 0, 4, 0, 61, 0, 100, 0, 0, 0, 0, 0, 80, @WRATH_MASTER_ENTRY*100+1, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Run Script'),
 (-68312, 0, 5, 0, 59, 0, 100, 0, 1, 0, 0, 0, 53, 0, 68312, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Timed Event - Start WP'),
@@ -171,7 +171,7 @@ INSERT INTO `smart_scripts` VALUES
 (-68312, 0, 11, 0, 0, 0, 100, 0, 6000, 19000, 21000, 36000, 11, 35871, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - In Combat - Cast Spellbreaker'),
 (-68313, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Set Active'),
 (-68313, 0, 1, 0, 36, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Corpse Removed - Set Active'),
-(-68313, 0, 2, 3, 11, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Cast Teleport Visual Only'),
+(-68313, 0, 2, 3, 11, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Cast Teleport Visual Only'),
 (-68313, 0, 3, 4, 61, 0, 100, 0, 0, 0, 0, 0, 67, 1, 4000, 4000, 0, 0, 100, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Create Timed Event'),
 (-68313, 0, 4, 0, 61, 0, 100, 0, 0, 0, 0, 0, 80, @WRATH_MASTER_ENTRY*100+2, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Run Script'),
 (-68313, 0, 5, 0, 59, 0, 100, 0, 1, 0, 0, 0, 53, 0, 68313, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Timed Event - Start WP'),
@@ -182,7 +182,7 @@ INSERT INTO `smart_scripts` VALUES
 (-68313, 0, 11, 0, 0, 0, 100, 0, 6000, 19000, 21000, 36000, 11, 35871, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - In Combat - Cast Spellbreaker'),
 (-68314, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Set Active'),
 (-68314, 0, 1, 0, 36, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Corpse Removed - Set Active'),
-(-68314, 0, 2, 3, 11, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Cast Teleport Visual Only'),
+(-68314, 0, 2, 3, 11, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Cast Teleport Visual Only'),
 (-68314, 0, 3, 4, 61, 0, 100, 0, 0, 0, 0, 0, 67, 1, 4000, 4000, 0, 0, 100, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Create Timed Event'),
 (-68314, 0, 4, 0, 61, 0, 100, 0, 0, 0, 0, 0, 80, @WRATH_MASTER_ENTRY*100+3, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Respawn - Run Script'),
 (-68314, 0, 5, 0, 59, 0, 100, 0, 1, 0, 0, 0, 53, 0, 68314, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Wrath Master - On Timed Event - Start WP'),
@@ -396,7 +396,7 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,1,0,38,0,100,0,2,2,0,0,29,6,120,0,0,0,0,23,0,0,0,0,0,0,0,"Fel Soldier - On Data Set - Follow"),
 (@ENTRY,0,2,0,38,0,100,0,3,3,0,0,29,1,240,0,0,0,0,23,0,0,0,0,0,0,0,"Fel Soldier - On Data Set - Follow"),
 (@ENTRY,0,3,0,38,0,100,0,4,4,0,0,29,6,240,0,0,0,0,23,0,0,0,0,0,0,0,"Fel Soldier - On Data Set - Follow"),
-(@ENTRY,0,4,5,54,0,100,0,0,0,0,0,11,51347,0,0,0,0,0,1,0,0,0,0,0,0,0,"Fel Soldier - On Reset - Cast Teleport Visual Only"),
+(@ENTRY,0,4,5,54,0,100,0,0,0,0,0,11,41232,0,0,0,0,0,1,0,0,0,0,0,0,0,"Fel Soldier - On Reset - Cast Teleport Visual Only"),
 (@ENTRY,0,5,0,61,0,100,0,0,0,0,0,59,0,0,0,0,0,0,1,0,0,0,0,0,0,0,"Fel Soldier - On Respawn - Set Run False"),
 (@ENTRY,0,6,0,0,0,100,0,3000,12000,9000,15000,11,15496,0,0,0,0,0,2,0,0,0,0,0,0,0,"Fel Soldier - In Combat - Cast Cleave"),
 (@ENTRY,0,7,0,0,0,100,0,6000,20000,16000,33000,11,32009,0,0,0,0,0,2,0,0,0,0,0,0,0,"Fel Soldier - In Combat - Cast Cutdown"),
@@ -414,7 +414,7 @@ INSERT INTO `smart_scripts` VALUES
 UPDATE `creature_template` SET AIName='SmartAI', `ScriptName`='' WHERE `entry`=@DARKSPEAR_AXE_THROWER_ENTRY;
 DELETE FROM `smart_scripts` WHERE `entryorguid`=@DARKSPEAR_AXE_THROWER_ENTRY AND `source_type`=0;
 INSERT INTO `smart_scripts` VALUES 
-(@DARKSPEAR_AXE_THROWER_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Darkspear Axe Thrower - On JUST SUMMONED - Cast visual teleport'),
+(@DARKSPEAR_AXE_THROWER_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Darkspear Axe Thrower - On JUST SUMMONED - Cast visual teleport'),
 (@DARKSPEAR_AXE_THROWER_ENTRY, 0, 1, 2, 61, 0, 100, 0, 1, 0, 0, 0, 53, 1, @DARKSPEAR_AXE_THROWER_ENTRY, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Darkspear Axe Thrower - On Timed Event - Start WP'),
 (@DARKSPEAR_AXE_THROWER_ENTRY, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Darkspear Axe Thrower - On JUST SUMMONED - Set active'),
 (@DARKSPEAR_AXE_THROWER_ENTRY, 0, 3, 0, 0, 0, 100, 0, 0, 2000, 2300, 3900, 11, 10277, 64, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Darkspear Axe Thrower - In Combat - Cast Throw'),
@@ -426,7 +426,7 @@ INSERT INTO `smart_scripts` VALUES
 UPDATE `creature_template` SET `AIName`='SmartAI', `ScriptName`='' WHERE `entry`=@ORGRIMMAR_GRUNT_ENTRY;
 DELETE FROM `smart_scripts` WHERE `entryorguid`=@ORGRIMMAR_GRUNT_ENTRY AND `source_type`=0;
 INSERT INTO `smart_scripts` VALUES 
-(@ORGRIMMAR_GRUNT_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Orgrimmar Grunt - On JUST SUMMONED - Cast visual teleport'),
+(@ORGRIMMAR_GRUNT_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Orgrimmar Grunt - On JUST SUMMONED - Cast visual teleport'),
 (@ORGRIMMAR_GRUNT_ENTRY, 0, 1, 2, 61, 0, 100, 0, 1, 0, 0, 0, 53, 1, @DARKSPEAR_AXE_THROWER_ENTRY, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Orgrimmar Grunt - On Timed Event - Start WP'),
 (@ORGRIMMAR_GRUNT_ENTRY, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Orgrimmar Grunt - On JUST SUMMONED - Set active'),
 (@ORGRIMMAR_GRUNT_ENTRY, 0, 3, 0, 0, 0, 100, 0, 3000, 9000, 8000, 13000, 11, 33626, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Orgrimmar Grunt - In Combat - Cast Strike'),
@@ -442,7 +442,7 @@ INSERT INTO `creature_template_addon` (`entry`,`bytes2`, `emote`) VALUES (@ORGRI
 UPDATE `creature_template` SET `AIName`='SmartAI', `ScriptName`='' WHERE `entry`=@ORGRIMMAR_SHAMAN_ENTRY;
 DELETE FROM `smart_scripts` WHERE `entryorguid`=@ORGRIMMAR_SHAMAN_ENTRY AND `source_type`=0;
 INSERT INTO `smart_scripts` VALUES
-(@ORGRIMMAR_SHAMAN_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Orgrimmar Shaman - On JUST SUMMONED - Cast visual teleport'),
+(@ORGRIMMAR_SHAMAN_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Orgrimmar Shaman - On JUST SUMMONED - Cast visual teleport'),
 (@ORGRIMMAR_SHAMAN_ENTRY, 0, 1, 2, 61, 0, 100, 0, 1, 0, 0, 0, 53, 1, @DARKSPEAR_AXE_THROWER_ENTRY, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Orgrimmar Shaman - On Timed Event - Start WP'),
 (@ORGRIMMAR_SHAMAN_ENTRY, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Orgrimmar Shaman - On JUST SUMMONED - Set active'),
 (@ORGRIMMAR_SHAMAN_ENTRY, 0, 3, 0, 0, 0, 100, 0, 3000, 12000, 12000, 18000, 11, 15616, 0, 0, 0, 0, 0, 5, 20, 0, 0, 0, 0, 0, 0, 'Orgrimmar Shaman - In Combat - Cast Flame Shock'),
@@ -455,11 +455,11 @@ INSERT INTO `smart_scripts` VALUES
 UPDATE `creature_template` SET `AIName`='SmartAI', `ScriptName`='' WHERE `entry`=@UNDERCITY_MAGE_ENTRY;
 DELETE FROM `smart_scripts` WHERE `entryorguid`=@UNDERCITY_MAGE_ENTRY AND `source_type`=0;
 INSERT INTO `smart_scripts` VALUES 
-(@UNDERCITY_MAGE_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Undercity Mage - On JUST SUMMONED - Cast visual teleport'),
+(@UNDERCITY_MAGE_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Undercity Mage - On JUST SUMMONED - Cast visual teleport'),
 (@UNDERCITY_MAGE_ENTRY, 0, 1, 2, 61, 0, 100, 0, 1, 0, 0, 0, 53, 1, @DARKSPEAR_AXE_THROWER_ENTRY, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Undercity Mage - On Timed Event - Start WP'),
 (@UNDERCITY_MAGE_ENTRY, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Undercity Mage - On JUST SUMMONED - Set active'),
 (@UNDERCITY_MAGE_ENTRY, 0, 3, 0, 0, 0, 100, 0, 1000, 2000, 3000, 5000, 11, 33417, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Undercity Mage - In Combat - Cast Fireball'),
-(@UNDERCITY_MAGE_ENTRY, 0, 4, 0, 0, 0, 100, 0, 3000, 17000, 20000, 40000, 11, 33419, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Undercity Mage - In Combat - Cast Arcane Missiles'),
+(@UNDERCITY_MAGE_ENTRY, 0, 4, 0, 0, 0, 100, 0, 3000, 17000, 20000, 40000, 11, 33031, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Undercity Mage - In Combat - Cast Arcane Missiles'),
 (@UNDERCITY_MAGE_ENTRY, 0, 5, 0, 0, 0, 100, 0, 3000, 27000, 30000, 50000, 11, 33624, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Undercity Mage - In Combat - Cast Blizzard'),
 (@UNDERCITY_MAGE_ENTRY, 0, 6, 7, 40, 0, 100, 0, 12, 0, 0, 0, 101, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Undercity Mage - On WP Reached - Set Home pos'),
 (@UNDERCITY_MAGE_ENTRY, 0, 7, 0, 61, 0, 100, 0, 0, 0, 0, 0, 89, 8, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Undercity Mage - On WP Reached - Random mov'),
@@ -469,7 +469,7 @@ INSERT INTO `smart_scripts` VALUES
 UPDATE `creature_template` SET `AIName`='SmartAI', ScriptName='' WHERE `entry`=@DARNASSIAN_ARCHER_ENTRY;
 DELETE FROM `smart_scripts` WHERE `entryorguid`=@DARNASSIAN_ARCHER_ENTRY AND `source_type`=0;
 INSERT INTO `smart_scripts` VALUES
-(@DARNASSIAN_ARCHER_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Darnassian Archer - On JUST SUMMONED - Cast visual teleport'),
+(@DARNASSIAN_ARCHER_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Darnassian Archer - On JUST SUMMONED - Cast visual teleport'),
 (@DARNASSIAN_ARCHER_ENTRY, 0, 1, 2, 61, 0, 100, 0, 0, 0, 0, 0, 53, 1, @DARNASSIAN_ARCHER_ENTRY, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Darnassian Archer - On JUST SUMMONED - start WP'),
 (@DARNASSIAN_ARCHER_ENTRY, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Darnassian Archer - On JUST SUMMONED - Set active'),
 (@DARNASSIAN_ARCHER_ENTRY, 0, 3, 0, 0, 0, 100, 0, 0, 2000, 2000, 3000, 11, 15620, 64, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Darnassian Archer - In Combat - Cast Shoot'),
@@ -484,7 +484,7 @@ INSERT INTO `creature_template_addon` (`entry`,`bytes2`, `emote`) VALUES (@IRONF
 UPDATE `creature_template` SET `AIName`='SmartAI', `ScriptName`='' WHERE `entry`=@IRONFORGE_PALADIN_ENTRY;
 DELETE FROM `smart_scripts` WHERE `entryorguid`=@IRONFORGE_PALADIN_ENTRY AND `source_type`=0;
 INSERT INTO `smart_scripts` VALUES
-(@IRONFORGE_PALADIN_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Ironforge Paladin - On JUST SUMMONED - Cast visual teleport'),
+(@IRONFORGE_PALADIN_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Ironforge Paladin - On JUST SUMMONED - Cast visual teleport'),
 (@IRONFORGE_PALADIN_ENTRY, 0, 1, 2, 61, 0, 100, 0, 0, 0, 0, 0, 53, 1, @DARNASSIAN_ARCHER_ENTRY, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Ironforge Paladin - On JUST SUMMONED - start WP'),
 (@IRONFORGE_PALADIN_ENTRY, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Ironforge Paladin - On JUST SUMMONED - Set active'),
 (@IRONFORGE_PALADIN_ENTRY, 0, 3, 0, 0, 0, 100, 0, 3000, 9000, 8000, 13000, 11, 20696, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Ironforge Paladin - In Combat - Cast Holy Smite'),
@@ -500,7 +500,7 @@ INSERT INTO `creature_template_addon` (`entry`,`bytes2`, `emote`) VALUES (@STORM
 UPDATE `creature_template` SET `AIName`='SmartAI', `ScriptName`='' WHERE `entry`=@STORMWIND_SOLDIER_ENTRY;
 DELETE FROM `smart_scripts` WHERE `entryorguid`=@STORMWIND_SOLDIER_ENTRY AND `source_type`=0;
 INSERT INTO `smart_scripts` VALUES 
-(@STORMWIND_SOLDIER_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Soldier - On JUST SUMMONED - Cast visual teleport'),
+(@STORMWIND_SOLDIER_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Soldier - On JUST SUMMONED - Cast visual teleport'),
 (@STORMWIND_SOLDIER_ENTRY, 0, 1, 2, 61, 0, 100, 0, 0, 0, 0, 0, 53, 1, @DARNASSIAN_ARCHER_ENTRY, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Soldier - On JUST SUMMONED - start WP'),
 (@STORMWIND_SOLDIER_ENTRY, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Soldier - On JUST SUMMONED - Set active'),
 (@STORMWIND_SOLDIER_ENTRY, 0, 3, 0, 0, 0, 100, 0, 3000, 9000, 8000, 13000, 11, 33626, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Soldier - In Combat - Cast Strike'),
@@ -513,11 +513,11 @@ INSERT INTO `smart_scripts` VALUES
 UPDATE `creature_template` SET `AIName`='SmartAI', `ScriptName`='' WHERE `entry`=@STORMWIND_MAGE_ENTRY;
 DELETE FROM `smart_scripts` WHERE `entryorguid`=@STORMWIND_MAGE_ENTRY AND `source_type`=0;
 INSERT INTO `smart_scripts` VALUES
-(@STORMWIND_MAGE_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 51347, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Mage - On JUST SUMMONED - Cast visual teleport'),
+(@STORMWIND_MAGE_ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 41232, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Mage - On JUST SUMMONED - Cast visual teleport'),
 (@STORMWIND_MAGE_ENTRY, 0, 1, 2, 61, 0, 100, 0, 0, 0, 0, 0, 53, 1, @DARNASSIAN_ARCHER_ENTRY, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Mage - On JUST SUMMONED - start WP'),
 (@STORMWIND_MAGE_ENTRY, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Mage - On JUST SUMMONED - Set active'),
 (@STORMWIND_MAGE_ENTRY, 0, 3, 0, 0, 0, 100, 0, 1000, 2000, 3000, 5000, 11, 33417, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Mage - In Combat - Cast Fireball'),
-(@STORMWIND_MAGE_ENTRY, 0, 4, 0, 0, 0, 100, 0, 3000, 17000, 20000, 40000, 11, 33419, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Mage - In Combat - Cast Arcane Missiles'),
+(@STORMWIND_MAGE_ENTRY, 0, 4, 0, 0, 0, 100, 0, 3000, 17000, 20000, 40000, 11, 33031, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Mage - In Combat - Cast Arcane Missiles'),
 (@STORMWIND_MAGE_ENTRY, 0, 5, 0, 0, 0, 100, 0, 3000, 27000, 30000, 50000, 11, 33624, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Mage - In Combat - Cast Blizzard'),
 (@STORMWIND_MAGE_ENTRY, 0, 6, 7, 40, 0, 100, 0, 12, 0, 0, 0, 101, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Mage - On WP Reached - Set Home pos'),
 (@STORMWIND_MAGE_ENTRY, 0, 7, 0, 61, 0, 100, 0, 0, 0, 0, 0, 89, 8, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Stormwind Mage - On WP Reached - Random mov'),
@@ -564,50 +564,50 @@ DELETE FROM `creature_addon` WHERE `guid` IN(SELECT `guid` FROM `creature` WHERE
 
 DELETE FROM `creature` WHERE `id` IN(@DARKSPEAR_AXE_THROWER_ENTRY, @ORGRIMMAR_GRUNT_ENTRY, @ORGRIMMAR_SHAMAN_ENTRY, @DARNASSIAN_ARCHER_ENTRY, @IRONFORGE_PALADIN_ENTRY, @STORMWIND_SOLDIER_ENTRY, @UNDERCITY_MAGE_ENTRY, @STORMWIND_MAGE_ENTRY, @JUSTINIUS_THE_HARBINGER_ENTRY, @MELGROMM_HIGHMOUNTAIN_ENTRY, @PIT_COMMANDER_ENTRY, @WRATH_MASTER_ENTRY);
 INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`) VALUES
-(@PIT_COMMANDER_GUID, @PIT_COMMANDER_ENTRY, 530, 1, 0, 1, -420.58, 1832.27, 75.1, 4.60, 10, 0, 0, 236000, 330900, 0),
-(68311, @WRATH_MASTER_ENTRY, 530, 1, 0, 1, -276.43, 1529.10, 31.8, 0.0, 35, 0, 0, 143620, 0, 0),
-(68312, @WRATH_MASTER_ENTRY, 530, 1, 0, 1, -172.35, 1513.68, 27.8, 3.14, 25, 0, 0, 143620, 0, 0),
-(68313, @WRATH_MASTER_ENTRY, 530, 1, 0, 1, -99.78, 1892.91, 77.35, 2.54, 25, 0, 0, 143620, 0, 0),
-(68314, @WRATH_MASTER_ENTRY, 530, 1, 0, 1, -418.51, 1828.48, 74.2, 4.53, 25, 0, 0, 143620, 0, 0),
-(68010, @STORMWIND_SOLDIER_ENTRY, 530, 1, 0, 1, -267.365, 1098.02, 41.7141, 1.5708, 30, 0, 0, 12652 , 0, 0),
-(68011, @STORMWIND_SOLDIER_ENTRY, 530, 1, 0, 1, -272.049, 1097.78, 41.936, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68012, @STORMWIND_SOLDIER_ENTRY, 530, 1, 0, 1, -259.395, 1098.42, 41.6679, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68013, @STORMWIND_SOLDIER_ENTRY, 530, 1, 0, 1, -264.079, 1098.18, 41.6716, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68014, @STORMWIND_SOLDIER_ENTRY, 530, 1, 0, 1, -254.498, 1098.19, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68017, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 1, -229.442, 1098.11, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68018, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 1, -237.898, 1098.01, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68020, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 1, -246.297, 1097.92, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68022, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 1, -251.015, 1097.87, 41.7916, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68024, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 1, -233.684, 1098.06, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68025, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 1, -242.321, 1097.96, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68111, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 1, -269.663, 1086.26, 46.2537, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68112, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 1, -269.932, 1083.3, 48.2155, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68113, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 1, -260.548, 1086.05, 46.4834, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68114, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 1, -260.593, 1083.48, 48.1924, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68115, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 1, -265.322, 1083.37, 48.2152, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68116, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 1, -265.187, 1086.36, 46.23, 1.5708, 30  , 0, 0, 12652, 0, 0),
-(68118, @JUSTINIUS_THE_HARBINGER_ENTRY, 530, 1, 0, 1, -269.544, 1071.83, 54.3084, 1.5708, 30, 0, 0, 111780, 47325, 0),
-(68121, @MELGROMM_HIGHMOUNTAIN_ENTRY, 530, 1, 0, 1, -230.449, 1071.93, 54.3084, 1.5708, 30, 0, 0, 111780, 47325, 0),
-(1500000, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 1, -231.948, 1088.23, 45.3315, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68122, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 1, -232.25, 1085.21, 47.3327, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68123, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 1, -235.748, 1085.1, 47.3696, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68124, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 1, -238.932, 1088.06, 45.3673, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68125, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 1, -235.209, 1088.15, 45.3476, 1.5708, 30, 0, 0, 12652, 0, 0),
-(68126, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 1, -239.247, 1084.99, 47.4066, 1.5708, 30, 0, 0, 12652, 0, 0),
-(86066, @ORGRIMMAR_SHAMAN_ENTRY, 530, 1, 0, 1, -249.345, 1094.04, 41.6667, 1.5708, 30, 0, 0, 7590, 29330, 0),
-(86067, @ORGRIMMAR_SHAMAN_ENTRY, 530, 1, 0, 1, -240.736, 1094.17, 41.6667, 1.5708, 30, 0, 0, 7590, 29330, 0),
-(86068, @ORGRIMMAR_SHAMAN_ENTRY, 530, 1, 0, 1, -245.398, 1094.1, 41.6667, 1.5708, 30, 0, 0, 7590, 29330, 0),
-(86069, @ORGRIMMAR_SHAMAN_ENTRY, 530, 1, 0, 1, -231.307, 1094.23, 41.6667, 1.5708, 30, 0, 0, 7590, 29330, 0),
-(86070, @ORGRIMMAR_SHAMAN_ENTRY, 530, 1, 0, 1, -236.089, 1094.24, 41.6667, 1.5708, 30, 0, 0, 7590, 29330, 0),
-(68262, @IRONFORGE_PALADIN_ENTRY, 530, 1, 0, 1, -265.912, 1092.97, 41.8355, 1.5708, 30, 0, 0, 12650, 29330, 0),
-(68263, @IRONFORGE_PALADIN_ENTRY, 530, 1, 0, 1, -257.407, 1092.94, 41.9379, 1.5708, 30, 0, 0, 12650, 29330, 0),
-(68264, @IRONFORGE_PALADIN_ENTRY, 530, 1, 0, 1, -253.246, 1093.04, 41.9172, 1.5708, 30, 0, 0, 12650, 29330, 0),
-(68265, @IRONFORGE_PALADIN_ENTRY, 530, 1, 0, 1, -261.812, 1092.96, 41.8783, 1.5708, 30, 0, 0, 12650, 29330, 0),
-(68266, @IRONFORGE_PALADIN_ENTRY, 530, 1, 0, 1, -270.575, 1093.28, 41.923, 1.5708, 30, 0, 0, 12650, 29330, 0),
-(68127, @UNDERCITY_MAGE_ENTRY, 530, 1, 0, 1, -225.987, 1083.23, 54.3374, 2.71726, 30, 0, 0, 9160, 68820, 0),
-(68128, @UNDERCITY_MAGE_ENTRY, 530, 1, 0, 1, -228.478, 1074.47, 54.3336, 2.51033, 30, 0, 0, 9160, 68820, 0),
-(68015, @STORMWIND_MAGE_ENTRY, 530, 1, 0, 1, -272.632, 1075, 54.3557, 1.5708, 30, 0, 0, 9160, 68820, 0),
-(68016, @STORMWIND_MAGE_ENTRY, 530, 1, 0, 1, -275.911, 1083.75, 54.3343, 1.5708, 30, 0, 0, 9160, 68820, 0);
+(@PIT_COMMANDER_GUID, @PIT_COMMANDER_ENTRY, 530, 1, 0, 0, -420.58, 1832.27, 75.1, 4.60, 10, 0, 0, 236000, 330900, 0),
+(68311, @WRATH_MASTER_ENTRY, 530, 1, 0, 0, -276.43, 1529.10, 31.8, 0.0, 35, 0, 0, 143620, 0, 0),
+(68312, @WRATH_MASTER_ENTRY, 530, 1, 0, 0, -172.35, 1513.68, 27.8, 3.14, 25, 0, 0, 143620, 0, 0),
+(68313, @WRATH_MASTER_ENTRY, 530, 1, 0, 0, -99.78, 1892.91, 77.35, 2.54, 25, 0, 0, 143620, 0, 0),
+(68314, @WRATH_MASTER_ENTRY, 530, 1, 0, 0, -418.51, 1828.48, 74.2, 4.53, 25, 0, 0, 143620, 0, 0),
+(68010, @STORMWIND_SOLDIER_ENTRY, 530, 1, 0, 0, -267.365, 1098.02, 41.7141, 1.5708, 30, 0, 0, 12652 , 0, 0),
+(68011, @STORMWIND_SOLDIER_ENTRY, 530, 1, 0, 0, -272.049, 1097.78, 41.936, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68012, @STORMWIND_SOLDIER_ENTRY, 530, 1, 0, 0, -259.395, 1098.42, 41.6679, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68013, @STORMWIND_SOLDIER_ENTRY, 530, 1, 0, 0, -264.079, 1098.18, 41.6716, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68014, @STORMWIND_SOLDIER_ENTRY, 530, 1, 0, 0, -254.498, 1098.19, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68017, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 0, -229.442, 1098.11, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68018, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 0, -237.898, 1098.01, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68020, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 0, -246.297, 1097.92, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68022, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 0, -251.015, 1097.87, 41.7916, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68024, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 0, -233.684, 1098.06, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68025, @ORGRIMMAR_GRUNT_ENTRY, 530, 1, 0, 0, -242.321, 1097.96, 41.6667, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68111, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 0, -269.663, 1086.26, 46.2537, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68112, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 0, -269.932, 1083.3, 48.2155, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68113, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 0, -260.548, 1086.05, 46.4834, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68114, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 0, -260.593, 1083.48, 48.1924, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68115, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 0, -265.322, 1083.37, 48.2152, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68116, @DARNASSIAN_ARCHER_ENTRY, 530, 1, 0, 0, -265.187, 1086.36, 46.23, 1.5708, 30  , 0, 0, 12652, 0, 0),
+(68118, @JUSTINIUS_THE_HARBINGER_ENTRY, 530, 1, 0, 0, -269.544, 1071.83, 54.3084, 1.5708, 30, 0, 0, 111780, 47325, 0),
+(68121, @MELGROMM_HIGHMOUNTAIN_ENTRY, 530, 1, 0, 0, -230.449, 1071.93, 54.3084, 1.5708, 30, 0, 0, 111780, 47325, 0),
+(1500000, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 0, -231.948, 1088.23, 45.3315, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68122, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 0, -232.25, 1085.21, 47.3327, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68123, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 0, -235.748, 1085.1, 47.3696, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68124, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 0, -238.932, 1088.06, 45.3673, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68125, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 0, -235.209, 1088.15, 45.3476, 1.5708, 30, 0, 0, 12652, 0, 0),
+(68126, @DARKSPEAR_AXE_THROWER_ENTRY, 530, 1, 0, 0, -239.247, 1084.99, 47.4066, 1.5708, 30, 0, 0, 12652, 0, 0),
+(86066, @ORGRIMMAR_SHAMAN_ENTRY, 530, 1, 0, 0, -249.345, 1094.04, 41.6667, 1.5708, 30, 0, 0, 7590, 29330, 0),
+(86067, @ORGRIMMAR_SHAMAN_ENTRY, 530, 1, 0, 0, -240.736, 1094.17, 41.6667, 1.5708, 30, 0, 0, 7590, 29330, 0),
+(86068, @ORGRIMMAR_SHAMAN_ENTRY, 530, 1, 0, 0, -245.398, 1094.1, 41.6667, 1.5708, 30, 0, 0, 7590, 29330, 0),
+(86069, @ORGRIMMAR_SHAMAN_ENTRY, 530, 1, 0, 0, -231.307, 1094.23, 41.6667, 1.5708, 30, 0, 0, 7590, 29330, 0),
+(86070, @ORGRIMMAR_SHAMAN_ENTRY, 530, 1, 0, 0, -236.089, 1094.24, 41.6667, 1.5708, 30, 0, 0, 7590, 29330, 0),
+(68262, @IRONFORGE_PALADIN_ENTRY, 530, 1, 0, 0, -265.912, 1092.97, 41.8355, 1.5708, 30, 0, 0, 12650, 29330, 0),
+(68263, @IRONFORGE_PALADIN_ENTRY, 530, 1, 0, 0, -257.407, 1092.94, 41.9379, 1.5708, 30, 0, 0, 12650, 29330, 0),
+(68264, @IRONFORGE_PALADIN_ENTRY, 530, 1, 0, 0, -253.246, 1093.04, 41.9172, 1.5708, 30, 0, 0, 12650, 29330, 0),
+(68265, @IRONFORGE_PALADIN_ENTRY, 530, 1, 0, 0, -261.812, 1092.96, 41.8783, 1.5708, 30, 0, 0, 12650, 29330, 0),
+(68266, @IRONFORGE_PALADIN_ENTRY, 530, 1, 0, 0, -270.575, 1093.28, 41.923, 1.5708, 30, 0, 0, 12650, 29330, 0),
+(68127, @UNDERCITY_MAGE_ENTRY, 530, 1, 0, 0, -225.987, 1083.23, 54.3374, 2.71726, 30, 0, 0, 9160, 68820, 0),
+(68128, @UNDERCITY_MAGE_ENTRY, 530, 1, 0, 0, -228.478, 1074.47, 54.3336, 2.51033, 30, 0, 0, 9160, 68820, 0),
+(68015, @STORMWIND_MAGE_ENTRY, 530, 1, 0, 0, -272.632, 1075, 54.3557, 1.5708, 30, 0, 0, 9160, 68820, 0),
+(68016, @STORMWIND_MAGE_ENTRY, 530, 1, 0, 0, -275.911, 1083.75, 54.3343, 1.5708, 30, 0, 0, 9160, 68820, 0);
 
 -- Update addon
 DELETE FROM `creature_addon` WHERE `guid` IN(@PIT_COMMANDER_GUID, 68311, 68312, 68313, 68314);
@@ -664,3 +664,5 @@ INSERT INTO `smart_scripts` VALUES
 (1896703, 9, 3, 0, 0, 0, 100, 0, 0, 0, 0, 0, 12, @DARNASSIAN_ARCHER_ENTRY, 3, 180000, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Dark Assault Alliance Portal Invisible Stalker - Action list - Summon');
 
 DELETE FROM `creature_ai_scripts` WHERE `creature_id` = 18970;
+
+UPDATE `creature_template` SET `speed_walk` = '1.5' WHERE `entry` IN (18944, 18945, 19005); 
