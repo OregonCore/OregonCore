@@ -22,7 +22,7 @@
 #define DATA_MOGRAINE                   2
 #define DATA_WHITEMANE                  3
 #define DATA_DOOR_WHITEMANE             4
-#define DATA_CHAPEL_DOOR				8
+#define DATA_CHAPEL_DOOR                8
 #define DATA_HORSEMAN_EVENT             5
 #define GAMEOBJECT_PUMPKIN_SHRINE       6
 

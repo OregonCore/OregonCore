@@ -52,7 +52,7 @@ struct boss_herodAI : public ScriptedAI
     void Reset()
     {
         Enrage = false;
-        Cleave_Timer = 7500;
+        Cleave_Timer  = 7500;
         Whirlwind_Timer = 14500;
     }
 
@@ -78,8 +78,8 @@ struct boss_herodAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-		if (me->IsNonMeleeSpellCast(false)) //Checks if spell NPC is already casting a spell
-			return;
+        if (me->IsNonMeleeSpellCast(false)) //Checks if spell NPC is already casting a spell
+            return;
 
         //If we are <30% hp goes Enraged
         if (!Enrage && HealthBelowPct(30) && !me->IsNonMeleeSpellCast(false))
@@ -100,19 +100,19 @@ struct boss_herodAI : public ScriptedAI
 
         // Whirlwind_Timer
 
-		if (Whirlwind_Timer < diff)
-		{
-			DoCast(me->GetVictim(), SPELL_WHIRLWIND);
-			{
-				DoScriptText(SAY_WHIRLWIND, me);
-				Whirlwind_Timer = urand(15000, 25000);
-			}
-		}
-		else
-			Whirlwind_Timer -= diff;
+        if (Whirlwind_Timer < diff)
+        {
+            DoCast(me->GetVictim(), SPELL_WHIRLWIND);
+            {
+                DoScriptText(SAY_WHIRLWIND, me);
+                Whirlwind_Timer = urand(15000, 25000);
+            }
+        }
+        else
+            Whirlwind_Timer -= diff;
 
-		DoMeleeAttackIfReady();
-	}
+        DoMeleeAttackIfReady();
+    }
 };
 
 CreatureAI* GetAI_boss_herod(Creature* pCreature)

@@ -78,8 +78,8 @@ struct boss_arcanist_doanAI : public ScriptedAI
 
             DoScriptText(SAY_SPECIALAE, me);
             DoCast(me, SPELL_ARCANEBUBBLE);
-			DoCast(me, SPELL_FIREAOE);
-			
+            DoCast(me, SPELL_FIREAOE);
+
             bCanDetonate = true;
             bShielded = true;
         }
