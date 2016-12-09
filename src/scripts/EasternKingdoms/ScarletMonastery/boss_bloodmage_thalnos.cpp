@@ -51,7 +51,7 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
     {
         HpYell = false;
         FlameShock_Timer = 10000;
-        ShadowBolt_Timer = 2000;
+        ShadowBolt_Timer = 3000;
         FlameSpike_Timer = 8000;
         FireNova_Timer = 40000;
     }
@@ -71,6 +71,9 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
+		if (me->IsNonMeleeSpellCast(false)) //Checks if spell NPC is already casting a spell
+			return;
+
         //If we are <35% hp
         if (!HpYell && ((me->GetHealth() * 100) / me->GetMaxHealth() <= 35))
         {
@@ -87,6 +90,7 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
         else FlameShock_Timer -= diff;
 
         //FlameSpike_Timer
+
         if (FlameSpike_Timer <= diff)
         {
             DoCastVictim( SPELL_FLAMESPIKE);
@@ -95,6 +99,7 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
         else FlameSpike_Timer -= diff;
 
         //FireNova_Timer
+
         if (FireNova_Timer <= diff)
         {
             DoCastVictim( SPELL_FIRENOVA);
@@ -103,10 +108,11 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
         else FireNova_Timer -= diff;
 
         //ShadowBolt_Timer
+
         if (ShadowBolt_Timer <= diff)
         {
             DoCastVictim( SPELL_SHADOWBOLT);
-            ShadowBolt_Timer = 2000;
+            ShadowBolt_Timer = 3000;
         }
         else ShadowBolt_Timer -= diff;
 

@@ -66,12 +66,6 @@ struct boss_arcanist_doanAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (bShielded && bCanDetonate)
-        {
-            DoCast(me, SPELL_FIREAOE);
-            bCanDetonate = false;
-        }
-
         if (me->HasAura(SPELL_ARCANEBUBBLE, 0))
             return;
 
@@ -84,7 +78,8 @@ struct boss_arcanist_doanAI : public ScriptedAI
 
             DoScriptText(SAY_SPECIALAE, me);
             DoCast(me, SPELL_ARCANEBUBBLE);
-
+			DoCast(me, SPELL_FIREAOE);
+			
             bCanDetonate = true;
             bShielded = true;
         }

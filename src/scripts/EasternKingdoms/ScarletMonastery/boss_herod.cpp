@@ -52,8 +52,8 @@ struct boss_herodAI : public ScriptedAI
     void Reset()
     {
         Enrage = false;
-        Cleave_Timer = 12000;
-        Whirlwind_Timer = 60000;
+        Cleave_Timer = 7500;
+        Whirlwind_Timer = 14500;
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -70,13 +70,16 @@ struct boss_herodAI : public ScriptedAI
     void JustDied(Unit* /*killer*/)
     {
         for (uint8 i = 0; i < 20; ++i)
-            me->SummonCreature(ENTRY_SCARLET_TRAINEE, 1939.18f, -431.58f, 17.09f, 6.22f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+            me->SummonCreature(ENTRY_SCARLET_TRAINEE, 1939.18f, -431.58f, 17.09f, 6.22f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000 +i);
     }
 
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
+
+		if (me->IsNonMeleeSpellCast(false)) //Checks if spell NPC is already casting a spell
+			return;
 
         //If we are <30% hp goes Enraged
         if (!Enrage && HealthBelowPct(30) && !me->IsNonMeleeSpellCast(false))
@@ -96,16 +99,20 @@ struct boss_herodAI : public ScriptedAI
         else Cleave_Timer -= diff;
 
         // Whirlwind_Timer
-        if (Whirlwind_Timer <= diff)
-        {
-            DoScriptText(SAY_WHIRLWIND, me);
-            DoCastVictim( SPELL_WHIRLWIND);
-            Whirlwind_Timer = 30000;
-        }
-        else Whirlwind_Timer -= diff;
 
-        DoMeleeAttackIfReady();
-    }
+		if (Whirlwind_Timer < diff)
+		{
+			DoCast(me->GetVictim(), SPELL_WHIRLWIND);
+			{
+				DoScriptText(SAY_WHIRLWIND, me);
+				Whirlwind_Timer = urand(15000, 25000);
+			}
+		}
+		else
+			Whirlwind_Timer -= diff;
+
+		DoMeleeAttackIfReady();
+	}
 };
 
 CreatureAI* GetAI_boss_herod(Creature* pCreature)
