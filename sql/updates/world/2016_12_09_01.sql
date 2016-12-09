@@ -1,5 +1,5 @@
 /* Fix for Archmage Arugal in Shadow Fang Keep */
-UPDATE `creature_template` SET `ScriptName` = "boss_archmage_arugal" WHERE `entry` = 4275;
+UPDATE `creature_template` SET `ScriptName` = 'boss_archmage_arugal' WHERE `entry` = 4275;
 
 
 
@@ -12,3 +12,5 @@ INSERT INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `t
 ('7136', '33', '-85.75', '2150.80', '155.7', '2.195'),
 ('7586', '33', '-102.60', '2124.49', '155.7', '1.12'),
 ('7587', '33', '-105.80', '2160.44', '155.7', '0.02');
+
+UPDATE `creature_template` SET `minhealth` = 6890, `maxhealth` = 6890, `minlevel` = 26, `maxlevel` = 26 WHERE `entry` = 4275;

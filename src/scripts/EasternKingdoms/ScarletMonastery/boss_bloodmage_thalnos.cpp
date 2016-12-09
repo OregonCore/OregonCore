@@ -71,8 +71,8 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-		if (me->IsNonMeleeSpellCast(false)) //Checks if spell NPC is already casting a spell
-			return;
+        if (me->IsNonMeleeSpellCast(false)) //Checks if spell NPC is already casting a spell
+            return;
 
         //If we are <35% hp
         if (!HpYell && ((me->GetHealth() * 100) / me->GetMaxHealth() <= 35))
