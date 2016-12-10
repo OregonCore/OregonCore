@@ -8187,7 +8187,7 @@ bool Unit::isSpellCrit(Unit* victim, SpellEntry const* spellProto, SpellSchoolMa
         return false;
 
     // not critting spell
-    if ((spellProto->AttributesEx2 & SPELL_ATTR2_CANT_CRIT))
+    if (!IsSpellAbleToCrit(spellProto))
         return false;
 
     // Creatures do not crit with their spells or abilities, unless it is owned by a player (pet, totem, etc)
@@ -8216,7 +8216,7 @@ bool Unit::isSpellCrit(Unit* victim, SpellEntry const* spellProto, SpellSchoolMa
         case SPELL_DAMAGE_CLASS_MAGIC:
             {
                 if (schoolMask & SPELL_SCHOOL_MASK_NORMAL)
-                    crit_chance = 0.0f;
+                    crit_chance = (float)m_baseSpellCritChance;
                 // For other schools
                 else if (GetTypeId() == TYPEID_PLAYER)
                     crit_chance = GetFloatValue(PLAYER_SPELL_CRIT_PERCENTAGE1 + GetFirstSchoolInMask(schoolMask));
