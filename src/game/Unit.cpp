@@ -1797,6 +1797,49 @@ bool Unit::IsDamageReducedByArmor(SpellSchoolMask schoolMask, SpellEntry const* 
     return true;
 }
 
+uint32 Unit::CalculateEffectiveMagicResistance(Unit* attacker, SpellSchoolMask schoolMask) const
+{
+    if (!(schoolMask & SPELL_SCHOOL_MASK_MAGIC))
+        return 0;
+
+    uint32 resistance = 0;
+    // Select a resistance value matching spell school mask, prefer mininal for multischool spells
+    uint32 schools = uint32(schoolMask);
+    for (uint32 school = 0; schools; ++school)
+    {
+        if ((schools & 1) && school != SPELL_SCHOOL_NORMAL && school != SPELL_SCHOOL_HOLY)
+        {
+            // Base victim resistance
+            uint32 amount = GetResistance(SpellSchools(school));
+            // Add SPELL_AURA_MOD_TARGET_RESISTANCE aura value at caster
+            // Negative value is spell penetration, but effective resistance can't be negative since betas
+            if (const int32 casterMod = attacker->GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_TARGET_RESISTANCE, (1 << school)))
+                amount = uint32(std::max((int32(amount) + casterMod), 0));
+            if (!amount)
+            {
+                resistance = 0; // No resistance for this school: use it!
+                break;
+            }
+            else if (!resistance || amount < resistance)
+                resistance = amount;    // First school encountered or more vulnerable: memorize and continue
+        }
+        schools >>= 1;
+    }
+
+    return resistance;
+}
+
+float Unit::CalculateMagicResistanceMitigation(Unit* attacker, uint32 resistance, bool binary) const
+{
+    // Total resistance mitigation: final ratio of resistance effectiveness
+    float ratio = float(float(resistance) / (attacker->getLevelForTarget(this) * 5)) * 0.75f;
+    // Add bonus resistance mitigation to victim based on level difference for non-binary spells
+    if (!binary)
+        ratio += std::max(int32(getLevelForTarget(attacker) - attacker->getLevelForTarget(this)), 0) * 0.02f;
+    // Magic resistance mitigation is capped at 0.75
+    return std::min(ratio, 0.75f);
+}
+
 uint32 Unit::CalcArmorReducedDamage(Unit* victim, const uint32 damage)
 {
     uint32 newdamage = 0;
@@ -1831,12 +1874,9 @@ void Unit::CalcAbsorbResist(Unit* victim, SpellSchoolMask schoolMask, DamageEffe
         return;
 
     // Magic damage, check for resists
-    if ((schoolMask & (SPELL_SCHOOL_MASK_NORMAL | SPELL_SCHOOL_MASK_HOLY)) == 0 && (!spellInfo || (spellInfo->AttributesEx4 & SPELL_ATTR4_IGNORE_RESISTANCES) == 0))
+    if (!spellInfo || (spellInfo->AttributesEx4 & SPELL_ATTR4_IGNORE_RESISTANCES) == 0)
     {
-        // Get base victim resistance for school
-        float tmpvalue2 = (float)victim->GetResistance(GetFirstSchoolInMask(schoolMask));
-        // Ignore resistance by self SPELL_AURA_MOD_TARGET_RESISTANCE aura
-        tmpvalue2 += (float)GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_TARGET_RESISTANCE, schoolMask);
+        float tmpvalue2 = CalculateEffectiveMagicResistance(victim, schoolMask);
 
         tmpvalue2 *= (float)(0.15f / getLevel());
         if (tmpvalue2 < 0.0f)
@@ -2760,19 +2800,14 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit* victim, SpellEntry const* spellInf
     if (rand > HitChance)
         return SPELL_MISS_RESIST;
 
-    if ((schoolMask & SPELL_SCHOOL_MASK_NORMAL) == 0 && IsBinarySpell(spellInfo) && !spellInfo->HasAttribute(SPELL_ATTR4_IGNORE_RESISTANCES))
+    if (!spellInfo->HasAttribute(SPELL_ATTR4_IGNORE_RESISTANCES))
     {
-        // Get base victim resistance for school
-        int32 targetResistance = victim->GetResistance(GetFirstSchoolInMask(schoolMask));
-        // Ignore resistance by self SPELL_AURA_MOD_TARGET_RESISTANCE aura
-        targetResistance += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_TARGET_RESISTANCE, schoolMask);
-
-        rand = irand(0,9999); // exactly 10000 number range
-
-        float averageResistance = float(targetResistance) / (getLevel() * 5) * 0.75;
-        averageResistance = averageResistance > 0.75 ? 0.75 : averageResistance; // cant have more than cap
-
-        if (rand < averageResistance*10000) // compute resistance percentage for binary spell
+        const bool binary = IsBinarySpell(spellInfo);
+        const float mitigation = victim->CalculateMagicResistanceMitigation(this, victim->CalculateEffectiveMagicResistance(this, schoolMask), binary);
+        // Calculate full resist chance
+        const uint32 chance = binary ? uint32(mitigation * 10000) : /* FIXME: nonbinary full resist chance */ 0;
+        // Do a roll for full resist chance
+        if (urand(0,9999) < chance)
             return SPELL_MISS_RESIST;
     }
 
