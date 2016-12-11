@@ -53,6 +53,13 @@ CREATE TABLE `areatrigger_scripts` (
 -- Table structure for table `areatrigger_tavern`
 --
 
+DROP TABLE IF EXISTS `version`;
+CREATE TABLE `version` (
+  `core_version` varchar(120) DEFAULT NULL COMMENT 'Core revision dumped at startup.',
+  `core_revision` varchar(6) DEFAULT NULL,
+  `db_version` varchar(120) DEFAULT NULL COMMENT 'Version of world DB.',
+  `script_version` varchar(120) DEFAULT NULL COMMENT 'Version of scripts DB.'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Version Notes'; 
 DROP TABLE IF EXISTS `areatrigger_tavern`;
 CREATE TABLE `areatrigger_tavern` (
   `id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'Identifier',
