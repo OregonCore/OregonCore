@@ -28,7 +28,7 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,9,1,0,0,0,100,0,0,0,0,0,69,0,0,0,0,0,0,8,0,0,0,-0.954329,-942.685,61.938,6.23103,"Captured Farmer - On Script - Move To Position"),
 (@ENTRY,9,2,0,0,0,100,0,3000,3000,0,0,5,16,0,0,0,0,0,1,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State kneel"),
 (@ENTRY,9,3,0,0,0,100,0,1000,1000,0,0,5,26,0,0,0,0,0,1,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State stand"),
-(@ENTRY,9,4,0,0,0,100,0,3000,3000,0,0,5,418,0,0,0,0,0,7,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State Eat"),
+(@ENTRY,9,4,0,0,0,100,0,3000,3000,0,0,5,7,0,0,0,0,0,7,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State Eat"),
 (@ENTRY,9,5,0,0,0,100,0,5000,5000,0,0,51,0,0,0,0,0,0,1,0,0,0,0,0,0,0,"Captured Farmer - On Script - Kill Target");
 
 -- Captured Farmer SAI
@@ -45,7 +45,7 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,9,0,0,0,0,100,0,4000,4000,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,"Captured Farmer - On Script - Say Line 0"),
 (@ENTRY,9,1,0,0,0,100,0,2000,2000,0,0,5,16,0,0,0,0,0,1,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State kneel"),
 (@ENTRY,9,2,0,0,0,100,0,1000,1000,0,0,5,26,0,0,0,0,0,1,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State stand"),
-(@ENTRY,9,3,0,0,0,100,0,3000,3000,0,0,5,418,0,0,0,0,0,7,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State Eat"),
+(@ENTRY,9,3,0,0,0,100,0,3000,3000,0,0,5,7,0,0,0,0,0,7,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State Eat"),
 (@ENTRY,9,4,0,0,0,100,0,5000,5000,0,0,51,0,0,0,0,0,0,1,0,0,0,0,0,0,0,"Captured Farmer - On Script - Kill Target");
 
 -- Captured Farmer SAI
@@ -63,7 +63,7 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,9,1,0,0,0,100,0,0,0,0,0,69,0,0,0,0,0,0,8,0,0,0,0.542607,-941.692,61.9395,4.71364,"Captured Farmer - On Script - Move To Position"),
 (@ENTRY,9,2,0,0,0,100,0,3000,3000,0,0,5,16,0,0,0,0,0,1,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State kneel"),
 (@ENTRY,9,3,0,0,0,100,0,1000,1000,0,0,5,26,0,0,0,0,0,1,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State stand"),
-(@ENTRY,9,4,0,0,0,100,0,3000,3000,0,0,5,418,0,0,0,0,0,7,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State Eat"),
+(@ENTRY,9,4,0,0,0,100,0,3000,3000,0,0,5,7,0,0,0,0,0,7,0,0,0,0,0,0,0,"Captured Farmer - On Script - Set Emote State Eat"),
 (@ENTRY,9,5,0,0,0,100,0,5000,5000,0,0,51,0,0,0,0,0,0,1,0,0,0,0,0,0,0,"Captured Farmer - On Script - Kill Target");
 
 
