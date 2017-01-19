@@ -21,6 +21,7 @@
 #include "DBCEnums.h"
 #include "Platform/Define.h"
 #include "Path.h"
+#include "SharedDefines.h"
 
 #include <map>
 #include <set>
@@ -47,7 +48,8 @@ struct AreaTableEntry
     char*  area_name[16];                                   // 11-26
     // 27, string flags, unused
     uint32  team;                                           // 28
-    uint32  LiquidTypeOverride[4];                          // 29-32 liquid override by type
+    uint32  LiquidTypeOverride;                             // 29       m_liquidTypeID override for water type
+    // 30-32    uknown/unused
 };
 
 struct AreaTriggerEntry
@@ -393,6 +395,11 @@ struct GtOCTRegenHPEntry
     float    ratio;
 };
 
+struct GtNPCManaCostScalerEntry
+{
+    float    ratio;
+};
+
 //struct GtOCTRegenMPEntry
 //{
 //    float    ratio;
@@ -571,6 +578,11 @@ struct MapEntry
     bool HasResetTime() const
     {
         return resetTimeHeroic || resetTimeRaid;
+    }
+
+    bool IsContinent() const
+    {
+        return MapID == 0 || MapID == 1 || MapID == 530;
     }
 };
 
@@ -758,6 +770,14 @@ struct SpellEntry
         uint32    TotemCategory[2];                             // 212-213
         uint32    AreaId;                                       // 214
         uint32    SchoolMask;                                   // 215 school mask
+
+    inline bool HasAttribute(SpellAttributes attribute) const { return Attributes & attribute; }
+    inline bool HasAttribute(SpellAttributesEx attribute) const { return AttributesEx & attribute; }
+    inline bool HasAttribute(SpellAttributesEx2 attribute) const { return AttributesEx2 & attribute; }
+    inline bool HasAttribute(SpellAttributesEx3 attribute) const { return AttributesEx3 & attribute; }
+    inline bool HasAttribute(SpellAttributesEx4 attribute) const { return AttributesEx4 & attribute; }
+    inline bool HasAttribute(SpellAttributesEx5 attribute) const { return AttributesEx5 & attribute; }
+    inline bool HasAttribute(SpellAttributesEx6 attribute) const { return AttributesEx6 & attribute; }
 
         // Helpers
         bool HasEffect(uint8 effect) const

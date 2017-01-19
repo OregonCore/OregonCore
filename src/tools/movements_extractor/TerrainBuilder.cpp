@@ -633,7 +633,7 @@ bool TerrainBuilder::loadVMap(uint32 mapID, uint32 tileX, uint32 tileY, MeshData
                     uint8 type = NAV_EMPTY;
 
                     // convert liquid type to NavTerrain
-                    switch (liquid->GetType())
+                    switch (liquid->GetType() & 3)
                     {
                     case 0:
                     case 1:

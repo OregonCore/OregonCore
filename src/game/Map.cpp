@@ -1478,23 +1478,24 @@ inline ZLiquidStatus GridMap::getLiquidStatus(float x, float y, float z, uint8 R
 
     // Check water type in cell
     int idx=(x_int>>3)*16 + (y_int>>3);
-    uint8 type = _liquidFlags ? _liquidFlags[idx] : m_liquidType;
+    uint8 type = _liquidFlags ? _liquidFlags[idx] : 1 <<  m_liquidType;
     uint32 entry = 0;
     if (_liquidEntry)
     {
         if (LiquidTypeEntry const* liquidEntry = sLiquidTypeStore.LookupEntry(_liquidEntry[idx]))
         {
             entry = liquidEntry->Id;
-            type &= MAP_LIQUID_TYPE_DARK_WATER;
             uint32 liqTypeIdx = liquidEntry->Type;
-            if (entry < 21)
+            if ((entry < 21) && (type & MAP_LIQUID_TYPE_WATER))
             {
+                // only basic liquid stored in maps actualy so in some case we need to override type depend on area
+                // actualy only Hyjal Mount and Coilfang raid be overrided here
                 if (AreaTableEntry const* area = GetAreaEntryByAreaFlagAndMap(getArea(x, y), MAPID_INVALID))
                 {
-                    uint32 overrideLiquid = area->LiquidTypeOverride[liquidEntry->Type];
+                    uint32 overrideLiquid = area->LiquidTypeOverride;
                     if (!overrideLiquid && area->zone)
                         if (area = GetAreaEntryByAreaID(area->zone))
-                            overrideLiquid = area->LiquidTypeOverride[liquidEntry->Type];
+                            overrideLiquid = area->LiquidTypeOverride;
 
                     if (LiquidTypeEntry const* liq = sLiquidTypeStore.LookupEntry(overrideLiquid))
                     {
@@ -1504,7 +1505,7 @@ inline ZLiquidStatus GridMap::getLiquidStatus(float x, float y, float z, uint8 R
                 }
             }
 
-            type |= 1 << liqTypeIdx;
+            type |= (1 << liqTypeIdx) | (type & MAP_LIQUID_TYPE_DARK_WATER);
         }
     }
 
@@ -1739,36 +1740,19 @@ ZLiquidStatus Map::getLiquidStatus(float x, float y, float z, uint8 ReqLiquidTyp
             // All ok in water -> store data
             if (data)
             {
-                // hardcoded in client like this
+                //  hardcoded in client like this convert ocean to lava
                 if (GetId() == 530 && liquid_type == 2)
-                    liquid_type = 15;
+                    liquid_type = 3;
 
                 uint32 liquidFlagType = 0;
                 if (LiquidTypeEntry const* liq = sLiquidTypeStore.LookupEntry(liquid_type))
-                    liquidFlagType = liq->Type;
-
-                if (liquid_type && liquid_type < 21)
-                {
-                    if (AreaTableEntry const* area = GetAreaEntryByAreaFlagAndMap(GetAreaFlag(x, y, z), GetId()))
-                    {
-                        uint32 overrideLiquid = area->LiquidTypeOverride[liquidFlagType];
-                        if (!overrideLiquid && area->zone)
-                            if (area = GetAreaEntryByAreaID(area->zone))
-                                overrideLiquid = area->LiquidTypeOverride[liquidFlagType];
-
-                        if (LiquidTypeEntry const* liq = sLiquidTypeStore.LookupEntry(overrideLiquid))
-                        {
-                            liquid_type = overrideLiquid;
-                            liquidFlagType = liq->Type;
-                        }
-                    }
-                }
+                    liquidFlagType = 1 << liq->Type;
 
                 data->level = liquid_level;
                 data->depth_level = ground_level;
 
                 data->entry = liquid_type;
-                data->type_flags = 1 << liquidFlagType;
+                data->type_flags = liquidFlagType;
             }
 
             // For speed check as int values
@@ -1796,7 +1780,10 @@ ZLiquidStatus Map::getLiquidStatus(float x, float y, float z, uint8 ReqLiquidTyp
             {
                 // hardcoded in client like this
                 if (GetId() == 530 && map_data.entry == 2)
-                    map_data.entry = 15;
+                {
+                    map_data.entry = 3;
+                    map_data.type_flags = MAP_LIQUID_TYPE_MAGMA;
+                }
 
                 *data = map_data;
             }

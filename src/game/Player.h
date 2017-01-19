@@ -427,7 +427,7 @@ enum PlayerFieldByteFlags
 enum PlayerFieldByte2Flags
 {
     PLAYER_FIELD_BYTE2_NONE              = 0x00,
-    PLAYER_FIELD_BYTE2_STEALTH           = 0x20,
+    PLAYER_FIELD_BYTE2_STEALTH           = 0x2000,
     PLAYER_FIELD_BYTE2_INVISIBILITY_GLOW = 0x4000
 };
 

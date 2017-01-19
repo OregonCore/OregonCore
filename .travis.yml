@@ -43,10 +43,10 @@ install:
 # apply all updates to db and catch possible errors
 script:
   - cd $TRAVIS_BUILD_DIR/sql
-  - mysql -u root --password='' < create_mysql.sql
-  - mysql -u oregon -poregon realmd < realmd.sql
-  - mysql -u oregon -poregon characters < characters.sql
-  - mysql -u oregon -poregon world < world.sql
+  - mysql -u root --password='' < create/create_mysql.sql
+  - mysql -u oregon -poregon realmd < base/realmd.sql
+  - mysql -u oregon -poregon characters < base/characters.sql
+  - mysql -u oregon -poregon world < base/world.sql
   - curl --retry 3 -o OregonDatabase.zip https://oregon-core.net/travis/OregonDatabase.zip
   - unzip OregonDatabase.zip
   - mysql -u oregon -poregon world < OregonDatabase.sql

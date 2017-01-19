@@ -469,7 +469,7 @@ void WorldSession::HandleMoveNotActiveMoverOpcode(WorldPacket& recv_data)
     uint64 old_mover_guid;
     MovementInfo mi;
 
-    old_mover_guid = recv_data.readPackGUID();
+    recv_data >> old_mover_guid;
     recv_data >> mi;
 
     if (!old_mover_guid)
