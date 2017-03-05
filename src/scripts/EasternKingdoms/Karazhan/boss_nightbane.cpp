@@ -211,12 +211,8 @@ struct boss_nightbaneAI : public ScriptedAI
 
 	void MoveInLineOfSight(Unit *who)
 	{
-		if (!Intro && !Flying)
-			if (!me->GetVictim() && me->canStartAttack(who))
-				if (Phase == 1)
-					ScriptedAI::AttackStart(who);
-				else
-					AttackStartNoMove(who);
+        if (!Intro && !Flying)
+            ScriptedAI::MoveInLineOfSight(who);
 	}
 
 	void MovementInform(uint32 type, uint32 id)

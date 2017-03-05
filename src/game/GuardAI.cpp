@@ -38,8 +38,8 @@ void GuardAI::MoveInLineOfSight(Unit* u)
     if (!me->canFly() && me->GetDistanceZ(u) > CREATURE_Z_ATTACK_RANGE)
         return;
 
-    if (!me->GetVictim() && me->canAttack(u) &&
-        (u->IsHostileToPlayers() || me->IsHostileTo(u) /*|| u->GetVictim() && me->IsFriendlyTo(u->GetVictim())*/) &&
+    if (!me->GetVictim() && me->IsValidAttackTarget(u) &&
+        (u->IsHostileToPlayers() || me->IsHostileTo(u)) &&
         u->isInAccessiblePlaceFor(me))
     {
         float attackRadius = me->GetAttackDistance(u);

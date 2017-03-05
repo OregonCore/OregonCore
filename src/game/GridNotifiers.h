@@ -830,12 +830,10 @@ class AnyAoETargetUnitInObjectRangeCheck
         bool operator()(Unit* u)
         {
             // Check contains checks for: live, non-selectable, non-attackable flags, flight check and GM check, ignore totems
-            if (!u->isTargetableForAttack())
-                return false;
             if (u->GetTypeId() == TYPEID_UNIT && u->IsTotem())
                 return false;
 
-            if ((i_targetForPlayer ? !i_funit->IsFriendlyTo(u) : i_funit->IsHostileTo(u)) && i_obj->IsWithinDistInMap(u, i_range))
+            if (i_funit->IsValidAttackTarget(u) && i_obj->IsWithinDistInMap(u, i_range))
                 return true;
 
             return false;
@@ -901,7 +899,7 @@ struct AnyDeadUnitCheck
                 if (!me->IsWithinDistInMap(u, m_range))
                     return false;
 
-                if (!me->canAttack(u))
+                if (!me->IsValidAttackTarget(u))
                     return false;
 
                 if (i_playerOnly && u->GetTypeId() != TYPEID_PLAYER)
@@ -936,12 +934,12 @@ class NearestHostileUnitInAttackDistanceCheck
 
             if (m_force)
             {
-                if (!me->canAttack(u))
+                if (!me->IsValidAttackTarget(u))
                     return false;
             }
             else
             {
-                if (!me->canStartAttack(u))
+                if (!me->canStartAttack(u, false))
                     return false;
             }
 

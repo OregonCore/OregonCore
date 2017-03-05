@@ -49,7 +49,7 @@ bool PetAI::_needToStop() const
     if (me->isCharmed() && me->GetVictim() == me->GetCharmer())
         return true;
 
-    return !me->canAttack(me->GetVictim());
+    return !me->IsValidAttackTarget(me->GetVictim());
 }
 
 void PetAI::_stopAttack()

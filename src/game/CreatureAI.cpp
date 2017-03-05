@@ -164,9 +164,8 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
     if (me->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET) // non-combat pets should just stand there and look good;)
         return;
 
-    if (me->canStartAttack(who))
+    if (me->HasReactState(REACT_AGGRESSIVE) && me->canStartAttack(who, false))
         AttackStart(who);
-
     //else if (who->GetVictim() && me->IsFriendlyTo(who)
     //    && me->IsWithinDistInMap(who, sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS))
     //    && me->canAttack(who->GetVictim()))
@@ -249,7 +248,7 @@ void CreatureAI::EnterEvadeMode()
 
 void CreatureAI::SetGazeOn(Unit* target)
 {
-    if (me->canAttack(target))
+    if (me->IsValidAttackTarget(target))
     {
         AttackStart(target);
         me->SetReactState(REACT_PASSIVE);

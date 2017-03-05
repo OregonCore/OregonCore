@@ -644,7 +644,7 @@ enum SpellAttributesEx6
     SPELL_ATTR6_ASSIST_IGNORE_IMMUNE_FLAG        = 0x00000008, // 3 [NYI] skips checking UNIT_FLAG_IMMUNE_TO_PC and UNIT_FLAG_IMMUNE_TO_NPC flags on assist
     SPELL_ATTR6_UNK4                             = 0x00000010, // 4 not set in 2.4.2
     SPELL_ATTR6_UNK5                             = 0x00000020, // 5
-    SPELL_ATTR6_UNK6                             = 0x00000040, // 6
+    SPELL_ATTR6_CAN_TARGET_INVISIBLE             = 0x00000040, // 6 not set in 2.4.3
     SPELL_ATTR6_UNK7                             = 0x00000080, // 7
     SPELL_ATTR6_UNK8                             = 0x00000100, // 8
     SPELL_ATTR6_UNK9                             = 0x00000200, // 9 not set in 2.4.2

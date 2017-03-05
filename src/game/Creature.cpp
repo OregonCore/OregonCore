@@ -1474,7 +1474,7 @@ bool Creature::CanAlwaysSee(WorldObject const* obj) const
     return false;
 }
 
-bool Creature::canStartAttack(Unit const* who) const
+bool Creature::canStartAttack(Unit const* who, bool force) const
 {
     if (isCivilian())
         return false;
@@ -1492,13 +1492,20 @@ bool Creature::canStartAttack(Unit const* who) const
     if (!canFly() && (GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE + m_CombatDistance))
         return false;
 
-    if (!IsWithinDistInMap(who, GetAttackDistance(who)))
-        return false;
+    if (!force)
+    {
+        // @todo Is acceptable target?
 
-    if (!CanCreatureAttack(who))
-        return false;
+        if (who->IsInCombat() && IsWithinDist(who, ATTACK_DISTANCE))
+            if (Unit* victim = who->getAttackerForHelper())
+                if (IsWithinDistInMap(victim, sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS)))
+                    force = true;
 
-    if (!canAttack(who, false))
+        if (!force && (IsNeutralToAll() || !IsWithinDistInMap(who, GetAttackDistance(who) + m_CombatDistance)))
+            return false;
+    }
+
+    if (!CanCreatureAttack(who, force))
         return false;
 
     return IsWithinLOSInMap(who);
@@ -2002,7 +2009,7 @@ void Creature::SaveRespawnTime()
     sObjectMgr.SaveCreatureRespawnTime(m_DBTableGuid, GetInstanceId(), m_respawnTime);
 }
 
-bool Creature::CanCreatureAttack(Unit const* victim) const
+bool Creature::CanCreatureAttack(Unit const* victim, bool /*force*/) const
 {
     if (!victim)
         return false;
@@ -2010,7 +2017,7 @@ bool Creature::CanCreatureAttack(Unit const* victim) const
     if (!victim->IsInMap(this))
         return false;
 
-    if (!victim->isTargetableForAttack())
+    if (!IsValidAttackTarget(victim))
         return false;
 
     if (!victim->isInAccessiblePlaceFor(this))
@@ -2019,16 +2026,43 @@ bool Creature::CanCreatureAttack(Unit const* victim) const
     if (IsAIEnabled && !AI()->CanAIAttack(victim))
         return false;
 
-    if (GetMap()->IsDungeon())
-        return true;
+    // we cannot attack in evade mode
+    if (IsInEvadeMode())
+        return false;
 
-    //Use AttackDistance in distance check if threat radius is lower. This prevents creature bounce in and out of combat every update tick.
-    float dist = std::max(uint32(GetAttackDistance(victim)), sWorld.getConfig(CONFIG_THREAT_RADIUS)) + m_CombatDistance;
+    // or if enemy is in evade mode
+    if (victim->GetTypeId() == TYPEID_UNIT && victim->ToCreature()->IsInEvadeMode())
+        return false;
+
+    if (Unit* u = GetCharmerOrOwner())
+    {
+        if (u->GetTypeId() == TYPEID_PLAYER)
+        {
+            if (GetMap()->IsDungeon())
+                return true;
+
+            // don't check distance to home position if recently damaged, this should include taunt auras
+            if (!isWorldBoss() && (GetLastDamagedTime() > getMSTime() || HasAuraType(SPELL_AURA_MOD_TAUNT)))
+                return true;
+        }
+    }
+
+    // Map visibility range, but no more than 2*cell size
+    float dist = std::min<float>(GetMap()->GetVisibilityRange(), SIZE_OF_GRID_CELL * 2);
 
     if (Unit* unit = GetCharmerOrOwner())
         return victim->IsWithinDist(unit, dist);
     else
-        return victim->IsInDist(&m_homePosition, dist);
+    {
+        // include sizes for huge npcs
+        dist += GetObjectSize() + victim->GetObjectSize();
+
+        // to prevent creatures in air ignore attacks because distance is already too high...
+        if (GetCreatureTemplate()->InhabitType & INHABIT_AIR)
+            return victim->IsInDist2d(&m_homePosition, dist);
+        else
+            return victim->IsInDist(&m_homePosition, dist);
+    }
 }
 
 CreatureDataAddon const* Creature::GetCreatureAddon() const

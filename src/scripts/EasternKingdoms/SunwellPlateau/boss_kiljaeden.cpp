@@ -446,8 +446,7 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
         if (pInstance && pInstance->GetData(DATA_KILJAEDEN_EVENT) == DONE)
             return;
 
-        if (me->canStartAttack(who))
-            AttackStart(who);
+        ScriptedAI::MoveInLineOfSight(who);
 
         DoZoneInCombatWithPlayers(true);
 

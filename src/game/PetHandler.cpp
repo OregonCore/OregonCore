@@ -136,7 +136,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
                 if (!TargetUnit)
                     return;
 
-                if (!pet->canAttack(TargetUnit))
+                if (!pet->IsValidAttackTarget(TargetUnit))
                     return;
 
                 // Not let attack through obstructions

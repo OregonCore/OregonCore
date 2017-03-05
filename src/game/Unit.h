@@ -231,7 +231,7 @@ enum UnitBytes2_Flags
 {
     UNIT_BYTE2_FLAG_UNK0        = 0x01,
     UNIT_BYTE2_FLAG_UNK1        = 0x02,
-    UNIT_BYTE2_FLAG_UNK2        = 0x04,
+    UNIT_BYTE2_FLAG_FFA_PVP     = 0x04,
     UNIT_BYTE2_FLAG_SANCTUARY   = 0x08,
     UNIT_BYTE2_FLAG_AURAS       = 0x10,                     // show possitive auras as positive, and allow its dispel
     UNIT_BYTE2_FLAG_UNK5        = 0x20,                     // show negative auras as positive, disallowing dispel
@@ -961,7 +961,7 @@ class Unit : public WorldObject
         {
             m_attackers.erase(pAttacker);
         }
-        Unit* getAttackerForHelper()                       // If someone wants to help, who to give them
+        Unit* getAttackerForHelper() const                 // If someone wants to help, who to give them
         {
             if (GetVictim() != NULL)
                 return GetVictim();
@@ -1134,10 +1134,12 @@ class Unit : public WorldObject
 
             return false;
         }
+        bool IsInSanctuary() const;
         bool IsPvP() const
         {
             return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP);
         }
+        bool IsFFAPvP() const { return HasFlag(UNIT_FIELD_BYTES_2, UNIT_BYTE2_FLAG_FFA_PVP); }
         void SetPvP(bool state)
         {
             if (state) SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP);
@@ -1319,7 +1321,7 @@ class Unit : public WorldObject
             return m_initiatingCombat;
         }
         bool IsInCombat()  const { return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT); }
-        bool IsInCombatWith(Unit* who);
+        bool IsInCombatWith(Unit const* who) const;
         void CombatStart(Unit* target, bool initialAggro = true);
         void SetInCombatState(bool PvP, Unit* enemy = NULL);
         void setInitiatingCombat(bool flag)
@@ -1372,8 +1374,15 @@ class Unit : public WorldObject
         bool isFrozen() const;
 
         bool isTargetableForAttack(bool checkFakeDeath = true) const;
+
+        bool IsValidAttackTarget(Unit const* target) const;
+        bool _IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, WorldObject const* obj = NULL) const;
+
         bool isAttackableByAOE(float x = 0, float y = 0, float z = 0, bool LosCheck = false) const;
-        bool canAttack(Unit const* target, bool force = true) const;
+
+        bool IsValidAssistTarget(Unit const* target) const;
+        bool _IsValidAssistTarget(Unit const* target, SpellEntry const* bySpell) const;
+
         virtual bool IsInWater() const;
         virtual bool IsUnderWater() const;
         bool isInAccessiblePlaceFor(Creature const* c) const;

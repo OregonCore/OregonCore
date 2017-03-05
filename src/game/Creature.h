@@ -528,7 +528,7 @@ class Creature : public Unit, public GridObject<Creature>
         bool IsTrainerOf(Player* player, bool msg) const;
         bool CanInteractWithBattleMaster(Player* player, bool msg) const;
         bool CanTrainAndResetTalentsOf(Player* pPlayer) const;
-        bool CanCreatureAttack(Unit const* victim) const;
+        bool CanCreatureAttack(Unit const* victim, bool force = true) const;
 
         bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false) override;
         bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const override;
@@ -679,7 +679,7 @@ class Creature : public Unit, public GridObject<Creature>
         CreatureSpellCooldowns m_CreatureCategoryCooldowns;
         uint32 m_GlobalCooldown;
 
-        bool canStartAttack(Unit const* u) const;
+        bool canStartAttack(Unit const* u, bool force) const;
         float GetAttackDistance(Unit const* pl) const;
 
         void SendAIReaction(AiReaction reactionType);

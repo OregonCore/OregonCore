@@ -926,10 +926,9 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
 
     // Get mask of effects for target
     uint8 mask = target->effectMask;
-    if (mask == 0)                                          // No effects
-        return;
 
     Unit* unit = m_caster->GetGUID() == target->targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, target->targetGUID);
+
     if (!unit)
     {
         uint8 farMask = 0;
@@ -938,12 +937,14 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
             if (IsFarUnitTargetEffect(m_spellInfo->Effect[i]))
                 if ((1 << i) & mask)
                     farMask |= (1 << i);
+
         if (!farMask)
             return;
         // find unit in world
         unit = ObjectAccessor::FindUnit(target->targetGUID);
         if (!unit)
             return;
+
         // do far effects on the unit
         // can't use default call because of threading, do stuff as fast as possible
         for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
@@ -1163,7 +1164,7 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
                 }
             }
         }
-        if (m_caster->IsHostileTo(unit))
+        if (m_caster->IsValidAttackTarget(unit))
         {
             unit->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_HITBYSPELL);
             if (m_customAttr & SPELL_ATTR_CU_AURA_CC)
@@ -1184,7 +1185,8 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
             if (unit->HasUnitState(UNIT_STATE_ATTACK_PLAYER))
             {
                 m_caster->SetContestedPvP();
-                //m_caster->UpdatePvP(true);
+                if (m_caster->GetTypeId() == TYPEID_PLAYER)
+                    m_caster->ToPlayer()->UpdatePvP(true);
             }
             if (unit->IsInCombat() && !(m_spellInfo->AttributesEx3 & SPELL_ATTR3_NO_INITIAL_AGGRO))
             {
