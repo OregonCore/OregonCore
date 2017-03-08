@@ -422,7 +422,7 @@ void WorldSession::DoLootRelease(uint64 lguid)
     {
         Creature* pCreature = GetPlayer()->GetMap()->GetCreature(lguid);
 
-        bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->loot.loot_type == LOOT_SKINNING);
+        bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->loot.loot_type == LOOT_PICKPOCKETING);
         if (!ok_loot || !pCreature->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
             return;
 
