@@ -7174,11 +7174,11 @@ ReputationRank Unit::GetReactionTo(Unit const* target) const
                     return REP_FRIENDLY; // return true to allow config option AllowTwoSide.Interaction.Group to work
                 // however client seems to allow mixed group parties, because in 13850 client it works like:
                 // return GetFactionReactionTo(GetFactionTemplateEntry(), target);
-
-                // PvP FFA state
-                if (selfPlayerOwner->IsFFAPvP() && targetPlayerOwner->IsFFAPvP())
-                    return REP_HOSTILE;
             }
+
+            // PvP FFA state
+            if (IsFFAPvP() && target->IsFFAPvP())
+                return REP_HOSTILE;
 
             if (selfPlayerOwner)
             {
@@ -7272,7 +7272,7 @@ bool Unit::IsFriendlyTo(Unit const* unit) const
 bool Unit::IsHostileToPlayers() const
 {
     FactionTemplateEntry const* my_faction = GetFactionTemplateEntry();
-    if (!my_faction)
+    if (!my_faction || !my_faction->faction)
         return false;
 
     FactionEntry const* raw_faction = sFactionStore.LookupEntry(my_faction->faction);
@@ -7285,7 +7285,7 @@ bool Unit::IsHostileToPlayers() const
 bool Unit::IsNeutralToAll() const
 {
     FactionTemplateEntry const* my_faction = GetFactionTemplateEntry();
-    if (!my_faction)
+    if (!my_faction || !my_faction->faction)
         return true;
 
     FactionEntry const* raw_faction = sFactionStore.LookupEntry(my_faction->faction);
@@ -9422,7 +9422,7 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, W
         // can't attack invisible
         if (!bySpell)
         {
-            if (obj && !obj->CanSeeOrDetect(target/*, bySpell && bySpell->IsAffectingArea()*/))
+            if (obj && !obj->CanSeeOrDetect(target))
                 return false;
             else if (!obj)
             {
@@ -9477,7 +9477,7 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, W
             if (!(player->GetReputationMgr().GetForcedRankIfAny(factionTemplate)))
                 if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplate->faction))
                     if (FactionState const* repState = player->GetReputationMgr().GetState(factionEntry))
-                        if (!(repState->Flags & FACTION_FLAG_AT_WAR))
+                        if (!(repState->Flags & FACTION_FLAG_AT_WAR) && (!IsContestedGuard() && !HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP)))
                             return false;
 
         }
@@ -9553,8 +9553,8 @@ bool Unit::_IsValidAssistTarget(Unit const* target, SpellEntry const* bySpell) c
     }
 
     // can't assist non-friendly targets
-    if (GetReactionTo(target) <= REP_NEUTRAL
-        && target->GetReactionTo(this) <= REP_NEUTRAL)
+    if (GetReactionTo(target) < REP_NEUTRAL
+        && target->GetReactionTo(this) < REP_NEUTRAL)
         return false;
 
     // PvP case
