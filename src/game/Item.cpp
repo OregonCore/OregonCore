@@ -974,6 +974,19 @@ Item* Item::CloneItem(uint32 count, Player const* player) const
     return newItem;
 }
 
+bool Item::IsBindedNotWith(Player const* player) const
+{
+    // not binded item
+    if (!IsSoulBound())
+        return false;
+
+    // own item
+    if (GetOwnerGUID() == player->GetGUID())
+        return false;
+
+   return true;
+}
+
 void Item::BuildUpdate(UpdateDataMapType& data_map)
 {
     if (Player* owner = GetOwner())
