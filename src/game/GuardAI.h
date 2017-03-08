@@ -18,12 +18,12 @@
 #ifndef OREGON_GUARDAI_H
 #define OREGON_GUARDAI_H
 
-#include "CreatureAI.h"
+#include "ScriptedCreature.h"
 #include "Timer.h"
 
 class Creature;
 
-class GuardAI : public CreatureAI
+class GuardAI : public ScriptedAI
 {
         enum GuardState
         {
@@ -32,17 +32,13 @@ class GuardAI : public CreatureAI
         };
 
     public:
+        explicit GuardAI(Creature* creature);
 
-        explicit GuardAI(Creature* c);
-
-        void MoveInLineOfSight(Unit*);
         void EnterEvadeMode();
         void JustDied(Unit*);
-        bool IsVisible(Unit*) const;
 
-        void UpdateAI(const uint32);
         static int Permissible(const Creature*);
-
+        bool CanSeeAlways(WorldObject const* obj) override;
     private:
         uint64 i_victimGuid;
         GuardState i_state;

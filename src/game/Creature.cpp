@@ -1494,7 +1494,8 @@ bool Creature::canStartAttack(Unit const* who, bool force) const
 
     if (!force)
     {
-        // @todo Is acceptable target?
+        if (!_IsTargetAcceptable(who))
+            return false;
 
         if (who->IsInCombat() && IsWithinDist(who, ATTACK_DISTANCE))
             if (Unit* victim = who->getAttackerForHelper())
@@ -1999,6 +2000,41 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
         return false;
 
     return true;
+}
+
+// use this function to avoid having hostile creatures attack
+// friendlies and other mobs they shouldn't attack
+bool Creature::_IsTargetAcceptable(const Unit* target) const
+{
+    ASSERT(target);
+
+    // if the target cannot be attacked, the target is not acceptable
+    if (IsFriendlyTo(target)
+        || !target->isTargetableForAttack(false))
+        return false;
+
+    if (target->HasUnitState(UNIT_STATE_DIED))
+    {
+        // guards can detect fake death
+        if (IsGuard() && target->HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH))
+            return true;
+        else
+            return false;
+    }
+
+    const Unit* myVictim = getAttackerForHelper();
+    const Unit* targetVictim = target->getAttackerForHelper();
+
+    // if I'm already fighting target, or I'm hostile towards the target, the target is acceptable
+    if (myVictim == target || targetVictim == this || IsHostileTo(target))
+        return true;
+
+    // if the target's victim is friendly, and the target is neutral, the target is acceptable
+    if (targetVictim && IsFriendlyTo(targetVictim))
+        return true;
+
+    // if the target's victim is not friendly, or the target is friendly, the target is not acceptable
+    return false;
 }
 
 void Creature::SaveRespawnTime()
