@@ -3929,8 +3929,8 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
         }
 
-        // check if target is in combat
-        if (target != m_caster && (m_spellInfo->AttributesEx & SPELL_ATTR1_CANT_TARGET_IN_COMBAT) && target->IsInCombat())
+        // spells cannot be cast if player is in fake combat also
+        if (m_spellInfo->HasAttribute(SPELL_ATTR1_CANT_TARGET_IN_COMBAT) && (target->IsInCombat() || target->IsPetInCombat()))
             return SPELL_FAILED_TARGET_AFFECTING_COMBAT;
     }
 

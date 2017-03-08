@@ -250,7 +250,8 @@ enum UnitRename
 #define MAX_SPELL_CHARM         4
 #define MAX_SPELL_POSSESS       8
 
-#define MAX_AGGRO_RESET_TIME    10 // In Seconds
+#define MAX_AGGRO_RESET_TIME    10     // In Seconds
+#define MAX_AGGRO_RADIUS        45.0f  // yards
 
 enum Swing
 {
@@ -816,6 +817,8 @@ struct CharmInfo
 
         void SetIsCommandAttack(bool val);
         bool IsCommandAttack();
+        void SetIsCommandFollow(bool val);
+        bool IsCommandFollow();
         void SetIsAtStay(bool val);
         bool IsAtStay();
         void SetIsFollowing(bool val);
@@ -838,6 +841,7 @@ struct CharmInfo
         ReactStates     m_oldReactState;
 
         bool m_isCommandAttack;
+        bool _isCommandFollow;
         bool m_isAtStay;
         bool m_isFollowing;
         bool m_isReturning;
@@ -1313,6 +1317,7 @@ class Unit : public WorldObject
             return m_initiatingCombat;
         }
         bool IsInCombat()  const { return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT); }
+        bool IsPetInCombat() const { return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT); }
         bool IsInCombatWith(Unit const* who) const;
         void CombatStart(Unit* target, bool initialAggro = true);
         void SetInCombatState(bool PvP, Unit* enemy = NULL);
@@ -1323,6 +1328,7 @@ class Unit : public WorldObject
 
         void SetInCombatWith(Unit* enemy);
         void ClearInCombat();
+        void ClearInPetCombat();
         uint32 GetCombatTimer() const
         {
             return m_CombatTimer;

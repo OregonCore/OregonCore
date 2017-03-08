@@ -32,7 +32,7 @@ class HomeMovementGenerator<Creature>
 {
     public:
 
-        HomeMovementGenerator() {}
+        HomeMovementGenerator() : skipToHome(false) {}
         ~HomeMovementGenerator() {}
 
         void Initialize(Creature&);
@@ -49,6 +49,7 @@ class HomeMovementGenerator<Creature>
 
         float ori;
         bool arrived;
+        bool skipToHome;
 };
 #endif
 
