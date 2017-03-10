@@ -2994,8 +2994,12 @@ void Spell::finish(bool ok)
     // other code related only to successfully finished spells
 
     //remove spell mods
-    if (m_caster->GetTypeId() == TYPEID_PLAYER)
-        m_caster->ToPlayer()->RemoveSpellMods(this);
+    if (Player* modOwner = m_caster->GetSpellModOwner())
+    {
+        // Take mods after trigger spell
+        // mods are taken only on succesfull cast and independantly from targets of the spell
+        modOwner->RemoveSpellMods(this);
+    }
 
     // Okay to remove extra attacks
     if (IsSpellHaveEffect(m_spellInfo, SPELL_EFFECT_ADD_EXTRA_ATTACKS))
