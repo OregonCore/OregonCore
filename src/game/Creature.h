@@ -107,6 +107,7 @@ enum CreatureFlagsExtra
     CREATURE_FLAG_EXTRA_NO_XP_AT_KILL   = 0x00000040,       // creature kill not provide XP
     CREATURE_FLAG_EXTRA_TRIGGER         = 0x00000080,       // trigger creature
     CREATURE_FLAG_EXTRA_NO_TAUNT        = 0x00000100,       // cannot be taunted
+    CREATURE_FLAG_EXTRA_GUARD           = 0x00000400,       // creature is a guard
     CREATURE_FLAG_EXTRA_WORLDEVENT      = 0x00004000,       // custom flag for world event creatures (left room for merging)
     CREATURE_FLAG_EXTRA_CHARM_AI        = 0x00008000,       // use ai when charmed
     CREATURE_FLAG_EXTRA_NO_CRIT         = 0x00020000,       // creature can't do critical strikes
@@ -507,6 +508,7 @@ class Creature : public Unit, public GridObject<Creature>
         {
             return GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER;
         }
+        bool IsGuard() const { return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_GUARD) != 0; }
         bool canWalk() const
         {
             return GetCreatureTemplate()->InhabitType & INHABIT_GROUND;
@@ -528,7 +530,7 @@ class Creature : public Unit, public GridObject<Creature>
         bool IsTrainerOf(Player* player, bool msg) const;
         bool CanInteractWithBattleMaster(Player* player, bool msg) const;
         bool CanTrainAndResetTalentsOf(Player* pPlayer) const;
-        bool CanCreatureAttack(Unit const* victim) const;
+        bool CanCreatureAttack(Unit const* victim, bool force = true) const;
 
         bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false) override;
         bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const override;
@@ -679,8 +681,9 @@ class Creature : public Unit, public GridObject<Creature>
         CreatureSpellCooldowns m_CreatureCategoryCooldowns;
         uint32 m_GlobalCooldown;
 
-        bool canStartAttack(Unit const* u) const;
+        bool canStartAttack(Unit const* u, bool force) const;
         float GetAttackDistance(Unit const* pl) const;
+        float GetAggroRange(Unit const* target) const;
 
         void SendAIReaction(AiReaction reactionType);
 
@@ -695,6 +698,7 @@ class Creature : public Unit, public GridObject<Creature>
         void SetNoSearchAssistance(bool val) { m_AlreadySearchedAssistance = val; }
         bool HasSearchedAssistance() const { return m_AlreadySearchedAssistance; }
         bool CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction = true) const;
+        bool _IsTargetAcceptable(const Unit* target) const;
 
         MovementGeneratorType GetDefaultMovementType() const
         {

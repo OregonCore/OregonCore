@@ -1153,6 +1153,14 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
 
                     return;
                 }
+            case 29970:                                 // Deactivate Blizzard (Naxxramas: Sapphiron)
+                {
+                    if (!unitTarget)
+                        return;
+
+                    unitTarget->RemoveAurasDueToSpell(29952);
+                    return;
+                }
             case 30004:                                 // Flame Wreath
                 {
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
@@ -1243,6 +1251,9 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 }
             case 40109:                                 // Knockdown Fel Cannon: The Bolt
                 {
+                    if (!unitTarget)
+                        return;
+
                     unitTarget->CastSpell(unitTarget, 40075, true);
                     return;
                 }
@@ -1373,6 +1384,14 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     //cast spell Raptor Capture Credit
                     m_caster->CastSpell(m_caster, 42337, true, NULL);
                     return;
+                }
+            case 37473:                                 // Detect Whispers (related to quest 10607 - Whispers of the Raven God_Whispers of the Raven God)
+                {
+                    if (!unitTarget)
+                        return;
+
+                    unitTarget->CastSpell(unitTarget, damage, true);
+                    break;
                 }
             case 37573:                                 //Temporal Phase Modulator
                 {
@@ -1855,6 +1874,8 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 Item* item = pCaster->GetWeaponForAttack(OFF_ATTACK);
                 if (!item)
                     return;
+
+                ((Player*)m_caster)->AddComboPoints(unitTarget, 1);
 
                 // all poison enchantments is temporary
                 if (uint32 enchant_id = item->GetEnchantmentId(TEMP_ENCHANTMENT_SLOT))
@@ -2754,8 +2775,6 @@ void Spell::EffectPowerDrain(SpellEffIndex effIndex)
     if (drain_power == POWER_MANA)
     {
         float manaMultiplier = m_spellInfo->EffectMultipleValue[effIndex];
-        if (manaMultiplier == 0)
-            manaMultiplier = 1;
 
         if (Player* modOwner = m_caster->GetSpellModOwner())
             modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_MULTIPLE_VALUE, manaMultiplier);
@@ -3551,6 +3570,8 @@ void Spell::EffectSummonChangeItem(SpellEffIndex effIndex)
             m_CastItem = NULL;
 
             player->StoreItem(dest, pNewItem, true);
+            player->SendNewItem(pNewItem, 1, true, false);
+            player->ItemAddedQuestCheck(newitemid, 1);
             return;
         }
     }
@@ -3588,6 +3609,8 @@ void Spell::EffectSummonChangeItem(SpellEffIndex effIndex)
 
             player->EquipItem(dest, pNewItem, true);
             player->AutoUnequipOffhandIfNeed();
+            player->SendNewItem(pNewItem, 1, true, false);
+            player->ItemAddedQuestCheck(newitemid, 1);
             return;
         }
     }
@@ -5412,6 +5435,14 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                 break;
             }*/
             // Tidal Surge
+            case 37473:                                 // Detect Whispers (related to quest 10607 - Whispers of the Raven God_Whispers of the Raven God)
+                {
+                    if (!unitTarget)
+                        return;
+
+                    unitTarget->CastSpell(unitTarget, damage, true);
+                    break;
+                }
             case 38358:
                 if (unitTarget)
                     m_caster->CastSpell(unitTarget, 38353, true);
@@ -6787,6 +6818,18 @@ void Spell::EffectModifyThreatPercent(SpellEffIndex /*effIndex*/)
 void Spell::EffectTransmitted(SpellEffIndex effIndex)
 {
     uint32 name_id = m_spellInfo->EffectMiscValue[effIndex];
+
+    switch (m_spellInfo->Id)
+    {
+        case 29886: // Create Soulwell
+            if (m_caster->HasAura(18692))
+                name_id = 183510;
+            else if (m_caster->HasAura(18693))
+                name_id = 183511;
+            break;
+        default:
+            break;
+    }
 
     GameObjectInfo const* goinfo = sObjectMgr.GetGameObjectInfo(name_id);
 

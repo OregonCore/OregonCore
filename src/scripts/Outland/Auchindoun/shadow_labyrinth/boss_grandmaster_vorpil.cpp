@@ -260,8 +260,8 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (who && !me->GetVictim() && me->canStartAttack(who))
-            AttackStart(who);
+        ScriptedAI::MoveInLineOfSight(who);
+
         if (!Intro && who && me->IsWithinLOSInMap(who) && me->IsWithinDistInMap(who, 100) && me->IsHostileTo(who))
         {
             DoScriptText(SAY_INTRO, me);
@@ -303,7 +303,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
 
             me->GetMap()->CreatureRelocation(me, VorpilPosition[0], VorpilPosition[1], VorpilPosition[2], 0.0f);
             DoCast(me, SPELL_DRAW_SHADOWS, true);
-
+            DoTeleportTo(-254.091873, -263.627197, 17.086361); //Teleports the boss before the Rain of Fire
             DoCast(me, HeroicMode ? H_SPELL_RAIN_OF_FIRE : SPELL_RAIN_OF_FIRE);
 
             ShadowBoltVolley_Timer = 6000;

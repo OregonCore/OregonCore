@@ -30,9 +30,9 @@ void HomeMovementGenerator<Creature>::Initialize(Creature& owner)
 
 void HomeMovementGenerator<Creature>::Finalize(Creature & owner)
 {
-    owner.ClearUnitState(UNIT_STATE_EVADE);
     if (arrived)
     {
+        owner.ClearUnitState(UNIT_STATE_EVADE);
         owner.SetWalk(!owner.HasUnitState(UNIT_STATE_RUNNING_STATE) && !owner.IsLevitating());
         owner.LoadCreaturesAddon(true);
         owner.AI()->JustReachedHome();
@@ -44,25 +44,33 @@ void HomeMovementGenerator<Creature>::Reset(Creature&) { }
 void HomeMovementGenerator<Creature>::_setTargetLocation(Creature& owner)
 {
     if (owner.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED | UNIT_STATE_DISTRACTED))
+    { // if we are ROOT/STUNNED/DISTRACTED even after aura clear, finalize on next update - otherwise we would get stuck in evade
+        skipToHome = true;
         return;
+    }
 
     float x, y, z;
     Movement::MoveSplineInit init(owner);
 
-    owner.GetHomePosition(x, y, z, ori);
-
-    init.SetFacing(ori);
+    // at apply we can select more nice return points base at current movegen
+    if (owner.GetMotionMaster()->empty() || !owner.GetMotionMaster()->top()->GetResetPosition(owner, x, y, z))
+    {
+        owner.GetHomePosition(x, y, z, ori);
+        init.SetFacing(ori);
+    }
     init.MoveTo(x, y, z, true);
     init.SetWalk(false);
     init.Launch();
 
+    skipToHome = false;
     arrived = false;
-    owner.ClearUnitState(UNIT_STATE_ALL_STATE & ~UNIT_STATE_EVADE);
+
+    owner.ClearUnitState(UNIT_STATE_ALL_STATE & ~(UNIT_STATE_EVADE | UNIT_STATE_IGNORE_PATHFINDING));
 }
 
 bool HomeMovementGenerator<Creature>::Update(Creature& owner, const uint32& time_diff)
 {
-    arrived = owner.movespline->Finalized();
+    arrived = skipToHome || owner.movespline->Finalized();
     return !arrived;
 }
 

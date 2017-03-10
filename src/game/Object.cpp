@@ -492,7 +492,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
             {
                 // remove custom flag before send
                 if (index == UNIT_NPC_FLAGS)
-                    *data << uint32(m_uint32Values[ index ] & ~(UNIT_NPC_FLAG_GUARD + UNIT_NPC_FLAG_OUTDOORPVP));
+                    *data << uint32(m_uint32Values[index]);
                 // FIXME: Some values at server stored in float format but must be sent to client in uint32 format
                 else if (index >= UNIT_FIELD_BASEATTACKTIME && index <= UNIT_FIELD_RANGEDATTACKTIME)
                 {
@@ -532,11 +532,30 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                 // hide lootable animation for unallowed players
                 else if (index == UNIT_DYNAMIC_FLAGS && GetTypeId() == TYPEID_UNIT)
                 {
-                    if (!target->isAllowedToLoot(ToCreature()))
-                        *data << (m_uint32Values[ index ] & ~UNIT_DYNFLAG_LOOTABLE);
-                    else
-                        *data << (m_uint32Values[ index ] & ~UNIT_DYNFLAG_OTHER_TAGGER);
+                    Creature const* creature = ToCreature();
+
+                    if (creature)
+                    {
+                        if (!creature->isDead())
+                        {
+                            //sLog.outError("MOB ALIVE!");
+                            if (creature->isTappedBy(target))
+                                *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_OTHER_TAGGER);
+                            else
+                                *data << (m_uint32Values[index] | UNIT_DYNFLAG_OTHER_TAGGER);
+                        }
+                        else 
+                        {
+                            //sLog.outError("MOB DEAD!");
+                            if (!target->isAllowedToLoot(creature))
+                                *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_LOOTABLE);
+                            else
+                                *data << (m_uint32Values[index] | UNIT_DYNFLAG_LOOTABLE);
+                        }
+                    }
+
                 }
+
                 // hide RAF menu to non-RAF linked friends
                 else if (index == UNIT_DYNAMIC_FLAGS && GetTypeId() == TYPEID_PLAYER)
                 {

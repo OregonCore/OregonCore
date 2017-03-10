@@ -17,7 +17,7 @@
 
 /* ScriptData
 SDName: Boss_Midnight
-SD%Complete: 100
+SD%Complete: 90%
 SDComment:
 SDCategory: Karazhan
 EndScriptData */
@@ -40,6 +40,8 @@ EndScriptData */
 #define SPELL_SHADOWCLEAVE          29832
 #define SPELL_INTANGIBLE_PRESENCE   29833
 #define SPELL_BERSERKER_CHARGE      26561                   //Only when mounted
+#define SPELL_UPPERCUT              29850
+#define SPELL_KNOCKDOWN             29711
 
 #define MOUNTED_DISPLAYID           16040
 
@@ -53,12 +55,14 @@ struct boss_midnightAI : public ScriptedAI
     uint64 Attumen;
     uint8 Phase;
     uint32 Mount_Timer;
+    uint32 Knockdown_Timer;
 
     void Reset()
     {
         Phase = 1;
         Attumen = 0;
         Mount_Timer = 0;
+        Knockdown_Timer = urand(6000, 9000);
 
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         me->SetVisible(true);
@@ -77,6 +81,14 @@ struct boss_midnightAI : public ScriptedAI
     {
         if (!UpdateVictim())
             return;
+
+        if (Knockdown_Timer < diff)
+        {
+            DoCastVictim(SPELL_KNOCKDOWN);
+            Knockdown_Timer = urand(6000, 9000);
+        }
+        else
+            Knockdown_Timer -= diff;
 
         if (Phase == 1 && (me->GetHealth() * 100) / me->GetMaxHealth() < 95)
         {
@@ -168,6 +180,7 @@ struct boss_attumenAI : public ScriptedAI
         RandomYellTimer = urand(30000, 60000);             //Occasionally yell
         ChargeTimer = 20000;
         ResetTimer = 0;
+        KnockdownUppercutTimer = urand(6000, 9000);
     }
 
     uint64 Midnight;
@@ -177,9 +190,16 @@ struct boss_attumenAI : public ScriptedAI
     uint32 RandomYellTimer;
     uint32 ChargeTimer;                                     //only when mounted
     uint32 ResetTimer;
+    uint32 KnockdownUppercutTimer;
 
     void Reset()
     {
+        ResetTimer = 0;
+    }
+
+    void EnterEvadeMode()
+    {
+        ScriptedAI::EnterEvadeMode();
         ResetTimer = 2000;
     }
 
@@ -211,9 +231,9 @@ struct boss_attumenAI : public ScriptedAI
                 Midnight = 0;
                 me->SetVisible(false);
                 me->Kill(me);
-            }
         }
         else ResetTimer -= diff;
+    }
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -231,7 +251,7 @@ struct boss_attumenAI : public ScriptedAI
 
         if (CurseTimer <= diff)
         {
-            DoCastVictim( SPELL_INTANGIBLE_PRESENCE);
+            DoCastVictim(SPELL_INTANGIBLE_PRESENCE);
             CurseTimer = 30000;
         }
         else CurseTimer -= diff;
@@ -242,6 +262,22 @@ struct boss_attumenAI : public ScriptedAI
             RandomYellTimer = urand(30000, 60000);
         }
         else RandomYellTimer -= diff;
+
+        if (KnockdownUppercutTimer < diff)
+        {
+            if (me->GetUInt32Value(UNIT_FIELD_DISPLAYID) == MOUNTED_DISPLAYID)
+            {
+                DoCastVictim(SPELL_KNOCKDOWN);
+                KnockdownUppercutTimer = urand(6000, 9000);
+            }    
+            else
+            {
+                DoCastVictim(SPELL_UPPERCUT);
+                KnockdownUppercutTimer = urand(6000, 9000);
+            }    
+        }
+        else
+            KnockdownUppercutTimer -= diff;
 
         if (me->GetUInt32Value(UNIT_FIELD_DISPLAYID) == MOUNTED_DISPLAYID)
         {

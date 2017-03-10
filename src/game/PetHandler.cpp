@@ -103,7 +103,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
             pet->InterruptNonMeleeSpells(false);
             pet->GetMotionMaster()->MoveIdle();
             charmInfo->SetCommandState(COMMAND_STAY);
-
+            charmInfo->SetIsCommandFollow(false);
             charmInfo->SetIsCommandAttack(false);
             charmInfo->SetIsAtStay(true);
             charmInfo->SetIsFollowing(false);
@@ -113,9 +113,10 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
         case COMMAND_FOLLOW:                        //spellid=1792  //FOLLOW
             pet->AttackStop();
             pet->InterruptNonMeleeSpells(false);
+            pet->ClearInPetCombat();
             pet->GetMotionMaster()->MoveFollow(_player, PET_FOLLOW_DIST, pet->GetFollowAngle());
             charmInfo->SetCommandState(COMMAND_FOLLOW);
-
+            charmInfo->SetIsCommandFollow(true);
             charmInfo->SetIsCommandAttack(false);
             charmInfo->SetIsAtStay(false);
             charmInfo->SetIsReturning(true);
@@ -136,17 +137,9 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
                 if (!TargetUnit)
                     return;
 
-                if (!pet->canAttack(TargetUnit))
-                    return;
-
-                // Not let attack through obstructions
-                if (sWorld.getConfig(CONFIG_PET_LOS))
-                {
-
-                    if (!pet->IsWithinLOSInMap(TargetUnit))
+                if (Unit* owner = pet->GetOwner())
+                    if (!owner->IsValidAttackTarget(TargetUnit))
                         return;
-
-                }
 
                 pet->ClearUnitState(UNIT_STATE_FOLLOW);
                 // This is true if pet has no target or has target but targets differs.
@@ -161,6 +154,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
                         charmInfo->SetIsAtStay(false);
                         charmInfo->SetIsFollowing(false);
                         charmInfo->SetIsReturning(false);
+                        charmInfo->SetIsCommandFollow(false);
 
                         pet->ToCreature()->AI()->AttackStart(TargetUnit);
 
@@ -175,14 +169,11 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
                     }
                     else                                // charmed player
                     {
-                        if (pet->GetVictim() && pet->GetVictim() != TargetUnit)
-                            pet->AttackStop();
-
                         charmInfo->SetIsCommandAttack(true);
                         charmInfo->SetIsAtStay(false);
                         charmInfo->SetIsFollowing(false);
                         charmInfo->SetIsReturning(false);
-
+                        charmInfo->SetIsCommandFollow(false);
                         pet->Attack(TargetUnit, true);
                         pet->SendPetAIReaction(guid1);
                     }
@@ -216,7 +207,8 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
         {
         case REACT_PASSIVE:                         //passive
             pet->AttackStop();
-
+            pet->ClearInPetCombat();
+            // no break
         case REACT_DEFENSIVE:                       //recovery
         case REACT_AGGRESSIVE:                      //activete
             if (pet->GetTypeId() == TYPEID_UNIT)
@@ -300,8 +292,6 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
                     // This is true if pet has no target or has target but targets differs.
                     if (pet->GetVictim() != unit_target)
                     {
-                        if (pet->GetVictim())
-                            pet->AttackStop();
                         pet->GetMotionMaster()->Clear();
                         if (pet->ToCreature()->IsAIEnabled)
                             pet->ToCreature()->AI()->AttackStart(unit_target);

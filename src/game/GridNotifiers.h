@@ -830,12 +830,10 @@ class AnyAoETargetUnitInObjectRangeCheck
         bool operator()(Unit* u)
         {
             // Check contains checks for: live, non-selectable, non-attackable flags, flight check and GM check, ignore totems
-            if (!u->isTargetableForAttack())
-                return false;
             if (u->GetTypeId() == TYPEID_UNIT && u->IsTotem())
                 return false;
 
-            if ((i_targetForPlayer ? !i_funit->IsFriendlyTo(u) : i_funit->IsHostileTo(u)) && i_obj->IsWithinDistInMap(u, i_range))
+            if (i_funit->IsValidAttackTarget(u) && i_obj->IsWithinDistInMap(u, i_range))
                 return true;
 
             return false;
@@ -901,7 +899,7 @@ struct AnyDeadUnitCheck
                 if (!me->IsWithinDistInMap(u, m_range))
                     return false;
 
-                if (!me->canAttack(u))
+                if (!me->IsValidAttackTarget(u))
                     return false;
 
                 if (i_playerOnly && u->GetTypeId() != TYPEID_PLAYER)
@@ -936,12 +934,12 @@ class NearestHostileUnitInAttackDistanceCheck
 
             if (m_force)
             {
-                if (!me->canAttack(u))
+                if (!me->IsValidAttackTarget(u))
                     return false;
             }
             else
             {
-                if (!me->canStartAttack(u))
+                if (!me->canStartAttack(u, false))
                     return false;
             }
 
@@ -957,6 +955,35 @@ class NearestHostileUnitInAttackDistanceCheck
         float m_range;
         bool m_force;
         NearestHostileUnitInAttackDistanceCheck(NearestHostileUnitInAttackDistanceCheck const&);
+};
+
+class NearestHostileUnitInAggroRangeCheck
+{
+public:
+    explicit NearestHostileUnitInAggroRangeCheck(Creature const* creature, bool useLOS = false) : _me(creature), _useLOS(useLOS)
+    {
+    }
+    bool operator()(Unit* u)
+    {
+        if (!u->IsHostileTo(_me))
+            return false;
+
+        if (!u->IsWithinDistInMap(_me, _me->GetAggroRange(u)))
+            return false;
+
+        if (!_me->IsValidAttackTarget(u))
+            return false;
+
+        if (_useLOS && !u->IsWithinLOSInMap(_me))
+            return false;
+
+        return true;
+    }
+
+private:
+    Creature const* _me;
+    bool _useLOS;
+    NearestHostileUnitInAggroRangeCheck(NearestHostileUnitInAggroRangeCheck const&);
 };
 
 class AnyAssistCreatureInRangeCheck

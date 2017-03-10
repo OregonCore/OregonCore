@@ -18,7 +18,7 @@
 #ifndef DBCSFRM_H
 #define DBCSFRM_H
 
-const char AreaTableEntryfmt[] = "iiinixxxxxissssssssssssssssxiiiiixx";
+const char AreaTableEntryfmt[] = "iiinixxxxxissssssssssssssssxiixxxxx";
 const char AuctionHouseEntryfmt[] = "niiixxxxxxxxxxxxxxxxx";
 const char AreaTriggerEntryfmt[] = "niffffffff";
 const char BankBagSlotPricesEntryfmt[] = "ni";
@@ -51,6 +51,7 @@ const char GtChanceToMeleeCritfmt[] = "f";
 const char GtChanceToSpellCritBasefmt[] = "f";
 const char GtChanceToSpellCritfmt[] = "f";
 const char GtOCTRegenHPfmt[] = "f";
+const char GtNPCManaCostScalerfmt[] = "f";
 //const char GtOCTRegenMPfmt[]="f";
 const char GtRegenHPPerSptfmt[] = "f";
 const char GtRegenMPPerSptfmt[] = "f";

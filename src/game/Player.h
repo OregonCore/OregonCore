@@ -363,8 +363,8 @@ enum PlayerFlags
     PLAYER_FLAGS_UNK2           = 0x00002000,               // played too long time
     PLAYER_FLAGS_UNK3           = 0x00008000,               // strange visual effect (2.0.1), looks like PLAYER_FLAGS_GHOST flag
     PLAYER_FLAGS_SANCTUARY      = 0x00010000,               // player entered sanctuary
-    PLAYER_FLAGS_UNK4           = 0x00020000,               // taxi benchmark mode (on/off) (2.0.1)
-    PLAYER_UNK                  = 0x00040000,               // 2.0.8...
+    PLAYER_FLAGS_TAXI_BENCHMARK = 0x00020000,               // taxi benchmark mode (on/off) (2.0.1)
+    PLAYER_FLAGS_PVP_TIMER      = 0x00040000,               // 2.0.8...
 };
 
 // used for PLAYER__FIELD_KNOWN_TITLES field (uint64), (1<<bit_index) without (-1)
@@ -427,7 +427,7 @@ enum PlayerFieldByteFlags
 enum PlayerFieldByte2Flags
 {
     PLAYER_FIELD_BYTE2_NONE              = 0x00,
-    PLAYER_FIELD_BYTE2_STEALTH           = 0x20,
+    PLAYER_FIELD_BYTE2_STEALTH           = 0x2000,
     PLAYER_FIELD_BYTE2_INVISIBILITY_GLOW = 0x4000
 };
 

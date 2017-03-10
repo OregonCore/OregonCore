@@ -211,12 +211,8 @@ struct boss_nightbaneAI : public ScriptedAI
 
 	void MoveInLineOfSight(Unit *who)
 	{
-		if (!Intro && !Flying)
-			if (!me->GetVictim() && me->canStartAttack(who))
-				if (Phase == 1)
-					ScriptedAI::AttackStart(who);
-				else
-					AttackStartNoMove(who);
+        if (!Intro && !Flying)
+            ScriptedAI::MoveInLineOfSight(who);
 	}
 
 	void MovementInform(uint32 type, uint32 id)
@@ -285,6 +281,9 @@ struct boss_nightbaneAI : public ScriptedAI
 		me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
 		(*me).GetMotionMaster()->Clear(false);
 		(*me).GetMotionMaster()->MovePoint(0, IntroWay[2][0], IntroWay[2][1], IntroWay[2][2]);
+
+		// Set Flight Speed to normal at begin of takeoff
+		me->SetSpeed(MOVE_FLIGHT, 1.0f);
 
 		Flying = true;
 
@@ -480,6 +479,9 @@ struct boss_nightbaneAI : public ScriptedAI
 					me->GetMotionMaster()->MovePoint(3, IntroWay[3][0], IntroWay[3][1], IntroWay[3][2]);
 
 					Flying = true;
+
+				// Set flying speed to x6.0 so doesnt take so long to land
+				me->SetSpeed(MOVE_FLIGHT, 6.0f);
 				}
 				else FlyTimer -= diff;
 			}

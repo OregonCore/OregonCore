@@ -9146,7 +9146,7 @@ uint8 Player::_CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32
             return EQUIP_ERR_ALREADY_LOOTED;
         }
 
-        if (pItem->IsBindedNotWith(GetGUID()))
+        if (pItem->IsBindedNotWith(this))
         {
             if (no_space_count)
                 *no_space_count = count;
@@ -9558,7 +9558,7 @@ uint8 Player::CanStoreItems(Item** pItems, int count) const
             return EQUIP_ERR_ALREADY_LOOTED;
 
         // item it 'bind'
-        if (pItem->IsBindedNotWith(GetGUID()))
+        if (pItem->IsBindedNotWith(this))
             return EQUIP_ERR_DONT_OWN_THAT_ITEM;
 
         Bag* pBag;
@@ -9737,7 +9737,7 @@ uint8 Player::CanEquipItem(uint8 slot, uint16& dest, Item* pItem, bool swap, boo
             if (pItem->m_lootGenerated)
                 return EQUIP_ERR_ALREADY_LOOTED;
 
-            if (pItem->IsBindedNotWith(GetGUID()))
+            if (pItem->IsBindedNotWith(this))
                 return EQUIP_ERR_DONT_OWN_THAT_ITEM;
 
             // check count of items (skip for auto move for same player from bank)
@@ -9929,7 +9929,7 @@ uint8 Player::CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item* pI
     if (pItem->m_lootGenerated)
         return EQUIP_ERR_ALREADY_LOOTED;
 
-    if (pItem->IsBindedNotWith(GetGUID()))
+    if (pItem->IsBindedNotWith(this))
         return EQUIP_ERR_DONT_OWN_THAT_ITEM;
 
     // check count of items (skip for auto move for same player from bank)
@@ -10109,7 +10109,7 @@ uint8 Player::CanUseItem(Item* pItem, bool not_loading) const
         ItemTemplate const* pProto = pItem->GetProto();
         if (pProto)
         {
-            if (pItem->IsBindedNotWith(GetGUID()))
+            if (pItem->IsBindedNotWith(this))
                 return EQUIP_ERR_DONT_OWN_THAT_ITEM;
 
             if ((pProto->AllowableClass & getClassMask()) == 0 || (pProto->AllowableRace & getRaceMask()) == 0)
@@ -15009,6 +15009,9 @@ bool Player::isAllowedToLoot(const Creature* creature)
     if (loot->isLooted()) // nothing to loot or everything looted.
         return false;
 
+    if (!loot->hasItemForAll() && !loot->hasItemFor(this)) // no loot in creature for this player
+        return false;
+
     if (loot->loot_type == LOOT_SKINNING)
         return creature->GetSkinner() == GetGUID();
 
@@ -15326,10 +15329,8 @@ void Player::_LoadInventory(QueryResult_AutoPtr result, uint32 timediff)
 
             for (int i = 0; !problematicItems.empty() && i < MAX_MAIL_ITEMS; ++i)
             {
-                Item* item = problematicItems.front();
+                draft.AddItem(problematicItems.front());
                 problematicItems.pop_front();
-
-                draft.AddItem(item);
             }
 
             draft.SendMailTo(this, MailSender(this, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
@@ -15366,7 +15367,7 @@ void Player::_LoadMailedItems(Mail* mail)
 
         Item* item = NewItemOrBag(proto);
 
-        if (!item->LoadFromDB(item_guid_low, 0, fields))
+        if (!item->LoadFromDB(item_guid_low, GetGUID(), fields))
         {
             sLog.outError("Player::_LoadMailedItems - Item in mail (%u) doesn't exist !!!! - item guid: %u, deleted from mail", mail->messageID, item_guid_low);
             CharacterDatabase.PExecute("DELETE FROM mail_items WHERE item_guid = '%u'", item_guid_low);
@@ -19583,10 +19584,11 @@ void Player::AutoUnequipOffhandIfNeed()
         CharacterDatabase.BeginTransaction();
         offItem->DeleteFromInventoryDB();                   // deletes item from character's inventory
         offItem->SaveToDB();                                // recursive and not have transaction guard into self, item not in inventory and can be save standalone
-        CharacterDatabase.CommitTransaction();
 
         std::string subject = GetSession()->GetOregonString(LANG_NOT_EQUIPPED_ITEM);
         MailDraft(subject).AddItem(offItem).SendMailTo(this, MailSender(this, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+
+        CharacterDatabase.CommitTransaction();
     }
 }
 
@@ -20521,7 +20523,7 @@ void Player::UpdateCharmedAI()
         GetMotionMaster()->MoveFollow(charmer, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
 
     Unit* target = GetVictim();
-    if (!target || !charmer->canAttack(target))
+    if (!target || !charmer->IsValidAttackTarget(target))
     {
         target = charmer->SelectNearestTarget();
         if (!target)

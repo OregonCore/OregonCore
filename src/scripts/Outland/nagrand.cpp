@@ -64,18 +64,34 @@ EndContentData */
 ## mob_shattered_rumbler - this should be done with ACID
 ######*/
 
+#define SPELL_EARTH_RUMBLE  33840
+
 struct mob_shattered_rumblerAI : public ScriptedAI
 {
     bool Spawn;
 
     mob_shattered_rumblerAI(Creature* c) : ScriptedAI(c) {}
 
+    uint32 EarthRumbleTimer;
+
     void Reset()
     {
         Spawn = false;
+        EarthRumbleTimer = urand(12000, 17000);
 
-		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
+        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
     }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (EarthRumbleTimer < diff)
+        {
+            DoCast(me, SPELL_EARTH_RUMBLE);
+            EarthRumbleTimer = urand(14000, 21000);
+        }
+        else
+            EarthRumbleTimer -= diff;
+    }            
 
     void EnterCombat(Unit* /*who*/) {}
 
@@ -90,7 +106,7 @@ struct mob_shattered_rumblerAI : public ScriptedAI
             Hitter->SummonCreature(18181, x + (0.7f * (rand() % 30)), y + (rand() % 5), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
             Hitter->SummonCreature(18181, x + (rand() % 5), y - (rand() % 5), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
             Hitter->SummonCreature(18181, x - (rand() % 5), y + (0.5f * (rand() % 60)), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
-			me->DisappearAndDie();
+            me->DisappearAndDie();
             me->setDeathState(CORPSE);
             Spawn = true;
         }

@@ -164,9 +164,8 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
     if (me->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET) // non-combat pets should just stand there and look good;)
         return;
 
-    if (me->canStartAttack(who))
+    if (me->HasReactState(REACT_AGGRESSIVE) && me->canStartAttack(who, false))
         AttackStart(who);
-
     //else if (who->GetVictim() && me->IsFriendlyTo(who)
     //    && me->IsWithinDistInMap(who, sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS))
     //    && me->canAttack(who->GetVictim()))
@@ -249,7 +248,7 @@ void CreatureAI::EnterEvadeMode()
 
 void CreatureAI::SetGazeOn(Unit* target)
 {
-    if (me->canAttack(target))
+    if (me->IsValidAttackTarget(target))
     {
         AttackStart(target);
         me->SetReactState(REACT_PASSIVE);
@@ -301,8 +300,8 @@ bool CreatureAI::_EnterEvadeMode()
 
     // sometimes bosses stuck in combat?
     me->DeleteThreatList();
-    me->CombatStop(true);
-    me->SetLootRecipient(NULL);
+    me->CombatStopWithPets(true);
+    me->SetLootRecipient(nullptr);
     me->SetPlayerDamaged(false);
     me->SetLastDamagedTime(0);
 
@@ -311,8 +310,6 @@ bool CreatureAI::_EnterEvadeMode()
 
     me->RemoveAllAuras();
     me->LoadCreaturesAddon();
-    // @todo Determine if required
-    //me->SetReactState(REACT_AGGRESSIVE);
 
     return true;
 }

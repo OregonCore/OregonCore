@@ -128,7 +128,8 @@ class CreatureAI : public UnitAI
         virtual void SpellHitTarget(Unit* /*target*/, const SpellEntry*) {}
 
         // Called when the creature is target of hostile action: swing, hostile spell landed, fear/etc)
-        //virtual void AttackedBy(Unit* attacker);
+        virtual void AttackedBy(Unit* attacker) {}
+
         virtual bool IsEscorted()
         {
             return false;
@@ -158,6 +159,12 @@ class CreatureAI : public UnitAI
 
         // Called at text emote receive from player
         virtual void ReceiveEmote(Player* /*pPlayer*/, uint32 /*text_emote*/) {}
+
+        // Called when owner takes damage
+        virtual void OwnerAttackedBy(Unit* /*attacker*/) {}
+
+        // Called when owner attacks something
+        virtual void OwnerAttacked(Unit* /*target*/) {}
 
         // == Triggered Actions Requested ==================
 

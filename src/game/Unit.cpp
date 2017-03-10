@@ -53,6 +53,7 @@
 #include "MoveSpline.h"
 
 #include <math.h>
+#include <array>
 
 float baseMoveSpeed[MAX_MOVE_TYPE] =
 {
@@ -151,6 +152,142 @@ bool IsPassiveStackableSpell(uint32 spellId)
 
     return true;
 }
+
+typedef std::array<uint32, NUM_SPELL_PARTIAL_RESISTS> SpellPartialResistChanceEntry;
+typedef std::vector<SpellPartialResistChanceEntry> SpellPartialResistDistribution;
+static inline SpellPartialResistDistribution InitSpellPartialResistDistribution()
+{
+    // Precalculated chances for 0-100% mitigation
+    // We use integer random instead of floats, so each chance is premultiplied by 100 (100.00 becomes 10000)
+    const SpellPartialResistDistribution precalculated = {
+        {{10000,0,0,0,0}},
+        {{9700,200,100,0,0}},
+        {{9400,400,200,0,0}},
+        {{9000,800,200,0,0}},
+        {{8700,1000,300,0,0}},
+        {{8400,1200,400,0,0}},
+        {{8200,1300,400,100,0}},
+        {{7900,1500,500,100,0}},
+        {{7600,1700,600,100,0}},
+        {{7300,1900,700,100,0}},
+        {{6900,2300,700,100,0}},
+        {{6600,2500,800,100,0}},
+        {{6300,2700,900,100,0}},
+        {{6000,2900,1000,100,0}},
+        {{5800,3000,1000,200,0}},
+        {{5400,3300,1100,200,0}},
+        {{5100,3600,1100,200,0}},
+        {{4800,3800,1200,200,0}},
+        {{4400,4200,1200,200,0}},
+        {{4100,4400,1300,200,0}},
+        {{3700,4800,1300,200,0}},
+        {{3400,5000,1400,200,0}},
+        {{3100,5200,1500,200,0}},
+        {{3000,5200,1500,200,100}},
+        {{2800,5300,1500,300,100}},
+        {{2500,5500,1600,300,100}},
+        {{2400,5400,1700,400,100}},
+        {{2300,5300,1800,500,100}},
+        {{2200,5100,2100,500,100}},
+        {{2100,5000,2200,600,100}},
+        {{2000,4900,2400,600,100}},
+        {{1900,4700,2600,700,100}},
+        {{1800,4600,2700,800,100}},
+        {{1700,4400,3000,800,100}},
+        {{1600,4300,3100,900,100}},
+        {{1500,4200,3200,1000,100}},
+        {{1400,4100,3300,1100,100}},
+        {{1300,3900,3600,1100,100}},
+        {{1300,3600,3800,1200,100}},
+        {{1200,3500,3900,1300,100}},
+        {{1100,3400,4000,1400,100}},
+        {{1000,3300,4100,1500,100}},
+        {{900,3100,4400,1500,100}},
+        {{800,3000,4500,1600,100}},
+        {{800,2700,4700,1700,100}},
+        {{700,2600,4800,1800,100}},
+        {{600,2500,4900,1900,100}},
+        {{600,2300,5000,1900,200}},
+        {{500,2200,5100,2000,200}},
+        {{300,2200,5300,2000,200}},
+        {{200,2100,5400,2100,200}},
+        {{200,2000,5300,2200,300}},
+        {{200,2000,5100,2200,500}},
+        {{200,1900,5000,2300,600}},
+        {{100,1900,4900,2500,600}},
+        {{100,1800,4800,2600,700}},
+        {{100,1700,4700,2700,800}},
+        {{100,1600,4500,3000,800}},
+        {{100,1500,4400,3100,900}},
+        {{100,1500,4100,3300,1000}},
+        {{100,1400,4000,3400,1100}},
+        {{100,1300,3900,3500,1200}},
+        {{100,1200,3800,3600,1300}},
+        {{100,1100,3600,3900,1300}},
+        {{100,1100,3300,4100,1400}},
+        {{100,1000,3200,4200,1500}},
+        {{100,900,3100,4300,1600}},
+        {{100,800,3000,4400,1700}},
+        {{100,800,2700,4600,1800}},
+        {{100,700,2600,4700,1900}},
+        {{100,600,2400,4900,2000}},
+        {{100,600,2200,5000,2100}},
+        {{100,500,2100,5100,2200}},
+        {{100,500,1800,5300,2300}},
+        {{100,400,1700,5400,2400}},
+        {{100,300,1600,5500,2500}},
+        {{100,300,1500,5300,2800}},
+        {{100,200,1500,5200,3000}},
+        {{0,200,1500,5200,3100}},
+        {{0,200,1400,5000,3400}},
+        {{0,200,1300,4800,3700}},
+        {{0,200,1300,4400,4100}},
+        {{0,200,1200,4200,4400}},
+        {{0,200,1200,3800,4800}},
+        {{0,200,1100,3600,5100}},
+        {{0,200,1100,3300,5400}},
+        {{0,200,1000,3000,5800}},
+        {{0,100,1000,2900,6000}},
+        {{0,100,900,2700,6300}},
+        {{0,100,800,2500,6600}},
+        {{0,100,700,2300,6900}},
+        {{0,100,700,1900,7300}},
+        {{0,100,600,1700,7600}},
+        {{0,100,500,1500,7900}},
+        {{0,100,400,1300,8200}},
+        {{0,0,400,1200,8400}},
+        {{0,0,300,1000,8700}},
+        {{0,0,200,800,9000}},
+        {{0,0,200,400,9400}},
+        {{0,0,100,200,9700}},
+        {{0,0,0,0,10000}},
+    };
+    // Inflate up to two decimal places of chance %: add intermediate values
+    SpellPartialResistDistribution inflated;
+    for (size_t index = 0; index < precalculated.size(); ++index)
+    {
+        for (uint8 intermediate = 0; intermediate < 100; ++intermediate)
+        {
+            // Check if this is the last one first
+            if ((index + 1) == precalculated.size())
+            {
+                inflated.push_back(precalculated[index]);
+                break;
+            }
+            SpellPartialResistChanceEntry values;
+            for (uint8 column = SPELL_PARTIAL_RESIST_NONE; column < NUM_SPELL_PARTIAL_RESISTS; ++column)
+            {
+                const uint32 base = precalculated.at(index).at(column);
+                const uint32 next = precalculated.at(index + 1).at(column);
+                values[column] = base + ((next - base) * intermediate / 100);
+            }
+            inflated.push_back(values);
+        }
+    }
+    return inflated;
+}
+
+static const SpellPartialResistDistribution SPELL_PARTIAL_RESIST_DISTRIBUTION = InitSpellPartialResistDistribution();
 
 void MovementInfo::Read(ByteBuffer& data)
 {
@@ -360,7 +497,7 @@ Unit::~Unit()
 }
 
 // Check if unit in combat with specific unit
-bool Unit::IsInCombatWith(Unit* who)
+bool Unit::IsInCombatWith(Unit const* who) const
 {
     // Check target exists
     if (!who)
@@ -368,7 +505,7 @@ bool Unit::IsInCombatWith(Unit* who)
 
     // Search in threat list
     uint64 guid = who->GetGUID();
-    ThreatContainer::StorageType threatList = getThreatManager().getThreatList();
+    ThreatContainer::StorageType threatList = m_ThreatManager.getThreatList();
     for (ThreatContainer::StorageType::const_iterator i = threatList.begin(); i != threatList.end(); ++i)
     {
         HostileReference* ref = (*i);
@@ -735,17 +872,31 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
             return 0;
     }
 
-    // Handler for god command
-    if(victim->GetTypeId() == TYPEID_PLAYER)
-        if (victim->ToPlayer()->GetCommandStatus(CHEAT_GOD))
-            return 0;
-
     //Script Event damage taken
     if (victim->IsAIEnabled)
         victim->ToCreature()->AI()->DamageTaken(this, damage);
 
     if (IsAIEnabled)
         ToCreature()->AI()->DamageDealt(victim, damage, damagetype);
+
+    if (victim->GetTypeId() == TYPEID_PLAYER && this != victim)
+    {
+        // Signal to pets that their owner was attacked - except when DOT.
+        if (damagetype != DOT)
+        {
+            Pet* pet = victim->ToPlayer()->GetPet();
+
+            if (pet && pet->IsAlive())
+                pet->AI()->OwnerAttackedBy(this);
+        }
+
+        if (victim->ToPlayer()->GetCommandStatus(CHEAT_GOD))
+            return 0;
+    }
+
+    // Signal the pet it was attacked so the AI can respond if needed
+    if (victim->GetTypeId() == TYPEID_UNIT && this != victim && victim->IsPet() && victim->IsAlive())
+        victim->ToPet()->AI()->AttackedBy(this);
 
     if (victim->GetTypeId() == TYPEID_UNIT && (victim->ToCreature())->IsAIEnabled)
     {
@@ -1337,7 +1488,7 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
     // Calculate absorb resist
     if (damage > 0)
     {
-        CalcAbsorbResist(victim, damageSchoolMask, SPELL_DIRECT_DAMAGE, damage, &damageInfo->absorb, &damageInfo->resist, spellInfo);
+        CalcAbsorbResist(victim, damageSchoolMask, SPELL_DIRECT_DAMAGE, damage, &damageInfo->absorb, &damageInfo->resist, spellInfo, IsBinarySpell(spellInfo));
         damage -= damageInfo->absorb + damageInfo->resist;
     }
     else
@@ -1797,6 +1948,49 @@ bool Unit::IsDamageReducedByArmor(SpellSchoolMask schoolMask, SpellEntry const* 
     return true;
 }
 
+uint32 Unit::CalculateEffectiveMagicResistance(Unit* attacker, SpellSchoolMask schoolMask) const
+{
+    if (!(schoolMask & SPELL_SCHOOL_MASK_MAGIC))
+        return 0;
+
+    uint32 resistance = 0;
+    // Select a resistance value matching spell school mask, prefer mininal for multischool spells
+    uint32 schools = uint32(schoolMask);
+    for (uint32 school = 0; schools; ++school)
+    {
+        if ((schools & 1) && school != SPELL_SCHOOL_NORMAL && school != SPELL_SCHOOL_HOLY)
+        {
+            // Base victim resistance
+            uint32 amount = GetResistance(SpellSchools(school));
+            // Add SPELL_AURA_MOD_TARGET_RESISTANCE aura value at caster
+            // Negative value is spell penetration, but effective resistance can't be negative since betas
+            if (const int32 casterMod = attacker->GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_TARGET_RESISTANCE, (1 << school)))
+                amount = uint32(std::max((int32(amount) + casterMod), 0));
+            if (!amount)
+            {
+                resistance = 0; // No resistance for this school: use it!
+                break;
+            }
+            else if (!resistance || amount < resistance)
+                resistance = amount;    // First school encountered or more vulnerable: memorize and continue
+        }
+        schools >>= 1;
+    }
+
+    return resistance;
+}
+
+float Unit::CalculateMagicResistanceMitigation(Unit* attacker, uint32 resistance, bool binary) const
+{
+    // Total resistance mitigation: final ratio of resistance effectiveness
+    float ratio = float(float(resistance) / (attacker->getLevelForTarget(this) * 5)) * 0.75f;
+    // Add bonus resistance mitigation to victim based on level difference for non-binary spells
+    if (!binary)
+        ratio += std::max(int32(getLevelForTarget(attacker) - attacker->getLevelForTarget(this)), 0) * 0.02f;
+    // Magic resistance mitigation is capped at 0.75
+    return std::min(ratio, 0.75f);
+}
+
 uint32 Unit::CalcArmorReducedDamage(Unit* victim, const uint32 damage)
 {
     uint32 newdamage = 0;
@@ -1825,42 +2019,38 @@ uint32 Unit::CalcArmorReducedDamage(Unit* victim, const uint32 damage)
     return (newdamage > 1) ? newdamage : 1;
 }
 
-void Unit::CalcAbsorbResist(Unit* victim, SpellSchoolMask schoolMask, DamageEffectType damagetype, const uint32 damage, uint32* absorb, uint32* resist, SpellEntry const* spellInfo /*= NULL*/)
+void Unit::CalcAbsorbResist(Unit* victim, SpellSchoolMask schoolMask, DamageEffectType damagetype, const uint32 damage, uint32* absorb, uint32* resist, SpellEntry const* spellInfo /*= NULL*/, bool binary)
 {
     if (!victim || !victim->IsAlive() || !damage)
         return;
 
     // Magic damage, check for resists
-    if ((schoolMask & (SPELL_SCHOOL_MASK_NORMAL | SPELL_SCHOOL_MASK_HOLY)) == 0 && (!spellInfo || (spellInfo->AttributesEx4 & SPELL_ATTR4_IGNORE_RESISTANCES) == 0))
+    if (!spellInfo || (spellInfo->AttributesEx4 & SPELL_ATTR4_IGNORE_RESISTANCES) == 0 && (schoolMask & SPELL_SCHOOL_MASK_MAGIC) && (!binary || damagetype == DOT))
     {
-        // Get base victim resistance for school
-        float tmpvalue2 = (float)victim->GetResistance(GetFirstSchoolInMask(schoolMask));
-        // Ignore resistance by self SPELL_AURA_MOD_TARGET_RESISTANCE aura
-        tmpvalue2 += (float)GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_TARGET_RESISTANCE, schoolMask);
-
-        tmpvalue2 *= (float)(0.15f / getLevel());
-        if (tmpvalue2 < 0.0f)
-            tmpvalue2 = 0.0f;
-        if (tmpvalue2 > 0.75f)
-            tmpvalue2 = 0.75f;
-        uint32 ran = urand(0, 100);
-        uint32 faq[4] = {24, 6, 4, 6};
-        uint8 m = 0;
-        float Binom = 0.0f;
-        for (uint8 i = 0; i < 4; i++)
+        const float mitigation = CalculateMagicResistanceMitigation(victim, CalculateEffectiveMagicResistance(victim, schoolMask), false);
+        const SpellPartialResistChanceEntry &chances = SPELL_PARTIAL_RESIST_DISTRIBUTION.at(uint32(mitigation * 10000));
+        // We choose which portion of damage is resisted below, none by default
+        uint8 portion = SPELL_PARTIAL_RESIST_NONE;
+        // If we got to this point, we already rolled for full resist on hit
+        // We do a roll between remaining chances
+        const uint8 outcomes = (NUM_SPELL_PARTIAL_RESISTS - 1);
+        const uint32 roll = urand(1, (10000 - chances.at(SPELL_PARTIAL_RESIST_PCT_100)));
+        uint32 sum = 0;
+        for (uint8 outcome = SPELL_PARTIAL_RESIST_NONE; outcome < outcomes; ++outcome)
         {
-            Binom += 2400 * (powf(tmpvalue2, i) * powf((1 - tmpvalue2), (4 - i))) / faq[i];
-            if (ran > Binom)
-                ++m;
-            else
-                break;
+            if (const uint32 chance = chances.at(outcome))
+            {
+                sum += chance;
+                if (roll <= sum)
+                {
+                    portion = outcome;
+                    break;
+                }
+            }
         }
-        if (damagetype == DOT && m == 4)
-            *resist += uint32(damage - 1);
-        else
-            *resist += uint32(damage * m / 4);
-        if (*resist > damage)
-            *resist = damage;
+        const uint32 amount = uint32(damage * (portion * (1.0f / float(outcomes))));
+        // We already rolled for full resist on hit, so we need to deal at least *some* amount of damage...
+        *resist = (amount >= damage) ? (damage - 1) : amount;
     }
     else
         *resist = 0;
@@ -2376,7 +2566,8 @@ float Unit::CalculateLevelPenalty(SpellEntry const* spellProto) const
     float LvlPenalty = 0.0f;
 
     if (spellProto->spellLevel < 20)
-        LvlPenalty = 20.0f - spellProto->spellLevel * 3.75f;
+        LvlPenalty = (20.0f - spellProto->spellLevel) * 3.75f;
+
     float LvlFactor = (float(spellProto->spellLevel) + 6.0f) / float(getLevel());
     if (LvlFactor > 1.0f)
         LvlFactor = 1.0f;
@@ -2759,6 +2950,17 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit* victim, SpellEntry const* spellInf
     int32 rand = irand(0, 10000);
     if (rand > HitChance)
         return SPELL_MISS_RESIST;
+
+    if (!spellInfo->HasAttribute(SPELL_ATTR4_IGNORE_RESISTANCES))
+    {
+        const bool binary = IsBinarySpell(spellInfo);
+        const float mitigation = victim->CalculateMagicResistanceMitigation(this, victim->CalculateEffectiveMagicResistance(this, schoolMask), binary);
+        // Calculate full resist chance
+        const uint32 chance = binary ? uint32(mitigation * 10000) : SPELL_PARTIAL_RESIST_DISTRIBUTION.at(uint32(mitigation * 10000)).at(SPELL_PARTIAL_RESIST_PCT_100);
+        // Do a roll for full resist chance
+        if (urand(0,9999) < chance)
+            return SPELL_MISS_RESIST;
+    }
 
     return SPELL_MISS_NONE;
 }
@@ -5702,6 +5904,21 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, Aura* triggeredByAur
                         return false;
 
                     triggered_spell_id = 31803;
+
+                    // Since Patch 2.2.0 Seal of Vengeance does additional damage against fully stacked targets
+                    // Add 5-stack effect from Holy Vengeance
+                    uint32 stacks = 0;
+                    AuraList const& auras = target->GetAurasByType(SPELL_AURA_PERIODIC_DAMAGE);
+                    for (AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
+                    {
+                        if (((*itr)->GetId() == 31803) && (*itr)->GetCasterGUID() == GetGUID())
+                        {
+                            stacks = (*itr)->GetStackAmount();
+                            break;
+                        }
+                    }
+                    if (stacks >= 5)
+                        CastSpell(target, 42463, true, NULL, triggeredByAura);
                     break;
                 }
             // Spiritual Att.
@@ -6978,11 +7195,11 @@ ReputationRank Unit::GetReactionTo(Unit const* target) const
                     return REP_FRIENDLY; // return true to allow config option AllowTwoSide.Interaction.Group to work
                 // however client seems to allow mixed group parties, because in 13850 client it works like:
                 // return GetFactionReactionTo(GetFactionTemplateEntry(), target);
-
-                // PvP FFA state
-                if (selfPlayerOwner->IsFFAPvP() && targetPlayerOwner->IsFFAPvP())
-                    return REP_HOSTILE;
             }
+
+            // PvP FFA state
+            if (IsFFAPvP() && target->IsFFAPvP())
+                return REP_HOSTILE;
 
             if (selfPlayerOwner)
             {
@@ -7076,7 +7293,7 @@ bool Unit::IsFriendlyTo(Unit const* unit) const
 bool Unit::IsHostileToPlayers() const
 {
     FactionTemplateEntry const* my_faction = GetFactionTemplateEntry();
-    if (!my_faction)
+    if (!my_faction || !my_faction->faction)
         return false;
 
     FactionEntry const* raw_faction = sFactionStore.LookupEntry(my_faction->faction);
@@ -7089,7 +7306,7 @@ bool Unit::IsHostileToPlayers() const
 bool Unit::IsNeutralToAll() const
 {
     FactionTemplateEntry const* my_faction = GetFactionTemplateEntry();
-    if (!my_faction)
+    if (!my_faction || !my_faction->faction)
         return true;
 
     FactionEntry const* raw_faction = sFactionStore.LookupEntry(my_faction->faction);
@@ -7227,6 +7444,10 @@ void Unit::CombatStop(bool includingCast)
     if (GetTypeId() == TYPEID_PLAYER)
         ToPlayer()->SendAttackSwingCancelAttack();     // melee and ranged forced attack cancel
     ClearInCombat();
+
+    // just in case
+    if (IsPetInCombat() && GetTypeId() != TYPEID_PLAYER)
+        ClearInPetCombat();
 }
 
 void Unit::CombatStopWithPets(bool includingCast)
@@ -7709,7 +7930,7 @@ void Unit::EnergizeBySpell(Unit* victim, uint32 SpellID, uint32 damage, Powers p
 
 uint32 Unit::SpellDamageBonus(Unit* victim, SpellEntry const* spellProto, uint32 pdamage, DamageEffectType damagetype)
 {
-    if (!spellProto || !victim || damagetype == DIRECT_DAMAGE)
+    if (!spellProto || !victim || damagetype == DIRECT_DAMAGE || spellProto->AttributesEx6 & SPELL_ATTR6_NO_DMG_PERCENT_MODS)
         return pdamage;
 
     int32 BonusDamage = 0;
@@ -8163,7 +8384,7 @@ bool Unit::isSpellCrit(Unit* victim, SpellEntry const* spellProto, SpellSchoolMa
         return false;
 
     // not critting spell
-    if ((spellProto->AttributesEx2 & SPELL_ATTR2_CANT_CRIT))
+    if (!IsSpellAbleToCrit(spellProto))
         return false;
 
     // Creatures do not crit with their spells or abilities, unless it is owned by a player (pet, totem, etc)
@@ -8192,7 +8413,7 @@ bool Unit::isSpellCrit(Unit* victim, SpellEntry const* spellProto, SpellSchoolMa
         case SPELL_DAMAGE_CLASS_MAGIC:
             {
                 if (schoolMask & SPELL_SCHOOL_MASK_NORMAL)
-                    crit_chance = 0.0f;
+                    crit_chance = (float)m_baseSpellCritChance;
                 // For other schools
                 else if (GetTypeId() == TYPEID_PLAYER)
                     crit_chance = GetFloatValue(PLAYER_SPELL_CRIT_PERCENTAGE1 + GetFirstSchoolInMask(schoolMask));
@@ -8738,7 +8959,7 @@ bool Unit::IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool
 
 void Unit::MeleeDamageBonus(Unit* victim, uint32* pdamage, WeaponAttackType attType, SpellEntry const* spellProto)
 {
-    if (!victim || pdamage == 0)
+    if (!victim || pdamage == 0 || (spellProto && spellProto->AttributesEx6 & SPELL_ATTR6_NO_DMG_PERCENT_MODS))
         return;
 
     uint32 creatureTypeMask = victim->GetCreatureTypeMask();
@@ -9092,7 +9313,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
         return;
 
     if (PvP)
-        m_CombatTimer = 5000;
+        m_CombatTimer = 6000;
 
     if (IsInCombat() || HasUnitState(UNIT_STATE_EVADE))
         return;
@@ -9140,10 +9361,12 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
             Dismount();
     }
 
-    for (Unit::ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
+    for (Unit::ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end();)
     {
-        (*itr)->SetInCombatState(PvP, enemy);
-        (*itr)->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
+        Unit* controlled = *itr;
+        ++itr;
+
+        controlled->SetInCombatState(PvP, enemy);
     }
 }
 
@@ -9173,8 +9396,13 @@ void Unit::ClearInCombat()
         else if (!isCharmed())
             return;
     }
+}
 
+void Unit::ClearInPetCombat()
+{
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
+    if (Unit* owner = GetOwner())
+        owner->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
 }
 
 bool Unit::isTargetableForAttack(bool checkFakeDeath) const
@@ -9192,32 +9420,208 @@ bool Unit::isTargetableForAttack(bool checkFakeDeath) const
     return !HasUnitState(UNIT_STATE_UNATTACKABLE) && (!checkFakeDeath || !HasUnitState(UNIT_STATE_DIED));
 }
 
-bool Unit::canAttack(Unit const* target, bool force) const
+bool Unit::IsValidAttackTarget(Unit const* target) const
+{
+    return _IsValidAttackTarget(target, NULL);
+}
+
+bool Unit::IsInSanctuary() const
+{
+    const AreaTableEntry* area = GetAreaEntryByAreaID(GetAreaId());
+    if (area && area->flags & AREA_FLAG_SANCTUARY)       //sanctuary
+        return true;
+
+    return false;
+}
+
+bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, WorldObject const* obj) const
 {
     ASSERT(target);
 
-    if (force)
+    // can't attack self
+    if (this == target)
+        return false;
+
+    // can't attack unattackable units or GMs
+    if (target->HasUnitState(UNIT_STATE_UNATTACKABLE)
+        || target->GetTypeId() == TYPEID_PLAYER && target->ToPlayer()->IsGameMaster())
+        return false;
+
+    // visibility checks
+    // skip visibility check for GO casts, needs removal when go cast is implemented. Also ignore for gameobject and dynauras
+    if (GetEntry() != WORLD_TRIGGER && (!obj || !obj->isType(TYPEMASK_GAMEOBJECT | TYPEMASK_DYNAMICOBJECT)))
     {
-        if (IsFriendlyTo(target))
-            return false;
+        // can't attack invisible
+        if (!bySpell)
+        {
+            if (obj && !obj->CanSeeOrDetect(target))
+                return false;
+            else if (!obj)
+            {
+                // ignore stealth for aoe spells. Ignore stealth if target is player and unit in combat with same player
+                bool const ignoreStealthCheck = target->GetTypeId() == TYPEID_PLAYER && target->HasStealthAura() && target->IsInCombat() && IsInCombatWith(target);
+
+                if (!CanSeeOrDetect(target, ignoreStealthCheck))
+                    return false;
+            }
+        }
     }
-    else if (!IsHostileTo(target))
+
+    // can't attack dead
+    if (!target->IsAlive())
         return false;
 
-    if (!target->isAttackableByAOE())
+    // can't attack untargetable
+    if (!bySpell && target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
         return false;
 
-    // feign dead case
-    if (target->HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH))
+    // check flags
+    if (target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_TAXI_FLIGHT | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_NOT_PL_SPELL_TARGET)
+        || (!HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) && target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC))
+        || (!target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC))
+        || (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) && target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC))
+        // check if this is a world trigger cast - GOs are using world triggers to cast their spells, so we need to ignore their immunity flag here, this is a temp workaround, needs removal when go cast is implemented properly
+        || (GetEntry() != WORLD_TRIGGER && target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC)))
+        return false;
+
+    // CvC case - can attack each other only when one of them is hostile
+    if (!HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) && !target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE))
+        return GetReactionTo(target) <= REP_HOSTILE || target->GetReactionTo(this) <= REP_HOSTILE;
+
+    // PvP, PvC, CvP case
+    // can't attack friendly targets
+    if (GetReactionTo(target) > REP_NEUTRAL
+        || target->GetReactionTo(this) > REP_NEUTRAL)
+        return false;
+
+    Player const* playerAffectingAttacker = HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) ? GetAffectingPlayer() : nullptr;
+    Player const* playerAffectingTarget = target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) ? target->GetAffectingPlayer() : nullptr;
+
+    // Not all neutral creatures can be attacked (even some unfriendly faction does not react aggresive to you, like Sporaggar)
+    if ((playerAffectingAttacker && !playerAffectingTarget) ||
+        (!playerAffectingAttacker && playerAffectingTarget))
     {
-        if ((GetTypeId() != TYPEID_PLAYER && !GetOwner()) || (GetOwner() && GetOwner()->GetTypeId() != TYPEID_PLAYER))
-            return false;
-        // if this == player or owner == player check other conditions
+        Player const* player = playerAffectingAttacker ? playerAffectingAttacker : playerAffectingTarget;
+        Unit const* creature = playerAffectingAttacker ? target : this;
+
+        if (FactionTemplateEntry const* factionTemplate = creature->GetFactionTemplateEntry())
+        {
+            if (!(player->GetReputationMgr().GetForcedRankIfAny(factionTemplate)))
+                if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplate->faction))
+                    if (FactionState const* repState = player->GetReputationMgr().GetState(factionEntry))
+                        if (!(repState->Flags & FACTION_FLAG_AT_WAR) && (!IsContestedGuard() && !HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP)))
+                            return false;
+
+        }
     }
-    // real dead case ~UNIT_FLAG2_FEIGN_DEATH && UNIT_STATE_DIED
-    else if (target->HasUnitState(UNIT_STATE_DIED))
+
+    // check duel - before sanctuary checks
+    if (playerAffectingAttacker && playerAffectingTarget)
+        if (playerAffectingAttacker->duel && playerAffectingAttacker->duel->opponent == playerAffectingTarget && playerAffectingAttacker->duel->startTime != 0)
+            return true;
+
+    // PvP case - can't attack when attacker or target are in sanctuary
+    if ((target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) && (target->IsInSanctuary()))
+        || (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) && (IsInSanctuary())))
         return false;
 
+    // additional checks - only PvP case
+    if (playerAffectingAttacker && playerAffectingTarget)
+    {
+        if (target->IsPvP())
+            return true;
+
+        if (IsFFAPvP() && target->IsFFAPvP())
+            return true;
+
+        return HasFlag(UNIT_FIELD_BYTES_2, UNIT_BYTE2_FLAG_UNK1)
+            || target->HasFlag(UNIT_FIELD_BYTES_2, UNIT_BYTE2_FLAG_UNK1);
+    }
+    return true;
+}
+
+bool Unit::IsValidAssistTarget(Unit const* target) const
+{
+    return _IsValidAssistTarget(target, NULL);
+}
+
+bool Unit::_IsValidAssistTarget(Unit const* target, SpellEntry const* bySpell) const
+{
+    ASSERT(target);
+
+    // can assist to self
+    if (this == target)
+        return true;
+
+    // can't assist unattackable units or GMs
+    if (target->HasUnitState(UNIT_STATE_UNATTACKABLE)
+        || target->GetTypeId() == TYPEID_PLAYER && target->ToPlayer()->IsGameMaster())
+        return false;
+
+    // can't assist invisible
+    if (!CanSeeOrDetect(target))
+        return false;
+
+    // can't assist dead
+    if (!target->IsAlive())
+        return false;
+
+    // can't assist untargetable
+    if (target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
+        return false;
+
+    if (!bySpell || !(bySpell->AttributesEx6 & SPELL_ATTR6_ASSIST_IGNORE_IMMUNE_FLAG))
+    {
+        if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE))
+        {
+            if (target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC))
+                return false;
+        }
+        else
+        {
+            if (target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC))
+                return false;
+        }
+    }
+
+    // can't assist non-friendly targets
+    if (GetReactionTo(target) < REP_NEUTRAL
+        && target->GetReactionTo(this) < REP_NEUTRAL)
+        return false;
+
+    // PvP case
+    if (target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE))
+    {
+        Player const* targetPlayerOwner = target->GetAffectingPlayer();
+        if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE))
+        {
+            Player const* selfPlayerOwner = GetAffectingPlayer();
+            if (selfPlayerOwner && targetPlayerOwner)
+            {
+                // can't assist player which is dueling someone
+                if (selfPlayerOwner != targetPlayerOwner
+                    && targetPlayerOwner->duel)
+                    return false;
+            }
+            // can't assist player in ffa_pvp zone from outside
+            if ((target->GetByteValue(UNIT_FIELD_BYTES_2, 1) & UNIT_BYTE2_FLAG_FFA_PVP)
+                && !(GetByteValue(UNIT_FIELD_BYTES_2, 1) & UNIT_BYTE2_FLAG_FFA_PVP))
+                return false;
+            // can't assist player out of sanctuary from sanctuary if has pvp enabled
+            if (target->GetByteValue(UNIT_FIELD_BYTES_2, 1) & UNIT_BYTE2_FLAG_UNK0)
+                if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_SANCTUARY) && !target->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_SANCTUARY))
+                    return false;
+        }
+    }
+    // PvC case - player can assist creature only if has specific type flags
+    // !target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) &&
+    else if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE)
+        && (!bySpell || !(bySpell->AttributesEx6 & SPELL_ATTR6_ASSIST_IGNORE_IMMUNE_FLAG))
+        && !((target->GetByteValue(UNIT_FIELD_BYTES_2, 1) & UNIT_BYTE2_FLAG_UNK0)))
+    {
+        if (Creature const* creatureTarget = target->ToCreature())
+            return creatureTarget->GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_CAN_ASSIST;
+    }
     return true;
 }
 
@@ -9565,6 +9969,7 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
                 return;
         }
 
+        data << GetPackGUID();
         BuildMovementPacket(&data);
         data << float(GetSpeed(mtype));
         SendMessageToSet(&data, true);
@@ -9646,6 +10051,7 @@ void Unit::setDeathState(DeathState s)
         //do not why since in IncreaseMaxHealth currenthealth is checked
         SetHealth(0);
         SetPower(getPowerType(), 0);
+        SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
     }
     else if (s == JUST_RESPAWNED)
         RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE); // clear skinnable for creature and player (at Battleground)
@@ -9832,7 +10238,7 @@ Unit* Creature::SelectVictim()
             {
                 --aura;
                 caster = (*aura)->GetCaster();
-                if (caster && CanSeeOrDetect(caster, true) && canAttack(caster) && caster->isInAccessiblePlaceFor(ToCreature()))
+                if (caster && CanSeeOrDetect(caster, true) && IsValidAttackTarget(caster) && caster->isInAccessiblePlaceFor(ToCreature()))
                 {
                     target = caster;
                     break;
@@ -9987,16 +10393,20 @@ int32 Unit::CalculateSpellDamage(SpellEntry const* spellProto, uint8 effect_inde
         }
     }
 
-    if (!basePointsPerLevel && (spellProto->Attributes & SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION && spellProto->spellLevel) &&
-        spellProto->Effect[effect_index] != SPELL_EFFECT_WEAPON_PERCENT_DAMAGE &&
-        spellProto->Effect[effect_index] != SPELL_EFFECT_KNOCK_BACK &&
-        spellProto->EffectApplyAuraName[effect_index] != SPELL_AURA_MOD_SPEED_ALWAYS &&
-        spellProto->EffectApplyAuraName[effect_index] != SPELL_AURA_MOD_SPEED_NOT_STACK &&
-        spellProto->EffectApplyAuraName[effect_index] != SPELL_AURA_MOD_INCREASE_SPEED &&
-        spellProto->EffectApplyAuraName[effect_index] != SPELL_AURA_MOD_DECREASE_SPEED)
-        //there are many more: slow speed, -healing pct
-        //value = int32(value*0.25f*exp(getLevel()*(70-spellProto->spellLevel)/1000.0f));
-        value = int32(value * (int32)getLevel() / (int32)(spellProto->spellLevel ? spellProto->spellLevel : 1));
+    if (spellProto->Attributes & SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION && spellProto->spellLevel)
+    {
+        if (spellProto->EffectApplyAuraName[effect_index])
+            value += int32(std::max(0, int32(getLevel() - spellProto->maxLevel)) * basePointsPerLevel);
+        else if (spellProto->Effect[effect_index] != SPELL_EFFECT_WEAPON_PERCENT_DAMAGE &&
+                 spellProto->Effect[effect_index] != SPELL_EFFECT_KNOCK_BACK &&
+                 !IsControlledByPlayer())
+        {
+            GtNPCManaCostScalerEntry const* spellScaler = sGtNPCManaCostScalerStore.LookupEntry(spellProto->spellLevel - 1);
+            GtNPCManaCostScalerEntry const* casterScaler = sGtNPCManaCostScalerStore.LookupEntry(this->getLevel() - 1);
+            if (spellScaler && casterScaler)
+                value *= casterScaler->ratio / spellScaler->ratio;
+        }
+    }
 
     return value;
 }
@@ -10732,7 +11142,7 @@ void Unit::DeleteCharmInfo()
 
 CharmInfo::CharmInfo(Unit* unit)
     : m_unit(unit), m_CommandState(COMMAND_FOLLOW), m_petnumber(0), m_barInit(false),
-    m_isCommandAttack(false), m_isAtStay(false), m_isFollowing(false), m_isReturning(false),
+    m_isCommandAttack(false), _isCommandFollow(false), m_isAtStay(false), m_isFollowing(false), m_isReturning(false),
     m_stayX(0.0f), m_stayY(0.0f), m_stayZ(0.0f)
 {
     for (int i = 0; i < MAX_SPELL_CHARM; ++i)
@@ -11761,7 +12171,7 @@ void Unit::UpdateAuraForGroup(uint8 slot)
 
 float Unit::GetAPMultiplier(WeaponAttackType attType, bool normalized)
 {
-    if (!normalized || GetTypeId() != TYPEID_PLAYER)
+    if (!normalized || GetTypeId() != TYPEID_PLAYER || (IsInFeralForm() && !normalized))
         return float(GetAttackTime(attType)) / 1000.0f;
 
     Item* Weapon = ToPlayer()->GetWeaponForAttack(attType);
@@ -12050,8 +12460,13 @@ bool Unit::SetPosition(float x, float y, float z, float orientation, bool telepo
         return false;
     }
 
-    bool turn = (GetOrientation() != orientation);
-    bool relocated = (teleport || GetPositionX() != x || GetPositionY() != y || GetPositionZ() != z);
+    bool const turn = (GetOrientation() != orientation);
+
+    // G3D::fuzzyEq won't help here, in some cases magnitudes differ by a little more than G3D::eps, but should be considered equal
+    bool const relocated = (teleport || 
+        std::fabs(GetPositionX() - x) > 0.001f ||
+        std::fabs(GetPositionY() - y) > 0.001f ||
+        std::fabs(GetPositionZ() - z) > 0.001f);
 
     if (turn)
         RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TURNING);
@@ -13008,6 +13423,16 @@ void CharmInfo::SetIsCommandAttack(bool val)
 bool CharmInfo::IsCommandAttack()
 {
     return m_isCommandAttack;
+}
+
+void CharmInfo::SetIsCommandFollow(bool val)
+{
+    _isCommandFollow = val;
+}
+
+bool CharmInfo::IsCommandFollow()
+{
+    return _isCommandFollow;
 }
 
 void CharmInfo::SaveStayPosition()

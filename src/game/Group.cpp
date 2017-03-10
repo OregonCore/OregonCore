@@ -967,7 +967,7 @@ void Group::SendUpdate()
         data << (uint8)m_groupType;                         // group type
         data << (uint8)(isBGGroup() ? 1 : 0);               // 2.0.x, isBattlegroundGroup?
         data << (uint8)(citr->group);                       // groupid
-        data << (uint8)(citr->assistant ? 0x01 : 0);        // 0x2 main assist, 0x4 main tank
+        data << (uint8)(GetFlags(*citr));                   // group flags
         data << uint64(0x50000000FFFFFFFELL);               // related to voice chat?
         data << uint32(GetMembersCount() - 1);
         for (member_citerator citr2 = m_memberSlots.begin(); citr2 != m_memberSlots.end(); ++citr2)
@@ -984,7 +984,7 @@ void Group::SendUpdate()
             // online-state
             data << (uint8)(onlineState);
             data << (uint8)(citr2->group);                  // groupid
-            data << (uint8)(citr2->assistant ? 0x01 : 0);   // 0x2 main assist, 0x4 main tank
+            data << (uint8)(GetFlags(*citr2));              // group flags
         }
 
         data << uint64(m_leaderGuid);                       // leader guid

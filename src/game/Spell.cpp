@@ -180,7 +180,7 @@ void SpellCastTargets::read(ByteBuffer& data, Unit* caster)
     if (m_targetMask & (TARGET_FLAG_UNIT | TARGET_FLAG_UNK2))
         data >> m_unitTargetGUID.ReadAsPacked();
 
-    if (m_targetMask & (TARGET_FLAG_OBJECT | TARGET_FLAG_OBJECT_UNK))
+    if (m_targetMask & (TARGET_FLAG_OBJECT | TARGET_FLAG_OBJECT_UNK | TARGET_FLAG_GAMEOBJECT_ITEM))
         data >> m_GOTargetGUID.ReadAsPacked();
 
     if ((m_targetMask & (TARGET_FLAG_ITEM | TARGET_FLAG_TRADE_ITEM)) && caster->GetTypeId() == TYPEID_PLAYER)
@@ -645,6 +645,10 @@ void Spell::prepareDataForTriggerSystem()
         case SPELLFAMILY_ROGUE: // mutilate mainhand + offhand
             if (m_spellInfo->SpellFamilyFlags & 0x600000000LL) m_canTrigger = true;
             break;
+        case SPELLFAMILY_SHAMAN:
+        // Lightning Shield
+            if (m_spellInfo->SpellFamilyFlags & 0x0000000000000400LL) m_canTrigger = true;
+            break;
         }
     }
 
@@ -926,10 +930,9 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
 
     // Get mask of effects for target
     uint8 mask = target->effectMask;
-    if (mask == 0)                                          // No effects
-        return;
 
     Unit* unit = m_caster->GetGUID() == target->targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, target->targetGUID);
+
     if (!unit)
     {
         uint8 farMask = 0;
@@ -938,12 +941,14 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
             if (IsFarUnitTargetEffect(m_spellInfo->Effect[i]))
                 if ((1 << i) & mask)
                     farMask |= (1 << i);
+
         if (!farMask)
             return;
         // find unit in world
         unit = ObjectAccessor::FindUnit(target->targetGUID);
         if (!unit)
             return;
+
         // do far effects on the unit
         // can't use default call because of threading, do stuff as fast as possible
         for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
@@ -1042,6 +1047,8 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         procEx = createProcExtendMask(&damageInfo, missInfo);
         procVictim |= PROC_FLAG_TAKEN_DAMAGE;
 
+        caster->DealSpellDamage(&damageInfo, true);
+
         // Do triggers for unit (reflect triggers passed on hit phase for correct drop charge)
         if (missInfo != SPELL_MISS_REFLECT)
         {
@@ -1049,8 +1056,6 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
             if (caster->GetTypeId() == TYPEID_PLAYER && !(m_spellInfo->AttributesEx4 & SPELL_ATTR4_CANT_TRIGGER_ITEM_SPELLS))
                 caster->ToPlayer()->CastItemCombatSpell(unitTarget, m_attackType, procVictim, procEx, m_spellInfo);
         }
-
-        caster->DealSpellDamage(&damageInfo, true);
 
         // Judgement of Blood
         if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN && m_spellInfo->SpellFamilyFlags & 0x0000000800000000LL && m_spellInfo->SpellIconID == 153)
@@ -1163,7 +1168,7 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
                 }
             }
         }
-        if (m_caster->IsHostileTo(unit))
+        if (m_caster->IsValidAttackTarget(unit))
         {
             unit->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_HITBYSPELL);
             if (m_customAttr & SPELL_ATTR_CU_AURA_CC)
@@ -1184,7 +1189,8 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
             if (unit->HasUnitState(UNIT_STATE_ATTACK_PLAYER))
             {
                 m_caster->SetContestedPvP();
-                //m_caster->UpdatePvP(true);
+                if (m_caster->GetTypeId() == TYPEID_PLAYER)
+                    m_caster->ToPlayer()->UpdatePvP(true);
             }
             if (unit->IsInCombat() && !(m_spellInfo->AttributesEx3 & SPELL_ATTR3_NO_INITIAL_AGGRO))
             {
@@ -2713,7 +2719,7 @@ void Spell::_handle_immediate_phase()
             continue;
 
         // apply Send Event effect to ground in case empty target lists
-        if (m_spellInfo->Effect[j] == SPELL_EFFECT_SEND_EVENT && !HaveTargetsForEffect(j))
+        if (m_spellInfo->Effect[j] == SPELL_EFFECT_SEND_EVENT || m_spellInfo->Effect[j] == SPELL_EFFECT_TRANS_DOOR && !HaveTargetsForEffect(j))
         {
             HandleEffects(NULL, NULL, NULL, j);
             continue;
@@ -3406,7 +3412,7 @@ void Spell::SendInterrupted(uint8 result)
     m_caster->SendMessageToSet(&data, true);
 
     data.Initialize(SMSG_SPELL_FAILED_OTHER, (8 + 4));
-    data << m_caster->GetPackGUID();
+    data << m_caster->GetObjectGUID();
     data << m_spellInfo->Id;
     m_caster->SendMessageToSet(&data, true);
 }
@@ -3940,8 +3946,8 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
         }
 
-        // check if target is in combat
-        if (target != m_caster && (m_spellInfo->AttributesEx & SPELL_ATTR1_CANT_TARGET_IN_COMBAT) && target->IsInCombat())
+        // spells cannot be cast if player is in fake combat also
+        if (m_spellInfo->HasAttribute(SPELL_ATTR1_CANT_TARGET_IN_COMBAT) && (target->IsInCombat() || target->IsPetInCombat()))
             return SPELL_FAILED_TARGET_AFFECTING_COMBAT;
     }
 

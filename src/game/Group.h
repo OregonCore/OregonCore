@@ -60,6 +60,13 @@ enum GroupType
     GROUPTYPE_RAID   = 1
 };
 
+enum GroupFlagMask
+{
+    GROUP_ASSISTANT      = 0x01,
+    GROUP_MAIN_ASSISTANT = 0x02,
+    GROUP_MAIN_TANK      = 0x04,
+};
+
 class Battleground;
 
 enum GroupUpdateFlags
@@ -485,6 +492,17 @@ class Group
                 --m_subGroupsCounts[subgroup];
         }
 
+        GroupFlagMask GetFlags(MemberSlot const& slot) const
+        {
+            uint8 flags = 0;
+            if (slot.assistant)
+                flags |= GROUP_ASSISTANT;
+            if (slot.guid == m_mainAssistant)
+                flags |= GROUP_MAIN_ASSISTANT;
+            if (slot.guid == m_mainTank)
+                flags |= GROUP_MAIN_TANK;
+            return GroupFlagMask(flags);
+        }
         MemberSlotList      m_memberSlots;
         GroupRefManager     m_memberMgr;
         InvitesList         m_invitees;

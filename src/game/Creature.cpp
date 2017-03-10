@@ -552,7 +552,8 @@ void Creature::Update(uint32 diff)
                 IsAIEnabled = true;
                 if (!IsInEvadeMode() && LastCharmerGUID)
                     if (Unit* charmer = ObjectAccessor::GetUnit(*this, LastCharmerGUID))
-                        i_AI->AttackStart(charmer);
+                        if (canStartAttack(charmer, true))
+                            i_AI->AttackStart(charmer);
 
                 LastCharmerGUID = 0;
             }
@@ -1474,7 +1475,7 @@ bool Creature::CanAlwaysSee(WorldObject const* obj) const
     return false;
 }
 
-bool Creature::canStartAttack(Unit const* who) const
+bool Creature::canStartAttack(Unit const* who, bool force) const
 {
     if (isCivilian())
         return false;
@@ -1492,13 +1493,21 @@ bool Creature::canStartAttack(Unit const* who) const
     if (!canFly() && (GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE + m_CombatDistance))
         return false;
 
-    if (!IsWithinDistInMap(who, GetAttackDistance(who)))
-        return false;
+    if (!force)
+    {
+        if (!_IsTargetAcceptable(who))
+            return false;
 
-    if (!CanCreatureAttack(who))
-        return false;
+        if (who->IsInCombat() && IsWithinDist(who, ATTACK_DISTANCE))
+            if (Unit* victim = who->getAttackerForHelper())
+                if (IsWithinDistInMap(victim, sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS)))
+                    force = true;
 
-    if (!canAttack(who, false))
+        if (!force && (IsNeutralToAll() || !IsWithinDistInMap(who, GetAttackDistance(who) + m_CombatDistance)))
+            return false;
+    }
+
+    if (!CanCreatureAttack(who, force))
         return false;
 
     return IsWithinLOSInMap(who);
@@ -1994,6 +2003,41 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
     return true;
 }
 
+// use this function to avoid having hostile creatures attack
+// friendlies and other mobs they shouldn't attack
+bool Creature::_IsTargetAcceptable(const Unit* target) const
+{
+    ASSERT(target);
+
+    // if the target cannot be attacked, the target is not acceptable
+    if (IsFriendlyTo(target)
+        || !target->isTargetableForAttack(false))
+        return false;
+
+    if (target->HasUnitState(UNIT_STATE_DIED))
+    {
+        // guards can detect fake death
+        if (IsGuard() && target->HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH))
+            return true;
+        else
+            return false;
+    }
+
+    const Unit* myVictim = getAttackerForHelper();
+    const Unit* targetVictim = target->getAttackerForHelper();
+
+    // if I'm already fighting target, or I'm hostile towards the target, the target is acceptable
+    if (myVictim == target || targetVictim == this || IsHostileTo(target))
+        return true;
+
+    // if the target's victim is friendly, and the target is neutral, the target is acceptable
+    if (targetVictim && IsFriendlyTo(targetVictim))
+        return true;
+
+    // if the target's victim is not friendly, or the target is friendly, the target is not acceptable
+    return false;
+}
+
 void Creature::SaveRespawnTime()
 {
     if (IsSummon() || !m_DBTableGuid || (m_creatureData && !m_creatureData->dbData))
@@ -2002,7 +2046,7 @@ void Creature::SaveRespawnTime()
     sObjectMgr.SaveCreatureRespawnTime(m_DBTableGuid, GetInstanceId(), m_respawnTime);
 }
 
-bool Creature::CanCreatureAttack(Unit const* victim) const
+bool Creature::CanCreatureAttack(Unit const* victim, bool /*force*/) const
 {
     if (!victim)
         return false;
@@ -2010,7 +2054,7 @@ bool Creature::CanCreatureAttack(Unit const* victim) const
     if (!victim->IsInMap(this))
         return false;
 
-    if (!victim->isTargetableForAttack())
+    if (!IsValidAttackTarget(victim))
         return false;
 
     if (!victim->isInAccessiblePlaceFor(this))
@@ -2019,16 +2063,43 @@ bool Creature::CanCreatureAttack(Unit const* victim) const
     if (IsAIEnabled && !AI()->CanAIAttack(victim))
         return false;
 
-    if (GetMap()->IsDungeon())
-        return true;
+    // we cannot attack in evade mode
+    if (IsInEvadeMode())
+        return false;
 
-    //Use AttackDistance in distance check if threat radius is lower. This prevents creature bounce in and out of combat every update tick.
-    float dist = std::max(uint32(GetAttackDistance(victim)), sWorld.getConfig(CONFIG_THREAT_RADIUS)) + m_CombatDistance;
+    // or if enemy is in evade mode
+    if (victim->GetTypeId() == TYPEID_UNIT && victim->ToCreature()->IsInEvadeMode())
+        return false;
+
+    if (Unit* u = GetCharmerOrOwner())
+    {
+        if (u->GetTypeId() == TYPEID_PLAYER)
+        {
+            if (GetMap()->IsDungeon())
+                return true;
+
+            // don't check distance to home position if recently damaged, this should include taunt auras
+            if (!isWorldBoss() && (GetLastDamagedTime() > getMSTime() || HasAuraType(SPELL_AURA_MOD_TAUNT)))
+                return true;
+        }
+    }
+
+    // Map visibility range, but no more than 2*cell size
+    float dist = std::min<float>(GetMap()->GetVisibilityRange(), SIZE_OF_GRID_CELL * 2);
 
     if (Unit* unit = GetCharmerOrOwner())
         return victim->IsWithinDist(unit, dist);
     else
-        return victim->IsInDist(&m_homePosition, dist);
+    {
+        // include sizes for huge npcs
+        dist += GetObjectSize() + victim->GetObjectSize();
+
+        // to prevent creatures in air ignore attacks because distance is already too high...
+        if (GetCreatureTemplate()->InhabitType & INHABIT_AIR)
+            return victim->IsInDist2d(&m_homePosition, dist);
+        else
+            return victim->IsInDist(&m_homePosition, dist);
+    }
 }
 
 CreatureDataAddon const* Creature::GetCreatureAddon() const
@@ -2585,4 +2656,71 @@ void Creature::ClearTextRepeatGroup(uint8 textGroup)
     CreatureTextRepeatGroup::iterator groupItr = m_textRepeat.find(textGroup);
     if (groupItr != m_textRepeat.end())
         groupItr->second.clear();
+}
+
+
+float Creature::GetAggroRange(Unit const* target) const
+{
+    // Determines the aggro range for creatures (usually pets), used mainly for aggressive pet target selection.
+    // Based on data from wowwiki due to lack of 3.3.5a data
+
+    if (target && this->IsPet())
+    {
+        uint32 targetLevel = 0;
+
+        if (target->GetTypeId() == TYPEID_PLAYER)
+            targetLevel = target->getLevelForTarget(this);
+        else if (target->GetTypeId() == TYPEID_UNIT)
+            targetLevel = target->ToCreature()->getLevelForTarget(this);
+
+        uint32 myLevel = getLevelForTarget(target);
+        int32 levelDiff = int32(targetLevel) - int32(myLevel);
+
+        // The maximum Aggro Radius is capped at 45 yards (25 level difference)
+        if (levelDiff < -25)
+            levelDiff = -25;
+
+        // The base aggro radius for mob of same level
+        float aggroRadius = 20;
+
+        // Aggro Radius varies with level difference at a rate of roughly 1 yard/level
+        aggroRadius -= (float)levelDiff;
+
+        // detect range auras
+        aggroRadius += GetTotalAuraModifier(SPELL_AURA_MOD_DETECT_RANGE);
+
+        // detected range auras
+        aggroRadius += target->GetTotalAuraModifier(SPELL_AURA_MOD_DETECTED_RANGE);
+
+        // Just in case, we don't want pets running all over the map
+        if (aggroRadius > MAX_AGGRO_RADIUS)
+            aggroRadius = MAX_AGGRO_RADIUS;
+
+        // Minimum Aggro Radius for a mob seems to be combat range (5 yards)
+        //  hunter pets seem to ignore minimum aggro radius so we'll default it a little higher
+        if (aggroRadius < 10)
+            aggroRadius = 10;
+
+        return (aggroRadius);
+    }
+
+    // Default
+    return 0.0f;
+}
+
+Unit* Creature::SelectNearestHostileUnitInAggroRange(bool useLOS) const
+{
+    // Selects nearest hostile target within creature's aggro range. Used primarily by
+    //  pets set to aggressive. Will not return neutral or friendly targets.
+
+    Unit* target = NULL;
+
+    {
+        Oregon::NearestHostileUnitInAggroRangeCheck u_check(this, useLOS);
+        Oregon::UnitSearcher<Oregon::NearestHostileUnitInAggroRangeCheck> searcher(target, u_check);
+
+        VisitNearbyGridObject(MAX_AGGRO_RADIUS, searcher);
+    }
+
+    return target;
 }
