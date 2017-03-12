@@ -817,9 +817,9 @@ void Player::EnvironmentalDamage(EnviromentalDamage type, uint32 damage)
     uint32 absorb = 0;
     uint32 resist = 0;
     if (type == DAMAGE_LAVA)
-        CalcAbsorbResist(this, SPELL_SCHOOL_MASK_FIRE, DIRECT_DAMAGE, damage, &absorb, &resist);
+        CalcAbsorbResist(this, SPELL_SCHOOL_MASK_FIRE, DIRECT_DAMAGE, damage, &absorb, &resist, nullptr);
     else if (type == DAMAGE_SLIME)
-        CalcAbsorbResist(this, SPELL_SCHOOL_MASK_NATURE, DIRECT_DAMAGE, damage, &absorb, &resist);
+        CalcAbsorbResist(this, SPELL_SCHOOL_MASK_NATURE, DIRECT_DAMAGE, damage, &absorb, &resist, nullptr);
 
     damage -= absorb + resist;
 
@@ -838,8 +838,8 @@ void Player::EnvironmentalDamage(EnviromentalDamage type, uint32 damage)
         DEBUG_LOG("We are fall to death, loosing 10 percents durability");
         DurabilityLossAll(0.10f, false);
         // durability lost message
-        WorldPacket data(SMSG_DURABILITY_DAMAGE_DEATH, 0);
-        GetSession()->SendPacket(&data);
+        WorldPacket data2(SMSG_DURABILITY_DAMAGE_DEATH, 0);
+        GetSession()->SendPacket(&data2);
     }
 }
 
@@ -1371,6 +1371,9 @@ void Player::setDeathState(DeathState s)
         // passive spell
         if (!ressSpellId)
             ressSpellId = GetResurrectionSpellId();
+
+        if (m_zoneScript)
+            m_zoneScript->OnPlayerDeath(this);
     }
 
     Unit::setDeathState(s);
