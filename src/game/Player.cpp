@@ -1924,11 +1924,11 @@ void Player::RemoveFromWorld()
         StopCastingCharm();
         StopCastingBindSight();
         sOutdoorPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
-    }
 
-    // remove duel before calling Unit::RemoveFromWorld
-    // otherwise there will be an existing duel flag pointer but no entry in m_gameObj
-    DuelComplete(DUEL_INTERUPTED);
+        // remove duel before calling Unit::RemoveFromWorld
+        // otherwise there will be an existing duel flag pointer but no entry in m_gameObj
+        DuelComplete(DUEL_INTERUPTED);
+    }
 
     // Do not add/remove the player from the object storage
     // It will crash when updating the ObjectAccessor
