@@ -1141,7 +1141,6 @@ class Unit : public WorldObject
         {
             return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP);
         }
-        bool IsFFAPvP() const { return HasFlag(UNIT_FIELD_BYTES_2, UNIT_BYTE2_FLAG_FFA_PVP); }
         void SetPvP(bool state)
         {
             if (state) SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP);
