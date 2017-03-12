@@ -2331,6 +2331,9 @@ void Player::SetGameMaster(bool on)
         setFactionForRace(getRace());
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_GM);
 
+        if (Pet* pet = GetPet())
+            pet->setFaction(getFaction());
+
         // restore FFA PvP Server state
         if (sWorld.IsFFAPvPRealm())
             SetFFAPvP(true);
@@ -5820,6 +5823,7 @@ void Player::CheckAreaExploreAndOutdoor()
 
     if (areaFlag == 0xffff)
         return;
+
     int offset = areaFlag / 32;
 
     if (offset >= 128)
