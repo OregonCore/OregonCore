@@ -205,6 +205,7 @@ class BattlegroundWS : public Battleground
         void HandleKillPlayer(Player* player, Player* killer);
         bool SetupBattleground();
         virtual void ResetBGSubclass();
+        void EndBattleground(Team winner);
         virtual WorldSafeLocsEntry const* GetClosestGraveYard(Player* player);
 
         void UpdateFlagState(uint32 team, uint32 value);

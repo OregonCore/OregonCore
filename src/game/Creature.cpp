@@ -1599,7 +1599,7 @@ void Creature::setDeathState(DeathState s)
     else if (s == JUST_RESPAWNED)
     {
         SetFullHealth();
-        SetLootRecipient(NULL);
+        SetLootRecipient(nullptr);
         SetPlayerDamaged(false);
 
         UpdateMovementFlags();
