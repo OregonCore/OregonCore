@@ -238,6 +238,21 @@ void PetAI::UpdateAI(const uint32 diff)
     }
 }
 
+void PetAI::DamageDealt(Unit* victim, uint32& damage, DamageEffectType damageType)
+{
+    if (!victim)
+        return;
+
+    Unit* owner = me->GetCharmerOrOwner();
+    if (!owner)
+        return;
+
+    if (!(me->GetVictim() == victim) && !me->GetVictim()->IsAlive())
+        return;
+
+    owner->SetInCombatWith(victim);
+}
+
 void PetAI::UpdateAllies()
 {
     m_updateAlliesTimer = 10 * IN_MILLISECONDS;              //update friendly targets every 10 seconds, lesser checks increase performance
@@ -298,9 +313,6 @@ void PetAI::KilledUnit(Unit* victim)
         AttackStart(nextTarget);
     else
     {
-        if (!me->GetCharmInfo())
-            return;
-
         // Cancels the attack command so the pet stops chasing the
         // target it is attacking, and returns the pet to his owner
         me->GetCharmInfo()->SetIsCommandAttack(false);

@@ -39,6 +39,7 @@ class PetAI : public CreatureAI
         void OwnerAttackedBy(Unit* attacker);
         void OwnerAttacked(Unit* target);
         void AttackedBy(Unit* attacker);
+        void DamageDealt(Unit* victim, uint32& damage, DamageEffectType damageType);
         void ClearCharmInfoFlags();
 
         // The following aren't used by the PetAI but need to be defined to override
