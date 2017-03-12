@@ -174,7 +174,7 @@ void PetAI::UpdateAI(const uint32 diff)
             Spell* spell = new Spell(me, spellInfo, false, 0);
 
             // Fix to allow pets on STAY to autocast
-            if (me->GetVictim() && _CanAttack(me->GetVictim()) && spell->CanAutoCast(me->GetVictim()))
+            if (me->GetVictim() && CanAttack(me->GetVictim()) && spell->CanAutoCast(me->GetVictim()))
             {
                 targetSpellStore.push_back(std::pair<Unit*, Spell*>(me->GetVictim(), spell));
                 continue;
@@ -313,7 +313,7 @@ void PetAI::AttackStart(Unit* target)
     // Overrides Unit::AttackStart to correctly evaluate Pet states
 
     // Check all pet states to decide if we can attack this target
-    if (!me->GetCharmInfo() || !_CanAttack(target))
+    if (!me->GetCharmInfo() || !CanAttack(target))
         return;
 
     // Only chase if not commanded to stay or if stay but commanded to attack
@@ -452,7 +452,7 @@ void PetAI::MovementInform(uint32 moveType, uint32 data)
     }
 }
 
-bool PetAI::_CanAttack(Unit* target)
+bool PetAI::CanAttack(Unit* target)
 {
     // Evaluates wether a pet can attack a specific target based on CommandState, ReactState and other flags
 
@@ -556,8 +556,11 @@ void PetAI::AttackedBy(Unit* attacker)
         return;
 
     // Passive pets don't do anything
-    if (me->HasReactState(REACT_PASSIVE))
+    if (me->HasReactState(REACT_PASSIVE) && !me->GetCharmInfo()->IsCommandAttack())
         return;
+
+    if (Unit* owner = me->GetOwner())
+        owner->SetInCombatWith(me->GetVictim());
 
     // Prevent pet from disengaging from current target
     if (me->GetVictim() && me->GetVictim()->IsAlive())

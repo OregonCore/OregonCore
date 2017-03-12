@@ -9284,7 +9284,11 @@ void Unit::CombatStart(Unit* target, bool initialAggro)
         if (!target->IsInCombat() && target->GetTypeId() != TYPEID_PLAYER
             && !target->ToCreature()->HasReactState(REACT_PASSIVE) && target->ToCreature()->IsAIEnabled)
         {
-            target->ToCreature()->AI()->AttackStart(this);
+            if (target->IsPet())
+                target->ToCreature()->AI()->AttackedBy(this); // PetAI has special handler before AttackStart()
+            else
+                target->ToCreature()->AI()->AttackStart(this);
+
             if (((Creature*)target)->GetFormation())
             {
                 ((Creature*)target)->GetFormation()->MemberAttackStart((Creature*)target, this);
