@@ -1390,6 +1390,8 @@ void Player::setDeathState(DeathState s)
         // restore default warrior stance
         if (getClass() == CLASS_WARRIOR)
             CastSpell(this, SPELL_PASSIVE_BATTLE_STANCE, true);
+
+        ResetContestedPvP();
     }
 }
 
