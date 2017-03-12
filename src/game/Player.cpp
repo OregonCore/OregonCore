@@ -1523,6 +1523,9 @@ void Player::ToggleAFK()
 {
     ToggleFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK);
 
+    if (GetGroup())
+        SetGroupUpdateFlag(GROUP_UPDATE_FLAG_STATUS);
+
     // afk player not allowed in battleground
     if (isAFK() && InBattleground() && !InArena())
         LeaveBattleground();
