@@ -772,14 +772,18 @@ bool Creature::Create(uint32 guidlow, Map* map, uint32 entry, uint32 team, float
     //! returning correct zone id for selecting OutdoorPvP/Battlefield script
     Relocate(x, y, z, ang);
 
-    if (!CreateFromProto(guidlow, entry, team, data))
-        return false;
-
     if (!IsPositionValid())
     {
         sLog.outError("Creature (guidlow %d, entry %d) not loaded. Suggested coordinates isn't valid (X: %f Y: %f)", guidlow, entry, x, y);
         return false;
     }
+
+    // Allow players to see those units while dead, do it here (mayby altered by addon auras)
+    if (cinfo->type_flags & CREATURE_TYPE_FLAG_GHOST_VISIBLE)
+        m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GHOST, GHOST_VISIBILITY_ALIVE | GHOST_VISIBILITY_GHOST);
+
+    if (!CreateFromProto(guidlow, entry, team, data))
+        return false;
 
     switch (GetCreatureTemplate()->rank)
     {
@@ -2005,7 +2009,7 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
 
 // use this function to avoid having hostile creatures attack
 // friendlies and other mobs they shouldn't attack
-bool Creature::_IsTargetAcceptable(const Unit* target) const
+bool Creature::_IsTargetAcceptable(Unit const* target) const
 {
     ASSERT(target);
 
@@ -2023,12 +2027,16 @@ bool Creature::_IsTargetAcceptable(const Unit* target) const
             return false;
     }
 
-    const Unit* myVictim = getAttackerForHelper();
-    const Unit* targetVictim = target->getAttackerForHelper();
+    Unit const* targetVictim = target->getAttackerForHelper();
 
     // if I'm already fighting target, or I'm hostile towards the target, the target is acceptable
-    if (myVictim == target || targetVictim == this || IsHostileTo(target))
+    if (GetVictim() == target || IsHostileTo(target))
         return true;
+
+    // a player is targeting me, but I'm not hostile towards it, and not currently attacking it, the target is not acceptable
+    // (players may set their victim from a distance, and doesn't mean we should attack)
+    if (target->GetTypeId() == TYPEID_PLAYER && targetVictim == this)
+        return false;
 
     // if the target's victim is friendly, and the target is neutral, the target is acceptable
     if (targetVictim && IsFriendlyTo(targetVictim))
