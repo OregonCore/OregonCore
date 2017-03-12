@@ -5791,6 +5791,9 @@ void Player::CheckAreaExploreAndOutdoor()
     if (isInFlight())
         return;
 
+    if (GetCinematicMgr()->IsOnCinematic())
+        return;
+
     bool isOutdoor;
     uint16 areaFlag = GetBaseMap()->GetAreaFlag(GetPositionX(), GetPositionY(), GetPositionZ(), &isOutdoor);
 
