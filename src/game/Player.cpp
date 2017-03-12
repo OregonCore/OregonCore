@@ -1990,22 +1990,22 @@ void Player::RewardRage(uint32 damage, uint32 weaponSpeedHitFactor, bool attacke
 {
     float addRage;
 
-    float rageconversion = ((0.0091107836 * getLevel() * getLevel()) + 3.225598133 * getLevel()) + 4.2652911;
+    float rageconversion = float((0.0091107836 * getLevel() * getLevel()) + 3.225598133 * getLevel()) + 4.2652911f;
 
     if (attacker)
     {
-        addRage = ((damage / rageconversion * 7.5 + weaponSpeedHitFactor) / 2);
+        addRage = (damage / rageconversion * 7.5f + weaponSpeedHitFactor) / 2.0f;
 
         // talent who gave more rage on attack
         addRage *= 1.0f + GetTotalAuraModifier(SPELL_AURA_MOD_RAGE_FROM_DAMAGE_DEALT) / 100.0f;
     }
     else
     {
-        addRage = damage / rageconversion * 2.5;
+        addRage = damage / rageconversion * 2.5f;
 
         // Berserker Rage effect
         if (HasAura(18499, 0))
-            addRage *= 2.0;
+            addRage *= 2.0f;
     }
 
     addRage *= sWorld.getRate(RATE_POWER_RAGE_INCOME);
@@ -2137,7 +2137,7 @@ void Player::RegenerateHealth()
     }
 
     // always regeneration bonus (including combat)
-    addValue += GetTotalAuraModifier(SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT);
+    addValue += HealthIncreaseRate * 2.0f * (GetTotalAuraModifier(SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT) / 5.0f);
 
     if (addValue < 0.0f)
         addValue = 0.0f;
@@ -2399,10 +2399,9 @@ void Player::UninviteFromGroup()
             sObjectMgr.RemoveGroup(group);
         }
         else
-        {
             group->RemoveAllInvites();
-            delete group;
-        }
+
+        delete group;
     }
 }
 
