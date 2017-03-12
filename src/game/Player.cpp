@@ -2332,7 +2332,10 @@ void Player::SetGameMaster(bool on)
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_GM);
 
         if (Pet* pet = GetPet())
+        {
             pet->setFaction(getFaction());
+            pet->getHostileRefManager().setOnlineOfflineState(true);
+        }
 
         // restore FFA PvP Server state
         if (sWorld.IsFFAPvPRealm())
