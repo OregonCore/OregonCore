@@ -1534,6 +1534,9 @@ void Player::ToggleAFK()
 void Player::ToggleDND()
 {
     ToggleFlag(PLAYER_FLAGS, PLAYER_FLAGS_DND);
+
+    if (GetGroup())
+        SetGroupUpdateFlag(GROUP_UPDATE_FLAG_STATUS);
 }
 
 uint8 Player::GetChatTag() const
