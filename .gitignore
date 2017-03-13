@@ -31,6 +31,7 @@ build*/
 # database documentation - generated files
 doc/doxygen/Database/*.dox
 
-# IDEs
+# IDEs and Tools
 .idea/
 .nbproject/
+.project

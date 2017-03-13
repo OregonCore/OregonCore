@@ -797,9 +797,9 @@ void Player::EnvironmentalDamage(EnviromentalDamage type, uint32 damage)
     uint32 absorb = 0;
     uint32 resist = 0;
     if (type == DAMAGE_LAVA)
-        CalcAbsorbResist(this, SPELL_SCHOOL_MASK_FIRE, DIRECT_DAMAGE, damage, &absorb, &resist);
+        CalcAbsorbResist(this, SPELL_SCHOOL_MASK_FIRE, DIRECT_DAMAGE, damage, &absorb, &resist, nullptr);
     else if (type == DAMAGE_SLIME)
-        CalcAbsorbResist(this, SPELL_SCHOOL_MASK_NATURE, DIRECT_DAMAGE, damage, &absorb, &resist);
+        CalcAbsorbResist(this, SPELL_SCHOOL_MASK_NATURE, DIRECT_DAMAGE, damage, &absorb, &resist, nullptr);
 
     damage -= absorb + resist;
 
@@ -818,8 +818,8 @@ void Player::EnvironmentalDamage(EnviromentalDamage type, uint32 damage)
         DEBUG_LOG("We are fall to death, loosing 10 percents durability");
         DurabilityLossAll(0.10f, false);
         // durability lost message
-        WorldPacket data(SMSG_DURABILITY_DAMAGE_DEATH, 0);
-        GetSession()->SendPacket(&data);
+        WorldPacket data2(SMSG_DURABILITY_DAMAGE_DEATH, 0);
+        GetSession()->SendPacket(&data2);
     }
 }
 
@@ -1351,6 +1351,9 @@ void Player::setDeathState(DeathState s)
         // passive spell
         if (!ressSpellId)
             ressSpellId = GetResurrectionSpellId();
+
+        if (m_zoneScript)
+            m_zoneScript->OnPlayerDeath(this);
     }
 
     Unit::setDeathState(s);
@@ -1367,6 +1370,8 @@ void Player::setDeathState(DeathState s)
         // restore default warrior stance
         if (getClass() == CLASS_WARRIOR)
             CastSpell(this, SPELL_PASSIVE_BATTLE_STANCE, true);
+
+        ResetContestedPvP();
     }
 }
 
@@ -1498,6 +1503,9 @@ void Player::ToggleAFK()
 {
     ToggleFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK);
 
+    if (GetGroup())
+        SetGroupUpdateFlag(GROUP_UPDATE_FLAG_STATUS);
+
     // afk player not allowed in battleground
     if (isAFK() && InBattleground() && !InArena())
         LeaveBattleground();
@@ -1506,6 +1514,9 @@ void Player::ToggleAFK()
 void Player::ToggleDND()
 {
     ToggleFlag(PLAYER_FLAGS, PLAYER_FLAGS_DND);
+
+    if (GetGroup())
+        SetGroupUpdateFlag(GROUP_UPDATE_FLAG_STATUS);
 }
 
 uint8 Player::GetChatTag() const
@@ -1959,22 +1970,22 @@ void Player::RewardRage(uint32 damage, uint32 weaponSpeedHitFactor, bool attacke
 {
     float addRage;
 
-    float rageconversion = ((0.0091107836 * getLevel() * getLevel()) + 3.225598133 * getLevel()) + 4.2652911;
+    float rageconversion = float((0.0091107836 * getLevel() * getLevel()) + 3.225598133 * getLevel()) + 4.2652911f;
 
     if (attacker)
     {
-        addRage = ((damage / rageconversion * 7.5 + weaponSpeedHitFactor) / 2);
+        addRage = (damage / rageconversion * 7.5f + weaponSpeedHitFactor) / 2.0f;
 
         // talent who gave more rage on attack
         addRage *= 1.0f + GetTotalAuraModifier(SPELL_AURA_MOD_RAGE_FROM_DAMAGE_DEALT) / 100.0f;
     }
     else
     {
-        addRage = damage / rageconversion * 2.5;
+        addRage = damage / rageconversion * 2.5f;
 
         // Berserker Rage effect
         if (HasAura(18499, 0))
-            addRage *= 2.0;
+            addRage *= 2.0f;
     }
 
     addRage *= sWorld.getRate(RATE_POWER_RAGE_INCOME);
@@ -2106,7 +2117,7 @@ void Player::RegenerateHealth()
     }
 
     // always regeneration bonus (including combat)
-    addValue += GetTotalAuraModifier(SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT);
+    addValue += HealthIncreaseRate * 2.0f * (GetTotalAuraModifier(SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT) / 5.0f);
 
     if (addValue < 0.0f)
         addValue = 0.0f;
@@ -2229,8 +2240,7 @@ GameObject* Player::GetGameObjectIfCanInteractWith(uint64 guid, GameobjectTypes 
 
 bool Player::IsUnderWater() const
 {
-    return IsInWater() &&
-           GetPositionZ() < (GetBaseMap()->GetWaterLevel(GetPositionX(), GetPositionY()) - 2);
+    return GetPositionZ() < (GetBaseMap()->GetWaterLevel(GetPositionX(), GetPositionY()) - 2);
 }
 
 void Player::SetInWater(bool apply)
@@ -2300,6 +2310,12 @@ void Player::SetGameMaster(bool on)
         setFactionForRace(getRace());
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_GM);
 
+        if (Pet* pet = GetPet())
+        {
+            pet->setFaction(getFaction());
+            pet->getHostileRefManager().setOnlineOfflineState(true);
+        }
+
         // restore FFA PvP Server state
         if (sWorld.IsFFAPvPRealm())
             SetFFAPvP(true);
@@ -2368,10 +2384,9 @@ void Player::UninviteFromGroup()
             sObjectMgr.RemoveGroup(group);
         }
         else
-        {
             group->RemoveAllInvites();
-            delete group;
-        }
+
+        delete group;
     }
 }
 
@@ -2520,7 +2535,8 @@ void Player::GiveLevel(uint32 level, bool ignoreRAF)
         UpdateSkillsToMaxSkillsForLevel();
 
     // set current level health and mana/energy to maximum after applying all mods.
-    SetHealth(GetMaxHealth());
+    if (IsAlive())
+        SetHealth(GetMaxHealth());
     SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
     SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
     if (GetPower(POWER_RAGE) > GetMaxPower(POWER_RAGE))
@@ -5694,6 +5710,8 @@ bool Player::SetPosition(float x, float y, float z, float orientation, bool tele
     {
         if (teleport || old_x != x || old_y != y || old_z != z)
             RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_MOVE | AURA_INTERRUPT_FLAG_TURNING);
+        else
+            RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TURNING);
 
         // move and update visible state if need
         m->PlayerRelocation(this, x, y, z, orientation);
@@ -5770,6 +5788,9 @@ void Player::CheckAreaExploreAndOutdoor()
     if (isInFlight())
         return;
 
+    if (GetCinematicMgr()->IsOnCinematic())
+        return;
+
     bool isOutdoor;
     uint16 areaFlag = GetBaseMap()->GetAreaFlag(GetPositionX(), GetPositionY(), GetPositionZ(), &isOutdoor);
 
@@ -5796,6 +5817,7 @@ void Player::CheckAreaExploreAndOutdoor()
 
     if (areaFlag == 0xffff)
         return;
+
     int offset = areaFlag / 32;
 
     if (offset >= 128)
@@ -17026,7 +17048,7 @@ void Player::UpdatePvPFlag(time_t currTime)
     if (!IsPvP())
         return;
 
-    if (pvpInfo.endTimer == 0 || currTime < (pvpInfo.endTimer + 300) || pvpInfo.inHostileArea)
+    if (!pvpInfo.endTimer || currTime < (pvpInfo.endTimer + 300) || pvpInfo.inHostileArea)
         return;
 
     UpdatePvP(false);
@@ -18314,12 +18336,12 @@ void Player::UpdatePvPState(bool onlyFFA)
 
     if (pvpInfo.inHostileArea)                               // in hostile area
     {
-        if (!IsPvP() || pvpInfo.endTimer != 0)
+        if (!IsPvP() || pvpInfo.endTimer)
             UpdatePvP(true, true);
     }
     else                                                    // in friendly area
     {
-        if (IsPvP() && !IsFFAPvP() && pvpInfo.endTimer == 0)
+        if (IsPvP() && !HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP) && !pvpInfo.endTimer)
             pvpInfo.endTimer = time(0);                     // start toggle-off
     }
 }
@@ -18333,10 +18355,8 @@ void Player::UpdatePvP(bool state, bool override)
     }
     else
     {
-        if (pvpInfo.endTimer != 0)
-            pvpInfo.endTimer = time(NULL);
-        else
-            SetPvP(state);
+        pvpInfo.endTimer = time(nullptr);
+        SetPvP(state);
     }
 }
 
@@ -20226,7 +20246,7 @@ void Player::UpdateUnderwaterState(Map* m, float x, float y, float z)
     // All liquids type - check under water position
     if (liquid_status.type_flags & (MAP_LIQUID_TYPE_WATER | MAP_LIQUID_TYPE_OCEAN | MAP_LIQUID_TYPE_MAGMA | MAP_LIQUID_TYPE_SLIME))
     {
-        if (res & LIQUID_MAP_UNDER_WATER)
+        if (res & LIQUID_MAP_UNDER_WATER && IsUnderWater())
             m_MirrorTimerFlags |= UNDERWATER_INWATER;
         else
             m_MirrorTimerFlags &= ~UNDERWATER_INWATER;

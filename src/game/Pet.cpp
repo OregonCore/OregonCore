@@ -107,12 +107,13 @@ void Pet::AddToWorld()
 
     // Prevent stuck pets when zoning. Pets default to "follow" when added to world
     // so we'll reset flags and let the AI handle things
-    if (this->GetCharmInfo() && this->GetCharmInfo()->HasCommandState(COMMAND_FOLLOW))
+    if (GetCharmInfo() && GetCharmInfo()->HasCommandState(COMMAND_FOLLOW))
     {
-        this->GetCharmInfo()->SetIsCommandAttack(false);
-        this->GetCharmInfo()->SetIsAtStay(false);
-        this->GetCharmInfo()->SetIsFollowing(false);
-        this->GetCharmInfo()->SetIsReturning(false);
+        GetCharmInfo()->SetIsCommandAttack(false);
+        GetCharmInfo()->SetIsCommandFollow(true);
+        GetCharmInfo()->SetIsAtStay(false);
+        GetCharmInfo()->SetIsFollowing(false);
+        GetCharmInfo()->SetIsReturning(false);
     }
 }
 

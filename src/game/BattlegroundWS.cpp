@@ -71,14 +71,14 @@ void BattlegroundWS::Update(uint32 diff)
             if (GetTeamScore(ALLIANCE) == 0)
             {
                 if (GetTeamScore(HORDE) == 0)   // No one scored - result is tie
-                    EndBattleground(0);
+                    EndBattleground(TEAM_NONE);
                 else                            // Horde has more points and thus wins
                     EndBattleground(HORDE);
             }
             else if (GetTeamScore(HORDE) == 0)
                 EndBattleground(ALLIANCE);      // Alliance has > 0, Horde has 0, alliance wins
             else if (GetTeamScore(HORDE) == GetTeamScore(ALLIANCE)) // Team score equal, winner is team that scored the first flag
-                EndBattleground(m_FirstFlagCaptureTeam);
+                EndBattleground(Team(m_FirstFlagCaptureTeam));
             else if (GetTeamScore(HORDE) > GetTeamScore(ALLIANCE)) // Last but not least, check who has the higher score
                 EndBattleground(HORDE);
             else
@@ -260,9 +260,7 @@ void BattlegroundWS::EventPlayerCapturedFlag(Player* Source)
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;
 
-    uint32 winner = 0;
-
-    //TODO FIX reputation and honor gains for low level players!
+    Team winner = TEAM_NONE;
 
     Source->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_ENTER_PVP_COMBAT);
     if (Source->GetTeam() == ALLIANCE)
@@ -282,7 +280,6 @@ void BattlegroundWS::EventPlayerCapturedFlag(Player* Source)
             AddPoint(ALLIANCE, 1);
         PlaySoundToAll(BG_WS_SOUND_FLAG_CAPTURED_ALLIANCE);
         RewardReputationToTeam(890, BG_WSG_Reputation[m_HonorMode][BG_WSG_FLAG_CAP], ALLIANCE);          // +35 reputation
-        RewardHonorToTeam(BG_WSG_Honor[m_HonorMode][BG_WSG_FLAG_CAP], ALLIANCE);                    // +40 bonushonor
     }
     else
     {
@@ -301,7 +298,7 @@ void BattlegroundWS::EventPlayerCapturedFlag(Player* Source)
             AddPoint(HORDE, 1);
         PlaySoundToAll(BG_WS_SOUND_FLAG_CAPTURED_HORDE);
         RewardReputationToTeam(889, BG_WSG_Reputation[m_HonorMode][BG_WSG_FLAG_CAP], HORDE);             // +35 reputation
-        RewardHonorToTeam(BG_WSG_Honor[m_HonorMode][BG_WSG_FLAG_CAP], HORDE);                       // +40 bonushonor
+    RewardHonorToTeam(BG_WSG_Honor[m_HonorMode][BG_WSG_FLAG_CAP], Source->GetTeam());                    // +40 bonushonor
     }
 
     SpawnBGObject(BG_WS_OBJECT_H_FLAG, BG_WS_FLAG_RESPAWN_TIME);
@@ -333,7 +330,6 @@ void BattlegroundWS::EventPlayerCapturedFlag(Player* Source)
         UpdateWorldState(BG_WS_FLAG_STATE_ALLIANCE, 1);
         UpdateWorldState(BG_WS_FLAG_STATE_HORDE, 1);
 
-        RewardHonorToTeam(BG_WSG_Honor[m_HonorMode][BG_WSG_WIN], winner);
         EndBattleground(winner);
     }
     else
@@ -348,7 +344,7 @@ void BattlegroundWS::EventPlayerDroppedFlag(Player* Source)
         // just take off the aura
         if (Source->GetTeam() == ALLIANCE)
         {
-            if (!this->IsHordeFlagPickedup())
+            if (!IsHordeFlagPickedup())
                 return;
             if (GetHordeFlagPickerGUID() == Source->GetGUID())
             {
@@ -358,7 +354,7 @@ void BattlegroundWS::EventPlayerDroppedFlag(Player* Source)
         }
         else
         {
-            if (!this->IsAllianceFlagPickedup())
+            if (!IsAllianceFlagPickedup())
                 return;
             if (GetAllianceFlagPickerGUID() == Source->GetGUID())
             {
@@ -598,23 +594,12 @@ void BattlegroundWS::HandleAreaTrigger(Player* Source, uint32 Trigger)
     //uint64 buff_guid = 0;
     switch (Trigger)
     {
-    case 3686:                                          // Alliance elixir of speed spawn. Trigger not working, because located inside other areatrigger, can be replaced by IsWithinDist(object, dist) in Battleground::Update().
-        //buff_guid = m_BgObjects[BG_WS_OBJECT_SPEEDBUFF_1];
-        break;
-    case 3687:                                          // Horde elixir of speed spawn. Trigger not working, because located inside other areatrigger, can be replaced by IsWithinDist(object, dist) in Battleground::Update().
-        //buff_guid = m_BgObjects[BG_WS_OBJECT_SPEEDBUFF_2];
-        break;
+    case 3686:                                          // Alliance elixir of speed spawn. Trigger not working, because located inside other areatrigger, can be replaced by IsWithinDist(object, dist) in BattleGround::Update().
+    case 3687:                                          // Horde elixir of speed spawn. Trigger not working, because located inside other areatrigger, can be replaced by IsWithinDist(object, dist) in BattleGround::Update().
     case 3706:                                          // Alliance elixir of regeneration spawn
-        //buff_guid = m_BgObjects[BG_WS_OBJECT_REGENBUFF_1];
-        break;
     case 3708:                                          // Horde elixir of regeneration spawn
-        //buff_guid = m_BgObjects[BG_WS_OBJECT_REGENBUFF_2];
-        break;
     case 3707:                                          // Alliance elixir of berserk spawn
-        //buff_guid = m_BgObjects[BG_WS_OBJECT_BERSERKBUFF_1];
-        break;
     case 3709:                                          // Horde elixir of berserk spawn
-        //buff_guid = m_BgObjects[BG_WS_OBJECT_BERSERKBUFF_2];
         break;
     case 3646:                                          // Alliance Flag spawn
         if (m_FlagState[BG_TEAM_HORDE] && !m_FlagState[BG_TEAM_ALLIANCE])
@@ -636,9 +621,6 @@ void BattlegroundWS::HandleAreaTrigger(Player* Source, uint32 Trigger)
         Source->GetSession()->SendAreaTriggerMessage("Warning: Unhandled AreaTrigger in Battleground: %u", Trigger);
         break;
     }
-
-    //if (buff_guid)
-    //    HandleTriggerBuff(buff_guid,Source);
 }
 
 bool BattlegroundWS::SetupBattleground()
@@ -708,6 +690,19 @@ void BattlegroundWS::ResetBGSubclass()
     if (m_BgCreatures[WS_SPIRIT_MAIN_HORDE])
         DelCreature(WS_SPIRIT_MAIN_HORDE);
     */
+}
+
+void BattlegroundWS::EndBattleground(Team winner)
+{
+    // @todo BG Weekend Holiday
+
+    //win reward
+    if (winner == ALLIANCE)
+        RewardHonorToTeam(BG_WSG_Honor[m_HonorMode][BG_WSG_WIN], ALLIANCE);
+    if (winner == HORDE)
+        RewardHonorToTeam(BG_WSG_Honor[m_HonorMode][BG_WSG_WIN], HORDE);
+
+    Battleground::EndBattleground(winner);
 }
 
 void BattlegroundWS::HandleKillPlayer(Player* player, Player* killer)

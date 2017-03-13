@@ -876,7 +876,10 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
     if (victim->IsAIEnabled)
         victim->ToCreature()->AI()->DamageTaken(this, damage);
 
-    if (IsAIEnabled)
+    // Signal to pet that it dealt damage
+    if (IsPet() && this != victim && victim->IsAlive())
+        ToPet()->AI()->DamageDealt(victim, damage, damagetype);
+    else if (IsAIEnabled)
         ToCreature()->AI()->DamageDealt(victim, damage, damagetype);
 
     if (victim->GetTypeId() == TYPEID_PLAYER && this != victim)
@@ -7195,11 +7198,11 @@ ReputationRank Unit::GetReactionTo(Unit const* target) const
                     return REP_FRIENDLY; // return true to allow config option AllowTwoSide.Interaction.Group to work
                 // however client seems to allow mixed group parties, because in 13850 client it works like:
                 // return GetFactionReactionTo(GetFactionTemplateEntry(), target);
-            }
 
-            // PvP FFA state
-            if (IsFFAPvP() && target->IsFFAPvP())
-                return REP_HOSTILE;
+                // PvP FFA state
+                if (selfPlayerOwner->IsFFAPvP() && targetPlayerOwner->IsFFAPvP())
+                    return REP_HOSTILE;
+            }
 
             if (selfPlayerOwner)
             {
@@ -7395,6 +7398,16 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
 
     if (meleeAttack)
         SendMeleeAttackStart(victim);
+
+    // Let the pet know we've started attacking someting. Handles melee attacks only
+    // Spells such as auto-shot and others handled in WorldSession::HandleCastSpellOpcode
+    if (this->GetTypeId() == TYPEID_PLAYER)
+    {
+        Pet* playerPet = this->ToPlayer()->GetPet();
+
+        if (playerPet && playerPet->IsAlive())
+            playerPet->AI()->OwnerAttacked(victim);
+    }
 
     return true;
 }
@@ -9281,7 +9294,11 @@ void Unit::CombatStart(Unit* target, bool initialAggro)
         if (!target->IsInCombat() && target->GetTypeId() != TYPEID_PLAYER
             && !target->ToCreature()->HasReactState(REACT_PASSIVE) && target->ToCreature()->IsAIEnabled)
         {
-            target->ToCreature()->AI()->AttackStart(this);
+            if (target->IsPet())
+                target->ToCreature()->AI()->AttackedBy(this); // PetAI has special handler before AttackStart()
+            else
+                target->ToCreature()->AI()->AttackStart(this);
+
             if (((Creature*)target)->GetFormation())
             {
                 ((Creature*)target)->GetFormation()->MemberAttackStart((Creature*)target, this);
@@ -9313,7 +9330,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
         return;
 
     if (PvP)
-        m_CombatTimer = 6000;
+        m_CombatTimer = 5000;
 
     if (IsInCombat() || HasUnitState(UNIT_STATE_EVADE))
         return;
@@ -9531,7 +9548,7 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, W
         if (target->IsPvP())
             return true;
 
-        if (IsFFAPvP() && target->IsFFAPvP())
+        if (playerAffectingAttacker->IsFFAPvP() && playerAffectingTarget->IsFFAPvP())
             return true;
 
         return HasFlag(UNIT_FIELD_BYTES_2, UNIT_BYTE2_FLAG_UNK1)
@@ -11061,6 +11078,9 @@ void Unit::RemoveFromWorld()
 
         UnsummonAllTotems();
         RemoveAllControlled();
+
+        if (isCharmed())
+            RemoveCharmedBy(nullptr);
 
         if (GetCharmerGUID())
             sLog.outFatal("Crash alert! Unit %u has charmer guid when removed from world", GetEntry());

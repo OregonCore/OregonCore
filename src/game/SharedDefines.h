@@ -422,7 +422,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] =
 
 enum SpellAttributes
 {
-    SPELL_ATTR0_UNK0                             = 0x00000001, // 0
+    SPELL_ATTR0_DONT_DISPLAY_SPELL_RESULT        = 0x00000001, // 0
     SPELL_ATTR0_RANGED                           = 0x00000002, // 1 All ranged abilities have this flag
     SPELL_ATTR0_ON_NEXT_SWING_1                  = 0x00000004, // 2 on next swing
     SPELL_ATTR0_UNK3                             = 0x00000008, // 3 not set in 2.4.2
@@ -744,6 +744,7 @@ enum TeamId
 
 enum Team
 {
+    TEAM_NONE           = 0,                                // if ReputationListId > 0 && Flags != FACTION_FLAG_TEAM_HEADER
     HORDE               = 67,
     ALLIANCE            = 469,
     //TEAM_STEAMWHEEDLE_CARTEL = 169,                       // not used in code
@@ -751,7 +752,6 @@ enum Team
     //TEAM_HORDE_FORCES        = 892,
     //TEAM_SANCTUARY           = 936,
     //TEAM_OUTLAND             = 980,
-    TEAM_OTHER          = 0,                                // if ReputationListId > 0 && Flags != FACTION_FLAG_TEAM_HEADER
 };
 
 enum SpellEffects

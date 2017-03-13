@@ -1535,9 +1535,12 @@ void GameObject::CastSpell(Unit* target, uint32 spellId, bool triggered /*= true
     }
 
     //summon world trigger
-    Creature* trigger = SummonTrigger(GetPositionX(), GetPositionY(), GetPositionZ(), 0, 1);
+    Creature* trigger = SummonTrigger(GetPositionX(), GetPositionY(), GetPositionZ(), 0, GetSpellCastTime(spellProto) + 100);
     if (!trigger)
         return;
+
+    // remove immunity flags, to allow spell to target anything
+    trigger->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC | UNIT_FLAG_IMMUNE_TO_PC);
 
     if (Unit* owner = GetOwner())
     {
@@ -1548,9 +1551,9 @@ void GameObject::CastSpell(Unit* target, uint32 spellId, bool triggered /*= true
     }
     else
     {
-        trigger->setFaction(14);
+        trigger->setFaction(IsPositiveSpell(spellId) ? 35 : 14);
         // Set owner guid for target if no owner available - needed by trigger auras
-        trigger->CastSpell(target ? target : trigger, spellId, triggered, 0, 0, target ? target->GetGUID() : NULL);
+        trigger->CastSpell(target ? target : trigger, spellProto, triggered, nullptr, nullptr, target ? target->GetGUID() : 0);
     }
 }
 

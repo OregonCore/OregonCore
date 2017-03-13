@@ -98,11 +98,11 @@ class CreatureTextMgr
         static size_t BuildMonsterChat(WorldPacket* data, WorldObject* source, ChatMsg msgtype, std::string text, Language language, WorldObject* whisperTarget, int loc_idx);
 
         //if sent, returns the 'duration' of the text else 0 if error
-        uint32 SendChat(Creature* source, uint8 textGroup, WorldObject* whisperTarget = nullptr, ChatMsg msgType = CHAT_MSG_ADDON, Language language = LANG_ADDON, CreatureTextRange range = TEXT_RANGE_NORMAL, uint32 sound = 0, Team team = TEAM_OTHER, bool gmOnly = false, Player* srcPlr = nullptr);
+        uint32 SendChat(Creature* source, uint8 textGroup, WorldObject* whisperTarget = nullptr, ChatMsg msgType = CHAT_MSG_ADDON, Language language = LANG_ADDON, CreatureTextRange range = TEXT_RANGE_NORMAL, uint32 sound = 0, Team team = TEAM_NONE, bool gmOnly = false, Player* srcPlr = nullptr);
         std::string GetLocalizedChatString(uint32 entry, uint8 gender, uint8 textGroup, uint32 id, int loc_idx) const;
         bool TextExist(uint32 sourceEntry, uint8 textGroup);
 
-        template<class Builder> void SendChatPacket(WorldObject* source, Builder const& builder, ChatMsg msgType, WorldObject* whisperTarget = nullptr, CreatureTextRange range = TEXT_RANGE_NORMAL, Team team = TEAM_OTHER, bool gmOnly = false) const;
+        template<class Builder> void SendChatPacket(WorldObject* source, Builder const& builder, ChatMsg msgType, WorldObject* whisperTarget = nullptr, CreatureTextRange range = TEXT_RANGE_NORMAL, Team team = TEAM_NONE, bool gmOnly = false) const;
 
     private:
         CreatureTextRepeatIds GetRepeatGroup(Creature* source, uint8 textGroup);
