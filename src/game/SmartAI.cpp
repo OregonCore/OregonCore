@@ -218,6 +218,8 @@ void SmartAI::EndPath(bool fail)
                 for (GroupReference* groupRef = group->GetFirstMember(); groupRef != NULL; groupRef = groupRef->next())
                 {
                     Player* groupGuy = groupRef->GetSource();
+                    if (!groupGuy->IsInMap(player))
+                        continue;
 
                     if (!fail && groupGuy->IsAtGroupRewardDistance(me) && !groupGuy->GetCorpse())
                         groupGuy->AreaExploredOrEventHappens(mEscortQuestID);
@@ -368,7 +370,7 @@ bool SmartAI::IsEscortInvokerInRange()
                 {
                     Player* groupGuy = groupRef->GetSource();
 
-                    if (me->GetDistance(groupGuy) <= SMART_ESCORT_MAX_PLAYER_DIST)
+                    if (groupGuy->IsInMap(player) && me->GetDistance(groupGuy) <= SMART_ESCORT_MAX_PLAYER_DIST)
                         return true;
                 }
             }

@@ -398,7 +398,8 @@ void Loot::FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner, 
 
         for (GroupReference* itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
             if (Player* player = itr->GetSource())   // should actually be looted object instead of lootOwner but looter has to be really close so doesnt really matter
-                FillNotNormalLootFor(player);
+                if (player->IsInMap(loot_owner))
+                    FillNotNormalLootFor(player);
 
         for (uint8 i = 0; i < items.size(); ++i)
         {

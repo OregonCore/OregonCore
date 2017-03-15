@@ -11102,7 +11102,7 @@ void Unit::CleanupsBeforeDelete()
     CombatStop();
     ClearComboPointHolders();
     DeleteThreatList();
-    getHostileRefManager().setOnlineOfflineState(false);
+    getHostileRefManager().deleteReferences();
     GetMotionMaster()->Clear(false);                    // remove different non-standard movement generators.
 }
 
@@ -13292,12 +13292,12 @@ void Unit::GetRaidMember(std::list<Unit*>& nearMembers, float radius)
 
     for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
     {
-        Player* Target = itr->GetSource();
-
-        // IsHostileTo check duel and controlled by enemy
-        if (Target && Target != this && Target->IsAlive()
-            && IsWithinDistInMap(Target, radius) && !IsHostileTo(Target))
-            nearMembers.push_back(Target);
+        if (Player* Target = itr->GetSource())
+        {
+            // IsHostileTo check duel and controlled by enemy
+            if (Target != this && IsWithinDistInMap(Target, radius) && Target->IsAlive() && !IsHostileTo(Target))
+                nearMembers.push_back(Target);
+        }
     }
 }
 
@@ -13317,23 +13317,23 @@ void Unit::GetPartyMember(std::list<Unit*>& TagUnitMap, float radius)
             Player* Target = itr->GetSource();
 
             // IsHostileTo check duel and controlled by enemy
-            if (Target && Target->GetSubGroup() == subgroup && !IsHostileTo(Target))
+            if (Target && Target->IsInMap(owner) && Target->GetSubGroup() == subgroup && !IsHostileTo(Target))
             {
-                if (Target->IsAlive() && IsWithinDistInMap(Target, radius))
+                if (Target->IsAlive() && IsWithinDist(Target, radius))
                     TagUnitMap.push_back(Target);
 
                 if (Guardian* pet = Target->GetGuardianPet())
-                    if (pet->IsAlive() &&  IsWithinDistInMap(pet, radius))
+                    if (pet->IsAlive() &&  IsWithinDist(pet, radius))
                         TagUnitMap.push_back(pet);
             }
         }
     }
     else
     {
-        if (owner->IsAlive() && (owner == this || IsWithinDistInMap(owner, radius)))
+        if ((owner == this || IsInMap(owner)) && owner->IsAlive())
             TagUnitMap.push_back(owner);
         if (Guardian* pet = owner->GetGuardianPet())
-            if (pet->IsAlive() && (pet == this && IsWithinDistInMap(pet, radius)))
+            if ((pet == this || IsInMap(pet)) && pet->IsAlive())
                 TagUnitMap.push_back(pet);
     }
 }

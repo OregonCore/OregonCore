@@ -141,23 +141,24 @@ void FollowerAI::JustDied(Unit* /*pKiller*/)
         return;
 
     //@todo need a better check for quests with time limit.
-    if (Player* pPlayer = GetLeaderForFollower())
+    if (Player* player = GetLeaderForFollower())
     {
-        if (Group* pGroup = pPlayer->GetGroup())
+        if (Group* pGroup = player->GetGroup())
         {
             for (GroupReference* pRef = pGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
             {
-                if (Player* pMember = pRef->GetSource())
+                if (Player* member = pRef->GetSource())
                 {
-                    if (pMember->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
-                        pMember->FailQuest(m_pQuestForFollow->GetQuestId());
+                    if (member->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
+                        if (member->IsInMap(player))
+                            member->FailQuest(m_pQuestForFollow->GetQuestId());
                 }
             }
         }
         else
         {
-            if (pPlayer->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->FailQuest(m_pQuestForFollow->GetQuestId());
+            if (player->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
+                player->FailQuest(m_pQuestForFollow->GetQuestId());
         }
     }
 }
@@ -339,13 +340,13 @@ Player* FollowerAI::GetLeaderForFollower()
             {
                 for (GroupReference* pRef = pGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
                 {
-                    Player* pMember = pRef->GetSource();
+                    Player* member = pRef->GetSource();
 
-                    if (pMember && pMember->IsAlive() && me->IsWithinDistInMap(pMember, MAX_PLAYER_DISTANCE))
+                    if (member && me->IsWithinDistInMap(member, MAX_PLAYER_DISTANCE) && member->IsAlive())
                     {
                         sLog.outDebug("OSCR: FollowerAI GetLeader changed and returned new leader.");
-                        m_uiLeaderGUID = pMember->GetGUID();
-                        return pMember;
+                        m_uiLeaderGUID = member->GetGUID();
+                        return member;
                         break;
                     }
                 }
