@@ -3626,9 +3626,8 @@ struct npc_guldanAI : public ScriptedAI
 		Creature* pOronok = me->FindNearestCreature(NPC_ORONOK, 90);
 		Creature* pBorak = me->FindNearestCreature(NPC_BORAK, 90);
 		Creature* pGromtor = me->FindNearestCreature(NPC_GROMTOR, 90);
-		Creature* pTrigger = me->FindNearestCreature(61037, 90);
 
-		if (!pCyrukh && !pSpirit && !pTrigger)
+		if (!pCyrukh && !pSpirit)
 		{
 			Reset();
 			return 0;
@@ -3670,7 +3669,10 @@ struct npc_guldanAI : public ScriptedAI
 			DoScriptText(GULDAN_5, me);
 			return 1000;
 		case 10:
-			pTrigger->MonsterYellToZone(ORONOK_1, LANG_UNIVERSAL, playerGUID);
+            if (pOronok = me->SummonCreature(NPC_ORONOK, -3605.26f, 1924.91f, 49.53f, 4.88f, TEMPSUMMON_MANUAL_DESPAWN, 0))
+                pOronok->MonsterYellToZone(ORONOK_1, LANG_UNIVERSAL, playerGUID);
+            me->SummonCreature(NPC_BORAK, -3601.04f, 1928.46f, 50.054f, 4.85f, TEMPSUMMON_MANUAL_DESPAWN, 0);
+            me->SummonCreature(NPC_GROMTOR, -3609.73f, 1926.59f, 50.007f, 4.88f, TEMPSUMMON_MANUAL_DESPAWN, 0);
 			return 5000;
 		case 11:
 			if (me->HasAura(SPELL_GULDAN_CHANNEL))
@@ -3682,11 +3684,6 @@ struct npc_guldanAI : public ScriptedAI
 			me->SetStandState(UNIT_STAND_STATE_KNEEL);
 			return 10000;
 		case 13:
-			me->SummonCreature(NPC_ORONOK, -3605.26f, 1924.91f, 49.53f, 4.88f, TEMPSUMMON_MANUAL_DESPAWN, 0);
-			me->SummonCreature(NPC_BORAK, -3601.04f, 1928.46f, 50.054f, 4.85f, TEMPSUMMON_MANUAL_DESPAWN, 0);
-			me->SummonCreature(NPC_GROMTOR, -3609.73f, 1926.59f, 50.007f, 4.88f, TEMPSUMMON_MANUAL_DESPAWN, 0);
-			return 500;
-		case 14:
 			pOronok->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 			pOronok->GetMotionMaster()->MovePath(608608600, false);
 			pBorak->GetMotionMaster()->MovePath(608608601, false);
