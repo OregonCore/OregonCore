@@ -33,12 +33,6 @@
 
 extern DatabaseType LoginDatabase;
 
-enum eStatus
-{
-    STATUS_CONNECTED = 0,
-    STATUS_AUTHED
-};
-
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some paltform
 #if defined( __GNUC__ )
 #pragma pack(1)
@@ -154,14 +148,14 @@ typedef struct AuthHandler
 
 const AuthHandler table[] =
 {
-    { CMD_AUTH_LOGON_CHALLENGE,     STATUS_CONNECTED, &AuthSocket::_HandleLogonChallenge    },
-    { CMD_AUTH_LOGON_PROOF,         STATUS_CONNECTED, &AuthSocket::_HandleLogonProof        },
-    { CMD_AUTH_RECONNECT_CHALLENGE, STATUS_CONNECTED, &AuthSocket::_HandleReconnectChallenge},
-    { CMD_AUTH_RECONNECT_PROOF,     STATUS_CONNECTED, &AuthSocket::_HandleReconnectProof    },
-    { CMD_REALM_LIST,               STATUS_AUTHED,    &AuthSocket::_HandleRealmList         },
-    { CMD_XFER_ACCEPT,              STATUS_CONNECTED, &AuthSocket::_HandleXferAccept        },
-    { CMD_XFER_RESUME,              STATUS_CONNECTED, &AuthSocket::_HandleXferResume        },
-    { CMD_XFER_CANCEL,              STATUS_CONNECTED, &AuthSocket::_HandleXferCancel        }
+    { CMD_AUTH_LOGON_CHALLENGE,     STATUS_CHALLENGE,   &AuthSocket::_HandleLogonChallenge    },
+    { CMD_AUTH_LOGON_PROOF,         STATUS_LOGON_PROOF, &AuthSocket::_HandleLogonProof        },
+    { CMD_AUTH_RECONNECT_CHALLENGE, STATUS_CHALLENGE,   &AuthSocket::_HandleReconnectChallenge},
+    { CMD_AUTH_RECONNECT_PROOF,     STATUS_RECON_PROOF, &AuthSocket::_HandleReconnectProof    },
+    { CMD_REALM_LIST,               STATUS_AUTHED,      &AuthSocket::_HandleRealmList         },
+    { CMD_XFER_ACCEPT,              STATUS_PATCH,       &AuthSocket::_HandleXferAccept        },
+    { CMD_XFER_RESUME,              STATUS_PATCH,       &AuthSocket::_HandleXferResume        },
+    { CMD_XFER_CANCEL,              STATUS_PATCH,       &AuthSocket::_HandleXferCancel        }
 };
 
 #define AUTH_TOTAL_COMMANDS sizeof(table)/sizeof(AuthHandler)
@@ -171,7 +165,7 @@ AuthSocket::AuthSocket()
 {
     N.SetHexStr("894B645E89E1535BBDAD5B8B290650530801B18EBFBF5E8FAB3C82872A3E9BB7");
     g.SetDword(7);
-    _authed = false;
+    _status = STATUS_CHALLENGE;
 
     _accountSecurityLevel = SEC_PLAYER;
 
@@ -220,9 +214,7 @@ void AuthSocket::OnRead()
         // Circle through known commands and call the correct command handler
         for (i = 0; i < AUTH_TOTAL_COMMANDS; ++i)
         {
-            if ((uint8)table[i].cmd == _cmd &&
-                (table[i].status == STATUS_CONNECTED ||
-                 (_authed && table[i].status == STATUS_AUTHED)))
+            if ((uint8)table[i].cmd == _cmd && table[i].status == _status)
             {
                 DEBUG_LOG("[Auth] got data for cmd %u recv length %u",
                           (uint32)_cmd, (uint32)recv_len());
@@ -241,7 +233,9 @@ void AuthSocket::OnRead()
         // Report unknown packets in the error log
         if (i == AUTH_TOTAL_COMMANDS)
         {
-            sLog.outError("[Auth] got unknown packet from '%s'", getRemoteAddress().c_str());
+            sLog.outError("[Auth] got unknown packet from '%s'. Kicking.", getRemoteAddress().c_str());
+            ACE_OS::close(patch_); // kick
+            patch_ = ACE_INVALID_HANDLE;
             return;
         }
     }
@@ -337,6 +331,8 @@ bool AuthSocket::_HandleLogonChallenge()
     if ((remaining < sizeof(sAuthLogonChallenge_C) - buf.size()) || (recv_len() < remaining))
         return false;
 
+    _status = STATUS_CLOSED;
+
     // No big fear of memory outage (size is int16, i.e. < 65536)
     buf.resize(remaining + buf.size() + 1);
     buf[buf.size() - 1] = 0;
@@ -418,6 +414,8 @@ bool AuthSocket::_HandleLogonChallenge()
                 }
                 else
                     DEBUG_LOG("[AuthChallenge] Account IP matches");
+
+                _status = STATUS_LOGON_PROOF;
             }
             else
                 DEBUG_LOG("[AuthChallenge] Account '%s' is not locked to ip", _login.c_str());
@@ -593,8 +591,8 @@ bool AuthSocket::_HandleLogonProof()
 
     A.SetBinary(lp.A, 32);
 
-    // SRP safeguard: abort if A==0
-    if (A.isZero())
+    // SRP safeguard: abort if A==0 or A % N == 0
+    if (A.isZero() || (A % N).isZero())
         return false;
 
     Sha1Hash sha;
@@ -670,8 +668,8 @@ bool AuthSocket::_HandleLogonProof()
 
         SendProof(sha);
 
-        // Set _authed to true!
-        _authed = true;
+        // Set _status to authed
+        _status = STATUS_AUTHED;
     }
     else
     {
@@ -748,6 +746,8 @@ bool AuthSocket::_HandleReconnectChallenge()
     if ((remaining < sizeof(sAuthLogonChallenge_C) - buf.size()) || (recv_len() < remaining))
         return false;
 
+    _status = STATUS_CLOSED;
+
     // No big fear of memory outage (size is int16, i.e. < 65536)
     buf.resize(remaining + buf.size() + 1);
     buf[buf.size() - 1] = 0;
@@ -787,6 +787,8 @@ bool AuthSocket::_HandleReconnectChallenge()
     Field* fields = result->Fetch ();
     K.SetHexStr (fields[0].GetString ());
 
+    _status = STATUS_RECON_PROOF;
+
     // Sending response
     ByteBuffer pkt;
     pkt << (uint8)  CMD_AUTH_RECONNECT_CHALLENGE;
@@ -806,6 +808,8 @@ bool AuthSocket::_HandleReconnectProof()
     sAuthReconnectProof_C lp;
     if (!recv((char*)&lp, sizeof(sAuthReconnectProof_C)))
         return false;
+
+    _status = STATUS_CLOSED;
 
     if (_login.empty() || !_reconnectProof.GetNumBytes() || !K.GetNumBytes())
         return false;
@@ -828,8 +832,8 @@ bool AuthSocket::_HandleReconnectProof()
         pkt << (uint16) 0x00;                               // 2 bytes zeros
         send((char const*)pkt.contents(), pkt.size());
 
-        // Set _authed to true!
-        _authed = true;
+        // Set _status to authed
+        _status = STATUS_AUTHED;
 
         return true;
     }

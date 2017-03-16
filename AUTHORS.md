@@ -170,6 +170,9 @@ Development of this project dates back to 2010, and was developed under various 
  * аксим Аго
  * Максим Аго
  * Михаил Фатеев
+ * Gennady 
+ * namreeb
+ * uberhax
 
 ## Copyright Information
 = Oregon Core -- General information =
