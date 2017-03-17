@@ -414,8 +414,6 @@ bool AuthSocket::_HandleLogonChallenge()
                 }
                 else
                     DEBUG_LOG("[AuthChallenge] Account IP matches");
-
-                _status = STATUS_LOGON_PROOF;
             }
             else
                 DEBUG_LOG("[AuthChallenge] Account '%s' is not locked to ip", _login.c_str());
@@ -507,6 +505,8 @@ bool AuthSocket::_HandleLogonChallenge()
                         _localizationName[i] = ch->country[4 - i - 1];
 
                     sLog.outBasic("[AuthChallenge] account %s is using '%c%c%c%c' locale (%u)", _login.c_str (), ch->country[3], ch->country[2], ch->country[1], ch->country[0], GetLocaleByName(_localizationName));
+
+                    _status = STATUS_LOGON_PROOF;
                 }
             }
         }
