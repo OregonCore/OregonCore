@@ -22,18 +22,18 @@ This guide will walk through what tools are needed for building the OregonCore o
 
 To fetch the components for Ubuntu :
 
-    apt-get install build-essential cmake mercurial binutils-dev libiberty-dev libbz2-dev \
+    apt-get install build-essential cmake git binutils-dev libiberty-dev libbz2-dev \
     openssl libssl-dev zlib1g-dev libmysqlclient15-dev libtool mysql-client unrar libace-dev unzip libncurses-dev
 
 To fetch the components for Debian :
 
-    apt-get install g++ gcc make cmake binutils-dev mercurial openssl \
+    apt-get install g++ gcc make cmake binutils-dev git openssl \
     libssl-dev zlib1g-dev libmysqlclient15-dev patch build-essential \
     mysql-client libreadline5-dev libbz2-dev bzip2 libace-dev libbz2-dev
 
 To fetch the components for Fedora/Centos:
 
-    yum install cpp gcc gcc-c++ make cmake mercurial openssl openssl-devel \
+    yum install cpp gcc gcc-c++ make cmake git openssl openssl-devel \
     mysql-devel mysql-server mysql mysql-libs readline readline-devel \
     compat-readline5-devel compat-readline5 zlib-devel binutils-devel ace-devel
 
