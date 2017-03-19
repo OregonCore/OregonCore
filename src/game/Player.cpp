@@ -1903,6 +1903,9 @@ void Player::RemoveFromWorld()
         ///- Release charmed creatures, unsummon totems and remove pets/guardians
         StopCastingCharm();
         StopCastingBindSight();
+        UnsummonPetTemporaryIfAny();
+        ClearComboPoints();
+        ClearComboPointHolders();
         sOutdoorPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
     }
 
@@ -1920,6 +1923,9 @@ void Player::RemoveFromWorld()
         if (m_items[i])
             m_items[i]->RemoveFromWorld();
     }
+
+    for (ItemMap::iterator iter = mMitems.begin(); iter != mMitems.end(); ++iter)
+        iter->second->RemoveFromWorld();
 
     if (m_uint32Values)
     {
@@ -11715,6 +11721,17 @@ void Player::RemoveEnchantmentDurations(Item* item)
     }
 }
 
+void Player::RemoveEnchantmentDurationsReferences(Item* item)
+{
+    for (EnchantDurationList::iterator itr = m_enchantDuration.begin(); itr != m_enchantDuration.end();)
+    {
+        if (itr->item == item)
+            itr = m_enchantDuration.erase(itr);
+        else
+            ++itr;
+    }
+}
+
 void Player::RemoveAllEnchantments(EnchantmentSlot slot, bool arena)
 {
     // remove enchantments from equipped items first to clean up the m_enchantDuration list
@@ -14578,7 +14595,10 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
         {
             // leave bg
             if (player_at_bg)
+            {
+                player_at_bg = false;
                 currentBg->RemovePlayerAtLeave(GetGUID(), false, true);
+            }
 
             // Do not look for instance if bg not found
             const WorldLocation& _loc = GetBattlegroundEntryPoint();
@@ -16104,7 +16124,7 @@ bool Player::CheckInstanceValidity(bool /*isLogin*/)
         return true;
 
     // non-instances are always valid
-    Map* map = GetMap();
+    Map* map = FindMap();
     if (!map || !map->IsDungeon())
         return true;
 
@@ -16515,6 +16535,7 @@ void Player::_SaveInventory()
         Item* item = m_items[i];
         if (!item || item->GetState() == ITEM_NEW)
             continue;
+
         CharacterDatabase.PExecute("DELETE FROM character_inventory WHERE item = '%u'", item->GetGUIDLow());
         CharacterDatabase.PExecute("DELETE FROM item_instance WHERE guid = '%u'", item->GetGUIDLow());
         m_items[i]->FSetState(ITEM_NEW);
@@ -16550,6 +16571,10 @@ void Player::_SaveInventory()
                 sLog.outError("Player(GUID: %u Name: %s)::_SaveInventory - the bag(%u) and slot(%u) values for the item with guid %u (state %d) are incorrect, the player doesn't have an item at that position!", lowGuid, GetName(), item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow(), (int32)item->GetState());
                 // according to the test that was just performed nothing should be in this slot, delete
                 CharacterDatabase.PExecute("DELETE FROM character_inventory WHERE bag=%u AND slot=%u", bagTestGUID, item->GetSlot());
+
+                RemoveEnchantmentDurationsReferences(item);
+                RemoveItemDurations(item);
+
                 // also THIS item should be somewhere else, cheat attempt
                 item->FSetState(ITEM_REMOVED); // we are IN updateQueue right now, can't use SetState which modifies the queue
                 // don't skip, let the switch delete it
@@ -19900,14 +19925,13 @@ void Player::RewardPlayerAndGroupAtEvent(uint32 creature_id, WorldObject* pRewar
 
 bool Player::IsAtGroupRewardDistance(WorldObject const* pRewardSource) const
 {
-    if (!pRewardSource)
+    if (!pRewardSource || !IsInMap(pRewardSource))
         return false;
+
     const WorldObject* player = GetCorpse();
     if (!player || IsAlive())
         player = this;
 
-    if (player->GetMapId() != pRewardSource->GetMapId() || player->GetInstanceId() != pRewardSource->GetInstanceId())
-        return false;
 
     return pRewardSource->GetDistance(player) <= sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE);
 }

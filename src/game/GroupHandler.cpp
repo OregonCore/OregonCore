@@ -80,6 +80,13 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket& recv_data)
         return;
     }
 
+    // player trying to invite himself (most likely cheating)
+    if (player == GetPlayer())
+    {
+        SendPartyResult(PARTY_OP_INVITE, membername, PARTY_RESULT_CANT_FIND_TARGET);
+        return;
+    }
+
     // restrict invite to GMs
     if (!sWorld.getConfig(CONFIG_ALLOW_GM_GROUP) && !GetPlayer()->IsGameMaster() && player->IsGameMaster())
     {
@@ -162,6 +169,7 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket& recv_data)
         }
         if (!group->AddInvite(player, false))
         {
+            group->RemoveAllInvites();
             delete group;
             return;
         }

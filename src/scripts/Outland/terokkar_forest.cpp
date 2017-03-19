@@ -92,12 +92,12 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
                 {
                     for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                     {
-                        Player* pGroupie = itr->GetSource();
-                        if (pGroupie &&
-                            pGroupie->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE &&
-                            pGroupie->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10)
+                        Player* groupie = itr->GetSource();
+                        if (groupie && groupie->IsInMap(done_by) &&
+                            groupie->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE &&
+                            groupie->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10)
                         {
-                            pGroupie->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
+                            groupie->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
                             if (!CanDoQuest)
                                 CanDoQuest = true;
                         }

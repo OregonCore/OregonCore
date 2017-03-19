@@ -2930,10 +2930,6 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
             return SPELL_FAILED_REQUIRES_AREA;
     }
 
-    // elixirs (all area dependent elixirs have family SPELLFAMILY_POTION, use this for speedup)
-    if (spellInfo->SpellFamilyName == SPELLFAMILY_POTION)
-        return true;
-
     // special cases zone check (maps checked by multimap common id)
     switch (spellInfo->Id)
     {
