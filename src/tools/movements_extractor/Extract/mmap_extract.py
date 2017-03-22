@@ -36,7 +36,7 @@ class workerThread(threading.Thread):
             stInfo.dwFlags |= 0x00000001
             stInfo.wShowWindow = 7
             cFlags = subprocess.CREATE_NEW_CONSOLE
-            binName = "MoveMapGen.exe"
+            binName = "movements_extractor.exe"
         else:
             stInfo = None
             cFlags = 0
