@@ -60,6 +60,13 @@ enum GroupType
     GROUPTYPE_RAID   = 1
 };
 
+enum GroupFlagMask
+{
+    GROUP_ASSISTANT      = 0x01,
+    GROUP_MAIN_ASSISTANT = 0x02,
+    GROUP_MAIN_TANK      = 0x04,
+};
+
 class Battleground;
 
 enum GroupUpdateFlags
@@ -109,7 +116,7 @@ class Roll : public LootValidatorRef
         Roll(uint64 _guid, LootItem const& li)
             : itemGUID(_guid), itemid(li.itemid), itemRandomPropId(li.randomPropertyId), itemRandomSuffix(li.randomSuffix),
               totalPlayersRolling(0), totalNeed(0), totalGreed(0), totalPass(0), itemSlot(0) {}
-        ~Roll() { }
+        ~Roll() override { }
         void setLoot(Loot* pLoot)
         {
             link(pLoot, this);
@@ -118,7 +125,7 @@ class Roll : public LootValidatorRef
         {
             return getTarget();
         }
-        void targetObjectBuildLink();
+        void targetObjectBuildLink() override;
 
         uint64 itemGUID;
         uint32 itemid;
@@ -350,8 +357,8 @@ class Group
         }
 
         void SetTargetIcon(uint8 id, uint64 guid);
-        void SetDifficulty(DungeonDifficulties difficulty);
-        DungeonDifficulties GetDifficulty()
+        void SetDifficulty(DungeonDifficulty difficulty);
+        DungeonDifficulty GetDifficulty()
         {
             return m_difficulty;
         }
@@ -370,14 +377,14 @@ class Group
         void BroadcastWorker(Worker& worker)
         {
             for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
-                worker(itr->getSource());
+                worker(itr->GetSource());
         }
 
         template<class Worker>
         void BroadcastWorker(Worker const& worker) const
         {
             for (GroupReference const* itr = GetFirstMember(); itr != NULL; itr = itr->next())
-                worker(itr->getSource());
+                worker(itr->GetSource());
         }
         void BroadcastPacket(WorldPacket* packet, bool ignorePlayersInBGRaid, int group = -1, uint64 ignore = 0);
         void BroadcastReadyCheck(WorldPacket* packet);
@@ -419,10 +426,9 @@ class Group
         void UnbindInstance(uint32 mapid, uint8 difficulty, bool unload = false);
         InstanceGroupBind* GetBoundInstance(Player* player);
         InstanceGroupBind* GetBoundInstance(Map* aMap);
-        BoundInstancesMap& GetBoundInstances(uint8 difficulty)
-        {
-            return m_boundInstances[difficulty];
-        }
+        InstanceGroupBind* GetBoundInstance(MapEntry const* mapEntry);
+        InstanceGroupBind* GetBoundInstance(DungeonDifficulty difficulty, uint32 mapId);
+        BoundInstancesMap& GetBoundInstances(DungeonDifficulty difficulty);
 
         // FG: evil hacks
         void BroadcastGroupUpdate(void);
@@ -486,6 +492,17 @@ class Group
                 --m_subGroupsCounts[subgroup];
         }
 
+        GroupFlagMask GetFlags(MemberSlot const& slot) const
+        {
+            uint8 flags = 0;
+            if (slot.assistant)
+                flags |= GROUP_ASSISTANT;
+            if (slot.guid == m_mainAssistant)
+                flags |= GROUP_MAIN_ASSISTANT;
+            if (slot.guid == m_mainTank)
+                flags |= GROUP_MAIN_TANK;
+            return GroupFlagMask(flags);
+        }
         MemberSlotList      m_memberSlots;
         GroupRefManager     m_memberMgr;
         InvitesList         m_invitees;
@@ -494,7 +511,7 @@ class Group
         uint64              m_mainTank;
         uint64              m_mainAssistant;
         GroupType           m_groupType;
-        DungeonDifficulties m_difficulty;
+        DungeonDifficulty   m_difficulty;
         Battleground*       m_bgGroup;
         uint64              m_targetIcons[TARGETICONCOUNT];
         LootMethod          m_lootMethod;

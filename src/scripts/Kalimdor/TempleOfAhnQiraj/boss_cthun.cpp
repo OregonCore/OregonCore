@@ -578,7 +578,7 @@ struct cthunAI : public Scripted_NoMovementAI
                 Map::PlayerList const& PlayerList = map->GetPlayers();
                 for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 {
-                    if (Player* i_pl = i->getSource())
+                    if (Player* i_pl = i->GetSource())
                     {
                         //Play random sound to the zone
                         i_pl->SendPlaySound(RANDOM_SOUND_WHISPER, true);
@@ -1035,7 +1035,7 @@ struct claw_tentacleAI : public Scripted_NoMovementAI
             return;
 
         //EvadeTimer
-        if (!me->IsWithinMeleeRange(me->getVictim()))
+        if (!me->IsWithinMeleeRange(me->GetVictim()))
         {
             if (EvadeTimer <= diff)
             {
@@ -1136,7 +1136,7 @@ struct giant_claw_tentacleAI : public Scripted_NoMovementAI
             return;
 
         //EvadeTimer
-        if (!me->IsWithinMeleeRange(me->getVictim()))
+        if (!me->IsWithinMeleeRange(me->GetVictim()))
         {
             if (EvadeTimer <= diff)
             {

@@ -125,7 +125,7 @@ bool GOHello_go_barov_journal(Player* pPlayer, GameObject* /*pGO*/)
 
 bool GOHello_go_field_repair_bot_74A(Player* pPlayer, GameObject* /*pGO*/)
 {
-    if (pPlayer->HasSkill(SKILL_ENGINERING) && pPlayer->GetBaseSkillValue(SKILL_ENGINERING) >= 300 && !pPlayer->HasSpell(22704))
+	if (pPlayer->HasSkill(SKILL_ENGINEERING) && pPlayer->GetBaseSkillValue(SKILL_ENGINEERING) >= 300 && !pPlayer->HasSpell(22704))
         pPlayer->CastSpell(pPlayer, 22864, false);
     return true;
 }
@@ -134,11 +134,30 @@ bool GOHello_go_field_repair_bot_74A(Player* pPlayer, GameObject* /*pGO*/)
 ## go_orb_of_command
 ######*/
 
-bool GOHello_go_orb_of_command(Player* pPlayer, GameObject* /*pGO*/)
-{
-    if (pPlayer->GetQuestRewardStatus(7761))
-        pPlayer->CastSpell(pPlayer, 23460, true);
+#define GOSSIP_ORB_OF_COMMAND       "<Place my hand on the orb.>"
+#define QUEST_BLACKHANDS_COMMAND    7761
 
+bool GOHello_go_orb_of_command(Player* pPlayer, GameObject* pGO)
+{
+    if (pPlayer->GetQuestRewardStatus(QUEST_BLACKHANDS_COMMAND))
+    {
+        pPlayer->ADD_GOSSIP_ITEM(0, GOSSIP_ORB_OF_COMMAND, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        pPlayer->SEND_GOSSIP_MENU(7155, pGO->GetGUID());
+    }
+  
+    return true;
+}
+
+bool GOSelect_go_orb_of_command(Player* pPlayer, GameObject* pGO, uint32 Sender, uint32 action)
+{
+    switch (action)
+    {
+        case GOSSIP_ACTION_INFO_DEF + 1:
+            pPlayer->TeleportTo(469, -7672.46f, -1107.19f, 396.65f, 0.59f);
+            break;
+    }
+
+    pPlayer->CLOSE_GOSSIP_MENU();
     return true;
 }
 
@@ -211,7 +230,7 @@ bool GOHello_go_ethereum_prison(Player* player, GameObject* go)
     {
         if (!creature->IsHostileTo(player))
         {
-            if (FactionTemplateEntry const* pFaction = creature->getFactionTemplateEntry())
+            if (FactionTemplateEntry const* pFaction = creature->GetFactionTemplateEntry())
             {
                 uint32 Spell = 0;
 
@@ -295,7 +314,7 @@ bool GOHello_go_resonite_cask(Player* /*pPlayer*/, GameObject* pGO)
 bool GOHello_go_sacred_fire_of_life(Player* pPlayer, GameObject* pGO)
 {
     if (pGO->GetGoType() == GAMEOBJECT_TYPE_GOOBER)
-        pPlayer->SummonCreature(NPC_ARIKARA, -5008.338, -2118.894, 83.657, 0.874, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+        pPlayer->SummonCreature(NPC_ARIKARA, -5008.338f, -2118.894f, 83.657f, 0.874f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
 
     return true;
 }
@@ -660,6 +679,7 @@ void AddSC_go_scripts()
     newscript = new Script;
     newscript->Name = "go_orb_of_command";
     newscript->pGOHello = &GOHello_go_orb_of_command;
+    newscript->pGOSelect = &GOSelect_go_orb_of_command;
     newscript->RegisterSelf();
 
     newscript = new Script;

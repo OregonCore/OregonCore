@@ -130,6 +130,7 @@ struct npc_barnesAI : public npc_escortAI
 {
     npc_barnesAI(Creature* c) : npc_escortAI(c)
     {
+        SetDespawnAtEnd(false);
         RaidWiped = false;
         m_uiEventId = 0;
         pInstance = (ScriptedInstance*)c->GetInstanceData();
@@ -195,7 +196,7 @@ struct npc_barnesAI : public npc_escortAI
         switch (i)
         {
         case 0:
-            DoCast(me, SPELL_TUXEDO, false);
+            DoCast(me, SPELL_TUXEDO, true);
             pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GO_STAGEDOORLEFT));
             break;
         case 2:
@@ -231,6 +232,7 @@ struct npc_barnesAI : public npc_escortAI
             PerformanceReady = true;
             PrepareEncounter();
             pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GO_CURTAINS));
+            me->SetFacingTo(1.41372f);
             break;
         }
     }
@@ -345,7 +347,7 @@ struct npc_barnesAI : public npc_escortAI
                     RaidWiped = true;
                     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                     {
-                        if (i->getSource()->IsAlive() && !i->getSource()->isGameMaster())
+                        if (i->GetSource()->IsAlive() && !i->GetSource()->IsGameMaster())
                         {
                             RaidWiped = false;
                             break;
@@ -382,7 +384,7 @@ bool GossipHello_npc_barnes(Player* pPlayer, Creature* pCreature)
         {
             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, OZ_GOSSIP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-            if (pPlayer->isGameMaster())
+            if (pPlayer->IsGameMaster())
             {
                 pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, OZ_GM_GOSSIP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
                 pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, OZ_GM_GOSSIP2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
@@ -623,10 +625,10 @@ struct npc_image_of_medivhAI : public ScriptedAI
                 InstanceMap::PlayerList const& PlayerList = pMap->GetPlayers();
                 for (InstanceMap::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 {
-                    if (i->getSource()->IsAlive())
+                    if (i->GetSource()->IsAlive())
                     {
-                        if (i->getSource()->GetQuestStatus(9645) == QUEST_STATUS_INCOMPLETE)
-                            i->getSource()->CompleteQuest(9645);
+                        if (i->GetSource()->GetQuestStatus(9645) == QUEST_STATUS_INCOMPLETE)
+                            i->GetSource()->CompleteQuest(9645);
                     }
                 }
             }

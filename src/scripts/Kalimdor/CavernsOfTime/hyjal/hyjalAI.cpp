@@ -734,7 +734,7 @@ void hyjalAI::UpdateWorldState(uint32 id, uint32 state)
     {
         for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
         {
-            if (Player* player = itr->getSource())
+            if (Player* player = itr->GetSource())
                 player->SendUpdateWorldState(id, state);
         }
     }
@@ -999,7 +999,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     break;
                 case TARGETTYPE_VICTIM:
-                    pTarget = me->getVictim();
+                    pTarget = me->GetVictim();
                     break;
                 }
 

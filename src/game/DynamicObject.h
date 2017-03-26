@@ -29,11 +29,11 @@ class DynamicObject : public WorldObject, public GridObject<DynamicObject>
         typedef std::set<Unit*> AffectedSet;
         explicit DynamicObject(bool isWorldObject);
 
-        void AddToWorld();
-        void RemoveFromWorld();
+        void AddToWorld() override;
+        void RemoveFromWorld() override;
 
         bool CreateDynamicObject(uint32 guidlow, Unit* caster, uint32 spellId, uint32 effIndex, const Position& pos, int32 duration, float radius);
-        void Update(uint32 p_time);
+        void Update(uint32 p_time) override;
         void Remove();
         uint32 GetSpellId() const
         {

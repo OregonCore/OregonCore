@@ -4,7 +4,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (81531, 81532, 2, 310, 2),
 (81531, 81530, 2, 40, 2);
 
--- Pathing for Sul'lithuz Sandcrawler Entry: 8095 'TDB FORMAT' 
+-- Pathing for Sul'lithuz Sandcrawler Entry: 8095 'TDB FORMAT'
 SET @NPC := 81531;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1843.703,`position_y`=1193.693,`position_z`=9.399462 WHERE `guid`=@NPC;
@@ -52,7 +52,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (81581, 81583, 2, 310, 2),
 (81581, 81582, 2, 40, 2);
 
--- Pathing for Sul'lithuz Sandcrawler Entry: 8095 'TDB FORMAT' 
+-- Pathing for Sul'lithuz Sandcrawler Entry: 8095 'TDB FORMAT'
 SET @NPC := 81581;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1675.997,`position_y`=1232.113,`position_z`=8.987229 WHERE `guid`=@NPC;
@@ -118,7 +118,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (81587, 81601, 2, 310, 2),
 (81587, 81588, 2, 40, 2);
 
--- Pathing for Sul'lithuz Sandcrawler Entry: 8095 'TDB FORMAT' 
+-- Pathing for Sul'lithuz Sandcrawler Entry: 8095 'TDB FORMAT'
 SET @NPC := 81587;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1600.69,`position_y`=1126.462,`position_z`=12.41756 WHERE `guid`=@NPC;
@@ -156,7 +156,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 (@PATH,28,1613.163,1134.797,10.02532,0,0,0,0,100,0); -- 09:41:31
 -- 0x1C16F41A2007E7C00020100000B70E69 .go 1600.69 1126.462 12.41756
 
--- Pathing for Sandfury Blood Drinker Entry: 5649 'TDB FORMAT' 
+-- Pathing for Sandfury Blood Drinker Entry: 5649 'TDB FORMAT'
 SET @NPC := 45709;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1617.601,`position_y`=983.7964,`position_z`=9.916536 WHERE `guid`=@NPC;
@@ -181,7 +181,7 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 (44170, 44170, 0, 0, 1),
 (44170, 44177, 4, 0, 2);
 
--- Pathing for Sandfury Shadowhunter Entry: 7246 'TDB FORMAT' 
+-- Pathing for Sandfury Shadowhunter Entry: 7246 'TDB FORMAT'
 SET @NPC := 44170;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1655.273,`position_y`=905.2343,`position_z`=9.25178 WHERE `guid`=@NPC;
@@ -238,7 +238,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 
 UPDATE `creature` SET `id`=7246 WHERE `guid`=81449;
 
--- Pathing for Sandfury Shadowhunter Entry: 7246 'TDB FORMAT' 
+-- Pathing for Sandfury Shadowhunter Entry: 7246 'TDB FORMAT'
 SET @NPC := 81449;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1714.547,`position_y`=751.6357,`position_z`=31.01397 WHERE `guid`=@NPC;
@@ -278,7 +278,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 (@PATH,30,1707.021,770.4479,18.85983,0,0,0,0,100,0); -- 09:37:53
 -- 0x1C16F41A200713800020100003B70E6B .go 1714.547 751.6357 31.01397
 
--- Pathing for Hydromancer Velratha Entry: 7795 'TDB FORMAT' 
+-- Pathing for Hydromancer Velratha Entry: 7795 'TDB FORMAT'
 SET @NPC := 81570;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1680.114,`position_y`=1177.732,`position_z`=8.987229 WHERE `guid`=@NPC;
@@ -301,7 +301,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 UPDATE `creature` SET `id`=5650 WHERE `guid`=81575;
 UPDATE `creature` SET `id`=5649 WHERE `guid`=81623;
 
--- Pathing for Sandfury Blood Drinker Entry: 5649 'TDB FORMAT' 
+-- Pathing for Sandfury Blood Drinker Entry: 5649 'TDB FORMAT'
 SET @NPC := 81623;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1467.867,`position_y`=814.7855,`position_z`=9.265823 WHERE `guid`=@NPC;
@@ -332,7 +332,7 @@ UPDATE `creature` SET `spawndist`=10, `MovementType`=1 WHERE `guid` IN (81566, 8
 
 UPDATE `creature` SET `id`=5650 WHERE `guid`=81578;
 
--- Pathing for Sandfury Witch Doctor Entry: 5650 'TDB FORMAT' 
+-- Pathing for Sandfury Witch Doctor Entry: 5650 'TDB FORMAT'
 SET @NPC := 81578;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1676.368,`position_y`=1157.151,`position_z`=9.249697 WHERE `guid`=@NPC;
@@ -352,7 +352,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 (@PATH,10,1704.706,1187.339,9.265233,0,0,0,0,100,0); -- 13:42:29
 -- 0x1C16F41A2005848000491D0001B743F7 .go 1676.368 1157.151 9.249697
 
--- Pathing for Sandfury Witch Doctor Entry: 5650 'TDB FORMAT' 
+-- Pathing for Sandfury Witch Doctor Entry: 5650 'TDB FORMAT'
 SET @NPC := 81526;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1879.829,`position_y`=1016.147,`position_z`=9.251789 WHERE `guid`=@NPC;
@@ -388,7 +388,7 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 
 UPDATE `creature` SET `id`=5649 WHERE `guid`=81505;
 
--- Pathing for Sandfury Blood Drinker Entry: 5649 'TDB FORMAT' 
+-- Pathing for Sandfury Blood Drinker Entry: 5649 'TDB FORMAT'
 SET @NPC := 81505;
 SET @PATH := @NPC * 10;
 UPDATE `creature` SET `spawndist`=0,`MovementType`=2,`position_x`=1822.724,`position_y`=914.1884,`position_z`=9.001788 WHERE `guid`=@NPC;
@@ -411,3 +411,4 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 (@PATH,13,1837.749,936.4601,9.251788,0,0,0,0,100,0), -- 14:00:36
 (@PATH,14,1829.292,923.94,9.251788,0,0,0,0,100,0); -- 14:00:43
 -- 0x1C16F41A2005844000491D00033743F5 .go 1822.724 914.1884 9.001788
+

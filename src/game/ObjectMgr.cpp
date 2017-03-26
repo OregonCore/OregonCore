@@ -1301,6 +1301,13 @@ void ObjectMgr::LoadCreatures()
         int16 gameEvent     = fields[16].GetInt16();
         int32 PoolId        = fields[17].GetInt32();
 
+        MapEntry const* mapEntry = sMapStore.LookupEntry(data.mapid);
+        if (!mapEntry)
+        {
+            sLog.outErrorDb("Table `creature` has creature (GUID: %u) that spawned at nonexistent map (Id: %u), skipped.", guid, data.mapid);
+            continue;
+        }
+
         if (heroicCreatures.find(data.id) != heroicCreatures.end())
         {
             sLog.outErrorDb("Table creature has creature (GUID: %u, Entry %u) that is listed as heroic template in creature_template_substitution, skipped.", guid, data.id);
@@ -1316,28 +1323,22 @@ void ObjectMgr::LoadCreatures()
             }
         }
 
-        if (cInfo->RegenHealth && data.curhealth < cInfo->minhealth)
+        if (cInfo->flags_extra & CREATURE_FLAG_EXTRA_INSTANCE_BIND)
         {
-            sLog.outErrorDb("Table creature has creature (GUID: %u Entry: %u) with creature_template.RegenHealth=1 and low current health (%u), creature_template.minhealth=%u.", guid, data.id, data.curhealth, cInfo->minhealth);
-            data.curhealth = cInfo->minhealth;
-        }
-
-        if (data.curmana < cInfo->minmana)
-        {
-            sLog.outErrorDb("Table creature has creature (GUID: %u Entry: %u) with low current mana (%u), creature_template.minmana=%u.", guid, data.id, data.curmana, cInfo->minmana);
-            data.curmana = cInfo->minmana;
+            if (!mapEntry || !mapEntry->IsDungeon())
+                sLog.outErrorDb("Table `creature` has creature (GUID: %u Entry: %u) with `creature_template`.`flags_extra` including CREATURE_FLAG_EXTRA_INSTANCE_BIND but creature is not in instance.", guid, data.id);
         }
 
         if (data.spawndist < 0.0f)
         {
-            sLog.outErrorDb("Table creature has creature (GUID: %u Entry: %u) with spawndist< 0, set to 0.", guid, data.id);
+            sLog.outErrorDb("Table `creature` has creature (GUID: %u Entry: %u) with `spawndist`< 0, set to 0.", guid, data.id);
             data.spawndist = 0.0f;
         }
         else if (data.movementType == RANDOM_MOTION_TYPE)
         {
             if (data.spawndist == 0.0f)
             {
-                sLog.outErrorDb("Table creature has creature (GUID: %u Entry: %u) with MovementType=1 (random movement) but with spawndist=0, replaced by idle movement type (0).", guid, data.id);
+                sLog.outErrorDb("Table `creature` has creature (GUID: %u Entry: %u) with `MovementType`=1 (random movement) but with `spawndist`=0, replace by idle movement type (0).", guid, data.id);
                 data.movementType = IDLE_MOTION_TYPE;
             }
         }
@@ -1345,16 +1346,14 @@ void ObjectMgr::LoadCreatures()
         {
             if (data.spawndist != 0.0f)
             {
-                sLog.outErrorDb("Table creature has creature (GUID: %u Entry: %u) with MovementType=0 (idle) has spawndist<>0, set to 0.", guid, data.id);
+                sLog.outErrorDb("Table `creature` has creature (GUID: %u Entry: %u) with `MovementType`=0 (idle) have `spawndist`<>0, set to 0.", guid, data.id);
                 data.spawndist = 0.0f;
             }
         }
 
-        if (gameEvent == 0 && PoolId == 0)                      // if not this is to be managed by GameEvent System or Pool system
+        // Add to grid if not managed by the game event or pool system
+        if (gameEvent == 0 && PoolId == 0)
             AddCreatureToGrid(guid, &data);
-
-        ++count;
-
     }
     while (result->NextRow());
 
@@ -3121,7 +3120,7 @@ void ObjectMgr::LoadGroups()
                 continue;
             }
 
-            InstanceSave* save = sInstanceSaveMgr.AddInstanceSave(mapEntry->MapID, fields[2].GetUInt32(), (DungeonDifficulties)fields[4].GetUInt8(), (time_t)fields[5].GetUInt64(), (fields[6].GetUInt32() == 0), true);
+            InstanceSave* save = sInstanceSaveMgr.AddInstanceSave(mapEntry->MapID, fields[2].GetUInt32(), (DungeonDifficulty)fields[4].GetUInt8(), (time_t)fields[5].GetUInt64(), (fields[6].GetUInt32() == 0), true);
             group->BindToInstance(save, fields[3].GetBool(), true);
         }
         while (result->NextRow());
@@ -3332,10 +3331,10 @@ void ObjectMgr::LoadQuests()
             // no changes, quest can't be done for this requirement
         }
 
-        if (qinfo->RequiredMinRepValue && qinfo->RequiredMinRepValue > Player::Reputation_Cap)
+        if (qinfo->RequiredMinRepValue && qinfo->RequiredMinRepValue > ReputationMgr::Reputation_Cap)
         {
             sLog.outErrorDb("Quest %u has RequiredMinRepValue = %d but max reputation is %u, quest cannot be completed.",
-                            qinfo->GetQuestId(), qinfo->RequiredMinRepValue, Player::Reputation_Cap);
+                qinfo->GetQuestId(), qinfo->RequiredMinRepValue, ReputationMgr::Reputation_Cap);
             // no changes, quest can't be done for this requirement
         }
 
@@ -5032,19 +5031,18 @@ uint16 ObjectMgr::GetTaxiMount(uint32 id, uint32 team)
 
 void ObjectMgr::LoadGraveyardZones()
 {
-    mGraveYardMap.clear();                                  // need for reload case
+    mGraveYardMap.clear();  // need for reload case
 
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT id,ghost_zone,faction FROM game_graveyard_zone");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT ID, GhostZone, Faction FROM graveyard_zone");
 
     uint32 count = 0;
 
     if (!result)
     {
 
-        sLog.outString(">> Loaded %u graveyard-zone links", count);
+        sLog.outString(">> Loaded 0 graveyard-zone links. DB table `graveyard_zone` is empty.");
         return;
     }
-
 
     do
     {
@@ -5059,35 +5057,50 @@ void ObjectMgr::LoadGraveyardZones()
         WorldSafeLocsEntry const* entry = sWorldSafeLocsStore.LookupEntry(safeLocId);
         if (!entry)
         {
-            sLog.outErrorDb("Table game_graveyard_zone has record for invalid graveyard (WorldSafeLocs.dbc id) %u, skipped.", safeLocId);
+            sLog.outErrorDb("Table `graveyard_zone` has a record for non-existing graveyard (WorldSafeLocsID: %u), skipped.", safeLocId);
             continue;
         }
 
         AreaTableEntry const* areaEntry = GetAreaEntryByAreaID(zoneId);
         if (!areaEntry)
         {
-            sLog.outErrorDb("Table game_graveyard_zone has record for invalid zone id (%u), skipped.", zoneId);
+            sLog.outErrorDb("Table `graveyard_zone` has a record for non-existing Zone (ID: %u), skipped.", zoneId);
             continue;
         }
 
         if (areaEntry->zone != 0)
         {
-            sLog.outErrorDb("Table game_graveyard_zone has record subzone id (%u) instead of zone, skipped.", zoneId);
+            sLog.outErrorDb("Table `graveyard_zone` has a record for SubZone (ID: %u) instead of zone, skipped.", zoneId);
             continue;
         }
 
         if (team != 0 && team != HORDE && team != ALLIANCE)
         {
-            sLog.outErrorDb("Table game_graveyard_zone has record for non player faction (%u), skipped.", team);
+            sLog.outErrorDb("Table `graveyard_zone` has a record for non player faction (%u), skipped.", team);
             continue;
         }
 
         if (!AddGraveYardLink(safeLocId, zoneId, team, false))
-            sLog.outErrorDb("Table game_graveyard_zone has a duplicate record for Graveyard (ID: %u) and Zone (ID: %u), skipped.", safeLocId, zoneId);
+            sLog.outErrorDb("Table `graveyard_zone` has a duplicate record for Graveyard (ID: %u) and Zone (ID: %u), skipped.", safeLocId, zoneId);
     }
     while (result->NextRow());
 
     sLog.outString(">> Loaded %u graveyard-zone links", count);
+}
+
+WorldSafeLocsEntry const* ObjectMgr::GetDefaultGraveYard(uint32 team)
+{
+    enum DefaultGraveyard
+    {
+        HORDE_GRAVEYARD = 10, // Crossroads
+        ALLIANCE_GRAVEYARD = 4   // Westfall
+    };
+
+    if (team == HORDE)
+        return sWorldSafeLocsStore.LookupEntry(HORDE_GRAVEYARD);
+    else if (team == ALLIANCE)
+        return sWorldSafeLocsStore.LookupEntry(ALLIANCE_GRAVEYARD);
+    else return NULL;
 }
 
 WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float z, uint32 MapId, uint32 team)
@@ -5095,6 +5108,14 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
     // search for zone associated closest graveyard
     uint32 zoneId = MapManager::Instance().GetZoneId(MapId, x, y, z);
 
+    if (!zoneId)
+    {
+        if (z > -500)
+        {
+            sLog.outError("ZoneId not found for map %u coords (%f, %f, %f)", MapId, x, y, z);
+            return GetDefaultGraveYard(team);
+        }
+    }
     // Simulate std. algorithm:
     //   found some graveyard associated to (ghost_zone,ghost_map)
     //
@@ -5106,18 +5127,18 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
     GraveYardMap::const_iterator graveUp   = mGraveYardMap.upper_bound(zoneId);
     if (graveLow == graveUp)
     {
-        sLog.outErrorDb("Table game_graveyard_zone incomplete: Zone %u Team %u does not have a linked graveyard.", zoneId, team);
+        sLog.outErrorDb("Table `graveyard_zone` incomplete: Zone %u Team %u does not have a linked graveyard.", zoneId, team);
         return NULL;
     }
 
     // at corpse map
     bool foundNear = false;
-    float distNear;
+    float distNear = 10000;
     WorldSafeLocsEntry const* entryNear = NULL;
 
     // at entrance map for corpse map
     bool foundEntr = false;
-    float distEntr;
+    float distEntr = 10000;
     WorldSafeLocsEntry const* entryEntr = NULL;
 
     // some where other
@@ -5132,7 +5153,7 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
         WorldSafeLocsEntry const* entry = sWorldSafeLocsStore.LookupEntry(data.safeLocId);
         if (!entry)
         {
-            sLog.outErrorDb("Table game_graveyard_zone has record for invalid graveyard (WorldSafeLocs.dbc id) %u, skipped.", data.safeLocId);
+            sLog.outErrorDb("Table `graveyard_zone` has record for not existing graveyard (WorldSafeLocsID %u), skipped.", data.safeLocId);
             continue;
         }
 
@@ -5145,8 +5166,10 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
         if (MapId != entry->map_id)
         {
             // if find graveyard at different map from where entrance placed (or no entrance data), use any first
-            if (!mapEntry || mapEntry->entrance_map < 0 || mapEntry->entrance_map != entry->map_id ||
-                mapEntry->entrance_x == 0 && mapEntry->entrance_y == 0)
+            if (!mapEntry 
+                || mapEntry->entrance_map < 0
+                || mapEntry->entrance_map != entry->map_id
+                || mapEntry->entrance_x == 0 && mapEntry->entrance_y == 0)
             {
                 // not have any corrdinates for check distance anyway
                 entryFar = entry;
@@ -5230,7 +5253,7 @@ bool ObjectMgr::AddGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool inD
     // add link to DB
     if (inDB)
     {
-        WorldDatabase.PExecuteLog("INSERT INTO game_graveyard_zone (id,ghost_zone,faction) "
+        WorldDatabase.PExecuteLog("INSERT INTO graveyard_zone (ID, GhostZone, Faction) "
                                   "VALUES ('%u', '%u','%u')", id, zoneId, team);
     }
 
@@ -5243,7 +5266,7 @@ void ObjectMgr::RemoveGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool 
     GraveYardMap::iterator graveUp   = mGraveYardMap.upper_bound(zoneId);
     if (graveLow == graveUp)
     {
-        //sLog.outErrorDb("Table game_graveyard_zone incomplete: Zone %u Team %u does not have a linked graveyard.",zoneId,team);
+        //sLog.outErrorDb("Table graveyard_zone incomplete: Zone %u Team %u does not have a linked graveyard.",zoneId,team);
         return;
     }
 
@@ -5277,7 +5300,7 @@ void ObjectMgr::RemoveGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool 
 
     // remove link from DB
     if (inDB)
-        WorldDatabase.PExecute("DELETE FROM game_graveyard_zone WHERE id = '%u' AND ghost_zone = '%u' AND faction = '%u'", id, zoneId, team);
+        WorldDatabase.PExecute("DELETE FROM graveyard_zone WHERE ID = '%u' AND GhostZone = '%u' AND Faction = '%u'", id, zoneId, team);
 
     return;
 }
@@ -5292,10 +5315,7 @@ void ObjectMgr::LoadAreaTriggerTeleports()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT id, access_id, target_map, target_position_x, target_position_y, target_position_z, target_orientation FROM areatrigger_teleport");
     if (!result)
     {
-
-
-
-        sLog.outString(">> Loaded %u area trigger teleport definitions", count);
+        sLog.outString(">> Loaded 0 area trigger teleport definitions.", count);
         return;
     }
 
@@ -5303,13 +5323,9 @@ void ObjectMgr::LoadAreaTriggerTeleports()
     do
     {
         Field* fields = result->Fetch();
-
-
-        ++count;
-
         uint32 Trigger_ID = fields[0].GetUInt32();
-
         AreaTrigger at;
+        ++count;
 
         at.access_id                = fields[1].GetUInt32();
         at.target_mapId             = fields[2].GetUInt32();
@@ -6119,6 +6135,113 @@ void ObjectMgr::LoadReputationOnKill()
     while (result->NextRow());
 
     sLog.outString(">> Loaded %u creature award reputation definitions", count);
+}
+
+void ObjectMgr::LoadReputationSpilloverTemplate()
+{
+    m_RepSpilloverTemplateMap.clear();                      // for reload case
+
+    uint32 count = 0;
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT faction, faction1, rate_1, rank_1, faction2, rate_2, rank_2, faction3, rate_3, rank_3, faction4, rate_4, rank_4 FROM reputation_spillover_template");
+
+    if (!result)
+    {
+        sLog.outErrorDb(">> Loaded `reputation_spillover_template`, table is empty!");
+        return;
+    }
+
+    do
+    {
+        Field *fields = result->Fetch();
+
+        uint32 factionId = fields[0].GetUInt32();
+
+        RepSpilloverTemplate repTemplate;
+
+        repTemplate.faction[0] = fields[1].GetUInt32();
+        repTemplate.faction_rate[0] = fields[2].GetFloat();
+        repTemplate.faction_rank[0] = fields[3].GetUInt32();
+        repTemplate.faction[1] = fields[4].GetUInt32();
+        repTemplate.faction_rate[1] = fields[5].GetFloat();
+        repTemplate.faction_rank[1] = fields[6].GetUInt32();
+        repTemplate.faction[2] = fields[7].GetUInt32();
+        repTemplate.faction_rate[2] = fields[8].GetFloat();
+        repTemplate.faction_rank[2] = fields[9].GetUInt32();
+        repTemplate.faction[3] = fields[10].GetUInt32();
+        repTemplate.faction_rate[3] = fields[11].GetFloat();
+        repTemplate.faction_rank[3] = fields[12].GetUInt32();
+
+        FactionEntry const *factionEntry = sFactionStore.LookupEntry(factionId);
+
+        if (!factionEntry)
+        {
+            sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `reputation_spillover_template`", factionId);
+            continue;
+        }
+
+        if (factionEntry->team == 0)
+        {
+            sLog.outErrorDb("Faction (faction.dbc) %u in `reputation_spillover_template` does not belong to any team, skipping", factionId);
+            continue;
+        }
+
+        for (uint32 i = 0; i < MAX_SPILLOVER_FACTIONS; ++i)
+        {
+            if (repTemplate.faction[i])
+            {
+                FactionEntry const *factionSpillover = sFactionStore.LookupEntry(repTemplate.faction[i]);
+
+                if (!factionSpillover)
+                {
+                    sLog.outErrorDb("Spillover faction (faction.dbc) %u does not exist but is used in `reputation_spillover_template` for faction %u, skipping", repTemplate.faction[i], factionId);
+                    continue;
+                }
+
+                if (factionSpillover->reputationListID < 0)
+                {
+                    sLog.outErrorDb("Spillover faction (faction.dbc) %u for faction %u in `reputation_spillover_template` can not be listed for client, and then useless, skipping", repTemplate.faction[i], factionId);
+                    continue;
+                }
+
+                if (repTemplate.faction_rank[i] >= MAX_REPUTATION_RANK)
+                {
+                    sLog.outErrorDb("Rank %u used in `reputation_spillover_template` for spillover faction %u is not valid, skipping", repTemplate.faction_rank[i], repTemplate.faction[i]);
+                    continue;
+                }
+            }
+        }
+
+        FactionEntry const *factionEntry0 = sFactionStore.LookupEntry(repTemplate.faction[0]);
+        if (repTemplate.faction[0] && !factionEntry0)
+        {
+            sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `reputation_spillover_template`", repTemplate.faction[0]);
+            continue;
+        }
+        FactionEntry const *factionEntry1 = sFactionStore.LookupEntry(repTemplate.faction[1]);
+        if (repTemplate.faction[1] && !factionEntry1)
+        {
+            sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `reputation_spillover_template`", repTemplate.faction[1]);
+            continue;
+        }
+        FactionEntry const *factionEntry2 = sFactionStore.LookupEntry(repTemplate.faction[2]);
+        if (repTemplate.faction[2] && !factionEntry2)
+        {
+            sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `reputation_spillover_template`", repTemplate.faction[2]);
+            continue;
+        }
+        FactionEntry const *factionEntry3 = sFactionStore.LookupEntry(repTemplate.faction[3]);
+        if (repTemplate.faction[3] && !factionEntry3)
+        {
+            sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `reputation_spillover_template`", repTemplate.faction[3]);
+            continue;
+        }
+
+        m_RepSpilloverTemplateMap[factionId] = repTemplate;
+
+        ++count;
+    } while (result->NextRow());
+
+    sLog.outString(">> Loaded %u reputation_spillover_template", count);
 }
 
 void ObjectMgr::LoadWeatherZoneChances()

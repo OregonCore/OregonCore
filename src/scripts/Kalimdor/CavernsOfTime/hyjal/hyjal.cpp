@@ -83,7 +83,7 @@ bool GossipHello_npc_jaina_proudmoore(Player* pPlayer, Creature* pCreature)
     else if (RageEncounter == DONE && AnetheronEncounter == DONE)
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_RETREAT, GOSSIP_SENDER_MAIN,    GOSSIP_ACTION_INFO_DEF + 3);
 
-    if (pPlayer->isGameMaster())
+    if (pPlayer->IsGameMaster())
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, GOSSIP_ITEM_GM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     pPlayer->SEND_GOSSIP_MENU(907, pCreature->GetGUID());
@@ -152,7 +152,7 @@ bool GossipHello_npc_thrall(Player* pPlayer, Creature* pCreature)
             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_RETREAT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
     }
 
-    if (pPlayer->isGameMaster())
+    if (pPlayer->IsGameMaster())
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, GOSSIP_ITEM_GM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     pPlayer->SEND_GOSSIP_MENU(907, pCreature->GetGUID());

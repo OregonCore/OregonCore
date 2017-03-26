@@ -65,15 +65,14 @@ void FollowerAI::AttackStart(Unit* pWho)
 //The flag (type_flag) is unconfirmed, but used here for further research and is a good candidate.
 bool FollowerAI::AssistPlayerInCombat(Unit* pWho)
 {
-    if (!pWho || !pWho->getVictim())
+    if (!pWho || !pWho->GetVictim())
         return false;
 
-    //experimental (unknown) flag not present
-    if (!(me->GetCreatureTemplate()->type_flags & CREATURE_TYPEFLAGS_UNK13))
+    if (!(me->GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_CAN_ASSIST))
         return false;
 
     //not a player
-    if (!pWho->getVictim()->GetCharmerOrOwnerPlayerOrPlayerItself())
+    if (!pWho->GetVictim()->GetCharmerOrOwnerPlayerOrPlayerItself())
         return false;
 
     //never attack friendly
@@ -84,7 +83,7 @@ bool FollowerAI::AssistPlayerInCombat(Unit* pWho)
     if (me->IsWithinDistInMap(pWho, MAX_PLAYER_DISTANCE) && me->IsWithinLOSInMap(pWho))
     {
         //already fighting someone?
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             AttackStart(pWho);
             return true;
@@ -115,7 +114,7 @@ void FollowerAI::MoveInLineOfSight(Unit* pWho)
             float fAttackRadius = me->GetAttackDistance(pWho);
             if (me->IsWithinDistInMap(pWho, fAttackRadius) && me->IsWithinLOSInMap(pWho))
             {
-                if (!me->getVictim())
+                if (!me->GetVictim())
                 {
                     // Clear distracted state on combat
                     if (me->HasUnitState(UNIT_STATE_DISTRACTED))
@@ -142,23 +141,24 @@ void FollowerAI::JustDied(Unit* /*pKiller*/)
         return;
 
     //@todo need a better check for quests with time limit.
-    if (Player* pPlayer = GetLeaderForFollower())
+    if (Player* player = GetLeaderForFollower())
     {
-        if (Group* pGroup = pPlayer->GetGroup())
+        if (Group* pGroup = player->GetGroup())
         {
             for (GroupReference* pRef = pGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
             {
-                if (Player* pMember = pRef->getSource())
+                if (Player* member = pRef->GetSource())
                 {
-                    if (pMember->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
-                        pMember->FailQuest(m_pQuestForFollow->GetQuestId());
+                    if (member->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
+                        if (member->IsInMap(player))
+                            member->FailQuest(m_pQuestForFollow->GetQuestId());
                 }
             }
         }
         else
         {
-            if (pPlayer->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->FailQuest(m_pQuestForFollow->GetQuestId());
+            if (player->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
+                player->FailQuest(m_pQuestForFollow->GetQuestId());
         }
     }
 }
@@ -205,7 +205,7 @@ void FollowerAI::EnterEvadeMode()
 
 void FollowerAI::UpdateAI(const uint32 uiDiff)
 {
-    if (HasFollowState(STATE_FOLLOW_INPROGRESS) && !me->getVictim())
+    if (HasFollowState(STATE_FOLLOW_INPROGRESS) && !me->GetVictim())
     {
         if (m_uiUpdateFollowTimer <= uiDiff)
         {
@@ -233,7 +233,7 @@ void FollowerAI::UpdateAI(const uint32 uiDiff)
                 {
                     for (GroupReference* pRef = pGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
                     {
-                        Player* pMember = pRef->getSource();
+                        Player* pMember = pRef->GetSource();
 
                         if (pMember && me->IsWithinDistInMap(pMember, MAX_PLAYER_DISTANCE))
                         {
@@ -292,7 +292,7 @@ void FollowerAI::MovementInform(uint32 uiMotionType, uint32 uiPointId)
 
 void FollowerAI::StartFollow(Player* pLeader, uint32 uiFactionForFollower, const Quest* pQuest)
 {
-    if (me->getVictim())
+    if (me->GetVictim())
     {
         sLog.outDebug("OSCR: FollowerAI attempt to StartFollow while in combat.");
         return;
@@ -340,13 +340,13 @@ Player* FollowerAI::GetLeaderForFollower()
             {
                 for (GroupReference* pRef = pGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
                 {
-                    Player* pMember = pRef->getSource();
+                    Player* member = pRef->GetSource();
 
-                    if (pMember && pMember->IsAlive() && me->IsWithinDistInMap(pMember, MAX_PLAYER_DISTANCE))
+                    if (member && me->IsWithinDistInMap(member, MAX_PLAYER_DISTANCE) && member->IsAlive())
                     {
                         sLog.outDebug("OSCR: FollowerAI GetLeader changed and returned new leader.");
-                        m_uiLeaderGUID = pMember->GetGUID();
-                        return pMember;
+                        m_uiLeaderGUID = member->GetGUID();
+                        return member;
                         break;
                     }
                 }

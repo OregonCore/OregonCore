@@ -80,7 +80,7 @@ enum Gossip_Guard_Skill
     GOSSIP_GUARD_SKILL_MINING       = 88,
     GOSSIP_GUARD_SKILL_SKINNING     = 89,
     GOSSIP_GUARD_SKILL_TAILORING    = 90,
-    GOSSIP_GUARD_SKILL_ENGINERING   = 91
+    GOSSIP_GUARD_SKILL_ENGINEERING   = 91
 };
 
 struct GossipOption
@@ -107,6 +107,7 @@ enum CreatureFlagsExtra
     CREATURE_FLAG_EXTRA_NO_XP_AT_KILL   = 0x00000040,       // creature kill not provide XP
     CREATURE_FLAG_EXTRA_TRIGGER         = 0x00000080,       // trigger creature
     CREATURE_FLAG_EXTRA_NO_TAUNT        = 0x00000100,       // cannot be taunted
+    CREATURE_FLAG_EXTRA_GUARD           = 0x00000400,       // creature is a guard
     CREATURE_FLAG_EXTRA_WORLDEVENT      = 0x00004000,       // custom flag for world event creatures (left room for merging)
     CREATURE_FLAG_EXTRA_CHARM_AI        = 0x00008000,       // use ai when charmed
     CREATURE_FLAG_EXTRA_NO_CRIT         = 0x00020000,       // creature can't do critical strikes
@@ -161,7 +162,7 @@ struct CreatureInfo
     uint32  unit_class;                                     // enum Classes. Note only 4 classes are known for creatures.
     uint32  unit_flags;                                     // enum UnitFlags mask values
     uint32  dynamicflags;
-    uint32  family;                                         // enum CreatureFamily values for type == CREATURE_TYPE_BEAST, or 0 in another cases
+    CreatureFamily family;                                  // enum CreatureFamily values for type == CREATURE_TYPE_BEAST, or 0 in another cases
     uint32  trainer_type;
     uint32  trainer_spell;
     uint32  classNum;
@@ -201,17 +202,22 @@ struct CreatureInfo
     // helpers
     SkillType GetRequiredLootSkill() const
     {
-        if (type_flags & CREATURE_TYPEFLAGS_HERBLOOT)
+        if (type_flags & CREATURE_TYPE_FLAG_HERB_SKINNING_SKILL)
             return SKILL_HERBALISM;
-        else if (type_flags & CREATURE_TYPEFLAGS_MININGLOOT)
+        else if (type_flags & CREATURE_TYPE_FLAG_MINING_SKINNING_SKILL)
             return SKILL_MINING;
+        else if (type_flags & CREATURE_TYPE_FLAG_ENGINEERING_SKINNING_SKILL)
+            return SKILL_ENGINEERING;
         else
             return SKILL_SKINNING;                          // normal case
     }
 
     bool isTameable() const
     {
-        return type == CREATURE_TYPE_BEAST && family != 0 && (type_flags & CREATURE_TYPEFLAGS_TAMEABLE);
+        if (type != CREATURE_TYPE_BEAST || family == CREATURE_FAMILY_NONE || (type_flags & CREATURE_TYPE_FLAG_TAMEABLE_PET) == 0)
+            return false;
+
+        return true;
     }
 
     std::string GetAIName() const
@@ -455,10 +461,10 @@ class Creature : public Unit, public GridObject<Creature>
     public:
 
         explicit Creature(bool isWorldObject = false);
-        virtual ~Creature();
+        ~Creature() override;
 
-        void AddToWorld();
-        void RemoveFromWorld();
+        void AddToWorld() override;
+        void RemoveFromWorld() override;
 
         void DisappearAndDie();
 
@@ -476,7 +482,7 @@ class Creature : public Unit, public GridObject<Creature>
             return GetCreatureTemplate()->SubName;
         }
 
-        void Update(uint32 time);                         // overwrited Unit::Update
+        void Update(uint32 time) override;                         // overwrited Unit::Update
         void GetRespawnPosition(float& x, float& y, float& z, float* ori = NULL, float* dist = NULL) const;
 
         uint32 GetEquipmentId() const
@@ -502,13 +508,14 @@ class Creature : public Unit, public GridObject<Creature>
         {
             return GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER;
         }
+        bool IsGuard() const { return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_GUARD) != 0; }
         bool canWalk() const
         {
             return GetCreatureTemplate()->InhabitType & INHABIT_GROUND;
         }
         virtual bool canSwim() const
         {
-            return GetCreatureTemplate()->InhabitType & INHABIT_WATER;
+            return GetCreatureTemplate()->InhabitType & INHABIT_WATER || isCharmedOwnedByPlayerOrPlayer();
         }
         bool canFly()  const
         {
@@ -523,10 +530,10 @@ class Creature : public Unit, public GridObject<Creature>
         bool IsTrainerOf(Player* player, bool msg) const;
         bool CanInteractWithBattleMaster(Player* player, bool msg) const;
         bool CanTrainAndResetTalentsOf(Player* pPlayer) const;
-        bool CanCreatureAttack(Unit const* victim) const;
+        bool CanCreatureAttack(Unit const* victim, bool force = true) const;
 
-        bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false);
-        bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const;
+        bool IsImmuneToSpell(SpellEntry const* spellInfo, bool useCharges = false) override;
+        bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, uint32 index, bool castOnSelf) const override;
 
         bool isElite() const;
         bool isWorldBoss() const;
@@ -543,12 +550,12 @@ class Creature : public Unit, public GridObject<Creature>
             return (CreatureAI*)i_AI;
         }
 
-        uint32 GetShieldBlockValue() const                  //dunno mob block value
+        uint32 GetShieldBlockValue() const override                  //dunno mob block value
         {
             return (getLevel() / 2 + uint32(GetStat(STAT_STRENGTH) / 20));
         }
 
-        SpellSchoolMask GetMeleeDamageSchoolMask() const
+        SpellSchoolMask GetMeleeDamageSchoolMask() const override
         {
             return m_meleeDamageSchoolMask;
         }
@@ -563,18 +570,18 @@ class Creature : public Unit, public GridObject<Creature>
         bool HasSpellCooldown(uint32 spell_id) const;
         bool HasCategoryCooldown(uint32 spell_id) const;
 
-        bool HasSpell(uint32 spellID) const;
+        bool HasSpell(uint32 spellID) const override;
 
         bool UpdateEntry(uint32 entry, uint32 team = ALLIANCE, const CreatureData* data = NULL);
         void UpdateMovementFlags(bool packetOnly = false);
-        bool UpdateStats(Stats stat);
-        bool UpdateAllStats();
-        void UpdateResistances(uint32 school);
-        void UpdateArmor();
-        void UpdateMaxHealth();
-        void UpdateMaxPower(Powers power);
-        void UpdateAttackPowerAndDamage(bool ranged = false);
-        void UpdateDamagePhysical(WeaponAttackType attType);
+        bool UpdateStats(Stats stat) override;
+        bool UpdateAllStats() override;
+        void UpdateResistances(uint32 school) override;
+        void UpdateArmor() override;
+        void UpdateMaxHealth() override;
+        void UpdateMaxPower(Powers power) override;
+        void UpdateAttackPowerAndDamage(bool ranged = false) override;
+        void UpdateDamagePhysical(WeaponAttackType attType) override;
         void SetCurrentEquipmentId(uint8 id) { m_equipmentId = id; }
         uint32 GetCurrentEquipmentId()
         {
@@ -640,9 +647,9 @@ class Creature : public Unit, public GridObject<Creature>
         }
 
         // overwrite WorldObject function for proper name localization
-        const char* GetNameForLocaleIdx(int32 locale_idx) const;
+        const char* GetNameForLocaleIdx(int32 locale_idx) const override;
 
-        void setDeathState(DeathState s);                     // overwrite virtual Unit::setDeathState
+        void setDeathState(DeathState s) override;                     // overwrite virtual Unit::setDeathState
         bool FallGround();
 
         bool LoadFromDB(uint32 guid, Map* map) { return LoadCreatureFromDB(guid, map, false); }
@@ -674,8 +681,9 @@ class Creature : public Unit, public GridObject<Creature>
         CreatureSpellCooldowns m_CreatureCategoryCooldowns;
         uint32 m_GlobalCooldown;
 
-        bool canStartAttack(Unit const* u) const;
+        bool canStartAttack(Unit const* u, bool force) const;
         float GetAttackDistance(Unit const* pl) const;
+        float GetAggroRange(Unit const* target) const;
 
         void SendAIReaction(AiReaction reactionType);
 
@@ -690,6 +698,7 @@ class Creature : public Unit, public GridObject<Creature>
         void SetNoSearchAssistance(bool val) { m_AlreadySearchedAssistance = val; }
         bool HasSearchedAssistance() const { return m_AlreadySearchedAssistance; }
         bool CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction = true) const;
+        bool _IsTargetAcceptable(const Unit* target) const;
 
         MovementGeneratorType GetDefaultMovementType() const
         {
@@ -725,7 +734,7 @@ class Creature : public Unit, public GridObject<Creature>
             m_respawnTime = time(NULL) + respawn;
         }
         void Respawn(bool force = false);
-        void SaveRespawnTime();
+        void SaveRespawnTime() override;
 
         uint32 GetRespawnDelay() const
         {
@@ -761,8 +770,8 @@ class Creature : public Unit, public GridObject<Creature>
 
         void SetInCombatWithZone();
 
-        bool hasQuest(uint32 quest_id) const;
-        bool hasInvolvedQuest(uint32 quest_id)  const;
+        bool hasQuest(uint32 quest_id) const override;
+        bool hasInvolvedQuest(uint32 quest_id)  const override;
 
         bool isRegeneratingHealth()
         {
@@ -854,7 +863,7 @@ class Creature : public Unit, public GridObject<Creature>
 
         float m_SightDistance, m_CombatDistance;
 
-        bool SetLevitate(bool enable, bool packetOnly = false);
+        bool SetLevitate(bool enable, bool packetOnly = false) override;
         bool SetWalk(bool enable) override;
         bool SetSwim(bool enable) override;
         bool SetCanFly(bool enable, bool packetOnly = false) override;
@@ -941,7 +950,7 @@ class AssistDelayEvent : public BasicEvent
     public:
         AssistDelayEvent(const uint64& victim, Unit& owner) : BasicEvent(), m_victim(victim), m_owner(owner) { }
 
-        bool Execute(uint64 e_time, uint32 p_time);
+        bool Execute(uint64 e_time, uint32 p_time) override;
         void AddAssistant(const uint64& guid)
         {
             m_assistants.push_back(guid);
@@ -958,7 +967,7 @@ class ForcedDespawnDelayEvent : public BasicEvent
 {
     public:
         ForcedDespawnDelayEvent(Creature& owner) : BasicEvent(), m_owner(owner) { }
-        bool Execute(uint64 e_time, uint32 p_time);
+        bool Execute(uint64 e_time, uint32 p_time) override;
 
     private:
         Creature& m_owner;

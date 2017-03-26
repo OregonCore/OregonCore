@@ -305,7 +305,7 @@ LootItem::LootItem(LootStoreItem const& li)
     conditions  = li.conditions;
 
     ItemTemplate const* proto = sObjectMgr.GetItemTemplate(itemid);
-    freeforall  = proto && (proto->Flags & ITEM_FLAGS_PARTY_LOOT);
+    freeforall = proto && (proto->Flags & ITEM_PROTO_FLAG_MULTI_DROP);
 
     needs_quest = li.needs_quest;
 
@@ -330,28 +330,13 @@ bool LootItem::AllowedForPlayer(Player const* player) const
         return false;
 
     // not show loot for players without profession or those who already know the recipe
-    if ((pProto->Class == 9) && (!player->HasSkill(pProto->RequiredSkill) || player->HasSpell(pProto->Spells[1].SpellId)))
+    if ((pProto->Flags & ITEM_PROTO_FLAG_SMART_LOOT) && (!player->HasSkill(pProto->RequiredSkill) || player->HasSpell(pProto->Spells[1].SpellId)))
         return false;
 
     // check quest requirements
     if (((needs_quest || (pProto->StartQuest && player->GetQuestStatus(pProto->StartQuest) != QUEST_STATUS_NONE)) && !player->HasQuestForItem(itemid)))
         return false;
 
-    /*if (needs_quest && !player->HasQuestForItem(itemid))    // Items that require a quest to drop
-        return false;
-    else
-    {
-        if (pProto && pProto->StartQuest)
-        {
-            // Not quest only drop (check quest starting items for already accepted non-repeatable quests)
-            if (player->GetQuestStatus(pProto->StartQuest) != QUEST_STATUS_NONE && !player->HasQuestForItem(itemid))
-                return false;
-
-            // Player is not allowed to have more then one item that starts the same quest
-            if (player->HasItemCount(itemid, 1, true))
-                return false;
-        }
-    }*/
     return true;
 }
 
@@ -380,7 +365,7 @@ void Loot::AddItem(LootStoreItem const& item)
         // non-ffa conditionals are counted in FillNonQuestNonFFAConditionalLoot()
         if (item.conditions.empty())
         {
-            if (!proto || (proto->Flags & ITEM_FLAGS_PARTY_LOOT) == 0)
+            if ((proto->Flags & ITEM_PROTO_FLAG_MULTI_DROP) == 0)
                 ++unlootedCount;
         }
     }
@@ -412,8 +397,9 @@ void Loot::FillLoot(uint32 loot_id, LootStore const& store, Player* loot_owner, 
         roundRobinPlayer = loot_owner->GetGUID();
 
         for (GroupReference* itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
-            if (Player* player = itr->getSource())   // should actually be looted object instead of lootOwner but looter has to be really close so doesnt really matter
-                FillNotNormalLootFor(player);
+            if (Player* player = itr->GetSource())   // should actually be looted object instead of lootOwner but looter has to be really close so doesnt really matter
+                if (player->IsInMap(loot_owner))
+                    FillNotNormalLootFor(player);
 
         for (uint8 i = 0; i < items.size(); ++i)
         {
@@ -497,11 +483,8 @@ QuestItemList* Loot::FillQuestLoot(Player* player)
             // player's quest vector
             //
             // increase once if one looter only, looter-times if free for all
-            if ((item.freeforall || !item.is_blocked) && !item.is_counted)
-            {
+            if (item.freeforall || !item.is_blocked)
                  ++unlootedCount;
-                item.is_counted = true;
-            }
             if (!player->GetGroup() || (player->GetGroup()->GetLootMethod() != GROUP_LOOT && player->GetGroup()->GetLootMethod() != ROUND_ROBIN))
                 item.is_blocked = true;
 
@@ -695,6 +678,19 @@ uint32 Loot::GetMaxSlotInLootFor(Player* player) const
     return items.size() + (itr != PlayerQuestItems.end() ?  itr->second->size() : 0);
 }
 
+// return true if there is any item that is lootable for any player (not quest item, FFA or conditional)
+bool Loot::hasItemForAll() const
+{
+    // Gold is always lootable
+    if (gold)
+        return true;
+
+    for (LootItem const& item : items)
+        if (!item.is_looted && !item.freeforall && item.conditions.empty())
+            return true;
+    return false;
+}
+ 
 // return true if there is any FFA, quest or conditional item for the player.
 bool Loot::hasItemFor(Player* player) const
 {
@@ -1389,7 +1385,7 @@ void LoadLootTemplates_Item()
     // remove real entries and check existence loot
     for (uint32 i = 1; i < sItemStorage.MaxEntry; ++i)
         if (ItemTemplate const* proto = sItemStorage.LookupEntry<ItemTemplate>(i))
-            if (ids_set.find(proto->ItemId) != ids_set.end())
+            if (ids_set.find(proto->ItemId) != ids_set.end() && proto->Flags & ITEM_PROTO_FLAG_HAS_LOOT)
                 ids_set.erase(proto->ItemId);
 
     // output error for any still listed (not referenced from appropriate table) ids

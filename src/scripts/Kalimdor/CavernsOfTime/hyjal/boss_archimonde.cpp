@@ -299,14 +299,13 @@ struct mob_doomfire_targettingAI : public ScriptedAI
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                 if (pTarget && pTarget->IsAlive())
                 {
-                    me->AddThreat(pTarget, DoGetThreat(me->getVictim()));
+                    me->AddThreat(pTarget, DoGetThreat(me->GetVictim()));
                     me->GetMotionMaster()->MoveChase(pTarget);
                 }
                 break;
 
             case 1:                                     // random location
-                Position pos;
-                me->GetRandomNearPosition(pos, 40);
+                Position pos = me->GetRandomNearPosition(40.0f);
                 me->GetMotionMaster()->MovePoint(0, pos.m_positionX, pos.m_positionY, pos.m_positionZ);
                 break;
             }
@@ -434,7 +433,7 @@ struct boss_archimondeAI : public hyjal_trashAI
     bool CanUseFingerOfDeath()
     {
         // First we check if our current victim is in melee range or not.
-        Unit* victim = me->getVictim();
+        Unit* victim = me->GetVictim();
         if (victim && me->IsWithinDistInMap(victim, me->GetAttackDistance(victim)))
             return false;
 
@@ -461,7 +460,7 @@ struct boss_archimondeAI : public hyjal_trashAI
             if (!me->IsWithinDistInMap(pTarget, me->GetAttackDistance(pTarget)))
                 return true;                                // Cast Finger of Death
             else                                            // This target is closest, he is our new tank
-                me->AddThreat(pTarget, DoGetThreat(me->getVictim()));
+                me->AddThreat(pTarget, DoGetThreat(me->GetVictim()));
         }
 
         return false;
@@ -574,14 +573,14 @@ struct boss_archimondeAI : public hyjal_trashAI
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 10) && !BelowTenPercent && !Enraged)
+        if (HealthBelowPct(10) && !BelowTenPercent && !Enraged)
             BelowTenPercent = true;
 
         if (!Enraged)
         {
             if (EnrageTimer <= diff)
             {
-                if ((me->GetHealth() * 100 / me->GetMaxHealth()) > 10)
+                if (HealthBelowPct(10))
                 {
                     me->GetMotionMaster()->Clear(false);
                     me->GetMotionMaster()->MoveIdle();

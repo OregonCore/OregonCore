@@ -322,7 +322,7 @@ Guardian::Guardian(SummonPropertiesEntry const* properties, Unit* owner, bool is
     , m_bonusdamage(0)
 {
     m_unitTypeMask |= UNIT_MASK_GUARDIAN;
-    if (properties && properties->Type == SUMMON_TYPE_PET)
+    if (properties && (properties->Type == SUMMON_TYPE_PET || properties->Category == SUMMON_CATEGORY_PET))
     {
         m_unitTypeMask |= UNIT_MASK_CONTROLABLE_GUARDIAN;
         InitCharmInfo();

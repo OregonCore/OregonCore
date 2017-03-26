@@ -125,18 +125,20 @@ IF(WIN32 AND NOT CYGWIN)
       NAMES
         libeay32
       PATHS
-        ${OPENSSL_ROOT_DIR}/lib/MinGW
+        ${OPENSSL_ROOT_DIR}/lib
     )
 
-    FIND_LIBRARY(SSL_EAY NAMES
+    FIND_LIBRARY(SSL_EAY
       NAMES
         ssleay32
       PATHS
-        ${OPENSSL_ROOT_DIR}/lib/MinGW
+        ${OPENSSL_ROOT_DIR}/lib
     )
-
+    
     MARK_AS_ADVANCED(SSL_EAY LIB_EAY)
-
+message(STATUS ${SSL_EAY})
+message(STATUS ${LIB_EAY})
+message(STATUS ${OPENSSL_ROOT_DIR})
     set( OPENSSL_LIBRARIES
       ${SSL_EAY}
       ${LIB_EAY}

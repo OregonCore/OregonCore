@@ -123,12 +123,12 @@ struct npc_testAI : public npc_escortAI
             npc_escortAI::UpdateAI(diff);
 
             //Combat check
-            if (me->IsInCombat() && me->getVictim())
+            if (me->IsInCombat() && me->GetVictim())
             {
                 if (DeathCoilTimer <= diff)
                 {
                     me->Say(SAY_DEATHCOIL, LANG_UNIVERSAL, 0);
-                    me->CastSpell(me->getVictim(), 33130, false);
+                    me->CastSpell(me->GetVictim(), 33130, false);
 
                     DeathCoilTimer = 4000;
                 }

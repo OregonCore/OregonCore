@@ -842,7 +842,7 @@ void Aura::UpdateAuraDuration()
         {
             for (GroupReference* itr = CasterGroup->GetFirstMember(); itr != NULL; itr = itr->next())
             {
-                Player* player = itr->getSource();
+                Player* player = itr->GetSource();
                 if (player && player != caster)
                     SendAuraDurationForCaster(player);
             }
@@ -2068,7 +2068,8 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
     {
         switch (GetId())
         {
-         case 29266:
+        case 31261:
+        case 29266:
             m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
             m_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
             m_target->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
@@ -2101,7 +2102,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             return;
         case 30019: //control piece
             if (caster && caster->GetTypeId() == TYPEID_PLAYER)
-                caster->ToPlayer()->TeleportTo(532, -11105.08, -1845.65, 229.65, 5.42);
+                caster->ToPlayer()->TeleportTo(532, -11105.08f, -1845.65f, 229.65f, 5.42f);
             if (caster && caster->GetCharm())
                 caster->GetCharm()->GetCharmInfo()->SetIsAtStay(true);
             return;
@@ -2127,7 +2128,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
         case 32260: //Chess: Deactivate Own Field
             {
                 //Set No_Movement Flag, to disable Field
-                m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
                 //Add Tempsummon
                 GetCaster()->SummonCreature(22519, m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ(), m_target->GetOrientation());
                 return;
@@ -2287,6 +2288,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     m_target->ToPlayer()->StopCastingCharm();
                 return;
             }
+        case 31261:
         case 29266:
             {
                 m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
@@ -2853,6 +2855,9 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
                 break;
         }
 
+        // Remove auras linked to forms, such as Vanish and Stealth
+        m_target->RemoveAurasWithAttribute(SPELL_ATTR2_UNK1);
+
         /* We need to re-apply any of transform auras:
            Great example is OHF, when you are in cat form and unshapeshift,
            you should be a human not your original model */
@@ -3101,20 +3106,8 @@ void Aura::HandleForceReaction(bool apply, bool Real)
     uint32 factionId = m_modifier.m_miscvalue;
     uint32 factionRank = m_modifier.m_amount;
 
-    if (apply)
-        player->m_forcedReactions[factionId] = ReputationRank(factionRank);
-    else
-        player->m_forcedReactions.erase(factionId);
-
-    WorldPacket data;
-    data.Initialize(SMSG_SET_FORCED_REACTIONS, 4 + player->m_forcedReactions.size() * (4 + 4));
-    data << uint32(player->m_forcedReactions.size());
-    for (ForcedReactions::const_iterator itr = player->m_forcedReactions.begin(); itr != player->m_forcedReactions.end(); ++itr)
-    {
-        data << uint32(itr->first);                         // faction_id (Faction.dbc)
-        data << uint32(itr->second);                        // reputation rank
-    }
-    player->SendDirectMessage(&data);
+    player->GetReputationMgr().ApplyForceReaction(factionId, ReputationRank(factionRank), apply);
+    player->GetReputationMgr().SendForceReactions();
 }
 
 void Aura::HandleAuraModSkill(bool apply, bool /*Real*/)
@@ -3312,10 +3305,10 @@ void Aura::HandleModPossessPet(bool apply, bool Real)
             // Follow owner only if not fighting or owner didn't click "stay" at new location
             // This may be confusing because pet bar shows "stay" when under the spell but it retains
             //  the "follow" flag. Player MUST click "stay" while under the spell.
-            if (!pet->getVictim() && !pet->GetCharmInfo()->HasCommandState(COMMAND_STAY))
+            if (!pet->GetVictim() && !pet->GetCharmInfo()->HasCommandState(COMMAND_STAY))
             {
-                m_target->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
-                m_target->GetCharmInfo()->SetCommandState(COMMAND_FOLLOW);
+                pet->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+                pet->GetCharmInfo()->SetCommandState(COMMAND_FOLLOW);
             }
         }
     }
@@ -3531,7 +3524,7 @@ void Aura::HandleModStealth(bool apply, bool Real)
         m_target->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_UNATTACKABLE);
     }
 
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 void Aura::HandleModStealthLevel(bool apply, bool Real)
@@ -3543,7 +3536,7 @@ void Aura::HandleModStealthLevel(bool apply, bool Real)
     else
         m_target->m_stealth.AddValue(type, -GetAmount());
 
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 void Aura::HandleModInvisibility(bool apply, bool Real)
@@ -3592,7 +3585,7 @@ void Aura::HandleModInvisibility(bool apply, bool Real)
     if (apply && Real)
         m_target->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_UNATTACKABLE);  // drop flag at invisibiliy in bg
 
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 void Aura::HandleModStealthDetect(bool apply, bool Real)
@@ -3612,7 +3605,7 @@ void Aura::HandleModStealthDetect(bool apply, bool Real)
         m_target->m_stealthDetect.AddValue(type, -GetAmount());
     }
 
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 void Aura::HandleModInvisibilityDetect(bool apply, bool Real)
@@ -3632,7 +3625,7 @@ void Aura::HandleModInvisibilityDetect(bool apply, bool Real)
         m_target->m_invisibilityDetect.AddValue(type, -GetAmount());
     }
 
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 void Aura::HandleAuraModRoot(bool apply, bool Real)
@@ -3661,42 +3654,6 @@ void Aura::HandleAuraModSilence(bool apply, bool Real)
                 if (spell->m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
                     // Stop spells on prepare or casting state
                     m_target->InterruptSpell(CurrentSpellTypes(i), false);
-
-        switch (GetId())
-        {
-            // Arcane Torrent (Mana)
-            case 28730:
-            {
-                Unit* caster = GetCaster();
-                if (!caster)
-                    return;
-
-                Aura* dummy = caster->GetDummyAura(28734);
-                if (dummy)
-                {
-                    int32 bp = (5 + caster->getLevel()) * dummy->GetStackAmount();
-                    caster->CastCustomSpell(caster, 28733, &bp, NULL, NULL, true);
-                    caster->RemoveAurasDueToSpell(28734);
-                }
-                return;
-            }
-            // Arcane Torrent (Energy)
-            case 25046:
-            {
-                Unit* caster = GetCaster();
-                if (!caster)
-                    return;
-
-                // Search Mana Tap auras on caster
-                Aura* dummy = caster->GetDummyAura(28734);
-                if (dummy)
-                {
-                    int32 bp = dummy->GetStackAmount() * 10;
-                    caster->CastCustomSpell(caster, 25048, &bp, NULL, NULL, true);
-                    m_target->RemoveAurasDueToSpell(28734);
-                }
-            }
-        }
     }
     else
     {
@@ -3811,7 +3768,9 @@ void Aura::HandleAuraModIncreaseFlightSpeed(bool apply, bool Real)
     // Enable Fly mode for flying mounts
     if (GetAuraType() == SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED)
     {
-        m_target->SetCanFly(apply);
+        if (m_target->SetCanFly(apply))
+            if (!apply && !m_target->IsLevitating())
+                m_target->GetMotionMaster()->MoveFall();
 
         if (!apply && m_target->GetTypeId() == TYPEID_UNIT && !m_target->IsLevitating())
             m_target->GetMotionMaster()->MoveFall();
@@ -4124,7 +4083,7 @@ void Aura::HandleAuraModStalked(bool apply, bool /*Real*/)
     }
 
     // call functions which may have additional effects after chainging state of unit
-    m_target->UpdateObjectVisibility();
+    m_target->UpdateObjectVisibility(false);
 }
 
 /*********************************************************/
@@ -5615,7 +5574,7 @@ void Aura::HandleAuraAllowFlight(bool apply, bool Real)
 
     m_target->SetCanFly(apply);
 
-    if (!apply && m_target->GetTypeId() == TYPEID_UNIT && !m_target->IsLevitating())
+    if (!apply && !m_target->IsLevitating())
         m_target->GetMotionMaster()->MoveFall();
 }
 
@@ -5742,12 +5701,6 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
 
 void Aura::CleanupTriggeredSpells()
 {
-    /*if(sSpellMgr.GetSpellElixirSpecific(m_spellProto->Id) & SPELL_GROUP_ELIXIR_SHATTRATH)
-    {
-        m_target->RemoveAurasDueToSpell( m_spellProto->EffectTriggerSpell[1]);  // remove triggered effect of shattrath flask, when removing it
-        return;
-    }*/
-
     uint32 tSpellId = m_spellProto->EffectTriggerSpell[GetEffIndex()];
     if (!tSpellId)
         return;
@@ -5991,9 +5944,9 @@ void Aura::PeriodicTick()
 
             if (pdamage)
                 procVictim |= PROC_FLAG_TAKEN_DAMAGE;
-            pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, pdamage, BASE_ATTACK, spellProto);
 
             pCaster->DealDamage(target, pdamage, &cleanDamage, DOT, GetSpellSchoolMask(spellProto), spellProto, true);
+            pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, pdamage, BASE_ATTACK, spellProto);
             break;
         }
     case SPELL_AURA_PERIODIC_LEECH:
@@ -6016,6 +5969,8 @@ void Aura::PeriodicTick()
             uint32 absorb = 0;
             uint32 resist = 0;
 
+            bool applyHealingThreat = true;
+
             uint32 pdamage = GetModifierValuePerStack() > 0 ? GetModifierValuePerStack() : 0;
 
             CleanDamage cleanDamage =  CleanDamage(pdamage, BASE_ATTACK, MELEE_HIT_NORMAL);
@@ -6035,6 +5990,11 @@ void Aura::PeriodicTick()
             // talent Soul Siphon add bonus to Drain Life spells
             if (GetSpellProto()->SpellFamilyName == SPELLFAMILY_WARLOCK && (GetSpellProto()->SpellFamilyFlags & 0x8))
             {
+                // Spell is Drain Life
+
+                // Drain Life healing should not generate threat (Issue #1232)
+                applyHealingThreat = false;
+
                 // find talent max bonus percentage
                 Unit::AuraList const& mClassScriptAuras = pCaster->GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
                 for (Unit::AuraList::const_iterator i = mClassScriptAuras.begin(); i != mClassScriptAuras.end(); ++i)
@@ -6115,6 +6075,7 @@ void Aura::PeriodicTick()
             if (pdamage)
                 procVictim |= PROC_FLAG_TAKEN_DAMAGE;
             pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, pdamage, BASE_ATTACK, spellProto);
+            // Apply damage to target
             int32 new_damage = pCaster->DealDamage(target, pdamage, &cleanDamage, DOT, GetSpellSchoolMask(spellProto), spellProto, false);
 
             if (!target->IsAlive() && pCaster->IsNonMeleeSpellCast(false))
@@ -6128,8 +6089,11 @@ void Aura::PeriodicTick()
 
             uint32 heal = pCaster->SpellHealingBonus(spellProto, uint32(new_damage * multiplier), DOT, pCaster);
 
+            // Apply healing to caster
             int32 gain = pCaster->ModifyHealth(heal);
-            pCaster->getHostileRefManager().threatAssist(pCaster, gain * 0.5f, spellProto);
+            // Apply threat to caster for the amount healed.
+            if (applyHealingThreat)
+                pCaster->getHostileRefManager().threatAssist(pCaster, gain * 0.5f, spellProto);
 
             pCaster->SendHealSpellLog(pCaster, spellProto->Id, heal);
             break;
@@ -6776,10 +6740,10 @@ void Aura::HandleAuraReflectSpellSchool(bool apply, bool real)
         {
             // Fire Ward
             if (GetSpellProto()->SpellFamilyFlags & 0x8)
-                GetModifier()->m_amount += pTarget->HasSpell(11094) ? 10.0f : pTarget->HasSpell(13043) ? 20.0f : 0.0f;
+                GetModifier()->m_amount += pTarget->HasSpell(11094) ? 10 : pTarget->HasSpell(13043) ? 20 : 0;
             // Frost Ward
             else if (GetSpellProto()->SpellFamilyFlags & 0x80100)
-                GetModifier()->m_amount += pTarget->HasSpell(11189) ? 10.0f : pTarget->HasSpell(28332) ? 20.0f : 0.0f;
+                GetModifier()->m_amount += pTarget->HasSpell(11189) ? 10 : pTarget->HasSpell(28332) ? 20 : 0;
         }
     }
 }

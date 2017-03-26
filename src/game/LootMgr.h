@@ -243,8 +243,8 @@ class LootValidatorRef :  public Reference<Loot, LootValidatorRef>
 {
     public:
         LootValidatorRef() {}
-        void targetObjectDestroyLink() {}
-        void sourceObjectDestroyLink() {}
+        void targetObjectDestroyLink() override {}
+        void sourceObjectDestroyLink() override {}
 };
 
 //=====================================================
@@ -326,7 +326,6 @@ struct Loot
         // void clear();
         void clear()
         {
-            items.clear();
             gold = 0;
             PlayersLooting.clear();
             for (QuestItemMap::iterator itr = PlayerQuestItems.begin(); itr != PlayerQuestItems.end(); ++itr)
@@ -379,6 +378,7 @@ struct Loot
 
         LootItem* LootItemInSlot(uint32 lootslot, Player* player, QuestItem** qitem = NULL, QuestItem** ffaitem = NULL, QuestItem** conditem = NULL);
         uint32 GetMaxSlotInLootFor(Player* player) const;
+        bool hasItemForAll() const;
         bool hasItemFor(Player* player) const;
         bool hasOverThresholdItem() const;
 

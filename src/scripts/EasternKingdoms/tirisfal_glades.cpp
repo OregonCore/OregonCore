@@ -68,7 +68,7 @@ struct npc_calvin_montagueAI : public ScriptedAI
 
     void AttackedBy(Unit* pAttacker)
     {
-        if (me->getVictim() || me->IsFriendlyTo(pAttacker))
+        if (me->GetVictim() || me->IsFriendlyTo(pAttacker))
             return;
 
         AttackStart(pAttacker);
@@ -123,7 +123,7 @@ struct npc_calvin_montagueAI : public ScriptedAI
             return;
         }
 
-        if (!me->getVictim())
+        if (!me->GetVictim())
             return;
 
         DoMeleeAttackIfReady();

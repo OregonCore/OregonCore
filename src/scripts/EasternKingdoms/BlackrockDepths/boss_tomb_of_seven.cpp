@@ -196,7 +196,7 @@ struct boss_doomrelAI : public ScriptedAI
         else DemonArmor_Timer -= diff;
 
         //Summon Voidwalkers
-        if (!Voidwalkers && me->GetHealth() * 100 / me->GetMaxHealth() < 51)
+        if (!Voidwalkers && HealthBelowPct(50))
         {
             DoCastVictim( SPELL_SUMMON_VOIDWALKERS, true);
             Voidwalkers = true;

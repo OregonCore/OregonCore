@@ -350,8 +350,13 @@ uint32 CalculatePowerCost(SpellEntry const* spellInfo, Unit const* caster, Spell
     if (Player* modOwner = caster->GetSpellModOwner())
         modOwner->ApplySpellMod(spellInfo->Id, SPELLMOD_COST, powerCost);
 
-    if (spellInfo->Attributes & SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION)
-        powerCost = int32(powerCost / (1.117f * spellInfo->spellLevel / caster->getLevel() - 0.1327f));
+    if (!caster->IsControlledByPlayer() && spellInfo->Attributes & SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION)
+    {
+        GtNPCManaCostScalerEntry const* spellScaler = sGtNPCManaCostScalerStore.LookupEntry(spellInfo->spellLevel - 1);
+        GtNPCManaCostScalerEntry const* casterScaler = sGtNPCManaCostScalerStore.LookupEntry(caster->getLevel() - 1);
+        if (spellScaler && casterScaler)
+            powerCost *= casterScaler->ratio / spellScaler->ratio;
+    }
 
     // PCT mod from user auras by school
     powerCost = int32(powerCost * (1.0f + caster->GetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER + school)));
@@ -568,6 +573,7 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
         case SPELLFAMILY_GENERIC:
             switch (spellproto->Id)
             {
+                case 6716:                                          // Test of Faith
                 case 23333:                                         // Warsong Flag
                 case 23335:                                         // Silverwing Flag
                 case 34976:                                         // Netherstorm Flag
@@ -596,6 +602,10 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
             break;
         case SPELLFAMILY_MAGE:
         {
+            // Amplify Magic, Dampen Magic
+            if (spellproto->SpellFamilyFlags == 0x00002000)
+                return true;
+
             switch (spellproto->Id)
             {
                 case 31579:                                         // Arcane Empowerment Rank1 talent aura with one positive and one negative (check not needed in wotlk)
@@ -762,18 +772,10 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
 
 bool IsPositiveSpell(uint32 spellId)
 {
-    SpellEntry const* spellproto = sSpellStore.LookupEntry(spellId);
-    if (!spellproto)
-        return false;
-
-    // talents
-    if (IsPassiveSpell(spellId) && GetTalentSpellCost(spellId))
-        return true;
-
     // spells with at least one negative effect are considered negative
     // some self-applied spells have negative effects but in self casting case negative check ignored.
-    for (int i = 0; i < MAX_SPELL_EFFECTS; i++)
-        if (!IsPositiveEffect(spellId, i) && !IsSelfCastEffect(spellproto, i))
+    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+        if (!IsPositiveEffect(spellId, i))
             return false;
     return true;
 }
@@ -1507,10 +1509,27 @@ bool SpellMgr::IsRankSpellDueToSpell(SpellEntry const* spellInfo_1, uint32 spell
     return GetFirstSpellInChain(spellInfo_1->Id) == GetFirstSpellInChain(spellId_2);
 }
 
+/**
+ * Checks whether spell should stack in spellbook with its ranks.
+ * If spell can stack it means that all its ranks will be shown in the spellbook.
+ * @param spellinfo Pointer to the spell entry
+ * @returns true if spell ranks stack, false otherwise
+ */
 bool SpellMgr::canStackSpellRanks(SpellEntry const* spellInfo)
 {
     if (spellInfo->powerType != POWER_MANA && spellInfo->powerType != POWER_HEALTH)
+    {
+        // These spells do not cost energy/rage/focus and their cost does not
+        // change between ranks so we will allow only the highest rank in spellbook
+
+        // One exception - Faerie Fire (feral) need to stack in order to properly show
+        // up in talent tree otherwise on higher rank it will be seen as not used
+        if (spellInfo->SpellFamilyName == SPELLFAMILY_DRUID && spellInfo->SpellFamilyFlags & 0x400)
+            return true;
+
         return false;
+    }
+
     if (IsProfessionSpell(spellInfo->Id))
         return false;
 
@@ -1535,6 +1554,13 @@ bool SpellMgr::canStackSpellRanks(SpellEntry const* spellInfo)
     return true;
 }
 
+/**
+* @name IsNoStackSpellDueToSpell
+* @brief Determines whether a spell can stack, based on parameters of another spell
+* @param spellId_1 Spell to compare
+* @param spellId_2 Spell we are comparing to
+* @param sameCaster Are these spells casted by the same entity?
+*/
 bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool sameCaster) const
 {
     SpellEntry const* spellInfo_1 = sSpellStore.LookupEntry(spellId_1);
@@ -1587,13 +1613,11 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
     SpellSpecific spellSpec = GetSpellSpecific(spellId_1);
     switch (spellSpec)
     {
-        case SPELL_SPECIFIC_SEAL:
-        case SPELL_SPECIFIC_AURA:
         case SPELL_SPECIFIC_STING:
         case SPELL_SPECIFIC_CURSE:
         case SPELL_SPECIFIC_ASPECT:
-        case SPELL_SPECIFIC_JUDGEMENT:
         case SPELL_SPECIFIC_WARLOCK_CORRUPTION:
+        case SPELL_SPECIFIC_JUDGEMENT:
             return sameCaster == (spellSpec == GetSpellSpecific(spellId_2));
         default:
             break;
@@ -2024,6 +2048,7 @@ void SpellMgr::LoadSpellChains()
             mSpellChains[spell_id].last = RankedSpells.back();
 
             itr2++;
+
             if (spell_rank < 2)
                 mSpellChains[spell_id].prev = 0;
 
@@ -2295,6 +2320,9 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->speed = SPEED_CHARGE;
                 mSpellCustomAttr[i] |= SPELL_ATTR_CU_CHARGE;
                 break;
+            case SPELL_EFFECT_PICKPOCKET:
+                mSpellCustomAttr[i] |= SPELL_ATTR_CU_PICKPOCKET;
+                break;
             case SPELL_EFFECT_TRIGGER_SPELL:
                 if (IsPositionTarget(spellInfo->EffectImplicitTargetA[j]) ||
                     spellInfo->Targets & (TARGET_FLAG_SOURCE_LOCATION | TARGET_FLAG_DEST_LOCATION))
@@ -2418,8 +2446,8 @@ void SpellMgr::LoadSpellCustomAttr()
         case 38310: // Multi-Shot
             spellInfo->MaxAffectedTargets = 4;
             break;
-		case 32205: // Place Burning Blade Pyre
-		    spellInfo->AttributesEx2 |= SPELL_ATTR2_IGNORE_LOS;
+        case 32205: // Place Burning Blade Pyre
+            spellInfo->AttributesEx2 |= SPELL_ATTR2_IGNORE_LOS;
             break;
         case 42005: // Bloodboil
         case 38296: // Spitfire Totem
@@ -2533,10 +2561,10 @@ void SpellMgr::LoadSpellCustomAttr()
         case 31830: // Blessed Life (Rank 3)
             spellInfo->EffectApplyAuraName[0] = SPELL_AURA_REUSED_BLESSED_LIFE;
             break;
-		case 39095: // Amplify Damage (Prince Malchaazar)
-			spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_TARGET_ENEMY;
-			spellInfo->EffectImplicitTargetB[0] = 0;
-			break;
+        case 39095: // Amplify Damage (Prince Malchaazar)
+            spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_TARGET_ENEMY;
+            spellInfo->EffectImplicitTargetB[0] = 0;
+            break;
         case 42389: // Nalorakk's Mangle
             spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
             spellInfo->EffectImplicitTargetB[1] = 0;
@@ -2610,8 +2638,19 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->AttributesEx3 |= SPELL_ATTR3_CANT_MISS;
             spellInfo->MaxAffectedTargets = 1;
             break;
-        case 45399:
+        case 45399: // Demonic Vapor Trail Periodic
             spellInfo->rangeIndex = 2;
+            break;
+        case 28730: // Arcane Torrent (mana)
+            spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_CASTER;
+            break;
+        case 25046: // Arcane Torrent (energy)
+            spellInfo->Effect[1] = SPELL_EFFECT_DUMMY;
+            spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_CASTER;
+            break;
+        case 23505: // Berserking
+        case 23451: // Speed
+            spellInfo->Attributes |= SPELL_ATTR0_NEGATIVE_1;
             break;
         default:
             break;
@@ -2690,7 +2729,6 @@ void SpellMgr::LoadSpellCustomCooldowns()
         sLog.outString(">> Loaded %u custom spell cooldowns", count);
         return;
     }
-
 
     do
     {
@@ -2865,9 +2903,22 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
     if (spellInfo->AreaId && spellInfo->AreaId != zone_id && spellInfo->AreaId != area_id)
         return false;
 
-    // elixirs (all area dependent elixirs have family SPELLFAMILY_POTION, use this for speedup)
-    if (spellInfo->SpellFamilyName == SPELLFAMILY_POTION)
-        return true;
+    // continent limitation (virtual continent)
+    if (spellInfo->HasAttribute(SPELL_ATTR4_CAST_ONLY_IN_OUTLAND))
+    {
+        uint32 v_map = GetVirtualMapForMapAndZone(map_id, zone_id);
+        MapEntry const* mapEntry = sMapStore.LookupEntry(v_map);
+        if (!mapEntry || mapEntry->addon < 1 || !mapEntry->IsContinent())
+            return SPELL_FAILED_REQUIRES_AREA;
+    }
+
+    // raid instance limitation
+    if (spellInfo->HasAttribute(SPELL_ATTR6_NOT_IN_RAID_INSTANCE))
+    {
+        MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
+        if (!mapEntry || mapEntry->IsRaid())
+            return SPELL_FAILED_REQUIRES_AREA;
+    }
 
     // special cases zone check (maps checked by multimap common id)
     switch (spellInfo->Id)

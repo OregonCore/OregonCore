@@ -506,7 +506,7 @@ public:
         setPointer(strongPtr.pointer());
     }
 
-    ~WeakReferenceCountedPointer() {
+    ~WeakReferenceCountedPointer() override {
         zeroPointer();
     }
 
@@ -556,7 +556,7 @@ public:
 protected:
 
     /** Invoked by the destructor on ReferenceCountedPointer. */
-    void objectCollected() {
+    void objectCollected() override {
         debugAssertM(pointer != NULL,
                      "Removed a weak pointer twice.");
         pointer = NULL;

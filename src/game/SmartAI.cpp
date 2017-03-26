@@ -42,7 +42,7 @@ SmartAI::SmartAI(Creature* c) : CreatureAI(c)
     me->SetWalk(false);
     mRun = false;
 
-    me->GetPosition(&mLastOOCPos);
+    mLastOOCPos = me->GetPosition();
 
     mCanAutoAttack = true;
     mCanCombatMove = true;
@@ -127,7 +127,7 @@ void SmartAI::StartPath(bool run, uint32 path, bool repeat, Unit* /*invoker*/)
 
     if (WayPoint* wp = GetNextWayPoint())
     {
-        me->GetPosition(&mLastOOCPos);
+        mLastOOCPos = me->GetPosition();
         me->GetMotionMaster()->MovePoint(wp->id, wp->x, wp->y, wp->z);
         GetScript()->ProcessEventsFor(SMART_EVENT_WAYPOINT_START, NULL, wp->id, GetScript()->GetPathId());
     }
@@ -157,7 +157,7 @@ void SmartAI::PausePath(uint32 delay, bool forced)
         return;
     }
     mForcedPaused = forced;
-    me->GetPosition(&mLastOOCPos);
+    mLastOOCPos = me->GetPosition();
     AddEscortState(SMART_ESCORT_PAUSED);
     mWPPauseTimer = delay;
     if (forced)
@@ -179,7 +179,7 @@ void SmartAI::StopPath(uint32 DespawnTime, uint32 quest, bool fail)
     SetDespawnTime(DespawnTime);
     //mDespawnTime = DespawnTime;
 
-    me->GetPosition(&mLastOOCPos);
+    mLastOOCPos = me->GetPosition();
     me->StopMoving();//force stop
     me->GetMotionMaster()->MoveIdle();
     GetScript()->ProcessEventsFor(SMART_EVENT_WAYPOINT_STOPPED, NULL, mLastWP->id, GetScript()->GetPathId());
@@ -217,7 +217,9 @@ void SmartAI::EndPath(bool fail)
             {
                 for (GroupReference* groupRef = group->GetFirstMember(); groupRef != NULL; groupRef = groupRef->next())
                 {
-                    Player* groupGuy = groupRef->getSource();
+                    Player* groupGuy = groupRef->GetSource();
+                    if (!groupGuy->IsInMap(player))
+                        continue;
 
                     if (!fail && groupGuy->IsAtGroupRewardDistance(me) && !groupGuy->GetCorpse())
                         groupGuy->AreaExploredOrEventHappens(mEscortQuestID);
@@ -366,9 +368,9 @@ bool SmartAI::IsEscortInvokerInRange()
             {
                 for (GroupReference* groupRef = group->GetFirstMember(); groupRef != NULL; groupRef = groupRef->next())
                 {
-                    Player* groupGuy = groupRef->getSource();
+                    Player* groupGuy = groupRef->GetSource();
 
-                    if (me->GetDistance(groupGuy) <= SMART_ESCORT_MAX_PLAYER_DIST)
+                    if (groupGuy->IsInMap(player) && me->GetDistance(groupGuy) <= SMART_ESCORT_MAX_PLAYER_DIST)
                         return true;
                 }
             }
@@ -465,15 +467,14 @@ bool SmartAI::CanAIAttack(const Unit* /*who*/) const
 
 bool SmartAI::AssistPlayerInCombat(Unit* who)
 {
-    if (!who || !who->getVictim())
+    if (!who || !who->GetVictim())
         return false;
 
-    //experimental (unknown) flag not present
-    if (!(me->GetCreatureTemplate()->type_flags & 0x001000/*CREATURE_TYPEFLAGS_AID_PLAYERS*/))
+    if (!(me->GetCreatureTemplate()->type_flags & CREATURE_TYPE_FLAG_CAN_ASSIST))
         return false;
 
     //not a player
-    if (!who->getVictim()->GetCharmerOrOwnerPlayerOrPlayerItself())
+    if (!who->GetVictim()->GetCharmerOrOwnerPlayerOrPlayerItself())
         return false;
 
     //never attack friendly
@@ -484,7 +485,7 @@ bool SmartAI::AssistPlayerInCombat(Unit* who)
     if (me->IsWithinDistInMap(who, SMART_MAX_AID_DIST) && me->IsWithinLOSInMap(who))
     {
         //already fighting someone?
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             AttackStart(who);
             return true;
@@ -546,7 +547,7 @@ void SmartAI::EnterCombat(Unit* enemy)
 {
     me->InterruptNonMeleeSpells(false); // must be before ProcessEvents
     GetScript()->ProcessEventsFor(SMART_EVENT_AGGRO, enemy);
-    me->GetPosition(&mLastOOCPos);
+    mLastOOCPos = me->GetPosition();
     SetRun(mRun);
     if (me->GetMotionMaster()->GetMotionSlotType(MOTION_SLOT_ACTIVE) == POINT_MOTION_TYPE)
         me->GetMotionMaster()->MovementExpired();
@@ -727,12 +728,12 @@ void SmartAI::SetCombatMove(bool on)
     mCanCombatMove = on;
     if (!HasEscortState(SMART_ESCORT_ESCORTING))
     {
-        if (on && me->getVictim())
+        if (on && me->GetVictim())
         {
             if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE)
             {
                 SetRun(mRun);
-                me->GetMotionMaster()->MoveChase(me->getVictim());
+                me->GetMotionMaster()->MoveChase(me->GetVictim());
                 me->CastStop();
             }
         }

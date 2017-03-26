@@ -79,7 +79,7 @@ struct boss_archaedasAI : public ScriptedAI
             pInstance->SetData (DATA_MINIONS, NOT_STARTED);    // respawn any dead minions
         me->setFaction(35);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		me->SetRooted(true);
 
     }
 
@@ -96,9 +96,9 @@ struct boss_archaedasAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        me->setFaction (14);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->setFaction(14);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+		me->SetRooted(false);
     }
 
     void SpellHit (Unit* /*caster*/, const SpellEntry* spell)
@@ -150,7 +150,7 @@ struct boss_archaedasAI : public ScriptedAI
         else WallMinionTimer -= diff;
 
         //If we are <66 summon the guardians
-        if (!guardiansAwake && me->GetHealth() * 100 / me->GetMaxHealth() <= 66)
+        if (!guardiansAwake && HealthBelowPct(66))
         {
             ActivateMinion(pInstance->GetData64(5), true);  // EarthenGuardian1
             ActivateMinion(pInstance->GetData64(6), true);  // EarthenGuardian2
@@ -164,7 +164,7 @@ struct boss_archaedasAI : public ScriptedAI
         }
 
         //If we are <33 summon the vault walkers
-        if (!vaultWalkersAwake && me->GetHealth() * 100 / me->GetMaxHealth() <= 33)
+        if (!vaultWalkersAwake && HealthBelowPct(33))
         {
             ActivateMinion(pInstance->GetData64(1), true);   // VaultWalker1
             ActivateMinion(pInstance->GetData64(2), true);   // VaultWalker2
@@ -237,16 +237,16 @@ struct mob_archaedas_minionsAI : public ScriptedAI
 
         me->setFaction(35);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		me->SetRooted(true);
         me->RemoveAllAuras();
     }
 
     void EnterCombat(Unit* /*who*/)
     {
-        me->setFaction (14);
+        me->setFaction(14);
         me->RemoveAllAuras();
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+		me->SetRooted(false);
         amIAwake = true;
     }
 
@@ -380,15 +380,15 @@ struct mob_stonekeepersAI : public ScriptedAI
     {
         me->setFaction(35);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+		me->SetRooted(true);
         me->RemoveAllAuras();
     }
 
     void EnterCombat(Unit* /*who*/)
     {
-        me->setFaction (14);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->setFaction(14);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+		me->SetRooted(false);
     }
 
     void UpdateAI(const uint32 /*diff*/)

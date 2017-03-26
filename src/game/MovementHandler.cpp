@@ -72,14 +72,14 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     if (GetPlayer()->IsInWorld())
     {
         sLog.outError("Crash alert! Player is still in world when teleported from map %u! to new map %u", oldMap->GetId(), loc.GetMapId());
-        oldMap->RemoveFromMap(GetPlayer(), false);
+        oldMap->RemovePlayerFromMap(GetPlayer(), false);
     }
 
     // relocate the player to the teleport destination
     Map* newMap = MapManager::Instance().CreateMap(loc.GetMapId(), GetPlayer(), 0);
-    // the CanEnter checks are done in TeleporTo but conditions may change
+    // the CannotEnter checks are done in TeleporTo but conditions may change
     // while the player is in transit, for example the map may get full
-    if (!newMap || !newMap->CanEnter(GetPlayer()))
+    if (!newMap || newMap->CannotEnter(GetPlayer()))
     {
         sLog.outError("Map %d could not be created for player %d, porting player to homebind", loc.GetMapId(), GetPlayer()->GetGUIDLow());
         GetPlayer()->TeleportToHomebind();
@@ -91,11 +91,11 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     GetPlayer()->ResetMap();
     GetPlayer()->SetMap(newMap);
 
-    // check this before Map::AddToMap(player), because that will create the instance save!
+    // check this before Map::AddPlayerToMap(player), because that will create the instance save!
     bool reset_notify = (GetPlayer()->GetBoundInstance(GetPlayer()->GetMapId(), GetPlayer()->GetDifficulty()) == NULL);
 
     GetPlayer()->SendInitialPacketsBeforeAddToMap();
-    if (!GetPlayer()->GetMap()->AddToMap(GetPlayer()))
+    if (!GetPlayer()->GetMap()->AddPlayerToMap(GetPlayer()))
     {
         sLog.outError("WORLD: failed to teleport player %s (%d) to map %d because of unknown reason!", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), loc.GetMapId());
         GetPlayer()->ResetMap();
@@ -158,6 +158,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     {
         if (reset_notify)
         {
+            // check if this instance has a reset time and send it to player if so
             if (uint32 timeReset = sInstanceSaveMgr.GetResetTimeFor(mEntry->MapID))
             {
                 uint32 timeleft = timeReset - time(NULL);
@@ -165,6 +166,12 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
             }
         }
+
+        // check if instance is valid
+        if (!GetPlayer()->CheckInstanceValidity(false))
+            GetPlayer()->m_InstanceValid = false;
+
+        // instance mounting is handled in InstanceTemplate
         allowMount = mInstance->allowMount;
     }
 
@@ -175,6 +182,10 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     // honorless target
     if (GetPlayer()->pvpInfo.inHostileArea)
         GetPlayer()->CastSpell(GetPlayer(), 2479, true);
+
+    // allow waterwalking for ghost players at map change
+    if (GetPlayer()->GetCorpse())
+        GetPlayer()->SetWaterWalking(true);
 
     // resummon pet
     if (GetPlayer()->m_temporaryUnsummonedPetNumber)
@@ -458,7 +469,7 @@ void WorldSession::HandleMoveNotActiveMoverOpcode(WorldPacket& recv_data)
     uint64 old_mover_guid;
     MovementInfo mi;
 
-    old_mover_guid = recv_data.readPackGUID();
+    recv_data >> old_mover_guid;
     recv_data >> mi;
 
     if (!old_mover_guid)
@@ -500,7 +511,7 @@ void WorldSession::HandleMoveKnockBackAck(WorldPacket& recv_data)
     mstime = getMSTime();
     if(m_clientTimeDelay == 0)
         m_clientTimeDelay = mstime - movementInfo.time;
-    move_time = (movementInfo.time - (mstime - m_clientTimeDelay)) + mstime + 500;
+    move_time = (movementInfo.time - (mstime - m_clientTimeDelay)) + mstime;
     movementInfo.time = move_time;
 
     // Save movement flags

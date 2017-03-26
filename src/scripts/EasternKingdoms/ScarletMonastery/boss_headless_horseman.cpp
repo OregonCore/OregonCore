@@ -28,15 +28,15 @@ EndScriptData */
 #include "scarlet_monastery.h"
 
 //this texts are already used by 3975 and 3976
-#define SAY_ENTRANCE                -1189001
-#define SAY_REJOINED                -1189002
-#define SAY_LOST_HEAD               -1189003
-#define SAY_CONFLAGRATION           -1189004
-#define SAY_SPROUTING_PUMPKINS      -1189005
-#define SAY_PLAYER_DEATH            -1189006
-#define SAY_DEATH                   -1189007
+#define SAY_ENTRANCE                -1123682
+#define SAY_REJOINED                -1123688
+#define SAY_LOST_HEAD               -1123687
+#define SAY_CONFLAGRATION           -1123686
+#define SAY_SPROUTING_PUMPKINS      -1123684
+#define SAY_PLAYER_DEATH            -1123683
+#define SAY_DEATH                   -1123685
 
-uint32 RandomLaugh[] = {11965, 11975, 11976};
+uint32 RandomLaugh[] = { 11965, 11975, 11976 };
 
 // Entryes
 #define HH_MOUNTED                  23682
@@ -89,33 +89,33 @@ struct Locations
 
 static Locations FlightPoint[] =
 {
-    {1754.00, 1346.00, 17.50},
-    {1765.00, 1347.00, 19.00},
-    {1784.00, 1346.80, 25.40},
-    {1803.30, 1347.60, 33.00},
-    {1824.00, 1350.00, 42.60},
-    {1838.80, 1353.20, 49.80},
-    {1852.00, 1357.60, 55.70},
-    {1861.30, 1364.00, 59.40},
-    {1866.30, 1374.80, 61.70},
-    {1864.00, 1387.30, 63.20},
-    {1854.80, 1399.40, 64.10},
-    {1844.00, 1406.90, 64.10},
-    {1824.30, 1411.40, 63.30},
-    {1801.00, 1412.30, 60.40},
-    {1782.00, 1410.10, 55.50},
-    {1770.50, 1405.20, 50.30},
-    {1765.20, 1400.70, 46.60},
-    {1761.40, 1393.40, 41.70},
-    {1759.10, 1386.70, 36.60},
-    {1757.80, 1378.20, 29.00},
-    {1758.00, 1367.00, 19.51}
+    { 1754.00f, 1346.00f, 17.50f },
+    { 1765.00f, 1347.00f, 19.00f },
+    { 1784.00f, 1346.80f, 25.40f },
+    { 1803.30f, 1347.60f, 33.00f },
+    { 1824.00f, 1350.00f, 42.60f },
+    { 1838.80f, 1353.20f, 49.80f },
+    { 1852.00f, 1357.60f, 55.70f },
+    { 1861.30f, 1364.00f, 59.40f },
+    { 1866.30f, 1374.80f, 61.70f },
+    { 1864.00f, 1387.30f, 63.20f },
+    { 1854.80f, 1399.40f, 64.10f },
+    { 1844.00f, 1406.90f, 64.10f },
+    { 1824.30f, 1411.40f, 63.30f },
+    { 1801.00f, 1412.30f, 60.40f },
+    { 1782.00f, 1410.10f, 55.50f },
+    { 1770.50f, 1405.20f, 50.30f },
+    { 1765.20f, 1400.70f, 46.60f },
+    { 1761.40f, 1393.40f, 41.70f },
+    { 1759.10f, 1386.70f, 36.60f },
+    { 1757.80f, 1378.20f, 29.00f },
+    { 1758.00f, 1367.00f, 19.51f }
 };
 
 static Locations Spawn[] =
 {
-    {1776.27, 1348.74, 19.20},      //spawn point for pumpkin shrine mob
-    {1765.28, 1347.46, 17.55}   //spawn point for smoke
+    { 1776.27f, 1348.74f, 19.20f },   //spawn point for pumpkin shrine mob
+    { 1765.28f, 1347.46f, 17.55f }    //spawn point for smoke
 };
 
 static const char* Text[] =
@@ -130,17 +130,17 @@ static const char* Text[] =
 
 struct mob_wisp_invisAI : public ScriptedAI
 {
-    mob_wisp_invisAI(Creature* c) : ScriptedAI(c)
-    {
-        Creaturetype = delay = spell = spell2 = 0;
-        //that's hack but there are no info about range of this spells in dbc
-        SpellEntry* wisp = GET_SPELL(SPELL_WISP_BLUE);
-        if (wisp)
-            wisp->rangeIndex = 6; //100 yards
-        SpellEntry* port = GET_SPELL(SPELL_WISP_FLIGHT_PORT);
-        if (port)
-            port->rangeIndex = 6;
-    }
+mob_wisp_invisAI(Creature* c) : ScriptedAI(c)
+{
+    Creaturetype = delay = spell = spell2 = 0;
+    //that's hack but there are no info about range of this spells in dbc
+    SpellEntry* wisp = GET_SPELL(SPELL_WISP_BLUE);
+    if (wisp)
+        wisp->rangeIndex = 6; //100 yards
+    SpellEntry* port = GET_SPELL(SPELL_WISP_FLIGHT_PORT);
+    if (port)
+        port->rangeIndex = 6;
+}
 
     uint32 Creaturetype;
     uint32 delay;
@@ -184,7 +184,7 @@ struct mob_wisp_invisAI : public ScriptedAI
         if (!who || Creaturetype != 1 || !who->isTargetableForAttack())
             return;
 
-        if (me->IsWithinDist(who, 0.1, false) && !who->HasAura(SPELL_SQUASH_SOUL, 0))
+        if (me->IsWithinDist(who, 0.1f, false) && !who->HasAura(SPELL_SQUASH_SOUL, 0))
             DoCast(who, SPELL_SQUASH_SOUL);
     }
 
@@ -287,7 +287,7 @@ struct mob_headAI : public ScriptedAI
             DoCast(me, SPELL_HEAD, false);
             SaySound(SAY_LOST_HEAD);
             me->GetMotionMaster()->Clear(false);
-            me->GetMotionMaster()->MoveFleeing(caster->getVictim());
+            me->GetMotionMaster()->MoveFleeing(caster->GetVictim());
         }
     }
     void Disappear();//we must set returned=true(this will prevent from "body calls head" while head flying to body), see function below
@@ -298,9 +298,9 @@ struct mob_headAI : public ScriptedAI
             if (wait <= diff)
             {
                 wait = 1000;
-                if (!me->getVictim()) return;
+                if (!me->GetVictim()) return;
                 me->GetMotionMaster()->Clear(false);
-                me->GetMotionMaster()->MoveFleeing(me->getVictim());
+                me->GetMotionMaster()->MoveFleeing(me->GetVictim());
             }
             else wait -= diff;
 
@@ -346,14 +346,14 @@ struct boss_headless_horsemanAI : public ScriptedAI
             confl->DmgMultiplier[0] = 1;
         }
         /*
-                if (SpellEntry *confl = GET_SPELL(SPELL_CONFLAGRATION))
-                    confl->EffectTriggerSpell[1] = 22587;
+        if (SpellEntry *confl = GET_SPELL(SPELL_CONFLAGRATION))
+        confl->EffectTriggerSpell[1] = 22587;
 
-                if (SpellEntry *speed = GET_SPELL(22587))
-                {
-                    speed->Effect[1] = SPELL_EFFECT_APPLY_AURA;
-                    speed->EffectApplyAuraName[1] = SPELL_AURA_MOD_CONFUSE;
-                }
+        if (SpellEntry *speed = GET_SPELL(22587))
+        {
+        speed->Effect[1] = SPELL_EFFECT_APPLY_AURA;
+        speed->EffectApplyAuraName[1] = SPELL_AURA_MOD_CONFUSE;
+        }
         */
         pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
@@ -415,7 +415,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
     {
         me->SetVisible(false);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->SetLevitate(true);
+        me->SetCanFly(true);
         me->SetSpeed(MOVE_WALK, 5.0f, true);
         wp_reached = false;
         count = 0;
@@ -437,30 +437,30 @@ struct boss_headless_horsemanAI : public ScriptedAI
             me->SetVisible(true);
             break;
         case 1:
-            {
-                if (Creature* smoke = me->SummonCreature(HELPER, Spawn[1].x, Spawn[1].y, Spawn[1].z, 0, TEMPSUMMON_TIMED_DESPAWN, 20000))
-                    CAST_AI(mob_wisp_invisAI, smoke->AI())->SetType(3);
-                DoCast(me, SPELL_RHYME_BIG);
-                break;
-            }
+        {
+            if (Creature* smoke = me->SummonCreature(HELPER, Spawn[1].x, Spawn[1].y, Spawn[1].z, 0, TEMPSUMMON_TIMED_DESPAWN, 20000))
+                CAST_AI(mob_wisp_invisAI, smoke->AI())->SetType(3);
+            DoCast(me, SPELL_RHYME_BIG);
+            break;
+        }
         case 6:
             if (pInstance)
                 pInstance->SetData(GAMEOBJECT_PUMPKIN_SHRINE, 0);   //hide gameobject
             break;
         case 19:
-            me->SetLevitate(false);
+            me->SetCanFly(false);
             break;
         case 20:
-            {
-                Phase = 1;
-                IsFlying = false;
-                wp_reached = false;
-                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                SaySound(SAY_ENTRANCE);
-                if (Unit* plr = Unit::GetUnit((*me), PlayerGUID))
-                    DoStartMovement(plr);
-                break;
-            }
+        {
+            Phase = 1;
+            IsFlying = false;
+            wp_reached = false;
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            SaySound(SAY_ENTRANCE);
+            if (Unit* plr = Unit::GetUnit((*me), PlayerGUID))
+                DoStartMovement(plr);
+            break;
+        }
         }
         ++id;
     }
@@ -511,9 +511,9 @@ struct boss_headless_horsemanAI : public ScriptedAI
         std::list<Player*>::const_iterator j;
 
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-            if ((me->IsWithinLOSInMap(i->getSource()) || !checkLoS) && me->getVictim() != i->getSource() &&
-                me->IsWithinDistInMap(i->getSource(), range) && i->getSource()->IsAlive())
-                temp.push_back(i->getSource());
+            if ((me->IsWithinLOSInMap(i->GetSource()) || !checkLoS) && me->GetVictim() != i->GetSource() &&
+                me->IsWithinDistInMap(i->GetSource(), range) && i->GetSource()->IsAlive())
+                temp.push_back(i->GetSource());
 
         if (temp.size())
         {
@@ -609,46 +609,46 @@ struct boss_headless_horsemanAI : public ScriptedAI
             switch (Phase)
             {
             case 0:
+            {
+                if (!IsFlying)
                 {
-                    if (!IsFlying)
+                    if (say_timer <= diff)
                     {
-                        if (say_timer <= diff)
+                        say_timer = 3000;
+                        Player* plr = SelectRandomPlayer(100.0f, false);
+                        if (count < 3)
                         {
-                            say_timer = 3000;
-                            Player* plr = SelectRandomPlayer(100.0f, false);
-                            if (count < 3)
-                            {
-                                if (plr)
-                                    plr->Say(Text[count], 0);
-                            }
-                            else
-                            {
-                                DoCast(me, SPELL_RHYME_BIG);
-                                if (plr)
-                                {
-                                    plr->Say(Text[count], 0);
-                                    plr->HandleEmoteCommand(ANIM_EMOTE_SHOUT);
-                                }
-                                wp_reached = true;
-                                IsFlying = true;
-                                count = 0;
-                                break;
-                            }
-                            ++count;
+                            if (plr)
+                                plr->Say(Text[count], 0);
                         }
-                        else say_timer -= diff;
+                        else
+                        {
+                            DoCast(me, SPELL_RHYME_BIG);
+                            if (plr)
+                            {
+                                plr->Say(Text[count], 0);
+                                plr->HandleEmoteCommand(ANIM_EMOTE_SHOUT);
+                            }
+                            wp_reached = true;
+                            IsFlying = true;
+                            count = 0;
+                            break;
+                        }
+                        ++count;
                     }
-                    else
+                    else say_timer -= diff;
+                }
+                else
+                {
+                    if (wp_reached)
                     {
-                        if (wp_reached)
-                        {
-                            wp_reached = false;
-                            me->GetMotionMaster()->Clear(false);
-                            me->GetMotionMaster()->MovePoint(id, FlightPoint[id].x, FlightPoint[id].y, FlightPoint[id].z);
-                        }
+                        wp_reached = false;
+                        me->GetMotionMaster()->Clear(false);
+                        me->GetMotionMaster()->MovePoint(id, FlightPoint[id].x, FlightPoint[id].y, FlightPoint[id].z);
                     }
                 }
-                break;
+            }
+            break;
             case 1:
                 if (burned)
                     break;
@@ -694,7 +694,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
                 DoMeleeAttackIfReady();
                 if (cleave <= diff)
                 {
-                    DoCastVictim( SPELL_CLEAVE);
+                    DoCastVictim(SPELL_CLEAVE);
                     cleave = urand(2000, 6000);      //1 cleave per 2.0-6.0sec
                 }
                 else cleave -= diff;
@@ -799,7 +799,7 @@ struct mob_pulsing_pumpkinAI : public ScriptedAI
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
             DoCast(me, SPELL_SPROUT_BODY, true);
             me->UpdateEntry(PUMPKIN_FIEND);
-            DoStartMovement(me->getVictim());
+            DoStartMovement(me->GetVictim());
         }
     }
 
@@ -819,7 +819,7 @@ struct mob_pulsing_pumpkinAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!who || !who->isTargetableForAttack() || !me->IsHostileTo(who) || me->getVictim())
+        if (!who || !who->isTargetableForAttack() || !me->IsHostileTo(who) || me->GetVictim())
             return;
 
         me->AddThreat(who, 0.0f);
@@ -844,12 +844,12 @@ bool GOHello_go_loosely_turned_soil(Player* pPlayer, GameObject* soil)
         pInstance->SetData(DATA_HORSEMAN_EVENT, IN_PROGRESS);
     }
     /* if (soil->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER && plr->getLevel() > 64)
-        {
-            plr->PrepareQuestMenu(soil->GetGUID());
-            plr->SendPreparedQuest(soil->GetGUID());
-        }
-        if (plr->GetQuestStatus(11405) == QUEST_STATUS_INCOMPLETE && plr->getLevel() > 64)
-        { */
+    {
+    plr->PrepareQuestMenu(soil->GetGUID());
+    plr->SendPreparedQuest(soil->GetGUID());
+    }
+    if (plr->GetQuestStatus(11405) == QUEST_STATUS_INCOMPLETE && plr->getLevel() > 64)
+    { */
     pPlayer->AreaExploredOrEventHappens(11405);
     if (Creature* horseman = soil->SummonCreature(HH_MOUNTED, FlightPoint[20].x, FlightPoint[20].y, FlightPoint[20].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 0))
     {
@@ -862,22 +862,22 @@ bool GOHello_go_loosely_turned_soil(Player* pPlayer, GameObject* soil)
 
 CreatureAI* GetAI_mob_head(Creature* pCreature)
 {
-    return new mob_headAI (pCreature);
+    return new mob_headAI(pCreature);
 }
 
 CreatureAI* GetAI_boss_headless_horseman(Creature* pCreature)
 {
-    return new boss_headless_horsemanAI (pCreature);
+    return new boss_headless_horsemanAI(pCreature);
 }
 
 CreatureAI* GetAI_mob_pulsing_pumpkin(Creature* pCreature)
 {
-    return new mob_pulsing_pumpkinAI (pCreature);
+    return new mob_pulsing_pumpkinAI(pCreature);
 }
 
 CreatureAI* GetAI_mob_wisp_invis(Creature* pCreature)
 {
-    return new mob_wisp_invisAI (pCreature);
+    return new mob_wisp_invisAI(pCreature);
 }
 
 void AddSC_boss_headless_horseman()
@@ -909,4 +909,3 @@ void AddSC_boss_headless_horseman()
     newscript->pGOHello = &GOHello_go_loosely_turned_soil;
     newscript->RegisterSelf();
 }
-

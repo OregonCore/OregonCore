@@ -21,6 +21,7 @@
 // For static or at-server-startup loaded spell data
 // For more high level function for sSpellStore data
 
+#include <ace/Singleton.h>
 #include "SharedDefines.h"
 #include "DBCStructure.h"
 #include "DBCStores.h"
@@ -225,6 +226,55 @@ inline bool IsElementalShield(SpellEntry const* spellInfo)
     return (spellInfo->SpellFamilyFlags & 0x42000000400LL) || spellInfo->Id == 23552;
 }
 
+inline bool IsSpellEffectTriggerSpell(const SpellEntry* entry, SpellEffIndex eff_idx)
+{
+    if (!entry)
+        return false;
+
+    switch (entry->Effect[eff_idx])
+    {
+        case SPELL_EFFECT_TRIGGER_MISSILE:
+        case SPELL_EFFECT_TRIGGER_SPELL:
+        case SPELL_EFFECT_TRIGGER_SPELL_WITH_VALUE:
+        case SPELL_EFFECT_TRIGGER_SPELL_2:
+            return true;
+    }
+    return false;
+}
+
+inline bool IsSpellEffectAbleToCrit(const SpellEntry* entry, SpellEffIndex index)
+{
+    if (!entry || entry->HasAttribute(SPELL_ATTR2_CANT_CRIT))
+        return false;
+
+    switch (entry->Effect[index])
+    {
+        case SPELL_EFFECT_SCHOOL_DAMAGE:
+        case SPELL_EFFECT_HEAL:
+        case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
+        case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
+        case SPELL_EFFECT_WEAPON_DAMAGE:
+        case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
+            return true;
+        case SPELL_EFFECT_ENERGIZE: // Mana Potion and similar spells, Lay on hands
+            return (entry->SpellFamilyName && entry->DmgClass);
+    }
+    return false;
+}
+
+inline bool IsSpellAbleToCrit(const SpellEntry* entry)
+{
+    if (!entry || entry->HasAttribute(SPELL_ATTR2_CANT_CRIT))
+        return false;
+
+    for (uint32 i = EFFECT_0; i < MAX_SPELL_EFFECTS; ++i)
+    {
+        if (entry->Effect[i] && IsSpellEffectAbleToCrit(entry, SpellEffIndex(i)))
+            return true;
+    }
+    return false;
+}
+
 inline bool IsSpellRemoveAllMovementAndControlLossEffects(SpellEntry const* spellProto)
 {
     return spellProto->EffectApplyAuraName[EFFECT_0] == SPELL_AURA_MECHANIC_IMMUNITY &&
@@ -271,23 +321,80 @@ bool IsPositiveSpell(uint32 spellId);
 bool IsPositiveEffect(uint32 spellId, uint32 effIndex);
 bool IsPositiveTarget(uint32 targetA, uint32 targetB);
 
-inline bool IsSelfCastEffect(SpellEntry const* spellInfo, uint32 eff)
-{
-    switch (spellInfo->EffectImplicitTargetA[eff])
-    {
-        case TARGET_NONE:
-        case TARGET_UNIT_CASTER:
-        case TARGET_UNIT_TARGET_ANY:
-            return true;
-        default:
-            break;
-    }
-
-    return false;
-}
-
 bool IsSingleTargetSpell(SpellEntry const* spellInfo);
 bool IsSingleTargetSpells(SpellEntry const* spellInfo1, SpellEntry const* spellInfo2);
+
+inline bool IsBinarySpell(SpellEntry const* spellInfo)
+{
+    // Spell is considered binary if:
+    // * Its composed entirely out of non-damage and aura effects (Example: Mind Flay, Vampiric Embrace, DoTs, etc)
+    // * Has damage and non-damage effects with additional mechanics (Example: Death Coil, Frost Nova)
+    uint32 effectmask = 0;  // A bitmask of effects: set bits are valid effects
+    uint32 nondmgmask = 0;  // A bitmask of effects: set bits are non-damage effects
+    uint32 mechmask = 0;    // A bitmask of effects: set bits are non-damage effects with additional mechanics
+    for (uint32 i = EFFECT_0; i < MAX_SPELL_EFFECTS; ++i)
+    {
+        if (!spellInfo->Effect[i] || IsSpellEffectTriggerSpell(spellInfo, SpellEffIndex(i)))
+            continue;
+
+        effectmask |= (1 << i);
+
+        bool damage = false;
+        if (!spellInfo->EffectApplyAuraName[i])
+        {
+            // If its not an aura effect, check for damage effects
+            switch (spellInfo->Effect[i])
+            {
+                case SPELL_EFFECT_SCHOOL_DAMAGE:
+                case SPELL_EFFECT_ENVIRONMENTAL_DAMAGE:
+                case SPELL_EFFECT_HEALTH_LEECH:
+                case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
+                case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
+                case SPELL_EFFECT_WEAPON_DAMAGE:
+                //   SPELL_EFFECT_POWER_BURN: deals damage for power burned, but its either full damage or resist?
+                case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
+                    damage = true;
+                    break;
+            }
+        }
+        if (!damage)
+        {
+            nondmgmask |= (1 << i);
+            if (spellInfo->EffectMechanic[i])
+                mechmask |= (1 << i);
+        }
+    }
+    // No non-damage involved at all: assumed all effects which should be rolled separately or no effects
+    if (!effectmask || !nondmgmask)
+        return false;
+    // All effects are non-damage
+    if (nondmgmask == effectmask)
+        return true;
+    // No non-damage effects with additional mechanics
+    if (!mechmask)
+        return false;
+    // Binary spells execution order detection
+    for (uint32 i = EFFECT_0; i < MAX_SPELL_EFFECTS; ++i)
+    {
+        // If effect is present and not a non-damage effect
+        const uint32 effect = (1 << i);
+        if ((effectmask & effect) && !(nondmgmask & effect))
+        {
+            // Iterate over mechanics
+            for (uint32 e = EFFECT_0; e < MAX_SPELL_EFFECTS; ++e)
+            {
+                // If effect is extra mechanic on the same target as damage effect
+                if ((mechmask & (1 << e)) &&
+                    spellInfo->EffectImplicitTargetA[i] == spellInfo->EffectImplicitTargetA[e] &&
+                    spellInfo->EffectImplicitTargetB[i] == spellInfo->EffectImplicitTargetB[e])
+                {
+                    return (e > i); // Post-2.3: checks the order of application
+                }
+            }
+        }
+    }
+    return false;
+}
 
 bool IsAuraAddedBySpell(uint32 auraType, uint32 spellId);
 
@@ -621,10 +728,7 @@ typedef UNORDERED_MAP<uint32, SpellTargetPosition> SpellTargetPositionMap;
 class PetAura
 {
     public:
-        PetAura()
-        {
-            auras.clear();
-        }
+        PetAura() : removeOnChangePet(false), damage(0) { auras.clear(); }
 
         PetAura(uint32 petEntry, uint32 aura, bool _removeOnChangePet, int _damage) :
             removeOnChangePet(_removeOnChangePet), damage(_damage)
@@ -739,11 +843,12 @@ enum SpellCustomAttributes
     SPELL_ATTR_CU_LINK_HIT         = 0x00000800,
     SPELL_ATTR_CU_LINK_AURA        = 0x00001000,
     SPELL_ATTR_CU_LINK_REMOVE      = 0x00002000,
-    SPELL_ATTR_CU_MOVEMENT_IMPAIR  = 0x00004000,
-    SPELL_ATTR_CU_IGNORE_ARMOR     = 0x00008000, 
+    SPELL_ATTR_CU_MOVEMENT_IMPAIR  = 0x00004000, //!< related to movement impiaring effects
+    SPELL_ATTR_CU_IGNORE_ARMOR     = 0x00008000, //!< must ignore armor
     SPELL_ATTR_CU_CAST_BY_ITEM_ONLY= 0x00010000, //!< must be cast from item, never directly
     SPELL_ATTR_CU_FIXED_AMOUNT     = 0x00020000, //!< ignore bonus healing/damage
-    SPELL_ATTR_CU_ANY_TARGET       = 0x00040000  //!< approves cast on any target, even when its non-attackable @see Spell::CheckTarget, useful with crafted/forced targets
+    SPELL_ATTR_CU_ANY_TARGET       = 0x00040000, //!< approves cast on any target, even when its non-attackable @see Spell::CheckTarget, useful with crafted/forced targets
+    SPELL_ATTR_CU_PICKPOCKET       = 0x00080000, //!< Spell is Pickpocket
 };
 
 typedef std::vector<uint32> SpellCustomAttribute;
@@ -920,9 +1025,19 @@ class SpellMgr
             return spell_id;
         }
 
+        uint32 GetNextSpellInChain(uint32 spell_id) const
+        {
+            if (SpellChainNode const* node = GetSpellChainNode(spell_id))
+                if (node->next)
+                    return node->next;
+
+            return 0;
+        }
+
         uint32 GetPrevSpellInChain(uint32 spell_id) const
         {
             if (SpellChainNode const* node = GetSpellChainNode(spell_id))
+                if (node->prev)
                 return node->prev;
 
             return 0;

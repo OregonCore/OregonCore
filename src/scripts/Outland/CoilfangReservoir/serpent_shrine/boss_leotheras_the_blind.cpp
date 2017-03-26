@@ -119,7 +119,7 @@ struct mob_inner_demonAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (me->getVictim()->GetGUID() != victimGUID)
+        if (me->GetVictim()->GetGUID() != victimGUID)
         {
             Unit* owner = Unit::GetUnit((*me), victimGUID);
             if (owner)
@@ -247,7 +247,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
         if (me->HasAura(AURA_BANISH, 0))
             return;
 
-        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor(me))
+        if (!me->GetVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor(me))
         {
             if (me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
@@ -256,7 +256,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             if (me->IsWithinDistInMap(who, attackRadius))
             {
                 // Check first that object is in an angle in front of this one before LoS check
-                if (me->HasInArc(M_PI / 2.0f, who) && me->IsWithinLOSInMap(who))
+                if (me->HasInArc(float(M_PI) / 2.0f, who) && me->IsWithinLOSInMap(who))
                     AttackStart(who);
             }
         }
@@ -456,7 +456,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             NeedThreatReset = false;
             DoResetThreat();
             me->GetMotionMaster()->Clear();
-            me->GetMotionMaster()->MoveChase(me->getVictim());
+            me->GetMotionMaster()->MoveChase(me->GetVictim());
         }
 
         //Enrage_Timer (10 min)
@@ -506,18 +506,18 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
         else
         {
             //ChaosBlast_Timer
-            if (!me->getVictim())
+            if (!me->GetVictim())
                 return;
-            if (me->GetDistance(me->getVictim()) < 30)
+            if (me->GetDistance(me->GetVictim()) < 30)
                 me->StopMoving();
             if (ChaosBlast_Timer <= diff)
             {
                 // will cast only when in range of spell
-                if (me->GetDistance(me->getVictim()) < 30)
+                if (me->GetDistance(me->GetVictim()) < 30)
                 {
                     //DoCastVictim( SPELL_CHAOS_BLAST, true);
                     int damage = 100;
-                    me->CastCustomSpell(me->getVictim(), SPELL_CHAOS_BLAST, &damage, NULL, NULL, false, NULL, NULL, me->GetGUID());
+                    me->CastCustomSpell(me->GetVictim(), SPELL_CHAOS_BLAST, &damage, NULL, NULL, false, NULL, NULL, me->GetGUID());
                 }
                 ChaosBlast_Timer = 3000;
             }
@@ -530,7 +530,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
                 for (ThreatContainer::StorageType::const_iterator itr = ThreatList.begin(); itr != ThreatList.end(); ++itr)
                 {
                     Unit* tempTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
-                    if (tempTarget && tempTarget->GetTypeId() == TYPEID_PLAYER && tempTarget->GetGUID() != me->getVictim()->GetGUID() && TargetList.size() < 5)
+                    if (tempTarget && tempTarget->GetTypeId() == TYPEID_PLAYER && tempTarget->GetGUID() != me->GetVictim()->GetGUID() && TargetList.size() < 5)
                         TargetList.push_back(tempTarget);
                 }
                 SpellEntry* spell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_INSIDIOUS_WHISPER);
@@ -586,7 +586,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             else SwitchToHuman_Timer -= diff;
         }
 
-        if (!IsFinalForm && (me->GetHealth() * 100 / me->GetMaxHealth()) < 15)
+        if (!IsFinalForm && HealthBelowPct(15))
         {
             //at this point he divides himself in two parts
             CastConsumingMadness();
@@ -596,8 +596,8 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             if (Copy)
             {
                 Demon = Copy->GetGUID();
-                if (me->getVictim())
-                    Copy->AI()->AttackStart(me->getVictim());
+                if (me->GetVictim())
+                    Copy->AI()->AttackStart(me->GetVictim());
             }
             //set nightelf final form
             IsFinalForm = true;
@@ -665,17 +665,17 @@ struct boss_leotheras_the_blind_demonformAI : public ScriptedAI
         if (!UpdateVictim())
             return;
         //ChaosBlast_Timer
-        if (me->GetDistance(me->getVictim()) < 30)
+        if (me->GetDistance(me->GetVictim()) < 30)
             me->StopMoving();
 
         if (ChaosBlast_Timer <= diff)
         {
             // will cast only when in range od spell
-            if (me->GetDistance(me->getVictim()) < 30)
+            if (me->GetDistance(me->GetVictim()) < 30)
             {
                 //DoCastVictim( SPELL_CHAOS_BLAST, true);
                 int damage = 100;
-                me->CastCustomSpell(me->getVictim(), SPELL_CHAOS_BLAST, &damage, NULL, NULL, false, NULL, NULL, me->GetGUID());
+                me->CastCustomSpell(me->GetVictim(), SPELL_CHAOS_BLAST, &damage, NULL, NULL, false, NULL, NULL, me->GetGUID());
                 ChaosBlast_Timer = 3000;
             }
         }
@@ -787,7 +787,7 @@ struct mob_greyheart_spellbinderAI : public ScriptedAI
             Map::PlayerList const& PlayerList = pMap->GetPlayers();
             for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
             {
-                if (Player* i_pl = itr->getSource())
+                if (Player* i_pl = itr->GetSource())
                 {
                     bool isCasting = false;
                     for (uint8 i = 0; i < CURRENT_MAX_SPELL; ++i)

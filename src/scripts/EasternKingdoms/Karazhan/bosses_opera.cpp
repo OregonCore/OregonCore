@@ -97,8 +97,8 @@ void SummonCroneIfReady(ScriptedInstance* pInstance, Creature* pCreature)
     {
         if (Creature* pCrone = pCreature->SummonCreature(CREATURE_CRONE, -10891.96f, -1755.95f, pCreature->GetPositionZ(), 4.64f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR * 2 * IN_MILLISECONDS))
         {
-            if (pCreature->getVictim())
-                pCrone->AI()->AttackStart(pCreature->getVictim());
+            if (pCreature->GetVictim())
+                pCrone->AI()->AttackStart(pCreature->GetVictim());
         }
     }
 };
@@ -259,7 +259,7 @@ void boss_dorotheeAI::SummonTito()
     {
         DoScriptText(SAY_DOROTHEE_SUMMON, me);
         CAST_AI(mob_titoAI, pTito->AI())->DorotheeGUID = me->GetGUID();
-        pTito->AI()->AttackStart(me->getVictim());
+        pTito->AI()->AttackStart(me->GetVictim());
         SummonedTito = true;
         TitoDied = false;
     }
@@ -580,6 +580,7 @@ struct boss_croneAI : public ScriptedAI
 
     void Reset()
     {
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
         CycloneTimer = 30000;
         ChainLightningTimer = 10000;
     }
@@ -592,8 +593,6 @@ struct boss_croneAI : public ScriptedAI
     void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(RAND(SAY_CRONE_AGGRO, SAY_CRONE_AGGRO2), me);
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
     }
 
     void JustDied(Unit* /*killer*/)
@@ -615,9 +614,6 @@ struct boss_croneAI : public ScriptedAI
     {
         if (!UpdateVictim())
             return;
-
-        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         if (CycloneTimer <= diff)
         {
@@ -662,8 +658,7 @@ struct mob_cycloneAI : public ScriptedAI
 
         if (MoveTimer <= diff)
         {
-            Position pos;
-            me->GetRandomNearPosition(pos, 10);
+            Position pos = me->GetRandomNearPosition(10.0f);
             me->GetMotionMaster()->MovePoint(0, pos);
             MoveTimer = urand(5000, 8000);
         }
@@ -933,10 +928,10 @@ void Resurrect(Creature* pTarget)
     pTarget->SetHealth(pTarget->GetMaxHealth());
     pTarget->SetStandState(UNIT_STAND_STATE_STAND);
     pTarget->CastSpell(pTarget, SPELL_RES_VISUAL, true);
-    if (pTarget->getVictim())
+    if (pTarget->GetVictim())
     {
-        pTarget->GetMotionMaster()->MoveChase(pTarget->getVictim());
-        pTarget->AI()->AttackStart(pTarget->getVictim());
+        pTarget->GetMotionMaster()->MoveChase(pTarget->GetVictim());
+        pTarget->AI()->AttackStart(pTarget->GetVictim());
     }
     else
         pTarget->GetMotionMaster()->Initialize();
@@ -1106,10 +1101,10 @@ struct boss_romuloAI : public ScriptedAI
         if (JulianneGUID)
         {
             Creature* Julianne = (Unit::GetCreature((*me), JulianneGUID));
-            if (Julianne && Julianne->getVictim())
+            if (Julianne && Julianne->GetVictim())
             {
-                me->AddThreat(Julianne->getVictim(), 1.0f);
-                AttackStart(Julianne->getVictim());
+                me->AddThreat(Julianne->GetVictim(), 1.0f);
+                AttackStart(Julianne->GetVictim());
             }
         }
     }
@@ -1324,8 +1319,8 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
             Phase = PHASE_BOTH;
             IsFakingDeath = false;
 
-            if (me->getVictim())
-                AttackStart(me->getVictim());
+            if (me->GetVictim())
+                AttackStart(me->GetVictim());
 
             ResurrectSelfTimer = 0;
             ResurrectTimer = 1000;
@@ -1417,7 +1412,7 @@ void boss_romuloAI::UpdateAI(const uint32 diff)
     if (BackwardLungeTimer <= diff)
     {
         Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
-        if (pTarget && !me->HasInArc(M_PI, pTarget))
+        if (pTarget && !me->HasInArc(float(M_PI), pTarget))
         {
             DoCast(pTarget, SPELL_BACKWARD_LUNGE);
             BackwardLungeTimer = urand(15000, 30000);

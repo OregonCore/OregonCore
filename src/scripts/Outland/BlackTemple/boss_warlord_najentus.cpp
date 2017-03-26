@@ -162,7 +162,7 @@ struct boss_najentusAI : public ScriptedAI
         Map::PlayerList const& PlayerList = ((InstanceMap*)me->GetMap())->GetPlayers();
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
         {
-            Player* i_pl = i->getSource();
+            Player* i_pl = i->GetSource();
             if (i_pl)
                 i_pl->DestroyItemCount(32408, i_pl->GetItemCount(32408), true);
         }
@@ -213,7 +213,7 @@ struct boss_najentusAI : public ScriptedAI
             if (!me->IsNonMeleeSpellCast(false))
             {
                 Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 80, true);
-                if (!pTarget) pTarget = me->getVictim();
+                if (!pTarget) pTarget = me->GetVictim();
                 if (pTarget)
                 {
                     DoCast(pTarget, SPELL_IMPALING_SPINE);

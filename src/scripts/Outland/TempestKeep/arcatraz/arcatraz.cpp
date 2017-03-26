@@ -188,7 +188,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (!LowHp && ((me->GetHealth() * 100 / me->GetMaxHealth()) < 20))
+        if (!LowHp && HealthBelowPct(20))
         {
             DoScriptText(SAY_LOWHP, me);
             LowHp = true;
@@ -294,7 +294,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
         if (IsRunning)
             return;
 
-        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
+        if (!me->GetVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
         {
             if (!me->canFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;

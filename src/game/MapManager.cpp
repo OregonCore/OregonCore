@@ -122,13 +122,14 @@ Map* MapManager::_createBaseMap(uint32 id)
     return m;
 }
 
-Map* MapManager::CreateMap(uint32 id, const WorldObject* obj, uint32 /*instanceId*/)
+Map* MapManager::CreateMap(uint32 id, const WorldObject* obj, uint32 loginInstanceId)
 {
     ASSERT(obj);
     //if (!obj->IsInWorld()) sLog.outError("GetMap: called for map %d with object (typeid %d, guid %d, mapid %d, instanceid %d) who is not in world!", id, obj->GetTypeId(), obj->GetGUIDLow(), obj->GetMapId(), obj->GetInstanceId());
     Map* m = _createBaseMap(id);
 
-    if (m && (obj->GetTypeId() == TYPEID_PLAYER) && m->Instanceable()) m = ((MapInstanced*)m)->CreateInstance(id, (Player*)obj);
+    if (m && (obj->GetTypeId() == TYPEID_PLAYER) && m->Instanceable())
+        m = ((MapInstanced*)m)->CreateInstanceForPlayer(id, (Player*)obj, loginInstanceId);
 
     return m;
 }
@@ -142,90 +143,83 @@ Map* MapManager::FindMap(uint32 mapid, uint32 instanceId) const
     if (!map->Instanceable())
         return instanceId == 0 ? map : NULL;
 
-    return ((MapInstanced*)map)->FindMap(instanceId);
+    return ((MapInstanced*)map)->FindInstanceMap(instanceId);
 }
 
 /*
     checks that do not require a map to be created
     will send transfer error messages on fail
 */
-bool MapManager::CanPlayerEnter(uint32 mapid, Player* player)
+Map::EnterState MapManager::PlayerCannotEnter(uint32 mapid, Player* player, bool loginCheck)
 {
     const MapEntry* entry = sMapStore.LookupEntry(mapid);
     if (!entry)
-        return false;
+        return Map::CANNOT_ENTER_NO_ENTRY;
 
     if (!entry->IsDungeon())
-        return true;
+        return Map::CAN_ENTER;
 
     InstanceTemplate const* instance = sObjectMgr.GetInstanceTemplate(mapid);
     if (!instance)
-        return false;
+        return Map::CANNOT_ENTER_UNINSTANCED_DUNGEON;
+
+    //The player has a heroic mode and tries to enter into instance which has no a heroic mode
+    if (!entry->SupportsHeroicMode() && player->GetDifficulty() == DIFFICULTY_HEROIC)
+        return Map::CANNOT_ENTER_DIFFICULTY_UNAVAILABLE;
+
+    //Bypass checks for GMs
+    if (player->IsGameMaster())
+        return Map::CAN_ENTER;
 
     const char* mapName = entry->name[player->GetSession()->GetSessionDbcLocale()];
 
-    if (entry->IsDungeon())
+    Group* group = player->GetGroup();
+    if (entry->IsRaid()) // can only enter in a raid group
+        if ((!group || !group->isRaidGroup()) && !sWorld.getConfig(CONFIG_INSTANCE_IGNORE_RAID))
+            return Map::CANNOT_ENTER_NOT_IN_RAID;
+
+
+    if (!player->IsAlive())
     {
-        if (entry->IsRaid())
+        if (Corpse* corpse = player->GetCorpse())
         {
-            // GMs can avoid raid limitations
-            if (!player->isGameMaster() && !sWorld.getConfig(CONFIG_INSTANCE_IGNORE_RAID))
+            // let enter in ghost mode in instance that connected to inner instance with corpse
+            uint32 instance_map = corpse->GetMapId();
+            do
             {
-                // can only enter in a raid group
-                Group* group = player->GetGroup();
-                if (!group || !group->isRaidGroup())
-                {
-                    // probably there must be special opcode, because client has this string constant in GlobalStrings.lua
-                    // @todo this is not a good place to send the message
-                    player->GetSession()->SendAreaTriggerMessage(player->GetSession()->GetOregonString(810), mapName);
-                    sLog.outDebug("MAP: Player '%s' must be in a raid group to enter instance of '%s'", player->GetName(), mapName);
-                    return false;
-                }
+                if (instance_map == mapid)
+                    break;
+
+                InstanceTemplate const* instance = sObjectMgr.GetInstanceTemplate(instance_map);
+                instance_map = instance ? instance->parent : 0;
             }
+            while (instance_map);
+
+            if (!instance_map)
+                return Map::CANNOT_ENTER_CORPSE_IN_DIFFERENT_INSTANCE;
+
+            sLog.outDebug("MAP: Player '%s' has corpse in instance '%s' and can enter", player->GetName(), mapName);
         }
-
-        //The player has a heroic mode and tries to enter into instance which has no a heroic mode
-        if (!entry->SupportsHeroicMode() && player->GetDifficulty() == DIFFICULTY_HEROIC)
-        {
-            //Send aborted message
-            player->SendTransferAborted(mapid, TRANSFER_ABORT_DIFFICULTY2);
-            return false;
-        }
-
-        if (!player->IsAlive())
-        {
-            if (Corpse* corpse = player->GetCorpse())
-            {
-                // let enter in ghost mode in instance that connected to inner instance with corpse
-                uint32 instance_map = corpse->GetMapId();
-                do
-                {
-                    if (instance_map == mapid)
-                        break;
-
-                    InstanceTemplate const* instance = sObjectMgr.GetInstanceTemplate(instance_map);
-                    instance_map = instance ? instance->parent : 0;
-                }
-                while (instance_map);
-
-                if (!instance_map)
-                {
-                    player->GetSession()->SendAreaTriggerMessage(player->GetSession()->GetOregonString(811), mapName);
-                    sLog.outDebug("MAP: Player '%s' doesn't has a corpse in instance '%s' and can't enter", player->GetName(), mapName);
-                    return false;
-                }
-                sLog.outDebug("MAP: Player '%s' has corpse in instance '%s' and can enter", player->GetName(), mapName);
-                player->ResurrectPlayer(0.5f, false);
-                player->SpawnCorpseBones();
-            }
-            else
-                sLog.outDebug("Map::CanEnter - player '%s' is dead but doesn't have a corpse!", player->GetName());
-        }
-
-        return player->Satisfy(sObjectMgr.GetAccessRequirement(instance->access_id), mapid, true);
+        else
+            sLog.outDebug("Map::CanEnter - player '%s' is dead but doesn't have a corpse!", player->GetName());
     }
+
+    //Get instance where player's group is bound & its map
+    if (!loginCheck && group)
+    {
+        InstanceGroupBind* boundInstance = group->GetBoundInstance(entry);
+        if (boundInstance && boundInstance->save)
+            if (Map* boundMap = MapManager::Instance().FindMap(mapid, boundInstance->save->GetInstanceId()))
+                if (Map::EnterState denyReason = boundMap->CannotEnter(player))
+                    return denyReason;
+    }
+
+    // @todo Implement 5 dungeons per hour limit
+
+    if (player->Satisfy(sObjectMgr.GetAccessRequirement(instance->access_id), mapid, true))
+        return Map::CAN_ENTER;
     else
-        return true;
+        return Map::CANNOT_ENTER_UNSPECIFIED_REASON;
 }
 
 void MapManager::Update(time_t diff)

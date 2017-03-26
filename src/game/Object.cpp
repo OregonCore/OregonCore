@@ -38,6 +38,7 @@
 #include "Totem.h"
 #include "OutdoorPvPMgr.h"
 #include "packet_builder.h"
+#include "MapManager.h"
 
 uint32 GuidHigh2TypeId(uint32 guid_hi)
 {
@@ -430,8 +431,8 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
     {
         if (Unit const* me = ToUnit())
         {
-            if (me->getVictim())
-                *data << me->getVictim()->GetPackGUID();
+            if (me->GetVictim())
+                *data << me->GetVictim()->GetPackGUID();
             else
                 *data << uint8(0);
         }
@@ -456,7 +457,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
     {
         if (isType(TYPEMASK_GAMEOBJECT) && !((GameObject*)this)->IsTransport())
         {
-            if (((GameObject*)this)->ActivateToQuest(target) || target->isGameMaster())
+            if (((GameObject*)this)->ActivateToQuest(target) || target->IsGameMaster())
                 IsActivateToQuest = true;
 
             updateMask->SetBit(GAMEOBJECT_DYN_FLAGS);
@@ -469,7 +470,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
     {
         if (isType(TYPEMASK_GAMEOBJECT) && !((GameObject*)this)->IsTransport())
         {
-            if (((GameObject*)this)->ActivateToQuest(target) || target->isGameMaster())
+            if (((GameObject*)this)->ActivateToQuest(target) || target->IsGameMaster())
                 IsActivateToQuest = true;
 
             updateMask->SetBit(GAMEOBJECT_DYN_FLAGS);
@@ -491,7 +492,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
             {
                 // remove custom flag before send
                 if (index == UNIT_NPC_FLAGS)
-                    *data << uint32(m_uint32Values[ index ] & ~(UNIT_NPC_FLAG_GUARD + UNIT_NPC_FLAG_OUTDOORPVP));
+                    *data << uint32(m_uint32Values[index]);
                 // FIXME: Some values at server stored in float format but must be sent to client in uint32 format
                 else if (index >= UNIT_FIELD_BASEATTACKTIME && index <= UNIT_FIELD_RANGEDATTACKTIME)
                 {
@@ -505,7 +506,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                          (index >= UNIT_FIELD_POSSTAT0   && index <= UNIT_FIELD_POSSTAT4))
                     *data << uint32(m_floatValues[ index ]);
                 // Gamemasters should be always able to select units - remove not selectable flag
-                else if (index == UNIT_FIELD_FLAGS && target->isGameMaster())
+                else if (index == UNIT_FIELD_FLAGS && target->IsGameMaster())
                     *data << (m_uint32Values[ index ] & ~UNIT_FLAG_NOT_SELECTABLE);
                 // use modelid_a if not gm, _h if gm for CREATURE_FLAG_EXTRA_TRIGGER creatures
                 else if (index == UNIT_FIELD_DISPLAYID && GetTypeId() == TYPEID_UNIT)
@@ -513,7 +514,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                     const CreatureInfo* cinfo = ToCreature()->GetCreatureTemplate();
                     if (cinfo->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER)
                     {
-                        if (target->isGameMaster())
+                        if (target->IsGameMaster())
                         {
                             if (cinfo->modelid1)
                                 *data << cinfo->modelid1;
@@ -531,11 +532,30 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                 // hide lootable animation for unallowed players
                 else if (index == UNIT_DYNAMIC_FLAGS && GetTypeId() == TYPEID_UNIT)
                 {
-                    if (!ToCreature()->isTappedBy(target))
-                        *data << (m_uint32Values[ index ] & ~UNIT_DYNFLAG_LOOTABLE);
-                    else
-                        *data << (m_uint32Values[ index ] & ~UNIT_DYNFLAG_OTHER_TAGGER);
+                    Creature const* creature = ToCreature();
+
+                    if (creature)
+                    {
+                        if (!creature->isDead())
+                        {
+                            //sLog.outError("MOB ALIVE!");
+                            if (creature->isTappedBy(target))
+                                *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_OTHER_TAGGER);
+                            else
+                                *data << (m_uint32Values[index] | UNIT_DYNFLAG_OTHER_TAGGER);
+                        }
+                        else 
+                        {
+                            //sLog.outError("MOB DEAD!");
+                            if (!target->isAllowedToLoot(creature))
+                                *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_LOOTABLE);
+                            else
+                                *data << (m_uint32Values[index] | UNIT_DYNFLAG_LOOTABLE);
+                        }
+                    }
+
                 }
+
                 // hide RAF menu to non-RAF linked friends
                 else if (index == UNIT_DYNAMIC_FLAGS && GetTypeId() == TYPEID_PLAYER)
                 {
@@ -562,8 +582,8 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                             else if (index == UNIT_FIELD_FACTIONTEMPLATE)
                             {
                                 FactionTemplateEntry const* ft1, *ft2;
-                                ft1 = ToPlayer()->getFactionTemplateEntry();
-                                ft2 = target->ToPlayer()->getFactionTemplateEntry();
+                                ft1 = ToPlayer()->GetFactionTemplateEntry();
+                                ft2 = target->ToPlayer()->GetFactionTemplateEntry();
                                 if (ft1 && ft2 && !ft1->IsFriendlyTo(*ft2))
                                 {
                                     uint32 faction = target->ToPlayer()->getFaction(); // pretend that all other HOSTILE players have own faction, to allow follow, heal, rezz (trade wont work)
@@ -1064,15 +1084,6 @@ bool Object::PrintIndexError(uint32 index, bool set) const
     return false;
 }
 
-bool Position::HasInLine(const Unit* const target, float distance, float width) const
-{
-    if (!HasInArc(M_PI, target) || !target->IsWithinDist3d(m_positionX, m_positionY, m_positionZ, distance))
-        return false;
-    width += target->GetObjectSize() * 0.5f;
-    float angle = GetRelativeAngle(target);
-    return fabsf(sinf(angle)) * GetExactDist2d(target->GetPositionX(), target->GetPositionY()) < width;
-}
-
 WorldObject::WorldObject(bool isWorldObject):
       WorldLocation()
     , m_groupLootTimer(0)
@@ -1152,6 +1163,16 @@ void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh)
     Object::_Create(guidlow, 0, guidhigh);
 }
 
+void WorldObject::RemoveFromWorld()
+{
+    if (!IsInWorld())
+        return;
+
+    DestroyForNearbyPlayers();
+
+    Object::RemoveFromWorld();
+}
+
 uint32 WorldObject::GetZoneId() const
 {
     return GetBaseMap()->GetZoneId(m_positionX, m_positionY, m_positionZ);
@@ -1204,20 +1225,51 @@ bool WorldObject::_IsWithinDist(WorldObject const* obj, float dist2compare, bool
 
 bool WorldObject::IsWithinLOSInMap(const WorldObject* obj) const
 {
-    if (!IsInMap(obj)) return false;
-    float ox, oy, oz;
-    obj->GetPosition(ox, oy, oz);
-    return (IsWithinLOS(ox, oy, oz));
+    if (!IsInMap(obj))
+        return false;
+
+    float x, y, z;
+    if (obj->GetTypeId() == TYPEID_PLAYER)
+        obj->GetPosition(x, y, z);
+    else
+        obj->GetHitSpherePointFor(GetPosition(), x, y, z);
+
+    return IsWithinLOS(x, y, z);
 }
 
 bool WorldObject::IsWithinLOS(float ox, float oy, float oz) const
 {
     if (IsInWorld())
-        return GetMap()->isInLineOfSight(GetPositionX(), GetPositionY(), GetPositionZ() + 2.f, ox, oy, oz + 2.f);
+    {
+        float x, y, z;
+        if (GetTypeId() == TYPEID_PLAYER)
+            GetPosition(x, y, z);
+        else
+            GetHitSpherePointFor({ ox, oy, oz }, x, y, z);
+
+        return GetMap()->isInLineOfSight(x, y, z + 2.0f, ox, oy, oz + 2.0f);
+    }
 
     return true;
 }
 
+Position WorldObject::GetHitSpherePointFor(Position const& dest) const
+{
+    G3D::Vector3 vThis(GetPositionX(), GetPositionY(), GetPositionZ());
+    G3D::Vector3 vObj(dest.GetPositionX(), dest.GetPositionY(), dest.GetPositionZ());
+    G3D::Vector3 contactPoint = vThis + (vObj - vThis).directionOrZero() * GetObjectSize();
+
+    return Position(contactPoint.x, contactPoint.y, contactPoint.z, GetAngle(contactPoint.x, contactPoint.y));
+}
+
+void WorldObject::GetHitSpherePointFor(Position const& dest, float& x, float& y, float& z) const
+{
+    Position pos = GetHitSpherePointFor(dest);
+    x = pos.GetPositionX();
+    y = pos.GetPositionY();
+    z = pos.GetPositionZ();
+}
+ 
 bool WorldObject::GetDistanceOrder(WorldObject const* obj1, WorldObject const* obj2, bool is3D /* = true */) const
 {
     float dx1 = GetPositionX() - obj1->GetPositionX();
@@ -1307,43 +1359,6 @@ bool WorldObject::IsInRange3d(float x, float y, float z, float minRange, float m
     return distsq < maxdist * maxdist;
 }
 
-float Position::GetAngle(const Position* obj) const
-{
-    if (!obj) return 0;
-    return GetAngle(obj->GetPositionX(), obj->GetPositionY());
-}
-
-// Return angle in range 0..2*pi
-float Position::GetAngle(const float x, const float y) const
-{
-    float dx = x - GetPositionX();
-    float dy = y - GetPositionY();
-
-    float ang = atan2(dy, dx);
-    ang = (ang >= 0) ? ang : 2 * M_PI + ang;
-    return ang;
-}
-
-
-void Position::GetSinCos(const float x, const float y, float &vsin, float &vcos) const
-{
-    float dx = GetPositionX() - x;
-    float dy = GetPositionY() - y;
-
-    if (std::fabs(dx) < 0.001f && std::fabs(dy) < 0.001f)
-    {
-        float angle = (float)rand_norm()*static_cast<float>(2*M_PI);
-        vcos = std::cos(angle);
-        vsin = std::sin(angle);
-    }
-    else
-    {
-        float dist = std::sqrt((dx*dx) + (dy*dy));
-        vcos = dx / dist;
-        vsin = dy / dist;
-    }
-}
-
 bool WorldObject::HasInArc(const float arcangle, const float x, const float y) const
 {
     // always have self in arc
@@ -1353,19 +1368,19 @@ bool WorldObject::HasInArc(const float arcangle, const float x, const float y) c
     float arc = arcangle;
 
     // move arc to range 0.. 2*pi
-    while ( arc >= 2.0f * M_PI )
-        arc -=  2.0f * M_PI;
+    while ( arc >= 2.0f * float(M_PI) )
+        arc -=  2.0f * float(M_PI);
     while ( arc < 0 )
-        arc +=  2.0f * M_PI;
+        arc +=  2.0f * float(M_PI);
 
     float angle = GetAngle( x, y );
-    angle -= m_orientation;
+    angle -= GetOrientation();
 
     // move angle to range -pi ... +pi
-    while ( angle > M_PI)
-        angle -= 2.0f * M_PI;
+    while ( angle > float(M_PI))
+        angle -= 2.0f * float(M_PI);
     while (angle < -M_PI)
-        angle += 2.0f * M_PI;
+        angle += 2.0f * float(M_PI);
 
     float lborder =  -1 * (arc / 2.0f);                     // in range -pi..0
     float rborder = (arc / 2.0f);                           // in range 0..pi
@@ -1375,56 +1390,6 @@ bool WorldObject::HasInArc(const float arcangle, const float x, const float y) c
 bool WorldObject::HasInArc(float arc, const Position* obj) const
 {
     return this->HasInArc(arc, obj->GetPositionX(), obj->GetPositionY());
-}
-
-bool Position::IsWithinBox(const Position& center, float xradius, float yradius, float zradius) const
-{
-    // rotate the WorldObject position instead of rotating the whole cube, that way we can make a simplified
-    // is-in-cube check and we have to calculate only one point instead of 4
-
-    // 2PI = 360*, keep in mind that ingame orientation is counter-clockwise
-    double rotation = 2 * M_PI - center.GetOrientation();
-    double sinVal = std::sin(rotation);
-    double cosVal = std::cos(rotation);
-
-    float BoxDistX = GetPositionX() - center.GetPositionX();
-    float BoxDistY = GetPositionY() - center.GetPositionY();
-
-    float rotX = float(center.GetPositionX() + BoxDistX * cosVal - BoxDistY*sinVal);
-    float rotY = float(center.GetPositionY() + BoxDistY * cosVal + BoxDistX*sinVal);
-
-    // box edges are parallel to coordiante axis, so we can treat every dimension independently :D
-    float dz = GetPositionZ() - center.GetPositionZ();
-    float dx = rotX - center.GetPositionX();
-    float dy = rotY - center.GetPositionY();
-    if ((std::fabs(dx) > xradius) ||
-        (std::fabs(dy) > yradius) ||
-        (std::fabs(dz) > zradius))
-        return false;
-
-    return true;
-}
-
-bool Position::HasInArc(float arc, const Position* obj) const
-{
-    // always have self in arc
-    if (obj == this)
-        return true;
-
-    // move arc to range 0.. 2*pi
-    arc = MapManager::NormalizeOrientation(arc);
-
-    float angle = GetAngle(obj);
-    angle -= m_orientation;
-
-    // move angle to range -pi ... +pi
-    angle = MapManager::NormalizeOrientation(angle);
-    if (angle > M_PI)
-        angle -= 2.0f * M_PI;
-
-    float lborder =  -1 * (arc / 2.0f);                     // in range -pi..0
-    float rborder = (arc / 2.0f);                           // in range 0..pi
-    return ((angle >= lborder) && (angle <= rborder));
 }
 
 void WorldObject::GetRandomPoint(const Position& pos, float distance, float& rand_x, float& rand_y, float& rand_z) const
@@ -1519,11 +1484,6 @@ void WorldObject::UpdateGroundPositionZ(float x, float y, float& z) const
         z = new_z + 0.05f;                                  // just to be sure that we are not a few pixel under the surface
 }
 
-bool Position::IsPositionValid() const
-{
-    return Oregon::IsValidMapCoord(m_positionX, m_positionY, m_positionZ, m_orientation);
-}
-
 void WorldObject::MonsterSay(const char* text, uint32 language, uint64 TargetGuid)
 {
     WorldPacket data(SMSG_MESSAGECHAT, 200);
@@ -1568,9 +1528,20 @@ bool WorldObject::isValid() const
 float WorldObject::GetGridActivationRange() const
 {
     if (ToPlayer())
+    {
+        if (ToPlayer()->GetCinematicMgr()->IsOnCinematic())
+            return DEFAULT_VISIBILITY_INSTANCE;
         return GetMap()->GetVisibilityRange();
+    }
     else if (ToCreature())
         return ToCreature()->m_SightDistance;
+    else if (ToDynObject())
+    {
+        if (isActiveObject())
+            return GetMap()->GetVisibilityRange();
+        else
+            return 0.0f;
+    }
     else
         return 0.0f;
 }
@@ -1589,8 +1560,10 @@ float WorldObject::GetSightRange(const WorldObject* target) const
     {
         if (ToPlayer())
         {
-            if (target && target->isActiveObject())
+            if (target && target->isActiveObject() && !target->ToPlayer())
                 return MAX_VISIBILITY_DISTANCE;
+            else if (ToPlayer()->GetCinematicMgr()->IsOnCinematic())
+                return DEFAULT_VISIBILITY_INSTANCE;
             else
                 return GetMap()->GetVisibilityRange();
         }
@@ -1599,6 +1572,9 @@ float WorldObject::GetSightRange(const WorldObject* target) const
         else
             return SIGHT_RANGE_UNIT;
     }
+
+    if (ToDynObject() && isActiveObject())
+        return GetMap()->GetVisibilityRange();
 
     return 0.0f;
 }
@@ -1892,8 +1868,8 @@ void WorldObject::MonsterYellToZone(int32 textId, uint32 language, uint64 Target
 
     Map::PlayerList const& pList = GetMap()->GetPlayers();
     for (Map::PlayerList::const_iterator itr = pList.begin(); itr != pList.end(); ++itr)
-        if (itr->getSource()->GetZoneId() == zoneid)
-            say_do(itr->getSource());
+        if (itr->GetSource()->GetZoneId() == zoneid)
+            say_do(itr->GetSource());
 }
 
 void WorldObject::MonsterTextEmote(int32 textId, uint64 TargetGuid, bool IsBossEmote)
@@ -2379,6 +2355,27 @@ void WorldObject::GetNearPoint(WorldObject const* /*searcher*/, float& x, float&
     UpdateAllowedPositionZ(x, y, z);
 }
 
+Position WorldObject::GetNearPosition(float dist, float angle)
+{
+    Position pos = GetPosition();
+    MovePosition(pos, dist, angle);
+    return pos;
+}
+
+Position WorldObject::GetFirstCollisionPosition(float dist, float angle)
+{
+    Position pos = GetPosition();
+    MovePositionToFirstCollision(pos, dist, angle);
+    return pos;
+}
+
+Position WorldObject::GetRandomNearPosition(float radius)
+{
+    Position pos = GetPosition();
+    MovePosition(pos, radius * (float)rand_norm(), (float)rand_norm() * static_cast<float>(2 * M_PI));
+    return pos;
+}
+
 // @todo: replace with WorldObject::UpdateAllowedPositionZ
 //   To use WorldObject::UpdateAllowedPositionZ at the moment causes a caster of
 //     a leap effect to fall through the ground much too easily.
@@ -2421,7 +2418,7 @@ float WorldObject::GetPositionZTarget(Position& pos, float destx, float desty)
 
 void WorldObject::MovePosition(Position& pos, float dist, float angle)
 {
-    angle += m_orientation;
+    angle += GetOrientation();
     float destx, desty, destz, ground, floor;
     destx = pos.m_positionX + dist * cos(angle);
     desty = pos.m_positionY + dist * sin(angle);
@@ -2468,12 +2465,12 @@ void WorldObject::MovePosition(Position& pos, float dist, float angle)
     Oregon::NormalizeMapCoord(pos.m_positionX);
     Oregon::NormalizeMapCoord(pos.m_positionY);
     UpdateGroundPositionZ(pos.m_positionX, pos.m_positionY, pos.m_positionZ);
-    pos.m_orientation = m_orientation;
+    pos.SetOrientation(GetOrientation());
 }
 
 void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float angle)
 {
-    angle += m_orientation;
+    angle += GetOrientation();
     float destx, desty, destz;
     destx = pos.m_positionX + dist * cos(angle);
     desty = pos.m_positionY + dist * sin(angle);
@@ -2530,7 +2527,7 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
     Oregon::NormalizeMapCoord(pos.m_positionX);
     Oregon::NormalizeMapCoord(pos.m_positionY);
     pos.m_positionZ = GetPositionZTarget(pos, destx, desty);
-    pos.m_orientation = m_orientation;
+    pos.SetOrientation(GetOrientation());
 }
 
 void WorldObject::PlayDistanceSound(uint32 sound_id, Player* target /*= NULL*/)
@@ -2605,11 +2602,11 @@ struct WorldObjectChangeAccumulator
     {
         for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
         {
-            BuildPacket(iter->getSource());
-            if (!iter->getSource()->GetSharedVisionList().empty())
+            BuildPacket(iter->GetSource());
+            if (!iter->GetSource()->GetSharedVisionList().empty())
             {
-                SharedVisionList::const_iterator it = iter->getSource()->GetSharedVisionList().begin();
-                for (; it != iter->getSource()->GetSharedVisionList().end(); ++it)
+                SharedVisionList::const_iterator it = iter->GetSource()->GetSharedVisionList().begin();
+                for (; it != iter->GetSource()->GetSharedVisionList().end(); ++it)
                     BuildPacket(*it);
             }
         }
@@ -2619,10 +2616,10 @@ struct WorldObjectChangeAccumulator
     {
         for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
         {
-            if (!iter->getSource()->GetSharedVisionList().empty())
+            if (!iter->GetSource()->GetSharedVisionList().empty())
             {
-                SharedVisionList::const_iterator it = iter->getSource()->GetSharedVisionList().begin();
-                for (; it != iter->getSource()->GetSharedVisionList().end(); ++it)
+                SharedVisionList::const_iterator it = iter->GetSource()->GetSharedVisionList().begin();
+                for (; it != iter->GetSource()->GetSharedVisionList().end(); ++it)
                     BuildPacket(*it);
             }
         }
@@ -2631,12 +2628,12 @@ struct WorldObjectChangeAccumulator
     {
         for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
         {
-            uint64 guid = iter->getSource()->GetCasterGUID();
+            uint64 guid = iter->GetSource()->GetCasterGUID();
             if (IS_PLAYER_GUID(guid))
             {
                 //Caster may be NULL if DynObj is in removelist
                 if (Player* caster = ObjectAccessor::FindPlayer(guid))
-                    if (caster->GetUInt64Value(PLAYER_FARSIGHT) == iter->getSource()->GetGUID())
+                    if (caster->GetUInt64Value(PLAYER_FARSIGHT) == iter->GetSource()->GetGUID())
                         BuildPacket(caster);
             }
         }

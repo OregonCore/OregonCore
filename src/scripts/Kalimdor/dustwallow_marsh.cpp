@@ -26,6 +26,7 @@ EndScriptData */
 mobs_risen_husk_spirit
 npc_restless_apparition
 npc_deserter_agitator
+npc_gavis_greysheild
 npc_lady_jaina_proudmoore
 npc_nat_pagle
 npc_morokk
@@ -195,6 +196,106 @@ bool GossipSelect_npc_deserter_agitator(Player* pPlayer, Creature* pCreature, ui
     }
 
     return true;
+}
+
+/*######
+## npc_gavis_greyshield
+######*/
+
+enum eGavisGreyshield
+{
+	NPC_GAVIS_GREYSHIELD = 23941,
+
+	SAY_GAVIS1 = -1910267,
+	SAY_GAVIS2 = -1910268,
+
+	QUEST_THE_END_OF_THE_DESERTERS = 11134,
+	SPELL_GAVIS_GREYSHIELD_CREDIT = 42660,
+
+	PHASE_GAVIS_ATTACK = 1,
+	PHASE_GAVIS_SURRENDER = 2
+};
+
+struct npc_gavis_greyshieldAI : public ScriptedAI
+{
+	npc_gavis_greyshieldAI(Creature* pCreature) : ScriptedAI(pCreature) 
+	{
+		Reset();
+	}
+
+	uint32 phase;
+	uint32 phaseTimer;
+	uint32 phaseCounter;
+
+	void Reset()
+	{
+		me->setFaction(54);
+		phase = PHASE_GAVIS_ATTACK;
+		phaseTimer = 0;
+		phaseCounter = 0;
+	}
+
+	void EnterCombat(Unit* /*who*/) { }
+
+	void DamageTaken(Unit* done_by, uint32& damage)
+	{
+		if (done_by->GetTypeId() == TYPEID_PLAYER)
+		{
+			if (damage > me->GetHealth())
+			{
+				me->SetHealth(1);
+				damage = 0;
+			}
+
+            if (me->HealthBelowPctDamaged(20, damage))
+			{
+				if (CAST_PLR(done_by)->GetQuestStatus(QUEST_THE_END_OF_THE_DESERTERS) == QUEST_STATUS_INCOMPLETE)
+					me->CastSpell(done_by, SPELL_GAVIS_GREYSHIELD_CREDIT, true);
+
+				phase = PHASE_GAVIS_SURRENDER;
+			}
+		}
+	}
+
+	void UpdateAI(const uint32 uiDiff)
+	{
+		switch (phase)
+		{
+			case PHASE_GAVIS_ATTACK:
+				break;
+
+			case PHASE_GAVIS_SURRENDER:
+				if (phaseTimer <= uiDiff)
+				{
+					switch (phaseCounter)
+					{
+						case 0:
+							me->CombatStop(true);
+							me->setFaction(35);
+							DoScriptText(SAY_GAVIS1, me);
+							phaseTimer = 5000;
+							break;
+						case 1:
+							DoScriptText(SAY_GAVIS2, me);
+							phaseTimer = 10000;
+							break;
+						case 2:
+							me->DespawnOrUnsummon();
+							break;
+					}
+					++phaseCounter;
+				}
+				else
+				{
+					phaseTimer -= uiDiff;
+				}
+		}
+	}
+};
+
+CreatureAI* GetAI_npc_gavis_greyshield(Creature* pCreature)
+{
+	return new npc_gavis_greyshieldAI(pCreature);
 }
 
 /*######
@@ -401,7 +502,7 @@ struct npc_morokkAI : public npc_escortAI
 
     void AttackedBy(Unit* pAttacker)
     {
-        if (me->getVictim())
+        if (me->GetVictim())
             return;
 
         if (me->IsFriendlyTo(pAttacker))
@@ -432,7 +533,7 @@ struct npc_morokkAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 /*uiDiff*/)
     {
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             if (HasEscortState(STATE_ESCORT_PAUSED))
             {
@@ -805,6 +906,11 @@ struct npc_private_hendelAI : public ScriptedAI
 {
     npc_private_hendelAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
+        PlayerGUID = 0;
+        m_uiPhase = 0;
+        m_uiEventTimer = 0;
+        m_uiPhaseCounter = 0;
+        lCreatureList.clear();
         Reset();
     }
 
@@ -817,16 +923,12 @@ struct npc_private_hendelAI : public ScriptedAI
 
     void Reset()
     {
-        PlayerGUID = 0;
-        m_uiPhase = 0;
-        m_uiEventTimer = 0;
-        m_uiPhaseCounter = 0;
-        lCreatureList.clear();
+        me->RestoreFaction();
     }
 
     void AttackedBy(Unit* pAttacker)
     {
-        if (me->getVictim())
+        if (me->GetVictim())
             return;
 
         if (me->IsFriendlyTo(pAttacker))
@@ -936,22 +1038,14 @@ struct npc_private_hendelAI : public ScriptedAI
 
     void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
-        if (uiDamage > me->GetHealth() || ((me->GetHealth() - uiDamage) * 100 / me->GetMaxHealth() < 20))
+        if (uiDamage > me->GetHealth() || me->HealthBelowPctDamaged(20, uiDamage))
         {
             uiDamage = 0;
+
+            EnterEvadeMode();
+
             m_uiPhase = PHASE_COMPLETE;
             m_uiEventTimer = 2000;
-
-            me->RestoreFaction();
-            me->RemoveAllAuras();
-            me->DeleteThreatList();
-            me->CombatStop(true);
-            me->SetWalk(false);
-            me->SetHomePosition(-2892.28f, -3347.81f, 31.8609f, 0.160719f);
-            me->GetMotionMaster()->MoveTargetedHome();
-
-            if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-                pPlayer->CombatStop(true);
 
             if (!lCreatureList.empty())
             {
@@ -963,9 +1057,7 @@ struct npc_private_hendelAI : public ScriptedAI
                     {
                         N = N + 1;
                         (*itr)->RestoreFaction();
-                        (*itr)->RemoveAllAuras();
-                        (*itr)->DeleteThreatList();
-                        (*itr)->CombatStop(true);
+                        EnterEvadeMode();
                         (*itr)->SetWalk(false);
                         (*itr)->GetMotionMaster()->MovePoint(0, m_afEventMoveTo[N].m_fX,  m_afEventMoveTo[N].m_fY,  m_afEventMoveTo[N].m_fZ);
                         (*itr)->ForcedDespawn(5000);
@@ -1040,14 +1132,14 @@ struct npc_zelfraxAI : public ScriptedAI
         SetCombatMovement(true);
 
         if (me->IsInCombat())
-            if (Unit* pUnit = me->getVictim())
+            if (Unit* pUnit = me->GetVictim())
                 me->GetMotionMaster()->MoveChase(pUnit);
     }
 
     void MoveToDock()
     {
         SetCombatMovement(false);
-        me->GetMotionMaster()->MovePoint(0, -2967.030, -3872.1799, 35.620);
+        me->GetMotionMaster()->MovePoint(0, -2967.030f, -3872.1799f, 35.620f);
         DoScriptText(SAY_ZELFRAX, me);
         DoScriptText(SAY_ZELFRAX_2, me);
     }
@@ -1279,12 +1371,17 @@ void AddSC_dustwallow_marsh()
     newscript->pGossipHello =   &GossipHello_npc_restless_apparition;
     newscript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "npc_deserter_agitator";
-    newscript->GetAI = &GetAI_npc_deserter_agitator;
-    newscript->pGossipHello = &GossipHello_npc_deserter_agitator;
-    newscript->pGossipSelect = &GossipSelect_npc_deserter_agitator;
-    newscript->RegisterSelf();
+	newscript = new Script;
+	newscript->Name = "npc_deserter_agitator";
+	newscript->GetAI = &GetAI_npc_deserter_agitator;
+	newscript->pGossipHello = &GossipHello_npc_deserter_agitator;
+	newscript->pGossipSelect = &GossipSelect_npc_deserter_agitator;
+	newscript->RegisterSelf();
+
+	newscript = new Script;
+	newscript->Name = "npc_gavis_greyshield";
+	newscript->GetAI = &GetAI_npc_gavis_greyshield;
+	newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_theramore_guard";

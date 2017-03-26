@@ -241,7 +241,7 @@ struct mob_ragin_flamesAI : public ScriptedAI
         if (inferno_Timer <= diff)
         {
             DoCastVictim(HeroicMode ? H_SPELL_INFERNO : SPELL_INFERNO);
-            me->TauntApply(me->getVictim());
+            me->TauntApply(me->GetVictim());
             inferno_Timer = 10000;
         }
         else inferno_Timer -= diff;

@@ -406,9 +406,9 @@ struct boss_alarAI : public ScriptedAI
     {
         if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
         {
-            if (me->IsWithinMeleeRange(me->getVictim()))
+            if (me->IsWithinMeleeRange(me->GetVictim()))
             {
-                me->AttackerStateUpdate(me->getVictim());
+                me->AttackerStateUpdate(me->GetVictim());
                 me->resetAttackTimer();
             }
             else

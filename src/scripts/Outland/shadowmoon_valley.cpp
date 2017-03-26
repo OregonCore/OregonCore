@@ -38,7 +38,6 @@ mob_illidari_spawn
 npc_lord_illidan_stormrage
 go_crystal_prison
 npc_enraged_spirit
-npc_jovaan
 npc_azaloth
 npc_sunfurywarlock
 EndContentData */
@@ -47,6 +46,27 @@ EndContentData */
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 #include "ScriptedGossip.h"
+
+enum
+{
+    SPELL_BOX             = 37097,
+    NPC_WARBRINGER        = 21502,
+
+    SAY_JOVAAN1           = -1900140,
+    SAY_JOVAAN2           = -1900142,
+    SAY_JOVAAN3           = -1900144,
+    SAY_JOVAAN4           = -1900146,
+    SAY_WARBRINGER1       = -1900141,
+    SAY_WARBRINGER2       = -1900143,
+    SAY_WARBRINGER3       = -1900145,
+    SAY_WARBRINGER4       = -1900147,
+
+    QUEST_LEGION_HOLD1    = 10563,
+    QUEST_LEGION_HOLD2    = 10596,
+
+    GO_INFERNAL           = 184834,
+    GO_INFERNAL_TRAP      = 184835
+};
 
 /*#####
 # mob_mature_netherwing_drake
@@ -291,10 +311,10 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
 
                             Position pos;
                             if (Unit* EscapeDummy = me->FindNearestCreature(CREATURE_ESCAPE_DUMMY, 30))
-                                EscapeDummy->GetPosition(&pos);
+                                pos = EscapeDummy->GetPosition();
                             else
                             {
-                                me->GetRandomNearPosition(pos, 20);
+                                pos = me->GetRandomNearPosition(20);
                                 pos.m_positionZ += 25;
                             }
 
@@ -1691,7 +1711,7 @@ struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
 
             for (GroupReference* pRef = pEventGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
             {
-                if (Player* pMember = pRef->getSource())
+                if (Player* pMember = pRef->GetSource())
                 {
                     if (!pMember->IsAlive())
                         ++uiDeadMemberCount;
@@ -1722,7 +1742,7 @@ struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
             {
                 for (GroupReference* pRef = pEventGroup->GetFirstMember(); pRef != NULL; pRef = pRef->next())
                 {
-                    if (Player* pMember = pRef->getSource())
+                    if (Player* pMember = pRef->GetSource())
                     {
                         if (pMember->GetQuestStatus(QUEST_BATTLE_OF_THE_CRIMSON_WATCH) == QUEST_STATUS_INCOMPLETE)
                             pMember->FailQuest(QUEST_BATTLE_OF_THE_CRIMSON_WATCH);
@@ -1905,142 +1925,6 @@ struct npc_enraged_spiritAI : public ScriptedAI
 CreatureAI* GetAI_npc_enraged_spirit(Creature* pCreature)
 {
     return new npc_enraged_spiritAI(pCreature);
-}
-
-/*######
-# npc_jovaan
-#####*/
-
-enum
-{
-    SPELL_BOX             = 37097,
-    NPC_WARBRINGER        = 21502,
-
-    SAY_JOVAAN1           = -1900140,
-    SAY_JOVAAN2           = -1900142,
-    SAY_JOVAAN3           = -1900144,
-    SAY_JOVAAN4           = -1900146,
-    SAY_WARBRINGER1       = -1900141,
-    SAY_WARBRINGER2       = -1900143,
-    SAY_WARBRINGER3       = -1900145,
-    SAY_WARBRINGER4       = -1900147,
-
-    QUEST_LEGION_HOLD1    = 10563,
-    QUEST_LEGION_HOLD2    = 10596,
-
-    GO_INFERNAL           = 184834,
-    GO_INFERNAL_TRAP      = 184835
-};
-
-struct npc_jovaanAI : public ScriptedAI
-{
-    npc_jovaanAI(Creature* pCreature) : ScriptedAI(pCreature) {}
-
-    bool Image;
-
-    uint64 uiPlayerGUID;
-    uint32 uiStepsTimer;
-    uint32 uiSteps;
-
-    void Reset()
-    {
-        me->setFaction(7);
-        Image = false;
-        uiPlayerGUID = 0;
-        uiStepsTimer = 0;
-        uiSteps = 0;
-    }
-
-    void MoveInLineOfSight(Unit* pWho)
-    {
-        if (pWho->GetTypeId() == TYPEID_PLAYER)
-        {
-            if (me->IsWithinDistInMap(((Player*)pWho), 15) && ((Player*)pWho)->HasAura(SPELL_BOX, 0))
-            {
-                uiPlayerGUID = pWho->GetGUID();
-                if ((CAST_PLR(pWho)->GetQuestStatus(QUEST_LEGION_HOLD1) == QUEST_STATUS_INCOMPLETE) || (CAST_PLR(pWho)->GetQuestStatus(QUEST_LEGION_HOLD2) == QUEST_STATUS_INCOMPLETE))
-                    Image = true;
-            }
-            else uiPlayerGUID = 0;
-        }
-    }
-
-    uint32 NextStep(uint32 uiSteps)
-    {
-        Creature* pWarbringer = me->FindNearestCreature(NPC_WARBRINGER, 25);
-        GameObject* pInfernal = me->FindNearestGameObject(GO_INFERNAL, 15);
-        GameObject* pInfernalTrap = me->FindNearestGameObject(GO_INFERNAL_TRAP, 15);
-
-        if (!pWarbringer || !pInfernal || !pInfernalTrap)
-        {
-            Reset();
-            return 0;
-        }
-
-        switch (uiSteps)
-        {
-        case 1:
-            pInfernal->SetRespawnTime(61);
-            pInfernal->UpdateObjectVisibility();
-            break;
-        case 2:
-            pInfernalTrap->SetRespawnTime(61);
-            pInfernalTrap->UpdateObjectVisibility();
-            return 500;
-        case 3:
-            me->setFaction(35);
-            me->SummonCreature(NPC_WARBRINGER, -3300.479, 2927.177, 173.894, 2.5f, TEMPSUMMON_TIMED_DESPAWN, 60000);
-            return 1000;
-        case 4:
-            DoScriptText(SAY_JOVAAN1, me, 0);
-            return 6000;
-        case 5:
-            DoScriptText(SAY_WARBRINGER1, pWarbringer, 0);
-            pWarbringer->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_TALK);
-            return 6800;
-        case 6:
-            DoScriptText(SAY_JOVAAN2, me, 0);
-            return 6800;
-        case 7:
-            DoScriptText(SAY_WARBRINGER2, pWarbringer, 0);
-            return 6800;
-        case 8:
-            DoScriptText(SAY_JOVAAN3, me, 0);
-            return 6800;
-        case 9:
-            DoScriptText(SAY_WARBRINGER3, pWarbringer, 0);
-            return 6800;
-        case 10:
-            DoScriptText(SAY_JOVAAN4, me, 0);
-            return 6800;
-        case 11:
-            DoScriptText(SAY_WARBRINGER4, pWarbringer, 0);
-            return 6000;
-        case 12:
-            if (Player* pPlayer = Unit::GetPlayer(*me, uiPlayerGUID))
-                pPlayer->KilledMonsterCredit(NPC_WARBRINGER, 0);;
-            return 2000;
-        case 13:
-            Reset();
-        default:
-            return 0;
-        }
-    }
-
-    void UpdateAI(const uint32 uiDiff)
-    {
-        if (uiStepsTimer <= uiDiff)
-        {
-            if (Image)
-                uiStepsTimer = NextStep(++uiSteps);
-        }
-        else uiStepsTimer -= uiDiff;
-    }
-};
-
-CreatureAI* GetAI_npc_jovaan(Creature* pCreature)
-{
-    return new npc_jovaanAI(pCreature);
 }
 
 /*######
@@ -2469,7 +2353,7 @@ struct npc_deathbringer_jovaanAI : public ScriptedAI
 			return 500;
 		case 3:
 			me->setFaction(35);
-			me->SummonCreature(NPC_WARBRINGER, -3300.479, 2927.177, 173.894, 2.5f, TEMPSUMMON_TIMED_DESPAWN, 60000);
+			me->SummonCreature(NPC_WARBRINGER, -3300.479f, 2927.177f, 173.894f, 2.5f, TEMPSUMMON_TIMED_DESPAWN, 60000);
 			return 1000;
 		case 4:
 			DoScriptText(SAY_JOVAAN1, me, 0);
@@ -3742,9 +3626,8 @@ struct npc_guldanAI : public ScriptedAI
 		Creature* pOronok = me->FindNearestCreature(NPC_ORONOK, 90);
 		Creature* pBorak = me->FindNearestCreature(NPC_BORAK, 90);
 		Creature* pGromtor = me->FindNearestCreature(NPC_GROMTOR, 90);
-		Creature* pTrigger = me->FindNearestCreature(61037, 90);
 
-		if (!pCyrukh && !pSpirit && !pTrigger)
+		if (!pCyrukh && !pSpirit)
 		{
 			Reset();
 			return 0;
@@ -3786,7 +3669,10 @@ struct npc_guldanAI : public ScriptedAI
 			DoScriptText(GULDAN_5, me);
 			return 1000;
 		case 10:
-			pTrigger->MonsterYellToZone(ORONOK_1, LANG_UNIVERSAL, playerGUID);
+            if (pOronok = me->SummonCreature(NPC_ORONOK, -3605.26f, 1924.91f, 49.53f, 4.88f, TEMPSUMMON_MANUAL_DESPAWN, 0))
+                pOronok->MonsterYellToZone(ORONOK_1, LANG_UNIVERSAL, playerGUID);
+            me->SummonCreature(NPC_BORAK, -3601.04f, 1928.46f, 50.054f, 4.85f, TEMPSUMMON_MANUAL_DESPAWN, 0);
+            me->SummonCreature(NPC_GROMTOR, -3609.73f, 1926.59f, 50.007f, 4.88f, TEMPSUMMON_MANUAL_DESPAWN, 0);
 			return 5000;
 		case 11:
 			if (me->HasAura(SPELL_GULDAN_CHANNEL))
@@ -3798,11 +3684,6 @@ struct npc_guldanAI : public ScriptedAI
 			me->SetStandState(UNIT_STAND_STATE_KNEEL);
 			return 10000;
 		case 13:
-			me->SummonCreature(NPC_ORONOK, -3605.26f, 1924.91f, 49.53f, 4.88f, TEMPSUMMON_MANUAL_DESPAWN, 0);
-			me->SummonCreature(NPC_BORAK, -3601.04f, 1928.46f, 50.054f, 4.85f, TEMPSUMMON_MANUAL_DESPAWN, 0);
-			me->SummonCreature(NPC_GROMTOR, -3609.73f, 1926.59f, 50.007f, 4.88f, TEMPSUMMON_MANUAL_DESPAWN, 0);
-			return 500;
-		case 14:
 			pOronok->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 			pOronok->GetMotionMaster()->MovePath(608608600, false);
 			pBorak->GetMotionMaster()->MovePath(608608601, false);
@@ -4183,11 +4064,6 @@ void AddSC_shadowmoon_valley()
     newscript = new Script;
     newscript->Name = "npc_enraged_spirit";
     newscript->GetAI = &GetAI_npc_enraged_spirit;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_jovaan";
-    newscript->GetAI = &GetAI_npc_jovaan;
     newscript->RegisterSelf();
 
     newscript = new Script;

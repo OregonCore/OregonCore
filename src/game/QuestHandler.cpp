@@ -163,7 +163,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket& recv_data)
                 {
                     for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                     {
-                        Player* pPlayer = itr->getSource();
+                        Player* pPlayer = itr->GetSource();
 
                         if (!pPlayer || pPlayer == _player)     // not self
                             continue;
@@ -492,7 +492,7 @@ void WorldSession::HandleQuestPushToParty(WorldPacket& recvPacket)
         {
             for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
             {
-                Player* pPlayer = itr->getSource();
+                Player* pPlayer = itr->GetSource();
 
                 if (!pPlayer || pPlayer == _player)         // skip self
                     continue;
@@ -642,8 +642,13 @@ uint32 WorldSession::getDialogStatus(Player* pPlayer, Object* questgiver, uint32
             {
                 if (pPlayer->SatisfyQuestLevel(pQuest, false))
                 {
-                    if (pQuest->IsAutoComplete() || (pQuest->IsRepeatable() && pPlayer->getQuestStatusMap()[quest_id].m_rewarded))
+                    auto questStatusItr = pPlayer->getQuestStatusMap().find(quest_id);
+                    bool rewarded = (questStatusItr != pPlayer->getQuestStatusMap().end()) ? questStatusItr->second.m_rewarded : false;
+
+                    if (pQuest->IsAutoComplete() || (pQuest->IsRepeatable() && rewarded))
+                    {
                         result2 = DIALOG_STATUS_REWARD_REP;
+                    }
                     else if (pPlayer->getLevel() <= pPlayer->GetQuestLevelForPlayer(pQuest) + sWorld.getConfig(CONFIG_QUEST_LOW_LEVEL_HIDE_DIFF))
                     {
                         if (pQuest->HasFlag(QUEST_FLAGS_DAILY))

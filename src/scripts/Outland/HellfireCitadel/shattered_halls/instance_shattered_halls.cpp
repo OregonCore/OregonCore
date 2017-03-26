@@ -199,7 +199,7 @@ struct instance_shattered_halls : public ScriptedInstance
         {
             for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
-                if (Player* plr = itr->getSource())
+                if (Player* plr = itr->GetSource())
                     return plr;
             }
         }
@@ -391,7 +391,7 @@ struct instance_shattered_halls : public ScriptedInstance
 
         for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
         {
-            Player* pPlayer = itr->getSource();
+            Player* pPlayer = itr->GetSource();
             if (pPlayer && !pPlayer->HasAura(uiSpellId, 0))
                 pPlayer->CastSpell(pPlayer, uiSpellId, true);
         }
@@ -405,7 +405,7 @@ InstanceData* GetInstanceData_instance_shattered_halls(Map* map)
 
 bool AreaTrigger_at_shattered_halls(Player* pPlayer, AreaTriggerEntry const* /*pAt*/)
 {
-    if (pPlayer->isGameMaster() || pPlayer->isDead())
+    if (pPlayer->IsGameMaster() || pPlayer->isDead())
         return false;
 
     instance_shattered_halls* pInstance = (instance_shattered_halls*)pPlayer->GetInstanceData();

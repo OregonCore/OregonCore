@@ -140,7 +140,7 @@ void ScriptedAI::DoStartNoMovement(Unit* pVictim)
 
 void ScriptedAI::DoStopAttack()
 {
-    if (me->getVictim())
+    if (me->GetVictim())
         me->AttackStop();
 }
 
@@ -468,7 +468,7 @@ void ScriptedAI::DoTeleportAll(float fX, float fY, float fZ, float fO)
 
     Map::PlayerList const& PlayerList = map->GetPlayers();
     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-        if (Player* i_pl = i->getSource())
+        if (Player* i_pl = i->GetSource())
             if (i_pl->IsAlive())
                 i_pl->TeleportTo(me->GetMapId(), fX, fY, fZ, fO, TELE_TO_NOT_LEAVE_COMBAT);
 }
@@ -563,7 +563,7 @@ bool ScriptedAI::EnterEvadeIfOutOfCombatArea(const uint32 uiDiff)
         return false;
     }
 
-    if (me->IsInEvadeMode() || !me->getVictim())
+    if (me->IsInEvadeMode() || !me->GetVictim())
         return false;
 
     float fX = me->GetPositionX();

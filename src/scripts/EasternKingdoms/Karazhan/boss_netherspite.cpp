@@ -175,7 +175,7 @@ struct boss_netherspiteAI : public ScriptedAI
                     // get the best suitable target
                     for (Map::PlayerList::const_iterator i = players.begin(); i != players.end(); ++i)
                     {
-                        Player* p = i->getSource();
+                        Player* p = i->GetSource();
                         if (p && p->IsAlive() // alive
                             && (!pTarget || pTarget->GetDistance2d(portal) > p->GetDistance2d(portal)) // closer than current best
                             && !p->HasAura(PlayerDebuff[j], 0) // not exhausted
@@ -210,8 +210,8 @@ struct boss_netherspiteAI : public ScriptedAI
                     }
                 }
                 // aggro target if Red Beam
-                if (j == RED_PORTAL && me->getVictim() != pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
-                    me->getThreatManager().addThreat(pTarget, 100000.0f + DoGetThreat(me->getVictim()));
+                if (j == RED_PORTAL && me->GetVictim() != pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
+                    me->getThreatManager().addThreat(pTarget, 100000.0f + DoGetThreat(me->GetVictim()));
             }
     }
 

@@ -92,8 +92,8 @@ struct boss_jindoAI : public ScriptedAI
         {
             DoCastVictim( SPELL_HEX);
 
-            if (DoGetThreat(me->getVictim()))
-                DoModifyThreatPercent(me->getVictim(), -80);
+            if (DoGetThreat(me->GetVictim()))
+                DoModifyThreatPercent(me->GetVictim(), -80);
 
             Hex_Timer = 12000 + rand() % 8000;
         }
@@ -124,7 +124,7 @@ struct boss_jindoAI : public ScriptedAI
             {
                 DoTeleportPlayer(pTarget, -11583.7783f, -1249.4278f, 77.5471f, 4.745f);
 
-                if (DoGetThreat(me->getVictim()))
+                if (DoGetThreat(me->GetVictim()))
                     DoModifyThreatPercent(pTarget, -100);
 
                 Creature* Skeletons;

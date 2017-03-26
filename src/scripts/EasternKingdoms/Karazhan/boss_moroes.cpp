@@ -145,8 +145,8 @@ struct boss_moroesAI : public ScriptedAI
 
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
-                if (i->getSource()->IsAlive() && i->getSource()->HasAura(SPELL_GARROTE, 0))
-                    i->getSource()->RemoveAurasDueToSpell(SPELL_GARROTE);
+                if (i->GetSource()->IsAlive() && i->GetSource()->HasAura(SPELL_GARROTE, 0))
+                    i->GetSource()->RemoveAurasDueToSpell(SPELL_GARROTE);
             }
         }
     }
@@ -224,7 +224,7 @@ struct boss_moroesAI : public ScriptedAI
                 Temp = Creature::GetCreature((*me), AddGUID[i]);
                 if (Temp && Temp->IsAlive())
                 {
-                    Temp->AI()->AttackStart(me->getVictim());
+                    Temp->AI()->AttackStart(me->GetVictim());
                     DoZoneInCombat(Temp);
                 }
                 else
@@ -244,7 +244,7 @@ struct boss_moroesAI : public ScriptedAI
             return;
         }
 
-        if (!Enrage && me->GetHealth() * 100 / me->GetMaxHealth() < 30)
+        if (!Enrage && HealthBelowPct(30))
         {
             DoCast(me, SPELL_FRENZY);
             Enrage = true;
@@ -259,8 +259,8 @@ struct boss_moroesAI : public ScriptedAI
                 {
                     Temp = Unit::GetCreature((*me), AddGUID[i]);
                     if (Temp && Temp->IsAlive())
-                        if (!Temp->getVictim())
-                            Temp->AI()->AttackStart(me->getVictim());
+                        if (!Temp->GetVictim())
+                            Temp->AI()->AttackStart(me->GetVictim());
                 }
             }
             CheckAdds_Timer = 5000;

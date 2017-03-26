@@ -288,7 +288,7 @@ struct npc_secondTrialAI : public ScriptedAI
         // healer
         if (spellFlashLight)
         {
-            if (me->GetHealth() * 100 / me->GetMaxHealth() < 70)
+            if (HealthBelowPct(70))
             {
                 if (timerFlashLight <= diff)
                 {
@@ -507,7 +507,7 @@ void npc_secondTrialAI::JustDied(Unit* Killer)
             {
                 for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                 {
-                    Player* pGroupGuy = itr->getSource();
+                    Player* pGroupGuy = itr->GetSource();
 
                     // for any leave or dead (with not released body) group member at appropriate distance
                     if (pGroupGuy && pGroupGuy->IsAtGroupRewardDistance(me) && !pGroupGuy->GetCorpse() && pGroupGuy->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)

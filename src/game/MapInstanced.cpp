@@ -95,66 +95,95 @@ void MapInstanced::UnloadAll()
 - create the instance if it's not created already
 - the player is not actually added to the instance (only in InstanceMap::Add)
 */
-Map* MapInstanced::CreateInstance(const uint32 mapId, Player* player)
+Map* MapInstanced::CreateInstanceForPlayer(const uint32 mapId, Player* player, uint32 loginInstanceId)
 {
     if (GetId() != mapId || !player)
-        return NULL;
+        return nullptr;
 
-    Map* map = NULL;
-    uint32 NewInstanceId = 0;                       // instanceId of the resulting map
+    Map* map = nullptr;
+    uint32 newInstanceId = 0;                       // instanceId of the resulting map
 
     if (IsBattlegroundOrArena())
     {
         // instantiate or find existing bg map for player
         // the instance id is set in battlegroundid
-        NewInstanceId = player->GetBattlegroundId();
-        if (!NewInstanceId) return NULL;
-        map = _FindMap(NewInstanceId);
+        newInstanceId = player->GetBattlegroundId();
+        if (!newInstanceId)
+            return nullptr;
+
+        map = MapManager::Instance().FindMap(mapId, newInstanceId);
         if (!map)
-            map = CreateBattleground(NewInstanceId, player->GetBattleground());
+        {
+            if (Battleground* bg = player->GetBattleground())
+                map = CreateBattleground(newInstanceId, bg);
+            else
+            {
+                player->TeleportToBGEntryPoint();
+                return nullptr;
+            }
+        }
     }
     else
     {
         InstancePlayerBind* pBind = player->GetBoundInstance(GetId(), player->GetDifficulty());
-        InstanceSave* pSave = pBind ? pBind->save : NULL;
+        InstanceSave* pSave = pBind ? pBind->save : nullptr;
 
-        // the player's permanent player bind is taken into consideration first
-        // then the player's group bind and finally the solo bind.
+        // priority:
+        // 1. player's permanent bind
+        // 2. player's current instance id if this is at login
+        // 3. group's current bind
+        // 4. player's current bind
         if (!pBind || !pBind->perm)
         {
-            InstanceGroupBind* groupBind = NULL;
+            if (loginInstanceId) // if the player has a saved instance id on login, we either use this instance or relocate him out (return null)
+            {
+                map = FindInstanceMap(loginInstanceId);
+                return (map && map->GetId() == GetId()) ? map : nullptr; // is this check necessary? or does MapInstanced only find instances of itself?
+            }
+
+            InstanceGroupBind* groupBind = nullptr;
             Group* group = player->GetGroup();
             // use the player's difficulty setting (it may not be the same as the group's)
             if (group)
             {
                 groupBind = group->GetBoundInstance(this);
                 if (groupBind)
+                {
+                    // solo saves should be reset when entering a group's instance
+                    player->UnbindInstance(GetId(), player->GetDifficulty());
                     pSave = groupBind->save;
+                }
             }
         }
 
         if (pSave)
         {
             // solo/perm/group
-            NewInstanceId = pSave->GetInstanceId();
-            map = _FindMap(NewInstanceId);
+            newInstanceId = pSave->GetInstanceId();
+            map = FindInstanceMap(newInstanceId);
             // it is possible that the save exists but the map doesn't
             if (!map)
-                map = CreateInstance(NewInstanceId, pSave, pSave->GetDifficulty());
+                map = CreateInstance(newInstanceId, pSave, pSave->GetDifficulty());
         }
         else
         {
             // if no instanceId via group members or instance saves is found
             // the instance will be created for the first time
-            NewInstanceId = MapManager::Instance().GenerateInstanceId();
-            map = CreateInstance(NewInstanceId, NULL, player->GetDifficulty());
+            newInstanceId = MapManager::Instance().GenerateInstanceId();
+
+            DungeonDifficulty diff = player->GetGroup() ? player->GetGroup()->GetDifficulty() : player->GetDifficulty();
+            //Seems it is now possible, but I do not know if it should be allowed
+            //ASSERT(!FindInstanceMap(NewInstanceId));
+            map = FindInstanceMap(newInstanceId);
+            if (!map)
+                map = CreateInstance(newInstanceId, NULL, diff);
         }
     }
 
     return map;
 }
 
-InstanceMap* MapInstanced::CreateInstance(uint32 InstanceId, InstanceSave* save, DungeonDifficulties difficulty)
+InstanceMap* MapInstanced::CreateInstance(uint32 InstanceId, InstanceSave* save, DungeonDifficulty difficulty)
 {
     // load/create a map
     Guard guard(*this);
@@ -232,9 +261,9 @@ bool MapInstanced::DestroyInstance(InstancedMaps::iterator& itr)
     return true;
 }
 
-bool MapInstanced::CanEnter(Player* /*player*/)
+Map::EnterState MapInstanced::CannotEnter(Player* /*player*/)
 {
     //ASSERT(false);
-    return true;
+    return CAN_ENTER;
 }
 

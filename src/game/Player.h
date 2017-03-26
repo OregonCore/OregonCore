@@ -30,9 +30,11 @@
 #include "Group.h"
 #include "Bag.h"
 #include "WorldSession.h"
+#include "CinematicMgr.h"
 #include "Pet.h"
 #include "MapReference.h"
 #include "Util.h"                                           // for Tokens typedef
+#include "ReputationMgr.h"
 
 #include<string>
 #include<vector>
@@ -196,9 +198,7 @@ struct PlayerLevelInfo
 struct PlayerInfo
 {
     // existence checked by displayId != 0             // existence checked by displayId != 0
-    PlayerInfo() : displayId_m(0), displayId_f(0), levelInfo(NULL)
-    {
-    }
+    PlayerInfo() : mapId(0), areaId(0), positionX(0.0f), positionY(0.0f), positionZ(0.0f), orientation(0.0f), displayId_m(0), displayId_f(0), levelInfo(nullptr) { }
 
     uint32 mapId;
     uint32 areaId;
@@ -245,31 +245,6 @@ struct Areas
     float y1;
     float y2;
 };
-
-enum FactionFlags
-{
-    FACTION_FLAG_VISIBLE            = 0x01,                 // makes visible in client (set or can be set at interaction with target of this faction)
-    FACTION_FLAG_AT_WAR             = 0x02,                 // enable AtWar-button in client. player controlled (except opposition team always war state), Flag only set on initial creation
-    FACTION_FLAG_HIDDEN             = 0x04,                 // hidden faction from reputation pane in client (player can gain reputation, but this update not sent to client)
-    FACTION_FLAG_INVISIBLE_FORCED   = 0x08,                 // always overwrite FACTION_FLAG_VISIBLE and hide faction in rep.list, used for hide opposite team factions
-    FACTION_FLAG_PEACE_FORCED       = 0x10,                 // always overwrite FACTION_FLAG_AT_WAR, used for prevent war with own team factions
-    FACTION_FLAG_INACTIVE           = 0x20,                 // player controlled, state stored in characters.data (CMSG_SET_FACTION_INACTIVE)
-    FACTION_FLAG_RIVAL              = 0x40                  // flag for the two competing outland factions
-};
-
-typedef uint32 RepListID;
-struct FactionState
-{
-    uint32 ID;
-    RepListID ReputationListID;
-    uint32 Flags;
-    int32  Standing;
-    bool Changed;
-};
-
-typedef std::map<RepListID, FactionState> FactionStateList;
-
-typedef std::map<uint32, ReputationRank> ForcedReactions;
 
 struct EnchantDuration
 {
@@ -388,8 +363,8 @@ enum PlayerFlags
     PLAYER_FLAGS_UNK2           = 0x00002000,               // played too long time
     PLAYER_FLAGS_UNK3           = 0x00008000,               // strange visual effect (2.0.1), looks like PLAYER_FLAGS_GHOST flag
     PLAYER_FLAGS_SANCTUARY      = 0x00010000,               // player entered sanctuary
-    PLAYER_FLAGS_UNK4           = 0x00020000,               // taxi benchmark mode (on/off) (2.0.1)
-    PLAYER_UNK                  = 0x00040000,               // 2.0.8...
+    PLAYER_FLAGS_TAXI_BENCHMARK = 0x00020000,               // taxi benchmark mode (on/off) (2.0.1)
+    PLAYER_FLAGS_PVP_TIMER      = 0x00040000,               // 2.0.8...
 };
 
 // used for PLAYER__FIELD_KNOWN_TITLES field (uint64), (1<<bit_index) without (-1)
@@ -452,7 +427,7 @@ enum PlayerFieldByteFlags
 enum PlayerFieldByte2Flags
 {
     PLAYER_FIELD_BYTE2_NONE              = 0x00,
-    PLAYER_FIELD_BYTE2_STEALTH           = 0x20,
+    PLAYER_FIELD_BYTE2_STEALTH           = 0x2000,
     PLAYER_FIELD_BYTE2_INVISIBILITY_GLOW = 0x4000
 };
 
@@ -646,7 +621,6 @@ enum TransferAbortReason
     TRANSFER_ABORT_INSUF_EXPAN_LVL1     = 0x0106,           // You must have TBC expansion installed to access this area.
     TRANSFER_ABORT_DIFFICULTY1          = 0x0007,           // Normal difficulty mode is not available for %s.
     TRANSFER_ABORT_DIFFICULTY2          = 0x0107,           // Heroic difficulty mode is not available for %s.
-    TRANSFER_ABORT_DIFFICULTY3          = 0x0207            // Epic difficulty mode is not available for %s.
 };
 
 enum InstanceResetWarningType
@@ -948,19 +922,21 @@ struct BGData
 class Player : public Unit, public GridObject<Player>
 {
         friend class WorldSession;
+        friend class CinematicMgr;
+
         friend void Item::AddToUpdateQueueOf(Player* player);
         friend void Item::RemoveFromUpdateQueueOf(Player* player);
     public:
         explicit Player(WorldSession* session);
-        ~Player();
+        ~Player() override;
 
-        void CleanupsBeforeDelete();
+        void CleanupsBeforeDelete() override;
 
         static UpdateMask updateVisualBits;
         static void InitVisibleBits();
 
-        void AddToWorld();
-        void RemoveFromWorld();
+        void AddToWorld() override;
+        void RemoveFromWorld() override;
 
         void SetObjectScale(float scale)
         {
@@ -978,7 +954,7 @@ class Player : public Unit, public GridObject<Player>
 
         bool Create(uint32 guidlow, const std::string& name, uint8 race, uint8 class_, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair, uint8 outfitId);
 
-        void Update(uint32 time);
+        void Update(uint32 time) override;
 
         static bool BuildEnumData(QueryResult_AutoPtr result, WorldPacket* data);
 
@@ -1029,7 +1005,7 @@ class Player : public Unit, public GridObject<Player>
             if (on) m_ExtraFlags |= PLAYER_EXTRA_ACCEPT_WHISPERS;
             else m_ExtraFlags &= ~PLAYER_EXTRA_ACCEPT_WHISPERS;
         }
-        bool isGameMaster() const
+        bool IsGameMaster() const
         {
             return m_ExtraFlags & PLAYER_EXTRA_GM_ON;
         }
@@ -1088,7 +1064,7 @@ class Player : public Unit, public GridObject<Player>
         void ResetTimeSync();
         void SendTimeSync();
 
-        void setDeathState(DeathState s);                   // overwrite Unit::setDeathState
+        void setDeathState(DeathState s) override;                   // overwrite Unit::setDeathState
 
         float GetRestBonus() const { return m_rest_bonus; }
         void SetRestBonus(float rest_bonus_new);
@@ -1116,7 +1092,7 @@ class Player : public Unit, public GridObject<Player>
         /*********************************************************/
 
         void SetVirtualItemSlot(uint8 i, Item* item);
-        void SetSheath(SheathState sheathed);             // overwrite Unit version
+        void SetSheath(SheathState sheathed) override;             // overwrite Unit version
         uint8 FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) const;
         uint32 GetItemCount(uint32 item, bool inBankAlso = false, Item* skipItem = NULL) const;
         Item* GetItemByGuid(uint64 guid) const;
@@ -1274,6 +1250,9 @@ class Player : public Unit, public GridObject<Player>
         }
         void ClearTrade();
         void TradeCancel(bool sendback);
+
+        CinematicMgr* GetCinematicMgr() const { return _cinematicMgr; }
+
         Item* GetItemByTradeSlot(uint8 slot) const
         {
             if (slot < TRADE_SLOT_COUNT && tradeItems[slot])
@@ -1285,6 +1264,7 @@ class Player : public Unit, public GridObject<Player>
         void UpdateItemDuration(uint32 time, bool realtimeonly = false);
         void AddEnchantmentDurations(Item* item);
         void RemoveEnchantmentDurations(Item* item);
+        void RemoveEnchantmentDurationsReferences(Item* item);
         void RemoveAllEnchantments(EnchantmentSlot slot, bool arena);
         void AddEnchantmentDuration(Item* item, EnchantmentSlot slot, uint32 duration);
         void ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool apply_dur = true, bool ignore_condition = false);
@@ -1670,7 +1650,7 @@ class Player : public Unit, public GridObject<Player>
         void CharmSpellInitialize();
         void PossessSpellInitialize();
         void SendRemoveControlBar();
-        bool HasSpell(uint32 spell) const;
+        bool HasSpell(uint32 spell) const override;
         bool HasActiveSpell(uint32 spell) const;            // shown in spellbook
         TrainerSpellState GetTrainerSpellState(TrainerSpell const* trainer_spell) const;
         bool IsSpellFitByClassAndRace(uint32 spell_id) const;
@@ -1685,7 +1665,7 @@ class Player : public Unit, public GridObject<Player>
         void LearnQuestRewardedSpells();
         void LearnQuestRewardedSpells(Quest const* quest);
         void LearnSpellHighestRank(uint32 spellid);
-        uint32 GetHighestLearnedRankOf(uint32 spellid) const;
+        uint32 GetHighestLearnedRankOf(uint32 spellid) const override;
 
         uint32 GetFreeTalentPoints() const
         {
@@ -1739,7 +1719,7 @@ class Player : public Unit, public GridObject<Player>
         }
         void AddSpellCooldown(uint32 spell_id, uint32 itemid, time_t end_time);
         void SendCooldownEvent(SpellEntry const* spellInfo);
-        void ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs);
+        void ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs) override;
         void RemoveSpellCooldown(uint32 spell_id, bool update = false);
         void SendClearCooldown(uint32 spell_id, Unit* target);
         void RemoveArenaSpellCooldowns();
@@ -1896,11 +1876,11 @@ class Player : public Unit, public GridObject<Player>
             return m_ArenaTeamIdInvited;
         }
 
-        void SetDifficulty(DungeonDifficulties dungeon_difficulty)
+        void SetDifficulty(DungeonDifficulty dungeon_difficulty)
         {
             m_dungeonDifficulty = dungeon_difficulty;
         }
-        DungeonDifficulties GetDifficulty()
+        DungeonDifficulty GetDifficulty()
         {
             return m_dungeonDifficulty;
         }
@@ -1923,15 +1903,15 @@ class Player : public Unit, public GridObject<Player>
         float GetHealthBonusFromStamina();
         float GetManaBonusFromIntellect();
 
-        bool UpdateStats(Stats stat);
-        bool UpdateAllStats();
-        void UpdateResistances(uint32 school);
-        void UpdateArmor();
-        void UpdateMaxHealth();
-        void UpdateMaxPower(Powers power);
-        void UpdateAttackPowerAndDamage(bool ranged = false);
+        bool UpdateStats(Stats stat) override;
+        bool UpdateAllStats() override;
+        void UpdateResistances(uint32 school) override;
+        void UpdateArmor() override;
+        void UpdateMaxHealth() override;
+        void UpdateMaxPower(Powers power) override;
+        void UpdateAttackPowerAndDamage(bool ranged = false) override;
         void UpdateShieldBlockValue();
-        void UpdateDamagePhysical(WeaponAttackType attType);
+        void UpdateDamagePhysical(WeaponAttackType attType) override;
         void UpdateSpellDamageAndHealingBonus();
 
         void CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, float& min_damage, float& max_damage);
@@ -1984,8 +1964,8 @@ class Player : public Unit, public GridObject<Player>
             m_session = s;
         }
 
-        void BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) const;
-        void DestroyForPlayer(Player* target, bool onDeath = false) const;
+        void BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) const override;
+        void DestroyForPlayer(Player* target, bool onDeath = false) const override;
         void SendDelayResponse(const uint32);
         void SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP, bool RafBonus = false);
 
@@ -2005,15 +1985,15 @@ class Player : public Unit, public GridObject<Player>
         void SendResetInstanceFailed(uint32 reason, uint32 MapId);
         void SendResetFailedNotify(uint32 mapid);
 
-        virtual bool SetPosition(float x, float y, float z, float orientation, bool teleport = false);
+        bool SetPosition(float x, float y, float z, float orientation, bool teleport = false) override;
         bool SetPosition(const Position& pos, bool teleport = false)
         {
             return SetPosition(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), teleport);
         }
 
         void UpdateUnderwaterState(Map* m, float x, float y, float z);
-        void SendMessageToSet(WorldPacket *data, bool self) {SendMessageToSetInRange(data, GetVisibilityRange(), self); };// overwrite Object::SendMessageToSet
-        void SendMessageToSetInRange(WorldPacket* data, float fist, bool self);// overwrite Object::SendMessageToSetInRange
+        void SendMessageToSet(WorldPacket *data, bool self) override {SendMessageToSetInRange(data, GetVisibilityRange(), self); };// overwrite Object::SendMessageToSet
+        void SendMessageToSetInRange(WorldPacket* data, float fist, bool self) override;// overwrite Object::SendMessageToSetInRange
         void SendMessageToSetInRange(WorldPacket* data, float dist, bool self, bool own_team_only);
 
         Corpse* GetCorpse() const;
@@ -2049,7 +2029,7 @@ class Player : public Unit, public GridObject<Player>
 
         void UpdateDefense();
         void UpdateWeaponSkill (WeaponAttackType attType);
-        void UpdateCombatSkills(Unit* pVictim, WeaponAttackType attType, MeleeHitOutcome outcome, bool defence);
+        void UpdateCombatSkills(Unit* victim, WeaponAttackType attType, MeleeHitOutcome outcome, bool defence);
 
         void SetSkill(uint32 id, uint16 currVal, uint16 maxVal);
         uint16 GetMaxSkillValue(uint32 skill) const;        // max + perm. bonus
@@ -2103,46 +2083,18 @@ class Player : public Unit, public GridObject<Player>
         void setFactionForRace(uint8 race);
 
         bool IsAtGroupRewardDistance(WorldObject const* pRewardSource) const;
-        void RewardPlayerAndGroupAtKill(Unit* pVictim);
+        void RewardPlayerAndGroupAtKill(Unit* victim);
         void RewardPlayerAndGroupAtEvent(uint32 creature_id, WorldObject* pRewardSource);
-        bool isHonorOrXPTarget(Unit* pVictim) const;
+        bool isHonorOrXPTarget(Unit* victim) const;
 
-        FactionStateList m_factions;
-        ForcedReactions m_forcedReactions;
-        FactionStateList const& GetFactionStateList()
-        {
-            return m_factions;
-        }
-        uint32 GetDefaultReputationFlags(const FactionEntry* factionEntry) const;
-        int32 GetBaseReputation(const FactionEntry* factionEntry) const;
-        int32 GetReputation(uint32 faction_id) const;
-        int32 GetReputation(const FactionEntry* factionEntry) const;
-        ReputationRank GetReputationRank(uint32 faction) const;
-        ReputationRank GetReputationRank(const FactionEntry* factionEntry) const;
-        ReputationRank GetBaseReputationRank(const FactionEntry* factionEntry) const;
-        ReputationRank ReputationToRank(int32 standing) const;
-        const static int32 ReputationRank_Length[MAX_REPUTATION_RANK];
-        const static int32 Reputation_Cap    =  42999;
-        const static int32 Reputation_Bottom = -42000;
-        bool ModifyFactionReputation(uint32 FactionTemplateId, int32 DeltaReputation);
-        bool ModifyFactionReputation(FactionEntry const* factionEntry, int32 standing);
-        bool ModifyOneFactionReputation(FactionEntry const* factionEntry, int32 standing);
-        bool SetFactionReputation(uint32 FactionTemplateId, int32 standing);
-        bool SetFactionReputation(FactionEntry const* factionEntry, int32 standing);
-        bool SetOneFactionReputation(FactionEntry const* factionEntry, int32 standing);
-        int32 CalculateReputationGain(uint32 creatureOrQuestLevel, int32 rep, bool for_quest);
-        void RewardReputation(Unit* pVictim, float rate);
+        ReputationMgr&       GetReputationMgr()       { return m_reputationMgr; }
+        ReputationMgr const& GetReputationMgr() const { return m_reputationMgr; }
+        ReputationRank GetReputationRank(uint32 faction_id) const;
+        void RewardReputation(Unit* victim, float rate);
         void RewardReputation(Quest const* pQuest);
-        void SetInitialFactions();
-        void UpdateReputation() const;
-        void SendFactionState(FactionState const* faction) const;
-        void SendInitialReputations();
-        FactionState const* GetFactionState(FactionEntry const* factionEntry) const;
-        void SetFactionAtWar(FactionState* faction, bool atWar);
-        void SetFactionInactive(FactionState* faction, bool inactive);
-        void SetFactionVisible(FactionState* faction);
-        void SetFactionVisibleForFactionTemplateId(uint32 FactionTemplateId);
-        void SetFactionVisibleForFactionId(uint32 FactionId);
+ 
+        int32 CalculateReputationGain(uint32 creatureOrQuestLevel, int32 rep, bool for_quest);
+
         void UpdateSkillsForLevel();
         void UpdateSkillsToMaxSkillsForLevel();             // for .levelup
         void ModifySkillBonus(uint32 skillid, int32 val, bool talent);
@@ -2151,7 +2103,7 @@ class Player : public Unit, public GridObject<Player>
         /***                 PVP SYSTEM                       ***/
         /*********************************************************/
         void UpdateHonorFields();
-        bool RewardHonor(Unit* pVictim, uint32 groupsize, float honor = -1, bool pvptoken = false);
+        bool RewardHonor(Unit* victim, uint32 groupsize, float honor = -1, bool pvptoken = false);
         uint32 GetHonorPoints()
         {
             return GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY);
@@ -2162,6 +2114,7 @@ class Player : public Unit, public GridObject<Player>
         }
         void ModifyHonorPoints(int32 value);
         void ModifyArenaPoints(int32 value, bool update = true);
+        uint8 GetHighestPvPRankIndex();
         uint32 GetMaxPersonalArenaRatingRequirement();
 
         //End of PvP System
@@ -2179,9 +2132,10 @@ class Player : public Unit, public GridObject<Player>
         }
         uint32 GetCorpseReclaimDelay(bool pvp) const;
         void UpdateCorpseReclaimDelay();
-        void SendCorpseReclaimDelay(bool load = false);
+        int32 CalculateCorpseReclaimDelay(bool load = false);
+        void SendCorpseReclaimDelay(uint32 delay);
 
-        uint32 GetShieldBlockValue() const;                 // overwrite Unit version (virtual)
+        uint32 GetShieldBlockValue() const override;                 // overwrite Unit version (virtual)
         bool CanParry() const
         {
             return m_canParry;
@@ -2288,7 +2242,7 @@ class Player : public Unit, public GridObject<Player>
             for (uint8 i = 0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
                 if (m_bgBattlegroundQueueID[i].bgQueueType == bgQueueType)
                     return m_bgBattlegroundQueueID[i].invitedToInstance != 0;
-            return PLAYER_MAX_BATTLEGROUND_QUEUES;
+            return false;
         }
         bool InBattlegroundQueueForBattlegroundQueueType(uint32 bgQueueType) const
         {
@@ -2468,7 +2422,7 @@ class Player : public Unit, public GridObject<Player>
         }
         float GetTransOffsetO() const
         {
-            return m_movementInfo.GetTransportPos()->m_orientation;
+            return m_movementInfo.GetTransportPos()->GetOrientation();
         }
         uint32 GetTransTime() const
         {
@@ -2521,7 +2475,7 @@ class Player : public Unit, public GridObject<Player>
 
         bool IsVisibleGloballyFor(Player* pl) const;
 
-        void UpdateObjectVisibility(bool forced = true);
+        void UpdateObjectVisibility(bool forced = true) override;
         void UpdateVisibilityForPlayer();
         void UpdateVisibilityOf(WorldObject* target);
         void UpdateTriggerVisibility();
@@ -2611,8 +2565,13 @@ class Player : public Unit, public GridObject<Player>
         InstancePlayerBind* BindToInstance(InstanceSave* save, bool permanent, bool load = false);
         void SendRaidInfo();
         void SendSavedInstances();
+        bool CheckInstanceValidity(bool /*isLogin*/);
         static void ConvertInstancesToGroup(Player* player, Group* group = NULL, uint64 player_guid = 0);
         bool Satisfy(AccessRequirement const*, uint32 target_map, bool report = false);
+
+        // last used pet number (for BG's)
+        uint32 GetLastPetNumber() const { return m_lastpetnumber; }
+        void SetLastPetNumber(uint32 petnumber) { m_lastpetnumber = petnumber; }
 
         /*********************************************************/
         /***                  GROUP SYSTEM                    ***/
@@ -2692,8 +2651,8 @@ class Player : public Unit, public GridObject<Player>
         }
 
         // Set map to player and add reference
-        void SetMap(Map* map);
-        void ResetMap();
+        void SetMap(Map* map) override;
+        void ResetMap() override;
 
         bool isAllowedToLoot(const Creature* creature);
 
@@ -2720,11 +2679,11 @@ class Player : public Unit, public GridObject<Player>
             m_rafLink = status;
         }
 
-        bool SetFeatherFall(bool apply, bool packetOnly = false);
-        bool SetHover(bool apply, bool packetOnly = false);
-        bool SetCanFly(bool apply, bool packetOnly = false);
-        bool SetLevitate(bool apply, bool packetOnly = false);
-        bool SetWaterWalking(bool enable, bool packetOnly = false);
+        bool SetFeatherFall(bool apply, bool packetOnly = false) override;
+        bool SetHover(bool apply, bool packetOnly = false) override;
+        bool SetCanFly(bool apply, bool packetOnly = false) override;
+        bool SetLevitate(bool apply, bool packetOnly = false) override;
+        bool SetWaterWalking(bool enable, bool packetOnly = false) override;
 
         void ScheduleDelayedOperation(uint32 operation)
         {
@@ -2775,7 +2734,6 @@ class Player : public Unit, public GridObject<Player>
         void _LoadQuestStatus(QueryResult_AutoPtr result);
         void _LoadDailyQuestStatus(QueryResult_AutoPtr result);
         void _LoadGroup(QueryResult_AutoPtr result);
-        void _LoadReputation(QueryResult_AutoPtr result);
         void _LoadSkills(QueryResult_AutoPtr result);
         void _LoadSpells(QueryResult_AutoPtr result);
         void _LoadTutorials(QueryResult_AutoPtr result);
@@ -2795,14 +2753,13 @@ class Player : public Unit, public GridObject<Player>
         void _SaveMail();
         void _SaveQuestStatus();
         void _SaveDailyQuestStatus();
-        void _SaveReputation();
         void _SaveSkills();
         void _SaveSpells();
         void _SaveTutorials();
         void _SaveBGData();
 
-        void _SetCreateBits(UpdateMask* updateMask, Player* target) const;
-        void _SetUpdateBits(UpdateMask* updateMask, Player* target) const;
+        void _SetCreateBits(UpdateMask* updateMask, Player* target) const override;
+        void _SetUpdateBits(UpdateMask* updateMask, Player* target) const override;
 
         /*********************************************************/
         /***             ENVIRONMENTAL SYSTEM                 ***/
@@ -2826,7 +2783,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 m_nextSave;
         time_t m_speakTime;
         uint32 m_speakCount;
-        DungeonDifficulties m_dungeonDifficulty;
+        DungeonDifficulty m_dungeonDifficulty;
 
         uint32 m_atLoginFlags;
 
@@ -2931,6 +2888,9 @@ class Player : public Unit, public GridObject<Player>
         uint64 m_auraUpdateMask;
         bool _passOnGroupLoot;
 
+        // last used pet number (for BG's)
+        uint32 m_lastpetnumber;
+
         // Player summoning
         time_t m_summon_expire;
         uint32 m_summon_mapid;
@@ -2940,9 +2900,9 @@ class Player : public Unit, public GridObject<Player>
 
         DeclinedName* m_declinedname;
 
-        bool CanAlwaysSee(WorldObject const* obj) const;
+        bool CanAlwaysSee(WorldObject const* obj) const override;
 
-        bool IsAlwaysDetectableFor(WorldObject const* seer) const;
+        bool IsAlwaysDetectableFor(WorldObject const* seer) const override;
 
     private:
         // internal common parts for CanStore/StoreItem functions
@@ -2951,6 +2911,8 @@ class Player : public Unit, public GridObject<Player>
         uint8 _CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool merge, Item* pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
         Item* _StoreItem(uint16 pos, Item* pItem, uint32 count, bool clone, bool update);
 
+        CinematicMgr* _cinematicMgr;
+
         LiquidTypeEntry const* _lastLiquid;
         int32 m_MirrorTimer[MAX_TIMERS];
         uint8 m_MirrorTimerFlags;
@@ -2958,6 +2920,8 @@ class Player : public Unit, public GridObject<Player>
         float m_GrantableLevels;
         bool m_isInWater;
         bool m_wasOutdoors;
+
+        ReputationMgr  m_reputationMgr;
 
         void SetCanDelayTeleport(bool setting)
         {
@@ -2977,6 +2941,7 @@ class Player : public Unit, public GridObject<Player>
             return m_bHasDelayedTeleport;
         }
 
+        bool IsInstanceLoginGameMasterException() const;
 
         MapReference m_mapRef;
 

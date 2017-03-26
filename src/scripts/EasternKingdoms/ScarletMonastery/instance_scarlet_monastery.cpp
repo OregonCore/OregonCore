@@ -30,6 +30,7 @@ EndScriptData */
 #define ENTRY_HORSEMAN          23682
 #define ENTRY_HEAD              23775
 #define ENTRY_PUMPKIN           23694
+#define ENTRY_CHAPEL_DOOR       104591
 
 #define MAX_ENCOUNTER 2
 
@@ -49,6 +50,7 @@ struct instance_scarlet_monastery : public ScriptedInstance
     uint64 WhitemaneGUID;
     uint64 VorrelGUID;
     uint64 DoorHighInquisitorGUID;
+    uint64 ChapelDoorGUID;
 
     uint32 m_auiEncounter[MAX_ENCOUNTER];
 
@@ -65,6 +67,7 @@ struct instance_scarlet_monastery : public ScriptedInstance
         WhitemaneGUID = 0;
         VorrelGUID = 0;
         DoorHighInquisitorGUID = 0;
+        ChapelDoorGUID = 0;
     }
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
@@ -76,6 +79,9 @@ struct instance_scarlet_monastery : public ScriptedInstance
             break;
         case 104600:
             DoorHighInquisitorGUID = pGo->GetGUID();
+            break;
+        case ENTRY_CHAPEL_DOOR:
+            ChapelDoorGUID = pGo->GetGUID();
             break;
         }
     }
@@ -114,9 +120,9 @@ struct instance_scarlet_monastery : public ScriptedInstance
                 DoUseDoorOrButton(DoorHighInquisitorGUID);
             if (data == FAIL)
                 DoUseDoorOrButton(DoorHighInquisitorGUID);
-
             m_auiEncounter[0] = data;
             break;
+
         case GAMEOBJECT_PUMPKIN_SHRINE:
             HandleGameObject(PumpkinShrineGUID, false);
             break;
@@ -134,7 +140,16 @@ struct instance_scarlet_monastery : public ScriptedInstance
                 HandleGameObject(PumpkinShrineGUID, false);
             }
             break;
+
+        case DATA_CHAPEL_DOOR:
+            if (data == IN_PROGRESS)
+                DoUseDoorOrButton(ChapelDoorGUID);
+            if (data == FAIL)
+                DoUseDoorOrButton(ChapelDoorGUID);
+            m_auiEncounter[2] = data;
+            break;
         }
+
     }
 
     uint64 GetData64(uint32 type)
@@ -163,6 +178,8 @@ struct instance_scarlet_monastery : public ScriptedInstance
         if (type == DATA_HORSEMAN_EVENT)
             return m_auiEncounter[1];
         return 0;
+        if (type == DATA_CHAPEL_DOOR)
+            return m_auiEncounter[2];
     }
 };
 

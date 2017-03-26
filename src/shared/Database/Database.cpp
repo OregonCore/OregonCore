@@ -675,12 +675,9 @@ bool Database::ExecuteFile(const char* file)
     bool in_transaction = true;
     bool success = false;
 
-    if (FILE* fp = fopen(file, "rb"))
+    if (FILE* fp = ACE_OS::fopen(file, "rb"))
     {
-        #if PLATFORM == PLATFORM_WINDOWS
-        HANDLE fileHandle = (HANDLE) _get_osfhandle(fileno(fp));
-        LockFile(fileHandle, 0, 0, -1, -1);
-        #else
+        #if PLATFORM == PLATFORM_UNIX
         flock(fileno(fp), LOCK_SH);
         #endif
         //------
@@ -691,7 +688,7 @@ bool Database::ExecuteFile(const char* file)
         // if less than 1MB allocate on stack, else on heap
         char* contents = (info.st_size > 1024*1024) ? new char[info.st_size] : (char*) alloca(info.st_size);
 
-        if (fread(contents, info.st_size, 1, fp) == 1)
+        if (ACE_OS::fread(contents, info.st_size, 1, fp) == 1)
         {
             if (mysql_real_query(mMysql, contents, info.st_size))
             {
@@ -738,13 +735,10 @@ bool Database::ExecuteFile(const char* file)
             delete [] contents;
 
         //------
-        #if PLATFORM == PLATFORM_WINDOWS
-        UnlockFile(fileHandle, 0, 0, -1, -1);
-        close((int)fileHandle);
-        #else
+        #if PLATFORM == PLATFORM_UNIX
         flock(fileno(fp), LOCK_UN);
         #endif
-        fclose(fp);
+        ACE_OS::fclose(fp);
     }
 
     mysql_set_server_option(mMysql, MYSQL_OPTION_MULTI_STATEMENTS_OFF);

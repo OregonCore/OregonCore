@@ -537,13 +537,13 @@ void Transport::UpdateForMap(Map const* targetMap)
     {
         for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)
         {
-            if (this != itr->getSource()->GetTransport())
+            if (this != itr->GetSource()->GetTransport())
             {
                 UpdateData transData;
-                BuildCreateUpdateBlockForPlayer(&transData, itr->getSource());
+                BuildCreateUpdateBlockForPlayer(&transData, itr->GetSource());
                 WorldPacket packet;
                 transData.BuildPacket(&packet, true);
-                itr->getSource()->SendDirectMessage(&packet);
+                itr->GetSource()->SendDirectMessage(&packet);
             }
         }
     }
@@ -555,8 +555,8 @@ void Transport::UpdateForMap(Map const* targetMap)
         transData.BuildPacket(&out_packet, true);
 
         for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)
-            if (this != itr->getSource()->GetTransport())
-                itr->getSource()->SendDirectMessage(&out_packet);
+            if (this != itr->GetSource()->GetTransport())
+                itr->GetSource()->SendDirectMessage(&out_packet);
     }
 }
 

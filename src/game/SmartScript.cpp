@@ -199,7 +199,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                     else if (IsPlayer(*itr) && me)
                     {
                         Unit* templastInvoker = GetLastInvoker();
-                        sCreatureTextMgr->SendChat(me, uint8(e.action.talk.textGroupID), IsPlayer(templastInvoker) ? templastInvoker : 0, CHAT_MSG_ADDON, LANG_ADDON, TEXT_RANGE_NORMAL, 0, TEAM_OTHER, false, (*itr)->ToPlayer());
+                        sCreatureTextMgr->SendChat(me, uint8(e.action.talk.textGroupID), IsPlayer(templastInvoker) ? templastInvoker : 0, CHAT_MSG_ADDON, LANG_ADDON, TEXT_RANGE_NORMAL, 0, TEAM_NONE, false, (*itr)->ToPlayer());
                     }
                     sLog.outDebug("SmartScript::ProcessAction:: SMART_ACTION_SIMPLE_TALK: talker: %s (GuidLow: %u), textGroupId: %u",
                         (*itr)->GetName(), (*itr)->GetGUIDLow(), uint8(e.action.talk.textGroupID));
@@ -1611,9 +1611,9 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
             {
                 for (ObjectList::iterator itr = targets->begin(); itr != targets->end(); ++itr)
                     if (Creature* target = (*itr)->ToCreature())
-                        if (IsSmart(target) && target->getVictim())
+                        if (IsSmart(target) && target->GetVictim())
                             if (CAST_AI(SmartAI, target->AI())->CanCombatMove())
-                                target->GetMotionMaster()->MoveChase(target->getVictim(), attackDistance, attackAngle);
+                                target->GetMotionMaster()->MoveChase(target->GetVictim(), attackDistance, attackAngle);
 
                 delete targets;
             }
@@ -2407,7 +2407,7 @@ ObjectList* SmartScript::GetTargets(SmartScriptHolder const& e, Unit* invoker /*
             break;
         case SMART_TARGET_VICTIM:
             if (me)
-                if (Unit* victim = me->getVictim())
+                if (Unit* victim = me->GetVictim())
                     l->push_back(victim);
             break;
         case SMART_TARGET_HOSTILE_SECOND_AGGRO:
@@ -2445,8 +2445,9 @@ ObjectList* SmartScript::GetTargets(SmartScriptHolder const& e, Unit* invoker /*
                     if (Group* group = player->GetGroup())
                     {
                         for (GroupReference* groupRef = group->GetFirstMember(); groupRef != NULL; groupRef = groupRef->next())
-                            if (Player* member = groupRef->getSource())
-                                l->push_back(member);
+                            if (Player* member = groupRef->GetSource())
+                                if (member->IsInMap(player))
+                                    l->push_back(member);
                     }
                     // We still add the player to the list if there is no group. If we do
                     // this even if there is a group (thus the else-check), it will add the
@@ -2718,12 +2719,12 @@ void SmartScript::ProcessEvent(SmartScriptHolder& e, Unit* unit, uint32 var0, ui
         }
         case SMART_EVENT_TARGET_HEALTH_PCT:
         {
-            if (!me || !me->IsInCombat() || !me->getVictim() || !me->getVictim()->GetMaxHealth())
+            if (!me || !me->IsInCombat() || !me->GetVictim() || !me->GetVictim()->GetMaxHealth())
                 return;
-            uint32 perc = (uint32)me->getVictim()->GetHealthPct();
+            uint32 perc = (uint32)me->GetVictim()->GetHealthPct();
             if (perc > e.event.minMaxRepeat.max || perc < e.event.minMaxRepeat.min)
                 return;
-            ProcessTimedAction(e, e.event.minMaxRepeat.repeatMin, e.event.minMaxRepeat.repeatMax, me->getVictim());
+            ProcessTimedAction(e, e.event.minMaxRepeat.repeatMin, e.event.minMaxRepeat.repeatMax, me->GetVictim());
             break;
         }
         case SMART_EVENT_MANA_PCT:
@@ -2738,21 +2739,21 @@ void SmartScript::ProcessEvent(SmartScriptHolder& e, Unit* unit, uint32 var0, ui
         }
         case SMART_EVENT_TARGET_MANA_PCT:
         {
-            if (!me || !me->IsInCombat() || !me->getVictim() || !me->getVictim()->GetMaxPower(POWER_MANA))
+            if (!me || !me->IsInCombat() || !me->GetVictim() || !me->GetVictim()->GetMaxPower(POWER_MANA))
                 return;
-            uint32 perc = uint32(100.0f * me->getVictim()->GetPower(POWER_MANA) / me->getVictim()->GetMaxPower(POWER_MANA));
+            uint32 perc = uint32(100.0f * me->GetVictim()->GetPower(POWER_MANA) / me->GetVictim()->GetMaxPower(POWER_MANA));
             if (perc > e.event.minMaxRepeat.max || perc < e.event.minMaxRepeat.min)
                 return;
-            ProcessTimedAction(e, e.event.minMaxRepeat.repeatMin, e.event.minMaxRepeat.repeatMax, me->getVictim());
+            ProcessTimedAction(e, e.event.minMaxRepeat.repeatMin, e.event.minMaxRepeat.repeatMax, me->GetVictim());
             break;
         }
         case SMART_EVENT_RANGE:
         {
-            if (!me || !me->IsInCombat() || !me->getVictim())
+            if (!me || !me->IsInCombat() || !me->GetVictim())
                 return;
 
-            if (me->IsInRange(me->getVictim(), (float)e.event.minMaxRepeat.min, (float)e.event.minMaxRepeat.max))
-                ProcessTimedAction(e, e.event.minMaxRepeat.repeatMin, e.event.minMaxRepeat.repeatMax, me->getVictim());
+            if (me->IsInRange(me->GetVictim(), (float)e.event.minMaxRepeat.min, (float)e.event.minMaxRepeat.max))
+                ProcessTimedAction(e, e.event.minMaxRepeat.repeatMin, e.event.minMaxRepeat.repeatMax, me->GetVictim());
             break;
         }
         case SMART_EVENT_VICTIM_CASTING:
@@ -2760,7 +2761,7 @@ void SmartScript::ProcessEvent(SmartScriptHolder& e, Unit* unit, uint32 var0, ui
             if (!me || !me->IsInCombat())
                 return;
 
-            Unit* victim = me->getVictim();
+            Unit* victim = me->GetVictim();
 
             if (!victim || !victim->IsNonMeleeSpellCast(false, false, true))
                 return;
@@ -2770,7 +2771,7 @@ void SmartScript::ProcessEvent(SmartScriptHolder& e, Unit* unit, uint32 var0, ui
                     if (currSpell->m_spellInfo->Id != e.event.targetCasting.spellId)
                         return;
 
-            ProcessTimedAction(e, e.event.targetCasting.repeatMin, e.event.targetCasting.repeatMax, me->getVictim());
+            ProcessTimedAction(e, e.event.targetCasting.repeatMin, e.event.targetCasting.repeatMax, me->GetVictim());
             break;
         }
         case SMART_EVENT_FRIENDLY_HEALTH:
@@ -2818,9 +2819,9 @@ void SmartScript::ProcessEvent(SmartScriptHolder& e, Unit* unit, uint32 var0, ui
         }
         case SMART_EVENT_TARGET_BUFFED:
         {
-            if (!me || !me->getVictim())
+            if (!me || !me->GetVictim())
                 return;
-            uint32 count = me->getVictim()->GetAuraCount(e.event.aura.spell);
+            uint32 count = me->GetVictim()->GetAuraCount(e.event.aura.spell);
             if (count < e.event.aura.count)
                 return;
             ProcessTimedAction(e, e.event.aura.repeatMin, e.event.aura.repeatMax);
@@ -2855,7 +2856,7 @@ void SmartScript::ProcessEvent(SmartScriptHolder& e, Unit* unit, uint32 var0, ui
                 if (!me)
                     return;
 
-                if (Unit* victim = me->getVictim())
+                if (Unit* victim = me->GetVictim())
                 {
                     if (!victim->HasInArc(static_cast<float>(M_PI), me))
                         ProcessTimedAction(e, e.event.behindTarget.cooldownMin, e.event.behindTarget.cooldownMax, victim);
@@ -3269,6 +3270,16 @@ void SmartScript::UpdateTimer(SmartScriptHolder& e, uint32 const diff)
                     e.timer = 1;
                     return;
                 }
+            }
+        }
+
+        // Delay flee for assist event if stunned or rooted
+        if (e.GetActionType() == SMART_ACTION_FLEE_FOR_ASSIST)
+        {
+            if (me && me->HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
+            {
+                e.timer = 1;
+                return;
             }
         }
 

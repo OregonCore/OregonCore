@@ -215,24 +215,17 @@ class Item : public Object
         }
         Player* GetOwner()const;
 
-        void SetBinding(bool val)
-        {
-            ApplyModFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED, val);
-        }
-        bool IsSoulBound() const
-        {
-            return HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED);
-        }
-        bool IsBindedNotWith(uint64 guid) const
-        {
-            return IsSoulBound() && GetOwnerGUID() != guid;
-        }
+        void SetBinding(bool val) { ApplyModFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_SOULBOUND, val); }
+        bool IsSoulBound() const { return HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_SOULBOUND); }
+
+        bool IsBindedNotWith(Player const* player) const;
         bool IsBoundByEnchant() const;
         virtual void SaveToDB();
         virtual bool LoadFromDB(uint32 guid, uint64 owner_guid, Field* fields);
         virtual void DeleteFromDB();
         void DeleteFromInventoryDB();
 
+        bool IsLocked() const { return !HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_UNLOCKED); }
         bool IsBag() const
         {
             return GetProto()->InventoryType == INVTYPE_BAG;
@@ -367,17 +360,17 @@ class Item : public Object
             uState = state;
         }
 
-        bool hasQuest(uint32 quest_id) const
+        bool hasQuest(uint32 quest_id) const override
         {
             ItemTemplate const* itemProto = GetProto();
             return itemProto && itemProto->StartQuest == quest_id;
         }
-        bool hasInvolvedQuest(uint32 /*quest_id*/) const
+        bool hasInvolvedQuest(uint32 /*quest_id*/) const override
         {
             return false;
         }
 
-        void BuildUpdate(UpdateDataMapType&);
+        void BuildUpdate(UpdateDataMapType&) override;
 
     private:
         uint8 m_slot;

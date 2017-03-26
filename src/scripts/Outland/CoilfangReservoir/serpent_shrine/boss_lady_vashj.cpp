@@ -275,7 +275,7 @@ struct boss_lady_vashjAI : public ScriptedAI
             Map::PlayerList const& PlayerList = pMap->GetPlayers();
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
-                if (Player* i_pl = i->getSource())
+                if (Player* i_pl = i->GetSource())
                     i_pl->DestroyItemCount(31088, 1, true);
             }
         }
@@ -294,7 +294,7 @@ struct boss_lady_vashjAI : public ScriptedAI
         }
         if (!CanAttack)
             return;
-        if (!who || me->getVictim())
+        if (!who || me->GetVictim())
             return;
 
         if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
@@ -360,7 +360,7 @@ struct boss_lady_vashjAI : public ScriptedAI
             }
         }
         //to prevent abuses during phase 2
-        if (Phase == 2 && !me->getVictim() && me->IsInCombat())
+        if (Phase == 2 && !me->GetVictim() && me->IsInCombat())
         {
             EnterEvadeMode();
             return;
@@ -377,7 +377,7 @@ struct boss_lady_vashjAI : public ScriptedAI
                 //Shock Burst
                 //Randomly used in Phases 1 and 3 on Vashj's target, it's a Shock spell doing 8325-9675 nature damage and stunning the target for 5 seconds, during which she will not attack her target but switch to the next person on the aggro list.
                 DoCastVictim( SPELL_SHOCK_BLAST);
-                me->TauntApply(me->getVictim());
+                me->TauntApply(me->GetVictim());
 
                 ShockBlast_Timer = 1000 + rand() % 14000;   //random cooldown
             }
@@ -423,7 +423,7 @@ struct boss_lady_vashjAI : public ScriptedAI
             if (Phase == 1)
             {
                 //Start phase 2
-                if ((me->GetHealth() * 100 / me->GetMaxHealth()) < 70)
+                if (HealthBelowPct(70))
                 {
                     //Phase 2 begins when Vashj hits 70%. She will run to the middle of her platform and surround herself in a shield making her invulerable.
                     Phase = 2;
@@ -511,7 +511,7 @@ struct boss_lady_vashjAI : public ScriptedAI
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
                 if (!pTarget)
-                    pTarget = me->getVictim();
+                    pTarget = me->GetVictim();
 
                 DoCast(pTarget, SPELL_FORKED_LIGHTNING);
 
@@ -555,8 +555,8 @@ struct boss_lady_vashjAI : public ScriptedAI
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     if (pTarget)
                         CoilfangElite->AI()->AttackStart(pTarget);
-                    else if (me->getVictim())
-                        CoilfangElite->AI()->AttackStart(me->getVictim());
+                    else if (me->GetVictim())
+                        CoilfangElite->AI()->AttackStart(me->GetVictim());
                 }
                 CoilfangElite_Timer = 45000 + rand() % 5000;
             }
@@ -574,8 +574,8 @@ struct boss_lady_vashjAI : public ScriptedAI
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     if (pTarget)
                         CoilfangStrider->AI()->AttackStart(pTarget);
-                    else if (me->getVictim())
-                        CoilfangStrider->AI()->AttackStart(me->getVictim());
+                    else if (me->GetVictim())
+                        CoilfangStrider->AI()->AttackStart(me->GetVictim());
                 }
                 CoilfangStrider_Timer = 60000 + rand() % 10000;
             }
@@ -597,7 +597,7 @@ struct boss_lady_vashjAI : public ScriptedAI
                     Phase = 3;
 
                     //return to the tank
-                    me->GetMotionMaster()->MoveChase(me->getVictim());
+                    me->GetMotionMaster()->MoveChase(me->GetVictim());
                 }
                 Check_Timer = 1000;
             }

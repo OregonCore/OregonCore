@@ -148,7 +148,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
         {
             if (Unit* add = Unit::GetUnit(*me, m_auiLackeyGUID[i]))
             {
-                if (!add->getVictim())
+                if (!add->GetVictim())
                 {
                     who->SetInCombatWith(add);
                     add->AddThreat(who, 0.0f);
@@ -387,7 +387,7 @@ struct boss_priestess_lackey_commonAI : public ScriptedAI
             {
                 if (Unit* add = Unit::GetUnit(*me, m_auiLackeyGUIDs[i]))
                 {
-                    if (!add->getVictim() && add != me)
+                    if (!add->GetVictim() && add != me)
                     {
                         pWho->SetInCombatWith(add);
                         add->AddThreat(pWho, 0.0f);
@@ -397,7 +397,7 @@ struct boss_priestess_lackey_commonAI : public ScriptedAI
 
             if (Creature* pDelrissa = Unit::GetCreature(*me, instance->GetData64(DATA_DELRISSA)))
             {
-                if (pDelrissa->IsAlive() && !pDelrissa->getVictim())
+                if (pDelrissa->IsAlive() && !pDelrissa->GetVictim())
                 {
                     pWho->SetInCombatWith(pDelrissa);
                     pDelrissa->AddThreat(pWho, 0.0f);
@@ -461,7 +461,7 @@ struct boss_priestess_lackey_commonAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!UsedPotion && (me->GetHealth() * 100 / me->GetMaxHealth()) < 25)
+        if (!UsedPotion && HealthBelowPct(25))
         {
             DoCast(me, SPELL_HEALING_POTION);
             UsedPotion = true;
@@ -785,7 +785,7 @@ struct boss_yazzaiAI : public boss_priestess_lackey_commonAI
         }
         else Polymorph_Timer -= diff;
 
-        if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 35) && !HasIceBlocked)
+        if (HealthBelowPct(35) && !HasIceBlocked)
         {
             DoCast(me, SPELL_ICE_BLOCK);
             HasIceBlocked = true;
@@ -1031,7 +1031,7 @@ struct boss_garaxxasAI : public boss_priestess_lackey_commonAI
 
         boss_priestess_lackey_commonAI::UpdateAI(diff);
 
-        if (me->IsWithinDistInMap(me->getVictim(), ATTACK_DISTANCE))
+        if (me->IsWithinDistInMap(me->GetVictim(), ATTACK_DISTANCE))
         {
             if (Wing_Clip_Timer <= diff)
             {

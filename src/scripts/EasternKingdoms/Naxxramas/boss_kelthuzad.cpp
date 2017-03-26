@@ -289,7 +289,7 @@ struct boss_kelthuzadAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (me->getVictim() && me->IsAlive())
+        if (me->GetVictim() && me->IsAlive())
         {
             //Check for Frost Bolt
             if (FrostBolt_Timer <= diff)
@@ -357,7 +357,7 @@ struct boss_kelthuzadAI : public ScriptedAI
             else FrostBlast_Timer -= diff;
 
             //start phase 3 when we are 40% health
-            if (!Phase3 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 40)
+            if (!Phase3 && HealthBelowPct(40))
             {
                 Phase3 = true;
                 DoScriptText(SAY_REQUEST_AID, me);

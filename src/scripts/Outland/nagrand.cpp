@@ -41,6 +41,18 @@ npc_corki2
 go_corkis_prison3
 npc_corki3
 npc_kurenai_captive
+npc_warmaul_pyre
+npc_fel_cannon_haf
+npc_living_cyclone
+npc_enraged_crusher
+npc_storm_rager
+npc_lake_surger
+npc_lake_spirit
+npc_tortured_earth_spirit
+npc_crashing_wave_spirit
+npc_raging_fire_soul
+npc_storming_wind_ripper
+npc_rumbling_earth_heart
 EndContentData */
 
 #include "ScriptMgr.h"
@@ -52,18 +64,34 @@ EndContentData */
 ## mob_shattered_rumbler - this should be done with ACID
 ######*/
 
+#define SPELL_EARTH_RUMBLE  33840
+
 struct mob_shattered_rumblerAI : public ScriptedAI
 {
     bool Spawn;
 
     mob_shattered_rumblerAI(Creature* c) : ScriptedAI(c) {}
 
+    uint32 EarthRumbleTimer;
+
     void Reset()
     {
         Spawn = false;
+        EarthRumbleTimer = urand(12000, 17000);
 
-		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
+        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
     }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (EarthRumbleTimer < diff)
+        {
+            DoCast(me, SPELL_EARTH_RUMBLE);
+            EarthRumbleTimer = urand(14000, 21000);
+        }
+        else
+            EarthRumbleTimer -= diff;
+    }            
 
     void EnterCombat(Unit* /*who*/) {}
 
@@ -78,7 +106,7 @@ struct mob_shattered_rumblerAI : public ScriptedAI
             Hitter->SummonCreature(18181, x + (0.7f * (rand() % 30)), y + (rand() % 5), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
             Hitter->SummonCreature(18181, x + (rand() % 5), y - (rand() % 5), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
             Hitter->SummonCreature(18181, x - (rand() % 5), y + (0.5f * (rand() % 60)), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
-			me->DisappearAndDie();
+            me->DisappearAndDie();
             me->setDeathState(CORPSE);
             Spawn = true;
         }
@@ -130,7 +158,7 @@ struct mob_lumpAI : public ScriptedAI
 
     void DamageTaken(Unit* done_by, uint32& damage)
     {
-        if (done_by->GetTypeId() == TYPEID_PLAYER && (me->GetHealth() - damage) * 100 / me->GetMaxHealth() < 30)
+        if (done_by->GetTypeId() == TYPEID_PLAYER && me->HealthBelowPctDamaged(30, damage))
         {
             if (!bReset && CAST_PLR(done_by)->GetQuestStatus(9918) == QUEST_STATUS_INCOMPLETE)
             {
@@ -244,25 +272,27 @@ bool GossipSelect_mob_lump(Player* player, Creature* pCreature, uint32 /*sender*
 # mob_sunspring_villager - should be done with ACID
 ####*/
 
+enum eSunspringVillager
+{
+	SPELL_LIQUID_FIRE_QUEST_ITEM = 32146,
+	SPELL_SUMMON_LIQUID_FIRE = 31706,
+	NPC_SUNSPRING_VILLAGER = 18240
+};
+
 struct mob_sunspring_villagerAI : public ScriptedAI
 {
     mob_sunspring_villagerAI(Creature* c) : ScriptedAI(c) {}
 
-    void Reset()
-    {
-        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
-        me->SetUInt32Value(UNIT_FIELD_BYTES_1, 7);  // lay down
-    }
-
     void EnterCombat(Unit* /*who*/) {}
 
-    void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
+    void SpellHit(Unit* caster, const SpellEntry* spell)
     {
-        if (spell->Id == 23970)
+        if (spell->Id == SPELL_LIQUID_FIRE_QUEST_ITEM)
         {
-            me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-			me->CastSpell(me, 31706, true);
-            me->RemoveCorpse();
+            if (Player* player = caster->ToPlayer())
+                player->KilledMonsterCredit(NPC_SUNSPRING_VILLAGER, me->GetGUID());
+			me->CastSpell(me, SPELL_SUMMON_LIQUID_FIRE, true);
+			me->DespawnOrUnsummon(5000);
         }
     }
 };
@@ -567,8 +597,8 @@ enum eMagharCaptive
     NPC_MURK_PUTRIFIER          = 18202
 };
 
-static float m_afAmbushA[] = { -1568.805786, 8533.873047, 1.958};
-static float m_afAmbushB[] = { -1491.554321, 8506.483398, 1.248};
+static float m_afAmbushA[] = { -1568.805786f, 8533.873047f, 1.958f};
+static float m_afAmbushB[] = { -1491.554321f, 8506.483398f, 1.248f};
 
 struct npc_maghar_captiveAI : public npc_escortAI
 {
@@ -643,7 +673,7 @@ struct npc_maghar_captiveAI : public npc_escortAI
     void UpdateAI(const uint32 uiDiff)
     {
         npc_escortAI::UpdateAI(uiDiff);
-        if (!me->getVictim())
+        if (!me->GetVictim())
             return;
 
         if (m_uiChainLightningTimer <= uiDiff)
@@ -1361,8 +1391,8 @@ enum
     MURK_PUTRIFIER           = 18202
 };
 
-static float m_afAmbushC[] = { -1531.204712, 8456.174805, -4.102};
-static float m_afAmbushD[] = { -1442.524780, 8500.364258, 6.381};
+static float m_afAmbushC[] = { -1531.204712f, 8456.174805f, -4.102f};
+static float m_afAmbushD[] = { -1442.524780f, 8500.364258f, 6.381f};
 
 struct npc_kurenai_captiveAI : public npc_escortAI
 {
@@ -1442,7 +1472,7 @@ struct npc_kurenai_captiveAI : public npc_escortAI
     {
         npc_escortAI::UpdateAI(uiDiff);
 
-        if (!me->getVictim())
+        if (!me->GetVictim())
             return;
 
         if (m_uiChainLightningTimer <= uiDiff)
@@ -1498,1119 +1528,6 @@ bool QuestAccept_npc_kurenai_captive(Player* pPlayer, Creature* pCreature, const
     return true;
 }
 
-/*######
-## Quest - Ring of Blood
-######*/
-
-enum RingofBlood
-{
-	QUEST_BROKENTOE = 9962,
-	QUEST_TWINS = 9967,
-	QUEST_ROKDAR = 9970,
-	QUEST_VOID = 9972,
-	QUEST_CHAMPION = 9973,
-	QUEST_MOGOR = 9977,
-
-	SAY_MOGOR_INTRO_BATTLE = -1910139,
-	SAY_START = -1910124,
-	SAY_START_BROKENTOE = -1910125, 
-	SAY_DEFEAT_BROKENTOE = -1910126,
-	SAY_START_TWINS = -1910127,
-	SAY_DEFEAT_TWINS = -1910128,
-	SAY_START_GOLEM = -1910129,
-	SAY_DEFEAT_GOLEM = -1910130,
-	SAY_START_VOID = -1910131,
-	SAY_START_CHAMPION = -1910132,
-	SAY_START_MOGOR = -1910133,
-	SAY_DEFEAT_MOGOR = -1910134,
-
-	//Mogor
-	SAY_MOGOR_IMPOSSIBLE = -1910135,
-	SAY_MOGOR_VOID = -1910136,
-	SAY_MOGOR_GOLEM = -1910137,
-	SAY_MOGOR_INTRO = -1910138,
-	SAY_MOROG_ENRAGE = -1910144,
-	SAY_MOGOR_AGGRO = -1910143,
-
-	SPELL_REVIVE = 32343,
-	SPELL_ICETOTEM = 18975,
-	SPELL_HEALINGWAVE = 15982,
-	SPELL_FRENZY = 28747,
-	SPELL_FLAMESHOCK = 39529,
-	SPELL_CHAINLIGHTNING = 16033,
-
-	WP_MOGOR = 330330330,
-
-	//Brokentoe Spells
-	SPELL_STOMP = 32023,
-
-	//Twins Spells
-	SPELL_SINISTERSTRIKE = 14873,
-	SPELL_MULTILATE = 32319,
-	SPELL_EVISCERATE = 27611,
-	SPELL_DUALWIELD = 42459,
-
-	DAGGER_MODEL = 41469,
-
-	//Rokdar Spells
-	SPELL_PUNCTURE = 15976,
-	SPELL_WARSTOMP = 16727,
-	SPELL_KNOCKBACK = 31389,
-	SAY_SMASH = -1910140,
-
-	//Skra'gath Spells
-	SPELL_DARKSHRIEK = 32322,
-	SPELL_DRAININGTOUCH = 29299,
-	SPELL_PIERCINGSHADOW = 16429,
-	SPELL_SHADOWREDUCTION = 34338,
-	SPELL_NATUREREDUCTION = 34335,
-	SPELL_HOLYREDUCTION = 34336,
-	SPELL_FROSTREDUCTION = 34334,
-	SPELL_FIREREDUCTION = 34333,
-	SPELL_ARCANEREDUCTION = 34331,
-	SAY_CLOSER = -1910141,
-
-	//Warmaul Champion Spells
-	SPELL_CHARGE = 32323,
-	SPELL_BATTLESHOUT = 31403,
-	SPELL_SUNDERINGCLEAVE = 17963,
-	SPELL_MORTALSTRIKE = 15708,
-	SAY_CHALLENGER = -1910142,
-
-};
-
-struct trigger_arenahelperAI : public ScriptedAI
-{
-	trigger_arenahelperAI(Creature* creature) : ScriptedAI(creature){}
-
-	void Reset() 
-	{
-		PlayerGUID = 0;
-		Yelled = false;
-	}
-
-	bool Yelled;
-	
-	uint64 PlayerGUID;
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (Creature* mogor = me->FindNearestCreature(18069, 3.0f, true))
-		{
-			mogor->setFaction(14);
-		}
-
-		if (Creature* mogor = me->FindNearestCreature(18069, 50.0f, false))
-		{
-			if (!Yelled)
-			{
-				me->MonsterYellToZone(SAY_DEFEAT_MOGOR, LANG_UNIVERSAL, PlayerGUID);
-				me->DisappearAndDie();
-				Yelled = true;
-			}
-		}
-	}
-};
-
-CreatureAI* GetAI_trigger_arenahelper(Creature* pCreature)
-{
-	return new trigger_arenahelperAI(pCreature);
-}
-
-uint64 MogorGUID;
-
-void FakeDeathMogor(Unit* Target)
-{
-	Target->GetMotionMaster()->MovementExpired();
-	Target->GetMotionMaster()->MoveIdle();
-
-	Target->SetHealth(0);
-
-	if (Target->IsNonMeleeSpellCast(false))
-		Target->InterruptNonMeleeSpells(false);
-
-	Target->ClearComboPointHolders();
-	Target->RemoveAllAuras();
-	Target->ClearAllReactives();
-
-	Target->SetStandState(UNIT_STAND_STATE_DEAD);
-}
-
-void ResurrectMogor(Unit* Target)
-{
-	Target->SetStandState(UNIT_STAND_STATE_STAND);
-
-	if (Target->getVictim())
-		Target->GetMotionMaster()->MoveChase(Target->getVictim());
-
-	Target->SetHealth(int(Target->GetMaxHealth() * 1.0f));
-	if (Target->GetMaxPower(POWER_MANA) > 0)
-		Target->SetPower(POWER_MANA, int(Target->GetMaxPower(POWER_MANA) * 1.0f));
-}
-
-struct npc_mogorAI : public ScriptedAI
-{
-	npc_mogorAI(Creature* creature) : ScriptedAI(creature){}
-
-	void Reset()
-	{	
-		reset_timer = 0;
-		chainlight_timer = 5500;
-		healingwave_timer = 0;
-		flameshock_timer = 12000;;
-		totem_timer = 25000;
-
-		say_intro = false;
-		enraged = false;
-		MogorDead = false;
-		MogorDiedOnce = false;
-		MogorRevived = false;
-		Phase1 = true;
-		Phase2 = false;
-
-		me->setFaction(35);
-		me->SetStandState(UNIT_STAND_STATE_STAND);
-	}
-
-	uint32 reset_timer;
-	uint32 chainlight_timer;
-	uint32 healingwave_timer;
-	uint32 flameshock_timer;
-	uint32 totem_timer;
-	uint32 wait_timer;
-
-	bool say_intro;
-	bool enraged;
-	bool MogorDead;
-	bool MogorDiedOnce;
-	bool MogorRevived;
-	bool Phase1;
-	bool Phase2;
-	bool GotGUID;
-
-	void EnterCombat(Unit* /*who*/)
-	{
-		DoScriptText(SAY_MOGOR_AGGRO, me);
-	}
-
-	void SpellHit(Unit* /*pWho*/, const SpellEntry* pSpell)
-	{
-		if (pSpell->Id == SPELL_REVIVE)
-		{
-			ResurrectMogor(me);
-			DoCast(me, SPELL_FRENZY);	
-			DoScriptText(SAY_MOROG_ENRAGE, me);
-			enraged = true;
-			Phase1 = false;
-			Phase2 = true;
-		}
-	}
-
-	void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
-	{
-		if (Phase1)
-		{
-			if (uiDamage < me->GetHealth() || MogorDead)
-				return;
-
-			MogorDiedOnce = true;
-
-			FakeDeathMogor(me);
-
-			if (MogorDiedOnce)
-				wait_timer = 6000;
-
-			uiDamage = 0;
-		}
-
-		if (Phase2)
-		{
-			me->RemoveCorpse();
-		}
-
-	}
-
-	void MogorStart()
-	{
-		me->GetMotionMaster()->MovePath(WP_MOGOR, false);
-
-		if (!say_intro)
-		{
-			DoScriptText(SAY_MOGOR_INTRO, me);
-			say_intro = true;
-
-			reset_timer = 180000;
-		}
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (me->HasUnitState(UNIT_STATE_CASTING))
-			return;
-
-		if (!UpdateVictim())
-		{
-			if (reset_timer <= diff)
-			{
-				Reset();
-			}
-			else reset_timer -= diff;
-		}
-
-		if (MogorDiedOnce)
-		{
-			if (!MogorRevived)
-			{
-				if (wait_timer <= diff)
-				{
-					DoCast(me, SPELL_REVIVE);
-					MogorRevived = true;
-				}
-				else wait_timer -= diff;
-			}	
-		}
-
-		if (chainlight_timer <= diff)
-		{
-			DoCast(SPELL_CHAINLIGHTNING);
-			chainlight_timer = 13000;
-		}
-		else chainlight_timer -= diff;
-
-		if (flameshock_timer <= diff)
-		{
-			if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 25, true))
-				DoCast(pTarget, SPELL_FLAMESHOCK);
-			flameshock_timer = 10000;
-		}
-		else flameshock_timer -= diff;
-
-		if (HealthBelowPct(80))
-		{
-			if (healingwave_timer <= diff)
-			{
-				DoCast(me, SPELL_HEALINGWAVE);
-				healingwave_timer = 14000;
-			}
-			else healingwave_timer -= diff;
-		}
-
-		if (totem_timer <= diff)
-		{
-			DoCast(SPELL_ICETOTEM);
-			totem_timer = 60000;
-		}
-		else totem_timer -= diff;
-
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_mogor(Creature* pCreature)
-{
-	return new npc_mogorAI(pCreature);
-}
-
-struct npc_gunthockAI : public ScriptedAI
-{
-	npc_gunthockAI(Creature* creature) : ScriptedAI(creature){}
-
-	void Reset()
-	{
-		CanReset = false;
-
-		//* Brokentoe *//
-		CanYellBrokentoe = false;
-		say_brokentoe1 = false;
-		brokentoe_timer = 5000;
-
-		//* Murkblood Twins *//
-		CanYellTwins = false;
-		say_twins1 = false;
-		twins_timer = 5000;
-
-		//* Rokdar the Sundered Lord *//
-		CanYellRokdar = false;
-		say_rokdar1 = false;
-		rokdar_timer = 5000;
-
-		//*  Skra'gath *//
-		CanYellVoid = false;
-		say_void1 = false;
-		void_timer = 5000;
-
-		//* Warmaul Champion *//
-		CanYellChampion = false;
-		say_champion1 = false;
-		champion_timer = 5000;
-
-		//* Mogor *//
-		CanYellMogor = false;
-		CanMogorMove = false;
-		say_mogor1 = false;
-		mogor_timer = 5000;
-		mogorstart_timer = 7000;
-		
-		Reset_Timer = 0;
-		PlayerGUID = 0;
-	}
-
-	bool CanReset;
-	uint64 PlayerGUID;
-	uint32 Reset_Timer;
-
-	//* Brokentoe *//
-	uint32 brokentoe_timer;
-	bool CanYellBrokentoe;
-	bool say_brokentoe1;
-	
-	//* Murkblood Twins *//
-	uint32 twins_timer;
-	bool CanYellTwins;
-	bool say_twins1;
-
-	//* Rokdar the Sundered Lord *//
-	uint32 rokdar_timer;
-	bool CanYellRokdar;
-	bool say_rokdar1;
-
-	//*  Skra'gath *//
-	uint32 void_timer;
-	bool CanYellVoid;
-	bool say_void1;
-
-	//* Warmaul Champion *//
-	uint32 champion_timer;
-	bool CanYellChampion;
-	bool say_champion1;
-
-	//* Mogor *//
-	uint32 mogor_timer;
-	uint32 mogorstart_timer;
-	bool CanYellMogor;
-	bool say_mogor1;
-	bool CanMogorMove;
-
-	void BrokentoeDied()
-	{
-		if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-		{
-			DoScriptText(SAY_DEFEAT_BROKENTOE, me, pPlayer);
-		}
-	}
-
-	void TwinsDied()
-	{
-		if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-		{
-			DoScriptText(SAY_DEFEAT_TWINS, me, pPlayer);
-		}
-	}
-
-	void RokdarDied()
-	{
-		if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-		{
-			DoScriptText(SAY_DEFEAT_GOLEM, me, pPlayer);
-
-			if (Creature* mogor = me->FindNearestCreature(18069, 50.0f, true))
-			{
-				DoScriptText(SAY_MOGOR_GOLEM, mogor, pPlayer);
-			}
-		}
-	}
-
-	void VoidDied()
-	{
-		if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-		{
-			DoScriptText(SAY_DEFEAT_GOLEM, me, pPlayer);
-
-			if (Creature* mogor = me->FindNearestCreature(18069, 50.0f, true))
-			{
-				DoScriptText(SAY_MOGOR_VOID, mogor, pPlayer);
-			}
-		}
-	}
-
-	void ChampionDied()
-	{
-		if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-		{
-			DoScriptText(SAY_DEFEAT_GOLEM, me, pPlayer);
-
-			if (Creature* mogor = me->FindNearestCreature(18069, 50.0f, true))
-			{
-				DoScriptText(SAY_MOGOR_IMPOSSIBLE, mogor, pPlayer);
-			}
-		}
-	}
-	
-	void SayRokdarAggro()
-	{
-		if (Creature* rokdar = me->FindNearestCreature(18400, 150.0f, true))
-		{
-			if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-			{
-				DoScriptText(SAY_SMASH, rokdar, pPlayer);
-			}
-		}
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-		{
-			if (CanReset)
-			{
-				if (Reset_Timer <= diff)
-				{
-					Reset();
-				}
-				else Reset_Timer -= diff;
-			}
-
-			if (CanYellBrokentoe)
-			{
-				if (!say_brokentoe1)
-				{
-					if (brokentoe_timer <= diff)
-					{
-						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-						{
-							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-							DoScriptText(SAY_START_BROKENTOE, me, pPlayer);
-							say_brokentoe1 = true;
-							CanReset = true;
-							Reset_Timer = 15000;
-							brokentoe_timer = 5000;
-						}
-					}
-					else brokentoe_timer -= diff;
-				}
-			}
-
-			if (CanYellTwins)
-			{
-				if (!say_twins1)
-				{
-					if (twins_timer <= diff)
-					{
-						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-						{
-							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-							DoScriptText(SAY_START_TWINS, me, pPlayer);
-							say_twins1 = true;
-							CanReset = true;
-							Reset_Timer = 15000;
-							twins_timer = 5000;
-						}
-					}
-					else twins_timer -= diff;
-				}
-			}
-
-			if (CanYellRokdar)
-			{
-				if (!say_rokdar1)
-				{
-					if (rokdar_timer <= diff)
-					{
-						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-						{
-							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-							DoScriptText(SAY_START_GOLEM, me, pPlayer);
-							say_rokdar1 = true;
-							CanReset = true;
-							Reset_Timer = 15000;
-							rokdar_timer = 5000;
-						}
-					}
-					else rokdar_timer -= diff;
-				}
-			}
-
-			if (CanYellVoid)
-			{
-				if (!say_void1)
-				{
-					if (void_timer <= diff)
-					{
-						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-						{
-							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-							DoScriptText(SAY_START_VOID, me, pPlayer);
-							say_void1 = true;
-							CanReset = true;
-							Reset_Timer = 15000;
-							void_timer = 5000;
-						}
-					}
-					else void_timer -= diff;
-				}
-			}
-
-			if (CanYellChampion)
-			{
-				if (!say_champion1)
-				{
-					if (champion_timer <= diff)
-					{
-						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-						{
-							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-							DoScriptText(SAY_START_CHAMPION, me, pPlayer);
-							say_champion1 = true;
-							CanReset = true;
-							Reset_Timer = 15000;
-							champion_timer = 5000;
-						}
-					}
-					else champion_timer -= diff;
-				}
-			}
-
-			if (CanYellMogor)
-			{
-				if (!say_mogor1)
-				{
-					if (mogor_timer <= diff)
-					{
-						if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-						{
-							me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
-							DoScriptText(SAY_START_MOGOR, me, pPlayer);
-							say_mogor1 = true;
-							CanReset = true;
-							CanMogorMove = true;
-							Reset_Timer = 15000;
-							mogor_timer = 5000;
-							mogorstart_timer = 7000;
-						}
-					}
-					else mogor_timer -= diff;
-				}
-
-				if (CanMogorMove)
-				{
-					if (mogorstart_timer <= diff)
-					{
-						if (Creature* mogor = me->FindNearestCreature(18069, 50.0f, true))
-						{
-							CAST_AI(npc_mogorAI, mogor->AI())->MogorStart();
-						}
-					}
-					else mogorstart_timer -= diff;
-				}
-			}
-		}
-	}
-};
-
-CreatureAI* GetAI_npc_gunthock(Creature* pCreature)
-{
-	return new npc_gunthockAI(pCreature);
-}
-
-struct npc_brokentoeAI : public ScriptedAI
-{
-	npc_brokentoeAI(Creature* creature) : ScriptedAI(creature){}
-
-	void Reset()
-	{
-		PlayerGUID = 0;
-		stomp_timer = 10000;
-
-		// Poisons 
-		me->ApplySpellImmune(0, IMMUNITY_ID, 27282, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 26892, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 26786, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 27283, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 26969, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 25347, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11343, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 13230, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11358, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11400, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11342, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 3421, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 13229, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11357, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11341, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 13228, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 8694, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 2837, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 8691, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 13220, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 2835, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 8687, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 5763, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 8681, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 3420, true);
-	}
-
-	uint64 PlayerGUID;
-	uint32 stomp_timer;
-
-	void JustDied(Unit* /*killer*/)
-	{
-		if (Creature* pCreature = me->FindNearestCreature(18471, 150.0f, true))
-		{
-			CAST_AI(npc_gunthockAI, pCreature->AI())->BrokentoeDied();
-		}
-
-		me->RemoveCorpse();
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-
-		if (stomp_timer <= diff)
-		{
-			DoCast(SPELL_STOMP);
-			stomp_timer = 18000;
-		}
-		else stomp_timer -= diff;
-		
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_brokentoe(Creature* pCreature)
-{
-	return new npc_brokentoeAI(pCreature);
-}
-
-struct npc_murkbloodtwinsAI : public ScriptedAI
-{
-	npc_murkbloodtwinsAI(Creature* creature) : ScriptedAI(creature){}
-
-	void Reset()
-	{
-		PlayerGUID = 0;
-		sinister_timer = 6000;
-		multilate_timer = 15000;
-		eviscerate_timer = 20000;
-
-		//models
-		me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, DAGGER_MODEL);
-
-		me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 1, DAGGER_MODEL);
-	}
-
-	uint64 PlayerGUID;
-	uint32 sinister_timer;
-	uint32 multilate_timer;
-	uint32 eviscerate_timer;
-
-	void EnterCombat(Unit* /*who*/)
-	{
-		DoCast(me, SPELL_DUALWIELD);
-	}
-
-	void JustDied(Unit* /*killer*/)
-	{
-		if (Creature* pCreature = me->FindNearestCreature(18471, 150.0f, true))
-		{
-			CAST_AI(npc_gunthockAI, pCreature->AI())->TwinsDied(); // make it count 2 before send AI
-		}
-
-		me->RemoveCorpse();
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-
-		if (me->HasUnitState(UNIT_STATE_CASTING))
-			return;
-
-		if (sinister_timer <= diff)
-		{
-			DoCastVictim(SPELL_SINISTERSTRIKE);
-			sinister_timer = 7000;
-		}
-		else sinister_timer -= diff;
-
-		if (multilate_timer <= diff)
-		{
-			DoCastVictim(SPELL_MULTILATE);
-			multilate_timer = 15000;
-		}
-		else multilate_timer -= diff;
-
-		if (eviscerate_timer <= diff)
-		{
-			DoCastVictim(SPELL_EVISCERATE);
-			eviscerate_timer = 20000;
-		}
-		else eviscerate_timer -= diff;
-
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_murkbloodtwins(Creature* pCreature)
-{
-	return new npc_murkbloodtwinsAI(pCreature);
-}
-
-struct npc_rockdarAI : public ScriptedAI
-{
-	npc_rockdarAI(Creature* creature) : ScriptedAI(creature){}
-
-	void Reset()
-	{
-		PlayerGUID = 0;
-
-		knockback_timer = 15000;
-		puncture_timer = 2000;
-		warstomp_timer = 10000;
-
-		// Poisons 
-		me->ApplySpellImmune(0, IMMUNITY_ID, 27282, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 26892, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 26786, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 27283, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 26969, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 25347, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11343, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 13230, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11358, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11400, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11342, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 3421, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 13229, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11357, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 11341, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 13228, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 8694, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 2837, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 8691, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 13220, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 2835, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 8687, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 5763, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 8681, true);
-		me->ApplySpellImmune(0, IMMUNITY_ID, 3420, true);
-
-		me->SetReactState(REACT_AGGRESSIVE);
-	}
-
-	uint64 PlayerGUID;
-
-	uint32 knockback_timer;
-	uint32 warstomp_timer;
-	uint32 puncture_timer;
-
-	void EnterCombat(Unit* /*who*/)
-	{
-		if (Creature* pCreature = me->FindNearestCreature(18471, 150.0f, true))
-		{
-			CAST_AI(npc_gunthockAI, pCreature->AI())->SayRokdarAggro();
-		}
-	}
-
-	void JustDied(Unit* /*killer*/)
-	{
-		if (Creature* pCreature = me->FindNearestCreature(18471, 150.0f, true))
-		{
-			CAST_AI(npc_gunthockAI, pCreature->AI())->RokdarDied();
-		}
-
-		me->RemoveCorpse();
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-
-		if (me->HasUnitState(UNIT_STATE_CASTING))
-			return;
-
-		if (puncture_timer <= diff)
-		{
-			DoCastVictim(SPELL_PUNCTURE);
-			puncture_timer = 12000;
-		}
-		else puncture_timer -= diff;
-
-		if (knockback_timer <= diff)
-		{
-			DoCast(SPELL_KNOCKBACK);
-			knockback_timer = 15000;
-		}
-		else knockback_timer -= diff;
-
-		if (warstomp_timer <= diff)
-		{
-			DoCast(SPELL_WARSTOMP);
-			warstomp_timer = 20000;
-		}
-		else warstomp_timer -= diff;
-
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_rockdar(Creature* pCreature)
-{
-	return new npc_rockdarAI(pCreature);
-}
-
-struct npc_szagathAI : public ScriptedAI
-{
-	npc_szagathAI(Creature* creature) : ScriptedAI(creature){}
-
-	void Reset()
-	{
-		PlayerGUID = 0;
-
-		darkshriek_timer = 12000;
-		piercing_timer = 1000;
-
-		spellHit = false;
-	}
-
-	uint64 PlayerGUID;
-
-	uint32 darkshriek_timer;
-	uint32 piercing_timer;
-
-	bool spellHit;
-
-	void EnterCombat(Unit* /*who*/)
-	{
-		DoScriptText(SAY_CLOSER, me);	
-		
-		DoCast(me, SPELL_DRAININGTOUCH);
-	}
-
-	void SpellHit(Unit* Hitter, const SpellEntry* Spellkind)
-	{
-		if (Spellkind->SchoolMask == SPELL_SCHOOL_MASK_FIRE && !spellHit)
-		{
-			DoCast(me, SPELL_FIREREDUCTION);
-			spellHit = true;
-		}
-
-		if (Spellkind->SchoolMask == SPELL_SCHOOL_MASK_SHADOW && !spellHit)
-		{
-			DoCast(me, SPELL_SHADOWREDUCTION);
-			spellHit = true;
-		}
-
-		if (Spellkind->SchoolMask == SPELL_SCHOOL_MASK_FROST && !spellHit)
-		{
-			DoCast(me, SPELL_FROSTREDUCTION);
-			spellHit = true;
-		}
-
-		if (Spellkind->SchoolMask == SPELL_SCHOOL_MASK_HOLY && !spellHit)
-		{
-			DoCast(me, SPELL_HOLYREDUCTION);
-			spellHit = true;
-		}
-
-		if (Spellkind->SchoolMask == SPELL_SCHOOL_MASK_NATURE && !spellHit)
-		{
-			DoCast(me, SPELL_NATUREREDUCTION);
-			spellHit = true;
-		}
-
-		if (Spellkind->SchoolMask == SPELL_SCHOOL_MASK_ARCANE && !spellHit)
-		{
-			DoCast(me, SPELL_ARCANEREDUCTION);
-			spellHit = true;
-		}
-	}
-
-	void JustDied(Unit* /*killer*/)
-	{
-		if (Creature* pCreature = me->FindNearestCreature(18471, 150.0f, true))
-		{
-			CAST_AI(npc_gunthockAI, pCreature->AI())->VoidDied();
-		}
-
-		me->RemoveCorpse();
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-
-		if (me->HasUnitState(UNIT_STATE_CASTING))
-			return;
-
-		if (piercing_timer <= diff)
-		{
-			DoCastVictim(SPELL_PIERCINGSHADOW);
-			piercing_timer = 45000;
-		}
-		else piercing_timer -= diff;
-
-		if (darkshriek_timer <= diff)
-		{
-			DoCast(SPELL_DARKSHRIEK);
-			darkshriek_timer = 12000;
-		}
-		else darkshriek_timer -= diff;
-
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_szagath(Creature* pCreature)
-{
-	return new npc_szagathAI(pCreature);
-}
-
-struct npc_warmaul_championAI : public ScriptedAI
-{
-	npc_warmaul_championAI(Creature* creature) : ScriptedAI(creature){}
-
-	void Reset()
-	{
-		PlayerGUID = 0;
-		charge_timer = 500;
-		battleshout_timer = 1000;
-		mortalstrike_timer = 9000;
-		sunder_timer = 5000;
-	}
-
-	uint64 PlayerGUID;
-	
-	uint32 charge_timer;
-	uint32 battleshout_timer;
-	uint32 mortalstrike_timer;
-	uint32 sunder_timer;
-
-	void EnterCombat(Unit* /*who*/)
-	{
-		DoScriptText(SAY_CHALLENGER, me);
-
-		DoCast(me, SPELL_BATTLESHOUT);
-	}
-
-	void JustDied(Unit* /*killer*/)
-	{
-		if (Creature* pCreature = me->FindNearestCreature(18471, 150.0f, true))
-		{
-			CAST_AI(npc_gunthockAI, pCreature->AI())->ChampionDied();
-		}
-
-		me->RemoveCorpse();
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-
-		if (me->HasUnitState(UNIT_STATE_CASTING))
-			return;
-
-		if (charge_timer <= diff)
-		{
-			if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 25, true))
-				DoCast(pTarget, SPELL_CHARGE);
-			charge_timer = 15000;
-		}
-		else charge_timer -= diff;
-
-		if (sunder_timer <= diff)
-		{
-			DoCastVictim(SPELL_SUNDERINGCLEAVE);
-			sunder_timer = 8000;
-		}
-		else sunder_timer -= diff;
-
-		if (mortalstrike_timer <= diff)
-		{
-			DoCastVictim(SPELL_MORTALSTRIKE);
-			mortalstrike_timer = 12000;
-		}
-		else mortalstrike_timer -= diff;
-
-		if (battleshout_timer <= diff)
-		{
-			DoCast(me, SPELL_BATTLESHOUT);
-			battleshout_timer = 60000;
-		}
-		else battleshout_timer -= diff;
-
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_warmaul_champion(Creature* pCreature)
-{
-	return new npc_warmaul_championAI(pCreature);
-}
-
-bool QuestAccept_npc_gunthock(Player* pPlayer, Creature* pCreature, Quest const* quest)
-{
-	if (quest->GetQuestId() == QUEST_BROKENTOE)
-	{
-		DoScriptText(SAY_START, pCreature, pPlayer);		
-
-		CAST_AI(npc_gunthockAI, pCreature->AI())->CanYellBrokentoe = true;
-		CAST_AI(npc_gunthockAI, pCreature->AI())->PlayerGUID = pPlayer->GetGUID();
-	}
-
-	if (quest->GetQuestId() == QUEST_TWINS)
-	{
-		DoScriptText(SAY_START, pCreature, pPlayer);
-
-		CAST_AI(npc_gunthockAI, pCreature->AI())->CanYellTwins = true;
-		CAST_AI(npc_gunthockAI, pCreature->AI())->PlayerGUID = pPlayer->GetGUID();
-	}
-
-	if (quest->GetQuestId() == QUEST_ROKDAR)
-	{
-		DoScriptText(SAY_START, pCreature, pPlayer);
-
-		CAST_AI(npc_gunthockAI, pCreature->AI())->CanYellRokdar = true;
-		CAST_AI(npc_gunthockAI, pCreature->AI())->PlayerGUID = pPlayer->GetGUID();
-	}
-
-	if (quest->GetQuestId() == QUEST_VOID)
-	{
-		DoScriptText(SAY_START, pCreature, pPlayer);
-
-		CAST_AI(npc_gunthockAI, pCreature->AI())->CanYellVoid = true;
-		CAST_AI(npc_gunthockAI, pCreature->AI())->PlayerGUID = pPlayer->GetGUID();
-	}
-
-	if (quest->GetQuestId() == QUEST_CHAMPION)
-	{
-		DoScriptText(SAY_START, pCreature, pPlayer);
-
-		CAST_AI(npc_gunthockAI, pCreature->AI())->CanYellChampion = true;
-		CAST_AI(npc_gunthockAI, pCreature->AI())->PlayerGUID = pPlayer->GetGUID();
-	}
-
-	if (quest->GetQuestId() == QUEST_MOGOR)
-	{
-		DoScriptText(SAY_MOGOR_INTRO_BATTLE, pCreature, pPlayer);
-
-		CAST_AI(npc_gunthockAI, pCreature->AI())->CanYellMogor = true;
-		CAST_AI(npc_gunthockAI, pCreature->AI())->PlayerGUID = pPlayer->GetGUID();	
-
-		if (Creature* trigger = pCreature->FindNearestCreature(61036, 100.0f, true))
-		{
-			CAST_AI(trigger_arenahelperAI, trigger->AI())->PlayerGUID = pPlayer->GetGUID();
-		}
-	}
-
-	return true;
-}
-
 /*#####
 ## npc_warmaul_pyre Q 9932
 #####*/
@@ -2620,16 +1537,23 @@ enum
 	NPC_SABOTEUR = 18396,
 	NPC_CORPSE = 18397,
 
+	// Opening chat
 	SAY_SABOTEUR1 = -1900192,
 	SAY_SABOTEUR2 = -1900193,
 	SAY_SABOTEUR3 = -1900194,
 	SAY_SABOTEUR4 = -1900195,
+
+	// Random phrases to say
 	SAY_SABOTEUR5 = -1900196,
 	SAY_SABOTEUR6 = -1900197,
 	SAY_SABOTEUR7 = -1900198,
 	SAY_SABOTEUR8 = -1900199,
 	SAY_SABOTEUR9 = -1900200,
-	SAY_SABOTEUR10 = -1900201
+	SAY_SABOTEUR10 = -1900201,
+	SAY_SABOTEUR11 = -1900202,
+
+	// Quest complete phrase
+	SAY_SABOTEUR_COMPLETE = -1900203
 };
 
 struct Move
@@ -2727,11 +1651,12 @@ struct npc_warmaul_pyreAI : public ScriptedAI
 	{
 		if (who->GetTypeId() == TYPEID_PLAYER)
 		{
-			if (((Player*)who)->GetQuestStatus(9932) == QUEST_STATUS_INCOMPLETE)
+			Player* player = (Player*) who;
+			if (player->GetQuestStatus(9932) == QUEST_STATUS_INCOMPLETE)
 			{
-				if (me->IsWithinDistInMap(((Player *)who), 3.0f))
+				if (me->IsWithinDistInMap(player, 3.0f))
 				{
-					PlayerGUID = who->GetGUID();
+					PlayerGUID = player->GetGUID();
 					Event = true;                     // this is not the best way to start the event :)
 				}
 			}
@@ -2771,79 +1696,107 @@ struct npc_warmaul_pyreAI : public ScriptedAI
 	{
 		switch (Steps)
 		{
-		case 1:DoSpawn();
+		case 1:
+			DoSpawn();
 			return 4000;
-		case 2:Started();
-			return 2900;
-		case 3:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR1, Saboteur);
+		case 2:
+			Started();
+			return 3000;
+		case 3:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(SAY_SABOTEUR1, Saboteur);
 			return 5000;
-		case 4:if (Creature* Saboteur = GetSaboteur(1))
-			DoScriptText(SAY_SABOTEUR2, Saboteur);
+		case 4:
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(SAY_SABOTEUR2, Saboteur);
 			return 5000;
-		case 5:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR3, Saboteur);
+		case 5:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(SAY_SABOTEUR3, Saboteur);
 			return 5000;
-		case 6:if (Creature* Saboteur = GetSaboteur(1))
-			DoScriptText(SAY_SABOTEUR4, Saboteur);
+		case 6:
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(SAY_SABOTEUR4, Saboteur);
 			return 4000;
-		case 7:Move();
+		case 7:
+			Move();
 			return 6000;
-		case 8:DoSummon();
+		case 8:
+			DoSummon();
 			return 2000;
-		case 9:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR5, Saboteur);
+		case 9:
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
 			return 2000;
-		case 10:Move();
+		case 10:
+			Move();
 			return 7000;
-		case 11:DoSummon();
+		case 11:
+			DoSummon();
 			return 2000;
-		case 12:if (Creature* Saboteur = GetSaboteur(1))
-			DoScriptText(SAY_SABOTEUR6, Saboteur);
+		case 12:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
 			return 2000;
-		case 13:Move();
+		case 13:
+			Move();
 			return 7000;
-		case 14:DoSummon();
+		case 14:
+			DoSummon();
 			return 2000;
-		case 15:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR7, Saboteur);
-			return 3000;
-		case 16:if (Creature* Saboteur = GetSaboteur(1))
-			DoScriptText(SAY_SABOTEUR7, Saboteur);
+		case 15:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
 			return 2000;
-		case 17:Move();
+		case 16:
+			Move();
 			return 7000;
-		case 18:DoSummon();
+		case 17:
+			DoSummon();
 			return 2000;
-		case 19:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR8, Saboteur);
-			return 3000;
-		case 21:if (Creature* Saboteur = GetSaboteur(1))
-			DoScriptText(SAY_SABOTEUR9, Saboteur);
+		case 18:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
+			if (Creature* Saboteur = GetSaboteur(1))
+				DoScriptText(RAND(SAY_SABOTEUR5, SAY_SABOTEUR6, SAY_SABOTEUR7, SAY_SABOTEUR8, SAY_SABOTEUR9, SAY_SABOTEUR10, SAY_SABOTEUR11), Saboteur);
 			return 2000;
-		case 22:Move();
+		case 19:
+			Move();
 			return 7000;
-		case 23:DoSummon();
+		case 20:
+			DoSummon();
 			return 2000;
-		case 24:if (Creature* Saboteur = GetSaboteur(2))
-			DoScriptText(SAY_SABOTEUR10, Saboteur);
+		case 21:
+			if (Creature* Saboteur = GetSaboteur(2))
+				DoScriptText(SAY_SABOTEUR_COMPLETE, Saboteur);
 			return 2000;
-		case 25:Move();
+		case 22:
+			Move();
 			return 7000;
-		case 26:if (Player* player = Unit::GetPlayer(*me, PlayerGUID))
-		{
-			float Radius = 15.0f;
-			if (me->IsWithinDistInMap(player, Radius))
-				((Player*)player)->KilledMonsterCredit(18395, me->GetGUID());
+		case 23:
+			if (Player* player = Unit::GetPlayer(*me, PlayerGUID))
+			{
+				float Radius = 15.0f;
+				if (me->IsWithinDistInMap(player, Radius))
+					((Player*)player)->KilledMonsterCredit(18395, me->GetGUID());
+			}
+			return 2000;
+        case 24:
+            for (std::list<Creature*>::iterator itr = SaboteurList.begin(); itr != SaboteurList.end(); ++itr)
+                (*itr)->DespawnOrUnsummon();
+            Reset();
+            break;
+		default:
+			return 0;
 		}
-				return 2000;
-		case 27:for (std::list<Creature*>::iterator itr = SaboteurList.begin(); itr != SaboteurList.end(); ++itr)
-		{
-			(*itr)->ForcedDespawn();
-		}
-				Reset();
-		default: return 0;
-		}
+
+        return 0;
 	}
 
 	void UpdateAI(const uint32 diff)
@@ -3481,47 +2434,6 @@ void AddSC_nagrand()
     newscript->GetAI = &GetAI_npc_kurenai_captive;
     newscript->pQuestAccept = &QuestAccept_npc_kurenai_captive;
     newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_gunthock";
-	newscript->GetAI = &GetAI_npc_gunthock;
-	newscript->pQuestAccept = &QuestAccept_npc_gunthock;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_brokentoe";
-	newscript->GetAI = &GetAI_npc_brokentoe;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_murkbloodtwins";
-	newscript->GetAI = &GetAI_npc_murkbloodtwins;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_rockdar";
-	newscript->GetAI = &GetAI_npc_rockdar;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_szagath";
-	newscript->GetAI = &GetAI_npc_szagath;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_warmaul_champion";
-	newscript->GetAI = &GetAI_npc_warmaul_champion;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_mogor";
-	newscript->GetAI = &GetAI_npc_mogor;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "trigger_arenahelper";
-	newscript->GetAI = &GetAI_trigger_arenahelper;
-	newscript->RegisterSelf();
 
 	newscript = new Script;
 	newscript->Name = "npc_warmaul_pyre";

@@ -100,8 +100,8 @@ void Resurrect(Unit* Target)
     Target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     Target->SetStandState(UNIT_STAND_STATE_STAND);
 
-    if (Target->getVictim())
-        Target->GetMotionMaster()->MoveChase(Target->getVictim());
+    if (Target->GetVictim())
+        Target->GetMotionMaster()->MoveChase(Target->GetVictim());
 
     Target->SetHealth(int(Target->GetMaxHealth() * 1.0f));
     if (Target->GetMaxPower(POWER_MANA) > 0)
@@ -595,8 +595,8 @@ struct mob_zealot_zathAI : public ScriptedAI
         {
             DoCastVictim( SPELL_GOUGE);
 
-            if (DoGetThreat(me->getVictim()))
-                DoModifyThreatPercent(me->getVictim(), -100);
+            if (DoGetThreat(me->GetVictim()))
+                DoModifyThreatPercent(me->GetVictim(), -100);
 
             Gouge_Timer = 17000 + rand() % 10000;
         }

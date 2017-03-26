@@ -125,8 +125,8 @@ struct boss_renatakiAI : public ScriptedAI
                 Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
 
-                if (DoGetThreat(me->getVictim()))
-                    DoModifyThreatPercent(me->getVictim(), -50);
+                if (DoGetThreat(me->GetVictim()))
+                    DoModifyThreatPercent(me->GetVictim(), -50);
 
                 if (pTarget)
                     AttackStart(pTarget);

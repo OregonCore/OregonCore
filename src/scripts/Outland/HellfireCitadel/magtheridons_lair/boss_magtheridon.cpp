@@ -495,7 +495,7 @@ struct mob_hellfire_channelerAI : public ScriptedAI
 
     void JustSummoned(Creature* summon)
     {
-        summon->AI()->AttackStart(me->getVictim());
+        summon->AI()->AttackStart(me->GetVictim());
     }
 
     void MoveInLineOfSight(Unit*) {}
@@ -528,7 +528,7 @@ struct mob_hellfire_channelerAI : public ScriptedAI
 
         if (DarkMending_Timer <= diff)
         {
-            if ((me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
+            if (HealthBelowPct(50))
                 DoCast(me, SPELL_DARK_MENDING);
             DarkMending_Timer = 10000 + (rand() % 10000);
         }

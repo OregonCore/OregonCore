@@ -98,14 +98,14 @@ struct boss_general_angerforgeAI : public ScriptedAI
         else Cleave_Timer -= diff;
 
         //Adds_Timer
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 21)
+        if (HealthBelowPct(20))
         {
             if (Adds_Timer <= diff)
             {
                 // summon 3 Adds every 25s
-                SummonAdds(me->getVictim());
-                SummonAdds(me->getVictim());
-                SummonAdds(me->getVictim());
+                SummonAdds(me->GetVictim());
+                SummonAdds(me->GetVictim());
+                SummonAdds(me->GetVictim());
 
                 Adds_Timer = 25000;
             }
@@ -113,10 +113,10 @@ struct boss_general_angerforgeAI : public ScriptedAI
         }
 
         //Summon Medics
-        if (!Medics && me->GetHealth() * 100 / me->GetMaxHealth() < 21)
+        if (!Medics && HealthBelowPct(20))
         {
-            SummonMedics(me->getVictim());
-            SummonMedics(me->getVictim());
+            SummonMedics(me->GetVictim());
+            SummonMedics(me->GetVictim());
             Medics = true;
         }
 

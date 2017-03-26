@@ -49,10 +49,10 @@ class Corpse : public WorldObject, public GridObject<Corpse>
 {
     public:
         explicit Corpse(CorpseType type = CORPSE_BONES);
-        ~Corpse();
+        ~Corpse() override;
 
-        void AddToWorld();
-        void RemoveFromWorld();
+        void AddToWorld() override;
+        void RemoveFromWorld() override;
 
         bool Create(uint32 guidlow, Map* map);
         bool Create(uint32 guidlow, Player* owner, uint32 mapid, float x, float y, float z, float ang);

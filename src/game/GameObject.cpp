@@ -899,6 +899,8 @@ void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
         return;
 
     float range = GetSpellMaxRange(sSpellRangeStore.LookupEntry(trapSpell->rangeIndex));
+    if (range < CONTACT_DISTANCE)
+        range = CONTACT_DISTANCE;
 
     // search nearest linked GO
     GameObject* trapGO = NULL;
@@ -1073,12 +1075,12 @@ void GameObject::Use(Unit* user)
                         y_lowest = y_i;
                     }
                 }
-                user->NearTeleportTo(x_lowest, y_lowest, GetPositionZ(), GetOrientation(), TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET);
+                user->NearTeleportTo(x_lowest, y_lowest, GetPositionZ(), GetOrientation(), (TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET));
             }
             else
             {
                 // fallback, will always work
-                user->NearTeleportTo(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(), TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET);
+                user->NearTeleportTo(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(), (TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET));
             }
             user->SetStandState(UNIT_STAND_STATE_SIT_LOW_CHAIR + info->chair.height);
             return;
@@ -1518,9 +1520,12 @@ void GameObject::CastSpell(Unit* target, uint32 spellId, bool triggered /*= true
     }
 
     //summon world trigger
-    Creature* trigger = SummonTrigger(GetPositionX(), GetPositionY(), GetPositionZ(), 0, 1);
+    Creature* trigger = SummonTrigger(GetPositionX(), GetPositionY(), GetPositionZ(), 0, GetSpellCastTime(spellProto) + 100);
     if (!trigger)
         return;
+
+    // remove immunity flags, to allow spell to target anything
+    trigger->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC | UNIT_FLAG_IMMUNE_TO_PC);
 
     if (Unit* owner = GetOwner())
     {
@@ -1531,9 +1536,9 @@ void GameObject::CastSpell(Unit* target, uint32 spellId, bool triggered /*= true
     }
     else
     {
-        trigger->setFaction(14);
+        trigger->setFaction(IsPositiveSpell(spellId) ? 35 : 14);
         // Set owner guid for target if no owner available - needed by trigger auras
-        trigger->CastSpell(target ? target : trigger, spellId, triggered, 0, 0, target ? target->GetGUID() : 0);
+        trigger->CastSpell(target ? target : trigger, spellProto, triggered, nullptr, nullptr, target ? target->GetGUID() : 0);
     }
 }
 

@@ -134,6 +134,8 @@ enum ReputationRank
 #define MIN_REPUTATION_RANK (REP_HATED)
 #define MAX_REPUTATION_RANK 8
 
+#define MAX_SPILLOVER_FACTIONS 4
+
 enum MoneyConstants
 {
     COPPER = 1,
@@ -418,9 +420,9 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] =
 // Spell Attributes definitions
 // ***********************************
 
-enum SpellAttr0
+enum SpellAttributes
 {
-    SPELL_ATTR0_UNK0                             = 0x00000001, // 0
+    SPELL_ATTR0_DONT_DISPLAY_SPELL_RESULT        = 0x00000001, // 0
     SPELL_ATTR0_RANGED                           = 0x00000002, // 1 All ranged abilities have this flag
     SPELL_ATTR0_ON_NEXT_SWING_1                  = 0x00000004, // 2 on next swing
     SPELL_ATTR0_UNK3                             = 0x00000008, // 3 not set in 2.4.2
@@ -454,7 +456,7 @@ enum SpellAttr0
     SPELL_ATTR0_CANT_CANCEL                      = 0x80000000  // 31 positive aura can't be canceled
 };
 
-enum SpellAttr1
+enum SpellAttributesEx
 {
     SPELL_ATTR1_DISMISS_PET                      = 0x00000001, // 0 for spells without this flag client doesn't allow to summon pet if caster has a pet
     SPELL_ATTR1_DRAIN_ALL_POWER                  = 0x00000002, // 1 use all power (Only paladin Lay of Hands and Bunyanize)
@@ -490,7 +492,7 @@ enum SpellAttr1
     SPELL_ATTR1_UNK31                            = 0x80000000  // 31
 };
 
-enum SpellAttr2
+enum SpellAttributesEx2
 {
     SPELL_ATTR2_CAN_TARGET_DEAD                  = 0x00000001, // 0 can target dead unit or corpse
     SPELL_ATTR2_UNK1                             = 0x00000002, // 1 Used by shadowform, ghost wolf, vanish
@@ -526,7 +528,7 @@ enum SpellAttr2
     SPELL_ATTR2_FOOD                             = 0x80000000  // 31 food, well-fed, and a few others
 };
 
-enum SpellAttr3
+enum SpellAttributesEx3
 {
     SPELL_ATTR3_UNK0                             = 0x00000001, // 0
     SPELL_ATTR3_UNK1                             = 0x00000002, // 1
@@ -562,7 +564,7 @@ enum SpellAttr3
     SPELL_ATTR3_UNK31                            = 0x80000000  // 31
 };
 
-enum SpellAttr4
+enum SpellAttributesEx4
 {
     SPELL_ATTR4_IGNORE_RESISTANCES               = 0x00000001, // 0 spells with this attribute will completely ignore the target's resistance (these spells can't be resisted)
     SPELL_ATTR4_PROC_ONLY_ON_CASTER              = 0x00000002, // 1 proc only on effects with TARGET_UNIT_CASTER?
@@ -587,7 +589,7 @@ enum SpellAttr4
     SPELL_ATTR4_UNK20                            = 0x00100000, // 20
     SPELL_ATTR4_STANCES                          = 0x00200000, // 21 stances, shapeshifts, etc.
     SPELL_ATTR4_UNK22                            = 0x00400000, // 22 used by seal of command (20424,42058)
-    SPELL_ATTR4_UNK23                            = 0x00800000, // 23 
+    SPELL_ATTR4_CANT_TRIGGER_ITEM_SPELLS         = 0x00800000, // 23 Used by spells that cannot trigger item procs such as enchants
     SPELL_ATTR4_AUTOSHOT                         = 0x01000000, // 24
     SPELL_ATTR4_SCALE_PET                        = 0x02000000, // 25 pet scaling auras
     SPELL_ATTR4_CAST_ONLY_IN_OUTLAND             = 0x04000000, // 26 Can only be used in Outland.
@@ -598,7 +600,7 @@ enum SpellAttr4
     SPELL_ATTR4_UNK31                            = 0x80000000  // 31 Polymorph: Chicken (228), Sonic Boom (38052,38488)
 };
 
-enum SpellAttr5
+enum SpellAttributesEx5
 {
     SPELL_ATTR5_CAN_CHANNEL_WHEN_MOVING          = 0x00000001, // 0 don't interrupt channeling spells when moving
     SPELL_ATTR5_NO_REAGENT_WHILE_PREP            = 0x00000002, // 1 not need reagents if UNIT_FLAG_PREPARATION
@@ -634,7 +636,7 @@ enum SpellAttr5
     SPELL_ATTR5_TAUNT                            = 0x80000000  // 31 Forces all nearby enemies to focus attacks to caster Taunt, Challenging Roar, etc.
 };
 
-enum SpellAttr6
+enum SpellAttributesEx6
 {
     SPELL_ATTR6_UNK0                             = 0x00000001, // 0 Only Move spell have this flag
     SPELL_ATTR6_UNK1                             = 0x00000002, // 1 not set in 2.4.2
@@ -642,12 +644,12 @@ enum SpellAttr6
     SPELL_ATTR6_ASSIST_IGNORE_IMMUNE_FLAG        = 0x00000008, // 3 [NYI] skips checking UNIT_FLAG_IMMUNE_TO_PC and UNIT_FLAG_IMMUNE_TO_NPC flags on assist
     SPELL_ATTR6_UNK4                             = 0x00000010, // 4 not set in 2.4.2
     SPELL_ATTR6_UNK5                             = 0x00000020, // 5
-    SPELL_ATTR6_UNK6                             = 0x00000040, // 6
+    SPELL_ATTR6_CAN_TARGET_INVISIBLE             = 0x00000040, // 6 not set in 2.4.3
     SPELL_ATTR6_UNK7                             = 0x00000080, // 7
     SPELL_ATTR6_UNK8                             = 0x00000100, // 8
     SPELL_ATTR6_UNK9                             = 0x00000200, // 9 not set in 2.4.2
     SPELL_ATTR6_UNK10                            = 0x00000400, // 10
-    SPELL_ATTR6_UNK11                            = 0x00000800, // 11
+    SPELL_ATTR6_NOT_IN_RAID_INSTANCE             = 0x00000800, // 11
     SPELL_ATTR6_UNK12                            = 0x00001000, // 12 not set in 2.4.2
     SPELL_ATTR6_UNK13                            = 0x00002000, // 13 not set in 2.4.2
     SPELL_ATTR6_UNK14                            = 0x00004000, // 14 not set in 2.4.2
@@ -665,7 +667,7 @@ enum SpellAttr6
     SPELL_ATTR6_UNK26                            = 0x04000000, // 26 not set in 2.4.2
     SPELL_ATTR6_UNK27                            = 0x08000000, // 27 not set in 2.4.2
     SPELL_ATTR6_UNK28                            = 0x10000000, // 28 not set in 2.4.2
-    SPELL_ATTR6_UNK29                            = 0x20000000, // 29 not set in 2.4.2
+    SPELL_ATTR6_NO_DMG_PERCENT_MODS              = 0x20000000, // 29 not set in 2.4.2
     SPELL_ATTR6_UNK30                            = 0x40000000, // 30 not set in 2.4.2
     SPELL_ATTR6_UNK31                            = 0x80000000  // 31 not set in 2.4.2
 };
@@ -742,6 +744,7 @@ enum TeamId
 
 enum Team
 {
+    TEAM_NONE           = 0,                                // if ReputationListId > 0 && Flags != FACTION_FLAG_TEAM_HEADER
     HORDE               = 67,
     ALLIANCE            = 469,
     //TEAM_STEAMWHEEDLE_CARTEL = 169,                       // not used in code
@@ -749,11 +752,11 @@ enum Team
     //TEAM_HORDE_FORCES        = 892,
     //TEAM_SANCTUARY           = 936,
     //TEAM_OUTLAND             = 980,
-    TEAM_OTHER          = 0,                                // if ReputationListId > 0 && Flags != FACTION_FLAG_TEAM_HEADER
 };
 
 enum SpellEffects
 {
+    SPELL_EFFECT_NONE                      = 0,
     SPELL_EFFECT_INSTAKILL                 = 1,
     SPELL_EFFECT_SCHOOL_DAMAGE             = 2,
     SPELL_EFFECT_DUMMY                     = 3,
@@ -1137,7 +1140,7 @@ enum SpellCastTargetFlags
     TARGET_FLAG_OBJECT          = 0x00000800,               // pguid
     TARGET_FLAG_TRADE_ITEM      = 0x00001000,               // pguid
     TARGET_FLAG_STRING          = 0x00002000,               // string
-    TARGET_FLAG_UNK1            = 0x00004000,               // ?
+    TARGET_FLAG_GAMEOBJECT_ITEM = 0x00004000,               // 199 spells, opening object/lock
     TARGET_FLAG_CORPSE          = 0x00008000,               // pguid
     TARGET_FLAG_UNK2            = 0x00010000                // pguid
 };
@@ -1760,7 +1763,8 @@ enum Emote
     EMOTE_ONESHOT_CUSTOMSPELL10        = 411,
     EMOTE_STATE_EXCLAIM                = 412,
     EMOTE_STATE_SIT_CHAIR_MED          = 415,
-    EMOTE_STATE_SPELLEFFECT_HOLD       = 422
+    EMOTE_STATE_SPELLEFFECT_HOLD       = 422,
+    EMOTE_STATE_EAT_NO_SHEATHE         = 423
 };
 
 enum Anim
@@ -2053,6 +2057,7 @@ uint32 const CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD = (1 << (CREATURE_TYPE_HUMANOI
 
 enum CreatureFamily
 {
+    CREATURE_FAMILY_NONE           = 0,
     CREATURE_FAMILY_WOLF           = 1,
     CREATURE_FAMILY_CAT            = 2,
     CREATURE_FAMILY_SPIDER         = 3,
@@ -2088,23 +2093,23 @@ enum CreatureFamily
 
 enum CreatureTypeFlags
 {
-    CREATURE_TYPEFLAGS_TAMEABLE        = 0x00001,           //tameable by any hunter
-    CREATURE_TYPEFLAGS_GHOST_VISIBLE   = 0x00002,         // Creatures which can _also_ be seen when player is a ghost
-    CREATURE_TYPEFLAGS_UNK3            = 0x00004,
-    CREATURE_TYPEFLAGS_UNK4            = 0x00008,
-    CREATURE_TYPEFLAGS_UNK5            = 0x00010,
-    CREATURE_TYPEFLAGS_UNK6            = 0x00020,
-    CREATURE_TYPEFLAGS_UNK7            = 0x00040,
-    CREATURE_TYPEFLAGS_UNK8            = 0x00080,
-    CREATURE_TYPEFLAGS_HERBLOOT        = 0x00100,           //can be looted by herbalist
-    CREATURE_TYPEFLAGS_MININGLOOT      = 0x00200,           //can be looted by miner
-    CREATURE_TYPEFLAGS_UNK11           = 0x00400,
-    CREATURE_TYPEFLAGS_UNK12           = 0x00800,           //? Related to mounts in some way. If mounted, fight mounted, mount appear as independant when rider dies?
-    CREATURE_TYPEFLAGS_UNK13           = 0x01000,           //? Can aid any player in combat if in range?
-    CREATURE_TYPEFLAGS_UNK14           = 0x02000,
-    CREATURE_TYPEFLAGS_UNK15           = 0x04000,           //? Possibly not in use
-    CREATURE_TYPEFLAGS_ENGINEERLOOT    = 0x08000,           //can be looted by engineer
-    CREATURE_TYPEFLAGS_EXOTIC          = 0x10000           //can be tamed by hunter as exotic pet
+    CREATURE_TYPE_FLAG_TAMEABLE_PET                         = 0x00000001,   // Makes the mob tameable (must also be a beast and have family set)
+    CREATURE_TYPE_FLAG_GHOST_VISIBLE                        = 0x00000002,   // Creature are also visible for not alive player. Allow gossip interaction if npcflag allow?
+    CREATURE_TYPE_FLAG_BOSS_MOB                             = 0x00000004,   // Changes creature's visible level to "??" in the creature's portrait - Immune Knockback.
+    CREATURE_TYPE_FLAG_DO_NOT_PLAY_WOUND_PARRY_ANIMATION    = 0x00000008,
+    CREATURE_TYPE_FLAG_HIDE_FACTION_TOOLTIP                 = 0x00000010,
+    CREATURE_TYPE_FLAG_UNK5                                 = 0x00000020,   // Sound related
+    CREATURE_TYPE_FLAG_SPELL_ATTACKABLE                     = 0x00000040,
+    CREATURE_TYPE_FLAG_CAN_INTERACT_WHILE_DEAD              = 0x00000080,   // Player can interact with the creature if its dead (not player dead)
+    CREATURE_TYPE_FLAG_HERB_SKINNING_SKILL                  = 0x00000100,   // Can be looted by herbalist
+    CREATURE_TYPE_FLAG_MINING_SKINNING_SKILL                = 0x00000200,   // Can be looted by miner
+    CREATURE_TYPE_FLAG_DO_NOT_LOG_DEATH                     = 0x00000400,   // Death event will not show up in combat log
+    CREATURE_TYPE_FLAG_MOUNTED_COMBAT_ALLOWED               = 0x00000800,   // Creature can remain mounted when entering combat
+    CREATURE_TYPE_FLAG_CAN_ASSIST                           = 0x00001000,   // ? Can aid any player in combat if in range?
+    CREATURE_TYPE_FLAG_IS_PET_BAR_USED                      = 0x00002000,
+    CREATURE_TYPE_FLAG_MASK_UID                             = 0x00004000,
+    CREATURE_TYPE_FLAG_ENGINEERING_SKINNING_SKILL           = 0x00008000,   // Can be looted by engineer
+    CREATURE_TYPE_FLAG_EXOTIC_PET                           = 0x00010000,   // Can be tamed by hunter as exotic pet
 };
 
 enum CreatureEliteType
@@ -2199,6 +2204,8 @@ inline uint8 ClassByQuestSort(int32 QuestSort)
 
 enum SkillType
 {
+    SKILL_NONE                     = 0,
+
     SKILL_FROST                    = 6,
     SKILL_FIRE                     = 8,
     SKILL_ARMS                     = 26,
@@ -2257,7 +2264,7 @@ enum SkillType
     SKILL_PET_IMP                  = 188,
     SKILL_PET_FELHUNTER            = 189,
     SKILL_TAILORING                = 197,
-    SKILL_ENGINERING               = 202,
+    SKILL_ENGINEERING              = 202,
     SKILL_PET_SPIDER               = 203,
     SKILL_PET_VOIDWALKER           = 204,
     SKILL_PET_SUCCUBUS             = 205,
@@ -2356,7 +2363,7 @@ inline uint32 SkillByQuestSort(int32 QuestSort)
     case QUEST_SORT_LEATHERWORKING:
         return SKILL_LEATHERWORKING;
     case QUEST_SORT_ENGINERING:
-        return SKILL_ENGINERING;
+        return SKILL_ENGINEERING;
     case QUEST_SORT_TAILORING:
         return SKILL_TAILORING;
     case QUEST_SORT_COOKING:
@@ -2529,8 +2536,8 @@ enum PetDiet
 
 #define MAX_PET_DIET 9
 
-#define PET_FOLLOW_DIST  (0.2f)
-#define PET_FOLLOW_ANGLE (M_PI/2)
+#define PET_FOLLOW_DIST  0.2f   // Trinity has 1.0f
+#define PET_FOLLOW_ANGLE float(M_PI/2)
 
 #define CHAIN_SPELL_JUMP_RADIUS 10
 
@@ -2588,7 +2595,7 @@ enum DiminishingGroup
     DIMINISHING_LIMITONLY
 };
 
-enum DungeonDifficulties
+enum DungeonDifficulty
 {
     DIFFICULTY_NORMAL = 0,
     DIFFICULTY_HEROIC = 1,

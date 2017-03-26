@@ -21,6 +21,7 @@
 #include "Platform/Define.h"
 #include <list>
 #include "Unit.h"
+#include "QuestDef.h"
 
 class Unit;
 class Player;
@@ -98,6 +99,7 @@ class UnitAI
 
         void DoCast(uint32 spellId);
         void DoCast(Unit* victim, uint32 spellId, bool triggered = false);
+        void DoCastSelf(uint32 spellId, bool triggered = false) { DoCast(me, spellId, triggered); }
         void DoCastVictim(uint32 spellId, bool triggered = false);
         void DoCastAOE(uint32 spellId, bool triggered = false);
 
@@ -127,20 +129,20 @@ class PlayerAI : public UnitAI
     public:
         explicit PlayerAI(Player* p) : UnitAI((Unit*)p), me(p) {}
 
-        void OnCharmed(bool apply);
+        void OnCharmed(bool apply) override;
 };
 
 class SimpleCharmedAI : public PlayerAI
 {
     public:
-        void UpdateAI(const uint32 diff);
+        void UpdateAI(const uint32 diff) override;
 };
 
 class ScriptEvent : public BasicEvent
 {
     public:
         ScriptEvent(Unit* unit, uint32 data = 0) : BasicEvent(), m_unit(unit), m_data(data) {}
-        bool Execute(uint64, uint32)
+        bool Execute(uint64, uint32) override
         {
             if (m_unit->IsAIEnabled)
                 m_unit->i_AI->EventHappens(m_data);

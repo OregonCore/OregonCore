@@ -227,7 +227,7 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recv_data*/)
             std::vector<Player*> playersNear;
             for (GroupReference* itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
             {
-                Player* playerGroup = itr->getSource();
+                Player* playerGroup = itr->GetSource();
                 if (!playerGroup)
                     continue;
                 if (player->GetDistance2d(playerGroup) < sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE))
@@ -400,14 +400,17 @@ void WorldSession::DoLootRelease(uint64 lguid)
         if (!pItem)
             return;
 
-        if ((pItem->GetProto()->BagFamily & BAG_FAMILY_MASK_MINING_SUPP) &&
-            pItem->GetProto()->Class == ITEM_CLASS_TRADE_GOODS &&
-            pItem->GetCount() >= 5)
+        if (pItem->GetProto()->Flags & ITEM_PROTO_FLAG_PROSPECTABLE)
         {
             pItem->m_lootGenerated = false;
             pItem->loot.clear();
 
-            uint32 count = 5;
+            uint32 count = pItem->GetCount();
+
+            // >=5 checked in spell code, but will work for cheating cases also with removing from another stacks.
+            if (count > 5)
+                count = 5;
+
             player->DestroyItemCount(pItem, count, true);
         }
         else
@@ -419,7 +422,7 @@ void WorldSession::DoLootRelease(uint64 lguid)
     {
         Creature* pCreature = GetPlayer()->GetMap()->GetCreature(lguid);
 
-        bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->loot.loot_type == LOOT_SKINNING);
+        bool ok_loot = pCreature && pCreature->IsAlive() == (player->getClass() == CLASS_ROGUE && pCreature->loot.loot_type == LOOT_PICKPOCKETING);
         if (!ok_loot || !pCreature->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
             return;
 
@@ -443,13 +446,10 @@ void WorldSession::DoLootRelease(uint64 lguid)
                 loot->roundRobinPlayer = 0;
 
                 if (Group* group = player->GetGroup())
-                {
                     group->SendLooter(pCreature, NULL);
-
-                    // force update of dynamic flags, otherwise other group's players still not able to loot.
-                    pCreature->ForceValuesUpdateAtIndex(UNIT_DYNAMIC_FLAGS);
-                }
             }
+            // force update of dynamic flags, otherwise other group's players still not able to loot.
+            pCreature->ForceValuesUpdateAtIndex(UNIT_DYNAMIC_FLAGS);
         }
     }
 

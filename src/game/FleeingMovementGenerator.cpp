@@ -33,12 +33,17 @@ void FleeingMovementGenerator<T>::_setTargetLocation(T& owner)
     if (owner.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
         return;
 
+    if (owner.HasUnitState(UNIT_STATE_CASTING) && !owner.CanMoveDuringChannel())
+    {
+        owner.CastStop();
+        return;
+    }
+
     float x, y, z;
     _getPoint(owner, x, y, z);
 
     // Add LOS check for target point
-    Position mypos;
-    owner.GetPosition(&mypos);
+    Position mypos = owner.GetPosition();
     bool isInLOS = VMAP::VMapFactory::createOrGetVMapManager()->isInLineOfSight(owner.GetMapId(),
         mypos.m_positionX,
         mypos.m_positionY,
@@ -104,8 +109,7 @@ void FleeingMovementGenerator<T>::_getPoint(T& owner, float& x, float& y, float&
         angle = frand(0, 2 * static_cast<float>(M_PI));
     }
 
-    Position pos;
-    owner.GetFirstCollisionPosition(pos, dist, angle);
+    Position pos = owner.GetFirstCollisionPosition(dist, angle);
     x = pos.m_positionX;
     y = pos.m_positionY;
     z = pos.m_positionZ;
@@ -134,8 +138,8 @@ void FleeingMovementGenerator<Creature>::Finalize(Creature& owner)
 {
     owner.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
     owner.ClearUnitState(UNIT_STATE_FLEEING | UNIT_STATE_ROAMING);
-    if (owner.GetTypeId() == TYPEID_UNIT && owner.getVictim())
-        owner.SetTarget(owner.getVictim()->GetGUID());
+    if (owner.GetTypeId() == TYPEID_UNIT && owner.GetVictim())
+        owner.SetTarget(owner.GetVictim()->GetGUID());
 }
 
 template<class T>
@@ -175,7 +179,7 @@ void TimedFleeingMovementGenerator::Finalize(Unit& owner)
 {
     owner.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
     owner.ClearUnitState(UNIT_STATE_FLEEING | UNIT_STATE_ROAMING);
-    if (Unit* victim = owner.getVictim())
+    if (Unit* victim = owner.GetVictim())
     {
         if (owner.IsAlive())
         {

@@ -392,7 +392,7 @@ void WorldSession::LogoutPlayer(bool Save)
             bg->EventPlayerLoggedOut(_player);
 
         // Teleport to home if the player is in an invalid instance
-        if (!_player->m_InstanceValid && !_player->isGameMaster())
+        if (!_player->m_InstanceValid && !_player->IsGameMaster())
         {
             _player->TeleportToHomebind();
             //this is a bad place to call for far teleport because we need player to be in world for successful logout
@@ -458,7 +458,7 @@ void WorldSession::LogoutPlayer(bool Save)
         // calls to GetMap in this case may cause crashes
         _player->CleanupsBeforeDelete();
         Map* _map = _player->GetMap();
-        _map->RemoveFromMap(_player, true);
+        _map->RemovePlayerFromMap(_player, true);
         _player = NULL;                                     // deleted in Remove call
 
         // Send the 'logout complete' packet to the client
@@ -481,7 +481,7 @@ void WorldSession::LogoutPlayer(bool Save)
 // Kick a player out of the World
 void WorldSession::KickPlayer()
 {
-    if (m_Socket)
+    if (m_Socket && !m_Socket->IsClosed())
         m_Socket->CloseSocket();
 }
 

@@ -108,7 +108,6 @@
 #include <ace/Thread_Mutex.h>
 
 #if PLATFORM == PLATFORM_WINDOWS
-#  define FD_SETSIZE 4096
 #  include <windows.h>
 #  include <ace/config-all.h>
 #  include <ws2tcpip.h>

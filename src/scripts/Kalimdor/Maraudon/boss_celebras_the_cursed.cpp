@@ -25,7 +25,7 @@ EndScriptData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
-#include "Maraudon.h"
+#include "instance_maraudon.h"
 
 #define SPELL_WRATH                 21807
 #define SPELL_ENTANGLINGROOTS       12747
@@ -35,9 +35,9 @@ EndScriptData */
 #define NPC_CELEBRAS				13716
 #define SAY_SUMMONED			 -1910034
 
-struct celebras_the_cursedAI : public ScriptedAI
+struct npc_celebras_the_cursedAI : public ScriptedAI
 {
-    celebras_the_cursedAI(Creature* c) : ScriptedAI(c) {}
+    npc_celebras_the_cursedAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Wrath_Timer;
     uint32 EntanglingRoots_Timer;
@@ -60,15 +60,15 @@ struct celebras_the_cursedAI : public ScriptedAI
 
 	void SetData(uint32 type, uint32 data) override
 	{		
-		if (Creature* celebras = me->FindNearestCreature(NPC_CELEBRAS, 100.0, true))
+		if (Creature* celebras = me->FindNearestCreature(NPC_CELEBRAS, 100.0f, true))
 			celebrasGUID = celebras->GetGUID();
 	}
 
     void JustDied(Unit* /*Killer*/)
     {
-		me->SummonCreature(NPC_CELEBRAS, 651.491, 84.702, -86.831, 6.05, TEMPSUMMON_TIMED_DESPAWN, 600000);
+		me->SummonCreature(NPC_CELEBRAS, 651.491f, 84.702f, -86.831f, 6.05f, TEMPSUMMON_TIMED_DESPAWN, 600000);
 
-		if (Creature* celebras = me->FindNearestCreature(NPC_CELEBRAS, 100.0, true))	
+		if (Creature* celebras = me->FindNearestCreature(NPC_CELEBRAS, 100.0f, true))	
 			celebras->Yell(SAY_SUMMONED, LANG_UNIVERSAL, celebrasGUID);	
     }
 
@@ -117,9 +117,9 @@ struct celebras_the_cursedAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_celebras_the_cursed(Creature* pCreature)
+CreatureAI* GetAI_npc_celebras_the_cursed(Creature* pCreature)
 {
-    return new celebras_the_cursedAI (pCreature);
+    return new npc_celebras_the_cursedAI (pCreature);
 }
 
 /////////////////////////////////
@@ -204,12 +204,12 @@ struct npc_celebrasAI : public npc_escortAI
 			break;
 		case 4:
 			DoScriptText(SAY_TOGETHER, me);
-			me->SummonGameObject(GO_BOOK, 652.272, 74.053, -85.335, 6.08, 0, 0, 0, 0, 0);		
+			me->SummonGameObject(GO_BOOK, 652.272f, 74.053f, -85.335f, 6.08f, 0, 0, 0, 0, 0);		
 			DoCast(me, SPELL_NARALEXS_AWAKENING, true);
 			//SetEscortPaused(true);
 			break;
 		case 5:
-			me->SummonGameObject(GO_LIGHT, 650.746, 74.470, -82.271, 6.21, 0, 0, 0, 0, 0);
+			me->SummonGameObject(GO_LIGHT, 650.746f, 74.470f, -82.271f, 6.21f, 0, 0, 0, 0, 0);
 			break;
 		case 6:
 			DoScriptText(SAY_CELEBRAS, me);		
@@ -229,7 +229,7 @@ struct npc_celebrasAI : public npc_escortAI
 		case 13:			
 			if (Player* pPlayer = GetPlayerForEscort())
 				pPlayer->GroupEventHappens(QUEST_THE_SCEPTER_OF_CELEBERAS, me);
-			me->SummonCreature(NPC_CELEBRAS, 651.491, 84.702, -86.831, 6.05, TEMPSUMMON_TIMED_DESPAWN, 600000);
+			me->SummonCreature(NPC_CELEBRAS, 651.491f, 84.702f, -86.831f, 6.05f, TEMPSUMMON_TIMED_DESPAWN, 600000);
 			break;
 		}
 	}
@@ -255,20 +255,20 @@ CreatureAI* GetAI_npc_celebras(Creature* pCreature)
 {
 	npc_celebrasAI* celebrasAI = new npc_celebrasAI(pCreature);
 
-	celebrasAI->AddWaypoint(0, 651.491, 84.702, -86.831, 2000);
-	celebrasAI->AddWaypoint(1, 657.493, 79.669, -86.830, 0);
-	celebrasAI->AddWaypoint(2, 656.661, 73.410, -86.830, 0);
-	celebrasAI->AddWaypoint(3, 655.510, 73.600, -86.830, 3000);
-	celebrasAI->AddWaypoint(4, 655.510, 73.600, -86.830, 0); // pause -> start cast etc.
-	celebrasAI->AddWaypoint(5, 655.510, 73.600, -86.830, 3000);
-	celebrasAI->AddWaypoint(6, 653.309, 73.900, -85.858, 3000);
-	celebrasAI->AddWaypoint(7, 656.779, 73.386, -86.828, 0);
-	celebrasAI->AddWaypoint(8, 655.616, 66.945, -86.828, 0);
-	celebrasAI->AddWaypoint(9, 647.230, 66.300, -86.710, 0);
-	celebrasAI->AddWaypoint(10, 647.974, 66.642, -86.709, 5000);
-	celebrasAI->AddWaypoint(11, 655.518, 66.717, -86.828, 0);
-	celebrasAI->AddWaypoint(12, 657.083, 80.657, -86.830, 0);
-	celebrasAI->AddWaypoint(13, 651.491, 84.702, -86.831, 0);
+	celebrasAI->AddWaypoint(0, 651.491f, 84.702f, -86.831f, 2000);
+	celebrasAI->AddWaypoint(1, 657.493f, 79.669f, -86.830f, 0);
+	celebrasAI->AddWaypoint(2, 656.661f, 73.410f, -86.830f, 0);
+	celebrasAI->AddWaypoint(3, 655.510f, 73.600f, -86.830f, 3000);
+	celebrasAI->AddWaypoint(4, 655.510f, 73.600f, -86.830f, 0); // pause -> start cast etc.
+	celebrasAI->AddWaypoint(5, 655.510f, 73.600f, -86.830f, 3000);
+	celebrasAI->AddWaypoint(6, 653.309f, 73.900f, -85.858f, 3000);
+	celebrasAI->AddWaypoint(7, 656.779f, 73.386f, -86.828f, 0);
+	celebrasAI->AddWaypoint(8, 655.616f, 66.945f, -86.828f, 0);
+	celebrasAI->AddWaypoint(9, 647.230f, 66.300f, -86.710f, 0);
+	celebrasAI->AddWaypoint(10, 647.974f, 66.642f, -86.709f, 5000);
+	celebrasAI->AddWaypoint(11, 655.518f, 66.717f, -86.828f, 0);
+	celebrasAI->AddWaypoint(12, 657.083f, 80.657f, -86.830f, 0);
+	celebrasAI->AddWaypoint(13, 651.491f, 84.702f, -86.831f, 0);
 
 	return celebrasAI;
 }
@@ -305,8 +305,8 @@ void AddSC_boss_celebras_the_cursed()
 {
     Script* newscript;
     newscript = new Script;
-    newscript->Name = "celebras_the_cursed";
-    newscript->GetAI = &GetAI_celebras_the_cursed;
+    newscript->Name = "npc_celebras_the_cursed";
+    newscript->GetAI = &GetAI_npc_celebras_the_cursed;
     newscript->RegisterSelf();
 
 	newscript = new Script;

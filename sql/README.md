@@ -2,11 +2,11 @@ Database Installation Order:
 ======================
 Run the following SQL files in order in your database to successfully set up this section of the OregonCore project.
 
-  1. sql/create_mysql.sql
-  2. sql/world.sql
-  3. sql/characters.sql
-  4. sql/realmd.sql
-  5. [OregonDatabase.zip](https://github.com/OregonCore/OregonCore/releases) (shuold be extracted first)
+  1. sql/create/create_mysql.sql
+  2. sql/base/world.sql
+  3. sql/base/characters.sql
+  4. sql/base/realmd.sql
+  5. [OregonDatabase.zip](https://github.com/OregonCore/OregonCore/releases) (should be extracted first)
 
 Contributing SQL:
 ======================

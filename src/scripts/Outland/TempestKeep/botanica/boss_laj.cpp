@@ -148,7 +148,7 @@ struct boss_lajAI : public ScriptedAI
 
     void JustSummoned(Creature* summon)
     {
-        if (summon && me->getVictim())
+        if (summon && me->GetVictim())
             summon->AI()->AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0));
     }
 

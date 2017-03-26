@@ -10,7 +10,7 @@ The project is currently hosted at http://oregon-core.net/ and developed under h
 
 ## History of development
 Development of this project dates back to 2010, and was developed under various umbrellas over time:
-* OregonCore project, 2009-2016, located at http://oregon-core.net/
+* OregonCore project, 2009-2017, located at http://oregon-core.net/
 * TrinityCore project, 2008-2009 located at http://www.trinitycore.org/
 * Mangos project, 2005-2012 located at http://getmangos.com/
 * ScriptDev2 project, 2006-2012 located at http://www.scriptdev2.com/
@@ -170,6 +170,9 @@ Development of this project dates back to 2010, and was developed under various 
  * аксим Аго
  * Максим Аго
  * Михаил Фатеев
+ * Gennady 
+ * namreeb
+ * uberhax
 
 ## Copyright Information
 = Oregon Core -- General information =

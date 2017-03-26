@@ -16,6 +16,7 @@
  */
 
 #include "Map.h"
+#include "MapManager.h"
 #include "GridStates.h"
 #include "ScriptMgr.h"
 #include "VMapFactory.h"
@@ -198,7 +199,7 @@ void Map::DeleteStateMachine()
     delete si_GridStates[GRID_STATE_REMOVAL];
 }
 
-Map::Map(uint32 id, time_t expiry, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent):
+Map::Map(uint32 id, time_t expiry, uint32 InstanceId, uint8 SpawnMode, Map* _parent):
     i_mapEntry (sMapStore.LookupEntry(id)), i_spawnMode(SpawnMode), i_InstanceId(InstanceId),
     m_unloadTimer(0), m_VisibleDistance(DEFAULT_VISIBILITY_DISTANCE),
     m_VisibilityNotifyPeriod(DEFAULT_VISIBILITY_NOTIFY_PERIOD),
@@ -389,10 +390,11 @@ void Map::LoadGrid(float x, float y)
     EnsureGridLoaded(Cell(x, y));
 }
 
-bool Map::AddToMap(Player* player)
+bool Map::AddPlayerToMap(Player* player)
 {
     // Check if we are adding to correct map
     ASSERT (player->GetMap() == this);
+
     CellCoord p = Oregon::ComputeCellCoord(player->GetPositionX(), player->GetPositionY());
     if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
     {
@@ -406,6 +408,7 @@ bool Map::AddToMap(Player* player)
     EnsureGridLoadedForActiveObject(cell, player);
     AddToGrid(player, cell);
 
+    player->SetMap(this);
     player->AddToWorld();
 
     SendInitSelf(player);
@@ -420,6 +423,12 @@ bool Map::AddToMap(Player* player)
 template<class T>
 bool Map::AddToMap(T *obj)
 {
+    if (obj->IsInWorld()) // need some clean up later
+    {
+        obj->UpdateObjectVisibility(true);
+        return true;
+    }
+
     CellCoord p = Oregon::ComputeCellCoord(obj->GetPositionX(), obj->GetPositionY());
     if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
     {
@@ -428,12 +437,6 @@ bool Map::AddToMap(T *obj)
     }
 
     Cell cell(p);
-    if (obj->IsInWorld()) // need some clean up later
-    {
-        obj->UpdateObjectVisibility(true);
-        return true;
-    }
-
     if (obj->isActiveObject())
         EnsureGridLoadedForActiveObject(cell, obj);
     else
@@ -504,7 +507,7 @@ void Map::Update(const uint32& t_diff)
     // to make sure calls to Map::RemoveFromMap don't invalidate it
     for (m_mapRefIter = m_mapRefManager.begin(); m_mapRefIter != m_mapRefManager.end(); ++m_mapRefIter)
     {
-        Player* player = m_mapRefIter->getSource();
+        Player* player = m_mapRefIter->GetSource();
 
         if (!player || !player->IsInWorld())
             continue;
@@ -512,6 +515,15 @@ void Map::Update(const uint32& t_diff)
         player->Update(t_diff);
 
         VisitNearbyCellsOf(player, grid_object_update, world_object_update);
+
+        // If player is using far sight, visit that object too
+        if (WorldObject* viewPoint = player->GetViewpoint())
+        {
+            if (Creature* viewCreature = viewPoint->ToCreature())
+                VisitNearbyCellsOf(viewCreature, grid_object_update, world_object_update);
+            else if (DynamicObject* viewObject = viewPoint->ToDynObject())
+                VisitNearbyCellsOf(viewObject, grid_object_update, world_object_update);
+        }
 
         // Handle updates for creatures in combat with player and are more than 60 yards away
         if (player->IsInCombat())
@@ -521,7 +533,7 @@ void Map::Update(const uint32& t_diff)
 
             while (ref)
             {
-                if (Unit* unit = ref->getSource()->getOwner())
+                if (Unit* unit = ref->GetSource()->getOwner())
                     if (unit->ToCreature() && unit->GetMapId() == player->GetMapId() && !unit->IsWithinDistInMap(player, GetVisibilityRange(), false))
                         updateList.push_back(unit->ToCreature());
 
@@ -565,7 +577,7 @@ struct ResetNotifier
     template<class T>inline void resetNotify(GridRefManager<T>& m)
     {
         for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
-            iter->getSource()->ResetAllNotifies();
+            iter->GetSource()->ResetAllNotifies();
     }
     template<class T> void Visit(GridRefManager<T>&) {}
     void Visit(CreatureMapType& m)
@@ -582,7 +594,7 @@ void Map::ProcessRelocationNotifies(const uint32& diff)
 {
     for (GridRefManager<NGridType>::iterator i = GridRefManager<NGridType>::begin(); i != GridRefManager<NGridType>::end(); ++i)
     {
-        NGridType* grid = i->getSource();
+        NGridType* grid = i->GetSource();
 
         if (grid->GetGridState() != GRID_STATE_ACTIVE)
             continue;
@@ -624,7 +636,7 @@ void Map::ProcessRelocationNotifies(const uint32& diff)
     TypeContainerVisitor<ResetNotifier, WorldTypeMapContainer > world_notifier(reset);
     for (GridRefManager<NGridType>::iterator i = GridRefManager<NGridType>::begin(); i != GridRefManager<NGridType>::end(); ++i)
     {
-        NGridType* grid = i->getSource();
+        NGridType* grid = i->GetSource();
 
         if (grid->GetGridState() != GRID_STATE_ACTIVE)
             continue;
@@ -657,13 +669,16 @@ void Map::ProcessRelocationNotifies(const uint32& diff)
     }
 }
 
-void Map::RemoveFromMap(Player* player, bool remove)
+void Map::RemovePlayerFromMap(Player* player, bool remove)
 {
     player->RemoveFromWorld();
     SendRemoveTransports(player);
 
     player->UpdateObjectVisibility(true);
-    player->RemoveFromGrid();
+    if (player->IsInGrid())
+        player->RemoveFromGrid();
+    else
+        ASSERT(remove); //maybe deleted in logoutplayer when player is not in a map
 
     if (remove)
         DeleteFromWorld(player);
@@ -966,7 +981,7 @@ void Map::RemoveAllPlayers()
     {
         for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
         {
-            Player* plr = itr->getSource();
+            Player* plr = itr->GetSource();
             if (!plr->IsBeingTeleportedFar())
             {
                 // this is happening for bg
@@ -984,7 +999,7 @@ void Map::UnloadAll()
 
     for (GridRefManager<NGridType>::iterator i = GridRefManager<NGridType>::begin(); i != GridRefManager<NGridType>::end();)
     {
-        NGridType& grid(*i->getSource());
+        NGridType& grid(*i->GetSource());
         ++i;
         UnloadGrid(grid, true);       // deletes the grid and removes it from the GridRefManager
     }
@@ -1027,10 +1042,9 @@ bool GridMap::loadData(const char* filename)
     unloadData();
 
     map_fileheader header;
-    // Not return error if file not found
     FILE* in = fopen(filename, "rb");
     if (!in)
-        return true;
+        return false;
 
     if (fread(&header, sizeof(header), 1, in) != 1)
     {
@@ -1464,23 +1478,24 @@ inline ZLiquidStatus GridMap::getLiquidStatus(float x, float y, float z, uint8 R
 
     // Check water type in cell
     int idx=(x_int>>3)*16 + (y_int>>3);
-    uint8 type = _liquidFlags ? _liquidFlags[idx] : m_liquidType;
+    uint8 type = _liquidFlags ? _liquidFlags[idx] : 1 <<  m_liquidType;
     uint32 entry = 0;
     if (_liquidEntry)
     {
         if (LiquidTypeEntry const* liquidEntry = sLiquidTypeStore.LookupEntry(_liquidEntry[idx]))
         {
             entry = liquidEntry->Id;
-            type &= MAP_LIQUID_TYPE_DARK_WATER;
             uint32 liqTypeIdx = liquidEntry->Type;
-            if (entry < 21)
+            if ((entry < 21) && (type & MAP_LIQUID_TYPE_WATER))
             {
+                // only basic liquid stored in maps actualy so in some case we need to override type depend on area
+                // actualy only Hyjal Mount and Coilfang raid be overrided here
                 if (AreaTableEntry const* area = GetAreaEntryByAreaFlagAndMap(getArea(x, y), MAPID_INVALID))
                 {
-                    uint32 overrideLiquid = area->LiquidTypeOverride[liquidEntry->Type];
+                    uint32 overrideLiquid = area->LiquidTypeOverride;
                     if (!overrideLiquid && area->zone)
                         if (area = GetAreaEntryByAreaID(area->zone))
-                            overrideLiquid = area->LiquidTypeOverride[liquidEntry->Type];
+                            overrideLiquid = area->LiquidTypeOverride;
 
                     if (LiquidTypeEntry const* liq = sLiquidTypeStore.LookupEntry(overrideLiquid))
                     {
@@ -1490,7 +1505,7 @@ inline ZLiquidStatus GridMap::getLiquidStatus(float x, float y, float z, uint8 R
                 }
             }
 
-            type |= 1 << liqTypeIdx;
+            type |= (1 << liqTypeIdx) | (type & MAP_LIQUID_TYPE_DARK_WATER);
         }
     }
 
@@ -1606,7 +1621,7 @@ float Map::GetHeight(float x, float y, float z, bool checkVMap, float maxSearchD
 
             // we are already under the surface or vmap height above map heigt
             // or if the distance of the vmap height is less the land height distance
-            if (z < mapHeight || vmapHeight > mapHeight || std::fabs(mapHeight - z) > std::fabs(vmapHeight - z))
+            if (vmapHeight > mapHeight || std::fabs(mapHeight - z) > std::fabs(vmapHeight - z))
                 realHeight = vmapHeight;
             else
                 realHeight = mapHeight;                           // better use .map surface height
@@ -1725,36 +1740,19 @@ ZLiquidStatus Map::getLiquidStatus(float x, float y, float z, uint8 ReqLiquidTyp
             // All ok in water -> store data
             if (data)
             {
-                // hardcoded in client like this
+                //  hardcoded in client like this convert ocean to lava
                 if (GetId() == 530 && liquid_type == 2)
-                    liquid_type = 15;
+                    liquid_type = 3;
 
                 uint32 liquidFlagType = 0;
                 if (LiquidTypeEntry const* liq = sLiquidTypeStore.LookupEntry(liquid_type))
-                    liquidFlagType = liq->Type;
-
-                if (liquid_type && liquid_type < 21)
-                {
-                    if (AreaTableEntry const* area = GetAreaEntryByAreaFlagAndMap(GetAreaFlag(x, y, z), GetId()))
-                    {
-                        uint32 overrideLiquid = area->LiquidTypeOverride[liquidFlagType];
-                        if (!overrideLiquid && area->zone)
-                            if (area = GetAreaEntryByAreaID(area->zone))
-                                overrideLiquid = area->LiquidTypeOverride[liquidFlagType];
-
-                        if (LiquidTypeEntry const* liq = sLiquidTypeStore.LookupEntry(overrideLiquid))
-                        {
-                            liquid_type = overrideLiquid;
-                            liquidFlagType = liq->Type;
-                        }
-                    }
-                }
+                    liquidFlagType = 1 << liq->Type;
 
                 data->level = liquid_level;
                 data->depth_level = ground_level;
 
                 data->entry = liquid_type;
-                data->type_flags = 1 << liquidFlagType;
+                data->type_flags = liquidFlagType;
             }
 
             // For speed check as int values
@@ -1782,7 +1780,10 @@ ZLiquidStatus Map::getLiquidStatus(float x, float y, float z, uint8 ReqLiquidTyp
             {
                 // hardcoded in client like this
                 if (GetId() == 530 && map_data.entry == 2)
-                    map_data.entry = 15;
+                {
+                    map_data.entry = 3;
+                    map_data.type_flags = MAP_LIQUID_TYPE_MAGMA;
+                }
 
                 *data = map_data;
             }
@@ -1857,6 +1858,19 @@ bool Map::IsUnderWater(float x, float y, float z) const
     return false;
 }
 
+bool Map::IsSwimmable(float x, float y, float z, LiquidData* data) const
+{
+    LiquidData liquid_status;
+    LiquidData* liquid_ptr = data ? data : &liquid_status;
+    if (getLiquidStatus(x, y, z, MAP_ALL_LIQUIDS, liquid_ptr) & (LIQUID_MAP_IN_WATER | LIQUID_MAP_UNDER_WATER))
+    {
+        if (liquid_ptr->level - liquid_ptr->depth_level > 1.5f)
+            return true;
+    }
+
+    return false;
+}
+
 bool Map::CheckGridIntegrity(Creature* c, bool moved) const
 {
     Cell const& cur_cell = c->GetCurrentCell();
@@ -1895,8 +1909,8 @@ void Map::UpdateObjectsVisibilityFor(Player* player, Cell cell, CellCoord cellpa
     cell.SetNoCreate();
     TypeContainerVisitor<Oregon::VisibleNotifier, WorldTypeMapContainer > world_notifier(notifier);
     TypeContainerVisitor<Oregon::VisibleNotifier, GridTypeMapContainer  > grid_notifier(notifier);
-    cell.Visit(cellpair, world_notifier, *this, *player, player->GetVisibilityRange());
-    cell.Visit(cellpair, grid_notifier,  *this, *player, player->GetVisibilityRange());
+    cell.Visit(cellpair, world_notifier, *this, *player->m_seer, player->GetVisibilityRange());
+    cell.Visit(cellpair, grid_notifier,  *this, *player->m_seer, player->GetVisibilityRange());
 
     // send data
     notifier.SendToSelf();
@@ -2011,8 +2025,8 @@ void Map::DelayedUpdate(const uint32 t_diff)
     {
         for (GridRefManager<NGridType>::iterator i = GridRefManager<NGridType>::begin(); i != GridRefManager<NGridType>::end();)
         {
-            NGridType* grid = i->getSource();
-            GridInfo* info = i->getSource()->getGridInfoRef();
+            NGridType* grid = i->GetSource();
+            GridInfo* info = i->GetSource()->getGridInfoRef();
             ++i;                                                // The update might delete the map and we need the next map before the iterator gets invalid
             ASSERT(grid->GetGridState() >= 0 && grid->GetGridState() < MAX_GRID_STATE);
             si_GridStates[grid->GetGridState()]->Update(*this, *grid, *info, t_diff);
@@ -2104,7 +2118,7 @@ uint32 Map::GetPlayersCountExceptGMs() const
 {
     uint32 count = 0;
     for (MapRefManager::const_iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
-        if (!itr->getSource()->isGameMaster())
+        if (!itr->GetSource()->IsGameMaster())
             ++count;
     return count;
 }
@@ -2112,7 +2126,7 @@ uint32 Map::GetPlayersCountExceptGMs() const
 void Map::SendToPlayers(WorldPacket const* data) const
 {
     for (MapRefManager::const_iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
-        itr->getSource()->GetSession()->SendPacket(data);
+        itr->GetSource()->GetSession()->SendPacket(data);
 }
 
 bool Map::ActiveObjectsNearGrid(NGridType const& ngrid) const
@@ -2131,7 +2145,7 @@ bool Map::ActiveObjectsNearGrid(NGridType const& ngrid) const
 
     for (MapRefManager::const_iterator iter = m_mapRefManager.begin(); iter != m_mapRefManager.end(); ++iter)
     {
-        Player* plr = iter->getSource();
+        Player* plr = iter->GetSource();
 
         CellCoord p = Oregon::ComputeCellCoord(plr->GetPositionX(), plr->GetPositionY());
         if ((cell_min.x_coord <= p.x_coord && p.x_coord <= cell_max.x_coord) &&
@@ -2206,7 +2220,7 @@ template void Map::RemoveFromMap(DynamicObject*, bool);
 
 /* ******* Dungeon Instance Maps ******* */
 
-InstanceMap::InstanceMap(uint32 id, time_t expiry, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent)
+InstanceMap::InstanceMap(uint32 id, time_t expiry, uint32 InstanceId, uint8 SpawnMode, Map* _parent)
     : Map(id, expiry, InstanceId, SpawnMode, _parent),
       m_resetAfterUnload(false), m_unloadWhenEmpty(false),
       i_data(NULL)
@@ -2235,66 +2249,44 @@ void InstanceMap::InitVisibilityDistance()
 /*
     Do map specific checks to see if the player can enter
 */
-bool InstanceMap::CanEnter(Player* player)
+Map::EnterState InstanceMap::CannotEnter(Player* player)
 {
     if (player->GetMapRef().getTarget() == this)
     {
-        sLog.outError("InstanceMap::CanEnter - player %s(%u) already in map %d,%d,%d!", player->GetName(), player->GetGUIDLow(), GetId(), GetInstanceId(), GetSpawnMode());
+        sLog.outError("InstanceMap::CannotEnter - player %s(%u) already in map %d,%d,%d!", player->GetName(), player->GetGUIDLow(), GetId(), GetInstanceId(), GetSpawnMode());
         ASSERT(false);
-        return false;
+        return CANNOT_ENTER_ALREADY_IN_MAP;
     }
 
     // allow GM's to enter
-    if (player->isGameMaster())
-        return Map::CanEnter(player);
+    if (player->IsGameMaster())
+        return Map::CannotEnter(player);
 
     // cannot enter if the instance is full (player cap), GMs don't count
     InstanceTemplate const* iTemplate = sObjectMgr.GetInstanceTemplate(GetId());
     if (GetPlayersCountExceptGMs() >= iTemplate->maxPlayers)
     {
         sLog.outDetail("MAP: Instance '%u' of map '%s' cannot have more than '%u' players. Player '%s' rejected", GetInstanceId(), GetMapName(), iTemplate->maxPlayers, player->GetName());
-        player->SendTransferAborted(GetId(), TRANSFER_ABORT_MAX_PLAYERS);
-        return false;
+        return CANNOT_ENTER_MAX_PLAYERS;
     }
 
-    // cannot enter while an encounter is in progress
-    // allow if just loading
+    // cannot enter while an encounter is in progress (unless this is a relog, in which case it is permitted)
     if (!player->IsLoading() && IsRaid() && GetInstanceData() && GetInstanceData()->IsEncounterInProgress())
-    {
-        player->SendTransferAborted(GetId(), TRANSFER_ABORT_ZONE_IN_COMBAT);
-        return false;
-    }
+        return CANNOT_ENTER_ZONE_IN_COMBAT;
 
-    // cannot enter if instance is in use by another party/soloer that have a
-    // permanent save in the same instance id
-    PlayerList const& playerList = GetPlayers();
-    if (!playerList.isEmpty())
-        for (PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
-            if (Player* iPlayer = i->getSource())
-            {
-                if (iPlayer->isGameMaster()) // bypass GMs
-                    continue;
-                if (!player->GetGroup()) // player has not group and there is someone inside, deny entry
-                {
-                    player->SendTransferAborted(GetId(), TRANSFER_ABORT_MAX_PLAYERS);
-                    return false;
-                }
-                // player inside instance has no group or his groups is different to entering player's one, deny entry
-                if (!iPlayer->GetGroup() || iPlayer->GetGroup() != player->GetGroup())
-                {
-                    player->SendTransferAborted(GetId(), TRANSFER_ABORT_MAX_PLAYERS);
-                    return false;
-                }
-                break;
-            }
+    // cannot enter if player is permanent saved to a different instance id
+    if (InstancePlayerBind* playerBind = player->GetBoundInstance(GetId(), GetDifficulty()))
+        if (playerBind->perm && playerBind->save)
+            if (playerBind->save->GetInstanceId() != GetInstanceId())
+                return CANNOT_ENTER_INSTANCE_BIND_MISMATCH;
 
-    return Map::CanEnter(player);
+    return Map::CannotEnter(player);
 }
 
 /*
     Do map specific checks and add the player to the map if successful.
 */
-bool InstanceMap::AddToMap(Player* player)
+bool InstanceMap::AddPlayerToMap(Player* player)
 {
     // @todo Not sure about checking player level: already done in HandleAreaTriggerOpcode
     // GMs still can teleport player in instance.
@@ -2313,7 +2305,7 @@ bool InstanceMap::AddToMap(Player* player)
             if (!mapSave)
             {
                 sLog.outDetail("InstanceMap::AddToMap: creating instance save for map %d spawnmode %d with instance id %d", GetId(), GetSpawnMode(), GetInstanceId());
-                mapSave = sInstanceSaveMgr.AddInstanceSave(GetId(), GetInstanceId(), GetSpawnMode(), 0, true);
+                mapSave = sInstanceSaveMgr.AddInstanceSave(GetId(), GetInstanceId(), DungeonDifficulty(GetSpawnMode()), 0, true);
             }
 
             // check for existing instance binds
@@ -2397,7 +2389,7 @@ bool InstanceMap::AddToMap(Player* player)
     }
 
     // this will acquire the same mutex so it cannot be in the previous block
-    Map::AddToMap(player);
+    Map::AddPlayerToMap(player);
 
     if (i_data)
         i_data->OnPlayerEnter(player);
@@ -2413,13 +2405,13 @@ void InstanceMap::Update(const uint32& t_diff)
         i_data->Update(t_diff);
 }
 
-void InstanceMap::RemoveFromMap(Player* player, bool remove)
+void InstanceMap::RemovePlayerFromMap(Player* player, bool remove)
 {
     sLog.outDetail("MAP: Removing player '%s' from instance '%u' of map '%s' before relocating to another map", player->GetName(), GetInstanceId(), GetMapName());
     //if last player set unload timer
     if (!m_unloadTimer && m_mapRefManager.getSize() == 1)
         m_unloadTimer = m_unloadWhenEmpty ? MIN_UNLOAD_DELAY : std::max(sWorld.getConfig(CONFIG_INSTANCE_UNLOAD_DELAY), (uint32)MIN_UNLOAD_DELAY);
-    Map::RemoveFromMap(player, remove);
+    Map::RemovePlayerFromMap(player, remove);
     // for normal instances schedule the reset after all players have left
     SetResetSchedule(true);
 }
@@ -2472,14 +2464,14 @@ bool InstanceMap::Reset(uint8 method)
         {
             // notify the players to leave the instance so it can be reset
             for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
-                itr->getSource()->SendResetFailedNotify(GetId());
+                itr->GetSource()->SendResetFailedNotify(GetId());
         }
         else
         {
             if (method == INSTANCE_RESET_GLOBAL)
                 // set the homebind timer for players inside (1 minute)
                 for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
-                    itr->getSource()->m_InstanceValid = false;
+                    itr->GetSource()->m_InstanceValid = false;
 
             // the unload timer is not started
             // instead the map will unload immediately after the players have left
@@ -2513,7 +2505,7 @@ void InstanceMap::PermBindAllPlayers(Player* player)
     // group members outside the instance group don't get bound
     for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
     {
-        Player* plr = itr->getSource();
+        Player* plr = itr->GetSource();
         // players inside an instance cannot be bound to other instances
         // some players may already be permanently bound, in this case nothing happens
         InstancePlayerBind* bind = plr->GetBoundInstance(save->GetMapId(), save->GetDifficulty());
@@ -2550,7 +2542,7 @@ void InstanceMap::UnloadAll()
 void InstanceMap::SendResetWarnings(uint32 timeLeft) const
 {
     for (MapRefManager::const_iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
-        itr->getSource()->SendInstanceResetWarning(GetId(), timeLeft);
+        itr->GetSource()->SendInstanceResetWarning(GetId(), timeLeft);
 }
 
 void InstanceMap::SetResetSchedule(bool on)
@@ -2586,24 +2578,24 @@ void BattlegroundMap::InitVisibilityDistance()
     m_VisibilityNotifyPeriod = World::GetVisibilityNotifyPeriodInBGArenas();
 }
 
-bool BattlegroundMap::CanEnter(Player* player)
+Map::EnterState BattlegroundMap::CannotEnter(Player* player)
 {
     if (player->GetMapRef().getTarget() == this)
     {
-        sLog.outError("BGMap::CanEnter - player %u is already in map!", player->GetGUIDLow());
+        sLog.outError("BGMap::CannotEnter - player %u is already in map!", player->GetGUIDLow());
         ASSERT(false);
-        return false;
+        return CANNOT_ENTER_ALREADY_IN_MAP;
     }
 
     if (player->GetBattlegroundId() != GetInstanceId())
-        return false;
+        return CANNOT_ENTER_INSTANCE_BIND_MISMATCH;
 
     // player number limit is checked in bgmgr, no need to do it here
 
-    return Map::CanEnter(player);
+    return Map::CannotEnter(player);
 }
 
-bool BattlegroundMap::AddToMap(Player* player)
+bool BattlegroundMap::AddPlayerToMap(Player* player)
 {
     {
         Guard guard(*this);
@@ -2612,13 +2604,13 @@ bool BattlegroundMap::AddToMap(Player* player)
         // reset instance validity, battleground maps do not homebind
         player->m_InstanceValid = true;
     }
-    return Map::AddToMap(player);
+    return Map::AddPlayerToMap(player);
 }
 
-void BattlegroundMap::RemoveFromMap(Player* player, bool remove)
+void BattlegroundMap::RemovePlayerFromMap(Player* player, bool remove)
 {
     sLog.outDetail("MAP: Removing player '%s' from bg '%u' of map '%s' before relocating to other map", player->GetName(), GetInstanceId(), GetMapName());
-    Map::RemoveFromMap(player, remove);
+    Map::RemovePlayerFromMap(player, remove);
 }
 
 void BattlegroundMap::SetUnload()
@@ -2630,7 +2622,7 @@ void BattlegroundMap::RemoveAllPlayers()
 {
     if (HavePlayers())
         for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
-            if (Player* plr = itr->getSource())
+            if (Player* plr = itr->GetSource())
                 if (!plr->IsBeingTeleportedFar())
                     plr->TeleportTo(plr->GetBattlegroundEntryPoint());
 

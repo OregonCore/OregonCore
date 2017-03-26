@@ -252,7 +252,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
                     Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
                     if (!me->HasInArc(2.5f, pTarget))
-                        pTarget = me->getVictim();
+                        pTarget = me->GetVictim();
 
                     if (pTarget)
                         DoCast(pTarget, SPELL_ARCANE_MISSILES);
@@ -387,7 +387,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
         }
 
         //When Solarian reaches 20% she will transform into a huge void walker.
-        if (Phase != 4 && ((me->GetHealth() * 100 / me->GetMaxHealth()) < 20))
+        if (Phase != 4 && HealthBelowPct(20))
         {
             Phase = 4;
 

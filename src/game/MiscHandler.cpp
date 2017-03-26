@@ -489,7 +489,8 @@ void WorldSession::HandleSetTargetOpcode(WorldPacket& recv_data)
     if (!unit)
         return;
 
-    _player->SetFactionVisibleForFactionTemplateId(unit->getFaction());
+    if (FactionTemplateEntry const* factionTemplateEntry = sFactionTemplateStore.LookupEntry(unit->getFaction()))
+        _player->GetReputationMgr().SetVisible(factionTemplateEntry);
 }
 
 void WorldSession::HandleSetSelectionOpcode(WorldPacket& recv_data)
@@ -775,46 +776,40 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket& recv_data)
 {
     DEBUG_LOG("WORLD: Received CMSG_AREATRIGGER");
 
-    uint32 Trigger_ID;
+    uint32 triggerId;
+    recv_data >> triggerId;
 
-    recv_data >> Trigger_ID;
-    DEBUG_LOG("Trigger ID:%u", Trigger_ID);
+    DEBUG_LOG("Trigger ID:%u", triggerId);
 
     if (GetPlayer()->isInFlight())
     {
-        DEBUG_LOG("Player '%s' (GUID: %u) in flight, ignore Area Trigger ID:%u", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), Trigger_ID);
+        DEBUG_LOG("Player '%s' (GUID: %u) in flight, ignore Area Trigger ID:%u", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), triggerId);
         return;
     }
 
-    AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(Trigger_ID);
+    AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(triggerId);
     if (!atEntry)
     {
-        DEBUG_LOG("Player '%s' (GUID: %u) send unknown (by DBC) Area Trigger ID:%u", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), Trigger_ID);
+        DEBUG_LOG("Player '%s' (GUID: %u) send unknown (by DBC) Area Trigger ID:%u", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), triggerId);
         return;
     }
 
     if (!GetPlayer()->IsInAreaTriggerRadius(atEntry))
     {
         DEBUG_LOG("Player '%s' (GUID: %u) too far, ignore Area Trigger ID: %u", 
-            GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), Trigger_ID);
+            GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), triggerId);
         return;
     }
 
     if (sScriptMgr.AreaTrigger(GetPlayer(), atEntry))
         return;
 
-    uint32 quest_id = sObjectMgr.GetQuestForAreaTrigger(Trigger_ID);
-    if (quest_id && GetPlayer()->IsAlive() && GetPlayer()->IsActiveQuest(quest_id))
-    {
-        Quest const* pQuest = sObjectMgr.GetQuestTemplate(quest_id);
-        if (pQuest)
-        {
-            if (GetPlayer()->GetQuestStatus(quest_id) == QUEST_STATUS_INCOMPLETE)
-                GetPlayer()->AreaExploredOrEventHappens(quest_id);
-        }
-    }
+    if (GetPlayer()->IsAlive())
+        if (uint32 questId = sObjectMgr.GetQuestForAreaTrigger(triggerId))
+            if (GetPlayer()->GetQuestStatus(questId) == QUEST_STATUS_INCOMPLETE)
+                GetPlayer()->AreaExploredOrEventHappens(questId);
 
-    if (sObjectMgr.IsTavernAreaTrigger(Trigger_ID))
+    if (sObjectMgr.IsTavernAreaTrigger(triggerId))
     {
         // set resting flag we are in the inn
         GetPlayer()->SetRestFlag(REST_FLAG_IN_TAVERN, atEntry->id);
@@ -825,31 +820,117 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket& recv_data)
         return;
     }
 
-    if (GetPlayer()->InBattleground())
-    {
-        Battleground* bg = GetPlayer()->GetBattleground();
-        if (bg)
-            if (bg->GetStatus() == STATUS_IN_PROGRESS)
-                bg->HandleAreaTrigger(GetPlayer(), Trigger_ID);
-
-        return;
-    }
+    if (Battleground* bg = GetPlayer()->GetBattleground())
+        if (bg->GetStatus() == STATUS_IN_PROGRESS)
+            bg->HandleAreaTrigger(GetPlayer(), triggerId);
 
     if (OutdoorPvP* pvp = GetPlayer()->GetOutdoorPvP())
-    {
-        if (pvp->HandleAreaTrigger(_player, Trigger_ID))
+        if (pvp->HandleAreaTrigger(_player, triggerId))
             return;
-    }
 
-    // NULL if all values default (non teleport trigger)
-    AreaTrigger const* at = sObjectMgr.GetAreaTrigger(Trigger_ID);
+    AreaTrigger const* at = sObjectMgr.GetAreaTrigger(triggerId);
     if (!at)
         return;
 
-    if (!GetPlayer()->Satisfy(sObjectMgr.GetAccessRequirement(at->access_id), at->target_mapId, true))
-        return;
+    uint32 testTwo = 1;
+    bool teleported = false;
+    if (GetPlayer()->GetMapId() != at->target_mapId)
+    {
+        if (at->access_id)
+            if (AccessRequirement const* arEntry = sObjectMgr.GetAccessRequirement(at->access_id))
+                if (!GetPlayer()->Satisfy(arEntry, at->target_mapId, true))
+                    return;
 
-    GetPlayer()->TeleportTo(at->target_mapId, at->target_X, at->target_Y, at->target_Z, at->target_Orientation, TELE_TO_NOT_LEAVE_TRANSPORT);
+        if (Map::EnterState denyReason = MapManager::Instance().PlayerCannotEnter(at->target_mapId, GetPlayer(), false))
+        {
+            bool reviveAtTrigger = false; // should we revive the player if he is trying to enter the correct instance?
+            switch (denyReason)
+            {
+            case Map::CANNOT_ENTER_NO_ENTRY:
+                sLog.outDebug("MAP: Player '%s' attempted to enter map with id %d which has no entry", GetPlayer()->GetName(), at->target_mapId);
+                break;
+            case Map::CANNOT_ENTER_UNINSTANCED_DUNGEON:
+                sLog.outDebug("MAP: Player '%s' attempted to enter dungeon map %d but no instance template was found", GetPlayer()->GetName(), at->target_mapId);
+                break;
+            case Map::CANNOT_ENTER_DIFFICULTY_UNAVAILABLE:
+                sLog.outDebug("MAP: Player '%s' attempted to enter instance map %d but the requested difficulty was not found", GetPlayer()->GetName(), at->target_mapId);
+                if (MapEntry const* entry = sMapStore.LookupEntry(at->target_mapId))
+                    GetPlayer()->SendTransferAborted(entry->MapID, TRANSFER_ABORT_DIFFICULTY2);
+                break;
+            case Map::CANNOT_ENTER_NOT_IN_RAID:
+            {
+                WorldPacket data(SMSG_RAID_GROUP_ONLY, 4 + 4);
+                data << uint32(0);
+                data << uint32(1); // You must be in a raid group to enter this instance.
+                GetPlayer()->GetSession()->SendPacket(&data);
+                sLog.outDebug("MAP: Player '%s' must be in a raid group to enter instance map %d", GetPlayer()->GetName(), at->target_mapId);
+                reviveAtTrigger = true;
+                break;
+            }
+            case Map::CANNOT_ENTER_CORPSE_IN_DIFFERENT_INSTANCE:
+            {
+                sLog.outDebug("MAP: Player '%s' does not have a corpse in instance map %d and cannot enter", GetPlayer()->GetName(), at->target_mapId);
+                break;
+            }
+            case Map::CANNOT_ENTER_INSTANCE_BIND_MISMATCH:
+                if (MapEntry const* entry = sMapStore.LookupEntry(at->target_mapId))
+                {
+                    char const* mapName = entry->name[GetPlayer()->GetSession()->GetSessionDbcLocale()];
+                    sLog.outDebug("MAP: Player '%s' cannot enter instance map '%s' because their permanent bind is incompatible with their groups.", GetPlayer()->GetName(), mapName);
+                    // @todo figure out how to get player localized difficulty string (e.g. "10 player", "Heroic" etc)
+                    ChatHandler(GetPlayer()->GetSession()).PSendSysMessage(GetPlayer()->GetSession()->GetOregonString(LANG_INSTANCE_BIND_MISMATCH), mapName);
+                }
+                reviveAtTrigger = true;
+                break;
+            case Map::CANNOT_ENTER_TOO_MANY_INSTANCES:
+                GetPlayer()->SendTransferAborted(at->target_mapId, TRANSFER_ABORT_TOO_MANY_INSTANCES);
+                sLog.outDebug("MAP: Player '%s' cannot enter instance map %d because he has exceeded the maximum number of instances per hour.", GetPlayer()->GetName(), at->target_mapId);
+                reviveAtTrigger = true;
+                break;
+            case Map::CANNOT_ENTER_MAX_PLAYERS:
+                GetPlayer()->SendTransferAborted(at->target_mapId, TRANSFER_ABORT_MAX_PLAYERS);
+                reviveAtTrigger = true;
+                break;
+            case Map::CANNOT_ENTER_ZONE_IN_COMBAT:
+                GetPlayer()->SendTransferAborted(at->target_mapId, TRANSFER_ABORT_ZONE_IN_COMBAT);
+                reviveAtTrigger = true;
+                break;
+            default:
+                break;
+            }
+
+            // check if the player is touching the areatrigger leading to the map his corpse is on
+            if (reviveAtTrigger)
+            {
+                if (!GetPlayer()->IsAlive())
+                {
+                    if (Corpse* corpse = GetPlayer()->GetCorpse())
+                    {
+                        uint32 instance_map = corpse->GetMapId();
+                        do
+                        {
+                            if (instance_map == at->target_mapId)
+                                break;
+
+                            InstanceTemplate const* instance = sObjectMgr.GetInstanceTemplate(instance_map);
+                            instance_map = instance ? instance->parent : 0;
+                        } while (instance_map);
+
+                        if (instance_map)
+                        {
+                            GetPlayer()->ResurrectPlayer(0.5f, false);
+                            GetPlayer()->SpawnCorpseBones();
+                        }
+                    }
+                }
+            }
+
+            return;
+        }
+    }
+
+    if (!teleported)
+        GetPlayer()->TeleportTo(at->target_mapId, at->target_X, at->target_Y, at->target_Z, at->target_Orientation, TELE_TO_NOT_LEAVE_TRANSPORT);
 }
 
 void WorldSession::HandleUpdateAccountData(WorldPacket& recv_data)
@@ -902,12 +983,14 @@ void WorldSession::HandleSetActionButtonOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleCompleteCinema(WorldPacket& /*recv_data*/)
 {
-    DEBUG_LOG("WORLD: Player is watching cinema");
+    // If player has sight bound to visual waypoint NPC we should remove it
+    GetPlayer()->GetCinematicMgr()->EndCinematic();
 }
 
 void WorldSession::HandleNextCinematicCamera(WorldPacket& /*recv_data*/)
 {
-    DEBUG_LOG("WORLD: Which movie to play");
+    // Sent by client when cinematic actually begun. So we begin the server side process
+    GetPlayer()->GetCinematicMgr()->BeginCinematic();
 }
 
 void WorldSession::HandleMoveTimeSkippedOpcode(WorldPacket& recv_data)
@@ -1012,6 +1095,9 @@ void WorldSession::HandleInspectOpcode(WorldPacket& recv_data)
     if (!GetPlayer()->IsWithinDistInMap(player, INSPECT_DISTANCE, false))
         return;
 
+    if (_player->IsHostileTo(player))
+        return;
+
     uint32 talent_points = 0x3D;
     uint32 guid_size = player->GetPackGUID().size();
     WorldPacket data(SMSG_INSPECT_TALENT, 4 + talent_points);
@@ -1022,7 +1108,7 @@ void WorldSession::HandleInspectOpcode(WorldPacket& recv_data)
     for (uint32 i = 0; i < talent_points; ++i)
         data << uint8(0);
 
-    if (sWorld.getConfig(CONFIG_TALENTS_INSPECTING) || _player->isGameMaster())
+    if (sWorld.getConfig(CONFIG_TALENTS_INSPECTING) || _player->IsGameMaster())
     {
         // find class talent tabs (all players have 3 talent tabs)
         uint32 const* talentTabIds = GetTalentTabPages(player->getClass());
@@ -1105,7 +1191,7 @@ void WorldSession::HandleInspectHonorStatsOpcode(WorldPacket& recv_data)
 
     WorldPacket data(MSG_INSPECT_HONOR_STATS, 8 + 1 + 4 * 4);
     data << uint64(player->GetGUID());
-    data << uint8(player->GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY));
+    data << uint8(player->GetHighestPvPRankIndex());
     data << uint32(player->GetUInt32Value(PLAYER_FIELD_KILLS));
     data << uint32(player->GetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION));
     data << uint32(player->GetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION));
@@ -1282,7 +1368,7 @@ void WorldSession::HandleFarSightOpcode(WorldPacket& recv_data)
         _player->SetSeer(_player);
         break;
     case 1:
-        DEBUG_LOG("Added FarSight " UI64FMTD " to player %u", _player->GetUInt64Value(PLAYER_FARSIGHT), _player->GetGUIDLow());
+        DEBUG_LOG("Added FarSight of target " UI64FMTD " to player %u", _player->GetUInt64Value(PLAYER_FARSIGHT), _player->GetGUIDLow());
         if (WorldObject* target = _player->GetViewpoint())
             _player->SetSeer(target);
         else
@@ -1357,7 +1443,7 @@ void WorldSession::HandleDungeonDifficultyOpcode(WorldPacket& recv_data)
     uint32 mode;
     recv_data >> mode;
 
-    DungeonDifficulties difficulty = DungeonDifficulties(mode);
+    DungeonDifficulty difficulty = DungeonDifficulty(mode);
 
     if (difficulty == _player->GetDifficulty())
         return;

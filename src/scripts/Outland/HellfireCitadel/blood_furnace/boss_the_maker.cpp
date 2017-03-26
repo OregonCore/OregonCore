@@ -126,7 +126,7 @@ struct boss_the_makerAI : public ScriptedAI
 
         if (Knockdown_Timer <= diff)
         {
-            DoCast(me->getVictim(), SPELL_KNOCKDOWN);
+            DoCast(me->GetVictim(), SPELL_KNOCKDOWN);
             Knockdown_Timer = 4000 + rand() % 8000;
         }
         else

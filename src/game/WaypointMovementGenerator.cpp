@@ -176,7 +176,7 @@ bool WaypointMovementGenerator<Creature>::Update(Creature& unit, const uint32& d
             if (unit.GetFormation() && unit.GetFormation()->getLeader() == &unit)
                 unit.GetFormation()->LeaderMoveTo(node->x, node->y, node->z);
         }
-        else
+        else if (i_nextMoveTime.Passed()) //don't begin delay until movement is actually finished
         {
             // Determine wait time
             if (node->delay)
@@ -238,10 +238,11 @@ void FlightPathMovementGenerator::Initialize(Player& player)
 void FlightPathMovementGenerator::Finalize(Player& player)
 {
     // remove flag to prevent send object build movement packets for flight state and crash (movement generator already not at top of stack)
-    player.ClearUnitState(UNIT_FLAG_DISABLE_MOVE | UNIT_STATE_IN_FLIGHT);
+    player.ClearUnitState(UNIT_STATE_IN_FLIGHT);
 
     player.Dismount();
-    player.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
+    player.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL | UNIT_FLAG_TAXI_FLIGHT);
+    player.SetClientControl(&player, 1);
 
     if (player.m_taxi.empty())
     {
@@ -262,7 +263,8 @@ void FlightPathMovementGenerator::Reset(Player& player)
 {
     player.getHostileRefManager().setOnlineOfflineState(false);
     player.AddUnitState(UNIT_STATE_IN_FLIGHT);
-    player.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
+    player.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL | UNIT_FLAG_TAXI_FLIGHT);
+    player.SetClientControl(&player, 0);
 
     Movement::MoveSplineInit init(player);
     uint32 end = GetPathAtMapEnd();
@@ -296,7 +298,19 @@ bool FlightPathMovementGenerator::Update(Player& player, const uint32& diff)
         while (true);
     }
 
-    return i_currentNode < (i_path->size()-1);
+    const bool flying = (i_currentNode < (i_path->size() - 1));
+
+    // Multi-map flight paths
+    if (flying && (*i_path)[i_currentNode + 1].mapid != player.GetMapId())
+    {
+        // short preparations to continue flight
+        SetCurrentNodeAfterTeleport();
+        TaxiPathNodeEntry const& node = (*i_path)[i_currentNode];
+        SkipCurrentNode();
+        player.TeleportTo(node.mapid, node.x, node.y, node.z, player.GetOrientation());
+    }
+
+    return flying;
 }
 
 void FlightPathMovementGenerator::SetCurrentNodeAfterTeleport()

@@ -326,7 +326,7 @@ Unit* SentinelAbilityAura::GetTriggerTarget() const
     case SPELL_THUNDER_BUFF:
     case SPELL_MSTRIKE_BUFF:
     case SPELL_STORM_BUFF:
-        return aOwner->me->getVictim();
+        return aOwner->me->GetVictim();
 
     case SPELL_MANAB_BUFF:
         return aOwner->GetHatedManaUser();

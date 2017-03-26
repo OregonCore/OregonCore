@@ -113,7 +113,7 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
             {
                 Creature* pWar = Unit::GetCreature(*me, pInstance->GetData64(DATA_WARBRINGER));
                 if (pWar && pWar->IsAlive())
-                    pWar->AI()->AttackStart(me->getVictim());
+                    pWar->AI()->AttackStart(me->GetVictim());
             }
         }
     }
@@ -239,7 +239,7 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
                         // stop bladedance
                         InBlade = false;
                         me->SetSpeed(MOVE_RUN, 2);
-                        (*me).GetMotionMaster()->MoveChase(me->getVictim());
+                        (*me).GetMotionMaster()->MoveChase(me->GetVictim());
                         Blade_Dance_Timer = 30000;
                         Wait_Timer = 0;
                         if (HeroicMode)

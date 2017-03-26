@@ -118,8 +118,8 @@ struct boss_sacrolashAI : public ScriptedAI
                     CAST_CRE(Temp)->Respawn();
                 else
                 {
-                    if (Temp->getVictim())
-                        me->getThreatManager().addThreat(Temp->getVictim(), 0.0f);
+                    if (Temp->GetVictim())
+                        me->getThreatManager().addThreat(Temp->GetVictim(), 0.0f);
                 }
             }
         }
@@ -147,7 +147,7 @@ struct boss_sacrolashAI : public ScriptedAI
         if (pInstance)
         {
             Unit* Temp =  Unit::GetUnit((*me), pInstance->GetData64(DATA_ALYTHESS));
-            if (Temp && Temp->IsAlive() && !(Temp->getVictim()))
+            if (Temp && Temp->IsAlive() && !(Temp->GetVictim()))
                 CAST_CRE(Temp)->AI()->AttackStart(who);
         }
 
@@ -333,10 +333,10 @@ struct boss_sacrolashAI : public ScriptedAI
         if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
         {
             //If we are within range melee the target
-            if (me->IsWithinMeleeRange(me->getVictim()))
+            if (me->IsWithinMeleeRange(me->GetVictim()))
             {
-                HandleTouchedSpells(me->getVictim(), SPELL_DARK_TOUCHED);
-                me->AttackerStateUpdate(me->getVictim());
+                HandleTouchedSpells(me->GetVictim(), SPELL_DARK_TOUCHED);
+                me->AttackerStateUpdate(me->GetVictim());
                 me->resetAttackTimer();
             }
         }
@@ -384,8 +384,8 @@ struct boss_alythessAI : public Scripted_NoMovementAI
                     CAST_CRE(Temp)->Respawn();
                 else
                 {
-                    if (Temp->getVictim())
-                        me->getThreatManager().addThreat(Temp->getVictim(), 0.0f);
+                    if (Temp->GetVictim())
+                        me->getThreatManager().addThreat(Temp->GetVictim(), 0.0f);
                 }
             }
         }
@@ -414,7 +414,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
         if (pInstance)
         {
             Unit* Temp =  Unit::GetUnit((*me), pInstance->GetData64(DATA_SACROLASH));
-            if (Temp && Temp->IsAlive() && !(Temp->getVictim()))
+            if (Temp && Temp->IsAlive() && !(Temp->GetVictim()))
                 CAST_CRE(Temp)->AI()->AttackStart(who);
         }
 
@@ -430,7 +430,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!who || me->getVictim())
+        if (!who || me->GetVictim())
             return;
 
         if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
@@ -576,16 +576,16 @@ struct boss_alythessAI : public Scripted_NoMovementAI
                 }
             }
         }
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             if (pInstance)
             {
                 Creature* sisiter = Unit::GetCreature((*me), pInstance->GetData64(DATA_SACROLASH));
-                if (sisiter && !sisiter->isDead() && sisiter->getVictim())
+                if (sisiter && !sisiter->isDead() && sisiter->GetVictim())
                 {
-                    me->AddThreat(sisiter->getVictim(), 0.0f);
-                    DoStartNoMovement(sisiter->getVictim());
-                    me->Attack(sisiter->getVictim(), false);
+                    me->AddThreat(sisiter->GetVictim(), 0.0f);
+                    DoStartNoMovement(sisiter->GetVictim());
+                    me->Attack(sisiter->GetVictim(), false);
                 }
             }
         }
@@ -745,7 +745,7 @@ struct mob_shadow_imageAI : public ScriptedAI
             if (!me->IsNonMeleeSpellCast(false))
             {
                 //If we are within range melee the target
-                if (me->IsWithinMeleeRange(me->getVictim()))
+                if (me->IsWithinMeleeRange(me->GetVictim()))
                     DoCastVictim( SPELL_DARK_STRIKE);
             }
             DarkstrikeTimer = 3000;

@@ -136,7 +136,7 @@ struct boss_highlord_mograineAI : public ScriptedAI
         else Mark_Timer -= diff;
 
         // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-        if (ShieldWall1 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 50)
+        if (ShieldWall1 && HealthBelowPct(50))
         {
             if (ShieldWall1)
             {
@@ -144,7 +144,7 @@ struct boss_highlord_mograineAI : public ScriptedAI
                 ShieldWall1 = false;
             }
         }
-        if (ShieldWall2 && (me->GetHealth() * 100 / me->GetMaxHealth()) < 20)
+        if (ShieldWall2 && HealthBelowPct(20))
         {
             if (ShieldWall2)
             {

@@ -122,11 +122,11 @@ const creature_type EP_EWT_Summons_H[EP_EWT_NUM_CREATURES] =
     {17996, 67, 0, 3169.91f, -4349.68f, 138.37f, 0.7444f}
 };
 
-const creature_type EP_PWT_FlightMaster = {17209, 0, 0, 2987.5, -3049.11, 120.126, 5.75959};
+const creature_type EP_PWT_FlightMaster = {17209, 0, 0, 2987.5f, -3049.11f, 120.126f, 5.75959f};
 const uint32 EP_PWT_FlightMasterAura = 36725;
 
-const go_type EP_NPT_LordaeronShrine = {181682, 0, 3167.72, -4355.91, 138.785, 1.69297, 0, 0, 0.748956, 0.66262};
-const go_type EP_NPT_LordaeronShrineAura = {180100, 0, 3167.72, -4355.91, 138.785, 1.69297, 0, 0, 0.748956, 0.66262};
+const go_type EP_NPT_LordaeronShrine = {181682, 0, 3167.72f, -4355.91f, 138.785f, 1.69297f, 0, 0, 0.748956f, 0.66262f};
+const go_type EP_NPT_LordaeronShrineAura = {180100, 0, 3167.72f, -4355.91f, 138.785f, 1.69297f, 0, 0, 0.748956f, 0.66262f};
 
 class OPvPCapturePointEP : public OPvPCapturePoint
 {

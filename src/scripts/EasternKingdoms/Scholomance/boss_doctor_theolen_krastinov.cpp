@@ -86,7 +86,7 @@ struct boss_theolenkrastinovAI : public ScriptedAI
             m_uiBackhand_Timer -= uiDiff;
 
         //Frenzy_Timer
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 26)
+        if (HealthBelowPct(25))
         {
             if (m_uiFrenzy_Timer <= uiDiff)
             {

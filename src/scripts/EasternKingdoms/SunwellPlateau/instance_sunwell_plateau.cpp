@@ -147,7 +147,7 @@ struct instance_sunwell_plateau : public ScriptedInstance
         {
             for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
-                Player* plr = itr->getSource();
+                Player* plr = itr->GetSource();
                 if (plr && !plr->HasAura(45839, 0))
                     return plr;
             }

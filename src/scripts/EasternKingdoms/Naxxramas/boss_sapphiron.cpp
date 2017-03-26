@@ -102,7 +102,7 @@ struct boss_sapphironAI : public ScriptedAI
             }
             else Blizzard_Timer -= diff;
 
-            if (me->GetHealth() * 100 / me->GetMaxHealth() > 10)
+            if (HealthAbovePct(10))
             {
                 if (Fly_Timer <= diff)
                 {
@@ -151,7 +151,7 @@ struct boss_sapphironAI : public ScriptedAI
                 me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
                 me->SetLevitate(false);
                 me->GetMotionMaster()->Clear(false);
-                me->GetMotionMaster()->MoveChase(me->getVictim());
+                me->GetMotionMaster()->MoveChase(me->GetVictim());
                 me->SetHover(true);
                 land_Timer = 0;
                 Fly_Timer = 67000;

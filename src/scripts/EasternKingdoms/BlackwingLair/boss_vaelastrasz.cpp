@@ -148,7 +148,7 @@ struct boss_vaelAI : public ScriptedAI
             return;
 
         // Yell if hp lower than 15%
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 15 && !HasYelled)
+        if (HealthBelowPct(15) && !HasYelled)
         {
             DoScriptText(SAY_HALFLIFE, me);
             HasYelled = true;
@@ -195,7 +195,7 @@ struct boss_vaelAI : public ScriptedAI
         {
             // have the victim cast the spell on himself otherwise the third effect aura will be applied
             // to Vael instead of the player
-            me->getVictim()->CastSpell(me->getVictim(), SPELL_BURNINGADRENALINE, 1);
+            me->GetVictim()->CastSpell(me->GetVictim(), SPELL_BURNINGADRENALINE, 1);
 
             BurningAdrenalineTank_Timer = 45000;
         }
@@ -213,7 +213,7 @@ struct boss_vaelAI : public ScriptedAI
         if (TailSwipe_Timer <= diff)
         {
             //Only cast if we are behind
-            /*if (!me->HasInArc(M_PI, me->getVictim()))
+            /*if (!me->HasInArc(M_PI, me->GetVictim()))
             {
             DoCastVictim( SPELL_TAILSWIPE);
             }*/

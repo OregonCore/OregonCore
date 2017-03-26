@@ -54,7 +54,7 @@ struct Script
         pGossipHello(NULL), pQuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
         pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL), pItemQuestAccept(NULL),
-        pGOQuestAccept(NULL), pGOChooseReward(NULL), pItemUse(NULL), pEffectDummyCreature(NULL),
+        pGOQuestAccept(NULL), pGOChooseReward(NULL), pGOSelect(NULL), pGOSelectWithCode(NULL), pItemUse(NULL), pEffectDummyCreature(NULL),
         GetAI(NULL), GetInstanceData(NULL)
     {}
 
@@ -67,7 +67,7 @@ struct Script
     void (*OnPVPKill               )(Player*, Player*);
     void (*OnCreatureKill          )(Player*, Creature*);
     void (*OnPlayerKilledByCreature)(Creature*, Player*);
-    void (*OnLevelChanged          )(Player*, uint8);
+    void (*OnLevelChanged          )(Player*, uint8, uint8);
     void (*OnTalentsReset          )(Player*, bool);
 
     void (*OnGroupCreated          )(Group*, Player*);
@@ -119,7 +119,7 @@ class ScriptMgr
         void OnPVPKill(Player* killer, Player* killed);
         void OnCreatureKill(Player* killer, Creature* killed);
         void OnPlayerKilledByCreature(Creature* killer, Player* killed);
-        void OnPlayerLevelChanged(Player* player, uint8 newLevel);
+        void OnPlayerLevelChanged(Player* player, uint8 oldLevel, uint8 newLevel);
         void OnPlayerTalentsReset(Player* player, bool no_cost);
 
         void OnGroupCreated(Group* group, Player* player);

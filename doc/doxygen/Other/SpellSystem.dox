@@ -1,0 +1,97 @@
+/*!
+\page oc_spell_system Spell System
+\tableofcontents
+
+In this article we are gonna look at how spells works in OregonCore.
+Spell system is designed to be universal for every spell, this handles spells in a general way.
+Exceptions are very rare but may be found from time to time.
+
+Spell Data
+==========
+
+All main data are taken from DBC files but not all daaa are actually used.
+DBCs are files taken from wow client using map_extractor utility. They are usually
+never edited - we do change some values but we do that only at runtime at the first loading.
+Some people, however, use a toll called DBC editor and edit those values manually, which is not recommended.
+
+A DBC file is in general a table that contains columns and rows. They does not contain information about
+those columns, so meaning of column must have been reverse-engineered and deducted.
+
+Table of spell dbcs used:
+
+<table>
+    <tr><th>DBC File</th><th>Description</th></tr>
+    <tr><td>Spell.dbc</td><td>Contains essential spell data (see \ref SpellEntry)</td></tr>
+    <tr><td>SpellCastTimes.dbc</tr><td>A lookup table for cast times (see \ref SpellCastTimesEntry)</td></tr>
+    <tr><td>SpellDuration.dbc</td><td>A lookup table for aura durations (see \ref SpellDurationEntry)</td></tr>
+    <tr><td>SpellFocusObject.dbc</td><td>Some spells require to be cast near an object. This dbc contains ID and Names of the places. (see \ref SpellFocusObject)</td></tr>
+    <tr><td>SpellItemEnchantment.dbc</td><td>Information about enchantments.</td></tr>
+    <tr><td>SpellItemEnchantmentCondition.dbc</td><td>Information about enchantments' conditions.</td></tr>
+    <tr><td>SpellRadius.dbc</td><td>A lookup table for spell radiuses. (see \ref SpellRadiusEntry)</td></tr>
+    <tr><td>SpellRange.dbc</td><td>A lookup table for spell ranges (see \ref SpellRangeEntry)</td></tr>
+    <tr><td>SpellShapeshift.dbc</td><td>A lookup table for shapeshift information (see \ref SpellShapeshiftEntry)</td></tr>
+</table>
+
+These data are usually linked. For example, if you want to find out what cast time a certain spell has,
+you have to lookup its CastingTimeIndex in Spell.dbc and then search SpellCastTimes for that index, then you
+will finally have the cast time. Similar way you would go with durations, radiuses, ranges, etc.
+
+We have converted DBCs we use into SQL to be easily browsable. You can check it out [here][1].
+
+These data, however, are not sufficient. Because of that, we have a few spell tables created in world database:
+
+ - \ref schema_world_table_skill_discovery_template
+ - \ref schema_world_table_skill_extra_item_template
+ - \ref schema_world_table_skill_fishing_base_level
+ - \ref schema_world_table_spell_affect
+ - \ref schema_world_table_spell_cooldown
+ - \ref schema_world_table_spell_dummy_condition
+ - \ref schema_world_table_spell_enchant_proc_data
+ - \ref schema_world_table_spell_group
+ - \ref schema_world_table_spell_group_stack_rules
+ - \ref schema_world_table_spell_learn_spell
+ - \ref schema_world_table_spell_linked_spell
+ - \ref schema_world_table_spell_pet_auras
+ - \ref schema_world_table_spell_proc_event
+ - \ref schema_world_table_spell_proc_event
+ - \ref schema_world_table_spell_required
+ - \ref schema_world_table_spell_scripts
+ - \ref schema_world_table_spell_target_position
+ - \ref schema_world_table_spell_threat
+
+Effects & Auras
+===============
+
+<strong>An Effect</strong> is a one-time routine that will be done on the target, once hit.
+
+Each spell can have up to **three** effects. You can view all of them \ref SPELL_EFFECT_INSTAKILL "here".
+If a spell needs more than three effects, it will use SPELL_EFFECT_TRIGGER_SPELL that casts another spell,
+which can have more three effects.
+
+<strong>An Aura</strong> is a modifier that can potentially change the behaviour of an ingame mechanic such as spell damage or movement speed
+
+Auras are applied via effects, more specifially SPELL_EFFECT_APPLY_AURA, the aura applied is in EffectApplyAuraName field.
+They are also known as buffs and debuffs. The most auras are hidden - for example talents.
+
+There is often needed extra operation - specific to a spell. They are usually handled via "Dummy" effects and auras.
+
+Attributes
+==========
+
+Spell attributes are [bitmaks][2], which determines properties of a spell. Not all attributes
+have been examined,, yet. In DBCs there are 160 attributes in DBC. We use 32-bit chunks of them.
+So we have \ref SpellAttr0, \ref SpellAttr1, \ref SpellAttr2, \ref SpellAttr3, \ref SpellAttr4, \ref SpellAttr5 and
+a custom set of attributes - \ref SpellCustomAttributes. You can take a look at them to see for what purposes they
+are used.
+
+Proc System
+===========
+
+Proccing means triggering an aura. 
+
+TO-DO
+
+[1]: http://dbc.oregon-core.net/
+[2]: https://en.wikipedia.org/wiki/Mask_(computing)
+
+ */

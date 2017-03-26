@@ -67,7 +67,7 @@ struct ScriptAction
 // Map file format defines
 //******************************************
 static const uint32 MAP_MAGIC         = 0x5350414D; // SPAM
-static const uint32 MAP_VERSION_MAGIC = 0x332E3176; // 6.0w
+static const uint32 MAP_VERSION_MAGIC = 0x332E3176; // 3.1v
 static const uint32 MAP_AREA_MAGIC    = 0x41455241; // AERA
 static const uint32 MAP_HEIGHT_MAGIC  = 0x5447484D; // TGHM
 static const uint32 MAP_LIQUID_MAGIC  = 0x51494C4D; // QILM
@@ -139,7 +139,7 @@ enum ZLiquidStatus
 #define MAP_LIQUID_TYPE_SLIME       0x04
 #define MAP_LIQUID_TYPE_WATER       0x08
 
-#define MAP_ALL_LIQUIDS   (MAP_LIQUID_TYPE_WATER | MAP_LIQUID_TYPE_OCEAN | MAP_LIQUID_TYPE_MAGMA | MAP_LIQUID_TYPE_SLIME)
+#define MAP_ALL_LIQUIDS   (MAP_LIQUID_TYPE_WATER | MAP_LIQUID_TYPE_MAGMA | MAP_LIQUID_TYPE_OCEAN | MAP_LIQUID_TYPE_SLIME)
 
 #define MAP_LIQUID_TYPE_DARK_WATER  0x10
 #define MAP_LIQUID_TYPE_WMO_WATER   0x20
@@ -267,8 +267,8 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 {
         friend class MapReference;
     public:
-        Map(uint32 id, time_t, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent = NULL);
-        virtual ~Map();
+        Map(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode, Map* _parent = NULL);
+        ~Map() override;
 
         // currently unused for normal maps
         bool CanUnload(uint32 diff)
@@ -279,8 +279,9 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
             return false;
         }
 
-        virtual bool AddToMap(Player*);
-        virtual void RemoveFromMap(Player*, bool);
+        virtual bool AddPlayerToMap(Player*);
+        virtual void RemovePlayerFromMap(Player*, bool);
+
         template<class T> bool AddToMap(T*);
         template<class T> void RemoveFromMap(T*, bool);
 
@@ -362,6 +363,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         float GetWaterLevel(float x, float y) const;
         bool IsInWater(float x, float y, float z, LiquidData* data = nullptr) const;
         bool IsUnderWater(float x, float y, float z) const;
+        bool IsSwimmable(float x, float y, float z, LiquidData* data = nullptr) const;
 
         static uint32 GetAreaId(uint16 areaflag, uint32 map_id);
         static uint32 GetZoneId(uint16 areaflag, uint32 map_id);
@@ -389,15 +391,33 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         {
             return i_InstanceId;
         }
-        DungeonDifficulties GetSpawnMode() const
+        uint8 GetSpawnMode() const
         {
             return (i_spawnMode);
         }
-        virtual bool CanEnter(Player* /*player*/)
+
+        enum EnterState
         {
-            return true;
-        }
+            CAN_ENTER = 0,
+            CANNOT_ENTER_ALREADY_IN_MAP = 1, // Player is already in the map
+            CANNOT_ENTER_NO_ENTRY, // No map entry was found for the target map ID
+            CANNOT_ENTER_UNINSTANCED_DUNGEON, // No instance template was found for dungeon map
+            CANNOT_ENTER_DIFFICULTY_UNAVAILABLE, // Requested instance difficulty is not available for target map
+            CANNOT_ENTER_NOT_IN_RAID, // Target instance is a raid instance and the player is not in a raid group
+            CANNOT_ENTER_CORPSE_IN_DIFFERENT_INSTANCE, // Player is dead and their corpse is not in target instance
+            CANNOT_ENTER_INSTANCE_BIND_MISMATCH, // Player's permanent instance save is not compatible with their group's current instance bind
+            CANNOT_ENTER_TOO_MANY_INSTANCES, // Player has entered too many instances recently
+            CANNOT_ENTER_MAX_PLAYERS, // Target map already has the maximum number of players allowed
+            CANNOT_ENTER_ZONE_IN_COMBAT, // A boss encounter is currently in progress on the target map
+            CANNOT_ENTER_UNSPECIFIED_REASON
+        };
+        virtual EnterState CannotEnter(Player* /*player*/) { return CAN_ENTER; }
+
         const char* GetMapName() const;
+
+        // have meaning only for instanced map (that have set real difficulty)
+        DungeonDifficulty GetDifficulty() const { return DungeonDifficulty(GetSpawnMode()); }
+        bool IsRegularDifficulty() const { return GetDifficulty() == DIFFICULTY_NORMAL; }
 
         bool Instanceable() const
         {
@@ -578,7 +598,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         typedef Oregon::ObjectLevelLockable<Map, ACE_Thread_Mutex>::Lock Guard;
 
         MapEntry const* i_mapEntry;
-        DungeonDifficulties i_spawnMode;
+        uint8 i_spawnMode;
         uint32 i_InstanceId;
         uint32 m_unloadTimer;
         float m_VisibleDistance;
@@ -667,11 +687,11 @@ enum InstanceResetMethod
 class InstanceMap : public Map
 {
     public:
-        InstanceMap(uint32 id, time_t, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent);
-        ~InstanceMap();
-        bool AddToMap(Player*);
-        void RemoveFromMap(Player*, bool);
-        void Update(const uint32&);
+        InstanceMap(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode, Map* _parent);
+        ~InstanceMap() override;
+        bool AddPlayerToMap(Player*) override;
+        void RemovePlayerFromMap(Player*, bool) override;
+        void Update(const uint32&) override;
         void CreateInstanceData(bool load);
         bool Reset(uint8 method);
         uint32 GetScriptId()
@@ -684,12 +704,12 @@ class InstanceMap : public Map
         }
         void PermBindAllPlayers(Player* player);
         time_t GetResetTime();
-        void UnloadAll();
-        bool CanEnter(Player* player);
+        void UnloadAll() override;
+        EnterState CannotEnter(Player* player) override;
         void SendResetWarnings(uint32 timeLeft) const;
         void SetResetSchedule(bool on);
 
-        virtual void InitVisibilityDistance();
+        void InitVisibilityDistance() override;
     private:
         bool m_resetAfterUnload;
         bool m_unloadWhenEmpty;
@@ -701,15 +721,15 @@ class BattlegroundMap : public Map
 {
     public:
         BattlegroundMap(uint32 id, time_t, uint32 InstanceId, Map* _parent);
-        ~BattlegroundMap();
+        ~BattlegroundMap() override;
 
-        bool AddToMap(Player*);
-        void RemoveFromMap(Player*, bool);
-        bool CanEnter(Player* player);
+        bool AddPlayerToMap(Player*) override;
+        void RemovePlayerFromMap(Player*, bool) override;
+        EnterState CannotEnter(Player* player) override;
         void SetUnload();
-        void RemoveAllPlayers();
+        void RemoveAllPlayers() override;
 
-        virtual void InitVisibilityDistance();
+        void InitVisibilityDistance() override;
         Battleground* GetBG()
         {
             return m_bg;

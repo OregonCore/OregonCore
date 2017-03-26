@@ -62,6 +62,22 @@ if( UNIX )
   endif( MYSQL_CONFIG )
 endif( UNIX )
 
+if( WIN32 )
+  # read environment variables and change \ to /
+  SET(SYSTEM_DRIVE $ENV{SystemDrive})
+  
+  if (PLATFORM EQUAL 64)
+    SET(PROGRAM_FILES_32 "$ENV{ProgramFiles} (x86)")
+    SET(PROGRAM_FILES_64 "$ENV{ProgramW6432}")
+  else (PLATFORM EQUAL 64)
+    SET(PROGRAM_FILES_32 "$ENV{ProgramFiles}")
+    SET(PROGRAM_FILES_64 "$ENV{ProgramFiles}")
+  endif (PLATFORM EQUAL 64)
+
+  STRING(REPLACE "\\" "/" PROGRAM_FILES_32 ${PROGRAM_FILES_32})
+  STRING(REPLACE "\\" "/" PROGRAM_FILES_64 ${PROGRAM_FILES_64})
+endif ( WIN32 )
+
 find_path(MYSQL_INCLUDE_DIR
   NAMES
     mysql.h
@@ -69,26 +85,45 @@ find_path(MYSQL_INCLUDE_DIR
     ${MYSQL_ADD_INCLUDE_PATH}
     /usr/include
     /usr/include/mysql
+    /usr/include/mariadb
     /usr/local/include
     /usr/local/include/mysql
     /usr/local/mysql/include
-    "C:/Program Files/MySQL/MySQL Server 5.6/include"
-    "C:/Program Files/MySQL/MySQL Server 5.5/include"
-    "C:/Program Files/MySQL/MySQL Server 5.1/include"
-    "C:/Program Files/MySQL/MySQL Server 5.0/include"
-    "C:/Program Files/MySQL/include"
-    "C:/MySQL/include"
+    "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.7/include"
+    "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.6/include"
+    "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.5/include"
+    "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.1/include"
+    "${PROGRAM_FILES_64}/MySQL/include"
+    "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.7/include"
+    "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.6/include"
+    "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.5/include"
+    "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.1/include"
+    "${PROGRAM_FILES_32}/MySQL/include"
+    "${SYSTEM_DRIVE}/MySQL/include"
+    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.7;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.6;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.5;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.1;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.0;Location]/include"
+    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.7;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.6;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.5;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.1;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.0;Location]/include"
-    "$ENV{ProgramFiles}/MySQL/*/include"
-    "$ENV{SystemDrive}/MySQL/*/include"
-    "c:/msys/local/include"
+    "${PROGRAM_FILES_32}/MariaDB 10.0/include/mysql"
+    "${PROGRAM_FILES_32}/MariaDB 10.1/include/mysql"
+    "${PROGRAM_FILES_32}/MariaDB 10.2/include/mysql"
+    "${PROGRAM_FILES_32}/MariaDB 5.5/include/mysql"
+    "${PROGRAM_FILES_32}/MariaDB 5.5/include/mysql"
+    "${PROGRAM_FILES_32}/MariaDB 5.4/include/mysql"
+    "${PROGRAM_FILES_32}/MariaDB 5.3/include/mysql"
+    "${PROGRAM_FILES_64}/MariaDB 10.0/include/mysql"
+    "${PROGRAM_FILES_64}/MariaDB 10.1/include/mysql"
+    "${PROGRAM_FILES_64}/MariaDB 10.2/include/mysql"
+    "${PROGRAM_FILES_64}/MariaDB 5.5/include/mysql"
+    "${PROGRAM_FILES_64}/MariaDB 5.5/include/mysql"
+    "${PROGRAM_FILES_64}/MariaDB 5.4/include/mysql"
+    "${PROGRAM_FILES_64}/MariaDB 5.3/include/mysql"
   DOC
     "Specify the directory containing mysql.h."
 )
@@ -116,31 +151,45 @@ if( WIN32 )
       libmysql
     PATHS
       ${MYSQL_ADD_LIBRARIES_PATH}
-      "C:/Program Files/MySQL/MySQL Server 5.6/lib/opt"
-      "C:/Program Files/MySQL/MySQL Server 5.5/lib/opt"
-      "C:/Program Files/MySQL/MySQL Server 5.1/lib/opt"
-      "C:/Program Files/MySQL/MySQL Server 5.0/lib/opt"
-      "C:/Program Files/MySQL/lib"
-      "C:/MySQL/lib/debug"
+      "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.7/lib"
+      "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.6/lib"
+      "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.5/lib"
+      "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.4/lib"
+      "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.3/lib"
+      "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.2/lib"
+      "${PROGRAM_FILES_32}/MySQL/MySQL Server 5.1/lib"
+      "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.7/lib"
+      "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.6/lib"
+      "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.5/lib"
+      "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.4/lib"
+      "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.3/lib"
+      "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.2/lib"
+      "${PROGRAM_FILES_64}/MySQL/MySQL Server 5.1/lib"
+      "${SYSTEM_DRIVE}/MySQL/lib"
+      "${SYSTEM_DRIVE}/MySQL/lib"
+      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.7;Location]/lib"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.6;Location]/lib"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.6;Location]/lib/opt"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.5;Location]/lib"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.5;Location]/lib/opt"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.1;Location]/lib"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.1;Location]/lib/opt"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.0;Location]/lib"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.0;Location]/lib/opt"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.6;Location]/lib"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.6;Location]/lib/opt"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.5;Location]/lib"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.5;Location]/lib/opt"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.1;Location]/lib"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.1;Location]/lib/opt"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.0;Location]/lib"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.0;Location]/lib/opt"
-      "$ENV{ProgramFiles}/MySQL/*/lib/opt"
-      "$ENV{SystemDrive}/MySQL/*/lib/opt"
-      "c:/msys/local/include"
+      "${PROGRAM_FILES_32}/MariaDB 10.0/lib"
+      "${PROGRAM_FILES_32}/MariaDB 10.1/lib"
+      "${PROGRAM_FILES_32}/MariaDB 10.2/lib"
+      "${PROGRAM_FILES_32}/MariaDB 5.5/lib"
+      "${PROGRAM_FILES_32}/MariaDB 5.5/lib"
+      "${PROGRAM_FILES_32}/MariaDB 5.4/lib"
+      "${PROGRAM_FILES_32}/MariaDB 5.3/lib"
+      "${PROGRAM_FILES_64}/MariaDB 10.0/lib"
+      "${PROGRAM_FILES_64}/MariaDB 10.1/lib"
+      "${PROGRAM_FILES_64}/MariaDB 10.2/lib"
+      "${PROGRAM_FILES_64}/MariaDB 5.5/lib"
+      "${PROGRAM_FILES_64}/MariaDB 5.5/lib"
+      "${PROGRAM_FILES_64}/MariaDB 5.4/lib"
+      "${PROGRAM_FILES_64}/MariaDB 5.3/lib"
     DOC "Specify the location of the mysql library here."
   )
 endif( WIN32 )
@@ -167,10 +216,20 @@ if( MYSQL_LIBRARY )
     set( MYSQL_FOUND 1 )
     message(STATUS "Found MySQL library: ${MYSQL_LIBRARY}")
     message(STATUS "Found MySQL headers: ${MYSQL_INCLUDE_DIR}")
+    
+    if (WIN32)
+        get_filename_component(MYSQL_LIB_PATH ${MYSQL_LIBRARY} PATH)
+        get_filename_component(MYSQL_LIB_NAME ${MYSQL_LIBRARY} NAME_WE)
+        set(MYSQL_DLL_LIBRARY "${MYSQL_LIB_PATH}/${MYSQL_LIB_NAME}.dll" CACHE INTERNAL "")
+        install(FILES ${MYSQL_DLL_LIBRARY} DESTINATION "${CMAKE_INSTALL_PREFIX}")
+        
+        set (MYSQL_LIB_PATH "${MYSQL_LIB_PARTH}" CACHE INTERNAL "")
+        set (MYSQL_LIB_NAME "${MYSQL_LIB_PARTH}" CACHE INTERNAL "")
+    endif (WIN32)
   else( MYSQL_INCLUDE_DIR )
     message(FATAL_ERROR "Could not find MySQL headers! Please install the development libraries and headers")
   endif( MYSQL_INCLUDE_DIR )
-  mark_as_advanced( MYSQL_FOUND MYSQL_LIBRARY MYSQL_EXTRA_LIBRARIES MYSQL_INCLUDE_DIR )
+  mark_as_advanced( MYSQL_FOUND MYSQL_EXTRA_LIBRARIES )
 else( MYSQL_LIBRARY )
   message(FATAL_ERROR "Could not find the MySQL libraries! Please install the development libraries and headers")
 endif( MYSQL_LIBRARY )

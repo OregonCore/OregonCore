@@ -35,34 +35,36 @@
 void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 {
     Player* pUser = _player;
-    uint8 bagIndex, slot;
-    uint8 spell_count;                                      // number of spells at item, not used
-    uint8 cast_count;                                       // next cast if exists (single or not)
-    uint64 item_guid;
 
-    recvPacket >> bagIndex >> slot >> spell_count >> cast_count >> item_guid;
+    // ignore for remote control state
+    if (pUser->m_mover != pUser)
+        return;
+
+    uint8 bagIndex, slot;
+    uint8 spellCount;                                       // number of spells at item, not used
+    uint8 castCount;                                        // next cast if exists (single or not)
+    uint64 itemGUID;
+
+    recvPacket >> bagIndex >> slot >> spellCount >> castCount >> itemGUID;
 
     Item* pItem = pUser->GetItemByPos(bagIndex, slot);
     if (!pItem)
     {
-        recvPacket.rpos(recvPacket.wpos());                 // prevent spam at not read packet tail
         pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, NULL);
         return;
     }
 
-    if (pItem->GetGUID() != item_guid)
+    if (pItem->GetGUID() != itemGUID)
     {
-        recvPacket.rpos(recvPacket.wpos());                 // prevent spam at not read packet tail
         pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, NULL);
         return;
     }
 
-    sLog.outDetail("WORLD: CMSG_USE_ITEM packet, bagIndex: %u, slot: %u, spell_count: %u , cast_count: %u, Item: %u, data length = %i", bagIndex, slot, spell_count, cast_count, pItem->GetEntry(), recvPacket.size());
+    sLog.outDetail("WORLD: CMSG_USE_ITEM packet, bagIndex: %u, slot: %u, spell_count: %u , cast_count: %u, Item: %u, data length = %i", bagIndex, slot, spellCount, castCount, pItem->GetEntry(), recvPacket.size());
 
     ItemTemplate const* proto = pItem->GetProto();
     if (!proto)
     {
-        recvPacket.rpos(recvPacket.wpos());                 // prevent spam at not read packet tail
         pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, pItem, NULL);
         return;
     }
@@ -70,7 +72,6 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
     // some item classes can be used only in equipped state
     if (proto->InventoryType != INVTYPE_NON_EQUIP && !pItem->IsEquipped())
     {
-        recvPacket.rpos(recvPacket.wpos());                 // prevent spam at not read packet tail
         pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, pItem, NULL);
         return;
     }
@@ -78,30 +79,32 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
     uint8 msg = pUser->CanUseItem(pItem);
     if (msg != EQUIP_ERR_OK)
     {
-        recvPacket.rpos(recvPacket.wpos());                 // prevent spam at not read packet tail
         pUser->SendEquipError(msg, pItem, NULL);
         return;
     }
 
     // only allow conjured consumable, bandage, poisons (all should have the 2^21 item flag set in DB)
-    if (proto->Class == ITEM_CLASS_CONSUMABLE &&
-        !(proto->Flags & ITEM_FLAGS_USEABLE_IN_ARENA) &&
-        pUser->InArena())
+    if (proto->Class == ITEM_CLASS_CONSUMABLE && !(proto->Flags & ITEM_PROTO_FLAG_USEABLE_IN_ARENA) && pUser->InArena())
     {
-        recvPacket.rpos(recvPacket.wpos());                 // prevent spam at not read packet tail
+        pUser->SendEquipError(EQUIP_ERR_NOT_DURING_ARENA_MATCH, pItem, NULL);
+        return;
+    }
+
+    // don't allow items banned in arena
+    if (proto->Flags & ITEM_PROTO_FLAG_NOT_USEABLE_IN_ARENA && pUser->InArena())
+    {
         pUser->SendEquipError(EQUIP_ERR_NOT_DURING_ARENA_MATCH, pItem, NULL);
         return;
     }
 
     if (pUser->IsInCombat())
     {
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
         {
             if (SpellEntry const* spellInfo = sSpellStore.LookupEntry(proto->Spells[i].SpellId))
             {
                 if (IsNonCombatSpell(spellInfo))
                 {
-                    recvPacket.rpos(recvPacket.wpos());     // prevent spam at not read packet tail
                     pUser->SendEquipError(EQUIP_ERR_NOT_IN_COMBAT, pItem, NULL);
                     return;
                 }
@@ -109,7 +112,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
         }
     }
 
-    // check also  BIND_WHEN_PICKED_UP and BIND_QUEST_ITEM for .additem or .additemset case by GM (not binded at adding to inventory)
+    // check also BIND_WHEN_PICKED_UP and BIND_QUEST_ITEM for .additem or .additemset case by GM (not binded at adding to inventory)
     if (pItem->GetProto()->Bonding == BIND_WHEN_USE || pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM)
     {
         if (!pItem->IsSoulBound())
@@ -120,7 +123,6 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
     }
 
     SpellCastTargets targets;
-
     recvPacket >> targets.ReadForCaster(pUser);
 
     //Note: If script stop casting it must send appropriate data to client to prevent stuck item in gray state.
@@ -143,7 +145,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 
             Spell* spell = new Spell(pUser, spellInfo, false);
             spell->m_CastItem = pItem;
-            spell->m_cast_count = cast_count;               //set count of casts
+            spell->m_cast_count = castCount;               //set count of casts
             spell->m_currentBasePoints[0] = learning_spell_id;
             spell->prepare(&targets);
             return;
@@ -173,7 +175,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 
             Spell* spell = new Spell(pUser, spellInfo, (count > 0));
             spell->m_CastItem = pItem;
-            spell->m_cast_count = cast_count;               //set count of casts
+            spell->m_cast_count = castCount;               //set count of casts
             spell->prepare(&targets);
 
             ++count;
@@ -219,15 +221,15 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket& recvPacket)
             return;
         }
 
-        // required picklocking
-        if (lockInfo->requiredlockskill || lockInfo->requiredminingskill)
+        // was not unlocked yet
+        if (pItem->IsLocked())
         {
             pUser->SendEquipError(EQUIP_ERR_ITEM_LOCKED, pItem, NULL);
             return;
         }
     }
 
-    if (pItem->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPED))// wrapped?
+    if (pItem->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_WRAPPED))// wrapped?
     {
         QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT entry, flags FROM character_gifts WHERE item_guid = '%u'", pItem->GetGUIDLow());
         if (result)
@@ -267,7 +269,7 @@ void WorldSession::HandleGameObjectUseOpcode(WorldPacket& recv_data)
 
     FactionTemplateEntry const* faction = sFactionTemplateStore.LookupEntry(obj->GetGOInfo()->faction);
     if (faction &&
-        !_player->isGameMaster() &&
+        !_player->IsGameMaster() &&
         faction->IsHostileTo(*sFactionTemplateStore.LookupEntry(_player->getFaction())) &&
         !faction->IsNeutralToAll() &&
         !obj->GetOwner())

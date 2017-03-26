@@ -37,7 +37,7 @@ EndContentData */
 ## go_gauntlet_gate (this is the _first_ of the gauntlet gates, two exist)
 ######*/
 
-bool GOHello_go_gauntlet_gate(Player* pPlayer, GameObject* pGo)
+bool GOHello_go_gauntlet_gate(Player* player, GameObject* pGo)
 {
     ScriptedInstance* pInstance = (ScriptedInstance*)pGo->GetInstanceData();
 
@@ -47,12 +47,12 @@ bool GOHello_go_gauntlet_gate(Player* pPlayer, GameObject* pGo)
     if (pInstance->GetData(TYPE_BARON_RUN) != NOT_STARTED)
         return false;
 
-    if (Group* pGroup = pPlayer->GetGroup())
+    if (Group* pGroup = player->GetGroup())
     {
         for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player* pGroupie = itr->getSource();
-            if (!pGroupie)
+            Player* pGroupie = itr->GetSource();
+            if (!pGroupie || !pGroupie->IsInMap(player))
                 continue;
 
             if (pGroupie->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
@@ -61,10 +61,10 @@ bool GOHello_go_gauntlet_gate(Player* pPlayer, GameObject* pGo)
                 pGroupie->CastSpell(pGroupie, SPELL_BARON_ULTIMATUM, true);
         }
     }
-    else if (pPlayer->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
-             !pPlayer->HasAura(SPELL_BARON_ULTIMATUM, 0) &&
-             pPlayer->GetMap() == pGo->GetMap())
-        pPlayer->CastSpell(pPlayer, SPELL_BARON_ULTIMATUM, true);
+    else if (player->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
+             !player->HasAura(SPELL_BARON_ULTIMATUM, 0) &&
+        player->GetMap() == pGo->GetMap())
+        player->CastSpell(player, SPELL_BARON_ULTIMATUM, true);
 
     pInstance->SetData(TYPE_BARON_RUN, IN_PROGRESS);
     return false;

@@ -188,10 +188,10 @@ void CreatureGroup::MemberAttackStart(Creature* member, Unit* target)
         if (!other->IsAlive())
             continue;
 
-        if (other->getVictim())
+        if (other->GetVictim())
             continue;
 
-        if (other->canAttack(target))
+        if (other->IsValidAttackTarget(target))
             other->AI()->AttackStart(target);
     }
 }
@@ -224,7 +224,7 @@ void CreatureGroup::LeaderMoveTo(float x, float y, float z)
     for (CreatureGroupMemberType::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {
         Creature* member = itr->first;
-        if (member == m_leader || !member->IsAlive() || member->getVictim())
+        if (member == m_leader || !member->IsAlive() || member->GetVictim())
             continue;
 
         if (itr->second->point_1)

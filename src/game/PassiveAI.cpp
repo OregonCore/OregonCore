@@ -44,9 +44,9 @@ void PossessedAI::AttackStart(Unit* target)
 
 void PossessedAI::UpdateAI(const uint32 /*diff*/)
 {
-    if (me->getVictim())
+    if (me->GetVictim())
     {
-        if (!me->canAttack(me->getVictim()))
+        if (!me->IsValidAttackTarget(me->GetVictim()))
             me->AttackStop();
         else
             DoMeleeAttackIfReady();

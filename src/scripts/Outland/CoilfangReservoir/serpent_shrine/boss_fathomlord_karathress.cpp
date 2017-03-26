@@ -242,7 +242,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
 
             //if there aren't other units, cast on the tank
             if (!pTarget)
-                pTarget = me->getVictim();
+                pTarget = me->GetVictim();
 
             if (pTarget)
                 DoCast(pTarget, SPELL_CATACLYSMIC_BOLT);
@@ -267,7 +267,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
         else Enrage_Timer -= diff;
 
         //Blessing of Tides Trigger
-        if ((me->GetHealth() * 100 / me->GetMaxHealth()) <= 75 && !BlessingOfTides)
+        if (HealthBelowPct(75) && !BlessingOfTides)
         {
             BlessingOfTides = true;
             bool continueTriggering = false;
@@ -521,7 +521,7 @@ struct boss_fathomguard_tidalvessAI : public ScriptedAI
             DoCast(me, SPELL_SPITFIRE_TOTEM);
             Unit* SpitfireTotem = Unit::GetUnit(*me, CREATURE_SPITFIRE_TOTEM);
             if (SpitfireTotem)
-                CAST_CRE(SpitfireTotem)->AI()->AttackStart(me->getVictim());
+                CAST_CRE(SpitfireTotem)->AI()->AttackStart(me->GetVictim());
             Spitfire_Timer = 60000;
         }
         else Spitfire_Timer -= diff;
@@ -628,7 +628,7 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
         {
             DoCastVictim( SPELL_TIDAL_SURGE);
             // Hacky way to do it - won't trigger elseways
-            me->getVictim()->CastSpell(me->getVictim(), SPELL_TIDAL_SURGE_FREEZE, true);
+            me->GetVictim()->CastSpell(me->GetVictim(), SPELL_TIDAL_SURGE_FREEZE, true);
             TidalSurge_Timer = 15000 + rand() % 5000;
         }
         else TidalSurge_Timer -= diff;

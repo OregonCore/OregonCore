@@ -209,7 +209,7 @@ struct boss_malchezaarAI : public ScriptedAI
         SWPainTimer = 20000;
         AmplifyDamageTimer = 5000;
         Cleave_Timer = 8000;
-        InfernalTimer = 45000;
+        InfernalTimer = 40000;
         InfernalCleanupTimer = 47000;
         AxesTargetSwitchTimer = urand(7500, 20000);
         SunderArmorTimer = urand(5000, 10000);
@@ -305,7 +305,7 @@ struct boss_malchezaarAI : public ScriptedAI
         std::advance(itr, 1);
         for (; itr != t_list.end(); ++itr) //store the threat list in a different container
             if (Unit* pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid()))
-                if (pTarget->IsAlive() && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget != me->getVictim())
+                if (pTarget->IsAlive() && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget != me->GetVictim())
                     targets.push_back(pTarget);
 
         //cut down to size if we have more than 5 targets
@@ -341,7 +341,7 @@ struct boss_malchezaarAI : public ScriptedAI
         InfernalPoint* point = NULL;
         Position pos;
         if ((me->GetMapId() != 532) || positions.empty())
-            me->GetRandomNearPosition(pos, 60);
+            pos = me->GetRandomNearPosition(60.0f);
         else
         {
             std::vector<InfernalPoint*>::iterator itr = positions.begin() + rand() % positions.size();
@@ -382,8 +382,8 @@ struct boss_malchezaarAI : public ScriptedAI
         if (me->HasUnitState(UNIT_STATE_STUNNED))      // While shifting to phase 2 malchezaar stuns himself
             return;
 
-        if (me->GetUInt64Value(UNIT_FIELD_TARGET) != me->getVictim()->GetGUID())
-            me->SetUInt64Value(UNIT_FIELD_TARGET, me->getVictim()->GetGUID());
+        if (me->GetUInt64Value(UNIT_FIELD_TARGET) != me->GetVictim()->GetGUID())
+            me->SetUInt64Value(UNIT_FIELD_TARGET, me->GetVictim()->GetGUID());
 
         if (phase == 1)
         {
@@ -495,11 +495,11 @@ struct boss_malchezaarAI : public ScriptedAI
                     {
                         if (Unit* axe = Unit::GetUnit(*me, axes[i]))
                         {
-                            if (axe->getVictim())
-                                DoModifyThreatPercent(axe->getVictim(), -100);
+                            if (axe->GetVictim())
+                                DoModifyThreatPercent(axe->GetVictim(), -100);
                             if (pTarget)
                                 axe->AddThreat(pTarget, 1000000.0f);
-                            //axe->getThreatManager().tauntFadeOut(axe->getVictim());
+                            //axe->getThreatManager().tauntFadeOut(axe->GetVictim());
                             //axe->getThreatManager().tauntApply(pTarget);
                         }
                     }
@@ -537,7 +537,7 @@ struct boss_malchezaarAI : public ScriptedAI
             {
                 Unit* pTarget = NULL;
                 if (phase == 1)
-                    pTarget = me->getVictim();        // the tank
+                    pTarget = me->GetVictim();        // the tank
                 else                                          // anyone but the tank
                     pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
 
@@ -569,18 +569,18 @@ struct boss_malchezaarAI : public ScriptedAI
 
     void DoMeleeAttacksIfReady()
     {
-        if (me->IsWithinMeleeRange(me->getVictim()) && !me->IsNonMeleeSpellCast(false))
+        if (me->IsWithinMeleeRange(me->GetVictim()) && !me->IsNonMeleeSpellCast(false))
         {
             //Check for base attack
-            if (me->isAttackReady() && me->getVictim())
+            if (me->isAttackReady() && me->GetVictim())
             {
-                me->AttackerStateUpdate(me->getVictim());
+                me->AttackerStateUpdate(me->GetVictim());
                 me->resetAttackTimer();
             }
             //Check for offhand attack
-            if (me->isAttackReady(OFF_ATTACK) && me->getVictim())
+            if (me->isAttackReady(OFF_ATTACK) && me->GetVictim())
             {
-                me->AttackerStateUpdate(me->getVictim(), OFF_ATTACK);
+                me->AttackerStateUpdate(me->GetVictim(), OFF_ATTACK);
                 me->resetAttackTimer(OFF_ATTACK);
             }
         }

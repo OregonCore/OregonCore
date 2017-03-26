@@ -42,7 +42,8 @@ enum Sounds
 enum Misc
 {
     DATA_CANNON_BLAST_TIMER                                = 3000,
-    DATA_PIRATES_DELAY_TIMER                               = 1000
+    DATA_PIRATES_DELAY_TIMER                               = 1000,
+    DATA_SMITE_ALARM_DELAY_TIMER                           = 5000
 };
 
 struct instance_deadmines : public ScriptedInstance
@@ -61,10 +62,12 @@ struct instance_deadmines : public ScriptedInstance
     uint64 DefiasPirate1GUID;
     uint64 DefiasPirate2GUID;
     uint64 DefiasCompanionGUID;
+    uint64 MrSmiteGUID;
 
     uint32 CannonEventState;
     uint32 CannonBlast_Timer;
     uint32 PiratesDelay_Timer;
+    uint32 SmiteAlarmDelay_Timer;
     uint64 uiSmiteChestGUID;
 
     void Initialize()
@@ -96,22 +99,20 @@ struct instance_deadmines : public ScriptedInstance
         {
         case CANNON_GUNPOWDER_USED:
             CannonBlast_Timer = DATA_CANNON_BLAST_TIMER;
-            // it's a hack - Mr. Smite should do that but his too far away
-            pIronCladDoor->SetName("Mr. Smite");
-            pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM1, LANG_UNIVERSAL, 0);
-            DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM1);
             CannonEventState = CANNON_BLAST_INITIATED;
             break;
         case CANNON_BLAST_INITIATED:
             PiratesDelay_Timer = DATA_PIRATES_DELAY_TIMER;
+            SmiteAlarmDelay_Timer = DATA_SMITE_ALARM_DELAY_TIMER;
             if (CannonBlast_Timer <= diff)
             {
                 SummonCreatures();
                 ShootCannon();
                 BlastOutDoor();
                 LeverStucked();
-                pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM2, LANG_UNIVERSAL, 0);
-                DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM2);
+                pIronCladDoor->SetName("Mr. Smite");
+                pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM1, LANG_UNIVERSAL, 0);
+                DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM1);
                 CannonEventState = PIRATES_ATTACK;
             }
             else CannonBlast_Timer -= diff;
@@ -120,9 +121,17 @@ struct instance_deadmines : public ScriptedInstance
             if (PiratesDelay_Timer <= diff)
             {
                 MoveCreaturesInside();
-                CannonEventState = EVENT_DONE;
+                CannonEventState = SMITE_ALARMED;
             }
             else PiratesDelay_Timer -= diff;
+            break;
+        case SMITE_ALARMED:
+            if (SmiteAlarmDelay_Timer <= diff)
+            {
+                pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM2, LANG_UNIVERSAL, 0);
+                DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM2);
+                CannonEventState = EVENT_DONE;
+            } else SmiteAlarmDelay_Timer -= diff;
             break;
         }
     }
@@ -160,7 +169,7 @@ struct instance_deadmines : public ScriptedInstance
     void MoveCreatureInside(Creature* pCreature)
     {
         pCreature->SetWalk(false);
-        pCreature->GetMotionMaster()->MovePoint(0, -102.7, -655.9, pCreature->GetPositionZ());
+        pCreature->GetMotionMaster()->MovePoint(0, -102.7f, -655.9f, pCreature->GetPositionZ());
     }
 
     void ShootCannon()
@@ -185,6 +194,19 @@ struct instance_deadmines : public ScriptedInstance
     {
         if (GameObject* pDoorLever = instance->GetGameObject(DoorLeverGUID))
             pDoorLever->SetUInt32Value(GAMEOBJECT_FLAGS, 4);
+    }
+
+
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
+    {
+        switch (pCreature->GetEntry())
+        {
+            case NPC_MR_SMITE:
+                MrSmiteGUID = pCreature->GetGUID();
+                break;
+            default:
+                break;
+        }
     }
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)

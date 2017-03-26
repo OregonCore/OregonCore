@@ -242,7 +242,7 @@ struct boss_kalecgosAI : public ScriptedAI
                     me->AI()->EnterEvadeMode();
                     return;
                 }
-                if ((me->GetHealth() * 100 / me->GetMaxHealth() < 10) && !isEnraged)
+                if (HealthBelowPct(10) && !isEnraged)
                 {
                     if (Creature* Sath = Unit::GetCreature(*me, SathGUID))
                         Sath->AI()->DoAction(DO_ENRAGE);
@@ -308,7 +308,7 @@ struct boss_kalecgosAI : public ScriptedAI
                     Unit* target = (*itr)->getTarget();
                     if (target
                         && target->GetTypeId() == TYPEID_PLAYER
-                        && target->GetGUID() != me->getVictim()->GetGUID()
+                        && target->GetGUID() != me->GetVictim()->GetGUID()
                         && target->GetPositionZ() > me->GetPositionZ() - 5
                         && !target->HasAura(AURA_SPECTRAL_EXHAUSTION))
                         {
@@ -340,7 +340,7 @@ struct boss_kalecgosAI : public ScriptedAI
         if (bJustReset)//boss is invisible, don't attack
             return;
 
-        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)))
+        if (!me->GetVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)))
         {
             float attackRadius = me->GetAttackDistance(who);
             if (me->IsWithinDistInMap(who, attackRadius))
@@ -383,7 +383,7 @@ struct boss_kalecgosAI : public ScriptedAI
             {
                 for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
                 {
-                    Player* pPlayer = itr->getSource();
+                    Player* pPlayer = itr->GetSource();
                     if (pPlayer)
                         ((InstanceMap*)me->GetMap())->PermBindAllPlayers(pPlayer);
                 }
@@ -549,7 +549,7 @@ struct boss_sathrovarrAI : public ScriptedAI
         Position homePos = me->GetHomePosition();
         for (Map::PlayerList::const_iterator itr = playerList.begin(); itr != playerList.end(); ++itr)
         {
-            Player* player = itr->getSource();
+            Player* player = itr->GetSource();
             if (player->IsInDist(&homePos, 50.0f) && player->GetPositionZ() <= DEMON_REALM_Z + 10.f)
             {
                  player->RemoveAura(AURA_SPECTRAL_REALM, 0);
@@ -588,7 +588,7 @@ struct boss_sathrovarrAI : public ScriptedAI
                     Kalecgos->AI()->EnterEvadeMode();
                 return;
             }
-            if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 10) && !isEnraged)
+            if (HealthBelowPct(10) && !isEnraged)
             {
                 if (Creature* Kalecgos = Unit::GetCreature(*me, KalecgosGUID))
                     Kalecgos->AI()->DoAction(DO_ENRAGE);
@@ -603,7 +603,7 @@ struct boss_sathrovarrAI : public ScriptedAI
                     return;
                 }
             }
-            if (!isBanished && me->GetHealth() * 100 / me->GetMaxHealth() < 1)
+            if (!isBanished && HealthBelowPct(1))
             {
                 if (Kalecgos)
                 {
@@ -650,7 +650,7 @@ struct boss_sathrovarrAI : public ScriptedAI
         if (AgonyCurseTimer <= diff)
         {
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (!pTarget) pTarget = me->getVictim();
+            if (!pTarget) pTarget = me->GetVictim();
             DoCast(pTarget, SPELL_AGONY_CURSE);
             AgonyCurseTimer = 20000;
         }
@@ -766,7 +766,7 @@ bool GOkalecgos_teleporter(Player* pPlayer, GameObject* pGo)
     Map::PlayerList const& PlayerList = pMap->GetPlayers();
     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
     {
-        if (i->getSource() && i->getSource()->GetPositionZ() < DEMON_REALM_Z + 5)
+        if (i->GetSource() && i->GetSource()->GetPositionZ() < DEMON_REALM_Z + 5)
             ++SpectralPlayers;
     }
     if (pPlayer->HasAura(AURA_SPECTRAL_EXHAUSTION, 0) || (MAX_PLAYERS_IN_SPECTRAL_REALM && SpectralPlayers >= MAX_PLAYERS_IN_SPECTRAL_REALM))

@@ -223,7 +223,7 @@ struct boss_gruulAI : public ScriptedAI
 
                         me->GetMotionMaster()->Clear();
 
-                        Unit* victim = me->getVictim();
+                        Unit* victim = me->GetVictim();
                         if (victim)
                         {
                             me->GetMotionMaster()->MoveChase(victim);
@@ -254,7 +254,7 @@ struct boss_gruulAI : public ScriptedAI
                 Unit* pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
 
-                if (pTarget && me->IsWithinMeleeRange(me->getVictim()))
+                if (pTarget && me->IsWithinMeleeRange(me->GetVictim()))
                     DoCast(pTarget, SPELL_HURTFUL_STRIKE);
                 else
                     DoCastVictim(SPELL_HURTFUL_STRIKE);

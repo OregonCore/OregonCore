@@ -98,11 +98,11 @@ class CreatureTextMgr
         static size_t BuildMonsterChat(WorldPacket* data, WorldObject* source, ChatMsg msgtype, std::string text, Language language, WorldObject* whisperTarget, int loc_idx);
 
         //if sent, returns the 'duration' of the text else 0 if error
-        uint32 SendChat(Creature* source, uint8 textGroup, WorldObject* whisperTarget = nullptr, ChatMsg msgType = CHAT_MSG_ADDON, Language language = LANG_ADDON, CreatureTextRange range = TEXT_RANGE_NORMAL, uint32 sound = 0, Team team = TEAM_OTHER, bool gmOnly = false, Player* srcPlr = nullptr);
+        uint32 SendChat(Creature* source, uint8 textGroup, WorldObject* whisperTarget = nullptr, ChatMsg msgType = CHAT_MSG_ADDON, Language language = LANG_ADDON, CreatureTextRange range = TEXT_RANGE_NORMAL, uint32 sound = 0, Team team = TEAM_NONE, bool gmOnly = false, Player* srcPlr = nullptr);
         std::string GetLocalizedChatString(uint32 entry, uint8 gender, uint8 textGroup, uint32 id, int loc_idx) const;
         bool TextExist(uint32 sourceEntry, uint8 textGroup);
 
-        template<class Builder> void SendChatPacket(WorldObject* source, Builder const& builder, ChatMsg msgType, WorldObject* whisperTarget = nullptr, CreatureTextRange range = TEXT_RANGE_NORMAL, Team team = TEAM_OTHER, bool gmOnly = false) const;
+        template<class Builder> void SendChatPacket(WorldObject* source, Builder const& builder, ChatMsg msgType, WorldObject* whisperTarget = nullptr, CreatureTextRange range = TEXT_RANGE_NORMAL, Team team = TEAM_NONE, bool gmOnly = false) const;
 
     private:
         CreatureTextRepeatIds GetRepeatGroup(Creature* source, uint8 textGroup);
@@ -204,8 +204,8 @@ void CreatureTextMgr::SendChatPacket(WorldObject* source, Builder const& builder
         uint32 areaId = source->GetAreaId();
         Map::PlayerList const& players = source->GetMap()->GetPlayers();
         for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
-            if (itr->getSource()->GetAreaId() == areaId && (!team || Team(itr->getSource()->GetTeam()) == team) && (!gmOnly || itr->getSource()->isGameMaster()))
-                localizer(itr->getSource());
+            if (itr->GetSource()->GetAreaId() == areaId && (!team || Team(itr->GetSource()->GetTeam()) == team) && (!gmOnly || itr->GetSource()->IsGameMaster()))
+                localizer(itr->GetSource());
         return;
     }
     case TEXT_RANGE_ZONE:
@@ -213,16 +213,16 @@ void CreatureTextMgr::SendChatPacket(WorldObject* source, Builder const& builder
         uint32 zoneId = source->GetZoneId();
         Map::PlayerList const& players = source->GetMap()->GetPlayers();
         for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
-            if (itr->getSource()->GetZoneId() == zoneId && (!team || Team(itr->getSource()->GetTeam()) == team) && (!gmOnly || itr->getSource()->isGameMaster()))
-                localizer(itr->getSource());
+            if (itr->GetSource()->GetZoneId() == zoneId && (!team || Team(itr->GetSource()->GetTeam()) == team) && (!gmOnly || itr->GetSource()->IsGameMaster()))
+                localizer(itr->GetSource());
         return;
     }
     case TEXT_RANGE_MAP:
     {
         Map::PlayerList const& players = source->GetMap()->GetPlayers();
         for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
-            if ((!team || Team(itr->getSource()->GetTeam()) == team) && (!gmOnly || itr->getSource()->isGameMaster()))
-                localizer(itr->getSource());
+            if ((!team || Team(itr->GetSource()->GetTeam()) == team) && (!gmOnly || itr->GetSource()->IsGameMaster()))
+                localizer(itr->GetSource());
         return;
     }
     case TEXT_RANGE_WORLD:
@@ -230,7 +230,7 @@ void CreatureTextMgr::SendChatPacket(WorldObject* source, Builder const& builder
         SessionMap const& smap = sWorld.GetAllSessions();
         for (SessionMap::const_iterator iter = smap.begin(); iter != smap.end(); ++iter)
             if (Player* player = iter->second->GetPlayer())
-                if ((!team || Team(player->GetTeam()) == team) && (!gmOnly || player->isGameMaster()))
+                if ((!team || Team(player->GetTeam()) == team) && (!gmOnly || player->IsGameMaster()))
                     localizer(player);
         return;
     }

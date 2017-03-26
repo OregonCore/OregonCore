@@ -226,7 +226,7 @@ void
 MotionMaster::MoveChase(Unit* target, float dist, float angle)
 {
     // ignore movement request if target not exist
-    if (!target || target == i_owner || i_owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+    if (!target || target == i_owner)
         return;
 
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
@@ -251,7 +251,7 @@ void
 MotionMaster::MoveFollow(Unit* target, float dist, float angle, MovementSlot slot)
 {
     // ignore movement request if target not exist
-    if (!target || target == i_owner || i_owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+    if (!target || target == i_owner)
         return;
 
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
@@ -325,11 +325,14 @@ void MotionMaster::MoveFall(float z, uint32 id)
             return;
     }
 
+    i_owner->AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
+
+    // don't run spline movement for players
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
-        i_owner->AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
+        return;
 
     Movement::MoveSplineInit init(*i_owner);
-    init.MoveTo(i_owner->GetPositionX(), i_owner->GetPositionY(), z);
+    init.MoveTo(i_owner->GetPositionX(), i_owner->GetPositionY(), z, false);
     init.SetFall();
     init.Launch();
     Mutate(new EffectMovementGenerator(0), MOTION_SLOT_ACTIVE);
@@ -345,6 +348,7 @@ MotionMaster::MoveSeekAssistance(float x, float y, float z)
         DEBUG_LOG("Creature (Entry: %u GUID: %u) seek assistance (X: %f Y: %f Z: %f)",
                   i_owner->GetEntry(), i_owner->GetGUIDLow(), x, y, z);
         i_owner->AttackStop();
+        i_owner->CastStop();
         i_owner->ToCreature()->SetReactState(REACT_PASSIVE);
         Mutate(new AssistanceMovementGenerator(x, y, z), MOTION_SLOT_ACTIVE);
     }

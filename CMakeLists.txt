@@ -9,9 +9,22 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 # Set projectname (must be done AFTER setting configurationtypes)
+
 project(OregonCore)
+
+# We require CMake >= 2.8
 cmake_minimum_required(VERSION 2.8)
+
+# CMake policies (can not be handled elsewhere)
 cmake_policy(VERSION 2.8)
+ 
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
+endif()
+
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif()
 
 # Set RPATH-handing (CMake parameters)
 set(CMAKE_SKIP_BUILD_RPATH 0)
@@ -50,9 +63,7 @@ include(CheckPlatform)
 find_package(PCHSupport)
 find_package(ACE REQUIRED)
 find_package(OpenSSL REQUIRED)
-if( NOT USE_MYSQL_SOURCES )
-  find_package(MySQL REQUIRED)
-endif()
+find_package(MySQL REQUIRED)
 
 if( UNIX )
   find_package(Curses)

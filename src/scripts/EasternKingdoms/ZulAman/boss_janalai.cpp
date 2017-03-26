@@ -26,6 +26,7 @@ EndScriptData */
 #include "ScriptedCreature.h"
 #include "zulaman.h"
 #include "GridNotifiers.h"
+#include "CellImpl.h"
 
 enum eEnums
 {
@@ -185,7 +186,7 @@ struct boss_janalaiAI : public ScriptedAI
     {
         if (isFlameBreathing)
         {
-            if (!me->HasInArc(M_PI / 6, pTarget))
+            if (!me->HasInArc(float(M_PI) / 6, pTarget))
                 damage = 0;
         }
     }
@@ -375,7 +376,7 @@ struct boss_janalaiAI : public ScriptedAI
             if (!pMap->IsDungeon()) return;
             Map::PlayerList const& PlayerList = pMap->GetPlayers();
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-                if (Player* i_pl = i->getSource())
+                if (Player* i_pl = i->GetSource())
                     if (i_pl->IsAlive())
                         DoTeleportPlayer(i_pl, JanalainPos[0][0] - 5 + rand() % 10, JanalainPos[0][1] - 5 + rand() % 10, JanalainPos[0][2], 0);
             //DoCast(Temp, SPELL_SUMMON_PLAYERS, true) // core bug, spell does not work if too far

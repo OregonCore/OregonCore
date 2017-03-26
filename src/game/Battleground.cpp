@@ -132,6 +132,7 @@ Battleground::Battleground()
     m_StartTime         = 0;
     m_ValidStartPositionTimer = 0;
     m_Events            = 0;
+    m_StartDelayTime    = 0;
     m_IsRated           = false;
     m_BuffChange        = false;
     m_Name              = "";
@@ -176,8 +177,11 @@ Battleground::Battleground()
     m_TeamScores[BG_TEAM_ALLIANCE]      = 0;
     m_TeamScores[BG_TEAM_HORDE]         = 0;
 
+    m_score[BG_TEAM_ALLIANCE]   = m_TeamScores[BG_TEAM_ALLIANCE];
+    m_score[BG_TEAM_HORDE]      = m_TeamScores[BG_TEAM_HORDE];
+
     m_PrematureCountDown = false;
-    m_PrematureCountDown = 0;
+    m_PrematureCountDownTimer = 0;
 
     m_HonorMode = BG_NORMAL;
 
@@ -331,11 +335,12 @@ void Battleground::Update(uint32 diff)
     {
         for (std::vector<uint64>::iterator itr = m_ResurrectQueue.begin(); itr != m_ResurrectQueue.end(); ++itr)
         {
-            Player* plr = sObjectMgr.GetPlayer(*itr);
-            if (!plr)
+            Player* player = sObjectMgr.GetPlayer(*itr);
+            if (!player)
                 continue;
-            plr->ResurrectPlayer(1.0f);
-            plr->CastSpell(plr, SPELL_SPIRIT_HEAL_MANA, true);
+            player->ResurrectPlayer(1.0f);
+            player->CastSpell(player, SPELL_SUMMON_PET, true);
+            player->CastSpell(player, SPELL_SPIRIT_HEAL_MANA, true);
             ObjectAccessor::Instance().ConvertCorpseForPlayer(*itr);
         }
         m_ResurrectQueue.clear();
@@ -648,7 +653,7 @@ void Battleground::RewardReputationToTeam(uint32 faction_id, uint32 Reputation, 
             uint32 repGain = Reputation;
             AddPct(repGain, plr->GetTotalAuraModifier(SPELL_AURA_MOD_REPUTATION_GAIN));
             AddPct(repGain, plr->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_FACTION_REPUTATION_GAIN, faction_id));
-            plr->ModifyFactionReputation(factionEntry, Reputation);
+            plr->GetReputationMgr().ModifyReputation(factionEntry, Reputation);
         }
     }
 }
@@ -869,11 +874,11 @@ uint32 Battleground::GetBattlemasterEntry() const
 
 void Battleground::RewardMark(Player* plr, uint32 count)
 {
-    // 'Inactive' this aura prevents the player from gaining honor points and battleground tokens
-    if (plr->GetDummyAura(SPELL_AURA_PLAYER_INACTIVE))
+    if (!plr || !count)
         return;
 
-    if (!plr || !count)
+    // 'Inactive' this aura prevents the player from gaining honor points and battleground tokens
+    if (plr->GetDummyAura(SPELL_AURA_PLAYER_INACTIVE))
         return;
 
     BattlegroundMarks mark;
@@ -1930,9 +1935,9 @@ inline void Battleground::_CheckSafePositions(uint32 diff)
         for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
             if (Player* player = ObjectAccessor::FindPlayer(itr->first))
             {
-                player->GetPosition(&pos);
+                pos = player->GetPosition();
                 GetTeamStartLoc(player->GetBGTeam(), x, y, z, o);
-                if (pos.GetExactDistSq(x, y, z) > maxDist)
+                if (!pos.IsInDist2d(x, y, maxDist))
                 {
                     sLog.outDebug("BATTLEGROUND: Sending %s back to start location (map: %u) (possible exploit)", player->GetName(), GetMapId());
                     player->TeleportTo(GetMapId(), x, y, z, o);

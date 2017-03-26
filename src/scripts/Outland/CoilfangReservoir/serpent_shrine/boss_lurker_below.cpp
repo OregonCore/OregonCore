@@ -155,7 +155,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
     {
         if (!CanStartEvent)//boss is invisible, don't attack
             return;
-        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)))
+        if (!me->GetVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)))
         {
             float attackRadius = me->GetAttackDistance(who);
             if (me->IsWithinDistInMap(who, attackRadius))
@@ -249,7 +249,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
                 {
                     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                     {
-                        if (me->IsWithinMeleeRange(i->getSource()))
+                        if (me->IsWithinMeleeRange(i->GetSource()))
                             InRange = true;
                     }
                 }
@@ -265,8 +265,8 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
                     Map::PlayerList const& PlayerList = pMap->GetPlayers();
                     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                     {
-                        if (i->getSource() && i->getSource()->IsAlive() && me->HasInArc((double)diff / 20000 * (double)M_PI * 2, i->getSource()) && me->IsWithinDist(i->getSource(), SPOUT_DIST) && !i->getSource()->IsInWater())
-                            DoCast(i->getSource(), SPELL_SPOUT, true);//only knock back palyers in arc, in 100yards, not in water
+                        if (i->GetSource() && i->GetSource()->IsAlive() && me->HasInArc((double)diff / 20000 * (double)M_PI * 2, i->GetSource()) && me->IsWithinDist(i->GetSource(), SPOUT_DIST) && !i->GetSource()->IsInWater())
+                            DoCast(i->GetSource(), SPELL_SPOUT, true);//only knock back palyers in arc, in 100yards, not in water
                     }
                 }
 
@@ -286,8 +286,8 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
             if (GeyserTimer <= diff)
             {
                 Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-                if (!pTarget && me->getVictim())
-                    pTarget = me->getVictim();
+                if (!pTarget && me->GetVictim())
+                    pTarget = me->GetVictim();
                 if (pTarget)
                     DoCast(pTarget, SPELL_GEYSER, true);
                 GeyserTimer = rand() % 5000 + 15000;
@@ -299,8 +299,8 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
                 if (WaterboltTimer <= diff)
                 {
                     Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                    if (!pTarget && me->getVictim())
-                        pTarget = me->getVictim();
+                    if (!pTarget && me->GetVictim())
+                        pTarget = me->GetVictim();
                     if (pTarget)
                         DoCast(pTarget, SPELL_WATERBOLT, true);
                     WaterboltTimer = 3000;
@@ -404,7 +404,7 @@ struct mob_coilfang_ambusherAI : public Scripted_NoMovementAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!who || me->getVictim()) return;
+        if (!who || me->GetVictim()) return;
 
         if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who) && me->IsWithinDistInMap(who, 45))
             AttackStart(who);
@@ -414,7 +414,7 @@ struct mob_coilfang_ambusherAI : public Scripted_NoMovementAI
     {
         if (MultiShotTimer <= diff)
         {
-            if (me->getVictim())
+            if (me->GetVictim())
                 DoCastVictim( SPELL_SPREAD_SHOT, true);
 
             MultiShotTimer = 10000 + rand() % 10000;

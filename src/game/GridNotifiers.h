@@ -110,7 +110,7 @@ struct GridUpdater
     template<class T> void updateObjects(GridRefManager<T>& m)
     {
         for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
-            iter->getSource()->Update(i_timeDiff);
+            iter->GetSource()->Update(i_timeDiff);
     }
 
     void Visit(PlayerMapType& m)
@@ -242,30 +242,30 @@ struct WorldObjectWorker
     void Visit(GameObjectMapType& m)
     {
         for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     void Visit(PlayerMapType& m)
     {
         for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
     void Visit(CreatureMapType& m)
     {
         for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     void Visit(CorpseMapType& m)
     {
         for (CorpseMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     void Visit(DynamicObjectMapType& m)
     {
         for (DynamicObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -413,7 +413,7 @@ struct CreatureWorker
     void Visit(CreatureMapType& m)
     {
         for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -437,7 +437,6 @@ struct PlayerSearcher
 template<class Check>
 struct PlayerListSearcher
 {
-    uint32 i_phaseMask;
     std::list<Player*>& i_objects;
     Check& i_check;
 
@@ -459,7 +458,7 @@ struct PlayerWorker
     void Visit(PlayerMapType& m)
     {
         for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -477,7 +476,7 @@ struct PlayerDistWorker
     void Visit(PlayerMapType& m)
     {
         for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-            i_do(itr->getSource());
+            i_do(itr->GetSource());
     }
 
     template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -831,12 +830,10 @@ class AnyAoETargetUnitInObjectRangeCheck
         bool operator()(Unit* u)
         {
             // Check contains checks for: live, non-selectable, non-attackable flags, flight check and GM check, ignore totems
-            if (!u->isTargetableForAttack())
-                return false;
             if (u->GetTypeId() == TYPEID_UNIT && u->IsTotem())
                 return false;
 
-            if ((i_targetForPlayer ? !i_funit->IsFriendlyTo(u) : i_funit->IsHostileTo(u)) && i_obj->IsWithinDistInMap(u, i_range))
+            if (i_funit->IsValidAttackTarget(u) && i_obj->IsWithinDistInMap(u, i_range))
                 return true;
 
             return false;
@@ -902,7 +899,7 @@ struct AnyDeadUnitCheck
                 if (!me->IsWithinDistInMap(u, m_range))
                     return false;
 
-                if (!me->canAttack(u))
+                if (!me->IsValidAttackTarget(u))
                     return false;
 
                 if (i_playerOnly && u->GetTypeId() != TYPEID_PLAYER)
@@ -937,12 +934,12 @@ class NearestHostileUnitInAttackDistanceCheck
 
             if (m_force)
             {
-                if (!me->canAttack(u))
+                if (!me->IsValidAttackTarget(u))
                     return false;
             }
             else
             {
-                if (!me->canStartAttack(u))
+                if (!me->canStartAttack(u, false))
                     return false;
             }
 
@@ -958,6 +955,35 @@ class NearestHostileUnitInAttackDistanceCheck
         float m_range;
         bool m_force;
         NearestHostileUnitInAttackDistanceCheck(NearestHostileUnitInAttackDistanceCheck const&);
+};
+
+class NearestHostileUnitInAggroRangeCheck
+{
+public:
+    explicit NearestHostileUnitInAggroRangeCheck(Creature const* creature, bool useLOS = false) : _me(creature), _useLOS(useLOS)
+    {
+    }
+    bool operator()(Unit* u)
+    {
+        if (!u->IsHostileTo(_me))
+            return false;
+
+        if (!u->IsWithinDistInMap(_me, _me->GetAggroRange(u)))
+            return false;
+
+        if (!_me->IsValidAttackTarget(u))
+            return false;
+
+        if (_useLOS && !u->IsWithinLOSInMap(_me))
+            return false;
+
+        return true;
+    }
+
+private:
+    Creature const* _me;
+    bool _useLOS;
+    NearestHostileUnitInAggroRangeCheck(NearestHostileUnitInAggroRangeCheck const&);
 };
 
 class AnyAssistCreatureInRangeCheck
@@ -1127,7 +1153,7 @@ class AllGameObjectsWithEntryInRange
         AllGameObjectsWithEntryInRange(const WorldObject* pObject, uint32 uiEntry, float fMaxRange) : m_pObject(pObject), m_uiEntry(uiEntry), m_fRange(fMaxRange) {}
         bool operator() (GameObject* pGo)
         {
-            if (pGo->GetEntry() == m_uiEntry && m_pObject->IsWithinDist(pGo, m_fRange, false))
+            if ((!m_uiEntry || pGo->GetEntry() == m_uiEntry) && m_pObject->IsWithinDist(pGo, m_fRange, false))
                 return true;
 
             return false;
@@ -1144,7 +1170,7 @@ class AllCreaturesOfEntryInRange
         AllCreaturesOfEntryInRange(const WorldObject* pObject, uint32 uiEntry, float fMaxRange) : m_pObject(pObject), m_uiEntry(uiEntry), m_fRange(fMaxRange) {}
         bool operator() (Unit* pUnit)
         {
-            if (pUnit->GetEntry() == m_uiEntry && m_pObject->IsWithinDist(pUnit, m_fRange, false))
+            if ((!m_uiEntry || pUnit->GetEntry() == m_uiEntry) && m_pObject->IsWithinDist(pUnit, m_fRange, false))
                 return true;
 
             return false;
@@ -1163,7 +1189,7 @@ class PlayerAtMinimumRangeAway
         bool operator() (Player* pPlayer)
         {
             //No threat list check, must be done explicit if expected to be in combat with creature
-            if (!pPlayer->isGameMaster() && pPlayer->IsAlive() && !pUnit->IsWithinDist(pPlayer, fRange, false))
+            if (!pPlayer->IsGameMaster() && pPlayer->IsAlive() && !pUnit->IsWithinDist(pPlayer, fRange, false))
                 return true;
 
             return false;

@@ -32,9 +32,9 @@ endif()
 set(scripts_STAT_SRCS
   ${scripts_STAT_SRCS}
   ../game/ScriptedEscortAI.cpp
+  ../game/ScriptedGuardAI.cpp
   ../game/ScriptedCreature.cpp
   ../game/ScriptedFollowerAI.cpp
-  ../game/ScriptedGuardAI.cpp
   ../game/ScriptedSimpleAI.cpp
 )
 

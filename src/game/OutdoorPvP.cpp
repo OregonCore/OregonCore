@@ -20,6 +20,7 @@
 #include "ObjectAccessor.h"
 #include "ObjectMgr.h"
 #include "Map.h"
+#include "MapManager.h"
 #include "Group.h"
 #include "WorldPacket.h"
 #include "GridNotifiers.h"
@@ -423,7 +424,7 @@ void OutdoorPvP::HandleKill(Player* killer, Unit* killed)
     {
         for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player* pGroupGuy = itr->getSource();
+            Player* pGroupGuy = itr->GetSource();
 
             if (!pGroupGuy)
                 continue;

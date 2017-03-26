@@ -201,7 +201,7 @@ const float CHESS_RIGHT_VECTOR[3] = { -27.665f, 34.6075f, 0.0f };
 const float CHESS_UP_VECTOR[3] = { -34.6375f, -27.3475f, 0.0f };
 
 const float CHESS_PIECEBAR_ALLIANCE[3] = { -11082.1709f, -1910.06103f, 221.07f };
-const float CHESS_PIECEBAR_HORDE[3] = { -11079.038f, -1842.5085, 221.07f };
+const float CHESS_PIECEBAR_HORDE[3] = { -11079.038f, -1842.5085f, 221.07f };
 
 uint32 ChessPieceEntrysHorde[6] = { NPC_PAWN_H, NPC_ROOK_H, NPC_QUEEN_H, NPC_KNIGHT_H, NPC_BISHOP_H, NPC_KING_H };
 uint32 ChessPieceEntrysAlliance[6] = { NPC_PAWN_A, NPC_ROOK_A, NPC_QUEEN_A, NPC_BISHOP_A, NPC_KNIGHT_A, NPC_KING_A };
@@ -256,9 +256,9 @@ struct Echo_of_MedivhAI : public ScriptedAI
         Map::PlayerList const &PlList = me->GetMap()->GetPlayers();
         for (Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
         {
-            if (i->getSource())
+            if (i->GetSource())
             {
-                if (i->getSource()->GetTeam() == ALLIANCE)
+                if (i->GetSource()->GetTeam() == ALLIANCE)
                     PlayerControlledFaction = FACTION_ALLIANCE;
                 else
                     PlayerControlledFaction = FACTION_HORDE;
@@ -706,7 +706,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
         Map::PlayerList const &PlList = me->GetMap()->GetPlayers();
         for (Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
         {
-            i->getSource()->RemoveAurasDueToSpellByCancel(SPELL_CONTROL_PIECE);
+            i->GetSource()->RemoveAurasDueToSpellByCancel(SPELL_CONTROL_PIECE);
         }
     }
 
@@ -954,7 +954,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
         //check black fields first
         for (std::list<Unit*>::iterator itr = medivhAI->BlackFieldList.begin(); itr != medivhAI->BlackFieldList.end(); itr++)
         {
-            if ((*itr)->GetDistance(me) <= SpellRange && (*itr)->GetDistance(target) < distance && !(*itr)->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+			if ((*itr)->GetDistance(me) <= SpellRange && (*itr)->GetDistance(target) < distance && !(*itr)->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL))
             {
                 victim = (*itr);
                 distance = (*itr)->GetDistance(target);
@@ -964,7 +964,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
         //now check for closer white fields
         for (std::list<Unit*>::iterator itr = medivhAI->WhiteFieldList.begin(); itr != medivhAI->WhiteFieldList.end(); itr++)
         {
-            if ((*itr)->GetDistance(me) <= SpellRange && (*itr)->GetDistance(target) < distance && !(*itr)->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+			if ((*itr)->GetDistance(me) <= SpellRange && (*itr)->GetDistance(target) < distance && !(*itr)->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL))
             {
                 victim = (*itr);
                 distance = (*itr)->GetDistance(target);
@@ -1195,12 +1195,12 @@ struct Move_triggerAI : public ScriptedAI
         if (pInstance->GetData(TYPE_CHESS) != IN_PROGRESS)
             return;
 
-        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+		if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL))
         {
             if (search_timer < diff)
             {
                 if (!HasMoveMarker())
-                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+					me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
 
                 search_timer = 2000;
             }
@@ -1214,7 +1214,7 @@ struct Move_triggerAI : public ScriptedAI
         if (spell->Id == SPELL_TRANSFORM_FIELD)
         {
             search_timer = 3000;
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+			me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
         }
     }
 };
@@ -1455,7 +1455,7 @@ bool GossipSelect_chess_npc(Player* player, Creature* _Creature, uint32 sender, 
         if (pInstance && _Creature)
         {
             player->CastSpell(_Creature, SPELL_CONTROL_PIECE, true);
-            _Creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+			_Creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
             player->SetClientControl(_Creature, false);
 
             if ((_Creature->GetEntry() == NPC_KING_A || _Creature->GetEntry() == NPC_KING_H) && pInstance->GetData(TYPE_CHESS) == NOT_STARTED)

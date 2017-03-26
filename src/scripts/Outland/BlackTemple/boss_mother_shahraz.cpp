@@ -174,7 +174,7 @@ struct boss_shahrazAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth() * 100 / me->GetMaxHealth()) < 10) && !Enraged)
+        if (HealthBelowPct(10) && !Enraged)
         {
             Enraged = true;
             DoCast(me, SPELL_ENRAGE, true);
@@ -309,7 +309,7 @@ struct boss_shahrazAI : public ScriptedAI
 
         if (ShriekTimer <= diff)
         {
-            if (TryDoCast(me->getVictim(), SPELL_SILENCING_SHRIEK))
+            if (TryDoCast(me->GetVictim(), SPELL_SILENCING_SHRIEK))
                 ShriekTimer = 20000;
         }
         else ShriekTimer -= diff;

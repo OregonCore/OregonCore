@@ -88,21 +88,21 @@ struct boss_kormokAI : public ScriptedAI
         if (Minion_Timer <= diff)
         {
             //Cast
-            SummonMinions(me->getVictim());
-            SummonMinions(me->getVictim());
-            SummonMinions(me->getVictim());
-            SummonMinions(me->getVictim());
+            SummonMinions(me->GetVictim());
+            SummonMinions(me->GetVictim());
+            SummonMinions(me->GetVictim());
+            SummonMinions(me->GetVictim());
 
             Minion_Timer = 12000;
         }
         else Minion_Timer -= diff;
 
         //Summon 2 Bone Mages
-        if (!Mages && me->GetHealth() * 100 / me->GetMaxHealth() < 26)
+        if (!Mages && HealthBelowPct(25))
         {
             //Cast
-            SummonMages(me->getVictim());
-            SummonMages(me->getVictim());
+            SummonMages(me->GetVictim());
+            SummonMages(me->GetVictim());
             Mages = true;
         }
 

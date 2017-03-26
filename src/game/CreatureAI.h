@@ -18,6 +18,7 @@
 #ifndef OREGON_CREATUREAI_H
 #define OREGON_CREATUREAI_H
 
+#include "Creature.h"
 #include "UnitAI.h"
 #include "Common.h"
 
@@ -87,7 +88,7 @@ class CreatureAI : public UnitAI
             AttackAngle(0.0f)
         {}
 
-        virtual ~CreatureAI() {}
+        ~CreatureAI() override {}
 
         // == Reactions At =================================
 
@@ -127,7 +128,8 @@ class CreatureAI : public UnitAI
         virtual void SpellHitTarget(Unit* /*target*/, const SpellEntry*) {}
 
         // Called when the creature is target of hostile action: swing, hostile spell landed, fear/etc)
-        //virtual void AttackedBy(Unit* attacker);
+        virtual void AttackedBy(Unit* attacker) {}
+
         virtual bool IsEscorted()
         {
             return false;
@@ -145,7 +147,7 @@ class CreatureAI : public UnitAI
         // Called if a temporary summoned of m_creature reach a move point
         virtual void SummonedMovementInform(Creature* /*pSummoned*/, uint32 /*uiMotionType*/, uint32 /*uiData*/) {}
 
-        void OnCharmed(bool apply);
+        void OnCharmed(bool apply) override;
 
         //virtual void SpellClick(Player* player) {}
 
@@ -157,6 +159,12 @@ class CreatureAI : public UnitAI
 
         // Called at text emote receive from player
         virtual void ReceiveEmote(Player* /*pPlayer*/, uint32 /*text_emote*/) {}
+
+        // Called when owner takes damage
+        virtual void OwnerAttackedBy(Unit* /*attacker*/) {}
+
+        // Called when owner attacks something
+        virtual void OwnerAttacked(Unit* /*target*/) {}
 
         // == Triggered Actions Requested ==================
 

@@ -73,7 +73,7 @@ struct mob_treantAI  : public ScriptedAI
             return;
         }
 
-        if (me->getVictim()->GetGUID() != WarpGuid)
+        if (me->GetVictim()->GetGUID() != WarpGuid)
             DoMeleeAttackIfReady();
     }
 };

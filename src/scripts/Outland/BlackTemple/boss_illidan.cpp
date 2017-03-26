@@ -306,10 +306,10 @@ static Locations HoverPosition[] =
 
 static Locations GlaivePosition[] =
 {
-    {695.105, 305.303, 354.256},
-    {659.338, 305.303, 354.256},//the distance between two glaives is 36
-    {700.105, 305.303, 354.256},
-    {664.338, 305.303, 354.256}
+    {695.105f, 305.303f, 354.256f},
+    {659.338f, 305.303f, 354.256f},//the distance between two glaives is 36
+    {700.105f, 305.303f, 354.256f},
+    {664.338f, 305.303f, 354.256f}
 };
 
 static Locations EyeBlast[] =
@@ -421,9 +421,9 @@ struct boss_illidan_stormrageAI : public ScriptedAI
     {
         if (FlightCount == 7) //change hover point
         {
-            if (me->getVictim())
+            if (me->GetVictim())
             {
-                me->SetInFront(me->getVictim());
+                me->SetInFront(me->GetVictim());
                 me->StopMoving();
             }
             EnterPhase(PHASE_FLIGHT);
@@ -867,8 +867,8 @@ struct boss_illidan_stormrageAI : public ScriptedAI
             {
             case EVENT_SHADOW_BLAST:
                 me->GetMotionMaster()->Clear(false);
-                if (!me->IsWithinDistInMap(me->getVictim(), 50) || !me->IsWithinLOSInMap(me->getVictim()))
-                    me->GetMotionMaster()->MoveChase(me->getVictim(), 30);
+                if (!me->IsWithinDistInMap(me->GetVictim(), 50) || !me->IsWithinLOSInMap(me->GetVictim()))
+                    me->GetMotionMaster()->MoveChase(me->GetVictim(), 30);
                 else
                     me->GetMotionMaster()->MoveIdle();
                 DoCastVictim( SPELL_SHADOW_BLAST);
@@ -939,8 +939,8 @@ struct flame_of_azzinothAI : public ScriptedAI
                 Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget && pTarget->IsAlive())
                 {
-                    me->AddThreat(me->getVictim(), 5000000.0f);
-                    AttackStart(me->getVictim());
+                    me->AddThreat(me->GetVictim(), 5000000.0f);
+                    AttackStart(me->GetVictim());
                 }
             }
             else if (!me->HasAura(SPELL_AZZINOTH_CHANNEL, 0))
@@ -1415,7 +1415,7 @@ struct npc_akama_illidanAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 20)
+        if (HealthBelowPct(20))
             DoCast(me, SPELL_HEALING_POTION);
 
         DoMeleeAttackIfReady();
@@ -1461,7 +1461,7 @@ struct boss_maievAI : public ScriptedAI
         else
         {
             GETUNIT(Illidan, IllidanGUID);
-            if (Illidan && Illidan->getVictim() == me)
+            if (Illidan && Illidan->GetVictim() == me)
                 damage = me->GetMaxHealth() / 10;
             if (damage >= me->GetHealth())
                 damage = 0;
@@ -1608,8 +1608,8 @@ struct boss_maievAI : public ScriptedAI
             }
             else
             {
-                if (!me->IsWithinDistInMap(me->getVictim(), 40))
-                    me->GetMotionMaster()->MoveChase(me->getVictim(), 30);
+                if (!me->IsWithinDistInMap(me->GetVictim(), 40))
+                    me->GetMotionMaster()->MoveChase(me->GetVictim(), 30);
                 DoCastVictim( SPELL_THROW_DAGGER);
                 Timer[EVENT_MAIEV_THROW_DAGGER] = 2000;
             }
@@ -1618,7 +1618,7 @@ struct boss_maievAI : public ScriptedAI
             break;
         }
 
-        if (me->GetHealth() * 100 / me->GetMaxHealth() < 50)
+        if (HealthBelowPct(50))
         {
             me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -1757,17 +1757,17 @@ struct shadow_demonAI : public ScriptedAI
     {
         if (!UpdateVictim()) return;
 
-        if (me->getVictim()->GetTypeId() != TYPEID_PLAYER) return; // Only cast the below on players.
+        if (me->GetVictim()->GetTypeId() != TYPEID_PLAYER) return; // Only cast the below on players.
 
-        if (!me->getVictim()->HasAura(SPELL_PARALYZE, 0))
+        if (!me->GetVictim()->HasAura(SPELL_PARALYZE, 0))
         {
-            TargetGUID = me->getVictim()->GetGUID();
-            me->AddThreat(me->getVictim(), 10000000.0f);
+            TargetGUID = me->GetVictim()->GetGUID();
+            me->AddThreat(me->GetVictim(), 10000000.0f);
             DoCastVictim( SPELL_PURPLE_BEAM, true);
             DoCastVictim( SPELL_PARALYZE, true);
         }
         // Kill our target if we're very close.
-        if (me->IsWithinDistInMap(me->getVictim(), 3))
+        if (me->IsWithinDistInMap(me->GetVictim(), 3))
             DoCastVictim( SPELL_CONSUME_SOUL);
     }
 };
@@ -1802,21 +1802,21 @@ struct mob_parasitic_shadowfiendAI : public ScriptedAI
 
     void DoMeleeAttackIfReady()
     {
-        if (me->isAttackReady() && me->IsWithinMeleeRange(me->getVictim()))
+        if (me->isAttackReady() && me->IsWithinMeleeRange(me->GetVictim()))
         {
-            if (!me->getVictim()->HasAura(SPELL_PARASITIC_SHADOWFIEND, 0)
-                && !me->getVictim()->HasAura(SPELL_PARASITIC_SHADOWFIEND2, 0))
+            if (!me->GetVictim()->HasAura(SPELL_PARASITIC_SHADOWFIEND, 0)
+                && !me->GetVictim()->HasAura(SPELL_PARASITIC_SHADOWFIEND2, 0))
             {
-                me->CastSpell(me->getVictim(), SPELL_PARASITIC_SHADOWFIEND2, true, 0, 0, IllidanGUID); //do not stack
+                me->CastSpell(me->GetVictim(), SPELL_PARASITIC_SHADOWFIEND2, true, 0, 0, IllidanGUID); //do not stack
             }
-            me->AttackerStateUpdate(me->getVictim());
+            me->AttackerStateUpdate(me->GetVictim());
             me->resetAttackTimer();
         }
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!me->getVictim())
+        if (!me->GetVictim())
         {
             if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
                 AttackStart(pTarget);
@@ -2119,7 +2119,7 @@ void boss_illidan_stormrageAI::EnterPhase(PhaseIllidan NextPhase)
     case PHASE_NORMAL:
     case PHASE_NORMAL_2:
     case PHASE_NORMAL_MAIEV:
-        AttackStart(me->getVictim());
+        AttackStart(me->GetVictim());
         Timer[EVENT_TAUNT] = 32000;
         Timer[EVENT_SHEAR] = 10000 + rand() % 15 * 1000;
         Timer[EVENT_FLAME_CRASH] = 20000;
@@ -2146,7 +2146,7 @@ void boss_illidan_stormrageAI::EnterPhase(PhaseIllidan NextPhase)
         Timer[EVENT_FLAME_BURST] = 10000;
         Timer[EVENT_SHADOWDEMON] = 30000;
         Timer[EVENT_TRANSFORM_DEMON] = 60000;
-        AttackStart(me->getVictim());
+        AttackStart(me->GetVictim());
         break;
     case PHASE_TALK_SEQUENCE:
         Timer[EVENT_TALK_SEQUENCE] = 100;

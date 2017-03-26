@@ -195,10 +195,10 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         break;
     case EVENT_T_TARGET_HP:
         {
-            if (!me->IsInCombat() || !me->getVictim() || !me->getVictim()->GetMaxHealth())
+            if (!me->IsInCombat() || !me->GetVictim() || !me->GetVictim()->GetMaxHealth())
                 return false;
 
-            uint32 perc = (me->getVictim()->GetHealth() * 100) / me->getVictim()->GetMaxHealth();
+            uint32 perc = (me->GetVictim()->GetHealth() * 100) / me->GetVictim()->GetMaxHealth();
 
             if (perc > event.percent_range.percentMax || perc < event.percent_range.percentMin)
                 return false;
@@ -208,7 +208,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
             break;
         }
     case EVENT_T_TARGET_CASTING:
-        if (!me->IsInCombat() || !me->getVictim() || !me->getVictim()->IsNonMeleeSpellCast(false, false, true))
+        if (!me->IsInCombat() || !me->GetVictim() || !me->GetVictim()->IsNonMeleeSpellCast(false, false, true))
             return false;
 
         //Repeat Timers
@@ -282,10 +282,10 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         }
     case EVENT_T_TARGET_MANA:
         {
-            if (!me->IsInCombat() || !me->getVictim() || !me->getVictim()->GetMaxPower(POWER_MANA))
+            if (!me->IsInCombat() || !me->GetVictim() || !me->GetVictim()->GetMaxPower(POWER_MANA))
                 return false;
 
-            uint32 perc = (me->getVictim()->GetPower(POWER_MANA) * 100) / me->getVictim()->GetMaxPower(POWER_MANA);
+            uint32 perc = (me->GetVictim()->GetPower(POWER_MANA) * 100) / me->GetVictim()->GetMaxPower(POWER_MANA);
 
             if (perc > event.percent_range.percentMax || perc < event.percent_range.percentMin)
                 return false;
@@ -339,10 +339,10 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         }
     case EVENT_T_TARGET_MISSING_AURA:
         {
-            if (!me->IsInCombat() || !me->getVictim())
+            if (!me->IsInCombat() || !me->GetVictim())
                 return false;
 
-            Aura* aura = me->getVictim()->GetAura(event.buffed.spellId, 0);
+            Aura* aura = me->GetVictim()->GetAura(event.buffed.spellId, 0);
             if (aura && uint32(aura->GetStackAmount()) >= event.buffed.amount)
                 return false;
 
@@ -419,7 +419,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
                 }
                 else
                 {
-                    target = me->getVictim();
+                    target = me->GetVictim();
                     if (target && target->GetTypeId() != TYPEID_PLAYER)
                         if (Unit* owner = target->GetOwner())
                             if (owner->GetTypeId() == TYPEID_PLAYER)
@@ -595,10 +595,10 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
 
         SetCombatMovement(action.combat_movement.state != 0);
 
-        if (CombatMovementEnabled && action.combat_movement.melee && me->IsInCombat() && me->getVictim())
-            me->SendMeleeAttackStart(me->getVictim());
-        else if (action.combat_movement.melee && me->IsInCombat() && me->getVictim())
-            me->SendMeleeAttackStop(me->getVictim());
+        if (CombatMovementEnabled && action.combat_movement.melee && me->IsInCombat() && me->GetVictim())
+            me->SendMeleeAttackStart(me->GetVictim());
+        else if (action.combat_movement.melee && me->IsInCombat() && me->GetVictim())
+            me->SendMeleeAttackStop(me->GetVictim());
         break;
     case ACTION_T_SET_PHASE:
         Phase = action.set_phase.phase;
@@ -657,7 +657,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
             if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() & TARGETED_MOTION_TYPE)
             {
                 me->GetMotionMaster()->Clear(false);
-                me->GetMotionMaster()->MoveChase(me->getVictim(), AttackDistance, AttackAngle);
+                me->GetMotionMaster()->MoveChase(me->GetVictim(), AttackDistance, AttackAngle);
             }
         }
         break;
@@ -1005,7 +1005,7 @@ void CreatureEventAI::MoveInLineOfSight(Unit* who)
         if (!who)
             return;
 
-        if (me->getVictim())
+        if (me->GetVictim())
             return;
 
         for (std::list<CreatureEventAIHolder>::iterator itr = CreatureEventAIList.begin(); itr != CreatureEventAIList.end(); ++itr)
@@ -1092,13 +1092,13 @@ void CreatureEventAI::UpdateAI(const uint32 diff)
                 case EVENT_T_TARGET_HP:
                 case EVENT_T_TARGET_CASTING:
                 case EVENT_T_FRIENDLY_HP:
-                    if (me->getVictim())
+                    if (me->GetVictim())
                         ProcessEvent(*i);
                     break;
                 case EVENT_T_RANGE:
-                    if (me->getVictim())
-                        if (me->IsInMap(me->getVictim()))
-                            if (me->IsInRange(me->getVictim(), (float)(*i).Event.range.minDist, (float)(*i).Event.range.maxDist))
+                    if (me->GetVictim())
+                        if (me->IsInMap(me->GetVictim()))
+                            if (me->IsInRange(me->GetVictim(), (float)(*i).Event.range.minDist, (float)(*i).Event.range.maxDist))
                                 ProcessEvent(*i);
                     break;
                 }
@@ -1154,7 +1154,7 @@ inline Unit* CreatureEventAI::GetTargetByType(uint32 Target, Unit* pActionInvoke
     case TARGET_T_SELF:
         return me;
     case TARGET_T_HOSTILE:
-        return me->getVictim();
+        return me->GetVictim();
     case TARGET_T_HOSTILE_SECOND_AGGRO:
         return SelectTarget(SELECT_TARGET_TOPAGGRO, 1);
     case TARGET_T_HOSTILE_LAST_AGGRO:

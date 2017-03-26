@@ -131,7 +131,7 @@ void SimpleAI::KilledUnit(Unit* victim)
         pTarget = me;
         break;
     case CAST_HOSTILE_TARGET:
-        pTarget = me->getVictim();
+        pTarget = me->GetVictim();
         break;
     case CAST_HOSTILE_SECOND_AGGRO:
         pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
@@ -179,7 +179,7 @@ void SimpleAI::DamageTaken(Unit* killer, uint32& damage)
         pTarget = me;
         break;
     case CAST_HOSTILE_TARGET:
-        pTarget = me->getVictim();
+        pTarget = me->GetVictim();
         break;
     case CAST_HOSTILE_SECOND_AGGRO:
         pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
@@ -230,7 +230,7 @@ void SimpleAI::UpdateAI(const uint32 diff)
                     pTarget = me;
                     break;
                 case CAST_HOSTILE_TARGET:
-                    pTarget = me->getVictim();
+                    pTarget = me->GetVictim();
                     break;
                 case CAST_HOSTILE_SECOND_AGGRO:
                     pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);

@@ -61,6 +61,7 @@ enum BattlegroundMarksCount
 
 enum BattlegroundSpells
 {
+    SPELL_SUMMON_PET                = 6962,                 // Pet Summoned
     SPELL_WAITING_FOR_RESURRECT     = 2584,                 // Waiting to Resurrect
     SPELL_SPIRIT_HEAL_CHANNEL       = 22011,                // Spirit Heal Channel
     SPELL_SPIRIT_HEAL               = 22012,                // Spirit Heal

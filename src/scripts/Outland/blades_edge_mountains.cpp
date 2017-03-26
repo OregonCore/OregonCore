@@ -255,7 +255,7 @@ struct mobs_nether_drakeAI : public ScriptedAI
 
         if (ManaBurn_Timer <= diff)
         {
-            Unit* pTarget = me->getVictim();
+            Unit* pTarget = me->GetVictim();
             if (pTarget && pTarget->getPowerType() == POWER_MANA)
                 DoCast(pTarget, SPELL_MANA_BURN);
             ManaBurn_Timer = 8000 + rand() % 8000;
@@ -496,7 +496,7 @@ bool GOUse_go_thunderspike(Player* player, GameObject* /*_GO*/)
         // to prevent spawn spam :)
         if (Creature* pGor = GetClosestCreatureWithEntry(player, GOR_GRIMGUT_ENTRY, 50.0f, true))
         {
-            if (!pGor->getVictim())
+            if (!pGor->GetVictim())
                 pGor->AI()->AttackStart(player);
 
             return false;
@@ -504,7 +504,7 @@ bool GOUse_go_thunderspike(Player* player, GameObject* /*_GO*/)
 
         Position dest;
         //player->GetValidPointInAngle(dest, 5.0f, frand(0.0f, 2*M_PI), true);
-        player->GetPosition(&dest);
+        dest = player->GetPosition();
         if (Creature* pGor = player->SummonCreature(GOR_GRIMGUT_ENTRY, dest.m_positionX, dest.m_positionY, dest.m_positionZ, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000))
             pGor->AI()->AttackStart(player);
     }
@@ -553,7 +553,7 @@ struct npc_light_orb_collectorAI : public ScriptedAI
         Map::PlayerList const &PlayerList = map->GetPlayers();
 
         for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
-            if (Player* player = itr->getSource())
+            if (Player* player = itr->GetSource())
                 if (player->GetGUID() == playerGUID)
                     if (me->IsWithinDistInMap(player, 15.0f))
                         if (player->GetQuestStatus(QUEST_LIGHT_FANTASTIC) || player->GetQuestStatus(QUEST_GATHER_THE_ORBS) == QUEST_STATUS_INCOMPLETE)
@@ -653,7 +653,7 @@ struct npc_anger_campAI : public ScriptedAI
 
 		if (Count == 5)
 		{
-			me->SummonCreature(NPC_DOOMCRYER, 2878.467, 4817.107, 282.800, 0.329514, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+			me->SummonCreature(NPC_DOOMCRYER, 2878.467f, 4817.107f, 282.800f, 0.329514f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
 			Reset();
 		}
 	}
@@ -1200,7 +1200,7 @@ struct npc_evergrove_ancientAI : public ScriptedAI
 
 		if (Creature* baelmon = me->FindNearestCreature(19747, 30.0f, true))
 		{
-			if (!baelmon->getVictim())
+			if (!baelmon->GetVictim())
 				me->AI()->AttackStart(baelmon);
 		}
 
@@ -1734,53 +1734,6 @@ CreatureAI* GetAI_npc_rexxar(Creature* pCreature)
 	return new npc_rexxarAI(pCreature);
 }
 
-/*#########
-# npc_thunderstrike_trigger
-#########*/
-
-#define QUEST_VISION_GUIDE 10525
-
-struct npc_thunderstrike_triggerAI : public ScriptedAI
-{
-	npc_thunderstrike_triggerAI(Creature *c) : ScriptedAI(c)
-	{
-		me->SetReactState(REACT_AGGRESSIVE);
-	}
-
-	void Reset() { }
-
-	void MoveInLineOfSight(Unit *pWho)
-	{
-		if (Player* plWho = pWho->GetCharmerOrOwnerPlayerOrPlayerItself())
-		{
-			if (plWho->GetQuestStatus(QUEST_VISION_GUIDE) == QUEST_STATUS_INCOMPLETE && plWho->HasItemCount(30481, 1, false) && plWho->GetDistance(me) < 8.0f)
-			{
-				switch (me->GetEntry())
-				{
-				case 61003:
-					plWho->CompleteQuest(QUEST_VISION_GUIDE);
-					break;
-				}
-			}		
-
-			if (plWho->GetQuestStatus(QUEST_VISION_GUIDE) == QUEST_STATUS_COMPLETE && plWho->HasItemCount(30481, 1, false) && plWho->GetDistance(me) < 8.0f)
-			{
-				switch (me->GetEntry())
-				{
-				case 61003:
-					plWho->TeleportTo(530, 2280.67f, 5983.65f, 142.49f, 3.04f, 0);
-					break;
-				}
-			}
-		}
-	}
-};
-
-CreatureAI* GetAI_npc_thunderstrike_trigger(Creature* pCreature)
-{
-	return new npc_thunderstrike_triggerAI(pCreature);
-}
-
 /*######
 ## npc_grimgut
 ######*/
@@ -2061,7 +2014,7 @@ CreatureAI* GetAI_npc_vimgol_circle_trigger(Creature* pCreature)
 ## npc_vimgol_the_vile
 ######*/
 
-#define YELL_AGGRO "YOU DARE SUMMON ME!?"
+#define YELL_VIMGOL_AGGRO "YOU DARE SUMMON ME!?"
 #define YELL_ENRAGE "Now me grow bigger and crush you!"
 #define SPELL_SHADOW_BOLT_VOLLEY 46082
 #define SPELL_GROWTH 40545
@@ -2086,7 +2039,7 @@ struct npc_vimgol_the_vileAI : public ScriptedAI
 
 	void EnterCombat(Unit* /*who*/)
 	{
-		me->Yell(YELL_AGGRO, LANG_UNIVERSAL, 0);
+		me->Yell(YELL_VIMGOL_AGGRO, LANG_UNIVERSAL, 0);
 	}
 
 	void UpdateAI(const uint32 diff)
@@ -2113,7 +2066,7 @@ struct npc_vimgol_the_vileAI : public ScriptedAI
 
 		if (!enrage && HealthBelowPct(50))
 		{
-			me->GetMotionMaster()->MovePoint(1, 3280.1f, 4640.3f, 216.5f, 4.8f);
+			me->GetMotionMaster()->MovePoint(1, 3280.1f, 4640.3f, 216.5f);
 			me->Yell(YELL_ENRAGE, LANG_UNIVERSAL, 0);
 			DoCast(me, SPELL_GROWTH);
 			enrage = true;
@@ -2990,101 +2943,6 @@ CreatureAI* GetAI_npc_abyssal_flamebringer(Creature* pCreature)
 	return new npc_abyssal_flamebringerAI(pCreature);
 }
 
-struct npc_vilefire_soulAI : public ScriptedAI
-{
-	npc_vilefire_soulAI(Creature *c) : ScriptedAI(c) {}
-
-	void Reset()
-	{
-		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
-
-		fireball_timer = 6000;
-	}
-
-	uint32 fireball_timer;
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-
-		if (fireball_timer <= diff)
-		{
-			DoCastVictim(9053);
-			fireball_timer = 8000;
-		}
-		else fireball_timer -= diff;
-
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_vilefire_soul(Creature* pCreature)
-{
-	return new npc_vilefire_soulAI(pCreature);
-}
-
-struct npc_searing_elementalAI : public ScriptedAI
-{
-	npc_searing_elementalAI(Creature *c) : ScriptedAI(c) {}
-
-	void Reset()
-	{
-		me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);		
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-
-		DoMeleeAttackIfReady();
-	}
-};
-
-CreatureAI* GetAI_npc_searing_elemental(Creature* pCreature)
-{
-	return new npc_searing_elementalAI(pCreature);
-}
-
-// make it work -.-
-
-#define QUEST_THE_STONES_OF_VEKHNIR 10565
-
-struct npc_veknir_triggerAI : public ScriptedAI 
-{
-	npc_veknir_triggerAI(Creature *c) : ScriptedAI(c) {}
-
-	void Reset() { }
-
-	void MoveInLineOfSight(Unit *pWho)
-	{
-		if (Player *plWho = pWho->GetCharmerOrOwnerPlayerOrPlayerItself())
-		{
-			if (plWho->GetQuestStatus(QUEST_THE_STONES_OF_VEKHNIR) == QUEST_STATUS_INCOMPLETE && plWho->HasItemCount(30561, 1, false) && plWho->GetDistance(me) < 5.0f)
-			{
-				switch (me->GetEntry())
-				{
-				case 61015:
-					plWho->AddItem(30567, 1);
-					break;
-				}
-			}
-		}
-	}
-
-	void UpdateAI(const uint32 diff)
-	{
-		if (!UpdateVictim())
-			return;
-	}
-};
-
-CreatureAI* GetAI_npc_veknir_trigger(Creature* pCreature)
-{
-	return new npc_veknir_triggerAI(pCreature);
-}
-
 void AddSC_blades_edge_mountains()
 {
     Script* newscript;
@@ -3223,11 +3081,6 @@ void AddSC_blades_edge_mountains()
 	newscript->RegisterSelf();
 
 	newscript = new Script;
-	newscript->Name = "npc_thunderstrike_trigger";
-	newscript->GetAI = &GetAI_npc_thunderstrike_trigger;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
 	newscript->Name = "npc_grimgut";
 	newscript->GetAI = &GetAI_npc_grimgut;
 	newscript->RegisterSelf();
@@ -3348,20 +3201,5 @@ void AddSC_blades_edge_mountains()
 	newscript = new Script;
 	newscript->Name = "npc_abyssal_flamebringer";
 	newscript->GetAI = &GetAI_npc_abyssal_flamebringer;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_vilefire_soul";
-	newscript->GetAI = &GetAI_npc_vilefire_soul;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_searing_elemental";
-	newscript->GetAI = &GetAI_npc_searing_elemental;
-	newscript->RegisterSelf();
-
-	newscript = new Script;
-	newscript->Name = "npc_veknir_trigger";
-	newscript->GetAI = &GetAI_npc_veknir_trigger;
 	newscript->RegisterSelf();
 }

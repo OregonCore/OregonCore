@@ -192,9 +192,9 @@ enum KilJaedenTimers
 // Locations of the Hand of Deceiver adds
 float DeceiverLocations[3][3] =
 {
-    {1682.045, 631.299, 5.936},
-    {1684.099, 618.848, 0.589},
-    {1694.170, 612.272, 1.416},
+    {1682.045f, 631.299f, 5.936f},
+    {1684.099f, 618.848f, 0.589f},
+    {1694.170f, 612.272f, 1.416f},
 };
 
 // Locations, where Shield Orbs will spawn
@@ -446,8 +446,7 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
         if (pInstance && pInstance->GetData(DATA_KILJAEDEN_EVENT) == DONE)
             return;
 
-        if (me->canStartAttack(who))
-            AttackStart(who);
+        ScriptedAI::MoveInLineOfSight(who);
 
         DoZoneInCombatWithPlayers(true);
 
@@ -480,7 +479,7 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
             break;
         case CREATURE_KILJAEDEN:
             summoned->CastSpell(summoned, SPELL_REBIRTH, false);
-            summoned->AddThreat(me->getVictim(), 1.0f);
+            summoned->AddThreat(me->GetVictim(), 1.0f);
             break;
         case NPC_RIFTWALKER:
             summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, true);
@@ -1092,7 +1091,7 @@ struct mob_volatile_felfire_fiendAI : public ScriptedAI
 
         if (!bLockedTarget)
         {
-            me->AddThreat(me->getVictim(), 10000000.0f);
+            me->AddThreat(me->GetVictim(), 10000000.0f);
             bLockedTarget = true;
         }
 
@@ -1102,7 +1101,7 @@ struct mob_volatile_felfire_fiendAI : public ScriptedAI
                 uiExplodeTimer = 0;
             else uiExplodeTimer -= diff;
         }
-        else if (me->IsWithinDistInMap(me->getVictim(), 3)) // Explode if it's close enough to it's target
+        else if (me->IsWithinDistInMap(me->GetVictim(), 3)) // Explode if it's close enough to it's target
         {
             DoCastVictim( SPELL_FELFIRE_FISSION);
             uiKillTimer = 500;
@@ -1216,7 +1215,7 @@ struct mob_shield_orbAI : public ScriptedAI
             bPointReached = false;
             uiCheckTimer = 1000;
             me->GetMotionMaster()->MovePoint(1, x, y, SHIELD_ORB_Z);
-            c += M_PI / 32;
+            c += float(M_PI) / 32;
             if (c >= 2 * M_PI) c = 0;
         }
         else
@@ -1270,9 +1269,9 @@ struct mob_sinster_reflectionAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if ((victimClass == 0) && me->getVictim())
+        if ((victimClass == 0) && me->GetVictim())
         {
-            victimClass = me->getVictim()->getClass();
+            victimClass = me->GetVictim()->getClass();
             switch (victimClass)
             {
             case CLASS_DRUID:
@@ -1320,7 +1319,7 @@ struct mob_sinster_reflectionAI : public ScriptedAI
                 DoCastVictim( SPELL_SR_SHOOT, false);
                 uiTimer[2] = urand(4000, 6000);
             }
-            if (me->IsWithinMeleeRange(me->getVictim(), 6))
+            if (me->IsWithinMeleeRange(me->GetVictim(), 6))
             {
                 if (uiTimer[0] <= diff)
                 {

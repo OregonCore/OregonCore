@@ -161,7 +161,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
             InstanceMap::PlayerList const& PlayerList = ((InstanceMap*)map)->GetPlayers();
             for (InstanceMap::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
-                if (Player* i_pl = i->getSource())
+                if (Player* i_pl = i->GetSource())
                 {
                     if (i_pl && i_pl->IsAlive())
                         targets.push_back(i_pl);
@@ -244,7 +244,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
 
         if (Charge_Timer <= diff)
         {
-            if (me->GetDistance2d(me->getVictim()) > 15)
+            if (me->GetDistance2d(me->GetVictim()) > 15)
                 DoCastVictim(SPELL_CHARGE);
             Charge_Timer = 10000;
         }
@@ -281,8 +281,8 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
             }
             else FelGeyserTimer -= diff;
 
-            if (me->getVictim() && me->getVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL, true))
-                me->getThreatManager().modifyThreatPercent(me->getVictim(), -100);
+            if (me->GetVictim() && me->GetVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL, true))
+                me->getThreatManager().modifyThreatPercent(me->GetVictim(), -100);
         }
 
         if (PhaseChangeTimer <= diff)

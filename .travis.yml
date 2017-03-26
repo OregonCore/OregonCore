@@ -27,7 +27,7 @@ git:
 
 before_install:
   - sudo apt-get -qq install mariadb-client libace-dev
-  - test "$TRAVIS_PULL_REQUEST" == "false"
+  - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
   - curl -o doxygen.tar.gz https://oregon-core.net/travis/doxygen.tar.gz
   - tar xzf doxygen.tar.gz
   - sudo install -m 755 doxygen /usr/bin
@@ -43,10 +43,10 @@ install:
 # apply all updates to db and catch possible errors
 script:
   - cd $TRAVIS_BUILD_DIR/sql
-  - mysql -u root --password='' < create_mysql.sql
-  - mysql -u oregon -poregon realmd < realmd.sql
-  - mysql -u oregon -poregon characters < characters.sql
-  - mysql -u oregon -poregon world < world.sql
+  - mysql -u root --password='' < create/create_mysql.sql
+  - mysql -u oregon -poregon realmd < base/realmd.sql
+  - mysql -u oregon -poregon characters < base/characters.sql
+  - mysql -u oregon -poregon world < base/world.sql
   - curl --retry 3 -o OregonDatabase.zip https://oregon-core.net/travis/OregonDatabase.zip
   - unzip OregonDatabase.zip
   - mysql -u oregon -poregon world < OregonDatabase.sql
@@ -57,7 +57,7 @@ script:
 
 # generate and deploy doxygen documentation now
 after_success:
-  - test "$TRAVIS_PULL_REQUEST" == "false"
+  - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
   - echo 'create database documentation' | mysql -u root --password=''
   - mysql -u root --password='' documentation < documentation.sql
   - cd $TRAVIS_BUILD_DIR/build

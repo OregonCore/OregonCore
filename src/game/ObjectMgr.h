@@ -391,10 +391,7 @@ typedef std::multimap<uint32, uint32> QuestRelations;
 
 struct PetLevelInfo
 {
-    PetLevelInfo() : health(0), mana(0)
-    {
-        for (int i = 0; i < MAX_STATS; ++i) stats[i] = 0;
-    }
+    PetLevelInfo() : health(0), mana(0), armor(0) { for (uint8 i = 0; i < MAX_STATS; ++i) stats[i] = 0; }
 
     uint16 stats[MAX_STATS];
     uint16 health;
@@ -413,6 +410,13 @@ struct ReputationOnKillEntry
     uint32 reputation_max_cap2;
     int32 repvalue2;
     bool team_dependent;
+};
+
+struct RepSpilloverTemplate
+{
+    uint32 faction[MAX_SPILLOVER_FACTIONS];
+    float faction_rate[MAX_SPILLOVER_FACTIONS];
+    uint32 faction_rank[MAX_SPILLOVER_FACTIONS];
 };
 
 struct GossipMenuItems
@@ -531,7 +535,9 @@ class ObjectMgr
 
         typedef UNORDERED_MAP<uint32, AccessRequirement> AccessRequirementMap;
 
+        // Reputation Related
         typedef UNORDERED_MAP<uint32, ReputationOnKillEntry> RepOnKillMap;
+        typedef UNORDERED_MAP<uint32, RepSpilloverTemplate> RepSpilloverTemplateMap;
 
         typedef UNORDERED_MAP<uint32, WeatherZoneChances> WeatherZoneMap;
 
@@ -700,6 +706,7 @@ class ObjectMgr
         void AddGossipText(GossipText* pGText);
         GossipText* GetGossipText(uint32 Text_ID);
 
+        WorldSafeLocsEntry const* GetDefaultGraveYard(uint32 team);
         WorldSafeLocsEntry const* GetClosestGraveYard(float x, float y, float z, uint32 MapId, uint32 team);
         bool AddGraveYardLink(uint32 id, uint32 zone, uint32 team, bool inDB = true);
         void RemoveGraveYardLink(uint32 id, uint32 zone, uint32 team, bool inDB = false);
@@ -732,6 +739,15 @@ class ObjectMgr
             RepOnKillMap::const_iterator itr = mRepOnKill.find(id);
             if (itr != mRepOnKill.end())
                 return &itr->second;
+            return NULL;
+        }
+
+        RepSpilloverTemplate const* GetRepSpilloverTemplate(uint32 factionId) const
+        {
+            RepSpilloverTemplateMap::const_iterator itr = m_RepSpilloverTemplateMap.find(factionId);
+            if (itr != m_RepSpilloverTemplateMap.end())
+                return &itr->second;
+
             return NULL;
         }
 
@@ -840,6 +856,7 @@ class ObjectMgr
         void LoadFishingBaseSkillLevel();
 
         void LoadReputationOnKill();
+        void LoadReputationSpilloverTemplate();
 
         void LoadWeatherZoneChances();
         void LoadGameTele();
@@ -1183,6 +1200,7 @@ class ObjectMgr
         AccessRequirementMap  mAccessRequirements;
 
         RepOnKillMap        mRepOnKill;
+        RepSpilloverTemplateMap m_RepSpilloverTemplateMap;
 
         GossipMenusMap      m_mGossipMenusMap;
         GossipMenuItemsMap  m_mGossipMenuItemsMap;

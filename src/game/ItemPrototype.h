@@ -83,22 +83,78 @@ enum ItemBondingType
 
 #define MAX_BIND_TYPE                             6
 
-// masks for ITEM_FIELD_FLAGS field
-enum ITEM_FLAGS
+/* /// @todo: Requiring actual cases in which using (an) item isn't allowed while shapeshifted. Else, this flag would need an implementation.
+    ITEM_PROTO_FLAG_USABLE_WHEN_SHAPESHIFTED    = 0x00800000, // Item can be used in shapeshift forms */
+
+enum ItemProtoFlags
 {
-    ITEM_FLAGS_BINDED                         = 0x00000001, // set in game at binding, not set in template
-    ITEM_FLAGS_CONJURED                       = 0x00000002,
-    ITEM_FLAGS_OPENABLE                       = 0x00000004,
-    ITEM_FLAGS_WRAPPED                        = 0x00000008,
-    ITEM_FLAGS_WRAPPER                        = 0x00000200, // used or not used wrapper
-    ITEM_FLAGS_PARTY_LOOT                     = 0x00000800, // determines if item is party loot or not
-    ITEM_FLAGS_CHARTER                        = 0x00002000, // arena/guild charter
-    ITEM_FLAGS_UNIQUE_EQUIPPED                = 0x00080000,
-    ITEM_FLAGS_USEABLE_IN_ARENA               = 0x00200000,
-    ITEM_FLAGS_THROWABLE                      = 0x00400000, // not used in game for check trow possibility, only for item in game tooltip
-    ITEM_FLAGS_SPECIALUSE                     = 0x00800000, // last used flag in 2.3.0
-    ITEM_FLAGS_BOA                            = 0x08000000, // bind on account (set in template for items that can binded in like way)
-    ITEM_FLAGS_MILLABLE                       = 0x20000000
+    ITEM_PROTO_FLAG_NO_PICKUP                   = 0x00000001, // ?
+    ITEM_PROTO_FLAG_CONJURED                    = 0x00000002, // Conjured item
+    ITEM_PROTO_FLAG_HAS_LOOT                    = 0x00000004, // Item can be right clicked to open for loot
+    ITEM_PROTO_FLAG_HEROIC                      = 0x00000008, // Makes green "Heroic" text appear on item
+    ITEM_PROTO_FLAG_DEPRECATED                  = 0x00000010, // Cannot equip or use
+    ITEM_PROTO_FLAG_INDESTRUCTIBLE              = 0x00000020, // Item can not be destroyed, except by using spell (item can be reagent for spell)
+    ITEM_PROTO_FLAG_PLAYER_CAST                 = 0x00000040, // Item's spells are castable by players
+    ITEM_PROTO_FLAG_NO_EQUIP_COOLDOWN           = 0x00000080, // No default 30 seconds cooldown when equipped
+    ITEM_PROTO_FLAG_INT_BONUS_INSTEAD           = 0x00000100, // ?
+    ITEM_PROTO_FLAG_IS_WRAPPER                  = 0x00000200, // Item can wrap other items
+    ITEM_PROTO_FLAG_USES_RESOURCES              = 0x00000400, // ?
+    ITEM_PROTO_FLAG_MULTI_DROP                  = 0x00000800, // Looting this item does not remove it from available loot
+    ITEM_PROTO_FLAG_REFUNDABLE                  = 0x00001000, // Item can be returned to vendor for its original cost (extended cost)
+    ITEM_PROTO_FLAG_PETITION                    = 0x00002000, // Item is guild or arena charter
+    ITEM_PROTO_FLAG_UNK5                        = 0x00004000, // Only readable items have this (but not all)
+    ITEM_PROTO_FLAG_UNK6                        = 0x00008000, // ?
+    ITEM_PROTO_FLAG_UNK7                        = 0x00010000, // ?
+    ITEM_PROTO_FLAG_UNK8                        = 0x00020000, // ?
+    ITEM_PROTO_FLAG_PROSPECTABLE                = 0x00040000, // Item can be prospected
+    ITEM_PROTO_FLAG_UNIQUE_EQUIPPED             = 0x00080000, // You can only equip one of these
+    ITEM_PROTO_FLAG_UNK9                        = 0x00100000, // ?
+    ITEM_PROTO_FLAG_USEABLE_IN_ARENA            = 0x00200000, // Item can be used during arena match
+    ITEM_PROTO_FLAG_THROWABLE                   = 0x00400000, // Some Thrown weapons have it (and only Thrown) but not all
+    ITEM_PROTO_FLAG_USABLE_WHEN_SHAPESHIFTED    = 0x00800000, // Item can be used in shapeshift forms
+    ITEM_PROTO_FLAG_UNK10                       = 0x01000000, // ?
+    ITEM_PROTO_FLAG_SMART_LOOT                  = 0x02000000, // Profession recipes: can only be looted if you meet requirements and don't already know it
+    ITEM_PROTO_FLAG_NOT_USEABLE_IN_ARENA        = 0x04000000, // Item cannot be used in arena
+    ITEM_PROTO_FLAG_BIND_TO_ACCOUNT             = 0x08000000, // Item binds to account and can be sent only to your own characters
+    ITEM_PROTO_FLAG_TRIGGERED_CAST              = 0x10000000, // Spell is cast with triggered flag
+    ITEM_PROTO_FLAG_MILLABLE                    = 0x20000000, // Item can be milled
+    ITEM_PROTO_FLAG_UNK11                       = 0x40000000, // ?
+    ITEM_PROTO_FLAG_UNK12                       = 0x80000000  // ?
+};
+
+// masks for ITEM_FIELD_FLAGS field
+enum ItemFieldFlags
+{
+    ITEM_FLAG_SOULBOUND     = 0x00000001, // Item is soulbound and cannot be traded <<--
+    ITEM_FLAG_UNK1          = 0x00000002, // ?
+    ITEM_FLAG_UNLOCKED      = 0x00000004, // Item had lock but can be opened now
+    ITEM_FLAG_WRAPPED       = 0x00000008, // Item is wrapped and contains another item
+    ITEM_FLAG_UNK2          = 0x00000010, // ?
+    ITEM_FLAG_UNK3          = 0x00000020, // ?
+    ITEM_FLAG_UNK4          = 0x00000040, // ?
+    ITEM_FLAG_UNK5          = 0x00000080, // ?
+    ITEM_FLAG_BOP_TRADEABLE = 0x00000100, // Allows trading soulbound items
+    ITEM_FLAG_READABLE      = 0x00000200, // Opens text page when right clicked
+    ITEM_FLAG_UNK6          = 0x00000400, // ?
+    ITEM_FLAG_UNK7          = 0x00000800, // ?
+    ITEM_FLAG_REFUNDABLE    = 0x00001000, // Item can be returned to vendor for its original cost (extended cost)
+    ITEM_FLAG_UNK8          = 0x00002000, // ?
+    ITEM_FLAG_UNK9          = 0x00004000, // ?
+    ITEM_FLAG_UNK10         = 0x00008000, // ?
+    ITEM_FLAG_UNK11         = 0x00010000, // ?
+    ITEM_FLAG_UNK12         = 0x00020000, // ?
+    ITEM_FLAG_UNK13         = 0x00040000, // ?
+    ITEM_FLAG_UNK14         = 0x00080000, // ?
+    ITEM_FLAG_UNK15         = 0x00100000, // ?
+    ITEM_FLAG_UNK16         = 0x00200000, // ?
+    ITEM_FLAG_UNK17         = 0x00400000, // ?
+    ITEM_FLAG_UNK18         = 0x00800000, // ?
+    ITEM_FLAG_UNK19         = 0x01000000, // ?
+    ITEM_FLAG_UNK20         = 0x02000000, // ?
+    ITEM_FLAG_UNK21         = 0x04000000, // ?
+    ITEM_FLAG_UNK22         = 0x08000000, // ?
+    ITEM_FLAG_UNK23         = 0x10000000, // ?
+    ITEM_FLAG_UNK24         = 0x20000000, // ?
 };
 
 enum BAG_FAMILY_MASK
@@ -563,6 +619,11 @@ struct ItemTemplate
         }
 
         return false;
+    }
+
+    uint32 GetMaxStackSize() const
+    {
+        return (Stackable == 2147483647 || Stackable <= 0) ? uint32(0x7FFFFFFF - 1) : uint32(Stackable);
     }
 };
 

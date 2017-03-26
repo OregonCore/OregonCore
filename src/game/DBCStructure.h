@@ -21,6 +21,7 @@
 #include "DBCEnums.h"
 #include "Platform/Define.h"
 #include "Path.h"
+#include "SharedDefines.h"
 
 #include <map>
 #include <set>
@@ -47,7 +48,8 @@ struct AreaTableEntry
     char*  area_name[16];                                   // 11-26
     // 27, string flags, unused
     uint32  team;                                           // 28
-    uint32  LiquidTypeOverride[4];                          // 29-32 liquid override by type
+    uint32  LiquidTypeOverride;                             // 29       m_liquidTypeID override for water type
+    // 30-32    uknown/unused
 };
 
 struct AreaTriggerEntry
@@ -182,11 +184,20 @@ struct CinematicCameraEntry
 };
 */
 
+struct CinematicCameraEntry
+{
+    uint32 ID;                                              // 0
+    char const* Model;                                      // 1    Model filename (translate .mdx to .m2)
+    uint32 SoundID;                                         // 2    Sound ID       (voiceover for cinematic)
+    DBCPosition3D Origin;                                   // 3-5  Position in map used for basis for M2 co-ordinates
+    float OriginFacing;                                     // 4    Orientation in map used for basis for M2 co-ordinates
+};
+
 struct CinematicSequencesEntry
 {
     uint32      Id;                                         // 0 index
     //uint32      unk1;                                     // 1 always 0
-    //uint32      cinematicCamera;                          // 2 id in CinematicCamera.dbc
+    uint32      cinematicCamera;                            // 2 id in CinematicCamera.dbc
     // 3-9 always 0
 };
 
@@ -249,17 +260,36 @@ struct EmotesTextEntry
 
 struct FactionEntry
 {
-    uint32      ID;                                         // 0
-    int32       reputationListID;                           // 1
-    uint32      BaseRepRaceMask[4];                         // 2-5 Base reputation race masks (see enum Races)
-    uint32      BaseRepClassMask[4];                        // 6-9 Base reputation class masks (see enum Classes)
-    int32       BaseRepValue[4];                            // 10-13 Base reputation values
-    uint32      ReputationFlags[4];                         // 14-17 Default flags to apply
-    uint32      team;                                       // 18 enum Team
-    char*      name[16];                                   // 19-34
+    uint32      ID;                                         // 0        m_ID
+    int32       reputationListID;                           // 1        m_reputationIndex
+    uint32      BaseRepRaceMask[4];                         // 2-5      m_reputationRaceMask
+    uint32      BaseRepClassMask[4];                        // 6-9      m_reputationClassMask
+    int32       BaseRepValue[4];                            // 10-13    m_reputationBase
+    uint32      ReputationFlags[4];                         // 14-17    m_reputationFlags
+    uint32      team;                                       // 18       m_parentFactionID
+    char*       name[16];                                   // 19-34    m_name_lang
     // 35 string flags, unused
-    //char*    description[16];                            // 36-51 unused
+    //char*    description[16];                            // 36-51     m_description_lang
     // 52 string flags, unused
+
+    // helpers
+
+    bool CanHaveReputation() const
+    {
+        return reputationListID >= 0;
+    }
+
+    int GetIndexFitTo(uint32 raceMask, uint32 classMask) const
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            if ((BaseRepRaceMask[i] == 0 || (BaseRepRaceMask[i] & raceMask)) &&
+                (BaseRepClassMask[i] == 0 || (BaseRepClassMask[i] & classMask)))
+                return i;
+        }
+
+        return -1;
+    }
 };
 
 struct FactionTemplateEntry
@@ -283,8 +313,6 @@ struct FactionTemplateEntry
     // helpers
     bool IsFriendlyTo(FactionTemplateEntry const& entry) const
     {
-        if (ID == entry.ID)
-            return true;
         if (enemyFaction1 == entry.faction || enemyFaction2 == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
             return false;
         if (friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction)
@@ -293,8 +321,6 @@ struct FactionTemplateEntry
     }
     bool IsHostileTo(FactionTemplateEntry const& entry) const
     {
-        if (ID == entry.ID)
-            return false;
         if (enemyFaction1 == entry.faction || enemyFaction2 == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
             return true;
         if (friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction)
@@ -365,6 +391,11 @@ struct GtChanceToSpellCritEntry
 };
 
 struct GtOCTRegenHPEntry
+{
+    float    ratio;
+};
+
+struct GtNPCManaCostScalerEntry
 {
     float    ratio;
 };
@@ -498,7 +529,7 @@ struct MapEntry
     // 63-65 not used
     //chat*    unknownText1                                // 66-81 unknown empty text fields, possible normal Intro text.
     // 82 text flags
-    //chat*    heroicIntroText                             // 83-98 heroic mode requirement text
+    char*       heroicIntroText[16];                       // 83-98 heroic mode requirement text
     // 99 text flags
     //chat*    unknownText2                                // 100-115 unknown empty text fields
     // 116 text flags
@@ -547,6 +578,11 @@ struct MapEntry
     bool HasResetTime() const
     {
         return resetTimeHeroic || resetTimeRaid;
+    }
+
+    bool IsContinent() const
+    {
+        return MapID == 0 || MapID == 1 || MapID == 530;
     }
 };
 
@@ -734,6 +770,14 @@ struct SpellEntry
         uint32    TotemCategory[2];                             // 212-213
         uint32    AreaId;                                       // 214
         uint32    SchoolMask;                                   // 215 school mask
+
+    inline bool HasAttribute(SpellAttributes attribute) const { return Attributes & attribute; }
+    inline bool HasAttribute(SpellAttributesEx attribute) const { return AttributesEx & attribute; }
+    inline bool HasAttribute(SpellAttributesEx2 attribute) const { return AttributesEx2 & attribute; }
+    inline bool HasAttribute(SpellAttributesEx3 attribute) const { return AttributesEx3 & attribute; }
+    inline bool HasAttribute(SpellAttributesEx4 attribute) const { return AttributesEx4 & attribute; }
+    inline bool HasAttribute(SpellAttributesEx5 attribute) const { return AttributesEx5 & attribute; }
+    inline bool HasAttribute(SpellAttributesEx6 attribute) const { return AttributesEx6 & attribute; }
 
         // Helpers
         bool HasEffect(uint8 effect) const

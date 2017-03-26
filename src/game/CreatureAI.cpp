@@ -60,9 +60,9 @@ void CreatureAI::DoZoneInCombatWithPlayers(bool force)
     Map::PlayerList const &PlayerList = map->GetPlayers();
     for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
     {
-        if (Player* pPlayer = i->getSource())
+        if (Player* pPlayer = i->GetSource())
         {
-            if (pPlayer->isGameMaster())
+            if (pPlayer->IsGameMaster())
                 continue;
 
             if (pPlayer->IsAlive())
@@ -90,7 +90,7 @@ void CreatureAI::DoZoneInCombat(Creature* creature /*= NULL*/, float maxRangeToN
         return;
     }
 
-    if (!creature->HasReactState(REACT_PASSIVE) && !creature->getVictim())
+    if (!creature->HasReactState(REACT_PASSIVE) && !creature->GetVictim())
     {
         if (Unit* nearTarget = creature->SelectNearestTarget(maxRangeToNearestTarget))
             creature->AI()->AttackStart(nearTarget);
@@ -107,7 +107,9 @@ void CreatureAI::DoZoneInCombat(Creature* creature /*= NULL*/, float maxRangeToN
         }
     }
 
-    if (!creature->HasReactState(REACT_PASSIVE) && !creature->getVictim())
+    // Intended duplicated check, the code above this should select a victim
+    // If it can't find a suitable attack target then we should error out.
+    if (!creature->HasReactState(REACT_PASSIVE) && !creature->GetVictim())
     {
         sLog.outError("DoZoneInCombat called for creature that has empty threat list (creature entry = %u)", creature->GetEntry());
         return;
@@ -120,9 +122,9 @@ void CreatureAI::DoZoneInCombat(Creature* creature /*= NULL*/, float maxRangeToN
 
     for (Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
     {
-        if (Player* pPlayer = i->getSource())
+        if (Player* pPlayer = i->GetSource())
         {
-            if (pPlayer->isGameMaster())
+            if (pPlayer->IsGameMaster())
                 continue;
 
             if (pPlayer->IsAlive())
@@ -156,19 +158,18 @@ void CreatureAI::MoveInLineOfSight_Safe(Unit* who)
 
 void CreatureAI::MoveInLineOfSight(Unit* who)
 {
-    if (me->getVictim())
+    if (me->GetVictim())
         return;
     
     if (me->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET) // non-combat pets should just stand there and look good;)
         return;
 
-    if (me->canStartAttack(who))
+    if (me->HasReactState(REACT_AGGRESSIVE) && me->canStartAttack(who, false))
         AttackStart(who);
-
-    //else if (who->getVictim() && me->IsFriendlyTo(who)
+    //else if (who->GetVictim() && me->IsFriendlyTo(who)
     //    && me->IsWithinDistInMap(who, sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS))
-    //    && me->canAttack(who->getVictim()))
-    //    AttackStart(who->getVictim());
+    //    && me->canAttack(who->GetVictim()))
+    //    AttackStart(who->GetVictim());
 }
 
 // Distract creature, if player gets too close while stealthed/prowling
@@ -204,7 +205,7 @@ bool CreatureAI::UpdateVictimByReact()
     {
         if (Unit* victim = me->SelectVictim())
             AttackStart(victim);
-        return me->getVictim();
+        return me->GetVictim();
     }
     else if (me->getThreatManager().isThreatListEmpty())
     {
@@ -240,14 +241,14 @@ void CreatureAI::EnterEvadeMode()
 
 /*void CreatureAI::AttackedBy(Unit* attacker)
 {
-    if (!me->getVictim())
+    if (!me->GetVictim())
         AttackStart(attacker);
 }*/
 
 
 void CreatureAI::SetGazeOn(Unit* target)
 {
-    if (me->canAttack(target))
+    if (me->IsValidAttackTarget(target))
     {
         AttackStart(target);
         me->SetReactState(REACT_PASSIVE);
@@ -261,7 +262,7 @@ bool CreatureAI::UpdateVictimWithGaze()
 
     if (me->HasReactState(REACT_PASSIVE))
     {
-        if (me->getVictim())
+        if (me->GetVictim())
             return true;
         else
             me->SetReactState(REACT_AGGRESSIVE);
@@ -269,7 +270,7 @@ bool CreatureAI::UpdateVictimWithGaze()
 
     if (Unit* victim = me->SelectVictim())
         AttackStart(victim);
-    return me->getVictim();
+    return me->GetVictim();
 }
 
 bool CreatureAI::UpdateVictim()
@@ -281,7 +282,7 @@ bool CreatureAI::UpdateVictim()
     {
         if (Unit* victim = me->SelectVictim())
             AttackStart(victim);
-        return me->getVictim();
+        return me->GetVictim();
     }
     else if (me->getThreatManager().isThreatListEmpty())
     {
@@ -299,8 +300,8 @@ bool CreatureAI::_EnterEvadeMode()
 
     // sometimes bosses stuck in combat?
     me->DeleteThreatList();
-    me->CombatStop(true);
-    me->SetLootRecipient(NULL);
+    me->CombatStopWithPets(true);
+    me->SetLootRecipient(nullptr);
     me->SetPlayerDamaged(false);
     me->SetLastDamagedTime(0);
 
@@ -309,8 +310,6 @@ bool CreatureAI::_EnterEvadeMode()
 
     me->RemoveAllAuras();
     me->LoadCreaturesAddon();
-    // @todo Determine if required
-    //me->SetReactState(REACT_AGGRESSIVE);
 
     return true;
 }
@@ -322,11 +321,11 @@ void CreatureAI::SetCombatMovement(bool enable)
 
     CombatMovementEnabled = enable;
 
-    if (enable && me->getVictim())
+    if (enable && me->GetVictim())
     {
         if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE || ASSISTANCE_MOTION_TYPE)
         {
-            me->GetMotionMaster()->MoveChase(me->getVictim());
+            me->GetMotionMaster()->MoveChase(me->GetVictim());
             me->CastStop();
         }
     }
@@ -346,15 +345,13 @@ Creature* CreatureAI::DoSummon(uint32 entry, const Position& pos, uint32 despawn
 
 Creature* CreatureAI::DoSummon(uint32 entry, WorldObject* obj, float radius, uint32 despawnTime, TempSummonType summonType)
 {
-    Position pos;
-    obj->GetRandomNearPosition(pos, radius);
+    Position pos = obj->GetRandomNearPosition(radius);
     return me->SummonCreature(entry, pos, summonType, despawnTime);
 }
 
 Creature* CreatureAI::DoSummonFlyer(uint32 entry, WorldObject* obj, float flightZ, float radius, uint32 despawnTime, TempSummonType summonType)
 {
-    Position pos;
-    obj->GetRandomNearPosition(pos, radius);
+    Position pos = obj->GetRandomNearPosition(radius);
     pos.m_positionZ += flightZ;
     return me->SummonCreature(entry, pos, summonType, despawnTime);
 }

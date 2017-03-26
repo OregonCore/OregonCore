@@ -150,7 +150,7 @@ struct boss_void_reaverAI : public ScriptedAI
             if (target_list.size())
                 pTarget = *(target_list.begin() + rand() % target_list.size());
             else
-                pTarget = me->getVictim();
+                pTarget = me->GetVictim();
 
             if (pTarget)
                 me->CastSpell(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), SPELL_ARCANE_ORB, false);
@@ -165,8 +165,8 @@ struct boss_void_reaverAI : public ScriptedAI
             DoCastVictim(SPELL_KNOCK_AWAY);
 
             //Drop 25% aggro
-            if (DoGetThreat(me->getVictim()))
-                DoModifyThreatPercent(me->getVictim(), -25);
+            if (DoGetThreat(me->GetVictim()))
+                DoModifyThreatPercent(me->GetVictim(), -25);
 
             KnockAway_Timer = 30000;
         }

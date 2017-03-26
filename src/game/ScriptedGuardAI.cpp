@@ -99,30 +99,30 @@ void guardAI::UpdateAI(const uint32 diff)
     if (me->isAttackReady() && !me->IsNonMeleeSpellCast(false))
     {
         //If we are within range melee the target
-        if (me->IsWithinMeleeRange(me->getVictim()))
+        if (me->IsWithinMeleeRange(me->GetVictim()))
         {
             bool Healing = false;
             SpellEntry const* info = NULL;
 
             //Select a healing spell if less than 30% hp
-            if (me->GetHealth() * 100 / me->GetMaxHealth() < 30)
+            if (HealthBelowPct(30))
                 info = SelectSpell(me, 0, 0, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
 
             //No healing spell available, select a hostile spell
             if (info) Healing = true;
-            else info = SelectSpell(me->getVictim(), 0, 0, SELECT_TARGET_ANY_ENEMY, 0, 0, 0, 0, SELECT_EFFECT_DONTCARE);
+            else info = SelectSpell(me->GetVictim(), 0, 0, SELECT_TARGET_ANY_ENEMY, 0, 0, 0, 0, SELECT_EFFECT_DONTCARE);
 
             //20% chance to replace our white hit with a spell
             if (info && rand() % 5 == 0 && !GlobalCooldown)
             {
                 //Cast the spell
                 if (Healing)DoCastSpell(me, info);
-                else DoCastSpell(me->getVictim(), info);
+                else DoCastSpell(me->GetVictim(), info);
 
                 //Set our global cooldown
                 GlobalCooldown = GENERIC_CREATURE_COOLDOWN;
             }
-            else me->AttackerStateUpdate(me->getVictim());
+            else me->AttackerStateUpdate(me->GetVictim());
 
             me->resetAttackTimer();
         }
@@ -136,12 +136,12 @@ void guardAI::UpdateAI(const uint32 diff)
             SpellEntry const* info = NULL;
 
             //Select a healing spell if less than 30% hp ONLY 33% of the time
-            if (me->GetHealth() * 100 / me->GetMaxHealth() < 30 && rand() % 3 == 0)
+            if (HealthBelowPct(30) && rand() % 3 == 0)
                 info = SelectSpell(me, 0, 0, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
 
             //No healing spell available, See if we can cast a ranged spell (Range must be greater than ATTACK_DISTANCE)
             if (info) Healing = true;
-            else info = SelectSpell(me->getVictim(), 0, 0, SELECT_TARGET_ANY_ENEMY, 0, 0, NOMINAL_MELEE_RANGE, 0, SELECT_EFFECT_DONTCARE);
+            else info = SelectSpell(me->GetVictim(), 0, 0, SELECT_TARGET_ANY_ENEMY, 0, 0, NOMINAL_MELEE_RANGE, 0, SELECT_EFFECT_DONTCARE);
 
             //Found a spell, check if we arn't on cooldown
             if (info && !GlobalCooldown)
@@ -155,7 +155,7 @@ void guardAI::UpdateAI(const uint32 diff)
 
                 //Cast spell
                 if (Healing) DoCastSpell(me, info);
-                else DoCastSpell(me->getVictim(), info);
+                else DoCastSpell(me->GetVictim(), info);
 
                 //Set our global cooldown
                 GlobalCooldown = GENERIC_CREATURE_COOLDOWN;
@@ -166,7 +166,7 @@ void guardAI::UpdateAI(const uint32 diff)
                 //Cancel our current spell and then mutate new movement generator
                 me->InterruptNonMeleeSpells(false);
                 (*me).GetMotionMaster()->Clear(false);
-                (*me).GetMotionMaster()->MoveChase(me->getVictim());
+                (*me).GetMotionMaster()->MoveChase(me->GetVictim());
             }
         }
     }

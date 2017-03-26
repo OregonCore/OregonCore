@@ -263,7 +263,7 @@ struct boss_captain_skarlocAI : public ScriptedAI
         //Hammer of Justice
         if (HammerOfJustice_Timer < diff)
         {
-            DoCast(me->getVictim(), SPELL_HAMMER_OF_JUSTICE);
+            DoCast(me->GetVictim(), SPELL_HAMMER_OF_JUSTICE);
             HammerOfJustice_Timer = 60000;
         }
         else
