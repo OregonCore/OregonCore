@@ -287,28 +287,23 @@ struct npc_daranelleAI : public ScriptedAI
 {
     npc_daranelleAI(Creature* c) : ScriptedAI(c) {}
 
-    void Reset()
-    {
-    }
+    void Reset() {}
 
-    void EnterCombat(Unit* /*who*/)
-    {
-    }
+    void EnterCombat(Unit* /*who*/) {}
 
     void MoveInLineOfSight(Unit* who)
-    {
-        if (who->GetTypeId() == TYPEID_PLAYER)
-        {
-            if (who->HasAura(36904, 0))
-            {
-                DoScriptText(SAY_DARANELLE, me, who);
-                //@todo Move the below to updateAI and run if this statement == true
-                CAST_PLR(who)->KilledMonsterCredit(21511, me->GetGUID());
-                CAST_PLR(who)->RemoveAurasDueToSpell(36904);
-            }
-        }
+    {      
+		if (Creature* kaliri = me->FindNearestCreature(21468, 15.0f, true))
+			kaliri->ForcedDespawn(1000);
 
-        ScriptedAI::MoveInLineOfSight(who);
+        if (who->HasAura(36904, 0) && who->GetDistance(me) < 15.0f)
+        {
+			me->CastSpell(who, 37028, true);
+            DoScriptText(SAY_DARANELLE, me, who);
+            //@todo Move the below to updateAI and run if this statement == true
+            CAST_PLR(who)->KilledMonsterCredit(21511, me->GetGUID());
+            CAST_PLR(who)->RemoveAurasDueToSpell(36904);			
+        }      
     }
 };
 
