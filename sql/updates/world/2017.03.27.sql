@@ -7,6 +7,7 @@ INSERT INTO `creature_template` (`entry`, `modelid1`, `modelid2`, `modelid3`, `m
 `type`, `flags_extra`, `ScriptName`) VALUES (61031, 17519, 11686, 17519, 11686, 'Legion Hold Device Trigger', 60, 60, 6900, 6900,
 20, 114, 1.05, 2000, 1, 33587968, 100, 10, 130, 'legion_hold_device_trigger');
 
+DELETE FROM creature_template WHERE entry=61031;
 DELETE FROM `creature` WHERE `id`=61031;
 
 INSERT INTO `creature` (`id`, `map`, `spawnMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`,
@@ -29,6 +30,7 @@ INSERT INTO `creature_template` (`entry`, `heroic_entry`, `KillCredit1`, `KillCr
 1.14286, 1, 0, 0, 0, 0, 0, 2000, 0, 1, 33587968, 0, 0, 0, 0, 0, 0, 0, 0, 100, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 0, '', 0, 3, 1, 1, 0, 1, 0, 0, 130, '');
 
+DELETE FROM creature_template WHERE entry=61025;
 DELETE FROM `creature` WHERE `id`=61025;
 
 INSERT INTO `creature` (`id`, `map`, `spawnMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`,
