@@ -792,27 +792,27 @@ bool QuestAccept_npc_karynaku(Player* player, Creature* creature, Quest const* q
 #define SPELL_ONE 39990 // Red Lightning Bolt
 #define SPELL_TWO 41528 // Mark of Stormrage
 #define SPELL_THREE 40216 // Dragonaw Faction
-#define SPELL_FOUR 42016 // Dragonaw Trasform
+#define SPELL_FOUR 42016 // Dragonaw Transform
 
-#define OVERLORD_SAY_1 -1000206
-#define OVERLORD_SAY_2 -1000207
-#define OVERLORD_SAY_3 -1000208
-#define OVERLORD_SAY_4 -1000209
-#define OVERLORD_SAY_5 -1000210
-#define OVERLORD_SAY_6 -1000211
+#define OVERLORD_SAY_1 -1910204
+#define OVERLORD_SAY_2 -1910206
+#define OVERLORD_SAY_3 -1910208
+#define OVERLORD_SAY_4 -1910210
+#define OVERLORD_SAY_5 -1910217
+#define OVERLORD_SAY_6 -1910218
 
-#define OVERLORD_YELL_1 -1000212
-#define OVERLORD_YELL_2 -1000213
+#define OVERLORD_YELL_1 -1910205
+#define OVERLORD_YELL_2 -1910207
 
-#define LORD_ILLIDAN_SAY_1 -1000214
-#define LORD_ILLIDAN_SAY_2 -1000215
-#define LORD_ILLIDAN_SAY_3 -1000216
-#define LORD_ILLIDAN_SAY_4 -1000217
-#define LORD_ILLIDAN_SAY_5 -1000218
-#define LORD_ILLIDAN_SAY_6 -1000219
-#define LORD_ILLIDAN_SAY_7 -1000220
+#define LORD_ILLIDAN_SAY_1 -1910209
+#define LORD_ILLIDAN_SAY_2 -1910211
+#define LORD_ILLIDAN_SAY_3 -1910212
+#define LORD_ILLIDAN_SAY_4 -1910213
+#define LORD_ILLIDAN_SAY_5 -1910214
+#define LORD_ILLIDAN_SAY_6 -1910215
+#define LORD_ILLIDAN_SAY_7 -1910216
 
-#define YARZILL_THE_MERC_SAY -1000221
+#define YARZILL_THE_MERC_SAY -1910219
 
 struct npc_overlord_morghorAI : public ScriptedAI
 {
@@ -823,6 +823,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
 
     uint32 ConversationTimer;
     uint32 Step;
+	uint32 resetTimer;
 
     bool Event;
 
@@ -834,7 +835,10 @@ struct npc_overlord_morghorAI : public ScriptedAI
         ConversationTimer = 0;
         Step = 0;
 
+		resetTimer = 180000;
+		
         Event = false;
+		me->SetUInt32Value(UNIT_NPC_FLAGS, 2);
     }
 
     void EnterCombat(Unit* /*who*/) {}
@@ -843,18 +847,12 @@ struct npc_overlord_morghorAI : public ScriptedAI
     {
         me->SetUInt32Value(UNIT_NPC_FLAGS, 0);
         me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-        Unit* Illidan = me->SummonCreature(C_ILLIDAN, -5107.83f, 602.584f, 85.2393f, 4.92598f, TEMPSUMMON_CORPSE_DESPAWN, 0);
-        if (Illidan)
-        {
-            IllidanGUID = Illidan->GetGUID();
-            Illidan->SetVisible(false);
-        }
-        if (PlayerGUID)
-        {
-            Player* player = Unit::GetPlayer(*me, PlayerGUID);
-            if (player)
-                DoScriptText(OVERLORD_SAY_1, me, player);
-        }
+		Unit* Illidan = me->SummonCreature(C_ILLIDAN, -5107.83f, 602.584f, 85.2393f, 4.92598f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+		if (Illidan)
+		{
+			IllidanGUID = Illidan->GetGUID();
+		}
+
         ConversationTimer = 4200;
         Step = 0;
         Event = true;
@@ -864,9 +862,9 @@ struct npc_overlord_morghorAI : public ScriptedAI
     {
         Player* plr = Unit::GetPlayer(*me, PlayerGUID);
 
-        Unit* Illi = Unit::GetUnit((*me), IllidanGUID);
+        Creature* Illi = Creature::GetCreature((*me), IllidanGUID);
 
-        if (!plr || !Illi)
+		if (!plr || (!Illi && Step < 23))
         {
             EnterEvadeMode();
             return 0;
@@ -877,8 +875,8 @@ struct npc_overlord_morghorAI : public ScriptedAI
         case 0:
             return 0;
             break;
-        case 1:
-            me->GetMotionMaster()->MovePoint(0, -5104.41f, 595.297f, 85.6838f);
+        case 1:		
+            me->GetMotionMaster()->MovePoint(0, -5104.41f, 595.297f, 85.6838f);			
             return 9000;
             break;
         case 2:
@@ -894,7 +892,6 @@ struct npc_overlord_morghorAI : public ScriptedAI
             return 2000;
             break;
         case 5:
-            Illi->SetVisible(true);
             Illi->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             return 350;
             break;
@@ -944,7 +941,6 @@ struct npc_overlord_morghorAI : public ScriptedAI
             if (plr)
             {
                 Illi->CastSpell(plr, SPELL_TWO, true);
-                plr->RemoveAurasDueToSpell(SPELL_THREE);
                 plr->RemoveAurasDueToSpell(SPELL_FOUR);
                 return 5000;
             }
@@ -978,8 +974,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
             return 500;
             break;
         case 22:
-            Illi->SetVisible(false);
-            Illi->setDeathState(JUST_DIED);
+			Illi->DespawnOrUnsummon(10);           
             return 1000;
             break;
         case 23:
@@ -1008,8 +1003,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
             }
             break;
         case 28:
-            plr->RemoveAurasDueToSpell(SPELL_TWO);
-            plr->RemoveAurasDueToSpell(41519);
+            plr->RemoveAurasDueToSpell(SPELL_TWO);      
             plr->CastSpell(plr, SPELL_THREE, true);
             plr->CastSpell(plr, SPELL_FOUR, true);
             return 1000;
@@ -1032,9 +1026,11 @@ struct npc_overlord_morghorAI : public ScriptedAI
             break;
         case 31:
             {
-                Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
+              /*  Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
                 if (Yarzill)
-                    Yarzill->CastSpell(plr, 41540, true);
+                    Yarzill->CastSpell(plr, 41540, true); */
+				plr->TeleportTo(530, -3924.051514f, 967.308044f, 22.454834f, 1.763926f);
+				plr->RemoveAurasDueToSpell(41519);
                 return 1000;
             }
             break;
@@ -1075,6 +1071,7 @@ bool QuestAccept_npc_overlord_morghor(Player* player, Creature* pCreature, const
 {
     if (_Quest->GetQuestId() == QUEST_LORD_ILLIDAN_STORMRAGE)
     {
+		pCreature->MonsterSay(OVERLORD_SAY_1, LANG_UNIVERSAL, player->GetGUID());
         ((npc_overlord_morghorAI*)pCreature->AI())->PlayerGUID = player->GetGUID();
         ((npc_overlord_morghorAI*)pCreature->AI())->StartEvent();
         return true;
@@ -1987,6 +1984,10 @@ bool GossipSelect_npc_grand_commander_ruusk(Player* player, Creature* _Creature,
 
 enum Azaloth
 {
+	// Quests
+	QUEST_A_NECESSARY_DISTRACTION_ALDOR = 10637,
+	QUEST_A_NECESSARY_DISTRACTION_SCRYERS = 10688,
+
     // NPCs
     NPC_SUNFURY_WARLOCK     = 21503,
     NPC_AZALOTH             = 21506,
@@ -2005,18 +2006,16 @@ enum Azaloth
 struct npc_azalothAI : public ScriptedAI
 {
 	bool free;
-	uint64 PlayerGUID;
 
 	uint32 cleaveTimer;
 	uint32 crippleTimer;
 	uint32 warstompTimer;
 	uint32 rainOfFireTimer;
-	uint32 banishTimer;
 
 	void Reset()
 	{
 		free = false;
-		PlayerGUID = 0;
+
 		me->CombatStop();
 		me->DeleteThreatList();
 		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC); // passive
@@ -2028,24 +2027,23 @@ struct npc_azalothAI : public ScriptedAI
 		crippleTimer = 1000;
 		rainOfFireTimer = 15000;
 		warstompTimer = 10000;
-		banishTimer = 60000;
 	}
 
 	npc_azalothAI(Creature* c) : ScriptedAI(c){}
+	
+	/* SPELL 37834 IS BROKEN, UNQOUTE PART BELOW WHEN SPELL IS FIXED */
 
+	/*
 	void SpellHit(Unit* caster, const SpellEntry* spell)
 	{
 		if (caster->GetTypeId() == TYPEID_PLAYER && spell->Id == 37834 && !free)
 		{
-			if (me->HasAura(37833, 0))
-				me->RemoveAurasDueToSpell(37833);
-
-			free = true;
-			PlayerGUID = caster->GetGUID();
+			me->RemoveAurasDueToSpell(SPELL_BANISH);
 			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC); // passive
 			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);		
 			me->setFaction(954);
+			free = true;
 
 			Unit* Warlock = me->FindNearestCreature(21503, 50);
 
@@ -2057,6 +2055,7 @@ struct npc_azalothAI : public ScriptedAI
 			DoMeleeAttackIfReady();
 		}
 	}
+	*/
 
 	void UpdateAI(const uint32 diff)
 	{
@@ -2069,18 +2068,6 @@ struct npc_azalothAI : public ScriptedAI
 
 		if (UpdateVictim())
 		{
-			if (banishTimer < diff)
-			{
-				DoCast(SPELL_BANISH);
-				banishTimer = 60000;
-			}
-
-			if (!UpdateVictim())
-			{
-				banishTimer -= diff;
-				return;
-			}
-
 			if (cleaveTimer < diff)
 			{
 				DoCastVictim(SPELL_CLEAVE);
