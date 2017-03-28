@@ -923,6 +923,7 @@ class Player : public Unit, public GridObject<Player>
 {
         friend class WorldSession;
         friend class CinematicMgr;
+        friend class RegressionTestSuite;
 
         friend void Item::AddToUpdateQueueOf(Player* player);
         friend void Item::RemoveFromUpdateQueueOf(Player* player);
@@ -2767,6 +2768,7 @@ class Player : public Unit, public GridObject<Player>
         void HandleSobering();
         void SendMirrorTimer(MirrorTimerType Type, uint32 MaxValue, uint32 CurrentValue, int32 Regen);
         void StopMirrorTimer(MirrorTimerType Type);
+        bool HasMirrorTimerFlag(uint32 flag) const { return m_MirrorTimerFlags & flag; }
         void HandleDrowning(uint32 time_diff);
         int32 getMaxTimer(MirrorTimerType timer);
 

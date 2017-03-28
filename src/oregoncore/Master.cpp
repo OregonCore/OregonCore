@@ -21,7 +21,6 @@
 #include "Common.h"
 #include "Master.h"
 #include "WorldSocket.h"
-#include "WorldRunnable.h"
 #include "World.h"
 #include "Log.h"
 #include "Timer.h"
@@ -33,11 +32,19 @@
 #include "Util.h"
 #include "OCSoap.h"
 #include "Console.h"
+#include "ObjectAccessor.h"
+#include "MapManager.h"
+#include "BattlegroundMgr.h"
+#include "CreatureGroups.h"
+#include "Database/DatabaseEnv.h"
 
 #ifdef _WIN32
 #include "ServiceWin32.h"
 extern int m_ServiceStatus;
 #endif
+
+
+#define WORLD_SLEEP_CONST 5
 
 INSTANTIATE_SINGLETON_1(Master);
 
@@ -98,7 +105,7 @@ Master::~Master()
 }
 
 // Main function
-int Master::Run()
+int Master::Run(bool runTests)
 {
     int defaultStderr = dup(2);
 
@@ -228,9 +235,41 @@ int Master::Run()
         ACE_Based::Thread::Sleep(1500);
     }
 
-    /* Run our World, we use main thread for this,
-       because it we need the highest priority possible */
-    WorldRunnable().run();
+    // ----------------------------------------------------------------------------------------------------------------
+    //
+
+    // Init new SQL thread for the world database
+    WorldDatabase.ThreadStart();                    // let thread do safe mySQL requests (one connection call enough)
+    sWorld.InitResultQueue();
+
+    // Run regression tests, then gracefully exit with particular exit code
+    if (runTests)
+    {
+        if (RunRegressionTests())
+            World::StopNow(SHUTDOWN_EXIT_CODE);
+        else
+            World::StopNow(ERROR_EXIT_CODE);
+    }
+
+    // Run our World, we use main thread for this,
+    MainLoop();
+
+    ObjectAccessor::Instance().SaveAllPlayers();   // save all players
+    sWorld.KickAll();                              // kick all players
+    sWorld.UpdateSessions( 1 );                    // real players unload required UpdateSessions call
+
+    // unload battleground templates before different singletons destroyed
+    sBattlegroundMgr.DeleteAlllBattlegrounds();
+
+    sWorldSocketMgr->StopNetwork();
+
+    MapManager::Instance().UnloadAll();            // unload all grids (including locked in memory)
+
+    // End the database thread
+    WorldDatabase.ThreadEnd();                     // free mySQL thread resources
+
+    //
+    // ----------------------------------------------------------------------------------------------------------------
 
     // Stop freeze protection before shutdown tasks
     if (freeze_thread)
@@ -253,7 +292,7 @@ int Master::Run()
     LoginDatabase.PExecute("UPDATE realmlist SET realmflags = realmflags | %u WHERE id = '%d'", REALM_FLAG_OFFLINE, realmID);
 
     // when the main thread closes the singletons get unloaded
-    // since worldrunnable uses them, it will crash if unloaded after master
+    // since MainLoop uses them, it will crash if unloaded after master
     rar_thread.wait ();
 
     // Clean account database before leaving
@@ -281,7 +320,7 @@ int Master::Run()
     // Remove signal handling before leaving
     _UnhookSignals();
 
-    // for some unknown reason, unloading scripts here and not in worldrunnable
+    // for some unknown reason, unloading scripts here and not in MainLoop
     // fixes a memory leak related to detaching threads from the module
     //UnloadScriptingModule();
 
@@ -386,3 +425,41 @@ void Master::_UnhookSignals()
     #endif
 }
 
+bool Master::RunRegressionTests()
+{
+    RegressionTestSuite suite;
+    return suite.RunAll();
+}
+
+// Heartbeat for the World
+void Master::MainLoop()
+{
+    uint32 realCurrTime = 0;
+    uint32 realPrevTime = getMSTime();
+
+    uint32 prevSleepTime = 0;                               // used for balanced full tick time length near WORLD_SLEEP_CONST
+
+    // While we have not World::m_stopEvent, update the world
+    while (!World::IsStopped())
+    {
+        ++World::m_worldLoopCounter;
+        realCurrTime = getMSTime();
+
+        uint32 diff = getMSTimeDiff(realPrevTime, realCurrTime);
+
+        sWorld.Update(diff);
+        realPrevTime = realCurrTime;
+
+        // diff (D0) include time of previous sleep (d0) + tick time (t0)
+        // we want that next d1 + t1 == WORLD_SLEEP_CONST
+        // we can't know next t1 and then can use (t0 + d1) == WORLD_SLEEP_CONST requirement
+        // d1 = WORLD_SLEEP_CONST - t0 = WORLD_SLEEP_CONST - (D0 - d0) = WORLD_SLEEP_CONST + d0 - D0
+        if (diff <= WORLD_SLEEP_CONST + prevSleepTime)
+        {
+            prevSleepTime = WORLD_SLEEP_CONST + prevSleepTime - diff;
+            ACE_Based::Thread::Sleep(prevSleepTime);
+        }
+        else
+            prevSleepTime = 0;
+    }
+}

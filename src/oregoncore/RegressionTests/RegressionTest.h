@@ -15,14 +15,25 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WORLDRUNNABLE_H
-#define __WORLDRUNNABLE_H
+#ifndef __OREGON_REGRESSION_TEST_H_DEFINED__
+#define __OREGON_REGRESSION_TEST_H_DEFINED__
 
-// Heartbeat for the World
-class WorldRunnable
+#include "Common.h"
+
+class RegressionTestSuite
 {
     public:
-        void run();
-};
-#endif
+        RegressionTestSuite();
+        ~RegressionTestSuite();
 
+        bool RunAll();
+    protected:
+        bool Run(bool(RegressionTestSuite::*)(), const char* comment);
+
+        bool TestBreathingIssues();
+
+        uint32 m_failedTestsCounter = 0;
+        uint32 m_passedTestsCounter = 0;
+};
+
+#endif // __OREGON_REGRESSION_TEST_H_DEFINED__

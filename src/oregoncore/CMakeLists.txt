@@ -8,7 +8,10 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-file(GLOB sources_localdir *.cpp *.h)
+file(GLOB sources_localdir
+  *.cpp
+  RegressionTests/*.cpp
+)
 
 set(oregon-core_SRCS
   ${oregon-core_SRCS}
