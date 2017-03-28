@@ -25,7 +25,7 @@ We have also a public IRC `#OregonCore` at [irc.oregon-core.net][6], this is a p
 If you have found a bug you may report it on our bugtracker, issues must include revision hash and as many details as possible to aide us in resolving it as quickly as possible.
 
 [1]: https://travis-ci.org/OregonCore/OregonCore.svg?branch=master
-[2]: https://ci.appveyor.com/api/projects/status/ci1ar8l82w61i5ix/branch/master
+[2]: https://ci.appveyor.com/api/projects/status/bxn9cq9miqxn33gr/branch/master
 [3]: https://wiki.oregon-core.net/
 [4]: https://docs.oregon-core.net/
 [5]: https://forums.oregon-core.net/
