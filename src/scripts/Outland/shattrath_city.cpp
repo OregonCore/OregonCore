@@ -646,6 +646,7 @@ struct npc_dirty_larryAI : public ScriptedAI
 
     uint32 SayTimer;
     uint32 Step;
+	uint32 reset_timer;
 
     void Reset()
     {
@@ -656,6 +657,7 @@ struct npc_dirty_larryAI : public ScriptedAI
         PlayerGUID = 0;
         SayTimer = 0;
         Step = 0;
+		reset_timer = 0;
 
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         me->setFaction(1194);
@@ -784,7 +786,15 @@ struct npc_dirty_larryAI : public ScriptedAI
             Player* player = Unit::GetPlayer(*me, PlayerGUID);
             if (player)
                 player->GroupEventHappens(QUEST_WBI, me);
+			reset_timer = 30000;
         }
+
+		if (Done == true && reset_timer <= diff)
+		{
+			Reset();
+		}
+		else reset_timer -= diff;
+
         DoMeleeAttackIfReady();
     }
 };
