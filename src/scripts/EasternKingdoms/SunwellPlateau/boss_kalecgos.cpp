@@ -99,7 +99,7 @@ enum SWPActions
 #define DRAGON_REALM_Z  53.079f
 #define DEMON_REALM_Z   -74.558f
 
-#define MAX_PLAYERS_IN_SPECTRAL_REALM 0 //over this, teleport object won't work, 0 disables check
+#define MAX_PLAYERS_IN_SPECTRAL_REALM 10 //over this, teleport object won't work, 0 disables check
 
 uint32 WildMagic[] = { 44978, 45001, 45002, 45004, 45006, 45010 };
 

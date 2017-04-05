@@ -839,7 +839,7 @@ void Unit::RemoveSpellbyDamageTaken(uint32 damage, uint32 spell)
 {
     // The chance to dispel an aura depends on the damage taken with respect to the casters level.
     uint32 max_dmg = getLevel() > 8 ? 30 * getLevel() - 100 : 50;
-    float chance = float(damage) / max_dmg * 100.0f;
+    float chance = (float(damage) / max_dmg * 100.0f)*0.8;
 
     AuraList::iterator i, next;
     for (i = m_ccAuras.begin(); i != m_ccAuras.end(); i = next)
@@ -3984,6 +3984,13 @@ bool Unit::RemoveNoStackAurasDueToAura(Aura* Aur)
 
     uint32 spellId = Aur->GetId();
     uint32 effIndex = Aur->GetEffIndex();
+
+    // If a tracking aura is being applied, remove other instances of tracking auras.
+    if (Aur->GetAuraType() == SPELL_AURA_TRACK_CREATURES || Aur->GetAuraType() == SPELL_AURA_TRACK_RESOURCES)
+    {
+        RemoveAurasByType(SPELL_AURA_TRACK_CREATURES, GetGUID(),Aur);
+        RemoveAurasByType(SPELL_AURA_TRACK_RESOURCES, GetGUID(),Aur);
+    }
 
     AuraMap::iterator i, next;
     for (i = m_Auras.begin(); i != m_Auras.end(); i = next)
@@ -11552,7 +11559,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
             if (spellproto->Effect[i] == SPELL_EFFECT_TRIGGER_SPELL)
                 active = true;
 
-        if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, active, spellProcEvent))
+        if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, damage, spellProcEvent))
             continue;
 
         procTriggered.push_back(ProcTriggeredData(spellProcEvent, itr->second));

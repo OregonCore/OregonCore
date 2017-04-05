@@ -355,6 +355,10 @@ Spell::Spell(Unit* Caster, SpellEntry const* info, bool triggered, uint64 origin
     m_isNeedSendToClient = m_spellInfo->SpellVisual != 0 || IsChanneledSpell(m_spellInfo) ||
                            m_spellInfo->speed > 0.0f || (!m_triggeredByAuraSpell && !m_IsTriggeredSpell);
 
+    // Hide cast bar if the spell has the appropriate attribute, unless the spell is Arcane Missiles.
+    m_isCastTimeHidden = m_spellInfo->Attributes & SPELL_ATTR0_HIDDEN_CAST_TIME &&
+                         ! (m_spellInfo->SpellFamilyName == SPELLFAMILY_MAGE && m_spellInfo->SpellFamilyFlags & 0x00000800);
+
     CleanupTargetList();
 }
 
@@ -2408,6 +2412,19 @@ void Spell::cast(bool skipCheck)
 {
     if (m_spellInfo->Id > MAX_SPELL_ID)
         return;
+
+	if (m_caster->HasAura(12043,0) || m_caster->HasAura(16188,0) || m_caster->HasAura(17116,0))
+	{
+		if (m_spellInfo->CastingTimeIndex != 1)
+		{
+			m_caster->RemoveAurasDueToSpell(16188);
+			m_caster->RemoveAurasDueToSpell(12043);
+			m_caster->RemoveAurasDueToSpell(17116);
+		}
+	}
+
+	if (m_caster->HasAura(27089,0))
+		m_caster->RemoveAurasDueToSpell(27089);
 
     // update pointers base at GUIDs to prevent access to non-existed already object
     UpdatePointers();
@@ -4761,7 +4778,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                 {
                     if (!m_caster->ToPlayer()->IsGameMaster() &&
-                        GetVirtualMapForMapAndZone(m_caster->GetMapId(), m_caster->GetZoneId()) != 530)
+                        GetVirtualMapForMapAndZone(m_caster->GetMapId(), m_caster->GetZoneId()) != 530 && GetVirtualMapForMapAndZone(m_caster->GetMapId(), m_caster->GetZoneId()) != 876)
                         return SPELL_FAILED_NOT_HERE;
                 }
                 break;
@@ -4813,8 +4830,9 @@ SpellCastResult Spell::CheckPetCast(Unit* target)
     if (!m_caster->IsAlive())
         return SPELL_FAILED_CASTER_DEAD;
 
-    if (m_caster->IsNonMeleeSpellCast(false) && !m_IsTriggeredSpell)  //prevent spellcast interruption by another spellcast
-        return SPELL_FAILED_SPELL_IN_PROGRESS;
+/*    if (m_caster->IsNonMeleeSpellCast(false) && !m_IsTriggeredSpell)  //prevent spellcast interruption by another spellcast
+        return SPELL_FAILED_SPELL_IN_PROGRESS;*/
+
     if (m_caster->IsInCombat() && IsNonCombatSpell(m_spellInfo))
         return SPELL_FAILED_AFFECTING_COMBAT;
 

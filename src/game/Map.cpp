@@ -691,7 +691,9 @@ void Map::RemoveFromMap(T *obj, bool remove)
     if (obj->isActiveObject())
         RemoveFromActive(obj);
 
-    obj->UpdateObjectVisibility(true);
+    CellCoord p = Oregon::ComputeCellCoord(obj->GetPositionX(), obj->GetPositionY());
+    Cell cell(p);
+    UpdateObjectVisibility(obj, cell, p);
     obj->RemoveFromGrid();
 
     obj->ResetMap();

@@ -810,6 +810,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
             }
         }
 
+        GameObject* FindLinkedTrap();
         void TriggeringLinkedGameObject(uint32 trapEntry, Unit* target);
 
         bool IsNeverVisible() const override;

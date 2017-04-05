@@ -384,6 +384,26 @@ Player::Player(WorldSession* session) : Unit(true), m_reputationMgr(this)
     m_rest_bonus = 0;
     _restFlagMask = 0;
 
+    // Movement Anticheat
+    m_anti_lastmovetime = 0;          // last movement time
+    m_anti_transportGUID = 0;         // current transport GUID
+    m_anti_last_hspeed = 7.0f;        // horizontal speed, default RUN speed
+    m_anti_lastspeed_changetime = 0;  // last speed change time
+    m_anti_last_vspeed = -2.3f;       // vertical speed, default max jump height
+    m_anti_beginfalltime = 0;         // alternative falling begin time
+    m_anti_justteleported = false;    // seted when player was teleported
+    m_anti_flymounted = false;        // seted when player is mounted on flymount
+    m_anti_wasflymounted = false;     // seted when player was mounted on flymount
+    m_anti_ontaxipath = false;        // seted when player is on a taxi fight
+    m_anti_isjumping = false;         // seted when player is in jump phase
+    m_anti_isknockedback = false;     // seted when player is knocked back
+    m_anti_speedchanged = false;      // seted when player changed speed
+    m_anti_justjumped = 0;            // jump already began, anti-air jump check
+    m_anti_lastcheat.empty();         // stores last cheat as string
+    m_anti_jumpbase = 0;              // Anti-Gravitation
+
+    /////////////////////////////////
+
     // Mail system variables
     m_mailsLoaded = false;
     m_mailsUpdated = false;
@@ -639,6 +659,9 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     // original spells
     LearnDefaultSpells(true);
 
+	UpdateSkillsToMaxSkillsForLevel();
+	LearnAllGreenSpells();
+
     // original action bar
     std::list<uint16>::const_iterator action_itr[4];
     for (int i = 0; i < 4; i++)
@@ -656,55 +679,12 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
             ++action_itr[i];
     }
 
-    // original items
-    CharStartOutfitEntry const* oEntry = NULL;
-    for (uint32 i = 1; i < sCharStartOutfitStore.GetNumRows(); ++i)
-    {
-        if (CharStartOutfitEntry const* entry = sCharStartOutfitStore.LookupEntry(i))
-        {
-            if (entry->RaceClassGender == RaceClassGender)
-            {
-                oEntry = entry;
-                break;
-            }
-        }
-    }
-
-    if (oEntry)
-    {
-        for (int j = 0; j < MAX_OUTFIT_ITEMS; ++j)
-        {
-            if (oEntry->ItemId[j] <= 0)
-                continue;
-
-            uint32 item_id = oEntry->ItemId[j];
-
-            ItemTemplate const* iProto = sObjectMgr.GetItemTemplate(item_id);
-            if (!iProto)
-            {
-                sLog.outErrorDb("Initial item id %u (race %u class %u) from CharStartOutfit.dbc not listed in item_template, ignoring.", item_id, getRace(), getClass());
-                continue;
-            }
-
-            uint32 count = iProto->Stackable;               // max stack by default (mostly 1)
-            if (iProto->Class == ITEM_CLASS_CONSUMABLE && iProto->SubClass == ITEM_SUBCLASS_FOOD)
-            {
-                switch (iProto->Spells[0].SpellCategory)
-                {
-                case SPELL_CATEGORY_FOOD:                                // food
-                    if (iProto->Stackable > 4)
-                        count = 4;
-                    break;
-                case SPELL_CATEGORY_DRINK:                                // drink
-                    if (iProto->Stackable > 2)
-                        count = 2;
-                    break;
-                }
-            }
-
-            StoreNewItemInBestSlots(item_id, count);
-        }
-    }
+    LearnSpell(27028);
+    SetSkill(129,375,375);
+    LearnSpell(33359);
+    SetSkill(185,375,375);
+    LearnSpell(33095);
+    SetSkill(356,375,375);
 
     for (PlayerCreateInfoItems::const_iterator item_id_itr = info->item.begin(); item_id_itr != info->item.end(); ++item_id_itr)
         StoreNewItemInBestSlots(item_id_itr->item_id, item_id_itr->item_amount);
@@ -3261,6 +3241,18 @@ void Player::RemoveSpell(uint32 spell_id, bool disabled)
     SpellsRequiringSpellMap::const_iterator itr2 = reqMap.find(spell_id);
     for (uint32 i = reqMap.count(spell_id); i > 0; i--, ++itr2)
         RemoveSpell(itr2->second, disabled);
+
+	if (CanDualWield())
+    {
+        SpellEntry const *spellInfo = sSpellStore.LookupEntry(spell_id);
+
+        if (spellInfo)
+			if (spellInfo->Effect[0] != SPELL_EFFECT_DUAL_WIELD || 
+				spellInfo->Effect[1] != SPELL_EFFECT_DUAL_WIELD ||
+				spellInfo->Effect[2] != SPELL_EFFECT_DUAL_WIELD ||
+				spellInfo->Effect[3] != SPELL_EFFECT_DUAL_WIELD)
+            SetCanDualWield(false);
+    }
 
     // removing
     WorldPacket data(SMSG_REMOVED_SPELL, 4);
@@ -6384,7 +6376,8 @@ void Player::UpdateZone(uint32 newZone)
     }
 
     pvpInfo.inNoPvPArea = false;
-    if (zone->flags & AREA_FLAG_SANCTUARY)                   // in sanctuary
+	
+	if ((zone->flags & AREA_FLAG_SANCTUARY)|| (GetAreaId() ==  3539)) 
     {
         SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_SANCTUARY);
         pvpInfo.inNoPvPArea = true;
@@ -6574,6 +6567,10 @@ void Player::_ApplyItemMods(Item* item, uint8 slot, bool apply)
 
     // not apply/remove mods for broken item
     if (item->IsBroken())
+        return;
+
+	// don't apply/remove mods if the weapon is disarmed
+    if (item->GetSlot() == EQUIPMENT_SLOT_MAINHAND && !IsUseEquippedWeapon(true))
         return;
 
     sLog.outDetail("applying mods for item %u ", item->GetGUIDLow());
@@ -11835,9 +11832,15 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
     if (!item->IsEquipped())
         return;
 
+    if (!CanUseAttackType(Player::GetAttackBySlot(item->GetSlot())))
+        return;
+
     if (slot >= MAX_ENCHANTMENT_SLOT)
         return;
 
+	if (HasAuraType(SPELL_AURA_MOD_DISARM))
+		return;
+	
     uint32 enchant_id = item->GetEnchantmentId(slot);
     if (!enchant_id)
         return;
@@ -17849,6 +17852,20 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_i
         return false;
     }
 
+    // prevent stealth flight
+    //RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TALK);
+
+    if (sWorld.getConfig(CONFIG_INSTANT_TAXI))
+    {
+        TaxiNodesEntry const* lastPathNode = sTaxiNodesStore.LookupEntry(nodes[nodes.size()-1]);
+        ASSERT(lastPathNode);
+        m_taxi.ClearTaxiDestinations();
+        ModifyMoney(-(int32)totalcost);
+        TeleportTo(lastPathNode->map_id, lastPathNode->x, lastPathNode->y, lastPathNode->z, GetOrientation());
+        return false;
+    }
+    else
+    {
     //Checks and preparations done, DO FLIGHT
     ModifyMoney(-(int32)totalcost);
 
@@ -17871,8 +17888,9 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_i
     DEBUG_LOG("WORLD: Sent SMSG_ACTIVATETAXIREPLY");
 
     GetSession()->SendDoFlight(mount_id, sourcepath);
-
-    return true;
+    }
+    return true;	
+	
 }
 
 bool Player::ActivateTaxiPathTo(uint32 taxi_path_id)
@@ -19977,7 +19995,7 @@ void Player::UpdateZoneDependentAuras(uint32 newZone)
 {
     // remove new continent flight forms
     if (!IsGameMaster() &&
-        GetVirtualMapForMapAndZone(GetMapId(), newZone) != 530)
+        GetVirtualMapForMapAndZone(GetMapId(), newZone) != 530 && GetVirtualMapForMapAndZone(GetMapId(), newZone) != 876)
     {
         RemoveSpellsCausingAura(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED);
         RemoveSpellsCausingAura(SPELL_AURA_FLY);
@@ -20314,12 +20332,16 @@ bool ItemPosCount::isContainedIn(ItemPosCountVec const& vec) const
 
 void Player::HandleFallDamage(MovementInfo& movementInfo)
 {
-    if (movementInfo.GetFallTime() < 1500)
-        return;
-
-    // calculate total z distance of the fall
-    float z_diff = m_lastFallZ - movementInfo.GetPos()->GetPositionZ();
-    DEBUG_LOG("zDiff = %f", z_diff);
+    // Removed for Anticheat Fall DMG
+    if (!World::GetEnableMvAnticheat() && movementInfo.GetFallTime() < 1500)
+         return;
+    else
+        if (movementInfo.GetFallTime() > 400 && movementInfo.GetFallTime() < 1500) // lower falltime then 400 = cheat
+            return;
+ 
+     // calculate total z distance of the fall
+     float z_diff = m_lastFallZ - movementInfo.GetPos()->GetPositionZ();
+    DEBUG_LOG("zDiff=%f, FallTime=%u", z_diff, movementInfo.GetFallTime());
 
     //Players with low fall distance, Feather Fall or physical immunity (charges used) are ignored
     // 14.57 can be calculated by resolving damageperc formular below to 0
@@ -20825,3 +20847,9 @@ void Player::RemoveRestFlag(RestFlag restFlag)
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
     }
 }
+
+void Player::LearnAllGreenSpells()
+{
+
+}
+

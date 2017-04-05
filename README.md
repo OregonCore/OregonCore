@@ -1,5 +1,5 @@
 
-![logo](http://www.oregon-core.net/images/logo-github.png) Welcome to OregonCore!
+![logo](http://www.oregon-core.net/images/logo-github.png) Welcome to Foton.Core, custom fork OregonCore!
 =================================================================================
 
 OregonCore is a piece of software that targets emulation of a World of Warcraft: The Burning Crusade game server. Our goal is to create a stable MMO framework and to help teach and learn development among our community. OregonCore has sustained itself with its tight knit community of developers, testers and bug reporters and thanks all those who have been involved with the project over the years. 
@@ -24,12 +24,11 @@ We have also a public IRC `#OregonCore` at [irc.oregon-core.net][6], this is a p
 
 If you have found a bug you may report it on our bugtracker, issues must include revision hash and as many details as possible to aide us in resolving it as quickly as possible.
 
-[1]: https://travis-ci.org/OregonCore/OregonCore.svg?branch=master
-[2]: https://ci.appveyor.com/api/projects/status/bxn9cq9miqxn33gr/branch/master
+[1]: https://travis-ci.org/superwow/foton.core.svg?branch=master
+[2]: https://ci.appveyor.com/api/projects/status/ormhb9b3mf0xbnvs/branch/master
 [3]: https://wiki.oregon-core.net/
 [4]: https://docs.oregon-core.net/
 [5]: https://forums.oregon-core.net/
 [6]: irc://irc.oregon-core.net
-[7]: https://travis-ci.org/OregonCore/OregonCore
+[7]: https://travis-ci.org/superwow/foton.core
 [8]: https://ci.appveyor.com/project/OregonCore/OregonCore/branch/master
-

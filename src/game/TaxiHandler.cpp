@@ -115,6 +115,9 @@ void WorldSession::SendDoFlight(uint16 MountId, uint32 path, uint32 pathNode)
     if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
         GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
+    // Movement Anticheat
+    GetPlayer()->m_anti_ontaxipath = true;
+
     while (GetPlayer()->GetMotionMaster()->GetCurrentMovementGeneratorType() == FLIGHT_MOTION_TYPE)
         GetPlayer()->GetMotionMaster()->MovementExpired(false);
     GetPlayer()->Mount(MountId);
@@ -190,7 +193,40 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
 
     uint32 curDest = GetPlayer()->m_taxi.GetTaxiDestination();
     if (!curDest)
+    {
+        // Movement Anticheat
+        GetPlayer()->Relocate(movementInfo.GetPos());
+        GetPlayer()->m_movementInfo = movementInfo;
+        GetPlayer()->m_anti_lastmovetime = movementInfo.time;
+        GetPlayer()->m_anti_justteleported = true;
+        //<<< end Movement Anticheat
+         return;
+    }
+
+    TaxiNodesEntry const* curDestNode = sTaxiNodesStore.LookupEntry(curDest);
+ 
+    // Movement Anticheat
+    GetPlayer()->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
+    GetPlayer()->m_movementInfo = movementInfo;
+    GetPlayer()->m_anti_lastmovetime = movementInfo.time;
+    //<<< end Movement Anticheat
+
+    // far teleport case
+    if (curDestNode && curDestNode->map_id != GetPlayer()->GetMapId())
+    {
+        if (GetPlayer()->GetMotionMaster()->GetCurrentMovementGeneratorType() == FLIGHT_MOTION_TYPE)
+        {
+            // short preparations to continue flight
+            FlightPathMovementGenerator* flight = (FlightPathMovementGenerator*)(GetPlayer()->GetMotionMaster()->top());
+
+            flight->SetCurrentNodeAfterTeleport();
+            TaxiPathNodeEntry const& node = flight->GetPath()[flight->GetCurrentNode()];
+            flight->SkipCurrentNode();
+
+            GetPlayer()->TeleportTo(curDestNode->map_id, node.x, node.y, node.z, GetPlayer()->GetOrientation());
+        }
         return;
+    }
 
     uint32 destinationnode = GetPlayer()->m_taxi.NextTaxiDestination();
     if (destinationnode > 0)                              // if more destinations to go
