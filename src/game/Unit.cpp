@@ -3985,6 +3985,13 @@ bool Unit::RemoveNoStackAurasDueToAura(Aura* Aur)
     uint32 spellId = Aur->GetId();
     uint32 effIndex = Aur->GetEffIndex();
 
+    // If a tracking aura is being applied, remove other instances of tracking auras.
+    if (Aur->GetAuraType() == SPELL_AURA_TRACK_CREATURES || Aur->GetAuraType() == SPELL_AURA_TRACK_RESOURCES)
+    {
+        RemoveAurasByType(SPELL_AURA_TRACK_CREATURES, GetGUID(),Aur);
+        RemoveAurasByType(SPELL_AURA_TRACK_RESOURCES, GetGUID(),Aur);
+    }
+
     AuraMap::iterator i, next;
     for (i = m_Auras.begin(); i != m_Auras.end(); i = next)
     {
