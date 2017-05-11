@@ -1,3 +1,4 @@
+DELETE FROM  reputation_spillover_template WHERE faction IN (21, 47, 54, 68, 69, 72, 76, 81, 369, 470, 530, 577, 911, 930, 932, 934);
 insert into `reputation_spillover_template` (`faction`, `faction1`, `rate_1`, `rank_1`, `faction2`, `rate_2`, `rank_2`, `faction3`, `rate_3`, `rank_3`, `faction4`, `rate_4`, `rank_4`) values('21','369','0.5','7','470','0.5','7','577','0.5','7','0','0','0');
 insert into `reputation_spillover_template` (`faction`, `faction1`, `rate_1`, `rank_1`, `faction2`, `rate_2`, `rank_2`, `faction3`, `rate_3`, `rank_3`, `faction4`, `rate_4`, `rank_4`) values('47','72','0.25','7','54','0.25','7','69','0.25','7','930','0.25','7');
 insert into `reputation_spillover_template` (`faction`, `faction1`, `rate_1`, `rank_1`, `faction2`, `rate_2`, `rank_2`, `faction3`, `rate_3`, `rank_3`, `faction4`, `rate_4`, `rank_4`) values('54','47','0.25','7','72','0.25','7','69','0.25','7','930','0.25','7');
