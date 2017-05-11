@@ -1629,7 +1629,7 @@ struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
             fLocZ = SpawnLocation[uiLocIndex + i].fLocZ;
             fOrient = SpawnLocation[uiLocIndex + i].fOrient;
 
-            if (Creature* pSpawn = me->SummonCreature(WavesInfo[m_uiWaveCount].uiCreatureId, fLocX, fLocY, fLocZ, fOrient, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 15000))
+            if (Creature* pSpawn = me->SummonCreature(WavesInfo[m_uiWaveCount].uiCreatureId, fLocX, fLocY, fLocZ, fOrient, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000))
             {
 
                 if (m_uiWaveCount)                          // only in first wave
@@ -1717,14 +1717,14 @@ struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
                     if (pMember->GetQuestStatus(QUEST_BATTLE_OF_THE_CRIMSON_WATCH) == QUEST_STATUS_FAILED)
                     {
                         ++uiFailedMemberCount;
-                        continue;
+                        continue;					
                     }
 
                     // we left event area fail quest
                     if (!pMember->IsWithinDistInMap(me, EVENT_AREA_RADIUS))
                     {
                         pMember->FailQuest(QUEST_BATTLE_OF_THE_CRIMSON_WATCH);
-                        ++uiFailedMemberCount;
+                        ++uiFailedMemberCount;					
                     }
                 }
             }
@@ -1803,9 +1803,11 @@ bool GOQuestAccept_GO_crystal_prison(Player* pPlayer, GameObject* /*pGo*/, Quest
     if (pQuest->GetQuestId() == QUEST_BATTLE_OF_THE_CRIMSON_WATCH )
         if (Creature* pLordIllidan = GetClosestCreatureWithEntry(pPlayer, NPC_LORD_ILLIDAN, 50.0))
             if (npc_lord_illidan_stormrageAI* pIllidanAI = dynamic_cast<npc_lord_illidan_stormrageAI*>(pLordIllidan->AI()))
-                if (!pIllidanAI->m_bEventStarted)
-                    pIllidanAI->StartEvent(pPlayer);
-
+				if (!pIllidanAI->m_bEventStarted)
+				{
+					pIllidanAI->Reset();
+					pIllidanAI->StartEvent(pPlayer);
+				}
     return true;
 }
 
