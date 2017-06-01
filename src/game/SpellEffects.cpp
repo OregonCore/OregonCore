@@ -5495,7 +5495,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     // Triggered spell id dependent on riding skill and zone
                     bool canFly = true;
                     uint32 v_map = GetVirtualMapForMapAndZone(unitTarget->GetMapId(), unitTarget->GetZoneId());
-                    if (v_map != 530)
+                    if (v_map != 530 || v_map != 876)
                         canFly = false;
 
                     switch (unitTarget->ToPlayer()->GetBaseSkillValue(SKILL_RIDING))
@@ -5536,7 +5536,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     // Triggered spell id dependent on riding skill and zone
                     bool canFly = true;
                     uint32 v_map = GetVirtualMapForMapAndZone(unitTarget->GetMapId(), unitTarget->GetZoneId());
-                    if (v_map != 530)
+                    if (v_map != 530 || v_map != 876)
                         canFly = false;
 
                     switch (unitTarget->ToPlayer()->GetBaseSkillValue(SKILL_RIDING))

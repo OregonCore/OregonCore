@@ -1504,8 +1504,11 @@ void Group::SetDifficulty(DungeonDifficulty difficulty)
     for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
     {
         Player* player = itr->GetSource();
-        if (!player->GetSession() || player->getLevel() < LEVELREQUIREMENT_HEROIC)
+        if (!player->GetSession())
             continue;
+        if (player->getLevel() < LEVELREQUIREMENT_HEROIC)
+            continue;
+ 
         player->SetDifficulty(difficulty);
         player->SendDungeonDifficulty(true);
     }

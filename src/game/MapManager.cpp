@@ -75,32 +75,6 @@ void MapManager::InitializeVisibilityDistanceInfo()
         (*iter).second->InitVisibilityDistance();
 }
 
-// debugging code, should be deleted some day
-void MapManager::checkAndCorrectGridStatesArray()
-{
-    bool ok = true;
-    for (int i = 0; i < MAX_GRID_STATE; i++)
-    {
-        if (i_GridStates[i] != si_GridStates[i])
-        {
-            sLog.outError("MapManager::checkGridStates(), GridState: si_GridStates is currupt !!!");
-            ok = false;
-            si_GridStates[i] = i_GridStates[i];
-        }
-        #if 0 // OREGON_DEBUG
-        // inner class checking only when compiled with debug
-        if (!si_GridStates[i]->checkMagic())
-        {
-            ok = false;
-            si_GridStates[i]->setMagic();
-        }
-        #endif
-    }
-    if (!ok)
-        ++i_GridStateErrorCount;
-    if (i_GridStateErrorCount > 2)
-        ASSERT(false);                                      // force a crash. Too many errors
-}
 
 Map* MapManager::_createBaseMap(uint32 id)
 {
