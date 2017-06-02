@@ -804,7 +804,7 @@ bool GameObject::IsAlwaysVisibleFor(WorldObject const* seer) const
 
     if (IsTransport())
         return true;
-    
+
     if (!seer)
         return false;
 
@@ -1340,6 +1340,7 @@ void GameObject::Use(Unit* user)
             }
 
             user->RemoveAurasByType(SPELL_AURA_MOUNTED);
+            user->RemoveAurasByType(SPELL_AURA_FLY);
             spellId = info->spellcaster.spellId;
 
             break;
@@ -1491,7 +1492,7 @@ void GameObject::SetLootState(LootState s, Unit* unit)
          // Use the current go state
          if ((GetGoState() != GO_STATE_READY && (s == GO_ACTIVATED || s == GO_JUST_DEACTIVATED)) || s == GO_READY)
             collision = !collision;
-         
+
         EnableCollision(collision);
     }
 }
@@ -1594,8 +1595,8 @@ void GameObject::SetGoState(GOState state)
         // startOpen determines whether we are going to add or remove the LoS on activation
         bool collision = false;
         if (state == GO_STATE_READY)
-            collision = !collision; 
- 
+            collision = !collision;
+
         EnableCollision(collision);
     }
 }
