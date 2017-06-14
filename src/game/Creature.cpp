@@ -162,7 +162,7 @@ Creature::Creature(bool isWorldObject): Unit(isWorldObject),
 
     m_CreatureSpellCooldowns.clear();
     m_CreatureCategoryCooldowns.clear();
-    
+
     m_SightDistance = sWorld.getConfig(CONFIG_SIGHT_MONSTER);
     m_CombatDistance = 0; // MELEE_RANGE
 
@@ -590,7 +590,7 @@ void Creature::Update(uint32 diff)
                     m_combatPulseTime = m_combatPulseDelay * IN_MILLISECONDS;
                 }
             }
- 
+
             if (!IsInEvadeMode() && IsAIEnabled)
             {
                 // do not allow the AI to be changed during update
@@ -2092,8 +2092,8 @@ bool Creature::CanCreatureAttack(Unit const* victim, bool /*force*/) const
         }
     }
 
-    // Map visibility range, but no more than 2*cell size
-    float dist = std::min<float>(GetMap()->GetVisibilityRange(), SIZE_OF_GRID_CELL * 2);
+    // Get the correct threat range from the config.
+    float dist = std::max<float>(GetAttackDistance(victim), sWorld.getConfig(CONFIG_THREAT_RADIUS) + m_CombatDistance);
 
     if (Unit* unit = GetCharmerOrOwner())
         return victim->IsWithinDist(unit, dist);
