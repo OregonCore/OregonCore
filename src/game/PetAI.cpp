@@ -86,18 +86,6 @@ void PetAI::UpdateAI(const uint32 diff)
     else
         m_updateAlliesTimer -= diff;
 
-    // Prevent losing the pet action bar after reloading the user interface
-    if (owner && owner->GetTypeId() == TYPEID_PLAYER)
-    {
-        if (m_updatePetSpellTimer <= diff)
-        {
-            owner->ToPlayer()->PetSpellInitialize();
-            m_updatePetSpellTimer = 5 * IN_MILLISECONDS;
-        }
-        else
-            m_updatePetSpellTimer -= diff;
-    }
-
     // i_pet.GetVictim() can't be used for check in case stop fighting, i_pet.GetVictim() clear at Unit death etc.
     if (me->GetVictim() && me->GetVictim()->IsAlive())
     {

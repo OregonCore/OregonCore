@@ -60,7 +60,6 @@ class PetAI : public CreatureAI
         bool inCombat;
         std::set<uint64> m_AllySet;
         uint32 m_updateAlliesTimer;
-        uint32 m_updatePetSpellTimer;
 
         Unit* SelectNextTarget();
         void HandleReturnMovement();
