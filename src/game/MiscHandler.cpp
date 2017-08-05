@@ -1506,10 +1506,12 @@ void WorldSession::HandleDismountOpcode(WorldPacket& /*recv_data*/)
 
 void WorldSession::HandleRequestPetInfoOpcode(WorldPacket& /*recv_data */)
 {
-    /*
-        DEBUG_LOG("WORLD: CMSG_REQUEST_PET_INFO");
-        recv_data.hexlike();
-    */
+    DEBUG_LOG("WORLD: CMSG_REQUEST_PET_INFO");
+
+    if (_player->GetPet())
+        _player->PetSpellInitialize();
+    else if (_player->GetCharm())
+        _player->CharmSpellInitialize();
 }
 
 void WorldSession::HandleSetTaxiBenchmarkOpcode(WorldPacket& recv_data)
