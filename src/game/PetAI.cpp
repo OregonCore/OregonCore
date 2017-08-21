@@ -232,7 +232,7 @@ void PetAI::DamageDealt(Unit* victim, uint32& damage, DamageEffectType damageTyp
         return;
 
     Unit* owner = me->GetCharmerOrOwner();
-    if (!owner)
+    if (!owner || !me->GetVictim())
         return;
 
     if (!(me->GetVictim() == victim) && !me->GetVictim()->IsAlive())
@@ -560,7 +560,7 @@ void PetAI::AttackedBy(Unit* attacker)
         return;
 
     if (Unit* owner = me->GetOwner())
-        owner->SetInCombatWith(me->GetVictim());
+        owner->SetInCombatWith(attacker);
 
     // Prevent pet from disengaging from current target
     if (me->GetVictim() && me->GetVictim()->IsAlive())
