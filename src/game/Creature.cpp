@@ -377,9 +377,11 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
-    SetAttackTime(BASE_ATTACK,  cInfo->baseattacktime);
-    SetAttackTime(OFF_ATTACK,   cInfo->baseattacktime);
-    SetAttackTime(RANGED_ATTACK, cInfo->rangeattacktime);
+    uint32 attackTimer = GetCreatureTemplate()->baseattacktime;
+    
+    SetAttackTime(BASE_ATTACK, attackTimer);
+    SetAttackTime(OFF_ATTACK, attackTimer - attackTimer / 4);
+    SetAttackTime(RANGED_ATTACK, GetCreatureTemplate()->rangeattacktime);
 
     SelectLevel();
 
@@ -1186,14 +1188,12 @@ void Creature::SelectLevel()
     SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, cInfo->maxdmg * damagemod);
     SetBaseWeaponDamage(OFF_ATTACK, MINDAMAGE, cInfo->mindmg * damagemod);
     SetBaseWeaponDamage(OFF_ATTACK, MAXDAMAGE, cInfo->maxdmg * damagemod);
-    SetBaseWeaponDamage(RANGED_ATTACK, MINDAMAGE, cInfo->minrangedmg * damagemod);
-    SetBaseWeaponDamage(RANGED_ATTACK, MAXDAMAGE, cInfo->maxrangedmg * damagemod);
+    SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE, cInfo->minrangedmg * damagemod);
+    SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE, cInfo->maxrangedmg * damagemod);
+    
+    SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, cInfo->attackpower * damagemod);
+    SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, cInfo->rangedattackpower * damagemod);
 
-    // this value is not accurate, but should be close to the real value
-    SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, level * 5);
-    SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, level * 5);
-    //SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, cinfo->attackpower * damagemod);
-    //SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, cinfo->rangedattackpower * damagemod);
     UpdateAllStats();
 }
 
