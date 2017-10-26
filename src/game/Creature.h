@@ -141,7 +141,7 @@ struct CreatureInfo
     uint32  GossipMenuId;
     uint32  minlevel;
     uint32  maxlevel;
-    int32 exp;
+    int32   exp;
     uint32  minhealth;
     uint32  maxhealth;
     uint32  minmana;
@@ -157,6 +157,7 @@ struct CreatureInfo
     float   maxdmg;
     uint32  dmgschool;
     uint32  attackpower;
+    float   dmg_multiplier;
     uint32  baseattacktime;
     uint32  rangeattacktime;
     uint32  unit_class;                                     // enum Classes. Note only 4 classes are known for creatures.
@@ -190,6 +191,7 @@ struct CreatureInfo
     uint32  InhabitType;
     float   ModHealth;
     float   ModMana;
+    float   ModArmor;
     bool    RacialLeader;
     bool    RegenHealth;
     uint32  equipmentId;
