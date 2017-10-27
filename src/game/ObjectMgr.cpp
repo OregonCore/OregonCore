@@ -702,11 +702,11 @@ void ObjectMgr::LoadCreatureTemplates()
             const_cast<CreatureInfo*>(cInfo)->dmgschool = SPELL_SCHOOL_NORMAL;
         }
 
-        if (cInfo->baseattacktime == 0)
-            const_cast<CreatureInfo*>(cInfo)->baseattacktime  = BASE_ATTACK_TIME;
+        if (cInfo->BaseAttackTime == 0)
+            const_cast<CreatureInfo*>(cInfo)->BaseAttackTime = BASE_ATTACK_TIME;
 
-        if (cInfo->rangeattacktime == 0)
-            const_cast<CreatureInfo*>(cInfo)->rangeattacktime = BASE_ATTACK_TIME;
+        if (cInfo->RangeAttackTime == 0)
+            const_cast<CreatureInfo*>(cInfo)->RangeAttackTime = BASE_ATTACK_TIME;
 
         if ((cInfo->npcflag & UNIT_NPC_FLAG_TRAINER) && cInfo->trainer_type >= MAX_TRAINER_TYPE)
             sLog.outErrorDb("Creature (Entry: %u) has wrong trainer type %u", cInfo->Entry, cInfo->trainer_type);

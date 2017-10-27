@@ -135,10 +135,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         Charging_Timer = 0;
         Roar_Timer = 0;
 
-		const CreatureInfo* cinfo = me->GetCreatureTemplate();
-		me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 45)));
-		me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 45)));
-		me->UpdateDamagePhysical(BASE_ATTACK);
+        me->HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, 45.0f, true); // hack
 
 		if (me->HasAura(SPELL_DUAL_WIELD))
 			me->RemoveAurasDueToSpell(SPELL_DUAL_WIELD);
@@ -293,10 +290,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
 
         if (Phase2)
         {
-			const CreatureInfo* cinfo = me->GetCreatureTemplate();
-			me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
-			me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));
-			me->UpdateDamagePhysical(BASE_ATTACK);
+            me->HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, 1.0f, true); // hack
 
             //Charging_Timer
             if (Charging_Timer <= diff)

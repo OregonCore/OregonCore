@@ -5039,7 +5039,7 @@ void Aura::HandleModCombatSpeedPct(bool apply, bool /*Real*/)
 
 void Aura::HandleModAttackSpeed(bool apply, bool /*Real*/)
 {
-    m_target->ApplyAttackTimePercentMod(BASE_ATTACK, (float)GetModifierValue(), apply);
+    m_target->ApplyAttackTimePercentMod(BASE_ATTACK, float(GetModifierValue()), apply);
     m_target->UpdateDamagePhysical(BASE_ATTACK);
 }
 
