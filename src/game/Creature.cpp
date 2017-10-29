@@ -332,11 +332,6 @@ bool Creature::InitEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
     SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
 
-    SetSpeed(MOVE_WALK,   cinfo->speed_walk);
-    SetSpeed(MOVE_RUN,    cinfo->speed_run);
-    SetSpeed(MOVE_SWIM,   1.0f); // using 1.0 rate
-    SetSpeed(MOVE_FLIGHT, 1.0f); // using 1.0 rate
-
     SetObjectScale(cinfo->scale);
 
     // checked at loading
@@ -2731,4 +2726,29 @@ Unit* Creature::SelectNearestHostileUnitInAggroRange(bool useLOS) const
     }
 
     return target;
+}
+void Creature::SetBaseWalkSpeed(float speed)
+{
+    float newSpeed = speed;
+    if (m_creatureInfo->speed_walk) // Creature template should still override
+        newSpeed = m_creatureInfo->speed_walk;
+
+    if (newSpeed != m_baseSpeedWalk)
+    {
+        m_baseSpeedWalk = newSpeed;
+        UpdateSpeed(MOVE_WALK, false);
+    }
+}
+
+void Creature::SetBaseRunSpeed(float speed)
+{
+    float newSpeed = speed;
+    if (m_creatureInfo->speed_run) // Creature template should still override
+        newSpeed = m_creatureInfo->speed_run;
+
+    if (newSpeed != m_baseSpeedWalk)
+    {
+        m_baseSpeedRun = newSpeed;
+        UpdateSpeed(MOVE_RUN, false);
+    }
 }

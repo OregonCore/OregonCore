@@ -311,6 +311,8 @@ struct CreatureModelInfo
     uint32 modelid;
     float bounding_radius;
     float combat_reach;
+    float SpeedWalk;
+    float SpeedRun;
     uint8 gender;
     uint32 modelid_other_gender;
 };
@@ -930,6 +932,9 @@ class Creature : public Unit, public GridObject<Creature>
 
         bool IsInvisibleDueToDespawn() const override;
         bool CanAlwaysSee(WorldObject const* obj) const override;
+
+        void SetBaseWalkSpeed(float speed) override;
+        void SetBaseRunSpeed(float speed) override;
     private:
         //WaypointMovementGenerator vars
         uint32 m_waypointID;
