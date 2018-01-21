@@ -1780,10 +1780,7 @@ ZLiquidStatus Map::getLiquidStatus(float x, float y, float z, uint8 ReqLiquidTyp
             {
                 // hardcoded in client like this
                 if (GetId() == 530 && map_data.entry == 2)
-                {
-                    map_data.entry = 3;
-                    map_data.type_flags = MAP_LIQUID_TYPE_MAGMA;
-                }
+                    map_data.entry = 15;
 
                 *data = map_data;
             }
