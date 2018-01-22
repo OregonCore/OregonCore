@@ -507,8 +507,8 @@ void MapBuilder::buildMoveMapTile(uint32 mapID, uint32 tileX, uint32 tileY,
     config.minRegionArea = rcSqr(60);
     config.mergeRegionArea = rcSqr(50);
     config.maxSimplificationError = 1.8f;           // eliminates most jagged edges (tiny polygons)
-    config.detailSampleDist = config.cs * 64;
-    config.detailSampleMaxError = config.ch * 2;
+    config.detailSampleDist = config.cs * 16;
+    config.detailSampleMaxError = config.ch * 1;
 
     // this sets the dimensions of the heightfield - should maybe happen before border padding
     rcCalcGridSize(config.bmin, config.bmax, config.cs, &config.width, &config.height);
