@@ -329,13 +329,6 @@ void CreatureAI::SetCombatMovement(bool enable)
             me->CastStop();
         }
     }
-    else
-    {
-        me->GetMotionMaster()->MovementExpired();
-        me->GetMotionMaster()->Clear(true);
-        me->StopMoving();
-        me->GetMotionMaster()->MoveIdle();
-    }
 }
 
 Creature* CreatureAI::DoSummon(uint32 entry, const Position& pos, uint32 despawnTime, TempSummonType summonType)
