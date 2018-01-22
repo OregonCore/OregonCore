@@ -83,7 +83,7 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
 
         victim = NULL;
 
-        Oregon::NearestAttackableUnitInObjectRangeCheck u_check(&i_totem, &i_totem, max_range);
+        Oregon::NearestAttackableUnitInObjectRangeCheck u_check(&i_totem, me->GetCharmerOrOwnerOrSelf(), max_range);
         Oregon::UnitLastSearcher<Oregon::NearestAttackableUnitInObjectRangeCheck> checker(victim, u_check);
 
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestAttackableUnitInObjectRangeCheck>, GridTypeMapContainer > grid_object_checker(checker);
