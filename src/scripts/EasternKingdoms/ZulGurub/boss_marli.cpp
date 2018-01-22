@@ -177,10 +177,7 @@ struct boss_marliAI : public ScriptedAI
                 me->InterruptNonMeleeSpells(false);
                 DoScriptText(SAY_TRANSFORM, me);
                 DoCast(me, SPELL_SPIDER_FORM);
-                const CreatureInfo* cinfo = me->GetCreatureTemplate();
-                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 35)));
-                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 35)));
-                me->UpdateDamagePhysical(BASE_ATTACK);
+                me->HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, 35.0f, true); // hack
                 DoCastVictim( SPELL_ENVOLWINGWEB);
 
                 PhaseTwo = true;
@@ -229,9 +226,7 @@ struct boss_marliAI : public ScriptedAI
                 {
                     me->SetDisplayId(15220);
                     const CreatureInfo* cinfo = me->GetCreatureTemplate();
-                    me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
-                    me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));
-                    me->UpdateDamagePhysical(BASE_ATTACK);
+                    me->HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, 1.0f, true); // hack
                     Charge_Timer = 1500;  // reset charge timer so each transform she charges
 
                     PhaseTwo = false;
@@ -281,9 +276,7 @@ struct mob_spawn_of_marliAI : public ScriptedAI
         if (Grow_Timer <= diff)
         {
             const CreatureInfo* cinfo = me->GetCreatureTemplate();
-            me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->maxdmg * (1 + 0.1f * Growth_Level)));
-            me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg * (1 + 0.1f * Growth_Level)));
-            me->UpdateDamagePhysical(BASE_ATTACK);
+            me->HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, 1.0f, true); // hack
             me->SetObjectScale(1.0f + Growth_Level * 0.1f);
             Grow_Timer = 1000;
             ++Growth_Level;

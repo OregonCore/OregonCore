@@ -377,14 +377,16 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
-    SetAttackTime(BASE_ATTACK,  cInfo->baseattacktime);
-    SetAttackTime(OFF_ATTACK,   cInfo->baseattacktime);
-    SetAttackTime(RANGED_ATTACK, cInfo->rangeattacktime);
+    SetAttackTime(BASE_ATTACK, cInfo->BaseAttackTime);
+    SetAttackTime(OFF_ATTACK, cInfo->BaseAttackTime);
+    SetAttackTime(RANGED_ATTACK, cInfo->RangeAttackTime);
 
     SelectLevel();
 
     SetMeleeDamageSchool(SpellSchools(cInfo->dmgschool));
-    SetModifierValue(UNIT_MOD_ARMOR, BASE_VALUE, float(cInfo->armor));
+    CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(getLevel(), cInfo->unit_class, cInfo->exp);
+    float armor = cCLS->BaseArmor * cInfo->ModArmor;
+    SetModifierValue(UNIT_MOD_ARMOR, BASE_VALUE, armor);
 
     if (cInfo->resistance1 < 0)
     {
@@ -1138,30 +1140,10 @@ void Creature::SelectLevel()
     uint32 health;
     uint32 mana;
 
-    if (CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(level, cInfo->unit_class, cInfo->exp))
-    {
-        // Use Creature Stats to calculate stat values
-
-        // health
-        health = cCLS->BaseHealth * cInfo->ModHealth;
-
-        // mana
-        mana = cCLS->BaseMana * cInfo->ModMana;
-    }
-    else
-    {
-        // Use old style to calculate stat values
-        float rellevel = maxlevel == minlevel ? 0 : (float(level - minlevel)) / (maxlevel - minlevel);
-
-        uint32 minhealth = std::min(cInfo->maxhealth, cInfo->minhealth);
-        uint32 maxhealth = std::max(cInfo->maxhealth, cInfo->minhealth);
-        health = uint32(minhealth + uint32(rellevel * (maxhealth - minhealth)));
-
-        // mana
-        uint32 minmana = std::min(cInfo->maxmana, cInfo->minmana);
-        uint32 maxmana = std::max(cInfo->maxmana, cInfo->minmana);
-        mana = minmana + uint32(rellevel * (maxmana - minmana));
-    }
+    CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(level, cInfo->unit_class, cInfo->exp);
+    
+    // health
+    health = cCLS->BaseHealth * cInfo->ModHealth;
 
     health *= _GetHealthMod(rank); // Apply custom config settting
     if (health < 1)
@@ -1172,6 +1154,8 @@ void Creature::SelectLevel()
     SetHealth(health);
     SetPlayerDamaged(false);
 
+    // mana
+    mana = cCLS->BaseMana * cInfo->ModMana;
     SetCreateMana(mana);
     SetMaxPower(POWER_MANA, mana);                          //MAX Mana
     SetPower(POWER_MANA, mana);
@@ -1180,20 +1164,23 @@ void Creature::SelectLevel()
     SetModifierValue(UNIT_MOD_MANA, BASE_VALUE, (float)mana);
 
     // damage
-    float damagemod = _GetDamageMod(rank);
+    float basedamage = cCLS->BaseDamage;
+    
+    float weaponBaseMinDamage = basedamage;
+    float weaponBaseMaxDamage = basedamage * 1.5;
+    
+    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, weaponBaseMinDamage);
+    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, weaponBaseMaxDamage);
+    
+    SetBaseWeaponDamage(OFF_ATTACK, MINDAMAGE, weaponBaseMinDamage);
+    SetBaseWeaponDamage(OFF_ATTACK, MAXDAMAGE, weaponBaseMaxDamage);
 
-    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, cInfo->mindmg * damagemod);
-    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, cInfo->maxdmg * damagemod);
-    SetBaseWeaponDamage(OFF_ATTACK, MINDAMAGE, cInfo->mindmg * damagemod);
-    SetBaseWeaponDamage(OFF_ATTACK, MAXDAMAGE, cInfo->maxdmg * damagemod);
-    SetBaseWeaponDamage(RANGED_ATTACK, MINDAMAGE, cInfo->minrangedmg * damagemod);
-    SetBaseWeaponDamage(RANGED_ATTACK, MAXDAMAGE, cInfo->maxrangedmg * damagemod);
+    SetBaseWeaponDamage(RANGED_ATTACK, MINDAMAGE, weaponBaseMinDamage);
+    SetBaseWeaponDamage(RANGED_ATTACK, MAXDAMAGE, weaponBaseMaxDamage);
 
-    // this value is not accurate, but should be close to the real value
-    SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, level * 5);
-    SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, level * 5);
-    //SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, cinfo->attackpower * damagemod);
-    //SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, cinfo->rangedattackpower * damagemod);
+    SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, cCLS->BaseMeleeAttackPower);
+    SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, cCLS->BaseRangedAttackPower);
+
     UpdateAllStats();
 }
 
@@ -1353,6 +1340,12 @@ bool Creature::LoadCreatureFromDB(uint32 guid, Map* map, bool addToMap)
     if (addToMap && !GetMap()->AddToMap(this))
         return false;
     return true;
+}
+
+void Creature::SetCanDualWield(bool value)
+{
+    Unit::SetCanDualWield(value);
+    UpdateDamagePhysical(OFF_ATTACK);
 }
 
 void Creature::LoadEquipment(uint32 equip_entry, bool force)
