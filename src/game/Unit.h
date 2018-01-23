@@ -963,16 +963,7 @@ class Unit : public WorldObject
         {
             m_attackers.erase(pAttacker);
         }
-        Unit* getAttackerForHelper() const                 // If someone wants to help, who to give them
-        {
-            if (GetVictim() != NULL)
-                return GetVictim();
-
-            if (!m_attackers.empty())
-                return *(m_attackers.begin());
-
-            return NULL;
-        }
+        Unit* getAttackerForHelper() const;                 // If someone wants to help, who to give them
         bool Attack(Unit* victim, bool meleeAttack);
         void CastStop(uint32 except_spellid = 0);
         bool AttackStop();

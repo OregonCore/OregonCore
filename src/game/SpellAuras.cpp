@@ -5792,6 +5792,11 @@ void Aura::PeriodicTick()
             if (!pCaster)
                 return;
 
+            Unit* target = m_target;                        // aura can be deleted in DealDamage
+                                                            // Needs to be moved to aura apply
+            if (!pCaster->IsValidAttackTarget(target))
+                return;
+
             if (GetSpellProto()->Effect[GetEffIndex()] == SPELL_EFFECT_PERSISTENT_AREA_AURA &&
                 pCaster->SpellHitResult(m_target, GetSpellProto(), false) != SPELL_MISS_NONE)
                 return;
@@ -5921,7 +5926,7 @@ void Aura::PeriodicTick()
             DEBUG_LOG("PeriodicTick: %u (TypeId: %u) attacked %u (TypeId: %u) for %u dmg inflicted by %u abs is %u",
                       GUID_LOPART(GetCasterGUID()), GuidHigh2TypeId(GUID_HIPART(GetCasterGUID())), m_target->GetGUIDLow(), m_target->GetTypeId(), pdamage, GetId(), absorb);
 
-            Unit* target = m_target;                        // aura can be deleted in DealDamage
+
             SpellEntry const* spellProto = GetSpellProto();
 
             // Set trigger flag
