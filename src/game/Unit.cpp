@@ -10062,6 +10062,21 @@ void Unit::setDeathState(DeathState s)
     // Death state needs to be updated before RemoveAllAurasOnDeath() is called, to prevent entering combat
     m_deathState = s;
 
+    if (s != ALIVE && s != JUST_RESPAWNED)
+    {
+        CombatStop();
+        DeleteThreatList();
+        getHostileRefManager().deleteReferences();
+        ClearComboPointHolders();                           // any combo points pointed to unit lost at it death
+
+        if (IsNonMeleeSpellCast(false))
+            InterruptNonMeleeSpells(false);
+
+        UnsummonAllTotems();
+        RemoveAllControlled();
+        RemoveAllAurasOnDeath();
+    }
+
     if (s == JUST_DIED)
     {
         ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
@@ -10079,7 +10094,7 @@ void Unit::setDeathState(DeathState s)
             GetMotionMaster()->Clear(false);
             GetMotionMaster()->MoveIdle();
         }
-
+        DisableSpline();
         StopMoving();
 
         //without this when removing IncreaseMaxHealth aura player may stuck with 1 hp
@@ -10090,21 +10105,6 @@ void Unit::setDeathState(DeathState s)
     }
     else if (s == JUST_RESPAWNED)
         RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE); // clear skinnable for creature and player (at Battleground)
-
-    if (s != ALIVE && s != JUST_RESPAWNED)
-    {
-        CombatStop();
-        DeleteThreatList();
-        getHostileRefManager().deleteReferences();
-        ClearComboPointHolders();                           // any combo points pointed to unit lost at it death
-
-        if (IsNonMeleeSpellCast(false))
-            InterruptNonMeleeSpells(false);
-
-        UnsummonAllTotems();
-        RemoveAllControlled();
-        RemoveAllAurasOnDeath();
-    }
 }
 
 /*########################################
@@ -10351,6 +10351,7 @@ Unit* Creature::SelectVictim()
     // search nearby enemy before enter evade mode
     if (HasReactState(REACT_AGGRESSIVE))
     {
+        target = SelectNearestTargetInAttackDistance(m_CombatDistance ? m_CombatDistance : ATTACK_DISTANCE);
 
         if (target && _IsTargetAcceptable(target) && CanCreatureAttack(target))
             return target;
