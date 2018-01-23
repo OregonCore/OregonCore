@@ -14556,6 +14556,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     _LoadBGData(holder->GetResult(PLAYER_LOGIN_QUERY_LOADBGDATA));
 
     MapEntry const* mapEntry = sMapStore.LookupEntry(mapId);
+    Map* map = nullptr;
+
     if (!mapEntry || !IsPositionValid())
     {
         sLog.outError("Player (guidlow %d) has invalid coordinates (MapId: %u X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.", guid, mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
@@ -14712,8 +14714,9 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
 
     // NOW player must have valid map
     // load the player's map here if it's not already loaded
-    Map* map = MapManager::Instance().CreateMap(mapId, this, instanceId);
-    AreaTrigger const* areaTrigger = NULL;
+    if (!map)
+        map = MapManager::Instance().CreateMap(mapId, this, instanceId);
+    AreaTrigger const* areaTrigger = nullptr;
     bool check = false;
 
     if (!map)
@@ -14727,23 +14730,23 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
         {
             switch (denyReason)
             {
-            case Map::CANNOT_ENTER_DIFFICULTY_UNAVAILABLE:
-                SendTransferAborted(map->GetId(), TRANSFER_ABORT_DIFFICULTY2);
-                break;
-            case Map::CANNOT_ENTER_INSTANCE_BIND_MISMATCH:
-                ChatHandler(GetSession()).PSendSysMessage(GetSession()->GetOregonString(LANG_INSTANCE_BIND_MISMATCH), map->GetMapName());
-                break;
-            case Map::CANNOT_ENTER_TOO_MANY_INSTANCES:
-                SendTransferAborted(map->GetId(), TRANSFER_ABORT_TOO_MANY_INSTANCES);
-                break;
-            case Map::CANNOT_ENTER_MAX_PLAYERS:
-                SendTransferAborted(map->GetId(), TRANSFER_ABORT_MAX_PLAYERS);
-                break;
-            case Map::CANNOT_ENTER_ZONE_IN_COMBAT:
-                SendTransferAborted(map->GetId(), TRANSFER_ABORT_ZONE_IN_COMBAT);
-                break;
-            default:
-                break;
+                case Map::CANNOT_ENTER_DIFFICULTY_UNAVAILABLE:
+                    SendTransferAborted(map->GetId(), TRANSFER_ABORT_DIFFICULTY2);
+                    break;
+                case Map::CANNOT_ENTER_INSTANCE_BIND_MISMATCH:
+                    ChatHandler(GetSession()).PSendSysMessage(GetSession()->GetOregonString(LANG_INSTANCE_BIND_MISMATCH), map->GetMapName());
+                    break;
+                case Map::CANNOT_ENTER_TOO_MANY_INSTANCES:
+                    SendTransferAborted(map->GetId(), TRANSFER_ABORT_TOO_MANY_INSTANCES);
+                    break;
+                case Map::CANNOT_ENTER_MAX_PLAYERS:
+                    SendTransferAborted(map->GetId(), TRANSFER_ABORT_MAX_PLAYERS);
+                    break;
+                case Map::CANNOT_ENTER_ZONE_IN_COMBAT:
+                    SendTransferAborted(map->GetId(), TRANSFER_ABORT_ZONE_IN_COMBAT);
+                    break;
+                default:
+                    break;
             }
             areaTrigger = sObjectMgr.GetGoBackTrigger(mapId);
             check = true;
@@ -14769,7 +14772,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
         else
         {
             sLog.outError("Player %s (guid: %d) Map: %u, X: %f, Y: %f, Z: %f, O: %f. Areatrigger not found.", m_name.c_str(), guid, mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
-            map = NULL;
+            map = nullptr;
         }
     }
 

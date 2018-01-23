@@ -5470,18 +5470,32 @@ void ObjectMgr::LoadAccessRequirements()
 
 AreaTrigger const* ObjectMgr::GetGoBackTrigger(uint32 Map) const
 {
-    const MapEntry* mapEntry = sMapStore.LookupEntry(Map);
-    if (!mapEntry) return NULL;
-    for (AreaTriggerMap::const_iterator itr = mAreaTriggers.begin(); itr != mAreaTriggers.end(); ++itr)
+    bool useParentDbValue = false;
+    uint32 parentId = 0;
+    MapEntry const* mapEntry = sMapStore.LookupEntry(Map);
+    if (!mapEntry || mapEntry->entrance_map < 0)
+        return nullptr;
+
+    if (mapEntry->IsDungeon())
     {
-        if (itr->second.target_mapId == mapEntry->entrance_map)
+        InstanceTemplate const* iTemplate = sObjectMgr.GetInstanceTemplate(Map);
+
+        if (!iTemplate)
+            return nullptr;
+
+        parentId = iTemplate->parent;
+        useParentDbValue = true;
+    }
+
+    uint32 entrance_map = uint32(mapEntry->entrance_map);
+    for (AreaTriggerMap::const_iterator itr = mAreaTriggers.begin(); itr != mAreaTriggers.end(); ++itr)
+        if ((!useParentDbValue && itr->second.target_mapId == entrance_map) || (useParentDbValue && itr->second.target_mapId == parentId))
         {
             AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(itr->first);
             if (atEntry && atEntry->mapid == Map)
                 return &itr->second;
         }
-    }
-    return NULL;
+    return nullptr;
 }
 
 /**
