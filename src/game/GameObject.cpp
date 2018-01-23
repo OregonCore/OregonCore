@@ -1601,6 +1601,23 @@ void GameObject::SetGoState(GOState state)
     }
 }
 
+float GameObject::GetInteractionDistance() const
+{
+    switch (GetGoType())
+    {
+        /// @todo find out how the client calculates the maximal usage distance to spellless working
+        // gameobjects like guildbanks and mailboxes - 10.0 is a just an abitrary choosen number
+    case GAMEOBJECT_TYPE_GUILD_BANK:
+    case GAMEOBJECT_TYPE_MAILBOX:
+        return 10.0f;
+    case GAMEOBJECT_TYPE_FISHINGHOLE:
+    case GAMEOBJECT_TYPE_FISHINGNODE:
+        return 20.0f + CONTACT_DISTANCE; // max spell range
+    default:
+        return INTERACTION_DISTANCE;
+    }
+}
+
 void GameObject::UpdateModelPosition()
 {
     if (!m_model)

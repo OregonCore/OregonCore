@@ -828,6 +828,8 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         Transport* ToTransport() { if (GetGOInfo()->type == GAMEOBJECT_TYPE_TRANSPORT) return reinterpret_cast<Transport*>(this); else return NULL; }
         Transport const* ToTransport() const { if (GetGOInfo()->type == GAMEOBJECT_TYPE_TRANSPORT) return reinterpret_cast<Transport const*>(this); else return NULL; }
 
+        float GetInteractionDistance() const;
+
         void UpdateModelPosition(); 
         GameObject* LookupFishingHoleAround(float range);
 
