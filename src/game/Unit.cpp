@@ -12880,27 +12880,25 @@ void Unit::SetControlled(bool apply, UnitState state)
                 if (HasAuraType(SPELL_AURA_MOD_FEAR))
                     return;
 
+                ClearUnitState(state);
                 SetFeared(false);
                 break;
             default:
                 return;
         }
 
-        ClearUnitState(state);
-
         // Unit States might have been already cleared but auras still present. I need to check with HasAuraType
         if (HasAuraType(SPELL_AURA_MOD_STUN))
             SetStunned(true);
-        else
-        {
-            if (HasAuraType(SPELL_AURA_MOD_ROOT))
-                SetRooted(true);
 
-            if (HasAuraType(SPELL_AURA_MOD_CONFUSE))
-                SetConfused(true);
-            else if (HasAuraType(SPELL_AURA_MOD_FEAR))
-                SetFeared(true);
-        }
+        if (HasAuraType(SPELL_AURA_MOD_ROOT))
+            SetRooted(true);
+
+        if (HasAuraType(SPELL_AURA_MOD_CONFUSE))
+            SetConfused(true);
+
+        if (HasAuraType(SPELL_AURA_MOD_FEAR))
+            SetFeared(true);
     }
 }
 
