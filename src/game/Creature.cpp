@@ -1869,7 +1869,7 @@ Unit* Creature::SelectNearestTargetInAttackDistance(float dist) const
     Cell cell(p);
     cell.SetNoCreate();
 
-    Unit *target = NULL;
+    Unit *target = nullptr;
 
     if (dist > MAX_VISIBILITY_DISTANCE)
     {
@@ -1877,16 +1877,14 @@ Unit* Creature::SelectNearestTargetInAttackDistance(float dist) const
         dist = ATTACK_DISTANCE;
     }
 
-    {
-        Oregon::NearestHostileUnitInAttackDistanceCheck u_check(this, dist);
-        Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck> searcher(target, u_check);
+    Oregon::NearestHostileUnitInAttackDistanceCheck u_check(this, dist);
+    Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck> searcher(target, u_check);
 
-        TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
-        TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
+    TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
+    TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
 
-        cell.Visit(p, world_unit_searcher, *GetMap(), *this, ATTACK_DISTANCE > dist ? ATTACK_DISTANCE : dist);
-        cell.Visit(p, grid_unit_searcher, *GetMap(), *this, ATTACK_DISTANCE > dist ? ATTACK_DISTANCE : dist);
-    }
+    cell.Visit(p, world_unit_searcher, *GetMap(), *this, ATTACK_DISTANCE > dist ? ATTACK_DISTANCE : dist);
+    cell.Visit(p, grid_unit_searcher, *GetMap(), *this, ATTACK_DISTANCE > dist ? ATTACK_DISTANCE : dist);
 
     return target;
 }
@@ -2074,13 +2072,13 @@ bool Creature::CanCreatureAttack(Unit const* victim, bool /*force*/) const
     if (victim->GetTypeId() == TYPEID_UNIT && victim->ToCreature()->IsInEvadeMode())
         return false;
 
+    if (GetMap()->IsDungeon())
+        return true;
+
     if (Unit* u = GetCharmerOrOwner())
     {
-        if (u->GetTypeId() == TYPEID_PLAYER)
+        if (u->GetTypeId() != TYPEID_PLAYER)
         {
-            if (GetMap()->IsDungeon())
-                return true;
-
             // don't check distance to home position if recently damaged, this should include taunt auras
             if (!isWorldBoss() && (GetLastDamagedTime() > getMSTime() || HasAuraType(SPELL_AURA_MOD_TAUNT)))
                 return true;

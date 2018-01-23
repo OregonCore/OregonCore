@@ -10252,7 +10252,7 @@ Unit* Creature::SelectVictim()
     //or who does not have threat (totem/pet/critter)
     //otherwise enterevademode every update
 
-    Unit* target = NULL;
+    Unit* target = nullptr;
     // First checking if we have some taunt on us
     AuraList const& tauntAuras = GetAurasByType(SPELL_AURA_MOD_TAUNT);
     if (!tauntAuras.empty())
@@ -10351,9 +10351,8 @@ Unit* Creature::SelectVictim()
     // search nearby enemy before enter evade mode
     if (HasReactState(REACT_AGGRESSIVE))
     {
-        target = SelectNearestTargetInAttackDistance();
 
-        if (target && CanCreatureAttack(target))
+        if (target && _IsTargetAcceptable(target) && CanCreatureAttack(target))
             return target;
     }
 

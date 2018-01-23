@@ -919,10 +919,10 @@ struct AnyDeadUnitCheck
 class NearestHostileUnitInAttackDistanceCheck
 {
     public:
-        explicit NearestHostileUnitInAttackDistanceCheck(Creature const* creature, float dist = 0) : me(creature)
+        explicit NearestHostileUnitInAttackDistanceCheck(Creature const* creature, float dist = 0.f) : me(creature)
         {
-            m_range = (dist == 0 ? 9999 : dist);
-            m_force = (dist == 0 ? false : true);
+            m_range = (dist == 0.f ? 9999.f : dist);
+            m_force = (dist == 0.f ? false : true);
         }
         bool operator()(Unit* u)
         {
@@ -937,11 +937,8 @@ class NearestHostileUnitInAttackDistanceCheck
                 if (!me->IsValidAttackTarget(u))
                     return false;
             }
-            else
-            {
-                if (!me->canStartAttack(u, false))
-                    return false;
-            }
+            else if (!me->canStartAttack(u, false))
+                return false;
 
             m_range = me->GetDistance(u);   // use found unit range as new range limit for next check
             return true;

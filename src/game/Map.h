@@ -588,7 +588,6 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         void setNGrid(NGridType* grid, uint32 x, uint32 y);
         void ScriptsProcess();
 
-        void UpdateActiveCells(const float& x, const float& y, const uint32& t_diff);
     protected:
         void SetUnloadReferenceLock(const GridCoord& p, bool on)
         {
