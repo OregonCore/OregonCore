@@ -1,7 +1,4 @@
-sudo: required
-dist: trusty
-group: deprecated-2017Q4
-
+dist: precise
 language: cpp
 compiler:
   - clang
