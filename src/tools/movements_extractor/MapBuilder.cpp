@@ -387,8 +387,8 @@ void MapBuilder::buildNavMesh(uint32 mapID, dtNavMesh*& navMesh)
     //if (tileBits < 1) tileBits = 1;                                     // need at least one bit!
     //int polyBits = sizeof(dtPolyRef)*8 - SALT_MIN_BITS - tileBits;
 
-    int tileBits = STATIC_TILE_BITS;
-    int polyBits = STATIC_POLY_BITS;
+    int tileBits = DT_TILE_BITS;
+    int polyBits = DT_POLY_BITS;
 
     (void)(tileBits); // unused, kept for some reason
     (void)(polyBits); // unused, kept for some reason

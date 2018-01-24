@@ -37,7 +37,7 @@ static int getCornerHeight(int x, int y, int i, int dir,
 	unsigned int regs[4] = {0,0,0,0};
 	
 	// Combine region and area codes in order to prevent
-	// border vertices which are in between two areas to be removed. 
+	// border vertices which are in between two areas to be removed.
 	regs[0] = chf.spans[i].reg | (chf.areas[i] << 16);
 	
 	if (rcGetCon(s, dir) != RC_NOT_CONNECTED)
@@ -237,13 +237,13 @@ static void simplifyContour(rcIntArray& points, rcIntArray& simplified,
 				simplified.push(points[i*4+2]);
 				simplified.push(i);
 			}
-		}       
+		}
 	}
 	
 	if (simplified.size() == 0)
 	{
 		// If there is no connections at all,
-		// create some initial points for the simplification process. 
+		// create some initial points for the simplification process.
 		// Find lower-left and upper-right vertices of the contour.
 		int llx = points[0];
 		int lly = points[1];
@@ -294,7 +294,7 @@ static void simplifyContour(rcIntArray& points, rcIntArray& simplified,
 		int ax = simplified[i*4+0];
 		int az = simplified[i*4+2];
 		int ai = simplified[i*4+3];
-		
+
 		int bx = simplified[ii*4+0];
 		int bz = simplified[ii*4+2];
 		int bi = simplified[ii*4+3];
@@ -303,7 +303,7 @@ static void simplifyContour(rcIntArray& points, rcIntArray& simplified,
 		float maxd = 0;
 		int maxi = -1;
 		int ci, cinc, endi;
-		
+
 		// Traverse the segment in lexilogical order so that the
 		// max deviation is calculated similarly when traversing
 		// opposite segments.
@@ -379,11 +379,11 @@ static void simplifyContour(rcIntArray& points, rcIntArray& simplified,
 			const int bx = simplified[ii*4+0];
 			const int bz = simplified[ii*4+2];
 			const int bi = simplified[ii*4+3];
-
+			
 			// Find maximum deviation from the segment.
 			int maxi = -1;
 			int ci = (ai+1) % pn;
-
+			
 			// Tessellate only outer edges or edges between areas.
 			bool tess = false;
 			// Wall edges.
@@ -485,17 +485,17 @@ inline bool xorb(bool x, bool y)
 // Returns true iff c is strictly to the left of the directed
 // line through a to b.
 inline bool left(const int* a, const int* b, const int* c)
-	{
+{
 	return area2(a, b, c) < 0;
 }
-		
+
 inline bool leftOn(const int* a, const int* b, const int* c)
-		{
+{
 	return area2(a, b, c) <= 0;
 }
 
 inline bool collinear(const int* a, const int* b, const int* c)
-			{
+{
 	return area2(a, b, c) == 0;
 }
 
@@ -503,14 +503,14 @@ inline bool collinear(const int* a, const int* b, const int* c)
 //	a point interior to both segments.  The properness of the
 //	intersection is ensured by using strict leftness.
 static bool intersectProp(const int* a, const int* b, const int* c, const int* d)
-				{
+{
 	// Eliminate improper cases.
 	if (collinear(a,b,c) || collinear(a,b,d) ||
 		collinear(c,d,a) || collinear(c,d,b))
 		return false;
 	
 	return xorb(left(a,b,c), left(a,b,d)) && xorb(left(c,d,a), left(c,d,b));
-				}
+}
 
 // Returns T iff (a,b,c) are collinear and point c lies
 // on the closed segement ab.
@@ -523,7 +523,7 @@ static bool between(const int* a, const int* b, const int* c)
 		return	((a[0] <= c[0]) && (c[0] <= b[0])) || ((a[0] >= c[0]) && (c[0] >= b[0]));
 	else
 		return	((a[2] <= c[2]) && (c[2] <= b[2])) || ((a[2] >= c[2]) && (c[2] >= b[2]));
-			}
+}
 
 // Returns true iff segments ab and cd intersect, properly or improperly.
 static bool intersect(const int* a, const int* b, const int* c, const int* d)
@@ -535,12 +535,12 @@ static bool intersect(const int* a, const int* b, const int* c, const int* d)
 		return true;
 	else
 		return false;
-		}
+}
 
 static bool vequal(const int* a, const int* b)
 {
 	return a[0] == b[0] && a[2] == b[2];
-	}
+}
 
 static bool intersectSegCountour(const int* d0, const int* d1, int i, int n, const int* verts)
 {
@@ -558,7 +558,7 @@ static bool intersectSegCountour(const int* d0, const int* d1, int i, int n, con
 		
 		if (intersect(d0, d1, p0, p1))
 			return true;
-}
+	}
 	return false;
 }
 
@@ -609,9 +609,9 @@ static bool mergeContours(rcContour& ca, rcContour& cb, int ia, int ib)
 	int* verts = (int*)rcAlloc(sizeof(int)*maxVerts*4, RC_ALLOC_PERM);
 	if (!verts)
 		return false;
-
+	
 	int nv = 0;
-
+	
 	// Copy contour A.
 	for (int i = 0; i <= ca.nverts; ++i)
 	{
@@ -639,7 +639,7 @@ static bool mergeContours(rcContour& ca, rcContour& cb, int ia, int ib)
 	rcFree(ca.verts);
 	ca.verts = verts;
 	ca.nverts = nv;
-
+	
 	rcFree(cb.verts);
 	cb.verts = 0;
 	cb.nverts = 0;
@@ -731,7 +731,7 @@ static void mergeRegionHoles(rcContext* ctx, rcContourRegion& region)
 	for (int i = 0; i < region.nholes; i++)
 		maxVerts += region.holes[i].contour->nverts;
 	
-	rcScopedDelete<rcPotentialDiagonal> diags = (rcPotentialDiagonal*)rcAlloc(sizeof(rcPotentialDiagonal)*maxVerts, RC_ALLOC_TEMP);
+	rcScopedDelete<rcPotentialDiagonal> diags((rcPotentialDiagonal*)rcAlloc(sizeof(rcPotentialDiagonal)*maxVerts, RC_ALLOC_TEMP));
 	if (!diags)
 	{
 		ctx->log(RC_LOG_WARNING, "mergeRegionHoles: Failed to allocated diags %d.", maxVerts);
@@ -813,13 +813,13 @@ static void mergeRegionHoles(rcContext* ctx, rcContourRegion& region)
 /// The raw contours will match the region outlines exactly. The @p maxError and @p maxEdgeLen
 /// parameters control how closely the simplified contours will match the raw contours.
 ///
-/// Simplified contours are generated such that the vertices for portals between areas match up. 
+/// Simplified contours are generated such that the vertices for portals between areas match up.
 /// (They are considered mandatory vertices.)
 ///
 /// Setting @p maxEdgeLength to zero will disabled the edge length feature.
-/// 
+///
 /// See the #rcConfig documentation for more information on the configuration parameters.
-/// 
+///
 /// @see rcAllocContourSet, rcCompactHeightfield, rcContourSet, rcConfig
 bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 					 const float maxError, const int maxEdgeLen,
@@ -831,7 +831,7 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 	const int h = chf.height;
 	const int borderSize = chf.borderSize;
 	
-	ctx->startTimer(RC_TIMER_BUILD_CONTOURS);
+	rcScopedTimer timer(ctx, RC_TIMER_BUILD_CONTOURS);
 	
 	rcVcopy(cset.bmin, chf.bmin);
 	rcVcopy(cset.bmax, chf.bmax);
@@ -849,6 +849,7 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 	cset.width = chf.width - chf.borderSize*2;
 	cset.height = chf.height - chf.borderSize*2;
 	cset.borderSize = chf.borderSize;
+	cset.maxError = maxError;
 	
 	int maxContours = rcMax((int)chf.maxRegions, 8);
 	cset.conts = (rcContour*)rcAlloc(sizeof(rcContour)*maxContours, RC_ALLOC_PERM);
@@ -856,7 +857,7 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 		return false;
 	cset.nconts = 0;
 	
-	rcScopedDelete<unsigned char> flags = (unsigned char*)rcAlloc(sizeof(unsigned char)*chf.spanCount, RC_ALLOC_TEMP);
+	rcScopedDelete<unsigned char> flags((unsigned char*)rcAlloc(sizeof(unsigned char)*chf.spanCount, RC_ALLOC_TEMP));
 	if (!flags)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'flags' (%d).", chf.spanCount);
@@ -922,17 +923,17 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 				
 				verts.resize(0);
 				simplified.resize(0);
-
+				
 				ctx->startTimer(RC_TIMER_BUILD_CONTOURS_TRACE);
 				walkContour(x, y, i, chf, flags, verts);
 				ctx->stopTimer(RC_TIMER_BUILD_CONTOURS_TRACE);
-
+				
 				ctx->startTimer(RC_TIMER_BUILD_CONTOURS_SIMPLIFY);
 				simplifyContour(verts, simplified, maxError, maxEdgeLen, buildFlags);
 				removeDegenerateSegments(simplified);
 				ctx->stopTimer(RC_TIMER_BUILD_CONTOURS_SIMPLIFY);
 				
-
+				
 				// Store region->contour remap info.
 				// Create contour.
 				if (simplified.size()/4 >= 3)
@@ -953,10 +954,10 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 						}
 						rcFree(cset.conts);
 						cset.conts = newConts;
-					
+						
 						ctx->log(RC_LOG_WARNING, "rcBuildContours: Expanding max contours from %d to %d.", oldMax, maxContours);
 					}
-						
+					
 					rcContour* cont = &cset.conts[cset.nconts++];
 					
 					cont->nverts = simplified.size()/4;
@@ -1008,16 +1009,16 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 	if (cset.nconts > 0)
 	{
 		// Calculate winding of all polygons.
-		rcScopedDelete<char> winding = (char*)rcAlloc(sizeof(char)*cset.nconts, RC_ALLOC_TEMP);
+		rcScopedDelete<char> winding((char*)rcAlloc(sizeof(char)*cset.nconts, RC_ALLOC_TEMP));
 		if (!winding)
 		{
 			ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'hole' (%d).", cset.nconts);
 			return false;
 		}
 		int nholes = 0;
-	for (int i = 0; i < cset.nconts; ++i)
-	{
-		rcContour& cont = cset.conts[i];
+		for (int i = 0; i < cset.nconts; ++i)
+		{
+			rcContour& cont = cset.conts[i];
 			// If the contour is wound backwards, it is a hole.
 			winding[i] = calcAreaOfPolygon2D(cont.verts, cont.nverts) < 0 ? -1 : 1;
 			if (winding[i] < 0)
@@ -1029,7 +1030,7 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 			// Collect outline contour and holes contours per region.
 			// We assume that there is one outline and multiple holes.
 			const int nregions = chf.maxRegions+1;
-			rcScopedDelete<rcContourRegion> regions = (rcContourRegion*)rcAlloc(sizeof(rcContourRegion)*nregions, RC_ALLOC_TEMP);
+			rcScopedDelete<rcContourRegion> regions((rcContourRegion*)rcAlloc(sizeof(rcContourRegion)*nregions, RC_ALLOC_TEMP));
 			if (!regions)
 			{
 				ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'regions' (%d).", nregions);
@@ -1037,32 +1038,32 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 			}
 			memset(regions, 0, sizeof(rcContourRegion)*nregions);
 			
-			rcScopedDelete<rcContourHole> holes = (rcContourHole*)rcAlloc(sizeof(rcContourHole)*cset.nconts, RC_ALLOC_TEMP);
+			rcScopedDelete<rcContourHole> holes((rcContourHole*)rcAlloc(sizeof(rcContourHole)*cset.nconts, RC_ALLOC_TEMP));
 			if (!holes)
-				{
+			{
 				ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'holes' (%d).", cset.nconts);
 				return false;
 			}
 			memset(holes, 0, sizeof(rcContourHole)*cset.nconts);
 			
 			for (int i = 0; i < cset.nconts; ++i)
-					{
+			{
 				rcContour& cont = cset.conts[i];
 				// Positively would contours are outlines, negative holes.
 				if (winding[i] > 0)
-			{
+				{
 					if (regions[cont.reg].outline)
 						ctx->log(RC_LOG_ERROR, "rcBuildContours: Multiple outlines for region %d.", cont.reg);
 					regions[cont.reg].outline = &cont;
-			}
-			else
-			{
+				}
+				else
+				{
 					regions[cont.reg].nholes++;
 				}
 			}
 			int index = 0;
 			for (int i = 0; i < nregions; i++)
-				{
+			{
 				if (regions[i].nholes > 0)
 				{
 					regions[i].holes = &holes[index];
@@ -1071,12 +1072,12 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 				}
 			}
 			for (int i = 0; i < cset.nconts; ++i)
-				{
+			{
 				rcContour& cont = cset.conts[i];
 				rcContourRegion& reg = regions[cont.reg];
 				if (winding[i] < 0)
 					reg.holes[reg.nholes++].contour = &cont;
-				}
+			}
 			
 			// Finally merge each regions holes into the outline.
 			for (int i = 0; i < nregions; i++)
@@ -1087,20 +1088,18 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 				if (reg.outline)
 				{
 					mergeRegionHoles(ctx, reg);
-			}
+				}
 				else
 				{
 					// The region does not have an outline.
 					// This can happen if the contour becaomes selfoverlapping because of
 					// too aggressive simplification settings.
 					ctx->log(RC_LOG_ERROR, "rcBuildContours: Bad outline for region %d, contour simplification is likely too aggressive.", i);
-		}
-	}
+				}
+			}
 		}
 		
 	}
-	
-	ctx->stopTimer(RC_TIMER_BUILD_CONTOURS);
 	
 	return true;
 }
