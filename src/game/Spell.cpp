@@ -4357,10 +4357,6 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (res != SPELL_CAST_OK)
                     return res;
 
-                // chance for fail at orange mining/herb/LockPicking gathering attempt
-                if (!m_selfContainer || ((*m_selfContainer) != this))
-                    break;
-
                 // chance for fail at lockpicking attempt
                 // second check prevent fail at rechecks
                 if (skillId != SKILL_NONE && (!m_selfContainer || ((*m_selfContainer) != this)))
