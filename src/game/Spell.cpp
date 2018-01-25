@@ -4352,33 +4352,33 @@ SpellCastResult Spell::CheckCast(bool strict)
                         switch (lockInfo->keytype[it])
                         {
                         case LOCK_KEY_ITEM:
+                        {
+                            if (lockInfo->key[it])
+                                if (m_CastItem && m_CastItem->GetEntry() == lockInfo->key[it])
+                                    ok_key = true;
+                            break;
+                        }
+                        case LOCK_KEY_SKILL:
+                        {
+                            // wrong locktype, skip
+                            if (uint32(m_spellInfo->EffectMiscValue[i]) != lockInfo->key[it])
+                                break;
+
+                            switch (lockInfo->key[it])
                             {
-                                if (lockInfo->key[it])
-                                    if (m_CastItem && m_CastItem->GetEntry() == lockInfo->key[it])
-                                        ok_key = true;
+                            case LOCKTYPE_HERBALISM:
+                                if (m_caster->ToPlayer()->HasSkill(SKILL_HERBALISM))
+                                    ok_key = true;
+                                break;
+                            case LOCKTYPE_MINING:
+                                if (m_caster->ToPlayer()->HasSkill(SKILL_MINING))
+                                    ok_key = true;
+                                break;
+                            default:
+                                ok_key = true;
                                 break;
                             }
-                        case LOCK_KEY_SKILL:
-                            {
-                                // wrong locktype, skip
-                                if (uint32(m_spellInfo->EffectMiscValue[i]) != lockInfo->key[it])
-                                    break;
-
-                                switch (lockInfo->key[it])
-                                {
-                                case LOCKTYPE_HERBALISM:
-                                    if (m_caster->ToPlayer()->HasSkill(SKILL_HERBALISM))
-                                        ok_key = true;
-                                    break;
-                                case LOCKTYPE_MINING:
-                                    if (m_caster->ToPlayer()->HasSkill(SKILL_MINING))
-                                        ok_key = true;
-                                    break;
-                                default:
-                                    ok_key = true;
-                                    break;
-                                }
-                            }
+                        }
                         }
 
                         if (ok_key)
@@ -4388,6 +4388,8 @@ SpellCastResult Spell::CheckCast(bool strict)
                     if (!ok_key)
                         return SPELL_FAILED_BAD_TARGETS;
                 }
+                else
+                    return SPELL_FAILED_BAD_TARGETS;
 
                 // chance for fail at orange mining/herb/LockPicking gathering attempt
                 if (!m_selfContainer || ((*m_selfContainer) != this))
