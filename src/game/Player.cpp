@@ -4662,8 +4662,8 @@ void Player::CleanupChannels()
 
 void Player::UpdateLocalChannels(uint32 newZone)
 {
-    if (GetSession()->PlayerLoading() && !IsBeingTeleportedFar())
-        return;                                              // The client handles it automatically after loading, but not after teleporting
+    if (m_channels.empty())
+        return;
 
     AreaTableEntry const* current_zone = GetAreaEntryByAreaID(newZone);
     if (!current_zone)
