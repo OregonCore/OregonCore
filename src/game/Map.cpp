@@ -156,11 +156,11 @@ void Map::LoadMap(int gx, int gy, bool reload)
     {
         sLog.outDetail("Unloading previously loaded map %u before reloading.", GetId());
         delete (GridMaps[gx][gy]);
-        GridMaps[gx][gy] = NULL;
+        GridMaps[gx][gy] = nullptr;
     }
 
     // map file name
-    char* tmp = NULL;
+    char* tmp = nullptr;
     int len = sWorld.GetDataPath().length() + strlen("maps/%03u%02u%02u.map") + 1;
     tmp = new char[len];
     snprintf(tmp, len, (char*)(sWorld.GetDataPath() + "maps/%03u%02u%02u.map").c_str(), GetId(), gx, gy);
@@ -1042,9 +1042,10 @@ bool GridMap::loadData(const char* filename)
     unloadData();
 
     map_fileheader header;
+    // Not return error if file not found
     FILE* in = fopen(filename, "rb");
     if (!in)
-        return false;
+        return true;
 
     if (fread(&header, sizeof(header), 1, in) != 1)
     {
