@@ -112,9 +112,14 @@ void Totem::InitSummon()
     data << GetGUID();
     SendMessageToSet(&data, true);
 
-    if (m_type == TOTEM_PASSIVE)
-        for (unsigned long i = 0; i < sizeof(m_spells)/sizeof(m_spells[0]); ++i)
-            CastSpell(this, m_spells[i], true);
+    if (m_type == TOTEM_PASSIVE && GetSpell())
+    {
+        CastSpell(this, GetSpell(), true);
+    }
+
+    // Some totems can have both instant effect and passive spell
+    if (GetSpell(1))
+        CastSpell(this, GetSpell(1), true);
 }
 
 void Totem::UnSummon()

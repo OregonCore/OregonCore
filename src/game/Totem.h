@@ -37,10 +37,7 @@ class Totem : public Minion
         void InitStats(uint32 duration) override;
         void InitSummon() override;
         void UnSummon();
-        uint32 GetSpell() const
-        {
-            return m_spells[0];
-        }
+        uint32 GetSpell(uint8 slot = 0) const { return m_spells[slot]; }
         uint32 GetTotemDuration() const
         {
             return m_duration;
