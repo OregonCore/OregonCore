@@ -2790,7 +2790,6 @@ void ObjectMgr::LoadGuilds()
             continue;
         }
         newGuild->LoadGuildEventLogFromDB();
-        newGuild->LoadGuildBankEventLogFromDB();
         newGuild->LoadGuildBankFromDB();
         AddGuild(newGuild);
 
