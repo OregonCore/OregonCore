@@ -2897,11 +2897,11 @@ bool SpellMgr::IsSpellValid(SpellEntry const* spellInfo, Player* pl, bool msg)
     return true;
 }
 
-bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32 zone_id, uint32 area_id)
+SpellCastResult IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32 zone_id, uint32 area_id)
 {
     // normal case
     if (spellInfo->AreaId && spellInfo->AreaId != zone_id && spellInfo->AreaId != area_id)
-        return false;
+        return SPELL_FAILED_REQUIRES_AREA;
 
     // continent limitation (virtual continent)
     if (spellInfo->HasAttribute(SPELL_ATTR4_CAST_ONLY_IN_OUTLAND))
@@ -2917,12 +2917,29 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
     {
         MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
         if (!mapEntry || mapEntry->IsRaid())
-            return SPELL_FAILED_REQUIRES_AREA;
+            return SPELL_FAILED_TARGET_NOT_IN_RAID;
     }
 
     // special cases zone check (maps checked by multimap common id)
     switch (spellInfo->Id)
     {
+    case 46838:                                         // Shattrath Flask of Pure Death
+    case 41607:                                         // Shattrath Flask of Fortification
+    case 41605:                                         // Shattrath Flask of Mighty Restoration
+    case 41604:                                         // Shattrath Flask of Supreme Power
+    case 41606:                                         // Shattrath Flask of Relentless Assault
+    case 46840:                                         // Shattrath Flask of Blinding Light
+    {
+        MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
+        if (!mapEntry)
+            return SPELL_FAILED_REQUIRES_AREA;
+
+                        // Tempest Keep        // Black Temple          // Serpentshrine Cavern     // Sunwell               // Mount Hyjal
+        if (mapEntry->multimap_id == 206 || mapEntry->MapID == 564 || mapEntry->MapID == 548 || mapEntry->MapID == 580 || mapEntry->MapID == 534)
+            return SPELL_CAST_OK;
+        else
+            return SPELL_FAILED_DONT_REPORT;
+    }
     case 23333:                                         // Warsong Flag
     case 23335:                                         // Silverwing Flag
     case 46392:                                         // Focused Assault
@@ -2930,29 +2947,29 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
         {
             MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
             if (!mapEntry)
-                return false;
+                return SPELL_FAILED_REQUIRES_AREA;
 
             if (!mapEntry->IsBattleground())
-                return false;
+                return SPELL_FAILED_REQUIRES_AREA;
 
             if (zone_id == 3277)
-                return true;
+                return SPELL_CAST_OK;
 
-            return false;
+            return SPELL_FAILED_REQUIRES_AREA;
         }
     case 34976:                                         // Netherstorm Flag
         {
             MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
             if (!mapEntry)
-                return false;
+                return SPELL_FAILED_REQUIRES_AREA;
 
             if (!mapEntry->IsBattleground())
-                return false;
+                return SPELL_FAILED_REQUIRES_AREA;
 
             if (zone_id == 3820)
-                return true;
+                return SPELL_CAST_OK;
 
-            return false;
+            return SPELL_FAILED_REQUIRES_AREA;
         }
     case 32724:                                         // Gold Team (Alliance)
     case 32725:                                         // Green Team (Alliance)
@@ -2962,7 +2979,7 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
         {
             MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
             if (!mapEntry)
-                return false;
+                return SPELL_FAILED_REQUIRES_AREA;
 
             //the follow code doesn't work.
             //if (!mapEntry->IsBattleArena())
@@ -2970,31 +2987,31 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
 
             //this is the working code, HACK
             if (zone_id == 3702 || zone_id == 3968 || zone_id == 3698)
-                return true;
+                return SPELL_CAST_OK;
 
-            return false;
+            return SPELL_FAILED_REQUIRES_AREA;
         }
     case 41618:                                         // Bottled Nethergon Energy
     case 41620:                                         // Bottled Nethergon Vapor
         {
             MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
             if (!mapEntry)
-                return false;
+                return SPELL_FAILED_REQUIRES_AREA;
 
-            return mapEntry->multimap_id == 206;
+            return mapEntry->multimap_id == 206 ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
         }
     case 41617:                                         // Cenarion Mana Salve
     case 41619:                                         // Cenarion Healing Salve
         {
             MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
             if (!mapEntry)
-                return false;
+                return SPELL_FAILED_REQUIRES_AREA;
 
-            return mapEntry->multimap_id == 207;
+            return mapEntry->multimap_id == 207 ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
         }
     case 40216:                                         // Dragonmaw Illusion
     case 42016:                                         // Dragonmaw Illusion
-        return area_id == 3759 || area_id == 3966 || area_id == 3939;
+        return (area_id == 3759 || area_id == 3966 || area_id == 3939) ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
     case 2584:                                          // Waiting to Resurrect
     case 22011:                                         // Spirit Heal Channel
     case 22012:                                         // Spirit Heal
@@ -3006,14 +3023,14 @@ bool IsSpellAllowedInLocation(SpellEntry const* spellInfo, uint32 map_id, uint32
         {
             MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
             if (!mapEntry)
-                return false;
+                return SPELL_FAILED_REQUIRES_AREA;
 
             if (!mapEntry->IsBattleground())
-                return false;
+                return SPELL_FAILED_REQUIRES_AREA;
         }
     }
 
-    return true;
+    return SPELL_CAST_OK;
 }
 
 void SpellMgr::LoadSkillLineAbilityMap()

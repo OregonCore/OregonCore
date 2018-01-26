@@ -5701,6 +5701,12 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
 
 void Aura::CleanupTriggeredSpells()
 {
+    if (sSpellMgr.IsSpellMemberOfSpellGroup(m_spellProto->Id, SPELL_GROUP_ELIXIR_SHATTRATH))
+    {
+        m_target->RemoveAurasDueToSpell(m_spellProto->EffectTriggerSpell[1]);  // remove triggered effect of shattrath flask, when removing it
+        return;
+    }
+
     uint32 tSpellId = m_spellProto->EffectTriggerSpell[GetEffIndex()];
     if (!tSpellId)
         return;
