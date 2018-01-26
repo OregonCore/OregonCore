@@ -41,7 +41,7 @@ void WaypointMgr::Load()
     if (!result)
         sLog.outFatal("an error occured while loading the table waypoint_data (maybe it doesn't exist ?)");
 
-    result = WorldDatabase.Query("SELECT id, point, position_x, position_y, position_z, orientation, move_flag, delay, action, action_chance FROM waypoint_data ORDER BY id, point");
+    result = WorldDatabase.Query("SELECT id, point, position_x, position_y, position_z, orientation, move_type, delay, action, action_chance FROM waypoint_data ORDER BY id, point");
     if (!result)
     {
         sLog.outErrorDb("The table waypoint_data is empty or corrupted");
@@ -95,7 +95,7 @@ void WaypointMgr::ReloadPath(uint32 id)
         _waypointStore.erase(itr);
     }
 
-    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT point, position_x, position_y, position_z, orientation, move_flag, delay, action, action_chance FROM waypoint_data WHERE id = %u ORDER BY point", id);
+    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT point, position_x, position_y, position_z, orientation, move_type, delay, action, action_chance FROM waypoint_data WHERE id = %u ORDER BY point", id);
     if (!result)
         return;
 

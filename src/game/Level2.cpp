@@ -2479,7 +2479,7 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
     // Check
     // Remember: "show" must also be the name of a column!
     if ((show != "delay") && (show != "action") && (show != "action_chance")
-        && (show != "move_flag") && (show != "del") && (show != "move") && (show != "wpadd")
+        && (show != "move_type") && (show != "del") && (show != "move") && (show != "wpadd")
        )
         return false;
 
@@ -2723,7 +2723,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             return false;
         }
 
-        QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT id, point, delay, move_flag, action, action_chance FROM waypoint_data WHERE wpguid = %u", target->GetGUIDLow());
+        QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT id, point, delay, move_type, action, action_chance FROM waypoint_data WHERE wpguid = %u", target->GetGUIDLow());
 
         if (!result)
         {
