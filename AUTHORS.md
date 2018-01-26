@@ -10,8 +10,8 @@ The project is currently hosted at http://oregon-core.net/ and developed under h
 
 ## History of development
 Development of this project dates back to 2010, and was developed under various umbrellas over time:
-* OregonCore project, 2009-2017, located at http://oregon-core.net/
-* TrinityCore project, 2008-2009 located at http://www.trinitycore.org/
+* OregonCore project, 2009-2018, located at http://oregon-core.net/
+* TrinityCore project, 2008-2009 located at https://www.trinitycore.org/
 * Mangos project, 2005-2012 located at http://getmangos.com/
 * ScriptDev2 project, 2006-2012 located at http://www.scriptdev2.com/
 
@@ -177,7 +177,7 @@ Development of this project dates back to 2010, and was developed under various 
 ## Copyright Information
 = Oregon Core -- General information =
 
-Copyright (C) 2009-2015 OregonCore (http://oregon-core.net)
+Copyright (C) 2009-2018 OregonCore (http://oregon-core.net)
 
 Oregon Core is a World of Warcraft (The Burning Crusade) game server emulator.
 It is derived from Trinity Core, and is based on the code of that project.
