@@ -40,7 +40,7 @@ extern "C"
 #endif /* __cplusplus */
 
 #if defined (_MSC_VER) && (_MSC_VER < 1400) && !(defined (__INTEL_COMPILER) && (__INTEL_COMPILER == 900))
-// See http://msdn2.microsoft.com/en-us/library/f24ya7ct(VS.71).aspx
+// See https://www.microsoft.com/en-us/download/details.aspx?id=55979
 LONG __cdecl _InterlockedIncrement (LONG volatile *Addend);
 LONG __cdecl _InterlockedDecrement (LONG volatile *Addend);
 LONG __cdecl _InterlockedExchange (LONG volatile *Target, LONG Value);

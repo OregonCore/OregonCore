@@ -273,7 +273,7 @@ ACE_Object_Manager::init (void)
   // Note the following fix was derived from that proposed by Jochen Kalmbach
   // http://blog.kalmbachnet.de/?postid=75
   // See also:
-  // http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=101337
+  // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=101337
   //
   // Starting with VC8 (VS2005), Microsoft changed the behaviour of the CRT in some
   // security related and special situations. The are many situations in which our

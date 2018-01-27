@@ -71,7 +71,7 @@ BEGIN
             VALUE "FileDescription", "OregonRealm"
             VALUE "FileVersion", STRFILEVER
             VALUE "InternalName", "OregonRealm"
-            VALUE "LegalCopyright", "Copyright (C) 2009-2012"
+            VALUE "LegalCopyright", "Copyright (C) 2009-2018"
             VALUE "OriginalFilename", "OregonRealm.exe"
             VALUE "ProductName", "OregonRealm"
             VALUE "ProductVersion", STRPRODUCTVER

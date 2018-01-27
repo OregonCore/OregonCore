@@ -1,8 +1,8 @@
 /**
   @file Box2D.h
- 
+
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
+
   @created 2001-06-02
   @edited  2008-12-27
 
@@ -25,7 +25,7 @@ typedef class Rect2D AABox2D;
 
 /**
    2D oriented box
-   @cite http://www.flipcode.com/archives/2D_OBB_Intersection.shtml
+   @cite https://www.flipcode.com/archives/2D_OBB_Intersection.shtml
  */
 class Box2D {
 private:
@@ -60,7 +60,7 @@ private:
 
 public:
 
-    /** 
+    /**
         @param center World-space center
         @param w Width along object-space x-axis
         @param h Height along object-space y-axis
@@ -75,7 +75,7 @@ public:
     /** Transform @a b by @a frame, discarding the Z components, and
         compute the new box.*/
     Box2D(const CFrame& frame, Box2D& b);
-    
+
     inline bool contains(const Vector2& v) const {
         // Take to object space:
         const Vector2& p = v - m_center;
@@ -83,7 +83,7 @@ public:
         float y = p.dot(m_axisin[1]);
 
         // Must be within extent/2 on both axes in object space
-        return (abs(x) <= 0.5f) && (abs(y) <= 0.5f);        
+        return (abs(x) <= 0.5f) && (abs(y) <= 0.5f);
     }
 
     /** @brief Distance from corner(0) to the next corner along the box's local axis a. */

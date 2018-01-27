@@ -204,7 +204,7 @@
 #define ACE_LACKS_ISCTYPE
 
 #if defined(__APPLE_CC__) && (__APPLE_CC__ < 1173)
-#error "Compiler must be upgraded, see http://developer.apple.com"
+#error "Compiler must be upgraded, see https://developer.apple.com"
 #endif /* __APPLE_CC__ */
 
 #endif /* ACE_CONFIG_MACOSX_TIGER_H */
