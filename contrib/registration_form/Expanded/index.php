@@ -264,6 +264,6 @@ if (!empty($_POST)) {
         echo($page);
 };
 
-echo '<center><a href="http://www.oregoncore.com"> Powered by OregonCore</a></center>';
+echo '<center><a href="https://oregon-core.net/"> Powered by OregonCore</a></center>';
 
 ?>

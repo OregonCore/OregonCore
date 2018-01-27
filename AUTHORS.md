@@ -6,11 +6,11 @@ and - except for third party libraries - licensed under the GPL 2.0,
 which you can read from the file "COPYING"
 
 ## Point of current development
-The project is currently hosted at http://oregon-core.net/ and developed under https://github.com/oregoncore/oregoncore
+The project is currently hosted at https://oregon-core.net/ and developed under https://github.com/oregoncore/oregoncore
 
 ## History of development
 Development of this project dates back to 2010, and was developed under various umbrellas over time:
-* OregonCore project, 2009-2018, located at http://oregon-core.net/
+* OregonCore project, 2009-2018, located at https://oregon-core.net/
 * TrinityCore project, 2008-2009 located at https://www.trinitycore.org/
 * Mangos project, 2005-2012 located at http://getmangos.com/
 * ScriptDev2 project, 2006-2012 located at http://www.scriptdev2.com/
@@ -177,13 +177,13 @@ Development of this project dates back to 2010, and was developed under various 
 ## Copyright Information
 = Oregon Core -- General information =
 
-Copyright (C) 2009-2018 OregonCore (http://oregon-core.net)
+Copyright (C) 2009-2018 OregonCore (https://oregon-core.net/)
 
 Oregon Core is a World of Warcraft (The Burning Crusade) game server emulator.
 It is derived from Trinity Core, and is based on the code of that project.
 
 For further information on the Oregon Core project, please visit our
-project website at http://oregon-core.net/.
+project website at https://oregon-core.net/.
 
 SQL files to create the database can be found in the sql directory. Files
 to update your database from an older revision/version can be found in the
