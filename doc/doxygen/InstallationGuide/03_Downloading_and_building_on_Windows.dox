@@ -5,13 +5,13 @@
 
 This guide is meant to introduce you to the proper steps in building OregonCore on your Windows system using cmake.
 
-> **Important:** As the OregonCore project is highly active, portions of the guide may be outdated. In case something fails, please check the <a href="https://forums.oregon-core.net/viewforum.php?id=18]">forums</a>, which will usually have an answer to your questions.''
+> **Important:** As the OregonCore project is highly active, portions of the guide may be outdated. In case something fails, please check the <a href="https://forums.oregon-core.net/viewforum.php?id=18">forums</a>, which will usually have an answer to your questions.''
 
 \subsection Software Software Required
 
-1.  <a href="http://sourceforge.net/projects/gitextensions/" rel="nofollow">Git Extensions</a>
+1.  <a href="https://sourceforge.net/projects/gitextensions/" rel="nofollow">Git Extensions</a>
 	1.	Includes Git, MySYSGit, and KDiff - be sure to **install all three**
-	2.	View <a href="http://www.trinitycore.org/f/index.php?/topic/345-howto-properly-install-git-on-windows/" rel="nofollow">this thread</a> for important details on how to install Git for best results. Default install options for KDiff and MySYSGit are acceptable.
+	2.	View <a href="https://www.trinitycore.org/f/index.php?/topic/345-howto-properly-install-git-on-windows/" rel="nofollow">this thread</a> for important details on how to install Git for best results. Default install options for KDiff and MySYSGit are acceptable.
 		1.	During Git installation - Adjusting your PATH environment. Pick &quot;**Run Git from the Windows Command Prompt**&quot;.  
 
 3. Install the compiler/IDE<a href="https://www.visualstudio.com/news/vs2015-update1-vs" rel="nofollow"> Visual Studio Community 2015 with Update 1</a>
@@ -24,10 +24,10 @@ This guide is meant to introduce you to the proper steps in building OregonCore 
 5. Choose one of these database management tools:
     1. mysql cli (Fastest (recomended since we use some very big files))
     2. <a href="https://github.com/webyog/sqlyog-community/wiki/Downloads" rel="nofollow">SQLYog Community Edition</a>
-    3. <a href="http://www.heidisql.com/download.php" rel="nofollow">HeidiSQL</a> (Best for beginners)
-    4. <a href="http://dev.mysql.com/downloads/workbench/" rel="nofollow">MySQL Workbench</a> (already installed if you chose to install full MySQL package)
+    3. <a href="https://www.heidisql.com/download.php" rel="nofollow">HeidiSQL</a> (Best for beginners)
+    4. <a href="https://dev.mysql.com/downloads/workbench/" rel="nofollow">MySQL Workbench</a> (already installed if you chose to install full MySQL package)
 6. Try connecting your MySQL instance that you installed above. Depending on the program, you may be looking for &quot;Connect to Host&quot; or &quot;New Connection&quot; or &quot;Session Manager&quot;.
-7. Create a new connection/session. The Hostname/IP address of &quot;127.0.0.1&quot; or &quot;localhost&quot; is fine if you installed MySQL on the same computer that you installed HeidiSQL or SQLYog. Simply fill in your root // whatever password and you should now be able to connect to your database.<a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=333325FD-AE52-4E35-B531-508D977D32A6&amp;amp;displaylang=en" rel="nofollow">NET Framework 3.5</a> or above (you should already have it via your Windows updates.
+7. Create a new connection/session. The Hostname/IP address of &quot;127.0.0.1&quot; or &quot;localhost&quot; is fine if you installed MySQL on the same computer that you installed HeidiSQL or SQLYog. Simply fill in your root // whatever password and you should now be able to connect to your database.<a href="https://www.microsoft.com/downloads/details.aspx?FamilyId=333325FD-AE52-4E35-B531-508D977D32A6&amp;amp;displaylang=en" rel="nofollow">NET Framework 3.5</a> or above (you should already have it via your Windows updates.
 8. <a href="https://cmake.org/download/" rel="nofollow">CMake</a>
     1. Download and install the **Latest Release** win32-x86.exe file, NOT the RC (Release Candidate) versions.
     2. &ldquo;Visual Studio 12&rdquo; is Microsoft Visual Studio 2013, or Visual C++ 12.0, or MSC 18.0. If you need to build for 64-bit, then choose &ldquo;Visual Studio 12 Win64&rdquo;;
@@ -37,8 +37,8 @@ This guide is meant to introduce you to the proper steps in building OregonCore 
     2. Find the 64bit version by finding the <em>latest </em> **Win64 OpenSSL** that is **NOT** the &quot;light&quot; version.
         1. Example: **Win64 OpenSSL v1.0.2e**
     3. <em>Note #1: If you get a &quot;Missing Microsoft Visual C++ 2008 Redistributables&quot; error message while installing OpenSSL,  
-    download the ** <a href="http://www.microsoft.com/en-us/download/details.aspx?id=29" rel="nofollow">Microsoft Visual C++ 2008 Redistributable Package (x86)</a> ** (1.7MB Installer) and install it.  
-    If you need 64bit support, download and install the <a href="http://www.microsoft.com/en-us/download/details.aspx?id=15336" rel="nofollow"> **Microsoft Visual C++ 2008 Redistributable Package (x64)** </a>.</em>  
+    download the ** <a href="https://www.microsoft.com/en-us/download/details.aspx?id=29" rel="nofollow">Microsoft Visual C++ 2008 Redistributable Package (x86)</a> ** (1.7MB Installer) and install it.  
+    If you need 64bit support, download and install the <a href="https://www.microsoft.com/en-us/download/details.aspx?id=15336" rel="nofollow"> **Microsoft Visual C++ 2008 Redistributable Package (x64)** </a>.</em>  
      
     4. <em>Note #2: While installing OpenSSL, choose **The OpenSSL binaries (/bin) directory** (NOT &quot;The Windows system directory&quot;)  
     when given the choice on where to copy the OpenSSL DLLs. These DLLs will need to be located easily for <a href="https://trinitycore.atlassian.net/wiki/display/tc/Requirements#Requirements-windows">Core Installation</a>.</em> 
@@ -48,7 +48,7 @@ This guide is meant to introduce you to the proper steps in building OregonCore 
 1. If you use different PCs to compile/run TrinityCore, install one of the following packages on your Server-PC to avoid missing dependencies (depending on your Visual Studio Version and your Server-PC Operating System)
     1. [Microsoft Visual C++ 2015 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=48145)
     2. NOTE: Whatever you do you CAN'T run TrinityCore on Windows XP or Windows 2003.
-2. [TortoiseGit](http://code.google.com/p/tortoisegit/)
+2. [TortoiseGit](https://tortoisegit.org/)
     1. This instruction supports Git Extensions only, but TortoiseGit is another viable option if you're comfortable with the process.</li>
 
 \section pulling_and_compiling Pulling & Compiling the Source

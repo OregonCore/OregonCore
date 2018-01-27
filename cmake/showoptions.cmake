@@ -1,5 +1,5 @@
-# Copyright (C) 2008-2012 OregonCore <http://www.oregoncore.com/>
-# Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+# Copyright (C) 2008-2018 OregonCore <https://oregon-core.net/>
+# Copyright (C) 2008-2012 TrinityCore <https://www.trinitycore.org/>
 #
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without

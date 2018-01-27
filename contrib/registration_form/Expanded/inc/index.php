@@ -13,7 +13,7 @@ krakjoe@krakjoe.info                                  ==> J Watkins
 
 The GIFEncoder class was written by ...
 http://gifs.hu                                        ==>  László Zsidi
-http://www.phpclasses.org/browse/package/3163.html    ==>  Download Current Version 
+https://www.phpclasses.org/browse/package/3163.html    ==>  Download Current Version 
 
 This file is part of QueryThe.Net's AnimatedCaptcha Package.
 

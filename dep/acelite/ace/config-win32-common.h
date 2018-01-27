@@ -651,7 +651,7 @@
 
 ///////////////////////////////////////
 // windows version-specific definitions
-// see: http://msdn2.microsoft.com/en-us/library/aa383745.aspx
+// see: https://msdn.microsoft.com/en-us/library/aa383745.aspx
 //
 // For TSS information
 // see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/thread_local_storage.asp
