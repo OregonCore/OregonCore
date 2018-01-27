@@ -781,7 +781,7 @@ void Console::DrawLogo()
         sLog.outString();
         for (uint32 i = 0; i < sOregonLogoRows; i++)
             sLog.outString("%.*s", sOregonLogoCols, &sOregonLogo[i * sOregonLogoCols]);
-        sLog.outString("http://www.oregon-core.net\n");
+        sLog.outString("https://www.oregon-core.net\n");
     }
 }
 
