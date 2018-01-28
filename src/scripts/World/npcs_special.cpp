@@ -1495,8 +1495,9 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
 
         //Add delta to make them not all hit the same time
         uint32 delta = (rand() % 7) * 100;
-        me->SetStatFloatValue(UNIT_FIELD_BASEATTACKTIME, Info->baseattacktime + delta);
-        me->SetStatFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER , Info->attackpower);
+        CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(me->getLevel(), Info->unit_class, Info->exp);
+        me->SetStatFloatValue(UNIT_FIELD_BASEATTACKTIME, Info->BaseAttackTime + delta);
+        me->SetStatFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER, cCLS->BaseMeleeAttackPower);
 
         if (Unit* attacker = Owner->getAttackerForHelper())
         {

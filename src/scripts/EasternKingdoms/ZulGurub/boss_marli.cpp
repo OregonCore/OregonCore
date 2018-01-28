@@ -176,10 +176,15 @@ struct boss_marliAI : public ScriptedAI
             {
                 me->InterruptNonMeleeSpells(false);
                 DoScriptText(SAY_TRANSFORM, me);
-                DoCast(me, SPELL_SPIDER_FORM);
                 const CreatureInfo* cinfo = me->GetCreatureTemplate();
-                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 35)));
-                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 35)));
+                CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(me->getLevel(), cinfo->unit_class, cinfo->exp);
+                float basedamage = cCLS->BaseDamage;
+
+                float weaponBaseMinDamage = basedamage;
+                float weaponBaseMaxDamage = basedamage * 1.5;
+
+                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (weaponBaseMinDamage + ((weaponBaseMinDamage / 100) * 35)));
+                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (weaponBaseMaxDamage + ((weaponBaseMaxDamage / 100) * 35)));
                 me->UpdateDamagePhysical(BASE_ATTACK);
                 DoCastVictim( SPELL_ENVOLWINGWEB);
 
@@ -229,8 +234,14 @@ struct boss_marliAI : public ScriptedAI
                 {
                     me->SetDisplayId(15220);
                     const CreatureInfo* cinfo = me->GetCreatureTemplate();
-                    me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
-                    me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));
+                    CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(me->getLevel(), cinfo->unit_class, cinfo->exp);
+                    float basedamage = cCLS->BaseDamage;
+
+                    float weaponBaseMinDamage = basedamage;
+                    float weaponBaseMaxDamage = basedamage * 1.5;
+
+                    me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (weaponBaseMinDamage + ((weaponBaseMinDamage / 100) * 1)));
+                    me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (weaponBaseMaxDamage + ((weaponBaseMaxDamage / 100) * 1)));
                     me->UpdateDamagePhysical(BASE_ATTACK);
                     Charge_Timer = 1500;  // reset charge timer so each transform she charges
 
@@ -281,8 +292,13 @@ struct mob_spawn_of_marliAI : public ScriptedAI
         if (Grow_Timer <= diff)
         {
             const CreatureInfo* cinfo = me->GetCreatureTemplate();
-            me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->maxdmg * (1 + 0.1f * Growth_Level)));
-            me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg * (1 + 0.1f * Growth_Level)));
+            CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(me->getLevel(), cinfo->unit_class, cinfo->exp);
+            float basedamage = cCLS->BaseDamage;
+
+            float weaponBaseMinDamage = basedamage;
+            float weaponBaseMaxDamage = basedamage * 1.5;
+            me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (weaponBaseMinDamage * (1 + 0.1f * Growth_Level)));
+            me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (weaponBaseMaxDamage * (1 + 0.1f * Growth_Level)));
             me->UpdateDamagePhysical(BASE_ATTACK);
             me->SetObjectScale(1.0f + Growth_Level * 0.1f);
             Grow_Timer = 1000;

@@ -377,11 +377,9 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
-	uint32 attackTimer = GetCreatureTemplate()->baseattacktime;
-	
-	SetAttackTime(BASE_ATTACK, attackTimer);
-	SetAttackTime(OFF_ATTACK, attackTimer - attackTimer / 4);
-	SetAttackTime(RANGED_ATTACK, GetCreatureTemplate()->rangeattacktime);
+    SetAttackTime(BASE_ATTACK, cInfo->BaseAttackTime);
+    SetAttackTime(OFF_ATTACK, cInfo->BaseAttackTime);
+    SetAttackTime(RANGED_ATTACK, cInfo->RangeAttackTime);
 
     SelectLevel();
 
@@ -1166,17 +1164,22 @@ void Creature::SelectLevel()
     SetModifierValue(UNIT_MOD_MANA, BASE_VALUE, (float)mana);
 
     // damage
-    float damagemod = _GetDamageMod(rank);
+    float basedamage = cCLS->BaseDamage;
+    
+    float weaponBaseMinDamage = basedamage;
+    float weaponBaseMaxDamage = basedamage * 1.5;
 
-    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, cInfo->mindmg * damagemod);
-    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, cInfo->maxdmg * damagemod);
-    SetBaseWeaponDamage(OFF_ATTACK, MINDAMAGE, cInfo->mindmg * damagemod);
-    SetBaseWeaponDamage(OFF_ATTACK, MAXDAMAGE, cInfo->maxdmg * damagemod);
-	SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE, cInfo->minrangedmg * damagemod);
-	SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE, cInfo->maxrangedmg * damagemod);
-	
-	SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, cInfo->attackpower * damagemod);
-	SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, cInfo->rangedattackpower * damagemod);
+    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, weaponBaseMinDamage);
+    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, weaponBaseMaxDamage);
+    
+    SetBaseWeaponDamage(OFF_ATTACK, MINDAMAGE, weaponBaseMinDamage);
+    SetBaseWeaponDamage(OFF_ATTACK, MAXDAMAGE, weaponBaseMaxDamage);
+    
+    SetBaseWeaponDamage(RANGED_ATTACK, MINDAMAGE, weaponBaseMinDamage);
+    SetBaseWeaponDamage(RANGED_ATTACK, MAXDAMAGE, weaponBaseMaxDamage);
+    
+    SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, cCLS->BaseMeleeAttackPower);
+    SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, cCLS->BaseRangedAttackPower);
 
     UpdateAllStats();
 }
@@ -1337,6 +1340,12 @@ bool Creature::LoadCreatureFromDB(uint32 guid, Map* map, bool addToMap)
     if (addToMap && !GetMap()->AddToMap(this))
         return false;
     return true;
+}
+
+void Creature::SetCanDualWield(bool value)
+{
+    Unit::SetCanDualWield(value);
+    UpdateDamagePhysical(OFF_ATTACK);
 }
 
 void Creature::LoadEquipment(uint32 equip_entry, bool force)

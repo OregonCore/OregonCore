@@ -1912,10 +1912,9 @@ class Player : public Unit, public GridObject<Player>
         void UpdateMaxPower(Powers power) override;
         void UpdateAttackPowerAndDamage(bool ranged = false) override;
         void UpdateShieldBlockValue();
-        void UpdateDamagePhysical(WeaponAttackType attType) override;
         void UpdateSpellDamageAndHealingBonus();
 
-        void CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, float& min_damage, float& max_damage);
+        void CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage) override;
 
         void UpdateDefenseBonusesMod();
         void ApplyRatingMod(CombatRating cr, int32 value, bool apply);

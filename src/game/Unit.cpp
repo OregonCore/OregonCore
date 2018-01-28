@@ -631,9 +631,6 @@ bool Unit::UpdateMeleeAttackingState()
 
 bool Unit::haveOffhandWeapon() const
 {
-	if (!CanUseEquippedWeapon(OFF_ATTACK))
-		return false;
-
 	if (GetTypeId() == TYPEID_PLAYER)
 		return ((Player*)this)->GetWeaponForAttack(OFF_ATTACK, true);
 	else
@@ -644,6 +641,8 @@ bool Unit::haveOffhandWeapon() const
 
 		return false;
 	}
+
+    return CanDualWield();
 }
 
 void Unit::resetAttackTimer(WeaponAttackType type)
@@ -1674,7 +1673,7 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
         return;
     }
 
-    damage += CalculateDamage(damageInfo->attackType, false);
+    damage += CalculateDamage(damageInfo->attackType, false, true);
     // Add melee damage bonus
     MeleeDamageBonus(damageInfo->target, &damage, damageInfo->attackType);
 
@@ -2590,13 +2589,13 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst (const Unit* victim, WeaponAttackT
     return MELEE_HIT_NORMAL;
 }
 
-uint32 Unit::CalculateDamage(WeaponAttackType attType, bool normalized)
+uint32 Unit::CalculateDamage(WeaponAttackType attType, bool normalized, bool addTotalPct)
 {
     float minDamage = 0.0f;
     float maxDamage = 0.0f;
 
     if (normalized && GetTypeId() == TYPEID_PLAYER)
-        ToPlayer()->CalculateMinMaxDamage(attType, normalized, minDamage, maxDamage);
+        ToPlayer()->CalculateMinMaxDamage(attType, normalized, addTotalPct, minDamage, maxDamage);
     else
     {
         switch (attType)
@@ -2617,6 +2616,9 @@ uint32 Unit::CalculateDamage(WeaponAttackType attType, bool normalized)
                 break;
         }
     }
+
+    minDamage = std::max(0.f, minDamage);
+    maxDamage = std::max(0.f, maxDamage);
 
     if (minDamage > maxDamage)
         std::swap(minDamage, maxDamage);
@@ -5917,7 +5919,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, Aura* triggeredByAur
                 case 1:
                     {
                         // damage
-                        damage += CalculateDamage(BASE_ATTACK, false) * 35 / 100; // add spell damage from prev effect (35%)
+                        damage += CalculateDamage(BASE_ATTACK, false, true) * 35 / 100; // add spell damage from prev effect (35%)
                         basepoints0 =  triggeredByAura->GetModifier()->m_amount * damage / 100;
 
                         target = this;

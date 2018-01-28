@@ -135,9 +135,15 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         Charging_Timer = 0;
         Roar_Timer = 0;
 
-		const CreatureInfo* cinfo = me->GetCreatureTemplate();
-		me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 45)));
-		me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 45)));
+        const CreatureInfo* cinfo = me->GetCreatureTemplate();
+        CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(me->getLevel(), cinfo->unit_class, cinfo->exp);
+        float basedamage = cCLS->BaseDamage;
+
+        float weaponBaseMinDamage = basedamage;
+        float weaponBaseMaxDamage = basedamage * 1.5;
+
+        me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (weaponBaseMinDamage + ((weaponBaseMinDamage / 100) * 45)));
+        me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (weaponBaseMaxDamage + ((weaponBaseMaxDamage / 100) * 45)));
 		me->UpdateDamagePhysical(BASE_ATTACK);
 
 		if (me->HasAura(SPELL_DUAL_WIELD))
@@ -293,9 +299,15 @@ struct boss_high_king_maulgarAI : public ScriptedAI
 
         if (Phase2)
         {
-			const CreatureInfo* cinfo = me->GetCreatureTemplate();
-			me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
-			me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));
+            const CreatureInfo* cinfo = me->GetCreatureTemplate();
+            CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(me->getLevel(), cinfo->unit_class, cinfo->exp);
+            float basedamage = cCLS->BaseDamage;
+
+            float weaponBaseMinDamage = basedamage;
+            float weaponBaseMaxDamage = basedamage * 1.5;
+
+            me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (weaponBaseMinDamage + ((weaponBaseMinDamage / 100) * 1)));
+            me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (weaponBaseMaxDamage + ((weaponBaseMaxDamage / 100) * 1)));
 			me->UpdateDamagePhysical(BASE_ATTACK);
 
             //Charging_Timer
