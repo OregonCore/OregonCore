@@ -22,3 +22,5 @@ ALTER TABLE creature_template DROP COLUMN attackpower;
 ALTER TABLE creature_template DROP COLUMN minrangedmg;
 ALTER TABLE creature_template DROP COLUMN maxrangedmg;
 ALTER TABLE creature_template DROP COLUMN rangedattackpower;
+
+UPDATE creature_template SET exp = "0" WHERE exp = "-1";
