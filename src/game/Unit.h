@@ -930,6 +930,22 @@ class Unit : public WorldObject
             return m_attackTimer[type] == 0;
         }
         bool haveOffhandWeapon() const;
+		bool UpdateMeleeAttackingState();
+		bool CanUseEquippedWeapon(WeaponAttackType attackType) const
+		{
+			if (IsInFeralForm())
+				return false;
+			
+			switch (attackType)
+		    {
+		        default:
+		        case BASE_ATTACK:
+	                return !HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISARMED);
+		        case OFF_ATTACK:
+		        case RANGED_ATTACK:
+		        return true;
+            }
+        }
         bool CanDualWield() const
         {
             return m_canDualWield;
@@ -1415,8 +1431,6 @@ class Unit : public WorldObject
         void BuildHeartBeatMsg(WorldPacket* data) const;
         void BuildMovementPacket(ByteBuffer *data) const;
 
-        virtual void MoveOutOfRange(Player&) {  };
-
         bool isMoving() const
         {
             return HasUnitMovementFlag(MOVEMENTFLAG_MOVING) && !HasUnitMovementFlag(MOVEMENTFLAG_ROOT);
@@ -1704,7 +1718,6 @@ class Unit : public WorldObject
         // Check if our current channel spell has attribute SPELL_ATTR5_CAN_CHANNEL_WHEN_MOVING
         bool CanMoveDuringChannel() const;
 
-        uint32 m_addDmgOnce;
         uint64 m_SummonSlot[MAX_SUMMON_SLOT];
         uint64 m_ObjectSlot[4];
 

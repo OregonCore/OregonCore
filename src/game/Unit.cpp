@@ -400,8 +400,6 @@ Unit::Unit(bool isWorldObject):
     for (uint8 i = 0; i < CURRENT_MAX_SPELL; ++i)
         m_currentSpells[i] = NULL;
 
-    m_addDmgOnce = 0;
-
     for (uint8 i = 0; i < MAX_SUMMON_SLOT; ++i)
         m_SummonSlot[i] = 0;
 
@@ -547,16 +545,14 @@ void Unit::Update(uint32 p_time)
         }
     }
 
-    //not implemented before 3.0.2
-    //if (!HasUnitState(UNIT_STATE_CASTING))
-    {
-        if (uint32 base_att = getAttackTimer(BASE_ATTACK))
-            setAttackTimer(BASE_ATTACK, (p_time >= base_att ? 0 : base_att - p_time));
-        if (uint32 ranged_att = getAttackTimer(RANGED_ATTACK))
-            setAttackTimer(RANGED_ATTACK, (p_time >= ranged_att ? 0 : ranged_att - p_time));
-        if (uint32 off_att = getAttackTimer(OFF_ATTACK))
-            setAttackTimer(OFF_ATTACK, (p_time >= off_att ? 0 : off_att - p_time));
-    }
+	if (uint32 base_att = getAttackTimer(BASE_ATTACK))
+		setAttackTimer(BASE_ATTACK, (p_time >= base_att ? 0 : base_att - p_time));
+
+	if (uint32 base_att = getAttackTimer(OFF_ATTACK))
+		setAttackTimer(OFF_ATTACK, (p_time >= base_att ? 0 : base_att - p_time));
+
+	if (uint32 ranged_att = getAttackTimer(RANGED_ATTACK))
+		setAttackTimer(RANGED_ATTACK, (p_time >= ranged_att ? 0 : ranged_att - p_time));
 
     // update abilities available only for fraction of time
     UpdateReactives(p_time);
@@ -572,12 +568,82 @@ void Unit::Update(uint32 p_time)
     
 }
 
+bool Unit::UpdateMeleeAttackingState()
+{
+	Unit *victim = GetVictim();
+	if (!victim || IsNonMeleeSpellCast(false))
+		return false;
+
+	if (!isAttackReady(BASE_ATTACK) && !(isAttackReady(OFF_ATTACK) && haveOffhandWeapon()))
+		return false;
+
+	uint8 swingError = 0;
+	if (!IsWithinMeleeRange(victim))
+	{
+		setAttackTimer(BASE_ATTACK, 100);
+		setAttackTimer(OFF_ATTACK, 100);
+		swingError = 1;
+	}
+	//120 degrees of radiant range
+	else if (!HasInArc(2 * M_PI / 3, victim))
+	{
+		setAttackTimer(BASE_ATTACK, 100);
+		setAttackTimer(OFF_ATTACK, 100);
+		swingError = 2;
+	}
+	else
+	{
+		if (isAttackReady(BASE_ATTACK))
+		{
+			// prevent base and off attack in same time, delay attack at 0.2 sec
+			if (haveOffhandWeapon())
+			{
+				if (getAttackTimer(OFF_ATTACK) < ATTACK_DISPLAY_DELAY)
+					setAttackTimer(OFF_ATTACK, ATTACK_DISPLAY_DELAY);
+			}
+			AttackerStateUpdate(victim, BASE_ATTACK);
+			resetAttackTimer(BASE_ATTACK);
+		}
+		if (haveOffhandWeapon() && isAttackReady(OFF_ATTACK))
+		{
+			// prevent base and off attack in same time, delay attack at 0.2 sec
+			uint32 base_att = getAttackTimer(BASE_ATTACK);
+			if (base_att < ATTACK_DISPLAY_DELAY)
+				setAttackTimer(BASE_ATTACK, ATTACK_DISPLAY_DELAY);
+			// do attack
+			AttackerStateUpdate(victim, OFF_ATTACK);
+			resetAttackTimer(OFF_ATTACK);
+		}
+	}
+
+	Player* player = (GetTypeId() == TYPEID_PLAYER ? (Player*)this : NULL);
+	if (player && swingError != player->LastSwingErrorMsg())
+	{
+		if (swingError == 1)
+			player->SendAttackSwingNotInRange();
+		else if (swingError == 2)
+			player->SendAttackSwingBadFacingAttack();
+		player->SwingErrorMsg(swingError);
+	}
+
+	return swingError == 0;
+}
+
 bool Unit::haveOffhandWeapon() const
 {
-    if (GetTypeId() == TYPEID_PLAYER)
-        return ToPlayer()->GetWeaponForAttack(OFF_ATTACK, true);
+	if (!CanUseEquippedWeapon(OFF_ATTACK))
+		return false;
 
-    return m_canDualWield;
+	if (GetTypeId() == TYPEID_PLAYER)
+		return ((Player*)this)->GetWeaponForAttack(OFF_ATTACK, true);
+	else
+	{
+		uint8 itemClass = GetByteValue(UNIT_VIRTUAL_ITEM_INFO + (1 * 2) + 0, VIRTUAL_ITEM_INFO_0_OFFSET_CLASS);
+		if (itemClass == ITEM_CLASS_WEAPON)
+			return true;
+
+		return false;
+	}
 }
 
 void Unit::resetAttackTimer(WeaponAttackType type)
