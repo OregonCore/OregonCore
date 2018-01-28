@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2018 OregonCore <https://oregon-core.net/>
  * Copyright (C) 2008-2012 TrinityCore <https://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <http://www.scriptdev2.com/>
  *
@@ -190,7 +190,7 @@ enum Thrall
     SPELL_TELEPORT               = 7791,
     SPELL_MEMORY_WIPE            = 33336,
     SPELL_MEMORY_WP_RESUME       = 33337,
-    SPELL_SHADOW_PRISON          = 33071, 
+    SPELL_SHADOW_PRISON          = 33071,
 
     GO_PRISON_DOOR               = 184393
 };
@@ -253,7 +253,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
     {
         LowHp = false;
         Event = false;
-        
+
         MountGUID = 0;
         ArmorerGUID = 0;
         ImageGUID = 0;
@@ -647,7 +647,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
     }
 
     int32 NextStep(uint32 Steps)
-    {       
+    {
         if (uint64 TarethaGUID = pInstance->GetData64(DATA_TARETHA))
         {
             Creature* Taretha = (Unit::GetCreature(*me, TarethaGUID));
@@ -697,7 +697,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
             }
         } else if (Creature* Taretha = me->FindNearestCreature(18887, 300.0f, true))
             {
-                Creature* Image = me->GetMap()->GetCreature(ImageGUID);         
+                Creature* Image = me->GetMap()->GetCreature(ImageGUID);
 
                 switch (Steps)
                 {
@@ -765,7 +765,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
                 AddWaypoint(10, 2182.11f, 120.328f, 89.4548f, 5000);
                 AddWaypoint(11, 2182.11f, 120.329f, 89.4548f, 5000);
                 AddWaypoint(12, 2182.11f, 120.330f, 89.4548f, 3000);
-                AddWaypoint(13, 2189.44f, 113.922f, 89.4549f, 0); 
+                AddWaypoint(13, 2189.44f, 113.922f, 89.4549f, 0);
                 AddWaypoint(14, 2195.63f, 110.584f, 89.4549f, 0);
                 AddWaypoint(15, 2201.09f, 115.115f, 89.4549f, 0);
                 AddWaypoint(16, 2204.34f, 121.036f, 89.4355f, 0);
@@ -1082,7 +1082,7 @@ struct npc_tarethaAI : public npc_escortAI
         }
     }
 
-    void Reset() 
+    void Reset()
     {
         DoCast(me, SPELL_SHADOW_PRISON, true);
     }
@@ -1180,7 +1180,7 @@ struct erozion_imageAI : public ScriptedAI
     }
 
     int32 NextStep(uint32 Steps)
-    {       
+    {
        if (Creature *Thrall = (Creature*)(Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL))))
        {
            switch (Steps)

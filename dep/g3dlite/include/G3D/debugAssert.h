@@ -1,21 +1,21 @@
 /**
   @file debugAssert.h
- 
+
   debugAssert(expression);
   debugAssertM(expression, message);
- 
+
   @cite
      John Robbins, Microsoft Systems Journal Bugslayer Column, Feb 1999.
-     <A HREF="http://msdn.microsoft.com/library/periodic/period99/feb99_BUGSLAYE_BUGSLAYE.htm">
+     <A HREF="https://msdn.microsoft.com/en-us/library/periodic/period99/feb99_BUGSLAYE_BUGSLAYE.htm">
      http://msdn.microsoft.com/library/periodic/period99/feb99_BUGSLAYE_BUGSLAYE.htm</A>
- 
-  @cite 
+
+  @cite
      Douglas Cox, An assert() Replacement, Code of The Day, flipcode, Sept 19, 2000
      <A HREF="http://www.flipcode.com/cgi-bin/msg.cgi?showThread=COTD-AssertReplace&forum=cotd&id=-1">
      http://www.flipcode.com/cgi-bin/msg.cgi?showThread=COTD-AssertReplace&forum=cotd&id=-1</A>
- 
+
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
+
   @created 2001-08-26
   @edited  2006-01-12
 
@@ -49,7 +49,7 @@
 
 /**
  @def debugBreak()
- 
+
  Break at the current location (i.e. don't push a procedure stack frame
  before breaking).
  */
@@ -57,18 +57,18 @@
 /**
   @def debugAssert(exp)
   Breaks if the expression is false. If G3D_DEBUG_NOGUI is defined, prompts at
-  the console, otherwise pops up a dialog.  The user may then break (debug), 
+  the console, otherwise pops up a dialog.  The user may then break (debug),
   ignore, or halt the program.
- 
+
   The assertion is also posted to the clipboard under Win32.
  */
 
 /**
   @def debugAssertM(exp, msg)
-  Breaks if the expression is false and displays a message. If G3D_DEBUG_NOGUI 
+  Breaks if the expression is false and displays a message. If G3D_DEBUG_NOGUI
   is defined, prompts at the console, otherwise pops up a dialog.  The user may
   then break (debug), ignore, or halt the program.
- 
+
   The assertion is also posted to the clipboard under Win32.
  */
 
@@ -85,7 +85,7 @@ typedef bool (*AssertionHook)(
     int lineNumber,
     bool useGuiPrompt);
 
-/** 
+/**
   Allows customization of the global function invoked when a debugAssert fails.
   The initial value is G3D::_internal::_handleDebugAssert_.  G3D will invoke
   rawBreak if the hook returns true.  If NULL, assertions are not handled.
@@ -115,11 +115,11 @@ namespace _internal {
 
 #ifdef G3D_DEBUG
 
-#    if defined(_MSC_VER) 
+#    if defined(_MSC_VER)
 #       define rawBreak()  ::DebugBreak();
 #    elif defined(__i386__)
         // gcc on intel
-#       define rawBreak() __asm__ __volatile__ ( "int $3" ); 
+#       define rawBreak() __asm__ __volatile__ ( "int $3" );
 #    else
         // some other gcc
 #      define rawBreak() ::abort()
@@ -219,12 +219,12 @@ bool _handleErrorCheck_(
     int         lineNumber,
     bool        useGuiPrompt);
 
-/** Attempts to give the user back their mouse and keyboard if they 
-    were locked to the current window.  
+/** Attempts to give the user back their mouse and keyboard if they
+    were locked to the current window.
     @internal*/
 void _releaseInputGrab_();
 
-/** Attempts to restore the state before _releaseInputGrab_.  
+/** Attempts to restore the state before _releaseInputGrab_.
     @internal*/
 void _restoreInputGrab_();
 

@@ -103,7 +103,7 @@ public:
    * @note Windows: The implementation of set_handles() uses DuplicateHandle
    *       on Windows. DuplicateHandle cannot be used to pass a socket handle
    *       on Windows. Socket handles require an alternate mechanism to pass;
-   *       see http://msdn.microsoft.com/en-us/library/ms741565(v=VS.85).aspx
+   *       see https://msdn.microsoft.com/en-us/library/ms741565(v=VS.85).aspx
    *
    * @return 0 on success, -1 on failure.
    */

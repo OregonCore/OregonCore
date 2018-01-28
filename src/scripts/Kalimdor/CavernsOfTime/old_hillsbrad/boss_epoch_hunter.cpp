@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2018 OregonCore <https://oregon-core.net/>
  * Copyright (C) 2008-2012 TrinityCore <https://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <http://www.scriptdev2.com/>
  *
@@ -95,7 +95,7 @@ struct boss_epoch_hunterAI : public ScriptedAI
 
         if (Creature *Thrall = (Creature*)(Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL))))
             ThrallGUID = Thrall->GetGUID();
-        else if (Creature* Thrall = me->FindNearestCreature(17876, 300.0f, true)) 
+        else if (Creature* Thrall = me->FindNearestCreature(17876, 300.0f, true))
         {
              if (Thrall)
                 ThrallGUID = Thrall->GetGUID();
@@ -129,7 +129,7 @@ struct boss_epoch_hunterAI : public ScriptedAI
         {
             if (Creature* Thrall = me->GetMap()->GetCreature(ThrallGUID))
                 Thrall->AI()->DoAction();
-            else if (Creature* Thrall = me->FindNearestCreature(17876, 300.0f, true)) 
+            else if (Creature* Thrall = me->FindNearestCreature(17876, 300.0f, true))
                 Thrall->AI()->DoAction();
 
             pInstance->SetData(TYPE_THRALL_PART4, DONE);
@@ -193,13 +193,13 @@ struct boss_epoch_hunterAI : public ScriptedAI
                             attacker->UpdateEntry(NPC_INFINITE_SABOTEUR);
                             break;
                     }
-                            
+
                     attacker->SetReactState(REACT_AGGRESSIVE);
                     attacker->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
                     if (Creature* Thrall = me->GetMap()->GetCreature(ThrallGUID))
                         attacker->AI()->AttackStart(Thrall);
-                    else if (Creature* Thrall = me->FindNearestCreature(17876, 150.0f, true)) 
+                    else if (Creature* Thrall = me->FindNearestCreature(17876, 150.0f, true))
                         attacker->AI()->AttackStart(Thrall);
                 }
             }
@@ -287,7 +287,7 @@ struct boss_epoch_hunterAI : public ScriptedAI
                 me->SetLevitate(false);
                 if (Creature* Thrall = me->GetMap()->GetCreature(ThrallGUID))
                     Thrall->AI()->AttackStart(me);
-                else if (Creature* Thrall = me->FindNearestCreature(17876, 100.0f, true)) 
+                else if (Creature* Thrall = me->FindNearestCreature(17876, 100.0f, true))
                     Thrall->AI()->AttackStart(me);
                 Intro = false;
                 break;
@@ -322,7 +322,7 @@ struct boss_epoch_hunterAI : public ScriptedAI
                             }
                         }
                     }
-                    
+
                     if (!alive)
                     {
                         NextWave();
@@ -343,7 +343,7 @@ struct boss_epoch_hunterAI : public ScriptedAI
 
             if (Next)
             {
-                if (NextTimer <= diff) 
+                if (NextTimer <= diff)
                 {
                     NextWave();
                 }

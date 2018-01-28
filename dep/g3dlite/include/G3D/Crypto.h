@@ -1,8 +1,8 @@
-/** 
+/**
   @file Crypto.h
- 
+
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
+
 
   @created 2006-03-29
   @edited  2006-04-06
@@ -69,7 +69,7 @@ public:
 
      This implementation is compatible with PKZIP and GZIP.
 
-     Based on http://www.gamedev.net/reference/programming/features/crc32/
+     Based on https://www.gamedev.net/reference/programming/features/crc32/
     */
     static uint32 crc32(const void* bytes, size_t numBytes);
 

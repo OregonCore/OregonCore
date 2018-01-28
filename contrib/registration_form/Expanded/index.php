@@ -3,7 +3,7 @@ session_start();
 include("db.conf.php");
 
 $page = '<?xml version="1.0" encoding="utf-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <style type="text/css">
@@ -122,15 +122,15 @@ Username:
 <br /><input name="username" type="text" maxlength="14" /><img src="inc/help.gif" HEIGHT="20" WIDTH="20" alt="help" onMouseover="ttip(\'username must be 5 - 14 chars long\', 300)"; onMouseout="hidettip()"><br />
 Password:
 <br /><input name="password" type="password" maxlength="12" onkeyup="runPassword(this.value, \'mypassword\');" /><img src="inc/help.gif" HEIGHT="20" WIDTH="20" alt="help" onMouseover="ttip(\'Password must be 6 - 12 chars long\', 300)"; onMouseout="hidettip()">
-<div style="width: 100px;text-align:center;"> 
+<div style="width: 100px;text-align:center;">
 				<div id="mypassword_text" style="font-size: 10px;"></div>
-				<div id="mypassword_bar" style="font-size: 1px; height: 2px; width: 0px; border: 1px solid white;"></div> 
+				<div id="mypassword_bar" style="font-size: 1px; height: 2px; width: 0px; border: 1px solid white;"></div>
 			</div></p>
 <br />
 <p style="text-align:center;">Email:
 <br /><input name="email" type="text" maxlength="50" /><img src="inc/help.gif" HEIGHT="20" WIDTH="20" alt="help" onMouseover="ttip(\'Email must be 15 - 50 chars long\', 300)"; onMouseout="hidettip()"><br />
-<INPUT TYPE=RADIO NAME="expansion" VALUE="0"         >Original - 
-<INPUT TYPE=RADIO NAME="expansion" VALUE="1" CHECKED >TBC - 
+<INPUT TYPE=RADIO NAME="expansion" VALUE="0"         >Original -
+<INPUT TYPE=RADIO NAME="expansion" VALUE="1" CHECKED >TBC -
 <INPUT TYPE=RADIO NAME="expansion" VALUE="2"         >WOTLK<br />
 <img src="inc/OOP5.php" style="border: 1px dashed silver;"><br />
 <span style="font-size:9px;"><a href="">New question</a></span><br />
@@ -264,6 +264,6 @@ if (!empty($_POST)) {
         echo($page);
 };
 
-echo '<center><a href="http://www.oregoncore.com"> Powered by OregonCore</a></center>';
+echo '<center><a href="https://oregon-core.net/"> Powered by OregonCore</a></center>';
 
 ?>

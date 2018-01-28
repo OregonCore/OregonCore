@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // The following configuration file is designed to work for win32 and win64
-// platforms using gcc/g++ with mingw64 (http://http://mingw-w64.sourceforge.net/).
+// platforms using gcc/g++ with mingw64 (https://mingw-w64.org/doku.php).
 //
 
 #ifndef ACE_CONFIG_WIN32_MINGW64_H

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2018 OregonCore <https://oregon-core.net/>
  * Copyright (C) 2008-2012 TrinityCore <https://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <http://www.scriptdev2.com/>
  *
@@ -94,7 +94,7 @@ struct boss_captain_skarlocAI : public ScriptedAI
 
         if (Creature *Thrall = (Creature*)(Unit::GetUnit((*me), pInstance->GetData64(DATA_THRALL))))
             ThrallinGUID = Thrall->GetGUID();
-        else if (Creature* Thrall = me->FindNearestCreature(17876, 100.0f, true)) 
+        else if (Creature* Thrall = me->FindNearestCreature(17876, 100.0f, true))
             ThrallinGUID = Thrall->GetGUID();
 
     }
@@ -129,7 +129,7 @@ struct boss_captain_skarlocAI : public ScriptedAI
 
                     if (Creature* Thrall = me->GetMap()->GetCreature(ThrallinGUID))
                         Thrall->SummonCreature(SKARLOC_MOUNT,2049.90f, 256.85f, 62.822f, me->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 5000);
-                            
+
                     me->SetWalk(true);
                     me->GetMotionMaster()->MovePoint(0, 2056.80f, 240.81f, 63.538f);
 
