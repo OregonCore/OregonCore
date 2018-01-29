@@ -771,7 +771,7 @@ void Console::DrawLogo()
         wattron(m_logoWindow, TermColor(COLOR_CYAN));
 
         mvwprintw(m_logoWindow, 1, sOregonLogoCols / 2 - (sizeof(FavString) - 1) / 2, "%s", FavString);
-        mvwprintw(m_logoWindow, sOregonLogoRows - 1, 0, "%s", "http://www.oregon-core.net");
+        mvwprintw(m_logoWindow, sOregonLogoRows - 1, 0, "%s", "https://www.oregon-core.net");
 
         wattroff(m_logoWindow, TermColor(COLOR_CYAN));
         wrefresh(m_logoWindow);
@@ -781,7 +781,7 @@ void Console::DrawLogo()
         sLog.outString();
         for (uint32 i = 0; i < sOregonLogoRows; i++)
             sLog.outString("%.*s", sOregonLogoCols, &sOregonLogo[i * sOregonLogoCols]);
-        sLog.outString("http://www.oregon-core.net\n");
+        sLog.outString("https://www.oregon-core.net\n");
     }
 }
 

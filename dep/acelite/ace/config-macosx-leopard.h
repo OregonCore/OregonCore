@@ -227,7 +227,7 @@
 //#define ACE_HAS_NONSTATIC_OBJECT_MANAGER
 
 #if defined(__APPLE_CC__) && (__APPLE_CC__ < 1173)
-#error "Compiler must be upgraded, see http://developer.apple.com"
+#error "Compiler must be upgraded, see https://developer.apple.com"
 #endif /* __APPLE_CC__ */
 
 #endif /* ACE_CONFIG_MACOSX_LEOPARD_H */

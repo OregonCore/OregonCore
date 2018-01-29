@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2018 OregonCore <https://oregon-core.net/>
  * Copyright (C) 2008-2012 TrinityCore <https://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <http://www.scriptdev2.com/>
  *
@@ -219,7 +219,7 @@ struct instance_old_hillsbrad : public ScriptedInstance
 
                         Encounter[0] = DONE;
                         Position OrcLocPos;
-                        
+
                         // move the orcs outside the houses
                         float x, y, z;
                         for (std::list<uint64>::iterator it = RightPrisonersList.begin(); it != RightPrisonersList.end(); ++it)

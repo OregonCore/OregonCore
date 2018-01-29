@@ -7,25 +7,25 @@ In order to run the OregonCore server, certain data is required from the WoW cli
 
 The extractors are created as a part of the server build process, either by checking the TOOLS option in the Windows Cmake GUI, or by including -DTOOLS=1 on the configure line of the Linux build. When you build your core, the extractors will be created to run on the operating system that you use to build. If you build on Windows, you will create Windows tools, if you build on Linux, you will create Linux tools. This is important because you will need to run the extractors from a WoW client directory.
 
-You can also download map tools from http://code.google.com/p/oregoncore/downloads/list but we highly recommend building them on your own, because these are not kept up to date with the main repository.
+You can also download map tools from https://code.google.com/archive/p/oregoncore/downloads but we highly recommend building them on your own, because these are not kept up to date with the main repository.
 
 \section Terminology Terminology
 
 \subsection sDBC DBC
 
-DBC (DataBaseClient) files are client-side databases containing world data about items, NPCs, environment etc. DBC files are required for the server to run. 
+DBC (DataBaseClient) files are client-side databases containing world data about items, NPCs, environment etc. DBC files are required for the server to run.
 
 \subsection sMaps Maps
 
-Map files are used by the server to interpret the in-game terrain, such as the difference between land and water, etc. Map files are required for the server to run. 
+Map files are used by the server to interpret the in-game terrain, such as the difference between land and water, etc. Map files are required for the server to run.
 
 \subsection sVMaps VMaps
 
-VMaps (Visual Maps) make it possible to calculate Line-Of-Sight (LOS) relationships. There are special configuration options needed in oregoncore.conf for VMaps to be activated. VMap files are not required for the server to run, but will greatly enhance playability in many ways such as preventing most NPCs from attacking through walls etc. 
+VMaps (Visual Maps) make it possible to calculate Line-Of-Sight (LOS) relationships. There are special configuration options needed in oregoncore.conf for VMaps to be activated. VMap files are not required for the server to run, but will greatly enhance playability in many ways such as preventing most NPCs from attacking through walls etc.
 
 \subsection sMMaps MMaps
 
-MMaps (Movement Maps) are used to allow correct pathing. Just as VMaps, MMaps are not required but will improve game experience greatly.    
+MMaps (Movement Maps) are used to allow correct pathing. Just as VMaps, MMaps are not required but will improve game experience greatly.
 
 \section Preparation Preparation
 
@@ -34,7 +34,7 @@ Copy map_extractor.exe, vmap_extractor.exe and vmap_assembler.exe (map_extractor
 \section Maps Maps
 
 1. Run the map_extractor program. You can run this on Windows by either opening cmd.exe and changing to your WoW client directory, then executing it, or by double-clicking it. It is advised that you open cmd.exe and run that way, since you will not have the option of double-clicking for all of the extractor programs and the opportunity to see possible extraction errors.
-2. If the program fails to run, read the error message carefully. The most common error is that you do not have the program in the right directory. It should be in the same place as wow.exe. 
+2. If the program fails to run, read the error message carefully. The most common error is that you do not have the program in the right directory. It should be in the same place as wow.exe.
 3. The program will create two directories: dbc and maps. These will both be required for the OregonCore server to run.
 
 \section VMaps VMaps
