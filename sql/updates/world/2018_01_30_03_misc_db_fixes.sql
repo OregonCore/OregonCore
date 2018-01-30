@@ -10,3 +10,5 @@ UPDATE `quest_template` SET `OfferRewardText`='It was just horrible! Night elves
 # Ported to OregonCore by Uberhax
 UPDATE `quest_template` SET `PrevQuestId`='76' WHERE `entry`=239;
 UPDATE `quest_template` SET `PrevQuestId`='125' WHERE `entry`=89;
+
+DELETE FROM `npc_vendor` WHERE `entry`=15309;
