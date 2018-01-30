@@ -1,10 +1,3 @@
-ALTER TABLE `creature_template` DROP `HealthModifier`;
-ALTER TABLE `creature_template` DROP `ManaModifier`;
-ALTER TABLE creature_template ADD COLUMN `HealthModifier` FLOAT NOT NULL DEFAULT  '1' AFTER `InhabitType`;
-ALTER TABLE creature_template ADD COLUMN `ManaModifier` FLOAT NOT NULL DEFAULT  '1' AFTER `HealthModifier`;
-ALTER TABLE creature_template ADD COLUMN `ArmorModifier` FLOAT NOT NULL DEFAULT  '1' AFTER `ManaModifier`;
-
-
 -- ----------------------------
 -- Table structure for `creature_templatewotlk`
 -- ----------------------------
@@ -29959,29 +29952,4 @@ SET    creature_template.exp = creature_templatewotlk.exp;
 
 DROP TABLE IF EXISTS `creature_templatewotlk`;
 
--- Formel to get Health Mod
-UPDATE creature_template ct 
-JOIN creature_classlevelstats cls ON ct.minlevel = cls.level AND ct.unit_class = cls.class
-SET ct.HealthModifier =  (ct.minhealth / cls.basehp0) WHERE ct.exp = "0";
-
-UPDATE creature_template ct 
-JOIN creature_classlevelstats cls ON ct.minlevel = cls.level AND ct.unit_class = cls.class
-SET ct.HealthModifier = (ct.minhealth / cls.basehp1) WHERE ct.exp = "1";
-
--- Formel to get Armor Mod
-UPDATE creature_template ct 
-JOIN creature_classlevelstats cls ON ct.minlevel = cls.level AND ct.unit_class = cls.class
-SET ct.HealthModifier =  (ct.armor / cls.basearmor) WHERE ct.exp = "0";
-
-UPDATE creature_template ct 
-JOIN creature_classlevelstats cls ON ct.minlevel = cls.level AND ct.unit_class = cls.class
-SET ct.HealthModifier = (ct.armor / cls.basearmor) WHERE ct.exp = "1";
-
--- Formel to get Mana Mod
-UPDATE creature_template ct 
-JOIN creature_classlevelstats cls ON ct.minlevel = cls.level AND ct.unit_class = cls.class
-SET ct.HealthModifier =  (ct.minmana / cls.basemana) WHERE ct.exp = "0";
-
-UPDATE creature_template ct 
-JOIN creature_classlevelstats cls ON ct.minlevel = cls.level AND ct.unit_class = cls.class
-SET ct.HealthModifier = (ct.minmana / cls.basemana) WHERE ct.exp = "1";
+UPDATE creature_template SET exp = "0" WHERE exp = "-1";
