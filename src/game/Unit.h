@@ -930,14 +930,27 @@ class Unit : public WorldObject
             return m_attackTimer[type] == 0;
         }
         bool haveOffhandWeapon() const;
+		bool UpdateMeleeAttackingState();
+		bool CanUseEquippedWeapon(WeaponAttackType attackType) const
+		{
+			if (IsInFeralForm())
+				return false;
+			
+			switch (attackType)
+		    {
+		        default:
+		        case BASE_ATTACK:
+	                return !HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISARMED);
+		        case OFF_ATTACK:
+		        case RANGED_ATTACK:
+		        return true;
+            }
+        }
         bool CanDualWield() const
         {
             return m_canDualWield;
         }
-        void SetCanDualWield(bool value)
-        {
-            m_canDualWield = value;
-        }
+        virtual void SetCanDualWield(bool value) { m_canDualWield = value; }
         float GetCombatReach() const
         {
             return m_floatValues[UNIT_FIELD_COMBATREACH];
@@ -1415,8 +1428,6 @@ class Unit : public WorldObject
         void BuildHeartBeatMsg(WorldPacket* data) const;
         void BuildMovementPacket(ByteBuffer *data) const;
 
-        virtual void MoveOutOfRange(Player&) {  };
-
         bool isMoving() const
         {
             return HasUnitMovementFlag(MOVEMENTFLAG_MOVING) && !HasUnitMovementFlag(MOVEMENTFLAG_ROOT);
@@ -1704,7 +1715,6 @@ class Unit : public WorldObject
         // Check if our current channel spell has attribute SPELL_ATTR5_CAN_CHANNEL_WHEN_MOVING
         bool CanMoveDuringChannel() const;
 
-        uint32 m_addDmgOnce;
         uint64 m_SummonSlot[MAX_SUMMON_SLOT];
         uint64 m_ObjectSlot[4];
 
@@ -1764,13 +1774,13 @@ class Unit : public WorldObject
         virtual void UpdateMaxHealth() = 0;
         virtual void UpdateMaxPower(Powers power) = 0;
         virtual void UpdateAttackPowerAndDamage(bool ranged = false) = 0;
-        virtual void UpdateDamagePhysical(WeaponAttackType attType) = 0;
+        virtual void UpdateDamagePhysical(WeaponAttackType attType);;
         float GetTotalAttackPowerValue(WeaponAttackType attType) const;
         float GetWeaponDamageRange(WeaponAttackType attType , WeaponDamageRange type) const;
-        void SetBaseWeaponDamage(WeaponAttackType attType , WeaponDamageRange damageRange, float value)
-        {
-            m_weaponDamage[attType][damageRange] = value;
-        }
+        void SetBaseWeaponDamage(WeaponAttackType attType, WeaponDamageRange damageRange, float value) { m_weaponDamage[attType][damageRange] = value; }
+        virtual void CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage) = 0;
+        uint32 CalculateDamage(WeaponAttackType attType, bool normalized, bool addTotalPct);
+        float GetAPMultiplier(WeaponAttackType attType, bool normalized);
 
         bool isInFrontInMap(Unit const* target, float distance, float arc = M_PI) const;
         void SetInFront(Unit const* target)
@@ -1913,8 +1923,6 @@ class Unit : public WorldObject
         void RemoveAllGameObjects();
         DynamicObject* GetDynObject(uint32 spellId, uint32 effIndex);
         DynamicObject* GetDynObject(uint32 spellId);
-        uint32 CalculateDamage(WeaponAttackType attType, bool normalized);
-        float GetAPMultiplier(WeaponAttackType attType, bool normalized);
         void ModifyAuraState(AuraState flag, bool apply);
         bool HasAuraState(AuraState flag) const
         {

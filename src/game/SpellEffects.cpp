@@ -3968,8 +3968,6 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
 void Spell::EffectDualWield(SpellEffIndex /*effIndex*/)
 {
     unitTarget->SetCanDualWield(true);
-    if (unitTarget->GetTypeId() == TYPEID_UNIT)
-        unitTarget->ToCreature()->UpdateDamagePhysical(OFF_ATTACK);
 }
 
 void Spell::EffectPull(SpellEffIndex /*effIndex*/)
@@ -4815,7 +4813,9 @@ void Spell::SpellDamageWeaponDmg(SpellEffIndex effIndex)
             break;
         }
 
-        float weapon_total_pct  = m_caster->GetModifierValue(unitMod, TOTAL_PCT);
+        float weapon_total_pct = 1.0f;
+        if (m_spellInfo->SchoolMask & SPELL_SCHOOL_MASK_NORMAL)
+            weapon_total_pct = m_caster->GetModifierValue(unitMod, TOTAL_PCT);
 
         if (fixed_bonus)
             fixed_bonus = int32(fixed_bonus * weapon_total_pct);
@@ -4823,7 +4823,7 @@ void Spell::SpellDamageWeaponDmg(SpellEffIndex effIndex)
             spell_bonus = int32(spell_bonus * weapon_total_pct);
     }
 
-    int32 weaponDamage = m_caster->CalculateDamage(m_attackType, normalized);
+    int32 weaponDamage = m_caster->CalculateDamage(m_attackType, normalized, true);
 
     // Sequence is important
     for (int j = 0; j < MAX_SPELL_EFFECTS; ++j)

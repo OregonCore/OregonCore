@@ -141,7 +141,7 @@ struct CreatureInfo
     uint32  GossipMenuId;
     uint32  minlevel;
     uint32  maxlevel;
-    int32 exp;
+    int32   exp;
     uint32  minhealth;
     uint32  maxhealth;
     uint32  minmana;
@@ -153,12 +153,11 @@ struct CreatureInfo
     float   speed_run;
     float   scale;
     uint32  rank;
-    float   mindmg;
-    float   maxdmg;
     uint32  dmgschool;
-    uint32  attackpower;
-    uint32  baseattacktime;
-    uint32  rangeattacktime;
+    uint32  BaseAttackTime;
+    uint32  RangeAttackTime;
+    float   BaseVariance;
+    float   RangeVariance;
     uint32  unit_class;                                     // enum Classes. Note only 4 classes are known for creatures.
     uint32  unit_flags;                                     // enum UnitFlags mask values
     uint32  dynamicflags;
@@ -167,9 +166,6 @@ struct CreatureInfo
     uint32  trainer_spell;
     uint32  classNum;
     uint32  race;
-    float   minrangedmg;
-    float   maxrangedmg;
-    uint32  rangedattackpower;
     uint32  type;                                           // enum CreatureType values
     uint32  type_flags;                                     // enum CreatureTypeFlags mask values
     uint32  lootid;
@@ -190,6 +186,8 @@ struct CreatureInfo
     uint32  InhabitType;
     float   ModHealth;
     float   ModMana;
+    float   ModArmor;
+    float   ModDamage;
     bool    RacialLeader;
     bool    RegenHealth;
     uint32  equipmentId;
@@ -579,7 +577,9 @@ class Creature : public Unit, public GridObject<Creature>
         void UpdateMaxHealth() override;
         void UpdateMaxPower(Powers power) override;
         void UpdateAttackPowerAndDamage(bool ranged = false) override;
-        void UpdateDamagePhysical(WeaponAttackType attType) override;
+        void CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage) override;
+        
+        void SetCanDualWield(bool value);
         void SetCurrentEquipmentId(uint8 id) { m_equipmentId = id; }
         uint32 GetCurrentEquipmentId()
         {
