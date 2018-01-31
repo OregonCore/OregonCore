@@ -700,7 +700,7 @@ void AddSC_tanaris()
     newscript->Name = "npc_steward_of_time";
     newscript->pGossipHello =  &GossipHello_npc_steward_of_time;
     newscript->pGossipSelect = &GossipSelect_npc_steward_of_time;
-    newscript->pQuestAccept =  &QuestAccept_npc_steward_of_time;
+    newscript->QuestAccept =  &QuestAccept_npc_steward_of_time;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -712,7 +712,7 @@ void AddSC_tanaris()
     newscript = new Script;
     newscript->Name = "npc_OOX17";
     newscript->GetAI = &GetAI_npc_OOX17;
-    newscript->pQuestAccept = &QuestAccept_npc_OOX17;
+    newscript->QuestAccept = &QuestAccept_npc_OOX17;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -723,7 +723,7 @@ void AddSC_tanaris()
     newscript = new Script;
     newscript->Name = "npc_tooga";
     newscript->GetAI = &GetAI_npc_tooga;
-    newscript->pQuestAccept = &QuestAccept_npc_tooga;
+    newscript->QuestAccept = &QuestAccept_npc_tooga;
     newscript->RegisterSelf();
 }
 

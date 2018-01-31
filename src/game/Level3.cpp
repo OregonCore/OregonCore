@@ -5754,7 +5754,7 @@ bool ChatHandler::HandleCompleteQuest(const char* args)
     // Add quest items for quests that require items
     for (uint8 x = 0; x < QUEST_OBJECTIVES_COUNT; ++x)
     {
-        uint32 id = pQuest->ReqItemId[x];
+        uint32 id = pQuest->RequiredItemId[x];
         uint32 count = pQuest->ReqItemCount[x];
         if (!id || !count)
             continue;

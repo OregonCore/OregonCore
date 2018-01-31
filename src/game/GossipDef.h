@@ -261,7 +261,7 @@ class PlayerMenu
         bool GossipOptionCoded(unsigned int Selection);
 
         void SendGossipMenu(uint32 TitleTextId, uint64 npcGUID);
-        void CloseGossip();
+        void SendCloseGossip();
         void SendPointOfInterest(float X, float Y, uint32 Icon, uint32 Flags, uint32 Data, const char* locName);
         void SendTalking(uint32 textID);
         void SendTalking(char const* title, char const* text);

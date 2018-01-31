@@ -162,7 +162,7 @@ extern uint32 GetSkillLevel(Player* player, uint32 skill);
 #define SEND_POI(a,b,c,d,e,f)      PlayerTalkClass->SendPointOfInterest(a,b,c,d,e,f)
 
 // Closes the Menu
-#define CLOSE_GOSSIP_MENU()        PlayerTalkClass->CloseGossip()
+#define CLOSE_GOSSIP_MENU()        PlayerTalkClass->SendCloseGossip()
 
 // Fuction to tell to client the details
 // a - quest object

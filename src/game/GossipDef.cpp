@@ -184,7 +184,7 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, uint64 objectGUID)
     pSession->SendPacket(&data);
 }
 
-void PlayerMenu::CloseGossip()
+void PlayerMenu::SendCloseGossip()
 {
     WorldPacket data(SMSG_GOSSIP_COMPLETE, 0);
     pSession->SendPacket(&data);
@@ -604,7 +604,7 @@ void PlayerMenu::SendQuestQueryResponse(Quest const* pQuest)
         else
             data << uint32(pQuest->ReqCreatureOrGOId[iI]);
         data << uint32(pQuest->ReqCreatureOrGOCount[iI]);
-        data << uint32(pQuest->ReqItemId[iI]);
+        data << uint32(pQuest->RequiredItemId[iI]);
         data << uint32(pQuest->ReqItemCount[iI]);
     }
 
@@ -756,12 +756,12 @@ void PlayerMenu::SendQuestGiverRequestItems(Quest const* pQuest, uint64 npcGUID,
     ItemTemplate const* pItem;
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
     {
-        if (!pQuest->ReqItemId[i])
+        if (!pQuest->RequiredItemId[i])
             continue;
 
-        pItem = sObjectMgr.GetItemTemplate(pQuest->ReqItemId[i]);
+        pItem = sObjectMgr.GetItemTemplate(pQuest->RequiredItemId[i]);
 
-        data << uint32(pQuest->ReqItemId[i]);
+        data << uint32(pQuest->RequiredItemId[i]);
         data << uint32(pQuest->ReqItemCount[i]);
 
         if (pItem)

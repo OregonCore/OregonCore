@@ -426,7 +426,7 @@ void WorldSession::SendBindPoint(Creature* npc)
     data << uint32(3286);                                   // Bind
     SendPacket(&data);
 
-    _player->PlayerTalkClass->CloseGossip();
+    _player->PlayerTalkClass->SendCloseGossip();
 }
 
 //Need fix

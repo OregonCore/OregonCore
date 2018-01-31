@@ -142,6 +142,6 @@ void AddSC_swamp_of_sorrows()
     newscript = new Script;
     newscript->Name = "npc_galen_goodward";
     newscript->GetAI = &GetAI_npc_galen_goodward;
-    newscript->pQuestAccept = &QuestAccept_npc_galen_goodward;
+    newscript->QuestAccept = &QuestAccept_npc_galen_goodward;
     newscript->RegisterSelf();
 }

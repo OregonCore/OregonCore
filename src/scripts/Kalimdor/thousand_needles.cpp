@@ -429,19 +429,19 @@ void AddSC_thousand_needles()
     newscript = new Script;
     newscript->Name = "npc_kanati";
     newscript->GetAI = &GetAI_npc_kanati;
-    newscript->pQuestAccept = &QuestAccept_npc_kanati;
+    newscript->QuestAccept = &QuestAccept_npc_kanati;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_lakota_windsong";
     newscript->GetAI = &GetAI_npc_lakota_windsong;
-    newscript->pQuestAccept = &QuestAccept_npc_lakota_windsong;
+    newscript->QuestAccept = &QuestAccept_npc_lakota_windsong;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_paoka_swiftmountain";
     newscript->GetAI = &GetAI_npc_paoka_swiftmountain;
-    newscript->pQuestAccept = &QuestAccept_npc_paoka_swiftmountain;
+    newscript->QuestAccept = &QuestAccept_npc_paoka_swiftmountain;
     newscript->RegisterSelf();
 
     newscript = new Script;

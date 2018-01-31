@@ -504,13 +504,13 @@ void AddSC_darkshore()
     newscript = new Script;
     newscript->Name = "npc_kerlonian";
     newscript->GetAI = &GetAI_npc_kerlonian;
-    newscript->pQuestAccept = &QuestAccept_npc_kerlonian;
+    newscript->QuestAccept = &QuestAccept_npc_kerlonian;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_prospector_remtravel";
     newscript->GetAI = &GetAI_npc_prospector_remtravel;
-    newscript->pQuestAccept = &QuestAccept_npc_prospector_remtravel;
+    newscript->QuestAccept = &QuestAccept_npc_prospector_remtravel;
     newscript->RegisterSelf();
 
     newscript = new Script;

@@ -3414,7 +3414,7 @@ void ObjectMgr::LoadQuests()
 
         for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
         {
-            uint32 id = qinfo->ReqItemId[j];
+            uint32 id = qinfo->RequiredItemId[j];
             if (id)
             {
                 if (qinfo->ReqItemCount[j] == 0)
@@ -3428,14 +3428,14 @@ void ObjectMgr::LoadQuests()
 
                 if (!sItemStorage.LookupEntry<ItemTemplate>(id))
                 {
-                    sLog.outErrorDb("Quest %u has ReqItemId%d = %u but item with entry %u does not exist, quest cannot be completed.",
+                    sLog.outErrorDb("Quest %u has RequiredItemId%d = %u but item with entry %u does not exist, quest cannot be completed.",
                                     qinfo->GetQuestId(), j + 1, id, id);
                     qinfo->ReqItemCount[j] = 0;             // prevent incorrect work of quest
                 }
             }
             else if (qinfo->ReqItemCount[j] > 0)
             {
-                sLog.outErrorDb("Quest %u has ReqItemId%d = 0 but ReqItemCount%d = %u, quest cannot be completed.",
+                sLog.outErrorDb("Quest %u has RequiredItemId%d = 0 but ReqItemCount%d = %u, quest cannot be completed.",
                                 qinfo->GetQuestId(), j + 1, j + 1, qinfo->ReqItemCount[j]);
                 qinfo->ReqItemCount[j] = 0;                 // prevent incorrect work of quest
             }

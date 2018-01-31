@@ -923,7 +923,7 @@ void Map::ScriptsProcess()
         case SCRIPT_COMMAND_CLOSE_GOSSIP:
             // Source must be Player.
             if (Player* pSource = _GetScriptPlayer(source, true, step.script))
-                pSource->PlayerTalkClass->CloseGossip();
+                pSource->PlayerTalkClass->SendCloseGossip();
             break;
 
         default:

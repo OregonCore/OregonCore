@@ -251,7 +251,7 @@ void SendDefaultMenu_custom_example(Player* pPlayer, Creature* pCreature, uint32
         //Set our faction to hostile twoards all
         pCreature->setFaction(24);
         pCreature->Attack(pPlayer, true);
-        pPlayer->PlayerTalkClass->CloseGossip();
+        pPlayer->PlayerTalkClass->SendCloseGossip();
     }
 }
 

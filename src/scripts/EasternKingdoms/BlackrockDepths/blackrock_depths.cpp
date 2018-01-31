@@ -1609,15 +1609,15 @@ void AddSC_blackrock_depths()
 
         newscript = new Script;
         newscript->Name = "npc_tobias_seecher";
-    newscript->GetAI = &GetAI_npc_tobias_seecher;
+        newscript->GetAI = &GetAI_npc_tobias_seecher;
         newscript->pGossipHello =  &GossipHello_npc_tobias_seecher;
         newscript->pGossipSelect = &GossipSelect_npc_tobias_seecher;
         newscript->RegisterSelf();
 
         newscript = new Script;
         newscript->Name = "npc_marshal_windsor";
-    newscript->GetAI = &GetAI_npc_marshal_windsor;
-        newscript->pQuestAccept = &QuestAccept_npc_marshal_windsor;
+        newscript->GetAI = &GetAI_npc_marshal_windsor;
+        newscript->QuestAccept = &QuestAccept_npc_marshal_windsor;
         newscript->RegisterSelf();
 
         newscript = new Script;

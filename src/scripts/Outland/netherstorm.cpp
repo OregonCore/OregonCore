@@ -4527,7 +4527,7 @@ void AddSC_netherstorm()
     newscript->Name = "npc_professor_dabiri";
     newscript->pGossipHello =   &GossipHello_npc_professor_dabiri;
     newscript->pGossipSelect =  &GossipSelect_npc_professor_dabiri;
-    newscript->pQuestAccept = &QuestAccept_npc_professor_dabiri;
+    newscript->QuestAccept = &QuestAccept_npc_professor_dabiri;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -4538,13 +4538,13 @@ void AddSC_netherstorm()
     newscript = new Script;
     newscript->Name = "npc_bessy";
     newscript->GetAI = &GetAI_npc_bessy;
-    newscript->pQuestAccept = &QuestAccept_npc_bessy;
+    newscript->QuestAccept = &QuestAccept_npc_bessy;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_maxx_a_million_escort";
     newscript->GetAI = &GetAI_npc_maxx_a_million_escort;
-    newscript->pQuestAccept = &QuestAccept_npc_maxx_a_million_escort;
+    newscript->QuestAccept = &QuestAccept_npc_maxx_a_million_escort;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -4565,7 +4565,7 @@ void AddSC_netherstorm()
     newscript = new Script;
     newscript->Name = "npc_drijya";
     newscript->GetAI = &GetAI_npc_drijya;
-    newscript->pQuestAccept = &QuestAccept_npc_drijya;
+    newscript->QuestAccept = &QuestAccept_npc_drijya;
     newscript->RegisterSelf();
 
 	newscript = new Script;
@@ -4601,7 +4601,7 @@ void AddSC_netherstorm()
 	newscript = new Script;
 	newscript->Name = "npc_doctor_vomisa";
 	newscript->GetAI = &GetAI_npc_doctor_vomisa;
-	newscript->pQuestAccept = &QuestAccept_npc_doctor_vomisa;
+	newscript->QuestAccept = &QuestAccept_npc_doctor_vomisa;
 	newscript->RegisterSelf();
 
 	newscript = new Script;
@@ -4687,7 +4687,7 @@ void AddSC_netherstorm()
 	newscript = new Script;
 	newscript->Name = "npc_captured_protectorate";
 	newscript->GetAI = &GetAI_npc_captured_protectorate;
-	newscript->pQuestAccept = &QuestAccept_npc_captured_protectorate;
+	newscript->QuestAccept = &QuestAccept_npc_captured_protectorate;
 	newscript->RegisterSelf();
 
 	newscript = new Script;
