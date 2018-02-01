@@ -442,7 +442,7 @@ struct mob_felkael_flamestrikeAI : public ScriptedAI
         FlameStrikeTimer = 5000;
 
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->setFaction(14);
+        me->SetFaction(14);
 
         DoCast(me, SPELL_FLAMESTRIKE2, true);
     }
@@ -608,7 +608,7 @@ struct mob_arcane_sphereAI : public ScriptedAI
 
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetLevitate(true);
-        me->setFaction(14);
+        me->SetFaction(14);
         DoCast(me, SPELL_ARCANE_SPHERE_PASSIVE, true);
     }
 

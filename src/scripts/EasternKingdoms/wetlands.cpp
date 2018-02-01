@@ -66,7 +66,7 @@ struct npc_tapoke_slim_jahnAI : public npc_escortAI
                 me->RemoveAurasDueToSpell(SPELL_AURA_MOD_STEALTH);
 
             SetRun();
-            me->setFaction(FACTION_ENEMY);
+            me->SetFaction(FACTION_ENEMY);
             break;
         }
     }

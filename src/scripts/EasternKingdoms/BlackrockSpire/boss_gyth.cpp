@@ -114,7 +114,7 @@ struct boss_gythAI : public ScriptedAI
                 bAggro = true;
                 // Visible now!
                 me->SetDisplayId(9723);
-                me->setFaction(14);
+                me->SetFaction(14);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             }
             else Aggro_Timer -= diff;

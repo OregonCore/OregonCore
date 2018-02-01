@@ -477,7 +477,7 @@ struct boss_archimondeAI : public hyjal_trashAI
             ThreatContainer::StorageType::const_iterator itr;
             for (itr = me->getThreatManager().getThreatList().begin(); itr != me->getThreatManager().getThreatList().end(); ++itr)
                 Doomfire->AddThreat(Unit::GetUnit(*me, (*itr)->getUnitGuid()), 1.0f);
-            Doomfire->setFaction(me->getFaction());
+            Doomfire->SetFaction(me->GetFaction());
             DoCast(Doomfire, SPELL_DOOMFIRE_SPAWN);
             Doomfire->CastSpell(Doomfire, SPELL_DOOMFIRE_VISUAL, true);
             if (pTarget)
@@ -533,14 +533,14 @@ struct boss_archimondeAI : public hyjal_trashAI
             if (pInstance)
             {
                 // Do not let the raid skip straight to Archimonde. Visible and hostile ONLY if Azagalor is finished.
-                if ((pInstance->GetData(DATA_AZGALOREVENT) < DONE) && ((me->IsVisible()) || (me->getFaction() != 35)))
+                if ((pInstance->GetData(DATA_AZGALOREVENT) < DONE) && ((me->IsVisible()) || (me->GetFaction() != 35)))
                 {
                     me->SetVisible(false);
-                    me->setFaction(35);
+                    me->SetFaction(35);
                 }
-                else if ((pInstance->GetData(DATA_AZGALOREVENT) >= DONE) && ((!me->IsVisible()) || (me->getFaction() == 35)))
+                else if ((pInstance->GetData(DATA_AZGALOREVENT) >= DONE) && ((!me->IsVisible()) || (me->GetFaction() == 35)))
                 {
-                    me->setFaction(1720);
+                    me->SetFaction(1720);
                     me->SetVisible(true);
                 }
             }

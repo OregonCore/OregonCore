@@ -170,7 +170,7 @@ struct boss_maexxnaAI : public ScriptedAI
                 }
                 if (Wrap)
                 {
-                    Wrap->setFaction(me->getFaction());
+                    Wrap->SetFaction(me->GetFaction());
                     ((mob_webwrapAI*)Wrap->AI())->SetVictim(pTarget);
                 }
             }

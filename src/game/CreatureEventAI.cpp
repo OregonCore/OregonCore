@@ -433,14 +433,14 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
     case ACTION_T_SET_FACTION:
         {
             if (action.set_faction.factionId)
-                me->setFaction(action.set_faction.factionId);
+                me->SetFaction(action.set_faction.factionId);
             else
             {
                 if (CreatureInfo const* ci = GetCreatureTemplateStore(me->GetEntry()))
                 {
                     //if no id provided, assume reset and then use default
-                    if (me->getFaction() != ci->faction)
-                        me->setFaction(ci->faction);
+                    if (me->GetFaction() != ci->faction)
+                        me->SetFaction(ci->faction);
                 }
             }
             break;

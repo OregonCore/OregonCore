@@ -235,8 +235,8 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
     {
         //just in case
         if (GetPlayerForEscort())
-            if (me->getFaction() != GetPlayerForEscort()->getFaction())
-                me->setFaction(GetPlayerForEscort()->getFaction());
+            if (me->GetFaction() != GetPlayerForEscort()->GetFaction())
+                me->SetFaction(GetPlayerForEscort()->GetFaction());
 
         switch (uiPoint)
         {
@@ -531,7 +531,7 @@ bool GossipSelect_npc_blastmaster_emi_shortfuse(Player* pPlayer, Creature* pCrea
         if (npc_escortAI* pEscortAI = CAST_AI(npc_blastmaster_emi_shortfuseAI, pCreature->AI()))
             pEscortAI->Start(true, false, pPlayer->GetGUID());
 
-        pCreature->setFaction(pPlayer->getFaction());
+        pCreature->SetFaction(pPlayer->GetFaction());
         pCreature->AI()->SetData(1, 0);
 
         pPlayer->CLOSE_GOSSIP_MENU();

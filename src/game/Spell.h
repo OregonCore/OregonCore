@@ -725,7 +725,7 @@ struct SpellNotifierCreatureAndPlayer
 
         for (typename GridRefManager<T>::iterator itr = m.begin(); itr != m.end(); ++itr)
         {
-            if (!itr->GetSource()->IsAlive() || (itr->GetSource()->GetTypeId() == TYPEID_PLAYER && ((Player*)itr->GetSource())->isInFlight()))
+            if (!itr->GetSource()->IsAlive() || (itr->GetSource()->GetTypeId() == TYPEID_PLAYER && ((Player*)itr->GetSource())->IsInFlight()))
                 continue;
 
             switch (i_TargetType)

@@ -67,7 +67,7 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
         UnkorUnfriendly_Timer = 0;
         Pulverize_Timer = 3000;
         me->SetStandState(UNIT_STAND_STATE_STAND);
-        me->setFaction(FACTION_HOSTILE);
+        me->SetFaction(FACTION_HOSTILE);
     }
 
     void EnterCombat(Unit* /*who*/) {}
@@ -75,7 +75,7 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
     void DoNice()
     {
         DoScriptText(SAY_SUBMIT, me);
-        me->setFaction(FACTION_FRIENDLY);
+        me->SetFaction(FACTION_FRIENDLY);
         me->SetStandState(UNIT_STAND_STATE_SIT);
         me->RemoveAllAuras();
         me->DeleteThreatList();
@@ -337,7 +337,7 @@ struct npc_floonAI : public ScriptedAI
         Silence_Timer = 2000;
         Frostbolt_Timer = 4000;
         FrostNova_Timer = 9000;
-        me->setFaction(FACTION_FRIENDLY_FL);
+        me->SetFaction(FACTION_FRIENDLY_FL);
     }
 
     void EnterCombat(Unit* /*who*/) {}
@@ -395,7 +395,7 @@ bool GossipSelect_npc_floon(Player* player, Creature* pCreature, uint32 /*sender
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 2:
         player->CLOSE_GOSSIP_MENU();
-		pCreature->setFaction(1738);
+		pCreature->SetFaction(1738);
         DoScriptText(SAY_FLOON_ATTACK, pCreature, player);
         ((npc_floonAI*)pCreature->AI())->AttackStart(player);
 		break;
@@ -489,7 +489,7 @@ bool QuestAccept_npc_isla_starmane(Player* pPlayer, Creature* pCreature, Quest c
     if (quest->GetQuestId() == QUEST_EFTW_H || quest->GetQuestId() == QUEST_EFTW_A)
     {
         CAST_AI(npc_escortAI, (pCreature->AI()))->Start(true, false, pPlayer->GetGUID());
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
     }
     return true;
 }
@@ -643,7 +643,7 @@ enum eSlim
 
 bool GossipHello_npc_slim(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isVendor() && pPlayer->GetReputationRank(FACTION_CONSORTIUM) >= REP_FRIENDLY)
+    if (pCreature->IsVendor() && pPlayer->GetReputationRank(FACTION_CONSORTIUM) >= REP_FRIENDLY)
     {
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
         pPlayer->SEND_GOSSIP_MENU(9896, pCreature->GetGUID());
@@ -755,7 +755,7 @@ bool QuestAccept_npc_akuno(Player* pPlayer, Creature* pCreature, const Quest* pQ
         if (npc_akunoAI* pEscortAI = CAST_AI(npc_akunoAI, pCreature->AI()))
         {
             pCreature->SetStandState(UNIT_STAND_STATE_STAND);
-            pCreature->setFaction(FACTION_ESCORT_N_NEUTRAL_ACTIVE);
+            pCreature->SetFaction(FACTION_ESCORT_N_NEUTRAL_ACTIVE);
 
             DoScriptText(SAY_AKU_START, pCreature);
             pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
@@ -777,7 +777,7 @@ CreatureAI* GetAI_npc_akuno(Creature* pCreature)
 
 bool GossipHello_npc_skyguard_handler_deesak(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetReputationRank(1031) >= REP_HONORED)
@@ -1044,7 +1044,7 @@ bool QuestAccept_npc_letoll(Player* pPlayer, Creature* pCreature, const Quest* p
         if (npc_letollAI* pEscortAI = dynamic_cast<npc_letollAI*>(pCreature->AI()))
         {
             DoScriptText(SAY_LE_START, pCreature);
-            pCreature->setFaction(FACTION_ESCORT_N_NEUTRAL_PASSIVE);
+            pCreature->SetFaction(FACTION_ESCORT_N_NEUTRAL_PASSIVE);
 
             pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest, true);
         }
@@ -1507,7 +1507,7 @@ bool ChooseReward_npc_private_weeks(Player* pPlayer, Creature* pCreature, const 
 
 bool GossipHello_npc_private_weeks(Player* player, Creature* pCreature)
 {
-	if (pCreature->isQuestGiver())
+	if (pCreature->IsQuestGiver())
 		player->PrepareQuestMenu(pCreature->GetGUID());
 
 	// Give Another Disguise
@@ -1567,7 +1567,7 @@ bool ChooseReward_npc_scout_nefris(Player* pPlayer, Creature* pCreature, const Q
 
 bool GossipHello_npc_scout_nefris(Player* player, Creature* pCreature)
 {
-	if (pCreature->isQuestGiver())
+	if (pCreature->IsQuestGiver())
 		player->PrepareQuestMenu(pCreature->GetGUID());
 
 	// Give Another Disguise
@@ -1849,12 +1849,12 @@ struct npc_empoorAI : public ScriptedAI
 
 	void Reset()
 	{
-		me->setFaction(35);
+		me->SetFaction(35);
 		me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
 		if (Creature* guard = me->FindNearestCreature(18483, 15, true))
 		{
-			guard->setFaction(35);
+			guard->SetFaction(35);
 		}
 
 		reset_timer = 0;
@@ -1873,12 +1873,12 @@ struct npc_empoorAI : public ScriptedAI
 		if (done_by->GetTypeId() == TYPEID_PLAYER)
 			if ((me->GetHealth() - damage) * 100 / me->GetMaxHealth() < 20)
 			{
-				me->setFaction(35);
+				me->SetFaction(35);
 				me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
 
 				if (Creature* guard = me->FindNearestCreature(18483, 15, true))
 				{
-					guard->setFaction(35);
+					guard->SetFaction(35);
 				}
 
 				damage = 0;
@@ -1919,7 +1919,7 @@ CreatureAI* GetAI_npc_empoor(Creature* pCreature)
 
 bool GossipHello_npc_empoor(Player* player, Creature* pCreature)
 {
-	if (pCreature->isQuestGiver())
+	if (pCreature->IsQuestGiver())
 		player->PrepareQuestMenu(pCreature->GetGUID());
 
 	if (player->GetQuestStatus(9978) == QUEST_STATUS_COMPLETE)
@@ -1935,13 +1935,13 @@ bool GossipSelect_npc_empoor(Player* player, Creature* pCreature, uint32 /*sende
 	{
 		player->CLOSE_GOSSIP_MENU();
 		DoScriptText(SAY_MEANING, pCreature, player);
-		pCreature->setFaction(14);
+		pCreature->SetFaction(14);
 
 		((npc_empoorAI*)pCreature->AI())->AttackStart(player);
 
 		if (Creature* guard = pCreature->FindNearestCreature(18483, 15, true))
 		{
-			guard->setFaction(14);
+			guard->SetFaction(14);
 		}
 	}
 

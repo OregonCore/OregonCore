@@ -81,7 +81,7 @@ bool GossipSelect_npc_scout_landion(Player* player, Creature* _Creature, uint32 
 
 bool GossipHello_npc_highlord_demitrian(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(7785) == QUEST_STATUS_NONE &&
@@ -158,7 +158,7 @@ bool GossipSelect_npc_highlord_demitrian(Player* pPlayer, Creature* pCreature, u
 
 bool GossipHello_npcs_rutgar_and_frankal(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(8304) == QUEST_STATUS_INCOMPLETE &&
@@ -1129,7 +1129,7 @@ bool OnQuestAccept(Player* plr, GameObject* go, Quest const* quest)
                 Merithra->SetUInt32Value(UNIT_NPC_FLAGS, 0);
                 Merithra->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                 Merithra->SetDisplayId(15420);
-                Merithra->setFaction(35);
+                Merithra->SetFaction(35);
             }
 
             if (Caelestrasz)
@@ -1137,7 +1137,7 @@ bool OnQuestAccept(Player* plr, GameObject* go, Quest const* quest)
                 Caelestrasz->SetUInt32Value(UNIT_NPC_FLAGS, 0);
                 Caelestrasz->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                 Caelestrasz->SetDisplayId(15419);
-                Caelestrasz->setFaction(35);
+                Caelestrasz->SetFaction(35);
             }
 
             if (Arygos)
@@ -1145,7 +1145,7 @@ bool OnQuestAccept(Player* plr, GameObject* go, Quest const* quest)
                 Arygos->SetUInt32Value(UNIT_NPC_FLAGS, 0);
                 Arygos->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                 Arygos->SetDisplayId(15418);
-                Arygos->setFaction(35);
+                Arygos->SetFaction(35);
             }
 
             if (Anachronos)

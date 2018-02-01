@@ -1535,14 +1535,14 @@ void GameObject::CastSpell(Unit* target, uint32 spellId, bool triggered /*= true
 
     if (Unit* owner = GetOwner())
     {
-        trigger->setFaction(owner->getFaction());
+        trigger->SetFaction(owner->GetFaction());
         if (owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE))
             trigger->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
         trigger->CastSpell(target ? target : trigger, spellId, triggered, 0, 0, owner->GetGUID());
     }
     else
     {
-        trigger->setFaction(IsPositiveSpell(spellId) ? 35 : 14);
+        trigger->SetFaction(IsPositiveSpell(spellId) ? 35 : 14);
         // Set owner guid for target if no owner available - needed by trigger auras
         trigger->CastSpell(target ? target : trigger, spellProto, triggered, nullptr, nullptr, target ? target->GetGUID() : 0);
     }

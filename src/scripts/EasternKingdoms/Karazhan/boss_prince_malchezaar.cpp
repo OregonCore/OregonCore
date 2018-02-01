@@ -352,7 +352,7 @@ struct boss_malchezaarAI : public ScriptedAI
         if (Infernal)
         {
             Infernal->SetDisplayId(INFERNAL_MODEL_INVISIBLE);
-            Infernal->setFaction(me->getFaction());
+            Infernal->SetFaction(me->GetFaction());
             if (point)
                 CAST_AI(netherspite_infernalAI, Infernal->AI())->point = point;
             CAST_AI(netherspite_infernalAI, Infernal->AI())->malchezaar = me->GetGUID();
@@ -448,7 +448,7 @@ struct boss_malchezaarAI : public ScriptedAI
                         axe->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, AXE_EQUIP_INFO);
 
                         axe->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                        axe->setFaction(me->getFaction());
+                        axe->SetFaction(me->GetFaction());
                         axes[i] = axe->GetGUID();
                         if (pTarget)
                         {

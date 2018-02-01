@@ -256,7 +256,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        summoned->setFaction(14);
+        summoned->SetFaction(14);
         summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }

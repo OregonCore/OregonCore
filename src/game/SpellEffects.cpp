@@ -1804,7 +1804,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 // Mana Feed
                 int32 manaFeedVal = m_caster->CalculateSpellDamage(m_spellInfo, 1, m_spellInfo->EffectBasePoints[1], m_caster);
                 manaFeedVal = manaFeedVal * mana / 100;
-                if (manaFeedVal > 0 && m_caster->isPlayer() && m_caster->ToPlayer()->GetPet())
+                if (manaFeedVal > 0 && m_caster->IsPlayer() && m_caster->ToPlayer()->GetPet())
                     m_caster->CastCustomSpell(m_caster, 32553, &manaFeedVal, NULL, NULL, true, NULL);
             }
             else
@@ -2521,7 +2521,7 @@ void Spell::EffectTriggerMissileSpell(SpellEffIndex effIndex)
 
 void Spell::EffectTeleportUnits(SpellEffIndex /*effIndex*/)
 {
-    if (!unitTarget || unitTarget->isInFlight())
+    if (!unitTarget || unitTarget->IsInFlight())
         return;
 
     // If not exist data for dest location - return
@@ -2870,27 +2870,21 @@ void Spell::EffectPowerBurn(SpellEffIndex effIndex)
     if (m_spellInfo->EffectMiscValue[effIndex] < 0 || m_spellInfo->EffectMiscValue[effIndex] >= MAX_POWERS)
         return;
 
-    Powers powertype = Powers(m_spellInfo->EffectMiscValue[effIndex]);
+    Powers powerType = Powers(m_spellInfo->EffectMiscValue[effIndex]);
 
-    if (!unitTarget)
-        return;
-    if (!unitTarget->IsAlive())
-        return;
-    if (unitTarget->getPowerType() != powertype)
-        return;
-    if (damage < 0)
+    if (!unitTarget || !unitTarget->IsAlive() || unitTarget->getPowerType() != powerType || damage < 0)
         return;
 
-    int32 curPower = int32(unitTarget->GetPower(powertype));
+    int32 curPower = int32(unitTarget->GetPower(powerType));
 
     // resilience reduce mana draining effect at spell crit damage reduction (added in 2.4)
     uint32 power = damage;
-    if (powertype == POWER_MANA && unitTarget->GetTypeId() == TYPEID_PLAYER)
+    if (powerType == POWER_MANA && unitTarget->GetTypeId() == TYPEID_PLAYER)
         power -= unitTarget->ToPlayer()->GetSpellCritDamageReduction(power);
 
     int32 new_damage = (curPower < int32(power)) ? curPower : int32(power);
 
-    unitTarget->ModifyPower(powertype, -new_damage);
+    unitTarget->ModifyPower(powerType, -new_damage);
     float multiplier = m_spellInfo->EffectMultipleValue[effIndex];
 
     if (Player* modOwner = m_caster->GetSpellModOwner())
@@ -3745,7 +3739,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                 if (properties->Category == SUMMON_CATEGORY_ALLY)
                 {
                     summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
-                    summon->setFaction(m_originalCaster->getFaction());
+                    summon->SetFaction(m_originalCaster->GetFaction());
                     summon->SetLevel(m_originalCaster->getLevel());
                     summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
                 }
@@ -3778,9 +3772,9 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
 
         uint32 faction = properties->Faction;
         if (!faction)
-            faction = m_originalCaster->getFaction();
+            faction = m_originalCaster->GetFaction();
 
-        summon->setFaction(faction);
+        summon->SetFaction(faction);
 
         if (prop_id == 65) // Eye of Kilrogg
             summon->CastSpell(summon, 2585, true);
@@ -4043,7 +4037,7 @@ void Spell::EffectTeleUnitsFaceCaster(SpellEffIndex effIndex)
     if (!unitTarget)
         return;
 
-    if (unitTarget->isInFlight())
+    if (unitTarget->IsInFlight())
         return;
 
     float dis = GetSpellRadius(m_spellInfo, effIndex, false);
@@ -6031,7 +6025,7 @@ void Spell::EffectDuel(SpellEffIndex effIndex)
         return;
     }
 
-    pGameObj->SetUInt32Value(GAMEOBJECT_FACTION, m_caster->getFaction());
+    pGameObj->SetUInt32Value(GAMEOBJECT_FACTION, m_caster->GetFaction());
     pGameObj->SetUInt32Value(GAMEOBJECT_LEVEL, m_caster->getLevel() + 1);
     int32 duration = GetSpellDuration(m_spellInfo);
     pGameObj->SetRespawnTime(duration > 0 ? duration / IN_MILLISECONDS : 0);
@@ -6431,7 +6425,7 @@ void Spell::EffectBlock(SpellEffIndex /*effIndex*/)
 
 void Spell::EffectMomentMove(SpellEffIndex effIndex)
 {
-    if (unitTarget->isInFlight())
+    if (unitTarget->IsInFlight())
         return;
 
     if (!m_targets.HasDst())
@@ -6692,7 +6686,7 @@ void Spell::EffectDispelMechanic(SpellEffIndex effIndex)
 
 void Spell::EffectSummonDeadPet(SpellEffIndex /*effIndex*/)
 {
-    if (!m_caster->isPlayer())
+    if (!m_caster->IsPlayer())
         return;
 
     Player* _player = m_caster->ToPlayer();
@@ -7222,7 +7216,7 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* 
             ((Guardian*)summon)->InitStatsForLevel(level);
 
         if (properties && properties->Category == SUMMON_CATEGORY_ALLY)
-            summon->setFaction(caster->getFaction());
+            summon->SetFaction(caster->GetFaction());
 
         if (summon->HasUnitTypeMask(UNIT_MASK_MINION) && m_targets.HasDst())
             ((Minion*)summon)->SetFollowAngle(m_caster->GetAngle(summon));

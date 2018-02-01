@@ -44,7 +44,7 @@ void WorldSession::HandleBattlegroundHelloOpcode(WorldPacket& recv_data)
     if (!unit)
         return;
 
-    if (!unit->isBattleMaster())                             // it's not battlemaster
+    if (!unit->IsBattleMaster())                             // it's not battlemaster
         return;
 
     // Stop the npc if moving
@@ -108,7 +108,7 @@ void WorldSession::HandleBattlegroundJoinOpcode(WorldPacket& recv_data)
     if (!unit)
         return;
 
-    if (!unit->isBattleMaster())                             // it's not battlemaster
+    if (!unit->IsBattleMaster())                             // it's not battlemaster
         return;
 
     // get bg instance or bg template if instance not found
@@ -466,7 +466,7 @@ void WorldSession::HandleBattlegroundPlayerPortOpcode(WorldPacket& recv_data)
                 _player->SpawnCorpseBones();
             }
             // stop taxi flight at port
-            if (_player->isInFlight())
+            if (_player->IsInFlight())
             {
                 _player->GetMotionMaster()->MovementExpired();
                 _player->CleanupAfterTaxiFlight();
@@ -641,7 +641,7 @@ void WorldSession::HandleAreaSpiritHealerQueryOpcode(WorldPacket& recv_data)
     if (!unit)
         return;
 
-    if (!unit->isSpiritService())                            // it's not spirit service
+    if (!unit->IsSpiritService())                            // it's not spirit service
         return;
 
     sBattlegroundMgr.SendAreaSpiritHealerQueryOpcode(_player, bg, guid);
@@ -662,7 +662,7 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket& recv_data)
     if (!unit)
         return;
 
-    if (!unit->isSpiritService())                            // it's not spirit service
+    if (!unit->IsSpiritService())                            // it's not spirit service
         return;
 
     bg->AddPlayerToResurrectQueue(guid, _player->GetGUID());
@@ -689,7 +689,7 @@ void WorldSession::HandleBattlegroundArenaJoin(WorldPacket& recv_data)
     if (!unit)
         return;
 
-    if (!unit->isBattleMaster())                             // it's not battle master
+    if (!unit->IsBattleMaster())                             // it's not battle master
         return;
 
     uint8 arenatype = 0;

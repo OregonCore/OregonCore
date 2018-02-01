@@ -287,7 +287,7 @@ bool QuestAccept_npc_prospector_remtravel(Player* pPlayer, Creature* pCreature, 
         if (npc_escortAI* pEscortAI = CAST_AI(npc_prospector_remtravelAI, pCreature->AI()))
             pEscortAI->Start(false, false, pPlayer->GetGUID());
 
-        pCreature->setFaction(FACTION_ESCORTEE);
+        pCreature->SetFaction(FACTION_ESCORTEE);
     }
 
     return true;
@@ -324,7 +324,7 @@ struct npc_threshwackonatorAI : public FollowerAI
             {
                 DoScriptText(SAY_AT_CLOSE, pWho);
 
-                me->setFaction(FACTION_HOSTILE);
+                me->SetFaction(FACTION_HOSTILE);
                 if (Player* pHolder = GetLeaderForFollower())
                     me->AI()->AttackStart(pHolder);
             }

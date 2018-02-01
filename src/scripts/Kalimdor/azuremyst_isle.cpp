@@ -283,7 +283,7 @@ struct npc_engineer_spark_overgrindAI : public ScriptedAI
     {
         Dynamite_Timer = 8000;
         Emote_Timer = 120000 + rand() % 30000;
-        me->setFaction(875);
+        me->SetFaction(875);
     }
 
     void EnterCombat(Unit*) { }
@@ -334,7 +334,7 @@ bool GossipSelect_npc_engineer_spark_overgrind(Player* player, Creature* pCreatu
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
         player->CLOSE_GOSSIP_MENU();
-        pCreature->setFaction(14);
+        pCreature->SetFaction(14);
         DoScriptText(ATTACK_YELL, pCreature, player);
         ((npc_engineer_spark_overgrindAI*)pCreature->AI())->AttackStart(player);
     }
@@ -438,7 +438,7 @@ bool QuestAccept_npc_magwin(Player* pPlayer, Creature* pCreature, Quest const* q
 {
     if (quest->GetQuestId() == QUEST_A_CRY_FOR_SAY_HELP)
     {
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
         if (npc_escortAI* pEscortAI = CAST_AI(npc_escortAI, pCreature->AI()))
             pEscortAI->Start(true, false, pPlayer->GetGUID());
     }

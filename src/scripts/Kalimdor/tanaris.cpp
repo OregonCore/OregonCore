@@ -66,7 +66,7 @@ struct mob_aquementasAI : public ScriptedAI
     {
         SendItem_Timer = 0;
         SwitchFaction_Timer = 10000;
-        me->setFaction(35);
+        me->SetFaction(35);
         isFriendly = true;
 
         AquaJet_Timer = 5000;
@@ -98,7 +98,7 @@ struct mob_aquementasAI : public ScriptedAI
         {
             if (SwitchFaction_Timer <= diff)
             {
-                me->setFaction(91);
+                me->SetFaction(91);
                 isFriendly = false;
             }
             else SwitchFaction_Timer -= diff;
@@ -265,10 +265,10 @@ CreatureAI* GetAI_npc_custodian_of_time(Creature* pCreature)
 
 bool GossipHello_npc_marin_noggenfogger(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (pCreature->isVendor() && pPlayer->GetQuestRewardStatus(2662))
+    if (pCreature->IsVendor() && pPlayer->GetQuestRewardStatus(2662))
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
@@ -292,7 +292,7 @@ bool GossipSelect_npc_marin_noggenfogger(Player* pPlayer, Creature* pCreature, u
 
 bool GossipHello_npc_steward_of_time(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(10279) == QUEST_STATUS_INCOMPLETE || pPlayer->GetQuestRewardStatus(10279))
@@ -335,7 +335,7 @@ bool GossipSelect_npc_steward_of_time(Player* pPlayer, Creature* /*pCreature*/, 
 
 bool GossipHello_npc_stone_watcher_of_norgannon(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(2954) == QUEST_STATUS_INCOMPLETE)
@@ -453,7 +453,7 @@ bool QuestAccept_npc_OOX17(Player* pPlayer, Creature* pCreature, Quest const* qu
 {
     if (quest->GetQuestId() == Q_OOX17)
     {
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
         pCreature->SetHealth(pCreature->GetMaxHealth());
         pCreature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
         pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);

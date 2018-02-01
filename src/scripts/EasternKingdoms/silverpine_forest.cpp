@@ -46,7 +46,7 @@ struct npc_astor_hadrenAI : public ScriptedAI
 
     void Reset()
     {
-        me->setFaction(68);
+        me->SetFaction(68);
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -55,7 +55,7 @@ struct npc_astor_hadrenAI : public ScriptedAI
 
     void JustDied(Unit* /*who*/)
     {
-        me->setFaction(68);
+        me->SetFaction(68);
     }
 };
 
@@ -84,7 +84,7 @@ bool GossipSelect_npc_astor_hadren(Player* pPlayer, Creature* pCreature, uint32 
         break;
     case GOSSIP_ACTION_INFO_DEF + 2:
         pPlayer->CLOSE_GOSSIP_MENU();
-        pCreature->setFaction(21);
+        pCreature->SetFaction(21);
         if (pPlayer)
             CAST_AI(npc_astor_hadrenAI, pCreature->AI())->AttackStart(pPlayer);
         break;
@@ -277,7 +277,7 @@ struct pyrewood_ambushAI : public ScriptedAI
 
             if (pTarget)
             {
-                pSummoned->setFaction(168);
+                pSummoned->SetFaction(168);
                 pSummoned->AddThreat(pTarget, 32.0f);
                 pSummoned->AI()->AttackStart(pTarget);
             }

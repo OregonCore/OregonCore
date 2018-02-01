@@ -179,7 +179,7 @@ bool QuestAccept_npc_lakota_windsong(Player* pPlayer, Creature* pCreature, const
     if (pQuest->GetQuestId() == QUEST_FREE_AT_LAST)
     {
         DoScriptText(SAY_LAKO_START, pCreature, pPlayer);
-        pCreature->setFaction(FACTION_ESCORTEE_LAKO);
+        pCreature->SetFaction(FACTION_ESCORTEE_LAKO);
 
         if (npc_lakota_windsongAI* pEscortAI = CAST_AI(npc_lakota_windsongAI, pCreature->AI()))
             pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
@@ -252,7 +252,7 @@ bool QuestAccept_npc_paoka_swiftmountain(Player* pPlayer, Creature* pCreature, c
     if (pQuest->GetQuestId() == QUEST_HOMEWARD)
     {
         DoScriptText(SAY_START, pCreature, pPlayer);
-        pCreature->setFaction(FACTION_ESCORTEE);
+        pCreature->SetFaction(FACTION_ESCORTEE);
 
         if (npc_paoka_swiftmountainAI* pEscortAI = CAST_AI(npc_paoka_swiftmountainAI, pCreature->AI()))
             pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
@@ -278,7 +278,7 @@ struct npc_pluckyAI : public ScriptedAI
 {
     npc_pluckyAI(Creature* c) : ScriptedAI(c)
     {
-        m_uiNormFaction = c->getFaction();
+        m_uiNormFaction = c->GetFaction();
     }
 
     uint32 m_uiNormFaction;
@@ -288,8 +288,8 @@ struct npc_pluckyAI : public ScriptedAI
     {
         m_uiResetTimer = 120000;
 
-        if (me->getFaction() != m_uiNormFaction)
-            me->setFaction(m_uiNormFaction);
+        if (me->GetFaction() != m_uiNormFaction)
+            me->SetFaction(m_uiNormFaction);
 
         if (me->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP))
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
@@ -303,7 +303,7 @@ struct npc_pluckyAI : public ScriptedAI
         {
             if (uiTextEmote == TEXT_EMOTE_BECKON)
             {
-                me->setFaction(FACTION_FRIENDLY);
+                me->SetFaction(FACTION_FRIENDLY);
                 me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                 DoCast(me, SPELL_PLUCKY_HUMAN, false);
             }
@@ -315,7 +315,7 @@ struct npc_pluckyAI : public ScriptedAI
                 return;
             else
             {
-                me->setFaction(FACTION_FRIENDLY);
+                me->SetFaction(FACTION_FRIENDLY);
                 me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                 DoCast(me, SPELL_PLUCKY_HUMAN, false);
                 me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);

@@ -567,7 +567,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
                     GlaiveGUID[i] = Glaive->GetGUID();
                     Glaive->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     Glaive->SetDisplayId(11686);
-                    Glaive->setFaction(me->getFaction());
+                    Glaive->SetFaction(me->GetFaction());
                     DoCast(Glaive, SPELL_THROW_GLAIVE2);
                 }
             }
@@ -584,7 +584,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
                     GlaiveGUID[i] = Glaive->GetGUID();
                     Glaive->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     Glaive->SetDisplayId(11686);
-                    Glaive->setFaction(me->getFaction());
+                    Glaive->SetFaction(me->GetFaction());
                     DoCast(Glaive, SPELL_THROW_GLAIVE, true);
                 }
             }
@@ -2089,7 +2089,7 @@ void boss_illidan_stormrageAI::SummonFlamesOfAzzinoth()
             Creature* Flame = me->SummonCreature(FLAME_OF_AZZINOTH, GlaivePosition[i + 2].x, GlaivePosition[i + 2].y, GlaivePosition[i + 2].z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
             if (Flame)
             {
-                Flame->setFaction(me->getFaction()); // Just in case the database has it as a different faction
+                Flame->SetFaction(me->GetFaction()); // Just in case the database has it as a different faction
                 Flame->SetMeleeDamageSchool(SPELL_SCHOOL_FIRE);
                 FlameGUID[i] = Flame->GetGUID(); // Record GUID in order to check if they're dead later on to move to the next phase
                 ((flame_of_azzinothAI*)Flame->AI())->SetGlaiveGUID(GlaiveGUID[i]);

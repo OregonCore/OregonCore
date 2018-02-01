@@ -119,7 +119,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
             //SPELL_STOLEN_SOUL_VISUAL has shapeshift effect, but not implemented feature in OREGON for this spell.
             summoned->CastSpell(summoned, SPELL_STOLEN_SOUL_VISUAL, false);
             summoned->SetDisplayId(soulmodel);
-            summoned->setFaction(me->getFaction());
+            summoned->SetFaction(me->GetFaction());
 
             if (Unit* pTarget = Unit::GetUnit(*me, soulholder))
             {

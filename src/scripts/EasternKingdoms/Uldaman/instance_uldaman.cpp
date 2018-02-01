@@ -140,7 +140,7 @@ struct instance_uldaman : public ScriptedInstance
 
     void SetFrozenState(Creature* pCreature)
     {
-        pCreature->setFaction(35);
+        pCreature->SetFaction(35);
         pCreature->RemoveAllAuras();
         pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		pCreature->SetRooted(true);
@@ -169,10 +169,10 @@ struct instance_uldaman : public ScriptedInstance
         for (std::vector<uint64>::const_iterator i = stoneKeeper.begin(); i != stoneKeeper.end(); ++i)
         {
             Creature* pTarget = instance->GetCreature(*i);
-            if (!pTarget || !pTarget->IsAlive() || pTarget->getFaction() == 14)
+            if (!pTarget || !pTarget->IsAlive() || pTarget->GetFaction() == 14)
                 continue;
 			pTarget->SetRooted(false);
-            pTarget->setFaction(14);
+            pTarget->SetFaction(14);
             pTarget->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             return;        // only want the first one we find
         }
@@ -190,7 +190,7 @@ struct instance_uldaman : public ScriptedInstance
         for (std::vector<uint64>::const_iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
         {
             Creature* pTarget = instance->GetCreature(*i);
-            if (!pTarget || !pTarget->IsAlive() || pTarget->getFaction() == 14)
+            if (!pTarget || !pTarget->IsAlive() || pTarget->GetFaction() == 14)
                 continue;
             archaedas->CastSpell(pTarget, SPELL_AWAKEN_VAULT_WALKER, true);
             pTarget->CastSpell(pTarget, SPELL_ARCHAEDAS_AWAKEN, true);
@@ -205,7 +205,7 @@ struct instance_uldaman : public ScriptedInstance
         for (std::vector<uint64>::const_iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
         {
             Creature* pTarget = instance->GetCreature(*i);
-            if (!pTarget || pTarget->isDead() || pTarget->getFaction() != 14)
+            if (!pTarget || pTarget->isDead() || pTarget->GetFaction() != 14)
                 continue;
             pTarget->setDeathState(JUST_DIED);
             pTarget->RemoveCorpse();
@@ -215,7 +215,7 @@ struct instance_uldaman : public ScriptedInstance
         for (std::vector<uint64>::const_iterator i = vaultWalker.begin(); i != vaultWalker.end(); ++i)
         {
             Creature* pTarget = instance->GetCreature(*i);
-            if (!pTarget || pTarget->isDead() || pTarget->getFaction() != 14)
+            if (!pTarget || pTarget->isDead() || pTarget->GetFaction() != 14)
                 continue;
             pTarget->setDeathState(JUST_DIED);
             pTarget->RemoveCorpse();
@@ -225,7 +225,7 @@ struct instance_uldaman : public ScriptedInstance
         for (std::vector<uint64>::const_iterator i = earthenGuardian.begin(); i != earthenGuardian.end(); ++i)
         {
             Creature* pTarget = instance->GetCreature(*i);
-            if (!pTarget || pTarget->isDead() || pTarget->getFaction() != 14)
+            if (!pTarget || pTarget->isDead() || pTarget->GetFaction() != 14)
                 continue;
             pTarget->setDeathState(JUST_DIED);
             pTarget->RemoveCorpse();
@@ -251,7 +251,7 @@ struct instance_uldaman : public ScriptedInstance
         if (!ironaya)
             return;
 
-        ironaya->setFaction(415);
+        ironaya->SetFaction(415);
 		ironaya->SetRooted(false);
         ironaya->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }

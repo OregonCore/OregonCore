@@ -92,7 +92,7 @@ struct npc_sergeant_blyAI : public ScriptedAI
                     Text_Timer = 5000;
                     break;
                 case 3:
-                    me->setFaction(FACTION_HOSTILE);
+                    me->SetFaction(FACTION_HOSTILE);
                     if (Player* target = ObjectAccessor::GetPlayer(*me, PlayerGUID))
                         AttackStart(target);
 
@@ -136,7 +136,7 @@ struct npc_sergeant_blyAI : public ScriptedAI
     {
         if (Creature* crew = instance->GetCreature(instance->GetData64(entry)))
             if (crew->IsAlive())
-                crew->setFaction(FACTION_HOSTILE);
+                crew->SetFaction(FACTION_HOSTILE);
     }
 };
 CreatureAI* GetAI_npc_sergeant_bly(Creature* pCreature)
@@ -247,7 +247,7 @@ struct npc_weegli_blastfuseAI : public ScriptedAI
     {
         if (me->IsAlive())
         {
-            me->setFaction(FACTION_FRIENDLY);
+            me->SetFaction(FACTION_FRIENDLY);
             me->GetMotionMaster()->MovePoint(0, 1858.57f, 1146.35f, 14.745f);
             me->SetHomePosition(1858.57f, 1146.35f, 14.745f, 3.85f); // in case he gets interrupted
             me->Say(SAY_WEEGLI_OK_I_GO, LANG_UNIVERSAL, 0);
@@ -351,7 +351,7 @@ bool AreaTrigger_at_zumrah(Player* pPlayer, const AreaTriggerEntry* /*at*/)
     if (!Zumrah)
         return false;
 
-    Zumrah->setFaction(ZUMRAH_HOSTILE_FACTION);
+    Zumrah->SetFaction(ZUMRAH_HOSTILE_FACTION);
     Zumrah->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
     Zumrah->AI()->AttackStart(pPlayer);
     return true;

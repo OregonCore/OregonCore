@@ -127,7 +127,7 @@ bool QuestAccept_npc_willix(Player* pPlayer, Creature* pCreature, Quest const* q
     {
         CAST_AI(npc_escortAI, (pCreature->AI()))->Start(true, false, pPlayer->GetGUID());
         DoScriptText(SAY_READY, pCreature, pPlayer);
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
     }
 
     return true;

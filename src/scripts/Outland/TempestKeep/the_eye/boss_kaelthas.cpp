@@ -345,7 +345,7 @@ struct boss_kaelthasAI : public ScriptedAI
             {
                 pCreature->Respawn();
                 pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                pCreature->setFaction(me->getFaction());
+                pCreature->SetFaction(me->GetFaction());
                 pCreature->AI()->EnterEvadeMode();
             }
         }
@@ -513,7 +513,7 @@ struct boss_kaelthasAI : public ScriptedAI
                         if (Advisor)
                         {
                             Advisor->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                            Advisor->setFaction(me->getFaction());
+                            Advisor->SetFaction(me->GetFaction());
 
                             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                             if (pTarget)
@@ -529,7 +529,7 @@ struct boss_kaelthasAI : public ScriptedAI
                 case 2:
                     Advisor = (Creature*)(Unit::GetUnit((*me), m_auiAdvisorGuid[0]));
 
-                    if (Advisor && (Advisor->getStandState() == UNIT_STAND_STATE_DEAD))
+                    if (Advisor && (Advisor->GetStandState() == UNIT_STAND_STATE_DEAD))
                     {
                         DoScriptText(SAY_INTRO_SANGUINAR, me);
 
@@ -549,7 +549,7 @@ struct boss_kaelthasAI : public ScriptedAI
                         if (Advisor)
                         {
                             Advisor->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                            Advisor->setFaction(me->getFaction());
+                            Advisor->SetFaction(me->GetFaction());
 
                             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                             if (pTarget)
@@ -565,7 +565,7 @@ struct boss_kaelthasAI : public ScriptedAI
                 case 4:
                     Advisor = (Creature*)(Unit::GetUnit((*me), m_auiAdvisorGuid[1]));
 
-                    if (Advisor && (Advisor->getStandState() == UNIT_STAND_STATE_DEAD))
+                    if (Advisor && (Advisor->GetStandState() == UNIT_STAND_STATE_DEAD))
                     {
                         DoScriptText(SAY_INTRO_CAPERNIAN, me);
 
@@ -585,7 +585,7 @@ struct boss_kaelthasAI : public ScriptedAI
                         if (Advisor)
                         {
                             Advisor->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                            Advisor->setFaction(me->getFaction());
+                            Advisor->SetFaction(me->GetFaction());
 
                             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                             if (pTarget)
@@ -601,7 +601,7 @@ struct boss_kaelthasAI : public ScriptedAI
                 case 6:
                     Advisor = (Creature*)(Unit::GetUnit((*me), m_auiAdvisorGuid[2]));
 
-                    if (Advisor && (Advisor->getStandState() == UNIT_STAND_STATE_DEAD))
+                    if (Advisor && (Advisor->GetStandState() == UNIT_STAND_STATE_DEAD))
                     {
                         DoScriptText(SAY_INTRO_TELONICUS, me);
 
@@ -621,7 +621,7 @@ struct boss_kaelthasAI : public ScriptedAI
                         if (Advisor)
                         {
                             Advisor->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                            Advisor->setFaction(me->getFaction());
+                            Advisor->SetFaction(me->GetFaction());
 
                             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                             if (pTarget)
@@ -639,7 +639,7 @@ struct boss_kaelthasAI : public ScriptedAI
                 case 8:
                     Advisor = (Creature*)(Unit::GetUnit((*me), m_auiAdvisorGuid[3]));
 
-                    if (Advisor && (Advisor->getStandState() == UNIT_STAND_STATE_DEAD))
+                    if (Advisor && (Advisor->GetStandState() == UNIT_STAND_STATE_DEAD))
                     {
                         Phase = 2;
                         m_pInstance->SetData(DATA_KAELTHASEVENT, 2);
@@ -1388,7 +1388,7 @@ struct mob_kael_flamestrikeAI : public ScriptedAI
         KillSelf = false;
 
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->setFaction(14);
+        me->SetFaction(14);
     }
 
     void MoveInLineOfSight(Unit* who) { }

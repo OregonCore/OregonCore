@@ -508,7 +508,7 @@ struct mob_zerekethvoidzoneAI : public ScriptedAI
     void Reset()
     {
         me->SetUInt32Value(UNIT_NPC_FLAGS, 0);
-        me->setFaction(16);
+        me->SetFaction(16);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
         DoCast(me, SPELL_VOID_ZONE_DAMAGE);

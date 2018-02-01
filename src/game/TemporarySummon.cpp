@@ -187,7 +187,7 @@ void TempSummon::InitStats(uint32 duration)
 
     if (owner && isTrigger() && m_spells[0])
     {
-        setFaction(owner->getFaction());
+        SetFaction(owner->GetFaction());
         SetLevel(owner->getLevel());
         if (owner->GetTypeId() == TYPEID_PLAYER)
             m_ControlledByPlayer = true;
@@ -211,7 +211,7 @@ void TempSummon::InitStats(uint32 duration)
     }
 
     if (m_Properties->Faction)
-        setFaction(m_Properties->Faction);
+        SetFaction(m_Properties->Faction);
 }
 
 void TempSummon::InitSummon()
@@ -299,7 +299,7 @@ void Minion::InitStats(uint32 duration)
     SetReactState(REACT_PASSIVE);
 
     SetCreatorGUID(m_owner->GetGUID());
-    setFaction(m_owner->getFaction());
+    SetFaction(m_owner->GetFaction());
 
     m_owner->SetMinion(this, true);
 }

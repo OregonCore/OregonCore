@@ -119,7 +119,7 @@ struct boss_doomrelAI : public ScriptedAI
         DemonArmor_Timer = 16000;
         Voidwalkers = false;
 
-        me->setFaction(FACTION_FRIEND);
+        me->SetFaction(FACTION_FRIEND);
 
         // was set before event start, so set again
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
@@ -233,7 +233,7 @@ bool GossipSelect_boss_doomrel(Player* pPlayer, Creature* pCreature, uint32 /*ui
     case GOSSIP_ACTION_INFO_DEF+2:
         pPlayer->CLOSE_GOSSIP_MENU();
         //start event here
-        pCreature->setFaction(FACTION_HOSTILE);
+        pCreature->SetFaction(FACTION_HOSTILE);
         pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         pCreature->AI()->AttackStart(pPlayer);
         ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();

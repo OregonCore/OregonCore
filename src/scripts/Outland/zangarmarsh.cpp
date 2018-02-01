@@ -145,7 +145,7 @@ struct npc_cooshcooshAI : public ScriptedAI
     {
         LightningBolt_Timer = 2000;
 		LighningShield_Timer = 25000;
-        me->setFaction(35);
+        me->SetFaction(35);
 
 		DoCast(me, SPELL_LIGHTNING_SHIELD);
     }
@@ -194,7 +194,7 @@ bool GossipSelect_npc_cooshcoosh(Player* player, Creature* pCreature, uint32 /*s
     {
         player->CLOSE_GOSSIP_MENU();
 		DoScriptText(SAY_COOSH, pCreature);
-        pCreature->setFaction(45);
+        pCreature->SetFaction(45);
         ((npc_cooshcooshAI*)pCreature->AI())->AttackStart(player);
     }
     return true;
@@ -313,7 +313,7 @@ bool GossipSelect_npc_elder_kuruti(Player* player, Creature* pCreature, uint32 /
 
 bool GossipHello_npc_mortog_steamhead(Player* player, Creature* pCreature)
 {
-    if (pCreature->isVendor() && player->GetReputationRank(942) == REP_EXALTED)
+    if (pCreature->IsVendor() && player->GetReputationRank(942) == REP_EXALTED)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
@@ -415,10 +415,10 @@ enum eTimothy
 
 bool GossipHello_npc_timothy_daniels(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (pCreature->isVendor())
+    if (pCreature->IsVendor())
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_TEXT_BROWSE_POISONS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TIMOTHY_DANIELS_ITEM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
@@ -622,7 +622,7 @@ struct npc_wrektslaveAI : public ScriptedAI
 		flee_timer = 6000;
 		share_timer = 10000;
 
-		me->setFaction(74);
+		me->SetFaction(74);
 		flee = false;
 		say = false;
 	}
@@ -670,7 +670,7 @@ struct npc_wrektslaveAI : public ScriptedAI
 
 			if (me->FindNearestCreature(NPC_SLAVEDRIVER, 25, false))
 			{
-				me->setFaction(35);
+				me->SetFaction(35);
 				me->CombatStop();
 				flee = true;
 			}
@@ -710,7 +710,7 @@ struct npc_dreghooddrudgeAI : public ScriptedAI
 		flee_timer = 8000;
 		share_timer = 10000;
 
-		me->setFaction(74);
+		me->SetFaction(74);
 		flee = false;
 	}
 
@@ -742,7 +742,7 @@ struct npc_dreghooddrudgeAI : public ScriptedAI
 		{
 			if (me->FindNearestCreature(NPC_DARKSCRESTSLAVER, 25, false))
 			{
-				me->setFaction(35);
+				me->SetFaction(35);
 				me->CombatStop();
 				flee = true;
 			}

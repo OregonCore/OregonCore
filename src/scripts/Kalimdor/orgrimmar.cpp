@@ -43,7 +43,7 @@ EndContentData */
 #define GOSSIP_SNF "[PH] ..."
 bool GossipHello_npc_neeru_fireblade(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(QUEST_5727) == QUEST_STATUS_INCOMPLETE)
@@ -222,7 +222,7 @@ CreatureAI* GetAI_npc_thrall_warchief(Creature* pCreature)
 
 bool GossipHello_npc_thrall_warchief(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(QUEST_6566) == QUEST_STATUS_INCOMPLETE)
@@ -283,7 +283,7 @@ bool GossipSelect_npc_thrall_warchief(Player* pPlayer, Creature* pCreature, uint
 
 bool GossipHello_npc_eitrigg(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(4941) == QUEST_STATUS_INCOMPLETE)

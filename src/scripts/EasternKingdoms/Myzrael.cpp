@@ -89,7 +89,7 @@ enum Spells
 
 					intro3 = true;
 					me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-					me->setFaction(91);
+					me->SetFaction(91);
 					me->SetReactState(REACT_AGGRESSIVE);
 				}
 				else say_timer3 -= diff;

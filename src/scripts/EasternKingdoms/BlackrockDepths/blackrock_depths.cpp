@@ -441,7 +441,7 @@ enum KharamQuests
 
 bool GossipHello_npc_kharan_mighthammer(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(QUEST_4001) == QUEST_STATUS_INCOMPLETE)
@@ -531,10 +531,10 @@ enum LokhtosSpells
 
 bool GossipHello_npc_lokhtos_darkbargainer(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (pCreature->isVendor() && pPlayer->GetReputationRank(59) >= REP_FRIENDLY)
+    if (pCreature->IsVendor() && pPlayer->GetReputationRank(59) >= REP_FRIENDLY)
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_ITEM_SHOW_ACCESS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     if (pPlayer->GetQuestRewardStatus(QUEST_A_BINDING_CONTRACT) != 1 &&
@@ -640,7 +640,7 @@ struct npc_marshal_windsorAI : public npc_escortAI
             SetEscortPaused(true);
             break;
         case 10:
-            me->setFaction(534);
+            me->SetFaction(534);
             break;
         case 12:
             me->Say(SAY_WINDSOR_6, LANG_UNIVERSAL, PlayerGUID);
@@ -651,7 +651,7 @@ struct npc_marshal_windsorAI : public npc_escortAI
             break;
         case 14:
             pInstance->SetData(DATA_GATE_SR,0);
-            me->setFaction(11);
+            me->SetFaction(11);
             break;
         case 16:
             me->Say(SAY_WINDSOR_9, LANG_UNIVERSAL, 0);
@@ -741,7 +741,7 @@ bool QuestAccept_npc_marshal_windsor(Player* player, Creature* creature, Quest c
         if (npc_escortAI* pEscortAI = CAST_AI(npc_marshal_windsorAI, creature->AI()))
             pEscortAI->Start(true, true, player->GetGUID());
 
-        creature->setFaction(11);
+        creature->SetFaction(11);
         }
 
     return true;
@@ -944,7 +944,7 @@ struct npc_marshal_reginald_windsorAI : public npc_escortAI
         switch (waypointId)
         {
         case 0:
-            me->setFaction(11);
+            me->SetFaction(11);
             me->Say(SAY_REGINALD_WINDSOR_0_1, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 1:
@@ -1075,7 +1075,7 @@ struct npc_ograbisiAI : public ScriptedAI
 
     void Reset() 
     {
-        me->setFaction(35);
+        me->SetFaction(35);
 
         if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
         {
@@ -1107,7 +1107,7 @@ struct npc_ograbisiAI : public ScriptedAI
         {
             if (me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 20.0f, true))
             {
-                me->setFaction(14);
+                me->SetFaction(14);
             }
         }
 
@@ -1135,7 +1135,7 @@ struct npc_jazAI : public ScriptedAI
 
     void Reset()
     {
-        me->setFaction(35);
+        me->SetFaction(35);
 
         if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
         {
@@ -1168,7 +1168,7 @@ struct npc_jazAI : public ScriptedAI
         {
             if (me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 20.0f, true))
             {
-                me->setFaction(14);
+                me->SetFaction(14);
             }
         }
 
@@ -1196,7 +1196,7 @@ struct npc_shillAI : public ScriptedAI
 
     void Reset()
     {
-        me->setFaction(35);
+        me->SetFaction(35);
 
         if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
         {
@@ -1225,7 +1225,7 @@ struct npc_shillAI : public ScriptedAI
         {
             if (me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 20.0f, true))
             {
-                me->setFaction(14);
+                me->SetFaction(14);
             }
         }
 
@@ -1255,7 +1255,7 @@ struct npc_crestAI : public ScriptedAI
 
     void Reset()
     {
-        me->setFaction(35);
+        me->SetFaction(35);
 
         if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS)
         {
@@ -1286,7 +1286,7 @@ struct npc_crestAI : public ScriptedAI
         {
             if (me->FindNearestCreature(MOB_ENTRY_REGINALD_WINDSOR, 20.0f, true))
             {
-                me->setFaction(14);
+                me->SetFaction(14);
             }
         }
 
@@ -1510,7 +1510,7 @@ struct npc_rocknotAI : public npc_escortAI
                 //spell by trap has effect61, this indicate the bar go hostile
 
                 if (Unit* tmp = Unit::GetUnit(*me, pInstance->GetData64(DATA_PHALANX)))
-                    tmp->setFaction(14);
+                    tmp->SetFaction(14);
 
                 //for later, this event(s) has alot more to it.
                 //optionally, DONE can trigger bar to go hostile.

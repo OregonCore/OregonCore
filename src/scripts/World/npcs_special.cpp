@@ -105,7 +105,7 @@ struct npc_chicken_cluckAI : public ScriptedAI
     void Reset()
     {
         ResetFlagTimer = 120000;
-        me->setFaction(FACTION_CHICKEN);
+        me->SetFaction(FACTION_CHICKEN);
         me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
     }
 
@@ -136,7 +136,7 @@ struct npc_chicken_cluckAI : public ScriptedAI
                 if (player->GetQuestStatus(QUEST_CLUCK) == QUEST_STATUS_NONE && rand32() % 30 == 1)
                 {
                     me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-                    me->setFaction(FACTION_FRIENDLY);
+                    me->SetFaction(FACTION_FRIENDLY);
                     DoScriptText(EMOTE_HELLO, me);
                 }
                 break;
@@ -144,7 +144,7 @@ struct npc_chicken_cluckAI : public ScriptedAI
                 if (player->GetQuestStatus(QUEST_CLUCK) == QUEST_STATUS_COMPLETE)
                 {
                     me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-                    me->setFaction(FACTION_FRIENDLY);
+                    me->SetFaction(FACTION_FRIENDLY);
                     DoScriptText(EMOTE_CLUCK_TEXT, me);
                 }
                 break;
@@ -911,7 +911,7 @@ CreatureAI* GetAI_npc_guardian(Creature* pCreature)
 
 bool GossipHello_npc_mount_vendor(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     bool canBuy;
@@ -978,7 +978,7 @@ bool GossipHello_npc_mount_vendor(Player* pPlayer, Creature* pCreature)
 
     if (canBuy)
     {
-        if (pCreature->isVendor())
+        if (pCreature->IsVendor())
             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
         pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     }
@@ -1003,10 +1003,10 @@ bool GossipSelect_npc_mount_vendor(Player* pPlayer, Creature* pCreature, uint32 
 
 bool GossipHello_npc_rogue_trainer(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (pCreature->isTrainer())
+    if (pCreature->IsTrainer())
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, GOSSIP_TEXT_TRAIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRAIN);
 
     if (pCreature->CanTrainAndResetTalentsOf(pPlayer))
@@ -1077,7 +1077,7 @@ bool GossipSelect_npc_rogue_trainer(Player* pPlayer, Creature* pCreature, uint32
 
 bool GossipHello_npc_sayge(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->HasSpellCooldown(SPELL_INT) ||
@@ -1697,7 +1697,7 @@ struct mob_rift_spawnAI : public ScriptedAI
     {
         DoCast(me, SPELL_RIFT_SPAWN_INVISIBILITY, true);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NON_ATTACKABLE);
-        me->setFaction(FACTION_HOSTILE);
+        me->SetFaction(FACTION_HOSTILE);
 
         creatureActive = false;
         questActive = false;
@@ -1715,7 +1715,7 @@ struct mob_rift_spawnAI : public ScriptedAI
         {
             escapeTimer = 31000;
             damage = 0;
-            me->setFaction(FACTION_NEUTRAL);
+            me->SetFaction(FACTION_NEUTRAL);
             me->CombatStop();
             me->RemoveAllAuras();
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NON_ATTACKABLE);

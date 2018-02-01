@@ -111,7 +111,7 @@ CreatureAI* GetAI_npc_cairne_bloodhoof(Creature* pCreature)
 
 bool GossipHello_npc_cairne_bloodhoof(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(925) == QUEST_STATUS_INCOMPLETE)

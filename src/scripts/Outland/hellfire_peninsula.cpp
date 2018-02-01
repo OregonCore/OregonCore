@@ -84,7 +84,7 @@ struct npc_aeranasAI : public ScriptedAI
         Shock_Timer = 5000;
 
         me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-        me->setFaction(FACTION_FRIENDLY);
+        me->SetFaction(FACTION_FRIENDLY);
 
         DoScriptText(SAY_SUMMON, me);
     }
@@ -97,7 +97,7 @@ struct npc_aeranasAI : public ScriptedAI
         {
             if (Faction_Timer <= diff)
             {
-                me->setFaction(FACTION_HOSTILE);
+                me->SetFaction(FACTION_HOSTILE);
                 Faction_Timer = 0;
             }
             else Faction_Timer -= diff;
@@ -108,7 +108,7 @@ struct npc_aeranasAI : public ScriptedAI
 
         if ((me->GetHealth() * 100) / me->GetMaxHealth() < 30)
         {
-            me->setFaction(FACTION_FRIENDLY);
+            me->SetFaction(FACTION_FRIENDLY);
             me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
             me->RemoveAllAuras();
             me->DeleteThreatList();
@@ -238,7 +238,7 @@ enum eNaladu
 
 bool GossipHello_npc_naladu(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_NALADU_ITEM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
@@ -270,10 +270,10 @@ enum eTracy
 
 bool GossipHello_npc_tracy_proudwell(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (pCreature->isVendor())
+    if (pCreature->IsVendor())
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_TEXT_REDEEM_MARKS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     if (pPlayer->GetQuestStatus(QUEST_DIGGING_FOR_PRAYER_BEADS) == QUEST_STATUS_INCOMPLETE)
@@ -319,7 +319,7 @@ enum eTrollbane
 
 bool GossipHello_npc_trollbane(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TROLLBANE_ITEM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
@@ -423,7 +423,7 @@ CreatureAI* GetAI_npc_fel_guard_hound(Creature* pCreature)
 
 bool GossipHello_npc_wing_commander_dabiree(Player* player, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
 
     //Mission: The Murketh and Shaadraz Gateways
@@ -496,7 +496,7 @@ bool GossipSelect_npc_gryphoneer_leafbeard(Player* player, Creature* /*pCreature
 
 bool GossipHello_npc_wing_commander_brack(Player* player, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
 
     //Mission: The Murketh and Shaadraz Gateways
@@ -618,7 +618,7 @@ bool QuestAccept_npc_wounded_blood_elf(Player* pPlayer, Creature* pCreature, Que
             pEscortAI->Start(true, false, pPlayer->GetGUID());
 
         // Change faction so mobs attack
-        pCreature->setFaction(775);
+        pCreature->SetFaction(775);
     }
 
     return true;
@@ -2224,7 +2224,7 @@ struct npc_dreghood_bruteAI : public ScriptedAI
 		hamstring_timer = 1000;
 		flee_timer = 4000;
 
-		me->setFaction(90);
+		me->SetFaction(90);
 		flee = false;
 		say = false;
 	}
@@ -2280,7 +2280,7 @@ struct npc_dreghood_bruteAI : public ScriptedAI
 
 		if (Creature* taskmaster = me->FindNearestCreature(NPC_TASKMASTER, 25, false))
 		{
-			me->setFaction(35);
+			me->SetFaction(35);
 			me->CombatStop();
 			flee = true;
 		}
@@ -2429,7 +2429,7 @@ bool GossipHello_npc_dreghood_elder1(Player* pPlayer, Creature* pCreature)
 {
 	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 
-	if (pCreature->isQuestGiver())
+	if (pCreature->IsQuestGiver())
 		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
 	if (pPlayer->GetQuestStatus(10368) == QUEST_STATUS_INCOMPLETE)
@@ -2459,7 +2459,7 @@ bool GossipHello_npc_dreghood_elder2(Player* pPlayer, Creature* pCreature)
 {
 	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 
-	if (pCreature->isQuestGiver())
+	if (pCreature->IsQuestGiver())
 		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
 	if (pPlayer->GetQuestStatus(10368) == QUEST_STATUS_INCOMPLETE)
@@ -2488,7 +2488,7 @@ bool GossipHello_npc_dreghood_elder3(Player* pPlayer, Creature* pCreature)
 {
 	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 
-	if (pCreature->isQuestGiver())
+	if (pCreature->IsQuestGiver())
 		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
 	if (pPlayer->GetQuestStatus(10368) == QUEST_STATUS_INCOMPLETE)

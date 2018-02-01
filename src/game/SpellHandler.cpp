@@ -270,7 +270,7 @@ void WorldSession::HandleGameObjectUseOpcode(WorldPacket& recv_data)
     FactionTemplateEntry const* faction = sFactionTemplateStore.LookupEntry(obj->GetGOInfo()->faction);
     if (faction &&
         !_player->IsGameMaster() &&
-        faction->IsHostileTo(*sFactionTemplateStore.LookupEntry(_player->getFaction())) &&
+        faction->IsHostileTo(*sFactionTemplateStore.LookupEntry(_player->GetFaction())) &&
         !faction->IsNeutralToAll() &&
         !obj->GetOwner())
         return;
@@ -329,7 +329,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
     // When casting a combat spell the unit has to be flagged as initiating combat
     // No need to check if spell is self-cast because combat spells can only be cast on self with commands
     if (target && !IsNonCombatSpell(spellInfo))
-        _player->setInitiatingCombat(true);
+        _player->SetInitiatingCombat(true);
 
     Spell* spell = new Spell(_player, spellInfo, false);
     spell->m_cast_count = cast_count;                       // set count of casts

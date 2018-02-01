@@ -132,7 +132,7 @@ bool GameObjectModel::initialize(const GameObject& go, const GameObjectDisplayIn
         Vector3 pos(iBound.corner(i));
         if (Creature* c = const_cast<GameObject&>(go).SummonCreature(23472, pos.x, pos.y, pos.z, 0, TEMPSUMMON_MANUAL_DESPAWN))
         {
-            c->setFaction(35);
+            c->SetFaction(35);
             c->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.1f);
         }
     }

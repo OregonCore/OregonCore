@@ -101,7 +101,7 @@ struct boss_nazanAI : public ScriptedAI
         if (summoned && summoned->GetEntry() == ENTRY_LIQUID_FIRE)
         {
             summoned->SetLevel(me->getLevel());
-            summoned->setFaction(me->getFaction());
+            summoned->SetFaction(me->GetFaction());
             summoned->CastSpell(summoned, SPELL_BLAZE, true);
             summoned->CastSpell(summoned, SPELL_FIRE_NOVA_VISUAL, true);
         }
