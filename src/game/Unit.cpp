@@ -652,7 +652,7 @@ void Unit::resetAttackTimer(WeaponAttackType type)
 
 bool Unit::IsWithinCombatRange(const Unit* obj, float dist2compare) const
 {
-    if (!obj || !IsInMap(obj))
+    if (!obj || !IsInMap(obj) || !InSamePhase(obj))
         return false;
 
     float dx = GetPositionX() - obj->GetPositionX();
@@ -668,7 +668,7 @@ bool Unit::IsWithinCombatRange(const Unit* obj, float dist2compare) const
 
 bool Unit::IsWithinMeleeRange(Unit* obj, float dist) const
 {
-    if (!obj || !IsInMap(obj))
+    if (!obj || !IsInMap(obj) || !InSamePhase(obj))
         return false;
 
     float dx = GetPositionX() - obj->GetPositionX();
@@ -12081,7 +12081,7 @@ Unit* Unit::SelectNearbyTarget(Unit* exclude, float dist) const
 {
     std::list<Unit* > targets;
     Oregon::AnyUnfriendlyUnitInObjectRangeCheck u_check(this, this, dist);
-    Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(targets, u_check);
+    Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(this, targets, u_check);
     VisitNearbyObject(dist, searcher);
 
     // remove current target
@@ -12122,7 +12122,7 @@ Player* Unit::SelectNearestPlayer(float distance) const
 
     {
         Oregon::NearestPlayerInObjectRangeCheck creature_check(*this, distance);
-        Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck> searcher(pPlayer, creature_check);
+        Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck> searcher(this, pPlayer, creature_check);
 
         TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck>, WorldTypeMapContainer> world_player_searcher(searcher);
         TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::NearestPlayerInObjectRangeCheck>, GridTypeMapContainer> grid_player_searcher(searcher);
@@ -13507,6 +13507,32 @@ void Unit::AddAura(uint32 spellId, Unit* target)
             }
         }
     }
+}
+
+void Unit::SetPhaseMask(uint32 newPhaseMask, bool update)
+{
+    if (newPhaseMask == GetPhaseMask())
+        return;
+
+    // Phase player, dont update
+    WorldObject::SetPhaseMask(newPhaseMask, false);
+
+    // Phase pets and summons
+    if (IsInWorld())
+    {
+        for (ControlList::const_iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
+            if ((*itr)->GetTypeId() == TYPEID_UNIT)
+                (*itr)->SetPhaseMask(newPhaseMask, true);
+
+        for (uint8 i = 0; i < MAX_SUMMON_SLOT; ++i)
+            if (m_SummonSlot[i])
+                if (Creature* summon = GetMap()->GetCreature(m_SummonSlot[i]))
+                    summon->SetPhaseMask(newPhaseMask, true);
+    }
+
+    // Update visibility after phasing pets and summons so they wont despawn
+    if (update)
+        UpdateObjectVisibility();
 }
 
 void Unit::UpdateObjectVisibility(bool forced)

@@ -477,7 +477,7 @@ Unit* ScriptedAI::DoSelectLowestHpFriendly(float fRange, uint32 uiMinHPDiff)
 {
     Unit* pUnit = NULL;
     Oregon::MostHPMissingInRange u_check(me, fRange, uiMinHPDiff);
-    Oregon::UnitLastSearcher<Oregon::MostHPMissingInRange> searcher(pUnit, u_check);
+    Oregon::UnitLastSearcher<Oregon::MostHPMissingInRange> searcher(me, pUnit, u_check);
     me->VisitNearbyObject(fRange, searcher);
 
     return pUnit;
@@ -487,7 +487,7 @@ std::list<Creature*> ScriptedAI::DoFindFriendlyCC(float fRange)
 {
     std::list<Creature*> pList;
     Oregon::FriendlyCCedInRange u_check(me, fRange);
-    Oregon::CreatureListSearcher<Oregon::FriendlyCCedInRange> searcher(pList, u_check);
+    Oregon::CreatureListSearcher<Oregon::FriendlyCCedInRange> searcher(me, pList, u_check);
     me->VisitNearbyObject(fRange, searcher);
     return pList;
 }
@@ -496,7 +496,7 @@ std::list<Creature*> ScriptedAI::DoFindFriendlyMissingBuff(float fRange, uint32 
 {
     std::list<Creature*> pList;
     Oregon::FriendlyMissingBuffInRange u_check(me, fRange, uiSpellid);
-    Oregon::CreatureListSearcher<Oregon::FriendlyMissingBuffInRange> searcher(pList, u_check);
+    Oregon::CreatureListSearcher<Oregon::FriendlyMissingBuffInRange> searcher(me, pList, u_check);
     me->VisitNearbyObject(fRange, searcher);
     return pList;
 }
@@ -510,7 +510,7 @@ Player* ScriptedAI::GetPlayerAtMinimumRange(float minimumRange)
     cell.SetNoCreate();
 
     Oregon::PlayerAtMinimumRangeAway check(me, minimumRange);
-    Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway> searcher(pPlayer, check);
+    Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway> searcher(me, pPlayer, check);
     TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway>, GridTypeMapContainer> visitor(searcher);
 
     cell.Visit(pair, visitor, *me->GetMap(), *me, minimumRange);

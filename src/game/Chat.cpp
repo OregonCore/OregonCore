@@ -132,6 +132,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "drunk",          SEC_MODERATOR,      false, &ChatHandler::HandleDrunkCommand,               "", NULL },
         { "standstate",     SEC_GAMEMASTER,     false, &ChatHandler::HandleStandStateCommand,          "", NULL },
         { "morph",          SEC_GAMEMASTER,     false, &ChatHandler::HandleMorphCommand,               "", NULL },
+        { "phase",          SEC_GAMEMASTER,     false, &ChatHandler::HandleModifyPhaseCommand,         "", NULL },
         { "gender",         SEC_ADMINISTRATOR,  false, &ChatHandler::HandleModifyGenderCommand,        "", NULL },
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
@@ -489,6 +490,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "info",           SEC_ADMINISTRATOR,  false, &ChatHandler::HandleNpcInfoCommand,             "", NULL },
         { "playemote",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleNpcPlayEmoteCommand,        "", NULL },
         { "follow",         SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcFollowCommand,           "", NULL },
+        { "setphase",       SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcSetPhaseCommand,         "", NULL },
         { "unfollow",       SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcUnFollowCommand,         "", NULL },
         { "whisper",        SEC_MODERATOR,      false, &ChatHandler::HandleNpcWhisperCommand,          "", NULL },
         { "yell",           SEC_MODERATOR,      false, &ChatHandler::HandleNpcYellCommand,             "", NULL },
@@ -529,6 +531,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "near",           SEC_ADMINISTRATOR,  false, &ChatHandler::HandleNearObjectCommand,          "", NULL },
         { "activate",       SEC_GAMEMASTER,     false, &ChatHandler::HandleActivateObjectCommand,      "", NULL },
         { "addtemp",        SEC_GAMEMASTER,     false, &ChatHandler::HandleTempGameObjectCommand,      "", NULL },
+        { "setphase",       SEC_GAMEMASTER,     false, &ChatHandler::HandleGOPhaseCommand,             "", NULL },
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 
@@ -1789,7 +1792,7 @@ GameObject* ChatHandler::GetObjectGlobalyWithGuidOrNearWithDbGuid(uint32 lowguid
         Cell cell(p);
 
         Oregon::GameObjectWithDbGUIDCheck go_check(*pl, lowguid);
-        Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck> checker(obj, go_check);
+        Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck> checker(pl, obj, go_check);
 
         TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck>, GridTypeMapContainer > object_checker(checker);
         cell.Visit(p, object_checker, *pl->GetMap(), *pl, pl->GetGridActivationRange());

@@ -213,7 +213,7 @@ struct boss_akilzonAI : public ScriptedAI
 
             {
                 Oregon::AnyAoETargetUnitInObjectRangeCheck u_check(me, me, SIZE_OF_GRIDS);
-                Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck> searcher(tempUnitMap, u_check);
+                Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck> searcher(me, tempUnitMap, u_check);
 
                 TypeContainerVisitor<Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
                 TypeContainerVisitor<Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);

@@ -539,6 +539,7 @@ struct GameObjectData
     explicit GameObjectData() : dbData(true) {}
     uint32 id;                                              // entry in gamobject_template
     uint32 mapid;
+    uint32 phaseMask;
     float posX;
     float posY;
     float posZ;
@@ -585,7 +586,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         void RemoveFromWorld() override;
         void CleanupsBeforeDelete() override;
 
-        bool Create(uint32 guidlow, uint32 name_id, Map* map, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 ArtKit = 0);
+        bool Create(uint32 guidlow, uint32 name_id, Map* map, uint32 phaseMask, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 ArtKit = 0);
         void Update(uint32 diff) override;
         static GameObject* GetGameObject(WorldObject& object, uint64 guid);
         GameObjectInfo const* GetGOInfo() const
@@ -598,6 +599,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         }
 
         void SetGoState(GOState state);
+        void SetPhaseMask(uint32 newPhaseMask, bool update) override;
         void EnableCollision(bool enable);
 
         bool IsTransport() const;
@@ -646,7 +648,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         const char* GetNameForLocaleIdx(int32 locale_idx) const override;
 
         void SaveToDB();
-        void SaveToDB(uint32 mapid, uint8 spawnMask);
+        void SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask);
         bool LoadFromDB(uint32 guid, Map* map) { return LoadGameObjectFromDB(guid, map, false); }
         bool LoadGameObjectFromDB(uint32 guid, Map* map, bool addToMap = true);
         void DeleteFromDB();
