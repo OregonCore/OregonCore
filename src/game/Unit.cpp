@@ -9613,7 +9613,7 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, W
             if (!(player->GetReputationMgr().GetForcedRankIfAny(factionTemplate)))
                 if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplate->faction))
                     if (FactionState const* repState = player->GetReputationMgr().GetState(factionEntry))
-                        if (!(repState->Flags & FACTION_FLAG_AT_WAR) && (!IsContestedGuard() && !HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP)))
+                        if (!(repState->Flags & FACTION_FLAG_AT_WAR) && (!IsContestedGuard() && !player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP)))
                             return false;
 
         }
