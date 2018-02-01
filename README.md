@@ -19,8 +19,8 @@ Docs, Community and Support
 Development went ahead and documentation was left behind. Although we try to keep stuff documented, there's a lot to do.
 Here's what we've saved from old [wiki][3] and our growing new official [documentation][4] here.
 
-Next place is our [forums][5], you can get support there as well as be a part of our growing community.
-We have also a public IRC `#OregonCore` at [irc.oregon-core.net][6], this is a place for developers to hang out and discuss all things. Mentioning issues in IRC is strictly forbidden.
+Next place is our [Discord][5], you can get support there as well as be a part of our growing community.
+We have also a [forum][6], this is a place for developers to hang out and discuss all things.
 
 If you have found a bug you may report it on our bugtracker, issues must include revision hash and as many details as possible to aide us in resolving it as quickly as possible.
 
@@ -28,8 +28,8 @@ If you have found a bug you may report it on our bugtracker, issues must include
 [2]: https://ci.appveyor.com/api/projects/status/bxn9cq9miqxn33gr/branch/master
 [3]: https://wiki.oregon-core.net/
 [4]: https://docs.oregon-core.net/
-[5]: https://forums.oregon-core.net/
-[6]: irc://irc.oregon-core.net
+[5]: https://discord.gg/Nyc3fTy
+[6]: https://forums.oregon-core.net/
 [7]: https://travis-ci.org/OregonCore/OregonCore
 [8]: https://ci.appveyor.com/project/OregonCore/OregonCore/branch/master
 
