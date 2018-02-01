@@ -10,11 +10,11 @@ UPDATE creature_template SET maxdmg = ROUND(`maxdmg`+ `attackpower` / 7);
 
 UPDATE creature_template ct 
 JOIN creature_classlevelstats cls ON ct.minlevel = cls.level AND ct.unit_class = cls.class
-SET ct.DamageModifier = (ct.mindmg / ((cls.basedamage_exp0 + (cls.attackpower / 14)) * (ct.BaseAttackTime / 1000))) WHERE ct.exp = "0";
+SET ct.DamageModifier = (IFNULL(ct.mindmg / ((cls.basedamage_exp0 + (cls.attackpower / 14)) * (ct.BaseAttackTime / 1000)), 1)) WHERE ct.exp = "0";
 
 UPDATE creature_template ct 
 JOIN creature_classlevelstats cls ON ct.minlevel = cls.level AND ct.unit_class = cls.class
-SET ct.DamageModifier = (ct.mindmg / ((cls.basedamage_exp1 + (cls.attackpower / 14)) * (ct.BaseAttackTime / 1000))) WHERE ct.exp = "1";
+SET ct.DamageModifier = (IFNULL(ct.mindmg / ((cls.basedamage_exp1 + (cls.attackpower / 14)) * (ct.BaseAttackTime / 1000)), 1)) WHERE ct.exp = "1";
 
 ALTER TABLE creature_template DROP COLUMN mindmg;
 ALTER TABLE creature_template DROP COLUMN maxdmg;
