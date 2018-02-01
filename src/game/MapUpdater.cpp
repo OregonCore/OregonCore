@@ -76,14 +76,6 @@ class MapUpdateRequest : public ACE_Method_Request
         }
 };
 
-MapUpdater::MapUpdater():
-m_executor(), m_mutex(), m_condition(m_mutex), pending_requests(0) { }
-
-MapUpdater::~MapUpdater()
-{
-    deactivate();
-}
-
 int MapUpdater::activate(size_t num_threads)
 {
     return m_executor.activate((int)num_threads, new WDBThreadStartReq1, new WDBThreadEndReq1);
