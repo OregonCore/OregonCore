@@ -438,7 +438,7 @@ void WorldSession::HandleCancelChanneling(WorldPacket& recv_data)
     uint32 spellId;
 
     recv_data >> spellId;
-    _player->InterruptNonMeleeSpells(false, spellId, false);
+    _player->InterruptSpell(CURRENT_CHANNELED_SPELL);
 }
 
 void WorldSession::HandleTotemDestroy(WorldPacket& recvPacket)
