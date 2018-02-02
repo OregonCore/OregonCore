@@ -62,8 +62,8 @@ EndScriptData */
 
 float PortalLocations[2][2] =
 {
-	{ -11249.6933, -1704.61023 },
-	{ -11242.1160, -1713.33325 },
+	{ -11249.6933f, -1704.61023f },
+	{ -11242.1160f, -1713.33325f },
 };
 
 struct mob_demon_chainAI : public ScriptedAI
