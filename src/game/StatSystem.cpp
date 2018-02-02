@@ -200,10 +200,10 @@ void Player::UpdateArmor()
 {
     UnitMods unitMod = UNIT_MOD_ARMOR;
 
-    float value = GetModifierValue(unitMod, BASE_VALUE);    // base armor (from items)
-    value *= GetModifierValue(unitMod, BASE_PCT);           // armor percent from items
+    float value = GetFlatModifierValue(unitMod, BASE_VALUE);    // base armor (from items)
+    value *= GetPctModifierValue(unitMod, BASE_PCT);           // armor percent from items
     value += GetStat(STAT_AGILITY) * 2.0f;                  // armor bonus from stats
-    value += GetModifierValue(unitMod, TOTAL_VALUE);
+    value += GetFlatModifierValue(unitMod, TOTAL_VALUE);
 
     //add dynamic flat mods
     AuraList const& mResbyIntellect = GetAurasByType(SPELL_AURA_MOD_RESISTANCE_OF_STAT_PERCENT);
@@ -214,7 +214,7 @@ void Player::UpdateArmor()
             value += CalculatePct(GetStat(Stats((*i)->GetMiscBValue())), (*i)->GetModifierValue());
     }
 
-    value *= GetModifierValue(unitMod, TOTAL_PCT);
+    value *= GetPctModifierValue(unitMod, TOTAL_PCT);
 
     // @todo Move this outta here!
     // Druid Enrage armor reduction
@@ -250,10 +250,10 @@ void Player::UpdateMaxHealth()
 {
     UnitMods unitMod = UNIT_MOD_HEALTH;
 
-    float value = GetModifierValue(unitMod, BASE_VALUE) + GetCreateHealth();
-    value *= GetModifierValue(unitMod, BASE_PCT);
-    value += GetModifierValue(unitMod, TOTAL_VALUE) + GetHealthBonusFromStamina();
-    value *= GetModifierValue(unitMod, TOTAL_PCT);
+    float value = GetFlatModifierValue(unitMod, BASE_VALUE) + GetCreateHealth();
+    value *= GetPctModifierValue(unitMod, BASE_PCT);
+    value += GetFlatModifierValue(unitMod, TOTAL_VALUE) + GetHealthBonusFromStamina();
+    value *= GetPctModifierValue(unitMod, TOTAL_PCT);
 
     SetMaxHealth((uint32)value);
 }
@@ -265,10 +265,10 @@ void Player::UpdateMaxPower(Powers power)
     // ignore classes without mana
     float bonusPower = (power == POWER_MANA && GetCreatePowers(power) > 0) ? GetManaBonusFromIntellect() : 0;
 
-    float value = GetModifierValue(unitMod, BASE_VALUE) + GetCreatePowers(power);
-    value *= GetModifierValue(unitMod, BASE_PCT);
-    value += GetModifierValue(unitMod, TOTAL_VALUE) +  bonusPower;
-    value *= GetModifierValue(unitMod, TOTAL_PCT);
+    float value = GetFlatModifierValue(unitMod, BASE_VALUE) + GetCreatePowers(power);
+    value *= GetPctModifierValue(unitMod, BASE_PCT);
+    value += GetFlatModifierValue(unitMod, TOTAL_VALUE) + bonusPower;
+    value *= GetPctModifierValue(unitMod, TOTAL_PCT);
 
     SetMaxPower(power, uint32(value));
 }
@@ -391,10 +391,10 @@ void Player::UpdateAttackPowerAndDamage(bool ranged)
         }
     }
 
-    SetModifierValue(unitMod, BASE_VALUE, val2);
+    SetStatFlatModifier(unitMod, BASE_VALUE, val2);
 
-    float base_attPower  = GetModifierValue(unitMod, BASE_VALUE) * GetModifierValue(unitMod, BASE_PCT);
-    float attPowerMod = GetModifierValue(unitMod, TOTAL_VALUE);
+    float base_attPower = GetFlatModifierValue(unitMod, BASE_VALUE) * GetPctModifierValue(unitMod, BASE_PCT);
+    float attPowerMod = GetFlatModifierValue(unitMod, TOTAL_VALUE);
 
     //add dynamic flat mods
     if (ranged)
@@ -407,7 +407,7 @@ void Player::UpdateAttackPowerAndDamage(bool ranged)
         }
     }
 
-    float attPowerMultiplier = GetModifierValue(unitMod, TOTAL_PCT) - 1.0f;
+    float attPowerMultiplier = GetPctModifierValue(unitMod, TOTAL_PCT) - 1.0f;
 
     SetInt32Value(index, (uint32)base_attPower);            //UNIT_FIELD_(RANGED)_ATTACK_POWER field
     SetInt32Value(index_mod, (uint32)attPowerMod);          //UNIT_FIELD_(RANGED)_ATTACK_POWER_MODS field
@@ -456,10 +456,10 @@ void Player::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bo
 
     float attackSpeedMod = GetAPMultiplier(attType, normalized);
 
-    float baseValue  = GetModifierValue(unitMod, BASE_VALUE) + GetTotalAttackPowerValue(attType) / 14.0f * attackSpeedMod;
-    float basePct    = GetModifierValue(unitMod, BASE_PCT);
-    float totalValue = GetModifierValue(unitMod, TOTAL_VALUE);
-    float totalPct   = GetModifierValue(unitMod, TOTAL_PCT);
+    float baseValue = GetFlatModifierValue(unitMod, BASE_VALUE);
+    float basePct = GetPctModifierValue(unitMod, BASE_PCT);
+    float totalValue = GetFlatModifierValue(unitMod, TOTAL_VALUE);
+    float totalPct = addTotalPct ? GetPctModifierValue(unitMod, TOTAL_PCT) : 1.0f;
 
     float weaponMinDamage = GetWeaponDamageRange(attType, MINDAMAGE);
     float weaponMaxDamage = GetWeaponDamageRange(attType, MAXDAMAGE);
@@ -822,9 +822,9 @@ void Creature::UpdateAttackPowerAndDamage(bool ranged)
         indexMulti = UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER;
     }
 
-    float baseAttackPower = GetModifierValue(unitMod, BASE_VALUE) * GetModifierValue(unitMod, BASE_PCT);
-    float attackPowerMod = GetModifierValue(unitMod, TOTAL_VALUE);
-    float attackPowerMultiplier = GetModifierValue(unitMod, TOTAL_PCT) - 1.0f;
+    float baseAttackPower = GetFlatModifierValue(unitMod, BASE_VALUE) * GetPctModifierValue(unitMod, BASE_PCT);
+    float attackPowerMod = GetFlatModifierValue(unitMod, TOTAL_VALUE);
+    float attackPowerMultiplier = GetPctModifierValue(unitMod, TOTAL_PCT) - 1.0f;
 
     SetInt32Value(index, uint32(baseAttackPower));      // UNIT_FIELD_(RANGED)_ATTACK_POWER
     SetInt32Value(indexMod, uint32(attackPowerMod));    // UNIT_FIELD_(RANGED)_ATTACK_POWER_MODS
@@ -879,10 +879,10 @@ void Creature::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, 
 
     float attackPower = GetTotalAttackPowerValue(attType);
     float attackSpeedMulti = GetAPMultiplier(attType, normalized);
-    float baseValue = GetModifierValue(unitMod, BASE_VALUE) + (attackPower / 14.0f) * variance;
-    float basePct = GetModifierValue(unitMod, BASE_PCT) * attackSpeedMulti;
-    float totalValue = GetModifierValue(unitMod, TOTAL_VALUE);
-    float totalPct = addTotalPct ? GetModifierValue(unitMod, TOTAL_PCT) : 1.0f;
+    float baseValue = GetFlatModifierValue(unitMod, BASE_VALUE) + (attackPower / 14.0f) * variance;
+    float basePct = GetPctModifierValue(unitMod, BASE_PCT) * attackSpeedMulti;
+    float totalValue = GetFlatModifierValue(unitMod, TOTAL_VALUE);
+    float totalPct = addTotalPct ? GetPctModifierValue(unitMod, TOTAL_PCT) : 1.0f;
     float dmgMultiplier = GetCreatureTemplate()->ModDamage; // = ModDamage * _GetDamageMod(rank);
 
     minDamage = ((weaponMinDamage + baseValue) * dmgMultiplier * basePct + totalValue) * totalPct;
@@ -988,11 +988,11 @@ void Guardian::UpdateArmor()
     if (IsPet())
         bonus_armor = float(CalculatePct(m_owner->GetArmor(), 35));
 
-    value  = GetModifierValue(unitMod, BASE_VALUE);
-    value *= GetModifierValue(unitMod, BASE_PCT);
+    value = GetFlatModifierValue(unitMod, BASE_VALUE);
+    value *= GetPctModifierValue(unitMod, BASE_PCT);
     value += GetStat(STAT_AGILITY) * 2.0f;
-    value += GetModifierValue(unitMod, TOTAL_VALUE) + bonus_armor;
-    value *= GetModifierValue(unitMod, TOTAL_PCT);
+    value += GetFlatModifierValue(unitMod, TOTAL_VALUE) + bonus_armor;
+    value *= GetPctModifierValue(unitMod, TOTAL_PCT);
 
     SetArmor(int32(value));
 }
@@ -1013,10 +1013,10 @@ void Guardian::UpdateMaxHealth()
         default:                multiplicator = 10.0f;  break;
     }
 
-    float value = GetModifierValue(unitMod, BASE_VALUE) + GetCreateHealth();
-    value  *= GetModifierValue(unitMod, BASE_PCT);
-    value  += GetModifierValue(unitMod, TOTAL_VALUE) + stamina * multiplicator;
-    value  *= GetModifierValue(unitMod, TOTAL_PCT);
+    float value = GetFlatModifierValue(unitMod, BASE_VALUE) + GetCreateHealth();
+    value *= GetPctModifierValue(unitMod, BASE_PCT);
+    value += GetFlatModifierValue(unitMod, TOTAL_VALUE) + stamina * multiplicator;
+    value *= GetPctModifierValue(unitMod, TOTAL_PCT);
 
     SetMaxHealth((uint32)value);
 }
@@ -1038,10 +1038,10 @@ void Guardian::UpdateMaxPower(Powers power)
         default:                multiplicator = 15.0f;  break;
     }
 
-    float value  = GetModifierValue(unitMod, BASE_VALUE) + GetCreatePowers(power);
-    value *= GetModifierValue(unitMod, BASE_PCT);
-    value += GetModifierValue(unitMod, TOTAL_VALUE) +  addValue * multiplicator;
-    value *= GetModifierValue(unitMod, TOTAL_PCT);
+    float value = GetFlatModifierValue(unitMod, BASE_VALUE) + GetCreatePowers(power);
+    value *= GetPctModifierValue(unitMod, BASE_PCT);
+    value += GetFlatModifierValue(unitMod, TOTAL_VALUE) + addValue * multiplicator;
+    value *= GetPctModifierValue(unitMod, TOTAL_PCT);
 
     SetMaxPower(power, uint32(value));
 }
@@ -1089,12 +1089,12 @@ void Guardian::UpdateAttackPowerAndDamage(bool ranged)
         }
     }
 
-    SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, val + bonusAP);
+    SetStatFlatModifier(UNIT_MOD_ATTACK_POWER, BASE_VALUE, val + bonusAP);
 
     //in BASE_VALUE of UNIT_MOD_ATTACK_POWER for creatures we store data of meleeattackpower field in DB
-    float base_attPower  = GetModifierValue(unitMod, BASE_VALUE) * GetModifierValue(unitMod, BASE_PCT);
-    float attPowerMod = GetModifierValue(unitMod, TOTAL_VALUE);
-    float attPowerMultiplier = GetModifierValue(unitMod, TOTAL_PCT) - 1.0f;
+    float base_attPower = GetFlatModifierValue(unitMod, BASE_VALUE) * GetPctModifierValue(unitMod, BASE_PCT);
+    float attPowerMod = GetFlatModifierValue(unitMod, TOTAL_VALUE);
+    float attPowerMultiplier = GetPctModifierValue(unitMod, TOTAL_PCT) - 1.0f;
 
     //UNIT_FIELD_(RANGED)_ATTACK_POWER field
     SetInt32Value(UNIT_FIELD_ATTACK_POWER, (int32)base_attPower);
@@ -1142,10 +1142,10 @@ void Guardian::UpdateDamagePhysical(WeaponAttackType attType)
 
     float att_speed = float(GetAttackTime(BASE_ATTACK)) / 1000.0f;
 
-    float base_value  = GetModifierValue(unitMod, BASE_VALUE) + GetTotalAttackPowerValue(attType) / 14.0f * att_speed  + bonusDamage;
-    float base_pct    = GetModifierValue(unitMod, BASE_PCT);
-    float total_value = GetModifierValue(unitMod, TOTAL_VALUE);
-    float total_pct   = GetModifierValue(unitMod, TOTAL_PCT);
+    float base_value = GetFlatModifierValue(unitMod, BASE_VALUE) + GetTotalAttackPowerValue(attType) / 14.0f * att_speed + bonusDamage;
+    float base_pct = GetPctModifierValue(unitMod, BASE_PCT);
+    float total_value = GetFlatModifierValue(unitMod, TOTAL_VALUE);
+    float total_pct = GetPctModifierValue(unitMod, TOTAL_PCT);
 
     float weapon_mindamage = GetWeaponDamageRange(BASE_ATTACK, MINDAMAGE);
     float weapon_maxdamage = GetWeaponDamageRange(BASE_ATTACK, MAXDAMAGE);

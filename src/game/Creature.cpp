@@ -386,55 +386,54 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
     SetMeleeDamageSchool(SpellSchools(cInfo->dmgschool));
     CreatureBaseStats const* cCLS = sObjectMgr.GetCreatureClassLvlStats(getLevel(), cInfo->unit_class, cInfo->exp);
     float armor = cCLS->BaseArmor * cInfo->ModArmor;
-    SetModifierValue(UNIT_MOD_ARMOR, BASE_VALUE, armor);
 
     if (cInfo->resistance1 < 0)
     {
         ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_HOLY, true);
-        SetModifierValue(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, 0);
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, 0);
     }
     else
-        SetModifierValue(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, float(cInfo->resistance1));
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, float(cInfo->resistance1));
 
     if (cInfo->resistance2 < 0)
     {
         ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
-        SetModifierValue(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, 0);
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, 0);
     }
     else
-        SetModifierValue(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, float(cInfo->resistance2));
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, float(cInfo->resistance2));
 
     if (cInfo->resistance3 < 0)
     {
         ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
-        SetModifierValue(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, 0);
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, 0);
     }
     else
-        SetModifierValue(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, float(cInfo->resistance3));
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, float(cInfo->resistance3));
 
     if (cInfo->resistance4 < 0)
     {
         ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
-        SetModifierValue(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, 0);
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, 0);
     }
     else
-        SetModifierValue(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, float(cInfo->resistance4));
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, float(cInfo->resistance4));
 
     if (cInfo->resistance5 < 0)
     {
         ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
-        SetModifierValue(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, 0);
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, 0);
     }
     else
-        SetModifierValue(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, float(cInfo->resistance5));
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, float(cInfo->resistance5));
 
     if (cInfo->resistance6 < 0)
     {
         ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
-        SetModifierValue(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, 0);
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, 0);
     }
     else
-        SetModifierValue(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, float(cInfo->resistance6));
+        SetStatFlatModifier(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, float(cInfo->resistance6));
 
 
     SetCanModifyStats(true);
@@ -1163,8 +1162,8 @@ void Creature::SelectLevel()
     SetMaxPower(POWER_MANA, mana);                          //MAX Mana
     SetPower(POWER_MANA, mana);
 
-    SetModifierValue(UNIT_MOD_HEALTH, BASE_VALUE, (float)health);
-    SetModifierValue(UNIT_MOD_MANA, BASE_VALUE, (float)mana);
+    SetStatFlatModifier(UNIT_MOD_HEALTH, BASE_VALUE, (float)health);
+    SetStatFlatModifier(UNIT_MOD_MANA, BASE_VALUE, (float)mana);
 
     // damage
     float basedamage = cCLS->BaseDamage;
@@ -1181,8 +1180,8 @@ void Creature::SelectLevel()
     SetBaseWeaponDamage(RANGED_ATTACK, MINDAMAGE, weaponBaseMinDamage);
     SetBaseWeaponDamage(RANGED_ATTACK, MAXDAMAGE, weaponBaseMaxDamage);
     
-    SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, cCLS->BaseMeleeAttackPower);
-    SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, cCLS->BaseRangedAttackPower);
+    SetStatFlatModifier(UNIT_MOD_ATTACK_POWER, BASE_VALUE, cCLS->BaseMeleeAttackPower);
+    SetStatFlatModifier(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, cCLS->BaseRangedAttackPower);
 
     UpdateAllStats();
 }
