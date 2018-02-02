@@ -44,7 +44,7 @@ EndContentData */
 
 bool GossipHello_npc_braug_dimspirit(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(6627) == QUEST_STATUS_INCOMPLETE)
@@ -142,7 +142,7 @@ bool QuestAccept_npc_kaya_flathoof(Player* pPlayer, Creature* pCreature, Quest c
             pEscortAI->Start(true, false, pPlayer->GetGUID());
 
         DoScriptText(SAY_START, pCreature);
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
         pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
     }
     return true;

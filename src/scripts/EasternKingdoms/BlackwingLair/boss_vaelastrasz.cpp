@@ -46,7 +46,7 @@ struct boss_vaelAI : public ScriptedAI
     boss_vaelAI(Creature* c) : ScriptedAI(c)
     {
         c->SetUInt32Value(UNIT_NPC_FLAGS, 1);
-        c->setFaction(35);
+        c->SetFaction(35);
         c->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
@@ -129,7 +129,7 @@ struct boss_vaelAI : public ScriptedAI
                     ++SpeechNum;
                     break;
                 case 2:
-                    me->setFaction(103);
+                    me->SetFaction(103);
                     if (PlayerGUID && Unit::GetUnit((*me), PlayerGUID))
                     {
                         AttackStart(Unit::GetUnit((*me), PlayerGUID));

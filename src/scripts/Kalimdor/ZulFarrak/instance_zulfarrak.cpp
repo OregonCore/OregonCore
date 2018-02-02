@@ -382,7 +382,7 @@ struct instance_zulfarrak : public ScriptedInstance
             crew->SetWalk(true);
             crew->SetHomePosition(x, y, z, 0);
             crew->GetMotionMaster()->MovePoint(1, x, y, z);
-            crew->setFaction(FACTION_FREED);
+            crew->SetFaction(FACTION_FREED);
         }
     }
 };

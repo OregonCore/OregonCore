@@ -129,7 +129,7 @@ bool QuestAccept_npc_ame(Player* pPlayer, Creature* pCreature, Quest const* ques
         DoScriptText(SAY_READY, pCreature, pPlayer);
         pCreature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
         // Change faction so mobs attack
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
     }
     return true;
 }

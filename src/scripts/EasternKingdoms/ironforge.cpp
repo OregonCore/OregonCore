@@ -42,7 +42,7 @@ EndContentData */
 
 bool GossipHello_npc_royal_historian_archesonus(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(3702) == QUEST_STATUS_INCOMPLETE)

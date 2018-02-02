@@ -97,7 +97,7 @@ struct boss_taerarAI : public ScriptedAI
         if (m_bShades && m_uiShades_Timer <= uiDiff)
         {
             //Become unbanished again
-            me->setFaction(14);
+            me->SetFaction(14);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             m_bShades = false;
         }
@@ -177,7 +177,7 @@ struct boss_taerarAI : public ScriptedAI
                 me->InterruptNonMeleeSpells(false);
 
                 //horrible workaround, need to fix
-                me->setFaction(35);
+                me->SetFaction(35);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
                 DoScriptText(SAY_SUMMONSHADE, me);

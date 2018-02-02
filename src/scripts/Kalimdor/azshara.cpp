@@ -112,7 +112,7 @@ CreatureAI* GetAI_mobs_spitelashes(Creature* pCreature)
 
 bool GossipHello_npc_loramus_thalipedes(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(2744) == QUEST_STATUS_INCOMPLETE)
@@ -367,7 +367,7 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
             {
                 DoScriptText(SAY_RIZZLE_FINAL, me);
                 me->SetUInt32Value(UNIT_NPC_FLAGS, 1);
-                me->setFaction(35);
+                me->SetFaction(35);
                 me->GetMotionMaster()->MoveIdle();
                 me->RemoveAurasDueToSpell(SPELL_PERIODIC_DEPTH_CHARGE);
                 Reached = true;

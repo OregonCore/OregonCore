@@ -925,7 +925,7 @@ void Unit::RemoveSpellbyDamageTaken(uint32 damage, uint32 spell)
 
 uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDamage, DamageEffectType damagetype, SpellSchoolMask damageSchoolMask, SpellEntry const* spellProto, bool durabilityLoss)
 {
-    if ((!victim->IsAlive() || victim->isInFlight()) || (victim->GetTypeId() == TYPEID_UNIT && victim->ToCreature()->IsInEvadeMode()))
+    if ((!victim->IsAlive() || victim->IsInFlight()) || (victim->GetTypeId() == TYPEID_UNIT && victim->ToCreature()->IsInEvadeMode()))
         return 0;
 
     //You don't lose health from damage taken from another player while in a sanctuary
@@ -1304,7 +1304,7 @@ void Unit::CastSpell(Unit* Victim, SpellEntry const* spellInfo, bool triggered, 
     // When casting a combat spell the unit has to be flagged as initiating combat
     // Check for self-cast case here for this may have been called by a command
     if (Victim && spell->GetCaster() != Victim && !IsNonCombatSpell(spellInfo))
-        spell->GetCaster()->setInitiatingCombat(true);
+        spell->GetCaster()->SetInitiatingCombat(true);
 
     spell->m_CastItem = castItem;
     spell->prepare(&targets, triggeredByAura);
@@ -3329,7 +3329,7 @@ uint32 Unit::GetWeaponSkillValue (WeaponAttackType attType, Unit const* target) 
         uint32  skill = item && item->GetSkill() != SKILL_FIST_WEAPONS ? item->GetSkill() : uint32(SKILL_UNARMED);
 
         // in PvP use full skill instead current skill value
-        value = (target && target->isCharmedOwnedByPlayerOrPlayer())
+        value = (target && target->IsCharmedOwnedByPlayerOrPlayer())
                 ? ToPlayer()->GetMaxSkillValue(skill)
                 : ToPlayer()->GetSkillValue(skill);
         // Modify value from ratings
@@ -7201,15 +7201,15 @@ void Unit::setPowerType(Powers new_powertype)
 }
 FactionTemplateEntry const* Unit::GetFactionTemplateEntry() const
 {
-    FactionTemplateEntry const* entry = sFactionTemplateStore.LookupEntry(getFaction());
+    FactionTemplateEntry const* entry = sFactionTemplateStore.LookupEntry(GetFaction());
     if (!entry)
     {
         if (Player const* player = ToPlayer())
-            sLog.outError("Player %s has invalid faction (faction template id) #%u", player->GetName(), getFaction());
+            sLog.outError("Player %s has invalid faction (faction template id) #%u", player->GetName(), GetFaction());
         else if (Creature const* creature = ToCreature())
-            sLog.outError("Creature (template id: %u) has invalid faction (faction template id) #%u", creature->GetCreatureTemplate()->Entry, getFaction());
+            sLog.outError("Creature (template id: %u) has invalid faction (faction template id) #%u", creature->GetCreatureTemplate()->Entry, GetFaction());
         else
-            sLog.outError("Unit (name=%s, type=%u) has invalid faction (faction template id) #%u", GetName(), uint32(GetTypeId()), getFaction());
+            sLog.outError("Unit (name=%s, type=%u) has invalid faction (faction template id) #%u", GetName(), uint32(GetTypeId()), GetFaction());
     }
     return entry;
 }
@@ -9421,7 +9421,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
     // Combat is no longer in initiation phase
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
-    setInitiatingCombat(false);
+    SetInitiatingCombat(false);
 
     if (GetTypeId() == TYPEID_PLAYER)
     {
@@ -9613,7 +9613,7 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, W
             if (!(player->GetReputationMgr().GetForcedRankIfAny(factionTemplate)))
                 if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplate->faction))
                     if (FactionState const* repState = player->GetReputationMgr().GetState(factionEntry))
-                        if (!(repState->Flags & FACTION_FLAG_AT_WAR) && (!IsContestedGuard() && !HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP)))
+                        if (!(repState->Flags & FACTION_FLAG_AT_WAR) && (!IsContestedGuard() && !player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP)))
                             return false;
 
         }
@@ -9744,7 +9744,7 @@ bool Unit::isAttackableByAOE(float x, float y, float z, bool LosCheck) const
         if (!IsWithinLOS(x, y, z))
             return false;
 
-    return !isInFlight();
+    return !IsInFlight();
 }
 
 int32 Unit::ModifyHealth(int32 dVal)
@@ -9872,7 +9872,7 @@ bool Unit::isInvisibleForAlive() const
     if (m_AuraFlags & UNIT_AURAFLAG_ALIVE_INVISIBLE)
         return true;
     // @todo maybe spiritservices also have just an aura
-    return isSpiritService();
+    return IsSpiritService();
 }
 
 bool Unit::IsAlwaysDetectableFor(WorldObject const* seer) const
@@ -11949,7 +11949,7 @@ void Unit::SendMovementFlagUpdate(bool self /* = false */)
 
 bool Unit::IsSitState() const
 {
-    uint8 s = getStandState();
+    uint8 s = GetStandState();
     return
         s == UNIT_STAND_STATE_SIT_CHAIR        || s == UNIT_STAND_STATE_SIT_LOW_CHAIR  ||
         s == UNIT_STAND_STATE_SIT_MEDIUM_CHAIR || s == UNIT_STAND_STATE_SIT_HIGH_CHAIR ||
@@ -11958,7 +11958,7 @@ bool Unit::IsSitState() const
 
 bool Unit::IsStandState() const
 {
-    uint8 s = getStandState();
+    uint8 s = GetStandState();
     return !IsSitState() && s != UNIT_STAND_STATE_SLEEP && s != UNIT_STAND_STATE_KNEEL;
 }
 
@@ -12372,7 +12372,7 @@ Pet* Unit::CreateTamedPetFrom(Creature* creatureTarget, uint32 spell_id)
     }
 
     pet->SetCreatorGUID(GetGUID());
-    pet->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, getFaction());
+    pet->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, GetFaction());
     pet->SetUInt32Value(UNIT_CREATED_BY_SPELL, spell_id);
 
     if (!pet->InitStatsForLevel(creatureTarget->getLevel()))
@@ -13166,8 +13166,8 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
         return;
     }
 
-    _oldFactionId = getFaction();
-    setFaction(charmer->getFaction());
+    _oldFactionId = GetFaction();
+    SetFaction(charmer->GetFaction());
 
     // Set charmed
     charmer->SetCharm(this, true);
@@ -13258,7 +13258,7 @@ void Unit::RemoveCharmedBy(Unit* charmer)
 
     if (_oldFactionId)
     {
-        setFaction(_oldFactionId);
+        SetFaction(_oldFactionId);
         _oldFactionId = 0;
     }
     else
@@ -13339,12 +13339,12 @@ void Unit::RestoreFaction()
         if (IsPet())
         {
             if (Unit* owner = GetOwner())
-                setFaction(owner->getFaction());
+                SetFaction(owner->GetFaction());
             else if (cinfo)
-                setFaction(cinfo->faction);
+                SetFaction(cinfo->faction);
         }
         else if (cinfo)  // normal creature
-            setFaction(cinfo->faction);
+            SetFaction(cinfo->faction);
     }
 }
 

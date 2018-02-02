@@ -651,7 +651,7 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
                 break;
         }
 
-        summoned->setFaction(me->getFaction());
+        summoned->SetFaction(me->GetFaction());
         summons.Summon(summoned);
     }
 
@@ -667,7 +667,7 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
 
         if (Creature *controller = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)))
         {
-            controller->setFaction(35);
+            controller->SetFaction(35);
             controller->RemoveAllAuras();
             controller->DeleteThreatList();
             controller->CombatStop();
@@ -952,7 +952,7 @@ struct mob_hand_of_the_deceiverAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        summoned->setFaction(me->getFaction());
+        summoned->SetFaction(me->GetFaction());
         summoned->SetLevel(me->getLevel());
     }
 
@@ -1029,7 +1029,7 @@ struct mob_felfire_portalAI : public Scripted_NoMovementAI
 
     void JustSummoned(Creature* summoned)
     {
-        summoned->setFaction(me->getFaction());
+        summoned->SetFaction(me->GetFaction());
         summoned->SetLevel(me->getLevel());
     }
 

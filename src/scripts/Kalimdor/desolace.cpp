@@ -219,7 +219,7 @@ bool QuestAccept_npc_dalinda(Player* pPlayer, Creature* pCreature, Quest const* 
         if (npc_escortAI* pEscortAI = CAST_AI(npc_dalindaAI, pCreature->AI()))
         {
             pEscortAI->Start(true, false, pPlayer->GetGUID());
-            pCreature->setFaction(113);
+            pCreature->SetFaction(113);
         }
     }
     return true;
@@ -272,7 +272,7 @@ struct npc_melizza_brimbuzzleAI : public npc_escortAI
             switch (uiPointId)
             {
             case 1:
-                me->setFaction(113);
+                me->SetFaction(113);
                 DoScriptText(SAY_START, me, pPlayer);
                 break;
             case 7:

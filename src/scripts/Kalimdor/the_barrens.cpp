@@ -150,7 +150,7 @@ bool QuestAccept_npc_gilthares(Player* pPlayer, Creature* pCreature, const Quest
 {
     if (pQuest->GetQuestId() == QUEST_FREE_FROM_HOLD)
     {
-        pCreature->setFaction(FACTION_ESCORTEE);
+        pCreature->SetFaction(FACTION_ESCORTEE);
         pCreature->SetStandState(UNIT_STAND_STATE_STAND);
 
         DoScriptText(SAY_GIL_START, pCreature, pPlayer);
@@ -169,7 +169,7 @@ bool QuestAccept_npc_gilthares(Player* pPlayer, Creature* pCreature, const Quest
 
 bool GossipHello_npc_sputtervalve(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(6981) == QUEST_STATUS_INCOMPLETE)
@@ -213,7 +213,7 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
         IsFriend = false;
         Reset_Timer = 120000;
         FlareCount = 0;
-        me->setFaction(FACTION_HOSTILE_F);
+        me->SetFaction(FACTION_HOSTILE_F);
         me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
     }
 
@@ -234,7 +234,7 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
             ++FlareCount;
             if (FlareCount >= 2)
             {
-                me->setFaction(FACTION_FRIENDLY_F);
+                me->SetFaction(FACTION_FRIENDLY_F);
                 IsFriend = true;
             }
         }
@@ -420,7 +420,7 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                         Creature* pCreature = me->SummonCreature(NPC_AFFRAY_CHALLENGER, AffrayChallengerLoc[i][0], AffrayChallengerLoc[i][1], AffrayChallengerLoc[i][2], AffrayChallengerLoc[i][3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
                         if (!pCreature)
                             continue;
-                        pCreature->setFaction(35);
+                        pCreature->SetFaction(35);
                         pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         pCreature->HandleEmoteCommand(EMOTE_ONESHOT_ROAR);
@@ -462,7 +462,7 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                             pCreature->HandleEmoteCommand(EMOTE_ONESHOT_ROAR);
-                            pCreature->setFaction(14);
+                            pCreature->SetFaction(14);
                             pCreature->AI()->AttackStart(pWarrior);
                             ++Wave;
                             Wave_Timer = 20000;
@@ -498,7 +498,7 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                             pCreature->HandleEmoteCommand(EMOTE_ONESHOT_ROAR);
-                            pCreature->setFaction(14);
+                            pCreature->SetFaction(14);
                             pCreature->AI()->AttackStart(pWarrior);
                         }
                     }
@@ -661,7 +661,7 @@ bool QuestAccept_npc_wizzlecrank_shredder(Player* pPlayer, Creature* pCreature, 
 {
     if (quest->GetQuestId() == QUEST_ESCAPE)
     {
-        pCreature->setFaction(FACTION_RATCHET);
+        pCreature->SetFaction(FACTION_RATCHET);
         if (npc_escortAI* pEscortAI = CAST_AI(npc_wizzlecrank_shredderAI, pCreature->AI()))
             pEscortAI->Start(true, false, pPlayer->GetGUID());
     }

@@ -182,7 +182,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
         NefCheckTime = 2000;
 
         me->SetUInt32Value(UNIT_NPC_FLAGS, 1);
-        me->setFaction(35);
+        me->SetFaction(35);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
@@ -200,7 +200,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
         }
         */
         me->SetUInt32Value(UNIT_NPC_FLAGS, 0);
-        me->setFaction(103);
+        me->SetFaction(103);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         AttackStart(pTarget);
     }
@@ -270,7 +270,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 if (pTarget && Spawned)
                 {
                     Spawned->AI()->AttackStart(pTarget);
-                    Spawned->setFaction(103);
+                    Spawned->SetFaction(103);
                 }
 
                 //1 in 3 chance it will be a chromatic
@@ -286,7 +286,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 if (pTarget && Spawned)
                 {
                     Spawned->AI()->AttackStart(pTarget);
-                    Spawned->setFaction(103);
+                    Spawned->SetFaction(103);
                 }
 
                 //Begin phase 2 by spawning Nefarian and what not
@@ -314,7 +314,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
                     if (pTarget && Nefarian)
                     {
                         Nefarian->AI()->AttackStart(pTarget);
-                        Nefarian->setFaction(103);
+                        Nefarian->SetFaction(103);
                         NefarianGUID = Nefarian->GetGUID();
                     }
                     else error_log("OSCR: Blackwing Lair: Unable to spawn nefarian properly.");

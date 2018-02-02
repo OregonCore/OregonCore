@@ -187,7 +187,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
     }
 
     setPetType(PetType(fields[22].GetUInt8()));
-    SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, owner->getFaction());
+    SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, owner->GetFaction());
     SetUInt32Value(UNIT_CREATED_BY_SPELL, summon_spell_id);
 
     CreatureInfo const* cinfo = GetCreatureTemplate();
@@ -867,7 +867,7 @@ void Pet::GivePetXP(uint32 xp)
         return;
 
     uint32 level = getLevel();
-    uint32 maxlevel = std::min(sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL), GetOwner()->getLevel());
+    uint8 maxlevel = std::min((uint8)sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL), GetOwner()->getLevel());
 
     uint32 nextLvlXP = GetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP);
     uint32 curXP = GetUInt32Value(UNIT_FIELD_PETEXPERIENCE);

@@ -29,8 +29,8 @@ class MapUpdater
 {
     public:
 
-        MapUpdater();
-        virtual ~MapUpdater();
+        MapUpdater() : m_executor(), m_mutex(), m_condition(m_mutex), pending_requests(0) {}
+        ~MapUpdater() { };
 
         friend class MapUpdateRequest;
 

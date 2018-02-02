@@ -69,7 +69,7 @@ bool ItemUse_item_only_for_flight(Player* pPlayer, Item* pItem, SpellCastTargets
     }
 
     // allow use in flight only
-    if (pPlayer->isInFlight() && !disabled)
+    if (pPlayer->IsInFlight() && !disabled)
         return false;
 
     // error

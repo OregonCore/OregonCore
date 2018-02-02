@@ -707,7 +707,7 @@ bool AreaTrigger_at_commander_dawnforge(Player* player, const AreaTriggerEntry* 
 
 bool GossipHello_npc_professor_dabiri(Player* player, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(QUEST_ON_NETHERY_WINGS) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(29778, 1))
@@ -934,7 +934,7 @@ bool QuestAccept_npc_bessy(Player* pPlayer, Creature* pCreature, Quest const* qu
 {
     if (quest->GetQuestId() == Q_ALMABTRIEB)
     {
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
         pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         CAST_AI(npc_escortAI, (pCreature->AI()))->Start(true, false, pPlayer->GetGUID());
     }
@@ -1032,7 +1032,7 @@ bool QuestAccept_npc_maxx_a_million_escort(Player* pPlayer, Creature* pCreature,
     {
         if (npc_maxx_a_million_escortAI* pEscortAI = CAST_AI(npc_maxx_a_million_escortAI, pCreature->AI()))
         {
-            pCreature->setFaction(113);
+            pCreature->SetFaction(113);
             pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
         }
     }
@@ -1196,7 +1196,7 @@ struct npc_boom_botAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* pWho)
     {
-        if (!pWho->isCharmedOwnedByPlayerOrPlayer())
+        if (!pWho->IsCharmedOwnedByPlayerOrPlayer())
             return;
 
         if (me->IsWithinDistInMap(pWho, 4.0f, false))
@@ -1464,7 +1464,7 @@ bool QuestAccept_npc_drijya(Player* pPlayer, Creature* pCreature, const Quest* p
     {
         if (npc_drijyaAI* pEscortAI = dynamic_cast<npc_drijyaAI*>(pCreature->AI()))
         {
-            pCreature->setFaction(113);
+            pCreature->SetFaction(113);
             pEscortAI->Start(true, false, pPlayer->GetGUID(), pQuest);
         }
     }
@@ -1578,7 +1578,7 @@ struct npc_scrapped_fel_reaverAI : public ScriptedAI
 		if (me->GetEntry() == NPC_SCRAPPER)
 			me->UpdateEntry(NPC_SCRAPPER_FEL);
 
-		me->setFaction(16);
+		me->SetFaction(16);
 
 		spellHit = false;
 		CanSummon = false;
@@ -1943,7 +1943,7 @@ struct npc_negatronAI : public ScriptedAI
 		me->MonsterYell(NEGATRON_TEXT, LANG_UNIVERSAL, 0);
 		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 		me->SetReactState(REACT_DEFENSIVE);
-		me->setFaction(35);
+		me->SetFaction(35);
 
 		yelled = false;
 		start_timer = 0;
@@ -1987,7 +1987,7 @@ struct npc_negatronAI : public ScriptedAI
 
 			if (yelled == true && start_timer <= diff)
 			{
-				me->setFaction(14);
+				me->SetFaction(14);
 				me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 				me->SetReactState(REACT_AGGRESSIVE);
 			}
@@ -2128,7 +2128,7 @@ struct npc_talbuk_sireAI : public ScriptedAI
 		me->RemoveAllAuras();
 		me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		me->SetStandState(UNIT_STAND_STATE_STAND);
-		me->setFaction(14);
+		me->SetFaction(14);
 		reset_timer = 0;
 		stun_timer = urand(8000, 10000);
 	}
@@ -2150,7 +2150,7 @@ struct npc_talbuk_sireAI : public ScriptedAI
 			
 			me->MonsterTextEmote(EMOTE_TALBUK_SIRE, 0, false);
 			me->CombatStop();
-			me->setFaction(35);
+			me->SetFaction(35);
 			DoCast(me, 20373);
 			me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 			me->SetStandState(UNIT_STAND_STATE_DEAD);
@@ -2203,7 +2203,7 @@ struct npc_talbuk_doeAI : public ScriptedAI
 		me->RemoveAllAuras();
 		me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		me->SetStandState(UNIT_STAND_STATE_STAND);
-		me->setFaction(15);
+		me->SetFaction(15);
 		reset_timer = 0;
 		gore_timer = urand(4000, 7000);
 	}
@@ -2225,7 +2225,7 @@ struct npc_talbuk_doeAI : public ScriptedAI
 
 			me->MonsterTextEmote(EMOTE_TALBUK_DOE, 0, false);
 			me->CombatStop();
-			me->setFaction(35);
+			me->SetFaction(35);
 			DoCast(me, 20373);
 			me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 			me->SetStandState(UNIT_STAND_STATE_DEAD);
@@ -2447,7 +2447,7 @@ struct npc_socretharAI : public ScriptedAI
 
 	void Reset()
 	{
-		me->setFaction(35);
+		me->SetFaction(35);
 
 		// Event
 		EventStarted = false;
@@ -2510,7 +2510,7 @@ struct npc_socretharAI : public ScriptedAI
 				case 20132:
 					if (!scryer_start)
 					{
-						me->setFaction(14);	
+						me->SetFaction(14);	
 						scryer_start = true;
 					}
 					break;
@@ -2578,7 +2578,7 @@ struct npc_socretharAI : public ScriptedAI
 					if (Creature* kaylaan = me->FindNearestCreature(NPC_KAYLAAN, 20.0f, true))
 					{
 						DoCast(kaylaan, SPELL_POWER_OF_THE_LEGION);
-						kaylaan->setFaction(14);
+						kaylaan->SetFaction(14);
 
 						if (Creature* adyen = me->FindNearestCreature(NPC_ADYEN_THE_LIGHTWARDEN, 50.0f, true))
 						{
@@ -2674,7 +2674,7 @@ struct npc_kaylaanAI : public ScriptedAI
 
 	void Reset()
 	{
-		me->setFaction(35);
+		me->SetFaction(35);
 		me->SetReactState(REACT_AGGRESSIVE);
 		me->SetStandState(UNIT_STAND_STATE_STAND);
 
@@ -3122,7 +3122,7 @@ CreatureAI* GetAI_adyen_lightwarden(Creature* pCreature)
 
 bool GossipHello_adyen_lightwarden(Player* player, Creature* creature)
 {
-	if (creature->isQuestGiver())
+	if (creature->IsQuestGiver())
 		player->PrepareQuestMenu(creature->GetGUID());
 
 	if (player->GetQuestStatus(QUEST_DEATHBLOW_TO_THE_LEGION) == QUEST_STATUS_INCOMPLETE)
@@ -3285,7 +3285,7 @@ struct npc_windtrader_maridAI : public ScriptedAI
 	void Reset()
 	{
 		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-		me->setFaction(1731);
+		me->SetFaction(1731);
 		me->SetReactState(REACT_DEFENSIVE);
 
 		PlayerGUID = 0;
@@ -3337,7 +3337,7 @@ struct npc_windtrader_maridAI : public ScriptedAI
 
 			if (marid_say_1 == true && !start_attack && attack_timer <= diff)
 			{
-				me->setFaction(14);
+				me->SetFaction(14);
 				me->SetReactState(REACT_AGGRESSIVE);
 				me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 				start_attack = true;
@@ -3356,7 +3356,7 @@ CreatureAI* GetAI_npc_windtrader_marid(Creature* pCreature)
 
 bool GossipHello_npc_windtrader_marid(Player* player, Creature* creature)
 {
-	if (creature->isQuestGiver())
+	if (creature->IsQuestGiver())
 		player->PrepareQuestMenu(creature->GetGUID());
 
 	if (player->GetQuestStatus(QUEST_TROUBLESOME_DISTRACTIONS) == QUEST_STATUS_INCOMPLETE)
@@ -3596,7 +3596,7 @@ struct npc_salhadaarAI : public ScriptedAI
 
 	void Reset()
 	{
-		me->setFaction(35);
+		me->SetFaction(35);
 
 		Count = 0;
 		summoncopy = false;
@@ -3619,7 +3619,7 @@ struct npc_salhadaarAI : public ScriptedAI
 			if (me->HasAura(40225))
 				me->RemoveAurasDueToSpell(40225);
 
-			me->setFaction(14);
+			me->SetFaction(14);
 			me->MonsterYell(YELL_SALH_AGGRO, LANG_UNIVERSAL, 0);
 		}
 	}
@@ -4047,7 +4047,7 @@ CreatureAI* GetAI_npc_captain_saeed(Creature* pCreature)
 
 bool GossipHello_npc_captain_saeed(Player* player, Creature* creature)
 {
-	if (creature->isQuestGiver())
+	if (creature->IsQuestGiver())
 		player->PrepareQuestMenu(creature->GetGUID());
 
 	if (creature->FindNearestCreature(61028, 10.0f, true))
@@ -4122,7 +4122,7 @@ struct npc_dimensius_devourerAI : public ScriptedAI
 	void Reset()
 	{
 		me->SetReactState(REACT_AGGRESSIVE);
-		me->setFaction(35);
+		me->SetFaction(35);
 
 		summon_spawns_timer = 20000;
 		shadow_spiral_timer = 11000;
@@ -4160,7 +4160,7 @@ struct npc_dimensius_devourerAI : public ScriptedAI
 		{
 			if (start_combat_timer <= diff && !start_combat)
 			{
-				me->setFaction(14);
+				me->SetFaction(14);
 				me->MonsterTextEmote(DIMENSIUS_LAUGH_EMOTE, 0, false);
 				me->MonsterYell(DIMENSIUS_YELL, LANG_UNIVERSAL, 0);
 				start_combat = true;
@@ -4411,11 +4411,11 @@ struct npc_reflection_of_ya_sixAI : public ScriptedAI
 			return NULL;
 
 		Unit* target = owner->getAttackerForHelper();
-		if (target && !target->isCharmedOwnedByPlayerOrPlayer())
+		if (target && !target->IsCharmedOwnedByPlayerOrPlayer())
 			return target;
 
 		target = me->getAttackerForHelper();
-		if (target && !target->isCharmedOwnedByPlayerOrPlayer())
+		if (target && !target->IsCharmedOwnedByPlayerOrPlayer())
 			return target;
 
 		return NULL;
@@ -4432,7 +4432,7 @@ struct npc_reflection_of_ya_sixAI : public ScriptedAI
 		{
 			doSpawnText = false;
 			me->MonsterSay(YA_SIX_SPAWN_TEXT, LANG_UNIVERSAL, 0);
-			me->setFaction(1797);
+			me->SetFaction(1797);
 		}
 
 		if (doSenseArconusText && me->GetDistance(3908.9350f, 2087.8901f, 156.0805f) < 8.0f)

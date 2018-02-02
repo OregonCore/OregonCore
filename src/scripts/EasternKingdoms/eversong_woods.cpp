@@ -95,7 +95,7 @@ struct npc_prospector_anvilwardAI : public npc_escortAI
             DoScriptText(SAY_ANVIL2, me, pPlayer);
             break;
         case 6:
-            me->setFaction(24);
+            me->SetFaction(24);
             break;
         }
     }
@@ -227,7 +227,7 @@ struct npc_secondTrialAI : public ScriptedAI
         summonerGuid = 0;
 
         me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_KNEEL);
-        me->setFaction(FACTION_FRIENDLY);
+        me->SetFaction(FACTION_FRIENDLY);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         spellFlashLight = false;
@@ -269,7 +269,7 @@ struct npc_secondTrialAI : public ScriptedAI
             if (timer <= diff)
             {
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_STAND);
-                me->setFaction(FACTION_HOSTILE);
+                me->SetFaction(FACTION_HOSTILE);
                 questPhase = 0;
 
                 if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))

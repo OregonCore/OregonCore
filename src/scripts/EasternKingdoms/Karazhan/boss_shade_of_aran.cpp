@@ -493,7 +493,7 @@ struct boss_aranAI : public ScriptedAI
                 if (Blizzard)
                 {
                     Blizzard->SetInCombatWithZone();
-                    Blizzard->setFaction(me->getFaction());
+                    Blizzard->SetFaction(me->GetFaction());
                     me->CastSpell(Blizzard, SPELL_SUMMON_BLIZZ, false);
                     Blizzard->CastSpell(Blizzard, SPELL_CIRCULAR_BLIZZARD, false);
                     Blizzard->GetMotionMaster()->MovePath(110110101, false);
@@ -528,7 +528,7 @@ struct boss_aranAI : public ScriptedAI
                 DoStartNoMovement(pTarget);
                 ElementalOne->SetInCombatWithZone();
                 ElementalOne->CombatStart(pTarget);
-                ElementalOne->setFaction(me->getFaction());
+                ElementalOne->SetFaction(me->GetFaction());
                 ElementalOne->SetRooted(true);
                 ElementalOne->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                 ElementalOne->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
@@ -543,7 +543,7 @@ struct boss_aranAI : public ScriptedAI
                 DoStartNoMovement(pTarget);
                 ElementalTwo->SetInCombatWithZone();
                 ElementalTwo->CombatStart(pTarget);
-                ElementalTwo->setFaction(me->getFaction());
+                ElementalTwo->SetFaction(me->GetFaction());
                 ElementalTwo->SetRooted(true);
                 ElementalTwo->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                 ElementalTwo->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
@@ -558,7 +558,7 @@ struct boss_aranAI : public ScriptedAI
                 DoStartNoMovement(pTarget);
                 ElementalThree->SetInCombatWithZone();
                 ElementalThree->CombatStart(pTarget);
-                ElementalThree->setFaction(me->getFaction());
+                ElementalThree->SetFaction(me->GetFaction());
                 ElementalThree->SetRooted(true);
                 ElementalThree->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                 ElementalThree->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
@@ -573,7 +573,7 @@ struct boss_aranAI : public ScriptedAI
                 DoStartNoMovement(pTarget);
                 ElementalFour->SetInCombatWithZone();
                 ElementalFour->CombatStart(pTarget);
-                ElementalFour->setFaction(me->getFaction());
+                ElementalFour->SetFaction(me->GetFaction());
                 ElementalFour->SetRooted(true);
                 ElementalFour->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                 ElementalFour->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);

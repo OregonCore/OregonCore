@@ -64,7 +64,7 @@ struct boss_jandicebarovAI : public ScriptedAI
         if (Invisible && Invisible_Timer <= diff)
         {
             //Become visible again
-            me->setFaction(14);
+            me->SetFaction(14);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetDisplayId(11073);     //Jandice Model
             Invisible = false;
@@ -97,7 +97,7 @@ struct boss_jandicebarovAI : public ScriptedAI
 
             //Inturrupt any spell casting
             me->InterruptNonMeleeSpells(false);
-            me->setFaction(35);
+            me->SetFaction(35);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetDisplayId(11686);  // Invisible Model
             DoModifyThreatPercent(me->GetVictim(), -99);

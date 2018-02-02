@@ -228,7 +228,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
     void Reset()
     {
         if (!Tapped)
-            me->setFaction(FACTION_DEFAULT);
+            me->SetFaction(FACTION_DEFAULT);
 
         FlyTimer = 10000;
         me->SetLevitate(false);
@@ -247,7 +247,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
             Tapped = true;
             PlayerGUID = caster->GetGUID();
 
-            me->setFaction(FACTION_FRIENDLY);
+            me->SetFaction(FACTION_FRIENDLY);
             DoCast(caster, SPELL_FORCE_OF_NELTHARAKU, true);
 
             Unit* Dragonmaw = me->FindNearestCreature(CREATURE_DRAGONMAW_SUBJUGATOR, 50);
@@ -440,7 +440,7 @@ CreatureAI* GetAI_mob_dragonmaw_peon(Creature* pCreature)
 
 bool GossipHello_npc_drake_dealer_hurlunk(Player* player, Creature* pCreature)
 {
-    if (pCreature->isVendor() && player->GetReputationRank(1015) == REP_EXALTED)
+    if (pCreature->IsVendor() && player->GetReputationRank(1015) == REP_EXALTED)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
@@ -572,7 +572,7 @@ bool GossipSelect_npc_murkblood_overseer(Player* player, Creature* pCreature, ui
 
 bool GossipHello_npc_neltharaku(Player* player, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(10814) == QUEST_STATUS_INCOMPLETE)
@@ -657,9 +657,9 @@ CreatureAI* GetAI_npc_oronok_tornheart(Creature* pCreature)
 
 bool GossipHello_npc_oronok_tornheart(Player* player, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
-    if (pCreature->isVendor())
+    if (pCreature->IsVendor())
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     if (player->GetQuestStatus(10519) == QUEST_STATUS_INCOMPLETE)
@@ -1119,7 +1119,7 @@ struct npc_earthmender_wildaAI : public npc_escortAI
 
     void Reset()
     {
-        me->setFaction(1726);
+        me->SetFaction(1726);
         Completed = false;
     }
 
@@ -1287,7 +1287,7 @@ bool QuestAccept_npc_earthmender_wilda(Player* player, Creature* creature, Quest
 {
     if (quest->GetQuestId() == QUEST_ESCAPE_FROM_COILSKAR_CISTERN)
     {
-        creature->setFaction(113);
+        creature->SetFaction(113);
         if (npc_earthmender_wildaAI* pEscortAI = CAST_AI(npc_earthmender_wildaAI, creature->AI()))
             pEscortAI->Start(false, false, player->GetGUID(), quest);
     }
@@ -1908,7 +1908,7 @@ struct npc_enraged_spiritAI : public ScriptedAI
             totemOspirits = me->FindNearestCreature(ENTRY_TOTEM_OF_SPIRITS, RADIUS_TOTEM_OF_SPIRITS);
             if (totemOspirits)
             {
-                Summoned->setFaction(ENRAGED_SOUL_FRIENDLY);
+                Summoned->SetFaction(ENRAGED_SOUL_FRIENDLY);
                 Summoned->GetMotionMaster()->MovePoint(0, totemOspirits->GetPositionX(), totemOspirits->GetPositionY(), Summoned->GetPositionZ());
 
                 Player* Owner = (Player*)totemOspirits->GetOwner();
@@ -2023,7 +2023,7 @@ struct npc_azalothAI : public ScriptedAI
 		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC); // passive
 		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
-		me->setFaction(1813);
+		me->SetFaction(1813);
 
 		cleaveTimer = 6000;
 		crippleTimer = 1000;
@@ -2044,7 +2044,7 @@ struct npc_azalothAI : public ScriptedAI
 			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC); // passive
 			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);		
-			me->setFaction(954);
+			me->SetFaction(954);
 			free = true;
 
 			Unit* Warlock = me->FindNearestCreature(21503, 50);
@@ -2294,7 +2294,7 @@ struct npc_deathbringer_jovaanAI : public ScriptedAI
 
 	void Reset()
 	{		
-		me->setFaction(7);
+		me->SetFaction(7);
 		Image = true;
 		uiPlayerGUID = 0;
 		uiStepsTimer = 0;
@@ -2341,7 +2341,7 @@ struct npc_deathbringer_jovaanAI : public ScriptedAI
 			pInfernalTrap->UpdateObjectVisibility();
 			return 500;
 		case 3:
-			me->setFaction(35);
+			me->SetFaction(35);
 			me->SummonCreature(NPC_WARBRINGER, -3300.479f, 2927.177f, 173.894f, 2.5f, TEMPSUMMON_TIMED_DESPAWN, 60000);
 			return 1000;
 		case 4:
@@ -2845,7 +2845,7 @@ struct npc_karsius_the_ancient_watcherAI : public ScriptedAI
 			{
 				if (Combat_Timer <= diff)
 				{
-					me->setFaction(14);
+					me->SetFaction(14);
 					me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
 					if (Creature* teron = me->FindNearestCreature(21867, 100.0f, true))
@@ -3399,13 +3399,13 @@ struct npc_envoy_icariusAI : public ScriptedAI
 	{
         me->SetVisible(false);
 		me->GetMotionMaster()->MoveTargetedHome();
-		me->setFaction(14);
+		me->SetFaction(14);
 		me->SetReactState(REACT_DEFENSIVE);
 		me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
 		if (Creature* zarath = me->FindNearestCreature(21410, 30.0f, true))
 		{
-			zarath->setFaction(35);
+			zarath->SetFaction(35);
             me->SetVisible(false);
 			zarath->GetMotionMaster()->MoveTargetedHome();
 		}
@@ -3444,7 +3444,7 @@ struct npc_envoy_icariusAI : public ScriptedAI
 
 					if (Creature* zarath = me->FindNearestCreature(21410, 30.0f, true))
 					{
-						zarath->setFaction(14);
+						zarath->SetFaction(14);
 						zarath->SetVisible(true);
 						zarath->GetMotionMaster()->MovePoint(0, -4062.35f, 1517.71f, 91.783f);
 					}
@@ -3861,7 +3861,7 @@ struct npc_oronokAI : public ScriptedAI
 					if (Creature* cyrukh = me->FindNearestCreature(NPC_CYRUKH, 100.0f, true))
 					{
 						cyrukh->MonsterYell(CYRUKH_2, LANG_UNIVERSAL, 0);
-						cyrukh->setFaction(14);
+						cyrukh->SetFaction(14);
 						cyrukh->SetReactState(REACT_AGGRESSIVE);
 						cyrukh->GetMotionMaster()->MovePoint(0, -3663.570f, 1831.090f, 60.117f);
 						CyrukhYell = true;

@@ -77,7 +77,7 @@ CreatureAI* GetAI_npc_ragged_john(Creature* pCreature)
 
 bool GossipHello_npc_ragged_john(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(4224) == QUEST_STATUS_INCOMPLETE)

@@ -454,7 +454,7 @@ struct mob_giant_infernalAI : public hyjal_trashAI
             if (trigger)
             {
                 trigger->SetVisible(false);
-                trigger->setFaction(me->getFaction());
+                trigger->SetFaction(me->GetFaction());
                 trigger->SetLevitate(true);
                 trigger->CastSpell(me, SPELL_METEOR, true);
             }

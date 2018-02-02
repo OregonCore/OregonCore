@@ -180,14 +180,14 @@ bool GossipSelect_npc_deserter_agitator(Player* pPlayer, Creature* pCreature, ui
         {
         case 0:
             pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-            pCreature->setFaction(14);
+            pCreature->SetFaction(14);
             pCreature->AI()->AttackStart(pPlayer);
             break;
         case 1:
             pPlayer->KilledMonsterCredit(NPC_THERAMORE_DESERTER, 0);
             pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             pCreature->SetSpeed(MOVE_RUN, pCreature->GetSpeedRate(MOVE_RUN), true);
-            pCreature->setFaction(35);
+            pCreature->SetFaction(35);
             pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
             pCreature->SetReactState(REACT_PASSIVE);
             pCreature->GetMotionMaster()->MovePoint(1, DeserterDisappearPos);
@@ -229,7 +229,7 @@ struct npc_gavis_greyshieldAI : public ScriptedAI
 
 	void Reset()
 	{
-		me->setFaction(54);
+		me->SetFaction(54);
 		phase = PHASE_GAVIS_ATTACK;
 		phaseTimer = 0;
 		phaseCounter = 0;
@@ -271,7 +271,7 @@ struct npc_gavis_greyshieldAI : public ScriptedAI
 					{
 						case 0:
 							me->CombatStop(true);
-							me->setFaction(35);
+							me->SetFaction(35);
 							DoScriptText(SAY_GAVIS1, me);
 							phaseTimer = 5000;
 							break;
@@ -405,7 +405,7 @@ bool GossipSelect_npc_theramore_guard(Player* pPlayer, Creature* pCreature, uint
 
 bool GossipHello_npc_lady_jaina_proudmoore(Player* player, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(558) == QUEST_STATUS_INCOMPLETE)
@@ -432,10 +432,10 @@ bool GossipSelect_npc_lady_jaina_proudmoore(Player* player, Creature* pCreature,
 
 bool GossipHello_npc_nat_pagle(Player* player, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         player->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (pCreature->isVendor() && player->GetQuestRewardStatus(8227))
+    if (pCreature->IsVendor() && player->GetQuestRewardStatus(8227))
     {
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
         player->SEND_GOSSIP_MENU(7640, pCreature->GetGUID());
@@ -520,7 +520,7 @@ struct npc_morokkAI : public npc_escortAI
                 if (Player* pPlayer = GetPlayerForEscort())
                     pPlayer->GroupEventHappens(QUEST_CHALLENGE_MOROKK, me);
 
-                me->setFaction(FACTION_MOR_RUNNING);
+                me->SetFaction(FACTION_MOR_RUNNING);
                 SetRun(true);
 
                 m_bIsSuccess = true;
@@ -541,7 +541,7 @@ struct npc_morokkAI : public npc_escortAI
                 {
                     m_bIsSuccess = false;
                     DoScriptText(SAY_MOR_CHALLENGE, me, pPlayer);
-                    me->setFaction(FACTION_MOR_HOSTILE);
+                    me->SetFaction(FACTION_MOR_HOSTILE);
                     AttackStart(pPlayer);
                 }
 
@@ -682,7 +682,7 @@ struct npc_ogronAI : public npc_escortAI
     {
         lCreatureList.push_back(pSummoned);
 
-        pSummoned->setFaction(FACTION_GENERIC_FRIENDLY);
+        pSummoned->SetFaction(FACTION_GENERIC_FRIENDLY);
 
         if (pSummoned->GetEntry() == NPC_CALDWELL)
             pSummoned->GetMotionMaster()->MovePoint(0, m_afMoveTo[0], m_afMoveTo[1], m_afMoveTo[2]);
@@ -708,7 +708,7 @@ struct npc_ogronAI : public npc_escortAI
 
                 if ((*itr)->IsAlive())
                 {
-                    (*itr)->setFaction(FACTION_THER_HOSTILE);
+                    (*itr)->SetFaction(FACTION_THER_HOSTILE);
                     (*itr)->AI()->AttackStart(me);
                 }
             }
@@ -851,7 +851,7 @@ bool QuestAccept_npc_ogron(Player* pPlayer, Creature* pCreature, const Quest* pQ
 {
     if (pQuest->GetQuestId() == QUEST_QUESTIONING)
     {
-        pCreature->setFaction(FACTION_ESCORT_N_FRIEND_PASSIVE);
+        pCreature->SetFaction(FACTION_ESCORT_N_FRIEND_PASSIVE);
         DoScriptText(SAY_OGR_START, pCreature, pPlayer);
 
         if (npc_ogronAI* pEscortAI = CAST_AI(npc_ogronAI, (pCreature->AI())))
@@ -960,7 +960,7 @@ struct npc_private_hendelAI : public ScriptedAI
         if (!pPlayer)
             return;
 
-        me->setFaction(FACTION_HOSTILE);
+        me->SetFaction(FACTION_HOSTILE);
         me->AI()->AttackStart(pPlayer);
 
         float x, y, z;
@@ -981,7 +981,7 @@ struct npc_private_hendelAI : public ScriptedAI
             {
                 if ((*itr)->IsAlive())
                 {
-                    (*itr)->setFaction(FACTION_HOSTILE);
+                    (*itr)->SetFaction(FACTION_HOSTILE);
                     (*itr)->AI()->AttackStart(pPlayer);
                 }
             }
@@ -1293,7 +1293,7 @@ bool QuestAccept_npc_stinky(Player* pPlayer, Creature* pCreature, Quest const* q
     {
         if (npc_stinkyAI* pEscortAI = CAST_AI(npc_stinkyAI, pCreature->AI()))
         {
-            pCreature->setFaction(FACTION_ESCORT_N_NEUTRAL_ACTIVE);
+            pCreature->SetFaction(FACTION_ESCORT_N_NEUTRAL_ACTIVE);
             pCreature->SetStandState(UNIT_STAND_STATE_STAND);
             DoScriptText(SAY_QUEST_ACCEPTED, pCreature);
             pEscortAI->Start(false, false, pPlayer->GetGUID());

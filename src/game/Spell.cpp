@@ -2983,8 +2983,8 @@ void Spell::finish(bool ok)
 
         // Spell has failed so the combat is no longer being initiated
         // Do this only if the unit is initiating combat
-        if (m_caster->isInitiatingCombat())
-            m_caster->setInitiatingCombat(false);
+        if (m_caster->IsInitiatingCombat())
+            m_caster->SetInitiatingCombat(false);
 
         return;
     }
@@ -3828,7 +3828,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 return SPELL_FAILED_TARGET_AURASTATE;
 
             // Not allow casting on flying player
-            if (target->isInFlight())
+            if (target->IsInFlight())
                 return SPELL_FAILED_BAD_TARGETS;
 
             // Must be behind the target.
@@ -3955,7 +3955,7 @@ SpellCastResult Spell::CheckCast(bool strict)
     if (m_caster->IsMounted() && m_caster->GetTypeId() == TYPEID_PLAYER && !m_IsTriggeredSpell &&
         !IsPassiveSpell(m_spellInfo->Id) && !(m_spellInfo->Attributes & SPELL_ATTR0_CASTABLE_WHILE_MOUNTED))
     {
-        if (m_caster->isInFlight())
+        if (m_caster->IsInFlight())
             return SPELL_FAILED_NOT_FLYING;
         else
             return SPELL_FAILED_NOT_MOUNTED;
@@ -4378,11 +4378,11 @@ SpellCastResult Spell::CheckCast(bool strict)
                     return SPELL_FAILED_ALREADY_HAVE_SUMMON;
 
                 // Do not revive dismissed pets, they are not dead
-                if (m_caster->isPlayer() && m_caster->ToPlayer()->isPetDismissed())
+                if (m_caster->IsPlayer() && m_caster->ToPlayer()->isPetDismissed())
                     return SPELL_FAILED_TARGET_NOT_DEAD;
 
                 // Attempting to revive a non existing pet?
-                if (m_caster->isPlayer() && !m_caster->ToPlayer()->doesOwnPet())
+                if (m_caster->IsPlayer() && !m_caster->ToPlayer()->doesOwnPet())
                     return SPELL_FAILED_NO_PET;
 
                 break;
@@ -4419,7 +4419,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         case SPELL_EFFECT_SUMMON_PET:
             {
                 // Check these things only for player hunters
-                if (m_caster->isPlayer() && m_caster->getClass() == CLASS_HUNTER)
+                if (m_caster->IsPlayer() && m_caster->getClass() == CLASS_HUNTER)
                 {
                     // Player should not be able to call the pet if he doesn't own one...
                     if (!m_caster->ToPlayer()->doesOwnPet())
@@ -4431,7 +4431,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 }
                 if (m_caster->GetPetGUID())  // let warlock do a replacement summon
                 {
-                    if (m_caster->isPlayer())
+                    if (m_caster->IsPlayer())
                     {
                         if (strict)          // starting cast, trigger pet stun (cast by pet so it doesn't attack player)
                             if (Pet* pet = m_caster->ToPlayer()->GetPet())

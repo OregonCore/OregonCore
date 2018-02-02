@@ -51,7 +51,7 @@ EndContentData */
 
 bool GossipHello_npc_archmage_malin(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(11223) == QUEST_STATUS_COMPLETE && !pPlayer->GetQuestRewardStatus(11223))
@@ -85,7 +85,7 @@ struct npc_bartlebyAI : public ScriptedAI
 
     void Reset()
     {
-        me->setFaction(11);
+        me->SetFaction(11);
         me->setEmoteState(7);
 
         PlayerGUID = 0;
@@ -93,7 +93,7 @@ struct npc_bartlebyAI : public ScriptedAI
 
     void JustDied(Unit*)
     {
-        me->setFaction(11);
+        me->SetFaction(11);
     }
 
     void DamageTaken(Unit* done_by, uint32& damage)
@@ -118,7 +118,7 @@ bool QuestAccept_npc_bartleby(Player* pPlayer, Creature* pCreature, Quest const*
 {
     if (pQuest->GetQuestId() == 1640)
     {
-        pCreature->setFaction(168);
+        pCreature->SetFaction(168);
         ((npc_bartlebyAI*)pCreature->AI())->PlayerGUID = pPlayer->GetGUID();
         pCreature->AI()->AttackStart(pPlayer);
     }
@@ -140,7 +140,7 @@ struct npc_dashel_stonefistAI : public ScriptedAI
 
     void Reset()
     {
-        me->setFaction(11);
+        me->SetFaction(11);
         me->setEmoteState(7);
     }
 
@@ -165,7 +165,7 @@ bool QuestAccept_npc_dashel_stonefist(Player* pPlayer, Creature* pCreature, Ques
 {
     if (pQuest->GetQuestId() == 1447)
     {
-        pCreature->setFaction(168);
+        pCreature->SetFaction(168);
         CAST_AI(npc_dashel_stonefistAI, pCreature->AI())->AttackStart(pPlayer);
     }
     return true;
@@ -215,7 +215,7 @@ CreatureAI* GetAI_npc_general_marcus_jonathan(Creature* pCreature)
 
 bool GossipHello_npc_lady_katrana_prestor(Player* pPlayer, Creature* pCreature)
 {
-    if (pCreature->isQuestGiver())
+    if (pCreature->IsQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(4185) == QUEST_STATUS_INCOMPLETE)
@@ -542,8 +542,8 @@ struct npc_lord_gregor_lescovarAI : public npc_escortAI
                     if (Creature* pTyrion = me->FindNearestCreature(NPC_TYRION, 20.0f, true))
                         DoScriptText(SAY_TYRION_2, pTyrion);
                     if (Creature* pMarzon = Unit::GetCreature(*me, MarzonGUID))
-                        pMarzon->setFaction(14);
-                    me->setFaction(14);
+                        pMarzon->SetFaction(14);
+                    me->SetFaction(14);
                     uiTimer = 0;
                     uiPhase = 0;
                     break;

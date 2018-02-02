@@ -77,7 +77,7 @@ struct boss_archaedasAI : public ScriptedAI
 
         if (pInstance)
             pInstance->SetData (DATA_MINIONS, NOT_STARTED);    // respawn any dead minions
-        me->setFaction(35);
+        me->SetFaction(35);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		me->SetRooted(true);
 
@@ -96,7 +96,7 @@ struct boss_archaedasAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        me->setFaction(14);
+        me->SetFaction(14);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		me->SetRooted(false);
     }
@@ -235,7 +235,7 @@ struct mob_archaedas_minionsAI : public ScriptedAI
         wakingUp = false;
         amIAwake = false;
 
-        me->setFaction(35);
+        me->SetFaction(35);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		me->SetRooted(true);
         me->RemoveAllAuras();
@@ -243,7 +243,7 @@ struct mob_archaedas_minionsAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        me->setFaction(14);
+        me->SetFaction(14);
         me->RemoveAllAuras();
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		me->SetRooted(false);
@@ -378,7 +378,7 @@ struct mob_stonekeepersAI : public ScriptedAI
 
     void Reset()
     {
-        me->setFaction(35);
+        me->SetFaction(35);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		me->SetRooted(true);
         me->RemoveAllAuras();
@@ -386,7 +386,7 @@ struct mob_stonekeepersAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        me->setFaction(14);
+        me->SetFaction(14);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		me->SetRooted(false);
     }

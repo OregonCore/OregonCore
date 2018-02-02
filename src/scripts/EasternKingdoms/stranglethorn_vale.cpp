@@ -59,7 +59,7 @@ struct mob_yennikuAI : public ScriptedAI
                 me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STUN);
                 me->CombatStop();                   //stop combat
                 me->DeleteThreatList();             //unsure of this
-                me->setFaction(83);                 //horde generic
+                me->SetFaction(83);                 //horde generic
 
                 bReset = true;
                 Reset_Timer = 60000;
@@ -78,7 +78,7 @@ struct mob_yennikuAI : public ScriptedAI
             {
                 EnterEvadeMode();
                 bReset = false;
-                me->setFaction(28);                     //troll, bloodscalp
+                me->SetFaction(28);                     //troll, bloodscalp
                 return;
             }
             else Reset_Timer -= diff;

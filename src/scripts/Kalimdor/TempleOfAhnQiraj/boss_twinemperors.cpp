@@ -351,7 +351,7 @@ struct boss_twinemperorsAI : public ScriptedAI
                 if (c && c->isDead())
                 {
                     c->Respawn();
-                    c->setFaction(7);
+                    c->SetFaction(7);
                     c->RemoveAllAuras();
                 }
                 if (c->IsWithinDistInMap(me, ABUSE_BUG_RANGE))
@@ -441,7 +441,7 @@ struct boss_veknilashAI : public boss_twinemperorsAI
 
     void CastSpellOnBug(Creature* pTarget)
     {
-        pTarget->setFaction(14);
+        pTarget->SetFaction(14);
         ((CreatureAI*)pTarget->AI())->AttackStart(me->getThreatManager().getHostileTarget());
         SpellEntry* spell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_MUTATE_BUG);
         for (int i = 0; i < 3; i++)
@@ -529,7 +529,7 @@ struct boss_veklorAI : public boss_twinemperorsAI
 
     void CastSpellOnBug(Creature* pTarget)
     {
-        pTarget->setFaction(14);
+        pTarget->SetFaction(14);
         SpellEntry* spell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_EXPLODEBUG);
         for (int i = 0; i < 3; i++)
         {

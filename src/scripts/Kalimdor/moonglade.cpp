@@ -1230,7 +1230,7 @@ struct npc_eranikusAI : public ScriptedAI
                         }
                         CanAttack = false;
                         me->CombatStop(true);
-                        me->setFaction(35);
+                        me->SetFaction(35);
                         me->DeleteThreatList();
                         me->RemoveAllAuras();
                         me->SetReactState(REACT_PASSIVE);

@@ -212,7 +212,7 @@ bool QuestAccept_npc_muglash(Player* pPlayer, Creature* pCreature, const Quest* 
         if (npc_muglashAI* pEscortAI = dynamic_cast<npc_muglashAI*>(pCreature->AI()))
         {
             DoScriptText(SAY_MUG_START1, pCreature);
-            pCreature->setFaction(FACTION_ESCORT_H_PASSIVE);
+            pCreature->SetFaction(FACTION_ESCORT_H_PASSIVE);
 
             pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
         }
@@ -349,7 +349,7 @@ bool QuestAccept_npc_torek(Player* pPlayer, Creature* pCreature, Quest const* qu
     {
         //@todo find companions, make them follow Torek, at any time (possibly done by mangos/database in future?)
         DoScriptText(SAY_READY, pCreature, pPlayer);
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
 
         if (npc_escortAI* pEscortAI = CAST_AI(npc_torekAI, pCreature->AI()))
             pEscortAI->Start(true, true, pPlayer->GetGUID());
@@ -436,7 +436,7 @@ bool QuestAccept_npc_ruul_snowhoof(Player* pPlayer, Creature* pCreature, Quest c
 {
     if (quest->GetQuestId() == QUEST_FREEDOM_TO_RUUL)
     {
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
 
         if (npc_escortAI* pEscortAI = CAST_AI(npc_ruul_snowhoofAI, (pCreature->AI())))
             pEscortAI->Start(true, false, pPlayer->GetGUID());
@@ -605,7 +605,7 @@ bool QuestAccept_npc_feero(Player* player, Creature* creature, Quest const* ques
 			if (npc_escortAI* pEscortAI = CAST_AI(npc_feeroAI, creature->AI()))
 				pEscortAI->Start(true, false, player->GetGUID());
 
-			creature->setFaction(774);
+			creature->SetFaction(774);
 			creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 		}
 

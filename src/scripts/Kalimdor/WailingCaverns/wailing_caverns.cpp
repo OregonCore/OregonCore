@@ -352,7 +352,7 @@ bool GossipSelect_npc_disciple_of_naralex(Player* pPlayer, Creature* pCreature, 
 
         DoScriptText(SAY_MAKE_PREPARATIONS, pCreature);
 
-        pCreature->setFaction(250);
+        pCreature->SetFaction(250);
         pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
 
         CAST_AI(npc_escortAI, (pCreature->AI()))->Start(false, false, pPlayer->GetGUID());

@@ -515,7 +515,7 @@ class CannibalizeObjectCheck
         CannibalizeObjectCheck(Unit* funit, float range) : i_funit(funit), i_range(range) {}
         bool operator()(Player* u)
         {
-            if (i_funit->IsFriendlyTo(u) || u->IsAlive() || u->isInFlight())
+            if (i_funit->IsFriendlyTo(u) || u->IsAlive() || u->IsInFlight())
                 return false;
 
             return i_funit->IsWithinDistInMap(u, i_range);
@@ -523,7 +523,7 @@ class CannibalizeObjectCheck
         bool operator()(Corpse* u);
         bool operator()(Creature* u)
         {
-            if (i_funit->IsFriendlyTo(u) || u->IsAlive() || u->isInFlight() ||
+            if (i_funit->IsFriendlyTo(u) || u->IsAlive() || u->IsInFlight() ||
                 (u->GetCreatureTypeMask() & CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD) == 0)
                 return false;
 
@@ -699,7 +699,7 @@ class FriendlyCCedInRange
         bool operator()(Unit* u)
         {
             if (u->IsAlive() && u->IsInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
-                (u->isFeared() || u->isCharmed() || u->isFrozen() || u->HasUnitState(UNIT_STATE_STUNNED) || u->HasUnitState(UNIT_STATE_CONFUSED)))
+                (u->IsFeared() || u->isCharmed() || u->isFrozen() || u->HasUnitState(UNIT_STATE_STUNNED) || u->HasUnitState(UNIT_STATE_CONFUSED)))
                 return true;
             return false;
         }
@@ -1046,7 +1046,7 @@ class NearestAssistCreatureInCreatureRangeCheck
 
         bool operator()(Creature* u)
         {
-            if (u->getFaction() == i_obj->getFaction() && !u->IsInCombat() && !u->GetCharmerOrOwnerGUID() && u->IsHostileTo(i_enemy) && u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_obj->IsWithinLOSInMap(u))
+            if (u->GetFaction() == i_obj->GetFaction() && !u->IsInCombat() && !u->GetCharmerOrOwnerGUID() && u->IsHostileTo(i_enemy) && u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_obj->IsWithinLOSInMap(u))
             {
                 i_range = i_obj->GetDistance(u);         // use found unit range as new range limit for next check
                 return true;

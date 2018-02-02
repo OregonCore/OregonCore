@@ -122,7 +122,7 @@ bool QuestAccept_npc_professor_phizzlethorpe(Player* pPlayer, Creature* pCreatur
         if (npc_escortAI* pEscortAI = CAST_AI(npc_professor_phizzlethorpeAI, (pCreature->AI())))
             pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
 
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
     }
     return true;
 }

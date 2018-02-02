@@ -67,7 +67,7 @@ bool ChatHandler::HandleStartCommand(const char* /*args*/)
 {
     Player* chr = m_session->GetPlayer();
 
-    if (chr->isInFlight())
+    if (chr->IsInFlight())
     {
         SendSysMessage(LANG_YOU_IN_FLIGHT);
         SetSentErrorMessage(true);
@@ -123,7 +123,7 @@ bool ChatHandler::HandleDismountCommand(const char* /*args*/)
         return false;
     }
 
-    if (m_session->GetPlayer()->isInFlight())
+    if (m_session->GetPlayer()->IsInFlight())
     {
         SendSysMessage(LANG_YOU_IN_FLIGHT);
         SetSentErrorMessage(true);

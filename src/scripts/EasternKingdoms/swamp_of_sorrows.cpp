@@ -118,7 +118,7 @@ bool QuestAccept_npc_galen_goodward(Player* pPlayer, Creature* pCreature, const 
 {
     if (pQuest->GetQuestId() == QUEST_GALENS_ESCAPE)
     {
-        pCreature->setFaction(113);
+        pCreature->SetFaction(113);
         DoScriptText(GILAN_SAY_START_1, pCreature);
         pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
 

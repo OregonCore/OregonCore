@@ -389,7 +389,7 @@ struct boss_alarAI : public ScriptedAI
                         Summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         Summoned->SetObjectScale(Summoned->GetObjectScale() * 2.5f);
                         Summoned->SetDisplayId(11686);
-                        Summoned->setFaction(me->getFaction());
+                        Summoned->SetFaction(me->GetFaction());
                         Summoned->SetLevel(me->getLevel());
                         Summoned->CastSpell(Summoned, SPELL_FLAME_PATCH, false);
                     }
