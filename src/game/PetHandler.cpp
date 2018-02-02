@@ -338,6 +338,31 @@ void WorldSession::HandlePetActionHelper(Unit* pet, uint64 guid1, uint16 spellid
         sLog.outError("WORLD: unknown PET flag Action %i and spellid %i.", flag, spellid);
     }
 }
+void WorldSession::HandlePetStopAttack(WorldPacket& recv_data)
+{
+    DEBUG_LOG("WORLD: Received CMSG_PET_STOP_ATTACK");
+
+    ObjectGuid petGuid;
+    recv_data >> petGuid;
+
+    Unit* pet = ObjectAccessor::GetUnit(*_player, petGuid);    // pet or controlled creature/player
+    if (!pet)
+    {
+        sLog.outError("HandlePetStopAttack: %s doesn't exist.", petGuid.GetString().c_str());
+        return;
+    }
+
+    if (GetPlayer()->GetGUID() != pet->GetCharmerOrOwnerGUID())
+    {
+        sLog.outError("HandlePetStopAttack: %s isn't charm/pet of %s.", petGuid.GetString().c_str(), _player->GetGUIDLow());
+        return;
+    }
+
+    if (!pet->IsAlive())
+        return;
+
+    pet->AttackStop();
+}
 
 void WorldSession::HandlePetNameQuery(WorldPacket& recv_data)
 {
