@@ -77,7 +77,7 @@ WorldSocket::WorldSocket (void) :
     m_OutBuffer(0),
     m_OutBufferSize(65536),
     m_OutActive(false),
-    m_Seed(static_cast<uint32> (rand32()))
+    m_Seed(rand32())
 {
     reference_counting_policy().value (ACE_Event_Handler::Reference_Counting_Policy::ENABLED);
 }

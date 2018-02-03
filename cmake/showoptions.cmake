@@ -89,13 +89,6 @@ else()
   ShowOption("Build scripts w/PCH    :" "No")
 endif()
 
-if( USE_SFMT )
-  ShowOption("Use SFMT for RNG       :" "Yes")
-  add_definitions(-DUSE_SFMT_FOR_RNG)
-else()
-  ShowOption("Use SFMT for RNG       :" "No  (default)")
-endif()
-
 if( WITH_WARNINGS )
   ShowOption("Show all warnings      :" "Yes")
   add_definitions(-D__SHOW_STUPID_WARNINGS__)

@@ -7,7 +7,6 @@
  * in effect in addition to the GNU General Public License.
  * Copyright (c) 2006, 2007 by Mutsuo Saito, Makoto Matsumoto and Hiroshima University.
  * Copyright (c) 2008 by Agner Fog.
- * Copyright (c) 2010 Trinity Core
  * 
  *  BSD License:
  *  Redistribution and use in source and binary forms, with or without 
@@ -39,6 +38,7 @@
 #include <emmintrin.h>                 // Define SSE2 intrinsics
 #include "randomc.h"                   // Define integer types etc
 #include <time.h>
+#include <new>
 
 // Choose one of the possible Mersenne exponents.
 // Higher values give longer cycle length and use more memory:
@@ -122,7 +122,8 @@
 #define SFMT_PARITY 0x00000001, 0x00000000, 0x00000000, 0x5986f054  // Period certification vector
 #endif
 
-// Functions used by SFMTRand::RandomInitByArray
+// Functions used by SFMTRand::RandomInitByArray (UNUSED AND COMMENTED OUT)
+/*
 static uint32_t func1(uint32_t x) {
     return (x ^ (x >> 27)) * 1664525U;
 }
@@ -130,6 +131,7 @@ static uint32_t func1(uint32_t x) {
 static uint32_t func2(uint32_t x) {
     return (x ^ (x >> 27)) * 1566083941U;
 }
+*/
 
 // Subfunction for the sfmt algorithm
 static inline __m128i sfmt_recursion(__m128i const &a, __m128i const &b, 
@@ -147,10 +149,20 @@ __m128i const &c, __m128i const &d, __m128i const &mask) {
     return z2;
 }
 
+namespace boost {
+    template <typename T> class thread_specific_ptr;
+}
+
 // Class for SFMT generator
 class SFMTRand {                              // Encapsulate random number generator
+    friend class boost::thread_specific_ptr<SFMTRand>;
+
 public:
-    SFMTRand() { LastInterval = 0; RandomInit((int)(time(0))); } 
+    SFMTRand()
+    {
+        LastInterval = 0;
+        RandomInit((int)(time(0)));
+    }
 
     void RandomInit(int seed)                     // Re-seed
     {
@@ -160,7 +172,8 @@ public:
         uint32_t statesize = SFMT_N*4;      // Size of state vector
 
         // Fill state vector with random numbers from seed
-        ((uint32_t*)state)[0] = y;
+        uint32_t* s = (uint32_t*)&state;
+        s[0] = y;
         const uint32_t factor = 1812433253U;// Multiplication factor
 
         for (i = 1; i < statesize; i++) {
@@ -234,6 +247,47 @@ public:
         y = ((uint32_t*)state)[ix++];
         return y;
     }
+
+    void* operator new(size_t size, std::nothrow_t const&)
+    {
+        return _mm_malloc(size, 16);
+    }
+
+        void operator delete(void* ptr, std::nothrow_t const&)
+    {
+        _mm_free(ptr);
+    }
+
+    void* operator new(size_t size)
+    {
+        return _mm_malloc(size, 16);
+    }
+
+        void operator delete(void* ptr)
+    {
+        _mm_free(ptr);
+    }
+
+    void* operator new[](size_t size, std::nothrow_t const&)
+    {
+        return _mm_malloc(size, 16);
+    }
+
+        void operator delete[](void* ptr, std::nothrow_t const&)
+    {
+        _mm_free(ptr);
+    }
+
+        void* operator new[](size_t size)
+    {
+        return _mm_malloc(size, 16);
+    }
+
+        void operator delete[](void* ptr)
+    {
+        _mm_free(ptr);
+    }
+
 private:
     void Init2()                                   // Various initializations and period certification
     {
@@ -298,11 +352,11 @@ private:
         ix = 0;
     }
 
+    __m128i  mask;                                // AND mask
+    __m128i  state[SFMT_N];                       // State vector for SFMT generator
     uint32_t ix;                                  // Index into state array
     uint32_t LastInterval;                        // Last interval length for IRandom
     uint32_t RLimit;                              // Rejection limit used by IRandom
-    __m128i  mask;                                // AND mask
-    __m128i  state[SFMT_N];                       // State vector for SFMT generator
 };
 
 #endif // SFMT_H
