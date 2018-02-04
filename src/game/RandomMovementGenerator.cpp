@@ -109,6 +109,10 @@ RandomMovementGenerator<Creature>::_setRandomLocation(Creature& creature)
 
     Movement::MoveSplineInit init(creature);
     init.MoveTo(nx, ny, nz, true);
+
+    if (creature.canFly())
+        init.SetFly();
+
     if (creature.IsPet() && creature.GetOwner() && !creature.IsWithinDist(creature.GetOwner(), PET_FOLLOW_DIST + 2.5f))
         init.SetWalk(false);
     else
