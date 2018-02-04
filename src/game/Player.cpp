@@ -6837,47 +6837,25 @@ void Player::_ApplyWeaponDependentAuraDamageMod(Item* item, WeaponAttackType att
         default: return;
     }
 
-    UnitModifierPctType unitPctModType = MODIFIER_TYPE_PCT_END;
-    UnitModifierFlatType unitFlatModType = MODIFIER_TYPE_FLAT_END;
-
+    /*UnitModifierType unitModType = TOTAL_VALUE;
     switch (modifier->m_auraname)
     {
-        case SPELL_AURA_MOD_DAMAGE_DONE:         unitFlatModType = TOTAL_VALUE; break;
-        case SPELL_AURA_MOD_DAMAGE_PERCENT_DONE: unitPctModType = TOTAL_PCT;   break;
+        case SPELL_AURA_MOD_DAMAGE_DONE:         unitModType = TOTAL_VALUE; break;
+        case SPELL_AURA_MOD_DAMAGE_PERCENT_DONE: unitModType = TOTAL_PCT;   break;
         default: return;
     }
 
     if (item->IsFitToSpellRequirements(aura->GetSpellProto()))
     {
-        if (unitFlatModType != MODIFIER_TYPE_FLAT_END)
+        HandleStatModifier(unitMod, unitModType, float(aura->GetModifierValue()), apply);
+        if (unitModType == TOTAL_VALUE)
         {
-            HandleStatFlatModifier(unitMod, unitFlatModType, float(aura->GetModifierValue()), apply);
-            if (unitFlatModType == TOTAL_VALUE)
-            {
-                if (aura->GetAmount() > 0)
-                    ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS, aura->GetModifierValue(), apply);
-                else
-                    ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG, aura->GetModifierValue(), apply);
-            }
-        }
-        else if (unitPctModType != MODIFIER_TYPE_PCT_END) {
-            if (apply)
-                SetStatPctModifier(unitMod, unitPctModType, float(aura->GetModifierValue()));
+            if (aura->GetAmount() > 0)
+                ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS, aura->GetModifierValue(), apply);
             else
-            {
-                float amount = GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, SPELL_SCHOOL_MASK_NORMAL);
-                SetStatPctModifier(unitMod, BASE_PCT, amount);
-            }
-
-            if (unitPctModType == TOTAL_VALUE)
-            {
-                if (aura->GetAmount() > 0)
-                    ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS, aura->GetModifierValue(), apply);
-                else
-                    ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG, aura->GetModifierValue(), apply);
-            }
+                ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG, aura->GetModifierValue(), apply);
         }
-    }
+    }*/
 }
 
 void Player::ApplyItemEquipSpell(Item* item, bool apply, bool form_change)
