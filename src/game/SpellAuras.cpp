@@ -4875,8 +4875,7 @@ void Aura::HandleAuraModIncreaseEnergy(bool apply, bool /*Real*/)
 
 void Aura::HandleAuraModIncreaseEnergyPercent(bool apply, bool /*Real*/)
 {
-    Powers powerType = m_target->getPowerType();
-
+    Powers powerType = Powers(GetMiscValue());
     UnitMods unitMod = UnitMods(UNIT_MOD_POWER_START + powerType);
 
     m_target->HandleStatModifier(unitMod, TOTAL_PCT, float(GetModifierValue()), apply);
