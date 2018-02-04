@@ -5314,9 +5314,19 @@ void Aura::HandleModDamagePercentDone(bool apply, bool Real)
         // apply generic physical damage bonuses including wand case
         if (GetSpellProto()->EquippedItemClass == -1 || m_target->GetTypeId() != TYPEID_PLAYER)
         {
-            m_target->SetStatPctModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, float(GetModifierValue()));
-            m_target->SetStatPctModifier(UNIT_MOD_DAMAGE_OFFHAND, TOTAL_PCT, float(GetModifierValue()));
-            m_target->SetStatPctModifier(UNIT_MOD_DAMAGE_RANGED, TOTAL_PCT, float(GetModifierValue()));
+            if (apply)
+            {
+                m_target->SetStatPctModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, float(GetModifierValue()));
+                m_target->SetStatPctModifier(UNIT_MOD_DAMAGE_OFFHAND, TOTAL_PCT, float(GetModifierValue()));
+                m_target->SetStatPctModifier(UNIT_MOD_DAMAGE_RANGED, TOTAL_PCT, float(GetModifierValue()));
+            }
+            else {
+                float amount = m_target->GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, SPELL_SCHOOL_MASK_NORMAL);
+                m_target->SetStatPctModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, amount);
+                m_target->SetStatPctModifier(UNIT_MOD_DAMAGE_OFFHAND, TOTAL_PCT, amount);
+                m_target->SetStatPctModifier(UNIT_MOD_DAMAGE_RANGED, TOTAL_PCT, amount);
+
+            }
         }
         else
         {
