@@ -992,7 +992,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
 
     SetMeleeDamageSchool(SpellSchools(cinfo->dmgschool));
 
-    SetStatFlatModifier(UNIT_MOD_ARMOR, BASE_VALUE, float(petlevel * 50));
+    SetModifierValue(UNIT_MOD_ARMOR, BASE_VALUE, float(petlevel * 50));
 
     SetAttackTime(BASE_ATTACK, BASE_ATTACK_TIME);
     SetAttackTime(OFF_ATTACK, BASE_ATTACK_TIME);
@@ -1027,7 +1027,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
         createResistance[SPELL_SCHOOL_ARCANE] = cinfo->resistance6;
     }
     for (uint8 i = SPELL_SCHOOL_HOLY; i < MAX_SPELL_SCHOOL; ++i)
-        SetStatFlatModifier(UnitMods(UNIT_MOD_RESISTANCE_START + i), BASE_VALUE, float(createResistance[i]));
+        SetModifierValue(UnitMods(UNIT_MOD_RESISTANCE_START + i), BASE_VALUE, float(createResistance[i]));
 
     //health, mana, armor and resistance
     PetLevelInfo const* pInfo = sObjectMgr.GetPetLevelInfo(creature_ID, petlevel);
@@ -1038,7 +1038,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
             SetCreateMana(pInfo->mana);
 
         if (pInfo->armor > 0)
-            SetStatFlatModifier(UNIT_MOD_ARMOR, BASE_VALUE, float(pInfo->armor));
+            SetModifierValue(UNIT_MOD_ARMOR, BASE_VALUE, float(pInfo->armor));
 
         for (uint8 stat = 0; stat < MAX_STATS; ++stat)
             SetCreateStat(Stats(stat), float(pInfo->stats[stat]));

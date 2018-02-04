@@ -531,7 +531,7 @@ struct boss_aranAI : public ScriptedAI
                 ElementalOne->SetFaction(me->GetFaction());
                 ElementalOne->SetRooted(true);
                 ElementalOne->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
-                ElementalOne->SetStatFlatModifier(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
+                ElementalOne->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
             }
 
             if (ElementalTwo)
@@ -546,7 +546,7 @@ struct boss_aranAI : public ScriptedAI
                 ElementalTwo->SetFaction(me->GetFaction());
                 ElementalTwo->SetRooted(true);
                 ElementalTwo->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
-                ElementalTwo->SetStatFlatModifier(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
+                ElementalTwo->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
             }
 
             if (ElementalThree)
@@ -561,7 +561,7 @@ struct boss_aranAI : public ScriptedAI
                 ElementalThree->SetFaction(me->GetFaction());
                 ElementalThree->SetRooted(true);
                 ElementalThree->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
-                ElementalThree->SetStatFlatModifier(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
+                ElementalThree->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
             }
 
             if (ElementalFour)
@@ -576,7 +576,7 @@ struct boss_aranAI : public ScriptedAI
                 ElementalFour->SetFaction(me->GetFaction());
                 ElementalFour->SetRooted(true);
                 ElementalFour->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
-                ElementalFour->SetStatFlatModifier(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
+                ElementalFour->SetModifierValue(UNIT_MOD_RESISTANCE_FROST,  BASE_VALUE, 0);
             }
 
             DoScriptText(SAY_ELEMENTALS, me);

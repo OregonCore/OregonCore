@@ -348,18 +348,13 @@ struct SpellImmune
 
 typedef std::list<SpellImmune> SpellImmuneList;
 
-enum UnitModifierFlatType
+enum UnitModifierType
 {
     BASE_VALUE = 0,
-    TOTAL_VALUE = 1,
-    MODIFIER_TYPE_FLAT_END = 2
-};
-
-enum UnitModifierPctType
-{
-    BASE_PCT = 0,
-    TOTAL_PCT = 1,
-    MODIFIER_TYPE_PCT_END = 2
+    BASE_PCT = 1,
+    TOTAL_VALUE = 2,
+    TOTAL_PCT = 3,
+    MODIFIER_TYPE_END = 4
 };
 
 enum WeaponDamageRange
@@ -504,9 +499,10 @@ enum WeaponAttackType
 {
     BASE_ATTACK   = 0,
     OFF_ATTACK    = 1,
-    RANGED_ATTACK = 2,
-    MAX_ATTACK    = 3
+    RANGED_ATTACK = 2
 };
+
+#define MAX_ATTACK  3
 
 enum CombatRating
 {
@@ -1638,22 +1634,15 @@ class Unit : public WorldObject
         // Event handler
         EventProcessor m_Events;
 
-        void HandleStatFlatModifier(UnitMods unitMod, UnitModifierFlatType modifierType, float amount, bool apply);
-        void ApplyStatPctModifier(UnitMods unitMod, UnitModifierPctType modifierType, float amount);
-
-        void SetStatFlatModifier(UnitMods unitMod, UnitModifierFlatType modifierType, float val);
-        void SetStatPctModifier(UnitMods unitMod, UnitModifierPctType modifierType, float val);
-
-        float GetFlatModifierValue(UnitMods unitMod, UnitModifierFlatType modifierType) const;
-        float GetPctModifierValue(UnitMods unitMod, UnitModifierPctType modifierType) const;
-
+        // stat system
+        bool HandleStatModifier(UnitMods unitMod, UnitModifierType modifierType, float amount, bool apply);
+        void SetModifierValue(UnitMods unitMod, UnitModifierType modifierType, float value)
+        {
+            m_auraModifiersGroup[unitMod][modifierType] = value;
+        }
+        float GetModifierValue(UnitMods unitMod, UnitModifierType modifierType) const;
         float GetTotalStatValue(Stats stat) const;
         float GetTotalAuraModValue(UnitMods unitMod) const;
-
-        void UpdateUnitMod(UnitMods unitMod);
-
-        virtual void UpdateDamageDoneMods(WeaponAttackType attackType);
-
         SpellSchools GetSpellSchoolByAuraGroup(UnitMods unitMod) const;
         Stats GetStatByAuraGroup(UnitMods unitMod) const;
         Powers GetPowerTypeByAuraGroup(UnitMods unitMod) const;
@@ -1774,8 +1763,6 @@ class Unit : public WorldObject
         float GetTotalAuraMultiplierByMiscValue(AuraType auratype, int32 misc_value) const;
         int32 GetMaxPositiveAuraModifierByMiscValue(AuraType auratype, int32 misc_value) const;
         int32 GetMaxNegativeAuraModifierByMiscValue(AuraType auratype, int32 misc_value) const;
-
-        void UpdateResistanceBuffModsMod(SpellSchools school);
 
         Aura* GetDummyAura(uint32 spell_id) const;
 
@@ -2051,8 +2038,7 @@ class Unit : public WorldObject
         AuraList m_ccAuras;
         uint32 m_interruptMask;
 
-        float m_auraFlatModifiersGroup[UNIT_MOD_END][MODIFIER_TYPE_FLAT_END];
-        float m_auraPctModifiersGroup[UNIT_MOD_END][MODIFIER_TYPE_PCT_END];
+        float m_auraModifiersGroup[UNIT_MOD_END][MODIFIER_TYPE_END];
         float m_weaponDamage[MAX_ATTACK][2];
         bool m_canModifyStats;
         //std::list< spellEffectPair > AuraSpells[TOTAL_AURAS];  // @todo use this if ok for mem

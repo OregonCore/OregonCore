@@ -4810,7 +4810,7 @@ void Spell::SpellDamageWeaponDmg(SpellEffIndex effIndex)
 
         float weapon_total_pct = 1.0f;
         if (m_spellInfo->SchoolMask & SPELL_SCHOOL_MASK_NORMAL)
-            weapon_total_pct = m_caster->GetPctModifierValue(unitMod, TOTAL_PCT);
+            weapon_total_pct = m_caster->GetModifierValue(unitMod, TOTAL_PCT);
 
         if (fixed_bonus)
             fixed_bonus = int32(fixed_bonus * weapon_total_pct);

@@ -4669,57 +4669,6 @@ void Player::UpdateDefense()
         UpdateDefenseBonusesMod(); // update dependent from defense skill part
 }
 
-void Player::UpdateDamageDoneMods(WeaponAttackType attackType)
-{
-    Unit::UpdateDamageDoneMods(attackType);
-
-    UnitMods unitMod;
-    switch (attackType)
-    {
-    case BASE_ATTACK:
-        unitMod = UNIT_MOD_DAMAGE_MAINHAND;
-        break;
-    case OFF_ATTACK:
-        unitMod = UNIT_MOD_DAMAGE_OFFHAND;
-        break;
-    case RANGED_ATTACK:
-        unitMod = UNIT_MOD_DAMAGE_RANGED;
-        break;
-    default:
-        break;
-    }
-
-    float amount = 0.0f;
-    Item* item = GetWeaponForAttack(attackType, true);
-    if (!item)
-        return;
-
-    for (uint8 slot = 0; slot < MAX_ENCHANTMENT_SLOT; ++slot)
-    {
-        SpellItemEnchantmentEntry const* enchantmentEntry = sSpellItemEnchantmentStore.LookupEntry(item->GetEnchantmentId(EnchantmentSlot(slot)));
-        if (!enchantmentEntry)
-            continue;
-
-        for (uint8 i = 0; i < MAX_ITEM_ENCHANTMENT_EFFECTS; ++i)
-        {
-            switch (enchantmentEntry->type[i])
-            {
-            case ITEM_ENCHANTMENT_TYPE_DAMAGE:
-                amount += enchantmentEntry->amount[i];
-                break;
-            case ITEM_ENCHANTMENT_TYPE_TOTEM:
-                if (getClass() == CLASS_SHAMAN)
-                    amount += enchantmentEntry->amount[i] * item->GetProto()->Delay / 1000.0f;
-                break;
-            default:
-                break;
-            }
-        }
-    }
-
-    HandleStatFlatModifier(unitMod, TOTAL_VALUE, amount, true);
-}
-
 void Player::HandleBaseModValue(BaseModGroup modGroup, BaseModType modType, float amount, bool apply)
 {
     if (modGroup >= BASEMOD_END || modType >= MOD_END)
@@ -6596,29 +6545,29 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
         switch (proto->ItemStat[i].ItemStatType)
         {
             case ITEM_MOD_MANA:
-                HandleStatFlatModifier(UNIT_MOD_MANA, BASE_VALUE, float(val), apply);
+                HandleStatModifier(UNIT_MOD_MANA, BASE_VALUE, float(val), apply);
                 break;
             case ITEM_MOD_HEALTH:                           // modify HP
-                HandleStatFlatModifier(UNIT_MOD_HEALTH, BASE_VALUE, float(val), apply);
+                HandleStatModifier(UNIT_MOD_HEALTH, BASE_VALUE, float(val), apply);
                 break;
             case ITEM_MOD_AGILITY:                          // modify agility
-                HandleStatFlatModifier(UNIT_MOD_STAT_AGILITY, BASE_VALUE, float(val), apply);
+                HandleStatModifier(UNIT_MOD_STAT_AGILITY, BASE_VALUE, float(val), apply);
                 ApplyStatBuffMod(STAT_AGILITY, float(val), apply);
                 break;
             case ITEM_MOD_STRENGTH:                         //modify strength
-                HandleStatFlatModifier(UNIT_MOD_STAT_STRENGTH, BASE_VALUE, float(val), apply);
+                HandleStatModifier(UNIT_MOD_STAT_STRENGTH, BASE_VALUE, float(val), apply);
                 ApplyStatBuffMod(STAT_STRENGTH, float(val), apply);
                 break;
             case ITEM_MOD_INTELLECT:                        //modify intellect
-                HandleStatFlatModifier(UNIT_MOD_STAT_INTELLECT, BASE_VALUE, float(val), apply);
+                HandleStatModifier(UNIT_MOD_STAT_INTELLECT, BASE_VALUE, float(val), apply);
                 ApplyStatBuffMod(STAT_INTELLECT, float(val), apply);
                 break;
             case ITEM_MOD_SPIRIT:                           //modify spirit
-                HandleStatFlatModifier(UNIT_MOD_STAT_SPIRIT, BASE_VALUE, float(val), apply);
+                HandleStatModifier(UNIT_MOD_STAT_SPIRIT, BASE_VALUE, float(val), apply);
                 ApplyStatBuffMod(STAT_SPIRIT, float(val), apply);
                 break;
             case ITEM_MOD_STAMINA:                          //modify stamina
-                HandleStatFlatModifier(UNIT_MOD_STAT_STAMINA, BASE_VALUE, float(val), apply);
+                HandleStatModifier(UNIT_MOD_STAT_STAMINA, BASE_VALUE, float(val), apply);
                 ApplyStatBuffMod(STAT_STAMINA, float(val), apply);
                 break;
             case ITEM_MOD_DEFENSE_SKILL_RATING:
@@ -6712,28 +6661,28 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
     }
 
     if (proto->Armor)
-        HandleStatFlatModifier(UNIT_MOD_ARMOR, BASE_VALUE, float(proto->Armor), apply);
+        HandleStatModifier(UNIT_MOD_ARMOR, BASE_VALUE, float(proto->Armor), apply);
 
     if (proto->Block)
         HandleBaseModValue(SHIELD_BLOCK_VALUE, FLAT_MOD, float(proto->Block), apply);
 
     if (proto->HolyRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, float(proto->HolyRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, float(proto->HolyRes), apply);
 
     if (proto->FireRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, float(proto->FireRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, float(proto->FireRes), apply);
 
     if (proto->NatureRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, float(proto->NatureRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, float(proto->NatureRes), apply);
 
     if (proto->FrostRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, float(proto->FrostRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, float(proto->FrostRes), apply);
 
     if (proto->ShadowRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, float(proto->ShadowRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, float(proto->ShadowRes), apply);
 
     if (proto->ArcaneRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, float(proto->ArcaneRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, float(proto->ArcaneRes), apply);
 
     WeaponAttackType attType = BASE_ATTACK;
     float damage = 0.0f;
@@ -6837,7 +6786,7 @@ void Player::_ApplyWeaponDependentAuraDamageMod(Item* item, WeaponAttackType att
         default: return;
     }
 
-    /*UnitModifierType unitModType = TOTAL_VALUE;
+    UnitModifierType unitModType = TOTAL_VALUE;
     switch (modifier->m_auraname)
     {
         case SPELL_AURA_MOD_DAMAGE_DONE:         unitModType = TOTAL_VALUE; break;
@@ -6855,7 +6804,7 @@ void Player::_ApplyWeaponDependentAuraDamageMod(Item* item, WeaponAttackType att
             else
                 ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG, aura->GetModifierValue(), apply);
         }
-    }*/
+    }
 }
 
 void Player::ApplyItemEquipSpell(Item* item, bool apply, bool form_change)
@@ -8652,7 +8601,7 @@ Item* Player::GetShield(bool useable) const
     return item;
 }
 
-WeaponAttackType Player::GetAttackBySlot(uint8 slot)
+uint32 Player::GetAttackBySlot(uint8 slot)
 {
     switch (slot)
     {
@@ -10450,7 +10399,7 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
             _ApplyItemMods(pItem, slot, true);
 
             if (pProto && IsInCombat() && pProto->Class == ITEM_CLASS_WEAPON && m_weaponChangeTimer == 0)
-            {// @HERE
+            {
                 uint32 cooldownSpell = getClass() == CLASS_ROGUE ? SPELL_WEAPON_SWITCH_COOLDOWN_1_0s : SPELL_WEAPON_SWITCH_COOLDOWN_1_5s;
                 SpellEntry const* spellProto = sSpellStore.LookupEntry(cooldownSpell);
 
@@ -11849,12 +11798,13 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                 // processed in Player::CastItemCombatSpell
                 break;
             case ITEM_ENCHANTMENT_TYPE_DAMAGE:
-            {
-                WeaponAttackType const attackType = GetAttackBySlot(item->GetSlot());
-                if (attackType != MAX_ATTACK)
-                    UpdateDamageDoneMods(attackType);
+                if (item->GetSlot() == EQUIPMENT_SLOT_MAINHAND)
+                    HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_VALUE, float(enchant_amount), apply);
+                else if (item->GetSlot() == EQUIPMENT_SLOT_OFFHAND)
+                    HandleStatModifier(UNIT_MOD_DAMAGE_OFFHAND, TOTAL_VALUE, float(enchant_amount), apply);
+                else if (item->GetSlot() == EQUIPMENT_SLOT_RANGED)
+                    HandleStatModifier(UNIT_MOD_DAMAGE_RANGED, TOTAL_VALUE, float(enchant_amount), apply);
                 break;
-            }
             case ITEM_ENCHANTMENT_TYPE_EQUIP_SPELL:
                 if (enchant_spell_id)
                 {
@@ -11905,7 +11855,7 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                     }
                 }
 
-                HandleStatFlatModifier(UnitMods(UNIT_MOD_RESISTANCE_START + enchant_spell_id), TOTAL_VALUE, float(enchant_amount), apply);
+                HandleStatModifier(UnitMods(UNIT_MOD_RESISTANCE_START + enchant_spell_id), TOTAL_VALUE, float(enchant_amount), apply);
                 break;
             case ITEM_ENCHANTMENT_TYPE_STAT:
                 {
@@ -11930,27 +11880,27 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                     {
                     case ITEM_MOD_AGILITY:
                         DEBUG_LOG("+ %u AGILITY", enchant_amount);
-                        HandleStatFlatModifier(UNIT_MOD_STAT_AGILITY, TOTAL_VALUE, float(enchant_amount), apply);
+                        HandleStatModifier(UNIT_MOD_STAT_AGILITY, TOTAL_VALUE, float(enchant_amount), apply);
                         ApplyStatBuffMod(STAT_AGILITY, enchant_amount, apply);
                         break;
                     case ITEM_MOD_STRENGTH:
                         DEBUG_LOG("+ %u STRENGTH", enchant_amount);
-                        HandleStatFlatModifier(UNIT_MOD_STAT_STRENGTH, TOTAL_VALUE, float(enchant_amount), apply);
+                        HandleStatModifier(UNIT_MOD_STAT_STRENGTH, TOTAL_VALUE, float(enchant_amount), apply);
                         ApplyStatBuffMod(STAT_STRENGTH, enchant_amount, apply);
                         break;
                     case ITEM_MOD_INTELLECT:
                         DEBUG_LOG("+ %u INTELLECT", enchant_amount);
-                        HandleStatFlatModifier(UNIT_MOD_STAT_INTELLECT, TOTAL_VALUE, float(enchant_amount), apply);
+                        HandleStatModifier(UNIT_MOD_STAT_INTELLECT, TOTAL_VALUE, float(enchant_amount), apply);
                         ApplyStatBuffMod(STAT_INTELLECT, enchant_amount, apply);
                         break;
                     case ITEM_MOD_SPIRIT:
                         DEBUG_LOG("+ %u SPIRIT", enchant_amount);
-                        HandleStatFlatModifier(UNIT_MOD_STAT_SPIRIT, TOTAL_VALUE, float(enchant_amount), apply);
+                        HandleStatModifier(UNIT_MOD_STAT_SPIRIT, TOTAL_VALUE, float(enchant_amount), apply);
                         ApplyStatBuffMod(STAT_SPIRIT, enchant_amount, apply);
                         break;
                     case ITEM_MOD_STAMINA:
                         DEBUG_LOG("+ %u STAMINA", enchant_amount);
-                        HandleStatFlatModifier(UNIT_MOD_STAT_STAMINA, TOTAL_VALUE, float(enchant_amount), apply);
+                        HandleStatModifier(UNIT_MOD_STAT_STAMINA, TOTAL_VALUE, float(enchant_amount), apply);
                         ApplyStatBuffMod(STAT_STAMINA, enchant_amount, apply);
                         break;
                     case ITEM_MOD_DEFENSE_SKILL_RATING:
@@ -12065,10 +12015,21 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                 }
             case ITEM_ENCHANTMENT_TYPE_TOTEM:               // Shaman Rockbiter Weapon
                 {
-                WeaponAttackType const attackType = Player::GetAttackBySlot(item->GetSlot());
-                if (attackType != MAX_ATTACK)
-                    UpdateDamageDoneMods(attackType);
-                break;
+                    if (getClass() == CLASS_SHAMAN)
+                    {
+                        float addValue = 0.0f;
+                        if (item->GetSlot() == EQUIPMENT_SLOT_MAINHAND)
+                        {
+                            addValue = float(enchant_amount * item->GetProto()->Delay / 1000.0f);
+                            HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_VALUE, addValue, apply);
+                        }
+                        else if (item->GetSlot() == EQUIPMENT_SLOT_OFFHAND)
+                        {
+                            addValue = float(enchant_amount * item->GetProto()->Delay / 1000.0f);
+                            HandleStatModifier(UNIT_MOD_DAMAGE_OFFHAND, TOTAL_VALUE, addValue, apply);
+                        }
+                    }
+                    break;
                 }
             default:
                 sLog.outError("Unknown item enchantment display type: %d", enchant_display_type);

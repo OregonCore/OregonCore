@@ -159,8 +159,6 @@ enum ActionButtonType
 
 typedef std::map<uint8, ActionButton> ActionButtonList;
 
-#define MAX_ITEM_ENCHANTMENT_EFFECTS 3
-
 typedef std::pair<uint16, uint8> CreateSpellPair;
 
 struct PlayerCreateInfoItem
@@ -1105,7 +1103,7 @@ class Player : public Unit, public GridObject<Player>
         Item* GetItemByPos(uint8 bag, uint8 slot) const;
         Item* GetWeaponForAttack(WeaponAttackType attackType, bool useable = false) const;
         Item* GetShield(bool useable = false) const;
-        static WeaponAttackType GetAttackBySlot(uint8 slot);        // MAX_ATTACK if not weapon slot
+        static uint32 GetAttackBySlot(uint8 slot);        // MAX_ATTACK if not weapon slot
         std::vector<Item* >& GetItemUpdateQueue()
         {
             return m_itemUpdateQueue;
@@ -2139,9 +2137,6 @@ class Player : public Unit, public GridObject<Player>
         void SetCanBlock(bool value);
 
         void SetRegularAttackTime();
-
-        void UpdateDamageDoneMods(WeaponAttackType attackType) override;
-
         void SetBaseModValue(BaseModGroup modGroup, BaseModType modType, float value)
         {
             m_auraBaseMod[modGroup][modType] = value;
