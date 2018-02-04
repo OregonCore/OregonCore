@@ -4867,8 +4867,7 @@ void  Aura::HandleAuraModIncreaseMaxHealth(bool apply, bool /*Real*/)
 
 void Aura::HandleAuraModIncreaseEnergy(bool apply, bool /*Real*/)
 {
-    Powers powerType = m_target->getPowerType();
-
+    Powers powerType = Powers(GetMiscValue());
     UnitMods unitMod = UnitMods(UNIT_MOD_POWER_START + powerType);
 
     m_target->HandleStatModifier(unitMod, TOTAL_VALUE, float(GetModifierValue()), apply);
