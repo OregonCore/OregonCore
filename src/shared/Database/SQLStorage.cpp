@@ -37,7 +37,7 @@ const char InstanceTemplatedstfmt[] = "iiiiiffffib";
 
 SQLStorage sCreatureStorage(CreatureInfosrcfmt, CreatureInfodstfmt, "entry", "creature_template");
 SQLStorage sCreatureDataAddonStorage(CreatureDataAddonInfofmt, "guid", "creature_addon");
-SQLStorage sCreatureModelStorage(CreatureModelfmt, "modelid", "creature_model_info");
+SQLStorage sCreatureModelStorage(CreatureModelfmt, "DisplayID", "creature_model_info");
 SQLStorage sCreatureInfoAddonStorage(CreatureInfoAddonInfofmt, "entry", "creature_template_addon");
 SQLStorage sEquipmentStorage(EquipmentInfofmt, "entry", "creature_equip_template");
 SQLStorage sEquipmentStorageRaw(EquipmentInfoRawfmt, "entry", "creature_equip_template_raw");
