@@ -460,11 +460,6 @@ void SmartAI::MoveInLineOfSight(Unit* who)
     CreatureAI::MoveInLineOfSight(who);
 }
 
-bool SmartAI::CanAIAttack(const Unit* /*who*/) const
-{
-    return !(me->HasReactState(REACT_PASSIVE));
-}
-
 bool SmartAI::AssistPlayerInCombat(Unit* who)
 {
     if (!who || !who->GetVictim())
