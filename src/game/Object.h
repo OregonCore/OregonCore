@@ -814,7 +814,7 @@ class WorldObject : public Object, public WorldLocation
         virtual bool isValid() const;
 
         virtual bool IsNeverVisible() const { return !IsInWorld(); }
-        virtual bool IsAlwaysVisibleFor(WorldObject const* seer) const { return false; }
+        virtual bool IsAlwaysVisibleFor(WorldObject const* /*seer*/) const { return false; }
         virtual bool IsInvisibleDueToDespawn() const { return false; }
         //difference from IsAlwaysVisibleFor: 1. after distance check; 2. use owner or charmer as seer
         virtual bool IsAlwaysDetectableFor(WorldObject const* /*seer*/) const { return false; }
