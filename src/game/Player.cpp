@@ -1228,11 +1228,10 @@ void Player::Update(uint32 p_time)
         m_Last_tick = now;
     }
 
-    if (m_drunk)
+    if (GetDrunkValue())
     {
         m_drunkTimer += p_time;
-
-        if (m_drunkTimer > 10 * IN_MILLISECONDS)
+        if (m_drunkTimer > 9 * IN_MILLISECONDS)
             HandleSobering();
     }
 
@@ -1853,6 +1852,9 @@ void Player::RemoveFromWorld()
         UnsummonPetTemporaryIfAny();
         ClearComboPoints();
         ClearComboPointHolders();
+        uint64 lootGuid = GetLootGUID();
+        if (!lootGuid)
+            m_session->DoLootRelease(lootGuid);
         sOutdoorPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
     }
 
@@ -1860,16 +1862,16 @@ void Player::RemoveFromWorld()
     // otherwise there will be an existing duel flag pointer but no entry in m_gameObj
     DuelComplete(DUEL_INTERUPTED);
 
-    // Do not add/remove the player from the object storage
-    // It will crash when updating the ObjectAccessor
-    // The player should only be removed when logging out
-    Unit::RemoveFromWorld();
-
     for (uint8 i = PLAYER_SLOT_START; i < PLAYER_SLOT_END; ++i)
     {
         if (m_items[i])
             m_items[i]->RemoveFromWorld();
     }
+
+    // Do not add/remove the player from the object storage
+    // It will crash when updating the ObjectAccessor
+    // The player should only be removed when logging out
+    Unit::RemoveFromWorld();
 
     for (ItemMap::iterator iter = mMitems.begin(); iter != mMitems.end(); ++iter)
         iter->second->RemoveFromWorld();
@@ -4570,7 +4572,7 @@ void Player::RepopAtGraveyard()
             data << ClosestGrave->x;
             data << ClosestGrave->y;
             data << ClosestGrave->z;
-            GetSession()->SendPacket(&data);
+            SendDirectMessage(&data);
         }
     }
     else if (GetPositionZ() < -500.0f)
@@ -5711,7 +5713,6 @@ void Player::SendMessageToSetInRange(WorldPacket* data, float dist, bool self, b
 
 void Player::SendDirectMessage(WorldPacket* data)
 {
-    if (m_session)
         m_session->SendPacket(data);
 }
 
@@ -5720,7 +5721,7 @@ void Player::SendCinematicStart(uint32 CinematicSequenceId)
     WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
     data << uint32(CinematicSequenceId);
     SendDirectMessage(&data);
-    if (const CinematicSequencesEntry* sequence = sCinematicSequencesStore.LookupEntry(CinematicSequenceId))
+    if (CinematicSequencesEntry const* sequence = sCinematicSequencesStore.LookupEntry(CinematicSequenceId))
         _cinematicMgr->SetActiveCinematicCamera(sequence->cinematicCamera);
 }
 
@@ -19926,10 +19927,12 @@ bool Player::IsAtGroupRewardDistance(WorldObject const* pRewardSource) const
     if (!pRewardSource || !IsInMap(pRewardSource))
         return false;
 
-    const WorldObject* player = GetCorpse();
+    WorldObject const* player = GetCorpse();
     if (!player || IsAlive())
         player = this;
 
+    if (pRewardSource->GetMap()->IsDungeon())
+        return true;
 
     return pRewardSource->GetDistance(player) <= sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE);
 }
@@ -20090,10 +20093,12 @@ void Player::UpdateCorpseReclaimDelay()
         return;
 
     time_t now = time(NULL);
+
     if (now < m_deathExpireTime)
     {
         // full and partly periods 1..3
         uint32 count = (m_deathExpireTime - now) / DEATH_EXPIRE_STEP + 1;
+
         if (count < MAX_DEATH_COUNT)
             m_deathExpireTime = now + (count + 1) * DEATH_EXPIRE_STEP;
         else
@@ -20106,22 +20111,26 @@ void Player::UpdateCorpseReclaimDelay()
 int32 Player::CalculateCorpseReclaimDelay(bool load)
 {
     Corpse* corpse = GetCorpse();
+
     if (load && !corpse)
         return -1;
 
     bool pvp = corpse ? corpse->GetType() == CORPSE_RESURRECTABLE_PVP : m_ExtraFlags & PLAYER_EXTRA_PVP_DEATH;
 
     uint32 delay;
+
     if (load)
     {
         if (corpse->GetGhostTime() > m_deathExpireTime)
             return -1;
 
         uint64 count = 0;
+
         if ((pvp && sWorld.getConfig(CONFIG_DEATH_CORPSE_RECLAIM_DELAY_PVP)) ||
-            (!pvp && sWorld.getConfig(CONFIG_DEATH_CORPSE_RECLAIM_DELAY_PVE)))
+           (!pvp && sWorld.getConfig(CONFIG_DEATH_CORPSE_RECLAIM_DELAY_PVE)))
         {
             count = (m_deathExpireTime - corpse->GetGhostTime()) / DEATH_EXPIRE_STEP;
+
             if (count >= MAX_DEATH_COUNT)
                 count = MAX_DEATH_COUNT - 1;
         }
@@ -20145,6 +20154,7 @@ void Player::SendCorpseReclaimDelay(uint32 delay)
     WorldPacket data(SMSG_CORPSE_RECLAIM_DELAY, 4);
     data << uint32(delay);
     GetSession()->SendPacket(&data);
+    SendDirectMessage(&data);
 }
 
 Player* Player::GetNextRandomRaidMember(float radius)
