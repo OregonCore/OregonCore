@@ -1027,6 +1027,25 @@ uint32 ObjectMgr::ChooseDisplayId(uint32 /*team*/, const CreatureInfo* cinfo, co
     return display_id;
 }
 
+void ObjectMgr::ChooseCreatureFlags(const CreatureInfo *cinfo, uint32& npcflag, uint32& unit_flags, uint32& dynamicflags, const CreatureData *data /*= NULL*/)
+{
+    npcflag = cinfo->npcflag;
+    unit_flags = cinfo->unit_flags;
+    dynamicflags = cinfo->dynamicflags;
+
+    if (data)
+    {
+        if (data->npcflag)
+            npcflag = data->npcflag;
+
+        if (data->unit_flags)
+            unit_flags = data->unit_flags;
+
+        if (data->dynamicflags)
+            dynamicflags = data->dynamicflags;
+    }
+}
+
 CreatureModelInfo const* ObjectMgr::GetCreatureModelRandomGender(uint32 display_id)
 {
     CreatureModelInfo const* minfo = GetCreatureModelInfo(display_id);
@@ -1247,7 +1266,9 @@ void ObjectMgr::LoadCreatures()
                                  //4             5           6           7           8            9              10         11
                                  "equipment_id, position_x, position_y, position_z, orientation, spawntimesecs, spawndist, currentwaypoint,"
                                  //12        13       14            15         16     17
-                                 "curhealth, curmana, MovementType, spawnMask, phaseMask, event, pool_entry "
+                                 "curhealth, curmana, MovementType, spawnMask, phaseMask, event, pool_entry, "
+                                    //   19                20                   21
+                                 "creature.npcflag, creature.unit_flags, creature.dynamicflags "
                                  "FROM creature LEFT OUTER JOIN game_event_creature ON creature.guid = game_event_creature.guid "
                                  "LEFT OUTER JOIN pool_creature ON creature.guid = pool_creature.guid");
 
@@ -1301,6 +1322,9 @@ void ObjectMgr::LoadCreatures()
         data.phaseMask      = fields[16].GetUInt16();
         int16 gameEvent     = fields[17].GetInt16();
         int32 PoolId        = fields[18].GetInt32();
+        data.npcflag        = fields[19].GetUInt32();
+        data.unit_flags     = fields[20].GetUInt32();
+        data.dynamicflags   = fields[21].GetUInt32();
 
         MapEntry const* mapEntry = sMapStore.LookupEntry(data.mapid);
         if (!mapEntry)
@@ -1352,13 +1376,19 @@ void ObjectMgr::LoadCreatures()
             }
         }
 
+        if (data.phaseMask == 0)
+        {
+            sLog.outErrorDb("Table `creature` have creature (GUID: %u Entry: %u) with `phaseMask`=0 (not visible for anyone), set to 1.", guid, data.id);
+            data.phaseMask = 1;
+        }
+
         // Add to grid if not managed by the game event or pool system
         if (gameEvent == 0 && PoolId == 0)
             AddCreatureToGrid(guid, &data);
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %lu creatures", mCreatureDataMap.size());
+    sLog.outString(">> Loaded %u creatures", (uint32)mCreatureDataMap.size());
 }
 
 void ObjectMgr::AddCreatureToGrid(uint32 guid, CreatureData const* data)
@@ -1460,6 +1490,9 @@ uint32 ObjectMgr::AddCreData(uint32 entry, uint32 /*team*/, uint32 mapId, float 
     data.movementType = cInfo->MovementType;
     data.spawnMask = 1;
     data.dbData = false;
+    data.npcflag = cInfo->npcflag;
+    data.unit_flags = cInfo->unit_flags;
+    data.dynamicflags = cInfo->dynamicflags;
 
     AddCreatureToGrid(guid, &data);
 

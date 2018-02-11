@@ -367,13 +367,16 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
 
     SetFaction(cInfo->faction);
 
-    if (cInfo->flags_extra & CREATURE_FLAG_EXTRA_WORLDEVENT)
-        SetUInt32Value(UNIT_NPC_FLAGS, cInfo->npcflag | sGameEventMgr.GetNPCFlag(this));
-    else
-        SetUInt32Value(UNIT_NPC_FLAGS, cInfo->npcflag);
+    uint32 npcflag, unit_flags, dynamicflags;
+    ObjectMgr::ChooseCreatureFlags(cInfo, npcflag, unit_flags, dynamicflags, data);
 
-    SetUInt32Value(UNIT_FIELD_FLAGS, cInfo->unit_flags);
-    SetUInt32Value(UNIT_DYNAMIC_FLAGS, cInfo->dynamicflags);
+    if (cInfo->flags_extra & CREATURE_FLAG_EXTRA_WORLDEVENT)
+        SetUInt32Value(UNIT_NPC_FLAGS, npcflag | sGameEventMgr.GetNPCFlag(this));
+    else
+        SetUInt32Value(UNIT_NPC_FLAGS, npcflag);
+
+    SetUInt32Value(UNIT_FIELD_FLAGS, unit_flags);
+    SetUInt32Value(UNIT_DYNAMIC_FLAGS, dynamicflags);
 
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
@@ -1067,6 +1070,9 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
     CreatureData& data = sObjectMgr.NewOrExistCreatureData(m_DBTableGuid);
 
     uint32 displayId = GetNativeDisplayId();
+    uint32 npcflag = GetUInt32Value(UNIT_NPC_FLAGS);
+    uint32 unit_flags = GetUInt32Value(UNIT_FIELD_FLAGS);
+    uint32 dynamicflags = GetUInt32Value(UNIT_DYNAMIC_FLAGS);
 
     // check if it's a custom model and if not, use 0 for displayId
     CreatureInfo const* cinfo = GetCreatureTemplate();
@@ -1076,6 +1082,15 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
             displayId == cinfo->modelid3 || displayId == cinfo->modelid4)
             displayId = 0;
     }
+
+    if (npcflag == cinfo->npcflag)
+        npcflag = 0;
+
+    if (unit_flags == cinfo->unit_flags)
+        unit_flags = 0;
+
+    if (dynamicflags == cinfo->dynamicflags)
+        dynamicflags = 0;
 
     // data->guid = guid must not be update at save
     data.id = GetEntry();
@@ -1097,6 +1112,9 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
     data.movementType = !m_respawnradius && GetDefaultMovementType() == RANDOM_MOTION_TYPE
                         ? IDLE_MOTION_TYPE : GetDefaultMovementType();
     data.spawnMask = spawnMask;
+    data.npcflag = npcflag;
+    data.unit_flags = unit_flags;
+    data.dynamicflags = dynamicflags;
 
     // updated in DB
     WorldDatabase.BeginTransaction();
@@ -1121,7 +1139,10 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
        << (uint32) (0) << ","                              //currentwaypoint
        << GetHealth() << ","                               //curhealth
        << GetPower(POWER_MANA) << ","                      //curmana
-       << GetDefaultMovementType() << ")";                 //default movement generator type
+       << GetDefaultMovementType() << ","                  //default movement generator type
+       << npcflag << ","
+       << unit_flags << ","
+       << dynamicflags << ")";
 
     WorldDatabase.PExecuteLog("%s", ss.str().c_str());
 
