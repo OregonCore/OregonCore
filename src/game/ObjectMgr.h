@@ -763,13 +763,17 @@ class ObjectMgr
         void LoadArenaTeams();
         void LoadGroups();
         void LoadQuests();
-        void LoadQuestRelations()
+        void LoadQuestStartersAndEnders()
         {
-            LoadGameobjectQuestRelations();
-            LoadGameobjectInvolvedRelations();
-            LoadCreatureQuestRelations();
-            LoadCreatureInvolvedRelations();
+            LoadGameobjectQuestStarters();
+            LoadGameobjectQuestEnders();
+            LoadCreatureQuestStarters();
+            LoadCreatureQuestEnders();
         }
+        void LoadGameobjectQuestStarters();
+        void LoadGameobjectQuestEnders();
+        void LoadCreatureQuestStarters();
+        void LoadCreatureQuestEnders();
 
         QuestRelations* GetGOQuestRelationMap()
         {
@@ -782,11 +786,6 @@ class ObjectMgr
         }
 
         CreatureBaseStats const* GetCreatureClassLvlStats(uint32 level, uint32 unitClass, int32 expansion) const;
-
-        void LoadGameobjectQuestRelations();
-        void LoadGameobjectInvolvedRelations();
-        void LoadCreatureQuestRelations();
-        void LoadCreatureInvolvedRelations();
 
         QuestRelations mGOQuestRelations;
         QuestRelations mGOQuestInvolvedRelations;

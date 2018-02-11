@@ -1366,8 +1366,8 @@ void World::SetInitialWorldSettings()
     sConsole.SetLoadingLabel("Checking Quest Disables");
     sDisableMgr.CheckQuestDisables();                       // must be after loading quests
 
-    sConsole.SetLoadingLabel("Loading Quests Relations...");
-    sObjectMgr.LoadQuestRelations();                            // must be after quest load
+    sConsole.SetLoadingLabel("Loading Quests Starters and Enders...");
+    sObjectMgr.LoadQuestStartersAndEnders();                    // must be after quest load
 
     sConsole.SetLoadingLabel("Loading Quest Pooling Data...");
     sPoolMgr.LoadQuestPools();

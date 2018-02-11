@@ -256,8 +256,8 @@ class ChatHandler
         bool HandleReloadEventAISummonsCommand(const char* args);
         bool HandleReloadEventAIScriptsCommand(const char* args);
         bool HandleReloadCommandCommand(const char* args);
-        bool HandleReloadCreatureQuestRelationsCommand(const char* args);
-        bool HandleReloadCreatureQuestInvRelationsCommand(const char* args);
+        bool HandleReloadCreatureQuestStarterCommand(const char* args);
+        bool HandleReloadCreatureQuestEnderCommand(const char* args);
         bool HandleReloadCreatureLinkedRespawnCommand(const char* args);
         bool HandleReloadDbScriptStringCommand(const char* args);
         bool HandleReloadGameGraveyardZoneCommand(const char* args);
@@ -265,8 +265,8 @@ class ChatHandler
         bool HandleReloadGameTeleCommand(const char* args);
         bool HandleReloadGossipMenuCommand(const char* args);
         bool HandleReloadGossipMenuOptionCommand(const char* args);
-        bool HandleReloadGOQuestRelationsCommand(const char* args);
-        bool HandleReloadGOQuestInvRelationsCommand(const char* args);
+        bool HandleReloadGOQuestStarterCommand(const char* args);
+        bool HandleReloadGOQuestEnderCommand(const char* args);
         bool HandleReloadLootTemplatesCreatureCommand(const char* args);
         bool HandleReloadLootTemplatesDisenchantCommand(const char* args);
         bool HandleReloadLootTemplatesFishingCommand(const char* args);

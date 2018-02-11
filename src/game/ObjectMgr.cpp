@@ -6437,59 +6437,59 @@ void ObjectMgr::LoadQuestRelationsHelper(QuestRelations& map, std::string table,
     sLog.outString(">> Loaded %u quest relations from %s", count, table.c_str());
 }
 
-void ObjectMgr::LoadGameobjectQuestRelations()
+void ObjectMgr::LoadGameobjectQuestStarters()
 {
-    LoadQuestRelationsHelper(mGOQuestRelations, "gameobject_questrelation", true, true);
+    LoadQuestRelationsHelper(mGOQuestRelations, "gameobject_queststarter", true, true);
 
     for (QuestRelations::iterator itr = mGOQuestRelations.begin(); itr != mGOQuestRelations.end(); ++itr)
     {
         GameObjectInfo const* goInfo = GetGameObjectInfo(itr->first);
         if (!goInfo)
-            sLog.outErrorDb("Table gameobject_questrelation has data for invalid gameobject entry (%u) and valid quest %u", itr->first, itr->second);
+            sLog.outErrorDb("Table gameobject_queststarter has data for invalid gameobject entry (%u) and valid quest %u", itr->first, itr->second);
         else if (goInfo->type != GAMEOBJECT_TYPE_QUESTGIVER)
-            sLog.outErrorDb("Table gameobject_questrelation has data gameobject entry (%u) for quest %u, but GO is not GAMEOBJECT_TYPE_QUESTGIVER", itr->first, itr->second);
+            sLog.outErrorDb("Table gameobject_queststarter has data gameobject entry (%u) for quest %u, but GO is not GAMEOBJECT_TYPE_QUESTGIVER", itr->first, itr->second);
     }
 }
 
-void ObjectMgr::LoadGameobjectInvolvedRelations()
+void ObjectMgr::LoadGameobjectQuestEnders()
 {
-    LoadQuestRelationsHelper(mGOQuestInvolvedRelations, "gameobject_involvedrelation", false, true);
+    LoadQuestRelationsHelper(mGOQuestInvolvedRelations, "gameobject_questender", false, true);
 
     for (QuestRelations::iterator itr = mGOQuestInvolvedRelations.begin(); itr != mGOQuestInvolvedRelations.end(); ++itr)
     {
         GameObjectInfo const* goInfo = GetGameObjectInfo(itr->first);
         if (!goInfo)
-            sLog.outErrorDb("Table gameobject_involvedrelation has data for invalid gameobject entry (%u) and valid quest %u", itr->first, itr->second);
+            sLog.outErrorDb("Table gameobject_questender has data for invalid gameobject entry (%u) and valid quest %u", itr->first, itr->second);
         else if (goInfo->type != GAMEOBJECT_TYPE_QUESTGIVER)
-            sLog.outErrorDb("Table gameobject_involvedrelation has data gameobject entry (%u) for quest %u, but GO is not GAMEOBJECT_TYPE_QUESTGIVER", itr->first, itr->second);
+            sLog.outErrorDb("Table gameobject_questender has data gameobject entry (%u) for quest %u, but GO is not GAMEOBJECT_TYPE_QUESTGIVER", itr->first, itr->second);
     }
 }
 
-void ObjectMgr::LoadCreatureQuestRelations()
+void ObjectMgr::LoadCreatureQuestStarters()
 {
-    LoadQuestRelationsHelper(mCreatureQuestRelations, "creature_questrelation", true, false);
+    LoadQuestRelationsHelper(mCreatureQuestRelations, "creature_queststarter", true, false);
 
     for (QuestRelations::iterator itr = mCreatureQuestRelations.begin(); itr != mCreatureQuestRelations.end(); ++itr)
     {
         CreatureInfo const* cInfo = GetCreatureTemplate(itr->first);
         if (!cInfo)
-            sLog.outErrorDb("Table creature_questrelation has data for invalid creature entry (%u) and valid quest %u", itr->first, itr->second);
+            sLog.outErrorDb("Table creature_queststarter has data for invalid creature entry (%u) and valid quest %u", itr->first, itr->second);
         else if (!(cInfo->npcflag & UNIT_NPC_FLAG_QUESTGIVER))
-            sLog.outErrorDb("Table creature_questrelation has creature entry (%u) for quest %u, but npcflag does not include UNIT_NPC_FLAG_QUESTGIVER", itr->first, itr->second);
+            sLog.outErrorDb("Table creature_queststarter has creature entry (%u) for quest %u, but npcflag does not include UNIT_NPC_FLAG_QUESTGIVER", itr->first, itr->second);
     }
 }
 
-void ObjectMgr::LoadCreatureInvolvedRelations()
+void ObjectMgr::LoadCreatureQuestEnders()
 {
-    LoadQuestRelationsHelper(mCreatureQuestInvolvedRelations, "creature_involvedrelation", false, false);
+    LoadQuestRelationsHelper(mCreatureQuestInvolvedRelations, "creature_questender", false, false);
 
     for (QuestRelations::iterator itr = mCreatureQuestInvolvedRelations.begin(); itr != mCreatureQuestInvolvedRelations.end(); ++itr)
     {
         CreatureInfo const* cInfo = GetCreatureTemplate(itr->first);
         if (!cInfo)
-            sLog.outErrorDb("Table creature_involvedrelation has data for invalid creature entry (%u) and valid quest %u", itr->first, itr->second);
+            sLog.outErrorDb("Table creature_questender has data for invalid creature entry (%u) and valid quest %u", itr->first, itr->second);
         else if (!(cInfo->npcflag & UNIT_NPC_FLAG_QUESTGIVER))
-            sLog.outErrorDb("Table creature_involvedrelation has creature entry (%u) for quest %u, but npcflag does not include UNIT_NPC_FLAG_QUESTGIVER", itr->first, itr->second);
+            sLog.outErrorDb("Table creature_questender has creature entry (%u) for quest %u, but npcflag does not include UNIT_NPC_FLAG_QUESTGIVER", itr->first, itr->second);
     }
 }
 
