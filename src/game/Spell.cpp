@@ -3849,7 +3849,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             if (strict && m_spellInfo->AttributesEx3 & SPELL_ATTR3_PLAYERS_ONLY && target->GetTypeId() != TYPEID_PLAYER && !IsAreaOfEffectSpell(m_spellInfo))
                 return SPELL_FAILED_BAD_TARGETS;
 
-            bool isTrigger = (target->ToCreature() && target->ToCreature()->isTrigger());
+            bool isTrigger = (target->ToCreature() && target->ToCreature()->IsTrigger());
             if (!isTrigger)
             {
                 WorldObject* losTarget = target;

@@ -470,54 +470,24 @@ class Creature : public Unit, public GridObject<Creature>
         void SelectLevel();
         void LoadEquipment(uint32 equip_entry, bool force = false);
 
-        uint32 GetDBTableGUIDLow() const
-        {
-            return m_DBTableGuid;
-        }
-        char const* GetSubName() const
-        {
-            return GetCreatureTemplate()->SubName;
-        }
+        uint32 GetDBTableGUIDLow() const { return m_DBTableGuid; }
+        char const* GetSubName() const { return GetCreatureTemplate()->SubName; }
 
         void Update(uint32 time) override;                         // overwrited Unit::Update
         void GetRespawnPosition(float& x, float& y, float& z, float* ori = NULL, float* dist = NULL) const;
 
-        uint32 GetEquipmentId() const
-        {
-            return m_equipmentId;
-        }
+        uint32 GetEquipmentId() const { return m_equipmentId; }
         void SetVirtualItem(VirtualItemSlot slot, uint32 item_id);
         void SetVirtualItemRaw(VirtualItemSlot slot, uint32 display_id, uint32 info0, uint32 info1);
 
-        void SetCorpseDelay(uint32 delay)
-        {
-            m_corpseDelay = delay;
-        }
-        bool isRacialLeader() const
-        {
-            return GetCreatureTemplate()->RacialLeader;
-        }
-        bool isCivilian() const
-        {
-            return GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_CIVILIAN;
-        }
-        bool isTrigger() const
-        {
-            return GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER;
-        }
+        void SetCorpseDelay(uint32 delay) { m_corpseDelay = delay; }
+        bool IsRacialLeader() const { return GetCreatureTemplate()->RacialLeader; }
+        bool IsCivilian() const { return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_CIVILIAN) != 0; }
+        bool IsTrigger() const { return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER) != 0; }
         bool IsGuard() const { return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_GUARD) != 0; }
-        bool canWalk() const
-        {
-            return GetCreatureTemplate()->InhabitType & INHABIT_GROUND;
-        }
-        virtual bool canSwim() const
-        {
-            return GetCreatureTemplate()->InhabitType & INHABIT_WATER || IsCharmedOwnedByPlayerOrPlayer();
-        }
-        bool canFly()  const
-        {
-            return (GetCreatureTemplate()->InhabitType & INHABIT_AIR) || HasAuraType(SPELL_AURA_FLY);
-        }
+        bool CanWalk() const { return (GetCreatureTemplate()->InhabitType & INHABIT_GROUND) != 0; }
+        bool CanSwim() const { return (GetCreatureTemplate()->InhabitType & INHABIT_WATER) != 0 || IsPet(); }
+        bool CanFly() const { return (GetCreatureTemplate()->InhabitType & INHABIT_AIR) != 0 || HasAuraType(SPELL_AURA_FLY); }
 
         void SetReactState(ReactStates st) { m_reactState = st; }
         ReactStates GetReactState() const { return m_reactState; }
@@ -540,26 +510,16 @@ class Creature : public Unit, public GridObject<Creature>
         bool IsInEvadeMode() const;
 
         bool AIM_Initialize(CreatureAI* ai = NULL);
-        void Motion_Initialize();
 
-        CreatureAI* AI() const
-        {
-            return (CreatureAI*)i_AI;
-        }
+        CreatureAI* AI() const { return (CreatureAI*)i_AI; }
 
         uint32 GetShieldBlockValue() const override                  //dunno mob block value
         {
             return (getLevel() / 2 + uint32(GetStat(STAT_STRENGTH) / 20));
         }
 
-        SpellSchoolMask GetMeleeDamageSchoolMask() const override
-        {
-            return m_meleeDamageSchoolMask;
-        }
-        void SetMeleeDamageSchool(SpellSchools school)
-        {
-            m_meleeDamageSchoolMask = SpellSchoolMask(1 << school);
-        }
+        SpellSchoolMask GetMeleeDamageSchoolMask() const override { return m_meleeDamageSchoolMask; }
+        void SetMeleeDamageSchool(SpellSchools school) { m_meleeDamageSchoolMask = SpellSchoolMask(1 << school); }
 
         void _AddCreatureSpellCooldown(uint32 spell_id, time_t end_time);
         void _AddCreatureCategoryCooldown(uint32 category, time_t apply_time);
@@ -582,10 +542,7 @@ class Creature : public Unit, public GridObject<Creature>
         
         void SetCanDualWield(bool value);
         void SetCurrentEquipmentId(uint8 id) { m_equipmentId = id; }
-        uint32 GetCurrentEquipmentId()
-        {
-            return m_equipmentId;
-        }
+        uint32 GetCurrentEquipmentId() { return m_equipmentId; }
         float GetSpellDamageMod(int32 Rank) const;
 
         VendorItemData const* GetVendorItems() const;
@@ -594,62 +551,28 @@ class Creature : public Unit, public GridObject<Creature>
 
         TrainerSpellData const* GetTrainerSpells() const;
 
-        CreatureInfo const* GetCreatureTemplate() const
-        {
-            return m_creatureInfo;
-        }
-        CreatureData const* GetCreatureData() const
-        {
-            return m_creatureData;
-        }
+        CreatureInfo const* GetCreatureTemplate() const { return m_creatureInfo; }
+        CreatureData const* GetCreatureData() const { return m_creatureData; }
         CreatureDataAddon const* GetCreatureAddon() const;
 
         std::string GetAIName() const;
         std::string GetScriptName();
         uint32 GetScriptId();
 
-        void setEmoteState(uint8 emote)
-        {
-            m_emoteState = emote;
-        };
-        void Say(const char* text, uint32 language, uint64 TargetGuid)
-        {
-            MonsterSay(text, language, TargetGuid);
-        }
-        void Yell(const char* text, uint32 language, uint64 TargetGuid)
-        {
-            MonsterYell(text, language, TargetGuid);
-        }
-        void TextEmote(const char* text, uint64 TargetGuid, bool IsBossEmote = false)
-        {
-            MonsterTextEmote(text, TargetGuid, IsBossEmote);
-        }
-        void Whisper(const char* text, uint64 receiver, bool IsBossWhisper = false)
-        {
-            MonsterWhisper(text, receiver, IsBossWhisper);
-        }
-        void Say(int32 textId, uint32 language, uint64 TargetGuid)
-        {
-            MonsterSay(textId, language, TargetGuid);
-        }
-        void Yell(int32 textId, uint32 language, uint64 TargetGuid)
-        {
-            MonsterYell(textId, language, TargetGuid);
-        }
-        void TextEmote(int32 textId, uint64 TargetGuid, bool IsBossEmote = false)
-        {
-            MonsterTextEmote(textId, TargetGuid, IsBossEmote);
-        }
-        void Whisper(int32 textId, uint64 receiver, bool IsBossWhisper = false)
-        {
-            MonsterWhisper(textId, receiver, IsBossWhisper);
-        }
+        void setEmoteState(uint8 emote) { m_emoteState = emote; };
+        void Say(const char* text, uint32 language, uint64 TargetGuid) { MonsterSay(text, language, TargetGuid); }
+        void Yell(const char* text, uint32 language, uint64 TargetGuid) { MonsterYell(text, language, TargetGuid); }
+        void TextEmote(const char* text, uint64 TargetGuid, bool IsBossEmote = false) { MonsterTextEmote(text, TargetGuid, IsBossEmote); }
+        void Whisper(const char* text, uint64 receiver, bool IsBossWhisper = false) { MonsterWhisper(text, receiver, IsBossWhisper); }
+        void Say(int32 textId, uint32 language, uint64 TargetGuid) { MonsterSay(textId, language, TargetGuid); }
+        void Yell(int32 textId, uint32 language, uint64 TargetGuid) { MonsterYell(textId, language, TargetGuid); }
+        void TextEmote(int32 textId, uint64 TargetGuid, bool IsBossEmote = false) { MonsterTextEmote(textId, TargetGuid, IsBossEmote); }
+        void Whisper(int32 textId, uint64 receiver, bool IsBossWhisper = false) { MonsterWhisper(textId, receiver, IsBossWhisper); }
 
         // overwrite WorldObject function for proper name localization
         const char* GetNameForLocaleIdx(int32 locale_idx) const override;
 
         void setDeathState(DeathState s) override;                     // overwrite virtual Unit::setDeathState
-        bool FallGround();
 
         bool LoadFromDB(uint32 guid, Map* map) { return LoadCreatureFromDB(guid, map, false); }
         bool LoadCreatureFromDB(uint32 guid, Map* map, bool addToMap = true);

@@ -338,7 +338,7 @@ struct npc_shatteredscoutAI : public ScriptedAI
 				spotted = true;					
 			}
 
-			if (!me->canFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
+			if (!me->CanFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
 				return;
 
 			float attackRadius = me->GetAttackDistance(who);

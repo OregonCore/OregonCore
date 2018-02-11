@@ -396,7 +396,7 @@ struct boss_kaelthasAI : public ScriptedAI
         if (!me->HasUnitState(UNIT_STATE_STUNNED) && who->isTargetableForAttack() &&
             me->IsHostileTo(who) && who->isInAccessiblePlaceFor(me))
         {
-            if (!me->canFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
+            if (!me->CanFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
             float attackRadius = me->GetAttackDistance(who);

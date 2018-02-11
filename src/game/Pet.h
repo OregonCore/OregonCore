@@ -211,15 +211,9 @@ class Pet : public Guardian
         void InitPetAuras(const uint32 Entry);
         bool HaveInDiet(ItemTemplate const* item) const;
         uint32 GetCurrentFoodBenefitLevel(uint32 itemlevel);
-        void SetDuration(int32 dur)
-        {
-            m_duration = dur;
-        }
+        void SetDuration(int32 dur) { m_duration = dur; }
 
-        bool canSwim() const override
-        {
-            return true;
-        }
+        bool CanSwim() const { return true; }
 
         bool   CanTakeMoreActiveSpells(uint32 SpellIconID);
         void   ToggleAutocast(uint32 spellid, bool apply);

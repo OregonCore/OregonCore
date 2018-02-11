@@ -450,7 +450,7 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData* data)
     }
 
     // trigger creature is always not selectable and can not be attacked
-    if (isTrigger())
+    if (IsTrigger())
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
     InitializeReactState();
@@ -819,7 +819,7 @@ bool Creature::Create(uint32 guidlow, Map* map, uint32 phaseMask, uint32 entry, 
 
 void Creature::InitializeReactState()
 {
-    if (IsTotem() || isTrigger() || IsCritter() || IsSpiritService())
+    if (IsTotem() || IsTrigger() || IsCritter() || IsSpiritService())
         SetReactState(REACT_PASSIVE);
     else
         SetReactState(REACT_AGGRESSIVE);
@@ -1306,7 +1306,7 @@ bool Creature::LoadCreatureFromDB(uint32 guid, Map* map, bool addToMap)
     if (m_respawnTime)                          // respawn on Update
     {
         m_deathState = DEAD;
-        if (canFly())
+        if (CanFly())
         {
             float tz = GetMap()->GetHeight(data->posX, data->posY, data->posZ, false);
             if (data->posZ - tz > 0.1)
@@ -1477,7 +1477,7 @@ bool Creature::CanAlwaysSee(WorldObject const* obj) const
 
 bool Creature::canStartAttack(Unit const* who, bool force) const
 {
-    if (isCivilian())
+    if (IsCivilian())
         return false;
 
     // This set of checks is should be done only for creatures
@@ -1490,7 +1490,7 @@ bool Creature::canStartAttack(Unit const* who, bool force) const
     if (who->GetTypeId() == TYPEID_UNIT && who->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET)
         return false;
 
-    if (!canFly() && (GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE + m_CombatDistance))
+    if (!CanFly() && (GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE + m_CombatDistance))
         return false;
 
     if (!force)
@@ -1581,7 +1581,7 @@ void Creature::setDeathState(DeathState s)
         if (m_formation && m_formation->getLeader() == this)
             m_formation->FormationReset(true);
 
-        if ((canFly() || IsFlying()))
+        if ((CanFly() || IsFlying()))
             GetMotionMaster()->MoveFall();
 
         SetHealth(0);
@@ -1972,7 +1972,7 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
         return false;
 
     // we don't need help from non-combatant ;)
-    if (isCivilian())
+    if (IsCivilian())
         return false;
 
     if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_NPC))
@@ -2624,7 +2624,7 @@ void Creature::UpdateMovementFlags(bool packetOnly)
     if (!isInAir)
         RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
 
-    SetSwim(canSwim() && GetBaseMap()->IsSwimmable(GetPositionX(), GetPositionY(), GetPositionZ()));
+    SetSwim(CanSwim() && GetBaseMap()->IsSwimmable(GetPositionX(), GetPositionY(), GetPositionZ()));
 }
 
 void Creature::StartPickPocketRefillTimer()

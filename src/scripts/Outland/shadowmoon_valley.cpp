@@ -2178,7 +2178,7 @@ struct legion_infernal_summon_triggerAI : public ScriptedAI
 	void Reset()
 	{
 		me->SetCanFly(true);
-		me->canFly();
+		me->CanFly();
 		infernal_summon_timer = 5000;
 	}
 

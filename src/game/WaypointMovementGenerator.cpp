@@ -72,7 +72,7 @@ WaypointMovementGenerator<Creature>::MoveToNextNode(Creature& unit, const Waypoi
     else
         init.SetWalk(false);
 
-    if (unit.canFly())
+    if (unit.CanFly())
         init.SetFly();
 
     int32 traveltime = init.Launch();

@@ -210,7 +210,7 @@ bool TargetedMovementGeneratorMedium<T, D>::RequiresNewPosition(T& owner, float 
 
     // GetClosePoint() will always return a point on the ground, so we need to
     // handle the difference in elevation when the creature is flying
-    if (owner.GetTypeId() == TYPEID_UNIT && ((Creature*)&owner)->canFly())
+    if (owner.GetTypeId() == TYPEID_UNIT && ((Creature*)&owner)->CanFly())
         targetMoved = i_target->GetDistanceSqr(x, y, z) > dist * dist;
     else
         targetMoved = i_target->GetDistance2d(x, y) > dist;

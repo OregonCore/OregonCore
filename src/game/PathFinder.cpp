@@ -173,9 +173,9 @@ void PathInfo::BuildPolyPath(const Vector3& startPos, const Vector3& endPos)
         sLog.outMMap("BuildPolyPath :: (startPoly == 0 || endPoly == 0)\n");
         BuildShortcut();
 
-        bool path = m_sourceUnit->GetTypeId() == TYPEID_UNIT && m_sourceUnit->ToCreature()->canFly();
+        bool path = m_sourceUnit->GetTypeId() == TYPEID_UNIT && m_sourceUnit->ToCreature()->CanFly();
 
-        bool waterPath = m_sourceUnit->GetTypeId() == TYPEID_UNIT && m_sourceUnit->ToCreature()->canSwim();
+        bool waterPath = m_sourceUnit->GetTypeId() == TYPEID_UNIT && m_sourceUnit->ToCreature()->CanSwim();
         if (waterPath)
         {
             // Check both start and end points, if they're both in water, then we can *safely* let the creature move
@@ -210,13 +210,13 @@ void PathInfo::BuildPolyPath(const Vector3& startPos, const Vector3& endPos)
             if (m_sourceUnit->GetMap()->IsUnderWater(p.x, p.y, p.z))
             {
                 sLog.outMMap("BuildPolyPath :: underwater case\n");
-                if (owner->canSwim())
+                if (owner->CanSwim())
                     buildShotrcut = true;
             }
             else
             {
                 sLog.outMMap("BuildPolyPath :: flying case\n");
-                if (owner->canFly())
+                if (owner->CanFly())
                     buildShotrcut = true;
             }
         }
@@ -523,11 +523,11 @@ void PathInfo::createFilter()
     if (m_sourceUnit->GetTypeId() == TYPEID_UNIT)
     {
         Creature* creature = (Creature*)m_sourceUnit;
-        if (creature->canWalk())
+        if (creature->CanWalk())
             includeFlags |= NAV_GROUND;          // walk
 
         // creatures don't take environmental damage
-        if (creature->canSwim())
+        if (creature->CanSwim())
             includeFlags |= (NAV_WATER | NAV_MAGMA | NAV_SLIME);           // swim
     }
     else if (m_sourceUnit->GetTypeId() == TYPEID_PLAYER)

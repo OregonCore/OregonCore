@@ -296,7 +296,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
 
         if (!me->GetVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
         {
-            if (!me->canFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
+            if (!me->CanFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
             if (who->GetTypeId() != TYPEID_PLAYER)
                 return;

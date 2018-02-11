@@ -2971,7 +2971,7 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit* victim, SpellEntry const* spellInf
     // PvP - PvE spell misschances per leveldif > 2
     int32 lchance = victim->GetTypeId() == TYPEID_PLAYER ? 7 : 11;
     int32 thisLevel = getLevelForTarget(victim);
-    if (GetTypeId() == TYPEID_UNIT && ToCreature()->isTrigger())
+    if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsTrigger())
         thisLevel = std::max<int32>(thisLevel, spellInfo->spellLevel);
     int32 leveldif = int32(victim->getLevelForTarget(this)) - thisLevel;
 
@@ -3662,9 +3662,9 @@ void Unit::SetFacingToObject(WorldObject* pObject)
 bool Unit::isInAccessiblePlaceFor(Creature const* c) const
 {
     if (IsInWater())
-        return c->canSwim();
+        return c->CanSwim();
     else
-        return c->canWalk() || c->canFly();
+        return c->CanWalk() || c->CanFly();
 }
 
 bool Unit::IsInWater() const

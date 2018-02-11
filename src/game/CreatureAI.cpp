@@ -184,7 +184,7 @@ void CreatureAI::TriggerAlert(Unit const* who) const
         return;
 
     // Only alert for hostiles!
-    if (me->isCivilian() || me->HasReactState(REACT_PASSIVE) || !me->IsHostileTo(who))
+    if (me->IsCivilian() || me->HasReactState(REACT_PASSIVE) || !me->IsHostileTo(who))
         return;
 
     // Send alert sound (if any) for this creature

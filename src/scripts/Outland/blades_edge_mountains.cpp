@@ -2767,7 +2767,7 @@ struct npc_felburn_triggerAI : public ScriptedAI
 	{
 		spellHit = false;
 		me->SetCanFly(true);
-		me->canFly();
+		me->CanFly();
 	}
 
 	bool spellHit;
