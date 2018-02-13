@@ -3884,6 +3884,7 @@ bool Unit::AddAura(Aura* Aur)
         for (AuraMap::iterator i2 = m_Auras.lower_bound(spair); i2 != m_Auras.upper_bound(spair);)
         {
             Aura* aur2 = i2->second;
+
             if (aur2 && !stackModified)
             {
                 ASSERT(aur2->GetId() == Aur->GetId());
@@ -3904,38 +3905,38 @@ bool Unit::AddAura(Aura* Aur)
                         break;
                 }
 
-                // Not the same caster - might allow stacking - based on spell_group and spell_group_stack_rules tables
-                if (Aur->GetCasterGUID() != aur2->GetCasterGUID())
-                     if (!sSpellMgr.IsNoStackSpellDueToSpell(Aur->GetId(), aur2->GetId(), false))
-                         break;
-
-                // Non stackable and capped auras do not allow stacking
-                if (!(aurSpellInfo->StackAmount && uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount))
+                if (sSpellMgr.IsNoStackSpellDueToSpell(Aur->GetId(), aur2->GetId(), Aur->GetCasterGUID() == aur2->GetCasterGUID()))
                 {
-                    // Do not let the stack size exceed the maximum stack limit
-                    // Instead of adding a new stack, just set the duration time
-                    // we need to use time from Aur because of diminishing effects
-                    aur2->SetAuraDuration(Aur->GetAuraMaxDuration());
-                    aur2->SetAuraProcCharges(Aur->m_procCharges);
-                    aur2->UpdateAuraDuration();
-                    aur2->UpdateAuraCharges();
-                    *aur2->GetModifier() = *Aur->GetModifier();
-                    delete Aur;
-                    return true;
+                    // Non stackable and capped auras do not allow stacking
+                    if (!(aurSpellInfo->StackAmount && uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount))
+                    {
+                        // Do not let the stack size exceed the maximum stack limit
+                        // Instead of adding a new stack, just set the duration time
+                        // we need to use time from Aur because of diminishing effects
+                        aur2->SetAuraDuration(Aur->GetAuraMaxDuration());
+                        aur2->SetAuraProcCharges(Aur->m_procCharges);
+                        aur2->UpdateAuraDuration();
+                        aur2->UpdateAuraCharges();
+                        *aur2->GetModifier() = *Aur->GetModifier();
+                        delete Aur;
+                        return true;
+                    }
+
+                    // Increment aura's stack, one stack per one call
+                    Aur->SetStackAmount(aur2->GetStackAmount() + 1);
+                    stackModified = true;
+
+                    // Existing aura will be replaced with the newly created one
+                    RemoveAura(i2, AURA_REMOVE_BY_STACK);
+                    i2 = m_Auras.lower_bound(spair);
+                    continue;
                 }
-
-                // Increment aura's stack, one stack per one call
-                Aur->SetStackAmount(aur2->GetStackAmount() + 1);
-                stackModified = true;
-
-                // Existing aura will be replaced with the newly created one
-                RemoveAura(i2, AURA_REMOVE_BY_STACK);
-                i2 = m_Auras.lower_bound(spair);
-                continue;
             }
+
             ++i2;
         }
     }
+
     // passive auras stack with all (except passive spell proc auras)
     if ((!Aur->IsPassive() || !IsPassiveStackableSpell(Aur->GetId())) &&
         !(Aur->GetId() == 20584 || Aur->GetId() == 8326))
