@@ -404,6 +404,7 @@ void Pet::SavePetToDB(PetSaveMode mode)
             std::string name = m_name;
             CharacterDatabase.escape_string(name);
             CharacterDatabase.BeginTransaction();
+
             // remove current data
             CharacterDatabase.PExecute("DELETE FROM character_pet WHERE owner = '%u' AND id = '%u'", owner, m_charmInfo->GetPetNumber());
 
@@ -422,7 +423,7 @@ void Pet::SavePetToDB(PetSaveMode mode)
                 << GetEntry() << ", "
                 << owner << ", "
                 << GetNativeDisplayId() << ", "
-                << getLevel() << ", "
+                << uint32(getLevel()) << ", "
                 << GetUInt32Value(UNIT_FIELD_PETEXPERIENCE) << ", "
                 << uint32(GetReactState()) << ", "
                 << m_loyaltyPoints << ", "
