@@ -41,7 +41,7 @@
 #include "OutdoorPvP.h"
 #include "OutdoorPvPMgr.h"
 #include "CreatureAI.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
 #include "ScriptMgr.h"
@@ -2581,7 +2581,10 @@ void Aura::HandleAuraMounted(bool apply, bool Real)
         m_target->Mount(display_id, m_spellProto->Id);
     }
     else
+    {
         m_target->Dismount();
+        m_target->RemoveAurasByType(SPELL_AURA_MOUNTED);
+    }
 }
 
 void Aura::HandleAuraWaterWalk(bool apply, bool Real)

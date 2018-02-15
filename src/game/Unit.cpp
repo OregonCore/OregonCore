@@ -34,7 +34,7 @@
 #include "CreatureAI.h"
 #include "Formulas.h"
 #include "Pet.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "Totem.h"
 #include "Battleground.h"
 #include "OutdoorPvP.h"
@@ -9285,12 +9285,8 @@ float Unit::GetPPMProcChance(uint32 WeaponSpeed, float PPM) const
 
 void Unit::Mount(uint32 mount, uint32 spellId)
 {
-    if (!mount)
-        return;
-
-    RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_MOUNT);
-
-    SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, mount);
+    if (mount)
+        SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, mount);
 
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNT);
 
@@ -9316,6 +9312,8 @@ void Unit::Mount(uint32 mount, uint32 spellId)
             }
         }
     }
+
+    RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_MOUNT);
 }
 
 void Unit::Dismount()
@@ -9323,14 +9321,14 @@ void Unit::Dismount()
     if (!IsMounted())
         return;
 
-    RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_NOT_MOUNTED);
-
     SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNT);
 
     WorldPacket data(SMSG_DISMOUNT, 8);
     data << GetPackGUID();
     SendMessageToSet(&data, true);
+
+    RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_NOT_MOUNTED);
 
     // only resummon old pet if the player is already added to a map
     // this prevents adding a pet to a not created map which would otherwise cause a crash

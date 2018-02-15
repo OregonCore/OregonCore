@@ -54,7 +54,7 @@
 #include "InstanceSaveMgr.h"
 #include "SmartAI.h"
 #include "TicketMgr.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "Language.h"
 #include "CreatureGroups.h"
 #include "Transports.h"

@@ -23,7 +23,7 @@
 #include "ObjectMgr.h"
 #include <list>
 #include <vector>
-#include "Util.h"
+#include "Utilities/Util.h"
 
 struct EnchStoreItem
 {

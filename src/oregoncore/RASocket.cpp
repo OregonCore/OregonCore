@@ -21,7 +21,7 @@
 #include "AccountMgr.h"
 #include "Log.h"
 #include "RASocket.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "World.h"
 #include "Auth/Sha1.h"
 

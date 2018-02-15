@@ -20,7 +20,7 @@
 #include "AccountMgr.h"
 #include "ObjectAccessor.h"
 #include "Player.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "Auth/Sha1.h"
 
 extern DatabaseType LoginDatabase;

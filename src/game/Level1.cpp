@@ -31,7 +31,7 @@
 #include "Language.h"
 #include "CellImpl.h"
 #include "InstanceSaveMgr.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "TicketMgr.h"
 
 #ifdef _DEBUG_VMAPS

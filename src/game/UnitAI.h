@@ -22,6 +22,7 @@
 #include <list>
 #include "Unit.h"
 #include "QuestDef.h"
+#include "Utilities/EventMap.h"
 
 class Unit;
 class Player;

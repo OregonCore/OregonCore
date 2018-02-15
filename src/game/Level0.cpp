@@ -30,7 +30,7 @@
 #include "AccountMgr.h"
 #include "SystemConfig.h"
 #include "revision.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "Spell.h"
 
 bool ChatHandler::HandleHelpCommand(const char* args)

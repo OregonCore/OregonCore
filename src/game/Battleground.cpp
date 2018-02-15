@@ -23,7 +23,7 @@
 #include "Chat.h"
 #include "ArenaTeam.h"
 #include "World.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "GridNotifiersImpl.h"
 
 namespace Oregon

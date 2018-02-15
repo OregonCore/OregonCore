@@ -44,7 +44,7 @@
 #include "SkillExtraItems.h"
 #include "SystemConfig.h"
 #include "Config/Config.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "ItemEnchantmentMgr.h"
 #include "BattlegroundMgr.h"
 #include "InstanceSaveMgr.h"

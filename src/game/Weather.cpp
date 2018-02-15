@@ -22,7 +22,7 @@
 #include "World.h"
 #include "ObjectMgr.h"
 #include "Log.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 
 // Create the Weather object
 Weather::Weather(uint32 zone, WeatherZoneChances const* weatherChances) : m_zone(zone), m_weatherChances(weatherChances)

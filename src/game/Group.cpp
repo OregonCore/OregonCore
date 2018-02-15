@@ -28,7 +28,7 @@
 #include "Battleground.h"
 #include "MapManager.h"
 #include "InstanceSaveMgr.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "ScriptMgr.h"
 
 Group::Group()

@@ -22,7 +22,7 @@
 #include "ObjectMgr.h"
 #include "Config/Config.h"
 #include "ItemPrototype.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 
 #define AHB_GREY        0
 #define AHB_WHITE       1

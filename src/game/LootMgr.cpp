@@ -19,7 +19,7 @@
 #include "Log.h"
 #include "ObjectMgr.h"
 #include "World.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "SharedDefines.h"
 
 static Rates const qualityToRate[MAX_ITEM_QUALITY] =

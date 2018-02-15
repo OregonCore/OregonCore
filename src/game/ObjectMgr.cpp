@@ -38,7 +38,7 @@
 #include "AccountMgr.h"
 #include "InstanceSaveMgr.h"
 #include "SpellAuras.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "WaypointManager.h"
 #include "GossipDef.h"
 #include "DisableMgr.h"

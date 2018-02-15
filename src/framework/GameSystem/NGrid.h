@@ -23,7 +23,7 @@
 #include "GameSystem/Grid.h"
 #include "GameSystem/GridReference.h"
 #include "Timer.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 
 #define DEFAULT_VISIBILITY_NOTIFY_PERIOD      1000
 

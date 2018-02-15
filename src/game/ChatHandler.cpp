@@ -33,7 +33,7 @@
 #include "Player.h"
 #include "SpellAuras.h"
 #include "CreatureAI.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 
 bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg, uint32 lang)
 {

@@ -23,7 +23,7 @@
 #include "ObjectAccessor.h"
 #include "SpellMgr.h"
 #include "Creature.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 
 int PetAI::Permissible(const Creature* creature)
 {

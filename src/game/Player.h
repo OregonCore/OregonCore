@@ -33,7 +33,7 @@
 #include "CinematicMgr.h"
 #include "Pet.h"
 #include "MapReference.h"
-#include "Util.h"                                           // for Tokens typedef
+#include "Utilities/Util.h"                                           // for Tokens typedef
 #include "ReputationMgr.h"
 
 #include<string>

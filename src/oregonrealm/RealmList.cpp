@@ -18,7 +18,7 @@
 #include "Common.h"
 #include "RealmList.h"
 #include "AuthCodes.h"
-#include "Util.h"                                           // for Tokens typedef
+#include "Utilities/Util.h"                                           // for Tokens typedef
 #include "Database/DatabaseEnv.h"
 
 extern DatabaseType LoginDatabase;

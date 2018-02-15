@@ -27,7 +27,7 @@
 #include "WorldSession.h"
 #include "UpdateData.h"
 #include "UpdateMask.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "ObjectAccessor.h"
 #include "Transports.h"
 #include "VMapFactory.h"

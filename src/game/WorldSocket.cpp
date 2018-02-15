@@ -28,7 +28,7 @@
 #include "WorldSocket.h"
 #include "Common.h"
 
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "World.h"
 #include "WorldPacket.h"
 #include "SharedDefines.h"

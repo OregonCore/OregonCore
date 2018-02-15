@@ -23,7 +23,7 @@
 #include "Guild.h"
 #include "Chat.h"
 #include "SocialMgr.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "Language.h"
 
 Guild::Guild()

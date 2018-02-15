@@ -19,7 +19,7 @@
 #include "Log.h"
 #include "ObjectAccessor.h"
 #include "World.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "SkillDiscovery.h"
 #include "SpellMgr.h"
 #include <map>

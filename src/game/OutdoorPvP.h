@@ -18,7 +18,7 @@
 #ifndef OUTDOOR_PVP_H_
 #define OUTDOOR_PVP_H_
 
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "ZoneScript.h"
 
 class GameObject;

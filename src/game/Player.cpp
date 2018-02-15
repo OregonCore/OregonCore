@@ -45,7 +45,7 @@
 #include "Guild.h"
 #include "Pet.h"
 #include "SpellAuras.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "Transports.h"
 #include "Weather.h"
 #include "Battleground.h"

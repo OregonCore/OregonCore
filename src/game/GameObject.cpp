@@ -38,7 +38,7 @@
 #include "CreatureAISelector.h"
 #include "InstanceData.h"
 #include "Battleground.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "OutdoorPvPMgr.h"
 #include "BattlegroundAV.h"
 #include "GameObjectModel.h"

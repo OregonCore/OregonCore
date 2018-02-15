@@ -27,7 +27,7 @@
 #include "Formulas.h"
 #include "SpellAuras.h"
 #include "Unit.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 
 
 //numbers represent minutes * 100 while happy (you get 100 loyalty points per min while happy)

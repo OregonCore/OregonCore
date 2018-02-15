@@ -37,7 +37,7 @@
 #include "SharedDefines.h"
 #include "SocialMgr.h"
 #include "UpdateMask.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "MapManager.h"
 #include "SystemConfig.h"
 #include "ScriptMgr.h"

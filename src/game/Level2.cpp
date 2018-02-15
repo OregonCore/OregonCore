@@ -35,7 +35,7 @@
 #include "AccountMgr.h"
 #include "WaypointManager.h"
 #include "CreatureGroups.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include <cctype>
 #include <iostream>
 #include <fstream>

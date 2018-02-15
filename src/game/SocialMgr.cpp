@@ -24,7 +24,7 @@
 #include "ObjectMgr.h"
 #include "MapManager.h"
 #include "World.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 
 INSTANTIATE_SINGLETON_1(SocialMgr);
 

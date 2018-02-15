@@ -23,7 +23,7 @@
 #include "ObjectMgr.h"
 #include "MapManager.h"
 #include "Language.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 
 // these variables aren't used outside of this file, so declare them only here
 uint32 BG_EY_HonorScoreTicks[BG_HONOR_MODE_NUM] =

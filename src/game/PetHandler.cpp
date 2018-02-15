@@ -27,7 +27,7 @@
 #include "ObjectAccessor.h"
 #include "MapManager.h"
 #include "CreatureAI.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "Pet.h"
 #include "Language.h"
 

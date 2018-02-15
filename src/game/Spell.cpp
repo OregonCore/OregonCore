@@ -40,7 +40,7 @@
 #include "LootMgr.h"
 #include "VMapFactory.h"
 #include "Battleground.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "TemporarySummon.h"
 #include "GameEventMgr.h"
 #include "DisableMgr.h"

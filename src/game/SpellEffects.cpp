@@ -44,7 +44,7 @@
 #include "OutdoorPvPMgr.h"
 #include "Language.h"
 #include "SocialMgr.h"
-#include "Util.h"
+#include "Utilities/Util.h"
 #include "TemporarySummon.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
