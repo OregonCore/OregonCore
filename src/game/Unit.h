@@ -1250,7 +1250,8 @@ class Unit : public WorldObject
         void SetInCombatWith(Unit* enemy);
         void ClearInCombat();
         void ClearInPetCombat();
-        uint32 GetCombatTimer() const { return m_CombatTimer; }
+        IntervalTimer m_CombatTimer;
+        uint32 IsInPvPCombat() const { return m_CombatTimer.GetInterval() != 0; }
 
         uint32 GetAuraCount(uint32 spellId) const;
         bool HasAuraType(AuraType auraType) const;
@@ -2073,7 +2074,6 @@ class Unit : public WorldObject
         bool HandleMendingAuraProc(Aura* triggeredByAura);
 
         uint32 m_state;                                     // Even derived shouldn't modify
-        uint32 m_CombatTimer;
         uint32 m_lastManaUse;                               // msecs
 
         Spell* m_currentSpells[CURRENT_MAX_SPELL];

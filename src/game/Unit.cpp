@@ -443,7 +443,7 @@ Unit::Unit(bool isWorldObject):
 
     m_initiatingCombat = false;
 
-    m_CombatTimer = 0;
+    m_CombatTimer.SetInterval(0);
     m_lastManaUse = 0;
 
     for (uint8 i = 0; i < MAX_SPELL_SCHOOL; ++i)
@@ -528,22 +528,6 @@ void Unit::Update(uint32 p_time)
         return;
 
     _UpdateSpells(p_time);
-
-    // update combat timer only for players and pets
-    if (IsInCombat() && (GetTypeId() == TYPEID_PLAYER || IsPet() || ToCreature()->isCharmed()))
-    {
-        // Check UNIT_STATE_MELEE_ATTACKING or UNIT_STATE_CHASE (without UNIT_STATE_FOLLOW in this case) so pets can reach far away
-        // targets without stopping half way there and running off.
-        // These flags are reset after target dies or another command is given.
-        if (m_HostileRefManager.isEmpty())
-        {
-            // m_CombatTimer set at aura start and it will be freeze until aura removing
-            if (m_CombatTimer <= p_time)
-                ClearInCombat();
-            else
-                m_CombatTimer -= p_time;
-        }
-    }
 
 	if (uint32 base_att = getAttackTimer(BASE_ATTACK))
 		setAttackTimer(BASE_ATTACK, (p_time >= base_att ? 0 : base_att - p_time));
@@ -9413,7 +9397,10 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
         return;
 
     if (PvP)
-        m_CombatTimer = 5000;
+    {
+        m_CombatTimer.SetInterval(5000);
+        m_CombatTimer.SetCurrent(0);
+    }
 
     if (IsInCombat() || HasUnitState(UNIT_STATE_EVADE))
         return;
@@ -9472,7 +9459,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
 void Unit::ClearInCombat()
 {
-    m_CombatTimer = 0;
+    m_CombatTimer.SetInterval(0);
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
     // Player's state will be cleared in Player::UpdateContestedPvP
@@ -12322,6 +12309,7 @@ void Unit::SetContestedPvP(Player* attackedPlayer)
         return;
 
     player->SetContestedPvPTimer(30000);
+
     if (!player->HasUnitState(UNIT_STATE_ATTACK_PLAYER))
     {
         player->AddUnitState(UNIT_STATE_ATTACK_PLAYER);

@@ -1190,7 +1190,7 @@ void Spell::DoSpellHitOnUnit(Unit* unit, const uint32 effectMask)
             }
             if (unit->IsInCombat() && !(m_spellInfo->AttributesEx3 & SPELL_ATTR3_NO_INITIAL_AGGRO))
             {
-                m_caster->SetInCombatState(unit->GetCombatTimer() > 0, unit);
+                m_caster->SetInCombatState(unit->IsInPvPCombat(), unit);
                 unit->getHostileRefManager().threatAssist(m_caster, 0.0f);
             }
         }
