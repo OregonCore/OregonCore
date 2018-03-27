@@ -45,7 +45,7 @@ enum Factions
 };
 
 enum Creatures
-{ismedivh
+{
     NPC_MEDIVH = 16816,
 
     NPC_CHEST_BUNNY = 25213,
