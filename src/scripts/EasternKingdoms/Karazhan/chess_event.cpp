@@ -45,7 +45,7 @@ enum Factions
 };
 
 enum Creatures
-{
+{ismedivh
     NPC_MEDIVH = 16816,
 
     NPC_CHEST_BUNNY = 25213,
@@ -568,8 +568,11 @@ struct Chess_npcAI : public Scripted_NoMovementAI
 
         if (me->GetEntry() == NPC_KING_H || me->GetEntry() == NPC_KING_A)
         {
-            if (IsMedivhControlled(me)) //if medivhs king is killed player won
-                pInstance->SetData(TYPE_CHESS, DONE);
+            if (IsMedivhControlled(me)) {
+				//if medivhs king is killed player won
+				pInstance->SetData(TYPE_CHESS, DONE);
+				pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GO_GAME_EXIT_DOOR));
+			}
             else //else player lost
                 pInstance->SetData(TYPE_CHESS, FAIL);
 
