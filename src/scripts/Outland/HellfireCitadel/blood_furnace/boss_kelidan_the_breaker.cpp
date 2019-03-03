@@ -286,10 +286,15 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
             events.DelayEvents(6000, 0);
             events.ScheduleEvent(EVENT_SPELL_BURNING_NOVA, urand(25000, 32000));
             events.ScheduleEvent(EVENT_SPELL_FIRE_NOVA, 5000);
+            Firenova = true;
             break;
+
         case EVENT_SPELL_FIRE_NOVA:
-            me->CastSpell(me, SPELL_FIRE_NOVA, true);
-            events.ExecuteEvent();
+            if (Firenova)
+            {
+                me->CastSpell(me, SPELL_FIRE_NOVA, true);
+                Firenova = false;
+            }
             break;
         }
 
