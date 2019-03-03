@@ -2098,3 +2098,16 @@ RAF.GrantableLevelsPerLevel = 0.5
 
 DatabaseUpdater.Enabled = 0
 DatabaseUpdater.PathToUpdates = ""
+
+###############################################################################
+#
+#    WarsongTimer.Enabled
+#        Enable or disable the warsoong gultch timer.
+#        Warsong gultch timer wasnt added till 3.2.0
+#		 Default = 1
+#		 Values 1 - on, 0- off
+#
+###############################################################################
+
+WarsongTimer.Enabled = 0
+
