@@ -347,19 +347,25 @@ struct boss_malchezaarAI : public ScriptedAI
             pos.Relocate(point->x, point->y, INFERNAL_Z);
         }
 
-        Creature* Infernal = me->SummonCreature(NETHERSPITE_INFERNAL, pos, TEMPSUMMON_TIMED_DESPAWN, 180000);
-
-        if (Infernal)
+        if (Unit* Relay = Unit::GetUnit((*me), pInstance->GetData64(DATA_NPC_RELAY)))
         {
-            Infernal->SetDisplayId(INFERNAL_MODEL_INVISIBLE);
-            Infernal->SetFaction(me->GetFaction());
-            if (point)
-                CAST_AI(netherspite_infernalAI, Infernal->AI())->point = point;
-            CAST_AI(netherspite_infernalAI, Infernal->AI())->malchezaar = me->GetGUID();
+            Creature* Infernal = Relay->SummonCreature(NETHERSPITE_INFERNAL, pos, TEMPSUMMON_TIMED_DESPAWN, 180000);
 
-            infernals.push_back(Infernal->GetGUID());
-            DoCast(Infernal, SPELL_INFERNAL_RELAY);
+            if (Infernal)
+            {
+                Infernal->SetDisplayId(INFERNAL_MODEL_INVISIBLE);
+                Infernal->SetFaction(me->GetFaction());
+
+                if (point)
+                    CAST_AI(netherspite_infernalAI, Infernal->AI())->point = point;
+                CAST_AI(netherspite_infernalAI, Infernal->AI())->malchezaar = me->GetGUID();
+
+                infernals.push_back(Infernal->GetGUID());
+                ///CAST_CRE(Relay->AI())->DoCast(Infernal, SPELL_INFERNAL_RELAY));
+                CAST_CRE(Relay)->AI()->DoCast(Infernal, SPELL_INFERNAL_RELAY);
+            }
         }
+
 
         DoScriptText(RAND(SAY_SUMMON1, SAY_SUMMON2), me);
     }

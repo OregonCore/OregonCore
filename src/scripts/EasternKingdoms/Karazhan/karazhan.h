@@ -53,7 +53,8 @@ enum eEnums
     DATA_MASTERS_TERRACE_DOOR_2     = 28,
     DATA_GO_SIDE_ENTRANCE_DOOR      = 29,
     DATA_NIGHTBANE                  = 30,
-    DATA_ECHO_OF_MEDIVH             = 31
+    DATA_ECHO_OF_MEDIVH             = 31,
+    DATA_NPC_RELAY                  = 32
 };
 
 enum OperaEvents
@@ -77,7 +78,8 @@ enum MiscCreatures
     NPC_GREATER_SHADOWBAT           = 16174,
     NPC_PHASE_HOUND                 = 16178,
     NPC_DREADBEAST                  = 16177,
-    NPC_SHADOWBEAST                 = 16176
+    NPC_SHADOWBEAST                 = 16176,
+    NPC_RELAY                       = 17645
 };
  
 #define ERROR_INST_DATA(a)          error_log("OSCR: Instance Data for Karazhan not set properly. Encounter for Creature Entry %u may not work properly.", a->GetEntry());
