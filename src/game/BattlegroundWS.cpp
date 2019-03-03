@@ -22,6 +22,7 @@
 #include "GameObject.h"
 #include "MapManager.h"
 #include "Language.h"
+#include "World.h"
 
 // these variables aren't used outside of this file, so declare them only here
 enum BG_WSG_Rewards
