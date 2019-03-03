@@ -666,6 +666,30 @@ bool Unit::IsWithinMeleeRange(Unit* obj, float dist) const
     return distsq < maxdist * maxdist;
 }
 
+bool Unit::HasBreakableByDamageAuraType(AuraType type, uint32 excludeAura) const
+{
+    AuraList const& auras = GetAurasByType(type);
+    for (AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
+        if ((!excludeAura || excludeAura != (*itr)->GetSpellProto()->Id) &&
+            ((*itr)->GetSpellProto()->AuraInterruptFlags & AURA_INTERRUPT_FLAG_DAMAGE))
+            return true;
+    return false;
+}
+
+bool Unit::HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel) const
+{
+    uint32 excludeAura = 0;
+    if (Spell* currentChanneledSpell = excludeCasterChannel ? excludeCasterChannel->GetCurrentSpell(CURRENT_CHANNELED_SPELL) : NULL)
+        excludeAura = currentChanneledSpell->m_spellInfo->Id;
+
+    return (HasBreakableByDamageAuraType(SPELL_AURA_MOD_CONFUSE, excludeAura)
+        || HasBreakableByDamageAuraType(SPELL_AURA_MOD_FEAR, excludeAura)
+        || HasBreakableByDamageAuraType(SPELL_AURA_MOD_STUN, excludeAura)
+        || HasBreakableByDamageAuraType(SPELL_AURA_MOD_ROOT, excludeAura)
+        || HasBreakableByDamageAuraType(SPELL_AURA_TRANSFORM, excludeAura));
+}
+
+
 void Unit::GetRandomContactPoint(const Unit* obj, float& x, float& y, float& z, float distance2dMin, float distance2dMax) const
 {
     float combat_reach = GetCombatReach();
@@ -9505,6 +9529,35 @@ bool Unit::isTargetableForAttack(bool checkFakeDeath) const
         return false;
 
     return !HasUnitState(UNIT_STATE_UNATTACKABLE) && (!checkFakeDeath || !HasUnitState(UNIT_STATE_DIED));
+}
+
+bool Unit::canAttack(Unit const* target, bool force) const
+{
+    ASSERT(target);
+
+    if (force)
+    {
+        if (IsFriendlyTo(target))
+            return false;
+    }
+    else if (!IsHostileTo(target))
+        return false;
+
+    if (!target->isAttackableByAOE())
+        return false;
+
+    // feign dead case
+    if (target->HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH))
+    {
+        if ((GetTypeId() != TYPEID_PLAYER && !GetOwner()) || (GetOwner() && GetOwner()->GetTypeId() != TYPEID_PLAYER))
+            return false;
+        // if this == player or owner == player check other conditions
+    }
+    // real dead case ~UNIT_FLAG2_FEIGN_DEATH && UNIT_STATE_DIED
+    else if (target->HasUnitState(UNIT_STATE_DIED))
+        return false;
+
+    return true;
 }
 
 bool Unit::IsValidAttackTarget(Unit const* target) const

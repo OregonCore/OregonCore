@@ -1267,6 +1267,9 @@ class Unit : public WorldObject
             return false;
         }
 
+        bool HasBreakableByDamageAuraType(AuraType type, uint32 excludeAura = 0) const;
+        bool HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel = NULL) const;
+
         bool HasStealthAura()      const { return HasAuraType(SPELL_AURA_MOD_STEALTH); }
         bool HasInvisibilityAura() const { return HasAuraType(SPELL_AURA_MOD_INVISIBILITY); }
         bool IsFeared()  const { return HasAuraType(SPELL_AURA_MOD_FEAR); }
@@ -1274,6 +1277,7 @@ class Unit : public WorldObject
         bool IsPolymorphed() const;
 
         bool isFrozen() const;
+        bool canAttack(Unit const* target, bool force = true) const;
 
         bool isTargetableForAttack(bool checkFakeDeath = true) const;
 
