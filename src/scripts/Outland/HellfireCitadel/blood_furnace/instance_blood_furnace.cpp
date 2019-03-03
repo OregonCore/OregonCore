@@ -31,10 +31,26 @@ EndScriptData */
 
 #define NPC_BROGGOK                  17380
 #define NPC_NASCENT_FEL_ORC          17398
+#define NPC_MAGTHERIDON              21174
 
 #define SAY_BROGGOK_INTRO            -1542015
 
 #define ENCOUNTERS                   3
+
+struct Yell
+{
+    int32 id;
+};
+static Yell RandomTaunt[] =
+{
+    { -1544000 },
+    { -1544001 },
+    { -1544002 },
+    { -1544003 },
+    { -1544004 },
+    { -1544005 },
+};
+
 
 struct instance_blood_furnace : public ScriptedInstance
 {
@@ -58,9 +74,11 @@ struct instance_blood_furnace : public ScriptedInstance
     BroggokEventInfo BroggokEvent[MAX_ORC_WAVES];
     std::vector<uint64> NascentOrcGuids;
     uint32 BroggokEventTimer;
+    uint32 MagtheridonSayTimer;
     uint32 BroggokEventPhase;
     uint32 DoorTimer;
     uint64 BroggokGUID;
+    uint64 MagtheridonGUID;
     uint64 Sewer1GUID;
     uint64 Sewer2GUID;
     uint64 Maker1GUID;
@@ -104,6 +122,8 @@ struct instance_blood_furnace : public ScriptedInstance
         case NPC_NASCENT_FEL_ORC:
             NascentOrcGuids.push_back(pCreature->GetGUID());
             break;
+        case NPC_MAGTHERIDON:
+            MagtheridonGUID = pCreature->GetGUID();
         }
     }
 
@@ -379,6 +399,16 @@ struct instance_blood_furnace : public ScriptedInstance
             }
             else DoorTimer -= diff;
         }
+
+        if (MagtheridonSayTimer <= diff)
+        {
+            if (Creature* pMagtheridon = instance->GetCreature(MagtheridonGUID))
+            {
+                DoScriptText(RandomTaunt[rand() % 6].id, pMagtheridon);
+            }
+            MagtheridonSayTimer = 90000;
+        }
+        else MagtheridonSayTimer -= diff;
     }
 
     void OnCreatureDeath(Creature* pCreature)

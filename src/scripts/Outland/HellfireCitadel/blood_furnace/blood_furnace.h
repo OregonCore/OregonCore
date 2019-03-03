@@ -22,6 +22,7 @@
 #define DATA_BROGGOKEVENT           2
 #define DATA_KELIDANEVENT           3
 
+
 enum GameObjectIds
 {
     GO_PRISON_DOOR_01           = 181766, // Final Exit Door
@@ -41,6 +42,11 @@ enum GameObjectIds
     GO_PRISON_CELL_DOOR_8       = 181817, // Broggok Prison Cell back left
 
     GO_BROGGOK_LEVER            = 181982
+};
+
+enum bloodFurnaceNPC
+{
+    NPC_CHANNELER               = 17653
 };
 
 #endif

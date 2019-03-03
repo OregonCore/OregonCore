@@ -203,6 +203,8 @@ struct ScriptedAI : public CreatureAI
 
         bool EnterEvadeIfOutOfCombatArea(const uint32 uiDiff);
 
+        Player * SelectTargetFromPlayerList(float maxdist, uint32 excludeAura, bool mustBeInLOS) const;
+
     private:
         bool m_bCombatMovement;
         uint32 m_uiEvadeCheckCooldown;
@@ -215,6 +217,7 @@ struct Scripted_NoMovementAI : public ScriptedAI
     //Called at each attack of me by any victim
     void AttackStart(Unit* who);
 };
+
 
 struct BossAI : public ScriptedAI
 {

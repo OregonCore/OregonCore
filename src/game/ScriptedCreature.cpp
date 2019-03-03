@@ -674,6 +674,26 @@ void LoadOverridenSQLData()
             goInfo->trap.radius = 50;
 }
 
+Player* ScriptedAI::SelectTargetFromPlayerList(float maxdist, uint32 excludeAura, bool mustBeInLOS) const
+{
+    Map::PlayerList const& pList = me->GetMap()->GetPlayers();
+    std::vector<Player*> tList;
+    for (Map::PlayerList::const_iterator itr = pList.begin(); itr != pList.end(); ++itr)
+    {
+        if (me->GetDistance(itr->GetSource()) > maxdist || !itr->GetSource()->IsAlive() || itr->GetSource()->IsGameMaster())
+            continue;
+        if (excludeAura && itr->GetSource()->HasAura(excludeAura))
+            continue;
+        if (mustBeInLOS && !me->IsWithinLOSInMap(itr->GetSource()))
+            continue;
+        tList.push_back(itr->GetSource());
+    }
+    if (!tList.empty())
+        return tList[urand(0, tList.size() - 1)];
+    else
+        return nullptr;
+}
+
 // SD2 grid searchers.
 Creature* GetClosestCreatureWithEntry(WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange, bool bAlive)
 {
