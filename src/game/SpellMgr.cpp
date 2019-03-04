@@ -972,8 +972,6 @@ void SpellMgr::LoadSpellAffects()
     if (!result)
     {
 
-
-
         sLog.outString(">> Loaded %u spell affect definitions", count);
         return;
     }
