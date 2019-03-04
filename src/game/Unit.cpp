@@ -5976,15 +5976,17 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, Aura* triggeredByAur
                 }
             //Seal of Vengeance
             case 31801:
+            {
+                switch (triggeredByAura->GetEffIndex())
                 {
-                    if (effIndex != 0)                       // effect 1,2 used by seal unleashing code
-                        return false;
+                case 0:
+                    uint32 stacks = 0;
 
                     triggered_spell_id = 31803;
 
                     // Since Patch 2.2.0 Seal of Vengeance does additional damage against fully stacked targets
                     // Add 5-stack effect from Holy Vengeance
-                    uint32 stacks = 0;
+
                     AuraList const& auras = target->GetAurasByType(SPELL_AURA_PERIODIC_DAMAGE);
                     for (AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
                     {
@@ -5994,10 +5996,13 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, Aura* triggeredByAur
                             break;
                         }
                     }
+
                     if (stacks >= 5)
                         CastSpell(target, 42463, true, NULL, triggeredByAura);
                     break;
                 }
+                break;
+            }
             // Spiritual Att.
             case 31785:
             case 33776:

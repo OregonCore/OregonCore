@@ -6348,11 +6348,13 @@ void Spell::EffectResurrect(SpellEffIndex /*effIndex*/)
 {
     if (!unitTarget)
         return;
+
     if (unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
     if (unitTarget->IsAlive())
         return;
+
     if (!unitTarget->IsInWorld())
         return;
 
