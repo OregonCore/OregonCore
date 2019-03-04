@@ -652,9 +652,6 @@ struct npc_anchorite_relic_bunnyAI : public ScriptedAI
         EndTimer = 60000;
     }
 
-    void AttackedBy(Unit* enemy) {}
-    void AttackStart(Unit* enemy) {}
-
     void JustSummoned(Creature* summoned)
     {
         if (summoned->GetEntry() == NPC_FEL_SPIRIT)
@@ -679,7 +676,7 @@ struct npc_anchorite_relic_bunnyAI : public ScriptedAI
 
     // @todo Fix SpellHit not being called when caster is dead
     // This may have other implications elsewhere in the core
-    void SpellHit(Unit* caster, const SpellEntry* spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
     {
         if (spell->Id == SPELL_SOUL_BURDEN)
         {
@@ -759,7 +756,7 @@ struct npc_hand_berserkerAI : public ScriptedAI
             DoCast(me, SPELL_ENRAGE);
     }
 
-    void JustDied(Unit* who)
+    void JustDied(Unit* /*who*/)
     {
         if (Creature* Bunny = GetClosestCreatureWithEntry(me, NPC_BUNNY, 17.5f))
         {
@@ -2427,7 +2424,6 @@ CreatureAI* GetAI_npc_dreghood_elder3(Creature* pCreature)
 
 bool GossipHello_npc_dreghood_elder1(Player* pPlayer, Creature* pCreature)
 {
-	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 
 	if (pCreature->IsQuestGiver())
 		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
@@ -2457,8 +2453,6 @@ bool GossipSelect_npc_dreghood_elder1(Player* pPlayer, Creature* pCreature, uint
 
 bool GossipHello_npc_dreghood_elder2(Player* pPlayer, Creature* pCreature)
 {
-	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-
 	if (pCreature->IsQuestGiver())
 		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
@@ -2486,8 +2480,6 @@ bool GossipSelect_npc_dreghood_elder2(Player* pPlayer, Creature* pCreature, uint
 
 bool GossipHello_npc_dreghood_elder3(Player* pPlayer, Creature* pCreature)
 {
-	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-
 	if (pCreature->IsQuestGiver())
 		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 

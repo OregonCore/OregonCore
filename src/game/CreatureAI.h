@@ -83,9 +83,9 @@ class CreatureAI : public UnitAI
             UnitAI((Unit*)c),
             me(c),
             CombatMovementEnabled(true),
-            m_MoveInLineOfSight_locked(false),
             AttackDistance(0.0f),
-            AttackAngle(0.0f)
+            AttackAngle(0.0f),
+            m_MoveInLineOfSight_locked(false)
         {}
 
         ~CreatureAI() override {}

@@ -1758,10 +1758,12 @@ struct mob_rift_spawnAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (escapeTimer)
+        {
             if (escapeTimer <= diff)
                 EscapeIntoVoid(questActive);
             else
                 escapeTimer -= diff;
+        }
 
         if (!UpdateVictim())
             return;
@@ -1794,7 +1796,7 @@ CreatureAI* GetAI_mob_rift_spawn(Creature* _Creature)
     return new mob_rift_spawnAI (_Creature);
 }
 
-bool GossipHello_go_containment_coffer(Player* player, GameObject* go)
+bool GossipHello_go_containment_coffer(Player* /*player*/, GameObject* go)
 {
     if (Creature* spawn = GetClosestCreatureWithEntry(go, MOB_RIFT_SPAWN, 5.0f, true))
     {
