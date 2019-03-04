@@ -6010,24 +6010,21 @@ uint32 ObjectMgr::GetBaseXP(uint32 level)
 void ObjectMgr::LoadPetNames()
 {
     uint32 count = 0;
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT word,entry,half FROM pet_name_generation");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT `word`, `entry`, `half` FROM `pet_name_generation`");
 
     if (!result)
     {
-
-
         sLog.outString(">> Loaded %u pet name parts", count);
         return;
     }
 
-
     do
     {
-
         Field* fields = result->Fetch();
         std::string word = fields[0].GetString();
         uint32 entry     = fields[1].GetUInt32();
         bool   half      = fields[2].GetBool();
+
         if (half)
             PetHalfName1[entry].push_back(word);
         else

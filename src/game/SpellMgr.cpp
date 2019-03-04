@@ -455,7 +455,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         {
             // only warlock curses have this
             if (spellInfo->Dispel == DISPEL_CURSE)
-                return SPELL_SPECIFIC_CURSE;
+                return SPELL_SPECIFIC_CURSE; 
 
             // family flag 37 (only part spells have family name)
             if (spellInfo->SpellFamilyFlags & 0x2000000000LL)
@@ -463,7 +463,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
 
             //seed of corruption and corruption
             if (spellInfo->SpellFamilyFlags & 0x1000000002LL)
-                return SPELL_SPECIFIC_WARLOCK_CORRUPTION;
+                return SPELL_SPECIFIC_WARLOCK_CORRUPTION; 
             break;
         }
     case SPELLFAMILY_HUNTER:
@@ -1616,7 +1616,7 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
         case SPELL_SPECIFIC_ASPECT:
         case SPELL_SPECIFIC_WARLOCK_CORRUPTION:
         case SPELL_SPECIFIC_JUDGEMENT:
-            return !(sameCaster && (spellSpec == GetSpellSpecific(spellId_2)));
+           return sameCaster == (spellSpec == GetSpellSpecific(spellId_2));
         default:
             break;
     }
