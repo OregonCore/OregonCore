@@ -29,7 +29,7 @@ class MapUpdater
 {
     public:
 
-        MapUpdater() : m_executor(), m_mutex(), m_condition(m_mutex), pending_requests(0) {}
+        MapUpdater() : m_executor(), m_condition(m_mutex), m_mutex(), pending_requests(0) {}
         ~MapUpdater() { };
 
         friend class MapUpdateRequest;

@@ -35,7 +35,7 @@ public:
     ScriptedInstance(Map* pMap) : InstanceData(pMap) {}
     ~ScriptedInstance() {}
 
-    virtual void MovementInform(Creature* creature, uint32 uiType, uint32 uiPointId) { }
+    virtual void MovementInform(Creature* /*creature*/, uint32 /*uiType*/, uint32 /*uiPointId*/) { }
 };
 
 #endif

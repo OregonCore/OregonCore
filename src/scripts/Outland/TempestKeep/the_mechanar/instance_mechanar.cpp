@@ -141,8 +141,6 @@ struct instance_mechanar : public ScriptedInstance
                         if (Creature* creature = instance->SummonCreature(i == 1 || i == 2 ? NPC_SUNSEEKER_ASTROMAGE : NPC_BLOODWARDER_CENTURION, pos))
                             DoSummonAction(creature, player);
                     }
-                    Creature* creature;
-
                 }
             }
             if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE1)
