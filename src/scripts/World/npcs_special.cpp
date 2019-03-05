@@ -37,6 +37,7 @@ npc_sayge                   100%    Darkmoon event fortune teller, buff player b
 npc_snake_trap_serpents     100%    AI for snakes that summoned by Snake Trap
 npc_force_of_nature_treants 100%    AI for force of nature (druid spell)
 mob_inferno_infernal        100%    AI for Inferno (warlock spell)
+mob_explosive_sheep         100%    AI for Explosive Sheep
 npc_barmaid                 100%    Reponsive emotes for barmaids
 EndContentData */
 
@@ -47,6 +48,63 @@ EndContentData */
 #include "ObjectMgr.h"
 #include "World.h"
 #include "WorldPacket.h"
+
+enum
+{
+    NPC_EXPLOSIVE_SHEEP = 2675,
+    SPELL_EXPLOSIVE_SHEEP = 4050
+};
+
+struct npc_explosive_sheepAI : ScriptedAI
+{
+    npc_explosive_sheepAI(Creature* creature) : ScriptedAI(creature)
+    {
+        checkTimer = 0;
+        DespawnTimer = 0;
+    }
+
+    uint32 checkTimer;
+    uint32 DespawnTimer;
+
+    void UpdateAI(const uint32 uiDiff) override
+    {
+        checkTimer += uiDiff;
+        DespawnTimer += uiDiff;
+
+        if (DespawnTimer >= 3*MINUTE*IN_MILLISECONDS)
+        {
+            me->Kill(me, false);
+            me->ForcedDespawn(5000);
+        }
+
+        if (checkTimer >= 1000)
+        {
+            checkTimer = 0;
+            if (Unit* target = me->SelectNearestTarget(30.0f))
+            {
+                me->GetMotionMaster()->MoveChase(target);
+                if (me->GetDistance(target) < 3.0f)
+                {
+                    me->CastSpell(me, SPELL_EXPLOSIVE_SHEEP, false);
+                    me->ForcedDespawn(500);
+                }
+            }
+            else if (!me->HasUnitState(FOLLOW_MOTION_TYPE))
+            {
+                if (Unit* owner = me->GetCharmerOrOwner())
+                {
+                    me->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+                }
+            }
+        }
+    }
+
+};
+
+CreatureAI* GetAI_explosive_sheep(Creature* pCreature)
+{
+    return new npc_explosive_sheepAI(pCreature);
+}
 
 /*######
 ## npc_lunaclaw_spirit
@@ -1859,60 +1917,60 @@ enum eBarmaid
 
 struct npc_barmaidAI : public ScriptedAI
 {
-	npc_barmaidAI(Creature* c) : ScriptedAI(c) {}
+    npc_barmaidAI(Creature* c) : ScriptedAI(c) {}
 
-	void ReceiveEmote(Player* pPlayer, uint32 emote)
-	{
-		switch (emote)
-		{
-		case TEXT_EMOTE_APPLAUD:
-		case TEXT_EMOTE_BOW:
-			me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
-			break;
-		case TEXT_EMOTE_DANCE:
-			me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
-			break;
-		case TEXT_EMOTE_FLEX:
-			me->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
-			break;
-		case TEXT_EMOTE_KISS:
-			me->HandleEmoteCommand(EMOTE_ONESHOT_SHY);
-			break;
-		case TEXT_EMOTE_RUDE:
-			me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
-			DoScriptText(EMOTE_BARMAID_RUDE, me, pPlayer);
-			break;
-		case TEXT_EMOTE_SHY:
-			me->HandleEmoteCommand(EMOTE_ONESHOT_KISS);
-			break;
-		case TEXT_EMOTE_WAVE:
-			switch (urand(0, 5))
-			{
-				case 0:
-					DoScriptText(SAY_BARMAID1, me);
-					break;
-				case 1:
-					if (pPlayer->getGender() == 0)
-						DoScriptText(SAY_BARMAID2_MALE, me);
-					else
-						DoScriptText(SAY_BARMAID2_FEMALE, me);
-					break;
-				case 2:
-					DoScriptText(SAY_BARMAID3, me);
-					break;
-				case 3:
-					DoScriptText(SAY_BARMAID4, me, pPlayer);
-					break;
-				case 4:
-					DoScriptText(SAY_BARMAID5, me);
-					break;
-				case 5:
-					DoScriptText(SAY_BARMAID6, me, pPlayer);
-					break;
-			}
-			break;
-		}
-	}
+    void ReceiveEmote(Player* pPlayer, uint32 emote)
+    {
+        switch (emote)
+        {
+        case TEXT_EMOTE_APPLAUD:
+        case TEXT_EMOTE_BOW:
+            me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
+            break;
+        case TEXT_EMOTE_DANCE:
+            me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
+            break;
+        case TEXT_EMOTE_FLEX:
+            me->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
+            break;
+        case TEXT_EMOTE_KISS:
+            me->HandleEmoteCommand(EMOTE_ONESHOT_SHY);
+            break;
+        case TEXT_EMOTE_RUDE:
+            me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
+            DoScriptText(EMOTE_BARMAID_RUDE, me, pPlayer);
+            break;
+        case TEXT_EMOTE_SHY:
+            me->HandleEmoteCommand(EMOTE_ONESHOT_KISS);
+            break;
+        case TEXT_EMOTE_WAVE:
+            switch (urand(0, 5))
+            {
+            case 0:
+                DoScriptText(SAY_BARMAID1, me);
+                break;
+            case 1:
+                if (pPlayer->getGender() == 0)
+                    DoScriptText(SAY_BARMAID2_MALE, me);
+                else
+                    DoScriptText(SAY_BARMAID2_FEMALE, me);
+                break;
+            case 2:
+                DoScriptText(SAY_BARMAID3, me);
+                break;
+            case 3:
+                DoScriptText(SAY_BARMAID4, me, pPlayer);
+                break;
+            case 4:
+                DoScriptText(SAY_BARMAID5, me);
+                break;
+            case 5:
+                DoScriptText(SAY_BARMAID6, me, pPlayer);
+                break;
+            }
+            break;
+        }
+    }
 };
 
 CreatureAI* GetAI_npc_barmaid(Creature* pCreature)
@@ -1923,6 +1981,11 @@ CreatureAI* GetAI_npc_barmaid(Creature* pCreature)
 void AddSC_npcs_special()
 {
     Script* newscript;
+
+    newscript = new Script;
+    newscript->Name = "npc_explosive_sheep";
+    newscript->GetAI = &GetAI_explosive_sheep;
+    newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_lunaclaw_spirit";

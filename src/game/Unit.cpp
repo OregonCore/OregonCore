@@ -7411,6 +7411,8 @@ Unit* Unit::getAttackerForHelper() const                 // If someone wants to 
         for (Reference<Unit, ThreatManager> const& ref : refs)
             if (Unit* hostile = ref.GetSource()->getOwner())
                 return hostile;
+
+        
     }
 
     return nullptr;
