@@ -4278,6 +4278,10 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
         case SPELL_EFFECT_CHARGE:
             {
+            if (Unit* target = m_targets.getUnitTarget())
+                if (!target->IsAlive())
+                    return SPELL_FAILED_BAD_TARGETS;
+
                 if (m_caster->HasUnitState(UNIT_STATE_ROOT))
                     return SPELL_FAILED_ROOTED;
 
