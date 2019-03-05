@@ -730,8 +730,8 @@ void Spell::AddUnitTarget(Unit* pVictim, uint32 effIndex)
     if (m_spellInfo->Effect[effIndex] == 0)
         return;
 
-    if (!CheckTarget(pVictim, effIndex))
-        return;
+    /*if (!CheckTarget(pVictim, effIndex))
+        return;*/
 
     // Lookup target in already in list
     for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
@@ -3728,6 +3728,12 @@ void Spell::TriggerSpell()
 
 SpellCastResult Spell::CheckCast(bool strict)
 {
+    Unit* victim = m_targets.getUnitTarget();
+
+    if (victim)
+        if (!(m_spellInfo->AttributesEx6 & SPELL_ATTR6_CAN_TARGET_INVISIBLE) && !m_caster->CanSeeOrDetect(victim))
+            return SPELL_FAILED_BAD_TARGETS;
+
     // check death state
     if (!m_caster->IsAlive() && !(m_spellInfo->Attributes & SPELL_ATTR0_PASSIVE) && !(m_spellInfo->Attributes & SPELL_ATTR0_CASTABLE_WHILE_DEAD || (m_IsTriggeredSpell && !m_triggeredByAuraSpell)))
         return SPELL_FAILED_CASTER_DEAD;

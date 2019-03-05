@@ -821,8 +821,8 @@ class NearestAttackableUnitInObjectRangeCheck
         NearestAttackableUnitInObjectRangeCheck(WorldObject const* obj, Unit const* funit, float range) : i_obj(obj), i_funit(funit), i_range(range) {}
         bool operator()(Unit* u)
         {
-            if (u->isTargetableForAttack() && i_obj->IsWithinDistInMap(u, i_range) &&
-                (i_funit->IsInCombatWith(u) || i_funit->IsHostileTo(u)) && i_obj->CanSeeOrDetect(u))
+            if (u->isTargetableForAttack(true) && i_obj->IsWithinDistInMap(u, i_range) &&
+                !i_funit->IsFriendlyTo(u) && i_funit->CanSeeOrDetect(u))
             {
                 i_range = i_obj->GetDistance(u);        // use found unit range as new range limit for next check
                 return true;
@@ -943,10 +943,9 @@ struct AnyDeadUnitCheck
 class NearestHostileUnitInAttackDistanceCheck
 {
     public:
-        explicit NearestHostileUnitInAttackDistanceCheck(Creature const* creature, float dist = 0.f) : me(creature)
+        explicit NearestHostileUnitInAttackDistanceCheck(Creature const* creature, float dist = 0.f, bool playerOnly = false) : me(creature), i_playerOnly(playerOnly)
         {
             m_range = (dist == 0.f ? 9999.f : dist);
-            m_force = (dist == 0.f ? false : true);
         }
         bool operator()(Unit* u)
         {
@@ -956,12 +955,7 @@ class NearestHostileUnitInAttackDistanceCheck
             if (!me->CanSeeOrDetect(u))
                 return false;
 
-            if (m_force)
-            {
-                if (!me->IsValidAttackTarget(u))
-                    return false;
-            }
-            else if (!me->canStartAttack(u, false))
+            if (!me->IsValidAttackTarget(u))
                 return false;
 
             m_range = me->GetDistance(u);   // use found unit range as new range limit for next check
@@ -974,7 +968,7 @@ class NearestHostileUnitInAttackDistanceCheck
     private:
         Creature const* me;
         float m_range;
-        bool m_force;
+        bool i_playerOnly;
         NearestHostileUnitInAttackDistanceCheck(NearestHostileUnitInAttackDistanceCheck const&);
 };
 

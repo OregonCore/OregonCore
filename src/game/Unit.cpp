@@ -529,14 +529,14 @@ void Unit::Update(uint32 p_time)
 
     _UpdateSpells(p_time);
 
-	if (uint32 base_att = getAttackTimer(BASE_ATTACK))
-		setAttackTimer(BASE_ATTACK, (p_time >= base_att ? 0 : base_att - p_time));
+    if (uint32 base_att = getAttackTimer(BASE_ATTACK))
+        setAttackTimer(BASE_ATTACK, (p_time >= base_att ? 0 : base_att - p_time));
 
-	if (uint32 base_att = getAttackTimer(OFF_ATTACK))
-		setAttackTimer(OFF_ATTACK, (p_time >= base_att ? 0 : base_att - p_time));
+    if (uint32 base_att = getAttackTimer(OFF_ATTACK))
+        setAttackTimer(OFF_ATTACK, (p_time >= base_att ? 0 : base_att - p_time));
 
-	if (uint32 ranged_att = getAttackTimer(RANGED_ATTACK))
-		setAttackTimer(RANGED_ATTACK, (p_time >= ranged_att ? 0 : ranged_att - p_time));
+    if (uint32 ranged_att = getAttackTimer(RANGED_ATTACK))
+        setAttackTimer(RANGED_ATTACK, (p_time >= ranged_att ? 0 : ranged_att - p_time));
 
     // update abilities available only for fraction of time
     UpdateReactives(p_time);
@@ -549,7 +549,7 @@ void Unit::Update(uint32 p_time)
 
     UpdateSplineMovement(p_time);
     i_motionMaster.UpdateMotion(p_time);
-    
+
 }
 
 bool Unit::UpdateMeleeAttackingState()
