@@ -86,6 +86,7 @@ struct mob_voidtravelerAI : public ScriptedAI
         Vorpil = NULL;
         move = 0;
         sacrificed = false;
+        me->SetSpeed(MOVE_RUN, HeroicMode ? 0.5f : 0.7f);
     }
 
     void EnterCombat(Unit*) {}
