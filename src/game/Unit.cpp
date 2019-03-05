@@ -5977,9 +5977,8 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, Aura* triggeredByAur
             //Seal of Vengeance
             case 31801:
             {
-                switch (triggeredByAura->GetEffIndex())
+                if  (triggeredByAura->GetEffIndex() == 0)
                 {
-                case 0:
                     uint32 stacks = 0;
 
                     triggered_spell_id = 31803;
@@ -5999,7 +5998,6 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, Aura* triggeredByAur
 
                     if (stacks >= 5)
                         CastSpell(target, 42463, true, NULL, triggeredByAura);
-                    break;
                 }
                 break;
             }
