@@ -1143,7 +1143,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
        << GetDefaultMovementType() << ","                  //default movement generator type
        << npcflag << ","
        << unit_flags << ","
-       << dynamicflags << ")";
+       << dynamicflags << ");";
 
     WorldDatabase.PExecuteLog("%s", ss.str().c_str());
 
