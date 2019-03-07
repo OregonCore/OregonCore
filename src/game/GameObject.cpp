@@ -44,6 +44,7 @@
 #include "GameObjectModel.h"
 #include "DynamicTree.h"
 #include "Transports.h"
+#include "Log.h"
 
 GameObject::GameObject() : WorldObject(false), m_model(NULL), m_AI(NULL)
 {
@@ -656,12 +657,15 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
        << GetFloatValue(GAMEOBJECT_ROTATION + 3) << ", "
        << m_respawnDelayTime << ", "
        << uint32(GetGoAnimProgress()) << ", "
-       << uint32(GetGoState()) << ")";
+       << uint32(GetGoState()) << ");";
 
     WorldDatabase.BeginTransaction();
     WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
     WorldDatabase.PExecuteLog("%s", ss.str().c_str());
     WorldDatabase.CommitTransaction();
+
+    if (sWorld.getConfig(CONFIG_CREATEUPDATE_FILE))
+        sLog.CreateUpdateFile("Insert_GameObject", ss.str().c_str());
 }
 
 bool GameObject::LoadGameObjectFromDB(uint32 guid, Map* map, bool addToMap)
@@ -739,8 +743,17 @@ void GameObject::DeleteFromDB()
 {
     sObjectMgr.SaveGORespawnTime(m_DBTableGuid, GetInstanceId(), 0);
     sObjectMgr.DeleteGOData(m_DBTableGuid);
+
+    std::ostringstream ss;
+
+    ss << "DELETE FROM game_object WHERE guid = " << m_DBTableGuid << "; \n" <<
+        "DELETE FROM game_event_gameobject WHERE guid = " << m_DBTableGuid << ";";
+
     WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
     WorldDatabase.PExecuteLog("DELETE FROM game_event_gameobject WHERE guid = '%u'", m_DBTableGuid);
+
+    if (sWorld.getConfig(CONFIG_CREATEUPDATE_FILE))
+        sLog.CreateUpdateFile("Delete_GameObject", ss.str().c_str());
 }
 
 GameObject* GameObject::GetGameObject(WorldObject& object, uint64 guid)
