@@ -38,8 +38,8 @@
 #include "Utilities/Util.h"
 #include <cctype>
 #include <iostream>
-#include <fstream>
 #include <map>
+#include <time.h>
 #include "TicketMgr.h"
 #include "ace/INET_Addr.h"
 
@@ -994,6 +994,7 @@ bool ChatHandler::HandleNpcAddCommand(const char* args)
     }
 
     sObjectMgr.AddCreatureToGrid(db_guid, sObjectMgr.GetCreatureData(db_guid));
+
     return true;
 }
 

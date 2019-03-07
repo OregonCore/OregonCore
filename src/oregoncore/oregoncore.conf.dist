@@ -2106,8 +2106,14 @@ DatabaseUpdater.PathToUpdates = ""
 #        Warsong gultch timer wasnt added till 3.2.0
 #		 Default = 1
 #		 Values 1 - on, 0- off
+#	CreateUpdateFile.Enabled
+#   	 When adding the creature into the DB from ingame
+#		 it will create a .sql file in your main directory
+#        this is a good option to have for develoeopment
+#		 Default = 0
+#        Values 1 - on, 0 - off
 #
 ###############################################################################
 
 WarsongTimer.Enabled = 0
-
+CreateUpdateFile.Enabled = 0

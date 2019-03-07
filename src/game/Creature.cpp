@@ -44,6 +44,7 @@
 #include "GameEventMgr.h"
 #include "CreatureGroups.h"
 #include "MoveSpline.h"
+#include <fstream>
 
 void TrainerSpellData::Clear()
 {
@@ -1147,6 +1148,9 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
     WorldDatabase.PExecuteLog("%s", ss.str().c_str());
 
     WorldDatabase.CommitTransaction();
+
+    if (sWorld.getConfig(CONFIG_CREATEUPDATE_FILE))
+        sLog.CreateUpdateFile(cinfo->Name, ss.str().c_str());
 }
 
 void Creature::SelectLevel()
@@ -1467,14 +1471,25 @@ void Creature::DeleteFromDB()
     }
 
     sObjectMgr.SaveCreatureRespawnTime(m_DBTableGuid, GetInstanceId(), 0);
-    sObjectMgr.DeleteCreatureData(m_DBTableGuid);
+    std::ostringstream statement;
 
+    // This below will generate the update file 
+    statement << "DELETE FROM creature WHERE guid = " << m_DBTableGuid << "; \n"
+        "DELETE FROM creature_addon WHERE guid = " << m_DBTableGuid << "; \n"
+        "DELETE FROM game_event_creature WHERE guid = " << m_DBTableGuid << "; \n"
+        "DELETE FROM game_event_model_equip WHERE guid = " << m_DBTableGuid << ";";
+    
     WorldDatabase.BeginTransaction();
     WorldDatabase.PExecuteLog("DELETE FROM creature WHERE guid = '%u'", m_DBTableGuid);
     WorldDatabase.PExecuteLog("DELETE FROM creature_addon WHERE guid = '%u'", m_DBTableGuid);
     WorldDatabase.PExecuteLog("DELETE FROM game_event_creature WHERE guid = '%u'", m_DBTableGuid);
     WorldDatabase.PExecuteLog("DELETE FROM game_event_model_equip WHERE guid = '%u'", m_DBTableGuid);
     WorldDatabase.CommitTransaction();
+
+    if (sWorld.getConfig(CONFIG_CREATEUPDATE_FILE))
+        sLog.CreateUpdateFile("Delete_Creature", statement.str().c_str());
+
+    sObjectMgr.DeleteCreatureData(m_DBTableGuid);
 }
 
 bool Creature::IsInvisibleDueToDespawn() const
