@@ -1,3 +1,4 @@
+sudo: required
 dist: xenial # (16.04)
 language: cpp
 compiler:
