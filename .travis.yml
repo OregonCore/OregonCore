@@ -19,6 +19,7 @@ addons:
       - cppcheck
       - git
       - make
+      - binutils-dev
       - openssl
       - libssl-dev
       - zlib1g-dev
