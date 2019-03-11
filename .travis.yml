@@ -1,9 +1,13 @@
 sudo: required
+
 dist: xenial # (16.04)
+
 language: cpp
+
 compiler:
   - clang
 
+  
 # whitelisted packages can be obtained quickly without downloading
 # doxygen is out of date, tho so we download its binaries
 addons:
@@ -21,9 +25,9 @@ addons:
       - zlib1g-dev
       - zip
       - unzip
-      - php5-cli
-      - php5-mysql
-
+      - php7.0-cli
+      - php7.0-mysql
+      
 git:
   depth: 1
 
