@@ -19,7 +19,6 @@ addons:
       - cppcheck
       - git
       - make
-      - binutils-dev
       - openssl
       - libssl-dev
       - zlib1g-dev
@@ -33,6 +32,7 @@ git:
 
 before_install:
   - sudo apt-get install libace-dev
+  - sudo apt-get install binutils-dev
   - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
   - curl -o doxygen.tar.gz https://oregon-core.net/travis/doxygen.tar.gz
   - tar xzf doxygen.tar.gz
