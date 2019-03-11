@@ -183,8 +183,6 @@ void SmartAI::StopPath(uint32 DespawnTime, uint32 quest, bool fail)
 
 void SmartAI::EndPath(bool fail)
 {
-    GetScript()->ProcessEventsFor(SMART_EVENT_WAYPOINT_ENDED, NULL, mLastWP->id, GetScript()->GetPathId());
-
     RemoveEscortState(SMART_ESCORT_ESCORTING | SMART_ESCORT_PAUSED | SMART_ESCORT_RETURNING);
     mWayPoints = NULL;
     mCurrentWPID = 0;
