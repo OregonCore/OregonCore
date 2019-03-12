@@ -905,7 +905,7 @@ enum SpellEffects
     SPELL_EFFECT_ACTIVATE_RUNE             = 146, // not set
     SPELL_EFFECT_QUEST_FAIL                = 147,
     SPELL_EFFECT_148                       = 148, // not set
-    SPELL_EFFECT_149                       = 149,
+    SPELL_EFFECT_CHARGE_DEST               = 149,
     SPELL_EFFECT_150                       = 150, // not set
     SPELL_EFFECT_TRIGGER_SPELL_2           = 151,
     SPELL_EFFECT_SUMMON_FRIEND             = 152, // one spell: Summon Friend

@@ -151,4 +151,22 @@ namespace Movement
         args.facing.angle = G3D::wrap(angle, 0.f, (float)G3D::twoPi());
         args.flags.EnableFacingAngle();
     }
+
+    void MoveSplineInit::MoveTo(const Vector3& dest, bool generatePath, bool forceDestination)
+    {
+        if (generatePath)
+        {
+            PathInfo path(&unit);
+            bool result = path.Update(dest.x, dest.y, dest.z, forceDestination);
+            if (result && !(path.getPathType() && PATHFIND_NOPATH))
+            {
+                MovebyPath(path.getFullPath());
+                return;
+            }
+        }
+
+        args.path_Idx_offset = 0;
+        args.path.resize(2);
+        args.path[1] = dest;
+    }
 }

@@ -124,6 +124,31 @@ class PathInfo
             return m_type;
         }
 
+        float getPathLength() const
+        {
+            float len = 0.0f;
+            float dx, dy, dz;
+            uint32 size = m_pathPoints.size();
+            if (size)
+            {
+                dx = m_pathPoints[0].x - m_startPosition.x; dy = m_pathPoints[0].y - m_startPosition.y; dz = m_pathPoints[0].z - m_startPosition.z;
+                len += sqrt(dx*dx + dy * dy + dz * dz);
+            }
+            else
+                return len;
+
+            for (uint32 i = 1; i < size; ++i)
+            {
+                dx = m_pathPoints[i].x - m_pathPoints[i - 1].x; dy = m_pathPoints[i].y - m_pathPoints[i - 1].y; dz = m_pathPoints[i].z - m_pathPoints[i - 1].z;
+                len += sqrt(dx*dx + dy * dy + dz * dz);
+            }
+
+            return len;
+        }
+
+
+
+
         bool inRange(const Vector3& p1, const Vector3& p2, float r, float h) const;
         float dist3DSqr(const Vector3& p1, const Vector3& p2) const;
     private:

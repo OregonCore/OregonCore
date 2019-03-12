@@ -661,6 +661,8 @@ class WorldObject : public Object, public WorldLocation
             GetNearPoint(obj, x, y, z, obj->GetObjectSize(), distance2d, GetAngle(obj));
         }
 
+        void GetChargeContactPoint(const WorldObject* obj, float& x, float& y, float& z, float distance2d = CONTACT_DISTANCE) const;
+
         virtual float GetObjectBoundingRadius() const
         {
             return DEFAULT_WORLD_OBJECT_SIZE;

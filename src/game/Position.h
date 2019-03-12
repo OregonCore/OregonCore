@@ -114,6 +114,14 @@ public:
         x = m_positionX; y = m_positionY; z = m_positionZ; o = m_orientation;
     }
 
+    void GetPosition(Position* pos) const
+    {
+        if (pos)
+            pos->Relocate(m_positionX, m_positionY, m_positionZ, m_orientation);
+    }
+
+
+
     Position GetPosition() const { return *this; }
 
     Position::PositionXYStreamer PositionXYStream() { return PositionXYStreamer(*this); }

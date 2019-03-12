@@ -2379,6 +2379,20 @@ Position WorldObject::GetRandomNearPosition(float radius)
     return pos;
 }
 
+void WorldObject::GetChargeContactPoint(const WorldObject* obj, float& x, float& y, float& z, float distance2d) const
+{
+    // angle to face `obj` to `this` using distance includes size of `obj`
+    GetNearPoint(obj, x, y, z, obj->GetObjectSize(), distance2d, GetAngle(obj));
+
+    if (fabs(this->GetPositionZ() - z) > 3.0f || !IsWithinLOS(x, y, z))
+    {
+        x = this->GetPositionX();
+        y = this->GetPositionY();
+        z = this->GetPositionZ();
+        obj->UpdateGroundPositionZ(x, y, z);
+    }
+}
+
 // @todo: replace with WorldObject::UpdateAllowedPositionZ
 //   To use WorldObject::UpdateAllowedPositionZ at the moment causes a caster of
 //     a leap effect to fall through the ground much too easily.

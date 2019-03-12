@@ -106,24 +106,7 @@ namespace Movement
 
     inline void MoveSplineInit::MoveTo(float x, float y, float z, bool generatePath, bool forceDestination)
     {
-        Vector3 v(x, y, z);
-        MoveTo(v, generatePath, forceDestination);
-    }
-
-    inline void MoveSplineInit::MoveTo(const Vector3& dest, bool generatePath, bool forceDestination)
-    {
-        if (generatePath)
-        {
-            PathInfo path(&unit);
-            path.Update(dest.x, dest.y, dest.z, forceDestination);
-            MovebyPath(path.getFullPath());
-        }
-        else
-        {
-            args.path_Idx_offset = 0;
-            args.path.resize(2);
-            args.path[1] = dest;
-        }
+        MoveTo(G3D::Vector3(x, y, z), generatePath, forceDestination);
     }
 
     inline void MoveSplineInit::SetFacing(Vector3 const& spot)

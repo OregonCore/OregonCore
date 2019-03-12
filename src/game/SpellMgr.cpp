@@ -2314,6 +2314,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 mSpellCustomAttr[i] |= SPELL_ATTR_CU_DIRECT_DAMAGE;
                 break;
             case SPELL_EFFECT_CHARGE:
+            case SPELL_EFFECT_CHARGE_DEST:
                 if (!spellInfo->speed && !spellInfo->SpellFamilyName)
                     spellInfo->speed = SPEED_CHARGE;
                 mSpellCustomAttr[i] |= SPELL_ATTR_CU_CHARGE;
@@ -2649,6 +2650,17 @@ void SpellMgr::LoadSpellCustomAttr()
         case 23505: // Berserking
         case 23451: // Speed
             spellInfo->Attributes |= SPELL_ATTR0_NEGATIVE_1;
+            break;
+        case 20271: // Paladin's Judgement
+            spellInfo->AttributesEx3 &= ~SPELL_ATTR3_CANT_TRIGGER_PROC;
+            break;
+        case 1953: // Blink
+            spellInfo->DurationIndex = 328; // 250ms
+            break;
+        case 33240: // Infernal
+            spellInfo->EffectImplicitTargetA[EFFECT_0] = TARGET_DEST_TARGET_ANY;
+            spellInfo->EffectImplicitTargetA[EFFECT_1] = TARGET_DEST_TARGET_ANY;
+            spellInfo->EffectImplicitTargetA[EFFECT_2] = TARGET_DEST_TARGET_ANY;
             break;
         default:
             break;
