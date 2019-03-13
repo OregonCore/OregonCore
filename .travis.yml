@@ -1,13 +1,8 @@
-sudo: required
-
-dist: xenial # (16.04)
-
+dist: precise
 language: cpp
-
 compiler:
   - clang
 
-  
 # whitelisted packages can be obtained quickly without downloading
 # doxygen is out of date, tho so we download its binaries
 addons:
@@ -25,15 +20,14 @@ addons:
       - zlib1g-dev
       - zip
       - unzip
-      - php7.0-cli
-      - php7.0-mysql
-      
+      - php5-cli
+      - php5-mysql
+
 git:
   depth: 1
 
 before_install:
-  - sudo apt-get install libace-dev
-  - sudo apt-get install binutils-dev
+  - sudo apt-get -qq install mariadb-client libace-dev
   - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
   - curl -o doxygen.tar.gz https://oregon-core.net/travis/doxygen.tar.gz
   - tar xzf doxygen.tar.gz
