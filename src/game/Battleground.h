@@ -694,6 +694,7 @@ class Battleground
         uint32 GetOtherTeam(uint32 teamId);
         bool IsPlayerInBattleground(uint64 guid);
         void PlayerRelogin(uint64 guid);
+        void RewardXPAtKill(Player* killer, Player* victim);
 
         void SetDeleteThis()
         {

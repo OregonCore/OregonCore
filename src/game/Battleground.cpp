@@ -24,6 +24,7 @@
 #include "ArenaTeam.h"
 #include "World.h"
 #include "Utilities/Util.h"
+#include "World.h"
 #include "GridNotifiersImpl.h"
 
 namespace Oregon
@@ -1796,7 +1797,11 @@ void Battleground::HandleKillPlayer(Player* victim, Player* killer)
 
     // To be able to remove insignia -- ONLY IN Battlegrounds
     if (!isArena())
+    {
         victim->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
+        RewardXPAtKill(killer, victim);
+    }
+
 }
 
 // return the player's team based on battlegroundplayer info
@@ -1945,3 +1950,10 @@ inline void Battleground::_CheckSafePositions(uint32 diff)
             }
     }
 }
+
+void Battleground::RewardXPAtKill(Player* killer, Player* victim)
+{
+    if (sWorld.getConfig(CONFIG_BG_XP_FOR_KILL) && killer && victim)
+        killer->RewardPlayerAndGroupAtKill(victim, true);
+}
+

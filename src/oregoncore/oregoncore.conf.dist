@@ -1448,6 +1448,11 @@ Die.Command.Mode = 1
 #        Default: 0 (disable)
 #                 1 (enable)
 #
+#    Battleground.GiveXPForKills
+#        Description: Give experience for honorable kills in battlegrounds.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+#
 ###############################################################################
 
 Battleground.CastDeserter = 1
@@ -1456,6 +1461,7 @@ Battleground.QueueAnnouncer.PlayerOnly = 0
 Battleground.PrematureReward = 1
 BattleGround.PrematureFinishTimer = 300000
 Battleground.LeaveWrathMode = 0
+Battleground.GiveXPForKills = 0
 
 ###############################################################################
 # ARENA CONFIG

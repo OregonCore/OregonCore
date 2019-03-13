@@ -97,7 +97,7 @@ inline uint32 BaseGain(uint32 pl_level, uint32 mob_level, ContentLevels content)
     }
 }
 
-inline uint32 Gain(Player* pl, Unit* u)
+inline uint32 Gain(Player* pl, Unit* u, bool isBattleground)
 {
     if (u->GetTypeId() == TYPEID_UNIT && (
             ((Creature*)u)->IsTotem() || ((Creature*)u)->IsPet() ||

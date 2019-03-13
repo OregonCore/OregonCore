@@ -903,19 +903,6 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_LISTEN_RANGE_TEXTEMOTE] = sConfig.GetIntDefault("ListenRange.TextEmote", 25);
     m_configs[CONFIG_LISTEN_RANGE_YELL]      = sConfig.GetIntDefault("ListenRange.Yell", 300);
 
-    m_configs[CONFIG_BATTLEGROUND_CAST_DESERTER]                = sConfig.GetBoolDefault("Battleground.CastDeserter", true);
-    m_configs[CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE]       = sConfig.GetBoolDefault("Battleground.QueueAnnouncer.Enable", false);
-    m_configs[CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_PLAYERONLY]   = sConfig.GetBoolDefault("Battleground.QueueAnnouncer.PlayerOnly", false);
-    m_configs[CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ONSTART]      = sConfig.GetBoolDefault("Battleground.QueueAnnouncer.OnStart", false);
-    m_configs[CONFIG_BATTLEGROUND_PREMATURE_REWARD]             = sConfig.GetBoolDefault("Battleground.PrematureReward", true);
-    m_configs[CONFIG_BATTLEGROUND_PREMATURE_FINISH_TIMER]       = sConfig.GetIntDefault("Battleground.PrematureFinishTimer", 5 * MINUTE * IN_MILLISECONDS);
-    m_configs[CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE]             = sConfig.GetBoolDefault("Battleground.LeaveWrathMode", false);
-    m_configs[CONFIG_ARENA_MAX_RATING_DIFFERENCE]               = sConfig.GetIntDefault("Arena.MaxRatingDifference", 0);
-    m_configs[CONFIG_ARENA_RATING_DISCARD_TIMER]                = sConfig.GetIntDefault("Arena.RatingDiscardTimer", 10 * MINUTE * IN_MILLISECONDS);
-    m_configs[CONFIG_ARENA_AUTO_DISTRIBUTE_POINTS]              = sConfig.GetBoolDefault("Arena.AutoDistributePoints", false);
-    m_configs[CONFIG_ARENA_AUTO_DISTRIBUTE_INTERVAL_DAYS]       = sConfig.GetIntDefault("Arena.AutoDistributeInterval", 7);
-    m_configs[CONFIG_ARENA_HIDE_FROM_SOCIAL]                    = sConfig.GetBoolDefault("Arena.HideFromSocial", false);
-    m_configs[CONFIG_ARENA_LOG_EXTENDED_INFO]                   = sConfig.GetBoolDefault("ArenaLogExtendedInfo", false);
     m_configs[CONFIG_INSTANT_LOGOUT]                            = sConfig.GetIntDefault("InstantLogout", SEC_MODERATOR);
 
     //visibility on continents
@@ -1054,8 +1041,24 @@ void World::LoadConfigSettings(bool reload)
     // Misc
     m_configs[CONFIG_UI_QUESTLEVELS_IN_DIALOGS] = sConfig.GetBoolDefault("UI.ShowQuestLevelsInDialogs", false);
     m_configs[CONFIG_HEALTH_IN_PERCENTS] = sConfig.GetBoolDefault("HealthInPercents", true);
-    m_configs[CONFIG_WARSONG_TIMER] = sConfig.GetBoolDefault("WarsongTimer.Enabled", true);
     m_configs[CONFIG_CREATEUPDATE_FILE] = sConfig.GetBoolDefault("CreateUpdateFile.Enabled", false);
+
+    // Battleground
+    m_configs[CONFIG_BATTLEGROUND_CAST_DESERTER] = sConfig.GetBoolDefault("Battleground.CastDeserter", true);
+    m_configs[CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE] = sConfig.GetBoolDefault("Battleground.QueueAnnouncer.Enable", false);
+    m_configs[CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_PLAYERONLY] = sConfig.GetBoolDefault("Battleground.QueueAnnouncer.PlayerOnly", false);
+    m_configs[CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ONSTART] = sConfig.GetBoolDefault("Battleground.QueueAnnouncer.OnStart", false);
+    m_configs[CONFIG_BATTLEGROUND_PREMATURE_REWARD] = sConfig.GetBoolDefault("Battleground.PrematureReward", true);
+    m_configs[CONFIG_BATTLEGROUND_PREMATURE_FINISH_TIMER] = sConfig.GetIntDefault("Battleground.PrematureFinishTimer", 5 * MINUTE * IN_MILLISECONDS);
+    m_configs[CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE] = sConfig.GetBoolDefault("Battleground.LeaveWrathMode", false);
+    m_configs[CONFIG_ARENA_MAX_RATING_DIFFERENCE] = sConfig.GetIntDefault("Arena.MaxRatingDifference", 0);
+    m_configs[CONFIG_ARENA_RATING_DISCARD_TIMER] = sConfig.GetIntDefault("Arena.RatingDiscardTimer", 10 * MINUTE * IN_MILLISECONDS);
+    m_configs[CONFIG_ARENA_AUTO_DISTRIBUTE_POINTS] = sConfig.GetBoolDefault("Arena.AutoDistributePoints", false);
+    m_configs[CONFIG_ARENA_AUTO_DISTRIBUTE_INTERVAL_DAYS] = sConfig.GetIntDefault("Arena.AutoDistributeInterval", 7);
+    m_configs[CONFIG_ARENA_HIDE_FROM_SOCIAL] = sConfig.GetBoolDefault("Arena.HideFromSocial", false);
+    m_configs[CONFIG_ARENA_LOG_EXTENDED_INFO] = sConfig.GetBoolDefault("ArenaLogExtendedInfo", false);
+    m_configs[CONFIG_WARSONG_TIMER] = sConfig.GetBoolDefault("WarsongTimer.Enabled", true);
+    m_configs[CONFIG_BG_XP_FOR_KILL] = sConfig.GetBoolDefault("Battleground.GiveXPForKills", false);
 
     // SQLUpdater
     m_configs[CONFIG_SQLUPDATER_ENABLED] = sConfig.GetBoolDefault("DatabaseUpdater.Enabled", false);
