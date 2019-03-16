@@ -196,13 +196,11 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
                 else if (action == ACTION_ALLOW_FLY)
                 {
                     player->CastSpell(player, SPELL_GRAVITY_LAPSE_FLY, true, NULL, NULL, me->GetGUID());
-                    player->SetCanFly(true);
                 }
                 else if (action == ACTION_REMOVE_FLY)
                 {
                     player->RemoveAurasDueToSpell(SPELL_GRAVITY_LAPSE_FLY);
                     player->RemoveAurasDueToSpell(SPELL_GRAVITY_LAPSE_DOT);
-                    player->SetCanFly(false);
                 }
             }
     }
