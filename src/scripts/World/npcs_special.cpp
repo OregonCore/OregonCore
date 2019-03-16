@@ -1451,7 +1451,7 @@ struct npc_training_dummyAI : public ScriptedAI
 
         if (despawnTimer <= diff)
         {
-            me->DisappearAndDie();
+            me->DisappearAndDie(false);
         }
         else 
             despawnTimer -= diff;
@@ -1797,7 +1797,7 @@ struct mob_rift_spawnAI : public ScriptedAI
             }
 
             me->MonsterTextEmote(RIFT_EMOTE_SUCKED, 0);
-            me->DisappearAndDie();
+            me->DisappearAndDie(false);
             return;
         }
 

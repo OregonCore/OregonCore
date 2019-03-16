@@ -200,7 +200,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
                 if (Creature* pSummon = Unit::GetCreature(*me, *itr))
                 {
                     if (pSummon->IsAlive())
-                        pSummon->DisappearAndDie();
+                        pSummon->DisappearAndDie(false);
                     else
                         pSummon->RemoveCorpse();
                 }

@@ -1084,7 +1084,7 @@ struct mob_volatile_felfire_fiendAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (pInstance && pInstance->GetData(DATA_KILJAEDEN_EVENT) == NOT_STARTED)
-            me->DisappearAndDie();
+            me->DisappearAndDie(false);
 
         if (!UpdateVictim())
             return;

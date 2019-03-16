@@ -402,7 +402,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
         if (headGUID)
         {
             if (Creature* Head = Unit::GetCreature((*me), headGUID))
-                Head->DisappearAndDie();
+                Head->DisappearAndDie(false);
 
             headGUID = 0;
         }

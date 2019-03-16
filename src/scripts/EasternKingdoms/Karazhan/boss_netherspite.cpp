@@ -150,9 +150,9 @@ struct boss_netherspiteAI : public ScriptedAI
         for (int i = 0; i < 3; ++i)
         {
             if (Creature* portal = Unit::GetCreature(*me, PortalGUID[i]))
-                portal->DisappearAndDie();
+                portal->DisappearAndDie(false);
             if (Creature* portal = Unit::GetCreature(*me, BeamerGUID[i]))
-                portal->DisappearAndDie();
+                portal->DisappearAndDie(false);
             PortalGUID[i] = 0;
             BeamTarget[i] = 0;
         }
@@ -199,7 +199,7 @@ struct boss_netherspiteAI : public ScriptedAI
                     if (Creature* beamer = Unit::GetCreature(*portal, BeamerGUID[j]))
                     {
                         beamer->CastSpell(pTarget, PortalBeam[j], false);
-                        beamer->DisappearAndDie();
+                        beamer->DisappearAndDie(false);
                         BeamerGUID[j] = 0;
                     }
                     // create new one and start beaming on the target

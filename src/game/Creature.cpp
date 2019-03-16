@@ -210,12 +210,13 @@ void Creature::RemoveFromWorld()
     }
 }
 
-void Creature::DisappearAndDie()
+void Creature::DisappearAndDie(bool CorpseRemove)
 {
     DestroyForNearbyPlayers();
     if (IsAlive())
         setDeathState(JUST_DIED);
-    RemoveCorpse(false);
+
+    RemoveCorpse(CorpseRemove);
 }
 
 void Creature::SearchFormation()

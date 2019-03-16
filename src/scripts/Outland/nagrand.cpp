@@ -106,7 +106,7 @@ struct mob_shattered_rumblerAI : public ScriptedAI
             Hitter->SummonCreature(18181, x + (0.7f * (rand() % 30)), y + (rand() % 5), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
             Hitter->SummonCreature(18181, x + (rand() % 5), y - (rand() % 5), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
             Hitter->SummonCreature(18181, x - (rand() % 5), y + (0.5f * (rand() % 60)), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
-            me->DisappearAndDie();
+            me->DisappearAndDie(false);
             me->setDeathState(CORPSE);
             Spawn = true;
         }

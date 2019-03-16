@@ -2014,7 +2014,7 @@ struct npc_pathaleon_image2AI : public ScriptedAI
 			DoCast(SPELL_TELE);
 			return 1000;
 		case 9:		
-			me->DisappearAndDie();
+			me->DisappearAndDie(false);
 		default:
 			return 0;
 		}
@@ -2101,7 +2101,7 @@ struct npc_voldounAI : public ScriptedAI
 		if (Creature* image = me->FindNearestCreature(NPC_IMAGE, 20.0f, true))
 		{
 			DoScriptText(SAY_PLAYER_ENTER, image, me);
-			image->DisappearAndDie();
+			image->DisappearAndDie(false);
 		}
 	}
 
@@ -2424,7 +2424,7 @@ struct npc_terokkAI : public ScriptedAI
 		if (Creature* ace = me->FindNearestCreature(NPC_ACE, 100.0f, true))
 		{
 			DoScriptText(SAY_VICTORY, ace);
-			ace->DisappearAndDie();
+			ace->DisappearAndDie(false);
 		}
 	}
 

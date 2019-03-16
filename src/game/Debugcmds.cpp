@@ -747,7 +747,7 @@ bool ChatHandler::HandleSpellCrashTestCommand(const char* /*args*/)
             sLog.outDebugInLine("Testing spell %u ... ", i);
             Creature* trigger = player->SummonTrigger(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), 600, NULL);
             trigger->CastSpell(trigger, spellInfo, true);
-            trigger->DisappearAndDie();
+            trigger->DisappearAndDie(false);
             sLog.outDebug("OK!");
         }
     }

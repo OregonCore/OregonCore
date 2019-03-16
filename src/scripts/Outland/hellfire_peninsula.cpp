@@ -2261,7 +2261,7 @@ struct npc_dreghood_bruteAI : public ScriptedAI
 
 				if (flee_timer <= uiDiff)
 				{
-					me->DisappearAndDie();
+					me->DisappearAndDie(false);
 					flee_timer = 4000;
 				}
 				else flee_timer -= uiDiff;
@@ -2647,8 +2647,8 @@ struct npc_vieraAI : public npc_escortAI
 		case 12:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				me->DisappearAndDie();
-				kitty->DisappearAndDie();
+				me->DisappearAndDie(false);
+				kitty->DisappearAndDie(false);
 			}
 			break;
 		}

@@ -466,7 +466,7 @@ class Creature : public Unit, public GridObject<Creature>
         void AddToWorld() override;
         void RemoveFromWorld() override;
 
-        void DisappearAndDie();
+        void DisappearAndDie(bool CorpseRemove = false);
 
         bool Create(uint32 guidlow, Map* map, uint32 phaseMask, uint32 Entry, uint32 team, float x, float y, float z, float ang, const CreatureData* data = NULL);
         bool LoadCreaturesAddon(bool reload = false);

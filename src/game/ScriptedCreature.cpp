@@ -92,7 +92,7 @@ void SummonList::DespawnAll()
                 CAST_SUM(summon)->UnSummon();
             }
             else
-                summon->DisappearAndDie();
+                summon->DisappearAndDie(false);
         }
     }
 }

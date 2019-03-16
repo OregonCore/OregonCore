@@ -731,7 +731,7 @@ struct npc_dreghooddrudgeAI : public ScriptedAI
 
 				if (flee_timer <= uiDiff)
 				{
-					me->DisappearAndDie();
+					me->DisappearAndDie(false);
 					flee_timer = 8000;
 				}
 				else flee_timer -= uiDiff;

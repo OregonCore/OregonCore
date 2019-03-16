@@ -2223,7 +2223,7 @@ struct legion_infernal_summoner_triggerAI : public ScriptedAI
 		if (Spellkind->Id == 33814 && !spellHit)
 		{		
 			me->SummonCreature(21419, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 180000);
-			me->DisappearAndDie();
+			me->DisappearAndDie(false);
 			spellHit = true;		
 		}
 	}
@@ -2267,7 +2267,7 @@ struct legion_hold_device_triggerAI : public ScriptedAI
 					if (!LegionEventStart)
 					{
 						me->SummonCreature(21633, -3312.7f, 2949.5f, 171.1f, 4.78f, TEMPSUMMON_MANUAL_DESPAWN, 0);
-						me->DisappearAndDie();
+						me->DisappearAndDie(false);
 						LegionEventStart = true;
 					}
 					break;
@@ -2374,7 +2374,7 @@ struct npc_deathbringer_jovaanAI : public ScriptedAI
 				pPlayer->KilledMonsterCredit(NPC_WARBRINGER, 0);;
 			return 2000;
 		case 13:
-			me->DisappearAndDie();
+			me->DisappearAndDie(false);
 		default:
 			return 0;
 		}
@@ -2716,7 +2716,7 @@ struct npc_dragonmaw_archerAI : public ScriptedAI
 		{
 			if (me->FindNearestCreature(11980, 100.0f, false))
 			{
-				me->DisappearAndDie();
+				me->DisappearAndDie(false);
 			}
 
 			if (shoot_timer <= diff)
@@ -2825,7 +2825,7 @@ struct npc_karsius_the_ancient_watcherAI : public ScriptedAI
 	{
 		if (Creature* teron = me->FindNearestCreature(21867, 50.0f, true))
 		{
-			teron->DisappearAndDie();
+			teron->DisappearAndDie(false);
 		}
 
 		me->MonsterYell(KARSIUS_SAY_TEXT_2, LANG_UNIVERSAL, 0);
@@ -2838,7 +2838,7 @@ struct npc_karsius_the_ancient_watcherAI : public ScriptedAI
 		{
 			if (Creature* teron = me->FindNearestCreature(21867, 100.0f, false))
 			{
-				me->DisappearAndDie();				
+				me->DisappearAndDie(false);				
 			}
 
 			if (EventCombat)
@@ -2895,7 +2895,7 @@ struct teron_triggerAI : public ScriptedAI
 						if (me->FindNearestCreature(21876, 30.0f, true))
 						{
 							me->SummonCreature(61034, -4539.0f, 1025.99f, 9.28f, 0.71f, TEMPSUMMON_TIMED_DESPAWN, 45000);
-							me->DisappearAndDie();
+							me->DisappearAndDie(false);
 							teron = true;
 						}
 					}
@@ -3067,7 +3067,7 @@ bool ChooseReward_npc_artor(Player* pPlayer, Creature* pCreature, const Quest* q
 	{
 		CAST_AI(npc_artorAI, pCreature->AI())->PlayerGUID = pPlayer->GetGUID();
 		pCreature->SummonCreature(21318, -3803.7f, 2602.3f, 90.38f, 5.59f, TEMPSUMMON_TIMED_DESPAWN, 600000);
-		pCreature->DisappearAndDie();
+		pCreature->DisappearAndDie(false);
 	}
 	
 	return true;
@@ -3283,7 +3283,7 @@ struct npc_veneratusAI : public ScriptedAI
 			{
 				spirit->MonsterSay(VENERATUS_DEATH, LANG_UNIVERSAL, 0);
 				spirit->MonsterSay(SPIRIT_DESPAWN, LANG_UNIVERSAL, 0);
-				spirit->DisappearAndDie();
+				spirit->DisappearAndDie(false);
 				
 				VeneDied = true;
 			}
@@ -3373,7 +3373,7 @@ struct npc_icarus_triggerAI : public ScriptedAI
 					{
 						borak->Whisper(BOKAR_TEXT_1, PlayerGUID, false);
 						Whisper2 = true;
-						me->DisappearAndDie();
+						me->DisappearAndDie(false);
 					}
 				}
 				else Combat_timer -= diff;
@@ -3462,7 +3462,7 @@ struct npc_envoy_icariusAI : public ScriptedAI
 					if (Creature* zarath = me->FindNearestCreature(21410, 30.0f, true))
 					{
 						me->MonsterSay(ICARIUS_SAY_2, LANG_UNIVERSAL, 0);
-						zarath->DisappearAndDie();
+						zarath->DisappearAndDie(false);
 						GoToObject_timer = 1500;
 						IkarusSay = true;
 					}
@@ -3493,7 +3493,7 @@ struct npc_envoy_icariusAI : public ScriptedAI
 
 				if (DelObject == true && Despawn_Timer <= diff)
 				{
-					me->DisappearAndDie();
+					me->DisappearAndDie(false);
 				}
 				else Despawn_Timer -= diff;
 			}
@@ -3792,9 +3792,9 @@ struct npc_oronokAI : public ScriptedAI
 			pGuldan->AI()->EnterEvadeMode();
 			return 1000;
 		case 14:
-			me->DisappearAndDie();
-			pBorak->DisappearAndDie();
-			pGromtor->DisappearAndDie();
+			me->DisappearAndDie(false);
+			pBorak->DisappearAndDie(false);
+			pGromtor->DisappearAndDie(false);
 		default:
 			return 0;
 		}

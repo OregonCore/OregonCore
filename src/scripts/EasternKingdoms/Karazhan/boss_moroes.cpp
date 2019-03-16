@@ -209,7 +209,7 @@ struct boss_moroesAI : public ScriptedAI
             {
                 Temp = Creature::GetCreature((*me), AddGUID[i]);
                 if (Temp && Temp->IsAlive())
-                    Temp->DisappearAndDie();
+                    Temp->DisappearAndDie(false);
             }
         }
     }
