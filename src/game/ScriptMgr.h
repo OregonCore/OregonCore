@@ -53,7 +53,7 @@ struct Script
         OnGroupPlayerRemoved(NULL), OnGroupLeaderChanged(NULL), OnGroupDisbanded(NULL),
         pGossipHello(NULL), pQuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
-        pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL), OnQuestAccept(NULL),
+        pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL),
         pGOQuestAccept(NULL), pGOSelect(NULL), pGOChooseReward(NULL), pGOSelectWithCode(NULL), pItemUse(NULL), pEffectDummyCreature(NULL),
         GetAI(NULL), GetInstanceData(NULL)
     {}
