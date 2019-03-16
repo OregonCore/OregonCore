@@ -4735,13 +4735,15 @@ SpellCastResult Spell::CheckCast(bool strict)
         case SPELL_AURA_FLY:
         case SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED:
             {
-                // not allow cast fly spells at old maps by players (all spells is self target)
-              /*  if (m_caster->GetTypeId() == TYPEID_PLAYER)
-                {
-                    if (!m_caster->ToPlayer()->IsGameMaster() &&
-                        GetVirtualMapForMapAndZone(m_caster->GetMapId(), m_caster->GetZoneId()) != 530)
+            if (m_caster->IsInWater())
+                return SPELL_FAILED_ONLY_ABOVEWATER;
+
+            if (m_originalCaster && m_originalCaster->GetTypeId() == TYPEID_PLAYER && m_originalCaster->IsAlive())
+            {
+                if (AreaTableEntry const* pArea = sAreaStore.LookupEntry(m_originalCaster->GetAreaId()))
+                    if (pArea->flags & 0x20000000)
                         return SPELL_FAILED_NOT_HERE;
-                } */
+            }
                 break;
             }
         case SPELL_AURA_PERIODIC_MANA_LEECH:
