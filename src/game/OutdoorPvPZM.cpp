@@ -361,7 +361,7 @@ bool OPvPCapturePointZM_GraveYard::HandleGossipOption(Player* plr, uint64 guid, 
             m_FlagCarrierGUID = plr->GetGUID();
         }
         UpdateTowerState();
-        plr->PlayerTalkClass->SendCloseGossip();
+        plr->PlayerTalkClass->CloseGossip();
         return true;
     }
     return false;

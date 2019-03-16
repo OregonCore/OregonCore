@@ -707,6 +707,6 @@ void AddSC_gnomeregan()
 	newscript = new Script;
 	newscript->Name = "npc_kernobee";
 	newscript->GetAI = &GetAI_npc_kernobee;
-	newscript->QuestAccept = &QuestAccept_npc_kernobee;
+	newscript->pQuestAccept = &QuestAccept_npc_kernobee;
 	newscript->RegisterSelf();
 }

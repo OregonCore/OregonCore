@@ -312,7 +312,7 @@ void AddSC_boss_celebras_the_cursed()
 	newscript = new Script;
 	newscript->Name = "npc_celebras";
 	newscript->GetAI = &GetAI_npc_celebras;
-	newscript->QuestAccept = &QuestAccept_npc_celebras;
+	newscript->pQuestAccept = &QuestAccept_npc_celebras;
     newscript->RegisterSelf();
 
 	newscript = new Script;

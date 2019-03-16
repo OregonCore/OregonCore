@@ -127,7 +127,7 @@ bool GossipSelect_npc_innkeeper(Player* pPlayer, Creature* pCreature, uint32 /*u
         pPlayer->SEND_VENDORLIST(pCreature->GetGUID());
     else if (uiAction == GOSSIP_OPTION_INNKEEPER)
     {
-        pPlayer->PlayerTalkClass->SendCloseGossip();
+        pPlayer->PlayerTalkClass->CloseGossip();
         pPlayer->SetBindPoint(pCreature->GetGUID());
     }
 

@@ -185,7 +185,7 @@ void AddSC_razorfen_kraul()
     newscript = new Script;
     newscript->Name = "npc_willix";
     newscript->GetAI = &GetAI_npc_willix;
-    newscript->QuestAccept = &QuestAccept_npc_willix;
+    newscript->pQuestAccept = &QuestAccept_npc_willix;
     newscript->RegisterSelf();
 
     newscript = new Script;

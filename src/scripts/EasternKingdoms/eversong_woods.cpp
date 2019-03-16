@@ -790,7 +790,7 @@ void AddSC_eversong_woods()
     newscript->Name = "npc_second_trial_controller";
     newscript->GetAI = &GetAI_master_kelerun_bloodmourn;
     newscript->pGossipHello = &GossipHello_master_kelerun_bloodmourn;
-    newscript->QuestAccept = &QuestAccept_master_kelerun_bloodmourn;
+    newscript->pQuestAccept = &QuestAccept_master_kelerun_bloodmourn;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -806,7 +806,7 @@ void AddSC_eversong_woods()
     newscript = new Script;
     newscript->Name = "npc_apprentice_mirveda";
     newscript->GetAI = &GetAI_npc_apprentice_mirvedaAI;
-    newscript->QuestAccept = &QuestAccept_npc_apprentice_mirveda;
+    newscript->pQuestAccept = &QuestAccept_npc_apprentice_mirveda;
     newscript->RegisterSelf();
 
     newscript = new Script;

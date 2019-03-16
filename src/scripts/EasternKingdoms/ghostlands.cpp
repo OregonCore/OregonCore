@@ -273,6 +273,6 @@ void AddSC_ghostlands()
     newscript = new Script;
     newscript->Name = "npc_ranger_lilatha";
     newscript->GetAI = &GetAI_npc_ranger_lilathaAI;
-    newscript->QuestAccept = &QuestAccept_npc_ranger_lilatha;
+    newscript->pQuestAccept = &QuestAccept_npc_ranger_lilatha;
     newscript->RegisterSelf();
 }

@@ -839,7 +839,7 @@ void AddSC_azuremyst_isle()
     newscript = new Script;
     newscript->Name = "npc_magwin";
     newscript->GetAI = &GetAI_npc_magwinAI;
-    newscript->QuestAccept = &QuestAccept_npc_magwin;
+    newscript->pQuestAccept = &QuestAccept_npc_magwin;
     newscript->RegisterSelf();
 
     newscript = new Script;

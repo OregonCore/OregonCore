@@ -693,7 +693,7 @@ void SmartAI::sGossipSelect(Player* player, uint32 sender, uint32 action)
 
 void SmartAI::sGossipSelectCode(Player* /*player*/, uint32 /*sender*/, uint32 /*action*/, const char* /*code*/) { }
 
-void SmartAI::QuestAccept(Player* player, Quest const* quest)
+void SmartAI::sQuestAccept(Player* player, Quest const* quest)
 {
     GetScript()->ProcessEventsFor(SMART_EVENT_ACCEPTED_QUEST, player, quest->GetQuestId());
 }

@@ -383,10 +383,10 @@ bool ScriptMgr::GOSelectWithCode(Player* pPlayer, GameObject* pGO, uint32 uiSend
 bool ScriptMgr::QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     Script* tmpscript = m_scripts[pCreature->GetScriptId()];
-    if (!tmpscript || !tmpscript->QuestAccept) return false;
+    if (!tmpscript || !tmpscript->pQuestAccept) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
-    return tmpscript->QuestAccept(pPlayer, pCreature, pQuest);
+    return tmpscript->pQuestAccept(pPlayer, pCreature, pQuest);
 }
 
 bool ScriptMgr::QuestSelect(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
@@ -443,13 +443,13 @@ bool ScriptMgr::ItemHello(Player* pPlayer, Item* pItem, Quest const* pQuest)
     return tmpscript->pItemHello(pPlayer, pItem, pQuest);
 }
 
-bool ScriptMgr::OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
+bool ScriptMgr::ItemQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
     Script* tmpscript = m_scripts[pItem->GetProto()->ScriptId];
-    if (!tmpscript || !tmpscript->OnQuestAccept) return false;
+    if (!tmpscript || !tmpscript->pItemQuestAccept) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
-    return tmpscript->OnQuestAccept(pPlayer, pItem, pQuest);
+    return tmpscript->pItemQuestAccept(pPlayer, pItem, pQuest);
 }
 
 bool ScriptMgr::GOHello(Player* pPlayer, GameObject* pGO)

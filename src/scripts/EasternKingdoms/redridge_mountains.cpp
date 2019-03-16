@@ -171,6 +171,6 @@ void AddSC_redridge_mountains()
     newscript = new Script;
     newscript->Name = "npc_corporal_keeshan";
     newscript->GetAI = &GetAI_npc_corporal_keeshan;
-    newscript->QuestAccept = &QuestAccept_npc_corporal_keeshan;
+    newscript->pQuestAccept = &QuestAccept_npc_corporal_keeshan;
     newscript->RegisterSelf();
 }

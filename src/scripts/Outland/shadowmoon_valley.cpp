@@ -4013,7 +4013,7 @@ void AddSC_shadowmoon_valley()
     newscript = new Script;
     newscript->Name = "npc_karynaku";
 	newscript->GetAI = &GetAI_npc_karynaku;
-    newscript->QuestAccept = &QuestAccept_npc_karynaku;
+    newscript->pQuestAccept = &QuestAccept_npc_karynaku;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -4026,13 +4026,13 @@ void AddSC_shadowmoon_valley()
     newscript = new Script;
     newscript->Name = "npc_overlord_morghor";
     newscript->GetAI = &GetAI_npc_overlord_morghorAI;
-    newscript->QuestAccept = &QuestAccept_npc_overlord_morghor;
+    newscript->pQuestAccept = &QuestAccept_npc_overlord_morghor;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_earthmender_wilda";
     newscript->GetAI = &GetAI_npc_earthmender_wildaAI;
-    newscript->QuestAccept = &QuestAccept_npc_earthmender_wilda;
+    newscript->pQuestAccept = &QuestAccept_npc_earthmender_wilda;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -4098,12 +4098,12 @@ void AddSC_shadowmoon_valley()
 
 	newscript = new Script;
 	newscript->Name = "npc_plexi";
-	newscript->QuestAccept = &QuestAccept_npc_plexi;
+	newscript->pQuestAccept = &QuestAccept_npc_plexi;
 	newscript->RegisterSelf();
 
 	newscript = new Script;
 	newscript->Name = "npc_nakansi";
-	newscript->QuestAccept = &QuestAccept_npc_nakansi;
+	newscript->pQuestAccept = &QuestAccept_npc_nakansi;
 	newscript->RegisterSelf();
 
 	newscript = new Script;
@@ -4118,7 +4118,7 @@ void AddSC_shadowmoon_valley()
 
 	newscript = new Script;
 	newscript->Name = "npc_shadowmoon_ancient_spirit";
-	newscript->QuestAccept = &QuestAccept_npc_shadowmoon_ancient_spirit;
+	newscript->pQuestAccept = &QuestAccept_npc_shadowmoon_ancient_spirit;
 	newscript->RegisterSelf();
 
 	newscript = new Script;
@@ -4149,7 +4149,7 @@ void AddSC_shadowmoon_valley()
 
 	newscript = new Script;
 	newscript->Name = "npc_artor_spirit";
-	newscript->QuestAccept = &QuestAccept_npc_artor_spirit;
+	newscript->pQuestAccept = &QuestAccept_npc_artor_spirit;
 	newscript->RegisterSelf();
 
 	newscript = new Script;

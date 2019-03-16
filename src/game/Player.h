@@ -1365,7 +1365,6 @@ class Player : public Unit, public GridObject<Player>
         bool CanCompleteRepeatableQuest(Quest const* pQuest);
         bool CanRewardQuest(Quest const* pQuest, bool msg);
         bool CanRewardQuest(Quest const* pQuest, uint32 reward, bool msg);
-        void AddQuestAndCheckCompletion(Quest const* quest, Object* questGiver);
         void AddQuest(Quest const* pQuest, Object* questGiver);
         void CompleteQuest(uint32 quest_id);
         void IncompleteQuest(uint32 quest_id);
@@ -1476,16 +1475,33 @@ class Player : public Unit, public GridObject<Player>
         void SendQuestUpdateAddItem(Quest const* pQuest, uint32 item_idx, uint32 count);
         void SendQuestUpdateAddCreatureOrGo(Quest const* pQuest, uint64 guid, uint32 creatureOrGO_idx, uint32 old_count, uint32 add_count);
 
-        uint32 GetSharedQuestID() const { return m_sharedQuestId; }
-        ObjectGuid GetPlayerSharingQuest() const { return m_playerSharingQuest; }
-        void SetQuestSharingInfo(ObjectGuid guid, uint32 id) { m_playerSharingQuest = guid; m_sharedQuestId = id; }
-        void ClearQuestSharingInfo() { m_playerSharingQuest = 0; m_sharedQuestId = 0; }
+        uint64 GetDivider()
+        {
+            return m_divider;
+        }
+        void SetDivider(uint64 guid)
+        {
+            m_divider = guid;
+        }
 
-        uint32 GetInGameTime() const { return m_ingametime; }
-        void SetInGameTime(uint32 time) { m_ingametime = time; }
+        uint32 GetInGameTime()
+        {
+            return m_ingametime;
+        }
 
-        void AddTimedQuest(uint32 questId) { m_timedquests.insert(questId); }
-        void RemoveTimedQuest(uint32 questId) { m_timedquests.erase(questId); }
+        void SetInGameTime(uint32 time)
+        {
+            m_ingametime = time;
+        }
+
+        void AddTimedQuest(uint32 quest_id)
+        {
+            m_timedquests.insert(quest_id);
+        }
+        void RemoveTimedQuest(uint32 quest_id)
+        {
+            m_timedquests.erase(quest_id);
+        }
 
         /*********************************************************/
         /***                  LOAD SYSTEM                     ***/
@@ -2738,8 +2754,7 @@ class Player : public Unit, public GridObject<Player>
         //We allow only one timed quest active at the same time. Below can then be simple value instead of set.
         std::set<uint32> m_timedquests;
 
-        uint64 m_playerSharingQuest;
-        uint32 m_sharedQuestId;
+        uint64 m_divider;
         uint32 m_ingametime;
 
         /*********************************************************/

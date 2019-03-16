@@ -2571,7 +2571,7 @@ void AddSC_terokkar_forest()
     newscript = new Script;
     newscript->Name = "npc_isla_starmane";
     newscript->GetAI = &GetAI_npc_isla_starmaneAI;
-    newscript->QuestAccept = &QuestAccept_npc_isla_starmane;
+    newscript->pQuestAccept = &QuestAccept_npc_isla_starmane;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -2583,7 +2583,7 @@ void AddSC_terokkar_forest()
     newscript = new Script;
     newscript->Name = "npc_skywing";
     newscript->GetAI = &GetAI_npc_skywingAI;
-    newscript->QuestAccept = &QuestAccept_npc_skywing;
+    newscript->pQuestAccept = &QuestAccept_npc_skywing;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -2595,13 +2595,13 @@ void AddSC_terokkar_forest()
     newscript = new Script;
     newscript->Name = "npc_akuno";
     newscript->GetAI = &GetAI_npc_akuno;
-    newscript->QuestAccept = &QuestAccept_npc_akuno;
+    newscript->pQuestAccept = &QuestAccept_npc_akuno;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_letoll";
     newscript->GetAI = &GetAI_npc_letoll;
-    newscript->QuestAccept = &QuestAccept_npc_letoll;
+    newscript->pQuestAccept = &QuestAccept_npc_letoll;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -2633,7 +2633,7 @@ void AddSC_terokkar_forest()
     newscript = new Script;
     newscript->Name = "npc_skyguard_prisoner";
     newscript->GetAI = &GetAI_npc_skyguard_prisoner;
-    newscript->QuestAccept = &QuestAccept_npc_skyguard_prisoner;
+    newscript->pQuestAccept = &QuestAccept_npc_skyguard_prisoner;
     newscript->RegisterSelf();
 
 	newscript = new Script;
@@ -2645,7 +2645,7 @@ void AddSC_terokkar_forest()
 	newscript->Name = "npc_private_weeks";
 	newscript->pGossipHello = &GossipHello_npc_private_weeks;
 	newscript->pGossipSelect = &GossipSelect_npc_private_weeks;
-	newscript->QuestAccept = &QuestAccept_npc_private_weeks;
+	newscript->pQuestAccept = &QuestAccept_npc_private_weeks;
 	newscript->pChooseReward = &ChooseReward_npc_private_weeks;
 	newscript->RegisterSelf();
 
@@ -2653,7 +2653,7 @@ void AddSC_terokkar_forest()
 	newscript->Name = "npc_scout_nefris";
 	newscript->pGossipHello = &GossipHello_npc_scout_nefris;
 	newscript->pGossipSelect = &GossipSelect_npc_scout_nefris;
-	newscript->QuestAccept = &QuestAccept_npc_scout_nefris;
+	newscript->pQuestAccept = &QuestAccept_npc_scout_nefris;
 	newscript->pChooseReward = &ChooseReward_npc_scout_nefris;
 	newscript->RegisterSelf();
 

@@ -1480,7 +1480,7 @@ void AddSC_moonglade()
 
     newscript = new Script;
     newscript->Name = "npc_clintar_dreamwalker";
-    newscript->QuestAccept = &QuestAccept_npc_clintar_dreamwalker;
+    newscript->pQuestAccept = &QuestAccept_npc_clintar_dreamwalker;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -1491,7 +1491,7 @@ void AddSC_moonglade()
     newscript = new Script;
     newscript->Name = "npc_remulos";
     newscript->GetAI = &GetAI_npc_remulos;
-    newscript->QuestAccept = &QuestAccept_npc_remulos;
+    newscript->pQuestAccept = &QuestAccept_npc_remulos;
     newscript->RegisterSelf();
 
     newscript = new Script;

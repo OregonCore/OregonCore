@@ -51,7 +51,7 @@ struct Script
         OnLogin(NULL), OnLogout(NULL), OnPVPKill(NULL), OnCreatureKill(NULL), OnPlayerKilledByCreature(NULL),
         OnLevelChanged(NULL), OnTalentsReset(NULL), OnGroupCreated(NULL), OnGroupPlayerInvited(NULL), OnGroupPlayerJoined(NULL), 
         OnGroupPlayerRemoved(NULL), OnGroupLeaderChanged(NULL), OnGroupDisbanded(NULL),
-        pGossipHello(NULL), QuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
+        pGossipHello(NULL), pQuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
         pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL), OnQuestAccept(NULL),
         pGOQuestAccept(NULL), pGOSelect(NULL), pGOChooseReward(NULL), pGOSelectWithCode(NULL), pItemUse(NULL), pEffectDummyCreature(NULL),
@@ -78,7 +78,7 @@ struct Script
     void (*OnGroupDisbanded        )(Group*, Player*);
 
     bool (*pGossipHello         )(Player*, Creature*);
-    bool (*QuestAccept          )(Player*, Creature*, Quest const*);
+    bool (*pQuestAccept         )(Player*, Creature*, Quest const*);
     bool (*pGossipSelect        )(Player*, Creature*, uint32 , uint32);
     bool (*pGossipSelectWithCode)(Player*, Creature*, uint32 , uint32 , const char*);
     bool (*pGOSelect            )(Player*, GameObject*, uint32 , uint32);
@@ -91,7 +91,7 @@ struct Script
     bool (*pItemHello           )(Player*, Item*, Quest const*);
     bool (*pGOHello             )(Player*, GameObject*);
     bool (*pAreaTrigger         )(Player*, AreaTriggerEntry const*);
-    bool (*OnQuestAccept        )(Player*, Item*, Quest const*);
+    bool (*pItemQuestAccept     )(Player*, Item*, Quest const*);
     bool (*pGOQuestAccept       )(Player*, GameObject*, Quest const*);
     bool (*pGOChooseReward      )(Player*, GameObject*, Quest const*, uint32);
     bool (*pItemUse             )(Player*, Item*, SpellCastTargets const&);
@@ -141,7 +141,7 @@ class ScriptMgr
         uint32 NPCDialogStatus(Player* pPlayer, Creature* pCreature);
         uint32 GODialogStatus(Player* pPlayer, GameObject* pGO);
         bool ItemHello(Player* pPlayer, Item* pItem, Quest const* pQuest);
-        bool OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest);
+        bool ItemQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest);
         bool GOHello(Player* pPlayer, GameObject* pGO);
         bool GOQuestAccept(Player* pPlayer, GameObject* pGO, Quest const* pQuest);
         bool GOChooseReward(Player* pPlayer, GameObject* pGO, Quest const* pQuest, uint32 opt);

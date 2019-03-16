@@ -60,7 +60,7 @@ Quest::Quest(Field* questRecord)
         ObjectiveText[i] = questRecord[34 + i].GetCppString();
 
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-        RequiredItemId[i] = questRecord[38 + i].GetUInt32();
+        ReqItemId[i] = questRecord[38 + i].GetUInt32();
 
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
         ReqItemCount[i] = questRecord[42 + i].GetUInt32();
@@ -129,7 +129,7 @@ Quest::Quest(Field* questRecord)
 
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; i++)
     {
-        if (RequiredItemId[i])
+        if (ReqItemId[i])
             ++_reqItemsCount;
         if (ReqCreatureOrGOId[i])
             ++_reqCreatureOrGOcount;

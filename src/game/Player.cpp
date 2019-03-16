@@ -60,7 +60,6 @@
 #include "SocialMgr.h"
 #include "Mail.h"
 #include "GameEventMgr.h"
-#include "GameObjectAI.h"
 #include "DisableMgr.h"
 #include "ConditionMgr.h"
 #include "ScriptMgr.h"
@@ -468,6 +467,8 @@ Player::Player(WorldSession* session) : Unit(true), m_reputationMgr(this)
     m_valuesCount = PLAYER_END;
 
     m_session = session;
+
+    m_divider = 0;
 
     m_ExtraFlags = 0;
 
@@ -12596,29 +12597,29 @@ void Player::OnGossipSelect(WorldObject* pSource, uint32 gossipListId, uint32 me
         GetSession()->SendTrainerList(guid);
         break;
     case GOSSIP_OPTION_UNLEARNTALENTS:
-        PlayerTalkClass->SendCloseGossip();
+        PlayerTalkClass->CloseGossip();
         SendTalentWipeConfirm(guid);
         break;
     case GOSSIP_OPTION_UNLEARNPETSKILLS:
-        PlayerTalkClass->SendCloseGossip();
+        PlayerTalkClass->CloseGossip();
         SendPetSkillWipeConfirm();
         break;
     case GOSSIP_OPTION_TAXIVENDOR:
         GetSession()->SendTaxiMenu((pSource->ToCreature()));
         break;
     case GOSSIP_OPTION_INNKEEPER:
-        PlayerTalkClass->SendCloseGossip();
+        PlayerTalkClass->CloseGossip();
         SetBindPoint(guid);
         break;
     case GOSSIP_OPTION_BANKER:
         GetSession()->SendShowBank(guid);
         break;
     case GOSSIP_OPTION_PETITIONER:
-        PlayerTalkClass->SendCloseGossip();
+        PlayerTalkClass->CloseGossip();
         GetSession()->SendPetitionShowList(guid);
         break;
     case GOSSIP_OPTION_TABARDDESIGNER:
-        PlayerTalkClass->SendCloseGossip();
+        PlayerTalkClass->CloseGossip();
         GetSession()->SendTabardVendorActivate(guid);
         break;
     case GOSSIP_OPTION_AUCTIONEER:
@@ -13006,62 +13007,13 @@ bool Player::CanCompleteRepeatableQuest(Quest const* quest)
 
     if (quest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_DELIVER))
         for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-            if (quest->RequiredItemId[i] && quest->ReqItemCount[i] && !HasItemCount(quest->RequiredItemId[i], quest->ReqItemCount[i]))
+            if (quest->ReqItemId[i] && quest->ReqItemCount[i] && !HasItemCount(quest->ReqItemId[i], quest->ReqItemCount[i]))
                 return false;
 
     if (!CanRewardQuest(quest, false))
         return false;
 
     return true;
-}
-
-void Player::AddQuestAndCheckCompletion(Quest const* quest, Object* questGiver)
-{
-    AddQuest(quest, questGiver);
-
-    if (CanCompleteQuest(quest->GetQuestId()))
-        CompleteQuest(quest->GetQuestId());
-
-    if (!questGiver)
-        return;
-
-    switch (questGiver->GetTypeId())
-    {
-    case TYPEID_UNIT:
-        PlayerTalkClass->ClearMenus();
-        sScriptMgr.QuestAccept(this, questGiver->ToCreature(), quest);
-        questGiver->ToCreature()->AI()->QuestAccept(this, quest);
-        break;
-    case TYPEID_ITEM:
-    case TYPEID_CONTAINER:
-    {
-        Item* item = static_cast<Item*>(questGiver);
-        sScriptMgr.OnQuestAccept(this, item, quest);
-
-        // destroy not required for quest finish quest starting item
-        bool destroyItem = true;
-        for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-        {
-            if (quest->RequiredItemId[i] == item->GetEntry() && item->GetProto()->MaxCount > 0)
-            {
-                destroyItem = false;
-                break;
-            }
-        }
-
-        if (destroyItem)
-            DestroyItem(item->GetBagSlot(), item->GetSlot(), true);
-
-        break;
-    }
-    case TYPEID_GAMEOBJECT:
-        PlayerTalkClass->ClearMenus();
-        sScriptMgr.GOQuestAccept(this, ((GameObject*)questGiver), quest);
-        questGiver->ToGameObject()->AI()->QuestAccept(this, quest);
-        break;
-    default:
-        break;
-    }
 }
 
 bool Player::CanRewardQuest(Quest const* pQuest, bool msg)
@@ -13084,7 +13036,7 @@ bool Player::CanRewardQuest(Quest const* pQuest, bool msg)
         for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
         {
             if (pQuest->ReqItemCount[i] != 0 &&
-                GetItemCount(pQuest->RequiredItemId[i]) < pQuest->ReqItemCount[i])
+                GetItemCount(pQuest->ReqItemId[i]) < pQuest->ReqItemCount[i])
             {
                 if (msg)
                     SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, NULL);
@@ -13251,8 +13203,8 @@ void Player::RewardQuest(Quest const* pQuest, uint32 reward, Object* questGiver,
     uint32 quest_id = pQuest->GetQuestId();
 
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-        if (pQuest->RequiredItemId[i])
-            DestroyItemCount(pQuest->RequiredItemId[i], pQuest->ReqItemCount[i], true);
+        if (pQuest->ReqItemId[i])
+            DestroyItemCount(pQuest->ReqItemId[i], pQuest->ReqItemCount[i], true);
 
     for (uint8 i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
     {
@@ -13909,7 +13861,7 @@ void Player::AdjustQuestReqItemCount(Quest const* pQuest)
             if (reqitemcount != 0)
             {
                 uint32 quest_id = pQuest->GetQuestId();
-                uint32 curitemcount = GetItemCount(pQuest->RequiredItemId[i], true);
+                uint32 curitemcount = GetItemCount(pQuest->ReqItemId[i], true);
 
                 QuestStatusData& q_status = mQuestStatus[quest_id];
                 q_status.m_itemcount[i] = std::min(curitemcount, reqitemcount);
@@ -13989,7 +13941,7 @@ void Player::ItemAddedQuestCheck(uint32 entry, uint32 count)
 
         for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
         {
-            uint32 reqitem = qInfo->RequiredItemId[j];
+            uint32 reqitem = qInfo->ReqItemId[j];
             if (reqitem == entry)
             {
                 uint32 reqitemcount = qInfo->ReqItemCount[j];
@@ -14026,7 +13978,7 @@ void Player::ItemRemovedQuestCheck(uint32 entry, uint32 count)
 
         for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
         {
-            uint32 reqitem = qInfo->RequiredItemId[j];
+            uint32 reqitem = qInfo->ReqItemId[j];
             if (reqitem == entry)
             {
                 QuestStatusData& q_status = mQuestStatus[questid];
@@ -14299,7 +14251,7 @@ bool Player::HasQuestForItem(uint32 itemid) const
             // This part for ReqItem drop
             for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
             {
-                if (itemid == qinfo->RequiredItemId[j] && q_status.m_itemcount[j] < qinfo->ReqItemCount[j])
+                if (itemid == qinfo->ReqItemId[j] && q_status.m_itemcount[j] < qinfo->ReqItemCount[j])
                     return true;
             }
             // This part - for ReqSource
@@ -14447,7 +14399,7 @@ void Player::SendQuestUpdateAddItem(Quest const* pQuest, uint32 item_idx, uint32
 {
     WorldPacket data(SMSG_QUESTUPDATE_ADD_ITEM, (4 + 4));
     DEBUG_LOG("WORLD: Sent SMSG_QUESTUPDATE_ADD_ITEM");
-    data << pQuest->RequiredItemId[item_idx];
+    data << pQuest->ReqItemId[item_idx];
     data << count;
     GetSession()->SendPacket(&data);
 }
@@ -19331,14 +19283,6 @@ void Player::SendInitialPacketsAfterAddToMap()
            though because its unusable by the player anyway,
            and also is not shown in the spellbook */
         SetGrantableLevels(m_GrantableLevels);
-    }
-
-    if (GetPlayerSharingQuest())
-    {
-        if (Quest const* quest = sObjectMgr.GetQuestTemplate(GetSharedQuestID()))
-            PlayerTalkClass->SendQuestGiverQuestDetails(quest, GetGUID(), true);
-        else
-            ClearQuestSharingInfo();
     }
 }
 
