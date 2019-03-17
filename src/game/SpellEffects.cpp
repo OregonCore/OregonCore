@@ -2057,54 +2057,27 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
         switch (m_spellInfo->Id)
         {
         case 31789:                                 // Righteous Defense (step 1)
+            { 
+            if (!unitTarget)
+                return;
+
+            Unit::AttackerSet attackers = unitTarget->getAttackers();
+
+            for (Unit::AttackerSet::iterator aItr = attackers.begin(); aItr != attackers.end();)
+                if (!(*aItr)->IsValidAttackTarget(m_caster))
+                    aItr = attackers.erase(aItr);
+                else
+                    ++aItr;
+
+            uint32 maxTargets = std::min<uint32>(3, attackers.size());
+
+            for (uint32 i = 0; i < maxTargets; ++i)
             {
-                if (m_caster->GetTypeId() != TYPEID_PLAYER)
-                {
-                    SendCastResult(SPELL_FAILED_TARGET_AFFECTING_COMBAT);
-                    return;
-                }
-
-                // 31989 -> dummy effect (step 1) + dummy effect (step 2) -> 31709 (taunt like spell for each target)
-                Unit* friendTarget = !unitTarget || unitTarget->IsFriendlyTo(m_caster) ? unitTarget : unitTarget->GetVictim();
-                if (friendTarget)
-                {
-                    Player* player = friendTarget->GetCharmerOrOwnerPlayerOrPlayerItself();
-                    if (!player || !player->IsInSameRaidWith((Player*)m_caster))
-                        friendTarget = NULL;
-                }
-
-                // non-standard cast requirement check
-                if (!friendTarget || friendTarget->getAttackers().empty())
-                {
-                    // clear cooldown at fail
-                    ((Player*)m_caster)->RemoveSpellCooldown(m_spellInfo->Id, true);
-                    SendCastResult(SPELL_FAILED_TARGET_AFFECTING_COMBAT);
-                    return;
-                }
-
-                // Righteous Defense (step 2) (in old version 31980 dummy effect)
-                // Clear targets for eff 1
-                for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
-                {
-                    if (ihit->deleted)
-                        continue;
-
-                    ihit->effectMask &= ~(1 << 1);
-                }
-
-                // not empty (checked)
-                Unit::AttackerSet attackers = friendTarget->getAttackers();
-
-                // selected from list 3
-                for (uint32 i = 0; i < std::min(size_t(3), attackers.size()); ++i)
-                {
-                    Unit::AttackerSet::iterator aItr = attackers.begin();
-                    std::advance(aItr, rand() % attackers.size());
-                    AddUnitTarget((*aItr), 1);
-                    attackers.erase(aItr);
-                }
-
-                // now let next effect cast spell at each target.
+                Unit::AttackerSet::iterator aItr = attackers.begin();
+                std::advance(aItr, urand(0, attackers.size() - 1));
+                m_caster->CastSpell((*aItr), 31790, true);
+                attackers.erase(aItr);
+            }
                 return;
             }
         case 37877:                                 // Blessing of Faith
