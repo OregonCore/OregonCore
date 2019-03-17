@@ -27,7 +27,7 @@ git:
   depth: 1
 
 before_install:
-  - sudo apt-get -qq install mariadb-client libace-dev
+  - sudo apt-get -qq install mariadb-client libace-6.* libace-dev
   - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
   - curl -o doxygen.tar.gz https://oregon-core.net/travis/doxygen.tar.gz
   - tar xzf doxygen.tar.gz
