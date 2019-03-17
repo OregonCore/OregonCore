@@ -54,6 +54,25 @@ EndScriptData */
 #define SPELL_FROST_BUFFET          (HeroicMode?38142:33528)
 #define SPELL_SHADOW_BUFFET         (HeroicMode?38143:33529)
 
+enum events
+{
+    // Darkweaver Syth
+    EVENT_FLAME_SHOCK       = 1,
+    EVENT_ARCANE_SHOCK      = 2,
+    EVENT_FROST_SHOCK       = 3,
+    EVENT_SHADOW_SHOCK      = 4,
+    EVENT_CHAIN_LIGHTNING   = 5,
+    EVENT_CHECK_HEALTH1     = 6,
+    EVENT_CHECK_HEALTH2     = 7,
+    EVENT_CHECK_HEALTH3     = 8,
+
+    // Elementals
+    EVENT_FLAME_BUFFET      = 9,
+    EVENT_ARCANE_BUFFET     = 10,
+    EVENT_FROST_BUFFET      = 11,
+    EVENT_SHADOW_BUFFET     = 12
+};
+
 struct boss_darkweaver_sythAI : public ScriptedAI
 {
     boss_darkweaver_sythAI(Creature* c) : ScriptedAI(c)
@@ -62,27 +81,14 @@ struct boss_darkweaver_sythAI : public ScriptedAI
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
+    EventMap events;
     ScriptedInstance* pInstance;
-
-    uint32 flameshock_timer;
-    uint32 arcaneshock_timer;
-    uint32 frostshock_timer;
-    uint32 shadowshock_timer;
-    uint32 chainlightning_timer;
-
-    bool summon90;
-    bool summon50;
-    bool summon10;
+    bool summon90, summon50, summon10;
     bool HeroicMode;
+    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
     void Reset()
     {
-        flameshock_timer = 2000;
-        arcaneshock_timer = 4000;
-        frostshock_timer = 6000;
-        shadowshock_timer = 8000;
-        chainlightning_timer = 15000;
-
         summon90 = false;
         summon50 = false;
         summon10 = false;
@@ -93,21 +99,17 @@ struct boss_darkweaver_sythAI : public ScriptedAI
 
     void EnterCombat(Unit*)
     {
-        switch (rand() % 3)
-        {
-        case 0:
-            DoScriptText(SAY_AGGRO_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_AGGRO_2, me);
-            break;
-        case 2:
-            DoScriptText(SAY_AGGRO_3, me);
-            break;
-        }
+        DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
 
         if (pInstance)
             pInstance->SetData(DATA_SYTHEVENT, IN_PROGRESS);
+
+        events.ScheduleEvent(EVENT_FLAME_SHOCK, 2000);
+        events.ScheduleEvent(EVENT_ARCANE_SHOCK, 4000);
+        events.ScheduleEvent(EVENT_FROST_SHOCK, 6000);
+        events.ScheduleEvent(EVENT_SHADOW_SHOCK, 8000);
+        events.ScheduleEvent(EVENT_CHAIN_LIGHTNING, 15000);
+        events.ScheduleEvent(EVENT_CHECK_HEALTH1, 500);
     }
 
     void JustDied(Unit*)
@@ -120,18 +122,7 @@ struct boss_darkweaver_sythAI : public ScriptedAI
 
     void KilledUnit(Unit*)
     {
-        if (rand() % 2)
-            return;
-
-        switch (rand() % 2)
-        {
-        case 0:
-            DoScriptText(SAY_SLAY_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY_2, me);
-            break;
-        }
+        DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
     }
 
     void JustSummoned(Creature* summoned)
@@ -158,68 +149,58 @@ struct boss_darkweaver_sythAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth() * 100) / me->GetMaxHealth() < 90) && !summon90)
+        events.Update(diff);
+
+        switch (events.ExecuteEvent())
         {
-            SythSummoning();
-            summon90 = true;
+        case EVENT_CHECK_HEALTH1:
+            if (((me->GetHealth() * 100) / me->GetMaxHealth() < 90) && !summon90)
+            {
+                SythSummoning();
+                summon90 = true;
+                events.ScheduleEvent(EVENT_CHECK_HEALTH2, 500);
+            }
+            events.ScheduleEvent(EVENT_CHECK_HEALTH1, 500);
+            break;
+        case EVENT_CHECK_HEALTH2:
+            if (((me->GetHealth() * 100) / me->GetMaxHealth() < 50) && !summon50)
+            {
+                SythSummoning();
+                summon50 = true;
+                events.ScheduleEvent(EVENT_CHECK_HEALTH3, 500);
+            }
+            events.ScheduleEvent(EVENT_CHECK_HEALTH2, 500);
+            break;
+        case EVENT_CHECK_HEALTH3:
+            if (((me->GetHealth() * 100) / me->GetMaxHealth() < 10) && !summon10)
+            {
+                SythSummoning();
+                summon10 = true;
+            }
+            events.ScheduleEvent(EVENT_CHECK_HEALTH3, 500);
+            break;
+        case EVENT_FLAME_SHOCK:
+            DoCast(pTarget, SPELL_FLAME_SHOCK);
+            events.ScheduleEvent(EVENT_FLAME_SHOCK, 10000 + rand() % 5000);
+            break;
+        case EVENT_ARCANE_SHOCK:
+            DoCast(pTarget, SPELL_ARCANE_SHOCK);
+            events.ScheduleEvent(EVENT_ARCANE_SHOCK, 10000 + rand() % 5000);
+            break;
+        case EVENT_FROST_SHOCK:
+            DoCast(pTarget, SPELL_FROST_SHOCK);
+            events.ScheduleEvent(EVENT_FROST_SHOCK, 10000 + rand() % 5000);
+            break;
+        case EVENT_SHADOW_SHOCK:
+            DoCast(pTarget, SPELL_SHADOW_SHOCK);
+            events.ScheduleEvent(EVENT_SHADOW_SHOCK, 10000 + rand() % 5000);
+            break;
+        case EVENT_CHAIN_LIGHTNING:
+            DoCast(pTarget, SPELL_CHAIN_LIGHTNING);
+            events.ScheduleEvent(EVENT_CHAIN_LIGHTNING, 25000);
+            break;
+
         }
-
-        if (((me->GetHealth() * 100) / me->GetMaxHealth() < 50) && !summon50)
-        {
-            SythSummoning();
-            summon50 = true;
-        }
-
-        if (((me->GetHealth() * 100) / me->GetMaxHealth() < 10) && !summon10)
-        {
-            SythSummoning();
-            summon10 = true;
-        }
-
-        if (flameshock_timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_FLAME_SHOCK);
-
-            flameshock_timer = 10000 + rand() % 5000;
-        }
-        else flameshock_timer -= diff;
-
-        if (arcaneshock_timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_ARCANE_SHOCK);
-
-            arcaneshock_timer = 10000 + rand() % 5000;
-        }
-        else arcaneshock_timer -= diff;
-
-        if (frostshock_timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_FROST_SHOCK);
-
-            frostshock_timer = 10000 + rand() % 5000;
-        }
-        else frostshock_timer -= diff;
-
-        if (shadowshock_timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_SHADOW_SHOCK);
-
-            shadowshock_timer = 10000 + rand() % 5000;
-        }
-        else shadowshock_timer -= diff;
-
-        if (chainlightning_timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_CHAIN_LIGHTNING);
-
-            chainlightning_timer = 25000;
-        }
-        else chainlightning_timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -234,48 +215,39 @@ CreatureAI* GetAI_boss_darkweaver_syth(Creature* pCreature)
 
 struct mob_syth_fireAI : public ScriptedAI
 {
-    mob_syth_fireAI(Creature* c) : ScriptedAI(c)
+    mob_syth_fireAI(Creature* c) : ScriptedAI(c) {}
 
-    {
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
-
-    uint32 flameshock_timer;
-    uint32 flamebuffet_timer;
-    bool HeroicMode;
+    EventMap events;
+    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
     void Reset()
     {
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
-        flameshock_timer = 2500;
-        flamebuffet_timer = 5000;
     }
 
-    void EnterCombat(Unit*) { }
+    void EnterCombat(Unit*) 
+    {
+        events.ScheduleEvent(EVENT_FLAME_SHOCK, 2500);
+        events.ScheduleEvent(EVENT_FLAME_BUFFET, 5000);
+    }
 
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
+        events.Update(diff);
 
-        if (flameshock_timer <= diff)
+        switch (events.ExecuteEvent())
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_FLAME_SHOCK);
-
-            flameshock_timer = 5000;
+        case EVENT_FLAME_SHOCK:
+            DoCast(pTarget, SPELL_FLAME_SHOCK);
+            events.ScheduleEvent(EVENT_FLAME_SHOCK, 5000);
+            break;
+        case EVENT_FLAME_BUFFET:
+            DoCast(pTarget, SPELL_FLAME_BUFFET);
+            events.ScheduleEvent(EVENT_FLAME_BUFFET, 5000);
+            break;
         }
-        else flameshock_timer -= diff;
-
-        if (flamebuffet_timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_FLAME_BUFFET);
-
-            flamebuffet_timer = 5000;
-        }
-        else flamebuffet_timer -= diff;
-
         DoMeleeAttackIfReady();
     }
 };
@@ -287,48 +259,41 @@ CreatureAI* GetAI_mob_syth_fire(Creature* pCreature)
 
 struct mob_syth_arcaneAI : public ScriptedAI
 {
-    mob_syth_arcaneAI(Creature* c) : ScriptedAI(c)
+    mob_syth_arcaneAI(Creature* c) : ScriptedAI(c) { }
 
-    {
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
-
-    uint32 arcaneshock_timer;
-    uint32 arcanebuffet_timer;
-    bool HeroicMode;
+    EventMap events;
+    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
     void Reset()
     {
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
-        arcaneshock_timer = 2500;
-        arcanebuffet_timer = 5000;
     }
 
-    void EnterCombat(Unit*) { }
+    void EnterCombat(Unit*) 
+    { 
+        events.ScheduleEvent(EVENT_ARCANE_SHOCK, 2500);
+        events.ScheduleEvent(EVENT_ARCANE_BUFFET, 5000);
+    }
 
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
 
-        if (arcaneshock_timer <= diff)
+        events.Update(diff);
+
+        switch (events.ExecuteEvent())
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_ARCANE_SHOCK);
+        case EVENT_ARCANE_SHOCK:
+            DoCast(pTarget, SPELL_ARCANE_SHOCK);
+            events.ScheduleEvent(EVENT_ARCANE_SHOCK, 5000);
+            break;
+        case EVENT_ARCANE_BUFFET:
+            DoCast(pTarget, SPELL_ARCANE_BUFFET);
+            events.ScheduleEvent(EVENT_ARCANE_BUFFET, 5000);
+            break;
 
-            arcaneshock_timer = 5000;
         }
-        else arcaneshock_timer -= diff;
-
-        if (arcanebuffet_timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_ARCANE_BUFFET);
-
-            arcanebuffet_timer = 5000;
-        }
-        else arcanebuffet_timer -= diff;
-
         DoMeleeAttackIfReady();
     }
 };
@@ -340,47 +305,40 @@ CreatureAI* GetAI_mob_syth_arcane(Creature* pCreature)
 
 struct mob_syth_frostAI : public ScriptedAI
 {
-    mob_syth_frostAI(Creature* c) : ScriptedAI(c)
+    mob_syth_frostAI(Creature* c) : ScriptedAI(c) {}
 
-    {
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
-
-    uint32 frostshock_timer;
-    uint32 frostbuffet_timer;
-    bool HeroicMode;
+    EventMap events;
+    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
     void Reset()
     {
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
-        frostshock_timer = 2500;
-        frostbuffet_timer = 5000;
     }
 
-    void EnterCombat(Unit*) { }
+    void EnterCombat(Unit*) 
+    { 
+        events.ScheduleEvent(EVENT_FROST_SHOCK, 2500);
+        events.ScheduleEvent(EVENT_FROST_BUFFET, 5000);
+    }
 
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
 
-        if (frostshock_timer <= diff)
+        events.Update(diff);
+
+        switch (events.ExecuteEvent())
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_FROST_SHOCK);
-
-            frostshock_timer = 5000;
+        case EVENT_FROST_SHOCK:
+            DoCast(pTarget, SPELL_FROST_SHOCK);
+            events.ScheduleEvent(EVENT_FROST_SHOCK, 5000);
+            break;
+        case EVENT_FROST_BUFFET:
+            DoCast(pTarget, SPELL_FROST_BUFFET);
+            events.ScheduleEvent(EVENT_FROST_BUFFET, 5000);
+            break;
         }
-        else frostshock_timer -= diff;
-
-        if (frostbuffet_timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_FROST_BUFFET);
-
-            frostbuffet_timer = 5000;
-        }
-        else frostbuffet_timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -393,47 +351,40 @@ CreatureAI* GetAI_mob_syth_frost(Creature* pCreature)
 
 struct mob_syth_shadowAI : public ScriptedAI
 {
-    mob_syth_shadowAI(Creature* c) : ScriptedAI(c)
+    mob_syth_shadowAI(Creature* c) : ScriptedAI(c) {}
 
-    {
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
-
-    uint32 shadowshock_timer;
-    uint32 shadowbuffet_timer;
-    bool HeroicMode;
+    EventMap events;
+    Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
     void Reset()
     {
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
-        shadowshock_timer = 2500;
-        shadowbuffet_timer = 5000;
     }
 
-    void EnterCombat(Unit*) { }
+    void EnterCombat(Unit*) 
+    {
+        events.ScheduleEvent(EVENT_SHADOW_SHOCK, 2500);
+        events.ScheduleEvent(EVENT_SHADOW_BUFFET, 5000);
+    }
 
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
 
-        if (shadowshock_timer <= diff)
+        events.Update(diff);
+
+        switch (events.ExecuteEvent())
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_SHADOW_SHOCK);
-
-            shadowshock_timer = 5000;
+        case EVENT_SHADOW_SHOCK:
+            DoCast(pTarget, SPELL_SHADOW_SHOCK); 
+            events.ScheduleEvent(EVENT_SHADOW_SHOCK, 5000);
+            break;
+        case EVENT_SHADOW_BUFFET:
+            DoCast(pTarget, SPELL_SHADOW_BUFFET);
+            events.ScheduleEvent(EVENT_SHADOW_BUFFET, 5000);
+            break;
         }
-        else shadowshock_timer -= diff;
-
-        if (shadowbuffet_timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_SHADOW_BUFFET);
-
-            shadowbuffet_timer = 5000;
-        }
-        else shadowbuffet_timer -= diff;
 
         DoMeleeAttackIfReady();
     }
