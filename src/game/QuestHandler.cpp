@@ -124,13 +124,17 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket& recv_data)
     Object* pObject = ObjectAccessor::GetObjectByTypeMask(*_player, guid, TYPEMASK_UNIT | TYPEMASK_GAMEOBJECT | TYPEMASK_ITEM | TYPEMASK_PLAYER);
 
     // no or incorrect quest giver
-    if (!pObject || (pObject->GetTypeId() != TYPEID_PLAYER && !pObject->hasQuest(quest)) || 
+    if (!pObject || pObject == _player || (pObject->GetTypeId() != TYPEID_PLAYER && !pObject->hasQuest(quest)) || 
         (pObject->GetTypeId() == TYPEID_PLAYER && !pObject->ToPlayer()->CanShareQuest(quest)))
     {
         _player->PlayerTalkClass->CloseGossip();
         _player->SetDivider(0);
         return;
     }
+
+    // some kind of WPE protection
+    if (!_player->CanInteractWithQuestGiver(pObject))
+        return;
 
     Quest const* qInfo = sObjectMgr.GetQuestTemplate(quest);
     if (qInfo)
@@ -165,10 +169,10 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket& recv_data)
                     {
                         Player* pPlayer = itr->GetSource();
 
-                        if (!pPlayer || pPlayer == _player)     // not self
+                        if (!pPlayer || pPlayer == _player || pPlayer->IsAtGroupRewardDistance(_player))     // not self
                             continue;
 
-                        if (pPlayer->CanTakeQuest(qInfo, true))
+                        if (pPlayer->CanTakeQuest(qInfo, false))
                         {
                             pPlayer->SetDivider(_player->GetGUID());
 
@@ -180,6 +184,8 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket& recv_data)
                     }
                 }
             }
+
+            _player->PlayerTalkClass->CloseGossip();
 
             if (_player->CanCompleteQuest(quest))
                 _player->CompleteQuest(quest);
@@ -484,6 +490,9 @@ void WorldSession::HandleQuestPushToParty(WorldPacket& recvPacket)
     uint32 questId;
     recvPacket >> questId;
 
+    if (!_player->CanShareQuest(questId))
+        return;
+
     sLog.outDebug("WORLD: Received CMSG_PUSHQUESTTOPARTY quest = %u", questId);
 
     if (Quest const* pQuest = sObjectMgr.GetQuestTemplate(questId))
@@ -494,17 +503,8 @@ void WorldSession::HandleQuestPushToParty(WorldPacket& recvPacket)
             {
                 Player* pPlayer = itr->GetSource();
 
-                if (!pPlayer || pPlayer == _player)         // skip self
+                if (!pPlayer || pPlayer == _player || !pPlayer->IsInMap(_player))         // skip self
                     continue;
-
-                _player->SendPushToPartyResponse(pPlayer, QUEST_PARTY_MSG_SHARING_QUEST);
-
-                // 2.4.3: can only share quests within 10 yards
-                if (_player->GetDistance(pPlayer) > 10)
-                {
-                    _player->SendPushToPartyResponse(pPlayer, QUEST_PARTY_MSG_TOO_FAR);
-                    continue;
-                }
 
                 //player already has quest
                 if (!pPlayer->SatisfyQuestStatus(pQuest, false))
@@ -540,8 +540,22 @@ void WorldSession::HandleQuestPushToParty(WorldPacket& recvPacket)
                     continue;
                 }
 
-                pPlayer->PlayerTalkClass->SendQuestGiverQuestDetails(pQuest, _player->GetGUID(), true);
-                pPlayer->SetDivider(_player->GetGUID());
+                _player->SendPushToPartyResponse(pPlayer, QUEST_PARTY_MSG_SHARING_QUEST);
+
+                // 2.4.3: can only share quests within 10 yards
+               if (_player->GetDistance2d(pPlayer) > 10)
+                {
+                    _player->SendPushToPartyResponse(pPlayer, QUEST_PARTY_MSG_TOO_FAR);
+                    continue;
+                } 
+
+                if ((pQuest->IsAutoComplete() && pQuest->IsRepeatable() && !pQuest->IsDaily()) || pQuest->IsAutoComplete())
+                    pPlayer->PlayerTalkClass->SendQuestGiverRequestItems(pQuest, _player->GetGUID(), pPlayer->CanCompleteRepeatableQuest(pQuest), true);
+                else
+                {
+                    pPlayer->PlayerTalkClass->SendQuestGiverQuestDetails(pQuest, _player->GetGUID(), true);
+                    pPlayer->SetDivider(_player->GetGUID());
+                }
             }
         }
     }
