@@ -1,1 +1,1 @@
-UPDATE `creature_template` SET `faction` = '17' WHERE `entry` = '38';
+UPDATE `creature_template` SET `faction` = '17' WHERE `entry` IN (38, 103);
