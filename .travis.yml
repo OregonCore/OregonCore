@@ -6,7 +6,6 @@ compiler:
 # whitelisted packages can be obtained quickly without downloading
 # doxygen is out of date, tho so we download its binaries
 addons:
-  mariadb: '10.0'
   apt:
     packages:
       - cmake
