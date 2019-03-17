@@ -15,6 +15,7 @@ addons:
       - git
       - make
       - binutils-dev
+      - libiberty-dev
       - openssl
       - libssl-dev
       - zlib1g-dev
