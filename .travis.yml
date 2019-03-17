@@ -21,8 +21,8 @@ addons:
       - zlib1g-dev
       - zip
       - unzip
-      - php7-cli
-      - php7-mysql
+      - php7.0-cli
+      - php7.0-mysql
 
 git:
   depth: 1
