@@ -1,0 +1,1 @@
+UPDATE `creature_template` SET `faction` = '17' WHERE `entry` = '38';
