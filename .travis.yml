@@ -6,6 +6,7 @@ compiler:
 # whitelisted packages can be obtained quickly without downloading
 # doxygen is out of date, tho so we download its binaries
 addons:
+  mariadb: '10.0'
   apt:
     packages:
       - cmake
@@ -27,7 +28,7 @@ git:
   depth: 1
 
 before_install:
-  - sudo apt-get -qq install mariadb-server libace-6.* libace-dev
+  - sudo apt-get -qq install libace-6.* libace-dev
   - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
   - curl -o doxygen.tar.gz https://oregon-core.net/travis/doxygen.tar.gz
   - tar xzf doxygen.tar.gz
