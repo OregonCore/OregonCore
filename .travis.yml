@@ -1,5 +1,6 @@
 dist: xenial
 language: cpp
+compiler: gcc
 
 # whitelisted packages can be obtained quickly without downloading
 # doxygen is out of date, tho so we download its binaries
@@ -18,19 +19,13 @@ addons:
       - zlib1g-dev
       - zip
       - unzip
-      - php7.0-cli
-      - php7.0-mysql
 
 git:
   depth: 1
 
 before_install:
-  - sudo apt-get -qq install clang-3.8 mariadb-server libace-6.* libace-dev
+  - sudo apt-get -qq install mariadb-server libace-6.* libace-dev
   - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
-  - curl -o doxygen.tar.gz https://oregon-core.net/travis/doxygen.tar.gz
-  - tar xzf doxygen.tar.gz
-  - sudo install -m 755 doxygen /usr/bin
-  - sudo install -m 755 doxyindexer /usr/bin
 
 install:
   - mkdir build
@@ -52,20 +47,3 @@ script:
   - cat updates/realmd/*.sql | mysql -u oregon -poregon realmd
   - cat updates/characters/*.sql | mysql -u oregon -poregon characters
   - cat updates/world/*.sql | mysql -u oregon -poregon world
-  - curl --retry 3 -o documentation.sql https://oregon-core.net/travis/documentation.sql
-
-# generate and deploy doxygen documentation now
-after_success:
-  - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
-  - echo 'create database documentation' | sudo mysql -u root --password=''
-  - sudo mysql -u root --password='' documentation < documentation.sql
-  - cd $TRAVIS_BUILD_DIR/build
-  - make docs 2> /dev/null
-  - cd ../doc/doxygen/Database
-  - sudo php generator.php
-  - cd ../../../build
-  - make docs 2> /dev/null
-  - cd doc/html
-  - zip -q -r -9 html.zip ./*
-  - export URL="https://oregon-core.net/Deploy?secret=$TRAVIS_SECRET"
-  - curl -F 'userfile=@html.zip' $URL
