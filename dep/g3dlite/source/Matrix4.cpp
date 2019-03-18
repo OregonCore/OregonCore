@@ -139,7 +139,7 @@ Matrix4 Matrix4::orthogonalProjection(
     float            farval,
     float            upDirection) {
 
-    // Adapted from Mesa.  Note that Microsoft (http://msdn.microsoft.com/library/default.asp?url=/library/en-us/opengl/glfunc03_8qnj.asp) 
+    // Adapted from Mesa.  Note that Microsoft (https://msdn.microsoft.com/library?url=/library/en-us/opengl/glfunc03_8qnj.asp) 
     // and Linux (http://www.xfree86.org/current/glOrtho.3.html) have different matrices shown in their documentation.
 
     float x, y, z;

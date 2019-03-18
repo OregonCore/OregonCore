@@ -41,7 +41,7 @@ gSOAP (a portable development toolkit for C and C++ XML Web services and XML dat
   Version: 2.8.0
   
 Recast Navigation (latest Rev Modified by Mangos)
-  http://code.google.com/p/recastnavigation/
+  https://code.google.com/archive/p/recastnavigation/
   https://github.com/memononen/recastnavigatio
   Version: 1dd5cf1883d61e723fef3d4957cf758c50e7a52b (Jun 22 2015)
 

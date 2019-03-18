@@ -28,7 +28,7 @@
 // template instantiations, which breaks singletons.
 // As a workaround, we use the GCC visibility pragmas.
 // And to make them fit in a macro, we use C99's _Pragma()
-// http://gcc.gnu.org/bugzilla/show_bug.cgi?id=17470
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=17470
 // This has been fixed in GCC 4.1.1 with FC6 but not with SuSE 10.2
 // that gets shipped with GCC 4.1.2 so we assume that with GCC 4.2
 // this will be fixed on the head. With FC6 just set this define yourself

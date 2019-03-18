@@ -6,7 +6,7 @@
  *
  *  @author Iliyan Jeliazkov <iliyan@ociweb.com>
  *
- *  @note Modeled on http://www.boost.org/boost/intrusive_ptr.hpp
+ *  @note Modeled on https://www.boost.org/doc/libs/1_69_0/boost/intrusive_ptr.hp
  */
 //=============================================================================
 

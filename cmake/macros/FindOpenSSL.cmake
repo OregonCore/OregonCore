@@ -23,7 +23,7 @@
 # (To distributed this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-# http://www.slproweb.com/products/Win32OpenSSL.html
+# https://www.slproweb.com/products/Win32OpenSSL.html
 
 SET(_OPENSSL_ROOT_HINTS
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (32-bit)_is1;Inno Setup: App Path]"

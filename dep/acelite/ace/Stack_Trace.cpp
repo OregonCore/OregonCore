@@ -14,7 +14,7 @@
  *    comp.unix.solaris by Bart Smaalders,
  *    https://groups.google.com/forum/#!topic/comp.unix.solaris/i5896L4ojxw
  *  - VxWorks kernel-mode stack tracing is adapted from a code example
- *    in the VxWorks FAQ at http://www.xs4all.nl/~borkhuis/vxworks/vxw_pt5.html
+ *    in the VxWorks FAQ at https://borkhuis.home.xs4all.nl/vxworks/vxw_pt5.html
  *    although the undocumented functions it uses are also mentioned in
  *    various documents available on the WindRiver support website.
  *

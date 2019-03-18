@@ -41,7 +41,7 @@ Random::~Random() {
 
 
 uint32 Random::bits() {
-    // See http://en.wikipedia.org/wiki/Mersenne_twister
+    // See https://en.wikipedia.org/wiki/Mersenne_twister
 
     // Make a local copy of the index variable to ensure that it
     // is not out of bounds

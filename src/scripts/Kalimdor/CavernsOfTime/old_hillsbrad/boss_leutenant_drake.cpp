@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 OregonCore <https://oregon-core.net/>
+ * Copyright (C) 2010-2019 OregonCore <https://oregon-core.net/>
  * Copyright (C) 2008-2012 TrinityCore <https://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <http://www.scriptdev2.com/>
  *
@@ -14,7 +14,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* ScriptData

@@ -19,12 +19,12 @@ std::string license() {
 "Copyright (c) 2004 Glenn Randers-Pehrson\n\n"
 "This software is based in part on the work of the Independent JPEG Group.\n\n"
 "This software is based on part on the FFmpeg libavformat and libavcodec libraries\n" 
-"(\"FFmpeg\", http://ffmpeg.mplayerhq.hu), which are included under the terms of the\n" 
-"GNU Lesser General Public License (LGPL), (http://www.gnu.org/copyleft/lesser.html).\n\n"
+"(\"FFmpeg\", https://ffmpeg.org/), which are included under the terms of the\n" 
+"GNU Lesser General Public License (LGPL), (https://www.gnu.org/copyleft/lesser.html).\n\n"
 "%s"
 "This program uses the G3D Library (http://g3d.sf.net), which\n"
 "is licensed under the \"Modified BSD\" Open Source license.  The G3D library\n"
-"source code is Copyright © 2000-2010, Morgan McGuire, All rights reserved.\n"
+"source code is Copyright ï¿½ 2000-2010, Morgan McGuire, All rights reserved.\n"
 "This program uses The OpenGL Extension Wrangler Library, which \n"
 "is licensed under the \"Modified BSD\" Open Source license.  \n"
 "The OpenGL Extension Wrangler Library source code is\n"
@@ -63,8 +63,8 @@ std::string license() {
     "" // Win32 doesn't use SDL
 #else
     "This software uses the Simple DirectMedia Layer library (\"SDL\",\n"
-    "http://www.libsdl.org), which is included under the terms of the\n"
-    "GNU Lesser General Public License, (http://www.gnu.org/copyleft/lesser.html).\n\n"
+    "https://www.libsdl.org/), which is included under the terms of the\n"
+    "GNU Lesser General Public License, (https://www.gnu.org/copyleft/lesser.html).\n\n"
 #endif
 ,
 G3D_VER);

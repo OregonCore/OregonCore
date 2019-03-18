@@ -1,6 +1,6 @@
 = Oregon Core -- Linux Restarter =
 
-Copyright (C) 2010-2018 OregonCore <https://oregon-core.net/>
+Copyright (C) 2010-2098 OregonCore <https://oregon-core.net/>
 
 Content :
 - File "oregon" is an interface to use easier "screen" command.

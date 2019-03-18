@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "OCSoap.h"
@@ -160,8 +160,8 @@ struct Namespace namespaces[] =
 {
     { "SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", NULL, NULL }, // must be first
     { "SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", NULL, NULL }, // must be second
-    { "xsi", "http://www.w3.org/1999/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL },
-    { "xsd", "http://www.w3.org/1999/XMLSchema",          "http://www.w3.org/*/XMLSchema", NULL, },
+    { "xsi", "https://www.w3.org/1999/XMLSchema-instance", "https://www.w3.org/*/XMLSchema-instance", NULL },
+    { "xsd", "https://www.w3.org/1999/XMLSchema",          "https://www.w3.org/*/XMLSchema", NULL, },
     { "ns1", "urn:Oregon", NULL, NULL },     // "ns1" namespace prefix
     { NULL, NULL, NULL, NULL }
 };
