@@ -57,12 +57,12 @@ script:
 # generate and deploy doxygen documentation now
 after_success:
   - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
-  - echo 'create database documentation' | mysql -u root --password=''
-  - mysql -u root --password='' documentation < documentation.sql
+  - echo 'create database documentation' | sudo mysql -u root --password=''
+  - sudo mysql -u root --password='' documentation < documentation.sql
   - cd $TRAVIS_BUILD_DIR/build
   - make docs 2> /dev/null
   - cd ../doc/doxygen/Database
-  - php generator.php
+  - sudo php generator.php
   - cd ../../../build
   - make docs 2> /dev/null
   - cd doc/html
