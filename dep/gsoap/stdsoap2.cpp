@@ -297,9 +297,9 @@ unsigned short errno;
 #ifndef PALM_1
 static const char soap_env1[42] = "http://schemas.xmlsoap.org/soap/envelope/";
 static const char soap_enc1[42] = "http://schemas.xmlsoap.org/soap/encoding/";
-static const char soap_env2[40] = "https://www.w3.org/2003/05/soap-envelope";
-static const char soap_enc2[40] = "https://www.w3.org/2003/05/soap-encoding";
-static const char soap_rpc[35] = "https://www.w3.org/2003/05/soap-rpc";
+static const char soap_env2[40] = "http://www.w3.org/2003/05/soap-envelope";
+static const char soap_enc2[40] = "http://www.w3.org/2003/05/soap-encoding";
+static const char soap_rpc[35] = "http://www.w3.org/2003/05/soap-rpc";
 #endif
 
 #ifndef PALM_1
@@ -7103,7 +7103,7 @@ soap_attachment(struct soap *soap, const char *tag, int id, const void *p, const
   /* TODO: this code to be obsoleted with new import/xop.h conventions */
   if ((soap->mode & SOAP_ENC_MTOM) && strcmp(tag, "xop:Include"))
   { if (soap_element_begin_out(soap, tag, 0, type)
-     || soap_element_href(soap, "xop:Include", 0, "xmlns:xop=\"https://www.w3.org/2004/08/xop/include\" href", aid)
+     || soap_element_href(soap, "xop:Include", 0, "xmlns:xop=\"http://www.w3.org/2004/08/xop/include\" href", aid)
      || soap_element_end_out(soap, tag))
       return soap->error;
   }
