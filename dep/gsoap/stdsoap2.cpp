@@ -10426,7 +10426,7 @@ soap_peek_element(struct soap *soap)
           soap->mustUnderstand = 1;
         else if (!soap_match_tag(soap, tp->name, "SOAP-ENV:role"))
         { if ((!soap->actor || strcmp(soap->actor, tp->value))
-           && strcmp(tp->value, "https://www.w3.org/2003/05/soap-envelope/role/next"))
+           && strcmp(tp->value, "http://www.w3.org/2003/05/soap-envelope/role/next"))
             soap->other = 1;
         }
       }
@@ -11120,7 +11120,7 @@ soap_wstring_out(struct soap *soap, const wchar_t *s, int flag)
       }
       else /* check UTF16 encoding when wchar_t is too small to hold UCS */
       { if (sizeof(wchar_t) < 4 && (c & 0xD800) == 0xD800)
-        { /* http://unicode.org/faq/utf_bom.html#utf16-2 */
+        { /* https://unicode.org/faq/utf_bom.html#utf16-2 */
           if ((*s & 0xD800) == 0xD800)
             c = (c << 10) + *s++ + 0x10000 - (0xD800 << 10) - 0xDC00;
           else
