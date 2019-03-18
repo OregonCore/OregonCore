@@ -33,6 +33,7 @@ before_install:
   - sudo install -m 755 doxyindexer /usr/bin
 
 install:
+  - export CCACHE_CPP2=true
   - mkdir build
   - cd build
   - cmake .. -DCMAKE_C_COMPILER="clang-3.8" -DCMAKE_CXX_COMPILER="clang++-3.8" -DSERVERS=1 -DTOOLS=1 -DSCRIPTS=1 -DWITH_DOCS=1 -DWITH_WARNINGS=1 -DWITH_COREDEBUG=0
