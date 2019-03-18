@@ -22,13 +22,12 @@ addons:
       - unzip
       - php7.0-cli
       - php7.0-mysql
-      - libace-6.3.3
-      - libace-dev
 
 git:
   depth: 1
 
 before_install:
+  - sudo apt-get -qq install mariadb-server libace-6.* libace-dev
   - if [[ $TRAVIS_PULL_REQUEST == 'true' ]]; then exit; fi
   - curl -o doxygen.tar.gz https://oregon-core.net/travis/doxygen.tar.gz
   - tar xzf doxygen.tar.gz
@@ -38,7 +37,7 @@ before_install:
 install:
   - mkdir build
   - cd build
-  - cmake .. -DSERVERS=1 -DTOOLS=1 -DSCRIPTS=1 -DWITH_DOCS=1 -DWITH_WARNINGS=1 -DWITH_COREDEBUG=0
+  - cmake .. -DUSE_COREPCH=1 -DUSE_SCRIPTPCH=1 -DSERVERS=1 -DTOOLS=1 -DSCRIPTS=1 -DWITH_DOCS=1 -DWITH_WARNINGS=1 -DWITH_COREDEBUG=0
 # we have 1.5 cpu so 2 jobs at a time are sufficient
   - make -j2
 
