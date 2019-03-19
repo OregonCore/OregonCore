@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -33,8 +33,8 @@ EndScriptData */
 
 #define LOCALE_TRICK_OR_TREAT_0 "Trick or Treat!"
 #define LOCALE_TRICK_OR_TREAT_2 "Des bonbons ou des blagues!"
-#define LOCALE_TRICK_OR_TREAT_3 "Süßes oder Saures!"
-#define LOCALE_TRICK_OR_TREAT_6 "¡Truco o trato!"
+#define LOCALE_TRICK_OR_TREAT_3 "Sï¿½ï¿½es oder Saures!"
+#define LOCALE_TRICK_OR_TREAT_6 "ï¿½Truco o trato!"
 
 bool isEventActive()
 {
