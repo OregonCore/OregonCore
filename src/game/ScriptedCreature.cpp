@@ -31,6 +31,18 @@ struct TSpellSummary
     uint8 Effects;                                          // set of enum SelectEffect
 }* SpellSummary;
 
+Creature* SummonList::GetCreatureWithEntry(uint32 entry) const
+{
+    for (auto i = begin(); i != end();)
+    {
+        if (Creature* summon = ObjectAccessor::GetCreature(*me, *i))
+            if (summon->GetEntry() == entry)
+                return summon;
+    }
+
+    return NULL;
+}
+
 void SummonList::DoZoneInCombat(uint32 entry)
 {
     for (iterator i = begin(); i != end();)

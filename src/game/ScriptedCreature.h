@@ -63,6 +63,8 @@ class SummonList : public std::list<uint64>
         void DespawnEntry(uint32 entry);
         void DespawnAll();
         void DoAction(uint32 entry, uint32 info);
+        Creature* GetCreatureWithEntry(uint32 entry) const;
+
         void DoZoneInCombat(uint32 entry = 0);
     private:
         Creature* me;
