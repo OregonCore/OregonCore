@@ -823,6 +823,9 @@ struct npc_phase_hunterAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
+        if (me->HasUnitState(UNIT_STATE_CASTING))
+            return;
+
         if (ManaBurnTimer <= diff)
         {
             if (me->GetVictim()->getPowerType() == POWER_MANA && me->GetVictim()->GetPower(POWER_MANA) > 0)
