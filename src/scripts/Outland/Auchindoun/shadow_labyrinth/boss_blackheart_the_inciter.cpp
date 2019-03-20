@@ -112,7 +112,7 @@ struct boss_blackheart_the_inciterAI : public ScriptedAI
 
     void EnterEvadeMode()
     {
-        if (InciteChaos && SelectTargetFromPlayerList(100.0f))
+        if (InciteChaos && SelectTargetFromPlayerList(100.0f, NULL, false))
             return;
         CreatureAI::EnterEvadeMode();
     }
