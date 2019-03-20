@@ -43,6 +43,16 @@ Creature* SummonList::GetCreatureWithEntry(uint32 entry) const
     return NULL;
 }
 
+bool SummonList::HasEntry(uint32 entry) const
+{
+    for (auto i = begin(); i != end(); ++i)
+    {
+        Creature* summon = ObjectAccessor::GetCreature(*me, *i);
+        if (summon && summon->GetEntry() == entry)
+            return true;
+    }
+}
+
 void SummonList::DoZoneInCombat(uint32 entry)
 {
     for (iterator i = begin(); i != end();)

@@ -18,7 +18,7 @@
 /* ScriptData
 SDName: Boss_High_Botanist_Freywinn
 SD%Complete: 95
-SDComment: some strange visual related to tree form(if aura lost before normal duration end). Edit by Lee
+SDComment: some strange visual related to tree form(if aura lost before normal duration end).
 SDCategory: Tempest Keep, The Botanica
 EndScriptData */
 
@@ -43,60 +43,46 @@ EndScriptData */
 #define SPELL_PLANT_BLUE            34762
 #define SPELL_PLANT_RED             34763
 
+enum Misc
+{
+    NPC_FRAYER = 19953,
+
+    EVENT_SUMMON_SEEDLING = 1,
+    EVENT_TREE_FORM = 2,
+    EVENT_CHECK_FRAYERS = 3,
+    EVENT_RESTORE_COMBAT = 4
+};
+
+
 struct boss_high_botanist_freywinnAI : public ScriptedAI
 {
-    boss_high_botanist_freywinnAI(Creature* c) : ScriptedAI(c) {}
+    boss_high_botanist_freywinnAI(Creature* c) : ScriptedAI(c), summons(me) {}
 
-    std::list<uint64> Adds_List;
+    SummonList summons;
+    EventMap events;
 
-    uint32 SummonSeedling_Timer;
-    uint32 TreeForm_Timer;
-    uint32 MoveCheck_Timer;
-    uint32 DeadAddsCount;
-    bool MoveFree;
-
-    void Reset()
-    {
-        Adds_List.clear();
-
-        SummonSeedling_Timer = 6000;
-        TreeForm_Timer = 30000;
-        MoveCheck_Timer = 1000;
-        DeadAddsCount = 0;
-        MoveFree = true;
-    }
+    void Reset() {}
 
     void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
+        events.ScheduleEvent(EVENT_SUMMON_SEEDLING, 6000);
+        events.ScheduleEvent(EVENT_TREE_FORM, 30000);
     }
 
     void JustSummoned(Creature* summoned)
     {
-        if (summoned->GetEntry() == ENTRY_FRAYER)
-            Adds_List.push_back(summoned->GetGUID());
-
         //  Forced Summon Frayers to Attack players
         if (me->GetVictim())
             summoned->AI()->AttackStart(me->GetVictim());
+
+        summons.Summon(summoned);
     }
 
-    void DoSummonSeedling()
+    void KilledUnit(Unit* victim)
     {
-        {
-            switch (urand(0, 3))
-            {
-            case 0: DoCast(me, SPELL_PLANT_WHITE); break;
-            case 1: DoCast(me, SPELL_PLANT_GREEN); break;
-            case 2: DoCast(me, SPELL_PLANT_BLUE);  break;
-            case 3: DoCast(me, SPELL_PLANT_RED);   break;
-            }
-        }
-    }
-
-    void KilledUnit(Unit* /*victim*/)
-    {
-        DoScriptText(urand(0, 1) ? SAY_KILL_1 : SAY_KILL_2, me);
+        if (victim->GetTypeId() == TYPEID_PLAYER)
+            DoScriptText(RAND( SAY_KILL_1, SAY_KILL_2), me);
     }
 
     void JustDied(Unit* /*Killer*/)
@@ -104,87 +90,63 @@ struct boss_high_botanist_freywinnAI : public ScriptedAI
         DoScriptText(SAY_DEATH, me);
     }
 
+    void SummonedCreatureDies(Creature* summon, Unit*)
+    {
+        summons.Despawn(summon);
+    }
+
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
 
-        if (TreeForm_Timer <= diff)
+        events.Update(diff);
+
+        switch (events.ExecuteEvent())
         {
-            switch (rand() % 2)
-            {
-            case 0:DoScriptText(SAY_TREE_1, me); break;
-            case 1:DoScriptText(SAY_TREE_2, me); break;
-            }
+        case EVENT_SUMMON_SEEDLING:
+            me->CastSpell(me, RAND(SPELL_PLANT_WHITE, SPELL_PLANT_GREEN, SPELL_PLANT_BLUE, SPELL_PLANT_RED), false);
+            events.ScheduleEvent(EVENT_SUMMON_SEEDLING, 6000);
+            break;
+        case EVENT_TREE_FORM:
+            events.Reset();
+            events.SetPhase(1);
+            events.ScheduleEvent(EVENT_CHECK_FRAYERS, 1000);
+            events.ScheduleEvent(EVENT_TREE_FORM, 75000);
+            events.ScheduleEvent(EVENT_RESTORE_COMBAT, 46000);
 
-            if (me->IsNonMeleeSpellCast(false))
-                me->InterruptNonMeleeSpells(true);
-
+            DoScriptText(RAND(SAY_TREE_1, SAY_TREE_2), me);
             me->RemoveAllAuras();
-            for (uint8 i = 0; i<3; ++i) // loop to the spell of summoning Spell Frayer max loop of the spell is x3
-            DoCast(me, SPELL_SUMMON_FRAYER, true + i);
-            DoCast(me, SPELL_TRANQUILITY, true);
-            DoCast(me, SPELL_TREE_FORM, true);
-
             me->GetMotionMaster()->MoveIdle();
-            MoveFree = false;
+            me->GetMotionMaster()->Clear(false);
 
-            TreeForm_Timer = 75000;
-        }
-        else TreeForm_Timer -= diff;
+            for (int i = 0; i < 3; ++i)
+                me->SummonCreature(ENTRY_FRAYER, me->GetPosition(), TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000) + i;
 
-        if (!MoveFree)
-        {
-            if (MoveCheck_Timer <= diff)
+            me->CastSpell(me, SPELL_TRANQUILITY, true);
+            me->CastSpell(me, SPELL_TREE_FORM, true);
+            break;
+        case EVENT_RESTORE_COMBAT:
+            events.SetPhase(0);
+            events.ScheduleEvent(EVENT_SUMMON_SEEDLING, 6000);
+            me->GetMotionMaster()->MoveChase(me->GetVictim());
+            break;
+
+        case EVENT_CHECK_FRAYERS:
+            if (!summons.HasEntry(NPC_FRAYER))
             {
-                if (!Adds_List.empty())
-                {
-                    for (std::list<uint64>::iterator itr = Adds_List.begin(); itr != Adds_List.end(); ++itr)
-                    {
-                        if (Unit* temp = Unit::GetUnit(*me, *itr))
-                        {
-                            if (!temp->IsAlive())
-                            {
-                                Adds_List.erase(itr);
-                                ++DeadAddsCount;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (DeadAddsCount < 3 && TreeForm_Timer - 30000 <= diff)
-                    DeadAddsCount = 3;
-
-                if (DeadAddsCount >= 3)
-                {
-                    Adds_List.clear();
-                    DeadAddsCount = 0;
-
-                    me->InterruptNonMeleeSpells(true);
-                    me->RemoveAllAuras();
-                    me->GetMotionMaster()->MoveChase(me->GetVictim());
-                    MoveFree = true;
-                }
-                MoveCheck_Timer = 500;
+                me->InterruptNonMeleeSpells(true);
+                me->RemoveAllAuras();
+                events.RescheduleEvent(EVENT_RESTORE_COMBAT, 0);
+                events.RescheduleEvent(EVENT_TREE_FORM, 30000);
+                break;
             }
-            else MoveCheck_Timer -= diff;
-
-            return;
+            events.ScheduleEvent(EVENT_CHECK_FRAYERS, 500);
+            break;
         }
 
-        /*if (me->HasAura(SPELL_TREE_FORM,0) || me->HasAura(SPELL_TRANQUILITY,0))
-        return;*/
-
-        //one random seedling every 5 secs, but not in tree form
-        if (SummonSeedling_Timer <= diff)
-        {
-            DoSummonSeedling();
-            SummonSeedling_Timer = 6000;
-        }
-        else SummonSeedling_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+        if (!events.IsInPhase(1))
+            DoMeleeAttackIfReady();
     }
 };
 
