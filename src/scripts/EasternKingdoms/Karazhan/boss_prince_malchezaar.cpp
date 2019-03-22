@@ -276,6 +276,7 @@ struct boss_malchezaarAI : public ScriptedAI
 
     void ClearWeapons()
     {
+        me->SetCanDualWield(false);
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 0);
 
@@ -420,6 +421,7 @@ struct boss_malchezaarAI : public ScriptedAI
                 float weaponBaseMinDamage = basedamage;
                 float weaponBaseMaxDamage = basedamage * 1.5;
 
+                me->SetCanDualWield(true);
                 me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, 2 * weaponBaseMinDamage);
                 me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, 2 * weaponBaseMaxDamage);
                 me->UpdateDamagePhysical(BASE_ATTACK);
