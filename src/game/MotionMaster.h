@@ -181,6 +181,7 @@ class MotionMaster //: private std::stack<MovementGenerator *>
             MovePoint(id, pos.m_positionX, pos.m_positionY, pos.m_positionZ, usePathfinding);
         }
         void MovePoint(uint32 id, float x, float y, float z, bool usePathfinding = true);
+        void MoveToTarget(uint32 CreatureEntry, uint32 dist, bool alive);
         void MoveCharge(float x, float y, float z, float speed = SPEED_CHARGE, uint32 id = EVENT_CHARGE, bool usePathfinding = true);
         void MoveFall(float z = 0, uint32 id = 0);
         void MoveSeekAssistance(float x, float y, float z);

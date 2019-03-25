@@ -26,5 +26,7 @@
 #define DATA_MEKGINEERSTEAMRIGGER       5
 #define DATA_KALITRESH                  6
 #define DATA_THESPIA                    7
+
+#define NPC_WARLORD_KALITHRESH          17798
 #endif
 

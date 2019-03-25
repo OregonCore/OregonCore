@@ -355,6 +355,25 @@ MotionMaster::MoveSeekAssistance(float x, float y, float z)
 }
 
 void
+MotionMaster::MoveToTarget(uint32 CreatureEntry, uint32 dist, bool Alive)
+{
+    if (i_owner->GetTypeId() == TYPEID_PLAYER)
+        return;
+
+    Creature* creature = i_owner->FindNearestCreature(CreatureEntry, dist, Alive);
+
+    float x = creature->GetPositionX() + 2.0f;
+    float y = creature->GetPositionY();
+    float z = creature->GetPositionZ();
+
+    i_owner->CastStop();
+    Movement::MoveSplineInit init(*i_owner);
+    init.MoveTo(x, y, z, true, false);
+    init.Launch();
+    Mutate(new EffectMovementGenerator(0), MOTION_SLOT_ACTIVE);
+}
+
+void
 MotionMaster::MoveSeekAssistanceDistract(uint32 time)
 {
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
