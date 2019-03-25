@@ -372,6 +372,7 @@ void AddSC_instance_the_eye();
 void AddSC_the_eye();
 void AddSC_boss_gatewatcher_iron_hand();     //TK The Mechanar
 void AddSC_boss_nethermancer_sepethrea();
+void AddSC_boss_gatewatcher_gryo();
 void AddSC_boss_pathaleon_the_calculator();
 void AddSC_instance_mechanar();
 
@@ -740,6 +741,7 @@ void AddScripts()
     AddSC_the_eye();
     AddSC_boss_gatewatcher_iron_hand();     //TK The Mechanar
     AddSC_boss_nethermancer_sepethrea();
+    AddSC_boss_gatewatcher_gryo();
     AddSC_boss_pathaleon_the_calculator();
     AddSC_instance_mechanar();
 

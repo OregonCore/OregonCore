@@ -1,0 +1,1 @@
+UPDATE `creature_template` SET `ScriptName` = 'boss_gatewatcher_gryo', `AIName` = '' WHERE `entry` = 19218;
