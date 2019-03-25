@@ -82,20 +82,29 @@ struct mob_treantAI  : public ScriptedAI
 # boss_warp_splinter
 #####*/
 
-#define SAY_AGGRO           -1553007
-#define SAY_SLAY_1          -1553008
-#define SAY_SLAY_2          -1553009
-#define SAY_SUMMON_1        -1553010
-#define SAY_SUMMON_2        -1553011
-#define SAY_DEATH           -1553012
-
-#define WAR_STOMP           34716
-#define SUMMON_TREANTS      34727                           // DBC: 34727, 34731, 34733, 34734, 34736, 34739, 34741 (with Ancestral Life spell 34742)   // won't work (guardian summon)
-#define ARCANE_VOLLEY       (HeroicMode?39133:36705)
-
-#define CREATURE_TREANT     19949
-
 #define TREANT_SPAWN_DIST   50                              //50 yards from Warp Splinter's spawn point
+
+enum Splinter
+{
+    SAY_AGGRO               = -1553007,
+    SAY_SLAY_1              = -1553008,
+    SAY_SLAY_2              = -1553009,
+    SAY_SUMMON_1            = -1553010,
+    SAY_SUMMON_2            = -1553011,
+    SAY_DEATH               = -1553012,
+
+    SPELL_WAR_STOMP         = 34716,
+    SPELL_SUMMON_TREANTS    = 34727,
+    SPELL_ARCANE_VOLLEY_H   = 39133,
+    SPELL_ARCANE_VOLLEY_N   = 36705,
+
+
+    EVENT_WAR_STOMP         = 1,
+    EVENT_SUMMON_TREANT     = 2,
+    EVENT_ARCANE_VOLLEY     = 3,
+
+    CREATURE_TREANT         = 19949
+};
 
 float treant_pos[6][3] =
 {
@@ -109,46 +118,37 @@ float treant_pos[6][3] =
 
 struct boss_warp_splinterAI : public ScriptedAI
 {
-    boss_warp_splinterAI(Creature* c) : ScriptedAI(c)
+    boss_warp_splinterAI(Creature* c) : ScriptedAI(c), summons(me)
     {
         HeroicMode = c->GetMap()->IsHeroic();
         Treant_Spawn_Pos_X = c->GetPositionX();
         Treant_Spawn_Pos_Y = c->GetPositionY();
     }
 
-    uint32 War_Stomp_Timer;
-    uint32 Summon_Treants_Timer;
-    uint32 Arcane_Volley_Timer;
-    bool HeroicMode;
+    EventMap events;
+    SummonList summons;
 
     float Treant_Spawn_Pos_X;
     float Treant_Spawn_Pos_Y;
 
     void Reset()
     {
-        War_Stomp_Timer = 25000 + rand() % 15000;
-        Summon_Treants_Timer = 45000;
-        Arcane_Volley_Timer = 8000 + rand() % 12000;
-
+        events.Reset();
         me->SetSpeed(MOVE_RUN, 0.7f, true);
     }
 
     void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
+
+        events.ScheduleEvent(EVENT_WAR_STOMP, 25000 + rand() % 15000);
+        events.ScheduleEvent(EVENT_SUMMON_TREANT, 45000);
+        events.ScheduleEvent(EVENT_ARCANE_VOLLEY, 8000 + rand() % 12000);
     }
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch (rand() % 2)
-        {
-        case 0:
-            DoScriptText(SAY_SLAY_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY_2, me);
-            break;
-        }
+        DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
     }
 
     void JustDied(Unit* /*Killer*/)
@@ -169,15 +169,8 @@ struct boss_warp_splinterAI : public ScriptedAI
             if (Creature* pTreant = me->SummonCreature(CREATURE_TREANT, treant_pos[i][0], treant_pos[i][1], treant_pos[i][2], O, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 25000))
                 ((mob_treantAI*)pTreant->AI())->WarpGuid = me->GetGUID();
         }
-        switch (rand() % 2)
-        {
-        case 0:
-            DoScriptText(SAY_SUMMON_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SUMMON_2, me);
-            break;
-        }
+
+        DoScriptText(RAND(SAY_SUMMON_1, SAY_SUMMON_2), me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -185,29 +178,23 @@ struct boss_warp_splinterAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        //Check for War Stomp
-        if (War_Stomp_Timer <= diff)
-        {
-            DoCastVictim(WAR_STOMP);
-            War_Stomp_Timer = 25000 + rand() % 15000;
-        }
-        else War_Stomp_Timer -= diff;
+        events.Update(diff);
 
-        //Check for Arcane Volley
-        if (Arcane_Volley_Timer <= diff)
+        switch (events.ExecuteEvent())
         {
-            DoCastVictim(ARCANE_VOLLEY);
-            Arcane_Volley_Timer = 20000 + rand() % 15000;
-        }
-        else Arcane_Volley_Timer -= diff;
-
-        //Check for Summon Treants
-        if (Summon_Treants_Timer <= diff)
-        {
+        case EVENT_WAR_STOMP:
+            DoCastVictim(SPELL_WAR_STOMP);
+            events.Repeat(25000 + rand() % 15000);
+            break;
+        case EVENT_ARCANE_VOLLEY:
+            DoCastVictim(HeroicMode ? SPELL_ARCANE_VOLLEY_H : SPELL_ARCANE_VOLLEY_N);
+            events.Repeat(20000 + rand() % 15000);
+            break;
+        case EVENT_SUMMON_TREANT:
             SummonTreants();
-            Summon_Treants_Timer = 45000;
+            events.Repeat(45000);
+            break;
         }
-        else Summon_Treants_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
