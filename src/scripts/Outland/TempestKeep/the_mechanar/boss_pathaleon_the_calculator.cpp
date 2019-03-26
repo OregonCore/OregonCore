@@ -95,6 +95,7 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
     {
         events.Reset();
         summons.DespawnAll();
+        InitializeAI();
     }
     void EnterCombat(Unit* /*who*/)
     {
