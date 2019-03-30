@@ -532,14 +532,16 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                 // hide lootable animation for unallowed players
                 else if (index == UNIT_DYNAMIC_FLAGS && GetTypeId() == TYPEID_UNIT)
                 {
-                    if (target->IsAlive())
-                        if (ToCreature()->isTappedBy(target->ToPlayer()))
-                            continue;
 
-                    if (!target->isAllowedToLoot(ToCreature()))
-                        *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_LOOTABLE);
-                    else
-                        *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_OTHER_TAGGER);
+                    if (ToCreature()->IsAlive())
+                        if (ToCreature()->isTappedBy(target))
+                            continue;
+                      
+                        if (!target->isAllowedToLoot(ToCreature()))
+                            *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_LOOTABLE);
+                        else
+                            *data << (m_uint32Values[index] | UNIT_DYNFLAG_LOOTABLE);
+
                 }
 
                 // hide RAF menu to non-RAF linked friends
