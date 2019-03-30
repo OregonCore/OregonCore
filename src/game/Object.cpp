@@ -532,28 +532,14 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                 // hide lootable animation for unallowed players
                 else if (index == UNIT_DYNAMIC_FLAGS && GetTypeId() == TYPEID_UNIT)
                 {
-                    Creature const* creature = ToCreature();
+                    if (target->IsAlive())
+                        if (ToCreature()->isTappedBy(target->ToPlayer()))
+                            continue;
 
-                    if (creature)
-                    {
-                        if (!creature->isDead())
-                        {
-                            //sLog.outError("MOB ALIVE!");
-                            if (creature->isTappedBy(target))
-                                *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_OTHER_TAGGER);
-                            else
-                                *data << (m_uint32Values[index] | UNIT_DYNFLAG_OTHER_TAGGER);
-                        }
-                        else 
-                        {
-                            //sLog.outError("MOB DEAD!");
-                            if (!target->isAllowedToLoot(creature))
-                                *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_LOOTABLE);
-                            else
-                                *data << (m_uint32Values[index] | UNIT_DYNFLAG_LOOTABLE);
-                        }
-                    }
-
+                    if (!target->isAllowedToLoot(ToCreature()))
+                        *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_LOOTABLE);
+                    else
+                        *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_OTHER_TAGGER);
                 }
 
                 // hide RAF menu to non-RAF linked friends
