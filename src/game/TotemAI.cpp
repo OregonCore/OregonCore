@@ -86,7 +86,7 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
     }
 
     // If have target
-    if (victim)
+    if (victim && i_totem.IsValidAttackTarget(victim))
     {
         // remember
         i_victimGuid = victim->GetGUID();
