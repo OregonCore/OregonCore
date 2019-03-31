@@ -51,6 +51,7 @@ bool SummonList::HasEntry(uint32 entry) const
         if (summon && summon->GetEntry() == entry)
             return true;
     }
+    return false;
 }
 
 void SummonList::DoZoneInCombat(uint32 entry)

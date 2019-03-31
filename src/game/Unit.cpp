@@ -933,6 +933,7 @@ void Unit::RemoveSpellbyDamageTaken(uint32 damage, uint32 spell)
 
 uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDamage, DamageEffectType damagetype, SpellSchoolMask damageSchoolMask, SpellEntry const* spellProto, bool durabilityLoss)
 {
+
     if ((!victim->IsAlive() || victim->IsInFlight()) || (victim->GetTypeId() == TYPEID_UNIT && victim->ToCreature()->IsInEvadeMode()))
         return 0;
 
@@ -958,13 +959,10 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
     if (victim->GetTypeId() == TYPEID_PLAYER && this != victim)
     {
         // Signal to pets that their owner was attacked - except when DOT.
-        if (damagetype != DOT)
-        {
-            Pet* pet = victim->ToPlayer()->GetPet();
+        Pet* pet = victim->ToPlayer()->GetPet();
 
-            if (pet && pet->IsAlive())
-                pet->AI()->OwnerAttackedBy(this);
-        }
+        if (pet && pet->IsAlive())
+            pet->AI()->OwnerAttackedBy(this);
 
         if (victim->ToPlayer()->GetCommandStatus(CHEAT_GOD))
             return 0;
@@ -973,34 +971,6 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
     // Signal the pet it was attacked so the AI can respond if needed
     if (victim->GetTypeId() == TYPEID_UNIT && this != victim && victim->IsPet() && victim->IsAlive())
         victim->ToPet()->AI()->AttackedBy(this);
-
-    if (victim->GetTypeId() == TYPEID_UNIT && (victim->ToCreature())->IsAIEnabled)
-    {
-        // Set tagging
-        if (!victim->HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER) && !victim->IsPet())
-        {
-            //Set Loot
-            switch (GetTypeId())
-            {
-            case TYPEID_PLAYER:
-                {
-                    victim->ToCreature()->SetLootRecipient(this);
-                    //Set tagged
-                    victim->ToCreature()->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER);
-                    break;
-                }
-            case TYPEID_UNIT:
-                {
-                    if (IsPet())
-                    {
-                        victim->ToCreature()->SetLootRecipient(this->GetOwner());
-                        victim->ToCreature()->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER);
-                    }
-                    break;
-                }
-            }
-        }
-    }
 
     if (damage || (cleanDamage && cleanDamage->damage))
     {
@@ -1131,55 +1101,43 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
 
         victim->ModifyHealth(-(int32)damage);
 
-        if (damagetype != DOT)
-        {
-            if (!GetVictim())
-                /*{
-                    // if have target and damage victim just call AI reaction
-                    if (victim != GetVictim() && victim->GetTypeId() == TYPEID_UNIT && victim->ToCreature()->IsAIEnabled)
-                        victim->ToCreature()->AI()->AttackedBy(this);
-                }
-                else*/
-            {
-                // if not have main target then attack state with target (including AI call)
-                //start melee attacks only after melee hit
-                Attack(victim, (damagetype == DIRECT_DAMAGE));
-            }
-        }
-
         if (damagetype == DIRECT_DAMAGE || damagetype == SPELL_DIRECT_DAMAGE)
         {
             victim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DIRECT_DAMAGE, spellProto ? spellProto->Id : 0);
-            if (victim->GetTypeId() == TYPEID_UNIT && !victim->IsPet())
-                victim->SetLastDamagedTime(time(NULL));
         }
 
         if (victim->GetTypeId() != TYPEID_PLAYER)
-            victim->AddThreat(this, (float)damage, damageSchoolMask, spellProto);
+        {
+            if (damagetype != DOT && damage > 0 && !IS_PLAYER_GUID(victim->GetOwnerGUID()) && (!spellProto || !spellProto->HasEffect(SPELL_AURA_DAMAGE_SHIELD)))
+                victim->ToCreature()->SetLastDamagedTime(sWorld.GetGameTime() + MAX_AGGRO_RESET_TIME);
+
+            if (this)
+                victim->AddThreat(this, float(damage), damageSchoolMask, spellProto);
+        }
         else                                                // victim is a player
         {
-            // Rage from damage received
-            if (this != victim && victim->getPowerType() == POWER_RAGE)
-            {
-                uint32 rage_damage = damage + (cleanDamage ? cleanDamage->damage : 0);
-                victim->ToPlayer()->RewardRage(rage_damage, 0, false);
-            }
-
             // random durability for items (HIT TAKEN)
             if (roll_chance_f(sWorld.getRate(RATE_DURABILITY_LOSS_DAMAGE)))
             {
                 EquipmentSlots slot = EquipmentSlots(urand(0, EQUIPMENT_SLOT_END - 1));
                 victim->ToPlayer()->DurabilityPointLossForEquipSlot(slot);
             }
+
+            // Rage from damage received
+            if (this != victim && victim->getPowerType() == POWER_RAGE)
+            {
+                uint32 rage_damage = damage + (cleanDamage ? cleanDamage->damage : 0);
+                victim->ToPlayer()->RewardRage(rage_damage, 0, false);
+            }
         }
 
-        if (GetTypeId() == TYPEID_PLAYER)
+        if (this && this->GetTypeId() == TYPEID_PLAYER)
         {
             // random durability for items (HIT DONE)
             if (roll_chance_f(sWorld.getRate(RATE_DURABILITY_LOSS_DAMAGE)))
             {
                 EquipmentSlots slot = EquipmentSlots(urand(0, EQUIPMENT_SLOT_END - 1));
-                ToPlayer()->DurabilityPointLossForEquipSlot(slot);
+                this->ToPlayer()->DurabilityPointLossForEquipSlot(slot);
             }
         }
 
