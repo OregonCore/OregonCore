@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "resource.h"
@@ -38,7 +38,7 @@
 IDI_APPICON             ICON                    "OregonCore.ico"
 
 /////////////////////////////////////////////////////////////////////////////
-// Neutre (Par défaut système) resources
+// Neutre (Par dï¿½faut systï¿½me) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUSD)
 #ifdef _WIN32
@@ -71,7 +71,7 @@ BEGIN
             VALUE "FileDescription", "OregonCore"
             VALUE "FileVersion", STRFILEVER
             VALUE "InternalName", "OregonCore"
-            VALUE "LegalCopyright", "Copyright (C) 2009-2018"
+            VALUE "LegalCopyright", "Copyright (C) 2009-2019"
             VALUE "OriginalFilename", "OregonCore.exe"
             VALUE "ProductName", "OregonCore"
             VALUE "ProductVersion", STRPRODUCTVER
