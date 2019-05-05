@@ -21,7 +21,7 @@ Header for Core Files (even possible without MaNGOS or/and Trinity):
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 --- SNIP ---
 
@@ -41,7 +41,7 @@ Header for Script Files:
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 --- SNIP ---
 
