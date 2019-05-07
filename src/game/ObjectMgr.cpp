@@ -510,12 +510,9 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
 
     if (!result)
     {
-
-
         sLog.outString(">> Loaded 0 gossip_menu_option locale strings. DB table `locales_gossip_menu_option` is empty.");
         return;
     }
-
 
     do
     {
@@ -557,6 +554,47 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
     while (result->NextRow());
 
     sLog.outString(">> Loaded %u gossip_menu_option locale strings", mGossipMenuItemsLocaleMap.size());
+}
+
+void ObjectMgr::LoadPointOfInterestLocales()
+{
+    mPointOfInterestLocaleMap.clear();                              // need for reload case
+
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry,icon_name_loc1,icon_name_loc2,icon_name_loc3,icon_name_loc4,icon_name_loc5,icon_name_loc6,icon_name_loc7,icon_name_loc8 FROM locales_points_of_interest");
+
+    if (!result)
+    {
+        sLog.outString("");
+        sLog.outString(">> Loaded 0 points_of_interest locale strings. DB table `locales_points_of_interest` is empty.");
+        return;
+    }
+
+    do
+    {
+        Field *fields = result->Fetch();
+
+        uint32 entry = fields[0].GetUInt32();
+
+        PointOfInterestLocale& data = mPointOfInterestLocaleMap[entry];
+
+        for (int i = 1; i < MAX_LOCALE; ++i)
+        {
+            std::string str = fields[i].GetCppString();
+            if (str.empty())
+                continue;
+
+            int idx = GetOrNewIndexForLocale(LocaleConstant(i));
+            if (idx >= 0)
+            {
+                if (data.IconName.size() <= idx)
+                    data.IconName.resize(idx + 1);
+
+                data.IconName[idx] = str;
+            }
+        }
+    } while (result->NextRow());
+
+    sLog.outString(">> Loaded %u points_of_interest locale strings", mPointOfInterestLocaleMap.size());
 }
 
 struct SQLCreatureLoader : public SQLStorageLoaderBase<SQLCreatureLoader>
@@ -6292,6 +6330,47 @@ void ObjectMgr::LoadReputationSpilloverTemplate()
     sLog.outString(">> Loaded %u reputation_spillover_template", count);
 }
 
+void ObjectMgr::LoadPointsOfInterest()
+{
+    uint32 count = 0;
+
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, x, y, icon, flags, data, icon_name FROM points_of_interest");
+
+    if (!result)
+    {
+        sLog.outString();
+        sLog.outErrorDb(">> Loaded 0 Points of Interest definitions. DB table `points_of_interest` is empty.");
+        return;
+    }
+
+    do
+    {
+        Field *fields = result->Fetch();
+
+        uint32 point_id = fields[0].GetUInt32();
+
+        PointOfInterest POI;
+        POI.x = fields[1].GetFloat();
+        POI.y = fields[2].GetFloat();
+        POI.icon = fields[3].GetUInt32();
+        POI.flags = fields[4].GetUInt32();
+        POI.data = fields[5].GetUInt32();
+        POI.icon_name = fields[6].GetCppString();
+
+        if (!Oregon::IsValidMapCoord(POI.x, POI.y))
+        {
+            sLog.outErrorDb("Table `points_of_interest` (Entry: %u) have invalid coordinates (X: %f Y: %f), ignored.", point_id, POI.x, POI.y);
+            continue;
+        }
+
+        mPointsOfInterest[point_id] = POI;
+
+        ++count;
+    } while (result->NextRow());
+
+    sLog.outString(">> Loaded %u Points of Interest definitions", count);
+}
+
 void ObjectMgr::LoadWeatherZoneChances()
 {
     uint32 count = 0;
@@ -6301,8 +6380,6 @@ void ObjectMgr::LoadWeatherZoneChances()
 
     if (!result)
     {
-
-
         sLog.outErrorDb(">> Loaded 0 weather definitions. DB table game_weather is empty.");
         return;
     }
@@ -7364,50 +7441,49 @@ void ObjectMgr::LoadGossipMenuItems()
 
         GossipMenuItems gMenuItem;
 
-        gMenuItem.menu_id               = fields[0].GetUInt32();
-        gMenuItem.id                    = fields[1].GetUInt32();
-        gMenuItem.option_icon           = fields[2].GetUInt8();
-        gMenuItem.option_text           = fields[3].GetCppString();
-        gMenuItem.option_id             = fields[4].GetUInt32();
-        gMenuItem.npc_option_npcflag    = fields[5].GetUInt32();
-        gMenuItem.action_menu_id        = fields[6].GetUInt32();
-        gMenuItem.action_poi_id         = fields[7].GetUInt32();
-        gMenuItem.action_script_id      = fields[8].GetUInt32();
-        gMenuItem.box_coded             = fields[9].GetUInt8() != 0;
-        gMenuItem.box_money             = fields[10].GetUInt32();
-        gMenuItem.box_text              = fields[11].GetCppString();
+        gMenuItem.MenuId                = fields[0].GetUInt32();
+        gMenuItem.OptionIndex           = fields[1].GetUInt32();
+        gMenuItem.OptionIcon            = fields[2].GetUInt8();
+        gMenuItem.OptionText            = fields[3].GetCppString();
+        gMenuItem.OptionType            = fields[4].GetUInt32();
+        gMenuItem.OptionNpcflag         = fields[5].GetUInt32();
+        gMenuItem.ActionMenuId          = fields[6].GetUInt32();
+        gMenuItem.ActionPoiId           = fields[7].GetUInt32();
+        gMenuItem.ActionScriptId        = fields[8].GetUInt32();
+        gMenuItem.BoxCoded              = fields[9].GetUInt8() != 0;
+        gMenuItem.BoxMoney              = fields[10].GetUInt32();
+        gMenuItem.BoxText               = fields[11].GetCppString();
 
-        if (gMenuItem.option_icon >= GOSSIP_ICON_MAX)
+        if (gMenuItem.OptionIcon >= GOSSIP_ICON_MAX)
         {
-            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has unknown icon id %u. Replacing with GOSSIP_ICON_CHAT", gMenuItem.menu_id, gMenuItem.id, gMenuItem.option_icon);
-            gMenuItem.option_icon = GOSSIP_ICON_CHAT;
+            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has unknown icon id %u. Replacing with GOSSIP_ICON_CHAT", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.OptionIcon);
+            gMenuItem.OptionIcon = GOSSIP_ICON_CHAT;
         }
 
-        if (gMenuItem.option_id == GOSSIP_OPTION_NONE)
-            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u use option id GOSSIP_OPTION_NONE. Option will never be used", gMenuItem.menu_id, gMenuItem.id);
+        //if (gMenuItem.OptionIndex == GOSSIP_OPTION_NONE)
+           // sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u use option id GOSSIP_OPTION_NONE. Option will never be used", gMenuItem.menu_id, gMenuItem.id);
 
-        if (gMenuItem.option_id >= GOSSIP_OPTION_MAX)
-            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has unknown option id %u. Option will not be used", gMenuItem.menu_id, gMenuItem.id, gMenuItem.option_id);
+        if (gMenuItem.OptionType >= GOSSIP_OPTION_MAX)
+            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has unknown option id %u. Option will not be used", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.OptionType);
 
-        if (gMenuItem.action_script_id)
+        if (gMenuItem.ActionScriptId)
         {
-            if (gMenuItem.option_id != GOSSIP_OPTION_GOSSIP)
+            if (gMenuItem.OptionType != GOSSIP_OPTION_GOSSIP)
             {
-                sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has action_script_id %u but option_id is not GOSSIP_OPTION_GOSSIP, ignoring", gMenuItem.menu_id, gMenuItem.id, gMenuItem.action_script_id);
+                sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u have action_script_id %u but option_id is not GOSSIP_OPTION_GOSSIP, ignoring", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.ActionScriptId);
                 continue;
             }
 
-            if (sGossipScripts.find(gMenuItem.action_script_id) == sGossipScripts.end())
+            if (sGossipScripts.find(gMenuItem.ActionScriptId) == sGossipScripts.end())
             {
-                sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has action_script_id %u that does not exist in `gossip_scripts`, ignoring", gMenuItem.menu_id, gMenuItem.id, gMenuItem.action_script_id);
+                sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u have action_script_id %u that does not exist in `gossip_scripts`, ignoring", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.ActionScriptId);
                 continue;
             }
 
-            gossipScriptSet.erase(gMenuItem.action_script_id);
+            gossipScriptSet.erase(gMenuItem.ActionScriptId);
         }
 
-        m_mGossipMenuItemsMap.insert(GossipMenuItemsMap::value_type(gMenuItem.menu_id, gMenuItem));
-
+        m_mGossipMenuItemsMap.insert(GossipMenuItemsMap::value_type(gMenuItem.MenuId, gMenuItem));
         ++count;
     }
     while (result->NextRow());

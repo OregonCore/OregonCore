@@ -247,6 +247,11 @@ struct GossipMenuItemsLocale
     std::vector<std::string> BoxText;
 };
 
+struct PointOfInterestLocale
+{
+    StringVector IconName;
+};
+
 struct EquipmentInfo
 {
     uint32  entry;

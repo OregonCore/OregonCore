@@ -861,9 +861,9 @@ bool ConditionMgr::addToGossipMenuItems(Condition* cond)
     {
         for (GossipMenuItemsMap::iterator itr = pMenuItemBounds.first; itr != pMenuItemBounds.second; ++itr)
         {
-            if ((*itr).second.menu_id == cond->SourceGroup && (*itr).second.id == cond->SourceEntry)
+            if ((*itr).second.MenuId == cond->SourceGroup && (*itr).second.OptionIndex == cond->SourceEntry)
             {
-                (*itr).second.conditions.push_back(cond);
+                (*itr).second.Conditions.push_back(cond);
                 return true;
             }
         }

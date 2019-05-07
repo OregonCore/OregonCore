@@ -46,7 +46,7 @@ bool GossipHello_npc_innkeeper(Player* pPlayer, Creature* pCreature)
 
     pPlayer->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
 
-    pPlayer->PrepareGossipMenu(pCreature, 0); //send innkeeper menu too
+    pPlayer->PrepareGossipMenu(pCreature, 0, true); //send innkeeper menu too
 
     if (isEventActive() && !pPlayer->HasAura(SPELL_TRICK_OR_TREATED, 0))
     {

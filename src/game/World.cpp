@@ -1258,6 +1258,7 @@ void World::SetInitialWorldSettings()
     sObjectMgr.LoadNpcTextLocales();
     sObjectMgr.LoadPageTextLocales();
     sObjectMgr.LoadGossipMenuItemsLocales();
+    sObjectMgr.LoadPointOfInterestLocales();
     sObjectMgr.SetDBCLocaleIndex(GetDefaultDbcLocale());        // Get once for all the locale index of DBC language (console/broadcasts)
     sConsole.SetLoadingLabel(">>> Localization strings loaded");
 
@@ -1326,6 +1327,9 @@ void World::SetInitialWorldSettings()
 
     sConsole.SetLoadingLabel("Loading Reputation Spillover Data...");
     sObjectMgr.LoadReputationSpilloverTemplate();
+
+    sConsole.SetLoadingLabel("Loading Points Of Interest Data...");
+    sObjectMgr.LoadPointsOfInterest();
 
     sConsole.SetLoadingLabel("Loading Pet Create Spells...");
     sObjectMgr.LoadPetCreateSpells();
