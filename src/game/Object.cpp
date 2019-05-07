@@ -532,15 +532,26 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                 // hide lootable animation for unallowed players
                 else if (index == UNIT_DYNAMIC_FLAGS && GetTypeId() == TYPEID_UNIT)
                 {
+                    uint32 value = m_uint32Values[index];
 
-                    if (ToCreature()->IsAlive())
-                        if (ToCreature()->isTappedBy(target))
-                            continue;
-                      
-                        if (!target->isAllowedToLoot(ToCreature()))
-                            *data << (m_uint32Values[index] & ~UNIT_DYNFLAG_LOOTABLE);
-                        else
-                            *data << (m_uint32Values[index] | UNIT_DYNFLAG_LOOTABLE);
+                    if (Creature* creature = (Creature*)this)
+                        if (!creature->loot.isLooted())
+                            if (!(value & UNIT_DYNFLAG_LOOTABLE))
+                            {
+                                creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                                value = value | UNIT_DYNFLAG_LOOTABLE;
+                            }
+
+                    if (!target->isAllowedToLoot((Creature*)this))
+                        if (value & UNIT_DYNFLAG_LOOTABLE)
+                            value = value & ~UNIT_DYNFLAG_LOOTABLE;
+
+                    bool tapped = ToCreature()->isTappedBy(target->ToPlayer());
+
+                    if (value & UNIT_DYNFLAG_OTHER_TAGGER && tapped)
+                        value = value & ~UNIT_DYNFLAG_OTHER_TAGGER;
+
+                    *data << value;
 
                 }
 
