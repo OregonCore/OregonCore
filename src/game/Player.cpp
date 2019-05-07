@@ -13194,6 +13194,22 @@ void Player::IncompleteQuest(uint32 quest_id)
     }
 }
 
+void Player::AbandonQuest(uint32 questId)
+{
+    if (Quest const* quest = sObjectMgr.GetQuestTemplate(questId))
+    {
+       for (uint8 i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
+           if (ItemTemplate const* itemTemplate = sObjectMgr.GetItemTemplate(quest->ReqItemId[i]))
+               if (quest->ReqItemCount[i] > 0 && itemTemplate->Bonding == BIND_QUEST_ITEM)
+                   DestroyItemCount(quest->ReqItemId[i], quest->ReqItemCount[i], true);
+
+       for (uint8 i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
+           if (ItemTemplate const* itemTemplate = sObjectMgr.GetItemTemplate(quest->ReqSourceId[i]))
+               if (quest->ReqSourceCount[i] > 0 && itemTemplate->Bonding == BIND_QUEST_ITEM)
+                   DestroyItemCount(quest->ReqItemId[i], quest->ReqItemCount[i], true);
+    }
+}
+
 void Player::RewardQuest(Quest const* pQuest, uint32 reward, Object* questGiver, bool announce)
 {
     //this THING should be here to protect code from quest, which cast on player far teleport as a reward
