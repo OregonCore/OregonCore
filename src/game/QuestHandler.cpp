@@ -396,6 +396,7 @@ void WorldSession::HandleQuestLogRemoveQuest(WorldPacket& recv_data)
                     _player->RemoveTimedQuest(quest);
             }
 
+            _player->AbandonQuest(quest);
             _player->SetQuestStatus(quest, QUEST_STATUS_NONE);
         }
 
