@@ -165,8 +165,8 @@ void PlayerMenu::SendGossipMenu(uint32 titleTextId, uint64 objectGUID) const
                 if (localeData->Title.size() > uint32(locale) && !localeData->Title[locale].empty())
                     title = localeData->Title[locale];
 
-        //if (questLevelInTitle)
-            //AddQuestLevelToTitle(title, quest->GetQuestLevel());
+        if (questLevelInTitle)
+            AddQuestLevelToTitle(title, quest->GetQuestLevel());
 
         data << title;
     }
@@ -339,8 +339,8 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const *quest, uint64 npcGUID, 
         }
     }
 
-    //if (sWorld.getConfig(CONFIG_UI_QUESTLEVELS_IN_DIALOGS))
-       // AddQuestLevelToTitle(Title, pQuest->GetQuestLevel());
+    if (sWorld.getConfig(CONFIG_UI_QUESTLEVELS_IN_DIALOGS))
+        AddQuestLevelToTitle(questTitle, quest->GetQuestLevel());
 
     WorldPacket data(SMSG_QUESTGIVER_QUEST_DETAILS, 100);   // guess size
     data << uint64(npcGUID);
@@ -630,8 +630,8 @@ void PlayerMenu::SendQuestGiverRequestItems(Quest const *quest, uint64 npcGUID, 
         return;
     }
 
-    //if (sWorld.getConfig(CONFIG_UI_QUESTLEVELS_IN_DIALOGS))
-       // AddQuestLevelToTitle(questTitle, quest->GetQuestLevel());
+    if (sWorld.getConfig(CONFIG_UI_QUESTLEVELS_IN_DIALOGS))
+        AddQuestLevelToTitle(questTitle, quest->GetQuestLevel());
 
     WorldPacket data(SMSG_QUESTGIVER_REQUEST_ITEMS, 50);  // guess size
     data << uint64(npcGUID);

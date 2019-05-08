@@ -254,7 +254,7 @@ class PlayerMenu
         void SendPointOfInterest(float X, float Y, uint32 Icon, uint32 Flags, uint32 Data, char* locName) const;
         void SendPointOfInterest(uint32 poiId) const;
 
-        void AddQuestLevelToTitle(std::string& title, int32 level);
+        static void AddQuestLevelToTitle(std::string& title, int32 level);
 
         /*********************************************************/
         /***                   QUEST SYSTEM                   ***/
