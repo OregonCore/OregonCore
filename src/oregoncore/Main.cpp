@@ -186,8 +186,6 @@ extern int main(int argc, char** argv)
         #else
         fd = getdtablesize();
         #endif
-        while (fd > 2)
-            close(fd--);
 
         #ifndef _WIN32
         execv(argv[0], argv);
