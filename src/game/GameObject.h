@@ -540,6 +540,8 @@ struct GameObjectData
     uint32 id;                                              // entry in gamobject_template
     uint32 mapid;
     uint32 phaseMask;
+    uint32 zoneId;
+    uint32 areaId;
     float posX;
     float posY;
     float posZ;

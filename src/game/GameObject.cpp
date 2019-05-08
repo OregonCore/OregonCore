@@ -629,6 +629,9 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
     // data->guid = guid don't must be update at save
     data.id = GetEntry();
     data.mapid = mapid;
+    data.zoneId = GetZoneId();
+    data.areaId = GetAreaId();
+    data.spawnMask = spawnMask;
     data.phaseMask = phaseMask;
     data.posX = GetFloatValue(GAMEOBJECT_POS_X);
     data.posY = GetFloatValue(GAMEOBJECT_POS_Y);
@@ -641,17 +644,17 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
     data.spawntimesecs = m_spawnedByDefault ? m_respawnDelayTime : -(int32)m_respawnDelayTime;
     data.animprogress = GetGoAnimProgress();
     data.go_state = GetGoState();
-    data.spawnMask = spawnMask;
-    data.artKit = GetUInt32Value (GAMEOBJECT_ARTKIT);
 
     // updated in DB
     std::ostringstream ss;
     ss << "INSERT INTO gameobject VALUES ("
        << m_DBTableGuid << ", "
-       << GetUInt32Value (OBJECT_FIELD_ENTRY) << ", "
+       << GetUInt32Value(OBJECT_FIELD_ENTRY) << ", "
        << mapid << ", "
-       << (uint32)phaseMask << ", "
+       << (uint32)GetZoneId() << ", "
+       << (uint32)GetAreaId() << ", "
        << (uint32)spawnMask << ", "
+       << (uint32)phaseMask << ", "
        << GetFloatValue(GAMEOBJECT_POS_X) << ", "
        << GetFloatValue(GAMEOBJECT_POS_Y) << ", "
        << GetFloatValue(GAMEOBJECT_POS_Z) << ", "
