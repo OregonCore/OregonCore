@@ -6539,12 +6539,13 @@ void Spell::EffectCharge(SpellEffIndex /*effIndex*/)
     if (!target)
         return;
 
+    // charge changes fall time
+    if (m_caster->GetTypeId() == TYPEID_PLAYER)
+        m_caster->ToPlayer()->SetFallInformation(time(NULL), m_caster->GetPositionZ());
+
     float x, y, z;
     target->GetContactPoint(m_caster, x, y, z);
-    Movement::MoveSplineInit init(*m_caster);
-    init.MoveTo(x, y, z, true);
-    init.SetVelocity(25);
-    init.Launch();
+    m_caster->GetMotionMaster()->MoveCharge(x, y, z + 0.5f); // Lets add .5 to help prevent players falling under map
 
     // not all charge effects used in negative spells
     if (!IsPositiveSpell(m_spellInfo->Id) && m_caster->GetTypeId() == TYPEID_PLAYER)
