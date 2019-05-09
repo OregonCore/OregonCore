@@ -3480,6 +3480,24 @@ void Aura::HandleModStealth(bool apply, bool Real)
             if (m_target->GetTypeId() == TYPEID_PLAYER && GetId() == 20580)
                 m_target->CastSpell(m_target, 21009, true, NULL, this);
         }
+
+        // Handle cast canceling
+        std::list<Unit*> targets;
+        Oregon::AnyUnfriendlyUnitInObjectRangeCheck u_check(m_target, m_target, m_target->GetMap()->GetVisibilityRange());
+        Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(m_target, targets, u_check);
+        m_target->VisitNearbyObject(m_target->GetMap()->GetVisibilityRange(), searcher);
+        for (std::list<Unit*>::iterator iter = targets.begin(); iter != targets.end(); ++iter)
+        {
+            if (!(*iter)->HasUnitState(UNIT_STATE_CASTING))
+                continue;
+
+            for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; i++)
+            {
+                if ((*iter)->GetCurrentSpell(i)
+                    && (*iter)->GetCurrentSpell(i)->m_targets.getUnitTargetGUID() == m_target->GetGUID())
+                    (*iter)->InterruptSpell(CurrentSpellTypes(i), false);
+            }
+        }
     }
     else
     {
