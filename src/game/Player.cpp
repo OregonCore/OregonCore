@@ -4116,6 +4116,7 @@ void Player::BuildPlayerRepop()
     GetMap()->AddToMap(corpse);
 
     // convert player body to ghost
+    setDeathState(DEAD);
     SetHealth(1);
 
     SetWaterWalking(true);
@@ -14971,6 +14972,10 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
 
     _LoadSpellCooldowns(holder->GetResult(PLAYER_LOGIN_QUERY_LOADSPELLCOOLDOWNS));
 
+    uint32 savedHealth = fields[50].GetUInt32();
+    if (!savedHealth)
+        m_deathState = CORPSE;
+
     // Spell code allow apply any auras to dead character in load time in aura/spell/item loading
     // Do now before stats re-calculation cleanup for ghost state unexpected auras
     if (!IsAlive())
@@ -14980,8 +14985,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     SetCanModifyStats(true);
     UpdateAllStats();
 
-    // restore remembered power/health values (but not more max values)
-    uint32 savedHealth = fields[50].GetUInt32();
     SetHealth(savedHealth > GetMaxHealth() ? GetMaxHealth() : savedHealth);
     for (uint8 i = 0; i < MAX_POWERS; ++i)
     {
@@ -15220,11 +15223,10 @@ void Player::LoadCorpse()
         ObjectAccessor::Instance().ConvertCorpseForPlayer(GetGUID());
     else
     {
-        if (Corpse* corpse = GetCorpse())
-            ApplyModFlag(PLAYER_FIELD_BYTES, PLAYER_FIELD_BYTE_RELEASE_TIMER, corpse && !sMapStore.LookupEntry(corpse->GetMapId())->Instanceable());
-        else
-            //Prevent Dead Player login without corpse
+        if (HasAtLoginFlag(AT_LOGIN_RESURRECT))
             ResurrectPlayer(0.5f);
+        else if (Corpse* corpse = GetCorpse())
+            ApplyModFlag(PLAYER_FIELD_BYTES, PLAYER_FIELD_BYTE_RELEASE_TIMER, corpse && !sMapStore.LookupEntry(corpse->GetMapId())->Instanceable());
     }
 }
 
