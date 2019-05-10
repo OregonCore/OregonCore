@@ -1826,12 +1826,6 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
             return;
     }
 
-    // Hmmmm dont like this emotes client must by self do all animations
-    if (damageInfo->HitInfo & HITINFO_CRITICALHIT)
-        victim->HandleEmoteCommand(EMOTE_ONESHOT_WOUNDCRITICAL);
-    if (damageInfo->blocked_amount && damageInfo->TargetState != VICTIMSTATE_BLOCKS)
-        victim->HandleEmoteCommand(EMOTE_ONESHOT_PARRYSHIELD);
-
     if (damageInfo->TargetState == VICTIMSTATE_PARRY)
     {
         // Get attack timers
