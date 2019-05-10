@@ -159,6 +159,10 @@ Map::EnterState MapManager::PlayerCannotEnter(uint32 mapid, Player* player, bool
     if (!entry->IsDungeon())
         return Map::CAN_ENTER;
 
+    //Other requirements
+    if (!player->Satisfy(sObjectMgr.GetAccessRequirement(mapid), mapid, true))
+        return Map::CANNOT_ENTER_UNSPECIFIED_REASON;
+
     InstanceTemplate const* instance = sObjectMgr.GetInstanceTemplate(mapid);
     if (!instance)
         return Map::CANNOT_ENTER_UNINSTANCED_DUNGEON;
@@ -216,10 +220,7 @@ Map::EnterState MapManager::PlayerCannotEnter(uint32 mapid, Player* player, bool
 
     // @todo Implement 5 dungeons per hour limit
 
-    if (player->Satisfy(sObjectMgr.GetAccessRequirement(instance->access_id), mapid, true))
-        return Map::CAN_ENTER;
-    else
-        return Map::CANNOT_ENTER_UNSPECIFIED_REASON;
+    return Map::CAN_ENTER;
 }
 
 void MapManager::Update(time_t diff)
