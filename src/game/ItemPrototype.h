@@ -621,6 +621,15 @@ struct ItemTemplate
         return false;
     }
 
+    bool HasSignature() const
+    {
+        return GetMaxStackSize() == 1 &&
+            Class != ITEM_CLASS_CONSUMABLE &&
+            Class != ITEM_CLASS_QUEST &&
+            ItemId != 6265 && /*Soul Shard*/
+            ItemId != 6948; /*Hearthstone*/
+    }
+
     uint32 GetMaxStackSize() const
     {
         return (Stackable == 2147483647 || Stackable <= 0) ? uint32(0x7FFFFFFF - 1) : uint32(Stackable);
