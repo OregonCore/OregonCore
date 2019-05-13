@@ -325,6 +325,9 @@ void MotionMaster::MoveFall(float z, uint32 id)
             return;
     }
 
+    if (i_owner->HasUnitState(UNIT_STATE_ROOT))
+        return;
+
     i_owner->AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
 
     // don't run spline movement for players
