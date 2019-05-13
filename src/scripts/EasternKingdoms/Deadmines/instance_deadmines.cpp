@@ -289,6 +289,23 @@ struct instance_deadmines : public ScriptedInstance
         data << uint32(sound);
         unit->SendMessageToSet(&data, false);
     }
+
+    void OnCreatureDeath(Creature* pCreature)
+    {
+        switch (pCreature->GetEntry())
+        {
+        case 644:
+            SetData(EVENT_RHAHKZOR, DONE);
+            break;
+        case 643:
+            SetData(EVENT_SNEED, DONE);
+            break;
+        case 1763:
+            SetData(EVENT_GILNID, DONE);
+        default:
+            break;
+        }
+    }
 };
 
 InstanceData* GetInstanceData_instance_deadmines(Map* pMap)

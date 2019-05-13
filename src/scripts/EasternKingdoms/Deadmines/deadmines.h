@@ -49,6 +49,11 @@ enum GameObjects
 
 enum CreaturesIds
 {
-    NPC_MR_SMITE   = 646
+    NPC_RHAHK_ZOR  = 644, 
+    NPC_MR_SMITE   = 646,
+    NPC_OVERSEER   = 634,
+    NPC_EVOKER     = 1729,
+    NPC_TASKMASTER = 4417
 };
+
 #endif
