@@ -443,7 +443,7 @@ Unit::Unit(bool isWorldObject):
 
     m_initiatingCombat = false;
 
-    m_CombatTimer.SetInterval(0);
+    m_CombatTimer = 0;
     m_lastManaUse = 0;
 
     for (uint8 i = 0; i < MAX_SPELL_SCHOOL; ++i)
@@ -552,6 +552,15 @@ void Unit::Update(uint32 p_time)
 
     UpdateSplineMovement(p_time);
     i_motionMaster.UpdateMotion(p_time);
+
+    if (IsInCombat() && (GetTypeId() == TYPEID_PLAYER || (IsPet() && IsControlledByPlayer())))
+    {
+        if (m_HostileRefManager.isEmpty())
+            if (m_CombatTimer <= p_time)
+                ClearInCombat();
+            else
+                m_CombatTimer -= p_time;
+    }
 
 }
 
@@ -9390,8 +9399,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
     if (PvP)
     {
-        m_CombatTimer.SetInterval(5000);
-        m_CombatTimer.SetCurrent(0);
+        m_CombatTimer = 5500;
     }
 
     if (IsInCombat() || HasUnitState(UNIT_STATE_EVADE))
@@ -9451,7 +9459,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
 void Unit::ClearInCombat()
 {
-    m_CombatTimer.SetInterval(0);
+    m_CombatTimer = 0;
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
     // Player's state will be cleared in Player::UpdateContestedPvP

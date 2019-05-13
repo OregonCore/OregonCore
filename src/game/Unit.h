@@ -1250,8 +1250,8 @@ class Unit : public WorldObject
         void SetInCombatWith(Unit* enemy);
         void ClearInCombat();
         void ClearInPetCombat();
-        IntervalTimer m_CombatTimer;
-        uint32 IsInPvPCombat() const { return m_CombatTimer.GetInterval() != 0; }
+        uint32 m_CombatTimer;
+        uint32 IsInPvPCombat() const { return m_CombatTimer != 0; }
 
         uint32 GetAuraCount(uint32 spellId) const;
         bool HasAuraType(AuraType auraType) const;

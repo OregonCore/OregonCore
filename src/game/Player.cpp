@@ -1405,10 +1405,6 @@ void Player::Update(uint32 p_time)
 
     if (IsAlive())
     {
-        if (IsInCombat())
-            if (m_CombatTimer.GetInterval() != 0 && !m_CombatTimer.Passed())
-                m_CombatTimer.Update(p_time);
-
         RegenerateAll();
     }
 
@@ -2177,11 +2173,6 @@ void Player::RegenerateAll()
     Regenerate(POWER_ENERGY);
 
     Regenerate(POWER_MANA);
-
-    if (IsInCombat())
-        if (getHostileRefManager().isEmpty())
-            if (m_CombatTimer.GetInterval() == 0 || m_CombatTimer.Passed())
-                ClearInCombat();
 
     m_regenTimer = 2000;
 }
