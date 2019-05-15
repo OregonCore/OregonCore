@@ -2354,6 +2354,30 @@ void WorldObject::GetNearPoint(WorldObject const* /*searcher*/, float& x, float&
     GetNearPoint2D(x, y, distance2d + searcher_size, absAngle);
     z = GetPositionZ();
     UpdateAllowedPositionZ(x, y, z);
+
+    // return if the point is already in LoS
+    if (IsWithinLOS(x, y, z))
+        return;
+
+    // remember first point
+    float first_x = x;
+    float first_y = y;
+    float first_z = z;
+
+    // loop in a circle to look for a point in LoS using small steps
+    for (float angle = float(M_PI) / 8; angle < float(M_PI) * 2; angle += float(M_PI) / 8)
+    {
+        GetNearPoint2D(x, y, distance2d + searcher_size, absAngle);
+        z = GetPositionZ();
+        UpdateAllowedPositionZ(x, y, z);
+        if (IsWithinLOS(x, y, z))
+            return;
+    }
+
+    // still not in LoS, give up and return first position found
+    x = first_x;
+    y = first_y;
+    z = first_z;
 }
 
 Position WorldObject::GetNearPosition(float dist, float angle)
