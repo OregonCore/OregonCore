@@ -1627,7 +1627,7 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
         if (!spellInfo_1->SpellIconID
             || spellInfo_1->SpellIconID == 1
             || spellInfo_1->SpellIconID != spellInfo_2->SpellIconID)
-            return false;
+            return true;
     }
 
     // check for class spells
