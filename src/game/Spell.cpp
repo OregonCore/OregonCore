@@ -1590,8 +1590,8 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                     float min_dis = GetSpellMinRange(sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex));
                     float max_dis = GetSpellMaxRange(sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex));
                     float dis = rand_norm() * (max_dis - min_dis) + min_dis;
-                    float x, y, z, angle;
-                    angle = (float)rand_norm() * static_cast<float>(M_PI * 35.0f / 180.0f) - static_cast<float>(M_PI * 17.5f / 180.0f);
+                    float x, y, z;
+                    float angle = float(rand_norm()) * static_cast<float>(M_PI * 35.0f / 180.0f) - static_cast<float>(M_PI * 17.5f / 180.0f);
                     m_caster->GetClosePoint(x, y, z, DEFAULT_WORLD_OBJECT_SIZE, dis, angle);
 
                     float ground = z;
@@ -2701,22 +2701,6 @@ void Spell::_handle_immediate_phase()
     TakeCastItem();
 
     m_needSpellLog = m_isNeedSendToClient;
-    for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
-    {
-        if (m_spellInfo->Effect[j] == 0)
-            continue;
-
-        // apply Send Event effect to ground in case empty target lists
-        if (m_spellInfo->Effect[j] == SPELL_EFFECT_SEND_EVENT || m_spellInfo->Effect[j] == SPELL_EFFECT_TRANS_DOOR && !HaveTargetsForEffect(j))
-        {
-            HandleEffects(NULL, NULL, NULL, j);
-            continue;
-        }
-
-        // Don't do spell log, if is school damage spell
-        if (m_spellInfo->Effect[j] == SPELL_EFFECT_SCHOOL_DAMAGE || m_spellInfo->Effect[j] == 0)
-            m_needSpellLog = false;
-    }
 
     // initialize Diminishing Returns Data
     m_diminishLevel = DIMINISHING_LEVEL_1;
@@ -2728,17 +2712,20 @@ void Spell::_handle_immediate_phase()
 
     if (!m_originalCaster)
         return;
-    // process ground
+
+    // handle effects with SPELL_EFFECT_HANDLE_HIT mode
     for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
     {
-        if (sSpellMgr.EffectTargetType[m_spellInfo->Effect[j]] == SPELL_REQUIRE_DEST)
-        {
-            if (!m_targets.HasDst()) // FIXME: this will ignore dest set in effect
-                m_targets.setDst(m_caster);
-            HandleEffects(m_originalCaster, NULL, NULL, j);
-        }
-        else if (sSpellMgr.EffectTargetType[m_spellInfo->Effect[j]] == SPELL_REQUIRE_NONE)
-            HandleEffects(m_originalCaster, NULL, NULL, j);
+        // don't do anything for empty effect
+        if (m_spellInfo->Effect[j] == 0)
+            continue;
+
+        // call effect handlers to handle destination hit
+        HandleEffects(nullptr, nullptr, nullptr, j);
+
+        // Don't do spell log, if is school damage spell
+        if (m_spellInfo->Effect[j] == SPELL_EFFECT_SCHOOL_DAMAGE)
+            m_needSpellLog = false;
     }
 }
 

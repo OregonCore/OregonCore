@@ -306,7 +306,7 @@ void GameObject::Update(uint32 diff)
                             {
                                 caster->FinishSpell(CURRENT_CHANNELED_SPELL);
 
-                                WorldPacket data(SMSG_FISH_NOT_HOOKED, 0);
+                                WorldPacket data(SMSG_FISH_ESCAPED, 0);
                                 caster->ToPlayer()->GetSession()->SendPacket(&data);
                             }
                             // can be delete
