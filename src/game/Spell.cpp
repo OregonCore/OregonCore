@@ -2713,7 +2713,14 @@ void Spell::_handle_immediate_phase()
             continue;
 
         // call effect handlers to handle destination hit
-        HandleEffects(nullptr, nullptr, nullptr, j);
+        if (sSpellMgr.EffectTargetType[m_spellInfo->Effect[j]] == SPELL_REQUIRE_DEST)
+        {
+            if (!m_targets.HasDst()) // FIXME: this will ignore dest set in effect
+                m_targets.setDst(m_caster);
+            HandleEffects(m_originalCaster, nullptr, nullptr, j);
+        }
+        else if (sSpellMgr.EffectTargetType[m_spellInfo->Effect[j]] == SPELL_REQUIRE_NONE)
+            HandleEffects(m_originalCaster, nullptr, nullptr, j);
 
         // Don't do spell log, if is school damage spell
         if (m_spellInfo->Effect[j] == SPELL_EFFECT_SCHOOL_DAMAGE)
