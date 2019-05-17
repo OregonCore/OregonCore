@@ -4156,8 +4156,6 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     RemoveAurasDueToSpell(20584);                           // RACE_NIGHTELF speed bonuses
     RemoveAurasDueToSpell(8326);                            // SPELL_AURA_GHOST
 
-    setDeathState(ALIVE);
-
     SetWaterWalking(false);
     SetRooted(false);
 
@@ -4174,6 +4172,11 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
 
     // update visibility
     UpdateObjectVisibility();
+
+    // @todo: Death state should be set before SetPowers
+    // but we've moved it below UpdateObjectVisibility to
+    // solve an issue.
+    setDeathState(ALIVE);
 
     // some items limited to specific map
     DestroyZoneLimitedItem(true, GetZoneId());
