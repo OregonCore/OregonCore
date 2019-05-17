@@ -971,18 +971,13 @@ void SpellMgr::LoadSpellAffects()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, effectId, SpellFamilyMask FROM spell_affect");
     if (!result)
     {
-
-
-
         sLog.outString(">> Loaded %u spell affect definitions", count);
         return;
     }
 
-
     do
     {
         Field* fields = result->Fetch();
-
 
         uint16 entry = fields[0].GetUInt16();
         uint8 effectId = fields[1].GetUInt8();

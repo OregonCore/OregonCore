@@ -616,7 +616,6 @@ void ConditionMgr::LoadConditions(bool isReload)
 
     if (!result)
     {
-        sLog.outString();
         sLog.outErrorDb(">> Loaded `conditions`, table is empty!");
         return;
     }
@@ -815,7 +814,6 @@ void ConditionMgr::LoadConditions(bool isReload)
     }
     while (result->NextRow());
 
-    sLog.outString();
     sLog.outString(">> Loaded %u conditions", count);
 }
 

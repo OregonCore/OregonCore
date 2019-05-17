@@ -1566,8 +1566,6 @@ void ObjectMgr::LoadGameobjects()
 
     if (!result)
     {
-
-
         sLog.outErrorDb(">> Loaded 0 gameobjects. DB table gameobject is empty.");
         return;
     }
@@ -3957,14 +3955,12 @@ void ObjectMgr::LoadPetCreateSpells()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, Spell1, Spell2, Spell3, Spell4 FROM petcreateinfo_spell");
     if (!result)
     {
-
         sLog.outString(">> Loaded 0 pet create spells");
         sLog.outErrorDb("petcreateinfo_spell table is empty!");
         return;
     }
 
     uint32 count = 0;
-
 
     mPetCreateSpell.clear();
 
@@ -6338,7 +6334,6 @@ void ObjectMgr::LoadPointsOfInterest()
 
     if (!result)
     {
-        sLog.outString();
         sLog.outErrorDb(">> Loaded 0 Points of Interest definitions. DB table `points_of_interest` is empty.");
         return;
     }
