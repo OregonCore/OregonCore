@@ -553,6 +553,15 @@ void Unit::Update(uint32 p_time)
     UpdateSplineMovement(p_time);
     i_motionMaster.UpdateMotion(p_time);
     
+    if (IsInCombat() && (GetTypeId() == TYPEID_PLAYER || (IsPet() && IsControlledByPlayer())))
+    {
+        if (getHostileRefManager().isEmpty())
+            if (m_CombatTimer.GetInterval() == 0 || m_CombatTimer.Passed())
+                ClearInCombat();
+            else
+                if (m_CombatTimer.GetInterval() != 0 && !m_CombatTimer.Passed())
+                    m_CombatTimer.Update(p_time);
+    }
 }
 
 bool Unit::UpdateMeleeAttackingState()
