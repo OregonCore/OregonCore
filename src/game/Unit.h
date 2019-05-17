@@ -1262,10 +1262,10 @@ class Unit : public WorldObject
         bool HasAura(uint32 spellId, uint8 effIndex = 0) const { return m_Auras.find(spellEffectPair(spellId, effIndex)) != m_Auras.end(); }
         bool HasHigherRankOfAura(uint32 spellid, uint8 effIndex) const;
 
-        bool virtual HasSpell(uint32 /*spellID*/) const
-        {
-            return false;
-        }
+        bool virtual HasSpell(uint32 /*spellID*/) const { return false; }
+
+        bool HasBreakableByDamageAuraType(AuraType type, uint32 excludeAura = 0) const;
+        bool HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel = NULL) const;
 
         bool HasStealthAura()      const { return HasAuraType(SPELL_AURA_MOD_STEALTH); }
         bool HasInvisibilityAura() const { return HasAuraType(SPELL_AURA_MOD_INVISIBILITY); }

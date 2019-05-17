@@ -5938,7 +5938,8 @@ void Aura::PeriodicTick()
 
             // As of 2.2 resilience reduces damage from DoT ticks as much as the chance to not be critically hit
             // Reduce dot damage from resilience for players
-            if (m_target->GetTypeId() == TYPEID_PLAYER)
+            if (m_target->GetTypeId() == TYPEID_PLAYER &&
+                !GetSpellProto()->HasAttribute(SPELL_ATTR_EX5_DOT_IGNORE_RESILIENCE))
                 pdamage -= m_target->ToPlayer()->GetDotDamageReduction(pdamage);
 
             pdamage *= GetStackAmount();

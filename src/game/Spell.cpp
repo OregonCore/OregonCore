@@ -2200,8 +2200,20 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
 
             bool massbuff = IsPositiveSpell(m_spellInfo->Id) && sSpellMgr.IsNoStackSpellDueToSpell(m_spellInfo->Id, m_spellInfo->Id, false);
 
+            if (m_spellInfo->HasAttribute(SPELL_ATTR_CANT_TARGET_SELF))
+                unitList.remove(m_caster);
+
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); )
             {
+                if (m_spellInfo->HasAttribute(SPELL_ATTR_EX6_CANT_TARGET_CROWD_CONTROLLED))
+                {
+                    if ((*itr)->HasBreakableByDamageCrowdControlAura())
+                    {
+                        itr = unitList.erase(itr);
+                        continue;
+                    }
+                }
+
                 // for mass-buffs skip targets that have higher ranks already applied.on them
                 if (*itr != m_caster && massbuff)
                 {
@@ -4680,16 +4692,18 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
         case SPELL_AURA_FLY:
         case SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED:
+        {
+            if (m_caster->IsInWater())
+                return SPELL_FAILED_ONLY_ABOVEWATER;
+
+            if (m_originalCaster && m_originalCaster->GetTypeId() == TYPEID_PLAYER && m_originalCaster->IsAlive())
             {
-                // not allow cast fly spells at old maps by players (all spells is self target)
-                if (m_caster->GetTypeId() == TYPEID_PLAYER)
-                {
-                    if (!m_caster->ToPlayer()->IsGameMaster() &&
-                        GetVirtualMapForMapAndZone(m_caster->GetMapId(), m_caster->GetZoneId()) != 530)
+                if (AreaTableEntry const* pArea = sAreaStore.LookupEntry(m_originalCaster->GetAreaId()))
+                    if (pArea->flags & 0x20000000)
                         return SPELL_FAILED_NOT_HERE;
-                }
-                break;
             }
+            break;
+        }
         case SPELL_AURA_PERIODIC_MANA_LEECH:
             {
                 if (!m_targets.getUnitTarget())
