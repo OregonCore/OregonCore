@@ -4720,7 +4720,8 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_caster->GetTypeId() != TYPEID_PLAYER || m_CastItem)
                     break;
 
-                if (m_targets.getUnitTarget()->getPowerType() != POWER_MANA)
+                if (m_targets.getUnitTarget()->getPowerType() != POWER_MANA ||
+                    m_targets.getUnitTarget()->GetMaxPower(POWER_MANA) == 0)
                     return SPELL_FAILED_BAD_TARGETS;
 
                 break;
