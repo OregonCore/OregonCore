@@ -30,6 +30,6 @@ class SARC4
         void Init(uint8* seed);
         void UpdateData(int len, uint8* data);
     private:
-        EVP_CIPHER_CTX m_ctx;
+        EVP_CIPHER_CTX* m_ctx;
 };
 #endif
