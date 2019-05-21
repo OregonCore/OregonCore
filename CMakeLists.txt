@@ -13,30 +13,10 @@
 project(OregonCore)
 
 # We require CMake >= 2.8
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.8)
 
 # CMake policies (can not be handled elsewhere)
-cmake_policy(VERSION 2.8)
- 
-if(POLICY CMP0043)
-  cmake_policy(SET CMP0043 OLD)
-endif()
-
-if(POLICY CMP0054)
-  cmake_policy(SET CMP0054 NEW)
-endif()
-
-if(CMAKE_VERSION VERSION_EQUAL "3.0.0" OR
-  CMAKE_VERSION VERSION_GREATER "3.0.0")
-  CMAKE_POLICY(SET CMP0026 OLD)
-  CMAKE_POLICY(SET CMP0045 OLD)
-  CMAKE_POLICY(SET CMP0042 OLD)
-endif()
-
-if(CMAKE_VERSION VERSION_EQUAL "3.3.0" OR
-  CMAKE_VERSION VERSION_GREATER "3.3.0")
-  CMAKE_POLICY(SET CMP0059 OLD)
-endif()
+cmake_policy(VERSION 3.8)
 
 # Set RPATH-handing (CMake parameters)
 set(CMAKE_SKIP_BUILD_RPATH 0)
