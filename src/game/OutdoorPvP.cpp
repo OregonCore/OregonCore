@@ -275,8 +275,10 @@ bool OPvPCapturePoint::Update(uint32 diff)
         {
             Player* player = *itr;
             ++itr;
-            if (!player->IsWithinDistInMap(m_capturePoint, radius) || !player->IsOutdoorPvPActive())
-                HandlePlayerLeave(player);
+
+            if (Player* player = ObjectAccessor::FindPlayer(player->GetGUID()))
+                if (!m_capturePoint->IsWithinDistInMap(player, radius) || !player->IsOutdoorPvPActive())
+                    HandlePlayerLeave(player);
         }
     }
 
