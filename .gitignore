@@ -1,6 +1,7 @@
 
 # build directories
 build*/
+cmake-build*/
 
 # backups
 *.orig
@@ -8,6 +9,8 @@ build*/
 *~
 *.back
 *.old
+*.__jb_old__
+*.__jb_bak__
 
 # patch rejects
 *.rej
