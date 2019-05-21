@@ -9,8 +9,11 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-# Add Colors
-if (NOT WIN32)
+# Check if we can output colors - fill TERM_COLORS with number of colors supported
+execute_process(COMMAND tput colors OUTPUT_VARIABLE TERM_COLORS ERROR_QUIET)
+
+# Add Colors if possible
+if (TERM_COLORS GREATER_EQUAL 256)
     string(ASCII 27 Esc)
     function(ShowOption opt val)
         string(SUBSTRING ${val} 0 2 ye_no)
