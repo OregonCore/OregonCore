@@ -5768,9 +5768,9 @@ void ObjectMgr::LoadGameObjectLocales()
             }
         }
 
-        for (uint8 i = MAX_LOCALE; i < MAX_LOCALE * 2 - 1; ++i)
+        for (uint8 i = 1; i < MAX_LOCALE; ++i)
         {
-            std::string str = fields[i].GetCppString();
+            std::string str = fields[i + (MAX_LOCALE - 1)].GetCppString();
             if (!str.empty())
             {
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
