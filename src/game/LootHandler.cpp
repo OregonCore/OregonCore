@@ -261,7 +261,7 @@ void WorldSession::HandleLootOpcode(WorldPacket& recv_data)
     recv_data >> guid;
 
     // Check possible cheat
-    if (!_player->IsAlive())
+    if (!GetPlayer()->IsAlive())
         return;
 
     GetPlayer()->SendLoot(guid, LOOT_CORPSE);
