@@ -661,7 +661,7 @@ OpcodeHandler opcodeTable[NUM_MSG_TYPES] =
     /*0x27D*/ { "CMSG_ENABLE_DAMAGE_LOG",           STATUS_NEVER,    &WorldSession::Handle_NULL                     },
     /*0x27E*/ { "CMSG_GROUP_CHANGE_SUB_GROUP",      STATUS_LOGGEDIN, &WorldSession::HandleGroupChangeSubGroupOpcode },
     /*0x27F*/ { "CMSG_REQUEST_PARTY_MEMBER_STATS",  STATUS_LOGGEDIN, &WorldSession::HandleRequestPartyMemberStatsOpcode},
-    /*0x280*/ { "CMSG_GROUP_SWAP_SUB_GROUP",        STATUS_NEVER,    &WorldSession::Handle_NULL                     },
+    /*0x280*/ { "CMSG_GROUP_SWAP_SUB_GROUP",        STATUS_LOGGEDIN, &WorldSession::HandleGroupSwapSubGroupOpcode   },
     /*0x281*/ { "CMSG_RESET_FACTION_CHEAT",         STATUS_NEVER,    &WorldSession::Handle_NULL                     },
     /*0x282*/ { "CMSG_AUTOSTORE_BANK_ITEM",         STATUS_LOGGEDIN, &WorldSession::HandleAutoStoreBankItemOpcode   },
     /*0x283*/ { "CMSG_AUTOBANK_ITEM",               STATUS_LOGGEDIN, &WorldSession::HandleAutoBankItemOpcode        },

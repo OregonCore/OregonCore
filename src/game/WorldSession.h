@@ -410,6 +410,7 @@ class WorldSession
         void HandleLootMethodOpcode(WorldPacket& recvPacket);
         void HandleLootRoll(WorldPacket& recv_data);
         void HandleRequestPartyMemberStatsOpcode(WorldPacket& recv_data);
+        void HandleGroupSwapSubGroupOpcode(WorldPacket& recv_data);
         void HandleRaidIconTargetOpcode(WorldPacket& recv_data);
         void HandleRaidReadyCheckOpcode(WorldPacket& recv_data);
         void HandleRaidReadyCheckFinishOpcode(WorldPacket& recv_data);
