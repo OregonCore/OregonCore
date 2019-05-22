@@ -963,3 +963,47 @@ void WorldSession::HandleGroupPassOnLootOpcode(WorldPacket& recv_data)
     GetPlayer()->SetPassOnGroupLoot(passOnLoot);
 }
 
+void WorldSession::HandleGroupSwapSubGroupOpcode(WorldPacket& recv_data)
+{
+    std::string playerName1, playerName2;
+
+    recv_data >> playerName1;
+    recv_data >> playerName2;
+
+    Player* player = GetPlayer();
+
+    Group* group = player->GetGroup();
+    if (!group || !group->isRaidGroup())
+        return;
+
+    ObjectGuid const& guid = player->GetObjectGUID();
+    if (!group->IsLeader(guid) && !group->IsAssistant(guid))
+        return;
+
+    auto getMemberSlotInfo = [&group](std::string const& playerName, uint8& subgroup, ObjectGuid& guid)
+    {
+        auto slots = group->GetMemberSlots();
+        for (auto i = slots.begin(); i != slots.end(); ++i)
+        {
+            if ((*i).guid && (*i).name == playerName)
+            {
+                subgroup = (*i).group;
+                guid = (*i).guid;
+                return true;
+            }
+        }
+        return false;
+    };
+
+    ObjectGuid guid1, guid2;
+    uint8 subgroup1, subgroup2;
+
+    if (!getMemberSlotInfo(playerName1, subgroup1, guid1) || !getMemberSlotInfo(playerName2, subgroup2, guid2))
+        return;
+
+    if (subgroup1 == subgroup2)
+        return;
+
+    group->ChangeMembersGroup(guid1, subgroup2);
+    group->ChangeMembersGroup(guid2, subgroup1);
+}
