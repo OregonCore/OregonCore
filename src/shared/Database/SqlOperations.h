@@ -61,37 +61,13 @@ class SqlStatement : public SqlOperation
         void Execute(Database* db);
 };
 
-class SqlPreparedStatement : public SqlOperation
-{
-    private:
-        PreparedStatement* m_stmt;
-        PreparedValues m_values;
-    public:
-        SqlPreparedStatement(PreparedStatement* stmt, PreparedValues& values) : m_stmt(stmt), m_values(values) {}
-
-        void Execute(Database* db)
-        {
-            db->DirectExecute(m_stmt, m_values, NULL);
-        }
-};
-
 class SqlTransaction : public SqlOperation
 {
     protected:
         friend class Database;
         struct QueuedItem
         {
-            union
-            {
-                char* sql;
-                struct
-                {
-                    PreparedStatement* stmt;
-                    PreparedValues* values;
-                };
-            };
-
-            bool isStmt;
+            char* sql;
         };
 
         std::queue<QueuedItem> queue;
@@ -102,10 +78,7 @@ class SqlTransaction : public SqlOperation
             while (!queue.empty())
             {
                 QueuedItem item = queue.front();
-                if (!item.isStmt)
-                    free (item.sql);
-                else
-                    delete item.values;
+                free (item.sql);
                 queue.pop();
             }
         }
@@ -114,19 +87,6 @@ class SqlTransaction : public SqlOperation
         {
             QueuedItem item;
             item.sql = strdup(sql);
-            item.isStmt = false;
-
-            mutex.acquire();
-            queue.push(item);
-            mutex.release();
-        }
-        void DelayExecute(PreparedStatement* stmt, PreparedValues& values)
-        {
-            QueuedItem item;
-            item.stmt = stmt;
-            item.values = new PreparedValues(values.size());
-            *item.values = values;
-            item.isStmt = true;
 
             mutex.acquire();
             queue.push(item);

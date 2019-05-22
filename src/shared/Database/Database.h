@@ -25,7 +25,6 @@
 #include "ace/Thread_Mutex.h"
 #include "ace/Guard_T.h"
 #include "ace/Atomic_Op.h"
-#include "PreparedStatement.h"
 #include "QueryResult.h"
 
 #ifdef WIN32
@@ -117,7 +116,6 @@ class Database
             return DirectExecute(true, sql);
         }
         bool DirectPExecute(const char* format, ...) ATTR_PRINTF(2, 3);
-        bool DirectExecute(PreparedStatement* stmt, PreparedValues& values, va_list* args);
 
         // Writes SQL commands to a LOG file (see Oregond.conf "LogSQL")
         bool PExecuteLog(const char* format, ...) ATTR_PRINTF(2, 3);
@@ -125,7 +123,6 @@ class Database
         // Writes SQL commands to a LOG file (see Oregond.conf "LogSQL")
         // but runs via PreparedStatements
         bool PreparedExecuteLog(const char* sql, const char* format = NULL, ...);
-        bool PreparedExecuteLog(const char* sql, PreparedValues& values);
 
         bool BeginTransaction();
         bool CommitTransaction();
@@ -133,10 +130,7 @@ class Database
 
         bool ExecuteTransaction(SqlTransaction* transaction);
 
-        PreparedQueryResult_AutoPtr PreparedQuery(const char* sql, const char* format = NULL, ...);
-        PreparedQueryResult_AutoPtr PreparedQuery(const char* sql, PreparedValues& values);
         bool PreparedExecute(const char* sql, const char* format = NULL, ...);
-        bool PreparedExecute(const char* sql, PreparedValues& values);
 
         operator bool () const
         {
@@ -169,13 +163,6 @@ class Database
 
         bool _TransactionCmd(const char* sql);
         bool _Query(const char* sql, MYSQL_RES** pResult, MYSQL_FIELD** pFields, uint64* pRowCount, uint32* pFieldCount);
-
-        PreparedStatement* _GetOrMakePreparedStatement(const char* query, const char* format, PreparedValues* values);
-        bool _ExecutePreparedStatement(PreparedStatement* ps, PreparedValues* values, va_list* args, bool resultset);
-        void _ConvertValistToPreparedValues(va_list ap, PreparedValues& values, const char* fmt);
-
-        typedef UNORDERED_MAP<std::string, PreparedStatement*> PreparedStatementsMap;
-        PreparedStatementsMap m_preparedStatements;
 };
 #endif
 
