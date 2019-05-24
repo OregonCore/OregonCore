@@ -2166,7 +2166,11 @@ bool Creature::LoadCreaturesAddon(bool reload)
     if (cainfo->emote != 0)
         SetUInt32Value(UNIT_NPC_EMOTESTATE, cainfo->emote);
 
-    //Load Path
+    // Check if visibility distance different
+    if (cainfo->visibilityDistanceType != VISDIST_DEFAULT)
+        SetVisibilityDistanceOverride(cainfo->visibilityDistanceType);
+
+    // Load Path
     if (cainfo->path_id != 0)
         m_path_id = cainfo->path_id;
 
