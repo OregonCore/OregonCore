@@ -31,7 +31,7 @@ enum GroupAIFlags
     FLAG_MEMBERS_ASSIST_LEADER = 0x00000001,                                                // The member aggroes if the leader aggroes
     FLAG_LEADER_ASSISTS_MEMBER = 0x00000002,                                                // The leader aggroes if the member aggroes
     FLAG_MEMBERS_ASSIST_MEMBER = (FLAG_MEMBERS_ASSIST_LEADER | FLAG_LEADER_ASSISTS_MEMBER), // every member will assist if any member is attacked
-    FLAG_IDLE_IN_FORMATION     = 0x00000004,                                                // The member will follow the leader when pathing idly
+    FLAG_IDLE_IN_FORMATION     = 0x00000200,                                                // The member will follow the leader when pathing idly
 };
 
 class Creature;
@@ -42,7 +42,7 @@ struct FormationInfo
     uint32 leaderGUID;
     float follow_dist;
     float follow_angle;
-    uint8 groupAI;
+    uint32 groupAI;
     uint32 point_1;
     uint32 point_2;
 };
