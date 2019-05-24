@@ -1089,6 +1089,7 @@ WorldObject::WorldObject(bool isWorldObject):
     , m_isWorldObject(isWorldObject)
     , m_name("")
     , m_isActive(false)
+    , m_visibilityDistanceOverride(0)
     , m_zoneScript(NULL)
     , m_currMap(NULL)
     , m_InstanceId(0)
@@ -1149,6 +1150,30 @@ void WorldObject::setActive(bool on)
         else if (GetTypeId() == TYPEID_DYNAMICOBJECT)
             map->RemoveFromActive((DynamicObject*)this);
     }
+}
+
+void WorldObject::SetVisibilityDistanceOverride(VisibilityDistanceType type)
+{
+    if (GetTypeId() == TYPEID_PLAYER)
+        return;
+
+    switch (type)
+    {
+        case VISDIST_TINY:
+            m_visibilityDistanceOverride = VISIBILITY_DISTANCE_TINY;
+            break;
+        case VISDIST_SMALL:
+            m_visibilityDistanceOverride = VISIBILITY_DISTANCE_SMALL;
+            break;
+        case VISDIST_LARGE:
+            m_visibilityDistanceOverride = VISIBILITY_DISTANCE_LARGE;
+            break;
+        case VISDIST_GIGANTIC:
+            m_visibilityDistanceOverride = VISIBILITY_DISTANCE_GIGANTIC;
+            break;
+        default:
+            m_visibilityDistanceOverride = 0;
+    }   
 }
 
 void WorldObject::CleanupsBeforeDelete()
@@ -1549,7 +1574,9 @@ float WorldObject::GetGridActivationRange() const
 
 float WorldObject::GetVisibilityRange() const
 {
-    if (isActiveObject() && !ToPlayer())
+    if (IsVisibilityOverridden() && !ToPlayer())
+        return m_visibilityDistanceOverride;
+    else if (isActiveObject() && !ToPlayer())
         return MAX_VISIBILITY_DISTANCE;
     else
         return GetMap()->GetVisibilityRange();
@@ -1561,7 +1588,9 @@ float WorldObject::GetSightRange(const WorldObject* target) const
     {
         if (ToPlayer())
         {
-            if (target && target->isActiveObject() && !target->ToPlayer())
+            if (target && target->IsVisibilityOverridden() && !target->ToPlayer())
+                return target->m_visibilityDistanceOverride;
+            else if (target && target->isActiveObject() && !target->ToPlayer())
                 return MAX_VISIBILITY_DISTANCE;
             else if (ToPlayer()->GetCinematicMgr()->IsOnCinematic())
                 return DEFAULT_VISIBILITY_INSTANCE;
