@@ -40,10 +40,19 @@ VisibleNotifier::SendToSelf()
             {
                 vis_guids.erase((*itr)->GetGUID());
 
-                i_player.UpdateVisibilityOf((*itr), i_data, i_visibleNow);
-
-                if (!(*itr)->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
-                    (*itr)->UpdateVisibilityOf(&i_player);
+                switch ((*itr)->GetTypeId())
+                {
+                case TYPEID_GAMEOBJECT:
+                    i_player.UpdateVisibilityOf((*itr)->ToGameObject(), i_data, i_visibleNow);
+                    break;
+                case TYPEID_PLAYER:
+                    i_player.UpdateVisibilityOf((*itr)->ToPlayer(), i_data, i_visibleNow);
+                    (*itr)->ToPlayer()->UpdateVisibilityOf(&i_player);
+                    break;
+                case TYPEID_UNIT:
+                    i_player.UpdateVisibilityOf((*itr)->ToCreature(), i_data, i_visibleNow);
+                    break;
+                }
             }
         }
 
@@ -55,7 +64,7 @@ VisibleNotifier::SendToSelf()
         if (IS_PLAYER_GUID(*it))
         {
             Player* plr = ObjectAccessor::FindPlayer(*it, true);
-            if (plr && !plr->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
+            if (plr && plr->IsInMap(&i_player))
                 plr->UpdateVisibilityOf(&i_player);
         }
     }
@@ -81,9 +90,9 @@ VisibleChangesNotifier::Visit(PlayerMapType& m)
 
         iter->GetSource()->UpdateVisibilityOf(&i_object);
 
-        if (!iter->GetSource()->GetSharedVisionList().empty())
+        if (iter->GetSource()->HasSharedVision())
             for (SharedVisionList::const_iterator i = iter->GetSource()->GetSharedVisionList().begin();
-                 i != iter->GetSource()->GetSharedVisionList().end(); ++i)
+                i != iter->GetSource()->GetSharedVisionList().end(); ++i)
                 if ((*i)->m_seer == iter->GetSource())
                     (*i)->UpdateVisibilityOf(&i_object);
     }
@@ -104,10 +113,11 @@ void
 VisibleChangesNotifier::Visit(DynamicObjectMapType& m)
 {
     for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-        if (iter->GetSource()->GetTypeId() == TYPEID_PLAYER) // better check to see if the target it a player.
-            if (Player* caster = (Player*)iter->GetSource()->GetCaster())
-                if (caster->m_seer == iter->GetSource())
-                    caster->UpdateVisibilityOf(&i_object);
+        if (IS_PLAYER_GUID(iter->GetSource()->GetCasterGUID()))
+            if (Unit* caster = iter->GetSource()->GetCaster())
+                if (Player* player = caster->ToPlayer())
+                    if (player->m_seer == iter->GetSource())
+                        player->UpdateVisibilityOf(&i_object);
 }
 
 inline void CreatureUnitRelocationWorker(Creature* c, Unit* u)
@@ -116,13 +126,8 @@ inline void CreatureUnitRelocationWorker(Creature* c, Unit* u)
         return;
 
     if (c->HasReactState(REACT_AGGRESSIVE) && !c->HasUnitState(UNIT_STATE_SIGHTLESS))
-    {
         if (c->IsAIEnabled && c->CanSeeOrDetect(u, false, true))
             c->AI()->MoveInLineOfSight_Safe(u);
-        else
-            if (u->GetTypeId() == TYPEID_PLAYER && u->HasStealthAura() && c->IsAIEnabled && c->CanSeeOrDetect(u, false, true, true))
-                c->AI()->TriggerAlert(u);
-    }
 }
 
 void PlayerRelocationNotifier::Visit(PlayerMapType& m)
@@ -134,9 +139,6 @@ void PlayerRelocationNotifier::Visit(PlayerMapType& m)
         vis_guids.erase(plr->GetGUID());
 
         i_player.UpdateVisibilityOf(plr, i_data, i_visibleNow);
-
-        if (plr->m_seer->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
-            continue;
 
         plr->UpdateVisibilityOf(&i_player);
     }
