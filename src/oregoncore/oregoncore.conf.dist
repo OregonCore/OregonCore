@@ -2119,7 +2119,13 @@ DatabaseUpdater.PathToUpdates = ""
 #		 Default = 0
 #        Values 1 - on, 0 - off
 #
+#	Console.RestartTimer
+#		Time in seconds for when selecting restart in console 
+#		window the server will restart
+#		Default = 10
+#
 ###############################################################################
 
 WarsongTimer.Enabled = 0
 CreateUpdateFile.Enabled = 0
+Console.RestartTimer = 10

@@ -1042,6 +1042,7 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_UI_QUESTLEVELS_IN_DIALOGS] = sConfig.GetBoolDefault("UI.ShowQuestLevelsInDialogs", false);
     m_configs[CONFIG_HEALTH_IN_PERCENTS] = sConfig.GetBoolDefault("HealthInPercents", true);
     m_configs[CONFIG_CREATEUPDATE_FILE] = sConfig.GetBoolDefault("CreateUpdateFile.Enabled", false);
+    m_configs[CONFIG_CONSOLE_RESTART_TIMER] = sConfig.GetIntDefault("Console.RestartTimer", 10);
 
     // Battleground
     m_configs[CONFIG_BATTLEGROUND_CAST_DESERTER] = sConfig.GetBoolDefault("Battleground.CastDeserter", true);

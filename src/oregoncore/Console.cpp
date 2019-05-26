@@ -386,7 +386,7 @@ void Console::MainLoop()
                 RunLogViewLoop();
                 break;
             case 3:  /* Restart Server*/
-                sWorld.ShutdownServ(10, SHUTDOWN_MASK_RESTART, RESTART_EXIT_CODE);
+                sWorld.ShutdownServ(sWorld.getConfig(CONFIG_CONSOLE_RESTART_TIMER), SHUTDOWN_MASK_RESTART, RESTART_EXIT_CODE);
                 RunLogViewLoop(); // Need to view logs for it to correctly restart
                 break;
             case 4: /* shutdown */
