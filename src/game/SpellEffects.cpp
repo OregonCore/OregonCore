@@ -2637,7 +2637,7 @@ void Spell::EffectTeleportUnits(SpellEffIndex /*effIndex*/)
                     case 4:
                         // Transform
                         {
-                            if (m_caster->ToPlayer()->GetTeam() == ALLIANCE)
+                            if (m_caster->ToPlayer() && m_caster->ToPlayer()->GetTeam() == ALLIANCE)
                                 m_caster->CastSpell(m_caster, 36897, true);
                             else
                                 m_caster->CastSpell(m_caster, 36899, true);
