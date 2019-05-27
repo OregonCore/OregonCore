@@ -174,62 +174,23 @@ class Object
             ClearUpdateMask(true);
         }
 
-        const uint64& GetGUID() const
-        {
-            return GetUInt64Value(0);
-        }
-        uint32 GetGUIDLow() const
-        {
-            return GUID_LOPART(GetUInt64Value(0));
-        }
-        uint32 GetGUIDMid() const
-        {
-            return GUID_ENPART(GetUInt64Value(0));
-        }
-        uint32 GetGUIDHigh() const
-        {
-            return GUID_HIPART(GetUInt64Value(0));
-        }
-        PackedGuid const& GetPackGUID() const
-        {
-            return m_PackGUID;
-        }
-        ObjectGuid const& GetObjectGUID() const
-        {
-            return GetGuidValue(OBJECT_FIELD_GUID);
-        }
+        uint64 GetGUID() const { return GetUInt64Value(0); }
+        uint32 GetGUIDLow() const { return GUID_LOPART(GetUInt64Value(0)); }
+        uint32 GetGUIDMid() const { return GUID_ENPART(GetUInt64Value(0)); }
+        uint32 GetGUIDHigh() const { return GUID_HIPART(GetUInt64Value(0)); }
+        PackedGuid const& GetPackGUID() const { return m_PackGUID; }
+        ObjectGuid const& GetObjectGUID() const { return GetGuidValue(OBJECT_FIELD_GUID); }
 
-        std::string GetGuidStr() const
-        {
-            return GetObjectGUID().GetString();
-        }
+        std::string GetGuidStr() const { return GetObjectGUID().GetString(); }
 
-        uint32 GetEntry() const
-        {
-            return GetUInt32Value(OBJECT_FIELD_ENTRY);
-        }
-        void SetEntry(uint32 entry)
-        {
-            SetUInt32Value(OBJECT_FIELD_ENTRY, entry);
-        }
+        uint32 GetEntry() const { return GetUInt32Value(OBJECT_FIELD_ENTRY); }
+        void SetEntry(uint32 entry) { SetUInt32Value(OBJECT_FIELD_ENTRY, entry); }
 
-        float GetObjectScale() const
-        {
-            return GetFloatValue(OBJECT_FIELD_SCALE_X);
-        }
-        void SetObjectScale(float scale)
-        {
-            SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
-        }
+        float GetObjectScale() const { return GetFloatValue(OBJECT_FIELD_SCALE_X); }
+        void SetObjectScale(float scale) { SetFloatValue(OBJECT_FIELD_SCALE_X, scale); }
 
-        uint8 GetTypeId() const
-        {
-            return m_objectTypeId;
-        }
-        bool isType(uint16 mask) const
-        {
-            return (mask & m_objectType);
-        }
+        uint8 GetTypeId() const { return m_objectTypeId; }
+        bool isType(uint16 mask) const { return (mask & m_objectType); }
 
         virtual void BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) const;
         void SendUpdateToPlayer(Player* player);
@@ -854,10 +815,7 @@ class WorldObject : public Object, public WorldLocation
         virtual void SetMap(Map* map);
         virtual void ResetMap();
         Map* GetMap() const { ASSERT(m_currMap); return m_currMap; }
-        Map* FindMap() const
-        {
-            return m_currMap;
-        }
+        Map* FindMap() const { return m_currMap; }
         //used to check all object's GetMap() calls when object is not in world!
 
         //this function should be removed in nearest time...
@@ -897,18 +855,9 @@ class WorldObject : public Object, public WorldLocation
         void BuildUpdate(UpdateDataMapType&) override;
 
         //relocation and visibility system functions
-        void AddToNotify(uint16 f)
-        {
-            m_notifyflags |= f;
-        }
-        bool isNeedNotify(uint16 f) const
-        {
-            return m_notifyflags & f;
-        }
-        uint16 GetNotifyFlags() const
-        {
-            return m_notifyflags;
-        }
+        void AddToNotify(uint16 f) { m_notifyflags |= f; }
+        bool isNeedNotify(uint16 f) const { return (m_notifyflags & f) != 0; }
+        uint16 GetNotifyFlags() const { return m_notifyflags; }
         bool NotifyExecuted(uint16 f) const
         {
             return m_executed_notifies & f;
@@ -923,10 +872,7 @@ class WorldObject : public Object, public WorldLocation
             m_executed_notifies = 0;
         }
 
-        bool isActiveObject() const
-        {
-            return m_isActive;
-        }
+        bool isActiveObject() const { return m_isActive; }
         void setActive(bool isActiveObject);
         bool IsVisibilityOverridden() const { return m_visibilityDistanceOverride != 0; }
         void SetVisibilityDistanceOverride(VisibilityDistanceType type);

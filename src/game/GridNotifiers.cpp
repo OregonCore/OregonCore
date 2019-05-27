@@ -40,10 +40,25 @@ VisibleNotifier::SendToSelf()
             {
                 vis_guids.erase((*itr)->GetGUID());
 
-                i_player.UpdateVisibilityOf((*itr), i_data, i_visibleNow);
-
-                if (!(*itr)->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
-                    (*itr)->UpdateVisibilityOf(&i_player);
+                switch ((*itr)->GetTypeId())
+                {
+                    case TYPEID_GAMEOBJECT:
+                        i_player.UpdateVisibilityOf((*itr)->ToGameObject(), i_data, i_visibleNow);
+                        break;
+                    case TYPEID_PLAYER:
+                        i_player.UpdateVisibilityOf((*itr)->ToPlayer(), i_data, i_visibleNow);
+                        if (!(*itr)->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
+                            (*itr)->ToPlayer()->UpdateVisibilityOf(&i_player);
+                        break;
+                    case TYPEID_UNIT:
+                        i_player.UpdateVisibilityOf((*itr)->ToCreature(), i_data, i_visibleNow);
+                        break;
+                    case TYPEID_DYNAMICOBJECT:
+                        i_player.UpdateVisibilityOf((*itr)->ToDynObject(), i_data, i_visibleNow);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -54,9 +69,9 @@ VisibleNotifier::SendToSelf()
 
         if (IS_PLAYER_GUID(*it))
         {
-            Player* plr = ObjectAccessor::FindPlayer(*it, true);
-            if (plr && !plr->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
-                plr->UpdateVisibilityOf(&i_player);
+            Player* player = ObjectAccessor::FindPlayer(*it, true);
+            if (player && !player->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
+                player->UpdateVisibilityOf(&i_player);
         }
     }
 
@@ -71,8 +86,7 @@ VisibleNotifier::SendToSelf()
         i_player.SendAuraDurationsForTarget(*it);
 }
 
-void
-VisibleChangesNotifier::Visit(PlayerMapType& m)
+void VisibleChangesNotifier::Visit(PlayerMapType& m)
 {
     for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
@@ -81,33 +95,35 @@ VisibleChangesNotifier::Visit(PlayerMapType& m)
 
         iter->GetSource()->UpdateVisibilityOf(&i_object);
 
-        if (!iter->GetSource()->GetSharedVisionList().empty())
+        if (iter->GetSource()->HasSharedVision())
+        {
             for (SharedVisionList::const_iterator i = iter->GetSource()->GetSharedVisionList().begin();
-                 i != iter->GetSource()->GetSharedVisionList().end(); ++i)
+                i != iter->GetSource()->GetSharedVisionList().end(); ++i)
+            {
                 if ((*i)->m_seer == iter->GetSource())
                     (*i)->UpdateVisibilityOf(&i_object);
+            }
+        }
     }
 }
 
-void
-VisibleChangesNotifier::Visit(CreatureMapType& m)
+void VisibleChangesNotifier::Visit(CreatureMapType& m)
 {
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-        if (!iter->GetSource()->GetSharedVisionList().empty())
+        if (iter->GetSource()->HasSharedVision())
             for (SharedVisionList::const_iterator i = iter->GetSource()->GetSharedVisionList().begin();
-                 i != iter->GetSource()->GetSharedVisionList().end(); ++i)
+                i != iter->GetSource()->GetSharedVisionList().end(); ++i)
                 if ((*i)->m_seer == iter->GetSource())
                     (*i)->UpdateVisibilityOf(&i_object);
 }
 
-void
-VisibleChangesNotifier::Visit(DynamicObjectMapType& m)
+void VisibleChangesNotifier::Visit(DynamicObjectMapType& m)
 {
     for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-        if (iter->GetSource()->GetTypeId() == TYPEID_PLAYER) // better check to see if the target it a player.
-            if (Player* caster = (Player*)iter->GetSource()->GetCaster())
-                if (caster->m_seer == iter->GetSource())
-                    caster->UpdateVisibilityOf(&i_object);
+        if (Unit* caster = iter->GetSource()->GetCaster())
+            if (Player* player = caster->ToPlayer())
+                if (player->m_seer == iter->GetSource())
+                    player->UpdateVisibilityOf(&i_object);
 }
 
 inline void CreatureUnitRelocationWorker(Creature* c, Unit* u)
@@ -332,7 +348,7 @@ void MessageDistDeliverer::Visit(PlayerMapType& m)
             continue;
 
         // Send packet to all who are sharing the player's vision
-        if (!target->GetSharedVisionList().empty())
+        if (target->HasSharedVision())
         {
             SharedVisionList::const_iterator i = target->GetSharedVisionList().begin();
             for (; i != target->GetSharedVisionList().end(); ++i)
@@ -357,10 +373,10 @@ void MessageDistDeliverer::Visit(CreatureMapType& m)
             continue;
 
         // Send packet to all who are sharing the creature's vision
-        if (!target->GetSharedVisionList().empty())
+        if (target->HasSharedVision())
         {
-            SharedVisionList::const_iterator i = iter->GetSource()->GetSharedVisionList().begin();
-            for (; i != iter->GetSource()->GetSharedVisionList().end(); ++i)
+            SharedVisionList::const_iterator i = target->GetSharedVisionList().begin();
+            for (; i != target->GetSharedVisionList().end(); ++i)
                 if ((*i)->m_seer == target)
                     SendPacket(*i);
         }
@@ -378,12 +394,12 @@ void MessageDistDeliverer::Visit(DynamicObjectMapType& m)
         if (target->GetExactDist2dSq(i_source) > i_distSq)
             continue;
 
-        if (target->GetTypeId() == TYPEID_PLAYER)
+        if (Unit* caster = target->GetCaster())
         {
             // Send packet back to the caster if the caster has vision of dynamic object
-            Player* caster = target->GetCaster()->ToPlayer();
-            if (caster && caster->m_seer == target)
-                SendPacket(caster);
+            Player* player = caster->ToPlayer();
+            if (player && player->m_seer == target)
+                SendPacket(player);
         }
     }
 }
@@ -392,10 +408,8 @@ template<class T> void
 ObjectUpdater::Visit(GridRefManager<T>& m)
 {
     for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
-    {
         if (iter->GetSource()->IsInWorld())
             iter->GetSource()->Update(i_timeDiff);
-    }
 }
 
 bool CannibalizeObjectCheck::operator()(Corpse* u)
