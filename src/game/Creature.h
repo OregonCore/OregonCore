@@ -303,7 +303,6 @@ struct CreatureDataAddon
     uint32 bytes1;
     uint32 bytes2;
     uint32 emote;
-    VisibilityDistanceType visibilityDistanceType;
     CreatureDataAddonAura const* auras;                     // loaded as char* "spell1 eff1 spell2 eff2 ... "
 };
 

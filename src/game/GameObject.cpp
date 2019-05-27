@@ -225,10 +225,6 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, uint32 phaseMa
 
     AIM_Initialize();
 
-    // Check if GameObject is Large
-    if (goinfo->IsLargeGameObject())
-        SetVisibilityDistanceOverride(VISDIST_LARGE);
-
     return true;
 }
 

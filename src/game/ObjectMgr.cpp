@@ -847,12 +847,7 @@ void ObjectMgr::LoadCreatureAddons()
             continue;
 
         if (!sEmotesStore.LookupEntry(addon->emote))
-            sLog.outErrorDb("Creature (Entry: %u) has invalid emote (%u) defined in creature_template_addon.", 
-                addon->guidOrEntry, addon->emote);
-
-        if (addon->visibilityDistanceType >= VisibilityDistanceType::VISDIST_MAX)
-            sLog.outErrorDb("Creature (Entry: %u) has invalid visibilityDistanceType (%u) defined in `creature_template_addon`.",
-                addon->guidOrEntry, addon->visibilityDistanceType);
+            sLog.outErrorDb("Creature (GUID: %u) has invalid emote (%u) defined in creature_template_addon.", addon->guidOrEntry, addon->emote);
 
         ConvertCreatureAddonAuras(const_cast<CreatureDataAddon*>(addon), "creature_template_addon", "Entry");
 
@@ -873,12 +868,6 @@ void ObjectMgr::LoadCreatureAddons()
 
         if (!sEmotesStore.LookupEntry(addon->emote))
             sLog.outErrorDb("Creature (GUID: %u) has invalid emote (%u) defined in creature_addon.", addon->guidOrEntry, addon->emote);
-
-        if (addon->visibilityDistanceType >= VisibilityDistanceType::VISDIST_MAX)
-        {
-            sLog.outErrorDb("Creature (GUID: %u) has invalid visibilityDistanceType (%u) defined in `creature_addon`.",
-                addon->guidOrEntry, addon->visibilityDistanceType);
-        }
 
         ConvertCreatureAddonAuras(const_cast<CreatureDataAddon*>(addon), "creature_addon", "GUIDLow");
 
