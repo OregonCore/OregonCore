@@ -196,7 +196,6 @@ struct instance_deadmines : public ScriptedInstance
             pDoorLever->SetUInt32Value(GAMEOBJECT_FLAGS, 4);
     }
 
-
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
         switch (pCreature->GetEntry())
@@ -288,6 +287,23 @@ struct instance_deadmines : public ScriptedInstance
         data.SetOpcode(SMSG_PLAY_SOUND);
         data << uint32(sound);
         unit->SendMessageToSet(&data, false);
+    }
+
+    void OnCreatureDeath(Creature* pCreature)
+    {
+        switch (pCreature->GetEntry())
+        {
+        case 644:
+            SetData(EVENT_RHAHKZOR, DONE);
+            break;
+        case 643:
+            SetData(EVENT_SNEED, DONE);
+            break;
+        case 1763:
+            SetData(EVENT_GILNID, DONE);
+        default:
+            break;
+        }
     }
 };
 
