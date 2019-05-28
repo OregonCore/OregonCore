@@ -516,7 +516,7 @@ class Creature : public Unit, public GridObject<Creature>
         bool isElite() const;
         bool isWorldBoss() const;
 
-        uint8 getLevelForTarget(Unit const* target) const; // overwrite Unit::getLevelForTarget for boss level support
+        uint8 getLevelForTarget(WorldObject const* target) const override; // overwrite Unit::getLevelForTarget for boss level support
 
         bool IsInEvadeMode() const;
 
@@ -551,7 +551,7 @@ class Creature : public Unit, public GridObject<Creature>
         void UpdateAttackPowerAndDamage(bool ranged = false) override;
         void CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage) override;
         
-        void SetCanDualWield(bool value);
+        void SetCanDualWield(bool value) override;
         void SetCurrentEquipmentId(uint8 id) { m_equipmentId = id; }
         uint32 GetCurrentEquipmentId() { return m_equipmentId; }
         float GetSpellDamageMod(int32 Rank) const;

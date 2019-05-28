@@ -30,34 +30,31 @@ class PetAI : public CreatureAI
 
         explicit PetAI(Creature* c);
 
-        void UpdateAI(const uint32);
+        void UpdateAI(const uint32) override;
         static int Permissible(const Creature*);
 
-        void KilledUnit(Unit* victim);
-        void AttackStart(Unit* target);
-        void MovementInform(uint32 moveType, uint32 data);
-        void OwnerAttackedBy(Unit* attacker);
-        void OwnerAttacked(Unit* target);
-        void AttackedBy(Unit* attacker);
-        void DamageDealt(Unit* victim, uint32& damage, DamageEffectType damageType);
+        void KilledUnit(Unit* victim) override;
+        void AttackStart(Unit* target) override;
+        void MovementInform(uint32 moveType, uint32 data) override;
+        void OwnerAttackedBy(Unit* attacker) override;
+        void OwnerAttacked(Unit* target) override;
+        void AttackedBy(Unit* attacker) override;
+        void DamageDealt(Unit* victim, uint32& damage, DamageEffectType damageType) override;
         void ClearCharmInfoFlags();
 
         // The following aren't used by the PetAI but need to be defined to override
         //  default CreatureAI functions which interfere with the PetAI
         //
-        void MoveInLineOfSight(Unit* who) {} // CreatureAI interferes with returning pets
-        void MoveInLineOfSight_Safe(Unit* who) {} // CreatureAI interferes with returning pets
-        void EnterEvadeMode() {} // For fleeing, pets don't use this type of Evade mechanic
+        void MoveInLineOfSight(Unit* /*who*/) override {} // CreatureAI interferes with returning pets
+        void EnterEvadeMode() override {} // For fleeing, pets don't use this type of Evade mechanic
 
     private:
-        bool _isVisible(Unit*) const;
-        bool _needToStop(void) const;
-        void _stopAttack(void);
+        bool _needToStop() const;
+        void _stopAttack();
 
         void UpdateAllies();
 
         TimeTracker i_tracker;
-        bool inCombat;
         std::set<uint64> m_AllySet;
         uint32 m_updateAlliesTimer;
 

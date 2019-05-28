@@ -82,10 +82,10 @@ class CreatureAI : public UnitAI
         explicit CreatureAI(Creature* c) : 
             UnitAI((Unit*)c),
             me(c),
-            m_MoveInLineOfSight_locked(false),
             CombatMovementEnabled(true),
             AttackDistance(0.0f),
-            AttackAngle(0.0f)
+            AttackAngle(0.0f),
+            m_MoveInLineOfSight_locked(false)
         {}
 
         ~CreatureAI() override {}
@@ -128,7 +128,7 @@ class CreatureAI : public UnitAI
         virtual void SpellHitTarget(Unit* /*target*/, const SpellEntry*) {}
 
         // Called when the creature is target of hostile action: swing, hostile spell landed, fear/etc)
-        virtual void AttackedBy(Unit* attacker) {}
+        virtual void AttackedBy(Unit* /*attacker*/) {}
 
         virtual bool IsEscorted()
         {

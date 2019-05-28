@@ -1489,7 +1489,7 @@ void SpellMgr::LoadSpellDummyCondition()
         }
         while (result->NextRow());
 
-        sLog.outString(">> Loaded %llu spell dummy conditions", result->GetRowCount());
+        sLog.outString(">> Loaded %lu spell dummy conditions", result->GetRowCount());
         return;
     }
 
@@ -1875,7 +1875,7 @@ struct SpellRankEntry
                 : (_Left.SpellVisual != _Right.SpellVisual) && (!_Left.SpellVisual || !_Right.SpellVisual) ? _Left.SpellVisual < _Right.SpellVisual
                 : (_Left.ManaCost != _Right.ManaCost) && (!_Left.ManaCost || !_Right.ManaCost) ? _Left.ManaCost < _Right.ManaCost
                 : (_Left.DurationIndex != _Right.DurationIndex) && (!_Left.DurationIndex || !_Right.DurationIndex) ? _Left.DurationIndex < _Right.DurationIndex
-                : (_Left.RangeIndex != _Right.RangeIndex) && (!_Left.RangeIndex || !_Right.RangeIndex || _Left.RangeIndex == 1 || !_Right.RangeIndex == 1) ? _Left.RangeIndex < _Right.RangeIndex
+                : (_Left.RangeIndex != _Right.RangeIndex) && (!_Left.RangeIndex || !_Right.RangeIndex || _Left.RangeIndex == 1 || !(_Right.RangeIndex == 1)) ? _Left.RangeIndex < _Right.RangeIndex
                 : _Left.TargetAuraState < _Right.TargetAuraState
                );
     }

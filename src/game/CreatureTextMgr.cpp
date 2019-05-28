@@ -493,7 +493,7 @@ bool CreatureTextMgr::TextExist(uint32 sourceEntry, uint8 textGroup)
     return true;
 }
 
-std::string CreatureTextMgr::GetLocalizedChatString(uint32 entry, uint8 gender, uint8 textGroup, uint32 id, int loc_idx) const
+std::string CreatureTextMgr::GetLocalizedChatString(uint32 entry, uint8 /*gender*/, uint8 textGroup, uint32 id, int loc_idx) const
 {
     CreatureTextMap::const_iterator mapitr = mTextMap.find(entry);
     if (mapitr == mTextMap.end())

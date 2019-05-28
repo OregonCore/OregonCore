@@ -41,9 +41,8 @@ class TargetedMovementGeneratorMedium
     protected:
         TargetedMovementGeneratorMedium(Unit& target, float offset = 0, float angle = 0) :
             TargetedMovementGeneratorBase(target),
-            m_evadeTimer(urand(4000, 8000)),
-            i_offset(offset), i_angle(angle),
-            i_recheckDistance(0), i_path(NULL),
+            i_recheckDistance(0), m_evadeTimer(urand(4000, 8000)),
+            i_offset(offset), i_angle(angle), i_path(NULL),
             m_speedChanged(false), i_targetReached(false)
         {
         }

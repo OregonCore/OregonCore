@@ -279,7 +279,7 @@ void FlightPathMovementGenerator::Reset(Player& player)
     init.Launch();
 }
 
-bool FlightPathMovementGenerator::Update(Player& player, const uint32& diff)
+bool FlightPathMovementGenerator::Update(Player& player, const uint32& /*diff*/)
 {
     uint32 pointId = (uint32)player.movespline->currentPathIdx();
     if (pointId > i_currentNode)
@@ -338,7 +338,7 @@ void FlightPathMovementGenerator::DoEventIfAny(Player& player, TaxiPathNodeEntry
     }
 }
 
-bool FlightPathMovementGenerator::GetResetPosition(Player&, float& x, float& y, float& z, float& o) const
+bool FlightPathMovementGenerator::GetResetPosition(Unit&, float& x, float& y, float& z)
 {
     const TaxiPathNodeEntry& node = (*i_path)[i_currentNode];
     x = node.x; y = node.y; z = node.z;

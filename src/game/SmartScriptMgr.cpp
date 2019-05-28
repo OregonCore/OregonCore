@@ -1263,7 +1263,6 @@ void SmartAIMgr::LoadHelperStores()
 {
     uint32 oldMSTime = getMSTime();
 
-    SpellEntry const* spellInfo = NULL;
     for (uint32 i = 1; i < sSpellStore.GetNumRows(); ++i)
     {
         SpellEntry const* spellInfo = sSpellStore.LookupEntry(i);

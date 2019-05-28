@@ -472,7 +472,7 @@ void ObjectMgr::LoadCreatureLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Name.size() <= idx)
+                    if (data.Name.size() <= uint32(idx))
                         data.Name.resize(idx + 1);
 
                     data.Name[idx] = str;
@@ -484,7 +484,7 @@ void ObjectMgr::LoadCreatureLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.SubName.size() <= idx)
+                    if (data.SubName.size() <= uint32(idx))
                         data.SubName.resize(idx + 1);
 
                     data.SubName[idx] = str;
@@ -531,7 +531,7 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.OptionText.size() <= idx)
+                    if (data.OptionText.size() <= uint32(idx))
                         data.OptionText.resize(idx + 1);
 
                     data.OptionText[idx] = str;
@@ -543,7 +543,7 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.BoxText.size() <= idx)
+                    if (data.BoxText.size() <= uint32(idx))
                         data.BoxText.resize(idx + 1);
 
                     data.BoxText[idx] = str;
@@ -553,7 +553,7 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u gossip_menu_option locale strings", mGossipMenuItemsLocaleMap.size());
+    sLog.outString(">> Loaded %lu gossip_menu_option locale strings", mGossipMenuItemsLocaleMap.size());
 }
 
 void ObjectMgr::LoadPointOfInterestLocales()
@@ -586,7 +586,7 @@ void ObjectMgr::LoadPointOfInterestLocales()
             int idx = GetOrNewIndexForLocale(LocaleConstant(i));
             if (idx >= 0)
             {
-                if (data.IconName.size() <= idx)
+                if (data.IconName.size() <= uint32(idx))
                     data.IconName.resize(idx + 1);
 
                 data.IconName[idx] = str;
@@ -594,7 +594,7 @@ void ObjectMgr::LoadPointOfInterestLocales()
         }
     } while (result->NextRow());
 
-    sLog.outString(">> Loaded %u points_of_interest locale strings", mPointOfInterestLocaleMap.size());
+    sLog.outString(">> Loaded %lu points_of_interest locale strings", mPointOfInterestLocaleMap.size());
 }
 
 struct SQLCreatureLoader : public SQLStorageLoaderBase<SQLCreatureLoader>
@@ -1852,7 +1852,7 @@ void ObjectMgr::LoadItemLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Name.size() <= idx)
+                    if (data.Name.size() <= uint32(idx))
                         data.Name.resize(idx + 1);
 
                     data.Name[idx] = str;
@@ -1865,7 +1865,7 @@ void ObjectMgr::LoadItemLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Description.size() <= idx)
+                    if (data.Description.size() <= uint32(idx))
                         data.Description.resize(idx + 1);
 
                     data.Description[idx] = str;
@@ -3829,7 +3829,7 @@ void ObjectMgr::LoadQuests()
         }
     }
 
-    sLog.outString(">> Loaded %u quest definitions", mQuestTemplates.size());
+    sLog.outString(">> Loaded %lu quest definitions", mQuestTemplates.size());
 }
 
 void ObjectMgr::LoadQuestLocales()
@@ -3873,7 +3873,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Title.size() <= idx)
+                    if (data.Title.size() <= uint32(idx))
                         data.Title.resize(idx + 1);
 
                     data.Title[idx] = str;
@@ -3885,7 +3885,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Details.size() <= idx)
+                    if (data.Details.size() <= uint32(idx))
                         data.Details.resize(idx + 1);
 
                     data.Details[idx] = str;
@@ -3897,7 +3897,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Objectives.size() <= idx)
+                    if (data.Objectives.size() <= uint32(idx))
                         data.Objectives.resize(idx + 1);
 
                     data.Objectives[idx] = str;
@@ -3909,7 +3909,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.OfferRewardText.size() <= idx)
+                    if (data.OfferRewardText.size() <= uint32(idx))
                         data.OfferRewardText.resize(idx + 1);
 
                     data.OfferRewardText[idx] = str;
@@ -3921,7 +3921,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.RequestItemsText.size() <= idx)
+                    if (data.RequestItemsText.size() <= uint32(idx))
                         data.RequestItemsText.resize(idx + 1);
 
                     data.RequestItemsText[idx] = str;
@@ -3933,7 +3933,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.EndText.size() <= idx)
+                    if (data.EndText.size() <= uint32(idx))
                         data.EndText.resize(idx + 1);
 
                     data.EndText[idx] = str;
@@ -3947,7 +3947,7 @@ void ObjectMgr::LoadQuestLocales()
                     int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                     if (idx >= 0)
                     {
-                        if (data.ObjectiveText[k].size() <= idx)
+                        if (data.ObjectiveText[k].size() <= uint32(idx))
                             data.ObjectiveText[k].resize(idx + 1);
 
                         data.ObjectiveText[k][idx] = str;
@@ -3958,7 +3958,7 @@ void ObjectMgr::LoadQuestLocales()
     }
     while (result->NextRow());
 
-    sLog.outString(">> Loaded %u Quest locale strings", mQuestLocaleMap.size());
+    sLog.outString(">> Loaded %lu Quest locale strings", mQuestLocaleMap.size());
 }
 
 void ObjectMgr::LoadPetCreateSpells()
@@ -4595,7 +4595,7 @@ void ObjectMgr::LoadPageTextLocales()
             int idx = GetOrNewIndexForLocale(LocaleConstant(i));
             if (idx >= 0)
             {
-                if (data.Text.size() <= idx)
+                if (data.Text.size() <= uint32(idx))
                     data.Text.resize(idx + 1);
 
                 data.Text[idx] = str;
@@ -4770,7 +4770,7 @@ void ObjectMgr::LoadNpcTextLocales()
                     int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                     if (idx >= 0)
                     {
-                        if (data.Text_0[j].size() <= idx)
+                        if (data.Text_0[j].size() <= uint32(idx))
                             data.Text_0[j].resize(idx + 1);
 
                         data.Text_0[j][idx] = str0;
@@ -4782,7 +4782,7 @@ void ObjectMgr::LoadNpcTextLocales()
                     int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                     if (idx >= 0)
                     {
-                        if (data.Text_1[j].size() <= idx)
+                        if (data.Text_1[j].size() <= uint32(idx))
                             data.Text_1[j].resize(idx + 1);
 
                         data.Text_1[j][idx] = str1;
@@ -5247,8 +5247,8 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
             // if find graveyard at different map from where entrance placed (or no entrance data), use any first
             if (!mapEntry 
                 || mapEntry->entrance_map < 0
-                || mapEntry->entrance_map != entry->map_id
-                || mapEntry->entrance_x == 0 && mapEntry->entrance_y == 0)
+                || uint32(mapEntry->entrance_map) != entry->map_id
+                || (mapEntry->entrance_x == 0 && mapEntry->entrance_y == 0))
             {
                 // not have any corrdinates for check distance anyway
                 entryFar = entry;
@@ -5805,7 +5805,7 @@ void ObjectMgr::LoadGameObjectLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Name.size() <= idx)
+                    if (data.Name.size() <= uint32(idx))
                         data.Name.resize(idx + 1);
 
                     data.Name[idx] = str;
@@ -5821,7 +5821,7 @@ void ObjectMgr::LoadGameObjectLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.CastBarCaption.size() <= idx)
+                    if (data.CastBarCaption.size() <= uint32(idx))
                         data.CastBarCaption.resize(idx + 1);
 
                     data.CastBarCaption[idx] = str;
@@ -6959,7 +6959,7 @@ bool ObjectMgr::LoadOregonStrings(DatabaseType& db, char const* table, int32 min
                 if (idx >= 0)
                 {
                     // 0 -> default, idx in to idx+1
-                    if (data.Content.size() <= idx + 1)
+                    if (data.Content.size() <= uint32(idx) + 1)
                         data.Content.resize(idx + 2);
 
                     data.Content[idx + 1] = str;

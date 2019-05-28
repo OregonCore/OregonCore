@@ -354,7 +354,7 @@ void WorldSession::HandlePetStopAttack(WorldPacket& recv_data)
 
     if (GetPlayer()->GetGUID() != pet->GetCharmerOrOwnerGUID())
     {
-        sLog.outError("HandlePetStopAttack: %s isn't charm/pet of %s.", petGuid.GetString().c_str(), _player->GetGUIDLow());
+        sLog.outError("HandlePetStopAttack: %s isn't charm/pet of %u.", petGuid.GetString().c_str(), _player->GetGUIDLow());
         return;
     }
 

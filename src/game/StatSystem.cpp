@@ -436,7 +436,7 @@ void Player::UpdateShieldBlockValue()
     SetUInt32Value(PLAYER_SHIELD_BLOCK, GetShieldBlockValue());
 }
 
-void Player::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage)
+void Player::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bool /*addTotalPct*/, float& minDamage, float& maxDamage)
 {
     UnitMods unitMod;
 

@@ -57,22 +57,22 @@ template<class T, class D>
 class MovementGeneratorMedium : public MovementGenerator
 {
     public:
-        void Initialize(Unit& u)
+        void Initialize(Unit& u) override
         {
             //u->AssertIsType<T>();
             (static_cast<D*>(this))->Initialize(*((T*)&u));
         }
-        void Finalize(Unit& u)
+        void Finalize(Unit& u) override
         {
             //u->AssertIsType<T>();
             (static_cast<D*>(this))->Finalize(*((T*)&u));
         }
-        void Reset(Unit& u)
+        void Reset(Unit& u) override
         {
             //u->AssertIsType<T>();
             (static_cast<D*>(this))->Reset(*((T*)&u));
         }
-        bool Update(Unit& u, const uint32& time_diff)
+        bool Update(Unit& u, const uint32& time_diff) override
         {
             //u->AssertIsType<T>();
             return (static_cast<D*>(this))->Update(*((T*)&u), time_diff);

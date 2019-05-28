@@ -1663,7 +1663,7 @@ class Unit : public WorldObject
         virtual void UpdateMaxHealth() = 0;
         virtual void UpdateMaxPower(Powers power) = 0;
         virtual void UpdateAttackPowerAndDamage(bool ranged = false) = 0;
-        virtual void UpdateDamagePhysical(WeaponAttackType attType);;
+        virtual void UpdateDamagePhysical(WeaponAttackType attType);
         float GetTotalAttackPowerValue(WeaponAttackType attType) const;
         float GetWeaponDamageRange(WeaponAttackType attType , WeaponDamageRange type) const;
         void SetBaseWeaponDamage(WeaponAttackType attType, WeaponDamageRange damageRange, float value) { m_weaponDamage[attType][damageRange] = value; }

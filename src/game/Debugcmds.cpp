@@ -266,7 +266,7 @@ bool ChatHandler::HandleDebugPlayCinematicCommand(const char* args)
                 PSendSysMessage("%02u - %7ums [%f, %f, %f] Facing %f (%f degrees)", count, cam.timeStamp, cam.locations.x, cam.locations.y, cam.locations.z, cam.locations.w, cam.locations.w * (180 / M_PI));
                 count++;
             }
-            PSendSysMessage("%u waypoints dumped", itr->second.size());
+            PSendSysMessage("%lu waypoints dumped", itr->second.size());
         }
     }
 

@@ -1210,7 +1210,7 @@ bool ChatHandler::HandleReloadAuctionsCommand(const char* /*args*/)
     return true;
 }
 
-bool ChatHandler::HandleReloadConditions(const char* args)
+bool ChatHandler::HandleReloadConditions(const char* /*args*/)
 {
     sLog.outString("Re-Loading Conditions...");
     sConditionMgr.LoadConditions(true);

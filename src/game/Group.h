@@ -231,7 +231,7 @@ class Group
         {
             return m_lootMethod;
         }
-        const uint64 GetLooterGuid() const
+        uint64 GetLooterGuid() const
         {
             if (GetLootMethod() == FREE_FOR_ALL)
                 return 0;

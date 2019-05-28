@@ -2366,7 +2366,7 @@ void Creature::AllLootRemovedFromCorpse()
     m_respawnTime = m_corpseRemoveTime + m_respawnDelay;
 }
 
-uint8 Creature::getLevelForTarget(Unit const* target) const
+uint8 Creature::getLevelForTarget(WorldObject const* target) const
 {
     if (!isWorldBoss() || !target->ToUnit())
         return Unit::getLevelForTarget(target);

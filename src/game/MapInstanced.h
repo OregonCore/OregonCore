@@ -31,10 +31,10 @@ class MapInstanced : public Map
         ~MapInstanced() {}
 
         // functions overwrite Map versions
-        void Update(const uint32&);
-        void DelayedUpdate(const uint32 diff);
+        void Update(const uint32&) override;
+        void DelayedUpdate(const uint32 diff) override;
         //void RelocationNotify();
-        void UnloadAll();
+        void UnloadAll() override;
         EnterState CannotEnter(Player* /*player*/) override;
 
         Map* CreateInstanceForPlayer(const uint32 mapId, Player* player, uint32 loginInstanceId = 0);
@@ -62,7 +62,7 @@ class MapInstanced : public Map
         {
             return m_InstancedMaps;
         }
-        virtual void InitVisibilityDistance();
+        void InitVisibilityDistance() override;
 
     private:
 

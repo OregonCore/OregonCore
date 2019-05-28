@@ -47,58 +47,49 @@ struct ItemTemplate;
 
 struct Script
 {
-    Script() :
-        OnLogin(NULL), OnLogout(NULL), OnPVPKill(NULL), OnCreatureKill(NULL), OnPlayerKilledByCreature(NULL),
-        OnLevelChanged(NULL), OnTalentsReset(NULL), OnGroupCreated(NULL), OnGroupPlayerInvited(NULL), OnGroupPlayerJoined(NULL), 
-        OnGroupPlayerRemoved(NULL), OnGroupLeaderChanged(NULL), OnGroupDisbanded(NULL),
-        pGossipHello(NULL), QuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
-        pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
-        pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL), OnQuestAccept(NULL),
-        pGOQuestAccept(NULL), pGOChooseReward(NULL), pGOSelect(NULL), pGOSelectWithCode(NULL), pItemUse(NULL), pEffectDummyCreature(NULL),
-        GetAI(NULL), GetInstanceData(NULL)
-    {}
+    Script() = default;
 
     std::string Name;
 
     //Methods to be scripted
     // Player Related
-    void (*OnLogin                 )(Player*);
-    void (*OnLogout                )(Player*);
-    void (*OnPVPKill               )(Player*, Player*);
-    void (*OnCreatureKill          )(Player*, Creature*);
-    void (*OnPlayerKilledByCreature)(Creature*, Player*);
-    void (*OnLevelChanged          )(Player*, uint8, uint8);
-    void (*OnTalentsReset          )(Player*, bool);
+    void (*OnLogin                 )(Player*) = nullptr;
+    void (*OnLogout                )(Player*) = nullptr;
+    void (*OnPVPKill               )(Player*, Player*) = nullptr;
+    void (*OnCreatureKill          )(Player*, Creature*) = nullptr;
+    void (*OnPlayerKilledByCreature)(Creature*, Player*) = nullptr;
+    void (*OnLevelChanged          )(Player*, uint8, uint8) = nullptr;
+    void (*OnTalentsReset          )(Player*, bool) = nullptr;
 
-    void (*OnGroupCreated          )(Group*, Player*);
-    void (*OnGroupPlayerInvited    )(Group*, Player*);
-    void (*OnGroupPlayerJoined     )(Group*, Player*);
-    void (*OnGroupPlayerRemoved    )(Group*, Player*, uint8, uint64, const char*);
-    void (*OnGroupLeaderChanged    )(Group*, Player*, Player*);
-    void (*OnGroupDisbanded        )(Group*, Player*);
+    void (*OnGroupCreated          )(Group*, Player*) = nullptr;
+    void (*OnGroupPlayerInvited    )(Group*, Player*) = nullptr;
+    void (*OnGroupPlayerJoined     )(Group*, Player*) = nullptr;
+    void (*OnGroupPlayerRemoved    )(Group*, Player*, uint8, uint64, const char*) = nullptr;
+    void (*OnGroupLeaderChanged    )(Group*, Player*, Player*) = nullptr;
+    void (*OnGroupDisbanded        )(Group*, Player*) = nullptr;
 
-    bool (*pGossipHello         )(Player*, Creature*);
-    bool (*QuestAccept          )(Player*, Creature*, Quest const*);
-    bool (*pGossipSelect        )(Player*, Creature*, uint32 , uint32);
-    bool (*pGossipSelectWithCode)(Player*, Creature*, uint32 , uint32 , const char*);
-    bool (*pGOSelect            )(Player*, GameObject*, uint32 , uint32);
-    bool (*pGOSelectWithCode    )(Player*, GameObject*, uint32 , uint32 , const char*);
-    bool (*pQuestSelect         )(Player*, Creature*, Quest const*);
-    bool (*pQuestComplete       )(Player*, Creature*, Quest const*);
-    uint32 (*pNPCDialogStatus   )(Player*, Creature*);
-    uint32 (*pGODialogStatus    )(Player*, GameObject* _GO);
-    bool (*pChooseReward        )(Player*, Creature*, Quest const*, uint32);
-    bool (*pItemHello           )(Player*, Item*, Quest const*);
-    bool (*pGOHello             )(Player*, GameObject*);
-    bool (*pAreaTrigger         )(Player*, AreaTriggerEntry const*);
-    bool (*OnQuestAccept        )(Player*, Item*, Quest const*);
-    bool (*pGOQuestAccept       )(Player*, GameObject*, Quest const*);
-    bool (*pGOChooseReward      )(Player*, GameObject*, Quest const*, uint32);
-    bool (*pItemUse             )(Player*, Item*, SpellCastTargets const&);
-    bool (*pEffectDummyCreature )(Unit*, uint32, uint32, Creature*);
+    bool (*pGossipHello         )(Player*, Creature*) = nullptr;
+    bool (*QuestAccept          )(Player*, Creature*, Quest const*) = nullptr;
+    bool (*pGossipSelect        )(Player*, Creature*, uint32 , uint32) = nullptr;
+    bool (*pGossipSelectWithCode)(Player*, Creature*, uint32 , uint32 , const char*) = nullptr;
+    bool (*pGOSelect            )(Player*, GameObject*, uint32 , uint32) = nullptr;
+    bool (*pGOSelectWithCode    )(Player*, GameObject*, uint32 , uint32 , const char*) = nullptr;
+    bool (*pQuestSelect         )(Player*, Creature*, Quest const*) = nullptr;
+    bool (*pQuestComplete       )(Player*, Creature*, Quest const*) = nullptr;
+    uint32 (*pNPCDialogStatus   )(Player*, Creature*) = nullptr;
+    uint32 (*pGODialogStatus    )(Player*, GameObject* _GO) = nullptr;
+    bool (*pChooseReward        )(Player*, Creature*, Quest const*, uint32) = nullptr;
+    bool (*pItemHello           )(Player*, Item*, Quest const*) = nullptr;
+    bool (*pGOHello             )(Player*, GameObject*) = nullptr;
+    bool (*pAreaTrigger         )(Player*, AreaTriggerEntry const*) = nullptr;
+    bool (*OnQuestAccept        )(Player*, Item*, Quest const*) = nullptr;
+    bool (*pGOQuestAccept       )(Player*, GameObject*, Quest const*) = nullptr;
+    bool (*pGOChooseReward      )(Player*, GameObject*, Quest const*, uint32) = nullptr;
+    bool (*pItemUse             )(Player*, Item*, SpellCastTargets const&) = nullptr;
+    bool (*pEffectDummyCreature )(Unit*, uint32, uint32, Creature*) = nullptr;
 
-    CreatureAI* (*GetAI)(Creature*);
-    InstanceData* (*GetInstanceData)(Map*);
+    CreatureAI* (*GetAI)(Creature*) = nullptr;
+    InstanceData* (*GetInstanceData)(Map*) = nullptr;
 
     void RegisterSelf();
 };

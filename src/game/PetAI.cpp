@@ -226,7 +226,7 @@ void PetAI::UpdateAI(const uint32 diff)
     }
 }
 
-void PetAI::DamageDealt(Unit* victim, uint32& damage, DamageEffectType damageType)
+void PetAI::DamageDealt(Unit* victim, uint32& /*damage*/, DamageEffectType /*damageType*/)
 {
     if (!victim)
         return;

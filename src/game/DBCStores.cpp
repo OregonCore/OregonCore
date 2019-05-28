@@ -208,7 +208,7 @@ inline void LoadDBC(uint32& availableDbcLocales, StoreProblemList& errlist, DBCS
         if (f)
         {
             char buf[100];
-            snprintf(buf, 100, " (exists, but has %d fields instead %d) Wrong client version of DBC files?", storage.GetFieldCount(), strlen(storage.GetFormat()));
+            snprintf(buf, 100, " (exists, but has %d fields instead %lu) Wrong client version of DBC files?", storage.GetFieldCount(), strlen(storage.GetFormat()));
             errlist.push_back(dbc_filename + buf);
             fclose(f);
         }
@@ -546,7 +546,7 @@ void LoadDBCStores(const std::string& dataPath)
         for (std::list<std::string>::iterator i = bad_dbc_files.begin(); i != bad_dbc_files.end(); ++i)
             str += *i + "\n";
 
-        sLog.outFatal("\nSome required *.dbc files (%u from %d) not found or not compatible:\n%s", bad_dbc_files.size(), DBCFilesCount, str.c_str());
+        sLog.outFatal("\nSome required *.dbc files (%lu from %d) not found or not compatible:\n%s", bad_dbc_files.size(), DBCFilesCount, str.c_str());
     }
 
     // check at up-to-date DBC files (53085 is last added spell in 2.4.3)

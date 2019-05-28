@@ -2108,7 +2108,7 @@ void Unit::CalcAbsorbResist(Unit* victim, SpellSchoolMask schoolMask, DamageEffe
         return;
 
     // Magic damage, check for resists
-    if (!spellInfo || (spellInfo->AttributesEx4 & SPELL_ATTR4_IGNORE_RESISTANCES) == 0 && (schoolMask & SPELL_SCHOOL_MASK_MAGIC) && (!binary || damagetype == DOT))
+    if (!spellInfo || ((spellInfo->AttributesEx4 & SPELL_ATTR4_IGNORE_RESISTANCES) == 0 && (schoolMask & SPELL_SCHOOL_MASK_MAGIC) && (!binary || damagetype == DOT)))
     {
         const float mitigation = victim->CalculateMagicResistanceMitigation(victim, victim->CalculateEffectiveMagicResistance(victim, schoolMask), false);
         const SpellPartialResistChanceEntry &chances = SPELL_PARTIAL_RESIST_DISTRIBUTION.at(uint32(mitigation * 10000));
@@ -9566,7 +9566,7 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, W
 
     // can't attack unattackable units or GMs
     if (target->HasUnitState(UNIT_STATE_UNATTACKABLE)
-        || target->GetTypeId() == TYPEID_PLAYER && target->ToPlayer()->IsGameMaster())
+        || (target->GetTypeId() == TYPEID_PLAYER && target->ToPlayer()->IsGameMaster()))
         return false;
 
     // visibility checks
@@ -9679,7 +9679,7 @@ bool Unit::_IsValidAssistTarget(Unit const* target, SpellEntry const* bySpell) c
 
     // can't assist unattackable units or GMs
     if (target->HasUnitState(UNIT_STATE_UNATTACKABLE)
-        || target->GetTypeId() == TYPEID_PLAYER && target->ToPlayer()->IsGameMaster())
+        || (target->GetTypeId() == TYPEID_PLAYER && target->ToPlayer()->IsGameMaster()))
         return false;
 
     // can't assist invisible

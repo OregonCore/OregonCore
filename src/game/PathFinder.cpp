@@ -59,7 +59,6 @@ bool PathInfo::Update(float destX, float destY, float destZ, bool forceDest)
         return false;
     }
 
-    Vector3 oldDest = getEndPosition();
     Vector3 newDest(destX, destY, destZ);
     setEndPosition(newDest);
 

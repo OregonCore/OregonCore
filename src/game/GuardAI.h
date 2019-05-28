@@ -34,8 +34,8 @@ class GuardAI : public ScriptedAI
     public:
         explicit GuardAI(Creature* creature);
 
-        void EnterEvadeMode();
-        void JustDied(Unit*);
+        void EnterEvadeMode() override;
+        void JustDied(Unit*) override;
 
         static int Permissible(const Creature*);
         bool CanSeeAlways(WorldObject const* obj) override;

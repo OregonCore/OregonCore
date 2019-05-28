@@ -60,7 +60,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
         return;
     }
 
-    sLog.outDetail("WORLD: CMSG_USE_ITEM packet, bagIndex: %u, slot: %u, spell_count: %u , cast_count: %u, Item: %u, data length = %i", bagIndex, slot, spellCount, castCount, pItem->GetEntry(), recvPacket.size());
+    sLog.outDetail("WORLD: CMSG_USE_ITEM packet, bagIndex: %u, slot: %u, spell_count: %u , cast_count: %u, Item: %u, data length = %lu", bagIndex, slot, spellCount, castCount, pItem->GetEntry(), recvPacket.size());
 
     ItemTemplate const* proto = pItem->GetProto();
     if (!proto)
@@ -185,7 +185,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 
 void WorldSession::HandleOpenItemOpcode(WorldPacket& recvPacket)
 {
-    sLog.outDetail("WORLD: CMSG_OPEN_ITEM packet, data length = %i", recvPacket.size());
+    sLog.outDetail("WORLD: CMSG_OPEN_ITEM packet, data length = %lu", recvPacket.size());
 
     Player* pUser = _player;
     uint8 bagIndex, slot;

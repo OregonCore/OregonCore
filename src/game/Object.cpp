@@ -2119,7 +2119,7 @@ TempSummon* WorldObject::SummonCreature(uint32 entry, const Position& pos, TempS
 {
     if (Map* map = FindMap())
     {
-        if (TempSummon* summon = map->SummonCreature(entry, pos, NULL, duration, isType(TYPEMASK_UNIT) ? (Unit*)this : NULL, NULL, spwtype))
+        if (TempSummon* summon = map->SummonCreature(entry, pos, NULL, duration, isType(TYPEMASK_UNIT) ? (Unit*)this : NULL, 0, spwtype))
             return summon;
     }
 

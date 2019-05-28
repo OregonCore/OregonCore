@@ -3548,7 +3548,7 @@ void Aura::HandleModStealth(bool apply, bool Real)
     m_target->UpdateObjectVisibility(false);
 }
 
-void Aura::HandleModStealthLevel(bool apply, bool Real)
+void Aura::HandleModStealthLevel(bool apply, bool /*Real*/)
 {
     StealthType type = StealthType(GetMiscValue());
 
@@ -3609,7 +3609,7 @@ void Aura::HandleModInvisibility(bool apply, bool Real)
     m_target->UpdateObjectVisibility(false);
 }
 
-void Aura::HandleModStealthDetect(bool apply, bool Real)
+void Aura::HandleModStealthDetect(bool apply, bool /*Real*/)
 {
     StealthType type = StealthType(GetMiscValue());
 
@@ -3629,7 +3629,7 @@ void Aura::HandleModStealthDetect(bool apply, bool Real)
     m_target->UpdateObjectVisibility(false);
 }
 
-void Aura::HandleModInvisibilityDetect(bool apply, bool Real)
+void Aura::HandleModInvisibilityDetect(bool apply, bool /*Real*/)
 {
     InvisibilityType type = InvisibilityType(GetMiscValue());
 
@@ -4768,7 +4768,7 @@ void Aura::HandleModRegen(bool apply, bool /*Real*/)        // eating
         if (m_periodicTimer <= 0)
         {
             m_periodicTimer += 5000;
-            int32 gain = m_target->ModifyHealth(GetModifierValue());
+            m_target->ModifyHealth(GetModifierValue());
         }
     }
 
@@ -6779,7 +6779,7 @@ void Aura::HandleAuraReflectSpellSchool(bool apply, bool real)
     }
 }
 
-void Aura::HandleAuraCloneCaster(bool apply, bool Real)
+void Aura::HandleAuraCloneCaster(bool apply, bool /*Real*/)
 {
     if (apply)
     {

@@ -2861,7 +2861,7 @@ void Spell::update(uint32 difftime)
         (m_spellInfo->Effect[0] != SPELL_EFFECT_STUCK || !m_caster->HasUnitMovementFlag(MOVEMENTFLAG_FALLINGFAR)))
     {
          // always cancel for channeled spells
-        if (m_spellState == SPELL_STATE_CASTING && !m_spellInfo->AttributesEx5 & SPELL_ATTR5_CAN_CHANNEL_WHEN_MOVING)
+        if (m_spellState == SPELL_STATE_CASTING && !(m_spellInfo->AttributesEx5 & SPELL_ATTR5_CAN_CHANNEL_WHEN_MOVING))
              cancel();
         // don't cancel for melee, autorepeat, triggered and instant spells
         else if (!IsNextMeleeSwingSpell() && !IsAutoRepeat() && !m_IsTriggeredSpell && (m_spellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_MOVEMENT))
@@ -4283,7 +4283,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                             // users, so if it's mana we need to check max is >= 1
                             bool hasPower = int32(target->getPowerType()) == m_spellInfo->EffectMiscValue[i];
 
-                            if (!hasPower || 
+                            if (!hasPower ||
                                 (target->getPowerType() == POWER_MANA &&
                                 target->GetMaxPower(POWER_MANA) == 0))
                                     return SPELL_FAILED_BAD_TARGETS;
@@ -4424,7 +4424,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 switch (SummonProperties->Category)
                 {
                 case SUMMON_CATEGORY_PET:
-                    if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET && m_caster->GetPetGUID())
+                    if (!(m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET) && m_caster->GetPetGUID())
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
                     // intentional missing break, check both GetPetGUID() and GetCharmGUID for SUMMON_CATEGORY_PET
                 case SUMMON_CATEGORY_PUPPET:
@@ -4455,7 +4455,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                             if (Pet* pet = m_caster->ToPlayer()->GetPet())
                                 pet->CastSpell(pet, 32752, true, NULL, NULL, pet->GetGUID());
                     }
-                    else if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET)
+                    else if (!(m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET))
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
                 }
 
@@ -4636,7 +4636,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_CHARM
                     || m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_POSSESS)
                 {
-                    if (!m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET && m_caster->GetPetGUID())
+                    if (!(m_spellInfo->AttributesEx & SPELL_ATTR1_DISMISS_PET) && m_caster->GetPetGUID())
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;
 
                     if (m_caster->GetCharmGUID())
