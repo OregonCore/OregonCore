@@ -1,10 +1,6 @@
 # set up output paths for executable binaries (.exe-files, and .dll-files on DLL-capable platforms)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# set up output paths ofr static libraries etc (commented out - shown here as an example only)
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 if(PLATFORM EQUAL 64)
   # This definition is necessary to work around a bug with Intellisense described
   # here: http://tinyurl.com/2cb428.  Syntax highlighting is important for proper
@@ -33,13 +29,20 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 # Increases the 'Precompiled Header Memory Allocation Limit' to 150MB
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200")
 
+if( WITH_WARNINGS )
+  # Note: MSVC has also /Wall that is supposed to enable all warnings,
+  # but those warnings are not really warnings but rather information messages,
+  # Thus we are interested in one warning level beyond that - level 4
+  add_definitions(/W4 /D__SHOW_STUPID_WARNINGS__)
+  message(STATUS "MSVC: Warnings enabled")
+else()
+  add_definitions(/W0)
+  message(STATUS "MSVC: Warnings disabled")
+endif()
+
 # Define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES - eliminates the warning by changing the strcpy call to strcpy_s, which prevents buffer overruns
 add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES)
 message(STATUS "MSVC: Overloaded standard names")
-
-# Ignore warnings about older, less secure functions
-add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-message(STATUS "MSVC: Disabled NON-SECURE warnings")
 
 #Ignore warnings about POSIX deprecation
 add_definitions(-D_CRT_NONSTDC_NO_WARNINGS)

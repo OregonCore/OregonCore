@@ -94,7 +94,6 @@ endif()
 
 if( WITH_WARNINGS )
   ShowOption("Show all warnings      :" "Yes")
-  add_definitions(-D__SHOW_STUPID_WARNINGS__)
 else()
   ShowOption("Show compile-warnings  :" "No  (default)")
 endif()
