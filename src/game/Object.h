@@ -159,7 +159,7 @@ class Object
             ClearUpdateMask(true);
         }
 
-        uint64 GetGUID() const
+        const uint64& GetGUID() const
         {
             return GetUInt64Value(0);
         }

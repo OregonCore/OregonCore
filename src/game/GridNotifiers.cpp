@@ -52,7 +52,7 @@ VisibleNotifier::SendToSelf()
                 case TYPEID_UNIT:
                     i_player.UpdateVisibilityOf((*itr)->ToCreature(), i_data, i_visibleNow);
                     break;
-                }
+                } 
             }
         }
 
@@ -64,7 +64,7 @@ VisibleNotifier::SendToSelf()
         if (IS_PLAYER_GUID(*it))
         {
             Player* plr = ObjectAccessor::FindPlayer(*it, true);
-            if (plr && plr->IsInMap(&i_player))
+            if (plr && !plr->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
                 plr->UpdateVisibilityOf(&i_player);
         }
     }
@@ -113,11 +113,10 @@ void
 VisibleChangesNotifier::Visit(DynamicObjectMapType& m)
 {
     for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-        if (IS_PLAYER_GUID(iter->GetSource()->GetCasterGUID()))
-            if (Unit* caster = iter->GetSource()->GetCaster())
-                if (Player* player = caster->ToPlayer())
-                    if (player->m_seer == iter->GetSource())
-                        player->UpdateVisibilityOf(&i_object);
+        if (iter->GetSource()->GetTypeId() == TYPEID_PLAYER) // better check to see if the target it a player.
+            if (Player* caster = (Player*)iter->GetSource()->GetCaster())
+                if (caster->m_seer == iter->GetSource())
+                    caster->UpdateVisibilityOf(&i_object);
 }
 
 inline void CreatureUnitRelocationWorker(Creature* c, Unit* u)
@@ -142,6 +141,9 @@ void PlayerRelocationNotifier::Visit(PlayerMapType& m)
         vis_guids.erase(plr->GetGUID());
 
         i_player.UpdateVisibilityOf(plr, i_data, i_visibleNow);
+
+        if (plr->m_seer->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
+            continue;
 
         plr->UpdateVisibilityOf(&i_player);
     }

@@ -46,7 +46,7 @@
 #include "Transports.h"
 #include "Log.h"
 
-GameObject::GameObject() : WorldObject(false), m_model(NULL), m_AI(NULL)
+GameObject::GameObject() : WorldObject(false), m_model(nullptr), m_AI(nullptr)
 {
     m_objectType |= TYPEMASK_GAMEOBJECT;
     m_objectTypeId = TYPEID_GAMEOBJECT;
@@ -55,15 +55,15 @@ GameObject::GameObject() : WorldObject(false), m_model(NULL), m_AI(NULL)
 
     m_valuesCount = GAMEOBJECT_END;
     m_respawnTime = 0;
-    m_respawnDelayTime = 25;
+    m_respawnDelayTime = 300;
     m_lootState = GO_NOT_READY;
     m_spawnedByDefault = true;
     m_usetimes = 0;
     m_spellId = 0;
     m_cooldownTime = 0;
-    m_goInfo = NULL;
+    m_goInfo = nullptr;
     m_ritualOwnerGUID = 0;
-    m_goData = NULL;
+    m_goData = nullptr;
 
     m_DBTableGuid = 0;
 }
@@ -76,7 +76,8 @@ GameObject::~GameObject()
 
 bool GameObject::AIM_Initialize()
 {
-    delete m_AI;
+    if (m_AI)
+        delete m_AI;
 
     m_AI = FactorySelector::SelectGameObjectAI(this);
 
@@ -87,32 +88,37 @@ bool GameObject::AIM_Initialize()
     return true;
 }
 
+std::string GameObject::GetAIName() const
+{
+    if (m_goInfo)
+        return m_goInfo->AIName;
+
+    return "";
+}
+
 void GameObject::CleanupsBeforeDelete()
 {
     if (IsInWorld())
         RemoveFromWorld();
 
-    if (m_uint32Values)                                      // field array can be not exist if GameOBject not loaded
-    {
-        // Possible crash at access to deleted GO in Unit::m_gameobj
-        if (uint64 owner_guid = GetOwnerGUID())
-        {
-            Unit* owner = ObjectAccessor::GetUnit(*this, owner_guid);
-            if (owner)
-                owner->RemoveGameObject(this, false);
-            else
-            {
-                const char* ownerType = "creature";
-                if (IS_PLAYER_GUID(owner_guid))
-                    ownerType = "player";
-                else if (IS_PET_GUID(owner_guid))
-                    ownerType = "pet";
+    if (m_uint32Values)
+        RemoveFromOwner();
+}
 
-                sLog.outError("Delete GameObject (GUID: %u Entry: %u SpellId %u LinkedGO %u) that lost references to owner (GUID %u Type '%s') GO list. Crash possible later.",
-                              GetGUIDLow(), GetGOInfo()->id, m_spellId, GetGOInfo()->GetLinkedGameObjectEntry(), GUID_LOPART(owner_guid), ownerType);
-            }
-        }
+void GameObject::RemoveFromOwner()
+{
+    uint64 ownerGUID = GetOwnerGUID();
+
+    if (!ownerGUID)
+        return;
+
+    if (Unit* owner = ObjectAccessor::GetUnit(*this, ownerGUID))
+    {
+        owner->RemoveGameObject(this, false);
+        ASSERT(!GetOwnerGUID());
+        return;
     }
+    SetOwnerGUID(0);
 }
 
 void GameObject::AddToWorld()
@@ -147,14 +153,7 @@ void GameObject::RemoveFromWorld()
         if (m_zoneScript)
             m_zoneScript->OnGameObjectCreate(this, false);
 
-        // Possible crash at access to deleted GO in Unit::m_gameobj
-        if (uint64 owner_guid = GetOwnerGUID())
-        {
-            if (Unit* owner = GetOwner())
-                owner->RemoveGameObject(this, false);
-            else
-                sLog.outError("Delete GameObject (GUID: %u Entry: %u) that has references in invalid creature %u GO list. Crash possible.", GetGUIDLow(), GetGOInfo()->id, GUID_LOPART(owner_guid));
-        }
+        RemoveFromOwner();
 
         if (m_model)
             if (GetMap()->Contains(*m_model))
@@ -1597,13 +1596,6 @@ void GameObject::UpdateRotationFields(float rotation2 /*=0.0f*/, float rotation3
     SetFloatValue(GAMEOBJECT_ROTATION+3, rotation3);
 }
 
-std::string GameObject::GetAIName() const
-{
-    if (m_goInfo)
-        return m_goInfo->AIName;
-
-    return "";
-}
 
 void GameObject::SetGoState(GOState state)
 {
