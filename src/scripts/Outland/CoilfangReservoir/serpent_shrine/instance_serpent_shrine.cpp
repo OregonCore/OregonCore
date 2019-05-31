@@ -231,8 +231,8 @@ struct instance_serpentshrine_cavern : public ScriptedInstance
                     for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
                         if (Player* plr = itr->GetSource())
                         {
-                            if (plr->GetSkillValue(SKILL_FISHING <= 300))
-                                return;
+                            if (plr->GetSkillValue(SKILL_FISHING) <= 300)
+                                continue;
                             else
                             {
                                 FishingTimer = 10000 + rand() % 30000; //random time before lurker emerges

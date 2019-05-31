@@ -253,7 +253,7 @@ bool VMapManager2::GetLiquidLevel(uint32 mapId, float x, float y, float z, uint8
 {
     if (true/*!DisableMgr::IsDisabledFor(DISABLE_TYPE_VMAP, mapId, NULL, VMAP_DISABLE_LIQUIDSTATUS)*/)
     {
-        InstanceTreeMap::const_iterator instanceTree = GetMapTree(mapId);
+        InstanceTreeMap::const_iterator instanceTree = iInstanceMapTrees.find(mapId);
         if (instanceTree != iInstanceMapTrees.end())
         {
             LocationInfo info;
