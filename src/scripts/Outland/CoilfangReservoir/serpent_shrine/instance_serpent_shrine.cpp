@@ -224,8 +224,22 @@ struct instance_serpentshrine_cavern : public ScriptedInstance
         case GAMEOBJECT_FISHINGNODE_ENTRY://no way checking if fish is hooked, so we create a timed event
             if (LurkerSubEvent == LURKER_NOT_STARTED)
             {
-                FishingTimer = 10000 + rand() % 30000; //random time before lurker emerges
-                LurkerSubEvent = LURKER_FISHING;
+                Map::PlayerList const& players = instance->GetPlayers();
+
+                if (!players.isEmpty())
+                {
+                    for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+                        if (Player* plr = itr->GetSource())
+                        {
+                            if (plr->GetSkillValue(SKILL_FISHING <= 300))
+                                return;
+                            else
+                            {
+                                FishingTimer = 10000 + rand() % 30000; //random time before lurker emerges
+                                LurkerSubEvent = LURKER_FISHING;
+                            }
+                        }
+                }
             }
             break;
         }
