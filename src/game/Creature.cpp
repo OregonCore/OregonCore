@@ -175,7 +175,9 @@ Creature::~Creature()
 {
     m_vendorItemCounts.clear();
 
-    delete i_AI;
+    if (i_AI)
+        delete i_AI;
+
     i_AI = NULL;
 }
 
