@@ -2693,7 +2693,6 @@ uint64 Spell::handle_delayed(uint64 t_offset)
 void Spell::_handle_immediate_phase()
 {
     // handle some immediate features of the spell here
-
     if (m_customAttr & SPELL_ATTR_CU_DIRECT_DAMAGE)
         CalculateDamageDoneForAllTargets();
 
@@ -2701,6 +2700,22 @@ void Spell::_handle_immediate_phase()
     TakeCastItem();
 
     m_needSpellLog = m_isNeedSendToClient;
+    for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
+    {
+        if (m_spellInfo->Effect[i] == 0)
+            continue;
+
+        // apply Send Event effect to ground in case empty target lists
+        if (m_spellInfo->Effect[i] == SPELL_EFFECT_SEND_EVENT || m_spellInfo->Effect[i] == SPELL_EFFECT_TRANS_DOOR && !HaveTargetsForEffect(i))
+        {
+            HandleEffects(NULL, NULL, NULL, i);
+            continue;
+        }
+
+        // Don't do spell log, if is school damage spell
+        if (m_spellInfo->Effect[i] == SPELL_EFFECT_SCHOOL_DAMAGE || m_spellInfo->Effect[i] == 0)
+            m_needSpellLog = false;
+    }
 
     // initialize Diminishing Returns Data
     m_diminishLevel = DIMINISHING_LEVEL_1;
@@ -2710,29 +2725,10 @@ void Spell::_handle_immediate_phase()
     for (std::list<ItemTargetInfo>::iterator ihit = m_UniqueItemInfo.begin(); ihit != m_UniqueItemInfo.end(); ++ihit)
         DoAllEffectOnTarget(&(*ihit));
 
-    if (!m_originalCaster)
-        return;
-
-    // handle effects with SPELL_EFFECT_HANDLE_HIT mode
-    for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
+    for (int j = 0; j < MAX_SPELL_EFFECTS; ++j)
     {
-        // don't do anything for empty effect
-        if (m_spellInfo->Effect[j] == 0)
-            continue;
-
-        // call effect handlers to handle destination hit
-        if (sSpellMgr.EffectTargetType[m_spellInfo->Effect[j]] == SPELL_REQUIRE_DEST)
-        {
-            if (!m_targets.HasDst()) // FIXME: this will ignore dest set in effect
-                m_targets.setDst(m_caster);
-            HandleEffects(m_originalCaster, nullptr, nullptr, j);
-        }
-        else if (sSpellMgr.EffectTargetType[m_spellInfo->Effect[j]] == SPELL_REQUIRE_NONE)
-            HandleEffects(m_originalCaster, nullptr, nullptr, j);
-
-        // Don't do spell log, if is school damage spell
-        if (m_spellInfo->Effect[j] == SPELL_EFFECT_SCHOOL_DAMAGE)
-            m_needSpellLog = false;
+        if (m_spellInfo->Effect[j] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
+            HandleEffects(nullptr, nullptr, nullptr, j);
     }
 }
 
