@@ -2700,22 +2700,6 @@ void Spell::_handle_immediate_phase()
     TakeCastItem();
 
     m_needSpellLog = m_isNeedSendToClient;
-    for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
-    {
-        if (m_spellInfo->Effect[i] == 0)
-            continue;
-
-        // apply Send Event effect to ground in case empty target lists
-        if (m_spellInfo->Effect[i] == SPELL_EFFECT_SEND_EVENT || m_spellInfo->Effect[i] == SPELL_EFFECT_TRANS_DOOR && !HaveTargetsForEffect(i))
-        {
-            HandleEffects(NULL, NULL, NULL, i);
-            continue;
-        }
-
-        // Don't do spell log, if is school damage spell
-        if (m_spellInfo->Effect[i] == SPELL_EFFECT_SCHOOL_DAMAGE || m_spellInfo->Effect[i] == 0)
-            m_needSpellLog = false;
-    }
 
     // initialize Diminishing Returns Data
     m_diminishLevel = DIMINISHING_LEVEL_1;
@@ -2725,10 +2709,29 @@ void Spell::_handle_immediate_phase()
     for (std::list<ItemTargetInfo>::iterator ihit = m_UniqueItemInfo.begin(); ihit != m_UniqueItemInfo.end(); ++ihit)
         DoAllEffectOnTarget(&(*ihit));
 
-    for (int j = 0; j < MAX_SPELL_EFFECTS; ++j)
+    for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
-        if (m_spellInfo->Effect[j] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
-            HandleEffects(nullptr, nullptr, nullptr, j);
+        if (m_spellInfo->Effect[i] == 0)
+            continue;
+
+        if (m_spellInfo->Effect[i] == SPELL_EFFECT_SCHOOL_DAMAGE || m_spellInfo->Effect[i] == 0)
+            m_needSpellLog = false;
+
+        // apply Send Event effect to ground in case empty target lists
+        if (m_spellInfo->Effect[i] == SPELL_EFFECT_SEND_EVENT || m_spellInfo->Effect[i] == SPELL_EFFECT_TRANS_DOOR && !HaveTargetsForEffect(i))
+        {
+            HandleEffects(NULL, NULL, NULL, i);
+        }else if (sSpellMgr.EffectTargetType[m_spellInfo->Effect[i]] == SPELL_REQUIRE_DEST)
+        {
+            if (!m_targets.HasDst())
+                m_targets.setDst(m_caster);
+            HandleEffects(m_originalCaster, nullptr, nullptr, i);
+
+        }else if (sSpellMgr.EffectTargetType[m_spellInfo->Effect[i]] == SPELL_REQUIRE_NONE)
+        {
+            HandleEffects(m_originalCaster, nullptr, nullptr, i);
+
+        }
     }
 }
 
