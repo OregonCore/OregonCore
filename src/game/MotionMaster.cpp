@@ -51,7 +51,7 @@ MotionMaster::Initialize()
 // set new default movement generator
 void MotionMaster::InitDefault()
 {
-    if (i_owner->GetTypeId() == TYPEID_UNIT)
+    if (i_owner->GetTypeId() == TYPEID_UNIT && i_owner->IsAlive())
     {
         MovementGenerator* movement = FactorySelector::selectMovementGenerator(i_owner->ToCreature());
         Mutate(movement == NULL ? &si_idleMovement : movement, MOTION_SLOT_IDLE);
@@ -67,17 +67,24 @@ MotionMaster::~MotionMaster()
     {
         MovementGenerator* curr = top();
         pop();
-        if (curr) DirectDelete(curr);
+        if (curr && !isStatic(curr))
+            DirectDelete(curr);
     }
 }
 
 void
 MotionMaster::UpdateMotion(uint32 diff)
 {
+    if (!i_owner)
+        return;
+
     if (i_owner->HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
         return;
+
     ASSERT(!empty());
+
     m_cleanFlag |= MMCF_UPDATE;
+
     if (!top()->Update(*i_owner, diff))
     {
         m_cleanFlag &= ~MMCF_UPDATE;
@@ -118,6 +125,9 @@ MotionMaster::DirectClean(bool reset)
         if (curr) DirectDelete(curr);
     }
 
+    if (empty())
+        return;
+
     if (needInitTop())
         InitTop();
     else if (reset)
@@ -143,7 +153,7 @@ MotionMaster::DirectExpire(bool reset)
     {
         MovementGenerator* curr = top();
         pop();
-        DirectDelete(curr);
+        if (curr) DirectDelete(curr);
     }
 
     while (!empty() && !top())
@@ -164,7 +174,7 @@ MotionMaster::DelayedExpire()
     {
         MovementGenerator* curr = top();
         pop();
-        DelayedDelete(curr);
+        if (curr) DelayedDelete(curr);
     }
 
     while (!top())
@@ -182,6 +192,7 @@ void MotionMaster::MoveIdle(MovementSlot slot)
 void
 MotionMaster::MoveRandom(float spawndist)
 {
+
     if (i_owner->GetTypeId() == TYPEID_UNIT)
     {
         DEBUG_LOG("Creature (GUID: %u) start moving random", i_owner->GetGUIDLow());
