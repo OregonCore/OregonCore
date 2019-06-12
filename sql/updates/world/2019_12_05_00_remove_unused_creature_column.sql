@@ -1,1 +1,2 @@
-ALTER TABLE `creature` DROP `zoneId`, `areaId`;
+ALTER TABLE `creature` DROP `zoneId`;
+ALTER TABLE `creature` DROP `areaId`;
