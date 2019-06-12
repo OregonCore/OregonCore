@@ -1,0 +1,1 @@
+ALTER TABLE `creature` DROP `zoneId`, `areaId`;
