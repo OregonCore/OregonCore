@@ -367,6 +367,7 @@ class Spell
         void TriggerSpell();
         SpellCastResult CheckCast(bool strict);
         SpellCastResult CheckPetCast(Unit* target);
+        static uint32 GetCCDelay(uint32 _spell);
         SpellCastResult CheckDummyCast(uint32 effIndex);
         bool CanAutoCast(Unit* target);
 

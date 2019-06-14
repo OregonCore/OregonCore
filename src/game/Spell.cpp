@@ -2511,7 +2511,7 @@ void Spell::cast(bool skipCheck)
 
     // Okay, everything is prepared. Now we need to distinguish between immediate and evented delayed spells
     // @TODO: Find similarities for spells such as Ruthlessness and run the proper check here
-    if ((m_spellInfo->speed > 0.0f && !IsChanneledSpell(m_spellInfo)) || m_spellInfo->Id == 14157)
+    if (((m_spellInfo->speed > 0.0f ||GetCCDelay(m_spellInfo->Id) > 0) && !IsChanneledSpell(m_spellInfo)) || m_spellInfo->Id == 14157)
     {
         // Okay, maps created, now prepare flags
         m_immediateHandled = false;
@@ -2551,6 +2551,37 @@ void Spell::cast(bool skipCheck)
     }
 
     SetExecutedCurrently(false);
+}
+
+uint32 Spell::GetCCDelay(uint32 _spell)
+{
+    SpellEntry const* spellproto = sSpellStore.LookupEntry(_spell);
+
+    const uint32 delay70 = 70;
+    const uint32 dalay100 = 100;
+    const uint32 delay130 = 130;
+
+    for (uint8 j = 0; j < MAX_SPELL_EFFECTS; ++j)
+    {
+        switch (spellproto->EffectApplyAuraName[j])
+        {
+        case SPELL_AURA_MOD_STUN:
+            return dalay100;
+            break;
+        case SPELL_AURA_MOD_CONFUSE:
+        case SPELL_AURA_MOD_FEAR:
+        case SPELL_AURA_MOD_SILENCE:
+        case SPELL_AURA_MOD_POSSESS:
+            return delay130;
+            break;
+        case SPELL_AURA_MOD_DISARM:
+        case SPELL_AURA_MOD_ROOT:
+            return delay70;
+            break;
+        }
+    }
+
+    return 0;
 }
 
 void Spell::handle_immediate()
