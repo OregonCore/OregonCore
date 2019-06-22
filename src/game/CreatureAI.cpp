@@ -161,7 +161,7 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
     if (me->GetVictim())
         return;
     
-    if (me->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET || !who->IsInCombat() || !me->IsWithinDist(who, ATTACK_DISTANCE)) // non-combat pets should just stand there and look good;)
+    if (me->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET) // non-combat pets should just stand there and look good;)
         return;
 
     if (me->canStartAttack(who, false))
@@ -280,8 +280,6 @@ bool CreatureAI::UpdateVictim()
             AttackStart(victim);
         return me->GetVictim();
     }
-    else if (me->GetVictim() && me->GetExactDist(me->GetVictim()) < 30.0f)
-        return true;
     else if (me->getThreatManager().isThreatListEmpty())
     {
         EnterEvadeMode();
