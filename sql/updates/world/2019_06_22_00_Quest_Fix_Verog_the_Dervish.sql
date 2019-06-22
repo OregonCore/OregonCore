@@ -1,0 +1,4 @@
+DELETE FROM `creature_text` WHERE `CreatureID`=3397 AND `GroupID`=0 AND `ID`=0 AND `Text`='I am slain! Summon Verog!' AND `Type`=14 AND `Language`=0 AND `Probability`=100 AND `Emote`=0 AND `Duration`=0 AND `Sound`=0 AND `TextRange` IS NULL AND `comment`='Kolkar Bloodcharger';
+INSERT INTO `creature_text` VALUES (3397, 0, 0, 'I am slain! Summon Verog!', 14, 0, 100, 0, 0, 0, NULL, 'Kolkar Bloodcharger');
+DELETE FROM `creature_text` WHERE `CreatureID`=3275 AND `GroupID`=0 AND `ID`=0 AND `Text`='I am slain! Summon Verog!' AND `Type`=14 AND `Language`=0 AND `Probability`=100 AND `Emote`=0 AND `Duration`=0 AND `Sound`=0 AND `TextRange` IS NULL AND `comment`='Kolkar Kolkar Marauder';
+INSERT INTO `creature_text` VALUES (3275, 0, 0, 'I am slain! Summon Verog!', 14, 0, 100, 0, 0, 0, NULL, 'Kolkar Kolkar Marauder');
