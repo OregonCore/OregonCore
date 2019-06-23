@@ -4414,7 +4414,9 @@ void Unit::RemoveNotOwnSingleTargetAuras()
     // single target auras from other casters
     for (AuraMap::iterator iter = m_Auras.begin(); iter != m_Auras.end();)
     {
-        if (iter->second->GetCasterGUID() != GetGUID() && IsSingleTargetSpell(iter->second->GetSpellProto()))
+        Aura const* aura = iter->second;
+
+        if (aura->GetCasterGUID() != GetGUID() && aura->IsSingleTarget()  || IsSingleTargetSpell(iter->second->GetSpellProto()))
             RemoveAura(iter);
         else
             ++iter;
