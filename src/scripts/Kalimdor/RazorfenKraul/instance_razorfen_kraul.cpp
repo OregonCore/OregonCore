@@ -41,7 +41,7 @@ struct instance_razorfen_kraul : public ScriptedInstance
 
     void Initialize()
     {
-        WardKeeperAlive = 1;
+        WardKeeperAlive = 2;
         WardCheck_Timer = 4000;
         DoorWardGUID = 0;
     }
@@ -72,16 +72,29 @@ struct instance_razorfen_kraul : public ScriptedInstance
         }
     }
 
+    void OnCreatureDeath(Creature* pCreature)
+    {
+        switch (pCreature->GetEntry())
+        {
+        case 4625:
+            --WardKeeperAlive;
+            break;
+        }
+    }
+
     void Update(uint32 diff)
     {
-        if (WardCheck_Timer <= diff)
+        if (WardKeeperAlive == 0)
         {
-            HandleGameObject(DoorWardGUID, WardKeeperAlive);
-            WardKeeperAlive = 0;
-            WardCheck_Timer = 4000;
+            if (WardCheck_Timer <= diff)
+            {
+                HandleGameObject(DoorWardGUID, true);
+                WardKeeperAlive = 0;
+                WardCheck_Timer = 4000;
+            }
+            else
+                WardCheck_Timer -= diff;
         }
-        else
-            WardCheck_Timer -= diff;
     }
 
     void SetData(uint32 type, uint32 data)
