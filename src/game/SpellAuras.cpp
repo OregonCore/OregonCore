@@ -3210,6 +3210,7 @@ void Aura::HandleAuraTrackCreatures(bool apply, bool /*Real*/)
 
     if (apply)
         m_target->RemoveNoStackAurasDueToAura(this);
+
     m_target->SetUInt32Value(PLAYER_TRACK_CREATURES, apply ? ((uint32)1) << (m_modifier.m_miscvalue - 1) : 0);
 }
 
@@ -3220,6 +3221,7 @@ void Aura::HandleAuraTrackResources(bool apply, bool /*Real*/)
 
     if (apply)
         m_target->RemoveNoStackAurasDueToAura(this);
+
     m_target->SetUInt32Value(PLAYER_TRACK_RESOURCES, apply ? ((uint32)1) << (m_modifier.m_miscvalue - 1) : 0);
 }
 

@@ -1568,6 +1568,9 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
     if (!spellInfo_1 || !spellInfo_2)
         return false;
 
+    if (spellId_1 == spellId_2)
+        return false;
+
     SpellGroupStackRule stackRule = CheckSpellGroupStackRules(spellInfo_1->Id, spellInfo_2->Id);
     if (stackRule)
     {
@@ -1617,25 +1620,18 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
         case SPELL_SPECIFIC_ASPECT:
         case SPELL_SPECIFIC_WARLOCK_CORRUPTION:
         case SPELL_SPECIFIC_JUDGEMENT:
+        case SPELL_SPECIFIC_TRACKER:
            return sameCaster == (spellSpec == GetSpellSpecific(spellId_2));
         default:
             break;
     }
 
-    if (spellInfo_1->SpellFamilyName == SPELLFAMILY_GENERIC)
+    // generic spells
+    if (!spellInfo_1->SpellFamilyName)
     {
-        if (spellInfo_1->HasAttribute(SPELL_ATTR0_PASSIVE) && spellInfo_1->SpellIconID == 1)
-            return false;
-
-        if (spellInfo_1->SpellIconID == spellInfo_2->SpellIconID)
+        if (spellInfo_1->SpellIconID == spellInfo_2->SpellIconID &&
+            spellInfo_1->SpellIconID != 0 && spellInfo_2->SpellIconID != 0)
             return true;
-
-        if (spellInfo_1->EffectApplyAuraName[0] == SPELL_AURA_MOUNTED && spellInfo_2->EffectApplyAuraName[0] == SPELL_AURA_MOUNTED)
-            return true;
-
-        if (!(spellInfo_1->EffectApplyAuraName[0] == SPELL_AURA_MOD_POWER_REGEN &&
-            spellInfo_1->EffectApplyAuraName[1] == SPELL_AURA_PERIODIC_DUMMY))
-            return false;
     }
 
     // check for class spells
