@@ -1,0 +1,1 @@
+UPDATE `item_template` SET `Flags` = '2048' WHERE `entry` = '841';
