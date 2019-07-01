@@ -79,7 +79,7 @@ bool DynamicObject::CreateDynamicObject(uint32 guidlow, Unit* caster, uint32 spe
         return false;
     }
 
-    WorldObject::_Create(guidlow, HIGHGUID_DYNAMICOBJECT, caster->GetPhaseMask());
+    WorldObject::_Create(guidlow, HIGHGUID_DYNAMICOBJECT);
 
     SetEntry(spellId);
     SetObjectScale(1);

@@ -6314,7 +6314,7 @@ bool ChatHandler::HandleRespawnCommand(const char* /*args*/)
     cell.SetNoCreate();
 
     Oregon::RespawnDo u_do;
-    Oregon::WorldObjectWorker<Oregon::RespawnDo> worker(pl, u_do);
+    Oregon::WorldObjectWorker<Oregon::RespawnDo> worker(u_do);
 
     TypeContainerVisitor<Oregon::WorldObjectWorker<Oregon::RespawnDo>, GridTypeMapContainer > obj_worker(worker);
     cell.Visit(p, obj_worker, *pl->GetMap(), *pl, pl->GetGridActivationRange());

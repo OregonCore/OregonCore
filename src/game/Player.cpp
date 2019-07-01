@@ -2452,24 +2452,10 @@ void Player::SetGameMaster(bool on)
 
         getHostileRefManager().setOnlineOfflineState(false);
         CombatStopWithPets();
-
-        SetPhaseMask(uint32(PHASEMASK_ANYWHERE), false);    // see and visible in all phases
         m_serverSideVisibilityDetect.SetValue(SERVERSIDE_VISIBILITY_GM, GetSession()->GetSecurity());
     }
     else
     {
-        // restore phase
-        uint32 newPhase = 0;
-        AuraList const& phases = GetAurasByType(SPELL_AURA_PHASE);
-        if (!phases.empty())
-            for (AuraList::const_iterator itr = phases.begin(); itr != phases.end(); ++itr)
-                newPhase |= (*itr)->GetMiscValue();
-
-        if (!newPhase)
-            newPhase = PHASEMASK_NORMAL;
-
-        SetPhaseMask(newPhase, false);
-
         m_ExtraFlags &= ~ PLAYER_EXTRA_GM_ON;
         setFactionForRace(getRace());
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_GM);
@@ -15895,27 +15881,6 @@ void Player::_LoadSkills(QueryResult_AutoPtr result)
     }
 }
 
-uint32 Player::GetPhaseMaskForSpawn() const
-{
-    uint32 phase = PHASEMASK_NORMAL;
-    if (!IsGameMaster())
-        phase = GetPhaseMask();
-    else
-    {
-        AuraList const& phases = GetAurasByType(SPELL_AURA_PHASE);
-        if (phases.empty())
-            phase = GetPhaseMask();
-        else
-            phase = phases.front()->GetMiscValue();
-    }
-
-    // some aura phases include 1 normal map in addition to phase itself
-    if (uint32 n_phase = phase & ~PHASEMASK_NORMAL)
-        return n_phase;
-
-    return PHASEMASK_NORMAL;
-}
-
 void Player::_LoadSpells(QueryResult_AutoPtr result)
 {
     m_spells.clear();
@@ -18974,7 +18939,7 @@ void Player::UpdateVisibilityOf(WorldObject* target)
         if (CanSeeOrDetect(target, false, true))
         {
             target->SendUpdateToPlayer(this);
-            //if (target->GetTypeId() != TYPEID_GAMEOBJECT || !((GameObject*)target)->IsTransport())
+            if (target->GetTypeId() != TYPEID_GAMEOBJECT || !((GameObject*)target)->IsTransport())
                 m_clientGUIDs.insert(target->GetGUID());
 
             #ifdef OREGON_DEBUG
@@ -19033,7 +18998,7 @@ void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& vi
             #endif
         }
     }
-    else
+    else if (visibleNow.size() < 30)
     {
         if (CanSeeOrDetect(target, false, true))
         {

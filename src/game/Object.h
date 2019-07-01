@@ -105,12 +105,6 @@ namespace Movement
     class MoveSpline;
 }
 
-enum PhaseMasks
-{
-    PHASEMASK_NORMAL   = 0x00000001,
-    PHASEMASK_ANYWHERE = 0xFFFFFFFF
-};
-
 class WorldPacket;
 class UpdateData;
 class ByteBuffer;
@@ -638,7 +632,7 @@ class WorldObject : public Object, public WorldLocation
 
         virtual void Update (uint32 /*time_diff*/) { }
 
-        void _Create(uint32 guidlow, HighGuid guidhigh, uint32 phaseMask);
+        void _Create(uint32 guidlow, HighGuid guidhigh);
         virtual void RemoveFromWorld() override;
 
         void GetNearPoint2D(float& x, float& y, float distance, float absAngle) const;
@@ -692,12 +686,6 @@ class WorldObject : public Object, public WorldLocation
             return m_InstanceId;
         }
 
-        virtual void SetPhaseMask(uint32 newPhaseMask, bool update);
-        uint32 GetPhaseMask() const { return m_phaseMask; }
-        bool InSamePhase(uint32 phasemask) const { return (GetPhaseMask() & phasemask) != 0; }
-        bool InSamePhase(WorldObject const* obj) const { return obj && InSamePhase(obj->GetPhaseMask()); }
-        static bool InSamePhase(WorldObject const* a, WorldObject const* b) { return a && a->InSamePhase(b); }
-
         uint32 GetZoneId() const;
         uint32 GetAreaId() const;
 
@@ -747,7 +735,7 @@ class WorldObject : public Object, public WorldLocation
         bool IsInMap(const WorldObject* obj) const
         {
             if (obj)
-                return IsInWorld() && obj->IsInWorld() && (GetMap() == obj->GetMap()) && InSamePhase(obj);
+                return IsInWorld() && obj->IsInWorld() && (GetMap() == obj->GetMap());
             else
                 return false;
         }
@@ -952,7 +940,6 @@ class WorldObject : public Object, public WorldLocation
 
         //uint32 m_mapId;                                     // object at map with map_id
         uint32 m_InstanceId;                                // in map copy with instance id
-        uint32 m_phaseMask;                                 // in area phase state
 
         uint16 m_notifyflags;
         uint16 m_executed_notifies;

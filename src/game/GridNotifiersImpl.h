@@ -59,9 +59,6 @@ void Oregon::WorldObjectSearcher<Check>::Visit(GameObjectMapType& m)
 
     for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
         {
             i_object = itr->GetSource();
@@ -79,9 +76,6 @@ void Oregon::WorldObjectSearcher<Check>::Visit(PlayerMapType& m)
 
     for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
         {
             i_object = itr->GetSource();
@@ -99,9 +93,6 @@ void Oregon::WorldObjectSearcher<Check>::Visit(CreatureMapType& m)
 
     for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
         {
             i_object = itr->GetSource();
@@ -119,9 +110,6 @@ void Oregon::WorldObjectSearcher<Check>::Visit(CorpseMapType& m)
 
     for (CorpseMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
         {
             i_object = itr->GetSource();
@@ -139,9 +127,6 @@ void Oregon::WorldObjectSearcher<Check>::Visit(DynamicObjectMapType& m)
 
     for (DynamicObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
         {
             i_object = itr->GetSource();
@@ -154,45 +139,40 @@ template<class Check>
 void Oregon::WorldObjectListSearcher<Check>::Visit(PlayerMapType& m)
 {
     for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-        if (itr->GetSource()->InSamePhase(i_phaseMask))
-            if (i_check(itr->GetSource()))
-                i_objects.push_back(itr->GetSource());
+        if (i_check(itr->GetSource()))
+            i_objects.push_back(itr->GetSource());
 }
 
 template<class Check>
 void Oregon::WorldObjectListSearcher<Check>::Visit(CreatureMapType& m)
 {
     for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-        if (itr->GetSource()->InSamePhase(i_phaseMask))
-            if (i_check(itr->GetSource()))
-                i_objects.push_back(itr->GetSource());
+        if (i_check(itr->GetSource()))
+            i_objects.push_back(itr->GetSource());
 }
 
 template<class Check>
 void Oregon::WorldObjectListSearcher<Check>::Visit(CorpseMapType& m)
 {
     for (CorpseMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-        if (itr->GetSource()->InSamePhase(i_phaseMask))
-            if (i_check(itr->GetSource()))
-                i_objects.push_back(itr->GetSource());
+        if (i_check(itr->GetSource()))
+            i_objects.push_back(itr->GetSource());
 }
 
 template<class Check>
 void Oregon::WorldObjectListSearcher<Check>::Visit(GameObjectMapType& m)
 {
     for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-        if (itr->GetSource()->InSamePhase(i_phaseMask))
-            if (i_check(itr->GetSource()))
-                i_objects.push_back(itr->GetSource());
+        if (i_check(itr->GetSource()))
+            i_objects.push_back(itr->GetSource());
 }
 
 template<class Check>
 void Oregon::WorldObjectListSearcher<Check>::Visit(DynamicObjectMapType& m)
 {
     for (DynamicObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-        if (itr->GetSource()->InSamePhase(i_phaseMask))
-            if (i_check(itr->GetSource()))
-                i_objects.push_back(itr->GetSource());
+        if (i_check(itr->GetSource()))
+            i_objects.push_back(itr->GetSource());
 }
 
 // Gameobject searchers
@@ -206,9 +186,6 @@ void Oregon::GameObjectSearcher<Check>::Visit(GameObjectMapType& m)
 
     for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
         {
             i_object = itr->GetSource();
@@ -222,9 +199,6 @@ void Oregon::GameObjectLastSearcher<Check>::Visit(GameObjectMapType& m)
 {
     for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
             i_object = itr->GetSource();
     }
@@ -234,9 +208,8 @@ template<class Check>
 void Oregon::GameObjectListSearcher<Check>::Visit(GameObjectMapType& m)
 {
     for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-        if (itr->GetSource()->InSamePhase(i_phaseMask))
-            if (i_check(itr->GetSource()))
-                i_objects.push_back(itr->GetSource());
+        if (i_check(itr->GetSource()))
+            i_objects.push_back(itr->GetSource());
 }
 
 // Unit searchers
@@ -250,9 +223,6 @@ void Oregon::UnitSearcher<Check>::Visit(CreatureMapType& m)
 
     for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
         {
             i_object = itr->GetSource();
@@ -270,9 +240,6 @@ void Oregon::UnitSearcher<Check>::Visit(PlayerMapType& m)
 
     for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
         {
             i_object = itr->GetSource();
@@ -286,9 +253,6 @@ void Oregon::UnitLastSearcher<Check>::Visit(CreatureMapType& m)
 {
     for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
             i_object = itr->GetSource();
     }
@@ -299,9 +263,6 @@ void Oregon::UnitLastSearcher<Check>::Visit(PlayerMapType& m)
 {
     for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
             i_object = itr->GetSource();
     }
@@ -311,18 +272,16 @@ template<class Check>
 void Oregon::UnitListSearcher<Check>::Visit(PlayerMapType& m)
 {
     for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-        if (itr->GetSource()->InSamePhase(i_phaseMask))
-            if (i_check(itr->GetSource()))
-                i_objects.push_back(itr->GetSource());
+        if (i_check(itr->GetSource()))
+            i_objects.push_back(itr->GetSource());
 }
 
 template<class Check>
 void Oregon::UnitListSearcher<Check>::Visit(CreatureMapType& m)
 {
     for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-        if (itr->GetSource()->InSamePhase(i_phaseMask))
-            if (i_check(itr->GetSource()))
-                i_objects.push_back(itr->GetSource());
+        if (i_check(itr->GetSource()))
+            i_objects.push_back(itr->GetSource());
 }
 
 // Creature searchers
@@ -336,9 +295,6 @@ void Oregon::CreatureSearcher<Check>::Visit(CreatureMapType& m)
 
     for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
         {
             i_object = itr->GetSource();
@@ -352,9 +308,6 @@ void Oregon::CreatureLastSearcher<Check>::Visit(CreatureMapType& m)
 {
     for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
             i_object = itr->GetSource();
     }
@@ -364,18 +317,16 @@ template<class Check>
 void Oregon::CreatureListSearcher<Check>::Visit(CreatureMapType& m)
 {
     for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-        if (itr->GetSource()->InSamePhase(i_phaseMask))
-            if (i_check(itr->GetSource()))
-                i_objects.push_back(itr->GetSource());
+        if (i_check(itr->GetSource()))
+            i_objects.push_back(itr->GetSource());
 }
 
 template<class Check>
 void Oregon::PlayerListSearcher<Check>::Visit(PlayerMapType& m)
 {
     for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-        if (itr->GetSource()->InSamePhase(i_phaseMask))
-            if (i_check(itr->GetSource()))
-                i_objects.push_back(itr->GetSource());
+        if (i_check(itr->GetSource()))
+            i_objects.push_back(itr->GetSource());
 }
 
 template<class Check>
@@ -387,9 +338,6 @@ void Oregon::PlayerSearcher<Check>::Visit(PlayerMapType& m)
 
     for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
-        if (!itr->GetSource()->InSamePhase(i_phaseMask))
-            continue;
-
         if (i_check(itr->GetSource()))
         {
             i_object = itr->GetSource();

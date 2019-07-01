@@ -278,7 +278,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
             std::list<Unit*> unitList;
             uint32 searchEntry = ChessPieceEntrysAlliance[i];
             Oregon::AllCreaturesOfEntryInRange u_check(me, searchEntry, 100);
-            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, unitList, u_check);
+            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(unitList, u_check);
             me->GetMap()->VisitAll(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), searcher);
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); itr++)
             {
@@ -292,7 +292,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
             std::list<Unit*> unitList;
             uint32 searchEntry = ChessPieceEntrysHorde[i];
             Oregon::AllCreaturesOfEntryInRange u_check(me, searchEntry, 100);
-            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, unitList, u_check);
+            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(unitList, u_check);
             me->GetMap()->VisitAll(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), searcher);
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); itr++)
             {
@@ -304,7 +304,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
         {
             std::list<Unit*> unitList;
             Oregon::AllCreaturesOfEntryInRange u_check(me, NPC_BLACK_SQUARE, 100);
-            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, unitList, u_check);
+            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(unitList, u_check);
             me->GetMap()->VisitAll(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), searcher);
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); itr++)
             {
@@ -316,7 +316,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
         {
             std::list<Unit*> unitList;
             Oregon::AllCreaturesOfEntryInRange check(me, NPC_WHITE_SQUARE, 100);
-            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> _searcher(me, unitList, check);
+            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> _searcher(unitList, check);
             me->GetMap()->VisitAll(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), _searcher);
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); itr++)
             {

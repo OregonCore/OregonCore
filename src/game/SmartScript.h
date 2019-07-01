@@ -183,7 +183,7 @@ class SmartScript
             Cell cell(p);
 
             Oregon::GameObjectWithDbGUIDCheck goCheck(*searchObject, guid);
-            Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck> checker(searchObject, gameObject, goCheck);
+            Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck> checker(gameObject, goCheck);
 
             TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck>, GridTypeMapContainer > objectChecker(checker);
             cell.Visit(p, objectChecker, *searchObject->GetMap(), *searchObject, searchObject->GetGridActivationRange());
@@ -199,7 +199,7 @@ class SmartScript
             Cell cell(p);
 
             Oregon::CreatureWithDbGUIDCheck target_check(searchObject, guid);
-            Oregon::CreatureSearcher<Oregon::CreatureWithDbGUIDCheck> checker(searchObject, creature, target_check);
+            Oregon::CreatureSearcher<Oregon::CreatureWithDbGUIDCheck> checker(creature, target_check);
 
             TypeContainerVisitor<Oregon::CreatureSearcher <Oregon::CreatureWithDbGUIDCheck>, GridTypeMapContainer > unit_checker(checker);
             cell.Visit(p, unit_checker, *searchObject->GetMap(), *searchObject, searchObject->GetGridActivationRange());

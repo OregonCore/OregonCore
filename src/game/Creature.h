@@ -268,7 +268,6 @@ struct CreatureData
     explicit CreatureData() : dbData(true) {}
     uint32 id;                                              // entry in creature_template
     uint16 mapid;
-    uint32 phaseMask;
     uint32 displayid;
     int32 equipmentId;
     float posX;
@@ -470,7 +469,7 @@ class Creature : public Unit, public GridObject<Creature>
 
         void DisappearAndDie(bool CorpseRemove = false);
 
-        bool Create(uint32 guidlow, Map* map, uint32 phaseMask, uint32 Entry, uint32 team, float x, float y, float z, float ang, const CreatureData* data = NULL);
+        bool Create(uint32 guidlow, Map* map, uint32 Entry, uint32 team, float x, float y, float z, float ang, const CreatureData* data = NULL);
         bool LoadCreaturesAddon(bool reload = false);
         void SelectLevel();
         void LoadEquipment(uint32 equip_entry, bool force = false);
@@ -583,7 +582,7 @@ class Creature : public Unit, public GridObject<Creature>
         bool LoadCreatureFromDB(uint32 guid, Map* map, bool addToMap = true);
         virtual void SaveToDB();                              // overwrited in TemporarySummon
 
-        virtual void SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask); // overwrited in Pet
+        virtual void SaveToDB(uint32 mapid, uint8 spawnMask); // overwrited in Pet
         virtual void DeleteFromDB();                          // overwrited in Pet
 
         Loot loot;

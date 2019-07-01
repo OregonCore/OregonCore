@@ -725,7 +725,7 @@ void Creature::DoFleeToGetAssistance()
         Cell cell(p);
         cell.SetNoCreate();
         Oregon::NearestAssistCreatureInCreatureRangeCheck u_check(this, GetVictim(), radius);
-        Oregon::CreatureLastSearcher<Oregon::NearestAssistCreatureInCreatureRangeCheck> searcher(this, creature, u_check);
+        Oregon::CreatureLastSearcher<Oregon::NearestAssistCreatureInCreatureRangeCheck> searcher(creature, u_check);
 
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestAssistCreatureInCreatureRangeCheck>, GridTypeMapContainer > grid_creature_searcher(searcher);
 
@@ -760,11 +760,10 @@ bool Creature::AIM_Initialize(CreatureAI* ai)
     return true;
 }
 
-bool Creature::Create(uint32 guidlow, Map* map, uint32 phaseMask, uint32 entry, uint32 team, float x, float y, float z, float ang, const CreatureData* data)
+bool Creature::Create(uint32 guidlow, Map* map, uint32 entry, uint32 team, float x, float y, float z, float ang, const CreatureData* data)
 {
     ASSERT(map);
     SetMap(map);
-    SetPhaseMask(phaseMask, false);
 
     CreatureInfo const* cinfo = sObjectMgr.GetCreatureTemplate(entry);
     if (!cinfo)
@@ -1057,10 +1056,10 @@ void Creature::SaveToDB()
         return;
     }
 
-    SaveToDB(GetMapId(), data->spawnMask, GetPhaseMask());
+    SaveToDB(GetMapId(), data->spawnMask);
 }
 
-void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
+void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
 {
     // update in loaded data
     if (!m_DBTableGuid)
@@ -1094,7 +1093,6 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
     // data->guid = guid must not be update at save
     data.id = GetEntry();
     data.mapid = mapid;
-    data.phaseMask = phaseMask;
     data.displayid = displayId;
     data.equipmentId = GetCurrentEquipmentId();
     data.posX = GetPositionX();
@@ -1126,7 +1124,6 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
        << GetEntry() << ","
        << mapid << ","
        << (uint32)spawnMask << ","
-       << (uint32)phaseMask << ","
        << displayId << ","
        << GetEquipmentId() << ","
        << GetPositionX() << ","
@@ -1314,7 +1311,7 @@ bool Creature::LoadCreatureFromDB(uint32 guid, Map* map, bool addToMap)
         guid = sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT);
 
     uint16 team = 0;
-    if (!Create(guid, map, data->phaseMask, data->id, team, data->posX, data->posY, data->posZ, data->orientation, data))
+    if (!Create(guid, map, data->id, team, data->posX, data->posY, data->posZ, data->orientation, data))
         return false;
 
     //We should set first home position, because then AI calls home movement
@@ -1638,7 +1635,6 @@ void Creature::setDeathState(DeathState s)
 
         if (!IsPet())
         {
-            CreatureData const* creatureData = GetCreatureData();
             CreatureInfo  const* cinfo = GetCreatureTemplate();
 
             SetUInt32Value(UNIT_NPC_FLAGS, cinfo->npcflag);
@@ -1646,9 +1642,6 @@ void Creature::setDeathState(DeathState s)
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
             SetMeleeDamageSchool(SpellSchools(cinfo->dmgschool));
-
-            if (creatureData && GetPhaseMask() != creatureData->phaseMask)
-                SetPhaseMask(creatureData->phaseMask, false);
         }
 
         Unit::setDeathState(ALIVE);
@@ -1884,7 +1877,7 @@ Unit* Creature::SelectNearestTarget(float dist, bool playerOnly /* = false */) c
 
     {
         Oregon::NearestHostileUnitCheck u_check(this, dist, playerOnly);
-        Oregon::UnitLastSearcher<Oregon::NearestHostileUnitCheck> searcher(this, target, u_check);
+        Oregon::UnitLastSearcher<Oregon::NearestHostileUnitCheck> searcher(target, u_check);
 
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
@@ -1912,7 +1905,7 @@ Unit* Creature::SelectNearestTargetInAttackDistance(float dist) const
     }
 
     Oregon::NearestHostileUnitInAttackDistanceCheck u_check(this, dist);
-    Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck> searcher(this, target, u_check);
+    Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck> searcher(target, u_check);
 
     TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
     TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
@@ -1953,7 +1946,7 @@ void Creature::CallAssistance()
                 cell.SetNoCreate();
 
                 Oregon::AnyAssistCreatureInRangeCheck u_check(this, GetVictim(), radius);
-                Oregon::CreatureListSearcher<Oregon::AnyAssistCreatureInRangeCheck> searcher(this, assistList, u_check);
+                Oregon::CreatureListSearcher<Oregon::AnyAssistCreatureInRangeCheck> searcher(assistList, u_check);
 
                 TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AnyAssistCreatureInRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
 
@@ -1985,7 +1978,7 @@ void Creature::CallForHelp(float radius)
     cell.SetNoCreate();
 
     Oregon::CallOfHelpCreatureInRangeDo u_do(this, GetVictim(), radius);
-    Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo> worker(this, u_do);
+    Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo> worker(u_do);
 
     TypeContainerVisitor<Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo>, GridTypeMapContainer >  grid_creature_searcher(worker);
 
@@ -2752,7 +2745,7 @@ Unit* Creature::SelectNearestHostileUnitInAggroRange(bool useLOS) const
 
     {
         Oregon::NearestHostileUnitInAggroRangeCheck u_check(this, useLOS);
-        Oregon::UnitSearcher<Oregon::NearestHostileUnitInAggroRangeCheck> searcher(this, target, u_check);
+        Oregon::UnitSearcher<Oregon::NearestHostileUnitInAggroRangeCheck> searcher(target, u_check);
 
         VisitNearbyGridObject(MAX_AGGRO_RADIUS, searcher);
     }

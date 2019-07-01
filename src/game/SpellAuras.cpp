@@ -312,7 +312,7 @@ pAuraHandler AuraHandler[TOTAL_AURAS] =
     &Aura::HandleUnused,                                    //258 unused
     &Aura::HandleUnused,                                    //259 unused
     &Aura::HandleUnused,                                    //260 unused
-    &Aura::HandlePhase                                      //261 SPELL_AURA_261 some phased state (44856 spell)
+    &Aura::HandleNULL                                       //261 SPELL_AURA_261 some phased state (44856 spell)
 };
 
 Aura::Aura(SpellEntry const* spellproto, uint32 eff, int32* currentBasePoints, Unit* target, Unit* caster, Item* castItem) :
@@ -684,14 +684,14 @@ void AreaAura::Update(uint32 diff)
             case AREA_AURA_FRIEND:
                 {
                     Oregon::AnyFriendlyUnitInObjectRangeCheck u_check(caster, caster, m_radius);
-                    Oregon::UnitListSearcher<Oregon::AnyFriendlyUnitInObjectRangeCheck> searcher(caster, targets, u_check);
+                    Oregon::UnitListSearcher<Oregon::AnyFriendlyUnitInObjectRangeCheck> searcher(targets, u_check);
                     caster->VisitNearbyObject(m_radius, searcher);
                     break;
                 }
             case AREA_AURA_ENEMY:
                 {
                     Oregon::AnyAoETargetUnitInObjectRangeCheck u_check(caster, caster, m_radius); // No GetCharmer in searcher
-                    Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck> searcher(caster, targets, u_check);
+                    Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck> searcher(targets, u_check);
                     caster->VisitNearbyObject(m_radius, searcher);
                     break;
                 }
@@ -3369,7 +3369,7 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
 
         std::list<Unit*> targets;
         Oregon::AnyUnfriendlyUnitInObjectRangeCheck u_check(m_target, m_target, m_target->GetMap()->GetVisibilityRange());
-        Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(m_target, targets, u_check);
+        Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(targets, u_check);
         m_target->VisitNearbyObject(m_target->GetMap()->GetVisibilityRange(), searcher);
         for (std::list<Unit*>::iterator iter = targets.begin(); iter != targets.end(); ++iter)
         {
@@ -3485,7 +3485,7 @@ void Aura::HandleModStealth(bool apply, bool Real)
 
         std::list<Unit*> targets;
         Oregon::AnyUnfriendlyUnitInObjectRangeCheck u_check(m_target, m_target, m_target->GetMap()->GetVisibilityRange());
-        Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(m_target, targets, u_check);
+        Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(targets, u_check);
         m_target->VisitNearbyObject(m_target->GetMap()->GetVisibilityRange(), searcher);
         for (std::list<Unit*>::iterator iter = targets.begin(); iter != targets.end(); ++iter)
         {
@@ -6826,39 +6826,5 @@ void Aura::HandleIncreasePetOutdoorSpeed(bool apply, bool /*Real*/)
             }
         }
     }
-}
-
-void Aura::HandlePhase(bool apply, bool /*Real*/)
-{
-    // always non stackable
-    if (apply)
-    {
-        Unit::AuraList const& phases = m_target->GetAurasByType(SPELL_AURA_PHASE);
-        if (!phases.empty())
-            m_target->RemoveAurasDueToSpell(phases.front()->GetId(), this);
-    }
-
-    uint32 newPhase = 0;
-    Unit::AuraList const& phases = m_target->GetAurasByType(SPELL_AURA_PHASE);
-    if (!phases.empty())
-        for (Unit::AuraList::const_iterator itr = phases.begin(); itr != phases.end(); ++itr)
-            newPhase |= (*itr)->GetMiscValue();
-
-    if (Player* player = m_target->ToPlayer())
-    {
-        if (!newPhase)
-            newPhase = 0x00000001;
-
-        // GM-mode have mask 0xFFFFFFFF
-        if (player->IsGameMaster())
-            newPhase = 0xFFFFFFFF;
-
-        player->SetPhaseMask(newPhase, false);
-        //player->GetSession()->SendSetPhaseShift(newPhase);
-    }
-
-    // need triggering visibility update base at phase update of not GM invisible (other GMs anyway see in any phases)
-    if (m_target->IsVisible())
-        m_target->UpdateObjectVisibility();
 }
 

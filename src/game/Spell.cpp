@@ -442,7 +442,7 @@ void Spell::FillTargetMap()
                             WorldObject* result = NULL;
 
                             Oregon::CannibalizeObjectCheck u_check(m_caster, max_range);
-                            Oregon::WorldObjectSearcher<Oregon::CannibalizeObjectCheck > searcher(m_caster, result, u_check);
+                            Oregon::WorldObjectSearcher<Oregon::CannibalizeObjectCheck > searcher(result, u_check);
                             m_caster->VisitNearbyGridObject(max_range, searcher);
                             if (!result)
                                 m_caster->VisitNearbyWorldObject(max_range, searcher);
@@ -1553,7 +1553,7 @@ WorldObject* Spell::SearchNearbyTarget(float range, SpellTargets TargetType)
         {
             Unit* target = NULL;
             Oregon::AnyUnfriendlyUnitInObjectRangeCheck u_check(m_caster, m_caster, range);
-            Oregon::UnitLastSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(m_caster, target, u_check);
+            Oregon::UnitLastSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(target, u_check);
             m_caster->VisitNearbyObject(range, searcher);
             return target;
         }
@@ -1561,7 +1561,7 @@ WorldObject* Spell::SearchNearbyTarget(float range, SpellTargets TargetType)
         {
             Unit* target = NULL;
             Oregon::AnyFriendlyUnitInObjectRangeCheck u_check(m_caster, m_caster, range);
-            Oregon::UnitLastSearcher<Oregon::AnyFriendlyUnitInObjectRangeCheck> searcher(m_caster, target, u_check);
+            Oregon::UnitLastSearcher<Oregon::AnyFriendlyUnitInObjectRangeCheck> searcher(target, u_check);
             m_caster->VisitNearbyObject(range, searcher);
             return target;
         }
@@ -4058,7 +4058,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                                 Cell cell(p);
 
                                 Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*m_caster, (*i_spellST)->ConditionValue2, range);
-                                Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(m_caster, p_GameObject, go_check);
+                                Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(p_GameObject, go_check);
 
                                 TypeContainerVisitor<Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer > object_checker(checker);
                                 cell.Visit(p, object_checker, *m_caster->GetMap(), *m_caster, range);
@@ -4094,7 +4094,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                             cell.SetNoCreate();             // Really don't know what is that???
 
                             Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*m_caster, (*i_spellST)->ConditionValue2, (*i_spellST)->ConditionValue1 != SPELL_TARGET_TYPE_DEAD, range);
-                            Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(m_caster, p_Creature, u_check);
+                            Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(p_Creature, u_check);
 
                             TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
 
@@ -5512,7 +5512,7 @@ SpellCastResult Spell::CheckItems()
 
         GameObject* ok = NULL;
         Oregon::GameObjectFocusCheck go_check(m_caster, m_spellInfo->RequiresSpellFocus);
-        Oregon::GameObjectSearcher<Oregon::GameObjectFocusCheck> checker(m_caster, ok, go_check);
+        Oregon::GameObjectSearcher<Oregon::GameObjectFocusCheck> checker(ok, go_check);
 
         TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::GameObjectFocusCheck>, GridTypeMapContainer > object_checker(checker);
         Map& map = *m_caster->GetMap();

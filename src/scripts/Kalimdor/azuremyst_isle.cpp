@@ -577,7 +577,7 @@ struct npc_geezleAI : public ScriptedAI
         float radius = 50.0f;
         std::list<Player*> players;
         Oregon::AnyPlayerInObjectRangeCheck checker(me, radius);
-        Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(me, players, checker);
+        Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(players, checker);
         me->VisitNearbyWorldObject(radius, searcher);
 
         for (std::list<Player*>::const_iterator itr = players.begin(); itr != players.end(); ++itr)

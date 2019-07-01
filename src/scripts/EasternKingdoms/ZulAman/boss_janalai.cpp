@@ -240,7 +240,7 @@ struct boss_janalaiAI : public ScriptedAI
             cell.SetNoCreate();
 
             Oregon::AllCreaturesOfEntryInRange check(me, MOB_EGG, 100);
-            Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, templist, check);
+            Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
             cell.Visit(pair, cSearcher, *me->GetMap(), *me, me->GetGridActivationRange());
         }
@@ -271,7 +271,7 @@ struct boss_janalaiAI : public ScriptedAI
             cell.SetNoCreate();
 
             Oregon::AllCreaturesOfEntryInRange check(me, MOB_FIRE_BOMB, 100);
-            Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, templist, check);
+            Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
             cell.Visit(pair, cSearcher, *me->GetMap(), *me, me->GetGridActivationRange());
         }
@@ -519,7 +519,7 @@ struct mob_amanishi_hatcherAI : public ScriptedAI
             cell.SetNoCreate();
 
             Oregon::AllCreaturesOfEntryInRange check(me, 23817, 50);
-            Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, templist, check);
+            Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
             cell.Visit(pair, cSearcher, *me->GetMap(), *me, me->GetGridActivationRange());
         }

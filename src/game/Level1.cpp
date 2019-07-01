@@ -899,7 +899,6 @@ bool ChatHandler::HandleSummonCommand(const char* args)
         float x, y, z;
         m_session->GetPlayer()->GetClosePoint(x, y, z, target->GetObjectSize());
         target->TeleportTo(m_session->GetPlayer()->GetMapId(), x, y, z, target->GetOrientation());
-        target->SetPhaseMask(m_session->GetPlayer()->GetPhaseMask(), true);
     }
     else if (uint64 guid = sObjectMgr.GetPlayerGUIDByName(name))
     {
@@ -1036,7 +1035,6 @@ bool ChatHandler::HandleAppearCommand(const char* args)
         }
 
         _player->TeleportTo(target->GetMapId(), x, y, z, _player->GetAngle(target), TELE_TO_GM_MODE);
-        _player->SetPhaseMask(target->GetPhaseMask(), true);
 
         return true;
     }

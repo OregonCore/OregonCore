@@ -1048,7 +1048,7 @@ void hyjalAI::HideNearPos(float x, float y)
     // First get all creatures.
     std::list<Creature*> creatures;
     Oregon::AllFriendlyCreaturesInGrid creature_check(me);
-    Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> creature_searcher(me, creatures, creature_check);
+    Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> creature_searcher(creatures, creature_check);
     TypeContainerVisitor <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>, GridTypeMapContainer> creature_visitor(creature_searcher); 
     cell.Visit(pair, creature_visitor, *(me->GetMap()), *me, me->GetGridActivationRange());
 
@@ -1069,7 +1069,7 @@ void hyjalAI::RespawnNearPos(float x, float y)
     cell.SetNoCreate();
 
     Oregon::RespawnDo u_do;
-    Oregon::WorldObjectWorker<Oregon::RespawnDo> worker(me, u_do);
+    Oregon::WorldObjectWorker<Oregon::RespawnDo> worker(u_do);
     TypeContainerVisitor<Oregon::WorldObjectWorker<Oregon::RespawnDo>, GridTypeMapContainer > obj_worker(worker);
     cell.Visit(p, obj_worker, *me->GetMap(), *me, me->GetGridActivationRange());
 }
@@ -1102,7 +1102,7 @@ void hyjalAI::WaypointReached(uint32 i)
         // First get all creatures.
         std::list<Creature*> creatures;
         Oregon::AllFriendlyCreaturesInGrid creature_check(me);
-        Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> creature_searcher(me, creatures, creature_check);
+        Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> creature_searcher(creatures, creature_check);
         TypeContainerVisitor
         <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
         GridTypeMapContainer> creature_visitor(creature_searcher);
@@ -1143,7 +1143,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
 
             std::list<Creature*> creatures;
             Oregon::AllFriendlyCreaturesInGrid creature_check(me);
-            Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> creature_searcher(me, creatures, creature_check);
+            Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> creature_searcher(creatures, creature_check);
             TypeContainerVisitor
             <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
             GridTypeMapContainer> creature_visitor(creature_searcher);

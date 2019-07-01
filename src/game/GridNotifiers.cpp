@@ -327,13 +327,12 @@ void DynamicObjectUpdater::Visit(PlayerMapType& m)
         VisitHelper(itr->GetSource());
 }
 
-void MessageDistDeliverer::Visit(PlayerMapType& m)
+void
+MessageDistDeliverer::Visit(PlayerMapType& m)
 {
     for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
         Player* target = iter->GetSource();
-        if (!target->InSamePhase(i_phaseMask))
-            continue;
 
         if (target->GetExactDist2dSq(i_source) > i_distSq)
             continue;
@@ -352,48 +351,53 @@ void MessageDistDeliverer::Visit(PlayerMapType& m)
     }
 }
 
-void MessageDistDeliverer::Visit(CreatureMapType& m)
+void
+MessageDistDeliverer::Visit(CreatureMapType& m)
 {
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        Creature* target = iter->GetSource();
-        if (!target->InSamePhase(i_phaseMask))
-            continue;
-
-        if (target->GetExactDist2dSq(i_source) > i_distSq)
+        if (iter->GetSource()->GetExactDist2dSq(i_source) > i_distSq)
             continue;
 
         // Send packet to all who are sharing the creature's vision
-        if (!target->GetSharedVisionList().empty())
+        if (!iter->GetSource()->GetSharedVisionList().empty())
         {
             SharedVisionList::const_iterator i = iter->GetSource()->GetSharedVisionList().begin();
             for (; i != iter->GetSource()->GetSharedVisionList().end(); ++i)
-                if ((*i)->m_seer == target)
+                if ((*i)->m_seer == iter->GetSource())
                     SendPacket(*i);
         }
     }
 }
 
-void MessageDistDeliverer::Visit(DynamicObjectMapType& m)
+void
+MessageDistDeliverer::Visit(DynamicObjectMapType& m)
 {
     for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        DynamicObject* target = iter->GetSource();
-        if (!target->InSamePhase(i_phaseMask))
+        if (iter->GetSource()->GetExactDist2dSq(i_source) > i_distSq)
             continue;
 
-        if (target->GetExactDist2dSq(i_source) > i_distSq)
-            continue;
-
-        if (target->GetTypeId() == TYPEID_PLAYER)
+        if (iter->GetSource()->GetTypeId() == TYPEID_PLAYER)
         {
             // Send packet back to the caster if the caster has vision of dynamic object
-            Player* caster = target->GetCaster()->ToPlayer();
-            if (caster && caster->m_seer == target)
+            Player* caster = iter->GetSource()->GetCaster()->ToPlayer();
+            if (caster && caster->m_seer == iter->GetSource())
                 SendPacket(caster);
         }
     }
 }
+
+/*
+void
+MessageDistDeliverer::VisitObject(Player* plr)
+{
+    if (!i_ownTeamOnly || (i_source.GetTypeId() == TYPEID_PLAYER && plr->GetTeam() == ((Player&)i_source).GetTeam()))
+    {
+        SendPacket(plr);
+    }
+}
+*/
 
 template<class T> void
 ObjectUpdater::Visit(GridRefManager<T>& m)

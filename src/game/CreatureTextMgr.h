@@ -240,7 +240,7 @@ void CreatureTextMgr::SendChatPacket(WorldObject* source, Builder const& builder
     }
 
     float dist = GetRangeForChatType(msgType);
-    Oregon::PlayerDistWorker<CreatureTextLocalizer<Builder> > worker(source, dist, localizer);
+    Oregon::PlayerDistWorker<CreatureTextLocalizer<Builder> > worker(dist, localizer);
     source->VisitNearbyWorldObject(dist, worker);
 }
 

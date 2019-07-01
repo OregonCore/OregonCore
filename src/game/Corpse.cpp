@@ -85,7 +85,7 @@ bool Corpse::Create(uint32 guidlow, Player* owner, uint32 /*mapid*/, float x, fl
     //in other way we will get a crash in Corpse::SaveToDB()
     SetMap(owner->GetMap());
 
-    WorldObject::_Create(guidlow, HIGHGUID_CORPSE, owner->GetPhaseMask());
+    WorldObject::_Create(guidlow, HIGHGUID_CORPSE);
 
     SetObjectScale(1);
     SetFloatValue(CORPSE_FIELD_POS_X, x);
@@ -106,7 +106,7 @@ void Corpse::SaveToDB()
     DeleteFromDB();
 
     std::ostringstream ss;
-    ss  << "INSERT INTO corpse (guid,player,position_x,position_y,position_z,orientation,zone,map,displayId,itemCache,bytes1,bytes2,guild,flags,dynFlags,time,corpse_type,instance, phaseMask) VALUES ("
+    ss  << "INSERT INTO corpse (guid,player,position_x,position_y,position_z,orientation,zone,map,displayId,itemCache,bytes1,bytes2,guild,flags,dynFlags,time,corpse_type,instance) VALUES ("
         << GetGUIDLow() << ", "
         << GUID_LOPART(GetOwnerGUID()) << ", "
         << GetPositionX() << ", "
@@ -126,8 +126,7 @@ void Corpse::SaveToDB()
         << GetUInt32Value(CORPSE_FIELD_DYNAMIC_FLAGS) << ", "
         << uint64(m_time) << ", "
         << uint32(GetType()) << ", "
-        << int(GetInstanceId()) << ", "
-        << uint64(GetPhaseMask()) << ")";
+        << int(GetInstanceId()) << ")";
     CharacterDatabase.Execute(ss.str().c_str());
     CharacterDatabase.CommitTransaction();
 }
@@ -167,7 +166,7 @@ bool Corpse::LoadCorpseFromDB(uint32 guid, Field* fields)
     uint32 mapid    = fields[4].GetUInt32();
 
     // Initialize the datastores for this object
-    WorldObject::_Create(guid, HIGHGUID_CORPSE, GetPhaseMask());
+    WorldObject::_Create(guid, HIGHGUID_CORPSE);
 
     SetObjectScale(1.0f);
     SetUInt32Value(CORPSE_FIELD_DISPLAY_ID, fields[5].GetUInt32());
@@ -183,12 +182,9 @@ bool Corpse::LoadCorpseFromDB(uint32 guid, Field* fields)
 
     uint32 instanceid  = fields[14].GetUInt32();
 
-    uint32 phaseMask = fields[15].GetUInt32();
-
     // place
     SetLocationInstanceId(instanceid);
     SetLocationMapId(mapid);
-    SetPhaseMask(phaseMask, false);
     Relocate(positionX, positionY, positionZ, ort);
 
     if (!IsPositionValid())

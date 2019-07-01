@@ -132,6 +132,31 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
             DoScriptText(RAND(SAY_SLAY1, SAY_SLAY2), me);
     }
 
+    Creature* SelectCreatureInGrid(uint32 entry, float range)
+    {
+        Creature* pCreature = NULL;
+
+        CellCoord pair(Oregon::ComputeCellCoord(me->GetPositionX(), me->GetPositionY()));
+        Cell cell(pair);
+        cell.SetNoCreate();
+
+        Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*me, entry, true, range);
+        Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
+        TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
+        cell.Visit(pair, creature_searcher, *(me->GetMap()), *me, me->GetGridActivationRange());
+
+        return pCreature;
+    }
+
+    void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
+    {
+        //FIXME: hack :(
+        if (spell->Id == SPELL_WARLORDS_RAGE_PROC)
+            if (pInstance)
+                if (pInstance->GetData(TYPE_DISTILLER) == DONE)
+                    me->RemoveAurasDueToSpell(SPELL_WARLORDS_RAGE_PROC);
+    }
+
     void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
