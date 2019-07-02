@@ -1266,7 +1266,7 @@ void ObjectMgr::LoadCreatures()
                                  //4             5           6           7           8            9              10         11
                                  "equipment_id, position_x, position_y, position_z, orientation, spawntimesecs, spawndist, currentwaypoint,"
                                  //12        13       14            15         16     17
-                                 "curhealth, curmana, MovementType, spawnMask, event, pool_entry "
+                                 "curhealth, curmana, MovementType, spawnMask, event, pool_entry, creature.npcflag, creature.unit_flags, creature.dynamicflags  "
                                  "FROM creature LEFT OUTER JOIN game_event_creature ON creature.guid = game_event_creature.guid "
                                  "LEFT OUTER JOIN pool_creature ON creature.guid = pool_creature.guid");
 
@@ -1317,8 +1317,11 @@ void ObjectMgr::LoadCreatures()
         data.curmana        = fields[13].GetUInt32();
         data.movementType   = fields[14].GetUInt8();
         data.spawnMask      = fields[15].GetUInt8();
-        int16 gameEvent     = fields[16].GetInt16();
-        int32 PoolId        = fields[17].GetInt32();
+        int16 gameEvent     = fields[17].GetInt16();
+        int32 PoolId        = fields[18].GetInt32();
+        data.npcflag        = fields[19].GetUInt32();
+        data.unit_flags     = fields[20].GetUInt32();
+        data.dynamicflags   = fields[21].GetUInt32();
 
         MapEntry const* mapEntry = sMapStore.LookupEntry(data.mapid);
         if (!mapEntry)
