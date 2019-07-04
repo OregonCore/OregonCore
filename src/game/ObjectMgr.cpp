@@ -1317,11 +1317,11 @@ void ObjectMgr::LoadCreatures()
         data.curmana        = fields[13].GetUInt32();
         data.movementType   = fields[14].GetUInt8();
         data.spawnMask      = fields[15].GetUInt8();
-        int16 gameEvent     = fields[17].GetInt16();
-        int32 PoolId        = fields[18].GetInt32();
-        data.npcflag        = fields[19].GetUInt32();
-        data.unit_flags     = fields[20].GetUInt32();
-        data.dynamicflags   = fields[21].GetUInt32();
+        int16 gameEvent     = fields[16].GetInt16();
+        int32 PoolId        = fields[17].GetInt32();
+        data.npcflag        = fields[18].GetUInt32();
+        data.unit_flags     = fields[19].GetUInt32();
+        data.dynamicflags   = fields[20].GetUInt32();
 
         MapEntry const* mapEntry = sMapStore.LookupEntry(data.mapid);
         if (!mapEntry)
