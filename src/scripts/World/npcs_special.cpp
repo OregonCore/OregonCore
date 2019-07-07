@@ -164,7 +164,7 @@ struct npc_chicken_cluckAI : public ScriptedAI
     {
         ResetFlagTimer = 120000;
         me->SetFaction(FACTION_CHICKEN);
-        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
     }
 
     void EnterCombat(Unit* /*who*/) {}
@@ -172,7 +172,7 @@ struct npc_chicken_cluckAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         // Reset flags after a certain time has passed so that the next player has to start the 'event' again
-        if (me->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER))
+        if (me->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER))
         {
             if (ResetFlagTimer <= diff)
             {
@@ -193,7 +193,7 @@ struct npc_chicken_cluckAI : public ScriptedAI
             case TEXT_EMOTE_CHICKEN:
                 if (player->GetQuestStatus(QUEST_CLUCK) == QUEST_STATUS_NONE && rand32() % 30 == 1)
                 {
-                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
                     me->SetFaction(FACTION_FRIENDLY);
                     DoScriptText(EMOTE_HELLO, me);
                 }
@@ -201,7 +201,7 @@ struct npc_chicken_cluckAI : public ScriptedAI
             case TEXT_EMOTE_CHEER:
                 if (player->GetQuestStatus(QUEST_CLUCK) == QUEST_STATUS_COMPLETE)
                 {
-                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
                     me->SetFaction(FACTION_FRIENDLY);
                     DoScriptText(EMOTE_CLUCK_TEXT, me);
                 }
@@ -217,6 +217,7 @@ CreatureAI* GetAI_npc_chicken_cluck(Creature* pCreature)
 
 bool QuestAccept_npc_chicken_cluck(Player* /*pPlayer*/, Creature* pCreature, const Quest* _Quest)
 {
+
     if (_Quest->GetQuestId() == QUEST_CLUCK)
         CAST_AI(npc_chicken_cluckAI, pCreature->AI())->Reset();
 
