@@ -138,42 +138,45 @@ bool GossipSelect_npc_captured_sunhawk_agent(Player* pPlayer, Creature* pCreatur
 
 struct npc_young_furbolg_shamanAI : public ScriptedAI
 {
-	npc_young_furbolg_shamanAI(Creature* c) : ScriptedAI(c) {}
+    npc_young_furbolg_shamanAI(Creature* c) : ScriptedAI(c) {}
 
-	void Reset()
-	{
-		reset_timer = 900000;
-		me->SetStandState(UNIT_STAND_STATE_DEAD);
-	}
+    void Reset()
+    {
+        reset_timer = 900000;
+        me->SetStandState(UNIT_STAND_STATE_DEAD);
+        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+    }
 
-	uint32 reset_timer;
+    uint32 reset_timer;
 
-	void SpellHit(Unit* /*pWho*/, const SpellEntry* pSpell)
-	{
-		//When hit with ressurection say text
-		if (pSpell->Id == SPELL_SYMBOL_OF_LIFE)
-		{
-			me->SetStandState(UNIT_STAND_STATE_STAND);
-		}
-	}
+    void SpellHit(Unit* /*pWho*/, const SpellEntry* pSpell)
+    {
+        //When hit with ressurection say text
+        if (pSpell->Id == SPELL_SYMBOL_OF_LIFE)
+        {
+            me->SetStandState(UNIT_STAND_STATE_STAND);
+            me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+        }
+    }
 
-	void UpdateAI(const uint32 uiDiff)
-	{
-		if (!UpdateVictim())
-		{
-			if (reset_timer <= uiDiff)
-			{
-				me->SetStandState(UNIT_STAND_STATE_DEAD);
-				reset_timer = 900000;
-			}
-			else reset_timer -= uiDiff;
-		}
-	}
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!UpdateVictim())
+        {
+            if (reset_timer <= uiDiff)
+            {
+                me->SetStandState(UNIT_STAND_STATE_DEAD);
+                me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+                reset_timer = 900000;
+            }
+            else reset_timer -= uiDiff;
+        }
+    }
 };
 CreatureAI* GetAI_npc_young_furbolg_shaman(Creature* pCreature)
 {
-	return new npc_young_furbolg_shamanAI(pCreature);
-}
+    return new npc_young_furbolg_shamanAI(pCreature);
+};
 
 void AddSC_bloodmyst_isle()
 {
