@@ -134,7 +134,7 @@ class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Th
         void outFatal( const char* err, ... )                  ATTR_PRINTF(2, 3) ATTR_NORETURN;
         void outCharDump( const char* str, uint32 account_id, uint32 guid, const char* name );
         void outCommand(uint64 account, const char* fmt, ...) ATTR_PRINTF(3, 4);
-        void CreateUpdateFile(const char* description, const char* str);
+        void CreateUpdateFile(const char* str);
 
         static void outTimestamp(FILE* file);
         static std::string GetTimestampStr();

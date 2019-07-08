@@ -240,7 +240,7 @@ FILE* Log::openGmlogPerAccount(uint64 account)
     return fopen(namebuf, "ab");
 }
 
-void Log::CreateUpdateFile(const char* description, const char* str)
+void Log::CreateUpdateFile(const char* str)
 {
     time_t t = time(NULL);
     tm* aTm = localtime(&t);
@@ -253,13 +253,14 @@ void Log::CreateUpdateFile(const char* description, const char* str)
 
     ofstream(file_);
     std::ostringstream stream;
-    stream << year << "_" << month << "_" << day << "_" << minutes << "_" << description << ".sql";
-    file_.open(stream.str().c_str());
+    stream << year << "_" << month << "_" << day <<".sql";
+    file_.open(stream.str().c_str(), std::ios::out | std::ios::app);
+
     if (file_.is_open())
     {
-        file_ << str;
+        file_ << str << "\n" << std::endl;
+        file_.close();
     }
-    file_.close();
 }
 
 void Log::outTimestamp(FILE* file)

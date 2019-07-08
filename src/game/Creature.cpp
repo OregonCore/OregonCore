@@ -1119,7 +1119,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
     WorldDatabase.PExecuteLog("DELETE FROM creature WHERE guid = '%u'", m_DBTableGuid);
 
     std::ostringstream ss;
-    ss << "INSERT INTO creature (guid, id , map, spawnMask, phaseMask, modelid, equipment_id, position_x, position_y, position_z, orientation, spawntimesecs, spawndist, currentwaypoint, curhealth, curmana, MovementType, npcflag, unit_flags, dynamicflags) VALUES ("
+    ss << "INSERT INTO creature (guid, id , map, spawnMask, modelid, equipment_id, position_x, position_y, position_z, orientation, spawntimesecs, spawndist, currentwaypoint, curhealth, curmana, MovementType, npcflag, unit_flags, dynamicflags) VALUES ("
        << m_DBTableGuid << ","
        << GetEntry() << ","
        << mapid << ","
@@ -1145,7 +1145,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
     WorldDatabase.CommitTransaction();
 
     if (sWorld.getConfig(CONFIG_CREATEUPDATE_FILE))
-        sLog.CreateUpdateFile(cinfo->Name, ss.str().c_str());
+        sLog.CreateUpdateFile(ss.str().c_str());
 }
 
 void Creature::SelectLevel()
@@ -1482,7 +1482,7 @@ void Creature::DeleteFromDB()
     WorldDatabase.CommitTransaction();
 
     if (sWorld.getConfig(CONFIG_CREATEUPDATE_FILE))
-        sLog.CreateUpdateFile("Delete_Creature", statement.str().c_str());
+        sLog.CreateUpdateFile(statement.str().c_str());
 
     sObjectMgr.DeleteCreatureData(m_DBTableGuid);
 }
