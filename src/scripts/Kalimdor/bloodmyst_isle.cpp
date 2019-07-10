@@ -87,8 +87,9 @@ struct mob_matis_the_cruelAI : public ScriptedAI
             {
                 tracker->Say("Return to Kuros. I will bring him to Blood Watch", LANG_UNIVERSAL, me->GetGUID());
                 creditPlayer();
+                tracker->DespawnOrUnsummon(10000);
             }
-            
+            me->DespawnOrUnsummon(10000);
         }
 
         DoMeleeAttackIfReady();
