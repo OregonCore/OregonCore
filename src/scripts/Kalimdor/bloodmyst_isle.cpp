@@ -18,7 +18,7 @@
 /* ScriptData
 SDName: Bloodmyst_Isle
 SD%Complete: 80
-SDComment: Quest support: 9670, 9756(gossip items text needed).
+SDComment: Quest support: 9711, 9670, 9756(gossip items text needed).
 SDCategory: Bloodmyst Isle
 EndScriptData */
 
@@ -30,6 +30,75 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
+
+/*######
+## mob_matis_the_cruel
+######*/
+enum misc
+{
+    QUEST_MATIS_THE_CRUEL = 9711,
+    FACTION_ORGINAL = 1701,
+    FACTION_FRIENDLY = 35,
+    NPC_TRACKER = 17853,
+};
+
+struct mob_matis_the_cruelAI : public ScriptedAI
+{
+    mob_matis_the_cruelAI(Creature* c) : ScriptedAI(c) {}
+
+    void Reset()
+    {
+        me->SetFaction(FACTION_ORGINAL);
+    }
+
+    void EnterCombat(Unit* who)
+    {
+        if (Creature* tracker = GetClosestCreatureWithEntry(me, NPC_TRACKER, 35.0f))
+        {
+            tracker->Say("We've got you now, Mathis the Cruel!", LANG_UNIVERSAL, me->GetGUID());
+            me->Say("You will regret this, maggot.", LANG_UNIVERSAL, me->GetGUID());
+        }
+    }
+
+    void creditPlayer()
+    {
+        Map* map = me->GetMap();
+        Map::PlayerList const &PlayerList = map->GetPlayers();
+
+        for (auto itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+        {
+            if (Player* player = itr->GetSource())
+                if (me->IsWithinDistInMap(player, 20.0f) && (player->GetQuestStatus(QUEST_MATIS_THE_CRUEL) == QUEST_STATUS_INCOMPLETE) )
+                    player->GroupEventHappens(QUEST_MATIS_THE_CRUEL, me);
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!UpdateVictim())
+            return;
+
+        if (me->GetHealthPct() <= 25)
+        {
+            me->CombatStop();
+            me->SetFaction(FACTION_FRIENDLY);
+            me->SetStandState(UNIT_STAND_STATE_KNEEL);
+            if (Creature* tracker = GetClosestCreatureWithEntry(me, NPC_TRACKER, 35.0f))
+            {
+                tracker->Say("Return to Kuros. I will bring him to Blood Watch", LANG_UNIVERSAL, me->GetGUID());
+                creditPlayer();
+            }
+            
+        }
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_mob_matis_the_cruel(Creature* pCreature)
+{
+    return new mob_matis_the_cruelAI(pCreature);
+}
 
 /*######
 ## mob_webbed_creature
@@ -191,6 +260,11 @@ void AddSC_bloodmyst_isle()
     newscript->Name = "npc_captured_sunhawk_agent";
     newscript->pGossipHello =  &GossipHello_npc_captured_sunhawk_agent;
     newscript->pGossipSelect = &GossipSelect_npc_captured_sunhawk_agent;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_matis_the_cruel";
+    newscript->GetAI = &GetAI_mob_matis_the_cruel;
     newscript->RegisterSelf();
 }
 
