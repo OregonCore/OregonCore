@@ -3762,6 +3762,19 @@ SpellCastResult Spell::CheckCast(bool strict)
 {
     Unit* victim = m_targets.getUnitTarget();
 
+    if (m_spellInfo->Id == 26656) // Black Qiraji Battle Tank
+    {
+        if (m_caster->IsMounted())
+        {
+            m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
+            return SPELL_FAILED_DONT_REPORT;
+        }
+
+        if (m_caster->IsInCombat())
+            return SPELL_FAILED_AFFECTING_COMBAT;
+    }
+
+
     if (victim)
         if (!(m_spellInfo->AttributesEx6 & SPELL_ATTR6_CAN_TARGET_INVISIBLE) && !m_caster->CanSeeOrDetect(victim))
             return SPELL_FAILED_BAD_TARGETS;
