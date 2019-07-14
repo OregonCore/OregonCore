@@ -5335,10 +5335,10 @@ SpellCastResult Spell::CheckRange(bool strict)
     }
 
     //add radius of caster and ~5 yds "give" for non stricred (landing) check
-    //float range_mod = strict ? 1.25f : 6.25;
+    float range_mod = strict ? 1.25f : 6.25;
 
     SpellRangeEntry const* srange = sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex);
-    float max_range = GetSpellMaxRange(srange);// + range_mod;
+    float max_range = GetSpellMaxRange(srange) + range_mod;
     float min_range = GetSpellMinRange(srange);
     uint32 range_type = GetSpellRangeType(srange);
 
@@ -5375,11 +5375,13 @@ SpellCastResult Spell::CheckRange(bool strict)
         if (IsSpellHaveEffect(m_spellInfo, SPELL_EFFECT_TELEPORT_UNITS))
             return SPELL_CAST_OK;
 
+        if (m_spellInfo->Id == 7620)
+            return SPELL_CAST_OK;
+
         WorldLocation destPos = m_targets.m_dstPos;
-        float distance = m_caster->GetExactDist(destPos.m_positionX, destPos.m_positionY, destPos.m_positionZ);
-        if (distance > max_range)
+        if (!m_caster->IsWithinDist3d(destPos.m_positionX, destPos.m_positionY, destPos.m_positionZ, max_range))
             return SPELL_FAILED_OUT_OF_RANGE;
-        if (distance < min_range)
+        if (min_range && m_caster->IsWithinDist3d(destPos.m_positionX, destPos.m_positionY, destPos.m_positionZ, min_range))
             return SPELL_FAILED_TOO_CLOSE;
     }
 
