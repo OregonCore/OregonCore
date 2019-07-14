@@ -2061,6 +2061,40 @@ void SpellMgr::LoadSpellChains()
         }
     }
 
+    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT `spell_id`, `prev_spell_id`,`next_spell_id`,`first_spell_id`,`last_spell_id`, `rank` FROM `spell_ranks`");
+
+    if (!result)
+        return;
+
+    std::vector<uint32> spell_id;
+    std::vector<uint32> prev_spell_id;
+    std::vector < uint32> next_spell_id;
+    std::vector<uint32>first_spell_id;
+    std::vector<uint32>last_spell_id;
+    std::vector<uint32>rank;
+
+    do
+    {
+        Field* fields = result->Fetch();
+        spell_id.push_back(fields[0].GetUInt32());
+        prev_spell_id.push_back(fields[1].GetUInt32());
+        next_spell_id.push_back(fields[2].GetUInt32());
+        first_spell_id.push_back(fields[3].GetUInt32());
+        last_spell_id.push_back(fields[4].GetUInt32());
+        rank.push_back(fields[5].GetUInt32());
+
+    } while (result->NextRow());
+
+    for (int8 i = 0; i < spell_id.size(); ++i)
+    {
+        mSpellChains[spell_id[i]].prev = prev_spell_id[i];
+        mSpellChains[spell_id[i]].next = next_spell_id[i];
+        mSpellChains[spell_id[i]].first = first_spell_id[i];
+        mSpellChains[spell_id[i]].last = last_spell_id[i];
+        mSpellChains[spell_id[i]].rank = rank[i];
+    }
+
+
     //uncomment these two lines to print yourself list of spell_chains on startup
     //    for (UNORDERED_MAP<uint32, SpellChainNode>::iterator itr=mSpellChains.begin();itr != mSpellChains.end();itr++)
     //       sLog.outString("Id: %u, Rank: %d , %s",itr->first,itr->second.rank, sSpellStore.LookupEntry(itr->first)->Rank[sWorld.GetDefaultDbcLocale()]);
