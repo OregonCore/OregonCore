@@ -5266,14 +5266,15 @@ void Aura::HandleModDamagePercentDone(bool apply, bool Real)
             m_target->HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, float(GetModifierValue()), apply);
             m_target->HandleStatModifier(UNIT_MOD_DAMAGE_OFFHAND, TOTAL_PCT, float(GetModifierValue()), apply);
             m_target->HandleStatModifier(UNIT_MOD_DAMAGE_RANGED, TOTAL_PCT, float(GetModifierValue()), apply);
+
+            // For show in client
+            if (m_target->GetTypeId() == TYPEID_PLAYER)
+                m_target->ApplyModSignedFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT, m_modifier.m_amount / 100.0f, apply);
         }
         else
         {
             // done in Player::_ApplyWeaponDependentAuraMods
         }
-        // For show in client
-        if (m_target->GetTypeId() == TYPEID_PLAYER)
-            m_target->ApplyModSignedFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT, m_modifier.m_amount / 100.0f, apply);
     }
 
     // Skip non magic case for speedup
