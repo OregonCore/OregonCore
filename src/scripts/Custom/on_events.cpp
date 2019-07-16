@@ -31,6 +31,12 @@ void OnLogout(Player* /*pPlayer*/)
 
 }
 
+// This function is called when a player is rewarded XP
+void OnGivePlayerXP(Player* /*player*/, uint32& /*amount*/, Unit* /*victim*/)
+{
+
+}
+
 //This function is called when the player kills another player
 void OnPVPKill(Player* /*killer*/, Player* /*killed*/)
 {
@@ -105,6 +111,7 @@ void AddSC_onevents()
     newscript->OnLogin = &OnLogin;
     newscript->OnLogout = &OnLogout;
     newscript->OnPVPKill = &OnPVPKill;
+    newscript->OnGivePlayerXP = &OnGivePlayerXP;
 
     newscript->OnGroupCreated = &OnGroupCreated;
     newscript->OnGroupPlayerInvited = &OnGroupPlayerInvited;

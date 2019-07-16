@@ -49,13 +49,13 @@ struct Script
 {
     Script() :
         OnLogin(NULL), OnLogout(NULL), OnPVPKill(NULL), OnCreatureKill(NULL), OnPlayerKilledByCreature(NULL),
-        OnLevelChanged(NULL), OnTalentsReset(NULL), OnGroupCreated(NULL), OnGroupPlayerInvited(NULL), OnGroupPlayerJoined(NULL), 
+        OnLevelChanged(NULL), OnTalentsReset(NULL), OnGroupCreated(NULL), OnGroupPlayerInvited(NULL), OnGroupPlayerJoined(NULL),
         OnGroupPlayerRemoved(NULL), OnGroupLeaderChanged(NULL), OnGroupDisbanded(NULL),
         pGossipHello(NULL), pQuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
         pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL),
         pGOQuestAccept(NULL), pGOSelect(NULL), pGOChooseReward(NULL), pGOSelectWithCode(NULL), pItemUse(NULL), pEffectDummyCreature(NULL),
-        GetAI(NULL), GetInstanceData(NULL)
+        GetAI(NULL), GetInstanceData(NULL), OnGivePlayerXP(NULL)
     {}
 
     std::string Name;
@@ -69,6 +69,7 @@ struct Script
     void (*OnPlayerKilledByCreature)(Creature*, Player*);
     void (*OnLevelChanged          )(Player*, uint8, uint8);
     void (*OnTalentsReset          )(Player*, bool);
+    void(*OnGivePlayerXP)          (Player*, uint32&, Unit*);
 
     void (*OnGroupCreated          )(Group*, Player*);
     void (*OnGroupPlayerInvited    )(Group*, Player*);
@@ -116,6 +117,7 @@ class ScriptMgr
         //event handlers
         void OnLogin(Player* pPlayer);
         void OnLogout(Player* pPlayer);
+        void OnGivePlayerXP(Player* pPlayer, uint32& xp, Unit* victim);
         void OnPVPKill(Player* killer, Player* killed);
         void OnCreatureKill(Player* killer, Creature* killed);
         void OnPlayerKilledByCreature(Creature* killer, Player* killed);

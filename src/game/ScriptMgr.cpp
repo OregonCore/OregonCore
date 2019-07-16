@@ -241,6 +241,13 @@ void ScriptMgr::OnLogout(Player* player)
     tmpscript->OnLogout(player);
 }
 
+void ScriptMgr::OnGivePlayerXP(Player* player, uint32& xp, Unit* victim)
+{
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnGivePlayerXP) return;
+    tmpscript->OnGivePlayerXP(player, xp, victim);
+}
+
 void ScriptMgr::OnPVPKill(Player* killer, Player* killed)
 {
     Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
