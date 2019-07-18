@@ -1,0 +1,1 @@
+UPDATE `gameobject` SET `spawntimesecs` = '300' WHERE `id` IN (375);
