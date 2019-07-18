@@ -6867,6 +6867,35 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, uint32 damage, Aura* triggeredBy
     // Custom triggered spells
     switch (auraSpellInfo->Id)
     {
+     // Primal Fury - Druid Talent
+    case 16961:
+    {
+        if (GetTypeId() != TYPEID_PLAYER) // Check see if unit is player
+            return false;
+
+        if (!procSpell) 
+            return false;
+
+        if (!(PROC_EX_CRITICAL_HIT)) // if we are not critical hit return
+            return false;
+
+        switch (m_form)
+        {
+        case FORM_CAT:
+            
+            if (!procSpell->HasEffect(SPELL_EFFECT_ADD_COMBO_POINTS)) // if the current spell does not add combo points return.
+                return false;
+
+            trigger_spell_id = 16953;
+            target = victim;
+            break;
+        case FORM_BEAR:
+            trigger_spell_id = 16959;
+            target = this;
+            break;
+        } 
+        break;
+    }
     // Persistent Shield (Scarab Brooch trinket)
     // This spell originally trigger 13567 - Dummy Trigger (vs dummy efect)
     case 26467:
