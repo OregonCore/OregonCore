@@ -594,6 +594,7 @@ struct npc_khadgars_servantAI : public npc_escortAI
                         case 21:
                             DoScriptText(SAY_KHAD_SERV_21, me, pPlayer);
                             pPlayer->AreaExploredOrEventHappens(QUEST_CITY_LIGHT);
+                            me->DespawnOrUnsummon(5000);
                             SetEscortPaused(false);
                             break;
                         }
