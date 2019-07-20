@@ -4954,7 +4954,8 @@ bool Unit::HandleHasteAuraProc(Unit* victim, uint32 damage, Aura* triggeredByAur
             case 33735:
                 {
                     target = SelectNearbyTarget(victim);
-                    if (!target || !target->IsHostileTo(target->GetVictim()))
+
+                    if (!target || target->IsTotem() || target->IsFriendlyTo(this))
                         return false;
 
                     basepoints0 = damage;
@@ -5042,7 +5043,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, Aura* triggeredByAur
 
                     target = SelectNearbyTarget(victim);
 
-                    if (!target || !target->IsInCombatWith(target->GetVictim()))
+                    if (!target || target->IsTotem() || target->IsFriendlyTo(this))
                         return false;
 
                     if (procSpell && procSpell->SpellFamilyFlags == 536870912 && procSpell->SpellIconID == 1648)        // Prevent Execute proc on targets with > 20% health
