@@ -6484,11 +6484,11 @@ void Spell::EffectMomentMove(SpellEffIndex effIndex)
                 if (!map->IsInWater(tstX, tstY, tstZ))  // second safety check z for blink way if on the ground
                 {
                     // highest available point
-                    tstZ1 = map->GetHeight(tstX, tstY, prevZ + travelDistZ + 2.0f);
+                    tstZ1 = map->GetHeight(tstX, tstY, prevZ);
                     // upper or floor
-                    tstZ2 = map->GetHeight(tstX, tstY, prevZ + travelDistZ);
+                    tstZ2 = map->GetHeight(tstX, tstY, prevZ); 
                     //lower than floor
-                    tstZ3 = map->GetHeight(tstX, tstY, prevZ - travelDistZ);
+                    tstZ3 = map->GetHeight(tstX, tstY, prevZ);
 
                     //distance of rays, will select the shortest in 3D
                     srange1 = sqrt((tstY - prevY)*(tstY - prevY) + (tstX - prevX)*(tstX - prevX) + (tstZ1 - prevZ)*(tstZ1 - prevZ));
@@ -6496,11 +6496,11 @@ void Spell::EffectMomentMove(SpellEffIndex effIndex)
                     srange3 = sqrt((tstY - prevY)*(tstY - prevY) + (tstX - prevX)*(tstX - prevX) + (tstZ3 - prevZ)*(tstZ3 - prevZ));
 
                     if (srange1 < srange2)
-                        tstZ = tstZ1 + 0.5f;
+                        tstZ = tstZ1; 
                     else if (srange3 < srange2)
-                        tstZ = tstZ3 + 0.5f;
+                        tstZ = tstZ3; 
                     else
-                        tstZ = tstZ2 + 0.5f;
+                        tstZ = tstZ2;  
                 }
 
                 destZ = tstZ;
@@ -6529,7 +6529,7 @@ void Spell::EffectMomentMove(SpellEffIndex effIndex)
 
                     travelDistZ = sqrt((destY - prevY)*(destY - prevY) + (destX - prevX)*(destX - prevX));
                     // highest available point
-                    destZ1 = map->GetHeight(destX, destY, prevZ + travelDistZ + 2.0f, true);
+                    destZ1 = map->GetHeight(destX, destY, prevZ + travelDistZ, true);
                     // upper or floor
                     destZ2 = map->GetHeight(destX, destY, prevZ + travelDistZ, true);
                     //lower than floor
@@ -6541,11 +6541,11 @@ void Spell::EffectMomentMove(SpellEffIndex effIndex)
                     srange3 = sqrt((destY - prevY)*(destY - prevY) + (destX - prevX)*(destX - prevX) + (destZ3 - prevZ)*(destZ3 - prevZ));
 
                     if (srange1 < srange2)
-                        destZ = destZ1 + 0.5f;
+                        destZ = destZ1; 
                     else if (srange3 < srange2)
-                        destZ = destZ3 + 0.5f;
+                        destZ = destZ3; 
                     else
-                        destZ = destZ2 + 0.5f;
+                        destZ = destZ2;
 
                     if (map->IsInWater(destX, destY, destZ)) // recheck collide on top water 
                         destZ = prevZ;
