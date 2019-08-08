@@ -108,7 +108,7 @@ Object::~Object()
     }
 
     delete [] m_uint32Values;
-    delete [] m_uint32Values_mirror;
+    m_uint32Values = 0;
 }
 
 void Object::_InitValues()
