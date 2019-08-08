@@ -594,9 +594,9 @@ void Aura::Update(uint32 diff)
     if (m_isPeriodic && (m_duration >= 0 || m_isPassive || m_permanent))
     {
         m_periodicTimer -= diff;
+
         if (m_periodicTimer <= 0)                            // tick also at m_periodicTimer == 0 to prevent lost last tick in case max m_duration == (max m_periodicTimer)*N
         {
-            ++m_tickNumber;
 
             if (m_modifier.m_auraname == SPELL_AURA_MOD_REGEN ||
                 m_modifier.m_auraname == SPELL_AURA_MOD_POWER_REGEN ||
@@ -610,6 +610,7 @@ void Aura::Update(uint32 diff)
             }
             // update before applying (aura can be removed in TriggerSpell or PeriodicTick calls)
             m_periodicTimer += m_amplitude;//m_modifier.periodictime;
+            ++m_tickNumber;
 
             if (!m_target->HasUnitState(UNIT_STATE_ISOLATED))
                 PeriodicTick();
@@ -6514,11 +6515,16 @@ void Aura::PeriodicDummyTick()
             return;
         }
     case 7057:                                  // Haunting Spirits
+    {
+        if (roll_chance_i(33))
         {
-            if (roll_chance_i(33))
-                m_target->CastSpell(m_target, m_modifier.m_amount, true, NULL, this);
-            return;
+            m_target->CastSpell(m_target, m_modifier.m_amount, true, NULL, this);
+
+            m_amplitude = 30000;
         }
+
+        return;
+    }
     //        // Panda
     //        case 19230: break;
     //        // Master of Subtlety
