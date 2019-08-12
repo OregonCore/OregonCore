@@ -73,9 +73,10 @@ RandomMovementGenerator<Creature>::_setRandomLocation(Creature& creature)
     //else if (is_water_ok)                                 // 3D system under water and above ground (swimming mode)
     else                                                    // 2D only
     {
+        dist = dist >= 100.0f ? 10.0f : sqrtf(dist);
         // The fastest way to get an accurate result 90% of the time.
         // Better result can be obtained like 99% accuracy with a ray light, but the cost is too high and the code is too long.
-        nz = map->GetHeight(nx, ny, Z, false);
+        nz = map->GetHeight(nx, ny, Z + dist - 2.0f, false);
 
         if (fabs(nz - Z) > dist)                            // Map check
         {
@@ -84,7 +85,7 @@ RandomMovementGenerator<Creature>::_setRandomLocation(Creature& creature)
             if (fabs(nz - Z) > dist)
             {
                 // Vmap Higher
-                nz = map->GetHeight(nx, ny, Z, true);
+                nz = map->GetHeight(nx, ny, Z + dist - 2.0f, true);
 
                 // let's forget this bad coords where a z cannot be find and retry at next tick
                 if (fabs(nz - Z) > dist)
