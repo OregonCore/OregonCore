@@ -50,7 +50,7 @@ class Sha1Hash
         BigNumber GetBigNumber();
 
     private:
-        SHA_CTX* mC;
+        SHA_CTX mC;
         uint8 mDigest[SHA_DIGEST_LENGTH];
 };
 #endif
