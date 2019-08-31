@@ -25,6 +25,9 @@
 
 # http://www.slproweb.com/products/Win32OpenSSL.html
 
+set(OPENSSL_EXPECTED_VERSION "1.0")
+set(OPENSSL_MAX_VERSION "1.2")
+
 SET(_OPENSSL_ROOT_HINTS
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (32-bit)_is1;Inno Setup: App Path]"
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (64-bit)_is1;Inno Setup: App Path]"
@@ -77,38 +80,45 @@ IF(WIN32 AND NOT CYGWIN)
     # libeay32MD.lib is identical to ../libeay32.lib, and
     # ssleay32MD.lib is identical to ../ssleay32.lib
 
+    # Since OpenSSL 1.1, lib names are like libcrypto32MTd.lib and libssl32MTd.lib
+    if( "${CMAKE_SIZEOF_VOID_P}" STREQUAL "8" )
+        set(_OPENSSL_MSVC_ARCH_SUFFIX "64")
+    else()
+        set(_OPENSSL_MSVC_ARCH_SUFFIX "32")
+    endif()
+
     FIND_LIBRARY(LIB_EAY_DEBUG
       NAMES
-        libeay32MDd libeay32
+        libcrypto${_OPENSSL_MSVC_ARCH_SUFFIX}MDd libeay32MDd libeay32
       PATHS
         ${OPENSSL_ROOT_DIR}/lib/VC
     )
 
     FIND_LIBRARY(LIB_EAY_RELEASE
       NAMES
-        libeay32MD libeay32
+        libcrypto${_OPENSSL_MSVC_ARCH_SUFFIX}MD libeay32MD libeay32
       PATHS
         ${OPENSSL_ROOT_DIR}/lib/VC
     )
 
     FIND_LIBRARY(SSL_EAY_DEBUG
       NAMES
-        ssleay32MDd ssleay32 ssl
+        libssl${_OPENSSL_MSVC_ARCH_SUFFIX}MDd ssleay32MDd ssleay32 ssl
       PATHS
         ${OPENSSL_ROOT_DIR}/lib/VC
     )
 
     FIND_LIBRARY(SSL_EAY_RELEASE
       NAMES
-        ssleay32MD ssleay32 ssl
+        libssl${_OPENSSL_MSVC_ARCH_SUFFIX}MD ssleay32MD ssleay32 ssl
       PATHS
         ${OPENSSL_ROOT_DIR}/lib/VC
     )
 
     if( CMAKE_CONFIGURATION_TYPES OR CMAKE_BUILD_TYPE )
       set( OPENSSL_LIBRARIES
-        optimized ${SSL_EAY_RELEASE} ${LIB_EAY_RELEASE}
-        debug ${SSL_EAY_DEBUG} ${LIB_EAY_DEBUG}
+        optimized ${SSL_EAY_RELEASE} optimized ${LIB_EAY_RELEASE}
+        debug ${SSL_EAY_DEBUG} debug ${LIB_EAY_DEBUG}
       )
     else()
       set( OPENSSL_LIBRARIES
@@ -173,10 +183,57 @@ ELSE(WIN32 AND NOT CYGWIN)
 
 ENDIF(WIN32 AND NOT CYGWIN)
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(OpenSSL DEFAULT_MSG
-  OPENSSL_LIBRARIES 
-  OPENSSL_INCLUDE_DIR
-)
+if (NOT OPENSSL_INCLUDE_DIR)
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(OpenSSL DEFAULT_MSG
+    OPENSSL_LIBRARIES
+    OPENSSL_INCLUDE_DIR
+  )
+endif()
+
+ if (OPENSSL_INCLUDE_DIR)
+  message( STATUS "Found OpenSSL library: ${OPENSSL_LIBRARIES}")
+  message( STATUS "Found OpenSSL headers: ${OPENSSL_INCLUDE_DIR}")
+  if (_OPENSSL_VERSION)
+    set(OPENSSL_VERSION "${_OPENSSL_VERSION}")
+  else (_OPENSSL_VERSION)
+    file(STRINGS "${OPENSSL_INCLUDE_DIR}/openssl/opensslv.h" openssl_version_str
+         REGEX "^# *define[\t ]+OPENSSL_VERSION_NUMBER[\t ]+0x[0-9][0-9][0-9][0-9][0-9][0-9].*")
+
+    # The version number is encoded as 0xMNNFFPPS: major minor fix patch status
+    # The status gives if this is a developer or prerelease and is ignored here.
+    # Major, minor, and fix directly translate into the version numbers shown in
+    # the string. The patch field translates to the single character suffix that
+    # indicates the bug fix state, which 00 -> nothing, 01 -> a, 02 -> b and so
+    # on.
+
+    string(REGEX REPLACE "^.*OPENSSL_VERSION_NUMBER[\t ]+0x([0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f]).*$"
+           "\\1;\\2;\\3;\\4;\\5" OPENSSL_VERSION_LIST "${openssl_version_str}")
+    list(GET OPENSSL_VERSION_LIST 0 OPENSSL_VERSION_MAJOR)
+    list(GET OPENSSL_VERSION_LIST 1 OPENSSL_VERSION_MINOR)
+    list(GET OPENSSL_VERSION_LIST 2 OPENSSL_VERSION_FIX)
+    list(GET OPENSSL_VERSION_LIST 3 OPENSSL_VERSION_PATCH)
+
+    string(REGEX REPLACE "^0(.)" "\\1" OPENSSL_VERSION_MINOR "${OPENSSL_VERSION_MINOR}")
+    string(REGEX REPLACE "^0(.)" "\\1" OPENSSL_VERSION_FIX "${OPENSSL_VERSION_FIX}")
+
+    if (NOT OPENSSL_VERSION_PATCH STREQUAL "00")
+      # 96 is the ASCII code of 'a' minus 1
+      math(EXPR OPENSSL_VERSION_PATCH_ASCII "${OPENSSL_VERSION_PATCH} + 96")
+      # Once anyone knows how OpenSSL would call the patch versions beyond 'z'
+      # this should be updated to handle that, too. This has not happened yet
+      # so it is simply ignored here for now.
+      string(ASCII "${OPENSSL_VERSION_PATCH_ASCII}" OPENSSL_VERSION_PATCH_STRING)
+    endif (NOT OPENSSL_VERSION_PATCH STREQUAL "00")
+
+    set(OPENSSL_VERSION "${OPENSSL_VERSION_MAJOR}.${OPENSSL_VERSION_MINOR}.${OPENSSL_VERSION_FIX}${OPENSSL_VERSION_PATCH_STRING}")
+  endif (_OPENSSL_VERSION)
+
+   include(EnsureVersion)
+  ENSURE_VERSION_RANGE("${OPENSSL_EXPECTED_VERSION}" "${OPENSSL_VERSION}" "${OPENSSL_MAX_VERSION}" OPENSSL_VERSION_OK)
+  if (NOT OPENSSL_VERSION_OK)
+      message(FATAL_ERROR "OregonCoreLegacy needs OpenSSL version ${OPENSSL_EXPECTED_VERSION} but found too new version ${OPENSSL_VERSION}. ArkCORE-NG needs OpenSSL 1.0.x or 1.1.x to work properly. If you still have problems please install OpenSSL 1.0.x if you still have problems search on forum for TCE00022")
+  endif()
+endif (OPENSSL_INCLUDE_DIR)
 
 MARK_AS_ADVANCED(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
