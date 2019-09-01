@@ -32,8 +32,8 @@ class Sha1Hash
         void UpdateFinalizeBigNumbers(BigNumber* bn0, ...);
         void UpdateBigNumbers(BigNumber* bn0, ...);
 
-        void UpdateData(const uint8* dta, int len);
-        void UpdateData(const std::string& str);
+        void UpdateData(uint8 const* dta, int len);
+        void UpdateData(std::string const& str);
 
         void Initialize();
         void Finalize();

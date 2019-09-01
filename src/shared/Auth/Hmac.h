@@ -33,8 +33,8 @@ class HmacHash
         HmacHash(uint32 len, uint8* seed);
         ~HmacHash();
         void UpdateBigNumber(BigNumber* bn);
-        void UpdateData(const uint8* data, int length);
-        void UpdateData(const std::string& str);
+        void UpdateData(uint8 const* data, int length);
+        void UpdateData(std::string const& str);
         void Initialize();
         void Finalize();
         uint8* GetDigest()
@@ -46,7 +46,7 @@ class HmacHash
             return SHA_DIGEST_LENGTH;
         };
     private:
-        HMAC_CTX m_ctx;
+        HMAC_CTX* m_ctx;
         uint8 m_key[SEED_KEY_SIZE];
         uint8 m_digest[SHA_DIGEST_LENGTH];
 };
