@@ -131,6 +131,7 @@ enum eDeserter
 const Position DeserterDisappearPos = { -3609.03f, -4332.91f, 9.39354f, 3.73862f};
 
 #define GOSSIP_ITEM_DESERTER "Your propaganda wont`t work on me. Spout your treasonous filth elsewhere traitor!"
+#define SAY_1 "If you think you can stop us, you're mistaken, 'friend.'"
 
 struct npc_deserter_agitatorAI : public ScriptedAI
 {
@@ -182,6 +183,7 @@ bool GossipSelect_npc_deserter_agitator(Player* pPlayer, Creature* pCreature, ui
             pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             pCreature->SetFaction(14);
             pCreature->AI()->AttackStart(pPlayer);
+            pCreature->MonsterSay(SAY_1, LANG_COMMON, 0);
             break;
         case 1:
             pPlayer->KilledMonsterCredit(NPC_THERAMORE_DESERTER, 0);
