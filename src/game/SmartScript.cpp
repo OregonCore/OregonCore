@@ -12,7 +12,7 @@
 * more details.
 *
 * You should have received a copy of the GNU General Public License along
-* with this program. If not, see <https://www.gnu.org/licenses/>.
+* with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Common.h"
@@ -1504,7 +1504,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
 
             for (ObjectList::const_iterator itr = targets->begin(); itr != targets->end(); ++itr)
                 if (IsPlayer(*itr))
-                    (*itr)->ToPlayer()->PlayerTalkClass->SendCloseGossip();
+                    (*itr)->ToPlayer()->PlayerTalkClass->CloseGossip();
 
             delete targets;
             break;
@@ -2736,7 +2736,7 @@ ObjectList* SmartScript::GetWorldObjectsInDist(float dist)
     if (obj)
     {
         Oregon::AllWorldObjectsInRange u_check(obj, dist);
-        Oregon::WorldObjectListSearcher<Oregon::AllWorldObjectsInRange> searcher(obj, *targets, u_check);
+        Oregon::WorldObjectListSearcher<Oregon::AllWorldObjectsInRange> searcher(*targets, u_check);
         obj->VisitNearbyObject(dist, searcher);
     }
     return targets;
@@ -3608,7 +3608,7 @@ Unit* SmartScript::DoSelectLowestHpFriendly(float range, uint32 MinHPDiff)
     Unit* unit = NULL;
 
     Oregon::MostHPMissingInRange u_check(me, range, MinHPDiff);
-    Oregon::UnitLastSearcher<Oregon::MostHPMissingInRange> searcher(me, unit, u_check);
+    Oregon::UnitLastSearcher<Oregon::MostHPMissingInRange> searcher(unit, u_check);
 
     TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::MostHPMissingInRange>, GridTypeMapContainer >  grid_unit_searcher(searcher);
 
@@ -3626,7 +3626,7 @@ void SmartScript::DoFindFriendlyCC(std::list<Creature*>& _list, float range)
     cell.SetNoCreate();
 
     Oregon::FriendlyCCedInRange u_check(me, range);
-    Oregon::CreatureListSearcher<Oregon::FriendlyCCedInRange> searcher(me, _list, u_check);
+    Oregon::CreatureListSearcher<Oregon::FriendlyCCedInRange> searcher(_list, u_check);
 
     TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::FriendlyCCedInRange>, GridTypeMapContainer >  grid_creature_searcher(searcher);
 
@@ -3643,7 +3643,7 @@ void SmartScript::DoFindFriendlyMissingBuff(std::list<Creature*>& list, float ra
     cell.SetNoCreate();
 
     Oregon::FriendlyMissingBuffInRange u_check(me, range, spellid);
-    Oregon::CreatureListSearcher<Oregon::FriendlyMissingBuffInRange> searcher(me, list, u_check);
+    Oregon::CreatureListSearcher<Oregon::FriendlyMissingBuffInRange> searcher(list, u_check);
 
     TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::FriendlyMissingBuffInRange>, GridTypeMapContainer >  grid_creature_searcher(searcher);
 
@@ -3657,7 +3657,7 @@ Unit* SmartScript::DoFindClosestFriendlyInRange(float range, bool playerOnly)
 
     Unit* unit = NULL;
     Oregon::AnyFriendlyUnitInObjectRangeCheck u_check(me, me, range, playerOnly);
-    Oregon::UnitLastSearcher<Oregon::AnyFriendlyUnitInObjectRangeCheck> searcher(me, unit, u_check);
+    Oregon::UnitLastSearcher<Oregon::AnyFriendlyUnitInObjectRangeCheck> searcher(unit, u_check);
     me->VisitNearbyObject(range, searcher);
     return unit;
 }

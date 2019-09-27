@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -195,6 +195,7 @@ struct instance_deadmines : public ScriptedInstance
         if (GameObject* pDoorLever = instance->GetGameObject(DoorLeverGUID))
             pDoorLever->SetUInt32Value(GAMEOBJECT_FLAGS, 4);
     }
+
 
     void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {

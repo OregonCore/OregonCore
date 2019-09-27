@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -5754,7 +5754,7 @@ bool ChatHandler::HandleCompleteQuest(const char* args)
     // Add quest items for quests that require items
     for (uint8 x = 0; x < QUEST_OBJECTIVES_COUNT; ++x)
     {
-        uint32 id = pQuest->RequiredItemId[x];
+        uint32 id = pQuest->ReqItemId[x];
         uint32 count = pQuest->ReqItemCount[x];
         if (!id || !count)
             continue;
@@ -6314,7 +6314,7 @@ bool ChatHandler::HandleRespawnCommand(const char* /*args*/)
     cell.SetNoCreate();
 
     Oregon::RespawnDo u_do;
-    Oregon::WorldObjectWorker<Oregon::RespawnDo> worker(pl, u_do);
+    Oregon::WorldObjectWorker<Oregon::RespawnDo> worker(u_do);
 
     TypeContainerVisitor<Oregon::WorldObjectWorker<Oregon::RespawnDo>, GridTypeMapContainer > obj_worker(worker);
     cell.Visit(p, obj_worker, *pl->GetMap(), *pl, pl->GetGridActivationRange());

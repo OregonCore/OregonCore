@@ -1,0 +1,1 @@
+UPDATE creature_template SET unit_flags = 2048, dynamicflags = 32 WHERE entry = 18035;

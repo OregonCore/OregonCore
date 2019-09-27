@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -31,39 +31,39 @@ EndContentData */
 #include "ScriptedCreature.h"
 #include "steam_vault.h"
 
-#define SAY_SUMMON                  -1545000
-#define SAY_AGGRO_1                 -1545001
-#define SAY_AGGRO_2                 -1545002
-#define SAY_AGGRO_3                 -1545003
-#define SAY_SLAY_1                  -1545004
-#define SAY_SLAY_2                  -1545005
-#define SAY_DEAD                    -1545006
+enum HydromancerThespia
+{
+    SAY_SUMMON                      = -1545000,
+    SAY_AGGRO_1                     = -1545001,
+    SAY_AGGRO_2                     = -1545002,
+    SAY_AGGRO_3                     = -1545003,
+    SAY_SLAY_1                      = -1545004,
+    SAY_SLAY_2                      = -1545005,
+    SAY_DEAD                        = -1545006,
 
-#define SPELL_LIGHTNING_CLOUD       25033
-#define SPELL_LUNG_BURST            31481
-#define SPELL_ENVELOPING_WINDS      31718
+    SPELL_LIGHTNING_CLOUD           = 25033,
+    SPELL_LUNG_BURST                = 31481,
+    SPELL_ENVELOPING_WINDS          = 31718,
+
+    EVENT_SPELL_LIGHTNING           = 1,
+    EVENT_SPELL_LUNG                = 2,
+    EVENT_SPELL_ENVELOPING          = 3
+
+};
 
 struct boss_thespiaAI : public ScriptedAI
 {
     boss_thespiaAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
-        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance* pInstance;
-    bool HeroicMode;
-
-    uint32 LightningCloud_Timer;
-    uint32 LungBurst_Timer;
-    uint32 EnvelopingWinds_Timer;
+    EventMap events;
 
     void Reset()
     {
-        LightningCloud_Timer = 15000;
-        LungBurst_Timer = 7000;
-        EnvelopingWinds_Timer = 9000;
-
+        events.Reset();
         if (pInstance && me->IsAlive())
             pInstance->SetData(TYPE_HYDROMANCER_THESPIA, NOT_STARTED);
     }
@@ -78,31 +78,16 @@ struct boss_thespiaAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch (rand() % 2)
-        {
-        case 0:
-            DoScriptText(SAY_SLAY_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY_2, me);
-            break;
-        }
+        DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
     }
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch (rand() % 3)
-        {
-        case 0:
-            DoScriptText(SAY_AGGRO_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_AGGRO_2, me);
-            break;
-        case 2:
-            DoScriptText(SAY_AGGRO_3, me);
-            break;
-        }
+
+        DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
+        events.ScheduleEvent(EVENT_SPELL_LIGHTNING, 15000);
+        events.ScheduleEvent(EVENT_SPELL_LUNG, 7000);
+        events.ScheduleEvent(EVENT_SPELL_ENVELOPING, 9000);
 
         if (pInstance)
             pInstance->SetData(TYPE_HYDROMANCER_THESPIA, IN_PROGRESS);
@@ -113,41 +98,28 @@ struct boss_thespiaAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        //LightningCloud_Timer
-        if (LightningCloud_Timer <= diff)
-        {
-            //cast twice in Heroic mode
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_LIGHTNING_CLOUD);
-            if (HeroicMode)
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCast(pTarget, SPELL_LIGHTNING_CLOUD);
-            LightningCloud_Timer = 15000 + rand() % 10000;
-        }
-        else LightningCloud_Timer -= diff;
+        events.Update(diff);
 
-        //LungBurst_Timer
-        if (LungBurst_Timer <= diff)
+        switch (events.ExecuteEvent())
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_LUNG_BURST);
-            LungBurst_Timer = 7000 + rand() % 5000;
+        case EVENT_SPELL_LIGHTNING:
+            for (uint8 i = 0; i < (HeroicMode ? 2 : 1); ++i)
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                    me->CastSpell(target, SPELL_LIGHTNING_CLOUD, false);
+            events.Repeat(urand(15000, 25000));
+            break;
+        case EVENT_SPELL_LUNG:
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                DoCast(target, SPELL_LUNG_BURST);
+            events.Repeat(urand(7000, 12000));
+            break;
+        case EVENT_SPELL_ENVELOPING:
+            for (uint8 i = 0; i < (HeroicMode ? 2 : 1); ++i)
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                    me->CastSpell(target, SPELL_ENVELOPING_WINDS, false);
+            events.Repeat(urand(10000, 15000));
+            break;
         }
-        else LungBurst_Timer -= diff;
-
-        //EnvelopingWinds_Timer
-        if (EnvelopingWinds_Timer <= diff)
-        {
-            //cast twice in Heroic mode
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_ENVELOPING_WINDS);
-            if (HeroicMode)
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCast(pTarget, SPELL_ENVELOPING_WINDS);
-            EnvelopingWinds_Timer = 10000 + rand() % 5000;
-        }
-        else EnvelopingWinds_Timer -= diff;
-
         DoMeleeAttackIfReady();
     }
 };

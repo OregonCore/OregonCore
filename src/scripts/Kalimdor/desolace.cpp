@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -397,13 +397,13 @@ void AddSC_desolace()
     newscript = new Script;
     newscript->Name = "npc_dalinda";
     newscript->GetAI = &GetAI_npc_dalinda;
-    newscript->QuestAccept = &QuestAccept_npc_dalinda;
+    newscript->pQuestAccept = &QuestAccept_npc_dalinda;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_melizza_brimbuzzle";
     newscript->GetAI = &GetAI_npc_melizza_brimbuzzle;
-    newscript->QuestAccept = &QuestAccept_npc_melizza_brimbuzzle;
+    newscript->pQuestAccept = &QuestAccept_npc_melizza_brimbuzzle;
     newscript->RegisterSelf();
 
     newscript = new Script;

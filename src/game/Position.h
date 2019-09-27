@@ -12,7 +12,7 @@
 * more details.
 *
 * You should have received a copy of the GNU General Public License along
-* with this program. If not, see <https://www.gnu.org/licenses/>.
+* with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef POSITION_H
@@ -113,6 +113,14 @@ public:
     {
         x = m_positionX; y = m_positionY; z = m_positionZ; o = m_orientation;
     }
+
+    void GetPosition(Position* pos) const
+    {
+        if (pos)
+            pos->Relocate(m_positionX, m_positionY, m_positionZ, m_orientation);
+    }
+
+
 
     Position GetPosition() const { return *this; }
 

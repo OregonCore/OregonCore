@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef _OBJECT_H
@@ -31,20 +31,15 @@
 #include <set>
 #include <string>
 
-#define CONTACT_DISTANCE                    0.5f
-#define INTERACTION_DISTANCE                5.0f
-#define ATTACK_DISTANCE                     5.0f
-#define INSPECT_DISTANCE                    28.0f
-#define MAX_VISIBILITY_DISTANCE             SIZE_OF_GRIDS       // max distance for visible object show
-#define SIGHT_RANGE_UNIT                    50.0f
-#define VISIBILITY_DISTANCE_GIGANTIC        400.0f
-#define VISIBILITY_DISTANCE_LARGE           200.0f
-#define VISIBILITY_DISTANCE_NORMAL          100.0f
-#define VISIBILITY_DISTANCE_SMALL           50.0f
-#define VISIBILITY_DISTANCE_TINY            25.0f
-#define DEFAULT_VISIBILITY_DISTANCE         VISIBILITY_DISTANCE_NORMAL            // default visible distance, 100 yards on continents
-#define DEFAULT_VISIBILITY_INSTANCE         170.0f                  // default visible distance in instances, 170 yards
-#define DEFAULT_VISIBILITY_BGARENAS         533.0f                  // default visible distance in BG/Arenas, roughly 533 yards
+#define CONTACT_DISTANCE            0.5f
+#define INTERACTION_DISTANCE        5.0f
+#define ATTACK_DISTANCE             5.0f
+#define INSPECT_DISTANCE            28.0f
+#define MAX_VISIBILITY_DISTANCE     SIZE_OF_GRIDS       // max distance for visible object show
+#define SIGHT_RANGE_UNIT            50.0f
+#define DEFAULT_VISIBILITY_DISTANCE 90.0f                   // default visible distance, 90 yards on continents
+#define DEFAULT_VISIBILITY_INSTANCE 170.0f              // default visible distance in instances, 120 yards
+#define DEFAULT_VISIBILITY_BGARENAS 533.0f              // default visible distance in BG/Arenas, 180 yards
 
 #define DEFAULT_WORLD_OBJECT_SIZE   0.388999998569489f      // player size, also currently used (correctly?) for any non Unit world objects
 #define DEFAULT_COMBAT_REACH        1.5f
@@ -110,22 +105,6 @@ namespace Movement
     class MoveSpline;
 }
 
-enum PhaseMasks
-{
-    PHASEMASK_NORMAL   = 0x00000001,
-    PHASEMASK_ANYWHERE = 0xFFFFFFFF
-};
-
-enum VisibilityDistanceType
-{
-    VISDIST_DEFAULT = 0,
-    VISDIST_TINY,
-    VISDIST_SMALL,
-    VISDIST_LARGE,
-    VISDIST_GIGANTIC,
-    VISDIST_MAX
-};
-
 class WorldPacket;
 class UpdateData;
 class ByteBuffer;
@@ -174,23 +153,62 @@ class Object
             ClearUpdateMask(true);
         }
 
-        uint64 GetGUID() const { return GetUInt64Value(0); }
-        uint32 GetGUIDLow() const { return GUID_LOPART(GetUInt64Value(0)); }
-        uint32 GetGUIDMid() const { return GUID_ENPART(GetUInt64Value(0)); }
-        uint32 GetGUIDHigh() const { return GUID_HIPART(GetUInt64Value(0)); }
-        PackedGuid const& GetPackGUID() const { return m_PackGUID; }
-        ObjectGuid const& GetObjectGUID() const { return GetGuidValue(OBJECT_FIELD_GUID); }
+        const uint64& GetGUID() const
+        {
+            return GetUInt64Value(0);
+        }
+        uint32 GetGUIDLow() const
+        {
+            return GUID_LOPART(GetUInt64Value(0));
+        }
+        uint32 GetGUIDMid() const
+        {
+            return GUID_ENPART(GetUInt64Value(0));
+        }
+        uint32 GetGUIDHigh() const
+        {
+            return GUID_HIPART(GetUInt64Value(0));
+        }
+        PackedGuid const& GetPackGUID() const
+        {
+            return m_PackGUID;
+        }
+        ObjectGuid const& GetObjectGUID() const
+        {
+            return GetGuidValue(OBJECT_FIELD_GUID);
+        }
 
-        std::string GetGuidStr() const { return GetObjectGUID().GetString(); }
+        std::string GetGuidStr() const
+        {
+            return GetObjectGUID().GetString();
+        }
 
-        uint32 GetEntry() const { return GetUInt32Value(OBJECT_FIELD_ENTRY); }
-        void SetEntry(uint32 entry) { SetUInt32Value(OBJECT_FIELD_ENTRY, entry); }
+        uint32 GetEntry() const
+        {
+            return GetUInt32Value(OBJECT_FIELD_ENTRY);
+        }
+        void SetEntry(uint32 entry)
+        {
+            SetUInt32Value(OBJECT_FIELD_ENTRY, entry);
+        }
 
-        float GetObjectScale() const { return GetFloatValue(OBJECT_FIELD_SCALE_X); }
-        void SetObjectScale(float scale) { SetFloatValue(OBJECT_FIELD_SCALE_X, scale); }
+        float GetObjectScale() const
+        {
+            return GetFloatValue(OBJECT_FIELD_SCALE_X);
+        }
+        void SetObjectScale(float scale)
+        {
+            SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
+        }
 
-        uint8 GetTypeId() const { return m_objectTypeId; }
-        bool isType(uint16 mask) const { return (mask & m_objectType); }
+        uint8 GetTypeId() const
+        {
+            return m_objectTypeId;
+        }
+        bool isType(uint16 mask) const
+        {
+            return (mask & m_objectType);
+        }
 
         virtual void BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) const;
         void SendUpdateToPlayer(Player* player);
@@ -614,7 +632,7 @@ class WorldObject : public Object, public WorldLocation
 
         virtual void Update (uint32 /*time_diff*/) { }
 
-        void _Create(uint32 guidlow, HighGuid guidhigh, uint32 phaseMask);
+        void _Create(uint32 guidlow, HighGuid guidhigh);
         virtual void RemoveFromWorld() override;
 
         void GetNearPoint2D(float& x, float& y, float distance, float absAngle) const;
@@ -636,6 +654,8 @@ class WorldObject : public Object, public WorldLocation
             // angle to face `obj` to `this` using distance includes size of `obj`
             GetNearPoint(obj, x, y, z, obj->GetObjectSize(), distance2d, GetAngle(obj));
         }
+
+        void GetChargeContactPoint(const WorldObject* obj, float& x, float& y, float& z, float distance2d = CONTACT_DISTANCE) const;
 
         virtual float GetObjectBoundingRadius() const
         {
@@ -665,12 +685,6 @@ class WorldObject : public Object, public WorldLocation
         {
             return m_InstanceId;
         }
-
-        virtual void SetPhaseMask(uint32 newPhaseMask, bool update);
-        uint32 GetPhaseMask() const { return m_phaseMask; }
-        bool InSamePhase(uint32 phasemask) const { return (GetPhaseMask() & phasemask) != 0; }
-        bool InSamePhase(WorldObject const* obj) const { return obj && InSamePhase(obj->GetPhaseMask()); }
-        static bool InSamePhase(WorldObject const* a, WorldObject const* b) { return a && a->InSamePhase(b); }
 
         uint32 GetZoneId() const;
         uint32 GetAreaId() const;
@@ -721,7 +735,7 @@ class WorldObject : public Object, public WorldLocation
         bool IsInMap(const WorldObject* obj) const
         {
             if (obj)
-                return IsInWorld() && obj->IsInWorld() && (GetMap() == obj->GetMap()) && InSamePhase(obj);
+                return IsInWorld() && obj->IsInWorld() && (GetMap() == obj->GetMap());
             else
                 return false;
         }
@@ -815,7 +829,10 @@ class WorldObject : public Object, public WorldLocation
         virtual void SetMap(Map* map);
         virtual void ResetMap();
         Map* GetMap() const { ASSERT(m_currMap); return m_currMap; }
-        Map* FindMap() const { return m_currMap; }
+        Map* FindMap() const
+        {
+            return m_currMap;
+        }
         //used to check all object's GetMap() calls when object is not in world!
 
         //this function should be removed in nearest time...
@@ -855,9 +872,18 @@ class WorldObject : public Object, public WorldLocation
         void BuildUpdate(UpdateDataMapType&) override;
 
         //relocation and visibility system functions
-        void AddToNotify(uint16 f) { m_notifyflags |= f; }
-        bool isNeedNotify(uint16 f) const { return (m_notifyflags & f) != 0; }
-        uint16 GetNotifyFlags() const { return m_notifyflags; }
+        void AddToNotify(uint16 f)
+        {
+            m_notifyflags |= f;
+        }
+        bool isNeedNotify(uint16 f) const
+        {
+            return m_notifyflags & f;
+        }
+        uint16 GetNotifyFlags() const
+        {
+            return m_notifyflags;
+        }
         bool NotifyExecuted(uint16 f) const
         {
             return m_executed_notifies & f;
@@ -872,10 +898,11 @@ class WorldObject : public Object, public WorldLocation
             m_executed_notifies = 0;
         }
 
-        bool isActiveObject() const { return m_isActive; }
+        bool isActiveObject() const
+        {
+            return m_isActive;
+        }
         void setActive(bool isActiveObject);
-        bool IsVisibilityOverridden() const { return m_visibilityDistanceOverride != 0; }
-        void SetVisibilityDistanceOverride(VisibilityDistanceType type);
         void SetWorldObject(bool apply);
         bool IsPermanentWorldObject() const { return m_isWorldObject; }
         bool IsWorldObject() const;
@@ -895,7 +922,6 @@ class WorldObject : public Object, public WorldLocation
         bool m_isActive;
         const bool m_isWorldObject;
         ZoneScript* m_zoneScript;
-        float m_visibilityDistanceOverride;
 
         //these functions are used mostly for Relocate() and Corpse/Player specific stuff...
         //use them ONLY in LoadFromDB()/Create() funcs and nowhere else!
@@ -914,7 +940,6 @@ class WorldObject : public Object, public WorldLocation
 
         //uint32 m_mapId;                                     // object at map with map_id
         uint32 m_InstanceId;                                // in map copy with instance id
-        uint32 m_phaseMask;                                 // in area phase state
 
         uint16 m_notifyflags;
         uint16 m_executed_notifies;

@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef SC_INSTANCE_H
@@ -35,7 +35,7 @@ public:
     ScriptedInstance(Map* pMap) : InstanceData(pMap) {}
     ~ScriptedInstance() {}
 
-    virtual void MovementInform(Creature* creature, uint32 uiType, uint32 uiPointId) { }
+    virtual void MovementInform(Creature* /*creature*/, uint32 /*uiType*/, uint32 /*uiPointId*/) { }
 };
 
 #endif

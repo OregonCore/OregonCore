@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -350,13 +350,13 @@ void AddSC_ungoro_crater()
     newscript = new Script;
     newscript->Name = "npc_ame";
     newscript->GetAI = &GetAI_npc_ame;
-    newscript->QuestAccept = &QuestAccept_npc_ame;
+    newscript->pQuestAccept = &QuestAccept_npc_ame;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_ringo";
     newscript->GetAI = &GetAI_npc_ringo;
-    newscript->QuestAccept = &QuestAccept_npc_ringo;
+    newscript->pQuestAccept = &QuestAccept_npc_ringo;
     newscript->RegisterSelf();
 }
 

@@ -825,7 +825,7 @@ ExternalMailInterval = 1
 SkillChance.Prospecting = 0
 Event.Announce = 0
 BeepAtStart = 1
-Motd = "Welcome to an OregonCore server."
+Motd = "Welcome to an Oregon Core server."
 Server.LoginInfo = 0
 Command.LookupMaxResults = 0
 HealthInPercents = 1
@@ -1181,7 +1181,7 @@ GM.TicketSystem.ChanceOfGMSurvey = 0
 #    Visibility.Distance.Instances
 #    Visibility.Distance.BGArenas
 #        Visibility distance for different ingame object in different maps.
-#        Visibility on continents on retail ~100 yards. In BG/Arenas ~533.
+#        Visibility on continents on retail ~90 yards. In BG/Arenas ~533.
 #        For instances default ~170.
 #        Max limited by active player zone: ~ 533
 #        Min limit is max aggro radius (45) * Rate.Creature.Aggro
@@ -1189,7 +1189,7 @@ GM.TicketSystem.ChanceOfGMSurvey = 0
 ###############################################################################
 
 Visibility.GroupMode = 1
-Visibility.Distance.Continents = 100
+Visibility.Distance.Continents = 90
 Visibility.Distance.Instances = 170
 Visibility.Distance.BGArenas = 533
 
@@ -1448,6 +1448,11 @@ Die.Command.Mode = 1
 #        Default: 0 (disable)
 #                 1 (enable)
 #
+#    Battleground.GiveXPForKills
+#        Description: Give experience for honorable kills in battlegrounds.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+#
 ###############################################################################
 
 Battleground.CastDeserter = 1
@@ -1456,6 +1461,7 @@ Battleground.QueueAnnouncer.PlayerOnly = 0
 Battleground.PrematureReward = 1
 BattleGround.PrematureFinishTimer = 300000
 Battleground.LeaveWrathMode = 0
+Battleground.GiveXPForKills = 0
 
 ###############################################################################
 # ARENA CONFIG
@@ -2098,3 +2104,28 @@ RAF.GrantableLevelsPerLevel = 0.5
 
 DatabaseUpdater.Enabled = 0
 DatabaseUpdater.PathToUpdates = ""
+
+###############################################################################
+#
+#    WarsongTimer.Enabled
+#        Enable or disable the warsoong gultch timer.
+#        Warsong gultch timer wasnt added till 3.2.0
+#		 Default = 1
+#		 Values 1 - on, 0- off
+#	CreateUpdateFile.Enabled
+#   	 When adding the creature into the DB from ingame
+#		 it will create a .sql file in your main directory
+#        this is a good option to have for develoeopment
+#		 Default = 0
+#        Values 1 - on, 0 - off
+#
+#	Console.RestartTimer
+#		Time in seconds for when selecting restart in console 
+#		window the server will restart
+#		Default = 10
+#
+###############################################################################
+
+WarsongTimer.Enabled = 0
+CreateUpdateFile.Enabled = 0
+Console.RestartTimer = 10

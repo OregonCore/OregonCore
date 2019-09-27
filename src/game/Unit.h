@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @file Unit.cpp
  */
@@ -1250,8 +1250,8 @@ class Unit : public WorldObject
         void SetInCombatWith(Unit* enemy);
         void ClearInCombat();
         void ClearInPetCombat();
-        IntervalTimer m_CombatTimer;
-        uint32 IsInPvPCombat() const { return m_CombatTimer.GetInterval() != 0; }
+        uint32 m_CombatTimer;
+        uint32 IsInPvPCombat() const { return m_CombatTimer != 0; }
 
         uint32 GetAuraCount(uint32 spellId) const;
         bool HasAuraType(AuraType auraType) const;
@@ -1262,7 +1262,10 @@ class Unit : public WorldObject
         bool HasAura(uint32 spellId, uint8 effIndex = 0) const { return m_Auras.find(spellEffectPair(spellId, effIndex)) != m_Auras.end(); }
         bool HasHigherRankOfAura(uint32 spellid, uint8 effIndex) const;
 
-        bool virtual HasSpell(uint32 /*spellID*/) const { return false; }
+        bool virtual HasSpell(uint32 /*spellID*/) const
+        {
+            return false;
+        }
 
         bool HasBreakableByDamageAuraType(AuraType type, uint32 excludeAura = 0) const;
         bool HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel = NULL) const;
@@ -1274,6 +1277,7 @@ class Unit : public WorldObject
         bool IsPolymorphed() const;
 
         bool isFrozen() const;
+        bool canAttack(Unit const* target, bool force = true) const;
 
         bool isTargetableForAttack(bool checkFakeDeath = true) const;
 
@@ -1693,7 +1697,6 @@ class Unit : public WorldObject
 
         // common function for visibility checks for player/creatures with detection code
         bool isValid() const override { return WorldObject::isValid(); }       
-        void SetPhaseMask(uint32 newPhaseMask, bool update) override;// overwrite WorldObject::SetPhaseMask
         void UpdateObjectVisibility(bool forced = true) override;
 
         bool isInvisibleForAlive() const;

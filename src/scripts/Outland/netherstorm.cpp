@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -433,7 +433,7 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
         cell.SetNoCreate();
 
         Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*me, entry, true, range);
-        Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(me, pCreature, creature_check);
+        Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
         cell.Visit(pair, creature_searcher, *(me->GetMap()), *me, me->GetGridActivationRange());
 
@@ -821,6 +821,9 @@ struct npc_phase_hunterAI : public ScriptedAI
             DoCast(me, SPELL_PHASE_SLIP);
 
         if (!UpdateVictim())
+            return;
+
+        if (me->HasUnitState(UNIT_STATE_CASTING))
             return;
 
         if (ManaBurnTimer <= diff)
@@ -2072,7 +2075,7 @@ struct npc_farahlon_lasherAI : public ScriptedAI
 		if (Spellkind->Id == 35772 && !spellHit)
 		{
 			me->SummonCreature(NPC_MUTATED_FARAHLON_LASHER, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-			me->DisappearAndDie();
+			me->DisappearAndDie(false);
 
 			spellHit = true;
 		}
@@ -2413,7 +2416,7 @@ struct legion_aldor_triggerAI : public ScriptedAI
 						me->SummonCreature(NPC_ADYEN_THE_LIGHTWARDEN, 4804.8f, 3772.0f, 210.5f, 5.3f, TEMPSUMMON_MANUAL_DESPAWN, 0);
 						me->SummonCreature(NPC_ANCHORITE_KARJA, 4802.2f, 3772.0f, 210.5f, 5.3f, TEMPSUMMON_MANUAL_DESPAWN, 0);
 						me->SummonCreature(NPC_EXARCH_ORELIS, 4805.7f, 3775.3f, 210.5f, 5.3f, TEMPSUMMON_MANUAL_DESPAWN, 0);
-						me->DisappearAndDie();
+						me->DisappearAndDie(false);
 						summoned = true;
 					}
 					break;
@@ -2529,13 +2532,13 @@ struct npc_socretharAI : public ScriptedAI
 			}
 
 			if (Creature* adveyn = me->FindNearestCreature(NPC_ADYEN_THE_LIGHTWARDEN, 40.0f, true))
-				adveyn->DisappearAndDie();
+				adveyn->DisappearAndDie(false);
 
 			if (Creature* karja = me->FindNearestCreature(NPC_ANCHORITE_KARJA, 40.0f, true))
-				karja->DisappearAndDie();
+				karja->DisappearAndDie(false);
 
 			if (Creature* orelis = me->FindNearestCreature(NPC_EXARCH_ORELIS, 40.0f, true))
-				orelis->DisappearAndDie();
+				orelis->DisappearAndDie(false);
 		}
 	}
 
@@ -3044,7 +3047,7 @@ struct adyen_lightwardenAI : public ScriptedAI
 			{
 				if (Creature* sctrigger = me->FindNearestCreature(23491, 3.0f, true))
 				{
-					sctrigger->DisappearAndDie();
+					sctrigger->DisappearAndDie(false);
 					DoScriptText(ADYEN_TEXT_1, me);
 					talk_timer = 23000;
 					SocretharEvent();
@@ -3549,7 +3552,7 @@ struct npc_protectorate_demolitionistAI : public npc_escortAI
 			DoCast(me, 41232);
 			break;
 		case 13:
-			me->DisappearAndDie();
+			me->DisappearAndDie(false);
 			break;
 		}
 	}
@@ -3944,7 +3947,7 @@ struct npc_captain_saeedAI : public npc_escortAI
 
 			if (Creature* dimension = me->FindNearestCreature(21035, 25.0f, true))
 			{
-				dimension->DisappearAndDie();
+				dimension->DisappearAndDie(false);
 				me->SummonCreature(NPC_DIMENSIUS, 3936.4f, 2003.6f, 255.6f, 0.9f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
 			}				
 			break;
@@ -3960,39 +3963,39 @@ struct npc_captain_saeedAI : public npc_escortAI
 		case 21:
 			if (Creature* def1 = me->FindNearestCreature(ENTRY_DEFENDER_1, 30.0f, true))
 			{
-				def1->DisappearAndDie();
+				def1->DisappearAndDie(false);
 
 				if (Creature* def2 = me->FindNearestCreature(ENTRY_DEFENDER_2, 30.0f, true))
 				{
-					def2->DisappearAndDie();
+					def2->DisappearAndDie(false);
 
 					if (Creature* def3 = me->FindNearestCreature(ENTRY_DEFENDER_3, 30.0f, true))
 					{
-						def3->DisappearAndDie();
+						def3->DisappearAndDie(false);
 
 						if (Creature* av1 = me->FindNearestCreature(ENTRY_AVENGER_1, 30.0f, true))
 						{
-							av1->DisappearAndDie();
+							av1->DisappearAndDie(false);
 
 							if (Creature* av2 = me->FindNearestCreature(ENTRY_AVENGER_2, 30.0f, true))
 							{
-								av2->DisappearAndDie();
+								av2->DisappearAndDie(false);
 
 								if (Creature* av3 = me->FindNearestCreature(ENTRY_AVENGER_3, 30.0f, true))
 								{
-									av3->DisappearAndDie();
+									av3->DisappearAndDie(false);
 
 									if (Creature* av4 = me->FindNearestCreature(ENTRY_AVENGER_4, 30.0f, true))
 									{
-										av4->DisappearAndDie();
+										av4->DisappearAndDie(false);
 
 										if (Creature* reg1 = me->FindNearestCreature(ENTRY_REGENERATOR_1, 30.0f, true))
 										{
-											reg1->DisappearAndDie();
+											reg1->DisappearAndDie(false);
 
 											if (Creature* reg2 = me->FindNearestCreature(ENTRY_REGENERATOR_2, 30.0f, true))
 											{
-												reg2->DisappearAndDie();
+												reg2->DisappearAndDie(false);
 											}
 										}
 									}
@@ -4002,7 +4005,7 @@ struct npc_captain_saeedAI : public npc_escortAI
 					}
 				}
 			}	
-			me->DisappearAndDie();
+			me->DisappearAndDie(false);
 			break;
 		}
 	}
@@ -4328,7 +4331,7 @@ struct npc_commander_ameerAI : public ScriptedAI
 				prison->UseDoorOrButton();
 			}
 			if (prisoner)
-				prisoner->DisappearAndDie();
+				prisoner->DisappearAndDie(false);
 			timer = 4500;
 			break;
 		case 8: //ameer talks some more
@@ -4527,7 +4530,7 @@ void AddSC_netherstorm()
     newscript->Name = "npc_professor_dabiri";
     newscript->pGossipHello =   &GossipHello_npc_professor_dabiri;
     newscript->pGossipSelect =  &GossipSelect_npc_professor_dabiri;
-    newscript->QuestAccept = &QuestAccept_npc_professor_dabiri;
+    newscript->pQuestAccept = &QuestAccept_npc_professor_dabiri;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -4538,13 +4541,13 @@ void AddSC_netherstorm()
     newscript = new Script;
     newscript->Name = "npc_bessy";
     newscript->GetAI = &GetAI_npc_bessy;
-    newscript->QuestAccept = &QuestAccept_npc_bessy;
+    newscript->pQuestAccept = &QuestAccept_npc_bessy;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_maxx_a_million_escort";
     newscript->GetAI = &GetAI_npc_maxx_a_million_escort;
-    newscript->QuestAccept = &QuestAccept_npc_maxx_a_million_escort;
+    newscript->pQuestAccept = &QuestAccept_npc_maxx_a_million_escort;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -4565,7 +4568,7 @@ void AddSC_netherstorm()
     newscript = new Script;
     newscript->Name = "npc_drijya";
     newscript->GetAI = &GetAI_npc_drijya;
-    newscript->QuestAccept = &QuestAccept_npc_drijya;
+    newscript->pQuestAccept = &QuestAccept_npc_drijya;
     newscript->RegisterSelf();
 
 	newscript = new Script;
@@ -4601,7 +4604,7 @@ void AddSC_netherstorm()
 	newscript = new Script;
 	newscript->Name = "npc_doctor_vomisa";
 	newscript->GetAI = &GetAI_npc_doctor_vomisa;
-	newscript->QuestAccept = &QuestAccept_npc_doctor_vomisa;
+	newscript->pQuestAccept = &QuestAccept_npc_doctor_vomisa;
 	newscript->RegisterSelf();
 
 	newscript = new Script;
@@ -4687,7 +4690,7 @@ void AddSC_netherstorm()
 	newscript = new Script;
 	newscript->Name = "npc_captured_protectorate";
 	newscript->GetAI = &GetAI_npc_captured_protectorate;
-	newscript->QuestAccept = &QuestAccept_npc_captured_protectorate;
+	newscript->pQuestAccept = &QuestAccept_npc_captured_protectorate;
 	newscript->RegisterSelf();
 
 	newscript = new Script;

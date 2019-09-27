@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -60,7 +60,6 @@
 #include "SocialMgr.h"
 #include "Mail.h"
 #include "GameEventMgr.h"
-#include "GameObjectAI.h"
 #include "DisableMgr.h"
 #include "ConditionMgr.h"
 #include "ScriptMgr.h"
@@ -124,6 +123,210 @@ enum CharacterFlags
 #define MAX_DEATH_COUNT 3
 
 static uint32 copseReclaimDelay[MAX_DEATH_COUNT] = { 30, 60, 120 };
+
+// == KillRewarder =============================================
+KillRewarder::KillRewarder(Player* killer, Unit* victim, bool isBattleground) :
+    _killer(killer), _victim(victim), _group(killer->GetGroup()),
+    _groupRate(1.0f), _maxNotGrayMember(NULL), _count(0), _sumLevel(0), _xp(0),
+    _isFullXP(false), _maxLevel(0), _isBattleGround(isBattleground), _isPvP(false)
+{
+    if (victim->GetTypeId() == TYPEID_PLAYER)
+        _isPvP = true;
+
+    _InitGroupData();
+}
+
+inline void KillRewarder::_InitGroupData()
+{
+    if (_group)
+    {
+        // 2. In case when player is in group, initialize variables necessary for group calculations:
+        for (GroupReference* itr = _group->GetFirstMember(); itr != NULL; itr = itr->next())
+            if (Player* member = itr->GetSource())
+                if ((_killer == member || member->IsAtGroupRewardDistance(_victim)) && member->IsAlive())
+                {
+                    const uint8 lvl = member->getLevel();
+                    // 2.1. _count - number of alive group members within reward distance;
+                    ++_count;
+                    // 2.2. _sumLevel - sum of levels of alive group members within reward distance;
+                    _sumLevel += lvl;
+                    // 2.3. _maxLevel - maximum level of alive group member within reward distance;
+                    if (_maxLevel < lvl)
+                        _maxLevel = lvl;
+                    // 2.4. _maxNotGrayMember - maximum level of alive group member within reward distance,
+                    //      for whom victim is not gray;
+                    uint32 grayLevel = Oregon::XP::GetGrayLevel(lvl);
+                    if (_victim->getLevel() > grayLevel && (!_maxNotGrayMember || _maxNotGrayMember->getLevel() < lvl))
+                        _maxNotGrayMember = member;
+                }
+        // 2.5. _isFullXP - flag identifying that for all group members victim is not gray,
+        //      so 100% XP will be rewarded (50% otherwise).
+        _isFullXP = _maxNotGrayMember && (_maxLevel == _maxNotGrayMember->getLevel());
+    }
+    else
+        _count = 1;
+}
+
+inline void KillRewarder::_InitXP(Player* player)
+{
+    // Get initial value of XP for kill.
+    // XP is given:
+    // * on battlegrounds;
+    // * otherwise, not in PvP;
+    // * not if killer is on vehicle.
+    if (_isBattleGround || (!_isPvP))
+        _xp = Oregon::XP::Gain(player, _victim, _isBattleGround);
+
+    if (_xp && !_isBattleGround && _victim) // pussywizard: npcs with relatively low hp give lower exp
+        if (_victim->GetTypeId() == TYPEID_UNIT)
+            if (const CreatureInfo* ct = _victim->ToCreature()->GetCreatureTemplate())
+                if (ct->ModHealth <= 0.75f && ct->ModHealth >= 0.0f)
+                    _xp = uint32(_xp * ct->ModHealth);
+}
+
+inline void KillRewarder::_RewardHonor(Player* player)
+{
+    // Rewarded player must be alive.
+    if (player->IsAlive())
+        player->RewardHonor(_victim, _count, -1);
+}
+
+inline void KillRewarder::_RewardXP(Player* player, float rate)
+{
+    uint32 xp(_xp);
+
+    if (_group)
+    {
+        // 4.2.1. If player is in group, adjust XP:
+        //        * set to 0 if player's level is more than maximum level of not gray member;
+        //        * cut XP in half if _isFullXP is false.
+        if (_maxNotGrayMember && player->IsAlive() &&
+            _maxNotGrayMember->getLevel() >= player->getLevel())
+            xp = _isFullXP ?
+            uint32(xp * rate) :             // Reward FULL XP if all group members are not gray.
+            uint32(xp * rate / 2) + 1;      // Reward only HALF of XP if some of group members are gray.
+        else
+            xp = 0;
+    }
+    if (xp)
+    {
+        // 4.2.2. Apply auras modifying rewarded XP (SPELL_AURA_MOD_XP_PCT).
+        Unit::AuraList const& auras = player->GetAurasByType(SPELL_AURA_MOD_XP_PCT);
+        for (Unit::AuraList::const_iterator i = auras.begin(); i != auras.end(); ++i)
+            AddPct(xp, (*i)->GetAmount());
+
+        // 4.2.3. Give XP to player.
+        player->GiveXP(xp, _victim, _groupRate);
+        if (Pet* pet = player->GetPet())
+            // 4.2.4. If player has pet, reward pet with XP (100% for single player, 50% for group case).
+            pet->GivePetXP(_group ? xp / 2 : xp);
+    }
+}
+
+inline void KillRewarder::_RewardReputation(Player* player, float rate)
+{
+    // 4.3. Give reputation (player must not be on BG).
+    // Even dead players and corpses are rewarded.
+    player->RewardReputation(_victim, rate);
+}
+
+inline void KillRewarder::_RewardKillCredit(Player* player)
+{
+    // 4.4. Give kill credit (player must not be in group, or he must be alive or without corpse).
+    if (!_group || player->IsAlive() || !player->GetCorpse())
+        if (Creature* target = _victim->ToCreature())
+        {
+            player->KilledMonster(target->GetCreatureTemplate(), target->GetGUID()); 
+        }
+}
+
+void KillRewarder::_RewardPlayer(Player* player, bool isDungeon)
+{
+    // 4. Reward player.
+    if (!_isBattleGround)
+    {
+        // 4.1. Give honor (player must be alive and not on BG).
+        _RewardHonor(player);
+    }
+
+    // Give XP only in PvE or in battlegrounds.
+    // Give reputation and kill credit only in PvE.
+    if (!_isPvP || _isBattleGround)
+    {
+        const float rate = _group ?
+            _groupRate * float(player->getLevel()) / _sumLevel : // Group rate depends on summary level.
+            1.0f;                                                // Personal rate is 100%.
+        if (_xp)
+            // 4.2. Give XP.
+            _RewardXP(player, rate);
+        if (!_isBattleGround)
+        {
+            // If killer is in dungeon then all members receive full reputation at kill.
+            _RewardReputation(player, isDungeon ? 1.0f : rate);
+            _RewardKillCredit(player);
+        }
+    }
+}
+
+void KillRewarder::_RewardGroup()
+{
+    if (_maxLevel)
+    {
+        if (_maxNotGrayMember)
+            // 3.1.1. Initialize initial XP amount based on maximum level of group member,
+            //        for whom victim is not gray.
+            _InitXP(_maxNotGrayMember);
+        // To avoid unnecessary calculations and calls,
+        // proceed only if XP is not ZERO or player is not on battleground
+        // (battleground rewards only XP, that's why).
+        if (!_isBattleGround || _xp)
+        {
+            const bool isDungeon = !_isPvP && sMapStore.LookupEntry(_killer->GetMapId())->IsDungeon();
+            if (!_isBattleGround)
+            {
+                // 3.1.2. Alter group rate if group is in raid (not for battlegrounds).
+                const bool isRaid = !_isPvP && sMapStore.LookupEntry(_killer->GetMapId())->IsRaid() && _group->isRaidGroup();
+                _groupRate = Oregon::XP::xp_in_group_rate(_count, isRaid);
+            }
+
+            // 3.1.3. Reward each group member (even dead or corpse) within reward distance.
+            for (GroupReference* itr = _group->GetFirstMember(); itr != NULL; itr = itr->next())
+            {
+                if (Player* member = itr->GetSource())
+                {
+                    if (_killer == member || member->IsAtGroupRewardDistance(_victim))
+                    {
+                        _RewardPlayer(member, isDungeon);
+                        // Xinef: only count players
+                        //if (_victim->GetTypeId() == TYPEID_PLAYER)
+                        //    member->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_SPECIAL_PVP_KILL, 1, 0, _victim);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void KillRewarder::Reward()
+{
+    // 3. Reward killer (and group, if necessary).
+    if (_group)
+        // 3.1. If killer is in group, reward group.
+        _RewardGroup();
+    else
+    {
+        // 3.2. Reward single killer (not group case).
+        // 3.2.1. Initialize initial XP amount based on killer's level.
+        _InitXP(_killer);
+        // To avoid unnecessary calculations and calls,
+        // proceed only if XP is not ZERO or player is not on battleground
+        // (battleground rewards only XP, that's why).
+        if (!_isBattleGround || _xp)
+            // 3.2.2. Reward killer.
+            if (_killer->IsInMap(_victim)) // pussywizard: killer may be on other map (crashfix), when killing in a group same map is required, so its not a problem
+                _RewardPlayer(_killer, false);
+    }
+}
 
 //== PlayerTaxi ================================================
 
@@ -264,6 +467,8 @@ Player::Player(WorldSession* session) : Unit(true), m_reputationMgr(this)
     m_valuesCount = PLAYER_END;
 
     m_session = session;
+
+    m_divider = 0;
 
     m_ExtraFlags = 0;
 
@@ -1199,7 +1404,9 @@ void Player::Update(uint32 p_time)
     }
 
     if (IsAlive())
+    {
         RegenerateAll();
+    }
 
     if (m_deathState == JUST_DIED)
         KillPlayer();
@@ -2245,24 +2452,10 @@ void Player::SetGameMaster(bool on)
 
         getHostileRefManager().setOnlineOfflineState(false);
         CombatStopWithPets();
-
-        SetPhaseMask(uint32(PHASEMASK_ANYWHERE), false);    // see and visible in all phases
         m_serverSideVisibilityDetect.SetValue(SERVERSIDE_VISIBILITY_GM, GetSession()->GetSecurity());
     }
     else
     {
-        // restore phase
-        uint32 newPhase = 0;
-        AuraList const& phases = GetAurasByType(SPELL_AURA_PHASE);
-        if (!phases.empty())
-            for (AuraList::const_iterator itr = phases.begin(); itr != phases.end(); ++itr)
-                newPhase |= (*itr)->GetMiscValue();
-
-        if (!newPhase)
-            newPhase = PHASEMASK_NORMAL;
-
-        SetPhaseMask(newPhase, false);
-
         m_ExtraFlags &= ~ PLAYER_EXTRA_GM_ON;
         setFactionForRace(getRace());
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_GM);
@@ -2385,6 +2578,8 @@ void Player::GiveXP(uint32 xp, Unit* victim, bool disableRafBonus)
         return;
 
     uint32 level = getLevel();
+
+    sScriptMgr.OnGivePlayerXP(this, xp, victim);
 
     // XP to money conversion processed in Player::RewardQuest
     if (level >= sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
@@ -4103,7 +4298,6 @@ void Player::BuildPlayerRepop()
     GetMap()->AddToMap(corpse);
 
     // convert player body to ghost
-    setDeathState(DEAD);
     SetHealth(1);
 
     SetWaterWalking(true);
@@ -4173,9 +4367,6 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     // update visibility
     UpdateObjectVisibility();
 
-    // @todo: Death state should be set before SetPowers
-    // but we've moved it below UpdateObjectVisibility to
-    // solve an issue.
     setDeathState(ALIVE);
 
     // some items limited to specific map
@@ -6738,9 +6929,10 @@ void Player::_ApplyWeaponDependentAuraMods(Item* item, WeaponAttackType attackTy
     for (AuraList::const_iterator itr = auraDamageFlatList.begin(); itr != auraDamageFlatList.end(); ++itr)
         _ApplyWeaponDependentAuraDamageMod(item, attackType, *itr, apply);
 
+
     AuraList const& auraDamagePCTList = GetAurasByType(SPELL_AURA_MOD_DAMAGE_PERCENT_DONE);
     for (AuraList::const_iterator itr = auraDamagePCTList.begin(); itr != auraDamagePCTList.end(); ++itr)
-        _ApplyWeaponDependentAuraDamageMod(item, attackType, *itr, apply);
+        _ApplyWeaponDependentAuraDamageMod(item, attackType, *itr, apply);  
 }
 
 void Player::_ApplyWeaponDependentAuraCritMod(Item* item, WeaponAttackType attackType, Aura* aura, bool apply)
@@ -6806,8 +6998,12 @@ void Player::_ApplyWeaponDependentAuraDamageMod(Item* item, WeaponAttackType att
             if (aura->GetAmount() > 0)
                 ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS, aura->GetModifierValue(), apply);
             else
-                ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG, aura->GetModifierValue(), apply);
+                ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG, aura->GetModifierValue(), apply); 
         }
+
+        // For show in client
+        if (GetTypeId() == TYPEID_PLAYER)
+            ApplyModSignedFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT, aura->GetModifierValue() / 100.0f, apply);
     }
 }
 
@@ -9739,6 +9935,9 @@ uint8 Player::CanEquipItem(uint8 slot, uint16& dest, Item* pItem, bool swap, boo
 
                 if (IsNonMeleeSpellCast(false))
                     return EQUIP_ERR_CANT_DO_RIGHT_NOW;
+
+                if (HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
+                    return EQUIP_ERR_CANT_DO_RIGHT_NOW;
             }
 
             uint8 eslot = FindEquipSlot(pProto, slot, swap);
@@ -12108,91 +12307,92 @@ void Player::SendNewItem(Item* item, uint32 count, bool received, bool created, 
 /***                   GOSSIP SYSTEM                  ***/
 /*********************************************************/
 
-void Player::PrepareGossipMenu(WorldObject* source, uint32 menuId /*= 0*/, bool showQuests /*= false*/)
+void Player::PrepareGossipMenu(WorldObject* pSource, uint32 menuId)
 {
-    PlayerMenu* menu = PlayerTalkClass;
-    menu->ClearMenus();
+    PlayerMenu* pMenu = PlayerTalkClass;
+    pMenu->ClearMenus();
 
-    menu->GetGossipMenu().SetMenuId(menuId);
+    pMenu->GetGossipMenu().SetMenuId(menuId);
 
-    GossipMenuItemsMapBounds menuItemBounds = sObjectMgr.GetGossipMenuItemsMapBounds(menuId);
+    GossipMenuItemsMapBounds pMenuItemBounds = sObjectMgr.GetGossipMenuItemsMapBounds(menuId);
 
-    // if default menuId and no menu options exist for this, use options from default options
-    if (menuItemBounds.first == menuItemBounds.second && menuId == GetDefaultGossipMenuForSource(source))
-        menuItemBounds = sObjectMgr.GetGossipMenuItemsMapBounds(0);
+    // prepares quest menu when true
+    bool canSeeQuests = menuId == GetDefaultGossipMenuForSource(pSource);
 
-    uint32 npcflags = 0;
-    Creature* creature = NULL;
+    // if canSeeQuests (the default, top level menu) and no menu options exist for this, use options from default options
+    if (pMenuItemBounds.first == pMenuItemBounds.second && canSeeQuests)
+        pMenuItemBounds = sObjectMgr.GetGossipMenuItemsMapBounds(0);
 
-    if (source->GetTypeId() == TYPEID_UNIT)
+    bool canTalkToCredit = pSource->GetTypeId() == TYPEID_UNIT;
+
+    for (GossipMenuItemsMap::const_iterator itr = pMenuItemBounds.first; itr != pMenuItemBounds.second; ++itr)
     {
-        creature = source->ToCreature();
-        npcflags = creature->GetUInt32Value(UNIT_NPC_FLAGS);
-        if (npcflags & UNIT_NPC_FLAG_QUESTGIVER && showQuests)
-            PrepareQuestMenu(source->GetGUID());
-    }
+        bool hasMenuItem = true;
 
-    for (GossipMenuItemsMap::const_iterator itr = menuItemBounds.first; itr != menuItemBounds.second; ++itr)
-    {
-        bool canTalk = true;
-        bool canTalkToCredit = source->GetTypeId() == TYPEID_UNIT;
-        if (!sConditionMgr.IsObjectMeetToConditions(this, itr->second.Conditions))
-            continue;
-
-        if (source->GetTypeId() == TYPEID_UNIT)
+        if (!sConditionMgr.IsObjectMeetToConditions(this, pSource, itr->second.conditions))
         {
-            if (!(itr->second.OptionNpcflag & npcflags))
+            if (itr->second.option_id == GOSSIP_OPTION_QUESTGIVER)
+                canSeeQuests = false;
+            continue;
+        }
+
+        if (pSource->GetTypeId() == TYPEID_UNIT)
+        {
+            Creature* pCreature = pSource->ToCreature();
+            uint32 npcflags = pCreature->GetUInt32Value(UNIT_NPC_FLAGS);
+
+            if (!(itr->second.npc_option_npcflag & npcflags))
                 continue;
 
-            switch (itr->second.OptionType)
+            switch (itr->second.option_id)
             {
             case GOSSIP_OPTION_GOSSIP:
-                if (itr->second.ActionMenuId)         // has sub menu, so do not "talk" with this NPC yet
+                if (itr->second.action_menu_id)         // has sub menu, so do not "talk" with this NPC yet
                     canTalkToCredit = false;
                 break;
             case GOSSIP_OPTION_QUESTGIVER:
-                canTalk = false;
+                hasMenuItem = false;
                 break;
             case GOSSIP_OPTION_ARMORER:
-                canTalk = false;                    // added in special mode
+                hasMenuItem = false;                    // added in special mode
                 break;
             case GOSSIP_OPTION_SPIRITHEALER:
                 if (!isDead())
-                    canTalk = false;
+                    hasMenuItem = false;
                 break;
             case GOSSIP_OPTION_VENDOR:
-            {
-                VendorItemData const* vItems = creature->GetVendorItems();
-                if (!vItems || vItems->Empty())
                 {
-                    sLog.outErrorDb("Creature %u (Entry: %u) has UNIT_NPC_FLAG_VENDOR but has empty trading item list.", creature->GetGUIDLow(), creature->GetEntry());
-                    canTalk = false;
+                    VendorItemData const* vItems = pCreature->GetVendorItems();
+                    if (!vItems || vItems->Empty())
+                    {
+                        sLog.outErrorDb("Creature %u (Entry: %u) has UNIT_NPC_FLAG_VENDOR but has empty trading item list.", pCreature->GetGUIDLow(), pCreature->GetEntry());
+                        hasMenuItem = false;
+                    }
+                    break;
                 }
-                break;
-            }
             case GOSSIP_OPTION_UNLEARNTALENTS:
-                if (!creature->CanTrainAndResetTalentsOf(this))
-                    canTalk = false;
+                if (!pCreature->CanTrainAndResetTalentsOf(this))
+                    hasMenuItem = false;
                 break;
             case GOSSIP_OPTION_UNLEARNPETSKILLS:
-                if (!GetPet() || GetPet()->getPetType() != HUNTER_PET || GetPet()->m_spells.size() <= 1 || creature->GetCreatureTemplate()->trainer_type != TRAINER_TYPE_PETS || creature->GetCreatureTemplate()->classNum != CLASS_HUNTER)
-                    canTalk = false;
+                if (!GetPet() || GetPet()->getPetType() != HUNTER_PET || GetPet()->m_spells.size() <= 1 || pCreature->GetCreatureTemplate()->trainer_type != TRAINER_TYPE_PETS || pCreature->GetCreatureTemplate()->classNum != CLASS_HUNTER)
+                    hasMenuItem = false;
                 break;
             case GOSSIP_OPTION_TAXIVENDOR:
-                if (GetSession()->SendLearnNewTaxiNode(creature))
+                if (GetSession()->SendLearnNewTaxiNode(pCreature))
                     continue;
                 break;
             case GOSSIP_OPTION_BATTLEFIELD:
-                if (!creature->CanInteractWithBattleMaster(this, false))
-                    canTalk = false;
+                if (!pCreature->CanInteractWithBattleMaster(this, false))
+                    hasMenuItem = false;
                 break;
             case GOSSIP_OPTION_STABLEPET:
                 if (getClass() != CLASS_HUNTER)
-                    canTalk = false;
+                    hasMenuItem = false;
                 break;
             case GOSSIP_OPTION_TRAINER:
-                if (!creature->IsTrainerOf(this, false))
-                    canTalk = false;
+                if (!pCreature->IsTrainerOf(this, false))
+                    hasMenuItem = false;
             case GOSSIP_OPTION_SPIRITGUIDE:
             case GOSSIP_OPTION_INNKEEPER:
             case GOSSIP_OPTION_BANKER:
@@ -12201,86 +12401,90 @@ void Player::PrepareGossipMenu(WorldObject* source, uint32 menuId /*= 0*/, bool 
             case GOSSIP_OPTION_AUCTIONEER:
                 break;                                  // no checks
             case GOSSIP_OPTION_OUTDOORPVP:
-                if (!sOutdoorPvPMgr.CanTalkTo(this, creature, itr->second))
-                    canTalk = false;
+                if (!sOutdoorPvPMgr.CanTalkTo(this, pCreature, itr->second))
+                    hasMenuItem = false;
                 break;
             default:
-                sLog.outErrorDb("Creature entry %u have unknown gossip option %u for menu %u", creature->GetEntry(), itr->second.OptionType, itr->second.MenuId);
-                canTalk = false;
+                sLog.outErrorDb("Creature entry %u has unknown gossip option %u for menu %u", pCreature->GetEntry(), itr->second.option_id, itr->second.menu_id);
+                hasMenuItem = false;
                 break;
             }
         }
-        else if (source->GetTypeId() == TYPEID_GAMEOBJECT)
+        else if (pSource->GetTypeId() == TYPEID_GAMEOBJECT)
         {
-            GameObject* go = source->ToGameObject();
+            GameObject* pGo = (GameObject*)pSource;
 
-            switch (itr->second.OptionType)
+            switch (itr->second.option_id)
             {
             case GOSSIP_OPTION_QUESTGIVER:
-                if (go->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER)
-                    PrepareQuestMenu(source->GetGUID());
-                canTalk = false;
+                hasMenuItem = false;
                 break;
             case GOSSIP_OPTION_GOSSIP:
-                if (go->GetGoType() != GAMEOBJECT_TYPE_QUESTGIVER && go->GetGoType() != GAMEOBJECT_TYPE_GOOBER)
-                    canTalk = false;
+                if (pGo->GetGoType() != GAMEOBJECT_TYPE_QUESTGIVER && pGo->GetGoType() != GAMEOBJECT_TYPE_GOOBER)
+                    hasMenuItem = false;
                 break;
             default:
-                canTalk = false;
+                hasMenuItem = false;
                 break;
             }
         }
 
-        if (canTalk)
+        if (hasMenuItem)
         {
-            std::string strOptionText = itr->second.OptionText;
-            std::string strBoxText = itr->second.BoxText;
+            std::string strOptionText = itr->second.option_text;
+            std::string strBoxText = itr->second.box_text;
 
-            int32 locale = GetSession()->GetSessionDbLocaleIndex();
-            if (locale >= 0)
+            int loc_idx = GetSession()->GetSessionDbLocaleIndex();
+
+            if (loc_idx >= 0)
             {
-                uint32 idxEntry = MAKE_PAIR32(menuId, itr->second.OptionIndex);
+                uint32 idxEntry = MAKE_PAIR32(menuId, itr->second.id);
+
                 if (GossipMenuItemsLocale const* no = sObjectMgr.GetGossipMenuItemsLocale(idxEntry))
                 {
-                    if (no->OptionText.size() > (size_t)locale && !no->OptionText[locale].empty())
-                        strOptionText = no->OptionText[locale];
+                    if (no->OptionText.size() > (size_t)loc_idx && !no->OptionText[loc_idx].empty())
+                        strOptionText = no->OptionText[loc_idx];
 
-                    if (no->BoxText.size() > (size_t)locale && !no->BoxText[locale].empty())
-                        strBoxText = no->BoxText[locale];
+                    if (no->BoxText.size() > (size_t)loc_idx && !no->BoxText[loc_idx].empty())
+                        strBoxText = no->BoxText[loc_idx];
                 }
             }
-            menu->GetGossipMenu().AddMenuItem(itr->second.OptionIndex, itr->second.OptionIcon, strOptionText, 0, itr->second.OptionType, strBoxText, itr->second.BoxMoney, itr->second.BoxCoded);
-            menu->GetGossipMenu().AddGossipMenuItemData(itr->second.OptionIndex, itr->second.ActionMenuId, itr->second.ActionPoiId, itr->second.ActionScriptId);
-        
-            if (canTalkToCredit)
-            {
-                if (source->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP))
-                    TalkedToCreature(source->GetEntry(), source->GetGUID());
-            }
+
+            pMenu->GetGossipMenu().AddMenuItem(itr->second.option_icon, strOptionText, 0, itr->second.option_id, strBoxText, itr->second.box_money, itr->second.box_coded);
+            pMenu->GetGossipMenu().AddGossipMenuItemData(itr->second.action_menu_id, itr->second.action_poi_id, itr->second.action_script_id);
         }
+    }
+
+    if (canSeeQuests)
+        PrepareQuestMenu(pSource->GetGUID());
+
+    if (canTalkToCredit)
+    {
+        if (pSource->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP))
+            TalkedToCreature(pSource->GetEntry(), pSource->GetGUID());
     }
 }
 
-void Player::SendPreparedGossip(WorldObject* source)
+void Player::SendPreparedGossip(WorldObject* pSource)
 {
-    if (!source)
+    if (!pSource)
         return;
 
-    if (source->GetTypeId() == TYPEID_UNIT)
+    if (pSource->GetTypeId() == TYPEID_UNIT)
     {
         // in case no gossip flag and quest menu not empty, open quest menu (client expect gossip menu with this flag)
-        if (!source->ToCreature()->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP) && !PlayerTalkClass->GetQuestMenu().Empty())
+        if (!pSource->ToCreature()->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP) && !PlayerTalkClass->GetQuestMenu().Empty())
         {
-            SendPreparedQuest(source->GetGUID());
+            SendPreparedQuest(pSource->GetGUID());
             return;
         }
     }
-    else if (source->GetTypeId() == TYPEID_GAMEOBJECT)
+    else if (pSource->GetTypeId() == TYPEID_GAMEOBJECT)
     {
         // probably need to find a better way here
         if (!PlayerTalkClass->GetGossipMenu().GetMenuId() && !PlayerTalkClass->GetQuestMenu().Empty())
         {
-            SendPreparedQuest(source->GetGUID());
+            SendPreparedQuest(pSource->GetGUID());
             return;
         }
     }
@@ -12288,82 +12492,79 @@ void Player::SendPreparedGossip(WorldObject* source)
     // in case non empty gossip menu (that not included quests list size) show it
     // (quest entries from quest menu will be included in list)
 
-    uint32 textId = GetGossipTextId(source);
+    uint32 textId = GetGossipTextId(pSource);
 
     if (uint32 menuId = PlayerTalkClass->GetGossipMenu().GetMenuId())
-        textId = GetGossipTextId(menuId, source);
+        textId = GetGossipTextId(menuId, pSource);
 
-    PlayerTalkClass->SendGossipMenu(textId, source->GetGUID());
+    PlayerTalkClass->SendGossipMenu(textId, pSource->GetGUID());
 }
 
-void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 menuId)
+void Player::OnGossipSelect(WorldObject* pSource, uint32 gossipListId, uint32 menuId)
 {
-    GossipMenu& gossipMenu = PlayerTalkClass->GetGossipMenu();
+    GossipMenu& gossipmenu = PlayerTalkClass->GetGossipMenu();
+
+    if (gossipListId >= gossipmenu.MenuItemCount())
+        return;
 
     // if not same, then something funky is going on
-    if (menuId != gossipMenu.GetMenuId())
+    if (menuId != gossipmenu.GetMenuId())
         return;
 
-    GossipMenuItem const* item = gossipMenu.GetItem(gossipListId);
-    if (!item)
-        return;
+    GossipMenuItem const&  menu_item = gossipmenu.GetItem(gossipListId);
 
-    uint32 gossipOptionId = item->OptionType;
-    uint64 guid = source->GetGUID();
-    uint32 cost = item->BoxMoney;
+    uint32 gossipOptionId = menu_item.m_gOptionId;
+    uint64 guid = pSource->GetGUID();
+    uint32 moneyTake = menu_item.m_gBoxMoney;
 
     // if this function called and player have money for pay MoneyTake or cheating, proccess both cases
-    if (cost > 0)
+    if (moneyTake > 0)
     {
-        if (GetMoney() >= cost)
-            ModifyMoney(-int32(cost));
+        if (GetMoney() >= moneyTake)
+            ModifyMoney(-int32(moneyTake));
         else
-        {
-            SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, 0, 0, 0);
-            PlayerTalkClass->SendCloseGossip();
-            return;     // possible cheating
-        }
+            return;                                         // cheating
     }
 
-    if (source->GetTypeId() == TYPEID_GAMEOBJECT)
+    if (pSource->GetTypeId() == TYPEID_GAMEOBJECT)
     {
         if (gossipOptionId > GOSSIP_OPTION_QUESTGIVER)
         {
-            sLog.outError("Player guid %u request invalid gossip option for GameObject entry %u", GetGUIDLow(), source->GetEntry());
+            sLog.outError("Player guid %u request invalid gossip option for GameObject entry %u", GetGUIDLow(), pSource->GetEntry());
             return;
         }
     }
 
-    GossipMenuItemData const* menuItemData = gossipMenu.GetItemData(gossipListId);
+    GossipMenuItemData pMenuData = gossipmenu.GetItemData(gossipListId);
 
     switch (gossipOptionId)
     {
     case GOSSIP_OPTION_GOSSIP:
         {
-        if (menuItemData->GossipActionMenuId)
-        {
-            PrepareGossipMenu(source, menuItemData->GossipActionMenuId);
-            SendPreparedGossip(source);
-        }
+            //if (pMenuData.m_gAction_poi)
+            //    PlayerTalkClass->SendPointOfInterest(pMenuData.m_gAction_poi);
 
-        if (menuItemData->GossipActionPoi)
-            PlayerTalkClass->SendPointOfInterest(menuItemData->GossipActionPoi);
+            if (pMenuData.m_gAction_menu)
+            {
+                PrepareGossipMenu(pSource, pMenuData.m_gAction_menu);
+                SendPreparedGossip(pSource);
+            }
 
-        if (menuItemData->GossipActionScript)
-        {
-            if (source->GetTypeId() == TYPEID_UNIT)
-                GetMap()->ScriptsStart(sGossipScripts, menuItemData->GossipActionScript, this, source);
-            else if (source->GetTypeId() == TYPEID_GAMEOBJECT)
-                GetMap()->ScriptsStart(sGossipScripts, menuItemData->GossipActionScript, source, this);
-        }
+            if (pMenuData.m_gAction_script)
+            {
+                if (pSource->GetTypeId() == TYPEID_GAMEOBJECT)
+                    GetMap()->ScriptsStart(sGossipScripts, pMenuData.m_gAction_script, this, pSource);
+                else if (pSource->GetTypeId() == TYPEID_UNIT)
+                    GetMap()->ScriptsStart(sGossipScripts, pMenuData.m_gAction_script, pSource, this);
+            }
             break;
         }
     case GOSSIP_OPTION_OUTDOORPVP:
-        sOutdoorPvPMgr.HandleGossipOption(this, source->GetGUID(), gossipListId);
+        sOutdoorPvPMgr.HandleGossipOption(this, pSource->GetGUID(), gossipListId);
         break;
     case GOSSIP_OPTION_SPIRITHEALER:
         if (isDead())
-            source->ToCreature()->CastSpell((source->ToCreature()), 17251, true, NULL, NULL, GetGUID());
+            pSource->ToCreature()->CastSpell((pSource->ToCreature()), 17251, true, NULL, NULL, GetGUID());
         break;
     case GOSSIP_OPTION_QUESTGIVER:
         PrepareQuestMenu(guid);
@@ -12380,41 +12581,41 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
         GetSession()->SendTrainerList(guid);
         break;
     case GOSSIP_OPTION_UNLEARNTALENTS:
-        PlayerTalkClass->SendCloseGossip();
+        PlayerTalkClass->CloseGossip();
         SendTalentWipeConfirm(guid);
         break;
     case GOSSIP_OPTION_UNLEARNPETSKILLS:
-        PlayerTalkClass->SendCloseGossip();
+        PlayerTalkClass->CloseGossip();
         SendPetSkillWipeConfirm();
         break;
     case GOSSIP_OPTION_TAXIVENDOR:
-        GetSession()->SendTaxiMenu((source->ToCreature()));
+        GetSession()->SendTaxiMenu((pSource->ToCreature()));
         break;
     case GOSSIP_OPTION_INNKEEPER:
-        PlayerTalkClass->SendCloseGossip();
+        PlayerTalkClass->CloseGossip();
         SetBindPoint(guid);
         break;
     case GOSSIP_OPTION_BANKER:
         GetSession()->SendShowBank(guid);
         break;
     case GOSSIP_OPTION_PETITIONER:
-        PlayerTalkClass->SendCloseGossip();
+        PlayerTalkClass->CloseGossip();
         GetSession()->SendPetitionShowList(guid);
         break;
     case GOSSIP_OPTION_TABARDDESIGNER:
-        PlayerTalkClass->SendCloseGossip();
+        PlayerTalkClass->CloseGossip();
         GetSession()->SendTabardVendorActivate(guid);
         break;
     case GOSSIP_OPTION_AUCTIONEER:
-        GetSession()->SendAuctionHello(guid, (source->ToCreature()));
+        GetSession()->SendAuctionHello(guid, (pSource->ToCreature()));
         break;
     case GOSSIP_OPTION_SPIRITGUIDE:
-        PrepareGossipMenu(source);
-        SendPreparedGossip(source);
+        PrepareGossipMenu(pSource);
+        SendPreparedGossip(pSource);
         break;
     case GOSSIP_OPTION_BATTLEFIELD:
         {
-            uint32 bgTypeId = sObjectMgr.GetBattleMasterBG(source->GetEntry());
+            uint32 bgTypeId = sObjectMgr.GetBattleMasterBG(pSource->GetEntry());
 
             if (bgTypeId == 0)
             {
@@ -12511,16 +12712,15 @@ void Player::PrepareQuestMenu(uint64 guid)
             qm.AddMenuItem(quest_id, DIALOG_STATUS_REWARD_REP);
         else if (status == QUEST_STATUS_INCOMPLETE)
             qm.AddMenuItem(quest_id, DIALOG_STATUS_INCOMPLETE);
-        //else if (status == QUEST_STATUS_AVAILABLE)
-            //qm.AddMenuItem(quest_id, DIALOG_STATUS_CHAT);
+        else if (status == QUEST_STATUS_AVAILABLE)
+            qm.AddMenuItem(quest_id, DIALOG_STATUS_CHAT);
     }
 
     for (QuestRelations::const_iterator i = pObjectQR->lower_bound(pObject->GetEntry()); i != pObjectQR->upper_bound(pObject->GetEntry()); ++i)
     {
         uint32 quest_id = i->second;
         Quest const* pQuest = sObjectMgr.GetQuestTemplate(quest_id);
-        if (!pQuest)
-            continue;
+        if (!pQuest) continue;
 
         QuestStatus status = GetQuestStatus(quest_id);
 
@@ -12537,29 +12737,25 @@ void Player::SendPreparedQuest(uint64 guid)
     if (questMenu.Empty())
         return;
 
-    QuestMenuItem const& qmi0 = questMenu.GetItem(0);
-
-    uint32 icon = qmi0.QuestIcon;
-
     // single element case
-    if (questMenu.GetMenuItemCount() == 1)
+    if (questMenu.MenuItemCount() == 1)
     {
         // Auto open -- maybe also should verify there is no greeting
-        uint32 quest_id = qmi0.QuestId;
-        Quest const* pQuest = sObjectMgr.GetQuestTemplate(quest_id);
+        QuestMenuItem const& qmi0 = questMenu.GetItem(0);
+        uint32 questId = qmi0.m_qId;
 
-        if (pQuest)
+        if (Quest const* quest = sObjectMgr.GetQuestTemplate(questId))
         {
-            if (icon == DIALOG_STATUS_REWARD_REP && !GetQuestRewardStatus(quest_id))
-                PlayerTalkClass->SendQuestGiverRequestItems(pQuest, guid, CanRewardQuest(pQuest, false), true);
-            else if (icon == DIALOG_STATUS_INCOMPLETE)
-                PlayerTalkClass->SendQuestGiverRequestItems(pQuest, guid, false, true);
+            if (qmi0.m_qIcon == DIALOG_STATUS_REWARD_REP && !GetQuestRewardStatus(questId))
+                PlayerTalkClass->SendQuestGiverRequestItems(quest, guid, CanRewardQuest(quest, false), true);
+            else if (qmi0.m_qIcon == DIALOG_STATUS_INCOMPLETE)
+                PlayerTalkClass->SendQuestGiverRequestItems(quest, guid, false, true);
 
             // Repeatable quests such as donations can be completed without taking....
-            else if (pQuest->IsRepeatable() && !pQuest->IsDaily())
-                PlayerTalkClass->SendQuestGiverRequestItems(pQuest, guid, CanCompleteRepeatableQuest(pQuest), true);
+            else if (quest->IsRepeatable() && !quest->IsDaily())
+                PlayerTalkClass->SendQuestGiverRequestItems(quest, guid, CanCompleteRepeatableQuest(quest), true);
             else
-                PlayerTalkClass->SendQuestGiverQuestDetails(pQuest, guid, true);
+                PlayerTalkClass->SendQuestGiverQuestDetails(quest, guid, true);
         }
     }
     // multiply entries
@@ -12573,6 +12769,7 @@ void Player::SendPreparedQuest(uint64 guid)
         if (Creature* pCreature = GetMap()->GetCreature(guid))
         {
             uint32 textid = GetGossipTextId(pCreature);
+
             GossipText* gossiptext = sObjectMgr.GetGossipText(textid);
             if (!gossiptext)
             {
@@ -12590,9 +12787,14 @@ void Player::SendPreparedQuest(uint64 guid)
 
                     int loc_idx = GetSession()->GetSessionDbLocaleIndex();
                     if (loc_idx >= 0)
-                        if (NpcTextLocale const *nl = sObjectMgr.GetNpcTextLocale(textid))
+                    {
+                        NpcTextLocale const* nl = sObjectMgr.GetNpcTextLocale(textid);
+                        if (nl)
+                        {
                             if (nl->Text_0[0].size() > uint32(loc_idx) && !nl->Text_0[0][loc_idx].empty())
                                 title = nl->Text_0[0][loc_idx];
+                        }
+                    }
                 }
                 else
                 {
@@ -12600,9 +12802,14 @@ void Player::SendPreparedQuest(uint64 guid)
 
                     int loc_idx = GetSession()->GetSessionDbLocaleIndex();
                     if (loc_idx >= 0)
-                        if (NpcTextLocale const *nl = sObjectMgr.GetNpcTextLocale(textid))
+                    {
+                        NpcTextLocale const* nl = sObjectMgr.GetNpcTextLocale(textid);
+                        if (nl)
+                        {
                             if (nl->Text_1[0].size() > uint32(loc_idx) && !nl->Text_1[0][loc_idx].empty())
                                 title = nl->Text_1[0][loc_idx];
+                        }
+                    }
                 }
             }
         }
@@ -12784,62 +12991,13 @@ bool Player::CanCompleteRepeatableQuest(Quest const* quest)
 
     if (quest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_DELIVER))
         for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-            if (quest->RequiredItemId[i] && quest->ReqItemCount[i] && !HasItemCount(quest->RequiredItemId[i], quest->ReqItemCount[i]))
+            if (quest->ReqItemId[i] && quest->ReqItemCount[i] && !HasItemCount(quest->ReqItemId[i], quest->ReqItemCount[i]))
                 return false;
 
     if (!CanRewardQuest(quest, false))
         return false;
 
     return true;
-}
-
-void Player::AddQuestAndCheckCompletion(Quest const* quest, Object* questGiver)
-{
-    AddQuest(quest, questGiver);
-
-    if (CanCompleteQuest(quest->GetQuestId()))
-        CompleteQuest(quest->GetQuestId());
-
-    if (!questGiver)
-        return;
-
-    switch (questGiver->GetTypeId())
-    {
-    case TYPEID_UNIT:
-        PlayerTalkClass->ClearMenus();
-        sScriptMgr.QuestAccept(this, questGiver->ToCreature(), quest);
-        questGiver->ToCreature()->AI()->QuestAccept(this, quest);
-        break;
-    case TYPEID_ITEM:
-    case TYPEID_CONTAINER:
-    {
-        Item* item = static_cast<Item*>(questGiver);
-        sScriptMgr.OnQuestAccept(this, item, quest);
-
-        // destroy not required for quest finish quest starting item
-        bool destroyItem = true;
-        for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-        {
-            if (quest->RequiredItemId[i] == item->GetEntry() && item->GetProto()->MaxCount > 0)
-            {
-                destroyItem = false;
-                break;
-            }
-        }
-
-        if (destroyItem)
-            DestroyItem(item->GetBagSlot(), item->GetSlot(), true);
-
-        break;
-    }
-    case TYPEID_GAMEOBJECT:
-        PlayerTalkClass->ClearMenus();
-        sScriptMgr.GOQuestAccept(this, ((GameObject*)questGiver), quest);
-        questGiver->ToGameObject()->AI()->QuestAccept(this, quest);
-        break;
-    default:
-        break;
-    }
 }
 
 bool Player::CanRewardQuest(Quest const* pQuest, bool msg)
@@ -12862,7 +13020,7 @@ bool Player::CanRewardQuest(Quest const* pQuest, bool msg)
         for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
         {
             if (pQuest->ReqItemCount[i] != 0 &&
-                GetItemCount(pQuest->RequiredItemId[i]) < pQuest->ReqItemCount[i])
+                GetItemCount(pQuest->ReqItemId[i]) < pQuest->ReqItemCount[i])
             {
                 if (msg)
                     SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, NULL);
@@ -13024,15 +13182,15 @@ void Player::AbandonQuest(uint32 questId)
 {
     if (Quest const* quest = sObjectMgr.GetQuestTemplate(questId))
     {
-        for (uint8 i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-            if (ItemTemplate const* itemTemplate = sObjectMgr.GetItemTemplate(quest->RequiredItemId[i]))
-                if (quest->ReqItemCount[i] > 0 && itemTemplate->Bonding == BIND_QUEST_ITEM)
-                    DestroyItemCount(quest->RequiredItemId[i], quest->ReqItemCount[i], true);
+       for (uint8 i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
+           if (ItemTemplate const* itemTemplate = sObjectMgr.GetItemTemplate(quest->ReqItemId[i]))
+               if (quest->ReqItemCount[i] > 0 && itemTemplate->Bonding == BIND_QUEST_ITEM)
+                   DestroyItemCount(quest->ReqItemId[i], quest->ReqItemCount[i], true);
 
-        for (uint8 i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
-            if (ItemTemplate const* itemTemplate = sObjectMgr.GetItemTemplate(quest->ReqSourceId[i]))
-                if (quest->ReqSourceCount[i] > 0 && itemTemplate->Bonding == BIND_QUEST_ITEM)
-                    DestroyItemCount(quest->RequiredItemId[i], quest->ReqItemCount[i], true);
+       for (uint8 i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
+           if (ItemTemplate const* itemTemplate = sObjectMgr.GetItemTemplate(quest->ReqSourceId[i]))
+               if (quest->ReqSourceCount[i] > 0 && itemTemplate->Bonding == BIND_QUEST_ITEM)
+                   DestroyItemCount(quest->ReqItemId[i], quest->ReqItemCount[i], true);
     }
 }
 
@@ -13045,8 +13203,8 @@ void Player::RewardQuest(Quest const* pQuest, uint32 reward, Object* questGiver,
     uint32 quest_id = pQuest->GetQuestId();
 
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
-        if (pQuest->RequiredItemId[i])
-            DestroyItemCount(pQuest->RequiredItemId[i], pQuest->ReqItemCount[i], true);
+        if (pQuest->ReqItemId[i])
+            DestroyItemCount(pQuest->ReqItemId[i], pQuest->ReqItemCount[i], true);
 
     for (uint8 i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
     {
@@ -13651,7 +13809,7 @@ bool Player::CanShareQuest(uint32 quest_id) const
         QuestStatusMap::const_iterator itr = mQuestStatus.find(quest_id);
         if (itr != mQuestStatus.end())
         {
-            if (itr->second.m_status != QUEST_STATUS_NONE || itr->second.m_status != QUEST_STATUS_INCOMPLETE)
+            if (itr->second.m_status != QUEST_STATUS_INCOMPLETE)
                 return false;
 
             // Pooled daily quests that aren't available should not be shareable
@@ -13703,7 +13861,7 @@ void Player::AdjustQuestReqItemCount(Quest const* pQuest)
             if (reqitemcount != 0)
             {
                 uint32 quest_id = pQuest->GetQuestId();
-                uint32 curitemcount = GetItemCount(pQuest->RequiredItemId[i], true);
+                uint32 curitemcount = GetItemCount(pQuest->ReqItemId[i], true);
 
                 QuestStatusData& q_status = mQuestStatus[quest_id];
                 q_status.m_itemcount[i] = std::min(curitemcount, reqitemcount);
@@ -13783,7 +13941,7 @@ void Player::ItemAddedQuestCheck(uint32 entry, uint32 count)
 
         for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
         {
-            uint32 reqitem = qInfo->RequiredItemId[j];
+            uint32 reqitem = qInfo->ReqItemId[j];
             if (reqitem == entry)
             {
                 uint32 reqitemcount = qInfo->ReqItemCount[j];
@@ -13820,7 +13978,7 @@ void Player::ItemRemovedQuestCheck(uint32 entry, uint32 count)
 
         for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
         {
-            uint32 reqitem = qInfo->RequiredItemId[j];
+            uint32 reqitem = qInfo->ReqItemId[j];
             if (reqitem == entry)
             {
                 QuestStatusData& q_status = mQuestStatus[questid];
@@ -14093,7 +14251,7 @@ bool Player::HasQuestForItem(uint32 itemid) const
             // This part for ReqItem drop
             for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
             {
-                if (itemid == qinfo->RequiredItemId[j] && q_status.m_itemcount[j] < qinfo->ReqItemCount[j])
+                if (itemid == qinfo->ReqItemId[j] && q_status.m_itemcount[j] < qinfo->ReqItemCount[j])
                     return true;
             }
             // This part - for ReqSource
@@ -14241,7 +14399,7 @@ void Player::SendQuestUpdateAddItem(Quest const* pQuest, uint32 item_idx, uint32
 {
     WorldPacket data(SMSG_QUESTUPDATE_ADD_ITEM, (4 + 4));
     DEBUG_LOG("WORLD: Sent SMSG_QUESTUPDATE_ADD_ITEM");
-    data << pQuest->RequiredItemId[item_idx];
+    data << pQuest->ReqItemId[item_idx];
     data << count;
     GetSession()->SendPacket(&data);
 }
@@ -14962,10 +15120,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
 
     _LoadSpellCooldowns(holder->GetResult(PLAYER_LOGIN_QUERY_LOADSPELLCOOLDOWNS));
 
-    uint32 savedHealth = fields[50].GetUInt32();
-    if (!savedHealth)
-        m_deathState = CORPSE;
-
     // Spell code allow apply any auras to dead character in load time in aura/spell/item loading
     // Do now before stats re-calculation cleanup for ghost state unexpected auras
     if (!IsAlive())
@@ -14975,6 +15129,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder* holder)
     SetCanModifyStats(true);
     UpdateAllStats();
 
+    // restore remembered power/health values (but not more max values)
+    uint32 savedHealth = fields[50].GetUInt32();
     SetHealth(savedHealth > GetMaxHealth() ? GetMaxHealth() : savedHealth);
     for (uint8 i = 0; i < MAX_POWERS; ++i)
     {
@@ -15213,10 +15369,11 @@ void Player::LoadCorpse()
         ObjectAccessor::Instance().ConvertCorpseForPlayer(GetGUID());
     else
     {
-        if (HasAtLoginFlag(AT_LOGIN_RESURRECT))
-            ResurrectPlayer(0.5f);
-        else if (Corpse* corpse = GetCorpse())
+        if (Corpse* corpse = GetCorpse())
             ApplyModFlag(PLAYER_FIELD_BYTES, PLAYER_FIELD_BYTE_RELEASE_TIMER, corpse && !sMapStore.LookupEntry(corpse->GetMapId())->Instanceable());
+        else
+            //Prevent Dead Player login without corpse
+            ResurrectPlayer(0.5f);
     }
 }
 
@@ -15729,27 +15886,6 @@ void Player::_LoadSkills(QueryResult_AutoPtr result)
         SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(count), 0);
         SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(count), 0);
     }
-}
-
-uint32 Player::GetPhaseMaskForSpawn() const
-{
-    uint32 phase = PHASEMASK_NORMAL;
-    if (!IsGameMaster())
-        phase = GetPhaseMask();
-    else
-    {
-        AuraList const& phases = GetAurasByType(SPELL_AURA_PHASE);
-        if (phases.empty())
-            phase = GetPhaseMask();
-        else
-            phase = phases.front()->GetMiscValue();
-    }
-
-    // some aura phases include 1 normal map in addition to phase itself
-    if (uint32 n_phase = phase & ~PHASEMASK_NORMAL)
-        return n_phase;
-
-    return PHASEMASK_NORMAL;
 }
 
 void Player::_LoadSpells(QueryResult_AutoPtr result)
@@ -18810,7 +18946,7 @@ void Player::UpdateVisibilityOf(WorldObject* target)
         if (CanSeeOrDetect(target, false, true))
         {
             target->SendUpdateToPlayer(this);
-            //if (target->GetTypeId() != TYPEID_GAMEOBJECT || !((GameObject*)target)->IsTransport())
+            if (target->GetTypeId() != TYPEID_GAMEOBJECT || !((GameObject*)target)->IsTransport())
                 m_clientGUIDs.insert(target->GetGUID());
 
             #ifdef OREGON_DEBUG
@@ -18869,7 +19005,7 @@ void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& vi
             #endif
         }
     }
-    else
+    else if (visibleNow.size() < 30)
     {
         if (CanSeeOrDetect(target, false, true))
         {
@@ -19126,14 +19262,6 @@ void Player::SendInitialPacketsAfterAddToMap()
            though because its unusable by the player anyway,
            and also is not shown in the spellbook */
         SetGrantableLevels(m_GrantableLevels);
-    }
-
-    if (GetPlayerSharingQuest())
-    {
-        if (Quest const* quest = sObjectMgr.GetQuestTemplate(GetSharedQuestID()))
-            PlayerTalkClass->SendQuestGiverQuestDetails(quest, GetGUID(), true);
-        else
-            ClearQuestSharingInfo();
     }
 }
 
@@ -19803,108 +19931,9 @@ bool Player::isHonorOrXPTarget(Unit* victim) const
     return true;
 }
 
-void Player::RewardPlayerAndGroupAtKill(Unit* victim)
+void Player::RewardPlayerAndGroupAtKill(Unit* victim, bool isBattleGround)
 {
-    bool PvP = victim->IsCharmedOwnedByPlayerOrPlayer();
-
-    // prepare data for near group iteration (PvP and !PvP cases)
-    uint32 xp = 0;
-    uint32 petXP = 0;
-
-    if (Group* pGroup = GetGroup())
-    {
-        uint32 count = 0;
-        uint32 sum_level = 0;
-        Player* member_with_max_level = NULL;
-        Player* not_gray_member_with_max_level = NULL;
-
-        pGroup->GetDataForXPAtKill(victim, count, sum_level, member_with_max_level, not_gray_member_with_max_level);
-
-        if (member_with_max_level)
-        {
-            // PvP kills doesn't yield experience
-            // also no XP gained if there is no member below gray level
-            xp = (PvP || !not_gray_member_with_max_level) ? 0 : Oregon::XP::Gain(not_gray_member_with_max_level, victim);
-
-            // skip in check PvP case (for speed, not used)
-            bool is_raid = PvP ? false : sMapStore.LookupEntry(GetMapId())->IsRaid() && pGroup->isRaidGroup();
-            bool is_dungeon = PvP ? false : sMapStore.LookupEntry(GetMapId())->IsDungeon();
-            float group_rate = Oregon::XP::xp_in_group_rate(count, is_raid);
-
-            for (GroupReference* itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
-            {
-                Player* pGroupGuy = itr->GetSource();
-                if (!pGroupGuy)
-                    continue;
-
-                if (!pGroupGuy->IsAtGroupRewardDistance(victim))
-                    continue;                               // member (alive or dead) or his corpse at req. distance
-
-                // honor can be in PvP and !PvP (racial leader) cases (for alive)
-                if (pGroupGuy->IsAlive())
-                    pGroupGuy->RewardHonor(victim, count, -1, true);
-
-                // xp and reputation only in !PvP case
-                if (!PvP)
-                {
-                    float rate = group_rate * float(pGroupGuy->getLevel()) / sum_level;
-
-                    // if is in dungeon then all receive full reputation at kill
-                    // rewarded any alive/dead/near_corpse group member
-                    pGroupGuy->RewardReputation(victim, is_dungeon ? 1.0f : rate);
-
-                    // XP updated only for alive group member
-                    if (pGroupGuy->IsAlive() && not_gray_member_with_max_level &&
-                        pGroupGuy->getLevel() <= not_gray_member_with_max_level->getLevel())
-                    {
-                        bool trivialTarget = (member_with_max_level != not_gray_member_with_max_level);
-                        uint32 itr_xp = uint32(xp * rate);
-
-                        if (trivialTarget)
-                            itr_xp /= 2;
-
-                        pGroupGuy->GiveXP(itr_xp, victim, trivialTarget);
-                        if (Pet* pet = pGroupGuy->GetPet())
-                            pet->GivePetXP(itr_xp / 2);
-                    }
-
-                    // quest objectives updated only for alive group member or dead but with not released body
-                    if (pGroupGuy->IsAlive() || !pGroupGuy->GetCorpse())
-                    {
-                        // normal creature (not pet/etc) can be only in !PvP case
-                        if (victim->GetTypeId() == TYPEID_UNIT)
-                            if (CreatureInfo const* normalInfo = ObjectMgr::GetCreatureTemplate(victim->GetEntry()))
-                                pGroupGuy->KilledMonster(normalInfo, victim->GetGUID());
-                    }
-                }
-            }
-        }
-    }
-    else                                                    // if (!pGroup)
-    {
-        xp = PvP ? 0 : Oregon::XP::Gain(this, victim);
-
-        if (Pet* pet = GetPet())
-            petXP = PvP ? 0 : Oregon::XP::Gain(pet, victim);
-
-        // honor can be in PvP and !PvP (racial leader) cases
-        RewardHonor(victim, 1, -1, true);
-
-        // xp and reputation only in !PvP case
-        if (!PvP)
-        {
-            RewardReputation(victim, 1);
-            GiveXP(xp, victim);
-
-            if (Pet* pet = GetPet())
-                pet->GivePetXP(petXP);
-
-            // normal creature (not pet/etc) can be only in !PvP case
-            if (victim->GetTypeId() == TYPEID_UNIT)
-                if (CreatureInfo const* normalInfo = ObjectMgr::GetCreatureTemplate(victim->GetEntry()))
-                    KilledMonster(normalInfo, victim->GetGUID());
-        }
-    }
+    KillRewarder(this, victim, isBattleGround).Reward();
 }
 
 void Player::RewardPlayerAndGroupAtEvent(uint32 creature_id, WorldObject* pRewardSource)

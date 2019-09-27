@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -660,8 +660,18 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     pCurrChar->LoadCorpse();
 
     // setting Ghost+speed if dead
-    if (pCurrChar->m_deathState == DEAD)
+    if (pCurrChar->m_deathState != ALIVE)
+    {
+        // not blizz like, we must correctly save and load player instead...
+        if (pCurrChar->getRace() == RACE_NIGHTELF)
+        {
+            pCurrChar->CastSpell(pCurrChar, 20584, true, 0);// auras SPELL_AURA_INCREASE_SPEED(+speed in wisp form), SPELL_AURA_INCREASE_SWIM_SPEED(+swim speed in wisp form), SPELL_AURA_TRANSFORM (to wisp form)
+        }
+
+        pCurrChar->CastSpell(pCurrChar, 8326, true, 0);     // auras SPELL_AURA_GHOST, SPELL_AURA_INCREASE_SPEED(why?), SPELL_AURA_INCREASE_SWIM_SPEED(why?)
+
         pCurrChar->SetWaterWalking(true);
+    }
 
     pCurrChar->ContinueTaxiFlight();
 
@@ -761,13 +771,6 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
                  GetAccountId(), IP_str.c_str(), pCurrChar->GetName(), pCurrChar->GetGUIDLow());
 
     m_playerLoading = false;
-
-    // if we're loading a dead player, repop them to the GY after the load is finished
-    if (pCurrChar->getDeathState() == CORPSE)
-    {
-        pCurrChar->BuildPlayerRepop();
-        pCurrChar->RepopAtGraveyard();
-    }
 
     //Hook for OnLogin Event
     sScriptMgr.OnLogin(pCurrChar);

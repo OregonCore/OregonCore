@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -72,6 +72,7 @@ struct instance_karazhan : public ScriptedInstance
     uint64 m_uiMoroesGUID;
     uint64 m_uiNightBaneGUID;
     uint64 EchoOfMedivhGUID;
+    uint64 m_uiNpcRelayGuid;
 
     uint64 m_uiLibraryDoor;                                     // Door at Shade of Aran
     uint64 m_uiMassiveDoor;                                     // Door at Netherspite
@@ -101,6 +102,7 @@ struct instance_karazhan : public ScriptedInstance
         m_uiMoroesGUID      = 0;
         m_uiNightBaneGUID = 0;
         EchoOfMedivhGUID = 0;
+        m_uiNpcRelayGuid = 0;
 
         m_uiLibraryDoor         = 0;
         m_uiMassiveDoor         = 0;
@@ -112,6 +114,7 @@ struct instance_karazhan : public ScriptedInstance
         MastersTerraceDoor[0] = 0;
         MastersTerraceDoor[1] = 0;
         ImageGUID = 0;
+        
     }
 
     bool IsEncounterInProgress() const
@@ -139,6 +142,10 @@ struct instance_karazhan : public ScriptedInstance
         case 16816:
             EchoOfMedivhGUID = pCreature->GetGUID();
             break;
+        case 17645:
+            m_uiNpcRelayGuid = pCreature->GetGUID();
+            break;
+
         }
     }
 
@@ -417,6 +424,8 @@ struct instance_karazhan : public ScriptedInstance
             return m_uiNightBaneGUID;
         case DATA_ECHO_OF_MEDIVH:
             return EchoOfMedivhGUID;
+        case DATA_NPC_RELAY:
+            return m_uiNpcRelayGuid;
         }
 
         return 0;

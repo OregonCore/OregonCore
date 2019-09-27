@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "OutdoorPvP.h"
@@ -275,16 +275,14 @@ bool OPvPCapturePoint::Update(uint32 diff)
         {
             Player* player = *itr;
             ++itr;
-
-            if (Player* player = ObjectAccessor::FindPlayer(player->GetGUID()))
-                if (!m_capturePoint->IsWithinDistInMap(player, radius) || !player->IsOutdoorPvPActive())
-                    HandlePlayerLeave(player);
+            if (!player->IsWithinDistInMap(m_capturePoint, radius) || !player->IsOutdoorPvPActive())
+                HandlePlayerLeave(player);
         }
     }
 
     std::list<Player*> players;
     Oregon::AnyPlayerInObjectRangeCheck checker(m_capturePoint, radius);
-    Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(m_capturePoint, players, checker);
+    Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(players, checker);
     m_capturePoint->VisitNearbyWorldObject(radius, searcher);
 
     for (std::list<Player*>::iterator itr = players.begin(); itr != players.end(); ++itr)

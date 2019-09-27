@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef _PLAYER_H
@@ -477,8 +477,7 @@ enum AtLoginFlags
     AT_LOGIN_NONE          = 0,
     AT_LOGIN_RENAME        = 1,
     AT_LOGIN_RESET_SPELLS  = 2,
-    AT_LOGIN_RESET_TALENTS = 4,
-    AT_LOGIN_RESURRECT     = 8
+    AT_LOGIN_RESET_TALENTS = 4
 };
 
 typedef std::map<uint32, QuestStatusData> QuestStatusMap;
@@ -817,6 +816,38 @@ enum PlayerCommandStates
     CHEAT_WATERWALK = 0x10
 };
 
+class KillRewarder
+{
+public:
+    KillRewarder(Player* killer, Unit* victim, bool isBattleGround);
+
+    void Reward();
+
+private:
+    void _InitXP(Player* player);
+    void _InitGroupData();
+
+    void _RewardHonor(Player* player);
+    void _RewardXP(Player* player, float rate);
+    void _RewardReputation(Player* player, float rate);
+    void _RewardKillCredit(Player* player);
+    void _RewardPlayer(Player* player, bool isDungeon);
+    void _RewardGroup();
+
+    Player* _killer;
+    Unit* _victim;
+    Group* _group;
+    float _groupRate;
+    Player* _maxNotGrayMember;
+    uint32 _count;
+    uint32 _sumLevel;
+    uint32 _xp;
+    bool _isFullXP;
+    uint8 _maxLevel;
+    bool _isBattleGround;
+    bool _isPvP;
+};
+
 class PlayerTaxi
 {
     public:
@@ -1082,8 +1113,6 @@ class Player : public Unit, public GridObject<Player>
         Pet* SummonPet(uint32 entry, float x, float y, float z, float ang, PetType petType, uint32 despwtime);
         void RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent = false);
 
-        uint32 GetPhaseMaskForSpawn() const;                // used for proper set phase for DB at GM-mode creature/GO spawn
-
         void Say(const std::string& text, const uint32 language);
         void Yell(const std::string& text, const uint32 language);
         void TextEmote(const std::string& text);
@@ -1305,10 +1334,9 @@ class Player : public Unit, public GridObject<Player>
         /***                   GOSSIP SYSTEM                  ***/
         /*********************************************************/
 
-        void PrepareGossipMenu(WorldObject* source, uint32 menuId = 0, bool showQuests = false);
-        void SendPreparedGossip(WorldObject* source);
-        void OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 menuId);
-
+        void PrepareGossipMenu(WorldObject* pSource, uint32 menuId = 0);
+        void SendPreparedGossip(WorldObject* pSource);
+        void OnGossipSelect(WorldObject* pSource, uint32 gossipListId, uint32 menuId);
 
         uint32 GetGossipTextId(uint32 menuId, WorldObject* source);
         uint32 GetGossipTextId(WorldObject* pSource);
@@ -1335,7 +1363,6 @@ class Player : public Unit, public GridObject<Player>
         bool CanCompleteRepeatableQuest(Quest const* pQuest);
         bool CanRewardQuest(Quest const* pQuest, bool msg);
         bool CanRewardQuest(Quest const* pQuest, uint32 reward, bool msg);
-        void AddQuestAndCheckCompletion(Quest const* quest, Object* questGiver);
         void AddQuest(Quest const* pQuest, Object* questGiver);
         void CompleteQuest(uint32 quest_id);
         void IncompleteQuest(uint32 quest_id);
@@ -1447,16 +1474,33 @@ class Player : public Unit, public GridObject<Player>
         void SendQuestUpdateAddItem(Quest const* pQuest, uint32 item_idx, uint32 count);
         void SendQuestUpdateAddCreatureOrGo(Quest const* pQuest, uint64 guid, uint32 creatureOrGO_idx, uint32 old_count, uint32 add_count);
 
-        uint32 GetSharedQuestID() const { return m_sharedQuestId; }
-        ObjectGuid GetPlayerSharingQuest() const { return m_playerSharingQuest; }
-        void SetQuestSharingInfo(ObjectGuid guid, uint32 id) { m_playerSharingQuest = guid; m_sharedQuestId = id; }
-        void ClearQuestSharingInfo() { m_playerSharingQuest = 0; m_sharedQuestId = 0; }
+        uint64 GetDivider()
+        {
+            return m_divider;
+        }
+        void SetDivider(uint64 guid)
+        {
+            m_divider = guid;
+        }
 
-        uint32 GetInGameTime() const { return m_ingametime; }
-        void SetInGameTime(uint32 time) { m_ingametime = time; }
+        uint32 GetInGameTime()
+        {
+            return m_ingametime;
+        }
 
-        void AddTimedQuest(uint32 questId) { m_timedquests.insert(questId); }
-        void RemoveTimedQuest(uint32 questId) { m_timedquests.erase(questId); }
+        void SetInGameTime(uint32 time)
+        {
+            m_ingametime = time;
+        }
+
+        void AddTimedQuest(uint32 quest_id)
+        {
+            m_timedquests.insert(quest_id);
+        }
+        void RemoveTimedQuest(uint32 quest_id)
+        {
+            m_timedquests.erase(quest_id);
+        }
 
         /*********************************************************/
         /***                  LOAD SYSTEM                     ***/
@@ -2063,7 +2107,10 @@ class Player : public Unit, public GridObject<Player>
         void CheckAreaExploreAndOutdoor(void);
 
         static uint32 TeamForRace(uint8 race);
-        uint32 GetTeam() const { return m_team; }
+        uint32 GetTeam() const
+        {
+            return m_team;
+        }
         TeamId GetTeamId() const
         {
             return m_team == ALLIANCE ? TEAM_ALLIANCE : TEAM_HORDE;
@@ -2072,7 +2119,7 @@ class Player : public Unit, public GridObject<Player>
         void setFactionForRace(uint8 race);
 
         bool IsAtGroupRewardDistance(WorldObject const* pRewardSource) const;
-        void RewardPlayerAndGroupAtKill(Unit* victim);
+        void RewardPlayerAndGroupAtKill(Unit* victim, bool isBattleGround);
         void RewardPlayerAndGroupAtEvent(uint32 creature_id, WorldObject* pRewardSource);
         bool isHonorOrXPTarget(Unit* victim) const;
 
@@ -2706,8 +2753,7 @@ class Player : public Unit, public GridObject<Player>
         //We allow only one timed quest active at the same time. Below can then be simple value instead of set.
         std::set<uint32> m_timedquests;
 
-        uint64 m_playerSharingQuest;
-        uint32 m_sharedQuestId;
+        uint64 m_divider;
         uint32 m_ingametime;
 
         /*********************************************************/

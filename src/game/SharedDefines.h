@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef OREGON_SHAREDDEFINES_H
@@ -586,7 +586,7 @@ enum SpellAttributesEx4
     SPELL_ATTR4_USABLE_IN_ARENA                  = 0x00020000, // 17 usable in arena
     SPELL_ATTR4_AREA_TARGET_CHAIN                = 0x00040000, // 18 [NYI] hits area targets one after another instead of all at once
     SPELL_ATTR4_UNK19                            = 0x00080000, // 19
-    SPELL_ATTR4_UNK20                            = 0x00100000, // 20 do not give "more powerful spell" error message
+    SPELL_ATTR4_UNK20                            = 0x00100000, // 20
     SPELL_ATTR4_STANCES                          = 0x00200000, // 21 stances, shapeshifts, etc.
     SPELL_ATTR4_UNK22                            = 0x00400000, // 22 used by seal of command (20424,42058)
     SPELL_ATTR4_CANT_TRIGGER_ITEM_SPELLS         = 0x00800000, // 23 Used by spells that cannot trigger item procs such as enchants
@@ -625,7 +625,7 @@ enum SpellAttributesEx5
     SPELL_ATTR5_SPECIAL_MOUNT                    = 0x00100000, // 20 used by mount transformators, also by black qiraji and dragonmaw illusion
     SPELL_ATTR5_UNK21                            = 0x00200000, // 21 used by demonice sacrifice, BM Only OFF/ON, BM OFF, Terun Rift, "Damage", Rocket Bot Attack
     SPELL_ATTR5_UNK22                            = 0x00400000, // 22 used by spells Hex Lord Malacrass casts (player based), Hex Lord Adds also and also Flame Wreath from Aran
-    SPELL_ATTR_EX5_DOT_IGNORE_RESILIENCE         = 0x00800000, // 23 Damage over Time spells that are not affected by Resilience have this attribute
+    SPELL_ATTR5_UNK23                            = 0x00800000, // 23 used by ignite, shadow work: death
     SPELL_ATTR5_UNK24                            = 0x01000000, // 24
     SPELL_ATTR5_UNK25                            = 0x02000000, // 25 used by one spell - Death Lightning, doesn't seem to be used anywhere
     SPELL_ATTR5_UNK26                            = 0x04000000, // 26 used by thunder clap and seed of corruption
@@ -646,7 +646,7 @@ enum SpellAttributesEx6
     SPELL_ATTR6_UNK5                             = 0x00000020, // 5
     SPELL_ATTR6_CAN_TARGET_INVISIBLE             = 0x00000040, // 6 not set in 2.4.3
     SPELL_ATTR6_UNK7                             = 0x00000080, // 7
-    SPELL_ATTR_EX6_CANT_TARGET_CROWD_CONTROLLED  = 0x00000100, // 8
+    SPELL_ATTR6_UNK8                             = 0x00000100, // 8
     SPELL_ATTR6_UNK9                             = 0x00000200, // 9 not set in 2.4.2
     SPELL_ATTR6_UNK10                            = 0x00000400, // 10
     SPELL_ATTR6_NOT_IN_RAID_INSTANCE             = 0x00000800, // 11
@@ -905,7 +905,7 @@ enum SpellEffects
     SPELL_EFFECT_ACTIVATE_RUNE             = 146, // not set
     SPELL_EFFECT_QUEST_FAIL                = 147,
     SPELL_EFFECT_148                       = 148, // not set
-    SPELL_EFFECT_149                       = 149,
+    SPELL_EFFECT_CHARGE_DEST               = 149,
     SPELL_EFFECT_150                       = 150, // not set
     SPELL_EFFECT_TRIGGER_SPELL_2           = 151,
     SPELL_EFFECT_SUMMON_FRIEND             = 152, // one spell: Summon Friend

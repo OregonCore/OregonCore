@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -35,55 +35,77 @@ EndScriptData */
 #define SPELL_PARALYZING    40184
 #define SPELL_BOMB          40303
 #define SPELL_BANISH        42354
+#define SPELL_SHADOWFORM    40973
 
 #define GO_CLAW             185554
 
 #define NPC_BROOD           23132
 
+enum anzu
+{
+    EVENT_SPELL_SCREECH = 1,
+    EVENT_SPELL_BOMB = 2,
+    EVENT_SPELL_CYCLONE = 3,
+    EVENT_ANZU_HEALTH1 = 4,
+    EVENT_ANZU_HEALTH2 = 5
+};
+
 struct boss_anzuAI : public ScriptedAI
 {
-    boss_anzuAI(Creature* c) : ScriptedAI(c)
+    boss_anzuAI(Creature* c) : ScriptedAI(c), summons(me)
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
-        DoScriptText(SAY_INTRO1, me);
-        DoScriptText(SAY_INTRO2, me);
+
+        talkTimer = 1;
+        me->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->AddAura(SPELL_SHADOWFORM, me);
+
+        if (GameObject* pClaw = me->FindNearestGameObject(GO_CLAW, 20))
+            pClaw->RemoveFromWorld();
     }
 
     ScriptedInstance* pInstance;
-
+    EventMap events;
+    uint32 talkTimer;
+    SummonList summons;
     bool HeroicMode;
-
-    uint32 Cyclone_Timer;
-    uint32 Rip_Timer;
-    uint32 Paralyzing_Timer;
-    uint32 Bomb_Timer;
-    uint32 SummonedCount;
-
-    bool Summon1;
-    bool Summon2;
-    bool Paralyzing;
 
     void Reset()
     {
-        if (GameObject* pClaw = me->FindNearestGameObject(GO_CLAW , 20))
-            pClaw->RemoveFromWorld();
+        summons.DespawnAll();
+
+        if (GameObject* pClaw = me->FindNearestGameObject(GO_CLAW, 20))
+            if (!pClaw)
+                pClaw->AddToWorld();
 
         if (pInstance)
             pInstance->SetData(DATA_ANZUEVENT, NOT_STARTED);
+    }
 
-        Cyclone_Timer = 10000;
-        Rip_Timer = 8000;
-        Paralyzing_Timer = 1000;
-        Bomb_Timer = 22000;
-        Summon1 = false;
-        Summon2 = false;
-        Paralyzing = false;
-        SummonedCount = 5;
+    void JustSummoned(Creature* summon)
+    {
+        summons.Summon(summon);
+        summon->AI()->AttackStart(me->GetVictim());
+    }
+
+    void SummonedCreatureDies(Creature* summon, Unit*)
+    {
+        summons.Despawn(summon);
+        
+        if (summons.empty())
+            me->RemoveAurasDueToSpell(SPELL_BANISH);
     }
 
     void EnterCombat(Unit*)
     {
+        events.Reset();
+        events.ScheduleEvent(EVENT_SPELL_SCREECH, 14000);
+        events.ScheduleEvent(EVENT_SPELL_BOMB, 5000);
+        events.ScheduleEvent(EVENT_SPELL_CYCLONE, 8000);
+        events.ScheduleEvent(EVENT_ANZU_HEALTH1, 2000);
+        events.ScheduleEvent(EVENT_ANZU_HEALTH2, 2001);
+
         if (pInstance)
             pInstance->SetData(DATA_ANZUEVENT, IN_PROGRESS);
     }
@@ -94,79 +116,85 @@ struct boss_anzuAI : public ScriptedAI
             pInstance->SetData(DATA_ANZUEVENT, DONE);
     }
 
-    void JustSummoned(Creature* summoned)
+    void SummonBroods()
     {
-        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-            summoned->AI()->AttackStart(pTarget);
+        DoScriptText(SAY_HELP, me);
+        me->CastSpell(me, SPELL_BANISH, true);
+        for (int i = 0; i < 5; ++i)
+        {
+            Creature* brood = me->SummonCreature(NPC_BROOD, me->GetPositionX() + 20 * cos((float)i), me->GetPositionY() + 20 * sin((float)i), me->GetPositionZ() + 25.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            brood->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 1, 45.0f, true));
+        }
     }
 
     void UpdateAI(const uint32 diff)
     {
+        if (talkTimer)
+        {
+            talkTimer += diff;
+            if (talkTimer >= 1000 && talkTimer < 10000)
+            {
+                DoScriptText(SAY_INTRO1, me);
+                talkTimer = 10000;
+            }
+            else if (talkTimer >= 16000)
+            {
+                me->SetUInt32Value(UNIT_FIELD_FLAGS, 0);
+                me->RemoveAurasDueToSpell(SPELL_SHADOWFORM);
+                DoScriptText(SAY_INTRO2, me);
+                talkTimer = 0;
+            }
+        }
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth() * 100) / me->GetMaxHealth() < 66) && !Summon1)
+        events.Update(diff);
+        if (me->HasUnitState(UNIT_STATE_CASTING | UNIT_STATE_STUNNED))
+            return;
+
+        switch (events.ExecuteEvent())
         {
-            DoCast(me, SPELL_BANISH);
-            DoScriptText(SAY_HELP, me);
-            Paralyzing = true;
-            for (uint32 i = 0; i < SummonedCount; i++)
-                me->SummonCreature(NPC_BROOD, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-            Summon1 = true;
+        case EVENT_SPELL_SCREECH:
+            me->CastSpell(me, SPELL_PARALYZING, false);
+            events.Repeat(23000);
+            events.DelayEvents(3000);
+            break;
+        case EVENT_SPELL_BOMB:
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 50.0f, true))
+                me->CastSpell(target, SPELL_BOMB, false);
+            events.Repeat(urand(16000, 24500));
+            events.DelayEvents(3000);
+            break;
+        case EVENT_SPELL_CYCLONE:
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 45.0f, true))
+                me->CastSpell(target, SPELL_CYCLONE, false);
+            events.Repeat(urand(22000, 27000));
+            events.DelayEvents(3000);
+            break;
+        case EVENT_ANZU_HEALTH1:
+            if (me->HealthBelowPct(66))
+            {
+                SummonBroods();
+                events.ExecuteEvent();
+                events.DelayEvents(10000);
+                return;
+            }
+            events.Repeat(1000);
+            break;
+        case EVENT_ANZU_HEALTH2:
+            if (me->HealthBelowPct(33))
+            {
+                SummonBroods();
+                events.ExecuteEvent();
+                events.DelayEvents(10000);
+                return;
+            }
+            events.Repeat(1000);
+            break;
         }
-
-        if (((me->GetHealth() * 100) / me->GetMaxHealth() < 33) && !Summon2)
-        {
-            DoCast(me, SPELL_BANISH);
-            DoScriptText(SAY_HELP, me);
-            Paralyzing = true;
-            for (uint32 i = 0; i < SummonedCount; i++)
-                me->SummonCreature(NPC_BROOD, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-            Summon2 = true;
-        }
-
-        if (Paralyzing)
-        {
-            if (Paralyzing_Timer <= diff)
-            {
-                DoCastVictim( SPELL_PARALYZING);
-                Paralyzing_Timer = 1000;
-                Paralyzing = false;
-            }
-            else Paralyzing_Timer -= diff;
-        }
-
-        if (!me->HasAura(SPELL_BANISH, 0))
-        {
-            if (Cyclone_Timer <= diff)
-            {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                {
-                    DoCast(pTarget, SPELL_CYCLONE);
-                    Cyclone_Timer = 20000 + rand() % 1000;
-                }
-            }
-            else Cyclone_Timer -= diff;
-
-            if (Bomb_Timer <= diff)
-            {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                {
-                    DoCast(pTarget, SPELL_BOMB);
-                    Bomb_Timer = 30000 + rand() % 1000;
-                }
-            }
-            else Bomb_Timer -= diff;
-
-            if (Rip_Timer <= diff)
-            {
-                DoCastVictim( SPELL_RIP);
-                Rip_Timer = 25000 + rand() % 2000;
-            }
-            else Rip_Timer -= diff;
 
             DoMeleeAttackIfReady();
-        }
+        
     }
 };
 

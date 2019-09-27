@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __BATTLEGROUND_H
@@ -694,6 +694,7 @@ class Battleground
         uint32 GetOtherTeam(uint32 teamId);
         bool IsPlayerInBattleground(uint64 guid);
         void PlayerRelogin(uint64 guid);
+        void RewardXPAtKill(Player* killer, Player* victim);
 
         void SetDeleteThis()
         {

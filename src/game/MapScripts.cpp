@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Map.h"
@@ -276,7 +276,7 @@ inline GameObject* Map::_FindGameObject(WorldObject* searchObject, uint32 guid) 
     Cell cell(p);
 
     Oregon::GameObjectWithDbGUIDCheck goCheck(*searchObject, guid);
-    Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck> checker(searchObject, gameobject, goCheck);
+    Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck> checker(gameobject, goCheck);
 
     TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck>, GridTypeMapContainer > objectChecker(checker);
     cell.Visit(p, objectChecker, *searchObject->GetMap(), *searchObject, searchObject->GetGridActivationRange());
@@ -843,7 +843,7 @@ void Map::ScriptsProcess()
                     Cell cell(p);
 
                     Oregon::CreatureWithDbGUIDCheck target_check(wSource, step.script->CallScript.CreatureEntry);
-                    Oregon::CreatureSearcher<Oregon::CreatureWithDbGUIDCheck> checker(wSource, cTarget, target_check);
+                    Oregon::CreatureSearcher<Oregon::CreatureWithDbGUIDCheck> checker(cTarget, target_check);
 
                     TypeContainerVisitor<Oregon::CreatureSearcher <Oregon::CreatureWithDbGUIDCheck>, GridTypeMapContainer > unit_checker(checker);
                     cell.Visit(p, unit_checker, *wSource->GetMap(), *wSource, wSource->GetGridActivationRange());
@@ -923,7 +923,7 @@ void Map::ScriptsProcess()
         case SCRIPT_COMMAND_CLOSE_GOSSIP:
             // Source must be Player.
             if (Player* pSource = _GetScriptPlayer(source, true, step.script))
-                pSource->PlayerTalkClass->SendCloseGossip();
+                pSource->PlayerTalkClass->CloseGossip();
             break;
 
         default:

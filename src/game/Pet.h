@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef OREGONCORE_PET_H
@@ -171,7 +171,7 @@ class Pet : public Guardian
 
         bool IsPermanentPetFor(Player* owner);              // pet have tab in character windows and set UNIT_FIELD_PETNUMBER
 
-        bool Create (uint32 guidlow, Map* map, uint32 phaseMask, uint32 Entry, uint32 pet_number);
+        bool Create (uint32 guidlow, Map* map, uint32 Entry, uint32 pet_number);
         bool CreateBaseAtCreature(Creature* creature);
         bool LoadPetFromDB(Player* owner, uint32 petentry = 0, uint32 petnumber = 0, bool current = false);
         void SavePetToDB(PetSaveMode mode);
@@ -309,7 +309,7 @@ class Pet : public Guardian
         using Creature::SaveToDB;
         using Creature::DeleteFromDB;
         
-        void SaveToDB(uint32, uint8, uint32) override                        // overwrited of Creature::SaveToDB     - don't must be called
+        void SaveToDB(uint32, uint8) override                        // overwrited of Creature::SaveToDB     - don't must be called
         {
             assert(false);
         }

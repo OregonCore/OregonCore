@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Creature.h"
@@ -73,15 +73,14 @@ RandomMovementGenerator<Creature>::_setRandomLocation(Creature& creature)
     //else if (is_water_ok)                                 // 3D system under water and above ground (swimming mode)
     else                                                    // 2D only
     {
-        dist = dist >= 100.0f ? 10.0f : sqrtf(dist);        // 10.0 is the max that vmap high can check (MAX_CAN_FALL_DISTANCE)
-
+        dist = dist >= 100.0f ? 10.0f : sqrtf(dist);
         // The fastest way to get an accurate result 90% of the time.
         // Better result can be obtained like 99% accuracy with a ray light, but the cost is too high and the code is too long.
         nz = map->GetHeight(nx, ny, Z + dist - 2.0f, false);
 
         if (fabs(nz - Z) > dist)                            // Map check
         {
-            nz = map->GetHeight(nx, ny, Z - 2.0f, true);    // Vmap Horizontal or above
+            nz = map->GetHeight(nx, ny, Z, true);    // Vmap Horizontal or above
 
             if (fabs(nz - Z) > dist)
             {

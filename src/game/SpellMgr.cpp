@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Unit.h"
@@ -455,7 +455,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         {
             // only warlock curses have this
             if (spellInfo->Dispel == DISPEL_CURSE)
-                return SPELL_SPECIFIC_CURSE;
+                return SPELL_SPECIFIC_CURSE; 
 
             // family flag 37 (only part spells have family name)
             if (spellInfo->SpellFamilyFlags & 0x2000000000LL)
@@ -463,7 +463,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
 
             //seed of corruption and corruption
             if (spellInfo->SpellFamilyFlags & 0x1000000002LL)
-                return SPELL_SPECIFIC_WARLOCK_CORRUPTION;
+                return SPELL_SPECIFIC_WARLOCK_CORRUPTION; 
             break;
         }
     case SPELLFAMILY_HUNTER:
@@ -971,13 +971,16 @@ void SpellMgr::LoadSpellAffects()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, effectId, SpellFamilyMask FROM spell_affect");
     if (!result)
     {
+
         sLog.outString(">> Loaded %u spell affect definitions", count);
         return;
     }
 
+
     do
     {
         Field* fields = result->Fetch();
+
 
         uint16 entry = fields[0].GetUInt16();
         uint8 effectId = fields[1].GetUInt8();
@@ -1614,25 +1617,18 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
         case SPELL_SPECIFIC_ASPECT:
         case SPELL_SPECIFIC_WARLOCK_CORRUPTION:
         case SPELL_SPECIFIC_JUDGEMENT:
-            return sameCaster == (spellSpec == GetSpellSpecific(spellId_2));
+        case SPELL_SPECIFIC_TRACKER:
+           return sameCaster == (spellSpec == GetSpellSpecific(spellId_2));
         default:
             break;
     }
 
-    if (spellInfo_1->SpellFamilyName == SPELLFAMILY_GENERIC)
+    // generic spells
+    if (!spellInfo_1->SpellFamilyName)
     {
-        if (spellInfo_1->HasAttribute(SPELL_ATTR0_PASSIVE) && spellInfo_1->SpellIconID == 1)
-            return false;
-
-        if (spellInfo_1->SpellIconID == spellInfo_2->SpellIconID)
+        if (spellInfo_1->SpellIconID == spellInfo_2->SpellIconID &&
+            spellInfo_1->SpellIconID != 0 && spellInfo_2->SpellIconID != 0)
             return true;
-
-        if (spellInfo_1->EffectApplyAuraName[0] == SPELL_AURA_MOUNTED && spellInfo_2->EffectApplyAuraName[0] == SPELL_AURA_MOUNTED)
-            return true;
-
-        if (!(spellInfo_1->EffectApplyAuraName[0] == SPELL_AURA_MOD_POWER_REGEN &&
-            spellInfo_1->EffectApplyAuraName[1] == SPELL_AURA_PERIODIC_DUMMY))
-            return false;
     }
 
     // check for class spells
@@ -2065,6 +2061,40 @@ void SpellMgr::LoadSpellChains()
         }
     }
 
+    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT `spell_id`, `prev_spell_id`,`next_spell_id`,`first_spell_id`,`last_spell_id`, `rank` FROM `spell_ranks`");
+
+    if (!result)
+        return;
+
+    std::vector<uint32> spell_id;
+    std::vector<uint32> prev_spell_id;
+    std::vector < uint32> next_spell_id;
+    std::vector<uint32>first_spell_id;
+    std::vector<uint32>last_spell_id;
+    std::vector<uint32>rank;
+
+    do
+    {
+        Field* fields = result->Fetch();
+        spell_id.push_back(fields[0].GetUInt32());
+        prev_spell_id.push_back(fields[1].GetUInt32());
+        next_spell_id.push_back(fields[2].GetUInt32());
+        first_spell_id.push_back(fields[3].GetUInt32());
+        last_spell_id.push_back(fields[4].GetUInt32());
+        rank.push_back(fields[5].GetUInt32());
+
+    } while (result->NextRow());
+
+    for (int8 i = 0; i < spell_id.size(); ++i)
+    {
+        mSpellChains[spell_id[i]].prev = prev_spell_id[i];
+        mSpellChains[spell_id[i]].next = next_spell_id[i];
+        mSpellChains[spell_id[i]].first = first_spell_id[i];
+        mSpellChains[spell_id[i]].last = last_spell_id[i];
+        mSpellChains[spell_id[i]].rank = rank[i];
+    }
+
+
     //uncomment these two lines to print yourself list of spell_chains on startup
     //    for (UNORDERED_MAP<uint32, SpellChainNode>::iterator itr=mSpellChains.begin();itr != mSpellChains.end();itr++)
     //       sLog.outString("Id: %u, Rank: %d , %s",itr->first,itr->second.rank, sSpellStore.LookupEntry(itr->first)->Rank[sWorld.GetDefaultDbcLocale()]);
@@ -2319,6 +2349,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 mSpellCustomAttr[i] |= SPELL_ATTR_CU_DIRECT_DAMAGE;
                 break;
             case SPELL_EFFECT_CHARGE:
+            case SPELL_EFFECT_CHARGE_DEST:
                 if (!spellInfo->speed && !spellInfo->SpellFamilyName)
                     spellInfo->speed = SPEED_CHARGE;
                 mSpellCustomAttr[i] |= SPELL_ATTR_CU_CHARGE;
@@ -2654,6 +2685,20 @@ void SpellMgr::LoadSpellCustomAttr()
         case 23505: // Berserking
         case 23451: // Speed
             spellInfo->Attributes |= SPELL_ATTR0_NEGATIVE_1;
+            break;
+        case 20271: // Paladin's Judgement
+            spellInfo->AttributesEx3 &= ~SPELL_ATTR3_CANT_TRIGGER_PROC;
+            break;
+        case 1953: // Blink
+            spellInfo->DurationIndex = 328; // 250ms
+            break;
+        case 33240: // Infernal
+            spellInfo->EffectImplicitTargetA[EFFECT_0] = TARGET_DEST_TARGET_ANY;
+            spellInfo->EffectImplicitTargetA[EFFECT_1] = TARGET_DEST_TARGET_ANY;
+            spellInfo->EffectImplicitTargetA[EFFECT_2] = TARGET_DEST_TARGET_ANY;
+            break;
+        case 34444: // Summon Khadgar's Servent
+            spellInfo->DurationIndex = 30;
             break;
         default:
             break;

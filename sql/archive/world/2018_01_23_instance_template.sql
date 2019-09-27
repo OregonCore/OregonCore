@@ -1,0 +1,1 @@
+UPDATE instance_template SET `parent`=530 WHERE `map`=550;

@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -1084,7 +1084,7 @@ struct mob_volatile_felfire_fiendAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (pInstance && pInstance->GetData(DATA_KILJAEDEN_EVENT) == NOT_STARTED)
-            me->DisappearAndDie();
+            me->DisappearAndDie(false);
 
         if (!UpdateVictim())
             return;

@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Map.h"
@@ -52,6 +52,8 @@ Map::~Map()
 
     if (!m_scriptSchedule.empty())
         sWorld.DecreaseScheduledScriptCount(m_scriptSchedule.size());
+
+    MMAP::MMapFactory::createOrGetMMapManager()->unloadMapInstance(GetId(), i_InstanceId);
 }
 
 bool Map::ExistMap(uint32 mapid, int gx, int gy)
@@ -106,6 +108,7 @@ void Map::LoadMMap(int gx, int gy)
         return;
 
     bool mmapLoadResult = MMAP::MMapFactory::createOrGetMMapManager()->loadMap(GetId(), gx, gy);
+
     if (mmapLoadResult)
         sLog.outDetail("MMAP loaded name:%s, id:%d, x:%d, y:%d (mmap rep.: x:%d, y:%d)", GetMapName(), GetId(), gx, gy, gx, gy);
     else
@@ -402,12 +405,11 @@ bool Map::AddPlayerToMap(Player* player)
         return false;
     }
 
-    player->SetMap(this);
-
     Cell cell(p);
     EnsureGridLoadedForActiveObject(cell, player);
     AddToGrid(player, cell);
 
+    ASSERT(player->GetMap() == this);
     player->SetMap(this);
     player->AddToWorld();
 
@@ -425,11 +427,13 @@ bool Map::AddToMap(T *obj)
 {
     if (obj->IsInWorld()) // need some clean up later
     {
+        ASSERT(obj->IsInGrid());
         obj->UpdateObjectVisibility(true);
         return true;
     }
 
     CellCoord p = Oregon::ComputeCellCoord(obj->GetPositionX(), obj->GetPositionY());
+    ASSERT(p.IsCoordValid());
     if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
     {
         sLog.outError("Map::AddToMap: Object " UI64FMTD " has invalid coordinates X:%f Y:%f grid cell [%u:%u]", obj->GetGUID(), obj->GetPositionX(), obj->GetPositionY(), p.x_coord, p.y_coord);
@@ -462,6 +466,10 @@ void Map::VisitNearbyCellsOf(WorldObject* obj, TypeContainerVisitor<Oregon::Obje
     if (!obj->IsPositionValid())
         return;
 
+    // some objects that are active in grid will stop the grid from unloading
+    if (obj->GetGridActivationRange() <= 0.0f)
+        return;
+
     // Update mobs/objects in ALL visible cells around object!
     CellArea area = Cell::CalculateCellArea(obj->GetPositionX(), obj->GetPositionY(), obj->GetGridActivationRange());
 
@@ -492,7 +500,8 @@ bool Map::IsGridLoaded(const GridCoord &p) const
 
 void Map::Update(const uint32& t_diff)
 {
-    m_dyn_tree.update(t_diff);
+    if (t_diff)
+        m_dyn_tree.update(t_diff);
 
     // update active cells around players and active objects
     resetMarkedCells();
@@ -713,8 +722,6 @@ Map::PlayerRelocation(Player* player, float x, float y, float z, float orientati
     Cell old_cell(player->GetPositionX(), player->GetPositionY());
     Cell new_cell(x, y);
 
-    player->Relocate(x, y, z, orientation);
-
     if (old_cell.DiffGrid(new_cell) || old_cell.DiffCell(new_cell))
     {
         DEBUG_LOG("Player %s relocation grid[%u,%u]cell[%u,%u]->grid[%u,%u]cell[%u,%u]", player->GetName(), old_cell.GridX(), old_cell.GridY(), old_cell.CellX(), old_cell.CellY(), new_cell.GridX(), new_cell.GridY(), new_cell.CellX(), new_cell.CellY());
@@ -726,6 +733,8 @@ Map::PlayerRelocation(Player* player, float x, float y, float z, float orientati
 
         AddToGrid(player, new_cell);
     }
+
+    player->Relocate(x, y, z, orientation);
 
     player->UpdateObjectVisibility(false);
 }

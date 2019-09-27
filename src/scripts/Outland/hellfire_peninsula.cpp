@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -652,9 +652,6 @@ struct npc_anchorite_relic_bunnyAI : public ScriptedAI
         EndTimer = 60000;
     }
 
-    void AttackedBy(Unit* enemy) {}
-    void AttackStart(Unit* enemy) {}
-
     void JustSummoned(Creature* summoned)
     {
         if (summoned->GetEntry() == NPC_FEL_SPIRIT)
@@ -679,7 +676,7 @@ struct npc_anchorite_relic_bunnyAI : public ScriptedAI
 
     // @todo Fix SpellHit not being called when caster is dead
     // This may have other implications elsewhere in the core
-    void SpellHit(Unit* caster, const SpellEntry* spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
     {
         if (spell->Id == SPELL_SOUL_BURDEN)
         {
@@ -759,7 +756,7 @@ struct npc_hand_berserkerAI : public ScriptedAI
             DoCast(me, SPELL_ENRAGE);
     }
 
-    void JustDied(Unit* who)
+    void JustDied(Unit* /*who*/)
     {
         if (Creature* Bunny = GetClosestCreatureWithEntry(me, NPC_BUNNY, 17.5f))
         {
@@ -1288,6 +1285,25 @@ CreatureAI* GetAI_npc_sedai_quest_credit_marker(Creature* pCreature)
 {
     return new npc_sedai_quest_credit_markerAI(pCreature);
 }
+
+/*######
+## npc_vindicator_sedai
+######*/
+
+#define SAY_MAG_ESSCORT    -1900125
+#define SAY_SEDAI1         -1900126
+#define SAY_SEDAI2         -1900127
+#define SAY_KRUN           -1900128
+
+enum
+{
+    NPC_ESCORT        = 17417,
+    NPC_AMBUSHER      = 17418,
+    NPC_KRUN          = 17405,
+
+    SPELL_STUN        = 13005,
+    SPELL_HOLYFIRE    = 17141
+};
 
 /*######
 ## npc_demoniac_scryer
@@ -2072,7 +2088,7 @@ struct npc_dreghood_bruteAI : public ScriptedAI
 
 				if (flee_timer <= uiDiff)
 				{
-					me->DisappearAndDie();
+					me->DisappearAndDie(false);
 					flee_timer = 4000;
 				}
 				else flee_timer -= uiDiff;
@@ -2235,7 +2251,6 @@ CreatureAI* GetAI_npc_dreghood_elder3(Creature* pCreature)
 
 bool GossipHello_npc_dreghood_elder1(Player* pPlayer, Creature* pCreature)
 {
-	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 
 	if (pCreature->IsQuestGiver())
 		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
@@ -2265,8 +2280,6 @@ bool GossipSelect_npc_dreghood_elder1(Player* pPlayer, Creature* pCreature, uint
 
 bool GossipHello_npc_dreghood_elder2(Player* pPlayer, Creature* pCreature)
 {
-	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-
 	if (pCreature->IsQuestGiver())
 		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
@@ -2294,8 +2307,6 @@ bool GossipSelect_npc_dreghood_elder2(Player* pPlayer, Creature* pCreature, uint
 
 bool GossipHello_npc_dreghood_elder3(Player* pPlayer, Creature* pCreature)
 {
-	ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-
 	if (pCreature->IsQuestGiver())
 		pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
@@ -2463,8 +2474,8 @@ struct npc_vieraAI : public npc_escortAI
 		case 12:
 			if (Creature* kitty = me->FindNearestCreature(NPC_CAT, 40.0f, true))
 			{
-				me->DisappearAndDie();
-				kitty->DisappearAndDie();
+				me->DisappearAndDie(false);
+				kitty->DisappearAndDie(false);
 			}
 			break;
 		}
@@ -3291,7 +3302,7 @@ void AddSC_hellfire_peninsula()
     newscript = new Script;
     newscript->Name = "npc_wounded_blood_elf";
     newscript->GetAI = &GetAI_npc_wounded_blood_elf;
-    newscript->QuestAccept = &QuestAccept_npc_wounded_blood_elf;
+    newscript->pQuestAccept = &QuestAccept_npc_wounded_blood_elf;
     newscript->RegisterSelf();
 
     newscript = new Script;

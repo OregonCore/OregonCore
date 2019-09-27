@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef SC_CREATURE_H
@@ -63,6 +63,9 @@ class SummonList : public std::list<uint64>
         void DespawnEntry(uint32 entry);
         void DespawnAll();
         void DoAction(uint32 entry, uint32 info);
+        bool HasEntry(uint32 entry) const;
+        Creature* GetCreatureWithEntry(uint32 entry) const;
+
         void DoZoneInCombat(uint32 entry = 0);
     private:
         Creature* me;
@@ -203,6 +206,8 @@ struct ScriptedAI : public CreatureAI
 
         bool EnterEvadeIfOutOfCombatArea(const uint32 uiDiff);
 
+        Player * SelectTargetFromPlayerList(float maxdist, uint32 excludeAura, bool mustBeInLOS) const;
+
     private:
         bool m_bCombatMovement;
         uint32 m_uiEvadeCheckCooldown;
@@ -215,6 +220,7 @@ struct Scripted_NoMovementAI : public ScriptedAI
     //Called at each attack of me by any victim
     void AttackStart(Unit* who);
 };
+
 
 struct BossAI : public ScriptedAI
 {

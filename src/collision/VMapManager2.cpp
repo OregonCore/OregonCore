@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <iostream>
@@ -253,7 +253,7 @@ bool VMapManager2::GetLiquidLevel(uint32 mapId, float x, float y, float z, uint8
 {
     if (true/*!DisableMgr::IsDisabledFor(DISABLE_TYPE_VMAP, mapId, NULL, VMAP_DISABLE_LIQUIDSTATUS)*/)
     {
-        InstanceTreeMap::const_iterator instanceTree = GetMapTree(mapId);
+        InstanceTreeMap::const_iterator instanceTree = iInstanceMapTrees.find(mapId);
         if (instanceTree != iInstanceMapTrees.end())
         {
             LocationInfo info;

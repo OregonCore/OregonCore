@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef OREGONCORE_GROUP_H
@@ -231,7 +231,7 @@ class Group
         {
             return m_lootMethod;
         }
-        const uint64 GetLooterGuid() const
+        uint64 GetLooterGuid() const
         {
             if (GetLootMethod() == FREE_FOR_ALL)
                 return 0;

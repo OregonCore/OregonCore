@@ -12,13 +12,13 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
 SDName: Darkshore
 SD%Complete: 100
-SDComment: Quest support: 731, 2078, 5321
+SDComment: Quest support: 731, 2078, 5321, 975
 SDCategory: Darkshore
 EndScriptData */
 
@@ -34,6 +34,73 @@ EndContentData */
 #include "ScriptedEscortAI.h"
 #include "ScriptedFollowerAI.h"
 #include "ScriptedGossip.h"
+
+/*####
+# npc_therylune
+####*/
+enum misc
+{
+    SAY_START               = -1921941,
+    SAY_END                 = -1921942,
+    QUEST_THERYLUNE_ESCAPE  = 945
+};
+
+struct npc_theryluneAI : public npc_escortAI
+{
+    npc_theryluneAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+
+    void WaypointReached(uint32 i)
+    {
+        Player* pPlayer = GetPlayerForEscort();
+
+        if (!pPlayer)
+            return;
+
+        switch (i)
+        {
+        case 19:
+            DoScriptText(SAY_END, me, pPlayer);
+            pPlayer->GroupEventHappens(QUEST_THERYLUNE_ESCAPE, me);
+            break;
+        case 20:
+            me->DespawnOrUnsummon(10000);
+            break;
+        }
+    }
+
+    void Reset() {}
+
+    void EnterCombat() {}
+
+    void UpdateAI(const uint32 diff)
+    {
+        npc_escortAI::UpdateAI(diff);
+
+        if (!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+
+};
+
+CreatureAI* GetAI_npc_therylune(Creature* pCreature)
+{
+    return new npc_theryluneAI(pCreature);
+}
+
+bool QuestAccept_npc_therylune(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_THERYLUNE_ESCAPE)
+    {
+        if (npc_escortAI* pEscortAI = CAST_AI(npc_theryluneAI, pCreature->AI()))
+            pEscortAI->Start(false, false, pPlayer->GetGUID());
+
+        DoScriptText(SAY_START, pCreature, nullptr);
+    }
+
+    return true;
+}
 
 /*####
 # npc_kerlonian
@@ -502,15 +569,21 @@ void AddSC_darkshore()
     Script* newscript;
 
     newscript = new Script;
+    newscript->Name = "npc_therylune";
+    newscript->GetAI = &GetAI_npc_therylune;
+    newscript->pQuestAccept = &QuestAccept_npc_therylune;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
     newscript->Name = "npc_kerlonian";
     newscript->GetAI = &GetAI_npc_kerlonian;
-    newscript->QuestAccept = &QuestAccept_npc_kerlonian;
+    newscript->pQuestAccept = &QuestAccept_npc_kerlonian;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_prospector_remtravel";
     newscript->GetAI = &GetAI_npc_prospector_remtravel;
-    newscript->QuestAccept = &QuestAccept_npc_prospector_remtravel;
+    newscript->pQuestAccept = &QuestAccept_npc_prospector_remtravel;
     newscript->RegisterSelf();
 
     newscript = new Script;

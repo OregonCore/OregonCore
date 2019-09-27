@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -42,7 +42,7 @@ EndScriptData */
 #define SPELL_BANISH            30231
 #define SPELL_CORROSIVE_ACID    23313
 #define SPELL_FEAR              33547
-#define SPELL_ENRAGE            26662
+#define SPELL_ENRAGE            34970
 
 #define PATH_PATROL              2100
 #define PATH_FINAL               2101

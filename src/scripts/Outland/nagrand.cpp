@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -106,7 +106,7 @@ struct mob_shattered_rumblerAI : public ScriptedAI
             Hitter->SummonCreature(18181, x + (0.7f * (rand() % 30)), y + (rand() % 5), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
             Hitter->SummonCreature(18181, x + (rand() % 5), y - (rand() % 5), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
             Hitter->SummonCreature(18181, x - (rand() % 5), y + (0.5f * (rand() % 60)), z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
-            me->DisappearAndDie();
+            me->DisappearAndDie(false);
             me->setDeathState(CORPSE);
             Spawn = true;
         }
@@ -2358,7 +2358,7 @@ void AddSC_nagrand()
     newscript->Name = "npc_altruis_the_sufferer";
     newscript->pGossipHello =  &GossipHello_npc_altruis_the_sufferer;
     newscript->pGossipSelect = &GossipSelect_npc_altruis_the_sufferer;
-    newscript->QuestAccept =  &QuestAccept_npc_altruis_the_sufferer;
+    newscript->pQuestAccept =  &QuestAccept_npc_altruis_the_sufferer;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -2376,7 +2376,7 @@ void AddSC_nagrand()
     newscript = new Script;
     newscript->Name = "npc_maghar_captive";
     newscript->GetAI = &GetAI_npc_maghar_captive;
-    newscript->QuestAccept = &QuestAccept_npc_maghar_captive;
+    newscript->pQuestAccept = &QuestAccept_npc_maghar_captive;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -2432,7 +2432,7 @@ void AddSC_nagrand()
     newscript = new Script;
     newscript->Name = "npc_kurenai_captive";
     newscript->GetAI = &GetAI_npc_kurenai_captive;
-    newscript->QuestAccept = &QuestAccept_npc_kurenai_captive;
+    newscript->pQuestAccept = &QuestAccept_npc_kurenai_captive;
     newscript->RegisterSelf();
 
 	newscript = new Script;

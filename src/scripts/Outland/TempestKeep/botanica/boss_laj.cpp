@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -25,125 +25,79 @@ EndScriptData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 
-#define EMOTE_SUMMON                -1553006
 
-#define SPELL_ALLERGIC_REACTION     34697
-#define SPELL_TELEPORT_SELF         34673
+enum spells
+{
+    SPELL_ALLERGIC_REACTION     = 34697,
+    SPELL_TELEPORT_SELF         = 34673,
 
-#define SPELL_SUMMON_LASHER_1       34681
-#define SPELL_SUMMON_FLAYER_1       34682
-#define SPELL_SUMMON_LASHER_2       34684
-#define SPELL_SUMMON_FLAYER_2       34685
-#define SPELL_SUMMON_LASHER_3       34686
-#define SPELL_SUMMON_FLAYER_4       34687
-#define SPELL_SUMMON_LASHER_4       34688
-#define SPELL_SUMMON_FLAYER_3       34690
+    SPELL_SUMMON_LASHER_1       = 34681,
+    SPELL_SUMMON_FLAYER_1       = 34682,
+    SPELL_SUMMON_LASHER_2       = 34684,
+    SPELL_SUMMON_FLAYER_2       = 34685,
+    SPELL_SUMMON_LASHER_3       = 34686,
+    SPELL_SUMMON_FLAYER_4       = 34687,
+    SPELL_SUMMON_LASHER_4       = 34688,
+    SPELL_SUMMON_FLAYER_3       = 34690,
 
-#define MODEL_DEFAULT               13109
-#define MODEL_ARCANE                14213
-#define MODEL_FIRE                  13110
-#define MODEL_FROST                 14112
-#define MODEL_NATURE                14214
+    SPELL_DAMAGE_IMMUNE_ARCANE  = 34304,
+    SPELL_DAMAGE_IMMUNE_FIRE    = 34305,
+    SPELL_DAMAGE_IMMUNE_FROST   = 34306,
+    SPELL_DAMAGE_IMMUNE_NATURE  = 34308,
+    SPELL_DAMAGE_IMMUNE_SHADOW  = 34309
+};
+
+enum Misc
+{
+    EMOTE_SUMMON                    = -1553006,
+
+    MODEL_DEFAULT                   = 13109,
+    MODEL_ARCANE                    = 14213,
+    MODEL_FIRE                      = 13110,
+    MODEL_FROST                     = 14112,
+    MODEL_NATURE                    = 14214,
+
+
+    EVENT_ALERGIC_REACTION          = 1,
+    EVENT_TRANSFORM                 = 2,
+    EVENT_TELEPORT                  = 3,
+    EVENT_SUMMON                    = 4
+};
 
 struct boss_lajAI : public ScriptedAI
 {
     boss_lajAI(Creature* c) : ScriptedAI(c) {}
 
-    bool CanSummon;
-    uint32 Teleport_Timer;
-    uint32 Summon_Timer;
-    uint32 Transform_Timer;
-    uint32 Allergic_Timer;
+    EventMap events;
 
     void Reset()
     {
+        events.Reset();
         me->SetDisplayId(MODEL_DEFAULT);
-        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
-        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, false);
-        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);
-        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, false);
-        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, false);
-
-        CanSummon = false;
-        Teleport_Timer = 20000;
-        Summon_Timer = 2500;
-        Transform_Timer = 30000;
-        Allergic_Timer = 5000;
+        _lastTransform = SPELL_SCHOOL_MASK_SHADOW;
+        me->CastSpell(me, SPELL_DAMAGE_IMMUNE_SHADOW, true);
     }
 
     void DoTransform()
     {
-        switch (rand() % 5)
-        {
-        case 0:
-            me->SetDisplayId(MODEL_DEFAULT);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, false);
-            break;
-        case 1:
-            me->SetDisplayId(MODEL_ARCANE);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, false);
-            break;
-        case 2:
-            me->SetDisplayId(MODEL_FIRE);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, false);
-            break;
-        case 3:
-            me->SetDisplayId(MODEL_FROST);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, false);
-            break;
-        case 4:
-            me->SetDisplayId(MODEL_NATURE);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, false);
-            me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
-            break;
-        }
-    }
+        me->RemoveAurasDueToSpell(_lastTransform);
 
-    void DoSummons()
-    {
-        switch (rand() % 4)
+        switch (_lastTransform = RAND(SPELL_DAMAGE_IMMUNE_SHADOW, SPELL_DAMAGE_IMMUNE_FIRE, SPELL_DAMAGE_IMMUNE_FROST, SPELL_DAMAGE_IMMUNE_NATURE, SPELL_DAMAGE_IMMUNE_ARCANE))
         {
-        case 0:
-            DoCast(me, SPELL_SUMMON_LASHER_1, true);
-            DoCast(me, SPELL_SUMMON_FLAYER_1, true);
-            break;
-        case 1:
-            DoCast(me, SPELL_SUMMON_LASHER_2, true);
-            DoCast(me, SPELL_SUMMON_FLAYER_2, true);
-            break;
-        case 2:
-            DoCast(me, SPELL_SUMMON_LASHER_3, true);
-            DoCast(me, SPELL_SUMMON_FLAYER_3, true);
-            break;
-        case 3:
-            DoCast(me, SPELL_SUMMON_LASHER_4, true);
-            DoCast(me, SPELL_SUMMON_FLAYER_4, true);
-            break;
+            case SPELL_DAMAGE_IMMUNE_SHADOW: me->SetDisplayId(MODEL_DEFAULT); break;
+            case SPELL_DAMAGE_IMMUNE_ARCANE: me->SetDisplayId(MODEL_ARCANE); break;
+            case SPELL_DAMAGE_IMMUNE_FIRE: me->SetDisplayId(MODEL_FIRE); break;
+            case SPELL_DAMAGE_IMMUNE_FROST: me->SetDisplayId(MODEL_FROST); break;
+            case SPELL_DAMAGE_IMMUNE_NATURE: me->SetDisplayId(MODEL_NATURE); break;
         }
-        CanSummon = false;
+        me->CastSpell(me, _lastTransform, true);
     }
 
     void EnterCombat(Unit* /*who*/)
     {
+        events.ScheduleEvent(EVENT_ALERGIC_REACTION, 5000);
+        events.ScheduleEvent(EVENT_TRANSFORM, 30000);
+        events.ScheduleEvent(EVENT_TELEPORT, 20000);
     }
 
     void JustSummoned(Creature* summon)
@@ -157,41 +111,37 @@ struct boss_lajAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (CanSummon)
-        {
-            if (Summon_Timer <= diff)
-            {
-                DoScriptText(EMOTE_SUMMON, me);
-                DoSummons();
-                Summon_Timer = 2500;
-            }
-            else Summon_Timer -= diff;
-        }
+        events.Update(diff);
 
-        if (Allergic_Timer <= diff)
-        {
-            DoCastVictim(SPELL_ALLERGIC_REACTION);
-            Allergic_Timer = 25000 + rand() % 15000;
-        }
-        else Allergic_Timer -= diff;
+        if (me->HasUnitState(UNIT_STATE_CASTING))
+            return;
 
-        if (Teleport_Timer <= diff)
+        switch (events.ExecuteEvent())
         {
-            DoCast(me, SPELL_TELEPORT_SELF);
-            Teleport_Timer = 30000 + rand() % 10000;
-            CanSummon = true;
-        }
-        else Teleport_Timer -= diff;
-
-        if (Transform_Timer <= diff)
-        {
+        case EVENT_ALERGIC_REACTION:
+            me->CastSpell(me->GetVictim(), SPELL_ALLERGIC_REACTION, false);
+            events.ScheduleEvent(EVENT_ALERGIC_REACTION, 25000);
+            break;
+        case EVENT_TELEPORT:
+            me->CastSpell(me, SPELL_TELEPORT_SELF, false);
+            events.ScheduleEvent(EVENT_SUMMON, 2500);
+            events.ScheduleEvent(EVENT_TELEPORT, 30000);
+            break;
+        case EVENT_SUMMON:
+            DoScriptText(EMOTE_SUMMON, me);
+            me->CastSpell(me, SPELL_SUMMON_LASHER_1, true);
+            me->CastSpell(me, SPELL_SUMMON_FLAYER_1, true);
+            break;
+        case EVENT_TRANSFORM:
             DoTransform();
-            Transform_Timer = 25000 + rand() % 15000;
+            events.ScheduleEvent(EVENT_TRANSFORM, 35000);
+            break;
         }
-        else Transform_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
+    private: 
+        uint32 _lastTransform;
 };
 
 CreatureAI* GetAI_boss_laj(Creature* pCreature)

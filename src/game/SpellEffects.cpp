@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -205,7 +205,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectUnused,                                   //146 SPELL_EFFECT_ACTIVATE_RUNE            unused
     &Spell::EffectQuestFail,                                //147 SPELL_EFFECT_QUEST_FAIL               quest fail
     &Spell::EffectUnused,                                   //148 SPELL_EFFECT_148                      unused
-    &Spell::EffectNULL,                                     //149 SPELL_EFFECT_149                      swoop
+    &Spell::EffectChargeDest,                               //149 SPELL_EFFECT_CHARGE_DEST                      swoop
     &Spell::EffectUnused,                                   //150 SPELL_EFFECT_150                      unused
     &Spell::EffectTriggerRitualOfSummoning,                 //151 SPELL_EFFECT_TRIGGER_SPELL_2
     &Spell::EffectSummonFriend,                             //152 SPELL_EFFECT_SUMMON_FRIEND            summon Refer-a-Friend
@@ -2057,54 +2057,27 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
         switch (m_spellInfo->Id)
         {
         case 31789:                                 // Righteous Defense (step 1)
+            { 
+            if (!unitTarget)
+                return;
+
+            Unit::AttackerSet attackers = unitTarget->getAttackers();
+
+            for (Unit::AttackerSet::iterator aItr = attackers.begin(); aItr != attackers.end();)
+                if (!(*aItr)->IsValidAttackTarget(m_caster))
+                    aItr = attackers.erase(aItr);
+                else
+                    ++aItr;
+
+            uint32 maxTargets = std::min<uint32>(3, attackers.size());
+
+            for (uint32 i = 0; i < maxTargets; ++i)
             {
-                if (m_caster->GetTypeId() != TYPEID_PLAYER)
-                {
-                    SendCastResult(SPELL_FAILED_TARGET_AFFECTING_COMBAT);
-                    return;
-                }
-
-                // 31989 -> dummy effect (step 1) + dummy effect (step 2) -> 31709 (taunt like spell for each target)
-                Unit* friendTarget = !unitTarget || unitTarget->IsFriendlyTo(m_caster) ? unitTarget : unitTarget->GetVictim();
-                if (friendTarget)
-                {
-                    Player* player = friendTarget->GetCharmerOrOwnerPlayerOrPlayerItself();
-                    if (!player || !player->IsInSameRaidWith((Player*)m_caster))
-                        friendTarget = NULL;
-                }
-
-                // non-standard cast requirement check
-                if (!friendTarget || friendTarget->getAttackers().empty())
-                {
-                    // clear cooldown at fail
-                    ((Player*)m_caster)->RemoveSpellCooldown(m_spellInfo->Id, true);
-                    SendCastResult(SPELL_FAILED_TARGET_AFFECTING_COMBAT);
-                    return;
-                }
-
-                // Righteous Defense (step 2) (in old version 31980 dummy effect)
-                // Clear targets for eff 1
-                for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
-                {
-                    if (ihit->deleted)
-                        continue;
-
-                    ihit->effectMask &= ~(1 << 1);
-                }
-
-                // not empty (checked)
-                Unit::AttackerSet attackers = friendTarget->getAttackers();
-
-                // selected from list 3
-                for (uint32 i = 0; i < std::min(size_t(3), attackers.size()); ++i)
-                {
-                    Unit::AttackerSet::iterator aItr = attackers.begin();
-                    std::advance(aItr, rand() % attackers.size());
-                    AddUnitTarget((*aItr), 1);
-                    attackers.erase(aItr);
-                }
-
-                // now let next effect cast spell at each target.
+                Unit::AttackerSet::iterator aItr = attackers.begin();
+                std::advance(aItr, urand(0, attackers.size() - 1));
+                m_caster->CastSpell((*aItr), 31790, true);
+                attackers.erase(aItr);
+            }
                 return;
             }
         case 37877:                                 // Blessing of Faith
@@ -2637,7 +2610,7 @@ void Spell::EffectTeleportUnits(SpellEffIndex /*effIndex*/)
                     case 4:
                         // Transform
                         {
-                            if (m_caster->ToPlayer() && m_caster->ToPlayer()->GetTeam() == ALLIANCE)
+                            if (m_caster->ToPlayer()->GetTeam() == ALLIANCE)
                                 m_caster->CastSpell(m_caster, 36897, true);
                             else
                                 m_caster->CastSpell(m_caster, 36899, true);
@@ -3150,7 +3123,7 @@ void Spell::DoCreateItem(uint32 /*i*/, uint32 itemtype)
         }
 
         // set the "Crafted by ..." property of the item
-        if (pItem->GetProto()->HasSignature())
+        if (pItem->GetProto()->Class != ITEM_CLASS_CONSUMABLE && pItem->GetProto()->Class != ITEM_CLASS_QUEST && newitemid != 6265 /*Soul Shard*/ && newitemid != 6948 /*Hearthstone*/)
             pItem->SetUInt32Value(ITEM_FIELD_CREATOR, player->GetGUIDLow());
 
         // send info to the client
@@ -4425,6 +4398,7 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
     float x, y, z;
     owner->GetClosePoint(x, y, z, owner->GetObjectSize());
     Pet* pet = owner->SummonPet(petentry, x, y, z, owner->GetOrientation(), SUMMON_PET, 0);
+
     if (!pet)
         return;
 
@@ -4440,6 +4414,7 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
 
     // generate new name for summon pet
     std::string new_name = sObjectMgr.GeneratePetName(petentry);
+
     if (!new_name.empty())
         pet->SetName(new_name);
 }
@@ -4965,7 +4940,7 @@ void Spell::EffectSummonObjectWild(SpellEffIndex effIndex)
 
     Map* map = target->GetMap();
 
-    if (!pGameObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), gameobject_id, map, 0x00000001,
+    if (!pGameObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), gameobject_id, map,
                           x, y, z, target->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f, 100, GO_STATE_READY))
     {
         delete pGameObj;
@@ -5012,7 +4987,7 @@ void Spell::EffectSummonObjectWild(SpellEffIndex effIndex)
     if (uint32 linkedEntry = pGameObj->GetGOInfo()->GetLinkedGameObjectEntry())
     {
         GameObject* linkedGO = new GameObject;
-        if (linkedGO->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), linkedEntry, map, 0x00000001,
+        if (linkedGO->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), linkedEntry, map,
                              x, y, z, target->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f, 100, GO_STATE_READY))
         {
             linkedGO->SetRespawnTime(duration > 0 ? duration / IN_MILLISECONDS : 0);
@@ -6013,7 +5988,7 @@ void Spell::EffectDuel(SpellEffIndex effIndex)
     uint32 gameobject_id = m_spellInfo->EffectMiscValue[effIndex];
 
     Map* map = m_caster->GetMap();
-    if (!pGameObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), gameobject_id, map, 0x00000001,
+    if (!pGameObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), gameobject_id, map,
                           m_caster->GetPositionX() + (unitTarget->GetPositionX() - m_caster->GetPositionX()) / 2 ,
                           m_caster->GetPositionY() + (unitTarget->GetPositionY() - m_caster->GetPositionY()) / 2 ,
                           m_caster->GetPositionZ(),
@@ -6318,7 +6293,7 @@ void Spell::EffectSummonObject(SpellEffIndex effIndex)
         m_caster->GetClosePoint(x, y, z, DEFAULT_WORLD_OBJECT_SIZE);
 
     Map* map = m_caster->GetMap();
-    if (!pGameObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), go_id, map, 0x00000001,
+    if (!pGameObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), go_id, map,
                           x, y, z, m_caster->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f, 0, GO_STATE_READY))
     {
         delete pGameObj;
@@ -6343,11 +6318,13 @@ void Spell::EffectResurrect(SpellEffIndex /*effIndex*/)
 {
     if (!unitTarget)
         return;
+
     if (unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
     if (unitTarget->IsAlive())
         return;
+
     if (!unitTarget->IsInWorld())
         return;
 
@@ -6429,11 +6406,162 @@ void Spell::EffectMomentMove(SpellEffIndex effIndex)
     if (!m_targets.HasDst())
         return;
 
-    float dist = GetSpellRadius(m_spellInfo, effIndex, false);
+    float selfAddition = 1.5f;
+    float distance = GetSpellRadius(m_spellInfo, effIndex, false) + selfAddition;
+    Map* map = unitTarget->GetMap();
+    float x, y, z;
+    float destX, destY, destZ, ground;
+    float orientation = unitTarget->GetOrientation();
+    unitTarget->GetPosition(x, y, z);
 
-    Position pos = m_targets.m_dstPos;
-    pos = unitTarget->GetFirstCollisionPosition(unitTarget->GetDistance(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ()), 0.0f);
-    unitTarget->NearTeleportTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), unitTarget == m_caster);
+    Position destPos;
+    unitTarget->GetPosition(&destPos);
+    destX = x + distance * cos(orientation);
+    destY = y + distance * sin(orientation);
+
+    ground = map->GetHeight(destX, destY, z + 5.0f);
+    destZ = ground + 5.0f;
+
+    if (!unitTarget->HasUnitMovementFlag(MOVEMENTFLAG_FALLING) || (z - ground < 25.0f))
+    {
+        if ((unitTarget->HasUnitMovementFlag(MOVEMENTFLAG_FALLING) && (z - ground > 3.0f)) && (!map->IsInWater(x, y, z)))
+        {
+            Position pos;
+            pos.Relocate(destX, destY, destZ, orientation);
+            pos = unitTarget->GetFirstCollisionPosition(unitTarget->GetDistance(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ()), 0.0f);
+            destPos.Relocate(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation());
+        }
+        else
+        {
+            // recalculate, we need it if want can blink in different situations
+            uint32 mapid = m_caster->GetMapId();
+            float tstX, tstY, tstZ, prevX, prevY, prevZ, beforewaterz, travelDistZ, newdistance, totalpath;
+            float tstZ1, tstZ2, tstZ3, destZ1, destZ2, destZ3, srange, srange1, srange2, srange3;
+            float maxtravelDistZ = 2.65f;
+            const float step = 2.0f;
+            const uint8 numChecks = ceil(fabs(distance / step));
+            const float DELTA_X = (destX - x) / numChecks;
+            const float DELTA_Y = (destY - y) / numChecks;
+            int j = 1;
+            for (; j < (numChecks + 1); j++)
+            {
+                prevX = x + (float(j - 1)*DELTA_X);
+                prevY = y + (float(j - 1)*DELTA_Y);
+                tstX = x + (float(j)*DELTA_X);
+                tstY = y + (float(j)*DELTA_Y);
+
+                if (j < 2)
+                {
+                    prevZ = z;
+                    newdistance = 0.0f;
+                    totalpath = 0.0f;
+                }
+                else
+                    prevZ = tstZ;
+
+                travelDistZ = sqrt((tstY - prevY)*(tstY - prevY) + (tstX - prevX)*(tstX - prevX));
+                tstZ = map->GetHeight(tstX, tstY, prevZ + travelDistZ, true);
+
+                if (!map->IsInWater(x, y, z))
+                {
+                    if (map->IsInWater(tstX, tstY, tstZ) && !map->IsInWater(prevX, prevY, prevZ))// if first we start contact with water, we save coordinate Z before water and use her
+                    {
+                        beforewaterz = prevZ;
+                        tstZ = beforewaterz;
+                    }
+                    else if (map->IsInWater(tstX, tstY, tstZ)) // it next step , where first contact was previos step, and we must recalculate prevZ to Z before water.
+                    {
+                        prevZ = beforewaterz;
+                        tstZ = beforewaterz;
+                    }
+                }
+                else if (map->IsInWater(tstX, tstY, tstZ))
+                {
+                    prevZ = z;
+                    tstZ = z;
+                }
+
+                if (!map->IsInWater(tstX, tstY, tstZ))  // second safety check z for blink way if on the ground
+                {
+                    // highest available point
+                    tstZ1 = map->GetHeight(tstX, tstY, prevZ);
+                    // upper or floor
+                    tstZ2 = map->GetHeight(tstX, tstY, prevZ); 
+                    //lower than floor
+                    tstZ3 = map->GetHeight(tstX, tstY, prevZ);
+
+                    //distance of rays, will select the shortest in 3D
+                    srange1 = sqrt((tstY - prevY)*(tstY - prevY) + (tstX - prevX)*(tstX - prevX) + (tstZ1 - prevZ)*(tstZ1 - prevZ));
+                    srange2 = sqrt((tstY - prevY)*(tstY - prevY) + (tstX - prevX)*(tstX - prevX) + (tstZ2 - prevZ)*(tstZ2 - prevZ));
+                    srange3 = sqrt((tstY - prevY)*(tstY - prevY) + (tstX - prevX)*(tstX - prevX) + (tstZ3 - prevZ)*(tstZ3 - prevZ));
+
+                    if (srange1 < srange2)
+                        tstZ = tstZ1; 
+                    else if (srange3 < srange2)
+                        tstZ = tstZ3; 
+                    else
+                        tstZ = tstZ2;  
+                }
+
+                destZ = tstZ;
+                srange = sqrt((tstY - prevY)*(tstY - prevY) + (tstX - prevX)*(tstX - prevX) + (tstZ - prevZ)*(tstZ - prevZ));
+                totalpath += srange;
+
+                if (totalpath > distance)
+                    newdistance = totalpath - distance;
+
+                bool col = VMAP::VMapFactory::createOrGetVMapManager()->getObjectHitPos(mapid, prevX, prevY, prevZ + 0.5f, tstX, tstY, tstZ + 0.5f, tstX, tstY, tstZ, -0.5f);
+
+                // collision occured
+                if (col || (newdistance > 0.0f) || (fabs(prevZ - tstZ) > maxtravelDistZ))
+                {
+                    if ((newdistance > 0.0f) && (newdistance < step))
+                    {
+                        destX = prevX + newdistance * cos(orientation);
+                        destY = prevY + newdistance * sin(orientation);
+                    }
+                    else
+                    {
+                        // move back a bit
+                        destX = tstX - (0.6 * cos(orientation));
+                        destY = tstY - (0.6 * sin(orientation));
+                    }
+
+                    travelDistZ = sqrt((destY - prevY)*(destY - prevY) + (destX - prevX)*(destX - prevX));
+                    // highest available point
+                    destZ1 = map->GetHeight(destX, destY, prevZ + travelDistZ, true);
+                    // upper or floor
+                    destZ2 = map->GetHeight(destX, destY, prevZ + travelDistZ, true);
+                    //lower than floor
+                    destZ3 = map->GetHeight(destX, destY, prevZ - travelDistZ, true);
+
+                    //distance of rays, will select the shortest in 3D
+                    srange1 = sqrt((destY - prevY)*(destY - prevY) + (destX - prevX)*(destX - prevX) + (destZ1 - prevZ)*(destZ1 - prevZ));
+                    srange2 = sqrt((destY - prevY)*(destY - prevY) + (destX - prevX)*(destX - prevX) + (destZ2 - prevZ)*(destZ2 - prevZ));
+                    srange3 = sqrt((destY - prevY)*(destY - prevY) + (destX - prevX)*(destX - prevX) + (destZ3 - prevZ)*(destZ3 - prevZ));
+
+                    if (srange1 < srange2)
+                        destZ = destZ1; 
+                    else if (srange3 < srange2)
+                        destZ = destZ3; 
+                    else
+                        destZ = destZ2;
+
+                    if (map->IsInWater(destX, destY, destZ)) // recheck collide on top water 
+                        destZ = prevZ;
+
+                    break;
+                }
+                // we have correct destZ now
+            }
+
+            destPos.Relocate(destX, destY, destZ, orientation);
+        }
+    }
+
+    if (unitTarget->GetDistance(destPos) <= distance)
+        unitTarget->NearTeleportTo(destPos.GetPositionX(), destPos.GetPositionY(), destPos.GetPositionZ(), destPos.GetOrientation(), true);
+
 }
 
 void Spell::EffectReputation(SpellEffIndex effIndex)
@@ -6536,18 +6664,51 @@ void Spell::EffectCharge(SpellEffIndex /*effIndex*/)
     if (!target)
         return;
 
-    // charge changes fall time
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
         m_caster->ToPlayer()->SetFallInformation(time(NULL), m_caster->GetPositionZ());
 
-    float x, y, z;
-    target->GetContactPoint(m_caster, x, y, z);
-    m_caster->GetMotionMaster()->MoveCharge(x, y, z + 0.5f); // Lets add .5 to help prevent players falling under map
+    if (m_pathFinder)
+    {
+        m_caster->GetMotionMaster()->MoveCharge(m_pathFinder->getEndPosition().x, m_pathFinder->getEndPosition().y, m_pathFinder->getEndPosition().z, 42.0f, EVENT_CHARGE, m_pathFinder->getPathType());
+    }
+    else
+    {
+        Position pos;
+        target->GetContactPoint(m_caster, pos.m_positionX, pos.m_positionY, pos.m_positionZ);
 
-    // not all charge effects used in negative spells
+        if (!m_caster->IsWithinLOS(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ()))
+        {
+            float angle = m_caster->GetRelativeAngle(&pos);
+            float dist = m_caster->GetDistance(pos);
+            m_caster->GetFirstCollisionPosition(dist, angle);
+        }
+
+        m_caster->GetMotionMaster()->MoveCharge(pos.m_positionX, pos.m_positionY, pos.m_positionZ + 0.5f);
+    }
+
     if (!IsPositiveSpell(m_spellInfo->Id) && m_caster->GetTypeId() == TYPEID_PLAYER)
         m_caster->Attack(target, true);
 }
+
+void Spell::EffectChargeDest(SpellEffIndex /*effIndex*/)
+{
+    if (m_targets.HasDst())
+    {
+        Position pos;
+        m_targets.m_dstPos.GetPosition(&pos);
+
+        if (!m_caster->IsWithinLOS(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ()))
+        {
+            float angle = m_caster->GetRelativeAngle(&pos);
+            float dist = m_caster->GetDistance(pos);
+            pos = m_caster->GetFirstCollisionPosition(dist, angle);
+        }
+
+        m_caster->GetMotionMaster()->MoveCharge(pos.m_positionX, pos.m_positionY, pos.m_positionZ);
+    }
+}
+
+
 
 void Spell::EffectKnockBack(SpellEffIndex effIndex)
 {
@@ -6867,7 +7028,7 @@ void Spell::EffectTransmitted(SpellEffIndex effIndex)
 
     GameObject* pGameObj = new GameObject;
 
-    if (!pGameObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), name_id, cMap, 0x00000001,
+    if (!pGameObj->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), name_id, cMap,
                           fx, fy, fz, m_caster->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f, 100, GO_STATE_READY))
     {
         delete pGameObj;
@@ -6932,7 +7093,7 @@ void Spell::EffectTransmitted(SpellEffIndex effIndex)
     if (uint32 linkedEntry = pGameObj->GetGOInfo()->GetLinkedGameObjectEntry())
     {
         GameObject* linkedGO = new GameObject;
-        if (linkedGO->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), linkedEntry, cMap, 0x00000001,
+        if (linkedGO->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), linkedEntry, cMap,
                              fx, fy, fz, m_caster->GetOrientation(), 0, 0, 0, 0, 100, GO_STATE_READY))
         {
             linkedGO->SetRespawnTime(duration > 0 ? duration / IN_MILLISECONDS : 0);

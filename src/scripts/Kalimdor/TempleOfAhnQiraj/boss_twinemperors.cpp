@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -339,7 +339,7 @@ struct boss_twinemperorsAI : public ScriptedAI
             std::list<Creature*> unitList;
 
             AnyBugCheck u_check(me, 150);
-            Oregon::CreatureListSearcher<AnyBugCheck> searcher(me, unitList, u_check);
+            Oregon::CreatureListSearcher<AnyBugCheck> searcher(unitList, u_check);
             TypeContainerVisitor<Oregon::CreatureListSearcher<AnyBugCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
             cell.Visit(p, grid_creature_searcher, *(me->GetMap()), *me, me->GetGridActivationRange());
 

@@ -173,6 +173,7 @@ Development of this project dates back to 2010, and was developed under various 
  * Gennady
  * namreeb
  * uberhax
+ * Talamortis
 
 ## Copyright Information
 = Oregon Core -- General information =

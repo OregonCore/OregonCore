@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -390,12 +390,12 @@ void AddSC_silverpine_forest()
     newscript = new Script;
     newscript->Name = "npc_deathstalker_erland";
     newscript->GetAI = &GetAI_npc_deathstalker_erlandAI;
-    newscript->QuestAccept = &QuestAccept_npc_deathstalker_erland;
+    newscript->pQuestAccept = &QuestAccept_npc_deathstalker_erland;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "pyrewood_ambush";
     newscript->GetAI = &GetAI_pyrewood_ambush;
-    newscript->QuestAccept = &QuestAccept_pyrewood_ambush;
+    newscript->pQuestAccept = &QuestAccept_pyrewood_ambush;
     newscript->RegisterSelf();
 }

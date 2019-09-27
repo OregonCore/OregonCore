@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -48,13 +48,9 @@ void WorldSession::SendTaxiStatus(uint64 guid)
     }
 
     uint32 curloc = sObjectMgr.GetNearestTaxiNode(unit->GetPositionX(), unit->GetPositionY(), unit->GetPositionZ(), unit->GetMapId());
+
     // not found nearest
     if (curloc == 0)
-        return;
-
-    uint16 MountId = sObjectMgr.GetTaxiMount(curloc, GetPlayer()->GetTeam());
-    // no mount for faction == not supposed to learn fp
-    if (MountId == 0)
         return;
 
     DEBUG_LOG("WORLD: current location %u ", curloc);

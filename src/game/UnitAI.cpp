@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "UnitAI.h"
@@ -50,6 +50,11 @@ void UnitAI::DoMeleeAttackIfReady()
     //Make sure our attack is ready and we aren't currently casting before checking distance
     if (me->isAttackReady())
     {
+        //Prevent base and off attack at the same time
+        if (me->haveOffhandWeapon())
+            if (me->getAttackTimer(OFF_ATTACK) < ATTACK_DISPLAY_DELAY)
+                me->setAttackTimer(OFF_ATTACK, ATTACK_DISPLAY_DELAY);
+
         //If we are within range melee the target
         if (me->IsWithinMeleeRange(me->GetVictim()))
         {
@@ -59,6 +64,9 @@ void UnitAI::DoMeleeAttackIfReady()
     }
     if (me->haveOffhandWeapon() && me->isAttackReady(OFF_ATTACK))
     {
+        if (me->getAttackTimer(BASE_ATTACK) < ATTACK_DISPLAY_DELAY)
+            me->setAttackTimer(BASE_ATTACK, ATTACK_DISPLAY_DELAY);
+
         //If we are within range melee the target
         if (me->IsWithinMeleeRange(me->GetVictim()))
         {

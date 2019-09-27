@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Threading.h"
@@ -65,7 +65,7 @@ ThreadPriority::ThreadPriority()
         //since we have only 7(seven) values in enum Priority
         //and 3 we know already (Idle, Normal, Realtime) so
         //we need to split each list [Idle...Normal] and [Normal...Realtime]
-        //into ï¿½ piesces
+        //into ¹ piesces
         const size_t _divider = 4;
         size_t _div = (norm_pos - min_pos) / _divider;
         if (_div == 0)

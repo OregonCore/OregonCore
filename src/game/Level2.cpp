@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -38,8 +38,8 @@
 #include "Utilities/Util.h"
 #include <cctype>
 #include <iostream>
-#include <fstream>
 #include <map>
+#include <time.h>
 #include "TicketMgr.h"
 #include "ace/INET_Addr.h"
 
@@ -806,7 +806,7 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
     GameObject* pGameObj = new GameObject;
     uint32 db_lowGUID = sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT);
 
-    if (!pGameObj->Create(db_lowGUID, gInfo->id, map, 0x00000001, x, y, z, o, 0.0f, 0.0f, 0.0f, 0.0f, 0, GO_STATE_READY))
+    if (!pGameObj->Create(db_lowGUID, gInfo->id, map, x, y, z, o, 0.0f, 0.0f, 0.0f, 0.0f, 0, GO_STATE_READY))
     {
         delete pGameObj;
         return false;
@@ -820,7 +820,7 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
     }
 
     // fill the gameobject data and save to the db
-    pGameObj->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()), chr->GetPhaseMaskForSpawn());
+    pGameObj->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
     delete pGameObj;
 
     pGameObj = new GameObject();
@@ -976,13 +976,13 @@ bool ChatHandler::HandleNpcAddCommand(const char* args)
     Map* map = chr->GetMap();
 
     Creature* creature = new Creature;
-    if (!creature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, PHASEMASK_NORMAL, id, (uint32)teamval, x, y, z, o))
+    if (!creature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, id, (uint32)teamval, x, y, z, o))
     {
         delete creature;
         return false;
     }
 
-    creature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()), chr->GetPhaseMaskForSpawn());
+    creature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
 
     uint32 db_guid = creature->GetDBTableGUIDLow();
 
@@ -994,6 +994,7 @@ bool ChatHandler::HandleNpcAddCommand(const char* args)
     }
 
     sObjectMgr.AddCreatureToGrid(db_guid, sObjectMgr.GetCreatureData(db_guid));
+
     return true;
 }
 
@@ -1831,24 +1832,6 @@ bool ChatHandler::HandleKickPlayerCommand(const char* args)
     return true;
 }
 
-//set temporary phase mask for player
-bool ChatHandler::HandleModifyPhaseCommand(const char* args)
-{
-    if (!*args)
-        return false;
-
-    uint32 phasemask = (uint32)atoi((char*)args);
-
-    Unit *target = getSelectedUnit();
-    if(!target)
-        target = m_session->GetPlayer();
-
-
-    target->SetPhaseMask(phasemask,true);
-
-    return true;
-}
-
 //show info of player
 bool ChatHandler::HandlePInfoCommand(const char* args)
 {
@@ -2626,14 +2609,14 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
                 wpCreature->AddObjectToRemoveList();
                 // re-create
                 Creature* wpCreature2 = new Creature;
-                if (!wpCreature2->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, PHASEMASK_NORMAL, VISUAL_WAYPOINT, 0, chr->GetPositionX(), chr->GetPositionY(), chr->GetPositionZ(), chr->GetOrientation()))
+                if (!wpCreature2->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, VISUAL_WAYPOINT, 0, chr->GetPositionX(), chr->GetPositionY(), chr->GetPositionZ(), chr->GetOrientation()))
                 {
                     PSendSysMessage(LANG_WAYPOINT_VP_NOTCREATED, VISUAL_WAYPOINT);
                     delete wpCreature2;
                     return false;
                 }
 
-                wpCreature2->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()), chr->GetPhaseMaskForSpawn());
+                wpCreature2->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
                 // To call _LoadGoods(); _LoadQuests(); CreateTrainerSpells();
                 //TODO: Should we first use "Create" then use "LoadFromDB"?
                 if (!wpCreature2->LoadCreatureFromDB(wpCreature2->GetDBTableGUIDLow(), map))
@@ -2835,7 +2818,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             float o = chr->GetOrientation();
 
             Creature* wpCreature = new Creature;
-            if (!wpCreature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, chr->GetPhaseMaskForSpawn(), id, 0, x, y, z, o))
+            if (!wpCreature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, id, 0, x, y, z, o))
             {
                 PSendSysMessage(LANG_WAYPOINT_VP_NOTCREATED, id);
                 delete wpCreature;
@@ -2846,7 +2829,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             // set "wpguid" column to the visual waypoint
             WorldDatabase.PExecuteLog("UPDATE waypoint_data SET wpguid = '%u' WHERE id = '%u' and point = '%u'", wpCreature->GetGUIDLow(), pathid, point);
 
-            wpCreature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()), chr->GetPhaseMaskForSpawn());
+            wpCreature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
             if (!wpCreature->LoadCreatureFromDB(wpCreature->GetDBTableGUIDLow(), map))
             {
                 PSendSysMessage(LANG_WAYPOINT_VP_NOTCREATED, id);
@@ -2889,14 +2872,14 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         Map* map = chr->GetMap();
 
         Creature* creature = new Creature;
-        if (!creature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, chr->GetPhaseMaskForSpawn(), id, 0, x, y, z, o))
+        if (!creature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, id, 0, x, y, z, o))
         {
             PSendSysMessage(LANG_WAYPOINT_VP_NOTCREATED, id);
             delete creature;
             return false;
         }
 
-        creature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()), chr->GetPhaseMaskForSpawn());
+        creature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
         if (!creature->LoadCreatureFromDB(creature->GetDBTableGUIDLow(), map))
         {
             PSendSysMessage(LANG_WAYPOINT_VP_NOTCREATED, id);
@@ -2941,14 +2924,14 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         Map* map = chr->GetMap();
 
         Creature* creature = new Creature;
-        if (!creature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, chr->GetPhaseMaskForSpawn(), id, 0, x, y, z, o))
+        if (!creature->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), map, id, 0, x, y, z, o))
         {
             PSendSysMessage(LANG_WAYPOINT_NOTCREATED, id);
             delete creature;
             return false;
         }
 
-        creature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()), chr->GetPhaseMaskForSpawn());
+        creature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()));
         if (!creature->LoadCreatureFromDB(creature->GetDBTableGUIDLow(), map))
         {
             PSendSysMessage(LANG_WAYPOINT_NOTCREATED, id);
@@ -4380,70 +4363,3 @@ bool ChatHandler::HandleRAFUnlinkCommand(const char* args)
     return true;
 }
 
-//change phasemask of creature or pet
-bool ChatHandler::HandleNpcSetPhaseCommand(const char* args)
-{
-    if (!*args)
-        return false;
-
-    uint32 phasemask = (uint32)atoi((char*)args);
-    if (phasemask == 0)
-    {
-        SendSysMessage(LANG_BAD_VALUE);
-        SetSentErrorMessage(true);
-        return false;
-    }
-
-    Creature* pCreature = getSelectedCreature();
-    if (!pCreature)
-    {
-        SendSysMessage(LANG_SELECT_CREATURE);
-        SetSentErrorMessage(true);
-        return false;
-    }
-
-    pCreature->SetPhaseMask(phasemask, true);
-
-    if (!pCreature->IsPet())
-        pCreature->SaveToDB();
-
-    return true;
-}
-
-//set pahsemask for selected object
-bool ChatHandler::HandleGOPhaseCommand(const char* args)
-{
-    // number or [name] Shift-click form |color|Hgameobject:go_id|h[name]|h|r
-    char* cId = extractKeyFromLink((char*)args, "Hgameobject");
-    if (!cId)
-        return false;
-
-    uint32 lowguid = atoi(cId);
-    if (!lowguid)
-        return false;
-
-    GameObject* obj = NULL;
-    // by DB guid
-    if (GameObjectData const* go_data = sObjectMgr.GetGOData(lowguid))
-        obj = GetObjectGlobalyWithGuidOrNearWithDbGuid(lowguid, go_data->id);
-
-    if (!obj)
-    {
-        PSendSysMessage(LANG_COMMAND_OBJNOTFOUND, lowguid);
-        SetSentErrorMessage(true);
-        return false;
-    }
-
-    char* phaseStr = strtok(NULL, " ");
-    uint32 phasemask = phaseStr ? atoi(phaseStr) : 0;
-    if (phasemask == 0)
-    {
-        SendSysMessage(LANG_BAD_VALUE);
-        SetSentErrorMessage(true);
-        return false;
-    }
-
-    obj->SetPhaseMask(phasemask, true);
-    obj->SaveToDB();
-    return true;
-}

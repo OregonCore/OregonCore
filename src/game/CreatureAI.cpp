@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "CreatureAI.h"
@@ -164,12 +164,8 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
     if (me->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET) // non-combat pets should just stand there and look good;)
         return;
 
-    if (me->HasReactState(REACT_AGGRESSIVE) && me->canStartAttack(who, false))
+    if (me->canStartAttack(who, false))
         AttackStart(who);
-    //else if (who->GetVictim() && me->IsFriendlyTo(who)
-    //    && me->IsWithinDistInMap(who, sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS))
-    //    && me->canAttack(who->GetVictim()))
-    //    AttackStart(who->GetVictim());
 }
 
 // Distract creature, if player gets too close while stealthed/prowling
@@ -300,6 +296,7 @@ bool CreatureAI::_EnterEvadeMode()
 
     // sometimes bosses stuck in combat?
     me->DeleteThreatList();
+    me->CombatStop(true);
     me->CombatStopWithPets(true);
     me->SetLootRecipient(nullptr);
     me->SetPlayerDamaged(false);

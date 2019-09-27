@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __WORLD_H
@@ -263,6 +263,10 @@ enum WorldConfigs
     CONFIG_CREATURE_PICKPOCKET_REFILL,
     CONFIG_SQLUPDATER_ENABLED,
     CONFIG_HEALTH_IN_PERCENTS,
+    CONFIG_WARSONG_TIMER,
+    CONFIG_CREATEUPDATE_FILE,
+    CONFIG_CONSOLE_RESTART_TIMER,
+    CONFIG_BG_XP_FOR_KILL,
     CONFIG_VALUE_COUNT
 };
 

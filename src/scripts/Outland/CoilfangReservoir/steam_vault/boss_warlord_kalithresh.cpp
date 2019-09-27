@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -28,68 +28,71 @@ EndScriptData */
 #include "GridNotifiers.h"
 #include "Cell.h"
 #include "CellImpl.h"
-
-#define SAY_INTRO                   -1545016
-#define SAY_REGEN                   -1545017
-#define SAY_AGGRO1                  -1545018
-#define SAY_AGGRO2                  -1545019
-#define SAY_AGGRO3                  -1545020
-#define SAY_SLAY1                   -1545021
-#define SAY_SLAY2                   -1545022
-#define SAY_DEATH                   -1545023
-
-#define SPELL_SPELL_REFLECTION      31534
-#define SPELL_IMPALE                39061
-#define SPELL_WARLORDS_RAGE         37081
-#define SPELL_WARLORDS_RAGE_NAGA    31543
-
-#define SPELL_WARLORDS_RAGE_PROC    36453
-
-struct mob_naga_distillerAI : public ScriptedAI
+                               
+enum NagaDistiller
 {
-    mob_naga_distillerAI(Creature* c) : ScriptedAI(c)
+    SAY_INTRO                       = -1545016,
+    SAY_REGEN                       = -1545017,
+    SAY_AGGRO1                      = -1545018,
+    SAY_AGGRO2                      = -1545019,
+    SAY_AGGRO3                      = -1545020,
+    SAY_SLAY1                       = -1545021,
+    SAY_SLAY2                       = -1545022,
+    SAY_DEATH                       = -1545023,
+
+    SPELL_SPELL_REFLECTION          = 31534,
+    SPELL_IMPALE                    = 39061,
+    SPELL_WARLORDS_RAGE             = 37081,
+    SPELL_WARLORDS_RAGE_NAGA        = 31543,
+    SPELL_WARLORDS_RAGE_PROC        = 36453,
+
+    NPC_NAGA_DISTILLER              = 17954,
+
+    EVENT_SPELL_REFLECTION          = 1,
+    EVENT_SPELL_IMPALE              = 2,
+    EVENT_SPELL_RAGE                = 3
+};
+
+struct mob_naga_distillerAI : public NullCreatureAI
+{
+    mob_naga_distillerAI(Creature* c) : NullCreatureAI(c)
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
+    uint32 spellTimer;
 
     void Reset()
     {
+        spellTimer = 0;
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-		me->SetRooted(true);
-		me->SetStunned(true);
-
-        //hack, due to really weird spell behaviour :(
-        if (pInstance)
-        {
-            if (pInstance->GetData(TYPE_DISTILLER) == IN_PROGRESS)
-            {
-                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            }
-        }
     }
 
-    void EnterCombat(Unit* /*who*/) { }
-
-    void StartRageGen(Unit* /*caster*/)
+    void DoAction(int32 param)
     {
+        if (param != 1)
+            return;
+
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-
-        DoCast(me, SPELL_WARLORDS_RAGE_NAGA, true);
-
-        if (pInstance)
-            pInstance->SetData(TYPE_DISTILLER, IN_PROGRESS);
+        me->CastSpell(me, SPELL_WARLORDS_RAGE_NAGA, true);
+        spellTimer = 1;
     }
 
-    void DamageTaken(Unit* /*done_by*/, uint32& damage)
+    void UpdateAI(uint32 diff)
     {
-        if (me->GetHealth() <= damage)
-            if (pInstance)
-                pInstance->SetData(TYPE_DISTILLER, DONE);
+        if (spellTimer)
+        {
+            spellTimer += diff;
+            if (spellTimer >= 12000)
+            {
+                if (Creature* kali = me->FindNearestCreature(NPC_WARLORD_KALITHRESH, 100.0f))
+                    kali->CastSpell(kali, SPELL_WARLORDS_RAGE_PROC, true);
+                me->Kill(me, false);
+            }
+        }
     }
 };
 
@@ -101,18 +104,11 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
     }
 
     ScriptedInstance* pInstance;
-
-    uint32 Reflection_Timer;
-    uint32 Impale_Timer;
-    uint32 Rage_Timer;
-    bool CanRage;
+    EventMap events;
 
     void Reset()
     {
-        Reflection_Timer = 10000;
-        Impale_Timer = 7000 + rand() % 7000;
-        Rage_Timer = 45000;
-        CanRage = false;
+        events.Reset();
 
         if (pInstance)
             pInstance->SetData(TYPE_WARLORD_KALITHRESH, NOT_STARTED);
@@ -120,34 +116,20 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch (rand() % 3)
-        {
-        case 0:
-            DoScriptText(SAY_AGGRO1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_AGGRO2, me);
-            break;
-        case 2:
-            DoScriptText(SAY_AGGRO3, me);
-            break;
-        }
+        DoScriptText(RAND(SAY_AGGRO1, SAY_AGGRO2, SAY_AGGRO3), me);
+
+        events.ScheduleEvent(EVENT_SPELL_REFLECTION, 10000);
+        events.ScheduleEvent(EVENT_SPELL_IMPALE, urand(7000, 14000));
+        events.ScheduleEvent(EVENT_SPELL_RAGE, 20000);
 
         if (pInstance)
             pInstance->SetData(TYPE_WARLORD_KALITHRESH, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit* /*victim*/)
+    void KilledUnit(Unit* victim)
     {
-        switch (rand() % 2)
-        {
-        case 0:
-            DoScriptText(SAY_SLAY1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY2, me);
-            break;
-        }
+        if (victim->GetTypeId() == TYPEID_PLAYER)
+            DoScriptText(RAND(SAY_SLAY1, SAY_SLAY2), me);
     }
 
     Creature* SelectCreatureInGrid(uint32 entry, float range)
@@ -159,7 +141,7 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
         cell.SetNoCreate();
 
         Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*me, entry, true, range);
-        Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(me, pCreature, creature_check);
+        Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
         cell.Visit(pair, creature_searcher, *(me->GetMap()), *me, me->GetGridActivationRange());
 
@@ -188,36 +170,29 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Rage_Timer <= diff)
+        events.Update(diff);
+
+        switch (events.ExecuteEvent())
         {
-            Creature* distiller = SelectCreatureInGrid(17954, 100);
-            if (distiller)
+        case EVENT_SPELL_REFLECTION:
+            me->CastSpell(me, SPELL_SPELL_REFLECTION, false);
+            events.Repeat(urand(15000, 20000));
+            break;
+        case EVENT_SPELL_IMPALE:
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 10.0f, true))
+                me->CastSpell(target, SPELL_IMPALE, false);
+            events.Repeat(urand(7500, 12500));
+            break;
+        case EVENT_SPELL_RAGE:
+            if (Creature* distiller = me->FindNearestCreature(NPC_NAGA_DISTILLER, 100.0f))
             {
+                me->GetMotionMaster()->MoveToTarget(NPC_NAGA_DISTILLER, 100.0f, true);
                 DoScriptText(SAY_REGEN, me);
-                DoCast(me, SPELL_WARLORDS_RAGE);
-                ((mob_naga_distillerAI*)distiller->AI())->StartRageGen(me);
+                distiller->AI()->DoAction(1);
             }
-            Rage_Timer = 3000 + rand() % 15000;
+            events.Repeat(45000);
+            break;
         }
-        else Rage_Timer -= diff;
-
-        //Reflection_Timer
-        if (Reflection_Timer <= diff)
-        {
-            DoCast(me, SPELL_SPELL_REFLECTION);
-            Reflection_Timer = 15000 + rand() % 10000;
-        }
-        else Reflection_Timer -= diff;
-
-        //Impale_Timer
-        if (Impale_Timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_IMPALE);
-
-            Impale_Timer = 7500 + rand() % 5000;
-        }
-        else Impale_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

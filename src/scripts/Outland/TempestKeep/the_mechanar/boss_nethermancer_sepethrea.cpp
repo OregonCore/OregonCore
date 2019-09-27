@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -43,65 +43,76 @@ EndScriptData */
 #define SPELL_KNOCKBACK                 37317
 #define SPELL_SOLARBURN                 35267
 
-struct boss_nethermancer_sepethreaAI : public ScriptedAI
+enum NetherMancerSepthrea
 {
-    boss_nethermancer_sepethreaAI(Creature* c) : ScriptedAI(c)
-    {
-        pInstance = (ScriptedInstance*)c->GetInstanceData();
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
+    //npcs
+    NPC_RAGING_FLAMES               = 20481,
 
-    ScriptedInstance* pInstance;
+    //events
+    EVENT_FROST_ATTACK              = 1,
+    EVENT_ARCANE_BLAST              = 2,
+    EVENT_DRAGONS_BREATH            = 3,
+    EVENT_KNOCK_BACK                = 4,
+    EVENT_SOLAR_BURN                = 5
+};
 
-    bool HeroicMode;
+struct boss_nethermancer_sepethreaAI : public BossAI
+{
+    boss_nethermancer_sepethreaAI(Creature* c) : BossAI(c, DATA_NETHERMANCER_SEPRETHREA) {}
 
-    uint32 frost_attack_Timer;
-    uint32 arcane_blast_Timer;
-    uint32 dragons_breath_Timer;
-    uint32 knockback_Timer;
-    uint32 solarburn_Timer;
-
-    void Reset()
-    {
-        frost_attack_Timer = 7000 + rand() % 3000;
-        arcane_blast_Timer = 12000 + rand() % 6000;
-        dragons_breath_Timer = 18000 + rand() % 4000;
-        knockback_Timer = 22000 + rand() % 6000;
-        solarburn_Timer = 30000;
-
-        if (pInstance)
-            pInstance->SetData(DATA_NETHERMANCER_EVENT, NOT_STARTED);
-    }
+    bool isHeroic = me->GetMap()->IsHeroic();
 
     void EnterCombat(Unit* who)
     {
-        if (pInstance)
-            pInstance->SetData(DATA_NETHERMANCER_EVENT, IN_PROGRESS);
+        _EnterCombat();
+        
+        events.ScheduleEvent(EVENT_FROST_ATTACK, 6000);
+        events.ScheduleEvent(EVENT_ARCANE_BLAST, 14000);
+        events.ScheduleEvent(EVENT_DRAGONS_BREATH, 18000);
 
         DoScriptText(SAY_AGGRO, me);
-        DoCast(who, HeroicMode ? H_SPELL_SUMMON_RAGIN_FLAMES : SPELL_SUMMON_RAGIN_FLAMES);
+
+        if (isHeroic)
+        {
+            DoCast(H_SPELL_SUMMON_RAGIN_FLAMES);
+            me->SummonCreature(20481, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 300);
+        }
+        else
+            DoCast(SPELL_SUMMON_RAGIN_FLAMES);
+
         DoScriptText(SAY_SUMMON, me);
     }
 
-    void KilledUnit(Unit* /*victim*/)
+    void JustSummoned(Creature* summon)
     {
-        switch (rand() % 2)
+        summons.Summon(summon);
+        if (Unit* victim = me->GetVictim())
         {
-        case 0:
-            DoScriptText(SAY_SLAY1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY2, me);
-            break;
+            summon->AI()->AttackStart(victim);
+            summon->AddThreat(victim, 1000.0f);
+            summon->SetInCombatWithZone();
+        }
+    }
+
+    void KilledUnit(Unit* victim)
+    {
+        if (victim->GetTypeId() == TYPEID_PLAYER)
+        {
+            DoScriptText(RAND(SAY_SLAY1, SAY_SLAY2), me);
         }
     }
 
     void JustDied(Unit* /*Killer*/)
     {
+        events.Reset();
         DoScriptText(SAY_DEATH, me);
 
-        if (pInstance)
-            pInstance->SetData(DATA_NETHERMANCER_EVENT, DONE);
+        if (instance)
+            instance->SetData(DATA_NETHERMANCER_SEPRETHREA, DONE);
+
+        for (SummonList::const_iterator itr = summons.begin(); itr != summons.end(); ++itr)
+            if (Creature* summon = ObjectAccessor::GetCreature(*me, *itr))
+                me->DealDamage(summon, summon->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
     }
 
     void UpdateAI(const uint32 diff)
@@ -110,59 +121,36 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        //Frost Attack
-        if (frost_attack_Timer <= diff)
+        events.Update(diff);
+        if (me->HasUnitState(UNIT_STATE_CASTING))
+            return;
+
+
+        switch (events.ExecuteEvent())
         {
+        case EVENT_FROST_ATTACK:
             DoCastVictim(SPELL_FROST_ATTACK);
-            frost_attack_Timer = 7000 + rand() % 30000;
-        }
-        else frost_attack_Timer -= diff;
-
-        //Arcane Blast
-        if (arcane_blast_Timer <= diff)
-        {
-            DoCastVictim( SPELL_ARCANE_BLAST);
-            arcane_blast_Timer = 15000;
-        }
-        else arcane_blast_Timer -= diff;
-
-        //Dragons Breath
-        if (dragons_breath_Timer <= diff)
-        {
+            events.ScheduleEvent(EVENT_FROST_ATTACK, 8000);
+            break;
+        case EVENT_ARCANE_BLAST:
+            DoCastVictim(SPELL_ARCANE_BLAST);
+            events.ScheduleEvent(EVENT_ARCANE_BLAST, 12000);
+            break;
+        case EVENT_DRAGONS_BREATH:
             DoCastVictim(SPELL_DRAGONS_BREATH);
-            {
-                if (rand() % 2)
-                    return;
-
-                switch (rand() % 2)
-                {
-                case 0:
-                    DoScriptText(SAY_DRAGONS_BREATH_1, me);
-                    break;
-                case 1:
-                    DoScriptText(SAY_DRAGONS_BREATH_2, me);
-                    break;
-                }
-            }
-            dragons_breath_Timer = 12000 + rand() % 10000;
-        }
-        else dragons_breath_Timer -= diff;
-
-        //Knockback
-        if (knockback_Timer <= diff)
-        {
+            events.ScheduleEvent(EVENT_DRAGONS_BREATH, 16000);
+            if (roll_chance_i(50))
+                DoScriptText(RAND(SAY_DRAGONS_BREATH_1, SAY_DRAGONS_BREATH_2), me);
+            break;
+        case EVENT_KNOCK_BACK:
             DoCastVictim(SPELL_KNOCKBACK);
-            knockback_Timer = 15000 + rand() % 10000;
-        }
-        else knockback_Timer -= diff;
-
-        //Solarburn
-        if (solarburn_Timer <= diff)
-        {
+            events.ScheduleEvent(EVENT_KNOCK_BACK, 15000 + rand() % 10000);
+            break;
+        case EVENT_SOLAR_BURN:
             DoCastVictim(SPELL_SOLARBURN);
-            solarburn_Timer = 30000;
+            events.ScheduleEvent(EVENT_SOLAR_BURN, 30000);
+            break;
         }
-        else solarburn_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -174,85 +162,60 @@ CreatureAI* GetAI_boss_nethermancer_sepethrea(Creature* pCreature)
 }
 
 #define SPELL_INFERNO                   35268
-#define H_SPELL_INFERNO                 39346
 #define SPELL_FIRE_TAIL                 35278
+#define H_SPELL_INFERNO                 39346
+
+enum raginFlames
+{
+    EVENT_SPELL_FIRE_TAIL = 1,
+    EVENT_SPELL_INFERNO = 2
+};
+
 
 struct mob_ragin_flamesAI : public ScriptedAI
 {
     mob_ragin_flamesAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (ScriptedInstance*)c->GetInstanceData();
-        HeroicMode = me->GetMap()->IsHeroic();
     }
-
-    ScriptedInstance* pInstance;
-
-    bool HeroicMode;
-
-    uint32 inferno_Timer;
-    uint32 flame_timer;
-    uint32 Check_Timer;
-
-    bool onlyonce;
+    
+    EventMap events;
+    bool isHeroic = me->GetMap()->IsHeroic();
 
     void Reset()
     {
-        inferno_Timer = 10000;
-        flame_timer = 500;
-        Check_Timer = 2000;
-        onlyonce = false;
-        me->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_MAGIC, true);
-        me->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, true);
+        me->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_ALL, true);
         me->SetSpeed(MOVE_RUN, HeroicMode ? 0.7f : 0.5f);
     }
 
     void EnterCombat(Unit* /*who*/)
     {
+        events.ScheduleEvent(EVENT_SPELL_FIRE_TAIL, 500);
+        events.ScheduleEvent(EVENT_SPELL_INFERNO, urand(10000, 20000));
     }
 
     void UpdateAI(const uint32 diff)
     {
-        //Check_Timer
-        if (Check_Timer <= diff)
-        {
-            if (pInstance)
-            {
-                if (pInstance->GetData(DATA_NETHERMANCER_EVENT) != IN_PROGRESS)
-                {
-                    //remove
-                    me->setDeathState(JUST_DIED);
-                    me->RemoveCorpse();
-                }
-            }
-            Check_Timer = 1000;
-        }
-        else Check_Timer -= diff;
-
         if (!UpdateVictim())
             return;
 
-        if (!onlyonce)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                me->GetMotionMaster()->MoveChase(pTarget);
-            onlyonce = true;
-        }
+        events.Update(diff);
 
-        if (inferno_Timer <= diff)
+        switch (events.ExecuteEvent())
         {
-            DoCastVictim(HeroicMode ? H_SPELL_INFERNO : SPELL_INFERNO);
-            me->TauntApply(me->GetVictim());
-            inferno_Timer = 10000;
+        case EVENT_SPELL_INFERNO:
+            if (me->IsWithinCombatRange(me->GetVictim(), 5.0f))
+            {
+                me->CastSpell(me, SPELL_INFERNO, true);
+                events.ScheduleEvent(EVENT_SPELL_INFERNO, 20000);
+            }
+            else
+                events.ScheduleEvent(EVENT_SPELL_INFERNO, 1000);
+            break;
+        case EVENT_SPELL_FIRE_TAIL:
+            me->CastSpell(me, SPELL_FIRE_TAIL, true);
+            events.ScheduleEvent(EVENT_SPELL_FIRE_TAIL, 500);
+            break;
         }
-        else inferno_Timer -= diff;
-
-        if (flame_timer <= diff)
-        {
-            DoCast(me, SPELL_FIRE_TAIL);
-            flame_timer = 500;
-        }
-        else flame_timer -= diff;
-
         DoMeleeAttackIfReady();
     }
 
@@ -261,6 +224,7 @@ CreatureAI* GetAI_mob_ragin_flames(Creature* pCreature)
 {
     return GetInstanceAI<mob_ragin_flamesAI>(pCreature);
 }
+
 void AddSC_boss_nethermancer_sepethrea()
 {
     Script* newscript;

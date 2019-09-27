@@ -41,6 +41,7 @@ static const char* Menu[] =
     "Run a Command",
     "Toggle Output",
     "-------------",
+    "   Restart   ",
     " Halt Server ",
 };
 static const int MenuItems = sizeof(Menu) / sizeof(*Menu);
@@ -384,7 +385,11 @@ void Console::MainLoop()
             case 1: /* Real-time logs */
                 RunLogViewLoop();
                 break;
-            case 3: /* shutdown */
+            case 3:  /* Restart Server*/
+                sWorld.ShutdownServ(sWorld.getConfig(CONFIG_CONSOLE_RESTART_TIMER), SHUTDOWN_MASK_RESTART, RESTART_EXIT_CODE);
+                RunLogViewLoop(); // Need to view logs for it to correctly restart
+                break;
+            case 4: /* shutdown */
                 endwin();
                 raise(SIGINT);
                 break;

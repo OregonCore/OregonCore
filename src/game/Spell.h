@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __SPELL_H
@@ -21,6 +21,7 @@
 #include "GridDefines.h"
 #include "SpellMgr.h"
 #include "SharedDefines.h"
+#include "PathFinder.h"
 
 static const uint32 MAX_SPELL_ID = 53085;
 
@@ -323,6 +324,7 @@ class Spell
         void EffectSelfResurrect(SpellEffIndex effIndex);
         void EffectSkinning(SpellEffIndex effIndex);
         void EffectCharge(SpellEffIndex effIndex);
+        void EffectChargeDest(SpellEffIndex effIndex);
         void EffectProspecting(SpellEffIndex effIndex);
         void EffectSendTaxi(SpellEffIndex effIndex);
         void EffectSummonCritter(SpellEffIndex effIndex);
@@ -365,6 +367,7 @@ class Spell
         void TriggerSpell();
         SpellCastResult CheckCast(bool strict);
         SpellCastResult CheckPetCast(Unit* target);
+        static uint32 GetCCDelay(uint32 _spell);
         SpellCastResult CheckDummyCast(uint32 effIndex);
         bool CanAutoCast(Unit* target);
 
@@ -441,6 +444,7 @@ class Spell
         uint64 m_castItemGUID;
         uint8 m_cast_count;
         SpellCastTargets m_targets;
+
 
         int32 GetCastTime() const
         {
@@ -541,6 +545,7 @@ class Spell
         Unit* const m_caster;
 
         SpellValue* const m_spellValue;
+        PathInfo* m_pathFinder;
 
         uint64 m_originalCasterGUID;                        // real source of cast (aura caster/etc), used for spell targets selection
         // e.g. damage around area spell trigered by victim aura and damage enemies of aura caster

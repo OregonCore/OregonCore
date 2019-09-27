@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ScriptMgr.h"
@@ -27,6 +27,12 @@ void OnLogin(Player* /*pPlayer*/)
 
 //This function is called when the player logs out
 void OnLogout(Player* /*pPlayer*/)
+{
+
+}
+
+// This function is called when a player is rewarded XP
+void OnGivePlayerXP(Player* /*player*/, uint32& /*amount*/, Unit* /*victim*/)
 {
 
 }
@@ -105,6 +111,7 @@ void AddSC_onevents()
     newscript->OnLogin = &OnLogin;
     newscript->OnLogout = &OnLogout;
     newscript->OnPVPKill = &OnPVPKill;
+    newscript->OnGivePlayerXP = &OnGivePlayerXP;
 
     newscript->OnGroupCreated = &OnGroupCreated;
     newscript->OnGroupPlayerInvited = &OnGroupPlayerInvited;

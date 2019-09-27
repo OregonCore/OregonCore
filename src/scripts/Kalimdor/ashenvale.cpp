@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -619,7 +619,7 @@ void AddSC_ashenvale()
     newscript = new Script;
     newscript->Name = "npc_muglash";
     newscript->GetAI = &GetAI_npc_muglash;
-    newscript->QuestAccept = &QuestAccept_npc_muglash;
+    newscript->pQuestAccept = &QuestAccept_npc_muglash;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -630,18 +630,18 @@ void AddSC_ashenvale()
     newscript = new Script;
     newscript->Name = "npc_torek";
     newscript->GetAI = &GetAI_npc_torek;
-    newscript->QuestAccept = &QuestAccept_npc_torek;
+    newscript->pQuestAccept = &QuestAccept_npc_torek;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_ruul_snowhoof";
     newscript->GetAI = &GetAI_npc_ruul_snowhoofAI;
-    newscript->QuestAccept = &QuestAccept_npc_ruul_snowhoof;
+    newscript->pQuestAccept = &QuestAccept_npc_ruul_snowhoof;
     newscript->RegisterSelf();
 
 	newscript = new Script;
 	newscript->Name = "npc_feero";
 	newscript->GetAI = &GetAI_npc_feero;
-	newscript->QuestAccept = &QuestAccept_npc_feero;
+	newscript->pQuestAccept = &QuestAccept_npc_feero;
     newscript->RegisterSelf();
 }

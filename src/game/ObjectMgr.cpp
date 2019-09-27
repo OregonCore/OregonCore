@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -510,9 +510,12 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
 
     if (!result)
     {
+
+
         sLog.outString(">> Loaded 0 gossip_menu_option locale strings. DB table `locales_gossip_menu_option` is empty.");
         return;
     }
+
 
     do
     {
@@ -554,47 +557,6 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
     while (result->NextRow());
 
     sLog.outString(">> Loaded %u gossip_menu_option locale strings", mGossipMenuItemsLocaleMap.size());
-}
-
-void ObjectMgr::LoadPointOfInterestLocales()
-{
-    mPointOfInterestLocaleMap.clear();                              // need for reload case
-
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry,icon_name_loc1,icon_name_loc2,icon_name_loc3,icon_name_loc4,icon_name_loc5,icon_name_loc6,icon_name_loc7,icon_name_loc8 FROM locales_points_of_interest");
-
-    if (!result)
-    {
-        sLog.outString("");
-        sLog.outString(">> Loaded 0 points_of_interest locale strings. DB table `locales_points_of_interest` is empty.");
-        return;
-    }
-
-    do
-    {
-        Field *fields = result->Fetch();
-
-        uint32 entry = fields[0].GetUInt32();
-
-        PointOfInterestLocale& data = mPointOfInterestLocaleMap[entry];
-
-        for (int i = 1; i < MAX_LOCALE; ++i)
-        {
-            std::string str = fields[i].GetCppString();
-            if (str.empty())
-                continue;
-
-            int idx = GetOrNewIndexForLocale(LocaleConstant(i));
-            if (idx >= 0)
-            {
-                if (data.IconName.size() <= idx)
-                    data.IconName.resize(idx + 1);
-
-                data.IconName[idx] = str;
-            }
-        }
-    } while (result->NextRow());
-
-    sLog.outString(">> Loaded %u points_of_interest locale strings", mPointOfInterestLocaleMap.size());
 }
 
 struct SQLCreatureLoader : public SQLStorageLoaderBase<SQLCreatureLoader>
@@ -885,12 +847,7 @@ void ObjectMgr::LoadCreatureAddons()
             continue;
 
         if (!sEmotesStore.LookupEntry(addon->emote))
-            sLog.outErrorDb("Creature (Entry: %u) has invalid emote (%u) defined in creature_template_addon.", 
-                addon->guidOrEntry, addon->emote);
-
-        if (addon->visibilityDistanceType >= VisibilityDistanceType::VISDIST_MAX)
-            sLog.outErrorDb("Creature (Entry: %u) has invalid visibilityDistanceType (%u) defined in `creature_template_addon`.",
-                addon->guidOrEntry, addon->visibilityDistanceType);
+            sLog.outErrorDb("Creature (GUID: %u) has invalid emote (%u) defined in creature_template_addon.", addon->guidOrEntry, addon->emote);
 
         ConvertCreatureAddonAuras(const_cast<CreatureDataAddon*>(addon), "creature_template_addon", "Entry");
 
@@ -911,12 +868,6 @@ void ObjectMgr::LoadCreatureAddons()
 
         if (!sEmotesStore.LookupEntry(addon->emote))
             sLog.outErrorDb("Creature (GUID: %u) has invalid emote (%u) defined in creature_addon.", addon->guidOrEntry, addon->emote);
-
-        if (addon->visibilityDistanceType >= VisibilityDistanceType::VISDIST_MAX)
-        {
-            sLog.outErrorDb("Creature (GUID: %u) has invalid visibilityDistanceType (%u) defined in `creature_addon`.",
-                addon->guidOrEntry, addon->visibilityDistanceType);
-        }
 
         ConvertCreatureAddonAuras(const_cast<CreatureDataAddon*>(addon), "creature_addon", "GUIDLow");
 
@@ -1315,9 +1266,7 @@ void ObjectMgr::LoadCreatures()
                                  //4             5           6           7           8            9              10         11
                                  "equipment_id, position_x, position_y, position_z, orientation, spawntimesecs, spawndist, currentwaypoint,"
                                  //12        13       14            15         16     17
-                                 "curhealth, curmana, MovementType, spawnMask, phaseMask, event, pool_entry, "
-                                    //   19                20                   21
-                                 "creature.npcflag, creature.unit_flags, creature.dynamicflags "
+                                 "curhealth, curmana, MovementType, spawnMask, event, pool_entry, creature.npcflag, creature.unit_flags, creature.dynamicflags  "
                                  "FROM creature LEFT OUTER JOIN game_event_creature ON creature.guid = game_event_creature.guid "
                                  "LEFT OUTER JOIN pool_creature ON creature.guid = pool_creature.guid");
 
@@ -1368,12 +1317,11 @@ void ObjectMgr::LoadCreatures()
         data.curmana        = fields[13].GetUInt32();
         data.movementType   = fields[14].GetUInt8();
         data.spawnMask      = fields[15].GetUInt8();
-        data.phaseMask      = fields[16].GetUInt16();
-        int16 gameEvent     = fields[17].GetInt16();
-        int32 PoolId        = fields[18].GetInt32();
-        data.npcflag        = fields[19].GetUInt32();
-        data.unit_flags     = fields[20].GetUInt32();
-        data.dynamicflags   = fields[21].GetUInt32();
+        int16 gameEvent     = fields[16].GetInt16();
+        int32 PoolId        = fields[17].GetInt32();
+        data.npcflag        = fields[18].GetUInt32();
+        data.unit_flags     = fields[19].GetUInt32();
+        data.dynamicflags   = fields[20].GetUInt32();
 
         MapEntry const* mapEntry = sMapStore.LookupEntry(data.mapid);
         if (!mapEntry)
@@ -1423,12 +1371,6 @@ void ObjectMgr::LoadCreatures()
                 sLog.outErrorDb("Table `creature` has creature (GUID: %u Entry: %u) with `MovementType`=0 (idle) have `spawndist`<>0, set to 0.", guid, data.id);
                 data.spawndist = 0.0f;
             }
-        }
-
-        if (data.phaseMask == 0)
-        {
-            sLog.outErrorDb("Table `creature` have creature (GUID: %u Entry: %u) with `phaseMask`=0 (not visible for anyone), set to 1.", guid, data.id);
-            data.phaseMask = 1;
         }
 
         // Add to grid if not managed by the game event or pool system
@@ -1569,7 +1511,7 @@ void ObjectMgr::LoadGameobjects()
     uint32 count = 0;
 
     //                                                       0                1   2    3           4           5           6
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT gameobject.guid, id, map, phaseMask, position_x, position_y, position_z, orientation,"
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT gameobject.guid, id, map, position_x, position_y, position_z, orientation,"
                                  //   7          8          9          10         11             12            13     14         15     16
                                  "rotation0, rotation1, rotation2, rotation3, spawntimesecs, animprogress, state, spawnMask, event, pool_entry "
                                  "FROM gameobject LEFT OUTER JOIN game_event_gameobject ON gameobject.guid = game_event_gameobject.guid "
@@ -1577,6 +1519,8 @@ void ObjectMgr::LoadGameobjects()
 
     if (!result)
     {
+
+
         sLog.outErrorDb(">> Loaded 0 gameobjects. DB table gameobject is empty.");
         return;
     }
@@ -1600,20 +1544,19 @@ void ObjectMgr::LoadGameobjects()
 
         data.id             = entry;
         data.mapid          = fields[ 2].GetUInt32();
-        data.phaseMask      = fields[ 3].GetUInt32();
-        data.posX           = fields[ 4].GetFloat();
-        data.posY           = fields[ 5].GetFloat();
-        data.posZ           = fields[ 6].GetFloat();
-        data.orientation    = fields[ 7].GetFloat();
-        data.rotation0      = fields[ 8].GetFloat();
-        data.rotation1      = fields[ 9].GetFloat();
-        data.rotation2      = fields[10].GetFloat();
-        data.rotation3      = fields[11].GetFloat();
-        data.spawntimesecs  = fields[12].GetInt32();
-        data.animprogress   = fields[13].GetUInt32();
+        data.posX           = fields[ 3].GetFloat();
+        data.posY           = fields[ 4].GetFloat();
+        data.posZ           = fields[ 5].GetFloat();
+        data.orientation    = fields[ 6].GetFloat();
+        data.rotation0      = fields[ 7].GetFloat();
+        data.rotation1      = fields[ 8].GetFloat();
+        data.rotation2      = fields[ 9].GetFloat();
+        data.rotation3      = fields[10].GetFloat();
+        data.spawntimesecs  = fields[11].GetInt32();
+        data.animprogress   = fields[12].GetUInt32();
         data.artKit         = 0;
 
-        uint32 go_state     = fields[14].GetUInt32();
+        uint32 go_state     = fields[13].GetUInt32();
         if (go_state >= MAX_GO_STATE)
         {
             sLog.outErrorDb("Table `gameobject` has gameobject (GUID: %u Entry: %u) with invalid `state` (%u) value, skipped.", guid, data.id, go_state);
@@ -1621,9 +1564,9 @@ void ObjectMgr::LoadGameobjects()
         }
         data.go_state       = GOState(go_state);
 
-        data.spawnMask      = fields[15].GetUInt8();
-        int16 gameEvent     = fields[16].GetInt16();
-        int32 PoolId        = fields[17].GetInt32();
+        data.spawnMask      = fields[14].GetUInt8();
+        int16 gameEvent     = fields[15].GetInt16();
+        int32 PoolId        = fields[16].GetInt32();
 
 
         if (data.rotation2 < -1.0f || data.rotation2 > 1.0f)
@@ -3496,7 +3439,7 @@ void ObjectMgr::LoadQuests()
 
         for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
         {
-            uint32 id = qinfo->RequiredItemId[j];
+            uint32 id = qinfo->ReqItemId[j];
             if (id)
             {
                 if (qinfo->ReqItemCount[j] == 0)
@@ -3510,14 +3453,14 @@ void ObjectMgr::LoadQuests()
 
                 if (!sItemStorage.LookupEntry<ItemTemplate>(id))
                 {
-                    sLog.outErrorDb("Quest %u has RequiredItemId%d = %u but item with entry %u does not exist, quest cannot be completed.",
+                    sLog.outErrorDb("Quest %u has ReqItemId%d = %u but item with entry %u does not exist, quest cannot be completed.",
                                     qinfo->GetQuestId(), j + 1, id, id);
                     qinfo->ReqItemCount[j] = 0;             // prevent incorrect work of quest
                 }
             }
             else if (qinfo->ReqItemCount[j] > 0)
             {
-                sLog.outErrorDb("Quest %u has RequiredItemId%d = 0 but ReqItemCount%d = %u, quest cannot be completed.",
+                sLog.outErrorDb("Quest %u has ReqItemId%d = 0 but ReqItemCount%d = %u, quest cannot be completed.",
                                 qinfo->GetQuestId(), j + 1, j + 1, qinfo->ReqItemCount[j]);
                 qinfo->ReqItemCount[j] = 0;                 // prevent incorrect work of quest
             }
@@ -3966,12 +3909,14 @@ void ObjectMgr::LoadPetCreateSpells()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, Spell1, Spell2, Spell3, Spell4 FROM petcreateinfo_spell");
     if (!result)
     {
+
         sLog.outString(">> Loaded 0 pet create spells");
         sLog.outErrorDb("petcreateinfo_spell table is empty!");
         return;
     }
 
     uint32 count = 0;
+
 
     mPetCreateSpell.clear();
 
@@ -6055,24 +6000,21 @@ uint32 ObjectMgr::GetBaseXP(uint32 level)
 void ObjectMgr::LoadPetNames()
 {
     uint32 count = 0;
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT word,entry,half FROM pet_name_generation");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT `word`, `entry`, `half` FROM `pet_name_generation`");
 
     if (!result)
     {
-
-
         sLog.outString(">> Loaded %u pet name parts", count);
         return;
     }
 
-
     do
     {
-
         Field* fields = result->Fetch();
         std::string word = fields[0].GetString();
         uint32 entry     = fields[1].GetUInt32();
         bool   half      = fields[2].GetBool();
+
         if (half)
             PetHalfName1[entry].push_back(word);
         else
@@ -6123,7 +6065,7 @@ void ObjectMgr::LoadCorpses()
 {
     uint32 count = 0;
     //                                                           0           1           2           3            4    5          6          7       8       9      10     11        12    13           14        15    16
-    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT position_x, position_y, position_z, orientation, map, displayId, itemCache, bytes1, bytes2, guild, flags, dynFlags, time, corpse_type, instance, guid, player, phaseMask FROM corpse WHERE corpse_type <> 0");
+    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT position_x, position_y, position_z, orientation, map, displayId, itemCache, bytes1, bytes2, guild, flags, dynFlags, time, corpse_type, instance, guid, player FROM corpse WHERE corpse_type <> 0");
 
     if (!result)
     {
@@ -6337,46 +6279,6 @@ void ObjectMgr::LoadReputationSpilloverTemplate()
     sLog.outString(">> Loaded %u reputation_spillover_template", count);
 }
 
-void ObjectMgr::LoadPointsOfInterest()
-{
-    uint32 count = 0;
-
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, x, y, icon, flags, data, icon_name FROM points_of_interest");
-
-    if (!result)
-    {
-        sLog.outErrorDb(">> Loaded 0 Points of Interest definitions. DB table `points_of_interest` is empty.");
-        return;
-    }
-
-    do
-    {
-        Field *fields = result->Fetch();
-
-        uint32 point_id = fields[0].GetUInt32();
-
-        PointOfInterest POI;
-        POI.x = fields[1].GetFloat();
-        POI.y = fields[2].GetFloat();
-        POI.icon = fields[3].GetUInt32();
-        POI.flags = fields[4].GetUInt32();
-        POI.data = fields[5].GetUInt32();
-        POI.icon_name = fields[6].GetCppString();
-
-        if (!Oregon::IsValidMapCoord(POI.x, POI.y))
-        {
-            sLog.outErrorDb("Table `points_of_interest` (Entry: %u) have invalid coordinates (X: %f Y: %f), ignored.", point_id, POI.x, POI.y);
-            continue;
-        }
-
-        mPointsOfInterest[point_id] = POI;
-
-        ++count;
-    } while (result->NextRow());
-
-    sLog.outString(">> Loaded %u Points of Interest definitions", count);
-}
-
 void ObjectMgr::LoadWeatherZoneChances()
 {
     uint32 count = 0;
@@ -6386,6 +6288,8 @@ void ObjectMgr::LoadWeatherZoneChances()
 
     if (!result)
     {
+
+
         sLog.outErrorDb(">> Loaded 0 weather definitions. DB table game_weather is empty.");
         return;
     }
@@ -7447,49 +7351,50 @@ void ObjectMgr::LoadGossipMenuItems()
 
         GossipMenuItems gMenuItem;
 
-        gMenuItem.MenuId                = fields[0].GetUInt32();
-        gMenuItem.OptionIndex           = fields[1].GetUInt32();
-        gMenuItem.OptionIcon            = fields[2].GetUInt8();
-        gMenuItem.OptionText            = fields[3].GetCppString();
-        gMenuItem.OptionType            = fields[4].GetUInt32();
-        gMenuItem.OptionNpcflag         = fields[5].GetUInt32();
-        gMenuItem.ActionMenuId          = fields[6].GetUInt32();
-        gMenuItem.ActionPoiId           = fields[7].GetUInt32();
-        gMenuItem.ActionScriptId        = fields[8].GetUInt32();
-        gMenuItem.BoxCoded              = fields[9].GetUInt8() != 0;
-        gMenuItem.BoxMoney              = fields[10].GetUInt32();
-        gMenuItem.BoxText               = fields[11].GetCppString();
+        gMenuItem.menu_id               = fields[0].GetUInt32();
+        gMenuItem.id                    = fields[1].GetUInt32();
+        gMenuItem.option_icon           = fields[2].GetUInt8();
+        gMenuItem.option_text           = fields[3].GetCppString();
+        gMenuItem.option_id             = fields[4].GetUInt32();
+        gMenuItem.npc_option_npcflag    = fields[5].GetUInt32();
+        gMenuItem.action_menu_id        = fields[6].GetUInt32();
+        gMenuItem.action_poi_id         = fields[7].GetUInt32();
+        gMenuItem.action_script_id      = fields[8].GetUInt32();
+        gMenuItem.box_coded             = fields[9].GetUInt8() != 0;
+        gMenuItem.box_money             = fields[10].GetUInt32();
+        gMenuItem.box_text              = fields[11].GetCppString();
 
-        if (gMenuItem.OptionIcon >= GOSSIP_ICON_MAX)
+        if (gMenuItem.option_icon >= GOSSIP_ICON_MAX)
         {
-            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has unknown icon id %u. Replacing with GOSSIP_ICON_CHAT", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.OptionIcon);
-            gMenuItem.OptionIcon = GOSSIP_ICON_CHAT;
+            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has unknown icon id %u. Replacing with GOSSIP_ICON_CHAT", gMenuItem.menu_id, gMenuItem.id, gMenuItem.option_icon);
+            gMenuItem.option_icon = GOSSIP_ICON_CHAT;
         }
 
-        //if (gMenuItem.OptionIndex == GOSSIP_OPTION_NONE)
-           // sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u use option id GOSSIP_OPTION_NONE. Option will never be used", gMenuItem.menu_id, gMenuItem.id);
+        if (gMenuItem.option_id == GOSSIP_OPTION_NONE)
+            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u use option id GOSSIP_OPTION_NONE. Option will never be used", gMenuItem.menu_id, gMenuItem.id);
 
-        if (gMenuItem.OptionType >= GOSSIP_OPTION_MAX)
-            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has unknown option id %u. Option will not be used", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.OptionType);
+        if (gMenuItem.option_id >= GOSSIP_OPTION_MAX)
+            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has unknown option id %u. Option will not be used", gMenuItem.menu_id, gMenuItem.id, gMenuItem.option_id);
 
-        if (gMenuItem.ActionScriptId)
+        if (gMenuItem.action_script_id)
         {
-            if (gMenuItem.OptionType != GOSSIP_OPTION_GOSSIP)
+            if (gMenuItem.option_id != GOSSIP_OPTION_GOSSIP)
             {
-                sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u have action_script_id %u but option_id is not GOSSIP_OPTION_GOSSIP, ignoring", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.ActionScriptId);
+                sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has action_script_id %u but option_id is not GOSSIP_OPTION_GOSSIP, ignoring", gMenuItem.menu_id, gMenuItem.id, gMenuItem.action_script_id);
                 continue;
             }
 
-            if (sGossipScripts.find(gMenuItem.ActionScriptId) == sGossipScripts.end())
+            if (sGossipScripts.find(gMenuItem.action_script_id) == sGossipScripts.end())
             {
-                sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u have action_script_id %u that does not exist in `gossip_scripts`, ignoring", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.ActionScriptId);
+                sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has action_script_id %u that does not exist in `gossip_scripts`, ignoring", gMenuItem.menu_id, gMenuItem.id, gMenuItem.action_script_id);
                 continue;
             }
 
-            gossipScriptSet.erase(gMenuItem.ActionScriptId);
+            gossipScriptSet.erase(gMenuItem.action_script_id);
         }
 
-        m_mGossipMenuItemsMap.insert(GossipMenuItemsMap::value_type(gMenuItem.MenuId, gMenuItem));
+        m_mGossipMenuItemsMap.insert(GossipMenuItemsMap::value_type(gMenuItem.menu_id, gMenuItem));
+
         ++count;
     }
     while (result->NextRow());

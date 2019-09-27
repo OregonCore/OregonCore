@@ -1,0 +1,10 @@
+DELETE FROM `spell_proc_event` WHERE `entry`=12880;
+INSERT INTO `spell_proc_event` VALUES (12880, 0, 0, 0, 0, 65536, 0, 0, 0);
+DELETE FROM `spell_proc_event` WHERE `entry`=14201;
+INSERT INTO `spell_proc_event` VALUES (14201, 0, 0, 0, 0, 65536, 0, 0, 0);
+DELETE FROM `spell_proc_event` WHERE `entry`=14202;
+INSERT INTO `spell_proc_event` VALUES (14202, 0, 0, 0, 0, 65536, 0, 0, 0);
+DELETE FROM `spell_proc_event` WHERE `entry`=14203;
+INSERT INTO `spell_proc_event` VALUES (14203, 0, 0, 0, 0, 65536, 0, 0, 0);
+DELETE FROM `spell_proc_event` WHERE `entry`=14204;
+INSERT INTO `spell_proc_event` VALUES (14204, 0, 0, 0, 0, 65536, 0, 0, 0);

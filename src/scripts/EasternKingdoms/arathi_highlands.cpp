@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -139,6 +139,6 @@ void AddSC_arathi_highlands()
     newscript = new Script;
     newscript->Name = "npc_professor_phizzlethorpe";
     newscript->GetAI = &GetAI_npc_professor_phizzlethorpeAI;
-    newscript->QuestAccept = &QuestAccept_npc_professor_phizzlethorpe;
+    newscript->pQuestAccept = &QuestAccept_npc_professor_phizzlethorpe;
     newscript->RegisterSelf();
 }

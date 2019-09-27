@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @file ZoneScript.h
  */
@@ -61,8 +61,8 @@ class ZoneScript
         virtual void SetData(uint32 /*DataId*/, uint32 /*Value*/) {}
 
         // These functions are called explicitly by scripting stuff, no regular core-link for them, yet.
-        virtual void ProcessEvent(GameObject* /*obj*/, uint32 eventId = 0) {}
-        virtual void ProcessEvent(Unit* /*obj*/, uint32 eventId = 0) {}
+        virtual void ProcessEvent(GameObject* /*obj*/, uint32 /*eventId = 0*/) {}
+        virtual void ProcessEvent(Unit* /*obj*/, uint32 /*eventId = 0*/) {}
 };
 
 #endif

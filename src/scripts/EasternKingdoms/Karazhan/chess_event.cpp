@@ -12,7 +12,7 @@
 * more details.
 *
 * You should have received a copy of the GNU General Public License along
-* with this program. If not, see <https://www.gnu.org/licenses/>.
+* with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* ScriptData
@@ -278,7 +278,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
             std::list<Unit*> unitList;
             uint32 searchEntry = ChessPieceEntrysAlliance[i];
             Oregon::AllCreaturesOfEntryInRange u_check(me, searchEntry, 100);
-            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, unitList, u_check);
+            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(unitList, u_check);
             me->GetMap()->VisitAll(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), searcher);
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); itr++)
             {
@@ -292,7 +292,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
             std::list<Unit*> unitList;
             uint32 searchEntry = ChessPieceEntrysHorde[i];
             Oregon::AllCreaturesOfEntryInRange u_check(me, searchEntry, 100);
-            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, unitList, u_check);
+            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(unitList, u_check);
             me->GetMap()->VisitAll(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), searcher);
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); itr++)
             {
@@ -304,7 +304,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
         {
             std::list<Unit*> unitList;
             Oregon::AllCreaturesOfEntryInRange u_check(me, NPC_BLACK_SQUARE, 100);
-            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, unitList, u_check);
+            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(unitList, u_check);
             me->GetMap()->VisitAll(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), searcher);
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); itr++)
             {
@@ -316,7 +316,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
         {
             std::list<Unit*> unitList;
             Oregon::AllCreaturesOfEntryInRange check(me, NPC_WHITE_SQUARE, 100);
-            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> _searcher(me, unitList, check);
+            Oregon::UnitListSearcher<Oregon::AllCreaturesOfEntryInRange> _searcher(unitList, check);
             me->GetMap()->VisitAll(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), _searcher);
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); itr++)
             {
@@ -343,7 +343,7 @@ struct Echo_of_MedivhAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!pInstance->GetData(TYPE_CHESS) == IN_PROGRESS || !creaturesLoaded)
+        if (!(pInstance->GetData(TYPE_CHESS) == IN_PROGRESS) || !creaturesLoaded)
             return;
 
         if (cheat_block < diff)
@@ -627,7 +627,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
 
     void AttackStart(Unit *) { }
 
-    void KilledUnit(Unit* victim) { }
+    void KilledUnit(Unit* /*victim*/) { }
 
     void OnCharmed(bool apply)
     {
@@ -635,7 +635,6 @@ struct Chess_npcAI : public Scripted_NoMovementAI
         {
             me->InitCharmInfo();
             me->GetCharmInfo()->InitPossessCreateSpells(false);
-            Player* player = me->GetCharmer()->ToPlayer();
 
             Echo_of_MedivhAI* medivhAI = GetMedivhAI(pInstance, me);
             if (medivhAI)
@@ -780,7 +779,7 @@ struct Chess_npcAI : public Scripted_NoMovementAI
         uint32 spellID = m_spells[idx].m_spellEntry;
         if (spellID && !m_spells[idx].m_positive) //check only negative targets here
         {
-            if (proto = sSpellStore.LookupEntry(spellID))
+            if (proto == sSpellStore.LookupEntry(spellID))
             {
                 for (int effIdx = 0; effIdx < 3; effIdx++)
                 {
@@ -789,13 +788,13 @@ struct Chess_npcAI : public Scripted_NoMovementAI
 
                     if (proto->SchoolMask != SPELL_SCHOOL_MASK_NORMAL)
                     {
-                        if (EffectRange = sSpellRangeStore.LookupEntry(proto->rangeIndex))
+                        if (EffectRange == sSpellRangeStore.LookupEntry(proto->rangeIndex))
                         {
                             if (proto->Effect[effIdx] != 0 && proto->rangeIndex != 13 && me->GetDistance(target) <= EffectRange->maxRange)
                                 return true;
 
                             if (proto->Effect[effIdx] != 0 && proto->rangeIndex == 13)
-                                if (EffectRadius = sSpellRadiusStore.LookupEntry(proto->EffectRadiusIndex[effIdx]))
+                                if (EffectRadius == sSpellRadiusStore.LookupEntry(proto->EffectRadiusIndex[effIdx]))
                                     if (me->GetDistance(target) <= EffectRadius->radiusHostile)
                                         return true;
                         }
@@ -1212,12 +1211,12 @@ struct Move_triggerAI : public ScriptedAI
         }
     }
 
-    void SpellHit(Unit *caster, const SpellEntry* spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
     {
         if (spell->Id == SPELL_TRANSFORM_FIELD)
         {
             search_timer = 3000;
-			me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
+			         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
         }
     }
 };
